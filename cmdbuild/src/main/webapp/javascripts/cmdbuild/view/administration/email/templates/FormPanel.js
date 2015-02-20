@@ -15,7 +15,7 @@
 		},
 
 		/**
-		 * @cfg {CMDBuild.controller.administration.email.CMEmailTemplatesController}
+		 * @cfg {CMDBuild.controller.administration.email.TemplatesController}
 		 */
 		delegate: undefined,
 
@@ -204,8 +204,7 @@
 							this.defaultAccountCombo,
 							{
 								name: CMDBuild.core.proxy.CMProxyConstants.TO,
-								fieldLabel: CMDBuild.Translation.to,
-								allowBlank: false
+								fieldLabel: CMDBuild.Translation.to
 							},
 							{
 								name: CMDBuild.core.proxy.CMProxyConstants.CC,
@@ -217,8 +216,7 @@
 							},
 							{
 								name: CMDBuild.core.proxy.CMProxyConstants.SUBJECT,
-								fieldLabel: CMDBuild.Translation.subject,
-								allowBlank: false
+								fieldLabel: CMDBuild.Translation.subject
 							},
 							Ext.create('CMDBuild.view.common.field.CMHtmlEditorField', {
 								name: CMDBuild.core.proxy.CMProxyConstants.BODY,

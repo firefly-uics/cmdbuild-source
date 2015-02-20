@@ -9,7 +9,7 @@
 		],
 
 		/**
-		 * @cfg {CMDBuild.controller.administration.email.CMEmailTemplatesController}
+		 * @cfg {CMDBuild.controller.administration.email.TemplatesController}
 		 */
 		delegate: undefined,
 
@@ -53,7 +53,7 @@
 
 			// Event to load store on view display and first row selection as CMDbuild standard
 			viewready: function() {
-				this.store.load({
+				this.getStore().load({
 					scope: this,
 					callback: function() {
 						if (!this.getSelectionModel().hasSelection())

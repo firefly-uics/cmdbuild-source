@@ -50,6 +50,38 @@
 		 */
 		widgetConf: undefined,
 
+		statics: {
+			/**
+			 * @param {CMDBuild.model.widget.ManageEmail.email} record
+			 * @param {Array} regenerationTrafficLightArray
+			 *
+			 * @return {Boolean} storeLoadEnabled
+			 */
+			trafficLightArrayCheck: function(record, regenerationTrafficLightArray) {
+_debug('trafficLightArrayCheck record', record);
+_debug('trafficLightArrayCheck regenerationTrafficLightArray', regenerationTrafficLightArray);
+				if (!Ext.isEmpty(regenerationTrafficLightArray) && regenerationTrafficLightArray.length > 0) {
+					var storeLoadEnabled = true;
+
+					Ext.Array.forEach(regenerationTrafficLightArray, function(item, index, allItems) {
+						if (Ext.Object.equals(item[CMDBuild.core.proxy.CMProxyConstants.RECORD], record))
+							item[CMDBuild.core.proxy.CMProxyConstants.STATUS] = true;
+
+						if (!item[CMDBuild.core.proxy.CMProxyConstants.STATUS])
+							storeLoadEnabled = false;
+					}, this);
+
+					// Array reset on store load
+					if (storeLoadEnabled)
+						regenerationTrafficLightArray = [];
+
+					return storeLoadEnabled;
+				}
+
+				return false;
+			}
+		},
+
 		/**
 		 * @param {Object} configObject
 		 * @param {CMDBuild.controller.management.common.widgets.manageEmail.Main} configObject.parentDelegate
@@ -101,9 +133,11 @@
 
 		/**
 		 * @param {CMDBuild.model.widget.ManageEmail.email} record
+		 * @param {Array} regenerationTrafficLightArray
 		 */
-		addRecord: function(record) {
+		addRecord: function(record, regenerationTrafficLightArray) {
 _debug('addRecord record', record);
+_debug('addRecord regenerationTrafficLightArray', regenerationTrafficLightArray);
 			CMDBuild.LoadMask.instance.show();
 			CMDBuild.core.proxy.widgets.ManageEmail.create({
 				params: record.getAsParams(),
@@ -112,7 +146,8 @@ _debug('addRecord record', record);
 					CMDBuild.Msg.error(CMDBuild.Translation.common.failure, CMDBuild.Translation.errors.emailCreate, false);
 				},
 				success: function(response, options, decodedResponse) {
-					this.storeLoad();
+					if (this.self.trafficLightArrayCheck(record, regenerationTrafficLightArray) || Ext.isEmpty(regenerationTrafficLightArray))
+						this.storeLoad();
 				},
 				callback: function(options, success, response) {
 					CMDBuild.LoadMask.instance.hide();
@@ -139,9 +174,11 @@ _debug('addRecord record', record);
 
 		/**
 		 * @param {CMDBuild.model.widget.ManageEmail.email} record
+		 * @param {Array} regenerationTrafficLightArray
 		 */
-		editRecord: function(record) {
+		editRecord: function(record, regenerationTrafficLightArray) {
 _debug('editRecord record', record);
+_debug('editRecord regenerationTrafficLightArray', regenerationTrafficLightArray);
 			CMDBuild.LoadMask.instance.show();
 			CMDBuild.core.proxy.widgets.ManageEmail.update({
 				params: record.getAsParams(),
@@ -150,7 +187,8 @@ _debug('editRecord record', record);
 					CMDBuild.Msg.error(CMDBuild.Translation.common.failure, CMDBuild.Translation.errors.emailUpdate, false);
 				},
 				success: function(response, options, decodedResponse) {
-					this.storeLoad();
+					if (this.self.trafficLightArrayCheck(record, regenerationTrafficLightArray) || Ext.isEmpty(regenerationTrafficLightArray))
+						this.storeLoad();
 				},
 				callback: function(options, success, response) {
 					CMDBuild.LoadMask.instance.hide();
@@ -317,9 +355,11 @@ _debug('editRecord record', record);
 
 		/**
 		 * @param {CMDBuild.model.widget.ManageEmail.email} record
+		 * @param {Array} regenerationTrafficLightArray
 		 */
-		removeRecord: function(record) {
+		removeRecord: function(record, regenerationTrafficLightArray) {
 _debug('removeRecord record', record);
+_debug('removeRecord regenerationTrafficLightArray', regenerationTrafficLightArray);
 			CMDBuild.LoadMask.instance.show();
 			CMDBuild.core.proxy.widgets.ManageEmail.remove({
 				params: record.getAsParams([CMDBuild.core.proxy.CMProxyConstants.ID, CMDBuild.core.proxy.CMProxyConstants.TEMPORARY]),
@@ -328,7 +368,8 @@ _debug('removeRecord record', record);
 					CMDBuild.Msg.error(CMDBuild.Translation.common.failure, CMDBuild.Translation.errors.emailRemove, false);
 				},
 				success: function(response, options, decodedResponse) {
-					this.storeLoad();
+					if (this.self.trafficLightArrayCheck(record, regenerationTrafficLightArray) || Ext.isEmpty(regenerationTrafficLightArray))
+						this.storeLoad();
 				},
 				callback: function(options, success, response) {
 					CMDBuild.LoadMask.instance.hide();
@@ -365,8 +406,6 @@ _debug('storeLoad', regenerateAllEmails+ ' ' +forceRegeneration);
 
 		/**
 		 * Resets server and client store
-		 *
-		 * TODO: implement traficLight array
 		 */
 		storeReset: function() {
 			Ext.Array.forEach(this.getDraftEmails(), function(item, index, allItems) {
