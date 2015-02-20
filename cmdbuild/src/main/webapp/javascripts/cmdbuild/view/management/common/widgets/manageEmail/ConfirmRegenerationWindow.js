@@ -29,14 +29,14 @@
 		grid: undefined,
 
 		buttonAlign: 'center',
-		title: '@@ Confirm regeneration',
+		title: CMDBuild.Translation.confirmRegeneration,
 		layout: 'border',
 
 		initComponent: function() {
 			this.windowText = Ext.create('Ext.Component', {
 				region: 'north',
 				style: 'padding: 10px;',
-				html: '@@ Testo esplicativo per spiegare cosa fa la finestra'
+				html: CMDBuild.Translation.confirmRegenerationWindowText
 			});
 
 			this.grid = Ext.create('Ext.grid.Panel', {

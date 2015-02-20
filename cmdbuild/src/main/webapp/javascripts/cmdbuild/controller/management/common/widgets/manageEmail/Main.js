@@ -200,7 +200,7 @@ _debug('bindLocalDepsChangeEvent', record);
 					} else if (!scope.relatedAttributeChanged) {
 						scope.relatedAttributeChanged = true;
 
-						CMDBuild.Msg.warn(null, '@@ Attribute related with email templates changed, some mail could be regenerated.');
+						CMDBuild.Msg.warn(null, CMDBuild.Translation.warnings.emailTemplateRelatedAttributeEdited);
 					}
 				}
 			});

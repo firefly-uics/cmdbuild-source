@@ -108,14 +108,14 @@
 				items: [
 					{
 						xtype: 'checkbox',
-						fieldLabel: '@@ Keep synchronization',
+						fieldLabel: CMDBuild.Translation.keepSync,
 						readOnly: true,
 						name: CMDBuild.core.proxy.CMProxyConstants.KEEP_SYNCHRONIZATION,
 						value: this.delegate.record.get(CMDBuild.core.proxy.CMProxyConstants.KEEP_SYNCHRONIZATION)
 					},
 					{
 						xtype: 'checkbox',
-						fieldLabel: '@@ Prompt synchronization',
+						fieldLabel: CMDBuild.Translation.promptSync,
 						readOnly: true,
 						name: CMDBuild.core.proxy.CMProxyConstants.PROMPT_SYNCHRONIZATION,
 						value: this.delegate.record.get(CMDBuild.core.proxy.CMProxyConstants.PROMPT_SYNCHRONIZATION)

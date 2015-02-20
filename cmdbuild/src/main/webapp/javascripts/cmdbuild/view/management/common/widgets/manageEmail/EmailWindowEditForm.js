@@ -51,7 +51,7 @@
 			});
 
 			this.keepSynchronizationCheckbox = Ext.create('Ext.form.field.Checkbox', {
-				fieldLabel: '@@ Keep synchronization',
+				fieldLabel: CMDBuild.Translation.keepSync,
 				labelAlign: 'right',
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				name: CMDBuild.core.proxy.CMProxyConstants.KEEP_SYNCHRONIZATION,
