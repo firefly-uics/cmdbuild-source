@@ -232,15 +232,9 @@ public interface EmailAttachmentsLogic extends Logic {
 
 	}
 
-	String uploadAttachment(Upload.Builder builder) throws IOException, CMDBException;
-
-	String uploadAttachment(Upload upload) throws IOException, CMDBException;
-
-	void deleteAttachment(Delete.Builder builder) throws CMDBException;
+	void uploadAttachment(Upload upload) throws IOException, CMDBException;
 
 	void deleteAttachment(Delete delete) throws CMDBException;
-
-	Copy copyAttachments(Copy.Builder builder) throws CMDBException;
 
 	Copy copyAttachments(Copy copy) throws CMDBException;
 
