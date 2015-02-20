@@ -6,36 +6,25 @@ import static java.lang.Integer.MAX_VALUE;
 import static java.util.Collections.emptyList;
 import static org.apache.commons.lang3.StringUtils.defaultString;
 import static org.apache.commons.lang3.StringUtils.isBlank;
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.cmdbuild.data.store.email.EmailConstants.ADDRESSES_SEPARATOR;
 import static org.cmdbuild.logic.email.EmailLogic.Statuses.draft;
 import static org.cmdbuild.logic.email.EmailLogic.Statuses.outgoing;
 import static org.cmdbuild.logic.email.EmailLogic.Statuses.received;
 import static org.cmdbuild.logic.email.EmailLogic.Statuses.sent;
-import static org.cmdbuild.service.rest.v2.constants.Serialization.REFERENCE;
 import static org.cmdbuild.service.rest.v2.model.Models.newEmail;
 import static org.cmdbuild.service.rest.v2.model.Models.newMetadata;
 import static org.cmdbuild.service.rest.v2.model.Models.newResponseMultiple;
 import static org.cmdbuild.service.rest.v2.model.Models.newResponseSingle;
 
 import java.util.Collection;
+import java.util.NoSuchElementException;
 
-import org.cmdbuild.common.utils.UnsupportedProxyFactory;
+import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.attributetype.DateAttributeType;
-import org.cmdbuild.logic.data.access.filter.json.JsonParser;
-import org.cmdbuild.logic.data.access.filter.model.Attribute;
-import org.cmdbuild.logic.data.access.filter.model.Element;
-import org.cmdbuild.logic.data.access.filter.model.ElementVisitor;
-import org.cmdbuild.logic.data.access.filter.model.EqualTo;
-import org.cmdbuild.logic.data.access.filter.model.Filter;
-import org.cmdbuild.logic.data.access.filter.model.ForwardingElementVisitor;
-import org.cmdbuild.logic.data.access.filter.model.ForwardingPredicateVisitor;
-import org.cmdbuild.logic.data.access.filter.model.Parser;
-import org.cmdbuild.logic.data.access.filter.model.Predicate;
-import org.cmdbuild.logic.data.access.filter.model.PredicateVisitor;
 import org.cmdbuild.logic.email.EmailImpl;
 import org.cmdbuild.logic.email.EmailLogic;
-import org.cmdbuild.service.rest.v2.Emails;
+import org.cmdbuild.logic.workflow.WorkflowLogic;
+import org.cmdbuild.service.rest.v2.ProcessInstanceEmails;
 import org.cmdbuild.service.rest.v2.cxf.serialization.DefaultConverter;
 import org.cmdbuild.service.rest.v2.model.Email;
 import org.cmdbuild.service.rest.v2.model.ResponseMultiple;
@@ -44,12 +33,11 @@ import org.joda.time.DateTime;
 
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
-import com.google.common.base.Optional;
 import com.google.common.base.Splitter;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 
-public class CxfEmails implements Emails {
+public class CxfProcessInstanceEmails implements ProcessInstanceEmails {
 
 	private static final Function<EmailLogic.Email, Long> LOGIC_TO_LONG = new Function<EmailLogic.Email, Long>() {
 
@@ -77,7 +65,6 @@ public class CxfEmails implements Emails {
 					.withBody(input.getContent()) //
 					.withDate(dateAsString(input.getDate())) //
 					.withStatus(statuses.inverse().get(input.getStatus())) //
-					.withReference(input.getActivityId()) //
 					.withNotifyWith(input.getNotifyWith()) //
 					.withNoSubjectPrefix(input.isNoSubjectPrefix()) //
 					.withAccount(input.getAccount()) //
@@ -118,7 +105,6 @@ public class CxfEmails implements Emails {
 					.withSubject(input.getSubject()) //
 					.withContent(input.getBody()) //
 					.withStatus(statuses.get(input.getStatus())) //
-					.withActivityId(input.getReference()) //
 					.withNotifyWith(input.getNotifyWith()) //
 					.withNoSubjectPrefix(input.isNoSubjectPrefix()) //
 					.withAccount(input.getAccount()) //
@@ -145,9 +131,14 @@ public class CxfEmails implements Emails {
 		statuses.put("sent", sent());
 	}
 
+	private final ErrorHandler errorHandler;
+	private final WorkflowLogic workflowLogic;
 	private final EmailLogic emailLogic;
 
-	public CxfEmails(final EmailLogic emailLogic) {
+	public CxfProcessInstanceEmails(final ErrorHandler errorHandler, final WorkflowLogic workflowLogic,
+			final EmailLogic emailLogic) {
+		this.errorHandler = errorHandler;
+		this.workflowLogic = workflowLogic;
 		this.emailLogic = emailLogic;
 	}
 
@@ -162,80 +153,31 @@ public class CxfEmails implements Emails {
 	}
 
 	@Override
-	public ResponseSingle<Long> create(final Email email) {
-		final Long id = emailLogic.create(REST_TO_LOGIC.apply(email));
+	public ResponseSingle<Long> create(final String processId, final Long processInstanceId, final Email email) {
+		checkPreconditions(processId, processInstanceId);
+		final Long id = emailLogic.create(new EmailLogic.ForwardingEmail() {
+
+			@Override
+			protected org.cmdbuild.logic.email.EmailLogic.Email delegate() {
+				return REST_TO_LOGIC.apply(email);
+			}
+
+			@Override
+			public Long getActivityId() {
+				return processInstanceId;
+			}
+
+		});
 		return newResponseSingle(Long.class) //
 				.withElement(id) //
 				.build();
 	}
 
 	@Override
-	public ResponseMultiple<Long> readAll(final String filter, final Integer limit, final Integer offset) {
-		final Long processId;
-		if (isNotBlank(filter)) {
-			final Parser parser = new JsonParser(filter);
-			final Filter filterModel = parser.parse();
-			final Optional<Element> attribute = filterModel.attribute();
-			if (attribute.isPresent()) {
-				processId = new ForwardingElementVisitor() {
-
-					private final ElementVisitor UNSUPPORTED = UnsupportedProxyFactory.of(ElementVisitor.class) //
-							.create();
-
-					private Long output;
-
-					@Override
-					protected ElementVisitor delegate() {
-						return UNSUPPORTED;
-					}
-
-					public Long processId() {
-						attribute.get().accept(this);
-						return output;
-					}
-
-					@Override
-					public void visit(final Attribute element) {
-						output = new ForwardingPredicateVisitor() {
-
-							private final PredicateVisitor UNSUPPORTED = UnsupportedProxyFactory.of(
-									PredicateVisitor.class) //
-									.create();
-							private final String name = element.getName();
-							private final Predicate predicate = element.getPredicate();
-
-							private Long output;
-
-							@Override
-							protected PredicateVisitor delegate() {
-								return UNSUPPORTED;
-							}
-
-							public Long processId() {
-								predicate.accept(this);
-								return output;
-							}
-
-							@Override
-							public void visit(final EqualTo predicate) {
-								if (REFERENCE.equals(name)) {
-									output = Number.class.cast(predicate.getValue()).longValue();
-								} else {
-									super.visit(predicate);
-								}
-							}
-
-						}.processId();
-					}
-
-				}.processId();
-			} else {
-				processId = null;
-			}
-		} else {
-			processId = null;
-		}
-		final Iterable<EmailLogic.Email> elements = emailLogic.readAll(processId);
+	public ResponseMultiple<Long> readAll(final String processId, final Long processInstanceId, final Integer limit,
+			final Integer offset) {
+		checkPreconditions(processId, processInstanceId);
+		final Iterable<EmailLogic.Email> elements = emailLogic.readAll(processInstanceId);
 		return newResponseMultiple(Long.class) //
 				.withElements(from(elements) //
 						.skip((offset == null) ? 0 : offset) //
@@ -249,16 +191,19 @@ public class CxfEmails implements Emails {
 	}
 
 	@Override
-	public ResponseSingle<Email> read(final Long id) {
+	public ResponseSingle<Email> read(final String processId, final Long processInstanceId, final Long emailId) {
+		checkPreconditions(processId, processInstanceId);
 		final EmailLogic.Email element = emailLogic.read(EmailImpl.newInstance() //
-				.withId(id).build());
+				.withId(emailId) //
+				.build());
 		return newResponseSingle(Email.class) //
 				.withElement(LOGIC_TO_REST.apply(element)) //
 				.build();
 	}
 
 	@Override
-	public void update(final Long id, final Email email) {
+	public void update(final String processId, final Long processInstanceId, final Long emailId, final Email email) {
+		checkPreconditions(processId, processInstanceId);
 		emailLogic.update(new EmailLogic.ForwardingEmail() {
 
 			@Override
@@ -268,17 +213,35 @@ public class CxfEmails implements Emails {
 
 			@Override
 			public Long getId() {
-				return id;
+				return emailId;
+			}
+
+			@Override
+			public Long getActivityId() {
+				return processInstanceId;
 			}
 
 		});
 	}
 
 	@Override
-	public void delete(final Long id) {
+	public void delete(final String processId, final Long processInstanceId, final Long emailId) {
+		checkPreconditions(processId, processInstanceId);
 		emailLogic.delete(EmailImpl.newInstance() //
-				.withId(id) //
+				.withId(emailId) //
 				.build());
+	}
+
+	private void checkPreconditions(final String classId, final Long cardId) {
+		final CMClass targetClass = workflowLogic.findProcessClass(classId);
+		if (targetClass == null) {
+			errorHandler.classNotFound(classId);
+		}
+		try {
+			workflowLogic.getProcessInstance(classId, cardId);
+		} catch (final NoSuchElementException e) {
+			errorHandler.cardNotFound(cardId);
+		}
 	}
 
 }

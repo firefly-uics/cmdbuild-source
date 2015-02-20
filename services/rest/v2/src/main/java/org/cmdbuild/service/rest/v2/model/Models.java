@@ -730,7 +730,6 @@ public class Models {
 		private String notifyWith;
 		private String date;
 		private String status;
-		private Long reference;
 		private boolean noSubjectPrefix;
 		private String account;
 		private boolean temporary;
@@ -754,7 +753,6 @@ public class Models {
 			output.setBody(body);
 			output.setDate(date);
 			output.setStatus(status);
-			output.setReference(reference);
 			output.setNotifyWith(notifyWith);
 			output.setNoSubjectPrefix(noSubjectPrefix);
 			output.setAccount(account);
@@ -812,11 +810,6 @@ public class Models {
 
 		public EmailBuilder withStatus(final String status) {
 			this.status = status;
-			return this;
-		}
-
-		public EmailBuilder withReference(final Long reference) {
-			this.reference = reference;
 			return this;
 		}
 
