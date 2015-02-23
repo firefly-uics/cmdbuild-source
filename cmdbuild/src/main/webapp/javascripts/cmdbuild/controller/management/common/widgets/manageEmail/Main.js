@@ -339,7 +339,7 @@ _debug('templateIdentifier', templateIdentifier);
 					this.emailTemplatesIdentifiers.push(templateIdentifier);
 			}, this);
 
-			CMDBuild.LoadMask.instance.show();
+			CMDBuild.LoadMask.get().show();
 			CMDBuild.core.proxy.EmailTemplates.getAll({
 				params: {
 					templates: Ext.encode(this.emailTemplatesIdentifiers)
@@ -362,7 +362,7 @@ _debug('loadTemplates item', item);
 					}, this);
 				},
 				callback: function(options, success, response) {
-					CMDBuild.LoadMask.instance.hide();
+					CMDBuild.LoadMask.get().hide();
 
 					if (regenerateAllEmails)
 						this.regenerateAllEmails(forceRegeneration);

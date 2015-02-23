@@ -240,6 +240,13 @@
 				uploadCsv: 'services/json/management/importcsv/uploadcsv'
 			},
 			manageEmail: {
+				attachment: {
+					copy: 'services/json/email/attachment/copy',
+					readAll: 'services/json/email/attachment/readall',
+					remove: 'services/json/email/attachment/delete',
+					upload: 'services/json/email/attachment/upload',
+				},
+
 				remove: 'services/json/email/email/delete',
 				get: 'services/json/email/email/read',
 				post: 'services/json/email/email/create',

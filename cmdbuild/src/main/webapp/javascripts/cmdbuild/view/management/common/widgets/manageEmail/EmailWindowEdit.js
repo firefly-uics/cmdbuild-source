@@ -13,15 +13,17 @@
 		 */
 		delegate: undefined,
 
-		/**
-		 * @property {Ext.container.Container}
-		 */
-		attachmentPanelsContainer: undefined,
+		attachmentContainer: undefined,
 
-		/**
-		 * @property {Ext.container.Container}
-		 */
-		attachmentButtonsContainer: undefined,
+//		/**
+//		 * @property {Ext.container.Container}
+//		 */
+//		attachmentPanelsContainer: undefined,
+//
+//		/**
+//		 * @property {Ext.container.Container}
+//		 */
+//		attachmentButtonsContainer: undefined,
 
 		/**
 		 * @cfg {Ext.button.Split}
@@ -41,14 +43,11 @@
 		buttonAlign: 'center',
 		title: CMDBuild.Translation.composeEmail,
 
-		layout: {
-			type: 'vbox',
-			align: 'stretch'
-		},
+		layout: 'border',
 
 		initComponent: function() {
 			var me = this;
-
+_debug('EmailWindowEdit', this.delegate);
 			// Buttons configuration
 				this.fillFromTemplateButton = Ext.create('Ext.button.Split', {
 					iconCls: 'clone',
@@ -65,7 +64,8 @@
 			// END: Buttons configuration
 
 			// Fill from template button store configuration
-			CMDBuild.LoadMask.instance.show();
+			// TODO implementare questa parte nel controller
+			CMDBuild.LoadMask.get().show();
 			CMDBuild.core.proxy.EmailTemplates.getAll({
 				scope: this,
 				success: function(response, options, decodedResponse) {
@@ -98,67 +98,18 @@
 					}
 				},
 				callback: function(options, success, response) {
-					CMDBuild.LoadMask.instance.hide();
-				}
-			});
-
-			this.attachmentButtonsContainer = Ext.create('Ext.container.Container', {
-				layout: {
-					type: 'hbox',
-					padding: '0 5'
-				},
-
-				items: [
-					Ext.create('Ext.form.Panel', {
-						frame: false,
-						border: false,
-						bodyCls: 'x-panel-body-default-framed',
-
-						items: [
-							{
-								xtype: 'filefield',
-								name: 'file',
-								buttonText: CMDBuild.Translation.attachfile,
-								buttonOnly: true,
-
-								listeners: {
-									change: function(field, value) {
-										var form = this.up('form').getForm();
-
-										me.delegate.onCMEmailWindowAttachFileChanged(me, form, me.delegate.record); // TODO: use cmOn and this
-									}
-								}
-							}
-						]
-					}),
-					Ext.create('Ext.button.Button', {
-						margin: '0 0 0 5',
-						text: CMDBuild.Translation.add_attachment_from_dms,
-
-						handler: function() {
-							me.delegate.onAddAttachmentFromDmsButtonClick(me, me.delegate.record); // TODO: use cmOn and this
-						}
-					})
-				]
-			});
-
-			this.attachmentPanelsContainer = Ext.create('Ext.container.Container', {
-				autoScroll: true,
-				flex: 1,
-
-				getFileNames: function() {
-					var names = [];
-
-					this.items.each(function(i) {
-						names.push(i.fileName);
-					});
-
-					return names;
+					CMDBuild.LoadMask.get().hide();
 				}
 			});
 
 			this.formPanel = Ext.create('CMDBuild.view.management.common.widgets.manageEmail.EmailWindowEditForm', {
-				delegate: this.delegate
+				delegate: this.delegate,
+				region: 'center'
+			});
+
+			this.attachmentContainer = Ext.create('CMDBuild.view.management.common.widgets.manageEmail.attachments.MainContainer', {
+				height: '30%',
+				region: 'south'
 			});
 
 			Ext.apply(this, {
@@ -170,7 +121,7 @@
 						items: [this.fillFromTemplateButton]
 					}
 				],
-				items: [this.formPanel, this.attachmentButtonsContainer, this.attachmentPanelsContainer],
+				items: [this.formPanel, this.attachmentContainer],
 				buttons: [
 					Ext.create('CMDBuild.buttons.ConfirmButton', {
 						scope: this,
