@@ -135,6 +135,7 @@ public class DefaultEmailAttachmentsLogic implements EmailAttachmentsLogic {
 		try {
 			final DocumentSearch destination = documentCreator(temporary) //
 					.createDocumentSearch(EMAIL_CLASS_NAME, emailId);
+			dmsService.create(destination);
 			final List<StoredDocument> documents = dmsService.search(destination);
 			return from(documents) //
 					.transform(new Function<StoredDocument, Attachment>() {
