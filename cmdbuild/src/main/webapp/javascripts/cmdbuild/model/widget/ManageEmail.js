@@ -2,6 +2,16 @@
 
 	Ext.require('CMDBuild.core.proxy.CMProxyConstants');
 
+	Ext.define('CMDBuild.model.widget.ManageEmail.email.attachment', {
+		extend: 'Ext.data.Model',
+
+		fields: [
+			{ name: 'Description', type: 'string' },
+			{ name: 'Filename', type: 'string' },
+			{ name: 'Checked', type: 'boolean', }
+		]
+	});
+
 	Ext.define('CMDBuild.model.widget.ManageEmail.email', {
 		extend: 'Ext.data.Model',
 
@@ -92,7 +102,7 @@
 		constructor: function(data) {
 			if (!Ext.isEmpty(data) && !Ext.isEmpty(data[CMDBuild.core.proxy.CMProxyConstants.ID]))
 				delete data[CMDBuild.core.proxy.CMProxyConstants.ID];
-			
+
 //			if (!Ext.isEmpty(data) && !Ext.isEmpty(data[CMDBuild.core.proxy.CMProxyConstants.CONTENT]))
 //				data[CMDBuild.core.proxy.CMProxyConstants.BODY] = data[CMDBuild.core.proxy.CMProxyConstants.CONTENT];
 

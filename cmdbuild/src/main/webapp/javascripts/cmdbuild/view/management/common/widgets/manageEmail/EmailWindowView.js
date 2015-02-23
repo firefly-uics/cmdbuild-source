@@ -170,7 +170,7 @@
 						items: [this.fillFromTemplateButton]
 					}
 				],
-				items: [this.formPanel, this.attachmentButtonsContainer, this.attachmentPanelsContainer],
+				items: [this.formPanel, this.attachmentButtonsContainer, this.attachmentPanelsContainer], // TODO: forse si può unificare in una classe unica possibilità di read only
 				buttons: [
 					Ext.create('CMDBuild.buttons.CloseButton', {
 						scope: this,

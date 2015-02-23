@@ -13,6 +13,84 @@
 		/**
 		 * @param {Object} parameters
 		 */
+		attachmentCopy: function(parameters) {
+			CMDBuild.Ajax.request({
+				method: 'POST',
+				url: CMDBuild.core.proxy.CMProxyUrlIndex.widgets.manageEmail.attachment.copy,
+				params: parameters.params,
+				scope: parameters.scope,
+				failure: parameters.failure || Ext.emptyFn(),
+				success: parameters.success || Ext.emptyFn(),
+				callback: parameters.callback || Ext.emptyFn()
+			});
+		},
+
+		/**
+		 * @param {Object} parameters
+		 */
+		attachmentGetAll: function(parameters) {
+			CMDBuild.Ajax.request({
+				method: 'POST',
+				url: CMDBuild.core.proxy.CMProxyUrlIndex.widgets.manageEmail.attachment.readAll,
+				params: parameters.params,
+				scope: parameters.scope,
+				failure: parameters.failure || Ext.emptyFn(),
+				success: parameters.success || Ext.emptyFn(),
+				callback: parameters.callback || Ext.emptyFn()
+			});
+		},
+
+		/**
+		 * @return {Ext.data.Store}
+		 */
+		attachmentGetStore: function() {
+			return Ext.create('Ext.data.Store', {
+				autoLoad: false,
+				model: 'CMDBuild.model.widget.ManageEmail.email.attachment',
+				proxy: {
+					type: 'ajax',
+					url: CMDBuild.core.proxy.CMProxyUrlIndex.widgets.manageEmail.attachment.readAll,
+					reader: {
+						type: 'json',
+						root: 'rows'
+					}
+				}
+			});
+		},
+
+		/**
+		 * @param {Object} parameters
+		 */
+		attachmentRemove: function(parameters) {
+			CMDBuild.Ajax.request({
+				method: 'POST',
+				url: CMDBuild.core.proxy.CMProxyUrlIndex.widgets.manageEmail.attachment.remove,
+				params: parameters.params,
+				scope: parameters.scope,
+				failure: parameters.failure || Ext.emptyFn(),
+				success: parameters.success || Ext.emptyFn(),
+				callback: parameters.callback || Ext.emptyFn()
+			});
+		},
+
+		/**
+		 * @param {Object} parameters
+		 */
+		attachmentUpload: function(parameters) {
+			parameters.form.submit({
+				method: 'POST',
+				url: CMDBuild.core.proxy.CMProxyUrlIndex.widgets.manageEmail.attachment.upload,
+				params: parameters.params,
+				scope: parameters.scope,
+				failure: parameters.failure || Ext.emptyFn(),
+				success: parameters.success || Ext.emptyFn(),
+				callback: parameters.callback || Ext.emptyFn()
+			});
+		},
+
+		/**
+		 * @param {Object} parameters
+		 */
 		create: function(parameters) {
 			CMDBuild.Ajax.request({
 				method: 'POST',

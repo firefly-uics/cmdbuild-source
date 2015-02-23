@@ -6,13 +6,16 @@
 		requires: [
 			'CMDBuild.controller.management.common.widgets.CMWidgetController',
 			'CMDBuild.core.proxy.CMProxyConstants',
-			'CMDBuild.core.proxy.EmailTemplates'
+			'CMDBuild.core.proxy.EmailTemplates',
+			'CMDBuild.core.proxy.widgets.ManageEmail'
 		],
 
 		/**
 		 * @cfg {CMDBuild.controller.management.common.widgets.manageEmail.Grid}
 		 */
 		parentDelegate: undefined,
+
+		attachmentsController: undefined,
 
 		/**
 		 * @cfg {CMDBuild.controller.management.common.widgets.manageEmail.Main}
@@ -59,22 +62,16 @@
 		/**
 		 * @param {Object} configObject
 		 * @param {CMDBuild.controller.management.common.widgets.manageEmail.Main} configObject.parentDelegate
-		 * @param {CMDBuild.model.widget.ManageEmail.email} record
+		 * @param {CMDBuild.model.widget.ManageEmail.email} configObject.record
 		 * @param {String} configObject.windowMode
 		 */
 		constructor: function(configObject) {
-			var enableAttachmentSetup = true;
 			var windowClassName = null;
 
 			Ext.apply(this, configObject); // Apply config
 
 			if (Ext.Array.contains(this.windowModeAvailable, this.windowMode)) {
 				switch (this.windowMode) {
-					case 'confirm': {
-						windowClassName = 'CMDBuild.view.management.common.widgets.manageEmail.EmailWindowConfirmRegeneration';
-						enableAttachmentSetup = false;
-					} break;
-
 					case 'view': {
 						windowClassName = 'CMDBuild.view.management.common.widgets.manageEmail.EmailWindowView';
 					} break;
@@ -85,20 +82,51 @@
 				}
 
 				this.view = Ext.create(windowClassName, {
-					delegate: this
+					delegate: this,
+
+					listeners: {
+						scope: this,
+						close: function(window, eOpts) {
+							this.cmOn('onEmailWindowCloseButtonClick');
+						}
+					}
+				});
+
+				// Build controllers
+				this.attachmentsController = Ext.create('CMDBuild.controller.management.common.widgets.manageEmail.Attachments', {
+					parentDelegate: this,
+					record: this.record,
+					widgetController: this.widgetController,
+					view: this.view.attachmentContainer
 				});
 			}
 
-			// No attachment panel setup on confirm regeneration window
-			if (enableAttachmentSetup) {
-				var attachments = this.record.getAttachmentNames();
+			var params = {};
+			params[CMDBuild.core.proxy.CMProxyConstants.EMAIL_ID] = this.record.get(CMDBuild.core.proxy.CMProxyConstants.ID);
+			params[CMDBuild.core.proxy.CMProxyConstants.TEMPORARY] = this.record.get(CMDBuild.core.proxy.CMProxyConstants.TEMPORARY);
 
-				for (var i = 0; i < attachments.length; ++i) {
-					var attachmentName = attachments[i];
-
-					this.addAttachmentPanel(attachmentName, this.record);
+			this.view.setLoading(true);
+			CMDBuild.core.proxy.widgets.ManageEmail.attachmentGetAll({
+				params: params,
+				scope: this,
+				success: function(response, options, decodedResponse) {
+_debug('decodedResponse', decodedResponse);
+					Ext.Array.forEach(decodedResponse.response, function(item, index, allItems) {
+						if(!Ext.Object.isEmpty(item))
+							this.attachmentsController.addAttachmentPanel(item[CMDBuild.core.proxy.CMProxyConstants.FILE_NAME]);
+					}, this);
+				},
+				callback: function(records, operation, success) {
+					this.view.setLoading(false);
 				}
-			}
+			});
+
+//			var attachments = this.record.getAttachmentNames();
+//			for (var i = 0; i < attachments.length; ++i) {
+//				var attachmentName = attachments[i];
+//
+//				this.addAttachmentPanel(attachmentName);
+//			}
 
 			if (!Ext.isEmpty(this.record.get(CMDBuild.core.proxy.CMProxyConstants.TEMPLATE)))
 				this.view.formPanel.keepSynchronizationCheckbox.setDisabled(false);
@@ -119,6 +147,7 @@
 				case 'onEmailChange':
 					return this.onEmailChange();
 
+				case 'onEmailWindowCloseButtonClick':
 				case 'onEmailWindowAbortButtonClick':
 					return this.onEmailWindowAbortButtonClick();
 
@@ -135,20 +164,8 @@
 			}
 		},
 
-		/**
-		 * @param {String} fileName
-		 * @param {CMDBuild.model.widget.ManageEmail.email} emailRecord
-		 */
-		addAttachmentPanel: function(fileName, emailRecord) {
-			this.view.attachmentPanelsContainer.add(
-				Ext.create('CMDBuild.view.management.common.widgets.manageEmail.EmailWindowFileAttacchedPanel', {
-					fileName: fileName,
-					referredEmail: emailRecord,
-					delegate: this
-				})
-			);
-
-			this.view.attachmentPanelsContainer.doLayout();
+		emailDelete: function() {
+			// TODO implementare appena avrò un record completo da vedere
 		},
 
 		/**
@@ -232,81 +249,81 @@ _debug('values', values);
 			});
 		},
 
-		/**
-		 * @param {CMDBuild.view.management.common.widgets.email.EmailWindow} emailWindow
-		 * @param {CMDBuild.model.widget.ManageEmail.email} emailRecord
-		 */
-		onAddAttachmentFromDmsButtonClick: function(emailWindow, emailRecord) {
-_debug('onAddAttachmentFromDmsButtonClick', this.record);
-			Ext.create('CMDBuild.view.management.common.widgets.CMDMSAttachmentPicker', {
-				title: CMDBuild.Translation.choose_attachment_from_db,
-				emailRecord: emailRecord,
-				emailWindow: emailWindow,
-				delegate: this
-			}).show();
-		},
+//		/**
+//		 * @param {CMDBuild.view.management.common.widgets.email.EmailWindow} emailWindow
+//		 * @param {CMDBuild.model.widget.ManageEmail.email} emailRecord
+//		 */
+//		onAddAttachmentFromDmsButtonClick: function(emailWindow, emailRecord) {
+//_debug('onAddAttachmentFromDmsButtonClick', this.record);
+//			Ext.create('CMDBuild.view.management.common.widgets.CMDMSAttachmentPicker', {
+//				title: CMDBuild.Translation.choose_attachment_from_db,
+//				emailRecord: emailRecord,
+//				emailWindow: emailWindow,
+//				delegate: this
+//			}).show();
+//		},
 
-		/**
-		 * @param {CMDBuild.view.management.common.widgets.email.EmailWindow} emailWindow
-		 * @param {Object} form
-		 * @param {CMDBuild.model.widget.ManageEmail.email} emailRecord
-		 */
-		onCMEmailWindowAttachFileChanged: function(emailWindow, form, emailRecord) {
-			if (emailRecord.isNew()) {
-				var params = {};
-				var temporaryId = emailRecord.get(CMDBuild.core.proxy.CMProxyConstants.TEMPORARY_ID);
+//		/**
+//		 * @param {CMDBuild.view.management.common.widgets.email.EmailWindow} emailWindow
+//		 * @param {Object} form
+//		 * @param {CMDBuild.model.widget.ManageEmail.email} emailRecord
+//		 */
+//		onCMEmailWindowAttachFileChanged: function(emailWindow, form, emailRecord) {
+//			if (emailRecord.isNew()) {
+//				var params = {};
+//				var temporaryId = emailRecord.get(CMDBuild.core.proxy.CMProxyConstants.TEMPORARY_ID);
+//
+//				if (!Ext.isEmpty(temporaryId))
+//					params[CMDBuild.core.proxy.CMProxyConstants.TEMPORARY_ID] = temporaryId;
+//
+//				CMDBuild.core.proxy.widgets.ManageEmail.addAttachmentFromNewEmail(form, {
+//					params: params,
+//					success: function(fp, o) {
+//						emailRecord.set(CMDBuild.core.proxy.CMProxyConstants.TEMPORARY_ID, o.result[CMDBuild.core.proxy.CMProxyConstants.TEMPORARY_ID]);
+//						emailWindow.addAttachmentPanel(o.result.fileName, emailRecord);
+//					}
+//				});
+//			} else {
+//				CMDBuild.core.proxy.widgets.ManageEmail.addAttachmentFromExistingEmail(form, {
+//					params: {
+//						emailId: emailRecord.getId()
+//					},
+//					success: function(fp, o) {
+//						emailWindow.addAttachmentPanel(o.result.fileName, emailRecord);
+//					}
+//				});
+//			}
+//		},
 
-				if (!Ext.isEmpty(temporaryId))
-					params[CMDBuild.core.proxy.CMProxyConstants.TEMPORARY_ID] = temporaryId;
-
-				CMDBuild.core.proxy.widgets.ManageEmail.addAttachmentFromNewEmail(form, {
-					params: params,
-					success: function(fp, o) {
-						emailRecord.set(CMDBuild.core.proxy.CMProxyConstants.TEMPORARY_ID, o.result[CMDBuild.core.proxy.CMProxyConstants.TEMPORARY_ID]);
-						emailWindow.addAttachmentPanel(o.result.fileName, emailRecord);
-					}
-				});
-			} else {
-				CMDBuild.core.proxy.widgets.ManageEmail.addAttachmentFromExistingEmail(form, {
-					params: {
-						emailId: emailRecord.getId()
-					},
-					success: function(fp, o) {
-						emailWindow.addAttachmentPanel(o.result.fileName, emailRecord);
-					}
-				});
-			}
-		},
-
-		/**
-		 * @param {Object} attachmentPanel
-		 */
-		onCMEmailWindowRemoveAttachmentButtonClick: function(attachmentPanel) {
-			var emailRecord = attachmentPanel.referredEmail;
-			var params = {
-				fileName: attachmentPanel.fileName
-			};
-
-			if (emailRecord.isNew()) {
-				params[CMDBuild.core.proxy.CMProxyConstants.TEMPORARY_ID] = emailRecord.get(CMDBuild.core.proxy.CMProxyConstants.TEMPORARY_ID);
-
-				CMDBuild.core.proxy.widgets.ManageEmail.removeAttachmentFromNewEmail({
-					params: params,
-					success: function(response, options ,decodedResponse) {
-						attachmentPanel.removeFromEmailWindow();
-					}
-				});
-			} else {
-				params.emailId = emailRecord.getId();
-
-				CMDBuild.core.proxy.widgets.ManageEmail.removeAttachmentFromExistingEmail({
-					params: params,
-					success: function(response, options ,decodedResponse) {
-						attachmentPanel.removeFromEmailWindow();
-					}
-				});
-			}
-		},
+//		/**
+//		 * @param {Object} attachmentPanel
+//		 */
+//		onCMEmailWindowRemoveAttachmentButtonClick: function(attachmentPanel) {
+//			var emailRecord = attachmentPanel.referredEmail;
+//			var params = {
+//				fileName: attachmentPanel.fileName
+//			};
+//
+//			if (emailRecord.isNew()) {
+//				params[CMDBuild.core.proxy.CMProxyConstants.TEMPORARY_ID] = emailRecord.get(CMDBuild.core.proxy.CMProxyConstants.TEMPORARY_ID);
+//
+//				CMDBuild.core.proxy.widgets.ManageEmail.removeAttachmentFromNewEmail({
+//					params: params,
+//					success: function(response, options ,decodedResponse) {
+//						attachmentPanel.removeFromEmailWindow();
+//					}
+//				});
+//			} else {
+//				params.emailId = emailRecord.getId();
+//
+//				CMDBuild.core.proxy.widgets.ManageEmail.removeAttachmentFromExistingEmail({
+//					params: params,
+//					success: function(response, options ,decodedResponse) {
+//						attachmentPanel.removeFromEmailWindow();
+//					}
+//				});
+//			}
+//		},
 
 		/**
 		 * Change event management to catch email content edit
@@ -324,6 +341,7 @@ _debug('onEmailChange');
 		 * Destroy email window object
 		 */
 		onEmailWindowAbortButtonClick: function() {
+			this.emailDelete();
 			this.view.destroy();
 		},
 
@@ -335,7 +353,7 @@ _debug('### onEmailWindowConfirmButtonClick', this.record);
 			// Validate before save
 			if (this.validate(this.view.formPanel)) {
 				var formValues = this.view.formPanel.getForm().getValues();
-				var attachments = this.view.attachmentPanelsContainer.getFileNames();
+				var attachments = this.attachmentsController.getAttachmentsNames();
 _debug('formValues', formValues);
 				// Apply formValues to record object
 				for (var key in formValues)
@@ -364,9 +382,8 @@ _debug('this.record', this.record);
 		 */
 		onFillFromTemplateButtonClick: function(templateName) {
 _debug('onFillFromTemplateButtonClick', this.record);
-			CMDBuild.LoadMask.instance.show();
+			CMDBuild.LoadMask.get().show();
 			CMDBuild.core.proxy.EmailTemplates.get({
-				scope: this,
 				params: {
 					name: templateName
 				},
@@ -384,97 +401,97 @@ _debug('onFillFromTemplateButtonClick', this.record);
 					this.view.formPanel.keepSynchronizationCheckbox.setDisabled(false);
 				},
 				callback: function(options, success, response) {
-					CMDBuild.LoadMask.instance.hide();
+					CMDBuild.LoadMask.get().hide();
 				}
 			});
 		},
 
 		// As CMDMSAttachmentPicker Delegate
-			/**
-			 * @param {CMDBuild.view.management.common.widgets.CMDMSAttachmentPicker} dmsAttachmentPicker
-			 * @param {String} classId
-			 */
-			onCMDMSAttachmentPickerClassDidSelected: function(dmsAttachmentPicker, classId) {
-				var className = _CMCache.getEntryTypeNameById(classId);
+//			/**
+//			 * @param {CMDBuild.view.management.common.widgets.CMDMSAttachmentPicker} dmsAttachmentPicker
+//			 * @param {String} classId
+//			 */
+//			onCMDMSAttachmentPickerClassDidSelected: function(dmsAttachmentPicker, classId) {
+//				var className = _CMCache.getEntryTypeNameById(classId);
+//
+//				dmsAttachmentPicker.cmState.setClassName(className);
+//				dmsAttachmentPicker.updateCardGridForClassId(classId);
+//			},
 
-				dmsAttachmentPicker.cmState.setClassName(className);
-				dmsAttachmentPicker.updateCardGridForClassId(classId);
-			},
+//			/**
+//			 * @param {CMDBuild.view.management.common.widgets.CMDMSAttachmentPicker} dmsAttachmentPicker,
+//			 * @param {CMDBuild.model.widget.ManageEmail.email} emailRecord,
+//			 * @param {CMDBuild.view.management.common.widgets.email.EmailWindow} emailWindow,
+//			 */
+//			onCMDMSAttachmentPickerOKButtonClick: function(dmsAttachmentPicker, emailRecord, emailWindow) {
+//				var me = this;
+//				var data = dmsAttachmentPicker.cmState.getData();
+//
+//				if (data && data.length == 0)
+//					return;
+//
+//				var encodedAttachments = Ext.JSON.encode(data);
+//				var params = {
+//					attachments: encodedAttachments
+//				};
+//
+//				if (emailRecord.isNew()) {
+//					var temporaryId = emailRecord.get(CMDBuild.core.proxy.CMProxyConstants.TEMPORARY_ID);
+//
+//					if (!Ext.isEmpty(temporaryId))
+//						params[CMDBuild.core.proxy.CMProxyConstants.TEMPORARY_ID] = temporaryId;
+//
+//					CMDBuild.core.proxy.widgets.ManageEmail.copyAttachmentFromCardForNewEmail({
+//						params: params,
+//						success: function(fp, request, response) {
+//							emailRecord.set(CMDBuild.core.proxy.CMProxyConstants.TEMPORARY_ID, response[CMDBuild.core.proxy.CMProxyConstants.TEMPORARY_ID]);
+//							me.updateAttachmentList(response.attachments, emailWindow, emailRecord);
+//							dmsAttachmentPicker.destroy();
+//						}
+//					});
+//				} else {
+//					params.emailId = emailRecord.getId();
+//					CMDBuild.core.proxy.widgets.ManageEmail.copyAttachmentFromCardForExistingEmail({
+//						params: params,
+//						success: function(fp, request, response) {
+//							me.updateAttachmentList(response.attachments, emailWindow, emailRecord);
+//							dmsAttachmentPicker.destroy();
+//						}
+//					});
+//				}
+//			},
 
-			/**
-			 * @param {CMDBuild.view.management.common.widgets.CMDMSAttachmentPicker} dmsAttachmentPicker,
-			 * @param {CMDBuild.model.widget.ManageEmail.email} emailRecord,
-			 * @param {CMDBuild.view.management.common.widgets.email.EmailWindow} emailWindow,
-			 */
-			onCMDMSAttachmentPickerOKButtonClick: function(dmsAttachmentPicker, emailRecord, emailWindow) {
-				var me = this;
-				var data = dmsAttachmentPicker.cmState.getData();
+//			/**
+//			 * @param {CMDBuild.view.management.common.widgets.CMDMSAttachmentPicker} dmsAttachmentPicker
+//			 */
+//			onCMDMSAttachmentPickerCancelButtonClick: function(dmsAttachmentPicker) {
+//				dmsAttachmentPicker.destroy();
+//			},
 
-				if (data && data.length == 0)
-					return;
-
-				var encodedAttachments = Ext.JSON.encode(data);
-				var params = {
-					attachments: encodedAttachments
-				};
-
-				if (emailRecord.isNew()) {
-					var temporaryId = emailRecord.get(CMDBuild.core.proxy.CMProxyConstants.TEMPORARY_ID);
-
-					if (!Ext.isEmpty(temporaryId))
-						params[CMDBuild.core.proxy.CMProxyConstants.TEMPORARY_ID] = temporaryId;
-
-					CMDBuild.core.proxy.widgets.ManageEmail.copyAttachmentFromCardForNewEmail({
-						params: params,
-						success: function(fp, request, response) {
-							emailRecord.set(CMDBuild.core.proxy.CMProxyConstants.TEMPORARY_ID, response[CMDBuild.core.proxy.CMProxyConstants.TEMPORARY_ID]);
-							me.updateAttachmentList(response.attachments, emailWindow, emailRecord);
-							dmsAttachmentPicker.destroy();
-						}
-					});
-				} else {
-					params.emailId = emailRecord.getId();
-					CMDBuild.core.proxy.widgets.ManageEmail.copyAttachmentFromCardForExistingEmail({
-						params: params,
-						success: function(fp, request, response) {
-							me.updateAttachmentList(response.attachments, emailWindow, emailRecord);
-							dmsAttachmentPicker.destroy();
-						}
-					});
-				}
-			},
-
-			/**
-			 * @param {CMDBuild.view.management.common.widgets.CMDMSAttachmentPicker} dmsAttachmentPicker
-			 */
-			onCMDMSAttachmentPickerCancelButtonClick: function(dmsAttachmentPicker) {
-				dmsAttachmentPicker.destroy();
-			},
-
-			/**
-			 * @param {Array} attachmentNames
-			 * @param {CMDBuild.view.management.common.widgets.email.EmailWindow} emailWindow
-			 * @param {CMDBuild.model.widget.ManageEmail.email} emailRecord
-			 */
-			updateAttachmentList: function(attachmentNames, emailWindow, emailRecord) {
-				if (Ext.isArray(attachmentNames))
-					for (var i = 0; i < attachmentNames.length; ++i)
-						emailWindow.addAttachmentPanel(attachmentNames[i], emailRecord);
-			},
+//			/**
+//			 * @param {Array} attachmentNames
+//			 * @param {CMDBuild.view.management.common.widgets.email.EmailWindow} emailWindow
+//			 * @param {CMDBuild.model.widget.ManageEmail.email} emailRecord
+//			 */
+//			updateAttachmentList: function(attachmentNames, emailWindow, emailRecord) {
+//				if (Ext.isArray(attachmentNames))
+//					for (var i = 0; i < attachmentNames.length; ++i)
+//						emailWindow.addAttachmentPanel(attachmentNames[i], emailRecord);
+//			},
 
 		// As CMCardGrid Delegate
-			/**
-			 * @param {CMDBuild.view.management.common.widgets.CMDMSAttachmentPicker} dmsAttachmentPicker
-			 * @param {CMDBuild.view.management.common.CMCardGrid} attachmentGrid
-			 * @param {CMDBuild.view.management.common.widgets.CMDMSAttachmentModel} record
-			 */
-			onCMDMSAttachmentPickerCardDidSelected: function(dmsAttachmentPicker, attachmentGrid, record) {
-				var className = record.get('IdClass_value');
-				var cardId = record.get(CMDBuild.core.proxy.CMProxyConstants.ID);
-
-				dmsAttachmentPicker.cmState.setCardId(cardId);
-				dmsAttachmentPicker.loadAttachmentsForClassNameAndCardId(className, cardId);
-			},
+//			/**
+//			 * @param {CMDBuild.view.management.common.widgets.CMDMSAttachmentPicker} dmsAttachmentPicker
+//			 * @param {CMDBuild.view.management.common.CMCardGrid} attachmentGrid
+//			 * @param {CMDBuild.view.management.common.widgets.CMDMSAttachmentModel} record
+//			 */
+//			onCMDMSAttachmentPickerCardDidSelected: function(dmsAttachmentPicker, attachmentGrid, record) {
+//				var className = record.get('IdClass_value');
+//				var cardId = record.get(CMDBuild.core.proxy.CMProxyConstants.ID);
+//
+//				dmsAttachmentPicker.cmState.setCardId(cardId);
+//				dmsAttachmentPicker.loadAttachmentsForClassNameAndCardId(className, cardId);
+//			},
 
 			/**
 			 * @param {CMDBuild.view.management.common.widgets.CMDMSAttachmentPicker} dmsAttachmentPicker
@@ -491,20 +508,20 @@ _debug('onFillFromTemplateButtonClick', this.record);
 				console.log(dmsAttachmentPicker.cmState.getData());
 			},
 
-			/**
-			 * @param {CMDBuild.view.management.common.widgets.CMDMSAttachmentPicker} dmsAttachmentPicker
-			 * @param {CMDBuild.view.management.common.widgets.CMDMSAttachmentModel[]} records
-			 */
-			onCMDMSAttachmentPickerAttachmentsGridDidLoad: function(dmsAttachmentPicker, records) {
-				dmsAttachmentPicker.cmState.syncSelection(records);
-			},
+//			/**
+//			 * @param {CMDBuild.view.management.common.widgets.CMDMSAttachmentPicker} dmsAttachmentPicker
+//			 * @param {CMDBuild.view.management.common.widgets.CMDMSAttachmentModel[]} records
+//			 */
+//			onCMDMSAttachmentPickerAttachmentsGridDidLoad: function(dmsAttachmentPicker, records) {
+//				dmsAttachmentPicker.cmState.syncSelection(records);
+//			},
 
-			/**
-			 * @param {CMDBuild.view.management.common.widgets.CMDMSAttachmentPicker} dmsAttachmentPicker
-			 */
-			onCMDMSAttachmentPickerCardDidLoad: function(dmsAttachmentPicker) {
-				dmsAttachmentPicker.cleanAttachmentGrid();
-			}
+//			/**
+//			 * @param {CMDBuild.view.management.common.widgets.CMDMSAttachmentPicker} dmsAttachmentPicker
+//			 */
+//			onCMDMSAttachmentPickerCardDidLoad: function(dmsAttachmentPicker) {
+//				dmsAttachmentPicker.cleanAttachmentGrid();
+//			}
 	});
 
 })();

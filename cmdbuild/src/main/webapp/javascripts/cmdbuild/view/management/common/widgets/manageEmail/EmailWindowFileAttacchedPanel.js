@@ -4,7 +4,7 @@
 		extend: 'Ext.panel.Panel',
 
 		/**
-		 * @cfg {CMDBuild.controller.management.common.widgets.manageEmail.EmailWindow}
+		 * @cfg {CMDBuild.controller.management.common.widgets.manageEmail.Attachments}
 		 */
 		delegate: undefined,
 
@@ -13,17 +13,13 @@
 		 */
 		fileName: undefined,
 
-		/**
-		 * @property {Object}
-		 */
-		referredEmail: null,
-
 		frame: true,
+		margin: 5,
+
 		layout: {
 			type: 'hbox',
 			align: 'middle'
 		},
-		margin: 5,
 
 		initComponent: function() {
 			Ext.apply(this, {
@@ -42,17 +38,13 @@
 						scope: this,
 
 						handler: function() {
-							this.delegate.onCMEmailWindowRemoveAttachmentButtonClick(me); // TODO: use cmOn and this
+							this.delegate.cmOn('onRemoveAttachmentButtonClick', this);
 						}
 					}
 				]
 			});
 
 			this.callParent(arguments);
-		},
-
-		removeFromEmailWindow: function() {
-			this.ownerCt.remove(this);
 		}
 	});
 

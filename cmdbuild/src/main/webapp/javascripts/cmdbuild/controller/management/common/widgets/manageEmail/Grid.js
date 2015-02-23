@@ -134,23 +134,24 @@ _debug('trafficLightArrayCheck regenerationTrafficLightArray', regenerationTraff
 		/**
 		 * @param {CMDBuild.model.widget.ManageEmail.email} record
 		 * @param {Array} regenerationTrafficLightArray
+		 * @param {Function} success
 		 */
-		addRecord: function(record, regenerationTrafficLightArray) {
+		addRecord: function(record, regenerationTrafficLightArray, success) {
 _debug('addRecord record', record);
 _debug('addRecord regenerationTrafficLightArray', regenerationTrafficLightArray);
-			CMDBuild.LoadMask.instance.show();
+			CMDBuild.LoadMask.get().show();
 			CMDBuild.core.proxy.widgets.ManageEmail.create({
 				params: record.getAsParams(),
 				scope: this,
 				failure: function(response, options, decodedResponse) {
 					CMDBuild.Msg.error(CMDBuild.Translation.common.failure, CMDBuild.Translation.errors.emailCreate, false);
 				},
-				success: function(response, options, decodedResponse) {
+				success: success || function(response, options, decodedResponse) {
 					if (this.self.trafficLightArrayCheck(record, regenerationTrafficLightArray) || Ext.isEmpty(regenerationTrafficLightArray))
 						this.storeLoad();
 				},
 				callback: function(options, success, response) {
-					CMDBuild.LoadMask.instance.hide();
+					CMDBuild.LoadMask.get().hide();
 				}
 			});
 		},
@@ -179,7 +180,7 @@ _debug('addRecord regenerationTrafficLightArray', regenerationTrafficLightArray)
 		editRecord: function(record, regenerationTrafficLightArray) {
 _debug('editRecord record', record);
 _debug('editRecord regenerationTrafficLightArray', regenerationTrafficLightArray);
-			CMDBuild.LoadMask.instance.show();
+			CMDBuild.LoadMask.get().show();
 			CMDBuild.core.proxy.widgets.ManageEmail.update({
 				params: record.getAsParams(),
 				scope: this,
@@ -191,7 +192,7 @@ _debug('editRecord regenerationTrafficLightArray', regenerationTrafficLightArray
 						this.storeLoad();
 				},
 				callback: function(options, success, response) {
-					CMDBuild.LoadMask.instance.hide();
+					CMDBuild.LoadMask.get().hide();
 				}
 			});
 		},
@@ -227,12 +228,23 @@ _debug('editRecord regenerationTrafficLightArray', regenerationTrafficLightArray
 		},
 
 		onEmailAddButtonClick: function() {
-			Ext.create('CMDBuild.controller.management.common.widgets.manageEmail.EmailWindow', {
-				parentDelegate: this,
-				record: this.createRecord(),
-				widgetConf: this.widgetConf,
-				widgetController: this.parentDelegate
-			});
+			var me = this;
+			var record = this.createRecord();
+_debug('onEmailAddButtonClick');
+			this.addRecord( // To generate an emailId
+				record,
+				false, // Disable storeLoad
+				function(response, options, decodedResponse) { // Success function override
+					record.set(CMDBuild.core.proxy.CMProxyConstants.ID, decodedResponse.response);
+
+					Ext.create('CMDBuild.controller.management.common.widgets.manageEmail.EmailWindow', {
+						parentDelegate: me,
+						record: record,
+						widgetConf: me.widgetConf,
+						widgetController: me.parentDelegate
+					});
+				}
+			);
 		},
 
 		/**
@@ -360,7 +372,7 @@ _debug('editRecord regenerationTrafficLightArray', regenerationTrafficLightArray
 		removeRecord: function(record, regenerationTrafficLightArray) {
 _debug('removeRecord record', record);
 _debug('removeRecord regenerationTrafficLightArray', regenerationTrafficLightArray);
-			CMDBuild.LoadMask.instance.show();
+			CMDBuild.LoadMask.get().show();
 			CMDBuild.core.proxy.widgets.ManageEmail.remove({
 				params: record.getAsParams([CMDBuild.core.proxy.CMProxyConstants.ID, CMDBuild.core.proxy.CMProxyConstants.TEMPORARY]),
 				scope: this,
@@ -372,7 +384,7 @@ _debug('removeRecord regenerationTrafficLightArray', regenerationTrafficLightArr
 						this.storeLoad();
 				},
 				callback: function(options, success, response) {
-					CMDBuild.LoadMask.instance.hide();
+					CMDBuild.LoadMask.get().hide();
 				}
 			});
 		},
@@ -389,14 +401,14 @@ _debug('storeLoad', regenerateAllEmails+ ' ' +forceRegeneration);
 				regenerateAllEmails = regenerateAllEmails || false;
 				forceRegeneration = forceRegeneration || false;
 
-				CMDBuild.LoadMask.instance.show();
+				CMDBuild.LoadMask.get().show();
 				this.view.getStore().load({
 					params: {
 						activityId: this.parentDelegate.getActivityId()
 					},
 					scope: this,
 					callback: function(records, operation, success) {
-						CMDBuild.LoadMask.instance.hide();
+						CMDBuild.LoadMask.get().hide();
 
 						this.parentDelegate.getAllTemplatesData(regenerateAllEmails, forceRegeneration);
 					}
