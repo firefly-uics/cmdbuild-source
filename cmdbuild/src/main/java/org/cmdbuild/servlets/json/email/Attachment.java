@@ -1,69 +1,70 @@
 package org.cmdbuild.servlets.json.email;
 
-import static com.google.common.collect.FluentIterable.from;
-import static org.cmdbuild.logic.email.EmailAttachmentsLogic.Copy.newCopy;
-import static org.cmdbuild.logic.email.EmailAttachmentsLogic.Delete.newDelete;
-import static org.cmdbuild.logic.email.EmailAttachmentsLogic.Upload.newUpload;
-import static org.cmdbuild.servlets.json.CommunicationConstants.ATTACHMENTS;
+import org.cmdbuild.logic.email.EmailAttachmentsLogic;
+import org.cmdbuild.logic.email.EmailAttachmentsLogic.*;
+
+import static com.google.common.collect.FluentIterable.*;
+import static org.cmdbuild.servlets.json.CommunicationConstants.CARD_ID;
+import static org.cmdbuild.servlets.json.CommunicationConstants.CLASS_NAME;
 import static org.cmdbuild.servlets.json.CommunicationConstants.EMAIL_ID;
 import static org.cmdbuild.servlets.json.CommunicationConstants.FILE;
 import static org.cmdbuild.servlets.json.CommunicationConstants.FILE_NAME;
 import static org.cmdbuild.servlets.json.CommunicationConstants.TEMPORARY;
 
-import java.io.IOException;
-import java.util.Set;
-
 import javax.activation.DataHandler;
 
 import org.apache.commons.fileupload.FileItem;
-import org.cmdbuild.logic.email.EmailAttachmentsLogic;
-import org.cmdbuild.logic.email.EmailAttachmentsLogic.CopiableAttachment;
+import org.cmdbuild.logic.email.AttachmentImpl;
 import org.cmdbuild.servlets.json.JSONBaseWithSpringContext;
 import org.cmdbuild.servlets.json.management.JsonResponse;
 import org.cmdbuild.servlets.utils.FileItemDataSource;
 import org.cmdbuild.servlets.utils.Parameter;
-import org.json.JSONException;
+import org.codehaus.jackson.annotate.JsonProperty;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Function;
 
 public class Attachment extends JSONBaseWithSpringContext {
 
-	private static class JsonAttachment {
+	private static class JsonAttachment extends ForwardingAttachment {
 
-		public String className;
-		public Long cardId;
-		public String fileName;
+		private EmailAttachmentsLogic.Attachment delegate;
 
-	}
-
-	private static final Function<JsonAttachment, CopiableAttachment> TO_COPIABLE_ATTACHMENTS = new Function<JsonAttachment, EmailAttachmentsLogic.CopiableAttachment>() {
-
-		@Override
-		public CopiableAttachment apply(final JsonAttachment input) {
-			// TODO Auto-generated method stub
-			return CopiableAttachment.newCopy() //
-					.withClassName(input.className) //
-					.withCardId(input.cardId) //
-					.withFileName(input.fileName) //
-					.build();
+		public JsonAttachment(EmailAttachmentsLogic.Attachment delegate) {
+			this.delegate = delegate;
 		}
 
-	};
+		@Override
+		protected EmailAttachmentsLogic.Attachment delegate() {
+			return delegate;
+		}
+
+		@JsonProperty(CLASS_NAME)
+		@Override
+		public String getClassName() {
+			return super.getClassName();
+		}
+
+		@JsonProperty(CARD_ID)
+		@Override
+		public Long getCardId() {
+			return super.getCardId();
+		}
+
+		@JsonProperty(FILE_NAME)
+		@Override
+		public String getFileName() {
+			return super.getFileName();
+		}
+
+	}
 
 	@JSONExported
 	public JsonResponse upload( //
 			@Parameter(value = EMAIL_ID) final Long emailId, //
 			@Parameter(value = TEMPORARY, required = false) final boolean temporary, //
 			@Parameter(value = FILE) final FileItem file //
-	) throws JSONException, IOException {
-		emailAttachmentsLogic().uploadAttachment(newUpload() //
-				.withIdentifier(emailId.toString()) //
-				.withTemporaryStatus(temporary) //
-				.withDataHandler(dataHandlerOf(file)) //
-				.build());
+	) throws Exception {
+		emailAttachmentsLogic().upload(emailId, temporary, dataHandlerOf(file));
 		return JsonResponse.success(file.getName());
 	}
 
@@ -72,43 +73,47 @@ public class Attachment extends JSONBaseWithSpringContext {
 	}
 
 	@JSONExported
-	public JsonResponse delete( //
+	public JsonResponse copy( //
 			@Parameter(value = EMAIL_ID) final Long emailId, //
 			@Parameter(value = TEMPORARY, required = false) final boolean temporary, //
+			@Parameter(value = CLASS_NAME) final String className, //
+			@Parameter(value = CARD_ID) final Long cardId, //
 			@Parameter(value = FILE_NAME) final String fileName //
-	) {
-		emailAttachmentsLogic().deleteAttachment(newDelete() //
-				.withIdentifier(emailId.toString()) //
-				.withTemporaryStatus(temporary) //
+	) throws Exception {
+		emailAttachmentsLogic().copy(emailId, temporary, AttachmentImpl.newInstance() //
+				.withClassName(className) //
+				.withCardId(cardId) //
 				.withFileName(fileName) //
 				.build());
 		return JsonResponse.success(null);
 	}
 
 	@JSONExported
-	public JsonResponse copy(
-			//
-			@Parameter(value = EMAIL_ID, required = false) final String emailId,
-			@Parameter(value = TEMPORARY, required = false) final boolean temporary, //
-			@Parameter(ATTACHMENTS) final String jsonAttachments //
-	) throws JSONException, JsonParseException, JsonMappingException, IOException {
-		final Iterable<JsonAttachment> attachments = mapJsonAttachmentsFromJsonArray(jsonAttachments);
-		emailAttachmentsLogic().copyAttachments(newCopy() //
-				.withIdentifier(emailId.toString()) //
-				.withTemporaryStatus(temporary) //
-				.withAllAttachments(from(attachments) //
-						.transform(TO_COPIABLE_ATTACHMENTS)) //
-				.build());
-		return JsonResponse.success(null);
+	public JsonResponse readAll( //
+			@Parameter(value = EMAIL_ID) final Long emailId, //
+			@Parameter(value = TEMPORARY, required = false) final boolean temporary //
+	) throws Exception {
+		final Iterable<EmailAttachmentsLogic.Attachment> attachments = emailAttachmentsLogic().readAll(emailId,
+				temporary);
+		return JsonResponse.success(from(attachments) //
+				.transform(new Function<EmailAttachmentsLogic.Attachment, JsonAttachment>() {
+
+					@Override
+					public JsonAttachment apply(final EmailAttachmentsLogic.Attachment input) {
+						return new JsonAttachment(input);
+					}
+
+				}).toList());
 	}
 
-	private Iterable<JsonAttachment> mapJsonAttachmentsFromJsonArray(final String content) throws JsonParseException,
-			JsonMappingException, IOException {
-		final ObjectMapper mapper = new ObjectMapper();
-		return mapper.readValue( //
-				content, //
-				mapper.getTypeFactory() //
-						.constructCollectionType(Set.class, JsonAttachment.class));
+	@JSONExported
+	public JsonResponse delete( //
+			@Parameter(value = EMAIL_ID) final Long emailId, //
+			@Parameter(value = TEMPORARY, required = false) final boolean temporary, //
+			@Parameter(value = FILE_NAME) final String fileName //
+	) {
+		emailAttachmentsLogic().delete(emailId, temporary, fileName);
+		return JsonResponse.success(null);
 	}
 
 };
