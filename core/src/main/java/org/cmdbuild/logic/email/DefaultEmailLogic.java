@@ -116,7 +116,7 @@ public class DefaultEmailLogic implements EmailLogic {
 				public StatusConverter convert() {
 					if (status != null) {
 						status.accept(this);
-					} else{
+					} else {
 						output = UNDEFINED;
 					}
 					return output;

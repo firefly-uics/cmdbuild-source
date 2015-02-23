@@ -116,13 +116,9 @@ public class Email {
 	public EmailAttachmentsLogic emailAttachmentsLogic() {
 		return new DefaultEmailAttachmentsLogic( //
 				data.systemDataView(), //
-				emailServiceFactory(), //
-				emailAccountStore(), //
-				subjectHandler(), //
 				properties.dmsProperties(), //
 				dms.dmsService(), //
 				dms.documentCreatorFactory(), //
-				notifier, //
 				userStore.getUser());
 	}
 
