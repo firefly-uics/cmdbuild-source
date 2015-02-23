@@ -154,7 +154,7 @@ public class CxfProcessInstanceEmails implements ProcessInstanceEmails {
 
 	@Override
 	public ResponseSingle<Long> create(final String processId, final Long processInstanceId, final Email email) {
-		checkPreconditions(processId, processInstanceId);
+		checkPreconditions(processId, email.isTemporary() ? null : processInstanceId);
 		final Long id = emailLogic.create(new EmailLogic.ForwardingEmail() {
 
 			@Override
@@ -176,7 +176,7 @@ public class CxfProcessInstanceEmails implements ProcessInstanceEmails {
 	@Override
 	public ResponseMultiple<Long> readAll(final String processId, final Long processInstanceId, final Integer limit,
 			final Integer offset) {
-		checkPreconditions(processId, processInstanceId);
+		checkPreconditions(processId, null);
 		final Iterable<EmailLogic.Email> elements = emailLogic.readAll(processInstanceId);
 		return newResponseMultiple(Long.class) //
 				.withElements(from(elements) //
@@ -192,7 +192,7 @@ public class CxfProcessInstanceEmails implements ProcessInstanceEmails {
 
 	@Override
 	public ResponseSingle<Email> read(final String processId, final Long processInstanceId, final Long emailId) {
-		checkPreconditions(processId, processInstanceId);
+		checkPreconditions(processId, null);
 		final EmailLogic.Email element = emailLogic.read(EmailImpl.newInstance() //
 				.withId(emailId) //
 				.build());
@@ -203,7 +203,7 @@ public class CxfProcessInstanceEmails implements ProcessInstanceEmails {
 
 	@Override
 	public void update(final String processId, final Long processInstanceId, final Long emailId, final Email email) {
-		checkPreconditions(processId, processInstanceId);
+		checkPreconditions(processId, email.isTemporary() ? null : processInstanceId);
 		emailLogic.update(new EmailLogic.ForwardingEmail() {
 
 			@Override
@@ -226,7 +226,7 @@ public class CxfProcessInstanceEmails implements ProcessInstanceEmails {
 
 	@Override
 	public void delete(final String processId, final Long processInstanceId, final Long emailId) {
-		checkPreconditions(processId, processInstanceId);
+		checkPreconditions(processId, null);
 		emailLogic.delete(EmailImpl.newInstance() //
 				.withId(emailId) //
 				.build());
@@ -237,10 +237,12 @@ public class CxfProcessInstanceEmails implements ProcessInstanceEmails {
 		if (targetClass == null) {
 			errorHandler.classNotFound(classId);
 		}
-		try {
-			workflowLogic.getProcessInstance(classId, cardId);
-		} catch (final NoSuchElementException e) {
-			errorHandler.cardNotFound(cardId);
+		if (cardId != null) {
+			try {
+				workflowLogic.getProcessInstance(classId, cardId);
+			} catch (final NoSuchElementException e) {
+				errorHandler.cardNotFound(cardId);
+			}
 		}
 	}
 
