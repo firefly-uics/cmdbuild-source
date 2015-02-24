@@ -387,10 +387,9 @@ _debug('removeRecord regenerationTrafficLightArray', regenerationTrafficLightArr
 		 */
 		storeLoad: function(regenerateAllEmails, forceRegeneration) {
 			if (!this.view.getStore().isLoading()) {
-_debug('storeLoad', regenerateAllEmails+ ' ' +forceRegeneration);
 				regenerateAllEmails = regenerateAllEmails || false;
 				forceRegeneration = forceRegeneration || false;
-
+_debug('storeLoad', regenerateAllEmails+ ' ' +forceRegeneration);
 				this.view.getStore().load({
 					params: {
 						activityId: this.parentDelegate.getActivityId()

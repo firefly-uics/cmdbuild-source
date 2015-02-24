@@ -48,16 +48,17 @@
 		 * @return {Array}
 		 */
 		getExtraButtons: function() {
-			return [
-				Ext.create('Ext.button.Button', {
-					text: '@@ Send all',
-					scope: this,
-
-					handler: function() {
-						this.delegate.cmOn('onSendAllButtonClick');
-					}
-				})
-			];
+// TODO: future implementation
+//			return [
+//				Ext.create('Ext.button.Button', {
+//					text: '@@ Send all',
+//					scope: this,
+//
+//					handler: function() {
+//						this.delegate.cmOn('onSendAllButtonClick');
+//					}
+//				})
+//			];
 		}
 	});
 

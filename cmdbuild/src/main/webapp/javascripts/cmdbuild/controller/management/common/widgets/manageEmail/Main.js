@@ -453,7 +453,7 @@ _debug('regenerateAllEmails this.relatedAttributeChanged', this.relatedAttribute
 				if (forceRegeneration)
 					this.controllerGrid.storeReset();
 
-				var regeneratedTemplatesIdentifiers = [];
+				var templatesCheckedForRegenerationIdentifiers = [];
 				var emailTemplatesToRegenerate = this.checkTemplatesToRegenerate();
 _debug('draft emails', this.controllerGrid.getDraftEmails());
 				// Launch regeneration of all grid records
@@ -470,13 +470,15 @@ _debug(!Ext.isEmpty(recordTemplate) + ' ' + Ext.Array.contains(emailTemplatesToR
 						|| forceRegeneration
 					) {
 						if(this.regenerateEmail(item, regenerationTrafficLightArray))
-							regeneratedTemplatesIdentifiers.push(recordTemplate);
+							templatesCheckedForRegenerationIdentifiers.push(recordTemplate);
+					} else {
+						templatesCheckedForRegenerationIdentifiers.push(recordTemplate);
 					}
 				}, this);
 
 				// Launch regeneration of all widgetConf templates
 _debug('this.widgetConfTemplates', this.widgetConfTemplates);
-_debug('regeneratedTemplatesIdentifiers', regeneratedTemplatesIdentifiers);
+_debug('templatesCheckedForRegenerationIdentifiers', templatesCheckedForRegenerationIdentifiers);
 				Ext.Array.forEach(this.widgetConfTemplates, function(item, index, allItems) {
 					var templateIdentifier = item.get(CMDBuild.core.proxy.CMProxyConstants.KEY);
 
@@ -484,12 +486,12 @@ _debug('regeneratedTemplatesIdentifiers', regeneratedTemplatesIdentifiers);
 						(
 							!Ext.isEmpty(templateIdentifier)
 							&& Ext.Array.contains(emailTemplatesToRegenerate, templateIdentifier)
-							&& !Ext.Array.contains(regeneratedTemplatesIdentifiers, templateIdentifier) // Avoid to generate already regenerated templates
+							&& !Ext.Array.contains(templatesCheckedForRegenerationIdentifiers, templateIdentifier) // Avoid to generate already regenerated templates
 						)
 						|| forceRegeneration
 					) {
 						if(this.regenerateTemplate(item, regenerationTrafficLightArray))
-							regeneratedTemplatesIdentifiers.push(templateIdentifier);
+							templatesCheckedForRegenerationIdentifiers.push(templateIdentifier);
 					}
 				}, this);
 
