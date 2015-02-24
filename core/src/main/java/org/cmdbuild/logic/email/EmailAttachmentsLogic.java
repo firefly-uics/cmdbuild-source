@@ -11,7 +11,7 @@ import com.google.common.collect.ForwardingObject;
 
 public interface EmailAttachmentsLogic extends Logic {
 
-	static interface Attachment {
+	interface Attachment {
 
 		String getClassName();
 
@@ -21,7 +21,7 @@ public interface EmailAttachmentsLogic extends Logic {
 
 	}
 
-	static abstract class ForwardingAttachment extends ForwardingObject implements Attachment {
+	abstract class ForwardingAttachment extends ForwardingObject implements Attachment {
 
 		@Override
 		protected abstract Attachment delegate();
@@ -39,6 +39,43 @@ public interface EmailAttachmentsLogic extends Logic {
 		@Override
 		public String getFileName() {
 			return delegate().getFileName();
+		}
+
+	}
+
+	abstract class ForwardingEmailAttachmentsLogic extends ForwardingObject implements EmailAttachmentsLogic {
+
+		@Override
+		protected abstract EmailAttachmentsLogic delegate();
+
+		@Override
+		public void upload(final Email email, final DataHandler dataHandler) throws CMDBException {
+			delegate().upload(email, dataHandler);
+		}
+
+		@Override
+		public void copy(final Email email, final Attachment attachment) throws CMDBException {
+			delegate().copy(email, attachment);
+		}
+
+		@Override
+		public void copyAll(final Email source, final Email destination) throws CMDBException {
+			delegate().copyAll(source, destination);
+		}
+
+		@Override
+		public Iterable<Attachment> readAll(final Email email) throws CMDBException {
+			return delegate().readAll(email);
+		}
+
+		@Override
+		public Optional<DataHandler> read(final Email email, final Attachment attachment) throws CMDBException {
+			return delegate().read(email, attachment);
+		}
+
+		@Override
+		public void delete(final Email email, final Attachment attachment) throws CMDBException {
+			delegate().delete(email, attachment);
 		}
 
 	}
