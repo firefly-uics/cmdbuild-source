@@ -9,7 +9,7 @@
 		],
 
 		/**
-		 * @cfg {CMDBuild.controller.management.common.widgets.manageEmail.Attachments}
+		 * @cfg {CMDBuild.controller.management.common.widgets.manageEmail.AttachmentsPicker}
 		 */
 		delegate: undefined,
 

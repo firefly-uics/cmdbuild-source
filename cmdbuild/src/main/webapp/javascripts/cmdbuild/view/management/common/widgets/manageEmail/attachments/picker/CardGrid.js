@@ -4,13 +4,24 @@
 		extend: 'CMDBuild.view.management.common.CMCardGrid',
 
 		/**
-		 * @cfg {CMDBuild.controller.management.common.widgets.manageEmail.Attachments}
+		 * @cfg {CMDBuild.controller.management.common.widgets.manageEmail.AttachmentsPicker}
 		 */
 		delegate: undefined,
 
-		cmAdvancedFilter: false,
+		/**
+		 * @cfg {Boolean}
+		 */
 		cmAddGraphColumn: false,
+
+		/**
+		 * @cfg {Boolean}
+		 */
 		cmAddPrintButton: false,
+
+		/**
+		 * @cfg {Boolean}
+		 */
+		cmAdvancedFilter: false,
 
 		border: false,
 

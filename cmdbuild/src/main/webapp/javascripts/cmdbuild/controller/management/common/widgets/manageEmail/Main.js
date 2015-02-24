@@ -164,6 +164,9 @@ _debug('this.widgetConfTemplates', this.widgetConfTemplates);
 		 */
 		cmOn: function(name, param, callBack) {
 			switch (name) {
+				case 'getWidgetConf':
+					return this.getWidgetConf();
+
 				case 'getWidgetController':
 					return this.getWidgetController();
 
@@ -383,6 +386,13 @@ _debug('loadTemplates item', item);
 			out[CMDBuild.core.proxy.CMProxyConstants.OUTPUT] = this.getActivityId();
 _debug('getData', out);
 			return out;
+		},
+
+		/**
+		 * @return {Object}
+		 */
+		getWidgetConf: function() {
+			return this.widgetConf;
 		},
 
 		/**

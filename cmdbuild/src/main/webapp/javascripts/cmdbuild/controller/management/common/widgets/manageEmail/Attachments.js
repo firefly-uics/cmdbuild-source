@@ -46,17 +46,17 @@
 				case 'attachmentAddPanel':
 					return this.attachmentAddPanel(param);
 
+				case 'attachmentUpdateList':
+					return this.attachmentUpdateList(param);
+
 				case 'onAttachmentAddFromDmsButtonClick':
 					return this.onAttachmentAddFromDmsButtonClick();
-
-				case 'onAttachmentRemoveButtonClick':
-					return this.onAttachmentRemoveButtonClick(param);
 
 				case 'onAttachmentChangeFile':
 					return this.onAttachmentChangeFile();
 
-				case 'attachmentUpdateList':
-					return this.attachmentUpdateList(param);
+				case 'onAttachmentRemoveButtonClick':
+					return this.onAttachmentRemoveButtonClick(param);
 
 				default: {
 					if (!Ext.isEmpty(this.parentDelegate))
@@ -70,11 +70,22 @@
 		 */
 		attachmentAddPanel: function(fileName) {
 			this.view.addPanel(
-				Ext.create('CMDBuild.view.management.common.widgets.manageEmail.EmailWindowFileAttacchedPanel', { // TODO spostare annidando + rename
+				Ext.create('CMDBuild.view.management.common.widgets.manageEmail.emailWindow.FileAttacchedPanel', {
 					delegate: this,
-					fileName: fileName
+					fileName: fileName,
+					readOnly: this.view.readOnly
 				})
 			);
+		},
+
+		/**
+		 * @param {Array} attachmentNames
+		 */
+		attachmentUpdateList: function(attachmentNames) {
+			if (Ext.isArray(attachmentNames))
+				Ext.Array.forEach(attachmentNames, function(item, index, allItems) {
+					this.attachmentAddPanel(item);
+				}, this);
 		},
 
 		/**
@@ -94,8 +105,7 @@
 _debug('onAttachmentAddFromDmsButtonClick', this.record);
 			Ext.create('CMDBuild.controller.management.common.widgets.manageEmail.AttachmentsPicker', {
 				parentDelegate: this,
-				record: this.record,
-				widgetConf: this.widgetConf
+				record: this.record
 			});
 		},
 
@@ -125,7 +135,7 @@ _debug('this.view.', this.view);
 		},
 
 		/**
-		 * @param {CMDBuild.view.management.common.widgets.manageEmail.EmailWindowFileAttacchedPanel} attachmentPanel
+		 * @param {CMDBuild.view.management.common.widgets.manageEmail.emailWindow.FileAttacchedPanel} attachmentPanel
 		 */
 		onAttachmentRemoveButtonClick: function(attachmentPanel) {
 			var params = {};
@@ -143,16 +153,6 @@ _debug('this.view.', this.view);
 					this.view.attachmentPanelsContainer.remove(attachmentPanel);
 				}
 			});
-		},
-
-		/**
-		 * @param {Array} attachmentNames
-		 */
-		attachmentUpdateList: function(attachmentNames) {
-			if (Ext.isArray(attachmentNames))
-				Ext.Array.forEach(attachmentNames, function(item, index, allItems) {
-					this.attachmentAddPanel(item);
-				}, this);
 		}
 	});
 

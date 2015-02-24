@@ -40,11 +40,6 @@
 		view: undefined,
 
 		/**
-		 * @property {Object}
-		 */
-		widgetConf: undefined,
-
-		/**
 		 * @cfg {String}
 		 */
 		windowMode: 'create',
@@ -61,6 +56,7 @@
 		 * @param {String} configObject.windowMode
 		 */
 		constructor: function(configObject) {
+			var me = this;
 			var windowClassName = null;
 
 			Ext.apply(this, configObject); // Apply config
@@ -68,11 +64,11 @@
 			if (Ext.Array.contains(this.windowModeAvailable, this.windowMode)) {
 				switch (this.windowMode) {
 					case 'view': {
-						windowClassName = 'CMDBuild.view.management.common.widgets.manageEmail.EmailWindowView';
+						windowClassName = 'CMDBuild.view.management.common.widgets.manageEmail.emailWindow.ViewWindow';
 					} break;
 
 					default: { // Default window class to build
-						windowClassName = 'CMDBuild.view.management.common.widgets.manageEmail.EmailWindowEdit';
+						windowClassName = 'CMDBuild.view.management.common.widgets.manageEmail.emailWindow.EditWindow';
 					}
 				}
 
@@ -84,6 +80,44 @@
 						close: function(window, eOpts) {
 							this.cmOn('onEmailWindowCloseButtonClick');
 						}
+					}
+				});
+
+				// Fill from template button store configuration
+				CMDBuild.LoadMask.get().show();
+				CMDBuild.core.proxy.EmailTemplates.getAll({
+					scope: this,
+					success: function(response, options, decodedResponse) {
+						var templatesArray = decodedResponse.response.elements;
+
+						if (templatesArray.length > 0) {
+							// Sort templatesArray by description ascending
+							Ext.Array.sort(templatesArray, function(item1, item2) {
+								if (item1[CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION] < item2[CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION])
+									return -1;
+
+								if (item1[CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION] > item2[CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION])
+									return 1;
+
+								return 0;
+							});
+
+							Ext.Array.forEach(templatesArray, function(template, index, allItems) {
+								this.view.fillFromTemplateButton.menu.add({
+									text: template[CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION],
+									templateName: template[CMDBuild.core.proxy.CMProxyConstants.NAME],
+
+									handler: function(button, e) {
+										me.cmOn('onEmailWindowFillFromTemplateButtonClick', button[CMDBuild.core.proxy.CMProxyConstants.TEMPLATE_NAME]);
+									}
+								});
+							}, this);
+						} else { // To disable button if the aren't templates
+							this.view.fillFromTemplateButton.setDisabled(true);
+						}
+					},
+					callback: function(options, success, response) {
+						CMDBuild.LoadMask.get().hide();
 					}
 				});
 
@@ -116,7 +150,7 @@ _debug('decodedResponse', decodedResponse);
 				});
 
 				// If email has template enable keep-synch checkbox
-				if (!Ext.isEmpty(this.record.get(CMDBuild.core.proxy.CMProxyConstants.TEMPLATE)))
+				if (!Ext.isEmpty(this.record.get(CMDBuild.core.proxy.CMProxyConstants.TEMPLATE)) && this.windowMode != 'view')
 					this.view.formPanel.keepSynchronizationCheckbox.setDisabled(false);
 
 				// Show window
@@ -134,9 +168,6 @@ _debug('decodedResponse', decodedResponse);
 		 */
 		cmOn: function(name, param, callBack) {
 			switch (name) {
-				case 'onEmailChange':
-					return this.onEmailChange();
-
 				case 'onEmailWindowCloseButtonClick':
 				case 'onEmailWindowAbortButtonClick':
 					return this.onEmailWindowAbortButtonClick();
@@ -144,18 +175,17 @@ _debug('decodedResponse', decodedResponse);
 				case 'onEmailWindowConfirmButtonClick':
 					return this.onEmailWindowConfirmButtonClick();
 
-				case 'onFillFromTemplateButtonClick':
-					return this.onFillFromTemplateButtonClick(param);
+				case 'onEmailWindowFieldChange':
+					return this.onEmailWindowFieldChange();
+
+				case 'onEmailWindowFillFromTemplateButtonClick':
+					return this.onEmailWindowFillFromTemplateButtonClick(param);
 
 				default: {
 					if (!Ext.isEmpty(this.parentDelegate))
 						return this.parentDelegate.cmOn(name, param, callBack);
 				}
 			}
-		},
-
-		emailDelete: function() {
-			// TODO implementare appena avrò un record completo da vedere
 		},
 
 		/**
@@ -316,22 +346,9 @@ _debug('values', values);
 //		},
 
 		/**
-		 * Change event management to catch email content edit
-		 */
-		onEmailChange: function() {
-_debug('onEmailChange');
-			if (!this.isAdvicePrompted && this.isKeepSynchronizationChecked()) {
-				this.isAdvicePrompted = true;
-
-				CMDBuild.Msg.warn(null, CMDBuild.Translation.errors.emailChangedWithAutoSynch);
-			}
-		},
-
-		/**
 		 * Destroy email window object
 		 */
 		onEmailWindowAbortButtonClick: function() {
-			this.emailDelete();
 			this.view.destroy();
 		},
 
@@ -366,12 +383,24 @@ _debug('this.record', this.record);
 		},
 
 		/**
+		 * Change event management to catch email content edit
+		 */
+		onEmailWindowFieldChange: function() {
+_debug('onEmailWindowFieldChange');
+			if (!this.isAdvicePrompted && this.isKeepSynchronizationChecked()) {
+				this.isAdvicePrompted = true;
+
+				CMDBuild.Msg.warn(null, CMDBuild.Translation.errors.emailChangedWithAutoSynch);
+			}
+		},
+
+		/**
 		 * Using FillFromTemplateButton I put only tempalteName in emailObject and get template data to fill email form
 		 *
 		 * @param {String} templateName
 		 */
-		onFillFromTemplateButtonClick: function(templateName) {
-_debug('onFillFromTemplateButtonClick', this.record);
+		onEmailWindowFillFromTemplateButtonClick: function(templateName) {
+_debug('onEmailWindowFillFromTemplateButtonClick', this.record);
 			CMDBuild.LoadMask.get().show();
 			CMDBuild.core.proxy.EmailTemplates.get({
 				params: {

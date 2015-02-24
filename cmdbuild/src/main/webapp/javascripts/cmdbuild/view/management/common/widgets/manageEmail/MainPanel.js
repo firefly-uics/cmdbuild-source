@@ -20,7 +20,7 @@
 		grid: undefined,
 
 		/**
-		 * @property {Object}
+		 * @cfg {Object}
 		 */
 		widgetConf: undefined,
 

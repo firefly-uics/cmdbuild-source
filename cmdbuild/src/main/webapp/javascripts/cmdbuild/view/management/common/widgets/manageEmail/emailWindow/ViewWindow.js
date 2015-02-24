@@ -1,6 +1,6 @@
 (function() {
 
-	Ext.define('CMDBuild.view.management.common.widgets.manageEmail.EmailWindowView', {
+	Ext.define('CMDBuild.view.management.common.widgets.manageEmail.emailWindow.ViewWindow', {
 		extend: 'CMDBuild.PopupWindow',
 
 		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
@@ -11,17 +11,12 @@
 		delegate: undefined,
 
 		/**
-		 * @property {Ext.container.Container}
+		 * @property {CMDBuild.view.management.common.widgets.manageEmail.attachments.MainContainer}
 		 */
-		attachmentPanelsContainer: undefined,
+		attachmentContainer: undefined,
 
 		/**
-		 * @property {Ext.container.Container}
-		 */
-		attachmentButtonsContainer: undefined,
-
-		/**
-		 * @cfg {Ext.button.Split}
+		 * @property {Ext.button.Split}
 		 */
 		fillFromTemplateButton: undefined,
 
@@ -33,10 +28,7 @@
 		buttonAlign: 'center',
 		title: CMDBuild.Translation.viewEmail,
 
-		layout: {
-			type: 'vbox',
-			align: 'stretch'
-		},
+		layout: 'border',
 
 		initComponent: function() {
 			// Buttons configuration
@@ -51,44 +43,14 @@
 				});
 			// END: Buttons configuration
 
-			this.attachmentButtonsContainer = Ext.create('Ext.container.Container', {
-				layout: {
-					type: 'hbox',
-					padding: '0 5'
-				},
-
-				items: [
-					Ext.create('Ext.form.Panel', {
-						frame: false,
-						border: false,
-						bodyCls: 'x-panel-body-default-framed',
-
-						items: [
-							{
-								xtype: 'filefield',
-								name: 'file',
-								buttonText: CMDBuild.Translation.attachfile,
-								buttonOnly: true,
-
-								disabled: true
-							}
-						]
-					}),
-					Ext.create('Ext.button.Button', {
-						margin: '0 0 0 5',
-						text: CMDBuild.Translation.add_attachment_from_dms,
-
-						disabled: true
-					})
-				]
-			});
-
-			this.attachmentPanelsContainer = Ext.create('Ext.container.Container', {
-				autoScroll: true,
-				flex: 1
+			this.attachmentContainer = Ext.create('CMDBuild.view.management.common.widgets.manageEmail.attachments.MainContainer', {
+				height: '30%',
+				region: 'south',
+				readOnly: true
 			});
 
 			this.formPanel = Ext.create('Ext.panel.Panel', {
+				region: 'center',
 				frame: false,
 				border: false,
 				padding: '5',
@@ -112,13 +74,6 @@
 						readOnly: true,
 						name: CMDBuild.core.proxy.CMProxyConstants.KEEP_SYNCHRONIZATION,
 						value: this.delegate.record.get(CMDBuild.core.proxy.CMProxyConstants.KEEP_SYNCHRONIZATION)
-					},
-					{
-						xtype: 'checkbox',
-						fieldLabel: CMDBuild.Translation.promptSync,
-						readOnly: true,
-						name: CMDBuild.core.proxy.CMProxyConstants.PROMPT_SYNCHRONIZATION,
-						value: this.delegate.record.get(CMDBuild.core.proxy.CMProxyConstants.PROMPT_SYNCHRONIZATION)
 					},
 					{
 						xtype: 'displayfield',
@@ -170,7 +125,7 @@
 						items: [this.fillFromTemplateButton]
 					}
 				],
-				items: [this.formPanel, this.attachmentButtonsContainer, this.attachmentPanelsContainer], // TODO: forse si può unificare in una classe unica possibilità di read only
+				items: [this.formPanel, this.attachmentContainer],
 				buttons: [
 					Ext.create('CMDBuild.buttons.CloseButton', {
 						scope: this,

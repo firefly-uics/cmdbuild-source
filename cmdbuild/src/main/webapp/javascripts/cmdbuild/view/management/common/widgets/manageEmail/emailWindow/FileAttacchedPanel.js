@@ -1,6 +1,6 @@
 (function() {
 
-	Ext.define('CMDBuild.view.management.common.widgets.manageEmail.EmailWindowFileAttacchedPanel', {
+	Ext.define('CMDBuild.view.management.common.widgets.manageEmail.emailWindow.FileAttacchedPanel', {
 		extend: 'Ext.panel.Panel',
 
 		/**
@@ -12,6 +12,11 @@
 		 * @cfg {String}
 		 */
 		fileName: undefined,
+
+		/**
+		 * @cfg {Boolean}
+		 */
+		readOnly: false,
 
 		frame: true,
 		margin: 5,
@@ -35,6 +40,7 @@
 					{
 						xtype: 'button',
 						iconCls: 'delete',
+						disabled: this.readOnly,
 						scope: this,
 
 						handler: function() {

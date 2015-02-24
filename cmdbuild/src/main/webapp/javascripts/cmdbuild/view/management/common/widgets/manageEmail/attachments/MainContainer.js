@@ -10,8 +10,20 @@
 		 */
 		delegate: undefined,
 
+		/**
+		 * @property {CMDBuild.view.management.common.widgets.manageEmail.attachments.ButtonsContainer}
+		 */
 		attachmentButtonsContainer: undefined,
+
+		/**
+		 * @property {Ext.container.Container}
+		 */
 		attachmentPanelsContainer: undefined,
+
+		/**
+		 * @cfg {Boolean}
+		 */
+		readOnly: false,
 
 		layout: {
 			type: 'vbox',
@@ -20,7 +32,8 @@
 
 		initComponent: function() {
 			this.attachmentButtonsContainer = Ext.create('CMDBuild.view.management.common.widgets.manageEmail.attachments.ButtonsContainer', {
-				delegate: this.delegate
+				delegate: this.delegate,
+				readOnly: this.readOnly
 			});
 
 			this.attachmentPanelsContainer = Ext.create('Ext.container.Container', {

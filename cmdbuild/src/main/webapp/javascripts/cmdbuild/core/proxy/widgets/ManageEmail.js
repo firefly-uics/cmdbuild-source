@@ -174,32 +174,6 @@
 		// TODO: future refactor
 
 		/**
-		 * @param {Ext.form.Basic} form
-		 * @param {Object} parameters
-		 */
-		addAttachmentFromExistingEmail: function(form, parameters) {
-			form.submit({
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.widgets.manageEmail.addAttachmentFromExistingEmail,
-				waitMsg: CMDBuild.Translation.uploading_attachment,
-				params: parameters.params,
-				success: parameters.success
-			});
-		},
-
-		/**
-		 * @param {Ext.form.Basic} form
-		 * @param {Object} parameters
-		 */
-		addAttachmentFromNewEmail: function(form, parameters) {
-			form.submit({
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.widgets.manageEmail.addAttachmentFromNewEmail,
-				waitMsg: CMDBuild.Translation.uploading_attachment,
-				params: parameters.params,
-				success: parameters.success
-			});
-		},
-
-		/**
 		 * @param {Object} parameters
 		 */
 		copyAttachmentFromCardForExistingEmail: function(parameters) {
@@ -217,30 +191,6 @@
 		copyAttachmentFromCardForNewEmail: function(parameters) {
 			CMDBuild.Ajax.request({
 				url: CMDBuild.core.proxy.CMProxyUrlIndex.widgets.manageEmail.copyAttachmentFromCardForNewEmail,
-				method: 'POST',
-				params: parameters.params,
-				success: parameters.success
-			});
-		},
-
-		/**
-		 * @param {Object} parameters
-		 */
-		removeAttachmentFromExistingEmail: function(parameters) {
-			CMDBuild.Ajax.request({
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.widgets.manageEmail.removeAttachmentFromExistingEmail,
-				method: 'POST',
-				params: parameters.params,
-				success: parameters.success
-			});
-		},
-
-		/**
-		 * @param {Object} parameters
-		 */
-		removeAttachmentFromNewEmail: function(parameters) {
-			CMDBuild.Ajax.request({
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.widgets.manageEmail.removeAttachmentFromNewEmail,
 				method: 'POST',
 				params: parameters.params,
 				success: parameters.success
