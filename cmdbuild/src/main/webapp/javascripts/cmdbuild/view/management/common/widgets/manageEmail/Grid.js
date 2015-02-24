@@ -35,7 +35,7 @@
 						scope: this,
 
 						handler: function(values) {
-							this.delegate.cmOn('onEmailAddButtonClick');
+							this.delegate.cmOn('onGridAddEmailButtonClick');
 						}
 					},
 					{
@@ -109,7 +109,7 @@
 								scope: this,
 
 								handler: function(grid, rowIndex, colIndex, node, e, record, rowNode) {
-									this.delegate.cmOn('onEmailRegenerationButtonClick', record);
+									this.delegate.cmOn('onGridRegenerationEmailButtonClick', record);
 								},
 
 								isDisabled: function(grid, rowIndex, colIndex, item, record) {
@@ -137,7 +137,7 @@
 								},
 
 								handler: function(grid, rowIndex, colIndex, node, e, record, rowNode) {
-									this.delegate.cmOn('onEmailReplyButtonClick', record);
+									this.delegate.cmOn('onGridReplyEmailButtonClick', record);
 								}
 							}
 						]
@@ -157,7 +157,7 @@
 								scope: this,
 
 								handler: function(grid, rowIndex, colIndex, node, e, record, rowNode) {
-									this.delegate.cmOn('onEmailEditButtonClick', record);
+									this.delegate.cmOn('onGridEditEmailButtonClick', record);
 								},
 
 								isDisabled: function(grid, rowIndex, colIndex, item, record) {
@@ -181,7 +181,7 @@
 								scope: this,
 
 								handler: function(grid, rowIndex, colIndex, node, e, record, rowNode) {
-									this.delegate.cmOn('onEmailViewButtonClick', record);
+									this.delegate.cmOn('onGridViewEmailButtonClick', record);
 								}
 							}
 						]
@@ -201,7 +201,7 @@
 								scope: this,
 
 								handler: function(grid, rowIndex, colIndex, node, e, record, rowNode) {
-									this.delegate.cmOn('onEmailDeleteButtonClick', record);
+									this.delegate.cmOn('onGridDeleteEmailButtonClick', record);
 								},
 
 								isDisabled: function(grid, rowIndex, colIndex, item, record) {
@@ -234,7 +234,7 @@
 
 		listeners: {
 			itemdblclick: function(grid, record, item, index, e, eOpts) {
-				this.delegate.cmOn('onItemDoubleClick', record);
+				this.delegate.cmOn('onGridItemDoubleClick', record);
 			}
 		},
 

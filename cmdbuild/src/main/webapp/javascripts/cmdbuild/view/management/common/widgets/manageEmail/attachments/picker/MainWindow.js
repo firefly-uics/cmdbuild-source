@@ -6,14 +6,29 @@
 		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
 
 		/**
-		 * @cfg {CMDBuild.controller.management.common.widgets.manageEmail.Attachments}
+		 * @cfg {CMDBuild.controller.management.common.widgets.manageEmail.AttachmentsPicker}
 		 */
 		delegate: undefined,
 
-		state: undefined,
+		/**
+		 * @property {CMDBuild.view.management.common.widgets.manageEmail.attachments.picker.AttachmentGrid}
+		 */
 		attachmentGrid: undefined,
-		classComboBox: undefined,
+
+		/**
+		 * @property {CMDBuild.view.management.common.widgets.manageEmail.attachments.picker.CardGrid}
+		 */
 		cardGrid: undefined,
+
+		/**
+		 * @property {Ext.form.field.ComboBox}
+		 */
+		classComboBox: undefined,
+
+		/**
+		 * @property {CMDBuild.state.AttachmentPicker}
+		 */
+		state: undefined,
 
 		buttonAlign: 'center',
 		layout: 'border',

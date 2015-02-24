@@ -10,10 +10,25 @@
 		 */
 		delegate: undefined,
 
+		/**
+		 * @property {Ext.button.Button}
+		 */
 		attachmentAddFromDmsButton: undefined,
+
+		/**
+		 * @property {Ext.form.field.File}
+		 */
 		attachmentFileField: undefined,
+
+		/**
+		 * @property {Ext.form.Panel}
+		 */
 		attachmentUploadForm: undefined,
-		attachmentUploadForm: undefined,
+
+		/**
+		 * @cfg {Boolean}
+		 */
+		readOnly: false,
 
 		layout: {
 			type: 'hbox',
@@ -24,6 +39,7 @@
 			this.attachmentAddFromDmsButton = Ext.create('Ext.button.Button', {
 				margin: '0 0 0 5',
 				text: CMDBuild.Translation.add_attachment_from_dms,
+				disabled: this.readOnly,
 				scope: this,
 
 				handler: function() {
@@ -35,6 +51,7 @@
 				name: 'file',
 				buttonText: CMDBuild.Translation.attachfile,
 				buttonOnly: true,
+				disabled: this.readOnly,
 				scope: this,
 
 				listeners: {

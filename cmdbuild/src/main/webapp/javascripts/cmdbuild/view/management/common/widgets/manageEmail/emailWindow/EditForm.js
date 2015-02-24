@@ -1,6 +1,6 @@
 (function() {
 
-	Ext.define('CMDBuild.view.management.common.widgets.manageEmail.EmailWindowEditForm', {
+	Ext.define('CMDBuild.view.management.common.widgets.manageEmail.emailWindow.EditForm', {
 		extend: 'Ext.form.Panel',
 
 		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
@@ -18,6 +18,11 @@
 		 * @property {CMDBuild.view.common.field.CMHtmlEditorField}
 		 */
 		emailContentField: undefined,
+
+		/**
+		 * @property {Ext.form.field.Checkbox}
+		 */
+		keepSynchronizationCheckbox: undefined,
 
 		frame: false,
 		border: false,
@@ -45,7 +50,7 @@
 				listeners: {
 					scope: this,
 					change: function() {
-						this.delegate.cmOn('onEmailChange');
+						this.delegate.cmOn('onEmailWindowFieldChange');
 					}
 				}
 			});
@@ -74,7 +79,7 @@
 						listeners: {
 							scope: this,
 							change: function() {
-								this.delegate.cmOn('onEmailChange');
+								this.delegate.cmOn('onEmailWindowFieldChange');
 							}
 						}
 					},
@@ -89,7 +94,7 @@
 						listeners: {
 							scope: this,
 							change: function() {
-								this.delegate.cmOn('onEmailChange');
+								this.delegate.cmOn('onEmailWindowFieldChange');
 							}
 						}
 					},
@@ -103,7 +108,7 @@
 						listeners: {
 							scope: this,
 							change: function() {
-								this.delegate.cmOn('onEmailChange');
+								this.delegate.cmOn('onEmailWindowFieldChange');
 							}
 						}
 					},
@@ -117,7 +122,7 @@
 						listeners: {
 							scope: this,
 							change: function() {
-								this.delegate.cmOn('onEmailChange');
+								this.delegate.cmOn('onEmailWindowFieldChange');
 							}
 						}
 					},
@@ -131,7 +136,7 @@
 						listeners: {
 							scope: this,
 							change: function() {
-								this.delegate.cmOn('onEmailChange');
+								this.delegate.cmOn('onEmailWindowFieldChange');
 							}
 						}
 					},

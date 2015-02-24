@@ -54,14 +54,14 @@
 		 */
 		cmOn: function(name, param, callBack) {
 			switch (name) {
-				case 'onPickerWindowCardSelected':
-					return this.onCardSelected(param);
-
 				case 'onPickerWindowCardGridStoreLoad':
-					return this.onCardGridStoreLoad();
+					return this.onPickerWindowCardGridStoreLoad();
+
+				case 'onPickerWindowCardSelected':
+					return this.onPickerWindowCardSelected(param);
 
 				case 'onPickerWindowClassSelected':
-					return this.onClassSelected();
+					return this.onPickerWindowClassSelected();
 
 				case 'onPickerWindowAbortButtonClick':
 					return this.onPickerWindowAbortButtonClick();
@@ -90,10 +90,14 @@
 			});
 		},
 
+		onPickerWindowCardGridStoreLoad: function() {
+			this.view.attachmentGrid.getStore().removeAll();
+		},
+
 		/**
 		 * @param {Object} record
 		 */
-		onCardSelected: function(record) {
+		onPickerWindowCardSelected: function(record) {
 _debug('onCardGridSelect record', record);
 			this.selectedCardId = record.get(CMDBuild.core.proxy.CMProxyConstants.ID);
 
@@ -104,11 +108,7 @@ _debug('onCardGridSelect record', record);
 			);
 		},
 
-		onCardGridStoreLoad: function() {
-			this.view.attachmentGrid.getStore().removeAll();
-		},
-
-		onClassSelected: function() {
+		onPickerWindowClassSelected: function() {
 			this.selectedClass = _CMCache.getEntryTypeById(this.view.classComboBox.getValue());
 
 			this.view.state.setClassName(this.selectedClass.get(CMDBuild.core.proxy.CMProxyConstants.NAME));

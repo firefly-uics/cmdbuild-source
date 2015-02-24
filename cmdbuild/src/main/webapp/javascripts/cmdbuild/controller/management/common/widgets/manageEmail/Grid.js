@@ -46,7 +46,7 @@
 		view: undefined,
 
 		/**
-		 * @property {Object}
+		 * @cfg {Object}
 		 */
 		widgetConf: undefined,
 
@@ -91,7 +91,7 @@ _debug('trafficLightArrayCheck regenerationTrafficLightArray', regenerationTraff
 			Ext.apply(this, configObject); // Apply config
 
 			this.view.delegate = this;
-			this.widgetConf = this.parentDelegate.widgetConf;
+			this.widgetConf = this.cmOn('getWidgetConf');
 		},
 
 		/**
@@ -103,26 +103,26 @@ _debug('trafficLightArrayCheck regenerationTrafficLightArray', regenerationTraff
 		 */
 		cmOn: function(name, param, callBack) {
 			switch (name) {
-				case 'onEmailAddButtonClick':
-					return this.onEmailAddButtonClick(param);
+				case 'onGridAddEmailButtonClick':
+					return this.onGridAddEmailButtonClick(param);
 
-				case 'onEmailDeleteButtonClick':
-					return this.onEmailDeleteButtonClick(param);
+				case 'onGridDeleteEmailButtonClick':
+					return this.onGridDeleteEmailButtonClick(param);
 
-				case 'onEmailEditButtonClick':
-					return this.onEmailEditButtonClick(param);
+				case 'onGridEditEmailButtonClick':
+					return this.onGridEditEmailButtonClick(param);
 
-				case 'onEmailRegenerationButtonClick':
-					return this.onEmailRegenerationButtonClick(param);
+				case 'onGridItemDoubleClick':
+					return this.onGridItemDoubleClick(param);
 
-				case 'onEmailReplyButtonClick':
-					return this.onEmailReplyButtonClick(param);
+				case 'onGridRegenerationEmailButtonClick':
+					return this.onGridRegenerationEmailButtonClick(param);
 
-				case 'onEmailViewButtonClick':
-					return this.onEmailViewButtonClick(param);
+				case 'onGridReplyEmailButtonClick':
+					return this.onGridReplyEmailButtonClick(param);
 
-				case 'onItemDoubleClick':
-					return this.onItemDoubleClick(param);
+				case 'onGridViewEmailButtonClick':
+					return this.onGridViewEmailButtonClick(param);
 
 				default: {
 					if (!Ext.isEmpty(this.parentDelegate))
@@ -227,10 +227,10 @@ _debug('editRecord regenerationTrafficLightArray', regenerationTrafficLightArray
 			return !Ext.isEmpty(record.get(CMDBuild.core.proxy.CMProxyConstants.TEMPLATE));
 		},
 
-		onEmailAddButtonClick: function() {
+		onGridAddEmailButtonClick: function() {
 			var me = this;
 			var record = this.createRecord();
-_debug('onEmailAddButtonClick');
+_debug('onGridAddEmailButtonClick');
 			this.addRecord( // To generate an emailId
 				record,
 				null,
@@ -239,8 +239,7 @@ _debug('onEmailAddButtonClick');
 
 					Ext.create('CMDBuild.controller.management.common.widgets.manageEmail.EmailWindow', {
 						parentDelegate: me,
-						record: record,
-						widgetConf: me.widgetConf
+						record: record
 					});
 
 					this.storeLoad();
@@ -251,7 +250,7 @@ _debug('onEmailAddButtonClick');
 		/**
 		 * @param {CMDBuild.model.widget.ManageEmail.email} record
 		 */
-		onEmailDeleteButtonClick: function(record) {
+		onGridDeleteEmailButtonClick: function(record) {
 			Ext.Msg.confirm(
 				CMDBuild.Translation.common.confirmpopup.title,
 				CMDBuild.Translation.common.confirmpopup.areyousure,
@@ -267,11 +266,10 @@ _debug('onEmailAddButtonClick');
 		/**
 		 * @param {CMDBuild.model.widget.ManageEmail.email} record
 		 */
-		onEmailEditButtonClick: function(record) {
+		onGridEditEmailButtonClick: function(record) {
 			Ext.create('CMDBuild.controller.management.common.widgets.manageEmail.EmailWindow', {
 				parentDelegate: this,
 				record: record,
-				widgetConf: this.widgetConf,
 				windowMode: 'edit'
 			});
 		},
@@ -279,7 +277,18 @@ _debug('onEmailAddButtonClick');
 		/**
 		 * @param {CMDBuild.model.widget.ManageEmail.email} record
 		 */
-		onEmailRegenerationButtonClick: function(record) {
+		onGridItemDoubleClick: function(record) {
+			if (this.recordIsEditable(record)) {
+				this.onGridEditEmailButtonClick(record);
+			} else {
+				this.onGridViewEmailButtonClick(record);
+			}
+		},
+
+		/**
+		 * @param {CMDBuild.model.widget.ManageEmail.email} record
+		 */
+		onGridRegenerationEmailButtonClick: function(record) {
 			if (!Ext.isEmpty(record.get(CMDBuild.core.proxy.CMProxyConstants.TEMPLATE))) {
 				var emptyEmail = Ext.create('CMDBuild.model.widget.ManageEmail.email');
 				emptyEmail.set(CMDBuild.core.proxy.CMProxyConstants.ACTIVITY_ID, this.parentDelegate.getActivityId());
@@ -295,7 +304,7 @@ _debug('onEmailAddButtonClick');
 		/**
 		 * @param {CMDBuild.model.widget.ManageEmail.email} record
 		 */
-		onEmailReplyButtonClick: function(record) {
+		onGridReplyEmailButtonClick: function(record) {
 			var content = '<p>'
 					+ CMDBuild.Translation.onDay + ' ' + record.get(CMDBuild.core.proxy.CMProxyConstants.DATE)
 					+ ', <' + record.get(CMDBuild.core.proxy.CMProxyConstants.FROM_ADDRESS) + '> ' + CMDBuild.Translation.hasWrote
@@ -317,7 +326,6 @@ _debug('onEmailAddButtonClick');
 			Ext.create('CMDBuild.controller.management.common.widgets.manageEmail.EmailWindow', {
 				parentDelegate: this,
 				record: Ext.create('CMDBuild.model.widget.ManageEmail.email', replyRecordData),
-				widgetConf: this.widgetConf,
 				windowMode: 'reply'
 			});
 		},
@@ -325,24 +333,12 @@ _debug('onEmailAddButtonClick');
 		/**
 		 * @param {CMDBuild.model.widget.ManageEmail.email} record
 		 */
-		onEmailViewButtonClick: function(record) {
+		onGridViewEmailButtonClick: function(record) {
 			Ext.create('CMDBuild.controller.management.common.widgets.manageEmail.EmailWindow', {
 				parentDelegate: this,
 				record: record,
-				widgetConf: this.widgetConf,
 				windowMode: 'view'
 			});
-		},
-
-		/**
-		 * @param {CMDBuild.model.widget.ManageEmail.email} record
-		 */
-		onItemDoubleClick: function(record) {
-			if (this.recordIsEditable(record)) {
-				this.onEmailEditButtonClick(record);
-			} else {
-				this.onEmailViewButtonClick(record);
-			}
 		},
 
 		/**
