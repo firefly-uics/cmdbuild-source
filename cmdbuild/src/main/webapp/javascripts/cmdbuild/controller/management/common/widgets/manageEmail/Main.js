@@ -449,9 +449,9 @@ _debug('onEditMode');
 _debug('regenerateAllEmails forceRegeneration', forceRegeneration);
 _debug('regenerateAllEmails this.relatedAttributeChanged', this.relatedAttributeChanged);
 			if (forceRegeneration || this.relatedAttributeChanged) {
-//				// Reset all store before email regeneration
-//				if (forceRegeneration)
-//					this.controllerGrid.storeReset();
+				// Reset all store before email regeneration
+				if (forceRegeneration)
+					this.controllerGrid.storeReset();
 
 				var templatesCheckedForRegenerationIdentifiers = [];
 				var emailTemplatesToRegenerate = this.checkTemplatesToRegenerate();
