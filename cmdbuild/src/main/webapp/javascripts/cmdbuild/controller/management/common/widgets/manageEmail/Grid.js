@@ -233,16 +233,17 @@ _debug('editRecord regenerationTrafficLightArray', regenerationTrafficLightArray
 _debug('onEmailAddButtonClick');
 			this.addRecord( // To generate an emailId
 				record,
-				false, // Disable storeLoad
+				null,
 				function(response, options, decodedResponse) { // Success function override
 					record.set(CMDBuild.core.proxy.CMProxyConstants.ID, decodedResponse.response);
 
 					Ext.create('CMDBuild.controller.management.common.widgets.manageEmail.EmailWindow', {
 						parentDelegate: me,
 						record: record,
-						widgetConf: me.widgetConf,
-						widgetController: me.parentDelegate
+						widgetConf: me.widgetConf
 					});
+
+					this.storeLoad();
 				}
 			);
 		},
@@ -271,7 +272,6 @@ _debug('onEmailAddButtonClick');
 				parentDelegate: this,
 				record: record,
 				widgetConf: this.widgetConf,
-				widgetController: this.parentDelegate,
 				windowMode: 'edit'
 			});
 		},
@@ -318,7 +318,6 @@ _debug('onEmailAddButtonClick');
 				parentDelegate: this,
 				record: Ext.create('CMDBuild.model.widget.ManageEmail.email', replyRecordData),
 				widgetConf: this.widgetConf,
-				widgetController: this.parentDelegate,
 				windowMode: 'reply'
 			});
 		},
@@ -331,7 +330,6 @@ _debug('onEmailAddButtonClick');
 				parentDelegate: this,
 				record: record,
 				widgetConf: this.widgetConf,
-				widgetController: this.parentDelegate,
 				windowMode: 'view'
 			});
 		},
@@ -401,15 +399,12 @@ _debug('storeLoad', regenerateAllEmails+ ' ' +forceRegeneration);
 				regenerateAllEmails = regenerateAllEmails || false;
 				forceRegeneration = forceRegeneration || false;
 
-				CMDBuild.LoadMask.get().show();
 				this.view.getStore().load({
 					params: {
 						activityId: this.parentDelegate.getActivityId()
 					},
 					scope: this,
 					callback: function(records, operation, success) {
-						CMDBuild.LoadMask.get().hide();
-
 						this.parentDelegate.getAllTemplatesData(regenerateAllEmails, forceRegeneration);
 					}
 				});

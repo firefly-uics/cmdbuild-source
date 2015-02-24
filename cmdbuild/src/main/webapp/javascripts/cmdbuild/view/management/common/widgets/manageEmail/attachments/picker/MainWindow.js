@@ -1,6 +1,6 @@
 (function() {
 
-	Ext.define('CMDBuild.view.management.common.widgets.manageEmail.attachments.PickerWindow', {
+	Ext.define('CMDBuild.view.management.common.widgets.manageEmail.attachments.picker.MainWindow', {
 		extend: 'CMDBuild.PopupWindow',
 
 		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
@@ -15,8 +15,6 @@
 		classComboBox: undefined,
 		cardGrid: undefined,
 
-//		emailRecord: undefined,
-//		emailWindow: undefined,
 		buttonAlign: 'center',
 		layout: 'border',
 		title: CMDBuild.Translation.choose_attachment_from_db,
@@ -37,17 +35,17 @@
 					scope: this,
 
 					change: function(field, newValue, oldValue) {
-						this.delegate.cmOn('onClassSelected');
+						this.delegate.cmOn('onPickerWindowClassSelected');
 					}
 				}
 			});
 
-			this.cardGrid = Ext.create('CMDBuild.view.management.common.widgets.manageEmail.attachments.PickerCardGrid', {
+			this.cardGrid = Ext.create('CMDBuild.view.management.common.widgets.manageEmail.attachments.picker.CardGrid', {
 				delegate: this.delegate,
 				region: 'center'
 			});
 
-			this.attachmentGrid = Ext.create('CMDBuild.view.management.common.widgets.manageEmail.attachments.PickerAttachmentGrid', {
+			this.attachmentGrid = Ext.create('CMDBuild.view.management.common.widgets.manageEmail.attachments.picker.AttachmentGrid', {
 				delegate: this.delegate,
 				region: 'south',
 				height: '30%'

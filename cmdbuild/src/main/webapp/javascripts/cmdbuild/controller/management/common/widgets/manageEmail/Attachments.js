@@ -12,11 +12,6 @@
 		parentDelegate: undefined,
 
 		/**
-		 * @cfg {CMDBuild.controller.management.common.widgets.manageEmail.Main}
-		 */
-		widgetController: undefined,
-
-		/**
 		 * @property {CMDBuild.model.widget.ManageEmail.email}
 		 */
 		record: undefined,
@@ -30,7 +25,6 @@
 		 * @param {Object} configObject
 		 * @param {CMDBuild.controller.management.common.widgets.manageEmail.EmailWindow} configObject.parentDelegate
 		 * @param {CMDBuild.model.widget.ManageEmail.email} configObject.record
-		 * @param {CMDBuild.controller.management.common.widgets.manageEmail.Main} configObject.widgetController
 		 * @param {CMDBuild.view.management.common.widgets.manageEmail.attachments.MainContainer} configObject.view
 		 */
 		constructor: function(configObject) {
@@ -49,20 +43,20 @@
 		 */
 		cmOn: function(name, param, callBack) {
 			switch (name) {
-				case 'addAttachmentPanel':
-					return this.addAttachmentPanel(param);
+				case 'attachmentAddPanel':
+					return this.attachmentAddPanel(param);
 
-				case 'onAddAttachmentFromDmsButtonClick':
-					return this.onAddAttachmentFromDmsButtonClick();
+				case 'onAttachmentAddFromDmsButtonClick':
+					return this.onAttachmentAddFromDmsButtonClick();
 
-				case 'onRemoveAttachmentButtonClick':
-					return this.onRemoveAttachmentButtonClick(param);
+				case 'onAttachmentRemoveButtonClick':
+					return this.onAttachmentRemoveButtonClick(param);
 
-				case 'onChangeAttachmentFile':
-					return this.onChangeAttachmentFile();
+				case 'onAttachmentChangeFile':
+					return this.onAttachmentChangeFile();
 
-				case 'updateAttachmentList':
-					return this.updateAttachmentList(param);
+				case 'attachmentUpdateList':
+					return this.attachmentUpdateList(param);
 
 				default: {
 					if (!Ext.isEmpty(this.parentDelegate))
@@ -74,7 +68,7 @@
 		/**
 		 * @param {String} fileName
 		 */
-		addAttachmentPanel: function(fileName) {
+		attachmentAddPanel: function(fileName) {
 			this.view.addPanel(
 				Ext.create('CMDBuild.view.management.common.widgets.manageEmail.EmailWindowFileAttacchedPanel', { // TODO spostare annidando + rename
 					delegate: this,
@@ -96,13 +90,12 @@
 			return attachmentsNames;
 		},
 
-		onAddAttachmentFromDmsButtonClick: function() {
-_debug('onAddAttachmentFromDmsButtonClick', this.record);
+		onAttachmentAddFromDmsButtonClick: function() {
+_debug('onAttachmentAddFromDmsButtonClick', this.record);
 			Ext.create('CMDBuild.controller.management.common.widgets.manageEmail.AttachmentsPicker', {
 				parentDelegate: this,
 				record: this.record,
-				widgetConf: this.widgetConf,
-				widgetController: this.widgetController
+				widgetConf: this.widgetConf
 			});
 		},
 
@@ -111,7 +104,7 @@ _debug('onAddAttachmentFromDmsButtonClick', this.record);
 		 * @param {Object} form
 		 * @param {CMDBuild.model.widget.ManageEmail.email} emailRecord
 		 */
-		onChangeAttachmentFile: function() {
+		onAttachmentChangeFile: function() {
 _debug('record', this.record);
 _debug('this.view.', this.view);
 			params = {};
@@ -126,7 +119,7 @@ _debug('this.view.', this.view);
 				success: function(form, options) {
 					this.parentDelegate.view.setLoading(false);
 
-					this.cmOn('addAttachmentPanel', options.result.response);
+					this.cmOn('attachmentAddPanel', options.result.response);
 				}
 			});
 		},
@@ -134,7 +127,7 @@ _debug('this.view.', this.view);
 		/**
 		 * @param {CMDBuild.view.management.common.widgets.manageEmail.EmailWindowFileAttacchedPanel} attachmentPanel
 		 */
-		onRemoveAttachmentButtonClick: function(attachmentPanel) {
+		onAttachmentRemoveButtonClick: function(attachmentPanel) {
 			var params = {};
 			params[CMDBuild.core.proxy.CMProxyConstants.EMAIL_ID] = this.record.get(CMDBuild.core.proxy.CMProxyConstants.ID);
 			params[CMDBuild.core.proxy.CMProxyConstants.FILE_NAME] = attachmentPanel[CMDBuild.core.proxy.CMProxyConstants.FILE_NAME];
@@ -155,10 +148,10 @@ _debug('this.view.', this.view);
 		/**
 		 * @param {Array} attachmentNames
 		 */
-		updateAttachmentList: function(attachmentNames) {
+		attachmentUpdateList: function(attachmentNames) {
 			if (Ext.isArray(attachmentNames))
 				Ext.Array.forEach(attachmentNames, function(item, index, allItems) {
-					this.addAttachmentPanel(item);
+					this.attachmentAddPanel(item);
 				}, this);
 		}
 	});

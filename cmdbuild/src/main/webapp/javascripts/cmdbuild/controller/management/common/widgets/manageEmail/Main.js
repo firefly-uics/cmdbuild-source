@@ -164,6 +164,9 @@ _debug('this.widgetConfTemplates', this.widgetConfTemplates);
 		 */
 		cmOn: function(name, param, callBack) {
 			switch (name) {
+				case 'getWidgetController':
+					return this.getWidgetController();
+
 				case 'onGlobalRegenerationButtonClick':
 					return this.onGlobalRegenerationButtonClick();
 
@@ -380,6 +383,13 @@ _debug('loadTemplates item', item);
 			out[CMDBuild.core.proxy.CMProxyConstants.OUTPUT] = this.getActivityId();
 _debug('getData', out);
 			return out;
+		},
+
+		/**
+		 * @return {CMDBuild.controller.management.common.widgets.manageEmail.Main}
+		 */
+		getWidgetController: function() {
+			return this;
 		},
 
 		/**

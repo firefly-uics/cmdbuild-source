@@ -18,11 +18,6 @@
 		attachmentsController: undefined,
 
 		/**
-		 * @cfg {CMDBuild.controller.management.common.widgets.manageEmail.Main}
-		 */
-		widgetController: undefined,
-
-		/**
 		 * Used as flag to avoid pop-up spam
 		 *
 		 * @cfg {Boolean}
@@ -96,43 +91,38 @@
 				this.attachmentsController = Ext.create('CMDBuild.controller.management.common.widgets.manageEmail.Attachments', {
 					parentDelegate: this,
 					record: this.record,
-					widgetController: this.widgetController,
 					view: this.view.attachmentContainer
 				});
-			}
 
-			var params = {};
-			params[CMDBuild.core.proxy.CMProxyConstants.EMAIL_ID] = this.record.get(CMDBuild.core.proxy.CMProxyConstants.ID);
-			params[CMDBuild.core.proxy.CMProxyConstants.TEMPORARY] = this.record.get(CMDBuild.core.proxy.CMProxyConstants.TEMPORARY);
+				// Get all email attachments
+				var params = {};
+				params[CMDBuild.core.proxy.CMProxyConstants.EMAIL_ID] = this.record.get(CMDBuild.core.proxy.CMProxyConstants.ID);
+				params[CMDBuild.core.proxy.CMProxyConstants.TEMPORARY] = this.record.get(CMDBuild.core.proxy.CMProxyConstants.TEMPORARY);
 
-			this.view.setLoading(true);
-			CMDBuild.core.proxy.widgets.ManageEmail.attachmentGetAll({
-				params: params,
-				scope: this,
-				success: function(response, options, decodedResponse) {
+				this.view.setLoading(true);
+				CMDBuild.core.proxy.widgets.ManageEmail.attachmentGetAll({
+					params: params,
+					scope: this,
+					success: function(response, options, decodedResponse) {
 _debug('decodedResponse', decodedResponse);
-					Ext.Array.forEach(decodedResponse.response, function(item, index, allItems) {
-						if(!Ext.Object.isEmpty(item))
-							this.attachmentsController.addAttachmentPanel(item[CMDBuild.core.proxy.CMProxyConstants.FILE_NAME]);
-					}, this);
-				},
-				callback: function(records, operation, success) {
-					this.view.setLoading(false);
-				}
-			});
+						Ext.Array.forEach(decodedResponse.response, function(item, index, allItems) {
+							if(!Ext.Object.isEmpty(item))
+								this.attachmentsController.attachmentAddPanel(item[CMDBuild.core.proxy.CMProxyConstants.FILE_NAME]);
+						}, this);
+					},
+					callback: function(records, operation, success) {
+						this.view.setLoading(false);
+					}
+				});
 
-//			var attachments = this.record.getAttachmentNames();
-//			for (var i = 0; i < attachments.length; ++i) {
-//				var attachmentName = attachments[i];
-//
-//				this.addAttachmentPanel(attachmentName);
-//			}
+				// If email has template enable keep-synch checkbox
+				if (!Ext.isEmpty(this.record.get(CMDBuild.core.proxy.CMProxyConstants.TEMPLATE)))
+					this.view.formPanel.keepSynchronizationCheckbox.setDisabled(false);
 
-			if (!Ext.isEmpty(this.record.get(CMDBuild.core.proxy.CMProxyConstants.TEMPLATE)))
-				this.view.formPanel.keepSynchronizationCheckbox.setDisabled(false);
-
-			if (!Ext.isEmpty(this.view))
-				this.view.show();
+				// Show window
+				if (!Ext.isEmpty(this.view))
+					this.view.show();
+			}
 		},
 
 		/**
@@ -191,9 +181,9 @@ _debug('### loadFormValues');
 			var xaVars = Ext.apply({}, record.getData(), record.get(CMDBuild.core.proxy.CMProxyConstants.VARIABLES));
 
 			this.templateResolver = new CMDBuild.Management.TemplateResolver({
-				clientForm: this.widgetController.clientForm,
+				clientForm: this.cmOn('getWidgetController').clientForm,
 				xaVars: xaVars,
-				serverVars: this.widgetController.getTemplateResolverServerVars(this.widgetController.card)
+				serverVars: this.cmOn('getWidgetController').getTemplateResolverServerVars(this.cmOn('getWidgetController').card)
 			});
 _debug('this.templateResolver', this.templateResolver);
 			this.templateResolver.resolveTemplates({
@@ -360,7 +350,7 @@ _debug('formValues', formValues);
 					this.record.set(key, formValues[key]);
 
 				this.record.set(CMDBuild.core.proxy.CMProxyConstants.ATTACHMENTS, attachments);
-				this.record.set(CMDBuild.core.proxy.CMProxyConstants.ACTIVITY_ID, this.widgetController.getActivityId());
+				this.record.set(CMDBuild.core.proxy.CMProxyConstants.ACTIVITY_ID, this.cmOn('getWidgetController').getActivityId());
 _debug('this.record', this.record);
 				if (Ext.isEmpty(this.record.get(CMDBuild.core.proxy.CMProxyConstants.ID))) {
 					this.parentDelegate.addRecord(this.record);
@@ -369,7 +359,7 @@ _debug('this.record', this.record);
 				}
 
 				if (!Ext.Object.isEmpty(this.templateResolver))
-					this.widgetController.bindLocalDepsChangeEvent(this.record, this.templateResolver, this.widgetController);
+					this.cmOn('getWidgetController').bindLocalDepsChangeEvent(this.record, this.templateResolver, this.cmOn('getWidgetController'));
 
 				this.onEmailWindowAbortButtonClick();
 			}

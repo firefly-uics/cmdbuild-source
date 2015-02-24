@@ -38,7 +38,7 @@
 						scope: this,
 
 						handler: function() {
-							this.delegate.cmOn('onRemoveAttachmentButtonClick', this);
+							this.delegate.cmOn('onAttachmentRemoveButtonClick', this);
 						}
 					}
 				]
