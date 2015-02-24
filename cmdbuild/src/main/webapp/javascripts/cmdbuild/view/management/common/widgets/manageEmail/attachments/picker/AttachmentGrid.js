@@ -40,12 +40,12 @@
 						}
 					},
 					{
-						text: CMDBuild.Translation.file_name,
+						text: CMDBuild.Translation.fileName,
 						dataIndex: 'Filename',
 						flex: 1
 					},
 					{
-						text: CMDBuild.Translation.description_,
+						text: CMDBuild.Translation.descriptionLabel,
 						dataIndex: 'Description',
 						flex: 1
 					}

@@ -19,23 +19,6 @@
 		controllerEmailWindow: undefined,
 
 		/**
-		 * @cfg {Array}
-		 */
-		deletedEmails: [],
-
-		/**
-		 * All email types this widget manages
-		 *
-		 * @cfg {Object}
-		 */
-		emailTypes: {
-			draft: 'draft',
-			outgoing: 'outgoing',
-			received: 'received',
-			sent: 'sent'
-		},
-
-		/**
 		 * @property {Mixed}
 		 */
 		emailWindow: undefined,
@@ -167,8 +150,8 @@ _debug('addRecord regenerationTrafficLightArray', regenerationTrafficLightArray)
 			recordValues = recordValues || {};
 			recordValues[CMDBuild.core.proxy.CMProxyConstants.ACTIVITY_ID] = recordValues[CMDBuild.core.proxy.CMProxyConstants.ACTIVITY_ID] || this.parentDelegate.getActivityId();
 			recordValues[CMDBuild.core.proxy.CMProxyConstants.KEEP_SYNCHRONIZATION] = false;
-			recordValues[CMDBuild.core.proxy.CMProxyConstants.NO_SUBJECT_PREFIX] = (recordValues.hasOwnProperty(CMDBuild.core.proxy.CMProxyConstants.NO_SUBJECT_PREFIX)) ? recordValues[CMDBuild.core.proxy.CMProxyConstants.NO_SUBJECT_PREFIX] : this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.NO_SUBJECT_PREFIX];
-			recordValues[CMDBuild.core.proxy.CMProxyConstants.STATUS] = recordValues[CMDBuild.core.proxy.CMProxyConstants.STATUS] || this.emailTypes[CMDBuild.core.proxy.CMProxyConstants.DRAFT];
+			recordValues[CMDBuild.core.proxy.CMProxyConstants.NO_SUBJECT_PREFIX] = recordValues.hasOwnProperty(CMDBuild.core.proxy.CMProxyConstants.NO_SUBJECT_PREFIX) ? recordValues[CMDBuild.core.proxy.CMProxyConstants.NO_SUBJECT_PREFIX] : this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.NO_SUBJECT_PREFIX];
+			recordValues[CMDBuild.core.proxy.CMProxyConstants.STATUS] = recordValues[CMDBuild.core.proxy.CMProxyConstants.STATUS] || CMDBuild.core.proxy.CMProxyConstants.DRAFT;
 
 			return Ext.create('CMDBuild.model.widget.ManageEmail.email', recordValues);
 		},
@@ -201,7 +184,7 @@ _debug('editRecord regenerationTrafficLightArray', regenerationTrafficLightArray
 		 * @return {Array}
 		 */
 		getDraftEmails: function() {
-			return this.getEmailsByGroup(this.emailTypes[CMDBuild.core.proxy.CMProxyConstants.DRAFT]);
+			return this.getEmailsByGroup(CMDBuild.core.proxy.CMProxyConstants.DRAFT);
 		},
 
 		/**
@@ -293,7 +276,7 @@ _debug('onGridAddEmailButtonClick');
 				var emptyEmail = Ext.create('CMDBuild.model.widget.ManageEmail.email');
 				emptyEmail.set(CMDBuild.core.proxy.CMProxyConstants.ACTIVITY_ID, this.parentDelegate.getActivityId());
 				emptyEmail.set(CMDBuild.core.proxy.CMProxyConstants.ID, record.get(CMDBuild.core.proxy.CMProxyConstants.ID));
-				emptyEmail.set(CMDBuild.core.proxy.CMProxyConstants.STATUS, this.emailTypes[CMDBuild.core.proxy.CMProxyConstants.DRAFT]);
+				emptyEmail.set(CMDBuild.core.proxy.CMProxyConstants.STATUS, CMDBuild.core.proxy.CMProxyConstants.DRAFT);
 				emptyEmail.set(CMDBuild.core.proxy.CMProxyConstants.TEMPLATE, record.get(CMDBuild.core.proxy.CMProxyConstants.TEMPLATE));
 
 				this.parentDelegate.regenerateEmail(emptyEmail);
@@ -319,7 +302,7 @@ _debug('onGridAddEmailButtonClick');
 			replyRecordData[CMDBuild.core.proxy.CMProxyConstants.FROM_ADDRESS] = null;
 			replyRecordData[CMDBuild.core.proxy.CMProxyConstants.NOTIFY_WITH] = null;
 			replyRecordData[CMDBuild.core.proxy.CMProxyConstants.NO_SUBJECT_PREFIX] = true;
-			replyRecordData[CMDBuild.core.proxy.CMProxyConstants.STATUS] = this.emailTypes[CMDBuild.core.proxy.CMProxyConstants.DRAFT];
+			replyRecordData[CMDBuild.core.proxy.CMProxyConstants.STATUS] = CMDBuild.core.proxy.CMProxyConstants.DRAFT;
 			replyRecordData[CMDBuild.core.proxy.CMProxyConstants.SUBJECT] = 'RE: ' + record.get(CMDBuild.core.proxy.CMProxyConstants.SUBJECT);
 			replyRecordData[CMDBuild.core.proxy.CMProxyConstants.TO_ADDRESSES] = record.get(CMDBuild.core.proxy.CMProxyConstants.FROM_ADDRESS) || record.get(CMDBuild.core.proxy.CMProxyConstants.TO_ADDRESSES);
 
@@ -347,7 +330,7 @@ _debug('onGridAddEmailButtonClick');
 		 * @return {Boolean}
 		 */
 		recordIsEditable: function(record) {
-			return record.get(CMDBuild.core.proxy.CMProxyConstants.STATUS) == this.emailTypes[CMDBuild.core.proxy.CMProxyConstants.DRAFT];
+			return record.get(CMDBuild.core.proxy.CMProxyConstants.STATUS) == CMDBuild.core.proxy.CMProxyConstants.DRAFT;
 		},
 
 		/**
@@ -356,7 +339,7 @@ _debug('onGridAddEmailButtonClick');
 		 * @return {Boolean}
 		 */
 		recordIsReceived: function(record) {
-			return (record.get(CMDBuild.core.proxy.CMProxyConstants.STATUS) == this.emailTypes[CMDBuild.core.proxy.CMProxyConstants.RECEIVED]);
+			return (record.get(CMDBuild.core.proxy.CMProxyConstants.STATUS) == CMDBuild.core.proxy.CMProxyConstants.RECEIVED);
 		},
 
 		/**
@@ -381,6 +364,19 @@ _debug('removeRecord regenerationTrafficLightArray', regenerationTrafficLightArr
 					CMDBuild.LoadMask.get().hide();
 				}
 			});
+		},
+
+		/**
+		 * Updates all draft e-mail to outgoing state
+		 */
+		sendAll: function() {
+			var sendAllTrafficLightArray = [];
+
+			Ext.Array.forEach(this.getDraftEmails(), function(item, index, allItems) {
+				item.set(CMDBuild.core.proxy.CMProxyConstants.STATUS, CMDBuild.core.proxy.CMProxyConstants.OUTGOING);
+
+				this.editRecord(item, sendAllTrafficLightArray);
+			}, this);
 		},
 
 		/**

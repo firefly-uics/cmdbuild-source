@@ -40,6 +40,24 @@
 			});
 
 			this.callParent(arguments);
+		},
+
+		/**
+		 * Extra buttons to add on widget window
+		 *
+		 * @return {Array}
+		 */
+		getExtraButtons: function() {
+			return [
+				Ext.create('Ext.button.Button', {
+					text: '@@ Send all',
+					scope: this,
+
+					handler: function() {
+						this.delegate.cmOn('onSendAllButtonClick');
+					}
+				})
+			];
 		}
 	});
 

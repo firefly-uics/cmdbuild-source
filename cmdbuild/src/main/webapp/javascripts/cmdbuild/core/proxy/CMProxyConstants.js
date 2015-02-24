@@ -163,6 +163,7 @@
 		NO_SUBJECT_PREFIX: 'noSubjectPrefix',
 		OPERATIONS: 'operations',
 		ORACLE: 'oracle',
+		OUTGOING: 'outgoing',
 		OUTPUT: 'output',
 		PARENT: 'parent',
 		PARSING_ACTIVE: 'parsingActive',

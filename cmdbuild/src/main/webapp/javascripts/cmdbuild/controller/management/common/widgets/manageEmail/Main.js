@@ -173,6 +173,9 @@ _debug('this.widgetConfTemplates', this.widgetConfTemplates);
 				case 'onGlobalRegenerationButtonClick':
 					return this.onGlobalRegenerationButtonClick();
 
+				case 'onSendAllButtonClick':
+					return this.onSendAllButtonClick();
+
 				default: {
 					if (!Ext.isEmpty(this.parentDelegate))
 						return this.parentDelegate.cmOn(name, param, callBack);
@@ -689,6 +692,10 @@ _debug('resolveTemplateCondition templateObject.getData()', templateObject.getDa
 			}
 
 			return response;
+		},
+
+		onSendAllButtonClick: function() {
+			this.controllerGrid.sendAll();
 		},
 
 		/**
