@@ -32,12 +32,12 @@
 
 		buttonAlign: 'center',
 		layout: 'border',
-		title: CMDBuild.Translation.choose_attachment_from_db,
+		title: CMDBuild.Translation.chooseAttachmentFromDb,
 
 		initComponent: function() {
 			this.classComboBox = Ext.create('Ext.form.field.ComboBox', {
 				labelWidth: CMDBuild.LABEL_WIDTH,
-				fieldLabel: CMDBuild.Translation.select_a_class,
+				fieldLabel: CMDBuild.Translation.selectAClass,
 				labelAlign: 'right',
 				valueField: CMDBuild.core.proxy.CMProxyConstants.ID,
 				displayField: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
