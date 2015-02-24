@@ -2,6 +2,7 @@ package org.cmdbuild.model.widget;
 
 import static com.google.common.base.Predicates.or;
 import static com.google.common.collect.FluentIterable.from;
+import static com.google.common.collect.Lists.newArrayList;
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 import static org.cmdbuild.logic.email.EmailLogic.Statuses.draft;
 import static org.cmdbuild.logic.email.EmailLogic.Statuses.outgoing;
@@ -11,9 +12,11 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+import org.cmdbuild.logic.email.EmailAttachmentsLogic;
 import org.cmdbuild.logic.email.EmailLogic;
 import org.cmdbuild.logic.email.EmailLogic.Email;
 import org.cmdbuild.logic.email.EmailLogic.ForwardingEmail;
@@ -21,7 +24,7 @@ import org.cmdbuild.logic.email.EmailLogic.Status;
 import org.cmdbuild.model.AbstractEmail;
 import org.cmdbuild.workflow.CMActivityInstance;
 
-import static com.google.common.collect.Lists.*;
+import static com.google.common.collect.Maps.*;
 
 public class ManageEmail extends Widget {
 
@@ -103,13 +106,15 @@ public class ManageEmail extends Widget {
 	private boolean readOnly;
 
 	private final EmailLogic emailLogic;
+	private final EmailAttachmentsLogic emailAttachmentsLogic;
 
 	private Collection<EmailTemplate> templates;
 	private boolean noSubjectPrefix;
 
-	public ManageEmail(final EmailLogic emailLogic) {
+	public ManageEmail(final EmailLogic emailLogic, final EmailAttachmentsLogic emailAttachmentsLogic) {
 		super();
 		this.emailLogic = emailLogic;
+		this.emailAttachmentsLogic = emailAttachmentsLogic;
 		this.templates = newArrayList();
 	}
 
@@ -154,11 +159,11 @@ public class ManageEmail extends Widget {
 		final Long submittedInstanceId = Number.class.cast(inputMap.get(DEFAULT_SUBMISSION_PARAM)).longValue();
 		final Iterable<Email> emails = from(emailLogic.readAll(submittedInstanceId)).filter(statusIs(draft()));
 		final Collection<Email> toBeDeleted = newArrayList();
-		final Collection<Email> toBeCreated = newArrayList();
+		final Map<Email, Email> toBeCreatedWithOriginal = newHashMap();
 		for (final Email email : emails) {
 			if (email.isTemporary()) {
 				toBeDeleted.add(email);
-				toBeCreated.add(new ForwardingEmail() {
+				toBeCreatedWithOriginal.put(new ForwardingEmail() {
 
 					@Override
 					protected Email delegate() {
@@ -175,16 +180,24 @@ public class ManageEmail extends Widget {
 						return instanceId;
 					}
 
-				});
+				}, email);
 			}
 		}
 		for (final Email email : toBeDeleted) {
 			emailLogic.delete(email);
+			for (final EmailAttachmentsLogic.Attachment attachment : emailAttachmentsLogic.readAll(email)) {
+				emailAttachmentsLogic.delete(email, attachment);
+			}
 		}
-		for (final Email email : toBeCreated) {
-			emailLogic.create(email);
+		for (final Entry<Email, Email> entry : toBeCreatedWithOriginal.entrySet()) {
+			final Email toBeCreated = entry.getKey();
+			final Email original = entry.getValue();
+			emailLogic.create(toBeCreated);
+			for (final EmailAttachmentsLogic.Attachment attachment : emailAttachmentsLogic.readAll(original)) {
+				emailAttachmentsLogic.copy(toBeCreated, attachment);
+				emailAttachmentsLogic.delete(original, attachment);
+			}
 		}
-		// TODO attachments
 	}
 
 	@Override

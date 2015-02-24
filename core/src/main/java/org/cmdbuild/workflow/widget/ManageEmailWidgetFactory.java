@@ -16,6 +16,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.cmdbuild.logger.Log;
+import org.cmdbuild.logic.email.EmailAttachmentsLogic;
 import org.cmdbuild.logic.email.EmailLogic;
 import org.cmdbuild.logic.email.EmailTemplateLogic;
 import org.cmdbuild.model.widget.ManageEmail;
@@ -55,12 +56,15 @@ public class ManageEmailWidgetFactory extends ValuePairWidgetFactory {
 	private final static String WIDGET_NAME = "manageEmail";
 
 	private final EmailLogic emailLogic;
+	private final EmailAttachmentsLogic emailAttachmentsLogic;
 	private final EmailTemplateLogic emailTemplateLogic;
 
 	public ManageEmailWidgetFactory(final TemplateRepository templateRespository, final Notifier notifier,
-			final EmailLogic emailLogic, final EmailTemplateLogic emailTemplateLogic) {
+			final EmailLogic emailLogic, final EmailAttachmentsLogic emailAttachmentsLogic,
+			final EmailTemplateLogic emailTemplateLogic) {
 		super(templateRespository, notifier);
 		this.emailLogic = emailLogic;
+		this.emailAttachmentsLogic = emailAttachmentsLogic;
 		this.emailTemplateLogic = emailTemplateLogic;
 	}
 
@@ -182,7 +186,7 @@ public class ManageEmailWidgetFactory extends ValuePairWidgetFactory {
 		}
 		managedParameters.addAll(promptSynchronizations.keySet());
 
-		final ManageEmail widget = new ManageEmail(emailLogic);
+		final ManageEmail widget = new ManageEmail(emailLogic, emailAttachmentsLogic);
 		widget.setTemplates(transformEntries(emailTemplatesByName,
 				new EntryTransformer<String, EmailTemplate, EmailTemplate>() {
 

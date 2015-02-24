@@ -27,6 +27,7 @@ import org.cmdbuild.dms.StoredDocument;
 import org.cmdbuild.dms.exception.DmsError;
 import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.exception.DmsException;
+import org.cmdbuild.logic.email.EmailLogic.Email;
 
 import com.google.common.base.Function;
 
@@ -77,15 +78,15 @@ public class DefaultEmailAttachmentsLogic implements EmailAttachmentsLogic {
 	}
 
 	@Override
-	public void upload(final Long emailId, final boolean temporary, final DataHandler dataHandler) throws CMDBException {
+	public void upload(final Email email, final DataHandler dataHandler) throws CMDBException {
 		InputStream inputStream = null;
 		try {
 			inputStream = dataHandler.getInputStream();
-			final StorableDocument document = documentCreator(temporary) //
+			final StorableDocument document = documentCreator(email.isTemporary()) //
 					.createStorableDocument( //
 							operationUser.getAuthenticatedUser().getUsername(), //
 							EMAIL_CLASS_NAME, //
-							emailId, //
+							email.getId(), //
 							inputStream, //
 							dataHandler.getName(), //
 							dmsConfiguration.getLookupNameForAttachments(), //
@@ -100,10 +101,10 @@ public class DefaultEmailAttachmentsLogic implements EmailAttachmentsLogic {
 	}
 
 	@Override
-	public void copy(final Long emailId, final boolean temporary, final Attachment attachment) throws CMDBException {
+	public void copy(final Email email, final Attachment attachment) throws CMDBException {
 		try {
-			final DocumentSearch destination = documentCreator(temporary) //
-					.createDocumentSearch(EMAIL_CLASS_NAME, emailId);
+			final DocumentSearch destination = documentCreator(email.isTemporary()) //
+					.createDocumentSearch(EMAIL_CLASS_NAME, email.getId());
 			dmsService.create(destination);
 			final CMClass sourceClass = dataView.findClass(attachment.getClassName());
 			final DocumentSearch source = documentCreatorFactory.create(sourceClass) //
@@ -131,10 +132,10 @@ public class DefaultEmailAttachmentsLogic implements EmailAttachmentsLogic {
 	}
 
 	@Override
-	public Iterable<Attachment> readAll(final Long emailId, final boolean temporary) throws CMDBException {
+	public Iterable<Attachment> readAll(final Email email) throws CMDBException {
 		try {
-			final DocumentSearch destination = documentCreator(temporary) //
-					.createDocumentSearch(EMAIL_CLASS_NAME, emailId);
+			final DocumentSearch destination = documentCreator(email.isTemporary()) //
+					.createDocumentSearch(EMAIL_CLASS_NAME, email.getId());
 			dmsService.create(destination);
 			final List<StoredDocument> documents = dmsService.search(destination);
 			return from(documents) //
@@ -144,7 +145,7 @@ public class DefaultEmailAttachmentsLogic implements EmailAttachmentsLogic {
 						public Attachment apply(final StoredDocument input) {
 							return AttachmentImpl.newInstance() //
 									.withClassName(EMAIL_CLASS_NAME) //
-									.withCardId(emailId) //
+									.withCardId(email.getId()) //
 									.withFileName(input.getName()) //
 									.build();
 						}
@@ -158,10 +159,10 @@ public class DefaultEmailAttachmentsLogic implements EmailAttachmentsLogic {
 	}
 
 	@Override
-	public void delete(final Long emailId, final boolean temporary, final String fileName) throws CMDBException {
+	public void delete(final Email email, final Attachment attachment) throws CMDBException {
 		try {
-			final DocumentDelete document = documentCreator(temporary) //
-					.createDocumentDelete(EMAIL_CLASS_NAME, emailId, fileName);
+			final DocumentDelete document = documentCreator(email.isTemporary()) //
+					.createDocumentDelete(EMAIL_CLASS_NAME, email.getId(), attachment.getFileName());
 			dmsService.delete(document);
 		} catch (final Exception e) {
 			logger.error("error deleting document");
