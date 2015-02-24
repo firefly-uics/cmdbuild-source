@@ -6,6 +6,7 @@ import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.logic.Logic;
 import org.cmdbuild.logic.email.EmailLogic.Email;
 
+import com.google.common.base.Optional;
 import com.google.common.collect.ForwardingObject;
 
 public interface EmailAttachmentsLogic extends Logic {
@@ -46,7 +47,11 @@ public interface EmailAttachmentsLogic extends Logic {
 
 	void copy(Email email, Attachment attachment) throws CMDBException;
 
+	void copyAll(Email source, Email destination) throws CMDBException;
+
 	Iterable<Attachment> readAll(Email email) throws CMDBException;
+
+	Optional<DataHandler> read(Email email, Attachment attachment) throws CMDBException;
 
 	void delete(Email email, Attachment attachment) throws CMDBException;
 
