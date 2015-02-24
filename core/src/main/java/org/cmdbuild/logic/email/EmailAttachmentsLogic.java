@@ -4,6 +4,7 @@ import javax.activation.DataHandler;
 
 import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.logic.Logic;
+import org.cmdbuild.logic.email.EmailLogic.Email;
 
 import com.google.common.collect.ForwardingObject;
 
@@ -41,12 +42,12 @@ public interface EmailAttachmentsLogic extends Logic {
 
 	}
 
-	void upload(Long emailId, boolean temporary, DataHandler dataHandler) throws CMDBException;
+	void upload(Email email, DataHandler dataHandler) throws CMDBException;
 
-	void copy(Long emailId, boolean temporary, Attachment attachment) throws CMDBException;
+	void copy(Email email, Attachment attachment) throws CMDBException;
 
-	Iterable<Attachment> readAll(Long emailId, boolean temporary) throws CMDBException;
+	Iterable<Attachment> readAll(Email email) throws CMDBException;
 
-	void delete(Long emailId, boolean temporary, String fileName) throws CMDBException;
+	void delete(Email email, Attachment attachment) throws CMDBException;
 
 }

@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.cmdbuild.dao.entry.CMValueSet;
+import org.cmdbuild.logic.email.EmailAttachmentsLogic;
 import org.cmdbuild.logic.email.EmailLogic;
 import org.cmdbuild.logic.email.EmailTemplateLogic;
 import org.cmdbuild.model.widget.ManageEmail;
@@ -28,6 +29,7 @@ import org.junit.Test;
 public class ManageEmailWidgetFactoryTest {
 
 	private static final EmailLogic UNUSED_EMAIL_LOGIC = null;
+	private static final EmailAttachmentsLogic UNUSED_EMAIL_ATTACHMENTS_LOGIC = null;
 
 	private ManageEmailWidgetFactory factory;
 
@@ -40,6 +42,7 @@ public class ManageEmailWidgetFactoryTest {
 				mock(TemplateRepository.class), //
 				mock(Notifier.class), //
 				UNUSED_EMAIL_LOGIC, //
+				UNUSED_EMAIL_ATTACHMENTS_LOGIC, //
 				emailTemplateLogic);
 	}
 

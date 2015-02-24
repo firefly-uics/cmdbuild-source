@@ -1,6 +1,7 @@
 package org.cmdbuild.servlets.json.email;
 
 import org.cmdbuild.logic.email.EmailAttachmentsLogic;
+import org.cmdbuild.logic.email.EmailImpl;
 import org.cmdbuild.logic.email.EmailAttachmentsLogic.*;
 
 import static com.google.common.collect.FluentIterable.*;
@@ -64,7 +65,12 @@ public class Attachment extends JSONBaseWithSpringContext {
 			@Parameter(value = TEMPORARY, required = false) final boolean temporary, //
 			@Parameter(value = FILE) final FileItem file //
 	) throws Exception {
-		emailAttachmentsLogic().upload(emailId, temporary, dataHandlerOf(file));
+		emailAttachmentsLogic().upload( //
+				EmailImpl.newInstance() //
+						.withId(emailId) //
+						.withTemporary(temporary) //
+						.build(), //
+				dataHandlerOf(file));
 		return JsonResponse.success(file.getName());
 	}
 
@@ -80,11 +86,16 @@ public class Attachment extends JSONBaseWithSpringContext {
 			@Parameter(value = CARD_ID) final Long cardId, //
 			@Parameter(value = FILE_NAME) final String fileName //
 	) throws Exception {
-		emailAttachmentsLogic().copy(emailId, temporary, AttachmentImpl.newInstance() //
-				.withClassName(className) //
-				.withCardId(cardId) //
-				.withFileName(fileName) //
-				.build());
+		emailAttachmentsLogic().copy( //
+				EmailImpl.newInstance() //
+						.withId(emailId) //
+						.withTemporary(temporary) //
+						.build(), //
+				AttachmentImpl.newInstance() //
+						.withClassName(className) //
+						.withCardId(cardId) //
+						.withFileName(fileName) //
+						.build());
 		return JsonResponse.success(null);
 	}
 
@@ -93,8 +104,11 @@ public class Attachment extends JSONBaseWithSpringContext {
 			@Parameter(value = EMAIL_ID) final Long emailId, //
 			@Parameter(value = TEMPORARY, required = false) final boolean temporary //
 	) throws Exception {
-		final Iterable<EmailAttachmentsLogic.Attachment> attachments = emailAttachmentsLogic().readAll(emailId,
-				temporary);
+		final Iterable<EmailAttachmentsLogic.Attachment> attachments = emailAttachmentsLogic().readAll(
+				EmailImpl.newInstance() //
+						.withId(emailId) //
+						.withTemporary(temporary) //
+						.build());
 		return JsonResponse.success(from(attachments) //
 				.transform(new Function<EmailAttachmentsLogic.Attachment, JsonAttachment>() {
 
@@ -112,7 +126,14 @@ public class Attachment extends JSONBaseWithSpringContext {
 			@Parameter(value = TEMPORARY, required = false) final boolean temporary, //
 			@Parameter(value = FILE_NAME) final String fileName //
 	) {
-		emailAttachmentsLogic().delete(emailId, temporary, fileName);
+		emailAttachmentsLogic().delete( //
+				EmailImpl.newInstance() //
+						.withId(emailId) //
+						.withTemporary(temporary) //
+						.build(), //
+				AttachmentImpl.newInstance() //
+						.withFileName(fileName) //
+						.build());
 		return JsonResponse.success(null);
 	}
 
