@@ -121,33 +121,35 @@
 					}
 				});
 
-				// Build controllers
-				this.attachmentsController = Ext.create('CMDBuild.controller.management.common.widgets.manageEmail.Attachments', {
-					parentDelegate: this,
-					record: this.record,
-					view: this.view.attachmentContainer
-				});
+				if (CMDBuild.Config.dms.enabled == 'true') { // TODO: use a model for CMDBuild.Config to convert attributes from string
+					// Build attachments controller
+					this.attachmentsController = Ext.create('CMDBuild.controller.management.common.widgets.manageEmail.Attachments', {
+						parentDelegate: this,
+						record: this.record,
+						view: this.view.attachmentContainer
+					});
 
-				// Get all email attachments
-				var params = {};
-				params[CMDBuild.core.proxy.CMProxyConstants.EMAIL_ID] = this.record.get(CMDBuild.core.proxy.CMProxyConstants.ID);
-				params[CMDBuild.core.proxy.CMProxyConstants.TEMPORARY] = this.record.get(CMDBuild.core.proxy.CMProxyConstants.TEMPORARY);
+					// Get all email attachments
+					var params = {};
+					params[CMDBuild.core.proxy.CMProxyConstants.EMAIL_ID] = this.record.get(CMDBuild.core.proxy.CMProxyConstants.ID);
+					params[CMDBuild.core.proxy.CMProxyConstants.TEMPORARY] = this.record.get(CMDBuild.core.proxy.CMProxyConstants.TEMPORARY);
 
-				this.view.setLoading(true);
-				CMDBuild.core.proxy.widgets.ManageEmail.attachmentGetAll({
-					params: params,
-					scope: this,
-					success: function(response, options, decodedResponse) {
-_debug('decodedResponse', decodedResponse);
-						Ext.Array.forEach(decodedResponse.response, function(item, index, allItems) {
-							if(!Ext.Object.isEmpty(item))
-								this.attachmentsController.attachmentAddPanel(item[CMDBuild.core.proxy.CMProxyConstants.FILE_NAME]);
-						}, this);
-					},
-					callback: function(records, operation, success) {
-						this.view.setLoading(false);
-					}
-				});
+					this.view.setLoading(true);
+					CMDBuild.core.proxy.widgets.ManageEmail.attachmentGetAll({
+						params: params,
+						scope: this,
+						success: function(response, options, decodedResponse) {
+							_debug('decodedResponse', decodedResponse);
+							Ext.Array.forEach(decodedResponse.response, function(item, index, allItems) {
+								if(!Ext.Object.isEmpty(item))
+									this.attachmentsController.attachmentAddPanel(item[CMDBuild.core.proxy.CMProxyConstants.FILE_NAME]);
+							}, this);
+						},
+						callback: function(records, operation, success) {
+							this.view.setLoading(false);
+						}
+					});
+				}
 
 				// If email has template enable keep-synch checkbox
 				if (!Ext.isEmpty(this.record.get(CMDBuild.core.proxy.CMProxyConstants.TEMPLATE)) && this.windowMode != 'view')
@@ -284,13 +286,15 @@ _debug('### onEmailWindowConfirmButtonClick', this.record);
 			// Validate before save
 			if (this.validate(this.view.formPanel)) {
 				var formValues = this.view.formPanel.getForm().getValues();
-				var attachments = this.attachmentsController.getAttachmentsNames();
 _debug('formValues', formValues);
 				// Apply formValues to record object
 				for (var key in formValues)
 					this.record.set(key, formValues[key]);
 
-				this.record.set(CMDBuild.core.proxy.CMProxyConstants.ATTACHMENTS, attachments);
+				// Setup attachments only if DMS is enabled
+				if (CMDBuild.Config.dms.enabled == 'true') // TODO: use a model for CMDBuild.Config to convert attributes from string
+					this.record.set(CMDBuild.core.proxy.CMProxyConstants.ATTACHMENTS, this.attachmentsController.getAttachmentsNames());
+
 				this.record.set(CMDBuild.core.proxy.CMProxyConstants.ACTIVITY_ID, this.cmOn('getWidgetController').getActivityId());
 _debug('this.record', this.record);
 				if (Ext.isEmpty(this.record.get(CMDBuild.core.proxy.CMProxyConstants.ID))) {

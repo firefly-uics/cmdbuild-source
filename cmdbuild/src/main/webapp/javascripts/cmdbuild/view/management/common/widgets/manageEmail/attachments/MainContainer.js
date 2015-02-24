@@ -31,19 +31,21 @@
 		},
 
 		initComponent: function() {
-			this.attachmentButtonsContainer = Ext.create('CMDBuild.view.management.common.widgets.manageEmail.attachments.ButtonsContainer', {
-				delegate: this.delegate,
-				readOnly: this.readOnly
-			});
+			if (CMDBuild.Config.dms.enabled == 'true') { // TODO: use a model for CMDBuild.Config to convert attributes from string
+				this.attachmentButtonsContainer = Ext.create('CMDBuild.view.management.common.widgets.manageEmail.attachments.ButtonsContainer', {
+					delegate: this.delegate,
+					readOnly: this.readOnly
+				});
 
-			this.attachmentPanelsContainer = Ext.create('Ext.container.Container', {
-				autoScroll: true,
-				flex: 1
-			});
+				this.attachmentPanelsContainer = Ext.create('Ext.container.Container', {
+					autoScroll: true,
+					flex: 1
+				});
 
-			Ext.apply(this, {
-				items: [this.attachmentButtonsContainer, this.attachmentPanelsContainer],
-			});
+				Ext.apply(this, {
+					items: [this.attachmentButtonsContainer, this.attachmentPanelsContainer],
+				});
+			}
 
 			this.callParent(arguments);
 		},
