@@ -54,6 +54,9 @@
 		 */
 		cmOn: function(name, param, callBack) {
 			switch (name) {
+				case 'onPickerWindowAttachmentGridCheckChange':
+					return this.onPickerWindowAttachmentGridCheckChange(param.checked, param.fileName);
+
 				case 'onPickerWindowCardGridStoreLoad':
 					return this.onPickerWindowCardGridStoreLoad();
 
@@ -90,6 +93,18 @@
 			});
 		},
 
+		/**
+		 * @param {Boolean} checked
+		 * @param {String} fileName
+		 */
+		onPickerWindowAttachmentGridCheckChange: function(checked, fileName) {
+			if (checked) {
+				this.view.state.check(fileName);
+			} else {
+				this.view.state.uncheck(fileName);
+			}
+		},
+
 		onPickerWindowCardGridStoreLoad: function() {
 			this.view.attachmentGrid.getStore().removeAll();
 		},
@@ -119,14 +134,12 @@ _debug('onCardGridSelect record', record);
 			this.view.destroy();
 		},
 
-		onPickerWindowConfirmButtonClick: function() {
+		onPickerWindowConfirmButtonClick: function() { // TODO controllare con allegati funzionanti
 			var data = this.view.state.getData();
 _debug('AttachPicker controller', this);
 			if (!Ext.isEmpty(data)) {
-				var encodedAttachments = Ext.JSON.encode(data);
-
 				var params = {};
-				params[CMDBuild.core.proxy.CMProxyConstants.ATTACHMENTS] = encodedAttachments;
+				params[CMDBuild.core.proxy.CMProxyConstants.ATTACHMENTS] = Ext.JSON.encode(data);
 
 				CMDBuild.LoadMask.get().show();
 				CMDBuild.core.proxy.widgets.ManageEmail.attachmentCopy({

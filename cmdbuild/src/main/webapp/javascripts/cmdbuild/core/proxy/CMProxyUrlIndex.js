@@ -252,15 +252,7 @@
 				post: 'services/json/email/email/create',
 				put: 'services/json/email/email/update',
 
-				getStore: 'services/json/email/email/readall',
-
-				// TODO: future refactor
-				addAttachmentFromExistingEmail: 'services/json/email/attachment/uploadattachmentfromexistingemail',
-				addAttachmentFromNewEmail: 'services/json/email/attachment/uploadattachmentfromnewemail',
-				copyAttachmentFromCardForExistingEmail: 'services/json/email/attachment/copyattachmentsfromcardforexistingemail',
-				copyAttachmentFromCardForNewEmail: 'services/json/email/attachment/copyattachmentsfromcardfornewemail',
-				removeAttachmentFromExistingEmail: 'services/json/email/attachment/deleteattachmentfromexistingemail',
-				removeAttachmentFromNewEmail: 'services/json/email/attachment/deleteattachmentfromnewemail',
+				getStore: 'services/json/email/email/readall'
 			}
 		},
 

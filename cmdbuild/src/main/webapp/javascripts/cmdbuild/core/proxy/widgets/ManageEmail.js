@@ -169,32 +169,6 @@
 				success: parameters.success || Ext.emptyFn(),
 				callback: parameters.callback || Ext.emptyFn()
 			});
-		},
-
-		// TODO: future refactor
-
-		/**
-		 * @param {Object} parameters
-		 */
-		copyAttachmentFromCardForExistingEmail: function(parameters) {
-			CMDBuild.Ajax.request({
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.widgets.manageEmail.copyAttachmentFromCardForExistingEmail,
-				method: 'POST',
-				params: parameters.params,
-				success: parameters.success
-			});
-		},
-
-		/**
-		 * @param {Object} parameters
-		 */
-		copyAttachmentFromCardForNewEmail: function(parameters) {
-			CMDBuild.Ajax.request({
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.widgets.manageEmail.copyAttachmentFromCardForNewEmail,
-				method: 'POST',
-				params: parameters.params,
-				success: parameters.success
-			});
 		}
 	});
 
