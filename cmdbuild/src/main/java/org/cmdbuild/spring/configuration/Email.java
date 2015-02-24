@@ -16,6 +16,8 @@ import org.cmdbuild.data.store.email.EmailConverter;
 import org.cmdbuild.data.store.email.EmailTemplateStorableConverter;
 import org.cmdbuild.data.store.email.ExtendedEmailTemplate;
 import org.cmdbuild.data.store.email.ExtendedEmailTemplateStore;
+import org.cmdbuild.dms.DmsConfiguration;
+import org.cmdbuild.logic.email.ConfigurationAwareEmailAttachmentsLogic;
 import org.cmdbuild.logic.email.DefaultEmailAccountLogic;
 import org.cmdbuild.logic.email.DefaultEmailAttachmentsLogic;
 import org.cmdbuild.logic.email.DefaultEmailLogic;
@@ -46,6 +48,9 @@ public class Email {
 
 	@Autowired
 	private Dms dms;
+
+	@Autowired
+	private DmsConfiguration dmsConfiguration;
 
 	@Autowired
 	private Notifier notifier;
@@ -114,12 +119,14 @@ public class Email {
 	@Bean
 	@Scope(PROTOTYPE)
 	public EmailAttachmentsLogic emailAttachmentsLogic() {
-		return new DefaultEmailAttachmentsLogic( //
-				data.systemDataView(), //
-				properties.dmsProperties(), //
-				dms.dmsService(), //
-				dms.documentCreatorFactory(), //
-				userStore.getUser());
+		return new ConfigurationAwareEmailAttachmentsLogic( //
+				new DefaultEmailAttachmentsLogic( //
+						data.systemDataView(), //
+						properties.dmsProperties(), //
+						dms.dmsService(), //
+						dms.documentCreatorFactory(), //
+						userStore.getUser()), //
+				dmsConfiguration);
 	}
 
 	@Bean
