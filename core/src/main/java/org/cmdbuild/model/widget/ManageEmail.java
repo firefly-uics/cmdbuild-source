@@ -3,6 +3,7 @@ package org.cmdbuild.model.widget;
 import static com.google.common.base.Predicates.or;
 import static com.google.common.collect.FluentIterable.from;
 import static com.google.common.collect.Lists.newArrayList;
+import static com.google.common.collect.Maps.newHashMap;
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 import static org.cmdbuild.logic.email.EmailLogic.Statuses.draft;
 import static org.cmdbuild.logic.email.EmailLogic.Statuses.outgoing;
@@ -23,8 +24,6 @@ import org.cmdbuild.logic.email.EmailLogic.ForwardingEmail;
 import org.cmdbuild.logic.email.EmailLogic.Status;
 import org.cmdbuild.model.AbstractEmail;
 import org.cmdbuild.workflow.CMActivityInstance;
-
-import static com.google.common.collect.Maps.*;
 
 public class ManageEmail extends Widget {
 
@@ -185,16 +184,25 @@ public class ManageEmail extends Widget {
 		}
 		for (final Email email : toBeDeleted) {
 			emailLogic.delete(email);
-			for (final EmailAttachmentsLogic.Attachment attachment : emailAttachmentsLogic.readAll(email)) {
-				emailAttachmentsLogic.delete(email, attachment);
-			}
 		}
 		for (final Entry<Email, Email> entry : toBeCreatedWithOriginal.entrySet()) {
 			final Email toBeCreated = entry.getKey();
 			final Email original = entry.getValue();
-			emailLogic.create(toBeCreated);
+			final Long createdId = emailLogic.create(toBeCreated);
+			emailAttachmentsLogic.copyAll(original, new ForwardingEmail() {
+
+				@Override
+				protected Email delegate() {
+					return toBeCreated;
+				}
+
+				@Override
+				public Long getId() {
+					return createdId;
+				}
+
+			});
 			for (final EmailAttachmentsLogic.Attachment attachment : emailAttachmentsLogic.readAll(original)) {
-				emailAttachmentsLogic.copy(toBeCreated, attachment);
 				emailAttachmentsLogic.delete(original, attachment);
 			}
 		}

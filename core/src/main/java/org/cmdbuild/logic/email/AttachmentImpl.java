@@ -1,5 +1,10 @@
 package org.cmdbuild.logic.email;
 
+import static org.apache.commons.lang3.builder.ToStringStyle.SHORT_PREFIX_STYLE;
+
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.cmdbuild.logic.email.EmailAttachmentsLogic.Attachment;
 
 public class AttachmentImpl implements Attachment {
@@ -19,24 +24,24 @@ public class AttachmentImpl implements Attachment {
 			return new AttachmentImpl(this);
 		}
 
-		public AttachmentImpl.Builder withClassName(final String className) {
+		public Builder withClassName(final String className) {
 			this.className = className;
 			return this;
 		}
 
-		public AttachmentImpl.Builder withCardId(final Long cardId) {
+		public Builder withCardId(final Long cardId) {
 			this.cardId = cardId;
 			return this;
 		}
 
-		public AttachmentImpl.Builder withFileName(final String fileName) {
+		public Builder withFileName(final String fileName) {
 			this.fileName = fileName;
 			return this;
 		}
 
 	}
 
-	public static AttachmentImpl.Builder newInstance() {
+	public static Builder newInstance() {
 		return new Builder();
 	}
 
@@ -63,6 +68,36 @@ public class AttachmentImpl implements Attachment {
 	@Override
 	public String getFileName() {
 		return fileName;
+	}
+
+	@Override
+	public boolean equals(final Object obj) {
+		if (obj == this) {
+			return true;
+		}
+		if (!(obj instanceof Attachment)) {
+			return false;
+		}
+		final Attachment other = Attachment.class.cast(obj);
+		return new EqualsBuilder() //
+				.append(this.getClassName(), other.getClassName()) //
+				.append(this.getCardId(), other.getCardId()) //
+				.append(this.getFileName(), other.getFileName()) //
+				.isEquals();
+	}
+
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder() //
+				.append(className) //
+				.append(cardId) //
+				.append(fileName) //
+				.toHashCode();
+	}
+
+	@Override
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this, SHORT_PREFIX_STYLE);
 	}
 
 }

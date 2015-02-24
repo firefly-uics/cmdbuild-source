@@ -131,7 +131,8 @@ public class Email {
 				emailServiceFactory(), //
 				emailAccountStore(), //
 				subjectHandler(), //
-				notifier);
+				notifier, 
+				emailAttachmentsLogic());
 	}
 
 	@Bean

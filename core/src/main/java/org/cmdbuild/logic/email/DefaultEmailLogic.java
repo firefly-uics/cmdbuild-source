@@ -4,6 +4,7 @@ import static com.google.common.base.Suppliers.memoize;
 import static com.google.common.collect.FluentIterable.from;
 import static com.google.common.collect.Iterables.concat;
 import static com.google.common.collect.Iterables.contains;
+import static com.google.common.collect.Maps.newHashMap;
 import static java.util.Arrays.asList;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
@@ -16,13 +17,20 @@ import static org.cmdbuild.logic.email.EmailLogic.Statuses.sent;
 import static org.cmdbuild.services.email.Predicates.isDefault;
 import static org.cmdbuild.services.email.Predicates.named;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URL;
-import java.util.Collections;
 import java.util.Map;
 import java.util.UUID;
 
+import javax.activation.DataHandler;
+import javax.activation.DataSource;
+
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.Validate;
+import org.cmdbuild.common.utils.TempDataSource;
 import org.cmdbuild.common.utils.UnsupportedProxyFactory;
 import org.cmdbuild.data.store.Storable;
 import org.cmdbuild.data.store.Store;
@@ -31,6 +39,7 @@ import org.cmdbuild.data.store.email.EmailOwnerGroupable;
 import org.cmdbuild.data.store.email.EmailStatus;
 import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.exception.CMDBWorkflowException;
+import org.cmdbuild.logic.email.EmailAttachmentsLogic.Attachment;
 import org.cmdbuild.notification.Notifier;
 import org.cmdbuild.services.email.EmailAccount;
 import org.cmdbuild.services.email.EmailService;
@@ -39,6 +48,7 @@ import org.cmdbuild.services.email.ForwardingEmailService;
 import org.cmdbuild.services.email.SubjectHandler;
 
 import com.google.common.base.Function;
+import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
 
@@ -215,21 +225,24 @@ public class DefaultEmailLogic implements EmailLogic {
 	private final Store<EmailAccount> emailAccountStore;
 	private final SubjectHandler subjectHandler;
 	private final Notifier notifier;
+	private final EmailAttachmentsLogic emailAttachmentsLogic;
 
 	public DefaultEmailLogic( //
 			final Store<org.cmdbuild.data.store.email.Email> emailStore, //
-			final Store<org.cmdbuild.data.store.email.Email> store, //
+			final Store<org.cmdbuild.data.store.email.Email> temporaryEmailStore, //
 			final EmailServiceFactory emailServiceFactory, //
 			final Store<EmailAccount> emailAccountStore, //
 			final SubjectHandler subjectHandler, //
-			final Notifier notifier //
+			final Notifier notifier, //
+			final EmailAttachmentsLogic emailAttachmentsLogic //
 	) {
 		this.emailStore = emailStore;
+		this.temporaryEmailStore = temporaryEmailStore;
 		this.emailServiceFactory = emailServiceFactory;
 		this.emailAccountStore = emailAccountStore;
 		this.subjectHandler = subjectHandler;
 		this.notifier = notifier;
-		this.temporaryEmailStore = store;
+		this.emailAttachmentsLogic = emailAttachmentsLogic;
 	}
 
 	@Override
@@ -403,9 +416,26 @@ public class DefaultEmailLogic implements EmailLogic {
 		return accountSupplier;
 	}
 
-	private Map<URL, String> attachmentsOf(final Email read) {
-		// TODO Auto-generated method stub
-		return Collections.emptyMap();
+	private Map<URL, String> attachmentsOf(final Email read) throws IOException {
+		final Map<URL, String> attachments = newHashMap();
+		for (final Attachment attachment : emailAttachmentsLogic.readAll(read)) {
+			final Optional<DataHandler> dataHandler = emailAttachmentsLogic.read(read, attachment);
+			if (dataHandler.isPresent()) {
+				final TempDataSource tempDataSource = TempDataSource.create(attachment.getFileName());
+				copy(dataHandler.get(), tempDataSource);
+				final URL url = tempDataSource.getFile().toURI().toURL();
+				attachments.put(url, attachment.getFileName());
+			}
+		}
+		return attachments;
+	}
+
+	private void copy(final DataHandler from, final DataSource to) throws IOException {
+		final InputStream inputStream = from.getInputStream();
+		final OutputStream outputStream = to.getOutputStream();
+		IOUtils.copy(inputStream, outputStream);
+		IOUtils.closeQuietly(inputStream);
+		IOUtils.closeQuietly(outputStream);
 	}
 
 	private EmailService emailService(final Long processCardId, final Supplier<EmailAccount> emailAccountSupplier) {

@@ -20,6 +20,7 @@ import org.cmdbuild.dms.DmsService;
 import org.cmdbuild.dms.DocumentCreator;
 import org.cmdbuild.dms.DocumentCreatorFactory;
 import org.cmdbuild.dms.DocumentDelete;
+import org.cmdbuild.dms.DocumentDownload;
 import org.cmdbuild.dms.DocumentSearch;
 import org.cmdbuild.dms.ForwardingDmsService;
 import org.cmdbuild.dms.StorableDocument;
@@ -30,6 +31,7 @@ import org.cmdbuild.exception.DmsException;
 import org.cmdbuild.logic.email.EmailLogic.Email;
 
 import com.google.common.base.Function;
+import com.google.common.base.Optional;
 
 public class DefaultEmailAttachmentsLogic implements EmailAttachmentsLogic {
 
@@ -103,19 +105,36 @@ public class DefaultEmailAttachmentsLogic implements EmailAttachmentsLogic {
 	@Override
 	public void copy(final Email email, final Attachment attachment) throws CMDBException {
 		try {
-			final DocumentSearch destination = documentCreator(email.isTemporary()) //
+			final DocumentSearch _destination = documentCreator(email.isTemporary()) //
 					.createDocumentSearch(EMAIL_CLASS_NAME, email.getId());
-			dmsService.create(destination);
+			dmsService.create(_destination);
 			final CMClass sourceClass = dataView.findClass(attachment.getClassName());
-			final DocumentSearch source = documentCreatorFactory.create(sourceClass) //
+			final DocumentSearch _source = documentCreatorFactory.create(sourceClass) //
 					.createDocumentSearch(attachment.getClassName(), attachment.getCardId());
-			for (final StoredDocument storedDocument : dmsService.search(source)) {
+			for (final StoredDocument storedDocument : dmsService.search(_source)) {
 				if (storedDocument.getName().equals(attachment.getFileName())) {
-					dmsService.copy(storedDocument, source, destination);
+					dmsService.copy(storedDocument, _source, _destination);
 				}
 			}
 		} catch (final Exception e) {
 			logger.error("error copying document");
+			throw DmsException.Type.DMS_ATTACHMENT_UPLOAD_ERROR.createException();
+		}
+	}
+
+	@Override
+	public void copyAll(final Email source, final Email destination) throws CMDBException {
+		try {
+			final DocumentSearch _source = documentCreator(source.isTemporary()) //
+					.createDocumentSearch(EMAIL_CLASS_NAME, source.getId());
+			final DocumentSearch _destination = documentCreator(destination.isTemporary()) //
+					.createDocumentSearch(EMAIL_CLASS_NAME, destination.getId());
+			dmsService.create(_destination);
+			for (final StoredDocument storedDocument : dmsService.search(_source)) {
+				dmsService.copy(storedDocument, _source, _destination);
+			}
+		} catch (final Exception e) {
+			logger.error("error copying documents");
 			throw DmsException.Type.DMS_ATTACHMENT_UPLOAD_ERROR.createException();
 		}
 	}
@@ -156,6 +175,30 @@ public class DefaultEmailAttachmentsLogic implements EmailAttachmentsLogic {
 			throw DmsException.Type.DMS_ATTACHMENT_NOTFOUND.createException();
 		}
 
+	}
+
+	@Override
+	public Optional<DataHandler> read(final Email email, final Attachment attachment) throws CMDBException {
+		try {
+			final DocumentCreator documentCreator = documentCreator(email.isTemporary());
+			final DocumentSearch target = documentCreator.createDocumentSearch(EMAIL_CLASS_NAME, email.getId());
+			Optional<DataHandler> dataHandler = Optional.absent();
+			for (final StoredDocument storedDocument : dmsService.search(target)) {
+				if (storedDocument.getName().equals(attachment.getFileName())) {
+					logger.debug("downloading attachment with name '{}'", storedDocument.getName());
+					final DocumentDownload document = documentCreator.createDocumentDownload( //
+							EMAIL_CLASS_NAME, //
+							email.getId(), //
+							storedDocument.getName());
+					dataHandler = Optional.of(dmsService.download(document));
+					break;
+				}
+			}
+			return dataHandler;
+		} catch (final DmsError e) {
+			logger.error("error reading document");
+			throw DmsException.Type.DMS_ATTACHMENT_NOTFOUND.createException();
+		}
 	}
 
 	@Override
