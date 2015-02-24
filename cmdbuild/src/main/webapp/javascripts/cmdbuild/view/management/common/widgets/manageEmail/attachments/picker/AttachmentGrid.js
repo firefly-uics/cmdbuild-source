@@ -21,32 +21,30 @@
 				columns: [
 					{
 						xtype: 'checkcolumn',
-						dataIndex: 'Checked',
+						dataIndex: 'Checked', // TODO
 						width: 40,
 
 						listeners: {
 							scope: this,
-							checkchange: function(column, rowIndex, checked, eOpts) { // TODO
+							checkchange: function(column, rowIndex, checked, eOpts) { // TODO probabilmente sarà inutile perchè prendo quelli checcati e li spedisco
 								var record = this.getStore().getAt(rowIndex);
 
-								if (!Ext.isEmpty(record)) {
-									this.delegate.onCMDMSAttachmentPickerAttachmentCheckChange( //
-									this.ownerWindow, //
-										record.get('Filename'), //
-										checked //
-									);
-								}
+								if (!Ext.isEmpty(record))
+									this.cmOn('onPickerWindowAttachmentGridCheckChange', {
+										checked: checked,
+										fileName: record.get('Filename')
+									});
 							}
 						}
 					},
 					{
 						text: CMDBuild.Translation.fileName,
-						dataIndex: 'Filename',
+						dataIndex: 'Filename', // TODO
 						flex: 1
 					},
 					{
 						text: CMDBuild.Translation.descriptionLabel,
-						dataIndex: 'Description',
+						dataIndex: 'Description', // TODO
 						flex: 1
 					}
 				],
