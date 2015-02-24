@@ -1,6 +1,6 @@
 (function() {
 
-	Ext.define('CMDBuild.view.management.common.widgets.manageEmail.attachments.PickerCardGrid', {
+	Ext.define('CMDBuild.view.management.common.widgets.manageEmail.attachments.picker.CardGrid', {
 		extend: 'CMDBuild.view.management.common.CMCardGrid',
 
 		/**
@@ -16,11 +16,11 @@
 
 		listeners: {
 			load: function(store, records, successful, eOpts) {
-				this.delegate.cmOn('onCardGridStoreLoad', records);
+				this.delegate.cmOn('onPickerWindowCardGridStoreLoad', records);
 			},
 
 			select: function(selectionModel, record, index, eOpts) {
-				this.delegate.cmOn('onCardSelected', record);
+				this.delegate.cmOn('onPickerWindowCardSelected', record);
 			}
 		}
 	});

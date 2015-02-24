@@ -3,17 +3,14 @@
 	Ext.define('CMDBuild.view.management.common.widgets.manageEmail.attachments.ButtonsContainer', {
 		extend: 'Ext.container.Container',
 
-		requires: [
-			'CMDBuild.core.proxy.CMProxyConstants',
-//			'CMDBuild.core.proxy.EmailTemplates'
-		],
+		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
 
 		/**
 		 * @cfg {CMDBuild.controller.management.common.widgets.manageEmail.Attachments}
 		 */
 		delegate: undefined,
 
-		addAttachmentFromDmsButton: undefined,
+		attachmentAddFromDmsButton: undefined,
 		attachmentFileField: undefined,
 		attachmentUploadForm: undefined,
 		attachmentUploadForm: undefined,
@@ -24,13 +21,13 @@
 		},
 
 		initComponent: function() {
-			this.addAttachmentFromDmsButton = Ext.create('Ext.button.Button', {
+			this.attachmentAddFromDmsButton = Ext.create('Ext.button.Button', {
 				margin: '0 0 0 5',
 				text: CMDBuild.Translation.add_attachment_from_dms,
 				scope: this,
 
 				handler: function() {
-					this.delegate.cmOn('onAddAttachmentFromDmsButtonClick');
+					this.delegate.cmOn('onAttachmentAddFromDmsButtonClick');
 				}
 			});
 
@@ -43,7 +40,7 @@
 				listeners: {
 					scope: this,
 					change: function(field, value, eOpts) {
-						this.delegate.cmOn('onChangeAttachmentFile');
+						this.delegate.cmOn('onAttachmentChangeFile');
 					}
 				}
 			});
@@ -60,7 +57,7 @@
 			});
 
 			Ext.apply(this, {
-				items: [this.attachmentUploadForm, this.addAttachmentFromDmsButton],
+				items: [this.attachmentUploadForm, this.attachmentAddFromDmsButton],
 			});
 
 			this.callParent(arguments);

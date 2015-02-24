@@ -13,11 +13,6 @@
 		parentDelegate: undefined,
 
 		/**
-		 * @cfg {CMDBuild.controller.management.common.widgets.manageEmail.Main}
-		 */
-		widgetController: undefined,
-
-		/**
 		 * @property {CMDBuild.model.widget.ManageEmail.email}
 		 */
 		record: undefined,
@@ -41,12 +36,11 @@
 		 * @param {Object} configObject
 		 * @param {CMDBuild.controller.management.common.widgets.manageEmail.Attachments} configObject.parentDelegate
 		 * @param {CMDBuild.model.widget.ManageEmail.email} configObject.record
-		 * @param {CMDBuild.controller.management.common.widgets.manageEmail.Main} configObject.widgetController
 		 */
 		constructor: function(configObject) {
 			Ext.apply(this, configObject); // Apply config
 
-			this.view = Ext.create('CMDBuild.view.management.common.widgets.manageEmail.attachments.PickerWindow', {
+			this.view = Ext.create('CMDBuild.view.management.common.widgets.manageEmail.attachments.picker.MainWindow', {
 				delegate: this
 			}).show();
 		},
@@ -60,13 +54,13 @@
 		 */
 		cmOn: function(name, param, callBack) {
 			switch (name) {
-				case 'onCardSelected':
+				case 'onPickerWindowCardSelected':
 					return this.onCardSelected(param);
 
-				case 'onCardGridStoreLoad':
+				case 'onPickerWindowCardGridStoreLoad':
 					return this.onCardGridStoreLoad();
 
-				case 'onClassSelected':
+				case 'onPickerWindowClassSelected':
 					return this.onClassSelected();
 
 				case 'onPickerWindowAbortButtonClick':
@@ -139,7 +133,7 @@ _debug('AttachPicker controller', this);
 					scope: this,
 					params: params,
 					success: function(response, options, decodedResponse) {
-						this.cmOn('updateAttachmentList', decodedResponse[CMDBuild.core.proxy.CMProxyConstants.ATTACHMENTS]);
+						this.cmOn('attachmentUpdateList', decodedResponse[CMDBuild.core.proxy.CMProxyConstants.ATTACHMENTS]);
 
 						this.onPickerWindowAbortButtonClick();
 					},
@@ -147,6 +141,8 @@ _debug('AttachPicker controller', this);
 						CMDBuild.LoadMask.get().hide();
 					}
 				});
+			} else {
+				this.onPickerWindowAbortButtonClick();
 			}
 		}
 	});

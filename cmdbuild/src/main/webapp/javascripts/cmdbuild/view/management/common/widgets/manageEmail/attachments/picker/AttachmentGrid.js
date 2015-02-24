@@ -1,6 +1,6 @@
 (function() {
 
-	Ext.define('CMDBuild.view.management.common.widgets.manageEmail.attachments.PickerAttachmentGrid', {
+	Ext.define('CMDBuild.view.management.common.widgets.manageEmail.attachments.picker.AttachmentGrid', {
 		extend: 'Ext.grid.Panel',
 
 		requires: [

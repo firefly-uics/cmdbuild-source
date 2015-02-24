@@ -36,22 +36,6 @@
 		],
 
 		/**
-		 * @return {Boolean}
-		 *
-		 * TODO: will be deleted in future when i won't need 2 services to save attachments
-		 */
-		isNew: function() {
-			return this.get(CMDBuild.core.proxy.CMProxyConstants.TEMPORARY);
-		},
-
-		/**
-		 * TODO: refactor
-		 */
-		getAttachmentNames: function() {
-			return this.get(CMDBuild.core.proxy.CMProxyConstants.ATTACHMENTS) || [];
-		},
-
-		/**
 		 * Converts model object to params object, used in server calls
 		 *
 		 * @param {Array} requiredAttributes

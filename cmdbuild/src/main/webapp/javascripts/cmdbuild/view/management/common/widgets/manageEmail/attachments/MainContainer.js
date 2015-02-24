@@ -3,10 +3,7 @@
 	Ext.define('CMDBuild.view.management.common.widgets.manageEmail.attachments.MainContainer', {
 		extend: 'Ext.container.Container',
 
-		requires: [
-			'CMDBuild.core.proxy.CMProxyConstants',
-//			'CMDBuild.core.proxy.EmailTemplates'
-		],
+		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
 
 		/**
 		 * @cfg {CMDBuild.controller.management.common.widgets.manageEmail.Attachments}
