@@ -55,7 +55,7 @@ public class EmailConverter extends BaseStorableConverter<Email> {
 		email.setNotifyWith(defaultIfBlank(card.get(NOTIFY_WITH_ATTRIBUTE, String.class), null));
 		email.setNoSubjectPrefix(defaultIfNull(card.get(NO_SUBJECT_PREFIX_ATTRIBUTE, Boolean.class), false));
 		email.setAccount(defaultIfBlank(card.get(ACCOUNT_ATTRIBUTE, String.class), null));
-		email.setAccount(defaultIfBlank(card.get(TEMPLATE_ATTRIBUTE, String.class), null));
+		email.setTemplate(defaultIfBlank(card.get(TEMPLATE_ATTRIBUTE, String.class), null));
 		email.setKeepSynchronization(defaultIfNull(card.get(KEEP_SYNCHRONIZATION_ATTRIBUTE, Boolean.class), true));
 		email.setPromptSynchronization(defaultIfNull(card.get(PROMPT_SYNCHRONIZATION_ATTRIBUTE, Boolean.class), false));
 		email.setDate((card.getBeginDate()));
