@@ -4,7 +4,6 @@ import static org.cmdbuild.spring.util.Constants.PROTOTYPE;
 
 import org.cmdbuild.auth.GroupFetcher;
 import org.cmdbuild.auth.UserStore;
-import org.cmdbuild.dao.view.DBDataView;
 import org.cmdbuild.logic.DashboardLogic;
 import org.cmdbuild.logic.data.access.SystemDataAccessLogicBuilder;
 import org.cmdbuild.logic.menu.DefaultMenuLogic;
@@ -23,13 +22,13 @@ public class Menu {
 	private DashboardLogic dashboardLogic;
 
 	@Autowired
+	private Data data;
+
+	@Autowired
 	private GroupFetcher groupFetcher;
 
 	@Autowired
 	private SystemDataAccessLogicBuilder systemDataAccessLogicBuilder;
-
-	@Autowired
-	private DBDataView systemDataView;
 
 	@Autowired
 	private User user;
@@ -48,14 +47,14 @@ public class Menu {
 
 	@Bean
 	public MenuItemConverter menuItemConverter() {
-		return new MenuItemConverter(systemDataView, systemDataAccessLogicBuilder);
+		return new MenuItemConverter(data.systemDataView(), systemDataAccessLogicBuilder);
 	}
 
 	@Bean
 	@Scope(PROTOTYPE)
 	public DataViewMenuStore dataViewMenuStore() {
 		return new DataViewMenuStore( //
-				systemDataView, //
+				data.systemDataView(), //
 				groupFetcher, //
 				dashboardLogic, //
 				user.userDataAccessLogicBuilder(), //

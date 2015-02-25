@@ -261,7 +261,7 @@ public class Translation extends JSONBaseWithSpringContext {
 				.withName(className) //
 				.withField(field) //
 				.build();
-		final Map<String, String> translations = translationLogic().read(translationObject);
+		final Map<String, String> translations = translationLogic().readAll(translationObject);
 		return JsonResponse.success(translations);
 	}
 
@@ -277,7 +277,7 @@ public class Translation extends JSONBaseWithSpringContext {
 				.withName(attributeName) //
 				.withField(field) //
 				.build();
-		final Map<String, String> translations = translationLogic().read(translationObject);
+		final Map<String, String> translations = translationLogic().readAll(translationObject);
 		return JsonResponse.success(translations);
 	}
 
@@ -291,7 +291,7 @@ public class Translation extends JSONBaseWithSpringContext {
 				.withName(domainName) //
 				.withField(field) //
 				.build();
-		final Map<String, String> translations = translationLogic().read(translationObject);
+		final Map<String, String> translations = translationLogic().readAll(translationObject);
 		return JsonResponse.success(translations);
 	}
 
@@ -307,7 +307,7 @@ public class Translation extends JSONBaseWithSpringContext {
 				.withField(field) //
 				.withAttributeName(attributeName) //
 				.build();
-		final Map<String, String> translations = translationLogic().read(translationObject);
+		final Map<String, String> translations = translationLogic().readAll(translationObject);
 		return JsonResponse.success(translations);
 	}
 
@@ -320,7 +320,7 @@ public class Translation extends JSONBaseWithSpringContext {
 				.withName(viewName) //
 				.withField(field) //
 				.build();
-		final Map<String, String> translations = translationLogic().read(translationObject);
+		final Map<String, String> translations = translationLogic().readAll(translationObject);
 		return JsonResponse.success(translations);
 	}
 
@@ -333,7 +333,7 @@ public class Translation extends JSONBaseWithSpringContext {
 				.withField(field) //
 				.withName(filterName) //
 				.build();
-		final Map<String, String> translations = translationLogic().read(translationObject);
+		final Map<String, String> translations = translationLogic().readAll(translationObject);
 		return JsonResponse.success(translations);
 	}
 
@@ -341,7 +341,7 @@ public class Translation extends JSONBaseWithSpringContext {
 	@Admin
 	public JsonResponse readForInstanceName() {
 		final InstanceNameTranslation translationObject = new InstanceNameTranslation();
-		final Map<String, String> translations = translationLogic().read(translationObject);
+		final Map<String, String> translations = translationLogic().readAll(translationObject);
 		return JsonResponse.success(translations);
 	}
 
@@ -355,7 +355,7 @@ public class Translation extends JSONBaseWithSpringContext {
 				.withName(widgetId) //
 				.withField(field) //
 				.build();
-		final Map<String, String> translations = translationLogic().read(translationObject);
+		final Map<String, String> translations = translationLogic().readAll(translationObject);
 		return JsonResponse.success(translations);
 	}
 
@@ -368,7 +368,7 @@ public class Translation extends JSONBaseWithSpringContext {
 		final DashboardTranslation translationObject = new DashboardTranslation();
 		translationObject.setName(dashboardName);
 		translationObject.setField(field);
-		final Map<String, String> translations = translationLogic().read(translationObject);
+		final Map<String, String> translations = translationLogic().readAll(translationObject);
 		return JsonResponse.success(translations);
 	}
 
@@ -381,7 +381,7 @@ public class Translation extends JSONBaseWithSpringContext {
 		final ChartTranslation translationObject = new ChartTranslation();
 		translationObject.setName(chartName);
 		translationObject.setField(field);
-		final Map<String, String> translations = translationLogic().read(translationObject);
+		final Map<String, String> translations = translationLogic().readAll(translationObject);
 		return JsonResponse.success(translations);
 	}
 
@@ -395,7 +395,7 @@ public class Translation extends JSONBaseWithSpringContext {
 				.withField(field) //
 				.withName(reportName) //
 				.build();
-		final Map<String, String> translations = translationLogic().read(translationObject);
+		final Map<String, String> translations = translationLogic().readAll(translationObject);
 		return JsonResponse.success(translations);
 	}
 
@@ -409,7 +409,7 @@ public class Translation extends JSONBaseWithSpringContext {
 				.withName(lookupId) //
 				.withField(field) //
 				.build();
-		final Map<String, String> translations = translationLogic().read(translationObject);
+		final Map<String, String> translations = translationLogic().readAll(translationObject);
 		return JsonResponse.success(translations);
 	}
 
@@ -423,7 +423,7 @@ public class Translation extends JSONBaseWithSpringContext {
 				.withName(uniqueIdentifier) //
 				.withField(field) //
 				.build();
-		final Map<String, String> translations = translationLogic().read(translationObject);
+		final Map<String, String> translations = translationLogic().readAll(translationObject);
 		return JsonResponse.success(translations);
 	}
 
@@ -439,7 +439,7 @@ public class Translation extends JSONBaseWithSpringContext {
 				.withField(field) //
 				.build();
 		translationLogic().create(translationObject);
-		final Map<String, String> translations = translationLogic().read(translationObject);
+		final Map<String, String> translations = translationLogic().readAll(translationObject);
 		return JsonResponse.success(translations);
 	}
 

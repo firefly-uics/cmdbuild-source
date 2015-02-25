@@ -12,6 +12,7 @@ import org.cmdbuild.dao.entrytype.attributetype.EntryTypeAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.LookupAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.ReferenceAttributeType;
 import org.cmdbuild.data.store.lookup.LookupStore;
+import org.cmdbuild.logic.translation.TranslationFacade;
 
 import com.google.common.collect.Maps;
 

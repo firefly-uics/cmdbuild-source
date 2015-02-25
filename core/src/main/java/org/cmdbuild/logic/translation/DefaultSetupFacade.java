@@ -1,12 +1,12 @@
 package org.cmdbuild.logic.translation;
 
+import static com.google.common.collect.Iterables.isEmpty;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 import java.util.Arrays;
 import java.util.Map;
 
-import org.apache.commons.lang3.StringUtils;
 import org.cmdbuild.logic.setup.SetupLogic;
 
 import com.google.common.collect.Lists;
@@ -24,6 +24,11 @@ public class DefaultSetupFacade implements SetupFacade {
 	}
 
 	@Override
+	public boolean isEnabled() {
+		return !isEmpty(getEnabledLanguages());
+	}
+
+	@Override
 	public Iterable<String> getEnabledLanguages() {
 		Map<String, String> config;
 		String[] enabledLanguagesArray = null;
@@ -32,7 +37,7 @@ public class DefaultSetupFacade implements SetupFacade {
 			config = setupLogic.load(MODULE_NAME);
 			enabledLanguagesConfiguration = config.get(ENABLED_LANGUAGES);
 			enabledLanguagesConfiguration = enabledLanguagesConfiguration.replaceAll("\\s", "");
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace();
 		}
 		if (isNotBlank(enabledLanguagesConfiguration)) {

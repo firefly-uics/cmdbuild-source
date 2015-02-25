@@ -32,7 +32,8 @@ public class Web {
 
 	@Bean
 	public UserStore userStore() {
-//		return new ThreadLocalUserStore(new ValuesStoreBasedUserStore(valuesStore()));
+		// return new ThreadLocalUserStore(new
+		// ValuesStoreBasedUserStore(valuesStore()));
 		return new ValuesStoreBasedUserStore(valuesStore());
 	}
 

@@ -3,7 +3,6 @@ package org.cmdbuild.spring.configuration;
 import org.cmdbuild.auth.UserStore;
 import org.cmdbuild.config.DatabaseConfiguration;
 import org.cmdbuild.dao.view.CMDataView;
-import org.cmdbuild.dao.view.DBDataView;
 import org.cmdbuild.data.store.Store;
 import org.cmdbuild.data.store.dao.DataViewStore;
 import org.cmdbuild.data.store.dao.StorableConverter;
@@ -73,9 +72,6 @@ public class TaskManager {
 	private Scheduler scheduler;
 
 	@Autowired
-	private DBDataView systemDataView;
-
-	@Autowired
 	private Template template;
 
 	@Autowired
@@ -129,7 +125,7 @@ public class TaskManager {
 
 	@Bean
 	protected Store<TaskDefinition> dataViewSchedulerJobStore() {
-		return DataViewStore.newInstance(systemDataView, schedulerJobConverter());
+		return DataViewStore.newInstance(data.systemDataView(), schedulerJobConverter());
 	}
 
 	@Bean
@@ -139,7 +135,7 @@ public class TaskManager {
 
 	@Bean
 	protected Store<TaskParameter> dataViewSchedulerJobParameterStore() {
-		return DataViewStore.newInstance(systemDataView, schedulerJobParameterStoreConverter());
+		return DataViewStore.newInstance(data.systemDataView(), schedulerJobParameterStoreConverter());
 	}
 
 	@Bean

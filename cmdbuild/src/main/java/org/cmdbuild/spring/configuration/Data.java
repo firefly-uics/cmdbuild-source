@@ -21,6 +21,7 @@ import org.cmdbuild.logic.data.lookup.LookupLogic;
 import org.cmdbuild.logic.privileges.DefaultSecurityLogic;
 import org.cmdbuild.logic.privileges.SecurityLogic;
 import org.cmdbuild.services.cache.wrappers.CachingStore;
+import org.cmdbuild.services.localization.LocalizedDataView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
@@ -35,6 +36,9 @@ public class Data {
 
 	@Autowired
 	private Filter filter;
+
+	@Autowired
+	private Translation translation;
 
 	@Autowired
 	@Qualifier(SYSTEM)
@@ -101,7 +105,10 @@ public class Data {
 	@Bean(name = BEAN_SYSTEM_DATA_VIEW)
 	@Qualifier(SYSTEM)
 	public CMDataView systemDataView() {
-		return new DBDataView(dbDriver);
+		final DBDataView dbDataView = new DBDataView(dbDriver);
+		return new LocalizedDataView( //
+				dbDataView, //
+				translation.translationFacade());
 	}
 
 }

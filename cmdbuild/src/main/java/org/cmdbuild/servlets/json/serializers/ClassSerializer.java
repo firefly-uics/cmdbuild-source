@@ -21,6 +21,7 @@ import org.cmdbuild.exception.CMDBWorkflowException.WorkflowExceptionType;
 import org.cmdbuild.listeners.RequestListener;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.translation.ClassTranslation;
+import org.cmdbuild.logic.translation.TranslationFacade;
 import org.cmdbuild.logic.privileges.CardEditMode;
 import org.cmdbuild.logic.privileges.SecurityLogic;
 import org.cmdbuild.logic.workflow.SystemWorkflowLogicBuilder;
@@ -104,12 +105,7 @@ public class ClassSerializer extends Serializer {
 		jsonObject.put(ID, cmClass.getId());
 		jsonObject.put(NAME, cmClass.getName());
 
-		final ClassTranslation translationObject = ClassTranslation.newInstance() //
-				.withField(DESCRIPTION_FOR_CLIENT) //
-				.withName(cmClass.getName()) //
-				.build();
-		final String translatedDescription = translationFacade.read(translationObject);
-		jsonObject.put(CLASS_DESCRIPTION, defaultIfNull(translatedDescription, cmClass.getDescription()));
+		jsonObject.put(CLASS_DESCRIPTION, cmClass.getDescription());
 		jsonObject.put(DEFAULT_CLASS_DESCRIPTION, cmClass.getDescription());
 		jsonObject.put("superclass", cmClass.isSuperclass());
 		jsonObject.put("active", cmClass.isActive());

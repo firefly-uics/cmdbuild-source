@@ -19,6 +19,7 @@ import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.logic.translation.DomainTranslation;
+import org.cmdbuild.logic.translation.TranslationFacade;
 import org.cmdbuild.logic.translation.TranslationObject;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -95,7 +96,6 @@ public class DomainSerializer extends Serializer {
 				defaultIfNull(translatedMasterDetailLabel, domain.getMasterDetailDescription()));
 		jsonDomain.put(DEFAULT_MASTERDETAIL_LABEL, domain.getMasterDetailDescription());
 
-		jsonDomain.put("classType", getClassType(localName));
 		jsonDomain.put("active", domain.isActive());
 		jsonDomain.put("cardinality", domain.getCardinality());
 		// FIXME should not be used in this way
@@ -121,7 +121,7 @@ public class DomainSerializer extends Serializer {
 	private String getClassType(final String className) {
 		// TODO do it better
 		final CMClass target = dataView.findClass(className);
-		if (dataView.findClass("Activity").isAncestorOf(target)) {
+		if (dataView.getActivityClass().isAncestorOf(target)) {
 			return "processclass";
 		} else {
 			return "class";

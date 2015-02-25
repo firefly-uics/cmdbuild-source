@@ -25,6 +25,7 @@ import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.logic.translation.ClassTranslation;
 import org.cmdbuild.logic.translation.MenuItemTranslation;
 import org.cmdbuild.logic.translation.ReportTranslation;
+import org.cmdbuild.logic.translation.TranslationFacade;
 import org.cmdbuild.logic.translation.ViewTranslation;
 import org.cmdbuild.services.store.menu.MenuItem;
 import org.cmdbuild.services.store.menu.MenuItemDTO;

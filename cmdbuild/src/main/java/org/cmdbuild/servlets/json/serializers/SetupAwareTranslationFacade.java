@@ -1,8 +1,7 @@
 package org.cmdbuild.servlets.json.serializers;
 
-import static com.google.common.collect.Iterables.isEmpty;
-
 import org.cmdbuild.logic.translation.SetupFacade;
+import org.cmdbuild.logic.translation.TranslationFacade;
 import org.cmdbuild.logic.translation.TranslationObject;
 
 public class SetupAwareTranslationFacade extends ForwardingTranslationFacade {
@@ -22,7 +21,7 @@ public class SetupAwareTranslationFacade extends ForwardingTranslationFacade {
 
 	@Override
 	public String read(final TranslationObject translationObject) {
-		return isEmpty(setupFacade.getEnabledLanguages()) ? null : super.read(translationObject);
+		return setupFacade.isEnabled() ? super.read(translationObject) : null;
 	}
 
 }
