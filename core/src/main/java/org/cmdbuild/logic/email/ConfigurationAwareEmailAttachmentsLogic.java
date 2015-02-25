@@ -29,17 +29,21 @@ public class ConfigurationAwareEmailAttachmentsLogic extends ForwardingEmailAtta
 	}
 
 	@Override
-	public void copy(Email email, Attachment attachment) throws CMDBException {
-		// nothing to do
+	public void copy(final Email email, final Attachment attachment) throws CMDBException {
+		if (configuration.isEnabled()) {
+			super.copy(email, attachment);
+		}
 	}
 
 	@Override
-	public void copyAll(Email source, Email destination) throws CMDBException {
-		// nothing to do
+	public void copyAll(final Email source, final Email destination) throws CMDBException {
+		if (configuration.isEnabled()) {
+			super.copyAll(source, destination);
+		}
 	}
 
 	@Override
-	public Iterable<Attachment> readAll(Email email) throws CMDBException {
+	public Iterable<Attachment> readAll(final Email email) throws CMDBException {
 		return configuration.isEnabled() ? super.readAll(email) : NO_ATTACHMENTS;
 	}
 
