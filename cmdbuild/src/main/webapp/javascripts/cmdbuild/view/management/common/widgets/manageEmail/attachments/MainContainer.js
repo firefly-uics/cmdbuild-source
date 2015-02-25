@@ -31,7 +31,7 @@
 		},
 
 		initComponent: function() {
-			if (CMDBuild.Config.dms.enabled == 'true') { // TODO: use a model for CMDBuild.Config to convert attributes from string
+			if (CMDBuild.Config.dms.enabled) {
 				this.attachmentButtonsContainer = Ext.create('CMDBuild.view.management.common.widgets.manageEmail.attachments.ButtonsContainer', {
 					delegate: this.delegate,
 					readOnly: this.readOnly

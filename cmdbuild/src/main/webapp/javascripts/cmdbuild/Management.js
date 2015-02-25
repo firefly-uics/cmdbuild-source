@@ -24,11 +24,10 @@
 		extend: 'Ext.app.Application',
 
 		requires: [
-			'Ext.ux.Router',
-			'CMDBuild.core.proxy.CMProxyConfiguration',
 			'CMDBuild.core.proxy.Report',
 			'CMDBuild.routes.management.Cards',
-			'CMDBuild.routes.management.Classes'
+			'CMDBuild.routes.management.Classes',
+			'Ext.ux.Router'
 		],
 
 		name: 'CMDBuild',
@@ -84,6 +83,10 @@
 							success: function(response, options, decoded) {
 								// Cmdbuild
 								CMDBuild.Config.cmdbuild = decoded.cmdbuild;
+
+								// DMS
+								CMDBuild.Config.dms = decoded.dms;
+								CMDBuild.Config.dms.enabled = ('true' == CMDBuild.Config.dms.enabled);
 
 								// Bim
 								CMDBuild.Config.bim = decoded.bim;
@@ -293,13 +296,6 @@
 					},
 					callback: reqBarrier.getCallback()
 				});
-
-				CMDBuild.ServiceProxy.configuration.read({
-					success: function(response, options,decoded) {
-						CMDBuild.Config.dms = decoded.data;
-					},
-					callback: reqBarrier.getCallback
-				},'dms');
 
 				CMDBuild.core.proxy.Report.getTypesTree({
 					scope: this,
