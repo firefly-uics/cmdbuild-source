@@ -74,7 +74,7 @@ _debug('CMDBuild.Config.dms.enabled', CMDBuild.Config);
 		 */
 		attachmentAddPanel: function(fileName) {
 			this.view.addPanel(
-				Ext.create('CMDBuild.view.management.common.widgets.manageEmail.emailWindow.FileAttacchedPanel', {
+				Ext.create('CMDBuild.view.management.common.widgets.manageEmail.attachments.FileAttacchedPanel', {
 					delegate: this,
 					fileName: fileName,
 					readOnly: this.view.readOnly
