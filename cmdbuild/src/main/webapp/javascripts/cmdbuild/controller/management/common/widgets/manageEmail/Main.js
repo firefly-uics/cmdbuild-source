@@ -141,9 +141,9 @@ _debug('searchForCqlClientVariables', inspectingVariable + ' ' + inspectingVaria
 _debug('this.widgetConf', this.widgetConf);
 _debug('this.ownerController', this.ownerController);
 _debug('this.card', this.card);
+			// Converts widgetConf templates to templates model objects
 			this.widgetConfTemplates = []; // Reset variable
 
-			// Converts widgetConf templates to templates model objects
 			Ext.Array.forEach(this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.TEMPLATES], function(item, index, allItems) {
 				this.widgetConfTemplates.push(this.widgetConfigToModel(item));
 			}, this);
@@ -154,9 +154,7 @@ _debug('this.widgetConfTemplates', this.widgetConfTemplates);
 				view: this.grid
 			});
 
-//_debug('CMDBuild.Config', CMDBuild.Config);
-//			var config = Ext.create('CMDBuild.model.widget.ManageEmail.config', CMDBuild.Config);
-//_debug('config', config);
+_debug('CMDBuild.Config', CMDBuild.Config);
 		},
 
 		/**

@@ -121,7 +121,7 @@
 					}
 				});
 
-				if (CMDBuild.Config.dms.enabled == 'true') { // TODO: use a model for CMDBuild.Config to convert attributes from string
+				if (CMDBuild.Config.dms.enabled) {
 					// Build attachments controller
 					this.attachmentsController = Ext.create('CMDBuild.controller.management.common.widgets.manageEmail.Attachments', {
 						parentDelegate: this,
@@ -139,7 +139,7 @@
 						params: params,
 						scope: this,
 						success: function(response, options, decodedResponse) {
-							_debug('decodedResponse', decodedResponse);
+_debug('decodedResponse', decodedResponse);
 							Ext.Array.forEach(decodedResponse.response, function(item, index, allItems) {
 								if(!Ext.Object.isEmpty(item))
 									this.attachmentsController.attachmentAddPanel(item[CMDBuild.core.proxy.CMProxyConstants.FILE_NAME]);
@@ -292,7 +292,7 @@ _debug('formValues', formValues);
 					this.record.set(key, formValues[key]);
 
 				// Setup attachments only if DMS is enabled
-				if (CMDBuild.Config.dms.enabled == 'true') // TODO: use a model for CMDBuild.Config to convert attributes from string
+				if (CMDBuild.Config.dms.enabled)
 					this.record.set(CMDBuild.core.proxy.CMProxyConstants.ATTACHMENTS, this.attachmentsController.getAttachmentsNames());
 
 				this.record.set(CMDBuild.core.proxy.CMProxyConstants.ACTIVITY_ID, this.cmOn('getWidgetController').getActivityId());

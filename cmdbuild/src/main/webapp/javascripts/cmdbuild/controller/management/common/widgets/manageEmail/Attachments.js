@@ -28,13 +28,13 @@
 		 * @param {CMDBuild.view.management.common.widgets.manageEmail.attachments.MainContainer} configObject.view
 		 */
 		constructor: function(configObject) {
-			if (CMDBuild.Config.dms.enabled == 'true') { // TODO: use a model for CMDBuild.Config to convert attributes from string
+			if (CMDBuild.Config.dms.enabled) {
 				Ext.apply(this, configObject); // Apply config
-_debug('CMDBuild.Config.dms.enabled', CMDBuild.Config);
+
 				this.view.delegate = this;
 				this.view.attachmentButtonsContainer.delegate = this;
 			} else {
-				_error('Alfresco DMS not enabled');
+				_error('@@ Alfresco DMS not enabled');
 			}
 		},
 
