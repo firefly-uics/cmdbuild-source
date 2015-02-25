@@ -2,6 +2,23 @@
 
 	Ext.require('CMDBuild.core.proxy.CMProxyConstants');
 
+//	Ext.define('CMDBuild.model.widget.ManageEmail.config', {
+//		extend: 'Ext.data.Model',
+//
+//		fields: [
+//			{ name: 'dms', type: 'auto' },
+//		]
+//	});
+
+
+
+
+
+
+
+
+
+
 	Ext.define('CMDBuild.model.widget.ManageEmail.email.attachment', { // TODO
 		extend: 'Ext.data.Model',
 

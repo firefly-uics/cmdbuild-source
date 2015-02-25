@@ -153,6 +153,10 @@ _debug('this.widgetConfTemplates', this.widgetConfTemplates);
 				parentDelegate: this,
 				view: this.grid
 			});
+
+//_debug('CMDBuild.Config', CMDBuild.Config);
+//			var config = Ext.create('CMDBuild.model.widget.ManageEmail.config', CMDBuild.Config);
+//_debug('config', config);
 		},
 
 		/**
@@ -314,9 +318,9 @@ _debug('extractVariablesForTemplateResolver templateObject', templateObject);
 		 * @param {Boolean} forceRegeneration
 		 */
 		getAllTemplatesData: function(regenerateAllEmails, forceRegeneration) {
-_debug('#### getAllTemplatesData ' + regenerateAllEmails + ' ' + forceRegeneration);
 			regenerateAllEmails = regenerateAllEmails || false;
 			forceRegeneration = forceRegeneration || false;
+_debug('#### getAllTemplatesData ' + regenerateAllEmails + ' ' + forceRegeneration);
 //			var me = this;
 
 			// Reset local storage arrays
@@ -449,9 +453,9 @@ _debug('onEditMode');
 _debug('regenerateAllEmails forceRegeneration', forceRegeneration);
 _debug('regenerateAllEmails this.relatedAttributeChanged', this.relatedAttributeChanged);
 			if (forceRegeneration || this.relatedAttributeChanged) {
-				// Reset all store before email regeneration
-				if (forceRegeneration)
-					this.controllerGrid.storeReset();
+//				// Reset all store before email regeneration
+//				if (forceRegeneration)
+//					this.controllerGrid.storeReset();
 
 				var templatesCheckedForRegenerationIdentifiers = [];
 				var emailTemplatesToRegenerate = this.checkTemplatesToRegenerate();
@@ -462,12 +466,12 @@ _debug('draft emails', this.controllerGrid.getDraftEmails());
 _debug('checking item', item);
 _debug(!Ext.isEmpty(recordTemplate) + ' ' + Ext.Array.contains(emailTemplatesToRegenerate, recordTemplate) + ' ' + item.get(CMDBuild.core.proxy.CMProxyConstants.KEEP_SYNCHRONIZATION));
 					if (
-						(
-							!Ext.isEmpty(recordTemplate)
-							&& Ext.Array.contains(emailTemplatesToRegenerate, recordTemplate)
-							&& item.get(CMDBuild.core.proxy.CMProxyConstants.KEEP_SYNCHRONIZATION)
+						!Ext.isEmpty(recordTemplate)
+						&& (
+							Ext.Array.contains(emailTemplatesToRegenerate, recordTemplate)
+							|| forceRegeneration
 						)
-						|| forceRegeneration
+						&& item.get(CMDBuild.core.proxy.CMProxyConstants.KEEP_SYNCHRONIZATION)
 					) {
 						if(this.regenerateEmail(item, regenerationTrafficLightArray))
 							templatesCheckedForRegenerationIdentifiers.push(recordTemplate);
@@ -483,12 +487,12 @@ _debug('templatesCheckedForRegenerationIdentifiers', templatesCheckedForRegenera
 					var templateIdentifier = item.get(CMDBuild.core.proxy.CMProxyConstants.KEY);
 
 					if (
-						(
-							!Ext.isEmpty(templateIdentifier)
-							&& Ext.Array.contains(emailTemplatesToRegenerate, templateIdentifier)
-							&& !Ext.Array.contains(templatesCheckedForRegenerationIdentifiers, templateIdentifier) // Avoid to generate already regenerated templates
+						!Ext.isEmpty(templateIdentifier)
+						&& (
+							Ext.Array.contains(emailTemplatesToRegenerate, templateIdentifier)
+							|| forceRegeneration
 						)
-						|| forceRegeneration
+						&& !Ext.Array.contains(templatesCheckedForRegenerationIdentifiers, templateIdentifier) // Avoid to generate already regenerated templates
 					) {
 						if(this.regenerateTemplate(item, regenerationTrafficLightArray))
 							templatesCheckedForRegenerationIdentifiers.push(templateIdentifier);

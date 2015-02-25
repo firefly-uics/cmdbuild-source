@@ -1,6 +1,6 @@
 (function() {
 
-	Ext.define('CMDBuild.view.management.common.widgets.manageEmail.emailWindow.FileAttacchedPanel', {
+	Ext.define('CMDBuild.view.management.common.widgets.manageEmail.attachments.FileAttacchedPanel', {
 		extend: 'Ext.panel.Panel',
 
 		/**
