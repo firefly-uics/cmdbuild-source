@@ -18,7 +18,7 @@
 		extend: 'Ext.app.Application',
 
 		requires: [
-			'CMDBuild.core.proxy.CMProxyConfiguration',
+			'CMDBuild.core.proxy.Configuration',
 			'CMDBuild.core.proxy.Report'
 		],
 
@@ -39,7 +39,7 @@
 				CMDBuild.view.CMMainViewport.showSplash(forCredits, administration);
 
 				// Get server language
-				CMDBuild.core.proxy.CMProxyConfiguration.getLanguage({
+				CMDBuild.core.proxy.Configuration.getLanguage({
 					success: function(result, options, decodedResult) {
 						CMDBuild.Config[CMDBuild.core.proxy.CMProxyConstants.LANGUAGE] = decodedResult[CMDBuild.core.proxy.CMProxyConstants.LANGUAGE];
 					}
@@ -131,6 +131,10 @@
 											cmControllerType: 'CMDBuild.controller.administration.email.CMEmailTemplatesController',
 											cmName: 'emailTemplates'
 										}),
+										Ext.create('CMDBuild.view.administration.localizations.Form', {
+											cmControllerType: 'CMDBuild.controller.administration.localizations.Main',
+											cmName: 'localizations'
+										}),
 										Ext.create('CMDBuild.view.administration.tasks.CMTasks', {
 											cmControllerType: 'CMDBuild.controller.administration.tasks.CMTasksController',
 											cmName: 'tasks'
@@ -176,6 +180,7 @@
 							Ext.create('CMDBuild.view.administration.accordion.CMAccordionEmail'),
 							gisAccordion,
 							bimAccordion,
+							Ext.create('CMDBuild.view.administration.accordion.Localizations'),
 							Ext.create('CMDBuild.view.administration.accordion.CMConfigurationAccordion')
 						]);
 

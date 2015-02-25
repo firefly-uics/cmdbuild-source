@@ -539,6 +539,8 @@ em { font-style: oblique !important; }
 
 	.cmdbuild-tree-no-icon { background-image: url("../images/transparentPixel.png") !important; }
 
+	.cmdbuild-tree-localization-icon { background-image: url("../images/icons/tree/world.png") !important; }
+
 	/* Tasks */
 		.cmdbuild-tree-tasks-icon { background-image: url("../images/icons/tree/wrench.png") !important; }
 

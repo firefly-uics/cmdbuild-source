@@ -25,7 +25,7 @@
 
 		requires: [
 			'Ext.ux.Router',
-			'CMDBuild.core.proxy.CMProxyConfiguration',
+			'CMDBuild.core.proxy.Configuration',
 			'CMDBuild.core.proxy.Report',
 			'CMDBuild.routes.management.Cards',
 			'CMDBuild.routes.management.Classes'
@@ -69,7 +69,7 @@
 				CMDBuild.view.CMMainViewport.showSplash();
 
 				// Get server language
-				CMDBuild.core.proxy.CMProxyConfiguration.getLanguage({
+				CMDBuild.core.proxy.Configuration.getLanguage({
 					success: function(result, options, decodedResult) {
 						CMDBuild.Config[CMDBuild.core.proxy.CMProxyConstants.LANGUAGE] = decodedResult[CMDBuild.core.proxy.CMProxyConstants.LANGUAGE];
 					}

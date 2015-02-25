@@ -11,7 +11,7 @@
 		],
 
 		/**
-		 * @cfg {CMDBuild.controller.administration.tasks.common.cronForm.CMCronFormController}
+		 * @cfg {CMDBuild.controller.administration.tasks.CMTasksController}
 		 */
 		delegate: undefined,
 
