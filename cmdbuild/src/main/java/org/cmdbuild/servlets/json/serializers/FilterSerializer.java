@@ -13,6 +13,7 @@ import static org.cmdbuild.servlets.json.CommunicationConstants.NAME;
 import static org.cmdbuild.servlets.json.CommunicationConstants.TEMPLATE;
 
 import org.cmdbuild.logic.translation.FilterTranslation;
+import org.cmdbuild.logic.translation.TranslationFacade;
 import org.cmdbuild.services.store.FilterDTO;
 import org.cmdbuild.services.store.FilterStore.Filter;
 import org.cmdbuild.services.store.FilterStore.GetFiltersResponse;

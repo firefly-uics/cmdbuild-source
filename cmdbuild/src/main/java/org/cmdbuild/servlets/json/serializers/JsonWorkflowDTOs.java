@@ -12,6 +12,7 @@ import org.cmdbuild.data.store.email.Email;
 import org.cmdbuild.data.store.lookup.LookupStore;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.email.EmailLogic.EmailWithAttachmentNames;
+import org.cmdbuild.logic.translation.TranslationFacade;
 import org.cmdbuild.workflow.CMActivity;
 import org.cmdbuild.workflow.CMActivityWidget;
 import org.cmdbuild.workflow.CMWorkflowException;

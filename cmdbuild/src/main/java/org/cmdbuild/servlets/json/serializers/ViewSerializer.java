@@ -14,6 +14,7 @@ import static org.cmdbuild.servlets.json.CommunicationConstants.VIEWS;
 
 import java.util.List;
 
+import org.cmdbuild.logic.translation.TranslationFacade;
 import org.cmdbuild.logic.translation.ViewTranslation;
 import org.cmdbuild.model.View;
 import org.json.JSONArray;

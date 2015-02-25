@@ -64,6 +64,7 @@ import org.cmdbuild.exception.NotFoundException.NotFoundExceptionType;
 import org.cmdbuild.logic.data.lookup.LookupLogic;
 import org.cmdbuild.logic.translation.AttributeClassTranslation;
 import org.cmdbuild.logic.translation.AttributeDomainTranslation;
+import org.cmdbuild.logic.translation.TranslationFacade;
 import org.cmdbuild.logic.translation.TranslationObject;
 import org.cmdbuild.model.data.Attribute.IpType;
 import org.cmdbuild.services.meta.MetadataStoreFactory;

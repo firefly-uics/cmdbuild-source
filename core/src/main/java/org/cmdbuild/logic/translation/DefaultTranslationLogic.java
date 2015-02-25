@@ -30,9 +30,9 @@ public class DefaultTranslationLogic implements TranslationLogic {
 	public static final String INVERSE_DESCRIPTION_FOR_CLIENT = "inverseDescription";
 	private static final String INVERSE_DESCRIPTION_FOR_PERSISTENCE = "inversedescription";
 	public static final String MASTER_DETAIL_LABEL_FOR_CLIENT = "masterDetailLabel";
-	private static final String MASTER_DETAIL_LABEL_FOR_PERSISTENCE = "masterdetaillabel	";
+	private static final String MASTER_DETAIL_LABEL_FOR_PERSISTENCE = "masterdetaillabel";
 	public static final String BUTTON_LABEL_FOR_CLIENT = "ButtonLabel";
-	private static final String BUTTON_LABEL_FOR_PERSISTENCE = "buttonlabel	";
+	private static final String BUTTON_LABEL_FOR_PERSISTENCE = "buttonlabel";
 	public static final String INSTANCENAME_FOR_SERVER = "instancename";
 	public static final String GROUP_FOR_CLIENT = "group";
 	public static final String GROUP_FOR_PERSISTENCE = "group";
@@ -246,7 +246,7 @@ public class DefaultTranslationLogic implements TranslationLogic {
 	}
 
 	@Override
-	public Map<String, String> read(final TranslationObject translationObject) {
+	public Map<String, String> readAll(final TranslationObject translationObject) {
 		// TODO element, language and value must not be null
 		final Element element = ElementCreator.of(translationObject).create();
 		final Store<Translation> store = storeFactory.create(element);
@@ -259,6 +259,11 @@ public class DefaultTranslationLogic implements TranslationLogic {
 			}
 		}
 		return map;
+	}
+
+	@Override
+	public String read(final TranslationObject translationObject, final String lang) {
+		return readAll(translationObject).get(lang);
 	}
 
 	@Override

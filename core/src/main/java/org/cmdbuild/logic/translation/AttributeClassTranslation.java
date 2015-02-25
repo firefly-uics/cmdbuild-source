@@ -6,7 +6,7 @@ public class AttributeClassTranslation extends BaseTranslation {
 
 	private String attributeName;
 
-	public AttributeClassTranslation(Builder builder) {
+	public AttributeClassTranslation(final Builder builder) {
 		this.setField(builder.field);
 		this.setName(builder.className);
 		this.setAttributeName(builder.attributeName);
@@ -17,7 +17,7 @@ public class AttributeClassTranslation extends BaseTranslation {
 		return attributeName;
 	}
 
-	public void setAttributeName(String attributeName) {
+	public void setAttributeName(final String attributeName) {
 		this.attributeName = attributeName;
 	}
 
@@ -42,22 +42,22 @@ public class AttributeClassTranslation extends BaseTranslation {
 			return new AttributeClassTranslation(this);
 		}
 
-		public Builder withField(String field) {
+		public Builder withField(final String field) {
 			this.field = field;
 			return this;
 		}
 
-		public Builder withName(String attributeName) {
+		public Builder withName(final String attributeName) {
 			this.attributeName = attributeName;
 			return this;
 		}
 
-		public Builder forClass(String className) {
+		public Builder forClass(final String className) {
 			this.className = className;
 			return this;
 		}
 
-		public Builder withTranslations(Map<String, String> translations) {
+		public Builder withTranslations(final Map<String, String> translations) {
 			this.translations = translations;
 			return this;
 		}

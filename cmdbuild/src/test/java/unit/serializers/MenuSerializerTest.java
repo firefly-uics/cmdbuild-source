@@ -7,13 +7,13 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import org.cmdbuild.logic.translation.TranslationFacade;
 import org.cmdbuild.logic.translation.TranslationObject;
 import org.cmdbuild.services.store.DBDashboardStore;
 import org.cmdbuild.services.store.menu.MenuItem;
 import org.cmdbuild.services.store.menu.MenuItemDTO;
 import org.cmdbuild.services.store.menu.MenuItemType;
 import org.cmdbuild.servlets.json.serializers.MenuSerializer;
-import org.cmdbuild.servlets.json.serializers.TranslationFacade;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;

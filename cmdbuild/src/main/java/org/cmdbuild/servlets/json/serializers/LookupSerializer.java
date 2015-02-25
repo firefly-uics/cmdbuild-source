@@ -22,6 +22,7 @@ import org.cmdbuild.data.store.lookup.Lookup;
 import org.cmdbuild.data.store.lookup.LookupStore;
 import org.cmdbuild.data.store.lookup.LookupType;
 import org.cmdbuild.logic.translation.LookupTranslation;
+import org.cmdbuild.logic.translation.TranslationFacade;
 import org.json.JSONException;
 import org.json.JSONObject;
 

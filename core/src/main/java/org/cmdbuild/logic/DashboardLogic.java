@@ -253,7 +253,7 @@ public class DashboardLogic implements Logic {
 		final DashboardTranslation translationObject = new DashboardTranslation();
 		translationObject.setName(dahsboard.getName());
 		translationObject.setField(DESCRIPTION_FOR_CLIENT);
-		final String translatedDescription = translationLogic.read(translationObject).get(languageStore.getLanguage());
+		final String translatedDescription = translationLogic.readAll(translationObject).get(languageStore.getLanguage());
 		return translatedDescription;
 	}
 }
