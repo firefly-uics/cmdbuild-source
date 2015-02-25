@@ -44,17 +44,20 @@
 		 * Retrieve the position on the DB of the required card, considering the sorting and current filter applied on the grid
 		 *
 		 * @param {Object} p
-		 * @param {Object} p.params
-		 * @param {Number} p.params.cardId the id of the card
-		 * @param {String} p.params.className the name of the class
-		 * @param {Object} p.params.filter the current filter
-		 * @param {Object} p.params.sort the current sorting
+		 * 		Ex: {
+		 * 			params: {
+		 * 				{Number} cardId
+		 * 				{String} className
+		 * 				{Object} filter
+		 * 				{Object} sort
+		 * 			}
+		 * 		}
 		 */
-		getPosition: function(p) {
-			p.method = 'GET';
-			p.url = CMDBuild.core.proxy.CMProxyUrlIndex.card.getPosition;
+		getPosition: function(params) {
+			params.method = 'GET';
+			params.url = CMDBuild.core.proxy.CMProxyUrlIndex.card.getPosition;
 
-			CMDBuild.ServiceProxy.core.doRequest(p);
+			CMDBuild.ServiceProxy.core.doRequest(params);
 		},
 
 		/**
@@ -121,7 +124,7 @@
 			params.method = 'POST';
 			params.url = CMDBuild.core.proxy.CMProxyUrlIndex.card.unlock;
 
-			CMDBuild.ServiceProxy.core.doRequest(p);
+			CMDBuild.ServiceProxy.core.doRequest(params);
 		},
 
 		/**

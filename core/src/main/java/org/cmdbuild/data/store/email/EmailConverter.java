@@ -3,6 +3,7 @@ package org.cmdbuild.data.store.email;
 import static org.apache.commons.lang3.BooleanUtils.toBooleanDefaultIfNull;
 import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
 import static org.cmdbuild.data.store.email.EmailConstants.ACCOUNT_ATTRIBUTE;
+import static org.cmdbuild.data.store.email.EmailConstants.BCC_ADDRESSES_ATTRIBUTE;
 import static org.cmdbuild.data.store.email.EmailConstants.CC_ADDRESSES_ATTRIBUTE;
 import static org.cmdbuild.data.store.email.EmailConstants.CONTENT_ATTRIBUTE;
 import static org.cmdbuild.data.store.email.EmailConstants.EMAIL_CLASS_NAME;
@@ -43,8 +44,9 @@ public class EmailConverter extends BaseStorableConverter<Email> {
 	public Email convert(final CMCard card) {
 		final Email email = new Email(card.getId());
 		email.setFromAddress(defaultIfBlank(card.get(FROM_ADDRESS_ATTRIBUTE, String.class), null));
-		email.setCcAddresses(defaultIfBlank(card.get(CC_ADDRESSES_ATTRIBUTE, String.class), null));
 		email.setToAddresses(defaultIfBlank(card.get(TO_ADDRESSES_ATTRIBUTE, String.class), null));
+		email.setCcAddresses(defaultIfBlank(card.get(CC_ADDRESSES_ATTRIBUTE, String.class), null));
+		email.setBccAddresses(defaultIfBlank(card.get(BCC_ADDRESSES_ATTRIBUTE, String.class), null));
 		email.setSubject(defaultIfBlank(card.get(SUBJECT_ATTRIBUTE, String.class), null));
 		email.setContent(defaultIfBlank(card.get(CONTENT_ATTRIBUTE, String.class), null));
 		email.setNotifyWith(defaultIfBlank(card.get(NOTIFY_WITH_ATTRIBUTE, String.class), null));
@@ -65,9 +67,10 @@ public class EmailConverter extends BaseStorableConverter<Email> {
 	@Override
 	public Map<String, Object> getValues(final Email email) {
 		final Map<String, Object> values = Maps.newHashMap();
-		values.put(CC_ADDRESSES_ATTRIBUTE, email.getCcAddresses());
-		values.put(TO_ADDRESSES_ATTRIBUTE, email.getToAddresses());
 		values.put(FROM_ADDRESS_ATTRIBUTE, email.getFromAddress());
+		values.put(TO_ADDRESSES_ATTRIBUTE, email.getToAddresses());
+		values.put(CC_ADDRESSES_ATTRIBUTE, email.getCcAddresses());
+		values.put(BCC_ADDRESSES_ATTRIBUTE, email.getBccAddresses());
 		values.put(SUBJECT_ATTRIBUTE, email.getSubject());
 		values.put(CONTENT_ATTRIBUTE, email.getContent());
 		values.put(PROCESS_ID_ATTRIBUTE, email.getActivityId());

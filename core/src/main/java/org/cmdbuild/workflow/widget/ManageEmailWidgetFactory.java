@@ -32,6 +32,7 @@ public class ManageEmailWidgetFactory extends ValuePairWidgetFactory {
 	private final static String FROM_ADDRESS = "FromAddress";
 	private final static String TO_ADDRESSES = "ToAddresses";
 	private final static String CC_ADDRESSES = "CCAddresses";
+	private final static String BCC_ADDRESSES = "BCCAddresses";
 	private final static String SUBJECT = "Subject";
 	private final static String CONTENT = "Content";
 	private final static String CONDITION = "Condition";
@@ -80,6 +81,7 @@ public class ManageEmailWidgetFactory extends ValuePairWidgetFactory {
 					template.setFromAddress(_template.getFrom());
 					template.setToAddresses(_template.getTo());
 					template.setCcAddresses(_template.getCc());
+					template.setBccAddresses(_template.getBcc());
 					template.setSubject(_template.getSubject());
 					template.setContent(_template.getBody());
 					template.setVariables(_template.getVariables());
@@ -111,6 +113,13 @@ public class ManageEmailWidgetFactory extends ValuePairWidgetFactory {
 			template.setCcAddresses(readString(valueMap.get(key)));
 		}
 		managedParameters.addAll(ccAddresses.keySet());
+
+		final Map<String, String> bccAddresses = getAttributesStartingWith(valueMap, BCC_ADDRESSES);
+		for (final String key : bccAddresses.keySet()) {
+			final EmailTemplate template = getTemplateForKey(emailTemplatesByName, key, BCC_ADDRESSES);
+			template.setBccAddresses(readString(valueMap.get(key)));
+		}
+		managedParameters.addAll(bccAddresses.keySet());
 
 		final Map<String, String> subjects = getAttributesStartingWith(valueMap, SUBJECT);
 		for (final String key : subjects.keySet()) {

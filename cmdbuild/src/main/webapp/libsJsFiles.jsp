@@ -33,4 +33,4 @@
 <script type="text/javascript" src="javascripts/ext-<%= extVersion %>-ux/PatchOverride.js"></script>
 
 <!-- TinyMCE -->
-<script type="text/javascript" src="javascripts/ext-<%= extVersion %>-ux/form/TinyMCE/src/tiny_mce.js"></script>
+<script type="text/javascript" src="javascripts/ext-<%= extVersion %>-ux/form/field/tinymce/tiny_mce.js"></script>
