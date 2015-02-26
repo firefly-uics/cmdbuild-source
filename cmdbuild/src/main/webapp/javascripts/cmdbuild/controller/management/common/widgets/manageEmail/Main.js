@@ -117,7 +117,7 @@ _debug('searchForCqlClientVariables', inspectingVariable + ' ' + inspectingVaria
 						}
 					}
 				}
-
+_debug('found', found);
 				return found;
 			}
 		},
@@ -545,11 +545,11 @@ _debug('regenerateEmail this.templateResolver', templateResolver);
 					attributes: Ext.Object.getKeys(xaVars),
 					callback: function(values, ctx) {
 _debug('regenerateEmail values', values);
+						for (var key in values)
+							record.set(key, values[key]);
+						
 						if (me.checkCondition(values, templateResolver)) {
 							_msg('Email with subject "' + values[CMDBuild.core.proxy.CMProxyConstants.SUBJECT] + '" regenerated');
-
-							for (var key in values)
-								record.set(key, values[key]);
 _debug('regenerateEmail record', record);
 							// TrafficLight slot build
 							var trafficLight = [];
@@ -561,12 +561,12 @@ _debug('regenerateEmail record', record);
 							me.controllerGrid.editRecord(record, regenerationTrafficLightArray);
 
 							emailRegenerationStatus = true;
-
-							me.bindLocalDepsChangeEvent(record, templateResolver, me);
 						} else {
 _debug('regenerateEmail remove record', record);
 							me.controllerGrid.removeRecord(record);
 						}
+						
+						me.bindLocalDepsChangeEvent(record, templateResolver, me);
 					}
 				});
 			}
@@ -625,23 +625,23 @@ _debug('regenerateTemplate this.templateResolver', templateResolver);
 _debug('regenerateTemplate values', values);
 						var emailObject = null;
 
-						if (me.checkCondition(values, templateResolver)) {
 _debug('regenerateTemplate me.controllerGrid.getDraftEmails()', me.controllerGrid.getDraftEmails());
-							var record = Ext.Array.findBy(me.controllerGrid.getDraftEmails(), function(item, index) {
-								if (item.get(CMDBuild.core.proxy.CMProxyConstants.TEMPLATE) == template.get(CMDBuild.core.proxy.CMProxyConstants.KEY))
-									return true;
-
-								return false;
-							});
+						var record = Ext.Array.findBy(me.controllerGrid.getDraftEmails(), function(item, index) {
+							if (item.get(CMDBuild.core.proxy.CMProxyConstants.TEMPLATE) == template.get(CMDBuild.core.proxy.CMProxyConstants.KEY))
+								return true;
+							
+							return false;
+						});
 _debug('regenerateTemplate record', record);
-							// Update record data with values
-							if (!Ext.Object.isEmpty(record))
-								values = Ext.Object.merge(record.getData(), values);
-
-							emailObject = Ext.create('CMDBuild.model.widget.ManageEmail.email', values);
-							emailObject.set(CMDBuild.core.proxy.CMProxyConstants.ACTIVITY_ID, me.getActivityId());
-							emailObject.set(CMDBuild.core.proxy.CMProxyConstants.TEMPLATE, template.get(CMDBuild.core.proxy.CMProxyConstants.KEY));
-
+						// Update record data with values
+						if (!Ext.Object.isEmpty(record))
+							values = Ext.Object.merge(record.getData(), values);
+						
+						emailObject = Ext.create('CMDBuild.model.widget.ManageEmail.email', values);
+						emailObject.set(CMDBuild.core.proxy.CMProxyConstants.ACTIVITY_ID, me.getActivityId());
+						emailObject.set(CMDBuild.core.proxy.CMProxyConstants.TEMPLATE, template.get(CMDBuild.core.proxy.CMProxyConstants.KEY));
+			
+						if (me.checkCondition(values, templateResolver)) {
 							_msg('Template with subject "' + values[CMDBuild.core.proxy.CMProxyConstants.SUBJECT] + '" regenerated');
 _debug('regenerateTemplate emailObject', emailObject);
 							if (Ext.isEmpty(record)) {
@@ -651,9 +651,9 @@ _debug('regenerateTemplate emailObject', emailObject);
 							}
 
 							templateRegenerationStatus = true;
-
-							me.bindLocalDepsChangeEvent(emailObject, templateResolver, me);
 						}
+						
+						me.bindLocalDepsChangeEvent(emailObject, templateResolver, me);
 					}
 				});
 			}
