@@ -102,7 +102,6 @@ public class Serialization {
 			SUBJECT = "subject", //
 			TARGET_CLASS = "targetClass", //
 			TEMPLATE = "template", //
-			TEMPORARY = "temporary", //
 			TEXT = "text", //
 			TO2 = "to", //
 			TOTAL = "total", //

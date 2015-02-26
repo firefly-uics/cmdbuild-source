@@ -732,7 +732,6 @@ public class Models {
 		private String status;
 		private boolean noSubjectPrefix;
 		private String account;
-		private boolean temporary;
 		private String template;
 		private boolean keepSynchronization;
 		private boolean promptSynchronization;
@@ -756,7 +755,6 @@ public class Models {
 			output.setNotifyWith(notifyWith);
 			output.setNoSubjectPrefix(noSubjectPrefix);
 			output.setAccount(account);
-			output.setTemporary(temporary);
 			output.setTemplate(template);
 			output.setKeepSynchronization(keepSynchronization);
 			output.setPromptSynchronization(promptSynchronization);
@@ -820,11 +818,6 @@ public class Models {
 
 		public EmailBuilder withAccount(final String account) {
 			this.account = account;
-			return this;
-		}
-
-		public EmailBuilder withTemporary(final boolean temporary) {
-			this.temporary = temporary;
 			return this;
 		}
 

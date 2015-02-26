@@ -13,7 +13,6 @@ import static org.cmdbuild.service.rest.v2.constants.Serialization.PROMPT_SYNCHR
 import static org.cmdbuild.service.rest.v2.constants.Serialization.STATUS;
 import static org.cmdbuild.service.rest.v2.constants.Serialization.SUBJECT;
 import static org.cmdbuild.service.rest.v2.constants.Serialization.TEMPLATE;
-import static org.cmdbuild.service.rest.v2.constants.Serialization.TEMPORARY;
 import static org.cmdbuild.service.rest.v2.constants.Serialization.TO2;
 import static org.cmdbuild.service.rest.v2.constants.Serialization.UNDERSCORED_ID;
 
@@ -41,7 +40,6 @@ public class Email extends AbstractModel {
 	private String notifyWith;
 	private boolean noSubjectPrefix;
 	private String account;
-	private boolean temporary;
 	private String template;
 	private boolean keepSynchronization;
 	private boolean promptSynchronization;
@@ -159,15 +157,6 @@ public class Email extends AbstractModel {
 		this.account = account;
 	}
 
-	@XmlAttribute(name = TEMPORARY)
-	public boolean isTemporary() {
-		return temporary;
-	}
-
-	public void setTemporary(final boolean temporary) {
-		this.temporary = temporary;
-	}
-
 	@XmlAttribute(name = TEMPLATE)
 	public String getTemplate() {
 		return template;
@@ -217,7 +206,6 @@ public class Email extends AbstractModel {
 				.append(this.status, other.status) //
 				.append(this.noSubjectPrefix, other.noSubjectPrefix) //
 				.append(this.account, other.account) //
-				.append(this.temporary, other.temporary) //
 				.append(this.template, other.template) //
 				.append(this.keepSynchronization, other.keepSynchronization) //
 				.append(this.promptSynchronization, other.promptSynchronization) //
@@ -239,7 +227,6 @@ public class Email extends AbstractModel {
 				.append(status) //
 				.append(noSubjectPrefix) //
 				.append(account) //
-				.append(temporary) //
 				.append(template) //
 				.append(keepSynchronization) //
 				.append(promptSynchronization) //

@@ -60,8 +60,10 @@ import org.cmdbuild.service.rest.v2.cxf.CxfSessions;
 import org.cmdbuild.service.rest.v2.cxf.CxfSessions.AuthenticationLogicAdapter;
 import org.cmdbuild.service.rest.v2.cxf.CxfSessions.LoginHandler;
 import org.cmdbuild.service.rest.v2.cxf.DefaultEncoding;
+import org.cmdbuild.service.rest.v2.cxf.DefaultIdGenerator;
 import org.cmdbuild.service.rest.v2.cxf.DefaultProcessStatusHelper;
 import org.cmdbuild.service.rest.v2.cxf.ErrorHandler;
+import org.cmdbuild.service.rest.v2.cxf.IdGenerator;
 import org.cmdbuild.service.rest.v2.cxf.ProcessStatusHelper;
 import org.cmdbuild.service.rest.v2.cxf.TranslatingAttachmentsHelper;
 import org.cmdbuild.service.rest.v2.cxf.TranslatingAttachmentsHelper.Encoding;
@@ -142,7 +144,7 @@ public class ServicesV2 implements LoggingSupport {
 	@Bean
 	public ProcessInstanceEmails v2_emails() {
 		final CxfProcessInstanceEmails service = new CxfProcessInstanceEmails(v2_errorHandler(),
-				helper.userWorkflowLogic(), helper.emailLogic());
+				helper.userWorkflowLogic(), helper.emailLogic(), v2_idGenerator());
 		return proxy(ProcessInstanceEmails.class, service);
 	}
 
@@ -225,7 +227,7 @@ public class ServicesV2 implements LoggingSupport {
 	@Scope(value = SCOPE_REQUEST, proxyMode = TARGET_CLASS)
 	public Processes v2_processes() {
 		final CxfProcesses service = new CxfProcesses(v2_errorHandler(), helper.userWorkflowLogic(),
-				v2_processStatusHelper());
+				v2_processStatusHelper(), v2_idGenerator());
 		return proxy(Processes.class, service);
 	}
 
@@ -238,6 +240,11 @@ public class ServicesV2 implements LoggingSupport {
 	@Bean
 	protected ProcessStatusHelper v2_processStatusHelper() {
 		return new DefaultProcessStatusHelper(helper.lookupHelper());
+	}
+
+	@Bean
+	protected IdGenerator v2_idGenerator() {
+		return new DefaultIdGenerator();
 	}
 
 	@Bean
