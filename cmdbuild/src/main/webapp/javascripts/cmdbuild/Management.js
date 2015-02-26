@@ -153,9 +153,9 @@
 						cmControllerType: CMDBuild.controller.management.report.CMModReportController
 					}),
 
-					this.singleReportPanel = new CMDBuild.view.common.report.CMMainSingleReportPage({
-						cmName: 'singlereport',
-						cmControllerType: CMDBuild.controller.management.report.CMSingleReportPageController
+					Ext.create('CMDBuild.view.management.report.SingleReportPanel', {
+						cmControllerType: 'CMDBuild.controller.management.report.SingleReport',
+						cmName: 'singlereport'
 					}),
 
 					this.dashboardPanel = new CMDBuild.view.management.dashboard.CMModDashboard({

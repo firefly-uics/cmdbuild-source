@@ -143,9 +143,6 @@
 <!--  VIEWS -->
 <script type="text/javascript" src="javascripts/cmdbuild/view/common/CMBaseAccordion.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/view/common/report/CMReportAccordion.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/view/common/report/CMMainSingleReportPage.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/view/common/report/CMSingleReportFrame.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/view/common/report/CMSingleReportPage.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/view/common/report/CMReportGrid.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/view/common/CMUnconfiguredModPanel.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/view/common/CMFormFuncions.js"></script>

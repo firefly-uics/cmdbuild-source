@@ -202,7 +202,7 @@
 						if (!popup)
 							CMDBuild.Msg.warn(CMDBuild.Translation.warnings.warning_message,CMDBuild.Translation.warnings.popup_block);
 					} else { // Show form with launch parameters
-						Ext.create('CMDBuild.Management.ReportParamWin', {
+						Ext.create('CMDBuild.view.management.report.ParametersWindow', {
 							attributeList: decodedResult.attribute
 						}).show();
 					}
