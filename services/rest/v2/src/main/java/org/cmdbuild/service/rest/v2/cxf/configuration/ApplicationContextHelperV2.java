@@ -20,6 +20,7 @@ import org.cmdbuild.logic.data.access.UserDataAccessLogicBuilder;
 import org.cmdbuild.logic.data.lookup.LookupLogic;
 import org.cmdbuild.logic.dms.DmsLogic;
 import org.cmdbuild.logic.dms.PrivilegedDmsLogic;
+import org.cmdbuild.logic.email.EmailLogic;
 import org.cmdbuild.logic.menu.MenuLogic;
 import org.cmdbuild.logic.privileges.SecurityLogic;
 import org.cmdbuild.logic.workflow.UserWorkflowLogicBuilder;
@@ -69,6 +70,10 @@ public class ApplicationContextHelperV2 {
 
 	public DmsLogic dmsLogic() {
 		return applicationContext.getBean(PrivilegedDmsLogic.class);
+	}
+
+	public EmailLogic emailLogic() {
+		return applicationContext.getBean(EmailLogic.class);
 	}
 
 	public LookupHelper lookupHelper() {

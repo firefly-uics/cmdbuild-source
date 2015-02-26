@@ -24,6 +24,7 @@ import org.cmdbuild.service.rest.v2.LookupTypes;
 import org.cmdbuild.service.rest.v2.Menu;
 import org.cmdbuild.service.rest.v2.ProcessAttributes;
 import org.cmdbuild.service.rest.v2.ProcessInstanceActivities;
+import org.cmdbuild.service.rest.v2.ProcessInstanceEmails;
 import org.cmdbuild.service.rest.v2.ProcessInstances;
 import org.cmdbuild.service.rest.v2.ProcessStartActivities;
 import org.cmdbuild.service.rest.v2.Processes;
@@ -49,6 +50,7 @@ import org.cmdbuild.service.rest.v2.cxf.CxfMenu;
 import org.cmdbuild.service.rest.v2.cxf.CxfProcessAttributes;
 import org.cmdbuild.service.rest.v2.cxf.CxfProcessInstanceActivities;
 import org.cmdbuild.service.rest.v2.cxf.CxfProcessInstanceAttachments;
+import org.cmdbuild.service.rest.v2.cxf.CxfProcessInstanceEmails;
 import org.cmdbuild.service.rest.v2.cxf.CxfProcessInstances;
 import org.cmdbuild.service.rest.v2.cxf.CxfProcessStartActivities;
 import org.cmdbuild.service.rest.v2.cxf.CxfProcesses;
@@ -73,13 +75,13 @@ import org.cmdbuild.service.rest.v2.cxf.service.TokenGenerator;
 import org.cmdbuild.service.rest.v2.logging.LoggingSupport;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
 
-@Component
+@Configuration
 public class ServicesV2 implements LoggingSupport {
 
 	@Autowired
@@ -135,6 +137,13 @@ public class ServicesV2 implements LoggingSupport {
 		final CxfDomainAttributes service = new CxfDomainAttributes(v2_errorHandler(), helper.userDataAccessLogic(),
 				helper.systemDataView(), helper.metadataStoreFactory(), helper.lookupLogic());
 		return proxy(DomainAttributes.class, service);
+	}
+
+	@Bean
+	public ProcessInstanceEmails v2_emails() {
+		final CxfProcessInstanceEmails service = new CxfProcessInstanceEmails(v2_errorHandler(),
+				helper.userWorkflowLogic(), helper.emailLogic());
+		return proxy(ProcessInstanceEmails.class, service);
 	}
 
 	@Bean

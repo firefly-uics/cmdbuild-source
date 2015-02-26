@@ -718,6 +718,133 @@ public class Models {
 
 	}
 
+	public static class EmailBuilder extends ModelBuilder<Email> {
+
+		private Long id;
+		private String from;
+		private Collection<String> to;
+		private Collection<String> cc;
+		private Collection<String> bcc;
+		private String subject;
+		private String body;
+		private String notifyWith;
+		private String date;
+		private String status;
+		private boolean noSubjectPrefix;
+		private String account;
+		private boolean temporary;
+		private String template;
+		private boolean keepSynchronization;
+		private boolean promptSynchronization;
+
+		private EmailBuilder() {
+			// use factory method
+		}
+
+		@Override
+		protected Email doBuild() {
+			final Email output = new Email();
+			output.setId(id);
+			output.setFrom(from);
+			output.setTo(to);
+			output.setCc(cc);
+			output.setBcc(bcc);
+			output.setSubject(subject);
+			output.setBody(body);
+			output.setDate(date);
+			output.setStatus(status);
+			output.setNotifyWith(notifyWith);
+			output.setNoSubjectPrefix(noSubjectPrefix);
+			output.setAccount(account);
+			output.setTemporary(temporary);
+			output.setTemplate(template);
+			output.setKeepSynchronization(keepSynchronization);
+			output.setPromptSynchronization(promptSynchronization);
+			return output;
+		}
+
+		public EmailBuilder withId(final Long id) {
+			this.id = id;
+			return this;
+		}
+
+		public EmailBuilder withFrom(final String from) {
+			this.from = from;
+			return this;
+		}
+
+		public EmailBuilder withTo(final Collection<String> to) {
+			this.to = to;
+			return this;
+		}
+
+		public EmailBuilder withCc(final Collection<String> cc) {
+			this.cc = cc;
+			return this;
+		}
+
+		public EmailBuilder withBcc(final Collection<String> bcc) {
+			this.bcc = bcc;
+			return this;
+		}
+
+		public EmailBuilder withSubject(final String subject) {
+			this.subject = subject;
+			return this;
+		}
+
+		public EmailBuilder withBody(final String body) {
+			this.body = body;
+			return this;
+		}
+
+		public EmailBuilder withNotifyWith(final String notifyWith) {
+			this.notifyWith = notifyWith;
+			return this;
+		}
+
+		public EmailBuilder withDate(final String date) {
+			this.date = date;
+			return this;
+		}
+
+		public EmailBuilder withStatus(final String status) {
+			this.status = status;
+			return this;
+		}
+
+		public EmailBuilder withNoSubjectPrefix(final boolean noSubjectPrefix) {
+			this.noSubjectPrefix = noSubjectPrefix;
+			return this;
+		}
+
+		public EmailBuilder withAccount(final String account) {
+			this.account = account;
+			return this;
+		}
+
+		public EmailBuilder withTemporary(final boolean temporary) {
+			this.temporary = temporary;
+			return this;
+		}
+
+		public EmailBuilder withTemplate(final String template) {
+			this.template = template;
+			return this;
+		}
+
+		public EmailBuilder withKeepSynchronization(final boolean keepSynchronization) {
+			this.keepSynchronization = keepSynchronization;
+			return this;
+		}
+
+		public EmailBuilder withPromptSynchronization(final boolean promptSynchronization) {
+			this.promptSynchronization = promptSynchronization;
+			return this;
+		}
+
+	}
+
 	public static class FilterBuilder extends ModelBuilder<Filter> {
 
 		private String text;
@@ -943,6 +1070,11 @@ public class Models {
 
 		public MetadataBuilder withTotal(final Long total) {
 			this.total = total;
+			return this;
+		}
+
+		public MetadataBuilder withTotal(final Integer total) {
+			this.total = Long.valueOf(total);
 			return this;
 		}
 
@@ -1666,6 +1798,10 @@ public class Models {
 
 	public static DomainWithFullDetailsBuilder newDomainWithFullDetails() {
 		return new DomainWithFullDetailsBuilder();
+	}
+
+	public static EmailBuilder newEmail() {
+		return new EmailBuilder();
 	}
 
 	public static FilterBuilder newFilter() {

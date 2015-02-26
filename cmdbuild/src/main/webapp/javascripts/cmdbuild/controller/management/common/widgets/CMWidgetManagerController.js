@@ -221,7 +221,7 @@
 		addControllerClass(commonControllers.CMManageRelationController);
 
 		// ManageEmail
-		addControllerClass(CMDBuild.controller.management.common.widgets.CMManageEmailController);
+		addControllerClass(CMDBuild.controller.management.common.widgets.manageEmail.Main);
 
 		// ping
 		addControllerClass(commonControllers.CMPingController);

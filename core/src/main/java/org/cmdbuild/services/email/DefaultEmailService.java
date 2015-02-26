@@ -2,7 +2,7 @@ package org.cmdbuild.services.email;
 
 import static com.google.common.collect.Iterables.unmodifiableIterable;
 import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.cmdbuild.data.store.email.EmailStatus.RECEIVED;
 import static org.cmdbuild.system.SystemUtils.isMailDebugEnabled;
 
 import java.net.URL;
@@ -21,11 +21,11 @@ import org.cmdbuild.common.api.mail.MailApiFactory;
 import org.cmdbuild.common.api.mail.MailException;
 import org.cmdbuild.common.api.mail.NewMail;
 import org.cmdbuild.common.api.mail.SelectMail;
+import org.cmdbuild.data.store.Storable;
+import org.cmdbuild.data.store.Store;
 import org.cmdbuild.data.store.email.Attachment;
 import org.cmdbuild.data.store.email.Email;
 import org.cmdbuild.data.store.email.EmailConstants;
-import org.cmdbuild.data.store.email.EmailStatus;
-import org.cmdbuild.data.store.email.ExtendedEmailTemplate;
 import org.slf4j.Logger;
 
 import com.google.common.base.Predicate;
@@ -146,18 +146,18 @@ public class DefaultEmailService implements EmailService {
 
 	private static final Map<URL, String> NO_ATTACHMENTS = Collections.emptyMap();
 
-	private final Supplier<EmailAccount> emailAccountSupplier;
-	private final Supplier<MailApi> mailApiSupplier;
-	private final EmailPersistence persistence;
+	private final Supplier<EmailAccount> accountSupplier;
+	private final Supplier<MailApi> apiSupplier;
+	private final Store<Email> store;
 
 	DefaultEmailService( //
 			final Supplier<EmailAccount> emailAccountSupplier, //
 			final MailApiFactory mailApiFactory, //
-			final EmailPersistence persistence //
+			final Store<Email> store //
 	) {
-		this.emailAccountSupplier = emailAccountSupplier;
-		this.mailApiSupplier = new MailApiSupplier(emailAccountSupplier, mailApiFactory);
-		this.persistence = persistence;
+		this.accountSupplier = emailAccountSupplier;
+		this.apiSupplier = new MailApiSupplier(emailAccountSupplier, mailApiFactory);
+		this.store = store;
 	}
 
 	@Override
@@ -170,7 +170,7 @@ public class DefaultEmailService implements EmailService {
 	public void send(final Email email, final Map<URL, String> attachments) throws EmailServiceException {
 		logger.info("sending email {} with attachments {}", email.getId(), attachments);
 		try {
-			final NewMail newMail = mailApiSupplier.get().newMail() //
+			final NewMail newMail = apiSupplier.get().newMail() //
 					.withFrom(from(email.getFromAddress())) //
 					.withTo(addressesFrom(email.getToAddresses())) //
 					.withCc(addressesFrom(email.getCcAddresses())) //
@@ -189,7 +189,7 @@ public class DefaultEmailService implements EmailService {
 	}
 
 	private String from(final String fromAddress) {
-		return defaultIfBlank(fromAddress, emailAccountSupplier.get().getAddress());
+		return defaultIfBlank(fromAddress, accountSupplier.get().getAddress());
 	}
 
 	private String[] addressesFrom(final String addresses) {
@@ -217,7 +217,7 @@ public class DefaultEmailService implements EmailService {
 		 * to sync the e-mails. So don't try to reach always the server but only
 		 * if configured
 		 */
-		if (emailAccountSupplier.get().isImapConfigured()) {
+		if (accountSupplier.get().isImapConfigured()) {
 			try {
 				receive0(callback);
 			} catch (final MailException e) {
@@ -230,26 +230,26 @@ public class DefaultEmailService implements EmailService {
 	}
 
 	private void receive0(final EmailCallbackHandler callback) {
-		final Iterable<FetchedMail> fetchMails = mailApiSupplier.get() //
-				.selectFolder(emailAccountSupplier.get().getInputFolder()) //
+		final Iterable<FetchedMail> fetchMails = apiSupplier.get() //
+				.selectFolder(accountSupplier.get().getInputFolder()) //
 				.fetch();
 		for (final FetchedMail fetchedMail : fetchMails) {
-			final SelectMail mailMover = mailApiSupplier.get().selectMail(fetchedMail);
+			final SelectMail mailMover = apiSupplier.get().selectMail(fetchedMail);
 			boolean keepMail = false;
 			try {
-				final GetMail getMail = mailApiSupplier.get().selectMail(fetchedMail).get();
+				final GetMail getMail = apiSupplier.get().selectMail(fetchedMail).get();
 				final Email email = transform(getMail);
-				mailMover.selectTargetFolder(emailAccountSupplier.get().getProcessedFolder());
+				mailMover.selectTargetFolder(accountSupplier.get().getProcessedFolder());
 				if (callback.apply(email)) {
-					final Long id = persistence.save(email);
-					final Email stored = persistence.getEmail(id);
-					stored.setAttachments(email.getAttachments());
-					callback.accept(stored);
+					final Storable stored = store.create(email);
+					final Email read = store.read(stored);
+					read.setAttachments(email.getAttachments());
+					callback.accept(read);
 				}
 			} catch (final Exception e) {
 				logger.error("error getting mail", e);
-				keepMail = !emailAccountSupplier.get().isRejectNotMatching();
-				mailMover.selectTargetFolder(emailAccountSupplier.get().getRejectedFolder());
+				keepMail = !accountSupplier.get().isRejectNotMatching();
+				mailMover.selectTargetFolder(accountSupplier.get().getRejectedFolder());
 			}
 
 			try {
@@ -269,7 +269,7 @@ public class DefaultEmailService implements EmailService {
 		email.setCcAddresses(StringUtils.join(getMail.getCcs().iterator(), EmailConstants.ADDRESSES_SEPARATOR));
 		email.setSubject(getMail.getSubject());
 		email.setContent(getMail.getContent());
-		email.setStatus(getMessageStatusFromSender(getMail.getFrom()));
+		email.setStatus(RECEIVED);
 		final List<Attachment> attachments = Lists.newArrayList();
 		for (final GetMail.Attachment attachment : getMail.getAttachments()) {
 			attachments.add(Attachment.newInstance() //
@@ -280,15 +280,6 @@ public class DefaultEmailService implements EmailService {
 		email.setAttachments(attachments);
 		log(email);
 		return email;
-	}
-
-	private EmailStatus getMessageStatusFromSender(final String from) {
-		if (emailAccountSupplier.get().getAddress().equalsIgnoreCase(from)) {
-			// Probably sent from Shark with BCC here
-			return EmailStatus.SENT;
-		} else {
-			return EmailStatus.RECEIVED; // TODO Set as NEW!
-		}
 	}
 
 	private void log(final Email email) {
@@ -302,46 +293,6 @@ public class DefaultEmailService implements EmailService {
 		for (final Attachment attachment : email.getAttachments()) {
 			logger.debug("\t\t- {}", attachment.getName());
 		}
-	}
-
-	@Override
-	public Iterable<ExtendedEmailTemplate> getEmailTemplates(final Email email) {
-		logger.info("getting email templates for email with id '{}'", email.getId());
-		final List<ExtendedEmailTemplate> templates = Lists.newArrayList();
-		if (isNotBlank(email.getNotifyWith())) {
-			for (final ExtendedEmailTemplate template : persistence.getEmailTemplates()) {
-				if (template.getName().equals(email.getNotifyWith())) {
-					templates.add(template);
-				}
-			}
-		} else {
-			logger.debug("notification not required");
-		}
-		return Collections.unmodifiableList(templates);
-	}
-
-	@Override
-	public Long save(final Email email) {
-		logger.info("saving email with id '{}' and process' id '{}'", email.getId(), email.getActivityId());
-		return persistence.save(email);
-	}
-
-	@Override
-	public void delete(final Email email) {
-		logger.info("deleting email with id '{}' and process' id '{}'", email.getId(), email.getActivityId());
-		persistence.delete(email);
-	}
-
-	@Override
-	public Iterable<Email> getEmails(final Long processId) {
-		logger.info("getting emails for process with id '{}'", processId);
-		return persistence.getEmails(processId);
-	}
-
-	@Override
-	public Iterable<Email> getOutgoingEmails(final Long processId) {
-		logger.info("getting outgoing emails for process with id '{}'", processId);
-		return persistence.getOutgoingEmails(processId);
 	}
 
 }

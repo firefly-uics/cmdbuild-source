@@ -20,7 +20,7 @@ import com.google.common.collect.Maps;
 
 public class WebService extends Widget {
 
-	private final String SELECTED_NODE_KEY = "output";
+	private final String SELECTED_NODE_KEY = DEFAULT_SUBMISSION_PARAM;
 
 	private String endPoint, method, nameSpacePrefix, nameSpaceURI, outputName, outputSeparator;
 	private String[] nodesToUseAsRows, nodesToUseAsColumns;

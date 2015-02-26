@@ -13,11 +13,13 @@
 
 		/**
 		 * @param {Object} parameters
+		 *
+		 * TODO: to move in CMDBuild.core.proxy.Utils
 		 */
 		getLanguage: function(parameters) {
 			CMDBuild.Ajax.request({
 				method: 'POST',
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.getLanguage,
+				url: CMDBuild.core.proxy.CMProxyUrlIndex.utils.getLanguage,
 				scope: parameters.scope || this,
 				success: parameters.success || Ext.emptyFn,
 				failure: parameters.failure || Ext.emptyFn,
@@ -66,7 +68,7 @@
 		readAll: function(parameters) {
 			parameters.method = 'GET';
 			parameters.url = CMDBuild.core.proxy.CMProxyUrlIndex.configuration.getConfigurations;
-			parameters.params = { names: Ext.JSON.encode(['cmdbuild', 'workflow', 'gis', 'bim', 'graph']) };
+			parameters.params = { names: Ext.JSON.encode(['bim', 'cmdbuild', 'dms', 'gis', 'graph', 'workflow']) };
 
 			CMDBuild.ServiceProxy.core.doRequest(parameters);
 		},
