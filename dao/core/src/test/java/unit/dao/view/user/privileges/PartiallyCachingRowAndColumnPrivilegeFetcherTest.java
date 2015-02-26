@@ -37,19 +37,6 @@ public class PartiallyCachingRowAndColumnPrivilegeFetcherTest {
 	}
 
 	@Test
-	public void fetchPrivilegeFiltersFor_DoubleEntryType_NotCached() throws Exception {
-		// given
-		final CMClass entryType = mock(CMClass.class);
-
-		// when
-		fetcher.fetchPrivilegeFiltersFor(entryType, entryType);
-		fetcher.fetchPrivilegeFiltersFor(entryType, entryType);
-
-		// then
-		verify(delegate, times(2)).fetchPrivilegeFiltersFor(eq(entryType), eq(entryType));
-	}
-
-	@Test
 	public void fetchAttributesPrivilegesFor_Cached() throws Exception {
 		// given
 		final CMClass entryType = mock(CMClass.class);
