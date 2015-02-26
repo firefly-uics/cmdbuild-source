@@ -24,6 +24,7 @@ import org.cmdbuild.logic.email.EmailLogic;
 import org.cmdbuild.logic.workflow.WorkflowLogic;
 import org.cmdbuild.service.rest.v2.cxf.CxfProcessInstanceEmails;
 import org.cmdbuild.service.rest.v2.cxf.ErrorHandler;
+import org.cmdbuild.service.rest.v2.cxf.IdGenerator;
 import org.cmdbuild.service.rest.v2.model.Email;
 import org.cmdbuild.service.rest.v2.model.ResponseMultiple;
 import org.cmdbuild.service.rest.v2.model.ResponseSingle;
@@ -37,6 +38,7 @@ public class CxfProcessInstanceEmailsTest {
 	private ErrorHandler errorHandler;
 	private WorkflowLogic workflowLogic;
 	private EmailLogic emailLogic;
+	private IdGenerator idGenerator;
 
 	private CxfProcessInstanceEmails underTest;
 
@@ -45,7 +47,8 @@ public class CxfProcessInstanceEmailsTest {
 		errorHandler = mock(ErrorHandler.class);
 		workflowLogic = mock(WorkflowLogic.class);
 		emailLogic = mock(EmailLogic.class);
-		underTest = new CxfProcessInstanceEmails(errorHandler, workflowLogic, emailLogic);
+		idGenerator = mock(IdGenerator.class);
+		underTest = new CxfProcessInstanceEmails(errorHandler, workflowLogic, emailLogic, idGenerator);
 	}
 
 	@Test(expected = WebApplicationException.class)
@@ -125,7 +128,6 @@ public class CxfProcessInstanceEmailsTest {
 				.withNotifyWith("foo") //
 				.withNoSubjectPrefix(true) //
 				.withAccount("bar") //
-				.withTemporary(true) //
 				.withTemplate("baz") //
 				.withKeepSynchronization(true) //
 				.withPromptSynchronization(true) //
@@ -146,7 +148,7 @@ public class CxfProcessInstanceEmailsTest {
 				.withNotifyWith("foo") //
 				.withNoSubjectPrefix(true) //
 				.withAccount("bar") //
-				.withTemporary(true) //
+				.withTemporary(false) //
 				.withTemplate("baz") //
 				.withKeepSynchronization(true) //
 				.withPromptSynchronization(true) //
@@ -302,7 +304,6 @@ public class CxfProcessInstanceEmailsTest {
 				.withNotifyWith("foo") //
 				.withNoSubjectPrefix(true) //
 				.withAccount("bar") //
-				.withTemporary(true) //
 				.withTemplate("baz") //
 				.withKeepSynchronization(true) //
 				.withPromptSynchronization(true) //
@@ -388,7 +389,6 @@ public class CxfProcessInstanceEmailsTest {
 				.withNotifyWith("foo") //
 				.withNoSubjectPrefix(true) //
 				.withAccount("bar") //
-				.withTemporary(true) //
 				.withTemplate("baz") //
 				.withKeepSynchronization(true) //
 				.withPromptSynchronization(true) //
@@ -408,7 +408,7 @@ public class CxfProcessInstanceEmailsTest {
 				.withNotifyWith("foo") //
 				.withNoSubjectPrefix(true) //
 				.withAccount("bar") //
-				.withTemporary(true) //
+				.withTemporary(false) //
 				.withTemplate("baz") //
 				.withKeepSynchronization(true) //
 				.withPromptSynchronization(true) //

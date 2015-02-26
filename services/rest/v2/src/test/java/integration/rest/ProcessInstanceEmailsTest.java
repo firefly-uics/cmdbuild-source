@@ -88,7 +88,6 @@ public class ProcessInstanceEmailsTest {
 				+ "    \"notifyWith\" : \"foo\"," //
 				+ "    \"noSubjectPrefix\" : false," //
 				+ "    \"account\" : \"bar\"," //
-				+ "    \"temporary\" : false," //
 				+ "    \"template\" : \"baz\"," //
 				+ "    \"keepSynchronization\" : true," //
 				+ "    \"promptSynchronization\" : true" //
@@ -112,7 +111,6 @@ public class ProcessInstanceEmailsTest {
 				.withNotifyWith("foo") //
 				.withNoSubjectPrefix(false) //
 				.withAccount("bar") //
-				.withTemporary(false) //
 				.withTemplate("baz") //
 				.withKeepSynchronization(true) //
 				.withPromptSynchronization(true) //
@@ -184,7 +182,6 @@ public class ProcessInstanceEmailsTest {
 				+ "    \"notifyWith\" : \"foo\"," //
 				+ "    \"noSubjectPrefix\" : false," //
 				+ "    \"account\" : \"bar\"," //
-				+ "    \"temporary\" : false," //
 				+ "    \"template\" : \"baz\"," //
 				+ "    \"keepSynchronization\" : true," //
 				+ "    \"promptSynchronization\" : true" //
@@ -207,7 +204,6 @@ public class ProcessInstanceEmailsTest {
 				.withNotifyWith("foo") //
 				.withNoSubjectPrefix(false) //
 				.withAccount("bar") //
-				.withTemporary(false) //
 				.withTemplate("baz") //
 				.withKeepSynchronization(true) //
 				.withPromptSynchronization(true) //

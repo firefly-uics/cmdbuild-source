@@ -33,13 +33,14 @@ import org.joda.time.DateTime;
 
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
+import com.google.common.base.Predicate;
 import com.google.common.base.Splitter;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 
 public class CxfProcessInstanceEmails implements ProcessInstanceEmails {
 
-	private static final Function<EmailLogic.Email, Long> LOGIC_TO_LONG = new Function<EmailLogic.Email, Long>() {
+	private static class LogicToLong implements Function<EmailLogic.Email, Long> {
 
 		@Override
 		public Long apply(final org.cmdbuild.logic.email.EmailLogic.Email input) {
@@ -48,7 +49,9 @@ public class CxfProcessInstanceEmails implements ProcessInstanceEmails {
 
 	};
 
-	private static final Function<EmailLogic.Email, Email> LOGIC_TO_REST = new Function<EmailLogic.Email, Email>() {
+	private static final LogicToLong LOGIC_TO_LONG = new LogicToLong();
+
+	private static class LogicToRest implements Function<EmailLogic.Email, Email> {
 
 		private final Collection<String> NO_ADDRESSES = emptyList();
 		private final DateAttributeType DATE_ATTRIBUTE_TYPE = new DateAttributeType();
@@ -68,7 +71,6 @@ public class CxfProcessInstanceEmails implements ProcessInstanceEmails {
 					.withNotifyWith(input.getNotifyWith()) //
 					.withNoSubjectPrefix(input.isNoSubjectPrefix()) //
 					.withAccount(input.getAccount()) //
-					.withTemporary(input.isTemporary()) //
 					.withTemplate(input.getTemplate()) //
 					.withKeepSynchronization(input.isKeepSynchronization()) //
 					.withPromptSynchronization(input.isPromptSynchronization()) //
@@ -92,7 +94,17 @@ public class CxfProcessInstanceEmails implements ProcessInstanceEmails {
 
 	};
 
-	private static final Function<Email, EmailLogic.Email> REST_TO_LOGIC = new Function<Email, EmailLogic.Email>() {
+	private static final LogicToRest LOGIC_TO_REST = new LogicToRest();
+
+	private static class RestToLogic implements Function<Email, EmailLogic.Email> {
+
+		private final Predicate<Long> predicate;
+		private final Long activityId;
+
+		public RestToLogic(final Predicate<Long> predicate, final Long activityId) {
+			this.predicate = predicate;
+			this.activityId = activityId;
+		}
 
 		@Override
 		public EmailLogic.Email apply(final Email input) {
@@ -108,7 +120,7 @@ public class CxfProcessInstanceEmails implements ProcessInstanceEmails {
 					.withNotifyWith(input.getNotifyWith()) //
 					.withNoSubjectPrefix(input.isNoSubjectPrefix()) //
 					.withAccount(input.getAccount()) //
-					.withTemporary(input.isTemporary()) //
+					.withTemporary(predicate.apply(activityId)) //
 					.withTemplate(input.getTemplate()) //
 					.withKeepSynchronization(input.isKeepSynchronization()) //
 					.withPromptSynchronization(input.isPromptSynchronization()) //
@@ -134,12 +146,21 @@ public class CxfProcessInstanceEmails implements ProcessInstanceEmails {
 	private final ErrorHandler errorHandler;
 	private final WorkflowLogic workflowLogic;
 	private final EmailLogic emailLogic;
+	private final Predicate<Long> temporaryPredicate;
 
 	public CxfProcessInstanceEmails(final ErrorHandler errorHandler, final WorkflowLogic workflowLogic,
-			final EmailLogic emailLogic) {
+			final EmailLogic emailLogic, final IdGenerator idGenerator) {
 		this.errorHandler = errorHandler;
 		this.workflowLogic = workflowLogic;
 		this.emailLogic = emailLogic;
+		this.temporaryPredicate = new Predicate<Long>() {
+
+			@Override
+			public boolean apply(final Long input) {
+				return idGenerator.isGenerated(input);
+			};
+
+		};
 	}
 
 	@Override
@@ -154,12 +175,12 @@ public class CxfProcessInstanceEmails implements ProcessInstanceEmails {
 
 	@Override
 	public ResponseSingle<Long> create(final String processId, final Long processInstanceId, final Email email) {
-		checkPreconditions(processId, email.isTemporary() ? null : processInstanceId);
+		checkPreconditions(processId, processInstanceId > 0 ? processInstanceId : null);
 		final Long id = emailLogic.create(new EmailLogic.ForwardingEmail() {
 
 			@Override
 			protected org.cmdbuild.logic.email.EmailLogic.Email delegate() {
-				return REST_TO_LOGIC.apply(email);
+				return new RestToLogic(temporaryPredicate, processInstanceId).apply(email);
 			}
 
 			@Override
@@ -203,12 +224,12 @@ public class CxfProcessInstanceEmails implements ProcessInstanceEmails {
 
 	@Override
 	public void update(final String processId, final Long processInstanceId, final Long emailId, final Email email) {
-		checkPreconditions(processId, email.isTemporary() ? null : processInstanceId);
+		checkPreconditions(processId, processInstanceId > 0 ? processInstanceId : null);
 		emailLogic.update(new EmailLogic.ForwardingEmail() {
 
 			@Override
 			protected org.cmdbuild.logic.email.EmailLogic.Email delegate() {
-				return REST_TO_LOGIC.apply(email);
+				return new RestToLogic(temporaryPredicate, processInstanceId).apply(email);
 			}
 
 			@Override
