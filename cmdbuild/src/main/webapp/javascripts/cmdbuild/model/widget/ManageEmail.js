@@ -2,23 +2,6 @@
 
 	Ext.require('CMDBuild.core.proxy.CMProxyConstants');
 
-//	Ext.define('CMDBuild.model.widget.ManageEmail.config', {
-//		extend: 'Ext.data.Model',
-//
-//		fields: [
-//			{ name: 'dms', type: 'auto' },
-//		]
-//	});
-
-
-
-
-
-
-
-
-
-
 	Ext.define('CMDBuild.model.widget.ManageEmail.email.attachment', { // TODO
 		extend: 'Ext.data.Model',
 
@@ -93,6 +76,7 @@
 			{ name: CMDBuild.core.proxy.CMProxyConstants.DEFAULT_ACCOUNT, type: 'string' },
 			{ name: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION, type: 'string' },
 			{ name: CMDBuild.core.proxy.CMProxyConstants.KEEP_SYNCHRONIZATION, type: 'boolean', defaultValue: true },
+			{ name: CMDBuild.core.proxy.CMProxyConstants.KEY, type: 'string' },
 			{ name: CMDBuild.core.proxy.CMProxyConstants.NAME, type: 'string' },
 			{ name: CMDBuild.core.proxy.CMProxyConstants.PROMPT_SYNCHRONIZATION, type: 'boolean', defaultValue: false },
 			{ name: CMDBuild.core.proxy.CMProxyConstants.SUBJECT, type: 'string' },

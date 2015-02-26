@@ -263,13 +263,29 @@ _debug('checkTemplatesToRegenerate xaVars', xaVars);
 _debug('checkTemplatesToRegenerate this.emailTemplatesObjects', this.emailTemplatesObjects);
 _debug('checkTemplatesToRegenerate dirtyVariables', dirtyVariables);
 			// Check templates attributes looking for dirtyVariables as client variables (ex. {client:varName})
+//			Ext.Array.forEach(this.emailTemplatesObjects, function(template, templateIndex, allTemplatesItems) {
+//				if (!Ext.Object.isEmpty(template))
+//					Ext.Object.each(template.getData(), function(key, value, myself) {
+//						if (typeof value == 'string') { // Check all types of CQL variables that can contains client variables
+//							this.self.searchForCqlClientVariables(
+//								value,
+//								template.get(CMDBuild.core.proxy.CMProxyConstants.KEY) || template.get(CMDBuild.core.proxy.CMProxyConstants.NAME),
+//								dirtyVariables,
+//								templatesToRegenerate
+//							);
+//						}
+//					}, this);
+//			}, this);
 			Ext.Array.forEach(this.emailTemplatesObjects, function(template, templateIndex, allTemplatesItems) {
+_debug('template', template);
 				if (!Ext.Object.isEmpty(template))
-					Ext.Object.each(template.getData(), function(key, value, myself) {
+					var mergedTemplate = Ext.apply(template.getData(), template.get(CMDBuild.core.proxy.CMProxyConstants.VARIABLES));
+_debug('mergedTemplate', mergedTemplate);
+					Ext.Object.each(mergedTemplate, function(key, value, myself) {
 						if (typeof value == 'string') { // Check all types of CQL variables that can contains client variables
 							this.self.searchForCqlClientVariables(
 								value,
-								template.get(CMDBuild.core.proxy.CMProxyConstants.KEY) || template.get(CMDBuild.core.proxy.CMProxyConstants.NAME),
+								mergedTemplate[CMDBuild.core.proxy.CMProxyConstants.KEY] || mergedTemplate[CMDBuild.core.proxy.CMProxyConstants.NAME],
 								dirtyVariables,
 								templatesToRegenerate
 							);
@@ -285,6 +301,9 @@ _debug('checkTemplatesToRegenerate templatesToRegenerate', templatesToRegenerate
 		 * This is needed to be passed as a unique map to the template resolver.
 		 *
 		 * @return {Object} variables
+		 *
+		 * TODO è praticamente indentico a fare l'apply quindi eliminare questa funzione e rimpiazzarla facendo la fusione con l'apply
+		 * l'unica cosa da verificare è con più di un template
 		 */
 		extractVariablesForTemplateResolver: function() {
 			var variables = {};
@@ -547,7 +566,7 @@ _debug('regenerateEmail this.templateResolver', templateResolver);
 _debug('regenerateEmail values', values);
 						for (var key in values)
 							record.set(key, values[key]);
-						
+
 						if (me.checkCondition(values, templateResolver)) {
 							_msg('Email with subject "' + values[CMDBuild.core.proxy.CMProxyConstants.SUBJECT] + '" regenerated');
 _debug('regenerateEmail record', record);
@@ -565,7 +584,7 @@ _debug('regenerateEmail record', record);
 _debug('regenerateEmail remove record', record);
 							me.controllerGrid.removeRecord(record);
 						}
-						
+
 						me.bindLocalDepsChangeEvent(record, templateResolver, me);
 					}
 				});
@@ -629,18 +648,18 @@ _debug('regenerateTemplate me.controllerGrid.getDraftEmails()', me.controllerGri
 						var record = Ext.Array.findBy(me.controllerGrid.getDraftEmails(), function(item, index) {
 							if (item.get(CMDBuild.core.proxy.CMProxyConstants.TEMPLATE) == template.get(CMDBuild.core.proxy.CMProxyConstants.KEY))
 								return true;
-							
+
 							return false;
 						});
 _debug('regenerateTemplate record', record);
 						// Update record data with values
 						if (!Ext.Object.isEmpty(record))
 							values = Ext.Object.merge(record.getData(), values);
-						
+
 						emailObject = Ext.create('CMDBuild.model.widget.ManageEmail.email', values);
 						emailObject.set(CMDBuild.core.proxy.CMProxyConstants.ACTIVITY_ID, me.getActivityId());
 						emailObject.set(CMDBuild.core.proxy.CMProxyConstants.TEMPLATE, template.get(CMDBuild.core.proxy.CMProxyConstants.KEY));
-			
+
 						if (me.checkCondition(values, templateResolver)) {
 							_msg('Template with subject "' + values[CMDBuild.core.proxy.CMProxyConstants.SUBJECT] + '" regenerated');
 _debug('regenerateTemplate emailObject', emailObject);
@@ -652,7 +671,7 @@ _debug('regenerateTemplate emailObject', emailObject);
 
 							templateRegenerationStatus = true;
 						}
-						
+
 						me.bindLocalDepsChangeEvent(emailObject, templateResolver, me);
 					}
 				});
