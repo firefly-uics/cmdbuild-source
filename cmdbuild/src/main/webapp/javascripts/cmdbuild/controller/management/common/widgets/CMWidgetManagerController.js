@@ -97,8 +97,20 @@
 			return false;
 		},
 
+		/**
+		 * Trigger onBeforeSave method on all widgets
+		 */
+		onBeforeSaveTrigger: function() {
+			Ext.Object.each(this.controllers, function(widgetName, controller, myself) {
+				if (typeof controller.onBeforeSave == 'function')
+					controller.onBeforeSave();
+			}, this);
+		},
+
 		waitForBusyWidgets: function waitForBusyWidgets(cb, cbScope) {
 			var me = this;
+
+			this.onBeforeSaveTrigger();
 
 			new _CMUtils.PollingFunction({
 				success: cb,
