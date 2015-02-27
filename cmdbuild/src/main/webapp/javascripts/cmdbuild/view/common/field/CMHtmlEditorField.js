@@ -6,7 +6,7 @@
 		/**
 		 * @cfg {Boolean}
 		 */
-		dirty: true,
+		dirty: false,
 
 		/**
 		 * @cfg {Mixed} object or string
@@ -92,6 +92,10 @@
 			this.on('change', function() {
 				this.setDirty(); // Set as dirty
 			}, this);
+		},
+
+		initValue: function() {
+			this.dirty = false;
 		},
 
 		/**
