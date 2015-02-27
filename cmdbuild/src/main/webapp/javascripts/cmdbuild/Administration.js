@@ -355,7 +355,7 @@
 					success: function(response, options, reports) {
 						_CMCache.addReports(reports);
 
-						reportAccordion = new CMDBuild.view.common.report.CMReportAccordion();
+						reportAccordion = Ext.create('CMDBuild.view.administration.accordion.Report');
 						reportAccordion.updateStore();
 
 						_CMMainViewportController.addPanel(
