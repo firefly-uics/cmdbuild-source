@@ -119,6 +119,20 @@ _debug('searchForCqlClientVariables', inspectingVariable + ' ' + inspectingVaria
 				}
 _debug('found', found);
 				return found;
+			},
+
+			/**
+			 * @param {Mixed} record
+			 * @param {Array} trafficLightArray
+			 */
+			trafficLightSlotBuild: function(record, trafficLightArray) {
+				if (!Ext.isEmpty(trafficLightArray)) {
+					var trafficLight = [];
+					trafficLight[CMDBuild.core.proxy.CMProxyConstants.STATUS] = false;
+					trafficLight[CMDBuild.core.proxy.CMProxyConstants.RECORD] = record; // Reference to record
+
+					trafficLightArray.push(trafficLight);
+				}
 			}
 		},
 
@@ -470,10 +484,6 @@ _debug('onEditMode');
 _debug('regenerateAllEmails forceRegeneration', forceRegeneration);
 _debug('regenerateAllEmails this.relatedAttributeChanged', this.relatedAttributeChanged);
 			if (forceRegeneration || this.relatedAttributeChanged) {
-//				// Reset all store before email regeneration
-//				if (forceRegeneration)
-//					this.controllerGrid.storeReset();
-
 				var templatesCheckedForRegenerationIdentifiers = [];
 				var emailTemplatesToRegenerate = this.checkTemplatesToRegenerate();
 _debug('draft emails', this.controllerGrid.getDraftEmails());
@@ -570,12 +580,8 @@ _debug('regenerateEmail values', values);
 						if (me.checkCondition(values, templateResolver)) {
 							_msg('Email with subject "' + values[CMDBuild.core.proxy.CMProxyConstants.SUBJECT] + '" regenerated');
 _debug('regenerateEmail record', record);
-							// TrafficLight slot build
-							var trafficLight = [];
-							trafficLight[CMDBuild.core.proxy.CMProxyConstants.STATUS] = false;
-							trafficLight[CMDBuild.core.proxy.CMProxyConstants.RECORD] = record; // Reference to record
 
-							regenerationTrafficLightArray.push(trafficLight);
+							me.self.trafficLightSlotBuild(record, regenerationTrafficLightArray);
 
 							me.controllerGrid.editRecord(record, regenerationTrafficLightArray);
 
@@ -659,6 +665,8 @@ _debug('regenerateTemplate record', record);
 						emailObject = Ext.create('CMDBuild.model.widget.ManageEmail.email', values);
 						emailObject.set(CMDBuild.core.proxy.CMProxyConstants.ACTIVITY_ID, me.getActivityId());
 						emailObject.set(CMDBuild.core.proxy.CMProxyConstants.TEMPLATE, template.get(CMDBuild.core.proxy.CMProxyConstants.KEY));
+
+						me.self.trafficLightSlotBuild(emailObject, regenerationTrafficLightArray);
 
 						if (me.checkCondition(values, templateResolver)) {
 							_msg('Template with subject "' + values[CMDBuild.core.proxy.CMProxyConstants.SUBJECT] + '" regenerated');
