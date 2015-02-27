@@ -170,7 +170,8 @@ public class Serialization {
 			UNDERSCORED_SOURCE_TYPE = UNDERSCORED_SOURCE + TYPE_CAPITALIZED, //
 			UNDERSCORED_STATUS = "_" + STATUS, //
 			UNDERSCORED_TYPE = "_" + TYPE, //
-			UNDERSCORED_VERSION = "_" + VERSION;
+			UNDERSCORED_VERSION = "_" + VERSION, //
+			UNDERSCORED_WIDGETS = "_" + WIDGETS;
 
 	private Serialization() {
 		// prevents instantiation
