@@ -142,7 +142,6 @@
 
 <!--  VIEWS -->
 <script type="text/javascript" src="javascripts/cmdbuild/view/common/CMBaseAccordion.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/view/common/report/CMReportAccordion.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/view/common/CMUnconfiguredModPanel.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/view/common/CMFormFuncions.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/view/common/CMTranslationsWindow.js"></script>

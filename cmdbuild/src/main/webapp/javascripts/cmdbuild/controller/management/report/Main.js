@@ -141,7 +141,7 @@
 		 */
 		showReport: function() {
 			var popup = window.open(
-				'services/json/management/modreport/printreportfactory',
+				CMDBuild.core.proxy.CMProxyUrlIndex.reports.printReportFactory,
 				'Report',
 				'height=400,width=550,status=no,toolbar=no,scrollbars=yes,menubar=no,location=no,resizable'
 			);

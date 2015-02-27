@@ -10,6 +10,11 @@
 		],
 
 		/**
+		 * @property {Object}
+		 */
+		displayedReportParams: undefined,
+
+		/**
 		 * @cfg {CMDBuild.view.management.report.SingleReportPanel}
 		 */
 		view: undefined,
@@ -42,6 +47,9 @@
 		 */
 		cmOn: function(name, param, callBack) {
 			switch (name) {
+				case 'onReportDownloadButtonClick':
+					return this.onReportDownloadButtonClick();
+
 				case 'onReportTypeButtonClick' :
 					return this.onReportTypeButtonClick(param);
 
@@ -55,7 +63,7 @@
 		/**
 		 * @param {Object} reportParams
 		 */
-		createReport: function(reportParams) {
+		createReport: function(reportParams, success) {
 			if (!Ext.isEmpty(reportParams[CMDBuild.core.proxy.CMProxyConstants.ID])) {
 				reportParams[CMDBuild.core.proxy.CMProxyConstants.TYPE] = reportParams[CMDBuild.core.proxy.CMProxyConstants.TYPE] || 'CUSTOM';
 				reportParams[CMDBuild.core.proxy.CMProxyConstants.EXTENSION] = reportParams[CMDBuild.core.proxy.CMProxyConstants.EXTENSION] || CMDBuild.core.proxy.CMProxyConstants.PDF;
@@ -71,9 +79,9 @@
 							false
 						);
 					},
-					success: function(response, options, decodedResponse) {
+					success: success || function(response, options, decodedResponse) {
 						if(decodedResponse.filled) { // Report with no parameters
-							this.showReport();
+							this.showReport(reportParams);
 						} else { // Show parameters window
 							if (Ext.isIE) // FIX: in IE PDF is painted on top of the regular page content so remove it before display parameter window
 								this.view.removeAll();
@@ -89,6 +97,22 @@
 					}
 				});
 			}
+		},
+
+		onReportDownloadButtonClick: function() {
+			this.createReport(this.displayedReportParams, function() {
+				var popup = window.open(
+						CMDBuild.core.proxy.CMProxyUrlIndex.reports.printReportFactory,
+						'Report',
+						'height=400,width=550,status=no,toolbar=no,scrollbars=yes,menubar=no,location=no,resizable'
+				);
+
+				if (!popup)
+					CMDBuild.Msg.warn(
+							CMDBuild.Translation.warnings.warning_message,
+							CMDBuild.Translation.warnings.popup_block
+					);
+			});
 		},
 
 		/**
@@ -131,9 +155,13 @@
 
 		/**
 		 * Get created report from server and display it in iframe
+		 *
+		 * @param {Object} reportParams
 		 */
-		showReport: function() {
+		showReport: function(reportParams) {
 			this.view.removeAll();
+
+			this.displayedReportParams = reportParams;
 
 			this.view.add({
 				xtype: 'component',
