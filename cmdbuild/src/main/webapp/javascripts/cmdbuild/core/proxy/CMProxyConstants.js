@@ -233,6 +233,7 @@
 		TITLE: 'title',
 		TO: 'to',
 		TOOLBAR_TOP: 'topToolbar',
+		TOOLBAR_BOTTOM: 'bottomToolbar',
 		TO_ADDRESSES: 'toAddresses',
 		TYPE: 'type',
 		UNIQUE: 'isunique',

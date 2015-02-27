@@ -14,7 +14,30 @@
 		layout: 'fit',
 
 		initComponent: function() {
+			// Apply first store to use it in paging bar
 			Ext.apply(this, {
+				store: CMDBuild.core.proxy.Report.getStore()
+			});
+
+			Ext.apply(this, {
+				dockedItems: [
+					{
+						xtype: 'toolbar',
+						dock: 'bottom',
+						itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_BOTTOM,
+
+						layout: 'fit',
+
+						items: [
+							Ext.create('Ext.toolbar.Paging', {
+								store: this.getStore(),
+								displayInfo: true,
+								displayMsg: ' {0} - {1} ' + CMDBuild.Translation.common.display_topic_of + ' {2}',
+								emptyMsg: CMDBuild.Translation.common.display_topic_none
+							})
+						]
+					}
+				],
 				columns: [
 					{
 						text: CMDBuild.Translation.name,
@@ -103,8 +126,7 @@
 							}
 						]
 					})
-				],
-				store: CMDBuild.core.proxy.Report.getStore(),
+				]
 			});
 
 			this.callParent(arguments);
