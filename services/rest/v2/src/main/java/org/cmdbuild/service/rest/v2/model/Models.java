@@ -1242,6 +1242,7 @@ public class Models {
 		final Values values = newValues().build();
 		private String activityId;
 		private Boolean advance;
+		private Map<String, Object> widgets;
 
 		private ProcessInstanceAdvanceBuilder() {
 			// use factory method
@@ -1262,6 +1263,7 @@ public class Models {
 			output.setValues(values);
 			output.setActivity(activityId);
 			output.setAdvance(advance);
+			output.setWidgets(widgets);
 			return output;
 		}
 
@@ -1301,6 +1303,11 @@ public class Models {
 
 		public ProcessInstanceAdvanceBuilder withAdvance(final boolean advance) {
 			this.advance = advance;
+			return this;
+		}
+
+		public ProcessInstanceAdvanceBuilder withWidgets(final Map<String, Object> widgets) {
+			this.widgets = widgets;
 			return this;
 		}
 
