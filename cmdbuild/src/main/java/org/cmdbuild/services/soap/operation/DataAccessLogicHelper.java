@@ -59,11 +59,11 @@ import org.cmdbuild.logic.data.QueryOptions;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.logic.data.access.FetchCardListResponse;
 import org.cmdbuild.logic.data.access.RelationDTO;
+import org.cmdbuild.logic.report.ReportLogic;
 import org.cmdbuild.logic.workflow.WorkflowLogic;
 import org.cmdbuild.model.data.Card;
 import org.cmdbuild.report.ReportFactory;
 import org.cmdbuild.report.ReportFactory.ReportExtension;
-import org.cmdbuild.report.ReportFactory.ReportType;
 import org.cmdbuild.report.ReportFactoryDB;
 import org.cmdbuild.report.ReportParameter;
 import org.cmdbuild.report.ReportParameterConverter;
@@ -156,6 +156,7 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 	private MenuStore menuStore;
 	private ReportStore reportStore;
 	private LookupStore lookupStore;
+	private final ReportLogic reportLogic;
 
 	public DataAccessLogicHelper( //
 			final CMDataView dataView, //
@@ -166,7 +167,8 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 			final AuthenticationStore authenticationStore, //
 			final CmdbuildConfiguration configuration, //
 			final MetadataStoreFactory metadataStoreFactory, //
-			final CardAdapter cardAdapter //
+			final CardAdapter cardAdapter, //
+			final ReportLogic reportLogic //
 	) {
 		this.dataView = dataView;
 		this.dataAccessLogic = datAccessLogic;
@@ -178,6 +180,7 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 		this.configuration = configuration;
 		this.metadataStoreFactory = metadataStoreFactory;
 		this.cardAdapter = cardAdapter;
+		this.reportLogic = reportLogic;
 	}
 
 	public void setMenuStore(final MenuStore menuStore) {
@@ -775,28 +778,21 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 	}
 
 	public Report[] getReportsByType(final String type, final int limit, final int offset) {
-		final List<Report> pagedReports = new ArrayList<Report>();
-		final ReportType reportType = ReportType.valueOf(type.toUpperCase());
-		int numRecords = 0;
-		final List<org.cmdbuild.model.Report> fetchedReports = reportStore.findReportsByType(reportType);
-		for (final org.cmdbuild.model.Report report : fetchedReports) {
-			if (report.isUserAllowed()) {
-				++numRecords;
-				if (limit > 0 && numRecords > offset && numRecords <= offset + limit) {
-					pagedReports.add(transform(report));
-				}
-			}
-		}
-		return pagedReports.toArray(new Report[pagedReports.size()]);
-	}
+		return from(reportLogic.readAll()) //
+				.transform(new Function<ReportLogic.Report, Report>() {
 
-	private Report transform(final org.cmdbuild.model.Report reportModel) {
-		final Report report = new Report();
-		report.setDescription(reportModel.getDescription());
-		report.setId(reportModel.getId());
-		report.setTitle(reportModel.getCode());
-		report.setType(reportModel.getType().toString());
-		return report;
+					@Override
+					public Report apply(final ReportLogic.Report input) {
+						final Report output = new Report();
+						output.setId(input.getId());
+						output.setTitle(input.getTitle());
+						output.setType(input.getType());
+						output.setDescription(input.getDescription());
+						return output;
+					}
+
+				}) //
+				.toArray(Report.class);
 	}
 
 	public AttributeSchema[] getReportParameters(final int id, final String extension) {
