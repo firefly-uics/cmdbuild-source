@@ -176,7 +176,7 @@
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/management/dataView/CMModSqlDataViewController.js"></script>
 
 	<!-- REPORT-->
-	<script type="text/javascript" src="javascripts/cmdbuild/controller/management/report/CMModReportController.js"></script>
+	<!-- <script type="text/javascript" src="javascripts/cmdbuild/controller/management/report/CMModReportController.js"></script> -->
 
 	<!-- WORKFLOW -->
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/management/workflow/CMModWorkflowController.js"></script>

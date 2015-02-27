@@ -793,6 +793,8 @@ em { font-style: oblique !important; }
 		padding: 0.5em;
 	}
 
+	.cm-action-col-icon-spacer { margin: 0px 3px; }
+
 
 /* Activity rows*/
 	.x-grid-row-expander { margin: 0px !important; }

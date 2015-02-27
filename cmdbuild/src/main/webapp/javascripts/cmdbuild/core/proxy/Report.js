@@ -43,11 +43,11 @@
 		/**
 		 * @return {Ext.data.Store}
 		 */
-		getStore: function() {
+		getStore: function() { // TODO eliminare i limiti della richiesta
 			return Ext.create('Ext.data.Store', {
 				autoLoad: false,
 				model: 'CMDBuild.model.Report.grid',
-				pageSize: CMDBuild.core.Utils.getPageSize(),
+//				pageSize: CMDBuild.core.Utils.getPageSize(),
 				proxy: {
 					type: 'ajax',
 					url: CMDBuild.core.proxy.CMProxyUrlIndex.reports.getReportsByType,
