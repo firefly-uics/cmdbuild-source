@@ -400,18 +400,7 @@ _debug('storeLoad', regenerateAllEmails+ ' ' +forceRegeneration);
 					}
 				});
 			}
-		},
-
-//		/**
-//		 * Resets server and client store
-//		 */
-//		storeReset: function() {
-//			Ext.Array.forEach(this.getDraftEmails(), function(item, index, allItems) {
-//				this.removeRecord(item);
-//			}, this);
-//
-//			this.view.getStore().removeAll();
-//		}
+		}
 	});
 
 })();
