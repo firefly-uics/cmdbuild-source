@@ -1,11 +1,12 @@
 (function() {
 
+	var reportAccordion = Ext.create('CMDBuild.view.management.accordion.Report');
+
 	// TODO move in common
 	var menuAccordion = new CMDBuild.view.administration.accordion.CMMenuAccordion({
 		cmControllerType: CMDBuild.controller.management.menu.CMMenuAccordionController
 	});
-	// TODO move in common
-	var reportAccordion = new CMDBuild.view.common.report.CMReportAccordion();
+
 	// TODO move in common
 	var classesAccordion = new CMDBuild.view.common.classes.CMClassAccordion({
 		title: CMDBuild.Translation.administration.modClass.tree_title
