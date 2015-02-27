@@ -12,6 +12,7 @@ import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.common.reflect.AnnouncingInvocationHandler;
 import org.cmdbuild.common.reflect.AnnouncingInvocationHandler.Announceable;
 import org.cmdbuild.service.rest.v2.AttachmentsConfiguration;
+import org.cmdbuild.service.rest.v2.CardAttachments;
 import org.cmdbuild.service.rest.v2.Cards;
 import org.cmdbuild.service.rest.v2.ClassAttributes;
 import org.cmdbuild.service.rest.v2.ClassPrivileges;
@@ -24,6 +25,7 @@ import org.cmdbuild.service.rest.v2.LookupTypes;
 import org.cmdbuild.service.rest.v2.Menu;
 import org.cmdbuild.service.rest.v2.ProcessAttributes;
 import org.cmdbuild.service.rest.v2.ProcessInstanceActivities;
+import org.cmdbuild.service.rest.v2.ProcessInstanceAttachments;
 import org.cmdbuild.service.rest.v2.ProcessInstanceEmails;
 import org.cmdbuild.service.rest.v2.ProcessInstances;
 import org.cmdbuild.service.rest.v2.ProcessStartActivities;
@@ -31,8 +33,6 @@ import org.cmdbuild.service.rest.v2.Processes;
 import org.cmdbuild.service.rest.v2.ProcessesConfiguration;
 import org.cmdbuild.service.rest.v2.Relations;
 import org.cmdbuild.service.rest.v2.Sessions;
-import org.cmdbuild.service.rest.v2.cxf.AllInOneCardAttachments;
-import org.cmdbuild.service.rest.v2.cxf.AllInOneProcessInstanceAttachments;
 import org.cmdbuild.service.rest.v2.cxf.AttachmentsHelper;
 import org.cmdbuild.service.rest.v2.cxf.AttachmentsManagement;
 import org.cmdbuild.service.rest.v2.cxf.CxfAttachmentsConfiguration;
@@ -97,10 +97,10 @@ public class ServicesV2 implements LoggingSupport {
 
 	@Bean
 	@Scope(value = SCOPE_REQUEST, proxyMode = TARGET_CLASS)
-	public AllInOneCardAttachments v2_cardAttachments() {
+	public CardAttachments v2_cardAttachments() {
 		final CxfCardAttachments service = new CxfCardAttachments(v2_errorHandler(), helper.systemDataAccessLogic(),
 				v2_attachmentsHelper());
-		return proxy(AllInOneCardAttachments.class, service);
+		return proxy(CardAttachments.class, service);
 	}
 
 	@Bean
@@ -257,10 +257,10 @@ public class ServicesV2 implements LoggingSupport {
 
 	@Bean
 	@Scope(value = SCOPE_REQUEST, proxyMode = TARGET_CLASS)
-	public AllInOneProcessInstanceAttachments v2_processInstanceAttachments() {
+	public ProcessInstanceAttachments v2_processInstanceAttachments() {
 		final CxfProcessInstanceAttachments service = new CxfProcessInstanceAttachments(v2_errorHandler(),
 				helper.userWorkflowLogic(), v2_attachmentsHelper());
-		return proxy(AllInOneProcessInstanceAttachments.class, service);
+		return proxy(ProcessInstanceAttachments.class, service);
 	}
 
 	@Bean
