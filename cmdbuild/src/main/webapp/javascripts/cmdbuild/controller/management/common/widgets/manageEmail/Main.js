@@ -315,9 +315,6 @@ _debug('checkTemplatesToRegenerate templatesToRegenerate', templatesToRegenerate
 		 * This is needed to be passed as a unique map to the template resolver.
 		 *
 		 * @return {Object} variables
-		 *
-		 * TODO è praticamente indentico a fare l'apply quindi eliminare questa funzione e rimpiazzarla facendo la fusione con l'apply
-		 * l'unica cosa da verificare è con più di un template
 		 */
 		extractVariablesForTemplateResolver: function() {
 			var variables = {};
