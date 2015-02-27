@@ -58,6 +58,11 @@
 		grid: undefined,
 
 		/**
+		 * @cfg {Boolean}
+		 */
+		isWidgetBusy: false,
+
+		/**
 		 * @cfg {CMDBuild.controller.management.common.CMWidgetManagerController}
 		 */
 		ownerController: undefined,
@@ -277,19 +282,6 @@ _debug('checkTemplatesToRegenerate xaVars', xaVars);
 _debug('checkTemplatesToRegenerate this.emailTemplatesObjects', this.emailTemplatesObjects);
 _debug('checkTemplatesToRegenerate dirtyVariables', dirtyVariables);
 			// Check templates attributes looking for dirtyVariables as client variables (ex. {client:varName})
-//			Ext.Array.forEach(this.emailTemplatesObjects, function(template, templateIndex, allTemplatesItems) {
-//				if (!Ext.Object.isEmpty(template))
-//					Ext.Object.each(template.getData(), function(key, value, myself) {
-//						if (typeof value == 'string') { // Check all types of CQL variables that can contains client variables
-//							this.self.searchForCqlClientVariables(
-//								value,
-//								template.get(CMDBuild.core.proxy.CMProxyConstants.KEY) || template.get(CMDBuild.core.proxy.CMProxyConstants.NAME),
-//								dirtyVariables,
-//								templatesToRegenerate
-//							);
-//						}
-//					}, this);
-//			}, this);
 			Ext.Array.forEach(this.emailTemplatesObjects, function(template, templateIndex, allTemplatesItems) {
 _debug('template', template);
 				if (!Ext.Object.isEmpty(template))
@@ -405,8 +397,11 @@ _debug('loadTemplates item', item);
 				callback: function(options, success, response) {
 					CMDBuild.LoadMask.get().hide();
 
-					if (regenerateAllEmails)
+					if (regenerateAllEmails) {
 						this.regenerateAllEmails(forceRegeneration);
+					} else { // Reset widget busy state to false
+						this.isWidgetBusy = false;
+					}
 				}
 			});
 		},
@@ -438,6 +433,17 @@ _debug('getData', out);
 		},
 
 		/**
+		 * Used to mark widget as busy during regenerations, especially useful for getData() regeneration
+		 *
+		 * @return {Boolean}
+		 *
+		 * @override
+		 */
+		isBusy: function() {
+			return this.isWidgetBusy;
+		},
+
+		/**
 		 * @return {Boolean}
 		 *
 		 * @override
@@ -462,8 +468,19 @@ _debug('onEditMode');
 				this.controllerGrid.storeLoad(true, true);
 		},
 
+		/**
+		 * @override
+		 */
+		onBeforeSave: function() {
+			this.controllerGrid.storeLoad(true);
+		},
+
 		onGlobalRegenerationButtonClick: function() {
 			this.getAllTemplatesData(true, true);
+		},
+
+		onSendAllButtonClick: function() {
+			this.controllerGrid.sendAll();
 		},
 
 		/**
@@ -524,6 +541,8 @@ _debug('templatesCheckedForRegenerationIdentifiers', templatesCheckedForRegenera
 				}, this);
 
 				this.relatedAttributeChanged = false; // Reset attribute changed flag
+			} else { // Reset widget busy state to false
+				this.isWidgetBusy = false;
 			}
 		},
 
@@ -534,6 +553,7 @@ _debug('templatesCheckedForRegenerationIdentifiers', templatesCheckedForRegenera
 		 * @return {Boolean} emailRegenerationStatus
 		 */
 		regenerateEmail: function(record, regenerationTrafficLightArray) {
+			regenerationTrafficLightArray = regenerationTrafficLightArray || [];
 _debug('regenerateEmail', record);
 			var emailRegenerationStatus = false;
 
@@ -603,7 +623,6 @@ _debug('regenerateEmail remove record', record);
 		 */
 		regenerateSelectedEmails: function(records) {
 			if (!Ext.isEmpty(records)) {
-
 				Ext.Array.forEach(records, function(item, index, allItems) {
 					var recordTemplate = item.get(CMDBuild.core.proxy.CMProxyConstants.TEMPLATE);
 
@@ -616,8 +635,6 @@ _debug('regenerateEmail remove record', record);
 				}, this);
 
 				this.relatedAttributeChanged = false; // Reset attribute changed flag
-
-				this.controllerGrid.storeLoad(); // Load at end of all changes
 			}
 		},
 
@@ -628,6 +645,7 @@ _debug('regenerateEmail remove record', record);
 		 * @return {Boolean} templateRegenerationStatus
 		 */
 		regenerateTemplate: function(template, regenerationTrafficLightArray) {
+			regenerationTrafficLightArray = regenerationTrafficLightArray || [];
 _debug('regenerateTemplate', template);
 			var templateRegenerationStatus = false;
 
@@ -720,10 +738,6 @@ _debug('resolveTemplateCondition templateObject.getData()', templateObject.getDa
 			}
 
 			return response;
-		},
-
-		onSendAllButtonClick: function() {
-			this.controllerGrid.sendAll();
 		},
 
 		/**

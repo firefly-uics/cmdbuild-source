@@ -272,16 +272,8 @@ _debug('onGridAddEmailButtonClick');
 		 * @param {CMDBuild.model.widget.ManageEmail.email} record
 		 */
 		onGridRegenerationEmailButtonClick: function(record) {
-			if (!Ext.isEmpty(record.get(CMDBuild.core.proxy.CMProxyConstants.TEMPLATE))) {
-				var emptyEmail = Ext.create('CMDBuild.model.widget.ManageEmail.email');
-				emptyEmail.set(CMDBuild.core.proxy.CMProxyConstants.ACTIVITY_ID, this.parentDelegate.getActivityId());
-				emptyEmail.set(CMDBuild.core.proxy.CMProxyConstants.ID, record.get(CMDBuild.core.proxy.CMProxyConstants.ID));
-				emptyEmail.set(CMDBuild.core.proxy.CMProxyConstants.STATUS, CMDBuild.core.proxy.CMProxyConstants.DRAFT);
-				emptyEmail.set(CMDBuild.core.proxy.CMProxyConstants.TEMPLATE, record.get(CMDBuild.core.proxy.CMProxyConstants.TEMPLATE));
-
-				this.parentDelegate.regenerateEmail(emptyEmail);
-				this.storeLoad();
-			}
+			if (!Ext.isEmpty(record.get(CMDBuild.core.proxy.CMProxyConstants.TEMPLATE)))
+				this.parentDelegate.regenerateSelectedEmails([record]);
 		},
 
 		/**
@@ -382,7 +374,7 @@ _debug('removeRecord regenerationTrafficLightArray', regenerationTrafficLightArr
 		/**
 		 * Loads grid store with activityId parameter
 		 *
-		 * @param {Boolean} regenerateAllEmails
+		 * @param {Mixed} regenerateAllEmails
 		 * @param {Boolean} forceRegeneration
 		 */
 		storeLoad: function(regenerateAllEmails, forceRegeneration) {
@@ -390,6 +382,8 @@ _debug('removeRecord regenerationTrafficLightArray', regenerationTrafficLightArr
 				regenerateAllEmails = regenerateAllEmails || false;
 				forceRegeneration = forceRegeneration || false;
 _debug('storeLoad', regenerateAllEmails+ ' ' +forceRegeneration);
+				this.parentDelegate.isWidgetBusy = true; // Setup widget busy state and the begin of store load
+
 				this.view.getStore().load({
 					params: {
 						activityId: this.parentDelegate.getActivityId()

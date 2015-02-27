@@ -17,7 +17,7 @@
 			this.callParent(arguments);
 
 			// this flag is used to define if the user has click on the
-			// save or advance button. The difference is that on save 
+			// save or advance button. The difference is that on save
 			// the widgets do nothing and the saved activity goes in display mode.
 			// On advance, otherwise, the widgets do the react (save their state) and
 			// the saved activity lies in edit mode, to continue the data entry.
@@ -65,14 +65,14 @@
 
 			Ext.suspendLayouts();
 
-			if (!activityInstance.nullObject 
+			if (!activityInstance.nullObject
 					&& activityInstance.isNew()) {
 
 				/*
 				 * I could be in a tab different to the first one,
 				 * but to edit a new card is necessary to have the editing form.
 				 * So I force the view to go on the ActivityTab
-				 * 
+				 *
 				 * Do it here instead of in the CMModWorkflowController
 				 * because it must be done before all operation
 				 * over the form for rendering issues
@@ -142,7 +142,7 @@
 		// override
 		onSaveCardClick: function() {
 			this.isAdvance = false;
-			save.call(this);
+			this.widgetControllerManager.waitForBusyWidgets(save, this); // Check for busy widgets also on save
 		},
 
 		// override
