@@ -126,7 +126,7 @@ public class ProcessesTest {
 				.thenReturn(expectedResponse);
 
 		// when
-		final HttpGet get = new HttpGet(server.resource("processes/dummy/generateId"));
+		final HttpGet get = new HttpGet(server.resource("processes/dummy/generate_id"));
 		final HttpResponse response = httpclient.execute(get);
 
 		// then
