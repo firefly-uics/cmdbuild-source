@@ -12,7 +12,7 @@ Ext.define("CMDBuild.view.administration.report.CMModReport", {
 			text : this.translation.add
 		});
 
-		this.grid = Ext.create('CMDBuild.view.common.report.CMReportGrid', {
+		this.grid = Ext.create('CMDBuild.view.administration.report.CMReportGrid', {
 			border: false,
 			exportMode: true,
 			split: true,
