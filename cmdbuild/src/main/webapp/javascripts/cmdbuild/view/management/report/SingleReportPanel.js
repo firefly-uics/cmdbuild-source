@@ -34,8 +34,8 @@
 						Ext.create('Ext.button.Button', {
 							text: CMDBuild.Translation.pdf,
 							iconCls: CMDBuild.core.proxy.CMProxyConstants.PDF,
-							textAlign: 'left',
-							minWidth: 80,
+//							textAlign: 'left',
+//							minWidth: 80,
 							scope: this,
 
 							handler: function() {
@@ -45,8 +45,8 @@
 						Ext.create('Ext.button.Button', {
 							text: CMDBuild.Translation.odt,
 							iconCls: CMDBuild.core.proxy.CMProxyConstants.ODT,
-							textAlign: 'left',
-							minWidth: 80,
+//							textAlign: 'left',
+//							minWidth: 80,
 							scope: this,
 
 							handler: function() {
@@ -56,8 +56,8 @@
 						Ext.create('Ext.button.Button', {
 							text: CMDBuild.Translation.rtf,
 							iconCls: CMDBuild.core.proxy.CMProxyConstants.RTF,
-							textAlign: 'left',
-							minWidth: 80,
+//							textAlign: 'left',
+//							minWidth: 80,
 							scope: this,
 
 							handler: function() {
@@ -67,25 +67,25 @@
 						Ext.create('Ext.button.Button', {
 							text: CMDBuild.Translation.csv,
 							iconCls: CMDBuild.core.proxy.CMProxyConstants.CSV,
-							textAlign: 'left',
-							minWidth: 80,
+//							textAlign: 'left',
+//							minWidth: 80,
 							scope: this,
 
 							handler: function() {
 								this.delegate.cmOn('onReportTypeButtonClick', CMDBuild.core.proxy.CMProxyConstants.CSV);
 							}
 						}),
-						'->',
-						Ext.create('Ext.button.Button', {
-							text: '@@ Download',
-//							textAlign: 'left',
-//							minWidth: 80,
-							scope: this,
-
-							handler: function() {
-//								this.delegate.cmOn('onReportTypeButtonClick', CMDBuild.core.proxy.CMProxyConstants.CSV);
-							}
-						})
+//						'->',
+//						Ext.create('Ext.button.Button', {
+//							text: '@@ Download',
+////							textAlign: 'left',
+////							minWidth: 80,
+//							scope: this,
+//
+//							handler: function() {
+//								this.delegate.cmOn('onReportDownloadButtonClick');
+//							}
+//						})
 					]
 				}]
 			});
