@@ -148,9 +148,9 @@
 						cmControllerType: CMDBuild.controller.management.workflow.CMModWorkflowController
 					}),
 
-					this.reportPanel = new CMDBuild.view.common.report.CMReportGrid({
-						cmName: 'report',
-						cmControllerType: CMDBuild.controller.management.report.CMModReportController
+					Ext.create('CMDBuild.view.management.report.MainPanel', {
+						cmControllerType: 'CMDBuild.controller.management.report.Main',
+						cmName: 'report'
 					}),
 
 					Ext.create('CMDBuild.view.management.report.SingleReportPanel', {

@@ -28,11 +28,11 @@
 		CMDBuild.log.addAppender(new log4javascript.BrowserConsoleAppender());
 
 		// Disable all console messages if IE8 or lower to avoid print window spam
-//		if (Ext.isIE9m) {
-//			var console = { log: function() {} };
-//			log4javascript.setEnabled(false);
-//			Ext.Error.ignore = true;
-//		}
+		if (Ext.isIE9m) {
+			var console = { log: function() {} };
+			log4javascript.setEnabled(false);
+			Ext.Error.ignore = true;
+		}
 
 		// Convenience methods to debug
 		_debug = function() {

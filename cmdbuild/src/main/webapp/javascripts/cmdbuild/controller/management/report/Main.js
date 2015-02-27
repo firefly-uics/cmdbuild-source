@@ -1,6 +1,6 @@
 (function() {
 
-	Ext.define('CMDBuild.controller.management.report.SingleReport', {
+	Ext.define('CMDBuild.controller.management.report.Main', {
 		extend: 'CMDBuild.controller.CMBasePanelController',
 
 		requires: [
@@ -10,7 +10,12 @@
 		],
 
 		/**
-		 * @cfg {CMDBuild.view.management.report.SingleReportPanel}
+		 * @property {CMDBuild.view.management.report.GridPanel}
+		 */
+		grid: undefined,
+
+		/**
+		 * @cfg {CMDBuild.view.management.report.MainPanel}
 		 */
 		view: undefined,
 
@@ -30,6 +35,8 @@
 		constructor: function(view) {
 			this.callParent(arguments);
 
+			this.grid = this.view.grid;
+			this.grid.delegate = this;
 			this.view.delegate = this;
 		},
 
@@ -42,8 +49,8 @@
 		 */
 		cmOn: function(name, param, callBack) {
 			switch (name) {
-				case 'onReportTypeButtonClick' :
-					return this.onReportTypeButtonClick(param);
+				case 'onReportGenerateButtonClick' :
+					return this.onReportGenerateButtonClick(param);
 
 				default: {
 					if (!Ext.isEmpty(this.parentDelegate))
@@ -75,9 +82,6 @@
 						if(decodedResponse.filled) { // Report with no parameters
 							this.showReport();
 						} else { // Show parameters window
-							if (Ext.isIE) // FIX: in IE PDF is painted on top of the regular page content so remove it before display parameter window
-								this.view.removeAll();
-
 							Ext.create('CMDBuild.view.management.report.ParametersWindow', {
 								delegate: this,
 								attributeList: decodedResponse.attribute
@@ -92,13 +96,13 @@
 		},
 
 		/**
-		 * @param {String} type
+		 * @param {Object} reportInfo
 		 */
-		onReportTypeButtonClick: function(type) {
-			if (Ext.Array.contains(this.supportedReportTypes, type)) {
+		onReportGenerateButtonClick: function(reportInfo) {
+			if (Ext.Array.contains(this.supportedReportTypes, reportInfo[CMDBuild.core.proxy.CMProxyConstants.TYPE])) {
 				this.createReport({
-					id: this.reportId,
-					extension: type
+					id: reportInfo[CMDBuild.core.proxy.CMProxyConstants.RECORD].get(CMDBuild.core.proxy.CMProxyConstants.ID),
+					extension: reportInfo[CMDBuild.core.proxy.CMProxyConstants.TYPE]
 				});
 			} else {
 				CMDBuild.Msg.error(
@@ -109,40 +113,44 @@
 			}
 		},
 
+		onReportTypeSelected: function() {
+			this.grid.getStore().load();
+		},
+
 		/**
 		 * @param {CMDBuild.view.common.CMAccordionStoreModel} node
 		 */
 		onViewOnFront: function(node) {
-			if (
-				!Ext.Object.isEmpty(node)
-				&& !Ext.isEmpty(node.get(CMDBuild.core.proxy.CMProxyConstants.ID))
-				&& node.get(CMDBuild.core.proxy.CMProxyConstants.ID) != CMDBuild.core.proxy.CMProxyConstants.CUSTOM
-			) {
-				this.view.setTitle(this.view.sectionTitle + ' - ' + node.get(CMDBuild.core.proxy.CMProxyConstants.TEXT));
+			if (!Ext.Object.isEmpty(node)) {
+				this.onReportTypeSelected();
 
-				this.reportId = node.get(CMDBuild.core.proxy.CMProxyConstants.ID);
-
-				this.createReport({
-					id: node.get(CMDBuild.core.proxy.CMProxyConstants.ID),
-					extension: node.get(CMDBuild.core.proxy.CMProxyConstants.TYPE).replace(/report/i, '') // Removes 'report' string from type property in node object
-				});
+				if (
+					!Ext.isEmpty(node.get(CMDBuild.core.proxy.CMProxyConstants.ID))
+					&& node.get(CMDBuild.core.proxy.CMProxyConstants.ID) != CMDBuild.core.proxy.CMProxyConstants.CUSTOM
+				) {
+					this.createReport({
+						id: node.get(CMDBuild.core.proxy.CMProxyConstants.ID),
+						extension: node.get(CMDBuild.core.proxy.CMProxyConstants.TYPE).replace(/report/i, '') // Removes 'report' string from type property in node object
+					});
+				}
 			}
 		},
 
 		/**
-		 * Get created report from server and display it in iframe
+		 * Get created report from server and display it in popup window
 		 */
 		showReport: function() {
-			this.view.removeAll();
+			var popup = window.open(
+				'services/json/management/modreport/printreportfactory',
+				'Report',
+				'height=400,width=550,status=no,toolbar=no,scrollbars=yes,menubar=no,location=no,resizable'
+			);
 
-			this.view.add({
-				xtype: 'component',
-
-				autoEl: {
-					tag: 'iframe',
-					src: CMDBuild.core.proxy.CMProxyUrlIndex.reports.printReportFactory
-				}
-			});
+			if (!popup)
+				CMDBuild.Msg.warn(
+					CMDBuild.Translation.warnings.warning_message,
+					CMDBuild.Translation.warnings.popup_block
+				);
 		}
 	});
 

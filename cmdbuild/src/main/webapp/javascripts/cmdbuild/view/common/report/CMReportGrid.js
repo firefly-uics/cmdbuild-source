@@ -2,6 +2,9 @@
 
 	var tr = CMDBuild.Translation.management.modreport.reportForm;
 
+	/**
+	 * Used only in administration
+	 */
 	Ext.define('CMDBuild.view.common.report.CMReportGrid', {
 		extend: 'Ext.grid.Panel',
 

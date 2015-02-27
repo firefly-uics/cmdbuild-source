@@ -191,6 +191,7 @@
 		READ_ONLY_ATTRIBUTES: 'readOnlyAttributes',
 		RECEIVED: 'received',
 		RECIPIENT_ADDRESS: 'recipientAddress',
+		RECORD: 'record',
 		REJECTED_FOLDER: 'rejectedFolder',
 		RELATION: 'relation',
 		RELATIONS: 'relations',

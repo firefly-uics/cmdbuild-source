@@ -20,7 +20,8 @@
 		 */
 		sectionTitle: CMDBuild.Translation.report,
 
-		frame: true,
+		border: true,
+		frame: false,
 		layout: 'fit',
 
 		initComponent: function() {
@@ -72,6 +73,17 @@
 
 							handler: function() {
 								this.delegate.cmOn('onReportTypeButtonClick', CMDBuild.core.proxy.CMProxyConstants.CSV);
+							}
+						}),
+						'->',
+						Ext.create('Ext.button.Button', {
+							text: '@@ Download',
+//							textAlign: 'left',
+//							minWidth: 80,
+							scope: this,
+
+							handler: function() {
+//								this.delegate.cmOn('onReportTypeButtonClick', CMDBuild.core.proxy.CMProxyConstants.CSV);
 							}
 						})
 					]
