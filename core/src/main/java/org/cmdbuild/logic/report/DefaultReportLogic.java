@@ -206,12 +206,12 @@ public class DefaultReportLogic implements ReportLogic {
 
 				@Override
 				public void visit(final Pdf extension) {
-					output = RTF;
+					output = PDF;
 				}
 
 				@Override
 				public void visit(final Rtf extension) {
-					output = PDF;
+					output = RTF;
 				}
 
 				@Override
