@@ -23,6 +23,7 @@ import org.cmdbuild.logic.dms.PrivilegedDmsLogic;
 import org.cmdbuild.logic.email.EmailLogic;
 import org.cmdbuild.logic.menu.MenuLogic;
 import org.cmdbuild.logic.privileges.SecurityLogic;
+import org.cmdbuild.logic.report.ReportLogic;
 import org.cmdbuild.logic.workflow.UserWorkflowLogicBuilder;
 import org.cmdbuild.logic.workflow.WorkflowLogic;
 import org.cmdbuild.privileges.DBGroupFetcher;
@@ -90,6 +91,10 @@ public class ApplicationContextHelperV2 {
 
 	public MetadataStoreFactory metadataStoreFactory() {
 		return applicationContext.getBean(MetadataStoreFactory.class);
+	}
+
+	public ReportLogic reportLogic() {
+		return applicationContext.getBean(ReportLogic.class);
 	}
 
 	public SecurityLogic securityLogic() {

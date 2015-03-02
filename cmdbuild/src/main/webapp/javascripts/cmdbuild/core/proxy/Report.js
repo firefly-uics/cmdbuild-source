@@ -19,8 +19,9 @@
 				url: CMDBuild.core.proxy.CMProxyUrlIndex.reports.createReportFactory,
 				params: parameters.params,
 				scope: parameters.scope,
-				success: parameters.success,
-				failure: parameters.failure
+				failure: parameters.failure || Ext.emptyFn(),
+				success: parameters.success || Ext.emptyFn(),
+				callback: parameters.callback || Ext.emptyFn()
 			});
 		},
 
@@ -29,13 +30,13 @@
 		 */
 		getMenuTree: function(parameters) {
 			CMDBuild.ServiceProxy.core.doRequest({
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.reports.menuTree,
 				method: 'GET',
+				url: CMDBuild.core.proxy.CMProxyUrlIndex.reports.menuTree,
 				params: parameters.params,
 				scope: parameters.scope,
-				callback: parameters.callback,
-				failure: parameters.failure,
-				success: parameters.success
+				failure: parameters.failure || Ext.emptyFn(),
+				success: parameters.success || Ext.emptyFn(),
+				callback: parameters.callback || Ext.emptyFn()
 			});
 		},
 
@@ -46,7 +47,6 @@
 			return Ext.create('Ext.data.Store', {
 				autoLoad: false,
 				model: 'CMDBuild.model.Report.grid',
-				pageSize: CMDBuild.core.Utils.getPageSize(),
 				proxy: {
 					type: 'ajax',
 					url: CMDBuild.core.proxy.CMProxyUrlIndex.reports.getReportsByType,
@@ -67,13 +67,28 @@
 		 */
 		getTypesTree: function(parameters) {
 			CMDBuild.ServiceProxy.core.doRequest({
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.reports.getReportTypesTree,
 				method: 'GET',
+				url: CMDBuild.core.proxy.CMProxyUrlIndex.reports.getReportTypesTree,
 				params: parameters.params,
 				scope: parameters.scope,
-				callback: parameters.callback,
-				failure: parameters.failure,
-				success: parameters.success
+				failure: parameters.failure || Ext.emptyFn(),
+				success: parameters.success || Ext.emptyFn(),
+				callback: parameters.callback || Ext.emptyFn()
+			});
+		},
+
+		/**
+		 * @param {Object} parameters
+		 */
+		updateReport: function(parameters) {
+			parameters.form.submit({
+				method: 'POST',
+				url: CMDBuild.core.proxy.CMProxyUrlIndex.reports.updateReportFactoryParams,
+				params: parameters.params,
+				scope: parameters.scope,
+				failure: parameters.failure || Ext.emptyFn(),
+				success: parameters.success || Ext.emptyFn(),
+				callback: parameters.callback || Ext.emptyFn()
 			});
 		}
 

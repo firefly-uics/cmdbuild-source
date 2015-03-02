@@ -1,11 +1,12 @@
 (function() {
 
+	var reportAccordion = Ext.create('CMDBuild.view.management.accordion.Report');
+
 	// TODO move in common
 	var menuAccordion = new CMDBuild.view.administration.accordion.CMMenuAccordion({
 		cmControllerType: CMDBuild.controller.management.menu.CMMenuAccordionController
 	});
-	// TODO move in common
-	var reportAccordion = new CMDBuild.view.common.report.CMReportAccordion();
+
 	// TODO move in common
 	var classesAccordion = new CMDBuild.view.common.classes.CMClassAccordion({
 		title: CMDBuild.Translation.administration.modClass.tree_title
@@ -151,14 +152,14 @@
 						cmControllerType: CMDBuild.controller.management.workflow.CMModWorkflowController
 					}),
 
-					this.reportPanel = new CMDBuild.view.common.report.CMReportGrid({
-						cmName: 'report',
-						cmControllerType: CMDBuild.controller.management.report.CMModReportController
+					Ext.create('CMDBuild.view.management.report.MainPanel', {
+						cmControllerType: 'CMDBuild.controller.management.report.Main',
+						cmName: 'report'
 					}),
 
-					this.singleReportPanel = new CMDBuild.view.common.report.CMMainSingleReportPage({
-						cmName: 'singlereport',
-						cmControllerType: CMDBuild.controller.management.report.CMSingleReportPageController
+					Ext.create('CMDBuild.view.management.report.SingleReportPanel', {
+						cmControllerType: 'CMDBuild.controller.management.report.SingleReport',
+						cmName: 'singlereport'
 					}),
 
 					this.dashboardPanel = new CMDBuild.view.management.dashboard.CMModDashboard({

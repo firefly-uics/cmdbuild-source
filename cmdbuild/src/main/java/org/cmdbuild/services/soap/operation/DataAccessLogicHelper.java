@@ -14,7 +14,6 @@ import static org.cmdbuild.services.soap.utils.SoapToJsonUtils.toJsonArray;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -59,14 +58,13 @@ import org.cmdbuild.logic.data.QueryOptions;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.logic.data.access.FetchCardListResponse;
 import org.cmdbuild.logic.data.access.RelationDTO;
+import org.cmdbuild.logic.report.ReportLogic;
 import org.cmdbuild.logic.workflow.WorkflowLogic;
 import org.cmdbuild.model.data.Card;
 import org.cmdbuild.report.ReportFactory;
 import org.cmdbuild.report.ReportFactory.ReportExtension;
-import org.cmdbuild.report.ReportFactory.ReportType;
 import org.cmdbuild.report.ReportFactoryDB;
 import org.cmdbuild.report.ReportParameter;
-import org.cmdbuild.report.ReportParameterConverter;
 import org.cmdbuild.services.auth.PrivilegeManager.PrivilegeType;
 import org.cmdbuild.services.meta.MetadataService;
 import org.cmdbuild.services.meta.MetadataStoreFactory;
@@ -156,6 +154,7 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 	private MenuStore menuStore;
 	private ReportStore reportStore;
 	private LookupStore lookupStore;
+	private final ReportLogic reportLogic;
 
 	public DataAccessLogicHelper( //
 			final CMDataView dataView, //
@@ -166,7 +165,8 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 			final AuthenticationStore authenticationStore, //
 			final CmdbuildConfiguration configuration, //
 			final MetadataStoreFactory metadataStoreFactory, //
-			final CardAdapter cardAdapter //
+			final CardAdapter cardAdapter, //
+			final ReportLogic reportLogic //
 	) {
 		this.dataView = dataView;
 		this.dataAccessLogic = datAccessLogic;
@@ -178,6 +178,7 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 		this.configuration = configuration;
 		this.metadataStoreFactory = metadataStoreFactory;
 		this.cardAdapter = cardAdapter;
+		this.reportLogic = reportLogic;
 	}
 
 	public void setMenuStore(final MenuStore menuStore) {
@@ -775,50 +776,34 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 	}
 
 	public Report[] getReportsByType(final String type, final int limit, final int offset) {
-		final List<Report> pagedReports = new ArrayList<Report>();
-		final ReportType reportType = ReportType.valueOf(type.toUpperCase());
-		int numRecords = 0;
-		final List<org.cmdbuild.model.Report> fetchedReports = reportStore.findReportsByType(reportType);
-		for (final org.cmdbuild.model.Report report : fetchedReports) {
-			if (report.isUserAllowed()) {
-				++numRecords;
-				if (limit > 0 && numRecords > offset && numRecords <= offset + limit) {
-					pagedReports.add(transform(report));
-				}
-			}
-		}
-		return pagedReports.toArray(new Report[pagedReports.size()]);
-	}
+		return from(reportLogic.readAll()) //
+				.transform(new Function<ReportLogic.Report, Report>() {
 
-	private Report transform(final org.cmdbuild.model.Report reportModel) {
-		final Report report = new Report();
-		report.setDescription(reportModel.getDescription());
-		report.setId(reportModel.getId());
-		report.setTitle(reportModel.getCode());
-		report.setType(reportModel.getType().toString());
-		return report;
+					@Override
+					public Report apply(final ReportLogic.Report input) {
+						final Report output = new Report();
+						output.setId(input.getId());
+						output.setTitle(input.getTitle());
+						output.setType(input.getType());
+						output.setDescription(input.getDescription());
+						return output;
+					}
+
+				}) //
+				.toArray(Report.class);
 	}
 
 	public AttributeSchema[] getReportParameters(final int id, final String extension) {
-		ReportFactoryDB reportFactory;
-		try {
-			reportFactory = new ReportFactoryDB(dataSource, configuration, reportStore, id,
-					ReportExtension.valueOf(extension.toUpperCase()));
-			final List<AttributeSchema> reportParameterList = new ArrayList<AttributeSchema>();
-			for (final ReportParameter reportParameter : reportFactory.getReportParameters()) {
-				final CMAttribute reportAttribute = ReportParameterConverter.of(reportParameter).toCMAttribute();
-				final AttributeSchema attribute = serializationUtils.serialize(reportAttribute);
-				reportParameterList.add(attribute);
-			}
-			return reportParameterList.toArray(new AttributeSchema[reportParameterList.size()]);
-		} catch (final SQLException e) {
-			Log.SOAP.error("SQL error in report", e);
-		} catch (final IOException e) {
-			Log.SOAP.error("Error reading report", e);
-		} catch (final ClassNotFoundException e) {
-			Log.SOAP.error("Cannot find class in report", e);
-		}
-		return null;
+		return from(reportLogic.parameters(id)) //
+				.transform(new Function<CMAttribute, AttributeSchema>() {
+
+					@Override
+					public AttributeSchema apply(final CMAttribute input) {
+						return serializationUtils.serialize(input);
+					}
+
+				}) //
+				.toArray(AttributeSchema.class);
 	}
 
 	public DataHandler getReport(final int id, final String extension, final ReportParams[] params) {

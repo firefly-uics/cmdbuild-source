@@ -2,7 +2,7 @@
 
 	var tr = CMDBuild.Translation.management.modreport.reportForm;
 
-	Ext.define('CMDBuild.view.common.report.CMReportGrid', {
+	Ext.define('CMDBuild.view.administration.report.CMReportGrid', {
 		extend: 'Ext.grid.Panel',
 
 		requires: [
@@ -11,7 +11,6 @@
 			'CMDBuild.model.Report'
 		],
 
-		exportMode: false,
 		filtering: false,
 		reportType: '',
 
@@ -48,7 +47,7 @@
 					header: tr.report,
 					sortable: false,
 					dataIndex: CMDBuild.core.proxy.CMProxyConstants.TYPE,
-					width: this.exportMode ? 60 : 110,
+					width: 60,
 					fixed: true,
 					tdCls: 'grid-button',
 					renderer: this.loadReportIcons,
@@ -149,17 +148,8 @@
 		loadReportIcons: function(reportType) {
 			if(reportType == 'CUSTOM') {
 				var html ='<div class="cmcenter">';
-
-				if (this.exportMode) {
-					html += '<img qtip="Sql" style="cursor:pointer" class="sql" src="images/icons/ico_sql.png"/>&nbsp;&nbsp;';
-					html += '<img qtip="Zip" style="cursor:pointer" class="zip" src="images/icons/ico_zip.png"/>&nbsp;&nbsp;';
-				} else {
-					html += '<img qtip="Adobe Pdf" style="cursor:pointer" class="pdf" src="images/icons/ico_pdf.png"/>&nbsp;&nbsp;';
-					html += '<img qtip="OpenOffice Odt" style="cursor:pointer" class="odt" src="images/icons/ico_odt.png"/>&nbsp;&nbsp;';
-					html += '<img qtip="Rich Text Format" style="cursor:pointer" class="rtf" src="images/icons/ico_rtf.png"/>&nbsp;&nbsp;';
-					html += '<img qtip="Csv" style="cursor:pointer" class="csv" src="images/icons/ico_csv.png"/>&nbsp;&nbsp;';
-				}
-
+				html += '<img qtip="Sql" style="cursor:pointer" class="sql" src="images/icons/ico_sql.png"/>&nbsp;&nbsp;';
+				html += '<img qtip="Zip" style="cursor:pointer" class="zip" src="images/icons/ico_zip.png"/>&nbsp;&nbsp;';
 				html += '</div>';
 
 				return html;
@@ -202,7 +192,7 @@
 						if (!popup)
 							CMDBuild.Msg.warn(CMDBuild.Translation.warnings.warning_message,CMDBuild.Translation.warnings.popup_block);
 					} else { // Show form with launch parameters
-						Ext.create('CMDBuild.Management.ReportParamWin', {
+						Ext.create('CMDBuild.view.management.report.ParametersWindow', {
 							attributeList: decodedResult.attribute
 						}).show();
 					}

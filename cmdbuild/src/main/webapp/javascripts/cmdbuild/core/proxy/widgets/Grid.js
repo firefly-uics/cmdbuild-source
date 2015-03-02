@@ -97,7 +97,7 @@
 						},
 						extraParams: parameters.extraParams
 					}
-				})
+				});
 			}
 	});
 

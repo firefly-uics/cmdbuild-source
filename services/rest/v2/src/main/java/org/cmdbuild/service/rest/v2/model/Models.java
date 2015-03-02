@@ -1067,7 +1067,7 @@ public class Models {
 		}
 
 		public MetadataBuilder withTotal(final Integer total) {
-			this.total = Long.valueOf(total);
+			this.total = total.longValue();
 			return this;
 		}
 
@@ -1669,6 +1669,35 @@ public class Models {
 
 	}
 
+	public static class LongIdAndDescriptionBuilder extends ModelBuilder<LongIdAndDescription> {
+
+		private Long id;
+		private String description;
+
+		private LongIdAndDescriptionBuilder() {
+			// use factory method
+		}
+
+		@Override
+		protected LongIdAndDescription doBuild() {
+			final LongIdAndDescription output = new LongIdAndDescription();
+			output.setId(id);
+			output.setDescription(description);
+			return output;
+		}
+
+		public LongIdAndDescriptionBuilder setId(final Long id) {
+			this.id = id;
+			return this;
+		}
+
+		public LongIdAndDescriptionBuilder setDescription(final String description) {
+			this.description = description;
+			return this;
+		}
+
+	}
+
 	public static class ValuesBuilder extends ModelBuilder<Values> {
 
 		private static final Map<String, ? extends Object> NO_VALUES = emptyMap();
@@ -1880,6 +1909,10 @@ public class Models {
 
 	public static SessionBuilder newSession(final Session existing) {
 		return new SessionBuilder(existing);
+	}
+
+	public static LongIdAndDescriptionBuilder newLongIdAndDescription() {
+		return new LongIdAndDescriptionBuilder();
 	}
 
 	public static ValuesBuilder newValues() {

@@ -48,6 +48,8 @@
 			<ref bean="v2_processInstanceAttachments" />
 			<ref bean="v2_processInstances" />
 			<ref bean="v2_processStartActivities" />
+			<ref bean="v2_reportAttributes" />
+			<ref bean="v2_reports" />
 			<ref bean="v2_sessions" />
 		</jaxrs:serviceBeans>
 		<jaxrs:extensionMappings>
