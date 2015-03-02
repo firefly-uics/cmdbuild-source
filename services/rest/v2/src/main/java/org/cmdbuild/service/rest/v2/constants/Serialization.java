@@ -88,6 +88,8 @@ public class Serialization {
 			PROTOTYPE = "prototype", //
 			RELATION = "relation", //
 			RELATION_ID = RELATION + ID_CAPITALIZED, //
+			REPORT = "report", //
+			REPORT_ID = REPORT + ID_CAPITALIZED, //
 			RESPONSE_METADATA = "meta", //
 			ROLE_ID = "role" + ID_CAPITALIZED, //
 			ROLE = "role", //

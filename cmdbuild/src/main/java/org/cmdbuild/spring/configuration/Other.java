@@ -13,6 +13,7 @@ import org.cmdbuild.logic.data.access.SystemDataAccessLogicBuilder;
 import org.cmdbuild.services.DefaultPatchManager;
 import org.cmdbuild.services.FilesStore;
 import org.cmdbuild.services.PatchManager;
+import org.cmdbuild.services.meta.DefaultMetadataStoreFactory;
 import org.cmdbuild.services.meta.MetadataStoreFactory;
 import org.cmdbuild.services.template.store.StoreTemplateRepository;
 import org.cmdbuild.services.template.store.Template;
@@ -65,7 +66,7 @@ public class Other {
 
 	@Bean
 	public MetadataStoreFactory metadataStoreFactory() {
-		return new MetadataStoreFactory(data.systemDataView());
+		return new DefaultMetadataStoreFactory(data.systemDataView());
 	}
 
 	@Bean

@@ -101,9 +101,6 @@
 	<script type="text/javascript" src="javascripts/cmdbuild/view/management/utilities/CMModExportCSV.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/management/utilities/CMModImportCSV.js"></script>
 
-	<!-- REPORT -->
-	<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/report/ReportParamWin.js"></script>
-
 	<!-- MENU -->
 	<script type="text/javascript" src="javascripts/cmdbuild/view/management/menu/CMMenuAccordion.js"></script>
 
@@ -176,10 +173,6 @@
 
 	<!-- DATA VIEW -->
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/management/dataView/CMModSqlDataViewController.js"></script>
-
-	<!-- REPORT-->
-	<script type="text/javascript" src="javascripts/cmdbuild/controller/management/report/CMSingleReportPageController.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/controller/management/report/CMModReportController.js"></script>
 
 	<!-- WORKFLOW -->
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/management/workflow/CMModWorkflowController.js"></script>
