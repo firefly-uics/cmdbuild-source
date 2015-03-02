@@ -57,7 +57,9 @@ import org.cmdbuild.logic.data.QueryOptions;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.logic.data.access.FetchCardListResponse;
 import org.cmdbuild.logic.data.access.RelationDTO;
+import org.cmdbuild.logic.report.ExtensionConverter;
 import org.cmdbuild.logic.report.ReportLogic;
+import org.cmdbuild.logic.report.StringExtensionConverter;
 import org.cmdbuild.logic.workflow.WorkflowLogic;
 import org.cmdbuild.model.data.Card;
 import org.cmdbuild.report.ReportFactory;
@@ -821,7 +823,8 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 						asList(defaultIfNull(params, NO_PARAMS)), //
 						REPORT_PARAM_KEY), //
 				REPORT_PARAM_VALUE);
-		return reportLogic.download(id, extension, paramsAsMap);
+		final ExtensionConverter extensionConverter = StringExtensionConverter.of(extension);
+		return reportLogic.download(id, extensionConverter.extension(), paramsAsMap);
 	}
 
 	public DataHandler getReport(final String reportId, final String extension, final ReportParams[] params) {

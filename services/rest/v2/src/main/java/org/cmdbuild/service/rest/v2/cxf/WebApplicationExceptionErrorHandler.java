@@ -55,6 +55,12 @@ public class WebApplicationExceptionErrorHandler implements ErrorHandler, Loggin
 	}
 
 	@Override
+	public void extensionNotFound(final String id) {
+		logger.error("extension not found '{}'", id);
+		notFound(id);
+	}
+
+	@Override
 	public void missingUsername() {
 		logger.error("missing username");
 		throw new WebApplicationException(Response.status(BAD_REQUEST) //
