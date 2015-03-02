@@ -5,6 +5,7 @@
 
 		requires: [
 			'CMDBuild.core.proxy.CMProxyConstants',
+			'CMDBuild.core.proxy.CMProxyUrlIndex',
 			'CMDBuild.core.proxy.Report'
 		],
 
@@ -92,7 +93,11 @@
 					},
 					success: function(response, options) {
 						if (Ext.isEmpty(this.delegate)) {
-							var popup = window.open('services/json/management/modreport/printreportfactory', '_blank');
+							var popup = window.open(
+								CMDBuild.core.proxy.CMProxyUrlIndex.reports.printReportFactory,
+								'Report',
+								'height=400,width=550,status=no,toolbar=no,scrollbars=yes,menubar=no,location=no,resizable'
+							);
 
 							if (Ext.isEmpty(popup))
 								CMDBuild.Msg.warn(

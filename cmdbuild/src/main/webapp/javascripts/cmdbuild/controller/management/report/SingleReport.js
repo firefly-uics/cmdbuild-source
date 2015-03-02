@@ -62,8 +62,9 @@
 
 		/**
 		 * @param {Object} reportParams
+		 * @param {Boolean} forceDownload
 		 */
-		createReport: function(reportParams, success) {
+		createReport: function(reportParams) {
 			if (!Ext.isEmpty(reportParams[CMDBuild.core.proxy.CMProxyConstants.ID])) {
 				reportParams[CMDBuild.core.proxy.CMProxyConstants.TYPE] = reportParams[CMDBuild.core.proxy.CMProxyConstants.TYPE] || 'CUSTOM';
 				reportParams[CMDBuild.core.proxy.CMProxyConstants.EXTENSION] = reportParams[CMDBuild.core.proxy.CMProxyConstants.EXTENSION] || CMDBuild.core.proxy.CMProxyConstants.PDF;
@@ -79,9 +80,11 @@
 							false
 						);
 					},
-					success: success || function(response, options, decodedResponse) {
+					success: function(response, options, decodedResponse) {
+						this.displayedReportParams = reportParams;
+
 						if(decodedResponse.filled) { // Report with no parameters
-							this.showReport(reportParams);
+							this.showReport();
 						} else { // Show parameters window
 							if (Ext.isIE) // FIX: in IE PDF is painted on top of the regular page content so remove it before display parameter window
 								this.view.removeAll();
@@ -99,20 +102,11 @@
 			}
 		},
 
+		// TODO
 		onReportDownloadButtonClick: function() {
-			this.createReport(this.displayedReportParams, function() {
-				var popup = window.open(
-						CMDBuild.core.proxy.CMProxyUrlIndex.reports.printReportFactory,
-						'Report',
-						'height=400,width=550,status=no,toolbar=no,scrollbars=yes,menubar=no,location=no,resizable'
-				);
-
-				if (!popup)
-					CMDBuild.Msg.warn(
-							CMDBuild.Translation.warnings.warning_message,
-							CMDBuild.Translation.warnings.popup_block
-					);
-			});
+_debug('onReportDownloadButtonClick');
+//			if (!Ext.Object.isEmpty(this.displayedReportParams))
+//				this.createReport(this.displayedReportParams, true);
 		},
 
 		/**
@@ -155,13 +149,9 @@
 
 		/**
 		 * Get created report from server and display it in iframe
-		 *
-		 * @param {Object} reportParams
 		 */
-		showReport: function(reportParams) {
+		showReport: function() {
 			this.view.removeAll();
-
-			this.displayedReportParams = reportParams;
 
 			this.view.add({
 				xtype: 'component',
