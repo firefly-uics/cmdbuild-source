@@ -3,6 +3,8 @@
 	Ext.define('CMDBuild.view.common.field.CMHtmlEditorField', {
 		extend: 'Ext.ux.form.field.TinyMCE',
 
+		requires: ['CMDBuild.core.Utils'],
+
 		/**
 		 * @cfg {Mixed} object or string
 		 */
