@@ -29,7 +29,6 @@ import org.cmdbuild.service.rest.v2.ProcessStartActivities;
 import org.cmdbuild.service.rest.v2.Processes;
 import org.cmdbuild.service.rest.v2.ProcessesConfiguration;
 import org.cmdbuild.service.rest.v2.Relations;
-import org.cmdbuild.service.rest.v2.ReportAttributes;
 import org.cmdbuild.service.rest.v2.Reports;
 import org.cmdbuild.service.rest.v2.Sessions;
 import org.cmdbuild.service.rest.v2.cxf.AllInOneCardAttachments;
@@ -56,7 +55,6 @@ import org.cmdbuild.service.rest.v2.cxf.CxfProcessStartActivities;
 import org.cmdbuild.service.rest.v2.cxf.CxfProcesses;
 import org.cmdbuild.service.rest.v2.cxf.CxfProcessesConfiguration;
 import org.cmdbuild.service.rest.v2.cxf.CxfRelations;
-import org.cmdbuild.service.rest.v2.cxf.CxfReportAttributes;
 import org.cmdbuild.service.rest.v2.cxf.CxfReports;
 import org.cmdbuild.service.rest.v2.cxf.CxfSessions;
 import org.cmdbuild.service.rest.v2.cxf.CxfSessions.AuthenticationLogicAdapter;
@@ -312,15 +310,9 @@ public class ServicesV2 implements LoggingSupport {
 	}
 
 	@Bean
-	public ReportAttributes v2_reportAttributes() {
-		final CxfReportAttributes service = new CxfReportAttributes(v2_errorHandler(), helper.reportLogic(),
-				helper.systemDataView(), helper.lookupLogic());
-		return proxy(ReportAttributes.class, service);
-	}
-
-	@Bean
 	public Reports v2_reports() {
-		final CxfReports service = new CxfReports(helper.reportLogic());
+		final CxfReports service = new CxfReports(v2_errorHandler(), helper.reportLogic(), helper.systemDataView(),
+				helper.lookupLogic());
 		return proxy(Reports.class, service);
 	}
 

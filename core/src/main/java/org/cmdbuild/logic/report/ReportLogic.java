@@ -1,5 +1,9 @@
 package org.cmdbuild.logic.report;
 
+import java.util.Map;
+
+import javax.activation.DataHandler;
+
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.logic.Logic;
 import org.slf4j.Marker;
@@ -28,5 +32,7 @@ public interface ReportLogic extends Logic {
 	Optional<Report> read(int reportId);
 
 	Iterable<CMAttribute> parameters(int id);
+
+	DataHandler download(int reportId, String extension, Map<String, Object> parameters);
 
 }

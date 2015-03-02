@@ -47,6 +47,7 @@ public class Serialization {
 			DOMAIN_ID = DOMAIN + ID_CAPITALIZED, //
 			DOMAIN_SOURCE = DOMAIN + "Source", //
 			EDITOR_TYPE = "editorType", //
+			EXTENSION = "extension", //
 			EXTRA = "extra", //
 			FILE = "file", //
 			FILTER = "filter", //
@@ -69,6 +70,7 @@ public class Serialization {
 			OBJECT_DESCRIPTION = "objectDescription", //
 			OBJECT_ID = "objectId", //
 			OBJECT_TYPE = "objectType", //
+			PARAMETERS = "parameters", //
 			PARENT_ID = "parent_id", //
 			PARENT = "parent", //
 			PARENT_TYPE = "parent_type", //
