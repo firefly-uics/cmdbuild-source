@@ -6,13 +6,17 @@ import static org.apache.commons.lang3.builder.ToStringStyle.SHORT_PREFIX_STYLE;
 import static org.cmdbuild.report.ReportFactory.ReportExtension.PDF;
 import static org.cmdbuild.report.ReportFactory.ReportType.CUSTOM;
 
-import java.util.List;
+import java.io.OutputStream;
+import java.util.Map;
+import java.util.Map.Entry;
 
+import javax.activation.DataHandler;
 import javax.sql.DataSource;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.cmdbuild.common.utils.TempDataSource;
 import org.cmdbuild.config.CmdbuildConfiguration;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.report.ReportFactory.ReportExtension;
@@ -160,11 +164,14 @@ public class DefaultReportLogic implements ReportLogic {
 	private static final ReportExtension NOT_IMPORTANT = PDF;
 
 	private final ReportStore reportStore;
-	private DataSource dataSource;
-	private CmdbuildConfiguration configuration;
+	private final DataSource dataSource;
+	private final CmdbuildConfiguration configuration;
 
-	public DefaultReportLogic(final ReportStore reportStore) {
+	public DefaultReportLogic(final ReportStore reportStore, final DataSource dataSource,
+			final CmdbuildConfiguration configuration) {
 		this.reportStore = reportStore;
+		this.dataSource = dataSource;
+		this.configuration = configuration;
 	}
 
 	@Override
@@ -187,29 +194,68 @@ public class DefaultReportLogic implements ReportLogic {
 
 	@Override
 	public Iterable<CMAttribute> parameters(final int id) {
-		return from(reportParameters(id)) //
-				.transform(new Function<ReportParameter, CMAttribute>() {
-
-					@Override
-					public CMAttribute apply(final ReportParameter input) {
-						return ReportParameterConverter.of(input).toCMAttribute();
-					}
-
-				});
-	}
-
-	private List<ReportParameter> reportParameters(final int id) {
 		try {
-			return reportFactory(id).getReportParameters();
+			return from(reportFactory(id).getReportParameters()) //
+					.transform(new Function<ReportParameter, CMAttribute>() {
+
+						@Override
+						public CMAttribute apply(final ReportParameter input) {
+							return ReportParameterConverter.of(input).toCMAttribute();
+						}
+
+					});
 		} catch (final Exception e) {
 			logger.error(marker, "error getting report parameters", e);
 			throw new RuntimeException("error getting report parameters", e);
 		}
 	}
 
-	private ReportFactoryDB reportFactory(final int id) {
+	@Override
+	public DataHandler download(final int reportId, final String extension, final Map<String, Object> parameters) {
 		try {
-			return new ReportFactoryDB(dataSource, configuration, reportStore, id, NOT_IMPORTANT);
+			final ReportExtension reportExtension = ReportExtension.valueOf(extension.toUpperCase());
+			final ReportFactoryDB reportFactory = reportFactory(reportId, reportExtension);
+
+			// parameters management
+			for (final ReportParameter reportParameter : reportFactory.getReportParameters()) {
+				for (final Entry<String, Object> param : parameters.entrySet()) {
+					if (param.getKey().equals(reportParameter.getName())) {
+						// update parameter
+						reportParameter.parseValue(param.getValue());
+					}
+				}
+			}
+
+			reportFactory.fillReport();
+
+			// filename management
+			final String filename = new StringBuilder() //
+					// name
+					.append(reportFactory.getReportCard().getCode().replaceAll(" ", "")) //
+					// extension
+					.append("." + reportFactory.getReportExtension().toString().toLowerCase()) //
+					.toString();
+
+			final javax.activation.DataSource dataSource = TempDataSource.newInstance() //
+					.withName(filename) //
+					.withContentType(reportFactory.getContentType()) //
+					.build();
+			final OutputStream outputStream = dataSource.getOutputStream();
+			reportFactory.sendReportToStream(outputStream);
+			return new DataHandler(dataSource);
+		} catch (final Exception e) {
+			logger.error(marker, "error downloading report", e);
+			throw new RuntimeException("error downloading report", e);
+		}
+	}
+
+	private ReportFactoryDB reportFactory(final int id) {
+		return reportFactory(id, NOT_IMPORTANT);
+	}
+
+	private ReportFactoryDB reportFactory(final int id, final ReportExtension extension) {
+		try {
+			return new ReportFactoryDB(dataSource, configuration, reportStore, id, extension);
 		} catch (final Exception e) {
 			logger.error(marker, "error creating report factory", e);
 			throw new RuntimeException("error creating report factory", e);
