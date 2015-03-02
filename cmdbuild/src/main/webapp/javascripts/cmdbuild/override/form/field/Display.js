@@ -14,8 +14,6 @@
 		 * @return {String}
 		 */
 		renderer: function(rawValue, fieldObject) {
-_debug('rawValue', rawValue);
-_debug('fieldObject', fieldObject);
 			if (!CMDBuild.core.Utils.hasHtmlTags(rawValue))
 				return rawValue.replace(/(\r\n|\n|\r)/gm, '<br />');
 
