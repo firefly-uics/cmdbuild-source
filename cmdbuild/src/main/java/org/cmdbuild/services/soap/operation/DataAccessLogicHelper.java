@@ -14,7 +14,6 @@ import static org.cmdbuild.services.soap.utils.SoapToJsonUtils.toJsonArray;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -66,7 +65,6 @@ import org.cmdbuild.report.ReportFactory;
 import org.cmdbuild.report.ReportFactory.ReportExtension;
 import org.cmdbuild.report.ReportFactoryDB;
 import org.cmdbuild.report.ReportParameter;
-import org.cmdbuild.report.ReportParameterConverter;
 import org.cmdbuild.services.auth.PrivilegeManager.PrivilegeType;
 import org.cmdbuild.services.meta.MetadataService;
 import org.cmdbuild.services.meta.MetadataStoreFactory;
@@ -796,25 +794,16 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 	}
 
 	public AttributeSchema[] getReportParameters(final int id, final String extension) {
-		ReportFactoryDB reportFactory;
-		try {
-			reportFactory = new ReportFactoryDB(dataSource, configuration, reportStore, id,
-					ReportExtension.valueOf(extension.toUpperCase()));
-			final List<AttributeSchema> reportParameterList = new ArrayList<AttributeSchema>();
-			for (final ReportParameter reportParameter : reportFactory.getReportParameters()) {
-				final CMAttribute reportAttribute = ReportParameterConverter.of(reportParameter).toCMAttribute();
-				final AttributeSchema attribute = serializationUtils.serialize(reportAttribute);
-				reportParameterList.add(attribute);
-			}
-			return reportParameterList.toArray(new AttributeSchema[reportParameterList.size()]);
-		} catch (final SQLException e) {
-			Log.SOAP.error("SQL error in report", e);
-		} catch (final IOException e) {
-			Log.SOAP.error("Error reading report", e);
-		} catch (final ClassNotFoundException e) {
-			Log.SOAP.error("Cannot find class in report", e);
-		}
-		return null;
+		return from(reportLogic.parameters(id)) //
+				.transform(new Function<CMAttribute, AttributeSchema>() {
+
+					@Override
+					public AttributeSchema apply(final CMAttribute input) {
+						return serializationUtils.serialize(input);
+					}
+
+				}) //
+				.toArray(AttributeSchema.class);
 	}
 
 	public DataHandler getReport(final int id, final String extension, final ReportParams[] params) {

@@ -13,11 +13,11 @@ import org.cmdbuild.service.rest.v2.cxf.security.TokenHandler;
 import org.cmdbuild.service.rest.v2.logging.LoggingSupport;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
-import org.springframework.stereotype.Component;
+import org.springframework.context.annotation.Configuration;
 
 import com.google.common.base.Predicate;
 
-@Component
+@Configuration
 public class SecurityV2 implements LoggingSupport {
 
 	@Autowired

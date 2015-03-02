@@ -1,15 +1,28 @@
 package org.cmdbuild.logic.report;
 
 import static com.google.common.collect.FluentIterable.from;
+import static java.util.Arrays.asList;
 import static org.apache.commons.lang3.builder.ToStringStyle.SHORT_PREFIX_STYLE;
+import static org.cmdbuild.report.ReportFactory.ReportExtension.PDF;
 import static org.cmdbuild.report.ReportFactory.ReportType.CUSTOM;
+
+import java.util.List;
+
+import javax.sql.DataSource;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.cmdbuild.config.CmdbuildConfiguration;
+import org.cmdbuild.dao.entrytype.CMAttribute;
+import org.cmdbuild.report.ReportFactory.ReportExtension;
+import org.cmdbuild.report.ReportFactoryDB;
+import org.cmdbuild.report.ReportParameter;
+import org.cmdbuild.report.ReportParameterConverter;
 import org.cmdbuild.services.store.report.ReportStore;
 
 import com.google.common.base.Function;
+import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 
 public class DefaultReportLogic implements ReportLogic {
@@ -120,7 +133,35 @@ public class DefaultReportLogic implements ReportLogic {
 
 	}
 
+	private static final Predicate<org.cmdbuild.model.Report> USER_ALLOWED = new Predicate<org.cmdbuild.model.Report>() {
+
+		@Override
+		public boolean apply(final org.cmdbuild.model.Report input) {
+			return input.isUserAllowed();
+		}
+
+	};
+
+	private static final Function<org.cmdbuild.model.Report, Report> STORE_TO_LOGIC = new Function<org.cmdbuild.model.Report, Report>() {
+
+		@Override
+		public Report apply(final org.cmdbuild.model.Report input) {
+			return ReportImpl.newInstance() //
+					.setId(input.getId()) //
+					.setTitle(input.getCode()) //
+					// TODO do it better
+					.setType(input.getType().toString()) //
+					.setDescription(input.getDescription()) //
+					.build();
+		}
+
+	};
+
+	private static final ReportExtension NOT_IMPORTANT = PDF;
+
 	private final ReportStore reportStore;
+	private DataSource dataSource;
+	private CmdbuildConfiguration configuration;
 
 	public DefaultReportLogic(final ReportStore reportStore) {
 		this.reportStore = reportStore;
@@ -129,29 +170,50 @@ public class DefaultReportLogic implements ReportLogic {
 	@Override
 	public Iterable<Report> readAll() {
 		return from(reportStore.findReportsByType(CUSTOM)) //
-				.filter(new Predicate<org.cmdbuild.model.Report>() {
+				.filter(USER_ALLOWED) //
+				.transform(STORE_TO_LOGIC);
+	}
+
+	@Override
+	public Optional<Report> read(final int reportId) {
+		try {
+			return from(asList(reportStore.findReportById(reportId))) //
+					.transform(STORE_TO_LOGIC) //
+					.first();
+		} catch (final Throwable e) {
+			return Optional.absent();
+		}
+	}
+
+	@Override
+	public Iterable<CMAttribute> parameters(final int id) {
+		return from(reportParameters(id)) //
+				.transform(new Function<ReportParameter, CMAttribute>() {
 
 					@Override
-					public boolean apply(final org.cmdbuild.model.Report input) {
-						return input.isUserAllowed();
-					}
-
-				}) //
-				.transform(new Function<org.cmdbuild.model.Report, Report>() {
-
-					@Override
-					public Report apply(final org.cmdbuild.model.Report input) {
-						return ReportImpl.newInstance() //
-								.setId(input.getId()) //
-								.setTitle(input.getCode()) //
-								// TODO do it better
-								.setType(input.getType().toString()) //
-								.setDescription(input.getDescription()) //
-								.build();
+					public CMAttribute apply(final ReportParameter input) {
+						return ReportParameterConverter.of(input).toCMAttribute();
 					}
 
 				});
+	}
 
+	private List<ReportParameter> reportParameters(final int id) {
+		try {
+			return reportFactory(id).getReportParameters();
+		} catch (final Exception e) {
+			logger.error(marker, "error getting report parameters", e);
+			throw new RuntimeException("error getting report parameters", e);
+		}
+	}
+
+	private ReportFactoryDB reportFactory(final int id) {
+		try {
+			return new ReportFactoryDB(dataSource, configuration, reportStore, id, NOT_IMPORTANT);
+		} catch (final Exception e) {
+			logger.error(marker, "error creating report factory", e);
+			throw new RuntimeException("error creating report factory", e);
+		}
 	}
 
 }

@@ -67,11 +67,17 @@ public class CachingStore<T extends Storable> extends ForwardingStore<T> impleme
 
 	}
 
+	private final Store<T> delegate;
 	private final Cache<T> cache;
 
-	public CachingStore(final Store<T> store) {
-		super(store);
-		this.cache = new Cache<T>(store);
+	public CachingStore(final Store<T> delegate) {
+		this.delegate = delegate;
+		this.cache = new Cache<T>(delegate);
+	}
+
+	@Override
+	protected Store<T> delegate() {
+		return delegate;
 	}
 
 	@Override
@@ -91,7 +97,7 @@ public class CachingStore<T extends Storable> extends ForwardingStore<T> impleme
 	public Collection<T> readAll() {
 		return cache.values();
 	}
-	
+
 	// TODO readAll with Groupable
 
 	@Override
