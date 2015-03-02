@@ -280,7 +280,7 @@
 				var editor = {};
 				var header = CMDBuild.Management.FieldManager.getHeaderForAttr(attribute);
 
-				if (attribute.type == 'REFERENCE') { // TODO: hack to force a templateResolver buid for editor that haven't a form associated like other fields types
+				if (attribute.type == 'REFERENCE') { // TODO: hack to force a templateResolver build for editor that haven't a form associated like other fields types
 					var xaVars = CMDBuild.Utils.Metadata.extractMetaByNS(attribute.meta, "system.template.");
 					xaVars["_SystemFieldFilter"] = attribute.filter;
 
@@ -460,68 +460,75 @@
 			return day + '/' + month + '/' + date.getFullYear();
 		},
 
-		// GETters functions
-			/**
-			 * @return {Array} cardAttributes
-			 */
-			getCardAttributes: function() {
-				return this.cardAttributes;
-			},
+		/**
+		 * @return {Array} cardAttributes
+		 */
+		getCardAttributes: function() {
+			return this.cardAttributes;
+		},
 
-			/**
-			 * @return {Object} out
-			 *
-			 * @override
-			 */
-			getData: function() {
-				var me = this;
-				var out = {};
-				var data = [];
-				var store = this.grid.getStore();
+		/**
+		 * @return {Object} out
+		 *
+		 * @override
+		 */
+		getData: function() {
+			var me = this;
+			var out = {};
+			var data = [];
+			var store = this.grid.getStore();
 
-				for (var i = 0; i < store.getCount(); i++) {
-					var item = store.getAt(i);
-					var xaVars = item.getData();
+			for (var i = 0; i < store.getCount(); i++) {
+				var item = store.getAt(i);
+				var xaVars = item.getData();
 
-					// Resolve templates for widget configuration "text" type
-					var templateResolver = new CMDBuild.Management.TemplateResolver({
-						clientForm: me.clientForm,
-						xaVars: xaVars,
-						serverVars: this.getTemplateResolverServerVars()
-					});
-
-					templateResolver.resolveTemplates({
-						attributes: Ext.Object.getKeys(xaVars),
-						callback: function(out, ctx) {
-							data.push(
-								Ext.encode(
-									Ext.Object.merge(item.getData(), out)
-								)
-							);
-						}
-					});
-				}
-
-				if (!this.readOnly)
-					out[CMDBuild.core.proxy.CMProxyConstants.OUTPUT] = data;
-
-				return out;
-			},
-
-			/**
-			 * @param {Array} fields
-			 *
-			 * @return {Ext.data.Store}
-			 */
-			getStoreForFields: function(fields) {
-				fields.push({ name: 'Id', type: 'int' });
-				fields.push({ name: 'IdClass', type: 'int' });
-
-				return Ext.create('Ext.data.Store', {
-					fields: fields,
-					data: []
+				// Resolve templates for widget configuration "text" type
+				var templateResolver = new CMDBuild.Management.TemplateResolver({
+					clientForm: me.clientForm,
+					xaVars: xaVars,
+					serverVars: this.getTemplateResolverServerVars()
 				});
-			},
+
+				templateResolver.resolveTemplates({
+					attributes: Ext.Object.getKeys(xaVars),
+					callback: function(out, ctx) {
+
+						// Date field format fix: date field gives wrong formatted value used as cell editor.
+						// To delete when FieldManager will be refactored
+						Ext.Object.each(out, function(key, value, object) {
+							if (Ext.isDate(value))
+								out[key] = me.formatDate(value);
+						});
+
+						data.push(
+							Ext.encode(
+								Ext.Object.merge(item.getData(), out)
+							)
+						);
+					}
+				});
+			}
+
+			if (!this.readOnly)
+				out[CMDBuild.core.proxy.CMProxyConstants.OUTPUT] = data;
+
+			return out;
+		},
+
+		/**
+		 * @param {Array} fields
+		 *
+		 * @return {Ext.data.Store}
+		 */
+		getStoreForFields: function(fields) {
+			fields.push({ name: 'Id', type: 'int' });
+			fields.push({ name: 'IdClass', type: 'int' });
+
+			return Ext.create('Ext.data.Store', {
+				fields: fields,
+				data: []
+			});
+		},
 
 		/**
 		 * Check required field value of grid store records
@@ -663,49 +670,48 @@
 			this.onEditWindowAbortButtonClick();
 		},
 
-		// SETters functions
-			/**
-			 * Build columns for class in view's grid
-			 */
-			setColumnsForClass: function() {
-				this.columns = this.buildColumnsForAttributes();
+		/**
+		 * Build columns for class in view's grid
+		 */
+		setColumnsForClass: function() {
+			this.columns = this.buildColumnsForAttributes();
 
-				this.addActionColumns();
+			this.addActionColumns();
 
-				this.grid.reconfigure(
-					this.getStoreForFields(this.columns.fields),
-					this.columns.headers
-				);
-			},
+			this.grid.reconfigure(
+				this.getStoreForFields(this.columns.fields),
+				this.columns.headers
+			);
+		},
 
-			/**
-			 * Adapter for grid's loarRecords function
-			 *
-			 * @param {Array} rawData - Ex. [{ card: {...}, not_valid_fields: {...} }, {...}]
-			 */
-			setGridDataFromCsv: function(rawData) {
-				// To clear all grid data if mode = 'replace'
-				if (!Ext.isEmpty(this.importCSVWindow) && this.importCSVWindow.csvImportModeCombo.getValue() == 'replace')
-					this.grid.getStore().removeAll();
+		/**
+		 * Adapter for grid's loarRecords function
+		 *
+		 * @param {Array} rawData - Ex. [{ card: {...}, not_valid_fields: {...} }, {...}]
+		 */
+		setGridDataFromCsv: function(rawData) {
+			// To clear all grid data if mode = 'replace'
+			if (!Ext.isEmpty(this.importCSVWindow) && this.importCSVWindow.csvImportModeCombo.getValue() == 'replace')
+				this.grid.getStore().removeAll();
 
-				for (var i = 0; i < rawData.length; ++i) {
-					var cardData = rawData[i][CMDBuild.core.proxy.CMProxyConstants.CARD];
+			for (var i = 0; i < rawData.length; ++i) {
+				var cardData = rawData[i][CMDBuild.core.proxy.CMProxyConstants.CARD];
 
-					// Resolve objects returned for reference fields, just rewrite with object's id
-					for (var item in cardData)
-						if (typeof cardData[item] == 'object' && !Ext.isEmpty(cardData[item][CMDBuild.core.proxy.CMProxyConstants.ID]))
-							cardData[item] = cardData[item][CMDBuild.core.proxy.CMProxyConstants.ID];
+				// Resolve objects returned for reference fields, just rewrite with object's id
+				for (var item in cardData)
+					if (typeof cardData[item] == 'object' && !Ext.isEmpty(cardData[item][CMDBuild.core.proxy.CMProxyConstants.ID]))
+						cardData[item] = cardData[item][CMDBuild.core.proxy.CMProxyConstants.ID];
 
-					this.grid.getStore().add(Ext.create('CMDBuild.DummyModel', cardData));
-				}
-			},
-
-			/**
-			 * @param {Array} data
-			 */
-			setGridDataFromTextPresets: function(data) {
-				this.grid.getStore().loadData(data);
+				this.grid.getStore().add(Ext.create('CMDBuild.DummyModel', cardData));
 			}
+		},
+
+		/**
+		 * @param {Array} data
+		 */
+		setGridDataFromTextPresets: function(data) {
+			this.grid.getStore().loadData(data);
+		}
 	});
 
 })();
