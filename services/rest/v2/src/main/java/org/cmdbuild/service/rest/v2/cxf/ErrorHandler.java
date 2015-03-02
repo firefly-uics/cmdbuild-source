@@ -16,6 +16,8 @@ public interface ErrorHandler {
 
 	void domainNotFound(String id);
 
+	void extensionNotFound(String id);
+
 	void invalidType(String id);
 
 	void lookupTypeNotFound(String id);

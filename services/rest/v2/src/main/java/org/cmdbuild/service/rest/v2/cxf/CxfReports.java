@@ -14,8 +14,10 @@ import javax.activation.DataHandler;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.logic.data.lookup.LookupLogic;
+import org.cmdbuild.logic.report.ExtensionConverter;
 import org.cmdbuild.logic.report.ReportLogic;
 import org.cmdbuild.logic.report.ReportLogic.Report;
+import org.cmdbuild.logic.report.StringExtensionConverter;
 import org.cmdbuild.service.rest.v2.Reports;
 import org.cmdbuild.service.rest.v2.cxf.serialization.AttributeTypeResolver;
 import org.cmdbuild.service.rest.v2.cxf.serialization.ToAttributeDetail;
@@ -99,8 +101,11 @@ public class CxfReports implements Reports {
 		if (!report.isPresent()) {
 			errorHandler.reportNotFound(reportId);
 		}
-		// TODO check extension
-		return logic.download(reportId.intValue(), extension, defaultIfNull(parameters, NO_PARAMETERS));
+		final ExtensionConverter extensionConverter = StringExtensionConverter.of(extension);
+		if (!extensionConverter.isValid()) {
+			errorHandler.extensionNotFound(extension);
+		}
+		return logic.download(reportId.intValue(), extensionConverter.extension(),
+				defaultIfNull(parameters, NO_PARAMETERS));
 	}
-
 }

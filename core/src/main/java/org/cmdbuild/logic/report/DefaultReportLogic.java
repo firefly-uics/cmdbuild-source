@@ -161,6 +161,69 @@ public class DefaultReportLogic implements ReportLogic {
 
 	};
 
+	private static enum ExtensionConverter {
+		CSV(ReportExtension.CSV), //
+		ODT(ReportExtension.ODT), //
+		PDF(ReportExtension.PDF), //
+		RTF(ReportExtension.RTF), //
+		ZIP(ReportExtension.ZIP), //
+		UNDEFINED(null), //
+		;
+
+		private final ReportExtension value;
+
+		private ExtensionConverter(final ReportExtension value) {
+			this.value = value;
+		}
+
+		public ReportExtension reportExtension() {
+			return value;
+		}
+
+		public static ExtensionConverter of(final Extension status) {
+			return new ExtensionVisitor() {
+
+				private ExtensionConverter output;
+
+				public ExtensionConverter convert() {
+					if (status != null) {
+						status.accept(this);
+					} else {
+						output = UNDEFINED;
+					}
+					return output;
+				}
+
+				@Override
+				public void visit(final Csv extension) {
+					output = CSV;
+				}
+
+				@Override
+				public void visit(final Odt extension) {
+					output = ODT;
+				}
+
+				@Override
+				public void visit(final Pdf extension) {
+					output = RTF;
+				}
+
+				@Override
+				public void visit(final Rtf extension) {
+					output = PDF;
+				}
+
+				@Override
+				public void visit(final Zip extension) {
+					output = ZIP;
+				}
+
+			}.convert();
+		}
+
+	}
+
 	private static final ReportExtension NOT_IMPORTANT = PDF;
 
 	private final ReportStore reportStore;
@@ -211,9 +274,9 @@ public class DefaultReportLogic implements ReportLogic {
 	}
 
 	@Override
-	public DataHandler download(final int reportId, final String extension, final Map<String, Object> parameters) {
+	public DataHandler download(final int reportId, final Extension extension, final Map<String, Object> parameters) {
 		try {
-			final ReportExtension reportExtension = ReportExtension.valueOf(extension.toUpperCase());
+			final ReportExtension reportExtension = ExtensionConverter.of(extension).reportExtension();
 			final ReportFactoryDB reportFactory = reportFactory(reportId, reportExtension);
 
 			// parameters management
