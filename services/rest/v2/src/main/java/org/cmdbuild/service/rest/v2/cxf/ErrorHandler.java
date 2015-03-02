@@ -46,6 +46,8 @@ public interface ErrorHandler {
 
 	void relationNotFound(Long id);
 
+	void reportNotFound(Long id);
+
 	void roleNotFound(String id);
 
 	void sessionNotFound(String id);

@@ -945,7 +945,7 @@ public class Models {
 			this.total = total;
 			return this;
 		}
-		
+
 		public MetadataBuilder withTotal(final Integer total) {
 			this.total = total.longValue();
 			return this;

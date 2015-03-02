@@ -10,8 +10,15 @@ public class Stores {
 	 */
 	private static class NullOnNotFoundReadStore<T extends Storable> extends ForwardingStore<T> {
 
-		public NullOnNotFoundReadStore(final Store<T> inner) {
-			super(inner);
+		private final Store<T> delegate;
+
+		public NullOnNotFoundReadStore(final Store<T> delegate) {
+			this.delegate = delegate;
+		}
+
+		@Override
+		protected Store<T> delegate() {
+			return delegate;
 		}
 
 		/**

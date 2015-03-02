@@ -1,6 +1,15 @@
 package org.cmdbuild.logic.report;
 
-public interface ReportLogic {
+import org.cmdbuild.dao.entrytype.CMAttribute;
+import org.cmdbuild.logic.Logic;
+import org.slf4j.Marker;
+import org.slf4j.MarkerFactory;
+
+import com.google.common.base.Optional;
+
+public interface ReportLogic extends Logic {
+
+	Marker marker = MarkerFactory.getMarker(ReportLogic.class.getName());
 
 	interface Report {
 
@@ -15,5 +24,9 @@ public interface ReportLogic {
 	}
 
 	Iterable<Report> readAll();
+
+	Optional<Report> read(int reportId);
+
+	Iterable<CMAttribute> parameters(int id);
 
 }
