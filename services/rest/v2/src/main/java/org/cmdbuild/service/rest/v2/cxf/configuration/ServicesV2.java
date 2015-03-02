@@ -62,6 +62,7 @@ import org.cmdbuild.service.rest.v2.cxf.CxfSessions.LoginHandler;
 import org.cmdbuild.service.rest.v2.cxf.DefaultEncoding;
 import org.cmdbuild.service.rest.v2.cxf.DefaultProcessStatusHelper;
 import org.cmdbuild.service.rest.v2.cxf.ErrorHandler;
+import org.cmdbuild.service.rest.v2.cxf.HeaderResponseHandler;
 import org.cmdbuild.service.rest.v2.cxf.ProcessStatusHelper;
 import org.cmdbuild.service.rest.v2.cxf.TranslatingAttachmentsHelper;
 import org.cmdbuild.service.rest.v2.cxf.TranslatingAttachmentsHelper.Encoding;
@@ -338,6 +339,11 @@ public class ServicesV2 implements LoggingSupport {
 	@Bean
 	protected ErrorHandler v2_errorHandler() {
 		return new WebApplicationExceptionErrorHandler();
+	}
+
+	@Bean
+	public HeaderResponseHandler v2_headerResponseHandler() {
+		return new HeaderResponseHandler();
 	}
 
 }
