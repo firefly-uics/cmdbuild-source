@@ -32,7 +32,6 @@ import org.cmdbuild.service.rest.v2.ProcessStartActivities;
 import org.cmdbuild.service.rest.v2.Processes;
 import org.cmdbuild.service.rest.v2.ProcessesConfiguration;
 import org.cmdbuild.service.rest.v2.Relations;
-import org.cmdbuild.service.rest.v2.ReportAttributes;
 import org.cmdbuild.service.rest.v2.Reports;
 import org.cmdbuild.service.rest.v2.Sessions;
 import org.cmdbuild.service.rest.v2.cxf.AttachmentsHelper;
@@ -58,7 +57,6 @@ import org.cmdbuild.service.rest.v2.cxf.CxfProcessStartActivities;
 import org.cmdbuild.service.rest.v2.cxf.CxfProcesses;
 import org.cmdbuild.service.rest.v2.cxf.CxfProcessesConfiguration;
 import org.cmdbuild.service.rest.v2.cxf.CxfRelations;
-import org.cmdbuild.service.rest.v2.cxf.CxfReportAttributes;
 import org.cmdbuild.service.rest.v2.cxf.CxfReports;
 import org.cmdbuild.service.rest.v2.cxf.CxfSessions;
 import org.cmdbuild.service.rest.v2.cxf.CxfSessions.AuthenticationLogicAdapter;
@@ -67,6 +65,7 @@ import org.cmdbuild.service.rest.v2.cxf.DefaultEncoding;
 import org.cmdbuild.service.rest.v2.cxf.DefaultIdGenerator;
 import org.cmdbuild.service.rest.v2.cxf.DefaultProcessStatusHelper;
 import org.cmdbuild.service.rest.v2.cxf.ErrorHandler;
+import org.cmdbuild.service.rest.v2.cxf.HeaderResponseHandler;
 import org.cmdbuild.service.rest.v2.cxf.IdGenerator;
 import org.cmdbuild.service.rest.v2.cxf.ProcessStatusHelper;
 import org.cmdbuild.service.rest.v2.cxf.TranslatingAttachmentsHelper;
@@ -328,15 +327,9 @@ public class ServicesV2 implements LoggingSupport {
 	}
 
 	@Bean
-	public ReportAttributes v2_reportAttributes() {
-		final CxfReportAttributes service = new CxfReportAttributes(v2_errorHandler(), helper.reportLogic(),
-				helper.systemDataView(), helper.lookupLogic());
-		return proxy(ReportAttributes.class, service);
-	}
-
-	@Bean
 	public Reports v2_reports() {
-		final CxfReports service = new CxfReports(helper.reportLogic());
+		final CxfReports service = new CxfReports(v2_errorHandler(), helper.reportLogic(), helper.systemDataView(),
+				helper.lookupLogic());
 		return proxy(Reports.class, service);
 	}
 
@@ -362,6 +355,11 @@ public class ServicesV2 implements LoggingSupport {
 	@Bean
 	protected ErrorHandler v2_errorHandler() {
 		return new WebApplicationExceptionErrorHandler();
+	}
+
+	@Bean
+	public HeaderResponseHandler v2_headerResponseHandler() {
+		return new HeaderResponseHandler();
 	}
 
 }

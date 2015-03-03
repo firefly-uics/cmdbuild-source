@@ -83,6 +83,20 @@
 			}
 
 			return pageSize;
+		},
+
+		/**
+		 * Returns if string contains HTML tags
+		 *
+		 * @param {String} inputString
+		 *
+		 * @return {Boolean}
+		 */
+		hasHtmlTags: function(inputString) {
+			if (typeof inputString == 'string')
+				return /<[a-z][\s\S]*>/i.test(inputString);
+
+			return false;
 		}
 	});
 

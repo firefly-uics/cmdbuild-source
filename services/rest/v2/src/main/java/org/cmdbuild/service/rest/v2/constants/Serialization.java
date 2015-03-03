@@ -54,6 +54,7 @@ public class Serialization {
 			EDITOR_TYPE = "editorType", //
 			EMAIL = "email", //
 			EMAIL_ID = EMAIL + ID_CAPITALIZED, //
+			EXTENSION = "extension", //
 			EXTRA = "extra", //
 			FILE = "file", //
 			FILTER = "filter", //
@@ -78,6 +79,7 @@ public class Serialization {
 			OBJECT_DESCRIPTION = "objectDescription", //
 			OBJECT_ID = "objectId", //
 			OBJECT_TYPE = "objectType", //
+			PARAMETERS = "parameters", //
 			PARAMS = "params", //
 			PARENT_ID = "parent_id", //
 			PARENT = "parent", //

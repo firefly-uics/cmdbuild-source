@@ -18,6 +18,7 @@
 <!-- OVERRIDES and FIXES -->
 <script type="text/javascript" src="javascripts/cmdbuild/override/data/proxy/FixServer.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/override/form/FixFieldSet.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/override/form/field/Display.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/override/form/field/FixCheckbox.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/override/form/field/FixComboBox.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/override/form/field/VTypes.js"></script>

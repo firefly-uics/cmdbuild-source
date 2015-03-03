@@ -1453,6 +1453,7 @@
 	"disableGridFilter": "Désactiver le filtre de la table",
 	"display_less_attributes": "Afficher moins d'attributs",
 	"display_more_attributes": "Afficher plus d'attributs",
+	"download": "<em>Download</em>",
 	"download_ifc_file": "Télécharger un fichier Ifc",
 	"editEmail": "<em>Edit email</em>",
 	"emailBody": "Corps",
