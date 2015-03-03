@@ -21,12 +21,15 @@ public class Report {
 	private DataSource dataSource;
 
 	@Autowired
+	private Properties properties;
+
+	@Autowired
 	private UserStore userStore;
 
 	@Bean
 	@Scope(PROTOTYPE)
 	public ReportLogic reportLogic() {
-		return new DefaultReportLogic(reportStore());
+		return new DefaultReportLogic(reportStore(), dataSource, properties.cmdbuildProperties());
 	}
 
 	@Bean

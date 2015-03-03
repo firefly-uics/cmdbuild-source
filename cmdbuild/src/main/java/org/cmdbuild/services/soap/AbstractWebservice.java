@@ -118,7 +118,6 @@ abstract class AbstractWebservice implements ApplicationContextAware {
 		);
 		helper.setMenuStore(menuStore());
 		helper.setLookupStore(lookupStore());
-		helper.setReportStore(reportStore());
 		return helper;
 	}
 

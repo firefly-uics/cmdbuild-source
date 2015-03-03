@@ -21,22 +21,14 @@
 
 			Ext.apply(this, {
 				dockedItems: [
-					{
-						xtype: 'toolbar',
+					Ext.create('Ext.toolbar.Paging', {
 						dock: 'bottom',
 						itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_BOTTOM,
-
-						layout: 'fit',
-
-						items: [
-							Ext.create('Ext.toolbar.Paging', {
-								store: this.getStore(),
-								displayInfo: true,
-								displayMsg: ' {0} - {1} ' + CMDBuild.Translation.common.display_topic_of + ' {2}',
-								emptyMsg: CMDBuild.Translation.common.display_topic_none
-							})
-						]
-					}
+						store: this.getStore(),
+						displayInfo: true,
+						displayMsg: ' {0} - {1} ' + CMDBuild.Translation.common.display_topic_of + ' {2}',
+						emptyMsg: CMDBuild.Translation.common.display_topic_none
+					})
 				],
 				columns: [
 					{

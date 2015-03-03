@@ -421,7 +421,9 @@ public class DefaultEmailLogic implements EmailLogic {
 		for (final Attachment attachment : emailAttachmentsLogic.readAll(read)) {
 			final Optional<DataHandler> dataHandler = emailAttachmentsLogic.read(read, attachment);
 			if (dataHandler.isPresent()) {
-				final TempDataSource tempDataSource = TempDataSource.create(attachment.getFileName());
+				final TempDataSource tempDataSource = TempDataSource.newInstance() //
+						.withName(attachment.getFileName()) //
+						.build();
 				copy(dataHandler.get(), tempDataSource);
 				final URL url = tempDataSource.getFile().toURI().toURL();
 				attachments.put(url, attachment.getFileName());
