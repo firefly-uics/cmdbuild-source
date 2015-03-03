@@ -1,5 +1,6 @@
 package org.cmdbuild.api.fluent.ws;
 
+import static com.google.common.collect.FluentIterable.from;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.unmodifiableList;
 import static java.util.Collections.unmodifiableMap;
@@ -23,12 +24,13 @@ import javax.activation.DataSource;
 import javax.activation.URLDataSource;
 
 import org.apache.commons.lang3.StringUtils;
+import org.cmdbuild.api.fluent.Attachment;
+import org.cmdbuild.api.fluent.AttachmentDescriptor;
 import org.cmdbuild.api.fluent.Card;
 import org.cmdbuild.api.fluent.CardDescriptor;
 import org.cmdbuild.api.fluent.CreateReport;
 import org.cmdbuild.api.fluent.DownloadedReport;
 import org.cmdbuild.api.fluent.ExistingCard;
-import org.cmdbuild.api.fluent.ExistingCard.Attachment;
 import org.cmdbuild.api.fluent.ExistingProcessInstance;
 import org.cmdbuild.api.fluent.ExistingRelation;
 import org.cmdbuild.api.fluent.FluentApi;
@@ -46,6 +48,7 @@ import org.cmdbuild.api.fluent.QuerySingleLookup;
 import org.cmdbuild.api.fluent.Relation;
 import org.cmdbuild.api.fluent.RelationsQuery;
 import org.cmdbuild.common.Constants;
+import org.cmdbuild.common.logging.LoggingSupport;
 import org.cmdbuild.services.soap.Attribute;
 import org.cmdbuild.services.soap.AttributeSchema;
 import org.cmdbuild.services.soap.CardList;
@@ -57,8 +60,12 @@ import org.cmdbuild.services.soap.Private;
 import org.cmdbuild.services.soap.Query;
 import org.cmdbuild.services.soap.ReportParams;
 import org.cmdbuild.services.soap.WorkflowWidgetSubmission;
+import org.slf4j.Marker;
+import org.slf4j.MarkerFactory;
 
-public class WsFluentApiExecutor implements FluentApiExecutor {
+public class WsFluentApiExecutor implements FluentApiExecutor, LoggingSupport {
+
+	private static final Marker marker = MarkerFactory.getMarker(WsFluentApiExecutor.class.getName());
 
 	public enum WsType {
 
@@ -419,6 +426,46 @@ public class WsFluentApiExecutor implements FluentApiExecutor {
 		proxy.resumeWorkflow(soapCard);
 	}
 
+	public Iterable<Lookup> fetch(final QueryAllLookup queryLookup) {
+		throw new UnsupportedOperationException("TODO");
+	}
+
+	public Lookup fetch(final QuerySingleLookup querySingleLookup) {
+		throw new UnsupportedOperationException("TODO");
+	}
+
+	public Iterable<AttachmentDescriptor> fetchAttachments(final CardDescriptor card) {
+		final List<org.cmdbuild.services.soap.Attachment> soapAttachments = proxy.getAttachmentList(
+				card.getClassName(), card.getId());
+		return from(soapAttachments) //
+				.transform(
+						new com.google.common.base.Function<org.cmdbuild.services.soap.Attachment, AttachmentDescriptor>() {
+
+							public AttachmentDescriptor apply(final org.cmdbuild.services.soap.Attachment input) {
+								final AttachmentDescriptorImpl output = new AttachmentDescriptorImpl();
+								output.setName(input.getFilename());
+								output.setDescription(input.getDescription());
+								output.setCategory(input.getCategory());
+								return output;
+							}
+
+						});
+	}
+
+	public void upload(final CardDescriptor card, final Iterable<Attachment> attachments) {
+		try {
+			for (final Attachment attachment : attachments) {
+				final DataSource dataSource = new URLDataSource(new URL(attachment.getUrl()));
+				final DataHandler dataHandler = new DataHandler(dataSource);
+				proxy.uploadAttachment(card.getClassName(), card.getId(), dataHandler, attachment.getName(),
+						attachment.getCategory(), attachment.getDescription());
+			}
+		} catch (final Exception e) {
+			logger.error(marker, "error uploading attachments", e);
+			throw new RuntimeException(e);
+		}
+	}
+
 	/*
 	 * Utils
 	 */
@@ -483,7 +530,7 @@ public class WsFluentApiExecutor implements FluentApiExecutor {
 		return isNotBlank(wsAttribute.getCode());
 	}
 
-	public Filter wsEqualsFilter(final String attributeName, final String attibuteValue) {
+	private static Filter wsEqualsFilter(final String attributeName, final String attibuteValue) {
 		return new Filter() {
 			{
 				setName(attributeName);
@@ -500,14 +547,6 @@ public class WsFluentApiExecutor implements FluentApiExecutor {
 				setValue(attributeValue);
 			}
 		};
-	}
-
-	public Iterable<Lookup> fetch(final QueryAllLookup queryLookup) {
-		throw new UnsupportedOperationException("TODO");
-	}
-
-	public Lookup fetch(final QuerySingleLookup querySingleLookup) {
-		throw new UnsupportedOperationException("TODO");
 	}
 
 }

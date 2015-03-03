@@ -7,7 +7,7 @@ public interface Lookup {
 	String getCode();
 
 	String getDescription();
-	
+
 	Integer getId();
 
 }

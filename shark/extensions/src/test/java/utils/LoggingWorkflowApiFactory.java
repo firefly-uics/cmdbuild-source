@@ -32,15 +32,13 @@ import org.cmdbuild.api.fluent.ExistingProcessInstance;
 import org.cmdbuild.api.fluent.ExistingRelation;
 import org.cmdbuild.api.fluent.FluentApi;
 import org.cmdbuild.api.fluent.FluentApiExecutor;
+import org.cmdbuild.api.fluent.ForwardingFluentApiExecutor;
 import org.cmdbuild.api.fluent.FunctionCall;
-import org.cmdbuild.api.fluent.Lookup;
 import org.cmdbuild.api.fluent.NewCard;
 import org.cmdbuild.api.fluent.NewProcessInstance;
 import org.cmdbuild.api.fluent.NewRelation;
 import org.cmdbuild.api.fluent.ProcessInstanceDescriptor;
-import org.cmdbuild.api.fluent.QueryAllLookup;
 import org.cmdbuild.api.fluent.QueryClass;
-import org.cmdbuild.api.fluent.QuerySingleLookup;
 import org.cmdbuild.api.fluent.Relation;
 import org.cmdbuild.api.fluent.RelationsQuery;
 import org.cmdbuild.api.fluent.ws.EntryTypeAttribute;
@@ -126,7 +124,14 @@ public class LoggingWorkflowApiFactory implements SharkWorkflowApiFactory {
 
 	@Override
 	public WorkflowApi createWorkflowApi() {
-		return new WorkflowApi(new FluentApiExecutor() {
+		return new WorkflowApi(new ForwardingFluentApiExecutor() {
+
+			private final FluentApiExecutor UNSUPPORTED = UnsupportedProxyFactory.of(FluentApiExecutor.class).create();
+
+			@Override
+			protected FluentApiExecutor delegate() {
+				return UNSUPPORTED;
+			}
 
 			@Override
 			public CardDescriptor create(final NewCard card) {
@@ -146,11 +151,6 @@ public class LoggingWorkflowApiFactory implements SharkWorkflowApiFactory {
 								card.getClassName(), //
 								card.getId(), //
 								card.getAttributes()));
-			}
-
-			@Override
-			public void delete(final ExistingCard card) {
-				// TODO Auto-generated method stub
 			}
 
 			@Override
@@ -271,16 +271,6 @@ public class LoggingWorkflowApiFactory implements SharkWorkflowApiFactory {
 						resumeProcessInstanceLogLine( //
 								processCard.getClassName(), //
 								processCard.getId()));
-			}
-
-			@Override
-			public Iterable<Lookup> fetch(final QueryAllLookup queryLookup) {
-				throw new UnsupportedOperationException("TODO");
-			}
-
-			@Override
-			public Lookup fetch(final QuerySingleLookup querySingleLookup) {
-				throw new UnsupportedOperationException("TODO");
 			}
 
 		}, new SchemaApi() {

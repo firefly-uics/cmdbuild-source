@@ -2,8 +2,8 @@ package org.cmdbuild.api.fluent;
 
 public class NewRelation extends ActiveRelation {
 
-	NewRelation(final FluentApi api, final String domainName) {
-		super(api, domainName);
+	NewRelation(final FluentApiExecutor executor, final String domainName) {
+		super(executor, domainName);
 	}
 
 	public NewRelation withCard1(final String className, final int cardId) {
@@ -17,7 +17,7 @@ public class NewRelation extends ActiveRelation {
 	}
 
 	public void create() {
-		getApi().getExecutor().create(this);
+		executor().create(this);
 	}
 
 }

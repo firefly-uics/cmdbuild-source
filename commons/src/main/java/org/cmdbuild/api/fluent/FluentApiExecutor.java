@@ -41,4 +41,8 @@ public interface FluentApiExecutor {
 
 	Lookup fetch(QuerySingleLookup querySingleLookup);
 
+	Iterable<AttachmentDescriptor> fetchAttachments(CardDescriptor card);
+
+	void upload(CardDescriptor card, Iterable<Attachment> attachments);
+
 }
