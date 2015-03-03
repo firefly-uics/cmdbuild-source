@@ -1,10 +1,10 @@
 (function() {
 
-	Ext.define('CMDBuild.view.management.common.widgets.grid.CMGridPanel', {
+	Ext.define('CMDBuild.view.management.common.widgets.grid.GridPanel', {
 		extend: 'Ext.grid.Panel',
 
 		/**
-		 * @cfg {CMDBuild.controller.management.common.widgets.CMGridController}
+		 * @cfg {CMDBuild.controller.management.common.widgets.grid.Main}
 		 */
 		delegate: undefined,
 

@@ -1,6 +1,6 @@
 (function() {
 
-	Ext.define('CMDBuild.view.management.common.widgets.grid.CMImportCSVWindow', {
+	Ext.define('CMDBuild.view.management.common.widgets.grid.ImportCSVWindow', {
 		extend: 'CMDBuild.core.PopupWindow',
 
 		requires: [
@@ -9,21 +9,14 @@
 		],
 
 		/**
-		 * @cfg {CMDBuild.controller.management.common.widgets.CMGridController}
+		 * @cfg {CMDBuild.controller.management.common.widgets.grid.ImportCSV}
 		 */
 		delegate: undefined,
 
 		/**
 		 * @property {CMDBuild.buttons.AbortButton}
 		 */
-		cancelButton: undefined,
-
-		/**
-		 * Target classId to use in form submit (importCSV)
-		 *
-		 * @property {Int}
-		 */
-		classId: undefined,
+		abortButton: undefined,
 
 		/**
 		 * @property {Ext.form.field.Hidden}
@@ -46,43 +39,44 @@
 		csvSeparatorCombo: undefined,
 
 		/**
-		 * @property {Ext.button.Button}
-		 */
-		csvUploadButton: undefined,
-
-		/**
 		 * @property {Ext.form.Panel}
 		 */
 		csvUploadForm: undefined,
 
+		/**
+		 * @property {Ext.button.Button}
+		 */
+		uploadButton: undefined,
+
 		buttonAlign: 'center',
 		border: false,
 		defaultSizeW: 0.90,
-		defaultSizeH: 0.25,
+		autoHeight: true,
+		title: CMDBuild.Translation.importFromCSV,
 
 		initComponent: function() {
 			// Buttons configuration
-				this.cancelButton = Ext.create('CMDBuild.buttons.AbortButton', {
+				this.abortButton = Ext.create('CMDBuild.buttons.AbortButton', {
 					scope: this,
 
 					handler: function() {
-						this.destroy();
+						this.delegate.cmOn('onImportCSVAbortButtonClick');
 					}
 				});
 
-				this.csvUploadButton = Ext.create('Ext.button.Button', {
+				this.uploadButton = Ext.create('Ext.button.Button', {
 					scope: this,
 					text: CMDBuild.Translation.upload,
 
 					handler: function() {
-						this.delegate.cmOn('onCSVUploadButtonClick');
+						this.delegate.cmOn('onImportCSVUploadButtonClick');
 					}
 				});
 			// END: Buttons configuration
 
 			this.classIdField = Ext.create('Ext.form.field.Hidden', {
 				name: 'idClass',
-				value: this.classId
+				value: this.delegate.classId
 			});
 
 			this.csvFileField = Ext.create('Ext.form.field.File', {
@@ -144,13 +138,12 @@
 
 			Ext.apply(this, {
 				items: [this.csvUploadForm],
-				buttons: [this.csvUploadButton, this.cancelButton]
+				buttons: [this.uploadButton, this.abortButton]
 			});
 
 			this.callParent(arguments);
 
 			// Resize window, smaller than default size
-			this.height = this.height * this.defaultSizeH;
 			this.width = this.width * this.defaultSizeW;
 		}
 	});

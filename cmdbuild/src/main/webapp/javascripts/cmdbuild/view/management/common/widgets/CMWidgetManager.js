@@ -184,8 +184,8 @@
 		};
 
 		// Grid
-		me.builders[CMDBuild.view.management.common.widgets.grid.CMGrid.WIDGET_NAME] = function(widget, card) {
-			var w = Ext.create('CMDBuild.view.management.common.widgets.grid.CMGrid');
+		me.builders[CMDBuild.view.management.common.widgets.grid.MainPanel.WIDGET_NAME] = function(widget, card) {
+			var w = Ext.create('CMDBuild.view.management.common.widgets.grid.MainPanel');
 			me.widgetsContainer.addWidgt(w);
 
 			return w;

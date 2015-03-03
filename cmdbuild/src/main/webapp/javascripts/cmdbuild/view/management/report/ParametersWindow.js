@@ -19,7 +19,6 @@
 		 */
 		attributeList: [],
 
-		autoHeight: true,
 		buttonsAlign: 'center',
 		border: false,
 		frame: false,

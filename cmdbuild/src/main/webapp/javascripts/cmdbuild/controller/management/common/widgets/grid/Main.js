@@ -1,6 +1,6 @@
 (function() {
 
-	Ext.define('CMDBuild.controller.management.common.widgets.CMGridController', {
+	Ext.define('CMDBuild.controller.management.common.widgets.grid.Main', {
 		extend: 'CMDBuild.controller.management.common.widgets.CMWidgetController',
 
 		requires: [
@@ -13,7 +13,7 @@
 		},
 
 		statics: {
-			WIDGET_NAME: CMDBuild.view.management.common.widgets.grid.CMGrid.WIDGET_NAME
+			WIDGET_NAME: CMDBuild.view.management.common.widgets.grid.MainPanel.WIDGET_NAME
 		},
 
 		/**
@@ -39,22 +39,22 @@
 		columns: undefined,
 
 		/**
-		 * @property {CMDBuild.view.management.common.widgets.grid.CMGridPanel}
+		 * @property {CMDBuild.view.management.common.widgets.grid.GridPanel}
 		 */
 		grid: undefined,
 
 		/**
-		 * @property {CMDBuild.view.management.common.widgets.grid.CMGrid}
+		 * @property {CMDBuild.view.management.common.widgets.grid.MainPanel}
 		 */
 		view: undefined,
 
 		/**
-		 * @property {Object}
+		 * @cfg {Object}
 		 */
 		widgetConf: undefined,
 
 		/**
-		 * @param {CMDBuild.view.management.common.widgets.grid.CMGrid} view
+		 * @param {CMDBuild.view.management.common.widgets.grid.MainPanel} view
 		 * @param {CMDBuild.controller.management.common.CMWidgetManagerController} ownerController
 		 * @param {Object} widgetConf
 		 * @param {Ext.form.Basic} clientForm
@@ -86,7 +86,7 @@
 			} else {
 				CMDBuild.Msg.error(
 					CMDBuild.Translation.error,
-					'CMGridController error: classType error with className ' + this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME],
+					'GridController error: classType error with className ' + this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME],
 					true
 				);
 			}
@@ -107,20 +107,11 @@
 				case 'onCSVImportButtonClick':
 					return this.onCSVImportButtonClick();
 
-				case 'onCSVUploadButtonClick':
-					return this.onCSVUploadButtonClick();
-
 				case 'onDeleteRowButtonClick' :
 					return this.onDeleteRowButtonClick(param.rowIndex);
 
 				case 'onEditRowButtonClick' :
 					return this.onEditRowButtonClick(param.record);
-
-				case 'onEditWindowAbortButtonClick':
-					return this.onEditWindowAbortButtonClick();
-
-				case 'onEditWindowSaveButtonClick' :
-					return this.onEditWindowSaveButtonClick();
 
 				default: {
 					if (!Ext.isEmpty(this.parentDelegate))
@@ -211,8 +202,7 @@
 
 							value = (comboRecord) ?	comboRecord.get('Description') : '';
 						} else if (value && typeof value == 'object') {
-							if (value instanceof Date)
-								value = me.formatDate(value);
+							value = me.formatDate(value);
 						}
 
 						if (Ext.isEmpty(Ext.String.trim(value)) && required)
@@ -402,7 +392,7 @@
 					} else {
 						CMDBuild.Msg.error(
 							CMDBuild.Translation.error,
-							'CMGridController decodeFunctionPresets: SQL function not found',
+							'GridController decodeFunctionPresets: SQL function not found',
 							true
 						);
 					}
@@ -443,21 +433,15 @@
 		},
 
 		/**
-		 * @param {Object} date
+		 * @param {Mixed} value
 		 *
 		 * @return {String}
 		 */
-		formatDate: function(date) {
-			var day = date.getDate();
-			var month = date.getMonth() + 1; // getMonth return 0-11
+		formatDate: function(value) {
+			if(Ext.isDate(value))
+				return Ext.Date.format(value, 'd/m/Y');
 
-			if (day < 10)
-				day = '0' + day;
-
-			if (month < 10)
-				month = '0' + month;
-
-			return day + '/' + month + '/' + date.getFullYear();
+			return value;
 		},
 
 		/**
@@ -496,8 +480,7 @@
 						// Date field format fix: date field gives wrong formatted value used as cell editor.
 						// To delete when FieldManager will be refactored
 						Ext.Object.each(out, function(key, value, object) {
-							if (Ext.isDate(value))
-								out[key] = me.formatDate(value);
+							out[key] = me.formatDate(value);
 						});
 
 						data.push(
@@ -589,7 +572,7 @@
 					default:
 						CMDBuild.Msg.error(
 							CMDBuild.Translation.error,
-							'CMGridController: wrong serializationType (' + this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.SERIALIZATION_TYPE] + ') format or value',
+							'GridController: wrong serializationType (' + this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.SERIALIZATION_TYPE] + ') format or value',
 							true
 						);
 				}
@@ -601,36 +584,12 @@
 		},
 
 		/**
-		 * Opens importCSV configuration popup
+		 * Opens importCSV configuration pop-up window
 		 */
 		onCSVImportButtonClick: function() {
-			this.importCSVWindow = Ext.create('CMDBuild.view.management.common.widgets.grid.CMImportCSVWindow', {
-				title: CMDBuild.Translation.importFromCSV,
-				classId: this.classType.get(CMDBuild.core.proxy.CMProxyConstants.ID),
-				delegate: this
-			}).show();
-		},
-
-		/**
-		 * Uses importCSV calls to store and get CSV data from server and check if CSV has right fields
-		 */
-		onCSVUploadButtonClick: function() {
-			CMDBuild.LoadMask.get().show();
-			CMDBuild.core.proxy.widgets.Grid.uploadCsv({
-				form: this.importCSVWindow.csvUploadForm.getForm(),
-				scope: this,
-				success: function(response, options) {
-					CMDBuild.core.proxy.widgets.Grid.getCsvRecords({
-						scope: this,
-						success: function(result, options, decodedResult) {
-							this.setGridDataFromCsv(decodedResult.rows);
-							this.importCSVWindow.destroy();
-						}
-					});
-				},
-				failure: function() {
-					CMDBuild.LoadMask.get().hide();
-				}
+			Ext.create('CMDBuild.controller.management.common.widgets.grid.ImportCSV', {
+				parentDelegate: this,
+				classId: this.classType.get(CMDBuild.core.proxy.CMProxyConstants.ID)
 			});
 		},
 
@@ -642,32 +601,15 @@
 		},
 
 		/**
-		 * Edit row data in new popup window
+		 * Edit row data in new pop-up window
 		 *
-		 * @param {Ext.data.Store.ImplicitModel} record
+		 * @param {Object} record
 		 */
 		onEditRowButtonClick: function(record) {
-			this.editWindow = Ext.create('CMDBuild.view.management.common.widgets.grid.CMGridEditWindow', {
-				title: CMDBuild.Translation.row_edit,
-				record: record,
-				delegate: this
-			}).show();
-		},
-
-		onEditWindowAbortButtonClick: function() {
-			this.editWindow.destroy();
-		},
-
-		/**
-		 * Saves data to widget's grid
-		 */
-		onEditWindowSaveButtonClick: function() {
-			var values = this.editWindow.form.getValues();
-
-			for (var property in values)
-				this.editWindow.record.set(property, values[property]);
-
-			this.onEditWindowAbortButtonClick();
+			Ext.create('CMDBuild.controller.management.common.widgets.grid.RowEdit', {
+				parentDelegate: this,
+				record: record
+			});
 		},
 
 		/**
