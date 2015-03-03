@@ -10,7 +10,7 @@ public class Arrays {
 
 	@SuppressWarnings("unchecked")
 	public static <T> T[] append(final T[] original, final T element) {
-		return (T[]) ArrayUtils.add(original, element);
+		return ArrayUtils.add(original, element);
 	}
 
 	public static <T> T[] addDistinct(final T[] original, final T element) {

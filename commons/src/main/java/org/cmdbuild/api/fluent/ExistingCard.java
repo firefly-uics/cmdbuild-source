@@ -11,32 +11,36 @@ import com.google.common.collect.Sets;
 
 public class ExistingCard extends ActiveCard {
 
-	public static class Attachment {
+	private static class AttachmentImpl implements Attachment {
 
 		private final String url;
 		private final String name;
 		private final String category;
 		private final String description;
 
-		public Attachment(final String url, final String name, final String category, final String description) {
+		public AttachmentImpl(final String url, final String name, final String category, final String description) {
 			this.url = url;
 			this.name = name;
 			this.category = category;
 			this.description = description;
 		}
 
+		@Override
 		public String getUrl() {
 			return url;
 		}
 
+		@Override
 		public String getName() {
 			return name;
 		}
 
+		@Override
 		public String getCategory() {
 			return category;
 		}
 
+		@Override
 		public String getDescription() {
 			return description;
 		}
@@ -45,15 +49,15 @@ public class ExistingCard extends ActiveCard {
 
 	public static Attachment attachment(final String url, final String name, final String category,
 			final String description) {
-		return new Attachment(url, name, category, description);
+		return new AttachmentImpl(url, name, category, description);
 	}
 
 	private final Set<String> requestedAttributes;
 	private final Set<String> unmodifiableRequestedAttributes;
 	private final Map<String, Attachment> attachments;
 
-	ExistingCard(final FluentApi api, final String className, final Integer id) {
-		super(api, className, id);
+	ExistingCard(final FluentApiExecutor executor, final String className, final Integer id) {
+		super(executor, className, id);
 		requestedAttributes = Sets.newHashSet();
 		unmodifiableRequestedAttributes = unmodifiableSet(requestedAttributes);
 		attachments = Maps.newHashMap();
@@ -102,15 +106,19 @@ public class ExistingCard extends ActiveCard {
 	}
 
 	public void update() {
-		api().getExecutor().update(this);
+		executor().update(this);
 	}
 
 	public void delete() {
-		api().getExecutor().delete(this);
+		executor().delete(this);
 	}
 
 	public Card fetch() {
-		return api().getExecutor().fetch(this);
+		return executor().fetch(this);
+	}
+
+	public Attachments attachments() {
+		return new AttachmentsImpl(executor(), this);
 	}
 
 }
