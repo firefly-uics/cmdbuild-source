@@ -45,6 +45,8 @@ public interface FluentApiExecutor {
 
 	void upload(CardDescriptor card, Iterable<Attachment> attachments);
 
+	Attachment download(CardDescriptor cardDescriptor, AttachmentDescriptor attachmentDescriptor);
+
 	void delete(CardDescriptor cardDescriptor, AttachmentDescriptor attachmentDescriptor);
 
 }

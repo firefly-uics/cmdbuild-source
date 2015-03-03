@@ -108,6 +108,11 @@ public abstract class ForwardingFluentApiExecutor extends ForwardingObject imple
 	}
 
 	@Override
+	public Attachment download(final CardDescriptor cardDescriptor, final AttachmentDescriptor attachmentDescriptor) {
+		return delegate().download(cardDescriptor, attachmentDescriptor);
+	}
+
+	@Override
 	public void delete(final CardDescriptor cardDescriptor, final AttachmentDescriptor attachmentDescriptor) {
 		delegate().delete(cardDescriptor, attachmentDescriptor);
 	}
