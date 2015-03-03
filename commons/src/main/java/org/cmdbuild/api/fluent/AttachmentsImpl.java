@@ -5,6 +5,7 @@ import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 
 class AttachmentsImpl implements Attachments {
 
+	private static final String[] NO_NAMES = new String[] {};
 	private static final Attachment[] NO_ATTACHMENTS = new Attachment[] {};
 
 	private final FluentApiExecutor executor;
@@ -22,14 +23,12 @@ class AttachmentsImpl implements Attachments {
 
 	@Override
 	public SelectedAttachments selectByName(final String... names) {
-		// TODO Auto-generated method stub
-		return null;
+		return new SelectedAttachmentsImpl(executor, descriptor, newArrayList(defaultIfNull(names, NO_NAMES)));
 	}
 
 	@Override
 	public SelectedAttachments selectAll() {
-		// TODO Auto-generated method stub
-		return null;
+		return new SelectedAttachmentsImpl(executor, descriptor);
 	}
 
 	@Override

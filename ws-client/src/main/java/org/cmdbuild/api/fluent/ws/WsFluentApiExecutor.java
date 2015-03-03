@@ -466,6 +466,10 @@ public class WsFluentApiExecutor implements FluentApiExecutor, LoggingSupport {
 		}
 	}
 
+	public void delete(final CardDescriptor cardDescriptor, final AttachmentDescriptor attachmentDescriptor) {
+		proxy.deleteAttachment(cardDescriptor.getClassName(), cardDescriptor.getId(), attachmentDescriptor.getName());
+	}
+
 	/*
 	 * Utils
 	 */
