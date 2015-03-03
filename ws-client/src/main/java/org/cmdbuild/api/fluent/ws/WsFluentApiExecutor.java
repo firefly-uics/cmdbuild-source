@@ -4,6 +4,7 @@ import static com.google.common.collect.FluentIterable.from;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.unmodifiableList;
 import static java.util.Collections.unmodifiableMap;
+import static org.apache.commons.io.CopyUtils.copy;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.cmdbuild.api.fluent.ws.ClassAttribute.classAttribute;
 import static org.cmdbuild.api.fluent.ws.FunctionInput.functionInput;
@@ -11,6 +12,8 @@ import static org.cmdbuild.api.fluent.ws.FunctionOutput.functionOutput;
 import static org.cmdbuild.api.fluent.ws.ReportHelper.DEFAULT_TYPE;
 
 import java.io.File;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -23,6 +26,7 @@ import javax.activation.DataHandler;
 import javax.activation.DataSource;
 import javax.activation.URLDataSource;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.cmdbuild.api.fluent.Attachment;
 import org.cmdbuild.api.fluent.AttachmentDescriptor;
@@ -49,6 +53,7 @@ import org.cmdbuild.api.fluent.Relation;
 import org.cmdbuild.api.fluent.RelationsQuery;
 import org.cmdbuild.common.Constants;
 import org.cmdbuild.common.logging.LoggingSupport;
+import org.cmdbuild.common.utils.TempDataSource;
 import org.cmdbuild.services.soap.Attribute;
 import org.cmdbuild.services.soap.AttributeSchema;
 import org.cmdbuild.services.soap.CardList;
@@ -460,6 +465,33 @@ public class WsFluentApiExecutor implements FluentApiExecutor, LoggingSupport {
 				proxy.uploadAttachment(card.getClassName(), card.getId(), dataHandler, attachment.getName(),
 						attachment.getCategory(), attachment.getDescription());
 			}
+		} catch (final Exception e) {
+			logger.error(marker, "error uploading attachments", e);
+			throw new RuntimeException(e);
+		}
+	}
+
+	public Attachment download(final CardDescriptor cardDescriptor, final AttachmentDescriptor attachmentDescriptor) {
+		try {
+			final DataHandler source = proxy.downloadAttachment(cardDescriptor.getClassName(), cardDescriptor.getId(),
+					attachmentDescriptor.getName());
+
+			final TempDataSource tempDataSource = TempDataSource.newInstance() //
+					.withName(attachmentDescriptor.getName()) //
+					.build();
+			final DataHandler destination = new DataHandler(tempDataSource);
+			final InputStream inputStream = source.getInputStream();
+			final OutputStream outputStream = destination.getOutputStream();
+			copy(inputStream, outputStream);
+			IOUtils.closeQuietly(inputStream);
+			IOUtils.closeQuietly(outputStream);
+
+			final AttachmentImpl attachment = new AttachmentImpl();
+			attachment.setName(attachmentDescriptor.getName());
+			attachment.setDescription(attachment.getDescription());
+			attachment.setCategory(attachment.getCategory());
+			attachment.setUrl(tempDataSource.getFile().toURI().toURL().toString());
+			return attachment;
 		} catch (final Exception e) {
 			logger.error(marker, "error uploading attachments", e);
 			throw new RuntimeException(e);

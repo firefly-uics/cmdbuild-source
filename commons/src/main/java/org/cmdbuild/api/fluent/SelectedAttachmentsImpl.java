@@ -50,8 +50,11 @@ class SelectedAttachmentsImpl implements SelectedAttachments {
 
 	@Override
 	public Iterable<Attachment> download() {
-		// TODO Auto-generated method stub
-		return null;
+		final Collection<Attachment> downloaded = newArrayList();
+		for (final AttachmentDescriptor descriptor : selected()) {
+			downloaded.add(executor.download(this.descriptor, descriptor));
+		}
+		return downloaded;
 	}
 
 	@Override
