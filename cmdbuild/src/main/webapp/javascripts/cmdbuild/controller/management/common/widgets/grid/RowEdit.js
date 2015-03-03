@@ -97,7 +97,7 @@
 			var fields = this.view.form.getForm().getFields().getRange();
 
 			Ext.Array.forEach(fields, function(field, index, allFields) {
-				if (!Ext.Object.isEmpty(field) && field.resolveTemplate)
+				if (!Ext.Object.isEmpty(field) && !Ext.isEmpty(field.resolveTemplate))
 					field.resolveTemplate();
 
 				if (!Ext.Object.isEmpty(field) && !Ext.Object.isEmpty(field.store) && field.store.count() == 0)
