@@ -51,14 +51,11 @@
 			 */
 			buildEditor: function(attribute, templateResolver) {
 				templateResolver = templateResolver || null;
-				var extraFieldConf = extraFieldConf || {};
 
-				var field = Ext.create("CMDBuild.Management.ReferenceField.Field", Ext.apply(extraFieldConf,{
+				return Ext.create("CMDBuild.Management.ReferenceField.Field", {
 					attribute: attribute,
 					templateResolver: templateResolver
-				}));
-
-				return field;
+				});
 			}
 		}
 	});
@@ -235,32 +232,34 @@
 			var store = this.store;
 			var callParams = this.templateResolver.buildCQLQueryParameters(out[FILTER_FIELD]);
 
-			if (callParams) {
-				// For the popup window! baseParams is not meant to be the old ExtJS 3.x property!
-				// Ext.apply(store.baseParams, callParams);
-				store.baseParams.filter = Ext.encode({
-					CQL: callParams.CQL
-				});
+			if (!Ext.isEmpty(store)) {
+				if (callParams) {
+					// For the popup window! baseParams is not meant to be the old ExtJS 3.x property!
+					// Ext.apply(store.baseParams, callParams);
+					store.baseParams.filter = Ext.encode({
+						CQL: callParams.CQL
+					});
 
-				var me = this;
-				store.load({
-					callback: function() {
-						// Fail the validation if the current selection is not in the new filter
-						me.validate();
-						afterStoreIsLoaded();
-					}
-				});
-			} else {
-				var emptyDataSet = {};
-				emptyDataSet[store.root] = [];
-				emptyDataSet[store.totalProperty] = 0;
+					var me = this;
+					store.load({
+						callback: function() {
+							// Fail the validation if the current selection is not in the new filter
+							me.validate();
+							afterStoreIsLoaded();
+						}
+					});
+				} else {
+					var emptyDataSet = {};
+					emptyDataSet[store.root] = [];
+					emptyDataSet[store.totalProperty] = 0;
 
-				store.loadData(emptyDataSet);
+					store.loadData(emptyDataSet);
 
-				afterStoreIsLoaded();
+					afterStoreIsLoaded();
+				}
+
+				this.addListenerToDeps();
 			}
-
-			this.addListenerToDeps();
 		},
 
 		addListenerToDeps: function() {
