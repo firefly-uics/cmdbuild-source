@@ -11,45 +11,9 @@ import com.google.common.collect.Sets;
 
 public class ExistingCard extends ActiveCard {
 
-	private static class AttachmentImpl implements Attachment {
-
-		private final String url;
-		private final String name;
-		private final String category;
-		private final String description;
-
-		public AttachmentImpl(final String url, final String name, final String category, final String description) {
-			this.url = url;
-			this.name = name;
-			this.category = category;
-			this.description = description;
-		}
-
-		@Override
-		public String getUrl() {
-			return url;
-		}
-
-		@Override
-		public String getName() {
-			return name;
-		}
-
-		@Override
-		public String getCategory() {
-			return category;
-		}
-
-		@Override
-		public String getDescription() {
-			return description;
-		}
-
-	}
-
 	public static Attachment attachment(final String url, final String name, final String category,
 			final String description) {
-		return new AttachmentImpl(url, name, category, description);
+		return new AttachmentImpl(name, description, category, url);
 	}
 
 	private final Set<String> requestedAttributes;

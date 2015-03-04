@@ -79,10 +79,10 @@ public class AttachmentsTest extends AbstractWsFluentApiTest {
 	}
 
 	@Test
-	public void attachmentUpload() throws Exception {
+	public void uploadMultipleAttachments() throws Exception {
 		// given
-		final String firstUrl = temporaryFolder.newFile().toURL().toString();
-		final String secondUrl = temporaryFolder.newFile().toURL().toString();
+		final String firstUrl = temporaryFolder.newFile().toURI().toURL().toString();
+		final String secondUrl = temporaryFolder.newFile().toURI().toURL().toString();
 
 		final Attachment foo = mock(Attachment.class);
 		doReturn("foo").when(foo).getName();
@@ -113,6 +113,20 @@ public class AttachmentsTest extends AbstractWsFluentApiTest {
 		assertThat(fileNameCaptor.getAllValues().get(1), equalTo("bar"));
 		assertThat(descriptionCaptor.getAllValues().get(1), equalTo("this is bar"));
 		assertThat(categoryCaptor.getAllValues().get(1), equalTo("some other category"));
+	}
+
+	@Test
+	public void uploadSingleAttachment() throws Exception {
+		// given
+		final String url = temporaryFolder.newFile().toURI().toURL().toString();
+
+		// when
+		attachments.upload("foo", "this is foo", "some category", url);
+
+		// then
+		verify(proxy()).uploadAttachment(eq(CLASS_NAME), eq(CARD_ID), any(DataHandler.class), eq("foo"),
+				eq("some category"), eq("this is foo"));
+		verifyNoMoreInteractions(proxy());
 	}
 
 }

@@ -6,6 +6,8 @@ public interface Attachments {
 
 	void upload(Attachment... attachments);
 
+	void upload(final String name, final String description, final String category, final String url);
+
 	SelectedAttachments selectByName(String... names);
 
 	// TODO add later

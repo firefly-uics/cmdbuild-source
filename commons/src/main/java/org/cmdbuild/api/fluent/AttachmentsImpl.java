@@ -48,6 +48,11 @@ class AttachmentsImpl implements Attachments {
 	}
 
 	@Override
+	public void upload(final String name, final String description, final String category, final String url) {
+		executor.upload(descriptor, newArrayList(new AttachmentImpl(name, description, category, url)));
+	}
+
+	@Override
 	public SelectedAttachments selectByName(final String... names) {
 		return new SelectedAttachmentsImpl(executor, descriptor, new NamePredicate(newArrayList(defaultIfNull(names,
 				NO_NAMES))));
