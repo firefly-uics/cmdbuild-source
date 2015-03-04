@@ -5,7 +5,6 @@ import static com.google.common.collect.Lists.newArrayList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.unmodifiableList;
 import static java.util.Collections.unmodifiableMap;
-import static org.apache.commons.io.CopyUtils.copy;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.cmdbuild.api.fluent.ws.ClassAttribute.classAttribute;
 import static org.cmdbuild.api.fluent.ws.FunctionInput.functionInput;
@@ -503,7 +502,7 @@ public class WsFluentApiExecutor implements FluentApiExecutor, LoggingSupport {
 		final DataHandler local = new DataHandler(tempDataSource);
 		final InputStream inputStream = remote.getInputStream();
 		final OutputStream outputStream = local.getOutputStream();
-		copy(inputStream, outputStream);
+		IOUtils.copy(inputStream, outputStream);
 		IOUtils.closeQuietly(inputStream);
 		IOUtils.closeQuietly(outputStream);
 
@@ -519,6 +518,14 @@ public class WsFluentApiExecutor implements FluentApiExecutor, LoggingSupport {
 	public void delete(final CardDescriptor source, final Iterable<? extends AttachmentDescriptor> attachments) {
 		for (final AttachmentDescriptor attachment : attachments) {
 			proxy.deleteAttachment(source.getClassName(), source.getId(), attachment.getName());
+		}
+	}
+
+	public void copy(final CardDescriptor source, final Iterable<? extends AttachmentDescriptor> attachments,
+			final CardDescriptor destination) {
+		for (final AttachmentDescriptor attachment : attachments) {
+			proxy.copyAttachment(source.getClassName(), source.getId(), attachment.getName(),
+					destination.getClassName(), destination.getId());
 		}
 	}
 

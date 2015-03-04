@@ -62,7 +62,7 @@ public class SelectedAttachmentsTest extends AbstractWsFluentApiTest {
 		assertThat(get(selected, 0).getName(), equalTo(FOO.getFilename()));
 		assertThat(get(selected, 1).getName(), equalTo(BAR.getFilename()));
 
-		verify(proxy()).getAttachmentList(eq(CLASS_NAME), eq(CARD_ID));
+		verify(proxy()).getAttachmentList(eq(source.getClassName()), eq(source.getId()));
 		verifyNoMoreInteractions(proxy());
 	}
 
@@ -71,10 +71,10 @@ public class SelectedAttachmentsTest extends AbstractWsFluentApiTest {
 		// given
 		doReturn(asList(FOO, BAR, BAZ)) //
 				.when(proxy()).getAttachmentList(anyString(), anyInt());
-		final CardDescriptor descriptor = api().existingCard(CLASS_NAME, CARD_ID);
+		final CardDescriptor source = api().existingCard(CLASS_NAME, CARD_ID);
 
 		// when
-		selectedAttachments = api().existingCard(descriptor) //
+		selectedAttachments = api().existingCard(source) //
 				.attachments() //
 				.selectByName(FOO.getFilename(), BAZ.getFilename());
 
@@ -84,7 +84,7 @@ public class SelectedAttachmentsTest extends AbstractWsFluentApiTest {
 		assertThat(get(selected, 0).getName(), equalTo(FOO.getFilename()));
 		assertThat(get(selected, 1).getName(), equalTo(BAZ.getFilename()));
 
-		verify(proxy()).getAttachmentList(eq(CLASS_NAME), eq(CARD_ID));
+		verify(proxy()).getAttachmentList(eq(source.getClassName()), eq(source.getId()));
 		verifyNoMoreInteractions(proxy());
 	}
 
@@ -109,9 +109,10 @@ public class SelectedAttachmentsTest extends AbstractWsFluentApiTest {
 		assertThat(get(downloaded, 0).getName(), equalTo(FOO.getFilename()));
 		assertThat(get(downloaded, 1).getName(), equalTo(BAZ.getFilename()));
 
-		verify(proxy()).getAttachmentList(eq(CLASS_NAME), eq(CARD_ID));
+		verify(proxy()).getAttachmentList(eq(source.getClassName()), eq(source.getId()));
 		final ArgumentCaptor<String> fileNameCaptor = ArgumentCaptor.forClass(String.class);
-		verify(proxy(), times(2)).downloadAttachment(eq(CLASS_NAME), eq(CARD_ID), fileNameCaptor.capture());
+		verify(proxy(), times(2)).downloadAttachment(eq(source.getClassName()), eq(source.getId()),
+				fileNameCaptor.capture());
 		verifyNoMoreInteractions(proxy());
 
 		final List<String> values = fileNameCaptor.getAllValues();
@@ -134,9 +135,37 @@ public class SelectedAttachmentsTest extends AbstractWsFluentApiTest {
 				.delete();
 
 		// then
-		verify(proxy()).getAttachmentList(eq(CLASS_NAME), eq(CARD_ID));
+		verify(proxy()).getAttachmentList(eq(source.getClassName()), eq(source.getId()));
 		final ArgumentCaptor<String> fileNameCaptor = ArgumentCaptor.forClass(String.class);
-		verify(proxy(), times(2)).deleteAttachment(eq(CLASS_NAME), eq(CARD_ID), fileNameCaptor.capture());
+		verify(proxy(), times(2)).deleteAttachment(eq(source.getClassName()), eq(source.getId()),
+				fileNameCaptor.capture());
+		verifyNoMoreInteractions(proxy());
+
+		final List<String> values = fileNameCaptor.getAllValues();
+		assertThat(values.size(), equalTo(2));
+		assertThat(values.get(0), equalTo(FOO.getFilename()));
+		assertThat(values.get(1), equalTo(BAZ.getFilename()));
+	}
+
+	@Test
+	public void attachmentsCopied() throws Exception {
+		// given
+		doReturn(asList(FOO, BAR, BAZ)) //
+				.when(proxy()).getAttachmentList(anyString(), anyInt());
+		final CardDescriptor source = api().existingCard(CLASS_NAME, CARD_ID);
+		final CardDescriptor destination = api().existingCard(CLASS_NAME + "2", CARD_ID * 10);
+
+		// when
+		api().existingCard(source) //
+				.attachments() //
+				.selectByName(FOO.getFilename(), BAZ.getFilename()) //
+				.copyTo(destination);
+
+		// then
+		final ArgumentCaptor<String> fileNameCaptor = ArgumentCaptor.forClass(String.class);
+		verify(proxy()).getAttachmentList(eq(source.getClassName()), eq(source.getId()));
+		verify(proxy(), times(2)).copyAttachment(eq(source.getClassName()), eq(source.getId()),
+				fileNameCaptor.capture(), eq(destination.getClassName()), eq(destination.getId()));
 		verifyNoMoreInteractions(proxy());
 
 		final List<String> values = fileNameCaptor.getAllValues();

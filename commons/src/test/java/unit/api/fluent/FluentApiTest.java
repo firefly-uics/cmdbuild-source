@@ -273,4 +273,32 @@ public class FluentApiTest {
 		assertThat(get(captured, 2), equalTo(baz));
 	}
 
+	@Test
+	public void executorCalledWhenCopyingAttachments() {
+		// given
+		final CardDescriptor source = api.existingCard(CLASS_NAME, CARD_ID);
+		final AttachmentDescriptor foo = mock(AttachmentDescriptor.class);
+		final AttachmentDescriptor bar = mock(AttachmentDescriptor.class);
+		final AttachmentDescriptor baz = mock(AttachmentDescriptor.class);
+		final Iterable<AttachmentDescriptor> attachments = asList(foo, bar, baz);
+		doReturn(attachments) //
+				.when(executor).fetchAttachments(any(CardDescriptor.class));
+		final CardDescriptor destination = api.existingCard(CLASS_NAME + "2", CARD_ID * 10);
+
+		// when
+		api.existingCard(source) //
+				.attachments() //
+				.selectAll() //
+				.copyTo(destination);
+
+		verify(executor).fetchAttachments(eq(source));
+		verify(executor).copy(eq(source), captor.capture(), eq(destination));
+		verifyNoMoreInteractions(executor);
+
+		final Iterable<? extends AttachmentDescriptor> captured = captor.getValue();
+		assertThat(get(captured, 0), equalTo(foo));
+		assertThat(get(captured, 1), equalTo(bar));
+		assertThat(get(captured, 2), equalTo(baz));
+	}
+
 }
