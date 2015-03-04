@@ -76,6 +76,7 @@ public class AlfrescoDmsService extends BaseDmsService implements LoggingSupport
 
 	@Override
 	public List<StoredDocument> search(final DocumentSearch document) throws DmsError {
+		create(document);
 		return wsService.search(document);
 	}
 
@@ -166,11 +167,13 @@ public class AlfrescoDmsService extends BaseDmsService implements LoggingSupport
 
 	@Override
 	public void move(final StoredDocument document, final DocumentSearch from, final DocumentSearch to) throws DmsError {
+		create(to);
 		wsService.move(document, from, to);
 	}
 
 	@Override
 	public void copy(final StoredDocument document, final DocumentSearch from, final DocumentSearch to) throws DmsError {
+		create(to);
 		wsService.copy(document, from, to);
 	}
 

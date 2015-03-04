@@ -2,8 +2,8 @@ package org.cmdbuild.api.fluent;
 
 public class CreateReport extends ActiveReport {
 
-	CreateReport(final FluentApi api, final String title, final String format) {
-		super(api, title, format);
+	CreateReport(final FluentApiExecutor executor, final String title, final String format) {
+		super(executor, title, format);
 	}
 
 	public CreateReport with(final String name, final Object value) {
@@ -12,7 +12,7 @@ public class CreateReport extends ActiveReport {
 	}
 
 	public DownloadedReport download() {
-		return getApi().getExecutor().download(this);
+		return executor().download(this);
 	}
 
 }
