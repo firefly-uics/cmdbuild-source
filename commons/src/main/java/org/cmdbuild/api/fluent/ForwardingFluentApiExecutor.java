@@ -124,4 +124,10 @@ public abstract class ForwardingFluentApiExecutor extends ForwardingObject imple
 		delegate().copy(source, attachments, destination);
 	}
 
+	@Override
+	public void move(final CardDescriptor source, final Iterable<? extends AttachmentDescriptor> attachments,
+			final CardDescriptor destination) {
+		delegate().move(source, attachments, destination);
+	}
+
 }

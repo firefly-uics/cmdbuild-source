@@ -89,4 +89,6 @@ public interface DmsLogic extends Logic {
 
 	void copy(String sourceClassName, Long sourceId, String filename, String destinationClassName, Long destinationId);
 
+	void move(String sourceClassName, Long sourceId, String filename, String destinationClassName, Long destinationId);
+
 }
