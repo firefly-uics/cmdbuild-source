@@ -1,6 +1,7 @@
 package unit.api.fluent;
 
 import static com.google.common.collect.Iterables.get;
+import static com.google.common.collect.Iterables.size;
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.sameInstance;
@@ -30,7 +31,9 @@ import org.cmdbuild.api.fluent.NewRelation;
 import org.cmdbuild.api.fluent.ProcessInstanceDescriptor;
 import org.cmdbuild.api.fluent.QueryClass;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
@@ -53,8 +56,14 @@ public class FluentApiTest {
 	private static final ProcessInstanceDescriptor PROCESS_INSTANCE_DESCRIPTOR = new ProcessInstanceDescriptor(
 			PROCESS_CLASS_NAME, CARD_ID, PROCESS_INSTANCE_ID);
 
+	@Rule
+	public TemporaryFolder temporaryFolder = new TemporaryFolder();
+
 	@Captor
-	public ArgumentCaptor<Iterable<? extends AttachmentDescriptor>> captor;
+	public ArgumentCaptor<Iterable<? extends AttachmentDescriptor>> attachmentDescriptorsCaptor;
+
+	@Captor
+	public ArgumentCaptor<Iterable<? extends Attachment>> attachmentCaptor;
 
 	private FluentApiExecutor executor;
 	private FluentApi api;
@@ -66,7 +75,7 @@ public class FluentApiTest {
 	}
 
 	@Test
-	public void executorCalledWhenCreatingNewCard() {
+	public void executorCalledWhenCreatingNewCard() throws Exception {
 		final NewCard newCard = api.newCard(CLASS_NAME);
 
 		when(executor.create(newCard)).thenReturn(CARD_DESCRIPTOR);
@@ -78,7 +87,7 @@ public class FluentApiTest {
 	}
 
 	@Test
-	public void executorCalledWhenUpdatingExistingCard() {
+	public void executorCalledWhenUpdatingExistingCard() throws Exception {
 		final ExistingCard existingCard = api.existingCard(CLASS_NAME, CARD_ID);
 		existingCard.update();
 
@@ -87,7 +96,7 @@ public class FluentApiTest {
 	}
 
 	@Test
-	public void executorCalledWhenDeletingExistingCard() {
+	public void executorCalledWhenDeletingExistingCard() throws Exception {
 		final ExistingCard existingCard = api.existingCard(CLASS_NAME, CARD_ID);
 		existingCard.delete();
 
@@ -96,7 +105,7 @@ public class FluentApiTest {
 	}
 
 	@Test
-	public void executorCalledWhenFetchingExistingCard() {
+	public void executorCalledWhenFetchingExistingCard() throws Exception {
 		final ExistingCard existingCard = api.existingCard(CLASS_NAME, CARD_ID);
 		existingCard.fetch();
 
@@ -105,7 +114,7 @@ public class FluentApiTest {
 	}
 
 	@Test
-	public void executorCalledWhenFetchingClass() {
+	public void executorCalledWhenFetchingClass() throws Exception {
 		final QueryClass queryClass = api.queryClass(CLASS_NAME);
 		queryClass.fetch();
 
@@ -114,7 +123,7 @@ public class FluentApiTest {
 	}
 
 	@Test
-	public void executorCalledWhenCreatingNewRelation() {
+	public void executorCalledWhenCreatingNewRelation() throws Exception {
 		final NewRelation newRelation = api.newRelation(DOMAIN_NAME);
 		newRelation.create();
 
@@ -123,7 +132,7 @@ public class FluentApiTest {
 	}
 
 	@Test
-	public void executorCalledWhenDeletingExistingRelation() {
+	public void executorCalledWhenDeletingExistingRelation() throws Exception {
 		final ExistingRelation existingRelation = api.existingRelation(DOMAIN_NAME);
 		existingRelation.delete();
 
@@ -132,7 +141,7 @@ public class FluentApiTest {
 	}
 
 	@Test
-	public void executorCalledWhenFetchingRelations() {
+	public void executorCalledWhenFetchingRelations() throws Exception {
 		final ActiveQueryRelations query = api.queryRelations(CLASS_NAME, CARD_ID);
 		query.fetch();
 
@@ -141,7 +150,7 @@ public class FluentApiTest {
 	}
 
 	@Test
-	public void executorCalledWhenExecutingFunctionCall() {
+	public void executorCalledWhenExecutingFunctionCall() throws Exception {
 		final FunctionCall functionCall = api.callFunction(FUNCTION_NAME);
 		functionCall.execute();
 
@@ -150,7 +159,7 @@ public class FluentApiTest {
 	}
 
 	@Test
-	public void executorCalledWhenCreatingReport() {
+	public void executorCalledWhenCreatingReport() throws Exception {
 		final CreateReport createReport = api.createReport(REPORT_NAME, REPORT_FORMAT);
 		createReport.download();
 
@@ -159,7 +168,7 @@ public class FluentApiTest {
 	}
 
 	@Test
-	public void executorCalledWhenStartingNewProcessInstance() {
+	public void executorCalledWhenStartingNewProcessInstance() throws Exception {
 		final NewProcessInstance newProcess = api.newProcessInstance(PROCESS_CLASS_NAME);
 
 		when(executor.createProcessInstance(newProcess, AdvanceProcess.NO)).thenReturn(PROCESS_INSTANCE_DESCRIPTOR);
@@ -171,7 +180,7 @@ public class FluentApiTest {
 	}
 
 	@Test
-	public void executorCalledWhenFetchingAttachments() {
+	public void executorCalledWhenFetchingAttachments() throws Exception {
 		// given
 		final CardDescriptor source = api.existingCard(CLASS_NAME, CARD_ID);
 		final AttachmentDescriptor foo = mock(AttachmentDescriptor.class);
@@ -193,7 +202,7 @@ public class FluentApiTest {
 	}
 
 	@Test
-	public void executorCalledWhenUploadingAttachments() {
+	public void executorCalledWhenUploadingMultipleAttachments() throws Exception {
 		// given
 		final CardDescriptor source = api.existingCard(CLASS_NAME, CARD_ID);
 		final Attachment foo = mock(Attachment.class);
@@ -210,7 +219,26 @@ public class FluentApiTest {
 	}
 
 	@Test
-	public void executorCalledWhenDeletingAttachments() {
+	public void executorCalledWhenUploadingSingleAttachment() throws Exception {
+		// given
+		final CardDescriptor source = api.existingCard(CLASS_NAME, CARD_ID);
+		final String url = temporaryFolder.newFile().toURI().toURL().toString();
+
+		// when
+		api.existingCard(source) //
+				.attachments() //
+				.upload("foo", "this is foo", "some category", url);
+
+		verify(executor).upload(eq(source), attachmentCaptor.capture());
+		verifyNoMoreInteractions(executor);
+
+		final Iterable<? extends Attachment> captured = attachmentCaptor.getValue();
+		assertThat(size(captured), equalTo(1));
+		assertThat(get(captured, 0).getName(), equalTo("foo"));
+	}
+
+	@Test
+	public void executorCalledWhenDeletingAttachments() throws Exception {
 		// given
 		final CardDescriptor source = api.existingCard(CLASS_NAME, CARD_ID);
 		final AttachmentDescriptor foo = mock(AttachmentDescriptor.class);
@@ -227,17 +255,17 @@ public class FluentApiTest {
 				.delete();
 
 		verify(executor).fetchAttachments(eq(source));
-		verify(executor).delete(eq(source), captor.capture());
+		verify(executor).delete(eq(source), attachmentDescriptorsCaptor.capture());
 		verifyNoMoreInteractions(executor);
 
-		final Iterable<? extends AttachmentDescriptor> captured = captor.getValue();
+		final Iterable<? extends AttachmentDescriptor> captured = attachmentDescriptorsCaptor.getValue();
 		assertThat(get(captured, 0), equalTo(foo));
 		assertThat(get(captured, 1), equalTo(bar));
 		assertThat(get(captured, 2), equalTo(baz));
 	}
 
 	@Test
-	public void executorCalledWhenDownloadingAttachments() {
+	public void executorCalledWhenDownloadingAttachments() throws Exception {
 		// given
 		final CardDescriptor source = api.existingCard(CLASS_NAME, CARD_ID);
 		final AttachmentDescriptor foo = mock(AttachmentDescriptor.class);
@@ -264,17 +292,17 @@ public class FluentApiTest {
 		assertThat(get(downloaded, 2), equalTo(downloaded_baz));
 
 		verify(executor).fetchAttachments(eq(source));
-		verify(executor).download(eq(source), captor.capture());
+		verify(executor).download(eq(source), attachmentDescriptorsCaptor.capture());
 		verifyNoMoreInteractions(executor);
 
-		final Iterable<? extends AttachmentDescriptor> captured = captor.getValue();
+		final Iterable<? extends AttachmentDescriptor> captured = attachmentDescriptorsCaptor.getValue();
 		assertThat(get(captured, 0), equalTo(foo));
 		assertThat(get(captured, 1), equalTo(bar));
 		assertThat(get(captured, 2), equalTo(baz));
 	}
 
 	@Test
-	public void executorCalledWhenCopyingAttachments() {
+	public void executorCalledWhenCopyingAttachments() throws Exception {
 		// given
 		final CardDescriptor source = api.existingCard(CLASS_NAME, CARD_ID);
 		final AttachmentDescriptor foo = mock(AttachmentDescriptor.class);
@@ -292,17 +320,17 @@ public class FluentApiTest {
 				.copyTo(destination);
 
 		verify(executor).fetchAttachments(eq(source));
-		verify(executor).copy(eq(source), captor.capture(), eq(destination));
+		verify(executor).copy(eq(source), attachmentDescriptorsCaptor.capture(), eq(destination));
 		verifyNoMoreInteractions(executor);
 
-		final Iterable<? extends AttachmentDescriptor> captured = captor.getValue();
+		final Iterable<? extends AttachmentDescriptor> captured = attachmentDescriptorsCaptor.getValue();
 		assertThat(get(captured, 0), equalTo(foo));
 		assertThat(get(captured, 1), equalTo(bar));
 		assertThat(get(captured, 2), equalTo(baz));
 	}
-	
+
 	@Test
-	public void executorCalledWhenMovingAttachments() {
+	public void executorCalledWhenMovingAttachments() throws Exception {
 		// given
 		final CardDescriptor source = api.existingCard(CLASS_NAME, CARD_ID);
 		final AttachmentDescriptor foo = mock(AttachmentDescriptor.class);
@@ -320,10 +348,10 @@ public class FluentApiTest {
 				.moveTo(destination);
 
 		verify(executor).fetchAttachments(eq(source));
-		verify(executor).move(eq(source), captor.capture(), eq(destination));
+		verify(executor).move(eq(source), attachmentDescriptorsCaptor.capture(), eq(destination));
 		verifyNoMoreInteractions(executor);
 
-		final Iterable<? extends AttachmentDescriptor> captured = captor.getValue();
+		final Iterable<? extends AttachmentDescriptor> captured = attachmentDescriptorsCaptor.getValue();
 		assertThat(get(captured, 0), equalTo(foo));
 		assertThat(get(captured, 1), equalTo(bar));
 		assertThat(get(captured, 2), equalTo(baz));
