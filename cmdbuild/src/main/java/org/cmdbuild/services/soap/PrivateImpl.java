@@ -504,4 +504,11 @@ public class PrivateImpl extends AbstractWebservice implements Private {
 				Long.valueOf(destinationId));
 	}
 
+	@Override
+	public void moveAttachment(String sourceClassName, int sourceId, String filename, String destinationClassName,
+			int destinationId) {
+		dmsLogicHelper().move(sourceClassName, Long.valueOf(sourceId), filename, destinationClassName,
+				Long.valueOf(destinationId));
+	}
+
 }

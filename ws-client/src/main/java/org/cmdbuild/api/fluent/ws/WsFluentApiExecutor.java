@@ -529,6 +529,14 @@ public class WsFluentApiExecutor implements FluentApiExecutor, LoggingSupport {
 		}
 	}
 
+	public void move(final CardDescriptor source, final Iterable<? extends AttachmentDescriptor> attachments,
+			final CardDescriptor destination) {
+		for (final AttachmentDescriptor attachment : attachments) {
+			proxy.moveAttachment(source.getClassName(), source.getId(), attachment.getName(),
+					destination.getClassName(), destination.getId());
+		}
+	}
+
 	/*
 	 * Utils
 	 */
