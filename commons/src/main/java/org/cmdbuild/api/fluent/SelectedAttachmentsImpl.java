@@ -30,7 +30,7 @@ class SelectedAttachmentsImpl implements SelectedAttachments {
 
 	@Override
 	public void copyTo(final CardDescriptor destination) {
-		// TODO Auto-generated method stub
+		executor.copy(this.descriptor, selected(), destination);
 	}
 
 	@Override

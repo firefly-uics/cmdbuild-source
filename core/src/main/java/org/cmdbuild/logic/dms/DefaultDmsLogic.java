@@ -258,6 +258,27 @@ public class DefaultDmsLogic implements DmsLogic {
 		}
 	}
 
+	@Override
+	public void copy(final String sourceClassName, final Long sourceId, final String filename,
+			final String destinationClassName, final Long destinationId) {
+		try {
+			final DocumentSearch source = createDocumentFactory(sourceClassName) //
+					.createDocumentSearch(sourceClassName, sourceId.toString());
+			for (final StoredDocument document : service.search(source)) {
+				if (document.getName().equals(filename)) {
+					final DocumentSearch destination = createDocumentFactory(destinationClassName) //
+							.createDocumentSearch(destinationClassName, destinationId.toString());
+					service.copy(document, source, destination);
+				}
+			}
+		} catch (final Exception e) {
+			final String message = String.format("error copying file '%s' from '%s' with id '%d' to '%s' with id '%d'", //
+					filename, sourceClassName, sourceId, destinationClassName, destinationId);
+			logger.error(message, e);
+			throw DmsException.Type.DMS_UPDATE_ERROR.createException();
+		}
+	}
+
 	private DocumentCreator createDocumentFactory(final String className) {
 		final CMClass fetchedClass = dataView.findClass(className);
 		return documentCreatorFactory.create(fetchedClass);

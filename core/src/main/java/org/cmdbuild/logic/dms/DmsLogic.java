@@ -87,4 +87,6 @@ public interface DmsLogic extends Logic {
 	void updateDescriptionAndMetadata(String className, Long cardId, String filename, String category,
 			String description, Iterable<MetadataGroup> metadataGroups);
 
+	void copy(String sourceClassName, Long sourceId, String filename, String destinationClassName, Long destinationId);
+
 }

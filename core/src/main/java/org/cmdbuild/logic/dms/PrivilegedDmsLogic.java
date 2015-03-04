@@ -56,4 +56,11 @@ public class PrivilegedDmsLogic extends ForwardingDmsLogic {
 		super.updateDescriptionAndMetadata(className, cardId, filename, category, description, metadataGroups);
 	}
 
+	@Override
+	public void copy(final String sourceClassName, final Long sourceId, final String filename,
+			final String destinationClassName, final Long destinationId) {
+		assureWritePrivilege(destinationClassName);
+		super.copy(sourceClassName, sourceId, filename, destinationClassName, destinationId);
+	}
+
 }
