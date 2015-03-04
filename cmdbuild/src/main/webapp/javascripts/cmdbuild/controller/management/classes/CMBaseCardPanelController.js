@@ -100,7 +100,9 @@
 				var me = this;
 
 				this.lockCard(function() {
-					me.view.editMode();
+					me.loadCard(true, null, function() { // Force card load before entering in edit mode
+						me.view.editMode();
+					});
 				});
 			}
 		},
