@@ -98,23 +98,23 @@ public abstract class ForwardingFluentApiExecutor extends ForwardingObject imple
 	}
 
 	@Override
-	public Iterable<AttachmentDescriptor> fetchAttachments(final CardDescriptor card) {
-		return delegate().fetchAttachments(card);
+	public Iterable<AttachmentDescriptor> fetchAttachments(final CardDescriptor source) {
+		return delegate().fetchAttachments(source);
 	}
 
 	@Override
-	public void upload(final CardDescriptor card, final Iterable<Attachment> attachments) {
-		delegate().upload(card, attachments);
+	public void upload(final CardDescriptor source, final Iterable<? extends Attachment> attachments) {
+		delegate().upload(source, attachments);
 	}
 
 	@Override
-	public Attachment download(final CardDescriptor cardDescriptor, final AttachmentDescriptor attachmentDescriptor) {
-		return delegate().download(cardDescriptor, attachmentDescriptor);
+	public Attachment download(final CardDescriptor source, final AttachmentDescriptor attachment) {
+		return delegate().download(source, attachment);
 	}
 
 	@Override
-	public void delete(final CardDescriptor cardDescriptor, final AttachmentDescriptor attachmentDescriptor) {
-		delegate().delete(cardDescriptor, attachmentDescriptor);
+	public void delete(final CardDescriptor source, final Iterable<? extends AttachmentDescriptor> attachments) {
+		delegate().delete(source, attachments);
 	}
 
 }

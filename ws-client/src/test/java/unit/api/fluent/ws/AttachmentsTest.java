@@ -36,8 +36,8 @@ public class AttachmentsTest extends AbstractWsFluentApiTest {
 
 	@Before
 	public void createAttachments() throws Exception {
-		final CardDescriptor descriptor = api().existingCard(CLASS_NAME, CARD_ID);
-		attachments = api().existingCard(descriptor).attachments();
+		final CardDescriptor source = api().existingCard(CLASS_NAME, CARD_ID);
+		attachments = api().existingCard(source).attachments();
 	}
 
 	@Test
