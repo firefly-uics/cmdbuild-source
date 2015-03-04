@@ -1,9 +1,6 @@
 package org.cmdbuild.api.fluent;
 
 import static com.google.common.collect.FluentIterable.from;
-import static com.google.common.collect.Lists.newArrayList;
-
-import java.util.Collection;
 
 import com.google.common.base.Predicate;
 
@@ -28,11 +25,7 @@ class SelectedAttachmentsImpl implements SelectedAttachments {
 
 	@Override
 	public Iterable<Attachment> download() {
-		final Collection<Attachment> downloaded = newArrayList();
-		for (final AttachmentDescriptor descriptor : selected()) {
-			downloaded.add(executor.download(this.descriptor, descriptor));
-		}
-		return downloaded;
+		return executor.download(this.descriptor, selected());
 	}
 
 	@Override

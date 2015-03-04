@@ -1,6 +1,7 @@
 package org.cmdbuild.api.fluent.ws;
 
 import static com.google.common.collect.FluentIterable.from;
+import static com.google.common.collect.Lists.newArrayList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.unmodifiableList;
 import static java.util.Collections.unmodifiableMap;
@@ -12,11 +13,13 @@ import static org.cmdbuild.api.fluent.ws.FunctionOutput.functionOutput;
 import static org.cmdbuild.api.fluent.ws.ReportHelper.DEFAULT_TYPE;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -471,31 +474,46 @@ public class WsFluentApiExecutor implements FluentApiExecutor, LoggingSupport {
 		}
 	}
 
-	public Attachment download(final CardDescriptor source, final AttachmentDescriptor attachment) {
+	public Iterable<Attachment> download(final CardDescriptor source,
+			final Iterable<? extends AttachmentDescriptor> attachments) {
+		final Collection<Attachment> downloaded = newArrayList();
+		for (final AttachmentDescriptor attachment : attachments) {
+			downloaded.add(downloadQuietly(source, attachment));
+		}
+		return downloaded;
+	}
+
+	private Attachment downloadQuietly(final CardDescriptor source, final AttachmentDescriptor attachment) {
 		try {
-			final DataHandler remote = proxy.downloadAttachment(source.getClassName(), source.getId(),
-					attachment.getName());
-
-			final TempDataSource tempDataSource = TempDataSource.newInstance() //
-					.withName(attachment.getName()) //
-					.build();
-			final DataHandler local = new DataHandler(tempDataSource);
-			final InputStream inputStream = remote.getInputStream();
-			final OutputStream outputStream = local.getOutputStream();
-			copy(inputStream, outputStream);
-			IOUtils.closeQuietly(inputStream);
-			IOUtils.closeQuietly(outputStream);
-
-			final AttachmentImpl _attachment = new AttachmentImpl();
-			_attachment.setName(attachment.getName());
-			_attachment.setDescription(attachment.getDescription());
-			_attachment.setCategory(attachment.getCategory());
-			_attachment.setUrl(tempDataSource.getFile().toURI().toURL().toString());
-			return _attachment;
+			return download(source, attachment);
 		} catch (final Exception e) {
-			logger.error(marker, "error uploading attachments", e);
+			logger.error(marker, "error uploading attachment", e);
 			throw new RuntimeException(e);
 		}
+	}
+
+	private Attachment download(final CardDescriptor source, final AttachmentDescriptor attachment) throws IOException,
+			MalformedURLException {
+		final DataHandler remote = proxy
+				.downloadAttachment(source.getClassName(), source.getId(), attachment.getName());
+
+		final TempDataSource tempDataSource = TempDataSource.newInstance() //
+				.withName(attachment.getName()) //
+				.build();
+		final DataHandler local = new DataHandler(tempDataSource);
+		final InputStream inputStream = remote.getInputStream();
+		final OutputStream outputStream = local.getOutputStream();
+		copy(inputStream, outputStream);
+		IOUtils.closeQuietly(inputStream);
+		IOUtils.closeQuietly(outputStream);
+
+		final AttachmentImpl output = new AttachmentImpl();
+		output.setName(attachment.getName());
+		output.setDescription(attachment.getDescription());
+		output.setCategory(attachment.getCategory());
+		output.setUrl(tempDataSource.getFile().toURI().toURL().toString());
+
+		return output;
 	}
 
 	public void delete(final CardDescriptor source, final Iterable<? extends AttachmentDescriptor> attachments) {
