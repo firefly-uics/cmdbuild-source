@@ -63,7 +63,7 @@ class MoveCommand extends AbstractSearchCommand<ResultSetRow[]> {
 			successfull = true;
 		} catch (final Exception e) {
 			logger.error("error while moving file", e);
-			successfull = true;
+			successfull = false;
 		}
 	}
 

@@ -86,4 +86,16 @@ public abstract class ForwardingDmsLogic extends ForwardingObject implements Dms
 		delegate().updateDescriptionAndMetadata(className, cardId, filename, category, description, metadataGroups);
 	}
 
+	@Override
+	public void copy(final String sourceClassName, final Long sourceId, final String filename,
+			final String destinationClassName, final Long destinationId) {
+		delegate().copy(sourceClassName, sourceId, filename, destinationClassName, destinationId);
+	}
+
+	@Override
+	public void move(final String sourceClassName, final Long sourceId, final String filename,
+			final String destinationClassName, final Long destinationId) {
+		delegate().move(sourceClassName, sourceId, filename, destinationClassName, destinationId);
+	}
+
 }
