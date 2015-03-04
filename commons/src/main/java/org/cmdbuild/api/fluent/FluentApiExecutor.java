@@ -41,12 +41,12 @@ public interface FluentApiExecutor {
 
 	Lookup fetch(QuerySingleLookup querySingleLookup);
 
-	Iterable<AttachmentDescriptor> fetchAttachments(CardDescriptor card);
+	Iterable<AttachmentDescriptor> fetchAttachments(CardDescriptor source);
 
-	void upload(CardDescriptor card, Iterable<Attachment> attachments);
+	void upload(CardDescriptor source, Iterable<? extends Attachment> attachments);
 
-	Attachment download(CardDescriptor cardDescriptor, AttachmentDescriptor attachmentDescriptor);
+	Attachment download(CardDescriptor source, AttachmentDescriptor attachment);
 
-	void delete(CardDescriptor cardDescriptor, AttachmentDescriptor attachmentDescriptor);
+	void delete(CardDescriptor source, Iterable<? extends AttachmentDescriptor> attachments);
 
 }

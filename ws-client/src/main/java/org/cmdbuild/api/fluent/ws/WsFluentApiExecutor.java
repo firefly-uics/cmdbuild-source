@@ -439,9 +439,9 @@ public class WsFluentApiExecutor implements FluentApiExecutor, LoggingSupport {
 		throw new UnsupportedOperationException("TODO");
 	}
 
-	public Iterable<AttachmentDescriptor> fetchAttachments(final CardDescriptor card) {
+	public Iterable<AttachmentDescriptor> fetchAttachments(final CardDescriptor source) {
 		final List<org.cmdbuild.services.soap.Attachment> soapAttachments = proxy.getAttachmentList(
-				card.getClassName(), card.getId());
+				source.getClassName(), source.getId());
 		return from(soapAttachments) //
 				.transform(
 						new com.google.common.base.Function<org.cmdbuild.services.soap.Attachment, AttachmentDescriptor>() {
@@ -457,12 +457,12 @@ public class WsFluentApiExecutor implements FluentApiExecutor, LoggingSupport {
 						});
 	}
 
-	public void upload(final CardDescriptor card, final Iterable<Attachment> attachments) {
+	public void upload(final CardDescriptor source, final Iterable<? extends Attachment> attachments) {
 		try {
 			for (final Attachment attachment : attachments) {
 				final DataSource dataSource = new URLDataSource(new URL(attachment.getUrl()));
 				final DataHandler dataHandler = new DataHandler(dataSource);
-				proxy.uploadAttachment(card.getClassName(), card.getId(), dataHandler, attachment.getName(),
+				proxy.uploadAttachment(source.getClassName(), source.getId(), dataHandler, attachment.getName(),
 						attachment.getCategory(), attachment.getDescription());
 			}
 		} catch (final Exception e) {
@@ -471,35 +471,37 @@ public class WsFluentApiExecutor implements FluentApiExecutor, LoggingSupport {
 		}
 	}
 
-	public Attachment download(final CardDescriptor cardDescriptor, final AttachmentDescriptor attachmentDescriptor) {
+	public Attachment download(final CardDescriptor source, final AttachmentDescriptor attachment) {
 		try {
-			final DataHandler source = proxy.downloadAttachment(cardDescriptor.getClassName(), cardDescriptor.getId(),
-					attachmentDescriptor.getName());
+			final DataHandler remote = proxy.downloadAttachment(source.getClassName(), source.getId(),
+					attachment.getName());
 
 			final TempDataSource tempDataSource = TempDataSource.newInstance() //
-					.withName(attachmentDescriptor.getName()) //
+					.withName(attachment.getName()) //
 					.build();
-			final DataHandler destination = new DataHandler(tempDataSource);
-			final InputStream inputStream = source.getInputStream();
-			final OutputStream outputStream = destination.getOutputStream();
+			final DataHandler local = new DataHandler(tempDataSource);
+			final InputStream inputStream = remote.getInputStream();
+			final OutputStream outputStream = local.getOutputStream();
 			copy(inputStream, outputStream);
 			IOUtils.closeQuietly(inputStream);
 			IOUtils.closeQuietly(outputStream);
 
-			final AttachmentImpl attachment = new AttachmentImpl();
-			attachment.setName(attachmentDescriptor.getName());
-			attachment.setDescription(attachment.getDescription());
-			attachment.setCategory(attachment.getCategory());
-			attachment.setUrl(tempDataSource.getFile().toURI().toURL().toString());
-			return attachment;
+			final AttachmentImpl _attachment = new AttachmentImpl();
+			_attachment.setName(attachment.getName());
+			_attachment.setDescription(attachment.getDescription());
+			_attachment.setCategory(attachment.getCategory());
+			_attachment.setUrl(tempDataSource.getFile().toURI().toURL().toString());
+			return _attachment;
 		} catch (final Exception e) {
 			logger.error(marker, "error uploading attachments", e);
 			throw new RuntimeException(e);
 		}
 	}
 
-	public void delete(final CardDescriptor cardDescriptor, final AttachmentDescriptor attachmentDescriptor) {
-		proxy.deleteAttachment(cardDescriptor.getClassName(), cardDescriptor.getId(), attachmentDescriptor.getName());
+	public void delete(final CardDescriptor source, final Iterable<? extends AttachmentDescriptor> attachments) {
+		for (final AttachmentDescriptor attachment : attachments) {
+			proxy.deleteAttachment(source.getClassName(), source.getId(), attachment.getName());
+		}
 	}
 
 	/*

@@ -22,6 +22,7 @@ import org.cmdbuild.api.fluent.Attachment;
 import org.cmdbuild.api.fluent.AttachmentDescriptor;
 import org.cmdbuild.api.fluent.CardDescriptor;
 import org.cmdbuild.api.fluent.SelectedAttachments;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -34,23 +35,32 @@ public class SelectedAttachmentsTest extends AbstractWsFluentApiTest {
 
 	private SelectedAttachments selectedAttachments;
 
+	private static org.cmdbuild.services.soap.Attachment FOO;
+	private static org.cmdbuild.services.soap.Attachment BAR;
+	private static org.cmdbuild.services.soap.Attachment BAZ;
+
+	@Before
+	public void setUp() throws Exception {
+		FOO = soapAttachment("foo", "this is foo", "some category");
+		BAR = soapAttachment("bar", "this is bar", "some other category");
+		BAZ = soapAttachment("baz", "this is baz", "some category");
+	}
+
 	@Test
 	public void allAttachmentsSelected() throws Exception {
 		// given
-		final org.cmdbuild.services.soap.Attachment foo = soapAttachment("foo", "this is foo", "some category");
-		final org.cmdbuild.services.soap.Attachment bar = soapAttachment("bar", "this is bar", "some other category");
-		doReturn(asList(foo, bar)) //
+		doReturn(asList(FOO, BAR, BAZ)) //
 				.when(proxy()).getAttachmentList(anyString(), anyInt());
-		final CardDescriptor descriptor = api().existingCard(CLASS_NAME, CARD_ID);
+		final CardDescriptor source = api().existingCard(CLASS_NAME, CARD_ID);
 
 		// when
-		selectedAttachments = api().existingCard(descriptor).attachments().selectAll();
+		selectedAttachments = api().existingCard(source).attachments().selectAll();
 
 		// then
 		final Iterable<AttachmentDescriptor> selected = selectedAttachments.selected();
-		assertThat(size(selected), equalTo(2));
-		assertThat(get(selected, 0).getName(), equalTo("foo"));
-		assertThat(get(selected, 1).getName(), equalTo("bar"));
+		assertThat(size(selected), equalTo(3));
+		assertThat(get(selected, 0).getName(), equalTo(FOO.getFilename()));
+		assertThat(get(selected, 1).getName(), equalTo(BAR.getFilename()));
 
 		verify(proxy()).getAttachmentList(eq(CLASS_NAME), eq(CARD_ID));
 		verifyNoMoreInteractions(proxy());
@@ -59,23 +69,20 @@ public class SelectedAttachmentsTest extends AbstractWsFluentApiTest {
 	@Test
 	public void someAttachmentsSelected() throws Exception {
 		// given
-		final org.cmdbuild.services.soap.Attachment foo = soapAttachment("foo", "this is foo", "some category");
-		final org.cmdbuild.services.soap.Attachment bar = soapAttachment("bar", "this is bar", "some other category");
-		final org.cmdbuild.services.soap.Attachment baz = soapAttachment("baz", "this is baz", "some category");
-		doReturn(asList(foo, bar, baz)) //
+		doReturn(asList(FOO, BAR, BAZ)) //
 				.when(proxy()).getAttachmentList(anyString(), anyInt());
 		final CardDescriptor descriptor = api().existingCard(CLASS_NAME, CARD_ID);
 
 		// when
 		selectedAttachments = api().existingCard(descriptor) //
 				.attachments() //
-				.selectByName("foo", "baz");
+				.selectByName(FOO.getFilename(), BAZ.getFilename());
 
 		// then
 		final Iterable<AttachmentDescriptor> selected = selectedAttachments.selected();
 		assertThat(size(selected), equalTo(2));
-		assertThat(get(selected, 0).getName(), equalTo("foo"));
-		assertThat(get(selected, 1).getName(), equalTo("baz"));
+		assertThat(get(selected, 0).getName(), equalTo(FOO.getFilename()));
+		assertThat(get(selected, 1).getName(), equalTo(BAZ.getFilename()));
 
 		verify(proxy()).getAttachmentList(eq(CLASS_NAME), eq(CARD_ID));
 		verifyNoMoreInteractions(proxy());
@@ -84,26 +91,23 @@ public class SelectedAttachmentsTest extends AbstractWsFluentApiTest {
 	@Test
 	public void attachmentsDownloaded() throws Exception {
 		// given
-		final org.cmdbuild.services.soap.Attachment foo = soapAttachment("foo", "this is foo", "some category");
-		final org.cmdbuild.services.soap.Attachment bar = soapAttachment("bar", "this is bar", "some other category");
-		final org.cmdbuild.services.soap.Attachment baz = soapAttachment("baz", "this is baz", "some category");
-		doReturn(asList(foo, bar, baz)) //
+		doReturn(asList(FOO, BAR, BAZ)) //
 				.when(proxy()).getAttachmentList(anyString(), anyInt());
 		final DataHandler dataHandler = new DataHandler(new FileDataSource(temporaryFolder.newFile()));
 		doReturn(dataHandler) //
 				.when(proxy()).downloadAttachment(anyString(), anyInt(), anyString());
-		final CardDescriptor descriptor = api().existingCard(CLASS_NAME, CARD_ID);
+		final CardDescriptor source = api().existingCard(CLASS_NAME, CARD_ID);
 
 		// when
-		final Iterable<Attachment> downloaded = api().existingCard(descriptor) //
+		final Iterable<Attachment> downloaded = api().existingCard(source) //
 				.attachments() //
-				.selectByName("foo", "baz") //
+				.selectByName(FOO.getFilename(), BAZ.getFilename()) //
 				.download();
 
 		// then
 		assertThat(size(downloaded), equalTo(2));
-		assertThat(get(downloaded, 0).getName(), equalTo("foo"));
-		assertThat(get(downloaded, 1).getName(), equalTo("baz"));
+		assertThat(get(downloaded, 0).getName(), equalTo(FOO.getFilename()));
+		assertThat(get(downloaded, 1).getName(), equalTo(BAZ.getFilename()));
 
 		verify(proxy()).getAttachmentList(eq(CLASS_NAME), eq(CARD_ID));
 		final ArgumentCaptor<String> fileNameCaptor = ArgumentCaptor.forClass(String.class);
@@ -112,24 +116,21 @@ public class SelectedAttachmentsTest extends AbstractWsFluentApiTest {
 
 		final List<String> values = fileNameCaptor.getAllValues();
 		assertThat(values.size(), equalTo(2));
-		assertThat(values.get(0), equalTo("foo"));
-		assertThat(values.get(1), equalTo("baz"));
+		assertThat(values.get(0), equalTo(FOO.getFilename()));
+		assertThat(values.get(1), equalTo(BAZ.getFilename()));
 	}
 
 	@Test
 	public void attachmentsDeleted() throws Exception {
 		// given
-		final org.cmdbuild.services.soap.Attachment foo = soapAttachment("foo", "this is foo", "some category");
-		final org.cmdbuild.services.soap.Attachment bar = soapAttachment("bar", "this is bar", "some other category");
-		final org.cmdbuild.services.soap.Attachment baz = soapAttachment("baz", "this is baz", "some category");
-		doReturn(asList(foo, bar, baz)) //
+		doReturn(asList(FOO, BAR, BAZ)) //
 				.when(proxy()).getAttachmentList(anyString(), anyInt());
-		final CardDescriptor descriptor = api().existingCard(CLASS_NAME, CARD_ID);
+		final CardDescriptor source = api().existingCard(CLASS_NAME, CARD_ID);
 
 		// when
-		api().existingCard(descriptor) //
+		api().existingCard(source) //
 				.attachments() //
-				.selectByName("foo", "baz") //
+				.selectByName(FOO.getFilename(), BAZ.getFilename()) //
 				.delete();
 
 		// then
@@ -140,8 +141,8 @@ public class SelectedAttachmentsTest extends AbstractWsFluentApiTest {
 
 		final List<String> values = fileNameCaptor.getAllValues();
 		assertThat(values.size(), equalTo(2));
-		assertThat(values.get(0), equalTo("foo"));
-		assertThat(values.get(1), equalTo("baz"));
+		assertThat(values.get(0), equalTo(FOO.getFilename()));
+		assertThat(values.get(1), equalTo(BAZ.getFilename()));
 	}
 
 	private static org.cmdbuild.services.soap.Attachment soapAttachment(final String _filename,

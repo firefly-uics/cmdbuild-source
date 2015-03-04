@@ -1,14 +1,21 @@
 package unit.api.fluent;
 
+import static com.google.common.collect.Iterables.get;
+import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.sameInstance;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 import org.cmdbuild.api.fluent.ActiveQueryRelations;
+import org.cmdbuild.api.fluent.Attachment;
+import org.cmdbuild.api.fluent.AttachmentDescriptor;
 import org.cmdbuild.api.fluent.CardDescriptor;
 import org.cmdbuild.api.fluent.CreateReport;
 import org.cmdbuild.api.fluent.ExistingCard;
@@ -24,7 +31,12 @@ import org.cmdbuild.api.fluent.ProcessInstanceDescriptor;
 import org.cmdbuild.api.fluent.QueryClass;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
+import org.mockito.runners.MockitoJUnitRunner;
 
+@RunWith(MockitoJUnitRunner.class)
 public class FluentApiTest {
 
 	private static final String CLASS_NAME = "class";
@@ -40,6 +52,9 @@ public class FluentApiTest {
 	private static final CardDescriptor CARD_DESCRIPTOR = new CardDescriptor(CLASS_NAME, CARD_ID);
 	private static final ProcessInstanceDescriptor PROCESS_INSTANCE_DESCRIPTOR = new ProcessInstanceDescriptor(
 			PROCESS_CLASS_NAME, CARD_ID, PROCESS_INSTANCE_ID);
+
+	@Captor
+	public ArgumentCaptor<Iterable<? extends AttachmentDescriptor>> captor;
 
 	private FluentApiExecutor executor;
 	private FluentApi api;
@@ -154,4 +169,71 @@ public class FluentApiTest {
 		verify(executor).createProcessInstance(newProcess, AdvanceProcess.NO);
 		verifyNoMoreInteractions(executor);
 	}
+
+	@Test
+	public void executorCalledWhenFetchingAttachments() {
+		// given
+		final CardDescriptor source = api.existingCard(CLASS_NAME, CARD_ID);
+		final AttachmentDescriptor foo = mock(AttachmentDescriptor.class);
+		final AttachmentDescriptor bar = mock(AttachmentDescriptor.class);
+		final AttachmentDescriptor baz = mock(AttachmentDescriptor.class);
+		final Iterable<AttachmentDescriptor> attachments = asList(foo, bar, baz);
+		doReturn(attachments) //
+				.when(executor).fetchAttachments(any(CardDescriptor.class));
+
+		// when
+		final Iterable<AttachmentDescriptor> fetched = api.existingCard(source) //
+				.attachments() //
+				.fetch();
+
+		assertThat(fetched, equalTo(attachments));
+
+		verify(executor).fetchAttachments(eq(source));
+		verifyNoMoreInteractions(executor);
+	}
+
+	@Test
+	public void executorCalledWhenUploadingAttachments() {
+		// given
+		final CardDescriptor source = api.existingCard(CLASS_NAME, CARD_ID);
+		final Attachment foo = mock(Attachment.class);
+		final Attachment bar = mock(Attachment.class);
+		final Attachment baz = mock(Attachment.class);
+
+		// when
+		api.existingCard(source) //
+				.attachments() //
+				.upload(foo, bar, baz);
+
+		verify(executor).upload(eq(source), eq(asList(foo, bar, baz)));
+		verifyNoMoreInteractions(executor);
+	}
+
+	@Test
+	public void executorCalledWhenDeletingAttachments() {
+		// given
+		final CardDescriptor source = api.existingCard(CLASS_NAME, CARD_ID);
+		final AttachmentDescriptor foo = mock(AttachmentDescriptor.class);
+		final AttachmentDescriptor bar = mock(AttachmentDescriptor.class);
+		final AttachmentDescriptor baz = mock(AttachmentDescriptor.class);
+		final Iterable<AttachmentDescriptor> attachments = asList(foo, bar, baz);
+		doReturn(attachments) //
+				.when(executor).fetchAttachments(any(CardDescriptor.class));
+
+		// when
+		api.existingCard(source) //
+				.attachments() //
+				.selectAll() //
+				.delete();
+
+		verify(executor).fetchAttachments(eq(source));
+		verify(executor).delete(eq(source), captor.capture());
+		verifyNoMoreInteractions(executor);
+
+		final Iterable<? extends AttachmentDescriptor> captured = captor.getValue();
+		assertThat(get(captured, 0), equalTo(foo));
+		assertThat(get(captured, 1), equalTo(bar));
+		assertThat(get(captured, 2), equalTo(baz));
+	}
+
 }

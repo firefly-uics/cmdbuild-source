@@ -8,11 +8,7 @@ public interface SelectedAttachments {
 
 	void copyTo(CardDescriptor destination);
 
-	void copyTo(ProcessInstanceDescriptor destination);
-
 	void moveTo(CardDescriptor destination);
-
-	void moveTo(ProcessInstanceDescriptor destination);
 
 	void delete();
 
