@@ -77,13 +77,6 @@
 				if (attribute[CMDBuild.core.proxy.CMProxyConstants.FIELD_MODE] == 'read')
 					item.disabled = true;
 
-				// Setup right clientForm for templateResolver if exists
-				if (!Ext.Object.isEmpty(item.templateResolver)) {
-					delete item.templateResolver.getBasicForm;
-
-					item.templateResolver.clientForm = this.parentDelegate.clientForm;
-				}
-
 				itemsArray.push(item);
 			}, this);
 
