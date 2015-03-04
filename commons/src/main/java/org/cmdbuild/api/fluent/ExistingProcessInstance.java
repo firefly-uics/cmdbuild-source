@@ -43,4 +43,8 @@ public class ExistingProcessInstance extends ActiveCard {
 		executor().resumeProcessInstance(this);
 	}
 
+	public Attachments attachments() {
+		return new AttachmentsImpl(executor(), this);
+	}
+
 }
