@@ -236,4 +236,41 @@ public class FluentApiTest {
 		assertThat(get(captured, 2), equalTo(baz));
 	}
 
+	@Test
+	public void executorCalledWhenDownloadingAttachments() {
+		// given
+		final CardDescriptor source = api.existingCard(CLASS_NAME, CARD_ID);
+		final AttachmentDescriptor foo = mock(AttachmentDescriptor.class);
+		final AttachmentDescriptor bar = mock(AttachmentDescriptor.class);
+		final AttachmentDescriptor baz = mock(AttachmentDescriptor.class);
+		final Iterable<AttachmentDescriptor> attachments = asList(foo, bar, baz);
+		doReturn(attachments) //
+				.when(executor).fetchAttachments(any(CardDescriptor.class));
+		final Attachment downloaded_foo = mock(Attachment.class);
+		final Attachment downloaded_bar = mock(Attachment.class);
+		final Attachment downloaded_baz = mock(Attachment.class);
+		final Iterable<Attachment> downloaded_attachments = asList(downloaded_foo, downloaded_bar, downloaded_baz);
+		doReturn(downloaded_attachments) //
+				.when(executor).download(any(CardDescriptor.class), any(Iterable.class));
+
+		// when
+		final Iterable<Attachment> downloaded = api.existingCard(source) //
+				.attachments() //
+				.selectAll() //
+				.download();
+
+		assertThat(get(downloaded, 0), equalTo(downloaded_foo));
+		assertThat(get(downloaded, 1), equalTo(downloaded_bar));
+		assertThat(get(downloaded, 2), equalTo(downloaded_baz));
+
+		verify(executor).fetchAttachments(eq(source));
+		verify(executor).download(eq(source), captor.capture());
+		verifyNoMoreInteractions(executor);
+
+		final Iterable<? extends AttachmentDescriptor> captured = captor.getValue();
+		assertThat(get(captured, 0), equalTo(foo));
+		assertThat(get(captured, 1), equalTo(bar));
+		assertThat(get(captured, 2), equalTo(baz));
+	}
+
 }
