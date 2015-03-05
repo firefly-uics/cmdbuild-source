@@ -131,7 +131,7 @@
 											cmControllerType: 'CMDBuild.controller.administration.email.CMEmailTemplatesController',
 											cmName: 'emailTemplates'
 										}),
-										Ext.create('CMDBuild.view.administration.localizations.Form', {
+										Ext.create('CMDBuild.view.administration.localizations.MainPanel', {
 											cmControllerType: 'CMDBuild.controller.administration.localizations.Main',
 											cmName: 'localizations'
 										}),

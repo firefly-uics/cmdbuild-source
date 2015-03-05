@@ -52,10 +52,21 @@
 					}
 				},
 				sorters: {
-					property: 'name',
+					property: CMDBuild.core.proxy.CMProxyConstants.NAME,
 					direction: 'ASC'
 				}
 			});
+		},
+
+		getLanguagesToTranslate: function() { // TODO use model
+//			CMDBuild.Ajax.request({
+//				url: '',
+//				params: parameters.params,
+//				scope: parameters.scope,
+//				failure: parameters.failure || Ext.emptyFn(),
+//				success: parameters.success || Ext.emptyFn(),
+//				callback: parameters.callback || Ext.emptyFn()
+//			});
 		},
 
 		/**
@@ -103,7 +114,7 @@
 		/**
 		 * @return {Ext.data.Store}
 		 */
-		getSectionsStore: function() {
+		getSectionsStore: function() { // TODO non è necessario fare uno store ma una chiamata normale
 			return Ext.create('Ext.data.Store', {
 				fields: [CMDBuild.core.proxy.CMProxyConstants.NAME, CMDBuild.core.proxy.CMProxyConstants.VALUE],
 				data: [
