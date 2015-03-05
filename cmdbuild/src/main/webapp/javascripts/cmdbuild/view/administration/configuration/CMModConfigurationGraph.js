@@ -2,7 +2,7 @@
 	var tr = CMDBuild.Translation.administration.setup.graph;
 
 	Ext.define("CMDBuild.view.administration.configuration.CMModConfigurationGraph", {
-		extend: "CMDBuild.view.administration.configuration.CMBaseModConfiguration",
+		extend: "CMDBuild.view.administration.configuration.BasePanel",
 		title: tr.title,
 		configFileName: 'graph',
 

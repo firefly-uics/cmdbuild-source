@@ -1,7 +1,7 @@
 (function() {
 
 	Ext.define("CMDBuild.view.administration.configuration.CMModConfigurationBIM", {
-		extend: "CMDBuild.view.administration.configuration.CMBaseModConfiguration",
+		extend: "CMDBuild.view.administration.configuration.BasePanel",
 		title: CMDBuild.Translation.bim,
 		configFileName: 'bim',
 
