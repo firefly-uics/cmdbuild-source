@@ -2,50 +2,78 @@
 
 	var tr = CMDBuild.Translation.administration.setup.server;
 
-	Ext.define("CMDBuild.view.administration.configuration.CMModConfigurationServer", {
-		extend: "CMDBuild.view.administration.configuration.CMBaseModConfiguration",
-		title: tr.title,
+	Ext.define('CMDBuild.view.administration.configuration.CMModConfigurationServer', {
+		extend: 'Ext.form.Panel',
+
+		/**
+		 * @cfg {CMDBuild.controller.administration.configuration.Server}
+		 */
+		delegate: undefined,
+
+		/**
+		 * @cfg {String}
+		 */
 		configFileName: 'server',
 
+		frame: true,
+		overflowY: 'auto',
+		title: tr.title,
+
 		initComponent: function() {
-			this.clearCacheButton = new Ext.button.Button({
-				text : tr.clear_cache
-			});
+			Ext.apply(this, {
+				items: [
+					{
+						xtype: 'fieldset',
+						title: tr.cache_management,
+						padding: '5',
 
-			this.clearProcesses = new Ext.button.Button({
-				text : tr.servicesync
-			});
+						items: [
+							Ext.create('Ext.button.Button', {
+								text: tr.clear_cache,
+								scope: this,
 
-			this.unlockAllCards = new Ext.button.Button({
-				text : CMDBuild.Translation.unlock_all_cards
-			});
+								handler: function() {
+									this.delegate.cmOn('onConfigurationServerClearCacheButtonClick');
+								}
+							})
+						]
+					},
+					{
+						xtype: 'fieldset',
+						title: tr.servicesync,
+						padding: '5',
 
-			this.items = [{
-				xtype : 'fieldset',
-				title : tr.cache_management,
-				items : [this.clearCacheButton],
-				padding: "5"
-			}, {
-				xtype : 'fieldset',
-				title : tr.servicesync,
-				layout : 'column',
-				items : [this.clearProcesses],
-				padding: "5"
-			}, {
-				xtype : 'fieldset',
-				title : CMDBuild.Translation.lockCardsInEdit,
-				layout : 'column',
-				items : [this.unlockAllCards],
-				padding: "5"
-			}
-		];
+						items: [
+							Ext.create('Ext.button.Button', {
+								text: tr.servicesync,
+								scope: this,
+
+								handler: function() {
+									this.delegate.cmOn('onConfigurationServerServiceSynchButtonClick');
+								}
+							})
+						]
+					},
+					{
+						xtype: 'fieldset',
+						title: CMDBuild.Translation.lockCardsInEdit,
+						padding: '5',
+
+						items: [
+							Ext.create('Ext.button.Button', {
+								text: CMDBuild.Translation.unlock_all_cards,
+								scope: this,
+
+								handler: function() {
+									this.delegate.cmOn('onConfigurationServerUnlockCardsButtonClick');
+								}
+							})
+						]
+					}
+				]
+			});
 
 			this.callParent(arguments);
-		},
-
-		buildButtons: function() {
-			this.callParent(arguments);
-			this.buttons = [];
 		}
 	});
 

@@ -1,6 +1,6 @@
 (function() {
 
-	Ext.define('CMDBuild.view.administration.configuration.CMBaseModConfiguration', {
+	Ext.define('CMDBuild.view.administration.configuration.BasePanel', {
 		extend: 'Ext.form.Panel',
 
 		/**
@@ -46,15 +46,6 @@
 			});
 
 			this.callParent(arguments);
-		},
-
-//		getValues: function() {
-//			return this.getForm().getValues();
-//		},
-
-		populateForm: function(configurationOptions) {
-			this.valuesFromServer = configurationOptions.data;
-			this.getForm().setValues(this.valuesFromServer);
 		},
 
 		/**

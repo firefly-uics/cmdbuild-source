@@ -2,7 +2,7 @@
 	var tr = CMDBuild.Translation.administration.setup.dms;
 
 	Ext.define("CMDBuild.view.administration.configuration.CMModConfigurationAlfresco", {
-		extend: "CMDBuild.view.administration.configuration.CMBaseModConfiguration",
+		extend: "CMDBuild.view.administration.configuration.BasePanel",
 		title: tr.title,
 		configFileName: 'dms',
 

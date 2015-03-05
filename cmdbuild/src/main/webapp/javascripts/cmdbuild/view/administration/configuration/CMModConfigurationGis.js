@@ -2,7 +2,7 @@
 	var tr = CMDBuild.Translation.administration.setup.gis;
 
 	Ext.define("CMDBuild.view.administration.configuration.CMModConfigurationGis", {
-		extend: "CMDBuild.view.administration.configuration.CMBaseModConfiguration",
+		extend: "CMDBuild.view.administration.configuration.BasePanel",
 		title: tr.title,
 		alias: "widget.configuregis",
 		configFileName: 'gis',
@@ -42,11 +42,6 @@
 			this.navigationTreeName */
 		];
 
-			this.callParent(arguments);
-		},
-
-		//override
-		populateForm: function(configurationOptions) {
 			this.callParent(arguments);
 		},
 

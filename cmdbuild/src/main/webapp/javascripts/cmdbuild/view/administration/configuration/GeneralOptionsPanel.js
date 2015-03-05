@@ -1,7 +1,7 @@
 (function() {
 
 	Ext.define('CMDBuild.view.administration.configuration.GeneralOptionsPanel', {
-		extend: 'CMDBuild.view.administration.configuration.CMBaseModConfiguration',
+		extend: 'CMDBuild.view.administration.configuration.BasePanel',
 
 		requires: [
 			'CMDBuild.core.proxy.CMProxyConstants',
