@@ -1,7 +1,5 @@
 (function() {
 
-	Ext.require('CMDBuild.model.DataView');
-
 	_CMProxy.dataView = {
 
 		/**
