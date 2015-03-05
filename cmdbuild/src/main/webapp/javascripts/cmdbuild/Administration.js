@@ -66,7 +66,7 @@
 										cls: 'empty_panel x-panel-body'
 									}),
 									Ext.create('CMDBuild.view.administration.configuration.GeneralOptionsPanel', {
-										cmControllerType: controllerNS.administration.configuration.CMModConfigurationController,
+										cmControllerType: 'CMDBuild.controller.administration.configuration.Main',
 										cmName: 'modsetupcmdbuild'
 									}),
 									new CMDBuild.view.administration.filter.CMGroupFilterPanel({
@@ -91,10 +91,6 @@
 									dataViewAccordion = new CMDBuild.view.administration.accordion.CMDataViewAccordion();
 
 									panels = panels.concat([
-										new CMDBuild.view.administration.configuration.CMModConfigurationBIM({
-											cmControllerType : controllerNS.administration.configuration.CMModConfigurationController,
-											cmName : 'modsetupbim'
-										}),
 										new CMDBuild.view.administration.dataview.CMSqlDataView({
 											cmControllerType: controllerNS.administration.dataview.CMSqlDataViewController,
 											cmName: 'sqldataview'
@@ -104,19 +100,19 @@
 											cmName: 'filterdataview'
 										}),
 										new CMDBuild.view.administration.configuration.CMModConfigurationGis({
-											cmControllerType: controllerNS.administration.configuration.CMModConfigurationController,
+											cmControllerType: 'CMDBuild.controller.administration.configuration.Main',
 											cmName: 'modsetupgis'
 										}),
 										new CMDBuild.view.administration.configuration.CMModConfigurationGraph({
-											cmControllerType: controllerNS.administration.configuration.CMModConfigurationController,
+											cmControllerType: 'CMDBuild.controller.administration.configuration.Main',
 											cmName: 'modsetupgraph'
 										}),
 										new CMDBuild.view.administration.configuration.CMModConfigurationAlfresco({
-											cmControllerType: controllerNS.administration.configuration.CMModConfigurationController,
+											cmControllerType: 'CMDBuild.controller.administration.configuration.Main',
 											cmName: 'modsetupalfresco'
 										}),
 										new CMDBuild.view.administration.configuration.CMModConfigurationWorkflow({
-											cmControllerType: controllerNS.administration.configuration.CMModConfigurationController,
+											cmControllerType: 'CMDBuild.controller.administration.configuration.Main',
 											cmName: 'modsetupworkflow'
 										}),
 										new CMDBuild.view.administration.configuration.CMModConfigurationServer({
@@ -140,7 +136,7 @@
 											cmName: 'tasks'
 										}),
 										new CMDBuild.view.administration.configuration.CMModConfigurationBIM({
-											cmControllerType: controllerNS.administration.configuration.CMModConfigurationController,
+											cmControllerType: 'CMDBuild.controller.administration.configuration.Main',
 											cmName: 'modsetupbim'
 										})
 									]);

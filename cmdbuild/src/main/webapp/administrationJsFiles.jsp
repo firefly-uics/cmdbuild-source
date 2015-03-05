@@ -170,7 +170,6 @@
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/user/CMModUserController.js"></script>
 
 	<!-- CONFIGURATION -->
-	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/configuration/CMModConfigurationController.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/configuration/CMModConfigurationServerController.js"></script>
 
 	<!-- LOOKUP -->

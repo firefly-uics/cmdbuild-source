@@ -1,51 +1,71 @@
 (function() {
-	var buttonTr = CMDBuild.Translation.common.buttons;
 
-	Ext.define("CMDBuild.view.administration.configuration.CMBaseModConfiguration", {
-		extend: "Ext.form.Panel",
+	Ext.define('CMDBuild.view.administration.configuration.CMBaseModConfiguration', {
+		extend: 'Ext.form.Panel',
 
-		constructor: function() {
+		/**
+		 * @cfg {CMDBuild.controller.administration.configuration.Main}
+		 */
+		delegate: undefined,
 
-			this.buildButtons();
-			this.frame = true;
-			this.overflowY = "auto";
-			this.fieldDefaults = {
-				labelAlign: 'left',
-				labelWidth: CMDBuild.CFG_LABEL_WIDTH,
-				width: CMDBuild.CFG_MEDIUM_FIELD_WIDTH
-			};
+		/**
+		 * @cfg {String}
+		 *
+		 * @abstract
+		 */
+		configFileName: undefined,
+
+		buttonAlign: 'center',
+		frame: true,
+		overflowY: 'auto',
+
+		fieldDefaults: {
+			labelAlign: 'left',
+			labelWidth: CMDBuild.CFG_LABEL_WIDTH,
+			width: CMDBuild.CFG_MEDIUM_FIELD_WIDTH
+		},
+
+		initComponent: function() {
+			Ext.apply(this, {
+				buttons: [
+					Ext.create('CMDBuild.buttons.SaveButton', {
+						scope: this,
+
+						handler: function() {
+							this.delegate.cmOn('onConfigurationSaveButtonClick');
+						}
+					}),
+					Ext.create('CMDBuild.buttons.AbortButton', {
+						scope: this,
+
+						handler: function() {
+							this.delegate.cmOn('onConfigurationAbortButtonClick');
+						}
+					})
+				]
+			});
 
 			this.callParent(arguments);
 		},
 
-		getValues: function() {
-			return this.getForm().getValues();
-		},
+//		getValues: function() {
+//			return this.getForm().getValues();
+//		},
 
 		populateForm: function(configurationOptions) {
 			this.valuesFromServer = configurationOptions.data;
 			this.getForm().setValues(this.valuesFromServer);
 		},
 
-		buildButtons: function() {
-			this.saveButton = new Ext.Button({
-				text: buttonTr.save
-			});
-
-			this.abortButton = new Ext.Button({
-				text: buttonTr.abort
-			});
-
-			this.buttonAlign = "center";
-			this.buttons = [this.saveButton, this.abortButton];
-		},
-
 		/**
-		 * Template method called in the
-		 * callbak function of the form submit
+		 * Template method called in the callbak function of the form submit
+		 *
+		 * @param {Object} saveDataObject
+		 *
+		 * TODO: move to controller
 		 **/
-		afterSubmit: function() {
-			_debug("before submit of the templateModSetup");
+		afterSubmit: function(saveDataObject) {
+			_debug('Before submit of the templateModSetup');
 		}
 	});
 
