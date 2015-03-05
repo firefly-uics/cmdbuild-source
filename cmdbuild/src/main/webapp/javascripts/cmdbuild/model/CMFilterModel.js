@@ -3,6 +3,8 @@
 	Ext.define('CMDBuild.model.CMFilterModel', {
 		extend: 'Ext.data.Model',
 
+		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+
 		fields: [
 			{ name: CMDBuild.core.proxy.CMProxyConstants.ID, type: 'string' },
 			{ name: CMDBuild.core.proxy.CMProxyConstants.NAME, type: 'string' },
