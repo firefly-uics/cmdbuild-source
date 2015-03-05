@@ -32,8 +32,12 @@
 				]
 			});
 
-			this.importPanel = Ext.create('CMDBuild.view.administration.localizations.panels.ImportPanel');
-			this.exportPanel = Ext.create('CMDBuild.view.administration.localizations.panels.ExportPanel');
+			this.importPanel = Ext.create('CMDBuild.view.administration.localizations.panels.ImportPanel', {
+				delegate: this.delegate
+			});
+			this.exportPanel = Ext.create('CMDBuild.view.administration.localizations.panels.ExportPanel', {
+				delegate: this.delegate
+			});
 
 			this.importExportFieldset = Ext.create('Ext.form.FieldSet', {
 				title: '@@ Import/Export',

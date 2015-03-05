@@ -18,30 +18,17 @@
 		view: undefined,
 
 		/**
-		 * @param {CMDBuild.view.administration.localizations.AdvancedTranslationsPanel} view
+		 * @param {Object} configObject
+		 * @param {CMDBuild.controller.administration.localizations.Main} configObject.parentDelegate
 		 *
 		 * @override
 		 */
-		constructor: function(view) {
-			this.callParent(arguments);
+		constructor: function(configObject) {
+			Ext.apply(this, configObject); // Apply config
 
-			// Handlers exchange and controller setup
-			this.view = view;
-			this.view.delegate = this;
-			this.view.importPanel.delegate = this;
-			this.view.exportPanel.delegate = this;
-		},
-
-		/**
-		 * Parent controller/view setup
-		 *
-		 * @override
-		 */
-		onViewOnFront: function() {
-			this.parentDelegate.view.delegate = this;
-			this.parentDelegate.setViewTitle('@@ Advanced translations');
-
-			this.callParent(arguments);
+			this.view = Ext.create('CMDBuild.view.administration.localizations.AdvancedTranslationsPanel', {
+				delegate: this
+			});
 		},
 
 		/**
@@ -70,6 +57,13 @@
 						return this.parentDelegate.cmOn(name, param, callBack);
 				}
 			}
+		},
+
+		/**
+		 * @return {CMDBuild.view.administration.localizations.AdvancedTranslationsPanel}
+		 */
+		getView: function() {
+			return this.view;
 		},
 
 		onAbortButtonClick: function() {
