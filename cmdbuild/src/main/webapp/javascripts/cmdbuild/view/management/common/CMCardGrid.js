@@ -2,39 +2,39 @@
 
 	Ext.define("CMDBuild.view.management.common.CMCardGridDelegate", {
 		/**
-		 * 
+		 *
 		 * @param {CMDBuild.view.management.common.CMCardGrid} grid
 		 * @param {Ext.data.Model} record
 		 */
 		onCMCardGridSelect: function(grid, record) {},
 
 		/**
-		 * 
+		 *
 		 * @param {CMDBuild.view.management.common.CMCardGrid} grid
 		 * @param {Ext.data.Model} record
 		 */
 		onCMCardGridDeselect: function(grid, record) {},
 
 		/**
-		 * 
+		 *
 		 * @param {CMDBuild.view.management.common.CMCardGrid} grid
 		 */
 		onCMCardGridBeforeLoad: function(grid) {},
 
 		/**
-		 * 
+		 *
 		 * @param {CMDBuild.view.management.common.CMCardGrid} grid
 		 */
 		onCMCardGridLoad: function(grid) {},
 
 		/**
-		 * 
+		 *
 		 * @param {CMDBuild.view.management.common.CMCardGrid} grid
 		 */
 		onCMCardGridColumnsReconfigured: function(grid) {},
 
 		/**
-		 * 
+		 *
 		 * @param {CMDBuild.view.management.common.CMCardGrid} grid
 		 */
 		onCMCardGridIconRowClick: function(grid, action, model) {}
@@ -77,7 +77,7 @@
 		skipSelectFirst: false,
 		cmStoreUrl: 'services/json/management/modcard/getcardlist',
 		cmPaginate: true, // to say if build or not a paging bar, default true
-		cmBasicFilter: true, // to add a basic search-field to the paging bar 
+		cmBasicFilter: true, // to add a basic search-field to the paging bar
 		cmAdvancedFilter: true, // to add a button to set an advanced filter
 		cmAddGraphColumn: true, // to say if build or not a column to open the mystical graph window, default true
 		cmAddPrintButton: true, // to add a button to set an chose the print format
@@ -237,7 +237,7 @@
 
 			return visibleColumns;
 		},
-		
+
 		// protected
 		setColumnsForClass: function(classAttributes) {
 			var columns = this.buildColumnsForAttributes(classAttributes);
@@ -315,13 +315,13 @@
 				var attribute = attributes[i];
 				var sorter = {};
 				/*
-				 * 
+				 *
 				 * After some trouble I understood that
 				 * classOrderSign is:
 				 * 1 if the direction is ASC
 				 * 0 if the attribute is not used for the sorting
 				 * -1 if the direction is DESC
-				 * 
+				 *
 				 * the absoluteClassOrder is the
 				 * index of the sorting criteria
 				 */
@@ -350,27 +350,21 @@
 
 		// protected
 		addRendererToHeader: function(h) {
-			var me = this;
 			h.renderer = function(value, metadata, record, rowIndex, colIndex, store, view) {
 				value = value || record.get(h.dataIndex);
-				if (typeof value == "undefined" 
-					|| value == null) {
 
-					return "";
-				}
-
-				if (typeof value == "object") {
-					/*
-					 * Some values (like reference or lookup) are
-					 * serialized as object {id: "", description:""}.
+				if (typeof value == 'undefined' || value == null) {
+					return '';
+				} else if (typeof value == 'object') {
+					/**
+					 * Some values (like reference or lookup) are serialized as object {id: "", description:""}.
 					 * Here we display the description
 					 */
 					value = value.description;
-				} else if (typeof value == "boolean") {
-					/*
-					 * Localize the boolean values
-					 */
+				} else if (typeof value == 'boolean') { // Localize the boolean values
 					value = value ? Ext.MessageBox.buttonText.yes : Ext.MessageBox.buttonText.no;
+				} else if (typeof value == 'string') { // Strip HTML tags from strings in grid
+					value = Ext.util.Format.stripTags(value);
 				}
 
 				return value;
@@ -540,13 +534,13 @@
 		 if (c && c.get("tableType") != "simpletable") {
 			var graphHeader = {
 					noWrap: true,
-				header: '&nbsp', 
+				header: '&nbsp',
 				width: 30,
 				tdCls: "grid-button",
 				fixed: true,
-				sortable: false, 
-				renderer: renderGraphIcon, 
-				align: 'center', 
+				sortable: false,
+				renderer: renderGraphIcon,
+				align: 'center',
 				dataIndex: 'Id',
 				menuDisabled: true,
 				hideable: false
