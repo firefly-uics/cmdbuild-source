@@ -19,79 +19,31 @@
 		view: undefined,
 
 		/**
-		 * @param {CMDBuild.view.administration.localizations.AdvancedTranslationsPanel} view
+		 * @param {Object} configObject
+		 * @param {CMDBuild.controller.administration.localizations.Main} configObject.parentDelegate
 		 *
 		 * @override
 		 */
-		constructor: function(view) {
-			var me = this;
+		constructor: function(configObject) {
+			Ext.apply(this, configObject); // Apply config
 
-			this.callParent(arguments);
-
-			// Handlers exchange and controller setup
-			this.view = view;
-			this.view.delegate = this;
+			this.view = Ext.create('CMDBuild.view.administration.localizations.AdvancedTranslationsTablePanel', {
+				delegate: this
+			});
 
 			// Build tabs
-			CMDBuild.core.proxy.Localizations.getSectionsStore().each(function(record, id) {
+			CMDBuild.core.proxy.Localizations.getSectionsStore().each(function(record, id) { // TODO implementare la funzionalità con la creazione del pannello dinamica sull'onSuccess
 				this.view.add(
 					Ext.create('Ext.panel.Panel', {
 						title: record.get(CMDBuild.core.proxy.CMProxyConstants.NAME),
-						translationValue: record.get(CMDBuild.core.proxy.CMProxyConstants.VALUE), // TODO
+						translationValue: record.get(CMDBuild.core.proxy.CMProxyConstants.VALUE), // TODO "id" sezione traduzioni
 						bodyCls: 'cmgraypanel',
 
 						layout: 'fit',
 
-						// TODO: dynamic setup of AdvancedTranslationsTableGrid columns and store
-						items: [
+						items: [ // TODO: dynamic setup of AdvancedTranslationsTableGrid columns and store
 							Ext.create('CMDBuild.view.administration.localizations.panels.AdvancedTranslationsTableGrid', {
-								columns: [
-									{
-										xtype: 'treecolumn',
-										text: '@@ Translation object',
-										dataIndex: 'task',
-										width: 300,
-										locked: true, // TODO
-										sortable: false
-									},
-									{
-										text: '@@ Default',
-										dataIndex: 'duration',
-										width: 300,
-										sortable: false
-									},
-									{
-										text: 'Assigned To',
-										dataIndex: 'user',
-										width: 300,
-										sortable: false
-									},
-									{
-										text: '<img style="margin: 0px 5px 0px 0px;" src="images/icons/flags/en.png" alt="Language icon" /> @@ defaultTranslation',
-										dataIndex: '@@ defaultTranslation',
-										width: 300,
-										sortable: false
-									},
-									{
-										text: '<img style="margin: 0px 5px 0px 0px;" src="images/icons/flags/en.png" alt="Language icon" /> @@ langTag1',
-										dataIndex: '@@ langTag1',
-										width: 300,
-										sortable: false
-									},
-									{
-										text: '<img style="margin: 0px 5px 0px 0px;" src="images/icons/flags/en.png" alt="Language icon" /> @@ langTag2',
-										dataIndex: '@@ langTag2',
-										width: 300,
-										sortable: false
-									},
-									{
-										text: '<img style="margin: 0px 5px 0px 0px;" src="images/icons/flags/en.png" alt="Language icon" /> @@ langTag3',
-										dataIndex: '@@ langTag3',
-										width: 300,
-										sortable: false
-									}
-								],
-								store: CMDBuild.core.proxy.Localizations.getSectionTranslationsStore()
+								sectionId: record.get(CMDBuild.core.proxy.CMProxyConstants.VALUE) // TODO parametro di configurazione per indicare l'id della sezione
 							})
 						]
 					})
@@ -99,18 +51,6 @@
 			}, this);
 
 			this.view.setActiveTab(0);
-		},
-
-		/**
-		 * Parent controller/view setup
-		 *
-		 * @override
-		 */
-		onViewOnFront: function() {
-			this.parentDelegate.view.delegate = this;
-			this.parentDelegate.setViewTitle('@@ Base translations table');
-
-			this.callParent(arguments);
 		},
 
 		/**
@@ -133,6 +73,13 @@
 						return this.parentDelegate.cmOn(name, param, callBack);
 				}
 			}
+		},
+
+		/**
+		 * @return {CMDBuild.view.administration.localizations.AdvancedTranslationsTablePanel}
+		 */
+		getView: function() {
+			return this.view;
 		},
 
 		onAbortButtonClick: function() {
