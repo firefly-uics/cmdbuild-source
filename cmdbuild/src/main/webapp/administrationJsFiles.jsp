@@ -98,7 +98,6 @@
 	<!-- CONFIGURATION -->
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/configuration/CMBaseModConfiguration.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/accordion/CMConfigurationAccordion.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/configuration/CMModConfigurationGenericOption.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/configuration/CMModConfigurationGis.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/configuration/CMModConfigurationGraph.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/configuration/CMModConfigurationAlfresco.js"></script>

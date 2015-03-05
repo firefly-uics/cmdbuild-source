@@ -5,12 +5,12 @@
 		extend: "CMDBuild.view.administration.configuration.CMBaseModConfiguration",
 		title: tr.title,
 		configFileName: 'server',
-		
+
 		constructor: function() {
 			this.clearCacheButton = new Ext.button.Button({
 				text : tr.clear_cache
 			});
-		
+
 			this.clearProcesses = new Ext.button.Button({
 				text : tr.servicesync
 			});
@@ -32,7 +32,7 @@
 				padding: "5"
 			}, {
 				xtype : 'fieldset',
-				title : CMDBuild.Translation.lock_cards_in_edit,
+				title : CMDBuild.Translation.lockCardsInEdit,
 				layout : 'column',
 				items : [this.unlockAllCards],
 				padding: "5"

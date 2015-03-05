@@ -5,7 +5,7 @@
 	Ext.define('CMDBuild.view.administration.accordion.CMConfigurationAccordion', {
 		extend: 'CMDBuild.view.common.CMBaseAccordion',
 
-		title: tr.setupTitle,
+		title: CMDBuild.Translation.setup,
 		cmName: 'setup',
 		hideMode: 'offsets',
 
@@ -19,7 +19,7 @@
 			root.removeAll();
 
 			var children = [{
-				text: tr.cmdbuild.menuTitle,
+				text: CMDBuild.Translation.generalOptions,
 				leaf: true,
 				cmName: 'modsetupcmdbuild'
 			}];

@@ -1,11 +1,7 @@
 (function() {
 
-	var tr = CMDBuild.Translation.administration.setup.cmdbuild;
-
-	Ext.define('CMDBuild.view.administration.configuration.CMModConfigurationGenericOption', {
+	Ext.define('CMDBuild.view.administration.configuration.GeneralOptionsPanel', {
 		extend: 'CMDBuild.view.administration.configuration.CMBaseModConfiguration',
-
-		alias: 'widget.configuregenericoptions',
 
 		configFileName: 'cmdbuild',
 
@@ -14,11 +10,16 @@
 			'CMDBuild.core.proxy.Configuration'
 		],
 
-		title: tr.title,
+		/**
+		 * @property {Ext.form.CMTranslatableText}
+		 */
+		instanceNameField: undefined,
+
+		title: CMDBuild.Translation.setup + ' - ' + CMDBuild.Translation.generalOptions,
 
 		constructor: function() {
 			this.instanceNameField = Ext.create('Ext.form.CMTranslatableText', {
-				fieldLabel: tr.instancename,
+				fieldLabel: CMDBuild.Translation.instanceName,
 				name: 'instance_name',
 				allowBlank: true,
 				// This configuration is on the parent but for this special field is repeated here
@@ -33,13 +34,13 @@
 				items: [
 					{
 						xtype: 'fieldset',
-						title: tr.fieldsetgeneraltitle,
+						title: CMDBuild.Translation.general,
 
 						items: [
 							this.instanceNameField,
 							Ext.create('CMDBuild.field.ErasableCombo', {
 								name: 'startingclass',
-								fieldLabel: tr.startingClass,
+								fieldLabel: CMDBuild.Translation.defaultClass,
 								valueField: CMDBuild.core.proxy.CMProxyConstants.ID,
 								displayField: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
 								editable: false,
@@ -50,25 +51,25 @@
 							{
 								xtype: 'numberfield',
 								name: 'rowlimit',
-								fieldLabel: tr.rowlimit,
+								fieldLabel: CMDBuild.Translation.rowLimit,
 								allowBlank: false
 							},
 							{
 								xtype: 'numberfield',
 								name: 'referencecombolimit',
-								fieldLabel: tr.referencecombolimit,
+								fieldLabel: CMDBuild.Translation.referenceComboLimit,
 								allowBlank: false
 							},
 							{
 								xtype: 'numberfield',
 								name: 'relationlimit',
-								fieldLabel: tr.relationlimit,
+								fieldLabel: CMDBuild.Translation.relationLimit,
 								allowBlank: false
 							},
 							{
 								xtype: 'numberfield',
 								name: 'grid_card_ratio',
-								fieldLabel: tr.cardpanelheight,
+								fieldLabel: CMDBuild.Translation.cardPanelHeight,
 								allowBlank: false,
 								maxValue: 100,
 								minValue: 0
@@ -76,7 +77,7 @@
 							{
 								xtype: 'combobox',
 								name: 'card_tab_position',
-								fieldLabel: tr.tabs_position.label,
+								fieldLabel: CMDBuild.Translation.tabPositioInCardPanel,
 								allowBlank: false,
 								displayField: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
 								valueField: CMDBuild.core.proxy.CMProxyConstants.VALUE,
@@ -86,11 +87,11 @@
 									data: [
 										{
 											value: 'top',
-											description: tr.tabs_position.top
+											description: CMDBuild.Translation.top
 										},
 										{
 											value: 'bottom',
-											description: tr.tabs_position.bottom
+											description: CMDBuild.Translation.bottom
 										}
 									]
 								}),
@@ -99,7 +100,7 @@
 							{
 								xtype: 'numberfield',
 								name: 'session.timeout',
-								fieldLabel: tr.sessiontimeout,
+								fieldLabel: CMDBuild.Translation.sessionTimeout,
 								allowBlank: true,
 								minValue: 0
 							}
@@ -107,20 +108,20 @@
 					},
 					{
 						xtype: 'fieldset',
-						title: tr.fieldsetpopupwindowtitle,
+						title: CMDBuild.Translation.popupWindows,
 
 						items: [
 							{
 								xtype: 'numberfield',
 								name: 'popuppercentageheight',
-								fieldLabel: tr.popupheightlabel,
+								fieldLabel: CMDBuild.Translation.popupPercentageHeight,
 								maxValue: 100,
 								allowBlank: false
 							},
 							{
 								xtype: 'numberfield',
 								name: 'popuppercentagewidth',
-								fieldLabel: tr.popupwidthlabel,
+								fieldLabel: CMDBuild.Translation.popupPercentageWidth,
 								maxValue: 100,
 								allowBlank: false
 							}
@@ -128,7 +129,7 @@
 					},
 					{
 						xtype: 'fieldset',
-						title: CMDBuild.Translation.lock_cards_in_edit,
+						title: CMDBuild.Translation.lockCardsInEdit,
 
 						items: [
 							{
@@ -139,12 +140,12 @@
 							{
 								xtype: 'xcheckbox',
 								name: 'lockcarduservisible',
-								fieldLabel: CMDBuild.Translation.show_name_of_locker_user
+								fieldLabel: CMDBuild.Translation.showLockerUserName
 							},
 							{
 								xtype: 'numberfield',
 								name: 'lockcardtimeout',
-								fieldLabel: CMDBuild.Translation.lock_timeout
+								fieldLabel: CMDBuild.Translation.lockTimeout
 							}
 						]
 					}
