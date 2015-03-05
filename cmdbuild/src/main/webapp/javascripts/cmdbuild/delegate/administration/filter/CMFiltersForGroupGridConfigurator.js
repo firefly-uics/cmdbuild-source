@@ -6,7 +6,7 @@ Ext.define("CMDBuild.delegate.administration.common.group.CMFiltersForGroupGridC
 	 */
 	getStore: function() {
 		if (this.store == null) {
-			this.store = _CMProxy.Filter.newGroupStore();
+			this.store = CMDBuild.core.proxy.Filter.newGroupStore();
 		}
 
 		return this.store;
