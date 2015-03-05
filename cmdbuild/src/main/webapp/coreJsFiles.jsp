@@ -52,7 +52,6 @@
 <script type="text/javascript" src="javascripts/cmdbuild/model/CMGroupModels.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/model/CMDashboardModels.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/model/CMAttachmentModels.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/model/CMDataViewModel.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/model/Report.js"></script>
 
 <!-- SELECTION -->
