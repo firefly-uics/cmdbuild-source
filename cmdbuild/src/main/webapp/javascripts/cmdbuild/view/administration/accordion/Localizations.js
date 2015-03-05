@@ -21,21 +21,21 @@
 					id: 'baseTranslations',
 					cmName: 'localizations',
 					leaf: true,
-					text: '@@ Base translations',
+					text: '@@ Base',
 					iconCls: 'cmdbuild-tree-localization-icon'
 				},
 				{
 					id: 'advancedTranslations',
 					cmName: 'localizations',
 					leaf: true,
-					text: '@@ Advanced translations',
+					text: '@@ Advanced',
 					iconCls: 'cmdbuild-tree-localization-icon'
 				},
 				{
 					id: 'advancedTranslationsTable',
 					cmName: 'localizations',
 					leaf: true,
-					text: '@@ Advanced translations table',
+					text: '@@ Advanced table',
 					iconCls: 'cmdbuild-tree-localization-icon'
 				},
 			]);

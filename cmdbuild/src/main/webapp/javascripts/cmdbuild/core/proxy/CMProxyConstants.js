@@ -218,6 +218,7 @@
 		SUBJECT: 'subject',
 		TABLE: 'table',
 		TABLE_TYPE: 'tableType',
+		TAG: 'tag',
 		TARGET_CLASS: 'targetClass',
 		TEMPLATE: 'template',
 		TEMPLATES: 'templates',
