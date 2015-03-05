@@ -5,8 +5,8 @@
 		extend: "CMDBuild.view.administration.configuration.CMBaseModConfiguration",
 		title: tr.title,
 		configFileName: 'graph',
-		
-		constructor: function() {
+
+		initComponent: function() {
 			this.items = [{
 				xtype: 'xcheckbox',
 				name: 'enabled',

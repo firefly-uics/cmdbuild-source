@@ -6,7 +6,7 @@
 		title: tr.title,
 		configFileName: 'dms',
 
-		constructor: function() {
+		initComponent: function() {
 			this.items = [{
 				xtype : 'fieldset',
 				title : tr.general,
@@ -68,13 +68,13 @@
 					allowBlank : false,
 					name : 'repository.fspath',
 					width: CMDBuild.CFG_BIG_FIELD_WIDTH
-				}, 
+				},
 				{
 					fieldLabel : tr.repositoryWSPath,
 					allowBlank : false,
 					name : 'repository.wspath',
 					width: CMDBuild.CFG_BIG_FIELD_WIDTH
-				}, 
+				},
 				{
 					fieldLabel : tr.repositoryApp,
 					allowBlank : false,

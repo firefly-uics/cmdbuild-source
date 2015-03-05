@@ -6,14 +6,14 @@
 		title: tr.title,
 		alias: "widget.configuregis",
 		configFileName: 'gis',
-		
-		constructor: function() {
-/*	This part was begun for the unification of the Gis navigation tree with the other navigation tree and is suspended 
+
+		initComponent: function() {
+/*	This part was begun for the unification of the Gis navigation tree with the other navigation tree and is suspended
  * 	for the imminent release of the CMDBuild 2.2 version
  * 			var navigationTreesStore = buildNavigationTreesStore();
 			this.navigationTreeName = new Ext.form.field.ComboBox({
 				name: "navigationTreeName",
-				fieldLabel: CMDBuild.Translation.tree_navigation, 
+				fieldLabel: CMDBuild.Translation.tree_navigation,
 				valueField: 'name',
 				displayField: 'description',
 				store: navigationTreesStore
@@ -44,7 +44,7 @@
 
 			this.callParent(arguments);
 		},
-		
+
 		//override
 		populateForm: function(configurationOptions) {
 			this.callParent(arguments);
@@ -53,7 +53,7 @@
 		afterSubmit: function(conf) {
 			CMDBuild.Config.gis = Ext.apply(CMDBuild.Config.gis, conf);
 			CMDBuild.Config.gis.enabled = ('true' == CMDBuild.Config.gis.enabled);
-			
+
 			if (CMDBuild.Config.gis.enabled) {
 				_CMMainViewportController.enableAccordionByName("gis");
 			} else {
@@ -61,15 +61,15 @@
 			}
 		}
 	});
-/*	This part was begun for the unification of the Gis navigation tree with the other navigation tree and is suspended 
+/*	This part was begun for the unification of the Gis navigation tree with the other navigation tree and is suspended
  * 	for the imminent release of the CMDBuild 2.2 version
- * 
+ *
  * 	function buildNavigationTreesStore() {
 		_CMCache.listNavigationTrees({
 			success: function() {
 				var navigationTrees = _CMCache.getNavigationTrees();
 				var data = [];
-				
+
 				for (var i = 0; i < navigationTrees.data.length; i++) {
 					var obj = navigationTrees.data[i];
 					data.push({
@@ -90,7 +90,7 @@
 				return navigationTrees;
 			}
 		});
-		
+
 	}
 */
 })();

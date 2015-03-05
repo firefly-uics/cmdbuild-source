@@ -3,12 +3,20 @@
 	Ext.define('CMDBuild.view.administration.configuration.GeneralOptionsPanel', {
 		extend: 'CMDBuild.view.administration.configuration.CMBaseModConfiguration',
 
-		configFileName: 'cmdbuild',
-
 		requires: [
 			'CMDBuild.core.proxy.CMProxyConstants',
 			'CMDBuild.core.proxy.Configuration'
 		],
+
+		/**
+		 * @cfg {CMDBuild.controller.administration.configuration.Main}
+		 */
+		delegate: undefined,
+
+		/**
+		 * @cfg {String}
+		 */
+		configFileName: 'cmdbuild',
 
 		/**
 		 * @property {Ext.form.CMTranslatableText}
@@ -17,7 +25,7 @@
 
 		title: CMDBuild.Translation.setup + ' - ' + CMDBuild.Translation.generalOptions,
 
-		constructor: function() {
+		initComponent: function() {
 			this.instanceNameField = Ext.create('Ext.form.CMTranslatableText', {
 				fieldLabel: CMDBuild.Translation.instanceName,
 				name: 'instance_name',
@@ -156,12 +164,12 @@
 		},
 
 		/**
+		 * @param {Object} saveDataObject
+		 *
 		 * @override
 		 */
-		afterSubmit: function() {
-			var hdInstanceName = Ext.get('instance_name');
-
-			hdInstanceName.dom.innerHTML = this.instanceNameField.getValue();
+		afterSubmit: function(saveDataObject) {
+			Ext.get('instance_name').dom.innerHTML = saveDataObject['instance_name'];
 		}
 	});
 

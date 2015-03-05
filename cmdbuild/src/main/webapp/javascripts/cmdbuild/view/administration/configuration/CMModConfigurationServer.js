@@ -1,4 +1,5 @@
 (function() {
+
 	var tr = CMDBuild.Translation.administration.setup.server;
 
 	Ext.define("CMDBuild.view.administration.configuration.CMModConfigurationServer", {
@@ -6,7 +7,7 @@
 		title: tr.title,
 		configFileName: 'server',
 
-		constructor: function() {
+		initComponent: function() {
 			this.clearCacheButton = new Ext.button.Button({
 				text : tr.clear_cache
 			});
@@ -47,4 +48,5 @@
 			this.buttons = [];
 		}
 	});
+
 })();
