@@ -65,6 +65,10 @@
 									new Ext.Panel({
 										cls: 'empty_panel x-panel-body'
 									}),
+									Ext.create('CMDBuild.view.administration.configuration.GeneralOptionsPanel', {
+										cmControllerType: controllerNS.administration.configuration.CMModConfigurationController,
+										cmName: 'modsetupcmdbuild'
+									}),
 									new CMDBuild.view.administration.filter.CMGroupFilterPanel({
 										cmControllerType: controllerNS.administration.filter.CMGroupFilterPanelController,
 										cmName: 'groupfilter'
@@ -76,10 +80,6 @@
 									new CMDBuild.bim.administration.view.CMBimLayers({
 										cmControllerType: CMDBuild.controller.administration.filter.CMBimLayerController,
 										cmName: 'bim-layers'
-									}),
-									new CMDBuild.view.administration.configuration.CMModConfigurationGenericOption({
-										cmControllerType: controllerNS.administration.configuration.CMModConfigurationController,
-										cmName: 'modsetupcmdbuild'
 									}),
 									new CMDBuild.view.common.CMUnconfiguredModPanel({
 										cmControllerType: controllerNS.common.CMUnconfiguredModPanelController,
