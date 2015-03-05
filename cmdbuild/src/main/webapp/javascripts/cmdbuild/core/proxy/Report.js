@@ -58,7 +58,11 @@
 					extraParams: {
 						type: CMDBuild.core.proxy.CMProxyConstants.CUSTOM
 					}
-				}
+				},
+				sorters: [{
+					property: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
+					direction: 'ASC'
+				}]
 			});
 		},
 
