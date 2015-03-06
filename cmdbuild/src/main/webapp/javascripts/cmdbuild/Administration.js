@@ -107,9 +107,17 @@
 											cmControllerType: 'CMDBuild.controller.administration.localizations.Main',
 											cmName: 'localizations'
 										}),
-										Ext.create('CMDBuild.view.administration.configuration.Workflow', {
+										Ext.create('CMDBuild.view.administration.configuration.WorkflowPanel', {
 											cmControllerType: 'CMDBuild.controller.administration.configuration.Main',
 											cmName: 'modsetupworkflow'
+										}),
+										Ext.create('CMDBuild.view.administration.configuration.RelationGraphPanel', {
+											cmControllerType: 'CMDBuild.controller.administration.configuration.Main',
+											cmName: 'modsetupgraph'
+										}),
+										Ext.create('CMDBuild.view.administration.configuration.Gis', {
+											cmControllerType: 'CMDBuild.controller.administration.configuration.Main',
+											cmName: 'modsetupgis'
 										}),
 										Ext.create('CMDBuild.view.administration.configuration.ServerPanel', {
 											cmControllerType: 'CMDBuild.controller.administration.configuration.Server',
@@ -122,14 +130,6 @@
 										new CMDBuild.view.administration.dataview.CMFilterDataView({
 											cmControllerType: controllerNS.administration.dataview.CMFilerDataViewController,
 											cmName: 'filterdataview'
-										}),
-										new CMDBuild.view.administration.configuration.CMModConfigurationGis({
-											cmControllerType: 'CMDBuild.controller.administration.configuration.Main',
-											cmName: 'modsetupgis'
-										}),
-										new CMDBuild.view.administration.configuration.CMModConfigurationGraph({
-											cmControllerType: 'CMDBuild.controller.administration.configuration.Main',
-											cmName: 'modsetupgraph'
 										}),
 										new CMDBuild.view.administration.configuration.CMModConfigurationAlfresco({
 											cmControllerType: 'CMDBuild.controller.administration.configuration.Main',

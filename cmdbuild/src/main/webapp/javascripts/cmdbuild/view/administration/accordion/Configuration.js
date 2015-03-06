@@ -36,7 +36,7 @@
 						cmName: 'modsetupworkflow'
 					},
 					{
-						text: tr.graph.menuTitle,
+						text: CMDBuild.Translation.relationGraph,
 						leaf: true,
 						cmName: 'modsetupgraph'
 					},
@@ -46,7 +46,7 @@
 						cmName: 'modsetupalfresco'
 					},
 					{
-						text: tr.gis.title,
+						text: CMDBuild.Translation.gis,
 						leaf: true,
 						cmName: 'modsetupgis'
 					},
