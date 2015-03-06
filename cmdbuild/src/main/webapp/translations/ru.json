@@ -599,15 +599,6 @@
 				"serverurl": "URL сервера",
 				"title": "ГИС"
 			},
-			"graph": {
-				"baseLevel": "Уровень по умолчанию",
-				"clusteringThreshold": "Лимит числа отображаемых по отдельности узлов",
-				"enabled": "Включено",
-				"expandingThreshold": "Максимальное число узлов, при котором возможно разворачивание",
-				"extensionMaximumLevel": "Максимальный уровень",
-				"menuTitle": "Отображение связей",
-				"title": "Настройка отображения связей"
-			},
 			"modify": "Редактировать",
 			"save": "Сохранить",
 			"setupTitle": "Параметры"
@@ -1420,6 +1411,7 @@
 	"csvFile": "Файл CSV",
 	"defaultAccount": "<em>Default account</em>",
 	"defaultClass": "Класс по умолчанию",
+	"defaultLevel": "Уровень по умолчанию",
 	"deleteEmail": "<em>Delete email</em>",
 	"description_": "Описание",
 	"disable": "Отключить",
@@ -1468,6 +1460,7 @@
 	"loggedGroup": "Группа",
 	"loggedUser": "Пользователь",
 	"main": "Основной",
+	"maximumLevel": "Максимальный уровень",
 	"mode": "Режим",
 	"modifyFilter": "Редактировать представление",
 	"modifyProject": "Редактировать проект",
@@ -1492,6 +1485,7 @@
 	"referenceComboLimit": "Лимит числа элементов в списках связей и перечней",
 	"reference_to_root": "Ссылка на корень",
 	"relation": "<em>Relation</em>",
+	"relationGraph": "Отображение связей",
 	"relationLimit": "Лимит числа связей",
 	"remove": "Удалить",
 	"removeFilter": "Удалить представление",
@@ -1529,6 +1523,7 @@
 	"subject": "Тема",
 	"tabPositioInCardPanel": "Положение закладок в панели карточек",
 	"targetClass": "Целевой класс",
+	"thresholdForClusteringNodes": "Лимит числа отображаемых по отдельности узлов",
 	"to": "До",
 	"top": "Сверху",
 	"translations" : "Переводы",

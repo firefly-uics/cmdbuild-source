@@ -599,15 +599,6 @@
 				"serverurl": "Server URL",
 				"title": "GIS"
 			},
-			"graph": {
-				"baseLevel": "Default level",
-				"clusteringThreshold": "Threshold for clustering nodes",
-				"enabled": "Enabled",
-				"expandingThreshold": "Max number of nodes in an expandable cluster",
-				"extensionMaximumLevel": "Maximum level",
-				"menuTitle": "Relation Graph",
-				"title": "Relation Graph Setup"
-			},
 			"modify": "Modify",
 			"save": "Save",
 			"setupTitle": "Setup"
@@ -1420,6 +1411,7 @@
 	"csvFile": "<em>CSV file</em>",
 	"defaultAccount": "<em>Default account</em>",
 	"defaultClass": "Default class",
+	"defaultLevel": "Default level",
 	"deleteEmail": "<em>Delete email</em>",
 	"description_": "توضیحات",
 	"disable": "غیر فعال",
@@ -1468,6 +1460,7 @@
 	"loggedGroup": "گروه لاگ شده",
 	"loggedUser": "کاربر لاگ شده",
 	"main": "Main",
+	"maximumLevel": "Maximum level",
 	"mode": "مد",
 	"modifyFilter": "ویرایش فیلتر",
 	"modifyProject": "ویرایش پروژه",
@@ -1492,6 +1485,7 @@
 	"referenceComboLimit": "References combobox limit",
 	"reference_to_root": "Reference to Root",
 	"relation": "<em>Relation</em>",
+	"relationGraph": "Relation Graph",
 	"relationLimit": "Relations limit",
 	"remove": "Remove",
 	"removeFilter": "حذف فیلتر",
@@ -1529,6 +1523,7 @@
 	"subject": "موضوع",
 	"tabPositioInCardPanel": "Tabs position in card panel",
 	"targetClass": "کلاس مقصد",
+	"thresholdForClusteringNodes": "Threshold for clustering nodes",
 	"to": "به",
 	"top": "بالا",
 	"translations": "ترجمه",

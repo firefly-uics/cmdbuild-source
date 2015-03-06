@@ -599,15 +599,6 @@
 				"serverurl": "Server URL",
 				"title": "GIS"
 			},
-			"graph": {
-				"baseLevel": "Default level",
-				"clusteringThreshold": "Threshold for clustering nodes",
-				"enabled": "Enabled",
-				"expandingThreshold": "Max number of nodes in an expandable cluster",
-				"extensionMaximumLevel": "Maximum level",
-				"menuTitle": "Relation Graph",
-				"title": "Relation Graph Setup"
-			},
 			"modify": "Modify",
 			"save": "Save",
 			"setupTitle": "Setup"
@@ -1420,6 +1411,7 @@
 	"csvFile": "CSV file",
 	"defaultAccount": "Default account",
 	"defaultClass": "Default class",
+	"defaultLevel": "Default level",
 	"deleteEmail": "Delete email",
 	"description_": "Description",
 	"disable": "Disable",
@@ -1468,6 +1460,7 @@
 	"loggedGroup": "Logged Group",
 	"loggedUser": "Logged User",
 	"main": "Main",
+	"maximumLevel": "Maximum level",
 	"mode": "Mode",
 	"modifyFilter": "Modify Filter",
 	"modifyProject": "Modify Project",
@@ -1492,6 +1485,7 @@
 	"referenceComboLimit": "References combobox limit",
 	"reference_to_root": "Reference to Root",
 	"relation": "Relation",
+	"relationGraph": "Relation graph",
 	"relationLimit": "Relations limit",
 	"remove": "Remove",
 	"removeFilter": "Remove Filter",
@@ -1529,6 +1523,7 @@
 	"subject": "Subject",
 	"tabPositioInCardPanel": "Tabs position in card panel",
 	"targetClass": "Target Class",
+	"thresholdForClusteringNodes": "Threshold for clustering nodes",
 	"to": "To",
 	"top": "Top",
 	"translations" : "Translations",

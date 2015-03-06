@@ -599,15 +599,6 @@
 				"serverurl": "URL máy chủ",
 				"title": "GIS"
 			},
-			"graph": {
-				"baseLevel": "Cấp độ mặc định",
-				"clusteringThreshold": "Ngưỡng cho các nốt cluster",
-				"enabled": "Được kích hoạt",
-				"expandingThreshold": "Số lượng nốt tối đa trong một cluster mở rộng",
-				"extensionMaximumLevel": "Cấp độ cao nhất",
-				"menuTitle": "Đồ thị liên quan",
-				"title": "Thiết lập đồ thị liên quan"
-			},
 			"modify": "Sửa đổi",
 			"save": "Lưu",
 			"setupTitle": "Cài đặt"
@@ -1420,6 +1411,7 @@
 	"csvFile": "Tập tin CSV",
 	"defaultAccount": "<em>Default account</em>",
 	"defaultClass": "Lớp mặc định",
+	"defaultLevel": "Cấp độ mặc định",
 	"deleteEmail": "<em>Delete email</em>",
 	"description_": "Mô tả",
 	"disable": "<em>Disable</em>",
@@ -1468,6 +1460,7 @@
 	"loggedGroup": "Đăng nhập nhóm",
 	"loggedUser": "Đăng nhập người dùng",
 	"main": "<em>Main</em>",
+	"maximumLevel": "Cấp độ cao nhất",
 	"mode": "<em>Mode</em>",
 	"modifyFilter": "Sửa đổi bộ lọc",
 	"modifyProject": "<em>Modify Project</em>",
@@ -1492,6 +1485,7 @@
 	"referenceComboLimit": "<em>References combobox limit</em>",
 	"reference_to_root": "<em>Reference to Root</em>",
 	"relation": "<em>Relation</em>",
+	"relationGraph": "Đồ thị liên quan",
 	"relationLimit": "Giới hạn các quan hệ",
 	"remove": "<em>Remove</em>",
 	"removeFilter": "Hủy bỏ bộ lọc",
@@ -1529,6 +1523,7 @@
 	"subject": "<em>Subject</em>",
 	"tabPositioInCardPanel": "Vị trí các Tab trong bảng điều khiển thẻ",
 	"targetClass": "Class mục tiêu",
+	"thresholdForClusteringNodes": "Ngưỡng cho các nốt cluster",
 	"to": "<em>To</em>",
 	"top": "<em>Top</em>",
 	"translations" : "<em>Translations</em>",

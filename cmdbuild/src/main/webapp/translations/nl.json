@@ -599,15 +599,6 @@
 				"serverurl": "Server URL",
 				"title": "GIS"
 			},
-			"graph": {
-				"baseLevel": "Standaard niveau",
-				"clusteringThreshold": "Drempelwaarde voor samenvoegen nodes",
-				"enabled": "Geaktiveerd",
-				"expandingThreshold": "Max aantal nodes in een uitbreidbaar cluster",
-				"extensionMaximumLevel": "Maximum niveau",
-				"menuTitle": "Relatie Grafiek",
-				"title": "Relatie Grafiek Configuratie"
-			},
 			"modify": "Aanpassen",
 			"save": "Bewaren",
 			"setupTitle": "Configuratie"
@@ -1420,6 +1411,7 @@
 	"csvFile": "CSV bestand",
 	"defaultAccount": "Standaard gebruiker",
 	"defaultClass": "Standaard klas",
+	"defaultLevel": "Standaard niveau",
 	"deleteEmail": "Verwijderen email",
 	"description_": "Omschrijving",
 	"disable": "Blokkeer",
@@ -1468,6 +1460,7 @@
 	"loggedGroup": "Gelogde Groep",
 	"loggedUser": "Gelogde gebruiker",
 	"main": "Hoofddeel",
+	"maximumLevel": "Maximum niveau",
 	"mode": "Mode",
 	"modifyFilter": "Bijwerken Filter",
 	"modifyProject": "Project aanpassen",
@@ -1492,6 +1485,7 @@
 	"referenceComboLimit": "Referentie keuzebox limiet",
 	"reference_to_root": "Referentie naar Root",
 	"relation": "Relatie",
+	"relationGraph": "Relatie Grafiek",
 	"relationLimit": "Relatie limiet",
 	"remove": "Verwijderen",
 	"removeFilter": "Verwijder Filter",
@@ -1529,6 +1523,7 @@
 	"subject": "Onderwerp",
 	"tabPositioInCardPanel": "Tabs positie in kaart paneel",
 	"targetClass": "Doel Klas",
+	"thresholdForClusteringNodes": "Drempelwaarde voor samenvoegen nodes",
 	"to": "Aan",
 	"top": "Top",
 	"translations" : "Vertalingen",

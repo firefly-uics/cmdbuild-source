@@ -599,15 +599,6 @@
 				"serverurl": "サーバ URL",
 				"title": "GIS"
 			},
-			"graph": {
-				"baseLevel": "既定のレベル",
-				"clusteringThreshold": "クラスタノードの閾値",
-				"enabled": "有効",
-				"expandingThreshold": "拡張クラスタノードの数の最大値",
-				"extensionMaximumLevel": "最大値",
-				"menuTitle": "リレーショングラフ",
-				"title": "リレーショングラフアップ"
-			},
 			"modify": "更新",
 			"save": "保存",
 			"setupTitle": "セットアップ"
@@ -1420,6 +1411,7 @@
 	"csvFile": "CSV ファイル",
 	"defaultAccount": "既定のアカウント",
 	"defaultClass": "既定のクラス",
+	"defaultLevel": "既定のレベル",
 	"deleteEmail": "emailを削除",
 	"description_": "説明",
 	"disable": "無効",
@@ -1468,6 +1460,7 @@
 	"loggedGroup": "ロググループ",
 	"loggedUser": "ログユーザー",
 	"main": "メイン",
+	"maximumLevel": "最大値",
 	"mode": "モード",
 	"modifyFilter": "フィルターを変更",
 	"modifyProject": "プロジェクトを変更",
@@ -1492,6 +1485,7 @@
 	"referenceComboLimit": "参照コンボボックスの制限",
 	"reference_to_root": "ルートへの参照",
 	"relation": "リレーション",
+	"relationGraph": "リレーショングラフ",
 	"relationLimit": "リレーション制限",
 	"remove": "削除",
 	"removeFilter": "ビューを削除",
@@ -1529,6 +1523,7 @@
 	"subject": "サブジェクト",
 	"tabPositioInCardPanel": "カードパネル中のタブ位置",
 	"targetClass": "ターゲットクラス",
+	"thresholdForClusteringNodes": "クラスタノードの閾値",
 	"to": "To",
 	"top": "トップ",
 	"translations" : "翻訳",

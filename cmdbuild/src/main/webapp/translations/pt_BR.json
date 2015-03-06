@@ -599,15 +599,6 @@
 				"serverurl": "URL Servidor",
 				"title": "GIS"
 			},
-			"graph": {
-				"baseLevel": "Nível Padrão",
-				"clusteringThreshold": "Limites para nós do cluster",
-				"enabled": "Habilitado",
-				"expandingThreshold": "Número máximo de nos em um cluster expandido",
-				"extensionMaximumLevel": "Nível máximo",
-				"menuTitle": "Gráfico de Relacionamento",
-				"title": "Configuração do gráfico de relacionamento"
-			},
 			"modify": "Modificar",
 			"save": "Salvar",
 			"setupTitle": "Configuração"
@@ -1420,6 +1411,7 @@
 	"csvFile": "Arquivo CSV",
 	"defaultAccount": "<em>Default account</em>",
 	"defaultClass": "Classe Padrão",
+	"defaultLevel": "Nível Padrão",
 	"deleteEmail": "<em>Delete email</em>",
 	"description_": "Descrição",
 	"disable": "<em>Disable</em>",
@@ -1468,6 +1460,7 @@
 	"loggedGroup": "<em>Logged Group</em>",
 	"loggedUser": "<em>Logged User</em>",
 	"main": "<em>Main</em>",
+	"maximumLevel": "Nível máximo",
 	"mode": "<em>Mode</em>",
 	"modifyFilter": "Modificar Filtro",
 	"modifyProject": "<em>Modify Project</em>",
@@ -1492,6 +1485,7 @@
 	"referenceComboLimit": "<em>References combobox limit</em>",
 	"reference_to_root": "<em>Reference to Root</em>",
 	"relation": "<em>Relation</em>",
+	"relationGraph": "Gráfico de Relacionamento",
 	"relationLimit": "Limites de relacionamentos",
 	"remove": "<em>Remove</em>",
 	"removeFilter": "Remover Filtro",
@@ -1529,6 +1523,7 @@
 	"subject": "<em>Subject</em>",
 	"tabPositioInCardPanel": "Posição dos Tabs no painel do cartão",
 	"targetClass": "Classe Alvo",
+	"thresholdForClusteringNodes": "Limites para nós do cluster",
 	"to": "<em>To</em>",
 	"top": "<em>Top</em>",
 	"translations" : "<em>Translations</em>",
