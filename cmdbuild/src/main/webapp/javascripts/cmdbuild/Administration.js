@@ -91,6 +91,26 @@
 									dataViewAccordion = new CMDBuild.view.administration.accordion.CMDataViewAccordion();
 
 									panels = panels.concat([
+										Ext.create('CMDBuild.view.administration.tasks.CMTasks', {
+											cmControllerType: 'CMDBuild.controller.administration.tasks.CMTasksController',
+											cmName: 'tasks'
+										}),
+										Ext.create('CMDBuild.view.administration.email.CMEmailAccounts', {
+											cmControllerType: 'CMDBuild.controller.administration.email.CMEmailAccountsController',
+											cmName: 'emailAccounts'
+										}),
+										Ext.create('CMDBuild.view.administration.email.CMEmailTemplates', {
+											cmControllerType: 'CMDBuild.controller.administration.email.CMEmailTemplatesController',
+											cmName: 'emailTemplates'
+										}),
+										Ext.create('CMDBuild.view.administration.localizations.MainPanel', {
+											cmControllerType: 'CMDBuild.controller.administration.localizations.Main',
+											cmName: 'localizations'
+										}),
+										Ext.create('CMDBuild.view.administration.configuration.ServerPanel', {
+											cmControllerType: 'CMDBuild.controller.administration.configuration.Server',
+											cmName: 'modsetupserver'
+										}),
 										new CMDBuild.view.administration.dataview.CMSqlDataView({
 											cmControllerType: controllerNS.administration.dataview.CMSqlDataViewController,
 											cmName: 'sqldataview'
@@ -114,26 +134,6 @@
 										new CMDBuild.view.administration.configuration.CMModConfigurationWorkflow({
 											cmControllerType: 'CMDBuild.controller.administration.configuration.Main',
 											cmName: 'modsetupworkflow'
-										}),
-										new CMDBuild.view.administration.configuration.CMModConfigurationServer({
-											cmControllerType: controllerNS.administration.configuration.CMModConfigurationServerController,
-											cmName: 'modsetupserver'
-										}),
-										Ext.create('CMDBuild.view.administration.email.CMEmailAccounts', {
-											cmControllerType: 'CMDBuild.controller.administration.email.CMEmailAccountsController',
-											cmName: 'emailAccounts'
-										}),
-										Ext.create('CMDBuild.view.administration.email.CMEmailTemplates', {
-											cmControllerType: 'CMDBuild.controller.administration.email.CMEmailTemplatesController',
-											cmName: 'emailTemplates'
-										}),
-										Ext.create('CMDBuild.view.administration.localizations.MainPanel', {
-											cmControllerType: 'CMDBuild.controller.administration.localizations.Main',
-											cmName: 'localizations'
-										}),
-										Ext.create('CMDBuild.view.administration.tasks.CMTasks', {
-											cmControllerType: 'CMDBuild.controller.administration.tasks.CMTasksController',
-											cmName: 'tasks'
 										}),
 										new CMDBuild.view.administration.configuration.CMModConfigurationBIM({
 											cmControllerType: 'CMDBuild.controller.administration.configuration.Main',
@@ -177,7 +177,7 @@
 							gisAccordion,
 							bimAccordion,
 							Ext.create('CMDBuild.view.administration.accordion.Localizations'),
-							Ext.create('CMDBuild.view.administration.accordion.CMConfigurationAccordion')
+							Ext.create('CMDBuild.view.administration.accordion.Configuration')
 						]);
 
 						// Resume here the layouts operations

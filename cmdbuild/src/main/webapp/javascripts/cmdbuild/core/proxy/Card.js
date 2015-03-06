@@ -130,13 +130,19 @@
 		/**
 		 * Unlock all cards that was locked
 		 *
-		 * @param {Object} params
+		 * @param {Object} parameters
 		 */
-		unlockAllCards: function(params) {
-			params.method = 'POST';
-			params.url = CMDBuild.core.proxy.CMProxyUrlIndex.card.unlockAll;
-
-			CMDBuild.ServiceProxy.core.doRequest(params);
+		unlockAllCards: function(parameters) {
+			CMDBuild.Ajax.request({
+				method: 'POST',
+				url: CMDBuild.core.proxy.CMProxyUrlIndex.card.unlockAll,
+				loadMask: true,
+				params: parameters.params,
+				scope: parameters.scope,
+				failure: parameters.failure || Ext.emptyFn(),
+				success: parameters.success || Ext.emptyFn(),
+				callback: parameters.callback || Ext.emptyFn()
+			});
 		}
 	});
 

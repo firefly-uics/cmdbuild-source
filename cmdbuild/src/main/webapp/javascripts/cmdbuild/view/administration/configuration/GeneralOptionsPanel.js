@@ -23,8 +23,6 @@
 		 */
 		instanceNameField: undefined,
 
-		title: CMDBuild.Translation.setup + ' - ' + CMDBuild.Translation.generalOptions,
-
 		initComponent: function() {
 			this.instanceNameField = Ext.create('Ext.form.CMTranslatableText', {
 				fieldLabel: CMDBuild.Translation.instanceName,
@@ -39,6 +37,7 @@
 			});
 
 			Ext.apply(this, {
+				title: this.baseTitle + this.titleSeparator + CMDBuild.Translation.generalOptions,
 				items: [
 					{
 						xtype: 'fieldset',
