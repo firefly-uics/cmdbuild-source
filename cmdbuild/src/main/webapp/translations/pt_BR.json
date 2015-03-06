@@ -591,14 +591,6 @@
 				"serverUrl": "URL do Servidor",
 				"title": "Configuração do Alfresco"
 			},
-			"gis": {
-				"center_lat": "Latitude inicial",
-				"center_lon": "Longitude inicial",
-				"enable": "Habilitar",
-				"initial_zoom": "Nível de zoom inicial",
-				"serverurl": "URL Servidor",
-				"title": "GIS"
-			},
 			"modify": "Modificar",
 			"save": "Salvar",
 			"setupTitle": "Configuração"
@@ -1442,10 +1434,14 @@
 	"front": "<em>Front</em>",
 	"general": "Geral",
 	"generalOptions": "<em>General options</em>",
+	"gis": "GIS",
 	"global": "<em>Global</em>",
 	"hasWrote": "<em>has wrote</em>",
 	"ifc_file": "<em>File IFC</em>",
 	"importFromCSV": "<em>Import from CSV</em>",
+	"initialLatitude": "Latitude inicial",
+	"initialLongitude": "Longitude inicial",
+	"initialZoomLevel": "Nível de zoom inicial",
 	"instanceName": "Nome da instância",
 	"ipType": "<em>IP type</em>",
 	"ipv4": "ipv4",

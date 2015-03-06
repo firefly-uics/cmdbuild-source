@@ -591,14 +591,6 @@
 				"serverUrl": "URL máy chủ",
 				"title": "Cài đặt Alfresco"
 			},
-			"gis": {
-				"center_lat": "Vĩ độ ban đầu",
-				"center_lon": "Kinh độ ban đầu",
-				"enable": "Kích hoạt",
-				"initial_zoom": "Mức độ phóng ban đầu",
-				"serverurl": "URL máy chủ",
-				"title": "GIS"
-			},
 			"modify": "Sửa đổi",
 			"save": "Lưu",
 			"setupTitle": "Cài đặt"
@@ -1442,10 +1434,14 @@
 	"front": "<em>Front</em>",
 	"general": "Tổng quát",
 	"generalOptions": "<em>General options</em>",
+	"gis": "GIS",
 	"global": "<em>Global</em>",
 	"hasWrote": "<em>has wrote</em>",
 	"ifc_file": "<em>File IFC</em>",
 	"importFromCSV": "<em>Import from CSV</em>",
+	"initialLatitude": "Vĩ độ ban đầu",
+	"initialLongitude": "Kinh độ ban đầu",
+	"initialZoomLevel": "Mức độ phóng ban đầu",
 	"instanceName": "Tên thực thể",
 	"ipType": "<em>IP type</em>",
 	"ipv4": "ipv4",

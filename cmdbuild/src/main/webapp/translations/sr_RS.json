@@ -591,14 +591,6 @@
 				"serverUrl": "Адреса (Url) сервиса",
 				"title": "Alfresco подешавања"
 			},
-			"gis": {
-				"center_lat": "Почетна географска ширина",
-				"center_lon": "Почетна географска дужина",
-				"enable": "Укључен",
-				"initial_zoom": "Почетно увећање",
-				"serverurl": "Адреса сервера - URL",
-				"title": "ГИС"
-			},
 			"modify": "Измени",
 			"save": "Потврди",
 			"setupTitle": "Подешавања"
@@ -1442,10 +1434,14 @@
 	"front": "Front",
 	"general": "Опште",
 	"generalOptions": "<em>General options</em>",
+	"gis": "ГИС",
 	"global": "Глобално",
 	"hasWrote": "Написао(ла) је",
 	"ifc_file": "IFC датотека",
 	"importFromCSV": "Увоз из CSV",
+	"initialLatitude": "Почетна географска ширина",
+	"initialLongitude": "Почетна географска дужина",
+	"initialZoomLevel": "Почетно увећање",
 	"instanceName": "Назив инстанце",
 	"ipType": "IP тип",
 	"ipv4": "ipv4",
