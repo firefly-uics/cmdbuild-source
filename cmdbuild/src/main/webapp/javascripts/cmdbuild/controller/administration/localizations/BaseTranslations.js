@@ -3,10 +3,6 @@
 	Ext.define('CMDBuild.controller.administration.localizations.BaseTranslations', {
 		extend: 'CMDBuild.controller.common.CMBasePanelController',
 
-		requires: [
-//			'CMDBuild.core.proxy.CMProxyConstants'
-		],
-
 		/**
 		 * @cfg {CMDBuild.controller.administration.localizations.Main}
 		 */
@@ -40,11 +36,11 @@
 		 */
 		cmOn: function(name, param, callBack) {
 			switch (name) {
-				case 'onAbortButtonClick':
-					return this.onAbortButtonClick();
+				case 'onBaseAbortButtonClick':
+					return this.onBaseAbortButtonClick();
 
-				case 'onSaveButtonClick':
-					return this.onSaveButtonClick();
+				case 'onBaseSaveButtonClick':
+					return this.onBaseSaveButtonClick();
 
 				default: {
 					if (!Ext.isEmpty(this.parentDelegate))
@@ -60,11 +56,11 @@
 			return this.view;
 		},
 
-		onAbortButtonClick: function() {
+		onBaseAbortButtonClick: function() {
 _debug('CMDBuild.controller.administration.localizations.BaseTranslations ABORT');
 		},
 
-		onSaveButtonClick: function() {
+		onBaseSaveButtonClick: function() {
 _debug('CMDBuild.controller.administration.localizations.BaseTranslations SAVE');
 		}
 	});

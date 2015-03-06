@@ -1,7 +1,7 @@
 (function() {
 
 	Ext.define('CMDBuild.view.administration.localizations.BaseTranslationsPanel', {
-		extend: 'Ext.panel.Panel',
+		extend: 'Ext.form.Panel',
 
 		requires: [
 			'CMDBuild.core.proxy.CMProxyConstants',
@@ -13,10 +13,12 @@
 		 */
 		delegate: undefined,
 
+		bodyCls: 'cmgraypanel-nopadding',
 		border: false,
-		layout: 'vbox',
-		frame: true,
+		buttonAlign: 'center',
+		frame: false,
 		overflowY: 'auto',
+		region: 'center',
 
 		layout: {
 			type: 'vbox',
@@ -70,7 +72,23 @@
 			});
 
 			Ext.apply(this, {
-				items: [this.languageFieldset, this.enabledLanguagesFieldset]
+				items: [this.languageFieldset, this.enabledLanguagesFieldset],
+				buttons: [
+					Ext.create('CMDBuild.buttons.SaveButton', {
+						scope: this,
+
+						handler: function() {
+							this.delegate.cmOn('onBaseSaveButtonClick');
+						}
+					}),
+					Ext.create('CMDBuild.buttons.AbortButton', {
+						scope: this,
+
+						handler: function() {
+							this.delegate.cmOn('onBaseAbortButtonClick');
+						}
+					})
+				]
 			});
 
 			this.callParent(arguments);
