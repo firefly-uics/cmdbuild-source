@@ -10,10 +10,20 @@
 
 		/**
 		 * @cfg {String}
+		 */
+		baseTitle: CMDBuild.Translation.setup,
+
+		/**
+		 * @cfg {String}
 		 *
 		 * @abstract
 		 */
 		configFileName: undefined,
+
+		/**
+		 * @cfg {String}
+		 */
+		titleSeparator: ' - ',
 
 		buttonAlign: 'center',
 		frame: true,
@@ -49,7 +59,7 @@
 		},
 
 		/**
-		 * Template method called in the callbak function of the form submit
+		 * Template method called in the callback function of the form submit
 		 *
 		 * @param {Object} saveDataObject
 		 *

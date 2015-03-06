@@ -1,10 +1,17 @@
 (function() {
 
-	Ext.define('CMDBuild.controller.administration.configuration.CMModConfigurationServerController', {
+	Ext.define('CMDBuild.controller.administration.configuration.Server', {
 		extend: 'CMDBuild.controller.common.CMBasePanelController',
 
+		requires: [
+			'CMDBuild.core.proxy.CMProxyWorkflow',
+			'CMDBuild.core.proxy.Card',
+			'CMDBuild.core.proxy.Configuration',
+			'CMDBuild.core.proxy.Utils'
+		],
+
 		/**
-		 * @property {CMDBuild.view.administration.configuration.CMModConfigurationServer}
+		 * @property {CMDBuild.view.administration.configuration.ServerPanel}
 		 */
 		view: undefined,
 
@@ -40,27 +47,23 @@
 			}
 		},
 
-		onConfigurationServerClearCacheButtonClick: function() { // TODO proxy
-			CMDBuild.Ajax.request( {
-				url: 'services/json/utils/clearcache',
-				loadMask: true,
+		onConfigurationServerClearCacheButtonClick: function() {
+			CMDBuild.core.proxy.Utils.clearCache({
 				success: CMDBuild.Msg.success
 			});
 		},
 
-		onConfigurationServerServiceSynchButtonClick: function() { // TODO proxy
-			CMDBuild.Ajax.request( {
-				url : 'services/json/workflow/sync',
-				loadMask : true,
-				success : CMDBuild.Msg.success
+		onConfigurationServerServiceSynchButtonClick: function() {
+			CMDBuild.core.proxy.CMProxyWorkflow.synchronize({
+				success: CMDBuild.Msg.success
 			});
 		},
 
-		onConfigurationServerUnlockCardsButtonClick: function() { // TODO proxy
-			_CMProxy.card.unlockAllCards({
-				success : CMDBuild.Msg.success
+		onConfigurationServerUnlockCardsButtonClick: function() {
+			CMDBuild.core.proxy.Card.unlockAllCards({
+				success: CMDBuild.Msg.success
 			});
-		},
+		}
 	});
 
 })();

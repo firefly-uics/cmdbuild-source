@@ -2,20 +2,24 @@
 
 	var tr = CMDBuild.Translation.administration.setup;
 
-	Ext.define('CMDBuild.view.administration.accordion.CMConfigurationAccordion', {
+	Ext.define('CMDBuild.view.administration.accordion.Configuration', {
 		extend: 'CMDBuild.view.common.CMBaseAccordion',
 
-		title: CMDBuild.Translation.setup,
 		cmName: 'setup',
 		hideMode: 'offsets',
+		title: CMDBuild.Translation.setup,
 
-		constructor: function(){
+		constructor: function() {
 			this.callParent(arguments);
+
 			this.updateStore();
 		},
 
+		/**
+		 * @override
+		 */
 		updateStore: function() {
-			var root = this.store.getRootNode();
+			var root = this.getStore().getRootNode();
 			root.removeAll();
 
 			var children = [{
@@ -52,7 +56,7 @@
 						cmName: 'modsetupbim'
 					},
 					{
-						text: tr.server.menuTitle,
+						text: CMDBuild.Translation.serverManagement,
 						leaf: true,
 						cmName: 'modsetupserver'
 					}

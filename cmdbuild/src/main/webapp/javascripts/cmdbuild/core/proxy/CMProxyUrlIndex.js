@@ -229,6 +229,10 @@
 			getusergrouplist: 'services/json/schema/modsecurity/getusergrouplist'
 		},
 
+		utils: {
+			clearCache: 'services/json/utils/clearcache'
+		},
+
 		widgets: {
 			grid: {
 				clearSession: 'services/json/management/importcsv/clearsession',
@@ -253,6 +257,7 @@
 			getStartActivity: 'services/json/workflow/getstartactivity',
 			isProcessUpdated: 'services/json/workflow/isprocessupdated',
 			saveActivity: 'services/json/workflow/saveactivity',
+			synchronize: 'services/json/workflow/sync',
 			xpdlDownload: 'services/json/workflow/downloadxpdl',
 			xpdlDownloadTemplate: 'services/json/workflow/downloadxpdltemplate',
 			xpdlUpload: 'services/json/workflow/uploadxpdl',

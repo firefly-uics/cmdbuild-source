@@ -1,8 +1,6 @@
 (function() {
 
-	var tr = CMDBuild.Translation.administration.setup.server;
-
-	Ext.define('CMDBuild.view.administration.configuration.CMModConfigurationServer', {
+	Ext.define('CMDBuild.view.administration.configuration.ServerPanel', {
 		extend: 'Ext.form.Panel',
 
 		/**
@@ -13,23 +11,33 @@
 		/**
 		 * @cfg {String}
 		 */
+		baseTitle: CMDBuild.Translation.setup,
+
+		/**
+		 * @cfg {String}
+		 */
 		configFileName: 'server',
+
+		/**
+		 * @cfg {String}
+		 */
+		titleSeparator: ' - ',
 
 		frame: true,
 		overflowY: 'auto',
-		title: tr.title,
 
 		initComponent: function() {
 			Ext.apply(this, {
+				title: this.baseTitle + this.titleSeparator + CMDBuild.Translation.serverManagement,
 				items: [
 					{
 						xtype: 'fieldset',
-						title: tr.cache_management,
+						title: CMDBuild.Translation.cacheManagement,
 						padding: '5',
 
 						items: [
 							Ext.create('Ext.button.Button', {
-								text: tr.clear_cache,
+								text: CMDBuild.Translation.clearCache,
 								scope: this,
 
 								handler: function() {
@@ -40,12 +48,12 @@
 					},
 					{
 						xtype: 'fieldset',
-						title: tr.servicesync,
+						title: CMDBuild.Translation.serviceSynchronization,
 						padding: '5',
 
 						items: [
 							Ext.create('Ext.button.Button', {
-								text: tr.servicesync,
+								text: CMDBuild.Translation.serviceSynchronization,
 								scope: this,
 
 								handler: function() {
@@ -61,7 +69,7 @@
 
 						items: [
 							Ext.create('Ext.button.Button', {
-								text: CMDBuild.Translation.unlock_all_cards,
+								text: CMDBuild.Translation.unlockAllCards,
 								scope: this,
 
 								handler: function() {
