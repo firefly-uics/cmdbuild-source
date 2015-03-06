@@ -1,7 +1,5 @@
 (function() {
 
-	var tr = CMDBuild.Translation.administration.setup.workflow;
-
 	Ext.define('CMDBuild.view.administration.configuration.Workflow', {
 		extend: 'CMDBuild.view.administration.configuration.BasePanel',
 
