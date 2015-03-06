@@ -1,20 +1,19 @@
 (function() {
 
 	Ext.define('CMDBuild.view.administration.localizations.AdvancedTranslationsPanel', {
-		extend: 'Ext.panel.Panel',
-
-		requires: [
-//			'CMDBuild.core.proxy.CMProxyConstants' // TODO
-		],
+		extend: 'Ext.form.Panel',
 
 		/**
 		 * @cfg {CMDBuild.controller.administration.localizations.AdvancedTranslations}
 		 */
 		delegate: undefined,
 
+		bodyCls: 'cmgraypanel-nopadding',
 		border: false,
-		frame: true,
+		buttonAlign: 'center',
+		frame: false,
 		overflowY: 'auto',
+		region: 'center',
 
 		layout: {
 			type: 'vbox',
@@ -39,10 +38,11 @@
 				delegate: this.delegate
 			});
 
-			this.importExportFieldset = Ext.create('Ext.form.FieldSet', {
-				title: '@@ Import/Export',
+			this.importExportFieldset = Ext.create('Ext.panel.Panel', {
+				bodyCls: 'cmgraypanel-nopadding',
 				overflowY: 'auto',
-				padding: '0 5',
+				frame: false,
+				border: false,
 
 				layout: 'hbox',
 
@@ -68,7 +68,23 @@
 			});
 
 			Ext.apply(this, {
-				items: [this.translationGridLanguagesFieldset, this.importExportFieldset]
+				items: [this.translationGridLanguagesFieldset, this.importExportFieldset],
+				buttons: [
+					Ext.create('CMDBuild.buttons.SaveButton', {
+						scope: this,
+
+						handler: function() {
+							this.delegate.cmOn('onAdvancedSaveButtonClick');
+						}
+					}),
+					Ext.create('CMDBuild.buttons.AbortButton', {
+						scope: this,
+
+						handler: function() {
+							this.delegate.cmOn('onAdvancedAbortButtonClick');
+						}
+					})
+				]
 			});
 
 			this.callParent(arguments);
