@@ -1,6 +1,6 @@
 (function() {
 
-	Ext.define('CMDBuild.view.administration.configuration.Workflow', {
+	Ext.define('CMDBuild.view.administration.configuration.WorkflowPanel', {
 		extend: 'CMDBuild.view.administration.configuration.BasePanel',
 
 		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
@@ -44,7 +44,8 @@
 								width: CMDBuild.CFG_BIG_FIELD_WIDTH
 							}
 						]
-					}, {
+					},
+					{
 						xtype: 'fieldset',
 						title: CMDBuild.Translation.credentials,
 						autoHeight: true,
