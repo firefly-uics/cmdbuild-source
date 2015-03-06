@@ -15,6 +15,9 @@
 		 */
 		view: undefined,
 
+		/**
+		 * @param {CMDBuild.view.administration.configuration.ServerPanel} view
+		 */
 		constructor: function(view) {
 			this.callParent(arguments);
 
