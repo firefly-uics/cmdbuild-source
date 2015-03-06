@@ -3,10 +3,6 @@
 	Ext.define('CMDBuild.controller.administration.localizations.AdvancedTranslations', {
 		extend: 'CMDBuild.controller.common.CMBasePanelController',
 
-		requires: [
-//			'CMDBuild.core.proxy.CMProxyConstants'
-		],
-
 		/**
 		 * @cfg {CMDBuild.controller.administration.localizations.Main}
 		 */
@@ -40,17 +36,17 @@
 		 */
 		cmOn: function(name, param, callBack) {
 			switch (name) {
-				case 'onAbortButtonClick':
-					return this.onAbortButtonClick();
+				case 'onAdvancedAbortButtonClick':
+					return this.onAdvancedAbortButtonClick();
+
+				case 'onAdvancedSaveButtonClick':
+					return this.onAdvancedSaveButtonClick();
 
 				case 'onExportButtonClick':
 					return this.onExportButtonClick();
 
 				case 'onImportButtonClick':
 					return this.onImportButtonClick();
-
-				case 'onSaveButtonClick':
-					return this.onSaveButtonClick();
 
 				default: {
 					if (!Ext.isEmpty(this.parentDelegate))
@@ -66,8 +62,12 @@
 			return this.view;
 		},
 
-		onAbortButtonClick: function() {
+		onAdvancedAbortButtonClick: function() {
 _debug('CMDBuild.controller.administration.localizations.AdvancedTranslations ABORT');
+		},
+
+		onAdvancedSaveButtonClick: function() {
+			_debug('CMDBuild.controller.administration.localizations.AdvancedTranslations SAVE');
 		},
 
 		onExportButtonClick: function() {
@@ -76,10 +76,6 @@ _debug('CMDBuild.controller.administration.localizations.AdvancedTranslations EX
 
 		onImportButtonClick: function() {
 _debug('CMDBuild.controller.administration.localizations.AdvancedTranslations IMPORT');
-		},
-
-		onSaveButtonClick: function() {
-_debug('CMDBuild.controller.administration.localizations.AdvancedTranslations SAVE');
 		}
 	});
 
