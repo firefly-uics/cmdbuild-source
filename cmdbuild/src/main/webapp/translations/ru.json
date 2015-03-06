@@ -591,14 +591,6 @@
 				"serverUrl": "URL сервера",
 				"title": "Настройка Alfresco"
 			},
-			"gis": {
-				"center_lat": "Начальная широта",
-				"center_lon": "Начальная долгота",
-				"enable": "Включено",
-				"initial_zoom": "Начальный масштаб",
-				"serverurl": "URL сервера",
-				"title": "ГИС"
-			},
 			"modify": "Редактировать",
 			"save": "Сохранить",
 			"setupTitle": "Параметры"
@@ -1442,10 +1434,14 @@
 	"front": "Спереди",
 	"general": "Основные настройки",
 	"generalOptions": "<em>General options</em>",
+	"gis": "ГИС",
 	"global": "Глобальный",
 	"hasWrote": "<em>has wrote</em>",
 	"ifc_file": "Файл IFC",
 	"importFromCSV": "<em>Import from CSV</em>",
+	"initialLatitude": "Начальная широта",
+	"initialLongitude": "Начальная долгота",
+	"initialZoomLevel": "Начальный масштаб",
 	"instanceName": "Имя инстанса",
 	"ipType": "<em>IP type</em>",
 	"ipv4": "ipv4",

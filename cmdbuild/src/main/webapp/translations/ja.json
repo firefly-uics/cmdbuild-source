@@ -591,14 +591,6 @@
 				"serverUrl": "サーバ URL",
 				"title": "Alfresco セットアップ"
 			},
-			"gis": {
-				"center_lat": "初期緯度",
-				"center_lon": "初期経度",
-				"enable": "有効",
-				"initial_zoom": "初期ズームレベル",
-				"serverurl": "サーバ URL",
-				"title": "GIS"
-			},
 			"modify": "更新",
 			"save": "保存",
 			"setupTitle": "セットアップ"
@@ -1442,10 +1434,14 @@
 	"front": "Front",
 	"general": "一般",
 	"generalOptions": "<em>General options</em>",
+	"gis": "GIS",
 	"global": "グローバル",
 	"hasWrote": "は、書かれた",
 	"ifc_file": "IFCファイル",
 	"importFromCSV": "CSVからインポート",
+	"initialLatitude": "初期緯度",
+	"initialLongitude": "初期経度",
+	"initialZoomLevel": "初期ズームレベル",
 	"instanceName": "インスタンス名",
 	"ipType": "IPタイプ",
 	"ipv4": "ipv4",

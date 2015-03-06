@@ -591,14 +591,6 @@
 				"serverUrl": "Server URL",
 				"title": "Alfresco Configuratie"
 			},
-			"gis": {
-				"center_lat": "Initiele latitude",
-				"center_lon": "Initiele longitude",
-				"enable": "Geaktiveerd",
-				"initial_zoom": "Initieel zoom niveau",
-				"serverurl": "Server URL",
-				"title": "GIS"
-			},
 			"modify": "Aanpassen",
 			"save": "Bewaren",
 			"setupTitle": "Configuratie"
@@ -1442,10 +1434,14 @@
 	"front": "Voorkant",
 	"general": "Algemeen",
 	"generalOptions": "<em>General options</em>",
+	"gis": "GIS",
 	"global": "Globaal",
 	"hasWrote": "heeft geschreven",
 	"ifc_file": "Bestand IFC",
 	"importFromCSV": "Importeer vanaf CSV",
+	"initialLatitude": "Initiele latitude",
+	"initialLongitude": "Initiele longitude",
+	"initialZoomLevel": "Initieel zoom niveau",
 	"instanceName": "Database naam",
 	"ipType": "<em>IP type</em>",
 	"ipv4": "ipv4",

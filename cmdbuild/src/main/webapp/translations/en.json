@@ -591,14 +591,6 @@
 				"serverUrl": "Server URL",
 				"title": "Alfresco Setup"
 			},
-			"gis": {
-				"center_lat": "Initial latitude",
-				"center_lon": "Initial longitude",
-				"enable": "Enable",
-				"initial_zoom": "Initial zoom level",
-				"serverurl": "Server URL",
-				"title": "GIS"
-			},
 			"modify": "Modify",
 			"save": "Save",
 			"setupTitle": "Setup"
@@ -1442,10 +1434,14 @@
 	"front": "Front",
 	"general": "General",
 	"generalOptions": "General options",
+	"gis": "GIS",
 	"global": "Global",
 	"hasWrote": "has wrote",
 	"ifc_file": "File IFC",
 	"importFromCSV": "Import from CSV",
+	"initialLatitude": "Initial latitude",
+	"initialLongitude": "Initial longitude",
+	"initialZoomLevel": "Initial zoom level",
 	"instanceName": "Instance name",
 	"ipType": "IP type",
 	"ipv4": "ipv4",
@@ -1547,7 +1543,7 @@
 	"viewEmail": "View email",
 	"views": "Views",
 	"workflow": "Process",
-	"workflowEngine": "Workflow Engine",
+	"workflowEngine": "Workflow engine",
 	"workflow_attributes" : "Process attributes",
 	"workflow_by_cql": "by Cql",
 	"workflow_by_name": "by name",

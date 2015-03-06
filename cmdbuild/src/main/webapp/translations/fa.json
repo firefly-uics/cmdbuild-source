@@ -591,14 +591,6 @@
 				"serverUrl": "Server URL",
 				"title": "Alfresco Setup"
 			},
-			"gis": {
-				"center_lat": "Initial latitude",
-				"center_lon": "Initial longitude",
-				"enable": "Enable",
-				"initial_zoom": "Initial zoom level",
-				"serverurl": "Server URL",
-				"title": "GIS"
-			},
 			"modify": "Modify",
 			"save": "Save",
 			"setupTitle": "Setup"
@@ -1442,10 +1434,14 @@
 	"front": "رویرو",
 	"general": "کلی",
 	"generalOptions": "<em>General options</em>",
+	"gis": "GIS",
 	"global": "سراسری",
 	"hasWrote": "<em>has wrote</em>",
 	"ifc_file": "File IFC",
 	"importFromCSV": "<em>Import from CSV</em>",
+	"initialLatitude": "Initial latitude",
+	"initialLongitude": "Initial longitude",
+	"initialZoomLevel": "Initial zoom level",
 	"instanceName": "نام مورد",
 	"ipType": "<em>IP type</em>",
 	"ipv4": "ipv4",
