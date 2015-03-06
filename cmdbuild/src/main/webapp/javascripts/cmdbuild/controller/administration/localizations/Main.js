@@ -47,17 +47,16 @@
 		view: undefined,
 
 		/**
-		 * @param {CMDBuild.view.administration.localizations.Form} view
+		 * @param {CMDBuild.view.administration.localizations.MainPanel} view
 		 *
 		 * @override
 		 */
 		constructor: function(view) {
 			this.callParent(arguments);
 
-			// Handlers exchange and controller setup
+			// Handlers exchange
 			this.view = view;
 			this.view.delegate = this;
-_debug(this.view);
 		},
 
 		/**
@@ -73,7 +72,7 @@ _debug('parameters', parameters);
 				var subSection = Ext.Array.contains(this.subSections, parameters.get(CMDBuild.core.proxy.CMProxyConstants.ID))
 					? parameters.get(CMDBuild.core.proxy.CMProxyConstants.ID) : this.subSections[0];
 
-				this.view.wrapper.removeAll(true);
+				this.view.removeAll(true);
 
 				switch(subSection) {
 					case 'advancedTranslations': {
@@ -96,10 +95,10 @@ _debug('parameters', parameters);
 					}
 				}
 
-				this.view.wrapper.add(this.sectionController.getView());
+				this.view.add(this.sectionController.getView());
 
 				this.setViewTitle(parameters.get(CMDBuild.core.proxy.CMProxyConstants.TEXT));
-_debug('this.view.wrapper', this.view.wrapper);
+
 				this.callParent(arguments);
 			}
 		},
