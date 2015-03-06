@@ -28,7 +28,8 @@
 			Ext.apply(this, configObject); // Apply config
 
 			this.view = Ext.create('CMDBuild.view.administration.localizations.AdvancedTranslationsTablePanel', {
-				delegate: this
+				delegate: this,
+				buttons: this.parentDelegate.view.cmButtons
 			});
 
 			// Build tabs
@@ -62,11 +63,11 @@
 		 */
 		cmOn: function(name, param, callBack) {
 			switch (name) {
-				case 'onAbortButtonClick':
-					return this.onAbortButtonClick();
+				case 'onAdvancedTableAbortButtonClick':
+					return this.onAdvancedTableAbortButtonClick();
 
-				case 'onSaveButtonClick':
-					return this.onSaveButtonClick();
+				case 'onAdvancedTableSaveButtonClick':
+					return this.onAdvancedTableSaveButtonClick();
 
 				default: {
 					if (!Ext.isEmpty(this.parentDelegate))
@@ -82,11 +83,11 @@
 			return this.view;
 		},
 
-		onAbortButtonClick: function() {
+		onAdvancedTableAbortButtonClick: function() {
 _debug('CMDBuild.controller.administration.localizations.AdvancedTranslationsTable ABORT');
 		},
 
-		onSaveButtonClick: function() {
+		onAdvancedTableSaveButtonClick: function() {
 _debug('CMDBuild.controller.administration.localizations.AdvancedTranslationsTable SAVE');
 		}
 	});
