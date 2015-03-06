@@ -107,6 +107,10 @@
 											cmControllerType: 'CMDBuild.controller.administration.localizations.Main',
 											cmName: 'localizations'
 										}),
+										Ext.create('CMDBuild.view.administration.configuration.Workflow', {
+											cmControllerType: 'CMDBuild.controller.administration.configuration.Main',
+											cmName: 'modsetupworkflow'
+										}),
 										Ext.create('CMDBuild.view.administration.configuration.ServerPanel', {
 											cmControllerType: 'CMDBuild.controller.administration.configuration.Server',
 											cmName: 'modsetupserver'
@@ -130,10 +134,6 @@
 										new CMDBuild.view.administration.configuration.CMModConfigurationAlfresco({
 											cmControllerType: 'CMDBuild.controller.administration.configuration.Main',
 											cmName: 'modsetupalfresco'
-										}),
-										new CMDBuild.view.administration.configuration.CMModConfigurationWorkflow({
-											cmControllerType: 'CMDBuild.controller.administration.configuration.Main',
-											cmName: 'modsetupworkflow'
 										}),
 										new CMDBuild.view.administration.configuration.CMModConfigurationBIM({
 											cmControllerType: 'CMDBuild.controller.administration.configuration.Main',

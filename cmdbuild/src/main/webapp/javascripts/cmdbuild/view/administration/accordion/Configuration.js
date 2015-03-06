@@ -31,7 +31,7 @@
 			if (!_CMUIConfiguration.isCloudAdmin()) {
 				children = children.concat([
 					{
-						text: tr.workflow.menuTitle,
+						text: CMDBuild.Translation.workflowEngine,
 						leaf: true,
 						cmName: 'modsetupworkflow'
 					},
