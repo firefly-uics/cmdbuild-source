@@ -599,15 +599,6 @@
 				"serverurl": "Server URL",
 				"title": "GIS"
 			},
-			"graph": {
-				"baseLevel": "Livello di default",
-				"clusteringThreshold": "Soglia per il raggruppamento dei nodi",
-				"enabled": "Abilitato",
-				"expandingThreshold": "Numero massimo di nodi in un gruppo espandibile",
-				"extensionMaximumLevel": "Massimo livello selezionabile",
-				"menuTitle": "Grafo delle Relazioni",
-				"title": "Configurazione Grafo delle Relazioni"
-			},
 			"modify": "Modifica",
 			"save": "Salva",
 			"setupTitle": "Configurazione"
@@ -1420,6 +1411,7 @@
 	"csvFile": "File CSV",
 	"defaultAccount": "Account di default",
 	"defaultClass": "Classe di default",
+	"defaultLevel": "Livello di default",
 	"deleteEmail": "Cancella email",
 	"description_": "Descrizione",
 	"disable": "Disabilita",
@@ -1468,6 +1460,7 @@
 	"loggedGroup": "Gruppo corrente",
 	"loggedUser": "Utente corrente",
 	"main": "Principale",
+	"maximumLevel": "Massimo livello selezionabile",
 	"mode": "Modalità",
 	"modifyFilter": "Modifica Filtro",
 	"modifyProject": "Modifica Progetto",
@@ -1492,6 +1485,7 @@
 	"referenceComboLimit": "Limite menu a tendina reference",
 	"reference_to_root": "Reference alla Root",
 	"relation": "Relazioni",
+	"relationGraph": "Grafo delle Relazioni",
 	"relationLimit": "Limite relazioni",
 	"remove": "Rimuovi",
 	"removeFilter": "Rimuovi Filtro",
@@ -1529,6 +1523,7 @@
 	"subject": "Oggetto",
 	"tabPositioInCardPanel": "Posizione TAB sottopagine nel pannello scheda",
 	"targetClass": "Classe",
+	"thresholdForClusteringNodes": "Soglia per il raggruppamento dei nodi",
 	"to": "A",
 	"top": "Alto",
 	"translations" : "Traduzioni",

@@ -599,15 +599,6 @@
 				"serverurl": "Server URL",
 				"title": "GIS"
 			},
-			"graph": {
-				"baseLevel": "Default Ebene",
-				"clusteringThreshold": "Grenzwert für die Ballung von Knoten",
-				"enabled": "Freigegeben",
-				"expandingThreshold": "Höchstzahl der Knoten in einer erweiterbaren Gruppe",
-				"extensionMaximumLevel": "Maximal wählbare Ebene",
-				"menuTitle": "Beziehungsgraph",
-				"title": "Konfiguration Beziehungsgraph"
-			},
 			"modify": "Bearbeiten",
 			"save": "Bestätigen",
 			"setupTitle": "Konfiguration"
@@ -1420,6 +1411,7 @@
 	"csvFile": "CSV Datei",
 	"defaultAccount": "<em>Default account</em>",
 	"defaultClass": "Default-Klasse",
+	"defaultLevel": "Default Ebene",
 	"deleteEmail": "<em>Delete email</em>",
 	"description_": "Beschreibung",
 	"disable": "Ausschalten",
@@ -1468,6 +1460,7 @@
 	"loggedGroup": "Angemeldete Gruppe",
 	"loggedUser": "Angemeldeter Benutzer",
 	"main": "Hauptsächlich",
+	"maximumLevel": "Maximal wählbare Ebene",
 	"mode": "Modus",
 	"modifyFilter": "Filter bearbeiten",
 	"modifyProject": "Projekt verändern",
@@ -1492,6 +1485,7 @@
 	"referenceComboLimit": "Grenze des Reference-Pulldown-Menüs",
 	"reference_to_root": "Bezug mit Quelle",
 	"relation": "<em>Relation</em>",
+	"relationGraph": "Beziehungsgraph",
 	"relationLimit": "Grenzen in Beziehungen",
 	"remove": "Entfernen",
 	"removeFilter": "Filter löschen",
@@ -1529,6 +1523,7 @@
 	"subject": "Betreff",
 	"tabPositioInCardPanel": "Unterseiten TAB-Position in der Karte",
 	"targetClass": "Ursprungsklasse",
+	"thresholdForClusteringNodes": "Grenzwert für die Ballung von Knoten",
 	"to": "An",
 	"top": "Oben",
 	"translations" : "Übersetzungen",

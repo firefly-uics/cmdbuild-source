@@ -599,15 +599,6 @@
 				"serverurl": "Adresa servera - URL",
 				"title": "GIS"
 			},
-			"graph": {
-				"baseLevel": "Zadani broj razina",
-				"clusteringThreshold": "Prag za pregrupiranje čvorova",
-				"enabled": "Uključen",
-				"expandingThreshold": "Maksimalan broj čvorova u grupi",
-				"extensionMaximumLevel": "Maksimalan broj nivoa koji se mogu odabrati",
-				"menuTitle": "Graf relacija",
-				"title": "POstavke grafa relacija"
-			},
 			"modify": "Izmjeni",
 			"save": "Potvrdi",
 			"setupTitle": "Postavke"
@@ -1420,6 +1411,7 @@
 	"csvFile": "CSV datoteka",
 	"defaultAccount": "<em>Default account</em>",
 	"defaultClass": "Podrazumijevana klasa",
+	"defaultLevel": "Zadani broj razina",
 	"deleteEmail": "<em>Delete email</em>",
 	"description_": "Opis",
 	"disable": "<em>Disable</em>",
@@ -1468,6 +1460,7 @@
 	"loggedGroup": "Prijavljena Grupa",
 	"loggedUser": "Prijavljeni Korisnik",
 	"main": "<em>Main</em>",
+	"maximumLevel": "Maksimalan broj nivoa koji se mogu odabrati",
 	"mode": "<em>Mode</em>",
 	"modifyFilter": "Uredi filter",
 	"modifyProject": "<em>Modify Project</em>",
@@ -1492,6 +1485,7 @@
 	"referenceComboLimit": "Ograničenje broja stavki u padajućim menijima za reference i šifarnike",
 	"reference_to_root": "<em>Reference to Root</em>",
 	"relation": "<em>Relation</em>",
+	"relationGraph": "Graf relacija",
 	"relationLimit": "Broj prikazanih relacija",
 	"remove": "<em>Remove</em>",
 	"removeFilter": "Ukloni filter",
@@ -1529,6 +1523,7 @@
 	"subject": "Subject",
 	"tabPositioInCardPanel": "Smještaj tab-a u panelu kartice",
 	"targetClass": "Ciljna klasa",
+	"thresholdForClusteringNodes": "Prag za pregrupiranje čvorova",
 	"to": "To",
 	"top": "<em>Top</em>",
 	"translations" : "<em>Translations</em>",

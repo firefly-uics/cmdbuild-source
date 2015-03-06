@@ -599,15 +599,6 @@
 				"serverurl": "URL du serveur",
 				"title": "GIS"
 			},
-			"graph": {
-				"baseLevel": "Niveau par défaut",
-				"clusteringThreshold": "Seuil des groupes de noeuds",
-				"enabled": "Activé",
-				"expandingThreshold": "Seuil maximum de noeuds ouverts",
-				"extensionMaximumLevel": "Niveau Maximum",
-				"menuTitle": "Graphe des relations",
-				"title": "Configuration des graphes de relations"
-			},
 			"modify": "Modifier",
 			"save": "Enregistrer",
 			"setupTitle": "Configuration"
@@ -1420,6 +1411,7 @@
 	"csvFile": "Fichier CSV",
 	"defaultAccount": "Compte par défaut",
 	"defaultClass": "Classe par défaut",
+	"defaultLevel": "Niveau par défaut",
 	"deleteEmail": "<em>Delete email</em>",
 	"description_": "Description",
 	"disable": "Désactiver",
@@ -1468,6 +1460,7 @@
 	"loggedGroup": "Groupe connecté",
 	"loggedUser": "Utilisateur connecté",
 	"main": "Principal",
+	"maximumLevel": "Niveau Maximum",
 	"mode": "Mode",
 	"modifyFilter": "Modifier le filtre",
 	"modifyProject": "Modifier le projet",
@@ -1492,6 +1485,7 @@
 	"referenceComboLimit": "Limite du nombre de valeur dans les listes déroulantes",
 	"reference_to_root": "Références à la racine",
 	"relation": "Relation",
+	"relationGraph": "Graphe des relations",
 	"relationLimit": "Limite du nombre de liens",
 	"remove": "Supprimer",
 	"removeFilter": "Supprimer le filtre",
@@ -1529,6 +1523,7 @@
 	"subject": "Sujet",
 	"tabPositioInCardPanel": "Dans le panneau",
 	"targetClass": "Classe destination",
+	"thresholdForClusteringNodes": "Seuil des groupes de noeuds",
 	"to": "À",
 	"top": "Haut",
 	"translations" : "Traductions",

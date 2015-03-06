@@ -599,15 +599,6 @@
 				"serverurl": "Адреса сервера - URL",
 				"title": "ГИС"
 			},
-			"graph": {
-				"baseLevel": "Подразумевани број нивоа",
-				"clusteringThreshold": "Праг за прегруписавање чворова",
-				"enabled": "Укључен",
-				"expandingThreshold": "Максималан број чворова у групи",
-				"extensionMaximumLevel": "Максималан број нивоа који се могу селектовати",
-				"menuTitle": "Граф релација",
-				"title": "Подешавање графа релација"
-			},
 			"modify": "Измени",
 			"save": "Потврди",
 			"setupTitle": "Подешавања"
@@ -1420,6 +1411,7 @@
 	"csvFile": "CSV датотека",
 	"defaultAccount": "Подразумевани кор. налог",
 	"defaultClass": "Подразумевана класа",
+	"defaultLevel": "Подразумевани број нивоа",
 	"deleteEmail": "Обриши е-пошту",
 	"description_": "Опис",
 	"disable": "Онемогући",
@@ -1468,6 +1460,7 @@
 	"loggedGroup": "Пријављена група",
 	"loggedUser": "Пријављени корисник",
 	"main": "Главни",
+	"maximumLevel": "Максималан број нивоа који се могу селектовати",
 	"mode": "Режим",
 	"modifyFilter": "Модификуј приказ",
 	"modifyProject": "Измени пројекат",
@@ -1492,6 +1485,7 @@
 	"referenceComboLimit": "Лимит за листу референци",
 	"reference_to_root": "Референце ка корену",
 	"relation": "Веза",
+	"relationGraph": "Граф релација",
 	"relationLimit": "Број приказаних релација",
 	"remove": "Уклони",
 	"removeFilter": "Уклони приказ",
@@ -1529,6 +1523,7 @@
 	"subject": "Субјекат",
 	"tabPositioInCardPanel": "Позиција таб-а у панелу картице",
 	"targetClass": "Циљна класа",
+	"thresholdForClusteringNodes": "Праг за прегруписавање чворова",
 	"to": "За",
 	"top": "Врх",
 	"translations" : "Преводи",
