@@ -76,4 +76,11 @@
 		text: CMDBuild.Translation.common.buttons.next
 	});
 
+	Ext.define('CMDBuild.buttons.Download', {
+		extend: 'CMDBuild.buttons.BaseButton',
+
+		iconCls: 'download',
+		text: CMDBuild.Translation.download
+	});
+
 })();

@@ -64,12 +64,13 @@
 		 * @param {Object} reportParams
 		 * @param {Boolean} forceDownload
 		 */
-		createReport: function(reportParams) {
+		createReport: function(reportParams, forceDownload) {
+			forceDownload = forceDownload || false;
+
 			if (!Ext.isEmpty(reportParams[CMDBuild.core.proxy.CMProxyConstants.ID])) {
 				reportParams[CMDBuild.core.proxy.CMProxyConstants.TYPE] = reportParams[CMDBuild.core.proxy.CMProxyConstants.TYPE] || 'CUSTOM';
 				reportParams[CMDBuild.core.proxy.CMProxyConstants.EXTENSION] = reportParams[CMDBuild.core.proxy.CMProxyConstants.EXTENSION] || CMDBuild.core.proxy.CMProxyConstants.PDF;
 
-				CMDBuild.LoadMask.get().show();
 				CMDBuild.core.proxy.Report.createReport({
 					scope: this,
 					params: reportParams,
@@ -84,29 +85,25 @@
 						this.displayedReportParams = reportParams;
 
 						if(decodedResponse.filled) { // Report with no parameters
-							this.showReport();
+							this.showReport(forceDownload);
 						} else { // Show parameters window
 							if (Ext.isIE) // FIX: in IE PDF is painted on top of the regular page content so remove it before display parameter window
 								this.view.removeAll();
 
 							Ext.create('CMDBuild.view.management.report.ParametersWindow', {
 								delegate: this,
-								attributeList: decodedResponse.attribute
+								attributeList: decodedResponse.attribute,
+								forceDownload: forceDownload
 							}).show();
 						}
-					},
-					callback: function(options, success, response) {
-						CMDBuild.LoadMask.get().hide();
 					}
 				});
 			}
 		},
 
-		// TODO
 		onReportDownloadButtonClick: function() {
-_debug('onReportDownloadButtonClick');
-//			if (!Ext.Object.isEmpty(this.displayedReportParams))
-//				this.createReport(this.displayedReportParams, true);
+			if (!Ext.Object.isEmpty(this.displayedReportParams))
+				this.createReport(this.displayedReportParams, true);
 		},
 
 		/**
@@ -149,18 +146,40 @@ _debug('onReportDownloadButtonClick');
 
 		/**
 		 * Get created report from server and display it in iframe
+		 *
+		 * @param {Boolean} forceDownload
 		 */
-		showReport: function() {
-			this.view.removeAll();
+		showReport: function(forceDownload) {
+			forceDownload = forceDownload || false;
 
-			this.view.add({
-				xtype: 'component',
+			if (forceDownload) { // Force download mode
+				var form = Ext.create('Ext.form.Panel', {
+					standardSubmit: true,
+					url: CMDBuild.core.proxy.CMProxyUrlIndex.reports.printReportFactory
+				});
 
-				autoEl: {
-					tag: 'iframe',
-					src: CMDBuild.core.proxy.CMProxyUrlIndex.reports.printReportFactory
-				}
-			});
+				form.submit({
+					target: '_blank',
+					params: {
+						'force-download': true
+					}
+				});
+
+				Ext.defer(function() { // Form cleanup
+					form.close();
+				}, 100);
+			} else { // Add to view display mode
+				this.view.removeAll();
+
+				this.view.add({
+					xtype: 'component',
+
+					autoEl: {
+						tag: 'iframe',
+						src: CMDBuild.core.proxy.CMProxyUrlIndex.reports.printReportFactory
+					}
+				});
+			}
 		}
 	});
 
