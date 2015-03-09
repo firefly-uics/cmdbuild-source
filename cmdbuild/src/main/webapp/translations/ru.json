@@ -919,6 +919,7 @@
 		"invalid_fields": "Некоторые поля были заполнены с ошибками",
 		"no_driver": "Драйвер JDBC не найден.<br>Вы можете установить его в Tomcat из дистрибутива CMDBuild.",
 		"no_selections": "Не выбрано ни одной карточки для заполнения",
+		"printReportFilure": "<em>Print report failure</em>",
 		"reasons": {
 			"ATTRIBUTE_NOTFOUND": "Атрибут {1} из {0} не найден",
 			"AUTH_CLASS_NOT_AUTHORIZED": "Нет доступа к классу {0}",

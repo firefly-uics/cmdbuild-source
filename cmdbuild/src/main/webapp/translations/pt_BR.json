@@ -919,6 +919,7 @@
 		"invalid_fields": "Alguns campos não foram preenchidos corretamente",
 		"no_driver": "Nenhum driver JDBC foi localizado.<br />Você pode encontra-lo no pacote da versão CMDBuild e copia-lo para as bibliotecas Tomcat.",
 		"no_selections": "Você não selecionou nenhum cartão para atualização",
+		"printReportFilure": "<em>Print report failure</em>",
 		"reasons": {
 			"ATTRIBUTE_NOTFOUND": "Atributo {1} de {0} não localizado",
 			"AUTH_CLASS_NOT_AUTHORIZED": "Privilégios não suficientes para acessar a classe {0}",

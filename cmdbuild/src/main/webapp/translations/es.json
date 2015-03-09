@@ -919,6 +919,7 @@
 		"invalid_fields": "Algunos campos no ha sido compilados correctamente",
 		"no_driver": "No es grave; presente el driver JDBC.<br />Puede encontrarlo en el archivo liberado de CMDBuild y copiarlo a través de las librerías de Tomcat.",
 		"no_selections": "No ha seleccionado ningua tarjeta",
+		"printReportFilure": "<em>Print report failure</em>",
 		"reasons": {
 			"ATTRIBUTE_NOTFOUND": "Atributo {1} de {0} no encontrado",
 			"AUTH_CLASS_NOT_AUTHORIZED": "Privilegios insuficientes sobre la clase {0}",

@@ -919,6 +919,7 @@
 		"invalid_fields": "Određena polja nisu korektno pounjena",
 		"no_driver": "Nedostaje odgovarajući JDBC upravljački program (drajver).<br />Odgovarajući drajver možete pronaći u CMDBuild instalacionom folderu i kopirati u <b>lib<\/b> folder Tomcat servera.",
 		"no_selections": "Niste izabrali karticu podataka koja će biti ažurirana",
+		"printReportFilure": "<em>Print report failure</em>",
 		"reasons": {
 			"ATTRIBUTE_NOTFOUND": "Atribut {1} ne postoji u {0}",
 			"AUTH_CLASS_NOT_AUTHORIZED": "Nedovoljne privilegije nad klasom {0}",

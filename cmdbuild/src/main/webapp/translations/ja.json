@@ -919,6 +919,7 @@
 		"invalid_fields": "いくつかのフィールドは正しく設定されていません",
 		"no_driver": "JDBCドライバーが見つかりません。<br />CMDBuild リリースパッケージに含まれており、 Tomcatライブラリにコピーできます。",
 		"no_selections": "更新するカードが選択されていません",
+		"printReportFilure": "<em>Print report failure</em>",
 		"reasons": {
 			"ATTRIBUTE_NOTFOUND": "{0}の属性{1}が見つかりません",
 			"AUTH_CLASS_NOT_AUTHORIZED": "クラス{0}へアクセスする十分な権限がありません",

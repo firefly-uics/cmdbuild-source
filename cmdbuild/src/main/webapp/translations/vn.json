@@ -919,6 +919,7 @@
 		"invalid_fields": "Một vài trường đã không được điền đầy đủ một cách chính xác",
 		"no_driver": "Không có JDBC driver nào được tìm thấy.<br />Bạn có thể tìm thấy nó trong gói CMDBuild và copy nó vào thư viện Tomcat.",
 		"no_selections": "Bạn vẫn chưa chọn bất kỷ thẻ nào để cập nhật",
+		"printReportFilure": "<em>Print report failure</em>",
 		"reasons": {
 			"ATTRIBUTE_NOTFOUND": "Thuộc tính {1} of {0} không tìm thấy",
 			"AUTH_CLASS_NOT_AUTHORIZED": "Không đủ quyền để truy cập vào class này {0}",
