@@ -45,7 +45,7 @@ public class LocalizedDataView extends ForwardingDataView {
 
 	@Override
 	public CMClass findClass(final CMIdentifier identifier) {
-		return proxy(findClass(identifier));
+		return proxy(super.findClass(identifier));
 	}
 
 	@Override

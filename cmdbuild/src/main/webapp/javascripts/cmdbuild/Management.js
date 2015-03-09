@@ -25,6 +25,7 @@
 
 		requires: [
 			'Ext.ux.Router',
+			'CMDBuild.core.proxy.Classes',
 			'CMDBuild.core.proxy.Configuration',
 			'CMDBuild.core.proxy.Report',
 			'CMDBuild.routes.management.Cards',

@@ -18,6 +18,7 @@
 		extend: 'Ext.app.Application',
 
 		requires: [
+			'CMDBuild.core.proxy.Classes',
 			'CMDBuild.core.proxy.Configuration',
 			'CMDBuild.core.proxy.Report'
 		],
