@@ -107,7 +107,7 @@ public class Serialization {
 			TARGET_CLASS = "targetClass", //
 			TEMPLATE = "template", //
 			TEXT = "text", //
-			TO2 = "to", //
+			TO = "to", //
 			TOTAL = "total", //
 			TYPE_CAPITALIZED = "Type", //
 			TYPE = "type", //
