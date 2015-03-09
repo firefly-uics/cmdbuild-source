@@ -919,6 +919,7 @@
 		"invalid_fields": "Certains champs ne sont pas renseignés correctement",
 		"no_driver": "Aucun pilote JDBC trouvé.<br />Vous pouvez le trouver dans la distribution CMDBuild et le copier dans les librairies de Tomcat.",
 		"no_selections": "Vous n'avez pas choisi la fiche à mettre à jour",
+		"printReportFilure": "<em>Print report failure</em>",
 		"reasons": {
 			"ATTRIBUTE_NOTFOUND": "Attribut {1} de {0} non trouvé",
 			"AUTH_CLASS_NOT_AUTHORIZED": "Pas assez de privilèges pour accéder à la classe {0}",

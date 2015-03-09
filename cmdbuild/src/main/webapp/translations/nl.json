@@ -919,6 +919,7 @@
 		"invalid_fields": "Sommige velden zijn niet correct ingevuld",
 		"no_driver": "Geen JDBC driver gevonden.<br />je kunt het vinden in het CMDBuild release pakket en kopieren naar de Tomcat bibliotheken.",
 		"no_selections": "Je hebt geen kaart geselecteerd voor bijwerken",
+		"printReportFilure": "<em>Print report failure</em>",
 		"reasons": {
 			"ATTRIBUTE_NOTFOUND": "Attribuut {1} van {0} niet gevonden",
 			"AUTH_CLASS_NOT_AUTHORIZED": "Niet genoeg rechten voor toegang tot klas {0}",

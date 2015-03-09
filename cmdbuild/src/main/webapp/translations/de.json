@@ -919,6 +919,7 @@
 		"invalid_fields": "Einige Felder wurden nicht korrekt ausgefüllt",
 		"no_driver": "JDBC Treiber nicht anwesend.<br />Er kann in der CMDBuild Freigabedatei gefunden und in den Tomcat-Bibliotheken kopiert werden.",
 		"no_selections": "Sie haben keine Karte markiert",
+		"printReportFilure": "<em>Print report failure</em>",
 		"reasons": {
 			"ATTRIBUTE_NOTFOUND": "Attribut {1} von {0} nicht gefunden",
 			"AUTH_CLASS_NOT_AUTHORIZED": "Ungenügende Privilegien in der Klasse {0}",

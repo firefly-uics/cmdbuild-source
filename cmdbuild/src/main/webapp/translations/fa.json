@@ -919,6 +919,7 @@
 		"invalid_fields": "بعضی از فیلدها به درستی پر نشده اند",
 		"no_driver": "No JDBC driver was found.<br />You can find it in the CMDBuild release package and copy it into the Tomcat libraries.",
 		"no_selections": "شما هیچ کارتی را برای آپدیت انتخاب نکردید",
+		"printReportFilure": "<em>Print report failure</em>",
 		"reasons": {
 			"ATTRIBUTE_NOTFOUND": "خاصیت {1} از {0} پیدا نشد",
 			"AUTH_CLASS_NOT_AUTHORIZED": "اختیارات کافی برای دسترسی به کلاس {0} وجود ندارد",

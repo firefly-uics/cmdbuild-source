@@ -919,6 +919,7 @@
 		"invalid_fields": "Some fields have not been filled correctly",
 		"no_driver": "No JDBC driver was found.<br />You can find it in the CMDBuild release package and copy it into the Tomcat libraries.",
 		"no_selections": "You have not selected any card to update",
+		"printReportFilure": "Print report failure",
 		"reasons": {
 			"ATTRIBUTE_NOTFOUND": "Attribute {1} of {0} non found",
 			"AUTH_CLASS_NOT_AUTHORIZED": "Not enough privileges to access class {0}",
