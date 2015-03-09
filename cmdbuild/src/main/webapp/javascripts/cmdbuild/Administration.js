@@ -115,7 +115,11 @@
 											cmControllerType: 'CMDBuild.controller.administration.configuration.Main',
 											cmName: 'modsetupgraph'
 										}),
-										Ext.create('CMDBuild.view.administration.configuration.Gis', {
+										Ext.create('CMDBuild.view.administration.configuration.AlfrescoPanel', {
+											cmControllerType: 'CMDBuild.controller.administration.configuration.Main',
+											cmName: 'modsetupalfresco'
+										}),
+										Ext.create('CMDBuild.view.administration.configuration.GisPanel', {
 											cmControllerType: 'CMDBuild.controller.administration.configuration.Main',
 											cmName: 'modsetupgis'
 										}),
@@ -130,10 +134,6 @@
 										new CMDBuild.view.administration.dataview.CMFilterDataView({
 											cmControllerType: controllerNS.administration.dataview.CMFilerDataViewController,
 											cmName: 'filterdataview'
-										}),
-										new CMDBuild.view.administration.configuration.CMModConfigurationAlfresco({
-											cmControllerType: 'CMDBuild.controller.administration.configuration.Main',
-											cmName: 'modsetupalfresco'
 										}),
 										new CMDBuild.view.administration.configuration.CMModConfigurationBIM({
 											cmControllerType: 'CMDBuild.controller.administration.configuration.Main',

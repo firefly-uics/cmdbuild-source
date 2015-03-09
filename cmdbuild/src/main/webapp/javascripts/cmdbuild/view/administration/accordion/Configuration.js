@@ -1,7 +1,5 @@
 (function() {
 
-	var tr = CMDBuild.Translation.administration.setup;
-
 	Ext.define('CMDBuild.view.administration.accordion.Configuration', {
 		extend: 'CMDBuild.view.common.CMBaseAccordion',
 
@@ -41,7 +39,7 @@
 						cmName: 'modsetupgraph'
 					},
 					{
-						text: tr.dms.menuTitle,
+						text: CMDBuild.Translation.alfresco,
 						leaf: true,
 						cmName: 'modsetupalfresco'
 					},
