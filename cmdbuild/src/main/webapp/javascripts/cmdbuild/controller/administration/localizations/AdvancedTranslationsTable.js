@@ -5,6 +5,7 @@
 
 		requires: [
 			'CMDBuild.core.proxy.CMProxyConstants',
+			'CMDBuild.core.proxy.Classes',
 			'CMDBuild.core.proxy.Localizations'
 		],
 
@@ -28,8 +29,18 @@
 			Ext.apply(this, configObject); // Apply config
 
 			this.view = Ext.create('CMDBuild.view.administration.localizations.AdvancedTranslationsTablePanel', {
-				delegate: this,
-				buttons: this.parentDelegate.view.cmButtons
+				delegate: this
+			});
+
+			// GetAllClasses data to get default translations
+			CMDBuild.core.proxy.Classes.read({
+				params: {
+					active: false
+				},
+				success: function(response, options, decodedResponse) {
+_debug('decodedResponse', decodedResponse);
+
+				}
 			});
 
 			// Build tabs

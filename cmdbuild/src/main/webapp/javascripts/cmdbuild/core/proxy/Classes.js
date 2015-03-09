@@ -19,6 +19,7 @@
 				url: CMDBuild.core.proxy.CMProxyUrlIndex.classes.read,
 				params: parameters.params,
 				scope: parameters.scope || this,
+				loadMask: true,
 				success: parameters.success || Ext.emptyFn,
 				failure: parameters.failure || Ext.emptyFn,
 				callback: parameters.callback || Ext.emptyFn
@@ -34,6 +35,7 @@
 				url: CMDBuild.core.proxy.CMProxyUrlIndex.classes.update,
 				params: parameters.params,
 				scope: parameters.scope || this,
+				loadMask: true,
 				success: parameters.success || Ext.emptyFn,
 				failure: parameters.failure || Ext.emptyFn,
 				callback: parameters.callback || Ext.emptyFn
@@ -49,6 +51,7 @@
 				url: CMDBuild.core.proxy.CMProxyUrlIndex.classes.remove,
 				params: parameters.params,
 				scope: parameters.scope || this,
+				loadMask: true,
 				success: parameters.success || Ext.emptyFn,
 				failure: parameters.failure || Ext.emptyFn,
 				callback: parameters.callback || Ext.emptyFn
