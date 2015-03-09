@@ -21,6 +21,7 @@ import org.cmdbuild.logic.data.lookup.LookupLogic;
 import org.cmdbuild.logic.dms.DmsLogic;
 import org.cmdbuild.logic.dms.PrivilegedDmsLogic;
 import org.cmdbuild.logic.email.EmailLogic;
+import org.cmdbuild.logic.email.EmailTemplateLogic;
 import org.cmdbuild.logic.menu.MenuLogic;
 import org.cmdbuild.logic.privileges.SecurityLogic;
 import org.cmdbuild.logic.report.ReportLogic;
@@ -75,6 +76,10 @@ public class ApplicationContextHelperV2 {
 
 	public EmailLogic emailLogic() {
 		return applicationContext.getBean(EmailLogic.class);
+	}
+
+	public EmailTemplateLogic emailTemplateLogic() {
+		return applicationContext.getBean(EmailTemplateLogic.class);
 	}
 
 	public LookupHelper lookupHelper() {

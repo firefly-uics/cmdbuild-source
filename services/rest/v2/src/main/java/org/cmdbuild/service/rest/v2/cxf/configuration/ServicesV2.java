@@ -19,6 +19,7 @@ import org.cmdbuild.service.rest.v2.ClassPrivileges;
 import org.cmdbuild.service.rest.v2.Classes;
 import org.cmdbuild.service.rest.v2.DomainAttributes;
 import org.cmdbuild.service.rest.v2.Domains;
+import org.cmdbuild.service.rest.v2.EmailTemplates;
 import org.cmdbuild.service.rest.v2.Impersonate;
 import org.cmdbuild.service.rest.v2.LookupTypeValues;
 import org.cmdbuild.service.rest.v2.LookupTypes;
@@ -44,6 +45,7 @@ import org.cmdbuild.service.rest.v2.cxf.CxfClassPrivileges;
 import org.cmdbuild.service.rest.v2.cxf.CxfClasses;
 import org.cmdbuild.service.rest.v2.cxf.CxfDomainAttributes;
 import org.cmdbuild.service.rest.v2.cxf.CxfDomains;
+import org.cmdbuild.service.rest.v2.cxf.CxfEmailTemplates;
 import org.cmdbuild.service.rest.v2.cxf.CxfImpersonate;
 import org.cmdbuild.service.rest.v2.cxf.CxfLookupTypeValues;
 import org.cmdbuild.service.rest.v2.cxf.CxfLookupTypes;
@@ -150,6 +152,12 @@ public class ServicesV2 implements LoggingSupport {
 		final CxfProcessInstanceEmails service = new CxfProcessInstanceEmails(v2_errorHandler(),
 				helper.userWorkflowLogic(), helper.emailLogic(), v2_idGenerator());
 		return proxy(ProcessInstanceEmails.class, service);
+	}
+
+	@Bean
+	public EmailTemplates v2_emailTemplates() {
+		final CxfEmailTemplates service = new CxfEmailTemplates(helper.emailTemplateLogic());
+		return proxy(EmailTemplates.class, service);
 	}
 
 	@Bean

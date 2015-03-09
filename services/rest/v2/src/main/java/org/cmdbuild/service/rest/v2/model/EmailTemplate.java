@@ -4,19 +4,16 @@ import static org.cmdbuild.service.rest.v2.constants.Serialization.ACCOUNT;
 import static org.cmdbuild.service.rest.v2.constants.Serialization.BCC;
 import static org.cmdbuild.service.rest.v2.constants.Serialization.BODY;
 import static org.cmdbuild.service.rest.v2.constants.Serialization.CC;
-import static org.cmdbuild.service.rest.v2.constants.Serialization.DATE;
+import static org.cmdbuild.service.rest.v2.constants.Serialization.DESCRIPTION;
 import static org.cmdbuild.service.rest.v2.constants.Serialization.FROM;
 import static org.cmdbuild.service.rest.v2.constants.Serialization.KEEP_SYNCHRONIZATION;
+import static org.cmdbuild.service.rest.v2.constants.Serialization.NAME;
 import static org.cmdbuild.service.rest.v2.constants.Serialization.NOTIFY_WITH;
 import static org.cmdbuild.service.rest.v2.constants.Serialization.NO_SUBJECT_PREFIX;
 import static org.cmdbuild.service.rest.v2.constants.Serialization.PROMPT_SYNCHRONIZATION;
-import static org.cmdbuild.service.rest.v2.constants.Serialization.STATUS;
 import static org.cmdbuild.service.rest.v2.constants.Serialization.SUBJECT;
-import static org.cmdbuild.service.rest.v2.constants.Serialization.TEMPLATE;
 import static org.cmdbuild.service.rest.v2.constants.Serialization.TO;
 import static org.cmdbuild.service.rest.v2.constants.Serialization.UNDERSCORED_ID;
-
-import java.util.Collection;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -26,36 +23,53 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.codehaus.jackson.annotate.JsonProperty;
 
 @XmlRootElement
-public class Email extends AbstractModel {
+public class EmailTemplate extends AbstractModel {
 
-	private Long id;
+	private String id;
+	private String name;
+	private String description;
 	private String from;
-	private Collection<String> to;
-	private Collection<String> cc;
-	private Collection<String> bcc;
+	private String to;
+	private String cc;
+	private String bcc;
 	private String subject;
 	private String body;
-	private String date;
-	private String status;
 	private String notifyWith;
 	private boolean noSubjectPrefix;
 	private String account;
-	private String template;
 	private boolean keepSynchronization;
 	private boolean promptSynchronization;
 
-	Email() {
+	EmailTemplate() {
 		// package visibility
 	}
 
 	@XmlAttribute(name = UNDERSCORED_ID)
 	@JsonProperty(UNDERSCORED_ID)
-	public Long getId() {
+	public String getId() {
 		return id;
 	}
 
-	void setId(final Long id) {
+	void setId(final String id) {
 		this.id = id;
+	}
+
+	@XmlAttribute(name = NAME)
+	public String getName() {
+		return name;
+	}
+
+	void setName(final String name) {
+		this.name = name;
+	}
+
+	@XmlAttribute(name = DESCRIPTION)
+	public String getDescription() {
+		return description;
+	}
+
+	void setDescription(final String description) {
+		this.description = description;
 	}
 
 	@XmlAttribute(name = FROM)
@@ -68,29 +82,29 @@ public class Email extends AbstractModel {
 	}
 
 	@XmlAttribute(name = TO)
-	public Collection<String> getTo() {
+	public String getTo() {
 		return to;
 	}
 
-	public void setTo(final Collection<String> to) {
+	public void setTo(final String to) {
 		this.to = to;
 	}
 
 	@XmlAttribute(name = CC)
-	public Collection<String> getCc() {
+	public String getCc() {
 		return cc;
 	}
 
-	public void setCc(final Collection<String> cc) {
+	public void setCc(final String cc) {
 		this.cc = cc;
 	}
 
 	@XmlAttribute(name = BCC)
-	public Collection<String> getBcc() {
+	public String getBcc() {
 		return bcc;
 	}
 
-	public void setBcc(final Collection<String> bcc) {
+	public void setBcc(final String bcc) {
 		this.bcc = bcc;
 	}
 
@@ -110,24 +124,6 @@ public class Email extends AbstractModel {
 
 	public void setBody(final String body) {
 		this.body = body;
-	}
-
-	@XmlAttribute(name = DATE)
-	public String getDate() {
-		return date;
-	}
-
-	public void setDate(final String date) {
-		this.date = date;
-	}
-
-	@XmlAttribute(name = STATUS)
-	public String getStatus() {
-		return status;
-	}
-
-	public void setStatus(final String status) {
-		this.status = status;
 	}
 
 	@XmlAttribute(name = NOTIFY_WITH)
@@ -157,15 +153,6 @@ public class Email extends AbstractModel {
 		this.account = account;
 	}
 
-	@XmlAttribute(name = TEMPLATE)
-	public String getTemplate() {
-		return template;
-	}
-
-	public void setTemplate(final String template) {
-		this.template = template;
-	}
-
 	@XmlAttribute(name = KEEP_SYNCHRONIZATION)
 	public boolean isKeepSynchronization() {
 		return keepSynchronization;
@@ -189,12 +176,14 @@ public class Email extends AbstractModel {
 		if (obj == this) {
 			return true;
 		}
-		if (!(obj instanceof Email)) {
+		if (!(obj instanceof EmailTemplate)) {
 			return false;
 		}
-		final Email other = Email.class.cast(obj);
+		final EmailTemplate other = EmailTemplate.class.cast(obj);
 		return new EqualsBuilder() //
 				.append(this.id, other.id) //
+				.append(this.name, other.name) //
+				.append(this.description, other.description) //
 				.append(this.from, other.from) //
 				.append(this.to, other.to) //
 				.append(this.cc, other.cc) //
@@ -202,11 +191,8 @@ public class Email extends AbstractModel {
 				.append(this.subject, other.subject) //
 				.append(this.body, other.body) //
 				.append(this.notifyWith, other.notifyWith) //
-				.append(this.date, other.date) //
-				.append(this.status, other.status) //
 				.append(this.noSubjectPrefix, other.noSubjectPrefix) //
 				.append(this.account, other.account) //
-				.append(this.template, other.template) //
 				.append(this.keepSynchronization, other.keepSynchronization) //
 				.append(this.promptSynchronization, other.promptSynchronization) //
 				.isEquals();
@@ -216,6 +202,8 @@ public class Email extends AbstractModel {
 	protected int doHashCode() {
 		return new HashCodeBuilder() //
 				.append(id) //
+				.append(name) //
+				.append(description) //
 				.append(from) //
 				.append(to) //
 				.append(cc) //
@@ -223,11 +211,8 @@ public class Email extends AbstractModel {
 				.append(subject) //
 				.append(body) //
 				.append(notifyWith) //
-				.append(date) //
-				.append(status) //
 				.append(noSubjectPrefix) //
 				.append(account) //
-				.append(template) //
 				.append(keepSynchronization) //
 				.append(promptSynchronization) //
 				.toHashCode();
