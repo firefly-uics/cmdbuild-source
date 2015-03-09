@@ -1,8 +1,6 @@
 (function() {
 
-	var tr = CMDBuild.Translation.administration.setup.gis;
-
-	Ext.define('CMDBuild.view.administration.configuration.Gis', {
+	Ext.define('CMDBuild.view.administration.configuration.GisPanel', {
 		extend: 'CMDBuild.view.administration.configuration.BasePanel',
 
 		requires: ['CMDBuild.core.proxy.CMProxyConstants'],

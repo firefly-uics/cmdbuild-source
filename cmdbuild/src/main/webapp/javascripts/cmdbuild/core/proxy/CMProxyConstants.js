@@ -75,6 +75,7 @@
 		DB: 'db',
 		DEFAULT_ACCOUNT: 'defaultAccount',
 		DEFAULT_SELECTION: 'defaultSelection',
+		DELAY: 'delay',
 		DELETE: 'delete',
 		DELETE_CARD: 'deleteCard',
 		DELETE_TYPE: 'deletionType',

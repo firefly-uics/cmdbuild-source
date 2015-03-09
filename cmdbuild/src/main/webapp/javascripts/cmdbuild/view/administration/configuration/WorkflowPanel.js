@@ -22,8 +22,8 @@
 
 		initComponent: function() {
 			this.enabledCheckBox = Ext.create('Ext.ux.form.XCheckbox', {
-				fieldLabel: CMDBuild.Translation.enabled,
-				name: CMDBuild.core.proxy.CMProxyConstants.ENABLED
+				name: CMDBuild.core.proxy.CMProxyConstants.ENABLED,
+				fieldLabel: CMDBuild.Translation.enabled
 			});
 
 			Ext.apply(this, {
