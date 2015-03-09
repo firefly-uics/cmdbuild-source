@@ -19,7 +19,7 @@
 		layout: 'hbox',
 
 		initComponent: function() {
-			this.field = createField();
+			this.field = this.createField();
 
 			if (_CMCache.isMultiLanguages())
 				this.translationButton = Ext.create('CMDBuild.core.buttons.FieldTranslation', {

@@ -19,20 +19,18 @@
 		configFileName: 'cmdbuild',
 
 		/**
-		 * @property {Ext.form.CMTranslatableText}
+		 * @property {CMDBuild.view.common.field.translatable.Text}
 		 */
 		instanceNameField: undefined,
 
 		initComponent: function() {
-			this.instanceNameField = Ext.create('Ext.form.CMTranslatableText', {
+			this.instanceNameField = Ext.create('CMDBuild.view.common.field.translatable.Text', {
 				fieldLabel: CMDBuild.Translation.instanceName,
 				name: 'instance_name',
 				allowBlank: true,
-				// This configuration is on the parent but for this special field is repeated here
 				labelAlign: 'left',
 				labelWidth: CMDBuild.CFG_LABEL_WIDTH,
 				width: CMDBuild.CFG_MEDIUM_FIELD_WIDTH,
-				// END - Duplicated configuration
 				translationsKeyType: 'InstanceName'
 			});
 
