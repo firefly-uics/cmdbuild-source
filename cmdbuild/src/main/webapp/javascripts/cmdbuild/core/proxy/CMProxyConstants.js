@@ -241,6 +241,7 @@
 		TYPE: 'type',
 		UNIQUE: 'isunique',
 		UPDATE: 'update',
+		URL: 'url',
 		USER: 'user',
 		USERNAME: 'username',
 		VALUE: 'value',

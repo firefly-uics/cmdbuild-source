@@ -123,6 +123,10 @@
 											cmControllerType: 'CMDBuild.controller.administration.configuration.Main',
 											cmName: 'modsetupgis'
 										}),
+										Ext.create('CMDBuild.view.administration.configuration.BimPanel', {
+											cmControllerType: 'CMDBuild.controller.administration.configuration.Main',
+											cmName: 'modsetupbim'
+										}),
 										Ext.create('CMDBuild.view.administration.configuration.ServerPanel', {
 											cmControllerType: 'CMDBuild.controller.administration.configuration.Server',
 											cmName: 'modsetupserver'
@@ -134,10 +138,6 @@
 										new CMDBuild.view.administration.dataview.CMFilterDataView({
 											cmControllerType: controllerNS.administration.dataview.CMFilerDataViewController,
 											cmName: 'filterdataview'
-										}),
-										new CMDBuild.view.administration.configuration.CMModConfigurationBIM({
-											cmControllerType: 'CMDBuild.controller.administration.configuration.Main',
-											cmName: 'modsetupbim'
 										})
 									]);
 								}
