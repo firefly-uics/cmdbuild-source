@@ -145,6 +145,7 @@ public class ServicesV2 implements LoggingSupport {
 	}
 
 	@Bean
+	@Scope(value = SCOPE_REQUEST, proxyMode = TARGET_CLASS)
 	public ProcessInstanceEmails v2_emails() {
 		final CxfProcessInstanceEmails service = new CxfProcessInstanceEmails(v2_errorHandler(),
 				helper.userWorkflowLogic(), helper.emailLogic(), v2_idGenerator());
