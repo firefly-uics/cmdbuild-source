@@ -570,11 +570,6 @@
 			},
 			"users": "ユーザー"
 		},
-		"setup": {
-			"modify": "更新",
-			"save": "保存",
-			"setupTitle": "セットアップ"
-		},
 		"tasks": {
 			"add": "タスクを追加",
 			"all": "全て",

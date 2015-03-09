@@ -570,11 +570,6 @@
 			},
 			"users": "Utilisateurs"
 		},
-		"setup": {
-			"modify": "Modifier",
-			"save": "Enregistrer",
-			"setupTitle": "Configuration"
-		},
 		"tasks": {
 			"add": "Ajouter une tâche",
 			"all": "Toutes",

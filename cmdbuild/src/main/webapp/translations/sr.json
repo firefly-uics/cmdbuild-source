@@ -570,11 +570,6 @@
 			},
 			"users": "Korisnici"
 		},
-		"setup": {
-			"modify": "Izmeni",
-			"save": "Potvrdi",
-			"setupTitle": "Podešavanja"
-		},
 		"tasks": {
 			"add": "Dodaj zadatak",
 			"all": "Svi",

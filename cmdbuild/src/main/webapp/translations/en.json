@@ -570,11 +570,6 @@
 			},
 			"users": "Users"
 		},
-		"setup": {
-			"modify": "Modify",
-			"save": "Save",
-			"setupTitle": "Setup"
-		},
 		"tasks": {
 			"add": "Add task",
 			"all": "All",
