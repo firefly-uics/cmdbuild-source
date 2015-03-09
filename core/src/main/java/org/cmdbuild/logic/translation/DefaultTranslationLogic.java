@@ -87,6 +87,17 @@ public class DefaultTranslationLogic implements TranslationLogic {
 			Validate.notNull(value, "conversion error");
 			return Element.of(value);
 		}
+		
+
+		@Override
+		public void visit(ClassDescription classDescription) {
+			//FIXME
+			final String fieldForKey = "description";
+			value = format("class.%s.%s", //
+					classDescription.getName(), //
+					fieldForKey);
+			
+		}
 
 		@Override
 		public void visit(final ClassTranslation translationObject) {
@@ -190,6 +201,7 @@ public class DefaultTranslationLogic implements TranslationLogic {
 		public void visit(final NullTranslationObject translationObject) {
 			value = EMPTY;
 		}
+
 
 	}
 

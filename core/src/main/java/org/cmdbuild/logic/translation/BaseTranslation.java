@@ -23,7 +23,8 @@ public abstract class BaseTranslation implements TranslationObject {
 	public void setName(final String name) {
 		this.name = name;
 	}
-
+	
+	@Deprecated
 	public String getField() {
 		return field;
 	}

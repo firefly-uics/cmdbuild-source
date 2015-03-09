@@ -32,4 +32,6 @@ public interface TranslationObjectVisitor {
 
 	void visit(NullTranslationObject translationObject);
 
+	void visit(ClassDescription classDescription);
+
 }
