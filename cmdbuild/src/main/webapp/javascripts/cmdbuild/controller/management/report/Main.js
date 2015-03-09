@@ -61,13 +61,15 @@
 
 		/**
 		 * @param {Object} reportParams
+		 * @param {Boolean} forceDownload
 		 */
-		createReport: function(reportParams) {
+		createReport: function(reportParams, forceDownload) {
+			forceDownload = forceDownload || false;
+
 			if (!Ext.isEmpty(reportParams[CMDBuild.core.proxy.CMProxyConstants.ID])) {
 				reportParams[CMDBuild.core.proxy.CMProxyConstants.TYPE] = reportParams[CMDBuild.core.proxy.CMProxyConstants.TYPE] || 'CUSTOM';
 				reportParams[CMDBuild.core.proxy.CMProxyConstants.EXTENSION] = reportParams[CMDBuild.core.proxy.CMProxyConstants.EXTENSION] || CMDBuild.core.proxy.CMProxyConstants.PDF;
 
-				CMDBuild.LoadMask.get().show();
 				CMDBuild.core.proxy.Report.createReport({
 					scope: this,
 					params: reportParams,
@@ -80,16 +82,14 @@
 					},
 					success: function(response, options, decodedResponse) {
 						if(decodedResponse.filled) { // Report with no parameters
-							this.showReport();
+							this.showReport(forceDownload);
 						} else { // Show parameters window
 							Ext.create('CMDBuild.view.management.report.ParametersWindow', {
 								delegate: this,
-								attributeList: decodedResponse.attribute
+								attributeList: decodedResponse.attribute,
+								forceDownload: forceDownload
 							}).show();
 						}
-					},
-					callback: function(options, success, response) {
-						CMDBuild.LoadMask.get().hide();
 					}
 				});
 			}
@@ -100,10 +100,13 @@
 		 */
 		onReportGenerateButtonClick: function(reportInfo) {
 			if (Ext.Array.contains(this.supportedReportTypes, reportInfo[CMDBuild.core.proxy.CMProxyConstants.TYPE])) {
-				this.createReport({
-					id: reportInfo[CMDBuild.core.proxy.CMProxyConstants.RECORD].get(CMDBuild.core.proxy.CMProxyConstants.ID),
-					extension: reportInfo[CMDBuild.core.proxy.CMProxyConstants.TYPE]
-				});
+				this.createReport(
+					{
+						id: reportInfo[CMDBuild.core.proxy.CMProxyConstants.RECORD].get(CMDBuild.core.proxy.CMProxyConstants.ID),
+						extension: reportInfo[CMDBuild.core.proxy.CMProxyConstants.TYPE]
+					},
+					true
+				);
 			} else {
 				CMDBuild.Msg.error(
 					CMDBuild.Translation.error,
@@ -138,19 +141,41 @@
 
 		/**
 		 * Get created report from server and display it in popup window
+		 *
+		 * @param {Boolean} forceDownload
 		 */
-		showReport: function() {
-			var popup = window.open(
-				CMDBuild.core.proxy.CMProxyUrlIndex.reports.printReportFactory,
-				'Report',
-				'height=400,width=550,status=no,toolbar=no,scrollbars=yes,menubar=no,location=no,resizable'
-			);
+		showReport: function(forceDownload) {
+			forceDownload = forceDownload || false;
 
-			if (!popup)
-				CMDBuild.Msg.warn(
-					CMDBuild.Translation.warnings.warning_message,
-					CMDBuild.Translation.warnings.popup_block
+			if (forceDownload) { // Force download mode
+				var form = Ext.create('Ext.form.Panel', {
+					standardSubmit: true,
+					url: CMDBuild.core.proxy.CMProxyUrlIndex.reports.printReportFactory
+				});
+
+				form.submit({
+					target: '_blank',
+					params: {
+						'force-download': true
+					}
+				});
+
+				Ext.defer(function() { // Form cleanup
+					form.close();
+				}, 100);
+			} else { // Pop-up display mode
+				var popup = window.open(
+					CMDBuild.core.proxy.CMProxyUrlIndex.reports.printReportFactory,
+					'Report',
+					'height=400,width=550,status=no,toolbar=no,scrollbars=yes,menubar=no,location=no,resizable'
 				);
+
+				if (!popup)
+					CMDBuild.Msg.warn(
+						CMDBuild.Translation.warnings.warning_message,
+						CMDBuild.Translation.warnings.popup_block
+					);
+			}
 		}
 	});
 

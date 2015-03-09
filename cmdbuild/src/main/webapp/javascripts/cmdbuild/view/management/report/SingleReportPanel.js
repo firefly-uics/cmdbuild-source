@@ -68,8 +68,7 @@
 							}
 						}),
 						'->',
-						Ext.create('Ext.button.Button', {
-							text: CMDBuild.Translation.download,
+						Ext.create('CMDBuild.buttons.Download', {
 							scope: this,
 
 							handler: function() {

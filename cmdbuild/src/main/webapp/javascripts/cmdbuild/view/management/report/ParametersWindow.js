@@ -19,6 +19,12 @@
 		 */
 		attributeList: [],
 
+		/**
+		 * @cfg {Boolean}
+		 */
+		forceDownload: false,
+
+		autoHeight: true,
 		buttonsAlign: 'center',
 		border: false,
 		frame: false,
@@ -104,7 +110,7 @@
 									CMDBuild.Translation.warnings.popup_block
 								);
 						} else {
-							this.delegate.showReport();
+							this.delegate.showReport(this.forceDownload);
 						}
 
 						this.destroy();

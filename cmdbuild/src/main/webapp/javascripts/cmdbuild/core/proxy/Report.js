@@ -18,7 +18,8 @@
 			CMDBuild.Ajax.request({
 				url: CMDBuild.core.proxy.CMProxyUrlIndex.reports.createReportFactory,
 				params: parameters.params,
-				scope: parameters.scope,
+				scope: parameters.scope || this,
+				loadMask: true,
 				failure: parameters.failure || Ext.emptyFn(),
 				success: parameters.success || Ext.emptyFn(),
 				callback: parameters.callback || Ext.emptyFn()
@@ -33,7 +34,7 @@
 				method: 'GET',
 				url: CMDBuild.core.proxy.CMProxyUrlIndex.reports.menuTree,
 				params: parameters.params,
-				scope: parameters.scope,
+				scope: parameters.scope || this,
 				failure: parameters.failure || Ext.emptyFn(),
 				success: parameters.success || Ext.emptyFn(),
 				callback: parameters.callback || Ext.emptyFn()
@@ -74,7 +75,7 @@
 				method: 'GET',
 				url: CMDBuild.core.proxy.CMProxyUrlIndex.reports.getReportTypesTree,
 				params: parameters.params,
-				scope: parameters.scope,
+				scope: parameters.scope || this,
 				failure: parameters.failure || Ext.emptyFn(),
 				success: parameters.success || Ext.emptyFn(),
 				callback: parameters.callback || Ext.emptyFn()
@@ -89,7 +90,7 @@
 				method: 'POST',
 				url: CMDBuild.core.proxy.CMProxyUrlIndex.reports.updateReportFactoryParams,
 				params: parameters.params,
-				scope: parameters.scope,
+				scope: parameters.scope || this,
 				failure: parameters.failure || Ext.emptyFn(),
 				success: parameters.success || Ext.emptyFn(),
 				callback: parameters.callback || Ext.emptyFn()
