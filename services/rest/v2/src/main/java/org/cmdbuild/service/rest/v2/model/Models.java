@@ -722,9 +722,9 @@ public class Models {
 
 		private Long id;
 		private String from;
-		private Collection<String> to;
-		private Collection<String> cc;
-		private Collection<String> bcc;
+		private String to;
+		private String cc;
+		private String bcc;
 		private String subject;
 		private String body;
 		private String notifyWith;
@@ -771,17 +771,17 @@ public class Models {
 			return this;
 		}
 
-		public EmailBuilder withTo(final Collection<String> to) {
+		public EmailBuilder withTo(final String to) {
 			this.to = to;
 			return this;
 		}
 
-		public EmailBuilder withCc(final Collection<String> cc) {
+		public EmailBuilder withCc(final String cc) {
 			this.cc = cc;
 			return this;
 		}
 
-		public EmailBuilder withBcc(final Collection<String> bcc) {
+		public EmailBuilder withBcc(final String bcc) {
 			this.bcc = bcc;
 			return this;
 		}

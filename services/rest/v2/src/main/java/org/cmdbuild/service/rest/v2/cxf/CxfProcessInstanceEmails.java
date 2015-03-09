@@ -4,9 +4,6 @@ import static com.google.common.collect.FluentIterable.from;
 import static com.google.common.collect.Iterables.size;
 import static java.lang.Integer.MAX_VALUE;
 import static java.util.Collections.emptyList;
-import static org.apache.commons.lang3.StringUtils.defaultString;
-import static org.apache.commons.lang3.StringUtils.isBlank;
-import static org.cmdbuild.data.store.email.EmailConstants.ADDRESSES_SEPARATOR;
 import static org.cmdbuild.logic.email.EmailLogic.Statuses.draft;
 import static org.cmdbuild.logic.email.EmailLogic.Statuses.outgoing;
 import static org.cmdbuild.logic.email.EmailLogic.Statuses.received;
@@ -32,9 +29,7 @@ import org.cmdbuild.service.rest.v2.model.ResponseSingle;
 import org.joda.time.DateTime;
 
 import com.google.common.base.Function;
-import com.google.common.base.Joiner;
 import com.google.common.base.Predicate;
-import com.google.common.base.Splitter;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 
@@ -61,9 +56,9 @@ public class CxfProcessInstanceEmails implements ProcessInstanceEmails {
 			return newEmail() //
 					.withId(input.getId()) //
 					.withFrom(input.getFromAddress()) //
-					.withTo(splitAddresses(input.getToAddresses())) //
-					.withCc(splitAddresses(input.getCcAddresses())) //
-					.withBcc(splitAddresses(input.getBccAddresses())) //
+					.withTo(input.getToAddresses()) //
+					.withCc(input.getCcAddresses()) //
+					.withBcc(input.getBccAddresses()) //
 					.withSubject(input.getSubject()) //
 					.withBody(input.getContent()) //
 					.withDate(dateAsString(input.getDate())) //
@@ -75,12 +70,6 @@ public class CxfProcessInstanceEmails implements ProcessInstanceEmails {
 					.withKeepSynchronization(input.isKeepSynchronization()) //
 					.withPromptSynchronization(input.isPromptSynchronization()) //
 					.build();
-		}
-
-		private Collection<String> splitAddresses(final String addresses) {
-			return isBlank(addresses) ? NO_ADDRESSES : Splitter.on(ADDRESSES_SEPARATOR) //
-					.trimResults() //
-					.splitToList(defaultString(addresses));
 		}
 
 		private String dateAsString(final DateTime input) {
@@ -111,9 +100,9 @@ public class CxfProcessInstanceEmails implements ProcessInstanceEmails {
 			return EmailImpl.newInstance() //
 					.withId(input.getId()) //
 					.withFromAddress(input.getFrom()) //
-					.withToAddresses(joinAddresses(input.getTo())) //
-					.withCcAddresses(joinAddresses(input.getCc())) //
-					.withBccAddresses(joinAddresses(input.getBcc())) //
+					.withToAddresses(input.getTo()) //
+					.withCcAddresses(input.getCc()) //
+					.withBccAddresses(input.getBcc()) //
 					.withSubject(input.getSubject()) //
 					.withContent(input.getBody()) //
 					.withStatus(statuses.get(input.getStatus())) //
@@ -125,11 +114,6 @@ public class CxfProcessInstanceEmails implements ProcessInstanceEmails {
 					.withKeepSynchronization(input.isKeepSynchronization()) //
 					.withPromptSynchronization(input.isPromptSynchronization()) //
 					.build();
-		}
-
-		private String joinAddresses(final Iterable<String> addresses) {
-			return (addresses == null) ? null : Joiner.on(ADDRESSES_SEPARATOR) //
-					.join(addresses);
 		}
 
 	};

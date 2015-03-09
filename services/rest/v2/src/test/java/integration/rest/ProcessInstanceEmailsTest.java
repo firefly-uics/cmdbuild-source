@@ -79,9 +79,9 @@ public class ProcessInstanceEmailsTest {
 		post.setEntity(new StringEntity("" //
 				+ "{" //
 				+ "    \"from\" : \"from@example.com\"," //
-				+ "    \"to\" : [\"to@example.com\"]," //
-				+ "    \"cc\" : [\"cc@example.com\", \"another_cc@example.com\"]," //
-				+ "    \"bcc\" : [\"bcc@example.com\"]," //
+				+ "    \"to\" : \"to@example.com\"," //
+				+ "    \"cc\" : \"cc@example.com,another_cc@example.com\"," //
+				+ "    \"bcc\" : \"bcc@example.com\"," //
 				+ "    \"subject\" : \"subject\"," //
 				+ "    \"body\" : \"body\"," //
 				+ "    \"status\" : \"draft\"," //
@@ -102,9 +102,9 @@ public class ProcessInstanceEmailsTest {
 
 		verify(service).create(eq("dummy"), eq(12L), eq(newEmail() //
 				.withFrom("from@example.com") //
-				.withTo(asList("to@example.com")) //
-				.withCc(asList("cc@example.com", "another_cc@example.com")) //
-				.withBcc(asList("bcc@example.com")) //
+				.withTo("to@example.com") //
+				.withCc("cc@example.com,another_cc@example.com") //
+				.withBcc("bcc@example.com") //
 				.withSubject("subject") //
 				.withBody("body") //
 				.withStatus("draft") //
@@ -173,9 +173,9 @@ public class ProcessInstanceEmailsTest {
 		put.setEntity(new StringEntity("" //
 				+ "{" //
 				+ "    \"from\" : \"from@example.com\"," //
-				+ "    \"to\" : [\"to@example.com\"]," //
-				+ "    \"cc\" : [\"cc@example.com\", \"another_cc@example.com\"]," //
-				+ "    \"bcc\" : [\"bcc@example.com\"]," //
+				+ "    \"to\" : \"to@example.com\"," //
+				+ "    \"cc\" : \"cc@example.com,another_cc@example.com\"," //
+				+ "    \"bcc\" : \"bcc@example.com\"," //
 				+ "    \"subject\" : \"subject\"," //
 				+ "    \"body\" : \"body\"," //
 				+ "    \"status\" : \"draft\"," //
@@ -195,9 +195,9 @@ public class ProcessInstanceEmailsTest {
 
 		verify(service).update(eq("dummy"), eq(12L), eq(34L), eq(newEmail() //
 				.withFrom("from@example.com") //
-				.withTo(asList("to@example.com")) //
-				.withCc(asList("cc@example.com", "another_cc@example.com")) //
-				.withBcc(asList("bcc@example.com")) //
+				.withTo("to@example.com") //
+				.withCc("cc@example.com,another_cc@example.com") //
+				.withBcc("bcc@example.com") //
 				.withSubject("subject") //
 				.withBody("body") //
 				.withStatus("draft") //

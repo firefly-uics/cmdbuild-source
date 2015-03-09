@@ -62,7 +62,7 @@ public class CxfProcessInstanceEmailsTest {
 		// when
 		underTest.create("dummy", 12L, newEmail() //
 				.withFrom("from@example.com") //
-				.withTo(asList("to@example.com")) //
+				.withTo("to@example.com") //
 				.withSubject("subject") //
 				.withBody("body") //
 				.build());
@@ -82,7 +82,7 @@ public class CxfProcessInstanceEmailsTest {
 		// when
 		underTest.create("dummy", 12L, newEmail() //
 				.withFrom("from@example.com") //
-				.withTo(asList("to@example.com")) //
+				.withTo("to@example.com") //
 				.withSubject("subject") //
 				.withBody("body") //
 				.build());
@@ -104,7 +104,7 @@ public class CxfProcessInstanceEmailsTest {
 		// when
 		underTest.create("dummy", 12L, newEmail() //
 				.withFrom("from@example.com") //
-				.withTo(asList("to@example.com")) //
+				.withTo("to@example.com") //
 				.withSubject("subject") //
 				.withBody("body") //
 				.build());
@@ -119,9 +119,9 @@ public class CxfProcessInstanceEmailsTest {
 		// when
 		final ResponseSingle<Long> response = underTest.create("dummy", 12L, newEmail() //
 				.withFrom("from@example.com") //
-				.withTo(asList("to@example.com")) //
-				.withCc(asList("cc@example.com", "another_cc@gmail.com")) //
-				.withBcc(asList("bcc@example.com")) //
+				.withTo("to@example.com") //
+				.withCc("cc@example.com,another_cc@gmail.com") //
+				.withBcc("bcc@example.com") //
 				.withSubject("subject") //
 				.withBody("body") //
 				.withStatus("draft") //
@@ -295,9 +295,9 @@ public class CxfProcessInstanceEmailsTest {
 		assertThat(response.getElement(), equalTo(newEmail() //
 				.withId(56L) //
 				.withFrom("from@example.com") //
-				.withTo(asList("to@example.com")) //
-				.withCc(asList("cc@example.com", "another_cc@gmail.com")) //
-				.withBcc(asList("bcc@example.com")) //
+				.withTo("to@example.com") //
+				.withCc("cc@example.com,another_cc@gmail.com") //
+				.withBcc("bcc@example.com") //
 				.withSubject("subject") //
 				.withBody("body") //
 				.withStatus("draft") //
@@ -326,7 +326,7 @@ public class CxfProcessInstanceEmailsTest {
 		underTest.update("dummy", 12L, 34L, newEmail() //
 				.withId(56L) //
 				.withFrom("from@example.com") //
-				.withTo(asList("to@example.com")) //
+				.withTo("to@example.com") //
 				.withSubject("subject") //
 				.withBody("body") //
 				.build());
@@ -344,7 +344,7 @@ public class CxfProcessInstanceEmailsTest {
 		underTest.update("dummy", 12L, 34L, newEmail() //
 				.withId(56L) //
 				.withFrom("from@example.com") //
-				.withTo(asList("to@example.com")) //
+				.withTo("to@example.com") //
 				.withSubject("subject") //
 				.withBody("body") //
 				.build());
@@ -368,7 +368,7 @@ public class CxfProcessInstanceEmailsTest {
 		underTest.update("dummy", 12L, 34L, newEmail() //
 				.withId(56L) //
 				.withFrom("from@example.com") //
-				.withTo(asList("to@example.com")) //
+				.withTo("to@example.com") //
 				.withSubject("subject") //
 				.withBody("body") //
 				.build());
@@ -380,9 +380,9 @@ public class CxfProcessInstanceEmailsTest {
 		underTest.update("dummy", 12L, 34L, newEmail() //
 				.withId(56L) //
 				.withFrom("from@example.com") //
-				.withTo(asList("to@example.com")) //
-				.withCc(asList("cc@example.com", "another_cc@gmail.com")) //
-				.withBcc(asList("bcc@example.com")) //
+				.withTo("to@example.com") //
+				.withCc("cc@example.com,another_cc@gmail.com") //
+				.withBcc("bcc@example.com") //
 				.withSubject("subject") //
 				.withBody("body") //
 				.withStatus("draft") //
