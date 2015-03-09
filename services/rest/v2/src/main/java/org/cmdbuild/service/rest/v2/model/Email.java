@@ -30,9 +30,9 @@ public class Email extends AbstractModel {
 
 	private Long id;
 	private String from;
-	private Collection<String> to;
-	private Collection<String> cc;
-	private Collection<String> bcc;
+	private String to;
+	private String cc;
+	private String bcc;
 	private String subject;
 	private String body;
 	private String date;
@@ -68,29 +68,29 @@ public class Email extends AbstractModel {
 	}
 
 	@XmlAttribute(name = TO)
-	public Collection<String> getTo() {
+	public String getTo() {
 		return to;
 	}
 
-	public void setTo(final Collection<String> to) {
+	public void setTo(final String to) {
 		this.to = to;
 	}
 
 	@XmlAttribute(name = CC)
-	public Collection<String> getCc() {
+	public String getCc() {
 		return cc;
 	}
 
-	public void setCc(final Collection<String> cc) {
+	public void setCc(final String cc) {
 		this.cc = cc;
 	}
 
 	@XmlAttribute(name = BCC)
-	public Collection<String> getBcc() {
+	public String getBcc() {
 		return bcc;
 	}
 
-	public void setBcc(final Collection<String> bcc) {
+	public void setBcc(final String bcc) {
 		this.bcc = bcc;
 	}
 
