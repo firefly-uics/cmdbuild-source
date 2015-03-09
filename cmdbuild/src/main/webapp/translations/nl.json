@@ -570,11 +570,6 @@
 			},
 			"users": "Gebruikers"
 		},
-		"setup": {
-			"modify": "Aanpassen",
-			"save": "Bewaren",
-			"setupTitle": "Configuratie"
-		},
 		"tasks": {
 			"add": "Taak toevoegen",
 			"all": "Alles",

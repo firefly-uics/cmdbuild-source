@@ -570,11 +570,6 @@
 			},
 			"users": "Người dùng"
 		},
-		"setup": {
-			"modify": "Sửa đổi",
-			"save": "Lưu",
-			"setupTitle": "Cài đặt"
-		},
 		"tasks": {
 			"add": "<em>Add task</em>",
 			"all": "<em>All</em>",

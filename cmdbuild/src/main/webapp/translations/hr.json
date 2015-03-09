@@ -570,11 +570,6 @@
 			},
 			"users": "Korisnici"
 		},
-		"setup": {
-			"modify": "Izmjeni",
-			"save": "Potvrdi",
-			"setupTitle": "Postavke"
-		},
 		"tasks": {
 			"add": "<em>Add task</em>",
 			"all": "<em>All</em>",

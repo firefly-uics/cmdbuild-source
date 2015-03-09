@@ -570,11 +570,6 @@
 			},
 			"users": "کاربران"
 		},
-		"setup": {
-			"modify": "Modify",
-			"save": "Save",
-			"setupTitle": "Setup"
-		},
 		"tasks": {
 			"add": "اضافه کردن کار",
 			"all": "همه",
