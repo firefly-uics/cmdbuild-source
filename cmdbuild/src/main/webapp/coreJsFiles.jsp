@@ -31,7 +31,6 @@
 <script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxyAdministration.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxyAttachment.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxyAttributes.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxyClasses.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxyDashboard.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxyDataView.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxyFilter.js"></script>
