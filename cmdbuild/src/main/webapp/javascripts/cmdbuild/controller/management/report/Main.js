@@ -116,16 +116,12 @@
 			}
 		},
 
-		onReportTypeSelected: function() {
-			this.grid.getStore().load();
-		},
-
 		/**
 		 * @param {CMDBuild.view.common.CMAccordionStoreModel} node
 		 */
 		onViewOnFront: function(node) {
 			if (!Ext.Object.isEmpty(node)) {
-				this.onReportTypeSelected();
+				this.grid.getStore().load();
 
 				if (
 					!Ext.isEmpty(node.get(CMDBuild.core.proxy.CMProxyConstants.ID))
