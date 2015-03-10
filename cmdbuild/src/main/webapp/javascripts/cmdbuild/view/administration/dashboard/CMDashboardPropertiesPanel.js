@@ -121,7 +121,6 @@
 
 			this.nameField.setValue(obj.name);
 			this.descriptionField.setValue(obj.description);
-//			this.descriptionField.setValue(obj.description_default);
 			this.groupsSelectionList.setValue(obj.groups);
 		},
 

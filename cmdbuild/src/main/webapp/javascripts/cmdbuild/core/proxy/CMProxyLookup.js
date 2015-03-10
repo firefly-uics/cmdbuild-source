@@ -4,7 +4,6 @@
 		Id: 'Id',
 		Code: 'Code',
 		Description: 'Description',
-		Description_default: 'Description_default',
 		ParentId: 'ParentId',
 		Index: 'Number',
 		Type: 'Type',

@@ -31,13 +31,9 @@
 				description: d.description,
 				descr_1: d.descrdir,
 				descr_2: d.descrinv,
-				description_default: d.description_default,
-				descr_1_default: d.descrdir_default,
-				descr_2_default: d.descrinv_default,
 				meta: d.meta,
 				attributes: d.attributes,
-				md_label: d.md_label,
-				md_label_default: d.md_label_default
+				md_label: d.md_label
 			});
 
 			domainModel.isMany = function(side) {
@@ -73,7 +69,7 @@
 			_debug("There are no domains with name " + name);
 			return null;
 		},
-		
+
 		getDomainNameById: function(id) {
 			if (typeof domainsMapIdAndName[id] == "undefined") {
 				var et = this.getDomainById(id);
@@ -242,12 +238,12 @@
 			for (var domain in domains) {
 				domain = domains[domain];
 				if (domain.get("isMasterDetail")) {
-					if (givenClassIdIsTheMasterForDomain(domain, id)) { 
+					if (givenClassIdIsTheMasterForDomain(domain, id)) {
 						out.push(Ext.create("CMDBuild.cache.CMDomainModel", domain.data));
 					}
 				}
 			}
-			
+
 			return out;
 		},
 
@@ -274,9 +270,9 @@
 			if (attributeStore) {
 				attributeStore.reloadForLastDomainId();
 			}
-			
+
 		},
-		
+
 		onDomainAttributeDelete: function(domainId, attribute) {
 			var domainAttributes = domains[domainId].get("attributes") || [];
 			eraseAttribute(domainAttributes, attribute);
