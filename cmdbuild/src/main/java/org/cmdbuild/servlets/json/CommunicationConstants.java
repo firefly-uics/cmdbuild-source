@@ -60,7 +60,6 @@ public class CommunicationConstants {
 			DB_TYPE = "db_type", //
 			DEFAULT = "Default", //
 			DEFAULT_ACCOUNT = "defaultAccount", //
-			DEFAULT_CLASS_DESCRIPTION = "text_default", //
 			DEFAULT_DESCRIPTION = "description_default", //
 			DEFAULT_DESCRIPTION_CAPITAL = "Description_default", //
 			DEFAULT_DIRECT_DESCRIPTION = "descrdir_default", //
@@ -122,7 +121,6 @@ public class CommunicationConstants {
 			FROM = "from", //
 			FUNCTION = "function", //
 			GROUP = "group", //
-			GROUP_DEFAULT = "group_default", //
 			GROUP_ID = "groupId", //
 			GROUP_NAME = "groupName", //
 			GROUPS = "groups", //

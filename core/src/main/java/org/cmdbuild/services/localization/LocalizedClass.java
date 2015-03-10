@@ -4,7 +4,7 @@ import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
 
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.ForwardingClass;
-import org.cmdbuild.logic.translation.ClassDescription.ClassDescriptionConverter;
+import org.cmdbuild.logic.translation.ClassTranslationConverter;
 import org.cmdbuild.logic.translation.TranslationFacade;
 
 class LocalizedClass extends ForwardingClass {
@@ -27,7 +27,7 @@ class LocalizedClass extends ForwardingClass {
 	public String getDescription() {
 
 		return defaultIfBlank( //
-				facade.read(ClassDescriptionConverter.of(DESCRIPTION) //
+				facade.read(ClassTranslationConverter.of(DESCRIPTION) //
 						.create(getName())), //
 				super.getDescription());
 	}

@@ -50,7 +50,6 @@ public class Serialization {
 				data.systemDataView(), //
 				workflow.systemWorkflowLogicBuilder(), //
 				privilegeManagement.userPrivilegeContext(), //
-				translation.translationFacade(), //
 				data.securityLogic(), //
 				userStore, //
 				web.notifier() //

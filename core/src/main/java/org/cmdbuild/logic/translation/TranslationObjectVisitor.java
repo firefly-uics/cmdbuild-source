@@ -6,8 +6,6 @@ public interface TranslationObjectVisitor {
 
 	void visit(DomainTranslation domainTranslation);
 
-	void visit(AttributeClassTranslation attributeClassTranslation);
-
 	void visit(AttributeDomainTranslation attributeClassTranslation);
 
 	void visit(ViewTranslation filterViewTranslation);
@@ -33,5 +31,11 @@ public interface TranslationObjectVisitor {
 	void visit(NullTranslationObject translationObject);
 
 	void visit(ClassDescription classDescription);
+
+	void visit(ClassAttributeDescription classAttributeDescription);
+
+	void visit(AttributeClassTranslation attributeClassTranslation);
+
+	void visit(ClassAttributeGroup classAttributeGroup);
 
 }

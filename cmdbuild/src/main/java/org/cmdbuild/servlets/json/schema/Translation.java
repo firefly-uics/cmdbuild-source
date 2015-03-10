@@ -18,11 +18,11 @@ import static org.cmdbuild.servlets.json.schema.Utils.toMap;
 
 import java.util.Map;
 
-import org.cmdbuild.logic.translation.AttributeClassTranslation;
+import org.apache.commons.lang3.Validate;
 import org.cmdbuild.logic.translation.AttributeDomainTranslation;
 import org.cmdbuild.logic.translation.ChartTranslation;
-import org.cmdbuild.logic.translation.ClassDescription;
-import org.cmdbuild.logic.translation.ClassDescription.ClassDescriptionConverter;
+import org.cmdbuild.logic.translation.ClassAttributeTranslationConverter;
+import org.cmdbuild.logic.translation.ClassTranslationConverter;
 import org.cmdbuild.logic.translation.DashboardTranslation;
 import org.cmdbuild.logic.translation.DomainTranslation;
 import org.cmdbuild.logic.translation.FilterTranslation;
@@ -31,6 +31,7 @@ import org.cmdbuild.logic.translation.InstanceNameTranslation;
 import org.cmdbuild.logic.translation.LookupTranslation;
 import org.cmdbuild.logic.translation.MenuItemTranslation;
 import org.cmdbuild.logic.translation.ReportTranslation;
+import org.cmdbuild.logic.translation.TranslationObject;
 import org.cmdbuild.logic.translation.ViewTranslation;
 import org.cmdbuild.logic.translation.WidgetTranslation;
 import org.cmdbuild.services.CustomFilesStore;
@@ -52,9 +53,9 @@ public class Translation extends JSONBaseWithSpringContext {
 			@Parameter(value = FIELD) final String field, //
 			@Parameter(value = TRANSLATIONS) final JSONObject translations //
 	) {
-		final ClassDescriptionConverter converter = ClassDescriptionConverter.of(field);
-		assert converter.isValid();
-		final ClassDescription translationObject = converter.create(className, toMap(translations));
+		final ClassTranslationConverter converter = ClassTranslationConverter.of(field);
+		Validate.isTrue(converter.isValid());
+		final TranslationObject translationObject = converter.create(className, toMap(translations));
 		translationLogic().create(translationObject);
 	}
 
@@ -66,12 +67,10 @@ public class Translation extends JSONBaseWithSpringContext {
 			@Parameter(value = FIELD) final String field, //
 			@Parameter(value = TRANSLATIONS) final JSONObject translations //
 	) {
-		final AttributeClassTranslation translationObject = AttributeClassTranslation.newInstance() //
-				.forClass(className) //
-				.withField(field) //
-				.withName(attributeName) //
-				.withTranslations(toMap(translations)) //
-				.build();
+
+		final ClassAttributeTranslationConverter converter = ClassAttributeTranslationConverter.of(field);
+		Validate.isTrue(converter.isValid());
+		final TranslationObject translationObject = converter.create(className, attributeName, toMap(translations));
 		translationLogic().create(translationObject);
 	}
 
@@ -257,9 +256,9 @@ public class Translation extends JSONBaseWithSpringContext {
 			@Parameter(value = CLASS_NAME) final String className, //
 			@Parameter(value = FIELD) final String field //
 	) {
-		final ClassDescriptionConverter converter = ClassDescriptionConverter.of(field);
-		assert converter.isValid();
-		final ClassDescription translationObject = converter.create(className);
+		final ClassTranslationConverter converter = ClassTranslationConverter.of(field);
+		Validate.isTrue(converter.isValid());
+		final TranslationObject translationObject = converter.create(className);
 		final Map<String, String> translations = translationLogic().readAll(translationObject);
 		return JsonResponse.success(translations);
 	}
@@ -271,11 +270,9 @@ public class Translation extends JSONBaseWithSpringContext {
 			@Parameter(value = ATTRIBUTENAME) final String attributeName, //
 			@Parameter(value = FIELD) final String field //
 	) {
-		final AttributeClassTranslation translationObject = AttributeClassTranslation.newInstance() //
-				.forClass(className) //
-				.withName(attributeName) //
-				.withField(field) //
-				.build();
+		final ClassAttributeTranslationConverter converter = ClassAttributeTranslationConverter.of(field);
+		Validate.isTrue(converter.isValid());
+		final TranslationObject translationObject = converter.create(className, attributeName);
 		final Map<String, String> translations = translationLogic().readAll(translationObject);
 		return JsonResponse.success(translations);
 	}
@@ -452,9 +449,9 @@ public class Translation extends JSONBaseWithSpringContext {
 			@Parameter(value = FIELD) final String field, //
 			@Parameter(value = TRANSLATIONS) final JSONObject translations //
 	) {
-		final ClassDescriptionConverter converter = ClassDescriptionConverter.of(field);
-		assert converter.isValid();
-		final ClassDescription translationObject = converter.create(className, toMap(translations));
+		final ClassTranslationConverter converter = ClassTranslationConverter.of(field);
+		Validate.isTrue(converter.isValid());
+		final TranslationObject translationObject = converter.create(className, toMap(translations));
 		translationLogic().update(translationObject);
 	}
 
@@ -466,12 +463,8 @@ public class Translation extends JSONBaseWithSpringContext {
 			@Parameter(value = FIELD) final String field, //
 			@Parameter(value = TRANSLATIONS) final JSONObject translations //
 	) {
-		final AttributeClassTranslation translationObject = AttributeClassTranslation.newInstance() //
-				.forClass(className) //
-				.withName(attributeName) //
-				.withField(field) //
-				.withTranslations(toMap(translations)) //
-				.build();
+		final ClassAttributeTranslationConverter converter = ClassAttributeTranslationConverter.of(field);
+		final TranslationObject translationObject = converter.create(className, attributeName, toMap(translations));
 		translationLogic().update(translationObject);
 	}
 
@@ -657,9 +650,9 @@ public class Translation extends JSONBaseWithSpringContext {
 			@Parameter(value = FIELD) final String field, //
 			@Parameter(value = TRANSLATIONS) final JSONObject translations //
 	) {
-		final ClassDescriptionConverter converter = ClassDescriptionConverter.of(field);
-		assert converter.isValid();
-		final ClassDescription translationObject = converter.create(className, toMap(translations));
+		final ClassTranslationConverter converter = ClassTranslationConverter.of(field);
+		Validate.isTrue(converter.isValid());
+		final TranslationObject translationObject = converter.create(className, toMap(translations));
 		translationLogic().delete(translationObject);
 	}
 
@@ -671,12 +664,9 @@ public class Translation extends JSONBaseWithSpringContext {
 			@Parameter(value = FIELD) final String field, //
 			@Parameter(value = TRANSLATIONS) final JSONObject translations //
 	) {
-		final AttributeClassTranslation translationObject = AttributeClassTranslation.newInstance() //
-				.forClass(className) //
-				.withName(attributeName) //
-				.withField(field) //
-				.withTranslations(toMap(translations)) //
-				.build();
+		final ClassAttributeTranslationConverter converter = ClassAttributeTranslationConverter.of(field);
+		Validate.isTrue(converter.isValid());
+		final TranslationObject translationObject = converter.create(className, attributeName, toMap(translations));
 		translationLogic().delete(translationObject);
 	}
 
