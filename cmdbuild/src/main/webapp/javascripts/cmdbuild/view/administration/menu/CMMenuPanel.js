@@ -29,13 +29,12 @@ Ext.define("CMDBuild.Administration.MenuPanel", {
 	extend: "Ext.panel.Panel",
 	statics: {
 		openTranslationsWindow: function(uuid) {
-			var translationsWindow = new CMDBuild.view.common.CMTranslationsWindow({
+			Ext.create('CMDBuild.controller.common.field.translatable.Window', {
 				title: CMDBuild.Translation.translations,
 				translationsKeyType: "MenuItem",
 				translationsKeyField: "Description",
 				translationsKeyName: uuid
 			});
-			translationsWindow.show();
 		},
 		warningNoSaveWindow: function() {
 			message = htmlComposeMessage(warningNoSaved);
