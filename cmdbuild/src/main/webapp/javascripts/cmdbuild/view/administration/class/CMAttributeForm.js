@@ -126,15 +126,15 @@
 				cmImmutable : true
 			});
 
-			this.attributeDescription = new Ext.form.CMTranslatableText( {
-				fieldLabel : tr.description,
+			this.attributeDescription = Ext.create('CMDBuild.view.common.field.translatable.Text', {
+				fieldLabel: tr.description,
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
-				name : _CMProxy.parameter.DESCRIPTION,
-				allowBlank : false,
+				name: _CMProxy.parameter.DESCRIPTION,
+				allowBlank: false,
 				translationsKeyType: "ClassAttribute",
 				translationsKeyField: "Description",
-				vtype : 'cmdbcomment'
+				vtype: 'cmdbcomment'
 			});
 
 			this.attributeNotNull = new Ext.ux.form.XCheckbox({

@@ -27,7 +27,7 @@
 		active: undefined,
 
 		/**
-		 * @property {Ext.form.CMTranslatableText}
+		 * @property {CMDBuild.view.common.field.translatable.Text}
 		 */
 		buttonLabel: undefined,
 
@@ -54,7 +54,7 @@
 		 * @abstract
 		 */
 		buildForm: function() {
-			this.buttonLabel = Ext.create('Ext.form.CMTranslatableText', {
+			this.buttonLabel = Ext.create('CMDBuild.view.common.field.translatable.Text', {
 				name: CMDBuild.core.proxy.CMProxyConstants.LABEL,
 				allowBlank: false,
 				fieldLabel: tr.commonFields.buttonLabel,

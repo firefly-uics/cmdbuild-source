@@ -80,7 +80,6 @@
 		DELETE_CARD: 'deleteCard',
 		DELETE_TYPE: 'deletionType',
 		DESCRIPTION: 'description',
-		DESCRIPTION_DEFAULT: 'description_default',
 		DIRTY: 'dirty',
 		DISABLE_ADD_ROW: 'disableAddRow',
 		DISABLE_DELETE_ROW: 'disableDeleteRow',
