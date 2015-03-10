@@ -10,7 +10,6 @@
 		fields: [
 			{name: "type", type: "string"},
 			{name: "text", type: "string"},
-			{name: "description_default", type: "string"},
 			{name: "index", type: "ingeter"},
 			{name: "referencedClassName", type: "string"},
 			{name: "referencedElementId", type: "string"},

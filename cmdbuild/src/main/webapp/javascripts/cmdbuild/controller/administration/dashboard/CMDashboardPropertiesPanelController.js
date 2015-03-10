@@ -81,7 +81,6 @@
 		me.view.fillFieldsWith({
 			name: me.dashboard.getName(),
 			description: me.dashboard.getDescription(),
-			description_default: me.dashboard.getDescriptionDefault(),
 			groups: me.dashboard.getGroups()
 		});
 	}
