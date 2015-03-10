@@ -2,8 +2,6 @@ package org.cmdbuild.logic.translation;
 
 public interface TranslationObjectVisitor {
 
-	void visit(ClassTranslation translationObject);
-
 	void visit(DomainTranslation domainTranslation);
 
 	void visit(AttributeDomainTranslation attributeClassTranslation);
@@ -33,8 +31,6 @@ public interface TranslationObjectVisitor {
 	void visit(ClassDescription classDescription);
 
 	void visit(ClassAttributeDescription classAttributeDescription);
-
-	void visit(AttributeClassTranslation attributeClassTranslation);
 
 	void visit(ClassAttributeGroup classAttributeGroup);
 
