@@ -19,7 +19,6 @@
 
 		fields: [
 			{ name: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION, type: 'string' },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION_DEFAULT, type: 'string' },
 			{ name: CMDBuild.core.proxy.CMProxyConstants.GROUPS, type: 'string' },
 			{ name: CMDBuild.core.proxy.CMProxyConstants.ID, type: 'string' },
 			{ name: CMDBuild.core.proxy.CMProxyConstants.QUERY, type: 'string' },

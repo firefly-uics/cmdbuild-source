@@ -1,13 +1,13 @@
 Ext.define("CMDBuild.Administration.ModIcons", {
 	extend: "Ext.panel.Panel",
 
-	cmName:"gis-icons",	
+	cmName:"gis-icons",
 	translation: CMDBuild.Translation.administration.modcartography.icons,
 	buttonsTr: CMDBuild.Translation.common.buttons,
 
 	initComponent : function() {
 		this.buildUIButtons();
-		
+
 		this.iconsGrid = new Ext.grid.GridPanel({
 			title: this.translation.title,
 			region: 'center',
@@ -17,13 +17,13 @@ Ext.define("CMDBuild.Administration.ModIcons", {
 			store: CMDBuild.ServiceProxy.Icons.getIconStore(),
 			tbar: [this.addButton],
 			sm: new Ext.selection.RowModel(),
-			columns: [{	
-				header: '&nbsp', 
-				width: 50, 
-				rowsfixed: true, 
+			columns: [{
+				header: '&nbsp',
+				width: 50,
+				rowsfixed: true,
 				sortable: false,
-				renderer: this.renderIcon, 
-				align: 'center', 
+				renderer: this.renderIcon,
+				align: 'center',
 				dataIndex: 'path',
 				menuDisabled: true,
 				hideable: false
@@ -37,14 +37,14 @@ Ext.define("CMDBuild.Administration.ModIcons", {
 		});
 		this.iconsGrid.getSelectionModel().on("select", this.onRowSelect , this);
 
-		this.description = new Ext.form.CMTranslatableText( {
-			fieldLabel : this.translation.description,
+		this.description = Ext.create('CMDBuild.view.common.field.translatable.Text', {
+			fieldLabel: this.translation.description,
 			labelWidth: CMDBuild.LABEL_WIDTH,
 			width: CMDBuild.ADM_BIG_FIELD_WIDTH,
-			name : 'description',
-			allowBlank : false,
-			vtype : 'cmdbcomment',
-			translationsKeyType: "GisIcon", 
+			name: 'description',
+			allowBlank: false,
+			vtype: 'cmdbcomment',
+			translationsKeyType: "GisIcon",
 			translationsKeyField: "Description"
 		});
 		this.uploadForm = new Ext.form.FormPanel({
@@ -135,14 +135,14 @@ Ext.define("CMDBuild.Administration.ModIcons", {
 			formBind: true,
 			handler: this.onSave
 		});
-		
+
 		this.abortButton = new Ext.Button({
 			text: this.buttonsTr.abort,
 			scope: this,
 			disabled: true,
 			handler: this.onAbort
 		});
-		
+
 		this.modifyButton = new Ext.Button({
 	    	text: this.buttonsTr.modify,
 	    	iconCls: 'modify',
@@ -150,7 +150,7 @@ Ext.define("CMDBuild.Administration.ModIcons", {
 	    	disabled: true,
 	    	handler: this.onModify
 	    });
-		
+
 		this.removeButton = new Ext.Button({
 	    	text: this.buttonsTr.remove,
 	    	iconCls: 'delete',
@@ -158,9 +158,9 @@ Ext.define("CMDBuild.Administration.ModIcons", {
 	    	disabled: true,
 	    	handler: this.onRemove
 	    });
-		
+
   	},
-  	
+
   	//private
   	onRowSelect: function(sm, record, index) {
   		this.disableModify();
@@ -172,7 +172,7 @@ Ext.define("CMDBuild.Administration.ModIcons", {
 			translationsKeyName: record.get("name")
 		});
   	},
-  	
+
   	//private
   	onAddClick: function() {
 		this.iconsGrid.getSelectionModel().clearSelections();
@@ -181,15 +181,15 @@ Ext.define("CMDBuild.Administration.ModIcons", {
 		this.uploadForm.saveStatus = "add";
 		_CMCache.initAddingTranslations();
 	},
-  	
-  	//private	
+
+  	//private
   	onAbort: function() {
   		this.disableModify();
   		this.iconsGrid.getSelectionModel().clearSelections();
   		this.uploadForm.getForm().reset();
   	},
-  	
-  	//private  	
+
+  	//private
   	onModify: function() {
   		this.enableModify();
   		var descriptionField = this.uploadForm.getForm().findField("description");
@@ -199,8 +199,8 @@ Ext.define("CMDBuild.Administration.ModIcons", {
   		this.uploadForm.saveStatus = "modify";
 		_CMCache.initModifyingTranslations();
  	},
-  	
-  	//private  	
+
+  	//private
   	disableModify: function() {
   		this.addButton.enable();
   		this.modifyButton.disable();
@@ -219,8 +219,8 @@ Ext.define("CMDBuild.Administration.ModIcons", {
   		this.abortButton.enable();
   		this.uploadForm.setFieldsEnabled(true);
   	},
-  	
-  	//private  	
+
+  	//private
   	onSave: function() {
   		var form = this.uploadForm.getForm();
   		//the save status is set only when click to add
@@ -256,7 +256,7 @@ Ext.define("CMDBuild.Administration.ModIcons", {
 		}
   	},
 
-  	//private  	
+  	//private
   	onRemove: function() {
   		var title = this.translation.alert.title;
 		var msg = this.translation.alert.msg;
@@ -289,7 +289,7 @@ Ext.define("CMDBuild.Administration.ModIcons", {
   	//private
   	requestFailure: this.onAbort,
 
-  	//private  	
+  	//private
   	requestCallback: function() {
   		CMDBuild.LoadMask.get().hide();
 		this.disableModify();
