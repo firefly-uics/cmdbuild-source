@@ -115,13 +115,6 @@ public class DefaultTranslationLogic implements TranslationLogic {
 		}
 
 		@Override
-		public void visit(final ClassTranslation translationObject) {
-			value = format("class.%s.%s", //
-					translationObject.getName(), //
-					FieldMapper.of(translationObject.getField()).getResult());
-		}
-
-		@Override
 		public void visit(final DomainTranslation translationObject) {
 			value = format("domain.%s.%s", //
 					translationObject.getName(), //
@@ -207,14 +200,6 @@ public class DefaultTranslationLogic implements TranslationLogic {
 		@Override
 		public void visit(final NullTranslationObject translationObject) {
 			value = EMPTY;
-		}
-
-		@Override
-		public void visit(final AttributeClassTranslation translationObject) {
-			value = format("attributeclass.%s.%s.%s", //
-					translationObject.getName(), //
-					translationObject.getAttributeName(), //
-					FieldMapper.of(translationObject.getField()).getResult());
 		}
 
 	}
