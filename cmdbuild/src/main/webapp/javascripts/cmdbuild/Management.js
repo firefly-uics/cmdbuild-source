@@ -250,7 +250,8 @@
 
 				CMDBuild.ServiceProxy.classes.read({
 					params: {
-						active: true
+						active: true,
+						localized: true
 					},
 					scope: this,
 					success: function(response, options, decoded) {
