@@ -9,12 +9,8 @@ public class ClassDescription extends BaseTranslation {
 		this.setTranslations(builder.translations);
 	}
 
-	private static Builder newInstance() {
+	static Builder newInstance() {
 		return new Builder();
-	}
-
-	public static ClassDescription classDescription(final String name, final Map<String, String> translations) {
-		return newInstance().withField(name).withTranslations(translations).build();
 	}
 
 	@Override
@@ -43,71 +39,6 @@ public class ClassDescription extends BaseTranslation {
 		public Builder withTranslations(final Map<String, String> translations) {
 			this.translations = translations;
 			return this;
-		}
-
-	}
-
-	public enum ClassDescriptionConverter {
-
-		DESCRIPTION("description") {
-
-			@Override
-			public ClassDescription create(final String name, final Map<String, String> translations) {
-				return ClassDescription.newInstance() //
-						.withField(name) //
-						.withTranslations(translations) //
-						.build();
-			}
-
-			@Override
-			public boolean isValid() {
-				return true;
-			}
-
-			@Override
-			public ClassDescription create(final String name) {
-				return ClassDescription.newInstance() //
-						.withField(name) //
-						.build();
-			}
-		},
-
-		UNDEFINED("undefined") {
-			@Override
-			public ClassDescription create(final String name, final Map<String, String> translations) {
-				throw new IllegalArgumentException();
-			}
-
-			@Override
-			public boolean isValid() {
-				return false;
-			}
-
-			@Override
-			public ClassDescription create(final String name) {
-				throw new IllegalArgumentException();
-			}
-		};
-
-		private final String fieldName;
-
-		public abstract ClassDescription create(String name, Map<String, String> translations);
-
-		public abstract ClassDescription create(String name);
-
-		public abstract boolean isValid();
-
-		private ClassDescriptionConverter(final String fieldName) {
-			this.fieldName = fieldName;
-		}
-
-		public static ClassDescriptionConverter of(final String value) {
-			for (final ClassDescriptionConverter element : values()) {
-				if (element.fieldName.equalsIgnoreCase(value)) {
-					return element;
-				}
-			}
-			return UNDEFINED;
 		}
 
 	}

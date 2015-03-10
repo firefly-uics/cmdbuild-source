@@ -87,16 +87,31 @@ public class DefaultTranslationLogic implements TranslationLogic {
 			Validate.notNull(value, "conversion error");
 			return Element.of(value);
 		}
-		
 
 		@Override
-		public void visit(ClassDescription classDescription) {
-			//FIXME
+		public void visit(final ClassDescription translationObject) {
 			final String fieldForKey = "description";
 			value = format("class.%s.%s", //
-					classDescription.getName(), //
+					translationObject.getName(), //
 					fieldForKey);
-			
+		}
+
+		@Override
+		public void visit(final ClassAttributeDescription translationObject) {
+			final String fieldForKey = "description";
+			value = format("attributeclass.%s.%s.%s", //
+					translationObject.getClassName(), //
+					translationObject.getName(), //
+					fieldForKey);
+		}
+
+		@Override
+		public void visit(final ClassAttributeGroup translationObject) {
+			final String fieldForKey = "group";
+			value = format("attributeclass.%s.%s.%s", //
+					translationObject.getClassName(), //
+					translationObject.getName(), //
+					fieldForKey);
 		}
 
 		@Override
@@ -110,14 +125,6 @@ public class DefaultTranslationLogic implements TranslationLogic {
 		public void visit(final DomainTranslation translationObject) {
 			value = format("domain.%s.%s", //
 					translationObject.getName(), //
-					FieldMapper.of(translationObject.getField()).getResult());
-		}
-
-		@Override
-		public void visit(final AttributeClassTranslation translationObject) {
-			value = format("attributeclass.%s.%s.%s", //
-					translationObject.getName(), //
-					translationObject.getAttributeName(), //
 					FieldMapper.of(translationObject.getField()).getResult());
 		}
 
@@ -202,6 +209,13 @@ public class DefaultTranslationLogic implements TranslationLogic {
 			value = EMPTY;
 		}
 
+		@Override
+		public void visit(final AttributeClassTranslation translationObject) {
+			value = format("attributeclass.%s.%s.%s", //
+					translationObject.getName(), //
+					translationObject.getAttributeName(), //
+					FieldMapper.of(translationObject.getField()).getResult());
+		}
 
 	}
 

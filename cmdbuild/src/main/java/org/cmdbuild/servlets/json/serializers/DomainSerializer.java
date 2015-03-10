@@ -101,7 +101,6 @@ public class DomainSerializer extends Serializer {
 		// FIXME should not be used in this way
 		final AttributeSerializer attributeSerializer = AttributeSerializer.newInstance() //
 				.withDataView(dataView) //
-				.withTranslationFacade(translationFacade) //
 				.build();
 		jsonDomain.put("attributes", attributeSerializer.toClient(domain.getAttributes(), activeOnly));
 

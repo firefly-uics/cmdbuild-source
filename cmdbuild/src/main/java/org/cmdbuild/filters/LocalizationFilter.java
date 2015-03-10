@@ -45,6 +45,7 @@ public class LocalizationFilter implements Filter, ApplicationContextAware {
 			throws IOException, ServletException {
 		// TODO log
 		final String value = request.getParameter(PARAMETER);
+		//final String value = true;
 		requestHandler.setLocalized(toBoolean(value));
 		filterChain.doFilter(request, response);
 	}

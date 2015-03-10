@@ -1,11 +1,12 @@
 package org.cmdbuild.servlets.json.serializers;
 
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
-import static org.cmdbuild.logic.translation.DefaultTranslationLogic.DESCRIPTION_FOR_CLIENT;
+import static org.cmdbuild.servlets.json.CommunicationConstants.ACTIVE;
 import static org.cmdbuild.servlets.json.CommunicationConstants.CLASS_DESCRIPTION;
-import static org.cmdbuild.servlets.json.CommunicationConstants.DEFAULT_CLASS_DESCRIPTION;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ID;
 import static org.cmdbuild.servlets.json.CommunicationConstants.NAME;
+import static org.cmdbuild.servlets.json.CommunicationConstants.PARENT;
+import static org.cmdbuild.servlets.json.CommunicationConstants.SUPERCLASS;
 import static org.cmdbuild.servlets.json.CommunicationConstants.UI_CARD_EDIT_MODE;
 import static org.cmdbuild.servlets.json.schema.ModSecurity.LOGIC_TO_JSON;
 
@@ -18,10 +19,7 @@ import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.exception.CMDBWorkflowException;
 import org.cmdbuild.exception.CMDBWorkflowException.WorkflowExceptionType;
-import org.cmdbuild.listeners.RequestListener;
 import org.cmdbuild.logger.Log;
-import org.cmdbuild.logic.translation.ClassTranslation;
-import org.cmdbuild.logic.translation.TranslationFacade;
 import org.cmdbuild.logic.privileges.CardEditMode;
 import org.cmdbuild.logic.privileges.SecurityLogic;
 import org.cmdbuild.logic.workflow.SystemWorkflowLogicBuilder;
@@ -39,7 +37,6 @@ public class ClassSerializer extends Serializer {
 	private final CMDataView dataView;
 	private final WorkflowLogic workflowLogic;
 	private final PrivilegeContext privilegeContext;
-	private final TranslationFacade translationFacade;
 	private final SecurityLogic securityLogic;
 	private final UserStore userStore;
 	private final Notifier notifier;
@@ -48,7 +45,6 @@ public class ClassSerializer extends Serializer {
 			final CMDataView dataView, //
 			final SystemWorkflowLogicBuilder workflowLogicBuilder, //
 			final PrivilegeContext privilegeContext, //
-			final TranslationFacade translationFacade, //
 			final SecurityLogic securityLogic, //
 			final UserStore userStore, //
 			final Notifier notifier //
@@ -56,7 +52,6 @@ public class ClassSerializer extends Serializer {
 		this.dataView = dataView;
 		this.workflowLogic = workflowLogicBuilder.build();
 		this.privilegeContext = privilegeContext;
-		this.translationFacade = translationFacade;
 		this.securityLogic = securityLogic;
 		this.userStore = userStore;
 		this.notifier = notifier;
@@ -104,11 +99,9 @@ public class ClassSerializer extends Serializer {
 		}
 		jsonObject.put(ID, cmClass.getId());
 		jsonObject.put(NAME, cmClass.getName());
-
 		jsonObject.put(CLASS_DESCRIPTION, cmClass.getDescription());
-		jsonObject.put(DEFAULT_CLASS_DESCRIPTION, cmClass.getDescription());
-		jsonObject.put("superclass", cmClass.isSuperclass());
-		jsonObject.put("active", cmClass.isActive());
+		jsonObject.put(SUPERCLASS, cmClass.isSuperclass());
+		jsonObject.put(ACTIVE, cmClass.isActive());
 		jsonObject.put("tableType", cmClass.holdsHistory() ? "standard" : "simpletable");
 		jsonObject.put("selectable", !cmClass.getName().equals(Constants.BASE_CLASS_NAME));
 		jsonObject.put("system", cmClass.isSystemButUsable());
@@ -121,7 +114,7 @@ public class ClassSerializer extends Serializer {
 
 		final CMClass parent = cmClass.getParent();
 		if (parent != null) {
-			jsonObject.put("parent", parent.getId());
+			jsonObject.put(PARENT, parent.getId());
 		}
 
 		// Wrap the serialization if required
@@ -138,7 +131,7 @@ public class ClassSerializer extends Serializer {
 		final OperationUser user = userStore.getUser();
 		CardEditMode cardEditMode = securityLogic.fetchCardEditModeForGroupAndClass(user.getPreferredGroup().getId(),
 				cmClass.getId());
-		cardEditMode = (CardEditMode) defaultIfNull(cardEditMode, CardEditMode.ALLOW_ALL);
+		cardEditMode = defaultIfNull(cardEditMode, CardEditMode.ALLOW_ALL);
 		json.put(UI_CARD_EDIT_MODE, LOGIC_TO_JSON.apply(cardEditMode));
 	}
 
