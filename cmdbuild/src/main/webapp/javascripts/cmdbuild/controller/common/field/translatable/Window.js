@@ -79,21 +79,25 @@
 		/**
 		 * @param {Object} translations
 		 */
-		buildWindowItem: function(translations) {
-			var activeTranslations = _CMCache.getActiveTranslations();
+		buildWindowItem: function(translationsValues) {
+			var languagesWithLocalizations = CMDBuild.Config.localization.get(CMDBuild.core.proxy.CMProxyConstants.LANGUAGES_WITH_LOCALIZATIONS);
 
-			Ext.Array.forEach(activeTranslations, function(activeTranslation, index, allTranslations) {
+			Ext.Array.forEach(languagesWithLocalizations, function(language, index, allLanguages) {
 				var item = Ext.create('Ext.form.field.Text', {
-					name: activeTranslation[CMDBuild.core.proxy.CMProxyConstants.NAME],
-					fieldLabel: activeTranslation[CMDBuild.core.proxy.CMProxyConstants.LANGUAGE],
+					name: language[CMDBuild.core.proxy.CMProxyConstants.TAG],
+					fieldLabel: language[CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION],
 					labelWidth: CMDBuild.LABEL_WIDTH,
 					flex: 1,
 					padding: '3 5',
-					labelClsExtra: 'ux-flag-' + activeTranslation[CMDBuild.core.proxy.CMProxyConstants.NAME],
+					labelClsExtra: 'ux-flag-' + language[CMDBuild.core.proxy.CMProxyConstants.TAG],
 					labelStyle: 'background-repeat: no-repeat; background-position: left; padding-left: 22px;'
 				});
 
-				item.setValue(translations[activeTranslation[CMDBuild.core.proxy.CMProxyConstants.NAME]]);
+				item.setValue(
+					translationsValues[
+						language[CMDBuild.core.proxy.CMProxyConstants.TAG]
+					]
+				);
 
 				this.form.add(item);
 			},this);

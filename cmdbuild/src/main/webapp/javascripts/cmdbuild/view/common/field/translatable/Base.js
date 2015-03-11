@@ -3,6 +3,8 @@
 	Ext.define('CMDBuild.view.common.field.translatable.Base', {
 		extend: 'Ext.form.FieldContainer',
 
+		requires: ['CMDBuild.core.proxy.Localizations'],
+
 		/**
 		 * @cfg {Boolean}
 		 */
@@ -31,7 +33,7 @@
 		initComponent: function() {
 			this.field = this.createField();
 
-			if (_CMCache.isMultiLanguages())
+			if (CMDBuild.Config.localization.hasLocalizations())
 				this.translationButton = Ext.create('CMDBuild.core.buttons.FieldTranslation', {
 					scope: this,
 
@@ -49,8 +51,6 @@
 				items: [this.field, this.translationButton]
 			});
 
-			_CMCache.registerOnTranslations(this);
-
 			this.callParent(arguments);
 		},
 
@@ -60,6 +60,8 @@
 		createField: function() {},
 
 		/**
+		 * Forward method
+		 *
 		 * @return {String}
 		 */
 		getValue: function() {
@@ -67,6 +69,8 @@
 		},
 
 		/**
+		 * Forward method
+		 *
 		 * @return {Boolean}
 		 */
 		isValid: function() {
@@ -74,12 +78,17 @@
 		},
 
 		/**
+		 * Forward method
+		 *
 		 * @param {String} value
 		 */
 		setValue: function(value) {
 			this.field.setValue(value);
 		},
 
+		/**
+		 * Forward method
+		 */
 		reset: function() {
 			this.field.reset();
 		}
