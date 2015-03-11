@@ -26,11 +26,11 @@
 <script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxyConstants.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxyUrlIndex.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxy.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/core/proxy/Attributes.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/proxy/Card.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/proxy/Configuration.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxyAdministration.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxyAttachment.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxyAttributes.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxyDashboard.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxyDataView.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxyFilter.js"></script>
