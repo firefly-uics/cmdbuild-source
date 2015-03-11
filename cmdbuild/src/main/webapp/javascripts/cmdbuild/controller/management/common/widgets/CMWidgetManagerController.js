@@ -107,7 +107,7 @@
 			}, this);
 		},
 
-		waitForBusyWidgets: function waitForBusyWidgets(cb, cbScope) {
+		waitForBusyWidgets: function(cb, cbScope) {
 			var me = this;
 
 			this.onBeforeSaveTrigger();

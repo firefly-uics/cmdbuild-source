@@ -53,7 +53,7 @@
 		/**
 		 * Shorthand to view grid
 		 *
-		 * @property {CMDBuild.controller.management.common.widgets.manageEmail.Grid}
+		 * @property {CMDBuild.controller.management.common.widgets.manageEmail.GridPanel}
 		 */
 		grid: undefined,
 
@@ -95,7 +95,7 @@
 		widgetConfTemplates: [],
 
 		statics: {
-			WIDGET_NAME: CMDBuild.view.management.common.widgets.manageEmail.MainPanel.WIDGET_NAME,
+			WIDGET_NAME: CMDBuild.view.management.common.widgets.manageEmail.ManageEmailPanel.WIDGET_NAME,
 
 			/**
 			 * Searches for CQL variables resolved by client
