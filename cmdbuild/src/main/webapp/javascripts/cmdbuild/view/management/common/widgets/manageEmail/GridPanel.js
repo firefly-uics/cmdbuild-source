@@ -1,6 +1,6 @@
 (function() {
 
-	Ext.define('CMDBuild.view.management.common.widgets.manageEmail.Grid', {
+	Ext.define('CMDBuild.view.management.common.widgets.manageEmail.GridPanel', {
 		extend: 'Ext.grid.Panel',
 
 		requires: [
@@ -113,7 +113,12 @@
 								},
 
 								isDisabled: function(grid, rowIndex, colIndex, item, record) {
-									return !this.delegate.recordIsEditable(record) || this.readOnly || !this.delegate.isRegenerable(record);
+									return (
+										this.readOnly
+										|| !this.delegate.recordIsEditable(record)
+										|| !this.delegate.isRegenerable(record)
+										|| !record.get(CMDBuild.core.proxy.CMProxyConstants.KEEP_SYNCHRONIZATION)
+									);
 								}
 							}
 						]
