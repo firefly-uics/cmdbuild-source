@@ -3,6 +3,7 @@ package org.cmdbuild.workflow.api;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.cmdbuild.workflow.Constants.CURRENT_GROUP_NAME_VARIABLE;
 import static org.cmdbuild.workflow.Constants.CURRENT_USER_USERNAME_VARIABLE;
+import static org.cmdbuild.workflow.Constants.PROCESS_CARD_ID_VARIABLE;
 
 import org.cmdbuild.api.fluent.ws.WsFluentApiExecutor;
 import org.cmdbuild.common.api.mail.Configuration;
@@ -17,6 +18,8 @@ import org.enhydra.shark.api.client.wfmc.wapi.WAPI;
 import org.enhydra.shark.api.client.wfmc.wapi.WMAttribute;
 import org.enhydra.shark.api.client.wfmc.wapi.WMSessionHandle;
 import org.enhydra.shark.api.internal.working.CallbackUtilities;
+
+import com.google.common.base.Optional;
 
 public class SoapSharkWorkflowApiFactory implements SharkWorkflowApiFactory {
 
@@ -57,7 +60,9 @@ public class SoapSharkWorkflowApiFactory implements SharkWorkflowApiFactory {
 		final Private proxy = proxy();
 		final CachedWsSchemaApi schemaApi = new CachedWsSchemaApi(proxy);
 		final WsFluentApiExecutor wsFluentApiExecutor = new WsFluentApiExecutor(proxy);
-		final WorkflowApi workflowApi = new WorkflowApi(wsFluentApiExecutor, schemaApi, mailApi());
+		final SharkFluentApiExecutor executor = new SharkFluentApiExecutor(wsFluentApiExecutor, currentProcessId(),
+				new MonostateSelfSuspensionRequestHolder());
+		final WorkflowApi workflowApi = new WorkflowApi(executor, schemaApi, mailApi());
 
 		// FIXME needed for cut-off circular dependency
 		wsFluentApiExecutor.setEntryTypeConverter(new SharkWsEntryTypeConverter(workflowApi));
@@ -100,6 +105,21 @@ public class SoapSharkWorkflowApiFactory implements SharkWorkflowApiFactory {
 			return String.class.cast(value);
 		} catch (final Throwable e) {
 			return EMPTY;
+		}
+	}
+
+	private Optional<Long> currentProcessId() {
+		if (processData == null) {
+			return Optional.absent();
+		}
+
+		try {
+			final WMAttribute attribute = wapi().getProcessInstanceAttributeValue(processData.shandle,
+					processData.procInstId, PROCESS_CARD_ID_VARIABLE);
+			final Object value = attribute.getValue();
+			return Optional.of(Number.class.cast(value).longValue());
+		} catch (final Throwable e) {
+			return Optional.absent();
 		}
 	}
 
