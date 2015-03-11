@@ -21,6 +21,14 @@
 		 */
 		activityId: undefined,
 
+
+		/**
+		 * Callback function to run on beforeSave function call
+		 *
+		 * @property {Function}
+		 */
+		beforeSaveCallback: undefined,
+
 		/**
 		 * @property {CMDBuild.model.CMActivityInstance}
 		 */
@@ -469,9 +477,14 @@ _debug('onEditMode');
 		},
 
 		/**
+		 * @param {Function} callback
+		 *
 		 * @override
 		 */
-		onBeforeSave: function() {
+		onBeforeSave: function(callback) {
+			if (!Ext.isEmpty(callback))
+				this.beforeSaveCallback = callback;
+
 			this.controllerGrid.storeLoad(true);
 		},
 
@@ -779,6 +792,7 @@ _debug('setActivityId this.activityId', this.activityId);
 				model.set(CMDBuild.core.proxy.CMProxyConstants.FROM, template[CMDBuild.core.proxy.CMProxyConstants.FROM_ADDRESS]);
 				model.set(CMDBuild.core.proxy.CMProxyConstants.KEEP_SYNCHRONIZATION, template[CMDBuild.core.proxy.CMProxyConstants.KEEP_SYNCHRONIZATION]);
 				model.set(CMDBuild.core.proxy.CMProxyConstants.KEY, template[CMDBuild.core.proxy.CMProxyConstants.KEY]);
+				model.set(CMDBuild.core.proxy.CMProxyConstants.NOTIFY_WITH, template[CMDBuild.core.proxy.CMProxyConstants.NOTIFY_WITH]);
 				model.set(CMDBuild.core.proxy.CMProxyConstants.NO_SUBJECT_PREFIX, template[CMDBuild.core.proxy.CMProxyConstants.NO_SUBJECT_PREFIX]);
 				model.set(CMDBuild.core.proxy.CMProxyConstants.PROMPT_SYNCHRONIZATION, template[CMDBuild.core.proxy.CMProxyConstants.PROMPT_SYNCHRONIZATION]);
 				model.set(CMDBuild.core.proxy.CMProxyConstants.SUBJECT, template[CMDBuild.core.proxy.CMProxyConstants.SUBJECT]);
