@@ -11,9 +11,9 @@ import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.dao.entrytype.CMEntryTypeVisitor;
 import org.cmdbuild.dao.entrytype.CMFunctionCall;
-import org.cmdbuild.logic.translation.ClassAttributeTranslationConverter;
 import org.cmdbuild.logic.translation.TranslationFacade;
 import org.cmdbuild.logic.translation.TranslationObject;
+import org.cmdbuild.logic.translation.converter.ClassAttributeConverter;
 
 class LocalizedAttribute extends ForwardingAttribute {
 
@@ -38,7 +38,7 @@ class LocalizedAttribute extends ForwardingAttribute {
 		final String className = getOwner().getName();
 		final String attributeName = getName();
 
-		String translatedGroup = facade.read(ClassAttributeTranslationConverter.of(GROUP) //
+		String translatedGroup = facade.read(ClassAttributeConverter.of(GROUP) //
 				.create(className, attributeName));
 
 		if (isBlank(translatedGroup)) {
@@ -56,7 +56,7 @@ class LocalizedAttribute extends ForwardingAttribute {
 		final String className = getOwner().getName();
 		final String attributeName = getName();
 
-		String translatedDescription = facade.read(ClassAttributeTranslationConverter.of(DESCRIPTION) //
+		String translatedDescription = facade.read(ClassAttributeConverter.of(DESCRIPTION) //
 				.create(className, attributeName));
 
 		if (isBlank(translatedDescription) && this.getOwner() instanceof CMClass) {
@@ -79,7 +79,7 @@ class LocalizedAttribute extends ForwardingAttribute {
 		if (parent != null) {
 			final CMAttribute inheritedAttribute = parent.getAttribute(getName());
 			if (inheritedAttribute != null) {
-				final ClassAttributeTranslationConverter converter = ClassAttributeTranslationConverter.of(field);
+				final ClassAttributeConverter converter = ClassAttributeConverter.of(field);
 				final TranslationObject translationObject = converter.create(parent.getName(), getName());
 				inheritedTranslation = facade.read(translationObject);
 				if (isBlank(inheritedTranslation)) {
@@ -126,7 +126,7 @@ class LocalizedAttribute extends ForwardingAttribute {
 						continue;
 					}
 
-					final String groupNameTranslation = facade.read(ClassAttributeTranslationConverter.of(GROUP) //
+					final String groupNameTranslation = facade.read(ClassAttributeConverter.of(GROUP) //
 							.create(owner.getName(), attribute.getName()));
 					if (!isBlank(groupNameTranslation)) {
 						translatedGroupName = groupNameTranslation;

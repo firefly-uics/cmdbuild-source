@@ -18,7 +18,6 @@ import org.cmdbuild.auth.acl.PrivilegeContext;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.view.CMDataView;
-import org.cmdbuild.logic.translation.DomainTranslation;
 import org.cmdbuild.logic.translation.TranslationFacade;
 import org.cmdbuild.logic.translation.TranslationObject;
 import org.json.JSONException;
@@ -49,28 +48,9 @@ public class DomainSerializer extends Serializer {
 		jsonDomain.put("name", localName);
 		jsonDomain.put("origName", localName);
 
-		final TranslationObject translationObjectForDescription = DomainTranslation.newInstance() //
-				.withField(DESCRIPTION_FOR_CLIENT) //
-				.withName(localName) //
-				.build();
-		final String translatedDescription = translationFacade.read(translationObjectForDescription);
-		jsonDomain.put(DESCRIPTION, defaultIfNull(translatedDescription, domain.getDescription()));
-		jsonDomain.put(DEFAULT_DESCRIPTION, domain.getDescription());
-
-		final TranslationObject translationObjectForDirectDescription = DomainTranslation.newInstance() //
-				.withField(DIRECT_DESCRIPTION_FOR_CLIENT) //
-				.withName(localName) //
-				.build();
-		final String translatedDirectDescription = translationFacade.read(translationObjectForDirectDescription);
-		jsonDomain.put(DIRECT_DESCRIPTION, defaultIfNull(translatedDirectDescription, domain.getDescription1()));
-		jsonDomain.put(DEFAULT_DIRECT_DESCRIPTION, domain.getDescription1());
-
-		final TranslationObject translationObjectForInverseDescription = DomainTranslation.newInstance() //
-				.withField(INVERSE_DESCRIPTION_FOR_CLIENT) //
-				.withName(localName) //
-				.build();
-		final String translatedInverseDescription = translationFacade.read(translationObjectForInverseDescription);
-		jsonDomain.put(INVERSE_DESCRIPTION, defaultIfNull(translatedInverseDescription, domain.getDescription2()));
+		jsonDomain.put(DESCRIPTION, domain.getDescription());
+		jsonDomain.put(DIRECT_DESCRIPTION, domain.getDescription1());
+		jsonDomain.put(INVERSE_DESCRIPTION, domain.getDescription2());
 		jsonDomain.put(DEFAULT_INVERSE_DESCRIPTION, domain.getDescription2());
 
 		final CMClass class1 = domain.getClass1();
@@ -86,18 +66,12 @@ public class DomainSerializer extends Serializer {
 		}
 
 		jsonDomain.put("md", domain.isMasterDetail());
-
-		final TranslationObject translationObjectForMasterDetailLabel = DomainTranslation.newInstance() //
-				.withField(MASTER_DETAIL_LABEL_FOR_CLIENT) //
-				.withName(localName) //
-				.build();
-		final String translatedMasterDetailLabel = translationFacade.read(translationObjectForMasterDetailLabel);
-		jsonDomain.put(MASTERDETAIL_LABEL,
-				defaultIfNull(translatedMasterDetailLabel, domain.getMasterDetailDescription()));
-		jsonDomain.put(DEFAULT_MASTERDETAIL_LABEL, domain.getMasterDetailDescription());
-
+		jsonDomain.put("md_label", domain.getMasterDetailDescription());
+		jsonDomain.put("classType", getClassType(domain.getIdentifier().getLocalName()));
 		jsonDomain.put("active", domain.isActive());
 		jsonDomain.put("cardinality", domain.getCardinality());
+
+		jsonDomain.put("active", domain.isActive());
 		// FIXME should not be used in this way
 		final AttributeSerializer attributeSerializer = AttributeSerializer.newInstance() //
 				.withDataView(dataView) //

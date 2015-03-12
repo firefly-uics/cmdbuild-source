@@ -22,12 +22,12 @@ import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.view.CMDataView;
-import org.cmdbuild.logic.translation.ClassTranslationConverter;
 import org.cmdbuild.logic.translation.MenuItemTranslation;
 import org.cmdbuild.logic.translation.ReportTranslation;
 import org.cmdbuild.logic.translation.TranslationFacade;
 import org.cmdbuild.logic.translation.TranslationObject;
 import org.cmdbuild.logic.translation.ViewTranslation;
+import org.cmdbuild.logic.translation.converter.ClassConverter;
 import org.cmdbuild.services.store.menu.MenuItem;
 import org.cmdbuild.services.store.menu.MenuItemDTO;
 import org.cmdbuild.services.store.menu.MenuItemType;
@@ -175,7 +175,7 @@ public class MenuSerializer {
 			final MenuItemType type = menuItem.getType();
 			if (isClassOrProcess(type)) {
 				final String className = menuItem.getReferedClassName();
-				final ClassTranslationConverter converter = ClassTranslationConverter.of(DESCRIPTION_FOR_CLIENT);
+				final ClassConverter converter = ClassConverter.of(DESCRIPTION_FOR_CLIENT);
 				final TranslationObject classTranslation = converter.create(className);
 				translatedDescription = translationFacade.read(classTranslation);
 

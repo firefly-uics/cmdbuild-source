@@ -1,6 +1,9 @@
-package org.cmdbuild.logic.translation;
+package org.cmdbuild.logic.translation.object;
 
 import java.util.Map;
+
+import org.cmdbuild.logic.translation.BaseTranslation;
+import org.cmdbuild.logic.translation.TranslationObjectVisitor;
 
 public class ClassAttributeDescription extends BaseTranslation {
 
@@ -12,7 +15,7 @@ public class ClassAttributeDescription extends BaseTranslation {
 		this.setTranslations(builder.translations);
 	}
 
-	static Builder newInstance() {
+	public static Builder newInstance() {
 		return new Builder();
 	}
 

@@ -5,12 +5,10 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Map;
 
-import org.cmdbuild.logic.translation.ClassAttributeDescription;
-import org.cmdbuild.logic.translation.ClassAttributeTranslationConverter;
 import org.cmdbuild.logic.translation.TranslationObject;
-import org.junit.Rule;
+import org.cmdbuild.logic.translation.converter.ClassAttributeConverter;
+import org.cmdbuild.logic.translation.object.ClassAttributeDescription;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 
 import com.google.common.collect.ImmutableMap;
 
@@ -26,10 +24,12 @@ public class ClassAttributeDescriptionObjectCreationTest {
 	@Test
 	public void forDescriptionFieldReturnsValidObject() {
 		// given
-		final ClassAttributeTranslationConverter converter = ClassAttributeTranslationConverter.of(field);
+		final ClassAttributeConverter converter = ClassAttributeConverter //
+				.of(field)//
+				.withTranslations(map);
 
 		// when
-		final TranslationObject translationObject = converter.create(classname, attributename, map);
+		final TranslationObject translationObject = converter.create(classname, attributename);
 
 		// then
 		assertTrue(converter.isValid());
@@ -42,10 +42,12 @@ public class ClassAttributeDescriptionObjectCreationTest {
 	@Test
 	public void converterIsCaseInsensitiveForTheField() {
 		// given
-		final ClassAttributeTranslationConverter converter = ClassAttributeTranslationConverter.of("dEscRiptION");
+		final ClassAttributeConverter converter = ClassAttributeConverter//
+				.of("dEscRiptION") //
+				.withTranslations(map);
 
 		// when
-		final TranslationObject translationObject = converter.create(classname, attributename, map);
+		final TranslationObject translationObject = converter.create(classname, attributename);
 
 		// then
 		assertTrue(converter.isValid());
@@ -61,32 +63,38 @@ public class ClassAttributeDescriptionObjectCreationTest {
 		final String invalidfield = "invalidfield";
 
 		// when
-		final ClassAttributeTranslationConverter converter = ClassAttributeTranslationConverter.of(invalidfield);
+		final ClassAttributeConverter converter = ClassAttributeConverter //
+				.of(invalidfield);
 
 		// then
 		assertTrue(!converter.isValid());
 	}
 
-	@Rule
-	public ExpectedException thrown = ExpectedException.none();
-
 	@Test
 	public void invalidConverterThrowsException() {
 		// given
 		final String invalidfield = "invalidfield";
-		final ClassAttributeTranslationConverter converter = ClassAttributeTranslationConverter.of(invalidfield);
-		thrown.expect(IllegalArgumentException.class);
+		final ClassAttributeConverter converter = ClassAttributeConverter //
+				.of(invalidfield);
+		Exception thrown = null;
 
 		// when
-		converter.create(classname, attributename);
+		try {
+			converter.create(classname, attributename);
+		} catch (final Exception e) {
+			thrown = e;
+		}
 
 		// then
+		assertNotNull(thrown);
+		assertTrue(thrown instanceof UnsupportedOperationException);
 	}
 
 	@Test
 	public void createConverterForReading() {
 		// given
-		final ClassAttributeTranslationConverter converter = ClassAttributeTranslationConverter.of(field);
+		final ClassAttributeConverter converter = ClassAttributeConverter //
+				.of(field);
 
 		// when
 		final TranslationObject translationObject = converter.create(classname, attributename);

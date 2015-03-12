@@ -15,6 +15,13 @@ import org.cmdbuild.data.store.Store;
 import org.cmdbuild.data.store.StoreFactory;
 import org.cmdbuild.data.store.translation.Element;
 import org.cmdbuild.data.store.translation.Translation;
+import org.cmdbuild.logic.translation.object.ClassAttributeDescription;
+import org.cmdbuild.logic.translation.object.ClassAttributeGroup;
+import org.cmdbuild.logic.translation.object.ClassDescription;
+import org.cmdbuild.logic.translation.object.DomainDescription;
+import org.cmdbuild.logic.translation.object.DomainDirectDescription;
+import org.cmdbuild.logic.translation.object.DomainInverseDescription;
+import org.cmdbuild.logic.translation.object.DomainMasterDetailLabel;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
@@ -70,6 +77,12 @@ public class DefaultTranslationLogic implements TranslationLogic {
 	}
 
 	private static class ElementCreator implements TranslationObjectVisitor {
+		
+		private static final String DESCRIPTION = "description";
+		private static final String DIRECT_DESCRIPTION = "directDescription";
+		private static final String INVERSE_DESCRIPTION = "inverseDescription";
+		private static final String MASTERDETAIL_LABEL = "masterDetail";
+		private static final String GROUP = "group";
 
 		private static ElementCreator of(final TranslationObject translationObject) {
 			return new ElementCreator(translationObject);
@@ -90,36 +103,60 @@ public class DefaultTranslationLogic implements TranslationLogic {
 
 		@Override
 		public void visit(final ClassDescription translationObject) {
-			final String fieldForKey = "description";
 			value = format("class.%s.%s", //
 					translationObject.getName(), //
-					fieldForKey);
+					DESCRIPTION);
 		}
 
 		@Override
 		public void visit(final ClassAttributeDescription translationObject) {
-			final String fieldForKey = "description";
 			value = format("attributeclass.%s.%s.%s", //
 					translationObject.getClassName(), //
 					translationObject.getName(), //
-					fieldForKey);
+					DESCRIPTION);
 		}
 
 		@Override
 		public void visit(final ClassAttributeGroup translationObject) {
-			final String fieldForKey = "group";
 			value = format("attributeclass.%s.%s.%s", //
 					translationObject.getClassName(), //
 					translationObject.getName(), //
-					fieldForKey);
+					GROUP);
 		}
 
 		@Override
-		public void visit(final DomainTranslation translationObject) {
+		public void visit(DomainDescription translationObject) {
 			value = format("domain.%s.%s", //
 					translationObject.getName(), //
-					FieldMapper.of(translationObject.getField()).getResult());
+					DESCRIPTION);
 		}
+
+		@Override
+		public void visit(DomainDirectDescription translationObject) {
+			value = format("domain.%s.%s", //
+					translationObject.getName(), //
+					DIRECT_DESCRIPTION);
+			
+		}
+
+		@Override
+		public void visit(DomainInverseDescription translationObject) {
+			value = format("domain.%s.%s", //
+					translationObject.getName(), //
+					INVERSE_DESCRIPTION);
+			
+		}
+
+		@Override
+		public void visit(DomainMasterDetailLabel translationObject) {
+			value = format("domain.%s.%s", //
+					translationObject.getName(), //
+					MASTERDETAIL_LABEL);
+			
+		}
+		
+		
+		//TODO: get rid of everything below
 
 		@Override
 		public void visit(final AttributeDomainTranslation translationObject) {
@@ -201,6 +238,7 @@ public class DefaultTranslationLogic implements TranslationLogic {
 		public void visit(final NullTranslationObject translationObject) {
 			value = EMPTY;
 		}
+
 
 	}
 
