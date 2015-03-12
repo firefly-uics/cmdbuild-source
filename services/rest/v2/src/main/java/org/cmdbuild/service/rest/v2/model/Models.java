@@ -966,6 +966,28 @@ public class Models {
 
 	}
 
+	public static class LongIdBuilder extends ModelBuilder<LongId> {
+
+		private Long id;
+
+		private LongIdBuilder() {
+			// use factory method
+		}
+
+		@Override
+		protected LongId doBuild() {
+			final LongId output = new LongId();
+			output.setId(id);
+			return output;
+		}
+
+		public LongIdBuilder withId(final Long id) {
+			this.id = id;
+			return this;
+		}
+
+	}
+
 	public static class LongIdAndDescriptionBuilder extends ModelBuilder<LongIdAndDescription> {
 
 		private Long id;
@@ -1970,6 +1992,10 @@ public class Models {
 
 	public static FilterBuilder newFilter() {
 		return new FilterBuilder();
+	}
+
+	public static LongIdBuilder newLongId() {
+		return new LongIdBuilder();
 	}
 
 	public static LongIdAndDescriptionBuilder newLongIdAndDescription() {

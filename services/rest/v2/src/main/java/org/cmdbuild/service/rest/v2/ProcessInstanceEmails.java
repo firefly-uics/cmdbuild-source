@@ -19,6 +19,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 
 import org.cmdbuild.service.rest.v2.model.Email;
+import org.cmdbuild.service.rest.v2.model.LongId;
 import org.cmdbuild.service.rest.v2.model.ResponseMultiple;
 import org.cmdbuild.service.rest.v2.model.ResponseSingle;
 
@@ -41,7 +42,7 @@ public interface ProcessInstanceEmails {
 
 	@GET
 	@Path(EMPTY)
-	ResponseMultiple<Long> readAll( //
+	ResponseMultiple<LongId> readAll( //
 			@PathParam(PROCESS_ID) String processId, //
 			@PathParam(PROCESS_INSTANCE_ID) Long processInstanceId, //
 			@QueryParam(LIMIT) Integer limit, //

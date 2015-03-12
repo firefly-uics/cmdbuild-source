@@ -9,6 +9,7 @@ import static org.cmdbuild.service.rest.v2.constants.Serialization.FILTER;
 import static org.cmdbuild.service.rest.v2.constants.Serialization.LIMIT;
 import static org.cmdbuild.service.rest.v2.constants.Serialization.START;
 import static org.cmdbuild.service.rest.v2.model.Models.newEmail;
+import static org.cmdbuild.service.rest.v2.model.Models.newLongId;
 import static org.cmdbuild.service.rest.v2.model.Models.newMetadata;
 import static org.cmdbuild.service.rest.v2.model.Models.newResponseMultiple;
 import static org.cmdbuild.service.rest.v2.model.Models.newResponseSingle;
@@ -37,6 +38,7 @@ import org.cmdbuild.service.rest.test.JsonSupport;
 import org.cmdbuild.service.rest.test.ServerResource;
 import org.cmdbuild.service.rest.v2.ProcessInstanceEmails;
 import org.cmdbuild.service.rest.v2.model.Email;
+import org.cmdbuild.service.rest.v2.model.LongId;
 import org.cmdbuild.service.rest.v2.model.ResponseMultiple;
 import org.cmdbuild.service.rest.v2.model.ResponseSingle;
 import org.junit.Before;
@@ -120,8 +122,14 @@ public class ProcessInstanceEmailsTest {
 	@Test
 	public void emailsRead() throws Exception {
 		// given
-		final ResponseMultiple<Long> expectedResponse = newResponseMultiple(Long.class) //
-				.withElements(asList(1L, 2L)) //
+		final ResponseMultiple<LongId> expectedResponse = newResponseMultiple(LongId.class) //
+				.withElements(asList( //
+						newLongId() //
+								.withId(1L) //
+								.build(), //
+						newLongId() //
+								.withId(2L) //
+								.build())) //
 				.withMetadata(newMetadata() //
 						.withTotal(4L) //
 						.build()) //

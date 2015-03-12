@@ -4,6 +4,7 @@ import static com.google.common.collect.Lists.newArrayList;
 import static java.util.Arrays.asList;
 import static org.cmdbuild.logic.email.EmailLogic.Statuses.draft;
 import static org.cmdbuild.service.rest.v2.model.Models.newEmail;
+import static org.cmdbuild.service.rest.v2.model.Models.newLongId;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
@@ -26,6 +27,7 @@ import org.cmdbuild.service.rest.v2.cxf.CxfProcessInstanceEmails;
 import org.cmdbuild.service.rest.v2.cxf.ErrorHandler;
 import org.cmdbuild.service.rest.v2.cxf.IdGenerator;
 import org.cmdbuild.service.rest.v2.model.Email;
+import org.cmdbuild.service.rest.v2.model.LongId;
 import org.cmdbuild.service.rest.v2.model.ResponseMultiple;
 import org.cmdbuild.service.rest.v2.model.ResponseSingle;
 import org.cmdbuild.workflow.user.UserProcessClass;
@@ -214,10 +216,12 @@ public class CxfProcessInstanceEmailsTest {
 				.when(emailLogic).readAll(any(Long.class));
 
 		// when
-		final ResponseMultiple<Long> response = underTest.readAll("dummy", 12L, 1, 2);
+		final ResponseMultiple<LongId> response = underTest.readAll("dummy", 12L, 1, 2);
 
 		// then
-		assertThat(newArrayList(response.getElements()), equalTo(asList(email_3.getId())));
+		assertThat(newArrayList(response.getElements()), equalTo(asList(newLongId() //
+				.withId(3L) //
+				.build())));
 		assertThat(response.getMetadata().getTotal(), equalTo(4L));
 
 		verify(emailLogic).readAll(eq(12L));

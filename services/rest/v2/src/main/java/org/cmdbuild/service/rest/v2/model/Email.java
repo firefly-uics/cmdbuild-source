@@ -16,8 +16,6 @@ import static org.cmdbuild.service.rest.v2.constants.Serialization.TEMPLATE;
 import static org.cmdbuild.service.rest.v2.constants.Serialization.TO;
 import static org.cmdbuild.service.rest.v2.constants.Serialization.UNDERSCORED_ID;
 
-import java.util.Collection;
-
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
