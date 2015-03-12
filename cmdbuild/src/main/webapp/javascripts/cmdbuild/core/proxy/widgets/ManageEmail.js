@@ -131,6 +131,11 @@
 					reader: {
 						root: 'response',
 						type: 'json'
+					},
+					extraParams: { // Avoid to send limit, page and start parameters in server calls
+						limitParam: undefined,
+						pageParam: undefined,
+						startParam: undefined
 					}
 				},
 				sorters: {
