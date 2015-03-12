@@ -3,17 +3,16 @@ package org.cmdbuild.service.rest.v2.cxf;
 import static com.google.common.collect.FluentIterable.from;
 import static com.google.common.collect.Iterables.size;
 import static java.lang.Integer.MAX_VALUE;
-import static java.util.Collections.emptyList;
 import static org.cmdbuild.logic.email.EmailLogic.Statuses.draft;
 import static org.cmdbuild.logic.email.EmailLogic.Statuses.outgoing;
 import static org.cmdbuild.logic.email.EmailLogic.Statuses.received;
 import static org.cmdbuild.logic.email.EmailLogic.Statuses.sent;
 import static org.cmdbuild.service.rest.v2.model.Models.newEmail;
+import static org.cmdbuild.service.rest.v2.model.Models.newLongId;
 import static org.cmdbuild.service.rest.v2.model.Models.newMetadata;
 import static org.cmdbuild.service.rest.v2.model.Models.newResponseMultiple;
 import static org.cmdbuild.service.rest.v2.model.Models.newResponseSingle;
 
-import java.util.Collection;
 import java.util.NoSuchElementException;
 
 import org.cmdbuild.dao.entrytype.CMClass;
@@ -24,6 +23,7 @@ import org.cmdbuild.logic.workflow.WorkflowLogic;
 import org.cmdbuild.service.rest.v2.ProcessInstanceEmails;
 import org.cmdbuild.service.rest.v2.cxf.serialization.DefaultConverter;
 import org.cmdbuild.service.rest.v2.model.Email;
+import org.cmdbuild.service.rest.v2.model.LongId;
 import org.cmdbuild.service.rest.v2.model.ResponseMultiple;
 import org.cmdbuild.service.rest.v2.model.ResponseSingle;
 import org.joda.time.DateTime;
@@ -35,20 +35,21 @@ import com.google.common.collect.HashBiMap;
 
 public class CxfProcessInstanceEmails implements ProcessInstanceEmails {
 
-	private static class LogicToLong implements Function<EmailLogic.Email, Long> {
+	private static class LogicToLong implements Function<EmailLogic.Email, LongId> {
 
 		@Override
-		public Long apply(final org.cmdbuild.logic.email.EmailLogic.Email input) {
-			return input.getId();
+		public LongId apply(final org.cmdbuild.logic.email.EmailLogic.Email input) {
+			return newLongId() //
+					.withId(input.getId()) //
+					.build();
 		}
 
-	};
+	}
 
 	private static final LogicToLong LOGIC_TO_LONG = new LogicToLong();
 
 	private static class LogicToRest implements Function<EmailLogic.Email, Email> {
 
-		private final Collection<String> NO_ADDRESSES = emptyList();
 		private final DateAttributeType DATE_ATTRIBUTE_TYPE = new DateAttributeType();
 
 		@Override
@@ -179,11 +180,11 @@ public class CxfProcessInstanceEmails implements ProcessInstanceEmails {
 	}
 
 	@Override
-	public ResponseMultiple<Long> readAll(final String processId, final Long processInstanceId, final Integer limit,
+	public ResponseMultiple<LongId> readAll(final String processId, final Long processInstanceId, final Integer limit,
 			final Integer offset) {
 		checkPreconditions(processId, null);
 		final Iterable<EmailLogic.Email> elements = emailLogic.readAll(processInstanceId);
-		return newResponseMultiple(Long.class) //
+		return newResponseMultiple(LongId.class) //
 				.withElements(from(elements) //
 						.skip((offset == null) ? 0 : offset) //
 						.limit((limit == null) ? MAX_VALUE : limit) //
