@@ -12,18 +12,22 @@ import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.common.reflect.AnnouncingInvocationHandler;
 import org.cmdbuild.common.reflect.AnnouncingInvocationHandler.Announceable;
 import org.cmdbuild.service.rest.v2.AttachmentsConfiguration;
+import org.cmdbuild.service.rest.v2.CardAttachments;
 import org.cmdbuild.service.rest.v2.Cards;
 import org.cmdbuild.service.rest.v2.ClassAttributes;
 import org.cmdbuild.service.rest.v2.ClassPrivileges;
 import org.cmdbuild.service.rest.v2.Classes;
 import org.cmdbuild.service.rest.v2.DomainAttributes;
 import org.cmdbuild.service.rest.v2.Domains;
+import org.cmdbuild.service.rest.v2.EmailTemplates;
 import org.cmdbuild.service.rest.v2.Impersonate;
 import org.cmdbuild.service.rest.v2.LookupTypeValues;
 import org.cmdbuild.service.rest.v2.LookupTypes;
 import org.cmdbuild.service.rest.v2.Menu;
 import org.cmdbuild.service.rest.v2.ProcessAttributes;
 import org.cmdbuild.service.rest.v2.ProcessInstanceActivities;
+import org.cmdbuild.service.rest.v2.ProcessInstanceAttachments;
+import org.cmdbuild.service.rest.v2.ProcessInstanceEmails;
 import org.cmdbuild.service.rest.v2.ProcessInstances;
 import org.cmdbuild.service.rest.v2.ProcessStartActivities;
 import org.cmdbuild.service.rest.v2.Processes;
@@ -31,8 +35,6 @@ import org.cmdbuild.service.rest.v2.ProcessesConfiguration;
 import org.cmdbuild.service.rest.v2.Relations;
 import org.cmdbuild.service.rest.v2.Reports;
 import org.cmdbuild.service.rest.v2.Sessions;
-import org.cmdbuild.service.rest.v2.cxf.AllInOneCardAttachments;
-import org.cmdbuild.service.rest.v2.cxf.AllInOneProcessInstanceAttachments;
 import org.cmdbuild.service.rest.v2.cxf.AttachmentsHelper;
 import org.cmdbuild.service.rest.v2.cxf.AttachmentsManagement;
 import org.cmdbuild.service.rest.v2.cxf.CxfAttachmentsConfiguration;
@@ -43,6 +45,7 @@ import org.cmdbuild.service.rest.v2.cxf.CxfClassPrivileges;
 import org.cmdbuild.service.rest.v2.cxf.CxfClasses;
 import org.cmdbuild.service.rest.v2.cxf.CxfDomainAttributes;
 import org.cmdbuild.service.rest.v2.cxf.CxfDomains;
+import org.cmdbuild.service.rest.v2.cxf.CxfEmailTemplates;
 import org.cmdbuild.service.rest.v2.cxf.CxfImpersonate;
 import org.cmdbuild.service.rest.v2.cxf.CxfLookupTypeValues;
 import org.cmdbuild.service.rest.v2.cxf.CxfLookupTypes;
@@ -50,6 +53,7 @@ import org.cmdbuild.service.rest.v2.cxf.CxfMenu;
 import org.cmdbuild.service.rest.v2.cxf.CxfProcessAttributes;
 import org.cmdbuild.service.rest.v2.cxf.CxfProcessInstanceActivities;
 import org.cmdbuild.service.rest.v2.cxf.CxfProcessInstanceAttachments;
+import org.cmdbuild.service.rest.v2.cxf.CxfProcessInstanceEmails;
 import org.cmdbuild.service.rest.v2.cxf.CxfProcessInstances;
 import org.cmdbuild.service.rest.v2.cxf.CxfProcessStartActivities;
 import org.cmdbuild.service.rest.v2.cxf.CxfProcesses;
@@ -60,9 +64,11 @@ import org.cmdbuild.service.rest.v2.cxf.CxfSessions;
 import org.cmdbuild.service.rest.v2.cxf.CxfSessions.AuthenticationLogicAdapter;
 import org.cmdbuild.service.rest.v2.cxf.CxfSessions.LoginHandler;
 import org.cmdbuild.service.rest.v2.cxf.DefaultEncoding;
+import org.cmdbuild.service.rest.v2.cxf.DefaultIdGenerator;
 import org.cmdbuild.service.rest.v2.cxf.DefaultProcessStatusHelper;
 import org.cmdbuild.service.rest.v2.cxf.ErrorHandler;
 import org.cmdbuild.service.rest.v2.cxf.HeaderResponseHandler;
+import org.cmdbuild.service.rest.v2.cxf.IdGenerator;
 import org.cmdbuild.service.rest.v2.cxf.ProcessStatusHelper;
 import org.cmdbuild.service.rest.v2.cxf.TranslatingAttachmentsHelper;
 import org.cmdbuild.service.rest.v2.cxf.TranslatingAttachmentsHelper.Encoding;
@@ -96,10 +102,10 @@ public class ServicesV2 implements LoggingSupport {
 
 	@Bean
 	@Scope(value = SCOPE_REQUEST, proxyMode = TARGET_CLASS)
-	public AllInOneCardAttachments v2_cardAttachments() {
+	public CardAttachments v2_cardAttachments() {
 		final CxfCardAttachments service = new CxfCardAttachments(v2_errorHandler(), helper.systemDataAccessLogic(),
 				v2_attachmentsHelper());
-		return proxy(AllInOneCardAttachments.class, service);
+		return proxy(CardAttachments.class, service);
 	}
 
 	@Bean
@@ -138,6 +144,20 @@ public class ServicesV2 implements LoggingSupport {
 		final CxfDomainAttributes service = new CxfDomainAttributes(v2_errorHandler(), helper.userDataAccessLogic(),
 				helper.systemDataView(), helper.metadataStoreFactory(), helper.lookupLogic());
 		return proxy(DomainAttributes.class, service);
+	}
+
+	@Bean
+	@Scope(value = SCOPE_REQUEST, proxyMode = TARGET_CLASS)
+	public ProcessInstanceEmails v2_emails() {
+		final CxfProcessInstanceEmails service = new CxfProcessInstanceEmails(v2_errorHandler(),
+				helper.userWorkflowLogic(), helper.emailLogic(), v2_idGenerator());
+		return proxy(ProcessInstanceEmails.class, service);
+	}
+
+	@Bean
+	public EmailTemplates v2_emailTemplates() {
+		final CxfEmailTemplates service = new CxfEmailTemplates(helper.emailTemplateLogic());
+		return proxy(EmailTemplates.class, service);
 	}
 
 	@Bean
@@ -219,7 +239,7 @@ public class ServicesV2 implements LoggingSupport {
 	@Scope(value = SCOPE_REQUEST, proxyMode = TARGET_CLASS)
 	public Processes v2_processes() {
 		final CxfProcesses service = new CxfProcesses(v2_errorHandler(), helper.userWorkflowLogic(),
-				v2_processStatusHelper());
+				v2_processStatusHelper(), v2_idGenerator());
 		return proxy(Processes.class, service);
 	}
 
@@ -235,6 +255,11 @@ public class ServicesV2 implements LoggingSupport {
 	}
 
 	@Bean
+	protected IdGenerator v2_idGenerator() {
+		return new DefaultIdGenerator();
+	}
+
+	@Bean
 	@Scope(value = SCOPE_REQUEST, proxyMode = TARGET_CLASS)
 	public ProcessInstanceActivities v2_processInstanceActivities() {
 		final CxfProcessInstanceActivities service = new CxfProcessInstanceActivities(v2_errorHandler(),
@@ -244,10 +269,10 @@ public class ServicesV2 implements LoggingSupport {
 
 	@Bean
 	@Scope(value = SCOPE_REQUEST, proxyMode = TARGET_CLASS)
-	public AllInOneProcessInstanceAttachments v2_processInstanceAttachments() {
+	public ProcessInstanceAttachments v2_processInstanceAttachments() {
 		final CxfProcessInstanceAttachments service = new CxfProcessInstanceAttachments(v2_errorHandler(),
 				helper.userWorkflowLogic(), v2_attachmentsHelper());
-		return proxy(AllInOneProcessInstanceAttachments.class, service);
+		return proxy(ProcessInstanceAttachments.class, service);
 	}
 
 	@Bean

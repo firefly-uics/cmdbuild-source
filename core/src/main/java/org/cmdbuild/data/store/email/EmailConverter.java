@@ -1,6 +1,6 @@
 package org.cmdbuild.data.store.email;
 
-import static org.apache.commons.lang3.BooleanUtils.toBooleanDefaultIfNull;
+import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
 import static org.cmdbuild.data.store.email.EmailConstants.ACCOUNT_ATTRIBUTE;
 import static org.cmdbuild.data.store.email.EmailConstants.BCC_ADDRESSES_ATTRIBUTE;
@@ -9,10 +9,13 @@ import static org.cmdbuild.data.store.email.EmailConstants.CONTENT_ATTRIBUTE;
 import static org.cmdbuild.data.store.email.EmailConstants.EMAIL_CLASS_NAME;
 import static org.cmdbuild.data.store.email.EmailConstants.EMAIL_STATUS_ATTRIBUTE;
 import static org.cmdbuild.data.store.email.EmailConstants.FROM_ADDRESS_ATTRIBUTE;
+import static org.cmdbuild.data.store.email.EmailConstants.KEEP_SYNCHRONIZATION_ATTRIBUTE;
 import static org.cmdbuild.data.store.email.EmailConstants.NOTIFY_WITH_ATTRIBUTE;
 import static org.cmdbuild.data.store.email.EmailConstants.NO_SUBJECT_PREFIX_ATTRIBUTE;
 import static org.cmdbuild.data.store.email.EmailConstants.PROCESS_ID_ATTRIBUTE;
+import static org.cmdbuild.data.store.email.EmailConstants.PROMPT_SYNCHRONIZATION_ATTRIBUTE;
 import static org.cmdbuild.data.store.email.EmailConstants.SUBJECT_ATTRIBUTE;
+import static org.cmdbuild.data.store.email.EmailConstants.TEMPLATE_ATTRIBUTE;
 import static org.cmdbuild.data.store.email.EmailConstants.TO_ADDRESSES_ATTRIBUTE;
 
 import java.util.Map;
@@ -50,8 +53,11 @@ public class EmailConverter extends BaseStorableConverter<Email> {
 		email.setSubject(defaultIfBlank(card.get(SUBJECT_ATTRIBUTE, String.class), null));
 		email.setContent(defaultIfBlank(card.get(CONTENT_ATTRIBUTE, String.class), null));
 		email.setNotifyWith(defaultIfBlank(card.get(NOTIFY_WITH_ATTRIBUTE, String.class), null));
-		email.setNoSubjectPrefix(toBooleanDefaultIfNull(card.get(NO_SUBJECT_PREFIX_ATTRIBUTE, Boolean.class), false));
+		email.setNoSubjectPrefix(defaultIfNull(card.get(NO_SUBJECT_PREFIX_ATTRIBUTE, Boolean.class), false));
 		email.setAccount(defaultIfBlank(card.get(ACCOUNT_ATTRIBUTE, String.class), null));
+		email.setTemplate(defaultIfBlank(card.get(TEMPLATE_ATTRIBUTE, String.class), null));
+		email.setKeepSynchronization(defaultIfNull(card.get(KEEP_SYNCHRONIZATION_ATTRIBUTE, Boolean.class), true));
+		email.setPromptSynchronization(defaultIfNull(card.get(PROMPT_SYNCHRONIZATION_ATTRIBUTE, Boolean.class), false));
 		email.setDate((card.getBeginDate()));
 
 		final Long emailStatusLookupId = card.get(EMAIL_STATUS_ATTRIBUTE, IdAndDescription.class).getId();
@@ -77,6 +83,9 @@ public class EmailConverter extends BaseStorableConverter<Email> {
 		values.put(NOTIFY_WITH_ATTRIBUTE, email.getNotifyWith());
 		values.put(NO_SUBJECT_PREFIX_ATTRIBUTE, email.isNoSubjectPrefix());
 		values.put(ACCOUNT_ATTRIBUTE, email.getAccount());
+		values.put(TEMPLATE_ATTRIBUTE, email.getTemplate());
+		values.put(KEEP_SYNCHRONIZATION_ATTRIBUTE, email.isKeepSynchronization());
+		values.put(PROMPT_SYNCHRONIZATION_ATTRIBUTE, email.isPromptSynchronization());
 		if (email.getStatus() != null) {
 			values.put(EMAIL_STATUS_ATTRIBUTE, getEmailLookupIdFrom(email.getStatus()));
 		}

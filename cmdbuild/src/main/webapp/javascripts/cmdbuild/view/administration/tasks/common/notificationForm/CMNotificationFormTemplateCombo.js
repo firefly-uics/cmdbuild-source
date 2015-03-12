@@ -3,7 +3,10 @@
 	Ext.define('CMDBuild.view.administration.tasks.common.notificationForm.CMNotificationFormTemplateCombo', {
 		extend: 'Ext.form.field.ComboBox',
 
-		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+		requires: [
+			'CMDBuild.core.proxy.CMProxyConstants',
+			'CMDBuild.core.proxy.EmailTemplates'
+		],
 
 		/**
 		 * @cfg {CMDBuild.controller.administration.tasks.common.notificationForm.CMNotificationFormController}
@@ -21,7 +24,7 @@
 		editable: false,
 		anchor: '100%',
 
-		store: CMDBuild.core.proxy.CMProxyEmailTemplates.getStore()
+		store: CMDBuild.core.proxy.EmailTemplates.getStore()
 	});
 
 })();

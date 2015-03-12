@@ -316,7 +316,7 @@
 			actionsHtml += '<img style="cursor:pointer" title="' + tr.view_relation + '" class="action-relation-viewcard" src="images/icons/zoom.png"/>';
 		}
 
-		if (CMDBuild.Config.dms.enabled == 'true')
+		if (CMDBuild.Config.dms.enabled)
 			actionsHtml += '<img style="cursor:pointer" title="' + tr.showattach + '" class="action-relation-attach" src="images/icons/attach.png"/>';
 
 		return actionsHtml;

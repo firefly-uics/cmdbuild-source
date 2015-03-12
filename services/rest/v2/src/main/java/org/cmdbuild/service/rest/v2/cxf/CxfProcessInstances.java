@@ -14,7 +14,6 @@ import static org.cmdbuild.service.rest.v2.model.Models.newResponseMultiple;
 import static org.cmdbuild.service.rest.v2.model.Models.newResponseSingle;
 import static org.cmdbuild.workflow.ProcessAttributes.FlowStatus;
 
-import java.util.Collections;
 import java.util.Map;
 
 import org.cmdbuild.common.utils.PagedElements;
@@ -43,8 +42,6 @@ import com.google.common.collect.Maps.EntryTransformer;
 
 public class CxfProcessInstances implements ProcessInstances {
 
-	private static Map<String, Object> NO_WIDGET_SUBMISSION = Collections.emptyMap();
-
 	private final ErrorHandler errorHandler;
 	private final WorkflowLogic workflowLogic;
 	private final LookupHelper lookupHelper;
@@ -66,7 +63,7 @@ public class CxfProcessInstances implements ProcessInstances {
 			final UserProcessInstance instance = workflowLogic.startProcess( //
 					processId, //
 					adaptInputValues(found, processInstance), //
-					NO_WIDGET_SUBMISSION, //
+					processInstance.getWidgets(), //
 					processInstance.isAdvance());
 			return newResponseSingle(Long.class) //
 					.withElement(instance.getId()) //
@@ -174,7 +171,7 @@ public class CxfProcessInstances implements ProcessInstances {
 					instanceId, //
 					activity.getId(), //
 					adaptInputValues(found, processInstance), //
-					NO_WIDGET_SUBMISSION, //
+					processInstance.getWidgets(), //
 					processInstance.isAdvance());
 		} catch (final Throwable e) {
 			errorHandler.propagate(e);

@@ -11,52 +11,110 @@
 		singleton: true,
 
 		/**
-		 * @param {Ext.form.Basic} form
 		 * @param {Object} parameters
 		 */
-		addAttachmentFromExistingEmail: function(form, parameters) {
-			form.submit({
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.widgets.manageEmail.addAttachmentFromExistingEmail,
-				waitMsg: CMDBuild.Translation.uploading_attachment,
-				params: parameters.params,
-				success: parameters.success
-			});
-		},
-
-		/**
-		 * @param {Ext.form.Basic} form
-		 * @param {Object} parameters
-		 */
-		addAttachmentFromNewEmail: function(form, parameters) {
-			form.submit({
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.widgets.manageEmail.addAttachmentFromNewEmail,
-				waitMsg: CMDBuild.Translation.uploading_attachment,
-				params: parameters.params,
-				success: parameters.success
-			});
-		},
-
-		/**
-		 * @param {Object} parameters
-		 */
-		copyAttachmentFromCardForExistingEmail: function(parameters) {
+		attachmentCopy: function(parameters) {
 			CMDBuild.Ajax.request({
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.widgets.manageEmail.copyAttachmentFromCardForExistingEmail,
 				method: 'POST',
+				url: CMDBuild.core.proxy.CMProxyUrlIndex.widgets.manageEmail.attachment.copy,
 				params: parameters.params,
-				success: parameters.success
+				scope: parameters.scope,
+				failure: parameters.failure || Ext.emptyFn(),
+				success: parameters.success || Ext.emptyFn(),
+				callback: parameters.callback || Ext.emptyFn()
 			});
 		},
 
 		/**
 		 * @param {Object} parameters
 		 */
-		copyAttachmentFromCardForNewEmail: function(parameters) {
+		attachmentGetAll: function(parameters) {
 			CMDBuild.Ajax.request({
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.widgets.manageEmail.copyAttachmentFromCardForNewEmail,
 				method: 'POST',
+				url: CMDBuild.core.proxy.CMProxyUrlIndex.widgets.manageEmail.attachment.readAll,
 				params: parameters.params,
-				success: parameters.success
+				scope: parameters.scope,
+				failure: parameters.failure || Ext.emptyFn(),
+				success: parameters.success || Ext.emptyFn(),
+				callback: parameters.callback || Ext.emptyFn()
+			});
+		},
+
+		/**
+		 * @return {Ext.data.Store}
+		 */
+		attachmentGetStore: function() {
+			return Ext.create('Ext.data.Store', {
+				autoLoad: false,
+				model: 'CMDBuild.model.widget.ManageEmail.email.attachment',
+				proxy: {
+					type: 'ajax',
+					url: CMDBuild.core.proxy.CMProxyUrlIndex.widgets.manageEmail.attachment.readAll,
+					reader: {
+						type: 'json',
+						root: 'rows'
+					}
+				}
+			});
+		},
+
+		/**
+		 * @param {Object} parameters
+		 */
+		attachmentRemove: function(parameters) {
+			CMDBuild.Ajax.request({
+				method: 'POST',
+				url: CMDBuild.core.proxy.CMProxyUrlIndex.widgets.manageEmail.attachment.remove,
+				params: parameters.params,
+				scope: parameters.scope,
+				failure: parameters.failure || Ext.emptyFn(),
+				success: parameters.success || Ext.emptyFn(),
+				callback: parameters.callback || Ext.emptyFn()
+			});
+		},
+
+		/**
+		 * @param {Object} parameters
+		 */
+		attachmentUpload: function(parameters) {
+			parameters.form.submit({
+				method: 'POST',
+				url: CMDBuild.core.proxy.CMProxyUrlIndex.widgets.manageEmail.attachment.upload,
+				params: parameters.params,
+				scope: parameters.scope,
+				failure: parameters.failure || Ext.emptyFn(),
+				success: parameters.success || Ext.emptyFn(),
+				callback: parameters.callback || Ext.emptyFn()
+			});
+		},
+
+		/**
+		 * @param {Object} parameters
+		 */
+		create: function(parameters) {
+			CMDBuild.Ajax.request({
+				method: 'POST',
+				url: CMDBuild.core.proxy.CMProxyUrlIndex.widgets.manageEmail.post,
+				params: parameters.params,
+				scope: parameters.scope,
+				failure: parameters.failure || Ext.emptyFn(),
+				success: parameters.success || Ext.emptyFn(),
+				callback: parameters.callback || Ext.emptyFn()
+			});
+		},
+
+		/**
+		 * @param {Object} parameters
+		 */
+		createTemplate: function(parameters) {
+			CMDBuild.Ajax.request({
+				method: 'POST',
+				url: CMDBuild.core.proxy.CMProxyUrlIndex.email.templates.post,
+				params: parameters.params,
+				scope: parameters.scope,
+				failure: parameters.failure || Ext.emptyFn(),
+				success: parameters.success || Ext.emptyFn(),
+				callback: parameters.callback || Ext.emptyFn()
 			});
 		},
 
@@ -66,13 +124,18 @@
 		getStore: function() {
 			return Ext.create('Ext.data.Store', {
 				autoLoad: false,
-				model: 'CMDBuild.model.widget.ManageEmail.grid',
+				model: 'CMDBuild.model.widget.ManageEmail.email',
 				proxy: {
 					type: 'ajax',
-					url: CMDBuild.core.proxy.CMProxyUrlIndex.widgets.manageEmail.getEmailList,
+					url: CMDBuild.core.proxy.CMProxyUrlIndex.widgets.manageEmail.getStore,
 					reader: {
 						root: 'response',
 						type: 'json'
+					},
+					extraParams: { // Avoid to send limit, page and start parameters in server calls
+						limitParam: undefined,
+						pageParam: undefined,
+						startParam: undefined
 					}
 				},
 				sorters: {
@@ -86,24 +149,30 @@
 		/**
 		 * @param {Object} parameters
 		 */
-		removeAttachmentFromExistingEmail: function(parameters) {
+		remove: function(parameters) {
 			CMDBuild.Ajax.request({
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.widgets.manageEmail.removeAttachmentFromExistingEmail,
 				method: 'POST',
+				url: CMDBuild.core.proxy.CMProxyUrlIndex.widgets.manageEmail.remove,
 				params: parameters.params,
-				success: parameters.success
+				scope: parameters.scope,
+				failure: parameters.failure || Ext.emptyFn(),
+				success: parameters.success || Ext.emptyFn(),
+				callback: parameters.callback || Ext.emptyFn()
 			});
 		},
 
 		/**
 		 * @param {Object} parameters
 		 */
-		removeAttachmentFromNewEmail: function(parameters) {
+		update: function(parameters) {
 			CMDBuild.Ajax.request({
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.widgets.manageEmail.removeAttachmentFromNewEmail,
 				method: 'POST',
+				url: CMDBuild.core.proxy.CMProxyUrlIndex.widgets.manageEmail.put,
 				params: parameters.params,
-				success: parameters.success
+				scope: parameters.scope,
+				failure: parameters.failure || Ext.emptyFn(),
+				success: parameters.success || Ext.emptyFn(),
+				callback: parameters.callback || Ext.emptyFn()
 			});
 		}
 	});

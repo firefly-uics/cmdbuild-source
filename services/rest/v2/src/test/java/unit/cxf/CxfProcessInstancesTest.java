@@ -138,6 +138,7 @@ public class CxfProcessInstancesTest {
 		final ResponseSingle<Long> response = cxfProcessInstances.create("123", newProcessInstanceAdvance() //
 				.withValues(VALUES) //
 				.withAdvance(true) //
+				.withWidgets(NO_WIDGETS) //
 				.build());
 
 		// then
@@ -391,6 +392,7 @@ public class CxfProcessInstancesTest {
 				.withValues(VALUES) //
 				.withActivity(activityId) //
 				.withAdvance(true) //
+				.withWidgets(NO_WIDGETS) //
 				.build());
 
 		// then

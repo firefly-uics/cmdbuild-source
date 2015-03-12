@@ -1,7 +1,6 @@
 package org.cmdbuild.data.store.email;
 
 public enum EmailStatus {
-	NEW("New"), //
 	RECEIVED("Received"), //
 	DRAFT("Draft"), //
 	OUTGOING("Outgoing"), //

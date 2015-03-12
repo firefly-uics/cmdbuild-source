@@ -13,6 +13,7 @@ import javax.activation.DataHandler;
 
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
+import org.cmdbuild.service.rest.v2.CardAttachments;
 import org.cmdbuild.service.rest.v2.model.Attachment;
 import org.cmdbuild.service.rest.v2.model.ResponseMultiple;
 import org.cmdbuild.service.rest.v2.model.ResponseSingle;
@@ -20,7 +21,7 @@ import org.cmdbuild.service.rest.v2.model.ResponseSingle;
 import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 
-public class CxfCardAttachments implements AllInOneCardAttachments {
+public class CxfCardAttachments implements CardAttachments {
 
 	private final DataAccessLogic dataAccessLogic;
 	private final ErrorHandler errorHandler;

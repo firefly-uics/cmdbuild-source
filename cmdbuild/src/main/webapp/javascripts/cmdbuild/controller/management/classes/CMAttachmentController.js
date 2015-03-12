@@ -173,7 +173,7 @@
 		},
 
 		theModuleIsDisabled: function() {
-			return CMDBuild.Config.dms.enabled == "false";
+			return !CMDBuild.Config.dms.enabled;
 		},
 
 		// as attachment window delegate
@@ -217,7 +217,7 @@
 		return rules;
 	}
 
-	function cellclickHandler(grid, model, htmlelement, rowIndex, event, opt) { 
+	function cellclickHandler(grid, model, htmlelement, rowIndex, event, opt) {
 		var className = event.target.className;
 
 		if (this.callBacks[className]) {
@@ -321,10 +321,10 @@
 	 * The template resolver want the templates
 	 * as a map. Our rules are grouped so I need
 	 * to merge them to have a single level map
-	 * 
+	 *
 	 * To avoid name collision I choose to concatenate
 	 * the group name and the meta-data name
-	 * 
+	 *
 	 * The following two routines do this dirty work
 	 */
 	var SEPARATOR = "_";

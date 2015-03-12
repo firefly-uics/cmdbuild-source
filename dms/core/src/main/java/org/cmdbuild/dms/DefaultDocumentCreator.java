@@ -18,7 +18,7 @@ public class DefaultDocumentCreator implements DocumentCreator {
 	}
 
 	@Override
-	public DocumentSearch createDocumentSearch(final String className, final String cardId) {
+	public DocumentSearch createDocumentSearch(final String className, final Long cardId) {
 		return new DocumentSearch() {
 
 			@Override
@@ -27,7 +27,7 @@ public class DefaultDocumentCreator implements DocumentCreator {
 			}
 
 			@Override
-			public String getCardId() {
+			public Long getCardId() {
 				return cardId;
 			}
 
@@ -41,14 +41,14 @@ public class DefaultDocumentCreator implements DocumentCreator {
 	}
 
 	@Override
-	public StorableDocument createStorableDocument(final String author, final String className, final String cardId,
+	public StorableDocument createStorableDocument(final String author, final String className, final Long cardId,
 			final InputStream inputStream, final String fileName, final String category, final String description) {
 		return createStorableDocument(author, className, cardId, inputStream, fileName, category, description,
 				Collections.<MetadataGroup> emptyList());
 	}
 
 	@Override
-	public StorableDocument createStorableDocument(final String author, final String className, final String cardId,
+	public StorableDocument createStorableDocument(final String author, final String className, final Long cardId,
 			final InputStream inputStream, final String fileName, final String category, final String description,
 			final Iterable<MetadataGroup> metadataGroups) {
 		return new StorableDocument() {
@@ -64,7 +64,7 @@ public class DefaultDocumentCreator implements DocumentCreator {
 			}
 
 			@Override
-			public String getCardId() {
+			public Long getCardId() {
 				return cardId;
 			}
 
@@ -102,7 +102,7 @@ public class DefaultDocumentCreator implements DocumentCreator {
 	}
 
 	@Override
-	public DocumentDownload createDocumentDownload(final String className, final String cardId, final String fileName) {
+	public DocumentDownload createDocumentDownload(final String className, final Long cardId, final String fileName) {
 		return new DocumentDownload() {
 
 			@Override
@@ -111,7 +111,7 @@ public class DefaultDocumentCreator implements DocumentCreator {
 			}
 
 			@Override
-			public String getCardId() {
+			public Long getCardId() {
 				return cardId;
 			}
 
@@ -129,7 +129,7 @@ public class DefaultDocumentCreator implements DocumentCreator {
 	}
 
 	@Override
-	public DocumentDelete createDocumentDelete(final String className, final String cardId, final String fileName) {
+	public DocumentDelete createDocumentDelete(final String className, final Long cardId, final String fileName) {
 		return new DocumentDelete() {
 
 			@Override
@@ -138,7 +138,7 @@ public class DefaultDocumentCreator implements DocumentCreator {
 			}
 
 			@Override
-			public String getCardId() {
+			public Long getCardId() {
 				return cardId;
 			}
 
@@ -156,14 +156,14 @@ public class DefaultDocumentCreator implements DocumentCreator {
 	}
 
 	@Override
-	public DocumentUpdate createDocumentUpdate(final String className, final String cardId, final String filename,
+	public DocumentUpdate createDocumentUpdate(final String className, final Long cardId, final String filename,
 			final String category, final String description) {
 		return createDocumentUpdate(className, cardId, filename, category, description,
 				Collections.<MetadataGroup> emptyList());
 	}
 
 	@Override
-	public DocumentUpdate createDocumentUpdate(final String className, final String cardId, final String filename,
+	public DocumentUpdate createDocumentUpdate(final String className, final Long cardId, final String filename,
 			final String category, final String description, final Iterable<MetadataGroup> metadataGroups) {
 		return new DocumentUpdate() {
 
@@ -173,7 +173,7 @@ public class DefaultDocumentCreator implements DocumentCreator {
 			}
 
 			@Override
-			public String getCardId() {
+			public Long getCardId() {
 				return cardId;
 			}
 
@@ -205,7 +205,7 @@ public class DefaultDocumentCreator implements DocumentCreator {
 		};
 	}
 
-	private List<String> path(final String cardId) {
+	private List<String> path(final Long cardId) {
 		final List<String> fullPath = Lists.newArrayList(basePath);
 		if (cardId != null) {
 			fullPath.add("Id" + cardId);
