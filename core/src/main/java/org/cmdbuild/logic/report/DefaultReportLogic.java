@@ -282,7 +282,7 @@ public class DefaultReportLogic implements ReportLogic {
 			// parameters management
 			for (final ReportParameter reportParameter : reportFactory.getReportParameters()) {
 				for (final Entry<String, Object> param : parameters.entrySet()) {
-					if (param.getKey().equals(reportParameter.getName())) {
+					if (param.getKey().equals(reportParameter.getFullName())) {
 						// update parameter
 						reportParameter.parseValue(param.getValue());
 					}
