@@ -2,15 +2,16 @@
 
 	Ext.define('CMDBuild.view.common.field.LanguageCombo', {
 		alternateClassName: 'CMDBuild.field.LanguageCombo', // Legacy class name
-		extend: 'CMDBuild.field.CMIconCombo',
+		extend: 'CMDBuild.view.common.field.CMIconCombo',
 
 		requires: [
 			'CMDBuild.core.proxy.CMProxyConstants',
 			'CMDBuild.core.proxy.Localizations'
 		],
 
-		valueField: CMDBuild.core.proxy.CMProxyConstants.NAME,
-		displayField: CMDBuild.core.proxy.CMProxyConstants.VALUE,
+		displayField: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
+		iconClsField: CMDBuild.core.proxy.CMProxyConstants.TAG,
+		valueField: CMDBuild.core.proxy.CMProxyConstants.TAG,
 
 		initComponent: function() {
 			Ext.apply(this, {
@@ -21,7 +22,7 @@
 			this.callParent(arguments);
 
 			this.on('select', function(eventName, args) {
-				this.changeLanguage(args[0].get(CMDBuild.core.proxy.CMProxyConstants.NAME));
+				this.changeLanguage(args[0].get(CMDBuild.core.proxy.CMProxyConstants.TAG));
 			}, this);
 
 			this.store.on('load', function() {

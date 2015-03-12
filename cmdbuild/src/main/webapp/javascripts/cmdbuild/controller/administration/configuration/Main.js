@@ -44,15 +44,11 @@
 		},
 
 		onConfigurationSaveButtonClick: function() {
-			CMDBuild.LoadMask.get().show();
 			CMDBuild.core.proxy.Configuration.save({
 				scope: this,
 				params: this.view.getForm().getValues(),
 				success: function(result, options, decodedResult) {
 					this.readConfiguration();
-				},
-				callback: function() {
-					CMDBuild.LoadMask.get().hide();
 
 					CMDBuild.Msg.success();
 				}
@@ -67,7 +63,6 @@
 		},
 
 		readConfiguration: function() {
-			CMDBuild.LoadMask.get().show();
 			CMDBuild.core.proxy.Configuration.read({
 				scope: this,
 				success: function(result, options, decodedResult){
@@ -76,8 +71,7 @@
 					this.view.getForm().setValues(decodedResult.data);
 
 					this.view.afterSubmit(decodedResult.data);
-				},
-				callback: this.callback
+				}
 			}, this.view.configFileName);
 		}
 	});

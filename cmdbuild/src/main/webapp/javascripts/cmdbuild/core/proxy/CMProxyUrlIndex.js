@@ -111,8 +111,6 @@
 			getFunctions: 'services/json/schema/modclass/getfunctions'
 		},
 
-		getLanguage: 'services/json/utils/getlanguage',
-
 		login: 'services/json/login/login',
 
 		menu: {
@@ -230,7 +228,9 @@
 		},
 
 		utils: {
-			clearCache: 'services/json/utils/clearcache'
+			clearCache: 'services/json/utils/clearcache',
+			getLanguage: 'services/json/utils/getlanguage',
+			listAvailableTranslations: 'services/json/utils/listavailabletranslations'
 		},
 
 		widgets: {

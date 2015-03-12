@@ -26,6 +26,7 @@
 		},
 
 		initComponent: function() {
+_debug('CMDBuild.Config', CMDBuild.Config);
 			this.languageFieldset = Ext.create('Ext.form.FieldSet', {
 				title: '@@ Language configuration',
 				overflowY: 'auto',
@@ -41,23 +42,15 @@
 				},
 
 				items: [
-					{
-						xtype: 'combobox',
+					Ext.create('CMDBuild.view.common.field.LanguageCombo', {
 						fieldLabel: '@@ Default language',
-						name: '@@ language',
-						valueField: CMDBuild.core.proxy.CMProxyConstants.NAME,
-						displayField: CMDBuild.core.proxy.CMProxyConstants.VALUE,
-
-						forceSelection: true,
-						editable: false,
-
-						store: CMDBuild.core.proxy.Localizations.getLanguagesStore(),
-						queryMode: 'local',
-					},
+						labelWidth: CMDBuild.LABEL_WIDTH,
+						name: '@@ defaultLanguage'
+					}),
 					{
 						xtype: 'checkbox',
 						fieldLabel: '@@ Show language choice',
-						name: '@@ languageprompt'
+						name: '@@ languagePrompt'
 					}
 				]
 			});

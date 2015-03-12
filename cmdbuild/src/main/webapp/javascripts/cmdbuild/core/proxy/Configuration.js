@@ -17,7 +17,7 @@
 		getLanguage: function(parameters) {
 			CMDBuild.Ajax.request({
 				method: 'POST',
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.getLanguage,
+				url: CMDBuild.core.proxy.CMProxyUrlIndex.utils.getLanguage,
 				scope: parameters.scope || this,
 				success: parameters.success || Ext.emptyFn,
 				failure: parameters.failure || Ext.emptyFn,
