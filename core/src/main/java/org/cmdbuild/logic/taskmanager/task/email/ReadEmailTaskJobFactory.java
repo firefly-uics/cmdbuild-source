@@ -15,6 +15,7 @@ import static org.cmdbuild.common.template.engine.Engines.map;
 import static org.cmdbuild.common.template.engine.Engines.nullOnError;
 import static org.cmdbuild.common.utils.guava.Suppliers.firstNotNull;
 import static org.cmdbuild.common.utils.guava.Suppliers.nullOnException;
+import static org.cmdbuild.data.store.Storables.storableOf;
 import static org.cmdbuild.data.store.email.EmailConstants.EMAIL_CLASS_NAME;
 import static org.cmdbuild.services.email.Predicates.named;
 import static org.cmdbuild.services.template.engine.EngineNames.CARD_PREFIX;
@@ -54,7 +55,6 @@ import org.cmdbuild.logic.workflow.StartProcess.Hook;
 import org.cmdbuild.logic.workflow.WorkflowLogic;
 import org.cmdbuild.scheduler.command.Command;
 import org.cmdbuild.services.email.EmailAccount;
-import org.cmdbuild.services.email.EmailPersistence;
 import org.cmdbuild.services.email.EmailService;
 import org.cmdbuild.services.email.EmailServiceFactory;
 import org.cmdbuild.services.email.SubjectHandler;
@@ -120,7 +120,7 @@ public class ReadEmailTaskJobFactory extends AbstractJobFactory<ReadEmailTask> {
 	private final Store<EmailAccount> emailAccountStore;
 	private final EmailServiceFactory emailServiceFactory;
 	private final SubjectHandler subjectHandler;
-	private final EmailPersistence emailPersistence;
+	private final Store<Email> emailStore;
 	private final WorkflowLogic workflowLogic;
 	private final DmsLogic dmsLogic;
 	private final CMDataView dataView;
@@ -131,7 +131,7 @@ public class ReadEmailTaskJobFactory extends AbstractJobFactory<ReadEmailTask> {
 			final Store<EmailAccount> emailAccountStore, //
 			final EmailServiceFactory emailServiceFactory, //
 			final SubjectHandler subjectHandler, //
-			final EmailPersistence emailPersistence, //
+			final Store<Email> emailStore, //
 			final WorkflowLogic workflowLogic, //
 			final DmsLogic dmsLogic, //
 			final CMDataView dataView, //
@@ -140,7 +140,7 @@ public class ReadEmailTaskJobFactory extends AbstractJobFactory<ReadEmailTask> {
 		this.emailAccountStore = emailAccountStore;
 		this.emailServiceFactory = emailServiceFactory;
 		this.subjectHandler = subjectHandler;
-		this.emailPersistence = emailPersistence;
+		this.emailStore = emailStore;
 		this.workflowLogic = workflowLogic;
 		this.dmsLogic = dmsLogic;
 		this.dataView = dataView;
@@ -158,7 +158,7 @@ public class ReadEmailTaskJobFactory extends AbstractJobFactory<ReadEmailTask> {
 			}
 
 			try {
-				emailPersistence.getEmail(parsedSubject.getEmailId());
+				emailStore.read(storableOf(parsedSubject.getEmailId()));
 			} catch (final Exception e) {
 				return false;
 			}
@@ -173,7 +173,7 @@ public class ReadEmailTaskJobFactory extends AbstractJobFactory<ReadEmailTask> {
 		public Email apply(final Email email) {
 			final ParsedSubject parsedSubject = subjectHandler.parse(email.getSubject());
 			Validate.isTrue(parsedSubject.hasExpectedFormat(), "invalid subject format");
-			final Email parentEmail = emailPersistence.getEmail(parsedSubject.getEmailId());
+			final Email parentEmail = emailStore.read(storableOf(parsedSubject.getEmailId()));
 			email.setSubject(parsedSubject.getRealSubject());
 			email.setActivityId(parentEmail.getActivityId());
 			email.setNotifyWith(parentEmail.getNotifyWith());
@@ -195,6 +195,7 @@ public class ReadEmailTaskJobFactory extends AbstractJobFactory<ReadEmailTask> {
 
 		final ReadEmailCommand.Builder readEmail = ReadEmailCommand.newInstance() //
 				.withEmailService(service) //
+				.withEmailStore(emailStore) //
 				.withPredicate(predicate(task));
 
 		if (TaskPredicate.SEND_NOTIFICATION.apply(task)) {
@@ -339,7 +340,7 @@ public class ReadEmailTaskJobFactory extends AbstractJobFactory<ReadEmailTask> {
 								@Override
 								public void started(final UserProcessInstance userProcessInstance) {
 									email.setActivityId(userProcessInstance.getCardId());
-									emailPersistence.save(email);
+									emailStore.update(email);
 
 									if (task.isWorkflowAttachments()) {
 										StoreDocument.newInstance() //

@@ -23,6 +23,8 @@ public class DefaultEmailTemplate implements EmailTemplate {
 		private String subject;
 		private String body;
 		private Long account;
+		private boolean keepSynchronization;
+		private boolean promptReSynchronization;
 
 		private Builder() {
 			// use factory method
@@ -93,6 +95,16 @@ public class DefaultEmailTemplate implements EmailTemplate {
 			return this;
 		}
 
+		public Builder withKeepSynchronization(final boolean keepSynchronization) {
+			this.keepSynchronization = keepSynchronization;
+			return this;
+		}
+
+		public Builder withPromptSynchronization(final boolean promptReSynchronization) {
+			this.promptReSynchronization = promptReSynchronization;
+			return this;
+		}
+
 	}
 
 	public static Builder newInstance() {
@@ -109,6 +121,8 @@ public class DefaultEmailTemplate implements EmailTemplate {
 	private final String subject;
 	private final String body;
 	private final Long account;
+	private final boolean keepSynchronization;
+	private final boolean promptReSynchronization;
 
 	private DefaultEmailTemplate(final Builder builder) {
 		this.id = builder.id;
@@ -121,6 +135,8 @@ public class DefaultEmailTemplate implements EmailTemplate {
 		this.subject = builder.subject;
 		this.body = builder.body;
 		this.account = builder.account;
+		this.keepSynchronization = builder.keepSynchronization;
+		this.promptReSynchronization = builder.promptReSynchronization;
 	}
 
 	@Override
@@ -203,6 +219,16 @@ public class DefaultEmailTemplate implements EmailTemplate {
 	@Override
 	public Long getAccount() {
 		return account;
+	}
+
+	@Override
+	public boolean isKeepSynchronization() {
+		return keepSynchronization;
+	}
+
+	@Override
+	public boolean isPromptSynchronization() {
+		return promptReSynchronization;
 	}
 
 	@Override

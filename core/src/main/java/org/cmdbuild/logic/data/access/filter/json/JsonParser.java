@@ -107,12 +107,12 @@ public class JsonParser implements Parser, LoggingSupport {
 			final JsonNode simple = node.get(SIMPLE_KEY);
 			final String name = simple.get(ATTRIBUTE_KEY).getTextValue();
 			final String operator = simple.get(OPERATOR_KEY).getTextValue();
-			final Iterable<String> values = from(simple.get(VALUE_KEY)) //
-					.transform(new Function<JsonNode, String>() {
+			final Iterable<Object> values = from(simple.get(VALUE_KEY)) //
+					.transform(new Function<JsonNode, Object>() {
 
 						@Override
-						public String apply(final JsonNode input) {
-							return input.getTextValue();
+						public Object apply(final JsonNode input) {
+							return input.isTextual() ?input.getTextValue():input.getNumberValue().longValue();
 						}
 
 					});
@@ -139,7 +139,7 @@ public class JsonParser implements Parser, LoggingSupport {
 		BEGIN(FilterOperator.BEGIN.toString()) {
 
 			@Override
-			public Predicate create(final Iterable<String> values) {
+			public Predicate create(final Iterable<Object> values) {
 				return startsWith(firstOf(values));
 			}
 
@@ -147,7 +147,7 @@ public class JsonParser implements Parser, LoggingSupport {
 		BETWEEN(FilterOperator.BETWEEN.toString()) {
 
 			@Override
-			public Predicate create(final Iterable<String> values) {
+			public Predicate create(final Iterable<Object> values) {
 				return and(greaterThan(firstOf(values)), lessThan(secondOf(values)));
 			}
 
@@ -155,7 +155,7 @@ public class JsonParser implements Parser, LoggingSupport {
 		CONTAIN(FilterOperator.CONTAIN.toString()) {
 
 			@Override
-			public Predicate create(final Iterable<String> values) {
+			public Predicate create(final Iterable<Object> values) {
 				return contains(firstOf(values));
 			}
 
@@ -163,7 +163,7 @@ public class JsonParser implements Parser, LoggingSupport {
 		END(FilterOperator.END.toString()) {
 
 			@Override
-			public Predicate create(final Iterable<String> values) {
+			public Predicate create(final Iterable<Object> values) {
 				return endsWith(firstOf(values));
 			}
 
@@ -171,7 +171,7 @@ public class JsonParser implements Parser, LoggingSupport {
 		EQUAL(FilterOperator.EQUAL.toString()) {
 
 			@Override
-			public Predicate create(final Iterable<String> values) {
+			public Predicate create(final Iterable<Object> values) {
 				return equalTo(firstOf(values));
 			}
 
@@ -179,7 +179,7 @@ public class JsonParser implements Parser, LoggingSupport {
 		GREATER_THAN(FilterOperator.GREATER_THAN.toString()) {
 
 			@Override
-			public Predicate create(final Iterable<String> values) {
+			public Predicate create(final Iterable<Object> values) {
 				return greaterThan(firstOf(values));
 			}
 
@@ -187,7 +187,7 @@ public class JsonParser implements Parser, LoggingSupport {
 		IN(FilterOperator.IN.toString()) {
 
 			@Override
-			public Predicate create(final Iterable<String> values) {
+			public Predicate create(final Iterable<Object> values) {
 				return in(values);
 			}
 
@@ -195,7 +195,7 @@ public class JsonParser implements Parser, LoggingSupport {
 		LIKE(FilterOperator.LIKE.toString()) {
 
 			@Override
-			public Predicate create(final Iterable<String> values) {
+			public Predicate create(final Iterable<Object> values) {
 				return like(firstOf(values));
 			}
 
@@ -203,7 +203,7 @@ public class JsonParser implements Parser, LoggingSupport {
 		LOWER_THAN(FilterOperator.LESS_THAN.toString()) {
 
 			@Override
-			public Predicate create(final Iterable<String> values) {
+			public Predicate create(final Iterable<Object> values) {
 				return lessThan(firstOf(values));
 			}
 
@@ -216,7 +216,7 @@ public class JsonParser implements Parser, LoggingSupport {
 		NOT_BEGIN(FilterOperator.NOT_BEGIN.toString()) {
 
 			@Override
-			public Predicate create(final Iterable<String> values) {
+			public Predicate create(final Iterable<Object> values) {
 				return not(BEGIN.create(values));
 			}
 
@@ -224,7 +224,7 @@ public class JsonParser implements Parser, LoggingSupport {
 		NOT_CONTAIN(FilterOperator.NOT_CONTAIN.toString()) {
 
 			@Override
-			public Predicate create(final Iterable<String> values) {
+			public Predicate create(final Iterable<Object> values) {
 				return not(CONTAIN.create(values));
 			}
 
@@ -232,7 +232,7 @@ public class JsonParser implements Parser, LoggingSupport {
 		NOT_END(FilterOperator.NOT_END.toString()) {
 
 			@Override
-			public Predicate create(final Iterable<String> values) {
+			public Predicate create(final Iterable<Object> values) {
 				return not(END.create(values));
 			}
 
@@ -240,7 +240,7 @@ public class JsonParser implements Parser, LoggingSupport {
 		NOT_EQUAL(FilterOperator.NOT_EQUAL.toString()) {
 
 			@Override
-			public Predicate create(final Iterable<String> values) {
+			public Predicate create(final Iterable<Object> values) {
 				return not(EQUAL.create(values));
 			}
 
@@ -248,7 +248,7 @@ public class JsonParser implements Parser, LoggingSupport {
 		NOT_NULL(FilterOperator.NOT_NULL.toString()) {
 
 			@Override
-			public Predicate create(final Iterable<String> values) {
+			public Predicate create(final Iterable<Object> values) {
 				return not(NULL.create(values));
 			}
 
@@ -256,19 +256,19 @@ public class JsonParser implements Parser, LoggingSupport {
 		NULL(FilterOperator.NULL.toString()) {
 
 			@Override
-			public Predicate create(final Iterable<String> values) {
+			public Predicate create(final Iterable<Object> values) {
 				return isNull();
 			}
 
 		}, //
 		;
 
-		private static String firstOf(final Iterable<String> values) {
+		private static Object firstOf(final Iterable<Object> values) {
 			Validate.isTrue(size(values) > 0, "missing value");
 			return get(values, 0);
 		}
 
-		private static String secondOf(final Iterable<String> values) {
+		private static Object secondOf(final Iterable<Object> values) {
 			Validate.isTrue(size(values) > 1, "missing value");
 			return get(values, 1);
 		}
@@ -289,7 +289,7 @@ public class JsonParser implements Parser, LoggingSupport {
 			this.text = text;
 		}
 
-		public abstract Predicate create(Iterable<String> values);
+		public abstract Predicate create(Iterable<Object> values);
 
 	}
 

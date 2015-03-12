@@ -1,5 +1,7 @@
 package org.cmdbuild.service.rest.v2.model;
 
+import java.util.Map;
+
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
@@ -13,6 +15,7 @@ public class ProcessInstanceAdvanceable extends ProcessInstance {
 
 	private String activity;
 	private boolean advance;
+	private Map<String, Object> widgets;
 
 	ProcessInstanceAdvanceable() {
 		// package visibility
@@ -34,6 +37,14 @@ public class ProcessInstanceAdvanceable extends ProcessInstance {
 		this.advance = advance;
 	}
 
+	public Map<String, Object> getWidgets() {
+		return widgets;
+	}
+
+	void setWidgets(final Map<String, Object> widgets) {
+		this.widgets = widgets;
+	}
+
 	@Override
 	protected boolean doEquals(final Object obj) {
 		if (this == obj) {
@@ -48,6 +59,7 @@ public class ProcessInstanceAdvanceable extends ProcessInstance {
 		return super.doEquals(obj) && new EqualsBuilder() //
 				.append(this.activity, other.activity) //
 				.append(this.advance, other.advance) //
+				.append(this.widgets, other.widgets) //
 				.isEquals();
 	}
 
@@ -57,6 +69,7 @@ public class ProcessInstanceAdvanceable extends ProcessInstance {
 				.append(super.doHashCode()) //
 				.append(activity) //
 				.append(advance) //
+				.append(widgets) //
 				.toHashCode();
 	}
 

@@ -31,7 +31,7 @@ public class DomainAttributePredicate extends ForwardingPredicateVisitor impleme
 
 	private static final Marker marker = MarkerFactory.getMarker(DomainAttributePredicate.class.getName());
 
-	private static final PredicateVisitor UNSUPPORTED = NotSupportedPredicateVisitor.getInstance();
+	private static final PredicateVisitor NOT_SUPPORTED = NotSupportedPredicateVisitor.getInstance();
 
 	private final Attribute attribute;
 	private CMDomain input;
@@ -43,7 +43,7 @@ public class DomainAttributePredicate extends ForwardingPredicateVisitor impleme
 
 	@Override
 	protected PredicateVisitor delegate() {
-		return UNSUPPORTED;
+		return NOT_SUPPORTED;
 	}
 
 	@Override
@@ -67,8 +67,6 @@ public class DomainAttributePredicate extends ForwardingPredicateVisitor impleme
 			_output = true;
 		}
 		output = _output;
-
-		logger.warn(marker, format("predicate '%s' not supported", predicate));
 	}
 
 	private boolean contains(final CMClass target, final Object expected) {

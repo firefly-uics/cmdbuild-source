@@ -718,6 +718,225 @@ public class Models {
 
 	}
 
+	public static class EmailBuilder extends ModelBuilder<Email> {
+
+		private Long id;
+		private String from;
+		private String to;
+		private String cc;
+		private String bcc;
+		private String subject;
+		private String body;
+		private String notifyWith;
+		private String date;
+		private String status;
+		private boolean noSubjectPrefix;
+		private String account;
+		private String template;
+		private boolean keepSynchronization;
+		private boolean promptSynchronization;
+
+		private EmailBuilder() {
+			// use factory method
+		}
+
+		@Override
+		protected Email doBuild() {
+			final Email output = new Email();
+			output.setId(id);
+			output.setFrom(from);
+			output.setTo(to);
+			output.setCc(cc);
+			output.setBcc(bcc);
+			output.setSubject(subject);
+			output.setBody(body);
+			output.setDate(date);
+			output.setStatus(status);
+			output.setNotifyWith(notifyWith);
+			output.setNoSubjectPrefix(noSubjectPrefix);
+			output.setAccount(account);
+			output.setTemplate(template);
+			output.setKeepSynchronization(keepSynchronization);
+			output.setPromptSynchronization(promptSynchronization);
+			return output;
+		}
+
+		public EmailBuilder withId(final Long id) {
+			this.id = id;
+			return this;
+		}
+
+		public EmailBuilder withFrom(final String from) {
+			this.from = from;
+			return this;
+		}
+
+		public EmailBuilder withTo(final String to) {
+			this.to = to;
+			return this;
+		}
+
+		public EmailBuilder withCc(final String cc) {
+			this.cc = cc;
+			return this;
+		}
+
+		public EmailBuilder withBcc(final String bcc) {
+			this.bcc = bcc;
+			return this;
+		}
+
+		public EmailBuilder withSubject(final String subject) {
+			this.subject = subject;
+			return this;
+		}
+
+		public EmailBuilder withBody(final String body) {
+			this.body = body;
+			return this;
+		}
+
+		public EmailBuilder withNotifyWith(final String notifyWith) {
+			this.notifyWith = notifyWith;
+			return this;
+		}
+
+		public EmailBuilder withDate(final String date) {
+			this.date = date;
+			return this;
+		}
+
+		public EmailBuilder withStatus(final String status) {
+			this.status = status;
+			return this;
+		}
+
+		public EmailBuilder withNoSubjectPrefix(final boolean noSubjectPrefix) {
+			this.noSubjectPrefix = noSubjectPrefix;
+			return this;
+		}
+
+		public EmailBuilder withAccount(final String account) {
+			this.account = account;
+			return this;
+		}
+
+		public EmailBuilder withTemplate(final String template) {
+			this.template = template;
+			return this;
+		}
+
+		public EmailBuilder withKeepSynchronization(final boolean keepSynchronization) {
+			this.keepSynchronization = keepSynchronization;
+			return this;
+		}
+
+		public EmailBuilder withPromptSynchronization(final boolean promptSynchronization) {
+			this.promptSynchronization = promptSynchronization;
+			return this;
+		}
+
+	}
+
+	public static class EmailTemplateBuilder extends ModelBuilder<EmailTemplate> {
+
+		private String id;
+		private String name;
+		private String description;
+		private String from;
+		private String to;
+		private String cc;
+		private String bcc;
+		private String subject;
+		private String body;
+		private String account;
+		private boolean keepSynchronization;
+		private boolean promptSynchronization;
+
+		private EmailTemplateBuilder() {
+			// use factory method
+		}
+
+		@Override
+		protected EmailTemplate doBuild() {
+			final EmailTemplate output = new EmailTemplate();
+			output.setId(id);
+			output.setName(name);
+			output.setDescription(description);
+			output.setFrom(from);
+			output.setTo(to);
+			output.setCc(cc);
+			output.setBcc(bcc);
+			output.setSubject(subject);
+			output.setBody(body);
+			output.setAccount(account);
+			output.setKeepSynchronization(keepSynchronization);
+			output.setPromptSynchronization(promptSynchronization);
+			return output;
+		}
+
+		public EmailTemplateBuilder withId(final String id) {
+			this.id = id;
+			return this;
+		}
+
+		public EmailTemplateBuilder withName(final String name) {
+			this.name = name;
+			return this;
+		}
+
+		public EmailTemplateBuilder withDescription(final String description) {
+			this.description = description;
+			return this;
+		}
+
+		public EmailTemplateBuilder withFrom(final String from) {
+			this.from = from;
+			return this;
+		}
+
+		public EmailTemplateBuilder withTo(final String to) {
+			this.to = to;
+			return this;
+		}
+
+		public EmailTemplateBuilder withCc(final String cc) {
+			this.cc = cc;
+			return this;
+		}
+
+		public EmailTemplateBuilder withBcc(final String bcc) {
+			this.bcc = bcc;
+			return this;
+		}
+
+		public EmailTemplateBuilder withSubject(final String subject) {
+			this.subject = subject;
+			return this;
+		}
+
+		public EmailTemplateBuilder withBody(final String body) {
+			this.body = body;
+			return this;
+		}
+
+		public EmailTemplateBuilder withAccount(final String account) {
+			this.account = account;
+			return this;
+		}
+
+		public EmailTemplateBuilder withKeepSynchronization(final boolean keepSynchronization) {
+			this.keepSynchronization = keepSynchronization;
+			return this;
+		}
+
+		public EmailTemplateBuilder withPromptSynchronization(final boolean promptSynchronization) {
+			this.promptSynchronization = promptSynchronization;
+			return this;
+		}
+
+	}
+
 	public static class FilterBuilder extends ModelBuilder<Filter> {
 
 		private String text;
@@ -1151,6 +1370,7 @@ public class Models {
 		final Values values = newValues().build();
 		private String activityId;
 		private Boolean advance;
+		private Map<String, Object> widgets;
 
 		private ProcessInstanceAdvanceBuilder() {
 			// use factory method
@@ -1171,6 +1391,7 @@ public class Models {
 			output.setValues(values);
 			output.setActivity(activityId);
 			output.setAdvance(advance);
+			output.setWidgets(widgets);
 			return output;
 		}
 
@@ -1210,6 +1431,11 @@ public class Models {
 
 		public ProcessInstanceAdvanceBuilder withAdvance(final boolean advance) {
 			this.advance = advance;
+			return this;
+		}
+
+		public ProcessInstanceAdvanceBuilder withWidgets(final Map<String, Object> widgets) {
+			this.widgets = widgets;
 			return this;
 		}
 
@@ -1732,6 +1958,14 @@ public class Models {
 
 	public static DomainWithFullDetailsBuilder newDomainWithFullDetails() {
 		return new DomainWithFullDetailsBuilder();
+	}
+
+	public static EmailBuilder newEmail() {
+		return new EmailBuilder();
+	}
+
+	public static EmailTemplateBuilder newEmailTemplate() {
+		return new EmailTemplateBuilder();
 	}
 
 	public static FilterBuilder newFilter() {
