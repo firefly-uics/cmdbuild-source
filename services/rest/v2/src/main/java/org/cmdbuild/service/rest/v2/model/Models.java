@@ -747,6 +747,35 @@ public class Models {
 
 	}
 
+	public static class LongIdAndDescriptionBuilder extends ModelBuilder<LongIdAndDescription> {
+
+		private Long id;
+		private String description;
+
+		private LongIdAndDescriptionBuilder() {
+			// use factory method
+		}
+
+		@Override
+		protected LongIdAndDescription doBuild() {
+			final LongIdAndDescription output = new LongIdAndDescription();
+			output.setId(id);
+			output.setDescription(description);
+			return output;
+		}
+
+		public LongIdAndDescriptionBuilder withId(final Long id) {
+			this.id = id;
+			return this;
+		}
+
+		public LongIdAndDescriptionBuilder withDescription(final String description) {
+			this.description = description;
+			return this;
+		}
+
+	}
+
 	public static class LookupDetailBuilder extends ModelBuilder<LookupDetail> {
 
 		private Long id;
@@ -1421,6 +1450,38 @@ public class Models {
 
 	}
 
+	public static class ReportBuilder extends ModelBuilder<Report> {
+
+		private Long id;
+		private String title;
+		private String description;
+
+		@Override
+		protected Report doBuild() {
+			final Report output = new Report();
+			output.setId(id);
+			output.setTitle(title);
+			output.setDescription(description);
+			return output;
+		}
+
+		public ReportBuilder withId(final Long id) {
+			this.id = id;
+			return this;
+		}
+
+		public ReportBuilder withTitle(final String title) {
+			this.title = title;
+			return this;
+		}
+
+		public ReportBuilder withDescription(final String description) {
+			this.description = description;
+			return this;
+		}
+
+	}
+
 	public static class ResponseSingleBuilder<T> extends ModelBuilder<ResponseSingle<T>> {
 
 		private T element;
@@ -1537,35 +1598,6 @@ public class Models {
 		public SessionBuilder withAvailableRoles(final Iterable<String> availableRoles) {
 			this.availableRoles.clear();
 			addAll(this.availableRoles, defaultIfNull(availableRoles, NO_ROLES));
-			return this;
-		}
-
-	}
-
-	public static class LongIdAndDescriptionBuilder extends ModelBuilder<LongIdAndDescription> {
-
-		private Long id;
-		private String description;
-
-		private LongIdAndDescriptionBuilder() {
-			// use factory method
-		}
-
-		@Override
-		protected LongIdAndDescription doBuild() {
-			final LongIdAndDescription output = new LongIdAndDescription();
-			output.setId(id);
-			output.setDescription(description);
-			return output;
-		}
-
-		public LongIdAndDescriptionBuilder setId(final Long id) {
-			this.id = id;
-			return this;
-		}
-
-		public LongIdAndDescriptionBuilder setDescription(final String description) {
-			this.description = description;
 			return this;
 		}
 
@@ -1706,6 +1738,10 @@ public class Models {
 		return new FilterBuilder();
 	}
 
+	public static LongIdAndDescriptionBuilder newLongIdAndDescription() {
+		return new LongIdAndDescriptionBuilder();
+	}
+
 	public static LookupDetailBuilder newLookupDetail() {
 		return new LookupDetailBuilder();
 	}
@@ -1754,6 +1790,10 @@ public class Models {
 		return new RelationBuilder();
 	}
 
+	public static ReportBuilder newReport() {
+		return new ReportBuilder();
+	}
+
 	@Deprecated
 	public static <T> ResponseSingleBuilder<T> newResponseSingle() {
 		return new ResponseSingleBuilder<T>();
@@ -1778,10 +1818,6 @@ public class Models {
 
 	public static SessionBuilder newSession(final Session existing) {
 		return new SessionBuilder(existing);
-	}
-
-	public static LongIdAndDescriptionBuilder newLongIdAndDescription() {
-		return new LongIdAndDescriptionBuilder();
 	}
 
 	public static ValuesBuilder newValues() {

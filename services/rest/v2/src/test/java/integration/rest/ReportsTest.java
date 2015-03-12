@@ -9,7 +9,9 @@ import static org.cmdbuild.service.rest.v2.constants.Serialization.START;
 import static org.cmdbuild.service.rest.v2.model.Models.newAttribute;
 import static org.cmdbuild.service.rest.v2.model.Models.newLongIdAndDescription;
 import static org.cmdbuild.service.rest.v2.model.Models.newMetadata;
+import static org.cmdbuild.service.rest.v2.model.Models.newReport;
 import static org.cmdbuild.service.rest.v2.model.Models.newResponseMultiple;
+import static org.cmdbuild.service.rest.v2.model.Models.newResponseSingle;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.anyInt;
@@ -30,7 +32,9 @@ import org.cmdbuild.service.rest.test.ServerResource;
 import org.cmdbuild.service.rest.v2.Reports;
 import org.cmdbuild.service.rest.v2.model.Attribute;
 import org.cmdbuild.service.rest.v2.model.LongIdAndDescription;
+import org.cmdbuild.service.rest.v2.model.Report;
 import org.cmdbuild.service.rest.v2.model.ResponseMultiple;
+import org.cmdbuild.service.rest.v2.model.ResponseSingle;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
@@ -63,12 +67,12 @@ public class ReportsTest {
 		final ResponseMultiple<LongIdAndDescription> sentResponse = newResponseMultiple(LongIdAndDescription.class) //
 				.withElements(asList( //
 						newLongIdAndDescription() //
-								.setId(1L) //
-								.setDescription("foo") //
+								.withId(1L) //
+								.withDescription("foo") //
 								.build(), //
 						newLongIdAndDescription() //
-								.setId(2L) //
-								.setDescription("bar") //
+								.withId(2L) //
+								.withDescription("bar") //
 								.build() //
 						)) //
 				.withMetadata(newMetadata() //
@@ -89,6 +93,30 @@ public class ReportsTest {
 		assertThat(json.from(contentOf(response)), equalTo(json.from(sentResponse)));
 
 		verify(service).readAll(eq(12), eq(34));
+	}
+
+	@Test
+	public void read() throws Exception {
+		// given
+		final ResponseSingle<Report> sentResponse = newResponseSingle(Report.class) //
+				.withElement(newReport() //
+						.withId(12L) //
+						.withTitle("this is the title") //
+						.withDescription("this is the description") //
+						.build()) //
+				.build();
+		doReturn(sentResponse) //
+				.when(service).read(anyLong());
+
+		// when
+		final HttpGet get = new HttpGet(server.resource("reports/34/"));
+		final HttpResponse response = httpclient.execute(get);
+
+		// then
+		assertThat(statusCodeOf(response), equalTo(200));
+		assertThat(json.from(contentOf(response)), equalTo(json.from(sentResponse)));
+
+		verify(service).read(eq(34L));
 	}
 
 	@Test
