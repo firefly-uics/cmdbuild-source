@@ -32,12 +32,12 @@ _debug('decodedResult', decodedResult);
 						var translation = translations[i];
 
 						var item = Ext.create('Ext.form.field.Checkbox', {
-							fieldLabel: translation[CMDBuild.core.proxy.CMProxyConstants.VALUE],
+							fieldLabel: translation[CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION],
 							labelWidth: CMDBuild.LABEL_WIDTH,
-							name: translation[CMDBuild.core.proxy.CMProxyConstants.NAME],
+							name: translation[CMDBuild.core.proxy.CMProxyConstants.TAG],
 							padding: '3 5',
 							submitValue: false,
-							labelClsExtra: 'ux-flag-' + translation[CMDBuild.core.proxy.CMProxyConstants.NAME],
+							labelClsExtra: 'ux-flag-' + translation[CMDBuild.core.proxy.CMProxyConstants.TAG],
 							labelStyle: 'background-repeat: no-repeat; background-position: left; padding-left: 22px;'
 						});
 

@@ -20,6 +20,7 @@
 		requires: [
 			'CMDBuild.core.proxy.Classes',
 			'CMDBuild.core.proxy.Configuration',
+			'CMDBuild.core.proxy.Localizations',
 			'CMDBuild.core.proxy.Report'
 		],
 
@@ -42,7 +43,10 @@
 				// Get server language
 				CMDBuild.core.proxy.Configuration.getLanguage({
 					success: function(result, options, decodedResult) {
-						CMDBuild.Config[CMDBuild.core.proxy.CMProxyConstants.LANGUAGE] = decodedResult[CMDBuild.core.proxy.CMProxyConstants.LANGUAGE];
+						var configObject = {};
+						configObject[CMDBuild.core.proxy.CMProxyConstants.LANGUAGE] = decodedResult[CMDBuild.core.proxy.CMProxyConstants.LANGUAGE];
+
+						CMDBuild.Config[CMDBuild.core.proxy.CMProxyConstants.LOCALIZATION] = Ext.create('CMDBuild.model.configuration.Localization', configObject);
 					}
 				});
 
@@ -53,7 +57,13 @@
 
 						CMDBuild.ServiceProxy.configuration.readMainConfiguration({
 							success: function(response, options, decoded) {
+								// CMDBuild
 								CMDBuild.Config.cmdbuild = decoded.data;
+
+								// Localization
+								// TODO: refactor to avoid to use Cache
+								_CMCache.setActiveTranslations(decoded.data.enabled_languages);
+								CMDBuild.Config[CMDBuild.core.proxy.CMProxyConstants.LOCALIZATION].setLanguagesWithLocalizations(decoded.data.enabled_languages);
 
 								/* **********************************************
 								 * Suspend here the layouts, and resume after all
@@ -61,7 +71,7 @@
 								 * **********************************************/
 								Ext.suspendLayouts();
 								/* ***********************************************/
-								_CMCache.setActiveTranslations(decoded.data.enabled_languages);
+
 								var panels = [
 									new Ext.Panel({
 										cls: 'empty_panel x-panel-body'
