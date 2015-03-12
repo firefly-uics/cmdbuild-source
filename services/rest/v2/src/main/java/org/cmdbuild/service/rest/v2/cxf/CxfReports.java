@@ -1,9 +1,11 @@
 package org.cmdbuild.service.rest.v2.cxf;
 
+import static com.google.common.base.Predicates.alwaysTrue;
 import static com.google.common.collect.FluentIterable.from;
 import static com.google.common.collect.Iterables.size;
 import static java.lang.Integer.MAX_VALUE;
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.cmdbuild.service.rest.v2.model.Models.newLongIdAndDescription;
 import static org.cmdbuild.service.rest.v2.model.Models.newMetadata;
 import static org.cmdbuild.service.rest.v2.model.Models.newReport;
@@ -15,11 +17,16 @@ import javax.activation.DataHandler;
 
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.view.CMDataView;
+import org.cmdbuild.logic.data.access.filter.json.JsonParser;
+import org.cmdbuild.logic.data.access.filter.model.Element;
+import org.cmdbuild.logic.data.access.filter.model.Filter;
+import org.cmdbuild.logic.data.access.filter.model.Parser;
 import org.cmdbuild.logic.data.lookup.LookupLogic;
 import org.cmdbuild.logic.report.ExtensionConverter;
 import org.cmdbuild.logic.report.ReportLogic;
 import org.cmdbuild.logic.report.StringExtensionConverter;
 import org.cmdbuild.service.rest.v2.Reports;
+import org.cmdbuild.service.rest.v2.cxf.filter.ReportElementPredicate;
 import org.cmdbuild.service.rest.v2.cxf.serialization.AttributeTypeResolver;
 import org.cmdbuild.service.rest.v2.cxf.serialization.ToAttributeDetail;
 import org.cmdbuild.service.rest.v2.model.Attribute;
@@ -32,6 +39,7 @@ import org.cmdbuild.service.rest.v2.model.Values;
 
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
+import com.google.common.base.Predicate;
 
 public class CxfReports implements Reports {
 
@@ -56,8 +64,22 @@ public class CxfReports implements Reports {
 	}
 
 	@Override
-	public ResponseMultiple<LongIdAndDescription> readAll(final Integer limit, final Integer offset) {
-		final Iterable<ReportLogic.Report> elements = logic.readAll();
+	public ResponseMultiple<LongIdAndDescription> readAll(final String filter, final Integer limit, final Integer offset) {
+		final Predicate<ReportLogic.Report> predicate;
+		if (isNotBlank(filter)) {
+			final Parser parser = new JsonParser(filter);
+			final Filter filterModel = parser.parse();
+			final Optional<Element> element = filterModel.attribute();
+			if (element.isPresent()) {
+				predicate = new ReportElementPredicate(element.get());
+			} else {
+				predicate = alwaysTrue();
+			}
+		} else {
+			predicate = alwaysTrue();
+		}
+		final Iterable<ReportLogic.Report> elements = from(logic.readAll()) //
+				.filter(predicate);
 		return newResponseMultiple(LongIdAndDescription.class) //
 				.withElements(from(elements) //
 						.transform(new Function<ReportLogic.Report, LongIdAndDescription>() {
