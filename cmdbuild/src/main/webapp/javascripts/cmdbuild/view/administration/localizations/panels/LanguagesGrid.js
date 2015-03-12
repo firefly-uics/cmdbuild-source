@@ -5,7 +5,7 @@
 
 		requires: [
 			'CMDBuild.core.proxy.CMProxyConstants',
-//			'CMDBuild.ServiceProxy.translations' // TODO
+			'CMDBuild.core.proxy.Localizations'
 		],
 
 		/**
@@ -13,6 +13,9 @@
 		 */
 		languages: [],
 
+		/**
+		 * @property {Array}
+		 */
 		languageCheckboxes: [],
 
 		border: false,
@@ -20,11 +23,9 @@
 		layout: 'column',
 
 		initComponent: function() {
-			_CMCache.registerOnTranslations(this);
-
-			CMDBuild.LoadMask.instance.show();
-			CMDBuild.ServiceProxy.translations.readAvailableTranslations({
+			CMDBuild.core.proxy.Localizations.getLanguages({
 				scope: this,
+				loadMask: true,
 				success: function(result, options, decodedResult) {
 					var translations = decodedResult[CMDBuild.core.proxy.CMProxyConstants.TRANSLATIONS];
 _debug('decodedResult', decodedResult);
@@ -44,9 +45,6 @@ _debug('decodedResult', decodedResult);
 						this.languageCheckboxes.push(item);
 						this.add(item);
 					}
-				},
-				callback: function() {
-					CMDBuild.LoadMask.instance.hide();
 				}
 			});
 
@@ -78,11 +76,6 @@ _debug('decodedResult', decodedResult);
 
 				languageCheckbox.setValue(Ext.Array.contains(activeLanguages, languageCheckbox.getName()));
 			}
-		},
-
-		// TODO: this method is used????
-		resetLanguages: function() {
-			this.setValue(_CMCache.getActiveTranslations());
 		}
 	});
 

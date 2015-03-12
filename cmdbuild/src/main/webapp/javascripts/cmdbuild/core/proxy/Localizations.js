@@ -44,6 +44,7 @@
 			CMDBuild.Ajax.request({
 				url: CMDBuild.core.proxy.CMProxyUrlIndex.utils.listAvailableTranslations,
 				scope: parameters.scope || this,
+				loadMask: parameters.loadMask || false,
 				success: parameters.success || Ext.emptyFn,
 				failure: parameters.failure || Ext.emptyFn,
 				callback: parameters.callback || Ext.emptyFn
@@ -80,7 +81,47 @@
 				url: '#############',
 				params: parameters.params,
 				scope: parameters.scope || this,
-				loadMask: true,
+				loadMask: parameters.loadMask || false,
+				failure: parameters.failure || Ext.emptyFn(),
+				success: parameters.success || Ext.emptyFn(),
+				callback: parameters.callback || Ext.emptyFn()
+			});
+		},
+
+		/**
+		 * @param {Object} parameters
+		 */
+		readLocalization: function(parameters) { // TODO: future implementation of server-side parameter for sectionId
+			var url = undefined;
+
+			switch (parameters.params.sectionId) {
+				case 'classes': {
+					url = CMDBuild.core.proxy.CMProxyUrlIndex.localizations.classRead;
+				} break;
+
+				case 'domains': {
+
+				} break;
+
+				case 'lookups': {
+
+				} break;
+
+				case 'menus': {
+
+				} break;
+
+				case 'reports': {
+
+				} break;
+			}
+_debug('url', url);
+			CMDBuild.Ajax.request({
+//				method: 'POST',
+				url: url,
+				params: parameters.params,
+				scope: parameters.scope || this,
+				loadMask: parameters.loadMask || false,
 				failure: parameters.failure || Ext.emptyFn(),
 				success: parameters.success || Ext.emptyFn(),
 				callback: parameters.callback || Ext.emptyFn()

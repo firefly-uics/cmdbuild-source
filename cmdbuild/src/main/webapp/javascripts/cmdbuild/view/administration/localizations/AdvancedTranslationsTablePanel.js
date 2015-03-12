@@ -15,27 +15,29 @@
 		frame: false,
 		region: 'center',
 
-		initComponent: function() {
-			Ext.apply(this, {
-				buttons: [
-					Ext.create('CMDBuild.buttons.SaveButton', {
-						scope: this,
+		/**
+		 * @param {CMDBuild.model.Localizations.translation} languageObject
+		 *
+		 * @return {Mixed} returnObject
+		 */
+		buildColumn: function(languageObject) { // TODO
+			var returnObject = null;
 
-						handler: function() {
-							this.delegate.cmOn('onAdvancedTableSaveButtonClick');
-						}
-					}),
-					Ext.create('CMDBuild.buttons.AbortButton', {
-						scope: this,
+			if (!Ext.isEmpty(languageObject))
+				returnObject = Ext.create('Ext.grid.column.Column', {
+					text: '<img style="margin: 0px 5px 0px 0px;" src="images/icons/flags/'
+						+ languageObject.get(CMDBuild.core.proxy.CMProxyConstants.TAG) + '.png" alt="'
+						+ languageObject.get(CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION) + ' language icon" /> '
+						+ languageObject.get(CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION),
+					dataIndex: languageObject.get(CMDBuild.core.proxy.CMProxyConstants.TAG),
+					width: 300,
+					sortable: false,
+					draggable: false,
 
-						handler: function() {
-							this.delegate.cmOn('onAdvancedTableAbortButtonClick');
-						}
-					})
-				]
-			});
+					editor: { xtype: 'textfield' }
+				});
 
-			this.callParent(arguments);
+			return returnObject;
 		}
 	});
 
