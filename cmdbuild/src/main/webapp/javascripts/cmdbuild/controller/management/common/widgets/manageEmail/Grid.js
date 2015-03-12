@@ -390,6 +390,8 @@ _debug('storeLoad', regenerateAllEmails+ ' ' +forceRegeneration);
 					},
 					scope: this,
 					callback: function(records, operation, success) {
+						this.parentDelegate.isWidgetBusy = false;
+
 						this.parentDelegate.getAllTemplatesData(regenerateAllEmails, forceRegeneration);
 					}
 				});

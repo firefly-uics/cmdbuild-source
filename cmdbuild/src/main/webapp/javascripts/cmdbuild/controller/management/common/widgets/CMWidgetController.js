@@ -128,9 +128,15 @@
 		},
 
 		/**
-		 * @abstract
+		 * @param {Array} callbackChainArray
 		 */
-		onBeforeSave: Ext.emptyFn,
+		onBeforeSave: function(callbackChainArray, i) {
+			if (!Ext.isEmpty(callbackChainArray[i])) {
+				var callbackObject = callbackChainArray[i];
+
+				Ext.callback(callbackObject.fn, callbackObject.scope, [callbackChainArray, i + 1]);
+			}
+		},
 
 		/**
 		 * @abstract

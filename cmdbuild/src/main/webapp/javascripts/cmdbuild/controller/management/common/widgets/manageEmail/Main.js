@@ -23,11 +23,11 @@
 
 
 		/**
-		 * Callback function to run on beforeSave function call
+		 * Object with callbackArrayStack and index of next callback to execute
 		 *
-		 * @property {Function}
+		 * @property {Object}
 		 */
-		beforeSaveCallback: undefined,
+		beforeSaveCallbackObject: undefined,
 
 		/**
 		 * @property {CMDBuild.model.CMActivityInstance}
@@ -407,6 +407,16 @@ _debug('loadTemplates item', item);
 
 					if (regenerateAllEmails) {
 						this.regenerateAllEmails(forceRegeneration);
+_debug('################', !Ext.Object.isEmpty(this.beforeSaveCallbackObject));
+_debug('this.beforeSaveCallbackObject', this.beforeSaveCallbackObject);
+						// Last available end point to execute callback chain onBeforeSave functionality
+						if (!Ext.Object.isEmpty(this.beforeSaveCallbackObject)) {
+							var index = this.beforeSaveCallbackObject.index;
+							var callbackFunction = this.beforeSaveCallbackObject.array[index].fn;
+							var scope = this.beforeSaveCallbackObject.array[index].scope;
+
+							Ext.callback(callbackFunction, scope, [this.beforeSaveCallbackObject.array, index + 1]);
+						}
 					} else { // Reset widget busy state to false
 						this.isWidgetBusy = false;
 					}
@@ -464,6 +474,23 @@ _debug('getData', out);
 		},
 
 		/**
+		 * @param {Array} callbackChainArray
+		 *
+		 * @override
+		 */
+		onBeforeSave: function(callbackChainArray, i) {
+			if (!Ext.isEmpty(callbackChainArray[i])) {
+_debug('onBeforeSave ', this.self.WIDGET_NAME + ' ' + i);
+				this.beforeSaveCallbackObject = {
+					array: callbackChainArray,
+					index: i
+				};
+
+				this.controllerGrid.storeLoad(true);
+			}
+		},
+
+		/**
 		 * Initialize widget on widget configuration to apply all events on form fields
 		 *
 		 * @override
@@ -474,18 +501,6 @@ _debug('onEditMode');
 
 			if (!this.grid.getStore().isLoading())
 				this.controllerGrid.storeLoad(true, true);
-		},
-
-		/**
-		 * @param {Function} callback
-		 *
-		 * @override
-		 */
-		onBeforeSave: function(callback) {
-			if (!Ext.isEmpty(callback))
-				this.beforeSaveCallback = callback;
-
-			this.controllerGrid.storeLoad(true);
 		},
 
 		onGlobalRegenerationButtonClick: function() {

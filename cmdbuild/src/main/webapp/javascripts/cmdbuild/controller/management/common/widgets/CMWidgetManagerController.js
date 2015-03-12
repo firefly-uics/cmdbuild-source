@@ -98,32 +98,58 @@
 		},
 
 		/**
-		 * Trigger onBeforeSave method on all widgets
+		 * Trigger onBeforeSave method on all widgets creating an execution chain on all widget onBeforeSave() functions
+		 *
+		 * @param {Function} lastCallback
 		 */
-		onBeforeSaveTrigger: function() {
-			Ext.Object.each(this.controllers, function(widgetName, controller, myself) {
-				if (typeof controller.onBeforeSave == 'function')
-					controller.onBeforeSave();
+		onBeforeSaveTrigger: function(lastCallback) {
+			var controllersArray = Ext.Object.getValues(this.controllers);
+			var chainArray = [];
+
+			Ext.Array.forEach(controllersArray, function(controller, i, allControllers) {
+				var nextControllerFunction = Ext.emptyFn;
+				var scope = this;
+
+				if (typeof controller.onBeforeSave == 'function') {
+					if (i + 1 < controllersArray.length) {
+						nextControllerFunction = controllersArray[i + 1].onBeforeSave;
+						scope = controllersArray[i + 1];
+					} else {
+						nextControllerFunction = lastCallback;
+						scope = this;
+					}
+
+					chainArray.push({
+						fn: nextControllerFunction,
+						scope: scope
+					});
+				}
 			}, this);
+
+			if (typeof controllersArray[0].onBeforeSave == 'function')
+				controllersArray[0].onBeforeSave(chainArray, 0);
 		},
 
 		waitForBusyWidgets: function(cb, cbScope) {
 			var me = this;
 
-			this.onBeforeSaveTrigger();
-
-			new _CMUtils.PollingFunction({
-				success: cb,
-				failure: function failure() {
-					CMDBuild.Msg.error(null,CMDBuild.Translation.errors.busy_wf_widgets, false);
-				},
-				checkFn: function() {
-					// I want exit if there are no busy wc
-					return !me.areThereBusyWidget();
-				},
-				cbScope: cbScope,
-				checkFnScope: this
-			}).run();
+			CMDBuild.LoadMask.get().show();
+			this.onBeforeSaveTrigger(
+				function() {
+					new _CMUtils.PollingFunction({
+						success: cb,
+						failure: function failure() {
+							CMDBuild.Msg.error(null,CMDBuild.Translation.errors.busy_wf_widgets, false);
+						},
+						checkFn: function() {
+							// I want exit if there are no busy wc
+							return !me.areThereBusyWidget();
+						},
+						cbScope: cbScope,
+						checkFnScope: this
+					}).run();
+				}
+			);
 		},
 
 		getData: function(advance) {
