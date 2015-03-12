@@ -4,6 +4,7 @@ import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static javax.ws.rs.core.MediaType.APPLICATION_OCTET_STREAM;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.cmdbuild.service.rest.v2.constants.Serialization.EXTENSION;
+import static org.cmdbuild.service.rest.v2.constants.Serialization.FILTER;
 import static org.cmdbuild.service.rest.v2.constants.Serialization.LIMIT;
 import static org.cmdbuild.service.rest.v2.constants.Serialization.PARAMETERS;
 import static org.cmdbuild.service.rest.v2.constants.Serialization.REPORT_ID;
@@ -30,6 +31,7 @@ public interface Reports {
 	@GET
 	@Path(EMPTY)
 	ResponseMultiple<LongIdAndDescription> readAll( //
+			@QueryParam(FILTER) String filter, //
 			@QueryParam(LIMIT) Integer limit, //
 			@QueryParam(START) Integer offset //
 	);
