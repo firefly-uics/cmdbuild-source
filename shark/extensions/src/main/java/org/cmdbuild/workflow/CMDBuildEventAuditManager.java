@@ -84,6 +84,12 @@ public class CMDBuildEventAuditManager extends DelegatingEventAuditManager {
 				if (processClass.isPresent() && processId.isPresent()) {
 					if (new MonostateSelfSuspensionRequestHolder().remove(processId.get())) {
 						try {
+							/*
+							 * Calling CMDBuild API for suspend current process
+							 * will result in an error because process's state
+							 * is not "stable" at the moment. So that we must
+							 * call Shark API.
+							 */
 							Shark.getInstance()
 									.getWAPIConnection()
 									.changeProcessInstanceState(activityInstance.getSessionHandle(),
