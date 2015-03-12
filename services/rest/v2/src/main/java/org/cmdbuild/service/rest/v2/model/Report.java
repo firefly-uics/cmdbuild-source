@@ -1,22 +1,22 @@
 package org.cmdbuild.service.rest.v2.model;
 
 import static org.cmdbuild.service.rest.v2.constants.Serialization.DESCRIPTION;
+import static org.cmdbuild.service.rest.v2.constants.Serialization.TITLE;
 import static org.cmdbuild.service.rest.v2.constants.Serialization.UNDERSCORED_ID;
 
 import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.codehaus.jackson.annotate.JsonProperty;
 
-@XmlRootElement
-public class LongIdAndDescription extends AbstractModel {
+public class Report extends AbstractModel {
 
 	private Long id;
+	private String title;
 	private String description;
 
-	LongIdAndDescription() {
+	Report() {
 		// package visibility
 	}
 
@@ -28,6 +28,15 @@ public class LongIdAndDescription extends AbstractModel {
 
 	void setId(final Long id) {
 		this.id = id;
+	}
+
+	@XmlAttribute(name = TITLE)
+	public String getTitle() {
+		return title;
+	}
+
+	public void setTitle(final String title) {
+		this.title = title;
 	}
 
 	@XmlAttribute(name = DESCRIPTION)
@@ -45,13 +54,14 @@ public class LongIdAndDescription extends AbstractModel {
 			return true;
 		}
 
-		if (!(obj instanceof LongIdAndDescription)) {
+		if (!(obj instanceof Report)) {
 			return false;
 		}
 
-		final LongIdAndDescription other = LongIdAndDescription.class.cast(obj);
+		final Report other = Report.class.cast(obj);
 		return new EqualsBuilder() //
 				.append(this.id, other.id) //
+				.append(this.title, other.title) //
 				.append(this.description, other.description) //
 				.isEquals();
 	}

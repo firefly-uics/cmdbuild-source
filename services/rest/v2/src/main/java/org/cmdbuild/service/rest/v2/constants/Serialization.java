@@ -93,6 +93,7 @@ public class Serialization {
 			STATUSES = "statuses", //
 			TARGET_CLASS = "targetClass", //
 			TEXT = "text", //
+			TITLE = "title", //
 			TOTAL = "total", //
 			TYPE = "type", //
 			TYPE_CAPITALIZED = "Type", //

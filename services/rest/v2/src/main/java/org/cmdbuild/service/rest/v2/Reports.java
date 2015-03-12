@@ -19,7 +19,9 @@ import javax.ws.rs.QueryParam;
 import org.cmdbuild.service.rest.v2.model.Attribute;
 import org.cmdbuild.service.rest.v2.model.JsonValues;
 import org.cmdbuild.service.rest.v2.model.LongIdAndDescription;
+import org.cmdbuild.service.rest.v2.model.Report;
 import org.cmdbuild.service.rest.v2.model.ResponseMultiple;
+import org.cmdbuild.service.rest.v2.model.ResponseSingle;
 
 @Path("reports/")
 @Produces(APPLICATION_JSON)
@@ -30,6 +32,12 @@ public interface Reports {
 	ResponseMultiple<LongIdAndDescription> readAll( //
 			@QueryParam(LIMIT) Integer limit, //
 			@QueryParam(START) Integer offset //
+	);
+
+	@GET
+	@Path("{" + REPORT_ID + "}/")
+	ResponseSingle<Report> read( //
+			@PathParam(REPORT_ID) Long reportId //
 	);
 
 	@GET

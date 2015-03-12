@@ -6,7 +6,9 @@ import static java.lang.Integer.MAX_VALUE;
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 import static org.cmdbuild.service.rest.v2.model.Models.newLongIdAndDescription;
 import static org.cmdbuild.service.rest.v2.model.Models.newMetadata;
+import static org.cmdbuild.service.rest.v2.model.Models.newReport;
 import static org.cmdbuild.service.rest.v2.model.Models.newResponseMultiple;
+import static org.cmdbuild.service.rest.v2.model.Models.newResponseSingle;
 import static org.cmdbuild.service.rest.v2.model.Models.newValues;
 
 import javax.activation.DataHandler;
@@ -16,7 +18,6 @@ import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.logic.data.lookup.LookupLogic;
 import org.cmdbuild.logic.report.ExtensionConverter;
 import org.cmdbuild.logic.report.ReportLogic;
-import org.cmdbuild.logic.report.ReportLogic.Report;
 import org.cmdbuild.logic.report.StringExtensionConverter;
 import org.cmdbuild.service.rest.v2.Reports;
 import org.cmdbuild.service.rest.v2.cxf.serialization.AttributeTypeResolver;
@@ -24,7 +25,9 @@ import org.cmdbuild.service.rest.v2.cxf.serialization.ToAttributeDetail;
 import org.cmdbuild.service.rest.v2.model.Attribute;
 import org.cmdbuild.service.rest.v2.model.JsonValues;
 import org.cmdbuild.service.rest.v2.model.LongIdAndDescription;
+import org.cmdbuild.service.rest.v2.model.Report;
 import org.cmdbuild.service.rest.v2.model.ResponseMultiple;
+import org.cmdbuild.service.rest.v2.model.ResponseSingle;
 import org.cmdbuild.service.rest.v2.model.Values;
 
 import com.google.common.base.Function;
@@ -54,16 +57,16 @@ public class CxfReports implements Reports {
 
 	@Override
 	public ResponseMultiple<LongIdAndDescription> readAll(final Integer limit, final Integer offset) {
-		final Iterable<Report> elements = logic.readAll();
+		final Iterable<ReportLogic.Report> elements = logic.readAll();
 		return newResponseMultiple(LongIdAndDescription.class) //
 				.withElements(from(elements) //
-						.transform(new Function<Report, LongIdAndDescription>() {
+						.transform(new Function<ReportLogic.Report, LongIdAndDescription>() {
 
 							@Override
-							public LongIdAndDescription apply(final Report input) {
+							public LongIdAndDescription apply(final ReportLogic.Report input) {
 								return newLongIdAndDescription() //
-										.setId(Long.valueOf(input.getId())) //
-										.setDescription(input.getDescription()) //
+										.withId(Long.valueOf(input.getId())) //
+										.withDescription(input.getDescription()) //
 										.build();
 							}
 
@@ -79,7 +82,7 @@ public class CxfReports implements Reports {
 
 	@Override
 	public ResponseMultiple<Attribute> readAllAttributes(final Long reportId, final Integer limit, final Integer offset) {
-		final Optional<Report> report = logic.read(reportId.intValue());
+		final Optional<ReportLogic.Report> report = logic.read(reportId.intValue());
 		if (!report.isPresent()) {
 			errorHandler.reportNotFound(reportId);
 		}
@@ -96,8 +99,23 @@ public class CxfReports implements Reports {
 	}
 
 	@Override
+	public ResponseSingle<Report> read(final Long reportId) {
+		final Optional<ReportLogic.Report> report = logic.read(reportId.intValue());
+		if (!report.isPresent()) {
+			errorHandler.reportNotFound(reportId);
+		}
+		final ReportLogic.Report _report = report.get();
+		return newResponseSingle(Report.class) //
+				.withElement(newReport() //
+						.withId(Long.valueOf(_report.getId())) //
+						.withTitle(_report.getTitle()) //
+						.withDescription(_report.getDescription()) //
+						.build()).build();
+	}
+
+	@Override
 	public DataHandler download(final Long reportId, final String extension, final JsonValues parameters) {
-		final Optional<Report> report = logic.read(reportId.intValue());
+		final Optional<ReportLogic.Report> report = logic.read(reportId.intValue());
 		if (!report.isPresent()) {
 			errorHandler.reportNotFound(reportId);
 		}
