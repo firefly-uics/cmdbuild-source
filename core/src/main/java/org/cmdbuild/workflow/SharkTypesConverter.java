@@ -324,10 +324,10 @@ public class SharkTypesConverter implements WorkflowTypesConverter {
 		try {
 			final org.cmdbuild.data.store.lookup.Lookup lookupFromStore = lookupStore.read(storableOf(id));
 			final LookupType lookupType = new LookupType();
-			lookupType.setType(lookupFromStore.type.name);
+			lookupType.setType(lookupFromStore.type().name);
 			lookupType.setId(objectIdToInt(lookupFromStore.getId()));
-			lookupType.setCode(lookupFromStore.code);
-			lookupType.setDescription(lookupFromStore.description);
+			lookupType.setCode(lookupFromStore.code());
+			lookupType.setDescription(lookupFromStore.description());
 			return lookupType;
 		} catch (final Exception e) {
 			logger.error("cannot get lookup", e);

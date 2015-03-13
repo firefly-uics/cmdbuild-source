@@ -8,10 +8,9 @@ import org.cmdbuild.logic.translation.object.DomainDescription;
 import org.cmdbuild.logic.translation.object.DomainDirectDescription;
 import org.cmdbuild.logic.translation.object.DomainInverseDescription;
 import org.cmdbuild.logic.translation.object.DomainMasterDetailLabel;
+import org.cmdbuild.logic.translation.object.LookupDescription;
 
 public interface TranslationObjectVisitor {
-
-	void visit(AttributeDomainTranslation attributeClassTranslation);
 
 	void visit(ViewTranslation filterViewTranslation);
 
@@ -50,6 +49,8 @@ public interface TranslationObjectVisitor {
 	void visit(DomainMasterDetailLabel domainMasterDetailDescription);
 
 	void visit(DomainAttributeDescription domainAttributeDescription);
+
+	void visit(LookupDescription lookupDescription);
 
 
 }

@@ -35,8 +35,8 @@ public class ToProcessStatus implements Function<Lookup, ProcessStatus> {
 		return newProcessStatus() //
 				.withId(input.getId()) //
 				// FIXME do it in a better way
-				.withValue(map.get(input.code)) //
-				.withDescription(input.description) //
+				.withValue(map.get(input.code())) //
+				.withDescription(input.description()) //
 				.build();
 	}
 

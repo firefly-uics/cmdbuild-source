@@ -23,6 +23,7 @@ import org.cmdbuild.logic.translation.object.DomainDescription;
 import org.cmdbuild.logic.translation.object.DomainDirectDescription;
 import org.cmdbuild.logic.translation.object.DomainInverseDescription;
 import org.cmdbuild.logic.translation.object.DomainMasterDetailLabel;
+import org.cmdbuild.logic.translation.object.LookupDescription;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
@@ -161,14 +162,22 @@ public class DefaultTranslationLogic implements TranslationLogic {
 					DESCRIPTION);
 		}
 
+		@Override
+		public void visit(LookupDescription translationObject) {
+			value = format("lookup.%s.%s", //
+					translationObject.getName(),
+					DESCRIPTION);
+		}
+		
 		// TODO: get rid of everything below
+		
 
 		@Override
-		public void visit(final AttributeDomainTranslation translationObject) {
-			value = format("attributedomain.%s.%s.%s", //
-					translationObject.getName(), //
-					translationObject.getAttributeName(), //
-					FieldMapper.of(translationObject.getField()).getResult());
+		public void visit(LookupTranslation lookupTranslation) {
+			value = format("lookup.%s.%s", //
+					lookupTranslation.getName(),
+					FieldMapper.of(lookupTranslation.getField()).getResult());
+			
 		}
 
 		@Override
@@ -218,12 +227,7 @@ public class DefaultTranslationLogic implements TranslationLogic {
 					FieldMapper.of(translationObject.getField()).getResult());
 		}
 
-		@Override
-		public void visit(final LookupTranslation translationObject) {
-			value = format("lookup.%s.%s", //
-					translationObject.getName(), //
-					FieldMapper.of(translationObject.getField()).getResult());
-		}
+
 
 		@Override
 		public void visit(final GisIconTranslation translationObject) {
@@ -243,6 +247,8 @@ public class DefaultTranslationLogic implements TranslationLogic {
 		public void visit(final NullTranslationObject translationObject) {
 			value = EMPTY;
 		}
+
+
 
 	}
 

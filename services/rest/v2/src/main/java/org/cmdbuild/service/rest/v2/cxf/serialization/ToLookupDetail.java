@@ -34,14 +34,14 @@ public class ToLookupDetail implements Function<Lookup, LookupDetail> {
 	public LookupDetail apply(final Lookup lookup) {
 		return newLookupDetail() //
 				.withId(lookup.getId()) //
-				.withCode(lookup.code) //
-				.withDescription(lookup.description) //
-				.withType(lookup.type.name) //
-				.withNumber(Long.valueOf(lookup.number)) //
-				.thatIsActive(lookup.active) //
-				.thatIsDefault(lookup.isDefault) //
-				.withParentId(lookup.parentId) //
-				.withParentType(lookup.type.parent) //
+				.withCode(lookup.code()) //
+				.withDescription(lookup.description()) //
+				.withType(lookup.type().name) //
+				.withNumber(Long.valueOf(lookup.number())) //
+				.thatIsActive(lookup.active()) //
+				.thatIsDefault(lookup.isDefault()) //
+				.withParentId(lookup.parentId()) //
+				.withParentType(lookup.type().parent) //
 				.build();
 	}
 

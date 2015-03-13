@@ -95,7 +95,7 @@ public class EmailConverter extends BaseStorableConverter<Email> {
 	}
 
 	private String identifierOf(final Lookup lookup) {
-		return lookup.code;
+		return lookup.code();
 	}
 
 }
