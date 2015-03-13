@@ -48,6 +48,7 @@ import org.cmdbuild.dao.query.clause.QueryDomain.Source;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.data.store.lookup.Lookup;
 import org.cmdbuild.data.store.lookup.LookupStore;
+import org.cmdbuild.data.store.lookup._Lookup;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.commands.AbstractGetRelation.RelationInfo;
 import org.cmdbuild.logic.commands.GetCardHistory.GetCardHistoryResponse;
@@ -311,7 +312,7 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 					}
 				} else {
 					final Iterable<Lookup> lookupList = lookupStore.readAll();
-					for (final Lookup lookup : lookupList) {
+					for (final _Lookup lookup : lookupList) {
 						if (lookup.active() && //
 								lookup.type().name.equals(lookupTypeName) && //
 								lookup.description() != null && //
@@ -337,7 +338,7 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 
 	private boolean existsLookup(final String lookupTypeName, final Long lookupId) {
 		final Iterable<Lookup> lookupList = lookupStore.readAll();
-		for (final Lookup lookup : lookupList) {
+		for (final _Lookup lookup : lookupList) {
 			if (lookup.type().name.equals(lookupTypeName) && lookup.getId().equals(lookupId)) {
 				return true;
 			}
@@ -410,7 +411,7 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 		if (lookupId == null) {
 			return null;
 		} else {
-			final Lookup fetchedLookup = lookupStore.read(storableOf(lookupId));
+			final _Lookup fetchedLookup = lookupStore.read(storableOf(lookupId));
 			return fetchedLookup.description();
 		}
 	}

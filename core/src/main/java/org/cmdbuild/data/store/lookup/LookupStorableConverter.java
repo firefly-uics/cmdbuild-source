@@ -34,7 +34,7 @@ public class LookupStorableConverter extends BaseStorableConverter<Lookup> {
 	}
 
 	@Override
-	public Lookup convert(final CMCard card) {
+	public _Lookup convert(final CMCard card) {
 		return Lookup.newInstance() //
 				.withId(card.getId()) //
 				.withCode((String) card.getCode()) //
