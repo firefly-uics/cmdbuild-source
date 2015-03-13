@@ -3,13 +3,13 @@
 	Ext.define('CMDBuild.controller.management.common.widgets.manageEmail.Grid', {
 
 		requires: [
-			'CMDBuild.controller.management.common.widgets.manageEmail.Main',
+			'CMDBuild.controller.management.common.widgets.manageEmail.ManageEmail',
 			'CMDBuild.core.proxy.CMProxyConstants',
 			'CMDBuild.core.proxy.widgets.ManageEmail'
 		],
 
 		/**
-		 * @cfg {CMDBuild.controller.management.common.widgets.manageEmail.Main}
+		 * @cfg {CMDBuild.controller.management.common.widgets.manageEmail.ManageEmail}
 		 */
 		parentDelegate: undefined,
 
@@ -67,7 +67,7 @@ _debug('trafficLightArrayCheck regenerationTrafficLightArray', regenerationTraff
 
 		/**
 		 * @param {Object} configObject
-		 * @param {CMDBuild.controller.management.common.widgets.manageEmail.Main} configObject.parentDelegate
+		 * @param {CMDBuild.controller.management.common.widgets.manageEmail.ManageEmail} configObject.parentDelegate
 		 * @param {CMDBuild.controller.management.common.widgets.manageEmail.Grid} configObject.view
 		 */
 		constructor: function(configObject) {
@@ -122,10 +122,11 @@ _debug('trafficLightArrayCheck regenerationTrafficLightArray', regenerationTraff
 		addRecord: function(record, regenerationTrafficLightArray, success) {
 _debug('addRecord record', record);
 _debug('addRecord regenerationTrafficLightArray', regenerationTrafficLightArray);
-			CMDBuild.LoadMask.get().show();
+//			CMDBuild.LoadMask.get().show();
 			CMDBuild.core.proxy.widgets.ManageEmail.create({
 				params: record.getAsParams(),
 				scope: this,
+				loadMask: this.parentDelegate.globalLoadMask,
 				failure: function(response, options, decodedResponse) {
 					CMDBuild.Msg.error(CMDBuild.Translation.common.failure, CMDBuild.Translation.errors.emailCreate, false);
 				},
@@ -133,9 +134,9 @@ _debug('addRecord regenerationTrafficLightArray', regenerationTrafficLightArray)
 					if (this.self.trafficLightArrayCheck(record, regenerationTrafficLightArray) || Ext.isEmpty(regenerationTrafficLightArray))
 						this.storeLoad();
 				},
-				callback: function(options, success, response) {
-					CMDBuild.LoadMask.get().hide();
-				}
+//				callback: function(options, success, response) {
+//					CMDBuild.LoadMask.get().hide();
+//				}
 			});
 		},
 
@@ -163,10 +164,11 @@ _debug('addRecord regenerationTrafficLightArray', regenerationTrafficLightArray)
 		editRecord: function(record, regenerationTrafficLightArray) {
 _debug('editRecord record', record);
 _debug('editRecord regenerationTrafficLightArray', regenerationTrafficLightArray);
-			CMDBuild.LoadMask.get().show();
+//			CMDBuild.LoadMask.get().show();
 			CMDBuild.core.proxy.widgets.ManageEmail.update({
 				params: record.getAsParams(),
 				scope: this,
+				loadMask: this.parentDelegate.globalLoadMask,
 				failure: function(response, options, decodedResponse) {
 					CMDBuild.Msg.error(CMDBuild.Translation.common.failure, CMDBuild.Translation.errors.emailUpdate, false);
 				},
@@ -174,9 +176,9 @@ _debug('editRecord regenerationTrafficLightArray', regenerationTrafficLightArray
 					if (this.self.trafficLightArrayCheck(record, regenerationTrafficLightArray) || Ext.isEmpty(regenerationTrafficLightArray))
 						this.storeLoad();
 				},
-				callback: function(options, success, response) {
-					CMDBuild.LoadMask.get().hide();
-				}
+//				callback: function(options, success, response) {
+//					CMDBuild.LoadMask.get().hide();
+//				}
 			});
 		},
 
@@ -341,10 +343,11 @@ _debug('onGridAddEmailButtonClick');
 		removeRecord: function(record, regenerationTrafficLightArray) {
 _debug('removeRecord record', record);
 _debug('removeRecord regenerationTrafficLightArray', regenerationTrafficLightArray);
-			CMDBuild.LoadMask.get().show();
+//			CMDBuild.LoadMask.get().show();
 			CMDBuild.core.proxy.widgets.ManageEmail.remove({
 				params: record.getAsParams([CMDBuild.core.proxy.CMProxyConstants.ID, CMDBuild.core.proxy.CMProxyConstants.TEMPORARY]),
 				scope: this,
+				loadMask: this.parentDelegate.globalLoadMask,
 				failure: function(response, options, decodedResponse) {
 					CMDBuild.Msg.error(CMDBuild.Translation.common.failure, CMDBuild.Translation.errors.emailRemove, false);
 				},
@@ -352,9 +355,9 @@ _debug('removeRecord regenerationTrafficLightArray', regenerationTrafficLightArr
 					if (this.self.trafficLightArrayCheck(record, regenerationTrafficLightArray) || Ext.isEmpty(regenerationTrafficLightArray))
 						this.storeLoad();
 				},
-				callback: function(options, success, response) {
-					CMDBuild.LoadMask.get().hide();
-				}
+//				callback: function(options, success, response) {
+//					CMDBuild.LoadMask.get().hide();
+//				}
 			});
 		},
 

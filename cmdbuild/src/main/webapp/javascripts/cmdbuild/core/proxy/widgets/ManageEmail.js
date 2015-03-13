@@ -18,7 +18,8 @@
 				method: 'POST',
 				url: CMDBuild.core.proxy.CMProxyUrlIndex.widgets.manageEmail.attachment.copy,
 				params: parameters.params,
-				scope: parameters.scope,
+				scope: parameters.scope || this,
+				loadMask: parameters.loadMask || false,
 				failure: parameters.failure || Ext.emptyFn(),
 				success: parameters.success || Ext.emptyFn(),
 				callback: parameters.callback || Ext.emptyFn()
@@ -33,7 +34,8 @@
 				method: 'POST',
 				url: CMDBuild.core.proxy.CMProxyUrlIndex.widgets.manageEmail.attachment.readAll,
 				params: parameters.params,
-				scope: parameters.scope,
+				scope: parameters.scope || this,
+				loadMask: parameters.loadMask || false,
 				failure: parameters.failure || Ext.emptyFn(),
 				success: parameters.success || Ext.emptyFn(),
 				callback: parameters.callback || Ext.emptyFn()
@@ -66,7 +68,8 @@
 				method: 'POST',
 				url: CMDBuild.core.proxy.CMProxyUrlIndex.widgets.manageEmail.attachment.remove,
 				params: parameters.params,
-				scope: parameters.scope,
+				scope: parameters.scope || this,
+				loadMask: parameters.loadMask || false,
 				failure: parameters.failure || Ext.emptyFn(),
 				success: parameters.success || Ext.emptyFn(),
 				callback: parameters.callback || Ext.emptyFn()
@@ -81,7 +84,8 @@
 				method: 'POST',
 				url: CMDBuild.core.proxy.CMProxyUrlIndex.widgets.manageEmail.attachment.upload,
 				params: parameters.params,
-				scope: parameters.scope,
+				scope: parameters.scope || this,
+				loadMask: parameters.loadMask || false,
 				failure: parameters.failure || Ext.emptyFn(),
 				success: parameters.success || Ext.emptyFn(),
 				callback: parameters.callback || Ext.emptyFn()
@@ -96,7 +100,8 @@
 				method: 'POST',
 				url: CMDBuild.core.proxy.CMProxyUrlIndex.widgets.manageEmail.post,
 				params: parameters.params,
-				scope: parameters.scope,
+				scope: parameters.scope || this,
+				loadMask: parameters.loadMask || false,
 				failure: parameters.failure || Ext.emptyFn(),
 				success: parameters.success || Ext.emptyFn(),
 				callback: parameters.callback || Ext.emptyFn()
@@ -111,7 +116,8 @@
 				method: 'POST',
 				url: CMDBuild.core.proxy.CMProxyUrlIndex.email.templates.post,
 				params: parameters.params,
-				scope: parameters.scope,
+				scope: parameters.scope || this,
+				loadMask: parameters.loadMask || false,
 				failure: parameters.failure || Ext.emptyFn(),
 				success: parameters.success || Ext.emptyFn(),
 				callback: parameters.callback || Ext.emptyFn()
@@ -154,7 +160,8 @@
 				method: 'POST',
 				url: CMDBuild.core.proxy.CMProxyUrlIndex.widgets.manageEmail.remove,
 				params: parameters.params,
-				scope: parameters.scope,
+				scope: parameters.scope || this,
+				loadMask: parameters.loadMask || false,
 				failure: parameters.failure || Ext.emptyFn(),
 				success: parameters.success || Ext.emptyFn(),
 				callback: parameters.callback || Ext.emptyFn()
@@ -169,7 +176,8 @@
 				method: 'POST',
 				url: CMDBuild.core.proxy.CMProxyUrlIndex.widgets.manageEmail.put,
 				params: parameters.params,
-				scope: parameters.scope,
+				scope: parameters.scope || this,
+				loadMask: parameters.loadMask || false,
 				failure: parameters.failure || Ext.emptyFn(),
 				success: parameters.success || Ext.emptyFn(),
 				callback: parameters.callback || Ext.emptyFn()

@@ -51,7 +51,7 @@
 
 		/**
 		 * @param {Object} configObject
-		 * @param {CMDBuild.controller.management.common.widgets.manageEmail.Main} configObject.parentDelegate
+		 * @param {CMDBuild.controller.management.common.widgets.manageEmail.ManageEmail} configObject.parentDelegate
 		 * @param {CMDBuild.model.widget.ManageEmail.email} configObject.record
 		 * @param {String} configObject.windowMode
 		 */

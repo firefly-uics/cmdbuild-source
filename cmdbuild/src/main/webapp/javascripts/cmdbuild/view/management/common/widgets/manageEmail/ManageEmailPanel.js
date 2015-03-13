@@ -10,7 +10,7 @@
 		},
 
 		/**
-		 * @cfg {CMDBuild.controller.management.common.widgets.manageEmail.Main}
+		 * @cfg {CMDBuild.controller.management.common.widgets.manageEmail.ManageEmail}
 		 */
 		delegate: undefined,
 
