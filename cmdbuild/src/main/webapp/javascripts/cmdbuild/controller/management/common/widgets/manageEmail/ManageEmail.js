@@ -485,6 +485,7 @@ _debug('getData', out);
 		 */
 		onBeforeSave: function(callbackChainArray, i) {
 			if (!Ext.isEmpty(callbackChainArray[i])) {
+				this.globalLoadMask = false;
 _debug('onBeforeSave ', this.self.WIDGET_NAME + ' ' + i);
 				this.beforeSaveCallbackObject = {
 					array: callbackChainArray,
