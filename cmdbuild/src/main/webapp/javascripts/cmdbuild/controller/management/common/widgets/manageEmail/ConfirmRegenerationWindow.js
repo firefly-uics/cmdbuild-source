@@ -5,7 +5,7 @@
 		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
 
 		/**
-		 * @cfg {CMDBuild.controller.management.common.widgets.manageEmail.Main}
+		 * @cfg {CMDBuild.controller.management.common.widgets.manageEmail.ManageEmail}
 		 */
 		parentDelegate: undefined,
 
@@ -26,7 +26,7 @@
 
 		/**
 		 * @param {Object} configObject
-		 * @param {CMDBuild.controller.management.common.widgets.manageEmail.Main} configObject.parentDelegate
+		 * @param {CMDBuild.controller.management.common.widgets.manageEmail.ManageEmail} configObject.parentDelegate
 		 * @param {CMDBuild.controller.management.common.widgets.manageEmail.Grid} configObject.gridDelegate
 		 */
 		constructor: function(configObject) {

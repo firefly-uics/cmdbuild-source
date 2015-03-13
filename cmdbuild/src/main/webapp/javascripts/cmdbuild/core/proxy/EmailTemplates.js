@@ -18,9 +18,11 @@
 				method: 'POST',
 				url: CMDBuild.core.proxy.CMProxyUrlIndex.email.templates.post,
 				params: parameters.params,
-				scope: parameters.scope,
-				success: parameters.success,
-				callback: parameters.callback
+				scope: parameters.scope || this,
+				loadMask: parameters.loadMask || false,
+				failure: parameters.failure || Ext.emptyFn(),
+				success: parameters.success || Ext.emptyFn(),
+				callback: parameters.callback || Ext.emptyFn()
 			});
 		},
 
@@ -32,7 +34,8 @@
 				method: 'POST',
 				url: CMDBuild.core.proxy.CMProxyUrlIndex.email.templates.get,
 				params: parameters.params,
-				scope: parameters.scope,
+				scope: parameters.scope || this,
+				loadMask: parameters.loadMask || false,
 				failure: parameters.failure || Ext.emptyFn(),
 				success: parameters.success || Ext.emptyFn(),
 				callback: parameters.callback || Ext.emptyFn()
@@ -47,7 +50,8 @@
 				method: 'POST',
 				url: CMDBuild.core.proxy.CMProxyUrlIndex.email.templates.getStore,
 				params: parameters.params,
-				scope: parameters.scope,
+				scope: parameters.scope || this,
+				loadMask: parameters.loadMask || false,
 				failure: parameters.failure || Ext.emptyFn(),
 				success: parameters.success || Ext.emptyFn(),
 				callback: parameters.callback || Ext.emptyFn()
@@ -84,9 +88,11 @@
 				method: 'POST',
 				url: CMDBuild.core.proxy.CMProxyUrlIndex.email.templates.remove,
 				params: parameters.params,
-				scope: parameters.scope,
-				success: parameters.success,
-				callback: parameters.callback
+				scope: parameters.scope || this,
+				loadMask: parameters.loadMask || false,
+				failure: parameters.failure || Ext.emptyFn(),
+				success: parameters.success || Ext.emptyFn(),
+				callback: parameters.callback || Ext.emptyFn()
 			});
 		},
 
@@ -98,9 +104,11 @@
 				method: 'POST',
 				url: CMDBuild.core.proxy.CMProxyUrlIndex.email.templates.put,
 				params: parameters.params,
-				scope: parameters.scope,
-				success: parameters.success,
-				callback: parameters.callback
+				scope: parameters.scope || this,
+				loadMask: parameters.loadMask || false,
+				failure: parameters.failure || Ext.emptyFn(),
+				success: parameters.success || Ext.emptyFn(),
+				callback: parameters.callback || Ext.emptyFn()
 			});
 		}
 	});

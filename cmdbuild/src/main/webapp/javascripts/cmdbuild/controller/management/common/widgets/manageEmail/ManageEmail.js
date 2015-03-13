@@ -3,7 +3,7 @@
 	/**
 	 * Main widget controller which manage email regeneration methods
 	 */
-	Ext.define('CMDBuild.controller.management.common.widgets.manageEmail.Main', {
+	Ext.define('CMDBuild.controller.management.common.widgets.manageEmail.ManageEmail', {
 		extend: 'CMDBuild.controller.management.common.widgets.CMWidgetController',
 
 		requires: [
@@ -20,7 +20,6 @@
 		 * @cfg {Number}
 		 */
 		activityId: undefined,
-
 
 		/**
 		 * Object with callbackArrayStack and index of next callback to execute
@@ -64,6 +63,11 @@
 		 * @property {CMDBuild.controller.management.common.widgets.manageEmail.GridPanel}
 		 */
 		grid: undefined,
+
+		/**
+		 * @cfg {Boolean}
+		 */
+		globalLoadMask: true,
 
 		/**
 		 * @cfg {Boolean}
@@ -380,12 +384,13 @@ _debug('templateIdentifier', templateIdentifier);
 					this.emailTemplatesIdentifiers.push(templateIdentifier);
 			}, this);
 
-			CMDBuild.LoadMask.get().show();
+//			CMDBuild.LoadMask.get().show();
 			CMDBuild.core.proxy.EmailTemplates.getAll({
 				params: {
 					templates: Ext.encode(this.emailTemplatesIdentifiers)
 				},
 				scope: this,
+				loadMask: this.globalLoadMask,
 				failure: function(response, options, decodedResponse) {
 					CMDBuild.Msg.error(
 						CMDBuild.Translation.common.failure,
@@ -403,7 +408,7 @@ _debug('loadTemplates item', item);
 					}, this);
 				},
 				callback: function(options, success, response) {
-					CMDBuild.LoadMask.get().hide();
+//					CMDBuild.LoadMask.get().hide();
 
 					if (regenerateAllEmails) {
 						this.regenerateAllEmails(forceRegeneration);
@@ -444,7 +449,7 @@ _debug('getData', out);
 		},
 
 		/**
-		 * @return {CMDBuild.controller.management.common.widgets.manageEmail.Main}
+		 * @return {CMDBuild.controller.management.common.widgets.manageEmail.ManageEmail}
 		 */
 		getWidgetController: function() {
 			return this;
