@@ -13,18 +13,47 @@ import org.cmdbuild.dao.entrytype.CMEntryTypeVisitor;
 import org.cmdbuild.dao.entrytype.CMFunctionCall;
 import org.cmdbuild.logic.translation.TranslationFacade;
 import org.cmdbuild.logic.translation.TranslationObject;
-import org.cmdbuild.logic.translation.converter.ClassAttributeConverter;
+import org.cmdbuild.logic.translation.converter.AttributeConverter;
 
 class LocalizedAttribute extends ForwardingAttribute {
 
 	private final CMAttribute delegate;
 	private final TranslationFacade facade;
-	private static final String DESCRIPTION = "Description";
-	private static final String GROUP = "Group";
+	private final String entryType;
+
+	private static final String DESCRIPTION = AttributeConverter.CLASSATTRIBUTE_DESCRIPTION.fieldName();
+	private static final String GROUP = AttributeConverter.CLASSATTRIBUTE_GROUP.fieldName();
+	private static final String CLASS = AttributeConverter.CLASSATTRIBUTE_DESCRIPTION.entryType();
+	private static final String DOMAIN = AttributeConverter.DOMAINATTRIBUTE_DESCRIPTION.entryType();
 
 	LocalizedAttribute(final CMAttribute delegate, final TranslationFacade facade) {
 		this.delegate = delegate;
 		this.facade = facade;
+		entryType = new CMEntryTypeVisitor() {
+
+			String entryTypeKey = EMPTY;
+
+			@Override
+			public void visit(final CMFunctionCall type) {
+				throw new UnsupportedOperationException();
+
+			}
+
+			@Override
+			public void visit(final CMDomain type) {
+				entryTypeKey = DOMAIN;
+			}
+
+			@Override
+			public void visit(final CMClass type) {
+				entryTypeKey = CLASS;
+			}
+
+			public String getEntryType(final CMEntryType entryType) {
+				entryType.accept(this);
+				return entryTypeKey;
+			}
+		}.getEntryType(getOwner());
 	}
 
 	@Override
@@ -35,59 +64,81 @@ class LocalizedAttribute extends ForwardingAttribute {
 	@Override
 	public String getGroup() {
 
-		final String className = getOwner().getName();
+		final String entryTypeName = getOwner().getName();
 		final String attributeName = getName();
 
-		String translatedGroup = facade.read(ClassAttributeConverter.of(GROUP) //
-				.create(className, attributeName));
+		String translatedGroup = facade.read(AttributeConverter.of(entryType, GROUP) //
+				.create(entryTypeName, attributeName));
 
 		if (isBlank(translatedGroup)) {
 			translatedGroup = searchGroupTranslationFromOtherAttributes(this);
 		}
+
 		if (isBlank(translatedGroup)) {
-			translatedGroup = inheritTranslationOfField(GROUP);
+			translatedGroup = new CMEntryTypeVisitor() {
+
+				String translatedGroup = EMPTY;
+
+				@Override
+				public void visit(final CMFunctionCall type) {
+					// nothing to do
+				}
+
+				@Override
+				public void visit(final CMDomain type) {
+					// nothing to do
+				}
+
+				@Override
+				public void visit(final CMClass type) {
+					translatedGroup = inheritTranslationOfField(GROUP);
+				}
+
+				public String inheritedTranslation(final CMEntryType owner) {
+					owner.accept(this);
+					return translatedGroup;
+				}
+			}.inheritedTranslation(getOwner());
 		}
-		return defaultIfBlank(translatedGroup, delegate().getGroup());
+		return defaultIfBlank(translatedGroup, super.getGroup());
 	}
 
 	@Override
 	public String getDescription() {
 
-		final String className = getOwner().getName();
+		final String entryTypeName = getOwner().getName();
 		final String attributeName = getName();
 
-		String translatedDescription = facade.read(ClassAttributeConverter.of(DESCRIPTION) //
-				.create(className, attributeName));
+		String translatedDescription = facade.read(AttributeConverter.of(entryType, DESCRIPTION) //
+				.create(entryTypeName, attributeName));
 
-		if (isBlank(translatedDescription) && this.getOwner() instanceof CMClass) {
-			translatedDescription = inheritTranslationOfField(DESCRIPTION);
-		}
+		if (isBlank(translatedDescription)) {
+			translatedDescription = new CMEntryTypeVisitor() {
 
-		return defaultIfBlank( //
-				translatedDescription, //
-				super.getDescription());
-	}
+				String translatedGroup;
 
-	private String inheritTranslationOfField(final String field) {
-		final CMEntryType attributeOwner = getOwner();
-		return inheritTranslationFromAllAncestors((CMClass) attributeOwner, field);
-	}
-
-	private String inheritTranslationFromAllAncestors(final CMClass entryType, final String field) {
-		String inheritedTranslation = EMPTY;
-		final CMClass parent = entryType.getParent();
-		if (parent != null) {
-			final CMAttribute inheritedAttribute = parent.getAttribute(getName());
-			if (inheritedAttribute != null) {
-				final ClassAttributeConverter converter = ClassAttributeConverter.of(field);
-				final TranslationObject translationObject = converter.create(parent.getName(), getName());
-				inheritedTranslation = facade.read(translationObject);
-				if (isBlank(inheritedTranslation)) {
-					inheritedTranslation = inheritTranslationFromAllAncestors(parent, field);
+				@Override
+				public void visit(final CMFunctionCall type) {
+					// nothing to do
 				}
-			}
+
+				@Override
+				public void visit(final CMDomain type) {
+					// nothing to do
+				}
+
+				@Override
+				public void visit(final CMClass type) {
+					type.accept(this);
+					translatedGroup = inheritTranslationOfField(GROUP);
+				}
+
+				public String inheritedTranslation() {
+					return translatedGroup;
+				}
+			}.inheritedTranslation();
 		}
-		return inheritedTranslation;
+		return defaultIfBlank(translatedDescription, super.getDescription());
 	}
 
 	private String searchGroupTranslationFromOtherAttributes(final CMAttribute attribute) {
@@ -126,7 +177,7 @@ class LocalizedAttribute extends ForwardingAttribute {
 						continue;
 					}
 
-					final String groupNameTranslation = facade.read(ClassAttributeConverter.of(GROUP) //
+					final String groupNameTranslation = facade.read(AttributeConverter.of(CLASS, GROUP) //
 							.create(owner.getName(), attribute.getName()));
 					if (!isBlank(groupNameTranslation)) {
 						translatedGroupName = groupNameTranslation;
@@ -136,6 +187,28 @@ class LocalizedAttribute extends ForwardingAttribute {
 			}
 		}.searchGroupNameTranslation(owner, groupName);
 		return translatedGroupName;
+	}
+
+	public String inheritTranslationOfField(final String field) {
+		final CMEntryType attributeOwner = getOwner();
+		return inheritTranslationFromAllAncestors((CMClass) attributeOwner, field);
+	}
+
+	private String inheritTranslationFromAllAncestors(final CMClass entryType, final String field) {
+		String inheritedTranslation = EMPTY;
+		final CMClass parent = entryType.getParent();
+		if (parent != null) {
+			final CMAttribute inheritedAttribute = parent.getAttribute(getName());
+			if (inheritedAttribute != null) {
+				final AttributeConverter converter = AttributeConverter.of(CLASS, field);
+				final TranslationObject translationObject = converter.create(parent.getName(), getName());
+				inheritedTranslation = facade.read(translationObject);
+				if (isBlank(inheritedTranslation)) {
+					inheritedTranslation = inheritTranslationFromAllAncestors(parent, field);
+				}
+			}
+		}
+		return inheritedTranslation;
 	}
 
 }

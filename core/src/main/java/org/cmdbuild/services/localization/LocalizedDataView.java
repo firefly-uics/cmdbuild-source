@@ -2,10 +2,13 @@ package org.cmdbuild.services.localization;
 
 import static com.google.common.collect.FluentIterable.from;
 
+import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
-import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.entrytype.CMClass.CMClassDefinition;
+import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.entrytype.CMIdentifier;
+import org.cmdbuild.dao.entrytype.ForwardingClass;
+import org.cmdbuild.dao.entrytype.ForwardingDomain;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.dao.view.ForwardingDataView;
 import org.cmdbuild.logic.translation.TranslationFacade;
@@ -17,6 +20,7 @@ public class LocalizedDataView extends ForwardingDataView {
 	private final CMDataView delegate;
 	private final Function<CMClass, CMClass> TO_LOCALIZED_CLASS;
 	private final Function<CMDomain, CMDomain> TO_LOCALIZED_DOMAIN;
+	private final Function<CMAttribute, CMAttribute> TO_LOCALIZED_ATTRIBUTE;
 
 	public LocalizedDataView(final CMDataView delegate, final TranslationFacade facade) {
 		this.delegate = delegate;
@@ -24,7 +28,38 @@ public class LocalizedDataView extends ForwardingDataView {
 
 			@Override
 			public CMClass apply(final CMClass input) {
-				return (input == null) ? null : new LocalizedClass(input, facade);
+				return (input == null) ? null : new LocalizedClass(proxyAttributes(input), facade);
+			}
+
+			private CMClass proxyAttributes(final CMClass input) {
+				return new ForwardingClass() {
+
+					@Override
+					protected CMClass delegate() {
+						return input;
+					}
+
+					@Override
+					public Iterable<CMAttribute> getActiveAttributes() {
+						return proxyAttribute(super.getActiveAttributes());
+					}
+
+					@Override
+					public Iterable<CMAttribute> getAttributes() {
+						return proxyAttribute(super.getAttributes());
+					}
+
+					@Override
+					public Iterable<? extends CMAttribute> getAllAttributes() {
+						return proxyAttribute(super.getAllAttributes());
+					}
+
+					@Override
+					public CMAttribute getAttribute(final String name) {
+						return proxyAttribute(super.getAttribute(name));
+					}
+
+				};
 			}
 
 		};
@@ -32,7 +67,46 @@ public class LocalizedDataView extends ForwardingDataView {
 
 			@Override
 			public CMDomain apply(final CMDomain input) {
-				return (input == null) ? null : new LocalizedDomain(input, facade);
+				return (input == null) ? null : new LocalizedDomain(proxyAttributes(input), facade);
+			}
+
+			private CMDomain proxyAttributes(final CMDomain input) {
+				return new ForwardingDomain() {
+
+					@Override
+					protected CMDomain delegate() {
+						return input;
+					}
+
+					@Override
+					public Iterable<CMAttribute> getActiveAttributes() {
+						return proxyAttribute(super.getActiveAttributes());
+					}
+
+					@Override
+					public Iterable<CMAttribute> getAttributes() {
+						return proxyAttribute(super.getAttributes());
+					}
+
+					@Override
+					public Iterable<? extends CMAttribute> getAllAttributes() {
+						return proxyAttribute(super.getAllAttributes());
+					}
+
+					@Override
+					public CMAttribute getAttribute(final String name) {
+						return proxyAttribute(super.getAttribute(name));
+					}
+
+				};
+			}
+
+		};
+		this.TO_LOCALIZED_ATTRIBUTE = new Function<CMAttribute, CMAttribute>() {
+
+			@Override
+			public CMAttribute apply(final CMAttribute input) {
+				return (input == null) ? null : new LocalizedAttribute(input, facade);
 			}
 
 		};
@@ -82,7 +156,7 @@ public class LocalizedDataView extends ForwardingDataView {
 	public CMClass getReportClass() {
 		return proxyClass(super.getReportClass());
 	}
-	
+
 	@Override
 	public CMDomain findDomain(final Long id) {
 		return proxyDomain(super.findDomain(id));
@@ -108,24 +182,34 @@ public class LocalizedDataView extends ForwardingDataView {
 		return proxyDomains(super.findDomainsFor(type));
 	}
 
-	CMClass proxyClass(final CMClass type) {
+	private CMClass proxyClass(final CMClass type) {
 		return TO_LOCALIZED_CLASS.apply(type);
 	}
 
-	Iterable<CMClass> proxyClasses(final Iterable<? extends CMClass> types) {
+	private Iterable<CMClass> proxyClasses(final Iterable<? extends CMClass> types) {
 		return from(types) //
 				.transform(TO_LOCALIZED_CLASS) //
 				.filter(CMClass.class);
 	}
-	
-	CMDomain proxyDomain(final CMDomain type) {
+
+	private CMDomain proxyDomain(final CMDomain type) {
 		return TO_LOCALIZED_DOMAIN.apply(type);
 	}
 
-	Iterable<CMDomain> proxyDomains(final Iterable<? extends CMDomain> types) {
+	private Iterable<CMDomain> proxyDomains(final Iterable<? extends CMDomain> types) {
 		return from(types) //
 				.transform(TO_LOCALIZED_DOMAIN) //
 				.filter(CMDomain.class);
+	}
+
+	private CMAttribute proxyAttribute(final CMAttribute attribute) {
+		return TO_LOCALIZED_ATTRIBUTE.apply(attribute);
+	}
+
+	private Iterable<CMAttribute> proxyAttribute(final Iterable<? extends CMAttribute> attributes) {
+		return from(attributes) //
+				.transform(TO_LOCALIZED_ATTRIBUTE) //
+				.filter(CMAttribute.class);
 	}
 
 }

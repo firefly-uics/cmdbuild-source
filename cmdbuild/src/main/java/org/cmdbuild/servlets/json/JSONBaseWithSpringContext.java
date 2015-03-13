@@ -57,7 +57,6 @@ import org.cmdbuild.services.PatchManager;
 import org.cmdbuild.services.SessionVars;
 import org.cmdbuild.services.TranslationService;
 import org.cmdbuild.services.localization.Localization;
-import org.cmdbuild.services.localization.LocalizedDataAccessLogic;
 import org.cmdbuild.services.startup.StartupLogic;
 import org.cmdbuild.services.store.FilterStore;
 import org.cmdbuild.services.store.report.ReportStore;
@@ -166,16 +165,12 @@ public class JSONBaseWithSpringContext extends JSONBase {
 		return applicationContext().getBean(DashboardLogic.class);
 	}
 
-	// TODO: check
 	protected DataAccessLogic systemDataAccessLogic() {
 		return applicationContext().getBean(SystemDataAccessLogicBuilder.class).build();
 	}
 
-	// TODO: check
 	protected DataAccessLogic userDataAccessLogic() {
-		final DataAccessLogic userDataAccessLogic = applicationContext().getBean(UserDataAccessLogicBuilder.class)
-				.build();
-		return new LocalizedDataAccessLogic(userDataAccessLogic, translationFacade());
+		return applicationContext().getBean(UserDataAccessLogicBuilder.class).build();
 	}
 
 	protected DataDefinitionLogic dataDefinitionLogic() {

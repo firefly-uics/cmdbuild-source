@@ -11,10 +11,11 @@ class LocalizedDomain extends ForwardingDomain {
 
 	private final CMDomain delegate;
 	private final TranslationFacade facade;
-	private static final String DESCRIPTION = "Description";
-	private static final String DIRECT_DESCRIPTION = "DirectDescription";
-	private static final String INVERSE_DESCRIPTION = "InverseDescription";
-	private static final String MASTERDETAIL_LABEL = "MasterDetail";
+
+	private static final String DESCRIPTION = DomainConverter.DESCRIPTION.field();
+	private static final String DIRECT_DESCRIPTION = DomainConverter.DIRECT_DESCRIPTION.field();
+	private static final String INVERSE_DESCRIPTION = DomainConverter.INVERSE_DESCRIPTION.field();
+	private static final String MASTERDETAIL_LABEL = DomainConverter.MASTERDETAIL_LABEL.field();
 
 	LocalizedDomain(final CMDomain delegate, final TranslationFacade facade) {
 		this.delegate = delegate;
@@ -49,6 +50,14 @@ class LocalizedDomain extends ForwardingDomain {
 				facade.read(DomainConverter.of(INVERSE_DESCRIPTION) //
 						.create(getName())), //
 				super.getDescription2());
+	}
+
+	@Override
+	public String getMasterDetailDescription() {
+		return defaultIfBlank( //
+				facade.read(DomainConverter.of(MASTERDETAIL_LABEL) //
+						.create(getName())), //
+				super.getMasterDetailDescription());
 	}
 
 }

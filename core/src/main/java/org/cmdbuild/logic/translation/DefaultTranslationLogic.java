@@ -18,6 +18,7 @@ import org.cmdbuild.data.store.translation.Translation;
 import org.cmdbuild.logic.translation.object.ClassAttributeDescription;
 import org.cmdbuild.logic.translation.object.ClassAttributeGroup;
 import org.cmdbuild.logic.translation.object.ClassDescription;
+import org.cmdbuild.logic.translation.object.DomainAttributeDescription;
 import org.cmdbuild.logic.translation.object.DomainDescription;
 import org.cmdbuild.logic.translation.object.DomainDirectDescription;
 import org.cmdbuild.logic.translation.object.DomainInverseDescription;
@@ -77,7 +78,7 @@ public class DefaultTranslationLogic implements TranslationLogic {
 	}
 
 	private static class ElementCreator implements TranslationObjectVisitor {
-		
+
 		private static final String DESCRIPTION = "description";
 		private static final String DIRECT_DESCRIPTION = "directDescription";
 		private static final String INVERSE_DESCRIPTION = "inverseDescription";
@@ -136,7 +137,6 @@ public class DefaultTranslationLogic implements TranslationLogic {
 			value = format("domain.%s.%s", //
 					translationObject.getName(), //
 					DIRECT_DESCRIPTION);
-			
 		}
 
 		@Override
@@ -144,7 +144,6 @@ public class DefaultTranslationLogic implements TranslationLogic {
 			value = format("domain.%s.%s", //
 					translationObject.getName(), //
 					INVERSE_DESCRIPTION);
-			
 		}
 
 		@Override
@@ -152,11 +151,17 @@ public class DefaultTranslationLogic implements TranslationLogic {
 			value = format("domain.%s.%s", //
 					translationObject.getName(), //
 					MASTERDETAIL_LABEL);
-			
 		}
-		
-		
-		//TODO: get rid of everything below
+
+		@Override
+		public void visit(DomainAttributeDescription translationObject) {
+			value = format("attributedomain.%s.%s.%s", //
+					translationObject.getDomainName(), //
+					translationObject.getName(), //
+					DESCRIPTION);
+		}
+
+		// TODO: get rid of everything below
 
 		@Override
 		public void visit(final AttributeDomainTranslation translationObject) {
@@ -238,7 +243,6 @@ public class DefaultTranslationLogic implements TranslationLogic {
 		public void visit(final NullTranslationObject translationObject) {
 			value = EMPTY;
 		}
-
 
 	}
 

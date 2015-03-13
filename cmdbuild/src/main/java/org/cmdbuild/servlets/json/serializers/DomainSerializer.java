@@ -1,25 +1,15 @@
 package org.cmdbuild.servlets.json.serializers;
 
-import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
-import static org.cmdbuild.logic.translation.DefaultTranslationLogic.DESCRIPTION_FOR_CLIENT;
-import static org.cmdbuild.logic.translation.DefaultTranslationLogic.DIRECT_DESCRIPTION_FOR_CLIENT;
-import static org.cmdbuild.logic.translation.DefaultTranslationLogic.INVERSE_DESCRIPTION_FOR_CLIENT;
-import static org.cmdbuild.logic.translation.DefaultTranslationLogic.MASTER_DETAIL_LABEL_FOR_CLIENT;
-import static org.cmdbuild.servlets.json.CommunicationConstants.DEFAULT_DESCRIPTION;
-import static org.cmdbuild.servlets.json.CommunicationConstants.DEFAULT_DIRECT_DESCRIPTION;
 import static org.cmdbuild.servlets.json.CommunicationConstants.DEFAULT_INVERSE_DESCRIPTION;
-import static org.cmdbuild.servlets.json.CommunicationConstants.DEFAULT_MASTERDETAIL_LABEL;
 import static org.cmdbuild.servlets.json.CommunicationConstants.DESCRIPTION;
 import static org.cmdbuild.servlets.json.CommunicationConstants.DIRECT_DESCRIPTION;
 import static org.cmdbuild.servlets.json.CommunicationConstants.INVERSE_DESCRIPTION;
-import static org.cmdbuild.servlets.json.CommunicationConstants.MASTERDETAIL_LABEL;
 
 import org.cmdbuild.auth.acl.PrivilegeContext;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.logic.translation.TranslationFacade;
-import org.cmdbuild.logic.translation.TranslationObject;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -27,13 +17,11 @@ public class DomainSerializer extends Serializer {
 
 	private final CMDataView dataView;
 	private final PrivilegeContext privilegeContext;
-	private final TranslationFacade translationFacade;
 
 	public DomainSerializer(final CMDataView dataView, final PrivilegeContext privilegeContext,
 			final TranslationFacade translationFacade) {
 		this.dataView = dataView;
 		this.privilegeContext = privilegeContext;
-		this.translationFacade = translationFacade;
 	}
 
 	public JSONObject toClient(final CMDomain domain, final boolean activeOnly) throws JSONException {
