@@ -106,28 +106,40 @@
 			var controllersArray = Ext.Object.getValues(this.controllers);
 			var chainArray = [];
 
-			Ext.Array.forEach(controllersArray, function(controller, i, allControllers) {
-				var nextControllerFunction = Ext.emptyFn;
-				var scope = this;
+			if (!Ext.isEmpty(lastCallback) && typeof lastCallback == 'function') {
+				if (Ext.isEmpty(controllersArray)) { // No activity widgets
+					return lastCallback();
+				} else {
+					Ext.Array.forEach(controllersArray, function(controller, i, allControllers) {
+						var nextControllerFunction = Ext.emptyFn;
+						var scope = this;
 
-				if (typeof controller.onBeforeSave == 'function') {
-					if (i + 1 < controllersArray.length) {
-						nextControllerFunction = controllersArray[i + 1].onBeforeSave;
-						scope = controllersArray[i + 1];
+						if (typeof controller.onBeforeSave == 'function') {
+							if (i + 1 < controllersArray.length) {
+								nextControllerFunction = controllersArray[i + 1].onBeforeSave;
+								scope = controllersArray[i + 1];
+							} else {
+								nextControllerFunction = lastCallback;
+								scope = this;
+							}
+
+							chainArray.push({
+								fn: nextControllerFunction,
+								scope: scope
+							});
+						}
+					}, this);
+
+					// Execute first chain function
+					if (!Ext.isEmpty(controllersArray[0]) && typeof controllersArray[0].onBeforeSave == 'function') {
+						controllersArray[0].onBeforeSave(chainArray, 0);
 					} else {
-						nextControllerFunction = lastCallback;
-						scope = this;
+						_debug('CMDBuild.controller.management.common.CMWidgetManagerController onBeforeSaveTrigger controllersArray head function error!');
 					}
-
-					chainArray.push({
-						fn: nextControllerFunction,
-						scope: scope
-					});
 				}
-			}, this);
-
-			if (typeof controllersArray[0].onBeforeSave == 'function')
-				controllersArray[0].onBeforeSave(chainArray, 0);
+			} else {
+				_debug('CMDBuild.controller.management.common.CMWidgetManagerController onBeforeSaveTrigger lastCallback function error!');
+			}
 		},
 
 		waitForBusyWidgets: function(cb, cbScope) {

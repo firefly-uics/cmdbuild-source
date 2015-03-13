@@ -50,8 +50,8 @@
 				case 'attachmentAddPanel':
 					return this.attachmentAddPanel(param);
 
-				case 'attachmentUpdateList':
-					return this.attachmentUpdateList(param);
+//				case 'attachmentUpdateList':
+//					return this.attachmentUpdateList(param);
 
 				case 'onAttachmentAddFromDmsButtonClick':
 					return this.onAttachmentAddFromDmsButtonClick();
@@ -80,17 +80,19 @@
 					readOnly: this.view.readOnly
 				})
 			);
+
+			this.parentDelegate.view.setLoading(false);
 		},
 
-		/**
-		 * @param {Array} attachmentNames
-		 */
-		attachmentUpdateList: function(attachmentNames) {
-			if (Ext.isArray(attachmentNames))
-				Ext.Array.forEach(attachmentNames, function(item, index, allItems) {
-					this.attachmentAddPanel(item);
-				}, this);
-		},
+//		/**
+//		 * @param {Array} attachmentNames
+//		 */
+//		attachmentUpdateList: function(attachmentNames) {
+//			if (Ext.isArray(attachmentNames))
+//				Ext.Array.forEach(attachmentNames, function(item, index, allItems) {
+//					this.attachmentAddPanel(item);
+//				}, this);
+//		},
 
 		/**
 		 * @return {Array} attachmentsNames

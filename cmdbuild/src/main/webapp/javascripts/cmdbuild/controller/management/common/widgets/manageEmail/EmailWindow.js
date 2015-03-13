@@ -84,9 +84,10 @@
 				});
 
 				// Fill from template button store configuration
-				CMDBuild.LoadMask.get().show();
+//				CMDBuild.LoadMask.get().show();
 				CMDBuild.core.proxy.EmailTemplates.getAll({
 					scope: this,
+					loadMask: true,
 					success: function(response, options, decodedResponse) {
 						var templatesArray = decodedResponse.response.elements;
 
@@ -116,9 +117,9 @@
 							this.view.fillFromTemplateButton.setDisabled(true);
 						}
 					},
-					callback: function(options, success, response) {
-						CMDBuild.LoadMask.get().hide();
-					}
+//					callback: function(options, success, response) {
+//						CMDBuild.LoadMask.get().hide();
+//					}
 				});
 
 				if (CMDBuild.Config.dms.enabled) {
@@ -329,12 +330,13 @@ _debug('onEmailWindowFieldChange');
 		 */
 		onEmailWindowFillFromTemplateButtonClick: function(templateName) {
 _debug('onEmailWindowFillFromTemplateButtonClick', this.record);
-			CMDBuild.LoadMask.get().show();
+//			CMDBuild.LoadMask.get().show();
 			CMDBuild.core.proxy.EmailTemplates.get({
 				params: {
 					name: templateName
 				},
 				scope: this,
+				loadMask: true,
 				failure: function(response, options, decodedResponse) {
 					CMDBuild.Msg.error(
 						CMDBuild.Translation.common.failure,
@@ -347,9 +349,9 @@ _debug('onEmailWindowFillFromTemplateButtonClick', this.record);
 					this.record.set(CMDBuild.core.proxy.CMProxyConstants.TEMPLATE, templateName); // Bind templateName to email record
 					this.view.formPanel.keepSynchronizationCheckbox.setDisabled(false);
 				},
-				callback: function(options, success, response) {
-					CMDBuild.LoadMask.get().hide();
-				}
+//				callback: function(options, success, response) {
+//					CMDBuild.LoadMask.get().hide();
+//				}
 			});
 		}
 	});

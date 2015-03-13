@@ -8,6 +8,10 @@
 
 		singleton: true,
 
+		attachments: {
+			getAttachmentList: 'services/json/attachments/getattachmentlist'
+		},
+
 		attribute: {
 			create: '',
 			read: 'services/json/schema/modclass/getattributelist',

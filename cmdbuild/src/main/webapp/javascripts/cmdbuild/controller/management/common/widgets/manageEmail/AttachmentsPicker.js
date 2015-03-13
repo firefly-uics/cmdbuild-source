@@ -3,8 +3,9 @@
 	Ext.define('CMDBuild.controller.management.common.widgets.manageEmail.AttachmentsPicker', {
 
 		requires: [
+			'CMDBuild.core.proxy.Attachment',
 			'CMDBuild.core.proxy.CMProxyConstants',
-			'CMDBuild.core.proxy.widgets.ManageEmail'
+			'CMDBuild.core.proxy.widgets.ManageEmail',
 		],
 
 		/**
@@ -79,19 +80,19 @@
 			}
 		},
 
-		loadAttachments: function() {
-			var params = {};
-			params[CMDBuild.core.proxy.CMProxyConstants.EMAIL_ID] = this.selectedCardId;
-			params[CMDBuild.core.proxy.CMProxyConstants.TEMPORARY] = false;
-
-			this.view.attachmentGrid.getStore().load({
-				scope: this,
-				params: params,
-				callback: function(records, operation, success) {
-					this.view.state.syncSelection(records);
-				}
-			});
-		},
+//		loadAttachments: function() {
+//			var params = {};
+//			params[CMDBuild.core.proxy.CMProxyConstants.CARD_ID] = this.selectedCardId;
+//			params[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME] = this.selectedCardId;
+//
+//			this.view.attachmentGrid.getStore().load({
+//				params: params,
+//				scope: this,
+//				callback: function(records, operation, success) {
+//					this.view.state.syncSelection(records);
+//				}
+//			});
+//		},
 
 		/**
 		 * @param {Boolean} checked
@@ -114,13 +115,21 @@
 		 */
 		onPickerWindowCardSelected: function(record) {
 _debug('onCardGridSelect record', record);
-			this.selectedCardId = record.get(CMDBuild.core.proxy.CMProxyConstants.ID);
+			this.selectedRecord = record;
 
-			this.view.state.setCardId(this.selectedCardId);
-			this.loadAttachments(
-				this.selectedClass.get(CMDBuild.core.proxy.CMProxyConstants.NAME),
-				this.selectedCardId
-			);
+			this.view.state.setCardId(this.selectedRecord.get(CMDBuild.core.proxy.CMProxyConstants.ID));
+
+			var params = {};
+			params[CMDBuild.core.proxy.CMProxyConstants.CARD_ID] = this.selectedRecord.get(CMDBuild.core.proxy.CMProxyConstants.ID);
+			params[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME] = _CMCache.getEntryTypeNameById(this.selectedRecord.get('IdClass'));
+
+			this.view.attachmentGrid.getStore().load({
+				params: params,
+				scope: this,
+				callback: function(records, operation, success) {
+					this.view.state.syncSelection(records);
+				}
+			});
 		},
 
 		onPickerWindowClassSelected: function() {
@@ -134,26 +143,37 @@ _debug('onCardGridSelect record', record);
 			this.view.destroy();
 		},
 
-		onPickerWindowConfirmButtonClick: function() { // TODO controllare con allegati funzionanti
+		onPickerWindowConfirmButtonClick: function() {
 			var data = this.view.state.getData();
-_debug('AttachPicker controller', this);
+_debug('AttachPicker data', data);
+_debug('AttachPicker this.record', this.record);
 			if (!Ext.isEmpty(data)) {
-				var params = {};
-				params[CMDBuild.core.proxy.CMProxyConstants.ATTACHMENTS] = Ext.JSON.encode(data);
+				this.parentDelegate.parentDelegate.view.setLoading(true);
+				Ext.Array.forEach(data, function(attachment, i, allAttachments) {
+					var params = {};
+					params[CMDBuild.core.proxy.CMProxyConstants.EMAIL_ID] = this.record.get(CMDBuild.core.proxy.CMProxyConstants.ID);
+					params[CMDBuild.core.proxy.CMProxyConstants.TEMPORARY] = this.record.get(CMDBuild.core.proxy.CMProxyConstants.TEMPORARY);
+					params[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME] = attachment[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME];
+					params[CMDBuild.core.proxy.CMProxyConstants.CARD_ID] = attachment[CMDBuild.core.proxy.CMProxyConstants.CARD_ID];
+					params[CMDBuild.core.proxy.CMProxyConstants.FILE_NAME] = attachment[CMDBuild.core.proxy.CMProxyConstants.FILE_NAME];
 
-				CMDBuild.LoadMask.get().show();
-				CMDBuild.core.proxy.widgets.ManageEmail.attachmentCopy({
-					scope: this,
-					params: params,
-					success: function(response, options, decodedResponse) {
-						this.cmOn('attachmentUpdateList', decodedResponse[CMDBuild.core.proxy.CMProxyConstants.ATTACHMENTS]);
+					CMDBuild.core.proxy.widgets.ManageEmail.attachmentCopy({
+						scope: this,
+						params: params,
+						failure: function(response, options, decodedResponse) {
+							CMDBuild.Msg.error(
+								CMDBuild.Translation.common.failure,
+								Ext.String.format(CMDBuild.Translation.errors.copyAttachmentFailure, attachment[CMDBuild.core.proxy.CMProxyConstants.FILE_NAME]),
+								false
+							);
+						},
+						success: function(response, options, decodedResponse) {
+							this.parentDelegate.cmOn('attachmentAddPanel', attachment[CMDBuild.core.proxy.CMProxyConstants.FILE_NAME]);
+						}
+					});
+				}, this);
 
-						this.onPickerWindowAbortButtonClick();
-					},
-					callback: function(options, success, response) {
-						CMDBuild.LoadMask.get().hide();
-					}
-				});
+				this.onPickerWindowAbortButtonClick();
 			} else {
 				this.onPickerWindowAbortButtonClick();
 			}
