@@ -5,7 +5,7 @@
 
 		requires: [
 			'CMDBuild.core.proxy.CMProxyConstants',
-			'CMDBuild.core.proxy.widgets.ManageEmail'
+			'CMDBuild.core.proxy.widgets.manageEmail.ManageEmail'
 		],
 
 		/**
@@ -231,7 +231,7 @@
 						enableGroupingMenu: false
 					}
 				],
-				store: CMDBuild.core.proxy.widgets.ManageEmail.getStore()
+				store: CMDBuild.core.proxy.widgets.manageEmail.ManageEmail.getStore()
 			});
 
 			this.callParent(arguments);

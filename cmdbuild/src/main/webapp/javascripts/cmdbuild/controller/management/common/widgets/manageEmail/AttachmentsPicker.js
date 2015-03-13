@@ -5,7 +5,7 @@
 		requires: [
 			'CMDBuild.core.proxy.Attachment',
 			'CMDBuild.core.proxy.CMProxyConstants',
-			'CMDBuild.core.proxy.widgets.ManageEmail',
+			'CMDBuild.core.proxy.widgets.manageEmail.Attachment',
 		],
 
 		/**
@@ -14,19 +14,24 @@
 		parentDelegate: undefined,
 
 		/**
+		 * @property {Ext.selection.CheckboxModel}
+		 */
+		attachmentGridSelectionModel: undefined,
+
+		/**
 		 * @property {CMDBuild.model.widget.ManageEmail.email}
 		 */
 		record: undefined,
 
 		/**
+		 * @property {Ext.data.Store.Model}
+		 */
+		selectedCard: undefined,
+
+		/**
 		 * @property {CMDBuild.cache.CMEntryTypeModel}
 		 */
 		selectedClass: undefined,
-
-		/**
-		 * @property {Number}
-		 */
-		selectedCardId: undefined,
 
 		/**
 		 * @property {CMDBuild.view.management.common.widgets.manageEmail.attachments.PickerWindow}
@@ -44,6 +49,8 @@
 			this.view = Ext.create('CMDBuild.view.management.common.widgets.manageEmail.attachments.picker.MainWindow', {
 				delegate: this
 			}).show();
+
+			this.attachmentGridSelectionModel = this.view.attachmentGrid.getSelectionModel();
 		},
 
 		/**
@@ -55,9 +62,6 @@
 		 */
 		cmOn: function(name, param, callBack) {
 			switch (name) {
-				case 'onPickerWindowAttachmentGridCheckChange':
-					return this.onPickerWindowAttachmentGridCheckChange(param.checked, param.fileName);
-
 				case 'onPickerWindowCardGridStoreLoad':
 					return this.onPickerWindowCardGridStoreLoad();
 
@@ -80,32 +84,6 @@
 			}
 		},
 
-//		loadAttachments: function() {
-//			var params = {};
-//			params[CMDBuild.core.proxy.CMProxyConstants.CARD_ID] = this.selectedCardId;
-//			params[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME] = this.selectedCardId;
-//
-//			this.view.attachmentGrid.getStore().load({
-//				params: params,
-//				scope: this,
-//				callback: function(records, operation, success) {
-//					this.view.state.syncSelection(records);
-//				}
-//			});
-//		},
-
-		/**
-		 * @param {Boolean} checked
-		 * @param {String} fileName
-		 */
-		onPickerWindowAttachmentGridCheckChange: function(checked, fileName) {
-			if (checked) {
-				this.view.state.check(fileName);
-			} else {
-				this.view.state.uncheck(fileName);
-			}
-		},
-
 		onPickerWindowCardGridStoreLoad: function() {
 			this.view.attachmentGrid.getStore().removeAll();
 		},
@@ -114,28 +92,20 @@
 		 * @param {Object} record
 		 */
 		onPickerWindowCardSelected: function(record) {
-_debug('onCardGridSelect record', record);
-			this.selectedRecord = record;
-
-			this.view.state.setCardId(this.selectedRecord.get(CMDBuild.core.proxy.CMProxyConstants.ID));
+			this.selectedCard = record;
 
 			var params = {};
-			params[CMDBuild.core.proxy.CMProxyConstants.CARD_ID] = this.selectedRecord.get(CMDBuild.core.proxy.CMProxyConstants.ID);
-			params[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME] = _CMCache.getEntryTypeNameById(this.selectedRecord.get('IdClass'));
+			params[CMDBuild.core.proxy.CMProxyConstants.CARD_ID] = this.selectedCard.get(CMDBuild.core.proxy.CMProxyConstants.ID);
+			params[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME] = _CMCache.getEntryTypeNameById(this.selectedCard.get('IdClass'));
 
 			this.view.attachmentGrid.getStore().load({
-				params: params,
-				scope: this,
-				callback: function(records, operation, success) {
-					this.view.state.syncSelection(records);
-				}
+				params: params
 			});
 		},
 
 		onPickerWindowClassSelected: function() {
 			this.selectedClass = _CMCache.getEntryTypeById(this.view.classComboBox.getValue());
 
-			this.view.state.setClassName(this.selectedClass.get(CMDBuild.core.proxy.CMProxyConstants.NAME));
 			this.view.cardGrid.updateStoreForClassId(this.selectedClass.get(CMDBuild.core.proxy.CMProxyConstants.ID));
 		},
 
@@ -144,39 +114,34 @@ _debug('onCardGridSelect record', record);
 		},
 
 		onPickerWindowConfirmButtonClick: function() {
-			var data = this.view.state.getData();
-_debug('AttachPicker data', data);
-_debug('AttachPicker this.record', this.record);
-			if (!Ext.isEmpty(data)) {
+			if (this.attachmentGridSelectionModel.hasSelection()) {
 				this.parentDelegate.parentDelegate.view.setLoading(true);
-				Ext.Array.forEach(data, function(attachment, i, allAttachments) {
+				Ext.Array.forEach(this.attachmentGridSelectionModel.getSelection(), function(attachment, i, allAttachments) {
 					var params = {};
 					params[CMDBuild.core.proxy.CMProxyConstants.EMAIL_ID] = this.record.get(CMDBuild.core.proxy.CMProxyConstants.ID);
 					params[CMDBuild.core.proxy.CMProxyConstants.TEMPORARY] = this.record.get(CMDBuild.core.proxy.CMProxyConstants.TEMPORARY);
-					params[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME] = attachment[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME];
-					params[CMDBuild.core.proxy.CMProxyConstants.CARD_ID] = attachment[CMDBuild.core.proxy.CMProxyConstants.CARD_ID];
-					params[CMDBuild.core.proxy.CMProxyConstants.FILE_NAME] = attachment[CMDBuild.core.proxy.CMProxyConstants.FILE_NAME];
+					params[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME] = this.selectedClass.get(CMDBuild.core.proxy.CMProxyConstants.NAME);
+					params[CMDBuild.core.proxy.CMProxyConstants.CARD_ID] = this.selectedCard.get(CMDBuild.core.proxy.CMProxyConstants.ID);
+					params[CMDBuild.core.proxy.CMProxyConstants.FILE_NAME] = attachment.get('Filename');
 
-					CMDBuild.core.proxy.widgets.ManageEmail.attachmentCopy({
+					CMDBuild.core.proxy.widgets.manageEmail.Attachment.copy({
 						scope: this,
 						params: params,
 						failure: function(response, options, decodedResponse) {
 							CMDBuild.Msg.error(
 								CMDBuild.Translation.common.failure,
-								Ext.String.format(CMDBuild.Translation.errors.copyAttachmentFailure, attachment[CMDBuild.core.proxy.CMProxyConstants.FILE_NAME]),
+								Ext.String.format(CMDBuild.Translation.errors.copyAttachmentFailure, attachment.get('Filename')),
 								false
 							);
 						},
 						success: function(response, options, decodedResponse) {
-							this.parentDelegate.cmOn('attachmentAddPanel', attachment[CMDBuild.core.proxy.CMProxyConstants.FILE_NAME]);
+							this.parentDelegate.cmOn('attachmentAddPanel', attachment.get('Filename'));
 						}
 					});
 				}, this);
-
-				this.onPickerWindowAbortButtonClick();
-			} else {
-				this.onPickerWindowAbortButtonClick();
 			}
+
+			this.onPickerWindowAbortButtonClick();
 		}
 	});
 

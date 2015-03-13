@@ -3,7 +3,8 @@
 	Ext.define('CMDBuild.controller.management.common.widgets.manageEmail.Attachments', {
 
 		requires: [
-			'CMDBuild.core.proxy.CMProxyConstants'
+			'CMDBuild.core.proxy.CMProxyConstants',
+			'CMDBuild.core.proxy.widgets.manageEmail.Attachment'
 		],
 
 		/**
@@ -50,9 +51,6 @@
 				case 'attachmentAddPanel':
 					return this.attachmentAddPanel(param);
 
-//				case 'attachmentUpdateList':
-//					return this.attachmentUpdateList(param);
-
 				case 'onAttachmentAddFromDmsButtonClick':
 					return this.onAttachmentAddFromDmsButtonClick();
 
@@ -84,16 +82,6 @@
 			this.parentDelegate.view.setLoading(false);
 		},
 
-//		/**
-//		 * @param {Array} attachmentNames
-//		 */
-//		attachmentUpdateList: function(attachmentNames) {
-//			if (Ext.isArray(attachmentNames))
-//				Ext.Array.forEach(attachmentNames, function(item, index, allItems) {
-//					this.attachmentAddPanel(item);
-//				}, this);
-//		},
-
 		/**
 		 * @return {Array} attachmentsNames
 		 */
@@ -108,7 +96,6 @@
 		},
 
 		onAttachmentAddFromDmsButtonClick: function() {
-_debug('onAttachmentAddFromDmsButtonClick', this.record);
 			Ext.create('CMDBuild.controller.management.common.widgets.manageEmail.AttachmentsPicker', {
 				parentDelegate: this,
 				record: this.record
@@ -121,14 +108,12 @@ _debug('onAttachmentAddFromDmsButtonClick', this.record);
 		 * @param {CMDBuild.model.widget.ManageEmail.email} emailRecord
 		 */
 		onAttachmentChangeFile: function() {
-_debug('record', this.record);
-_debug('this.view.', this.view);
-			params = {};
+			var params = {};
 			params[CMDBuild.core.proxy.CMProxyConstants.EMAIL_ID] = this.record.get(CMDBuild.core.proxy.CMProxyConstants.ID);
 			params[CMDBuild.core.proxy.CMProxyConstants.TEMPORARY] = this.record.get(CMDBuild.core.proxy.CMProxyConstants.TEMPORARY);
 
 			this.parentDelegate.view.setLoading(true);
-			CMDBuild.core.proxy.widgets.ManageEmail.attachmentUpload({
+			CMDBuild.core.proxy.widgets.manageEmail.Attachment.upload({
 				scope: this,
 				form: this.view.attachmentButtonsContainer.attachmentUploadForm.getForm(),
 				params: params,
@@ -150,7 +135,7 @@ _debug('this.view.', this.view);
 			params[CMDBuild.core.proxy.CMProxyConstants.TEMPORARY] = this.record.get(CMDBuild.core.proxy.CMProxyConstants.TEMPORARY);
 
 			this.parentDelegate.view.setLoading(true);
-			CMDBuild.core.proxy.widgets.ManageEmail.attachmentRemove({
+			CMDBuild.core.proxy.widgets.manageEmail.Attachment.remove({
 				scope: this,
 				params: params,
 				success: function(response, options ,decodedResponse) {

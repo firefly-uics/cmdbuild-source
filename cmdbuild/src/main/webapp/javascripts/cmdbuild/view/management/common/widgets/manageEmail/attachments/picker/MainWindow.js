@@ -25,11 +25,6 @@
 		 */
 		classComboBox: undefined,
 
-		/**
-		 * @property {CMDBuild.state.AttachmentPicker}
-		 */
-		state: undefined,
-
 		buttonAlign: 'center',
 		layout: 'border',
 		title: CMDBuild.Translation.chooseAttachmentFromDb,
@@ -91,10 +86,7 @@
 							this.delegate.cmOn('onPickerWindowAbortButtonClick');
 						}
 					})
-				],
-				state: Ext.create('CMDBuild.state.AttachmentPicker', {
-					picker: this // TODO forse non serve
-				})
+				]
 			});
 
 			this.callParent(arguments);

@@ -9,7 +9,8 @@
 		requires: [
 			'CMDBuild.core.proxy.CMProxyConstants',
 			'CMDBuild.core.proxy.EmailTemplates',
-			'CMDBuild.core.proxy.Utils'
+			'CMDBuild.core.proxy.Utils',
+			'CMDBuild.model.widget.ManageEmail'
 		],
 
 		mixins: {
@@ -197,6 +198,9 @@ _debug('CMDBuild.Config', CMDBuild.Config);
 		 */
 		cmOn: function(name, param, callBack) {
 			switch (name) {
+				case 'getGlobalLoadMask':
+					return this.getGlobalLoadMask();
+
 				case 'getWidgetConf':
 					return this.getWidgetConf();
 
@@ -440,6 +444,13 @@ _debug('this.beforeSaveCallbackObject', this.beforeSaveCallbackObject);
 			out[CMDBuild.core.proxy.CMProxyConstants.OUTPUT] = this.getActivityId();
 _debug('getData', out);
 			return out;
+		},
+
+		/**
+		 * @return {Boolean}
+		 */
+		getGlobalLoadMask: function() {
+			return this.globalLoadMask;
 		},
 
 		/**
