@@ -56,16 +56,6 @@
 		}
 	});
 
-	Ext.define('CMDBuild.model.widget.ManageEmail.email.attachment', { // TODO
-		extend: 'Ext.data.Model',
-
-		fields: [
-			{ name: 'description', type: 'string' },
-			{ name: 'fileName', type: 'string' },
-			{ name: 'checked', type: 'boolean', }
-		]
-	});
-
 	Ext.define('CMDBuild.model.widget.ManageEmail.template', {
 		extend: 'Ext.data.Model',
 

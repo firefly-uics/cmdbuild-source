@@ -7,7 +7,7 @@
 			'CMDBuild.controller.management.common.widgets.CMWidgetController',
 			'CMDBuild.core.proxy.CMProxyConstants',
 			'CMDBuild.core.proxy.EmailTemplates',
-			'CMDBuild.core.proxy.widgets.ManageEmail'
+			'CMDBuild.core.proxy.widgets.manageEmail.Attachment'
 		],
 
 		/**
@@ -136,7 +136,7 @@
 					params[CMDBuild.core.proxy.CMProxyConstants.TEMPORARY] = this.record.get(CMDBuild.core.proxy.CMProxyConstants.TEMPORARY);
 
 					this.view.setLoading(true);
-					CMDBuild.core.proxy.widgets.ManageEmail.attachmentGetAll({
+					CMDBuild.core.proxy.widgets.manageEmail.Attachment.getAll({
 						params: params,
 						scope: this,
 						success: function(response, options, decodedResponse) {

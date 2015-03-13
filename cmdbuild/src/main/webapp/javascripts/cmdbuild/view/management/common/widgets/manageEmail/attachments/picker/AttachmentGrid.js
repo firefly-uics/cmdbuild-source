@@ -5,8 +5,7 @@
 
 		requires: [
 			'CMDBuild.core.proxy.Attachment',
-			'CMDBuild.core.proxy.CMProxyConstants',
-			'CMDBuild.core.proxy.widgets.ManageEmail'
+			'CMDBuild.core.proxy.CMProxyConstants'
 		],
 
 		/**
@@ -21,25 +20,6 @@
 			Ext.apply(this, {
 				columns: [
 					{
-						xtype: 'checkcolumn',
-						dataIndex: 'checked', // TODO
-						menuDisabled: true,
-						width: 40,
-
-						listeners: {
-							scope: this,
-							checkchange: function(column, rowIndex, checked, eOpts) { // TODO probabilmente sarà inutile perchè prendo quelli checcati e li spedisco
-								var record = this.getStore().getAt(rowIndex);
-
-								if (!Ext.isEmpty(record))
-									this.delegate.cmOn('onPickerWindowAttachmentGridCheckChange', {
-										checked: checked,
-										fileName: record.get('Filename')
-									});
-							}
-						}
-					},
-					{
 						text: CMDBuild.Translation.fileName,
 						dataIndex: 'Filename', // TODO: use proxy constants
 						flex: 1
@@ -50,6 +30,9 @@
 						flex: 1
 					}
 				],
+				selModel: Ext.create('Ext.selection.CheckboxModel', {
+					injectCheckbox: 'first'
+				}),
 				store: CMDBuild.core.proxy.Attachment.getStore()
 			});
 

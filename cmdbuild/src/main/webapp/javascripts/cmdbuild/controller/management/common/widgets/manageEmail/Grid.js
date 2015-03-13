@@ -5,7 +5,7 @@
 		requires: [
 			'CMDBuild.controller.management.common.widgets.manageEmail.ManageEmail',
 			'CMDBuild.core.proxy.CMProxyConstants',
-			'CMDBuild.core.proxy.widgets.ManageEmail'
+			'CMDBuild.core.proxy.widgets.manageEmail.ManageEmail'
 		],
 
 		/**
@@ -123,10 +123,10 @@ _debug('trafficLightArrayCheck regenerationTrafficLightArray', regenerationTraff
 _debug('addRecord record', record);
 _debug('addRecord regenerationTrafficLightArray', regenerationTrafficLightArray);
 //			CMDBuild.LoadMask.get().show();
-			CMDBuild.core.proxy.widgets.ManageEmail.create({
+			CMDBuild.core.proxy.widgets.manageEmail.ManageEmail.create({
 				params: record.getAsParams(),
 				scope: this,
-				loadMask: this.parentDelegate.globalLoadMask,
+				loadMask: this.cmOn('getGlobalLoadMask'),
 				failure: function(response, options, decodedResponse) {
 					CMDBuild.Msg.error(CMDBuild.Translation.common.failure, CMDBuild.Translation.errors.emailCreate, false);
 				},
@@ -165,10 +165,10 @@ _debug('addRecord regenerationTrafficLightArray', regenerationTrafficLightArray)
 _debug('editRecord record', record);
 _debug('editRecord regenerationTrafficLightArray', regenerationTrafficLightArray);
 //			CMDBuild.LoadMask.get().show();
-			CMDBuild.core.proxy.widgets.ManageEmail.update({
+			CMDBuild.core.proxy.widgets.manageEmail.ManageEmail.update({
 				params: record.getAsParams(),
 				scope: this,
-				loadMask: this.parentDelegate.globalLoadMask,
+				loadMask: this.cmOn('getGlobalLoadMask'),
 				failure: function(response, options, decodedResponse) {
 					CMDBuild.Msg.error(CMDBuild.Translation.common.failure, CMDBuild.Translation.errors.emailUpdate, false);
 				},
@@ -344,10 +344,10 @@ _debug('onGridAddEmailButtonClick');
 _debug('removeRecord record', record);
 _debug('removeRecord regenerationTrafficLightArray', regenerationTrafficLightArray);
 //			CMDBuild.LoadMask.get().show();
-			CMDBuild.core.proxy.widgets.ManageEmail.remove({
+			CMDBuild.core.proxy.widgets.manageEmail.ManageEmail.remove({
 				params: record.getAsParams([CMDBuild.core.proxy.CMProxyConstants.ID, CMDBuild.core.proxy.CMProxyConstants.TEMPORARY]),
 				scope: this,
-				loadMask: this.parentDelegate.globalLoadMask,
+				loadMask: this.cmOn('getGlobalLoadMask'),
 				failure: function(response, options, decodedResponse) {
 					CMDBuild.Msg.error(CMDBuild.Translation.common.failure, CMDBuild.Translation.errors.emailRemove, false);
 				},
