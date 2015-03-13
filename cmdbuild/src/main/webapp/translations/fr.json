@@ -909,6 +909,7 @@
 	},
 	"errors": {
 		"busy_wf_widgets": "Les widgets sont occupés, regardez le statut du serveur avant de recommencer l'opération.",
+		"copyAttachmentFailure": "<em>Copy attachment with name \"{0}\" failure</em>",
 		"createReportFilure": "<em>Create report failure</em>",
 		"detail": "Détails",
 		"domainCardinalityViolation": "Violation de la cardinalité du lien",

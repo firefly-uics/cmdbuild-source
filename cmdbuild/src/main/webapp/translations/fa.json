@@ -909,6 +909,7 @@
 	},
 	"errors": {
 		"busy_wf_widgets": "کنترل های تصویری شلوغ اند، لطفا قبل از اینکه دوباره تکرار کنید وضعیت سرور را چک کنید",
+		"copyAttachmentFailure": "<em>Copy attachment with name \"{0}\" failure</em>",
 		"createReportFilure": "<em>Create report failure</em>",
 		"detail": "جزئیات",
 		"domainCardinalityViolation": "<em>Domain cardinality violation</em>",

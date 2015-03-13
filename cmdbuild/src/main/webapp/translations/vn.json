@@ -909,6 +909,7 @@
 	},
 	"errors": {
 		"busy_wf_widgets": "Các bộ điều khiển trực quan đang bận, kiểm tra tình trạng của máy chủ trước khi thử lại lần nữa.",
+		"copyAttachmentFailure": "<em>Copy attachment with name \"{0}\" failure</em>",
 		"createReportFilure": "<em>Create report failure</em>",
 		"detail": "Chi tiết",
 		"domainCardinalityViolation": "<em>Domain cardinality violation</em>",
