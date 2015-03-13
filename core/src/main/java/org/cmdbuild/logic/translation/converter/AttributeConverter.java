@@ -12,7 +12,7 @@ import com.google.common.collect.Maps;
 
 public enum AttributeConverter {
 	
-	CLASSATTRIBUTE_DESCRIPTION("class", "description") {
+	CLASSATTRIBUTE_DESCRIPTION(aClass(), description()) {
 
 		@Override
 		public boolean isValid() {
@@ -20,11 +20,11 @@ public enum AttributeConverter {
 		}
 
 		@Override
-		public TranslationObject create(final String classname, final String attributename) {
+		public TranslationObject create(final String className, final String attributeName) {
 			org.cmdbuild.logic.translation.object.ClassAttributeDescription.Builder builder = ClassAttributeDescription
 					.newInstance() //
-					.withClassname(classname) //
-					.withAttributename(attributename);
+					.withClassname(className) //
+					.withAttributename(attributeName);
 			if (!translations.isEmpty()) {
 				builder.withTranslations(translations);
 			}
@@ -38,7 +38,7 @@ public enum AttributeConverter {
 		}
 	},
 
-	DOMAINATTRIBUTE_DESCRIPTION("domain", "description") {
+	DOMAINATTRIBUTE_DESCRIPTION(aDomain(),  description()) {
 
 		@Override
 		public boolean isValid() {
@@ -46,11 +46,11 @@ public enum AttributeConverter {
 		}
 
 		@Override
-		public TranslationObject create(final String entryTypeName, final String attributename) {
+		public TranslationObject create(final String domainName, final String attributeName) {
 			DomainAttributeDescription.Builder builder = DomainAttributeDescription
 					.newInstance() //
-					.withDomainName(entryTypeName) //
-					.withAttributeName(attributename);
+					.withDomainName(domainName) //
+					.withAttributeName(attributeName);
 			if (!translations.isEmpty()) {
 				builder.withTranslations(translations);
 			}
@@ -64,14 +64,14 @@ public enum AttributeConverter {
 		}
 	},
 
-	CLASSATTRIBUTE_GROUP("class", "group") {
+	CLASSATTRIBUTE_GROUP(aClass(), group()) {
 
 		@Override
-		public TranslationObject create(final String classname, final String attributename) {
+		public TranslationObject create(final String className, final String attributeName) {
 			org.cmdbuild.logic.translation.object.ClassAttributeGroup.Builder builder = ClassAttributeGroup
 					.newInstance() //
-					.withClassname(classname) //
-					.withAttributename(attributename);
+					.withClassname(className) //
+					.withAttributename(attributeName);
 			if (!translations.isEmpty()) {
 				builder.withTranslations(translations);
 			}
@@ -92,10 +92,10 @@ public enum AttributeConverter {
 
 	},
 
-	DOMAINATTRIBUTE_GROUP("domain", "group") {
+	DOMAINATTRIBUTE_GROUP(aDomain(), group()) {
 
 		@Override
-		public TranslationObject create(final String entrtTypeName, final String attributename) {
+		public TranslationObject create(final String domainName, final String attributeName) {
 			return new NullTranslationObject();
 		}
 
@@ -120,7 +120,7 @@ public enum AttributeConverter {
 		}
 
 		@Override
-		public TranslationObject create(final String classname, final String attributename) {
+		public TranslationObject create(final String entryTypeName, final String attributeName) {
 			throw new UnsupportedOperationException();
 		}
 
@@ -130,18 +130,35 @@ public enum AttributeConverter {
 		}
 	};
 	
-	
-
+	private static final String CLASS = "class";
+	private static final String DOMAIN = "domain";
+	private static final String DESCRIPTION = "description";
+	private static final String GROUP = "group";
 	private final String fieldName;
 	private final String entryType;
 	private static Map<String, String> translations = Maps.newHashMap();
 
-	public abstract TranslationObject create(String classname, String attributename);
-
+	public abstract TranslationObject create(String entryTypeName, String attributeName);
 	public abstract AttributeConverter withTranslations(Map<String, String> map);
-
 	public abstract boolean isValid();
 
+	public static String description() {
+		return DESCRIPTION;
+	}
+	
+	public static String group() {
+		return GROUP;
+	}
+	
+	public static String aClass(){
+		return CLASS;
+	}
+	
+	public static String aDomain(){
+		return DOMAIN;
+	}
+	
+	
 	private AttributeConverter(final String entryType, String fieldName) {
 		this.entryType = entryType;
 		this.fieldName = fieldName;

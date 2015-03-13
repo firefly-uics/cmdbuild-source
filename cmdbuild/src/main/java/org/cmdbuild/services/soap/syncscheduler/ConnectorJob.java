@@ -350,7 +350,7 @@ public class ConnectorJob implements Runnable {
 			for (final Lookup lookupDto : lookupStore.readAll(LookupType.newInstance() //
 					.withName(lookupTypeName) //
 					.build())) {
-				if (lookupDto.description.equals(attributeValue)) {
+				if (lookupDto.description().equals(attributeValue)) {
 					cardBuilder.withAttribute(attribute.getName(), lookupDto.getId());
 				}
 			}

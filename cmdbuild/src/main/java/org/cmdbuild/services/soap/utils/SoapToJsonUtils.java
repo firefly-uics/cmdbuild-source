@@ -253,7 +253,7 @@ public class SoapToJsonUtils {
 				.build();
 		final Iterable<Lookup> lookupList = lookupStore.readAll(lookupType);
 		for (final Lookup lookup : lookupList) {
-			if (lookup.description.equals(description)) {
+			if (lookup.description().equals(description)) {
 				return lookup.getId();
 			}
 		}

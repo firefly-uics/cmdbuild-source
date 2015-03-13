@@ -57,7 +57,7 @@ public class LookupLogicHelper implements SoapLogicHelper {
 		return getLookupListByAttribute(type, new AttributeChecker() {
 			@Override
 			public boolean check(final Lookup input) {
-				return code.equals(input.code);
+				return code.equals(input.code());
 			}
 		}, parentList);
 	}
@@ -67,7 +67,7 @@ public class LookupLogicHelper implements SoapLogicHelper {
 		return getLookupListByAttribute(type, new AttributeChecker() {
 			@Override
 			public boolean check(final Lookup input) {
-				return (description == null) || description.equals(input.description);
+				return (description == null) || description.equals(input.description());
 			}
 		}, parentList);
 	}
@@ -112,16 +112,16 @@ public class LookupLogicHelper implements SoapLogicHelper {
 		logger.debug(marker, "serializing lookup '{}'", from);
 		final org.cmdbuild.services.soap.types.Lookup to = new org.cmdbuild.services.soap.types.Lookup();
 		to.setId(from.getId().intValue());
-		to.setCode(from.code);
-		to.setDescription(from.description);
-		to.setNotes(from.notes);
-		to.setType(from.type.name);
-		to.setPosition(from.number);
-		if (from.parent != null) {
-			to.setParentId(from.parentId.intValue());
+		to.setCode(from.code());
+		to.setDescription(from.description());
+		to.setNotes(from.notes());
+		to.setType(from.type().name);
+		to.setPosition(from.number());
+		if (from.parent() != null) {
+			to.setParentId(from.parentId().intValue());
 		}
-		if (parentList && from.parent != null) {
-			to.setParent(transform(from.parent, true));
+		if (parentList && from.parent() != null) {
+			to.setParent(transform(from.parent(), true));
 		}
 		return to;
 	}

@@ -119,19 +119,59 @@ public final class Lookup implements Storable {
 	}
 
 	private Long id;
-	public final String code;
-	public final String description;
-	public final String notes;
-	public final LookupType type;
-	public final Integer number;
-	public final boolean active;
-	public final boolean isDefault;
-	public final Long parentId;
-	public final Lookup parent;
-	public String translationUuid;
+	private final String code;
+	private final String description;
+	private final String notes;
+	private final LookupType type;
+	private final Integer number;
+	private final boolean active;
+	private final boolean isDefault;
+	private final Long parentId;
+	private final Lookup parent;
+	private String translationUuid;
 
 	private final transient String toString;
-
+	
+	public String code(){
+		return code;
+	} 
+	
+	public String description(){
+		return description;
+	} 
+	
+	public String notes(){
+		return notes;
+	} 
+	
+	public LookupType type(){
+		return type;
+	} 
+	
+	public Integer number(){
+		return number;
+	} 
+	
+	public boolean active(){
+		return active;
+	} 
+	
+	public boolean isDefault(){
+		return isDefault;
+	} 
+	
+	public Long parentId(){
+		return parentId;
+	}
+	
+	public Lookup parent(){
+		return parent;
+	}
+	
+	public String uuid(){
+		return translationUuid;
+	}
+	
 	private Lookup(final LookupBuilder builder) {
 		this.id = builder.id;
 		this.code = builder.code;

@@ -9,6 +9,7 @@ import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.dao.view.DBDataView;
 import org.cmdbuild.data.converter.ViewConverter;
 import org.cmdbuild.data.store.dao.DataViewStore;
+import org.cmdbuild.data.store.dao.StorableConverter;
 import org.cmdbuild.data.store.lookup.DataViewLookupStore;
 import org.cmdbuild.data.store.lookup.Lookup;
 import org.cmdbuild.data.store.lookup.LookupStorableConverter;
@@ -22,6 +23,7 @@ import org.cmdbuild.logic.privileges.DefaultSecurityLogic;
 import org.cmdbuild.logic.privileges.SecurityLogic;
 import org.cmdbuild.services.cache.wrappers.CachingStore;
 import org.cmdbuild.services.localization.LocalizedDataView;
+import org.cmdbuild.services.localization.LocalizedStorableConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
@@ -38,21 +40,21 @@ public class Data {
 	private Filter filter;
 
 	@Autowired
-	private Translation translation;
-
-	@Autowired
 	@Qualifier(SYSTEM)
 	private LockCardManager systemLockCardManager;
 
 	@Autowired
-	private ViewConverter viewConverter;
+	private Translation translation;
 
 	@Autowired
 	private UserStore userStore;
 
+	@Autowired
+	private ViewConverter viewConverter;
+
 	@Bean
-	protected LookupStorableConverter lookupStorableConverter() {
-		return new LookupStorableConverter();
+	protected StorableConverter<Lookup> lookupStorableConverter() {
+		return new LocalizedStorableConverter<Lookup>(new LookupStorableConverter(), translation.translationFacade());
 	}
 
 	@Bean

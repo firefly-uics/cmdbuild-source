@@ -318,7 +318,7 @@ public class ModCard extends JSONBaseWithSpringContext {
 			final Object retrievedFlowStatus = card.card.get(FlowStatus.dbColumnName());
 			if (retrievedFlowStatus != null) {
 				final Lookup lookupFlowStatus = lookupLogic().getLookup(((LookupValue) retrievedFlowStatus).getId());
-				out.put("FlowStatus", lookupFlowStatus.code);
+				out.put("FlowStatus", lookupFlowStatus.code());
 			}
 		}
 
@@ -329,7 +329,7 @@ public class ModCard extends JSONBaseWithSpringContext {
 		final Object retrievedFlowStatus = card.get(FlowStatus.dbColumnName());
 		if (retrievedFlowStatus != null) {
 			final Lookup lookupFlowStatus = lookupLogic().getLookup(((LookupValue) retrievedFlowStatus).getId());
-			return lookupFlowStatus.code;
+			return lookupFlowStatus.code();
 		} else {
 			return null;
 		}

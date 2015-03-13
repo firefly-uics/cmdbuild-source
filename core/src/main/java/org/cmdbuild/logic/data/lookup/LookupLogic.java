@@ -131,9 +131,9 @@ public class LookupLogic implements Logic {
 	private static final Comparator<Lookup> NUMBER_COMPARATOR = new Comparator<Lookup>() {
 		@Override
 		public int compare(final Lookup o1, final Lookup o2) {
-			if (o1.number > o2.number) {
+			if (o1.number() > o2.number()) {
 				return 1;
-			} else if (o1.number < o2.number) {
+			} else if (o1.number() < o2.number()) {
 				return -1;
 			}
 			return 0;
@@ -201,12 +201,12 @@ public class LookupLogic implements Logic {
 			for (final Lookup lookup : store.readAll(oldType)) {
 				final Lookup newLookup = Lookup.newInstance() //
 						.withId(lookup.getId()) //
-						.withCode(lookup.code) //
-						.withDescription(lookup.description) //
+						.withCode(lookup.code()) //
+						.withDescription(lookup.description()) //
 						.withType(newType) //
-						.withNumber(lookup.number) //
-						.withActiveStatus(lookup.active) //
-						.withDefaultStatus(lookup.isDefault) //
+						.withNumber(lookup.number()) //
+						.withActiveStatus(lookup.active()) //
+						.withDefaultStatus(lookup.isDefault()) //
 						.build();
 				store.update(newLookup);
 			}
@@ -455,7 +455,7 @@ public class LookupLogic implements Logic {
 
 		final Lookup lookupWithRealType = Lookup.newInstance() //
 				.clone(lookup) //
-				.withType(typeFor(typesWith(lookup.type.name)).orNull()) //
+				.withType(typeFor(typesWith(lookup.type().name)).orNull()) //
 				.build();
 
 		final Long id;
@@ -463,10 +463,10 @@ public class LookupLogic implements Logic {
 			logger.info(marker, "creating lookup '{}'", lookupWithRealType);
 
 			logger.debug(marker, "checking lookup number ('{}'), if not valid assigning a valid one",
-					lookupWithRealType.number);
+					lookupWithRealType.number());
 			final Lookup toBeCreated;
 			if (hasNoValidNumber(lookupWithRealType)) {
-				final int count = size(store.readAll(lookupWithRealType.type));
+				final int count = size(store.readAll(lookupWithRealType.type()));
 				toBeCreated = Lookup.newInstance() //
 						.clone(lookupWithRealType) //
 						.withNumber(count + 1) //
@@ -481,13 +481,13 @@ public class LookupLogic implements Logic {
 			logger.info(marker, "updating lookup '{}'", lookupWithRealType);
 
 			logger.debug(marker, "checking lookup number ('{}'), if not valid assigning a valid one",
-					lookupWithRealType.number);
+					lookupWithRealType.number());
 			final Lookup toBeUpdated;
 			if (hasNoValidNumber(lookupWithRealType)) {
 				final Lookup actual = store.read(lookupWithRealType);
 				toBeUpdated = Lookup.newInstance() //
 						.clone(lookupWithRealType) //
-						.withNumber(actual.number) //
+						.withNumber(actual.number()) //
 						.build();
 			} else {
 				toBeUpdated = lookupWithRealType;
@@ -504,7 +504,7 @@ public class LookupLogic implements Logic {
 	}
 
 	private static boolean hasNoValidNumber(final Lookup lookup) {
-		return lookup.number == null || lookup.number <= 0;
+		return lookup.number() == null || lookup.number() <= 0;
 	}
 
 	/**

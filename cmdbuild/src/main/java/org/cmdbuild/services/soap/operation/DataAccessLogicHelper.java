@@ -312,10 +312,10 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 				} else {
 					final Iterable<Lookup> lookupList = lookupStore.readAll();
 					for (final Lookup lookup : lookupList) {
-						if (lookup.active && //
-								lookup.type.name.equals(lookupTypeName) && //
-								lookup.description != null && //
-								ObjectUtils.equals(lookup.description, value)) {
+						if (lookup.active() && //
+								lookup.type().name.equals(lookupTypeName) && //
+								lookup.description() != null && //
+								ObjectUtils.equals(lookup.description(), value)) {
 							lookupId = lookup.getId();
 							break;
 						}
@@ -338,7 +338,7 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 	private boolean existsLookup(final String lookupTypeName, final Long lookupId) {
 		final Iterable<Lookup> lookupList = lookupStore.readAll();
 		for (final Lookup lookup : lookupList) {
-			if (lookup.type.name.equals(lookupTypeName) && lookup.getId().equals(lookupId)) {
+			if (lookup.type().name.equals(lookupTypeName) && lookup.getId().equals(lookupId)) {
 				return true;
 			}
 		}
@@ -411,7 +411,7 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 			return null;
 		} else {
 			final Lookup fetchedLookup = lookupStore.read(storableOf(lookupId));
-			return fetchedLookup.description;
+			return fetchedLookup.description();
 		}
 	}
 
