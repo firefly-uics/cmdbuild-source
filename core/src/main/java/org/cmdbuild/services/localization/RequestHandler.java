@@ -2,6 +2,8 @@ package org.cmdbuild.services.localization;
 
 public interface RequestHandler {
 
-	void setLocalized(boolean value);
+	void setLocalized(boolean localized);
+
+	void setLocalization(String localization);
 
 }

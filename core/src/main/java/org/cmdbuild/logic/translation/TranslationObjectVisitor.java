@@ -3,6 +3,7 @@ package org.cmdbuild.logic.translation;
 import org.cmdbuild.logic.translation.object.ClassAttributeDescription;
 import org.cmdbuild.logic.translation.object.ClassAttributeGroup;
 import org.cmdbuild.logic.translation.object.ClassDescription;
+import org.cmdbuild.logic.translation.object.DomainAttributeDescription;
 import org.cmdbuild.logic.translation.object.DomainDescription;
 import org.cmdbuild.logic.translation.object.DomainDirectDescription;
 import org.cmdbuild.logic.translation.object.DomainInverseDescription;
@@ -47,6 +48,8 @@ public interface TranslationObjectVisitor {
 	void visit(DomainInverseDescription domainInverseDescription);
 
 	void visit(DomainMasterDetailLabel domainMasterDetailDescription);
+
+	void visit(DomainAttributeDescription domainAttributeDescription);
 
 
 }

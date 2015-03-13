@@ -6,14 +6,15 @@ import static org.junit.Assert.assertTrue;
 import java.util.Map;
 
 import org.cmdbuild.logic.translation.TranslationObject;
-import org.cmdbuild.logic.translation.converter.ClassAttributeConverter;
+import org.cmdbuild.logic.translation.converter.AttributeConverter;
 import org.cmdbuild.logic.translation.object.ClassAttributeDescription;
 import org.junit.Test;
 
 import com.google.common.collect.ImmutableMap;
 
 public class ClassAttributeDescriptionObjectCreationTest {
-
+	
+	private static final String entryType = "class";
 	private static final String classname = "Building";
 	private static final String attributename = "Name";
 	private static final String field = "Description";
@@ -24,8 +25,8 @@ public class ClassAttributeDescriptionObjectCreationTest {
 	@Test
 	public void forDescriptionFieldReturnsValidObject() {
 		// given
-		final ClassAttributeConverter converter = ClassAttributeConverter //
-				.of(field)//
+		final AttributeConverter converter = AttributeConverter //
+				.of(entryType, field)//
 				.withTranslations(map);
 
 		// when
@@ -42,8 +43,8 @@ public class ClassAttributeDescriptionObjectCreationTest {
 	@Test
 	public void converterIsCaseInsensitiveForTheField() {
 		// given
-		final ClassAttributeConverter converter = ClassAttributeConverter//
-				.of("dEscRiptION") //
+		final AttributeConverter converter = AttributeConverter//
+				.of(entryType, "dEscRiptION") //
 				.withTranslations(map);
 
 		// when
@@ -63,8 +64,8 @@ public class ClassAttributeDescriptionObjectCreationTest {
 		final String invalidfield = "invalidfield";
 
 		// when
-		final ClassAttributeConverter converter = ClassAttributeConverter //
-				.of(invalidfield);
+		final AttributeConverter converter = AttributeConverter //
+				.of(entryType, invalidfield);
 
 		// then
 		assertTrue(!converter.isValid());
@@ -74,8 +75,8 @@ public class ClassAttributeDescriptionObjectCreationTest {
 	public void invalidConverterThrowsException() {
 		// given
 		final String invalidfield = "invalidfield";
-		final ClassAttributeConverter converter = ClassAttributeConverter //
-				.of(invalidfield);
+		final AttributeConverter converter = AttributeConverter //
+				.of(entryType, invalidfield);
 		Exception thrown = null;
 
 		// when
@@ -93,8 +94,8 @@ public class ClassAttributeDescriptionObjectCreationTest {
 	@Test
 	public void createConverterForReading() {
 		// given
-		final ClassAttributeConverter converter = ClassAttributeConverter //
-				.of(field);
+		final AttributeConverter converter = AttributeConverter //
+				.of(entryType, field);
 
 		// when
 		final TranslationObject translationObject = converter.create(classname, attributename);

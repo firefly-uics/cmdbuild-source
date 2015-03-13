@@ -15,6 +15,11 @@ public interface SetupFacade {
 		}
 
 		@Override
+		public String getLocalization() {
+			return delegate().getLocalization();
+		}
+
+		@Override
 		public Iterable<String> getEnabledLanguages() {
 			return delegate().getEnabledLanguages();
 		}
@@ -24,5 +29,7 @@ public interface SetupFacade {
 	boolean isEnabled();
 
 	Iterable<String> getEnabledLanguages();
+
+	String getLocalization();
 
 }

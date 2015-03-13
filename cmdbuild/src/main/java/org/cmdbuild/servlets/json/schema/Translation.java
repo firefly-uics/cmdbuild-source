@@ -31,7 +31,7 @@ import org.cmdbuild.logic.translation.ReportTranslation;
 import org.cmdbuild.logic.translation.TranslationObject;
 import org.cmdbuild.logic.translation.ViewTranslation;
 import org.cmdbuild.logic.translation.WidgetTranslation;
-import org.cmdbuild.logic.translation.converter.ClassAttributeConverter;
+import org.cmdbuild.logic.translation.converter.AttributeConverter;
 import org.cmdbuild.logic.translation.converter.ClassConverter;
 import org.cmdbuild.logic.translation.converter.DomainConverter;
 import org.cmdbuild.services.CustomFilesStore;
@@ -70,7 +70,7 @@ public class Translation extends JSONBaseWithSpringContext {
 			@Parameter(value = TRANSLATIONS) final JSONObject translations //
 	) {
 
-		final ClassAttributeConverter converter = ClassAttributeConverter.of(field);
+		final AttributeConverter converter = AttributeConverter.of(null, field);
 		Validate.isTrue(converter.isValid());
 		converter.withTranslations(toMap(translations));
 		final TranslationObject translationObject = converter.create(className, attributeName);
@@ -272,7 +272,7 @@ public class Translation extends JSONBaseWithSpringContext {
 			@Parameter(value = ATTRIBUTENAME) final String attributeName, //
 			@Parameter(value = FIELD) final String field //
 	) {
-		final ClassAttributeConverter converter = ClassAttributeConverter.of(field);
+		final AttributeConverter converter = AttributeConverter.of(null, field);
 		Validate.isTrue(converter.isValid());
 		final TranslationObject translationObject = converter.create(className, attributeName);
 		final Map<String, String> translations = translationLogic().readAll(translationObject);
@@ -466,7 +466,7 @@ public class Translation extends JSONBaseWithSpringContext {
 			@Parameter(value = FIELD) final String field, //
 			@Parameter(value = TRANSLATIONS) final JSONObject translations //
 	) {
-		final ClassAttributeConverter converter = ClassAttributeConverter.of(field);
+		final AttributeConverter converter = AttributeConverter.of(null, field);
 		converter.withTranslations(toMap(translations));
 		final TranslationObject translationObject = converter.create(className, attributeName);
 		translationLogic().update(translationObject);
@@ -668,7 +668,7 @@ public class Translation extends JSONBaseWithSpringContext {
 			@Parameter(value = FIELD) final String field, //
 			@Parameter(value = TRANSLATIONS) final JSONObject translations //
 	) {
-		final ClassAttributeConverter converter = ClassAttributeConverter.of(field);
+		final AttributeConverter converter = AttributeConverter.of(null, field);
 		Validate.isTrue(converter.isValid());
 		converter.withTranslations(toMap(translations));
 		final TranslationObject translationObject = converter.create(className, attributeName);

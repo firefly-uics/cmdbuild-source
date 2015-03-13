@@ -84,7 +84,7 @@ public enum DomainConverter {
 		}
 	},
 	
-	MASTERDETAIL_LABEL("masterDetailLabel") {
+	MASTERDETAIL_LABEL("masterDetail") {
 
 		@Override
 		public boolean isValid() {
@@ -146,6 +146,10 @@ public enum DomainConverter {
 			}
 		}
 		return UNDEFINED;
+	}
+
+	public String field() {
+		return fieldName;
 	}
 
 }

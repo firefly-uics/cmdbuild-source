@@ -23,7 +23,8 @@ import org.springframework.context.annotation.Configuration;
 @Configuration("LocalizationFilter")
 public class LocalizationFilter implements Filter, ApplicationContextAware {
 
-	private static final String PARAMETER = "localized";
+	private static final String LOCALIZED = "localized";
+	private static final String LOCALIZATION = "localization";
 
 	private RequestHandler requestHandler;
 
@@ -44,9 +45,10 @@ public class LocalizationFilter implements Filter, ApplicationContextAware {
 	public void doFilter(final ServletRequest request, final ServletResponse response, final FilterChain filterChain)
 			throws IOException, ServletException {
 		// TODO log
-		final String value = request.getParameter(PARAMETER);
-		//final String value = true;
-		requestHandler.setLocalized(toBoolean(value));
+		final String localized = request.getParameter(LOCALIZED);
+		final String localization= request.getParameter(LOCALIZATION);
+		requestHandler.setLocalized(toBoolean(localized));
+		requestHandler.setLocalization(localization);
 		filterChain.doFilter(request, response);
 	}
 

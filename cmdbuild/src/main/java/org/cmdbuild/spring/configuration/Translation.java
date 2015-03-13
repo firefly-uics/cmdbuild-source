@@ -32,7 +32,6 @@ public class Translation {
 	@Bean
 	public TranslationFacade translationFacade() {
 		final DefaultTranslationFacade defaultTranslationFacade = new DefaultTranslationFacade( //
-				languageStore, //
 				translationLogic(), //
 				requestHandlerSetupFacade());
 		final SetupAwareTranslationFacade setupAwareTranslationFacade = new SetupAwareTranslationFacade( //
