@@ -909,6 +909,7 @@
 	},
 	"errors": {
 		"busy_wf_widgets": "Das Widget antwortet nicht. Prüfen Sie den Server-Status, bevor Sie die Operation wiederholen.",
+		"copyAttachmentFailure": "<em>Copy attachment with name \"{0}\" failure</em>",
 		"createReportFilure": "<em>Create report failure</em>",
 		"detail": "Details",
 		"domainCardinalityViolation": "<em>Domain cardinality violation</em>",

@@ -909,6 +909,7 @@
 	},
 	"errors": {
 		"busy_wf_widgets": "Los controles visuales están ocupados, controle el estado del servidor antes de intentar de nuevo. ",
+		"copyAttachmentFailure": "<em>Copy attachment with name \"{0}\" failure</em>",
 		"createReportFilure": "<em>Create report failure</em>",
 		"detail": "Detalles",
 		"domainCardinalityViolation": "<em>Domain cardinality violation</em>",

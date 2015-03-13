@@ -909,6 +909,7 @@
 	},
 	"errors": {
 		"busy_wf_widgets": "Виджеты заняты. Проверьте состояние сервера перед повторной попыткой.",
+		"copyAttachmentFailure": "<em>Copy attachment with name \"{0}\" failure</em>",
 		"createReportFilure": "<em>Create report failure</em>",
 		"detail": "Подробно",
 		"domainCardinalityViolation": "<em>Domain cardinality violation</em>",

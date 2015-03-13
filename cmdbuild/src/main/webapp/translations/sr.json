@@ -909,6 +909,7 @@
 	},
 	"errors": {
 		"busy_wf_widgets": "Vizelne kontrole su nedostupne, proverite status servera pre ponovnog pokušaja.",
+		"copyAttachmentFailure": "<em>Copy attachment with name \"{0}\" failure</em>",
 		"createReportFilure": "<em>Create report failure</em>",
 		"detail": "Detalji",
 		"domainCardinalityViolation": "Greška u kardinalitetu relacije",

@@ -909,6 +909,7 @@
 	},
 	"errors": {
 		"busy_wf_widgets": "De visuele controls zijn bezig, controleer de status van de server voor volgende poging.",
+		"copyAttachmentFailure": "<em>Copy attachment with name \"{0}\" failure</em>",
 		"createReportFilure": "<em>Create report failure</em>",
 		"detail": "Details",
 		"domainCardinalityViolation": "Domein kardinaliteits schending",
