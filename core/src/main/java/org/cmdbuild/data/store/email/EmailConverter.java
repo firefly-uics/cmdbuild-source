@@ -24,6 +24,7 @@ import org.cmdbuild.data.store.dao.BaseStorableConverter;
 import org.cmdbuild.data.store.lookup.Lookup;
 import org.cmdbuild.data.store.lookup.LookupStore;
 import org.cmdbuild.data.store.lookup.LookupType;
+import org.cmdbuild.data.store.lookup._Lookup;
 
 import com.google.common.collect.Maps;
 
@@ -55,7 +56,7 @@ public class EmailConverter extends BaseStorableConverter<Email> {
 		email.setDate((card.getBeginDate()));
 
 		final Long emailStatusLookupId = card.get(EMAIL_STATUS_ATTRIBUTE, IdAndDescription.class).getId();
-		final Lookup lookup = lookupStore.read(Lookup.newInstance() //
+		final _Lookup lookup = lookupStore.read(Lookup.newInstance() //
 				.withId(emailStatusLookupId) //
 				.build());
 		email.setStatus(EmailStatus.of(identifierOf(lookup)));
@@ -84,7 +85,7 @@ public class EmailConverter extends BaseStorableConverter<Email> {
 	}
 
 	private Long getEmailLookupIdFrom(final EmailStatus emailStatus) {
-		for (final Lookup lookup : lookupStore.readAll(LookupType.newInstance() //
+		for (final _Lookup lookup : lookupStore.readAll(LookupType.newInstance() //
 				.withName(EmailStatus.LOOKUP_TYPE) //
 				.build())) {
 			if (identifierOf(lookup).equals(emailStatus.getLookupName())) {
@@ -94,7 +95,7 @@ public class EmailConverter extends BaseStorableConverter<Email> {
 		throw new NoSuchElementException();
 	}
 
-	private String identifierOf(final Lookup lookup) {
+	private String identifierOf(final _Lookup lookup) {
 		return lookup.code();
 	}
 

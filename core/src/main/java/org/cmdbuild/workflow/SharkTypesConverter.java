@@ -36,6 +36,7 @@ import org.cmdbuild.dao.entrytype.attributetype.TextAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TimeAttributeType;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.data.store.lookup.LookupStore;
+import org.cmdbuild.data.store.lookup._Lookup;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.workflow.type.LookupType;
 import org.cmdbuild.workflow.type.ReferenceType;
@@ -322,7 +323,7 @@ public class SharkTypesConverter implements WorkflowTypesConverter {
 			return SharkTypeDefaults.defaultLookup();
 		}
 		try {
-			final org.cmdbuild.data.store.lookup.Lookup lookupFromStore = lookupStore.read(storableOf(id));
+			final _Lookup lookupFromStore = lookupStore.read(storableOf(id));
 			final LookupType lookupType = new LookupType();
 			lookupType.setType(lookupFromStore.type().name);
 			lookupType.setId(objectIdToInt(lookupFromStore.getId()));

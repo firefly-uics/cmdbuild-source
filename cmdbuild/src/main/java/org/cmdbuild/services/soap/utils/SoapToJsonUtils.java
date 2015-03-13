@@ -25,6 +25,7 @@ import org.cmdbuild.dao.entrytype.attributetype.UndefinedAttributeType;
 import org.cmdbuild.data.store.lookup.Lookup;
 import org.cmdbuild.data.store.lookup.LookupStore;
 import org.cmdbuild.data.store.lookup.LookupType;
+import org.cmdbuild.data.store.lookup._Lookup;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.mapping.json.Constants;
 import org.cmdbuild.services.soap.types.Attribute;
@@ -252,7 +253,7 @@ public class SoapToJsonUtils {
 				.withName(lookupTypeName) //
 				.build();
 		final Iterable<Lookup> lookupList = lookupStore.readAll(lookupType);
-		for (final Lookup lookup : lookupList) {
+		for (final _Lookup lookup : lookupList) {
 			if (lookup.description().equals(description)) {
 				return lookup.getId();
 			}

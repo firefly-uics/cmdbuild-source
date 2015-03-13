@@ -5,7 +5,7 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import org.cmdbuild.data.store.Storable;
 import org.cmdbuild.data.store.lookup.LookupType.LookupTypeBuilder;
 
-public final class Lookup implements Storable {
+public final class Lookup implements _Lookup {
 
 	public static class LookupBuilder implements org.apache.commons.lang3.builder.Builder<Lookup> {
 
@@ -18,7 +18,7 @@ public final class Lookup implements Storable {
 		private boolean active;
 		private boolean isDefault;
 		private Long parentId;
-		private Lookup parent;
+		private _Lookup parent;
 		private String translationUuid;
 
 		/**
@@ -127,47 +127,57 @@ public final class Lookup implements Storable {
 	private final boolean active;
 	private final boolean isDefault;
 	private final Long parentId;
-	private final Lookup parent;
+	private final _Lookup parent;
 	private String translationUuid;
 
 	private final transient String toString;
 	
+	@Override
 	public String code(){
 		return code;
 	} 
 	
+	@Override
 	public String description(){
 		return description;
 	} 
 	
+	@Override
 	public String notes(){
 		return notes;
 	} 
 	
+	@Override
 	public LookupType type(){
 		return type;
 	} 
 	
+	@Override
 	public Integer number(){
 		return number;
 	} 
 	
+	@Override
 	public boolean active(){
 		return active;
 	} 
 	
+	@Override
 	public boolean isDefault(){
 		return isDefault;
 	} 
 	
+	@Override
 	public Long parentId(){
 		return parentId;
 	}
 	
-	public Lookup parent(){
+	@Override
+	public _Lookup parent(){
 		return parent;
 	}
 	
+	@Override
 	public String uuid(){
 		return translationUuid;
 	}
@@ -192,6 +202,7 @@ public final class Lookup implements Storable {
 		return id.toString();
 	}
 	
+	@Override
 	public String getTranslationUuid() {
 		return translationUuid;
 	}
@@ -201,15 +212,18 @@ public final class Lookup implements Storable {
 		return toString;
 	}
 
+	@Override
 	public Long getId() {
 		return id;
 	}
 
+	@Override
 	public void setId(final Long id) {
 		this.id = id;
 	}
 
 	// FIXME Do I really need it?
+	@Override
 	public String getDescription() {
 		return description;
 	}

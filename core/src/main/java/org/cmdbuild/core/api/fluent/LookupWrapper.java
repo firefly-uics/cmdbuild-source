@@ -1,12 +1,13 @@
 package org.cmdbuild.core.api.fluent;
 
 import org.cmdbuild.api.fluent.Lookup;
+import org.cmdbuild.data.store.lookup._Lookup;
 
 public class LookupWrapper implements Lookup {
 
-	private final org.cmdbuild.data.store.lookup.Lookup inner;
+	private final _Lookup inner;
 
-	public LookupWrapper(final org.cmdbuild.data.store.lookup.Lookup inner) {
+	public LookupWrapper(final _Lookup inner) {
 		this.inner = inner;
 	}
 

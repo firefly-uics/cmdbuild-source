@@ -26,6 +26,7 @@ import java.util.UUID;
 
 import org.cmdbuild.data.store.lookup.Lookup;
 import org.cmdbuild.data.store.lookup.LookupType;
+import org.cmdbuild.data.store.lookup._Lookup;
 import org.cmdbuild.exception.AuthException;
 import org.cmdbuild.logic.data.lookup.LookupLogic.LookupQuery;
 import org.cmdbuild.logic.data.lookup.LookupLogic.LookupTypeQuery;
@@ -122,7 +123,7 @@ public class ModLookup extends JSONBaseWithSpringContext {
 
 		final LookupSerializer lookupSerializer = lookupSerializer();
 
-		for (final Lookup element : elements) {
+		for (final _Lookup element : elements) {
 			serializer.append("rows", lookupSerializer.serializeLookup(element, shortForm));
 		}
 
@@ -141,7 +142,7 @@ public class ModLookup extends JSONBaseWithSpringContext {
 
 		final LookupSerializer lookupSerializer = lookupSerializer();
 
-		for (final Lookup lookup : elements) {
+		for (final _Lookup lookup : elements) {
 			out.append("rows", lookupSerializer.serializeLookupParent(lookup));
 		}
 

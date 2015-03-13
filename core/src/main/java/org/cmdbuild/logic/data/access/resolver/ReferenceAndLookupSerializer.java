@@ -6,7 +6,7 @@ import org.cmdbuild.dao.entry.CMEntry;
 import org.cmdbuild.dao.entrytype.attributetype.ForeignKeyAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.LookupAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.ReferenceAttributeType;
-import org.cmdbuild.data.store.lookup.Lookup;
+import org.cmdbuild.data.store.lookup._Lookup;
 
 import com.google.common.collect.Maps;
 
@@ -36,10 +36,10 @@ public class ReferenceAndLookupSerializer<T extends CMEntry> extends AbstractSer
 		// }
 	}
 
-	private String descriptionOf(final Lookup lookup) {
+	private String descriptionOf(final _Lookup lookup) {
 		final String concatFormat = "%s - %s";
 		String description = lookup.description();
-		final Lookup parent = lookup.parent();
+		final _Lookup parent = lookup.parent();
 		if (parent != null) {
 			description = String.format(concatFormat, descriptionOf(parent), description);
 		}
