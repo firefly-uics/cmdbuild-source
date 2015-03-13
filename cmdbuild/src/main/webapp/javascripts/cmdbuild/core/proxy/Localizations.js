@@ -76,7 +76,7 @@
 		/**
 		 * @param {Object} parameters
 		 */
-		getLanguagesToTranslate: function(parameters) { // TODO
+		getLanguagesToTranslate: function(parameters) { // TODO forse non serve
 			CMDBuild.Ajax.request({
 				url: '#############',
 				params: parameters.params,
@@ -97,6 +97,10 @@
 			switch (parameters.params.sectionId) {
 				case 'classes': {
 					url = CMDBuild.core.proxy.CMProxyUrlIndex.localizations.classRead;
+				} break;
+
+				case 'classesAttribute': {
+					url = CMDBuild.core.proxy.CMProxyUrlIndex.localizations.classAttributeRead;
 				} break;
 
 				case 'domains': {
