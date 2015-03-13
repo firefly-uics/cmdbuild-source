@@ -4,6 +4,7 @@
 		extend: 'Ext.grid.Panel',
 
 		requires: [
+			'CMDBuild.core.proxy.Attachment',
 			'CMDBuild.core.proxy.CMProxyConstants',
 			'CMDBuild.core.proxy.widgets.ManageEmail'
 		],
@@ -21,7 +22,8 @@
 				columns: [
 					{
 						xtype: 'checkcolumn',
-						dataIndex: 'Checked', // TODO
+						dataIndex: 'checked', // TODO
+						menuDisabled: true,
 						width: 40,
 
 						listeners: {
@@ -30,7 +32,7 @@
 								var record = this.getStore().getAt(rowIndex);
 
 								if (!Ext.isEmpty(record))
-									this.cmOn('onPickerWindowAttachmentGridCheckChange', {
+									this.delegate.cmOn('onPickerWindowAttachmentGridCheckChange', {
 										checked: checked,
 										fileName: record.get('Filename')
 									});
@@ -39,16 +41,16 @@
 					},
 					{
 						text: CMDBuild.Translation.fileName,
-						dataIndex: 'Filename', // TODO
+						dataIndex: 'Filename', // TODO: use proxy constants
 						flex: 1
 					},
 					{
 						text: CMDBuild.Translation.descriptionLabel,
-						dataIndex: 'Description', // TODO
+						dataIndex: 'Description', // TODO: use proxy constants
 						flex: 1
 					}
 				],
-				store: CMDBuild.core.proxy.widgets.ManageEmail.attachmentGetStore()
+				store: CMDBuild.core.proxy.Attachment.getStore()
 			});
 
 			this.callParent(arguments);

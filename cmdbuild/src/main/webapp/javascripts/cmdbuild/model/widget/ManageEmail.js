@@ -2,16 +2,6 @@
 
 	Ext.require('CMDBuild.core.proxy.CMProxyConstants');
 
-	Ext.define('CMDBuild.model.widget.ManageEmail.email.attachment', { // TODO
-		extend: 'Ext.data.Model',
-
-		fields: [
-			{ name: 'Description', type: 'string' },
-			{ name: 'Filename', type: 'string' },
-			{ name: 'Checked', type: 'boolean', }
-		]
-	});
-
 	Ext.define('CMDBuild.model.widget.ManageEmail.email', {
 		extend: 'Ext.data.Model',
 
@@ -64,6 +54,16 @@
 
 			return params;
 		}
+	});
+
+	Ext.define('CMDBuild.model.widget.ManageEmail.email.attachment', { // TODO
+		extend: 'Ext.data.Model',
+
+		fields: [
+			{ name: 'description', type: 'string' },
+			{ name: 'fileName', type: 'string' },
+			{ name: 'checked', type: 'boolean', }
+		]
 	});
 
 	Ext.define('CMDBuild.model.widget.ManageEmail.template', {

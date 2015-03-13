@@ -42,23 +42,32 @@
 			});
 		},
 
-		/**
-		 * @return {Ext.data.Store}
-		 */
-		attachmentGetStore: function() {
-			return Ext.create('Ext.data.Store', {
-				autoLoad: false,
-				model: 'CMDBuild.model.widget.ManageEmail.email.attachment',
-				proxy: {
-					type: 'ajax',
-					url: CMDBuild.core.proxy.CMProxyUrlIndex.widgets.manageEmail.attachment.readAll,
-					reader: {
-						type: 'json',
-						root: 'rows'
-					}
-				}
-			});
-		},
+//		/**
+//		 * @return {Ext.data.Store}
+//		 */
+//		attachmentGetStore: function() {
+//			return Ext.create('Ext.data.Store', {
+//				autoLoad: false,
+//				model: 'CMDBuild.model.widget.ManageEmail.email.attachment',
+//				proxy: {
+//					type: 'ajax',
+//					url: CMDBuild.core.proxy.CMProxyUrlIndex.widgets.manageEmail.attachment.readAll,
+//					reader: {
+//						type: 'json',
+//						root: 'rows'
+//					},
+//					extraParams: { // Avoid to send limit, page and start parameters in server calls
+//						limitParam: undefined,
+//						pageParam: undefined,
+//						startParam: undefined
+//					}
+//				},
+//				sorters: {
+//					property: 'Filename',
+//					direction: 'ASC'
+//				},
+//			});
+//		},
 
 		/**
 		 * @param {Object} parameters

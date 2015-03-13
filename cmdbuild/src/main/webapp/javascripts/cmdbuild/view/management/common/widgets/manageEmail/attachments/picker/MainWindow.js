@@ -80,14 +80,14 @@
 					Ext.create('CMDBuild.buttons.ConfirmButton', {
 						scope: this,
 
-						handler: function() {
+						handler: function(button, e) {
 							this.delegate.cmOn('onPickerWindowConfirmButtonClick');
 						}
 					}),
 					Ext.create('CMDBuild.buttons.AbortButton', {
 						scope: this,
 
-						handler: function() {
+						handler: function(button, e) {
 							this.delegate.cmOn('onPickerWindowAbortButtonClick');
 						}
 					})

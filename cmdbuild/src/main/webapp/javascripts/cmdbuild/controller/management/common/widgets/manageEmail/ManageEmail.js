@@ -220,6 +220,7 @@ _debug('CMDBuild.Config', CMDBuild.Config);
 		 * @override
 		 */
 		beforeActiveView: function() {
+			this.globalLoadMask = false;
 _debug('BEFORE ACTIVE VIEW');
 _debug('grid store', this.grid.getStore());
 			this.controllerGrid.storeLoad(true);
