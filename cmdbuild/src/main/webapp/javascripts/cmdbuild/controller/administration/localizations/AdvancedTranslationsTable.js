@@ -37,14 +37,21 @@
 			CMDBuild.core.proxy.Localizations.getSectionsStore().each(function(record, id) { // TODO implementare la funzionalità con la creazione del pannello dinamica sull'onSuccess
 				this.view.add(
 					Ext.create('Ext.panel.Panel', {
-						title: record.get(CMDBuild.core.proxy.CMProxyConstants.NAME),
-						translationValue: record.get(CMDBuild.core.proxy.CMProxyConstants.VALUE), // TODO "id" sezione traduzioni
-						bodyCls: 'cmgraypanel',
+						delegate: this,
 
+						title: record.get(CMDBuild.core.proxy.CMProxyConstants.NAME),
+//						sectionId: record.get(CMDBuild.core.proxy.CMProxyConstants.VALUE), // TODO "id" sezione traduzioni
+
+						bodyCls: 'cmgraypanel',
 						layout: 'fit',
 
 						items: [ // TODO: dynamic setup of AdvancedTranslationsTableGrid columns and store
 							Ext.create('CMDBuild.view.administration.localizations.panels.AdvancedTranslationsTableGrid', {
+								delegate: this,
+
+								sectionId: record.get(CMDBuild.core.proxy.CMProxyConstants.VALUE), // TODO "id" sezione traduzioni
+
+								columns: this.buildColumns(),
 								store: this.buildStore(record.get(CMDBuild.core.proxy.CMProxyConstants.VALUE))
 							})
 						]
@@ -64,11 +71,11 @@
 		 */
 		cmOn: function(name, param, callBack) {
 			switch (name) {
-				case 'onAdvancedTableAbortButtonClick':
-					return this.onAdvancedTableAbortButtonClick();
+				case 'onAdvancedTableNodeExpand':
+					return this.onAdvancedTableNodeExpand(param);
 
-				case 'onAdvancedTableSaveButtonClick':
-					return this.onAdvancedTableSaveButtonClick();
+				case 'onAdvancedTableRowUpdateButtonClick':
+					return this.onAdvancedTableRowUpdateButtonClick(param);
 
 				default: {
 					if (!Ext.isEmpty(this.parentDelegate))
@@ -77,92 +84,58 @@
 			}
 		},
 
-		/**
-		 * @return {Array}
-		 */
-		buildStoreFields: function() {
-			var fieldsArray = [
-				{ name: 'expanded', type: 'boolean', defaultValue: true, persist: false }, // To expand all tree
-				{ name: CMDBuild.core.proxy.CMProxyConstants.NAME, type: 'string'},
-				{ name: CMDBuild.core.proxy.CMProxyConstants.DEFAULT, type: 'string'},
+		buildColumns: function() {
+			var columnsArray = [
+				{
+					xtype: 'treecolumn',
+					text: '@@ Translation object name',
+					dataIndex: 'name',
+					width: 300,
+					// locked: true, // There is a performance issue in ExtJs 4.2.0 without locked columns all is fine
+					sortable: false,
+					draggable: false
+				},
+				{
+					text: '@@ defaultTranslation',
+					dataIndex: CMDBuild.core.proxy.CMProxyConstants.DEFAULT_LOCALIZATION,
+					width: 300,
+					sortable: false,
+					draggable: false,
+
+					editor: { xtype: 'textfield' }
+				}
 			];
 
-			Ext.Array.forEach(CMDBuild.Config.localization.get(CMDBuild.core.proxy.CMProxyConstants.LANGUAGES), function(language, index, allLanguages) {
-				fieldsArray.push({ name: language.get(CMDBuild.core.proxy.CMProxyConstants.TAG), type: 'string' });
-			}, this);
+// TODO real implementation
+//			CMDBuild.core.proxy.Localizations.getLanguagesToTranslate({
+//				scope: this,
+//				success: function(response, options, decodedResponse) {
+//_debug('Attributes decodedResponse', decodedResponse);
+//
+//					Ext.Array.forEach(decodedResponse, function(language, index, allLanguages) {
+//						columnsArray.push({ name: language.get(CMDBuild.core.proxy.CMProxyConstants.TAG), type: 'string' });
+//					}, this);
+//
+//					return columnsArray;
+//				}
+//			});
 
-			return fieldsArray;
+			Ext.Array.forEach(CMDBuild.Config.localization.get(CMDBuild.core.proxy.CMProxyConstants.LANGUAGES_WITH_LOCALIZATIONS), function(language, i, allLanguages) { // TODO
+				columnsArray.push(this.view.buildColumn(language));
+			}, this);
+_debug('columnsArray', columnsArray);
+			return columnsArray;
 		},
 
 		/**
-		 * @param {String} sectionId
+		 * Gatherer function for store build
 		 *
-		 * @return {Ext.data.TreeStore}
+		 * @param {String} sectionId
 		 */
-		buildStore: function(sectionId) { // TODO rifinire isolando un po' le cose ed annidando tutto (buildClassStore(), build....)
+		buildStore: function(sectionId) { // TODO
 			switch (sectionId) {
-				case 'classes': {
-_debug('CMDBuild.Config', CMDBuild.Config);
-					var treeStore =  Ext.create('Ext.data.TreeStore', {
-						fields: this.buildStoreFields(),
-						folderSort: true,
-						root: {
-							text: 'ROOT',
-							expanded: true,
-							children: []
-						}
-					});
-					var root = treeStore.getRootNode();
-
-					// GetAllClasses data to get default translations
-					CMDBuild.LoadMask.get().show();
-					CMDBuild.core.proxy.Classes.read({
-						params: {
-							active: true
-						},
-						success: function(response, options, decodedResponse) {
-_debug('Classes decodedResponse', decodedResponse);
-							Ext.Array.forEach(decodedResponse.classes, function(classObject, index, allClasses) {
-								if (
-									classObject[CMDBuild.core.proxy.CMProxyConstants.TYPE] == 'class' // Discard processes from visualization
-									&& classObject[CMDBuild.core.proxy.CMProxyConstants.NAME] != 'Class' // Discard root class of all classes
-								) {
-									var childClassObject = {};
-									childClassObject[CMDBuild.core.proxy.CMProxyConstants.NAME] = classObject[CMDBuild.core.proxy.CMProxyConstants.NAME];
-									childClassObject[CMDBuild.core.proxy.CMProxyConstants.DEFAULT] = classObject[CMDBuild.core.proxy.CMProxyConstants.TEXT];
-									childClassObject[CMDBuild.core.proxy.CMProxyConstants.LEAF] = false;
-
-									var classNode = root.appendChild(childClassObject);
-
-									var params = {};
-									params[CMDBuild.core.proxy.CMProxyConstants.ACTIVE] = true;
-									params[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME] = classObject[CMDBuild.core.proxy.CMProxyConstants.NAME];
-
-									CMDBuild.core.proxy.Attributes.read({
-										params: params,
-										success: function(response, options, decodedResponse) {
-_debug('Attributes decodedResponse', decodedResponse);
-											Ext.Array.forEach(decodedResponse.attributes, function(attributeObject, index, allAttributes) {
-												var childAttributeObject = {};
-												childAttributeObject[CMDBuild.core.proxy.CMProxyConstants.NAME] = attributeObject[CMDBuild.core.proxy.CMProxyConstants.NAME];
-												childAttributeObject[CMDBuild.core.proxy.CMProxyConstants.DEFAULT] = attributeObject[CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION];
-												childAttributeObject[CMDBuild.core.proxy.CMProxyConstants.LEAF] = true;
-
-												classNode.appendChild(childAttributeObject);
-											}, this);
-										},
-										callback: function(records, operation, success) {
-											CMDBuild.LoadMask.get().hide();
-										}
-									});
-								}
-							}, this);
-						}
-					});
-_debug('treeStore', treeStore);
-_debug('root', root);
-					return treeStore;
-				} break;
+				case 'classes':
+					return this.buildStoreClasses();
 
 				case 'domains': {
 
@@ -187,18 +160,193 @@ _debug('root', root);
 		},
 
 		/**
+		 * @return {Ext.data.TreeStore} treeStore
+		 */
+		buildStoreClasses: function() {
+_debug('CMDBuild.Config', CMDBuild.Config);
+			var treeStore =  Ext.create('Ext.data.TreeStore', {
+				fields: this.buildTreeStoreFields(),
+				folderSort: true,
+				root: {
+					text: 'ROOT',
+					expanded: true,
+					children: []
+				}
+			});
+			var root = treeStore.getRootNode();
+
+			// GetAllClasses data to get default translations
+			CMDBuild.LoadMask.get().show();
+			CMDBuild.core.proxy.Classes.read({
+				params: {
+					active: true
+				},
+				scope: this,
+				success: function(response, options, decodedResponse) {
+_debug('Classes decodedResponse', decodedResponse);
+					Ext.Array.forEach(decodedResponse.classes, function(classObject, index, allClasses) {
+						if (
+							classObject[CMDBuild.core.proxy.CMProxyConstants.TYPE] == 'class' // Discard processes from visualization
+							&& classObject[CMDBuild.core.proxy.CMProxyConstants.NAME] != 'Class' // Discard root class of all classes
+						) {
+							// Class main node
+							var classMainNodeObject = {};
+							classMainNodeObject[CMDBuild.core.proxy.CMProxyConstants.LEAF] = false;
+							classMainNodeObject[CMDBuild.core.proxy.CMProxyConstants.NAME] = classObject[CMDBuild.core.proxy.CMProxyConstants.NAME];
+
+							var classMainNode = root.appendChild(classMainNodeObject);
+
+							// Class description node
+							var classDescriptionNodeObject = {};
+							classDescriptionNodeObject[CMDBuild.core.proxy.CMProxyConstants.ATTRIBUTE] = CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION;
+							classDescriptionNodeObject[CMDBuild.core.proxy.CMProxyConstants.DEFAULT_LOCALIZATION] = classObject[CMDBuild.core.proxy.CMProxyConstants.TEXT];
+							classDescriptionNodeObject[CMDBuild.core.proxy.CMProxyConstants.LEAF] = true;
+							classDescriptionNodeObject[CMDBuild.core.proxy.CMProxyConstants.NAME] = '@@ Description';
+
+							classMainNode.appendChild(classDescriptionNodeObject);
+						}
+					}, this);
+				},
+				callback: function(records, operation, success) {
+					CMDBuild.LoadMask.get().hide();
+				}
+			});
+
+			return treeStore;
+		},
+
+		/**
+		 * @return {Array}
+		 */
+		buildTreeStoreFields: function() {
+			var fieldsArray = [
+				{ name: CMDBuild.core.proxy.CMProxyConstants.ATTRIBUTE, type: 'string' },
+				{ name: CMDBuild.core.proxy.CMProxyConstants.DEFAULT_LOCALIZATION, type: 'string'},
+				{ name: CMDBuild.core.proxy.CMProxyConstants.NAME, type: 'string'}
+			];
+
+			Ext.Array.forEach(CMDBuild.Config.localization.get(CMDBuild.core.proxy.CMProxyConstants.LANGUAGES), function(language, index, allLanguages) {
+				fieldsArray.push({ name: language.get(CMDBuild.core.proxy.CMProxyConstants.TAG), type: 'string' });
+			}, this);
+
+			return fieldsArray;
+		},
+
+		/**
 		 * @return {CMDBuild.view.administration.localizations.AdvancedTranslationsTablePanel}
 		 */
 		getView: function() {
 			return this.view;
 		},
 
-		onAdvancedTableAbortButtonClick: function() {
-_debug('CMDBuild.controller.administration.localizations.AdvancedTranslationsTable ABORT');
+		/**
+		 * Gatherer function for node expand events
+		 *
+		 * @param {Object} inputObject
+		 * 	Ex. {
+		 * 			{String} sectionId
+		 * 			{Ext.data.NodeInterface} node
+		 * 		}
+		 */
+		onAdvancedTableNodeExpand: function(inputObject) { // TODO
+			var node = inputObject.node;
+			var sectionId = inputObject.sectionId;
+
+			switch (sectionId) {
+				case 'classes':
+					return this.onAdvancedTableNodeExpandClass(node);
+
+				case 'domains': {
+
+				} break;
+
+				case 'lookups': {
+
+				} break;
+
+				case 'menus': {
+
+				} break;
+
+				case 'reports': {
+
+				} break;
+
+				default: {
+					// TODO error message pop-up
+				}
+			}
 		},
 
-		onAdvancedTableSaveButtonClick: function() {
-_debug('CMDBuild.controller.administration.localizations.AdvancedTranslationsTable SAVE');
+		/**
+		 * @param {Ext.data.NodeInterface} node
+		 */
+		onAdvancedTableNodeExpandClass: function(node) {
+_debug('onAdvancedTableNodeExpand', node);
+			if (!Ext.isEmpty(node) && node.getDepth() == 1) { // I'm on first level node so load node childrens
+
+				// Fill node with description translations
+				node.eachChild(function(childNode) { // TODO ---> END LINE
+					var params = {};
+					params[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME] = node.get(CMDBuild.core.proxy.CMProxyConstants.NAME);
+					params['field'] = childNode.get(CMDBuild.core.proxy.CMProxyConstants.ATTRIBUTE); // TODO: proxyCostants
+					params['sectionId'] = 'classes'; // TODO proxy costants and get sectionId
+
+					CMDBuild.LoadMask.get().show();
+					CMDBuild.core.proxy.Localizations.readLocalization({
+						params: params,
+						scope: this,
+						success: function(response, options, decodedResponse) {
+_debug('localizations decodedResponse', decodedResponse);
+							if (!Ext.Object.isEmpty(decodedResponse.response))
+								Ext.Object.each(decodedResponse.response, function(tag, translation, myself) {
+									childNode.set(tag, translation);
+								});
+						},
+//					callback: function(records, operation, success) {
+//						CMDBuild.LoadMask.get().hide();
+//					}
+					});
+				}, this);
+
+				// Class attributes node
+				var classAttributeNodeObject = {};
+				classAttributeNodeObject[CMDBuild.core.proxy.CMProxyConstants.LEAF] = false;
+				classAttributeNodeObject[CMDBuild.core.proxy.CMProxyConstants.NAME] = '@@ Attributes';
+
+				var classAttributesNode = node.appendChild(classAttributeNodeObject);
+
+				var params = {};
+				params[CMDBuild.core.proxy.CMProxyConstants.ACTIVE] = true;
+				params[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME] = node.get(CMDBuild.core.proxy.CMProxyConstants.NAME);
+
+//				CMDBuild.LoadMask.get().show();
+				CMDBuild.core.proxy.Attributes.read({
+					params: params,
+					success: function(response, options, decodedResponse) {
+_debug('Attributes decodedResponse', decodedResponse);
+						Ext.Array.forEach(decodedResponse.attributes, function(attributeObject, index, allAttributes) {
+							var childAttributeNodeObject = {};
+							childAttributeNodeObject[CMDBuild.core.proxy.CMProxyConstants.DEFAULT_LOCALIZATION] = attributeObject[CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION];
+							childAttributeNodeObject[CMDBuild.core.proxy.CMProxyConstants.LEAF] = true;
+							childAttributeNodeObject[CMDBuild.core.proxy.CMProxyConstants.NAME] = attributeObject[CMDBuild.core.proxy.CMProxyConstants.NAME];
+
+							classAttributesNode.appendChild(childAttributeNodeObject);
+						}, this);
+					},
+					callback: function(records, operation, success) {
+						CMDBuild.LoadMask.get().hide();
+					}
+				});
+			}
+		},
+
+		/**
+		 * @param {Ext.data.Model} record
+		 */
+		onAdvancedTableRowUpdateButtonClick: function(record) {
+_debug('CMDBuild.controller.administration.localizations.AdvancedTranslationsTable UPDATE');
+			// TODO fare chiamata per salvataggio traduzioni a partire dai dati del record
 		}
 	});
 

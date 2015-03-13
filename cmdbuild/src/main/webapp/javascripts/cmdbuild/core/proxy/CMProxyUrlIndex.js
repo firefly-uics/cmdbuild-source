@@ -111,6 +111,10 @@
 			getFunctions: 'services/json/schema/modclass/getfunctions'
 		},
 
+		localizations: {
+			classRead: 'services/json/schema/translation/readforclass',
+		},
+
 		login: 'services/json/login/login',
 
 		menu: {
