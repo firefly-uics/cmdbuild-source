@@ -3,14 +3,13 @@ package org.cmdbuild.logic.translation.converter;
 import java.util.Map;
 
 import org.cmdbuild.logic.translation.TranslationObject;
-import org.cmdbuild.logic.translation.object.ClassDescription;
 import org.cmdbuild.logic.translation.object.LookupDescription;
 
 import com.google.common.collect.Maps;
 
 public enum LookupConverter {
 
-	DESCRIPTION("description") {
+	DESCRIPTION(description()) {
 
 		@Override
 		public boolean isValid() {
@@ -56,8 +55,13 @@ public enum LookupConverter {
 
 	private final String fieldName;
 	private static Map<String, String> translations = Maps.newHashMap();
+	private static final String DESCRIPTION_FIELD = "description";
 
 	public abstract TranslationObject create(String name);
+
+	public static String description() {
+		return DESCRIPTION_FIELD;
+	}
 
 	public abstract LookupConverter withTranslations(Map<String, String> map);
 
