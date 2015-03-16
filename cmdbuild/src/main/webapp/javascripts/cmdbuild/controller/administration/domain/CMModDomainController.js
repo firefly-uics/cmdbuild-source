@@ -1,29 +1,61 @@
 (function() {
 	Ext.ns("CMDBuild.administration.domain");
 	var ns = CMDBuild.administration.domain;
-	
+
 	Ext.define("CMDBuild.controller.administration.domain.CMModDomainController", {
 		extend: "CMDBuild.controller.CMBasePanelController",
 
-		constructor: function() {
+		requires: [
+			'CMDBuild.core.proxy.CMProxyConstants',
+//			'CMDBuild.core.proxy.Classes',
+//			'CMDBuild.core.proxy.Localizations'
+		],
+
+		/**
+		 * @property {CMDBuild.controller.administration.domain.Hierarchy}
+		 */
+		controllerHierarchy: undefined,
+
+		/**
+		 * @property {CMDBuild.cache.CMDomainModel}
+		 */
+		selectedDomain: undefined,
+
+		/**
+		 * @cfg {CMDBuild.view.administration.domain.CMModDomain}
+		 */
+		view: undefined,
+
+		constructor: function(view) {
 			this.callParent(arguments);
+_debug('this.view', this.view);
 			this.domain = null;
 			this.formController = new CMDBuild.controller.administration.domain.CMDomainFormController(this.view.domainForm);
 			this.attributesController = new CMDBuild.controller.administration.domain.CMDomainAttributesController(this.view.domainAttributes);
-			
+
+			// Controller build
+			this.controllerHierarchy = Ext.create('CMDBuild.controller.administration.domain.Hierarchy', { parentDelegate: this });
+
+			// Inject tabs
+			this.view.tabPanel.add(this.controllerHierarchy.getView());
+
 			this.view.addButton.on("click", this.onAddDomainButtonClick, this);
 			_CMCache.on("cm_domain_deleted", this.view.onDomainDeleted, this.view);
 		},
 
 		onViewOnFront: function(selection) {
 			if (selection) {
-				this.domain = _CMCache.getDomainById(selection.get("id"));
+				this.selectedDomain = _CMCache.getDomainById(selection.get(CMDBuild.core.proxy.CMProxyConstants.ID));
+_debug('selectedDomain', this.selectedDomain);
+				this.controllerHierarchy.onViewOnFront();
+
+				this.domain = _CMCache.getDomainById(selection.get("id")); // TODO: delete and keep selectedDomain
 				this.formController.onDomainSelected(this.domain);
 				this.attributesController.onDomainSelected(this.domain);
 				this.view.setTitleSuffix(this.domain.get("description"));
 			}
 		},
-		
+
 		onAddDomainButtonClick: function() {
 			_CMMainViewportController.deselectAccordionByName("domain");
 			this.view.selectPropertiesTab();
@@ -31,14 +63,14 @@
 			this.attributesController.onAddButtonClick();
 		}
 	});
-	
+
 	function onAttributeSaved(jsonAttribute) {
 		if (this.domain != null) {
 			try {
 				var attributeLibary = this.domain.getAttributeLibrary();
 				var newAttribute = CMDBuild.core.model.CMAttributeModel.buildFromJson(jsonAttribute);
 				var oldAttribute = attributeLibary.get(newAttribute.getname());
-				
+
 				if (oldAttribute == null) {
 					this.attributesController.beforeAddAttributeToLibrary(newAttribute);
 					attributeLibary.add(newAttribute);
