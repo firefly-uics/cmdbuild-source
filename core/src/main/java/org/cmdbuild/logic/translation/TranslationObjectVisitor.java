@@ -9,6 +9,7 @@ import org.cmdbuild.logic.translation.object.DomainDirectDescription;
 import org.cmdbuild.logic.translation.object.DomainInverseDescription;
 import org.cmdbuild.logic.translation.object.DomainMasterDetailLabel;
 import org.cmdbuild.logic.translation.object.LookupDescription;
+import org.cmdbuild.logic.translation.object.MenuItemDescription;
 
 public interface TranslationObjectVisitor {
 
@@ -20,15 +21,7 @@ public interface TranslationObjectVisitor {
 
 	void visit(WidgetTranslation widgetTranslation);
 
-	void visit(DashboardTranslation dashboardTranslation);
-
-	void visit(ChartTranslation chartTranslation);
-
 	void visit(ReportTranslation reportTranslation);
-
-	void visit(LookupTranslation lookupTranslation);
-
-	void visit(GisIconTranslation gisIconTranslation);
 
 	void visit(MenuItemTranslation menuItemTranslation);
 
@@ -51,6 +44,8 @@ public interface TranslationObjectVisitor {
 	void visit(DomainAttributeDescription domainAttributeDescription);
 
 	void visit(LookupDescription lookupDescription);
+
+	void visit(MenuItemDescription menuItemDescription);
 
 
 }

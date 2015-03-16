@@ -185,14 +185,6 @@ public class DefaultTranslationLogic implements TranslationLogic {
 		// TODO: get rid of everything below
 
 		@Override
-		public void visit(LookupTranslation lookupTranslation) {
-			value = format("lookup.%s.%s", //
-					lookupTranslation.getName(),
-					FieldMapper.of(lookupTranslation.getField()).getResult());
-			
-		}
-
-		@Override
 		public void visit(final ViewTranslation translationObject) {
 			value = format("view.%s.%s", //
 					translationObject.getName(), //
@@ -219,31 +211,8 @@ public class DefaultTranslationLogic implements TranslationLogic {
 		}
 
 		@Override
-		public void visit(final DashboardTranslation translationObject) {
-			value = format("dashboard.%s.%s", //
-					translationObject.getName(), //
-					FieldMapper.of(translationObject.getField()).getResult());
-		}
-
-		@Override
-		public void visit(final ChartTranslation translationObject) {
-			value = format("chart.%s.%s", //
-					translationObject.getName(), //
-					FieldMapper.of(translationObject.getField()).getResult());
-		}
-
-		@Override
 		public void visit(final ReportTranslation translationObject) {
 			value = format("report.%s.%s", //
-					translationObject.getName(), //
-					FieldMapper.of(translationObject.getField()).getResult());
-		}
-
-
-
-		@Override
-		public void visit(final GisIconTranslation translationObject) {
-			value = format("gisicon.%s.%s", //
 					translationObject.getName(), //
 					FieldMapper.of(translationObject.getField()).getResult());
 		}

@@ -12,7 +12,7 @@ import com.google.common.collect.Maps;
 
 public enum DomainConverter {
 
-	DESCRIPTION("description") {
+	DESCRIPTION(description()) {
 
 		@Override
 		public boolean isValid() {
@@ -36,7 +36,7 @@ public enum DomainConverter {
 		}
 	},
 
-	DIRECT_DESCRIPTION("directDescription") {
+	DIRECT_DESCRIPTION(directDescription()) {
 
 		@Override
 		public boolean isValid() {
@@ -60,7 +60,7 @@ public enum DomainConverter {
 		}
 	},
 	
-	INVERSE_DESCRIPTION("inverseDescription") {
+	INVERSE_DESCRIPTION(inverseDescription()) {
 
 		@Override
 		public boolean isValid() {
@@ -84,7 +84,7 @@ public enum DomainConverter {
 		}
 	},
 	
-	MASTERDETAIL_LABEL("masterDetail") {
+	MASTERDETAIL_LABEL(masterDetail()) {
 
 		@Override
 		public boolean isValid() {
@@ -108,7 +108,7 @@ public enum DomainConverter {
 		}
 	},
 
-	UNDEFINED("undefined") {
+	UNDEFINED(undefined()) {
 
 		@Override
 		public boolean isValid() {
@@ -128,13 +128,38 @@ public enum DomainConverter {
 
 	private final String fieldName;
 	private static Map<String, String> translations = Maps.newHashMap();
+	private static final String DESCRIPTION_FIELD = "description";
+	private static final String DIRECTDESCRIPTION = "directDescription";
+	private static final String INVERSEDESCRIPTION = "inverseDescription";
+	private static final String MASTERDETAIL = "masterDetail";
+	private static final String UNDEFINED_FIELD = "undefined";
 
 	public abstract TranslationObject create(String domainName);
 	
 	public abstract DomainConverter withTranslations(Map<String, String> map);
 
 	public abstract boolean isValid();
-
+	
+	public static String description() {
+		return DESCRIPTION_FIELD;
+	}
+	
+	public static String directDescription() {
+		return DIRECTDESCRIPTION;
+	}
+	
+	public static String inverseDescription() {
+		return INVERSEDESCRIPTION;
+	}
+	
+	public static String masterDetail() {
+		return MASTERDETAIL;
+	}
+	
+	private static String undefined() {
+		return UNDEFINED_FIELD;
+	}
+	
 	private DomainConverter(final String fieldName) {
 		this.fieldName = fieldName;
 	}

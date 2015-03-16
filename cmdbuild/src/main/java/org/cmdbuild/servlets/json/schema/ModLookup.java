@@ -223,7 +223,7 @@ public class ModLookup extends JSONBaseWithSpringContext {
 	}
 
 	private LookupSerializer lookupSerializer() {
-		return new LookupSerializer(translationFacade(), lookupStore());
+		return new LookupSerializer(lookupStore());
 	}
 
 }
