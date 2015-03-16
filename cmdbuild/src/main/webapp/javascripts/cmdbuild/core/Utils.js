@@ -83,6 +83,20 @@
 			}
 
 			return pageSize;
+		},
+
+		/**
+		 * Capitalize first string's char
+		 *
+		 * @param {String} string
+		 *
+		 * @return {String} string
+		 */
+		toTitleCase: function(string) {
+			if (typeof string == 'string')
+				string = string.charAt(0).toUpperCase() + string.slice(1);
+
+			return string;
 		}
 	});
 

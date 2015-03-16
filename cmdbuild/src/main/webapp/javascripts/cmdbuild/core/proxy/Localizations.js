@@ -99,7 +99,7 @@
 					url = CMDBuild.core.proxy.CMProxyUrlIndex.localizations.classRead;
 				} break;
 
-				case 'classesAttribute': {
+				case 'classesAttributes': {
 					url = CMDBuild.core.proxy.CMProxyUrlIndex.localizations.classAttributeRead;
 				} break;
 
@@ -119,9 +119,9 @@
 
 				} break;
 			}
-_debug('url', url);
+
 			CMDBuild.Ajax.request({
-//				method: 'POST',
+				method: 'POST',
 				url: url,
 				params: parameters.params,
 				scope: parameters.scope || this,
