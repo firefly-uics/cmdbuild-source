@@ -4,7 +4,10 @@ import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.data.store.Storable;
 import org.cmdbuild.data.store.dao.ForwardingStorableConverter;
 import org.cmdbuild.data.store.dao.StorableConverter;
+import org.cmdbuild.data.store.lookup.Lookup;
 import org.cmdbuild.logic.translation.TranslationFacade;
+
+import com.google.common.base.Function;
 
 public class LocalizedStorableConverter<T extends Storable> extends ForwardingStorableConverter<T> {
 
@@ -28,9 +31,9 @@ public class LocalizedStorableConverter<T extends Storable> extends ForwardingSt
 
 	private T proxy(final T input) {
 		final T output;
-		if (input instanceof LocalizedStorable) {
-			final LocalizedStorable localizedStorable = LocalizedStorable.class.cast(input);
-			output = new LocalizedStorableVisitor() {
+		if (input instanceof LocalizableStorable) {
+			final LocalizableStorable localizedStorable = LocalizableStorable.class.cast(input);
+			output = new LocalizableStorableVisitor() {
 
 				private T output;
 
@@ -40,17 +43,15 @@ public class LocalizedStorableConverter<T extends Storable> extends ForwardingSt
 				}
 
 				@Override
-				public void visit(final LocalizedLookup storable) {
-
+				public void visit(Lookup storable) {
 					output = (T) storable;
-					// output = new Function<Lookup, T>() {
-					//
-					// @Override
-					// public T apply(LocalizedLookup input) {
-					// return (T) ((input == null) ? null : new
-					// LocalizedLookup(input, facade));
-					// }
-					// }.apply(storable);
+					output = new Function<Lookup, T>() {
+
+						@Override
+						public T apply(Lookup input) {
+							return (T) ((input == null) ? null : new LocalizedLookup(input, facade));
+						}
+					}.apply(storable);
 				}
 			}.proxy();
 		} else {

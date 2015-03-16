@@ -1,8 +1,8 @@
 package org.cmdbuild.data.store.lookup;
 
-import org.cmdbuild.data.store.Storable;
+import org.cmdbuild.services.localization.LocalizableStorable;
 
-public interface Lookup extends Storable {
+public interface Lookup extends LocalizableStorable{
 
 	String code();
 

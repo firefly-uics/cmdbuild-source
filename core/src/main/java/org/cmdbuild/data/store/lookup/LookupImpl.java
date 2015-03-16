@@ -3,6 +3,8 @@ package org.cmdbuild.data.store.lookup;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.cmdbuild.data.store.lookup.LookupType.LookupTypeBuilder;
+import org.cmdbuild.services.localization.LocalizableStorable;
+import org.cmdbuild.services.localization.LocalizableStorableVisitor;
 
 public final class LookupImpl implements Lookup {
 
@@ -226,4 +228,10 @@ public final class LookupImpl implements Lookup {
 	public String getDescription() {
 		return description;
 	}
+
+	@Override
+	public void accept(LocalizableStorableVisitor visitor) {
+		visitor.visit(this);
+	}
+
 }
