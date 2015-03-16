@@ -34,7 +34,6 @@ import java.util.Map;
 
 import org.cmdbuild.data.store.lookup.Lookup;
 import org.cmdbuild.data.store.lookup.LookupType;
-import org.cmdbuild.data.store.lookup._Lookup;
 import org.cmdbuild.logic.taskmanager.Task;
 import org.cmdbuild.logic.taskmanager.task.email.ReadEmailTask;
 import org.cmdbuild.logic.taskmanager.task.email.mapper.KeyValueMapperEngine;
@@ -180,7 +179,7 @@ public class ReadEmail extends JSONBaseWithSpringContext {
 		}
 
 		private Long lookupIdOf(final String category) {
-			final _Lookup lookup = categoryLookupsByName.get(category);
+			final Lookup lookup = categoryLookupsByName.get(category);
 			return (lookup == null) ? null : lookup.getId();
 		}
 
@@ -339,7 +338,7 @@ public class ReadEmail extends JSONBaseWithSpringContext {
 	}
 
 	private String lookupValueOf(final Long id) {
-		final _Lookup lookup;
+		final Lookup lookup;
 		if (id == 0) {
 			lookup = null;
 		} else {

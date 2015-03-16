@@ -1,10 +1,10 @@
 package org.cmdbuild.logic.dms;
 
-import org.cmdbuild.data.store.lookup._Lookup;
+import org.cmdbuild.data.store.lookup.Lookup;
 
 public class Utils {
 
-	public static String valueForCategory(final _Lookup input) {
+	public static String valueForCategory(final Lookup input) {
 		return (input == null) ? null : input.description();
 	}
 

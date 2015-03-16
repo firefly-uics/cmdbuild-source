@@ -69,7 +69,7 @@ public class Translation extends JSONBaseWithSpringContext {
 			@Parameter(value = TRANSLATIONS) final JSONObject translations //
 	) {
 
-		final AttributeConverter converter = AttributeConverter.of(null, field);
+		final AttributeConverter converter = AttributeConverter.of(AttributeConverter.aClass(), field);
 		Validate.isTrue(converter.isValid());
 		converter.withTranslations(toMap(translations));
 		final TranslationObject translationObject = converter.create(className, attributeName);
@@ -269,7 +269,7 @@ public class Translation extends JSONBaseWithSpringContext {
 			@Parameter(value = ATTRIBUTENAME) final String attributeName, //
 			@Parameter(value = FIELD) final String field //
 	) {
-		final AttributeConverter converter = AttributeConverter.of(null, field);
+		final AttributeConverter converter = AttributeConverter.of(AttributeConverter.aClass(), field);
 		Validate.isTrue(converter.isValid());
 		final TranslationObject translationObject = converter.create(className, attributeName);
 		final Map<String, String> translations = translationLogic().readAll(translationObject);
@@ -461,7 +461,7 @@ public class Translation extends JSONBaseWithSpringContext {
 			@Parameter(value = FIELD) final String field, //
 			@Parameter(value = TRANSLATIONS) final JSONObject translations //
 	) {
-		final AttributeConverter converter = AttributeConverter.of(null, field);
+		final AttributeConverter converter = AttributeConverter.of(AttributeConverter.aClass(), field);
 		converter.withTranslations(toMap(translations));
 		final TranslationObject translationObject = converter.create(className, attributeName);
 		translationLogic().update(translationObject);
@@ -663,7 +663,7 @@ public class Translation extends JSONBaseWithSpringContext {
 			@Parameter(value = FIELD) final String field, //
 			@Parameter(value = TRANSLATIONS) final JSONObject translations //
 	) {
-		final AttributeConverter converter = AttributeConverter.of(null, field);
+		final AttributeConverter converter = AttributeConverter.of(AttributeConverter.aClass(), field);
 		Validate.isTrue(converter.isValid());
 		converter.withTranslations(toMap(translations));
 		final TranslationObject translationObject = converter.create(className, attributeName);

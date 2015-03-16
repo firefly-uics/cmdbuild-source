@@ -80,8 +80,10 @@ public class DefaultAttributeValueAdapter implements AttributeValueAdapter {
 							}
 							if (destination != null) {
 								final CMQueryResult queryResult = dataView.select(anyAttribute(destination)) //
-										.from(destination) //
-										.where(condition(attribute(destination, DESCRIPTION_ATTRIBUTE), eq(shouldBeCode))) //
+										.from(destination)
+										//
+										.where(condition(attribute(destination, DESCRIPTION_ATTRIBUTE),
+												eq(shouldBeCode))) //
 										.run();
 								if (!queryResult.isEmpty()) {
 									final CMQueryRow row = queryResult.iterator().next();

@@ -1,13 +1,13 @@
 package org.cmdbuild.services.soap.operation;
 
-import static org.cmdbuild.logic.data.lookup.LookupLogic.*;
 import static com.google.common.collect.FluentIterable.from;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.defaultIfEmpty;
+import static org.cmdbuild.logic.data.lookup.LookupLogic.UNUSED_LOOKUP_QUERY;
 
 import org.cmdbuild.data.store.lookup.Lookup;
+import org.cmdbuild.data.store.lookup.LookupImpl;
 import org.cmdbuild.data.store.lookup.LookupType;
-import org.cmdbuild.data.store.lookup._Lookup;
 import org.cmdbuild.logic.data.lookup.LookupLogic;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
@@ -21,7 +21,7 @@ public class LookupLogicHelper implements SoapLogicHelper {
 
 	private static interface AttributeChecker {
 
-		boolean check(_Lookup input);
+		boolean check(Lookup input);
 
 	}
 
@@ -32,12 +32,12 @@ public class LookupLogicHelper implements SoapLogicHelper {
 	}
 
 	public int createLookup(final org.cmdbuild.services.soap.types.Lookup lookup) {
-		final Lookup lookupDto = transform(lookup);
+		final LookupImpl lookupDto = transform(lookup);
 		return logic.createOrUpdateLookup(lookupDto).intValue();
 	}
 
 	public boolean updateLookup(final org.cmdbuild.services.soap.types.Lookup lookup) {
-		final Lookup lookupDto = transform(lookup);
+		final LookupImpl lookupDto = transform(lookup);
 		logic.createOrUpdateLookup(lookupDto).intValue();
 		return true;
 	}
@@ -48,7 +48,7 @@ public class LookupLogicHelper implements SoapLogicHelper {
 	}
 
 	public org.cmdbuild.services.soap.types.Lookup getLookupById(final int id) {
-		final _Lookup lookup = logic.getLookup(Long.valueOf(id));
+		final Lookup lookup = logic.getLookup(Long.valueOf(id));
 		return transform(lookup, true);
 	}
 
@@ -56,7 +56,7 @@ public class LookupLogicHelper implements SoapLogicHelper {
 			final boolean parentList) {
 		return getLookupListByAttribute(type, new AttributeChecker() {
 			@Override
-			public boolean check(final _Lookup input) {
+			public boolean check(final Lookup input) {
 				return code.equals(input.code());
 			}
 		}, parentList);
@@ -66,7 +66,7 @@ public class LookupLogicHelper implements SoapLogicHelper {
 			final String description, final boolean parentList) {
 		return getLookupListByAttribute(type, new AttributeChecker() {
 			@Override
-			public boolean check(final _Lookup input) {
+			public boolean check(final Lookup input) {
 				return (description == null) || description.equals(input.description());
 			}
 		}, parentList);
@@ -94,8 +94,8 @@ public class LookupLogicHelper implements SoapLogicHelper {
 				.toArray(org.cmdbuild.services.soap.types.Lookup.class);
 	}
 
-	private Lookup transform(final org.cmdbuild.services.soap.types.Lookup from) {
-		return Lookup.newInstance() //
+	private LookupImpl transform(final org.cmdbuild.services.soap.types.Lookup from) {
+		return LookupImpl.newInstance() //
 				.withType(LookupType.newInstance()//
 						.withName(from.getType())) //
 				.withCode(defaultIfEmpty(from.getCode(), EMPTY)) //
@@ -108,7 +108,7 @@ public class LookupLogicHelper implements SoapLogicHelper {
 				.build();
 	}
 
-	private org.cmdbuild.services.soap.types.Lookup transform(final _Lookup from, final boolean parentList) {
+	private org.cmdbuild.services.soap.types.Lookup transform(final Lookup from, final boolean parentList) {
 		logger.debug(marker, "serializing lookup '{}'", from);
 		final org.cmdbuild.services.soap.types.Lookup to = new org.cmdbuild.services.soap.types.Lookup();
 		to.setId(from.getId().intValue());

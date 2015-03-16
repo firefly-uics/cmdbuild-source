@@ -49,7 +49,7 @@ import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entry.LookupValue;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
-import org.cmdbuild.data.store.lookup._Lookup;
+import org.cmdbuild.data.store.lookup.Lookup;
 import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.exception.ConsistencyException;
 import org.cmdbuild.exception.NotFoundException;
@@ -317,7 +317,7 @@ public class ModCard extends JSONBaseWithSpringContext {
 		if (card.card != null) {
 			final Object retrievedFlowStatus = card.card.get(FlowStatus.dbColumnName());
 			if (retrievedFlowStatus != null) {
-				final _Lookup lookupFlowStatus = lookupLogic().getLookup(((LookupValue) retrievedFlowStatus).getId());
+				final Lookup lookupFlowStatus = lookupLogic().getLookup(((LookupValue) retrievedFlowStatus).getId());
 				out.put("FlowStatus", lookupFlowStatus.code());
 			}
 		}
@@ -328,7 +328,7 @@ public class ModCard extends JSONBaseWithSpringContext {
 	private String flowStatus(final CMCard card) {
 		final Object retrievedFlowStatus = card.get(FlowStatus.dbColumnName());
 		if (retrievedFlowStatus != null) {
-			final _Lookup lookupFlowStatus = lookupLogic().getLookup(((LookupValue) retrievedFlowStatus).getId());
+			final Lookup lookupFlowStatus = lookupLogic().getLookup(((LookupValue) retrievedFlowStatus).getId());
 			return lookupFlowStatus.code();
 		} else {
 			return null;

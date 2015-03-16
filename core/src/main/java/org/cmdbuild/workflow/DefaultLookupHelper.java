@@ -3,7 +3,6 @@ package org.cmdbuild.workflow;
 import org.cmdbuild.data.store.lookup.Lookup;
 import org.cmdbuild.data.store.lookup.LookupStore;
 import org.cmdbuild.data.store.lookup.LookupType;
-import org.cmdbuild.data.store.lookup._Lookup;
 import org.cmdbuild.workflow.service.WSProcessInstanceState;
 import org.enhydra.shark.api.common.SharkConstants;
 
@@ -66,7 +65,7 @@ public class DefaultLookupHelper implements LookupHelper {
 
 	@Override
 	public WSProcessInstanceState stateForLookupId(final Long id) {
-		for (final _Lookup lookup : allLookups()) {
+		for (final Lookup lookup : allLookups()) {
 			if (lookup.getId().equals(id)) {
 				final WSProcessInstanceState state = stateForLookupCode(lookup.code());
 				return (state == null) ? WSProcessInstanceState.UNSUPPORTED : state;

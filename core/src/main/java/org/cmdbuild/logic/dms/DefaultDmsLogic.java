@@ -14,9 +14,10 @@ import javax.activation.DataHandler;
 
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.view.CMDataView;
-import org.cmdbuild.data.store.lookup.Lookup;
+import org.cmdbuild.data.store.lookup.LookupImpl;
 import org.cmdbuild.data.store.lookup.LookupStore;
 import org.cmdbuild.data.store.lookup.LookupType;
+import org.cmdbuild.data.store.lookup.Lookup;
 import org.cmdbuild.dms.DefaultDefinitionsFactory;
 import org.cmdbuild.dms.DefinitionsFactory;
 import org.cmdbuild.dms.DmsConfiguration;
@@ -83,7 +84,7 @@ public class DefaultDmsLogic implements DmsLogic {
 	 * category.
 	 * 
 	 * @param category
-	 *            is the {@code Description} of the {@link Lookup}.
+	 *            is the {@code Description} of the {@link LookupImpl}.
 	 * 
 	 * @return the {@link DocumentTypeDefinition} for the specified category.
 	 * 

@@ -25,7 +25,7 @@ public class DataViewLookupStore implements LookupStore {
 	}
 
 	@Override
-	public org.cmdbuild.data.store.Storable create(final _Lookup storable) {
+	public org.cmdbuild.data.store.Storable create(final Lookup storable) {
 		return inner.create(storable);
 	}
 
@@ -35,7 +35,7 @@ public class DataViewLookupStore implements LookupStore {
 	}
 
 	@Override
-	public void update(final _Lookup storable) {
+	public void update(final Lookup storable) {
 		inner.update(storable);
 	}
 
@@ -85,7 +85,7 @@ public class DataViewLookupStore implements LookupStore {
 			} else {
 				parentWithGrandparent = parent;
 			}
-			lookupWithParent = Lookup.newInstance() //
+			lookupWithParent = LookupImpl.newInstance() //
 					.clone(lookup) //
 					.withParent(parentWithGrandparent) //
 					.build();

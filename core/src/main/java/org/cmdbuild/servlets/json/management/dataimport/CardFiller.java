@@ -20,9 +20,9 @@ import org.cmdbuild.dao.entrytype.attributetype.ReferenceAttributeType;
 import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.CMQueryRow;
 import org.cmdbuild.dao.view.CMDataView;
+import org.cmdbuild.data.store.lookup.Lookup;
 import org.cmdbuild.data.store.lookup.LookupStore;
 import org.cmdbuild.data.store.lookup.LookupType;
-import org.cmdbuild.data.store.lookup._Lookup;
 import org.cmdbuild.exception.NotFoundException.NotFoundExceptionType;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -132,7 +132,7 @@ public class CardFiller {
 		final LookupType lookupType = LookupType.newInstance().withName(lookupTypeName).build();
 
 		boolean set = false;
-		for (final _Lookup lookup : lookupStore.readAll(lookupType)) {
+		for (final Lookup lookup : lookupStore.readAll(lookupType)) {
 			if (value.equals(lookup.description())) {
 				mutableCard.set( //
 						attributeName, //
