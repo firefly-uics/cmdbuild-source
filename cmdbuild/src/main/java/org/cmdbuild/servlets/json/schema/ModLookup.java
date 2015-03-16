@@ -25,8 +25,8 @@ import java.util.Map;
 import java.util.UUID;
 
 import org.cmdbuild.data.store.lookup.Lookup;
+import org.cmdbuild.data.store.lookup.LookupImpl;
 import org.cmdbuild.data.store.lookup.LookupType;
-import org.cmdbuild.data.store.lookup._Lookup;
 import org.cmdbuild.exception.AuthException;
 import org.cmdbuild.logic.data.lookup.LookupLogic.LookupQuery;
 import org.cmdbuild.logic.data.lookup.LookupLogic.LookupTypeQuery;
@@ -123,7 +123,7 @@ public class ModLookup extends JSONBaseWithSpringContext {
 
 		final LookupSerializer lookupSerializer = lookupSerializer();
 
-		for (final _Lookup element : elements) {
+		for (final Lookup element : elements) {
 			serializer.append("rows", lookupSerializer.serializeLookup(element, shortForm));
 		}
 
@@ -142,7 +142,7 @@ public class ModLookup extends JSONBaseWithSpringContext {
 
 		final LookupSerializer lookupSerializer = lookupSerializer();
 
-		for (final _Lookup lookup : elements) {
+		for (final Lookup lookup : elements) {
 			out.append("rows", lookupSerializer.serializeLookupParent(lookup));
 		}
 
@@ -180,9 +180,10 @@ public class ModLookup extends JSONBaseWithSpringContext {
 			final @Parameter(NUMBER) int number //
 	) throws JSONException {
 
-		String translationUuid = defaultIfBlank(lookupLogic().fetchTranslationUuid(id), UUID.randomUUID().toString());
+		final String translationUuid = defaultIfBlank(lookupLogic().fetchTranslationUuid(id), UUID.randomUUID()
+				.toString());
 
-		final Lookup lookup = Lookup.newInstance() //
+		final LookupImpl lookup = LookupImpl.newInstance() //
 				.withId(Long.valueOf(id)) //
 				.withCode(code) //
 				.withDescription(description) //

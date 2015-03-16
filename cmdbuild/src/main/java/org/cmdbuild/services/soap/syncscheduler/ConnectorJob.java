@@ -25,9 +25,9 @@ import org.cmdbuild.dao.query.clause.QueryDomain.Source;
 import org.cmdbuild.dao.query.clause.where.TrueWhereClause;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
 import org.cmdbuild.dao.view.CMDataView;
+import org.cmdbuild.data.store.lookup.Lookup;
 import org.cmdbuild.data.store.lookup.LookupStore;
 import org.cmdbuild.data.store.lookup.LookupType;
-import org.cmdbuild.data.store.lookup._Lookup;
 import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.exception.NotFoundException;
 import org.cmdbuild.logger.Log;
@@ -185,11 +185,13 @@ public class ConnectorJob implements Runnable {
 					detailCardId = createCard(referenceName);
 				} else {
 					detailCardId = createCard();
-					if (detailCardId > 0)
+					if (detailCardId > 0) {
 						createRelation();
+					}
 				}
-			} else
+			} else {
 				throw new Exception("MasterCardId is 0");
+			}
 		}
 	}
 
@@ -210,10 +212,12 @@ public class ConnectorJob implements Runnable {
 				} else {
 					Log.SOAP.info("ExternalSync - card detail is shared and has other relations - cannot delete! ");
 				}
-				if (!detailHasReferenceToMaster())
+				if (!detailHasReferenceToMaster()) {
 					deleteRelation();
-			} else
+				}
+			} else {
 				throw new Exception("MasterCardId is 0");
+			}
 		}
 	}
 
@@ -344,10 +348,10 @@ public class ConnectorJob implements Runnable {
 
 	private void addLookupAttributeTo(final CMAttribute attribute, final Card.Builder cardBuilder,
 			final String attributeValue) {
-		final LookupAttributeType lookupAttributeType = (LookupAttributeType) attribute.getType();		
+		final LookupAttributeType lookupAttributeType = (LookupAttributeType) attribute.getType();
 		if (StringUtils.isNotBlank(attributeValue)) {
 			final String lookupTypeName = lookupAttributeType.getLookupTypeName();
-			for (final _Lookup lookupDto : lookupStore.readAll(LookupType.newInstance() //
+			for (final Lookup lookupDto : lookupStore.readAll(LookupType.newInstance() //
 					.withName(lookupTypeName) //
 					.build())) {
 				if (lookupDto.description().equals(attributeValue)) {

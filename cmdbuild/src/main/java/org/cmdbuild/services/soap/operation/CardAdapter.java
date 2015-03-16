@@ -11,7 +11,6 @@ import org.cmdbuild.dao.entrytype.attributetype.NullAttributeTypeVisitor;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.data.store.lookup.Lookup;
 import org.cmdbuild.data.store.lookup.LookupStore;
-import org.cmdbuild.data.store.lookup._Lookup;
 import org.cmdbuild.services.soap.types.Attribute;
 import org.cmdbuild.services.soap.types.Card;
 
@@ -42,7 +41,7 @@ public class CardAdapter {
 						}
 					} else {
 						final Iterable<Lookup> lookupList = lookupStore.readAll();
-						for (final _Lookup lookup : lookupList) {
+						for (final Lookup lookup : lookupList) {
 							if (lookup.active() && //
 									lookup.type().name.equals(lookupTypeName) && //
 									lookup.description() != null && //
@@ -56,7 +55,7 @@ public class CardAdapter {
 
 				private boolean existsLookup(final String lookupTypeName, final Long lookupId) {
 					final Iterable<Lookup> lookupList = lookupStore.readAll();
-					for (final _Lookup lookup : lookupList) {
+					for (final Lookup lookup : lookupList) {
 						if (lookup.type().name.equals(lookupTypeName) && lookup.getId().equals(lookupId)) {
 							return true;
 						}

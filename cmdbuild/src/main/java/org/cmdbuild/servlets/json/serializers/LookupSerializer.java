@@ -20,7 +20,7 @@ import java.util.Map;
 import org.cmdbuild.dao.entry.LookupValue;
 import org.cmdbuild.data.store.lookup.LookupStore;
 import org.cmdbuild.data.store.lookup.LookupType;
-import org.cmdbuild.data.store.lookup._Lookup;
+import org.cmdbuild.data.store.lookup.Lookup;
 import org.cmdbuild.logic.translation.LookupTranslation;
 import org.cmdbuild.logic.translation.TranslationFacade;
 import org.json.JSONException;
@@ -37,11 +37,11 @@ public class LookupSerializer {
 		this.lookupStore = lookupStore;
 	}
 
-	public JSONObject serializeLookup(final _Lookup lookup) throws JSONException {
+	public JSONObject serializeLookup(final Lookup lookup) throws JSONException {
 		return serializeLookup(lookup, false);
 	}
 
-	public JSONObject serializeLookup(final _Lookup lookup, final boolean shortForm) throws JSONException {
+	public JSONObject serializeLookup(final Lookup lookup, final boolean shortForm) throws JSONException {
 		JSONObject serializer = null;
 		if (lookup != null) {
 			serializer = new JSONObject();
@@ -68,7 +68,7 @@ public class LookupSerializer {
 				serializer.put("TranslationUuid", lookup.uuid());
 			}
 
-			final _Lookup parent = lookup.parent();
+			final Lookup parent = lookup.parent();
 			if (parent != null) {
 				serializer.put("ParentId", parent.getId());
 				if (!shortForm) {
@@ -89,7 +89,7 @@ public class LookupSerializer {
 		return serializer;
 	}
 
-	public JSONObject serializeLookupParent(final _Lookup lookup) throws JSONException {
+	public JSONObject serializeLookupParent(final Lookup lookup) throws JSONException {
 		JSONObject serializer = null;
 		if (lookup != null) {
 
@@ -123,7 +123,7 @@ public class LookupSerializer {
 	public Map<String, Object> serializeLookupValue( //
 			final LookupValue value //
 	) {
-		final _Lookup lookup = lookup(value.getId());
+		final Lookup lookup = lookup(value.getId());
 		final Map<String, Object> out = new HashMap<String, Object>();
 		out.put(ID, value.getId());
 		out.put(DESCRIPTION, description(value));
@@ -146,7 +146,7 @@ public class LookupSerializer {
 		String jointTranslatedDescription = translatedDescription;
 
 		if (value instanceof LookupValue) {
-			_Lookup lookup = lookup(value.getId());
+			Lookup lookup = lookup(value.getId());
 			if (lookup != null) {
 				lookup = lookup(lookup.parentId());
 				while (lookup != null) {
@@ -169,7 +169,7 @@ public class LookupSerializer {
 		return jointTranslatedDescription;
 	}
 
-	private _Lookup lookup(final Long id) {
+	private Lookup lookup(final Long id) {
 		if (id != null) {
 			return lookupStore.read(storableOf(id));
 		} else {

@@ -8,8 +8,8 @@ import org.cmdbuild.dao.entry.IdAndDescription;
 import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.LookupAttributeType;
+import org.cmdbuild.data.store.lookup.Lookup;
 import org.cmdbuild.data.store.lookup.LookupStore;
-import org.cmdbuild.data.store.lookup._Lookup;
 import org.cmdbuild.logic.commands.AbstractGetRelation.RelationInfo;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -44,7 +44,7 @@ public class RelationAttributeSerializer {
 					&& value != null) { //
 
 				final IdAndDescription cardReference = IdAndDescription.class.cast(value);
-				_Lookup lookup = null;
+				Lookup lookup = null;
 				if (cardReference.getId() != null) {
 					lookup = lookupStore.read(storableOf(cardReference.getId()));
 				}

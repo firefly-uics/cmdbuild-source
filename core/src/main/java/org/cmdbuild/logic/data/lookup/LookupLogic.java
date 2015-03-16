@@ -34,9 +34,9 @@ import org.cmdbuild.dao.view.CMAttributeDefinition;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.data.store.Storable;
 import org.cmdbuild.data.store.lookup.Lookup;
+import org.cmdbuild.data.store.lookup.LookupImpl;
 import org.cmdbuild.data.store.lookup.LookupStore;
 import org.cmdbuild.data.store.lookup.LookupType;
-import org.cmdbuild.data.store.lookup._Lookup;
 import org.cmdbuild.exception.NotFoundException;
 import org.cmdbuild.exception.NotFoundException.NotFoundExceptionType;
 import org.cmdbuild.exception.ORMException;
@@ -169,9 +169,9 @@ public class LookupLogic implements Logic {
 	}
 
 	public String fetchTranslationUuid(final int id) {
-		final Lookup lookupWithId = Lookup.newInstance().withId((long) id).build();
+		final LookupImpl lookupWithId = LookupImpl.newInstance().withId((long) id).build();
 		try {
-			final _Lookup currentLookup = store.read(lookupWithId);
+			final Lookup currentLookup = store.read(lookupWithId);
 			return currentLookup.getTranslationUuid();
 		} catch (final Throwable t) {
 			return null;
@@ -191,7 +191,7 @@ public class LookupLogic implements Logic {
 		final LookupType existingLookupType = typeForNameAndParent(oldType.name, oldType.parent);
 		if (existingLookupType == null) {
 			logger.debug(marker, "old one not specified, creating a new one");
-			final _Lookup lookup = Lookup.newInstance() //
+			final Lookup lookup = LookupImpl.newInstance() //
 					.withType(newType) //
 					.withNumber(1) //
 					.withActiveStatus(true) //
@@ -199,8 +199,8 @@ public class LookupLogic implements Logic {
 			store.create(lookup);
 		} else {
 			logger.debug(marker, "old one specified, modifying existing one");
-			for (final _Lookup lookup : store.readAll(oldType)) {
-				final _Lookup newLookup = Lookup.newInstance() //
+			for (final Lookup lookup : store.readAll(oldType)) {
+				final Lookup newLookup = LookupImpl.newInstance() //
 						.withId(lookup.getId()) //
 						.withCode(lookup.code()) //
 						.withDescription(lookup.description()) //
@@ -414,7 +414,7 @@ public class LookupLogic implements Logic {
 		}
 
 		logger.trace(marker, "updating lookup active to '{}'", status);
-		final _Lookup lookup = Lookup.newInstance() //
+		final Lookup lookup = LookupImpl.newInstance() //
 				.clone(shouldBeOneOnly.next()) //
 				.withActiveStatus(status) //
 				.build();
@@ -449,12 +449,12 @@ public class LookupLogic implements Logic {
 		return found;
 	}
 
-	public Long createOrUpdateLookup(final Lookup lookup) {
+	public Long createOrUpdateLookup(final LookupImpl lookup) {
 		logger.info(marker, "creating or updating lookup '{}'", lookup);
 
 		assure(operationUser.hasAdministratorPrivileges());
 
-		final Lookup lookupWithRealType = Lookup.newInstance() //
+		final LookupImpl lookupWithRealType = LookupImpl.newInstance() //
 				.clone(lookup) //
 				.withType(typeFor(typesWith(lookup.type().name)).orNull()) //
 				.build();
@@ -465,10 +465,10 @@ public class LookupLogic implements Logic {
 
 			logger.debug(marker, "checking lookup number ('{}'), if not valid assigning a valid one",
 					lookupWithRealType.number());
-			final _Lookup toBeCreated;
+			final Lookup toBeCreated;
 			if (hasNoValidNumber(lookupWithRealType)) {
 				final int count = size(store.readAll(lookupWithRealType.type()));
-				toBeCreated = Lookup.newInstance() //
+				toBeCreated = LookupImpl.newInstance() //
 						.clone(lookupWithRealType) //
 						.withNumber(count + 1) //
 						.build();
@@ -483,10 +483,10 @@ public class LookupLogic implements Logic {
 
 			logger.debug(marker, "checking lookup number ('{}'), if not valid assigning a valid one",
 					lookupWithRealType.number());
-			final _Lookup toBeUpdated;
+			final Lookup toBeUpdated;
 			if (hasNoValidNumber(lookupWithRealType)) {
-				final _Lookup actual = store.read(lookupWithRealType);
-				toBeUpdated = Lookup.newInstance() //
+				final Lookup actual = store.read(lookupWithRealType);
+				toBeUpdated = LookupImpl.newInstance() //
 						.clone(lookupWithRealType) //
 						.withNumber(actual.number()) //
 						.build();
@@ -500,11 +500,11 @@ public class LookupLogic implements Logic {
 		return id;
 	}
 
-	private static boolean isNotExistent(final _Lookup lookup) {
+	private static boolean isNotExistent(final Lookup lookup) {
 		return lookup.getId() == null || lookup.getId() <= 0;
 	}
 
-	private static boolean hasNoValidNumber(final _Lookup lookup) {
+	private static boolean hasNoValidNumber(final Lookup lookup) {
 		return lookup.number() == null || lookup.number() <= 0;
 	}
 
@@ -527,7 +527,7 @@ public class LookupLogic implements Logic {
 		for (final Lookup lookup : lookups) {
 			if (positions.containsKey(lookup.getId())) {
 				final int index = positions.get(lookup.getId());
-				final _Lookup updated = Lookup.newInstance() //
+				final Lookup updated = LookupImpl.newInstance() //
 						.clone(lookup) //
 						.withNumber(index) //
 						.build();

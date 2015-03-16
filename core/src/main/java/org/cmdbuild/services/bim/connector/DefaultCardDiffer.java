@@ -19,7 +19,6 @@ import org.cmdbuild.dao.entrytype.attributetype.ReferenceAttributeType;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.data.store.lookup.Lookup;
 import org.cmdbuild.data.store.lookup.LookupType;
-import org.cmdbuild.data.store.lookup._Lookup;
 import org.cmdbuild.logic.data.lookup.LookupLogic;
 import org.slf4j.Logger;
 
@@ -173,7 +172,7 @@ public class DefaultCardDiffer implements CardDiffer {
 		final Iterable<Lookup> allLookusOfType = lookupLogic.getAllLookup(theType, true, UNUSED_LOOKUP_QUERY);
 
 		for (final Iterator<Lookup> it = allLookusOfType.iterator(); it.hasNext();) {
-			final _Lookup l = it.next();
+			final Lookup l = it.next();
 			if (l.getDescription() != null && l.getDescription().equals(lookupValue)) {
 				lookupId = l.getId();
 				break;

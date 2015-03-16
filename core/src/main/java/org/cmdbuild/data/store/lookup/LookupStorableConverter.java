@@ -34,8 +34,8 @@ public class LookupStorableConverter extends BaseStorableConverter<Lookup> {
 	}
 
 	@Override
-	public _Lookup convert(final CMCard card) {
-		return Lookup.newInstance() //
+	public Lookup convert(final CMCard card) {
+		return LookupImpl.newInstance() //
 				.withId(card.getId()) //
 				.withCode((String) card.getCode()) //
 				.withDescription((String) card.getDescription()) //
@@ -47,7 +47,7 @@ public class LookupStorableConverter extends BaseStorableConverter<Lookup> {
 				.withActiveStatus(A.equals(card.get(STATUS, String.class))) //
 				.withDefaultStatus(card.get(IS_DEFAULT, Boolean.class)) //
 				.withParentId(safeIntegerToLong(card.get(PARENT_ID, Integer.class), Long.class)) //
-				.withUuid((String)card.get(TRANSLATION_UUID)) //
+				.withUuid((String) card.get(TRANSLATION_UUID)) //
 				.build();
 	}
 
@@ -75,7 +75,5 @@ public class LookupStorableConverter extends BaseStorableConverter<Lookup> {
 			};
 		});
 	}
-	
-	
 
 }

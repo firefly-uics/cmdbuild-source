@@ -2,6 +2,7 @@ package org.cmdbuild.service.rest.v2.cxf.serialization;
 
 import static org.cmdbuild.service.rest.v2.model.Models.newLookupDetail;
 
+import org.cmdbuild.data.store.lookup.LookupImpl;
 import org.cmdbuild.data.store.lookup.Lookup;
 import org.cmdbuild.service.rest.v2.model.LookupDetail;
 
