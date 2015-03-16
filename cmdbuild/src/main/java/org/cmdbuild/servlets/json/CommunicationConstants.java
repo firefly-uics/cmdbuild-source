@@ -72,6 +72,7 @@ public class CommunicationConstants {
 			DELETE = "delete", //
 			DESCRIPTION_CAPITAL = "Description", //
 			DESCRIPTION = "description", //
+			DESTINATION = "destination", //
 			DETAIL_CARD_ID = "detailCardId", //
 			DETAIL_CLASS_NAME = "detailClassName", //
 			DIRECT_DESCRIPTION = "descrdir", //
@@ -234,10 +235,11 @@ public class CommunicationConstants {
 			SMTP_SERVER = "smtpServer", //
 			SMTP_SSL = "smtpSsl", //
 			SORT = "sort", //
-			SOURCE_ATTRIBUTE = "sourceAttribute", //
-			SOURCE_CLASS_NAME = "sourceClassName", //
-			SOURCE_FUNCTION = "sourceFunction", //
-			SOURCE_NAME = "sourceName", //
+			SOURCE = "source", //
+			SOURCE_ATTRIBUTE = SOURCE + "Attribute", //
+			SOURCE_CLASS_NAME = SOURCE + "ClassName", //
+			SOURCE_FUNCTION = SOURCE + "Function", //
+			SOURCE_NAME = SOURCE + "Name", //
 			SQLSERVER_LABEL = "SQLServer", //
 			SQLSERVER = "sqlserver", //
 			STARTING_CLASS = "startingClass", //
