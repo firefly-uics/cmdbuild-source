@@ -7,14 +7,13 @@ import java.util.Map;
 
 import org.cmdbuild.logic.translation.TranslationObject;
 import org.cmdbuild.logic.translation.converter.AttributeConverter;
-import org.cmdbuild.logic.translation.object.ClassAttributeDescription;
 import org.cmdbuild.logic.translation.object.DomainAttributeDescription;
 import org.junit.Test;
 
 import com.google.common.collect.ImmutableMap;
 
 public class DomainAttributeDescriptionObjectCreationTest {
-	
+
 	private static final String entryType = "domain";
 	private static final String floorname = "BuildingFloor";
 	private static final String attributename = "Name";

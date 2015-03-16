@@ -43,12 +43,12 @@ public class LocalizedStorableConverter<T extends Storable> extends ForwardingSt
 				}
 
 				@Override
-				public void visit(Lookup storable) {
+				public void visit(final Lookup storable) {
 					output = (T) storable;
 					output = new Function<Lookup, T>() {
 
 						@Override
-						public T apply(Lookup input) {
+						public T apply(final Lookup input) {
 							return (T) ((input == null) ? null : new LocalizedLookup(input, facade));
 						}
 					}.apply(storable);

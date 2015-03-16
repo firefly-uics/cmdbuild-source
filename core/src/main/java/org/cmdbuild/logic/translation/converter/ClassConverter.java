@@ -9,7 +9,7 @@ import com.google.common.collect.Maps;
 
 public enum ClassConverter {
 
-	DESCRIPTION("description") {
+	DESCRIPTION(description()) {
 
 		@Override
 		public boolean isValid() {
@@ -35,7 +35,7 @@ public enum ClassConverter {
 		}
 	},
 
-	UNDEFINED("undefined") {
+	UNDEFINED(undefined()) {
 
 		@Override
 		public boolean isValid() {
@@ -55,12 +55,23 @@ public enum ClassConverter {
 
 	private final String fieldName;
 	private static Map<String, String> translations = Maps.newHashMap();
+	
+	private static final String DESCRIPTION_FIELD = "description";
+	private static final String UNDEFINED_FIELD = "undefined";
 
 	public abstract TranslationObject create(String name);
 
 	public abstract ClassConverter withTranslations(Map<String, String> map);
 
 	public abstract boolean isValid();
+	
+	public static String description() {
+		return DESCRIPTION_FIELD;
+	}
+	
+	private static String undefined() {
+		return UNDEFINED_FIELD;
+	}
 
 	private ClassConverter(final String fieldName) {
 		this.fieldName = fieldName;
