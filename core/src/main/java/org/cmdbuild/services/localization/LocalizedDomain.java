@@ -17,7 +17,7 @@ class LocalizedDomain extends ForwardingDomain {
 	private static final String INVERSE_DESCRIPTION = DomainConverter.INVERSE_DESCRIPTION.field();
 	private static final String MASTERDETAIL_LABEL = DomainConverter.MASTERDETAIL_LABEL.field();
 
-	LocalizedDomain(final CMDomain delegate, final TranslationFacade facade) {
+	protected LocalizedDomain(final CMDomain delegate, final TranslationFacade facade) {
 		this.delegate = delegate;
 		this.facade = facade;
 	}
