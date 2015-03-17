@@ -160,7 +160,7 @@ public class PostgresDriver extends AbstractDBDriver {
 	@Override
 	public Long create(final DBEntry entry) {
 		logger.info(marker, "creating entry for type '{}'", entry.getType().getIdentifier());
-		Long id = new EntryInsertCommand(jdbcTemplate, entry).executeAndReturnKey();
+		final Long id = new EntryInsertCommand(jdbcTemplate, entry).executeAndReturnKey();
 		return id;
 	}
 

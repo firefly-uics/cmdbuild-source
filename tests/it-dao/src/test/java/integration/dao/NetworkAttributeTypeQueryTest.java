@@ -3,11 +3,11 @@ package integration.dao;
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
 import static org.cmdbuild.dao.query.clause.where.OperatorAndValues.eq;
+import static org.cmdbuild.dao.query.clause.where.OperatorAndValues.networkContained;
+import static org.cmdbuild.dao.query.clause.where.OperatorAndValues.networkContainedOrEqual;
 import static org.cmdbuild.dao.query.clause.where.OperatorAndValues.networkContains;
 import static org.cmdbuild.dao.query.clause.where.OperatorAndValues.networkContainsOrEqual;
 import static org.cmdbuild.dao.query.clause.where.OperatorAndValues.networkRelationed;
-import static org.cmdbuild.dao.query.clause.where.OperatorAndValues.networkContained;
-import static org.cmdbuild.dao.query.clause.where.OperatorAndValues.networkContainedOrEqual;
 import static org.cmdbuild.dao.query.clause.where.WhereClauses.condition;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
@@ -112,7 +112,7 @@ public class NetworkAttributeTypeQueryTest extends IntegrationTestBase {
 		return new HasNoRecords();
 	}
 
-	private Matcher<CMQueryResult> hasOneCard(Matcher<Object> matcher) {
+	private Matcher<CMQueryResult> hasOneCard(final Matcher<Object> matcher) {
 		return new OnlyRecord(matcher);
 	}
 
