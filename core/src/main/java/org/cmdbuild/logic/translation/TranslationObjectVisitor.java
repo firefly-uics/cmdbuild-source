@@ -8,38 +8,17 @@ import org.cmdbuild.logic.translation.object.DomainDescription;
 import org.cmdbuild.logic.translation.object.DomainDirectDescription;
 import org.cmdbuild.logic.translation.object.DomainInverseDescription;
 import org.cmdbuild.logic.translation.object.DomainMasterDetailLabel;
+import org.cmdbuild.logic.translation.object.LookupDescription;
 
 public interface TranslationObjectVisitor {
-
-	void visit(AttributeDomainTranslation attributeClassTranslation);
-
-	void visit(ViewTranslation filterViewTranslation);
-
-	void visit(FilterTranslation filterTranslation);
-
-	void visit(InstanceNameTranslation instanceNameTranslation);
-
-	void visit(WidgetTranslation widgetTranslation);
-
-	void visit(DashboardTranslation dashboardTranslation);
-
-	void visit(ChartTranslation chartTranslation);
-
-	void visit(ReportTranslation reportTranslation);
-
-	void visit(LookupTranslation lookupTranslation);
-
-	void visit(GisIconTranslation gisIconTranslation);
-
-	void visit(MenuItemTranslation menuItemTranslation);
-
-	void visit(NullTranslationObject translationObject);
-
-	void visit(ClassDescription classDescription);
 
 	void visit(ClassAttributeDescription classAttributeDescription);
 
 	void visit(ClassAttributeGroup classAttributeGroup);
+
+	void visit(ClassDescription classDescription);
+
+	void visit(DomainAttributeDescription domainAttributeDescription);
 
 	void visit(DomainDescription domainDescription);
 
@@ -49,7 +28,20 @@ public interface TranslationObjectVisitor {
 
 	void visit(DomainMasterDetailLabel domainMasterDetailDescription);
 
-	void visit(DomainAttributeDescription domainAttributeDescription);
+	void visit(FilterTranslation filterTranslation);
 
+	void visit(InstanceNameTranslation instanceNameTranslation);
+
+	void visit(LookupDescription lookupDescription);
+
+	void visit(MenuItemTranslation menuItemTranslation);
+
+	void visit(NullTranslationObject translationObject);
+
+	void visit(ReportTranslation reportTranslation);
+
+	void visit(ViewTranslation filterViewTranslation);
+
+	void visit(WidgetTranslation widgetTranslation);
 
 }

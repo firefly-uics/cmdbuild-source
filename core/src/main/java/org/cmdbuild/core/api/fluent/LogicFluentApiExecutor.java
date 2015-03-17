@@ -1,9 +1,10 @@
 package org.cmdbuild.core.api.fluent;
 
+import static org.cmdbuild.logic.data.lookup.LookupLogic.UNUSED_LOOKUP_QUERY;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import static org.cmdbuild.logic.data.lookup.LookupLogic.*;
 
 import org.cmdbuild.api.fluent.Card;
 import org.cmdbuild.api.fluent.CardDescriptor;
@@ -121,12 +122,12 @@ public class LogicFluentApiExecutor implements FluentApiExecutor {
 	}
 
 	@Override
-	public void suspendProcessInstance(ExistingProcessInstance processCard) {
+	public void suspendProcessInstance(final ExistingProcessInstance processCard) {
 		throw new UnsupportedOperationException("TODO");
 	}
 
 	@Override
-	public void resumeProcessInstance(ExistingProcessInstance processCard) {
+	public void resumeProcessInstance(final ExistingProcessInstance processCard) {
 		throw new UnsupportedOperationException("TODO");
 	}
 

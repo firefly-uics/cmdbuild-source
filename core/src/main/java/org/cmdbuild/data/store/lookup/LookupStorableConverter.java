@@ -35,7 +35,7 @@ public class LookupStorableConverter extends BaseStorableConverter<Lookup> {
 
 	@Override
 	public Lookup convert(final CMCard card) {
-		return Lookup.newInstance() //
+		return LookupImpl.newInstance() //
 				.withId(card.getId()) //
 				.withCode((String) card.getCode()) //
 				.withDescription((String) card.getDescription()) //
@@ -47,7 +47,7 @@ public class LookupStorableConverter extends BaseStorableConverter<Lookup> {
 				.withActiveStatus(A.equals(card.get(STATUS, String.class))) //
 				.withDefaultStatus(card.get(IS_DEFAULT, Boolean.class)) //
 				.withParentId(safeIntegerToLong(card.get(PARENT_ID, Integer.class), Long.class)) //
-				.withUuid((String)card.get(TRANSLATION_UUID)) //
+				.withUuid((String) card.get(TRANSLATION_UUID)) //
 				.build();
 	}
 
@@ -58,16 +58,16 @@ public class LookupStorableConverter extends BaseStorableConverter<Lookup> {
 	@Override
 	public Map<String, Object> getValues(final Lookup storable) {
 		final Map<String, Object> values = Maps.newHashMap();
-		values.put(CODE, storable.code);
-		values.put(DESCRIPTION, storable.description);
-		values.put(NOTES, storable.notes);
-		values.put(TYPE, storable.type.name);
-		values.put(PARENT_TYPE, storable.type.parent);
-		values.put(NUMBER, storable.number);
-		values.put(STATUS, storable.active ? A : N);
-		values.put(IS_DEFAULT, storable.isDefault);
-		values.put(PARENT_ID, (storable.parentId != null && storable.parentId == 0) ? null : storable.parentId);
-		values.put(TRANSLATION_UUID, storable.translationUuid);
+		values.put(CODE, storable.code());
+		values.put(DESCRIPTION, storable.description());
+		values.put(NOTES, storable.notes());
+		values.put(TYPE, storable.type().name);
+		values.put(PARENT_TYPE, storable.type().parent);
+		values.put(NUMBER, storable.number());
+		values.put(STATUS, storable.active() ? A : N);
+		values.put(IS_DEFAULT, storable.isDefault());
+		values.put(PARENT_ID, (storable.parentId() != null && storable.parentId() == 0) ? null : storable.parentId());
+		values.put(TRANSLATION_UUID, storable.uuid());
 		return filterValues(values, new Predicate<Object>() {
 			@Override
 			public boolean apply(final Object input) {
@@ -75,7 +75,5 @@ public class LookupStorableConverter extends BaseStorableConverter<Lookup> {
 			};
 		});
 	}
-	
-	
 
 }

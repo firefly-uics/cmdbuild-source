@@ -38,8 +38,8 @@ public class ReferenceAndLookupSerializer<T extends CMEntry> extends AbstractSer
 
 	private String descriptionOf(final Lookup lookup) {
 		final String concatFormat = "%s - %s";
-		String description = lookup.description;
-		final Lookup parent = lookup.parent;
+		String description = lookup.description();
+		final Lookup parent = lookup.parent();
 		if (parent != null) {
 			description = String.format(concatFormat, descriptionOf(parent), description);
 		}

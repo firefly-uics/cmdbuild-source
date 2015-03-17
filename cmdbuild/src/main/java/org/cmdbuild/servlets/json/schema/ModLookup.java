@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import org.cmdbuild.data.store.lookup.Lookup;
+import org.cmdbuild.data.store.lookup.LookupImpl;
 import org.cmdbuild.data.store.lookup.LookupType;
 import org.cmdbuild.exception.AuthException;
 import org.cmdbuild.logic.data.lookup.LookupLogic.LookupQuery;
@@ -179,9 +180,10 @@ public class ModLookup extends JSONBaseWithSpringContext {
 			final @Parameter(NUMBER) int number //
 	) throws JSONException {
 
-		String translationUuid = defaultIfBlank(lookupLogic().fetchTranslationUuid(id), UUID.randomUUID().toString());
+		final String translationUuid = defaultIfBlank(lookupLogic().fetchTranslationUuid(id), UUID.randomUUID()
+				.toString());
 
-		final Lookup lookup = Lookup.newInstance() //
+		final LookupImpl lookup = LookupImpl.newInstance() //
 				.withId(Long.valueOf(id)) //
 				.withCode(code) //
 				.withDescription(description) //
@@ -221,7 +223,7 @@ public class ModLookup extends JSONBaseWithSpringContext {
 	}
 
 	private LookupSerializer lookupSerializer() {
-		return new LookupSerializer(translationFacade(), lookupStore());
+		return new LookupSerializer(lookupStore());
 	}
 
 }

@@ -35,8 +35,7 @@ public class Dashboard {
 	@Bean
 	@Scope(PROTOTYPE)
 	public DashboardLogic dashboardLogic() {
-		return new DashboardLogic(data.systemDataView(), dashboardStore(), userStore.getUser(),
-				translation.translationLogic(), languageStore);
+		return new DashboardLogic(data.systemDataView(), dashboardStore(), userStore.getUser());
 	}
 
 }
