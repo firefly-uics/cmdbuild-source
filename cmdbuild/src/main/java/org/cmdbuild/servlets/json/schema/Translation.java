@@ -89,7 +89,7 @@ public class Translation extends JSONBaseWithSpringContext {
 			@Parameter(value = FIELD) final String field, //
 			@Parameter(value = TRANSLATIONS) final JSONObject translations //
 	) {
-		final AttributeConverter converter = AttributeConverter.of(AttributeConverter.forDomain(), FIELD);
+		final AttributeConverter converter = AttributeConverter.of(AttributeConverter.forDomain(), field);
 		Validate.isTrue(converter.isValid());
 		final TranslationObject translationObject = converter //
 				.withTranslations(toMap(translations)) //
