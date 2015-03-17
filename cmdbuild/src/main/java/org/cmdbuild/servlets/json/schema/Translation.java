@@ -60,8 +60,9 @@ public class Translation extends JSONBaseWithSpringContext {
 
 		final AttributeConverter converter = AttributeConverter.of(AttributeConverter.forClass(), field);
 		Validate.isTrue(converter.isValid());
-		converter.withTranslations(toMap(translations));
-		final TranslationObject translationObject = converter.create(className, attributeName);
+		final TranslationObject translationObject = converter //
+				.withTranslations(toMap(translations)) //
+				.create(className, attributeName);
 		translationLogic().create(translationObject);
 	}
 
@@ -74,8 +75,9 @@ public class Translation extends JSONBaseWithSpringContext {
 	) {
 		final DomainConverter converter = DomainConverter.of(field);
 		Validate.isTrue(converter.isValid());
-		converter.withTranslations(toMap(translations));
-		final TranslationObject translationObject = converter.create(domainName);
+		final TranslationObject translationObject = converter //
+				.withTranslations(toMap(translations)) //
+				.create(domainName);
 		translationLogic().create(translationObject);
 	}
 
@@ -89,23 +91,9 @@ public class Translation extends JSONBaseWithSpringContext {
 	) {
 		final AttributeConverter converter = AttributeConverter.of(AttributeConverter.forDomain(), FIELD);
 		Validate.isTrue(converter.isValid());
-		converter.withTranslations(toMap(translations));
-		final TranslationObject translationObject = converter.create(domainName, attributeName);
-		translationLogic().create(translationObject);
-	}
-
-	@JSONExported
-	@Admin
-	public void createForView( //
-			@Parameter(value = VIEWNAME) final String viewName, //
-			@Parameter(value = FIELD) final String field, //
-			@Parameter(value = TRANSLATIONS) final JSONObject translations //
-	) {
-		final ViewTranslation translationObject = ViewTranslation.newInstance() //
-				.withName(viewName) //
-				.withField(field) //
+		final TranslationObject translationObject = converter //
 				.withTranslations(toMap(translations)) //
-				.build();
+				.create(domainName, attributeName);
 		translationLogic().create(translationObject);
 	}
 
@@ -136,6 +124,20 @@ public class Translation extends JSONBaseWithSpringContext {
 
 	@JSONExported
 	@Admin
+	public void createForLookup( //
+			@Parameter(value = TRANSLATION_UUID) final String uuid, //
+			@Parameter(value = FIELD) final String field, //
+			@Parameter(value = TRANSLATIONS) final JSONObject translations //
+	) {
+		final LookupConverter converter = LookupConverter.of(field);
+		Validate.isTrue(converter.isValid());
+		final TranslationObject translationObject = converter //
+				.withTranslations(toMap(translations)).create(uuid);
+		translationLogic().create(translationObject);
+	}
+
+	@JSONExported
+	@Admin
 	public void createForMenuItem( //
 			@Parameter(value = MENU_ITEM_UUID) final String itemUniqueIdentifier, //
 			@Parameter(value = FIELD) final String field, //
@@ -143,21 +145,6 @@ public class Translation extends JSONBaseWithSpringContext {
 	) {
 		final MenuItemTranslation translationObject = MenuItemTranslation.newInstance() //
 				.withName(itemUniqueIdentifier) //
-				.withField(field) //
-				.withTranslations(toMap(translations)) //
-				.build();
-		translationLogic().create(translationObject);
-	}
-
-	@JSONExported
-	@Admin
-	public void createForWidget( //
-			@Parameter(value = WIDGET_ID) final String widgetId, //
-			@Parameter(value = FIELD) final String field, //
-			@Parameter(value = TRANSLATIONS) final JSONObject translations //
-	) {
-		final WidgetTranslation translationObject = WidgetTranslation.newInstance() //
-				.withName(widgetId) //
 				.withField(field) //
 				.withTranslations(toMap(translations)) //
 				.build();
@@ -181,14 +168,31 @@ public class Translation extends JSONBaseWithSpringContext {
 
 	@JSONExported
 	@Admin
-	public void createForLookup( //
-			@Parameter(value = TRANSLATION_UUID) final String uuid, //
+	public void createForView( //
+			@Parameter(value = VIEWNAME) final String viewName, //
 			@Parameter(value = FIELD) final String field, //
 			@Parameter(value = TRANSLATIONS) final JSONObject translations //
 	) {
-		final LookupConverter converter = LookupConverter.of(field);
-		Validate.isTrue(converter.isValid());
-		final TranslationObject translationObject = converter.create(uuid);
+		final ViewTranslation translationObject = ViewTranslation.newInstance() //
+				.withName(viewName) //
+				.withField(field) //
+				.withTranslations(toMap(translations)) //
+				.build();
+		translationLogic().create(translationObject);
+	}
+
+	@JSONExported
+	@Admin
+	public void createForWidget( //
+			@Parameter(value = WIDGET_ID) final String widgetId, //
+			@Parameter(value = FIELD) final String field, //
+			@Parameter(value = TRANSLATIONS) final JSONObject translations //
+	) {
+		final WidgetTranslation translationObject = WidgetTranslation.newInstance() //
+				.withName(widgetId) //
+				.withField(field) //
+				.withTranslations(toMap(translations)) //
+				.build();
 		translationLogic().create(translationObject);
 	}
 
@@ -248,19 +252,6 @@ public class Translation extends JSONBaseWithSpringContext {
 
 	@JSONExported
 	@Admin
-	public JsonResponse readForView( //
-			@Parameter(value = VIEWNAME) final String viewName, //
-			@Parameter(value = FIELD) final String field) {
-		final ViewTranslation translationObject = ViewTranslation.newInstance() //
-				.withName(viewName) //
-				.withField(field) //
-				.build();
-		final Map<String, String> translations = translationLogic().readAll(translationObject);
-		return JsonResponse.success(translations);
-	}
-
-	@JSONExported
-	@Admin
 	public JsonResponse readForFilter( //
 			@Parameter(value = FILTERNAME) final String filterName, //
 			@Parameter(value = FIELD) final String field) {
@@ -282,12 +273,25 @@ public class Translation extends JSONBaseWithSpringContext {
 
 	@JSONExported
 	@Admin
-	public JsonResponse readForWidget( //
-			@Parameter(value = WIDGET_ID) final String widgetId, //
+	public JsonResponse readForLookup( //
+			@Parameter(value = TRANSLATION_UUID) final String uuid, //
 			@Parameter(value = FIELD) final String field //
 	) {
-		final WidgetTranslation translationObject = WidgetTranslation.newInstance() //
-				.withName(widgetId) //
+		final LookupConverter converter = LookupConverter.of(field);
+		Validate.isTrue(converter.isValid());
+		final TranslationObject translationObject = converter.create(uuid);
+		final Map<String, String> translations = translationLogic().readAll(translationObject);
+		return JsonResponse.success(translations);
+	}
+
+	@JSONExported
+	@Admin
+	public JsonResponse readForMenuItem( //
+			@Parameter(value = MENU_ITEM_UUID) final String uniqueIdentifier, //
+			@Parameter(value = FIELD) final String field //
+	) {
+		final MenuItemTranslation translationObject = MenuItemTranslation.newInstance() //
+				.withName(uniqueIdentifier) //
 				.withField(field) //
 				.build();
 		final Map<String, String> translations = translationLogic().readAll(translationObject);
@@ -310,25 +314,25 @@ public class Translation extends JSONBaseWithSpringContext {
 
 	@JSONExported
 	@Admin
-	public JsonResponse readForLookup( //
-			@Parameter(value = TRANSLATION_UUID) final String lookupId, //
-			@Parameter(value = FIELD) final String field //
-	) {
-		final LookupConverter converter = LookupConverter.of(field);
-		Validate.isTrue(converter.isValid());
-		final TranslationObject translationObject = converter.create(lookupId);
+	public JsonResponse readForView( //
+			@Parameter(value = VIEWNAME) final String viewName, //
+			@Parameter(value = FIELD) final String field) {
+		final ViewTranslation translationObject = ViewTranslation.newInstance() //
+				.withName(viewName) //
+				.withField(field) //
+				.build();
 		final Map<String, String> translations = translationLogic().readAll(translationObject);
 		return JsonResponse.success(translations);
 	}
 
 	@JSONExported
 	@Admin
-	public JsonResponse readForMenuItem( //
-			@Parameter(value = MENU_ITEM_UUID) final String uniqueIdentifier, //
+	public JsonResponse readForWidget( //
+			@Parameter(value = WIDGET_ID) final String widgetId, //
 			@Parameter(value = FIELD) final String field //
 	) {
-		final MenuItemTranslation translationObject = MenuItemTranslation.newInstance() //
-				.withName(uniqueIdentifier) //
+		final WidgetTranslation translationObject = WidgetTranslation.newInstance() //
+				.withName(widgetId) //
 				.withField(field) //
 				.build();
 		final Map<String, String> translations = translationLogic().readAll(translationObject);
@@ -362,8 +366,9 @@ public class Translation extends JSONBaseWithSpringContext {
 			@Parameter(value = TRANSLATIONS) final JSONObject translations //
 	) {
 		final AttributeConverter converter = AttributeConverter.of(AttributeConverter.forClass(), field);
-		converter.withTranslations(toMap(translations));
-		final TranslationObject translationObject = converter.create(className, attributeName);
+		final TranslationObject translationObject = converter //
+				.withTranslations(toMap(translations)) //
+				.create(className, attributeName);
 		translationLogic().update(translationObject);
 	}
 
@@ -375,8 +380,9 @@ public class Translation extends JSONBaseWithSpringContext {
 			@Parameter(value = TRANSLATIONS) final JSONObject translations //
 	) {
 		final DomainConverter converter = DomainConverter.of(field);
-		converter.withTranslations(toMap(translations));
-		final TranslationObject translationObject = converter.create(domainName);
+		final TranslationObject translationObject = converter //
+				.withTranslations(toMap(translations)) //
+				.create(domainName);
 		translationLogic().update(translationObject);
 	}
 
@@ -389,23 +395,9 @@ public class Translation extends JSONBaseWithSpringContext {
 			@Parameter(value = TRANSLATIONS) final JSONObject translations //
 	) {
 		final AttributeConverter converter = AttributeConverter.of(AttributeConverter.forDomain(), field);
-		converter.withTranslations(toMap(translations));
-		final TranslationObject translationObject = converter.create(domainName, attributeName);
-		translationLogic().update(translationObject);
-	}
-
-	@JSONExported
-	@Admin
-	public void updateForView( //
-			@Parameter(value = VIEWNAME) final String viewName, //
-			@Parameter(value = FIELD) final String field, //
-			@Parameter(value = TRANSLATIONS) final JSONObject translations //
-	) {
-		final ViewTranslation translationObject = ViewTranslation.newInstance() //
-				.withName(viewName) //
-				.withField(field) //
+		final TranslationObject translationObject = converter //
 				.withTranslations(toMap(translations)) //
-				.build();
+				.create(domainName, attributeName);
 		translationLogic().update(translationObject);
 	}
 
@@ -436,13 +428,27 @@ public class Translation extends JSONBaseWithSpringContext {
 
 	@JSONExported
 	@Admin
-	public void updateForWidget( //
-			@Parameter(value = WIDGET_ID) final String widgetId, //
+	public void updateForLookup( //
+			@Parameter(value = TRANSLATION_UUID) final String uuid, //
 			@Parameter(value = FIELD) final String field, //
 			@Parameter(value = TRANSLATIONS) final JSONObject translations //
 	) {
-		final WidgetTranslation translationObject = WidgetTranslation.newInstance() //
-				.withName(widgetId) //
+		final LookupConverter converter = LookupConverter.of(field);
+		final TranslationObject translationObject = converter //
+				.withTranslations(toMap(translations)) //
+				.create(uuid);
+		translationLogic().update(translationObject);
+	}
+
+	@JSONExported
+	@Admin
+	public void updateForMenuItem( //
+			@Parameter(value = MENU_ITEM_UUID) final String uniqueIdentifier, //
+			@Parameter(value = FIELD) final String field, //
+			@Parameter(value = TRANSLATIONS) final JSONObject translations //
+	) {
+		final MenuItemTranslation translationObject = MenuItemTranslation.newInstance() //
+				.withName(uniqueIdentifier) //
 				.withField(field) //
 				.withTranslations(toMap(translations)) //
 				.build();
@@ -466,31 +472,37 @@ public class Translation extends JSONBaseWithSpringContext {
 
 	@JSONExported
 	@Admin
-	public void updateForLookup( //
-			@Parameter(value = TRANSLATION_UUID) final String uuid, //
+	public void updateForView( //
+			@Parameter(value = VIEWNAME) final String viewName, //
 			@Parameter(value = FIELD) final String field, //
 			@Parameter(value = TRANSLATIONS) final JSONObject translations //
 	) {
-		final LookupConverter converter = LookupConverter.of(field);
-		converter.withTranslations(toMap(translations));
-		final TranslationObject translationObject = converter.create(uuid);
-		translationLogic().update(translationObject);
-	}
-
-	@JSONExported
-	@Admin
-	public void updateForMenuItem( //
-			@Parameter(value = MENU_ITEM_UUID) final String uniqueIdentifier, //
-			@Parameter(value = FIELD) final String field, //
-			@Parameter(value = TRANSLATIONS) final JSONObject translations //
-	) {
-		final MenuItemTranslation translationObject = MenuItemTranslation.newInstance() //
-				.withName(uniqueIdentifier) //
+		final ViewTranslation translationObject = ViewTranslation.newInstance() //
+				.withName(viewName) //
 				.withField(field) //
 				.withTranslations(toMap(translations)) //
 				.build();
 		translationLogic().update(translationObject);
 	}
+
+	@JSONExported
+	@Admin
+	public void updateForWidget( //
+			@Parameter(value = WIDGET_ID) final String widgetId, //
+			@Parameter(value = FIELD) final String field, //
+			@Parameter(value = TRANSLATIONS) final JSONObject translations //
+	) {
+		final WidgetTranslation translationObject = WidgetTranslation.newInstance() //
+				.withName(widgetId) //
+				.withField(field) //
+				.withTranslations(toMap(translations)) //
+				.build();
+		translationLogic().update(translationObject);
+	}
+
+	/*
+	 * Translations: DELETE
+	 */
 
 	@JSONExported
 	@Admin
@@ -517,8 +529,9 @@ public class Translation extends JSONBaseWithSpringContext {
 	) {
 		final AttributeConverter converter = AttributeConverter.of(AttributeConverter.forClass(), field);
 		Validate.isTrue(converter.isValid());
-		converter.withTranslations(toMap(translations));
-		final TranslationObject translationObject = converter.create(className, attributeName);
+		final TranslationObject translationObject = converter //
+				.withTranslations(toMap(translations)) //
+				.create(className, attributeName);
 		translationLogic().delete(translationObject);
 	}
 
@@ -531,8 +544,9 @@ public class Translation extends JSONBaseWithSpringContext {
 	) {
 		final DomainConverter converter = DomainConverter.of(field);
 		Validate.isTrue(converter.isValid());
-		converter.withTranslations(toMap(translations));
-		final TranslationObject translationObject = converter.create(domainName);
+		final TranslationObject translationObject = converter //
+				.withTranslations(toMap(translations)) //
+				.create(domainName);
 		translationLogic().delete(translationObject);
 	}
 
@@ -546,23 +560,9 @@ public class Translation extends JSONBaseWithSpringContext {
 	) {
 		final AttributeConverter converter = AttributeConverter.of(AttributeConverter.forDomain(), field);
 		Validate.isTrue(converter.isValid());
-		converter.withTranslations(toMap(translations));
-		final TranslationObject translationObject = converter.create(domainName, attributeName);
-		translationLogic().delete(translationObject);
-	}
-
-	@JSONExported
-	@Admin
-	public void deleteForView( //
-			@Parameter(value = VIEWNAME) final String viewName, //
-			@Parameter(value = FIELD) final String field, //
-			@Parameter(value = TRANSLATIONS) final JSONObject translations //
-	) {
-		final ViewTranslation translationObject = ViewTranslation.newInstance() //
-				.withName(viewName) //
-				.withField(field) //
+		final TranslationObject translationObject = converter //
 				.withTranslations(toMap(translations)) //
-				.build();
+				.create(domainName, attributeName);
 		translationLogic().delete(translationObject);
 	}
 
@@ -593,13 +593,27 @@ public class Translation extends JSONBaseWithSpringContext {
 
 	@JSONExported
 	@Admin
-	public void deleteForWidget( //
-			@Parameter(value = WIDGET_ID) final String widgetId, //
+	public void deleteForLookup( //
+			@Parameter(value = TRANSLATION_UUID) final String uuid, //
 			@Parameter(value = FIELD) final String field, //
 			@Parameter(value = TRANSLATIONS) final JSONObject translations //
 	) {
-		final WidgetTranslation translationObject = WidgetTranslation.newInstance() //
-				.withName(widgetId) //
+		final LookupConverter converter = LookupConverter.of(field);
+		Validate.isTrue(converter.isValid());
+		final TranslationObject translationObject = converter //
+				.withTranslations(toMap(translations)).create(uuid);
+		translationLogic().delete(translationObject);
+	}
+
+	@JSONExported
+	@Admin
+	public void deleteForMenuItem( //
+			@Parameter(value = MENU_ITEM_UUID) final String itemUniqueIdentifier, //
+			@Parameter(value = FIELD) final String field, //
+			@Parameter(value = TRANSLATIONS) final JSONObject translations //
+	) {
+		final MenuItemTranslation translationObject = MenuItemTranslation.newInstance() //
+				.withName(itemUniqueIdentifier) //
 				.withField(field) //
 				.withTranslations(toMap(translations)) //
 				.build();
@@ -623,31 +637,31 @@ public class Translation extends JSONBaseWithSpringContext {
 
 	@JSONExported
 	@Admin
-	public void deleteForLookup( //
-			@Parameter(value = TRANSLATION_UUID) final String uuid, //
+	public void deleteForView( //
+			@Parameter(value = VIEWNAME) final String viewName, //
 			@Parameter(value = FIELD) final String field, //
 			@Parameter(value = TRANSLATIONS) final JSONObject translations //
 	) {
-		final LookupConverter converter = LookupConverter.of(field);
-		Validate.isTrue(converter.isValid());
-		converter.withTranslations(toMap(translations));
-		final TranslationObject translationObject = converter.create(uuid);
-		translationLogic().delete(translationObject);
-	}
-
-	@JSONExported
-	@Admin
-	public void deleteForMenuItem( //
-			@Parameter(value = MENU_ITEM_UUID) final String itemUniqueIdentifier, //
-			@Parameter(value = FIELD) final String field, //
-			@Parameter(value = TRANSLATIONS) final JSONObject translations //
-	) {
-		final MenuItemTranslation translationObject = MenuItemTranslation.newInstance() //
-				.withName(itemUniqueIdentifier) //
+		final ViewTranslation translationObject = ViewTranslation.newInstance() //
+				.withName(viewName) //
 				.withField(field) //
 				.withTranslations(toMap(translations)) //
 				.build();
 		translationLogic().delete(translationObject);
 	}
 
+	@JSONExported
+	@Admin
+	public void deleteForWidget( //
+			@Parameter(value = WIDGET_ID) final String widgetId, //
+			@Parameter(value = FIELD) final String field, //
+			@Parameter(value = TRANSLATIONS) final JSONObject translations //
+	) {
+		final WidgetTranslation translationObject = WidgetTranslation.newInstance() //
+				.withName(widgetId) //
+				.withField(field) //
+				.withTranslations(toMap(translations)) //
+				.build();
+		translationLogic().delete(translationObject);
+	}
 }

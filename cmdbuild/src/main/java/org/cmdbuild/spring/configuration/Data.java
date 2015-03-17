@@ -59,7 +59,7 @@ public class Data {
 
 	@Bean
 	protected DataViewStore<Lookup> baseLookupStore() {
-		return DataViewStore.newInstance(systemDataView(), lookupStorableConverter());
+		return DataViewStore.newInstance(_systemDataView(), lookupStorableConverter());
 	}
 
 	@Bean
@@ -107,10 +107,15 @@ public class Data {
 	@Bean(name = BEAN_SYSTEM_DATA_VIEW)
 	@Qualifier(SYSTEM)
 	public CMDataView systemDataView() {
-		final DBDataView dbDataView = new DBDataView(dbDriver);
 		return new LocalizedDataView( //
-				dbDataView, //
-				translation.translationFacade());
+				_systemDataView(), //
+				translation.translationFacade(), //
+				lookupStore());
+	}
+
+	@Bean
+	protected DBDataView _systemDataView() {
+		return new DBDataView(dbDriver);
 	}
 
 }

@@ -9,8 +9,11 @@ import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.entrytype.CMIdentifier;
 import org.cmdbuild.dao.entrytype.ForwardingClass;
 import org.cmdbuild.dao.entrytype.ForwardingDomain;
+import org.cmdbuild.dao.query.CMQueryResult;
+import org.cmdbuild.dao.query.QuerySpecs;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.dao.view.ForwardingDataView;
+import org.cmdbuild.data.store.lookup.LookupStore;
 import org.cmdbuild.logic.translation.TranslationFacade;
 
 import com.google.common.base.Function;
@@ -21,8 +24,9 @@ public class LocalizedDataView extends ForwardingDataView {
 	private final Function<CMClass, CMClass> TO_LOCALIZED_CLASS;
 	private final Function<CMDomain, CMDomain> TO_LOCALIZED_DOMAIN;
 	private final Function<CMAttribute, CMAttribute> TO_LOCALIZED_ATTRIBUTE;
+	private Function<CMQueryResult, CMQueryResult> TO_LOCALIZED_QUERYRESULT;
 
-	public LocalizedDataView(final CMDataView delegate, final TranslationFacade facade) {
+	public LocalizedDataView(final CMDataView delegate, final TranslationFacade facade, final LookupStore lookupStore) {
 		this.delegate = delegate;
 		this.TO_LOCALIZED_CLASS = new Function<CMClass, CMClass>() {
 
@@ -110,6 +114,16 @@ public class LocalizedDataView extends ForwardingDataView {
 			}
 
 		};
+
+		this.TO_LOCALIZED_QUERYRESULT = new Function<CMQueryResult, CMQueryResult>() {
+
+			@Override
+			public CMQueryResult apply(final CMQueryResult input) {
+				return (input == null) ? null : new LocalizedQueryResult(input, facade, lookupStore);
+			}
+
+		};
+
 	}
 
 	@Override
@@ -180,6 +194,15 @@ public class LocalizedDataView extends ForwardingDataView {
 	@Override
 	public Iterable<? extends CMDomain> findDomainsFor(final CMClass type) {
 		return proxyDomains(super.findDomainsFor(type));
+	}
+
+	@Override
+	public CMQueryResult executeQuery(final QuerySpecs querySpecs) {
+		return proxy(super.executeQuery(querySpecs));
+	}
+
+	private CMQueryResult proxy(final CMQueryResult executeQuery) {
+		return TO_LOCALIZED_QUERYRESULT.apply(executeQuery);
 	}
 
 	private CMClass proxyClass(final CMClass type) {

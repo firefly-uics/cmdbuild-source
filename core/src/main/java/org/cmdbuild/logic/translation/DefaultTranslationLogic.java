@@ -24,7 +24,6 @@ import org.cmdbuild.logic.translation.object.DomainDirectDescription;
 import org.cmdbuild.logic.translation.object.DomainInverseDescription;
 import org.cmdbuild.logic.translation.object.DomainMasterDetailLabel;
 import org.cmdbuild.logic.translation.object.LookupDescription;
-import org.cmdbuild.logic.translation.object.MenuItemDescription;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
@@ -128,35 +127,35 @@ public class DefaultTranslationLogic implements TranslationLogic {
 		}
 
 		@Override
-		public void visit(DomainDescription translationObject) {
+		public void visit(final DomainDescription translationObject) {
 			value = format("domain.%s.%s", //
 					translationObject.getName(), //
 					DESCRIPTION);
 		}
 
 		@Override
-		public void visit(DomainDirectDescription translationObject) {
+		public void visit(final DomainDirectDescription translationObject) {
 			value = format("domain.%s.%s", //
 					translationObject.getName(), //
 					DIRECT_DESCRIPTION);
 		}
 
 		@Override
-		public void visit(DomainInverseDescription translationObject) {
+		public void visit(final DomainInverseDescription translationObject) {
 			value = format("domain.%s.%s", //
 					translationObject.getName(), //
 					INVERSE_DESCRIPTION);
 		}
 
 		@Override
-		public void visit(DomainMasterDetailLabel translationObject) {
+		public void visit(final DomainMasterDetailLabel translationObject) {
 			value = format("domain.%s.%s", //
 					translationObject.getName(), //
 					MASTERDETAIL_LABEL);
 		}
 
 		@Override
-		public void visit(DomainAttributeDescription translationObject) {
+		public void visit(final DomainAttributeDescription translationObject) {
 			value = format("attributedomain.%s.%s.%s", //
 					translationObject.getDomainName(), //
 					translationObject.getName(), //
@@ -164,10 +163,9 @@ public class DefaultTranslationLogic implements TranslationLogic {
 		}
 
 		@Override
-		public void visit(LookupDescription translationObject) {
+		public void visit(final LookupDescription translationObject) {
 			value = format("lookup.%s.%s", //
-					translationObject.getName(),
-					DESCRIPTION);
+					translationObject.getName(), DESCRIPTION);
 		}
 
 		@Override
@@ -175,13 +173,6 @@ public class DefaultTranslationLogic implements TranslationLogic {
 			value = EMPTY;
 		}
 
-		@Override
-		public void visit(MenuItemDescription translationObject) {
-			value = format("menuitem.%s.%s", //
-					translationObject.getName(), //
-					DESCRIPTION);
-		}
-		
 		// TODO: get rid of everything below
 
 		@Override
