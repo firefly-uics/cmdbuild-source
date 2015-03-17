@@ -87,9 +87,9 @@ public class CommunicationConstants {
 			DOMAIN_FIRST_CLASS_ID = "idClass1", //
 			DOMAIN_ID = "domainId", //
 			DOMAIN_IS_MASTER_DETAIL = "isMasterDetail", //
-			DOMAIN_LIMIT = "domainlimit", //
+			DOMAIN_LIMIT = DOMAIN + "limit", //
 			DOMAIN_MASTER_DETAIL_LABEL = "md_label", //
-			DOMAIN_NAME = "domainName", //
+			DOMAIN_NAME = DOMAIN + "Name", //
 			DOMAINS = "domains", //
 			DOMAIN_SECOND_CLASS_ID = "idClass2", //
 			DOMAIN_SOURCE = "src", //

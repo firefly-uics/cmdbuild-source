@@ -1,6 +1,7 @@
 package org.cmdbuild.logic.commands;
 
-import static com.google.common.collect.Iterables.isEmpty;
+import static com.google.common.collect.FluentIterable.from;
+import static org.cmdbuild.dao.entrytype.Predicates.domainFor;
 import static org.cmdbuild.dao.query.clause.AnyDomain.anyDomain;
 import static org.cmdbuild.dao.query.clause.DomainHistory.history;
 
@@ -31,9 +32,10 @@ public class GetRelationHistory extends AbstractGetRelation {
 	public GetRelationHistoryResponse exec(final Card source, final CMDomain domain) {
 		Validate.notNull(source);
 		final CMClass sourceClass = view.findClass(source.getClassName());
-		final Iterable<? extends CMDomain> domains = view.findDomainsFor(sourceClass);
 		final CMQueryResult relationList;
-		if (isEmpty(domains)) {
+		if (from(view.findDomains()) //
+				.filter(domainFor(sourceClass)) //
+				.isEmpty()) {
 			relationList = CMQueryResult.EMPTY;
 		} else {
 			relationList = getRelationQuery(source, history(domain)).run();

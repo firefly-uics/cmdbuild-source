@@ -8,8 +8,10 @@ import static java.util.Arrays.asList;
 import static org.apache.commons.lang3.RandomStringUtils.randomAscii;
 import static org.cmdbuild.dao.constants.Cardinality.CARDINALITY_1N;
 import static org.cmdbuild.dao.constants.Cardinality.CARDINALITY_N1;
-import static org.cmdbuild.dao.entrytype.Deactivable.IsActivePredicate.filterActive;
+import static org.cmdbuild.dao.entrytype.Deactivable.IsActivePredicate.activeOnes;
 import static org.cmdbuild.dao.entrytype.Predicates.attributeTypeInstanceOf;
+import static org.cmdbuild.dao.entrytype.Predicates.domainFor;
+import static org.cmdbuild.dao.entrytype.Predicates.usableForReferences;
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
 import static org.cmdbuild.dao.query.clause.AnyClass.anyClass;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
@@ -229,7 +231,8 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 	 */
 	@Override
 	public Iterable<? extends CMClass> findActiveClasses() {
-		return filterActive(strictDataView.findClasses());
+		return from(strictDataView.findClasses()) //
+				.filter(activeOnes());
 	}
 
 	/**
@@ -247,30 +250,16 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 	 */
 	@Override
 	public Iterable<? extends CMDomain> findActiveDomains() {
-		final Iterable<? extends CMDomain> activeDomains = filterActive(dataView.findDomains());
-		return activeDomains;
+		return from(dataView.findDomains()) //
+				.filter(activeOnes());
 	}
 
 	@Override
 	public Iterable<? extends CMDomain> findReferenceableDomains(final String className) {
-		final List<CMDomain> referenceableDomains = Lists.newArrayList();
 		final CMClass fetchedClass = dataView.findClass(className);
-		for (final CMDomain domain : dataView.findDomainsFor(fetchedClass)) {
-			if (isReferenceableDomain(domain, fetchedClass)) {
-				referenceableDomains.add(domain);
-			}
-		}
-		return referenceableDomains;
-	}
-
-	private static boolean isReferenceableDomain(final CMDomain domain, final CMClass cmClass) {
-		final String cardinality = domain.getCardinality();
-		if (cardinality.equals(CARDINALITY_1N.value()) && domain.getClass2().isAncestorOf(cmClass)) {
-			return true;
-		} else if (cardinality.equals(CARDINALITY_N1.value()) && domain.getClass1().isAncestorOf(cmClass)) {
-			return true;
-		}
-		return false;
+		return from(dataView.findDomains()) //
+				.filter(domainFor(fetchedClass)) //
+				.filter(usableForReferences(fetchedClass));
 	}
 
 	@Override
@@ -876,25 +865,21 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 	}
 
 	/**
-	 * Retrieves all domains in which the class with id = classId is involved
-	 * (both direct and inverse relation)
+	 * Retrieves all domains in which the class with the specified name is
+	 * involved (both direct and inverse relation).
 	 * 
 	 * @param className
 	 *            the class name involved in the relation
-	 * @return a list of all domains defined for the class
 	 */
 	@Override
-	public List<CMDomain> findDomainsForClassWithName(final String className) {
+	public Iterable<CMDomain> findDomainsForClass(final String className) {
 		final CMClass fetchedClass = dataView.findClass(className);
 		if (fetchedClass == null) {
 			throw NotFoundException.NotFoundExceptionType.DOMAIN_NOTFOUND.createException();
 		}
-
-		return findDomainsForCMClass(fetchedClass);
-	}
-
-	private List<CMDomain> findDomainsForCMClass(final CMClass fetchedClass) {
-		return Lists.newArrayList(dataView.findDomainsFor(fetchedClass));
+		return from(dataView.findDomains()) //
+				.filter(domainFor(fetchedClass)) //
+				.filter(CMDomain.class);
 	}
 
 	/**

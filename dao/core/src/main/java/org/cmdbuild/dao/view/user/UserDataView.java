@@ -135,20 +135,6 @@ public class UserDataView extends AbstractDataView {
 		return proxyDomains(view.findDomains());
 	}
 
-	/**
-	 * Returns the active domains for a class for which the user has read
-	 * access.
-	 * 
-	 * @param type
-	 *            the class i'm requesting the domains for
-	 * 
-	 * @return active domains for that class
-	 */
-	@Override
-	public Iterable<CMDomain> findDomainsFor(final CMClass type) {
-		return proxyDomains(view.findDomainsFor(type));
-	}
-
 	@Override
 	public CMDomain create(final CMDomainDefinition definition) {
 		return proxy(view.create(definition));
