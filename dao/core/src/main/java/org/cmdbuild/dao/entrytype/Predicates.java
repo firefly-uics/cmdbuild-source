@@ -1,5 +1,7 @@
 package org.cmdbuild.dao.entrytype;
 
+import static com.google.common.base.Predicates.alwaysTrue;
+import static com.google.common.collect.Iterables.contains;
 import static org.apache.commons.lang3.builder.ToStringStyle.SHORT_PREFIX_STYLE;
 import static org.cmdbuild.dao.constants.Cardinality.CARDINALITY_1N;
 import static org.cmdbuild.dao.constants.Cardinality.CARDINALITY_N1;
@@ -99,6 +101,51 @@ public class Predicates {
 		return new DomainForClass(target);
 	}
 
+	private static class DisabledClass implements Predicate<CMDomain> {
+
+		private final String target;
+
+		private DisabledClass(final CMClass target) {
+			this.target = target.getName();
+		}
+
+		@Override
+		public boolean apply(final CMDomain input) {
+			return contains(input.getDisabled1(), target) || contains(input.getDisabled2(), target);
+		};
+
+		@Override
+		public boolean equals(final Object obj) {
+			if (obj == this) {
+				return true;
+			}
+			if (!(obj instanceof DisabledClass)) {
+				return false;
+			}
+			final DisabledClass other = DisabledClass.class.cast(obj);
+			return new EqualsBuilder() //
+					.append(this.target, other.target) //
+					.isEquals();
+		}
+
+		@Override
+		public int hashCode() {
+			return new HashCodeBuilder() //
+					.append(target) //
+					.toHashCode();
+		}
+
+		@Override
+		public String toString() {
+			return ToStringBuilder.reflectionToString(this, SHORT_PREFIX_STYLE);
+		}
+
+	}
+
+	public static Predicate<CMDomain> disabledClass(final CMClass target) {
+		return new DisabledClass(target);
+	}
+
 	private static class UsableForReferences implements Predicate<CMDomain> {
 
 		private final CMClass target;
@@ -193,6 +240,10 @@ public class Predicates {
 
 	public static Predicate<CMDomain> isSystem(final Class<? extends CMEntryType> type) {
 		return new IsSystem(type);
+	}
+
+	public static Predicate<CMDomain> allDomains() {
+		return alwaysTrue();
 	}
 
 	private Predicates() {

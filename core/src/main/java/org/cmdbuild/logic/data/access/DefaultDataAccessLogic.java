@@ -1,5 +1,6 @@
 package org.cmdbuild.logic.data.access;
 
+import static com.google.common.base.Predicates.not;
 import static com.google.common.collect.FluentIterable.from;
 import static com.google.common.collect.Iterables.filter;
 import static com.google.common.collect.Iterables.size;
@@ -9,12 +10,15 @@ import static org.apache.commons.lang3.RandomStringUtils.randomAscii;
 import static org.cmdbuild.dao.constants.Cardinality.CARDINALITY_1N;
 import static org.cmdbuild.dao.constants.Cardinality.CARDINALITY_N1;
 import static org.cmdbuild.dao.entrytype.Deactivable.IsActivePredicate.activeOnes;
+import static org.cmdbuild.dao.entrytype.Predicates.allDomains;
 import static org.cmdbuild.dao.entrytype.Predicates.attributeTypeInstanceOf;
+import static org.cmdbuild.dao.entrytype.Predicates.disabledClass;
 import static org.cmdbuild.dao.entrytype.Predicates.domainFor;
 import static org.cmdbuild.dao.entrytype.Predicates.usableForReferences;
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
 import static org.cmdbuild.dao.query.clause.AnyClass.anyClass;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
+import static org.cmdbuild.dao.query.clause.alias.Aliases.name;
 import static org.cmdbuild.dao.query.clause.alias.Utils.as;
 import static org.cmdbuild.dao.query.clause.join.Over.over;
 import static org.cmdbuild.dao.query.clause.where.AndWhereClause.and;
@@ -49,7 +53,6 @@ import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.CMQueryRow;
 import org.cmdbuild.dao.query.clause.QueryAliasAttribute;
 import org.cmdbuild.dao.query.clause.alias.Alias;
-import org.cmdbuild.dao.query.clause.alias.NameAlias;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.data.store.Storable;
@@ -99,8 +102,8 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 
 	private static final String ID_ATTRIBUTE = org.cmdbuild.dao.driver.postgres.Const.ID_ATTRIBUTE;
 
-	protected static final Alias DOM_ALIAS = NameAlias.as("DOM");
-	protected static final Alias DST_ALIAS = NameAlias.as("DST");
+	private static final Alias DOM_ALIAS = name("DOM");
+	private static final Alias DST_ALIAS = name("DST");
 
 	private static final Function<CMCard, Card> CMCARD_TO_CARD = new Function<CMCard, Card>() {
 		@Override
@@ -539,7 +542,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 	@Override
 	public FetchCardListResponse fetchSQLCards(final String functionName, final QueryOptions queryOptions) {
 		final CMFunction fetchedFunction = dataView.findFunctionByName(functionName);
-		final Alias functionAlias = NameAlias.as("f");
+		final Alias functionAlias = name("f");
 
 		if (fetchedFunction == null) {
 			final List<Card> emptyCardList = Collections.emptyList();
@@ -720,8 +723,8 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 					continue;
 				}
 
-				final Alias DOM = NameAlias.as("DOM");
-				final Alias DST = NameAlias.as(format("DST-%s-%s", destinationClass.getName(), randomAscii(10)));
+				final Alias DOM = name("DOM");
+				final Alias DST = name(format("DST-%s-%s", destinationClass.getName(), randomAscii(10)));
 				final CMQueryRow row = dataView.select(anyAttribute(sourceClass), anyAttribute(DST), anyAttribute(DOM)) //
 						.from(sourceClass) //
 						.join(destinationClass, DST, over(domain, as(DOM))) //
@@ -864,30 +867,15 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 		}
 	}
 
-	/**
-	 * Retrieves all domains in which the class with the specified name is
-	 * involved (both direct and inverse relation).
-	 * 
-	 * @param className
-	 *            the class name involved in the relation
-	 */
 	@Override
-	public Iterable<CMDomain> findDomainsForClass(final String className) {
+	public Iterable<CMDomain> findDomainsForClass(final String className, final boolean withDisabledClasses) {
 		final CMClass fetchedClass = dataView.findClass(className);
 		if (fetchedClass == null) {
 			throw NotFoundException.NotFoundExceptionType.CLASS_NOTFOUND.createException(className);
 		}
 		return from(dataView.findDomains()) //
 				.filter(domainFor(fetchedClass)) //
-				.filter(new Predicate<CMDomain>() {
-
-					@Override
-					public boolean apply(final CMDomain input) {
-						// TODO Auto-generated method stub
-						return false;
-					}
-
-				}) //
+				.filter(withDisabledClasses ? not(disabledClass(fetchedClass)) : allDomains()) //
 				.filter(CMDomain.class);
 	}
 
@@ -1078,8 +1066,8 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 		 * The destination alias is mandatory in order to support also
 		 * reflective domains
 		 */
-		final Alias DOM = NameAlias.as("DOM");
-		final Alias DST = NameAlias.as(format("DST-%s-%s", destinationClass.getName(), randomAscii(10)));
+		final Alias DOM = name("DOM");
+		final Alias DST = name(format("DST-%s-%s", destinationClass.getName(), randomAscii(10)));
 		final CMQueryRow row = dataView.select(anyAttribute(sourceClass), anyAttribute(DOM)) //
 				.from(sourceClass) //
 				.join(destinationClass, DST, over(domain, as(DOM))) //
