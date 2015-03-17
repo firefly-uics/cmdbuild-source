@@ -11,7 +11,6 @@ class LocalizedClass extends ForwardingClass {
 
 	private final CMClass delegate;
 	private final TranslationFacade facade;
-	private static final String DESCRIPTION = "Description";
 
 	LocalizedClass(final CMClass delegate, final TranslationFacade facade) {
 		this.delegate = delegate;
@@ -26,7 +25,7 @@ class LocalizedClass extends ForwardingClass {
 	@Override
 	public String getDescription() {
 		return defaultIfBlank( //
-				facade.read(ClassConverter.of(DESCRIPTION) //
+				facade.read(ClassConverter.of(ClassConverter.description()) //
 						.create(getName())), //
 				super.getDescription());
 	}
