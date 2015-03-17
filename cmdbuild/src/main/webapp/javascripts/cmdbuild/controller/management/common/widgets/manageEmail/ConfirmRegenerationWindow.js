@@ -44,8 +44,9 @@ _debug('item', item);
 					this.gridDelegate.isRegenerable(item)
 					&& this.gridDelegate.recordIsEditable(item)
 					&& item.get(CMDBuild.core.proxy.CMProxyConstants.KEEP_SYNCHRONIZATION)
+					&& item.get(CMDBuild.core.proxy.CMProxyConstants.PROMPT_SYNCHRONIZATION)
 					&& Ext.Array.contains(emailTemplatesToRegenerate, item.get(CMDBuild.core.proxy.CMProxyConstants.TEMPLATE))
-					&& this.parentDelegate.resolveTemplateCondition(item.get(CMDBuild.core.proxy.CMProxyConstants.TEMPLATE))
+//					&& this.parentDelegate.resolveTemplateCondition(item.get(CMDBuild.core.proxy.CMProxyConstants.TEMPLATE))
 				) {
 					this.recordsCouldBeRegenerated.push(item);
 				}
@@ -61,7 +62,7 @@ _debug('this.recordsCouldBeRegenerated', this.recordsCouldBeRegenerated);
 				delegate: this
 			});
 
-			if (!Ext.isEmpty(this.recordsCouldBeRegenerated))
+			if (!Ext.isEmpty(this.view) && !Ext.isEmpty(this.recordsCouldBeRegenerated))
 				this.view.show();
 		},
 
