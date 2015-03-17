@@ -191,9 +191,11 @@ public interface DataAccessLogic extends Logic {
 	 * 
 	 * @param className
 	 *            the class name involved in the relation
+	 * @param withDisabledClasses
+	 * 
 	 * @return a list of all domains defined for the class
 	 */
-	Iterable<CMDomain> findDomainsForClass(String className);
+	Iterable<CMDomain> findDomainsForClass(String className, boolean withDisabledClasses);
 
 	/**
 	 * Tells if the given class is a subclass of Activity

@@ -285,6 +285,7 @@ public class CommunicationConstants {
 			VIEWS = "views", //
 			WIDGET_ID = "widgetId", //
 			WIDGET = "widget", //
+			WITH_DISABLED_CLASSES = "withDisabledClasses", //
 			WORKFLOW_ACTIVE = "workflowActive", //
 			WORKFLOW_ADVANCEABLE = "workflowAdvanceable", //
 			WORKFLOW_ATTACHMENTS_CATEGORY = "workflowAttachmentsCategory", //
