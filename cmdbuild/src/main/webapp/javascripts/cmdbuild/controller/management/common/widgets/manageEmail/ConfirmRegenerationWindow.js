@@ -29,10 +29,55 @@
 		 * @param {CMDBuild.controller.management.common.widgets.manageEmail.ManageEmail} configObject.parentDelegate
 		 * @param {CMDBuild.controller.management.common.widgets.manageEmail.Grid} configObject.gridDelegate
 		 */
-		constructor: function(configObject) { // TODO il template resolver è asincrono quindi non si può strutturare la funzione per chekkare la condition in quel modo
+		constructor: function(configObject) {
 _debug('configObject', configObject);
 			Ext.apply(this, configObject); // Apply config
 
+			this.view = Ext.create('CMDBuild.view.management.common.widgets.manageEmail.ConfirmRegenerationWindow', {
+				delegate: this
+			});
+		},
+
+		/**
+		 * Gatherer function to catch events
+		 *
+		 * @param {String} name
+		 * @param {Object} param
+		 * @param {Function} callback
+		 */
+		cmOn: function(name, param, callBack) {
+			switch (name) {
+				case 'onConfirmRegenerationWindowConfirmButtonClick':
+					return this.onConfirmRegenerationWindowConfirmButtonClick();
+
+				case 'onConfirmRegenerationWindowBeforeShow':
+					return this.onConfirmRegenerationWindowBeforeShow();
+
+				default: {
+					if (!Ext.isEmpty(this.parentDelegate))
+						return this.parentDelegate.cmOn(name, param, callBack);
+				}
+			}
+		},
+
+		/**
+		 * @return {CMDBuild.view.management.common.widgets.manageEmail.ConfirmRegenerationWindow}
+		 */
+		getView: function() {
+			return this.view;
+		},
+
+		/**
+		 * Regenerates only selected records
+		 */
+		onConfirmRegenerationWindowConfirmButtonClick: function() {
+			this.parentDelegate.regenerateSelectedEmails(this.view.grid.getSelectionModel().getSelection());
+
+			this.view.hide();
+		},
+
+		onConfirmRegenerationWindowBeforeShow: function() {
+_debug('onConfirmRegenerationWindowBeforeShow');
 			var emailTemplatesToRegenerate = this.parentDelegate.checkTemplatesToRegenerate();
 
 			this.recordsCouldBeRegenerated = [];
@@ -58,40 +103,12 @@ this.gridDelegate.isRegenerable(item)
 + ' ' + this.parentDelegate.resolveTemplateCondition(item.get(CMDBuild.core.proxy.CMProxyConstants.TEMPLATE)));
 			}, this);
 _debug('this.recordsCouldBeRegenerated', this.recordsCouldBeRegenerated);
-			this.view = Ext.create('CMDBuild.view.management.common.widgets.manageEmail.ConfirmRegenerationWindow', {
-				delegate: this
-			});
 
-			if (!Ext.isEmpty(this.view) && !Ext.isEmpty(this.recordsCouldBeRegenerated))
-				this.view.show();
-		},
+			this.view.grid.getStore().loadData(this.recordsCouldBeRegenerated);
+			this.view.grid.getSelectionModel().deselectAll();
 
-		/**
-		 * Gatherer function to catch events
-		 *
-		 * @param {String} name
-		 * @param {Object} param
-		 * @param {Function} callback
-		 */
-		cmOn: function(name, param, callBack) {
-			switch (name) {
-				case 'onConfirmRegenerationWindowConfirmButtonClick':
-					return this.onConfirmRegenerationWindowConfirmButtonClick();
-
-				default: {
-					if (!Ext.isEmpty(this.parentDelegate))
-						return this.parentDelegate.cmOn(name, param, callBack);
-				}
-			}
-		},
-
-		/**
-		 * Regenerates only selected records
-		 */
-		onConfirmRegenerationWindowConfirmButtonClick: function() {
-			this.parentDelegate.regenerateSelectedEmails(this.view.grid.getSelectionModel().getSelection());
-
-			this.view.destroy();
+			if (Ext.isEmpty(this.recordsCouldBeRegenerated))
+				return false;
 		}
 	});
 

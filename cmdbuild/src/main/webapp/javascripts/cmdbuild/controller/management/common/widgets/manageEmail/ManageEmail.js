@@ -185,7 +185,10 @@ _debug('this.widgetConfTemplates', this.widgetConfTemplates);
 				parentDelegate: this,
 				view: this.grid
 			});
-
+			this.controllerConfirmRegenerationWindow = Ext.create('CMDBuild.controller.management.common.widgets.manageEmail.ConfirmRegenerationWindow', {
+				parentDelegate: this,
+				gridDelegate: this.controllerGrid
+			});
 _debug('CMDBuild.Config', CMDBuild.Config);
 		},
 
@@ -237,19 +240,19 @@ _debug('grid store', this.grid.getStore());
 		 */
 		bindLocalDepsChangeEvent: function(record, templateResolver, scope) {
 _debug('bindLocalDepsChangeEvent', record);
-			if (!Ext.Object.isEmpty(record))
-				templateResolver.bindLocalDepsChange(function() {
+			templateResolver.bindLocalDepsChange(function() {
+_debug('change event', record);
+				if (!Ext.Object.isEmpty(record)) {
 					if (record.get(CMDBuild.core.proxy.CMProxyConstants.PROMPT_SYNCHRONIZATION)) {
-						Ext.create('CMDBuild.controller.management.common.widgets.manageEmail.ConfirmRegenerationWindow', {
-							parentDelegate: scope,
-							gridDelegate: scope.controllerGrid
-						});
+						if(!Ext.isEmpty(scope.controllerConfirmRegenerationWindow.getView()))
+							scope.controllerConfirmRegenerationWindow.getView().show();
 					} else if (!scope.relatedAttributeChanged) {
 						scope.relatedAttributeChanged = true;
 
 						CMDBuild.Msg.warn(null, CMDBuild.Translation.warnings.emailTemplateRelatedAttributeEdited);
 					}
-				});
+				}
+			});
 		},
 
 		/**

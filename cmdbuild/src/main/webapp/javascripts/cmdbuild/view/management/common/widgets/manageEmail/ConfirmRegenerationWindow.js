@@ -121,6 +121,12 @@
 			this.width = this.width * this.defaultSizeW;
 		},
 
+		listeners: {
+			beforeshow: function(window, eOpts) {
+				return this.delegate.cmOn('onConfirmRegenerationWindowBeforeShow');
+			}
+		},
+
 		// Column renderers
 			/**
 			 * @param {Mixed} value
