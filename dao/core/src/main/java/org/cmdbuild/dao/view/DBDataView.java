@@ -56,6 +56,12 @@ public class DBDataView extends AbstractDataView {
 		@Override
 		public DBClass getClass2();
 
+		@Override
+		public Iterable<String> getDisabled1();
+
+		@Override
+		public Iterable<String> getDisabled2();
+
 	}
 
 	private static final Iterable<? extends WhereClause> TRUE_ONLY_WHERE_CLAUSES = Arrays.asList(trueWhereClause());
@@ -333,6 +339,16 @@ public class DBDataView extends AbstractDataView {
 			@Override
 			public boolean isActive() {
 				return definition.isActive();
+			}
+
+			@Override
+			public Iterable<String> getDisabled1() {
+				return definition.getDisabled1();
+			}
+
+			@Override
+			public Iterable<String> getDisabled2() {
+				return definition.getDisabled2();
 			}
 
 		};

@@ -611,7 +611,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 	public Long createCard(final Card userGivenCard, final boolean manageAlsoDomainsAttributes) {
 		final CMClass entryType = strictDataView.findClass(userGivenCard.getClassName());
 		if (entryType == null) {
-			throw NotFoundException.NotFoundExceptionType.CLASS_NOTFOUND.createException();
+			throw NotFoundException.NotFoundExceptionType.CLASS_NOTFOUND.createException(userGivenCard.getClassName());
 		}
 
 		final Store<Card> store = storeOf(userGivenCard);
@@ -636,7 +636,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 
 		final CMClass entryType = dataView.findClass(userGivenCard.getClassName());
 		if (entryType == null) {
-			throw NotFoundException.NotFoundExceptionType.CLASS_NOTFOUND.createException();
+			throw NotFoundException.NotFoundExceptionType.CLASS_NOTFOUND.createException(userGivenCard.getClassName());
 		}
 
 		final Store<Card> store = storeOf(userGivenCard);
@@ -875,10 +875,19 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 	public Iterable<CMDomain> findDomainsForClass(final String className) {
 		final CMClass fetchedClass = dataView.findClass(className);
 		if (fetchedClass == null) {
-			throw NotFoundException.NotFoundExceptionType.DOMAIN_NOTFOUND.createException();
+			throw NotFoundException.NotFoundExceptionType.CLASS_NOTFOUND.createException(className);
 		}
 		return from(dataView.findDomains()) //
 				.filter(domainFor(fetchedClass)) //
+				.filter(new Predicate<CMDomain>() {
+
+					@Override
+					public boolean apply(final CMDomain input) {
+						// TODO Auto-generated method stub
+						return false;
+					}
+
+				}) //
 				.filter(CMDomain.class);
 	}
 

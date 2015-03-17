@@ -22,6 +22,10 @@ public interface CMDomain extends CMEntryType {
 
 		boolean isActive();
 
+		Iterable<String> getDisabled1();
+
+		Iterable<String> getDisabled2();
+
 	}
 
 	CMClass getClass1();
@@ -37,5 +41,9 @@ public interface CMDomain extends CMEntryType {
 	boolean isMasterDetail();
 
 	String getMasterDetailDescription();
+
+	Iterable<String> getDisabled1();
+
+	Iterable<String> getDisabled2();
 
 }

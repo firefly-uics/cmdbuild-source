@@ -719,6 +719,16 @@ public class Utils {
 				return domain.isActive();
 			}
 
+			@Override
+			public Iterable<String> getDisabled1() {
+				return domain.getDisabled1();
+			}
+
+			@Override
+			public Iterable<String> getDisabled2() {
+				return domain.getDisabled2();
+			}
+
 		};
 	}
 
@@ -795,6 +805,16 @@ public class Utils {
 			@Override
 			public boolean isActive() {
 				return domainWithChanges.isActive();
+			}
+
+			@Override
+			public Iterable<String> getDisabled1() {
+				return domainWithChanges.getDisabled1();
+			}
+
+			@Override
+			public Iterable<String> getDisabled2() {
+				return domainWithChanges.getDisabled2();
 			}
 
 		};

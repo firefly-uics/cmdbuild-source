@@ -76,6 +76,8 @@ public class CommunicationConstants {
 			DETAIL_CARD_ID = "detailCardId", //
 			DETAIL_CLASS_NAME = "detailClassName", //
 			DIRECT_DESCRIPTION = "descrdir", //
+			DISABLED1 = "disabled1", //
+			DISABLED2 = "disabled2", //
 			DISABLED_ATTRIBUTES = "disabledAttributes", //
 			DISABLE = "disable", //
 			DMS_ATTACHMENTS_LOOKUP = "alfrescoLookupType", //

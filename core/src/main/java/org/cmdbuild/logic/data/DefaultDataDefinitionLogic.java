@@ -501,7 +501,6 @@ public class DefaultDataDefinitionLogic implements DataDefinitionLogic {
 					domain.getName());
 			throw ORMExceptionType.ORM_ERROR_DOMAIN_CREATE.createException();
 		}
-
 		logger.info("Domain not already created, creating a new one");
 		final CMClass class1 = view.findClass(domain.getIdClass1());
 		final CMClass class2 = view.findClass(domain.getIdClass2());
@@ -517,6 +516,8 @@ public class DefaultDataDefinitionLogic implements DataDefinitionLogic {
 			logger.error("Cannot update the domain with name {}. It does not exist", domain.getName());
 			throw NotFoundExceptionType.DOMAIN_NOTFOUND.createException();
 		}
+
+		// TODO check reference attributes
 
 		logger.info("Updating domain with name {}", domain.getName());
 		updatedDomain = view.update(definitionForExisting(domain, existing));
