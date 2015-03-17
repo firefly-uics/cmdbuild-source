@@ -115,7 +115,7 @@ class LocalizedAttribute extends ForwardingAttribute {
 		if (isBlank(translatedDescription)) {
 			translatedDescription = new CMEntryTypeVisitor() {
 
-				String translatedGroup;
+				String translatedDescription;
 
 				@Override
 				public void visit(final CMFunctionCall type) {
@@ -129,14 +129,14 @@ class LocalizedAttribute extends ForwardingAttribute {
 
 				@Override
 				public void visit(final CMClass type) {
-					type.accept(this);
-					translatedGroup = inheritTranslationOfField(GROUP);
+					translatedDescription = inheritTranslationOfField(DESCRIPTION);
 				}
 
-				public String inheritedTranslation() {
-					return translatedGroup;
+				public String inheritedTranslation(final CMEntryType owner) {
+					owner.accept(this);
+					return translatedDescription;
 				}
-			}.inheritedTranslation();
+			}.inheritedTranslation(getOwner());
 		}
 		return defaultIfBlank(translatedDescription, super.getDescription());
 	}
