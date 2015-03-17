@@ -19,7 +19,7 @@ import org.cmdbuild.servlets.utils.Parameter;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.json.JSONArray;
 
-public class Domain extends JSONBaseWithSpringContext {
+public class Domains extends JSONBaseWithSpringContext {
 
 	private static class DisabledClasses {
 
