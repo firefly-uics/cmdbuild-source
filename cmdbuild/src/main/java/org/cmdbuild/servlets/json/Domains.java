@@ -4,7 +4,7 @@ import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Maps.newHashMap;
 import static org.apache.commons.lang3.builder.ToStringStyle.SHORT_PREFIX_STYLE;
 import static org.cmdbuild.servlets.json.CommunicationConstants.DESTINATION;
-import static org.cmdbuild.servlets.json.CommunicationConstants.DOMAIN;
+import static org.cmdbuild.servlets.json.CommunicationConstants.DOMAIN_NAME;
 import static org.cmdbuild.servlets.json.CommunicationConstants.SOURCE;
 import static org.cmdbuild.servlets.json.schema.Utils.toIterable;
 
@@ -73,20 +73,23 @@ public class Domains extends JSONBaseWithSpringContext {
 
 	private static final Map<String, DisabledClasses> map = newHashMap();
 
+	@Admin
 	public JsonResponse getDisabledClasses( //
-			@Parameter(value = DOMAIN) final String domain //
+			@Parameter(value = DOMAIN_NAME) final String domainName //
 	) {
 		// TODO call logic
-		return JsonResponse.success(map.get(domain));
+		return JsonResponse.success(map.get(domainName));
 	}
 
+	@Admin
 	public JsonResponse setDisabledClasses( //
-			@Parameter(value = DOMAIN) final String domain, //
+			@Parameter(value = DOMAIN_NAME) final String domainName, //
 			@Parameter(value = SOURCE) final JSONArray source, //
 			@Parameter(value = DESTINATION) final JSONArray destination //
 	) {
 		// TODO call logic
-		map.put(domain, new DisabledClasses(newArrayList(toIterable(source)), newArrayList(toIterable(source))));
+		map.put(domainName, new DisabledClasses(newArrayList(toIterable(source)), newArrayList(toIterable(source))));
 		return JsonResponse.success();
 	}
+
 }

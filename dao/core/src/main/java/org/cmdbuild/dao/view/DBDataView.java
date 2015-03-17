@@ -4,7 +4,6 @@ import static java.lang.String.format;
 import static org.cmdbuild.dao.query.clause.where.TrueWhereClause.trueWhereClause;
 
 import java.util.Arrays;
-import java.util.List;
 import java.util.Map.Entry;
 
 import org.cmdbuild.dao.driver.DBDriver;
@@ -32,8 +31,6 @@ import org.cmdbuild.dao.function.CMFunction;
 import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.QuerySpecs;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
-
-import com.google.common.collect.Lists;
 
 public class DBDataView extends AbstractDataView {
 
@@ -256,18 +253,6 @@ public class DBDataView extends AbstractDataView {
 	}
 
 	@Override
-	public Iterable<DBDomain> findDomainsFor(final CMClass cmClass) {
-		final List<DBDomain> domainsForClass = Lists.newArrayList();
-		for (final DBDomain d : findDomains()) {
-			if (d.getClass1().isAncestorOf(cmClass) || d.getClass2().isAncestorOf(cmClass)) {
-
-				domainsForClass.add(d);
-			}
-		}
-		return domainsForClass;
-	}
-
-	@Override
 	public DBDomain findDomain(final Long id) {
 		return driver.findDomain(id);
 	}
@@ -276,7 +261,7 @@ public class DBDataView extends AbstractDataView {
 	public DBDomain findDomain(final String name) {
 		return driver.findDomain(name);
 	}
-	
+
 	@Override
 	public DBDomain findDomain(final CMIdentifier identifier) {
 		return driver.findDomain(identifier.getLocalName(), identifier.getNameSpace());
@@ -396,8 +381,8 @@ public class DBDataView extends AbstractDataView {
 
 	@Override
 	public DBCard update(final CMCard card) {
-		CMIdentifier identifier = card.getType().getIdentifier();
-		final DBClass dbType = findClass(identifier);		
+		final CMIdentifier identifier = card.getType().getIdentifier();
+		final DBClass dbType = findClass(identifier);
 		final DBCard dbCard = DBCard.newInstance(driver, dbType, card.getId());
 		for (final Entry<String, Object> entry : card.getAllValues()) {
 			dbCard.set(entry.getKey(), entry.getValue());
@@ -407,7 +392,7 @@ public class DBDataView extends AbstractDataView {
 
 	@Override
 	public void delete(final CMCard card) {
-		CMIdentifier identifier = card.getType().getIdentifier();
+		final CMIdentifier identifier = card.getType().getIdentifier();
 		final DBClass dbType = findClass(identifier);
 		final DBCard dbCard = DBCard.newInstance(driver, dbType, card.getId());
 		driver.delete(dbCard);

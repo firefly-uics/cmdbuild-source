@@ -1,7 +1,9 @@
 package org.cmdbuild.servlets.json.schema;
 
+import static com.google.common.base.Predicates.not;
 import static com.google.common.collect.FluentIterable.from;
 import static com.google.common.collect.Iterables.filter;
+import static org.cmdbuild.dao.entrytype.Predicates.isSystem;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ACTIVE;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ATTRIBUTE;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ATTRIBUTES;
@@ -477,24 +479,26 @@ public class ModClass extends JSONBaseWithSpringContext {
 	}
 
 	@JSONExported
-	public JSONObject getAllDomains(@Parameter(value = ACTIVE, required = false) final boolean activeOnly)
-			throws JSONException, AuthException {
+	public JSONObject getAllDomains( //
+			@Parameter(value = ACTIVE, required = false) final boolean activeOnly //
+	) throws JSONException, AuthException {
 
-		final JSONObject out = new JSONObject();
 		final Iterable<? extends CMDomain> almostAllDomains;
 		if (activeOnly) {
-			almostAllDomains = filter(userDataAccessLogic().findActiveDomains(), domainsWithActiveClasses());
+			almostAllDomains = from(userDataAccessLogic().findActiveDomains()) //
+					.filter(domainsWithActiveClasses());
 		} else {
 			almostAllDomains = userDataAccessLogic().findAllDomains();
 		}
-		final Iterable<? extends CMDomain> domains = filter(almostAllDomains,
-				nonActivityClassesWhenWorkflowIsNotEnabled());
+		final Iterable<? extends CMDomain> domains = from(almostAllDomains) //
+				.filter(nonActivityClassesWhenWorkflowIsNotEnabled());
 
 		final JSONArray jsonDomains = new JSONArray();
-		out.put(DOMAINS, jsonDomains);
 		for (final CMDomain domain : domains) {
 			jsonDomains.put(domainSerializer().toClient(domain, activeOnly));
 		}
+		final JSONObject out = new JSONObject();
+		out.put(DOMAINS, jsonDomains);
 		return out;
 	}
 
@@ -566,18 +570,16 @@ public class ModClass extends JSONBaseWithSpringContext {
 
 	@Admin
 	@JSONExported
-	public JSONObject getDomainList(@Parameter(CLASS_NAME) final String className //
+	public JSONObject getDomainList( //
+			@Parameter(CLASS_NAME) final String className //
 	) throws JSONException {
-
-		final JSONObject out = new JSONObject();
 		final JSONArray jsonDomains = new JSONArray();
 		// TODO system really needed
-		final List<CMDomain> domainsForSpecifiedClass = systemDataAccessLogic().findDomainsForClassWithName(className);
-		for (final CMDomain domain : domainsForSpecifiedClass) {
-			if (!domain.isSystem()) {
-				jsonDomains.put(domainSerializer().toClient(domain, className));
-			}
+		for (final CMDomain domain : from(systemDataAccessLogic().findDomainsForClass(className)) //
+				.filter(not(isSystem(CMDomain.class)))) {
+			jsonDomains.put(domainSerializer().toClient(domain, className));
 		}
+		final JSONObject out = new JSONObject();
 		out.put(DOMAINS, jsonDomains);
 		return out;
 	}
