@@ -671,12 +671,8 @@ _debug('regenerateEmail remove record', record);
 				Ext.Array.forEach(records, function(item, index, allItems) {
 					var recordTemplate = item.get(CMDBuild.core.proxy.CMProxyConstants.TEMPLATE);
 
-					if (
-						!Ext.isEmpty(recordTemplate)
-						&& item.get(CMDBuild.core.proxy.CMProxyConstants.KEEP_SYNCHRONIZATION)
-					) {
+					if (!Ext.isEmpty(recordTemplate))
 						this.regenerateEmail(item);
-					}
 				}, this);
 
 				this.relatedAttributeChanged = false; // Reset attribute changed flag
