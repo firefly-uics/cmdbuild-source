@@ -66,7 +66,7 @@ public class CardSerializer {
 			if (input instanceof IdAndDescription) {
 
 				if (input instanceof LookupValue) {
-					final LookupSerializer lookupSerializer = new LookupSerializer(translationFacade, lookupStore);
+					final LookupSerializer lookupSerializer = new LookupSerializer(lookupStore);
 					output = lookupSerializer.serializeLookupValue((LookupValue) input);
 				} else {
 					final IdAndDescription idAndDescription = IdAndDescription.class.cast(input);

@@ -11,8 +11,8 @@ import org.cmdbuild.logic.translation.object.DomainAttributeDescription;
 import com.google.common.collect.Maps;
 
 public enum AttributeConverter {
-	
-	CLASSATTRIBUTE_DESCRIPTION("class", "description") {
+
+	CLASSATTRIBUTE_DESCRIPTION(forClass(), description()) {
 
 		@Override
 		public boolean isValid() {
@@ -20,11 +20,11 @@ public enum AttributeConverter {
 		}
 
 		@Override
-		public TranslationObject create(final String classname, final String attributename) {
-			org.cmdbuild.logic.translation.object.ClassAttributeDescription.Builder builder = ClassAttributeDescription
+		public TranslationObject create(final String className, final String attributeName) {
+			final org.cmdbuild.logic.translation.object.ClassAttributeDescription.Builder builder = ClassAttributeDescription
 					.newInstance() //
-					.withClassname(classname) //
-					.withAttributename(attributename);
+					.withClassname(className) //
+					.withAttributename(attributeName);
 			if (!translations.isEmpty()) {
 				builder.withTranslations(translations);
 			}
@@ -32,13 +32,13 @@ public enum AttributeConverter {
 		}
 
 		@Override
-		public AttributeConverter withTranslations(Map<String, String> map) {
+		public AttributeConverter withTranslations(final Map<String, String> map) {
 			translations = map;
 			return this;
 		}
 	},
 
-	DOMAINATTRIBUTE_DESCRIPTION("domain", "description") {
+	DOMAINATTRIBUTE_DESCRIPTION(forDomain(), description()) {
 
 		@Override
 		public boolean isValid() {
@@ -46,11 +46,10 @@ public enum AttributeConverter {
 		}
 
 		@Override
-		public TranslationObject create(final String entryTypeName, final String attributename) {
-			DomainAttributeDescription.Builder builder = DomainAttributeDescription
-					.newInstance() //
-					.withDomainName(entryTypeName) //
-					.withAttributeName(attributename);
+		public TranslationObject create(final String domainName, final String attributeName) {
+			final DomainAttributeDescription.Builder builder = DomainAttributeDescription.newInstance() //
+					.withDomainName(domainName) //
+					.withAttributeName(attributeName);
 			if (!translations.isEmpty()) {
 				builder.withTranslations(translations);
 			}
@@ -58,20 +57,20 @@ public enum AttributeConverter {
 		}
 
 		@Override
-		public AttributeConverter withTranslations(Map<String, String> map) {
+		public AttributeConverter withTranslations(final Map<String, String> map) {
 			translations = map;
 			return this;
 		}
 	},
 
-	CLASSATTRIBUTE_GROUP("class", "group") {
+	CLASSATTRIBUTE_GROUP(forClass(), group()) {
 
 		@Override
-		public TranslationObject create(final String classname, final String attributename) {
-			org.cmdbuild.logic.translation.object.ClassAttributeGroup.Builder builder = ClassAttributeGroup
+		public TranslationObject create(final String className, final String attributeName) {
+			final org.cmdbuild.logic.translation.object.ClassAttributeGroup.Builder builder = ClassAttributeGroup
 					.newInstance() //
-					.withClassname(classname) //
-					.withAttributename(attributename);
+					.withClassname(className) //
+					.withAttributename(attributeName);
 			if (!translations.isEmpty()) {
 				builder.withTranslations(translations);
 			}
@@ -85,17 +84,17 @@ public enum AttributeConverter {
 		}
 
 		@Override
-		public AttributeConverter withTranslations(Map<String, String> map) {
+		public AttributeConverter withTranslations(final Map<String, String> map) {
 			translations = map;
 			return this;
 		}
 
 	},
 
-	DOMAINATTRIBUTE_GROUP("domain", "group") {
+	DOMAINATTRIBUTE_GROUP(forDomain(), group()) {
 
 		@Override
-		public TranslationObject create(final String entrtTypeName, final String attributename) {
+		public TranslationObject create(final String domainName, final String attributeName) {
 			return new NullTranslationObject();
 		}
 
@@ -105,14 +104,14 @@ public enum AttributeConverter {
 		}
 
 		@Override
-		public AttributeConverter withTranslations(Map<String, String> map) {
+		public AttributeConverter withTranslations(final Map<String, String> map) {
 			translations = map;
 			return this;
 		}
 
 	},
 
-	UNDEFINED("undefined", null) {
+	UNDEFINED(undefined(), group()) {
 
 		@Override
 		public boolean isValid() {
@@ -120,34 +119,58 @@ public enum AttributeConverter {
 		}
 
 		@Override
-		public TranslationObject create(final String classname, final String attributename) {
+		public TranslationObject create(final String entryTypeName, final String attributeName) {
 			throw new UnsupportedOperationException();
 		}
 
 		@Override
-		public AttributeConverter withTranslations(Map<String, String> map) {
+		public AttributeConverter withTranslations(final Map<String, String> map) {
 			throw new UnsupportedOperationException();
 		}
 	};
-	
-	
+
+	private static final String CLASS = "class";
+	private static final String DOMAIN = "domain";
+	private static final String DESCRIPTION = "description";
+	private static final String GROUP = "group";
+	private static final String UNDEFINED_FIELD = "undefined";
 
 	private final String fieldName;
 	private final String entryType;
 	private static Map<String, String> translations = Maps.newHashMap();
 
-	public abstract TranslationObject create(String classname, String attributename);
+	public abstract TranslationObject create(String entryTypeName, String attributeName);
+
+	private static String undefined() {
+		return UNDEFINED_FIELD;
+	}
 
 	public abstract AttributeConverter withTranslations(Map<String, String> map);
 
 	public abstract boolean isValid();
 
-	private AttributeConverter(final String entryType, String fieldName) {
+	public static String description() {
+		return DESCRIPTION;
+	}
+
+	public static String group() {
+		return GROUP;
+	}
+
+	public static String forClass() {
+		return CLASS;
+	}
+
+	public static String forDomain() {
+		return DOMAIN;
+	}
+
+	private AttributeConverter(final String entryType, final String fieldName) {
 		this.entryType = entryType;
 		this.fieldName = fieldName;
 	}
 
-	public static AttributeConverter of(String entryType, final String value) {
+	public static AttributeConverter of(final String entryType, final String value) {
 		for (final AttributeConverter element : values()) {
 			if (element.entryType.equalsIgnoreCase(entryType) && element.fieldName.equalsIgnoreCase(value)) {
 				return element;

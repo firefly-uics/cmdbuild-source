@@ -45,13 +45,13 @@ public class FetchLookupTest {
 	public void fetchAllLookupOfValue() throws Exception {
 		// given
 		final org.cmdbuild.data.store.lookup.Lookup first = //
-		org.cmdbuild.data.store.lookup.Lookup.newInstance()//
+		org.cmdbuild.data.store.lookup.LookupImpl.newInstance()//
 				.withId((long) 1)//
 				.withCode(C1) //
 				.withDescription(D1) //
 				.build();
 		final org.cmdbuild.data.store.lookup.Lookup second = //
-		org.cmdbuild.data.store.lookup.Lookup.newInstance()//
+		org.cmdbuild.data.store.lookup.LookupImpl.newInstance()//
 				.withId((long) 2)//
 				.withCode("c2") //
 				.withDescription("d2") //
@@ -83,7 +83,7 @@ public class FetchLookupTest {
 	public void fetchSingleLookupById() throws Exception {
 		// given
 		final QuerySingleLookup querySingleLookup = mock(QuerySingleLookup.class);
-		final org.cmdbuild.data.store.lookup.Lookup value = org.cmdbuild.data.store.lookup.Lookup.newInstance()//
+		final org.cmdbuild.data.store.lookup.LookupImpl value = org.cmdbuild.data.store.lookup.LookupImpl.newInstance()//
 				.withId((long) 1)//
 				.withCode(C1) //
 				.withDescription(D1) //

@@ -11,6 +11,7 @@ import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.LookupAttributeType;
 import org.cmdbuild.data.store.lookup.Lookup;
+import org.cmdbuild.data.store.lookup.LookupImpl;
 import org.cmdbuild.data.store.lookup.LookupStore;
 import org.cmdbuild.data.store.lookup.LookupType;
 import org.cmdbuild.services.soap.types.Filter;
@@ -118,7 +119,7 @@ public class SoapToJsonUtilsTest {
 	}
 
 	private static Lookup lookup(final Long id, final String description) {
-		return Lookup.newInstance() //
+		return LookupImpl.newInstance() //
 				.withId(id) //
 				.withDescription(description) //
 				.build();

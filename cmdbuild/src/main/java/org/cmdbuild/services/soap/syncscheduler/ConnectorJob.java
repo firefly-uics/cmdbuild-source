@@ -185,11 +185,13 @@ public class ConnectorJob implements Runnable {
 					detailCardId = createCard(referenceName);
 				} else {
 					detailCardId = createCard();
-					if (detailCardId > 0)
+					if (detailCardId > 0) {
 						createRelation();
+					}
 				}
-			} else
+			} else {
 				throw new Exception("MasterCardId is 0");
+			}
 		}
 	}
 
@@ -210,10 +212,12 @@ public class ConnectorJob implements Runnable {
 				} else {
 					Log.SOAP.info("ExternalSync - card detail is shared and has other relations - cannot delete! ");
 				}
-				if (!detailHasReferenceToMaster())
+				if (!detailHasReferenceToMaster()) {
 					deleteRelation();
-			} else
+				}
+			} else {
 				throw new Exception("MasterCardId is 0");
+			}
 		}
 	}
 
@@ -344,13 +348,13 @@ public class ConnectorJob implements Runnable {
 
 	private void addLookupAttributeTo(final CMAttribute attribute, final Card.Builder cardBuilder,
 			final String attributeValue) {
-		final LookupAttributeType lookupAttributeType = (LookupAttributeType) attribute.getType();		
+		final LookupAttributeType lookupAttributeType = (LookupAttributeType) attribute.getType();
 		if (StringUtils.isNotBlank(attributeValue)) {
 			final String lookupTypeName = lookupAttributeType.getLookupTypeName();
 			for (final Lookup lookupDto : lookupStore.readAll(LookupType.newInstance() //
 					.withName(lookupTypeName) //
 					.build())) {
-				if (lookupDto.description.equals(attributeValue)) {
+				if (lookupDto.description().equals(attributeValue)) {
 					cardBuilder.withAttribute(attribute.getName(), lookupDto.getId());
 				}
 			}

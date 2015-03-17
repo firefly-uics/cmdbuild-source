@@ -6,9 +6,7 @@ import static org.junit.Assert.assertTrue;
 import java.util.Map;
 
 import org.cmdbuild.logic.translation.TranslationObject;
-import org.cmdbuild.logic.translation.converter.ClassConverter;
 import org.cmdbuild.logic.translation.converter.DomainConverter;
-import org.cmdbuild.logic.translation.object.ClassDescription;
 import org.cmdbuild.logic.translation.object.DomainDescription;
 import org.junit.Test;
 
