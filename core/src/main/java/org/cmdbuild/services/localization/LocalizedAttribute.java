@@ -26,7 +26,7 @@ class LocalizedAttribute extends ForwardingAttribute {
 	private static final String CLASS = AttributeConverter.CLASSATTRIBUTE_DESCRIPTION.entryType();
 	private static final String DOMAIN = AttributeConverter.DOMAINATTRIBUTE_DESCRIPTION.entryType();
 
-	LocalizedAttribute(final CMAttribute delegate, final TranslationFacade facade) {
+	protected LocalizedAttribute(final CMAttribute delegate, final TranslationFacade facade) {
 		this.delegate = delegate;
 		this.facade = facade;
 		entryType = new CMEntryTypeVisitor() {

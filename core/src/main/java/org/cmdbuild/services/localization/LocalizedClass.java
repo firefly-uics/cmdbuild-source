@@ -12,7 +12,7 @@ class LocalizedClass extends ForwardingClass {
 	private final CMClass delegate;
 	private final TranslationFacade facade;
 
-	LocalizedClass(final CMClass delegate, final TranslationFacade facade) {
+	protected LocalizedClass(final CMClass delegate, final TranslationFacade facade) {
 		this.delegate = delegate;
 		this.facade = facade;
 	}

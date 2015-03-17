@@ -13,7 +13,7 @@ public class LocalizedLookup extends ForwardingLookup {
 	private final Lookup delegate;
 	private final TranslationFacade facade;
 
-	public LocalizedLookup(final Lookup delegate, final TranslationFacade facade) {
+	protected LocalizedLookup(final Lookup delegate, final TranslationFacade facade) {
 		this.delegate = delegate;
 		this.facade = facade;
 	}
