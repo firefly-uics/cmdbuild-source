@@ -29,32 +29,40 @@
 		 * @param {CMDBuild.controller.management.common.widgets.manageEmail.ManageEmail} configObject.parentDelegate
 		 * @param {CMDBuild.controller.management.common.widgets.manageEmail.Grid} configObject.gridDelegate
 		 */
-		constructor: function(configObject) {
+		constructor: function(configObject) { // TODO il template resolver è asincrono quindi non si può strutturare la funzione per chekkare la condition in quel modo
 _debug('configObject', configObject);
 			Ext.apply(this, configObject); // Apply config
 
 			var emailTemplatesToRegenerate = this.parentDelegate.checkTemplatesToRegenerate();
 
 			this.recordsCouldBeRegenerated = [];
-
+_debug('emailTemplatesToRegenerate', emailTemplatesToRegenerate);
 			// Get all records witch will be regenerated
 			Ext.Array.forEach(this.gridDelegate.getDraftEmails(), function(item, index, allItems) {
+_debug('item', item);
 				if (
 					this.gridDelegate.isRegenerable(item)
 					&& this.gridDelegate.recordIsEditable(item)
+					&& item.get(CMDBuild.core.proxy.CMProxyConstants.KEEP_SYNCHRONIZATION)
 					&& Ext.Array.contains(emailTemplatesToRegenerate, item.get(CMDBuild.core.proxy.CMProxyConstants.TEMPLATE))
 					&& this.parentDelegate.resolveTemplateCondition(item.get(CMDBuild.core.proxy.CMProxyConstants.TEMPLATE))
-					&& item.get(CMDBuild.core.proxy.CMProxyConstants.KEEP_SYNCHRONIZATION)
 				) {
 					this.recordsCouldBeRegenerated.push(item);
 				}
+_debug('this.recordsCouldBeRegenerated',
+this.gridDelegate.isRegenerable(item)
++ ' ' + this.gridDelegate.recordIsEditable(item)
++ ' ' + item.get(CMDBuild.core.proxy.CMProxyConstants.KEEP_SYNCHRONIZATION)
++ ' ' + Ext.Array.contains(emailTemplatesToRegenerate, item.get(CMDBuild.core.proxy.CMProxyConstants.TEMPLATE))
++ ' ' + this.parentDelegate.resolveTemplateCondition(item.get(CMDBuild.core.proxy.CMProxyConstants.TEMPLATE)));
 			}, this);
 _debug('this.recordsCouldBeRegenerated', this.recordsCouldBeRegenerated);
 			this.view = Ext.create('CMDBuild.view.management.common.widgets.manageEmail.ConfirmRegenerationWindow', {
 				delegate: this
 			});
 
-			this.view.show();
+			if (!Ext.isEmpty(this.recordsCouldBeRegenerated))
+				this.view.show();
 		},
 
 		/**
