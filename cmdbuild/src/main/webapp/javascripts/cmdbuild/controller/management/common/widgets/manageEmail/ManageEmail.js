@@ -123,7 +123,7 @@
 			searchForCqlClientVariables: function(inspectingVariable, inspectingVariableKey, searchedVariablesNames, foundedKeysArray) {
 				var found = false;
 				var cqlTags = ['{client:', '{cql:', '{xa:', '{js:'];
-_debug('searchForCqlClientVariables', inspectingVariable + ' ' + inspectingVariableKey + ' ' + searchedVariablesNames + ' ' + foundedKeysArray);
+
 				for (var y in searchedVariablesNames) {
 					for (var i in cqlTags) {
 						if (
@@ -135,7 +135,7 @@ _debug('searchForCqlClientVariables', inspectingVariable + ' ' + inspectingVaria
 						}
 					}
 				}
-_debug('found', found);
+
 				return found;
 			},
 
@@ -237,8 +237,8 @@ _debug('grid store', this.grid.getStore());
 		 */
 		bindLocalDepsChangeEvent: function(record, templateResolver, scope) {
 _debug('bindLocalDepsChangeEvent', record);
-			templateResolver.bindLocalDepsChange(function() {
-				if (!Ext.Object.isEmpty(record)) {
+			if (!Ext.Object.isEmpty(record))
+				templateResolver.bindLocalDepsChange(function() {
 					if (record.get(CMDBuild.core.proxy.CMProxyConstants.PROMPT_SYNCHRONIZATION)) {
 						Ext.create('CMDBuild.controller.management.common.widgets.manageEmail.ConfirmRegenerationWindow', {
 							parentDelegate: scope,
@@ -249,8 +249,7 @@ _debug('bindLocalDepsChangeEvent', record);
 
 						CMDBuild.Msg.warn(null, CMDBuild.Translation.warnings.emailTemplateRelatedAttributeEdited);
 					}
-				}
-			});
+				});
 		},
 
 		/**
@@ -572,7 +571,7 @@ _debug('this.widgetConfTemplates', this.widgetConfTemplates);
 _debug('templatesCheckedForRegenerationIdentifiers', templatesCheckedForRegenerationIdentifiers);
 				Ext.Array.forEach(this.widgetConfTemplates, function(item, index, allItems) {
 					var templateIdentifier = item.get(CMDBuild.core.proxy.CMProxyConstants.KEY);
-
+_debug('checking template item', item);
 					if (
 						!Ext.isEmpty(templateIdentifier)
 						&& (
@@ -758,10 +757,11 @@ _debug('regenerateTemplate emailObject', emailObject);
 			var me = this;
 			var templateObject = null;
 			var response = false;
-
+_debug('resolveTemplateCondition', templateIdentifier);
+_debug('this.emailTemplatesObjects', this.emailTemplatesObjects);
 			if (!Ext.isEmpty(templateIdentifier) && typeof templateIdentifier == 'string') {
 				Ext.Array.forEach(this.emailTemplatesObjects, function(item, index, allItems) {
-					if (item.get(CMDBuild.core.proxy.CMProxyConstants.NAME) == templateIdentifier)
+					if (item.get(CMDBuild.core.proxy.CMProxyConstants.KEY) == templateIdentifier)
 						templateObject = item;
 				}, this);
 
@@ -777,12 +777,13 @@ _debug('resolveTemplateCondition templateObject.getData()', templateObject.getDa
 				templateResolver.resolveTemplates({
 					attributes: Ext.Object.getKeys(xaVars),
 					callback: function(values, ctx) {
+_debug('values', values);
 						if (me.checkCondition(values, templateResolver))
 							response = true;
 					}
 				});
 			}
-
+_debug('resolveTemplateCondition response', response);
 			return response;
 		},
 
