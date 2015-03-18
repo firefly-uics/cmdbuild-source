@@ -44,9 +44,8 @@
 						disabled: this.readOnly,
 						scope: this,
 
-						handler: function() {
-							// Ask to the user if is sure to delete all the unsent e-mails before
-							Ext.Msg.show({
+						handler: function(button, e) {
+							Ext.Msg.show({ // Ask to the user if is sure to delete all the unsent e-mails before
 								title: CMDBuild.Translation.common.confirmpopup.title,
 								msg: CMDBuild.Translation.emailRegenerationConfirmPopupText,
 								buttons: Ext.Msg.OKCANCEL,
@@ -63,8 +62,7 @@
 				columns: [
 					{
 						dataIndex: CMDBuild.core.proxy.CMProxyConstants.STATUS,
-						hidden: true,
-						sortable: true
+						hidden: true
 					},
 					{
 						text: CMDBuild.Translation.archivingDate,

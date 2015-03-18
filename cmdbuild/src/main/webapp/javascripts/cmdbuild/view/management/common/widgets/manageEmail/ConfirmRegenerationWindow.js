@@ -29,8 +29,9 @@
 		grid: undefined,
 
 		buttonAlign: 'center',
-		title: CMDBuild.Translation.confirmRegeneration,
+		closeAction: 'hide',
 		layout: 'border',
+		title: CMDBuild.Translation.confirmRegeneration,
 
 		initComponent: function() {
 			this.windowText = Ext.create('Ext.Component', {
@@ -93,11 +94,7 @@
 
 				store: Ext.create('Ext.data.Store', {
 					model: 'CMDBuild.model.widget.ManageEmail.email',
-					data: this.delegate.recordsCouldBeRegenerated || [],
-					sorters: {
-						property: CMDBuild.core.proxy.CMProxyConstants.STATUS,
-						direction: 'ASC'
-					}
+					data: []
 				})
 			});
 
@@ -122,8 +119,11 @@
 		},
 
 		listeners: {
-			beforeshow: function(window, eOpts) {
-				return this.delegate.cmOn('onConfirmRegenerationWindowBeforeShow');
+			hide: function(window, eOpts) {
+				this.delegate.cmOn('onConfirmRegenerationWindowClearStore');
+			},
+			show: function(window, eOpts) {
+				this.delegate.cmOn('onConfirmRegenerationWindowShow');
 			}
 		},
 

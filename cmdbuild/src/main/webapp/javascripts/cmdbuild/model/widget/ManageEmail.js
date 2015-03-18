@@ -6,6 +6,7 @@
 		extend: 'Ext.data.Model',
 
 		fields: [
+			{ name: CMDBuild.core.proxy.CMProxyConstants.ACCOUNT, type: 'string' },
 			{ name: CMDBuild.core.proxy.CMProxyConstants.ACTIVITY_ID, type: 'int', useNull: true },
 			{ name: CMDBuild.core.proxy.CMProxyConstants.ATTACHMENTS, type: 'auto' },
 			{ name: CMDBuild.core.proxy.CMProxyConstants.BCC, type: 'auto' },
@@ -60,6 +61,7 @@
 		extend: 'Ext.data.Model',
 
 		fields: [
+			{ name: CMDBuild.core.proxy.CMProxyConstants.ACCOUNT, type: 'string' },
 			{ name: CMDBuild.core.proxy.CMProxyConstants.BCC, type: 'string' },
 			{ name: CMDBuild.core.proxy.CMProxyConstants.BODY, type: 'string' },
 			{ name: CMDBuild.core.proxy.CMProxyConstants.CC, type: 'string' },

@@ -33,37 +33,37 @@
 		 */
 		widgetConf: undefined,
 
-		statics: {
-			/**
-			 * @param {CMDBuild.model.widget.ManageEmail.email} record
-			 * @param {Array} regenerationTrafficLightArray
-			 *
-			 * @return {Boolean} storeLoadEnabled
-			 */
-			trafficLightArrayCheck: function(record, regenerationTrafficLightArray) {
-_debug('trafficLightArrayCheck record', record);
-_debug('trafficLightArrayCheck regenerationTrafficLightArray', regenerationTrafficLightArray);
-				if (!Ext.isEmpty(regenerationTrafficLightArray) && regenerationTrafficLightArray.length > 0) {
-					var storeLoadEnabled = true;
-
-					Ext.Array.forEach(regenerationTrafficLightArray, function(item, index, allItems) {
-						if (Ext.Object.equals(item[CMDBuild.core.proxy.CMProxyConstants.RECORD], record))
-							item[CMDBuild.core.proxy.CMProxyConstants.STATUS] = true;
-
-						if (!item[CMDBuild.core.proxy.CMProxyConstants.STATUS])
-							storeLoadEnabled = false;
-					}, this);
-
-					// Array reset on store load
-					if (storeLoadEnabled)
-						regenerationTrafficLightArray = [];
-
-					return storeLoadEnabled;
-				}
-
-				return false;
-			}
-		},
+//		statics: {
+//			/**
+//			 * @param {CMDBuild.model.widget.ManageEmail.email} record
+//			 * @param {Array} regenerationTrafficLightArray
+//			 *
+//			 * @return {Boolean} storeLoadEnabled
+//			 */
+//			trafficLightArrayCheck: function(record, regenerationTrafficLightArray) {
+//_debug('trafficLightArrayCheck record', record);
+//_debug('trafficLightArrayCheck regenerationTrafficLightArray', regenerationTrafficLightArray);
+//				if (!Ext.isEmpty(regenerationTrafficLightArray) && regenerationTrafficLightArray.length > 0) {
+//					var storeLoadEnabled = true;
+//
+//					Ext.Array.forEach(regenerationTrafficLightArray, function(item, index, allItems) {
+//						if (Ext.Object.equals(item[CMDBuild.core.proxy.CMProxyConstants.RECORD], record))
+//							item[CMDBuild.core.proxy.CMProxyConstants.STATUS] = true;
+//
+//						if (!item[CMDBuild.core.proxy.CMProxyConstants.STATUS])
+//							storeLoadEnabled = false;
+//					}, this);
+//
+//					// Array reset on store load
+//					if (storeLoadEnabled)
+//						regenerationTrafficLightArray = [];
+//
+//					return storeLoadEnabled;
+//				}
+//
+//				return false;
+//			}
+//		},
 
 		/**
 		 * @param {Object} configObject
@@ -120,24 +120,26 @@ _debug('trafficLightArrayCheck regenerationTrafficLightArray', regenerationTraff
 		 * @param {Function} success
 		 */
 		addRecord: function(record, regenerationTrafficLightArray, success) {
+			if (!Ext.Object.isEmpty(record)) {
 _debug('addRecord record', record);
 _debug('addRecord regenerationTrafficLightArray', regenerationTrafficLightArray);
-//			CMDBuild.LoadMask.get().show();
-			CMDBuild.core.proxy.widgets.manageEmail.ManageEmail.create({
-				params: record.getAsParams(),
-				scope: this,
-				loadMask: this.cmOn('getGlobalLoadMask'),
-				failure: function(response, options, decodedResponse) {
-					CMDBuild.Msg.error(CMDBuild.Translation.common.failure, CMDBuild.Translation.errors.emailCreate, false);
-				},
-				success: success || function(response, options, decodedResponse) {
-					if (this.self.trafficLightArrayCheck(record, regenerationTrafficLightArray) || Ext.isEmpty(regenerationTrafficLightArray))
-						this.storeLoad();
-				},
-//				callback: function(options, success, response) {
-//					CMDBuild.LoadMask.get().hide();
-//				}
-			});
+	//			CMDBuild.LoadMask.get().show();
+				CMDBuild.core.proxy.widgets.manageEmail.ManageEmail.create({
+					params: record.getAsParams(),
+					scope: this,
+					loadMask: this.cmOn('getGlobalLoadMask'),
+					failure: function(response, options, decodedResponse) {
+						CMDBuild.Msg.error(CMDBuild.Translation.common.failure, CMDBuild.Translation.errors.emailCreate, false);
+					},
+					success: success || function(response, options, decodedResponse) {
+						if (CMDBuild.controller.management.common.widgets.manageEmail.ManageEmail.trafficLightArrayCheck(record, regenerationTrafficLightArray) || Ext.isEmpty(regenerationTrafficLightArray))
+							this.storeLoad();
+					},
+	//				callback: function(options, success, response) {
+	//					CMDBuild.LoadMask.get().hide();
+	//				}
+				});
+			}
 		},
 
 		/**
@@ -162,24 +164,26 @@ _debug('addRecord regenerationTrafficLightArray', regenerationTrafficLightArray)
 		 * @param {Array} regenerationTrafficLightArray
 		 */
 		editRecord: function(record, regenerationTrafficLightArray) {
+			if (!Ext.Object.isEmpty(record)) {
 _debug('editRecord record', record);
 _debug('editRecord regenerationTrafficLightArray', regenerationTrafficLightArray);
-//			CMDBuild.LoadMask.get().show();
-			CMDBuild.core.proxy.widgets.manageEmail.ManageEmail.update({
-				params: record.getAsParams(),
-				scope: this,
-				loadMask: this.cmOn('getGlobalLoadMask'),
-				failure: function(response, options, decodedResponse) {
-					CMDBuild.Msg.error(CMDBuild.Translation.common.failure, CMDBuild.Translation.errors.emailUpdate, false);
-				},
-				success: function(response, options, decodedResponse) {
-					if (this.self.trafficLightArrayCheck(record, regenerationTrafficLightArray) || Ext.isEmpty(regenerationTrafficLightArray))
-						this.storeLoad();
-				},
-//				callback: function(options, success, response) {
-//					CMDBuild.LoadMask.get().hide();
-//				}
-			});
+	//			CMDBuild.LoadMask.get().show();
+				CMDBuild.core.proxy.widgets.manageEmail.ManageEmail.update({
+					params: record.getAsParams(),
+					scope: this,
+					loadMask: this.cmOn('getGlobalLoadMask'),
+					failure: function(response, options, decodedResponse) {
+						CMDBuild.Msg.error(CMDBuild.Translation.common.failure, CMDBuild.Translation.errors.emailUpdate, false);
+					},
+					success: function(response, options, decodedResponse) {
+						if (CMDBuild.controller.management.common.widgets.manageEmail.ManageEmail.trafficLightArrayCheck(record, regenerationTrafficLightArray) || Ext.isEmpty(regenerationTrafficLightArray))
+							this.storeLoad();
+					},
+	//				callback: function(options, success, response) {
+	//					CMDBuild.LoadMask.get().hide();
+	//				}
+				});
+			}
 		},
 
 		/**
@@ -341,24 +345,26 @@ _debug('onGridAddEmailButtonClick');
 		 * @param {Array} regenerationTrafficLightArray
 		 */
 		removeRecord: function(record, regenerationTrafficLightArray) {
+			if (!Ext.Object.isEmpty(record)) {
 _debug('removeRecord record', record);
 _debug('removeRecord regenerationTrafficLightArray', regenerationTrafficLightArray);
-//			CMDBuild.LoadMask.get().show();
-			CMDBuild.core.proxy.widgets.manageEmail.ManageEmail.remove({
-				params: record.getAsParams([CMDBuild.core.proxy.CMProxyConstants.ID, CMDBuild.core.proxy.CMProxyConstants.TEMPORARY]),
-				scope: this,
-				loadMask: this.cmOn('getGlobalLoadMask'),
-				failure: function(response, options, decodedResponse) {
-					CMDBuild.Msg.error(CMDBuild.Translation.common.failure, CMDBuild.Translation.errors.emailRemove, false);
-				},
-				success: function(response, options, decodedResponse) {
-					if (this.self.trafficLightArrayCheck(record, regenerationTrafficLightArray) || Ext.isEmpty(regenerationTrafficLightArray))
-						this.storeLoad();
-				},
-//				callback: function(options, success, response) {
-//					CMDBuild.LoadMask.get().hide();
-//				}
-			});
+	//			CMDBuild.LoadMask.get().show();
+				CMDBuild.core.proxy.widgets.manageEmail.ManageEmail.remove({
+					params: record.getAsParams([CMDBuild.core.proxy.CMProxyConstants.ID, CMDBuild.core.proxy.CMProxyConstants.TEMPORARY]),
+					scope: this,
+					loadMask: this.cmOn('getGlobalLoadMask'),
+					failure: function(response, options, decodedResponse) {
+						CMDBuild.Msg.error(CMDBuild.Translation.common.failure, CMDBuild.Translation.errors.emailRemove, false);
+					},
+					success: function(response, options, decodedResponse) {
+						if (CMDBuild.controller.management.common.widgets.manageEmail.ManageEmail.trafficLightArrayCheck(record, regenerationTrafficLightArray) || Ext.isEmpty(regenerationTrafficLightArray))
+							this.storeLoad();
+					},
+	//				callback: function(options, success, response) {
+	//					CMDBuild.LoadMask.get().hide();
+	//				}
+				});
+			}
 		},
 
 		/**
