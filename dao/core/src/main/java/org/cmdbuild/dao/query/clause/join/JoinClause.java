@@ -1,9 +1,11 @@
 package org.cmdbuild.dao.query.clause.join;
 
+import static com.google.common.base.Predicates.not;
 import static com.google.common.collect.FluentIterable.from;
 import static com.google.common.collect.Iterables.isEmpty;
 import static com.google.common.collect.Maps.newHashMap;
 import static com.google.common.collect.Sets.newHashSet;
+import static org.cmdbuild.dao.entrytype.Predicates.disabledClass;
 import static org.cmdbuild.dao.entrytype.Predicates.domainFor;
 import static org.cmdbuild.dao.query.clause.where.OrWhereClause.or;
 import static org.cmdbuild.dao.query.clause.where.TrueWhereClause.trueWhereClause;
@@ -57,7 +59,7 @@ public class JoinClause {
 				domainHistory = true;
 			}
 			if (domain instanceof AnyDomain) {
-				addAllDomains(from(viewForBuild.findDomains()).filter(domainFor(source)));
+				addAllDomains();
 			} else {
 				addDomain(domain);
 			}
@@ -98,9 +100,10 @@ public class JoinClause {
 			return new JoinClause(this);
 		}
 
-		private final void addAllDomains(final Iterable<? extends CMDomain> domains) {
+		private final void addAllDomains() {
 			for (final CMDomain domain : from(viewForBuild.findDomains()) //
-					.filter(domainFor(source))) {
+					.filter(domainFor(source)) //
+					.filter(not(disabledClass(source)))) {
 				addDomain(domain);
 			}
 		}
