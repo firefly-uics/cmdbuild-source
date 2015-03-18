@@ -262,6 +262,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 		final CMClass fetchedClass = dataView.findClass(className);
 		return from(dataView.findDomains()) //
 				.filter(domainFor(fetchedClass)) //
+				.filter(not(disabledClass(fetchedClass))) //
 				.filter(usableForReferences(fetchedClass));
 	}
 

@@ -1,10 +1,14 @@
 package org.cmdbuild.dao.entrytype;
 
+import static com.google.common.base.Splitter.on;
+import static java.util.Collections.emptyList;
+import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.apache.commons.lang3.StringUtils.trim;
+
 import java.util.List;
 
 import org.apache.commons.lang3.builder.Builder;
 
-import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 
 public class DBDomain extends DBEntryType implements CMDomain {
@@ -20,8 +24,9 @@ public class DBDomain extends DBEntryType implements CMDomain {
 		public static final String MASTERDETAIL_DESCRIPTION = BASE_NS + "masterdetail.label";
 		public static final String DISABLED_1 = BASE_NS + "disabled.1";
 		public static final String DISABLED_2 = BASE_NS + "disabled.2";
-
 		public static final String DISABLED_SEPARATOR = ",";
+
+		private static final Iterable<String> NO_DISABLED = emptyList();
 
 		public String getDescription1() {
 			return get(DESCRIPTION_1);
@@ -44,11 +49,15 @@ public class DBDomain extends DBEntryType implements CMDomain {
 		}
 
 		public Iterable<String> getDisabled1() {
-			return Splitter.on(DISABLED_SEPARATOR).split(get(DISABLED_1));
+			return disabled(get(DISABLED_1));
 		}
 
 		public Iterable<String> getDisabled2() {
-			return Splitter.on(DISABLED_SEPARATOR).split(get(DISABLED_2));
+			return disabled(get(DISABLED_2));
+		}
+
+		private Iterable<String> disabled(final String value) {
+			return isBlank(value) ? NO_DISABLED : on(DISABLED_SEPARATOR).split(trim(value));
 		}
 
 	}
