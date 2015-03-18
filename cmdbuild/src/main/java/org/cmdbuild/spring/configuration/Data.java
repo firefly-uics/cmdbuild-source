@@ -54,7 +54,8 @@ public class Data {
 
 	@Bean
 	protected StorableConverter<Lookup> lookupStorableConverter() {
-		return new LocalizedStorableConverter<Lookup>(new LookupStorableConverter(), translation.translationFacade());
+		return new LocalizedStorableConverter<Lookup>(new LookupStorableConverter(), translation.translationFacade(),
+				_systemDataView());
 	}
 
 	@Bean

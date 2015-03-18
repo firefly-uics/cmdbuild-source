@@ -24,6 +24,7 @@ import org.cmdbuild.logic.translation.object.DomainDirectDescription;
 import org.cmdbuild.logic.translation.object.DomainInverseDescription;
 import org.cmdbuild.logic.translation.object.DomainMasterDetailLabel;
 import org.cmdbuild.logic.translation.object.LookupDescription;
+import org.cmdbuild.logic.translation.object.MenuItemDescription;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
@@ -169,6 +170,13 @@ public class DefaultTranslationLogic implements TranslationLogic {
 		}
 
 		@Override
+		public void visit(final MenuItemDescription translationObject) {
+			value = format("menuitem.%s.%s", //
+					translationObject.getName(), //
+					DESCRIPTION);
+		}
+
+		@Override
 		public void visit(final NullTranslationObject translationObject) {
 			value = EMPTY;
 		}
@@ -204,13 +212,6 @@ public class DefaultTranslationLogic implements TranslationLogic {
 		@Override
 		public void visit(final ReportTranslation translationObject) {
 			value = format("report.%s.%s", //
-					translationObject.getName(), //
-					FieldMapper.of(translationObject.getField()).getResult());
-		}
-
-		@Override
-		public void visit(final MenuItemTranslation translationObject) {
-			value = format("menuitem.%s.%s", //
 					translationObject.getName(), //
 					FieldMapper.of(translationObject.getField()).getResult());
 		}

@@ -9,6 +9,7 @@ import org.cmdbuild.logic.translation.object.DomainDirectDescription;
 import org.cmdbuild.logic.translation.object.DomainInverseDescription;
 import org.cmdbuild.logic.translation.object.DomainMasterDetailLabel;
 import org.cmdbuild.logic.translation.object.LookupDescription;
+import org.cmdbuild.logic.translation.object.MenuItemDescription;
 
 public interface TranslationObjectVisitor {
 
@@ -34,7 +35,7 @@ public interface TranslationObjectVisitor {
 
 	void visit(LookupDescription lookupDescription);
 
-	void visit(MenuItemTranslation menuItemTranslation);
+	void visit(MenuItemDescription menuItemDescription);
 
 	void visit(NullTranslationObject translationObject);
 
