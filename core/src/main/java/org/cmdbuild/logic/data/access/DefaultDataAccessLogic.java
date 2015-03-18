@@ -901,7 +901,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 	public Iterable<Long> createRelations(final RelationDTO relationDTO) {
 		final CMDomain domain = dataView.findDomain(relationDTO.domainName);
 		if (domain == null) {
-			throw NotFoundException.NotFoundExceptionType.DOMAIN_NOTFOUND.createException();
+			throw NotFoundException.NotFoundExceptionType.DOMAIN_NOTFOUND.createException(relationDTO.domainName);
 		}
 		final CMCard parentCard = retrieveParentCard(relationDTO);
 		final List<CMCard> childCards = retrieveChildCards(relationDTO);
@@ -973,7 +973,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 	public void updateRelation(final RelationDTO relationDTO) {
 		final CMDomain domain = dataView.findDomain(relationDTO.domainName);
 		if (domain == null) {
-			throw NotFoundException.NotFoundExceptionType.DOMAIN_NOTFOUND.createException();
+			throw NotFoundException.NotFoundExceptionType.DOMAIN_NOTFOUND.createException(relationDTO.domainName);
 		}
 
 		final Entry<Long, String> srcCard = relationDTO.getUniqueEntryForSourceCard();
@@ -1041,7 +1041,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 	public void deleteRelation(final String domainName, final Long relationId) {
 		final CMDomain domain = dataView.findDomain(domainName);
 		if (domain == null) {
-			throw NotFoundException.NotFoundExceptionType.DOMAIN_NOTFOUND.createException();
+			throw NotFoundException.NotFoundExceptionType.DOMAIN_NOTFOUND.createException(domainName);
 		}
 
 		dataView.delete(new IdentifiedRelation(domain, relationId));
@@ -1088,7 +1088,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 	public void deleteDetail(final Card master, final Card detail, final String domainName) {
 		final CMDomain domain = dataView.findDomain(domainName);
 		if (domain == null) {
-			throw NotFoundException.NotFoundExceptionType.DOMAIN_NOTFOUND.createException();
+			throw NotFoundException.NotFoundExceptionType.DOMAIN_NOTFOUND.createException(domainName);
 		}
 
 		String sourceClassName, destinationClassName;

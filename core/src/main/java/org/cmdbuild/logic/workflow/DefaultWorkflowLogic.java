@@ -27,8 +27,8 @@ import org.cmdbuild.exception.CMDBWorkflowException.WorkflowExceptionType;
 import org.cmdbuild.exception.ConsistencyException.ConsistencyExceptionType;
 import org.cmdbuild.logic.data.QueryOptions;
 import org.cmdbuild.logic.data.access.ProcessEntryFiller;
+import org.cmdbuild.logic.data.access.resolver.AbstractSerializer;
 import org.cmdbuild.logic.data.access.resolver.ForeignReferenceResolver;
-import org.cmdbuild.logic.data.access.resolver.ReferenceAndLookupSerializer;
 import org.cmdbuild.services.FilesStore;
 import org.cmdbuild.workflow.CMActivity;
 import org.cmdbuild.workflow.CMProcessClass;
@@ -105,7 +105,7 @@ class DefaultWorkflowLogic implements WorkflowLogic {
 				.withEntries(fetchedProcesses) //
 				.withEntryFiller(new ProcessEntryFiller()) //
 				.withLookupStore(lookupStore) //
-				.withSerializer(new ReferenceAndLookupSerializer<UserProcessInstance>()) //
+				.withSerializer(new AbstractSerializer<UserProcessInstance>(){}) //
 				.build() //
 				.resolve();
 		return new PagedElements<UserProcessInstance>(processes, fetchedProcesses.totalSize());

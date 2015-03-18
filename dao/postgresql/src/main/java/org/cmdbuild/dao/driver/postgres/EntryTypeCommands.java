@@ -38,24 +38,15 @@ import org.cmdbuild.dao.entrytype.DBDomain;
 import org.cmdbuild.dao.entrytype.DBDomain.DomainMetadata;
 import org.cmdbuild.dao.entrytype.DBEntryType;
 import org.cmdbuild.dao.entrytype.DBEntryType.EntryTypeMetadata;
-import org.cmdbuild.dao.entrytype.attributetype.BooleanAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeTypeVisitor;
-import org.cmdbuild.dao.entrytype.attributetype.CharAttributeType;
-import org.cmdbuild.dao.entrytype.attributetype.DateAttributeType;
-import org.cmdbuild.dao.entrytype.attributetype.DateTimeAttributeType;
-import org.cmdbuild.dao.entrytype.attributetype.DecimalAttributeType;
-import org.cmdbuild.dao.entrytype.attributetype.DoubleAttributeType;
-import org.cmdbuild.dao.entrytype.attributetype.EntryTypeAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.ForeignKeyAttributeType;
-import org.cmdbuild.dao.entrytype.attributetype.IntegerAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.ForwardingAttributeTypeVisitor;
 import org.cmdbuild.dao.entrytype.attributetype.IpAddressAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.LookupAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.NullAttributeTypeVisitor;
 import org.cmdbuild.dao.entrytype.attributetype.ReferenceAttributeType;
-import org.cmdbuild.dao.entrytype.attributetype.StringArrayAttributeType;
-import org.cmdbuild.dao.entrytype.attributetype.StringAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TextAttributeType;
-import org.cmdbuild.dao.entrytype.attributetype.TimeAttributeType;
 import org.cmdbuild.dao.function.DBFunction;
 import org.cmdbuild.dao.function.DBFunction.FunctionMetadata;
 import org.cmdbuild.dao.view.DBDataView.DBAttributeDefinition;
@@ -381,45 +372,20 @@ public class EntryTypeCommands implements LoggingSupport {
 	}
 
 	private String commentFrom(final DBAttributeDefinition definition) {
-		return new CMAttributeTypeVisitor() {
+		return new ForwardingAttributeTypeVisitor() {
+
+			private final CMAttributeTypeVisitor DELEGATE = NullAttributeTypeVisitor.getInstance();
 
 			private final Collection<String> elements = Lists.newArrayList();
 
 			@Override
-			public void visit(final BooleanAttributeType attributeType) {
-			}
-
-			@Override
-			public void visit(final CharAttributeType attributeType) {
-			}
-
-			@Override
-			public void visit(final EntryTypeAttributeType attributeType) {
-			}
-
-			@Override
-			public void visit(final DateTimeAttributeType attributeType) {
-			}
-
-			@Override
-			public void visit(final DateAttributeType attributeType) {
-			}
-
-			@Override
-			public void visit(final DecimalAttributeType attributeType) {
-			}
-
-			@Override
-			public void visit(final DoubleAttributeType attributeType) {
+			protected CMAttributeTypeVisitor delegate() {
+				return DELEGATE;
 			}
 
 			@Override
 			public void visit(final ForeignKeyAttributeType attributeType) {
 				append(DBAttribute.AttributeMetadata.FK_TARGET_CLASS, attributeType.getForeignKeyDestinationClassName());
-			}
-
-			@Override
-			public void visit(final IntegerAttributeType attributeType) {
 			}
 
 			@Override
@@ -448,20 +414,8 @@ public class EntryTypeCommands implements LoggingSupport {
 			}
 
 			@Override
-			public void visit(final StringAttributeType attributeType) {
-			}
-
-			@Override
 			public void visit(final TextAttributeType attributeType) {
 				append(DBAttribute.AttributeMetadata.EDITOR_TYPE, definition.getEditorType());
-			}
-
-			@Override
-			public void visit(final TimeAttributeType attributeType) {
-			}
-
-			@Override
-			public void visit(final StringArrayAttributeType attributeType) {
 			}
 
 			private void append(final String key, final String value) {

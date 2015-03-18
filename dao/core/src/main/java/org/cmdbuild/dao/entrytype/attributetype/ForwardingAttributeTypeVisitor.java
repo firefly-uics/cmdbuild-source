@@ -1,95 +1,96 @@
 package org.cmdbuild.dao.entrytype.attributetype;
 
-public class NullAttributeTypeVisitor implements CMAttributeTypeVisitor {
+import com.google.common.collect.ForwardingObject;
 
-	private static final NullAttributeTypeVisitor INSTANCE = new NullAttributeTypeVisitor();
+public abstract class ForwardingAttributeTypeVisitor extends ForwardingObject implements CMAttributeTypeVisitor {
 
-	public static NullAttributeTypeVisitor getInstance() {
-		return INSTANCE;
-	}
-
-	private NullAttributeTypeVisitor() {
-		// use factory method
+	/**
+	 * Usable by subclasses only.
+	 */
+	protected ForwardingAttributeTypeVisitor() {
 	}
 
 	@Override
+	protected abstract CMAttributeTypeVisitor delegate();
+
+	@Override
 	public void visit(final BooleanAttributeType attributeType) {
-		// nothing to do
+		delegate().visit(attributeType);
 	}
 
 	@Override
 	public void visit(final CharAttributeType attributeType) {
-		// nothing to do
+		delegate().visit(attributeType);
 	}
 
 	@Override
 	public void visit(final DateAttributeType attributeType) {
-		// nothing to do
+		delegate().visit(attributeType);
 	}
 
 	@Override
 	public void visit(final DateTimeAttributeType attributeType) {
-		// nothing to do
+		delegate().visit(attributeType);
 	}
 
 	@Override
 	public void visit(final DecimalAttributeType attributeType) {
-		// nothing to do
+		delegate().visit(attributeType);
 	}
 
 	@Override
 	public void visit(final DoubleAttributeType attributeType) {
-		// nothing to do
+		delegate().visit(attributeType);
 	}
 
 	@Override
 	public void visit(final EntryTypeAttributeType attributeType) {
-		// nothing to do
+		delegate().visit(attributeType);
 	}
 
 	@Override
 	public void visit(final ForeignKeyAttributeType attributeType) {
-		// nothing to do
+		delegate().visit(attributeType);
 	}
 
 	@Override
 	public void visit(final IntegerAttributeType attributeType) {
-		// nothing to do
+		delegate().visit(attributeType);
 	}
 
 	@Override
 	public void visit(final IpAddressAttributeType attributeType) {
-		// nothing to do
+		delegate().visit(attributeType);
 	}
 
 	@Override
 	public void visit(final LookupAttributeType attributeType) {
-		// nothing to do
+		delegate().visit(attributeType);
 	}
 
 	@Override
 	public void visit(final ReferenceAttributeType attributeType) {
-		// nothing to do
+		delegate().visit(attributeType);
 	}
 
 	@Override
 	public void visit(final StringArrayAttributeType attributeType) {
-		// nothing to do
+		delegate().visit(attributeType);
 	}
 
 	@Override
 	public void visit(final StringAttributeType attributeType) {
-		// nothing to do
+		delegate().visit(attributeType);
 	}
 
 	@Override
 	public void visit(final TextAttributeType attributeType) {
-		// nothing to do
+		delegate().visit(attributeType);
 	}
 
 	@Override
 	public void visit(final TimeAttributeType attributeType) {
-		// nothing to do
+		delegate().visit(attributeType);
 	}
 
 }

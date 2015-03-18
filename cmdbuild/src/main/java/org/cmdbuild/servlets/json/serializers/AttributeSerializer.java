@@ -48,9 +48,11 @@ import org.cmdbuild.dao.entrytype.attributetype.DecimalAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.DoubleAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.EntryTypeAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.ForeignKeyAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.ForwardingAttributeTypeVisitor;
 import org.cmdbuild.dao.entrytype.attributetype.IntegerAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.IpAddressAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.LookupAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.NullAttributeTypeVisitor;
 import org.cmdbuild.dao.entrytype.attributetype.ReferenceAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.StringArrayAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.StringAttributeType;
@@ -342,7 +344,9 @@ public class AttributeSerializer extends Serializer {
 		return out;
 	}
 
-	private class SerializerAttributeVisitor implements CMAttributeTypeVisitor {
+	private class SerializerAttributeVisitor extends ForwardingAttributeTypeVisitor {
+
+		private final CMAttributeTypeVisitor DELEGATE = NullAttributeTypeVisitor.getInstance();
 
 		private final CMAttribute attribute;
 		private final Iterable<Metadata> metadata;
@@ -356,23 +360,8 @@ public class AttributeSerializer extends Serializer {
 		}
 
 		@Override
-		public void visit(final BooleanAttributeType attributeType) {
-		}
-
-		@Override
-		public void visit(final CharAttributeType attributeType) {
-		}
-
-		@Override
-		public void visit(final EntryTypeAttributeType attributeType) {
-		}
-
-		@Override
-		public void visit(final DateTimeAttributeType attributeType) {
-		}
-
-		@Override
-		public void visit(final DateAttributeType attributeType) {
+		protected CMAttributeTypeVisitor delegate() {
+			return DELEGATE;
 		}
 
 		@Override
@@ -382,16 +371,8 @@ public class AttributeSerializer extends Serializer {
 		}
 
 		@Override
-		public void visit(final DoubleAttributeType attributeType) {
-		}
-
-		@Override
 		public void visit(final ForeignKeyAttributeType attributeType) {
 			serialization.put("fkDestination", attributeType.getForeignKeyDestinationClassName());
-		}
-
-		@Override
-		public void visit(final IntegerAttributeType attributeType) {
 		}
 
 		@Override
@@ -445,10 +426,6 @@ public class AttributeSerializer extends Serializer {
 		@Override
 		public void visit(final TextAttributeType attributeType) {
 			serialization.put(EDITOR_TYPE, attribute.getEditorType());
-		}
-
-		@Override
-		public void visit(final TimeAttributeType attributeType) {
 		}
 
 		public Map<String, Object> serialize() {

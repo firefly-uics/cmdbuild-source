@@ -11,9 +11,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.cmdbuild.common.Constants;
 import org.cmdbuild.dao.entry.IdAndDescription;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.CMAttributeTypeVisitor;
 import org.cmdbuild.dao.entrytype.attributetype.DateAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.DateTimeAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.ForeignKeyAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.ForwardingAttributeTypeVisitor;
 import org.cmdbuild.dao.entrytype.attributetype.LookupAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.NullAttributeTypeVisitor;
 import org.cmdbuild.dao.entrytype.attributetype.ReferenceAttributeType;
@@ -63,10 +65,17 @@ public class Card {
 		}
 
 		protected Object convertDateTimeOrTimeStamp(final CMAttributeType<?> attributeType, final Object attributeValue) {
-			return new NullAttributeTypeVisitor() {
+			return new ForwardingAttributeTypeVisitor() {
+
+				private final CMAttributeTypeVisitor DELEGATE = NullAttributeTypeVisitor.getInstance();
 
 				private Object attributeValue;
 				private Object convertedValue;
+
+				@Override
+				protected CMAttributeTypeVisitor delegate() {
+					return DELEGATE;
+				}
 
 				@Override
 				public void visit(final DateAttributeType attributeType) {
