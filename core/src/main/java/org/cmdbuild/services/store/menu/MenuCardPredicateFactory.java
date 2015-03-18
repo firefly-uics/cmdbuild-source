@@ -9,7 +9,8 @@ import org.cmdbuild.auth.acl.CMGroup;
 import org.cmdbuild.auth.acl.PrivilegeContext;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.view.CMDataView;
-import org.cmdbuild.data.converter.ViewConverter;
+import org.cmdbuild.data.store.dao.StorableConverter;
+import org.cmdbuild.model.View;
 import org.cmdbuild.privileges.predicates.IsAlwaysReadable;
 import org.cmdbuild.privileges.predicates.IsReadableClass;
 import org.cmdbuild.privileges.predicates.IsReadableDashboard;
@@ -25,13 +26,13 @@ public class MenuCardPredicateFactory {
 	private final CMGroup group;
 	private final CMDataView dataView;
 	private final Supplier<PrivilegeContext> privilegeContext;
-	private final ViewConverter viewConverter;
+	private final StorableConverter<View> viewConverter;
 
 	public MenuCardPredicateFactory( //
 			final CMDataView view, //
 			final CMGroup group, //
 			final Supplier<PrivilegeContext> privilegeContext, //
-			final ViewConverter viewConverter //
+			final StorableConverter<View> viewConverter //
 	) {
 		this.group = group;
 		this.dataView = view;

@@ -50,7 +50,7 @@ public class Data {
 	private UserStore userStore;
 
 	@Autowired
-	private ViewConverter viewConverter;
+	private View view;
 
 	@Bean
 	protected StorableConverter<Lookup> lookupStorableConverter() {
@@ -88,7 +88,7 @@ public class Data {
 	@Bean
 	@Scope(PROTOTYPE)
 	public SecurityLogic securityLogic() {
-		return new DefaultSecurityLogic(systemDataView(), viewConverter, filter.dataViewFilterStore());
+		return new DefaultSecurityLogic(systemDataView(), view.viewConverter(), filter.dataViewFilterStore());
 	}
 
 	@Bean

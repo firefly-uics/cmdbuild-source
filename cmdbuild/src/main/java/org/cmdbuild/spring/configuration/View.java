@@ -4,7 +4,9 @@ import static org.cmdbuild.spring.util.Constants.PROTOTYPE;
 
 import org.cmdbuild.auth.UserStore;
 import org.cmdbuild.data.converter.ViewConverter;
+import org.cmdbuild.data.store.dao.StorableConverter;
 import org.cmdbuild.logic.view.ViewLogic;
+import org.cmdbuild.services.localization.LocalizedStorableConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,10 +20,17 @@ public class View {
 
 	@Autowired
 	private UserStore userStore;
+	
+	@Autowired
+	private Translation translation;
 
-	@Bean
-	public ViewConverter viewConverter() {
+	private ViewConverter baseViewConverter() {
 		return new ViewConverter(data.systemDataView());
+	}
+	
+	@Bean
+	public StorableConverter<org.cmdbuild.model.View> viewConverter() {
+		return new LocalizedStorableConverter<org.cmdbuild.model.View>(baseViewConverter(), translation.translationFacade(), data.systemDataView());
 	}
 
 	@Bean

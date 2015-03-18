@@ -11,6 +11,7 @@ import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.data.converter.ViewConverter;
 import org.cmdbuild.data.store.Store;
 import org.cmdbuild.data.store.dao.DataViewStore;
+import org.cmdbuild.data.store.dao.StorableConverter;
 import org.cmdbuild.logic.Logic;
 import org.cmdbuild.model.View;
 import org.cmdbuild.model.View.ViewType;
@@ -25,7 +26,7 @@ public class ViewLogic implements Logic {
 
 	public ViewLogic( //
 			final CMDataView dataView, //
-			final ViewConverter converter, //
+			final StorableConverter<View> converter, //
 			final OperationUser operationUser //
 	) {
 		this.dataView = dataView;

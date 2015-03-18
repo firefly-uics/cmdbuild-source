@@ -25,7 +25,7 @@ public class ViewManagement extends JSONBaseWithSpringContext {
 
 	@JSONExported
 	public JSONObject read() throws JSONException {
-		return new ViewSerializer(translationFacade()).toClient(viewLogic().fetchViewsOfAllTypes());
+		return new ViewSerializer().toClient(viewLogic().fetchViewsOfAllTypes());
 	}
 
 	/* ************************************************
@@ -42,7 +42,7 @@ public class ViewManagement extends JSONBaseWithSpringContext {
 
 	@JSONExported
 	public JSONObject readSQLView() throws JSONException {
-		return new ViewSerializer(translationFacade()).toClient(readByType(View.ViewType.SQL));
+		return new ViewSerializer().toClient(readByType(View.ViewType.SQL));
 	}
 
 	@JSONExported
@@ -74,7 +74,7 @@ public class ViewManagement extends JSONBaseWithSpringContext {
 
 	@JSONExported
 	public JSONObject readFilterView() throws JSONException {
-		return new ViewSerializer(translationFacade()).toClient(readByType(View.ViewType.FILTER));
+		return new ViewSerializer().toClient(readByType(View.ViewType.FILTER));
 	}
 
 	@JSONExported

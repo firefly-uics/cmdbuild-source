@@ -39,8 +39,8 @@ import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.CMQueryRow;
 import org.cmdbuild.dao.view.CMDataView;
-import org.cmdbuild.data.converter.ViewConverter;
 import org.cmdbuild.data.store.dao.DataViewStore;
+import org.cmdbuild.data.store.dao.StorableConverter;
 import org.cmdbuild.logic.Logic;
 import org.cmdbuild.logic.privileges.PrivilegeInfo.Builder;
 import org.cmdbuild.model.View;
@@ -60,12 +60,12 @@ public class DefaultSecurityLogic implements Logic, SecurityLogic {
 
 	private final CMDataView view;
 	private final CMClass grantClass;
-	private final ViewConverter viewConverter;
+	private final StorableConverter<View> viewConverter;
 	private final DataViewFilterStore filterStore;
 
 	public DefaultSecurityLogic( //
 			final CMDataView view, //
-			final ViewConverter viewConverter, //
+			final StorableConverter<View> viewConverter, //
 			final DataViewFilterStore filterStore //
 	) {
 		this.view = view;

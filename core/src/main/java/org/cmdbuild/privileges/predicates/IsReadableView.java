@@ -8,8 +8,8 @@ import java.util.NoSuchElementException;
 import org.cmdbuild.auth.acl.PrivilegeContext;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.view.CMDataView;
-import org.cmdbuild.data.converter.ViewConverter;
 import org.cmdbuild.data.store.dao.DataViewStore;
+import org.cmdbuild.data.store.dao.StorableConverter;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.model.View;
 import org.slf4j.Marker;
@@ -21,12 +21,12 @@ public class IsReadableView implements Predicate<CMCard> {
 
 	private final PrivilegeContext privilegeContext;
 	private final CMDataView dataView;
-	private final ViewConverter viewConverter;
+	private final StorableConverter<View> viewConverter;
 
 	public IsReadableView( //
 			final CMDataView dataView, //
 			final PrivilegeContext privilegeContext, //
-			final ViewConverter viewConverter //
+			final StorableConverter<View> viewConverter //
 	) {
 		this.privilegeContext = privilegeContext;
 		this.dataView = dataView;

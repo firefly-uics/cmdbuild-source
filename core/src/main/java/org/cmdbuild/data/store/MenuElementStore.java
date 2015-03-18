@@ -18,8 +18,8 @@ import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.CMQueryRow;
 import org.cmdbuild.dao.view.CMDataView;
-import org.cmdbuild.data.converter.ViewConverter;
 import org.cmdbuild.data.store.dao.StorableConverter;
+import org.cmdbuild.model.View;
 import org.cmdbuild.services.store.menu.MenuCardFilter;
 import org.cmdbuild.services.store.menu.MenuElement;
 
@@ -33,11 +33,11 @@ public class MenuElementStore extends ForwardingStore<MenuElement> {
 	private final Store<MenuElement> delegate;
 	private final CMDataView dataView;
 	private final OperationUser operationUser;
-	private final ViewConverter viewConverter;
+	private final StorableConverter<View> viewConverter;
 	private final Function<CMCard, MenuElement> CONVERT;
 
 	public MenuElementStore(final Store<MenuElement> delegate, final CMDataView dataView,
-			final OperationUser operationUser, final ViewConverter viewConverter,
+			final OperationUser operationUser, final StorableConverter<View> viewConverter,
 			final StorableConverter<MenuElement> converter) {
 		this.delegate = delegate;
 		this.dataView = dataView;

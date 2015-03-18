@@ -15,6 +15,7 @@ import static org.cmdbuild.services.store.menu.MenuItemType.isDashboard;
 import static org.cmdbuild.services.store.menu.MenuItemType.isReport;
 import static org.cmdbuild.services.store.menu.MenuItemType.isView;
 
+import org.apache.commons.lang3.Validate;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.query.CMQueryResult;
@@ -22,8 +23,8 @@ import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.logic.translation.ReportTranslation;
 import org.cmdbuild.logic.translation.TranslationFacade;
 import org.cmdbuild.logic.translation.TranslationObject;
-import org.cmdbuild.logic.translation.ViewTranslation;
 import org.cmdbuild.logic.translation.converter.ClassConverter;
+import org.cmdbuild.logic.translation.converter.ViewConverter;
 import org.cmdbuild.services.localization.LocalizableStorableVisitor;
 
 import com.google.common.base.Optional;
@@ -81,11 +82,10 @@ public class LocalizedMenuElement extends ForwardingMenuElement {
 			} else if (isView(type)) {
 				final Optional<String> _viewName = fetchViewName();
 				if (_viewName.isPresent()) {
-					final ViewTranslation viewTranslation = ViewTranslation.newInstance() //
-							.withName(_viewName.get()) //
-							.withField(DESCRIPTION_FOR_CLIENT) //
-							.build();
-					translatedDescription = facade.read(viewTranslation);
+					final ViewConverter converter = ViewConverter.of(ViewConverter.description());
+					Validate.isTrue(converter.isValid());
+					converter.create(_viewName.get());
+					translatedDescription = facade.read(converter.create(_viewName.get()));
 				}
 			} else if (isDashboard(type)) {
 				// nothing to do

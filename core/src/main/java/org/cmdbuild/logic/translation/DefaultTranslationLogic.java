@@ -25,6 +25,7 @@ import org.cmdbuild.logic.translation.object.DomainInverseDescription;
 import org.cmdbuild.logic.translation.object.DomainMasterDetailLabel;
 import org.cmdbuild.logic.translation.object.LookupDescription;
 import org.cmdbuild.logic.translation.object.MenuItemDescription;
+import org.cmdbuild.logic.translation.object.ViewDescription;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
@@ -181,14 +182,15 @@ public class DefaultTranslationLogic implements TranslationLogic {
 			value = EMPTY;
 		}
 
-		// TODO: get rid of everything below
-
 		@Override
-		public void visit(final ViewTranslation translationObject) {
+		public void visit(ViewDescription translationObject) {
 			value = format("view.%s.%s", //
 					translationObject.getName(), //
-					FieldMapper.of(translationObject.getField()).getResult());
+					DESCRIPTION);
+			
 		}
+
+		// TODO: get rid of everything below
 
 		@Override
 		public void visit(final FilterTranslation translationObject) {
