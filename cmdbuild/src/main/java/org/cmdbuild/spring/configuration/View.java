@@ -3,9 +3,9 @@ package org.cmdbuild.spring.configuration;
 import static org.cmdbuild.spring.util.Constants.PROTOTYPE;
 
 import org.cmdbuild.auth.UserStore;
-import org.cmdbuild.data.converter.ViewConverter;
 import org.cmdbuild.data.store.dao.StorableConverter;
 import org.cmdbuild.logic.view.ViewLogic;
+import org.cmdbuild.model.ViewConverter;
 import org.cmdbuild.services.localization.LocalizedStorableConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -24,7 +24,7 @@ public class View {
 	@Autowired
 	private Translation translation;
 
-	private ViewConverter baseViewConverter() {
+	private org.cmdbuild.model.ViewConverter baseViewConverter() {
 		return new ViewConverter(data.systemDataView());
 	}
 	
