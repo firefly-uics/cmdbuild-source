@@ -13,6 +13,7 @@ import org.cmdbuild.dao.entrytype.attributetype.CMAttributeTypeVisitor;
 import org.cmdbuild.dao.entrytype.attributetype.DateAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.DateTimeAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.ForeignKeyAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.ForwardingAttributeTypeVisitor;
 import org.cmdbuild.dao.entrytype.attributetype.LookupAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.NullAttributeTypeVisitor;
 import org.cmdbuild.dao.entrytype.attributetype.ReferenceAttributeType;
@@ -36,11 +37,17 @@ public class DefaultConverter implements Converter {
 
 	private static final DateFormat dateFormat = new SimpleDateFormat(REST_ALL_DATES_PATTERN);
 
-	private static class ToClientImpl extends NullAttributeTypeVisitor implements ValueConverter,
-			CMAttributeTypeVisitor {
+	private static class ToClientImpl extends ForwardingAttributeTypeVisitor implements ValueConverter {
+
+		private static final CMAttributeTypeVisitor DELEGATE = NullAttributeTypeVisitor.getInstance();
 
 		private Object input;
 		private Object output;
+
+		@Override
+		protected CMAttributeTypeVisitor delegate() {
+			return DELEGATE;
+		}
 
 		@Override
 		public Object convert(final CMAttributeType<?> attributeType, final Object value) {
@@ -89,10 +96,17 @@ public class DefaultConverter implements Converter {
 
 	}
 
-	private static class FromClientImpl extends NullAttributeTypeVisitor implements ValueConverter {
+	private static class FromClientImpl extends ForwardingAttributeTypeVisitor implements ValueConverter {
+
+		private static final CMAttributeTypeVisitor DELEGATE = NullAttributeTypeVisitor.getInstance();
 
 		private Object input;
 		private Object output;
+
+		@Override
+		protected CMAttributeTypeVisitor delegate() {
+			return DELEGATE;
+		}
 
 		@Override
 		public Object convert(final CMAttributeType<?> attributeType, final Object value) {

@@ -6,7 +6,9 @@ import org.apache.commons.lang3.Validate;
 import org.cmdbuild.common.template.engine.Engine;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entry.IdAndDescription;
+import org.cmdbuild.dao.entrytype.attributetype.CMAttributeTypeVisitor;
 import org.cmdbuild.dao.entrytype.attributetype.ForeignKeyAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.ForwardingAttributeTypeVisitor;
 import org.cmdbuild.dao.entrytype.attributetype.LookupAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.NullAttributeTypeVisitor;
 import org.cmdbuild.dao.entrytype.attributetype.ReferenceAttributeType;
@@ -53,9 +55,16 @@ public class CardEngine implements Engine {
 		if (ID_ATTRIBUTE.equalsIgnoreCase(expression)) {
 			return card.getId();
 		}
-		return new NullAttributeTypeVisitor() {
+		return new ForwardingAttributeTypeVisitor() {
+
+			private final CMAttributeTypeVisitor DELEGATE = NullAttributeTypeVisitor.getInstance();
 
 			private Object adapted;
+
+			@Override
+			protected CMAttributeTypeVisitor delegate() {
+				return DELEGATE;
+			}
 
 			public Object adapt(final Object value) {
 				adapted = value;
