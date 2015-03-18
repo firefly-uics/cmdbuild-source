@@ -18,7 +18,6 @@ import java.util.Map;
 import org.apache.commons.lang3.Validate;
 import org.cmdbuild.logic.translation.FilterTranslation;
 import org.cmdbuild.logic.translation.InstanceNameTranslation;
-import org.cmdbuild.logic.translation.MenuItemTranslation;
 import org.cmdbuild.logic.translation.ReportTranslation;
 import org.cmdbuild.logic.translation.TranslationObject;
 import org.cmdbuild.logic.translation.ViewTranslation;
@@ -27,6 +26,7 @@ import org.cmdbuild.logic.translation.converter.AttributeConverter;
 import org.cmdbuild.logic.translation.converter.ClassConverter;
 import org.cmdbuild.logic.translation.converter.DomainConverter;
 import org.cmdbuild.logic.translation.converter.LookupConverter;
+import org.cmdbuild.logic.translation.converter.MenuItemConverter;
 import org.cmdbuild.servlets.json.JSONBaseWithSpringContext;
 import org.cmdbuild.servlets.json.management.JsonResponse;
 import org.cmdbuild.servlets.utils.Parameter;
@@ -139,15 +139,15 @@ public class Translation extends JSONBaseWithSpringContext {
 	@JSONExported
 	@Admin
 	public void createForMenuItem( //
-			@Parameter(value = MENU_ITEM_UUID) final String itemUniqueIdentifier, //
+			@Parameter(value = MENU_ITEM_UUID) final String uuid, //
 			@Parameter(value = FIELD) final String field, //
 			@Parameter(value = TRANSLATIONS) final JSONObject translations //
 	) {
-		final MenuItemTranslation translationObject = MenuItemTranslation.newInstance() //
-				.withName(itemUniqueIdentifier) //
-				.withField(field) //
+		final MenuItemConverter converter = MenuItemConverter.of(field);
+		Validate.isTrue(converter.isValid());
+		final TranslationObject translationObject = converter //
 				.withTranslations(toMap(translations)) //
-				.build();
+				.create(uuid);
 		translationLogic().create(translationObject);
 	}
 
@@ -287,13 +287,13 @@ public class Translation extends JSONBaseWithSpringContext {
 	@JSONExported
 	@Admin
 	public JsonResponse readForMenuItem( //
-			@Parameter(value = MENU_ITEM_UUID) final String uniqueIdentifier, //
+			@Parameter(value = MENU_ITEM_UUID) final String uuid, //
 			@Parameter(value = FIELD) final String field //
 	) {
-		final MenuItemTranslation translationObject = MenuItemTranslation.newInstance() //
-				.withName(uniqueIdentifier) //
-				.withField(field) //
-				.build();
+		final MenuItemConverter converter = MenuItemConverter.of(field);
+		Validate.isTrue(converter.isValid());
+		final TranslationObject translationObject = converter //
+				.create(uuid);
 		final Map<String, String> translations = translationLogic().readAll(translationObject);
 		return JsonResponse.success(translations);
 	}
@@ -443,15 +443,15 @@ public class Translation extends JSONBaseWithSpringContext {
 	@JSONExported
 	@Admin
 	public void updateForMenuItem( //
-			@Parameter(value = MENU_ITEM_UUID) final String uniqueIdentifier, //
+			@Parameter(value = MENU_ITEM_UUID) final String uuid, //
 			@Parameter(value = FIELD) final String field, //
 			@Parameter(value = TRANSLATIONS) final JSONObject translations //
 	) {
-		final MenuItemTranslation translationObject = MenuItemTranslation.newInstance() //
-				.withName(uniqueIdentifier) //
-				.withField(field) //
+		final MenuItemConverter converter = MenuItemConverter.of(field);
+		Validate.isTrue(converter.isValid());
+		final TranslationObject translationObject = converter //
 				.withTranslations(toMap(translations)) //
-				.build();
+				.create(uuid);
 		translationLogic().update(translationObject);
 	}
 
@@ -601,22 +601,23 @@ public class Translation extends JSONBaseWithSpringContext {
 		final LookupConverter converter = LookupConverter.of(field);
 		Validate.isTrue(converter.isValid());
 		final TranslationObject translationObject = converter //
-				.withTranslations(toMap(translations)).create(uuid);
+				.withTranslations(toMap(translations)) //
+				.create(uuid);
 		translationLogic().delete(translationObject);
 	}
 
 	@JSONExported
 	@Admin
 	public void deleteForMenuItem( //
-			@Parameter(value = MENU_ITEM_UUID) final String itemUniqueIdentifier, //
+			@Parameter(value = MENU_ITEM_UUID) final String uuid, //
 			@Parameter(value = FIELD) final String field, //
 			@Parameter(value = TRANSLATIONS) final JSONObject translations //
 	) {
-		final MenuItemTranslation translationObject = MenuItemTranslation.newInstance() //
-				.withName(itemUniqueIdentifier) //
-				.withField(field) //
+		final MenuItemConverter converter = MenuItemConverter.of(field);
+		Validate.isTrue(converter.isValid());
+		final TranslationObject translationObject = converter //
 				.withTranslations(toMap(translations)) //
-				.build();
+				.create(uuid);
 		translationLogic().delete(translationObject);
 	}
 

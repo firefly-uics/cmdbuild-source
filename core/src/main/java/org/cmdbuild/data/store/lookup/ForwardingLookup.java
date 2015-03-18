@@ -55,8 +55,7 @@ public abstract class ForwardingLookup extends ForwardingObject implements Looku
 
 	@Override
 	public Lookup parent() {
-		// TODO Auto-generated method stub
-		return null;
+		return delegate().parent();
 	}
 
 	@Override
