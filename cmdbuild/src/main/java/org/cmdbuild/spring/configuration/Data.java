@@ -7,7 +7,6 @@ import org.cmdbuild.auth.UserStore;
 import org.cmdbuild.dao.driver.DBDriver;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.dao.view.DBDataView;
-import org.cmdbuild.data.converter.ViewConverter;
 import org.cmdbuild.data.store.dao.DataViewStore;
 import org.cmdbuild.data.store.dao.StorableConverter;
 import org.cmdbuild.data.store.lookup.DataViewLookupStore;
