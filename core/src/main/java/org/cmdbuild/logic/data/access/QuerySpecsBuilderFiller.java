@@ -32,7 +32,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.Validate;
-import org.cmdbuild.common.collect.Mapper;
 import org.cmdbuild.cql.facade.CQLAnalyzer.NullCallback;
 import org.cmdbuild.cql.facade.CQLFacade;
 import org.cmdbuild.dao.entrytype.CMAttribute;
@@ -65,6 +64,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 
 public class QuerySpecsBuilderFiller {
@@ -91,9 +91,9 @@ public class QuerySpecsBuilderFiller {
 	}
 
 	public QuerySpecsBuilder create() {
-		final Mapper<Iterable<? extends String>, Iterable<QueryAliasAttribute>> attributeSubsetMapper = new AttributeSubsetMapper(
+		final Function<Iterable<? extends String>, Iterable<QueryAliasAttribute>> attributeSubsetMapper = new AttributeSubsetMapper(
 				sourceClass);
-		final Iterable<QueryAliasAttribute> attributeSubsetForSelect = attributeSubsetMapper.map(queryOptions
+		final Iterable<QueryAliasAttribute> attributeSubsetForSelect = attributeSubsetMapper.apply(queryOptions
 				.getAttributes());
 		final QuerySpecsBuilder querySpecsBuilder = newQuerySpecsBuilder(attributeSubsetForSelect, sourceClass) //
 				.from(sourceClass);
