@@ -3,6 +3,8 @@ package org.cmdbuild.dao.driver.postgres;
 import static com.google.common.base.Joiner.on;
 import static com.google.common.collect.Maps.newLinkedHashMap;
 import static java.lang.String.format;
+import static java.util.Collections.emptyList;
+import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
@@ -67,6 +69,8 @@ public class EntryTypeCommands implements LoggingSupport {
 
 	private static final Pattern COMMENT_PATTERN = Pattern.compile("(([A-Z0-9_]+)" + KEY_VALUE_SEPARATOR + "([^"
 			+ SEPARATOR + "]*))*");
+
+	private static final Iterable<String> NO_DISABLED = emptyList();
 
 	private final DBDriver driver;
 	private final JdbcTemplate jdbcTemplate;
@@ -549,11 +553,18 @@ public class EntryTypeCommands implements LoggingSupport {
 		map.put("CARDIN", defaultIfBlank(definition.getCardinality(), "N:N"));
 		map.put("MASTERDETAIL", Boolean.toString(definition.isMasterDetail()));
 		map.put("MDLABEL", defaultIfBlank(definition.getMasterDetailDescription(), EMPTY));
-		map.put("DISABLED1", on(DISABLED_SEPARATOR).join(definition.getDisabled1()));
-		map.put("DISABLED2", on(DISABLED_SEPARATOR).join(definition.getDisabled2()));
+		map.put("DISABLED1", disabled(definition.getDisabled1()));
+		map.put("DISABLED2", disabled(definition.getDisabled2()));
 		return on(SEPARATOR) //
 				.withKeyValueSeparator(KEY_VALUE_SEPARATOR) //
+				.useForNull(EMPTY) //
 				.join(map);
+	}
+
+	private String disabled(final Iterable<String> values) {
+		return on(DISABLED_SEPARATOR) //
+				.skipNulls() //
+				.join(defaultIfNull(values, NO_DISABLED));
 	}
 
 	public void deleteDomain(final DBDomain dbDomain) {

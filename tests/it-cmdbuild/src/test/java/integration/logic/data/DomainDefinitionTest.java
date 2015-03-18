@@ -36,7 +36,7 @@ public class DomainDefinitionTest extends DataDefinitionLogicTest {
 	@Test
 	public void createStandardDomainHasSomeDefaults() {
 		// given
-		dataDefinitionLogic().createOrUpdate(a(newDomain()));
+		dataDefinitionLogic().create(a(newDomain()));
 
 		// when
 		final CMDomain domain = dataView().findDomain(DOMAIN_NAME);
@@ -56,7 +56,7 @@ public class DomainDefinitionTest extends DataDefinitionLogicTest {
 	@Test
 	public void createDomainWithCardinality_N_N() {
 		// given
-		dataDefinitionLogic().createOrUpdate(a(newDomain().withCardinality(CARDINALITY_NN.value())));
+		dataDefinitionLogic().create(a(newDomain().withCardinality(CARDINALITY_NN.value())));
 
 		// when
 		final CMDomain domain = dataView().findDomain(DOMAIN_NAME);
@@ -68,7 +68,7 @@ public class DomainDefinitionTest extends DataDefinitionLogicTest {
 	@Test
 	public void createDomainWithCardinality_1_N() {
 		// given
-		dataDefinitionLogic().createOrUpdate(a(newDomain().withCardinality(CARDINALITY_1N.value())));
+		dataDefinitionLogic().create(a(newDomain().withCardinality(CARDINALITY_1N.value())));
 
 		// when
 		final CMDomain domain = dataView().findDomain(DOMAIN_NAME);
@@ -80,7 +80,7 @@ public class DomainDefinitionTest extends DataDefinitionLogicTest {
 	@Test
 	public void createDomainWithCardinality_N_1() {
 		// given
-		dataDefinitionLogic().createOrUpdate(a(newDomain().withCardinality(CARDINALITY_N1.value())));
+		dataDefinitionLogic().create(a(newDomain().withCardinality(CARDINALITY_N1.value())));
 
 		// when
 		final CMDomain domain = dataView().findDomain(DOMAIN_NAME);
@@ -92,7 +92,7 @@ public class DomainDefinitionTest extends DataDefinitionLogicTest {
 	@Test
 	public void createDomainWithCardinality_1_1() {
 		// given
-		dataDefinitionLogic().createOrUpdate(a(newDomain().withCardinality(CARDINALITY_11.value())));
+		dataDefinitionLogic().create(a(newDomain().withCardinality(CARDINALITY_11.value())));
 
 		// when
 		final CMDomain domain = dataView().findDomain(DOMAIN_NAME);
@@ -104,7 +104,7 @@ public class DomainDefinitionTest extends DataDefinitionLogicTest {
 	@Test
 	public void createDomainWithNonEmptyDescriptions() {
 		// given
-		dataDefinitionLogic().createOrUpdate(a(newDomain().withDirectDescription("foo").withInverseDescription("bar")));
+		dataDefinitionLogic().create(a(newDomain().withDirectDescription("foo").withInverseDescription("bar")));
 
 		// when
 		final CMDomain domain = dataView().findDomain(DOMAIN_NAME);
@@ -117,7 +117,7 @@ public class DomainDefinitionTest extends DataDefinitionLogicTest {
 	@Test
 	public void domainCanBeMasterDetail() {
 		// given
-		dataDefinitionLogic().createOrUpdate(a(newDomain() //
+		dataDefinitionLogic().create(a(newDomain() //
 				.thatIsMasterDetail(true) //
 				.withMasterDetailDescription("this is a master-detail domain")));
 
@@ -132,10 +132,10 @@ public class DomainDefinitionTest extends DataDefinitionLogicTest {
 	@Test
 	public void classesAndCardinalityCannotBeChanged() {
 		// given
-		dataDefinitionLogic().createOrUpdate(a(newDomain()));
+		dataDefinitionLogic().create(a(newDomain()));
 		final CMClass anotherClass1 = dataDefinitionLogic().createOrUpdate(a(newClass(ANOTHER_FIRST_CLASS_NAME)));
 		final CMClass anotherClass2 = dataDefinitionLogic().createOrUpdate(a(newClass(ANOTHER_SECOND_CLASS_NAME)));
-		dataDefinitionLogic().createOrUpdate(a(newDomain() //
+		dataDefinitionLogic().update(a(newDomain() //
 				.withIdClass1(anotherClass1.getId()) //
 				.withIdClass2(anotherClass2.getId())));
 
@@ -152,8 +152,8 @@ public class DomainDefinitionTest extends DataDefinitionLogicTest {
 	@Test
 	public void descriptionsCanBeChanged() {
 		// given
-		dataDefinitionLogic().createOrUpdate(a(newDomain()));
-		dataDefinitionLogic().createOrUpdate(a(newDomain() //
+		dataDefinitionLogic().create(a(newDomain()));
+		dataDefinitionLogic().update(a(newDomain() //
 				.withDirectDescription("foo") //
 				.withInverseDescription("bar")));
 
@@ -168,7 +168,7 @@ public class DomainDefinitionTest extends DataDefinitionLogicTest {
 	@Test
 	public void domainCreatedAndDeleted() {
 		// given
-		dataDefinitionLogic().createOrUpdate(a(newDomain()));
+		dataDefinitionLogic().create(a(newDomain()));
 		dataDefinitionLogic().deleteDomainIfExists(DOMAIN_NAME);
 
 		// when
