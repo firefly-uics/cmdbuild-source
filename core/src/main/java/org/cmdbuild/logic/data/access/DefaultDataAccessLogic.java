@@ -60,7 +60,7 @@ import org.cmdbuild.data.store.Store;
 import org.cmdbuild.data.store.dao.DataViewStore;
 import org.cmdbuild.data.store.lookup.LookupStore;
 import org.cmdbuild.exception.ConsistencyException.ConsistencyExceptionType;
-import org.cmdbuild.exception.NotFoundException;
+import org.cmdbuild.exception.NotFoundException.NotFoundExceptionType;
 import org.cmdbuild.exception.ORMException.ORMExceptionType;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.commands.AbstractGetRelation.RelationInfo;
@@ -383,7 +383,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 					.first() //
 					.get();
 		} catch (final NoSuchElementException ex) {
-			throw NotFoundException.NotFoundExceptionType.CARD_NOTFOUND.createException(className);
+			throw NotFoundExceptionType.CARD_NOTFOUND.createException(className);
 		}
 	}
 
@@ -410,7 +410,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 			return CMCARD_TO_CARD.apply(cardWithResolvedReference);
 
 		} catch (final NoSuchElementException ex) {
-			throw NotFoundException.NotFoundExceptionType.CARD_NOTFOUND.createException();
+			throw NotFoundExceptionType.CARD_NOTFOUND.createException();
 		}
 	}
 
@@ -615,7 +615,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 	public Long createCard(final Card userGivenCard, final boolean manageAlsoDomainsAttributes) {
 		final CMClass entryType = strictDataView.findClass(userGivenCard.getClassName());
 		if (entryType == null) {
-			throw NotFoundException.NotFoundExceptionType.CLASS_NOTFOUND.createException(userGivenCard.getClassName());
+			throw NotFoundExceptionType.CLASS_NOTFOUND.createException(userGivenCard.getClassName());
 		}
 
 		final Store<Card> store = storeOf(userGivenCard);
@@ -640,7 +640,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 
 		final CMClass entryType = dataView.findClass(userGivenCard.getClassName());
 		if (entryType == null) {
-			throw NotFoundException.NotFoundExceptionType.CLASS_NOTFOUND.createException(userGivenCard.getClassName());
+			throw NotFoundExceptionType.CLASS_NOTFOUND.createException(userGivenCard.getClassName());
 		}
 
 		final Store<Card> store = storeOf(userGivenCard);
@@ -872,7 +872,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 	public Iterable<CMDomain> findDomainsForClass(final String className, final boolean withDisabledClasses) {
 		final CMClass fetchedClass = dataView.findClass(className);
 		if (fetchedClass == null) {
-			throw NotFoundException.NotFoundExceptionType.CLASS_NOTFOUND.createException(className);
+			throw NotFoundExceptionType.CLASS_NOTFOUND.createException(className);
 		}
 		return from(dataView.findDomains()) //
 				.filter(domainFor(fetchedClass)) //
@@ -901,7 +901,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 	public Iterable<Long> createRelations(final RelationDTO relationDTO) {
 		final CMDomain domain = dataView.findDomain(relationDTO.domainName);
 		if (domain == null) {
-			throw NotFoundException.NotFoundExceptionType.DOMAIN_NOTFOUND.createException(relationDTO.domainName);
+			throw NotFoundExceptionType.DOMAIN_NOTFOUND.createException(relationDTO.domainName);
 		}
 		final CMCard parentCard = retrieveParentCard(relationDTO);
 		final List<CMCard> childCards = retrieveChildCards(relationDTO);
@@ -909,11 +909,23 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 		final List<Long> ids = Lists.newArrayList();
 		if (relationDTO.master.equals("_1")) {
 			for (final CMCard dstCard : childCards) {
+				if (from(domain.getDisabled1()).contains(parentCard)) {
+					throw NotFoundExceptionType.DOMAIN_NOTFOUND.createException(relationDTO.domainName);
+				}
+				if (from(domain.getDisabled2()).contains(dstCard)) {
+					throw NotFoundExceptionType.DOMAIN_NOTFOUND.createException(relationDTO.domainName);
+				}
 				final Long id = saveRelation(domain, parentCard, dstCard, relationDTO.relationAttributeToValue);
 				ids.add(id);
 			}
 		} else {
 			for (final CMCard srcCard : childCards) {
+				if (from(domain.getDisabled1()).contains(srcCard)) {
+					throw NotFoundExceptionType.DOMAIN_NOTFOUND.createException(relationDTO.domainName);
+				}
+				if (from(domain.getDisabled2()).contains(parentCard)) {
+					throw NotFoundExceptionType.DOMAIN_NOTFOUND.createException(relationDTO.domainName);
+				}
 				final Long id = saveRelation(domain, srcCard, parentCard, relationDTO.relationAttributeToValue);
 				ids.add(id);
 			}
@@ -973,7 +985,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 	public void updateRelation(final RelationDTO relationDTO) {
 		final CMDomain domain = dataView.findDomain(relationDTO.domainName);
 		if (domain == null) {
-			throw NotFoundException.NotFoundExceptionType.DOMAIN_NOTFOUND.createException(relationDTO.domainName);
+			throw NotFoundExceptionType.DOMAIN_NOTFOUND.createException(relationDTO.domainName);
 		}
 
 		final Entry<Long, String> srcCard = relationDTO.getUniqueEntryForSourceCard();
@@ -1041,7 +1053,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 	public void deleteRelation(final String domainName, final Long relationId) {
 		final CMDomain domain = dataView.findDomain(domainName);
 		if (domain == null) {
-			throw NotFoundException.NotFoundExceptionType.DOMAIN_NOTFOUND.createException(domainName);
+			throw NotFoundExceptionType.DOMAIN_NOTFOUND.createException(domainName);
 		}
 
 		dataView.delete(new IdentifiedRelation(domain, relationId));
@@ -1088,7 +1100,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 	public void deleteDetail(final Card master, final Card detail, final String domainName) {
 		final CMDomain domain = dataView.findDomain(domainName);
 		if (domain == null) {
-			throw NotFoundException.NotFoundExceptionType.DOMAIN_NOTFOUND.createException(domainName);
+			throw NotFoundExceptionType.DOMAIN_NOTFOUND.createException(domainName);
 		}
 
 		String sourceClassName, destinationClassName;
@@ -1152,7 +1164,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 					.run() //
 					.getOnlyRow();
 		} catch (final NoSuchElementException ex) {
-			throw NotFoundException.NotFoundExceptionType.CARD_NOTFOUND.createException();
+			throw NotFoundExceptionType.CARD_NOTFOUND.createException();
 		}
 		final CMCard card = row.getCard(entryType);
 		return card;

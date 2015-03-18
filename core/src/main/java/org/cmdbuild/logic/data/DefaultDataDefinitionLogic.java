@@ -4,6 +4,8 @@ import static com.google.common.collect.FluentIterable.from;
 import static com.google.common.collect.Iterables.concat;
 import static com.google.common.collect.Iterables.size;
 import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
+import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 import static org.cmdbuild.dao.constants.Cardinality.CARDINALITY_11;
 import static org.cmdbuild.dao.constants.Cardinality.CARDINALITY_1N;
 import static org.cmdbuild.dao.constants.Cardinality.CARDINALITY_N1;
@@ -129,6 +131,8 @@ public class DefaultDataDefinitionLogic implements DataDefinitionLogic {
 	private static final String UPDATE_CLASS_INDEXES_FUNCTION_NAME = "_cm_create_class_default_order_indexes";
 
 	private static final NameAlias FUNCTION_ALIAS = NameAlias.as("f");
+
+	private static final Iterable<String> NO_DISABLED = emptyList();
 
 	private static CMClass NO_PARENT = null;
 
@@ -405,29 +409,6 @@ public class DefaultDataDefinitionLogic implements DataDefinitionLogic {
 		return (classOrder == null) ? 0 : classOrder.value;
 	}
 
-	/**
-	 * TODO: remove it and use the create method and update method
-	 */
-	@Override
-	@Deprecated
-	public CMDomain createOrUpdate(final Domain domain) {
-		logger.info("creating or updating domain '{}'", domain);
-
-		final CMDomain existing = view.findDomain(domain.getName());
-
-		final CMDomain createdOrUpdated;
-		if (existing == null) {
-			logger.info("domain not already created, creating a new one");
-			final CMClass class1 = view.findClass(domain.getIdClass1());
-			final CMClass class2 = view.findClass(domain.getIdClass2());
-			createdOrUpdated = view.create(definitionForNew(domain, class1, class2));
-		} else {
-			logger.info("domain already created, updating existing one");
-			createdOrUpdated = view.update(definitionForExisting(domain, existing));
-		}
-		return createdOrUpdated;
-	}
-
 	@Override
 	public CMDomain create(final Domain domain) {
 		final CMDomain existing = view.findDomain(domain.getName());
@@ -453,10 +434,11 @@ public class DefaultDataDefinitionLogic implements DataDefinitionLogic {
 			throw NotFoundExceptionType.DOMAIN_NOTFOUND.createException(domain.getName());
 		}
 
-		for (final String disabled : concat(domain.getDisabled1(), domain.getDisabled2())) {
+		for (final String disabled : concat(defaultIfNull(domain.getDisabled1(), NO_DISABLED),
+				defaultIfNull(domain.getDisabled2(), NO_DISABLED))) {
 			final CMClass target = view.findClass(disabled);
 			if (target == null) {
-				throw NotFoundExceptionType.DOMAIN_NOTFOUND.createException();
+				throw NotFoundExceptionType.CLASS_NOTFOUND.createException(disabled);
 			}
 			for (final CMAttribute attribute : from(target.getActiveAttributes()) //
 					.filter(attributeTypeInstanceOf(ReferenceAttributeType.class))) {
