@@ -12,6 +12,7 @@ import java.util.List;
 
 import org.apache.commons.lang3.Validate;
 import org.cmdbuild.model.View;
+import org.cmdbuild.model._View;
 import org.cmdbuild.servlets.json.serializers.ViewSerializer;
 import org.cmdbuild.servlets.utils.Parameter;
 import org.json.JSONException;
@@ -42,7 +43,7 @@ public class ViewManagement extends JSONBaseWithSpringContext {
 
 	@JSONExported
 	public JSONObject readSQLView() throws JSONException {
-		return new ViewSerializer().toClient(readByType(View.ViewType.SQL));
+		return new ViewSerializer().toClient(readByType(_View.ViewType.SQL));
 	}
 
 	@JSONExported
@@ -74,7 +75,7 @@ public class ViewManagement extends JSONBaseWithSpringContext {
 
 	@JSONExported
 	public JSONObject readFilterView() throws JSONException {
-		return new ViewSerializer().toClient(readByType(View.ViewType.FILTER));
+		return new ViewSerializer().toClient(readByType(_View.ViewType.FILTER));
 	}
 
 	@JSONExported
@@ -98,15 +99,15 @@ public class ViewManagement extends JSONBaseWithSpringContext {
 	 * private**********************************************
 	 */
 
-	private void createView(final View view) {
+	private void createView(final _View view) {
 		viewLogic().create(view);
 	}
 
-	private List<View> readByType(final View.ViewType type) {
+	private List<_View> readByType(final View.ViewType type) {
 		return viewLogic().read(type);
 	}
 
-	private void updateView(final View view) {
+	private void updateView(final _View view) {
 		viewLogic().update(view);
 	}
 
@@ -114,35 +115,35 @@ public class ViewManagement extends JSONBaseWithSpringContext {
 		viewLogic().delete(id);
 	}
 
-	private View fillFilterView( //
+	private _View fillFilterView( //
 			final Long id, final String name, //
 			final String description, //
 			final String className, //
 			final String filter) {
 
-		final View view = new View();
+		final _View view = new View();
 		view.setId(id);
 		Validate.isTrue(isNotBlank(name));
 		view.setName(name);
 		view.setDescription(description);
 		view.setSourceClassName(className);
-		view.setType(View.ViewType.FILTER);
+		view.setType(_View.ViewType.FILTER);
 		view.setFilter(filter);
 
 		return view;
 	}
 
-	private View fillSQLView( //
+	private _View fillSQLView( //
 			final Long id, final String name, //
 			final String description, //
 			final String sourceFunction) {
 
-		final View view = new View();
+		final _View view = new View();
 		view.setId(id);
 		Validate.isTrue(isNotBlank(name));
 		view.setName(name);
 		view.setDescription(description);
-		view.setType(View.ViewType.SQL);
+		view.setType(_View.ViewType.SQL);
 		view.setSourceFunction(sourceFunction);
 		return view;
 	}

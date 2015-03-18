@@ -7,7 +7,7 @@ import org.cmdbuild.auth.acl.PrivilegeContext;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.data.store.dao.StorableConverter;
-import org.cmdbuild.model.View;
+import org.cmdbuild.model._View;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
@@ -18,13 +18,13 @@ public class MenuCardFilter {
 	private final CMDataView dataView;
 	private final CMGroup group;
 	private final Supplier<PrivilegeContext> privilegeContext;
-	private final StorableConverter<View> viewConverter;
+	private final StorableConverter<_View> viewConverter;
 
 	public MenuCardFilter( //
 			final CMDataView dataView, //
 			final CMGroup group, //
 			final Supplier<PrivilegeContext> privilegeContext, //
-			final StorableConverter<View> viewConverter //
+			final StorableConverter<_View> viewConverter //
 	) {
 		this.dataView = dataView;
 		this.group = group;
