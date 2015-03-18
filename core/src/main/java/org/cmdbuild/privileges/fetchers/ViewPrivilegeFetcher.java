@@ -17,13 +17,14 @@ import org.cmdbuild.data.store.dao.DataViewStore;
 import org.cmdbuild.data.store.dao.StorableConverter;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.model.View;
+import org.cmdbuild.model._View;
 
 public class ViewPrivilegeFetcher extends AbstractPrivilegeFetcher {
 
 	private final CMDataView view;
-	private final StorableConverter<View> converter;
+	private final StorableConverter<_View> converter;
 
-	public ViewPrivilegeFetcher(final CMDataView view, final Long groupId, final StorableConverter<View> converter) {
+	public ViewPrivilegeFetcher(final CMDataView view, final Long groupId, final StorableConverter<_View> converter) {
 		super(view, groupId);
 		this.view = view;
 		this.converter = converter;
@@ -37,8 +38,8 @@ public class ViewPrivilegeFetcher extends AbstractPrivilegeFetcher {
 	@Override
 	protected SerializablePrivilege extractPrivilegedObject(final CMCard privilegeCard) {
 		final Integer viewId = (Integer) privilegeCard.get(PRIVILEGED_OBJECT_ID_ATTRIBUTE);
-		final DataViewStore<View> viewStore = DataViewStore.newInstance(view, converter);
-		View view = null;
+		final DataViewStore<_View> viewStore = DataViewStore.newInstance(view, converter);
+		_View view = null;
 		try {
 			view = viewStore.read(storableOf(viewId));
 		} catch (final NoSuchElementException ex) {

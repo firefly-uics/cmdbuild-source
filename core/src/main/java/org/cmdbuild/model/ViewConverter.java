@@ -8,7 +8,7 @@ import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.data.store.dao.BaseStorableConverter;
 
-public class ViewConverter extends BaseStorableConverter<View> {
+public class ViewConverter extends BaseStorableConverter<_View> {
 
 	public static final String VIEW_CLASS_NAME = "_View";
 
@@ -30,8 +30,8 @@ public class ViewConverter extends BaseStorableConverter<View> {
 	}
 
 	@Override
-	public View convert(final CMCard card) {
-		final View view = new View();
+	public _View convert(final CMCard card) {
+		final _View view = new View();
 		final Long reference = card.get(SOURCE_CLASS, Long.class);
 		if (reference != null) {
 			final CMClass sourceClass = dataView.findClass(reference);
@@ -49,7 +49,7 @@ public class ViewConverter extends BaseStorableConverter<View> {
 	}
 
 	@Override
-	public Map<String, Object> getValues(final View view) {
+	public Map<String, Object> getValues(final _View view) {
 		final Map<String, Object> values = new HashMap<String, Object>();
 		if (View.ViewType.FILTER.equals(view.getType())) {
 			final CMClass sourceClass = dataView.findClass(view.getSourceClassName());

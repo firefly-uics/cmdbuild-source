@@ -29,8 +29,8 @@ public class View {
 	}
 	
 	@Bean
-	public StorableConverter<org.cmdbuild.model.View> viewConverter() {
-		return new LocalizedStorableConverter<org.cmdbuild.model.View>(baseViewConverter(), translation.translationFacade(), data.systemDataView());
+	public StorableConverter<org.cmdbuild.model._View> viewConverter() {
+		return new LocalizedStorableConverter<org.cmdbuild.model._View>(baseViewConverter(), translation.translationFacade(), data.systemDataView());
 	}
 
 	@Bean

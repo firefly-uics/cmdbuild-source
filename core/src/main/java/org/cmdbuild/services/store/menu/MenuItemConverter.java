@@ -21,6 +21,7 @@ import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.logic.data.access.SystemDataAccessLogicBuilder;
 import org.cmdbuild.model.View;
+import org.cmdbuild.model._View;
 import org.cmdbuild.model.dashboard.DashboardDefinition;
 import org.cmdbuild.model.data.Card;
 
@@ -155,7 +156,7 @@ public class MenuItemConverter {
 		return menuItem;
 	}
 
-	public MenuItem fromView(final View view) {
+	public MenuItem fromView(final _View view) {
 		final MenuItem menuItem = new MenuItemDTO();
 
 		menuItem.setType(MenuItemType.VIEW);

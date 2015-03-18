@@ -33,6 +33,7 @@ import org.cmdbuild.logic.data.access.DataViewCardFetcher;
 import org.cmdbuild.logic.data.access.UserDataAccessLogicBuilder;
 import org.cmdbuild.logic.view.ViewLogic;
 import org.cmdbuild.model.View;
+import org.cmdbuild.model._View;
 import org.cmdbuild.model.dashboard.DashboardDefinition;
 
 import com.google.common.collect.Iterables;
@@ -243,9 +244,9 @@ public class DataViewMenuStore implements MenuStore {
 		viewsFolder.setDescription("view");
 		viewsFolder.setIndex(4);
 
-		final List<View> definedViews = viewLogic.fetchViewsOfAllTypes();
+		final List<_View> definedViews = viewLogic.fetchViewsOfAllTypes();
 
-		for (final View view : definedViews) {
+		for (final _View view : definedViews) {
 			final Integer id = new Integer(view.getId().intValue());
 			if (!isInTheMenuList(id, menuCards)) {
 				viewsFolder.addChild(converter.fromView(view));

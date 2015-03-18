@@ -1,12 +1,9 @@
 package org.cmdbuild.model;
 
-import org.cmdbuild.auth.acl.SerializablePrivilege;
-import org.cmdbuild.data.store.Storable;
+import org.cmdbuild.services.localization.LocalizableStorableVisitor;
 
-public class View implements Storable, SerializablePrivilege {
-	public enum ViewType {
-		SQL, FILTER
-	}
+public class View implements _View {
+
 
 	private Long id;
 	private String name;
@@ -21,6 +18,7 @@ public class View implements Storable, SerializablePrivilege {
 		return id;
 	}
 
+	@Override
 	public void setId(final Long id) {
 		this.id = id;
 	}
@@ -30,6 +28,7 @@ public class View implements Storable, SerializablePrivilege {
 		return name;
 	}
 
+	@Override
 	public void setName(final String name) {
 		this.name = name;
 	}
@@ -39,38 +38,47 @@ public class View implements Storable, SerializablePrivilege {
 		return description;
 	}
 
+	@Override
 	public void setDescription(final String description) {
 		this.description = description;
 	}
 
+	@Override
 	public String getSourceClassName() {
 		return sourceClassName;
 	}
 
+	@Override
 	public void setSourceClassName(final String sourceClassName) {
 		this.sourceClassName = sourceClassName;
 	}
 
+	@Override
 	public String getSourceFunction() {
 		return sourceFunction;
 	}
 
+	@Override
 	public void setSourceFunction(final String sourceFunction) {
 		this.sourceFunction = sourceFunction;
 	}
 
+	@Override
 	public String getFilter() {
 		return filter;
 	}
 
+	@Override
 	public void setFilter(final String filter) {
 		this.filter = filter;
 	}
 
+	@Override
 	public ViewType getType() {
 		return type;
 	}
 
+	@Override
 	public void setType(final ViewType type) {
 		this.type = type;
 	}
@@ -83,5 +91,10 @@ public class View implements Storable, SerializablePrivilege {
 	@Override
 	public String getPrivilegeId() {
 		return String.format("View:%d", getId());
+	}
+
+	@Override
+	public void accept(LocalizableStorableVisitor visitor) {
+		visitor.visit(this);
 	}
 }
