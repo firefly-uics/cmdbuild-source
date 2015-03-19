@@ -47,8 +47,7 @@ public class ModWidget extends JSONBaseWithSpringContext {
 
 	private JsonResponse callCardWidget(final Long cardId, final String className, final Long widgetId,
 			final String action, final String jsonParams) throws Exception {
-		final WidgetLogic widgetLogic = new WidgetLogic(systemDataView());
-		final Widget widgetToExecute = widgetLogic.getWidget(widgetId);
+		final Widget widgetToExecute = widgetLogic().getWidget(widgetId);
 		final Card card = systemDataAccessLogic().fetchCard(className, cardId);
 		final Map<String, Object> params = readParams(jsonParams);
 		final Map<String, Object> attributesNameToValue = Maps.newHashMap();
@@ -95,9 +94,8 @@ public class ModWidget extends JSONBaseWithSpringContext {
 
 	@JSONExported
 	public JsonResponse getAllWidgets() {
-		final WidgetLogic widgetLogic = new WidgetLogic(systemDataView());
 		final Map<String, List<Widget>> classNameToWidgetList = Maps.newHashMap();
-		for (final Widget widget : widgetLogic.getAllWidgets()) {
+		for (final Widget widget : widgetLogic().getAllWidgets()) {
 			final WidgetTranslation translationObject = WidgetTranslation.newInstance() //
 					.withField(BUTTON_LABEL_FOR_CLIENT).withName(widget.getIdentifier()).build();
 			final String translatedLabel = translationFacade().read(translationObject);
@@ -121,7 +119,7 @@ public class ModWidget extends JSONBaseWithSpringContext {
 	@JSONExported
 	public JsonResponse saveWidgetDefinition(@Parameter(CLASS_NAME) final String className, //
 			@Parameter(value = WIDGET, required = true) final String jsonWidget) throws Exception {
-		final WidgetLogic widgetLogic = new WidgetLogic(systemDataView());
+		final WidgetLogic widgetLogic = widgetLogic();
 		final ObjectMapper mapper = new ObjectMapper();
 		final Widget widgetToSave = mapper.readValue(jsonWidget, Widget.class);
 		widgetToSave.setSourceClass(className);
@@ -138,8 +136,7 @@ public class ModWidget extends JSONBaseWithSpringContext {
 	@JSONExported
 	public void removeWidgetDefinition(@Parameter(CLASS_NAME) final String className, //
 			@Parameter(WIDGET_ID) final Long widgetId) throws Exception {
-		final WidgetLogic widgetLogic = new WidgetLogic(systemDataView());
-		widgetLogic.deleteWidget(widgetId);
+		widgetLogic().deleteWidget(widgetId);
 	}
 
 	private Map<String, Object> readParams(final String jsonParams) throws IOException, JsonParseException,
