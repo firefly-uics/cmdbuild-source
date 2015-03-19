@@ -15,7 +15,10 @@
 		 */
 		parentDelegate: undefined,
 
-		attachmentsController: undefined,
+		/**
+		 * @property {CMDBuild.controller.management.common.widgets.manageEmail.Attachments}
+		 */
+		attachmentsDelegate: undefined,
 
 		/**
 		 * Used as flag to avoid pop-up spam
@@ -84,7 +87,6 @@
 				});
 
 				// Fill from template button store configuration
-//				CMDBuild.LoadMask.get().show();
 				CMDBuild.core.proxy.EmailTemplates.getAll({
 					scope: this,
 					loadMask: true,
@@ -116,15 +118,12 @@
 						} else { // To disable button if the aren't templates
 							this.view.fillFromTemplateButton.setDisabled(true);
 						}
-					},
-//					callback: function(options, success, response) {
-//						CMDBuild.LoadMask.get().hide();
-//					}
+					}
 				});
 
 				if (CMDBuild.Config.dms.enabled) {
 					// Build attachments controller
-					this.attachmentsController = Ext.create('CMDBuild.controller.management.common.widgets.manageEmail.Attachments', {
+					this.attachmentsDelegate = Ext.create('CMDBuild.controller.management.common.widgets.manageEmail.Attachments', {
 						parentDelegate: this,
 						record: this.record,
 						view: this.view.attachmentContainer
@@ -143,7 +142,7 @@
 _debug('decodedResponse', decodedResponse);
 							Ext.Array.forEach(decodedResponse.response, function(item, index, allItems) {
 								if(!Ext.Object.isEmpty(item))
-									this.attachmentsController.attachmentAddPanel(item[CMDBuild.core.proxy.CMProxyConstants.FILE_NAME]);
+									this.attachmentsDelegate.attachmentAddPanel(item[CMDBuild.core.proxy.CMProxyConstants.FILE_NAME]);
 							}, this);
 						},
 						callback: function(records, operation, success) {
@@ -294,7 +293,7 @@ _debug('formValues', formValues);
 
 				// Setup attachments only if DMS is enabled
 				if (CMDBuild.Config.dms.enabled)
-					this.record.set(CMDBuild.core.proxy.CMProxyConstants.ATTACHMENTS, this.attachmentsController.getAttachmentsNames());
+					this.record.set(CMDBuild.core.proxy.CMProxyConstants.ATTACHMENTS, this.attachmentsDelegate.getAttachmentsNames());
 
 				this.record.set(CMDBuild.core.proxy.CMProxyConstants.ACTIVITY_ID, this.cmOn('getWidgetController').getActivityId());
 _debug('this.record', this.record);
@@ -330,7 +329,6 @@ _debug('onEmailWindowFieldChange');
 		 */
 		onEmailWindowFillFromTemplateButtonClick: function(templateName) {
 _debug('onEmailWindowFillFromTemplateButtonClick', this.record);
-//			CMDBuild.LoadMask.get().show();
 			CMDBuild.core.proxy.EmailTemplates.get({
 				params: {
 					name: templateName
@@ -348,10 +346,7 @@ _debug('onEmailWindowFillFromTemplateButtonClick', this.record);
 					this.loadFormValues(Ext.create('CMDBuild.model.widget.ManageEmail.template', decodedResponse.response));
 					this.record.set(CMDBuild.core.proxy.CMProxyConstants.TEMPLATE, templateName); // Bind templateName to email record
 					this.view.formPanel.keepSynchronizationCheckbox.setDisabled(false);
-				},
-//				callback: function(options, success, response) {
-//					CMDBuild.LoadMask.get().hide();
-//				}
+				}
 			});
 		}
 	});
