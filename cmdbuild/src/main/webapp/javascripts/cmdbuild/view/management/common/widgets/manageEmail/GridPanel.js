@@ -155,8 +155,32 @@
 						fixed: true,
 						items: [
 							{
+								icon: 'images/icons/email_go.png',
+								tooltip: CMDBuild.Translation.send,
+								scope: this,
+
+								handler: function(grid, rowIndex, colIndex, node, e, record, rowNode) {
+									this.delegate.cmOn('onGridSendEmailButtonClick', record);
+								},
+
+								isDisabled: function(grid, rowIndex, colIndex, item, record) {
+									return !this.delegate.recordIsSendable(record);
+								}
+							}
+						]
+					},
+					{
+						xtype: 'actioncolumn',
+						align: 'center',
+						width: 25,
+						sortable: false,
+						hideable: false,
+						menuDisabled: true,
+						fixed: true,
+						items: [
+							{
 								icon: 'images/icons/modify.png',
-								tooltip: CMDBuild.Translation.editEmail,
+								tooltip: CMDBuild.Translation.edit,
 								scope: this,
 
 								handler: function(grid, rowIndex, colIndex, node, e, record, rowNode) {
@@ -180,7 +204,7 @@
 						items: [
 							{
 								icon: 'images/icons/zoom.png',
-								tooltip: CMDBuild.Translation.viewEmail,
+								tooltip: CMDBuild.Translation.view,
 								scope: this,
 
 								handler: function(grid, rowIndex, colIndex, node, e, record, rowNode) {
@@ -200,7 +224,7 @@
 						items: [
 							{
 								icon: 'images/icons/cross.png',
-								tooltip: CMDBuild.Translation.deleteEmail,
+								tooltip: CMDBuild.Translation.deleteLabel,
 								scope: this,
 
 								handler: function(grid, rowIndex, colIndex, node, e, record, rowNode) {

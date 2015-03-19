@@ -72,6 +72,9 @@
 				case 'onGridReplyEmailButtonClick':
 					return this.onGridReplyEmailButtonClick(param);
 
+				case 'onGridSendEmailButtonClick':
+					return this.onGridSendEmailButtonClick(param);
+
 				case 'onGridViewEmailButtonClick':
 					return this.onGridViewEmailButtonClick(param);
 
@@ -197,6 +200,19 @@ _debug('onGridAddEmailButtonClick');
 
 		/**
 		 * @param {CMDBuild.model.widget.ManageEmail.email} record
+		 *
+		 * @return {Boolean}
+		 */
+		recordIsSendable: function(record) {
+			return (
+				!Ext.isEmpty(record.get(CMDBuild.core.proxy.CMProxyConstants.TO))
+				&& !Ext.isEmpty(record.get(CMDBuild.core.proxy.CMProxyConstants.SUBJECT))
+				&& record.get(CMDBuild.core.proxy.CMProxyConstants.STATUS) != CMDBuild.core.proxy.CMProxyConstants.OUTGOING
+			);
+		},
+
+		/**
+		 * @param {CMDBuild.model.widget.ManageEmail.email} record
 		 */
 		onGridDeleteEmailButtonClick: function(record) {
 			Ext.Msg.confirm(
@@ -269,6 +285,18 @@ _debug('onGridAddEmailButtonClick');
 				windowMode: 'reply'
 			});
 		},
+		/**
+		 * Updates selected record with Outgoing status
+		 *
+		 * @param {CMDBuild.model.widget.ManageEmail.email} record
+		 */
+		onGridSendEmailButtonClick: function(record) {
+			if (!Ext.isEmpty(record)) {
+				record.set(CMDBuild.core.proxy.CMProxyConstants.STATUS, CMDBuild.core.proxy.CMProxyConstants.OUTGOING);
+
+				this.editRecord(record);
+			}
+		},
 
 		/**
 		 * @param {CMDBuild.model.widget.ManageEmail.email} record
@@ -320,19 +348,6 @@ _debug('removeRecord regenerationTrafficLightArray', regenerationTrafficLightArr
 					}
 				});
 			}
-		},
-
-		/**
-		 * Updates all draft e-mail to outgoing state
-		 */
-		sendAll: function() {
-			var sendAllTrafficLightArray = [];
-
-			Ext.Array.forEach(this.getDraftEmails(), function(item, index, allItems) {
-				item.set(CMDBuild.core.proxy.CMProxyConstants.STATUS, CMDBuild.core.proxy.CMProxyConstants.OUTGOING);
-
-				this.editRecord(item, sendAllTrafficLightArray);
-			}, this);
 		},
 
 		/**
