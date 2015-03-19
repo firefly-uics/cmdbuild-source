@@ -3,7 +3,7 @@ package org.cmdbuild.privileges.predicates;
 import static org.cmdbuild.services.store.menu.MenuConstants.ELEMENT_OBJECT_ID_ATTRIBUTE;
 
 import org.cmdbuild.dao.entry.CMCard;
-import org.cmdbuild.model.Report;
+import org.cmdbuild.services.store.report.Report;
 import org.cmdbuild.services.store.report.ReportStore;
 
 import com.google.common.base.Predicate;
@@ -11,9 +11,11 @@ import com.google.common.base.Predicate;
 public class IsReadableReport implements Predicate<CMCard> {
 
 	private final ReportStore reportStore;
+	private final Predicate<Report> predicate;
 
-	public IsReadableReport(final ReportStore reportStore) {
+	public IsReadableReport(final ReportStore reportStore, final Predicate<Report> predicate) {
 		this.reportStore = reportStore;
+		this.predicate = predicate;
 	}
 
 	@Override
@@ -28,7 +30,7 @@ public class IsReadableReport implements Predicate<CMCard> {
 			return false;
 		}
 
-		return fetchedReport.isUserAllowed();
+		return predicate.apply(fetchedReport);
 	}
 
 }

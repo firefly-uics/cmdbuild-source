@@ -6,6 +6,7 @@ import org.cmdbuild.data.store.Storable;
 import org.cmdbuild.data.store.dao.ForwardingStorableConverter;
 import org.cmdbuild.data.store.dao.StorableConverter;
 import org.cmdbuild.data.store.lookup.Lookup;
+import org.cmdbuild.logic.report.ReportLogic;
 import org.cmdbuild.logic.translation.TranslationFacade;
 import org.cmdbuild.model.view.View;
 import org.cmdbuild.services.store.menu.LocalizedMenuElement;
@@ -18,12 +19,14 @@ public class LocalizedStorableConverter<T extends Storable> extends ForwardingSt
 	private final StorableConverter<T> delegate;
 	private final TranslationFacade facade;
 	private final CMDataView dataView;
+	private final ReportLogic reportLogic;
 
 	public LocalizedStorableConverter(final StorableConverter<T> delegate, final TranslationFacade facade,
-			final CMDataView dataView) {
+			final CMDataView dataView, final ReportLogic reportLogic) {
 		this.delegate = delegate;
 		this.facade = facade;
 		this.dataView = dataView;
+		this.reportLogic = reportLogic;
 	}
 
 	@Override
@@ -68,7 +71,8 @@ public class LocalizedStorableConverter<T extends Storable> extends ForwardingSt
 
 						@Override
 						public T apply(final MenuElement input) {
-							return (T) ((input == null) ? null : new LocalizedMenuElement(input, facade, dataView));
+							return (T) ((input == null) ? null : new LocalizedMenuElement(input, facade, dataView,
+									reportLogic));
 						}
 					}.apply(storable);
 				}

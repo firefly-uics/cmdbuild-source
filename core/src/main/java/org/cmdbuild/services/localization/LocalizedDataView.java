@@ -192,11 +192,6 @@ public class LocalizedDataView extends ForwardingDataView {
 	}
 
 	@Override
-	public Iterable<? extends CMDomain> findDomainsFor(final CMClass type) {
-		return proxyDomains(super.findDomainsFor(type));
-	}
-
-	@Override
 	public CMQueryResult executeQuery(final QuerySpecs querySpecs) {
 		return proxy(super.executeQuery(querySpecs));
 	}
