@@ -22,7 +22,7 @@ public class LocalizedResultSetToReport implements Function<ResultSet, Report> {
 		return proxy(delegate.apply(input));
 	}
 
-	private Report proxy(Report input) {
+	private Report proxy(final Report input) {
 		return new LocalizedReport(input, facade);
 	}
 

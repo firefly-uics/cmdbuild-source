@@ -14,9 +14,7 @@ public class ResultSetToReport implements Function<ResultSet, Report> {
 		Id, //
 		Code, //
 		Description, //
-		Status, //
 		User, //
-		BeginDate, //
 		Type, //
 		Query, //
 		SimpleReport, //
@@ -37,9 +35,7 @@ public class ResultSetToReport implements Function<ResultSet, Report> {
 			report.setId(input.getInt(Attributes.Id.toString()));
 			report.setCode(input.getString(Attributes.Code.toString()));
 			report.setDescription(input.getString(Attributes.Description.toString()));
-			report.setStatus(input.getString(Attributes.Status.toString()));
 			report.setUser(input.getString(Attributes.User.toString()));
-			report.setBeginDate(input.getDate(Attributes.BeginDate.toString()));
 			final String typeString = input.getString(Attributes.Type.toString());
 			report.setType(ReportType.valueOf(typeString.toUpperCase()));
 			report.setQuery(input.getString(Attributes.Query.toString()));

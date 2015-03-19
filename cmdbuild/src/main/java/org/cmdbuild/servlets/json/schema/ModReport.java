@@ -78,9 +78,7 @@ public class ModReport extends JSONBaseWithSpringContext {
 			setId(getId());
 			setCode(getCode());
 			setDescription(getDescription());
-			setStatus(getStatus());
 			setUser(getUser());
-			setBeginDate(getBeginDate());
 			setQuery(getQuery());
 			setOriginalId(getOriginalId());
 			setJd(getJd());
@@ -150,11 +148,6 @@ public class ModReport extends JSONBaseWithSpringContext {
 			this.description = description;
 		}
 
-		@Override
-		public String getStatus() {
-			return status;
-		}
-
 		public void setStatus(final String status) {
 			this.status = status;
 		}
@@ -166,11 +159,6 @@ public class ModReport extends JSONBaseWithSpringContext {
 
 		public void setUser(final String user) {
 			this.user = user;
-		}
-
-		@Override
-		public Date getBeginDate() {
-			return beginDate;
 		}
 
 		public void setBeginDate(final Date beginDate) {

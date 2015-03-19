@@ -2,7 +2,6 @@ package org.cmdbuild.services.store.report;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Date;
 
 import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.design.JasperDesign;
@@ -19,11 +18,7 @@ public interface Report {
 
 	String getDescription();
 
-	String getStatus();
-
 	String getUser();
-
-	Date getBeginDate();
 
 	String getQuery();
 

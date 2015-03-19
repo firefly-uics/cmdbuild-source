@@ -5,7 +5,6 @@ import static org.cmdbuild.utils.BinaryUtils.fromByte;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Date;
 
 import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.design.JasperDesign;
@@ -19,9 +18,7 @@ class ReportImpl implements Report {
 	private int id = 0;
 	private String code = "";
 	private String description = "";
-	private String status = "A";
 	private String user = "";
-	private Date beginDate = new Date();
 
 	private String query = "";
 	private byte[] simpleReport = new byte[0];
@@ -89,30 +86,12 @@ class ReportImpl implements Report {
 	}
 
 	@Override
-	public String getStatus() {
-		return status;
-	}
-
-	public void setStatus(final String status) {
-		this.status = status;
-	}
-
-	@Override
 	public String getUser() {
 		return user;
 	}
 
 	public void setUser(final String user) {
 		this.user = user;
-	}
-
-	@Override
-	public Date getBeginDate() {
-		return beginDate;
-	}
-
-	public void setBeginDate(final Date beginDate) {
-		this.beginDate = beginDate;
 	}
 
 	@Override
