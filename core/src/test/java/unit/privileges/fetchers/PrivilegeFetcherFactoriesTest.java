@@ -4,7 +4,7 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 
 import org.cmdbuild.dao.view.CMDataView;
-import org.cmdbuild.model.ViewConverter;
+import org.cmdbuild.model.view.ViewConverter;
 import org.cmdbuild.privileges.fetchers.CMClassPrivilegeFetcher;
 import org.cmdbuild.privileges.fetchers.PrivilegeFetcher;
 import org.cmdbuild.privileges.fetchers.ViewPrivilegeFetcher;

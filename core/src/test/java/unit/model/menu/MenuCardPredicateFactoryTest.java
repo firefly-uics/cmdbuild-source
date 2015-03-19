@@ -13,7 +13,7 @@ import org.cmdbuild.auth.acl.PrivilegeContext;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.view.CMDataView;
-import org.cmdbuild.model.ViewConverter;
+import org.cmdbuild.model.view.ViewConverter;
 import org.cmdbuild.privileges.predicates.IsAlwaysReadable;
 import org.cmdbuild.privileges.predicates.IsReadableClass;
 import org.cmdbuild.privileges.predicates.IsReadableDashboard;

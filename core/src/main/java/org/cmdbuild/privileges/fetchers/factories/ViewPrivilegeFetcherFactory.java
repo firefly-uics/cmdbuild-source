@@ -3,7 +3,7 @@ package org.cmdbuild.privileges.fetchers.factories;
 import org.apache.commons.lang3.Validate;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.data.store.dao.StorableConverter;
-import org.cmdbuild.model.View;
+import org.cmdbuild.model.view.View;
 import org.cmdbuild.privileges.fetchers.PrivilegeFetcher;
 import org.cmdbuild.privileges.fetchers.ViewPrivilegeFetcher;
 

@@ -11,7 +11,7 @@ import static org.cmdbuild.servlets.json.CommunicationConstants.VIEWS;
 
 import java.util.List;
 
-import org.cmdbuild.model.View;
+import org.cmdbuild.model.view.View;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;

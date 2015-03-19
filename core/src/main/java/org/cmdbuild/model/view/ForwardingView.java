@@ -1,4 +1,4 @@
-package org.cmdbuild.model;
+package org.cmdbuild.model.view;
 
 import com.google.common.collect.ForwardingObject;
 

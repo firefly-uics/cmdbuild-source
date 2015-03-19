@@ -5,8 +5,8 @@ import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
 import org.cmdbuild.logic.translation.TranslationFacade;
 import org.cmdbuild.logic.translation.TranslationObject;
 import org.cmdbuild.logic.translation.converter.ViewConverter;
-import org.cmdbuild.model.ForwardingView;
-import org.cmdbuild.model.View;
+import org.cmdbuild.model.view.ForwardingView;
+import org.cmdbuild.model.view.View;
 
 public class LocalizedView extends ForwardingView {
 

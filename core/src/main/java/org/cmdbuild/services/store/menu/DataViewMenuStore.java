@@ -32,8 +32,8 @@ import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.logic.data.access.DataViewCardFetcher;
 import org.cmdbuild.logic.data.access.UserDataAccessLogicBuilder;
 import org.cmdbuild.logic.view.ViewLogic;
-import org.cmdbuild.model.View;
 import org.cmdbuild.model.dashboard.DashboardDefinition;
+import org.cmdbuild.model.view.View;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
