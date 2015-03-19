@@ -44,7 +44,6 @@ import org.cmdbuild.data.store.dao.StorableConverter;
 import org.cmdbuild.logic.Logic;
 import org.cmdbuild.logic.privileges.PrivilegeInfo.Builder;
 import org.cmdbuild.model.View;
-import org.cmdbuild.model._View;
 import org.cmdbuild.model.profile.UIConfiguration;
 import org.cmdbuild.privileges.fetchers.PrivilegeFetcher;
 import org.cmdbuild.privileges.fetchers.factories.CMClassPrivilegeFetcherFactory;
@@ -61,12 +60,12 @@ public class DefaultSecurityLogic implements Logic, SecurityLogic {
 
 	private final CMDataView view;
 	private final CMClass grantClass;
-	private final StorableConverter<_View> viewConverter;
+	private final StorableConverter<View> viewConverter;
 	private final DataViewFilterStore filterStore;
 
 	public DefaultSecurityLogic( //
 			final CMDataView view, //
-			final StorableConverter<_View> viewConverter, //
+			final StorableConverter<View> viewConverter, //
 			final DataViewFilterStore filterStore //
 	) {
 		this.view = view;
@@ -115,7 +114,7 @@ public class DefaultSecurityLogic implements Logic, SecurityLogic {
 				break;
 			}
 		}
-		cardEditMode = (CardEditMode) defaultIfNull(cardEditMode, CardEditMode.ALLOW_ALL);
+		cardEditMode = defaultIfNull(cardEditMode, CardEditMode.ALLOW_ALL);
 		return cardEditMode;
 	}
 
@@ -123,8 +122,8 @@ public class DefaultSecurityLogic implements Logic, SecurityLogic {
 	public List<PrivilegeInfo> fetchViewPrivilegesForGroup(final Long groupId) {
 		final List<PrivilegeInfo> fetchedViewPrivileges = fetchStoredPrivilegesForGroup(groupId,
 				PrivilegedObjectType.VIEW);
-		final Iterable<_View> allViews = fetchAllViews();
-		for (final _View view : allViews) {
+		final Iterable<View> allViews = fetchAllViews();
+		for (final View view : allViews) {
 			final Long viewId = view.getId();
 			if (!isPrivilegeAlreadyStored(viewId, fetchedViewPrivileges)) {
 				final PrivilegeInfo pi = new PrivilegeInfo(groupId, view, PrivilegeMode.NONE, null);
@@ -149,9 +148,9 @@ public class DefaultSecurityLogic implements Logic, SecurityLogic {
 		return fetchedFilterPrivileges;
 	}
 
-	private Iterable<_View> fetchAllViews() {
+	private Iterable<View> fetchAllViews() {
 		// TODO must be an external dependency
-		final DataViewStore<_View> viewStore = DataViewStore.newInstance(view, viewConverter);
+		final DataViewStore<View> viewStore = DataViewStore.newInstance(view, viewConverter);
 		return viewStore.readAll();
 	}
 
@@ -375,7 +374,7 @@ public class DefaultSecurityLogic implements Logic, SecurityLogic {
 
 		// manage the null value for the privilege mode
 		// it could happen updating row and column privileges
-		final PrivilegeMode privilegeMode = (PrivilegeMode) defaultIfNull(privilegeInfo.getMode(), PrivilegeMode.NONE);
+		final PrivilegeMode privilegeMode = defaultIfNull(privilegeInfo.getMode(), PrivilegeMode.NONE);
 
 		final String persistenceCardEditMode = CardEditMode.LOGIC_TO_PERSISTENCE.apply(privilegeInfo.getCardEditMode());
 

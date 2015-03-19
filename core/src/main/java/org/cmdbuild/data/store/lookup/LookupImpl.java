@@ -3,7 +3,6 @@ package org.cmdbuild.data.store.lookup;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.cmdbuild.data.store.lookup.LookupType.LookupTypeBuilder;
-import org.cmdbuild.services.localization.LocalizableStorable;
 import org.cmdbuild.services.localization.LocalizableStorableVisitor;
 
 public final class LookupImpl implements Lookup {
@@ -230,7 +229,7 @@ public final class LookupImpl implements Lookup {
 	}
 
 	@Override
-	public void accept(LocalizableStorableVisitor visitor) {
+	public void accept(final LocalizableStorableVisitor visitor) {
 		visitor.visit(this);
 	}
 

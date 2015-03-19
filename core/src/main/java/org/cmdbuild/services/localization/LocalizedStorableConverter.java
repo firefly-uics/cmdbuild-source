@@ -74,8 +74,15 @@ public class LocalizedStorableConverter<T extends Storable> extends ForwardingSt
 				}
 
 				@Override
-				public void visit(final View view) {
-					// TODO Auto-generated method stub
+				public void visit(final View storable) {
+					output = (T) storable;
+					output = new Function<View, T>() {
+
+						@Override
+						public T apply(final View input) {
+							return (T) ((input == null) ? null : new LocalizedView(input, facade));
+						}
+					}.apply(storable);
 				}
 			}.proxy();
 		} else {

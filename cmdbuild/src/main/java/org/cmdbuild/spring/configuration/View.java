@@ -20,17 +20,18 @@ public class View {
 
 	@Autowired
 	private UserStore userStore;
-	
+
 	@Autowired
 	private Translation translation;
 
 	private org.cmdbuild.model.ViewConverter baseViewConverter() {
 		return new ViewConverter(data.systemDataView());
 	}
-	
+
 	@Bean
-	public StorableConverter<org.cmdbuild.model._View> viewConverter() {
-		return new LocalizedStorableConverter<org.cmdbuild.model._View>(baseViewConverter(), translation.translationFacade(), data.systemDataView());
+	public StorableConverter<org.cmdbuild.model.View> viewConverter() {
+		return new LocalizedStorableConverter<org.cmdbuild.model.View>(baseViewConverter(),
+				translation.translationFacade(), data.systemDataView());
 	}
 
 	@Bean
