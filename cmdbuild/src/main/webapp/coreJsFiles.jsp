@@ -29,11 +29,11 @@
 <script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxy.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/proxy/Attributes.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/proxy/Card.js"></script>
+<!-- <script type="text/javascript" src="javascripts/cmdbuild/core/proxy/Classes.js"></script> -->
 <script type="text/javascript" src="javascripts/cmdbuild/core/proxy/Configuration.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/proxy/Filter.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxyAdministration.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxyAttachment.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxyClasses.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxyDashboard.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxyDataView.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxyGIS.js"></script>
@@ -52,7 +52,7 @@
 <script type="text/javascript" src="javascripts/cmdbuild/model/CMGroupModels.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/model/CMDashboardModels.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/model/CMAttachmentModels.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/model/CMDataViewModel.js"></script>
+<!-- <script type="text/javascript" src="javascripts/cmdbuild/model/DataView.js"></script> -->
 <script type="text/javascript" src="javascripts/cmdbuild/model/Report.js"></script>
 
 <!-- SELECTION -->
@@ -143,11 +143,6 @@
 
 <!--  VIEWS -->
 <script type="text/javascript" src="javascripts/cmdbuild/view/common/CMBaseAccordion.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/view/common/report/CMReportAccordion.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/view/common/report/CMMainSingleReportPage.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/view/common/report/CMSingleReportFrame.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/view/common/report/CMSingleReportPage.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/view/common/report/CMReportGrid.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/view/common/CMUnconfiguredModPanel.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/view/common/CMFormFuncions.js"></script>
 

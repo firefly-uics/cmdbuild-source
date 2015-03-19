@@ -28,6 +28,13 @@
 		text: CMDBuild.Translation.common.buttons.confirm
 	});
 
+	Ext.define('CMDBuild.core.buttons.Download', {
+		extend: 'CMDBuild.core.buttons.Base',
+
+		iconCls: 'download',
+		text: CMDBuild.Translation.download
+	});
+
 	Ext.define('CMDBuild.core.buttons.Export', {
 		alternateClassName: 'CMDBuild.buttons.ExportButton', // Legacy class name
 		extend: 'CMDBuild.core.buttons.Base',
