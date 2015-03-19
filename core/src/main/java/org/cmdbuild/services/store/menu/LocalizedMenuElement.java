@@ -9,7 +9,7 @@ import static org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue.eq;
 import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
 import static org.cmdbuild.logic.translation.DefaultTranslationLogic.DESCRIPTION_FOR_CLIENT;
 import static org.cmdbuild.model.Report.REPORT_CLASS_NAME;
-import static org.cmdbuild.model.ViewConverter.VIEW_CLASS_NAME;
+import static org.cmdbuild.model.view.ViewConverter.VIEW_CLASS_NAME;
 import static org.cmdbuild.services.store.menu.MenuItemType.isClassOrProcess;
 import static org.cmdbuild.services.store.menu.MenuItemType.isDashboard;
 import static org.cmdbuild.services.store.menu.MenuItemType.isReport;

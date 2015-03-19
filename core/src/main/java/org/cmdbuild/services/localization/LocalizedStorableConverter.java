@@ -7,7 +7,7 @@ import org.cmdbuild.data.store.dao.ForwardingStorableConverter;
 import org.cmdbuild.data.store.dao.StorableConverter;
 import org.cmdbuild.data.store.lookup.Lookup;
 import org.cmdbuild.logic.translation.TranslationFacade;
-import org.cmdbuild.model.View;
+import org.cmdbuild.model.view.View;
 import org.cmdbuild.services.store.menu.LocalizedMenuElement;
 import org.cmdbuild.services.store.menu.MenuElement;
 

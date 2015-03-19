@@ -11,9 +11,9 @@ import static org.cmdbuild.servlets.json.CommunicationConstants.SOURCE_FUNCTION;
 import java.util.List;
 
 import org.apache.commons.lang3.Validate;
-import org.cmdbuild.model.View;
-import org.cmdbuild.model.View.ViewType;
-import org.cmdbuild.model.ViewImpl;
+import org.cmdbuild.model.view.View;
+import org.cmdbuild.model.view.ViewImpl;
+import org.cmdbuild.model.view.View.ViewType;
 import org.cmdbuild.servlets.json.serializers.ViewSerializer;
 import org.cmdbuild.servlets.utils.Parameter;
 import org.json.JSONException;

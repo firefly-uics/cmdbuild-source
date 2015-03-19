@@ -7,7 +7,7 @@ import org.cmdbuild.auth.acl.PrivilegeContext;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.data.store.dao.StorableConverter;
-import org.cmdbuild.model.View;
+import org.cmdbuild.model.view.View;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;

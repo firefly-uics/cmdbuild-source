@@ -1,4 +1,4 @@
-package org.cmdbuild.model;
+package org.cmdbuild.model.view;
 
 import org.cmdbuild.services.localization.LocalizableStorableVisitor;
 

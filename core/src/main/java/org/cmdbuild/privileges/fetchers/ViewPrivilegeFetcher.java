@@ -16,7 +16,7 @@ import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.data.store.dao.DataViewStore;
 import org.cmdbuild.data.store.dao.StorableConverter;
 import org.cmdbuild.logger.Log;
-import org.cmdbuild.model.View;
+import org.cmdbuild.model.view.View;
 
 public class ViewPrivilegeFetcher extends AbstractPrivilegeFetcher {
 

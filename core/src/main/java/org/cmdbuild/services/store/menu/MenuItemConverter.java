@@ -1,7 +1,7 @@
 package org.cmdbuild.services.store.menu;
 
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
-import static org.cmdbuild.model.ViewConverter.VIEW_CLASS_NAME;
+import static org.cmdbuild.model.view.ViewConverter.VIEW_CLASS_NAME;
 import static org.cmdbuild.services.store.menu.MenuConstants.ELEMENT_CLASS_ATTRIBUTE;
 import static org.cmdbuild.services.store.menu.MenuConstants.ELEMENT_OBJECT_ID_ATTRIBUTE;
 import static org.cmdbuild.services.store.menu.MenuConstants.GROUP_NAME_ATTRIBUTE;
@@ -20,9 +20,9 @@ import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.logic.data.access.SystemDataAccessLogicBuilder;
-import org.cmdbuild.model.View;
 import org.cmdbuild.model.dashboard.DashboardDefinition;
 import org.cmdbuild.model.data.Card;
+import org.cmdbuild.model.view.View;
 
 public class MenuItemConverter {
 

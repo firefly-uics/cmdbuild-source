@@ -12,8 +12,8 @@ import org.cmdbuild.data.store.Store;
 import org.cmdbuild.data.store.dao.DataViewStore;
 import org.cmdbuild.data.store.dao.StorableConverter;
 import org.cmdbuild.logic.Logic;
-import org.cmdbuild.model.View;
-import org.cmdbuild.model.View.ViewType;
+import org.cmdbuild.model.view.View;
+import org.cmdbuild.model.view.View.ViewType;
 import org.cmdbuild.privileges.GrantCleaner;
 
 public class ViewLogic implements Logic {

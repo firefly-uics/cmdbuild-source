@@ -19,7 +19,7 @@ import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.CMQueryRow;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.data.store.dao.StorableConverter;
-import org.cmdbuild.model.View;
+import org.cmdbuild.model.view.View;
 import org.cmdbuild.services.store.menu.MenuCardFilter;
 import org.cmdbuild.services.store.menu.MenuElement;
 
