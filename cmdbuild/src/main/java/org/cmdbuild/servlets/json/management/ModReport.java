@@ -119,7 +119,6 @@ public class ModReport extends JSONBaseWithSpringContext {
 					final CMAttribute attribute = ReportParameterConverter.of(reportParameter).toCMAttribute();
 					final AttributeSerializer attributeSerializer = AttributeSerializer.newInstance() //
 							.withDataView(systemDataView()) //
-							.withTranslationFacade(translationFacade()) //
 							.build();
 					out.append("attribute", attributeSerializer.toClient(attribute));
 				}
@@ -168,7 +167,6 @@ public class ModReport extends JSONBaseWithSpringContext {
 						// FIXME should not be used in this way
 						final AttributeSerializer attributeSerializer = AttributeSerializer.newInstance() //
 								.withDataView(systemDataView()) //
-								.withTranslationFacade(translationFacade()) //
 								.build();
 						out.append("attribute", attributeSerializer.toClient(attribute));
 					}

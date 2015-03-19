@@ -111,7 +111,10 @@
 			getFunctions: 'services/json/schema/modclass/getfunctions'
 		},
 
-		getLanguage: 'services/json/utils/getlanguage',
+		localizations: { // TODO: refactor with server side
+			classRead: 'services/json/schema/translation/readforclass',
+			classAttributeRead: 'services/json/schema/translation/readforclassattribute',
+		},
 
 		login: 'services/json/login/login',
 
@@ -138,8 +141,8 @@
 				read: 'services/json/schema/modsecurity/getclassprivilegelist',
 				update: 'services/json/schema/modsecurity/saveclassprivilege',
 
-				clearRowAndColumnPrivileges: "services/json/schema/modsecurity/clearrowandcolumnprivileges",
-				setRowAndColumnPrivileges: "services/json/schema/modsecurity/setrowandcolumnprivileges",
+				clearRowAndColumnPrivileges: 'services/json/schema/modsecurity/clearrowandcolumnprivileges',
+				setRowAndColumnPrivileges: 'services/json/schema/modsecurity/setrowandcolumnprivileges',
 				saveClassUiConfiguration: 'services/json/schema/modsecurity/saveclassuiconfiguration',
 				loadClassUiConfiguration: 'services/json/schema/modsecurity/loadclassuiconfiguration'
 			},
@@ -230,6 +233,12 @@
 			getusergrouplist: 'services/json/schema/modsecurity/getusergrouplist'
 		},
 
+		utils: {
+			clearCache: 'services/json/utils/clearcache',
+			getLanguage: 'services/json/utils/getlanguage',
+			listAvailableTranslations: 'services/json/utils/listavailabletranslations'
+		},
+
 		widgets: {
 			grid: {
 				clearSession: 'services/json/management/importcsv/clearsession',
@@ -254,6 +263,7 @@
 			getStartActivity: 'services/json/workflow/getstartactivity',
 			isProcessUpdated: 'services/json/workflow/isprocessupdated',
 			saveActivity: 'services/json/workflow/saveactivity',
+			synchronize: 'services/json/workflow/sync',
 			xpdlDownload: 'services/json/workflow/downloadxpdl',
 			xpdlDownloadTemplate: 'services/json/workflow/downloadxpdltemplate',
 			xpdlUpload: 'services/json/workflow/uploadxpdl',

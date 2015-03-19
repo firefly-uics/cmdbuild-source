@@ -8,7 +8,7 @@ public class Predicates {
 
 		@Override
 		public boolean apply(final Lookup input) {
-			return input.active;
+			return input.active();
 		}
 
 	};
@@ -17,7 +17,7 @@ public class Predicates {
 
 		@Override
 		public boolean apply(final Lookup input) {
-			return input.isDefault;
+			return input.isDefault();
 		}
 
 	};
@@ -31,7 +31,7 @@ public class Predicates {
 
 			@Override
 			public boolean apply(final Lookup input) {
-				return input.type.equals(type);
+				return input.type().equals(type);
 			}
 
 		};
@@ -42,7 +42,7 @@ public class Predicates {
 
 			@Override
 			public boolean apply(final Lookup input) {
-				return input.description.equals(description);
+				return input.description().equals(description);
 			}
 
 		};

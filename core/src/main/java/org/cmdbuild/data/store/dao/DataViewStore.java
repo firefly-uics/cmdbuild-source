@@ -64,7 +64,12 @@ public class DataViewStore<T extends Storable> implements Store<T> {
 		}
 
 		private StorableConverter<T> wrap(final StorableConverter<T> converter) {
-			return new ForwardingStorableConverter<T>(converter) {
+			return new ForwardingStorableConverter<T>() {
+
+				@Override
+				protected StorableConverter<T> delegate() {
+					return converter;
+				}
 
 				@Override
 				public String getIdentifierAttributeName() {

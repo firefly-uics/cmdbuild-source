@@ -97,6 +97,20 @@
 				return /<[a-z][\s\S]*>/i.test(inputString);
 
 			return false;
+		},
+
+		/**
+		 * Capitalize first string's char
+		 *
+		 * @param {String} string
+		 *
+		 * @return {String} string
+		 */
+		toTitleCase: function(string) {
+			if (typeof string == 'string')
+				string = string.charAt(0).toUpperCase() + string.slice(1);
+
+			return string;
 		}
 	});
 

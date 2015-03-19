@@ -50,7 +50,7 @@ public class RelationAttributeSerializer {
 				}
 
 				if (lookup != null) {
-					attribute.setValue(new IdAndDescription(lookup.getId(), lookup.description));
+					attribute.setValue(new IdAndDescription(lookup.getId(), lookup.description()));
 				}
 			}
 

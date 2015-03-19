@@ -31,7 +31,7 @@ import org.cmdbuild.common.collect.ChainablePutMap;
 import org.cmdbuild.common.utils.PagedElements;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.attributetype.StringAttributeType;
-import org.cmdbuild.data.store.lookup.Lookup;
+import org.cmdbuild.data.store.lookup.LookupImpl;
 import org.cmdbuild.logic.data.QueryOptions;
 import org.cmdbuild.logic.workflow.WorkflowLogic;
 import org.cmdbuild.service.rest.v2.cxf.CxfProcessInstances;
@@ -197,7 +197,7 @@ public class CxfProcessInstancesTest {
 				asList(foo, bar), 4);
 		doReturn(pagedElements) //
 				.when(workflowLogic).query(anyString(), any(QueryOptions.class));
-		doReturn(Optional.of(Lookup.newInstance().build())) //
+		doReturn(Optional.of(LookupImpl.newInstance().build())) //
 				.when(lookupHelper).lookupForState(any(WSProcessInstanceState.class));
 
 		// when
@@ -290,7 +290,7 @@ public class CxfProcessInstancesTest {
 				asList(instance), 1);
 		doReturn(pagedElements) //
 				.when(workflowLogic).query(anyString(), any(QueryOptions.class));
-		doReturn(Optional.of(Lookup.newInstance().build())) //
+		doReturn(Optional.of(LookupImpl.newInstance().build())) //
 				.when(lookupHelper).lookupForState(any(WSProcessInstanceState.class));
 
 		// when

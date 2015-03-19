@@ -1,7 +1,5 @@
 (function() {
 	var NAME = _CMProxy.parameter.NAME;
-	var DESCRIPTION = _CMProxy.parameter.DESCRIPTION;
-	var DESCRIPTION_DEFAULT = _CMProxy.parameter.DESCRIPTION_DEFAULT;
 
 	Ext.define("CMDBuild.delegate.administration.common.basepanel.CMBaseFormFiledsManager", {
 		extend: "CMDBuild.delegate.administration.common.basepanel.CMFormFiledsManager",
@@ -21,20 +19,20 @@
 				cmImmutable: true
 			});
 
-			this.description= new Ext.form.CMTranslatableText({
-				fieldLabel : CMDBuild.Translation.administration.modClass.attributeProperties.description,
+			this.description= Ext.create('CMDBuild.view.common.field.translatable.Text', {
+				fieldLabel: CMDBuild.Translation.administration.modClass.attributeProperties.description,
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
-				name: DESCRIPTION,
-				allowBlank : false,
-				vtype : "cmdbcomment"
+				name: _CMProxy.parameter.DESCRIPTION,
+				allowBlank: false,
+				vtype: "cmdbcomment"
 			});
 
 			return [this.name, this.description];
 		},
 
 		/**
-		 * 
+		 *
 		 * @param {Ext.data.Model} record
 		 * the record to use to fill the field values
 		 */
@@ -42,7 +40,6 @@
 		loadRecord: function(record) {
 			this.reset();
 			this.name.setValue(record.get(NAME));
-			this.description.setValue(record.get(DESCRIPTION_DEFAULT));
 		},
 
 		/**

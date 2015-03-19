@@ -4,12 +4,12 @@ import java.util.Map;
 
 public class WidgetTranslation extends BaseTranslation {
 
-	public WidgetTranslation(Builder builder) {
+	public WidgetTranslation(final Builder builder) {
 		this.setField(builder.field);
 		this.setName(builder.name);
 		this.setTranslations(builder.translations);
 	}
-	
+
 	public static Builder newInstance() {
 		return new Builder();
 	}
@@ -18,8 +18,7 @@ public class WidgetTranslation extends BaseTranslation {
 	public void accept(final TranslationObjectVisitor visitor) {
 		visitor.visit(this);
 	}
-	
-	
+
 	public static class Builder implements org.apache.commons.lang3.builder.Builder<WidgetTranslation> {
 
 		private String name;

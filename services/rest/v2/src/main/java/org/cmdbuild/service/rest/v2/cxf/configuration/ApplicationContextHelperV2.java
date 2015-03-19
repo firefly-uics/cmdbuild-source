@@ -11,7 +11,6 @@ import org.cmdbuild.auth.NotSystemUserFetcher;
 import org.cmdbuild.auth.UserStore;
 import org.cmdbuild.auth.acl.PrivilegeContextFactory;
 import org.cmdbuild.dao.view.CMDataView;
-import org.cmdbuild.dao.view.DBDataView;
 import org.cmdbuild.logic.auth.AuthenticationLogic;
 import org.cmdbuild.logic.auth.DefaultAuthenticationLogic;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
@@ -101,7 +100,7 @@ public class ApplicationContextHelperV2 {
 	}
 
 	public CMDataView systemDataView() {
-		return applicationContext.getBean(DBDataView.class);
+		return applicationContext.getBean("systemDataView", CMDataView.class);
 	}
 
 	public DataAccessLogic userDataAccessLogic() {

@@ -95,16 +95,6 @@
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/lookup/CMLookupGrid.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/lookup/CMModLookup.js"></script>
 
-	<!-- CONFIGURATION -->
-	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/configuration/CMBaseModConfiguration.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/accordion/CMConfigurationAccordion.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/configuration/CMModConfigurationGenericOption.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/configuration/CMModConfigurationGis.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/configuration/CMModConfigurationGraph.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/configuration/CMModConfigurationAlfresco.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/configuration/CMModConfigurationWorkflow.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/configuration/CMModConfigurationServer.js"></script>
-
 	<!-- MENU  -->
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/accordion/CMMenuAccordion.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/menu/CMMenuPanel.js"></script>
@@ -169,10 +159,6 @@
 
 	<!-- USER -->
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/user/CMModUserController.js"></script>
-
-	<!-- CONFIGURATION -->
-	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/configuration/CMModConfigurationController.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/configuration/CMModConfigurationServerController.js"></script>
 
 	<!-- LOOKUP -->
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/accordion/CMLookupAccordionController.js"></script>
@@ -249,7 +235,6 @@
 <script type="text/javascript" src="javascripts/cmdbuild/Administration.js"></script>
 
 <!-- BIM - ADMINISTRATION -->
-<script type="text/javascript" src="javascripts/cmdbuild/bim/administration/view/CMModConfigurationBIM.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/bim/administration/view/CMBIMAccordion.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/bim/administration/view/CMBIMPanel.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/bim/administration/view/CMBimGrid.js"></script>

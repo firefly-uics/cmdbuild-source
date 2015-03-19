@@ -22,6 +22,7 @@ import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entry.IdAndDescription;
 import org.cmdbuild.data.store.dao.BaseStorableConverter;
 import org.cmdbuild.data.store.lookup.Lookup;
+import org.cmdbuild.data.store.lookup.LookupImpl;
 import org.cmdbuild.data.store.lookup.LookupStore;
 import org.cmdbuild.data.store.lookup.LookupType;
 
@@ -55,7 +56,7 @@ public class EmailConverter extends BaseStorableConverter<Email> {
 		email.setDate((card.getBeginDate()));
 
 		final Long emailStatusLookupId = card.get(EMAIL_STATUS_ATTRIBUTE, IdAndDescription.class).getId();
-		final Lookup lookup = lookupStore.read(Lookup.newInstance() //
+		final Lookup lookup = lookupStore.read(LookupImpl.newInstance() //
 				.withId(emailStatusLookupId) //
 				.build());
 		email.setStatus(EmailStatus.of(identifierOf(lookup)));
@@ -95,7 +96,7 @@ public class EmailConverter extends BaseStorableConverter<Email> {
 	}
 
 	private String identifierOf(final Lookup lookup) {
-		return lookup.code;
+		return lookup.code();
 	}
 
 }

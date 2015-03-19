@@ -26,7 +26,8 @@
 
 		requires: [
 			'Ext.ux.Router',
-			'CMDBuild.core.proxy.CMProxyConfiguration',
+			'CMDBuild.core.proxy.Classes',
+			'CMDBuild.core.proxy.Configuration',
 			'CMDBuild.core.proxy.Report',
 			'CMDBuild.routes.management.Cards',
 			'CMDBuild.routes.management.Classes'
@@ -70,21 +71,27 @@
 				CMDBuild.view.CMMainViewport.showSplash();
 
 				// Get server language
-				CMDBuild.core.proxy.CMProxyConfiguration.getLanguage({
+				CMDBuild.core.proxy.Configuration.getLanguage({
 					success: function(result, options, decodedResult) {
-						CMDBuild.Config[CMDBuild.core.proxy.CMProxyConstants.LANGUAGE] = decodedResult[CMDBuild.core.proxy.CMProxyConstants.LANGUAGE];
+						var configObject = {};
+						configObject[CMDBuild.core.proxy.CMProxyConstants.LANGUAGE] = decodedResult[CMDBuild.core.proxy.CMProxyConstants.LANGUAGE];
+
+						CMDBuild.Config[CMDBuild.core.proxy.CMProxyConstants.LOCALIZATION] = Ext.create('CMDBuild.model.configuration.Localization', configObject);
 					}
 				});
 
 				// Maybe a single request with all the configuration could be better
 				CMDBuild.ServiceProxy.group.getUIConfiguration({
-					success: function(response, options,decoded) {
+					success: function(response, options, decoded) {
 						_CMUIConfiguration = new CMDBuild.model.CMUIConfigurationModel(decoded.response);
 
 						CMDBuild.ServiceProxy.configuration.readAll({
 							success: function(response, options, decoded) {
 								// Cmdbuild
 								CMDBuild.Config.cmdbuild = decoded.cmdbuild;
+
+								// Localization
+								CMDBuild.Config[CMDBuild.core.proxy.CMProxyConstants.LOCALIZATION].setLanguagesWithLocalizations(decoded.cmdbuild.enabled_languages);
 
 								// Bim
 								CMDBuild.Config.bim = decoded.bim;
@@ -250,7 +257,8 @@
 
 				CMDBuild.ServiceProxy.classes.read({
 					params: {
-						active: true
+						active: true,
+						localized: true
 					},
 					scope: this,
 					success: function(response, options, decoded) {

@@ -18,7 +18,9 @@
 		extend: 'Ext.app.Application',
 
 		requires: [
-			'CMDBuild.core.proxy.CMProxyConfiguration',
+			'CMDBuild.core.proxy.Classes',
+			'CMDBuild.core.proxy.Configuration',
+			'CMDBuild.core.proxy.Localizations',
 			'CMDBuild.core.proxy.Report'
 		],
 
@@ -39,9 +41,12 @@
 				CMDBuild.view.CMMainViewport.showSplash(forCredits, administration);
 
 				// Get server language
-				CMDBuild.core.proxy.CMProxyConfiguration.getLanguage({
+				CMDBuild.core.proxy.Configuration.getLanguage({
 					success: function(result, options, decodedResult) {
-						CMDBuild.Config[CMDBuild.core.proxy.CMProxyConstants.LANGUAGE] = decodedResult[CMDBuild.core.proxy.CMProxyConstants.LANGUAGE];
+						var configObject = {};
+						configObject[CMDBuild.core.proxy.CMProxyConstants.LANGUAGE] = decodedResult[CMDBuild.core.proxy.CMProxyConstants.LANGUAGE];
+
+						CMDBuild.Config[CMDBuild.core.proxy.CMProxyConstants.LOCALIZATION] = Ext.create('CMDBuild.model.configuration.Localization', configObject);
 					}
 				});
 
@@ -52,7 +57,13 @@
 
 						CMDBuild.ServiceProxy.configuration.readMainConfiguration({
 							success: function(response, options, decoded) {
+								// CMDBuild
 								CMDBuild.Config.cmdbuild = decoded.data;
+
+								// Localization
+								// TODO: refactor to avoid to use Cache
+								_CMCache.setActiveTranslations(decoded.data.enabled_languages);
+								CMDBuild.Config[CMDBuild.core.proxy.CMProxyConstants.LOCALIZATION].setLanguagesWithLocalizations(decoded.data.enabled_languages);
 
 								/* **********************************************
 								 * Suspend here the layouts, and resume after all
@@ -60,10 +71,14 @@
 								 * **********************************************/
 								Ext.suspendLayouts();
 								/* ***********************************************/
-								_CMCache.setActiveTranslations(decoded.data.enabled_languages);
+
 								var panels = [
 									new Ext.Panel({
 										cls: 'empty_panel x-panel-body'
+									}),
+									Ext.create('CMDBuild.view.administration.configuration.GeneralOptionsPanel', {
+										cmControllerType: 'CMDBuild.controller.administration.configuration.Main',
+										cmName: 'modsetupcmdbuild'
 									}),
 									new CMDBuild.view.administration.filter.CMGroupFilterPanel({
 										cmControllerType: controllerNS.administration.filter.CMGroupFilterPanelController,
@@ -77,10 +92,6 @@
 										cmControllerType: CMDBuild.controller.administration.filter.CMBimLayerController,
 										cmName: 'bim-layers'
 									}),
-									new CMDBuild.view.administration.configuration.CMModConfigurationGenericOption({
-										cmControllerType: controllerNS.administration.configuration.CMModConfigurationController,
-										cmName: 'modsetupcmdbuild'
-									}),
 									new CMDBuild.view.common.CMUnconfiguredModPanel({
 										cmControllerType: controllerNS.common.CMUnconfiguredModPanelController,
 										cmName: 'notconfiguredpanel'
@@ -91,37 +102,9 @@
 									dataViewAccordion = new CMDBuild.view.administration.accordion.CMDataViewAccordion();
 
 									panels = panels.concat([
-										new CMDBuild.view.administration.configuration.CMModConfigurationBIM({
-											cmControllerType : controllerNS.administration.configuration.CMModConfigurationController,
-											cmName : 'modsetupbim'
-										}),
-										new CMDBuild.view.administration.dataview.CMSqlDataView({
-											cmControllerType: controllerNS.administration.dataview.CMSqlDataViewController,
-											cmName: 'sqldataview'
-										}),
-										new CMDBuild.view.administration.dataview.CMFilterDataView({
-											cmControllerType: controllerNS.administration.dataview.CMFilerDataViewController,
-											cmName: 'filterdataview'
-										}),
-										new CMDBuild.view.administration.configuration.CMModConfigurationGis({
-											cmControllerType: controllerNS.administration.configuration.CMModConfigurationController,
-											cmName: 'modsetupgis'
-										}),
-										new CMDBuild.view.administration.configuration.CMModConfigurationGraph({
-											cmControllerType: controllerNS.administration.configuration.CMModConfigurationController,
-											cmName: 'modsetupgraph'
-										}),
-										new CMDBuild.view.administration.configuration.CMModConfigurationAlfresco({
-											cmControllerType: controllerNS.administration.configuration.CMModConfigurationController,
-											cmName: 'modsetupalfresco'
-										}),
-										new CMDBuild.view.administration.configuration.CMModConfigurationWorkflow({
-											cmControllerType: controllerNS.administration.configuration.CMModConfigurationController,
-											cmName: 'modsetupworkflow'
-										}),
-										new CMDBuild.view.administration.configuration.CMModConfigurationServer({
-											cmControllerType: controllerNS.administration.configuration.CMModConfigurationServerController,
-											cmName: 'modsetupserver'
+										Ext.create('CMDBuild.view.administration.tasks.CMTasks', {
+											cmControllerType: 'CMDBuild.controller.administration.tasks.CMTasksController',
+											cmName: 'tasks'
 										}),
 										Ext.create('CMDBuild.view.administration.email.CMEmailAccounts', {
 											cmControllerType: 'CMDBuild.controller.administration.email.CMEmailAccountsController',
@@ -131,13 +114,41 @@
 											cmControllerType: 'CMDBuild.controller.administration.email.CMEmailTemplatesController',
 											cmName: 'emailTemplates'
 										}),
-										Ext.create('CMDBuild.view.administration.tasks.CMTasks', {
-											cmControllerType: 'CMDBuild.controller.administration.tasks.CMTasksController',
-											cmName: 'tasks'
+										Ext.create('CMDBuild.view.administration.localizations.MainPanel', {
+											cmControllerType: 'CMDBuild.controller.administration.localizations.Main',
+											cmName: 'localizations'
 										}),
-										new CMDBuild.view.administration.configuration.CMModConfigurationBIM({
-											cmControllerType: controllerNS.administration.configuration.CMModConfigurationController,
+										Ext.create('CMDBuild.view.administration.configuration.WorkflowPanel', {
+											cmControllerType: 'CMDBuild.controller.administration.configuration.Main',
+											cmName: 'modsetupworkflow'
+										}),
+										Ext.create('CMDBuild.view.administration.configuration.RelationGraphPanel', {
+											cmControllerType: 'CMDBuild.controller.administration.configuration.Main',
+											cmName: 'modsetupgraph'
+										}),
+										Ext.create('CMDBuild.view.administration.configuration.AlfrescoPanel', {
+											cmControllerType: 'CMDBuild.controller.administration.configuration.Main',
+											cmName: 'modsetupalfresco'
+										}),
+										Ext.create('CMDBuild.view.administration.configuration.GisPanel', {
+											cmControllerType: 'CMDBuild.controller.administration.configuration.Main',
+											cmName: 'modsetupgis'
+										}),
+										Ext.create('CMDBuild.view.administration.configuration.BimPanel', {
+											cmControllerType: 'CMDBuild.controller.administration.configuration.Main',
 											cmName: 'modsetupbim'
+										}),
+										Ext.create('CMDBuild.view.administration.configuration.ServerPanel', {
+											cmControllerType: 'CMDBuild.controller.administration.configuration.Server',
+											cmName: 'modsetupserver'
+										}),
+										new CMDBuild.view.administration.dataview.CMSqlDataView({
+											cmControllerType: controllerNS.administration.dataview.CMSqlDataViewController,
+											cmName: 'sqldataview'
+										}),
+										new CMDBuild.view.administration.dataview.CMFilterDataView({
+											cmControllerType: controllerNS.administration.dataview.CMFilerDataViewController,
+											cmName: 'filterdataview'
 										})
 									]);
 								}
@@ -176,7 +187,8 @@
 							Ext.create('CMDBuild.view.administration.accordion.CMAccordionEmail'),
 							gisAccordion,
 							bimAccordion,
-							Ext.create('CMDBuild.view.administration.accordion.CMConfigurationAccordion')
+							Ext.create('CMDBuild.view.administration.accordion.Localizations'),
+							Ext.create('CMDBuild.view.administration.accordion.Configuration')
 						]);
 
 						// Resume here the layouts operations

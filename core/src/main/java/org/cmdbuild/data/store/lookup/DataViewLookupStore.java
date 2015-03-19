@@ -76,16 +76,16 @@ public class DataViewLookupStore implements LookupStore {
 
 	private Lookup buildLookupWithParentLookup(final Lookup lookup, final Map<Long, Lookup> lookupsById) {
 		final Lookup lookupWithParent;
-		final Lookup parent = lookupsById.get(lookup.parentId);
+		final Lookup parent = lookupsById.get(lookup.parentId());
 		if (parent != null) {
-			final Long grandparentId = parent.parentId;
+			final Long grandparentId = parent.parentId();
 			final Lookup parentWithGrandparent;
 			if (grandparentId != null) {
 				parentWithGrandparent = buildLookupWithParentLookup(parent, lookupsById);
 			} else {
 				parentWithGrandparent = parent;
 			}
-			lookupWithParent = Lookup.newInstance() //
+			lookupWithParent = LookupImpl.newInstance() //
 					.clone(lookup) //
 					.withParent(parentWithGrandparent) //
 					.build();

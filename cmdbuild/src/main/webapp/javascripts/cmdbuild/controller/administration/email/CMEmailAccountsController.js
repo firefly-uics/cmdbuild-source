@@ -90,7 +90,7 @@
 
 		onRemoveButtonClick: function() {
 			Ext.Msg.show({
-				title: CMDBuild.Translation.administration.setup.remove,
+				title: CMDBuild.Translation.common.confirmpopup.title,
 				msg: CMDBuild.Translation.common.confirmpopup.areyousure,
 				scope: this,
 				buttons: Ext.Msg.YESNO,

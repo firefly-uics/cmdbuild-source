@@ -72,6 +72,7 @@ import org.cmdbuild.dao.query.clause.where.WhereClause;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.dao.view.DBDataView;
 import org.cmdbuild.data.store.lookup.Lookup;
+import org.cmdbuild.data.store.lookup.LookupImpl;
 import org.cmdbuild.data.store.lookup.LookupStore;
 import org.cmdbuild.data.store.lookup.LookupType;
 import org.cmdbuild.logger.Log;
@@ -403,13 +404,13 @@ public class CQLAnalyzer {
 					value = fieldValue.getValue();
 				} else if (fieldValue.getType() == FieldValueType.STRING) {
 					for (final Lookup lookupDto : lookupStore.readAll()) {
-						if (lookupDto.description.equals(fieldValue.getValue().toString())) {
+						if (lookupDto.description().equals(fieldValue.getValue().toString())) {
 							value = lookupDto.getId();
 						}
 					}
 				} else {
 					try {
-						final Field lookupDtoField = Lookup.class.getField(node.getAttributeName());
+						final Field lookupDtoField = LookupImpl.class.getField(node.getAttributeName());
 						for (final Lookup lookupDto : lookupStore.readAll()) {
 							if (lookupDtoField.get(lookupDto).equals(fieldValue.getValue().toString())) {
 								value = lookupDto.getId();
@@ -472,7 +473,7 @@ public class CQLAnalyzer {
 										.build();
 
 								for (final Lookup lookup : lookupStore.readAll(lookupType)) {
-									if (lookup.description.equals(firstStringValue)) {
+									if (lookup.description().equals(firstStringValue)) {
 										searchedLookup = lookup;
 										values.add(searchedLookup.getId());
 										break;

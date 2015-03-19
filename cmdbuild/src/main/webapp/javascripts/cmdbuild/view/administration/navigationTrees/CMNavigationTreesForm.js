@@ -12,7 +12,7 @@
 
 			this.modifyButton = new Ext.button.Button({
 				iconCls : 'modify',
-				text: CMDBuild.Translation.tree_modify, 
+				text: CMDBuild.Translation.tree_modify,
 				scope: this,
 				handler: function() {
 					this.delegate.cmOn("onModifyButtonClick");
@@ -21,7 +21,7 @@
 
 			this.deleteButton = new Ext.button.Button({
 				iconCls : 'delete',
-				text: CMDBuild.Translation.tree_remove, 
+				text: CMDBuild.Translation.tree_remove,
 				scope: this,
 				handler: function() {
 					this.delegate.cmOn("onDeleteButtonClick");
@@ -69,13 +69,13 @@
 				cmImmutable: true
 			});
 
-			this.treeDescription = new Ext.form.CMTranslatableText({
-				fieldLabel : CMDBuild.Translation.description_,
+			this.treeDescription = Ext.create('CMDBuild.view.common.field.translatable.Text', {
+				fieldLabel: CMDBuild.Translation.description_,
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
-				name : "description",
-				allowBlank : false,
-				vtype : 'cmdbcomment'
+				name: "description",
+				allowBlank: false,
+				vtype: 'cmdbcomment'
 			});
 			this.rootName = new CMDBuild.field.CMBaseCombo({
 				fieldLabel: this.translation.class_target,
@@ -113,13 +113,13 @@
 				bodyCls: 'cmgraypanel',
 				items: [this.formPanel]
 			});
-			
+
 			this.plugins = [new CMDBuild.FormPlugin()];
 			this.callParent(arguments);
 
 			this.rootName.on('change', function(nameField, newValue, oldValue) {
 			}, this);
-			
+
 			this.disableModify();
 		},
 
@@ -159,7 +159,7 @@
 		setDefaultValues: function() {
 			this.active.setValue(true);
 		},
-		
+
 		onAddButtonClick: function() {
 			this.reset();
 			this.enableModify(all = true);
@@ -170,13 +170,13 @@
 		enableModify: function(all) {
 			this.mixins.cmFormFunctions.enableModify.call(this, all);
 		},
-		
+
 		resetForm: function() {
 			this.treeName.setValue("");
 			this.treeDescription.setValue("");
 			this.rootName.setValue("");
 		},
-		
+
 		loadForm: function(tree) {
 			this.treeName.setValue(tree.type);
 			this.rootName.setValue(tree.targetClassName);

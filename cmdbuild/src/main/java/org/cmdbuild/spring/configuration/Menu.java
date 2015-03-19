@@ -4,12 +4,17 @@ import static org.cmdbuild.spring.util.Constants.PROTOTYPE;
 
 import org.cmdbuild.auth.GroupFetcher;
 import org.cmdbuild.auth.UserStore;
-import org.cmdbuild.dao.view.DBDataView;
+import org.cmdbuild.data.store.MenuElementStore;
+import org.cmdbuild.data.store.dao.DataViewStore;
+import org.cmdbuild.data.store.dao.StorableConverter;
 import org.cmdbuild.logic.DashboardLogic;
 import org.cmdbuild.logic.data.access.SystemDataAccessLogicBuilder;
 import org.cmdbuild.logic.menu.DefaultMenuLogic;
 import org.cmdbuild.logic.menu.MenuLogic;
+import org.cmdbuild.services.localization.LocalizedStorableConverter;
 import org.cmdbuild.services.store.menu.DataViewMenuStore;
+import org.cmdbuild.services.store.menu.MenuElement;
+import org.cmdbuild.services.store.menu.MenuElementConverter;
 import org.cmdbuild.services.store.menu.MenuItemConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -23,13 +28,16 @@ public class Menu {
 	private DashboardLogic dashboardLogic;
 
 	@Autowired
+	private Data data;
+
+	@Autowired
 	private GroupFetcher groupFetcher;
 
 	@Autowired
-	private SystemDataAccessLogicBuilder systemDataAccessLogicBuilder;
+	private Translation translation;
 
 	@Autowired
-	private DBDataView systemDataView;
+	private SystemDataAccessLogicBuilder systemDataAccessLogicBuilder;
 
 	@Autowired
 	private User user;
@@ -48,21 +56,40 @@ public class Menu {
 
 	@Bean
 	public MenuItemConverter menuItemConverter() {
-		return new MenuItemConverter(systemDataView, systemDataAccessLogicBuilder);
+		return new MenuItemConverter(data.systemDataView(), systemDataAccessLogicBuilder);
+	}
+
+	@Bean
+	protected DataViewStore<MenuElement> baseMenuElementStore() {
+		return DataViewStore.newInstance(data.systemDataView(), menuElementStorableConverter());
+	}
+
+	private MenuElementStore menuElementStore() {
+		return new MenuElementStore(baseMenuElementStore(), data.systemDataView(), userStore.getUser(),
+				view.viewConverter(), menuElementStorableConverter());
+	}
+
+	private MenuElementConverter menuElementConverter() {
+		return new MenuElementConverter(data.systemDataView(), user.userDataAccessLogicBuilder());
+	}
+
+	private StorableConverter<MenuElement> menuElementStorableConverter() {
+		return new LocalizedStorableConverter<MenuElement>(menuElementConverter(), translation.translationFacade(),
+				data.systemDataView());
 	}
 
 	@Bean
 	@Scope(PROTOTYPE)
 	public DataViewMenuStore dataViewMenuStore() {
 		return new DataViewMenuStore( //
-				systemDataView, //
+				data.systemDataView(), //
 				groupFetcher, //
 				dashboardLogic, //
 				user.userDataAccessLogicBuilder(), //
 				view.viewLogic(), //
 				menuItemConverter(), //
-				view.viewConverter(), //
-				userStore.getUser());
+				userStore.getUser(), //
+				menuElementStore());
 	}
 
 }

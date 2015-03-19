@@ -98,7 +98,7 @@
 				this.saveButton = new Ext.button.Button( {
 					text : CMDBuild.Translation.common.buttons.save
 				});
-	
+
 				this.abortButton = new Ext.button.Button( {
 					text : CMDBuild.Translation.common.buttons.abort
 				});
@@ -135,14 +135,14 @@
 				cmImmutable : true
 			});
 
-			this.classDescription = new Ext.form.CMTranslatableText( {
-				fieldLabel : tr.description,
+			this.classDescription = Ext.create('CMDBuild.view.common.field.translatable.Text', {
+				fieldLabel: tr.description,
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
-				name : 'text',
-				allowBlank : false,
-				vtype : 'cmdbcomment',
-				translationsKeyType: "Class", 
+				name: 'text',
+				allowBlank: false,
+				vtype: 'cmdbcomment',
+				translationsKeyType: "Class",
 				translationsKeyField: "Description"
 			});
 
@@ -225,7 +225,7 @@
 			onTypeComboSetValue.call(this, s.get("value"));
 		}
 	}
-			
+
 	function onTypeComboSetValue(value) {
 		if (value == "simpletable") {
 			this.isSuperClass.hide();
@@ -235,5 +235,5 @@
 			this.inheriteCombo.show();
 		}
 	}
-			
+
 })();
