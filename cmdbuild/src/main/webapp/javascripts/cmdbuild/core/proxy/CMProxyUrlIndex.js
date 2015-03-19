@@ -54,7 +54,9 @@
 			create: 'services/json/schema/modclass/savedomain',
 			read: 'services/json/schema/modclass/getalldomains',
 			update: 'services/json/schema/modclass/savedomain',
-			remove: 'services/json/schema/modclass/deletedomain'
+			remove: 'services/json/schema/modclass/deletedomain',
+
+			getDomainList: 'services/json/schema/modclass/getdomainlist'
 		},
 
 		dataView: {

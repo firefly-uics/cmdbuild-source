@@ -116,9 +116,7 @@
 
 			this.tbar = [];
 
-			this.addRelationButton = Ext.create('CMDBuild.core.buttons.AddRelationMenuButton', {
-				text: tr.add_relations
-			});
+			this.addRelationButton = Ext.create('CMDBuild.core.buttons.AddRelationMenuButton');
 
 			this.mon(this.addRelationButton, 'cmClick', function(d) {
 				me.fireEvent(me.CMEVENTS.addButtonClick, d);
