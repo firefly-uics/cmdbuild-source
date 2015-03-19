@@ -49,6 +49,7 @@ import org.cmdbuild.logic.taskmanager.TaskManagerLogic;
 import org.cmdbuild.logic.translation.TranslationFacade;
 import org.cmdbuild.logic.translation.TranslationLogic;
 import org.cmdbuild.logic.view.ViewLogic;
+import org.cmdbuild.logic.widget.WidgetLogic;
 import org.cmdbuild.logic.workflow.SystemWorkflowLogicBuilder;
 import org.cmdbuild.logic.workflow.UserWorkflowLogicBuilder;
 import org.cmdbuild.logic.workflow.WorkflowLogic;
@@ -231,6 +232,10 @@ public class JSONBaseWithSpringContext extends JSONBase {
 
 	protected ViewLogic viewLogic() {
 		return applicationContext().getBean(ViewLogic.class);
+	}
+
+	protected WidgetLogic widgetLogic() {
+		return applicationContext().getBean(WidgetLogic.class);
 	}
 
 	protected WorkflowLogic workflowLogic() {
