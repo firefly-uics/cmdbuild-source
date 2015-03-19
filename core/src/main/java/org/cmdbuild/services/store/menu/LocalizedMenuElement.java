@@ -8,7 +8,6 @@ import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
 import static org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue.eq;
 import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
-import static org.cmdbuild.logic.translation.DefaultTranslationLogic.DESCRIPTION_FOR_CLIENT;
 import static org.cmdbuild.model.view.ViewConverter.VIEW_CLASS_NAME;
 import static org.cmdbuild.services.store.menu.MenuItemType.isClassOrProcess;
 import static org.cmdbuild.services.store.menu.MenuItemType.isDashboard;
@@ -22,10 +21,10 @@ import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.logic.report.ReportLogic;
 import org.cmdbuild.logic.report.ReportLogic.Report;
-import org.cmdbuild.logic.translation.ReportTranslation;
 import org.cmdbuild.logic.translation.TranslationFacade;
 import org.cmdbuild.logic.translation.TranslationObject;
 import org.cmdbuild.logic.translation.converter.ClassConverter;
+import org.cmdbuild.logic.translation.converter.ReportConverter;
 import org.cmdbuild.logic.translation.converter.ViewConverter;
 import org.cmdbuild.services.localization.LocalizableStorableVisitor;
 
@@ -80,22 +79,21 @@ public class LocalizedMenuElement extends ForwardingMenuElement {
 			} else if (isReport(type)) {
 				final Optional<String> _reportName = fetchReportName();
 				if (_reportName.isPresent()) {
-					final ReportTranslation reportTranslation = ReportTranslation.newInstance() //
-							.withName(_reportName.get()) //
-							.withField(DESCRIPTION_FOR_CLIENT) //
-							.build();
-					translatedDescription = facade.read(reportTranslation);
+					final ReportConverter converter = ReportConverter.of(ReportConverter.description());
+					Validate.isTrue(converter.isValid());
+					final TranslationObject reportTranslationObject = converter.create(_reportName.get());
+					translatedDescription = facade.read(reportTranslationObject);
 				}
 			} else if (isView(type)) {
 				final Optional<String> _viewName = fetchViewName();
 				if (_viewName.isPresent()) {
 					final ViewConverter converter = ViewConverter.of(ViewConverter.description());
 					Validate.isTrue(converter.isValid());
-					converter.create(_viewName.get());
-					translatedDescription = facade.read(converter.create(_viewName.get()));
+					final TranslationObject viewTranslationObject = converter.create(_viewName.get());
+					translatedDescription = facade.read(viewTranslationObject);
 				}
 			} else if (isDashboard(type)) {
-				// nothing to do
+				// dashboards localization not supported
 			}
 		}
 		return translatedDescription;
