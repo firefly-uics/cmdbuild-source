@@ -16,6 +16,8 @@ public interface ErrorHandler {
 
 	void domainNotFound(String id);
 
+	void extensionNotFound(String id);
+
 	void invalidType(String id);
 
 	void lookupTypeNotFound(String id);
@@ -45,6 +47,8 @@ public interface ErrorHandler {
 	void propagate(Throwable e);
 
 	void relationNotFound(Long id);
+
+	void reportNotFound(Long id);
 
 	void roleNotFound(String id);
 

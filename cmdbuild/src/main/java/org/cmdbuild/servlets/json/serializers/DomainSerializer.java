@@ -3,7 +3,10 @@ package org.cmdbuild.servlets.json.serializers;
 import static org.cmdbuild.servlets.json.CommunicationConstants.DEFAULT_INVERSE_DESCRIPTION;
 import static org.cmdbuild.servlets.json.CommunicationConstants.DESCRIPTION;
 import static org.cmdbuild.servlets.json.CommunicationConstants.DIRECT_DESCRIPTION;
+import static org.cmdbuild.servlets.json.CommunicationConstants.DISABLED1;
+import static org.cmdbuild.servlets.json.CommunicationConstants.DISABLED2;
 import static org.cmdbuild.servlets.json.CommunicationConstants.INVERSE_DESCRIPTION;
+import static org.cmdbuild.servlets.json.schema.Utils.toJsonArray;
 
 import org.cmdbuild.auth.acl.PrivilegeContext;
 import org.cmdbuild.dao.entrytype.CMClass;
@@ -52,6 +55,8 @@ public class DomainSerializer extends Serializer {
 			jsonDomain.put("class2", domain.getClass2().getIdentifier().getLocalName());
 			jsonDomain.put("class2id", domain.getClass2().getId());
 		}
+		jsonDomain.put(DISABLED1, toJsonArray(domain.getDisabled1()));
+		jsonDomain.put(DISABLED2, toJsonArray(domain.getDisabled2()));
 
 		jsonDomain.put("md", domain.isMasterDetail());
 		jsonDomain.put("md_label", domain.getMasterDetailDescription());

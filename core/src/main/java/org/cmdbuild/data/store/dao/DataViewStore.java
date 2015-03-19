@@ -147,7 +147,7 @@ public class DataViewStore<T extends Storable> implements Store<T> {
 				final CMClass target = dataView.findClass(className);
 				if (target == null) {
 					logger.error(marker, "class '{}' has not been found", converter.getClassName());
-					throw NotFoundException.NotFoundExceptionType.CLASS_NOTFOUND.createException();
+					throw NotFoundException.NotFoundExceptionType.CLASS_NOTFOUND.createException(className);
 				}
 				return target;
 			}

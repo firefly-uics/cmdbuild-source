@@ -2,6 +2,8 @@ package org.cmdbuild.services.soap.operation;
 
 import static com.google.common.collect.FluentIterable.from;
 import static com.google.common.collect.Iterables.size;
+import static com.google.common.collect.Maps.transformValues;
+import static com.google.common.collect.Maps.uniqueIndex;
 import static java.util.Arrays.asList;
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
@@ -11,10 +13,7 @@ import static org.cmdbuild.data.store.Storables.storableOf;
 import static org.cmdbuild.services.soap.utils.SoapToJsonUtils.createJsonFilterFrom;
 import static org.cmdbuild.services.soap.utils.SoapToJsonUtils.toJsonArray;
 
-import java.io.IOException;
 import java.io.OutputStream;
-import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -48,7 +47,6 @@ import org.cmdbuild.dao.query.clause.QueryDomain.Source;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.data.store.lookup.Lookup;
 import org.cmdbuild.data.store.lookup.LookupStore;
-import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.commands.AbstractGetRelation.RelationInfo;
 import org.cmdbuild.logic.commands.GetCardHistory.GetCardHistoryResponse;
 import org.cmdbuild.logic.commands.GetRelationHistory.GetRelationHistoryResponse;
@@ -59,14 +57,12 @@ import org.cmdbuild.logic.data.QueryOptions;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.logic.data.access.FetchCardListResponse;
 import org.cmdbuild.logic.data.access.RelationDTO;
+import org.cmdbuild.logic.report.ExtensionConverter;
+import org.cmdbuild.logic.report.ReportLogic;
+import org.cmdbuild.logic.report.StringExtensionConverter;
 import org.cmdbuild.logic.workflow.WorkflowLogic;
 import org.cmdbuild.model.data.Card;
 import org.cmdbuild.report.ReportFactory;
-import org.cmdbuild.report.ReportFactory.ReportExtension;
-import org.cmdbuild.report.ReportFactory.ReportType;
-import org.cmdbuild.report.ReportFactoryDB;
-import org.cmdbuild.report.ReportParameter;
-import org.cmdbuild.report.ReportParameterConverter;
 import org.cmdbuild.services.auth.PrivilegeManager.PrivilegeType;
 import org.cmdbuild.services.meta.MetadataService;
 import org.cmdbuild.services.meta.MetadataStoreFactory;
@@ -91,7 +87,6 @@ import org.cmdbuild.services.soap.types.Report;
 import org.cmdbuild.services.soap.types.ReportParams;
 import org.cmdbuild.services.soap.utils.DateTimeSerializer;
 import org.cmdbuild.services.store.menu.MenuStore;
-import org.cmdbuild.services.store.report.ReportStore;
 import org.cmdbuild.workflow.CMWorkflowException;
 import org.cmdbuild.workflow.user.UserActivityInstance;
 import org.cmdbuild.workflow.user.UserProcessInstance;
@@ -141,6 +136,25 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 	};
 
 	private static final Attribute[] NO_ATTRIBUTES = new Attribute[] {};
+	private static final ReportParams[] NO_PARAMS = new ReportParams[] {};
+
+	private static final Function<ReportParams, String> REPORT_PARAM_KEY = new Function<ReportParams, String>() {
+
+		@Override
+		public String apply(ReportParams input) {
+			return input.getKey();
+		}
+
+	};
+
+	private static final Function<ReportParams, Object> REPORT_PARAM_VALUE = new Function<ReportParams, Object>() {
+
+		@Override
+		public Object apply(ReportParams input) {
+			return input.getValue();
+		}
+
+	};
 
 	private final CMDataView dataView;
 	private final DataAccessLogic dataAccessLogic;
@@ -154,8 +168,8 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 	private final CardAdapter cardAdapter;
 
 	private MenuStore menuStore;
-	private ReportStore reportStore;
 	private LookupStore lookupStore;
+	private final ReportLogic reportLogic;
 
 	public DataAccessLogicHelper( //
 			final CMDataView dataView, //
@@ -166,7 +180,8 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 			final AuthenticationStore authenticationStore, //
 			final CmdbuildConfiguration configuration, //
 			final MetadataStoreFactory metadataStoreFactory, //
-			final CardAdapter cardAdapter //
+			final CardAdapter cardAdapter, //
+			final ReportLogic reportLogic //
 	) {
 		this.dataView = dataView;
 		this.dataAccessLogic = datAccessLogic;
@@ -178,6 +193,7 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 		this.configuration = configuration;
 		this.metadataStoreFactory = metadataStoreFactory;
 		this.cardAdapter = cardAdapter;
+		this.reportLogic = reportLogic;
 	}
 
 	public void setMenuStore(final MenuStore menuStore) {
@@ -186,10 +202,6 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 
 	public void setLookupStore(final LookupStore lookupStore) {
 		this.lookupStore = lookupStore;
-	}
-
-	public void setReportStore(final ReportStore reportStore) {
-		this.reportStore = reportStore;
 	}
 
 	public AttributeSchema[] getAttributeList(final String className) {
@@ -775,86 +787,44 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 	}
 
 	public Report[] getReportsByType(final String type, final int limit, final int offset) {
-		final List<Report> pagedReports = new ArrayList<Report>();
-		final ReportType reportType = ReportType.valueOf(type.toUpperCase());
-		int numRecords = 0;
-		final List<org.cmdbuild.model.Report> fetchedReports = reportStore.findReportsByType(reportType);
-		for (final org.cmdbuild.model.Report report : fetchedReports) {
-			if (report.isUserAllowed()) {
-				++numRecords;
-				if (limit > 0 && numRecords > offset && numRecords <= offset + limit) {
-					pagedReports.add(transform(report));
-				}
-			}
-		}
-		return pagedReports.toArray(new Report[pagedReports.size()]);
-	}
+		return from(reportLogic.readAll()) //
+				.transform(new Function<ReportLogic.Report, Report>() {
 
-	private Report transform(final org.cmdbuild.model.Report reportModel) {
-		final Report report = new Report();
-		report.setDescription(reportModel.getDescription());
-		report.setId(reportModel.getId());
-		report.setTitle(reportModel.getCode());
-		report.setType(reportModel.getType().toString());
-		return report;
+					@Override
+					public Report apply(final ReportLogic.Report input) {
+						final Report output = new Report();
+						output.setId(input.getId());
+						output.setTitle(input.getTitle());
+						output.setType(input.getType());
+						output.setDescription(input.getDescription());
+						return output;
+					}
+
+				}) //
+				.toArray(Report.class);
 	}
 
 	public AttributeSchema[] getReportParameters(final int id, final String extension) {
-		ReportFactoryDB reportFactory;
-		try {
-			reportFactory = new ReportFactoryDB(dataSource, configuration, reportStore, id,
-					ReportExtension.valueOf(extension.toUpperCase()));
-			final List<AttributeSchema> reportParameterList = new ArrayList<AttributeSchema>();
-			for (final ReportParameter reportParameter : reportFactory.getReportParameters()) {
-				final CMAttribute reportAttribute = ReportParameterConverter.of(reportParameter).toCMAttribute();
-				final AttributeSchema attribute = serializationUtils.serialize(reportAttribute);
-				reportParameterList.add(attribute);
-			}
-			return reportParameterList.toArray(new AttributeSchema[reportParameterList.size()]);
-		} catch (final SQLException e) {
-			Log.SOAP.error("SQL error in report", e);
-		} catch (final IOException e) {
-			Log.SOAP.error("Error reading report", e);
-		} catch (final ClassNotFoundException e) {
-			Log.SOAP.error("Cannot find class in report", e);
-		}
-		return null;
+		return from(reportLogic.parameters(id)) //
+				.transform(new Function<CMAttribute, AttributeSchema>() {
+
+					@Override
+					public AttributeSchema apply(final CMAttribute input) {
+						return serializationUtils.serialize(input);
+					}
+
+				}) //
+				.toArray(AttributeSchema.class);
 	}
 
 	public DataHandler getReport(final int id, final String extension, final ReportParams[] params) {
-		final ReportExtension reportExtension = ReportExtension.valueOf(extension.toUpperCase());
-		try {
-			final ReportFactoryDB reportFactory = new ReportFactoryDB(dataSource, configuration, reportStore, id,
-					reportExtension);
-			if (params != null) {
-				for (final ReportParameter reportParameter : reportFactory.getReportParameters()) {
-					for (final ReportParams param : params) {
-						if (param.getKey().equals(reportParameter.getName())) {
-							// update parameter
-							reportParameter.parseValue(param.getValue());
-						}
-					}
-				}
-			}
-			reportFactory.fillReport();
-			String filename = reportFactory.getReportCard().getCode().replaceAll(" ", "");
-			// add extension
-			filename += "." + reportFactory.getReportExtension().toString().toLowerCase();
-			// send to stream
-			final DataSource dataSource = TempDataSource.create(filename, reportFactory.getContentType());
-			final OutputStream outputStream = dataSource.getOutputStream();
-			reportFactory.sendReportToStream(outputStream);
-			return new DataHandler(dataSource);
-		} catch (final SQLException e) {
-			Log.SOAP.error("SQL error in report", e);
-		} catch (final IOException e) {
-			Log.SOAP.error("Error reading report", e);
-		} catch (final ClassNotFoundException e) {
-			Log.SOAP.error("Cannot find class in report", e);
-		} catch (final Exception e) {
-			Log.SOAP.error("Error getting report", e);
-		}
-		return null;
+		final Map<String, Object> paramsAsMap = transformValues( //
+				uniqueIndex( //
+						asList(defaultIfNull(params, NO_PARAMS)), //
+						REPORT_PARAM_KEY), //
+				REPORT_PARAM_VALUE);
+		final ExtensionConverter extensionConverter = StringExtensionConverter.of(extension);
+		return reportLogic.download(id, extensionConverter.extension(), paramsAsMap);
 	}
 
 	public DataHandler getReport(final String reportId, final String extension, final ReportParams[] params) {
@@ -869,7 +839,10 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 					.withOperationUser(operationUser) //
 					.build();
 			reportFactory.fillReport();
-			final DataSource dataSource = TempDataSource.create(null, reportFactory.getContentType());
+			final DataSource dataSource = TempDataSource.newInstance() //
+					.withName(reportId) //
+					.withContentType(reportFactory.getContentType()) //
+					.build();
 			final OutputStream outputStream = dataSource.getOutputStream();
 			reportFactory.sendReportToStream(outputStream);
 			return new DataHandler(dataSource);
@@ -887,4 +860,5 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 		}
 		return properties;
 	}
+
 }

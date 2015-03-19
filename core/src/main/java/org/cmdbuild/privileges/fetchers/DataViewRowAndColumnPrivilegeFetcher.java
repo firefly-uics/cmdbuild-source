@@ -55,9 +55,8 @@ public class DataViewRowAndColumnPrivilegeFetcher implements RowAndColumnPrivile
 	}
 
 	@Override
-	public Iterable<? extends WhereClause> fetchPrivilegeFiltersFor(final CMEntryType entryType,
-			final CMEntryType entryTypeForClauses) {
-		return fetchPrivilegeFiltersFor(entryType, entryTypeForClauses, canonical(entryTypeForClauses));
+	public Iterable<? extends WhereClause> fetchPrivilegeFiltersFor(final CMEntryType entryType, final Alias alias) {
+		return fetchPrivilegeFiltersFor(entryType, entryType, alias);
 	}
 
 	@Override

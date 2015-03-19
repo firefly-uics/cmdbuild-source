@@ -25,6 +25,7 @@
 			<ref bean="jsonProvider" />
 			<ref bean="wadlProvider" />
 			<ref bean="v2_tokenHandler" />
+			<ref bean="v2_headerResponseHandler" />
 		</jaxrs:providers>
 		<jaxrs:serviceBeans>
 			<ref bean="v2_attachmentsConfiguration" />
@@ -47,6 +48,7 @@
 			<ref bean="v2_processInstanceAttachments" />
 			<ref bean="v2_processInstances" />
 			<ref bean="v2_processStartActivities" />
+			<ref bean="v2_reports" />
 			<ref bean="v2_sessions" />
 		</jaxrs:serviceBeans>
 		<jaxrs:extensionMappings>

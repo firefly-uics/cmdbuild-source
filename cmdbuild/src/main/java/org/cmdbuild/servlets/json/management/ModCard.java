@@ -463,7 +463,7 @@ public class ModCard extends JSONBaseWithSpringContext {
 		final DataAccessLogic dataLogic = userDataAccessLogic();
 		final CMClass found = dataLogic.findClass(classId);
 		if (found == null) {
-			throw NotFoundException.NotFoundExceptionType.CLASS_NOTFOUND.createException();
+			throw NotFoundException.NotFoundExceptionType.CLASS_NOTFOUND.createException(classId.toString());
 		}
 		final String className = found.getIdentifier().getLocalName();
 		dataLogic.deleteCard(className, cardId);

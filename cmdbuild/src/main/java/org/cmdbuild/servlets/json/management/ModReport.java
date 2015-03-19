@@ -231,7 +231,10 @@ public class ModReport extends JSONBaseWithSpringContext {
 		filename += "." + reportFactory.getReportExtension().toString().toLowerCase();
 
 		// send to stream
-		final DataSource dataSource = TempDataSource.create(filename, reportFactory.getContentType());
+		final DataSource dataSource = TempDataSource.newInstance() //
+				.withName(filename) //
+				.withContentType(reportFactory.getContentType()) //
+				.build();
 		final OutputStream outputStream = dataSource.getOutputStream();
 		reportFactory.sendReportToStream(outputStream);
 		outputStream.flush();

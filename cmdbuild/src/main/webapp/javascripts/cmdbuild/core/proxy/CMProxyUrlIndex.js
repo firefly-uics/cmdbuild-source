@@ -172,7 +172,8 @@
 			getReportTypesTree: 'services/json/management/modreport/getreporttypestree',
 			getReportsByType: 'services/json/management/modreport/getreportsbytype',
 			menuTree: 'services/json/schema/modreport/menutree',
-			updateReportFactoryParams: 'services/json/management/modreport/updatereportfactoryparams',
+			printReportFactory: 'services/json/management/modreport/printreportfactory',
+			updateReportFactoryParams: 'services/json/management/modreport/updatereportfactoryparams'
 		},
 
 		tasks: {

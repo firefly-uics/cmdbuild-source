@@ -525,7 +525,9 @@ public class EmailLogic implements Logic {
 								emailId, //
 								storedDocument.getName());
 				final DataHandler dataHandler = dmsService.download(document);
-				final TempDataSource tempDataSource = TempDataSource.create(storedDocument.getName());
+				final TempDataSource tempDataSource = TempDataSource.newInstance() //
+						.withName(storedDocument.getName()) //
+						.build();
 				copy(dataHandler, tempDataSource);
 				final URL url = tempDataSource.getFile().toURI().toURL();
 				attachments.put(url, storedDocument.getName());

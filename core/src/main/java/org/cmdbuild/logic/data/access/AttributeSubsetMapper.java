@@ -3,14 +3,13 @@ package org.cmdbuild.logic.data.access;
 import static com.google.common.collect.FluentIterable.from;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
 
-import org.cmdbuild.common.collect.Mapper;
 import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.dao.query.clause.QueryAliasAttribute;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 
-public class AttributeSubsetMapper implements Mapper<Iterable<? extends String>, Iterable<QueryAliasAttribute>> {
+public class AttributeSubsetMapper implements Function<Iterable<? extends String>, Iterable<QueryAliasAttribute>> {
 
 	private final CMEntryType entryType;
 
@@ -19,7 +18,7 @@ public class AttributeSubsetMapper implements Mapper<Iterable<? extends String>,
 	}
 
 	@Override
-	public Iterable<QueryAliasAttribute> map(final Iterable<? extends String> jsonAttributes) {
+	public Iterable<QueryAliasAttribute> apply(final Iterable<? extends String> input) {
 		final Predicate<String> existingAttributes = new Predicate<String>() {
 
 			@Override
@@ -36,7 +35,7 @@ public class AttributeSubsetMapper implements Mapper<Iterable<? extends String>,
 			}
 
 		};
-		return from(jsonAttributes) //
+		return from(input) //
 				.filter(existingAttributes) //
 				.transform(toQueryAliasAttribute);
 	}

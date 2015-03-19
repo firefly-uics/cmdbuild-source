@@ -1,13 +1,18 @@
 package org.cmdbuild.servlets.json.schema;
 
+import static com.google.common.base.Predicates.not;
 import static com.google.common.collect.FluentIterable.from;
 import static com.google.common.collect.Iterables.filter;
+import static java.util.Collections.emptyList;
+import static org.cmdbuild.dao.entrytype.Predicates.isSystem;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ACTIVE;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ATTRIBUTE;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ATTRIBUTES;
 import static org.cmdbuild.servlets.json.CommunicationConstants.CLASS_NAME;
 import static org.cmdbuild.servlets.json.CommunicationConstants.DEFAULT_VALUE;
 import static org.cmdbuild.servlets.json.CommunicationConstants.DESCRIPTION;
+import static org.cmdbuild.servlets.json.CommunicationConstants.DISABLED1;
+import static org.cmdbuild.servlets.json.CommunicationConstants.DISABLED2;
 import static org.cmdbuild.servlets.json.CommunicationConstants.DOMAIN;
 import static org.cmdbuild.servlets.json.CommunicationConstants.DOMAINS;
 import static org.cmdbuild.servlets.json.CommunicationConstants.DOMAIN_CARDINALITY;
@@ -44,6 +49,8 @@ import static org.cmdbuild.servlets.json.CommunicationConstants.TYPE;
 import static org.cmdbuild.servlets.json.CommunicationConstants.TYPES;
 import static org.cmdbuild.servlets.json.CommunicationConstants.UNIQUE;
 import static org.cmdbuild.servlets.json.CommunicationConstants.USER_STOPPABLE;
+import static org.cmdbuild.servlets.json.CommunicationConstants.WITH_DISABLED_CLASSES;
+import static org.cmdbuild.servlets.json.schema.Utils.toIterable;
 
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -109,6 +116,8 @@ public class ModClass extends JSONBaseWithSpringContext {
 		}
 
 	};
+
+	private static final Iterable<String> NO_DISABLED = emptyList();
 
 	private static class JsonFunctionItem implements FunctionItem {
 
@@ -475,24 +484,26 @@ public class ModClass extends JSONBaseWithSpringContext {
 	}
 
 	@JSONExported
-	public JSONObject getAllDomains(@Parameter(value = ACTIVE, required = false) final boolean activeOnly)
-			throws JSONException, AuthException {
+	public JSONObject getAllDomains( //
+			@Parameter(value = ACTIVE, required = false) final boolean activeOnly //
+	) throws JSONException, AuthException {
 
-		final JSONObject out = new JSONObject();
 		final Iterable<? extends CMDomain> almostAllDomains;
 		if (activeOnly) {
-			almostAllDomains = filter(userDataAccessLogic().findActiveDomains(), domainsWithActiveClasses());
+			almostAllDomains = from(userDataAccessLogic().findActiveDomains()) //
+					.filter(domainsWithActiveClasses());
 		} else {
 			almostAllDomains = userDataAccessLogic().findAllDomains();
 		}
-		final Iterable<? extends CMDomain> domains = filter(almostAllDomains,
-				nonActivityClassesWhenWorkflowIsNotEnabled());
+		final Iterable<? extends CMDomain> domains = from(almostAllDomains) //
+				.filter(nonActivityClassesWhenWorkflowIsNotEnabled());
 
 		final JSONArray jsonDomains = new JSONArray();
-		out.put(DOMAINS, jsonDomains);
 		for (final CMDomain domain : domains) {
 			jsonDomains.put(domainSerializer().toClient(domain, activeOnly));
 		}
+		final JSONObject out = new JSONObject();
+		out.put(DOMAINS, jsonDomains);
 		return out;
 	}
 
@@ -526,13 +537,15 @@ public class ModClass extends JSONBaseWithSpringContext {
 			@Parameter(value = NAME, required = false) final String domainName, //
 			@Parameter(value = DOMAIN_FIRST_CLASS_ID, required = false) final int classId1, //
 			@Parameter(value = DOMAIN_SECOND_CLASS_ID, required = false) final int classId2, //
-			@Parameter(DESCRIPTION) final String description, //
+			@Parameter(value = DESCRIPTION) final String description, //
 			@Parameter(value = DOMAIN_CARDINALITY, required = false) final String cardinality, //
-			@Parameter(DOMAIN_DESCRIPTION_STARTING_AT_THE_FIRST_CLASS) final String descriptionDirect, //
-			@Parameter(DOMAIN_DESCRIPTION_STARTING_AT_THE_SECOND_CLASS) final String descriptionInverse, //
-			@Parameter(DOMAIN_IS_MASTER_DETAIL) final boolean isMasterDetail, //
+			@Parameter(value = DOMAIN_DESCRIPTION_STARTING_AT_THE_FIRST_CLASS) final String descriptionDirect, //
+			@Parameter(value = DOMAIN_DESCRIPTION_STARTING_AT_THE_SECOND_CLASS) final String descriptionInverse, //
+			@Parameter(value = DOMAIN_IS_MASTER_DETAIL) final boolean isMasterDetail, //
 			@Parameter(value = DOMAIN_MASTER_DETAIL_LABEL, required = false) final String mdLabel, //
-			@Parameter(ACTIVE) final boolean isActive //
+			@Parameter(value = ACTIVE) final boolean isActive, //
+			@Parameter(value = DISABLED1, required = false) final JSONArray disabled1, //
+			@Parameter(value = DISABLED2, required = false) final JSONArray disabled2 //
 	) throws JSONException, AuthException, NotFoundException {
 		final Domain domain = Domain.newDomain() //
 				.withName(domainName) //
@@ -545,6 +558,8 @@ public class ModClass extends JSONBaseWithSpringContext {
 				.thatIsMasterDetail(isMasterDetail) //
 				.withMasterDetailDescription(mdLabel) //
 				.thatIsActive(isActive) //
+				.withDisabled1((disabled1 == null) ? NO_DISABLED : toIterable(disabled1)) //
+				.withDisabled2((disabled2 == null) ? NO_DISABLED : toIterable(disabled2)) //
 				.build();
 		final CMDomain createdOrUpdated;
 		if (domainId == -1) {
@@ -562,20 +577,20 @@ public class ModClass extends JSONBaseWithSpringContext {
 		dataDefinitionLogic().deleteDomainIfExists(domainName);
 	}
 
-	@Admin
 	@JSONExported
-	public JSONObject getDomainList(@Parameter(CLASS_NAME) final String className //
+	public JSONObject getDomainList( //
+			@Parameter(value = CLASS_NAME) final String className, //
+			@Parameter(value = WITH_DISABLED_CLASSES, required = false) final boolean withDisabledClasses //
 	) throws JSONException {
-
-		final JSONObject out = new JSONObject();
 		final JSONArray jsonDomains = new JSONArray();
 		// TODO system really needed
-		final List<CMDomain> domainsForSpecifiedClass = systemDataAccessLogic().findDomainsForClassWithName(className);
-		for (final CMDomain domain : domainsForSpecifiedClass) {
-			if (!domain.isSystem()) {
-				jsonDomains.put(domainSerializer().toClient(domain, className));
-			}
+		final Iterable<CMDomain> domains = from(
+				systemDataAccessLogic().findDomainsForClass(className, withDisabledClasses)) //
+				.filter(not(isSystem(CMDomain.class)));
+		for (final CMDomain domain : domains) {
+			jsonDomains.put(domainSerializer().toClient(domain, className));
 		}
+		final JSONObject out = new JSONObject();
 		out.put(DOMAINS, jsonDomains);
 		return out;
 	}

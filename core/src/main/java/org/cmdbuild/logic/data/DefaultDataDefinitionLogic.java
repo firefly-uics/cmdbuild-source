@@ -1,11 +1,15 @@
 package org.cmdbuild.logic.data;
 
 import static com.google.common.collect.FluentIterable.from;
+import static com.google.common.collect.Iterables.concat;
 import static com.google.common.collect.Iterables.size;
 import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
+import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 import static org.cmdbuild.dao.constants.Cardinality.CARDINALITY_11;
 import static org.cmdbuild.dao.constants.Cardinality.CARDINALITY_1N;
 import static org.cmdbuild.dao.constants.Cardinality.CARDINALITY_N1;
+import static org.cmdbuild.dao.entrytype.Predicates.attributeTypeInstanceOf;
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
 import static org.cmdbuild.dao.query.clause.FunctionCall.call;
 import static org.cmdbuild.logic.data.Utils.definitionForClassOrdering;
@@ -23,24 +27,11 @@ import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.dao.entrytype.CMIdentifier;
-import org.cmdbuild.dao.entrytype.attributetype.BooleanAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeTypeVisitor;
-import org.cmdbuild.dao.entrytype.attributetype.CharAttributeType;
-import org.cmdbuild.dao.entrytype.attributetype.DateAttributeType;
-import org.cmdbuild.dao.entrytype.attributetype.DateTimeAttributeType;
-import org.cmdbuild.dao.entrytype.attributetype.DecimalAttributeType;
-import org.cmdbuild.dao.entrytype.attributetype.DoubleAttributeType;
-import org.cmdbuild.dao.entrytype.attributetype.EntryTypeAttributeType;
-import org.cmdbuild.dao.entrytype.attributetype.ForeignKeyAttributeType;
-import org.cmdbuild.dao.entrytype.attributetype.IntegerAttributeType;
-import org.cmdbuild.dao.entrytype.attributetype.IpAddressAttributeType;
-import org.cmdbuild.dao.entrytype.attributetype.LookupAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.ForwardingAttributeTypeVisitor;
+import org.cmdbuild.dao.entrytype.attributetype.NullAttributeTypeVisitor;
 import org.cmdbuild.dao.entrytype.attributetype.ReferenceAttributeType;
-import org.cmdbuild.dao.entrytype.attributetype.StringArrayAttributeType;
-import org.cmdbuild.dao.entrytype.attributetype.StringAttributeType;
-import org.cmdbuild.dao.entrytype.attributetype.TextAttributeType;
-import org.cmdbuild.dao.entrytype.attributetype.TimeAttributeType;
 import org.cmdbuild.dao.function.CMFunction;
 import org.cmdbuild.dao.query.clause.alias.NameAlias;
 import org.cmdbuild.dao.view.CMDataView;
@@ -140,6 +131,8 @@ public class DefaultDataDefinitionLogic implements DataDefinitionLogic {
 	private static final String UPDATE_CLASS_INDEXES_FUNCTION_NAME = "_cm_create_class_default_order_indexes";
 
 	private static final NameAlias FUNCTION_ALIAS = NameAlias.as("f");
+
+	private static final Iterable<String> NO_DISABLED = emptyList();
 
 	private static CMClass NO_PARENT = null;
 
@@ -314,50 +307,13 @@ public class DefaultDataDefinitionLogic implements DataDefinitionLogic {
 	}
 
 	private void validate(final Attribute attribute) {
-		new CMAttributeTypeVisitor() {
+		new ForwardingAttributeTypeVisitor() {
+
+			private final CMAttributeTypeVisitor DELEGATE = NullAttributeTypeVisitor.getInstance();
 
 			@Override
-			public void visit(final BooleanAttributeType attributeType) {
-			}
-
-			@Override
-			public void visit(final CharAttributeType attributeType) {
-			}
-
-			@Override
-			public void visit(final EntryTypeAttributeType attributeType) {
-			}
-
-			@Override
-			public void visit(final DateTimeAttributeType attributeType) {
-			}
-
-			@Override
-			public void visit(final DateAttributeType attributeType) {
-			}
-
-			@Override
-			public void visit(final DecimalAttributeType attributeType) {
-			}
-
-			@Override
-			public void visit(final DoubleAttributeType attributeType) {
-			}
-
-			@Override
-			public void visit(final ForeignKeyAttributeType attributeType) {
-			}
-
-			@Override
-			public void visit(final IntegerAttributeType attributeType) {
-			}
-
-			@Override
-			public void visit(final IpAddressAttributeType attributeType) {
-			}
-
-			@Override
-			public void visit(final LookupAttributeType attributeType) {
+			protected CMAttributeTypeVisitor delegate() {
+				return DELEGATE;
 			}
 
 			@Override
@@ -370,24 +326,8 @@ public class DefaultDataDefinitionLogic implements DataDefinitionLogic {
 						domain.getCardinality()));
 			}
 
-			@Override
-			public void visit(final StringAttributeType attributeType) {
-			}
-
-			@Override
-			public void visit(final TextAttributeType attributeType) {
-			}
-
-			@Override
-			public void visit(final TimeAttributeType attributeType) {
-			}
-
 			public void validate(final Attribute attribute) {
 				attribute.getType().accept(this);
-			}
-
-			@Override
-			public void visit(final StringArrayAttributeType attributeType) {
 			}
 
 		} //
@@ -469,29 +409,6 @@ public class DefaultDataDefinitionLogic implements DataDefinitionLogic {
 		return (classOrder == null) ? 0 : classOrder.value;
 	}
 
-	/**
-	 * TODO: remove it and use the create method and update method
-	 */
-	@Override
-	@Deprecated
-	public CMDomain createOrUpdate(final Domain domain) {
-		logger.info("creating or updating domain '{}'", domain);
-
-		final CMDomain existing = view.findDomain(domain.getName());
-
-		final CMDomain createdOrUpdated;
-		if (existing == null) {
-			logger.info("domain not already created, creating a new one");
-			final CMClass class1 = view.findClass(domain.getIdClass1());
-			final CMClass class2 = view.findClass(domain.getIdClass2());
-			createdOrUpdated = view.create(definitionForNew(domain, class1, class2));
-		} else {
-			logger.info("domain already created, updating existing one");
-			createdOrUpdated = view.update(definitionForExisting(domain, existing));
-		}
-		return createdOrUpdated;
-	}
-
 	@Override
 	public CMDomain create(final Domain domain) {
 		final CMDomain existing = view.findDomain(domain.getName());
@@ -501,7 +418,6 @@ public class DefaultDataDefinitionLogic implements DataDefinitionLogic {
 					domain.getName());
 			throw ORMExceptionType.ORM_ERROR_DOMAIN_CREATE.createException();
 		}
-
 		logger.info("Domain not already created, creating a new one");
 		final CMClass class1 = view.findClass(domain.getIdClass1());
 		final CMClass class2 = view.findClass(domain.getIdClass2());
@@ -515,7 +431,36 @@ public class DefaultDataDefinitionLogic implements DataDefinitionLogic {
 		final CMDomain updatedDomain;
 		if (existing == null) {
 			logger.error("Cannot update the domain with name {}. It does not exist", domain.getName());
-			throw NotFoundExceptionType.DOMAIN_NOTFOUND.createException();
+			throw NotFoundExceptionType.DOMAIN_NOTFOUND.createException(domain.getName());
+		}
+
+		for (final String disabled : concat(defaultIfNull(domain.getDisabled1(), NO_DISABLED),
+				defaultIfNull(domain.getDisabled2(), NO_DISABLED))) {
+			final CMClass target = view.findClass(disabled);
+			if (target == null) {
+				throw NotFoundExceptionType.CLASS_NOTFOUND.createException(disabled);
+			}
+			for (final CMAttribute attribute : from(target.getActiveAttributes()) //
+					.filter(attributeTypeInstanceOf(ReferenceAttributeType.class))) {
+				attribute.getType().accept(new ForwardingAttributeTypeVisitor() {
+
+					private final CMAttributeTypeVisitor DELEGATE = NullAttributeTypeVisitor.getInstance();
+
+					@Override
+					protected CMAttributeTypeVisitor delegate() {
+						return DELEGATE;
+					}
+
+					@Override
+					public void visit(final ReferenceAttributeType attributeType) {
+						if (attributeType.getDomainName().equals(domain.getName()) && attribute.isActive()) {
+							// TODO use a better exception
+							throw ORMExceptionType.ORM_DOMAIN_HAS_REFERENCE.createException();
+						}
+					}
+
+				});
+			}
 		}
 
 		logger.info("Updating domain with name {}", domain.getName());

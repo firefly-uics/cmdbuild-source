@@ -381,7 +381,7 @@
 			this.cls = "filterMenuButtonGrid";
 
 			var me = this;
-			var store = _CMProxy.Filter.newUserStore();
+			var store = CMDBuild.core.proxy.Filter.newUserStore();
 
 			this.grid = new Ext.grid.Panel({
 				width: 300,

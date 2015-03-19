@@ -47,6 +47,7 @@ public class Serialization {
 			DOMAIN_ID = DOMAIN + ID_CAPITALIZED, //
 			DOMAIN_SOURCE = DOMAIN + "Source", //
 			EDITOR_TYPE = "editorType", //
+			EXTENSION = "extension", //
 			EXTRA = "extra", //
 			FILE = "file", //
 			FILTER = "filter", //
@@ -69,6 +70,7 @@ public class Serialization {
 			OBJECT_DESCRIPTION = "objectDescription", //
 			OBJECT_ID = "objectId", //
 			OBJECT_TYPE = "objectType", //
+			PARAMETERS = "parameters", //
 			PARENT_ID = "parent_id", //
 			PARENT = "parent", //
 			PARENT_TYPE = "parent_type", //
@@ -76,6 +78,8 @@ public class Serialization {
 			PRECISION = "precision", //
 			RELATION = "relation", //
 			RELATION_ID = RELATION + ID_CAPITALIZED, //
+			REPORT = "report", //
+			REPORT_ID = REPORT + ID_CAPITALIZED, //
 			RESPONSE_METADATA = "meta", //
 			ROLE = "role", //
 			ROLE_ID = "role" + ID_CAPITALIZED, //
@@ -89,6 +93,7 @@ public class Serialization {
 			STATUSES = "statuses", //
 			TARGET_CLASS = "targetClass", //
 			TEXT = "text", //
+			TITLE = "title", //
 			TOTAL = "total", //
 			TYPE = "type", //
 			TYPE_CAPITALIZED = "Type", //

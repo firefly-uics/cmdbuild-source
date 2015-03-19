@@ -45,11 +45,11 @@ public class RelationFilterTest extends FilteredCardsFixture {
 				.thatIsActive(true)));
 
 		// domains
-		foo_bar = dataDefinitionLogic().createOrUpdate(a(newDomain("foo_bar") //
+		foo_bar = dataDefinitionLogic().create(a(newDomain("foo_bar") //
 				.withIdClass1(foo.getId()) //
 				.withIdClass2(bar.getId()) //
 				.thatIsActive(true)));
-		foo_baz = dataDefinitionLogic().createOrUpdate(a(newDomain("foo_baz") //
+		foo_baz = dataDefinitionLogic().create(a(newDomain("foo_baz") //
 				.withIdClass1(foo.getId()) //
 				.withIdClass2(baz.getId()) //
 				.thatIsActive(true)));

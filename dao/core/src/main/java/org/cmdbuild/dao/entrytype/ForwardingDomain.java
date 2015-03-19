@@ -46,4 +46,14 @@ public abstract class ForwardingDomain extends ForwardingEntryType implements CM
 		return delegate().getMasterDetailDescription();
 	}
 
+	@Override
+	public Iterable<String> getDisabled1() {
+		return delegate().getDisabled1();
+	}
+
+	@Override
+	public Iterable<String> getDisabled2() {
+		return delegate().getDisabled2();
+	}
+
 }

@@ -225,8 +225,7 @@ class EntryQueryCommand implements LoggingSupport {
 										id, //
 										description, //
 										type, //
-										null
-								);
+										null);
 
 							} else {
 								value = new IdAndDescription(id, description);

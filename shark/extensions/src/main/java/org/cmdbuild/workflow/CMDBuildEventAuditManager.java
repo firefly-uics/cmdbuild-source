@@ -1,12 +1,20 @@
 package org.cmdbuild.workflow;
 
 import static java.lang.String.format;
+import static org.cmdbuild.workflow.Constants.PROCESS_CARD_ID_VARIABLE;
+import static org.cmdbuild.workflow.Constants.PROCESS_CLASSNAME_VARIABLE;
+import static org.enhydra.shark.api.client.wfmc.wapi.WMProcessInstanceState.OPEN_NOTRUNNING_SUSPENDED;
 
 import org.cmdbuild.services.soap.AbstractWorkflowEvent;
 import org.cmdbuild.services.soap.Private;
 import org.cmdbuild.services.soap.ProcessStartEvent;
 import org.cmdbuild.services.soap.ProcessUpdateEvent;
+import org.cmdbuild.workflow.api.MonostateSelfSuspensionRequestHolder;
+import org.enhydra.shark.Shark;
+import org.enhydra.shark.api.client.wfmc.wapi.WMAttribute;
 import org.enhydra.shark.api.internal.working.CallbackUtilities;
+
+import com.google.common.base.Optional;
 
 /**
  * EventAuditManager that notifies CMDBuild through web services.
@@ -70,6 +78,31 @@ public class CMDBuildEventAuditManager extends DelegatingEventAuditManager {
 				cus.info(null, format("sending notification for activity '%s'", //
 						activityInstance.getActivityDefinitionId()));
 				sendProcessUpdateEvent(activityInstance);
+
+				final Optional<String> processClass = processClass(activityInstance);
+				final Optional<Long> processId = processId(activityInstance);
+				if (processClass.isPresent() && processId.isPresent()) {
+					if (new MonostateSelfSuspensionRequestHolder().remove(processId.get())) {
+						try {
+							/*
+							 * Calling CMDBuild API for suspend current process
+							 * will result in an error because process's state
+							 * is not "stable" at the moment. So that we must
+							 * call Shark API.
+							 */
+							Shark.getInstance()
+									.getWAPIConnection()
+									.changeProcessInstanceState(activityInstance.getSessionHandle(),
+											activityInstance.getProcessInstanceId(), OPEN_NOTRUNNING_SUSPENDED);
+						} catch (final Exception e) {
+							cus.error( //
+									activityInstance.getSessionHandle(), //
+									format("cannot suspend the current process: %s", //
+											activityInstance.getProcessInstanceId()), //
+									e);
+						}
+					}
+				}
 			}
 		}
 
@@ -96,6 +129,35 @@ public class CMDBuildEventAuditManager extends DelegatingEventAuditManager {
 			workflowEvent.setProcessDefinitionId(processInstance.getProcessDefinitionId());
 			workflowEvent.setProcessInstanceId(processInstance.getProcessInstanceId());
 		}
+
+		private Optional<String> processClass(final ProcessInstance processInstance) {
+			try {
+				final WMAttribute attribute = Shark
+						.getInstance()
+						.getWAPIConnection()
+						.getProcessInstanceAttributeValue(processInstance.getSessionHandle(),
+								processInstance.getProcessInstanceId(), PROCESS_CLASSNAME_VARIABLE);
+				final Object value = attribute.getValue();
+				return Optional.of(String.class.cast(value));
+			} catch (final Throwable e) {
+				return Optional.absent();
+			}
+		}
+
+		private Optional<Long> processId(final ProcessInstance processInstance) {
+			try {
+				final WMAttribute attribute = Shark
+						.getInstance()
+						.getWAPIConnection()
+						.getProcessInstanceAttributeValue(processInstance.getSessionHandle(),
+								processInstance.getProcessInstanceId(), PROCESS_CARD_ID_VARIABLE);
+				final Object value = attribute.getValue();
+				return Optional.of(Number.class.cast(value).longValue());
+			} catch (final Throwable e) {
+				return Optional.absent();
+			}
+		}
+
 	}
 
 	@Override

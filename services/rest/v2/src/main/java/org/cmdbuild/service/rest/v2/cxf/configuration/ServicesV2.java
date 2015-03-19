@@ -29,6 +29,7 @@ import org.cmdbuild.service.rest.v2.ProcessStartActivities;
 import org.cmdbuild.service.rest.v2.Processes;
 import org.cmdbuild.service.rest.v2.ProcessesConfiguration;
 import org.cmdbuild.service.rest.v2.Relations;
+import org.cmdbuild.service.rest.v2.Reports;
 import org.cmdbuild.service.rest.v2.Sessions;
 import org.cmdbuild.service.rest.v2.cxf.AllInOneCardAttachments;
 import org.cmdbuild.service.rest.v2.cxf.AllInOneProcessInstanceAttachments;
@@ -54,12 +55,14 @@ import org.cmdbuild.service.rest.v2.cxf.CxfProcessStartActivities;
 import org.cmdbuild.service.rest.v2.cxf.CxfProcesses;
 import org.cmdbuild.service.rest.v2.cxf.CxfProcessesConfiguration;
 import org.cmdbuild.service.rest.v2.cxf.CxfRelations;
+import org.cmdbuild.service.rest.v2.cxf.CxfReports;
 import org.cmdbuild.service.rest.v2.cxf.CxfSessions;
 import org.cmdbuild.service.rest.v2.cxf.CxfSessions.AuthenticationLogicAdapter;
 import org.cmdbuild.service.rest.v2.cxf.CxfSessions.LoginHandler;
 import org.cmdbuild.service.rest.v2.cxf.DefaultEncoding;
 import org.cmdbuild.service.rest.v2.cxf.DefaultProcessStatusHelper;
 import org.cmdbuild.service.rest.v2.cxf.ErrorHandler;
+import org.cmdbuild.service.rest.v2.cxf.HeaderResponseHandler;
 import org.cmdbuild.service.rest.v2.cxf.ProcessStatusHelper;
 import org.cmdbuild.service.rest.v2.cxf.TranslatingAttachmentsHelper;
 import org.cmdbuild.service.rest.v2.cxf.TranslatingAttachmentsHelper.Encoding;
@@ -73,13 +76,13 @@ import org.cmdbuild.service.rest.v2.cxf.service.TokenGenerator;
 import org.cmdbuild.service.rest.v2.logging.LoggingSupport;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
 
-@Component
+@Configuration
 public class ServicesV2 implements LoggingSupport {
 
 	@Autowired
@@ -307,6 +310,13 @@ public class ServicesV2 implements LoggingSupport {
 		return new DefaultEncoding();
 	}
 
+	@Bean
+	public Reports v2_reports() {
+		final CxfReports service = new CxfReports(v2_errorHandler(), helper.reportLogic(), helper.systemDataView(),
+				helper.lookupLogic());
+		return proxy(Reports.class, service);
+	}
+
 	private <T> T proxy(final Class<T> type, final T service) {
 		final InvocationHandler serviceWithAnnounces = AnnouncingInvocationHandler.of(service, v2_announceable());
 		return newProxy(type, serviceWithAnnounces);
@@ -329,6 +339,11 @@ public class ServicesV2 implements LoggingSupport {
 	@Bean
 	protected ErrorHandler v2_errorHandler() {
 		return new WebApplicationExceptionErrorHandler();
+	}
+
+	@Bean
+	public HeaderResponseHandler v2_headerResponseHandler() {
+		return new HeaderResponseHandler();
 	}
 
 }

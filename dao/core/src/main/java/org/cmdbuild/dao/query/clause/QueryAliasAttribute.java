@@ -73,7 +73,7 @@ public class QueryAliasAttribute implements QueryAttribute {
 	public String toString() {
 		return toString;
 	}
-	
+
 	public static QueryAliasAttribute attribute(final CMEntryType type, final CMAttribute attribute) {
 		return attribute(type, attribute.getName());
 	}
@@ -81,7 +81,7 @@ public class QueryAliasAttribute implements QueryAttribute {
 	public static QueryAliasAttribute attribute(final CMEntryType type, final String name) {
 		return attribute(EntryTypeAlias.canonicalAlias(type), name);
 	}
-	
+
 	public static QueryAliasAttribute attribute(final Alias entryTypeAlias, final CMAttribute attribute) {
 		return attribute(entryTypeAlias, attribute.getName());
 	}

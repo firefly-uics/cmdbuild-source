@@ -32,7 +32,7 @@ public class UserAttribute extends ForwardingAttribute {
 	}
 
 	private final UserDataView view;
-	private CMAttribute delegate;
+	private final CMAttribute delegate;
 	private final String mode;
 
 	private UserAttribute( //

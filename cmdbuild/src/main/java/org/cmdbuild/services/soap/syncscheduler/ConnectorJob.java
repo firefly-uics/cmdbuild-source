@@ -267,7 +267,7 @@ public class ConnectorJob implements Runnable {
 			if (fetchedClass == null) {
 				Log.SOAP.info("The class " + fetchedClass.getName()
 						+ " does not exist or the user does not have the privileges to read it");
-				throw NotFoundException.NotFoundExceptionType.CLASS_NOTFOUND.createException();
+				throw NotFoundException.NotFoundExceptionType.CLASS_NOTFOUND.createException(detailClassName);
 			}
 			final Card.Builder cardBuilder = Card.newInstance(fetchedClass);
 			setCardValues(fetchedClass, cardBuilder);

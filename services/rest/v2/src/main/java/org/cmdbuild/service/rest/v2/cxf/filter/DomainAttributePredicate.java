@@ -14,20 +14,12 @@ import java.util.Collection;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
-import org.cmdbuild.logic.data.access.filter.model.And;
 import org.cmdbuild.logic.data.access.filter.model.Attribute;
 import org.cmdbuild.logic.data.access.filter.model.Contains;
-import org.cmdbuild.logic.data.access.filter.model.EndsWith;
 import org.cmdbuild.logic.data.access.filter.model.EqualTo;
-import org.cmdbuild.logic.data.access.filter.model.GreaterThan;
+import org.cmdbuild.logic.data.access.filter.model.ForwardingPredicateVisitor;
 import org.cmdbuild.logic.data.access.filter.model.In;
-import org.cmdbuild.logic.data.access.filter.model.IsNull;
-import org.cmdbuild.logic.data.access.filter.model.LessThan;
-import org.cmdbuild.logic.data.access.filter.model.Like;
-import org.cmdbuild.logic.data.access.filter.model.Not;
-import org.cmdbuild.logic.data.access.filter.model.Or;
 import org.cmdbuild.logic.data.access.filter.model.PredicateVisitor;
-import org.cmdbuild.logic.data.access.filter.model.StartsWith;
 import org.cmdbuild.service.rest.v2.logging.LoggingSupport;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
@@ -35,9 +27,11 @@ import org.slf4j.MarkerFactory;
 import com.google.common.base.Predicate;
 import com.google.common.collect.FluentIterable;
 
-public class DomainAttributePredicate implements Predicate<CMDomain>, PredicateVisitor, LoggingSupport {
+public class DomainAttributePredicate extends ForwardingPredicateVisitor implements Predicate<CMDomain>, LoggingSupport {
 
 	private static final Marker marker = MarkerFactory.getMarker(DomainAttributePredicate.class.getName());
+
+	private static final PredicateVisitor UNSUPPORTED = NotSupportedPredicateVisitor.getInstance();
 
 	private final Attribute attribute;
 	private CMDomain input;
@@ -48,16 +42,16 @@ public class DomainAttributePredicate implements Predicate<CMDomain>, PredicateV
 	}
 
 	@Override
+	protected PredicateVisitor delegate() {
+		return UNSUPPORTED;
+	}
+
+	@Override
 	public boolean apply(final CMDomain input) {
 		this.input = input;
 		this.output = false;
 		this.attribute.getPredicate().accept(this);
 		return output;
-	}
-
-	@Override
-	public void visit(final And predicate) {
-		logger.warn(marker, format("predicate '%s' not supported", predicate));
 	}
 
 	@Override
@@ -86,11 +80,6 @@ public class DomainAttributePredicate implements Predicate<CMDomain>, PredicateV
 	}
 
 	@Override
-	public void visit(final EndsWith predicate) {
-		logger.warn(marker, format("predicate '%s' not supported", predicate));
-	}
-
-	@Override
 	public void visit(final EqualTo predicate) {
 		final boolean _output;
 		final Object expected = predicate.getValue();
@@ -103,11 +92,6 @@ public class DomainAttributePredicate implements Predicate<CMDomain>, PredicateV
 			_output = true;
 		}
 		output = _output;
-	}
-
-	@Override
-	public void visit(final GreaterThan predicate) {
-		logger.warn(marker, format("predicate '%s' not supported", predicate));
 	}
 
 	@Override
@@ -124,36 +108,6 @@ public class DomainAttributePredicate implements Predicate<CMDomain>, PredicateV
 			_output = true;
 		}
 		output = _output;
-	}
-
-	@Override
-	public void visit(final IsNull predicate) {
-		logger.warn(marker, format("predicate '%s' not supported", predicate));
-	}
-
-	@Override
-	public void visit(final LessThan predicate) {
-		logger.warn(marker, format("predicate '%s' not supported", predicate));
-	}
-
-	@Override
-	public void visit(final Like predicate) {
-		logger.warn(marker, format("predicate '%s' not supported", predicate));
-	}
-
-	@Override
-	public void visit(final Not predicate) {
-		logger.warn(marker, format("predicate '%s' not supported", predicate));
-	}
-
-	@Override
-	public void visit(final Or predicate) {
-		logger.warn(marker, format("predicate '%s' not supported", predicate));
-	}
-
-	@Override
-	public void visit(final StartsWith predicate) {
-		logger.warn(marker, format("predicate '%s' not supported", predicate));
 	}
 
 	@Override
