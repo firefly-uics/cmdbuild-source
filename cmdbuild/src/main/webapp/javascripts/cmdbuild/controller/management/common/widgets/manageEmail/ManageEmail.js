@@ -243,9 +243,6 @@ _debug('CMDBuild.Config', CMDBuild.Config);
 				case 'onGlobalRegenerationButtonClick':
 					return this.onGlobalRegenerationButtonClick();
 
-				case 'onSendAllButtonClick':
-					return this.onSendAllButtonClick();
-
 				default: {
 					if (!Ext.isEmpty(this.parentDelegate))
 						return this.parentDelegate.cmOn(name, param, callBack);
@@ -547,10 +544,6 @@ _debug('onEditMode');
 
 		onGlobalRegenerationButtonClick: function() {
 			this.getAllTemplatesData(true, true);
-		},
-
-		onSendAllButtonClick: function() {
-			this.controllerGrid.sendAll();
 		},
 
 		/**
