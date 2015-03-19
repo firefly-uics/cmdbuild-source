@@ -15,7 +15,6 @@
 			this.mixins.observable.constructor.call(this, arguments);
 
 			this.callParent(arguments);
-			this.hasDomains = false;
 
 			this.callBacks = {
 				'action-relation-go': this.onFollowRelationClick,
@@ -74,10 +73,8 @@
 			if (card) {
 				this.updateCurrentClass(card);
 
-				if (this.hasDomains) {
-					this.view.enable();
-					this.loadData();
-				}
+				this.view.enable();
+				this.loadData();
 			}
 		},
 
@@ -93,7 +90,7 @@
 					currentClass = null;
 
 				this.currentClass = currentClass;
-				this.hasDomains = this.view.addRelationButton.setDomainsForEntryType(currentClass);
+				this.view.addRelationButton.setDomainsForEntryType(currentClass);
 			}
 		},
 
@@ -518,7 +515,7 @@
 						entryType = null;
 
 					this.lastEntryType = entryType;
-					this.hasDomains = this.view.addRelationButton.setDomainsForEntryType(entryType);
+					this.view.addRelationButton.setDomainsForEntryType(entryType);
 				}
 			}
 		},
@@ -574,12 +571,8 @@
 			} else {
 				this.updateForProcessInstance(processInstance);
 
-				if (this.hasDomains) {
-					this.view.enable();
-					this.loadData();
-				} else {
-					this.view.disable();
-				}
+				this.view.enable();
+				this.loadData();
 			}
 		},
 
