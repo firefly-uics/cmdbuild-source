@@ -13,20 +13,19 @@ import org.cmdbuild.data.store.dao.DataViewStore;
 import org.cmdbuild.data.store.dao.StorableConverter;
 import org.cmdbuild.logic.Logic;
 import org.cmdbuild.model.View;
-import org.cmdbuild.model._View.ViewType;
-import org.cmdbuild.model._View;
+import org.cmdbuild.model.View.ViewType;
 import org.cmdbuild.privileges.GrantCleaner;
 
 public class ViewLogic implements Logic {
 
 	private final CMDataView dataView;
-	private final Store<_View> store;
+	private final Store<View> store;
 	private final OperationUser operationUser;
 	private final GrantCleaner grantCleaner;
 
 	public ViewLogic( //
 			final CMDataView dataView, //
-			final StorableConverter<_View> converter, //
+			final StorableConverter<View> converter, //
 			final OperationUser operationUser //
 	) {
 		this.dataView = dataView;
@@ -35,9 +34,9 @@ public class ViewLogic implements Logic {
 		this.grantCleaner = new GrantCleaner(dataView);
 	}
 
-	public List<_View> fetchViewsOfAllTypes() {
-		final List<_View> views = new ArrayList<_View>();
-		for (final _View view : store.readAll()) {
+	public List<View> fetchViewsOfAllTypes() {
+		final List<View> views = new ArrayList<View>();
+		for (final View view : store.readAll()) {
 			if ((operationUser.hasAdministratorPrivileges() || operationUser.hasReadAccess(view))) {
 				if (view.getType().equals(ViewType.FILTER)) {
 					if (isActive(view.getSourceClassName())) {
@@ -56,9 +55,9 @@ public class ViewLogic implements Logic {
 		return clazz.isActive();
 	}
 
-	public List<_View> read(final View.ViewType type) {
-		final List<_View> views = new ArrayList<_View>();
-		for (final _View view : fetchViewsOfAllTypes()) {
+	public List<View> read(final View.ViewType type) {
+		final List<View> views = new ArrayList<View>();
+		for (final View view : fetchViewsOfAllTypes()) {
 			if (view.getType().equals(type)) {
 				views.add(view);
 			}
@@ -66,15 +65,15 @@ public class ViewLogic implements Logic {
 		return views;
 	}
 
-	public _View read(final Long id) {
+	public View read(final Long id) {
 		return store.read(storableOf(id));
 	}
 
-	public void create(final _View view) {
+	public void create(final View view) {
 		store.create(view);
 	}
 
-	public void update(final _View view) {
+	public void update(final View view) {
 		store.update(view);
 	}
 

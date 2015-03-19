@@ -12,18 +12,17 @@ import static org.cmdbuild.servlets.json.CommunicationConstants.VIEWS;
 import java.util.List;
 
 import org.cmdbuild.model.View;
-import org.cmdbuild.model._View;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 public class ViewSerializer {
 
-	public JSONObject toClient(final List<_View> views) throws JSONException {
+	public JSONObject toClient(final List<View> views) throws JSONException {
 		final JSONObject out = new JSONObject();
 		final JSONArray jsonViews = new JSONArray();
 
-		for (final _View view : views) {
+		for (final View view : views) {
 			jsonViews.put(toClient(view));
 		}
 
@@ -32,7 +31,7 @@ public class ViewSerializer {
 		return out;
 	}
 
-	public JSONObject toClient(final _View view) throws JSONException {
+	public JSONObject toClient(final View view) throws JSONException {
 		final JSONObject jsonView = new JSONObject();
 		jsonView.put(DESCRIPTION, view.getDescription());
 		jsonView.put(FILTER, view.getFilter());

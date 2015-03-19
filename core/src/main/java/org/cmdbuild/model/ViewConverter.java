@@ -7,8 +7,9 @@ import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.data.store.dao.BaseStorableConverter;
+import org.cmdbuild.model.View.ViewType;
 
-public class ViewConverter extends BaseStorableConverter<_View> {
+public class ViewConverter extends BaseStorableConverter<View> {
 
 	public static final String VIEW_CLASS_NAME = "_View";
 
@@ -30,8 +31,8 @@ public class ViewConverter extends BaseStorableConverter<_View> {
 	}
 
 	@Override
-	public _View convert(final CMCard card) {
-		final _View view = new View();
+	public View convert(final CMCard card) {
+		final ViewImpl view = new ViewImpl();
 		final Long reference = card.get(SOURCE_CLASS, Long.class);
 		if (reference != null) {
 			final CMClass sourceClass = dataView.findClass(reference);
@@ -42,16 +43,16 @@ public class ViewConverter extends BaseStorableConverter<_View> {
 		view.setName((String) card.get(NAME));
 		view.setDescription((String) card.get(DESCRIPTION));
 		view.setSourceFunction((String) card.get(SOURCE_FUNCTION));
-		view.setType(View.ViewType.valueOf((String) card.get(TYPE)));
+		view.setType(ViewType.valueOf((String) card.get(TYPE)));
 		view.setFilter((String) card.get(FILTER));
 
 		return view;
 	}
 
 	@Override
-	public Map<String, Object> getValues(final _View view) {
+	public Map<String, Object> getValues(final View view) {
 		final Map<String, Object> values = new HashMap<String, Object>();
-		if (View.ViewType.FILTER.equals(view.getType())) {
+		if (ViewType.FILTER.equals(view.getType())) {
 			final CMClass sourceClass = dataView.findClass(view.getSourceClassName());
 			if (sourceClass != null) {
 				values.put(SOURCE_CLASS, sourceClass.getId());

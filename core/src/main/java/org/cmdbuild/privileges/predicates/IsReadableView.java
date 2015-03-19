@@ -12,7 +12,6 @@ import org.cmdbuild.data.store.dao.DataViewStore;
 import org.cmdbuild.data.store.dao.StorableConverter;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.model.View;
-import org.cmdbuild.model._View;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
@@ -22,12 +21,12 @@ public class IsReadableView implements Predicate<CMCard> {
 
 	private final PrivilegeContext privilegeContext;
 	private final CMDataView dataView;
-	private final StorableConverter<_View> viewConverter;
+	private final StorableConverter<View> viewConverter;
 
 	public IsReadableView( //
 			final CMDataView dataView, //
 			final PrivilegeContext privilegeContext, //
-			final StorableConverter<_View> viewConverter //
+			final StorableConverter<View> viewConverter //
 	) {
 		this.privilegeContext = privilegeContext;
 		this.dataView = dataView;
@@ -40,8 +39,8 @@ public class IsReadableView implements Predicate<CMCard> {
 		if (viewId == null) {
 			return false;
 		}
-		final DataViewStore<_View> store = DataViewStore.newInstance(dataView, viewConverter);
-		_View fetchedView = null;
+		final DataViewStore<View> store = DataViewStore.newInstance(dataView, viewConverter);
+		View fetchedView = null;
 
 		try {
 			fetchedView = store.read(storableOf(viewId.toString()));
