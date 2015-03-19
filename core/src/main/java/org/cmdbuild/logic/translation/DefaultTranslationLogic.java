@@ -25,6 +25,7 @@ import org.cmdbuild.logic.translation.object.DomainInverseDescription;
 import org.cmdbuild.logic.translation.object.DomainMasterDetailLabel;
 import org.cmdbuild.logic.translation.object.LookupDescription;
 import org.cmdbuild.logic.translation.object.MenuItemDescription;
+import org.cmdbuild.logic.translation.object.ReportDescription;
 import org.cmdbuild.logic.translation.object.ViewDescription;
 
 import com.google.common.base.Function;
@@ -183,11 +184,18 @@ public class DefaultTranslationLogic implements TranslationLogic {
 		}
 
 		@Override
-		public void visit(ViewDescription translationObject) {
+		public void visit(final ReportDescription translationObject) {
+			value = format("report.%s.%s", //
+					translationObject.getName(), //
+					DESCRIPTION);
+		}
+
+		@Override
+		public void visit(final ViewDescription translationObject) {
 			value = format("view.%s.%s", //
 					translationObject.getName(), //
 					DESCRIPTION);
-			
+
 		}
 
 		// TODO: get rid of everything below
@@ -207,13 +215,6 @@ public class DefaultTranslationLogic implements TranslationLogic {
 		@Override
 		public void visit(final WidgetTranslation translationObject) {
 			value = format("widget.%s.%s", //
-					translationObject.getName(), //
-					FieldMapper.of(translationObject.getField()).getResult());
-		}
-
-		@Override
-		public void visit(final ReportTranslation translationObject) {
-			value = format("report.%s.%s", //
 					translationObject.getName(), //
 					FieldMapper.of(translationObject.getField()).getResult());
 		}

@@ -79,7 +79,7 @@ public class ModReport extends JSONBaseWithSpringContext {
 			if (currentGroupAllowed(userStore()).apply(report)) {
 				++numRecords;
 				if (numRecords > offset && numRecords <= offset + limit) {
-					rows.put(new ReportSerializer(translationFacade()).toClient(report));
+					rows.put(new ReportSerializer().toClient(report));
 				}
 			}
 		}

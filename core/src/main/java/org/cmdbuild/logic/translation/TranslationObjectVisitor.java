@@ -10,6 +10,7 @@ import org.cmdbuild.logic.translation.object.DomainInverseDescription;
 import org.cmdbuild.logic.translation.object.DomainMasterDetailLabel;
 import org.cmdbuild.logic.translation.object.LookupDescription;
 import org.cmdbuild.logic.translation.object.MenuItemDescription;
+import org.cmdbuild.logic.translation.object.ReportDescription;
 import org.cmdbuild.logic.translation.object.ViewDescription;
 
 public interface TranslationObjectVisitor {
@@ -40,7 +41,7 @@ public interface TranslationObjectVisitor {
 
 	void visit(NullTranslationObject translationObject);
 
-	void visit(ReportTranslation reportTranslation);
+	void visit(ReportDescription reportDescription);
 
 	void visit(ViewDescription viewDescription);
 
