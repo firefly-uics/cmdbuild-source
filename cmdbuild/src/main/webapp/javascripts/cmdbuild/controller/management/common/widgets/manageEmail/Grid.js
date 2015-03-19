@@ -33,38 +33,6 @@
 		 */
 		widgetConf: undefined,
 
-//		statics: {
-//			/**
-//			 * @param {CMDBuild.model.widget.ManageEmail.email} record
-//			 * @param {Array} regenerationTrafficLightArray
-//			 *
-//			 * @return {Boolean} storeLoadEnabled
-//			 */
-//			trafficLightArrayCheck: function(record, regenerationTrafficLightArray) {
-//_debug('trafficLightArrayCheck record', record);
-//_debug('trafficLightArrayCheck regenerationTrafficLightArray', regenerationTrafficLightArray);
-//				if (!Ext.isEmpty(regenerationTrafficLightArray) && regenerationTrafficLightArray.length > 0) {
-//					var storeLoadEnabled = true;
-//
-//					Ext.Array.forEach(regenerationTrafficLightArray, function(item, index, allItems) {
-//						if (Ext.Object.equals(item[CMDBuild.core.proxy.CMProxyConstants.RECORD], record))
-//							item[CMDBuild.core.proxy.CMProxyConstants.STATUS] = true;
-//
-//						if (!item[CMDBuild.core.proxy.CMProxyConstants.STATUS])
-//							storeLoadEnabled = false;
-//					}, this);
-//
-//					// Array reset on store load
-//					if (storeLoadEnabled)
-//						regenerationTrafficLightArray = [];
-//
-//					return storeLoadEnabled;
-//				}
-//
-//				return false;
-//			}
-//		},
-
 		/**
 		 * @param {Object} configObject
 		 * @param {CMDBuild.controller.management.common.widgets.manageEmail.ManageEmail} configObject.parentDelegate
@@ -123,7 +91,6 @@
 			if (!Ext.Object.isEmpty(record)) {
 _debug('addRecord record', record);
 _debug('addRecord regenerationTrafficLightArray', regenerationTrafficLightArray);
-	//			CMDBuild.LoadMask.get().show();
 				CMDBuild.core.proxy.widgets.manageEmail.ManageEmail.create({
 					params: record.getAsParams(),
 					scope: this,
@@ -134,10 +101,7 @@ _debug('addRecord regenerationTrafficLightArray', regenerationTrafficLightArray)
 					success: success || function(response, options, decodedResponse) {
 						if (CMDBuild.controller.management.common.widgets.manageEmail.ManageEmail.trafficLightArrayCheck(record, regenerationTrafficLightArray) || Ext.isEmpty(regenerationTrafficLightArray))
 							this.storeLoad();
-					},
-	//				callback: function(options, success, response) {
-	//					CMDBuild.LoadMask.get().hide();
-	//				}
+					}
 				});
 			}
 		},
@@ -154,7 +118,6 @@ _debug('addRecord regenerationTrafficLightArray', regenerationTrafficLightArray)
 			recordValues[CMDBuild.core.proxy.CMProxyConstants.ACTIVITY_ID] = recordValues[CMDBuild.core.proxy.CMProxyConstants.ACTIVITY_ID] || this.parentDelegate.getActivityId();
 			recordValues[CMDBuild.core.proxy.CMProxyConstants.KEEP_SYNCHRONIZATION] = false;
 			recordValues[CMDBuild.core.proxy.CMProxyConstants.NO_SUBJECT_PREFIX] = recordValues.hasOwnProperty(CMDBuild.core.proxy.CMProxyConstants.NO_SUBJECT_PREFIX) ? recordValues[CMDBuild.core.proxy.CMProxyConstants.NO_SUBJECT_PREFIX] : this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.NO_SUBJECT_PREFIX];
-			recordValues[CMDBuild.core.proxy.CMProxyConstants.STATUS] = recordValues[CMDBuild.core.proxy.CMProxyConstants.STATUS] || CMDBuild.core.proxy.CMProxyConstants.DRAFT;
 
 			return Ext.create('CMDBuild.model.widget.ManageEmail.email', recordValues);
 		},
@@ -167,7 +130,6 @@ _debug('addRecord regenerationTrafficLightArray', regenerationTrafficLightArray)
 			if (!Ext.Object.isEmpty(record)) {
 _debug('editRecord record', record);
 _debug('editRecord regenerationTrafficLightArray', regenerationTrafficLightArray);
-	//			CMDBuild.LoadMask.get().show();
 				CMDBuild.core.proxy.widgets.manageEmail.ManageEmail.update({
 					params: record.getAsParams(),
 					scope: this,
@@ -178,10 +140,7 @@ _debug('editRecord regenerationTrafficLightArray', regenerationTrafficLightArray
 					success: function(response, options, decodedResponse) {
 						if (CMDBuild.controller.management.common.widgets.manageEmail.ManageEmail.trafficLightArrayCheck(record, regenerationTrafficLightArray) || Ext.isEmpty(regenerationTrafficLightArray))
 							this.storeLoad();
-					},
-	//				callback: function(options, success, response) {
-	//					CMDBuild.LoadMask.get().hide();
-	//				}
+					}
 				});
 			}
 		},
@@ -288,21 +247,21 @@ _debug('onGridAddEmailButtonClick');
 		onGridReplyEmailButtonClick: function(record) {
 			var content = '<p>'
 					+ CMDBuild.Translation.onDay + ' ' + record.get(CMDBuild.core.proxy.CMProxyConstants.DATE)
-					+ ', <' + record.get(CMDBuild.core.proxy.CMProxyConstants.FROM_ADDRESS) + '> ' + CMDBuild.Translation.hasWrote
+					+ ', <' + record.get(CMDBuild.core.proxy.CMProxyConstants.FROM) + '> ' + CMDBuild.Translation.hasWrote
 				+ ':</p>'
-				+ '<blockquote>' + record.get(CMDBuild.core.proxy.CMProxyConstants.CONTENT) + '</blockquote>';
+				+ '<blockquote>' + record.get(CMDBuild.core.proxy.CMProxyConstants.BODY) + '</blockquote>';
 
 			var replyRecordData = {};
-			replyRecordData[CMDBuild.core.proxy.CMProxyConstants.ATTACHMENTS] = null;
-			replyRecordData[CMDBuild.core.proxy.CMProxyConstants.CC_ADDRESSES] = record.get(CMDBuild.core.proxy.CMProxyConstants.CC_ADDRESSES);
-			replyRecordData[CMDBuild.core.proxy.CMProxyConstants.CONTENT] = content;
-			replyRecordData[CMDBuild.core.proxy.CMProxyConstants.DATE] = null;
-			replyRecordData[CMDBuild.core.proxy.CMProxyConstants.FROM_ADDRESS] = null;
-			replyRecordData[CMDBuild.core.proxy.CMProxyConstants.NOTIFY_WITH] = null;
-			replyRecordData[CMDBuild.core.proxy.CMProxyConstants.NO_SUBJECT_PREFIX] = true;
-			replyRecordData[CMDBuild.core.proxy.CMProxyConstants.STATUS] = CMDBuild.core.proxy.CMProxyConstants.DRAFT;
+			replyRecordData[CMDBuild.core.proxy.CMProxyConstants.ACCOUNT] = record.get(CMDBuild.core.proxy.CMProxyConstants.ACCOUNT);
+			replyRecordData[CMDBuild.core.proxy.CMProxyConstants.ACTIVITY_ID] = record.get(CMDBuild.core.proxy.CMProxyConstants.ACTIVITY_ID) || this.parentDelegate.getActivityId();
+			replyRecordData[CMDBuild.core.proxy.CMProxyConstants.BCC] = record.get(CMDBuild.core.proxy.CMProxyConstants.BCC);
+			replyRecordData[CMDBuild.core.proxy.CMProxyConstants.BODY] = content;
+			replyRecordData[CMDBuild.core.proxy.CMProxyConstants.CC] = record.get(CMDBuild.core.proxy.CMProxyConstants.CC);
+			replyRecordData[CMDBuild.core.proxy.CMProxyConstants.KEEP_SYNCHRONIZATION] = false;
+			replyRecordData[CMDBuild.core.proxy.CMProxyConstants.NOTIFY_WITH] = record.get(CMDBuild.core.proxy.CMProxyConstants.NOTIFY_WITH);
+			replyRecordData[CMDBuild.core.proxy.CMProxyConstants.NO_SUBJECT_PREFIX] = record.get(CMDBuild.core.proxy.CMProxyConstants.NO_SUBJECT_PREFIX);
 			replyRecordData[CMDBuild.core.proxy.CMProxyConstants.SUBJECT] = 'RE: ' + record.get(CMDBuild.core.proxy.CMProxyConstants.SUBJECT);
-			replyRecordData[CMDBuild.core.proxy.CMProxyConstants.TO_ADDRESSES] = record.get(CMDBuild.core.proxy.CMProxyConstants.FROM_ADDRESS) || record.get(CMDBuild.core.proxy.CMProxyConstants.TO_ADDRESSES);
+			replyRecordData[CMDBuild.core.proxy.CMProxyConstants.TO] = record.get(CMDBuild.core.proxy.CMProxyConstants.FROM) || record.get(CMDBuild.core.proxy.CMProxyConstants.TO);
 
 			Ext.create('CMDBuild.controller.management.common.widgets.manageEmail.EmailWindow', {
 				parentDelegate: this,
@@ -348,7 +307,6 @@ _debug('onGridAddEmailButtonClick');
 			if (!Ext.Object.isEmpty(record)) {
 _debug('removeRecord record', record);
 _debug('removeRecord regenerationTrafficLightArray', regenerationTrafficLightArray);
-	//			CMDBuild.LoadMask.get().show();
 				CMDBuild.core.proxy.widgets.manageEmail.ManageEmail.remove({
 					params: record.getAsParams([CMDBuild.core.proxy.CMProxyConstants.ID, CMDBuild.core.proxy.CMProxyConstants.TEMPORARY]),
 					scope: this,
@@ -359,10 +317,7 @@ _debug('removeRecord regenerationTrafficLightArray', regenerationTrafficLightArr
 					success: function(response, options, decodedResponse) {
 						if (CMDBuild.controller.management.common.widgets.manageEmail.ManageEmail.trafficLightArrayCheck(record, regenerationTrafficLightArray) || Ext.isEmpty(regenerationTrafficLightArray))
 							this.storeLoad();
-					},
-	//				callback: function(options, success, response) {
-	//					CMDBuild.LoadMask.get().hide();
-	//				}
+					}
 				});
 			}
 		},
