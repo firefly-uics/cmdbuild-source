@@ -343,8 +343,14 @@ _debug('onEmailWindowFillFromTemplateButtonClick', this.record);
 					);
 				},
 				success: function(response, options, decodedResponse) {
-					this.loadFormValues(Ext.create('CMDBuild.model.widget.ManageEmail.template', decodedResponse.response));
-					this.record.set(CMDBuild.core.proxy.CMProxyConstants.TEMPLATE, templateName); // Bind templateName to email record
+					var response = decodedResponse.response;
+
+					this.loadFormValues(Ext.create('CMDBuild.model.widget.ManageEmail.template', response));
+
+					// Bind extra form fields to email record
+					this.record.set(CMDBuild.core.proxy.CMProxyConstants.TEMPLATE, response[CMDBuild.core.proxy.CMProxyConstants.NAME]);
+					this.record.set(CMDBuild.core.proxy.CMProxyConstants.ACCOUNT, response[CMDBuild.core.proxy.CMProxyConstants.DEFAULT_ACCOUNT]);
+
 					this.view.formPanel.keepSynchronizationCheckbox.setDisabled(false);
 				}
 			});
