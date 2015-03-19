@@ -913,7 +913,7 @@
 		"createReportFilure": "<em>Create report failure</em>",
 		"detail": "Detalhes",
 		"domainCardinalityViolation": "<em>Domain cardinality violation</em>",
-		"emailChangedWithAutoSynch": "<em>E-mail changed and \"Keep sync\" is active. <br />Some changes could be missed.</em>",
+		"emailChangedWithAutoSynch": "<em>E-mail changed and \"Keep sync\" is active. <br />Some changes could be lost.</em>",
 		"emailCreate": "<em>E-mail create call failure</em>",
 		"emailRemove": "<em>E-mail remove call failure</em>",
 		"emailUpdate": "<em>E-mail update call failure</em>",
