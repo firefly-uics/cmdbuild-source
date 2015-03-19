@@ -34,10 +34,13 @@ public class Menu {
 	private GroupFetcher groupFetcher;
 
 	@Autowired
-	private Translation translation;
+	private Report report;
 
 	@Autowired
 	private SystemDataAccessLogicBuilder systemDataAccessLogicBuilder;
+
+	@Autowired
+	private Translation translation;
 
 	@Autowired
 	private User user;
@@ -64,18 +67,13 @@ public class Menu {
 		return DataViewStore.newInstance(data.systemDataView(), menuElementStorableConverter());
 	}
 
-	private MenuElementStore menuElementStore() {
-		return new MenuElementStore(baseMenuElementStore(), data.systemDataView(), userStore.getUser(),
-				view.viewConverter(), menuElementStorableConverter());
-	}
-
 	private MenuElementConverter menuElementConverter() {
 		return new MenuElementConverter(data.systemDataView(), user.userDataAccessLogicBuilder());
 	}
 
 	private StorableConverter<MenuElement> menuElementStorableConverter() {
 		return new LocalizedStorableConverter<MenuElement>(menuElementConverter(), translation.translationFacade(),
-				data.systemDataView());
+				data.systemDataView(), report.reportLogic());
 	}
 
 	@Bean
@@ -90,6 +88,11 @@ public class Menu {
 				menuItemConverter(), //
 				userStore.getUser(), //
 				menuElementStore());
+	}
+
+	private MenuElementStore menuElementStore() {
+		return new MenuElementStore(baseMenuElementStore(), data.systemDataView(), userStore, view.viewConverter(),
+				menuElementStorableConverter());
 	}
 
 }

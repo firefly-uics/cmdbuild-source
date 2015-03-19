@@ -1,5 +1,6 @@
 package org.cmdbuild.servlets.json.management;
 
+import static org.cmdbuild.logic.report.Predicates.currentGroupAllowed;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ATTRIBUTES;
 import static org.cmdbuild.servlets.json.CommunicationConstants.CARD_ID;
 import static org.cmdbuild.servlets.json.CommunicationConstants.CLASS_NAME;
@@ -29,7 +30,6 @@ import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.data.QueryOptions;
 import org.cmdbuild.logic.data.QueryOptions.QueryOptionsBuilder;
 import org.cmdbuild.logic.mapping.json.JsonFilterHelper;
-import org.cmdbuild.model.Report;
 import org.cmdbuild.report.ReportFactory;
 import org.cmdbuild.report.ReportFactory.ReportExtension;
 import org.cmdbuild.report.ReportFactory.ReportType;
@@ -39,6 +39,7 @@ import org.cmdbuild.report.ReportFactoryTemplateDetail;
 import org.cmdbuild.report.ReportFactoryTemplateList;
 import org.cmdbuild.report.ReportParameter;
 import org.cmdbuild.report.ReportParameterConverter;
+import org.cmdbuild.services.store.report.Report;
 import org.cmdbuild.servlets.json.JSONBaseWithSpringContext;
 import org.cmdbuild.servlets.json.serializers.AttributeSerializer;
 import org.cmdbuild.servlets.json.serializers.ReportSerializer;
@@ -75,7 +76,7 @@ public class ModReport extends JSONBaseWithSpringContext {
 		final JSONArray rows = new JSONArray();
 		int numRecords = 0;
 		for (final Report report : reportStore().findReportsByType(ReportType.valueOf(reportType.toUpperCase()))) {
-			if (report.isUserAllowed()) {
+			if (currentGroupAllowed(userStore()).apply(report)) {
 				++numRecords;
 				if (numRecords > offset && numRecords <= offset + limit) {
 					rows.put(new ReportSerializer(translationFacade()).toClient(report));
@@ -95,21 +96,20 @@ public class ModReport extends JSONBaseWithSpringContext {
 			@Parameter(CODE) final String code //
 	) throws Exception {
 
-		final Report reportCard = reportStore().findReportByTypeAndCode(ReportType.valueOf(type.toUpperCase()), code);
+		final Report report = reportStore().findReportByTypeAndCode(ReportType.valueOf(type.toUpperCase()), code);
 
-		if (reportCard == null) {
+		if (report == null) {
 			throw ReportExceptionType.REPORT_NOTFOUND.createException(code);
 		}
 
-		if (!reportCard.isUserAllowed()) {
-			throw ReportExceptionType.REPORT_GROUPNOTALLOWED.createException(reportCard.getCode());
+		if (!currentGroupAllowed(userStore()).apply(report)) {
+			throw ReportExceptionType.REPORT_GROUPNOTALLOWED.createException(report.getCode());
 		}
 
 		final JSONObject out = new JSONObject();
 		ReportFactoryDB factory = null;
 		if (type.equalsIgnoreCase(ReportType.CUSTOM.toString())) {
-			factory = new ReportFactoryDB(dataSource(), cmdbuildConfiguration(), reportStore(), reportCard.getId(),
-					null);
+			factory = new ReportFactoryDB(dataSource(), cmdbuildConfiguration(), reportStore(), report.getId(), null);
 			boolean filled = false;
 			if (factory.getReportParameters().isEmpty()) {
 				factory.fillReport();

@@ -9,7 +9,6 @@ import java.util.Map.Entry;
 
 import org.cmdbuild.common.annotations.Legacy;
 import org.cmdbuild.exception.ReportException.ReportExceptionType;
-import org.cmdbuild.model.Report;
 import org.cmdbuild.model.widget.Calendar;
 import org.cmdbuild.model.widget.CreateModifyCard;
 import org.cmdbuild.model.widget.Grid;
@@ -30,6 +29,7 @@ import org.cmdbuild.report.ReportFactory.ReportType;
 import org.cmdbuild.services.soap.structure.WorkflowWidgetDefinition;
 import org.cmdbuild.services.soap.structure.WorkflowWidgetDefinitionParameter;
 import org.cmdbuild.services.store.report.JDBCReportStore;
+import org.cmdbuild.services.store.report.Report;
 import org.cmdbuild.services.store.report.ReportStore;
 import org.cmdbuild.workflow.widget.CalendarWidgetFactory;
 import org.cmdbuild.workflow.widget.CreateModifyCardWidgetFactory;

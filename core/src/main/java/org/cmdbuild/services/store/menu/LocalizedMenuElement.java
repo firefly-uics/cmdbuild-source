@@ -1,5 +1,6 @@
 package org.cmdbuild.services.store.menu;
 
+import static com.google.common.base.Optional.absent;
 import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.cmdbuild.common.Constants.ID_ATTRIBUTE;
@@ -8,7 +9,6 @@ import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
 import static org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue.eq;
 import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
 import static org.cmdbuild.logic.translation.DefaultTranslationLogic.DESCRIPTION_FOR_CLIENT;
-import static org.cmdbuild.model.Report.REPORT_CLASS_NAME;
 import static org.cmdbuild.model.view.ViewConverter.VIEW_CLASS_NAME;
 import static org.cmdbuild.services.store.menu.MenuItemType.isClassOrProcess;
 import static org.cmdbuild.services.store.menu.MenuItemType.isDashboard;
@@ -20,6 +20,8 @@ import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.view.CMDataView;
+import org.cmdbuild.logic.report.ReportLogic;
+import org.cmdbuild.logic.report.ReportLogic.Report;
 import org.cmdbuild.logic.translation.ReportTranslation;
 import org.cmdbuild.logic.translation.TranslationFacade;
 import org.cmdbuild.logic.translation.TranslationObject;
@@ -31,14 +33,19 @@ import com.google.common.base.Optional;
 
 public class LocalizedMenuElement extends ForwardingMenuElement {
 
+	private static final Optional<String> NO_REPORT = absent();
+
 	private final MenuElement delegate;
 	private final TranslationFacade facade;
 	private final CMDataView dataView;
+	private final ReportLogic reportLogic;
 
-	public LocalizedMenuElement(final MenuElement delegate, final TranslationFacade facade, final CMDataView dataView) {
+	public LocalizedMenuElement(final MenuElement delegate, final TranslationFacade facade, final CMDataView dataView,
+			final ReportLogic reportLogic) {
 		this.delegate = delegate;
 		this.facade = facade;
 		this.dataView = dataView;
+		this.reportLogic = reportLogic;
 	}
 
 	@Override
@@ -96,27 +103,14 @@ public class LocalizedMenuElement extends ForwardingMenuElement {
 
 	private Optional<String> fetchReportName() {
 		final Number reportId = getElementId();
-		final CMClass reportClass = dataView.findClass(REPORT_CLASS_NAME);
-		return selectCodeFromIdAndClass(reportId, reportClass);
+		final Optional<Report> report = reportLogic.read(reportId.intValue());
+		return report.isPresent() ? Optional.of(report.get().getTitle()) : NO_REPORT;
 	}
 
 	private Optional<String> fetchViewName() {
 		final Number viewId = getElementId();
 		final CMClass viewClass = dataView.findClass(VIEW_CLASS_NAME);
 		return selectNameFromIdAndClass(viewId, viewClass);
-	}
-
-	private Optional<String> selectCodeFromIdAndClass(final Number id, final CMClass cmClass) {
-		final Optional<CMCard> _reportCard = fetchCardFromIdAndClass(id, cmClass);
-		Optional<String> _code;
-		if (_reportCard.isPresent()) {
-			final CMCard reportCard = _reportCard.get();
-			final String code = String.class.cast(reportCard.getCode());
-			_code = Optional.of(code);
-		} else {
-			_code = Optional.absent();
-		}
-		return _code;
 	}
 
 	private Optional<String> selectNameFromIdAndClass(final Number id, final CMClass cmClass) {
