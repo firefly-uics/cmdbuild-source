@@ -10,9 +10,9 @@ import static org.cmdbuild.services.store.menu.MenuConstants.MENU_CLASS_NAME;
 import java.util.List;
 
 import org.cmdbuild.auth.GroupFetcher;
+import org.cmdbuild.auth.UserStore;
 import org.cmdbuild.auth.acl.CMGroup;
 import org.cmdbuild.auth.acl.PrivilegeContext;
-import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.query.CMQueryResult;
@@ -32,16 +32,15 @@ public class MenuElementStore extends ForwardingStore<MenuElement> {
 
 	private final Store<MenuElement> delegate;
 	private final CMDataView dataView;
-	private final OperationUser operationUser;
+	private final UserStore userStore;
 	private final StorableConverter<View> viewConverter;
 	private final Function<CMCard, MenuElement> CONVERT;
 
-	public MenuElementStore(final Store<MenuElement> delegate, final CMDataView dataView,
-			final OperationUser operationUser, final StorableConverter<View> viewConverter,
-			final StorableConverter<MenuElement> converter) {
+	public MenuElementStore(final Store<MenuElement> delegate, final CMDataView dataView, final UserStore userStore,
+			final StorableConverter<View> viewConverter, final StorableConverter<MenuElement> converter) {
 		this.delegate = delegate;
 		this.dataView = dataView;
-		this.operationUser = operationUser;
+		this.userStore = userStore;
 		this.viewConverter = viewConverter;
 		this.CONVERT = new Function<CMCard, MenuElement>() {
 
@@ -66,9 +65,9 @@ public class MenuElementStore extends ForwardingStore<MenuElement> {
 
 			@Override
 			public PrivilegeContext get() {
-				return operationUser.getPrivilegeContext();
+				return userStore.getUser().getPrivilegeContext();
 			}
-		}, viewConverter);
+		}, viewConverter, userStore);
 		final Iterable<CMCard> readableMenuCards = menuCardFilter.filterReadableMenuCards(menuCards);
 		return Iterables.transform(readableMenuCards, CONVERT);
 	}

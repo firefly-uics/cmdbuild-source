@@ -43,6 +43,9 @@ public class Data {
 	private LockCardManager systemLockCardManager;
 
 	@Autowired
+	private Report report;
+
+	@Autowired
 	private Translation translation;
 
 	@Autowired
@@ -54,7 +57,7 @@ public class Data {
 	@Bean
 	protected StorableConverter<Lookup> lookupStorableConverter() {
 		return new LocalizedStorableConverter<Lookup>(new LookupStorableConverter(), translation.translationFacade(),
-				_systemDataView());
+				_systemDataView(), report.reportLogic());
 	}
 
 	@Bean

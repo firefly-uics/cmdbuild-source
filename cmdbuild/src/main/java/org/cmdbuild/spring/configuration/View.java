@@ -19,6 +19,9 @@ public class View {
 	private Data data;
 
 	@Autowired
+	private Report report;
+
+	@Autowired
 	private UserStore userStore;
 
 	@Autowired
@@ -31,7 +34,7 @@ public class View {
 	@Bean
 	public StorableConverter<org.cmdbuild.model.view.View> viewConverter() {
 		return new LocalizedStorableConverter<org.cmdbuild.model.view.View>(baseViewConverter(),
-				translation.translationFacade(), data.systemDataView());
+				translation.translationFacade(), data.systemDataView(), report.reportLogic());
 	}
 
 	@Bean
