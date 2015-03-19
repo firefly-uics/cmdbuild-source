@@ -9,7 +9,7 @@ public class LocalizedReport extends ForwardingReport implements Report {
 	private final Report delegate;
 	private final TranslationFacade facade;
 
-	LocalizedReport(Report delegate, TranslationFacade facade) {
+	LocalizedReport(final Report delegate, final TranslationFacade facade) {
 		this.delegate = delegate;
 		this.facade = facade;
 	}

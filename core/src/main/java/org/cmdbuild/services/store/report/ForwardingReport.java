@@ -2,7 +2,6 @@ package org.cmdbuild.services.store.report;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Date;
 
 import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.design.JasperDesign;
@@ -43,18 +42,8 @@ public abstract class ForwardingReport extends ForwardingObject implements Repor
 	}
 
 	@Override
-	public String getStatus() {
-		return delegate().getStatus();
-	}
-
-	@Override
 	public String getUser() {
 		return delegate().getUser();
-	}
-
-	@Override
-	public Date getBeginDate() {
-		return delegate().getBeginDate();
 	}
 
 	@Override
