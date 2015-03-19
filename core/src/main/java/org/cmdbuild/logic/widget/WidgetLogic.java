@@ -4,45 +4,38 @@ import static org.cmdbuild.data.store.Storables.storableOf;
 
 import java.util.Collection;
 
-import org.cmdbuild.dao.view.CMDataView;
-import org.cmdbuild.data.converter.WidgetConverter;
 import org.cmdbuild.data.store.Storable;
-import org.cmdbuild.data.store.dao.DataViewStore;
+import org.cmdbuild.data.store.Store;
 import org.cmdbuild.logic.Logic;
 import org.cmdbuild.model.widget.Widget;
 
 public class WidgetLogic implements Logic {
 
-	private final DataViewStore<Widget> widgetStore;
+	private final Store<Widget> store;
 
-	public WidgetLogic(final CMDataView dataView) {
-		final WidgetConverter converter = new WidgetConverter();
-		widgetStore = DataViewStore.newInstance(dataView, converter);
+	public WidgetLogic(final Store<Widget> store) {
+		this.store = store;
 	}
 
 	public Collection<Widget> getAllWidgets() {
-		return widgetStore.readAll();
+		return store.readAll();
 	}
 
 	public Widget getWidget(final Long widgetId) {
-		return widgetStore.read(storableOf(widgetId));
+		return store.read(storableOf(widgetId));
 	}
 
 	public Widget createWidget(final Widget widgetToCreate) {
-		return widgetStore.read(widgetStore.create(widgetToCreate));
+		return store.read(store.create(widgetToCreate));
 	}
 
 	public void updateWidget(final Widget widgetToUpdate) {
-		widgetStore.update(widgetToUpdate);
+		store.update(widgetToUpdate);
 	}
 
 	public void deleteWidget(final Long widgetId) {
 		final Storable storableToDelete = storableOf((widgetId));
-		widgetStore.delete(storableToDelete);
-	}
-
-	public void executeWidget() {
-		throw new UnsupportedOperationException();
+		store.delete(storableToDelete);
 	}
 
 }

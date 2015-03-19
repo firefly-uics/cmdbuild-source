@@ -137,19 +137,10 @@ public class DefaultReportLogic implements ReportLogic {
 
 	}
 
-	private static final Predicate<org.cmdbuild.model.Report> USER_ALLOWED = new Predicate<org.cmdbuild.model.Report>() {
+	private static final Function<org.cmdbuild.services.store.report.Report, Report> STORE_TO_LOGIC = new Function<org.cmdbuild.services.store.report.Report, Report>() {
 
 		@Override
-		public boolean apply(final org.cmdbuild.model.Report input) {
-			return input.isUserAllowed();
-		}
-
-	};
-
-	private static final Function<org.cmdbuild.model.Report, Report> STORE_TO_LOGIC = new Function<org.cmdbuild.model.Report, Report>() {
-
-		@Override
-		public Report apply(final org.cmdbuild.model.Report input) {
+		public Report apply(final org.cmdbuild.services.store.report.Report input) {
 			return ReportImpl.newInstance() //
 					.setId(input.getId()) //
 					.setTitle(input.getCode()) //
@@ -229,18 +220,20 @@ public class DefaultReportLogic implements ReportLogic {
 	private final ReportStore reportStore;
 	private final DataSource dataSource;
 	private final CmdbuildConfiguration configuration;
+	private final Predicate<org.cmdbuild.services.store.report.Report> readAllPredicate;
 
 	public DefaultReportLogic(final ReportStore reportStore, final DataSource dataSource,
-			final CmdbuildConfiguration configuration) {
+			final CmdbuildConfiguration configuration, final Predicate<org.cmdbuild.services.store.report.Report> readAllPredicate) {
 		this.reportStore = reportStore;
 		this.dataSource = dataSource;
 		this.configuration = configuration;
+		this.readAllPredicate = readAllPredicate;
 	}
 
 	@Override
 	public Iterable<Report> readAll() {
 		return from(reportStore.findReportsByType(CUSTOM)) //
-				.filter(USER_ALLOWED) //
+				.filter(readAllPredicate) //
 				.transform(STORE_TO_LOGIC);
 	}
 

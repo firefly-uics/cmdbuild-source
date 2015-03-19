@@ -1,26 +1,20 @@
-package org.cmdbuild.model;
+package org.cmdbuild.services.store.report;
 
 import static org.cmdbuild.utils.BinaryUtils.fromByte;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Arrays;
 import java.util.Date;
-import java.util.List;
 
 import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.design.JasperDesign;
 
-import org.cmdbuild.auth.UserStore;
-import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.report.ReportFactory.ReportType;
 
-public class Report {
+class ReportImpl implements Report {
 
 	public static final String REPORT_CLASS_NAME = "Report";
-
-	private final UserStore userStore;
 
 	private int id = 0;
 	private String code = "";
@@ -39,10 +33,6 @@ public class Report {
 	private String[] imagesName = new String[0];
 	private String[] groups = new String[0];
 
-	public Report(final UserStore userStore) {
-		this.userStore = userStore;
-	}
-
 	/**
 	 * id of the report we're editing, "-1" if it's a new one (administration
 	 * side)
@@ -59,6 +49,7 @@ public class Report {
 	 */
 	private JasperDesign jasperDesign = null;
 
+	@Override
 	public ReportType getType() {
 		// There is only one type
 		// return it
@@ -70,6 +61,7 @@ public class Report {
 		// there is only one report type
 	}
 
+	@Override
 	public int getId() {
 		return id;
 	}
@@ -78,6 +70,7 @@ public class Report {
 		this.id = id;
 	}
 
+	@Override
 	public String getCode() {
 		return code;
 	}
@@ -86,6 +79,7 @@ public class Report {
 		this.code = code;
 	}
 
+	@Override
 	public String getDescription() {
 		return description;
 	}
@@ -94,6 +88,7 @@ public class Report {
 		this.description = description;
 	}
 
+	@Override
 	public String getStatus() {
 		return status;
 	}
@@ -102,6 +97,7 @@ public class Report {
 		this.status = status;
 	}
 
+	@Override
 	public String getUser() {
 		return user;
 	}
@@ -110,6 +106,7 @@ public class Report {
 		this.user = user;
 	}
 
+	@Override
 	public Date getBeginDate() {
 		return beginDate;
 	}
@@ -118,6 +115,7 @@ public class Report {
 		this.beginDate = beginDate;
 	}
 
+	@Override
 	public String getQuery() {
 		return query;
 	}
@@ -126,6 +124,7 @@ public class Report {
 		this.query = query;
 	}
 
+	@Override
 	public int getOriginalId() {
 		return originalId;
 	}
@@ -134,6 +133,7 @@ public class Report {
 		this.originalId = originalId;
 	}
 
+	@Override
 	public JasperDesign getJd() {
 		return jasperDesign;
 	}
@@ -146,6 +146,7 @@ public class Report {
 		this.groups = groupNames;
 	}
 
+	@Override
 	public String[] getGroups() {
 		return groups;
 	}
@@ -153,6 +154,7 @@ public class Report {
 	/**
 	 * Get rich report as byte array
 	 */
+	@Override
 	public byte[] getRichReportBA() {
 		return richReport;
 	}
@@ -160,6 +162,7 @@ public class Report {
 	/**
 	 * Get rich report as JasperReport objects array
 	 */
+	@Override
 	public JasperReport[] getRichReportJRA() throws ClassNotFoundException, IOException {
 		int parseLength = 0;
 		byte[] singleBin = null;
@@ -186,6 +189,7 @@ public class Report {
 		this.richReport = richReport;
 	}
 
+	@Override
 	public byte[] getSimpleReport() {
 		return simpleReport;
 	}
@@ -194,6 +198,7 @@ public class Report {
 		this.simpleReport = simpleReport;
 	}
 
+	@Override
 	public byte[] getWizard() {
 		return wizard;
 	}
@@ -205,6 +210,7 @@ public class Report {
 	/**
 	 * Get report images as byte array
 	 */
+	@Override
 	public byte[] getImagesBA() {
 		return images;
 	}
@@ -212,6 +218,7 @@ public class Report {
 	/**
 	 * Get report images as input stream array
 	 */
+	@Override
 	public InputStream[] getImagesISA() {
 		final byte[] binary = getImagesBA();
 		final Integer[] imagesLength = getImagesLength();
@@ -240,6 +247,7 @@ public class Report {
 		this.images = images;
 	}
 
+	@Override
 	public Integer[] getReportLength() {
 		return reportLength;
 	}
@@ -248,6 +256,7 @@ public class Report {
 		this.reportLength = reportLength;
 	}
 
+	@Override
 	public Integer[] getImagesLength() {
 		return imagesLength;
 	}
@@ -256,6 +265,7 @@ public class Report {
 		this.imagesLength = imagesLength;
 	}
 
+	@Override
 	public String[] getImagesName() {
 		return imagesName;
 	}
@@ -268,27 +278,9 @@ public class Report {
 		this.subreportsNumber = subreportsNumber;
 	}
 
+	@Override
 	public int getSubreportsNumber() {
 		return subreportsNumber;
-	}
-
-	/**
-	 * TODO: create a ReportPrivilegeFetcher. The responsibility of that class
-	 * is to fetch privileges from Report table. This class will implement
-	 * CMPrivilegedObject and managed like other privilege objects (View, Class
-	 * ecc)
-	 */
-	public boolean isUserAllowed() {
-		final OperationUser operationUser = userStore.getUser();
-		if (operationUser.hasAdministratorPrivileges()) {
-			return true;
-		}
-		final List<String> allowedGroupIdsForThisReport = Arrays.asList(getGroups());
-		final String groupUsedForLogin = operationUser.getPreferredGroup().getName();
-		if (allowedGroupIdsForThisReport.contains(groupUsedForLogin.toString())) {
-			return true;
-		}
-		return false;
 	}
 
 }

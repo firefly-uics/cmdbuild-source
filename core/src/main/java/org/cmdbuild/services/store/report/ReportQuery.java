@@ -4,7 +4,6 @@ import java.lang.reflect.Array;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.cmdbuild.model.Report;
 import org.cmdbuild.report.ReportFactory.ReportType;
 
 public class ReportQuery {
@@ -52,7 +51,7 @@ public class ReportQuery {
 				arrayToCsv(report.getImagesName()) //
 				);
 
-		final Object[] arguments = { "\"" + Report.REPORT_CLASS_NAME + "\"", //
+		final Object[] arguments = { "\"" + ReportImpl.REPORT_CLASS_NAME + "\"", //
 				report.getCode(), //
 				report.getDescription(), //
 				"A", // active

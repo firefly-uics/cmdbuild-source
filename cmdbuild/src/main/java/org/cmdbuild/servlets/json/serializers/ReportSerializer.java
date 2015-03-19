@@ -12,7 +12,7 @@ import static org.cmdbuild.servlets.json.CommunicationConstants.TYPE;
 
 import org.cmdbuild.logic.translation.ReportTranslation;
 import org.cmdbuild.logic.translation.TranslationFacade;
-import org.cmdbuild.model.Report;
+import org.cmdbuild.services.store.report.Report;
 import org.json.JSONException;
 import org.json.JSONObject;
 
