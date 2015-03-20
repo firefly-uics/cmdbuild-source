@@ -24,6 +24,7 @@ import org.cmdbuild.logic.translation.object.DomainDirectDescription;
 import org.cmdbuild.logic.translation.object.DomainInverseDescription;
 import org.cmdbuild.logic.translation.object.DomainMasterDetailLabel;
 import org.cmdbuild.logic.translation.object.FilterDescription;
+import org.cmdbuild.logic.translation.object.InstanceName;
 import org.cmdbuild.logic.translation.object.LookupDescription;
 import org.cmdbuild.logic.translation.object.MenuItemDescription;
 import org.cmdbuild.logic.translation.object.ReportDescription;
@@ -37,15 +38,14 @@ import com.google.common.collect.Lists;
 
 public class DefaultTranslationLogic implements TranslationLogic {
 
-	public static final String INSTANCENAME_FOR_SERVER = "instancename";
-
 	private static class ElementCreator implements TranslationObjectVisitor {
 
 		private static final String DESCRIPTION = "description";
 		private static final String DIRECT_DESCRIPTION = "directDescription";
+		private static final String GROUP = "group";
+		private static final String INSTANCENAME = "instancename";
 		private static final String INVERSE_DESCRIPTION = "inverseDescription";
 		private static final String MASTERDETAIL_LABEL = "masterDetail";
-		private static final String GROUP = "group";
 
 		private static ElementCreator of(final TranslationObject translationObject) {
 			return new ElementCreator(translationObject);
@@ -131,6 +131,11 @@ public class DefaultTranslationLogic implements TranslationLogic {
 		}
 
 		@Override
+		public void visit(final InstanceName translationObject) {
+			value = format(INSTANCENAME);
+		}
+
+		@Override
 		public void visit(final LookupDescription translationObject) {
 			value = format("lookup.%s.%s", //
 					translationObject.getName(), DESCRIPTION);
@@ -160,7 +165,6 @@ public class DefaultTranslationLogic implements TranslationLogic {
 			value = format("view.%s.%s", //
 					translationObject.getName(), //
 					DESCRIPTION);
-
 		}
 
 		@Override
@@ -168,13 +172,6 @@ public class DefaultTranslationLogic implements TranslationLogic {
 			value = format("widget.%s.%s", //
 					translationObject.getName(), //
 					DESCRIPTION);
-		}
-
-		// TODO: get rid of everything below
-
-		@Override
-		public void visit(final InstanceNameTranslation translationObject) {
-			value = format(INSTANCENAME_FOR_SERVER);
 		}
 
 	}

@@ -1,5 +1,6 @@
 package org.cmdbuild.servlets.json.schema;
 
+import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ATTRIBUTENAME;
 import static org.cmdbuild.servlets.json.CommunicationConstants.CLASS_NAME;
 import static org.cmdbuild.servlets.json.CommunicationConstants.DOMAIN_NAME;
@@ -16,12 +17,12 @@ import static org.cmdbuild.servlets.json.schema.Utils.toMap;
 import java.util.Map;
 
 import org.apache.commons.lang3.Validate;
-import org.cmdbuild.logic.translation.InstanceNameTranslation;
 import org.cmdbuild.logic.translation.TranslationObject;
 import org.cmdbuild.logic.translation.converter.AttributeConverter;
 import org.cmdbuild.logic.translation.converter.ClassConverter;
 import org.cmdbuild.logic.translation.converter.DomainConverter;
 import org.cmdbuild.logic.translation.converter.FilterConverter;
+import org.cmdbuild.logic.translation.converter.InstanceConverter;
 import org.cmdbuild.logic.translation.converter.LookupConverter;
 import org.cmdbuild.logic.translation.converter.MenuItemConverter;
 import org.cmdbuild.logic.translation.converter.ReportConverter;
@@ -117,8 +118,10 @@ public class Translation extends JSONBaseWithSpringContext {
 	public void createForInstanceName( //
 			@Parameter(value = TRANSLATIONS) final JSONObject translations //
 	) {
-		final InstanceNameTranslation translationObject = new InstanceNameTranslation();
-		translationObject.setTranslations(toMap(translations));
+		final InstanceConverter converter = InstanceConverter.of(InstanceConverter.nameField());
+		Validate.isTrue(converter.isValid());
+		final TranslationObject translationObject = converter //
+				.withTranslations(toMap(translations)).create(EMPTY);
 		translationLogic().create(translationObject);
 	}
 
@@ -265,7 +268,9 @@ public class Translation extends JSONBaseWithSpringContext {
 	@JSONExported
 	@Admin
 	public JsonResponse readForInstanceName() {
-		final InstanceNameTranslation translationObject = new InstanceNameTranslation();
+		final InstanceConverter converter = InstanceConverter.of(InstanceConverter.nameField());
+		Validate.isTrue(converter.isValid());
+		final TranslationObject translationObject = converter.create(EMPTY);
 		final Map<String, String> translations = translationLogic().readAll(translationObject);
 		return JsonResponse.success(translations);
 	}
@@ -419,8 +424,10 @@ public class Translation extends JSONBaseWithSpringContext {
 	public void updateForInstanceName( //
 			@Parameter(value = TRANSLATIONS) final JSONObject translations //
 	) {
-		final InstanceNameTranslation translationObject = new InstanceNameTranslation();
-		translationObject.setTranslations(toMap(translations));
+		final InstanceConverter converter = InstanceConverter.of(InstanceConverter.nameField());
+		final TranslationObject translationObject = converter //
+				.withTranslations(toMap(translations)) //
+				.create(EMPTY);
 		translationLogic().update(translationObject);
 	}
 
@@ -584,8 +591,11 @@ public class Translation extends JSONBaseWithSpringContext {
 	public void deleteForInstanceName( //
 			@Parameter(value = TRANSLATIONS) final JSONObject translations //
 	) {
-		final InstanceNameTranslation translationObject = new InstanceNameTranslation();
-		translationObject.setTranslations(toMap(translations));
+		final InstanceConverter converter = InstanceConverter.of(InstanceConverter.nameField());
+		Validate.isTrue(converter.isValid());
+		final TranslationObject translationObject = converter //
+				.withTranslations(toMap(translations)) //
+				.create(EMPTY);
 		translationLogic().delete(translationObject);
 	}
 
