@@ -23,6 +23,7 @@ import org.cmdbuild.logic.translation.object.DomainDescription;
 import org.cmdbuild.logic.translation.object.DomainDirectDescription;
 import org.cmdbuild.logic.translation.object.DomainInverseDescription;
 import org.cmdbuild.logic.translation.object.DomainMasterDetailLabel;
+import org.cmdbuild.logic.translation.object.FilterDescription;
 import org.cmdbuild.logic.translation.object.LookupDescription;
 import org.cmdbuild.logic.translation.object.MenuItemDescription;
 import org.cmdbuild.logic.translation.object.ReportDescription;
@@ -36,51 +37,7 @@ import com.google.common.collect.Lists;
 
 public class DefaultTranslationLogic implements TranslationLogic {
 
-	public static final String DESCRIPTION_FOR_CLIENT = "Description";
-	public static final String DESCRIPTION_FOR_PERSISTENCE = "description";
-	public static final String DIRECT_DESCRIPTION_FOR_CLIENT = "directDescription";
-	private static final String DIRECT_DESCRIPTION_FOR_PERSISTENCE = "directdescription";
-	public static final String INVERSE_DESCRIPTION_FOR_CLIENT = "inverseDescription";
-	private static final String INVERSE_DESCRIPTION_FOR_PERSISTENCE = "inversedescription";
-	public static final String MASTER_DETAIL_LABEL_FOR_CLIENT = "masterDetailLabel";
-	private static final String MASTER_DETAIL_LABEL_FOR_PERSISTENCE = "masterdetaillabel";
-	public static final String BUTTON_LABEL_FOR_CLIENT = "ButtonLabel";
-	private static final String BUTTON_LABEL_FOR_PERSISTENCE = "buttonlabel";
 	public static final String INSTANCENAME_FOR_SERVER = "instancename";
-	public static final String GROUP_FOR_CLIENT = "group";
-	public static final String GROUP_FOR_PERSISTENCE = "group";
-
-	private static enum FieldMapper {
-
-		DESCRIPTION(DESCRIPTION_FOR_CLIENT, DESCRIPTION_FOR_PERSISTENCE), //
-		DIRECT_DESCRIPTION(DIRECT_DESCRIPTION_FOR_CLIENT, DIRECT_DESCRIPTION_FOR_PERSISTENCE), //
-		INVERSE_DESCRIPTION(INVERSE_DESCRIPTION_FOR_CLIENT, INVERSE_DESCRIPTION_FOR_PERSISTENCE), //
-		MASTER_DETAIL_LABEL(MASTER_DETAIL_LABEL_FOR_CLIENT, MASTER_DETAIL_LABEL_FOR_PERSISTENCE), //
-		BUTTON_LABEL(BUTTON_LABEL_FOR_CLIENT, BUTTON_LABEL_FOR_PERSISTENCE), //
-		GROUP(GROUP_FOR_CLIENT, GROUP_FOR_PERSISTENCE);
-
-		public static FieldMapper of(final String value) {
-			for (final FieldMapper element : values()) {
-				if (element.expected.equals(value)) {
-					return element;
-				}
-			}
-			throw new IllegalArgumentException("value not found");
-		}
-
-		private final String expected;
-		private final String result;
-
-		private FieldMapper(final String expected, final String result) {
-			this.expected = expected;
-			this.result = result;
-		}
-
-		public String getResult() {
-			return result;
-		}
-
-	}
 
 	private static class ElementCreator implements TranslationObjectVisitor {
 
@@ -167,6 +124,13 @@ public class DefaultTranslationLogic implements TranslationLogic {
 		}
 
 		@Override
+		public void visit(final FilterDescription translationObject) {
+			value = format("filter.%s.%s", //
+					translationObject.getName(), //
+					DESCRIPTION);
+		}
+
+		@Override
 		public void visit(final LookupDescription translationObject) {
 			value = format("lookup.%s.%s", //
 					translationObject.getName(), DESCRIPTION);
@@ -207,13 +171,6 @@ public class DefaultTranslationLogic implements TranslationLogic {
 		}
 
 		// TODO: get rid of everything below
-
-		@Override
-		public void visit(final FilterTranslation translationObject) {
-			value = format("filter.%s.%s", //
-					translationObject.getName(), //
-					FieldMapper.of(translationObject.getField()).getResult());
-		}
 
 		@Override
 		public void visit(final InstanceNameTranslation translationObject) {

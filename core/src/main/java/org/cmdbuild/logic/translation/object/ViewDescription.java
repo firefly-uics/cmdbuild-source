@@ -34,7 +34,7 @@ public class ViewDescription extends BaseTranslation {
 			return new ViewDescription(this);
 		}
 
-		public Builder withClassName(final String name) {
+		public Builder withName(final String name) {
 			this.name = name;
 			return this;
 		}

@@ -56,7 +56,7 @@ public enum WidgetConverter {
 	private final String fieldName;
 	private static Map<String, String> translations = Maps.newHashMap();
 
-	private static final String LABEL_FIELD = "description";
+	private static final String LABEL_FIELD = "buttonlabel";
 	private static final String UNDEFINED_FIELD = "undefined";
 
 	public abstract TranslationObject create(String name);

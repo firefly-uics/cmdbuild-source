@@ -3,12 +3,12 @@ package org.cmdbuild.logic.translation.converter;
 import java.util.Map;
 
 import org.cmdbuild.logic.translation.TranslationObject;
-import org.cmdbuild.logic.translation.object.ReportDescription;
+import org.cmdbuild.logic.translation.object.FilterDescription;
 import org.cmdbuild.logic.translation.object.ViewDescription;
 
 import com.google.common.collect.Maps;
 
-public enum ReportConverter {
+public enum FilterConverter {
 
 	DESCRIPTION(description()) {
 
@@ -18,14 +18,14 @@ public enum ReportConverter {
 		}
 
 		@Override
-		public ReportConverter withTranslations(final Map<String, String> map) {
+		public FilterConverter withTranslations(final Map<String, String> map) {
 			translations = map;
 			return this;
 		}
 
 		@Override
-		public ReportDescription create(final String name) {
-			final ReportDescription.Builder builder = ReportDescription //
+		public FilterDescription create(final String name) {
+			final FilterDescription.Builder builder = FilterDescription //
 					.newInstance() //
 					.withName(name);
 
@@ -44,7 +44,7 @@ public enum ReportConverter {
 		}
 
 		@Override
-		public ReportConverter withTranslations(final Map<String, String> map) {
+		public FilterConverter withTranslations(final Map<String, String> map) {
 			throw new UnsupportedOperationException();
 		}
 
@@ -62,7 +62,7 @@ public enum ReportConverter {
 
 	public abstract TranslationObject create(String name);
 
-	public abstract ReportConverter withTranslations(Map<String, String> map);
+	public abstract FilterConverter withTranslations(Map<String, String> map);
 
 	public abstract boolean isValid();
 
@@ -74,12 +74,12 @@ public enum ReportConverter {
 		return UNDEFINED_FIELD;
 	}
 
-	private ReportConverter(final String fieldName) {
+	private FilterConverter(final String fieldName) {
 		this.fieldName = fieldName;
 	}
 
-	public static ReportConverter of(final String value) {
-		for (final ReportConverter element : values()) {
+	public static FilterConverter of(final String value) {
+		for (final FilterConverter element : values()) {
 			if (element.fieldName.equalsIgnoreCase(value)) {
 				return element;
 			}
