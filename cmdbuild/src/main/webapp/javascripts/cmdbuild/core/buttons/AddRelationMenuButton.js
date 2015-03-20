@@ -10,7 +10,7 @@
 
 		iconCls: 'add',
 
-		text: '@@ Add relations', // TODO CMDBuild.Translation.addRelations
+		text: CMDBuild.Translation.addRelations,
 
 		initComponent: function() {
 			Ext.apply(this, {
@@ -29,9 +29,11 @@
 		 * @param {CMDBuild.cache.CMEntryTypeModel} entryType
 		 */
 		setDomainsForEntryType: function(entryType, singleDomainId) { // TODO: rename (setDomains)
+_debug('entryType', entryType);
+_debug('singleDomainId', singleDomainId);
 			if (!Ext.isEmpty(entryType)) {
 				this.menu.removeAll();
-
+_debug(_CMCache.getClasses());
 				var params = {};
 				params[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME] = entryType.get(CMDBuild.core.proxy.CMProxyConstants.NAME);
 				params[CMDBuild.core.proxy.CMProxyConstants.WITH_DISABLED_CLASSES] = false;
@@ -40,13 +42,15 @@
 					params: params,
 					scope: this,
 					success: function(result, options, decodedResult) {
+_debug('decodedResult', decodedResult);
 						Ext.Array.forEach(decodedResult[CMDBuild.core.proxy.CMProxyConstants.DOMAINS], function(domain, i, allDomains) {
+_debug('domain', domain);
 							if (_CMCache.isClassById(domain['class1id']) && _CMCache.isClassById(domain['class2id'])) {
 								var domainCMObject = {};
 								var originClass = _CMCache.getEntryTypeByName(domain['class1']);
 								var destinationClass = _CMCache.getEntryTypeByName(domain['class2']);
 
-								if (entryType.get(CMDBuild.core.proxy.CMProxyConstants.NAME) == domain['class1id']) {
+								if (entryType.get(CMDBuild.core.proxy.CMProxyConstants.NAME) == domain['class1']) {
 									domainCMObject = { // TODO: use domain real object in future
 										dom_id: domain['idDomain'],
 										description: domain['descrdir'] + ' (' + destinationClass.get(CMDBuild.core.proxy.CMProxyConstants.TEXT) + ')',

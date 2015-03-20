@@ -6,6 +6,8 @@
 		withIcon: false,
 		classIcon: undefined,
 
+		minWidth: 75,
+
 		initComponent: function() {
 			if (this.withIcon && classIcon)
 				Ext.apply(this, {

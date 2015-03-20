@@ -3,12 +3,30 @@
 	Ext.define("CMDBuild.controller.administration.domain.CMDomainFormController", {
 		constructor: function(view) {
 			this.view = view;
+			this.view.delegate = this;
 			this.currentDomain = null;
 
 			this.view.saveButton.on("click", onSaveButtonClick, this);
 			this.view.deleteButton.on("click", onDeleteButtonClick, this);
 			this.view.abortButton.on("click", onAbortButtonClick, this);
 		},
+
+		/**
+		 * Gatherer function to catch events
+		 *
+		 * @param {String} name
+		 * @param {Object} param
+		 * @param {Function} callback
+		 */
+		cmOn: function(name, param, callBack) {
+			switch (name) {
+				default: {
+					if (!Ext.isEmpty(this.parentDelegate))
+						return this.parentDelegate.cmOn(name, param, callBack);
+				}
+			}
+		},
+
 		onDomainSelected: function(cmDomain) {
 			this.currentDomain = cmDomain;
 			this.view.onDomainSelected(cmDomain);
@@ -21,6 +39,21 @@
 	});
 
 	function onSaveButtonClick() {
+		var originDisabledClasses = [];
+		var destinationDisabledClasses = [];
+
+		// Get origin disabled classes
+		this.parentDelegate.controllerEnabledClasses.view.originTree.getStore().getRootNode().eachChild(function(childNode) {
+			if (!childNode.get(CMDBuild.core.proxy.CMProxyConstants.ENABLED))
+				originDisabledClasses.push(childNode.get(CMDBuild.core.proxy.CMProxyConstants.NAME));
+		}, this);
+
+		// Get destination disabled classes
+		this.parentDelegate.controllerEnabledClasses.view.destinationTree.getStore().getRootNode().eachChild(function(childNode) {
+			if (!childNode.get(CMDBuild.core.proxy.CMProxyConstants.ENABLED))
+				destinationDisabledClasses.push(childNode.get(CMDBuild.core.proxy.CMProxyConstants.NAME));
+		}, this);
+
 		var invalidFields = this.view.getNonValidFields();
 
 		if (invalidFields.length == 0) {
@@ -30,7 +63,10 @@
 			if (this.currentDomain == null) {
 				data.id = -1;
 			} else {
-				data.id = this.currentDomain.get("id");
+				data.id = this.currentDomain.get(CMDBuild.core.proxy.CMProxyConstants.ID);
+
+				data.disabled1 = Ext.encode(originDisabledClasses); // TODO proxy constants
+				data.disabled2 = Ext.encode(destinationDisabledClasses); // TODO proxy constants
 			}
 
 			CMDBuild.ServiceProxy.administration.domain.save({

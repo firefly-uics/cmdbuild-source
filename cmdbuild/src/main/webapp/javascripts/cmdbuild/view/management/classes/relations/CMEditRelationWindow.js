@@ -39,6 +39,10 @@
 			this.buttons = [this.saveButton, this.abortButton];
 
 			this.callParent(arguments);
+
+			this.grid.applyFilterToStore();
+			this.grid.getStore().load();
+_debug('this.grid', this.grid);
 		},
 
 		/**
