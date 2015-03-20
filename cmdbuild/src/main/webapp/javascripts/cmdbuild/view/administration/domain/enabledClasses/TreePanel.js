@@ -1,15 +1,12 @@
 (function() {
 
-	Ext.define('CMDBuild.view.administration.domain.hierarchy.TreePanel', {
+	Ext.define('CMDBuild.view.administration.domain.enabledClasses.TreePanel', {
 		extend: 'Ext.tree.Panel',
 
-		requires: [
-			'CMDBuild.core.proxy.CMProxyConstants',
-//			'CMDBuild.core.proxy.Localizations'
-		],
+		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
 
 		/**
-		 * @cfg {CMDBuild.controller.administration.domain.Hierarchy}
+		 * @cfg {CMDBuild.controller.administration.domain.EnabledClasses}
 		 */
 		delegate: undefined,
 
@@ -41,8 +38,8 @@
 					},
 					{
 						xtype: 'checkcolumn',
-						header: '@@ Enabled',
-						dataIndex: 'enabled',
+						header: CMDBuild.Translation.enabled,
+						dataIndex: CMDBuild.core.proxy.CMProxyConstants.ENABLED,
 						width: 60,
 						align: 'center',
 						sortable: false,

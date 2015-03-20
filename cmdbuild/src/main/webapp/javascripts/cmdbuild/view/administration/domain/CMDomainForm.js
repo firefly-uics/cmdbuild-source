@@ -27,6 +27,7 @@
 				scope: this,
 
 				handler: function() {
+					this.delegate.cmOn('onModifyButtonClick');
 					this.enableModify();
 					_CMCache.initModifyingTranslations();
 				}

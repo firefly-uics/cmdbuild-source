@@ -1,20 +1,14 @@
 (function() {
-	Ext.ns("CMDBuild.administration.domain");
-	var ns = CMDBuild.administration.domain;
 
 	Ext.define("CMDBuild.controller.administration.domain.CMModDomainController", {
 		extend: "CMDBuild.controller.CMBasePanelController",
 
-		requires: [
-			'CMDBuild.core.proxy.CMProxyConstants',
-//			'CMDBuild.core.proxy.Classes',
-//			'CMDBuild.core.proxy.Localizations'
-		],
+		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
 
 		/**
-		 * @property {CMDBuild.controller.administration.domain.Hierarchy}
+		 * @property {CMDBuild.controller.administration.domain.EnabledClasses}
 		 */
-		controllerHierarchy: undefined,
+		controllerEnabledClasses: undefined,
 
 		/**
 		 * @property {CMDBuild.cache.CMDomainModel}
@@ -33,21 +27,49 @@ _debug('this.view', this.view);
 			this.formController = new CMDBuild.controller.administration.domain.CMDomainFormController(this.view.domainForm);
 			this.attributesController = new CMDBuild.controller.administration.domain.CMDomainAttributesController(this.view.domainAttributes);
 
+			// Temporary delegate bind, will be refactored
+			this.view.delegate = this;
+			this.formController.parentDelegate = this;
+			this.attributesController.parentDelegate = this;
+
 			// Controller build
-			this.controllerHierarchy = Ext.create('CMDBuild.controller.administration.domain.Hierarchy', { parentDelegate: this });
+			this.controllerEnabledClasses = Ext.create('CMDBuild.controller.administration.domain.EnabledClasses', { parentDelegate: this });
 
 			// Inject tabs
-			this.view.tabPanel.add(this.controllerHierarchy.getView());
+			this.view.tabPanel.add(this.controllerEnabledClasses.getView());
 
 			this.view.addButton.on("click", this.onAddDomainButtonClick, this);
 			_CMCache.on("cm_domain_deleted", this.view.onDomainDeleted, this.view);
 		},
 
+		/**
+		 * Gatherer function to catch events
+		 *
+		 * @param {String} name
+		 * @param {Object} param
+		 * @param {Function} callback
+		 */
+		cmOn: function(name, param, callBack) {
+			switch (name) {
+				case 'onModifyButtonClick':
+					return this.onModifyButtonClick();
+
+				default: {
+					if (!Ext.isEmpty(this.parentDelegate))
+						return this.parentDelegate.cmOn(name, param, callBack);
+				}
+			}
+		},
+
+		onModifyButtonClick: function() {
+			this.controllerEnabledClasses.onModifyButtonClick();
+		},
+
 		onViewOnFront: function(selection) {
 			if (selection) {
-				this.selectedDomain = _CMCache.getDomainById(selection.get(CMDBuild.core.proxy.CMProxyConstants.ID));
+				this.selectedDomain = _CMCache.getDomainById(selection.get(CMDBuild.core.proxy.CMProxyConstants.ID)); // TODO: use proxy to read class
 _debug('selectedDomain', this.selectedDomain);
-				this.controllerHierarchy.onViewOnFront();
+				this.controllerEnabledClasses.onDomainSelected();
 
 				this.domain = _CMCache.getDomainById(selection.get("id")); // TODO: delete and keep selectedDomain
 				this.formController.onDomainSelected(this.domain);

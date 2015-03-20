@@ -97,6 +97,7 @@
 		EMAIL_ACCOUNT: 'emailAccount',
 		EMAIL_TEMPLATE: 'emailTemplate',
 		EMAIL_TEMPLATES: 'emailTemplates',
+		ENABLED: 'enabled',
 		ENABLE_MAP: 'enableMap',
 		ENABLE_MOVE_REJECTED_NOT_MATCHING: 'enableMoveRejectedNotMatching',
 		ENTRY_TYPE: 'entryType',

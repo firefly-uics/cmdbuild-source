@@ -180,7 +180,9 @@
 			{name: "description_default", type: "string"},
 			{name: "descr_1_default", type: "string"},
 			{name: "descr_2_default", type: "string"},
-			{name: "md_label_default", type: "string"}
+			{name: "md_label_default", type: "string"},
+			{name: "disabled1", type: "auto"},
+			{name: "disabled2", type: "auto"}
 		],
 
 		getAttributes: function() {
