@@ -34,7 +34,7 @@ public class ReportDescription extends BaseTranslation {
 			return new ReportDescription(this);
 		}
 
-		public Builder withClassName(final String name) {
+		public Builder withName(final String name) {
 			this.name = name;
 			return this;
 		}

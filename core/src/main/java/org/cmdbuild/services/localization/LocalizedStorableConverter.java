@@ -14,6 +14,7 @@ import org.cmdbuild.logic.translation.TranslationObject;
 import org.cmdbuild.logic.translation.converter.WidgetConverter;
 import org.cmdbuild.model.view.View;
 import org.cmdbuild.model.widget.Widget;
+import org.cmdbuild.services.store.FilterStore.Filter;
 import org.cmdbuild.services.store.menu.LocalizedMenuElement;
 import org.cmdbuild.services.store.menu.MenuElement;
 
@@ -118,6 +119,18 @@ public class LocalizedStorableConverter<T extends Storable> extends ForwardingSt
 						}
 					}.apply(storable);
 
+				}
+
+				@Override
+				public void visit(final Filter filter) {
+					output = (T) filter;
+					output = new Function<Filter, T>() {
+
+						@Override
+						public T apply(final Filter input) {
+							return (T) ((input == null) ? null : new LocalizedFilter(input, facade));
+						}
+					}.apply(filter);
 				}
 			}.proxy();
 		} else {

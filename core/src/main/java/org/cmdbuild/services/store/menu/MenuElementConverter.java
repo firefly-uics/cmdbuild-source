@@ -74,7 +74,7 @@ public class MenuElementConverter extends BaseStorableConverter<MenuElement> {
 	@Override
 	public Map<String, Object> getValues(final MenuElement storable) {
 		throw new UnsupportedOperationException(
-				"'Write' operation not supported for this converter. Use only for reading elements.");
+				"This converter must be used only for reading. Writing is not supported.");
 	}
 
 }

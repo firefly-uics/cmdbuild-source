@@ -1,7 +1,5 @@
 package org.cmdbuild.servlets.json.serializers;
 
-import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
-import static org.cmdbuild.logic.translation.DefaultTranslationLogic.DESCRIPTION_FOR_CLIENT;
 import static org.cmdbuild.servlets.json.CommunicationConstants.CLASS_ID_CAPITAL;
 import static org.cmdbuild.servlets.json.CommunicationConstants.CLASS_NAME;
 import static org.cmdbuild.servlets.json.CommunicationConstants.DESCRIPTION;

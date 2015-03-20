@@ -1,11 +1,13 @@
-package org.cmdbuild.logic.translation;
+package org.cmdbuild.logic.translation.object;
 
 import java.util.Map;
 
-public class FilterTranslation extends BaseTranslation {
+import org.cmdbuild.logic.translation.BaseTranslation;
+import org.cmdbuild.logic.translation.TranslationObjectVisitor;
 
-	public FilterTranslation(final Builder builder) {
-		this.setField(builder.field);
+public class FilterDescription extends BaseTranslation {
+
+	private FilterDescription(final Builder builder) {
 		this.setName(builder.name);
 		this.setTranslations(builder.translations);
 	}
@@ -19,20 +21,17 @@ public class FilterTranslation extends BaseTranslation {
 		visitor.visit(this);
 	}
 
-	public static class Builder implements org.apache.commons.lang3.builder.Builder<FilterTranslation> {
+	public static class Builder implements org.apache.commons.lang3.builder.Builder<FilterDescription> {
 
 		private String name;
-		private String field;
 		private Map<String, String> translations;
 
-		@Override
-		public FilterTranslation build() {
-			return new FilterTranslation(this);
+		private Builder() {
 		}
 
-		public Builder withField(final String field) {
-			this.field = field;
-			return this;
+		@Override
+		public FilterDescription build() {
+			return new FilterDescription(this);
 		}
 
 		public Builder withName(final String name) {

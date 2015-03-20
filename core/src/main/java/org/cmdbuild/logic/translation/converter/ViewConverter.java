@@ -26,7 +26,7 @@ public enum ViewConverter {
 		public ViewDescription create(final String name) {
 			final ViewDescription.Builder builder = ViewDescription //
 					.newInstance() //
-					.withClassName(name);
+					.withName(name);
 
 			if (!translations.isEmpty()) {
 				builder.withTranslations(translations);
@@ -55,7 +55,7 @@ public enum ViewConverter {
 
 	private final String fieldName;
 	private static Map<String, String> translations = Maps.newHashMap();
-	
+
 	private static final String DESCRIPTION_FIELD = "description";
 	private static final String UNDEFINED_FIELD = "undefined";
 
@@ -64,11 +64,11 @@ public enum ViewConverter {
 	public abstract ViewConverter withTranslations(Map<String, String> map);
 
 	public abstract boolean isValid();
-	
+
 	public static String description() {
 		return DESCRIPTION_FIELD;
 	}
-	
+
 	private static String undefined() {
 		return UNDEFINED_FIELD;
 	}

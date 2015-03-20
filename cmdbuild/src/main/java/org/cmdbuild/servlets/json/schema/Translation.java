@@ -16,12 +16,12 @@ import static org.cmdbuild.servlets.json.schema.Utils.toMap;
 import java.util.Map;
 
 import org.apache.commons.lang3.Validate;
-import org.cmdbuild.logic.translation.FilterTranslation;
 import org.cmdbuild.logic.translation.InstanceNameTranslation;
 import org.cmdbuild.logic.translation.TranslationObject;
 import org.cmdbuild.logic.translation.converter.AttributeConverter;
 import org.cmdbuild.logic.translation.converter.ClassConverter;
 import org.cmdbuild.logic.translation.converter.DomainConverter;
+import org.cmdbuild.logic.translation.converter.FilterConverter;
 import org.cmdbuild.logic.translation.converter.LookupConverter;
 import org.cmdbuild.logic.translation.converter.MenuItemConverter;
 import org.cmdbuild.logic.translation.converter.ReportConverter;
@@ -104,11 +104,11 @@ public class Translation extends JSONBaseWithSpringContext {
 			@Parameter(value = FIELD) final String field, //
 			@Parameter(value = TRANSLATIONS) final JSONObject translations //
 	) {
-		final FilterTranslation translationObject = FilterTranslation.newInstance() //
-				.withField(field) //
-				.withName(filterName) //
+		final FilterConverter converter = FilterConverter.of(field);
+		Validate.isTrue(converter.isValid());
+		final TranslationObject translationObject = converter //
 				.withTranslations(toMap(translations)) //
-				.build();
+				.create(filterName);
 		translationLogic().create(translationObject);
 	}
 
@@ -255,10 +255,9 @@ public class Translation extends JSONBaseWithSpringContext {
 	public JsonResponse readForFilter( //
 			@Parameter(value = FILTERNAME) final String filterName, //
 			@Parameter(value = FIELD) final String field) {
-		final FilterTranslation translationObject = FilterTranslation.newInstance() //
-				.withField(field) //
-				.withName(filterName) //
-				.build();
+		final FilterConverter converter = FilterConverter.of(field);
+		Validate.isTrue(converter.isValid());
+		final TranslationObject translationObject = converter.create(filterName);
 		final Map<String, String> translations = translationLogic().readAll(translationObject);
 		return JsonResponse.success(translations);
 	}
@@ -408,11 +407,10 @@ public class Translation extends JSONBaseWithSpringContext {
 			@Parameter(value = FIELD) final String field, //
 			@Parameter(value = TRANSLATIONS) final JSONObject translations //
 	) {
-		final FilterTranslation translationObject = FilterTranslation.newInstance() //
-				.withField(field) //
-				.withName(filterName) //
+		final FilterConverter converter = FilterConverter.of(field);
+		final TranslationObject translationObject = converter //
 				.withTranslations(toMap(translations)) //
-				.build();
+				.create(filterName);
 		translationLogic().update(translationObject);
 	}
 
@@ -573,11 +571,11 @@ public class Translation extends JSONBaseWithSpringContext {
 			@Parameter(value = FIELD) final String field, //
 			@Parameter(value = TRANSLATIONS) final JSONObject translations //
 	) {
-		final FilterTranslation translationObject = FilterTranslation.newInstance() //
-				.withField(field) //
-				.withName(filterName) //
+		final FilterConverter converter = FilterConverter.of(field);
+		Validate.isTrue(converter.isValid());
+		final TranslationObject translationObject = converter //
 				.withTranslations(toMap(translations)) //
-				.build();
+				.create(filterName);
 		translationLogic().delete(translationObject);
 	}
 
