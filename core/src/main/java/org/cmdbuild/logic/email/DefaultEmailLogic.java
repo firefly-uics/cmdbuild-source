@@ -366,7 +366,7 @@ public class DefaultEmailLogic implements EmailLogic {
 	private void send(final Email email) {
 		try {
 			final Supplier<EmailAccount> accountSupplier = accountSupplierOf(email);
-			final Email toBeUpdated = new ForwardingEmail() {
+			final Email _email = new ForwardingEmail() {
 
 				@Override
 				protected Email delegate() {
@@ -379,27 +379,13 @@ public class DefaultEmailLogic implements EmailLogic {
 				}
 
 				@Override
-				public String getSubject() {
-					final org.cmdbuild.data.store.email.Email storable = LOGIC_TO_STORE.apply(delegate());
-					final String subject;
-					if (subjectHandler.parse(storable.getSubject()).hasExpectedFormat()) {
-						subject = storable.getSubject();
-					} else {
-						subject = defaultIfBlank(subjectHandler.compile(storable).getSubject(), EMPTY);
-					}
-					return subject;
-				}
-
-				@Override
 				public Status getStatus() {
 					return sent();
 				}
 
 			};
-
-			final org.cmdbuild.data.store.email.Email storable = LOGIC_TO_STORE.apply(toBeUpdated);
-			emailService(storable.getActivityId(), accountSupplier).send(storable, attachmentsOf(toBeUpdated));
-			storeOf(email).update(storable);
+			send0(accountSupplier, _email);
+			storeOf(email).update(LOGIC_TO_STORE.apply(_email));
 		} catch (final CMDBException e) {
 			notifier.warn(e);
 		} catch (final Throwable e) {
@@ -414,6 +400,35 @@ public class DefaultEmailLogic implements EmailLogic {
 		final Supplier<EmailAccount> accountSupplier = memoize(firstNotNull(asList(emailAccountSupplier,
 				defaultAccountSupplier)));
 		return accountSupplier;
+	}
+
+	private void send0(final Supplier<EmailAccount> accountSupplier, final Email email) throws IOException {
+		/*
+		 * we don't want to save the altered subject, so we are keeping it in a
+		 * different copy of the e-mail
+		 */
+		final Email _email = new ForwardingEmail() {
+
+			@Override
+			protected Email delegate() {
+				return email;
+			}
+
+			@Override
+			public String getSubject() {
+				final org.cmdbuild.data.store.email.Email storable = LOGIC_TO_STORE.apply(delegate());
+				final String subject;
+				if (subjectHandler.parse(storable.getSubject()).hasExpectedFormat()) {
+					subject = storable.getSubject();
+				} else {
+					subject = defaultIfBlank(subjectHandler.compile(storable).getSubject(), EMPTY);
+				}
+				return subject;
+			}
+
+		};
+		final org.cmdbuild.data.store.email.Email storable = LOGIC_TO_STORE.apply(_email);
+		emailService(storable.getActivityId(), accountSupplier).send(storable, attachmentsOf(_email));
 	}
 
 	private Map<URL, String> attachmentsOf(final Email read) throws IOException {
