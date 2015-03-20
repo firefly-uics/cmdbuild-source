@@ -2,13 +2,11 @@ package org.cmdbuild.services.email;
 
 import org.cmdbuild.data.store.email.Email;
 
-import com.google.common.base.Predicate;
-
 /**
  * Handler for {@link Email} reception.
  */
-public interface EmailCallbackHandler extends Predicate<Email> {
+public interface EmailCallbackHandler {
 
-	void accept(Email email);
+	void handle(Email email);
 
 }

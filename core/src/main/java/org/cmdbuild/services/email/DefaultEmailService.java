@@ -21,8 +21,6 @@ import org.cmdbuild.common.api.mail.MailApiFactory;
 import org.cmdbuild.common.api.mail.MailException;
 import org.cmdbuild.common.api.mail.NewMail;
 import org.cmdbuild.common.api.mail.SelectMail;
-import org.cmdbuild.data.store.Storable;
-import org.cmdbuild.data.store.Store;
 import org.cmdbuild.data.store.email.Attachment;
 import org.cmdbuild.data.store.email.Email;
 import org.cmdbuild.data.store.email.EmailConstants;
@@ -148,16 +146,12 @@ public class DefaultEmailService implements EmailService {
 
 	private final Supplier<EmailAccount> accountSupplier;
 	private final Supplier<MailApi> apiSupplier;
-	private final Store<Email> store;
 
 	DefaultEmailService( //
 			final Supplier<EmailAccount> emailAccountSupplier, //
-			final MailApiFactory mailApiFactory, //
-			final Store<Email> store //
-	) {
+			final MailApiFactory mailApiFactory) {
 		this.accountSupplier = emailAccountSupplier;
 		this.apiSupplier = new MailApiSupplier(emailAccountSupplier, mailApiFactory);
-		this.store = store;
 	}
 
 	@Override
@@ -240,12 +234,7 @@ public class DefaultEmailService implements EmailService {
 				final GetMail getMail = apiSupplier.get().selectMail(fetchedMail).get();
 				final Email email = transform(getMail);
 				mailMover.selectTargetFolder(accountSupplier.get().getProcessedFolder());
-				if (callback.apply(email)) {
-					final Storable stored = store.create(email);
-					final Email read = store.read(stored);
-					read.setAttachments(email.getAttachments());
-					callback.accept(read);
-				}
+				callback.handle(email);
 			} catch (final Exception e) {
 				logger.error("error getting mail", e);
 				keepMail = !accountSupplier.get().isRejectNotMatching();

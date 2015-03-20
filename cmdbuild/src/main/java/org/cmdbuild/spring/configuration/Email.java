@@ -101,7 +101,6 @@ public class Email {
 	public EmailServiceFactory emailServiceFactory() {
 		return ConfigurableEmailServiceFactory.newInstance() //
 				.withApiFactory(mailApiFactory()) //
-				.withPersistence(emailStore()) //
 				.withDefaultAccountSupplier(defaultEmailAccountSupplier()) //
 				.build();
 	}
