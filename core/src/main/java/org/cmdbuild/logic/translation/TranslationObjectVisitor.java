@@ -12,6 +12,7 @@ import org.cmdbuild.logic.translation.object.LookupDescription;
 import org.cmdbuild.logic.translation.object.MenuItemDescription;
 import org.cmdbuild.logic.translation.object.ReportDescription;
 import org.cmdbuild.logic.translation.object.ViewDescription;
+import org.cmdbuild.logic.translation.object.WidgetLabel;
 
 public interface TranslationObjectVisitor {
 
@@ -45,6 +46,6 @@ public interface TranslationObjectVisitor {
 
 	void visit(ViewDescription viewDescription);
 
-	void visit(WidgetTranslation widgetTranslation);
+	void visit(WidgetLabel widgetLabel);
 
 }
