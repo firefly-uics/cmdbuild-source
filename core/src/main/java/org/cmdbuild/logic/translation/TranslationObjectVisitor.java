@@ -9,6 +9,7 @@ import org.cmdbuild.logic.translation.object.DomainDirectDescription;
 import org.cmdbuild.logic.translation.object.DomainInverseDescription;
 import org.cmdbuild.logic.translation.object.DomainMasterDetailLabel;
 import org.cmdbuild.logic.translation.object.FilterDescription;
+import org.cmdbuild.logic.translation.object.InstanceName;
 import org.cmdbuild.logic.translation.object.LookupDescription;
 import org.cmdbuild.logic.translation.object.MenuItemDescription;
 import org.cmdbuild.logic.translation.object.ReportDescription;
@@ -35,7 +36,7 @@ public interface TranslationObjectVisitor {
 
 	void visit(FilterDescription filterDescription);
 
-	void visit(InstanceNameTranslation instanceNameTranslation);
+	void visit(InstanceName instanceNameTranslation);
 
 	void visit(LookupDescription lookupDescription);
 
