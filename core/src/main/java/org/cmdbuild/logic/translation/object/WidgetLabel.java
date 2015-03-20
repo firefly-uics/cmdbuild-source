@@ -1,11 +1,13 @@
-package org.cmdbuild.logic.translation;
+package org.cmdbuild.logic.translation.object;
 
 import java.util.Map;
 
-public class WidgetTranslation extends BaseTranslation {
+import org.cmdbuild.logic.translation.BaseTranslation;
+import org.cmdbuild.logic.translation.TranslationObjectVisitor;
 
-	public WidgetTranslation(final Builder builder) {
-		this.setField(builder.field);
+public class WidgetLabel extends BaseTranslation {
+
+	private WidgetLabel(final Builder builder) {
 		this.setName(builder.name);
 		this.setTranslations(builder.translations);
 	}
@@ -19,23 +21,20 @@ public class WidgetTranslation extends BaseTranslation {
 		visitor.visit(this);
 	}
 
-	public static class Builder implements org.apache.commons.lang3.builder.Builder<WidgetTranslation> {
+	public static class Builder implements org.apache.commons.lang3.builder.Builder<WidgetLabel> {
 
 		private String name;
-		private String field;
 		private Map<String, String> translations;
 
+		private Builder() {
+		}
+
 		@Override
-		public WidgetTranslation build() {
-			return new WidgetTranslation(this);
+		public WidgetLabel build() {
+			return new WidgetLabel(this);
 		}
 
-		public Builder withField(final String field) {
-			this.field = field;
-			return this;
-		}
-
-		public Builder withName(final String name) {
+		public Builder withClassName(final String name) {
 			this.name = name;
 			return this;
 		}

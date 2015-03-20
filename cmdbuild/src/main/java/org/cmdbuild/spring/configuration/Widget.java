@@ -7,6 +7,7 @@ import org.cmdbuild.data.store.Store;
 import org.cmdbuild.data.store.dao.DataViewStore;
 import org.cmdbuild.data.store.dao.StorableConverter;
 import org.cmdbuild.logic.widget.WidgetLogic;
+import org.cmdbuild.services.localization.LocalizedStorableConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,10 +19,22 @@ public class Widget {
 	@Autowired
 	private Data data;
 
+	@Autowired
+	private Translation translation;
+
+	@Autowired
+	private Report report;
+
 	@Bean
 	@Scope(PROTOTYPE)
 	public WidgetLogic widgetLogic() {
 		return new WidgetLogic(widgetStore());
+	}
+
+	@Bean
+	protected StorableConverter<org.cmdbuild.model.widget.Widget> converter() {
+		return new LocalizedStorableConverter<org.cmdbuild.model.widget.Widget>(baseConverter(),
+				translation.translationFacade(), data.systemDataView(), report.reportLogic());
 	}
 
 	@Bean
@@ -33,7 +46,7 @@ public class Widget {
 	}
 
 	@Bean
-	protected StorableConverter<org.cmdbuild.model.widget.Widget> converter() {
+	protected StorableConverter<org.cmdbuild.model.widget.Widget> baseConverter() {
 		return new WidgetConverter();
 	}
 

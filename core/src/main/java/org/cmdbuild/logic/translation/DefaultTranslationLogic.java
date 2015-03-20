@@ -27,6 +27,7 @@ import org.cmdbuild.logic.translation.object.LookupDescription;
 import org.cmdbuild.logic.translation.object.MenuItemDescription;
 import org.cmdbuild.logic.translation.object.ReportDescription;
 import org.cmdbuild.logic.translation.object.ViewDescription;
+import org.cmdbuild.logic.translation.object.WidgetLabel;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
@@ -198,6 +199,13 @@ public class DefaultTranslationLogic implements TranslationLogic {
 
 		}
 
+		@Override
+		public void visit(final WidgetLabel translationObject) {
+			value = format("widget.%s.%s", //
+					translationObject.getName(), //
+					DESCRIPTION);
+		}
+
 		// TODO: get rid of everything below
 
 		@Override
@@ -210,13 +218,6 @@ public class DefaultTranslationLogic implements TranslationLogic {
 		@Override
 		public void visit(final InstanceNameTranslation translationObject) {
 			value = format(INSTANCENAME_FOR_SERVER);
-		}
-
-		@Override
-		public void visit(final WidgetTranslation translationObject) {
-			value = format("widget.%s.%s", //
-					translationObject.getName(), //
-					FieldMapper.of(translationObject.getField()).getResult());
 		}
 
 	}

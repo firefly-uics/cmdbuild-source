@@ -1,5 +1,7 @@
 package org.cmdbuild.services.localization;
 
+import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
+
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.data.store.Storable;
@@ -8,7 +10,10 @@ import org.cmdbuild.data.store.dao.StorableConverter;
 import org.cmdbuild.data.store.lookup.Lookup;
 import org.cmdbuild.logic.report.ReportLogic;
 import org.cmdbuild.logic.translation.TranslationFacade;
+import org.cmdbuild.logic.translation.TranslationObject;
+import org.cmdbuild.logic.translation.converter.WidgetConverter;
 import org.cmdbuild.model.view.View;
+import org.cmdbuild.model.widget.Widget;
 import org.cmdbuild.services.store.menu.LocalizedMenuElement;
 import org.cmdbuild.services.store.menu.MenuElement;
 
@@ -20,6 +25,7 @@ public class LocalizedStorableConverter<T extends Storable> extends ForwardingSt
 	private final TranslationFacade facade;
 	private final CMDataView dataView;
 	private final ReportLogic reportLogic;
+	private final Function<Widget, Widget> TRANSLATE_WIDGET_LABEL;
 
 	public LocalizedStorableConverter(final StorableConverter<T> delegate, final TranslationFacade facade,
 			final CMDataView dataView, final ReportLogic reportLogic) {
@@ -27,6 +33,18 @@ public class LocalizedStorableConverter<T extends Storable> extends ForwardingSt
 		this.facade = facade;
 		this.dataView = dataView;
 		this.reportLogic = reportLogic;
+		this.TRANSLATE_WIDGET_LABEL = new Function<Widget, Widget>() {
+
+			@Override
+			public Widget apply(final Widget input) {
+				final TranslationObject translationObject = WidgetConverter.of(WidgetConverter.label()).create(
+						input.getIdentifier());
+				final String translatedDescription = facade.read(translationObject);
+				input.setLabel(defaultIfBlank(translatedDescription, input.getLabel()));
+				return input;
+			}
+		};
+
 	}
 
 	@Override
@@ -87,6 +105,19 @@ public class LocalizedStorableConverter<T extends Storable> extends ForwardingSt
 							return (T) ((input == null) ? null : new LocalizedView(input, facade));
 						}
 					}.apply(storable);
+				}
+
+				@Override
+				public void visit(final Widget storable) {
+					output = (T) storable;
+					output = new Function<Widget, T>() {
+
+						@Override
+						public T apply(final Widget input) {
+							return (T) ((input == null) ? null : TRANSLATE_WIDGET_LABEL.apply(storable));
+						}
+					}.apply(storable);
+
 				}
 			}.proxy();
 		} else {
