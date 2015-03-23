@@ -137,7 +137,7 @@ public class JsonAttributeFilterBuilder implements Builder<WhereClause> {
 			final JSONArray jsonArray = condition.getJSONArray(VALUE_KEY);
 			final List<Object> values = Lists.newArrayList();
 			for (int i = 0; i < jsonArray.length(); i++) {
-				values.add(jsonArray.getString(i));
+				values.add(jsonArray.get(i));
 			}
 			final QueryAliasAttribute attribute = (entryTypeAlias == null) ? attribute(entryType, attributeName)
 					: attribute(entryTypeAlias, attributeName);
