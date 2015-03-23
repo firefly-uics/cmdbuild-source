@@ -23,6 +23,8 @@ import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.dao.entrytype.CMEntryTypeVisitor;
 import org.cmdbuild.dao.entrytype.CMFunctionCall;
+import org.cmdbuild.dao.entrytype.ForwardingEntryTypeVisitor;
+import org.cmdbuild.dao.entrytype.NullEntryTypeVisitor;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.UndefinedAttributeType;
 import org.cmdbuild.dao.query.QuerySpecs;
@@ -99,7 +101,14 @@ public class WherePartCreator extends PartCreator implements WhereClauseVisitor 
 	 * privileges)
 	 */
 	private void excludeEntryTypes() {
-		querySpecs.getFromClause().getType().accept(new CMEntryTypeVisitor() {
+		querySpecs.getFromClause().getType().accept(new ForwardingEntryTypeVisitor() {
+
+			private final CMEntryTypeVisitor delegate = NullEntryTypeVisitor.getInstance();
+
+			@Override
+			protected CMEntryTypeVisitor delegate() {
+				return delegate;
+			}
 
 			@Override
 			public void visit(final CMClass type) {
@@ -111,16 +120,6 @@ public class WherePartCreator extends PartCreator implements WhereClauseVisitor 
 								null, OPERATOR_EQ, valuesOf(cmClass.getId())));
 					}
 				}
-			}
-
-			@Override
-			public void visit(final CMDomain type) {
-				// nothing to do
-			}
-
-			@Override
-			public void visit(final CMFunctionCall type) {
-				// nothing to do
 			}
 
 		});

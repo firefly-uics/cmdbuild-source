@@ -1,55 +1,56 @@
 package org.cmdbuild.dao.query.clause.where;
 
-public class NullWhereClauseVisitor implements WhereClauseVisitor {
+import com.google.common.collect.ForwardingObject;
 
-	private static final NullWhereClauseVisitor INSTANCE = new NullWhereClauseVisitor();
+public abstract class ForwardingWhereClauseVisitor extends ForwardingObject implements WhereClauseVisitor {
 
-	public static NullWhereClauseVisitor getInstance() {
-		return INSTANCE;
-	}
-
-	private NullWhereClauseVisitor() {
-		// use factory method
+	/**
+	 * Usable by subclasses only.
+	 */
+	protected ForwardingWhereClauseVisitor() {
 	}
 
 	@Override
+	protected abstract WhereClauseVisitor delegate();
+
+	@Override
 	public void visit(final AndWhereClause whereClause) {
-		// nothing to do
+		delegate().visit(whereClause);
 	}
 
 	@Override
 	public void visit(final EmptyWhereClause whereClause) {
-		// nothing to do
+		delegate().visit(whereClause);
 	}
 
 	@Override
 	public void visit(final FalseWhereClause whereClause) {
-		// nothing to do
+		delegate().visit(whereClause);
 	}
 
 	@Override
 	public void visit(final FunctionWhereClause whereClause) {
-		// nothing to do
+		delegate().visit(whereClause);
 	}
 
 	@Override
 	public void visit(final NotWhereClause whereClause) {
-		// nothing to do
+		delegate().visit(whereClause);
 	}
 
 	@Override
 	public void visit(final OrWhereClause whereClause) {
-		// nothing to do
+		delegate().visit(whereClause);
 	}
 
 	@Override
 	public void visit(final SimpleWhereClause whereClause) {
-		// nothing to do
+		delegate().visit(whereClause);
 	}
 
 	@Override
 	public void visit(final TrueWhereClause whereClause) {
-		// nothing to do
+		delegate().visit(whereClause);
 	}
 
 }

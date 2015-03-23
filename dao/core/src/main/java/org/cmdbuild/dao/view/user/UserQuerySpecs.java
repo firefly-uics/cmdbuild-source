@@ -22,6 +22,8 @@ import org.cmdbuild.common.Constants;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMEntryType;
+import org.cmdbuild.dao.entrytype.CMEntryTypeVisitor;
+import org.cmdbuild.dao.entrytype.ForwardingEntryTypeVisitor;
 import org.cmdbuild.dao.entrytype.NullEntryTypeVisitor;
 import org.cmdbuild.dao.query.ForwardingQuerySpecs;
 import org.cmdbuild.dao.query.QuerySpecs;
@@ -31,12 +33,14 @@ import org.cmdbuild.dao.query.clause.alias.EntryTypeAlias;
 import org.cmdbuild.dao.query.clause.from.FromClause;
 import org.cmdbuild.dao.query.clause.join.DirectJoinClause;
 import org.cmdbuild.dao.query.clause.where.AndWhereClause;
+import org.cmdbuild.dao.query.clause.where.ForwardingWhereClauseVisitor;
 import org.cmdbuild.dao.query.clause.where.FunctionWhereClause;
 import org.cmdbuild.dao.query.clause.where.NullWhereClauseVisitor;
 import org.cmdbuild.dao.query.clause.where.OrWhereClause;
 import org.cmdbuild.dao.query.clause.where.SimpleWhereClause;
 import org.cmdbuild.dao.query.clause.where.TrueWhereClause;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
+import org.cmdbuild.dao.query.clause.where.WhereClauseVisitor;
 import org.cmdbuild.dao.view.user.privileges.RowAndColumnPrivilegeFetcher;
 
 import com.google.common.collect.Lists;
@@ -235,7 +239,14 @@ public class UserQuerySpecs extends ForwardingQuerySpecs {
 	private Set<DirectJoinClause> directJoinClausesForUser(final WhereClause userWhereClause) {
 		final Set<DirectJoinClause> directJoins = Sets.newHashSet(delegate.getDirectJoins());
 		final Map<Alias, CMClass> descendantsByAlias = Maps.newHashMap();
-		delegate.getFromClause().getType().accept(new NullEntryTypeVisitor() {
+		delegate.getFromClause().getType().accept(new ForwardingEntryTypeVisitor() {
+
+			private final CMEntryTypeVisitor delegate = NullEntryTypeVisitor.getInstance();
+
+			@Override
+			protected CMEntryTypeVisitor delegate() {
+				return delegate;
+			}
 
 			@Override
 			public void visit(final CMClass type) {
@@ -246,7 +257,14 @@ public class UserQuerySpecs extends ForwardingQuerySpecs {
 			}
 
 		});
-		userWhereClause.accept(new NullWhereClauseVisitor() {
+		userWhereClause.accept(new ForwardingWhereClauseVisitor() {
+
+			private final WhereClauseVisitor _delegate = NullWhereClauseVisitor.getInstance();
+
+			@Override
+			protected WhereClauseVisitor delegate() {
+				return _delegate;
+			}
 
 			@Override
 			public void visit(final AndWhereClause whereClause) {

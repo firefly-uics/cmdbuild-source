@@ -17,24 +17,35 @@ import java.util.List;
 
 import org.cmdbuild.dao.driver.postgres.quote.AliasQuoter;
 import org.cmdbuild.dao.entrytype.CMEntryType;
+import org.cmdbuild.dao.entrytype.CMEntryTypeVisitor;
 import org.cmdbuild.dao.entrytype.CMFunctionCall;
+import org.cmdbuild.dao.entrytype.ForwardingEntryTypeVisitor;
 import org.cmdbuild.dao.entrytype.NullEntryTypeVisitor;
 import org.cmdbuild.dao.query.QuerySpecs;
 import org.cmdbuild.dao.query.clause.OrderByClause;
 import org.cmdbuild.dao.query.clause.QueryAliasAttribute;
 import org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue;
 import org.cmdbuild.dao.query.clause.where.ForwardingOperatorAndValueVisitor;
+import org.cmdbuild.dao.query.clause.where.ForwardingWhereClauseVisitor;
 import org.cmdbuild.dao.query.clause.where.NullOperatorAndValueVisitor;
 import org.cmdbuild.dao.query.clause.where.NullWhereClauseVisitor;
 import org.cmdbuild.dao.query.clause.where.OperatorAndValueVisitor;
 import org.cmdbuild.dao.query.clause.where.SimpleWhereClause;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
+import org.cmdbuild.dao.query.clause.where.WhereClauseVisitor;
 
 public class QueryCreator {
 
-	private static class SpecialFeaturesChecker extends NullEntryTypeVisitor {
+	private static class SpecialFeaturesChecker extends ForwardingEntryTypeVisitor {
+
+		private final CMEntryTypeVisitor delegate = NullEntryTypeVisitor.getInstance();
 
 		private boolean addDefaultOrderings;
+
+		@Override
+		protected CMEntryTypeVisitor delegate() {
+			return delegate;
+		}
 
 		/**
 		 * @return {@code true} if default orderings must be added,
@@ -184,7 +195,15 @@ public class QueryCreator {
 	private void appendConditionOnNumberedQuery() {
 		final WhereClause whereClause = (querySpecs.getConditionOnNumberedQuery() == null) ? emptyWhereClause()
 				: querySpecs.getConditionOnNumberedQuery();
-		whereClause.accept(new NullWhereClauseVisitor() {
+		whereClause.accept(new ForwardingWhereClauseVisitor() {
+
+			private final WhereClauseVisitor delegate = NullWhereClauseVisitor.getInstance();
+
+			@Override
+			protected WhereClauseVisitor delegate() {
+				return delegate;
+			}
+
 			@Override
 			public void visit(final SimpleWhereClause whereClause) {
 				whereClause.getOperator().accept(new ForwardingOperatorAndValueVisitor() {
@@ -211,6 +230,7 @@ public class QueryCreator {
 
 				});
 			}
+
 		});
 	}
 
