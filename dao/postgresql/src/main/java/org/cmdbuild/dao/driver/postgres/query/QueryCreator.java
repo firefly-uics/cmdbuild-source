@@ -23,8 +23,10 @@ import org.cmdbuild.dao.query.QuerySpecs;
 import org.cmdbuild.dao.query.clause.OrderByClause;
 import org.cmdbuild.dao.query.clause.QueryAliasAttribute;
 import org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue;
+import org.cmdbuild.dao.query.clause.where.ForwardingOperatorAndValueVisitor;
 import org.cmdbuild.dao.query.clause.where.NullOperatorAndValueVisitor;
 import org.cmdbuild.dao.query.clause.where.NullWhereClauseVisitor;
+import org.cmdbuild.dao.query.clause.where.OperatorAndValueVisitor;
 import org.cmdbuild.dao.query.clause.where.SimpleWhereClause;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
 
@@ -185,7 +187,15 @@ public class QueryCreator {
 		whereClause.accept(new NullWhereClauseVisitor() {
 			@Override
 			public void visit(final SimpleWhereClause whereClause) {
-				whereClause.getOperator().accept(new NullOperatorAndValueVisitor() {
+				whereClause.getOperator().accept(new ForwardingOperatorAndValueVisitor() {
+
+					private final OperatorAndValueVisitor delegate = NullOperatorAndValueVisitor.getInstance();
+
+					@Override
+					protected OperatorAndValueVisitor delegate() {
+						return delegate;
+					}
+
 					@Override
 					public void visit(final EqualsOperatorAndValue operatorAndValue) {
 						final QueryAliasAttribute attribute = whereClause.getAttribute();
@@ -198,6 +208,7 @@ public class QueryCreator {
 								quotedName, //
 								operatorAndValue.getValue()));
 					}
+
 				});
 			}
 		});
