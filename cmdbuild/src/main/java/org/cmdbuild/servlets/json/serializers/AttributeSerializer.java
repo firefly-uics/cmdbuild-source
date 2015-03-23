@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.cmdbuild.common.utils.UnsupportedProxyFactory;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMAttribute.Mode;
 import org.cmdbuild.dao.entrytype.CMClass;
@@ -38,6 +39,7 @@ import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.dao.entrytype.CMEntryTypeVisitor;
 import org.cmdbuild.dao.entrytype.CMFunctionCall;
+import org.cmdbuild.dao.entrytype.ForwardingEntryTypeVisitor;
 import org.cmdbuild.dao.entrytype.attributetype.BooleanAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeTypeVisitor;
@@ -541,25 +543,23 @@ public class AttributeSerializer extends Serializer {
 			final String groupName = attribute.getGroup();
 			final CMClass owner = (CMClass) attribute.getOwner();
 
-			final String translatedGroupName = new CMEntryTypeVisitor() {
+			final String translatedGroupName = new ForwardingEntryTypeVisitor() {
+
+				private final CMEntryTypeVisitor delegate = UnsupportedProxyFactory.of(CMEntryTypeVisitor.class)
+						.create();
 
 				String translatedGroupName;
 				String groupName;
+
+				@Override
+				protected CMEntryTypeVisitor delegate() {
+					return delegate;
+				}
 
 				public String searchGroupNameTranslation(final CMClass owner, final String groupName) {
 					this.groupName = groupName;
 					owner.accept(this);
 					return translatedGroupName;
-				}
-
-				@Override
-				public void visit(final CMFunctionCall type) {
-					throw new UnsupportedOperationException();
-				}
-
-				@Override
-				public void visit(final CMDomain type) {
-					throw new UnsupportedOperationException();
 				}
 
 				@Override
