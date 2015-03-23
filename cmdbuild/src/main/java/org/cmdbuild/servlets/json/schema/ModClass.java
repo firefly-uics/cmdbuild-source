@@ -49,7 +49,7 @@ import static org.cmdbuild.servlets.json.CommunicationConstants.TYPE;
 import static org.cmdbuild.servlets.json.CommunicationConstants.TYPES;
 import static org.cmdbuild.servlets.json.CommunicationConstants.UNIQUE;
 import static org.cmdbuild.servlets.json.CommunicationConstants.USER_STOPPABLE;
-import static org.cmdbuild.servlets.json.CommunicationConstants.WITH_DISABLED_CLASSES;
+import static org.cmdbuild.servlets.json.CommunicationConstants.SKIP_DISABLED_CLASSES;
 import static org.cmdbuild.servlets.json.schema.Utils.toIterable;
 
 import java.util.Iterator;
@@ -582,12 +582,12 @@ public class ModClass extends JSONBaseWithSpringContext {
 	@JSONExported
 	public JSONObject getDomainList( //
 			@Parameter(value = CLASS_NAME) final String className, //
-			@Parameter(value = WITH_DISABLED_CLASSES, required = false) final boolean withDisabledClasses //
+			@Parameter(value = SKIP_DISABLED_CLASSES, required = false) final boolean skipDisabledClasses //
 	) throws JSONException {
 		final JSONArray jsonDomains = new JSONArray();
 		// TODO system really needed
 		final Iterable<CMDomain> domains = from(
-				systemDataAccessLogic().findDomainsForClass(className, withDisabledClasses)) //
+				systemDataAccessLogic().findDomainsForClass(className, skipDisabledClasses)) //
 				.filter(not(isSystem(CMDomain.class)));
 		for (final CMDomain domain : domains) {
 			jsonDomains.put(domainSerializer().toClient(domain, className));
