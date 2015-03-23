@@ -233,6 +233,7 @@ public class CommunicationConstants {
 			SHARK_SCHEMA = "shark_schema", //
 			SHORT = "short", //
 			SHOW_IN_GRID = "isbasedsp", //
+			SKIP_DISABLED_CLASSES = "skipDisabledClasses", //
 			SMTP_PORT = "smtpPort", //
 			SMTP_SERVER = "smtpServer", //
 			SMTP_SSL = "smtpSsl", //
@@ -285,7 +286,6 @@ public class CommunicationConstants {
 			VIEWS = "views", //
 			WIDGET_ID = "widgetId", //
 			WIDGET = "widget", //
-			WITH_DISABLED_CLASSES = "withDisabledClasses", //
 			WORKFLOW_ACTIVE = "workflowActive", //
 			WORKFLOW_ADVANCEABLE = "workflowAdvanceable", //
 			WORKFLOW_ATTACHMENTS_CATEGORY = "workflowAttachmentsCategory", //

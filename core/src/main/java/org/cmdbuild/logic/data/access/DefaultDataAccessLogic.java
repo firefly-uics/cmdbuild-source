@@ -869,14 +869,14 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 	}
 
 	@Override
-	public Iterable<CMDomain> findDomainsForClass(final String className, final boolean withDisabledClasses) {
+	public Iterable<CMDomain> findDomainsForClass(final String className, final boolean skipDisabledClasses) {
 		final CMClass fetchedClass = dataView.findClass(className);
 		if (fetchedClass == null) {
 			throw NotFoundExceptionType.CLASS_NOTFOUND.createException(className);
 		}
 		return from(dataView.findDomains()) //
 				.filter(domainFor(fetchedClass)) //
-				.filter(withDisabledClasses ? not(disabledClass(fetchedClass)) : allDomains()) //
+				.filter(skipDisabledClasses ? not(disabledClass(fetchedClass)) : allDomains()) //
 				.filter(CMDomain.class);
 	}
 

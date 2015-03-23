@@ -36,7 +36,7 @@ _debug('singleDomainId', singleDomainId);
 _debug(_CMCache.getClasses());
 				var params = {};
 				params[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME] = entryType.get(CMDBuild.core.proxy.CMProxyConstants.NAME);
-				params[CMDBuild.core.proxy.CMProxyConstants.WITH_DISABLED_CLASSES] = false;
+				params[CMDBuild.core.proxy.CMProxyConstants.SKIP_DISABLED_CLASSES] = true;
 
 				CMDBuild.core.proxy.Domain.getList({
 					params: params,

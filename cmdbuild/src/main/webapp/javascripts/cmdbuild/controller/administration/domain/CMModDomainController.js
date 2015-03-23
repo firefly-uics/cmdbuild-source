@@ -51,6 +51,9 @@ _debug('this.view', this.view);
 		 */
 		cmOn: function(name, param, callBack) {
 			switch (name) {
+				case 'onAbortButtonClick':
+					return this.onAbortButtonClick();
+
 				case 'onModifyButtonClick':
 					return this.onModifyButtonClick();
 
@@ -61,7 +64,13 @@ _debug('this.view', this.view);
 			}
 		},
 
+		onAbortButtonClick: function() {
+			this.formController.onAbortButtonClick();
+			this.controllerEnabledClasses.onAbortButtonClick();
+		},
+
 		onModifyButtonClick: function() {
+			this.formController.view.enableModify();
 			this.controllerEnabledClasses.onModifyButtonClick();
 		},
 
@@ -82,6 +91,7 @@ _debug('selectedDomain', this.selectedDomain);
 			_CMMainViewportController.deselectAccordionByName("domain");
 			this.view.selectPropertiesTab();
 			this.formController.onAddButtonClick();
+			this.controllerEnabledClasses.onAddButtonClick();
 			this.attributesController.onAddButtonClick();
 		}
 	});

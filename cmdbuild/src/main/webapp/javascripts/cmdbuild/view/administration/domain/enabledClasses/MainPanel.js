@@ -90,7 +90,7 @@
 								scope: this,
 
 								handler: function(button, e) {
-									this.delegate.cmOn('onEnabledClassesAbortButtonClick');
+									this.delegate.cmOn('onAbortButtonClick');
 								}
 							})
 						]
@@ -110,14 +110,16 @@
 				delegate: this.delegate,
 
 				disabledClasses: !Ext.isEmpty(selectedDomain) ? selectedDomain.get('disabled1') : [],
-				title: CMDBuild.Translation.origin
+				title: CMDBuild.Translation.origin,
+				type: 'origin'
 			});
 
 			this.destinationTree = Ext.create('CMDBuild.view.administration.domain.enabledClasses.TreePanel', {
 				delegate: this.delegate,
 
 				disabledClasses: !Ext.isEmpty(selectedDomain) ? selectedDomain.get('disabled2') : [],
-				title: CMDBuild.Translation.destination
+				title: CMDBuild.Translation.destination,
+				type: 'destination'
 			});
 
 			this.wrapper.removeAll();

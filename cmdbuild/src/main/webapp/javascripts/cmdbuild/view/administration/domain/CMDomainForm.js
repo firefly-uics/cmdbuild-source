@@ -43,10 +43,14 @@
 			});
 
 			this.abortButton = Ext.create('Ext.button.Button', {
-				text: CMDBuild.Translation.common.buttons.abort
+				text: CMDBuild.Translation.common.buttons.abort,
+				scope: this,
+
+				handler: function() {
+					this.delegate.cmOn('onAbortButtonClick');
+				}
 			});
 			// END: Buttons configuration
-
 
 			this.cmTBar = [this.modifyButton, this.deleteButton];
 			this.cmButtons = [this.saveButton, this.abortButton];

@@ -27,6 +27,8 @@
 			}
 		},
 
+		onAbortButtonClick: onAbortButtonClick,
+
 		onDomainSelected: function(cmDomain) {
 			this.currentDomain = cmDomain;
 			this.view.onDomainSelected(cmDomain);
