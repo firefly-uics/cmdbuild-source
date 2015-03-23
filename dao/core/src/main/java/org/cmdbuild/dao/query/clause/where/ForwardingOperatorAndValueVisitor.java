@@ -1,90 +1,91 @@
 package org.cmdbuild.dao.query.clause.where;
 
-public class NullOperatorAndValueVisitor implements OperatorAndValueVisitor {
+import com.google.common.collect.ForwardingObject;
 
-	private static final NullOperatorAndValueVisitor INSTANCE = new NullOperatorAndValueVisitor();
+public abstract class ForwardingOperatorAndValueVisitor extends ForwardingObject implements OperatorAndValueVisitor {
 
-	public static NullOperatorAndValueVisitor getInstance() {
-		return INSTANCE;
-	}
-
-	private NullOperatorAndValueVisitor() {
-		// use factory method
+	/**
+	 * Usable by subclasses only.
+	 */
+	protected ForwardingOperatorAndValueVisitor() {
 	}
 
 	@Override
+	protected abstract OperatorAndValueVisitor delegate();
+
+	@Override
 	public void visit(final BeginsWithOperatorAndValue operatorAndValue) {
-		// nothing to do
+		delegate().visit(operatorAndValue);
 	}
 
 	@Override
 	public void visit(final ContainsOperatorAndValue operatorAndValue) {
-		// nothing to do
+		delegate().visit(operatorAndValue);
 	}
 
 	@Override
 	public void visit(final EmptyArrayOperatorAndValue operatorAndValue) {
-		// nothing to do
+		delegate().visit(operatorAndValue);
 	}
 
 	@Override
 	public void visit(final EndsWithOperatorAndValue operatorAndValue) {
-		// nothing to do
+		delegate().visit(operatorAndValue);
 	}
 
 	@Override
 	public void visit(final EqualsOperatorAndValue operatorAndValue) {
-		// nothing to do
+		delegate().visit(operatorAndValue);
 	}
 
 	@Override
 	public void visit(final GreaterThanOperatorAndValue operatorAndValue) {
-		// nothing to do
+		delegate().visit(operatorAndValue);
 	}
 
 	@Override
 	public void visit(final InOperatorAndValue operatorAndValue) {
-		// nothing to do
+		delegate().visit(operatorAndValue);
 	}
 
 	@Override
 	public void visit(final LessThanOperatorAndValue operatorAndValue) {
-		// nothing to do
+		delegate().visit(operatorAndValue);
 	}
 
 	@Override
 	public void visit(final NetworkContained operatorAndValue) {
-		// nothing to do
+		delegate().visit(operatorAndValue);
 	}
 
 	@Override
 	public void visit(final NetworkContainedOrEqual operatorAndValue) {
-		// nothing to do
+		delegate().visit(operatorAndValue);
 	}
 
 	@Override
 	public void visit(final NetworkContains operatorAndValue) {
-		// nothing to do
+		delegate().visit(operatorAndValue);
 	}
 
 	@Override
 	public void visit(final NetworkContainsOrEqual operatorAndValue) {
-		// nothing to do
+		delegate().visit(operatorAndValue);
 	}
 
 	@Override
 	public void visit(final NetworkRelationed operatorAndValue) {
-		// nothing to do
+		delegate().visit(operatorAndValue);
 	}
 
 	@Override
 	public void visit(final NullOperatorAndValue operatorAndValue) {
-		// nothing to do
+		delegate().visit(operatorAndValue);
 	}
 
 	@Override
 	public void visit(final StringArrayOverlapOperatorAndValue operatorAndValue) {
-		// nothing to do
+		delegate().visit(operatorAndValue);
 	}
 
 }
