@@ -207,6 +207,8 @@
 				isMany = domain.isMany(destination);
 
 			var editRelationWindow = Ext.create('CMDBuild.view.management.classes.relations.CMEditRelationWindow', {
+				domain: domain,
+				classObject: classData,
 				sourceCard: this.card,
 				relation: {
 					dst_cid: model.dst_cid,
@@ -342,9 +344,13 @@
 		onEditRelationClick: function(model) {
 			var me = this;
 			var data = model.raw || model.data;
+			var classData = _CMCache.getClassById(model.dst_cid);
+			var domain = _CMCache.getDomainById(model.dom_id);
 			var masterAndSlave = getMasterAndSlave(model.get(CMDBuild.core.proxy.CMProxyConstants.SOURCE));
 
 			var editRelationWindow = Ext.create('CMDBuild.view.management.classes.relations.CMEditRelationWindow', {
+				domain: domain,
+				classObject: classData,
 				sourceCard: this.card,
 				relation: {
 					rel_attr: data.attr_as_obj,
