@@ -104,7 +104,6 @@
 								&& classObject[CMDBuild.core.proxy.CMProxyConstants.NAME] != 'Class' // Discard root class of all classes
 								&& classObject['tableType'] == 'standard' // Discard simple classes
 							) {
-
 								// Class node object
 								var classMainNodeObject = {};
 								classMainNodeObject[CMDBuild.core.proxy.CMProxyConstants.LEAF] = true;
@@ -112,9 +111,9 @@
 								classMainNodeObject[CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION] = classObject[CMDBuild.core.proxy.CMProxyConstants.TEXT];
 								classMainNodeObject[CMDBuild.core.proxy.CMProxyConstants.ENABLED] = !Ext.Array.contains(disabledClasses, classObject[CMDBuild.core.proxy.CMProxyConstants.NAME]);
 
-								classMainNodeObject['id'] = classObject["id"];
-								classMainNodeObject['parent'] = classObject["parent"];
-								classMainNodeObject['iconCls'] = classObject["superclass"] ? "cmdbuild-tree-superclass-icon" : "cmdbuild-tree-class-icon";
+								classMainNodeObject['id'] = classObject['id'];
+								classMainNodeObject['parent'] = classObject['parent'];
+								classMainNodeObject['iconCls'] = classObject['superclass'] ? 'cmdbuild-tree-superclass-icon' : 'cmdbuild-tree-class-icon';
 
 								nodesMap[classMainNodeObject.id] = classMainNodeObject;
 							}
@@ -138,11 +137,11 @@
 						// Get root node and build offspring tree
 						switch(type) {
 							case 'destination': {
-								rootId = this.getSelectedDomain().get('idClass1');
+								rootId = this.getSelectedDomain().get('idClass2');
 							} break;
 
 							case 'origin': {
-								rootId = this.getSelectedDomain().get('idClass2');
+								rootId = this.getSelectedDomain().get('idClass1');
 							} break;
 						}
 
@@ -157,6 +156,20 @@
 			}
 
 			return treeStore;
+		},
+
+		/**
+		 * @param {Object} node
+		 * @param {Array} destinationArray
+		 */
+		getEnabledTreeVisit: function(node, destinationArray) {
+			node.eachChild(function(childNode) {
+				if (!childNode.get(CMDBuild.core.proxy.CMProxyConstants.ENABLED))
+					destinationArray.push(childNode.get(CMDBuild.core.proxy.CMProxyConstants.NAME));
+
+				if (!Ext.isEmpty(node.hasChildNodes()))
+					this.getEnabledTreeVisit(childNode, destinationArray);
+			}, this);
 		},
 
 		/**
@@ -198,19 +211,12 @@
 			var destinationDisabledClasses = [];
 
 			// Get origin disabled classes
-			this.view.originTree.getStore().getRootNode().eachChild(function(childNode) {
-				if (!childNode.get(CMDBuild.core.proxy.CMProxyConstants.ENABLED))
-					originDisabledClasses.push(childNode.get(CMDBuild.core.proxy.CMProxyConstants.NAME));
-			}, this);
+			this.getEnabledTreeVisit(this.view.originTree.getStore().getRootNode(), originDisabledClasses);
 
 			// Get destination disabled classes
-			this.view.destinationTree.getStore().getRootNode().eachChild(function(childNode) {
-				if (!childNode.get(CMDBuild.core.proxy.CMProxyConstants.ENABLED))
-					destinationDisabledClasses.push(childNode.get(CMDBuild.core.proxy.CMProxyConstants.NAME));
-			}, this);
+			this.getEnabledTreeVisit(this.view.destinationTree.getStore().getRootNode(), destinationDisabledClasses);
 
 			var invalidFields = this.parentDelegate.view.domainForm.getNonValidFields();
-
 			if (invalidFields.length == 0) {
 				CMDBuild.LoadMask.get().show();
 				var withDisabled = true;
@@ -256,10 +262,15 @@
 		 * TODO: to delete when CMFormCunctions will be refactored
 		 */
 		setDisabled: function(state) {
+			var topToolbar = this.view.getDockedComponent(CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_TOP);
 			var bottomToolbar = this.view.getDockedComponent(CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_BOTTOM);
 
 			this.view.originTree.setDisabled(state);
 			this.view.destinationTree.setDisabled(state);
+
+			Ext.Array.forEach(topToolbar.items.items, function(button, i, allButtons) {
+				button.setDisabled(!state);
+			}, this);
 
 			Ext.Array.forEach(bottomToolbar.items.items, function(button, i, allButtons) {
 				button.setDisabled(state);
