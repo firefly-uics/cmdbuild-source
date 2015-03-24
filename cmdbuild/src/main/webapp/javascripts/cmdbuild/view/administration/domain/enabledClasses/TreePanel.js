@@ -41,8 +41,7 @@
 						sortable: false,
 						draggable: false
 					},
-					{
-						xtype: 'checkcolumn',
+					Ext.create('Ext.grid.column.CheckColumn', {
 						header: CMDBuild.Translation.enabled,
 						dataIndex: CMDBuild.core.proxy.CMProxyConstants.ENABLED,
 						width: 60,
@@ -51,30 +50,29 @@
 						hideable: false,
 						menuDisabled: true,
 						fixed: true,
-						renderer: this.rendererEnabledColumn
-					},
+
+						renderer: function(value, meta, record, rowIndex, colIndex, store, view, returna) {
+							if (record.childNodes.length > 0) {
+								return '';
+							} else {// HACK: to recreate original renderer method behaviour, callParent doesn't work
+								var cssPrefix = Ext.baseCSSPrefix;
+								var cls = [cssPrefix + 'grid-checkcolumn'];
+
+								if (this.disabled)
+									meta.tdCls += ' ' + this.disabledCls;
+
+								if (value)
+									cls.push(cssPrefix + 'grid-checkcolumn-checked');
+
+								return '<img class="' + cls.join(' ') + '" src="' + Ext.BLANK_IMAGE_URL + '"/>';
+							}
+						}
+					})
 				],
 				store: this.delegate.buildClassesStore(this.disabledClasses, this.type)
 			});
 
 			this.callParent(arguments);
-		},
-
-		/**
-		 * Hide checkbox for superClasses
-		 *
-		 * @param {Object} value
-		 * @param {Object} metaData
-		 * @param {CMDBuild.model.Classes.domainsTreePanel} record
-		 *
-		 * @return {String} or null
-		 */
-		rendererEnabledColumn: function(value, metaData, record) {
-			if (record.childNodes.length > 0) {
-				return '';
-			} else {
-				return Ext.create('Ext.grid.column.CheckColumn').renderer(arguments); // Call the original renderer method
-			}
 		},
 
 		/**

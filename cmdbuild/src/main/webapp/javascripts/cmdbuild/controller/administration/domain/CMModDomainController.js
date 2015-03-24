@@ -22,7 +22,7 @@
 
 		constructor: function(view) {
 			this.callParent(arguments);
-_debug('this.view', this.view);
+
 			this.domain = null;
 			this.formController = new CMDBuild.controller.administration.domain.CMDomainFormController(this.view.domainForm);
 			this.attributesController = new CMDBuild.controller.administration.domain.CMDomainAttributesController(this.view.domainAttributes);
@@ -77,7 +77,7 @@ _debug('this.view', this.view);
 		onViewOnFront: function(selection) {
 			if (selection) {
 				this.selectedDomain = _CMCache.getDomainById(selection.get(CMDBuild.core.proxy.CMProxyConstants.ID)); // TODO: use proxy to read class
-_debug('selectedDomain', this.selectedDomain);
+
 				this.controllerEnabledClasses.onDomainSelected();
 
 				this.domain = _CMCache.getDomainById(selection.get("id")); // TODO: delete and keep selectedDomain
