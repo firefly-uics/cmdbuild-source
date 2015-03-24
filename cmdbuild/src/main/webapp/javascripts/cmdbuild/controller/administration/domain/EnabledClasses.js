@@ -106,14 +106,13 @@
 							) {
 								// Class node object
 								var classMainNodeObject = {};
-								classMainNodeObject[CMDBuild.core.proxy.CMProxyConstants.LEAF] = true;
-								classMainNodeObject[CMDBuild.core.proxy.CMProxyConstants.NAME] = classObject[CMDBuild.core.proxy.CMProxyConstants.NAME];
+								classMainNodeObject['iconCls'] = classObject['superclass'] ? 'cmdbuild-tree-superclass-icon' : 'cmdbuild-tree-class-icon';
 								classMainNodeObject[CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION] = classObject[CMDBuild.core.proxy.CMProxyConstants.TEXT];
 								classMainNodeObject[CMDBuild.core.proxy.CMProxyConstants.ENABLED] = !Ext.Array.contains(disabledClasses, classObject[CMDBuild.core.proxy.CMProxyConstants.NAME]);
-
-								classMainNodeObject['id'] = classObject['id'];
-								classMainNodeObject['parent'] = classObject['parent'];
-								classMainNodeObject['iconCls'] = classObject['superclass'] ? 'cmdbuild-tree-superclass-icon' : 'cmdbuild-tree-class-icon';
+								classMainNodeObject[CMDBuild.core.proxy.CMProxyConstants.ID] = classObject[CMDBuild.core.proxy.CMProxyConstants.ID];
+								classMainNodeObject[CMDBuild.core.proxy.CMProxyConstants.LEAF] = true;
+								classMainNodeObject[CMDBuild.core.proxy.CMProxyConstants.NAME] = classObject[CMDBuild.core.proxy.CMProxyConstants.NAME];
+								classMainNodeObject[CMDBuild.core.proxy.CMProxyConstants.PARENT] = classObject[CMDBuild.core.proxy.CMProxyConstants.PARENT];
 
 								nodesMap[classMainNodeObject.id] = classMainNodeObject;
 							}
@@ -123,8 +122,8 @@
 						for (var id in nodesMap) {
 							var node = nodesMap[id];
 
-							if (!Ext.isEmpty(node['parent']) && !Ext.isEmpty(nodesMap[node['parent']])) {
-								var parentNode = nodesMap[node['parent']];
+							if (!Ext.isEmpty(node[CMDBuild.core.proxy.CMProxyConstants.PARENT]) && !Ext.isEmpty(nodesMap[node[CMDBuild.core.proxy.CMProxyConstants.PARENT]])) {
+								var parentNode = nodesMap[node[CMDBuild.core.proxy.CMProxyConstants.PARENT]];
 
 								parentNode.children = parentNode.children || [];
 								parentNode.children.push(node);
