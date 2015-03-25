@@ -1,7 +1,7 @@
 (function() {
 
 	Ext.define('CMDBuild.view.administration.configuration.GeneralOptionsPanel', {
-		extend: 'CMDBuild.view.administration.configuration.BasePanel',
+		extend: 'Ext.form.Panel',
 
 		requires: [
 			'CMDBuild.core.proxy.CMProxyConstants',
@@ -23,6 +23,22 @@
 		 */
 		instanceNameField: undefined,
 
+		bodyCls: 'cmgraypanel',
+		border: false,
+		frame: false,
+		overflowY: 'auto',
+
+		layout: {
+			type: 'vbox',
+			align:'stretch'
+		},
+
+		fieldDefaults: {
+			labelAlign: 'left',
+			labelWidth: CMDBuild.CFG_LABEL_WIDTH,
+			width: CMDBuild.CFG_MEDIUM_FIELD_WIDTH
+		},
+
 		initComponent: function() {
 			this.instanceNameField = Ext.create('CMDBuild.view.common.field.translatable.Text', {
 				fieldLabel: CMDBuild.Translation.instanceName,
@@ -35,7 +51,6 @@
 			});
 
 			Ext.apply(this, {
-				title: this.baseTitle + this.titleSeparator + CMDBuild.Translation.generalOptions,
 				items: [
 					{
 						xtype: 'fieldset',
@@ -154,6 +169,37 @@
 							}
 						]
 					}
+				],
+				dockedItems: [
+					{
+						xtype: 'toolbar',
+						dock: 'bottom',
+						itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_BOTTOM,
+						ui: 'footer',
+
+						layout: {
+							type: 'hbox',
+							align: 'middle',
+							pack: 'center'
+						},
+
+						items: [
+							Ext.create('CMDBuild.core.buttons.Save', {
+								scope: this,
+
+								handler: function(button, e) {
+									this.delegate.cmOn('onConfigurationSaveButtonClick');
+								}
+							}),
+							Ext.create('CMDBuild.core.buttons.Abort', {
+								scope: this,
+
+								handler: function(button, e) {
+									this.delegate.cmOn('onConfigurationAbortButtonClick');
+								}
+							})
+						]
+					}
 				]
 			});
 
@@ -162,8 +208,6 @@
 
 		/**
 		 * @param {Object} saveDataObject
-		 *
-		 * @override
 		 */
 		afterSubmit: function(saveDataObject) {
 			Ext.get('instance_name').dom.innerHTML = saveDataObject['instance_name'];

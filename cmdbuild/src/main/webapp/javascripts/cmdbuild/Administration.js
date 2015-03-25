@@ -76,9 +76,9 @@
 									new Ext.Panel({
 										cls: 'empty_panel x-panel-body'
 									}),
-									Ext.create('CMDBuild.view.administration.configuration.GeneralOptionsPanel', {
+									Ext.create('CMDBuild.view.administration.configuration.MainPanel', {
 										cmControllerType: 'CMDBuild.controller.administration.configuration.Main',
-										cmName: 'modsetupcmdbuild'
+										cmName: 'configuration'
 									}),
 									new CMDBuild.view.administration.filter.CMGroupFilterPanel({
 										cmControllerType: controllerNS.administration.filter.CMGroupFilterPanelController,
@@ -117,30 +117,6 @@
 										Ext.create('CMDBuild.view.administration.localizations.MainPanel', {
 											cmControllerType: 'CMDBuild.controller.administration.localizations.Main',
 											cmName: 'localizations'
-										}),
-										Ext.create('CMDBuild.view.administration.configuration.WorkflowPanel', {
-											cmControllerType: 'CMDBuild.controller.administration.configuration.Main',
-											cmName: 'modsetupworkflow'
-										}),
-										Ext.create('CMDBuild.view.administration.configuration.RelationGraphPanel', {
-											cmControllerType: 'CMDBuild.controller.administration.configuration.Main',
-											cmName: 'modsetupgraph'
-										}),
-										Ext.create('CMDBuild.view.administration.configuration.AlfrescoPanel', {
-											cmControllerType: 'CMDBuild.controller.administration.configuration.Main',
-											cmName: 'modsetupalfresco'
-										}),
-										Ext.create('CMDBuild.view.administration.configuration.GisPanel', {
-											cmControllerType: 'CMDBuild.controller.administration.configuration.Main',
-											cmName: 'modsetupgis'
-										}),
-										Ext.create('CMDBuild.view.administration.configuration.BimPanel', {
-											cmControllerType: 'CMDBuild.controller.administration.configuration.Main',
-											cmName: 'modsetupbim'
-										}),
-										Ext.create('CMDBuild.view.administration.configuration.ServerPanel', {
-											cmControllerType: 'CMDBuild.controller.administration.configuration.Server',
-											cmName: 'modsetupserver'
 										}),
 										new CMDBuild.view.administration.dataview.CMSqlDataView({
 											cmControllerType: controllerNS.administration.dataview.CMSqlDataViewController,

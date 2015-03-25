@@ -1,7 +1,7 @@
 (function() {
 
 	Ext.define('CMDBuild.view.administration.configuration.AlfrescoPanel', {
-		extend: 'CMDBuild.view.administration.configuration.BasePanel',
+		extend: 'Ext.form.Panel',
 
 		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
 
@@ -34,6 +34,22 @@
 		 * @property {Ext.form.field.ComboBox}
 		 */
 		lookupTypeCombo: undefined,
+
+		bodyCls: 'cmgraypanel',
+		border: false,
+		frame: false,
+		overflowY: 'auto',
+
+		layout: {
+			type: 'vbox',
+			align:'stretch'
+		},
+
+		fieldDefaults: {
+			labelAlign: 'left',
+			labelWidth: CMDBuild.CFG_LABEL_WIDTH,
+			width: CMDBuild.CFG_MEDIUM_FIELD_WIDTH
+		},
 
 		initComponent: function() {
 			this.lookupTypeCombo = Ext.create('Ext.form.field.ComboBox', {
@@ -71,7 +87,6 @@
 			});
 
 			Ext.apply(this, {
-				title: this.baseTitle + this.titleSeparator + CMDBuild.Translation.alfresco,
 				items: [
 					{
 						xtype: 'fieldset',
@@ -151,6 +166,37 @@
 						]
 					},
 					this.credentialsFieldset
+				],
+				dockedItems: [
+					{
+						xtype: 'toolbar',
+						dock: 'bottom',
+						itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_BOTTOM,
+						ui: 'footer',
+
+						layout: {
+							type: 'hbox',
+							align: 'middle',
+							pack: 'center'
+						},
+
+						items: [
+							Ext.create('CMDBuild.core.buttons.Save', {
+								scope: this,
+
+								handler: function(button, e) {
+									this.delegate.cmOn('onConfigurationSaveButtonClick');
+								}
+							}),
+							Ext.create('CMDBuild.core.buttons.Abort', {
+								scope: this,
+
+								handler: function(button, e) {
+									this.delegate.cmOn('onConfigurationAbortButtonClick');
+								}
+							})
+						]
+					}
 				]
 			});
 

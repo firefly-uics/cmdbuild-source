@@ -4,7 +4,6 @@
 		extend: 'CMDBuild.view.common.CMBaseAccordion',
 
 		cmName: 'setup',
-		hideMode: 'offsets',
 		title: CMDBuild.Translation.setup,
 
 		constructor: function() {
@@ -17,51 +16,52 @@
 		 * @override
 		 */
 		updateStore: function() {
-			var root = this.getStore().getRootNode();
-			root.removeAll();
-
-			var children = [{
+			this.store.getRootNode().appendChild([{
+				id: 'generalOptions',
 				text: CMDBuild.Translation.generalOptions,
 				leaf: true,
-				cmName: 'modsetupcmdbuild'
-			}];
+				cmName: 'configuration'
+			}]);
 
-			if (!_CMUIConfiguration.isCloudAdmin()) {
-				children = children.concat([
+			if (!_CMUIConfiguration.isCloudAdmin())
+				this.store.getRootNode().appendChild([
 					{
+						id: 'workflow',
 						text: CMDBuild.Translation.workflowEngine,
 						leaf: true,
-						cmName: 'modsetupworkflow'
+						cmName: 'configuration'
 					},
 					{
+						id: 'relationGraph',
 						text: CMDBuild.Translation.relationGraph,
 						leaf: true,
-						cmName: 'modsetupgraph'
+						cmName: 'configuration'
 					},
 					{
+						id: 'alfresco',
 						text: CMDBuild.Translation.alfresco,
 						leaf: true,
-						cmName: 'modsetupalfresco'
+						cmName: 'configuration'
 					},
 					{
+						id: 'gis',
 						text: CMDBuild.Translation.gis,
 						leaf: true,
-						cmName: 'modsetupgis'
+						cmName: 'configuration'
 					},
 					{
+						id: 'bim',
 						text: CMDBuild.Translation.bim,
 						leaf: true,
-						cmName: 'modsetupbim'
+						cmName: 'configuration'
 					},
 					{
+						id: 'server',
 						text: CMDBuild.Translation.serverManagement,
 						leaf: true,
-						cmName: 'modsetupserver'
+						cmName: 'configuration'
 					}
 				]);
-			}
-
-			root.appendChild(children);
 		}
 	});
 
