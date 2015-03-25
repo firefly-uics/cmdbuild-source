@@ -39,7 +39,12 @@
 			});
 
 			this.saveButton = Ext.create('Ext.button.Button', {
-				text: CMDBuild.Translation.common.buttons.save
+				text: CMDBuild.Translation.common.buttons.save,
+				scope: this,
+
+				handler: function() {
+					this.delegate.cmOn('onSaveButtonClick');
+				}
 			});
 
 			this.abortButton = Ext.create('Ext.button.Button', {
