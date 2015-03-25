@@ -40,7 +40,7 @@ public enum DomainConverter {
 
 		@Override
 		public boolean isValid() {
-			return false;
+			return true;
 		}
 
 		@Override
@@ -59,12 +59,12 @@ public enum DomainConverter {
 			return this;
 		}
 	},
-	
+
 	INVERSE_DESCRIPTION(inverseDescription()) {
 
 		@Override
 		public boolean isValid() {
-			return false;
+			return true;
 		}
 
 		@Override
@@ -83,12 +83,12 @@ public enum DomainConverter {
 			return this;
 		}
 	},
-	
+
 	MASTERDETAIL_LABEL(masterDetail()) {
 
 		@Override
 		public boolean isValid() {
-			return false;
+			return true;
 		}
 
 		@Override
@@ -135,31 +135,31 @@ public enum DomainConverter {
 	private static final String UNDEFINED_FIELD = "undefined";
 
 	public abstract TranslationObject create(String domainName);
-	
+
 	public abstract DomainConverter withTranslations(Map<String, String> map);
 
 	public abstract boolean isValid();
-	
+
 	public static String description() {
 		return DESCRIPTION_FIELD;
 	}
-	
+
 	public static String directDescription() {
 		return DIRECTDESCRIPTION;
 	}
-	
+
 	public static String inverseDescription() {
 		return INVERSEDESCRIPTION;
 	}
-	
+
 	public static String masterDetail() {
 		return MASTERDETAIL;
 	}
-	
+
 	private static String undefined() {
 		return UNDEFINED_FIELD;
 	}
-	
+
 	private DomainConverter(final String fieldName) {
 		this.fieldName = fieldName;
 	}
