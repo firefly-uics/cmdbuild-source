@@ -36,7 +36,8 @@
 					extraParams: {
 						type: type,
 						active: true,
-						'short': true
+						'short': true,
+						localized: true
 					},
 					actionMethods: 'POST' // Lookup types can have UTF-8 names  not handled correctly
 				},

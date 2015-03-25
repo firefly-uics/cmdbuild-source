@@ -44,7 +44,9 @@
 		/**
 		 * @return {Ext.data.Store}
 		 */
-		getStore: function() {
+		getStore: function(localized) {
+			localized = localized ? true : false;
+
 			return Ext.create('Ext.data.Store', {
 				autoLoad: false,
 				model: 'CMDBuild.model.Report.grid',
@@ -57,7 +59,8 @@
 						totalProperty: 'results'
 					},
 					extraParams: {
-						type: CMDBuild.core.proxy.CMProxyConstants.CUSTOM
+						type: CMDBuild.core.proxy.CMProxyConstants.CUSTOM,
+						localized: localized
 					}
 				},
 				sorters: [{

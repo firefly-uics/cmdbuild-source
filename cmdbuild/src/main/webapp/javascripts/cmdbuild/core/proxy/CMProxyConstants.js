@@ -149,6 +149,7 @@
 		LENGTH: 'len',
 		LOCAL: 'local',
 		LOCALIZATION: 'localization',
+		LOCALIZED: 'localized',
 		LONGITUDE: 'lon',
 		LOOKUP: 'lookup',
 		MAP_LATITATUDE:'mapLatitude',

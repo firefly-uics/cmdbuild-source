@@ -49,8 +49,8 @@
 		// override
 		getValues: function() {
 			var values = {};
-			values[NAME] = this.name.getValue();
-			values[DESCRIPTION] = this.description.getValue();
+			values[_CMProxy.parameter.NAME] = this.name.getValue();
+			values[_CMProxy.parameter.DESCRIPTION] = this.description.getValue();
 
 			return values;
 		},
