@@ -1072,7 +1072,7 @@ BEGIN
 --		EXECUTE 'SELECT ($1).' || quote_ident(CardColumn) INTO OldCardId USING OLD; -- pg84
 		EXECUTE 'SELECT (' || quote_literal(OLD) || '::' || TG_RELID::regclass || ').' || quote_ident(CardColumn) INTO OldCardId;
 		IF (OldCardId <> NewCardId) THEN -- If the non-reference side changes...
-			PERFORM _cm_update_reference(TableId, AttributeName, OldCardId, NULL);
+			PERFORM _cm_update_reference(NEW."User", TableId, AttributeName, OldCardId, NULL);
 			-- OldRefValue is kept null because it is like a new relation
 		ELSE
 --			EXECUTE 'SELECT ($1).' || quote_ident(CardColumn) INTO OldRefValue USING OLD; -- pg84
@@ -1081,7 +1081,7 @@ BEGIN
 	END IF;
 
 	IF ((NewRefValue IS NULL) OR (OldRefValue IS NULL) OR (OldRefValue <> NewRefValue)) THEN
-		PERFORM _cm_update_reference(TableId, AttributeName, NewCardId, NewRefValue);
+		PERFORM _cm_update_reference(NEW."User", TableId, AttributeName, NewCardId, NewRefValue);
 	END IF;
 
 	RETURN NEW;
