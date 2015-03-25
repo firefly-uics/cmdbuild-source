@@ -49,9 +49,6 @@
 				case 'onAddButtonClick':
 					return this.onAddButtonClick();
 
-				case 'onEnabledClassesSaveButtonClick':
-					return this.onEnabledClassesSaveButtonClick();
-
 				default: {
 					if (!Ext.isEmpty(this.parentDelegate))
 						return this.parentDelegate.cmOn(name, param, callBack);
@@ -203,48 +200,6 @@
 			this.view.setDisabled(false);
 
 			this.setDisabled(true);
-		},
-
-		onEnabledClassesSaveButtonClick: function() {
-			var originDisabledClasses = [];
-			var destinationDisabledClasses = [];
-
-			// Get origin disabled classes
-			this.getEnabledTreeVisit(this.view.originTree.getStore().getRootNode(), originDisabledClasses);
-
-			// Get destination disabled classes
-			this.getEnabledTreeVisit(this.view.destinationTree.getStore().getRootNode(), destinationDisabledClasses);
-
-			var invalidFields = this.parentDelegate.view.domainForm.getNonValidFields();
-			if (invalidFields.length == 0) {
-				CMDBuild.LoadMask.get().show();
-				var withDisabled = true;
-				var data = this.parentDelegate.view.domainForm.getData(withDisabled);
-				if (this.parentDelegate.formController.currentDomain == null) {
-					data.id = -1;
-				} else {
-					data.id = this.parentDelegate.formController.currentDomain.get(CMDBuild.core.proxy.CMProxyConstants.ID);
-
-					data.disabled1 = Ext.encode(originDisabledClasses); // TODO proxy constants
-					data.disabled2 = Ext.encode(destinationDisabledClasses); // TODO proxy constants
-				}
-
-				CMDBuild.ServiceProxy.administration.domain.save({
-					params: data,
-					scope: this,
-					success: function(req, res, decoded) {
-						this.parentDelegate.view.domainForm.disableModify();
-						_CMCache.onDomainSaved(decoded.domain);
-						_CMCache.flushTranslationsToSave(decoded.domain.name);
-					},
-					callback: function() {
-						CMDBuild.LoadMask.get().hide();
-					}
-				});
-
-			} else {
-				CMDBuild.Msg.error(CMDBuild.Translation.common.failure, CMDBuild.Translation.errors.invalid_fields, false);
-			}
 		},
 
 		onModifyButtonClick: function() {
