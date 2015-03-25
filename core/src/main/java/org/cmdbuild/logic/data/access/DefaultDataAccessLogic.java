@@ -837,6 +837,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 		if (card != null) {
 			final Card updatedCard = Card.newInstance() //
 					.clone(card) //
+					.clearAttributes() //
 					.withAllAttributes(attributes) //
 					.build();
 			storeOf(updatedCard).update(updatedCard);
