@@ -1175,7 +1175,7 @@
 			"shownotes": "Hiện thị các ghi chú"
 		},
 		"modmenu": {
-			"Lệnh đơn": "Hướng"
+			"menu": "Hướng"
 		},
 		"modreport": {
 			"add_report": "Thêm báo cáo",
