@@ -1,7 +1,7 @@
 (function() {
 
 	Ext.define('CMDBuild.view.administration.configuration.BimPanel', {
-		extend: 'CMDBuild.view.administration.configuration.BasePanel',
+		extend: 'Ext.form.Panel',
 
 		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
 
@@ -15,6 +15,22 @@
 		 */
 		configFileName: 'bim',
 
+		bodyCls: 'cmgraypanel',
+		border: false,
+		frame: false,
+		overflowY: 'auto',
+
+		layout: {
+			type: 'vbox',
+			align:'stretch'
+		},
+
+		fieldDefaults: {
+			labelAlign: 'left',
+			labelWidth: CMDBuild.CFG_LABEL_WIDTH,
+			width: CMDBuild.CFG_MEDIUM_FIELD_WIDTH
+		},
+
 		initComponent: function() {
 			this.enabledCheckBox = Ext.create('Ext.ux.form.XCheckbox', {
 				name: CMDBuild.core.proxy.CMProxyConstants.ENABLED,
@@ -22,7 +38,6 @@
 			});
 
 			Ext.apply(this, {
-				title: this.baseTitle + this.titleSeparator + CMDBuild.Translation.bim,
 				items: [
 					this.enabledCheckBox,
 					{
@@ -41,6 +56,37 @@
 						name: CMDBuild.core.proxy.CMProxyConstants.PASSWORD,
 						fieldLabel: CMDBuild.Translation.password,
 						inputType: 'password'
+					}
+				],
+				dockedItems: [
+					{
+						xtype: 'toolbar',
+						dock: 'bottom',
+						itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_BOTTOM,
+						ui: 'footer',
+
+						layout: {
+							type: 'hbox',
+							align: 'middle',
+							pack: 'center'
+						},
+
+						items: [
+							Ext.create('CMDBuild.core.buttons.Save', {
+								scope: this,
+
+								handler: function(button, e) {
+									this.delegate.cmOn('onConfigurationSaveButtonClick');
+								}
+							}),
+							Ext.create('CMDBuild.core.buttons.Abort', {
+								scope: this,
+
+								handler: function(button, e) {
+									this.delegate.cmOn('onConfigurationAbortButtonClick');
+								}
+							})
+						]
 					}
 				]
 			});

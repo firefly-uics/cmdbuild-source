@@ -1,7 +1,7 @@
 (function() {
 
-	Ext.define('CMDBuild.view.administration.localizations.MainPanel', {
-		extend: 'Ext.form.Panel',
+	Ext.define('CMDBuild.view.administration.configuration.MainPanel', {
+		extend: 'Ext.panel.Panel',
 
 		/**
 		 * @cfg {CMDBuild.controller.administration.localizations.Main}
@@ -11,9 +11,9 @@
 		/**
 		 * @cfg {String}
 		 */
-		baseTitle: '@@ Localizations',
+		baseTitle: CMDBuild.Translation.setup,
 
-		bodyCls: 'cmgraypanel',
+		bodyCls: 'cmgraypanel-nopadding',
 		border: true,
 		frame: false,
 		layout: 'fit'

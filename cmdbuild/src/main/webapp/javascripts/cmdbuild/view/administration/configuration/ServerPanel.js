@@ -23,12 +23,13 @@
 		 */
 		titleSeparator: ' - ',
 
+		bodyCls: 'cmgraypanel',
+		border: false,
 		frame: true,
 		overflowY: 'auto',
 
 		initComponent: function() {
 			Ext.apply(this, {
-				title: this.baseTitle + this.titleSeparator + CMDBuild.Translation.serverManagement,
 				items: [
 					{
 						xtype: 'fieldset',
@@ -41,7 +42,7 @@
 								scope: this,
 
 								handler: function() {
-									this.delegate.cmOn('onConfigurationServerClearCacheButtonClick');
+									this.delegate.cmOn('onConfigurationClearCacheButtonClick');
 								}
 							})
 						]
@@ -57,7 +58,7 @@
 								scope: this,
 
 								handler: function() {
-									this.delegate.cmOn('onConfigurationServerServiceSynchButtonClick');
+									this.delegate.cmOn('onConfigurationServiceSynchButtonClick');
 								}
 							})
 						]
@@ -73,7 +74,7 @@
 								scope: this,
 
 								handler: function() {
-									this.delegate.cmOn('onConfigurationServerUnlockCardsButtonClick');
+									this.delegate.cmOn('onConfigurationUnlockCardsButtonClick');
 								}
 							})
 						]

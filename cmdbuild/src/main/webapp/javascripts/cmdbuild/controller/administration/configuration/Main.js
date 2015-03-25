@@ -3,7 +3,30 @@
 	Ext.define('CMDBuild.controller.administration.configuration.Main', {
 		extend: 'CMDBuild.controller.common.CMBasePanelController',
 
-		requires: ['CMDBuild.core.proxy.Configuration'],
+		requires: [
+			'CMDBuild.core.proxy.CMProxyWorkflow',
+			'CMDBuild.core.proxy.Card',
+			'CMDBuild.core.proxy.Configuration',
+			'CMDBuild.core.proxy.Utils'
+		],
+
+		/**
+		 * @cfg {Array}
+		 */
+		subSections: [
+			'generalOptions', // Default
+			'alfresco',
+			'bim',
+			'gis',
+			'relationGraph',
+			'server',
+			'workflow'
+		],
+
+		/**
+		 * @cfg {String}
+		 */
+		titleSeparator: ' - ',
 
 		/**
 		 * @property {Mixed}
@@ -29,8 +52,17 @@
 				case 'onConfigurationAbortButtonClick':
 					return this.onConfigurationAbortButtonClick();
 
+				case 'onConfigurationClearCacheButtonClick':
+					return this.onConfigurationClearCacheButtonClick();
+
 				case 'onConfigurationSaveButtonClick':
 					return this.onConfigurationSaveButtonClick();
+
+				case 'onConfigurationServiceSynchButtonClick':
+					return this.onConfigurationServiceSynchButtonClick();
+
+				case 'onConfigurationUnlockCardsButtonClick':
+					return this.onConfigurationUnlockCardsButtonClick();
 
 				default: {
 					if (!Ext.isEmpty(this.parentDelegate))
@@ -43,23 +75,106 @@
 			this.readConfiguration();
 		},
 
+		onConfigurationClearCacheButtonClick: function() {
+			CMDBuild.core.proxy.Utils.clearCache({
+				success: CMDBuild.Msg.success
+			});
+		},
+
 		onConfigurationSaveButtonClick: function() {
 			CMDBuild.core.proxy.Configuration.save({
 				scope: this,
-				params: this.view.getForm().getValues(),
+				params: this.sectionView.getForm().getValues(),
 				success: function(result, options, decodedResult) {
 					this.readConfiguration();
 
 					CMDBuild.Msg.success();
 				}
-			}, this.view.configFileName);
+			}, this.sectionView.configFileName);
 		},
 
-		onViewOnFront: function() {
-			if (this.view.isVisible())
+		onConfigurationServiceSynchButtonClick: function() {
+			CMDBuild.core.proxy.CMProxyWorkflow.synchronize({
+				success: CMDBuild.Msg.success
+			});
+		},
+
+		onConfigurationUnlockCardsButtonClick: function() {
+			CMDBuild.core.proxy.Card.unlockAllCards({
+				success: CMDBuild.Msg.success
+			});
+		},
+
+		/**
+		 * Setup view items on accordion click
+		 *
+		 * @param {CMDBuild.view.common.CMAccordionStoreModel} parameters
+		 *
+		 * @override
+		 */
+		onViewOnFront: function(parameters) {
+_debug('parameters', parameters);
+			if (!Ext.Object.isEmpty(parameters)) {
+				var subSection = Ext.Array.contains(this.subSections, parameters.get(CMDBuild.core.proxy.CMProxyConstants.ID))
+					? parameters.get(CMDBuild.core.proxy.CMProxyConstants.ID) : this.subSections[0];
+
+				this.view.removeAll(true);
+
+				switch(subSection) {
+					case 'alfresco': {
+						this.sectionView = Ext.create('CMDBuild.view.administration.configuration.AlfrescoPanel', {
+							delegate: this
+						});
+					} break;
+
+					case 'bim': {
+						this.sectionView = Ext.create('CMDBuild.view.administration.configuration.BimPanel', {
+							delegate: this
+						});
+					} break;
+
+					case 'gis': {
+						this.sectionView = Ext.create('CMDBuild.view.administration.configuration.GisPanel', {
+							delegate: this
+						});
+					} break;
+
+					case 'relationGraph': {
+						this.sectionView = Ext.create('CMDBuild.view.administration.configuration.RelationGraphPanel', {
+							delegate: this
+						});
+					} break;
+
+					case 'server': {
+						this.sectionView = Ext.create('CMDBuild.view.administration.configuration.ServerPanel', {
+							delegate: this
+						});
+					} break;
+
+					case 'workflow': {
+						this.sectionView = Ext.create('CMDBuild.view.administration.configuration.WorkflowPanel', {
+							delegate: this
+						});
+					} break;
+
+					case 'generalOptions':
+					default: {
+						this.sectionView = Ext.create('CMDBuild.view.administration.configuration.GeneralOptionsPanel', {
+							delegate: this
+						});
+					}
+				}
+
+				this.view.add(this.sectionView);
+
 				this.readConfiguration();
 
-			_CMCache.initModifyingTranslations();
+				this.setViewTitle(parameters.get(CMDBuild.core.proxy.CMProxyConstants.TEXT));
+
+				_CMCache.initModifyingTranslations();
+
+				this.callParent(arguments);
+			}
 		},
 
 		readConfiguration: function() {
@@ -68,11 +183,22 @@
 				success: function(result, options, decodedResult){
 					_CMCache.setActiveTranslations(decodedResult.data.enabled_languages);
 
-					this.view.getForm().setValues(decodedResult.data);
+					this.sectionView.getForm().setValues(decodedResult.data);
 
-					this.view.afterSubmit(decodedResult.data);
+					if (typeof this.sectionView.afterSubmit == 'function')
+						this.sectionView.afterSubmit(decodedResult.data);
 				}
-			}, this.view.configFileName);
+			}, this.sectionView.configFileName);
+		},
+
+		/**
+		 * Setup view panel title as a breadcrumbs component
+		 *
+		 * @param {String} titlePart
+		 */
+		setViewTitle: function(titlePart) {
+			if (!Ext.isEmpty(titlePart))
+				this.view.setTitle(this.view.baseTitle + this.titleSeparator + titlePart);
 		}
 	});
 

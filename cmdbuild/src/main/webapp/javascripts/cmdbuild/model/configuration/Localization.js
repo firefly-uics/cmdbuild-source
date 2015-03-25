@@ -18,7 +18,9 @@
 		hasLocalizations: function() {
 			var languagesWithTrasnlations = this.get(CMDBuild.core.proxy.CMProxyConstants.LANGUAGES_WITH_LOCALIZATIONS);
 
-			return Ext.isArray(languagesWithTrasnlations) && languagesWithTrasnlations.length > 0;
+			// TODO: it's needed to avoid to use "CMDBuild.Config.cmdbuild.enabled_languages", i must use that because configuration modules are initialized
+			// before configuration call ends
+			return (Ext.isArray(languagesWithTrasnlations) && languagesWithTrasnlations.length > 0) || !Ext.isEmpty(CMDBuild.Config.cmdbuild.enabled_languages);
 		},
 
 		/**

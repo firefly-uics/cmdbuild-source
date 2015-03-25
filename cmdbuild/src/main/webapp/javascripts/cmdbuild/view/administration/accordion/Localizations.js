@@ -37,7 +37,7 @@
 					leaf: true,
 					text: '@@ Advanced table',
 					iconCls: 'cmdbuild-tree-localization-icon'
-				},
+				}
 			]);
 		}
 	});
