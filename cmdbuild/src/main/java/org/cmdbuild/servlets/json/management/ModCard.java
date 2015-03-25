@@ -412,6 +412,7 @@ public class ModCard extends JSONBaseWithSpringContext {
 			final Card cardToUpdate = Card.newInstance() //
 					.withId(entry.getKey()) //
 					.withClassName(entry.getValue()).withAllAttributes(attributes) //
+					.withUser(operationUser().getAuthenticatedUser().getUsername()) //
 					.build();
 			dataLogic.updateCard(cardToUpdate);
 		}
