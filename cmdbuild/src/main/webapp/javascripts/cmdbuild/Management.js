@@ -26,6 +26,7 @@
 
 		requires: [
 			'Ext.ux.Router',
+			'CMDBuild.core.proxy.CMProxyConstants',
 			'CMDBuild.core.proxy.Classes',
 			'CMDBuild.core.proxy.Configuration',
 			'CMDBuild.core.proxy.Report',
@@ -222,44 +223,46 @@
 			loadResources: function() {
 				_CMCache.syncAttachmentCategories();
 
-				var me = this,
-					reqBarrier = new CMDBuild.Utils.CMRequestBarrier(function callback() {
-						hideIfEmpty(processAccordion);
-						hideIfEmpty(reportAccordion);
-						hideIfEmpty(menuAccordion);
-						hideIfEmpty(classesAccordion);
+				var me = this;
+				var params = {};
+				var reqBarrier = new CMDBuild.Utils.CMRequestBarrier(function callback() {
+					hideIfEmpty(processAccordion);
+					hideIfEmpty(reportAccordion);
+					hideIfEmpty(menuAccordion);
+					hideIfEmpty(classesAccordion);
 
-						_CMMainViewportController = new CMDBuild.controller.CMMainViewportController(
-							new CMDBuild.view.CMMainViewport({
-								cmAccordions: me.cmAccordions,
-								cmPanels: me.cmPanels,
-								hideAccordions: _CMUIConfiguration.isHideSidePanel()
-							})
-						);
+					_CMMainViewportController = new CMDBuild.controller.CMMainViewportController(
+						new CMDBuild.view.CMMainViewport({
+							cmAccordions: me.cmAccordions,
+							cmPanels: me.cmPanels,
+							hideAccordions: _CMUIConfiguration.isHideSidePanel()
+						})
+					);
 
-						/* *********************************
-						 * Resume here the layouts operations
-						 */
-						Ext.resumeLayouts(true);
-						/* *********************************/
+					/* *********************************
+					 * Resume here the layouts operations
+					 */
+					Ext.resumeLayouts(true);
+					/* *********************************/
 
-						_CMMainViewportController.viewport.doLayout();
+					_CMMainViewportController.viewport.doLayout();
 
-						CMDBuild.view.CMMainViewport.hideSplash(function() {
-							_CMMainViewportController.setInstanceName(CMDBuild.Config.cmdbuild.instance_name);
+					CMDBuild.view.CMMainViewport.hideSplash(function() {
+						_CMMainViewportController.setInstanceName(CMDBuild.Config.cmdbuild.instance_name);
 
-							// Execute routes
-							CMDBuild.routes.Routes.exec();
+						// Execute routes
+						CMDBuild.routes.Routes.exec();
 
-							_CMMainViewportController.selectStartingClass();
-						});
+						_CMMainViewportController.selectStartingClass();
 					});
+				});
+
+				params = {};
+				params[CMDBuild.core.proxy.CMProxyConstants.ACTIVE] = true;
+				params[CMDBuild.core.proxy.CMProxyConstants.LOCALIZED] = true;
 
 				CMDBuild.ServiceProxy.classes.read({
-					params: {
-						active: true,
-						localized: true
-					},
+					params: params,
 					scope: this,
 					success: function(response, options, decoded) {
 						_CMCache.addClasses(decoded.classes);
@@ -267,7 +270,11 @@
 						processAccordion.updateStore();
 
 						// Do a separate request for the widgets because, at this time it is not possible serialize them with the classes
+						params = {};
+						params[CMDBuild.core.proxy.CMProxyConstants.LOCALIZED] = true;
+
 						CMDBuild.ServiceProxy.CMWidgetConfiguration.read({
+							params: params,
 							scope: this,
 							success: function(response, options, decoded) {
 								// A day I'll can do a request to have only the active, now the cache discards the inactive if the flag onlyActive is true
@@ -277,19 +284,23 @@
 						});
 
 						// To fill the menu is needed that the classes are already loaded
-						var readMenuParams = {};
-						readMenuParams[_CMProxy.parameter.GROUP_NAME] = CMDBuild.Runtime.DefaultGroupName;
+						params = {};
+						params[CMDBuild.core.proxy.CMProxyConstants.GROUP_NAME] = CMDBuild.Runtime.DefaultGroupName;
 
 						CMDBuild.ServiceProxy.menu.read({
-							params: readMenuParams,
+							params: params,
 							success: function(response, options, decoded) {
 								menuAccordion.updateStore(decoded.menu);
 							},
 							callback: reqBarrier.getCallback()
 						});
 
+						params = {};
+						params[CMDBuild.core.proxy.CMProxyConstants.LOCALIZED] = true;
+
 						_CMProxy.dataView.read({
-							success : function(response, options, decoded) {
+							params: params,
+							success: function(response, options, decoded) {
 								dataViewAccordion.updateStore(decoded.views);
 							},
 							callback: reqBarrier.getCallback()
@@ -319,10 +330,12 @@
 					callback: reqBarrier.getCallback()
 				});
 
+				params = {};
+				params[CMDBuild.core.proxy.CMProxyConstants.ACTIVE] = true;
+				params[CMDBuild.core.proxy.CMProxyConstants.LOCALIZED] = true;
+
 				CMDBuild.ServiceProxy.administration.domain.list({ //TODO change 'administration'
-					params: {
-						active: true
-					},
+					params: params,
 					success: function(response, options, decoded) {
 						_CMCache.addDomains(decoded.domains);
 					},
@@ -338,7 +351,11 @@
 					callback: reqBarrier.getCallback()
 				});
 
+				params = {};
+				params[CMDBuild.core.proxy.CMProxyConstants.LOCALIZED] = true;
+
 				CMDBuild.ServiceProxy.lookup.readAllTypes({
+					params: params,
 					success : function(response, options, decoded) {
 						_CMCache.addLookupTypes(decoded);
 					},
