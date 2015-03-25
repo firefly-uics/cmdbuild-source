@@ -69,7 +69,7 @@
 				cmImmutable: true
 			});
 
-			this.treeDescription = Ext.create('CMDBuild.view.common.field.translatable.Text', {
+			this.treeDescription = Ext.create('Ext.form.TextField', {
 				fieldLabel: CMDBuild.Translation.description_,
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				width: CMDBuild.ADM_BIG_FIELD_WIDTH,

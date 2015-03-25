@@ -26,24 +26,6 @@
 			anchor: '100%'
 		},
 
-		initComponent: function() {
-			var me = this;
-
-			this.callParent(arguments);
-
-			_CMCache.readTranslations(
-				this.delegate.translationsKeyType,
-				this.delegate.translationsKeyName,
-				this.delegate.translationsKeySubName,
-				this.delegate.translationsKeyField,
-				function(result, options, decodedResult) {
-					me.oldValues = decodedResult.response;
-
-					me.delegate.buildWindowItem(decodedResult.response);
-				}
-			);
-		},
-
 		/**
 		 * @return {Object}
 		 */

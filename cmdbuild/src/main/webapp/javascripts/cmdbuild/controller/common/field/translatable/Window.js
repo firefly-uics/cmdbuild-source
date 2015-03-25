@@ -41,6 +41,8 @@
 		 * @override
 		 */
 		constructor: function(configObject) {
+			var me = this;
+
 			Ext.apply(this, configObject); // Apply config
 
 			this.view = Ext.create('CMDBuild.view.common.field.translatable.window.Window', {
@@ -52,6 +54,18 @@
 			// Show window
 			if (!Ext.isEmpty(this.view))
 				this.view.show();
+
+			_CMCache.readTranslations(
+				this.translationsKeyType,
+				this.translationsKeyName,
+				this.translationsKeySubName,
+				this.translationsKeyField,
+				function(result, options, decodedResult) {
+					me.form.oldValues = decodedResult.response;
+
+					me.buildWindowItem(decodedResult.response);
+				}
+			);
 		},
 
 		/**
@@ -100,7 +114,8 @@ _debug('languagesWithLocalizations', languagesWithLocalizations);
 					]
 				);
 
-				this.form.add(item);
+				if (!Ext.isEmpty(this.form))
+					this.form.add(item);
 			},this);
 		},
 
