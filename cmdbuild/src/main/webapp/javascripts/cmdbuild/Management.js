@@ -286,6 +286,7 @@
 						// To fill the menu is needed that the classes are already loaded
 						params = {};
 						params[CMDBuild.core.proxy.CMProxyConstants.GROUP_NAME] = CMDBuild.Runtime.DefaultGroupName;
+						params[CMDBuild.core.proxy.CMProxyConstants.LOCALIZED] = true;
 
 						CMDBuild.ServiceProxy.menu.read({
 							params: params,
