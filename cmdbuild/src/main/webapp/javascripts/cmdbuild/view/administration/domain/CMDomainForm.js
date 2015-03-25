@@ -62,7 +62,7 @@
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
 				translationsKeyType: 'Domain',
-				translationsKeyField: 'masterDetailLabel',
+				translationsKeyField: 'masterDetail',
 				name: 'md_label'
 			});
 

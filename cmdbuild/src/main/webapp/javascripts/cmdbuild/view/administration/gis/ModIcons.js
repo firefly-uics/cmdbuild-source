@@ -37,15 +37,13 @@ Ext.define("CMDBuild.Administration.ModIcons", {
 		});
 		this.iconsGrid.getSelectionModel().on("select", this.onRowSelect , this);
 
-		this.description = Ext.create('CMDBuild.view.common.field.translatable.Text', {
+		this.description = Ext.create('Ext.form.field.Text', {
 			fieldLabel: this.translation.description,
 			labelWidth: CMDBuild.LABEL_WIDTH,
 			width: CMDBuild.ADM_BIG_FIELD_WIDTH,
 			name: 'description',
 			allowBlank: false,
-			vtype: 'cmdbcomment',
-			translationsKeyType: "GisIcon",
-			translationsKeyField: "Description"
+			vtype: 'cmdbcomment'
 		});
 		this.uploadForm = new Ext.form.FormPanel({
 			monitorValid: true,
