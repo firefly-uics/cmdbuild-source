@@ -28,7 +28,7 @@
 				loadMask: true,
 				success: function(result, options, decodedResult) {
 					var translations = decodedResult[CMDBuild.core.proxy.CMProxyConstants.TRANSLATIONS];
-_debug('decodedResult', decodedResult);
+
 					for (var i in translations) {
 						var translation = translations[i];
 
@@ -37,6 +37,7 @@ _debug('decodedResult', decodedResult);
 							labelWidth: CMDBuild.LABEL_WIDTH,
 							name: translation[CMDBuild.core.proxy.CMProxyConstants.TAG],
 							padding: '3 5',
+							margin: '0 20 0 0',
 							submitValue: false,
 							labelClsExtra: 'ux-flag-' + translation[CMDBuild.core.proxy.CMProxyConstants.TAG],
 							labelStyle: 'background-repeat: no-repeat; background-position: left; padding-left: 22px;'
