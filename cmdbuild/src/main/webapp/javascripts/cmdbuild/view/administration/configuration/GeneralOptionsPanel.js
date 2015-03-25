@@ -32,12 +32,12 @@
 			type: 'vbox',
 			align:'stretch'
 		},
-
-		fieldDefaults: {
-			labelAlign: 'left',
-			labelWidth: CMDBuild.CFG_LABEL_WIDTH,
-			width: CMDBuild.CFG_MEDIUM_FIELD_WIDTH
-		},
+// TODO: use when localization module will be released
+//		fieldDefaults: {
+//			labelAlign: 'left',
+//			labelWidth: CMDBuild.CFG_LABEL_WIDTH,
+//			width: CMDBuild.CFG_MEDIUM_FIELD_WIDTH
+//		},
 
 		initComponent: function() {
 			this.instanceNameField = Ext.create('CMDBuild.view.common.field.translatable.Text', {
@@ -46,15 +46,59 @@
 				allowBlank: true,
 				labelAlign: 'left',
 				labelWidth: CMDBuild.CFG_LABEL_WIDTH,
-				width: CMDBuild.CFG_MEDIUM_FIELD_WIDTH,
+				width: CMDBuild.CFG_BIG_FIELD_WIDTH,
 				translationsKeyType: 'InstanceName'
 			});
+
+			// TODO: to delete when localization module will be released
+			this.languageFieldset = Ext.create('Ext.form.FieldSet', {
+				title: '@@ Language configuration',
+				overflowY: 'auto',
+
+				layout: {
+					type: 'vbox',
+					align:'stretch'
+				},
+
+				items: [
+					Ext.create('CMDBuild.view.common.field.LanguageCombo', {
+						fieldLabel: '@@ Default language',
+						labelWidth: CMDBuild.CFG_LABEL_WIDTH,
+						maxWidth: CMDBuild.CFG_MEDIUM_FIELD_WIDTH,
+						name: 'language'
+					}),
+					{
+						xtype: 'checkbox',
+						fieldLabel: '@@ Show language choice',
+						labelWidth: CMDBuild.CFG_LABEL_WIDTH,
+						name: 'languagePrompt'
+					}
+				]
+			});
+
+			this.enabledLanguagesFieldset = Ext.create('Ext.form.FieldSet', {
+				title: '@@ Enabled languages',
+				overflowY: 'auto',
+				name: 'enabled_languages', // TODO da finire di vedere come salvare questo come un array
+
+				items: [
+					Ext.create('CMDBuild.view.administration.localizations.panels.LanguagesGrid')
+				]
+			});
+			// END TODO: to delete when localization module will be released
 
 			Ext.apply(this, {
 				items: [
 					{
 						xtype: 'fieldset',
 						title: CMDBuild.Translation.general,
+
+						// TODO: to delete when localization module will be released
+						fieldDefaults: {
+							labelAlign: 'left',
+							labelWidth: CMDBuild.CFG_LABEL_WIDTH,
+							width: CMDBuild.CFG_MEDIUM_FIELD_WIDTH
+						},
 
 						items: [
 							this.instanceNameField,
@@ -126,9 +170,18 @@
 							}
 						]
 					},
+					this.languageFieldset,
+					this.enabledLanguagesFieldset,
 					{
 						xtype: 'fieldset',
 						title: CMDBuild.Translation.popupWindows,
+
+						// TODO: to delete when localization module will be released
+						fieldDefaults: {
+							labelAlign: 'left',
+							labelWidth: CMDBuild.CFG_LABEL_WIDTH,
+							width: CMDBuild.CFG_MEDIUM_FIELD_WIDTH
+						},
 
 						items: [
 							{
@@ -150,6 +203,13 @@
 					{
 						xtype: 'fieldset',
 						title: CMDBuild.Translation.lockCardsInEdit,
+
+						// TODO: to delete when localization module will be released
+						fieldDefaults: {
+							labelAlign: 'left',
+							labelWidth: CMDBuild.CFG_LABEL_WIDTH,
+							width: CMDBuild.CFG_MEDIUM_FIELD_WIDTH
+						},
 
 						items: [
 							{
