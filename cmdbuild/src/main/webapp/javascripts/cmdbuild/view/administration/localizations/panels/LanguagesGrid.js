@@ -56,14 +56,12 @@
 		 * @return {Array}
 		 */
 		getValue: function() {
-			var languageArray = {};
+			var languageArray = [];
 
-			for (var i in this.languageCheckboxes) {
-				var languageCheckbox = this.languageCheckboxes[i];
-
+			Ext.Array.forEach(this.languageCheckboxes, function(languageCheckbox, i, allCheckboxes) {
 				if (languageCheckbox.getValue())
 					languageArray.push(languageCheckbox.getName());
-			}
+			}, this);
 
 			return languageArray;
 		},
@@ -72,11 +70,10 @@
 		 * @param {Array} activeLanguages
 		 */
 		setValue: function(activeLanguages) {
-			for (var i in this.languageCheckboxes) {
-				var languageCheckbox = this.languageCheckboxes[i];
-
-				languageCheckbox.setValue(Ext.Array.contains(activeLanguages, languageCheckbox.getName()));
-			}
+			if (Ext.isArray(activeLanguages))
+				Ext.Array.forEach(this.languageCheckboxes, function(languageCheckbox, i, allCheckboxes) {
+					languageCheckbox.setValue(Ext.Array.contains(activeLanguages, languageCheckbox.getName()));
+				}, this);
 		}
 	});
 

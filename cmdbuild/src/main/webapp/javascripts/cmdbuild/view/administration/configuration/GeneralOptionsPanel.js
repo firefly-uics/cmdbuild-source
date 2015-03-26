@@ -65,25 +65,24 @@
 						fieldLabel: '@@ Default language',
 						labelWidth: CMDBuild.CFG_LABEL_WIDTH,
 						maxWidth: CMDBuild.CFG_MEDIUM_FIELD_WIDTH,
-						name: 'language'
+						name: 'language',
+						enableChangeLanguage: false
 					}),
-					{
-						xtype: 'checkbox',
+					Ext.create('Ext.ux.form.XCheckbox', {
 						fieldLabel: '@@ Show language choice',
 						labelWidth: CMDBuild.CFG_LABEL_WIDTH,
-						name: 'languagePrompt'
-					}
+						name: 'languageprompt'
+					})
 				]
 			});
 
+			this.languageGrid = Ext.create('CMDBuild.view.administration.localizations.panels.LanguagesGrid');
 			this.enabledLanguagesFieldset = Ext.create('Ext.form.FieldSet', {
 				title: '@@ Enabled languages',
 				overflowY: 'auto',
-				name: 'enabled_languages', // TODO da finire di vedere come salvare questo come un array
+				name: 'enabled_languages',
 
-				items: [
-					Ext.create('CMDBuild.view.administration.localizations.panels.LanguagesGrid')
-				]
+				items: [this.languageGrid]
 			});
 			// END TODO: to delete when localization module will be released
 
