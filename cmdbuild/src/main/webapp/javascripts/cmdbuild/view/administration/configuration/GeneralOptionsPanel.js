@@ -36,7 +36,7 @@
 //		fieldDefaults: {
 //			labelAlign: 'left',
 //			labelWidth: CMDBuild.CFG_LABEL_WIDTH,
-//			width: CMDBuild.CFG_MEDIUM_FIELD_WIDTH
+//			maxWidth: CMDBuild.CFG_MEDIUM_FIELD_WIDTH
 //		},
 
 		initComponent: function() {
@@ -46,7 +46,7 @@
 				allowBlank: true,
 				labelAlign: 'left',
 				labelWidth: CMDBuild.CFG_LABEL_WIDTH,
-				width: CMDBuild.CFG_BIG_FIELD_WIDTH,
+				maxWidth: CMDBuild.CFG_BIG_FIELD_WIDTH,
 				translationsKeyType: 'InstanceName'
 			});
 
@@ -92,11 +92,16 @@
 						xtype: 'fieldset',
 						title: CMDBuild.Translation.general,
 
+						layout: {
+							type: 'vbox',
+							align:'stretch'
+						},
+
 						// TODO: to delete when localization module will be released
 						fieldDefaults: {
 							labelAlign: 'left',
 							labelWidth: CMDBuild.CFG_LABEL_WIDTH,
-							width: CMDBuild.CFG_MEDIUM_FIELD_WIDTH
+							maxWidth: CMDBuild.CFG_MEDIUM_FIELD_WIDTH
 						},
 
 						items: [
@@ -173,11 +178,16 @@
 						xtype: 'fieldset',
 						title: CMDBuild.Translation.popupWindows,
 
+						layout: {
+							type: 'vbox',
+							align:'stretch'
+						},
+
 						// TODO: to delete when localization module will be released
 						fieldDefaults: {
 							labelAlign: 'left',
 							labelWidth: CMDBuild.CFG_LABEL_WIDTH,
-							width: CMDBuild.CFG_MEDIUM_FIELD_WIDTH
+							maxWidth: CMDBuild.CFG_MEDIUM_FIELD_WIDTH
 						},
 
 						items: [
@@ -203,11 +213,16 @@
 						xtype: 'fieldset',
 						title: CMDBuild.Translation.lockCardsInEdit,
 
+						layout: {
+							type: 'vbox',
+							align:'stretch'
+						},
+
 						// TODO: to delete when localization module will be released
 						fieldDefaults: {
 							labelAlign: 'left',
 							labelWidth: CMDBuild.CFG_LABEL_WIDTH,
-							width: CMDBuild.CFG_MEDIUM_FIELD_WIDTH
+							maxWidth: CMDBuild.CFG_MEDIUM_FIELD_WIDTH
 						},
 
 						items: [

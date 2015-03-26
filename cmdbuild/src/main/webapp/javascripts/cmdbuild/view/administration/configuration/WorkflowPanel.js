@@ -33,7 +33,7 @@
 		fieldDefaults: {
 			labelAlign: 'left',
 			labelWidth: CMDBuild.CFG_LABEL_WIDTH,
-			width: CMDBuild.CFG_MEDIUM_FIELD_WIDTH
+			maxWidth: CMDBuild.CFG_MEDIUM_FIELD_WIDTH
 		},
 
 		initComponent: function() {
@@ -50,13 +50,18 @@
 						autoHeight: true,
 						defaultType: 'textfield',
 
+						layout: {
+							type: 'vbox',
+							align:'stretch'
+						},
+
 						items: [
 							this.enabledCheckBox,
 							{
 								fieldLabel: CMDBuild.Translation.serverUrl,
 								name: 'endpoint',
 								allowBlank: false,
-								width: CMDBuild.CFG_BIG_FIELD_WIDTH
+								maxWidth: CMDBuild.CFG_BIG_FIELD_WIDTH
 							}
 						]
 					},
@@ -65,6 +70,11 @@
 						title: CMDBuild.Translation.credentials,
 						autoHeight: true,
 						defaultType: 'textfield',
+
+						layout: {
+							type: 'vbox',
+							align:'stretch'
+						},
 
 						items: [
 							{

@@ -28,7 +28,7 @@
 		fieldDefaults: {
 			labelAlign: 'left',
 			labelWidth: CMDBuild.CFG_LABEL_WIDTH,
-			width: CMDBuild.CFG_MEDIUM_FIELD_WIDTH
+			maxWidth: CMDBuild.CFG_MEDIUM_FIELD_WIDTH
 		},
 
 		initComponent: function() {
@@ -44,7 +44,7 @@
 						xtype: 'textfield',
 						name: CMDBuild.core.proxy.CMProxyConstants.URL,
 						fieldLabel: CMDBuild.Translation.url,
-						width: CMDBuild.CFG_BIG_FIELD_WIDTH,
+						maxWidth: CMDBuild.CFG_BIG_FIELD_WIDTH,
 					},
 					{
 						xtype: 'textfield',

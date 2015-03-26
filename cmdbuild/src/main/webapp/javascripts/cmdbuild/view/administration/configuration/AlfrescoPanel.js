@@ -48,7 +48,7 @@
 		fieldDefaults: {
 			labelAlign: 'left',
 			labelWidth: CMDBuild.CFG_LABEL_WIDTH,
-			width: CMDBuild.CFG_MEDIUM_FIELD_WIDTH
+			maxWidth: CMDBuild.CFG_MEDIUM_FIELD_WIDTH
 		},
 
 		initComponent: function() {
@@ -69,6 +69,11 @@
 				title: CMDBuild.Translation.credentials,
 				autoHeight: true,
 				defaultType: 'textfield',
+
+				layout: {
+					type: 'vbox',
+					align:'stretch'
+				},
 
 				items: [
 					{
@@ -94,6 +99,11 @@
 						autoHeight: true,
 						defaultType: 'textfield',
 
+						layout: {
+							type: 'vbox',
+							align:'stretch'
+						},
+
 						items: [
 							{
 								xtype: 'xcheckbox',
@@ -103,7 +113,7 @@
 							{
 								name: 'server.url',
 								fieldLabel: CMDBuild.Translation.host,
-								width: CMDBuild.CFG_BIG_FIELD_WIDTH,
+								maxWidth: CMDBuild.CFG_BIG_FIELD_WIDTH,
 								allowBlank: false
 							},
 							{
@@ -120,6 +130,11 @@
 						autoHeight: true,
 						defaultType: 'textfield',
 
+						layout: {
+							type: 'vbox',
+							align:'stretch'
+						},
+
 						items: [
 							{
 								name: 'fileserver.type',
@@ -130,7 +145,7 @@
 							{
 								name: 'fileserver.url',
 								fieldLabel: CMDBuild.Translation.host,
-								width: CMDBuild.CFG_BIG_FIELD_WIDTH,
+								maxWidth: CMDBuild.CFG_BIG_FIELD_WIDTH,
 								allowBlank: false
 							},
 							{
@@ -147,16 +162,21 @@
 						autoHeight: true,
 						defaultType: 'textfield',
 
+						layout: {
+							type: 'vbox',
+							align:'stretch'
+						},
+
 						items: [
 								{
 									name: 'repository.fspath',
 									fieldLabel: CMDBuild.Translation.fileServerPath,
-									width: CMDBuild.CFG_BIG_FIELD_WIDTH,
+									maxWidth: CMDBuild.CFG_BIG_FIELD_WIDTH,
 									allowBlank: false
 								}, {
 									name: 'repository.wspath',
 									fieldLabel: CMDBuild.Translation.webServicePath,
-									width: CMDBuild.CFG_BIG_FIELD_WIDTH,
+									maxWidth: CMDBuild.CFG_BIG_FIELD_WIDTH,
 									allowBlank: false
 								}, {
 									name: 'repository.app',

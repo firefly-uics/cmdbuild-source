@@ -28,7 +28,7 @@
 		fieldDefaults: {
 			labelAlign: 'left',
 			labelWidth: CMDBuild.CFG_LABEL_WIDTH,
-			width: CMDBuild.CFG_MEDIUM_FIELD_WIDTH
+			maxWidth: CMDBuild.CFG_MEDIUM_FIELD_WIDTH
 		},
 
 		initComponent: function() {
