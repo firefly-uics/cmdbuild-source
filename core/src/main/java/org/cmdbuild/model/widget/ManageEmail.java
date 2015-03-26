@@ -153,9 +153,8 @@ public class ManageEmail extends Widget {
 	@Override
 	public void save(final CMActivityInstance activityInstance, final Object input, final Map<String, Object> output)
 			throws Exception {
-		final Map<String, Object> inputMap = (Map<String, Object>) input;
 		final Long instanceId = activityInstance.getProcessInstance().getCardId();
-		final Long submittedInstanceId = Number.class.cast(inputMap.get(DEFAULT_SUBMISSION_PARAM)).longValue();
+		final Long submittedInstanceId = Number.class.cast(input).longValue();
 		final Iterable<Email> emails = from(emailLogic.readAll(submittedInstanceId)).filter(statusIs(draft()));
 		final Collection<Email> toBeDeleted = newArrayList();
 		final Map<Email, Email> toBeCreatedWithOriginal = newHashMap();

@@ -3,9 +3,11 @@ package unit.cxf;
 import static com.google.common.collect.Iterables.get;
 import static com.google.common.collect.Iterables.size;
 import static java.util.Arrays.asList;
+import static org.cmdbuild.model.widget.Widget.SUBMISSION_PARAM;
 import static org.cmdbuild.service.rest.v2.cxf.util.Json.safeJsonArray;
 import static org.cmdbuild.service.rest.v2.cxf.util.Json.safeJsonObject;
 import static org.cmdbuild.service.rest.v2.model.Models.newProcessInstanceAdvance;
+import static org.cmdbuild.service.rest.v2.model.Models.newWidget;
 import static org.cmdbuild.workflow.service.WSProcessInstanceState.OPEN;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
@@ -17,11 +19,12 @@ import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 
-import java.util.Collections;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -39,6 +42,7 @@ import org.cmdbuild.service.rest.v2.cxf.ErrorHandler;
 import org.cmdbuild.service.rest.v2.model.ProcessInstance;
 import org.cmdbuild.service.rest.v2.model.ResponseMultiple;
 import org.cmdbuild.service.rest.v2.model.ResponseSingle;
+import org.cmdbuild.service.rest.v2.model.Widget;
 import org.cmdbuild.workflow.CMWorkflowException;
 import org.cmdbuild.workflow.LookupHelper;
 import org.cmdbuild.workflow.service.WSProcessInstanceState;
@@ -48,18 +52,42 @@ import org.cmdbuild.workflow.user.UserProcessInstance;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
-import org.mockito.InOrder;
 
 import com.google.common.base.Optional;
 
 public class CxfProcessInstancesTest {
 
-	private static final Map<String, Object> NO_WIDGETS = Collections.emptyMap();
-
 	private static final Map<String, Object> VALUES = ChainablePutMap.of(new HashMap<String, Object>()) //
-			.chainablePut("foo", asList("oof")) //
-			.chainablePut("bar", asList("rab")) //
-			.chainablePut("baz", asList("zab"));
+			.chainablePut("foo", "oof") //
+			.chainablePut("bar", "rab") //
+			.chainablePut("baz", "zab");
+	private static final Collection<Widget> WIDGETS = asList( //
+			newWidget() //
+					.withId("widget 1") //
+					.withOutput(42) //
+					.build(), //
+			newWidget() //
+					.withId("widget 2") //
+					.withOutput("foo") //
+					.build(), //
+			newWidget() //
+					.withId("widget 3") //
+					.withOutput(asList("foo", "bar", "baz")) //
+					.build() //
+	);
+	private static final Map<String, Object> WIDGETS_MAP = ChainablePutMap.of(new HashMap<String, Object>()) //
+			.chainablePut("widget 1", //
+					ChainablePutMap.of(new HashMap<String, Object>()) //
+							.chainablePut(SUBMISSION_PARAM, 42) //
+			) //
+			.chainablePut("widget 2", //
+					ChainablePutMap.of(new HashMap<String, Object>()) //
+							.chainablePut(SUBMISSION_PARAM, "foo") //
+			) //
+			.chainablePut("widget 3", //
+					ChainablePutMap.of(new HashMap<String, Object>()) //
+							.chainablePut(SUBMISSION_PARAM, asList("foo", "bar", "baz")) //
+			);
 
 	private ErrorHandler errorHandler;
 	private WorkflowLogic workflowLogic;
@@ -88,10 +116,9 @@ public class CxfProcessInstancesTest {
 				.build());
 
 		// then
-		final InOrder inOrder = inOrder(errorHandler, workflowLogic, lookupHelper);
-		inOrder.verify(workflowLogic).findProcessClass(eq("123"));
-		inOrder.verify(errorHandler).processNotFound(eq("123"));
-		inOrder.verifyNoMoreInteractions();
+		verify(workflowLogic).findProcessClass(eq("123"));
+		verify(errorHandler).processNotFound(eq("123"));
+		verifyNoMoreInteractions(errorHandler, workflowLogic, lookupHelper);
 	}
 
 	@Test(expected = WebApplicationException.class)
@@ -114,11 +141,10 @@ public class CxfProcessInstancesTest {
 				.build());
 
 		// then
-		final InOrder inOrder = inOrder(errorHandler, workflowLogic, lookupHelper);
-		inOrder.verify(workflowLogic).findProcessClass(eq(123L));
-		inOrder.verify(workflowLogic).startProcess(eq(123L), eq(VALUES), eq(NO_WIDGETS), eq(true));
-		inOrder.verify(errorHandler).propagate(workflowException);
-		inOrder.verifyNoMoreInteractions();
+		verify(workflowLogic).findProcessClass(eq(123L));
+		verify(workflowLogic).startProcess(eq(123L), eq(VALUES), eq(WIDGETS_MAP), eq(true));
+		verify(errorHandler).propagate(workflowException);
+		verifyNoMoreInteractions(errorHandler, workflowLogic, lookupHelper);
 	}
 
 	@Test
@@ -138,14 +164,13 @@ public class CxfProcessInstancesTest {
 		final ResponseSingle<Long> response = cxfProcessInstances.create("123", newProcessInstanceAdvance() //
 				.withValues(VALUES) //
 				.withAdvance(true) //
-				.withWidgets(NO_WIDGETS) //
+				.withWidgets(WIDGETS) //
 				.build());
 
 		// then
-		final InOrder inOrder = inOrder(errorHandler, workflowLogic, lookupHelper);
-		inOrder.verify(workflowLogic).findProcessClass(eq("123"));
-		inOrder.verify(workflowLogic).startProcess(eq("123"), eq(VALUES), eq(NO_WIDGETS), eq(true));
-		inOrder.verifyNoMoreInteractions();
+		verify(workflowLogic).findProcessClass(eq("123"));
+		verify(workflowLogic).startProcess(eq("123"), eq(VALUES), eq(WIDGETS_MAP), eq(true));
+		verifyNoMoreInteractions(errorHandler, workflowLogic, lookupHelper);
 		assertThat(response.getElement(), equalTo(123L));
 	}
 
@@ -161,10 +186,9 @@ public class CxfProcessInstancesTest {
 		cxfProcessInstances.read("123", null, null, null, null);
 
 		// then
-		final InOrder inOrder = inOrder(errorHandler, workflowLogic, lookupHelper);
-		inOrder.verify(workflowLogic).findProcessClass(eq("123"));
-		inOrder.verify(errorHandler).processNotFound(eq("123"));
-		inOrder.verifyNoMoreInteractions();
+		verify(workflowLogic).findProcessClass(eq("123"));
+		verify(errorHandler).processNotFound(eq("123"));
+		verifyNoMoreInteractions(errorHandler, workflowLogic, lookupHelper);
 	}
 
 	@Test
@@ -207,11 +231,10 @@ public class CxfProcessInstancesTest {
 
 		// then
 		final ArgumentCaptor<QueryOptions> queryOptionsCaptor = ArgumentCaptor.forClass(QueryOptions.class);
-		final InOrder inOrder = inOrder(errorHandler, workflowLogic, lookupHelper);
-		inOrder.verify(workflowLogic).findProcessClass(eq("123"));
-		inOrder.verify(workflowLogic).query(eq("foo"), queryOptionsCaptor.capture());
-		inOrder.verify(lookupHelper, times(2)).lookupForState(eq(OPEN));
-		inOrder.verifyNoMoreInteractions();
+		verify(workflowLogic).findProcessClass(eq("123"));
+		verify(workflowLogic).query(eq("foo"), queryOptionsCaptor.capture());
+		verify(lookupHelper, times(2)).lookupForState(eq(OPEN));
+		verifyNoMoreInteractions(errorHandler, workflowLogic, lookupHelper);
 		final QueryOptions captured = queryOptionsCaptor.getValue();
 		assertThat(captured.getFilter().toString(), equalTo(safeJsonObject("{\"the\": \"filter\"}").toString()));
 		assertThat(captured.getSorters().toString(), equalTo(safeJsonArray("[\"foo\", \"bar\", \"baz\"]").toString()));
@@ -236,10 +259,9 @@ public class CxfProcessInstancesTest {
 		cxfProcessInstances.read("123", 456L);
 
 		// then
-		final InOrder inOrder = inOrder(errorHandler, workflowLogic, lookupHelper);
-		inOrder.verify(workflowLogic).findProcessClass(eq("123"));
-		inOrder.verify(errorHandler).processNotFound(eq("123"));
-		inOrder.verifyNoMoreInteractions();
+		verify(workflowLogic).findProcessClass(eq("123"));
+		verify(errorHandler).processNotFound(eq("123"));
+		verifyNoMoreInteractions(errorHandler, workflowLogic, lookupHelper);
 	}
 
 	@Test(expected = WebApplicationException.class)
@@ -258,11 +280,10 @@ public class CxfProcessInstancesTest {
 		cxfProcessInstances.read("123", 456L);
 
 		// then
-		final InOrder inOrder = inOrder(errorHandler, workflowLogic, lookupHelper);
-		inOrder.verify(workflowLogic).findProcessClass(eq(123L));
-		inOrder.verify(workflowLogic).query(eq("foo"), any(QueryOptions.class));
-		inOrder.verify(errorHandler).processInstanceNotFound(456L);
-		inOrder.verifyNoMoreInteractions();
+		verify(workflowLogic).findProcessClass(eq(123L));
+		verify(workflowLogic).query(eq("foo"), any(QueryOptions.class));
+		verify(errorHandler).processInstanceNotFound(456L);
+		verifyNoMoreInteractions(errorHandler, workflowLogic, lookupHelper);
 	}
 
 	@Test
@@ -298,11 +319,10 @@ public class CxfProcessInstancesTest {
 		final ResponseSingle<ProcessInstance> response = cxfProcessInstances.read("123", 456L);
 
 		// then
-		final InOrder inOrder = inOrder(errorHandler, workflowLogic, lookupHelper);
-		inOrder.verify(workflowLogic).findProcessClass(eq("123"));
-		inOrder.verify(workflowLogic).query(eq("foo"), any(QueryOptions.class));
-		inOrder.verify(lookupHelper).lookupForState(eq(OPEN));
-		inOrder.verifyNoMoreInteractions();
+		verify(workflowLogic).findProcessClass(eq("123"));
+		verify(workflowLogic).query(eq("foo"), any(QueryOptions.class));
+		verify(lookupHelper).lookupForState(eq(OPEN));
+		verifyNoMoreInteractions(errorHandler, workflowLogic, lookupHelper);
 		final ProcessInstance element = response.getElement();
 		assertThat(element.getType(), equalTo("foo"));
 		assertThat(element.getId(), equalTo(123L));
@@ -322,10 +342,9 @@ public class CxfProcessInstancesTest {
 		cxfProcessInstances.update("123", 456L, newProcessInstanceAdvance().build());
 
 		// then
-		final InOrder inOrder = inOrder(errorHandler, workflowLogic, lookupHelper);
-		inOrder.verify(workflowLogic).findProcessClass(eq("123"));
-		inOrder.verify(errorHandler).processNotFound(eq("123"));
-		inOrder.verifyNoMoreInteractions();
+		verify(workflowLogic).findProcessClass(eq("123"));
+		verify(errorHandler).processNotFound(eq("123"));
+		verifyNoMoreInteractions(errorHandler, workflowLogic, lookupHelper);
 	}
 
 	@Test(expected = WebApplicationException.class)
@@ -357,13 +376,11 @@ public class CxfProcessInstancesTest {
 				.build());
 
 		// then
-		final InOrder inOrder = inOrder(errorHandler, workflowLogic, lookupHelper);
-		inOrder.verify(workflowLogic).findProcessClass(eq("123"));
-		inOrder.verify(workflowLogic).getProcessInstance(eq("123"), eq(456L));
-		inOrder.verify(workflowLogic).updateProcess(eq("123"), eq(456L), eq("activity"), eq(VALUES), eq(NO_WIDGETS),
-				eq(true));
-		inOrder.verify(errorHandler).propagate(workflowException);
-		inOrder.verifyNoMoreInteractions();
+		verify(workflowLogic).findProcessClass(eq("123"));
+		verify(workflowLogic).getProcessInstance(eq("123"), eq(456L));
+		verify(workflowLogic).updateProcess(eq("123"), eq(456L), eq("activity"), eq(VALUES), eq(WIDGETS_MAP), eq(true));
+		verify(errorHandler).propagate(workflowException);
+		verifyNoMoreInteractions(errorHandler, workflowLogic, lookupHelper);
 	}
 
 	@Test
@@ -392,16 +409,14 @@ public class CxfProcessInstancesTest {
 				.withValues(VALUES) //
 				.withActivity(activityId) //
 				.withAdvance(true) //
-				.withWidgets(NO_WIDGETS) //
+				.withWidgets(WIDGETS) //
 				.build());
 
 		// then
-		final InOrder inOrder = inOrder(errorHandler, workflowLogic, lookupHelper);
-		inOrder.verify(workflowLogic).findProcessClass(eq("123"));
-		inOrder.verify(workflowLogic).getProcessInstance(eq("123"), eq(456L));
-		inOrder.verify(workflowLogic).updateProcess(eq("123"), eq(456L), eq(activityId), eq(VALUES), eq(NO_WIDGETS),
-				eq(true));
-		inOrder.verifyNoMoreInteractions();
+		verify(workflowLogic).findProcessClass(eq("123"));
+		verify(workflowLogic).getProcessInstance(eq("123"), eq(456L));
+		verify(workflowLogic).updateProcess(eq("123"), eq(456L), eq(activityId), eq(VALUES), eq(WIDGETS_MAP), eq(true));
+		verifyNoMoreInteractions(errorHandler, workflowLogic, lookupHelper);
 	}
 
 	@Test(expected = WebApplicationException.class)
@@ -416,10 +431,9 @@ public class CxfProcessInstancesTest {
 		cxfProcessInstances.delete("123", 456L);
 
 		// then
-		final InOrder inOrder = inOrder(errorHandler, workflowLogic, lookupHelper);
-		inOrder.verify(workflowLogic).findProcessClass(eq("123"));
-		inOrder.verify(errorHandler).processNotFound(eq("456"));
-		inOrder.verifyNoMoreInteractions();
+		verify(workflowLogic).findProcessClass(eq("123"));
+		verify(errorHandler).processNotFound(eq("456"));
+		verifyNoMoreInteractions(errorHandler, workflowLogic, lookupHelper);
 	}
 
 	@Test(expected = WebApplicationException.class)
@@ -438,11 +452,10 @@ public class CxfProcessInstancesTest {
 		cxfProcessInstances.delete("123", 456L);
 
 		// then
-		final InOrder inOrder = inOrder(errorHandler, workflowLogic, lookupHelper);
-		inOrder.verify(workflowLogic).findProcessClass(123L);
-		inOrder.verify(workflowLogic).abortProcess(123L, 456L);
-		inOrder.verify(errorHandler).propagate(workflowException);
-		inOrder.verifyNoMoreInteractions();
+		verify(workflowLogic).findProcessClass(123L);
+		verify(workflowLogic).abortProcess(123L, 456L);
+		verify(errorHandler).propagate(workflowException);
+		verifyNoMoreInteractions(errorHandler, workflowLogic, lookupHelper);
 	}
 
 	@Test
@@ -456,10 +469,9 @@ public class CxfProcessInstancesTest {
 		cxfProcessInstances.delete("123", 456L);
 
 		// then
-		final InOrder inOrder = inOrder(errorHandler, workflowLogic, lookupHelper);
-		inOrder.verify(workflowLogic).findProcessClass(eq("123"));
-		inOrder.verify(workflowLogic).abortProcess(eq("123"), eq(456L));
-		inOrder.verifyNoMoreInteractions();
+		verify(workflowLogic).findProcessClass(eq("123"));
+		verify(workflowLogic).abortProcess(eq("123"), eq(456L));
+		verifyNoMoreInteractions(errorHandler, workflowLogic, lookupHelper);
 	}
 
 	private UserProcessClass mockProcessClass(final Long id, final String name) {

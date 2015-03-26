@@ -1385,14 +1385,18 @@ public class Models {
 		private static final Function<Entry<? extends String, ? extends Object>, String> KEY = toKey();
 		private static final Function<Entry<? extends String, ? extends Object>, Object> VALUE = toValue();
 
+		private static final Map<String, Object> EMPTY_MAP = emptyMap();
+		private static final Values NO_VALUES = newValues().withValues(EMPTY_MAP).build();
+		private static final Collection<Widget> NO_WIDGETS = emptyList();
+
 		private String type;
 		private Long id;
 		private String name;
 		private Long status;
-		final Values values = newValues().build();
+		private Values values;
 		private String activityId;
 		private Boolean advance;
-		private Map<String, Object> widgets;
+		private Collection<Widget> widgets;
 
 		private ProcessInstanceAdvanceBuilder() {
 			// use factory method
@@ -1400,7 +1404,9 @@ public class Models {
 
 		@Override
 		protected void doValidate() {
+			values = defaultIfNull(values, NO_VALUES);
 			advance = defaultIfNull(advance, FALSE);
+			widgets = defaultIfNull(widgets, NO_WIDGETS);
 		}
 
 		@Override
@@ -1442,7 +1448,9 @@ public class Models {
 		}
 
 		public ProcessInstanceAdvanceBuilder withValues(final Map<String, ? extends Object> values) {
-			this.values.putAll(values);
+			this.values = newValues() //
+					.withValues(values) //
+					.build();
 			return this;
 		}
 
@@ -1456,7 +1464,7 @@ public class Models {
 			return this;
 		}
 
-		public ProcessInstanceAdvanceBuilder withWidgets(final Map<String, Object> widgets) {
+		public ProcessInstanceAdvanceBuilder withWidgets(final Collection<Widget> widgets) {
 			this.widgets = widgets;
 			return this;
 		}
@@ -1883,6 +1891,7 @@ public class Models {
 		private boolean required;
 		private String label;
 		private Values data;
+		private Object output;
 
 		private WidgetBuilder() {
 			// use factory method
@@ -1890,14 +1899,15 @@ public class Models {
 
 		@Override
 		protected Widget doBuild() {
-			final Widget output = new Widget();
-			output.setId(id);
-			output.setType(type);
-			output.setActive(active);
-			output.setRequired(required);
-			output.setLabel(label);
-			output.setData(data);
-			return output;
+			final Widget _output = new Widget();
+			_output.setId(id);
+			_output.setType(type);
+			_output.setActive(active);
+			_output.setRequired(required);
+			_output.setLabel(label);
+			_output.setData(data);
+			_output.setOutput(output);
+			return _output;
 		}
 
 		public WidgetBuilder withId(final String id) {
@@ -1927,6 +1937,11 @@ public class Models {
 
 		public WidgetBuilder withData(final Values data) {
 			this.data = data;
+			return this;
+		}
+
+		public WidgetBuilder withOutput(final Object output) {
+			this.output = output;
 			return this;
 		}
 
