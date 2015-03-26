@@ -52,7 +52,7 @@
 
 			// TODO: to delete when localization module will be released
 			this.languageFieldset = Ext.create('Ext.form.FieldSet', {
-				title: '@@ Language configuration',
+				title: CMDBuild.Translation.language,
 				overflowY: 'auto',
 
 				layout: {
@@ -62,14 +62,14 @@
 
 				items: [
 					Ext.create('CMDBuild.view.common.field.LanguageCombo', {
-						fieldLabel: '@@ Default language',
+						fieldLabel: CMDBuild.Translation.defaultLanguage,
 						labelWidth: CMDBuild.CFG_LABEL_WIDTH,
 						maxWidth: CMDBuild.CFG_MEDIUM_FIELD_WIDTH,
 						name: 'language',
 						enableChangeLanguage: false
 					}),
 					Ext.create('Ext.ux.form.XCheckbox', {
-						fieldLabel: '@@ Show language choice',
+						fieldLabel: CMDBuild.Translation.showLanguageChoice,
 						labelWidth: CMDBuild.CFG_LABEL_WIDTH,
 						name: 'languageprompt'
 					})
@@ -78,7 +78,7 @@
 
 			this.languageGrid = Ext.create('CMDBuild.view.administration.localizations.panels.LanguagesGrid');
 			this.enabledLanguagesFieldset = Ext.create('Ext.form.FieldSet', {
-				title: '@@ Enabled languages',
+				title: CMDBuild.Translation.enabledLanguages,
 				overflowY: 'auto',
 				name: 'enabled_languages',
 
@@ -169,8 +169,6 @@
 							}
 						]
 					},
-					this.languageFieldset,
-					this.enabledLanguagesFieldset,
 					{
 						xtype: 'fieldset',
 						title: CMDBuild.Translation.popupWindows,
@@ -199,6 +197,8 @@
 							}
 						]
 					},
+					this.languageFieldset, // TODO: to delete when localization module will be released
+					this.enabledLanguagesFieldset, // TODO: to delete when localization module will be released
 					{
 						xtype: 'fieldset',
 						title: CMDBuild.Translation.lockCardsInEdit,

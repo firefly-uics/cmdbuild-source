@@ -20,7 +20,7 @@
 
 			// TODO: it's needed to avoid to use "CMDBuild.Config.cmdbuild.enabled_languages", i must use that because configuration modules are initialized
 			// before configuration call ends
-			return (Ext.isArray(languagesWithTrasnlations) && languagesWithTrasnlations.length > 0) || !Ext.isEmpty(CMDBuild.Config.cmdbuild.enabled_languages);
+			return Ext.isArray(languagesWithTrasnlations) && languagesWithTrasnlations.length > 0;
 		},
 
 		/**
@@ -33,6 +33,7 @@
 			var languagesArray = [];
 			var languagesWithLocalizationsArray = [];
 
+			// TODO: refactor saving on server an array not a string
 			if (typeof enableLanguages == 'string') {
 				var splitted = enableLanguages.split(', ');
 
