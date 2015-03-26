@@ -107,13 +107,13 @@
 			success : function(response, options, decoded) {
 				withTranslations = false;
 				for (key in decoded.translations) {
-					if (! Ext.Array.contains(activeLanguages, decoded.translations[key].name)) {
+					if (! Ext.Array.contains(activeLanguages, decoded.translations[key].tag)) {
 						continue;
 					}
 					var item = {
-						name: decoded.translations[key].name,
-						image: "ux-flag-" + decoded.translations[key].name,
-						language: decoded.translations[key].value
+						name: decoded.translations[key].tag,
+						image: "ux-flag-" + decoded.translations[key].tag,
+						language: decoded.translations[key].description
 					};
 					activeTranslations.push(item);
 					withTranslations = true;
