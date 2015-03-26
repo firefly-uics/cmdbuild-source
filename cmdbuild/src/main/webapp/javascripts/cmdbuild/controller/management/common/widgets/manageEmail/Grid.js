@@ -181,7 +181,7 @@ _debug('editRecord regenerationTrafficLightArray', regenerationTrafficLightArray
 		onGridAddEmailButtonClick: function() {
 			var me = this;
 			var record = this.createRecord();
-_debug('onGridAddEmailButtonClick');
+_debug('onGridAddEmailButtonClick', record);
 			this.addRecord( // To generate an emailId
 				record,
 				null,

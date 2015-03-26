@@ -20,7 +20,7 @@
 			{ name: CMDBuild.core.proxy.CMProxyConstants.NOTIFY_WITH, type: 'string' },
 			{ name: CMDBuild.core.proxy.CMProxyConstants.NO_SUBJECT_PREFIX, type: 'boolean', defaultValue: false },
 			{ name: CMDBuild.core.proxy.CMProxyConstants.PROMPT_SYNCHRONIZATION, type: 'boolean', defaultValue: false },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.STATUS, type: 'string' },
+			{ name: CMDBuild.core.proxy.CMProxyConstants.STATUS, type: 'string', defaultValue: CMDBuild.core.proxy.CMProxyConstants.DRAFT },
 			{ name: CMDBuild.core.proxy.CMProxyConstants.SUBJECT, type: 'string' },
 			{ name: CMDBuild.core.proxy.CMProxyConstants.TEMPLATE, type: 'string' },
 			{ name: CMDBuild.core.proxy.CMProxyConstants.TEMPORARY, type: 'boolean', defaultValue: true },
