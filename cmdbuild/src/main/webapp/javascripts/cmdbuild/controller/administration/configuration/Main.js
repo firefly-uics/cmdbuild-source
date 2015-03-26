@@ -83,7 +83,7 @@
 
 		onConfigurationSaveButtonClick: function() {
 			var params = this.sectionView.getValues();
-			params['enabled_languages'] = Ext.encode(this.sectionView.languageGrid.getValue()); // TODO: to delete when localization module will be released
+			params['enabled_languages'] = this.sectionView.languageGrid.getValue().join(', '); // TODO: to delete when localization module will be released
 
 			CMDBuild.core.proxy.Configuration.save({
 				scope: this,
@@ -192,7 +192,7 @@ _debug('parameters', parameters);
 
 					// TODO: to delete when localization module will be released
 					if (this.sectionView.configFileName == 'cmdbuild')
-						this.sectionView.languageGrid.setValue(Ext.decode(decodedResult.enabled_languages));
+						this.sectionView.languageGrid.setValue(decodedResult.enabled_languages.split(', '));
 
 					if (typeof this.sectionView.afterSubmit == 'function')
 						this.sectionView.afterSubmit(decodedResult);

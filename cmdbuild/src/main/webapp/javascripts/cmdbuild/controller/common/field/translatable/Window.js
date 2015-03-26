@@ -95,8 +95,7 @@
 		 */
 		buildWindowItem: function(translationsValues) {
 			var languagesWithLocalizations = CMDBuild.Config.localization.get(CMDBuild.core.proxy.CMProxyConstants.LANGUAGES_WITH_LOCALIZATIONS);
-_debug('translationsValues', translationsValues);
-_debug('languagesWithLocalizations', languagesWithLocalizations);
+
 			Ext.Array.forEach(languagesWithLocalizations, function(language, index, allLanguages) {
 				var item = Ext.create('Ext.form.field.Text', {
 					name: language.get(CMDBuild.core.proxy.CMProxyConstants.TAG),
