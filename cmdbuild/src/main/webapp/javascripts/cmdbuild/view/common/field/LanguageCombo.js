@@ -9,6 +9,11 @@
 			'CMDBuild.core.proxy.Localizations'
 		],
 
+		/**
+		 * @cfg {Boolean}
+		 */
+		enableChangeLanguage: true,
+
 		displayField: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
 		iconClsField: CMDBuild.core.proxy.CMProxyConstants.TAG,
 		valueField: CMDBuild.core.proxy.CMProxyConstants.TAG,
@@ -21,13 +26,18 @@
 
 			this.callParent(arguments);
 
-			this.on('select', function(eventName, args) {
-				this.changeLanguage(args[0].get(CMDBuild.core.proxy.CMProxyConstants.TAG));
-			}, this);
-
 			this.store.on('load', function() {
 				this.setValue(this.getCurrentLanguage());
 			}, this);
+		},
+
+		listeners: {
+			select: function(field, newValue, oldValue, eOpts) {
+				newValue = newValue[0] || null;
+
+				if (this.enableChangeLanguage)
+					this.changeLanguage(newValue[0].get(CMDBuild.core.proxy.CMProxyConstants.TAG));
+			}
 		},
 
 		/**

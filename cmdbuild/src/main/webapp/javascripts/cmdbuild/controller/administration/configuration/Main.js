@@ -82,9 +82,12 @@
 		},
 
 		onConfigurationSaveButtonClick: function() {
+			var params = this.sectionView.getValues();
+			params['enabled_languages'] = Ext.encode(this.sectionView.languageGrid.getValue()); // TODO: to delete when localization module will be released
+
 			CMDBuild.core.proxy.Configuration.save({
 				scope: this,
-				params: this.sectionView.getForm().getValues(),
+				params: params,
 				success: function(result, options, decodedResult) {
 					this.readConfiguration();
 
@@ -181,12 +184,18 @@ _debug('parameters', parameters);
 			CMDBuild.core.proxy.Configuration.read({
 				scope: this,
 				success: function(result, options, decodedResult){
-					_CMCache.setActiveTranslations(decodedResult.data.enabled_languages);
+					var decodedResult = decodedResult.data;
 
-					this.sectionView.getForm().setValues(decodedResult.data);
+					_CMCache.setActiveTranslations(decodedResult.enabled_languages);
+
+					this.sectionView.getForm().setValues(decodedResult);
+
+					// TODO: to delete when localization module will be released
+					if (this.sectionView.configFileName == 'cmdbuild')
+						this.sectionView.languageGrid.setValue(Ext.decode(decodedResult.enabled_languages));
 
 					if (typeof this.sectionView.afterSubmit == 'function')
-						this.sectionView.afterSubmit(decodedResult.data);
+						this.sectionView.afterSubmit(decodedResult);
 				}
 			}, this.sectionView.configFileName);
 		},
