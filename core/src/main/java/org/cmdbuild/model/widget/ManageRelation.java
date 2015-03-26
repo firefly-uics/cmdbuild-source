@@ -24,8 +24,6 @@ public class ManageRelation extends Widget {
 		}
 	}
 
-	public static final String CREATED_CARD_ID_SUBMISSION_PARAM = DEFAULT_SUBMISSION_PARAM;
-
 	/*
 	 * Domain to which show the relations
 	 */
@@ -249,8 +247,7 @@ public class ManageRelation extends Widget {
 			return (Submission) input;
 		} else {
 			@SuppressWarnings("unchecked")
-			final Map<String, List<Object>> inputMap = (Map<String, List<Object>>) input;
-			final List<Object> selectedCardIds = inputMap.get(CREATED_CARD_ID_SUBMISSION_PARAM);
+			final List<Object> selectedCardIds = List.class.cast(input);
 			final Submission submission = new Submission();
 			submission.setOutput(selectedCardIds);
 			return submission;

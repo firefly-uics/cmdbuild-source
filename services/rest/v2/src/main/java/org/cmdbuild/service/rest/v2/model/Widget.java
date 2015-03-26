@@ -1,5 +1,12 @@
 package org.cmdbuild.service.rest.v2.model;
 
+import static org.cmdbuild.service.rest.v2.constants.Serialization.ACTIVE;
+import static org.cmdbuild.service.rest.v2.constants.Serialization.DATA;
+import static org.cmdbuild.service.rest.v2.constants.Serialization.LABEL;
+import static org.cmdbuild.service.rest.v2.constants.Serialization.OUTPUT;
+import static org.cmdbuild.service.rest.v2.constants.Serialization.REQUIRED;
+import static org.cmdbuild.service.rest.v2.constants.Serialization.TYPE;
+
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -14,12 +21,13 @@ public class Widget extends ModelWithStringId {
 	private boolean required;
 	private String label;
 	private Values data;
+	private Object output;
 
 	Widget() {
 		// package visibility
 	}
 
-	@XmlElement(name = "type")
+	@XmlElement(name = TYPE)
 	public String getType() {
 		return type;
 	}
@@ -28,7 +36,7 @@ public class Widget extends ModelWithStringId {
 		this.type = type;
 	}
 
-	@XmlElement(name = "active")
+	@XmlElement(name = ACTIVE)
 	public boolean isActive() {
 		return active;
 	}
@@ -37,7 +45,7 @@ public class Widget extends ModelWithStringId {
 		this.active = active;
 	}
 
-	@XmlElement(name = "required")
+	@XmlElement(name = REQUIRED)
 	public boolean isRequired() {
 		return required;
 	}
@@ -46,7 +54,7 @@ public class Widget extends ModelWithStringId {
 		this.required = required;
 	}
 
-	@XmlElement(name = "label")
+	@XmlElement(name = LABEL)
 	public String getLabel() {
 		return label;
 	}
@@ -55,13 +63,22 @@ public class Widget extends ModelWithStringId {
 		this.label = label;
 	}
 
-	@XmlElement(name = "data")
+	@XmlElement(name = DATA)
 	public Values getData() {
 		return data;
 	}
 
 	void setData(final Values data) {
 		this.data = data;
+	}
+
+	@XmlElement(name = OUTPUT)
+	public Object getOutput() {
+		return output;
+	}
+
+	void setOutput(final Object output) {
+		this.output = output;
 	}
 
 	@Override
@@ -82,6 +99,7 @@ public class Widget extends ModelWithStringId {
 				.append(this.required, other.required) //
 				.append(this.label, other.label) //
 				.append(this.data, other.data) //
+				.append(this.output, other.output) //
 				.isEquals();
 	}
 
@@ -94,6 +112,7 @@ public class Widget extends ModelWithStringId {
 				.append(this.required) //
 				.append(this.label) //
 				.append(this.data) //
+				.append(this.output) //
 				.toHashCode();
 	}
 

@@ -12,6 +12,7 @@ public class Serialization {
 	public static final String //
 			ACCOUNT = "account", //
 			ACTIVE = "active", //
+			ACTIVITY = "activity", //
 			ADVANCE = "advance", //
 			ATTACHMENT = "attachment", //
 			ATTACHMENT_ID = ATTACHMENT + ID_CAPITALIZED, //
@@ -64,6 +65,7 @@ public class Serialization {
 			INHERITED = "inherited", //
 			INSTRUCTIONS = "instructions", //
 			KEEP_SYNCHRONIZATION = "keepSynchronization", //
+			LABEL = "label", //
 			LENGTH = "length", //
 			LIMIT = "limit", //
 			MANDATORY = "mandatory", //
@@ -79,6 +81,7 @@ public class Serialization {
 			OBJECT_DESCRIPTION = "objectDescription", //
 			OBJECT_ID = "objectId", //
 			OBJECT_TYPE = "objectType", //
+			OUTPUT = "output", //
 			PARAMETERS = "parameters", //
 			PARAMS = "params", //
 			PARENT_ID = "parent_id", //
@@ -92,6 +95,7 @@ public class Serialization {
 			RELATION_ID = RELATION + ID_CAPITALIZED, //
 			REPORT = "report", //
 			REPORT_ID = REPORT + ID_CAPITALIZED, //
+			REQUIRED = "required", //
 			RESPONSE_METADATA = "meta", //
 			ROLE_ID = "role" + ID_CAPITALIZED, //
 			ROLE = "role", //

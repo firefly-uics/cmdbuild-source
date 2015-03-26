@@ -1,6 +1,8 @@
 package integration.rest;
 
+import static com.google.common.collect.Iterables.get;
 import static java.util.Arrays.asList;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.http.entity.ContentType.APPLICATION_JSON;
 import static org.cmdbuild.service.rest.test.HttpClientUtils.contentOf;
 import static org.cmdbuild.service.rest.test.HttpClientUtils.statusCodeOf;
@@ -25,6 +27,7 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -46,6 +49,7 @@ import org.cmdbuild.service.rest.v2.model.ProcessInstance;
 import org.cmdbuild.service.rest.v2.model.ProcessInstanceAdvanceable;
 import org.cmdbuild.service.rest.v2.model.ResponseMultiple;
 import org.cmdbuild.service.rest.v2.model.ResponseSingle;
+import org.cmdbuild.service.rest.v2.model.Widget;
 import org.cmdbuild.service.rest.v2.model.adapter.ProcessInstanceAdapter;
 import org.junit.Before;
 import org.junit.ClassRule;
@@ -77,7 +81,7 @@ public class ProcessInstancesTest {
 	}
 
 	@Test
-	public void instanceCreated() throws Exception {
+	public void instanceCreatedWithMissingWidgets() throws Exception {
 		// given
 		final ResponseSingle<Long> expectedResponse = newResponseSingle(Long.class) //
 				.withElement(123L) //
@@ -87,8 +91,14 @@ public class ProcessInstancesTest {
 
 		// when
 		final HttpPost post = new HttpPost(server.resource("processes/12/instances/"));
-		post.setEntity(new StringEntity( //
-				"{\"_id\" : 34, \"_type\" : \"56\", \"_advance\" : true, \"bar\" : \"BAR\", \"baz\" : \"BAZ\"}", //
+		post.setEntity(new StringEntity(EMPTY //
+				+ "{"//
+				+ "    \"_id\" : 34," //
+				+ "    \"_type\" : \"56\"," //
+				+ "    \"_advance\" : true," //
+				+ "    \"bar\" : \"BAR\"," //
+				+ "    \"baz\" : \"BAZ\"" //
+				+ "}", //
 				APPLICATION_JSON) //
 		);
 		final HttpResponse response = httpclient.execute(post);
@@ -106,6 +116,106 @@ public class ProcessInstancesTest {
 		assertThat(captured.isAdvance(), equalTo(true));
 		assertThat(captured.getValues(), hasEntry("bar", (Object) "BAR"));
 		assertThat(captured.getValues(), hasEntry("baz", (Object) "BAZ"));
+		final Collection<Widget> widgets = captured.getWidgets();
+		assertThat(widgets.size(), equalTo(0));
+	}
+
+	@Test
+	public void instanceCreatedWithNoWidgets() throws Exception {
+		// given
+		final ResponseSingle<Long> expectedResponse = newResponseSingle(Long.class) //
+				.withElement(123L) //
+				.build();
+		doReturn(expectedResponse) //
+				.when(service).create(anyString(), any(ProcessInstanceAdvanceable.class));
+
+		// when
+		final HttpPost post = new HttpPost(server.resource("processes/12/instances/"));
+		post.setEntity(new StringEntity(EMPTY //
+				+ "{"//
+				+ "    \"_id\" : 34," //
+				+ "    \"_type\" : \"56\"," //
+				+ "    \"_advance\" : true," //
+				+ "    \"bar\" : \"BAR\"," //
+				+ "    \"baz\" : \"BAZ\"," //
+				+ "    \"_widgets\" : [" //
+				+ "    ]" //
+				+ "}", //
+				APPLICATION_JSON) //
+		);
+		final HttpResponse response = httpclient.execute(post);
+
+		// then
+		assertThat(statusCodeOf(response), equalTo(200));
+		assertThat(json.from(contentOf(response)), equalTo(json.from(expectedResponse)));
+
+		final ArgumentCaptor<ProcessInstanceAdvanceable> captor = ArgumentCaptor
+				.forClass(ProcessInstanceAdvanceable.class);
+		verify(service).create(eq("12"), captor.capture());
+		final ProcessInstanceAdvanceable captured = captor.getValue();
+		assertThat(captured.getId(), equalTo(34L));
+		assertThat(captured.getType(), equalTo("56"));
+		assertThat(captured.isAdvance(), equalTo(true));
+		assertThat(captured.getValues(), hasEntry("bar", (Object) "BAR"));
+		assertThat(captured.getValues(), hasEntry("baz", (Object) "BAZ"));
+		final Collection<Widget> widgets = captured.getWidgets();
+		assertThat(widgets.size(), equalTo(0));
+	}
+
+	@Test
+	public void instanceCreatedWithWidgets() throws Exception {
+		// given
+		final ResponseSingle<Long> expectedResponse = newResponseSingle(Long.class) //
+				.withElement(123L) //
+				.build();
+		doReturn(expectedResponse) //
+				.when(service).create(anyString(), any(ProcessInstanceAdvanceable.class));
+
+		// when
+		final HttpPost post = new HttpPost(server.resource("processes/12/instances/"));
+		post.setEntity(new StringEntity(EMPTY //
+				+ "{"//
+				+ "    \"_id\" : 34," //
+				+ "    \"_type\" : \"56\"," //
+				+ "    \"_advance\" : true," //
+				+ "    \"bar\" : \"BAR\"," //
+				+ "    \"baz\" : \"BAZ\"," //
+				+ "    \"_widgets\" : [" //
+				+ "        {" //
+				+ "            \"_id\" : \"widget 1\"," //
+				+ "            \"output\" : \"output 1\"" //
+				+ "        }," //
+				+ "        {" //
+				+ "            \"_id\" : \"widget 2\"," //
+				+ "            \"output\" : \"output 2\"" //
+				+ "        }" //
+				+ "    ]" //
+				+ "}", //
+				APPLICATION_JSON) //
+		);
+		final HttpResponse response = httpclient.execute(post);
+
+		// then
+		assertThat(statusCodeOf(response), equalTo(200));
+		assertThat(json.from(contentOf(response)), equalTo(json.from(expectedResponse)));
+
+		final ArgumentCaptor<ProcessInstanceAdvanceable> captor = ArgumentCaptor
+				.forClass(ProcessInstanceAdvanceable.class);
+		verify(service).create(eq("12"), captor.capture());
+		final ProcessInstanceAdvanceable captured = captor.getValue();
+		assertThat(captured.getId(), equalTo(34L));
+		assertThat(captured.getType(), equalTo("56"));
+		assertThat(captured.isAdvance(), equalTo(true));
+		assertThat(captured.getValues(), hasEntry("bar", (Object) "BAR"));
+		assertThat(captured.getValues(), hasEntry("baz", (Object) "BAZ"));
+		final Collection<Widget> widgets = captured.getWidgets();
+		assertThat(widgets.size(), equalTo(2));
+		final Widget widget1 = get(widgets, 0);
+		assertThat(widget1.getId(), equalTo("widget 1"));
+		assertThat(widget1.getOutput(), equalTo((Object) "output 1"));
+		final Widget widget2 = get(widgets, 1);
+		assertThat(widget2.getId(), equalTo("widget 2"));
+		assertThat(widget2.getOutput(), equalTo((Object) "output 2"));
 	}
 
 	@Test
@@ -191,11 +301,18 @@ public class ProcessInstancesTest {
 	}
 
 	@Test
-	public void instanceUpdated() throws Exception {
+	public void instanceUpdatedWithMissingWidgets() throws Exception {
 		// when
 		final HttpPut put = new HttpPut(server.resource("processes/12/instances/34/"));
-		put.setEntity(new StringEntity( //
-				"{\"_id\" : 56, \"_type\" : \"78\", \"_activity\" : \"90\", \"_advance\" : true, \"bar\" : \"BAR\", \"baz\" : \"BAZ\"}", //
+		put.setEntity(new StringEntity(EMPTY //
+				+ "{" //
+				+ "    \"_id\" : 56," //
+				+ "    \"_type\" : \"78\"," //
+				+ "    \"_activity\" : \"90\"," //
+				+ "    \"_advance\" : true," //
+				+ "    \"bar\" : \"BAR\"," //
+				+ "    \"baz\" : \"BAZ\"" //
+				+ "}", //
 				APPLICATION_JSON) //
 		);
 		final HttpResponse response = httpclient.execute(put);
@@ -211,6 +328,90 @@ public class ProcessInstancesTest {
 		assertThat(captured.isAdvance(), equalTo(true));
 		assertThat(captured.getValues(), hasEntry("bar", (Object) "BAR"));
 		assertThat(captured.getValues(), hasEntry("baz", (Object) "BAZ"));
+		final Collection<Widget> widgets = captured.getWidgets();
+		assertThat(widgets.size(), equalTo(0));
+	}
+
+	@Test
+	public void instanceUpdatedWithNoWidgets() throws Exception {
+		// when
+		final HttpPut put = new HttpPut(server.resource("processes/12/instances/34/"));
+		put.setEntity(new StringEntity(EMPTY //
+				+ "{" //
+				+ "    \"_id\" : 56," //
+				+ "    \"_type\" : \"78\"," //
+				+ "    \"_activity\" : \"90\"," //
+				+ "    \"_advance\" : true," //
+				+ "    \"bar\" : \"BAR\"," //
+				+ "    \"baz\" : \"BAZ\"," //
+				+ "    \"_widgets\" : [" //
+				+ "    ]" //
+				+ "}", //
+				APPLICATION_JSON) //
+		);
+		final HttpResponse response = httpclient.execute(put);
+
+		// then
+		assertThat(statusCodeOf(response), equalTo(204));
+
+		final ArgumentCaptor<ProcessInstanceAdvanceable> captor = ArgumentCaptor
+				.forClass(ProcessInstanceAdvanceable.class);
+		verify(service).update(eq("12"), eq(34L), captor.capture());
+		final ProcessInstanceAdvanceable captured = captor.getValue();
+		assertThat(captured.getActivity(), equalTo("90"));
+		assertThat(captured.isAdvance(), equalTo(true));
+		assertThat(captured.getValues(), hasEntry("bar", (Object) "BAR"));
+		assertThat(captured.getValues(), hasEntry("baz", (Object) "BAZ"));
+		final Collection<Widget> widgets = captured.getWidgets();
+		assertThat(widgets.size(), equalTo(0));
+	}
+
+	@Test
+	public void instanceUpdatedWithWidgets() throws Exception {
+		// when
+		final HttpPut put = new HttpPut(server.resource("processes/12/instances/34/"));
+		put.setEntity(new StringEntity(EMPTY //
+				+ "{" //
+				+ "    \"_id\" : 56," //
+				+ "    \"_type\" : \"78\"," //
+				+ "    \"_activity\" : \"90\"," //
+				+ "    \"_advance\" : true," //
+				+ "    \"bar\" : \"BAR\"," //
+				+ "    \"baz\" : \"BAZ\"," //
+				+ "    \"_widgets\" : [" //
+				+ "        {" //
+				+ "            \"_id\" : \"widget 1\"," //
+				+ "            \"output\" : \"output 1\"" //
+				+ "        }," //
+				+ "        {" //
+				+ "            \"_id\" : \"widget 2\"," //
+				+ "            \"output\" : \"output 2\"" //
+				+ "        }" //
+				+ "    ]" //
+				+ "}", //
+				APPLICATION_JSON) //
+		);
+		final HttpResponse response = httpclient.execute(put);
+
+		// then
+		assertThat(statusCodeOf(response), equalTo(204));
+
+		final ArgumentCaptor<ProcessInstanceAdvanceable> captor = ArgumentCaptor
+				.forClass(ProcessInstanceAdvanceable.class);
+		verify(service).update(eq("12"), eq(34L), captor.capture());
+		final ProcessInstanceAdvanceable captured = captor.getValue();
+		assertThat(captured.getActivity(), equalTo("90"));
+		assertThat(captured.isAdvance(), equalTo(true));
+		assertThat(captured.getValues(), hasEntry("bar", (Object) "BAR"));
+		assertThat(captured.getValues(), hasEntry("baz", (Object) "BAZ"));
+		final Collection<Widget> widgets = captured.getWidgets();
+		assertThat(widgets.size(), equalTo(2));
+		final Widget widget1 = get(widgets, 0);
+		assertThat(widget1.getId(), equalTo("widget 1"));
+		assertThat(widget1.getOutput(), equalTo((Object) "output 1"));
+		final Widget widget2 = get(widgets, 1);
+		assertThat(widget2.getId(), equalTo("widget 2"));
+		assertThat(widget2.getOutput(), equalTo((Object) "output 2"));
 	}
 
 	@Test

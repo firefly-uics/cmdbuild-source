@@ -18,10 +18,10 @@ import org.slf4j.Logger;
 @JsonTypeInfo(use = JsonTypeInfo.Id.MINIMAL_CLASS, include = JsonTypeInfo.As.PROPERTY, property = "type")
 @NotThreadSafe
 public abstract class Widget implements CMActivityWidget, WidgetVisitable, Storable {
-	
+
 	protected static final Logger logger = Log.WORKFLOW;
 
-	protected static final String DEFAULT_SUBMISSION_PARAM = "output";
+	public static final String SUBMISSION_PARAM = "output";
 
 	protected interface WidgetAction {
 		Object execute() throws Exception;
@@ -107,7 +107,7 @@ public abstract class Widget implements CMActivityWidget, WidgetVisitable, Stora
 		return label_default;
 	}
 
-	public void setLabel_default(String label_default) {
+	public void setLabel_default(final String label_default) {
 		this.label_default = label_default;
 	}
 
