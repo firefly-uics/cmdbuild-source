@@ -52,13 +52,9 @@
 
 		listeners: {
 			beforeitemexpand: function(node, eOpts) {
-				this.delegate.cmOn('onAdvancedTableNodeExpand', {
-					sectionId: this.sectionId,
-					node: node
-				});
+				this.delegate.cmOn('onAdvancedTableNodeExpand', node);
 			},
 			edit: function(editor, context, eOpts) {
-_debug('context', context);
 				this.delegate.cmOn('onAdvancedTableRowUpdateButtonClick', context.record);
 			}
 		}

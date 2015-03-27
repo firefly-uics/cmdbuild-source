@@ -82,7 +82,7 @@ _debug('parameters', parameters);
 					} break;
 
 					case 'advancedTranslationsTable': {
-						this.sectionController = Ext.create('CMDBuild.controller.administration.localizations.AdvancedTranslationsTable', {
+						this.sectionController = Ext.create('CMDBuild.controller.administration.localizations.advancedTranslationsTable.Main', {
 							parentDelegate: this
 						});
 					} break;

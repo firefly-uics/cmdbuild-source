@@ -9,7 +9,9 @@
 		fields: [
 			{ name: CMDBuild.core.proxy.CMProxyConstants.LANGUAGE, type: 'string' },
 			{ name: CMDBuild.core.proxy.CMProxyConstants.LANGUAGES, type: 'auto' }, // All CMDBuild languages
-			{ name: CMDBuild.core.proxy.CMProxyConstants.LANGUAGES_WITH_LOCALIZATIONS, type: 'auto' }
+			{ name: CMDBuild.core.proxy.CMProxyConstants.LANGUAGES_TAGS, type: 'auto' },
+			{ name: CMDBuild.core.proxy.CMProxyConstants.LANGUAGES_WITH_LOCALIZATIONS, type: 'auto' }, // CMDBuild languages with localizations
+			{ name: CMDBuild.core.proxy.CMProxyConstants.LANGUAGES_WITH_LOCALIZATIONS_TAGS, type: 'auto' },
 		],
 
 		/**
@@ -31,7 +33,9 @@
 		setLanguagesWithLocalizations: function(enableLanguages) {
 			var decodedArray = [];
 			var languagesArray = [];
+			var languagesTagArray = [];
 			var languagesWithLocalizationsArray = [];
+			var languagesWithLocalizationsTagArray = [];
 
 			// TODO: refactor saving on server an array not a string
 			if (typeof enableLanguages == 'string') {
@@ -49,23 +53,30 @@
 				scope: this,
 				success: function(result, options, decodedResult) {
 					// Build all languages array
-					Ext.Array.forEach(decodedResult.translations, function(translation, index, allTranslations) {
+					Ext.Array.forEach(decodedResult.translations, function(translation, i, allTranslations) {
+						languagesTagArray.push(translation[CMDBuild.core.proxy.CMProxyConstants.TAG]);
+
 						languagesArray.push(
 							Ext.create('CMDBuild.model.Localizations.translation', translation)
 						);
 					}, this);
 
 					this.set(CMDBuild.core.proxy.CMProxyConstants.LANGUAGES, languagesArray);
+					this.set(CMDBuild.core.proxy.CMProxyConstants.LANGUAGES_TAGS, languagesTagArray);
 
-					// Build languages with translations
-					Ext.Array.forEach(decodedResult.translations, function(translation, index, allTranslations) {
-						if (Ext.Array.contains(decodedArray, translation[CMDBuild.core.proxy.CMProxyConstants.TAG]))
+					// Build languages with localizations
+					Ext.Array.forEach(decodedResult.translations, function(translation, i, allTranslations) {
+						if (Ext.Array.contains(decodedArray, translation[CMDBuild.core.proxy.CMProxyConstants.TAG])) {
+							languagesWithLocalizationsTagArray.push(translation[CMDBuild.core.proxy.CMProxyConstants.TAG]);
+
 							languagesWithLocalizationsArray.push(
-								Ext.create('CMDBuild.model.Localizations.translation', translation)
+									Ext.create('CMDBuild.model.Localizations.translation', translation)
 							);
+						}
 					}, this);
 
 					this.set(CMDBuild.core.proxy.CMProxyConstants.LANGUAGES_WITH_LOCALIZATIONS, languagesWithLocalizationsArray);
+					this.set(CMDBuild.core.proxy.CMProxyConstants.LANGUAGES_WITH_LOCALIZATIONS_TAGS, languagesWithLocalizationsTagArray);
 				}
 			});
 		}
