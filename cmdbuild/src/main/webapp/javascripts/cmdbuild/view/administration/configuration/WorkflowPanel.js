@@ -6,14 +6,9 @@
 		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
 
 		/**
-		 * @cfg {CMDBuild.controller.administration.configuration.Main}
+		 * @cfg {CMDBuild.controller.administration.configuration.Workflow}
 		 */
 		delegate: undefined,
-
-		/**
-		 * @cfg {String}
-		 */
-		configFileName: 'workflow',
 
 		/**
 		 * @property {Ext.ux.form.XCheckbox}
@@ -121,14 +116,14 @@
 								scope: this,
 
 								handler: function(button, e) {
-									this.delegate.cmOn('onConfigurationSaveButtonClick');
+									this.delegate.cmOn('onWorkflowSaveButtonClick');
 								}
 							}),
 							Ext.create('CMDBuild.core.buttons.Abort', {
 								scope: this,
 
 								handler: function(button, e) {
-									this.delegate.cmOn('onConfigurationAbortButtonClick');
+									this.delegate.cmOn('onWorkflowAbortButtonClick');
 								}
 							})
 						]

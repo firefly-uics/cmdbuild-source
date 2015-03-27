@@ -4,10 +4,8 @@
 		extend: 'CMDBuild.controller.common.CMBasePanelController',
 
 		requires: [
-			'CMDBuild.core.proxy.CMProxyWorkflow',
-			'CMDBuild.core.proxy.Card',
-			'CMDBuild.core.proxy.Configuration',
-			'CMDBuild.core.proxy.Utils'
+			'CMDBuild.core.proxy.CMProxyConstants',
+			'CMDBuild.core.proxy.Configuration'
 		],
 
 		/**
@@ -29,10 +27,13 @@
 		titleSeparator: ' - ',
 
 		/**
-		 * @property {Mixed}
+		 * @property {CMDBuild.view.administration.configuration.MainPanel}
 		 */
 		view: undefined,
 
+		/**
+		 * @param {CMDBuild.view.administration.configuration.MainPanel} view
+		 */
 		constructor: function(view) {
 			this.callParent(arguments);
 
@@ -49,20 +50,11 @@
 		 */
 		cmOn: function(name, param, callBack) {
 			switch (name) {
-				case 'onConfigurationAbortButtonClick':
-					return this.onConfigurationAbortButtonClick();
+				case 'onReadConfiguration':
+					return this.onReadConfiguration(param.configFileName, param.view);
 
-				case 'onConfigurationClearCacheButtonClick':
-					return this.onConfigurationClearCacheButtonClick();
-
-				case 'onConfigurationSaveButtonClick':
-					return this.onConfigurationSaveButtonClick();
-
-				case 'onConfigurationServiceSynchButtonClick':
-					return this.onConfigurationServiceSynchButtonClick();
-
-				case 'onConfigurationUnlockCardsButtonClick':
-					return this.onConfigurationUnlockCardsButtonClick();
+				case 'onSaveConfiguration':
+					return this.onSaveConfiguration(param.configFileName, param.view);
 
 				default: {
 					if (!Ext.isEmpty(this.parentDelegate))
@@ -71,41 +63,54 @@
 			}
 		},
 
-		onConfigurationAbortButtonClick: function() {
-			this.readConfiguration();
+		/**
+		 * @param {String} configFileName
+		 * @param {Mixed} view
+		 */
+		onReadConfiguration: function(configFileName, view) {
+			if (!Ext.isEmpty(configFileName) && !Ext.isEmpty(view)) {
+				CMDBuild.core.proxy.Configuration.read({
+					scope: this,
+					success: function(result, options, decodedResult){
+						var decodedResult = decodedResult.data;
+
+						_CMCache.setActiveTranslations(decodedResult.enabled_languages);
+
+						view.getForm().setValues(decodedResult);
+
+						// TODO: to delete when localization module will be released
+						if (configFileName == 'cmdbuild')
+							view.languageGrid.setValue(decodedResult.enabled_languages.split(', '));
+
+						if (typeof view.afterSubmit == 'function')
+							view.afterSubmit(decodedResult);
+					}
+				}, configFileName);
+			}
 		},
 
-		onConfigurationClearCacheButtonClick: function() {
-			CMDBuild.core.proxy.Utils.clearCache({
-				success: CMDBuild.Msg.success
-			});
-		},
+		/**
+		 * @param {String} configFileName
+		 * @param {Mixed} view
+		 */
+		onSaveConfiguration: function(configFileName, view) {
+			if (!Ext.isEmpty(configFileName) && !Ext.isEmpty(view)) {
+				var params = view.getValues();
 
-		onConfigurationSaveButtonClick: function() {
-			var params = this.sectionView.getValues();
-			params['enabled_languages'] = this.sectionView.languageGrid.getValue().join(', '); // TODO: to delete when localization module will be released
+				// TODO: to delete when localization module will be released
+				if (configFileName == 'cmdbuild')
+					params['enabled_languages'] = view.languageGrid.getValue().join(', ');
 
-			CMDBuild.core.proxy.Configuration.save({
-				scope: this,
-				params: params,
-				success: function(result, options, decodedResult) {
-					this.readConfiguration();
+				CMDBuild.core.proxy.Configuration.save({
+					scope: this,
+					params: params,
+					success: function(result, options, decodedResult) {
+						this.onReadConfiguration(configFileName, view);
 
-					CMDBuild.Msg.success();
-				}
-			}, this.sectionView.configFileName);
-		},
-
-		onConfigurationServiceSynchButtonClick: function() {
-			CMDBuild.core.proxy.CMProxyWorkflow.synchronize({
-				success: CMDBuild.Msg.success
-			});
-		},
-
-		onConfigurationUnlockCardsButtonClick: function() {
-			CMDBuild.core.proxy.Card.unlockAllCards({
-				success: CMDBuild.Msg.success
-			});
+						CMDBuild.Msg.success();
+					}
+				}, configFileName);
+			}
 		},
 
 		/**
@@ -116,7 +121,6 @@
 		 * @override
 		 */
 		onViewOnFront: function(parameters) {
-_debug('parameters', parameters);
 			if (!Ext.Object.isEmpty(parameters)) {
 				var subSection = Ext.Array.contains(this.subSections, parameters.get(CMDBuild.core.proxy.CMProxyConstants.ID))
 					? parameters.get(CMDBuild.core.proxy.CMProxyConstants.ID) : this.subSections[0];
@@ -125,52 +129,36 @@ _debug('parameters', parameters);
 
 				switch(subSection) {
 					case 'alfresco': {
-						this.sectionView = Ext.create('CMDBuild.view.administration.configuration.AlfrescoPanel', {
-							delegate: this
-						});
+						this.sectionController = Ext.create('CMDBuild.controller.administration.configuration.Alfresco', { parentDelegate: this });
 					} break;
 
 					case 'bim': {
-						this.sectionView = Ext.create('CMDBuild.view.administration.configuration.BimPanel', {
-							delegate: this
-						});
+						this.sectionController = Ext.create('CMDBuild.controller.administration.configuration.Bim', { parentDelegate: this });
 					} break;
 
 					case 'gis': {
-						this.sectionView = Ext.create('CMDBuild.view.administration.configuration.GisPanel', {
-							delegate: this
-						});
+						this.sectionController = Ext.create('CMDBuild.controller.administration.configuration.Gis', { parentDelegate: this });
 					} break;
 
 					case 'relationGraph': {
-						this.sectionView = Ext.create('CMDBuild.view.administration.configuration.RelationGraphPanel', {
-							delegate: this
-						});
+						this.sectionController = Ext.create('CMDBuild.controller.administration.configuration.RelationGraph', { parentDelegate: this });
 					} break;
 
 					case 'server': {
-						this.sectionView = Ext.create('CMDBuild.view.administration.configuration.ServerPanel', {
-							delegate: this
-						});
+						this.sectionController = Ext.create('CMDBuild.controller.administration.configuration.Server', { parentDelegate: this });
 					} break;
 
 					case 'workflow': {
-						this.sectionView = Ext.create('CMDBuild.view.administration.configuration.WorkflowPanel', {
-							delegate: this
-						});
+						this.sectionController = Ext.create('CMDBuild.controller.administration.configuration.Workflow', { parentDelegate: this });
 					} break;
 
 					case 'generalOptions':
 					default: {
-						this.sectionView = Ext.create('CMDBuild.view.administration.configuration.GeneralOptionsPanel', {
-							delegate: this
-						});
+						this.sectionController = Ext.create('CMDBuild.controller.administration.configuration.GeneralOptions', { parentDelegate: this });
 					}
 				}
 
-				this.view.add(this.sectionView);
-
-				this.readConfiguration();
+				this.view.add(this.sectionController.getView());
 
 				this.setViewTitle(parameters.get(CMDBuild.core.proxy.CMProxyConstants.TEXT));
 
@@ -178,26 +166,6 @@ _debug('parameters', parameters);
 
 				this.callParent(arguments);
 			}
-		},
-
-		readConfiguration: function() {
-			CMDBuild.core.proxy.Configuration.read({
-				scope: this,
-				success: function(result, options, decodedResult){
-					var decodedResult = decodedResult.data;
-
-					_CMCache.setActiveTranslations(decodedResult.enabled_languages);
-
-					this.sectionView.getForm().setValues(decodedResult);
-
-					// TODO: to delete when localization module will be released
-					if (this.sectionView.configFileName == 'cmdbuild')
-						this.sectionView.languageGrid.setValue(decodedResult.enabled_languages.split(', '));
-
-					if (typeof this.sectionView.afterSubmit == 'function')
-						this.sectionView.afterSubmit(decodedResult);
-				}
-			}, this.sectionView.configFileName);
 		},
 
 		/**

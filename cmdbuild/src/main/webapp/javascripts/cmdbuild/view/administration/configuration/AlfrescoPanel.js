@@ -6,7 +6,7 @@
 		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
 
 		/**
-		 * @cfg {CMDBuild.controller.administration.configuration.Main}
+		 * @cfg {CMDBuild.controller.administration.configuration.Alfresco}
 		 */
 		delegate: undefined,
 
@@ -19,11 +19,6 @@
 		 * @cfg {Boolean}
 		 */
 		attachmentLookupFirstLoad: true,
-
-		/**
-		 * @cfg {String}
-		 */
-		configFileName: 'dms',
 
 		/**
 		 * @property {Ext.form.FieldSet}
@@ -168,21 +163,23 @@
 						},
 
 						items: [
-								{
-									name: 'repository.fspath',
-									fieldLabel: CMDBuild.Translation.fileServerPath,
-									maxWidth: CMDBuild.CFG_BIG_FIELD_WIDTH,
-									allowBlank: false
-								}, {
-									name: 'repository.wspath',
-									fieldLabel: CMDBuild.Translation.webServicePath,
-									maxWidth: CMDBuild.CFG_BIG_FIELD_WIDTH,
-									allowBlank: false
-								}, {
-									name: 'repository.app',
-									fieldLabel: CMDBuild.Translation.application,
-									allowBlank: false
-								}
+							{
+								name: 'repository.fspath',
+								fieldLabel: CMDBuild.Translation.fileServerPath,
+								maxWidth: CMDBuild.CFG_BIG_FIELD_WIDTH,
+								allowBlank: false
+							},
+							{
+								name: 'repository.wspath',
+								fieldLabel: CMDBuild.Translation.webServicePath,
+								maxWidth: CMDBuild.CFG_BIG_FIELD_WIDTH,
+								allowBlank: false
+							},
+							{
+								name: 'repository.app',
+								fieldLabel: CMDBuild.Translation.application,
+								allowBlank: false
+							}
 						]
 					},
 					this.credentialsFieldset
@@ -205,14 +202,14 @@
 								scope: this,
 
 								handler: function(button, e) {
-									this.delegate.cmOn('onConfigurationSaveButtonClick');
+									this.delegate.cmOn('onAlfrescoSaveButtonClick');
 								}
 							}),
 							Ext.create('CMDBuild.core.buttons.Abort', {
 								scope: this,
 
 								handler: function(button, e) {
-									this.delegate.cmOn('onConfigurationAbortButtonClick');
+									this.delegate.cmOn('onAlfrescoAbortButtonClick');
 								}
 							})
 						]
@@ -222,16 +219,6 @@
 
 			this.callParent(arguments);
 		},
-
-//		getValues: function() {
-//			var values = this.callParent(arguments);
-//
-//			if (this.attachmentLookup)
-//				values['category.lookup.attachments'] = this.attachmentLookup.getRawValue();
-//
-//_debug('getValues', values);
-//			return values;
-//		},
 
 		/**
 		 * @param {Object} saveDataObject
@@ -294,7 +281,8 @@
 					},
 					200
 				)();
-		});
+			}
+		);
 	}
 
 })();

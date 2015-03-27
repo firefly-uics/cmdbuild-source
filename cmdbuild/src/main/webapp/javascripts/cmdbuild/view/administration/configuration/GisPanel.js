@@ -6,14 +6,9 @@
 		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
 
 		/**
-		 * @cfg {CMDBuild.controller.administration.configuration.Main}
+		 * @cfg {CMDBuild.controller.administration.configuration.Gis}
 		 */
 		delegate: undefined,
-
-		/**
-		 * @cfg {String}
-		 */
-		configFileName: 'gis',
 
 		bodyCls: 'cmgraypanel',
 		border: false,
@@ -77,14 +72,14 @@
 								scope: this,
 
 								handler: function(button, e) {
-									this.delegate.cmOn('onConfigurationSaveButtonClick');
+									this.delegate.cmOn('onGisSaveButtonClick');
 								}
 							}),
 							Ext.create('CMDBuild.core.buttons.Abort', {
 								scope: this,
 
 								handler: function(button, e) {
-									this.delegate.cmOn('onConfigurationAbortButtonClick');
+									this.delegate.cmOn('onGisAbortButtonClick');
 								}
 							})
 						]
@@ -106,9 +101,9 @@
 			CMDBuild.Config.gis.enabled = ('true' == CMDBuild.Config.gis.enabled);
 
 			if (CMDBuild.Config.gis.enabled) {
-				_CMMainViewportController.enableAccordionByName('gis');
+				_CMMainViewportController.enableAccordionByName(this.delegate.configFileName);
 			} else {
-				_CMMainViewportController.disableAccordionByName('gis');
+				_CMMainViewportController.disableAccordionByName(this.delegate.configFileName);
 			}
 		}
 	});

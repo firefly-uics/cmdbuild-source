@@ -6,14 +6,9 @@
 		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
 
 		/**
-		 * @cfg {CMDBuild.controller.administration.configuration.Main}
+		 * @cfg {CMDBuild.controller.administration.configuration.Bim}
 		 */
 		delegate: undefined,
-
-		/**
-		 * @cfg {String}
-		 */
-		configFileName: 'bim',
 
 		bodyCls: 'cmgraypanel',
 		border: false,
@@ -76,14 +71,14 @@
 								scope: this,
 
 								handler: function(button, e) {
-									this.delegate.cmOn('onConfigurationSaveButtonClick');
+									this.delegate.cmOn('onBimSaveButtonClick');
 								}
 							}),
 							Ext.create('CMDBuild.core.buttons.Abort', {
 								scope: this,
 
 								handler: function(button, e) {
-									this.delegate.cmOn('onConfigurationAbortButtonClick');
+									this.delegate.cmOn('onBimAbortButtonClick');
 								}
 							})
 						]
@@ -103,9 +98,9 @@
 			CMDBuild.Config.workflow.enabled = this.enabledCheckBox.getValue();
 
 			if (CMDBuild.Config.workflow.enabled) {
-				_CMMainViewportController.enableAccordionByName('bim');
+				_CMMainViewportController.enableAccordionByName(this.delegate.configFileName);
 			} else {
-				_CMMainViewportController.disableAccordionByName('bim');
+				_CMMainViewportController.disableAccordionByName(this.delegate.configFileName);
 			}
 		}
 	});

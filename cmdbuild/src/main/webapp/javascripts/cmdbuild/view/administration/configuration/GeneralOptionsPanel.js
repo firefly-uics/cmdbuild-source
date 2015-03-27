@@ -9,14 +9,9 @@
 		],
 
 		/**
-		 * @cfg {CMDBuild.controller.administration.configuration.Main}
+		 * @cfg {CMDBuild.controller.administration.configuration.GeneralOptions}
 		 */
 		delegate: undefined,
-
-		/**
-		 * @cfg {String}
-		 */
-		configFileName: 'cmdbuild',
 
 		/**
 		 * @property {CMDBuild.view.common.field.translatable.Text}
@@ -262,14 +257,14 @@
 								scope: this,
 
 								handler: function(button, e) {
-									this.delegate.cmOn('onConfigurationSaveButtonClick');
+									this.delegate.cmOn('onGeneralOptionsSaveButtonClick');
 								}
 							}),
 							Ext.create('CMDBuild.core.buttons.Abort', {
 								scope: this,
 
 								handler: function(button, e) {
-									this.delegate.cmOn('onConfigurationAbortButtonClick');
+									this.delegate.cmOn('onGeneralOptionsAbortButtonClick');
 								}
 							})
 						]
