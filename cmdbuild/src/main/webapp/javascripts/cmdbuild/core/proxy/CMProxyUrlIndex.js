@@ -112,8 +112,12 @@
 		},
 
 		localizations: { // TODO: refactor with server side
-			classRead: 'services/json/schema/translation/readforclass',
+			classAttributeCreate: 'services/json/schema/translation/createforclassattribute',
 			classAttributeRead: 'services/json/schema/translation/readforclassattribute',
+			classAttributeUpdate: 'services/json/schema/translation/updateforclassattribute',
+			classCreate: 'services/json/schema/translation/createforclass',
+			classRead: 'services/json/schema/translation/readforclass',
+			classUpdate: 'services/json/schema/translation/updateforclass',
 		},
 
 		login: 'services/json/login/login',

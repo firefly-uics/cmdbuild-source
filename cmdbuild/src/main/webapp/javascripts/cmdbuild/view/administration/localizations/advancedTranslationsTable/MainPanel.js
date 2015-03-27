@@ -1,10 +1,10 @@
 (function() {
 
-	Ext.define('CMDBuild.view.administration.localizations.AdvancedTranslationsTablePanel', {
+	Ext.define('CMDBuild.view.administration.localizations.advancedTranslationsTable.MainPanel', {
 		extend: 'Ext.tab.Panel',
 
 		/**
-		 * @cfg {CMDBuild.controller.administration.localizations.AdvancedTranslationsTable}
+		 * @cfg {CMDBuild.controller.administration.localizations.advancedTranslationsTable.Main}
 		 */
 		delegate: undefined,
 
@@ -18,13 +18,11 @@
 		/**
 		 * @param {CMDBuild.model.Localizations.translation} languageObject
 		 *
-		 * @return {Mixed} returnObject
+		 * @return {Ext.grid.column.Column} or null
 		 */
-		buildColumn: function(languageObject) { // TODO
-			var returnObject = null;
-
+		buildColumn: function(languageObject) {
 			if (!Ext.isEmpty(languageObject))
-				returnObject = Ext.create('Ext.grid.column.Column', {
+				return Ext.create('Ext.grid.column.Column', {
 					text: '<img style="margin: 0px 5px 0px 0px;" src="images/icons/flags/'
 						+ languageObject.get(CMDBuild.core.proxy.CMProxyConstants.TAG) + '.png" alt="'
 						+ languageObject.get(CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION) + ' language icon" /> '
@@ -37,7 +35,7 @@
 					editor: { xtype: 'textfield' }
 				});
 
-			return returnObject;
+			return null;
 		}
 	});
 
