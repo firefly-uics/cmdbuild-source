@@ -8,21 +8,6 @@
 		 */
 		delegate: undefined,
 
-		/**
-		 * @cfg {String}
-		 */
-		baseTitle: CMDBuild.Translation.setup,
-
-		/**
-		 * @cfg {String}
-		 */
-		configFileName: 'server',
-
-		/**
-		 * @cfg {String}
-		 */
-		titleSeparator: ' - ',
-
 		bodyCls: 'cmgraypanel',
 		border: false,
 		frame: true,
@@ -42,7 +27,7 @@
 								scope: this,
 
 								handler: function() {
-									this.delegate.cmOn('onConfigurationClearCacheButtonClick');
+									this.delegate.cmOn('onServerClearCacheButtonClick');
 								}
 							})
 						]
@@ -58,7 +43,7 @@
 								scope: this,
 
 								handler: function() {
-									this.delegate.cmOn('onConfigurationServiceSynchButtonClick');
+									this.delegate.cmOn('onServerServiceSynchButtonClick');
 								}
 							})
 						]
@@ -74,7 +59,7 @@
 								scope: this,
 
 								handler: function() {
-									this.delegate.cmOn('onConfigurationUnlockCardsButtonClick');
+									this.delegate.cmOn('onServerUnlockCardsButtonClick');
 								}
 							})
 						]

@@ -6,14 +6,9 @@
 		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
 
 		/**
-		 * @cfg {CMDBuild.controller.administration.configuration.Main}
+		 * @cfg {CMDBuild.controller.administration.configuration.RelationGraph}
 		 */
 		delegate: undefined,
-
-		/**
-		 * @cfg {String}
-		 */
-		configFileName: 'graph',
 
 		bodyCls: 'cmgraypanel',
 		border: false,
@@ -82,14 +77,14 @@
 								scope: this,
 
 								handler: function(button, e) {
-									this.delegate.cmOn('onConfigurationSaveButtonClick');
+									this.delegate.cmOn('onRelationGraphSaveButtonClick');
 								}
 							}),
 							Ext.create('CMDBuild.core.buttons.Abort', {
 								scope: this,
 
 								handler: function(button, e) {
-									this.delegate.cmOn('onConfigurationAbortButtonClick');
+									this.delegate.cmOn('onRelationGraphAbortButtonClick');
 								}
 							})
 						]
@@ -98,14 +93,7 @@
 			});
 
 			this.callParent(arguments);
-		},
-
-		/**
-		 * @param {Object} saveDataObject
-		 *
-		 * @override
-		 */
-		afterSubmit: function(saveDataObject) {}
+		}
 	});
 
 })();
