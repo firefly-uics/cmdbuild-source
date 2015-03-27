@@ -71,6 +71,7 @@
 			if (!Ext.isEmpty(configFileName) && !Ext.isEmpty(view)) {
 				CMDBuild.core.proxy.Configuration.read({
 					scope: this,
+					loadMask: true,
 					success: function(result, options, decodedResult){
 						var decodedResult = decodedResult.data;
 
@@ -104,6 +105,7 @@
 				CMDBuild.core.proxy.Configuration.save({
 					scope: this,
 					params: params,
+					loadMask: true,
 					success: function(result, options, decodedResult) {
 						this.onReadConfiguration(configFileName, view);
 
