@@ -34,7 +34,7 @@
 			return;
 		}
 
-		var params = this.form.getData();
+		var params = this.form.getData(true);
 		//if I'm not passing the "username" and the "description" I'm changing the password
 		//and i need to know the value of the "isactive" field to not set it to false anyway
 
