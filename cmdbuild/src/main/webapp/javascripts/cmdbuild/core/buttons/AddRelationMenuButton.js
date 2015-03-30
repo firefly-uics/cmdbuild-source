@@ -93,9 +93,7 @@
 							}
 						}, this);
 
-						// Disable button if there aren't available domains
-						if (this.menu.items.getCount() == 0)
-							this.setDisabled(true);
+						this.setDisabled(this.menu.items.items.length == 0); // Disable button if there aren't available domains
 
 						// Ascending items sort
 						this.menu.items.items.sort(function(a, b) {
