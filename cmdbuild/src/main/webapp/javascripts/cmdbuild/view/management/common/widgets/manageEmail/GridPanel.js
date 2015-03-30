@@ -170,7 +170,7 @@
 								},
 
 								isDisabled: function(grid, rowIndex, colIndex, item, record) {
-									return !this.delegate.recordIsSendable(record);
+									return this.readOnly || !this.delegate.recordIsSendable(record);
 								}
 							}
 						]
