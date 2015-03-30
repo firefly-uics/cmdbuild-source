@@ -992,6 +992,12 @@
 		"widgetLinkCardsNoClassNameError": "<em>LinkCardsController constructor: className not valid</em>",
 		"wrong_wf_widgets": "There was an error saving the following visual controls: "
 	},
+	"emailLookupNames": {
+		"draft": "پیش نویس",
+		"outgoing": "خروجی",
+		"received": "دریافتی",
+		"sent": "ارسالی"
+	},
 	"filterWindow": {
 		"add": "اضافه کردن فیلتر"
 	},
@@ -1388,13 +1394,6 @@
 	"download_ifc_file": "Download Ifc file",
 	"edit": "<em>Edit</em>",
 	"emailBody": "بدنه",
-	"emailLookupNames": {
-		"draft": "پیش نویس",
-		"new": "جدید",
-		"outgoing": "خروجی",
-		"received": "دریافتی",
-		"sent": "ارسالی"
-	},
 	"emailRegenerationConfirmPopupText": "این تمام ایمیل های ست نشده را حذف میکند.",
 	"emailTemplate": "قالب ایمیل",
 	"enable": "فعال",
@@ -1488,7 +1487,6 @@
 	"remove_formatting": "<em>Remove formatting</em>",
 	"replace": "<em>Replace</em>",
 	"reply": "<em>Reply</em>",
-	"replyEmail": "<em>Reply e-mail</em>",
 	"report": "<em>Report</em>",
 	"reportParameters": "<em>Report parameters</em>",
 	"repository": "Repository",

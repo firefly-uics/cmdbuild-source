@@ -244,7 +244,7 @@
 						groupHeaderTpl: [
 							'{name:this.formatName}',
 							{
-								formatName: function(name) {
+								formatName: function(name) { // TODO: use plain translation without emailLookupNames
 									return CMDBuild.Translation.emailLookupNames[name];
 								}
 							}

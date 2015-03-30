@@ -992,6 +992,12 @@
 		"widgetLinkCardsNoClassNameError": "LinkCardsController constructor: className not valid",
 		"wrong_wf_widgets": "There was an error saving the following visual controls: "
 	},
+	"emailLookupNames": {
+		"draft": "Draft",
+		"outgoing": "Outgoing",
+		"received": "Received",
+		"sent": "Sent"
+	},
 	"filterWindow": {
 		"add": "Add filter"
 	},

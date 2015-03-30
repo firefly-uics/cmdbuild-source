@@ -992,6 +992,12 @@
 		"widgetLinkCardsNoClassNameError": "Constructeur LinkCardsController: nom de classe non valide",
 		"wrong_wf_widgets": "Il y a eu une erreur d'enregistrement des widgets suivants: "
 	},
+	"emailLookupNames": {
+		"draft": "Brouillon",
+		"outgoing": "Sortant",
+		"received": "Reçu",
+		"sent": "Envoyé"
+	},
 	"filterWindow": {
 		"add": "Ajouter un filtre"
 	},
@@ -1388,13 +1394,6 @@
 	"download_ifc_file": "Télécharger un fichier Ifc",
 	"edit": "<em>Edit</em>",
 	"emailBody": "Corps",
-	"emailLookupNames": {
-		"draft": "Brouillon",
-		"new": "Nouveau",
-		"outgoing": "Sortant",
-		"received": "Reçu",
-		"sent": "Envoyé"
-	},
 	"emailRegenerationConfirmPopupText": "Cela effacera tous les emails non sélectionnés",
 	"emailTemplate": "Modèle d'email",
 	"enable": "Activer",
@@ -1488,7 +1487,6 @@
 	"remove_formatting": "Supprimer la mise en forme",
 	"replace": "Remplacer",
 	"reply": "<em>Reply</em>",
-	"replyEmail": "<em>Reply e-mail</em>",
 	"report": "<em>Report</em>",
 	"reportParameters": "<em>Report parameters</em>",
 	"repository": "Dépôt",

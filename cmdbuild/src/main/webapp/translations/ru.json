@@ -992,6 +992,12 @@
 		"widgetLinkCardsNoClassNameError": "<em>LinkCardsController constructor: className not valid</em>",
 		"wrong_wf_widgets": "При сохранении следующих виджетов произошла ошибка: "
 	},
+	"emailLookupNames": {
+		"draft": "Черновики",
+		"outgoing": "Исходящие",
+		"received": "Входящие",
+		"sent": "Отправленные"
+	},
 	"filterWindow": {
 		"add": "Создать фильтр"
 	},
@@ -1388,13 +1394,6 @@
 	"download_ifc_file": "Скачать Ifc-файл",
 	"edit": "<em>Edit</em>",
 	"emailBody": "Текст письма",
-	"emailLookupNames": {
-		"draft": "Черновики",
-		"new": "Создать",
-		"outgoing": "Исходящие",
-		"received": "Входящие",
-		"sent": "Отправленные"
-	},
 	"emailRegenerationConfirmPopupText": "Это действие удалит все неотправленные сообщения",
 	"emailTemplate": "Шаблон письма",
 	"enable": "Включить",
@@ -1488,7 +1487,6 @@
 	"remove_formatting": "Очистить форматирование",
 	"replace": "<em>Replace</em>",
 	"reply": "<em>Reply</em>",
-	"replyEmail": "<em>Reply e-mail</em>",
 	"report": "<em>Report</em>",
 	"reportParameters": "<em>Report parameters</em>",
 	"repository": "Хранилище документов",
