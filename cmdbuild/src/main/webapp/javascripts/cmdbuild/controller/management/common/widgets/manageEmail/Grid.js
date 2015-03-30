@@ -238,7 +238,7 @@
 		 * @param {CMDBuild.model.widget.ManageEmail.email} record
 		 */
 		onGridItemDoubleClick: function(record) {
-			if (this.recordIsEditable(record)) {
+			if (!this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.READ_ONLY] && this.recordIsEditable(record)) {
 				this.onGridEditEmailButtonClick(record);
 			} else {
 				this.onGridViewEmailButtonClick(record);
