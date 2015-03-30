@@ -13,7 +13,9 @@ import org.cmdbuild.auth.acl.PrivilegeContext;
 import org.cmdbuild.auth.user.AuthenticatedUser;
 import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.dao.entrytype.CMClass;
+import org.cmdbuild.services.localization.LocalizableStorableVisitor;
 import org.cmdbuild.services.store.DataViewFilterStore;
+import org.cmdbuild.services.store.FilterConverter;
 import org.cmdbuild.services.store.FilterStore;
 import org.cmdbuild.services.store.FilterStore.Filter;
 import org.cmdbuild.services.store.FilterStore.GetFiltersResponse;
@@ -37,7 +39,7 @@ public class DataViewFilterStoreTest extends IntegrationTestBase {
 
 	@Before
 	public void createFilterStore() throws Exception {
-		filterStore = new DataViewFilterStore(dbDataView(), operationUser(USER_ID));
+		filterStore = new DataViewFilterStore(dbDataView(), operationUser(USER_ID), new FilterConverter(dbDataView()));
 		roleClass = dbDataView().findClass("Role");
 		userClass = dbDataView().findClass("User");
 	}
@@ -133,7 +135,7 @@ public class DataViewFilterStoreTest extends IntegrationTestBase {
 		// given
 		filterStore.create(userFilter("bar", "baz", roleClass.getIdentifier().getLocalName(), EMPTY_ID));
 		final DataViewFilterStore anotherFilterStore = new DataViewFilterStore( //
-				dbDataView(), operationUser(ANOTHER_USER_ID));
+				dbDataView(), operationUser(ANOTHER_USER_ID), new FilterConverter(dbDataView()));
 		anotherFilterStore.create(userFilter("foo", "baz", roleClass.getIdentifier().getLocalName(), EMPTY_ID));
 
 		// when
@@ -226,6 +228,16 @@ public class DataViewFilterStoreTest extends IntegrationTestBase {
 	private Filter filter(final String name, final String description, final String value, final String className,
 			final Long id, final boolean asTemplate) {
 		return new Filter() {
+
+			@Override
+			public void accept(final LocalizableStorableVisitor visitor) {
+				visitor.visit(this);
+			}
+
+			@Override
+			public String getIdentifier() {
+				return name;
+			}
 
 			@Override
 			public String getName() {
