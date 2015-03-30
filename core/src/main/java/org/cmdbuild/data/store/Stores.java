@@ -40,7 +40,7 @@ public class Stores {
 	 * This store returns {@code null} instead of throwing
 	 * {@link NoSuchElementException} when {@link #read(Storable)} fails.
 	 */
-	public static <T extends Storable> NullOnNotFoundReadStore<T> nullOnNotFoundRead(final Store<T> store) {
+	public static <T extends Storable> Store<T> nullOnNotFoundRead(final Store<T> store) {
 		return new NullOnNotFoundReadStore<T>(store);
 	}
 

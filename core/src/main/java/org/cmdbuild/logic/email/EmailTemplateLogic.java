@@ -30,6 +30,10 @@ public interface EmailTemplateLogic extends Logic {
 
 		String getAccount();
 
+		boolean isKeepSynchronization();
+
+		boolean isPromptSynchronization();
+
 	}
 
 	/**
@@ -47,16 +51,16 @@ public interface EmailTemplateLogic extends Logic {
 	 * 
 	 * @return the id of the created {@link Template}.
 	 */
-	Long create(final Template template);
+	Long create(Template template);
 
 	/**
 	 * Updates the given {@link Template}.
 	 */
-	void update(final Template template);
+	void update(Template template);
 
 	/**
 	 * Remove the {@link Template} with the given name.
 	 */
-	void delete(final String name);
+	void delete(String name);
 
 }

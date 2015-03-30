@@ -8,10 +8,8 @@ import java.util.Map;
 
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
-import org.cmdbuild.data.store.email.Email;
 import org.cmdbuild.data.store.lookup.LookupStore;
 import org.cmdbuild.logger.Log;
-import org.cmdbuild.logic.email.EmailLogic.EmailWithAttachmentNames;
 import org.cmdbuild.logic.translation.TranslationFacade;
 import org.cmdbuild.workflow.CMActivity;
 import org.cmdbuild.workflow.CMActivityWidget;
@@ -22,8 +20,6 @@ import org.cmdbuild.workflow.xpdl.CMActivityVariableToProcess;
 import org.slf4j.Logger;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
-
-import com.google.common.collect.Lists;
 
 public class JsonWorkflowDTOs {
 
@@ -142,7 +138,8 @@ public class JsonWorkflowDTOs {
 		private final TranslationFacade translationFacade;
 		private final LookupStore lookupStore;
 
-		public JsonProcessCard(final UserProcessInstance processInstance, TranslationFacade translationFacade, LookupStore lookupStore) {
+		public JsonProcessCard(final UserProcessInstance processInstance, final TranslationFacade translationFacade,
+				final LookupStore lookupStore) {
 			this.processInstance = processInstance;
 			this.translationFacade = translationFacade;
 			this.lookupStore = lookupStore;
@@ -209,59 +206,8 @@ public class JsonWorkflowDTOs {
 
 		@Override
 		protected Object javaToJsonValue(final CMAttributeType<?> type, final Object value) {
-			return new JsonAttributeValueVisitor(type, value, translationFacade,lookupStore).convertValue();
+			return new JsonAttributeValueVisitor(type, value, translationFacade, lookupStore).convertValue();
 		}
 	}
 
-	public static class JsonEmail extends AbstractJsonResponseSerializer {
-
-		private final Email email;
-		private final List<String> attachmentNames;
-
-		public JsonEmail(final EmailWithAttachmentNames email) {
-			this.email = email.getEmail();
-			this.attachmentNames = Lists.newArrayList(email.getAttachmentNames());
-		}
-
-		public Long getId() {
-			return email.getId();
-		}
-
-		public String getFromAddress() {
-			return email.getFromAddress();
-		}
-
-		public String getToAddresses() {
-			return email.getToAddresses();
-		}
-
-		public String getCcAddresses() {
-			return email.getCcAddresses();
-		}
-
-		public String getSubject() {
-			return email.getSubject();
-		}
-
-		public String getContent() {
-			return email.getContent();
-		}
-
-		public String getDate() {
-			return formatDateTime(email.getDate());
-		}
-
-		public String getStatus() {
-			return email.getStatus().getLookupName();
-		}
-
-		public String getNotifyWith() {
-			return email.getNotifyWith();
-		}
-
-		public List<String> getAttachments() {
-			return attachmentNames;
-		}
-
-	}
 }

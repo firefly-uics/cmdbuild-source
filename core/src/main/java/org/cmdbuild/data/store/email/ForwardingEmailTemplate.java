@@ -6,15 +6,14 @@ import com.google.common.collect.ForwardingObject;
 
 public abstract class ForwardingEmailTemplate extends ForwardingObject implements EmailTemplate {
 
-
 	/**
 	 * Usable by subclasses only.
 	 */
 	protected ForwardingEmailTemplate() {
 	}
-	
+
 	@Override
-	protected abstract EmailTemplate delegate() ;
+	protected abstract EmailTemplate delegate();
 
 	@Override
 	public String getIdentifier() {
@@ -84,6 +83,16 @@ public abstract class ForwardingEmailTemplate extends ForwardingObject implement
 	@Override
 	public Long getAccount() {
 		return delegate().getAccount();
+	}
+
+	@Override
+	public boolean isKeepSynchronization() {
+		return delegate().isKeepSynchronization();
+	}
+
+	@Override
+	public boolean isPromptSynchronization() {
+		return delegate().isPromptSynchronization();
 	}
 
 }

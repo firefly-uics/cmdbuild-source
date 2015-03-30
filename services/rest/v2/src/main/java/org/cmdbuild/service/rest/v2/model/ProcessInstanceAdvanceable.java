@@ -1,5 +1,12 @@
 package org.cmdbuild.service.rest.v2.model;
 
+import static org.cmdbuild.service.rest.v2.constants.Serialization.ACTIVITY;
+import static org.cmdbuild.service.rest.v2.constants.Serialization.ADVANCE;
+import static org.cmdbuild.service.rest.v2.constants.Serialization.WIDGETS;
+
+import java.util.Collection;
+
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
@@ -13,11 +20,13 @@ public class ProcessInstanceAdvanceable extends ProcessInstance {
 
 	private String activity;
 	private boolean advance;
+	private Collection<Widget> widgets;
 
 	ProcessInstanceAdvanceable() {
 		// package visibility
 	}
 
+	@XmlAttribute(name = ACTIVITY)
 	public String getActivity() {
 		return activity;
 	}
@@ -26,12 +35,22 @@ public class ProcessInstanceAdvanceable extends ProcessInstance {
 		this.activity = activityId;
 	}
 
+	@XmlAttribute(name = ADVANCE)
 	public boolean isAdvance() {
 		return advance;
 	}
 
 	void setAdvance(final boolean advance) {
 		this.advance = advance;
+	}
+
+	@XmlAttribute(name = WIDGETS)
+	public Collection<Widget> getWidgets() {
+		return widgets;
+	}
+
+	void setWidgets(final Collection<Widget> widgets) {
+		this.widgets = widgets;
 	}
 
 	@Override
@@ -48,6 +67,7 @@ public class ProcessInstanceAdvanceable extends ProcessInstance {
 		return super.doEquals(obj) && new EqualsBuilder() //
 				.append(this.activity, other.activity) //
 				.append(this.advance, other.advance) //
+				.append(this.widgets, other.widgets) //
 				.isEquals();
 	}
 
@@ -57,6 +77,7 @@ public class ProcessInstanceAdvanceable extends ProcessInstance {
 				.append(super.doHashCode()) //
 				.append(activity) //
 				.append(advance) //
+				.append(widgets) //
 				.toHashCode();
 	}
 

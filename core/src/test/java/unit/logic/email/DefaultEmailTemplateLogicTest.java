@@ -1,9 +1,11 @@
 package unit.logic.email;
 
+import static com.google.common.collect.Iterables.size;
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -299,10 +301,25 @@ public class DefaultEmailTemplateLogicTest {
 
 	@Test
 	public void allElementsGet() throws Exception {
+		// given
+		final ExtendedEmailTemplate first = DefaultExtendedEmailTemplate.newInstance() //
+				.withDelegate(DefaultEmailTemplate.newInstance() //
+						.withName("first") //
+						.build()) //
+				.build();
+		final ExtendedEmailTemplate second = DefaultExtendedEmailTemplate.newInstance() //
+				.withDelegate(DefaultEmailTemplate.newInstance() //
+						.withName("second") //
+						.build()) //
+				.build();
+		doReturn(asList(first, second)) //
+				.when(store).readAll();
+
 		// when
-		logic.readAll();
+		final Iterable<Template> elements = logic.readAll();
 
 		// then
+		assertThat(size(elements), equalTo(2));
 		verify(store).readAll();
 		verifyNoMoreInteractions(store);
 	}

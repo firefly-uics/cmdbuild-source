@@ -188,7 +188,7 @@ public class TaskManager {
 				email.emailAccountStore(), //
 				email.emailServiceFactory(), //
 				email.subjectHandler(), //
-				email.emailPersistence(), //
+				email.emailStore(), //
 				workflow.systemWorkflowLogicBuilder() //
 						.build(), //
 				dms.defaultDmsLogic(), //

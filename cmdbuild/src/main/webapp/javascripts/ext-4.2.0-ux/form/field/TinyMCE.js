@@ -17,6 +17,10 @@
 
 		requires: ['Ext.ux.form.field.TinyMCEWindowManager'],
 
+		mixins: {
+			observable: 'Ext.util.Observable'
+		},
+
 		config: {
 			height: 170
 		},
@@ -54,6 +58,8 @@
 
 		constructor: function(config) {
 			var me = this;
+
+			this.mixins.observable.constructor.call(this, arguments);
 
 			config.height = (config.height && config.height >= me.config.height) ? config.height : me.config.height;
 
@@ -101,9 +107,28 @@
 			me.tinyMCEConfig.setup = function(editor) {
 				editor.onInit.add(function(editor) {
 					me.inProgress = false;
+
+					// Add focus event implementation
+					tinymce.dom.Event.add(editor.getBody(), 'focus', function(e) {
+						me.fireEvent('focus', me);
+					});
+
+					// Add blur event implementation
+					tinymce.dom.Event.add(editor.getBody(), 'blur', function(e) {
+						me.fireEvent('blur', me);
+						me.fireEvent('change', me); // Fake changeEvent
+
+						me.setValue(me.getValue()); // Fixes problems of lose content on blur
+					});
 				});
 
 				editor.onKeyPress.add(Ext.Function.createBuffered(me.validate, 250, me));
+
+				// ExtJs change implementation
+				// This should be right implementation but to be compatible with CMDBuild FieldManager change should be fired onBlur event
+				// editor.onKeyPress.add(function() {
+				//	me.fireEvent('change', me);
+				// });
 
 				editor.onPostRender.add(function(editor) {
 					me.editor = editor;

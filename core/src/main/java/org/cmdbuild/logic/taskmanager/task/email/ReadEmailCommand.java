@@ -5,6 +5,8 @@ import java.util.Collection;
 import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
 import org.apache.commons.lang3.tuple.Triple;
+import org.cmdbuild.data.store.Storable;
+import org.cmdbuild.data.store.Store;
 import org.cmdbuild.data.store.email.Email;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.scheduler.command.Command;
@@ -26,6 +28,7 @@ class ReadEmailCommand implements Command {
 	public static class Builder implements org.apache.commons.lang3.builder.Builder<ReadEmailCommand> {
 
 		private EmailService emailService;
+		private Store<Email> emailStore;
 		private Predicate<Email> predicate;
 		private final Collection<Triple<Predicate<Email>, Function<Email, Email>, Action>> triples = Lists
 				.newArrayList();
@@ -42,11 +45,17 @@ class ReadEmailCommand implements Command {
 
 		private void validate() {
 			Validate.notNull(emailService, "invalid email service");
+			Validate.notNull(emailStore, "invalid email store");
 			Validate.notNull(predicate, "invalid predicate");
 		}
 
 		public ReadEmailCommand.Builder withEmailService(final EmailService emailService) {
 			this.emailService = emailService;
+			return this;
+		}
+		
+		public ReadEmailCommand.Builder withEmailStore(final Store<Email> emailStore) {
+			this.emailStore = emailStore;
 			return this;
 		}
 
@@ -68,11 +77,13 @@ class ReadEmailCommand implements Command {
 	}
 
 	private final EmailService service;
+	private final Store<Email> emailStore;
 	private final Predicate<Email> predicate;
 	private final Iterable<Triple<Predicate<Email>, Function<Email, Email>, Action>> triples;
 
 	private ReadEmailCommand(final ReadEmailCommand.Builder builder) {
 		this.service = builder.emailService;
+		this.emailStore = builder.emailStore;
 		this.predicate = builder.predicate;
 		this.triples = builder.triples;
 	}
@@ -87,10 +98,12 @@ class ReadEmailCommand implements Command {
 
 		logger.info(marker, "executing actions");
 		for (final Email email : callbackHandler.getEmails()) {
+			final Storable stored = emailStore.create(email);
+			final Email read = emailStore.read(stored);
 			for (final Triple<Predicate<Email>, Function<Email, Email>, Action> triple : triples) {
-				if (triple.getLeft().apply(email)) {
-					final Email adapted = triple.getMiddle().apply(email);
-					service.save(adapted);
+				if (triple.getLeft().apply(read)) {
+					final Email adapted = triple.getMiddle().apply(read);
+					emailStore.update(adapted);
 					triple.getRight().execute(adapted);
 				}
 			}
