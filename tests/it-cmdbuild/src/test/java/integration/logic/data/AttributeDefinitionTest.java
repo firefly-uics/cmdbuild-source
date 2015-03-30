@@ -33,6 +33,7 @@ import org.cmdbuild.dao.entrytype.attributetype.ReferenceAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.StringAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TextAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TimeAttributeType;
+import static org.cmdbuild.model.data.Attribute.AttributeTypeBuilder.*;
 import org.cmdbuild.model.data.ClassOrder;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -572,6 +573,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 		// when
 		dataDefinitionLogic().createOrUpdate( //
 				a(newAttribute(ATTRIBUTE_NAME) //
+						.withType(TEXT) //
 						.withOwnerName(testClass.getIdentifier().getLocalName()) //
 						.withDescription(DESCRIPTION) //
 						.thatIsActive(false) //
@@ -587,10 +589,8 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 		assertThat(updatedAttribute.isDisplayableInList(), equalTo(true));
 		assertThat(updatedAttribute.isMandatory(), equalTo(true));
 		assertThat(updatedAttribute.isUnique(), equalTo(true));
-		assertThat(updatedAttribute.getIndex(), equalTo(DEFAULT_ATTRIBUTE_INDEX)); // index
-																					// is
-																					// not
-		// changed
+		// index is not changed
+		assertThat(updatedAttribute.getIndex(), equalTo(DEFAULT_ATTRIBUTE_INDEX));
 	}
 
 	@Test
