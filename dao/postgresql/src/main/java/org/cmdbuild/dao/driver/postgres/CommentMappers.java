@@ -54,6 +54,8 @@ class CommentMappers {
 			define("CARDIN", DomainMetadata.CARDINALITY);
 			define("MASTERDETAIL", DomainMetadata.MASTERDETAIL);
 			define("MDLABEL", DomainMetadata.MASTERDETAIL_DESCRIPTION);
+			define("DISABLED1", DomainMetadata.DISABLED_1);
+			define("DISABLED2", DomainMetadata.DISABLED_2);
 		}
 	};
 

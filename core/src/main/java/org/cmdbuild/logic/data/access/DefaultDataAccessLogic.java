@@ -1,5 +1,6 @@
 package org.cmdbuild.logic.data.access;
 
+import static com.google.common.base.Predicates.not;
 import static com.google.common.collect.FluentIterable.from;
 import static com.google.common.collect.Iterables.filter;
 import static com.google.common.collect.Iterables.size;
@@ -8,11 +9,16 @@ import static java.util.Arrays.asList;
 import static org.apache.commons.lang3.RandomStringUtils.randomAscii;
 import static org.cmdbuild.dao.constants.Cardinality.CARDINALITY_1N;
 import static org.cmdbuild.dao.constants.Cardinality.CARDINALITY_N1;
-import static org.cmdbuild.dao.entrytype.Deactivable.IsActivePredicate.filterActive;
+import static org.cmdbuild.dao.entrytype.Deactivable.IsActivePredicate.activeOnes;
+import static org.cmdbuild.dao.entrytype.Predicates.allDomains;
 import static org.cmdbuild.dao.entrytype.Predicates.attributeTypeInstanceOf;
+import static org.cmdbuild.dao.entrytype.Predicates.disabledClass;
+import static org.cmdbuild.dao.entrytype.Predicates.domainFor;
+import static org.cmdbuild.dao.entrytype.Predicates.usableForReferences;
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
 import static org.cmdbuild.dao.query.clause.AnyClass.anyClass;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
+import static org.cmdbuild.dao.query.clause.alias.Aliases.name;
 import static org.cmdbuild.dao.query.clause.alias.Utils.as;
 import static org.cmdbuild.dao.query.clause.join.Over.over;
 import static org.cmdbuild.dao.query.clause.where.AndWhereClause.and;
@@ -47,7 +53,6 @@ import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.CMQueryRow;
 import org.cmdbuild.dao.query.clause.QueryAliasAttribute;
 import org.cmdbuild.dao.query.clause.alias.Alias;
-import org.cmdbuild.dao.query.clause.alias.NameAlias;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.data.store.Storable;
@@ -55,7 +60,7 @@ import org.cmdbuild.data.store.Store;
 import org.cmdbuild.data.store.dao.DataViewStore;
 import org.cmdbuild.data.store.lookup.LookupStore;
 import org.cmdbuild.exception.ConsistencyException.ConsistencyExceptionType;
-import org.cmdbuild.exception.NotFoundException;
+import org.cmdbuild.exception.NotFoundException.NotFoundExceptionType;
 import org.cmdbuild.exception.ORMException.ORMExceptionType;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.commands.AbstractGetRelation.RelationInfo;
@@ -97,8 +102,8 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 
 	private static final String ID_ATTRIBUTE = org.cmdbuild.dao.driver.postgres.Const.ID_ATTRIBUTE;
 
-	protected static final Alias DOM_ALIAS = NameAlias.as("DOM");
-	protected static final Alias DST_ALIAS = NameAlias.as("DST");
+	private static final Alias DOM_ALIAS = name("DOM");
+	private static final Alias DST_ALIAS = name("DST");
 
 	private static final Function<CMCard, Card> CMCARD_TO_CARD = new Function<CMCard, Card>() {
 		@Override
@@ -229,7 +234,8 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 	 */
 	@Override
 	public Iterable<? extends CMClass> findActiveClasses() {
-		return filterActive(strictDataView.findClasses());
+		return from(strictDataView.findClasses()) //
+				.filter(activeOnes());
 	}
 
 	/**
@@ -247,30 +253,17 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 	 */
 	@Override
 	public Iterable<? extends CMDomain> findActiveDomains() {
-		final Iterable<? extends CMDomain> activeDomains = filterActive(dataView.findDomains());
-		return activeDomains;
+		return from(dataView.findDomains()) //
+				.filter(activeOnes());
 	}
 
 	@Override
 	public Iterable<? extends CMDomain> findReferenceableDomains(final String className) {
-		final List<CMDomain> referenceableDomains = Lists.newArrayList();
 		final CMClass fetchedClass = dataView.findClass(className);
-		for (final CMDomain domain : dataView.findDomainsFor(fetchedClass)) {
-			if (isReferenceableDomain(domain, fetchedClass)) {
-				referenceableDomains.add(domain);
-			}
-		}
-		return referenceableDomains;
-	}
-
-	private static boolean isReferenceableDomain(final CMDomain domain, final CMClass cmClass) {
-		final String cardinality = domain.getCardinality();
-		if (cardinality.equals(CARDINALITY_1N.value()) && domain.getClass2().isAncestorOf(cmClass)) {
-			return true;
-		} else if (cardinality.equals(CARDINALITY_N1.value()) && domain.getClass1().isAncestorOf(cmClass)) {
-			return true;
-		}
-		return false;
+		return from(dataView.findDomains()) //
+				.filter(domainFor(fetchedClass)) //
+				.filter(not(disabledClass(fetchedClass))) //
+				.filter(usableForReferences(fetchedClass));
 	}
 
 	@Override
@@ -390,7 +383,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 					.first() //
 					.get();
 		} catch (final NoSuchElementException ex) {
-			throw NotFoundException.NotFoundExceptionType.CARD_NOTFOUND.createException(className);
+			throw NotFoundExceptionType.CARD_NOTFOUND.createException(className);
 		}
 	}
 
@@ -417,7 +410,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 			return CMCARD_TO_CARD.apply(cardWithResolvedReference);
 
 		} catch (final NoSuchElementException ex) {
-			throw NotFoundException.NotFoundExceptionType.CARD_NOTFOUND.createException();
+			throw NotFoundExceptionType.CARD_NOTFOUND.createException();
 		}
 	}
 
@@ -550,7 +543,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 	@Override
 	public FetchCardListResponse fetchSQLCards(final String functionName, final QueryOptions queryOptions) {
 		final CMFunction fetchedFunction = dataView.findFunctionByName(functionName);
-		final Alias functionAlias = NameAlias.as("f");
+		final Alias functionAlias = name("f");
 
 		if (fetchedFunction == null) {
 			final List<Card> emptyCardList = Collections.emptyList();
@@ -622,7 +615,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 	public Long createCard(final Card userGivenCard, final boolean manageAlsoDomainsAttributes) {
 		final CMClass entryType = strictDataView.findClass(userGivenCard.getClassName());
 		if (entryType == null) {
-			throw NotFoundException.NotFoundExceptionType.CLASS_NOTFOUND.createException();
+			throw NotFoundExceptionType.CLASS_NOTFOUND.createException(userGivenCard.getClassName());
 		}
 
 		final Store<Card> store = storeOf(userGivenCard);
@@ -647,7 +640,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 
 		final CMClass entryType = dataView.findClass(userGivenCard.getClassName());
 		if (entryType == null) {
-			throw NotFoundException.NotFoundExceptionType.CLASS_NOTFOUND.createException();
+			throw NotFoundExceptionType.CLASS_NOTFOUND.createException(userGivenCard.getClassName());
 		}
 
 		final Store<Card> store = storeOf(userGivenCard);
@@ -731,8 +724,8 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 					continue;
 				}
 
-				final Alias DOM = NameAlias.as("DOM");
-				final Alias DST = NameAlias.as(format("DST-%s-%s", destinationClass.getName(), randomAscii(10)));
+				final Alias DOM = name("DOM");
+				final Alias DST = name(format("DST-%s-%s", destinationClass.getName(), randomAscii(10)));
 				final CMQueryRow row = dataView.select(anyAttribute(sourceClass), anyAttribute(DST), anyAttribute(DOM)) //
 						.from(sourceClass) //
 						.join(destinationClass, DST, over(domain, as(DOM))) //
@@ -844,6 +837,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 		if (card != null) {
 			final Card updatedCard = Card.newInstance() //
 					.clone(card) //
+					.clearAttributes() //
 					.withAllAttributes(attributes) //
 					.build();
 			storeOf(updatedCard).update(updatedCard);
@@ -875,26 +869,16 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 		}
 	}
 
-	/**
-	 * Retrieves all domains in which the class with id = classId is involved
-	 * (both direct and inverse relation)
-	 * 
-	 * @param className
-	 *            the class name involved in the relation
-	 * @return a list of all domains defined for the class
-	 */
 	@Override
-	public List<CMDomain> findDomainsForClassWithName(final String className) {
+	public Iterable<CMDomain> findDomainsForClass(final String className, final boolean skipDisabledClasses) {
 		final CMClass fetchedClass = dataView.findClass(className);
 		if (fetchedClass == null) {
-			throw NotFoundException.NotFoundExceptionType.DOMAIN_NOTFOUND.createException();
+			throw NotFoundExceptionType.CLASS_NOTFOUND.createException(className);
 		}
-
-		return findDomainsForCMClass(fetchedClass);
-	}
-
-	private List<CMDomain> findDomainsForCMClass(final CMClass fetchedClass) {
-		return Lists.newArrayList(dataView.findDomainsFor(fetchedClass));
+		return from(dataView.findDomains()) //
+				.filter(domainFor(fetchedClass)) //
+				.filter(skipDisabledClasses ? not(disabledClass(fetchedClass)) : allDomains()) //
+				.filter(CMDomain.class);
 	}
 
 	/**
@@ -918,7 +902,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 	public Iterable<Long> createRelations(final RelationDTO relationDTO) {
 		final CMDomain domain = dataView.findDomain(relationDTO.domainName);
 		if (domain == null) {
-			throw NotFoundException.NotFoundExceptionType.DOMAIN_NOTFOUND.createException();
+			throw NotFoundExceptionType.DOMAIN_NOTFOUND.createException(relationDTO.domainName);
 		}
 		final CMCard parentCard = retrieveParentCard(relationDTO);
 		final List<CMCard> childCards = retrieveChildCards(relationDTO);
@@ -926,11 +910,23 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 		final List<Long> ids = Lists.newArrayList();
 		if (relationDTO.master.equals("_1")) {
 			for (final CMCard dstCard : childCards) {
+				if (from(domain.getDisabled1()).contains(parentCard)) {
+					throw NotFoundExceptionType.DOMAIN_NOTFOUND.createException(relationDTO.domainName);
+				}
+				if (from(domain.getDisabled2()).contains(dstCard)) {
+					throw NotFoundExceptionType.DOMAIN_NOTFOUND.createException(relationDTO.domainName);
+				}
 				final Long id = saveRelation(domain, parentCard, dstCard, relationDTO.relationAttributeToValue);
 				ids.add(id);
 			}
 		} else {
 			for (final CMCard srcCard : childCards) {
+				if (from(domain.getDisabled1()).contains(srcCard)) {
+					throw NotFoundExceptionType.DOMAIN_NOTFOUND.createException(relationDTO.domainName);
+				}
+				if (from(domain.getDisabled2()).contains(parentCard)) {
+					throw NotFoundExceptionType.DOMAIN_NOTFOUND.createException(relationDTO.domainName);
+				}
 				final Long id = saveRelation(domain, srcCard, parentCard, relationDTO.relationAttributeToValue);
 				ids.add(id);
 			}
@@ -990,7 +986,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 	public void updateRelation(final RelationDTO relationDTO) {
 		final CMDomain domain = dataView.findDomain(relationDTO.domainName);
 		if (domain == null) {
-			throw NotFoundException.NotFoundExceptionType.DOMAIN_NOTFOUND.createException();
+			throw NotFoundExceptionType.DOMAIN_NOTFOUND.createException(relationDTO.domainName);
 		}
 
 		final Entry<Long, String> srcCard = relationDTO.getUniqueEntryForSourceCard();
@@ -1058,7 +1054,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 	public void deleteRelation(final String domainName, final Long relationId) {
 		final CMDomain domain = dataView.findDomain(domainName);
 		if (domain == null) {
-			throw NotFoundException.NotFoundExceptionType.DOMAIN_NOTFOUND.createException();
+			throw NotFoundExceptionType.DOMAIN_NOTFOUND.createException(domainName);
 		}
 
 		dataView.delete(new IdentifiedRelation(domain, relationId));
@@ -1084,8 +1080,8 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 		 * The destination alias is mandatory in order to support also
 		 * reflective domains
 		 */
-		final Alias DOM = NameAlias.as("DOM");
-		final Alias DST = NameAlias.as(format("DST-%s-%s", destinationClass.getName(), randomAscii(10)));
+		final Alias DOM = name("DOM");
+		final Alias DST = name(format("DST-%s-%s", destinationClass.getName(), randomAscii(10)));
 		final CMQueryRow row = dataView.select(anyAttribute(sourceClass), anyAttribute(DOM)) //
 				.from(sourceClass) //
 				.join(destinationClass, DST, over(domain, as(DOM))) //
@@ -1105,7 +1101,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 	public void deleteDetail(final Card master, final Card detail, final String domainName) {
 		final CMDomain domain = dataView.findDomain(domainName);
 		if (domain == null) {
-			throw NotFoundException.NotFoundExceptionType.DOMAIN_NOTFOUND.createException();
+			throw NotFoundExceptionType.DOMAIN_NOTFOUND.createException(domainName);
 		}
 
 		String sourceClassName, destinationClassName;
@@ -1169,7 +1165,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 					.run() //
 					.getOnlyRow();
 		} catch (final NoSuchElementException ex) {
-			throw NotFoundException.NotFoundExceptionType.CARD_NOTFOUND.createException();
+			throw NotFoundExceptionType.CARD_NOTFOUND.createException();
 		}
 		final CMCard card = row.getCard(entryType);
 		return card;

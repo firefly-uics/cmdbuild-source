@@ -19,19 +19,17 @@ import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeTypeVisitor;
 import org.cmdbuild.dao.entrytype.attributetype.CharAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.DateAttributeType;
-import org.cmdbuild.dao.entrytype.attributetype.DateTimeAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.DecimalAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.DoubleAttributeType;
-import org.cmdbuild.dao.entrytype.attributetype.EntryTypeAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.ForeignKeyAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.ForwardingAttributeTypeVisitor;
 import org.cmdbuild.dao.entrytype.attributetype.IntegerAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.IpAddressAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.LookupAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.NullAttributeTypeVisitor;
 import org.cmdbuild.dao.entrytype.attributetype.ReferenceAttributeType;
-import org.cmdbuild.dao.entrytype.attributetype.StringArrayAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.StringAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TextAttributeType;
-import org.cmdbuild.dao.entrytype.attributetype.TimeAttributeType;
 import org.cmdbuild.dao.query.ExternalReferenceAliasHandler;
 import org.cmdbuild.dao.query.clause.QueryAliasAttribute;
 import org.cmdbuild.dao.query.clause.alias.Alias;
@@ -134,7 +132,9 @@ public class JsonFullTextQueryBuilder implements Builder<WhereClause> {
 	 * specific type of the attribute. Created because it is not possible to use
 	 * a generic 'contains' OperatorAndValue(e.g. integer or inet attributes)
 	 */
-	public static class FullTextQueryOperatorVisitor implements CMAttributeTypeVisitor {
+	public static class FullTextQueryOperatorVisitor extends ForwardingAttributeTypeVisitor {
+
+		private static final CMAttributeTypeVisitor DELEGATE = NullAttributeTypeVisitor.getInstance();
 
 		private OperatorAndValue operatorAndValue;
 		private final CMAttributeType<?> type;
@@ -144,6 +144,11 @@ public class JsonFullTextQueryBuilder implements Builder<WhereClause> {
 			this.type = type;
 			this.fullText = fullText;
 			this.operatorAndValue = null;
+		}
+
+		@Override
+		protected CMAttributeTypeVisitor delegate() {
+			return DELEGATE;
 		}
 
 		@Override
@@ -175,11 +180,6 @@ public class JsonFullTextQueryBuilder implements Builder<WhereClause> {
 		}
 
 		@Override
-		public void visit(final DateTimeAttributeType attributeType) {
-			// do nothing for now
-		}
-
-		@Override
 		public void visit(final DecimalAttributeType attributeType) {
 			if (isNumeric(fullText)) {
 				final Double castValue = Double.valueOf(fullText);
@@ -193,16 +193,6 @@ public class JsonFullTextQueryBuilder implements Builder<WhereClause> {
 				final Double castValue = Double.valueOf(fullText);
 				operatorAndValue = eq(castValue);
 			}
-		}
-
-		@Override
-		public void visit(final EntryTypeAttributeType attributeType) {
-			// do nothing for now
-		}
-
-		@Override
-		public void visit(final ForeignKeyAttributeType attributeType) {
-			// do nothing for now
 		}
 
 		@Override
@@ -229,21 +219,6 @@ public class JsonFullTextQueryBuilder implements Builder<WhereClause> {
 		}
 
 		@Override
-		public void visit(final LookupAttributeType attributeType) {
-			// do nothing for now
-		}
-
-		@Override
-		public void visit(final ReferenceAttributeType attributeType) {
-			// do nothing for now
-		}
-
-		@Override
-		public void visit(final StringArrayAttributeType stringArrayAttributeType) {
-			// do nothing for now
-		}
-
-		@Override
 		public void visit(final StringAttributeType attributeType) {
 			operatorAndValue = contains(fullText);
 		}
@@ -251,11 +226,6 @@ public class JsonFullTextQueryBuilder implements Builder<WhereClause> {
 		@Override
 		public void visit(final TextAttributeType attributeType) {
 			operatorAndValue = contains(fullText);
-		}
-
-		@Override
-		public void visit(final TimeAttributeType attributeType) {
-			// do nothing for now
 		}
 
 		public OperatorAndValue getOperatorAndValue() {

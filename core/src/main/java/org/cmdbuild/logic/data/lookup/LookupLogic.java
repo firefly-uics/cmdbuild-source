@@ -28,6 +28,8 @@ import org.cmdbuild.dao.entrytype.CMAttribute.Mode;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.CMAttributeTypeVisitor;
+import org.cmdbuild.dao.entrytype.attributetype.ForwardingAttributeTypeVisitor;
 import org.cmdbuild.dao.entrytype.attributetype.LookupAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.NullAttributeTypeVisitor;
 import org.cmdbuild.dao.view.CMAttributeDefinition;
@@ -216,7 +218,14 @@ public class LookupLogic implements Logic {
 				logger.debug(marker, "examining class '{}'", existingClass.getIdentifier().getLocalName());
 				for (final CMAttribute existingAttribute : existingClass.getAttributes()) {
 					logger.debug(marker, "examining attribute '{}'", existingAttribute.getName());
-					existingAttribute.getType().accept(new NullAttributeTypeVisitor() {
+					existingAttribute.getType().accept(new ForwardingAttributeTypeVisitor() {
+
+						private final CMAttributeTypeVisitor DELEGATE = NullAttributeTypeVisitor.getInstance();
+
+						@Override
+						protected CMAttributeTypeVisitor delegate() {
+							return DELEGATE;
+						}
 
 						@Override
 						public void visit(final LookupAttributeType attributeType) {

@@ -55,7 +55,9 @@ import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.entrytype.CMEntryType;
+import org.cmdbuild.dao.entrytype.attributetype.CMAttributeTypeVisitor;
 import org.cmdbuild.dao.entrytype.attributetype.DateAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.ForwardingAttributeTypeVisitor;
 import org.cmdbuild.dao.entrytype.attributetype.IntegerAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.LookupAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.NullAttributeTypeVisitor;
@@ -447,7 +449,14 @@ public class CQLAnalyzer {
 			final String firstStringValue = (firstValue instanceof String) ? (String) firstValue : null;
 
 			if (firstStringValue != null) {
-				attribute.getType().accept(new NullAttributeTypeVisitor() {
+				attribute.getType().accept(new ForwardingAttributeTypeVisitor() {
+
+					private final CMAttributeTypeVisitor DELEGATE = NullAttributeTypeVisitor.getInstance();
+
+					@Override
+					protected CMAttributeTypeVisitor delegate() {
+						return DELEGATE;
+					}
 
 					@Override
 					public void visit(final LookupAttributeType attributeType) {

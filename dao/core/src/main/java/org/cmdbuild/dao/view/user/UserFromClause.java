@@ -2,6 +2,8 @@ package org.cmdbuild.dao.view.user;
 
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMEntryType;
+import org.cmdbuild.dao.entrytype.CMEntryTypeVisitor;
+import org.cmdbuild.dao.entrytype.ForwardingEntryTypeVisitor;
 import org.cmdbuild.dao.entrytype.NullEntryTypeVisitor;
 import org.cmdbuild.dao.query.clause.from.ClassFromClause;
 import org.cmdbuild.dao.query.clause.from.ForwardingFromClause;
@@ -33,9 +35,16 @@ public class UserFromClause extends ForwardingFromClause {
 
 	@Override
 	public EntryTypeStatus getStatus(final CMEntryType entryType) {
-		return new NullEntryTypeVisitor() {
+		return new ForwardingEntryTypeVisitor() {
+
+			private final CMEntryTypeVisitor _delegate = NullEntryTypeVisitor.getInstance();
 
 			private EntryTypeStatus status;
+
+			@Override
+			protected CMEntryTypeVisitor delegate() {
+				return _delegate;
+			}
 
 			public EntryTypeStatus getStatus(final CMEntryType entryType) {
 				status = UserFromClause.super.getStatus(entryType);
