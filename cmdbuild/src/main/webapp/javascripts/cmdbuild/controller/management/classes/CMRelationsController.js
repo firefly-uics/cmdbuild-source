@@ -15,7 +15,6 @@
 			this.mixins.observable.constructor.call(this, arguments);
 
 			this.callParent(arguments);
-			this.hasDomains = false;
 
 			this.callBacks = {
 				'action-relation-go': this.onFollowRelationClick,
@@ -74,10 +73,8 @@
 			if (card) {
 				this.updateCurrentClass(card);
 
-				if (this.hasDomains) {
-					this.view.enable();
-					this.loadData();
-				}
+				this.view.enable();
+				this.loadData();
 			}
 		},
 
@@ -93,7 +90,7 @@
 					currentClass = null;
 
 				this.currentClass = currentClass;
-				this.hasDomains = this.view.addRelationButton.setDomainsForEntryType(currentClass);
+				this.view.addRelationButton.setDomainsForEntryType(currentClass);
 			}
 		},
 
@@ -210,6 +207,8 @@
 				isMany = domain.isMany(destination);
 
 			var editRelationWindow = Ext.create('CMDBuild.view.management.classes.relations.CMEditRelationWindow', {
+				domain: domain,
+				classObject: classData,
 				sourceCard: this.card,
 				relation: {
 					dst_cid: model.dst_cid,
@@ -345,9 +344,13 @@
 		onEditRelationClick: function(model) {
 			var me = this;
 			var data = model.raw || model.data;
+			var classData = _CMCache.getClassById(model.dst_cid);
+			var domain = _CMCache.getDomainById(model.dom_id);
 			var masterAndSlave = getMasterAndSlave(model.get(CMDBuild.core.proxy.CMProxyConstants.SOURCE));
 
 			var editRelationWindow = Ext.create('CMDBuild.view.management.classes.relations.CMEditRelationWindow', {
+				domain: domain,
+				classObject: classData,
 				sourceCard: this.card,
 				relation: {
 					rel_attr: data.attr_as_obj,
@@ -518,7 +521,7 @@
 						entryType = null;
 
 					this.lastEntryType = entryType;
-					this.hasDomains = this.view.addRelationButton.setDomainsForEntryType(entryType);
+					this.view.addRelationButton.setDomainsForEntryType(entryType);
 				}
 			}
 		},
@@ -574,12 +577,8 @@
 			} else {
 				this.updateForProcessInstance(processInstance);
 
-				if (this.hasDomains) {
-					this.view.enable();
-					this.loadData();
-				} else {
-					this.view.disable();
-				}
+				this.view.enable();
+				this.loadData();
 			}
 		},
 

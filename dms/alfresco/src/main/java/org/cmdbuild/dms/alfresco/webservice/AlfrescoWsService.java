@@ -209,7 +209,7 @@ public class AlfrescoWsService extends AlfrescoInnerService {
 			}
 
 			@Override
-			public String getCardId() {
+			public Long getCardId() {
 				return document.getCardId();
 			}
 
@@ -401,7 +401,7 @@ public class AlfrescoWsService extends AlfrescoInnerService {
 			}
 
 			@Override
-			public String getCardId() {
+			public Long getCardId() {
 				return document.getCardId();
 			}
 
@@ -451,7 +451,7 @@ public class AlfrescoWsService extends AlfrescoInnerService {
 			}
 
 			@Override
-			public String getCardId() {
+			public Long getCardId() {
 				return from.getCardId();
 			}
 
@@ -479,7 +479,7 @@ public class AlfrescoWsService extends AlfrescoInnerService {
 			}
 
 			@Override
-			public String getCardId() {
+			public Long getCardId() {
 				return from.getCardId();
 			}
 

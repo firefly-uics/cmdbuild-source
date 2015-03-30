@@ -94,6 +94,10 @@
 								// Localization
 								CMDBuild.Config[CMDBuild.core.proxy.CMProxyConstants.LOCALIZATION].setLanguagesWithLocalizations(decoded.cmdbuild.enabled_languages);
 
+								// DMS
+								CMDBuild.Config.dms = decoded.dms;
+								CMDBuild.Config.dms.enabled = ('true' == CMDBuild.Config.dms.enabled);
+
 								// Bim
 								CMDBuild.Config.bim = decoded.bim;
 								CMDBuild.Config.bim.enabled = ('true' == CMDBuild.Config.bim.enabled);
@@ -314,13 +318,6 @@
 					},
 					callback: reqBarrier.getCallback()
 				});
-
-				CMDBuild.ServiceProxy.configuration.read({
-					success: function(response, options,decoded) {
-						CMDBuild.Config.dms = decoded.data;
-					},
-					callback: reqBarrier.getCallback
-				},'dms');
 
 				CMDBuild.core.proxy.Report.getTypesTree({
 					scope: this,

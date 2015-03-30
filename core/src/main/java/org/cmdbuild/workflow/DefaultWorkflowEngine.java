@@ -1,6 +1,7 @@
 package org.cmdbuild.workflow;
 
 import static java.util.Arrays.asList;
+import static org.cmdbuild.model.widget.Widget.SUBMISSION_PARAM;
 
 import java.util.Map;
 
@@ -375,6 +376,7 @@ public class DefaultWorkflowEngine implements QueryableUserWorkflowEngine {
 		nativeValues.put(Constants.CURRENT_GROUP_NAME_VARIABLE, currentGroupName());
 		nativeValues.put(Constants.CURRENT_USER_VARIABLE, currentUserReference());
 		nativeValues.put(Constants.CURRENT_GROUP_VARIABLE, currentGroupReference(activityInstance));
+		nativeValues.put(Constants.CURRENT_PERFORMER_VARIABLE, currentGroupReference(activityInstance));
 
 		saveWidgets(activityInstance, widgetSubmission, nativeValues);
 		service.setProcessInstanceVariables(processInstance.getProcessInstanceId(),
@@ -430,11 +432,14 @@ public class DefaultWorkflowEngine implements QueryableUserWorkflowEngine {
 	private void saveWidgets(final CMActivityInstance activityInstance, final Map<String, Object> widgetSubmission,
 			final Map<String, Object> nativeValues) throws CMWorkflowException {
 		for (final CMActivityWidget w : activityInstance.getWidgets()) {
-			final Object submission = widgetSubmission.get(w.getStringId());
-			if (submission == null) {
+			final Object rawSubmission = widgetSubmission.get(w.getStringId());
+			if (rawSubmission == null) {
 				continue;
 			}
 			try {
+				@SuppressWarnings("unchecked")
+				final Map<String, Object> submissionAsMap = (Map<String, Object>) rawSubmission;
+				final Object submission = submissionAsMap.get(SUBMISSION_PARAM);
 				w.save(activityInstance, submission, nativeValues);
 			} catch (final Exception e) {
 				throw new CMWorkflowException("Widget save failed", e);

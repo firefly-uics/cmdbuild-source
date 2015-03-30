@@ -2,10 +2,14 @@ package org.cmdbuild.service.rest.v2.cxf;
 
 import static com.google.common.collect.FluentIterable.from;
 import static com.google.common.collect.Iterables.concat;
+import static com.google.common.collect.Maps.newHashMap;
 import static com.google.common.collect.Maps.transformEntries;
+import static com.google.common.collect.Maps.transformValues;
+import static com.google.common.collect.Maps.uniqueIndex;
 import static java.util.Arrays.asList;
 import static org.apache.commons.lang3.StringUtils.defaultString;
 import static org.cmdbuild.dao.entrytype.Functions.attributeName;
+import static org.cmdbuild.model.widget.Widget.SUBMISSION_PARAM;
 import static org.cmdbuild.service.rest.v2.constants.Serialization.UNDERSCORED_STATUS;
 import static org.cmdbuild.service.rest.v2.cxf.util.Json.safeJsonArray;
 import static org.cmdbuild.service.rest.v2.cxf.util.Json.safeJsonObject;
@@ -14,7 +18,7 @@ import static org.cmdbuild.service.rest.v2.model.Models.newResponseMultiple;
 import static org.cmdbuild.service.rest.v2.model.Models.newResponseSingle;
 import static org.cmdbuild.workflow.ProcessAttributes.FlowStatus;
 
-import java.util.Collections;
+import java.util.Collection;
 import java.util.Map;
 
 import org.cmdbuild.common.utils.PagedElements;
@@ -31,6 +35,7 @@ import org.cmdbuild.service.rest.v2.model.ProcessInstance;
 import org.cmdbuild.service.rest.v2.model.ProcessInstanceAdvanceable;
 import org.cmdbuild.service.rest.v2.model.ResponseMultiple;
 import org.cmdbuild.service.rest.v2.model.ResponseSingle;
+import org.cmdbuild.service.rest.v2.model.Widget;
 import org.cmdbuild.workflow.LookupHelper;
 import org.cmdbuild.workflow.user.UserActivityInstance;
 import org.cmdbuild.workflow.user.UserProcessClass;
@@ -43,7 +48,25 @@ import com.google.common.collect.Maps.EntryTransformer;
 
 public class CxfProcessInstances implements ProcessInstances {
 
-	private static Map<String, Object> NO_WIDGET_SUBMISSION = Collections.emptyMap();
+	private static final Function<Widget, String> WIDGET_ID = new Function<Widget, String>() {
+
+		@Override
+		public String apply(final Widget input) {
+			return input.getId();
+		}
+
+	};
+
+	private static final Function<Widget, Object> WIDGET_OUTPUT = new Function<Widget, Object>() {
+
+		@Override
+		public Object apply(final Widget input) {
+			final Map<String, Object> map = newHashMap();
+			map.put(SUBMISSION_PARAM, input.getOutput());
+			return map;
+		}
+
+	};
 
 	private final ErrorHandler errorHandler;
 	private final WorkflowLogic workflowLogic;
@@ -66,7 +89,7 @@ public class CxfProcessInstances implements ProcessInstances {
 			final UserProcessInstance instance = workflowLogic.startProcess( //
 					processId, //
 					adaptInputValues(found, processInstance), //
-					NO_WIDGET_SUBMISSION, //
+					adaptWidgets(processInstance.getWidgets()), //
 					processInstance.isAdvance());
 			return newResponseSingle(Long.class) //
 					.withElement(instance.getId()) //
@@ -174,7 +197,7 @@ public class CxfProcessInstances implements ProcessInstances {
 					instanceId, //
 					activity.getId(), //
 					adaptInputValues(found, processInstance), //
-					NO_WIDGET_SUBMISSION, //
+					adaptWidgets(processInstance.getWidgets()), //
 					processInstance.isAdvance());
 		} catch (final Throwable e) {
 			errorHandler.propagate(e);
@@ -215,6 +238,10 @@ public class CxfProcessInstances implements ProcessInstances {
 			}
 
 		});
+	}
+
+	private Map<String, Object> adaptWidgets(final Collection<Widget> elements) {
+		return transformValues(uniqueIndex(elements, WIDGET_ID), WIDGET_OUTPUT);
 	}
 
 }

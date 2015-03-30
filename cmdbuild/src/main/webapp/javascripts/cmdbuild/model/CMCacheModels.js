@@ -175,7 +175,9 @@
 			{name: "description", type: "string"},
 			{name: "descr_1", type: "string"},
 			{name: "descr_2", type: "string"},
-			{name: "md_label", type: "string"}
+			{name: "md_label", type: "string"},
+			{name: "disabled1", type: "auto"},
+			{name: "disabled2", type: "auto"}
 		],
 
 		getAttributes: function() {
