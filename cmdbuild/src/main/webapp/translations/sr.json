@@ -992,6 +992,12 @@
 		"widgetLinkCardsNoClassNameError": "LinkCardsController konstruktor: Pogrešan naziv klase",
 		"wrong_wf_widgets": "Došlo je do greške prilikom snimanja sledeće vizuelne kotrole: "
 	},
+	"emailLookupNames": {
+		"draft": "Započete",
+		"outgoing": "Za slanje",
+		"received": "Primljene",
+		"sent": "Poslane"
+	},
 	"filterWindow": {
 		"add": "Dodaj filter"
 	},
@@ -1388,13 +1394,6 @@
 	"download_ifc_file": "Preuzmi Ifc datoteku",
 	"edit": "Izmeni",
 	"emailBody": "Telo poruke",
-	"emailLookupNames": {
-		"draft": "Započete",
-		"new": "Nove",
-		"outgoing": "Za slanje",
-		"received": "Primljene",
-		"sent": "Poslane"
-	},
 	"emailRegenerationConfirmPopupText": "Ovo će obrisati sve neisporučene poruke e-pošte.",
 	"emailTemplate": "ŠAblon e-pošte",
 	"enable": "Omogući",
@@ -1488,7 +1487,6 @@
 	"remove_formatting": "Ukloni formatiranje",
 	"replace": "Zameni",
 	"reply": "<em>Reply</em>",
-	"replyEmail": "<em>Reply e-mail</em>",
 	"report": "<em>Report</em>",
 	"reportParameters": "<em>Report parameters</em>",
 	"repository": "Arhiva",

@@ -992,6 +992,12 @@
 		"widgetLinkCardsNoClassNameError": "<em>LinkCardsController constructor: className not valid</em>",
 		"wrong_wf_widgets": "Fehler beim Speichern folgender Elemente: "
 	},
+	"emailLookupNames": {
+		"draft": "Entwürfe",
+		"outgoing": "Ausgehende",
+		"received": "Eingehende",
+		"sent": "Gesendete"
+	},
 	"filterWindow": {
 		"add": "Filter hinzufügen"
 	},
@@ -1388,13 +1394,6 @@
 	"download_ifc_file": "Ifc File herunterladen",
 	"edit": "<em>Edit</em>",
 	"emailBody": "Inhalt",
-	"emailLookupNames": {
-		"draft": "Entwürfe",
-		"new": "Neue",
-		"outgoing": "Ausgehende",
-		"received": "Eingehende",
-		"sent": "Gesendete"
-	},
 	"emailRegenerationConfirmPopupText": "Das wird alle nicht gesendete E-Mails löschen",
 	"emailTemplate": "E-mail Template",
 	"enable": "Aktivieren",
@@ -1488,7 +1487,6 @@
 	"remove_formatting": "Formatierung entfernen",
 	"replace": "<em>Replace</em>",
 	"reply": "<em>Reply</em>",
-	"replyEmail": "<em>Reply e-mail</em>",
 	"report": "<em>Report</em>",
 	"reportParameters": "<em>Report parameters</em>",
 	"repository": "Archivdatei",

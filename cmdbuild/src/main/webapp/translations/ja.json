@@ -992,6 +992,12 @@
 		"widgetLinkCardsNoClassNameError": "リンクカードコントローラーコンストラクター：クラス名が有効ではありません",
 		"wrong_wf_widgets": "以下のビジュアルコントロールを保存中にエラーが発生しました: "
 	},
+	"emailLookupNames": {
+		"draft": "下書き",
+		"outgoing": "送信中",
+		"received": "受信",
+		"sent": "送信"
+	},
 	"filterWindow": {
 		"add": "フィルターを追加"
 	},
@@ -1388,13 +1394,6 @@
 	"download_ifc_file": "Ifcファイルをダウンロード",
 	"edit": "を編集",
 	"emailBody": "本文",
-	"emailLookupNames": {
-		"draft": "下書き",
-		"new": "新規",
-		"outgoing": "送信中",
-		"received": "受信",
-		"sent": "送信"
-	},
 	"emailRegenerationConfirmPopupText": "これは、全ての未送信メールを削除します。",
 	"emailTemplate": "電子メールテンプレート",
 	"enable": "有効にする",
@@ -1488,7 +1487,6 @@
 	"remove_formatting": "フォーマットを削除",
 	"replace": "リプレース",
 	"reply": "<em>Reply</em>",
-	"replyEmail": "<em>Reply e-mail</em>",
 	"report": "<em>Report</em>",
 	"reportParameters": "<em>Report parameters</em>",
 	"repository": "リポジトリ",

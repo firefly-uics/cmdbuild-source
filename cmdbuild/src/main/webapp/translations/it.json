@@ -992,6 +992,12 @@
 		"widgetLinkCardsNoClassNameError": "LinkCardsController constructor: className non valido",
 		"wrong_wf_widgets": "C'è stato un errore nel salvataggio dei seguenti controlli visuali: "
 	},
+	"emailLookupNames": {
+		"draft": "Bozze",
+		"outgoing": "In uscita",
+		"received": "Ricevute",
+		"sent": "Inviate"
+	},
 	"filterWindow": {
 		"add": "Aggiungi filtro"
 	},
@@ -1388,13 +1394,6 @@
 	"download_ifc_file": "Scarica il file Ifc",
 	"edit": "Modifica",
 	"emailBody": "Contenuto",
-	"emailLookupNames": {
-		"draft": "Bozze",
-		"new": "Nuove",
-		"outgoing": "In uscita",
-		"received": "Ricevute",
-		"sent": "Inviate"
-	},
 	"keepSync": "Mantieni sync",
 	"promptSync": "Conferma sync",
 	"emailTemplate": "E-mail Template",
@@ -1488,7 +1487,6 @@
 	"remove_formatting": "Rimuovi formattazione",
 	"replace": "Sostituisci",
 	"reply": "Rispondi",
-	"replyEmail": "Rispondi",
 	"report": "Report",
 	"reportParameters": "Parametri report",
 	"repository": "Archivio",

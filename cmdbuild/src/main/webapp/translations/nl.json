@@ -992,6 +992,12 @@
 		"widgetLinkCardsNoClassNameError": "LinkCardsController constructeur: KlassenNaam niet geldig",
 		"wrong_wf_widgets": "Er was een fout tijdens de opslag van de volgende visual controls: "
 	},
+	"emailLookupNames": {
+		"draft": "Klad",
+		"outgoing": "Uitgaand",
+		"received": "Ontvangen",
+		"sent": "verstuurd"
+	},
 	"filterWindow": {
 		"add": "Filter toevoegen"
 	},
@@ -1388,13 +1394,6 @@
 	"download_ifc_file": "Ophalen Ifc bestand",
 	"edit": "Modificeer",
 	"emailBody": "Hoofddeel",
-	"emailLookupNames": {
-		"draft": "Klad",
-		"new": "Nieuw",
-		"outgoing": "Uitgaand",
-		"received": "Ontvangen",
-		"sent": "verstuurd"
-	},
 	"emailRegenerationConfirmPopupText": "Dit zal alle niet-verstuurde emails verwijderen.",
 	"emailTemplate": "Email sjabloon",
 	"enable": "Activeer",
@@ -1488,7 +1487,6 @@
 	"remove_formatting": "Verwijder formateering",
 	"replace": "Vervang",
 	"reply": "<em>Reply</em>",
-	"replyEmail": "<em>Reply e-mail</em>",
 	"report": "<em>Report</em>",
 	"reportParameters": "<em>Report parameters</em>",
 	"repository": "Bewaarplaats",

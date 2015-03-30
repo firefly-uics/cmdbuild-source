@@ -992,6 +992,12 @@
 		"widgetLinkCardsNoClassNameError": "<em>LinkCardsController constructor: className not valid</em>",
 		"wrong_wf_widgets": "Ha habido un error al guardar los siguientes controles visuales: "
 	},
+	"emailLookupNames": {
+		"draft": "Borradores",
+		"outgoing": "Salida",
+		"received": "Recibidos",
+		"sent": "Enviados"
+	},
 	"filterWindow": {
 		"add": "Agrega filtro"
 	},
@@ -1388,13 +1394,6 @@
 	"download_ifc_file": "Descarga archivo Ifc",
 	"edit": "<em>Edit</em>",
 	"emailBody": "Cuerpo",
-	"emailLookupNames": {
-		"draft": "Borradores",
-		"new": "Nuevo",
-		"outgoing": "Salida",
-		"received": "Recibidos",
-		"sent": "Enviados"
-	},
 	"emailRegenerationConfirmPopupText": "Esto borrará todos los emails no enviado.",
 	"emailTemplate": "Plantilla correo",
 	"enable": "Habilita",
