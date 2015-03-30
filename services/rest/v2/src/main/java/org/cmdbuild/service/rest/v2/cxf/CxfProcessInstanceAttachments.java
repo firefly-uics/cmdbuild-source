@@ -13,6 +13,7 @@ import javax.activation.DataHandler;
 
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.logic.workflow.WorkflowLogic;
+import org.cmdbuild.service.rest.v2.ProcessInstanceAttachments;
 import org.cmdbuild.service.rest.v2.model.Attachment;
 import org.cmdbuild.service.rest.v2.model.ResponseMultiple;
 import org.cmdbuild.service.rest.v2.model.ResponseSingle;
@@ -20,7 +21,7 @@ import org.cmdbuild.service.rest.v2.model.ResponseSingle;
 import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 
-public class CxfProcessInstanceAttachments implements AllInOneProcessInstanceAttachments {
+public class CxfProcessInstanceAttachments implements ProcessInstanceAttachments {
 
 	private final WorkflowLogic workflowLogic;
 	private final ErrorHandler errorHandler;

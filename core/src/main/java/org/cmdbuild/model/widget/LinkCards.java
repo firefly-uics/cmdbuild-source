@@ -43,8 +43,6 @@ public class LinkCards extends Widget {
 
 	}
 
-	public static final String CREATED_CARD_ID_SUBMISSION_PARAM = "output";
-
 	public static final String METADATA_GROUP_SEPARATOR = "|";
 	public static final String METADATA_SEPARATOR = ";";
 	public static final String NAME_TYPE_SEPARATOR = ":";
@@ -265,7 +263,7 @@ public class LinkCards extends Widget {
 		if (outputName != null) {
 			final Submission submission = decodeInput(input);
 			output.put(outputName, outputValue(submission));
-			if (isNotBlank(metadataOutput)){
+			if (isNotBlank(metadataOutput)) {
 				output.put(metadataOutput, metadataValue(submission));
 			}
 		}
@@ -276,8 +274,7 @@ public class LinkCards extends Widget {
 			return (Submission) input;
 		} else {
 			@SuppressWarnings("unchecked")
-			final Map<String, Map<Object, Object>> inputMap = (Map<String, Map<Object, Object>>) input;
-			final Map<Object, Object> selectedCards = inputMap.get(CREATED_CARD_ID_SUBMISSION_PARAM);
+			final Map<Object, Object> selectedCards = Map.class.cast(input);
 			final List<Object> selectedIds = Lists.newArrayList(selectedCards.keySet());
 			final List<Map<Object, Object>> metadata = Lists.newArrayList();
 			for (final Object selectedId : selectedIds) {

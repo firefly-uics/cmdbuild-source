@@ -191,10 +191,7 @@ public class Grid extends Widget {
 		String output = EMPTY;
 		final StringBuilder outputBuilder = new StringBuilder();
 		@SuppressWarnings("unchecked")
-		final Map<String, Object> inputMap = (Map<String, Object>) input;
-		final Object inputArray = inputMap.get("output");
-		@SuppressWarnings("unchecked")
-		final Iterable<String> inputElements = (Iterable<String>) inputArray;
+		final Iterable<String> inputElements = (Iterable<String>) input;
 		for (final String entry : inputElements) {
 			HashMap<String, Object> props;
 			try {

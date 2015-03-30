@@ -82,11 +82,6 @@ public class DefaultEmailTemplateLogic implements EmailTemplateLogic {
 		}
 
 		@Override
-		public Map<String, String> getVariables() {
-			return delegate.getVariables();
-		}
-
-		@Override
 		public String getAccount() {
 			return accountOf(delegate);
 		}
@@ -101,6 +96,21 @@ public class DefaultEmailTemplateLogic implements EmailTemplateLogic {
 			}
 			return null;
 		};
+
+		@Override
+		public boolean isKeepSynchronization() {
+			return delegate.isKeepSynchronization();
+		}
+
+		@Override
+		public boolean isPromptSynchronization() {
+			return delegate.isPromptSynchronization();
+		}
+
+		@Override
+		public Map<String, String> getVariables() {
+			return delegate.getVariables();
+		}
 
 		@Override
 		public String toString() {
@@ -145,6 +155,8 @@ public class DefaultEmailTemplateLogic implements EmailTemplateLogic {
 							.withSubject(input.getSubject()) //
 							.withBody(input.getBody()) //
 							.withAccount(accountIdOf(input)) //
+							.withKeepSynchronization(input.isKeepSynchronization()) //
+							.withPromptSynchronization(input.isPromptSynchronization()) //
 							.build()) //
 					.withVariables(input.getVariables()) //
 					.build();

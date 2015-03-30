@@ -106,14 +106,34 @@ public class ProcessesTest {
 				.thenReturn(expectedResponse);
 
 		// when
-		final HttpGet get = new HttpGet(server.resource("processes/123/"));
+		final HttpGet get = new HttpGet(server.resource("processes/dummy/"));
 		final HttpResponse response = httpclient.execute(get);
 
 		// then
 		assertThat(statusCodeOf(response), equalTo(200));
 		assertThat(json.from(contentOf(response)), equalTo(json.from(expectedResponse)));
 
-		verify(service).read("123");
+		verify(service).read("dummy");
+	}
+
+	@Test
+	public void generateId() throws Exception {
+		// given
+		final ResponseSingle<Long> expectedResponse = newResponseSingle(Long.class) //
+				.withElement(42L) //
+				.build();
+		when(service.generateId(anyString())) //
+				.thenReturn(expectedResponse);
+
+		// when
+		final HttpGet get = new HttpGet(server.resource("processes/dummy/generate_id"));
+		final HttpResponse response = httpclient.execute(get);
+
+		// then
+		assertThat(statusCodeOf(response), equalTo(200));
+		assertThat(json.from(contentOf(response)), equalTo(json.from(expectedResponse)));
+
+		verify(service).generateId("dummy");
 	}
 
 }

@@ -6,16 +6,22 @@ import net.jcip.annotations.NotThreadSafe;
 
 import org.apache.commons.lang3.StringUtils;
 import org.cmdbuild.data.store.Storable;
+import org.cmdbuild.logger.Log;
 import org.cmdbuild.model.widget.WidgetVisitor.WidgetVisitable;
 import org.cmdbuild.workflow.CMActivityInstance;
 import org.cmdbuild.workflow.CMActivityWidget;
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.annotate.JsonTypeInfo;
+import org.slf4j.Logger;
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.MINIMAL_CLASS, include = JsonTypeInfo.As.PROPERTY, property = "type")
 @NotThreadSafe
 public abstract class Widget implements CMActivityWidget, WidgetVisitable, Storable {
+
+	protected static final Logger logger = Log.WORKFLOW;
+
+	public static final String SUBMISSION_PARAM = "output";
 
 	protected interface WidgetAction {
 		Object execute() throws Exception;
@@ -101,7 +107,7 @@ public abstract class Widget implements CMActivityWidget, WidgetVisitable, Stora
 		return label_default;
 	}
 
-	public void setLabel_default(String label_default) {
+	public void setLabel_default(final String label_default) {
 		this.label_default = label_default;
 	}
 
