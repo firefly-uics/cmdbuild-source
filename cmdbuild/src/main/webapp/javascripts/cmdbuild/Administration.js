@@ -163,7 +163,7 @@
 							Ext.create('CMDBuild.view.administration.accordion.CMAccordionEmail'),
 							gisAccordion,
 							bimAccordion,
-							Ext.create('CMDBuild.view.administration.accordion.Localizations'),
+//							Ext.create('CMDBuild.view.administration.accordion.Localizations'), // TODO: will be implemented in future releases
 							Ext.create('CMDBuild.view.administration.accordion.Configuration')
 						]);
 
