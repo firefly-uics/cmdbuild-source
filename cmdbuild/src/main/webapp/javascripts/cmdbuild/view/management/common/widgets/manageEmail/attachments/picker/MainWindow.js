@@ -30,6 +30,8 @@
 		title: CMDBuild.Translation.chooseAttachmentFromDb,
 
 		initComponent: function() {
+			var me = this;
+
 			this.classComboBox = Ext.create('Ext.form.field.ComboBox', {
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				fieldLabel: CMDBuild.Translation.selectAClass,
@@ -68,25 +70,34 @@
 						dock: 'top',
 						itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_TOP,
 						items: [this.classComboBox]
+					},
+					{
+						xtype: 'toolbar',
+						dock: 'bottom',
+						itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_BOTTOM,
+						ui: 'footer',
+
+						layout: {
+							type: 'hbox',
+							align: 'middle',
+							pack: 'center'
+						},
+
+						items: [
+							Ext.create('CMDBuild.core.buttons.Confirm', {
+								handler: function(button, e) {
+									me.delegate.cmOn('onPickerWindowConfirmButtonClick');
+								}
+							}),
+							Ext.create('CMDBuild.core.buttons.Abort', {
+								handler: function(button, e) {
+									me.delegate.cmOn('onPickerWindowAbortButtonClick');
+								}
+							})
+						]
 					}
 				],
-				items: [this.cardGrid, this.attachmentGrid],
-				buttons: [
-					Ext.create('CMDBuild.buttons.ConfirmButton', {
-						scope: this,
-
-						handler: function(button, e) {
-							this.delegate.cmOn('onPickerWindowConfirmButtonClick');
-						}
-					}),
-					Ext.create('CMDBuild.buttons.AbortButton', {
-						scope: this,
-
-						handler: function(button, e) {
-							this.delegate.cmOn('onPickerWindowAbortButtonClick');
-						}
-					})
-				]
+				items: [this.cardGrid, this.attachmentGrid]
 			});
 
 			this.callParent(arguments);

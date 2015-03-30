@@ -38,7 +38,6 @@
 
 			this.callParent(arguments);
 		}
-
 	});
 
 })();

@@ -139,7 +139,6 @@
 						params: params,
 						scope: this,
 						success: function(response, options, decodedResponse) {
-_debug('decodedResponse', decodedResponse);
 							Ext.Array.forEach(decodedResponse.response, function(item, index, allItems) {
 								if(!Ext.Object.isEmpty(item))
 									this.attachmentsDelegate.attachmentAddPanel(item[CMDBuild.core.proxy.CMProxyConstants.FILE_NAME]);
@@ -208,7 +207,6 @@ _debug('decodedResponse', decodedResponse);
 		 * @param {CMDBuild.model.widget.ManageEmail.template} record
 		 */
 		loadFormValues: function(record) {
-_debug('### loadFormValues');
 			var me = this;
 			var xaVars = Ext.apply({}, record.getData(), record.get(CMDBuild.core.proxy.CMProxyConstants.VARIABLES));
 
@@ -217,11 +215,10 @@ _debug('### loadFormValues');
 				xaVars: xaVars,
 				serverVars: this.cmOn('getWidgetController').getTemplateResolverServerVars(this.cmOn('getWidgetController').card)
 			});
-_debug('this.templateResolver', this.templateResolver);
+
 			this.templateResolver.resolveTemplates({
 				attributes: Ext.Object.getKeys(xaVars),
 				callback: function(values, ctx) {
-_debug('values', values);
 					var setValueArray = [];
 					var content = values[CMDBuild.core.proxy.CMProxyConstants.BODY];
 
@@ -282,11 +279,10 @@ _debug('values', values);
 		 * Updates record object adding id (time in milliseconds), Description and attachments array and adds email record to grid store
 		 */
 		onEmailWindowConfirmButtonClick: function() {
-_debug('### onEmailWindowConfirmButtonClick', this.record);
 			// Validate before save
 			if (this.validate(this.view.formPanel)) {
 				var formValues = this.view.formPanel.getForm().getValues();
-_debug('formValues', formValues);
+
 				// Apply formValues to record object
 				for (var key in formValues)
 					this.record.set(key, formValues[key]);
@@ -296,7 +292,7 @@ _debug('formValues', formValues);
 					this.record.set(CMDBuild.core.proxy.CMProxyConstants.ATTACHMENTS, this.attachmentsDelegate.getAttachmentsNames());
 
 				this.record.set(CMDBuild.core.proxy.CMProxyConstants.ACTIVITY_ID, this.cmOn('getWidgetController').getActivityId());
-_debug('this.record', this.record);
+
 				if (Ext.isEmpty(this.record.get(CMDBuild.core.proxy.CMProxyConstants.ID))) {
 					this.parentDelegate.addRecord(this.record);
 				} else {
@@ -314,7 +310,6 @@ _debug('this.record', this.record);
 		 * Change event management to catch email content edit
 		 */
 		onEmailWindowFieldChange: function() {
-_debug('onEmailWindowFieldChange');
 			if (!this.isAdvicePrompted && this.isKeepSynchronizationChecked()) {
 				this.isAdvicePrompted = true;
 
@@ -328,7 +323,6 @@ _debug('onEmailWindowFieldChange');
 		 * @param {String} templateName
 		 */
 		onEmailWindowFillFromTemplateButtonClick: function(templateName) {
-_debug('onEmailWindowFillFromTemplateButtonClick', this.record);
 			CMDBuild.core.proxy.EmailTemplates.get({
 				params: {
 					name: templateName

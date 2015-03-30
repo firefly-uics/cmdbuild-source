@@ -31,6 +31,8 @@
 		layout: 'border',
 
 		initComponent: function() {
+			var me = this;
+
 			// Buttons configuration
 				this.fillFromTemplateButton = Ext.create('Ext.button.Split', {
 					iconCls: 'clone',
@@ -123,18 +125,29 @@
 						dock: 'top',
 						itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_TOP,
 						items: [this.fillFromTemplateButton]
+					},
+					{
+						xtype: 'toolbar',
+						dock: 'bottom',
+						itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_BOTTOM,
+						ui: 'footer',
+
+						layout: {
+							type: 'hbox',
+							align: 'middle',
+							pack: 'center'
+						},
+
+						items: [
+							Ext.create('CMDBuild.core.buttons.Close', {
+								handler: function(button, e) {
+									me.delegate.cmOn('onEmailWindowAbortButtonClick');
+								}
+							})
+						]
 					}
 				],
-				items: [this.formPanel, this.attachmentContainer],
-				buttons: [
-					Ext.create('CMDBuild.buttons.CloseButton', {
-						scope: this,
-
-						handler: function() {
-							this.delegate.cmOn('onEmailWindowAbortButtonClick');
-						}
-					})
-				]
+				items: [this.formPanel, this.attachmentContainer]
 			});
 
 			this.callParent(arguments);

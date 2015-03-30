@@ -34,11 +34,7 @@
 		title: CMDBuild.Translation.confirmRegeneration,
 
 		initComponent: function() {
-			this.windowText = Ext.create('Ext.Component', {
-				region: 'north',
-				style: 'padding: 10px;',
-				html: CMDBuild.Translation.confirmRegenerationWindowText
-			});
+			var me = this;
 
 			this.grid = Ext.create('Ext.grid.Panel', {
 				region: 'center',
@@ -99,15 +95,36 @@
 			});
 
 			Ext.apply(this, {
-				items: [this.windowText, this.grid],
-				buttons: [
-					Ext.create('CMDBuild.buttons.ConfirmButton', {
-						scope: this,
+				dockedItems: [
+					{
+						xtype: 'toolbar',
+						dock: 'bottom',
+						itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_BOTTOM,
+						ui: 'footer',
 
-						handler: function() {
-							this.delegate.cmOn('onConfirmRegenerationWindowConfirmButtonClick');
-						}
-					})
+						layout: {
+							type: 'hbox',
+							align: 'middle',
+							pack: 'center'
+						},
+
+						items: [
+							Ext.create('CMDBuild.core.buttons.Confirm', {
+								handler: function(button, e) {
+									me.delegate.cmOn('onConfirmRegenerationWindowConfirmButtonClick');
+								}
+							})
+						]
+					}
+				],
+				items: [
+					{
+						xtype: 'component',
+						region: 'north',
+						style: 'padding: 10px;',
+						html: CMDBuild.Translation.confirmRegenerationWindowText
+					},
+					this.grid
 				]
 			});
 
@@ -141,7 +158,7 @@
 				} else {
 					return record.get(CMDBuild.core.proxy.CMProxyConstants.TO);
 				}
-			},
+			}
 	});
 
 })();

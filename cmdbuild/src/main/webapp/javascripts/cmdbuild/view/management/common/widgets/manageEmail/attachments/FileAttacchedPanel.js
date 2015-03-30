@@ -43,7 +43,7 @@
 						disabled: this.readOnly,
 						scope: this,
 
-						handler: function() {
+						handler: function(button, e) {
 							this.delegate.cmOn('onAttachmentRemoveButtonClick', this);
 						}
 					}

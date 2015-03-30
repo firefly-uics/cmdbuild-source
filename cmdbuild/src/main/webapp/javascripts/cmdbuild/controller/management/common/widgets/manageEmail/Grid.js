@@ -92,8 +92,6 @@
 		 */
 		addRecord: function(record, regenerationTrafficLightArray, success) {
 			if (!Ext.Object.isEmpty(record)) {
-_debug('addRecord record', record);
-_debug('addRecord regenerationTrafficLightArray', regenerationTrafficLightArray);
 				CMDBuild.core.proxy.widgets.manageEmail.ManageEmail.create({
 					params: record.getAsParams(),
 					scope: this,
@@ -131,8 +129,6 @@ _debug('addRecord regenerationTrafficLightArray', regenerationTrafficLightArray)
 		 */
 		editRecord: function(record, regenerationTrafficLightArray) {
 			if (!Ext.Object.isEmpty(record)) {
-_debug('editRecord record', record);
-_debug('editRecord regenerationTrafficLightArray', regenerationTrafficLightArray);
 				CMDBuild.core.proxy.widgets.manageEmail.ManageEmail.update({
 					params: record.getAsParams(),
 					scope: this,
@@ -181,7 +177,7 @@ _debug('editRecord regenerationTrafficLightArray', regenerationTrafficLightArray
 		onGridAddEmailButtonClick: function() {
 			var me = this;
 			var record = this.createRecord();
-_debug('onGridAddEmailButtonClick', record);
+
 			this.addRecord( // To generate an emailId
 				record,
 				null,
@@ -333,8 +329,6 @@ _debug('onGridAddEmailButtonClick', record);
 		 */
 		removeRecord: function(record, regenerationTrafficLightArray) {
 			if (!Ext.Object.isEmpty(record)) {
-_debug('removeRecord record', record);
-_debug('removeRecord regenerationTrafficLightArray', regenerationTrafficLightArray);
 				CMDBuild.core.proxy.widgets.manageEmail.ManageEmail.remove({
 					params: record.getAsParams([CMDBuild.core.proxy.CMProxyConstants.ID, CMDBuild.core.proxy.CMProxyConstants.TEMPORARY]),
 					scope: this,
@@ -360,7 +354,7 @@ _debug('removeRecord regenerationTrafficLightArray', regenerationTrafficLightArr
 			if (!this.view.getStore().isLoading()) {
 				regenerateAllEmails = regenerateAllEmails || false;
 				forceRegeneration = forceRegeneration || false;
-_debug('storeLoad', regenerateAllEmails+ ' ' +forceRegeneration);
+
 				this.parentDelegate.isWidgetBusy = true; // Setup widget busy state and the begin of store load
 
 				this.view.getStore().load({

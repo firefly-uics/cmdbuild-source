@@ -34,7 +34,8 @@
 		layout: 'border',
 
 		initComponent: function() {
-_debug('EmailWindowEdit', this.delegate);
+			var me = this;
+
 			// Buttons configuration
 				this.fillFromTemplateButton = Ext.create('Ext.button.Split', {
 					iconCls: 'clone',
@@ -67,25 +68,34 @@ _debug('EmailWindowEdit', this.delegate);
 						dock: 'top',
 						itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_TOP,
 						items: [this.fillFromTemplateButton]
+					},
+					{
+						xtype: 'toolbar',
+						dock: 'bottom',
+						itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_BOTTOM,
+						ui: 'footer',
+
+						layout: {
+							type: 'hbox',
+							align: 'middle',
+							pack: 'center'
+						},
+
+						items: [
+							Ext.create('CMDBuild.core.buttons.Confirm', {
+								handler: function(button, e) {
+									me.delegate.cmOn('onEmailWindowConfirmButtonClick');
+								}
+							}),
+							Ext.create('CMDBuild.core.buttons.Abort', {
+								handler: function(button, e) {
+									me.delegate.cmOn('onEmailWindowAbortButtonClick');
+								}
+							})
+						]
 					}
 				],
-				items: [this.formPanel, this.attachmentContainer],
-				buttons: [
-					Ext.create('CMDBuild.buttons.ConfirmButton', {
-						scope: this,
-
-						handler: function() {
-							this.delegate.cmOn('onEmailWindowConfirmButtonClick');
-						}
-					}),
-					Ext.create('CMDBuild.buttons.AbortButton', {
-						scope: this,
-
-						handler: function() {
-							this.delegate.cmOn('onEmailWindowAbortButtonClick');
-						}
-					})
-				]
+				items: [this.formPanel, this.attachmentContainer]
 			});
 
 			this.callParent(arguments);

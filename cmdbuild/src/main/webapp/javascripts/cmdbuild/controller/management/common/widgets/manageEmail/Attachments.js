@@ -35,7 +35,7 @@
 				this.view.delegate = this;
 				this.view.attachmentButtonsContainer.delegate = this;
 			} else {
-				_error('@@ Alfresco DMS not enabled');
+				_debug('CMDBuild.controller.management.common.widgets.manageEmail.Attachments ERROR:  Alfresco DMS not enabled');
 			}
 		},
 

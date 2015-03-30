@@ -27,36 +27,42 @@
 			var me = this;
 
 			Ext.apply(this, {
-				tbar: [
+				dockedItems: [
 					{
-						iconCls: 'add',
-						text: CMDBuild.Translation.composeEmail,
-						disabled: this.readOnly,
-						scope: this,
+						xtype: 'toolbar',
+						dock: 'top',
+						itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_TOP,
 
-						handler: function(values) {
-							this.delegate.cmOn('onGridAddEmailButtonClick');
-						}
-					},
-					{
-						iconCls: 'x-tbar-loading',
-						text: CMDBuild.Translation.regenerateEmail,
-						disabled: this.readOnly,
-						scope: this,
+						items: [
+							{
+								iconCls: 'add',
+								text: CMDBuild.Translation.composeEmail,
+								disabled: this.readOnly,
 
-						handler: function(button, e) {
-							Ext.Msg.show({ // Ask to the user if is sure to delete all the unsent e-mails before
-								title: CMDBuild.Translation.common.confirmpopup.title,
-								msg: CMDBuild.Translation.emailRegenerationConfirmPopupText,
-								buttons: Ext.Msg.OKCANCEL,
-								icon: Ext.Msg.WARNING,
-
-								fn: function(btn) {
-									if (btn == 'ok')
-										me.delegate.cmOn('onGlobalRegenerationButtonClick');
+								handler: function(button, e) {
+									me.delegate.cmOn('onGridAddEmailButtonClick');
 								}
-							});
-						}
+							},
+							{
+								iconCls: 'x-tbar-loading',
+								text: CMDBuild.Translation.regenerateEmail,
+								disabled: this.readOnly,
+
+								handler: function(button, e) {
+									Ext.Msg.show({ // Ask to the user if is sure to delete all the unsent e-mails before
+										title: CMDBuild.Translation.common.confirmpopup.title,
+										msg: CMDBuild.Translation.emailRegenerationConfirmPopupText,
+										buttons: Ext.Msg.OKCANCEL,
+										icon: Ext.Msg.WARNING,
+
+										fn: function(btn) {
+											if (btn == 'ok')
+												me.delegate.cmOn('onGlobalRegenerationButtonClick');
+										}
+									});
+								}
+							}
+						]
 					}
 				],
 				columns: [

@@ -44,7 +44,6 @@
 		 * @param {CMDBuild.controller.management.common.widgets.manageEmail.Grid} configObject.gridDelegate
 		 */
 		constructor: function(configObject) {
-_debug('configObject', configObject);
 			Ext.apply(this, configObject); // Apply config
 
 			this.view = Ext.create('CMDBuild.view.management.common.widgets.manageEmail.ConfirmRegenerationWindow', {
@@ -83,7 +82,6 @@ _debug('configObject', configObject);
 		 * @param {CMDBuild.model.widget.ManageEmail.email} record
 		 */
 		addRecordToArray: function(record) {
-_debug('addRecordToArray', record);
 			this.recordsCouldBeRegenerated.push(record);
 		},
 
@@ -91,14 +89,10 @@ _debug('addRecordToArray', record);
 		 * @param {CMDBuild.model.widget.ManageEmail.template} template
 		 */
 		addTemplateToArray: function(template) {
-_debug('addTemplateToArray', template);
 			this.templatesCouldBeRegenerated.push(template);
 		},
 
 		beforeShow: function() {
-_debug('beforeShow');
-_debug('this.recordsCouldBeRegenerated', this.recordsCouldBeRegenerated);
-_debug('this.templatesCouldBeRegenerated', this.templatesCouldBeRegenerated);
 			this.gridStore.loadData(this.recordsCouldBeRegenerated);
 
 			this.regenerateAndAddTemplateToStore(this.templatesCouldBeRegenerated);
@@ -136,18 +130,16 @@ _debug('this.templatesCouldBeRegenerated', this.templatesCouldBeRegenerated);
 		regenerateAndAddTemplateToStore: function(templatesToAdd) {
 			var me = this;
 			var conditionEvalTrafficLightArray = [];
-_debug('addTemplatesToStoreAfterConditionEval templatesToAdd', templatesToAdd);
+
 			if (Ext.isArray(templatesToAdd) && !Ext.isEmpty(templatesToAdd)) {
 				CMDBuild.LoadMask.get().show();
 				Ext.Array.forEach(templatesToAdd, function(template, i, allTemplates) {
-_debug('template', template);
+
 					if (!Ext.Object.isEmpty(template)) {
-_debug('template', template);
 						CMDBuild.controller.management.common.widgets.manageEmail.ManageEmail.trafficLightSlotBuild(template, conditionEvalTrafficLightArray);
 
 						var xaVars = Ext.apply({}, template.getData(), template.get(CMDBuild.core.proxy.CMProxyConstants.VARIABLES));
-_debug('addTemplatesToStoreAfterConditionEval xaVars', xaVars);
-_debug('addTemplatesToStoreAfterConditionEval template.getData()', template.getData());
+
 						var templateResolver = new CMDBuild.Management.TemplateResolver({
 							clientForm: me.parentDelegate.clientForm,
 							xaVars: xaVars,
@@ -160,9 +152,9 @@ _debug('addTemplatesToStoreAfterConditionEval template.getData()', template.getD
 								emailObject = Ext.create('CMDBuild.model.widget.ManageEmail.email', values);
 								emailObject.set(CMDBuild.core.proxy.CMProxyConstants.ACTIVITY_ID, me.parentDelegate.getActivityId());
 								emailObject.set(CMDBuild.core.proxy.CMProxyConstants.TEMPLATE, template.get(CMDBuild.core.proxy.CMProxyConstants.KEY));
-_debug('addTemplatesToStoreAfterConditionEval values', values);
+
 								me.gridStore.add(emailObject);
-_debug('##AA', conditionEvalTrafficLightArray);
+
 								if (
 									CMDBuild.controller.management.common.widgets.manageEmail.ManageEmail.trafficLightArrayCheck(template, conditionEvalTrafficLightArray)
 									|| Ext.isEmpty(conditionEvalTrafficLightArray)
@@ -183,7 +175,6 @@ _debug('##AA', conditionEvalTrafficLightArray);
 		},
 
 		show: function() {
-_debug('config window show', this.view);
 			if(
 				!Ext.isEmpty(this.view)
 				&& (
