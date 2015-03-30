@@ -138,6 +138,21 @@ _debug('Classes decodedResponse', decodedResponse);
 		},
 
 		/**
+		 * @param {CMDBuild.model.Localizations.sectionClassesTreeStore} startNode
+		 *
+		 * @return {CMDBuild.model.Localizations.sectionClassesTreeStore} classNode
+		 */
+		getClassNode: function(node) {
+_debug('node1', node);
+			while (node.get(CMDBuild.core.proxy.CMProxyConstants.PROPERTY) != 'classes') { // TODO proxy costants
+_debug('node loop', node);
+				node = node.get(CMDBuild.core.proxy.CMProxyConstants.PARENT);
+			}
+_debug('node2', node);
+			return node;
+		},
+
+		/**
 		 * @return {String}
 		 */
 		getSectionId: function() {
@@ -172,10 +187,11 @@ _debug('nodeExpandLevel1 node', node);
 						success: function(response, options, decodedResponse) {
 							// Class property object
 							var classPropertyNodeObject = {};
-							classPropertyNodeObject[CMDBuild.core.proxy.CMProxyConstants.PROPERTY] = childNode.get(CMDBuild.core.proxy.CMProxyConstants.PROPERTY);
 							classPropertyNodeObject[CMDBuild.core.proxy.CMProxyConstants.DEFAULT] = childNode.get(CMDBuild.core.proxy.CMProxyConstants.DEFAULT);
 							classPropertyNodeObject[CMDBuild.core.proxy.CMProxyConstants.LEAF] = true;
 							classPropertyNodeObject[CMDBuild.core.proxy.CMProxyConstants.OBJECT] = childNode.get(CMDBuild.core.proxy.CMProxyConstants.OBJECT);
+							classPropertyNodeObject[CMDBuild.core.proxy.CMProxyConstants.PARENT] = node;
+							classPropertyNodeObject[CMDBuild.core.proxy.CMProxyConstants.PROPERTY] = childNode.get(CMDBuild.core.proxy.CMProxyConstants.PROPERTY);
 _debug('nodeExpandLevel1 decodedResponse', decodedResponse);
 							if (!Ext.Object.isEmpty(decodedResponse.response))
 								Ext.Object.each(decodedResponse.response, function(tag, translation, myself) {
@@ -271,15 +287,15 @@ _debug('onAdvancedTableNodeExpand', node);
 _debug('CMDBuild.controller.administration.localizations.AdvancedTranslationsTable UPDATE', node);
 			// TODO fare chiamata per salvataggio traduzioni a partire dai dati del node
 			if (!Ext.Object.isEmpty(node)) {
+				var parentProperty = node.get(CMDBuild.core.proxy.CMProxyConstants.PARENT).get(CMDBuild.core.proxy.CMProxyConstants.PROPERTY);
+
 				var localizationParams = {};
 				localizationParams[CMDBuild.core.proxy.CMProxyConstants.ATTRIBUTE_NAME] = node.get(CMDBuild.core.proxy.CMProxyConstants.NAME);
-				localizationParams[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME] = node.get(CMDBuild.core.proxy.CMProxyConstants.PARENT).get(CMDBuild.core.proxy.CMProxyConstants.PARENT).get(CMDBuild.core.proxy.CMProxyConstants.OBJECT);
+				localizationParams[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME] = this.getClassNode(node).get(CMDBuild.core.proxy.CMProxyConstants.OBJECT);
 				localizationParams['field'] = CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION; // TODO: proxyCostants
 				localizationParams['attributeName'] = node.get(CMDBuild.core.proxy.CMProxyConstants.OBJECT); // TODO: proxyCostants
 				localizationParams['translations'] = Ext.encode(node.getChanges()); // TODO: proxyCostants
-				localizationParams['sectionId'] = this.getSectionId() + CMDBuild.core.Utils.toTitleCase( // TODO proxy costants and get sectionId
-					node.get(CMDBuild.core.proxy.CMProxyConstants.PARENT).get(CMDBuild.core.proxy.CMProxyConstants.PROPERTY)
-				);
+				localizationParams['sectionId'] = (parentProperty == 'classes') ? this.getSectionId() : this.getSectionId() + CMDBuild.core.Utils.toTitleCase(parentProperty); // TODO proxy costants and get sectionId
 _debug('node wasEmpty', node.get('wasEmpty'));
 				if (node.get('wasEmpty')) {
 					CMDBuild.core.proxy.Localizations.createLocalization({
