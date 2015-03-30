@@ -168,6 +168,7 @@
 							Ext.create('Ext.ux.form.XCheckbox', {
 								name: CMDBuild.core.proxy.CMProxyConstants.IS_ACTIVE,
 								fieldLabel: tr.isactive,
+								labelWidth: CMDBuild.LABEL_WIDTH,
 								checked: true
 							})
 						]
