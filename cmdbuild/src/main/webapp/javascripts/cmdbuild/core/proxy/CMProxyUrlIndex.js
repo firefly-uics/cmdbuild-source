@@ -240,7 +240,10 @@
 		},
 
 		users: {
-			getusergrouplist: 'services/json/schema/modsecurity/getusergrouplist'
+			disable: 'services/json/schema/modsecurity/disableuser',
+			getGroupList: 'services/json/schema/modsecurity/getusergrouplist',
+			getList: 'services/json/schema/modsecurity/getuserlist',
+			save: 'services/json/schema/modsecurity/saveuser'
 		},
 
 		utils: {

@@ -88,6 +88,7 @@
 		DELETE_TYPE: 'deletionType',
 		DESCRIPTION: 'description',
 		DIRTY: 'dirty',
+		DISABLE: 'disable',
 		DISABLE_ADD_ROW: 'disableAddRow',
 		DISABLE_DELETE_ROW: 'disableDeleteRow',
 		DISABLE_GRID_FILTER_TOGGLER: 'disableGridFilterToggler',
