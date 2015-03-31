@@ -27,6 +27,7 @@ import org.cmdbuild.logic.report.ReportLogic;
 import org.cmdbuild.logic.workflow.UserWorkflowLogicBuilder;
 import org.cmdbuild.logic.workflow.WorkflowLogic;
 import org.cmdbuild.privileges.DBGroupFetcher;
+import org.cmdbuild.services.localization.RequestHandler;
 import org.cmdbuild.services.meta.MetadataStoreFactory;
 import org.cmdbuild.workflow.LookupHelper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -99,6 +100,10 @@ public class ApplicationContextHelperV2 {
 
 	public ReportLogic reportLogic() {
 		return applicationContext.getBean(ReportLogic.class);
+	}
+
+	public RequestHandler requestHandler() {
+		return applicationContext.getBean(RequestHandler.class);
 	}
 
 	public SecurityLogic securityLogic() {

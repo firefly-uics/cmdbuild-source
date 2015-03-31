@@ -2,7 +2,6 @@ package unit.cxf.security;
 
 import static java.util.Arrays.asList;
 import static org.apache.cxf.message.Message.PROTOCOL_HEADERS;
-import static org.cmdbuild.service.rest.v2.cxf.security.Token.TOKEN_KEY;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
@@ -16,12 +15,12 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.apache.cxf.message.Message;
-import org.cmdbuild.service.rest.v2.cxf.security.HeaderTokenExtractor;
+import org.cmdbuild.service.rest.v2.cxf.util.Messages.HeaderValue;
 import org.junit.Test;
 
 import com.google.common.base.Optional;
 
-public class HeaderTokenExtractorTest {
+public class HeaderValueTest {
 
 	@Test
 	public void absentWhenNullHeaders() throws Exception {
@@ -31,7 +30,7 @@ public class HeaderTokenExtractorTest {
 				.when(message).get(any(String.class));
 
 		// when
-		final Optional<String> optional = new HeaderTokenExtractor().extract(message);
+		final Optional<String> optional = HeaderValue.of("dummy").apply(message);
 
 		// then
 		assertThat(optional, equalTo(Optional.<String> absent()));
@@ -46,7 +45,7 @@ public class HeaderTokenExtractorTest {
 				.when(message).get(any(String.class));
 
 		// when
-		final Optional<String> optional = new HeaderTokenExtractor().extract(message);
+		final Optional<String> optional = HeaderValue.of("dummy").apply(message);
 
 		// then
 		assertThat(optional, equalTo(Optional.<String> absent()));
@@ -57,13 +56,13 @@ public class HeaderTokenExtractorTest {
 	public void absentWhenGettingTokenKeyReturnsEmptyList() throws Exception {
 		// given
 		final HashMap<String, List<String>> headers = new HashMap<String, List<String>>();
-		headers.put(TOKEN_KEY, new ArrayList<String>());
+		headers.put("dummy", new ArrayList<String>());
 		final Message message = mock(Message.class);
 		doReturn(headers) //
 				.when(message).get(any(String.class));
 
 		// when
-		final Optional<String> optional = new HeaderTokenExtractor().extract(message);
+		final Optional<String> optional = HeaderValue.of("dummy").apply(message);
 
 		// then
 		assertThat(optional, equalTo(Optional.<String> absent()));
@@ -74,13 +73,13 @@ public class HeaderTokenExtractorTest {
 	public void valuedWithTheFirstElementOfTheList() throws Exception {
 		// given
 		final HashMap<String, List<String>> headers = new HashMap<String, List<String>>();
-		headers.put(TOKEN_KEY, new ArrayList<String>(asList("foo", "bar")));
+		headers.put("dummy", new ArrayList<String>(asList("foo", "bar")));
 		final Message message = mock(Message.class);
 		doReturn(headers) //
 				.when(message).get(any(String.class));
 
 		// when
-		final Optional<String> optional = new HeaderTokenExtractor().extract(message);
+		final Optional<String> optional = HeaderValue.of("dummy").apply(message);
 
 		// then
 		assertThat(optional, equalTo(Optional.of("foo")));
