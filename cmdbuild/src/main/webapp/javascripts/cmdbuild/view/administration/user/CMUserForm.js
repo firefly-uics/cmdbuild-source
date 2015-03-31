@@ -74,7 +74,7 @@
 		buttonAlign: 'center',
 		cls: 'x-panel-body-default-framed cmbordertop',
 		frame: false,
-		layout: 'border',
+		layout: 'fit',
 		split: true,
 
 		initComponent: function () {
@@ -208,8 +208,8 @@
 
 			// Splitted-view wrapper
 			this.wrapper = Ext.create('Ext.form.Panel', {
-				region: 'center',
-				frame: true,
+				bodyCls: 'cmgraypanel-nopadding',
+				frame: false,
 				border: false,
 
 				layout: {

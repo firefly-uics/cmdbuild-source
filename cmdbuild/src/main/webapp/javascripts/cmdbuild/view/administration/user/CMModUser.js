@@ -27,7 +27,7 @@
 		title: tr.user.title,
 		layout: 'border',
 		frame: false,
-		border: false,
+		border: true,
 
 		initComponent: function() {
 			this.addUserButton = Ext.create('Ext.button.Button', {
@@ -37,7 +37,6 @@
 
 			this.userGrid = Ext.create('CMDBuild.view.administration.user.CMUserGrid', {
 				region: 'north',
-				border: false,
 				split: true,
 				height: '30%'
 			});
