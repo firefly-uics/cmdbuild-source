@@ -35,8 +35,7 @@ public class CxfCql implements Cql, LoggingSupport {
 	}
 
 	@Override
-	public ResponseMultiple<Card> read(final String filter, final String sort, final Integer limit,
-			final Integer offset) {
+	public ResponseMultiple<Card> read(final String filter, final String sort, final Integer limit, final Integer offset) {
 		final QueryOptions queryOptions = QueryOptions.newQueryOption() //
 				.filter(safeJsonObject(filter)) //
 				.orderBy(safeJsonArray(sort)) //

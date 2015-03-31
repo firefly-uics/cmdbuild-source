@@ -24,7 +24,6 @@ import org.cmdbuild.auth.acl.NullGroup;
 import org.cmdbuild.auth.context.NullPrivilegeContext;
 import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.service.rest.v2.cxf.security.TokenHandler;
-import org.cmdbuild.service.rest.v2.cxf.security.TokenHandler.TokenExtractor;
 import org.cmdbuild.service.rest.v2.cxf.service.InMemoryOperationUserStore;
 import org.cmdbuild.service.rest.v2.cxf.service.InMemorySessionStore;
 import org.cmdbuild.service.rest.v2.cxf.service.OperationUserStore;
@@ -49,14 +48,14 @@ public class TokenHandlerTest {
 	private SessionStore sessionStore;
 	private OperationUserStore operationUserStore;
 	private UserStore userStore;
-	private TokenExtractor tokenExtractor;
+	private org.cmdbuild.service.rest.v2.cxf.util.Messages.StringFromMessage tokenExtractor;
 
 	@Before
 	public void setUp() throws Exception {
 		sessionStore = new InMemorySessionStore();
 		operationUserStore = new InMemoryOperationUserStore();
 		userStore = inMemory();
-		tokenExtractor = mock(TokenExtractor.class);
+		tokenExtractor = mock(org.cmdbuild.service.rest.v2.cxf.util.Messages.StringFromMessage.class);
 	}
 
 	@Test
@@ -65,7 +64,7 @@ public class TokenHandlerTest {
 		final TokenHandler tokenHandler = new TokenHandler(tokenExtractor, IS_UNAUTHORIZED, sessionStore,
 				operationUserStore, userStore);
 		doReturn(MISSING_TOKEN) //
-				.when(tokenExtractor).extract(any(Message.class));
+				.when(tokenExtractor).apply(any(Message.class));
 		final Message message = mock(Message.class);
 
 		// when
@@ -82,7 +81,7 @@ public class TokenHandlerTest {
 		final TokenHandler tokenHandler = new TokenHandler(tokenExtractor, IS_UNAUTHORIZED, sessionStore,
 				operationUserStore, userStore);
 		doReturn(TOKEN_FOO) //
-				.when(tokenExtractor).extract(any(Message.class));
+				.when(tokenExtractor).apply(any(Message.class));
 		final Message message = mock(Message.class);
 
 		// when
@@ -99,7 +98,7 @@ public class TokenHandlerTest {
 		final TokenHandler tokenHandler = new TokenHandler(tokenExtractor, IS_AUTHORIZED, sessionStore,
 				operationUserStore, userStore);
 		doReturn(MISSING_TOKEN) //
-				.when(tokenExtractor).extract(any(Message.class));
+				.when(tokenExtractor).apply(any(Message.class));
 		final Message message = mock(Message.class);
 
 		// when
@@ -107,7 +106,7 @@ public class TokenHandlerTest {
 
 		// then
 		assertThat(response.getStatus(), equalTo(Status.UNAUTHORIZED.getStatusCode()));
-		verify(tokenExtractor).extract(eq(message));
+		verify(tokenExtractor).apply(eq(message));
 	}
 
 	@Test
@@ -117,7 +116,7 @@ public class TokenHandlerTest {
 		final TokenHandler tokenHandler = new TokenHandler(tokenExtractor, IS_AUTHORIZED, sessionStore,
 				operationUserStore, userStore);
 		doReturn(TOKEN_FOO) //
-				.when(tokenExtractor).extract(any(Message.class));
+				.when(tokenExtractor).apply(any(Message.class));
 		final Message message = mock(Message.class);
 
 		// when
@@ -125,7 +124,7 @@ public class TokenHandlerTest {
 
 		// then
 		assertThat(response.getStatus(), equalTo(Status.UNAUTHORIZED.getStatusCode()));
-		verify(tokenExtractor).extract(eq(message));
+		verify(tokenExtractor).apply(eq(message));
 	}
 
 	@Test
@@ -136,7 +135,7 @@ public class TokenHandlerTest {
 		final TokenHandler tokenHandler = new TokenHandler(tokenExtractor, IS_AUTHORIZED, sessionStore,
 				operationUserStore, userStore);
 		doReturn(TOKEN_FOO) //
-				.when(tokenExtractor).extract(any(Message.class));
+				.when(tokenExtractor).apply(any(Message.class));
 		final Message message = mock(Message.class);
 
 		// when
@@ -144,7 +143,7 @@ public class TokenHandlerTest {
 
 		// then
 		assertThat(response.getStatus(), equalTo(Status.UNAUTHORIZED.getStatusCode()));
-		verify(tokenExtractor).extract(eq(message));
+		verify(tokenExtractor).apply(eq(message));
 	}
 
 	@Test
@@ -158,7 +157,7 @@ public class TokenHandlerTest {
 		final TokenHandler tokenHandler = new TokenHandler(tokenExtractor, IS_AUTHORIZED, sessionStore,
 				operationUserStore, userStore);
 		doReturn(TOKEN_FOO) //
-				.when(tokenExtractor).extract(any(Message.class));
+				.when(tokenExtractor).apply(any(Message.class));
 		final Message message = mock(Message.class);
 
 		// when
@@ -167,7 +166,7 @@ public class TokenHandlerTest {
 		// then
 		assertThat(response, equalTo(null));
 		assertThat(userStore.getUser(), equalTo(operationUser));
-		verify(tokenExtractor).extract(eq(message));
+		verify(tokenExtractor).apply(eq(message));
 	}
 
 }

@@ -2,7 +2,6 @@ package unit.cxf.security;
 
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.cxf.message.Message.QUERY_STRING;
-import static org.cmdbuild.service.rest.v2.cxf.security.Token.TOKEN_KEY;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
@@ -12,12 +11,12 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 import org.apache.cxf.message.Message;
-import org.cmdbuild.service.rest.v2.cxf.security.QueryStringTokenExtractor;
+import org.cmdbuild.service.rest.v2.cxf.util.Messages.ParameterValue;
 import org.junit.Test;
 
 import com.google.common.base.Optional;
 
-public class QueryStringTokenExtractorTest {
+public class ParameterValueTest {
 
 	@Test
 	public void absentWhenQueryStringIsNull() throws Exception {
@@ -27,7 +26,7 @@ public class QueryStringTokenExtractorTest {
 				.when(message).get(any(String.class));
 
 		// when
-		final Optional<String> optional = new QueryStringTokenExtractor().extract(message);
+		final Optional<String> optional = ParameterValue.of("dummy").apply(message);
 
 		// then
 		assertThat(optional, equalTo(Optional.<String> absent()));
@@ -42,7 +41,7 @@ public class QueryStringTokenExtractorTest {
 				.when(message).get(any(String.class));
 
 		// when
-		final Optional<String> optional = new QueryStringTokenExtractor().extract(message);
+		final Optional<String> optional = ParameterValue.of("dummy").apply(message);
 
 		// then
 		assertThat(optional, equalTo(Optional.<String> absent()));
@@ -57,7 +56,7 @@ public class QueryStringTokenExtractorTest {
 				.when(message).get(any(String.class));
 
 		// when
-		final Optional<String> optional = new QueryStringTokenExtractor().extract(message);
+		final Optional<String> optional = ParameterValue.of("dummy").apply(message);
 
 		// then
 		assertThat(optional, equalTo(Optional.<String> absent()));
@@ -72,7 +71,7 @@ public class QueryStringTokenExtractorTest {
 				.when(message).get(any(String.class));
 
 		// when
-		final Optional<String> optional = new QueryStringTokenExtractor().extract(message);
+		final Optional<String> optional = ParameterValue.of("dummy").apply(message);
 
 		// then
 		assertThat(optional, equalTo(Optional.<String> absent()));
@@ -87,7 +86,7 @@ public class QueryStringTokenExtractorTest {
 				.when(message).get(any(String.class));
 
 		// when
-		final Optional<String> optional = new QueryStringTokenExtractor().extract(message);
+		final Optional<String> optional = ParameterValue.of("dummy").apply(message);
 
 		// then
 		assertThat(optional, equalTo(Optional.<String> absent()));
@@ -98,11 +97,11 @@ public class QueryStringTokenExtractorTest {
 	public void absentWhenQueryStringIsTokenKeyOnly() throws Exception {
 		// given
 		final Message message = mock(Message.class);
-		doReturn(TOKEN_KEY) //
+		doReturn("dummy") //
 				.when(message).get(any(String.class));
 
 		// when
-		final Optional<String> optional = new QueryStringTokenExtractor().extract(message);
+		final Optional<String> optional = ParameterValue.of("dummy").apply(message);
 
 		// then
 		assertThat(optional, equalTo(Optional.<String> absent()));
@@ -113,11 +112,11 @@ public class QueryStringTokenExtractorTest {
 	public void valuedWithTheFirstOccurrence() throws Exception {
 		// given
 		final Message message = mock(Message.class);
-		doReturn("foo=FOO&" + TOKEN_KEY + "=12345678&bar=BAR&" + TOKEN_KEY + "=abcdefgh&baz=BAZ") //
+		doReturn("foo=FOO&" + "dummy" + "=12345678&bar=BAR&dummy=abcdefgh&baz=BAZ") //
 				.when(message).get(any(String.class));
 
 		// when
-		final Optional<String> optional = new QueryStringTokenExtractor().extract(message);
+		final Optional<String> optional = ParameterValue.of("dummy").apply(message);
 
 		// then
 		assertThat(optional, equalTo(Optional.of("12345678")));

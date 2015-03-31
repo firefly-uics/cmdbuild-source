@@ -25,6 +25,7 @@
 			<ref bean="jsonProvider" />
 			<ref bean="wadlProvider" />
 			<ref bean="v2_tokenHandler" />
+			<ref bean="v2_localizationHandler" />
 			<ref bean="v2_headerResponseHandler" />
 		</jaxrs:providers>
 		<jaxrs:serviceBeans>
