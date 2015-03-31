@@ -20,8 +20,6 @@ import com.google.common.collect.Maps;
 
 public class WebService extends Widget {
 
-	private final String SELECTED_NODE_KEY = "output";
-
 	private String endPoint, method, nameSpacePrefix, nameSpaceURI, outputName, outputSeparator;
 	private String[] nodesToUseAsRows, nodesToUseAsColumns;
 	private boolean readOnly, mandatory, singleSelect;
@@ -72,8 +70,7 @@ public class WebService extends Widget {
 			throws Exception {
 		if (outputName != null) {
 			@SuppressWarnings("unchecked")
-			final Map<String, List<Object>> inputMap = (Map<String, List<Object>>) input;
-			final List<Object> selectedNodes = inputMap.get(SELECTED_NODE_KEY);
+			final List<Object> selectedNodes = List.class.cast(input);
 
 			// cast to string the selected nodes
 			final List<String> selectedNodesAsString = Lists.newLinkedList();

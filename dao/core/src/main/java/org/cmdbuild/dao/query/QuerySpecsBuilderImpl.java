@@ -28,6 +28,7 @@ import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.dao.entrytype.CMEntryTypeVisitor;
 import org.cmdbuild.dao.entrytype.CMFunctionCall;
 import org.cmdbuild.dao.entrytype.EntryTypeAnalyzer;
+import org.cmdbuild.dao.entrytype.ForwardingEntryTypeVisitor;
 import org.cmdbuild.dao.entrytype.NullEntryTypeVisitor;
 import org.cmdbuild.dao.entrytype.attributetype.ForeignKeyAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.ReferenceAttributeType;
@@ -52,10 +53,12 @@ import org.cmdbuild.dao.query.clause.join.JoinClause;
 import org.cmdbuild.dao.query.clause.join.Over;
 import org.cmdbuild.dao.query.clause.where.AndWhereClause;
 import org.cmdbuild.dao.query.clause.where.EmptyWhereClause;
+import org.cmdbuild.dao.query.clause.where.ForwardingWhereClauseVisitor;
 import org.cmdbuild.dao.query.clause.where.NullWhereClauseVisitor;
 import org.cmdbuild.dao.query.clause.where.OrWhereClause;
 import org.cmdbuild.dao.query.clause.where.SimpleWhereClause;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
+import org.cmdbuild.dao.query.clause.where.WhereClauseVisitor;
 import org.cmdbuild.dao.view.CMDataView;
 
 import com.google.common.base.Predicate;
@@ -264,7 +267,14 @@ public class QuerySpecsBuilderImpl implements QuerySpecsBuilder {
 
 	private void addSubclassesJoinClauses(final CMEntryType entryType, final Alias entryTypeAlias) {
 		final Map<Alias, CMClass> descendantsByAlias = Maps.newHashMap();
-		entryType.accept(new NullEntryTypeVisitor() {
+		entryType.accept(new ForwardingEntryTypeVisitor() {
+
+			private final CMEntryTypeVisitor delegate = NullEntryTypeVisitor.getInstance();
+
+			@Override
+			protected CMEntryTypeVisitor delegate() {
+				return delegate;
+			}
 
 			@Override
 			public void visit(final CMClass type) {
@@ -278,7 +288,14 @@ public class QuerySpecsBuilderImpl implements QuerySpecsBuilder {
 			}
 
 		});
-		whereClause.accept(new NullWhereClauseVisitor() {
+		whereClause.accept(new ForwardingWhereClauseVisitor() {
+
+			private final WhereClauseVisitor delegate = NullWhereClauseVisitor.getInstance();
+
+			@Override
+			protected WhereClauseVisitor delegate() {
+				return delegate;
+			}
 
 			@Override
 			public void visit(final AndWhereClause whereClause) {

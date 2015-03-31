@@ -19,6 +19,7 @@
 <script type="text/javascript" src="javascripts/cmdbuild/override/data/proxy/FixServer.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/override/form/FixFieldSet.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/override/form/field/Display.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/override/form/field/FixCheckbox.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/override/form/field/FixComboBox.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/override/form/field/VTypes.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/override/layout/container/FixEditor.js"></script>
@@ -27,13 +28,13 @@
 <script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxyConstants.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxyUrlIndex.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxy.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/core/proxy/Attachment.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/proxy/Attributes.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/proxy/Card.js"></script>
-<!-- <script type="text/javascript" src="javascripts/cmdbuild/core/proxy/Classes.js"></script> -->
+<script type="text/javascript" src="javascripts/cmdbuild/core/proxy/Classes.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/proxy/Configuration.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/proxy/Filter.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxyAdministration.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxyAttachment.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxyDashboard.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxyDataView.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxyGIS.js"></script>
@@ -79,9 +80,9 @@
 <script type="text/javascript" src="javascripts/cmdbuild/core/Ajax.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/Constants.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/CMDelegable.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/core/tree/TreeUtilities.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/xml/XMLUtility.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/buttons/Buttons.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/core/buttons/Iconized.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/buttons/CMClassesMenuButton.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/buttons/AddCardMenuButton.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/buttons/AddRelationMenuButton.js"></script>
@@ -119,7 +120,6 @@
 <script type="text/javascript" src="javascripts/cmdbuild/view/management/common/widgetBuilders/TextAttribute.js"></script>
 
 <!-- CUSTOM FIELDS -->
-<!-- <script type="text/javascript" src="javascripts/cmdbuild/view/common/field/CMTranslatableText.js"></script> -->
 <script type="text/javascript" src="javascripts/cmdbuild/view/common/field/CMBaseCombo.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/view/common/field/CMErasableCombo.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/view/common/field/CMGroupSelectionList.js"></script>

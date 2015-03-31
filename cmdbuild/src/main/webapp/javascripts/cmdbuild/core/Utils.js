@@ -4,6 +4,7 @@
 	 * New class to replace CMDBuild.Utils
 	 */
 	Ext.define('CMDBuild.core.Utils', {
+
 		singleton: true,
 
 		/**
@@ -26,6 +27,29 @@
 			}, this);
 
 			return clonedStore;
+		},
+
+		/**
+		 * @param {CMDBuild.cache.CMEntryTypeModel} entryTypeId
+		 *
+		 * @return {Array} out
+		 *
+		 * TODO: parseInt will be useless when model will be refactored
+		 */
+		getEntryTypeAncestorsId: function(entryType) {
+			var out = [];
+
+			if (!Ext.Object.isEmpty(entryType)) {
+				out.push(parseInt(entryType.get(CMDBuild.core.proxy.CMProxyConstants.ID)));
+
+				while (!Ext.isEmpty(entryType.get(CMDBuild.core.proxy.CMProxyConstants.PARENT))) {
+					entryType = _CMCache.getEntryTypeById(entryType.get(CMDBuild.core.proxy.CMProxyConstants.PARENT));
+
+					out.push(parseInt(entryType.get(CMDBuild.core.proxy.CMProxyConstants.ID)));
+				}
+			}
+
+			return out;
 		},
 
 		/**

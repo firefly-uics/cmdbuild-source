@@ -1,6 +1,7 @@
 package org.cmdbuild.workflow;
 
 import org.cmdbuild.dao.view.CMDataView;
+import org.cmdbuild.logic.email.EmailAttachmentsLogic;
 import org.cmdbuild.logic.email.EmailLogic;
 import org.cmdbuild.logic.email.EmailTemplateLogic;
 import org.cmdbuild.notification.Notifier;
@@ -24,12 +25,13 @@ public class DefaultXpdlExtendedAttributeWidgetFactory extends ValuePairXpdlExte
 
 	public DefaultXpdlExtendedAttributeWidgetFactory(final TemplateRepository templateRepository,
 			final Notifier notifier, final CMDataView dataView, final EmailLogic emailLogic,
-			final EmailTemplateLogic emailTemplateLogic) {
+			final EmailAttachmentsLogic emailAttachmentsLogic, final EmailTemplateLogic emailTemplateLogic) {
 		addWidgetFactory(new CalendarWidgetFactory(templateRepository, notifier));
 		addWidgetFactory(new CreateModifyCardWidgetFactory(templateRepository, notifier, dataView));
 		addWidgetFactory(new LinkCardsWidgetFactory(templateRepository, notifier));
 		addWidgetFactory(new ManageRelationWidgetFactory(templateRepository, notifier, dataView));
-		addWidgetFactory(new ManageEmailWidgetFactory(templateRepository, notifier, emailLogic, emailTemplateLogic));
+		addWidgetFactory(new ManageEmailWidgetFactory(templateRepository, notifier, emailLogic, emailAttachmentsLogic,
+				emailTemplateLogic));
 		addWidgetFactory(new OpenAttachmentWidgetFactory(templateRepository, notifier));
 		addWidgetFactory(new OpenNoteWidgetFactory(templateRepository, notifier));
 		addWidgetFactory(new OpenReportWidgetFactory(templateRepository, notifier));

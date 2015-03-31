@@ -618,14 +618,18 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 			throw NotFoundExceptionType.CLASS_NOTFOUND.createException(userGivenCard.getClassName());
 		}
 
-		final Store<Card> store = storeOf(userGivenCard);
-		final Storable created = store.create(userGivenCard);
+		final Card _userGivenCard = Card.newInstance() //
+				.clone(userGivenCard) //
+				.withUser(operationUser.getAuthenticatedUser().getUsername()) //
+				.build();
+		final Store<Card> store = storeOf(_userGivenCard);
+		final Storable created = store.create(_userGivenCard);
 
 		if (manageAlsoDomainsAttributes) {
 			updateRelationAttributesFromReference( //
 					Long.valueOf(created.getIdentifier()), //
-					userGivenCard, //
-					userGivenCard, //
+					_userGivenCard, //
+					_userGivenCard, //
 					entryType //
 			);
 		}
@@ -643,12 +647,16 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 			throw NotFoundExceptionType.CLASS_NOTFOUND.createException(userGivenCard.getClassName());
 		}
 
-		final Store<Card> store = storeOf(userGivenCard);
-		final Card currentCard = store.read(userGivenCard);
+		final Card _userGivenCard = Card.newInstance() //
+				.clone(userGivenCard) //
+				.withUser(operationUser.getAuthenticatedUser().getUsername()) //
+				.build();
+		final Store<Card> store = storeOf(_userGivenCard);
+		final Card currentCard = store.read(_userGivenCard);
 		final Card updatedCard = Card.newInstance(entryType) //
 				.clone(currentCard) //
-				.withAllAttributes(userGivenCard.getAttributes()) //
-				.withUser(userGivenCard.getUser()) //
+				.withAllAttributes(_userGivenCard.getAttributes()) //
+				.withUser(_userGivenCard.getUser()) //
 				.build();
 		store.update(updatedCard);
 
@@ -656,11 +664,11 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 		 * fetch card from database (bug #812: if some triggers are executed,
 		 * data must be fetched from db)
 		 */
-		final Card fetchedCard = store.read(storableOf(userGivenCard.getIdentifier()));
+		final Card fetchedCard = store.read(storableOf(_userGivenCard.getIdentifier()));
 
-		updateRelationAttributesFromReference(updatedCard.getId(), fetchedCard, userGivenCard, entryType);
+		updateRelationAttributesFromReference(updatedCard.getId(), fetchedCard, _userGivenCard, entryType);
 
-		lockCardManager.unlock(userGivenCard.getId());
+		lockCardManager.unlock(_userGivenCard.getId());
 	}
 
 	private void updateRelationAttributesFromReference( //
@@ -837,6 +845,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 		if (card != null) {
 			final Card updatedCard = Card.newInstance() //
 					.clone(card) //
+					.clearAttributes() //
 					.withAllAttributes(attributes) //
 					.build();
 			storeOf(updatedCard).update(updatedCard);
@@ -869,14 +878,14 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 	}
 
 	@Override
-	public Iterable<CMDomain> findDomainsForClass(final String className, final boolean withDisabledClasses) {
+	public Iterable<CMDomain> findDomainsForClass(final String className, final boolean skipDisabledClasses) {
 		final CMClass fetchedClass = dataView.findClass(className);
 		if (fetchedClass == null) {
 			throw NotFoundExceptionType.CLASS_NOTFOUND.createException(className);
 		}
 		return from(dataView.findDomains()) //
 				.filter(domainFor(fetchedClass)) //
-				.filter(withDisabledClasses ? not(disabledClass(fetchedClass)) : allDomains()) //
+				.filter(skipDisabledClasses ? not(disabledClass(fetchedClass)) : allDomains()) //
 				.filter(CMDomain.class);
 	}
 

@@ -33,7 +33,9 @@
 				descr_2: d.descrinv,
 				meta: d.meta,
 				attributes: d.attributes,
-				md_label: d.md_label
+				md_label: d.md_label,
+				disabled1: d.disabled1,
+				disabled2: d.disabled2
 			});
 
 			domainModel.isMany = function(side) {

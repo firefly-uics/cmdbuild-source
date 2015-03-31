@@ -8,6 +8,10 @@
 
 		singleton: true,
 
+		attachments: {
+			getAttachmentList: 'services/json/attachments/getattachmentlist'
+		},
+
 		attribute: {
 			create: '',
 			read: 'services/json/schema/modclass/getattributelist',
@@ -54,7 +58,9 @@
 			create: 'services/json/schema/modclass/savedomain',
 			read: 'services/json/schema/modclass/getalldomains',
 			update: 'services/json/schema/modclass/savedomain',
-			remove: 'services/json/schema/modclass/deletedomain'
+			remove: 'services/json/schema/modclass/deletedomain',
+
+			getDomainList: 'services/json/schema/modclass/getdomainlist'
 		},
 
 		dataView: {
@@ -85,12 +91,12 @@
 				setDefault: 'services/json/schema/emailaccount/setdefault'
 			},
 			templates:{
-				remove: 'services/json/emailtemplate/deletetemplate',
-				get: 'services/json/emailtemplate/readtemplate',
-				post: 'services/json/emailtemplate/createtemplate',
-				put: 'services/json/emailtemplate/updatetemplate',
+				remove: 'services/json/email/template/delete',
+				get: 'services/json/email/template/read',
+				post: 'services/json/email/template/create',
+				put: 'services/json/email/template/update',
 
-				getStore: 'services/json/emailtemplate/readtemplates'
+				getStore: 'services/json/email/template/readall'
 			}
 		},
 
@@ -234,11 +240,15 @@
 		},
 
 		users: {
-			getusergrouplist: 'services/json/schema/modsecurity/getusergrouplist'
+			disable: 'services/json/schema/modsecurity/disableuser',
+			getGroupList: 'services/json/schema/modsecurity/getusergrouplist',
+			getList: 'services/json/schema/modsecurity/getuserlist',
+			save: 'services/json/schema/modsecurity/saveuser'
 		},
 
 		utils: {
 			clearCache: 'services/json/utils/clearcache',
+			generateId: 'services/json/utils/generateid',
 			getLanguage: 'services/json/utils/getlanguage',
 			listAvailableTranslations: 'services/json/utils/listavailabletranslations'
 		},
@@ -251,13 +261,19 @@
 				uploadCsv: 'services/json/management/importcsv/uploadcsv'
 			},
 			manageEmail: {
-				addAttachmentFromExistingEmail: 'services/json/management/email/uploadattachmentfromexistingemail',
-				addAttachmentFromNewEmail: 'services/json/management/email/uploadattachmentfromnewemail',
-				copyAttachmentFromCardForExistingEmail: 'services/json/management/email/copyattachmentsfromcardforexistingemail',
-				copyAttachmentFromCardForNewEmail: 'services/json/management/email/copyattachmentsfromcardfornewemail',
-				getEmailList: 'services/json/management/email/getemaillist',
-				removeAttachmentFromExistingEmail: 'services/json/management/email/deleteattachmentfromexistingemail',
-				removeAttachmentFromNewEmail: 'services/json/management/email/deleteattachmentfromnewemail',
+				attachment: {
+					copy: 'services/json/email/attachment/copy',
+					readAll: 'services/json/email/attachment/readall',
+					remove: 'services/json/email/attachment/delete',
+					upload: 'services/json/email/attachment/upload',
+				},
+
+				remove: 'services/json/email/email/delete',
+				get: 'services/json/email/email/read',
+				post: 'services/json/email/email/create',
+				put: 'services/json/email/email/update',
+
+				getStore: 'services/json/email/email/readall'
 			}
 		},
 

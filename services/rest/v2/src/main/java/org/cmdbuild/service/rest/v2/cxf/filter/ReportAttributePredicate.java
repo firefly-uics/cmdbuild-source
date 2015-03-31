@@ -25,7 +25,7 @@ public class ReportAttributePredicate extends ForwardingPredicateVisitor impleme
 
 	private static final Marker marker = MarkerFactory.getMarker(ReportAttributePredicate.class.getName());
 
-	private static final PredicateVisitor UNSUPPORTED = NotSupportedPredicateVisitor.getInstance();
+	private static final PredicateVisitor NOT_SUPPORTED = NotSupportedPredicateVisitor.getInstance();
 
 	private final Attribute attribute;
 	private Report input;
@@ -37,7 +37,7 @@ public class ReportAttributePredicate extends ForwardingPredicateVisitor impleme
 
 	@Override
 	protected PredicateVisitor delegate() {
-		return UNSUPPORTED;
+		return NOT_SUPPORTED;
 	}
 
 	@Override

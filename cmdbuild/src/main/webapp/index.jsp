@@ -46,7 +46,6 @@
 		<script type="text/javascript" src="javascripts/cmdbuild/core/proxy/Configuration.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxySetup.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/core/proxy/Localizations.js"></script>
-
 		<script type="text/javascript" src="javascripts/cmdbuild/view/common/field/CMIconCombo.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/view/common/field/LanguageCombo.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/model/CMSetupModels.js"></script>

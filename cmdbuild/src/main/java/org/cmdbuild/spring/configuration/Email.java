@@ -6,6 +6,7 @@ import static org.cmdbuild.spring.util.Constants.PROTOTYPE;
 import org.cmdbuild.auth.UserStore;
 import org.cmdbuild.common.api.mail.MailApiFactory;
 import org.cmdbuild.common.api.mail.javax.mail.JavaxMailBasedMailApiFactory;
+import org.cmdbuild.data.store.InMemoryStore;
 import org.cmdbuild.data.store.Store;
 import org.cmdbuild.data.store.StoreSupplier;
 import org.cmdbuild.data.store.dao.DataViewStore;
@@ -15,18 +16,21 @@ import org.cmdbuild.data.store.email.EmailConverter;
 import org.cmdbuild.data.store.email.EmailTemplateStorableConverter;
 import org.cmdbuild.data.store.email.ExtendedEmailTemplate;
 import org.cmdbuild.data.store.email.ExtendedEmailTemplateStore;
+import org.cmdbuild.dms.DmsConfiguration;
+import org.cmdbuild.logic.email.ConfigurationAwareEmailAttachmentsLogic;
 import org.cmdbuild.logic.email.DefaultEmailAccountLogic;
+import org.cmdbuild.logic.email.DefaultEmailAttachmentsLogic;
+import org.cmdbuild.logic.email.DefaultEmailLogic;
 import org.cmdbuild.logic.email.DefaultEmailTemplateLogic;
 import org.cmdbuild.logic.email.EmailAccountLogic;
+import org.cmdbuild.logic.email.EmailAttachmentsLogic;
 import org.cmdbuild.logic.email.EmailLogic;
 import org.cmdbuild.logic.email.EmailTemplateLogic;
 import org.cmdbuild.logic.email.TransactionalEmailTemplateLogic;
 import org.cmdbuild.notification.Notifier;
 import org.cmdbuild.services.email.ConfigurableEmailServiceFactory;
-import org.cmdbuild.services.email.DefaultEmailPersistence;
 import org.cmdbuild.services.email.DefaultSubjectHandler;
 import org.cmdbuild.services.email.EmailAccount;
-import org.cmdbuild.services.email.EmailPersistence;
 import org.cmdbuild.services.email.EmailServiceFactory;
 import org.cmdbuild.services.email.SubjectHandler;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,6 +48,9 @@ public class Email {
 
 	@Autowired
 	private Dms dms;
+
+	@Autowired
+	private DmsConfiguration dmsConfiguration;
 
 	@Autowired
 	private Notifier notifier;
@@ -78,13 +85,6 @@ public class Email {
 	}
 
 	@Bean
-	public EmailPersistence emailPersistence() {
-		return new DefaultEmailPersistence( //
-				emailStore(), //
-				emailTemplateStore());
-	}
-
-	@Bean
 	protected Store<org.cmdbuild.data.store.email.Email> emailStore() {
 		return DataViewStore.<org.cmdbuild.data.store.email.Email> newInstance() //
 				.withDataView(data.systemDataView()) //
@@ -101,7 +101,6 @@ public class Email {
 	public EmailServiceFactory emailServiceFactory() {
 		return ConfigurableEmailServiceFactory.newInstance() //
 				.withApiFactory(mailApiFactory()) //
-				.withPersistence(emailPersistence()) //
 				.withDefaultAccountSupplier(defaultEmailAccountSupplier()) //
 				.build();
 	}
@@ -117,32 +116,47 @@ public class Email {
 	}
 
 	@Bean
-	protected Store<ExtendedEmailTemplate> emailTemplateStore() {
-		return ExtendedEmailTemplateStore.newInstance() //
-				.withDataView(data.systemDataView()) //
-				.withConverter(emailTemplateStorableConverter()) //
-				.build();
+	@Scope(PROTOTYPE)
+	public EmailAttachmentsLogic emailAttachmentsLogic() {
+		return new ConfigurationAwareEmailAttachmentsLogic( //
+				new DefaultEmailAttachmentsLogic( //
+						data.systemDataView(), //
+						properties.dmsProperties(), //
+						dms.dmsService(), //
+						dms.documentCreatorFactory(), //
+						userStore.getUser()), //
+				dmsConfiguration);
 	}
 
 	@Bean
 	@Scope(PROTOTYPE)
 	public EmailLogic emailLogic() {
-		return new EmailLogic( //
-				data.systemDataView(), //
+		return new DefaultEmailLogic( //
+				emailStore(), //
+				emailTemporaryStore(), //
 				emailServiceFactory(), //
 				emailAccountStore(), //
 				subjectHandler(), //
-				properties.dmsProperties(), //
-				dms.dmsService(), //
-				dms.documentCreatorFactory(), //
-				notifier, //
-				userStore.getUser());
+				notifier, 
+				emailAttachmentsLogic());
+	}
+
+	@Bean
+	protected Store<org.cmdbuild.data.store.email.Email> emailTemporaryStore() {
+		return InMemoryStore.of(org.cmdbuild.data.store.email.Email.class);
 	}
 
 	@Bean
 	public EmailTemplateLogic emailTemplateLogic() {
-		return new TransactionalEmailTemplateLogic(new DefaultEmailTemplateLogic(emailTemplateStore(),
-				emailAccountStore()));
+		return new TransactionalEmailTemplateLogic(new DefaultEmailTemplateLogic(templateStore(), emailAccountStore()));
+	}
+
+	@Bean
+	protected Store<ExtendedEmailTemplate> templateStore() {
+		return ExtendedEmailTemplateStore.newInstance() //
+				.withDataView(data.systemDataView()) //
+				.withConverter(emailTemplateStorableConverter()) //
+				.build();
 	}
 
 	@Bean

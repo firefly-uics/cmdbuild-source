@@ -3,8 +3,15 @@ package org.cmdbuild.servlets.json;
 public class CommunicationConstants {
 
 	public static final String //
+			ID = "id", //
+			ID_CAPITAL = "Id";
+
+	public static final String //
+			ACCOUNT = "account", //
 			ACTIVE = "active", //
 			ACTIVE_CAPITAL = "Active", //
+			activity = "activity", //
+			ACTIVITY_ID = activity + ID_CAPITAL, //
 			ADDRESS = "address", //
 			ADMIN_PASSWORD = "admin_password", //
 			ADMIN_USER = "admin_user", //
@@ -56,6 +63,7 @@ public class CommunicationConstants {
 			DATA_SOURCE_INSTANCE = "dataSourceInstance", //
 			DATA_SOURCE_TYPE = "dataSourceType", //
 			DATA_SOURCE_TYPE_SQL = "db", //
+			DATE = "date", //
 			DB_NAME = "db_name", //
 			DB_TYPE = "db_type", //
 			DEFAULT = "Default", //
@@ -129,8 +137,6 @@ public class CommunicationConstants {
 			GROUPS = "groups", //
 			HOST = "host", //
 			ICONNAME = "iconName", //
-			ID_CAPITAL = "Id", //
-			ID = "id", //
 			IMAP_PORT = "imapPort", //
 			IMAP_SERVER = "imapServer", //
 			IMAP_SSL = "imapSsl", //
@@ -147,6 +153,7 @@ public class CommunicationConstants {
 			IS_KEY = "isKey", //
 			IS_PROCESS = "isprocess", //
 			JRXML = "jrxml", //
+			KEEP_SYNCHRONIZATION = "keepSynchronization", //
 			KEY = "key", //
 			LANGUAGE = "language", //
 			LANGUAGE_PROMPT = "language_prompt", //
@@ -170,17 +177,22 @@ public class CommunicationConstants {
 			MASTER = "master", //
 			MENU = "menu", //
 			META_DATA = "meta", //
+			MODE = "mode", //
 			MYSQL_LABEL = "MySQL", //
 			MYSQL = "mysql", //
 			NAME = "name", //
 			NAMES = "names", //
 			NEW_PASSWORD = "newpassword", //
 			NOTES = "Notes", //
+			NO_SUBJECT_PREFIX = "noSubjectPrefix", //
 			NOTIFICATION_ACTIVE = "notificationActive", //
 			NOTIFICATION_EMAIL_ACCOUNT = "notificationEmailAccount", //
 			NOTIFICATION_EMAIL_TEMPLATE = "notificationEmailTemplate", //
 			NOTIFICATION_EMAIL_TEMPLATE_ERROR = "notificationEmailTemplateError", //
+			NOTIFY_WITH = "notifyWith", //
+			NOT_NEGATIVES = "notNegatives", //
 			NOT_NULL = "isnotnull", //
+			NOT_POSITIVES = "notPositives", //
 			NUMBER = "Number", //
 			OLD_PASSWORD = "oldpassword", //
 			ORACLE_LABEL = "Oracle", //
@@ -214,6 +226,7 @@ public class CommunicationConstants {
 			PRIVILEGE_WRITE = "write_privilege", //
 			PROCESSED_FOLDER = "processedFolder", //
 			PROCESS_ID = "ProcessId", //
+			PROMPT_SYNCHRONIZATION = "promptSynchronization", //
 			QUERY = "query", //
 			REJECTED_FOLDER = "rejectedFolder", //
 			REJECT_NOT_MATCHING = "rejectNotMatching", //
@@ -231,6 +244,7 @@ public class CommunicationConstants {
 			SHARK_SCHEMA = "shark_schema", //
 			SHORT = "short", //
 			SHOW_IN_GRID = "isbasedsp", //
+			SKIP_DISABLED_CLASSES = "skipDisabledClasses", //
 			SMTP_PORT = "smtpPort", //
 			SMTP_SERVER = "smtpServer", //
 			SMTP_SSL = "smtpSsl", //
@@ -245,6 +259,11 @@ public class CommunicationConstants {
 			STARTING_CLASS = "startingClass", //
 			START = "start", //
 			STATE = "state", //
+			STATUS = "status", //
+			STATUS_DRAFT = "draft", //
+			STATUS_OUTGOING = "outgoing", //
+			STATUS_RECEIVED = "received", //
+			STATUS_SENT = "sent", //
 			SUBJECT = "subject", //
 			SUCCESS = "success", //
 			SUPERCLASS = "superclass", //
@@ -258,8 +277,9 @@ public class CommunicationConstants {
 			TASK_SYNCHRONOUS_EVENT = "event_synchronous", //
 			TEMPLATE = "template", //
 			TEMPLATES = "templates", //
+			TEMPORARY = "temporary", //
+			TEMPORARY_ID = TEMPORARY + ID_CAPITAL, //
 			TITLE = "title", //
-			TEMPORARY_ID = "temporaryId", //
 			TO = "to", //
 			TRANSLATIONS = "translations", //
 			TRANSLATION_UUID = "translationUuid", //
@@ -283,7 +303,6 @@ public class CommunicationConstants {
 			VIEWS = "views", //
 			WIDGET_ID = "widgetId", //
 			WIDGET = "widget", //
-			WITH_DISABLED_CLASSES = "withDisabledClasses", //
 			WORKFLOW_ACTIVE = "workflowActive", //
 			WORKFLOW_ADVANCEABLE = "workflowAdvanceable", //
 			WORKFLOW_ATTACHMENTS_CATEGORY = "workflowAttachmentsCategory", //

@@ -40,7 +40,7 @@
 		/**
 		 * Validation input form
 		 *
-		 * @param {Ext.formPanel} form
+		 * @param {Ext.form.Panel} form
 		 *
 		 * @return {Boolean}
 		 */

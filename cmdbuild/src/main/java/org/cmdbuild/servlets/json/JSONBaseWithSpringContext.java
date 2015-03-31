@@ -38,6 +38,7 @@ import org.cmdbuild.logic.data.lookup.LookupLogic;
 import org.cmdbuild.logic.dms.DmsLogic;
 import org.cmdbuild.logic.dms.PrivilegedDmsLogic;
 import org.cmdbuild.logic.email.EmailAccountLogic;
+import org.cmdbuild.logic.email.EmailAttachmentsLogic;
 import org.cmdbuild.logic.email.EmailLogic;
 import org.cmdbuild.logic.email.EmailTemplateLogic;
 import org.cmdbuild.logic.menu.MenuLogic;
@@ -184,6 +185,10 @@ public class JSONBaseWithSpringContext extends JSONBase {
 
 	protected EmailAccountLogic emailAccountLogic() {
 		return applicationContext().getBean(EmailAccountLogic.class);
+	}
+
+	protected EmailAttachmentsLogic emailAttachmentsLogic() {
+		return applicationContext().getBean(EmailAttachmentsLogic.class);
 	}
 
 	protected EmailLogic emailLogic() {

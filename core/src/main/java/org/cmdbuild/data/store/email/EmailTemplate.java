@@ -44,4 +44,8 @@ public interface EmailTemplate extends Storable {
 
 	Long getAccount();
 
+	boolean isKeepSynchronization();
+
+	boolean isPromptSynchronization();
+
 }
