@@ -1,8 +1,11 @@
 package org.cmdbuild.services.email;
 
+import static com.google.common.base.Predicates.alwaysTrue;
+import static com.google.common.collect.FluentIterable.from;
+import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
+
 import java.util.Collection;
 
-import org.apache.commons.lang3.Validate;
 import org.cmdbuild.data.store.email.Email;
 
 import com.google.common.base.Predicate;
@@ -11,6 +14,8 @@ import com.google.common.collect.Lists;
 public class CollectingEmailCallbackHandler implements EmailCallbackHandler {
 
 	public static class Builder implements org.apache.commons.lang3.builder.Builder<CollectingEmailCallbackHandler> {
+
+		private static final Predicate<Email> ALWAYS_TRUE = alwaysTrue();
 
 		private Predicate<Email> predicate;
 
@@ -25,7 +30,7 @@ public class CollectingEmailCallbackHandler implements EmailCallbackHandler {
 		}
 
 		private void validate() {
-			Validate.notNull(predicate, "invalid predicate");
+			predicate = defaultIfNull(predicate, ALWAYS_TRUE);
 		}
 
 		public Builder withPredicate(final Predicate<Email> predicate) {
@@ -42,23 +47,19 @@ public class CollectingEmailCallbackHandler implements EmailCallbackHandler {
 	private final Predicate<Email> predicate;
 	private final Collection<Email> emails;
 
-	public CollectingEmailCallbackHandler(final Builder builder) {
+	private CollectingEmailCallbackHandler(final Builder builder) {
 		this.predicate = builder.predicate;
 		this.emails = Lists.newArrayList();
 	}
 
 	@Override
-	public boolean apply(final Email input) {
-		return predicate.apply(input);
-	}
-
-	@Override
-	public void accept(final Email email) {
+	public void handle(final Email email) {
 		emails.add(email);
 	}
 
 	public Iterable<Email> getEmails() {
-		return emails;
+		return from(emails) //
+				.filter(predicate);
 	}
 
 }

@@ -37,14 +37,16 @@ public class CxfProcesses implements Processes {
 	private final ErrorHandler errorHandler;
 	private final WorkflowLogic workflowLogic;
 	private final ToFullProcessDetail toFullDetail;
+	private final IdGenerator idGenerator;
 
 	public CxfProcesses(final ErrorHandler errorHandler, final WorkflowLogic workflowLogic,
-			final ProcessStatusHelper processStatusHelper) {
+			final ProcessStatusHelper processStatusHelper, final IdGenerator idGenerator) {
 		this.errorHandler = errorHandler;
 		this.workflowLogic = workflowLogic;
 		this.toFullDetail = ToFullProcessDetail.newInstance() //
 				.withLookupHelper(processStatusHelper) //
 				.build();
+		this.idGenerator = idGenerator;
 	}
 
 	@Override
@@ -74,6 +76,17 @@ public class CxfProcesses implements Processes {
 		final ProcessWithFullDetails element = toFullDetail.apply(found);
 		return newResponseSingle(ProcessWithFullDetails.class) //
 				.withElement(element) //
+				.build();
+	}
+
+	@Override
+	public ResponseSingle<Long> generateId(final String processId) {
+		final CMClass found = workflowLogic.findProcessClass(processId);
+		if (found == null) {
+			errorHandler.processNotFound(processId);
+		}
+		return newResponseSingle(Long.class) //
+				.withElement(idGenerator.generate()) //
 				.build();
 	}
 

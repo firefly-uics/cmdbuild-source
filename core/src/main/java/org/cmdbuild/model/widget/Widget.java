@@ -5,6 +5,7 @@ import java.util.Map;
 import net.jcip.annotations.NotThreadSafe;
 
 import org.apache.commons.lang3.StringUtils;
+import org.cmdbuild.logger.Log;
 import org.cmdbuild.model.widget.WidgetVisitor.WidgetVisitable;
 import org.cmdbuild.services.localization.LocalizableStorable;
 import org.cmdbuild.services.localization.LocalizableStorableVisitor;
@@ -13,10 +14,15 @@ import org.cmdbuild.workflow.CMActivityWidget;
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.annotate.JsonTypeInfo;
+import org.slf4j.Logger;
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.MINIMAL_CLASS, include = JsonTypeInfo.As.PROPERTY, property = "type")
 @NotThreadSafe
 public abstract class Widget implements CMActivityWidget, WidgetVisitable, LocalizableStorable {
+
+	protected static final Logger logger = Log.WORKFLOW;
+
+	public static final String SUBMISSION_PARAM = "output";
 
 	protected interface WidgetAction {
 		Object execute() throws Exception;

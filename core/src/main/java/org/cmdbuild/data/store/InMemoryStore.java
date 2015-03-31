@@ -1,11 +1,11 @@
 package org.cmdbuild.data.store;
 
+import static com.google.common.collect.Maps.newHashMap;
+
 import java.util.Collection;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.NoSuchElementException;
-
-import com.google.common.collect.Maps;
 
 /**
  * In-memory implementation of a {@link Store}.
@@ -19,7 +19,7 @@ public class InMemoryStore<T extends Storable> implements Store<T> {
 	private final Map<String, T> map;
 
 	private InMemoryStore() {
-		map = Maps.newHashMap();
+		map = newHashMap();
 	}
 
 	@Override

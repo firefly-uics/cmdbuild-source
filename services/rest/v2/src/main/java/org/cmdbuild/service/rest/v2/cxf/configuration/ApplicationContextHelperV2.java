@@ -19,12 +19,15 @@ import org.cmdbuild.logic.data.access.UserDataAccessLogicBuilder;
 import org.cmdbuild.logic.data.lookup.LookupLogic;
 import org.cmdbuild.logic.dms.DmsLogic;
 import org.cmdbuild.logic.dms.PrivilegedDmsLogic;
+import org.cmdbuild.logic.email.EmailLogic;
+import org.cmdbuild.logic.email.EmailTemplateLogic;
 import org.cmdbuild.logic.menu.MenuLogic;
 import org.cmdbuild.logic.privileges.SecurityLogic;
 import org.cmdbuild.logic.report.ReportLogic;
 import org.cmdbuild.logic.workflow.UserWorkflowLogicBuilder;
 import org.cmdbuild.logic.workflow.WorkflowLogic;
 import org.cmdbuild.privileges.DBGroupFetcher;
+import org.cmdbuild.services.localization.RequestHandler;
 import org.cmdbuild.services.meta.MetadataStoreFactory;
 import org.cmdbuild.workflow.LookupHelper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,6 +74,14 @@ public class ApplicationContextHelperV2 {
 		return applicationContext.getBean(PrivilegedDmsLogic.class);
 	}
 
+	public EmailLogic emailLogic() {
+		return applicationContext.getBean(EmailLogic.class);
+	}
+
+	public EmailTemplateLogic emailTemplateLogic() {
+		return applicationContext.getBean(EmailTemplateLogic.class);
+	}
+
 	public LookupHelper lookupHelper() {
 		return applicationContext.getBean(LookupHelper.class);
 	}
@@ -89,6 +100,10 @@ public class ApplicationContextHelperV2 {
 
 	public ReportLogic reportLogic() {
 		return applicationContext.getBean(ReportLogic.class);
+	}
+
+	public RequestHandler requestHandler() {
+		return applicationContext.getBean(RequestHandler.class);
 	}
 
 	public SecurityLogic securityLogic() {

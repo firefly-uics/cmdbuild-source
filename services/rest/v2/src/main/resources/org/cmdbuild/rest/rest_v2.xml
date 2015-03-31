@@ -25,6 +25,7 @@
 			<ref bean="jsonProvider" />
 			<ref bean="wadlProvider" />
 			<ref bean="v2_tokenHandler" />
+			<ref bean="v2_localizationHandler" />
 			<ref bean="v2_headerResponseHandler" />
 		</jaxrs:providers>
 		<jaxrs:serviceBeans>
@@ -34,8 +35,11 @@
 			<ref bean="v2_classes" />
 			<ref bean="v2_classAttributes" />
 			<ref bean="v2_classPrivileges" />
+			<ref bean="v2_cql" />
 			<ref bean="v2_domains" />
 			<ref bean="v2_domainAttributes" />
+			<ref bean="v2_emails" />
+			<ref bean="v2_emailTemplates" />
 			<ref bean="v2_relations" />
 			<ref bean="v2_impersonate" />
 			<ref bean="v2_lookupTypes" />

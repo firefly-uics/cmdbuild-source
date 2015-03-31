@@ -11,7 +11,6 @@ import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -24,6 +23,7 @@ import javax.ws.rs.WebApplicationException;
 import org.cmdbuild.logic.workflow.WorkflowLogic;
 import org.cmdbuild.service.rest.v2.cxf.CxfProcesses;
 import org.cmdbuild.service.rest.v2.cxf.ErrorHandler;
+import org.cmdbuild.service.rest.v2.cxf.IdGenerator;
 import org.cmdbuild.service.rest.v2.cxf.ProcessStatusHelper;
 import org.cmdbuild.service.rest.v2.model.ProcessWithBasicDetails;
 import org.cmdbuild.service.rest.v2.model.ProcessWithFullDetails;
@@ -32,7 +32,6 @@ import org.cmdbuild.service.rest.v2.model.ResponseSingle;
 import org.cmdbuild.workflow.user.UserProcessClass;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.InOrder;
 
 import com.google.common.base.Optional;
 
@@ -43,6 +42,7 @@ public class CxfProcessesTest {
 	private ErrorHandler errorHandler;
 	private WorkflowLogic workflowLogic;
 	private ProcessStatusHelper processStatusHelper;
+	private IdGenerator idGenerator;
 
 	private CxfProcesses cxfProcesses;
 
@@ -51,11 +51,12 @@ public class CxfProcessesTest {
 		errorHandler = mock(ErrorHandler.class);
 		workflowLogic = mock(WorkflowLogic.class);
 		processStatusHelper = mock(ProcessStatusHelper.class);
-		cxfProcesses = new CxfProcesses(errorHandler, workflowLogic, processStatusHelper);
+		idGenerator = mock(IdGenerator.class);
+		cxfProcesses = new CxfProcesses(errorHandler, workflowLogic, processStatusHelper, idGenerator);
 	}
 
 	@Test
-	public void noProcessesWhenTheyAreMissingWithinLogic() throws Exception {
+	public void readAllReturnsNoElementsWhenLogicReturnsNoElements() throws Exception {
 		// given
 		when(workflowLogic.findProcessClasses(anyBoolean())) //
 				.thenReturn(NO_PROCESSES);
@@ -71,7 +72,7 @@ public class CxfProcessesTest {
 	}
 
 	@Test
-	public void processesReturnedSortedByName() throws Exception {
+	public void readAllReturnsElementsSortedByName() throws Exception {
 		// given
 		final UserProcessClass foo = mock(UserProcessClass.class);
 		{
@@ -111,25 +112,19 @@ public class CxfProcessesTest {
 	}
 
 	@Test(expected = WebApplicationException.class)
-	public void processNotFound() throws Exception {
+	public void readFailsWhenProcessIsNotFound() throws Exception {
 		// given
 		doReturn(null) //
-				.when(workflowLogic).findProcessClass(anyString());
+				.when(workflowLogic).findProcessClass(eq("dummy"));
 		doThrow(new WebApplicationException()) //
-				.when(errorHandler).processNotFound(anyString());
+				.when(errorHandler).processNotFound(eq("dummy"));
 
 		// when
-		cxfProcesses.read("123");
-
-		// then
-		final InOrder inOrder = inOrder(errorHandler, workflowLogic, processStatusHelper);
-		inOrder.verify(workflowLogic).findProcessClass(eq("123"));
-		inOrder.verify(errorHandler).processNotFound(eq("123"));
-		inOrder.verifyNoMoreInteractions();
+		cxfProcesses.read("dummy");
 	}
 
 	@Test
-	public void processFound() throws Exception {
+	public void readReturnsFoundProcess() throws Exception {
 		// given
 		final UserProcessClass foo = mock(UserProcessClass.class);
 		{
@@ -155,7 +150,7 @@ public class CxfProcessesTest {
 				.when(processStatusHelper).defaultValue();
 
 		// when
-		final ResponseSingle<ProcessWithFullDetails> response = cxfProcesses.read("123");
+		final ResponseSingle<ProcessWithFullDetails> response = cxfProcesses.read("dummy");
 
 		// then
 		final ProcessWithFullDetails element = response.getElement();
@@ -163,9 +158,37 @@ public class CxfProcessesTest {
 		assertThat(element.getDescription(), equalTo("Foo"));
 		assertThat(element.getParent(), equalTo(null));
 		assertThat(element.isPrototype(), equalTo(true));
-		verify(workflowLogic).findProcessClass(eq("123"));
+		verify(workflowLogic).findProcessClass(eq("dummy"));
 		verify(processStatusHelper).allValues();
 		verify(processStatusHelper).defaultValue();
 		verifyNoMoreInteractions(errorHandler, workflowLogic, processStatusHelper);
 	}
+
+	@Test(expected = WebApplicationException.class)
+	public void generateIdFailsWhenProcessIsNotFound() throws Exception {
+		// given
+		doReturn(null) //
+				.when(workflowLogic).findProcessClass(eq("dummy"));
+		doThrow(new WebApplicationException()) //
+				.when(errorHandler).processNotFound(eq("dummy"));
+
+		// when
+		cxfProcesses.generateId("dummy");
+	}
+
+	@Test
+	public void generateIdReturnsSameValueReturnedByLogic() throws Exception {
+		// given
+		doReturn(mock(UserProcessClass.class)) //
+				.when(workflowLogic).findProcessClass(eq("dummy"));
+		doReturn(42L) //
+				.when(idGenerator).generate();
+
+		// when
+		final ResponseSingle<Long> response = cxfProcesses.generateId("dummy");
+
+		// then
+		assertThat(response.getElement(), equalTo(42L));
+	}
+
 }

@@ -110,8 +110,8 @@
 											cmControllerType: 'CMDBuild.controller.administration.email.CMEmailAccountsController',
 											cmName: 'emailAccounts'
 										}),
-										Ext.create('CMDBuild.view.administration.email.CMEmailTemplates', {
-											cmControllerType: 'CMDBuild.controller.administration.email.CMEmailTemplatesController',
+										Ext.create('CMDBuild.view.administration.email.templates.MainPanel', {
+											cmControllerType: 'CMDBuild.controller.administration.email.TemplatesController',
 											cmName: 'emailTemplates'
 										}),
 										Ext.create('CMDBuild.view.administration.localizations.MainPanel', {
@@ -163,7 +163,7 @@
 							Ext.create('CMDBuild.view.administration.accordion.CMAccordionEmail'),
 							gisAccordion,
 							bimAccordion,
-							Ext.create('CMDBuild.view.administration.accordion.Localizations'),
+//							Ext.create('CMDBuild.view.administration.accordion.Localizations'), // TODO: will be implemented in future releases
 							Ext.create('CMDBuild.view.administration.accordion.Configuration')
 						]);
 
@@ -308,11 +308,11 @@
 				 * Groups
 				 */
 				CMDBuild.ServiceProxy.group.read({
-					success : function(response, options, decoded) {
+					success: function(response, options, decoded) {
 						_CMCache.addGroups(decoded.groups);
 
-						groupsAccordion = new CMDBuild.view.administration.accordion.CMGroupsAccordion({
-							cmControllerType: CMDBuild.controller.accordion.CMGroupAccordionController
+						groupsAccordion = Ext.create('CMDBuild.view.administration.accordion.Groups', {
+							cmName: 'groups',
 						});
 						groupsAccordion.updateStore();
 
@@ -328,8 +328,9 @@
 							new CMDBuild.view.administration.group.CMModGroup({
 								cmControllerType: controllerNS.administration.group.CMModGroupsController
 							}),
-							new CMDBuild.view.administration.user.CMModUser({
-								cmControllerType: controllerNS.administration.user.CMModUserController
+							Ext.create('CMDBuild.view.administration.users.MainPanel', {
+								cmControllerType: 'CMDBuild.controller.administration.users.Main',
+								cmName: 'users',
 							})
 						]);
 					},

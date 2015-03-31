@@ -103,6 +103,7 @@ public class Workflow {
 				notifier, //
 				data.systemDataView(), //
 				email.emailLogic(), //
+				email.emailAttachmentsLogic(), //
 				email.emailTemplateLogic());
 	}
 

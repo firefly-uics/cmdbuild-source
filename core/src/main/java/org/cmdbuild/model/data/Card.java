@@ -82,6 +82,11 @@ public class Card implements Storable {
 			this.user = value;
 			return this;
 		}
+		
+		public Builder clearAttributes() {
+			this.attributes.clear();
+			return this;
+		}
 
 		public Builder withAttribute(final String key, final Object value) {
 			this.attributes.put(key, value);

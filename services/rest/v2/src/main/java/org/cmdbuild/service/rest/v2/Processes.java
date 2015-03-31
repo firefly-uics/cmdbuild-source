@@ -36,4 +36,10 @@ public interface Processes {
 			@PathParam(PROCESS_ID) String processId //
 	);
 
+	@GET
+	@Path("{" + PROCESS_ID + "}/generate_id")
+	ResponseSingle<Long> generateId( //
+			@PathParam(PROCESS_ID) String processId //
+	);
+
 }

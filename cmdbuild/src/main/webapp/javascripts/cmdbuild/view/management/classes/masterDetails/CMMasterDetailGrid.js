@@ -48,9 +48,9 @@
 			function setExtraParamsAndLoad(me) {
 				me.store.proxy.url = fkURL;
 				me.store.proxy.extraParams['IdClass'] = idClass;
-				me.store.proxy.extraParams['CQL'] = "from " 
-					+ fkClass.get("name") 
-					+ " where " + p.detail.name + "=" 
+				me.store.proxy.extraParams['CQL'] = "from "
+					+ fkClass.get("name")
+					+ " where " + p.detail.name + "="
 					+ p.masterCard.get("Id");
 
 				me.store.loadPage(1);
@@ -61,7 +61,7 @@
 
 		updateStoreForClassId: function(classId, cb, scope) {
 			this.currentClassId = classId;
-			_CMCache.getAttributeList(classId, 
+			_CMCache.getAttributeList(classId,
 				Ext.bind(function(attributes) {
 					this.setColumnsForClass(attributes);
 					this.setGridSorting(attributes);
@@ -117,9 +117,9 @@
 
 		if (CMDBuild.Config.graph.enabled=="true") {
 			icons.push("showGraph");
-			
+
 		}
-		if (CMDBuild.Config.dms.enabled == "true") {
+		if (CMDBuild.Config.dms.enabled) {
 			icons.push("attach");
 		}
 
@@ -153,7 +153,7 @@
 					title: CMDBuild.Translation.management.moddetail.showgraph,
 					event: "graph",
 					icon: "chart_organisation"
-				},		
+				},
 				note: {
 					title: CMDBuild.Translation.management.moddetail.shownotes,
 					event: "note",
