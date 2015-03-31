@@ -168,6 +168,8 @@ public class GetRelationList extends AbstractGetRelation {
 									_attribute = attribute(DOM_ALIAS, name);
 								} else if (IDOBJ2.equals(name)) {
 									_attribute = attribute(DOM_ALIAS, name);
+								} else if ("_Src".equals(name)) {
+									_attribute = attribute(DOM_ALIAS, name);
 								} else {
 									_attribute = attribute;
 								}
