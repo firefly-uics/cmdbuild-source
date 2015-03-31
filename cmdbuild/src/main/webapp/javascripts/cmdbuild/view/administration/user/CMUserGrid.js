@@ -10,6 +10,9 @@
 			// TODO: Require CMDBuild.ServiceProxy.group class
 		],
 
+		border: false,
+		frame: false,
+
 		initComponent : function() {
 			Ext.apply(this, {
 				columns: [
