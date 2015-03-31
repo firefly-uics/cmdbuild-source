@@ -17,6 +17,7 @@ import org.cmdbuild.service.rest.v2.Cards;
 import org.cmdbuild.service.rest.v2.ClassAttributes;
 import org.cmdbuild.service.rest.v2.ClassPrivileges;
 import org.cmdbuild.service.rest.v2.Classes;
+import org.cmdbuild.service.rest.v2.Cql;
 import org.cmdbuild.service.rest.v2.DomainAttributes;
 import org.cmdbuild.service.rest.v2.Domains;
 import org.cmdbuild.service.rest.v2.EmailTemplates;
@@ -43,6 +44,7 @@ import org.cmdbuild.service.rest.v2.cxf.CxfCards;
 import org.cmdbuild.service.rest.v2.cxf.CxfClassAttributes;
 import org.cmdbuild.service.rest.v2.cxf.CxfClassPrivileges;
 import org.cmdbuild.service.rest.v2.cxf.CxfClasses;
+import org.cmdbuild.service.rest.v2.cxf.CxfCql;
 import org.cmdbuild.service.rest.v2.cxf.CxfDomainAttributes;
 import org.cmdbuild.service.rest.v2.cxf.CxfDomains;
 import org.cmdbuild.service.rest.v2.cxf.CxfEmailTemplates;
@@ -136,6 +138,13 @@ public class ServicesV2 implements LoggingSupport {
 	public Classes v2_classes() {
 		final CxfClasses service = new CxfClasses(v2_errorHandler(), helper.userDataAccessLogic());
 		return proxy(Classes.class, service);
+	}
+
+	@Bean
+	@Scope(value = SCOPE_REQUEST, proxyMode = TARGET_CLASS)
+	public Cql v2_cql() {
+		final CxfCql service = new CxfCql(helper.userDataAccessLogic());
+		return proxy(Cql.class, service);
 	}
 
 	@Bean
