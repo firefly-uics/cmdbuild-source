@@ -82,6 +82,7 @@
 <script type="text/javascript" src="javascripts/cmdbuild/core/CMDelegable.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/xml/XMLUtility.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/buttons/Buttons.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/core/buttons/Iconized.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/buttons/CMClassesMenuButton.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/buttons/AddCardMenuButton.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/buttons/AddRelationMenuButton.js"></script>

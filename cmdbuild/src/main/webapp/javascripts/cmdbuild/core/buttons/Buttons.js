@@ -1,5 +1,7 @@
 (function() {
 
+	// Class not well formatted but it's a good solution to avoid tons of little class files
+
 	Ext.define('CMDBuild.core.buttons.Abort', {
 		alternateClassName: 'CMDBuild.buttons.AbortButton', // Legacy class name
 		extend: 'CMDBuild.core.buttons.Base',

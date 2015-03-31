@@ -35,6 +35,7 @@
 		initComponent: function() {
 			// Panel wrapper
 			this.wrapper = Ext.create('Ext.panel.Panel', {
+				bodyCls: 'cmgraypanel-nopadding',
 				border: false,
 				frame: false,
 
