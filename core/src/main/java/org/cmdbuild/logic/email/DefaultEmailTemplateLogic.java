@@ -149,6 +149,7 @@ public class DefaultEmailTemplateLogic implements EmailTemplateLogic {
 							.withId(input.getId()) //
 							.withName(input.getName()) //
 							.withDescription(input.getDescription()) //
+							.withFrom(input.getFrom()) //
 							.withTo(input.getTo()) //
 							.withCc(input.getCc()) //
 							.withBcc(input.getBcc()) //

@@ -8,6 +8,7 @@ import static org.cmdbuild.servlets.json.CommunicationConstants.CC;
 import static org.cmdbuild.servlets.json.CommunicationConstants.DEFAULT_ACCOUNT;
 import static org.cmdbuild.servlets.json.CommunicationConstants.DESCRIPTION;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ELEMENTS;
+import static org.cmdbuild.servlets.json.CommunicationConstants.FROM;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ID;
 import static org.cmdbuild.servlets.json.CommunicationConstants.KEEP_SYNCHRONIZATION;
 import static org.cmdbuild.servlets.json.CommunicationConstants.NAME;
@@ -196,6 +197,7 @@ public class Template extends JSONBaseWithSpringContext {
 		}
 
 		@Override
+		@JsonProperty(FROM)
 		public String getFrom() {
 			return from;
 		}
@@ -399,6 +401,7 @@ public class Template extends JSONBaseWithSpringContext {
 	public JsonResponse create( //
 			@Parameter(NAME) final String name, //
 			@Parameter(DESCRIPTION) final String description, //
+			@Parameter(FROM) final String from, //
 			@Parameter(TO) final String to, //
 			@Parameter(CC) final String cc, //
 			@Parameter(BCC) final String bcc, //
@@ -412,6 +415,7 @@ public class Template extends JSONBaseWithSpringContext {
 		final Long id = emailTemplateLogic().create(JsonTemplate.newInstance() //
 				.withName(name) //
 				.withDescription(description) //
+				.withFrom(from) //
 				.withTo(to) //
 				.withCc(cc) //
 				.withBcc(bcc) //
@@ -459,6 +463,7 @@ public class Template extends JSONBaseWithSpringContext {
 	public void update( //
 			@Parameter(NAME) final String name, //
 			@Parameter(DESCRIPTION) final String description, //
+			@Parameter(FROM) final String from, //
 			@Parameter(TO) final String to, //
 			@Parameter(CC) final String cc, //
 			@Parameter(BCC) final String bcc, //
@@ -472,6 +477,7 @@ public class Template extends JSONBaseWithSpringContext {
 		emailTemplateLogic().update(JsonTemplate.newInstance() //
 				.withName(name) //
 				.withDescription(description) //
+				.withFrom(from) //
 				.withTo(to) //
 				.withCc(cc) //
 				.withBcc(bcc) //
