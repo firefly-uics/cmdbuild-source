@@ -126,7 +126,7 @@ public class EmailImpl implements Email {
 			return this;
 		}
 
-		public Builder withDelay(long delay) {
+		public Builder withDelay(final long delay) {
 			this.delay = delay;
 			return this;
 		}
@@ -261,7 +261,7 @@ public class EmailImpl implements Email {
 	public boolean isPromptSynchronization() {
 		return promptSynchronization;
 	}
-	
+
 	@Override
 	public long getDelay() {
 		return delay;

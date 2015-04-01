@@ -26,13 +26,15 @@ public interface EmailTemplateLogic extends Logic {
 
 		String getBody();
 
-		Map<String, String> getVariables();
-
 		String getAccount();
 
 		boolean isKeepSynchronization();
 
 		boolean isPromptSynchronization();
+
+		long getDelay();
+
+		Map<String, String> getVariables();
 
 	}
 

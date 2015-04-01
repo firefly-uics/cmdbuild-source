@@ -108,6 +108,11 @@ public class DefaultEmailTemplateLogic implements EmailTemplateLogic {
 		}
 
 		@Override
+		public long getDelay() {
+			return delegate.getDelay();
+		}
+
+		@Override
 		public Map<String, String> getVariables() {
 			return delegate.getVariables();
 		}
@@ -158,6 +163,7 @@ public class DefaultEmailTemplateLogic implements EmailTemplateLogic {
 							.withAccount(accountIdOf(input)) //
 							.withKeepSynchronization(input.isKeepSynchronization()) //
 							.withPromptSynchronization(input.isPromptSynchronization()) //
+							.withDelay(input.getDelay()) //
 							.build()) //
 					.withVariables(input.getVariables()) //
 					.build();
