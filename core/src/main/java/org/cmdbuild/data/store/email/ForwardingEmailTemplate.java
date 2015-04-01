@@ -1,7 +1,5 @@
 package org.cmdbuild.data.store.email;
 
-import java.util.List;
-
 import com.google.common.collect.ForwardingObject;
 
 public abstract class ForwardingEmailTemplate extends ForwardingObject implements EmailTemplate {
@@ -46,28 +44,13 @@ public abstract class ForwardingEmailTemplate extends ForwardingObject implement
 	}
 
 	@Override
-	public List<String> getToAddresses() {
-		return delegate().getToAddresses();
-	}
-
-	@Override
 	public String getCc() {
 		return delegate().getCc();
 	}
 
 	@Override
-	public List<String> getCCAddresses() {
-		return delegate().getCCAddresses();
-	}
-
-	@Override
 	public String getBcc() {
 		return delegate().getBcc();
-	}
-
-	@Override
-	public List<String> getBCCAddresses() {
-		return delegate().getBCCAddresses();
 	}
 
 	@Override
@@ -93,6 +76,11 @@ public abstract class ForwardingEmailTemplate extends ForwardingObject implement
 	@Override
 	public boolean isPromptSynchronization() {
 		return delegate().isPromptSynchronization();
+	}
+
+	@Override
+	public long getDelay() {
+		return delegate().getDelay();
 	}
 
 }

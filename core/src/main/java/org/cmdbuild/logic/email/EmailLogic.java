@@ -231,7 +231,7 @@ public interface EmailLogic extends Logic {
 		public boolean isPromptSynchronization() {
 			return delegate().isPromptSynchronization();
 		}
-		
+
 		@Override
 		public long getDelay() {
 			return delegate().getDelay();

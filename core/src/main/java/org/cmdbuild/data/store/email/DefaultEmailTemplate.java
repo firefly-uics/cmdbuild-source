@@ -2,10 +2,9 @@ package org.cmdbuild.data.store.email;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
-import java.util.Arrays;
-import java.util.List;
-
 import org.apache.commons.lang3.Validate;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
@@ -25,6 +24,7 @@ public class DefaultEmailTemplate implements EmailTemplate {
 		private Long account;
 		private boolean keepSynchronization;
 		private boolean promptReSynchronization;
+		private long delay;
 
 		private Builder() {
 			// use factory method
@@ -105,6 +105,11 @@ public class DefaultEmailTemplate implements EmailTemplate {
 			return this;
 		}
 
+		public Builder withDelay(final long delay) {
+			this.delay = delay;
+			return this;
+		}
+
 	}
 
 	public static Builder newInstance() {
@@ -123,6 +128,7 @@ public class DefaultEmailTemplate implements EmailTemplate {
 	private final Long account;
 	private final boolean keepSynchronization;
 	private final boolean promptReSynchronization;
+	private final long delay;
 
 	private DefaultEmailTemplate(final Builder builder) {
 		this.id = builder.id;
@@ -137,6 +143,7 @@ public class DefaultEmailTemplate implements EmailTemplate {
 		this.account = builder.account;
 		this.keepSynchronization = builder.keepSynchronization;
 		this.promptReSynchronization = builder.promptReSynchronization;
+		this.delay = builder.delay;
 	}
 
 	@Override
@@ -169,41 +176,14 @@ public class DefaultEmailTemplate implements EmailTemplate {
 		return to;
 	}
 
-	/**
-	 * Read the "TO" attribute and build a list splitting over the separator of
-	 * email addresses {@link EmailConstants.ADDRESSES_SEPARATOR}.
-	 */
-	@Override
-	public List<String> getToAddresses() {
-		return Arrays.asList(getTo().split(EmailConstants.ADDRESSES_SEPARATOR));
-	}
-
 	@Override
 	public String getCc() {
 		return cc;
 	}
 
-	/**
-	 * Read the "CC" attribute and build a list splitting over the separator of
-	 * email addresses {@link EmailConstants.ADDRESSES_SEPARATOR}.
-	 */
-	@Override
-	public List<String> getCCAddresses() {
-		return Arrays.asList(getCc().split(EmailConstants.ADDRESSES_SEPARATOR));
-	}
-
 	@Override
 	public String getBcc() {
 		return bcc;
-	}
-
-	/**
-	 * Read the "BCC" attribute and build a list splitting over the separator of
-	 * email addresses {@link EmailConstants.ADDRESSES_SEPARATOR}.
-	 */
-	@Override
-	public List<String> getBCCAddresses() {
-		return Arrays.asList(getBcc().split(EmailConstants.ADDRESSES_SEPARATOR));
 	}
 
 	@Override
@@ -229,6 +209,58 @@ public class DefaultEmailTemplate implements EmailTemplate {
 	@Override
 	public boolean isPromptSynchronization() {
 		return promptReSynchronization;
+	}
+
+	@Override
+	public long getDelay() {
+		return delay;
+	}
+
+	@Override
+	public boolean equals(final Object obj) {
+		if (this == obj) {
+			return true;
+		}
+
+		if (!(obj instanceof EmailTemplate)) {
+			return false;
+		}
+
+		final EmailTemplate other = EmailTemplate.class.cast(obj);
+		return new EqualsBuilder() //
+				.append(this.getId(), other.getId()) //
+				.append(this.getName(), other.getName()) //
+				.append(this.getDescription(), other.getDescription()) //
+				.append(this.getFrom(), other.getFrom()) //
+				.append(this.getTo(), other.getTo()) //
+				.append(this.getCc(), other.getCc()) //
+				.append(this.getBcc(), other.getBcc()) //
+				.append(this.getSubject(), other.getSubject()) //
+				.append(this.getBody(), other.getBody()) //
+				.append(this.getAccount(), other.getAccount()) //
+				.append(this.isKeepSynchronization(), other.isKeepSynchronization()) //
+				.append(this.isPromptSynchronization(), other.isPromptSynchronization()) //
+				.append(this.getDelay(), other.getDelay()) //
+				.isEquals();
+	}
+
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder() //
+				.append(getId()) //
+				.append(getName()) //
+				.append(getDescription()) //
+				.append(getFrom()) //
+				.append(getTo()) //
+				.append(getCc()) //
+				.append(getBcc()) //
+				.append(getSubject()) //
+				.append(getBody()) //
+				.append(getAccount()) //
+				.append(isKeepSynchronization()) //
+				.append(isPromptSynchronization()) //
+				.append(getDelay()) //
+				.toHashCode();
 	}
 
 	@Override
