@@ -36,7 +36,7 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.cmdbuild.service.rest.test.JsonSupport;
 import org.cmdbuild.service.rest.test.ServerResource;
-import org.cmdbuild.service.rest.v2.ProcessInstanceEmails;
+import org.cmdbuild.service.rest.v2.CardEmails;
 import org.cmdbuild.service.rest.v2.model.Email;
 import org.cmdbuild.service.rest.v2.model.LongId;
 import org.cmdbuild.service.rest.v2.model.ResponseMultiple;
@@ -46,14 +46,14 @@ import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 
-public class ProcessInstanceEmailsTest {
+public class CardEmailsTest {
 
-	private ProcessInstanceEmails service;
+	private CardEmails service;
 
 	@Rule
 	public ServerResource server = ServerResource.newInstance() //
-			.withServiceClass(ProcessInstanceEmails.class) //
-			.withService(service = mock(ProcessInstanceEmails.class)) //
+			.withServiceClass(CardEmails.class) //
+			.withService(service = mock(CardEmails.class)) //
 			.withPort(randomPort()) //
 			.build();
 
@@ -77,7 +77,7 @@ public class ProcessInstanceEmailsTest {
 				.when(service).create(anyString(), anyLong(), any(Email.class));
 
 		// when
-		final HttpPost post = new HttpPost(server.resource("processes/dummy/instances/12/emails/"));
+		final HttpPost post = new HttpPost(server.resource("classes/dummy/cards/12/emails/"));
 		post.setEntity(new StringEntity("" //
 				+ "{" //
 				+ "    \"from\" : \"from@example.com\"," //
@@ -140,7 +140,7 @@ public class ProcessInstanceEmailsTest {
 				.thenReturn(expectedResponse);
 
 		// when
-		final HttpGet get = new HttpGet(new URIBuilder(server.resource("processes/dummy/instances/12/emails/")) //
+		final HttpGet get = new HttpGet(new URIBuilder(server.resource("classes/dummy/cards/12/emails/")) //
 				.setParameter(FILTER, "filter") //
 				.setParameter(LIMIT, "34") //
 				.setParameter(START, "56") //
@@ -166,7 +166,7 @@ public class ProcessInstanceEmailsTest {
 				.thenReturn(expectedResponse);
 
 		// when
-		final HttpGet get = new HttpGet(server.resource("processes/dummy/instances/12/emails/34/"));
+		final HttpGet get = new HttpGet(server.resource("classes/dummy/cards/12/emails/34/"));
 		final HttpResponse response = httpclient.execute(get);
 
 		// then
@@ -179,7 +179,7 @@ public class ProcessInstanceEmailsTest {
 	@Test
 	public void emailUpdated() throws Exception {
 		// when
-		final HttpPut put = new HttpPut(server.resource("processes/dummy/instances/12/emails/34/"));
+		final HttpPut put = new HttpPut(server.resource("classes/dummy/cards/12/emails/34/"));
 		put.setEntity(new StringEntity("" //
 				+ "{" //
 				+ "    \"from\" : \"from@example.com\"," //
@@ -225,7 +225,7 @@ public class ProcessInstanceEmailsTest {
 	@Test
 	public void emailDeleted() throws Exception {
 		// when
-		final HttpDelete delete = new HttpDelete(server.resource("processes/dummy/instances/12/emails/34/"));
+		final HttpDelete delete = new HttpDelete(server.resource("classes/dummy/cards/12/emails/34/"));
 		final HttpResponse response = httpclient.execute(delete);
 
 		// then

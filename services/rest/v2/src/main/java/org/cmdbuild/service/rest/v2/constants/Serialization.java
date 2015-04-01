@@ -40,6 +40,7 @@ public class Serialization {
 			DEFAULT = "default", //
 			DEFAULT_STATUS = DEFAULT + "Status", //
 			DEFAULT_VALUE = DEFAULT + "Value", //
+			DELAY = "delay", //
 			DESCRIPTION = "description", //
 			DESCRIPTION_ATTRIBUTE_NAME = DESCRIPTION + "_attribute_name", //
 			DESCRIPTION_CAPITALIZED = "Description", //

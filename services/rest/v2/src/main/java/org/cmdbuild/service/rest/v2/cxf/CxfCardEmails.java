@@ -17,10 +17,10 @@ import java.util.NoSuchElementException;
 
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.attributetype.DateAttributeType;
+import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.logic.email.EmailImpl;
 import org.cmdbuild.logic.email.EmailLogic;
-import org.cmdbuild.logic.workflow.WorkflowLogic;
-import org.cmdbuild.service.rest.v2.ProcessInstanceEmails;
+import org.cmdbuild.service.rest.v2.CardEmails;
 import org.cmdbuild.service.rest.v2.cxf.serialization.DefaultConverter;
 import org.cmdbuild.service.rest.v2.model.Email;
 import org.cmdbuild.service.rest.v2.model.LongId;
@@ -33,7 +33,7 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 
-public class CxfProcessInstanceEmails implements ProcessInstanceEmails {
+public class CxfCardEmails implements CardEmails {
 
 	private static class LogicToLong implements Function<EmailLogic.Email, LongId> {
 
@@ -131,14 +131,14 @@ public class CxfProcessInstanceEmails implements ProcessInstanceEmails {
 	}
 
 	private final ErrorHandler errorHandler;
-	private final WorkflowLogic workflowLogic;
+	private final DataAccessLogic dataAccessLogic;
 	private final EmailLogic emailLogic;
 	private final Predicate<Long> temporaryPredicate;
 
-	public CxfProcessInstanceEmails(final ErrorHandler errorHandler, final WorkflowLogic workflowLogic,
+	public CxfCardEmails(final ErrorHandler errorHandler, final DataAccessLogic dataAccessLogic,
 			final EmailLogic emailLogic, final IdGenerator idGenerator) {
 		this.errorHandler = errorHandler;
-		this.workflowLogic = workflowLogic;
+		this.dataAccessLogic = dataAccessLogic;
 		this.emailLogic = emailLogic;
 		this.temporaryPredicate = new Predicate<Long>() {
 
@@ -161,18 +161,18 @@ public class CxfProcessInstanceEmails implements ProcessInstanceEmails {
 	}
 
 	@Override
-	public ResponseSingle<Long> create(final String processId, final Long processInstanceId, final Email email) {
-		checkPreconditions(processId, processInstanceId > 0 ? processInstanceId : null);
+	public ResponseSingle<Long> create(final String classId, final Long cardId, final Email email) {
+		checkPreconditions(classId, cardId);
 		final Long id = emailLogic.create(new EmailLogic.ForwardingEmail() {
 
 			@Override
 			protected org.cmdbuild.logic.email.EmailLogic.Email delegate() {
-				return new RestToLogic(temporaryPredicate, processInstanceId).apply(email);
+				return new RestToLogic(temporaryPredicate, cardId).apply(email);
 			}
 
 			@Override
 			public Long getReference() {
-				return processInstanceId;
+				return cardId;
 			}
 
 		});
@@ -182,10 +182,10 @@ public class CxfProcessInstanceEmails implements ProcessInstanceEmails {
 	}
 
 	@Override
-	public ResponseMultiple<LongId> readAll(final String processId, final Long processInstanceId, final Integer limit,
+	public ResponseMultiple<LongId> readAll(final String classId, final Long cardId, final Integer limit,
 			final Integer offset) {
-		checkPreconditions(processId, null);
-		final Iterable<EmailLogic.Email> elements = emailLogic.readAll(processInstanceId);
+		checkPreconditions(classId, cardId);
+		final Iterable<EmailLogic.Email> elements = emailLogic.readAll(cardId);
 		return newResponseMultiple(LongId.class) //
 				.withElements(from(elements) //
 						.skip((offset == null) ? 0 : offset) //
@@ -199,8 +199,8 @@ public class CxfProcessInstanceEmails implements ProcessInstanceEmails {
 	}
 
 	@Override
-	public ResponseSingle<Email> read(final String processId, final Long processInstanceId, final Long emailId) {
-		checkPreconditions(processId, null);
+	public ResponseSingle<Email> read(final String classId, final Long cardId, final Long emailId) {
+		checkPreconditions(classId, cardId);
 		final EmailLogic.Email element = emailLogic.read(EmailImpl.newInstance() //
 				.withId(emailId) //
 				.build());
@@ -210,13 +210,13 @@ public class CxfProcessInstanceEmails implements ProcessInstanceEmails {
 	}
 
 	@Override
-	public void update(final String processId, final Long processInstanceId, final Long emailId, final Email email) {
-		checkPreconditions(processId, processInstanceId > 0 ? processInstanceId : null);
+	public void update(final String classId, final Long cardId, final Long emailId, final Email email) {
+		checkPreconditions(classId, cardId);
 		emailLogic.update(new EmailLogic.ForwardingEmail() {
 
 			@Override
 			protected org.cmdbuild.logic.email.EmailLogic.Email delegate() {
-				return new RestToLogic(temporaryPredicate, processInstanceId).apply(email);
+				return new RestToLogic(temporaryPredicate, cardId).apply(email);
 			}
 
 			@Override
@@ -226,31 +226,29 @@ public class CxfProcessInstanceEmails implements ProcessInstanceEmails {
 
 			@Override
 			public Long getReference() {
-				return processInstanceId;
+				return cardId;
 			}
 
 		});
 	}
 
 	@Override
-	public void delete(final String processId, final Long processInstanceId, final Long emailId) {
-		checkPreconditions(processId, null);
+	public void delete(final String classId, final Long cardId, final Long emailId) {
+		checkPreconditions(classId, cardId);
 		emailLogic.delete(EmailImpl.newInstance() //
 				.withId(emailId) //
 				.build());
 	}
 
 	private void checkPreconditions(final String classId, final Long cardId) {
-		final CMClass targetClass = workflowLogic.findProcessClass(classId);
+		final CMClass targetClass = dataAccessLogic.findClass(classId);
 		if (targetClass == null) {
 			errorHandler.classNotFound(classId);
 		}
-		if (cardId != null) {
-			try {
-				workflowLogic.getProcessInstance(classId, cardId);
-			} catch (final NoSuchElementException e) {
-				errorHandler.cardNotFound(cardId);
-			}
+		try {
+			dataAccessLogic.fetchCard(classId, cardId);
+		} catch (final NoSuchElementException e) {
+			errorHandler.cardNotFound(cardId);
 		}
 	}
 
