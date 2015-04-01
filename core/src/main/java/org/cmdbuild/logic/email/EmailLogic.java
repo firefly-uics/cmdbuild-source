@@ -122,7 +122,7 @@ public interface EmailLogic extends Logic {
 
 		Status getStatus();
 
-		Long getActivityId();
+		Long getReference();
 
 		String getNotifyWith();
 
@@ -191,8 +191,8 @@ public interface EmailLogic extends Logic {
 		}
 
 		@Override
-		public Long getActivityId() {
-			return delegate().getActivityId();
+		public Long getReference() {
+			return delegate().getReference();
 		}
 
 		@Override
@@ -256,7 +256,7 @@ public interface EmailLogic extends Logic {
 
 	Long create(Email email);
 
-	Iterable<Email> readAll(Long processCardId);
+	Iterable<Email> readAll(Long reference);
 
 	Email read(Email email);
 

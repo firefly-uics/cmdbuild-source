@@ -1,7 +1,7 @@
 package org.cmdbuild.data.store.email;
 
 import static org.cmdbuild.data.store.Groupables.nameAndValue;
-import static org.cmdbuild.data.store.email.EmailConstants.PROCESS_ID_ATTRIBUTE;
+import static org.cmdbuild.data.store.email.EmailConstants.CARD_ATTRIBUTE;
 
 import org.cmdbuild.data.store.ForwardingGroupable;
 import org.cmdbuild.data.store.Groupable;
@@ -9,7 +9,7 @@ import org.cmdbuild.data.store.Groupable;
 public class EmailOwnerGroupable extends ForwardingGroupable {
 
 	public static EmailOwnerGroupable of(final Long owner) {
-		return new EmailOwnerGroupable(nameAndValue(PROCESS_ID_ATTRIBUTE, owner));
+		return new EmailOwnerGroupable(nameAndValue(CARD_ATTRIBUTE, owner));
 	}
 
 	private final Groupable delegate;

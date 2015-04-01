@@ -4,7 +4,7 @@ public class EmailConstants {
 
 	public static final String EMAIL_CLASS_NAME = "Email";
 
-	public static final String PROCESS_ID_ATTRIBUTE = "Card";
+	public static final String CARD_ATTRIBUTE = "Card";
 	public static final String EMAIL_STATUS_ATTRIBUTE = "EmailStatus";
 	public static final String FROM_ADDRESS_ATTRIBUTE = "FromAddress";
 	public static final String TO_ADDRESSES_ATTRIBUTE = "ToAddresses";

@@ -18,7 +18,7 @@ public class Email extends AbstractEmail implements Storable {
 	private final Long id;
 	private DateTime date;
 	private EmailStatus status;
-	private Long activityId;
+	private Long reference;
 	private Iterable<Attachment> attachments;
 	private boolean noSubjectPrefix;
 	private String account;
@@ -59,12 +59,12 @@ public class Email extends AbstractEmail implements Storable {
 		this.status = status;
 	}
 
-	public Long getActivityId() {
-		return activityId;
+	public Long getReference() {
+		return reference;
 	}
 
-	public void setActivityId(final Long activityId) {
-		this.activityId = activityId;
+	public void setReference(final Long value) {
+		this.reference = value;
 	}
 
 	public Iterable<Attachment> getAttachments() {
@@ -136,7 +136,7 @@ public class Email extends AbstractEmail implements Storable {
 				.append(this.getContent(), other.getContent()) //
 				.append(this.getDate(), other.getDate()) //
 				.append(this.getStatus(), other.getStatus()) //
-				.append(this.getActivityId(), other.getActivityId()) //
+				.append(this.getReference(), other.getReference()) //
 				.append(this.getNotifyWith(), other.getNotifyWith()) //
 				.append(this.isNoSubjectPrefix(), other.isNoSubjectPrefix()) //
 				.append(this.getAccount(), other.getAccount()) //
@@ -158,7 +158,7 @@ public class Email extends AbstractEmail implements Storable {
 				.append(this.getContent()) //
 				.append(this.getDate()) //
 				.append(this.getStatus()) //
-				.append(this.getActivityId()) //
+				.append(this.getReference()) //
 				.append(this.getNotifyWith()) //
 				.append(this.isNoSubjectPrefix()) //
 				.append(this.getAccount()) //
