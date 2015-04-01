@@ -74,10 +74,10 @@ INSERT INTO "LookUp" ("IdClass", "Code", "Description", "Status", "Type", "Numbe
     VALUES ('"LookUp"'::regclass, 'Sent', 'Sent', 'A', 'EmailStatus', 5, false);
 
 -- Email class
-SELECT cm_create_class('Email', 'Class', 'MODE: user|TYPE: class|DESCR: Email|SUPERCLASS: false|STATUS: active');
+SELECT cm_create_class('Email', 'Class', 'MODE: reserved|TYPE: class|DESCR: Email|SUPERCLASS: false|STATUS: active');
 
 -- ActivityEmail domain
-SELECT cm_create_domain('ActivityEmail', 'MODE: user|TYPE: domain|CLASS1: Activity|CLASS2: Email|DESCRDIR: |DESCRINV: |CARDIN: 1:N|STATUS: active');
+SELECT cm_create_domain('ActivityEmail', 'MODE: reserved|TYPE: domain|CLASS1: Activity|CLASS2: Email|DESCRDIR: |DESCRINV: |CARDIN: 1:N|STATUS: active');
 
 -- Email class (attribute)
 SELECT cm_create_class_attribute('Email', 'Activity', 'integer', null, false, false, 'MODE: read|FIELDMODE: write|DESCR: Activity|INDEX: 4|REFERENCEDOM: ActivityEmail|REFERENCEDIRECT: false|REFERENCETYPE: restrict|STATUS: active');
