@@ -5,6 +5,7 @@ import static org.cmdbuild.service.rest.v2.constants.Serialization.BCC;
 import static org.cmdbuild.service.rest.v2.constants.Serialization.BODY;
 import static org.cmdbuild.service.rest.v2.constants.Serialization.CC;
 import static org.cmdbuild.service.rest.v2.constants.Serialization.DATE;
+import static org.cmdbuild.service.rest.v2.constants.Serialization.DELAY;
 import static org.cmdbuild.service.rest.v2.constants.Serialization.FROM;
 import static org.cmdbuild.service.rest.v2.constants.Serialization.KEEP_SYNCHRONIZATION;
 import static org.cmdbuild.service.rest.v2.constants.Serialization.NOTIFY_WITH;
@@ -41,6 +42,7 @@ public class Email extends AbstractModel {
 	private String template;
 	private boolean keepSynchronization;
 	private boolean promptSynchronization;
+	private long delay;
 
 	Email() {
 		// package visibility
@@ -61,7 +63,7 @@ public class Email extends AbstractModel {
 		return from;
 	}
 
-	public void setFrom(final String from) {
+	void setFrom(final String from) {
 		this.from = from;
 	}
 
@@ -70,7 +72,7 @@ public class Email extends AbstractModel {
 		return to;
 	}
 
-	public void setTo(final String to) {
+	void setTo(final String to) {
 		this.to = to;
 	}
 
@@ -79,7 +81,7 @@ public class Email extends AbstractModel {
 		return cc;
 	}
 
-	public void setCc(final String cc) {
+	void setCc(final String cc) {
 		this.cc = cc;
 	}
 
@@ -88,7 +90,7 @@ public class Email extends AbstractModel {
 		return bcc;
 	}
 
-	public void setBcc(final String bcc) {
+	void setBcc(final String bcc) {
 		this.bcc = bcc;
 	}
 
@@ -97,7 +99,7 @@ public class Email extends AbstractModel {
 		return subject;
 	}
 
-	public void setSubject(final String subject) {
+	void setSubject(final String subject) {
 		this.subject = subject;
 	}
 
@@ -106,7 +108,7 @@ public class Email extends AbstractModel {
 		return body;
 	}
 
-	public void setBody(final String body) {
+	void setBody(final String body) {
 		this.body = body;
 	}
 
@@ -115,7 +117,7 @@ public class Email extends AbstractModel {
 		return date;
 	}
 
-	public void setDate(final String date) {
+	void setDate(final String date) {
 		this.date = date;
 	}
 
@@ -124,7 +126,7 @@ public class Email extends AbstractModel {
 		return status;
 	}
 
-	public void setStatus(final String status) {
+	void setStatus(final String status) {
 		this.status = status;
 	}
 
@@ -133,7 +135,7 @@ public class Email extends AbstractModel {
 		return notifyWith;
 	}
 
-	public void setNotifyWith(final String notifyWith) {
+	void setNotifyWith(final String notifyWith) {
 		this.notifyWith = notifyWith;
 	}
 
@@ -142,7 +144,7 @@ public class Email extends AbstractModel {
 		return noSubjectPrefix;
 	}
 
-	public void setNoSubjectPrefix(final boolean noSubjectPrefix) {
+	void setNoSubjectPrefix(final boolean noSubjectPrefix) {
 		this.noSubjectPrefix = noSubjectPrefix;
 	}
 
@@ -151,7 +153,7 @@ public class Email extends AbstractModel {
 		return account;
 	}
 
-	public void setAccount(final String account) {
+	void setAccount(final String account) {
 		this.account = account;
 	}
 
@@ -160,7 +162,7 @@ public class Email extends AbstractModel {
 		return template;
 	}
 
-	public void setTemplate(final String template) {
+	void setTemplate(final String template) {
 		this.template = template;
 	}
 
@@ -169,7 +171,7 @@ public class Email extends AbstractModel {
 		return keepSynchronization;
 	}
 
-	public void setKeepSynchronization(final boolean keepSynchronization) {
+	void setKeepSynchronization(final boolean keepSynchronization) {
 		this.keepSynchronization = keepSynchronization;
 	}
 
@@ -178,8 +180,17 @@ public class Email extends AbstractModel {
 		return promptSynchronization;
 	}
 
-	public void setPromptSynchronization(final boolean promptSynchronization) {
+	void setPromptSynchronization(final boolean promptSynchronization) {
 		this.promptSynchronization = promptSynchronization;
+	}
+
+	@XmlAttribute(name = DELAY)
+	public long getDelay() {
+		return delay;
+	}
+
+	void setDelay(final long delay) {
+		this.delay = delay;
 	}
 
 	@Override
@@ -207,6 +218,7 @@ public class Email extends AbstractModel {
 				.append(this.template, other.template) //
 				.append(this.keepSynchronization, other.keepSynchronization) //
 				.append(this.promptSynchronization, other.promptSynchronization) //
+				.append(this.delay, other.delay) //
 				.isEquals();
 	}
 
@@ -228,6 +240,7 @@ public class Email extends AbstractModel {
 				.append(template) //
 				.append(keepSynchronization) //
 				.append(promptSynchronization) //
+				.append(delay) //
 				.toHashCode();
 	}
 
