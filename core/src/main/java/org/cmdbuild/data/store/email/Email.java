@@ -25,6 +25,7 @@ public class Email extends AbstractEmail implements Storable {
 	private String template;
 	private boolean keepSynchronization;
 	private boolean promptSynchronization;
+	private long delay;
 
 	public Email() {
 		this.id = null;
@@ -113,6 +114,14 @@ public class Email extends AbstractEmail implements Storable {
 
 	public void setPromptSynchronization(final boolean promptSynchronization) {
 		this.promptSynchronization = promptSynchronization;
+	}
+
+	public long getDelay() {
+		return delay;
+	}
+
+	public void setDelay(final long delay) {
+		this.delay = delay;
 	}
 
 	@Override

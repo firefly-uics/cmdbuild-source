@@ -18,6 +18,7 @@ public class EmailConstants {
 	public static final String TEMPLATE_ATTRIBUTE = "Template";
 	public static final String KEEP_SYNCHRONIZATION_ATTRIBUTE = "KeepSynchronization";
 	public static final String PROMPT_SYNCHRONIZATION_ATTRIBUTE = "PromptSynchronization";
+	public static final String DELAY_ATTRIBUTE = "Delay";
 
 	public static final String ADDRESSES_SEPARATOR = ",";
 

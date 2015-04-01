@@ -7,6 +7,7 @@ import static org.cmdbuild.data.store.email.EmailConstants.BCC_ADDRESSES_ATTRIBU
 import static org.cmdbuild.data.store.email.EmailConstants.CARD_ATTRIBUTE;
 import static org.cmdbuild.data.store.email.EmailConstants.CC_ADDRESSES_ATTRIBUTE;
 import static org.cmdbuild.data.store.email.EmailConstants.CONTENT_ATTRIBUTE;
+import static org.cmdbuild.data.store.email.EmailConstants.DELAY_ATTRIBUTE;
 import static org.cmdbuild.data.store.email.EmailConstants.EMAIL_CLASS_NAME;
 import static org.cmdbuild.data.store.email.EmailConstants.EMAIL_STATUS_ATTRIBUTE;
 import static org.cmdbuild.data.store.email.EmailConstants.FROM_ADDRESS_ATTRIBUTE;
@@ -59,6 +60,7 @@ public class EmailConverter extends BaseStorableConverter<Email> {
 		email.setTemplate(defaultIfBlank(card.get(TEMPLATE_ATTRIBUTE, String.class), null));
 		email.setKeepSynchronization(defaultIfNull(card.get(KEEP_SYNCHRONIZATION_ATTRIBUTE, Boolean.class), true));
 		email.setPromptSynchronization(defaultIfNull(card.get(PROMPT_SYNCHRONIZATION_ATTRIBUTE, Boolean.class), false));
+		email.setDelay(defaultIfNull(card.get(DELAY_ATTRIBUTE, Integer.class), 0).longValue());
 		email.setDate((card.getBeginDate()));
 
 		final Long emailStatusLookupId = card.get(EMAIL_STATUS_ATTRIBUTE, IdAndDescription.class).getId();
@@ -87,6 +89,7 @@ public class EmailConverter extends BaseStorableConverter<Email> {
 		values.put(TEMPLATE_ATTRIBUTE, email.getTemplate());
 		values.put(KEEP_SYNCHRONIZATION_ATTRIBUTE, email.isKeepSynchronization());
 		values.put(PROMPT_SYNCHRONIZATION_ATTRIBUTE, email.isPromptSynchronization());
+		values.put(DELAY_ATTRIBUTE, email.getDelay());
 		if (email.getStatus() != null) {
 			values.put(EMAIL_STATUS_ATTRIBUTE, getEmailLookupIdFrom(email.getStatus()));
 		}

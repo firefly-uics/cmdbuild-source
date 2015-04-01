@@ -138,6 +138,8 @@ public interface EmailLogic extends Logic {
 
 		boolean isPromptSynchronization();
 
+		long getDelay();
+
 	}
 
 	abstract class ForwardingEmail extends ForwardingObject implements Email {
@@ -228,6 +230,11 @@ public interface EmailLogic extends Logic {
 		@Override
 		public boolean isPromptSynchronization() {
 			return delegate().isPromptSynchronization();
+		}
+		
+		@Override
+		public long getDelay() {
+			return delegate().getDelay();
 		}
 
 	}

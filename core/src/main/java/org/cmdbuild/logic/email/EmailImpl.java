@@ -30,6 +30,7 @@ public class EmailImpl implements Email {
 		private String template;
 		private boolean keepSynchronization;
 		private boolean promptSynchronization;
+		private long delay;
 
 		private Builder() {
 			// use factory method
@@ -125,6 +126,11 @@ public class EmailImpl implements Email {
 			return this;
 		}
 
+		public Builder withDelay(long delay) {
+			this.delay = delay;
+			return this;
+		}
+
 	}
 
 	public static Builder newInstance() {
@@ -148,6 +154,7 @@ public class EmailImpl implements Email {
 	private final String template;
 	private final boolean keepSynchronization;
 	private final boolean promptSynchronization;
+	private final long delay;
 
 	private EmailImpl(final Builder builder) {
 		this.id = builder.id;
@@ -167,6 +174,7 @@ public class EmailImpl implements Email {
 		this.template = builder.template;
 		this.keepSynchronization = builder.keepSynchronization;
 		this.promptSynchronization = builder.promptSynchronization;
+		this.delay = builder.delay;
 	}
 
 	@Override
@@ -253,6 +261,11 @@ public class EmailImpl implements Email {
 	public boolean isPromptSynchronization() {
 		return promptSynchronization;
 	}
+	
+	@Override
+	public long getDelay() {
+		return delay;
+	}
 
 	@Override
 	public boolean equals(final Object obj) {
@@ -283,6 +296,7 @@ public class EmailImpl implements Email {
 				.append(this.getTemplate(), other.getTemplate()) //
 				.append(this.isKeepSynchronization(), other.isKeepSynchronization()) //
 				.append(this.isPromptSynchronization(), other.isPromptSynchronization()) //
+				.append(this.getDelay(), other.getDelay()) //
 				.isEquals();
 	}
 
@@ -306,6 +320,7 @@ public class EmailImpl implements Email {
 				.append(template) //
 				.append(keepSynchronization) //
 				.append(promptSynchronization) //
+				.append(delay) //
 				.toHashCode();
 	}
 

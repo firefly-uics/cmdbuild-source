@@ -177,6 +177,7 @@ public class DefaultEmailLogic implements EmailLogic {
 			output.setTemplate(input.getTemplate());
 			output.setKeepSynchronization(input.isKeepSynchronization());
 			output.setPromptSynchronization(input.isPromptSynchronization());
+			output.setDelay(input.getDelay());
 			return output;
 		}
 
@@ -203,6 +204,7 @@ public class DefaultEmailLogic implements EmailLogic {
 					.withTemplate(input.getTemplate()) //
 					.withKeepSynchronization(input.isKeepSynchronization()) //
 					.withPromptSynchronization(input.isPromptSynchronization()) //
+					.withDelay(input.getDelay()) //
 					.build();
 		}
 

@@ -74,6 +74,7 @@ public class CommunicationConstants {
 			DEFAULT_MASTERDETAIL_LABEL = "md_label_default", //
 			DEFAULT_PARENT_DESCRIPTION = "ParentDescription_default", //
 			DEFAULT_VALUE = "defaultvalue", //
+			DELAY = "delay", //
 			DELETE = "delete", //
 			DESCRIPTION_CAPITAL = "Description", //
 			DESCRIPTION = "description", //
