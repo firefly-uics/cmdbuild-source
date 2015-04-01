@@ -4,6 +4,7 @@ import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
 import static org.cmdbuild.data.store.email.EmailConstants.ACCOUNT_ATTRIBUTE;
 import static org.cmdbuild.data.store.email.EmailConstants.BCC_ADDRESSES_ATTRIBUTE;
+import static org.cmdbuild.data.store.email.EmailConstants.CARD_ATTRIBUTE;
 import static org.cmdbuild.data.store.email.EmailConstants.CC_ADDRESSES_ATTRIBUTE;
 import static org.cmdbuild.data.store.email.EmailConstants.CONTENT_ATTRIBUTE;
 import static org.cmdbuild.data.store.email.EmailConstants.EMAIL_CLASS_NAME;
@@ -12,7 +13,6 @@ import static org.cmdbuild.data.store.email.EmailConstants.FROM_ADDRESS_ATTRIBUT
 import static org.cmdbuild.data.store.email.EmailConstants.KEEP_SYNCHRONIZATION_ATTRIBUTE;
 import static org.cmdbuild.data.store.email.EmailConstants.NOTIFY_WITH_ATTRIBUTE;
 import static org.cmdbuild.data.store.email.EmailConstants.NO_SUBJECT_PREFIX_ATTRIBUTE;
-import static org.cmdbuild.data.store.email.EmailConstants.PROCESS_ID_ATTRIBUTE;
 import static org.cmdbuild.data.store.email.EmailConstants.PROMPT_SYNCHRONIZATION_ATTRIBUTE;
 import static org.cmdbuild.data.store.email.EmailConstants.SUBJECT_ATTRIBUTE;
 import static org.cmdbuild.data.store.email.EmailConstants.TEMPLATE_ATTRIBUTE;
@@ -66,8 +66,8 @@ public class EmailConverter extends BaseStorableConverter<Email> {
 				.withId(emailStatusLookupId) //
 				.build());
 		email.setStatus(EmailStatus.of(identifierOf(lookup)));
-		email.setActivityId((card.get(PROCESS_ID_ATTRIBUTE) != null) ? card.get(PROCESS_ID_ATTRIBUTE,
-				IdAndDescription.class).getId() : null);
+		email.setReference((card.get(CARD_ATTRIBUTE) != null) ? card.get(CARD_ATTRIBUTE, IdAndDescription.class)
+				.getId() : null);
 		return email;
 	}
 
@@ -80,7 +80,7 @@ public class EmailConverter extends BaseStorableConverter<Email> {
 		values.put(BCC_ADDRESSES_ATTRIBUTE, email.getBccAddresses());
 		values.put(SUBJECT_ATTRIBUTE, email.getSubject());
 		values.put(CONTENT_ATTRIBUTE, email.getContent());
-		values.put(PROCESS_ID_ATTRIBUTE, email.getActivityId());
+		values.put(CARD_ATTRIBUTE, email.getReference());
 		values.put(NOTIFY_WITH_ATTRIBUTE, email.getNotifyWith());
 		values.put(NO_SUBJECT_PREFIX_ATTRIBUTE, email.isNoSubjectPrefix());
 		values.put(ACCOUNT_ATTRIBUTE, email.getAccount());

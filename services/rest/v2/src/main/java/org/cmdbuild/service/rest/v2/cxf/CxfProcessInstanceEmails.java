@@ -169,7 +169,7 @@ public class CxfProcessInstanceEmails implements ProcessInstanceEmails {
 			}
 
 			@Override
-			public Long getActivityId() {
+			public Long getReference() {
 				return processInstanceId;
 			}
 
@@ -223,7 +223,7 @@ public class CxfProcessInstanceEmails implements ProcessInstanceEmails {
 			}
 
 			@Override
-			public Long getActivityId() {
+			public Long getReference() {
 				return processInstanceId;
 			}
 

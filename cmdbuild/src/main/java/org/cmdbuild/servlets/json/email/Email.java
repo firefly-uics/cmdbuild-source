@@ -6,7 +6,7 @@ import static org.cmdbuild.logic.email.EmailLogic.Statuses.outgoing;
 import static org.cmdbuild.logic.email.EmailLogic.Statuses.received;
 import static org.cmdbuild.logic.email.EmailLogic.Statuses.sent;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ACCOUNT;
-import static org.cmdbuild.servlets.json.CommunicationConstants.ACTIVITY_ID;
+import static org.cmdbuild.servlets.json.CommunicationConstants.REFERENCE;
 import static org.cmdbuild.servlets.json.CommunicationConstants.BCC;
 import static org.cmdbuild.servlets.json.CommunicationConstants.BODY;
 import static org.cmdbuild.servlets.json.CommunicationConstants.CC;
@@ -192,9 +192,9 @@ public class Email extends JSONBaseWithSpringContext {
 			return StatusConverter.of(delegate.getStatus()).string();
 		}
 
-		@JsonProperty(ACTIVITY_ID)
-		public Long getActivityId() {
-			return delegate.getActivityId();
+		@JsonProperty(REFERENCE)
+		public Long getReference() {
+			return delegate.getReference();
 		}
 
 		@JsonProperty(NOTIFY_WITH)
@@ -252,7 +252,7 @@ public class Email extends JSONBaseWithSpringContext {
 			@Parameter(SUBJECT) final String subject, //
 			@Parameter(BODY) final String body, //
 			@Parameter(value = NOTIFY_WITH, required = false) final String notifyWith, //
-			@Parameter(value = ACTIVITY_ID, required = false) final Long activityId, //
+			@Parameter(value = REFERENCE, required = false) final Long reference, //
 			@Parameter(value = NO_SUBJECT_PREFIX, required = false) final boolean noSubjectPrefix, //
 			@Parameter(value = ACCOUNT, required = false) final String account, //
 			@Parameter(value = TEMPORARY, required = false) final boolean temporary, //
@@ -269,7 +269,7 @@ public class Email extends JSONBaseWithSpringContext {
 				.withContent(body) //
 				.withNotifyWith(notifyWith) //
 				.withStatus(draft()) //
-				.withActivityId(activityId) //
+				.withReference(reference) //
 				.withNoSubjectPrefix(noSubjectPrefix) //
 				.withAccount(account) //
 				.withTemporary(temporary) //
@@ -282,9 +282,9 @@ public class Email extends JSONBaseWithSpringContext {
 
 	@JSONExported
 	public JsonResponse readAll( //
-			@Parameter(ACTIVITY_ID) final Long activityId //
+			@Parameter(REFERENCE) final Long reference //
 	) {
-		final Iterable<EmailLogic.Email> emails = emailLogic().readAll(activityId);
+		final Iterable<EmailLogic.Email> emails = emailLogic().readAll(reference);
 		return JsonResponse.success(Iterators.transform(emails.iterator(), TO_JSON_EMAIL));
 	}
 
@@ -311,7 +311,7 @@ public class Email extends JSONBaseWithSpringContext {
 			@Parameter(BODY) final String body, //
 			@Parameter(value = STATUS) final String status, //
 			@Parameter(value = NOTIFY_WITH, required = false) final String notifyWith, //
-			@Parameter(value = ACTIVITY_ID, required = false) final Long activityId, //
+			@Parameter(value = REFERENCE, required = false) final Long reference, //
 			@Parameter(value = NO_SUBJECT_PREFIX, required = false) final boolean noSubjectPrefix, //
 			@Parameter(value = ACCOUNT, required = false) final String account, //
 			@Parameter(value = TEMPORARY, required = false) final boolean temporary, //
@@ -329,7 +329,7 @@ public class Email extends JSONBaseWithSpringContext {
 				.withContent(body) //
 				.withNotifyWith(notifyWith) //
 				.withStatus(StatusConverter.of(status).status()) //
-				.withActivityId(activityId) //
+				.withReference(reference) //
 				.withNoSubjectPrefix(noSubjectPrefix) //
 				.withAccount(account) //
 				.withTemporary(temporary) //

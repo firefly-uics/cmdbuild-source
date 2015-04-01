@@ -174,7 +174,7 @@ public class ManageEmail extends Widget {
 					}
 
 					@Override
-					public Long getActivityId() {
+					public Long getReference() {
 						return instanceId;
 					}
 

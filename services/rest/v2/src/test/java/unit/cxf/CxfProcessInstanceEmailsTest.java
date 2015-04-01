@@ -96,7 +96,7 @@ public class CxfProcessInstanceEmailsTest {
 		final Throwable e = new RuntimeException();
 		doThrow(e) //
 				.when(emailLogic).create(eq(EmailImpl.newInstance() //
-						.withActivityId(12L) //
+						.withReference(12L) //
 						.withFromAddress("from@example.com") //
 						.withToAddresses("to@example.com") //
 						.withSubject("subject") //
@@ -146,7 +146,7 @@ public class CxfProcessInstanceEmailsTest {
 				.withSubject("subject") //
 				.withContent("body") //
 				.withStatus(draft()) //
-				.withActivityId(12L) //
+				.withReference(12L) //
 				.withNotifyWith("foo") //
 				.withNoSubjectPrefix(true) //
 				.withAccount("bar") //
@@ -280,7 +280,7 @@ public class CxfProcessInstanceEmailsTest {
 				.withSubject("subject") //
 				.withContent("body") //
 				.withStatus(draft()) //
-				.withActivityId(34L) //
+				.withReference(34L) //
 				.withNotifyWith("foo") //
 				.withNoSubjectPrefix(true) //
 				.withAccount("bar") //
@@ -361,7 +361,7 @@ public class CxfProcessInstanceEmailsTest {
 		doThrow(e) //
 				.when(emailLogic).update(eq(EmailImpl.newInstance() //
 						.withId(34L) //
-						.withActivityId(12L) //
+						.withReference(12L) //
 						.withFromAddress("from@example.com") //
 						.withToAddresses("to@example.com") //
 						.withSubject("subject") //
@@ -401,7 +401,7 @@ public class CxfProcessInstanceEmailsTest {
 		// then
 		verify(emailLogic).update(eq(EmailImpl.newInstance() //
 				.withId(34L) //
-				.withActivityId(12L) //
+				.withReference(12L) //
 				.withFromAddress("from@example.com") //
 				.withToAddresses("to@example.com") //
 				.withCcAddresses("cc@example.com,another_cc@gmail.com") //

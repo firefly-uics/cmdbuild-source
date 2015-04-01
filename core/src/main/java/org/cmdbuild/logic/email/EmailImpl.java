@@ -23,7 +23,7 @@ public class EmailImpl implements Email {
 		private String notifyWith;
 		private DateTime date;
 		private Status status;
-		private Long activityId;
+		private Long reference;
 		private boolean noSubjectPrefix;
 		private String account;
 		private boolean temporary;
@@ -90,8 +90,8 @@ public class EmailImpl implements Email {
 			return this;
 		}
 
-		public Builder withActivityId(final Long activityId) {
-			this.activityId = activityId;
+		public Builder withReference(final Long reference) {
+			this.reference = reference;
 			return this;
 		}
 
@@ -141,7 +141,7 @@ public class EmailImpl implements Email {
 	private final String notifyWith;
 	private final DateTime date;
 	private final Status status;
-	private final Long activityId;
+	private final Long reference;
 	private final boolean noSubjectPrefix;
 	private final String account;
 	private final boolean temporary;
@@ -160,7 +160,7 @@ public class EmailImpl implements Email {
 		this.notifyWith = builder.notifyWith;
 		this.date = builder.date;
 		this.status = builder.status;
-		this.activityId = builder.activityId;
+		this.reference = builder.reference;
 		this.noSubjectPrefix = builder.noSubjectPrefix;
 		this.account = builder.account;
 		this.temporary = builder.temporary;
@@ -215,8 +215,8 @@ public class EmailImpl implements Email {
 	}
 
 	@Override
-	public Long getActivityId() {
-		return activityId;
+	public Long getReference() {
+		return reference;
 	}
 
 	@Override
@@ -275,7 +275,7 @@ public class EmailImpl implements Email {
 				.append(this.getContent(), other.getContent()) //
 				.append(this.getDate(), other.getDate()) //
 				.append(this.getStatus(), other.getStatus()) //
-				.append(this.getActivityId(), other.getActivityId()) //
+				.append(this.getReference(), other.getReference()) //
 				.append(this.getNotifyWith(), other.getNotifyWith()) //
 				.append(this.isNoSubjectPrefix(), other.isNoSubjectPrefix()) //
 				.append(this.getAccount(), other.getAccount()) //
@@ -298,7 +298,7 @@ public class EmailImpl implements Email {
 				.append(content) //
 				.append(date) //
 				.append(status) //
-				.append(activityId) //
+				.append(reference) //
 				.append(notifyWith) //
 				.append(noSubjectPrefix) //
 				.append(account) //

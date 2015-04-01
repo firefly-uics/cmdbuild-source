@@ -10,8 +10,6 @@ public class CommunicationConstants {
 			ACCOUNT = "account", //
 			ACTIVE = "active", //
 			ACTIVE_CAPITAL = "Active", //
-			activity = "activity", //
-			ACTIVITY_ID = activity + ID_CAPITAL, //
 			ADDRESS = "address", //
 			ADMIN_PASSWORD = "admin_password", //
 			ADMIN_USER = "admin_user", //
@@ -228,6 +226,7 @@ public class CommunicationConstants {
 			PROCESS_ID = "ProcessId", //
 			PROMPT_SYNCHRONIZATION = "promptSynchronization", //
 			QUERY = "query", //
+			REFERENCE = "reference", //
 			REJECTED_FOLDER = "rejectedFolder", //
 			REJECT_NOT_MATCHING = "rejectNotMatching", //
 			RELATION_ID = "relationId", //

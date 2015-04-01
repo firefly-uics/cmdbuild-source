@@ -171,7 +171,7 @@ public class DefaultEmailLogic implements EmailLogic {
 			output.setNotifyWith(input.getNotifyWith());
 			output.setDate(input.getDate());
 			output.setStatus(StatusConverter.of(input.getStatus()).value());
-			output.setActivityId(input.getActivityId());
+			output.setReference(input.getReference());
 			output.setNoSubjectPrefix(input.isNoSubjectPrefix());
 			output.setAccount(input.getAccount());
 			output.setTemplate(input.getTemplate());
@@ -197,7 +197,7 @@ public class DefaultEmailLogic implements EmailLogic {
 					.withNotifyWith(input.getNotifyWith()) //
 					.withDate(input.getDate()) //
 					.withStatus(StatusConverter.of(input.getStatus()).status()) //
-					.withActivityId(input.getActivityId()) //
+					.withReference(input.getReference()) //
 					.withNoSubjectPrefix(input.isNoSubjectPrefix()) //
 					.withAccount(input.getAccount()) //
 					.withTemplate(input.getTemplate()) //
@@ -278,16 +278,16 @@ public class DefaultEmailLogic implements EmailLogic {
 	}
 
 	@Override
-	public Iterable<Email> readAll(final Long processCardId) {
+	public Iterable<Email> readAll(final Long reference) {
 		return from(concat( //
-				from(emailStore.readAll(EmailOwnerGroupable.of(processCardId))) //
+				from(emailStore.readAll(EmailOwnerGroupable.of(reference))) //
 						.transform(STORE_TO_LOGIC), //
 				from(temporaryEmailStore.readAll()) //
 						.filter(new Predicate<org.cmdbuild.data.store.email.Email>() {
 
 							@Override
 							public boolean apply(final org.cmdbuild.data.store.email.Email input) {
-								return ObjectUtils.equals(processCardId, input.getActivityId());
+								return ObjectUtils.equals(reference, input.getReference());
 							}
 
 						}) //
@@ -428,7 +428,7 @@ public class DefaultEmailLogic implements EmailLogic {
 
 		};
 		final org.cmdbuild.data.store.email.Email storable = LOGIC_TO_STORE.apply(_email);
-		emailService(storable.getActivityId(), accountSupplier).send(storable, attachmentsOf(_email));
+		emailService(storable.getReference(), accountSupplier).send(storable, attachmentsOf(_email));
 	}
 
 	private Map<URL, String> attachmentsOf(final Email read) throws IOException {

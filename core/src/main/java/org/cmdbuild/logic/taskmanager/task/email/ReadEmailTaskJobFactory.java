@@ -175,7 +175,7 @@ public class ReadEmailTaskJobFactory extends AbstractJobFactory<ReadEmailTask> {
 			Validate.isTrue(parsedSubject.hasExpectedFormat(), "invalid subject format");
 			final Email parentEmail = emailStore.read(storableOf(parsedSubject.getEmailId()));
 			email.setSubject(parsedSubject.getRealSubject());
-			email.setActivityId(parentEmail.getActivityId());
+			email.setReference(parentEmail.getReference());
 			email.setNotifyWith(parentEmail.getNotifyWith());
 			return email;
 		}
@@ -221,9 +221,9 @@ public class ReadEmailTaskJobFactory extends AbstractJobFactory<ReadEmailTask> {
 					final Supplier<EmailAccount> emailAccountSupplier = firstNotNull(asList(
 							templateEmailAccountSupplier, taskEmailAccountSupplier));
 					final CMCard genericProcessCard = workflowLogic.getProcessInstance(dataView.getActivityClass()
-							.getName(), email.getActivityId());
+							.getName(), email.getReference());
 					final CMCard processCard = workflowLogic.getProcessInstance(genericProcessCard.getType().getName(),
-							email.getActivityId());
+							email.getReference());
 					final EngineBasedTemplateResolver templateResolver = EngineBasedTemplateResolver.newInstance() //
 							.withEngine(emptyStringOnNull(nullOnError( //
 									UserEmailEngine.newInstance() //
@@ -339,7 +339,7 @@ public class ReadEmailTaskJobFactory extends AbstractJobFactory<ReadEmailTask> {
 
 								@Override
 								public void started(final UserProcessInstance userProcessInstance) {
-									email.setActivityId(userProcessInstance.getCardId());
+									email.setReference(userProcessInstance.getCardId());
 									emailStore.update(email);
 
 									if (task.isWorkflowAttachments()) {
