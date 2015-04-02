@@ -7,6 +7,7 @@ import static com.google.common.collect.Maps.newLinkedHashMap;
 import static com.google.common.collect.Maps.transformEntries;
 import static com.google.common.collect.Maps.transformValues;
 import static com.google.common.collect.Sets.newHashSet;
+import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.defaultIfEmpty;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
@@ -52,6 +53,7 @@ public class ManageEmailWidgetFactory extends ValuePairWidgetFactory {
 	private final static String GLOBAL_NO_SUBJECT_PREFIX = "GlobalNoSubjectPrefix";
 	private final static String KEEP_SYNCHRONIZATION = "KeepSynchronization";
 	private final static String PROMPT_SYNCHRONIZATION = "PromptSynchronization";
+	private final static String DELAY_IN_SECONDS = "Delay";
 
 	private final static String WIDGET_NAME = "manageEmail";
 
@@ -102,6 +104,7 @@ public class ManageEmailWidgetFactory extends ValuePairWidgetFactory {
 					template.setAccount(_template.getAccount());
 					template.setKeepSynchronization(_template.isKeepSynchronization());
 					template.setPromptSynchronization(_template.isPromptSynchronization());
+					template.setDelay(_template.getDelay());
 				} catch (final Exception e) {
 					logger.warn(marker, "error getting template, skipping", e);
 				}
@@ -185,6 +188,13 @@ public class ManageEmailWidgetFactory extends ValuePairWidgetFactory {
 			template.setPromptSynchronization(readBooleanTrueIfTrue(valueMap.get(key)));
 		}
 		managedParameters.addAll(promptSynchronizations.keySet());
+
+		final Map<String, String> delays = filterKeysStartingWith(valueMap, DELAY_IN_SECONDS);
+		for (final String key : delays.keySet()) {
+			final EmailTemplate template = getTemplateForKey(emailTemplatesByName, key, DELAY_IN_SECONDS);
+			template.setDelay(defaultIfNull(readInteger(valueMap.get(key)), 0) * 1000);
+		}
+		managedParameters.addAll(delays.keySet());
 
 		final ManageEmail widget = new ManageEmail(emailLogic, emailAttachmentsLogic);
 		widget.setTemplates(transformEntries(emailTemplatesByName,

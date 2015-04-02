@@ -38,6 +38,7 @@ public class ManageEmail extends Widget {
 		private String account;
 		private boolean keepSynchronization = true;
 		private boolean promptSynchronization;
+		private long delay;
 
 		public String getKey() {
 			return key;
@@ -93,6 +94,14 @@ public class ManageEmail extends Widget {
 
 		public void setPromptSynchronization(final boolean promptSynchronization) {
 			this.promptSynchronization = promptSynchronization;
+		}
+
+		public long getDelay() {
+			return delay;
+		}
+
+		public void setDelay(final long delay) {
+			this.delay = delay;
 		}
 
 		@Override
