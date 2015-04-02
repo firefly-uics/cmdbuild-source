@@ -1,10 +1,10 @@
 (function() {
-	Ext.define("CMDBuild.controller.management.common.CMModController", {
-		extend: "CMDBuild.controller.CMBasePanelController",
+	Ext.define('CMDBuild.controller.management.common.CMModController', {
+		extend: 'CMDBuild.controller.CMBasePanelController',
 
 		mixins: {
-			commonFunctions: "CMDBuild.controller.management.common.CMModClassAndWFCommons",
-			observable: "Ext.util.Observable"
+			commonFunctions: 'CMDBuild.controller.management.common.CMModClassAndWFCommons',
+			observable: 'Ext.util.Observable'
 		},
 
 		constructor: function() {
@@ -15,10 +15,10 @@
 		onViewOnFront: function(entryType) {
 			if (entryType) {
 				var currentEntryType = _CMCardModuleState.entryType;
-				var newEntryId = entryType.get("id");
+				var newEntryId = entryType.get('id');
 				var filter = entryType.get(_CMProxy.parameter.FILTER);
 				var dc = _CMMainViewportController.getDanglingCard();
-				var entryIdChanged = currentEntryType ? (currentEntryType.get("id") != newEntryId) : true;
+				var entryIdChanged = currentEntryType ? (currentEntryType.get('id') != newEntryId) : true;
 
 				// if there is a danglingCard do the same things that happen
 				// when select a new entryType, the cardGridController is able to
@@ -36,7 +36,7 @@
 		setEntryType: function(entryTypeId, dc, filter) {
 			this.entryType = _CMCache.getEntryTypeById(entryTypeId);
 			this.setCard(null);
-			this.callForSubControllers("onEntryTypeSelected", [this.entryType, dc, filter]);
+			this.callForSubControllers('onEntryTypeSelected', [this.entryType, dc, filter]);
 
 			if (dc != null) {
 				if (dc.activateFirstTab) {
@@ -52,7 +52,7 @@
 		getEntryTypeId: function() {
 			var id = null;
 			if (this.entryType) {
-				id = this.entryType.get("id");
+				id = this.entryType.get('id');
 			}
 
 			return id;
@@ -70,7 +70,7 @@
 		// private, called from setCard. Implement different
 		// behaviours in subclasses
 		onCardChanged: function(card) {
-			this.callForSubControllers("onCardSelected", this.card);
+			this.callForSubControllers('onCardSelected', this.card);
 		},
 
 		// private, call a given function for all the subcontrolles, and
@@ -78,8 +78,8 @@
 		callForSubControllers: function(fnName, params) {
 			for (var i=0, l = this.subControllers.length, ct=null; i<l; ++i) {
 				ct = this.subControllers[i];
-				if (typeof fnName == "string"
-					&& typeof ct[fnName] == "function") {
+				if (typeof fnName == 'string'
+					&& typeof ct[fnName] == 'function') {
 
 					params = Ext.isArray(params) ? params : [params];
 					ct[fnName].apply(ct, params);
@@ -87,12 +87,24 @@
 			}
 		},
 
-		// protected
+		/**
+		 * @abstract
+		 */
 		buildSubControllers: function() {}
 	});
 
-	Ext.define("CMDBuild.controller.management.classes.CMModCardController", {
-		extend: "CMDBuild.controller.management.common.CMModController",
+	Ext.define('CMDBuild.controller.management.classes.CMModCardController', {
+		extend: 'CMDBuild.controller.management.common.CMModController',
+
+		/**
+		 * @property {Ext.data.Model}
+		 */
+		card: undefined,
+
+		/**
+		 * @property {CMDBuild.controller.management.common.tabs.email.Email}
+		 */
+		controllerTabEmail: undefined,
 
 		/**
 		 * @property {Array}
@@ -100,31 +112,78 @@
 		subControllers: [],
 
 		/**
-		 * @property {"CMDBuild.view.management.classes.CMModCard"}
+		 * @property {CMDBuild.view.management.classes.CMModCard}
 		 */
 		view: undefined,
 
 		constructor: function() {
 			this.callParent(arguments);
+
 			this.mon(this.view, this.view.CMEVENTS.addButtonClick, onAddCardButtonClick, this);
 		},
 
-		// override
-		buildSubControllers: function() {
-			var me = this;
+		buildTabControllerCard: function() {
+			var view = this.view.getCardPanel();
+			var widgetControllerManager = new CMDBuild.controller.management.common.CMWidgetManagerController(this.view.getWidgetManager());
 
-			Ext.suspendLayouts();
-			buildCardPanelController(me, me.view.getCardPanel());
-			buildGridController(me, me.view.getGrid());
-			buildRelationsController(me, me.view.getRelationsPanel());
-			buildMapController(me);
-			buildMDController(me, me.view.getMDPanel());
-			buildNoteController(me, me.view.getNotePanel());
-			buildAttachmentsController(me, me.view.getAttachmentsPanel());
-			buildHistoryController(me, me.view.getHistoryPanel());
-			buildBimController(me, me.view.getGrid());
+			if (!Ext.isEmpty(view)) {
+				this.cardPanelController = new CMDBuild.controller.management.classes.CMCardPanelController(view, this, widgetControllerManager);
 
-			// Build email tab
+				this.mon(this.cardPanelController, this.cardPanelController.CMEVENTS.cardRemoved, function(idCard, idClass) {
+					var et = _CMCardModuleState.entryType;
+
+					this.gridController.onCardDeleted();
+					this.view.reset(et.get('id')); // TODO change to notify the sub-controllers
+
+					_CMCache.onClassContentChanged(idClass);
+				}, this);
+
+				this.mon(this.cardPanelController, this.cardPanelController.CMEVENTS.cardSaved,
+					function(cardData) {
+						var et = _CMCardModuleState.entryType;
+
+						this.gridController.onCardSaved(cardData);
+						this.mapController.onCardSaved(cardData);
+
+						_CMCache.onClassContentChanged(et.get('id'));
+				}, this);
+
+				this.mon(this.cardPanelController, this.cardPanelController.CMEVENTS.editModeDidAcitvate, function() {
+					this.mapController.editMode();
+				}, this);
+
+				this.mon(this.cardPanelController, this.cardPanelController.CMEVENTS.displayModeDidActivate, function() {
+					this.mapController.displayMode();
+				}, this);
+
+				this.mon(this.cardPanelController, this.cardPanelController.CMEVENTS.cloneCard, function() {
+					this.callForSubControllers('onCloneCard');
+				}, this);
+
+				this.subControllers.push(this.cardPanelController);
+
+				this.view.cardTabPanel.add(view); // Add panel to view
+			}
+		},
+
+		buildTabControllerDetails: function() {
+			var view = this.view.getMDPanel();
+
+			if (!Ext.isEmpty(view)) {
+				this.mdController = new CMDBuild.controller.management.classes.masterDetails.CMMasterDetailsController(view, this);
+
+				this.mon(this.mdController, 'empty', function(isVisible) {
+					if (isVisible)
+						this.view.cardTabPanel.activateFirstTab();
+				}, this);
+
+				this.subControllers.push(this.mdController);
+
+				this.view.cardTabPanel.add(view); // Add panel to view
+			}
+		},
+
+		buildTabControllerEmail: function() {
 			this.controllerTabEmail = Ext.create('CMDBuild.controller.management.common.tabs.email.Email', {
 				parentDelegate: this,
 				clientForm: this.getFormForTemplateResolver(),
@@ -133,11 +192,95 @@
 
 			this.subControllers.push(this.controllerTabEmail);
 			this.view.cardTabPanel.add(this.controllerTabEmail.getView());
+		},
+
+		buildTabControllerNotes: function() {
+			var view = this.view.getNotePanel();
+
+			if (!Ext.isEmpty(view)) {
+				this.noteController = new CMDBuild.controller.management.classes.CMNoteController(view);
+
+				this.mon(this.noteController, this.noteController.CMEVENTS.noteWasSaved, function(card) {
+					if (this.cardHistoryPanelController)
+						this.cardHistoryPanelController.onCardSelected(card);
+				}, this);
+
+				this.subControllers.push(this.noteController);
+
+				this.view.cardTabPanel.add(view); // Add panel to view
+			}
+		},
+
+		buildTabControllerRelations: function() {
+			var view = this.view.getRelationsPanel();
+
+			if (!Ext.isEmpty(view)) {
+				this.relationsController = new CMDBuild.controller.management.classes.CMCardRelationsController(view, this);
+
+				this.mon(this.relationsController, this.relationsController.CMEVENTS.serverOperationSuccess, function() {
+					this.gridController.reload(true);
+				}, this);
+
+				this.subControllers.push(this.relationsController);
+
+				this.view.cardTabPanel.add(view); // Add panel to view
+			}
+		},
+
+		buildTabControllerHistory: function() {
+			var view = this.view.getHistoryPanel();
+
+			if (!Ext.isEmpty(view)) {
+				this.cardHistoryPanelController = new CMDBuild.controller.management.classes.CMCardHistoryPanelController(view);
+
+				this.subControllers.push(this.cardHistoryPanelController);
+
+				this.view.cardTabPanel.add(view); // Add panel to view
+			}
+		},
+
+		buildTabControllerAttachments: function() {
+			var view = this.view.getAttachmentsPanel();
+
+			if (!Ext.isEmpty(view)) {
+				this.attachmentsController = new CMDBuild.controller.management.classes.attachments.CMCardAttachmentsController(view, this);
+
+				this.subControllers.push(this.attachmentsController);
+
+				this.view.cardTabPanel.add(view); // Add panel to view
+			}
+		},
+
+		/**
+		 * Build all controllers and adds view in tab panel with controller declaration order
+		 *
+		 * @override
+		 */
+		buildSubControllers: function() {
+			Ext.suspendLayouts();
+
+			// Tabs controllers
+			this.buildTabControllerCard();
+			this.buildTabControllerDetails();
+			this.buildTabControllerNotes();
+			this.buildTabControllerRelations();
+			this.buildTabControllerHistory();
+			this.buildTabControllerAttachments();
+			this.buildTabControllerEmail();
+
+			// Generic controllers
+			buildGridController(this, this.view.getGrid());
+			buildMapController(this);
+			buildBimController(this, this.view.getGrid());
 
 			Ext.resumeLayouts();
 		},
 
-		// override: bind the CMCardModuleState
+		/**
+		 * Bind the CMCardModuleState
+		 *
+		 * @override
+		 */
 		setEntryType: function(entryTypeId, dc, filter) {
 			var entryType = _CMCache.getEntryTypeById(entryTypeId);
 
@@ -145,14 +288,12 @@
 			this.view.mapAddCardButton.updateForEntry(entryType);
 			this.view.updateTitleForEntry(entryType);
 
-			if (dc != null) {
-				if (dc.activateFirstTab) {
-					this.view.activateFirstTab();
-				}
-			}
+			if (!Ext.isEmpty(dc) && dc.activateFirstTab)
+				this.view.activateFirstTab();
 
 			_CMCardModuleState.setEntryType(entryType, dc, filter);
 			_CMUIState.onlyGridIfFullScreen();
+
 			this.changeClassUIConfigurationForGroup(entryTypeId);
 		},
 
@@ -170,31 +311,43 @@
 			this.controllerTabEmail.onSaveCardClick();
 		},
 
+		/**
+		 * @param {Number} classId
+		 */
 		changeClassUIConfigurationForGroup: function(classId) {
 			var privileges = _CMUtils.getClassPrivileges(classId);
+
 			this.view.addCardButton.disabledForGroup = ! (privileges.write && ! privileges.crudDisabled.create);
-			if (this.view.addCardButton.disabledForGroup)
+
+			if (this.view.addCardButton.disabledForGroup) {
 				this.view.addCardButton.disable();
-			else
+			} else {
 				this.view.addCardButton.enable();
+			}
+
 			this.cardPanelController.changeClassUIConfigurationForGroup(
-					! (privileges.write && ! privileges.crudDisabled.modify),
-					! (privileges.write && ! privileges.crudDisabled.clone),
-					! (privileges.write && ! privileges.crudDisabled.remove));
+				!(privileges.write && !privileges.crudDisabled.modify),
+				!(privileges.write && !privileges.crudDisabled.clone),
+				!(privileges.write && !privileges.crudDisabled.remove)
+			);
 		},
 
-		onGridVisible: function onCardGridVisible(visible, selection) {
-			if (visible
-					&& this.entryType
-					&& this.card) {
-
-				if (selection
-					&& selection[0] && selection[0].get("Id") != this.card.get("Id")) {
-						this.gridController.openCard({
-							IdClass: this.entryType.get("id"),
-							Id: this.card.get("Id")
-						}, retryWithoutFilter = true);
-				}
+		onGridVisible: function(visible, selection) {
+			if (
+				visible
+				&& this.entryType
+				&& this.card
+				&& selection
+				&& selection[0]
+				&& selection[0].get('Id') != this.card.get('Id')
+			) {
+				this.gridController.openCard(
+					{
+						IdClass: this.entryType.get('id'),
+						Id: this.card.get('Id')
+					},
+					true
+				);
 			}
 		},
 
@@ -213,41 +366,6 @@
 			}
 		}
 	});
-
-	function buildCardPanelController(me, cardPanel) {
-		var widgetControllerManager = new CMDBuild.controller.management.common.CMWidgetManagerController(me.view.getWidgetManager());
-		if (cardPanel) {
-			me.cardPanelController = new CMDBuild.controller.management.classes.CMCardPanelController(cardPanel, me, widgetControllerManager);
-
-			me.mon(me.cardPanelController, me.cardPanelController.CMEVENTS.cardRemoved,
-				function(idCard, idClass) {
-					var et = _CMCardModuleState.entryType;
-					me.gridController.onCardDeleted();
-					me.view.reset(et.get("id")); // TODO change to notify the sub-controllers
-					_CMCache.onClassContentChanged(idClass);
-				});
-
-			me.mon(me.cardPanelController, me.cardPanelController.CMEVENTS.cardSaved,
-				function(cardData) {
-					var et = _CMCardModuleState.entryType;
-					me.gridController.onCardSaved(cardData);
-					me.mapController.onCardSaved(cardData);
-					_CMCache.onClassContentChanged(et.get("id"));
-			});
-
-			me.mon(me.cardPanelController, me.cardPanelController.CMEVENTS.editModeDidAcitvate, function() {
-				me.mapController.editMode();
-			}, me);
-
-			me.mon(me.cardPanelController, me.cardPanelController.CMEVENTS.displayModeDidActivate, function() {
-				me.mapController.displayMode();
-			}, me);
-
-			me.mon(me.cardPanelController, me.cardPanelController.CMEVENTS.cloneCard, onCloneCard, me);
-
-			me.subControllers.push(me.cardPanelController);
-		}
-	}
 
 	function buildGridController(me, grid) {
 		if (grid) {
@@ -268,33 +386,8 @@
 		}
 	}
 
-	function buildRelationsController(me, view) {
-
-		if (view == null) {return;}
-
-		me.relationsController = new CMDBuild.controller.management.classes.CMCardRelationsController(view, me);
-		me.mon(me.relationsController, me.relationsController.CMEVENTS.serverOperationSuccess, function() {
-			me.gridController.reload(reselect=true);
-		});
-
-		me.subControllers.push(me.relationsController);
-	}
-
-	function buildMDController(me, view) {
-
-		if (view == null) {return;}
-
-		me.mdController = new CMDBuild.controller.management.classes.masterDetails.CMMasterDetailsController(view, me);
-		me.mon(me.mdController, "empty", function(isVisible) {
-			if (isVisible) {
-				me.view.cardTabPanel.activateFirstTab();
-			}
-		});
-		me.subControllers.push(me.mdController);
-	}
-
 	function buildMapController(me) {
-		if (typeof me.view.getMapPanel == "function") {
+		if (typeof me.view.getMapPanel == 'function') {
 			me.mapController = new CMDBuild.controller.management.classes.CMMapController(me.view.getMapPanel(), me);
 		} else {
 			me.mapController = {
@@ -309,36 +402,8 @@
 		}
 
 		me.subControllers.push(me.mapController);
+
 		me.cardPanelController.addCardDataProviders(me.mapController);
-	}
-
-	function buildNoteController(me, view) {
-
-		if (view == null) {return;}
-
-		me.noteController = new CMDBuild.controller.management.classes.CMNoteController(view);
-		me.mon(me.noteController, me.noteController.CMEVENTS.noteWasSaved, function(card) {
-			if (me.cardHistoryPanelController) {
-				me.cardHistoryPanelController.onCardSelected(card);
-			}
-		}, me);
-		me.subControllers.push(me.noteController);
-	}
-
-	function buildAttachmentsController(me, view) {
-
-		if (view == null) {return;}
-
-		me.attachmentsController = new CMDBuild.controller.management.classes.attachments.CMCardAttachmentsController(view, me);
-		me.subControllers.push(me.attachmentsController);
-	}
-
-	function buildHistoryController(me, view) {
-
-		if (view == null) {return;}
-
-		me.cardHistoryPanelController = new CMDBuild.controller.management.classes.CMCardHistoryPanelController(view);
-		me.subControllers.push(me.cardHistoryPanelController);
 	}
 
 	function buildBimController(me, view) {
@@ -350,18 +415,15 @@
 	}
 
 	function onSelectionWentWrong() {
-		this.view.cardTabPanel.reset(_CMCardModuleState.entryType.get("id"));
+		this.view.cardTabPanel.reset(_CMCardModuleState.entryType.get('id'));
 	}
 
 	function onAddCardButtonClick(p) {
 		this.setCard(null);
-		this.callForSubControllers("onAddCardButtonClick", p.classId);
+		this.callForSubControllers('onAddCardButtonClick', p.classId);
 		this.view.activateFirstTab();
 
 		_CMUIState.onlyFormIfFullScreen();
 	}
 
-	function onCloneCard() {
-		this.callForSubControllers("onCloneCard");
-	}
 })();
