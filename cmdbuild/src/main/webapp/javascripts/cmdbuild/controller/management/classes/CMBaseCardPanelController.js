@@ -104,12 +104,14 @@
 						me.view.editMode();
 					});
 				});
+
+				this.callParent(arguments);
 			}
 		},
 
 		onSaveCardClick: function() {
-
 			var me = this;
+
 			var params = {};
 			params[_CMProxy.parameter.CARD_ID] = this.cloneCard ? -1 : this.card.get("Id");
 			params[_CMProxy.parameter.CLASS_NAME] = _CMCache.getEntryTypeNameById(this.card.get("IdClass"));
@@ -159,6 +161,8 @@
 				Id: operation.result.id || me.card.get("Id"),// if is a new card, the id is given by the request
 				IdClass: me.entryType.get("id")
 			};
+
+			this.callParent(arguments); // FOrward save event
 
 			me.fireEvent(me.CMEVENTS.cardSaved, cardData);
 		},
