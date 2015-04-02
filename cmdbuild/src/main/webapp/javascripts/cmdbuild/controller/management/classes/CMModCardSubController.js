@@ -29,8 +29,14 @@ Ext.define("CMDBuild.controller.management.classes.CMModCardSubController", {
 		this.card = card;
 	},
 
-	onAddCardButtonClick : function(classIdOfNewCard) {
+	onAddCardButtonClick: function(classIdOfNewCard) {},
 
+	onSaveSuccess: function() {
+		this.superController.onSaveCardClick(); // Forward save event
+	},
+
+	onModifyCardClick: function() {
+		this.superController.onModifyCardClick(); // Forward modify event
 	},
 
 	onShowGraphClick: function() {
@@ -53,6 +59,10 @@ Ext.define("CMDBuild.controller.management.classes.CMModCardSubController", {
 
 		this.cardStateDelegate.onEntryTypeDidChange = function(state, entryType) {
 			me.onEntryTypeSelected(entryType);
+		};
+
+		this.cardStateDelegate.onModifyCardClick = function(state) {
+			me.onModifyCardClick();
 		};
 
 		this.cardStateDelegate.onCardDidChange = function(state, card) {

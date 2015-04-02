@@ -94,6 +94,16 @@
 	Ext.define("CMDBuild.controller.management.classes.CMModCardController", {
 		extend: "CMDBuild.controller.management.common.CMModController",
 
+		/**
+		 * @property {Array}
+		 */
+		subControllers: [],
+
+		/**
+		 * @property {"CMDBuild.view.management.classes.CMModCard"}
+		 */
+		view: undefined,
+
 		constructor: function() {
 			this.callParent(arguments);
 			this.mon(this.view, this.view.CMEVENTS.addButtonClick, onAddCardButtonClick, this);
@@ -102,7 +112,7 @@
 		// override
 		buildSubControllers: function() {
 			var me = this;
-			me.subControllers = [];
+
 			Ext.suspendLayouts();
 			buildCardPanelController(me, me.view.getCardPanel());
 			buildGridController(me, me.view.getGrid());
@@ -113,6 +123,17 @@
 			buildAttachmentsController(me, me.view.getAttachmentsPanel());
 			buildHistoryController(me, me.view.getHistoryPanel());
 			buildBimController(me, me.view.getGrid());
+
+			// Build email tab
+			this.controllerTabEmail = Ext.create('CMDBuild.controller.management.common.tabs.email.Email', {
+				parentDelegate: this,
+				clientForm: this.getFormForTemplateResolver(),
+				selectedEntity: this.card
+			});
+
+			this.subControllers.push(this.controllerTabEmail);
+			this.view.cardTabPanel.add(this.controllerTabEmail.getView());
+
 			Ext.resumeLayouts();
 		},
 
@@ -133,6 +154,20 @@
 			_CMCardModuleState.setEntryType(entryType, dc, filter);
 			_CMUIState.onlyGridIfFullScreen();
 			this.changeClassUIConfigurationForGroup(entryTypeId);
+		},
+
+		/**
+		 * Forward onModifyCardClick event to email tab controller
+		 */
+		onModifyCardClick: function() {
+			this.controllerTabEmail.onModifyCardClick();
+		},
+
+		/**
+		 * Forward onSaveCardClick event to email tab controller
+		 */
+		onSaveCardClick: function() {
+			this.controllerTabEmail.onSaveCardClick();
 		},
 
 		changeClassUIConfigurationForGroup: function(classId) {
