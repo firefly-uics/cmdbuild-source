@@ -220,6 +220,7 @@
 		RECEIVED: 'received',
 		RECIPIENT_ADDRESS: 'recipientAddress',
 		RECORD: 'record',
+		REFERENCE: 'reference',
 		REJECTED_FOLDER: 'rejectedFolder',
 		RELATION: 'relation',
 		RELATIONS: 'relations',
