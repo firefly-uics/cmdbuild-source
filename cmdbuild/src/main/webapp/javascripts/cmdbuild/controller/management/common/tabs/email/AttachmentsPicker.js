@@ -31,7 +31,7 @@
 		attachmentGridSelectionModel: undefined,
 
 		/**
-		 * @property {CMDBuild.model.tabs.Email.email}
+		 * @property {Mixed}
 		 */
 		record: undefined,
 
@@ -53,7 +53,7 @@
 		/**
 		 * @param {Object} configObject
 		 * @param {CMDBuild.controller.management.common.tabs.email.Attachments} configObject.parentDelegate
-		 * @param {CMDBuild.model.tabs.Email.email} configObject.record
+		 * @param {Mixed} configObject.record
 		 */
 		constructor: function(configObject) {
 			Ext.apply(this, configObject); // Apply config

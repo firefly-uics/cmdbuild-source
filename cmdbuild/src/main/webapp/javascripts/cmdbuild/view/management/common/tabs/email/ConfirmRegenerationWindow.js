@@ -3,10 +3,7 @@
 	Ext.define('CMDBuild.view.management.common.tabs.email.ConfirmRegenerationWindow', {
 		extend: 'CMDBuild.core.PopupWindow',
 
-		requires: [
-			'CMDBuild.core.proxy.CMProxyConstants',
-			'CMDBuild.model.tabs.Email'
-		],
+		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
 
 		/**
 		 * @cfg {CMDBuild.controller.management.common.tabs.email.ConfirmRegenerationWindow}
@@ -89,7 +86,7 @@
 				],
 
 				store: Ext.create('Ext.data.Store', {
-					model: 'CMDBuild.model.tabs.Email.email',
+					model: me.delegate.cmfg('getModelEmail'),
 					data: []
 				})
 			});
@@ -148,7 +145,7 @@
 			/**
 			 * @param {Mixed} value
 			 * @param {Object} metaData
-			 * @param {CMDBuild.model.tabs.Email.email} record
+			 * @param {Mixed} record
 			 *
 			 * @return {String}
 			 */

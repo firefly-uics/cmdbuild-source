@@ -39,7 +39,7 @@
 		isAdvicePrompted: false,
 
 		/**
-		 * @property {CMDBuild.model.tabs.Email.email}
+		 * @property {Mixed}
 		 */
 		record: undefined,
 
@@ -66,7 +66,7 @@
 		/**
 		 * @param {Object} configObject
 		 * @param {CMDBuild.controller.management.common.tabs.email.Email} configObject.parentDelegate
-		 * @param {CMDBuild.model.tabs.Email.email} configObject.record
+		 * @param {Mixed} configObject.record
 		 * @param {String} configObject.windowMode
 		 */
 		constructor: function(configObject) {
@@ -186,7 +186,7 @@
 		},
 
 		/**
-		 * @param {CMDBuild.model.tabs.Email.template} record
+		 * @param {CMDBuild.model.commons.tabs.email.Template} record
 		 */
 		loadFormValues: function(record) {
 			var me = this;
@@ -328,7 +328,7 @@
 				success: function(response, options, decodedResponse) {
 					var response = decodedResponse.response;
 
-					this.loadFormValues(Ext.create('CMDBuild.model.tabs.Email.template', response));
+					this.loadFormValues(Ext.create('CMDBuild.model.commons.tabs.email.Template', response));
 
 					// Bind extra form fields to email record
 					this.record.set(CMDBuild.core.proxy.CMProxyConstants.TEMPLATE, response[CMDBuild.core.proxy.CMProxyConstants.NAME]);

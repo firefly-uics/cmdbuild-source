@@ -5,8 +5,7 @@
 
 		requires: [
 			'CMDBuild.controller.management.common.tabs.email.Email',
-			'CMDBuild.core.proxy.CMProxyConstants',
-			'CMDBuild.model.tabs.Email'
+			'CMDBuild.core.proxy.CMProxyConstants'
 		],
 
 		/**
@@ -64,14 +63,14 @@
 		},
 
 		/**
-		 * @param {CMDBuild.model.tabs.Email.email} record
+		 * @param {Mixed} record
 		 */
 		addRecordToArray: function(record) {
 			this.recordsCouldBeRegenerated.push(record);
 		},
 
 		/**
-		 * @param {CMDBuild.model.tabs.Email.template} template
+		 * @param {CMDBuild.model.commons.tabs.email.Template} template
 		 */
 		addTemplateToArray: function(template) {
 			this.templatesCouldBeRegenerated.push(template);
@@ -134,7 +133,7 @@
 						templateResolver.resolveTemplates({
 							attributes: Ext.Object.getKeys(xaVars),
 							callback: function(values, ctx) {
-								emailObject = Ext.create('CMDBuild.model.tabs.Email.email', values);
+								emailObject = Ext.create(this.cmfg('getModelEmail'), values);
 								emailObject.set(CMDBuild.core.proxy.CMProxyConstants.REFERENCE, me.parentDelegate.getSelectedEntityId());
 								emailObject.set(CMDBuild.core.proxy.CMProxyConstants.TEMPLATE, template.get(CMDBuild.core.proxy.CMProxyConstants.KEY));
 
