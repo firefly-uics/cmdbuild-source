@@ -11,8 +11,7 @@
 		requires: [
 			'CMDBuild.core.proxy.CMProxyConstants',
 			'CMDBuild.core.proxy.EmailTemplates',
-			'CMDBuild.core.proxy.Utils',
-			'CMDBuild.model.tabs.Email'
+			'CMDBuild.model.classes.tabs.email.Email'
 		],
 
 		/**
@@ -34,6 +33,7 @@
 			'getConfiguration',
 			'getGlobalLoadMask',
 			'getMainController',
+			'getModelEmail',
 			'onGlobalRegenerationButtonClick'
 		],
 
@@ -101,6 +101,15 @@
 		isWidgetBusy: false,
 
 		/**
+		 * Model class used for email records and stores
+		 *
+		 * @cfg {CMDBuild.model.classes.tabs.email.Email}
+		 *
+		 * @abstract
+		 */
+		modelEmail: 'CMDBuild.model.classes.tabs.email.Email',
+
+		/**
 		 * Global attribute change flag
 		 *
 		 * @cfg {Boolean}
@@ -155,7 +164,7 @@
 			},
 
 			/**
-			 * @param {CMDBuild.model.tabs.Email.email} record
+			 * @param {Mixed} record
 			 * @param {Array} regenerationTrafficLightArray
 			 *
 			 * @return {Boolean} storeLoadEnabled
@@ -238,7 +247,7 @@
 		},
 
 		/**
-		 * @param {CMDBuild.model.tabs.Email.email} record
+		 * @param {Mixed} record
 		 * @param {CMDBuild.Management.TemplateResolver} templateResolver
 		 * @param {Object} scope
 		 */
@@ -321,11 +330,11 @@
 		/**
 		 * @param {Object} template
 		 *
-		 * @return {CMDBuild.model.tabs.Email.template} or null
+		 * @return {CMDBuild.model.commons.tabs.email.Template} or null
 		 */
 		configurationTemplatesToModel: function(template) { // TODO: forse sarà da delegare al controller del vero widget
 			if (Ext.isObject(template) && !Ext.Object.isEmpty(template)) {
-				var model = Ext.create('CMDBuild.model.tabs.Email.template');
+				var model = Ext.create('CMDBuild.model.commons.tabs.email.Template');
 				model.set(CMDBuild.core.proxy.CMProxyConstants.ACCOUNT, template[CMDBuild.core.proxy.CMProxyConstants.ACCOUNT]);
 				model.set(CMDBuild.core.proxy.CMProxyConstants.BCC, template[CMDBuild.core.proxy.CMProxyConstants.BCC_ADDRESSES]);
 				model.set(CMDBuild.core.proxy.CMProxyConstants.BODY, template[CMDBuild.core.proxy.CMProxyConstants.CONTENT]);
@@ -423,7 +432,7 @@
 
 					// Load grid's templates to local array
 					Ext.Array.forEach(templates, function(template, i, allTemplates) {
-						this.emailTemplatesObjects.push(Ext.create('CMDBuild.model.tabs.Email.template', template));
+						this.emailTemplatesObjects.push(Ext.create('CMDBuild.model.commons.tabs.email.Template', template));
 					}, this);
 				},
 				callback: function(options, success, response) {
@@ -463,6 +472,13 @@
 		 */
 		getMainController: function() {
 			return this;
+		},
+
+		/**
+		 * @return {Mixed}
+		 */
+		getModelEmail: function() {
+			return this.modelEmail;
 		},
 
 		/**
@@ -577,7 +593,7 @@
 		},
 
 		/**
-		 * @param {CMDBuild.model.tabs.Email.email} record
+		 * @param {Mixed} record
 		 * @param {Array} regenerationTrafficLightArray
 		 */
 		regenerateEmail: function(record, regenerationTrafficLightArray) {
@@ -662,7 +678,7 @@
 		},
 
 		/**
-		 * @param {CMDBuild.model.tabs.Email.template} template
+		 * @param {CMDBuild.model.commons.tabs.email.Template} template
 		 * @param {Array} regenerationTrafficLightArray
 		 */
 		regenerateTemplate: function(template, regenerationTrafficLightArray) {
@@ -695,7 +711,7 @@
 						if (!Ext.Object.isEmpty(record))
 							values = Ext.Object.merge(record.getData(), values);
 
-						emailObject = Ext.create('CMDBuild.model.tabs.Email.email', values);
+						emailObject = Ext.create(this.getModelEmail(), values);
 						emailObject.set(CMDBuild.core.proxy.CMProxyConstants.REFERENCE, me.getSelectedEntityId());
 						emailObject.set(CMDBuild.core.proxy.CMProxyConstants.TEMPLATE, template.get(CMDBuild.core.proxy.CMProxyConstants.KEY));
 

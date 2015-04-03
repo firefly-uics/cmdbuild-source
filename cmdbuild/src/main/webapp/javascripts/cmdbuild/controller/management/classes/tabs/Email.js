@@ -6,6 +6,8 @@
 	Ext.define('CMDBuild.controller.management.classes.tabs.Email', {
 		extend: 'CMDBuild.controller.management.common.tabs.email.Email',
 
+		requires: ['CMDBuild.model.classes.tabs.email.Email'],
+
 		mixins: {
 			observable: 'Ext.util.Observable'
 		},
@@ -21,6 +23,13 @@
 		 * @cfg {Ext.data.Model}
 		 */
 		selectedEntity: undefined,
+
+		/**
+		 * Model class used for email records and stores
+		 *
+		 * @cfg {CMDBuild.model.classes.tabs.email.Email}
+		 */
+		modelEmail: 'CMDBuild.model.classes.tabs.email.Email',
 
 		/**
 		 * @param {Object} configObject

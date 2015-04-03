@@ -24,7 +24,7 @@
 		],
 
 		/**
-		 * @property {CMDBuild.model.tabs.Email.email}
+		 * @property {Mixed}
 		 */
 		record: undefined,
 
@@ -36,7 +36,7 @@
 		/**
 		 * @param {Object} configObject
 		 * @param {CMDBuild.controller.management.common.tabs.email.EmailWindow} configObject.parentDelegate
-		 * @param {CMDBuild.model.tabs.Email.email} configObject.record
+		 * @param {Mixed} configObject.record
 		 * @param {CMDBuild.view.management.common.tabs.email.attachments.MainContainer} configObject.view
 		 */
 		constructor: function(configObject) {
@@ -88,7 +88,7 @@
 		/**
 		 * @param {CMDBuild.view.management.common.widgets.email.EmailWindow} emailWindow
 		 * @param {Object} form
-		 * @param {CMDBuild.model.tabs.Email.email} emailRecord
+		 * @param {Mixed} emailRecord
 		 */
 		onAttachmentChangeFile: function() {
 			var params = {};

@@ -57,7 +57,7 @@
 		},
 
 		/**
-		 * @param {CMDBuild.model.tabs.Email.email} record
+		 * @param {Mixed} record
 		 * @param {Array} regenerationTrafficLightArray
 		 * @param {Function} success
 		 */
@@ -83,7 +83,7 @@
 		 *
 		 * @param {Object} recordValues
 		 *
-		 * @return {CMDBuild.model.tabs.Email.email}
+		 * @return {Mixed}
 		 */
 		createRecord: function(recordValues) {
 			recordValues = recordValues || {};
@@ -91,11 +91,11 @@
 			recordValues[CMDBuild.core.proxy.CMProxyConstants.NO_SUBJECT_PREFIX] = recordValues.hasOwnProperty(CMDBuild.core.proxy.CMProxyConstants.NO_SUBJECT_PREFIX) ? recordValues[CMDBuild.core.proxy.CMProxyConstants.NO_SUBJECT_PREFIX] : this.cmfg('getConfiguration')[CMDBuild.core.proxy.CMProxyConstants.NO_SUBJECT_PREFIX];
 			recordValues[CMDBuild.core.proxy.CMProxyConstants.REFERENCE] = recordValues[CMDBuild.core.proxy.CMProxyConstants.REFERENCE] || this.parentDelegate.getSelectedEntityId();
 
-			return Ext.create('CMDBuild.model.tabs.Email.email', recordValues);
+			return Ext.create(this.cmfg('getModelEmail'), recordValues);
 		},
 
 		/**
-		 * @param {CMDBuild.model.tabs.Email.email} record
+		 * @param {Mixed} record
 		 * @param {Array} regenerationTrafficLightArray
 		 */
 		editRecord: function(record, regenerationTrafficLightArray) {
@@ -137,7 +137,7 @@
 		},
 
 		/**
-		 * @param {CMDBuild.model.tabs.Email.email} record
+		 * @param {Mixed} record
 		 *
 		 * @return {Boolean}
 		 */
@@ -166,7 +166,7 @@
 		},
 
 		/**
-		 * @param {CMDBuild.model.tabs.Email.email} record
+		 * @param {Mixed} record
 		 */
 		onGridDeleteEmailButtonClick: function(record) {
 			Ext.Msg.confirm(
@@ -182,7 +182,7 @@
 		},
 
 		/**
-		 * @param {CMDBuild.model.tabs.Email.email} record
+		 * @param {Mixed} record
 		 */
 		onGridEditEmailButtonClick: function(record) {
 			Ext.create('CMDBuild.controller.management.common.tabs.email.EmailWindow', {
@@ -193,7 +193,7 @@
 		},
 
 		/**
-		 * @param {CMDBuild.model.tabs.Email.email} record
+		 * @param {Mixed} record
 		 */
 		onGridItemDoubleClick: function(record) {
 			if (!this.cmfg('getConfiguration')[CMDBuild.core.proxy.CMProxyConstants.READ_ONLY] && this.recordIsEditable(record)) {
@@ -204,7 +204,7 @@
 		},
 
 		/**
-		 * @param {CMDBuild.model.tabs.Email.email} record
+		 * @param {Mixed} record
 		 */
 		onGridRegenerationEmailButtonClick: function(record) {
 			if (!Ext.isEmpty(record.get(CMDBuild.core.proxy.CMProxyConstants.TEMPLATE)))
@@ -212,7 +212,7 @@
 		},
 
 		/**
-		 * @param {CMDBuild.model.tabs.Email.email} record
+		 * @param {Mixed} record
 		 */
 		onGridReplyEmailButtonClick: function(record) {
 			var content = '<p>'
@@ -235,20 +235,20 @@
 
 			Ext.create('CMDBuild.controller.management.common.tabs.email.EmailWindow', {
 				parentDelegate: this,
-				record: Ext.create('CMDBuild.model.tabs.Email.email', replyRecordData),
+				record: Ext.create(this.cmfg('getModelEmail'), replyRecordData),
 				windowMode: 'reply'
 			});
 		},
 
 		/**
-		 * @param {CMDBuild.model.tabs.Email.email} record
+		 * @param {Mixed} record
 		 */
 		onGridSendEmailButtonClick: function(record) {
 			this.sendRecord(record);
 		},
 
 		/**
-		 * @param {CMDBuild.model.tabs.Email.email} record
+		 * @param {Mixed} record
 		 */
 		onGridViewEmailButtonClick: function(record) {
 			Ext.create('CMDBuild.controller.management.common.tabs.email.EmailWindow', {
@@ -259,7 +259,7 @@
 		},
 
 		/**
-		 * @param {CMDBuild.model.tabs.Email.email} record
+		 * @param {Mixed} record
 		 *
 		 * @return {Boolean}
 		 */
@@ -268,7 +268,7 @@
 		},
 
 		/**
-		 * @param {CMDBuild.model.tabs.Email.email} record
+		 * @param {Mixed} record
 		 *
 		 * @return {Boolean}
 		 */
@@ -281,7 +281,7 @@
 		},
 
 		/**
-		 * @param {CMDBuild.model.tabs.Email.email} record
+		 * @param {Mixed} record
 		 * @param {Array} regenerationTrafficLightArray
 		 */
 		removeRecord: function(record, regenerationTrafficLightArray) {
@@ -315,7 +315,7 @@
 		/**
 		 * Updates selected record with Outgoing status
 		 *
-		 * @param {CMDBuild.model.tabs.Email.email} record
+		 * @param {Mixed} record
 		 * @param {Array} trafficLightArray
 		 */
 		sendRecord: function(record, trafficLightArray) {
