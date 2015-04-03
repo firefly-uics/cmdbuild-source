@@ -280,7 +280,7 @@
 				if (CMDBuild.Config.dms.enabled)
 					this.record.set(CMDBuild.core.proxy.CMProxyConstants.ATTACHMENTS, this.attachmentsDelegate.getAttachmentsNames());
 
-				this.record.set(CMDBuild.core.proxy.CMProxyConstants.ACTIVITY_ID, this.cmfg('getMainController').getSelectedEntityId());
+				this.record.set(CMDBuild.core.proxy.CMProxyConstants.REFERENCE, this.cmfg('getMainController').getSelectedEntityId());
 
 				if (Ext.isEmpty(this.record.get(CMDBuild.core.proxy.CMProxyConstants.ID))) {
 					this.parentDelegate.addRecord(this.record);
