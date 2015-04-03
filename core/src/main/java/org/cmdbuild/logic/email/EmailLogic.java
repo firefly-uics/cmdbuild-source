@@ -144,6 +144,12 @@ public interface EmailLogic extends Logic {
 
 	abstract class ForwardingEmail extends ForwardingObject implements Email {
 
+		/**
+		 * Usable by subclasses only.
+		 */
+		protected ForwardingEmail() {
+		}
+
 		@Override
 		protected abstract Email delegate();
 
