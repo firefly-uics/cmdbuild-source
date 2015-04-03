@@ -1,18 +1,20 @@
 package org.cmdbuild.services.email;
 
+import static com.google.common.collect.FluentIterable.from;
 import static com.google.common.collect.Iterables.unmodifiableIterable;
+import static com.google.common.reflect.Reflection.newProxy;
+import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
+import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
-import static org.cmdbuild.data.store.email.EmailStatus.RECEIVED;
+import static org.cmdbuild.common.utils.Reflection.unsupported;
 import static org.cmdbuild.system.SystemUtils.isMailDebugEnabled;
+import static org.joda.time.DateTime.now;
 
-import java.net.URL;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 
-import org.apache.commons.lang3.StringUtils;
+import javax.activation.DataHandler;
+
 import org.cmdbuild.common.api.mail.Configuration;
 import org.cmdbuild.common.api.mail.FetchedMail;
 import org.cmdbuild.common.api.mail.GetMail;
@@ -21,15 +23,11 @@ import org.cmdbuild.common.api.mail.MailApiFactory;
 import org.cmdbuild.common.api.mail.MailException;
 import org.cmdbuild.common.api.mail.NewMail;
 import org.cmdbuild.common.api.mail.SelectMail;
-import org.cmdbuild.data.store.email.Attachment;
-import org.cmdbuild.data.store.email.Email;
-import org.cmdbuild.data.store.email.EmailConstants;
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 
-import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
+import com.google.common.base.Function;
 import com.google.common.base.Supplier;
-import com.google.common.collect.Lists;
 
 public class DefaultEmailService implements EmailService {
 
@@ -88,7 +86,7 @@ public class DefaultEmailService implements EmailService {
 
 		@Override
 		public List<String> getOutputFromRecipients() {
-			return Arrays.asList(account.getAddress());
+			return asList(account.getAddress());
 		}
 
 		@Override
@@ -138,11 +136,114 @@ public class DefaultEmailService implements EmailService {
 
 	}
 
-	private static final Predicate<Email> ALL_EMAILS = Predicates.alwaysTrue();
+	private static class GetMailAdapter extends ForwardingEmail {
 
+		private static final Email unsupported = newProxy(Email.class, unsupported("method not supported"));
+
+		private final DateTime OBJECT_CREATION_TIME = now();
+
+		private final GetMail delegate;
+		private final String account;
+
+		public GetMailAdapter(final GetMail delegate, final String account) {
+			this.delegate = delegate;
+			this.account = account;
+		}
+
+		@Override
+		protected Email delegate() {
+			return unsupported;
+		}
+
+		@Override
+		public DateTime getDate() {
+			return OBJECT_CREATION_TIME;
+		}
+
+		@Override
+		public String getFromAddress() {
+			return delegate.getFrom();
+		}
+
+		@Override
+		public Iterable<String> getToAddresses() {
+			return delegate.getTos();
+		}
+
+		@Override
+		public Iterable<String> getCcAddresses() {
+			return delegate.getCcs();
+		}
+
+		@Override
+		public Iterable<String> getBccAddresses() {
+			return NO_ADDRESSES;
+		}
+
+		@Override
+		public String getSubject() {
+			return delegate.getSubject();
+		}
+
+		@Override
+		public String getContent() {
+			return delegate.getContent();
+		}
+
+		@Override
+		public Iterable<org.cmdbuild.services.email.Attachment> getAttachments() {
+			return from(delegate.getAttachments()) //
+					.transform(new Function<GetMail.Attachment, Attachment>() {
+
+						@Override
+						public Attachment apply(final GetMail.Attachment input) {
+							return new AttachmentAdapter(input);
+						}
+
+					});
+		}
+
+		@Override
+		public String getAccount() {
+			return account;
+		}
+
+		@Override
+		public long getDelay() {
+			return 0;
+		}
+
+	}
+
+	private static class AttachmentAdapter extends ForwardingAttachment {
+
+		private static final Attachment unsupported = newProxy(Attachment.class, unsupported("method not supported"));
+
+		private final GetMail.Attachment delegate;
+
+		public AttachmentAdapter(final GetMail.Attachment delegate) {
+			this.delegate = delegate;
+		}
+
+		@Override
+		protected Attachment delegate() {
+			return unsupported;
+		}
+
+		@Override
+		public String getName() {
+			return delegate.getName();
+		}
+
+		@Override
+		public DataHandler getDataHandler() {
+			return delegate.getDataHandler();
+		}
+
+	}
+
+	private static final Iterable<String> NO_ADDRESSES = emptyList();
 	private static final String CONTENT_TYPE = "text/html; charset=UTF-8";
-
-	private static final Map<URL, String> NO_ATTACHMENTS = Collections.emptyMap();
 
 	private final Supplier<EmailAccount> accountSupplier;
 	private final Supplier<MailApi> apiSupplier;
@@ -156,24 +257,18 @@ public class DefaultEmailService implements EmailService {
 
 	@Override
 	public void send(final Email email) throws EmailServiceException {
-		logger.info("sending email {}", email.getId());
-		send(email, NO_ATTACHMENTS);
-	}
-
-	@Override
-	public void send(final Email email, final Map<URL, String> attachments) throws EmailServiceException {
-		logger.info("sending email {} with attachments {}", email.getId(), attachments);
 		try {
+			logger.info("sending email '{}'", email);
 			final NewMail newMail = apiSupplier.get().newMail() //
-					.withFrom(from(email.getFromAddress())) //
-					.withTo(addressesFrom(email.getToAddresses())) //
-					.withCc(addressesFrom(email.getCcAddresses())) //
-					.withBcc(addressesFrom(email.getBccAddresses())) //
+					.withFrom(defaultIfBlank(email.getFromAddress(), accountSupplier.get().getAddress())) //
+					.withTo(defaultIfNull(email.getToAddresses(), NO_ADDRESSES)) //
+					.withCc(defaultIfNull(email.getCcAddresses(), NO_ADDRESSES)) //
+					.withBcc(defaultIfNull(email.getBccAddresses(), NO_ADDRESSES)) //
 					.withSubject(email.getSubject()) //
 					.withContent(email.getContent()) //
 					.withContentType(CONTENT_TYPE);
-			for (final Entry<URL, String> attachment : attachments.entrySet()) {
-				newMail.withAttachment(attachment.getKey(), attachment.getValue());
+			for (final Attachment attachment : email.getAttachments()) {
+				newMail.withAttachment(attachment.getDataHandler(), attachment.getName());
 			}
 			newMail.send();
 		} catch (final MailException e) {
@@ -182,23 +277,10 @@ public class DefaultEmailService implements EmailService {
 		}
 	}
 
-	private String from(final String fromAddress) {
-		return defaultIfBlank(fromAddress, accountSupplier.get().getAddress());
-	}
-
-	private String[] addressesFrom(final String addresses) {
-		if (addresses != null) {
-			return addresses.split(EmailConstants.ADDRESSES_SEPARATOR);
-		}
-		return new String[0];
-	}
-
 	@Override
 	public synchronized Iterable<Email> receive() throws EmailServiceException {
 		logger.info("receiving emails");
-		final CollectingEmailCallbackHandler callbackHandler = CollectingEmailCallbackHandler.newInstance() //
-				.withPredicate(ALL_EMAILS) //
-				.build();
+		final CollectingEmailCallbackHandler callbackHandler = new CollectingEmailCallbackHandler();
 		receive(callbackHandler);
 		return unmodifiableIterable(callbackHandler.getEmails());
 	}
@@ -232,7 +314,7 @@ public class DefaultEmailService implements EmailService {
 			boolean keepMail = false;
 			try {
 				final GetMail getMail = apiSupplier.get().selectMail(fetchedMail).get();
-				final Email email = transform(getMail);
+				final Email email = new GetMailAdapter(getMail, accountSupplier.get().getName());
 				mailMover.selectTargetFolder(accountSupplier.get().getProcessedFolder());
 				callback.handle(email);
 			} catch (final Exception e) {
@@ -248,39 +330,6 @@ public class DefaultEmailService implements EmailService {
 			} catch (final MailException e) {
 				logger.error("error moving mail", e);
 			}
-		}
-	}
-
-	private Email transform(final GetMail getMail) {
-		final Email email = new Email();
-		email.setFromAddress(getMail.getFrom());
-		email.setToAddresses(StringUtils.join(getMail.getTos().iterator(), EmailConstants.ADDRESSES_SEPARATOR));
-		email.setCcAddresses(StringUtils.join(getMail.getCcs().iterator(), EmailConstants.ADDRESSES_SEPARATOR));
-		email.setSubject(getMail.getSubject());
-		email.setContent(getMail.getContent());
-		email.setStatus(RECEIVED);
-		final List<Attachment> attachments = Lists.newArrayList();
-		for (final GetMail.Attachment attachment : getMail.getAttachments()) {
-			attachments.add(Attachment.newInstance() //
-					.withName(attachment.getName()) //
-					.withDataHandler(attachment.getDataHandler()) //
-					.build());
-		}
-		email.setAttachments(attachments);
-		log(email);
-		return email;
-	}
-
-	private void log(final Email email) {
-		logger.debug("Email");
-		logger.debug("\tFrom: {}", email.getFromAddress());
-		logger.debug("\tTO: {}", email.getToAddresses());
-		logger.debug("\tCC: {}", email.getCcAddresses());
-		logger.debug("\tSubject: {}", email.getSubject());
-		logger.debug("\tBody:\n{}", email.getContent());
-		logger.debug("\tAttachments:");
-		for (final Attachment attachment : email.getAttachments()) {
-			logger.debug("\t\t- {}", attachment.getName());
 		}
 	}
 

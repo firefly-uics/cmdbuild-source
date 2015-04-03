@@ -2,6 +2,8 @@ package org.cmdbuild.common.api.mail;
 
 import java.net.URL;
 
+import javax.activation.DataHandler;
+
 /**
  * New mail interface.
  */
@@ -144,6 +146,8 @@ public interface NewMail {
 	 *            is the {@link URL} of the attachment.
 	 * 
 	 * @return a {@link NewMail} object, can be {@code this} or a new instance.
+	 * 
+	 * @deprecated use {@link withAttachment(DataHandler)} instead.
 	 */
 	NewMail withAttachment(URL url);
 
@@ -156,12 +160,24 @@ public interface NewMail {
 	 *            is the name of the attachment.
 	 * 
 	 * @return a {@link NewMail} object, can be {@code this} or a new instance.
+	 * 
+	 * @deprecated use {@link withAttachment(DataHandler, String)} instead.
 	 */
 	NewMail withAttachment(URL url, String name);
 
+	/**
+	 * @deprecated use {@link withAttachment(DataHandler)} instead.
+	 */
 	NewMail withAttachment(String url);
 
+	/**
+	 * @deprecated use {@link withAttachment(DataHandler, String)} instead.
+	 */
 	NewMail withAttachment(String url, String name);
+
+	NewMail withAttachment(DataHandler dataHandler);
+
+	NewMail withAttachment(DataHandler dataHandler, String name);
 
 	/**
 	 * Sets if the mail will be sent asynchronously or not.

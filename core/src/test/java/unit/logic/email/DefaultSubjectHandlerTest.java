@@ -1,13 +1,13 @@
-package unit.services.email;
+package unit.logic.email;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
 import org.cmdbuild.data.store.email.Email;
-import org.cmdbuild.services.email.DefaultSubjectHandler;
-import org.cmdbuild.services.email.SubjectHandler.CompiledSubject;
-import org.cmdbuild.services.email.SubjectHandler.ParsedSubject;
+import org.cmdbuild.logic.email.DefaultSubjectHandler;
+import org.cmdbuild.logic.email.SubjectHandler.CompiledSubject;
+import org.cmdbuild.logic.email.SubjectHandler.ParsedSubject;
 import org.junit.Test;
 
 public class DefaultSubjectHandlerTest {

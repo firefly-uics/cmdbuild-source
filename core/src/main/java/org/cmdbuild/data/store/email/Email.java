@@ -1,7 +1,5 @@
 package org.cmdbuild.data.store.email;
 
-import static java.util.Collections.emptyList;
-import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 import static org.apache.commons.lang3.builder.ToStringStyle.SHORT_PREFIX_STYLE;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -13,13 +11,10 @@ import org.joda.time.DateTime;
 
 public class Email extends AbstractEmail implements Storable {
 
-	private static Iterable<Attachment> NO_ATTACHMENTS = emptyList();
-
 	private final Long id;
 	private DateTime date;
 	private EmailStatus status;
 	private Long reference;
-	private Iterable<Attachment> attachments;
 	private boolean noSubjectPrefix;
 	private String account;
 	private String template;
@@ -66,14 +61,6 @@ public class Email extends AbstractEmail implements Storable {
 
 	public void setReference(final Long value) {
 		this.reference = value;
-	}
-
-	public Iterable<Attachment> getAttachments() {
-		return defaultIfNull(attachments, NO_ATTACHMENTS);
-	}
-
-	public void setAttachments(final Iterable<Attachment> attachments) {
-		this.attachments = attachments;
 	}
 
 	public boolean isNoSubjectPrefix() {

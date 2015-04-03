@@ -38,7 +38,6 @@ import java.util.Properties;
 import java.util.Set;
 
 import javax.activation.DataHandler;
-import javax.activation.DataSource;
 import javax.activation.URLDataSource;
 import javax.mail.Address;
 import javax.mail.Authenticator;
@@ -74,7 +73,7 @@ class NewMailImpl implements NewMail {
 	private String subject;
 	private String body;
 	private String contentType;
-	private final Map<URL, String> attachments;
+	private final Map<DataHandler, String> attachments;
 	private boolean asynchronous;
 
 	private Message message;
@@ -93,7 +92,7 @@ class NewMailImpl implements NewMail {
 
 		contentType = CONTENT_TYPE_TEXT_PLAIN;
 
-		attachments = new HashMap<URL, String>();
+		attachments = new HashMap<DataHandler, String>();
 	}
 
 	@Override
@@ -194,8 +193,7 @@ class NewMailImpl implements NewMail {
 
 	@Override
 	public NewMail withAttachment(final URL url, final String name) {
-		attachments.put(url, name);
-		return this;
+		return withAttachment(new DataHandler(new URLDataSource(url)), name);
 	}
 
 	@Override
@@ -206,11 +204,20 @@ class NewMailImpl implements NewMail {
 	@Override
 	public NewMail withAttachment(final String url, final String name) {
 		try {
-			final URL realUrl = new URL(url);
-			attachments.put(realUrl, name);
+			return withAttachment(new URL(url), name);
 		} catch (final MalformedURLException e) {
 			throw new IllegalArgumentException(e);
 		}
+	}
+
+	@Override
+	public NewMail withAttachment(final DataHandler dataHandler) {
+		return withAttachment(dataHandler, null);
+	}
+
+	@Override
+	public NewMail withAttachment(final DataHandler dataHandler, final String name) {
+		attachments.put(dataHandler, name);
 		return this;
 	}
 
@@ -364,7 +371,7 @@ class NewMailImpl implements NewMail {
 
 	private void addAttachmentBodyParts(final Multipart multipart) {
 		try {
-			for (final Entry<URL, String> attachment : attachments.entrySet()) {
+			for (final Entry<DataHandler, String> attachment : attachments.entrySet()) {
 				final BodyPart bodyPart = getBodyPartFor(attachment.getKey(), attachment.getValue());
 				multipart.addBodyPart(bodyPart);
 			}
@@ -373,11 +380,10 @@ class NewMailImpl implements NewMail {
 		}
 	}
 
-	private BodyPart getBodyPartFor(final URL file, final String name) throws MessagingException {
+	private BodyPart getBodyPartFor(final DataHandler dataHandler, final String name) throws MessagingException {
 		final BodyPart bodyPart = new MimeBodyPart();
-		final DataSource source = new URLDataSource(file);
-		bodyPart.setDataHandler(new DataHandler(source));
-		bodyPart.setFileName((name == null) ? getFileName(file.getFile()) : name);
+		bodyPart.setDataHandler(dataHandler);
+		bodyPart.setFileName((name == null) ? getFileName(dataHandler.getName()) : name);
 		return bodyPart;
 	}
 

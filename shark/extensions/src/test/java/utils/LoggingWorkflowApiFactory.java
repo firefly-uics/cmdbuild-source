@@ -23,6 +23,9 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 
+import javax.activation.DataHandler;
+import javax.activation.URLDataSource;
+
 import org.cmdbuild.api.fluent.Card;
 import org.cmdbuild.api.fluent.CardDescriptor;
 import org.cmdbuild.api.fluent.CreateReport;
@@ -342,7 +345,7 @@ public class LoggingWorkflowApiFactory implements SharkWorkflowApiFactory {
 					private String subject;
 					private String content;
 					private String contentType;
-					private final Map<URL, String> attachments = Maps.newHashMap();
+					private final Map<DataHandler, String> attachments = Maps.newHashMap();
 					private boolean asynchronous;
 
 					@Override
@@ -430,8 +433,7 @@ public class LoggingWorkflowApiFactory implements SharkWorkflowApiFactory {
 
 					@Override
 					public NewMail withAttachment(final URL url, final String name) {
-						this.attachments.put(url, name);
-						return this;
+						return withAttachment(new DataHandler(new URLDataSource(url)), name);
 					}
 
 					@Override
@@ -442,11 +444,20 @@ public class LoggingWorkflowApiFactory implements SharkWorkflowApiFactory {
 					@Override
 					public NewMail withAttachment(final String url, final String name) {
 						try {
-							final URL realUrl = new URL(url);
-							attachments.put(realUrl, name);
+							return withAttachment(new URL(url), name);
 						} catch (final MalformedURLException e) {
 							throw new IllegalArgumentException(e);
 						}
+					}
+
+					@Override
+					public NewMail withAttachment(final DataHandler dataHandler) {
+						return withAttachment(dataHandler, null);
+					}
+
+					@Override
+					public NewMail withAttachment(final DataHandler dataHandler, final String name) {
+						attachments.put(dataHandler, name);
 						return this;
 					}
 
@@ -665,7 +676,7 @@ public class LoggingWorkflowApiFactory implements SharkWorkflowApiFactory {
 
 	public static String sendMail(final List<String> froms, final List<String> tos, final List<String> ccs,
 			final List<String> bccs, final String subject, final String content, final String contentType,
-			final Map<URL, String> attachments, final boolean asynchronous) {
+			final Map<DataHandler, String> attachments, final boolean asynchronous) {
 		return logLine("sendMail", new StringBuilder() //
 				.append(tos) //
 				.append(ccs) //

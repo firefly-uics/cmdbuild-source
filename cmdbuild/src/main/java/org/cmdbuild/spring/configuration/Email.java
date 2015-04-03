@@ -22,17 +22,17 @@ import org.cmdbuild.logic.email.DefaultEmailAccountLogic;
 import org.cmdbuild.logic.email.DefaultEmailAttachmentsLogic;
 import org.cmdbuild.logic.email.DefaultEmailLogic;
 import org.cmdbuild.logic.email.DefaultEmailTemplateLogic;
+import org.cmdbuild.logic.email.DefaultSubjectHandler;
 import org.cmdbuild.logic.email.EmailAccountLogic;
 import org.cmdbuild.logic.email.EmailAttachmentsLogic;
 import org.cmdbuild.logic.email.EmailLogic;
 import org.cmdbuild.logic.email.EmailTemplateLogic;
+import org.cmdbuild.logic.email.SubjectHandler;
 import org.cmdbuild.logic.email.TransactionalEmailTemplateLogic;
 import org.cmdbuild.notification.Notifier;
 import org.cmdbuild.services.email.ConfigurableEmailServiceFactory;
-import org.cmdbuild.services.email.DefaultSubjectHandler;
 import org.cmdbuild.services.email.EmailAccount;
 import org.cmdbuild.services.email.EmailServiceFactory;
-import org.cmdbuild.services.email.SubjectHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -137,7 +137,7 @@ public class Email {
 				emailServiceFactory(), //
 				emailAccountStore(), //
 				subjectHandler(), //
-				notifier, 
+				notifier, //
 				emailAttachmentsLogic());
 	}
 

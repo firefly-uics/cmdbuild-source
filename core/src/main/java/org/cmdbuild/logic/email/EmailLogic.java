@@ -239,28 +239,6 @@ public interface EmailLogic extends Logic {
 
 	}
 
-	class EmailSubmission extends org.cmdbuild.data.store.email.Email {
-
-		private String temporaryId;
-
-		public EmailSubmission() {
-			super();
-		}
-
-		public EmailSubmission(final long id) {
-			super(id);
-		}
-
-		public String getTemporaryId() {
-			return temporaryId;
-		}
-
-		public void setTemporaryId(final String temporaryId) {
-			this.temporaryId = temporaryId;
-		}
-
-	}
-
 	Long create(Email email);
 
 	Iterable<Email> readAll(Long reference);

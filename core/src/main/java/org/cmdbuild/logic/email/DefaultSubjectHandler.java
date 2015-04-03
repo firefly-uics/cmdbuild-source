@@ -1,4 +1,4 @@
-package org.cmdbuild.services.email;
+package org.cmdbuild.logic.email;
 
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.defaultIfBlank;

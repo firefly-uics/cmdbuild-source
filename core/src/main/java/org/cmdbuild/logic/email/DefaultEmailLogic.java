@@ -1,15 +1,18 @@
 package org.cmdbuild.logic.email;
 
+import static com.google.common.base.Splitter.on;
 import static com.google.common.base.Suppliers.memoize;
 import static com.google.common.collect.FluentIterable.from;
 import static com.google.common.collect.Iterables.concat;
 import static com.google.common.collect.Iterables.contains;
-import static com.google.common.collect.Maps.newHashMap;
+import static com.google.common.reflect.Reflection.newProxy;
 import static java.util.Arrays.asList;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
+import static org.cmdbuild.common.utils.Reflection.unsupported;
 import static org.cmdbuild.common.utils.guava.Suppliers.firstNotNull;
 import static org.cmdbuild.common.utils.guava.Suppliers.nullOnException;
+import static org.cmdbuild.data.store.email.EmailConstants.ADDRESSES_SEPARATOR;
 import static org.cmdbuild.logic.email.EmailLogic.Statuses.draft;
 import static org.cmdbuild.logic.email.EmailLogic.Statuses.outgoing;
 import static org.cmdbuild.logic.email.EmailLogic.Statuses.received;
@@ -18,16 +21,10 @@ import static org.cmdbuild.services.email.Predicates.isDefault;
 import static org.cmdbuild.services.email.Predicates.named;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.URL;
-import java.util.Map;
 import java.util.UUID;
 
 import javax.activation.DataHandler;
-import javax.activation.DataSource;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.Validate;
 import org.cmdbuild.common.utils.TempDataSource;
@@ -44,8 +41,8 @@ import org.cmdbuild.notification.Notifier;
 import org.cmdbuild.services.email.EmailAccount;
 import org.cmdbuild.services.email.EmailService;
 import org.cmdbuild.services.email.EmailServiceFactory;
+import org.cmdbuild.services.email.ForwardingAttachment;
 import org.cmdbuild.services.email.ForwardingEmailService;
-import org.cmdbuild.services.email.SubjectHandler;
 
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
@@ -220,6 +217,115 @@ public class DefaultEmailLogic implements EmailLogic {
 		}
 
 	};
+
+	private static class EmailAdapter extends org.cmdbuild.services.email.ForwardingEmail {
+
+		private final org.cmdbuild.services.email.Email unsupported = newProxy(org.cmdbuild.services.email.Email.class,
+				unsupported("method not supported"));
+
+		private final Email delegate;
+		private final EmailAttachmentsLogic emailAttachmentsLogic;
+
+		public EmailAdapter(final Email delegate, final EmailAttachmentsLogic emailAttachmentsLogic) {
+			this.delegate = delegate;
+			this.emailAttachmentsLogic = emailAttachmentsLogic;
+		}
+
+		@Override
+		protected org.cmdbuild.services.email.Email delegate() {
+			return unsupported;
+		}
+
+		@Override
+		public String getFromAddress() {
+			return delegate.getFromAddress();
+		}
+
+		@Override
+		public Iterable<String> getToAddresses() {
+			return on(ADDRESSES_SEPARATOR) //
+					.omitEmptyStrings() //
+					.trimResults() //
+					.split(delegate.getToAddresses());
+		}
+
+		@Override
+		public Iterable<String> getCcAddresses() {
+			return on(ADDRESSES_SEPARATOR) //
+					.omitEmptyStrings() //
+					.trimResults() //
+					.split(delegate.getCcAddresses());
+		}
+
+		@Override
+		public Iterable<String> getBccAddresses() {
+			return on(ADDRESSES_SEPARATOR) //
+					.omitEmptyStrings() //
+					.trimResults() //
+					.split(delegate.getBccAddresses());
+		}
+
+		@Override
+		public String getSubject() {
+			return delegate.getSubject();
+		}
+
+		@Override
+		public String getContent() {
+			return delegate.getContent();
+		}
+
+		@Override
+		public Iterable<org.cmdbuild.services.email.Attachment> getAttachments() {
+			return from(emailAttachmentsLogic.readAll(delegate)) //
+					.transform(new Function<Attachment, org.cmdbuild.services.email.Attachment>() {
+
+						@Override
+						public org.cmdbuild.services.email.Attachment apply(final Attachment input) {
+							final org.cmdbuild.services.email.Attachment output;
+							final Optional<DataHandler> dataHandler = emailAttachmentsLogic.read(delegate, input);
+							if (dataHandler.isPresent()) {
+								final TempDataSource tempDataSource = TempDataSource.newInstance() //
+										.withName(input.getFileName()) //
+										.build();
+								output = new ForwardingAttachment() {
+
+									private final org.cmdbuild.services.email.Attachment unsupported = newProxy(
+											org.cmdbuild.services.email.Attachment.class,
+											unsupported("method not supported"));
+
+									@Override
+									protected org.cmdbuild.services.email.Attachment delegate() {
+										return unsupported;
+									}
+
+									@Override
+									public String getName() {
+										return input.getFileName();
+									};
+
+									@Override
+									public DataHandler getDataHandler() {
+										return new DataHandler(tempDataSource);
+									};
+
+								};
+							} else {
+								output = null;
+							}
+							return output;
+						}
+
+					}) //
+					.filter(org.cmdbuild.services.email.Attachment.class);
+		}
+
+		@Override
+		public long getDelay() {
+			return delegate.getDelay();
+		}
+
+	}
 
 	private final Store<org.cmdbuild.data.store.email.Email> emailStore;
 	private final Store<org.cmdbuild.data.store.email.Email> temporaryEmailStore;
@@ -430,31 +536,7 @@ public class DefaultEmailLogic implements EmailLogic {
 
 		};
 		final org.cmdbuild.data.store.email.Email storable = LOGIC_TO_STORE.apply(_email);
-		emailService(storable.getReference(), accountSupplier).send(storable, attachmentsOf(_email));
-	}
-
-	private Map<URL, String> attachmentsOf(final Email read) throws IOException {
-		final Map<URL, String> attachments = newHashMap();
-		for (final Attachment attachment : emailAttachmentsLogic.readAll(read)) {
-			final Optional<DataHandler> dataHandler = emailAttachmentsLogic.read(read, attachment);
-			if (dataHandler.isPresent()) {
-				final TempDataSource tempDataSource = TempDataSource.newInstance() //
-						.withName(attachment.getFileName()) //
-						.build();
-				copy(dataHandler.get(), tempDataSource);
-				final URL url = tempDataSource.getFile().toURI().toURL();
-				attachments.put(url, attachment.getFileName());
-			}
-		}
-		return attachments;
-	}
-
-	private void copy(final DataHandler from, final DataSource to) throws IOException {
-		final InputStream inputStream = from.getInputStream();
-		final OutputStream outputStream = to.getOutputStream();
-		IOUtils.copy(inputStream, outputStream);
-		IOUtils.closeQuietly(inputStream);
-		IOUtils.closeQuietly(outputStream);
+		emailService(storable.getReference(), accountSupplier).send(new EmailAdapter(_email, emailAttachmentsLogic));
 	}
 
 	private EmailService emailService(final Long processCardId, final Supplier<EmailAccount> emailAccountSupplier) {
