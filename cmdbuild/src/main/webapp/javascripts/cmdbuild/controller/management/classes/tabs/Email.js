@@ -6,11 +6,14 @@
 	Ext.define('CMDBuild.controller.management.classes.tabs.Email', {
 		extend: 'CMDBuild.controller.management.common.tabs.email.Email',
 
-		requires: ['CMDBuild.model.classes.tabs.email.Email'],
-
 		mixins: {
 			observable: 'Ext.util.Observable'
 		},
+
+		/**
+		 * @cfg {CMDBuild.controller.management.common.tabs.email.Grid}
+		 */
+		controllerGrid: undefined,
 
 		/**
 		 * @property {CMDBuild.cache.CMEntryTypeModel}
@@ -18,23 +21,35 @@
 		entryType: undefined,
 
 		/**
-		 * Card actually selected
+		 * Flag to mark when performing save action
 		 *
-		 * @cfg {Ext.data.Model}
+		 * @cfg {Boolean}
+		 */
+		flagPerformSaveAction: false,
+
+		/**
+		 * Shorthand to view grid
+		 *
+		 * @property {CMDBuild.view.management.common.tabs.email.GridPanel}
+		 */
+		grid: undefined,
+
+		/**
+		 * Witch actually selected card
+		 *
+		 * @cfg {CMDBuild.model.common.tabs.email.SelectedEntity}
 		 */
 		selectedEntity: undefined,
 
 		/**
-		 * Model class used for email records and stores
-		 *
-		 * @cfg {CMDBuild.model.classes.tabs.email.Email}
+		 * @property {CMDBuild.view.management.common.tabs.email.EmailPanel}
 		 */
-		modelEmail: 'CMDBuild.model.classes.tabs.email.Email',
+		view: undefined,
 
 		/**
 		 * @param {Object} configObject
 		 * @param {Mixed} configObject.parentDelegate - CMModCardController or CMModWorkflowController
-		 * @param {Ext.data.Model} configObject.selectedEntity - Card or Activity in edit
+		 * @param {CMDBuild.model.common.tabs.email.SelectedEntity} configObject.selectedEntity - Card in edit
 		 * @param {Mixed} configObject.ownerEntityobject - card or activity
 		 * @param {Mixed} configObject.widgetConf
 		 */
@@ -67,7 +82,7 @@
 				this.mon(this.view, 'destroy', function(view) {
 					_CMCardModuleState.removeDelegate(me.cardStateDelegate);
 
-					delete me.cardStateDelegate;
+					delete this.cardStateDelegate;
 				}, this);
 		},
 
@@ -80,12 +95,13 @@
 		 * @param {Ext.data.Model} card
 		 */
 		onCardSelected: function(card) {
-			this.selectedEntity = card;
+_debug('onCardSelected', card);
+			this.setSelectedEntity(card);
 
 			this.controllerGrid.storeLoad();
 
 			// TODO: Enable/Disable tab with server call response
-			if (this.view)
+			if (this.view && !Ext.isEmpty(card))
 				this.view.setDisabled(false);
 		},
 

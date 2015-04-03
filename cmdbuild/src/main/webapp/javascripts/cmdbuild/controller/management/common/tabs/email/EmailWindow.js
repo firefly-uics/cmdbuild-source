@@ -7,7 +7,7 @@
 			'CMDBuild.controller.management.common.widgets.CMWidgetController',
 			'CMDBuild.core.proxy.CMProxyConstants',
 			'CMDBuild.core.proxy.EmailTemplates',
-			'CMDBuild.core.proxy.tabs.email.Attachment'
+			'CMDBuild.core.proxy.common.tabs.email.Attachment'
 		],
 
 		/**
@@ -146,7 +146,7 @@
 					params[CMDBuild.core.proxy.CMProxyConstants.TEMPORARY] = this.record.get(CMDBuild.core.proxy.CMProxyConstants.TEMPORARY);
 
 					this.view.setLoading(true);
-					CMDBuild.core.proxy.tabs.email.Attachment.getAll({
+					CMDBuild.core.proxy.common.tabs.email.Attachment.getAll({
 						params: params,
 						scope: this,
 						success: function(response, options, decodedResponse) {
@@ -186,7 +186,7 @@
 		},
 
 		/**
-		 * @param {CMDBuild.model.commons.tabs.email.Template} record
+		 * @param {CMDBuild.model.common.tabs.email.Template} record
 		 */
 		loadFormValues: function(record) {
 			var me = this;
@@ -195,7 +195,9 @@
 			this.templateResolver = new CMDBuild.Management.TemplateResolver({
 				clientForm: this.cmfg('getMainController').clientForm,
 				xaVars: xaVars,
-				serverVars: CMDBuild.controller.management.common.widgets.CMWidgetController.getTemplateResolverServerVars(this.cmfg('getMainController').selectedEntity)
+				serverVars: CMDBuild.controller.management.common.widgets.CMWidgetController.getTemplateResolverServerVars(
+					this.cmfg('getMainController').selectedEntity.get(CMDBuild.core.proxy.CMProxyConstants.ENTITY)
+				)
 			});
 
 			this.templateResolver.resolveTemplates({
@@ -270,6 +272,7 @@
 		onEmailWindowConfirmButtonClick: function() {
 			// Validate before save
 			if (this.validate(this.view.formPanel)) {
+
 				var formValues = this.view.formPanel.getForm().getValues();
 
 				// Apply formValues to record object
@@ -280,7 +283,7 @@
 				if (CMDBuild.Config.dms.enabled)
 					this.record.set(CMDBuild.core.proxy.CMProxyConstants.ATTACHMENTS, this.attachmentsDelegate.getAttachmentsNames());
 
-				this.record.set(CMDBuild.core.proxy.CMProxyConstants.REFERENCE, this.cmfg('getMainController').getSelectedEntityId());
+				this.record.set(CMDBuild.core.proxy.CMProxyConstants.REFERENCE, this.cmfg('getSelectedEntityId'));
 
 				if (Ext.isEmpty(this.record.get(CMDBuild.core.proxy.CMProxyConstants.ID))) {
 					this.parentDelegate.addRecord(this.record);
@@ -328,7 +331,7 @@
 				success: function(response, options, decodedResponse) {
 					var response = decodedResponse.response;
 
-					this.loadFormValues(Ext.create('CMDBuild.model.commons.tabs.email.Template', response));
+					this.loadFormValues(Ext.create('CMDBuild.model.common.tabs.email.Template', response));
 
 					// Bind extra form fields to email record
 					this.record.set(CMDBuild.core.proxy.CMProxyConstants.TEMPLATE, response[CMDBuild.core.proxy.CMProxyConstants.NAME]);

@@ -1,6 +1,6 @@
 (function() {
 
-	Ext.define('CMDBuild.model.classes.tabs.email.Email', {
+	Ext.define('CMDBuild.model.common.tabs.email.Email', {
 		extend: 'Ext.data.Model',
 
 		require: ['CMDBuild.core.proxy.CMProxyConstants'],

@@ -6,7 +6,7 @@
 		requires: [
 			'CMDBuild.controller.management.common.tabs.email.Email',
 			'CMDBuild.core.proxy.CMProxyConstants',
-			'CMDBuild.core.proxy.tabs.email.Email'
+			'CMDBuild.core.proxy.common.tabs.email.Email'
 		],
 
 		/**
@@ -63,7 +63,7 @@
 		 */
 		addRecord: function(record, regenerationTrafficLightArray, success) {
 			if (!Ext.Object.isEmpty(record)) {
-				CMDBuild.core.proxy.tabs.email.Email.create({
+				CMDBuild.core.proxy.common.tabs.email.Email.create({
 					params: record.getAsParams(),
 					scope: this,
 					loadMask: this.cmfg('getGlobalLoadMask'),
@@ -89,9 +89,10 @@
 			recordValues = recordValues || {};
 			recordValues[CMDBuild.core.proxy.CMProxyConstants.KEEP_SYNCHRONIZATION] = false;
 			recordValues[CMDBuild.core.proxy.CMProxyConstants.NO_SUBJECT_PREFIX] = recordValues.hasOwnProperty(CMDBuild.core.proxy.CMProxyConstants.NO_SUBJECT_PREFIX) ? recordValues[CMDBuild.core.proxy.CMProxyConstants.NO_SUBJECT_PREFIX] : this.cmfg('getConfiguration')[CMDBuild.core.proxy.CMProxyConstants.NO_SUBJECT_PREFIX];
-			recordValues[CMDBuild.core.proxy.CMProxyConstants.REFERENCE] = recordValues[CMDBuild.core.proxy.CMProxyConstants.REFERENCE] || this.parentDelegate.getSelectedEntityId();
+			recordValues[CMDBuild.core.proxy.CMProxyConstants.REFERENCE] = this.cmfg('getSelectedEntityId');
+			recordValues[CMDBuild.core.proxy.CMProxyConstants.TEMPORARY] = this.cmfg('getSelectedEntityId') < 0; // Setup temporary parameter
 
-			return Ext.create(this.cmfg('getModelEmail'), recordValues);
+			return Ext.create('CMDBuild.model.common.tabs.email.Email', recordValues);
 		},
 
 		/**
@@ -100,7 +101,7 @@
 		 */
 		editRecord: function(record, regenerationTrafficLightArray) {
 			if (!Ext.Object.isEmpty(record)) {
-				CMDBuild.core.proxy.tabs.email.Email.update({
+				CMDBuild.core.proxy.common.tabs.email.Email.update({
 					params: record.getAsParams(),
 					scope: this,
 					loadMask: this.cmfg('getGlobalLoadMask'),
@@ -229,13 +230,13 @@
 			replyRecordData[CMDBuild.core.proxy.CMProxyConstants.KEEP_SYNCHRONIZATION] = false;
 			replyRecordData[CMDBuild.core.proxy.CMProxyConstants.NOTIFY_WITH] = record.get(CMDBuild.core.proxy.CMProxyConstants.NOTIFY_WITH);
 			replyRecordData[CMDBuild.core.proxy.CMProxyConstants.NO_SUBJECT_PREFIX] = record.get(CMDBuild.core.proxy.CMProxyConstants.NO_SUBJECT_PREFIX);
-			replyRecordData[CMDBuild.core.proxy.CMProxyConstants.REFERENCE] = record.get(CMDBuild.core.proxy.CMProxyConstants.REFERENCE) || this.parentDelegate.getSelectedEntityId();
+			replyRecordData[CMDBuild.core.proxy.CMProxyConstants.REFERENCE] = this.cmfg('getSelectedEntityId');
 			replyRecordData[CMDBuild.core.proxy.CMProxyConstants.SUBJECT] = 'RE: ' + record.get(CMDBuild.core.proxy.CMProxyConstants.SUBJECT);
 			replyRecordData[CMDBuild.core.proxy.CMProxyConstants.TO] = record.get(CMDBuild.core.proxy.CMProxyConstants.FROM) || record.get(CMDBuild.core.proxy.CMProxyConstants.TO);
 
 			Ext.create('CMDBuild.controller.management.common.tabs.email.EmailWindow', {
 				parentDelegate: this,
-				record: Ext.create(this.cmfg('getModelEmail'), replyRecordData),
+				record: Ext.create('CMDBuild.model.common.tabs.email.Email', replyRecordData),
 				windowMode: 'reply'
 			});
 		},
@@ -286,7 +287,7 @@
 		 */
 		removeRecord: function(record, regenerationTrafficLightArray) {
 			if (!Ext.Object.isEmpty(record)) {
-				CMDBuild.core.proxy.tabs.email.Email.remove({
+				CMDBuild.core.proxy.common.tabs.email.Email.remove({
 					params: record.getAsParams([CMDBuild.core.proxy.CMProxyConstants.ID, CMDBuild.core.proxy.CMProxyConstants.TEMPORARY]),
 					scope: this,
 					loadMask: this.cmfg('getGlobalLoadMask'),
@@ -342,7 +343,7 @@
 				this.parentDelegate.isWidgetBusy = true; // Setup widget busy state and the begin of store load
 
 				var params = {};
-				params[CMDBuild.core.proxy.CMProxyConstants.REFERENCE] = this.parentDelegate.getSelectedEntityId();
+				params[CMDBuild.core.proxy.CMProxyConstants.REFERENCE] = this.cmfg('getSelectedEntityId');
 
 				this.view.getStore().load({
 					params: params,

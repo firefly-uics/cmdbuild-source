@@ -12,6 +12,8 @@
 		delegate: undefined,
 
 		border: false,
+
+		disabled: true,
 		cls: 'x-panel-body-default-framed',
 		frame: false,
 		layout: 'fit',

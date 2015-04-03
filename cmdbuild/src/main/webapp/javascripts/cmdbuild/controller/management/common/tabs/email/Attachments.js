@@ -5,7 +5,7 @@
 
 		requires: [
 			'CMDBuild.core.proxy.CMProxyConstants',
-			'CMDBuild.core.proxy.tabs.email.Attachment'
+			'CMDBuild.core.proxy.common.tabs.email.Attachment'
 		],
 
 		/**
@@ -96,7 +96,7 @@
 			params[CMDBuild.core.proxy.CMProxyConstants.TEMPORARY] = this.record.get(CMDBuild.core.proxy.CMProxyConstants.TEMPORARY);
 
 			this.parentDelegate.view.setLoading(true);
-			CMDBuild.core.proxy.tabs.email.Attachment.upload({
+			CMDBuild.core.proxy.common.tabs.email.Attachment.upload({
 				scope: this,
 				form: this.view.attachmentButtonsContainer.attachmentUploadForm.getForm(),
 				params: params,
@@ -118,7 +118,7 @@
 			params[CMDBuild.core.proxy.CMProxyConstants.TEMPORARY] = this.record.get(CMDBuild.core.proxy.CMProxyConstants.TEMPORARY);
 
 			this.parentDelegate.view.setLoading(true);
-			CMDBuild.core.proxy.tabs.email.Attachment.remove({
+			CMDBuild.core.proxy.common.tabs.email.Attachment.remove({
 				scope: this,
 				params: params,
 				success: function(response, options ,decodedResponse) {

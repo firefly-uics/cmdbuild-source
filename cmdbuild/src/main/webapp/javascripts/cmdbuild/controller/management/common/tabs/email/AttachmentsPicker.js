@@ -6,7 +6,7 @@
 		requires: [
 			'CMDBuild.core.proxy.Attachment',
 			'CMDBuild.core.proxy.CMProxyConstants',
-			'CMDBuild.core.proxy.tabs.email.Attachment',
+			'CMDBuild.core.proxy.common.tabs.email.Attachment',
 		],
 
 		/**
@@ -105,7 +105,7 @@
 					params[CMDBuild.core.proxy.CMProxyConstants.CARD_ID] = this.selectedCard.get(CMDBuild.core.proxy.CMProxyConstants.ID);
 					params[CMDBuild.core.proxy.CMProxyConstants.FILE_NAME] = attachment.get('Filename');
 
-					CMDBuild.core.proxy.tabs.email.Attachment.copy({
+					CMDBuild.core.proxy.common.tabs.email.Attachment.copy({
 						scope: this,
 						params: params,
 						failure: function(response, options, decodedResponse) {

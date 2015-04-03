@@ -1,6 +1,6 @@
 (function() {
 
-	Ext.define('CMDBuild.core.proxy.tabs.email.Email', {
+	Ext.define('CMDBuild.core.proxy.comon.tabs.email.Attachment', {
 
 		requires: [
 			'CMDBuild.core.proxy.CMProxyConstants',
@@ -12,10 +12,10 @@
 		/**
 		 * @param {Object} parameters
 		 */
-		create: function(parameters) {
+		copy: function(parameters) {
 			CMDBuild.Ajax.request({
 				method: 'POST',
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.email.post,
+				url: CMDBuild.core.proxy.CMProxyUrlIndex.email.attachment.copy,
 				params: parameters.params,
 				scope: parameters.scope || this,
 				loadMask: parameters.loadMask || false,
@@ -26,30 +26,18 @@
 		},
 
 		/**
-		 * @return {Ext.data.Store}
+		 * @param {Object} parameters
 		 */
-		getStore: function() {
-			return Ext.create('Ext.data.Store', {
-				autoLoad: false,
-				model: 'CMDBuild.model.tabs.Email.email',
-				proxy: {
-					type: 'ajax',
-					url: CMDBuild.core.proxy.CMProxyUrlIndex.email.getStore,
-					reader: {
-						root: 'response',
-						type: 'json'
-					},
-					extraParams: { // Avoid to send limit, page and start parameters in server calls
-						limitParam: undefined,
-						pageParam: undefined,
-						startParam: undefined
-					}
-				},
-				sorters: {
-					property: CMDBuild.core.proxy.CMProxyConstants.STATUS,
-					direction: 'ASC'
-				},
-				groupField: CMDBuild.core.proxy.CMProxyConstants.STATUS
+		getAll: function(parameters) {
+			CMDBuild.Ajax.request({
+				method: 'POST',
+				url: CMDBuild.core.proxy.CMProxyUrlIndex.email.attachment.readAll,
+				params: parameters.params,
+				scope: parameters.scope || this,
+				loadMask: parameters.loadMask || false,
+				failure: parameters.failure || Ext.emptyFn(),
+				success: parameters.success || Ext.emptyFn(),
+				callback: parameters.callback || Ext.emptyFn()
 			});
 		},
 
@@ -59,7 +47,7 @@
 		remove: function(parameters) {
 			CMDBuild.Ajax.request({
 				method: 'POST',
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.email.remove,
+				url: CMDBuild.core.proxy.CMProxyUrlIndex.email.attachment.remove,
 				params: parameters.params,
 				scope: parameters.scope || this,
 				loadMask: parameters.loadMask || false,
@@ -72,10 +60,10 @@
 		/**
 		 * @param {Object} parameters
 		 */
-		update: function(parameters) {
-			CMDBuild.Ajax.request({
+		upload: function(parameters) {
+			parameters.form.submit({
 				method: 'POST',
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.email.put,
+				url: CMDBuild.core.proxy.CMProxyUrlIndex.email.attachment.upload,
 				params: parameters.params,
 				scope: parameters.scope || this,
 				loadMask: parameters.loadMask || false,
