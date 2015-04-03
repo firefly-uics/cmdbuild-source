@@ -156,7 +156,8 @@
 				});
 			};
 
-			tinymce.init(me.tinyMCEConfig);
+			if (!Ext.isEmpty(tinymce))
+				tinymce.init(me.tinyMCEConfig);
 		},
 
 		setEditorSize: function(width, height) {
