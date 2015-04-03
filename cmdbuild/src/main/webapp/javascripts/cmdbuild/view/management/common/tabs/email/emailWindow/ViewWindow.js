@@ -55,8 +55,7 @@
 				region: 'center',
 				frame: false,
 				border: false,
-				padding: '5',
-				flex: 3,
+				padding: '0 5',
 				bodyCls: 'x-panel-body-default-framed',
 
 				layout: {
@@ -112,6 +111,7 @@
 						autoScroll: true,
 						frame: true,
 						border: true,
+						margin: '1 0', // Fixes a bug that hides bottom border
 						flex: 1,
 						html: this.delegate.record.get(CMDBuild.core.proxy.CMProxyConstants.BODY)
 					}

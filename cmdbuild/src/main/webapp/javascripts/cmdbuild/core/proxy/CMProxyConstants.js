@@ -111,6 +111,7 @@
 		ENABLE_MAP: 'enableMap',
 		ENABLE_MOVE_REJECTED_NOT_MATCHING: 'enableMoveRejectedNotMatching',
 		ENGINE: 'engine',
+		ENTITY: 'entity',
 		ENTRY_TYPE: 'entryType',
 		EXTENSION: 'extension',
 		EXTENSION_MAXIMUM_LEVEL: 'extensionMaximumLevel',

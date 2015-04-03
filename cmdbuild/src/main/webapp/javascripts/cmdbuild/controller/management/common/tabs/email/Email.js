@@ -11,7 +11,7 @@
 		requires: [
 			'CMDBuild.core.proxy.CMProxyConstants',
 			'CMDBuild.core.proxy.EmailTemplates',
-			'CMDBuild.model.classes.tabs.email.Email'
+			'CMDBuild.core.proxy.Utils'
 		],
 
 		/**
@@ -33,7 +33,7 @@
 			'getConfiguration',
 			'getGlobalLoadMask',
 			'getMainController',
-			'getModelEmail',
+			'getSelectedEntityId',
 			'onGlobalRegenerationButtonClick'
 		],
 
@@ -101,15 +101,6 @@
 		isWidgetBusy: false,
 
 		/**
-		 * Model class used for email records and stores
-		 *
-		 * @cfg {CMDBuild.model.classes.tabs.email.Email}
-		 *
-		 * @abstract
-		 */
-		modelEmail: 'CMDBuild.model.classes.tabs.email.Email',
-
-		/**
 		 * Global attribute change flag
 		 *
 		 * @cfg {Boolean}
@@ -117,11 +108,11 @@
 		relatedAttributeChanged: false,
 
 		/**
-		 * Card/Activity actually selected
+		 * Actually selected Card/Activity
 		 *
-		 * @cfg {Mixed}
+		 * @cfg {CMDBuild.model.common.tabs.email.SelectedEntity}
 		 */
-		selectedEntity: undefined,
+		selectedEntity: {},
 
 		/**
 		 * @property {CMDBuild.Management.TemplateResolver}
@@ -210,13 +201,16 @@
 		 * @param {Object} configObject
 		 * @param {Mixed} configObject.parentDelegate - CMModCardController or CMModWorkflowController
 		 * @param {Mixed} configObject.selectedEntity - Card or Activity in edit
-		 * @param {Mixed} configObject.ownerEntityobject - card or activity
+		 * @param {Mixed} configObject.ownerEntityobject
 		 * @param {Mixed} configObject.widgetConf
 		 */
 		constructor: function(configObject) {
 			// Setup configurationObject applying defaultConfiguration attributes to widgetConf
 			Ext.apply(this.configuration, configObject.widgetConf, this.defaultConfiguration);
 
+			this.setSelectedEntity(configObject.selectedEntity);
+
+			delete configObject.selectedEntity;
 			delete configObject.widgetConf;
 
 			Ext.apply(this, configObject); // Apply config
@@ -330,11 +324,11 @@
 		/**
 		 * @param {Object} template
 		 *
-		 * @return {CMDBuild.model.commons.tabs.email.Template} or null
+		 * @return {CMDBuild.model.common.tabs.email.Template} or null
 		 */
 		configurationTemplatesToModel: function(template) { // TODO: forse sarà da delegare al controller del vero widget
 			if (Ext.isObject(template) && !Ext.Object.isEmpty(template)) {
-				var model = Ext.create('CMDBuild.model.commons.tabs.email.Template');
+				var model = Ext.create('CMDBuild.model.common.tabs.email.Template');
 				model.set(CMDBuild.core.proxy.CMProxyConstants.ACCOUNT, template[CMDBuild.core.proxy.CMProxyConstants.ACCOUNT]);
 				model.set(CMDBuild.core.proxy.CMProxyConstants.BCC, template[CMDBuild.core.proxy.CMProxyConstants.BCC_ADDRESSES]);
 				model.set(CMDBuild.core.proxy.CMProxyConstants.BODY, template[CMDBuild.core.proxy.CMProxyConstants.CONTENT]);
@@ -432,7 +426,7 @@
 
 					// Load grid's templates to local array
 					Ext.Array.forEach(templates, function(template, i, allTemplates) {
-						this.emailTemplatesObjects.push(Ext.create('CMDBuild.model.commons.tabs.email.Template', template));
+						this.emailTemplatesObjects.push(Ext.create('CMDBuild.model.common.tabs.email.Template', template));
 					}, this);
 				},
 				callback: function(options, success, response) {
@@ -472,13 +466,6 @@
 		 */
 		getMainController: function() {
 			return this;
-		},
-
-		/**
-		 * @return {Mixed}
-		 */
-		getModelEmail: function() {
-			return this.modelEmail;
 		},
 
 		/**
@@ -601,6 +588,7 @@
 
 			if (
 				!Ext.Object.isEmpty(record)
+				&& !Ext.isEmpty(record.get(CMDBuild.core.proxy.CMProxyConstants.TEMPLATE))
 				&& record.get(CMDBuild.core.proxy.CMProxyConstants.KEEP_SYNCHRONIZATION)
 			) {
 				var me = this;
@@ -678,7 +666,7 @@
 		},
 
 		/**
-		 * @param {CMDBuild.model.commons.tabs.email.Template} template
+		 * @param {CMDBuild.model.common.tabs.email.Template} template
 		 * @param {Array} regenerationTrafficLightArray
 		 */
 		regenerateTemplate: function(template, regenerationTrafficLightArray) {
@@ -711,9 +699,10 @@
 						if (!Ext.Object.isEmpty(record))
 							values = Ext.Object.merge(record.getData(), values);
 
-						emailObject = Ext.create(this.getModelEmail(), values);
+						emailObject = Ext.create('CMDBuild.model.common.tabs.email.Email', values);
 						emailObject.set(CMDBuild.core.proxy.CMProxyConstants.REFERENCE, me.getSelectedEntityId());
 						emailObject.set(CMDBuild.core.proxy.CMProxyConstants.TEMPLATE, template.get(CMDBuild.core.proxy.CMProxyConstants.KEY));
+						emailObject.set(CMDBuild.core.proxy.CMProxyConstants.TEMPORARY, this.cmfg('getSelectedEntityId') < 0); // Setup temporary parameter
 
 						me.self.trafficLightSlotBuild(emailObject, regenerationTrafficLightArray);
 
@@ -731,6 +720,47 @@
 
 						me.bindLocalDepsChangeEvent(emailObject, templateResolver, me);
 					}
+				});
+			}
+		},
+
+		/**
+		 * Creates SelectedEntity object and bind relative original object
+		 *
+		 * @param {Mixed} selectedEntity
+		 */
+		setSelectedEntity: function(selectedEntity) {
+			if (Ext.isEmpty(selectedEntity)) {
+				var params = {};
+				params[CMDBuild.core.proxy.CMProxyConstants.NOT_POSITIVES] = true;
+
+				CMDBuild.core.proxy.Utils.generateId({
+					params: params,
+					scope: this,
+					success: function(response, options, decodedResponse) {
+						this.selectedEntity = Ext.create('CMDBuild.model.common.tabs.email.SelectedEntity', {
+							id: decodedResponse.response
+						});
+					}
+				});
+			} else if (Ext.isEmpty(selectedEntity.get(CMDBuild.core.proxy.CMProxyConstants.ID))) {
+				var params = {};
+				params[CMDBuild.core.proxy.CMProxyConstants.NOT_POSITIVES] = true;
+
+				CMDBuild.core.proxy.Utils.generateId({
+					params: params,
+					scope: this,
+					success: function(response, options, decodedResponse) {
+						this.selectedEntity = Ext.create('CMDBuild.model.common.tabs.email.SelectedEntity', {
+							id: decodedResponse.response,
+							entity: selectedEntity
+						});
+					}
+				});
+			} else {
+				this.selectedEntity = Ext.create('CMDBuild.model.common.tabs.email.SelectedEntity', {
+					id: selectedEntity.get(CMDBuild.core.proxy.CMProxyConstants.ID),
+					entity: selectedEntity
 				});
 			}
 		}

@@ -70,7 +70,7 @@
 		},
 
 		/**
-		 * @param {CMDBuild.model.commons.tabs.email.Template} template
+		 * @param {CMDBuild.model.common.tabs.email.Template} template
 		 */
 		addTemplateToArray: function(template) {
 			this.templatesCouldBeRegenerated.push(template);
@@ -133,8 +133,8 @@
 						templateResolver.resolveTemplates({
 							attributes: Ext.Object.getKeys(xaVars),
 							callback: function(values, ctx) {
-								emailObject = Ext.create(this.cmfg('getModelEmail'), values);
-								emailObject.set(CMDBuild.core.proxy.CMProxyConstants.REFERENCE, me.parentDelegate.getSelectedEntityId());
+								emailObject = Ext.create('CMDBuild.model.common.tabs.email.Email', values);
+								emailObject.set(CMDBuild.core.proxy.CMProxyConstants.REFERENCE, me.cmfg('getSelectedEntityId'));
 								emailObject.set(CMDBuild.core.proxy.CMProxyConstants.TEMPLATE, template.get(CMDBuild.core.proxy.CMProxyConstants.KEY));
 
 								me.gridStore.add(emailObject);
