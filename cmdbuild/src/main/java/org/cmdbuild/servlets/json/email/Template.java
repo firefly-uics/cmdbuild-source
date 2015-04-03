@@ -260,7 +260,7 @@ public class Template extends JSONBaseWithSpringContext {
 		}
 
 		@Override
-		@JsonProperty(PROMPT_SYNCHRONIZATION)
+		@JsonProperty(DELAY)
 		public long getDelay() {
 			return delay;
 		}

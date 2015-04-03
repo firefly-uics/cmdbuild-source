@@ -5,8 +5,9 @@
 	Ext.define("CMDBuild.view.management.classes.CMCardTabPanel", {
 		extend: "Ext.tab.Panel",
 
-		constructor: function() {
+		frame: false,
 
+		constructor: function() {
 			var tabs = CMDBuild.model.CMUIConfigurationModel.cardTabs;
 			var disabledTabs = _CMUIConfiguration.getDisabledCardTabs();
 
@@ -49,29 +50,18 @@
 			this.cardPanel.displayMode();
 		},
 
-		initComponent: function() {
-			this.frame = false;
-			this.items = [
-				this.cardPanel,
-				this.mdPanel,
-				this.cardNotesPanel,
-				this.relationsPanel,
-				this.cardHistoryPanel,
-				this.attachmentPanel
-			];
-
-			this.callParent(arguments);
-		},
-
+		/**
+		 * @param {Number} idClass
+		 */
 		reset: function(idClass) {
 			this.activateFirstTab();
+
 			this.items.each(function(item) {
-				if (item.reset) {
+				if (item.reset)
 					item.reset();
-				}
-				if (item.onClassSelected) {
+
+				if (item.onClassSelected)
 					item.onClassSelected(idClass);
-				}
 			});
 		},
 
@@ -121,4 +111,5 @@
 	function isEnabled(disabledTabs, name) {
 		return !Ext.Array.contains(disabledTabs, name);
 	}
+
 })();

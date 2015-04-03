@@ -97,7 +97,21 @@
 				put: 'services/json/email/template/update',
 
 				getStore: 'services/json/email/template/readall'
-			}
+			},
+
+			attachment: {
+				copy: 'services/json/email/attachment/copy',
+				readAll: 'services/json/email/attachment/readall',
+				remove: 'services/json/email/attachment/delete',
+				upload: 'services/json/email/attachment/upload',
+			},
+
+			remove: 'services/json/email/email/delete',
+			get: 'services/json/email/email/read',
+			post: 'services/json/email/email/create',
+			put: 'services/json/email/email/update',
+
+			getStore: 'services/json/email/email/readall'
 		},
 
 		fkTargetClass: 'services/json/schema/modclass/getfktargetingclass',
