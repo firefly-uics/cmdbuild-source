@@ -1,27 +1,55 @@
 (function () {
 
-	var FLOW_STATUS_CODE = "FlowStatus_code",
-		STATE_VALUE_OPEN = "open.running";
+	var FLOW_STATUS_CODE = "FlowStatus_code";
+	var STATE_VALUE_OPEN = "open.running";
 
 	Ext.define("CMDBuild.controller.management.workflow.CMModWorkflowController", {
-
 		extend: "CMDBuild.controller.management.common.CMModController",
 
 		mixins: {
 			wfStateDelegate: "CMDBuild.state.CMWorkflowStateDelegate"
 		},
 
+		/**
+		 * @property {Ext.data.Model}
+		 */
+		card: undefined,
+
+		/**
+		 * @property {CMDBuild.controller.management.common.tabs.email.Email}
+		 */
+		controllerTabEmail: undefined,
+
+		/**
+		 * @property {Array}
+		 */
+		subControllers: [],
+
+		view: undefined, // TODO
+
 		constructor: function() {
 			this.callParent(arguments);
+
 			this.widgetsController = {};
 
 			_CMWFState.addDelegate(this);
 		},
 
+		buildTabControllerEmail: function() {
+			this.controllerTabEmail = Ext.create('CMDBuild.controller.management.workflow.tabs.Email', {
+				parentDelegate: this,
+				clientForm: this.getFormForTemplateResolver(),
+				selectedEntity: this.card
+			});
+
+			this.subControllers.push(this.controllerTabEmail);
+			this.view.cardTabPanel.acutalPanel.add(this.controllerTabEmail.getView());
+		},
+
 		buildSubControllers: function() {
 			var me = this;
 
-			me.subControllers = [];
+//			me.subControllers = [];
 
 			buildActivityPanelController(me);
 			buildGridController(me);
@@ -29,6 +57,8 @@
 			buildRelationsController(me, me.view.getRelationsPanel());
 			buildHistoryController(me, me.view.getHistoryPanel());
 			buildAttachmentsController(me, me.view.getAttachmentsPanel());
+
+			this.buildTabControllerEmail();
 		},
 
 		// wfStateDelegate
@@ -36,7 +66,7 @@
 
 			this.view.updateDocPanel(activityInstance.getInstructions());
 
-			if (!activityInstance.nullObject 
+			if (!activityInstance.nullObject
 					&& activityInstance.isNew()) {
 				_CMUIState.onlyFormIfFullScreen();
 			}
@@ -64,6 +94,20 @@
 			}
 
 			me.callParent(arguments);
+		},
+
+		/**
+		 * Forward onModifyCardClick event to email tab controller
+		 */
+		onModifyCardClick: function() {
+			this.controllerTabEmail.onModifyCardClick();
+		},
+
+		/**
+		 * Forward onSaveCardClick event to email tab controller
+		 */
+		onSaveCardClick: function() {
+			this.controllerTabEmail.onSaveCardClick();
 		},
 
 		// override
