@@ -2,6 +2,8 @@
 
 	/**
 	 * Main controller which manage email regeneration methods
+	 *
+	 * @abstract
 	 */
 	Ext.define('CMDBuild.controller.management.common.tabs.email.Email', {
 		extend: 'CMDBuild.controller.common.AbstractController',
@@ -12,10 +14,6 @@
 			'CMDBuild.core.proxy.Utils',
 			'CMDBuild.model.tabs.Email'
 		],
-
-		mixins: {
-			observable: 'Ext.util.Observable' // Needed by classes controller structure
-		},
 
 		/**
 		 * @cfg {Mixed}
@@ -59,7 +57,7 @@
 		 */
 		defaultConfiguration: {
 			noSubjectPrefix: false,
-			readOnly: true,
+			readOnly: false,
 			required: false,
 			templates: []
 		},
@@ -77,11 +75,6 @@
 		 * @property {Array}
 		 */
 		emailTemplatesIdentifiers: [],
-
-		/**
-		 * @property {CMDBuild.cache.CMEntryTypeModel}
-		 */
-		entryType: undefined,
 
 		/**
 		 * Flag to mark when performing save action
@@ -212,8 +205,6 @@
 		 * @param {Mixed} configObject.widgetConf
 		 */
 		constructor: function(configObject) {
-			this.mixins.observable.constructor.call(this, arguments); // Needed by classes controller structure
-
 			// Setup configurationObject applying defaultConfiguration attributes to widgetConf
 			Ext.apply(this.configuration, configObject.widgetConf, this.defaultConfiguration);
 
@@ -244,8 +235,6 @@
 			});
 
 			this.view.add(this.grid);
-
-			this.buildCardModuleStateDelegate(); // Needed by classes controller structure
 		},
 
 		/**
@@ -265,34 +254,6 @@
 						CMDBuild.Msg.warn(null, CMDBuild.Translation.warnings.emailTemplateRelatedAttributeEdited);
 				}
 			});
-		},
-
-		/**
-		 * Needed by classes controller structure
-		 */
-		buildCardModuleStateDelegate: function() {
-			var me = this;
-
-			this.cardStateDelegate = new CMDBuild.state.CMCardModuleStateDelegate();
-
-			this.cardStateDelegate.onEntryTypeDidChange = function(state, entryType) {
-				me.onEntryTypeSelected(entryType);
-			};
-
-			this.cardStateDelegate.onCardDidChange = function(state, card) {
-				Ext.suspendLayouts();
-				me.onCardSelected(card);
-				Ext.resumeLayouts();
-			};
-
-			_CMCardModuleState.addDelegate(this.cardStateDelegate);
-
-			if (this.view)
-				this.mon(this.view, 'destroy', function(view) {
-					_CMCardModuleState.removeDelegate(me.cardStateDelegate);
-
-					delete me.cardStateDelegate;
-				}, this);
 		},
 
 		/**
@@ -328,7 +289,7 @@
 					&& !Ext.isObject(variable)
 					&& typeof variable == 'string'
 				) {
-					this.self.searchForCqlClientVariables(
+					CMDBuild.controller.management.common.tabs.email.Email.searchForCqlClientVariables(
 						variable,
 						i,
 						dirtyVariables,
@@ -344,7 +305,7 @@
 
 					Ext.Object.each(mergedTemplate, function(key, value, myself) {
 						if (typeof value == 'string') { // Check all types of CQL variables that can contains client variables
-							this.self.searchForCqlClientVariables(
+							CMDBuild.controller.management.common.tabs.email.Email.searchForCqlClientVariables(
 								value,
 								mergedTemplate[CMDBuild.core.proxy.CMProxyConstants.KEY] || mergedTemplate[CMDBuild.core.proxy.CMProxyConstants.NAME],
 								dirtyVariables,
@@ -540,58 +501,8 @@
 			return this.callParent(arguments);
 		},
 
-		onAddCardButtonClick: function() {
-			if (this.view)
-				this.view.setDisabled(true);
-		},
-
-		/**
-		 * @param {Ext.data.Model} card
-		 */
-		onCardSelected: function(card) {
-			this.selectedEntity = card;
-
-			this.controllerGrid.storeLoad();
-
-			// TODO: Enable/Disable tab with server call response
-			if (this.view)
-				this.view.setDisabled(false);
-		},
-
-		onCloneCard: function() {
-			if (this.view)
-				this.view.setDisabled(true);
-		},
-
-		/**
-		 * @param {CMDBuild.cache.CMEntryTypeModel} entryType
-		 * @param {Object} dc
-		 * @param {Object} filter
-		 */
-		onEntryTypeSelected: function(entryType, dc, filter) {
-			this.entryType = entryType;
-		},
-
 		onGlobalRegenerationButtonClick: function() {
 			this.getAllTemplatesData(true, true);
-		},
-
-		/**
-		 * Initialize tab to apply all events on form fields
-		 */
-		onModifyCardClick: function() {
-			if (!this.grid.getStore().isLoading())
-				this.controllerGrid.storeLoad(true, true);
-		},
-
-		/**
-		 * Launch regeneration on save button click and send all draft emails
-		 */
-		onSaveCardClick: function() {
-			this.flagPerformSaveAction = true;
-
-			if (!this.grid.getStore().isLoading())
-				this.controllerGrid.storeLoad(true);
 		},
 
 		/**
@@ -785,7 +696,7 @@
 							values = Ext.Object.merge(record.getData(), values);
 
 						emailObject = Ext.create('CMDBuild.model.tabs.Email.email', values);
-						emailObject.set(CMDBuild.core.proxy.CMProxyConstants.ACTIVITY_ID, me.getSelectedEntityId());
+						emailObject.set(CMDBuild.core.proxy.CMProxyConstants.REFERENCE, me.getSelectedEntityId());
 						emailObject.set(CMDBuild.core.proxy.CMProxyConstants.TEMPLATE, template.get(CMDBuild.core.proxy.CMProxyConstants.KEY));
 
 						me.self.trafficLightSlotBuild(emailObject, regenerationTrafficLightArray);

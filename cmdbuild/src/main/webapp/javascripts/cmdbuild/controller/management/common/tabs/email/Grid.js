@@ -87,9 +87,9 @@
 		 */
 		createRecord: function(recordValues) {
 			recordValues = recordValues || {};
-			recordValues[CMDBuild.core.proxy.CMProxyConstants.ACTIVITY_ID] = recordValues[CMDBuild.core.proxy.CMProxyConstants.ACTIVITY_ID] || this.parentDelegate.getSelectedEntityId();
 			recordValues[CMDBuild.core.proxy.CMProxyConstants.KEEP_SYNCHRONIZATION] = false;
 			recordValues[CMDBuild.core.proxy.CMProxyConstants.NO_SUBJECT_PREFIX] = recordValues.hasOwnProperty(CMDBuild.core.proxy.CMProxyConstants.NO_SUBJECT_PREFIX) ? recordValues[CMDBuild.core.proxy.CMProxyConstants.NO_SUBJECT_PREFIX] : this.cmfg('getConfiguration')[CMDBuild.core.proxy.CMProxyConstants.NO_SUBJECT_PREFIX];
+			recordValues[CMDBuild.core.proxy.CMProxyConstants.REFERENCE] = recordValues[CMDBuild.core.proxy.CMProxyConstants.REFERENCE] || this.parentDelegate.getSelectedEntityId();
 
 			return Ext.create('CMDBuild.model.tabs.Email.email', recordValues);
 		},
@@ -223,13 +223,13 @@
 
 			var replyRecordData = {};
 			replyRecordData[CMDBuild.core.proxy.CMProxyConstants.ACCOUNT] = record.get(CMDBuild.core.proxy.CMProxyConstants.ACCOUNT);
-			replyRecordData[CMDBuild.core.proxy.CMProxyConstants.ACTIVITY_ID] = record.get(CMDBuild.core.proxy.CMProxyConstants.ACTIVITY_ID) || this.parentDelegate.getSelectedEntityId();
 			replyRecordData[CMDBuild.core.proxy.CMProxyConstants.BCC] = record.get(CMDBuild.core.proxy.CMProxyConstants.BCC);
 			replyRecordData[CMDBuild.core.proxy.CMProxyConstants.BODY] = content;
 			replyRecordData[CMDBuild.core.proxy.CMProxyConstants.CC] = record.get(CMDBuild.core.proxy.CMProxyConstants.CC);
 			replyRecordData[CMDBuild.core.proxy.CMProxyConstants.KEEP_SYNCHRONIZATION] = false;
 			replyRecordData[CMDBuild.core.proxy.CMProxyConstants.NOTIFY_WITH] = record.get(CMDBuild.core.proxy.CMProxyConstants.NOTIFY_WITH);
 			replyRecordData[CMDBuild.core.proxy.CMProxyConstants.NO_SUBJECT_PREFIX] = record.get(CMDBuild.core.proxy.CMProxyConstants.NO_SUBJECT_PREFIX);
+			replyRecordData[CMDBuild.core.proxy.CMProxyConstants.REFERENCE] = record.get(CMDBuild.core.proxy.CMProxyConstants.REFERENCE) || this.parentDelegate.getSelectedEntityId();
 			replyRecordData[CMDBuild.core.proxy.CMProxyConstants.SUBJECT] = 'RE: ' + record.get(CMDBuild.core.proxy.CMProxyConstants.SUBJECT);
 			replyRecordData[CMDBuild.core.proxy.CMProxyConstants.TO] = record.get(CMDBuild.core.proxy.CMProxyConstants.FROM) || record.get(CMDBuild.core.proxy.CMProxyConstants.TO);
 
@@ -341,10 +341,11 @@
 
 				this.parentDelegate.isWidgetBusy = true; // Setup widget busy state and the begin of store load
 
+				var params = {};
+				params[CMDBuild.core.proxy.CMProxyConstants.REFERENCE] = this.parentDelegate.getSelectedEntityId();
+
 				this.view.getStore().load({
-					params: {
-						activityId: this.parentDelegate.getSelectedEntityId()
-					},
+					params: params,
 					scope: this,
 					callback: function(records, operation, success) {
 						this.parentDelegate.isWidgetBusy = false;

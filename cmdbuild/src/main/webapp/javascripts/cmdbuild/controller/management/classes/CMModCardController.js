@@ -122,6 +122,18 @@
 			this.mon(this.view, this.view.CMEVENTS.addButtonClick, onAddCardButtonClick, this);
 		},
 
+		buildTabControllerAttachments: function() {
+			var view = this.view.getAttachmentsPanel();
+
+			if (!Ext.isEmpty(view)) {
+				this.attachmentsController = new CMDBuild.controller.management.classes.attachments.CMCardAttachmentsController(view, this);
+
+				this.subControllers.push(this.attachmentsController);
+
+				this.view.cardTabPanel.add(view); // Add panel to view
+			}
+		},
+
 		buildTabControllerCard: function() {
 			var view = this.view.getCardPanel();
 			var widgetControllerManager = new CMDBuild.controller.management.common.CMWidgetManagerController(this.view.getWidgetManager());
@@ -184,7 +196,7 @@
 		},
 
 		buildTabControllerEmail: function() {
-			this.controllerTabEmail = Ext.create('CMDBuild.controller.management.common.tabs.email.Email', {
+			this.controllerTabEmail = Ext.create('CMDBuild.controller.management.classes.tabs.Email', {
 				parentDelegate: this,
 				clientForm: this.getFormForTemplateResolver(),
 				selectedEntity: this.card
@@ -192,6 +204,18 @@
 
 			this.subControllers.push(this.controllerTabEmail);
 			this.view.cardTabPanel.add(this.controllerTabEmail.getView());
+		},
+
+		buildTabControllerHistory: function() {
+			var view = this.view.getHistoryPanel();
+
+			if (!Ext.isEmpty(view)) {
+				this.cardHistoryPanelController = new CMDBuild.controller.management.classes.CMCardHistoryPanelController(view);
+
+				this.subControllers.push(this.cardHistoryPanelController);
+
+				this.view.cardTabPanel.add(view); // Add panel to view
+			}
 		},
 
 		buildTabControllerNotes: function() {
@@ -222,30 +246,6 @@
 				}, this);
 
 				this.subControllers.push(this.relationsController);
-
-				this.view.cardTabPanel.add(view); // Add panel to view
-			}
-		},
-
-		buildTabControllerHistory: function() {
-			var view = this.view.getHistoryPanel();
-
-			if (!Ext.isEmpty(view)) {
-				this.cardHistoryPanelController = new CMDBuild.controller.management.classes.CMCardHistoryPanelController(view);
-
-				this.subControllers.push(this.cardHistoryPanelController);
-
-				this.view.cardTabPanel.add(view); // Add panel to view
-			}
-		},
-
-		buildTabControllerAttachments: function() {
-			var view = this.view.getAttachmentsPanel();
-
-			if (!Ext.isEmpty(view)) {
-				this.attachmentsController = new CMDBuild.controller.management.classes.attachments.CMCardAttachmentsController(view, this);
-
-				this.subControllers.push(this.attachmentsController);
 
 				this.view.cardTabPanel.add(view); // Add panel to view
 			}
