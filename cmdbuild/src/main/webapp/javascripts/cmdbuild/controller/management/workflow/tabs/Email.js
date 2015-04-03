@@ -12,9 +12,40 @@
 		},
 
 		/**
+		 * @cfg {CMDBuild.controller.management.common.tabs.email.Grid}
+		 */
+		controllerGrid: undefined,
+
+		/**
+		 * Flag to mark when performing save action
+		 *
+		 * @cfg {Boolean}
+		 */
+		flagPerformSaveAction: false,
+
+		/**
+		 * Shorthand to view grid
+		 *
+		 * @property {CMDBuild.view.management.common.tabs.email.GridPanel}
+		 */
+		grid: undefined,
+
+		/**
+		 * Actually selected activity
+		 *
+		 * @cfg {CMDBuild.model.common.tabs.email.SelectedEntity}
+		 */
+		selectedEntity: undefined,
+
+		/**
+		 * @property {CMDBuild.view.management.common.tabs.email.EmailPanel}
+		 */
+		view: undefined,
+
+		/**
 		 * @param {Object} configObject
 		 * @param {Mixed} configObject.parentDelegate - CMModCardController or CMModWorkflowController
-		 * @param {Mixed} configObject.selectedEntity - Card or Activity in edit
+		 * @param {Mixed} configObject.selectedEntity - Activity in edit
 		 * @param {Mixed} configObject.ownerEntityobject - card or activity
 		 * @param {Mixed} configObject.widgetConf
 		 */
@@ -68,11 +99,11 @@ _debug('onProcessInstanceChange entryType', entryType);
 		 */
 		onProcessInstanceChange: function(processIstance) {
 _debug('onProcessInstanceChange entryType', processIstance);
-			this.selectedEntity = processIstance;
+			this.setSelectedEntity(processIstance);
 
 			this.controllerGrid.storeLoad();
 
-			// TODO: Enable/Disable tab with server call response
+			// TODO: Enable/Disable checking configuration for widget (getConfiguration)
 			if (this.view)
 				this.view.setDisabled(false);
 		},
