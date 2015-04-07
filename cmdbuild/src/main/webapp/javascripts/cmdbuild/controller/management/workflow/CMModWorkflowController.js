@@ -122,6 +122,8 @@
 
 			this.subControllers.push(this.controllerTabEmail);
 
+			this.view.cardTabPanel.emailPanel = this.controllerTabEmail.getView(); // Creates tabPanel object
+
 			this.view.cardTabPanel.acutalPanel.add(this.controllerTabEmail.getView());
 		},
 

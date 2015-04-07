@@ -141,20 +141,26 @@
 			return this.openNotePanel;
 		},
 
+		getEmailPanel: function() {
+			return this.emailPanel;
+		},
+
 		// return false if is not able to manage the widget
 		showWidget: function (w) {
-
 			var managedClasses = {
 				"CMDBuild.view.management.common.widgets.CMOpenAttachment": function(me) {
 					if (me.openAttachmentPanel != null) {
 						me.openAttachmentPanel.cmActivate();
 					}
 				},
-
 				"CMDBuild.view.management.common.widgets.CMOpenNotes": function(me) {
 					if (me.openNotePanel != null) {
 						me.openNotePanel.cmActivate();
 					}
+				},
+				'CMDBuild.view.management.workflow.tabs.Email': function(me) {
+					if (!Ext.isEmpty(me.emailPanel))
+						me.emailPanel.cmActivate();
 				}
 			};
 

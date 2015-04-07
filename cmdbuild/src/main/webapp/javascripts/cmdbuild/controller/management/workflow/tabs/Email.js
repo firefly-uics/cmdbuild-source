@@ -12,6 +12,11 @@
 		},
 
 		/**
+		 * @cfg {CMDBuild.controller.management.workflow.CMModWorkflowController}
+		 */
+		parentDelegate: undefined,
+
+		/**
 		 * @cfg {CMDBuild.controller.management.common.tabs.email.Grid}
 		 */
 		controllerGrid: undefined,
@@ -38,7 +43,7 @@
 		selectedEntity: undefined,
 
 		/**
-		 * @property {CMDBuild.view.management.common.tabs.email.EmailPanel}
+		 * @property {CMDBuild.view.management.workflow.tabs.Email}
 		 */
 		view: undefined,
 
@@ -53,6 +58,13 @@
 			this.mixins.observable.constructor.call(this, arguments);
 
 			this.callParent(arguments);
+
+			// View build
+			this.view = Ext.create('CMDBuild.view.management.workflow.tabs.Email', {
+				delegate: this
+			});
+
+			this.view.add(this.grid);
 
 			_CMWFState.addDelegate(this);
 		},
