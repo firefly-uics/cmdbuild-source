@@ -16,7 +16,13 @@
 		disabled: true,
 		frame: false,
 		layout: 'fit',
-		title: CMDBuild.Translation.email
+		title: CMDBuild.Translation.email,
+
+		listeners: {
+			show: function(panel, eOpts) {
+				this.delegate.cmfg('onEmailPanelShow');
+			}
+		}
 	});
 
 })();

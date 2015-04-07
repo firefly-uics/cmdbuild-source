@@ -34,6 +34,7 @@
 			'getGlobalLoadMask',
 			'getMainController',
 			'getSelectedEntityId',
+			'onEmailPanelShow',
 			'onGlobalRegenerationButtonClick'
 		],
 
@@ -198,11 +199,15 @@
 		},
 
 		/**
+		 * Abstract constructor that must be extended implementing creation and setup of view
+		 *
 		 * @param {Object} configObject
 		 * @param {Mixed} configObject.parentDelegate - CMModCardController or CMModWorkflowController
 		 * @param {Mixed} configObject.selectedEntity - Card or Activity in edit
 		 * @param {Mixed} configObject.ownerEntityobject
 		 * @param {Mixed} configObject.widgetConf
+		 *
+		 * @abstract
 		 */
 		constructor: function(configObject) {
 			// Setup configurationObject applying defaultConfiguration attributes to widgetConf
@@ -233,11 +238,11 @@
 				gridDelegate: this.controllerGrid
 			});
 
-			this.view = Ext.create('CMDBuild.view.management.common.tabs.email.EmailPanel', {
-				delegate: this
-			});
-
-			this.view.add(this.grid);
+//			this.view = Ext.create('CMDBuild.view.management.common.tabs.email.EmailPanel', {
+//				delegate: this
+//			});
+//
+//			this.view.add(this.grid);
 		},
 
 		/**
@@ -509,6 +514,13 @@
 		},
 
 		/**
+		 * Reload store every time panel is showed
+		 */
+		onEmailPanelShow: function() {
+			this.controllerGrid.storeLoad();
+		},
+
+		/**
 		 * Launch regeneration of all grid records if needed.
 		 *
 		 * {regenerationTrafficLightArray} Implements a trafficLight functionality to manage multiple asynchronous calls and have a global callback
@@ -721,6 +733,28 @@
 						me.bindLocalDepsChangeEvent(emailObject, templateResolver, me);
 					}
 				});
+			}
+		},
+
+		/**
+		 * Rebuild all widget with new configuration object
+		 *
+		 * @param {Object} configuration
+		 */
+		setConfiguration: function(configuration) {
+			if (!Ext.Object.isEmpty(configuration)) {
+				// Setup configurationObject applying defaultConfiguration attributes to widgetConf
+				Ext.apply(this.configuration, configuration, this.defaultConfiguration);
+
+				this.view.removeAll();
+
+				this.controllerGrid = Ext.create('CMDBuild.controller.management.common.tabs.email.Grid', {
+					parentDelegate: this
+				});
+
+				this.grid = this.controllerGrid.getView();
+
+				this.view.add(this.grid);
 			}
 		},
 
