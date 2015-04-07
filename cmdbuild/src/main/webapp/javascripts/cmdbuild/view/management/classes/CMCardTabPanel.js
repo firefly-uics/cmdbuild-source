@@ -99,6 +99,10 @@
 			return this.cardNotesPanel;
 		},
 
+		getEmailPanel: function() {
+			return this.emailPanel;
+		},
+
 		showWidget: function (w) {
 			return false; // not implemented yet
 		},

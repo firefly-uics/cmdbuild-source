@@ -11,6 +11,11 @@
 		},
 
 		/**
+		 * @cfg {CMDBuild.controller.management.classes.CMModCardController}
+		 */
+		parentDelegate: undefined,
+
+		/**
 		 * @cfg {CMDBuild.controller.management.common.tabs.email.Grid}
 		 */
 		controllerGrid: undefined,
@@ -57,6 +62,13 @@
 			this.mixins.observable.constructor.call(this, arguments);
 
 			this.callParent(arguments);
+
+			// View build
+			this.view = Ext.create('CMDBuild.view.management.common.tabs.email.EmailPanel', {
+				delegate: this
+			});
+
+			this.view.add(this.grid);
 
 			this.buildCardModuleStateDelegate();
 		},
