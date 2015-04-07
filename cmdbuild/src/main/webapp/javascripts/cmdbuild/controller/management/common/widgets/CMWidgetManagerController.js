@@ -234,7 +234,9 @@
 
 	function initBuilders(me) {
 		var commonControllers = CMDBuild.controller.management.common.widgets;
+
 		me.controllerClasses = {};
+		me.controllerClasses['.ManageEmail'] = CMDBuild.controller.management.common.widgets.manageEmail.ManageEmail;
 
 		function addControllerClass(controller) {
 			me.controllerClasses[controller.WIDGET_NAME] = controller;
@@ -269,9 +271,6 @@
 
 		// manageRelation
 		addControllerClass(commonControllers.CMManageRelationController);
-
-		// ManageEmail
-		addControllerClass(CMDBuild.controller.management.common.widgets.manageEmail.ManageEmail);
 
 		// ping
 		addControllerClass(commonControllers.CMPingController);

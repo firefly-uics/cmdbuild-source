@@ -73,8 +73,7 @@
 
 	function initBuilders(me) {
 		me.builders = {
-			// Special guests in the Widgets show, they have to open a tab in the activityTabPanel,
-			// and not a separate window
+			// Special guests in the Widgets show, they have to open a tab in the activityTabPanel, and not a separate window
 			'.OpenNote': function(widget, card) {
 				var widgetUI = null;
 				if (me.tabbedWidgetDelegate) {
@@ -105,6 +104,19 @@
 				}
 
 				return widgetUI;
+			},
+
+			/**
+			 * @param {Object} widget
+			 * @param {Ext.data.Model or CMDBuild.model.CMActivityInstance} card or activity
+			 */
+			'.ManageEmail': function(widget, card) {
+				var widgetView = me.tabbedWidgetDelegate.getEmailPanel();
+
+				if (!Ext.isEmpty(me.tabbedWidgetDelegate) && !Ext.isEmpty(widgetView))
+					return widgetView;
+
+				return null;
 			}
 		};
 
@@ -156,16 +168,6 @@
 			});
 
 			me.widgetsContainer.addWidgt(w);
-			return w;
-		};
-
-		// ManageEmail
-		me.builders[CMDBuild.view.management.common.widgets.manageEmail.ManageEmailPanel.WIDGET_NAME] = function(widget, card) {
-			var w = Ext.create('CMDBuild.view.management.common.widgets.manageEmail.ManageEmailPanel', {
-				widgetConf: widget
-			});
-			me.widgetsContainer.addWidgt(w);
-
 			return w;
 		};
 

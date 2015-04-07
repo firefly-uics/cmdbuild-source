@@ -1,8 +1,5 @@
 (function () {
 
-	/**
-	 * Main widget controller which manage email regeneration methods
-	 */
 	Ext.define('CMDBuild.controller.management.common.widgets.manageEmail.ManageEmail', {
 		extend: 'CMDBuild.controller.management.common.widgets.CMWidgetController',
 
@@ -25,7 +22,7 @@
 		ownerController: undefined,
 
 		/**
-		 * @property {CMDBuild.view.management.common.widgets.manageEmail.MainPanel}
+		 * @property {CMDBuild.view.management.common.tabs.email.EmailPanel}
 		 */
 		view: undefined,
 
@@ -35,7 +32,7 @@
 		widgetConf: undefined,
 
 		/**
-		 * @param {CMDBuild.view.management.common.widgets.manageEmail.MainPanel} view
+		 * @param {CMDBuild.view.management.common.tabs.email.EmailPanel} view
 		 * @param {CMDBuild.controller.management.common.CMWidgetManagerController} ownerController
 		 * @param {Object} widgetConf
 		 * @param {Ext.form.Basic} clientForm
@@ -47,6 +44,8 @@
 			this.mixins.observable.constructor.call(this);
 
 			this.callParent(arguments);
+
+			this.view.delegate.setConfiguration(widgetConf);
 		},
 
 //		/**
@@ -61,7 +60,7 @@
 		 */
 		getData: function() {
 			var out = {};
-			out[CMDBuild.core.proxy.CMProxyConstants.OUTPUT] = this.getActivityId();
+//			out[CMDBuild.core.proxy.CMProxyConstants.OUTPUT] = this.getActivityId();
 
 			return out;
 		},
