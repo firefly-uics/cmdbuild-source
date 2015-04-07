@@ -1,8 +1,10 @@
 package org.cmdbuild.cql.facade;
 
 import static java.lang.String.format;
+import static java.util.regex.Pattern.quote;
 
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -44,7 +46,14 @@ public class CQLFacade {
 	) {
 		QueryImpl compiled = null;
 		try {
-			compiled = compileAndCheck(query);
+			String _query = query;
+			// TODO do it better
+			for (final Entry<String, Object> entry : context.entrySet()) {
+				if (entry.getKey().startsWith("p")) {
+					_query = _query.replaceAll(quote(format("{%s}", entry.getKey())), entry.getValue().toString());
+				}
+			}
+			compiled = compileAndCheck(_query);
 		} catch (final Throwable e) {
 			final String message = format("CQL compilation failed '%s'", query);
 			logger.error(marker, message, e);
