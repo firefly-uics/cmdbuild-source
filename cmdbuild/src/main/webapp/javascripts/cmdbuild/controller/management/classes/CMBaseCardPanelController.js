@@ -104,9 +104,9 @@
 						me.view.editMode();
 					});
 				});
-
-				this.callParent(arguments);
 			}
+
+			this.callParent(arguments);
 		},
 
 		onSaveCardClick: function() {

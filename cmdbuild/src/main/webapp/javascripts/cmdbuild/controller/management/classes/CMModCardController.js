@@ -1,4 +1,5 @@
 (function() {
+
 	Ext.define('CMDBuild.controller.management.common.CMModController', {
 		extend: 'CMDBuild.controller.CMBasePanelController',
 
@@ -97,14 +98,44 @@
 		extend: 'CMDBuild.controller.management.common.CMModController',
 
 		/**
+		 * @property {CMDBuild.controller.management.classes.attachments.CMCardAttachmentsController}
+		 */
+		attachmentsController: undefined,
+
+		/**
 		 * @property {Ext.data.Model}
 		 */
 		card: undefined,
 
 		/**
-		 * @property {CMDBuild.controller.management.common.tabs.email.Email}
+		 * @property {CMDBuild.controller.management.classes.CMCardHistoryPanelController}
+		 */
+		cardHistoryPanelController: undefined,
+
+		/**
+		 * @property {CMDBuild.controller.management.classes.CMCardPanelController}
+		 */
+		cardPanelController: undefined,
+
+		/**
+		 * @property {CMDBuild.controller.management.classes.tabs.Email}
 		 */
 		controllerTabEmail: undefined,
+
+		/**
+		 * @property {CMDBuild.controller.management.classes.masterDetails.CMMasterDetailsController}
+		 */
+		mdController: undefined,
+
+		/**
+		 * @property {CMDBuild.controller.management.classes.CMNoteController}
+		 */
+		noteController: undefined,
+
+		/**
+		 * @property {CMDBuild.controller.management.classes.CMCardRelationsController}
+		 */
+		relationsController: undefined,
 
 		/**
 		 * @property {Array}
@@ -120,6 +151,31 @@
 			this.callParent(arguments);
 
 			this.mon(this.view, this.view.CMEVENTS.addButtonClick, onAddCardButtonClick, this);
+		},
+
+		/**
+		 * Build all controllers and adds view in tab panel with controller declaration order
+		 *
+		 * @override
+		 */
+		buildSubControllers: function() {
+			Ext.suspendLayouts();
+
+			// Tabs controllers
+			this.buildTabControllerCard();
+			this.buildTabControllerDetails();
+			this.buildTabControllerNotes();
+			this.buildTabControllerRelations();
+			this.buildTabControllerHistory();
+			this.buildTabControllerAttachments();
+			this.buildTabControllerEmail();
+
+			// Generic controllers
+			buildGridController(this, this.view.getGrid());
+			buildMapController(this);
+			buildBimController(this, this.view.getGrid());
+
+			Ext.resumeLayouts();
 		},
 
 		buildTabControllerAttachments: function() {
@@ -252,66 +308,6 @@
 		},
 
 		/**
-		 * Build all controllers and adds view in tab panel with controller declaration order
-		 *
-		 * @override
-		 */
-		buildSubControllers: function() {
-			Ext.suspendLayouts();
-
-			// Tabs controllers
-			this.buildTabControllerCard();
-			this.buildTabControllerDetails();
-			this.buildTabControllerNotes();
-			this.buildTabControllerRelations();
-			this.buildTabControllerHistory();
-			this.buildTabControllerAttachments();
-			this.buildTabControllerEmail();
-
-			// Generic controllers
-			buildGridController(this, this.view.getGrid());
-			buildMapController(this);
-			buildBimController(this, this.view.getGrid());
-
-			Ext.resumeLayouts();
-		},
-
-		/**
-		 * Bind the CMCardModuleState
-		 *
-		 * @override
-		 */
-		setEntryType: function(entryTypeId, dc, filter) {
-			var entryType = _CMCache.getEntryTypeById(entryTypeId);
-
-			this.view.addCardButton.updateForEntry(entryType);
-			this.view.mapAddCardButton.updateForEntry(entryType);
-			this.view.updateTitleForEntry(entryType);
-
-			if (!Ext.isEmpty(dc) && dc.activateFirstTab)
-				this.view.activateFirstTab();
-
-			_CMCardModuleState.setEntryType(entryType, dc, filter);
-			_CMUIState.onlyGridIfFullScreen();
-
-			this.changeClassUIConfigurationForGroup(entryTypeId);
-		},
-
-		/**
-		 * Forward onModifyCardClick event to email tab controller
-		 */
-		onModifyCardClick: function() {
-			this.controllerTabEmail.onModifyCardClick();
-		},
-
-		/**
-		 * Forward onSaveCardClick event to email tab controller
-		 */
-		onSaveCardClick: function() {
-			this.controllerTabEmail.onSaveCardClick();
-		},
-
-		/**
 		 * @param {Number} classId
 		 */
 		changeClassUIConfigurationForGroup: function(classId) {
@@ -330,6 +326,21 @@
 				!(privileges.write && !privileges.crudDisabled.clone),
 				!(privileges.write && !privileges.crudDisabled.remove)
 			);
+		},
+
+		/**
+		 * To clear view if there are no loaded records
+		 *
+		 * @param (Object) args
+		 * @param (Array) args[1] - loaded records array
+		 */
+		onGridLoad: function(args) {
+			// TODO notify to sub-controllers?
+			if (Ext.isEmpty(args[1])) {
+				this.view.getCardPanel().displayMode();
+				this.view.cardTabPanel.reset();
+				this.view.getHistoryPanel().disable();
+			}
 		},
 
 		onGridVisible: function(visible, selection) {
@@ -352,18 +363,38 @@
 		},
 
 		/**
-		 * To clear view if there are no loaded records
-		 *
-		 * @param (Object) args
-		 * @param (Array) args[1] - loaded records array
+		 * Forward onModifyCardClick event to email tab controller
 		 */
-		onGridLoad: function(args) {
-			// TODO notify to sub-controllers?
-			if (Ext.isEmpty(args[1])) {
-				this.view.getCardPanel().displayMode();
-				this.view.cardTabPanel.reset();
-				this.view.getHistoryPanel().disable();
-			}
+		onModifyCardClick: function() {
+			this.controllerTabEmail.onModifyCardClick();
+		},
+
+		/**
+		 * Forward onSaveCardClick event to email tab controller
+		 */
+		onSaveCardClick: function() {
+			this.controllerTabEmail.onSaveCardClick();
+		},
+
+		/**
+		 * Bind the CMCardModuleState
+		 *
+		 * @override
+		 */
+		setEntryType: function(entryTypeId, dc, filter) {
+			var entryType = _CMCache.getEntryTypeById(entryTypeId);
+
+			this.view.addCardButton.updateForEntry(entryType);
+			this.view.mapAddCardButton.updateForEntry(entryType);
+			this.view.updateTitleForEntry(entryType);
+
+			if (!Ext.isEmpty(dc) && dc.activateFirstTab)
+				this.view.activateFirstTab();
+
+			_CMCardModuleState.setEntryType(entryType, dc, filter);
+			_CMUIState.onlyGridIfFullScreen();
+
+			this.changeClassUIConfigurationForGroup(entryTypeId);
 		}
 	});
 

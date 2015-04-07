@@ -86,6 +86,9 @@
 				}, this);
 		},
 
+		/**
+		 * Enable action shouldn't be needed but on addCardButtoClick is fired also onCardSelect event
+		 */
 		onAddCardButtonClick: function() {
 			if (this.view)
 				this.view.setDisabled(true);
@@ -95,7 +98,6 @@
 		 * @param {Ext.data.Model} card
 		 */
 		onCardSelected: function(card) {
-_debug('onCardSelected', card);
 			this.setSelectedEntity(card);
 
 			this.controllerGrid.storeLoad();
