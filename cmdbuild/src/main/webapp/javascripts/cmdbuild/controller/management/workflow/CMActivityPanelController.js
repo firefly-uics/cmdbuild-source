@@ -13,7 +13,7 @@
 			wfStateDelegate: "CMDBuild.state.CMWorkflowStateDelegate"
 		},
 
-		constructor: function(v, owner, widgetControllerManager, delegate) {
+		constructor: function(view, supercontroller, widgetControllerManager, delegate) {
 			this.callParent(arguments);
 
 			// this flag is used to define if the user has click on the
@@ -119,6 +119,8 @@
 					&& ai && ai.isWritable()) {
 
 				this.view.editMode();
+
+				this.callParent(arguments);
 			}
 		},
 

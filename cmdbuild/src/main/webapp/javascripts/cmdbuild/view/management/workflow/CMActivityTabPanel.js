@@ -1,10 +1,10 @@
 (function() {
+
 	Ext.define("CMDBuild.view.management.workflow.CMActivityTabPanel", {
 		extend: "Ext.panel.Panel",
 
-		mixins: {
-			// cmTabbedWidgetDelegate: "CMDBuild.view.management.common.widgets.CMTabbedWidgetDelegate"
-		},
+		frame: false,
+		layout: 'border',
 
 		constructor: function(config) {
 
@@ -46,14 +46,7 @@
 				activeTab: 0,
 				frame: false,
 				border: false,
-				split: true,
-				items: [
-					this.activityTab,
-					this.openNotePanel,
-					this.relationsPanel,
-					this.cardHistoryPanel,
-					this.openAttachmentPanel
-				]
+				split: true
 			});
 
 			this.docPanel = new CMDBuild.view.management.workflow.CMActivityTabPanel.DocPanel();
@@ -65,9 +58,7 @@
 
 		initComponent : function() {
 			Ext.apply(this,{
-				frame: false,
-				layout: 'border',
-				items : [this.acutalPanel, this.docPanel]
+				items: [this.acutalPanel, this.docPanel]
 			});
 
 			this.callParent(arguments);
@@ -214,4 +205,5 @@
 	function isEnabled(disabledTabs, name) {
 		return !Ext.Array.contains(disabledTabs, name);
 	}
+
 })();
