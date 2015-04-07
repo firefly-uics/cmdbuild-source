@@ -1,8 +1,13 @@
 package org.cmdbuild.services.email;
 
+import static com.google.common.base.Suppliers.ofInstance;
+
 import org.apache.commons.lang3.Validate;
 import org.cmdbuild.common.api.mail.MailApiFactory;
+import org.cmdbuild.data.store.email.EmailAccount;
+import org.cmdbuild.data.store.email.EmailAccountFacade;
 
+import com.google.common.base.Optional;
 import com.google.common.base.Supplier;
 
 public class ConfigurableEmailServiceFactory implements EmailServiceFactory {
@@ -10,7 +15,7 @@ public class ConfigurableEmailServiceFactory implements EmailServiceFactory {
 	public static class Builder implements org.apache.commons.lang3.builder.Builder<ConfigurableEmailServiceFactory> {
 
 		private MailApiFactory apiFactory;
-		private Supplier<EmailAccount> accountSupplier;
+		private EmailAccountFacade emailAccountFacade;
 
 		private Builder() {
 			// use factory method
@@ -24,7 +29,7 @@ public class ConfigurableEmailServiceFactory implements EmailServiceFactory {
 
 		private void validate() {
 			Validate.notNull(apiFactory, "missing '%s'", MailApiFactory.class);
-			Validate.notNull(accountSupplier, "missing '%s' supplier", EmailAccount.class);
+			Validate.notNull(emailAccountFacade, "missing '%s'", EmailAccountFacade.class);
 		};
 
 		public Builder withApiFactory(final MailApiFactory apiFactory) {
@@ -32,8 +37,8 @@ public class ConfigurableEmailServiceFactory implements EmailServiceFactory {
 			return this;
 		}
 
-		public Builder withDefaultAccountSupplier(final Supplier<EmailAccount> accountSupplier) {
-			this.accountSupplier = accountSupplier;
+		public Builder withEmailAccountFacade(final EmailAccountFacade emailAccountFacade) {
+			this.emailAccountFacade = emailAccountFacade;
 			return this;
 		}
 
@@ -44,16 +49,17 @@ public class ConfigurableEmailServiceFactory implements EmailServiceFactory {
 	}
 
 	private final MailApiFactory apiFactory;
-	private final Supplier<EmailAccount> accountSupplier;
+	private final EmailAccountFacade emailAccountFacade;
 
 	public ConfigurableEmailServiceFactory(final Builder builder) {
 		this.apiFactory = builder.apiFactory;
-		this.accountSupplier = builder.accountSupplier;
+		this.emailAccountFacade = builder.emailAccountFacade;
 	}
 
 	@Override
 	public EmailService create() {
-		return create(accountSupplier);
+		final Optional<EmailAccount> account = emailAccountFacade.defaultAccount();
+		return create(ofInstance(account.get()));
 	}
 
 	@Override

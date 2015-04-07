@@ -12,11 +12,11 @@ import static org.joda.time.DateTime.now;
 
 import org.apache.commons.lang3.Validate;
 import org.cmdbuild.common.template.TemplateResolver;
+import org.cmdbuild.data.store.email.EmailAccount;
 import org.cmdbuild.logic.Action;
 import org.cmdbuild.logic.email.EmailTemplateLogic.Template;
 import org.cmdbuild.services.email.Attachment;
 import org.cmdbuild.services.email.Email;
-import org.cmdbuild.services.email.EmailAccount;
 import org.cmdbuild.services.email.EmailService;
 import org.cmdbuild.services.email.EmailServiceFactory;
 import org.cmdbuild.services.email.ForwardingEmail;

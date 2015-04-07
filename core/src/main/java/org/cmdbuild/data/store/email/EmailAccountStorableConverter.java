@@ -5,7 +5,6 @@ import java.util.Map;
 import org.cmdbuild.common.Constants;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.data.store.dao.BaseStorableConverter;
-import org.cmdbuild.services.email.EmailAccount;
 
 import com.google.common.collect.Maps;
 

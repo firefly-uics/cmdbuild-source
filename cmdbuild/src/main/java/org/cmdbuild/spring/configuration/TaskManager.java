@@ -157,7 +157,7 @@ public class TaskManager {
 	protected AsynchronousEventTaskJobFactory asynchronousEventTaskJobFactory() {
 		return new AsynchronousEventTaskJobFactory( //
 				data.systemDataView(), //
-				email.emailAccountStore(), //
+				email.emailAccountFacade(), //
 				email.emailServiceFactory(), //
 				email.emailTemplateLogic(), //
 				defaultTaskStore(), //
@@ -171,7 +171,7 @@ public class TaskManager {
 				data.systemDataView(), //
 				other.dataSourceHelper(), //
 				defaultAttributeValueAdapter(),//
-				email.emailAccountStore(), //
+				email.emailAccountFacade(), //
 				email.emailServiceFactory(), //
 				email.emailTemplateLogic() //
 		);
@@ -185,7 +185,7 @@ public class TaskManager {
 	@Bean
 	protected ReadEmailTaskJobFactory readEmailTaskJobFactory() {
 		return new ReadEmailTaskJobFactory( //
-				email.emailAccountStore(), //
+				email.emailAccountFacade(), //
 				email.emailServiceFactory(), //
 				email.subjectHandler(), //
 				email.emailStore(), //
@@ -219,7 +219,7 @@ public class TaskManager {
 				userStore, //
 				api.systemFluentApi(), //
 				workflow.systemWorkflowLogicBuilder().build(), //
-				email.emailAccountStore(), //
+				email.emailAccountFacade(), //
 				email.emailServiceFactory(), //
 				email.emailTemplateLogic(), //
 				data.systemDataView(), //

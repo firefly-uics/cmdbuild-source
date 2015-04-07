@@ -23,6 +23,7 @@ import org.cmdbuild.common.api.mail.MailApiFactory;
 import org.cmdbuild.common.api.mail.MailException;
 import org.cmdbuild.common.api.mail.NewMail;
 import org.cmdbuild.common.api.mail.SelectMail;
+import org.cmdbuild.data.store.email.EmailAccount;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 
