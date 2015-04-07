@@ -11,12 +11,9 @@ import static org.apache.commons.lang3.StringUtils.defaultString;
 import static org.cmdbuild.common.template.engine.Engines.emptyStringOnNull;
 import static org.cmdbuild.common.template.engine.Engines.map;
 import static org.cmdbuild.common.template.engine.Engines.nullOnError;
-import static org.cmdbuild.common.utils.guava.Suppliers.firstNotNull;
-import static org.cmdbuild.common.utils.guava.Suppliers.nullOnException;
 import static org.cmdbuild.data.store.Storables.storableOf;
 import static org.cmdbuild.data.store.email.EmailConstants.EMAIL_CLASS_NAME;
 import static org.cmdbuild.logic.taskmanager.task.email.Actions.safe;
-import static org.cmdbuild.services.email.Predicates.named;
 import static org.cmdbuild.services.template.engine.EngineNames.CARD_PREFIX;
 import static org.cmdbuild.services.template.engine.EngineNames.CQL_PREFIX;
 import static org.cmdbuild.services.template.engine.EngineNames.DB_TEMPLATE;
@@ -38,7 +35,8 @@ import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.data.store.Storable;
 import org.cmdbuild.data.store.Store;
-import org.cmdbuild.data.store.StoreSupplier;
+import org.cmdbuild.data.store.email.EmailAccount;
+import org.cmdbuild.data.store.email.EmailAccountFacade;
 import org.cmdbuild.data.store.email.EmailConstants;
 import org.cmdbuild.logic.dms.DmsLogic;
 import org.cmdbuild.logic.dms.StoreDocument;
@@ -56,7 +54,6 @@ import org.cmdbuild.logic.workflow.WorkflowLogic;
 import org.cmdbuild.scheduler.command.Command;
 import org.cmdbuild.services.email.Attachment;
 import org.cmdbuild.services.email.Email;
-import org.cmdbuild.services.email.EmailAccount;
 import org.cmdbuild.services.email.EmailService;
 import org.cmdbuild.services.email.EmailServiceFactory;
 import org.cmdbuild.services.template.engine.CardEngine;
@@ -69,6 +66,7 @@ import org.cmdbuild.services.template.engine.UserEmailEngine;
 import org.cmdbuild.workflow.user.UserProcessInstance;
 
 import com.google.common.base.Function;
+import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
 
@@ -93,7 +91,7 @@ public class ReadEmailTaskJobFactory extends AbstractJobFactory<ReadEmailTask> {
 
 	}
 
-	private final Store<EmailAccount> emailAccountStore;
+	private final EmailAccountFacade emailAccountFacade;
 	private final EmailServiceFactory emailServiceFactory;
 	private final SubjectHandler subjectHandler;
 	private final Store<org.cmdbuild.data.store.email.Email> emailStore;
@@ -104,7 +102,7 @@ public class ReadEmailTaskJobFactory extends AbstractJobFactory<ReadEmailTask> {
 	private final DatabaseEngine databaseEngine;
 
 	public ReadEmailTaskJobFactory( //
-			final Store<EmailAccount> emailAccountStore, //
+			final EmailAccountFacade emailAccountFacade, //
 			final EmailServiceFactory emailServiceFactory, //
 			final SubjectHandler subjectHandler, //
 			final Store<org.cmdbuild.data.store.email.Email> emailStore, //
@@ -113,7 +111,7 @@ public class ReadEmailTaskJobFactory extends AbstractJobFactory<ReadEmailTask> {
 			final CMDataView dataView, //
 			final EmailTemplateLogic emailTemplateLogic, //
 			final DatabaseEngine databaseEngine) {
-		this.emailAccountStore = emailAccountStore;
+		this.emailAccountFacade = emailAccountFacade;
 		this.emailServiceFactory = emailServiceFactory;
 		this.subjectHandler = subjectHandler;
 		this.emailStore = emailStore;
@@ -132,7 +130,7 @@ public class ReadEmailTaskJobFactory extends AbstractJobFactory<ReadEmailTask> {
 	@Override
 	protected Command command(final ReadEmailTask task) {
 		final String emailAccountName = task.getEmailAccount();
-		final EmailAccount selectedEmailAccount = emailAccountFor(emailAccountName);
+		final EmailAccount selectedEmailAccount = emailAccountFor(emailAccountName).get();
 		final EmailService service = emailServiceFactory.create(ofInstance(selectedEmailAccount));
 		return ReadEmailCommand.newInstance() //
 				.withEmailService(service) //
@@ -143,14 +141,9 @@ public class ReadEmailTaskJobFactory extends AbstractJobFactory<ReadEmailTask> {
 				.build();
 	}
 
-	private EmailAccount emailAccountFor(final String emailAccountName) {
-		logger.debug(marker, "getting email account for name '{}'", emailAccountName);
-		for (final EmailAccount emailAccount : emailAccountStore.readAll()) {
-			if (emailAccount.getName().equals(emailAccountName)) {
-				return emailAccount;
-			}
-		}
-		throw new IllegalArgumentException("email account not found");
+	private Optional<EmailAccount> emailAccountFor(final String name) {
+		logger.debug(marker, "getting email account for name '{}'", name);
+		return emailAccountFacade.firstOf(asList(name));
 	}
 
 	private Action sendNotification(final ReadEmailTask task) {
@@ -187,12 +180,10 @@ public class ReadEmailTaskJobFactory extends AbstractJobFactory<ReadEmailTask> {
 							}
 
 						});
-						final Supplier<EmailAccount> templateEmailAccountSupplier = nullOnException(StoreSupplier.of(
-								EmailAccount.class, emailAccountStore, named(emailTemplateSupplier.get().getAccount())));
-						final Supplier<EmailAccount> taskEmailAccountSupplier = StoreSupplier.of(EmailAccount.class,
-								emailAccountStore, named(task.getEmailAccount()));
-						final Supplier<EmailAccount> emailAccountSupplier = firstNotNull(asList(
-								templateEmailAccountSupplier, taskEmailAccountSupplier));
+						final Optional<EmailAccount> account = emailAccountFacade.firstOf(asList(emailTemplateSupplier
+								.get().getAccount(), task.getEmailAccount()));
+						final Supplier<EmailAccount> emailAccountSupplier = account.isPresent() ? ofInstance(account
+								.get()) : null;
 						final CMCard genericProcessCard = workflowLogic.getProcessInstance(dataView.getActivityClass()
 								.getName(), stored.getReference());
 						final CMCard processCard = workflowLogic.getProcessInstance(genericProcessCard.getType()

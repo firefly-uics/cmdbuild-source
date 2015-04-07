@@ -1,29 +1,28 @@
 package org.cmdbuild.logic.taskmanager.task.connector;
 
-import static org.cmdbuild.scheduler.command.Commands.*;
 import static com.google.common.base.Suppliers.memoize;
+import static com.google.common.base.Suppliers.ofInstance;
 import static java.util.Arrays.asList;
 import static org.apache.commons.lang3.StringUtils.defaultString;
 import static org.cmdbuild.common.utils.BuilderUtils.a;
-import static org.cmdbuild.common.utils.guava.Suppliers.firstNotNull;
-import static org.cmdbuild.common.utils.guava.Suppliers.nullOnException;
 import static org.cmdbuild.scheduler.command.Commands.composeOnExeption;
 import static org.cmdbuild.scheduler.command.Commands.conditional;
-import static org.cmdbuild.services.email.Predicates.named;
+import static org.cmdbuild.scheduler.command.Commands.nullCommand;
 
 import org.cmdbuild.common.java.sql.DataSourceHelper;
 import org.cmdbuild.dao.view.CMDataView;
-import org.cmdbuild.data.store.StoreSupplier;
+import org.cmdbuild.data.store.email.EmailAccount;
+import org.cmdbuild.data.store.email.EmailAccountFacade;
 import org.cmdbuild.logic.email.EmailTemplateLogic;
 import org.cmdbuild.logic.email.EmailTemplateLogic.Template;
 import org.cmdbuild.logic.email.SendTemplateEmail;
 import org.cmdbuild.logic.taskmanager.commons.SchedulerCommandWrapper;
 import org.cmdbuild.logic.taskmanager.scheduler.AbstractJobFactory;
 import org.cmdbuild.scheduler.command.Command;
-import org.cmdbuild.services.email.EmailAccount;
 import org.cmdbuild.services.email.EmailServiceFactory;
 import org.cmdbuild.services.sync.store.internal.AttributeValueAdapter;
 
+import com.google.common.base.Optional;
 import com.google.common.base.Supplier;
 
 public class ConnectorTaskJobFactory extends AbstractJobFactory<ConnectorTask> {
@@ -31,19 +30,18 @@ public class ConnectorTaskJobFactory extends AbstractJobFactory<ConnectorTask> {
 	private final CMDataView dataView;
 	private final DataSourceHelper jdbcService;
 	private final AttributeValueAdapter attributeValueAdapter;
-	private final org.cmdbuild.data.store.Store<EmailAccount> emailAccountStore;
+	private final EmailAccountFacade emailAccountFacade;
 	private final EmailServiceFactory emailServiceFactory;
 	private final EmailTemplateLogic emailTemplateLogic;
 
 	public ConnectorTaskJobFactory(final CMDataView dataView, final DataSourceHelper jdbcService,
-			final AttributeValueAdapter attributeValueAdapter,
-			final org.cmdbuild.data.store.Store<EmailAccount> emailAccountStore,
+			final AttributeValueAdapter attributeValueAdapter, final EmailAccountFacade emailAccountFacade,
 			final EmailServiceFactory emailServiceFactory, final EmailTemplateLogic emailTemplateLogic) {
 		this.dataView = dataView;
 		this.jdbcService = jdbcService;
 		this.attributeValueAdapter = attributeValueAdapter;
 		this.emailServiceFactory = emailServiceFactory;
-		this.emailAccountStore = emailAccountStore;
+		this.emailAccountFacade = emailAccountFacade;
 		this.emailTemplateLogic = emailTemplateLogic;
 	}
 
@@ -75,12 +73,9 @@ public class ConnectorTaskJobFactory extends AbstractJobFactory<ConnectorTask> {
 				}
 
 			});
-			final Supplier<EmailAccount> templateEmailAccountSupplier = nullOnException(StoreSupplier.of(
-					EmailAccount.class, emailAccountStore, named(emailTemplateSupplier.get().getAccount())));
-			final Supplier<EmailAccount> taskEmailAccountSupplier = nullOnException(StoreSupplier.of(
-					EmailAccount.class, emailAccountStore, named(task.getNotificationAccount())));
-			final Supplier<EmailAccount> emailAccountSupplier = firstNotNull(asList(templateEmailAccountSupplier,
-					taskEmailAccountSupplier));
+			final Optional<EmailAccount> account = emailAccountFacade.firstOf(asList(emailTemplateSupplier.get()
+					.getAccount(), task.getNotificationAccount()));
+			final Supplier<EmailAccount> emailAccountSupplier = account.isPresent() ? ofInstance(account.get()) : null;
 			command = SchedulerCommandWrapper.of(a(SendTemplateEmail.newInstance() //
 					.withEmailAccountSupplier(emailAccountSupplier) //
 					.withEmailServiceFactory(emailServiceFactory) //

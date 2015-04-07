@@ -1,6 +1,5 @@
 package org.cmdbuild.spring.configuration;
 
-import static org.cmdbuild.services.email.Predicates.isDefault;
 import static org.cmdbuild.spring.util.Constants.PROTOTYPE;
 
 import org.cmdbuild.auth.UserStore;
@@ -8,14 +7,16 @@ import org.cmdbuild.common.api.mail.MailApiFactory;
 import org.cmdbuild.common.api.mail.javax.mail.JavaxMailBasedMailApiFactory;
 import org.cmdbuild.data.store.InMemoryStore;
 import org.cmdbuild.data.store.Store;
-import org.cmdbuild.data.store.StoreSupplier;
 import org.cmdbuild.data.store.dao.DataViewStore;
 import org.cmdbuild.data.store.dao.StorableConverter;
+import org.cmdbuild.data.store.email.EmailAccount;
+import org.cmdbuild.data.store.email.EmailAccountFacade;
 import org.cmdbuild.data.store.email.EmailAccountStorableConverter;
 import org.cmdbuild.data.store.email.EmailConverter;
 import org.cmdbuild.data.store.email.EmailTemplateStorableConverter;
 import org.cmdbuild.data.store.email.ExtendedEmailTemplate;
 import org.cmdbuild.data.store.email.ExtendedEmailTemplateStore;
+import org.cmdbuild.data.store.email.StoreBasedEmailAccountFacade;
 import org.cmdbuild.dms.DmsConfiguration;
 import org.cmdbuild.logic.email.ConfigurationAwareEmailAttachmentsLogic;
 import org.cmdbuild.logic.email.DefaultEmailAccountLogic;
@@ -31,14 +32,11 @@ import org.cmdbuild.logic.email.SubjectHandler;
 import org.cmdbuild.logic.email.TransactionalEmailTemplateLogic;
 import org.cmdbuild.notification.Notifier;
 import org.cmdbuild.services.email.ConfigurableEmailServiceFactory;
-import org.cmdbuild.services.email.EmailAccount;
 import org.cmdbuild.services.email.EmailServiceFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
-
-import com.google.common.base.Supplier;
 
 @Configuration
 public class Email {
@@ -67,7 +65,7 @@ public class Email {
 	}
 
 	@Bean
-	public Store<EmailAccount> emailAccountStore() {
+	protected Store<EmailAccount> emailAccountStore() {
 		return DataViewStore.<EmailAccount> newInstance() //
 				.withDataView(data.systemDataView()) //
 				.withStorableConverter(emailAccountConverter()) //
@@ -75,8 +73,8 @@ public class Email {
 	}
 
 	@Bean
-	protected Supplier<EmailAccount> defaultEmailAccountSupplier() {
-		return StoreSupplier.of(EmailAccount.class, emailAccountStore(), isDefault());
+	public EmailAccountFacade emailAccountFacade() {
+		return new StoreBasedEmailAccountFacade(emailAccountStore());
 	}
 
 	@Bean
@@ -101,7 +99,7 @@ public class Email {
 	public EmailServiceFactory emailServiceFactory() {
 		return ConfigurableEmailServiceFactory.newInstance() //
 				.withApiFactory(mailApiFactory()) //
-				.withDefaultAccountSupplier(defaultEmailAccountSupplier()) //
+				.withEmailAccountFacade(emailAccountFacade()) //
 				.build();
 	}
 
@@ -135,7 +133,7 @@ public class Email {
 				emailStore(), //
 				emailTemporaryStore(), //
 				emailServiceFactory(), //
-				emailAccountStore(), //
+				emailAccountFacade(), //
 				subjectHandler(), //
 				notifier, //
 				emailAttachmentsLogic());
@@ -148,7 +146,7 @@ public class Email {
 
 	@Bean
 	public EmailTemplateLogic emailTemplateLogic() {
-		return new TransactionalEmailTemplateLogic(new DefaultEmailTemplateLogic(templateStore(), emailAccountStore()));
+		return new TransactionalEmailTemplateLogic(new DefaultEmailTemplateLogic(templateStore(), emailAccountFacade()));
 	}
 
 	@Bean
@@ -161,7 +159,7 @@ public class Email {
 
 	@Bean
 	public EmailAccountLogic emailAccountLogic() {
-		return new DefaultEmailAccountLogic(emailAccountStore());
+		return new DefaultEmailAccountLogic(emailAccountFacade());
 	}
 
 }

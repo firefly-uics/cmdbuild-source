@@ -1,7 +1,7 @@
 package org.cmdbuild.logic.email;
 
 import static com.google.common.base.Splitter.on;
-import static com.google.common.base.Suppliers.memoize;
+import static com.google.common.base.Suppliers.ofInstance;
 import static com.google.common.collect.FluentIterable.from;
 import static com.google.common.collect.Iterables.concat;
 import static com.google.common.collect.Iterables.contains;
@@ -10,15 +10,11 @@ import static java.util.Arrays.asList;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
 import static org.cmdbuild.common.utils.Reflection.unsupported;
-import static org.cmdbuild.common.utils.guava.Suppliers.firstNotNull;
-import static org.cmdbuild.common.utils.guava.Suppliers.nullOnException;
 import static org.cmdbuild.data.store.email.EmailConstants.ADDRESSES_SEPARATOR;
 import static org.cmdbuild.logic.email.EmailLogic.Statuses.draft;
 import static org.cmdbuild.logic.email.EmailLogic.Statuses.outgoing;
 import static org.cmdbuild.logic.email.EmailLogic.Statuses.received;
 import static org.cmdbuild.logic.email.EmailLogic.Statuses.sent;
-import static org.cmdbuild.services.email.Predicates.isDefault;
-import static org.cmdbuild.services.email.Predicates.named;
 
 import java.io.IOException;
 import java.util.UUID;
@@ -31,14 +27,14 @@ import org.cmdbuild.common.utils.TempDataSource;
 import org.cmdbuild.common.utils.UnsupportedProxyFactory;
 import org.cmdbuild.data.store.Storable;
 import org.cmdbuild.data.store.Store;
-import org.cmdbuild.data.store.StoreSupplier;
+import org.cmdbuild.data.store.email.EmailAccount;
+import org.cmdbuild.data.store.email.EmailAccountFacade;
 import org.cmdbuild.data.store.email.EmailOwnerGroupable;
 import org.cmdbuild.data.store.email.EmailStatus;
 import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.exception.CMDBWorkflowException;
 import org.cmdbuild.logic.email.EmailAttachmentsLogic.Attachment;
 import org.cmdbuild.notification.Notifier;
-import org.cmdbuild.services.email.EmailAccount;
 import org.cmdbuild.services.email.EmailService;
 import org.cmdbuild.services.email.EmailServiceFactory;
 import org.cmdbuild.services.email.ForwardingAttachment;
@@ -330,7 +326,7 @@ public class DefaultEmailLogic implements EmailLogic {
 	private final Store<org.cmdbuild.data.store.email.Email> emailStore;
 	private final Store<org.cmdbuild.data.store.email.Email> temporaryEmailStore;
 	private final EmailServiceFactory emailServiceFactory;
-	private final Store<EmailAccount> emailAccountStore;
+	private final EmailAccountFacade emailAccountFacade;
 	private final SubjectHandler subjectHandler;
 	private final Notifier notifier;
 	private final EmailAttachmentsLogic emailAttachmentsLogic;
@@ -339,7 +335,7 @@ public class DefaultEmailLogic implements EmailLogic {
 			final Store<org.cmdbuild.data.store.email.Email> emailStore, //
 			final Store<org.cmdbuild.data.store.email.Email> temporaryEmailStore, //
 			final EmailServiceFactory emailServiceFactory, //
-			final Store<EmailAccount> emailAccountStore, //
+			final EmailAccountFacade emailAccountFacade, //
 			final SubjectHandler subjectHandler, //
 			final Notifier notifier, //
 			final EmailAttachmentsLogic emailAttachmentsLogic //
@@ -347,7 +343,7 @@ public class DefaultEmailLogic implements EmailLogic {
 		this.emailStore = emailStore;
 		this.temporaryEmailStore = temporaryEmailStore;
 		this.emailServiceFactory = emailServiceFactory;
-		this.emailAccountStore = emailAccountStore;
+		this.emailAccountFacade = emailAccountFacade;
 		this.subjectHandler = subjectHandler;
 		this.notifier = notifier;
 		this.emailAttachmentsLogic = emailAttachmentsLogic;
@@ -473,7 +469,8 @@ public class DefaultEmailLogic implements EmailLogic {
 
 	private void send(final Email email) {
 		try {
-			final Supplier<EmailAccount> accountSupplier = accountSupplierOf(email);
+			final Optional<EmailAccount> account = emailAccountFacade.firstOfOrDefault(asList(email.getAccount()));
+			final Supplier<EmailAccount> accountSupplier = account.isPresent() ? ofInstance(account.get()) : null;
 			final Email _email = new ForwardingEmail() {
 
 				@Override
@@ -499,15 +496,6 @@ public class DefaultEmailLogic implements EmailLogic {
 		} catch (final Throwable e) {
 			notifier.warn(CMDBWorkflowException.WorkflowExceptionType.WF_EMAIL_NOT_SENT.createException());
 		}
-	}
-
-	private Supplier<EmailAccount> accountSupplierOf(final Email email) {
-		final Supplier<EmailAccount> defaultAccountSupplier = memoize(nullOnException(defaultAccountSupplier()));
-		final Supplier<EmailAccount> emailAccountSupplier = nullOnException(StoreSupplier.of(EmailAccount.class,
-				emailAccountStore, named(email.getAccount())));
-		final Supplier<EmailAccount> accountSupplier = memoize(firstNotNull(asList(emailAccountSupplier,
-				defaultAccountSupplier)));
-		return accountSupplier;
 	}
 
 	private void send0(final Supplier<EmailAccount> accountSupplier, final Email email) throws IOException {
@@ -551,10 +539,6 @@ public class DefaultEmailLogic implements EmailLogic {
 			emailService = EMAIL_SERVICE_FOR_INVALID_PROCESS_ID;
 		}
 		return emailService;
-	}
-
-	private StoreSupplier<EmailAccount> defaultAccountSupplier() {
-		return StoreSupplier.of(EmailAccount.class, emailAccountStore, isDefault());
 	}
 
 	@Override

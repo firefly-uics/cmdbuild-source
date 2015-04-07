@@ -12,7 +12,7 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import org.cmdbuild.data.store.Storable;
 import org.cmdbuild.data.store.Store;
 import org.cmdbuild.data.store.email.DefaultEmailAccount;
-import org.cmdbuild.services.email.EmailAccount;
+import org.cmdbuild.data.store.email.EmailAccount;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 

@@ -1,4 +1,4 @@
-package org.cmdbuild.services.email;
+package org.cmdbuild.data.store.email;
 
 import org.cmdbuild.data.store.Storable;
 
