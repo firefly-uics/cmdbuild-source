@@ -62,7 +62,14 @@
 		 */
 		onActivityInstanceChange: Ext.emptyFn,
 
-		onAddCardButtonClick: Ext.emptyFn,
+		/**
+		 * Enable action shouldn't be needed but on addCardButtoClick is fired also onProcessInstanceChange event
+		 */
+		onAddCardButtonClick: function() { // TODO da fare in modo che non si disabiliti nel caso ci sia il widget configurato
+_debug('tab onAddCardButtonClick', this.view);
+			if (this.view)
+				this.view.setDisabled(true);
+		},
 
 		onCardSelected: Ext.emptyFn,
 
@@ -82,29 +89,29 @@
 		},
 
 		/**
-		 * @param {CMDBuild.cache.CMEntryTypeModel} entryType
+		 * Equals to onEntryTypeSelected in classes
 		 *
-		 * TODO: aka onEntryTypeSelected
+		 * @param {CMDBuild.cache.CMEntryTypeModel} entryType
 		 */
 		onProcessClassRefChange: function(entryType) {
-_debug('onProcessInstanceChange entryType', entryType);
+_debug('tab onProcessClassRefChange entryType', entryType);
 			if (this.view)
 				this.view.setDisabled(true);
 		},
 
 		/**
-		 * @param {CMDBuild.model.CMProcessInstance} processIstance
+		 * Equals to onCardSelected in classes
 		 *
-		 * TODO: aka onCardSelected
+		 * @param {CMDBuild.model.CMProcessInstance} processIstance
 		 */
 		onProcessInstanceChange: function(processIstance) {
-_debug('onProcessInstanceChange entryType', processIstance);
+_debug('tab onProcessInstanceChange entryType', processIstance);
 			this.setSelectedEntity(processIstance);
 
 			this.controllerGrid.storeLoad();
 
 			// TODO: Enable/Disable checking configuration for widget (getConfiguration)
-			if (this.view)
+			if (this.view && !processIstance.isNew())
 				this.view.setDisabled(false);
 		},
 
@@ -112,6 +119,7 @@ _debug('onProcessInstanceChange entryType', processIstance);
 		 * Launch regeneration on save button click and send all draft emails
 		 */
 		onSaveCardClick: function() {
+_debug('tab onSaveCardClick');
 			this.flagPerformSaveAction = true;
 
 			if (!this.grid.getStore().isLoading())

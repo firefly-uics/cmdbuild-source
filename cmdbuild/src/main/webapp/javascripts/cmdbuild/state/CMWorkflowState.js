@@ -70,7 +70,7 @@
 			"className",
 			"endDate",
 			"flowStatus",
-			{name: "id", type: "integer"},
+			{name: "id", type: "integer", useNull: true },
 			{name: "classId", type: "integer"},
 			{name: "values", type: "auto"},
 			{name: "activityInstanceInfoList", type: "auto"}
@@ -106,7 +106,7 @@
 
 			return out;
 		},
- 
+
 		getActivityInfoList: function() {
 			return this.get("activityInstanceInfoList") || [];
 		},
@@ -202,7 +202,7 @@
 				setProcessInstance: function(pi, cb) {
 					processInstance = pi;
 
-					var processClassRefIsASuperclass = (processClassRef 
+					var processClassRefIsASuperclass = (processClassRef
 							&& processClassRef.isSuperClass());
 
 					var me = this;
