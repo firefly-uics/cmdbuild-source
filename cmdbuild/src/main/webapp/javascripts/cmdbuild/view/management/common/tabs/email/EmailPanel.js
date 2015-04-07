@@ -12,9 +12,8 @@
 		delegate: undefined,
 
 		border: false,
-
-		disabled: true,
 		cls: 'x-panel-body-default-framed',
+		disabled: true,
 		frame: false,
 		layout: 'fit',
 		title: CMDBuild.Translation.email

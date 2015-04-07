@@ -57,7 +57,7 @@
 		 */
 		defaultConfiguration: {
 			noSubjectPrefix: false,
-			readOnly: false,
+			readOnly: true,
 			required: false,
 			templates: []
 		},
