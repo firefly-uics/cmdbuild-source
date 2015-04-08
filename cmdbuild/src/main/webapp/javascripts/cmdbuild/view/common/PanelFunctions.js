@@ -3,7 +3,7 @@
 	/**
 	 * New class than will replace CMFormFunctions
 	 */
-	Ext.define('CMDBuild.view.common.FormFunctions', {
+	Ext.define('CMDBuild.view.common.PanelFunctions', {
 
 		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
 

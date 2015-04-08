@@ -1,5 +1,9 @@
 (function() {
 
+	// Requires all widget controllers to avoid to include manually
+	// TODO: rename of this class to use property "requires"
+	Ext.require('CMDBuild.controller.management.common.widgets.ManageEmail');
+
 	Ext.define("CMDBuild.controller.management.common.CMWidgetManagerController", {
 
 		constructor: function(view) {
@@ -236,7 +240,7 @@
 		var commonControllers = CMDBuild.controller.management.common.widgets;
 
 		me.controllerClasses = {};
-		me.controllerClasses['.ManageEmail'] = CMDBuild.controller.management.common.widgets.manageEmail.ManageEmail;
+		me.controllerClasses['.ManageEmail'] = CMDBuild.controller.management.common.widgets.ManageEmail;
 
 		function addControllerClass(controller) {
 			me.controllerClasses[controller.WIDGET_NAME] = controller;

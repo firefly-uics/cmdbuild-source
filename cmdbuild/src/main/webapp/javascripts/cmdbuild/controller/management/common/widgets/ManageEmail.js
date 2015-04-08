@@ -1,6 +1,6 @@
 (function () {
 
-	Ext.define('CMDBuild.controller.management.common.widgets.manageEmail.ManageEmail', {
+	Ext.define('CMDBuild.controller.management.common.widgets.ManageEmail', {
 		extend: 'CMDBuild.controller.management.common.widgets.CMWidgetController',
 
 		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
@@ -9,7 +9,10 @@
 			observable: 'Ext.util.Observable'
 		},
 
-		card: undefined, // TODO da configurare
+		/**
+		 * @property {CMDBuild.model.CMActivityInstance or Ext.data.Model}
+		 */
+		card: undefined,
 
 		/**
 		 * @property {Ext.form.Basic}
@@ -20,6 +23,11 @@
 		 * @cfg {CMDBuild.controller.management.common.CMWidgetManagerController}
 		 */
 		ownerController: undefined,
+
+		/**
+		 * @property {CMDBuild.controller.management.common.tabs.email.Email}
+		 */
+		tabController: undefined,
 
 		/**
 		 * @property {CMDBuild.view.management.common.tabs.email.EmailPanel}
@@ -36,7 +44,7 @@
 		 * @param {CMDBuild.controller.management.common.CMWidgetManagerController} ownerController
 		 * @param {Object} widgetConf
 		 * @param {Ext.form.Basic} clientForm
-		 * @param {CMDBuild.model.CMActivityInstance} card
+		 * @param {CMDBuild.model.CMActivityInstance or Ext.data.Model} card
 		 *
 		 * @override
 		 */
@@ -45,7 +53,9 @@
 
 			this.callParent(arguments);
 
-			this.view.delegate.setConfiguration(widgetConf);
+			this.tabController = this.view.delegate;
+
+			this.tabController.configurationSet(widgetConf);
 		},
 
 //		/**
@@ -60,7 +70,7 @@
 		 */
 		getData: function() {
 			var out = {};
-//			out[CMDBuild.core.proxy.CMProxyConstants.OUTPUT] = this.getActivityId();
+			out[CMDBuild.core.proxy.CMProxyConstants.OUTPUT] = this.tabController.getSelectedEntityId();
 
 			return out;
 		},

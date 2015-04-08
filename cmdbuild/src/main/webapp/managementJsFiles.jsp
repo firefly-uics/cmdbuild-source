@@ -138,7 +138,6 @@
 
 		<!-- WIDGETS -->
 		<script type="text/javascript" src="javascripts/cmdbuild/controller/management/common/widgets/linkCards/LinkCardsController.js"></script>
-		<script type="text/javascript" src="javascripts/cmdbuild/controller/management/common/widgets/manageEmail/ManageEmail.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/controller/management/common/widgets/grid/Main.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/controller/management/common/widgets/CMNavigationTreeController.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/controller/management/common/widgets/CMWidgetController.js"></script>
