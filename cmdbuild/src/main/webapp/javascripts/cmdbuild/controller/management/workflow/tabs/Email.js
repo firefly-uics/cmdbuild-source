@@ -127,7 +127,7 @@
 		onProcessInstanceChange: function(processIstance) {
 			if (!Ext.isEmpty(processIstance)) {
 				this.configurationReset();
-				this.setSelectedEntity(processIstance);
+				this.selectedEntitySet(processIstance);
 
 				this.controllerGrid.storeLoad();
 

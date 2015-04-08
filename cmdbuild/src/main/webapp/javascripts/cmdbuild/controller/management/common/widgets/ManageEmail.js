@@ -70,7 +70,7 @@
 		 */
 		getData: function() {
 			var out = {};
-			out[CMDBuild.core.proxy.CMProxyConstants.OUTPUT] = this.tabController.getSelectedEntityId();
+			out[CMDBuild.core.proxy.CMProxyConstants.OUTPUT] = this.tabController.selectedEntityGet();
 
 			return out;
 		},

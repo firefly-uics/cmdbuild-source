@@ -34,10 +34,10 @@
 			'getEditMode',
 			'getGlobalLoadMask',
 			'getMainController',
-			'getSelectedEntityId',
 			'onEmailPanelShow',
 			'onGlobalRegenerationButtonClick',
-			'onModifyCardClick'
+			'onModifyCardClick',
+			'selectedEntityGet'
 		],
 
 		/**
@@ -65,7 +65,10 @@
 			templates: []
 		},
 
-		editModeFlag: false, // TODO
+		/**
+		 * @property {Boolean}
+		 */
+		editModeFlag: false,
 
 		/**
 		 * All templates I have in configuration and grid
@@ -214,7 +217,7 @@
 		 */
 		constructor: function(configObject) {
 			this.configurationReset();
-			this.setSelectedEntity(configObject.selectedEntity);
+			this.selectedEntitySet(configObject.selectedEntity);
 
 			delete configObject.selectedEntity;
 
@@ -498,18 +501,6 @@
 			return this;
 		},
 
-		/**
-		 * @return {Number}
-		 */
-		getSelectedEntityId: function() { // TODO rinominare con selectedEntityGet
-			if (Ext.isEmpty(this.selectedEntity)) {
-				_msg('WARNING CMDBuild.controller.management.common.tabs.email.Email: Selected entity object is empty');
-
-				return null;
-			}
-
-			return this.selectedEntity.get(CMDBuild.core.proxy.CMProxyConstants.ID);
-		},
 // TODO spostare nel widget
 //		/**
 //		 * Used to mark widget as busy during regenerations, especially useful for getData() regeneration
@@ -746,9 +737,9 @@
 							values = Ext.Object.merge(record.getData(), values);
 
 						emailObject = Ext.create('CMDBuild.model.common.tabs.email.Email', values);
-						emailObject.set(CMDBuild.core.proxy.CMProxyConstants.REFERENCE, me.getSelectedEntityId());
+						emailObject.set(CMDBuild.core.proxy.CMProxyConstants.REFERENCE, me.selectedEntityGet());
 						emailObject.set(CMDBuild.core.proxy.CMProxyConstants.TEMPLATE, template.get(CMDBuild.core.proxy.CMProxyConstants.KEY));
-						emailObject.set(CMDBuild.core.proxy.CMProxyConstants.TEMPORARY, this.cmfg('getSelectedEntityId') < 0); // Setup temporary parameter
+						emailObject.set(CMDBuild.core.proxy.CMProxyConstants.TEMPORARY, this.cmfg('selectedEntityGet') < 0); // Setup temporary parameter
 
 						me.self.trafficLightSlotBuild(emailObject, regenerationTrafficLightArray);
 
@@ -770,52 +761,66 @@
 			}
 		},
 
+		// SelectedEntity property functions
+			/**
+			 * @return {Number}
+			 */
+			selectedEntityGet: function() {
+				if (Ext.isEmpty(this.selectedEntity)) {
+					_msg('WARNING CMDBuild.controller.management.common.tabs.email.Email: Selected entity object is empty');
+
+					return null;
+				}
+
+				return this.selectedEntity.get(CMDBuild.core.proxy.CMProxyConstants.ID);
+			},
+
+			/**
+			 * Creates SelectedEntity object and bind relative original object
+			 *
+			 * @param {Mixed} selectedEntity
+			 */
+			selectedEntitySet: function(selectedEntity) {
+				if (Ext.isEmpty(selectedEntity)) {
+					var params = {};
+					params[CMDBuild.core.proxy.CMProxyConstants.NOT_POSITIVES] = true;
+
+					CMDBuild.core.proxy.Utils.generateId({
+						params: params,
+						scope: this,
+						success: function(response, options, decodedResponse) {
+							this.selectedEntity = Ext.create('CMDBuild.model.common.tabs.email.SelectedEntity', {
+								id: decodedResponse.response
+							});
+						}
+					});
+				} else if (Ext.isEmpty(selectedEntity.get(CMDBuild.core.proxy.CMProxyConstants.ID))) {
+					var params = {};
+					params[CMDBuild.core.proxy.CMProxyConstants.NOT_POSITIVES] = true;
+
+					CMDBuild.core.proxy.Utils.generateId({
+						params: params,
+						scope: this,
+						success: function(response, options, decodedResponse) {
+							this.selectedEntity = Ext.create('CMDBuild.model.common.tabs.email.SelectedEntity', {
+								id: decodedResponse.response,
+								entity: selectedEntity
+							});
+						}
+					});
+				} else {
+					this.selectedEntity = Ext.create('CMDBuild.model.common.tabs.email.SelectedEntity', {
+						id: selectedEntity.get(CMDBuild.core.proxy.CMProxyConstants.ID),
+						entity: selectedEntity
+					});
+				}
+			},
+
 		/**
 		 * @param {Boolean} mode
 		 */
 		setEditMode: function(mode) {
 			this.editModeFlag = Ext.isBoolean(mode) ? mode : false;
-		},
-
-		/**
-		 * Creates SelectedEntity object and bind relative original object
-		 *
-		 * @param {Mixed} selectedEntity
-		 */
-		setSelectedEntity: function(selectedEntity) { // TODO rename con selectedEntitySet
-			if (Ext.isEmpty(selectedEntity)) {
-				var params = {};
-				params[CMDBuild.core.proxy.CMProxyConstants.NOT_POSITIVES] = true;
-
-				CMDBuild.core.proxy.Utils.generateId({
-					params: params,
-					scope: this,
-					success: function(response, options, decodedResponse) {
-						this.selectedEntity = Ext.create('CMDBuild.model.common.tabs.email.SelectedEntity', {
-							id: decodedResponse.response
-						});
-					}
-				});
-			} else if (Ext.isEmpty(selectedEntity.get(CMDBuild.core.proxy.CMProxyConstants.ID))) {
-				var params = {};
-				params[CMDBuild.core.proxy.CMProxyConstants.NOT_POSITIVES] = true;
-
-				CMDBuild.core.proxy.Utils.generateId({
-					params: params,
-					scope: this,
-					success: function(response, options, decodedResponse) {
-						this.selectedEntity = Ext.create('CMDBuild.model.common.tabs.email.SelectedEntity', {
-							id: decodedResponse.response,
-							entity: selectedEntity
-						});
-					}
-				});
-			} else {
-				this.selectedEntity = Ext.create('CMDBuild.model.common.tabs.email.SelectedEntity', {
-					id: selectedEntity.get(CMDBuild.core.proxy.CMProxyConstants.ID),
-					entity: selectedEntity
-				});
-			}
 		}
 	});
 
