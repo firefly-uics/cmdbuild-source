@@ -53,10 +53,9 @@
 
 		/**
 		 * @param {Object} configObject
-		 * @param {Mixed} configObject.parentDelegate - CMModCardController or CMModWorkflowController
-		 * @param {CMDBuild.model.common.tabs.email.SelectedEntity} configObject.selectedEntity - Card in edit
-		 * @param {Mixed} configObject.ownerEntityobject - card or activity
-		 * @param {Mixed} configObject.widgetConf
+		 * @param {Mixed} configObject.parentDelegate - CMModCardController
+		 * @param {Mixed} configObject.selectedEntity - Card in edit
+		 * @param {Mixed} configObject.clientForm
 		 */
 		constructor: function(configObject) {
 			this.mixins.observable.constructor.call(this, arguments);
@@ -90,7 +89,7 @@
 
 			_CMCardModuleState.addDelegate(this.cardStateDelegate);
 
-			if (this.view)
+			if (!Ext.isEmpty(this.view))
 				this.mon(this.view, 'destroy', function(view) {
 					_CMCardModuleState.removeDelegate(me.cardStateDelegate);
 
@@ -98,11 +97,18 @@
 				}, this);
 		},
 
+		onAbortCardClick: function() {
+			this.setEditMode(false);
+		},
+
 		/**
 		 * Enable action shouldn't be needed but on addCardButtoClick is fired also onCardSelect event
 		 */
 		onAddCardButtonClick: function() {
-			if (this.view)
+			this.setEditMode(true);
+			this.controllerGrid.setUiState();
+
+			if (!Ext.isEmpty(this.view))
 				this.view.setDisabled(true);
 		},
 
@@ -115,12 +121,14 @@
 			this.controllerGrid.storeLoad();
 
 			// TODO: Enable/Disable tab with server call response
-			if (this.view && !Ext.isEmpty(card))
+			if (!Ext.isEmpty(this.view)) {
 				this.view.setDisabled(false);
+				this.setEditMode(Ext.isEmpty(card)); // Enable/Disable tab based on model state to separate create/view mode
+			}
 		},
 
 		onCloneCard: function() {
-			if (this.view)
+			if (!Ext.isEmpty(this.view))
 				this.view.setDisabled(true);
 		},
 
@@ -131,12 +139,18 @@
 		 */
 		onEntryTypeSelected: function(entryType, dc, filter) {
 			this.entryType = entryType;
+
+			this.setEditMode(false);
 		},
 
 		/**
 		 * Initialize tab to apply all events on form fields
+		 *
+		 * @override
 		 */
 		onModifyCardClick: function() {
+			this.callParent(arguments);
+
 			if (!this.grid.getStore().isLoading())
 				this.controllerGrid.storeLoad(true, true);
 		},

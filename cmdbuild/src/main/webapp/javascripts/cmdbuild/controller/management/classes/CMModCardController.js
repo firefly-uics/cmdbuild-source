@@ -366,6 +366,13 @@
 		},
 
 		/**
+		 * Forward onAbortCardClick event to email tab controller
+		 */
+		onAbortCardClick: function() {
+			this.controllerTabEmail.onAbortCardClick();
+		},
+
+		/**
 		 * Forward onModifyCardClick event to email tab controller
 		 */
 		onModifyCardClick: function() {

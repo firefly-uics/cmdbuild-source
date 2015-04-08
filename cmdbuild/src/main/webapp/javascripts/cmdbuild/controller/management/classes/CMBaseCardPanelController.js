@@ -162,7 +162,7 @@
 				IdClass: me.entryType.get("id")
 			};
 
-			this.callParent(arguments); // FOrward save event
+			this.callParent(arguments); // Forward save event
 
 			me.fireEvent(me.CMEVENTS.cardSaved, cardData);
 		},
@@ -173,6 +173,8 @@
 			} else {
 				this.onCardSelected(this.card);
 			}
+
+			this.callParent(arguments); // Forward save event
 
 			this.fireEvent(this.CMEVENTS.abortedModify);
 		},
