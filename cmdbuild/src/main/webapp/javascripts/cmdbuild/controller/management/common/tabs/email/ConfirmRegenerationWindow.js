@@ -134,7 +134,7 @@
 							attributes: Ext.Object.getKeys(xaVars),
 							callback: function(values, ctx) {
 								emailObject = Ext.create('CMDBuild.model.common.tabs.email.Email', values);
-								emailObject.set(CMDBuild.core.proxy.CMProxyConstants.REFERENCE, me.cmfg('getSelectedEntityId'));
+								emailObject.set(CMDBuild.core.proxy.CMProxyConstants.REFERENCE, me.cmfg('selectedEntityGet'));
 								emailObject.set(CMDBuild.core.proxy.CMProxyConstants.TEMPLATE, template.get(CMDBuild.core.proxy.CMProxyConstants.KEY));
 
 								me.gridStore.add(emailObject);

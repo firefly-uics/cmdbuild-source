@@ -88,8 +88,8 @@
 			recordValues = recordValues || {};
 			recordValues[CMDBuild.core.proxy.CMProxyConstants.KEEP_SYNCHRONIZATION] = false;
 			recordValues[CMDBuild.core.proxy.CMProxyConstants.NO_SUBJECT_PREFIX] = recordValues.hasOwnProperty(CMDBuild.core.proxy.CMProxyConstants.NO_SUBJECT_PREFIX) ? recordValues[CMDBuild.core.proxy.CMProxyConstants.NO_SUBJECT_PREFIX] : this.cmfg('configurationGet')[CMDBuild.core.proxy.CMProxyConstants.NO_SUBJECT_PREFIX];
-			recordValues[CMDBuild.core.proxy.CMProxyConstants.REFERENCE] = this.cmfg('getSelectedEntityId');
-			recordValues[CMDBuild.core.proxy.CMProxyConstants.TEMPORARY] = this.cmfg('getSelectedEntityId') < 0; // Setup temporary parameter
+			recordValues[CMDBuild.core.proxy.CMProxyConstants.REFERENCE] = this.cmfg('selectedEntityGet');
+			recordValues[CMDBuild.core.proxy.CMProxyConstants.TEMPORARY] = this.cmfg('selectedEntityGet') < 0; // Setup temporary parameter
 
 			return Ext.create('CMDBuild.model.common.tabs.email.Email', recordValues);
 		},
@@ -233,7 +233,7 @@
 			replyRecordData[CMDBuild.core.proxy.CMProxyConstants.KEEP_SYNCHRONIZATION] = false;
 			replyRecordData[CMDBuild.core.proxy.CMProxyConstants.NOTIFY_WITH] = record.get(CMDBuild.core.proxy.CMProxyConstants.NOTIFY_WITH);
 			replyRecordData[CMDBuild.core.proxy.CMProxyConstants.NO_SUBJECT_PREFIX] = record.get(CMDBuild.core.proxy.CMProxyConstants.NO_SUBJECT_PREFIX);
-			replyRecordData[CMDBuild.core.proxy.CMProxyConstants.REFERENCE] = this.cmfg('getSelectedEntityId');
+			replyRecordData[CMDBuild.core.proxy.CMProxyConstants.REFERENCE] = this.cmfg('selectedEntityGet');
 			replyRecordData[CMDBuild.core.proxy.CMProxyConstants.SUBJECT] = 'RE: ' + record.get(CMDBuild.core.proxy.CMProxyConstants.SUBJECT);
 			replyRecordData[CMDBuild.core.proxy.CMProxyConstants.TO] = record.get(CMDBuild.core.proxy.CMProxyConstants.FROM) || record.get(CMDBuild.core.proxy.CMProxyConstants.TO);
 
@@ -358,7 +358,7 @@
 				this.parentDelegate.isWidgetBusy = true; // Setup widget busy state and the begin of store load
 
 				var params = {};
-				params[CMDBuild.core.proxy.CMProxyConstants.REFERENCE] = this.cmfg('getSelectedEntityId');
+				params[CMDBuild.core.proxy.CMProxyConstants.REFERENCE] = this.cmfg('selectedEntityGet');
 
 				this.view.getStore().load({
 					params: params,

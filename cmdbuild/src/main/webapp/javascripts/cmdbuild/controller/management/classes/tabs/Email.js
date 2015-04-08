@@ -116,7 +116,7 @@
 		 * @param {Ext.data.Model} card
 		 */
 		onCardSelected: function(card) {
-			this.setSelectedEntity(card);
+			this.selectedEntitySet(card);
 
 			this.controllerGrid.storeLoad();
 
