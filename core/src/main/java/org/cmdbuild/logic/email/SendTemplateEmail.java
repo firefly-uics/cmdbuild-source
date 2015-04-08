@@ -1,7 +1,6 @@
 package org.cmdbuild.logic.email;
 
 import static com.google.common.base.Splitter.on;
-import static com.google.common.base.Suppliers.ofInstance;
 import static com.google.common.reflect.Reflection.newProxy;
 import static java.util.Collections.emptyList;
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
@@ -148,6 +147,11 @@ public class SendTemplateEmail implements Action {
 		}
 
 		@Override
+		public String getAccount() {
+			return delegate.getAccount();
+		}
+
+		@Override
 		public long getDelay() {
 			return 0;
 		}
@@ -168,8 +172,7 @@ public class SendTemplateEmail implements Action {
 
 	@Override
 	public void execute() {
-		final EmailAccount emailAccount = emailAccoutSupplier.get();
-		final EmailService emailService = emailServiceFactory.create(ofInstance(emailAccount));
+		final EmailService emailService = emailServiceFactory.create(emailAccoutSupplier);
 		final Template template = emailTemplateSupplier.get();
 		emailService.send(new TemplateAdapter(template, templateResolver));
 	}
