@@ -180,6 +180,13 @@
 		},
 
 		/**
+		 * Forward onAbortCardClick event to email tab controller
+		 */
+		onAbortCardClick: function() {
+			this.controllerTabEmail.onAbortCardClick();
+		},
+
+		/**
 		 * Forward onAddCardButtonClick event to email tab controller
 		 */
 		onAddCardButtonClick: function() {
@@ -236,11 +243,13 @@ _debug('CMModWorkflowController onSaveCardClick');
 		setEntryType: function(entryTypeId, danglingCard) {
 			var entryType = _CMCache.getEntryTypeById(entryTypeId);
 
-			_CMWFState.setProcessClassRef(entryType, danglingCard);
+			_CMWFState.setProcessClassRef(entryType, danglingCard, false);
 
 			this.view.updateTitleForEntry(entryType);
 
 			_CMUIState.onlyGridIfFullScreen();
+
+			this.view.activateFirstTab();
 		}
 	});
 

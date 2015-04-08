@@ -158,6 +158,8 @@
 				this.onActivityInstanceChange(activityInstance);
 			}
 
+			this.callParent(arguments); // Forward save event
+
 			_CMUIState.onlyGridIfFullScreen();
 		},
 
@@ -342,13 +344,15 @@
 				_debug("save the process with params", requestParams);
 
 				CMDBuild.LoadMask.get().show();
-
 				CMDBuild.ServiceProxy.workflow.saveActivity({
 					params: requestParams,
 					scope : this,
 					clientValidation: this.isAdvance, //to force the save request
 					callback: function(operation, success, response) {
 						CMDBuild.LoadMask.get().hide();
+					},
+					failure: function(response, options, decodedResponse) {
+						this.delegate.reload(); // Reload store also on failure
 					},
 					success: function(operation, requestConfiguration, decodedResponse) {
 						var savedCardId = decodedResponse.response.Id;
