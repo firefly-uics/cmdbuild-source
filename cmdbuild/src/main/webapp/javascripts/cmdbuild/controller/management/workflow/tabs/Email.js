@@ -49,10 +49,9 @@
 
 		/**
 		 * @param {Object} configObject
-		 * @param {Mixed} configObject.parentDelegate - CMModCardController or CMModWorkflowController
+		 * @param {Mixed} configObject.parentDelegate - CMModWorkflowController
 		 * @param {Mixed} configObject.selectedEntity - Activity in edit
-		 * @param {Mixed} configObject.ownerEntityobject - card or activity
-		 * @param {Mixed} configObject.widgetConf
+		 * @param {Mixed} configObject.clientForm
 		 */
 		constructor: function(configObject) {
 			this.mixins.observable.constructor.call(this, arguments);
@@ -74,19 +73,22 @@
 		 */
 		onActivityInstanceChange: Ext.emptyFn,
 
+		onAbortCardClick: function() {
+			this.setEditMode(false);
+		},
+
 		/**
 		 * Enable action shouldn't be needed but on addCardButtoClick is fired also onProcessInstanceChange event
 		 */
-		onAddCardButtonClick: function() { // TODO da fare in modo che non si disabiliti nel caso ci sia il widget configurato
-_debug('tab onAddCardButtonClick', this.view);
-			if (this.view)
+		onAddCardButtonClick: function() {
+			if (!Ext.isEmpty(this.view))
 				this.view.setDisabled(true);
 		},
 
 		onCardSelected: Ext.emptyFn,
 
 		onCloneCard: function() {
-			if (this.view)
+			if (!Ext.isEmpty(this.view))
 				this.view.setDisabled(true);
 		},
 
@@ -94,8 +96,12 @@ _debug('tab onAddCardButtonClick', this.view);
 
 		/**
 		 * Initialize tab to apply all events on form fields
+		 *
+		 * @override
 		 */
 		onModifyCardClick: function() {
+			this.callParent(arguments);
+
 			if (!this.grid.getStore().isLoading())
 				this.controllerGrid.storeLoad(true, true);
 		},
@@ -106,32 +112,36 @@ _debug('tab onAddCardButtonClick', this.view);
 		 * @param {CMDBuild.cache.CMEntryTypeModel} entryType
 		 */
 		onProcessClassRefChange: function(entryType) {
-_debug('tab onProcessClassRefChange entryType', entryType);
-			if (this.view)
+			this.setEditMode(false);
+
+			if (!Ext.isEmpty(this.view))
 				this.view.setDisabled(true);
 		},
 
 		/**
-		 * Equals to onCardSelected in classes
+		 * Equals to onCardSelected in classes.
+		 * N.B. Enable/Disable email tab is done by widget configurationSet
 		 *
 		 * @param {CMDBuild.model.CMProcessInstance} processIstance
 		 */
 		onProcessInstanceChange: function(processIstance) {
-_debug('tab onProcessInstanceChange entryType', processIstance);
-			this.setSelectedEntity(processIstance);
+			if (!Ext.isEmpty(processIstance)) {
+				this.configurationReset();
+				this.setSelectedEntity(processIstance);
 
-			this.controllerGrid.storeLoad();
+				this.controllerGrid.storeLoad();
 
-			// TODO: Enable/Disable checking configuration for widget (getConfiguration)
-			if (this.view && !processIstance.isNew())
-				this.view.setDisabled(false);
+				if (!Ext.isEmpty(this.view))
+					this.setEditMode(processIstance.isNew()); // Enable/Disable tab based on model new state to separate create/view mode
+			} else {
+				_msg('ERROR CMDBuild.controller.management.workflow.tabs.Email: empty processIstance on onProcessInstanceChange');
+			}
 		},
 
 		/**
 		 * Launch regeneration on save button click and send all draft emails
 		 */
 		onSaveCardClick: function() {
-_debug('tab onSaveCardClick');
 			this.flagPerformSaveAction = true;
 
 			if (!this.grid.getStore().isLoading())

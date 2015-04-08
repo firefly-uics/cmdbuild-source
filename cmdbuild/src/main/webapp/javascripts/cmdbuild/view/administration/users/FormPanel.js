@@ -9,7 +9,7 @@
 		],
 
 		mixins: {
-			formFunctions: 'CMDBuild.view.common.FormFunctions'
+			panelFunctions: 'CMDBuild.view.common.PanelFunctions'
 		},
 
 		/**
