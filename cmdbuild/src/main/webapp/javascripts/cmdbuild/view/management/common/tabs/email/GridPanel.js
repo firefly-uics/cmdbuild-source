@@ -8,6 +8,10 @@
 			'CMDBuild.core.proxy.common.tabs.email.Email'
 		],
 
+		mixins: {
+			panelFunctions: 'CMDBuild.view.common.PanelFunctions'
+		},
+
 		/**
 		 * @cfg {CMDBuild.controller.management.common.tabs.email.Grid}
 		 */
@@ -32,7 +36,10 @@
 							{
 								iconCls: 'add',
 								text: CMDBuild.Translation.composeEmail,
-								disabled: this.delegate.cmfg('getConfiguration')[CMDBuild.core.proxy.CMProxyConstants.READ_ONLY],
+								disabled: (
+									this.delegate.cmfg('configurationGet')[CMDBuild.core.proxy.CMProxyConstants.READ_ONLY]
+									|| !this.delegate.cmfg('getEditMode')
+								),
 
 								handler: function(button, e) {
 									me.delegate.cmfg('onGridAddEmailButtonClick');
@@ -41,7 +48,10 @@
 							{
 								iconCls: 'x-tbar-loading',
 								text: CMDBuild.Translation.regenerateEmail,
-								disabled: this.delegate.cmfg('getConfiguration')[CMDBuild.core.proxy.CMProxyConstants.READ_ONLY],
+								disabled: (
+									this.delegate.cmfg('configurationGet')[CMDBuild.core.proxy.CMProxyConstants.READ_ONLY]
+									|| !this.delegate.cmfg('getEditMode')
+								),
 
 								handler: function(button, e) {
 									Ext.Msg.show({ // Ask to the user if is sure to delete all the unsent e-mails before
@@ -115,7 +125,8 @@
 
 								isDisabled: function(grid, rowIndex, colIndex, item, record) {
 									return (
-										this.delegate.cmfg('getConfiguration')[CMDBuild.core.proxy.CMProxyConstants.READ_ONLY]
+										this.delegate.cmfg('configurationGet')[CMDBuild.core.proxy.CMProxyConstants.READ_ONLY]
+										|| !this.delegate.cmfg('getEditMode')
 										|| !this.delegate.recordIsEditable(record)
 										|| !this.delegate.isRegenerable(record)
 										|| !record.get(CMDBuild.core.proxy.CMProxyConstants.KEEP_SYNCHRONIZATION)
@@ -138,12 +149,16 @@
 								tooltip: CMDBuild.Translation.reply,
 								scope: this,
 
-								isDisabled: function(grid, rowIndex, colIndex, item, record) {
-									return this.delegate.cmfg('getConfiguration')[CMDBuild.core.proxy.CMProxyConstants.READ_ONLY] || this.delegate.recordIsEditable(record);
-								},
-
 								handler: function(grid, rowIndex, colIndex, node, e, record, rowNode) {
 									this.delegate.cmfg('onGridReplyEmailButtonClick', record);
+								},
+
+								isDisabled: function(grid, rowIndex, colIndex, item, record) {
+									return (
+										this.delegate.cmfg('configurationGet')[CMDBuild.core.proxy.CMProxyConstants.READ_ONLY]
+										|| !this.delegate.cmfg('getEditMode')
+										|| this.delegate.recordIsEditable(record)
+									);
 								}
 							}
 						]
@@ -167,7 +182,11 @@
 								},
 
 								isDisabled: function(grid, rowIndex, colIndex, item, record) {
-									return this.delegate.cmfg('getConfiguration')[CMDBuild.core.proxy.CMProxyConstants.READ_ONLY] || !this.delegate.recordIsSendable(record);
+									return (
+										this.delegate.cmfg('configurationGet')[CMDBuild.core.proxy.CMProxyConstants.READ_ONLY]
+										|| !this.delegate.cmfg('getEditMode')
+										|| !this.delegate.recordIsSendable(record)
+									);
 								}
 							}
 						]
@@ -191,7 +210,11 @@
 								},
 
 								isDisabled: function(grid, rowIndex, colIndex, item, record) {
-									return !this.delegate.recordIsEditable(record) || this.delegate.cmfg('getConfiguration')[CMDBuild.core.proxy.CMProxyConstants.READ_ONLY];
+									return (
+										this.delegate.cmfg('configurationGet')[CMDBuild.core.proxy.CMProxyConstants.READ_ONLY]
+										|| !this.delegate.cmfg('getEditMode')
+										|| !this.delegate.recordIsEditable(record)
+									);
 								}
 							}
 						]
@@ -235,7 +258,11 @@
 								},
 
 								isDisabled: function(grid, rowIndex, colIndex, item, record) {
-									return !this.delegate.recordIsEditable(record) || this.delegate.cmfg('getConfiguration')[CMDBuild.core.proxy.CMProxyConstants.READ_ONLY];
+									return (
+										this.delegate.cmfg('configurationGet')[CMDBuild.core.proxy.CMProxyConstants.READ_ONLY]
+										|| !this.delegate.cmfg('getEditMode')
+										|| !this.delegate.recordIsEditable(record)
+									);
 								}
 							}
 						]
