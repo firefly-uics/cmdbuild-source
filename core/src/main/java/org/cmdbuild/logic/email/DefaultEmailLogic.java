@@ -317,6 +317,11 @@ public class DefaultEmailLogic implements EmailLogic {
 		}
 
 		@Override
+		public String getAccount() {
+			return delegate.getAccount();
+		}
+
+		@Override
 		public long getDelay() {
 			return delegate.getDelay();
 		}
