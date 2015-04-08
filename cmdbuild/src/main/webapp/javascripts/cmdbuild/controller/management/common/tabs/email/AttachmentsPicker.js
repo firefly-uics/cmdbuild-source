@@ -46,7 +46,7 @@
 		selectedClass: undefined,
 
 		/**
-		 * @property {CMDBuild.view.management.common.widgets.manageEmail.attachments.PickerWindow}
+		 * @property {CMDBuild.view.management.common.tabs.email.attachments.picker.MainWindow}
 		 */
 		view: undefined,
 
