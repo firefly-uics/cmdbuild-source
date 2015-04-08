@@ -11,7 +11,7 @@
 		delegate: undefined,
 
 		/**
-		 * @property {CMDBuild.view.management.common.widgets.manageEmail.attachments.picker.AttachmentGrid}
+		 * @property {CMDBuild.view.management.common.tabs.email.attachments.picker.AttachmentGrid}
 		 */
 		attachmentGrid: undefined,
 
@@ -57,7 +57,7 @@
 				region: 'center'
 			});
 
-			this.attachmentGrid = Ext.create('CMDBuild.view.management.common.widgets.manageEmail.attachments.picker.AttachmentGrid', {
+			this.attachmentGrid = Ext.create('CMDBuild.view.management.common.tabs.email.attachments.picker.AttachmentGrid', {
 				delegate: this.delegate,
 				region: 'south',
 				height: '30%'

@@ -85,11 +85,6 @@
 			});
 		},
 
-		/**
-		 * @param {CMDBuild.view.management.common.widgets.email.EmailWindow} emailWindow
-		 * @param {Object} form
-		 * @param {Mixed} emailRecord
-		 */
 		onAttachmentChangeFile: function() {
 			var params = {};
 			params[CMDBuild.core.proxy.CMProxyConstants.EMAIL_ID] = this.record.get(CMDBuild.core.proxy.CMProxyConstants.ID);
@@ -109,7 +104,7 @@
 		},
 
 		/**
-		 * @param {CMDBuild.view.management.common.widgets.manageEmail.emailWindow.FileAttacchedPanel} attachmentPanel
+		 * @param {CMDBuild.view.management.common.tabs.email.attachments.FileAttacchedPanel} attachmentPanel
 		 */
 		onAttachmentRemoveButtonClick: function(attachmentPanel) {
 			var params = {};
