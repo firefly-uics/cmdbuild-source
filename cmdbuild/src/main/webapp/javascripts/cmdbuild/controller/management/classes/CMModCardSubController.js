@@ -31,12 +31,25 @@ Ext.define("CMDBuild.controller.management.classes.CMModCardSubController", {
 
 	onAddCardButtonClick: function(classIdOfNewCard) {},
 
-	onSaveSuccess: function() {
-		this.superController.onSaveCardClick(); // Forward save event
+	/**
+	 * Forward onAbortCardClick event to superController
+	 */
+	onAbortCardClick: function() {
+		this.superController.onAbortCardClick(); // Forward abort event
 	},
 
+	/**
+	 * Forward onModifyCardClick event to superController
+	 */
 	onModifyCardClick: function() {
 		this.superController.onModifyCardClick(); // Forward modify event
+	},
+
+	/**
+	 * Forward onSaveSuccess event to superController
+	 */
+	onSaveSuccess: function() {
+		this.superController.onSaveCardClick(); // Forward save event
 	},
 
 	onShowGraphClick: function() {
