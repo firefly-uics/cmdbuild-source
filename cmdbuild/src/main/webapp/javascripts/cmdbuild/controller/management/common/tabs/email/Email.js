@@ -30,12 +30,14 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
-			'getConfiguration',
+			'configurationGet',
+			'getEditMode',
 			'getGlobalLoadMask',
 			'getMainController',
 			'getSelectedEntityId',
 			'onEmailPanelShow',
-			'onGlobalRegenerationButtonClick'
+			'onGlobalRegenerationButtonClick',
+			'onModifyCardClick'
 		],
 
 		/**
@@ -62,6 +64,8 @@
 			required: false,
 			templates: []
 		},
+
+		editModeFlag: false, // TODO
 
 		/**
 		 * All templates I have in configuration and grid
@@ -203,27 +207,23 @@
 		 *
 		 * @param {Object} configObject
 		 * @param {Mixed} configObject.parentDelegate - CMModCardController or CMModWorkflowController
-		 * @param {Mixed} configObject.selectedEntity - Card or Activity in edit
-		 * @param {Mixed} configObject.ownerEntityobject
-		 * @param {Mixed} configObject.widgetConf
+		 * @param {Mixed} configObject.selectedEntity - Activity in edit
+		 * @param {Mixed} configObject.clientForm
 		 *
 		 * @abstract
 		 */
 		constructor: function(configObject) {
-			// Setup configurationObject applying defaultConfiguration attributes to widgetConf
-			Ext.apply(this.configuration, configObject.widgetConf, this.defaultConfiguration);
-
+			this.configurationReset();
 			this.setSelectedEntity(configObject.selectedEntity);
 
 			delete configObject.selectedEntity;
-			delete configObject.widgetConf;
 
 			Ext.apply(this, configObject); // Apply config
 
 			// Converts configuration templates to templates model objects
 			this.configurationTemplates = []; // Reset variable
 
-			Ext.Array.forEach(this.configuration[CMDBuild.core.proxy.CMProxyConstants.TEMPLATES], function(item, index, allItems) {
+			Ext.Array.forEach(this.configuration[CMDBuild.core.proxy.CMProxyConstants.TEMPLATES], function(item, index, allItems) { // TODO da delegare al widget
 				this.configurationTemplates.push(this.configurationTemplatesToModel(item));
 			}, this);
 
@@ -238,11 +238,7 @@
 				gridDelegate: this.controllerGrid
 			});
 
-//			this.view = Ext.create('CMDBuild.view.management.common.tabs.email.EmailPanel', {
-//				delegate: this
-//			});
-//
-//			this.view.add(this.grid);
+			// Extends to create view
 		},
 
 		/**
@@ -325,6 +321,35 @@
 
 			return templatesToRegenerate;
 		},
+
+		// Configuration property functions
+			/**
+			 * @return {Object}
+			 */
+			configurationGet: function() {
+				return this.configuration;
+			},
+
+			/**
+			 * Setup local variable to default values
+			 */
+			configurationReset: function() {
+				this.configuration = this.defaultConfiguration;
+			},
+
+			/**
+			 * Set configure object and enable UI and all contained components
+			 *
+			 * @param {Object} configuration
+			 */
+			configurationSet: function(configuration) {
+				if (!Ext.Object.isEmpty(configuration)) {
+					// Setup class configuration applying configuration attributes to defaultConfiguration
+					this.configuration = Ext.apply({}, configuration, this.defaultConfiguration);
+
+					this.view.setDisabled(false);
+				}
+			},
 
 		/**
 		 * @param {Object} template
@@ -453,10 +478,10 @@
 		},
 
 		/**
-		 * @return {Object}
+		 * @return {Boolean}
 		 */
-		getConfiguration: function() {
-			return this.configuration;
+		getEditMode: function() {
+			return this.editModeFlag;
 		},
 
 		/**
@@ -476,7 +501,7 @@
 		/**
 		 * @return {Number}
 		 */
-		getSelectedEntityId: function() {
+		getSelectedEntityId: function() { // TODO rinominare con selectedEntityGet
 			if (Ext.isEmpty(this.selectedEntity)) {
 				_msg('WARNING CMDBuild.controller.management.common.tabs.email.Email: Selected entity object is empty');
 
@@ -485,29 +510,29 @@
 
 			return this.selectedEntity.get(CMDBuild.core.proxy.CMProxyConstants.ID);
 		},
-
-		/**
-		 * Used to mark widget as busy during regenerations, especially useful for getData() regeneration
-		 *
-		 * @return {Boolean}
-		 *
-		 * @override
-		 */
-		isBusy: function() {
-			return this.isWidgetBusy;
-		},
-
-		/**
-		 * @return {Boolean}
-		 *
-		 * @override
-		 */
-		isValid: function() {
-			if (this.configuration[CMDBuild.core.proxy.CMProxyConstants.REQUIRED])
-				return this.controllerGrid.getDraftEmails().length > 0;
-
-			return this.callParent(arguments);
-		},
+// TODO spostare nel widget
+//		/**
+//		 * Used to mark widget as busy during regenerations, especially useful for getData() regeneration
+//		 *
+//		 * @return {Boolean}
+//		 *
+//		 * @override
+//		 */
+//		isBusy: function() {
+//			return this.isWidgetBusy;
+//		},
+//
+//		/**
+//		 * @return {Boolean}
+//		 *
+//		 * @override
+//		 */
+//		isValid: function() {
+//			if (this.configuration[CMDBuild.core.proxy.CMProxyConstants.REQUIRED])
+//				return this.controllerGrid.getDraftEmails().length > 0;
+//
+//			return this.callParent(arguments);
+//		},
 
 		onGlobalRegenerationButtonClick: function() {
 			this.getAllTemplatesData(true, true);
@@ -517,7 +542,16 @@
 		 * Reload store every time panel is showed
 		 */
 		onEmailPanelShow: function() {
+			this.controllerGrid.setUiState();
+
 			this.controllerGrid.storeLoad();
+		},
+
+		/**
+		 * Enable/Disable UI on modify button click
+		 */
+		onModifyCardClick: function() {
+			this.setEditMode(true);
 		},
 
 		/**
@@ -737,25 +771,10 @@
 		},
 
 		/**
-		 * Rebuild all widget with new configuration object
-		 *
-		 * @param {Object} configuration
+		 * @param {Boolean} mode
 		 */
-		setConfiguration: function(configuration) {
-			if (!Ext.Object.isEmpty(configuration)) {
-				// Setup configurationObject applying defaultConfiguration attributes to widgetConf
-				Ext.apply(this.configuration, configuration, this.defaultConfiguration);
-
-				this.view.removeAll();
-
-				this.controllerGrid = Ext.create('CMDBuild.controller.management.common.tabs.email.Grid', {
-					parentDelegate: this
-				});
-
-				this.grid = this.controllerGrid.getView();
-
-				this.view.add(this.grid);
-			}
+		setEditMode: function(mode) {
+			this.editModeFlag = Ext.isBoolean(mode) ? mode : false;
 		},
 
 		/**
@@ -763,7 +782,7 @@
 		 *
 		 * @param {Mixed} selectedEntity
 		 */
-		setSelectedEntity: function(selectedEntity) {
+		setSelectedEntity: function(selectedEntity) { // TODO rename con selectedEntitySet
 			if (Ext.isEmpty(selectedEntity)) {
 				var params = {};
 				params[CMDBuild.core.proxy.CMProxyConstants.NOT_POSITIVES] = true;

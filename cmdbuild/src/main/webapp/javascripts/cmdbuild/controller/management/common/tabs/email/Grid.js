@@ -46,7 +46,6 @@
 		/**
 		 * @param {Object} configObject
 		 * @param {CMDBuild.controller.management.common.tabs.email.Email} configObject.parentDelegate
-		 * @param {CMDBuild.controller.management.common.tabs.email.Grid} configObject.view
 		 */
 		constructor: function(configObject) {
 			Ext.apply(this, configObject); // Apply config
@@ -88,7 +87,7 @@
 		createRecord: function(recordValues) {
 			recordValues = recordValues || {};
 			recordValues[CMDBuild.core.proxy.CMProxyConstants.KEEP_SYNCHRONIZATION] = false;
-			recordValues[CMDBuild.core.proxy.CMProxyConstants.NO_SUBJECT_PREFIX] = recordValues.hasOwnProperty(CMDBuild.core.proxy.CMProxyConstants.NO_SUBJECT_PREFIX) ? recordValues[CMDBuild.core.proxy.CMProxyConstants.NO_SUBJECT_PREFIX] : this.cmfg('getConfiguration')[CMDBuild.core.proxy.CMProxyConstants.NO_SUBJECT_PREFIX];
+			recordValues[CMDBuild.core.proxy.CMProxyConstants.NO_SUBJECT_PREFIX] = recordValues.hasOwnProperty(CMDBuild.core.proxy.CMProxyConstants.NO_SUBJECT_PREFIX) ? recordValues[CMDBuild.core.proxy.CMProxyConstants.NO_SUBJECT_PREFIX] : this.cmfg('configurationGet')[CMDBuild.core.proxy.CMProxyConstants.NO_SUBJECT_PREFIX];
 			recordValues[CMDBuild.core.proxy.CMProxyConstants.REFERENCE] = this.cmfg('getSelectedEntityId');
 			recordValues[CMDBuild.core.proxy.CMProxyConstants.TEMPORARY] = this.cmfg('getSelectedEntityId') < 0; // Setup temporary parameter
 
@@ -197,7 +196,11 @@
 		 * @param {Mixed} record
 		 */
 		onGridItemDoubleClick: function(record) {
-			if (!this.cmfg('getConfiguration')[CMDBuild.core.proxy.CMProxyConstants.READ_ONLY] && this.recordIsEditable(record)) {
+			if (
+				!this.cmfg('configurationGet')[CMDBuild.core.proxy.CMProxyConstants.READ_ONLY]
+				&& this.cmfg('getEditMode')
+				&& this.recordIsEditable(record)
+			) {
 				this.onGridEditEmailButtonClick(record);
 			} else {
 				this.onGridViewEmailButtonClick(record);
@@ -300,6 +303,18 @@
 					}
 				});
 			}
+		},
+
+		/**
+		 * Disable topToolbar evaluating readOnly and edit mode (disable only when readOnly = false and editMode = true)
+		 */
+		setUiState: function() {
+			this.view.setDisabledTopBar(
+				!(
+					!this.cmfg('configurationGet')[CMDBuild.core.proxy.CMProxyConstants.READ_ONLY]
+					&& this.cmfg('getEditMode')
+				)
+			);
 		},
 
 		/**
