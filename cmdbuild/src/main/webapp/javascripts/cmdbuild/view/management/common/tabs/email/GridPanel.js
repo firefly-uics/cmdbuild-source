@@ -44,7 +44,7 @@
 								handler: function(button, e) {
 									me.delegate.cmfg('onGridAddEmailButtonClick');
 								}
-							},
+							}),
 							{
 								iconCls: 'x-tbar-loading',
 								text: CMDBuild.Translation.regenerateEmail,
