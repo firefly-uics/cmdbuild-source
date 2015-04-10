@@ -29,6 +29,7 @@
 				url: CMDBuild.core.proxy.CMProxyUrlIndex.utils.generateId,
 				params: parameters.params,
 				scope: parameters.scope,
+				loadMask: parameters.loadMask || false,
 				failure: parameters.failure || Ext.emptyFn(),
 				success: parameters.success || Ext.emptyFn(),
 				callback: parameters.callback || Ext.emptyFn()
