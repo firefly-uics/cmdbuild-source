@@ -74,23 +74,23 @@ public class ModReport extends JSONBaseWithSpringContext {
 		}
 
 		public ReportImpl(final Report existing) {
-			setType(getType());
-			setId(getId());
-			setCode(getCode());
-			setDescription(getDescription());
-			setUser(getUser());
-			setQuery(getQuery());
-			setOriginalId(getOriginalId());
-			setJd(getJd());
-			setGroups(getGroups());
-			setRichReport(getRichReportBA());
-			setSimpleReport(getSimpleReport());
-			setWizard(getWizard());
-			setImages(getImagesBA());
-			setReportLength(getReportLength());
-			setImagesLength(getImagesLength());
-			setImagesName(getImagesName());
-			setSubreportsNumber(getSubreportsNumber());
+			setType(existing.getType());
+			setId(existing.getId());
+			setCode(existing.getCode());
+			setDescription(existing.getDescription());
+			setUser(existing.getUser());
+			setQuery(existing.getQuery());
+			setOriginalId(existing.getOriginalId());
+			setJd(existing.getJd());
+			setGroups(existing.getGroups());
+			setRichReport(existing.getRichReportBA());
+			setSimpleReport(existing.getSimpleReport());
+			setWizard(existing.getWizard());
+			setImages(existing.getImagesBA());
+			setReportLength(existing.getReportLength());
+			setImagesLength(existing.getImagesLength());
+			setImagesName(existing.getImagesName());
+			setSubreportsNumber(existing.getSubreportsNumber());
 		}
 
 		/**
@@ -423,6 +423,7 @@ public class ModReport extends JSONBaseWithSpringContext {
 		}
 
 		sessionVars().setNewReport(newReport);
+		Report test= sessionVars().getNewReport();
 		return out;
 	}
 
