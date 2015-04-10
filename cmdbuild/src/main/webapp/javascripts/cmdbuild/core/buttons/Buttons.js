@@ -16,6 +16,12 @@
 		text: CMDBuild.Translation.common.buttons.apply
 	});
 
+	Ext.define('CMDBuild.core.buttons.Back', {
+		extend: 'CMDBuild.core.buttons.Base',
+
+		text: CMDBuild.Translation.common.buttons.workflow.back
+	});
+
 	Ext.define('CMDBuild.core.buttons.Close', {
 		alternateClassName: 'CMDBuild.buttons.CloseButton', // Legacy class name
 		extend: 'CMDBuild.core.buttons.Base',

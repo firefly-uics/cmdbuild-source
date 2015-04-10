@@ -138,11 +138,11 @@
 					if (!Ext.isEmpty(controllersArray[0]) && typeof controllersArray[0].onBeforeSave == 'function') {
 						controllersArray[0].onBeforeSave(chainArray, 0);
 					} else {
-						_debug('CMDBuild.controller.management.common.CMWidgetManagerController onBeforeSaveTrigger controllersArray head function error!');
+						_msg('CMDBuild.controller.management.common.CMWidgetManagerController onBeforeSaveTrigger controllersArray head function error!');
 					}
 				}
 			} else {
-				_debug('CMDBuild.controller.management.common.CMWidgetManagerController onBeforeSaveTrigger lastCallback function error!');
+				_msg('CMDBuild.controller.management.common.CMWidgetManagerController onBeforeSaveTrigger lastCallback function error!');
 			}
 		},
 
