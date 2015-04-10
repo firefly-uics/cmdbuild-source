@@ -34,7 +34,6 @@
 		layout: 'border',
 
 		initComponent: function() {
-_debug('EmailWindowEdit', this.delegate);
 			// Buttons configuration
 				this.fillFromTemplateButton = Ext.create('Ext.button.Split', {
 					iconCls: 'clone',
