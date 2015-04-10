@@ -32,11 +32,9 @@
 		},
 
 		listeners: {
-			select: function(field, newValue, oldValue, eOpts) {
-				newValue = newValue[0] || null;
-
+			select: function(field, records, eOpts) {
 				if (this.enableChangeLanguage)
-					this.changeLanguage(newValue[0].get(CMDBuild.core.proxy.CMProxyConstants.TAG));
+					this.changeLanguage(records[0].get(CMDBuild.core.proxy.CMProxyConstants.TAG));
 			}
 		},
 
