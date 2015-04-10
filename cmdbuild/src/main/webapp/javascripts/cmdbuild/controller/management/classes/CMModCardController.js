@@ -254,8 +254,7 @@
 		buildTabControllerEmail: function() {
 			this.controllerTabEmail = Ext.create('CMDBuild.controller.management.classes.tabs.Email', {
 				parentDelegate: this,
-				clientForm: this.getFormForTemplateResolver(),
-				selectedEntity: this.card
+				clientForm: this.getFormForTemplateResolver()
 			});
 
 			this.subControllers.push(this.controllerTabEmail);

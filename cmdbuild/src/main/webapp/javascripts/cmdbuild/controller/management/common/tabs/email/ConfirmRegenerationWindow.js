@@ -48,12 +48,12 @@
 		view: undefined,
 
 		/**
-		 * @param {Object} configObject
-		 * @param {CMDBuild.controller.management.common.tabs.email.Email} configObject.parentDelegate
-		 * @param {CMDBuild.controller.management.common.tabs.email.Grid} configObject.gridDelegate
+		 * @param {Object} configurationObject
+		 * @param {CMDBuild.controller.management.common.tabs.email.Email} configurationObject.parentDelegate
+		 * @param {CMDBuild.controller.management.common.tabs.email.Grid} configurationObject.gridDelegate
 		 */
-		constructor: function(configObject) {
-			Ext.apply(this, configObject); // Apply config
+		constructor: function(configurationObject) {
+			this.callParent(arguments);
 
 			this.view = Ext.create('CMDBuild.view.management.common.tabs.email.ConfirmRegenerationWindow', {
 				delegate: this
@@ -94,7 +94,7 @@
 		 * Regenerates only selected records
 		 */
 		onConfirmRegenerationWindowConfirmButtonClick: function() {
-			this.parentDelegate.regenerateSelectedEmails(this.view.grid.getSelectionModel().getSelection());
+			this.cmfg('regenerateSelectedEmails', this.view.grid.getSelectionModel().getSelection());
 
 			this.view.hide();
 		},
@@ -134,7 +134,7 @@
 							attributes: Ext.Object.getKeys(xaVars),
 							callback: function(values, ctx) {
 								emailObject = Ext.create('CMDBuild.model.common.tabs.email.Email', values);
-								emailObject.set(CMDBuild.core.proxy.CMProxyConstants.REFERENCE, me.cmfg('selectedEntityGet'));
+								emailObject.set(CMDBuild.core.proxy.CMProxyConstants.REFERENCE, me.cmfg('selectedEntityIdGet'));
 								emailObject.set(CMDBuild.core.proxy.CMProxyConstants.TEMPLATE, template.get(CMDBuild.core.proxy.CMProxyConstants.KEY));
 
 								me.gridStore.add(emailObject);

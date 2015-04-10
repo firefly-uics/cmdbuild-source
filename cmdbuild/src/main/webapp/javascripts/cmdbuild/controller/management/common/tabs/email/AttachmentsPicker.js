@@ -51,12 +51,12 @@
 		view: undefined,
 
 		/**
-		 * @param {Object} configObject
-		 * @param {CMDBuild.controller.management.common.tabs.email.Attachments} configObject.parentDelegate
-		 * @param {Mixed} configObject.record
+		 * @param {Object} configurationObject
+		 * @param {CMDBuild.controller.management.common.tabs.email.Attachments} configurationObject.parentDelegate
+		 * @param {Mixed} configurationObject.record
 		 */
-		constructor: function(configObject) {
-			Ext.apply(this, configObject); // Apply config
+		constructor: function(configurationObject) {
+			this.callParent(arguments);
 
 			this.view = Ext.create('CMDBuild.view.management.common.tabs.email.attachments.picker.MainWindow', {
 				delegate: this

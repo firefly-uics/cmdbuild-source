@@ -25,7 +25,8 @@
 			'onGridRegenerationEmailButtonClick',
 			'onGridReplyEmailButtonClick',
 			'onGridSendEmailButtonClick',
-			'onGridViewEmailButtonClick'
+			'onGridViewEmailButtonClick',
+			'storeLoad'
 		],
 
 		/**
@@ -44,11 +45,11 @@
 		view: undefined,
 
 		/**
-		 * @param {Object} configObject
-		 * @param {CMDBuild.controller.management.common.tabs.email.Email} configObject.parentDelegate
+		 * @param {Object} configurationObject
+		 * @param {CMDBuild.controller.management.common.tabs.email.Email} configurationObject.parentDelegate
 		 */
-		constructor: function(configObject) {
-			Ext.apply(this, configObject); // Apply config
+		constructor: function(configurationObject) {
+			this.callParent(arguments);
 
 			this.view = Ext.create('CMDBuild.view.management.common.tabs.email.GridPanel', {
 				delegate: this
@@ -70,8 +71,12 @@
 						CMDBuild.Msg.error(CMDBuild.Translation.common.failure, CMDBuild.Translation.errors.emailCreate, false);
 					},
 					success: success || function(response, options, decodedResponse) {
-						if (CMDBuild.controller.management.common.tabs.email.Email.trafficLightArrayCheck(record, regenerationTrafficLightArray) || Ext.isEmpty(regenerationTrafficLightArray))
+						if (
+							CMDBuild.controller.management.common.tabs.email.Email.trafficLightArrayCheck(record, regenerationTrafficLightArray)
+							|| Ext.isEmpty(regenerationTrafficLightArray)
+						) {
 							this.storeLoad();
+						}
 					}
 				});
 			}
@@ -88,8 +93,8 @@
 			recordValues = recordValues || {};
 			recordValues[CMDBuild.core.proxy.CMProxyConstants.KEEP_SYNCHRONIZATION] = false;
 			recordValues[CMDBuild.core.proxy.CMProxyConstants.NO_SUBJECT_PREFIX] = recordValues.hasOwnProperty(CMDBuild.core.proxy.CMProxyConstants.NO_SUBJECT_PREFIX) ? recordValues[CMDBuild.core.proxy.CMProxyConstants.NO_SUBJECT_PREFIX] : this.cmfg('configurationGet')[CMDBuild.core.proxy.CMProxyConstants.NO_SUBJECT_PREFIX];
-			recordValues[CMDBuild.core.proxy.CMProxyConstants.REFERENCE] = this.cmfg('selectedEntityGet');
-			recordValues[CMDBuild.core.proxy.CMProxyConstants.TEMPORARY] = this.cmfg('selectedEntityGet') < 0; // Setup temporary parameter
+			recordValues[CMDBuild.core.proxy.CMProxyConstants.REFERENCE] = this.cmfg('selectedEntityIdGet');
+			recordValues[CMDBuild.core.proxy.CMProxyConstants.TEMPORARY] = this.cmfg('selectedEntityIdGet') < 0; // Setup temporary parameter
 
 			return Ext.create('CMDBuild.model.common.tabs.email.Email', recordValues);
 		},
@@ -108,8 +113,12 @@
 						CMDBuild.Msg.error(CMDBuild.Translation.common.failure, CMDBuild.Translation.errors.emailUpdate, false);
 					},
 					success: function(response, options, decodedResponse) {
-						if (CMDBuild.controller.management.common.tabs.email.Email.trafficLightArrayCheck(record, regenerationTrafficLightArray) || Ext.isEmpty(regenerationTrafficLightArray))
+						if (
+							CMDBuild.controller.management.common.tabs.email.Email.trafficLightArrayCheck(record, regenerationTrafficLightArray)
+							|| Ext.isEmpty(regenerationTrafficLightArray)
+						) {
 							this.storeLoad();
+						}
 					}
 				});
 			}
@@ -198,7 +207,7 @@
 		onGridItemDoubleClick: function(record) {
 			if (
 				!this.cmfg('configurationGet')[CMDBuild.core.proxy.CMProxyConstants.READ_ONLY]
-				&& this.cmfg('getEditMode')
+				&& this.cmfg('editModeGet')
 				&& this.recordIsEditable(record)
 			) {
 				this.onGridEditEmailButtonClick(record);
@@ -212,7 +221,7 @@
 		 */
 		onGridRegenerationEmailButtonClick: function(record) {
 			if (!Ext.isEmpty(record.get(CMDBuild.core.proxy.CMProxyConstants.TEMPLATE)))
-				this.parentDelegate.regenerateSelectedEmails([record]);
+				this.cmfg('regenerateSelectedEmails', [record]);
 		},
 
 		/**
@@ -233,7 +242,7 @@
 			replyRecordData[CMDBuild.core.proxy.CMProxyConstants.KEEP_SYNCHRONIZATION] = false;
 			replyRecordData[CMDBuild.core.proxy.CMProxyConstants.NOTIFY_WITH] = record.get(CMDBuild.core.proxy.CMProxyConstants.NOTIFY_WITH);
 			replyRecordData[CMDBuild.core.proxy.CMProxyConstants.NO_SUBJECT_PREFIX] = record.get(CMDBuild.core.proxy.CMProxyConstants.NO_SUBJECT_PREFIX);
-			replyRecordData[CMDBuild.core.proxy.CMProxyConstants.REFERENCE] = this.cmfg('selectedEntityGet');
+			replyRecordData[CMDBuild.core.proxy.CMProxyConstants.REFERENCE] = this.cmfg('selectedEntityIdGet');
 			replyRecordData[CMDBuild.core.proxy.CMProxyConstants.SUBJECT] = 'RE: ' + record.get(CMDBuild.core.proxy.CMProxyConstants.SUBJECT);
 			replyRecordData[CMDBuild.core.proxy.CMProxyConstants.TO] = record.get(CMDBuild.core.proxy.CMProxyConstants.FROM) || record.get(CMDBuild.core.proxy.CMProxyConstants.TO);
 
@@ -298,8 +307,12 @@
 						CMDBuild.Msg.error(CMDBuild.Translation.common.failure, CMDBuild.Translation.errors.emailRemove, false);
 					},
 					success: function(response, options, decodedResponse) {
-						if (CMDBuild.controller.management.common.tabs.email.Email.trafficLightArrayCheck(record, regenerationTrafficLightArray) || Ext.isEmpty(regenerationTrafficLightArray))
+						if (
+							CMDBuild.controller.management.common.tabs.email.Email.trafficLightArrayCheck(record, regenerationTrafficLightArray)
+							|| Ext.isEmpty(regenerationTrafficLightArray)
+						) {
 							this.storeLoad();
+						}
 					}
 				});
 			}
@@ -312,7 +325,7 @@
 			this.view.setDisabledTopBar(
 				!(
 					!this.cmfg('configurationGet')[CMDBuild.core.proxy.CMProxyConstants.READ_ONLY]
-					&& this.cmfg('getEditMode')
+					&& this.cmfg('editModeGet')
 				)
 			);
 		},
@@ -346,27 +359,19 @@
 
 		/**
 		 * Loads grid store with activityId parameter
-		 *
-		 * @param {Mixed} regenerateAllEmails
-		 * @param {Boolean} forceRegeneration
 		 */
-		storeLoad: function(regenerateAllEmails, forceRegeneration) {
+		storeLoad: function() {
 			if (!this.view.getStore().isLoading()) {
-				regenerateAllEmails = regenerateAllEmails || false;
-				forceRegeneration = forceRegeneration || false;
-
-				this.parentDelegate.isWidgetBusy = true; // Setup widget busy state and the begin of store load
+				this.cmfg('busyStateSet', true); // Setup widget busy state and the begin of store load
 
 				var params = {};
-				params[CMDBuild.core.proxy.CMProxyConstants.REFERENCE] = this.cmfg('selectedEntityGet');
+				params[CMDBuild.core.proxy.CMProxyConstants.REFERENCE] = this.cmfg('selectedEntityIdGet');
 
 				this.view.getStore().load({
 					params: params,
 					scope: this,
 					callback: function(records, operation, success) {
-						this.parentDelegate.isWidgetBusy = false;
-
-						this.parentDelegate.getAllTemplatesData(regenerateAllEmails, forceRegeneration);
+						this.cmfg('getAllTemplatesData');
 					}
 				});
 			}
