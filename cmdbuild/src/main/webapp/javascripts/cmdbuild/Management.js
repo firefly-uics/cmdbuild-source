@@ -71,13 +71,16 @@
 
 				CMDBuild.view.CMMainViewport.showSplash();
 
+				// Setup config localization model
+				CMDBuild.Config[CMDBuild.core.proxy.CMProxyConstants.LOCALIZATION] = Ext.create('CMDBuild.model.configuration.Localization');
+
 				// Get server language
 				CMDBuild.core.proxy.Configuration.getLanguage({
 					success: function(result, options, decodedResult) {
-						var configObject = {};
-						configObject[CMDBuild.core.proxy.CMProxyConstants.LANGUAGE] = decodedResult[CMDBuild.core.proxy.CMProxyConstants.LANGUAGE];
-
-						CMDBuild.Config[CMDBuild.core.proxy.CMProxyConstants.LOCALIZATION] = Ext.create('CMDBuild.model.configuration.Localization', configObject);
+						CMDBuild.Config[CMDBuild.core.proxy.CMProxyConstants.LOCALIZATION].set(
+							CMDBuild.core.proxy.CMProxyConstants.LANGUAGE,
+							decodedResult[CMDBuild.core.proxy.CMProxyConstants.LANGUAGE]
+						);
 					}
 				});
 
