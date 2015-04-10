@@ -36,12 +36,12 @@
 
 		/**
 		 * Convenience methods to debug
-		 *
-		 * @param {String} message
 		 */
-		_debug = function(message) {
-			if (!Ext.isEmpty(message))
-				CMDBuild.log.debug('DEBUG: ' + message);
+		_debug = function() {
+			if (!Ext.isEmpty(arguments[0]) && typeof arguments[0] == 'string')
+				arguments[0] = 'DEBUG: ' + arguments[0];
+
+			CMDBuild.log.debug.apply(CMDBuild.log, arguments);
 		};
 
 		_deprecated = function() {
