@@ -182,8 +182,8 @@
 					index: i
 				};
 
-				this.tabController.regenerateAllEmailsSet(true);
-				this.tabController.regenerationEndPointCallback = function() { // Setup end-point callback to close widget save callback loop
+				// Setup end-point callback to close widget save callback loop
+				this.tabController.regenerationEndPointCallback = function() {
 					if (!Ext.Object.isEmpty(me.beforeSaveCallbackObject)) {
 						var index = me.beforeSaveCallbackObject.index;
 
@@ -196,8 +196,11 @@
 							]
 						);
 					}
+
+					me.tabController.regenerationEndPointCallback = Ext.emptyFn; // Reset callback function
 				};
 
+				this.tabController.cmfg('regenerateAllEmailsSet', true);
 				this.tabController.cmfg('storeLoad');
 			}
 		}

@@ -34,14 +34,14 @@
 			Ext.Error.ignore = true;
 		}
 
-		// Convenience methods to debug
-		_debug = function() {
-			var prefix = 'DEBUG';
-
-			if (typeof arguments[0] == 'string')
-				arguments[0] = prefix + ': ' + arguments[0];
-
-			CMDBuild.log.debug.apply(CMDBuild.log, arguments);
+		/**
+		 * Convenience methods to debug
+		 *
+		 * @param {String} message
+		 */
+		_debug = function(message) {
+			if (!Ext.isEmpty(message))
+				CMDBuild.log.debug('DEBUG: ' + message);
 		};
 
 		_deprecated = function() {
@@ -50,30 +50,43 @@
 			try {
 				name  = arguments.callee.caller.name;
 			} catch (e) {
-				_debug('DEPRECATED', _trace());
+				CMDBuild.log.debug('DEPRECATED: ' + _trace());
 			}
 
-			_debug('DEPRECATED: ' + name, _trace());
+			CMDBuild.log.debug('DEPRECATED: ' + name, _trace());
 		};
 
-		_msg = function() {
-			CMDBuild.log.debug.apply(CMDBuild.log, arguments);
+		/**
+		 * @param {String} message
+		 * @param {String} className
+		 */
+		_error = function(message, className) {
+			if (!Ext.isEmpty(message))
+				CMDBuild.log.error('ERROR: ' + className + ' - ' + message);
+		};
+
+		/**
+		 * @param {String} message
+		 */
+		_msg = function(message) {
+			if (!Ext.isEmpty(message))
+				CMDBuild.log.info('INFO: ' + message);
 		};
 
 		_trace = function() {
-			_debug('TRACE', arguments);
+			CMDBuild.log.trace('TRACE: ', arguments);
 
 			if (console && typeof console.trace == 'function')
 				console.trace();
 		};
 
-		_warning = function() {
-			var prefix = 'WARNING';
-
-			if (typeof arguments[0] == 'string')
-				arguments[0] = prefix + ': ' + arguments[0];
-
-			CMDBuild.log.warn.apply(CMDBuild.log, arguments);
+		/**
+		 * @param {String} message
+		 * @param {String} className
+		 */
+		_warning = function(message, className) {
+			if (!Ext.isEmpty(message))
+				CMDBuild.log.debug.apply(CMDBuild.log, 'WARNING: ' + className + ' - ' + message);
 		};
 	// END: Logger configuration
 

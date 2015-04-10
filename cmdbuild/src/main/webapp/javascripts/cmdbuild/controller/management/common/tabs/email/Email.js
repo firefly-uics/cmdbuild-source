@@ -47,10 +47,12 @@
 			'onEmailPanelShow',
 			'onGlobalRegenerationButtonClick',
 			'onModifyCardClick',
+			'regenerateAllEmailsSet',
 			'regenerateSelectedEmails',
 			'selectedEntityIdGet',
 			'sendAllOnSaveGet',
 			'sendAllOnSaveSet',
+			'sendAll -> controllerGrid',
 			'storeLoad -> controllerGrid'
 		],
 
@@ -586,6 +588,7 @@
 			 */
 			regenerateAllEmails: function() {
 				if (this.regenerateAllEmailsGet()) {
+
 					var regenerationTrafficLightArray = [];
 
 					this.controllerConfirmRegenerationWindow.reset();
@@ -642,31 +645,21 @@
 
 						this.relatedAttributeChanged = false; // Reset attribute changed flag
 						this.forceRegenerationSet(); // Reset force regeneration flag
-					} else {
-						this.busyStateSet(); // Reset widget busy state to false
 					}
 
 					this.regenerateAllEmailsSet(); // Reset regenerate all emails flag
-				} else {
-					// Set all email as outgoing on save card
-					if (this.sendAllOnSaveGet()) {
-						this.sendAllOnSaveSet();
-
-						if (!Ext.isEmpty(this.controllerGrid.getDraftEmails())) {
-							this.controllerGrid.sendAll();
-						} else {
-							this.busyStateSet(); // Reset widget busy state to false
-						}
-					} else {
-						this.busyStateSet(); // Reset widget busy state to false
-
-						if (typeof this.regenerationEndPointCallback == 'function') {
-							Ext.callback(this.regenerationEndPointCallback, this);
-
-							this.regenerationEndPointCallback = Ext.emptyFn; // Reset callback function
-						}
-					}
 				}
+
+				// Set all email as outgoing on save card
+				if (this.sendAllOnSaveGet()) {
+					this.sendAllOnSaveSet();
+
+					this.cmfg('sendAll');
+				} else if (typeof this.regenerationEndPointCallback == 'function') {
+					Ext.callback(this.regenerationEndPointCallback, this);
+				}
+
+				this.busyStateSet(); // Reset widget busy state to false
 			},
 
 			/**
@@ -829,7 +822,7 @@
 		},
 
 		/**
-		 * Executed on regeneration end-point
+		 * Executed on regeneration end-point, works also as flagSave
 		 *
 		 * @abstract
 		 */
@@ -841,7 +834,7 @@
 			 */
 			selectedEntityIdGet: function() {
 				if (Ext.isEmpty(this.selectedEntity)) {
-					_msg('WARNING CMDBuild.controller.management.common.tabs.email.Email: Selected entity object is empty');
+					_warning('Selected entity object is empty', 'CMDBuild.controller.management.common.tabs.email.Email');
 
 					return null;
 				}

@@ -26,6 +26,7 @@
 			'onGridReplyEmailButtonClick',
 			'onGridSendEmailButtonClick',
 			'onGridViewEmailButtonClick',
+			'sendAll',
 			'storeLoad'
 		],
 
@@ -334,11 +335,13 @@
 		 * Send all draft email records
 		 */
 		sendAll: function() {
-			var updateTrafficLightArray = [];
+			if (!Ext.isEmpty(this.getDraftEmails())) {
+				var updateTrafficLightArray = [];
 
-			Ext.Array.forEach(this.getDraftEmails(), function(email, i, allEmails) {
-				this.sendRecord(email, updateTrafficLightArray);
-			}, this);
+				Ext.Array.forEach(this.getDraftEmails(), function(email, i, allEmails) {
+					this.sendRecord(email, updateTrafficLightArray);
+				}, this);
+			}
 		},
 
 		/**

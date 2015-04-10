@@ -11,6 +11,11 @@
 		},
 
 		/**
+		 * @property {CMDBuild.state.CMCardModuleStateDelegate}
+		 */
+		cardStateDelegate: undefined,
+
+		/**
 		 * @cfg {CMDBuild.controller.management.classes.CMModCardController}
 		 */
 		parentDelegate: undefined,
@@ -19,13 +24,6 @@
 		 * @property {CMDBuild.cache.CMEntryTypeModel}
 		 */
 		entryType: undefined,
-
-		/**
-		 * Witch actually selected card
-		 *
-		 * @cfg {CMDBuild.model.common.tabs.email.SelectedEntity}
-		 */
-		selectedEntity: undefined,
 
 		/**
 		 * @property {CMDBuild.view.management.common.tabs.email.EmailPanel}

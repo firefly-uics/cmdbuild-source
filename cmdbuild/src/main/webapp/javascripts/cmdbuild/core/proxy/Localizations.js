@@ -122,7 +122,7 @@
 		 */
 		readLocalization: function(parameters) { // TODO: future implementation of server-side parameter for sectionId
 			var url = undefined;
-_debug();
+
 			switch (parameters.params.sectionId) {
 				case 'classes': {
 					url = CMDBuild.core.proxy.CMProxyUrlIndex.localizations.classRead;
