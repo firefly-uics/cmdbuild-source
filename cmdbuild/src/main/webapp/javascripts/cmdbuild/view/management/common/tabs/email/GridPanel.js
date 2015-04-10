@@ -33,9 +33,9 @@
 						itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_TOP,
 
 						items: [
-							{
-								iconCls: 'add',
+							Ext.create('CMDBuild.core.buttons.Add', {
 								text: CMDBuild.Translation.composeEmail,
+
 								disabled: (
 									this.delegate.cmfg('configurationGet')[CMDBuild.core.proxy.CMProxyConstants.READ_ONLY]
 									|| !this.delegate.cmfg('editModeGet')
