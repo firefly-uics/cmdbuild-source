@@ -17,25 +17,6 @@
 		parentDelegate: undefined,
 
 		/**
-		 * @cfg {CMDBuild.controller.management.common.tabs.email.Grid}
-		 */
-		controllerGrid: undefined,
-
-		/**
-		 * Flag to mark when performing save action
-		 *
-		 * @cfg {Boolean}
-		 */
-		flagPerformSaveAction: false,
-
-		/**
-		 * Shorthand to view grid
-		 *
-		 * @property {CMDBuild.view.management.common.tabs.email.GridPanel}
-		 */
-		grid: undefined,
-
-		/**
 		 * Actually selected activity
 		 *
 		 * @cfg {CMDBuild.model.common.tabs.email.SelectedEntity}
@@ -50,7 +31,6 @@
 		/**
 		 * @param {Object} configObject
 		 * @param {Mixed} configObject.parentDelegate - CMModWorkflowController
-		 * @param {Mixed} configObject.selectedEntity - Activity in edit
 		 * @param {Mixed} configObject.clientForm
 		 */
 		constructor: function(configObject) {
@@ -74,13 +54,17 @@
 		onActivityInstanceChange: Ext.emptyFn,
 
 		onAbortCardClick: function() {
-			this.setEditMode(false);
+			this.editModeSet(false);
 		},
 
 		/**
 		 * Enable action shouldn't be needed but on addCardButtoClick is fired also onProcessInstanceChange event
+		 *
+		 * @override
 		 */
 		onAddCardButtonClick: function() {
+			this.callParent(arguments);
+
 			if (!Ext.isEmpty(this.view))
 				this.view.setDisabled(true);
 		},
@@ -95,24 +79,12 @@
 		onEntryTypeSelected: Ext.emptyFn,
 
 		/**
-		 * Initialize tab to apply all events on form fields
-		 *
-		 * @override
-		 */
-		onModifyCardClick: function() {
-			this.callParent(arguments);
-
-			if (!this.grid.getStore().isLoading())
-				this.controllerGrid.storeLoad(true, true);
-		},
-
-		/**
 		 * Equals to onEntryTypeSelected in classes
 		 *
 		 * @param {CMDBuild.cache.CMEntryTypeModel} entryType
 		 */
 		onProcessClassRefChange: function(entryType) {
-			this.setEditMode(false);
+			this.editModeSet(false);
 
 			if (!Ext.isEmpty(this.view))
 				this.view.setDisabled(true);
@@ -125,28 +97,25 @@
 		 * @param {CMDBuild.model.CMProcessInstance} processIstance
 		 */
 		onProcessInstanceChange: function(processIstance) {
+			var me = this;
+
 			if (!Ext.isEmpty(processIstance)) {
 				this.configurationReset();
-				this.selectedEntitySet(processIstance);
 
-				this.controllerGrid.storeLoad();
+				this.selectedEntitySet(processIstance, function() {
+					me.regenerateAllEmailsSet(processIstance.isNew());
+					me.forceRegenerationSet(processIstance.isNew());
+					me.cmfg('storeLoad');
+				});
 
 				if (!Ext.isEmpty(this.view))
-					this.setEditMode(processIstance.isNew()); // Enable/Disable tab based on model new state to separate create/view mode
+					this.editModeSet(processIstance.isNew()); // Enable/Disable tab based on model new state to separate create/view mode
 			} else {
 				_msg('ERROR CMDBuild.controller.management.workflow.tabs.Email: empty processIstance on onProcessInstanceChange');
 			}
 		},
 
-		/**
-		 * Launch regeneration on save button click and send all draft emails
-		 */
-		onSaveCardClick: function() {
-			this.flagPerformSaveAction = true;
-
-			if (!this.grid.getStore().isLoading())
-				this.controllerGrid.storeLoad(true);
-		}
+		onSaveCardClick: Ext.emptyFn
 	});
 
 })();

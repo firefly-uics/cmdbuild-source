@@ -116,8 +116,7 @@
 		buildTabControllerEmail: function() {
 			this.controllerTabEmail = Ext.create('CMDBuild.controller.management.workflow.tabs.Email', {
 				parentDelegate: this,
-				clientForm: this.getFormForTemplateResolver(),
-				selectedEntity: this.card
+				clientForm: this.getFormForTemplateResolver()
 			});
 
 			this.subControllers.push(this.controllerTabEmail);
@@ -229,8 +228,7 @@
 		/**
 		 * Forward onSaveCardClick event to email tab controller
 		 */
-		onSaveCardClick: function() { // TODO da controllare il salvataggio o avanzamento e tutto il sistema di attesa dei widget
-_debug('CMModWorkflowController onSaveCardClick');
+		onSaveCardClick: function() {
 			this.controllerTabEmail.onSaveCardClick();
 		},
 
