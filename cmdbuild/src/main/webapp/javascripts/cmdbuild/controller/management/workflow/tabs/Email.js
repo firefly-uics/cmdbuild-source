@@ -17,13 +17,6 @@
 		parentDelegate: undefined,
 
 		/**
-		 * Actually selected activity
-		 *
-		 * @cfg {CMDBuild.model.common.tabs.email.SelectedEntity}
-		 */
-		selectedEntity: undefined,
-
-		/**
 		 * @property {CMDBuild.view.management.workflow.tabs.Email}
 		 */
 		view: undefined,
@@ -111,11 +104,19 @@
 				if (!Ext.isEmpty(this.view))
 					this.editModeSet(processIstance.isNew()); // Enable/Disable tab based on model new state to separate create/view mode
 			} else {
-				_msg('ERROR CMDBuild.controller.management.workflow.tabs.Email: empty processIstance on onProcessInstanceChange');
+				_error('Empty processIstance on onProcessInstanceChange', 'CMDBuild.controller.management.workflow.tabs.Email');
 			}
 		},
 
-		onSaveCardClick: Ext.emptyFn
+		/**
+		 * Launch regeneration on save button click and send all draft emails
+		 */
+		onSaveCardClick: function() {
+			if (!this.grid.getStore().isLoading()) {
+				this.regenerateAllEmailsSet(true);
+				this.cmfg('storeLoad');
+			}
+		}
 	});
 
 })();
