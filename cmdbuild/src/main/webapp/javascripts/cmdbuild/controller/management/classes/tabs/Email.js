@@ -16,28 +16,9 @@
 		parentDelegate: undefined,
 
 		/**
-		 * @cfg {CMDBuild.controller.management.common.tabs.email.Grid}
-		 */
-		controllerGrid: undefined,
-
-		/**
 		 * @property {CMDBuild.cache.CMEntryTypeModel}
 		 */
 		entryType: undefined,
-
-		/**
-		 * Flag to mark when performing save action
-		 *
-		 * @cfg {Boolean}
-		 */
-		flagPerformSaveAction: false,
-
-		/**
-		 * Shorthand to view grid
-		 *
-		 * @property {CMDBuild.view.management.common.tabs.email.GridPanel}
-		 */
-		grid: undefined,
 
 		/**
 		 * Witch actually selected card
@@ -54,7 +35,6 @@
 		/**
 		 * @param {Object} configObject
 		 * @param {Mixed} configObject.parentDelegate - CMModCardController
-		 * @param {Mixed} configObject.selectedEntity - Card in edit
 		 * @param {Mixed} configObject.clientForm
 		 */
 		constructor: function(configObject) {
@@ -98,15 +78,16 @@
 		},
 
 		onAbortCardClick: function() {
-			this.setEditMode(false);
+			this.editModeSet(false);
 		},
 
 		/**
 		 * Enable action shouldn't be needed but on addCardButtoClick is fired also onCardSelect event
+		 *
+		 * @override
 		 */
 		onAddCardButtonClick: function() {
-			this.setEditMode(true);
-			this.controllerGrid.setUiState();
+			this.callParent(arguments);
 
 			if (!Ext.isEmpty(this.view))
 				this.view.setDisabled(true);
@@ -116,14 +97,18 @@
 		 * @param {Ext.data.Model} card
 		 */
 		onCardSelected: function(card) {
-			this.selectedEntitySet(card);
+			var me = this;
 
-			this.controllerGrid.storeLoad();
+			this.selectedEntitySet(card, function() {
+				me.regenerateAllEmailsSet(Ext.isEmpty(card));
+				me.forceRegenerationSet(Ext.isEmpty(card));
+				me.cmfg('storeLoad');
+			});
 
 			// TODO: Enable/Disable tab with server call response
 			if (!Ext.isEmpty(this.view)) {
 				this.view.setDisabled(false);
-				this.setEditMode(Ext.isEmpty(card)); // Enable/Disable tab based on model state to separate create/view mode
+				this.editModeSet(Ext.isEmpty(card)); // Enable/Disable tab based on model state to separate create/view mode
 			}
 		},
 
@@ -140,29 +125,19 @@
 		onEntryTypeSelected: function(entryType, dc, filter) {
 			this.entryType = entryType;
 
-			this.setEditMode(false);
-		},
-
-		/**
-		 * Initialize tab to apply all events on form fields
-		 *
-		 * @override
-		 */
-		onModifyCardClick: function() {
-			this.callParent(arguments);
-
-			if (!this.grid.getStore().isLoading())
-				this.controllerGrid.storeLoad(true, true);
+			this.editModeSet(false);
 		},
 
 		/**
 		 * Launch regeneration on save button click and send all draft emails
 		 */
 		onSaveCardClick: function() {
-			this.flagPerformSaveAction = true;
+			this.cmfg('sendAllOnSaveSet', true);
 
-			if (!this.grid.getStore().isLoading())
-				this.controllerGrid.storeLoad(true);
+			if (!this.grid.getStore().isLoading()) {
+				this.regenerateAllEmailsSet(true);
+				this.cmfg('storeLoad');
+			}
 		}
 	});
 

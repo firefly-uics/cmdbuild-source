@@ -24,8 +24,7 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
-			'onEmailWindowAbortButtonClick',
-			'onEmailWindowCloseButtonClick',
+			'onEmailWindowAbortButtonClick = onEmailWindowCloseButtonClick',
 			'onEmailWindowConfirmButtonClick',
 			'onEmailWindowFieldChange',
 			'onEmailWindowFillFromTemplateButtonClick'
@@ -64,16 +63,16 @@
 		windowModeAvailable: ['create', 'edit', 'reply', 'view'],
 
 		/**
-		 * @param {Object} configObject
-		 * @param {CMDBuild.controller.management.common.tabs.email.Email} configObject.parentDelegate
-		 * @param {Mixed} configObject.record
-		 * @param {String} configObject.windowMode
+		 * @param {Object} configurationObject
+		 * @param {CMDBuild.controller.management.common.tabs.email.Email} configurationObject.parentDelegate
+		 * @param {Mixed} configurationObject.record
+		 * @param {String} configurationObject.windowMode
 		 */
-		constructor: function(configObject) {
+		constructor: function(configurationObject) {
 			var me = this;
 			var windowClassName = null;
 
-			Ext.apply(this, configObject); // Apply config
+			this.callParent(arguments);
 
 			if (Ext.Array.contains(this.windowModeAvailable, this.windowMode)) {
 				switch (this.windowMode) {
@@ -260,13 +259,6 @@
 		},
 
 		/**
-		 * @alias
-		 */
-		onEmailWindowCloseButtonClick: function() {
-			this.onEmailWindowAbortButtonClick();
-		},
-
-		/**
 		 * Updates record object adding id (time in milliseconds), Description and attachments array and adds email record to grid store
 		 */
 		onEmailWindowConfirmButtonClick: function() {
@@ -283,7 +275,7 @@
 				if (CMDBuild.Config.dms.enabled)
 					this.record.set(CMDBuild.core.proxy.CMProxyConstants.ATTACHMENTS, this.attachmentsDelegate.getAttachmentsNames());
 
-				this.record.set(CMDBuild.core.proxy.CMProxyConstants.REFERENCE, this.cmfg('selectedEntityGet'));
+				this.record.set(CMDBuild.core.proxy.CMProxyConstants.REFERENCE, this.cmfg('selectedEntityIdGet'));
 
 				if (Ext.isEmpty(this.record.get(CMDBuild.core.proxy.CMProxyConstants.ID))) {
 					this.parentDelegate.addRecord(this.record);

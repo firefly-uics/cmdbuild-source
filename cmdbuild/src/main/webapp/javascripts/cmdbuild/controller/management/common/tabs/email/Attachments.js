@@ -34,14 +34,14 @@
 		view: undefined,
 
 		/**
-		 * @param {Object} configObject
-		 * @param {CMDBuild.controller.management.common.tabs.email.EmailWindow} configObject.parentDelegate
-		 * @param {Mixed} configObject.record
-		 * @param {CMDBuild.view.management.common.tabs.email.attachments.MainContainer} configObject.view
+		 * @param {Object} configurationObject
+		 * @param {CMDBuild.controller.management.common.tabs.email.EmailWindow} configurationObject.parentDelegate
+		 * @param {Mixed} configurationObject.record
+		 * @param {CMDBuild.view.management.common.tabs.email.attachments.MainContainer} configurationObject.view
 		 */
-		constructor: function(configObject) {
+		constructor: function(configurationObject) {
 			if (CMDBuild.Config.dms.enabled) {
-				Ext.apply(this, configObject); // Apply config
+				this.callParent(arguments);
 
 				this.view.delegate = this;
 				this.view.attachmentButtonsContainer.delegate = this;
