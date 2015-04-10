@@ -10,11 +10,9 @@ public interface Constants {
 	String CURRENT_GROUP_NAME_VARIABLE = "_CurrentGroupName";
 	String CURRENT_USER_VARIABLE = "_CurrentUser";
 	/**
-	 * @deprecated use CURRENT_PERFORMER_VARIABLE instead.
+	 * variable name is misleading but we cannot change it
 	 */
-	@Deprecated
-	String CURRENT_GROUP_VARIABLE = "_CurrentGroup";
-	String CURRENT_PERFORMER_VARIABLE = "_PerfomerGroup";
+	String CURRENT_PERFORMER_VARIABLE = "_CurrentGroup";
 	String API_VARIABLE = "cmdb";
 
 	String XPDL_REFERENCE_DECLARED_TYPE = "Reference";
