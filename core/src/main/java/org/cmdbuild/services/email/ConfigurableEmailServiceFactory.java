@@ -51,7 +51,7 @@ public class ConfigurableEmailServiceFactory implements EmailServiceFactory {
 	private final MailApiFactory apiFactory;
 	private final EmailAccountFacade emailAccountFacade;
 
-	public ConfigurableEmailServiceFactory(final Builder builder) {
+	private ConfigurableEmailServiceFactory(final Builder builder) {
 		this.apiFactory = builder.apiFactory;
 		this.emailAccountFacade = builder.emailAccountFacade;
 	}
