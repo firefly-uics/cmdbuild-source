@@ -1,6 +1,6 @@
 (function() {
 
-	Ext.define('CMDBuild.core.proxy.comon.tabs.email.Attachment', {
+	Ext.define('CMDBuild.core.proxy.common.tabs.email.Attachment', {
 
 		requires: [
 			'CMDBuild.core.proxy.CMProxyConstants',
