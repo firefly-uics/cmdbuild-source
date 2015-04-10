@@ -25,7 +25,7 @@
 		customConfigurations: {
 			common: {
 				skin: 'extjs',
-				skin_variant: 'blue',
+				skin_variant: 'silver', // Default color is silver
 				schema: 'html5',
 				language: 'en',
 
@@ -81,13 +81,16 @@
 			// Language setup
 			this.tinyMCEConfig.language = CMDBuild.Config.localization.get(CMDBuild.core.proxy.CMProxyConstants.LANGUAGE);
 
-			// Editor color setup for Administration
+			// Silver editor color setup for Administration
 			if (Ext.isEmpty(CMDBuild.app.Management)) {
 				var extVersion = CMDBuild.core.Utils.getExtJsVersion();
 
-				this.tinyMCEConfig.skin_variant = 'silver';
 				this.tinyMCEConfig.popup_css = 'javascripts/ext-' + extVersion + '-ux/form/field/tinymce/themes/advanced/skins/extjs/dialog_silver.css';
 			}
+
+			// Blue editor color setup for Management
+			if (Ext.isEmpty(CMDBuild.app.Administration))
+				this.tinyMCEConfig.skin_variant = 'blue';
 
 			this.callParent(arguments);
 
