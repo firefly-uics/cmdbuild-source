@@ -21,7 +21,7 @@
 		/**
 		 * @property {String}
 		 */
-		selectedName: undefined,
+		selectedRecord: undefined,
 
 		/**
 		 * Buffer to hold all values windows grid datas
@@ -175,7 +175,7 @@
 		},
 
 		onAbortButtonClick: function() {
-			if (!Ext.isEmpty(this.selectedName)) {
+			if (!Ext.isEmpty(this.selectedRecord)) {
 				this.onRowSelected();
 			} else {
 				this.form.reset();
@@ -185,7 +185,7 @@
 
 		onAddButtonClick: function() {
 			this.grid.getSelectionModel().deselectAll();
-			this.selectedName = null;
+			this.selectedRecord = null;
 			this.valuesWindowDataBuffer = null;
 			this.form.reset();
 			this.form.enableModify(true);
@@ -217,18 +217,18 @@
 
 		onRowSelected: function() {
 			if (this.grid.getSelectionModel().hasSelection()) {
-				this.selectedName = this.grid.getSelectionModel().getSelection()[0].get(CMDBuild.core.proxy.CMProxyConstants.NAME);
+				this.selectedRecord = this.grid.getSelectionModel().getSelection()[0];
 
-				CMDBuild.LoadMask.get().show();
 				CMDBuild.core.proxy.EmailTemplates.get({
 					params: {
-						name: this.selectedName
+						name: this.selectedRecord.get(CMDBuild.core.proxy.CMProxyConstants.NAME)
 					},
+					loadMask: true,
 					scope: this,
 					failure: function(response, options, decodedResponse) {
 						CMDBuild.Msg.error(
 							CMDBuild.Translation.common.failure,
-							Ext.String.format(CMDBuild.Translation.errors.getTemplateWithNameFailure, this.selectedName),
+							Ext.String.format(CMDBuild.Translation.errors.getTemplateWithNameFailure, this.selectedRecord.get(CMDBuild.core.proxy.CMProxyConstants.NAME)),
 							false
 						);
 					},
@@ -238,9 +238,6 @@
 						this.form.loadRecord(templateModel);
 						this.valuesWindowDataBuffer = templateModel.get(CMDBuild.core.proxy.CMProxyConstants.VARIABLES);
 						this.form.disableModify(true);
-					},
-					callback: function(options, success, response) {
-						CMDBuild.LoadMask.get().hide();
 					}
 				});
 			}
@@ -254,32 +251,31 @@
 				// To put and encode variablesWindow grid values
 				formData[CMDBuild.core.proxy.CMProxyConstants.VARIABLES] = Ext.encode(this.valuesWindowDataBuffer);
 
-				CMDBuild.LoadMask.get().show();
 				if (Ext.isEmpty(formData.id)) {
 					CMDBuild.core.proxy.EmailTemplates.create({
 						params: formData,
+						loadMask: true,
 						scope: this,
-						success: this.success,
-						callback: this.callback
+						success: this.success
 					});
 				} else {
 					CMDBuild.core.proxy.EmailTemplates.update({
 						params: formData,
+						loadMask: true,
 						scope: this,
-						success: this.success,
-						callback: this.callback
+						success: this.success
 					});
 				}
 			}
 		},
 
 		removeItem: function() {
-			if (!Ext.isEmpty(this.selectedName)) {
-				CMDBuild.LoadMask.get().show();
+			if (!Ext.isEmpty(this.selectedRecord)) {
 				CMDBuild.core.proxy.EmailTemplates.remove({
 					params: {
-						name: this.selectedName
+						name: this.selectedRecord.get(CMDBuild.core.proxy.CMProxyConstants.NAME)
 					},
+					loadMask: true,
 					scope: this,
 					success: function() {
 						this.form.reset();
@@ -293,8 +289,7 @@
 									this.form.disableModify();
 							}
 						});
-					},
-					callback: this.callback()
+					}
 				});
 			}
 		},
