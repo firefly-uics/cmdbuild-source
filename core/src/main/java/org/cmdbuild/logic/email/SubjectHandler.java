@@ -1,6 +1,6 @@
 package org.cmdbuild.logic.email;
 
-import org.cmdbuild.data.store.email.Email;
+import org.cmdbuild.logic.email.EmailLogic.Email;
 
 /**
  * Parses a string that should be the mail's subject according with an expected

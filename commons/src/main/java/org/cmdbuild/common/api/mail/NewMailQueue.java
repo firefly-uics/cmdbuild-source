@@ -2,6 +2,16 @@ package org.cmdbuild.common.api.mail;
 
 public interface NewMailQueue {
 
+	interface Callback {
+
+		void added(int index);
+
+		void sent(int index);
+
+	}
+
+	NewMailQueue withCallback(Callback callback);
+
 	/**
 	 * Creates a new mail.
 	 * 

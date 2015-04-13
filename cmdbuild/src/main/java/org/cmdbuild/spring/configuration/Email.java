@@ -138,8 +138,7 @@ public class Email {
 	@Bean
 	@Scope(PROTOTYPE)
 	public EmailLogic emailLogic() {
-		return new DefaultEmailLogic(emailStore(), emailTemporaryStore(), emailServiceFactory(), emailAccountFacade(),
-				subjectHandler(), notifier, emailAttachmentsLogic(), emailStatusConverter());
+		return new DefaultEmailLogic(emailStore(), emailTemporaryStore(), emailStatusConverter());
 	}
 
 	@Bean
@@ -167,7 +166,8 @@ public class Email {
 
 	@Bean
 	public Command emailQueue() {
-		return new DefaultEmailQueue(emailAccountFacade(), mailApiFactory(), emailLogic(), emailAttachmentsLogic());
+		return new DefaultEmailQueue(emailAccountFacade(), mailApiFactory(), emailLogic(), emailAttachmentsLogic(),
+				subjectHandler());
 	}
 
 }

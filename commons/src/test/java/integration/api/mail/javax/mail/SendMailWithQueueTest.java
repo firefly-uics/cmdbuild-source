@@ -8,6 +8,10 @@ import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.Matchers.startsWith;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 import java.net.URL;
 import java.util.Arrays;
@@ -21,8 +25,11 @@ import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 
+import org.cmdbuild.common.api.mail.NewMailQueue;
+import org.cmdbuild.common.api.mail.NewMailQueue.Callback;
 import org.junit.Rule;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 
 import com.icegreen.greenmail.util.GreenMail;
 import com.icegreen.greenmail.util.ServerSetup;
@@ -286,21 +293,27 @@ public class SendMailWithQueueTest extends AbstractMailTest {
 
 	@Test
 	public void multipleMessagesSuccessfullySent() throws Exception {
-		newMail() //
+		newMailQueue() //
+				// ---
+				.newMail() //
 				.withTo(BAR_AT_EXAMPLE_DOT_COM) //
 				.withSubject(FOO) //
 				.withContent(PLAIN_TEXT_CONTENT) //
-				.send();
-		newMail() //
+				.add() //
+				// ---
+				.newMail() //
 				.withTo(BAR_AT_EXAMPLE_DOT_COM) //
 				.withSubject(BAR) //
 				.withContent(PLAIN_TEXT_CONTENT) //
-				.send();
-		newMail() //
+				.add() //
+				// ---
+				.newMail() //
 				.withTo(BAR_AT_EXAMPLE_DOT_COM) //
 				.withSubject(BAZ) //
 				.withContent(PLAIN_TEXT_CONTENT) //
-				.send();
+				.add() //
+				// ---
+				.sendAll();
 
 		final List<MimeMessage> receivedMessages = Arrays.asList(greenMail().getReceivedMessages());
 		assertThat(receivedMessages, hasSize(3));
@@ -308,6 +321,50 @@ public class SendMailWithQueueTest extends AbstractMailTest {
 		assertThat(receivedMessages.get(0).getSubject(), equalTo(BAR));
 		assertThat(receivedMessages.get(1).getSubject(), equalTo(BAZ));
 		assertThat(receivedMessages.get(2).getSubject(), equalTo(FOO));
+	}
+
+	@Test
+	public void callbackCalledWhenMailsAreAddedAndSent() throws Exception {
+		// given
+		final Callback callback = mock(Callback.class);
+		final NewMailQueue queue = newMailQueue() //
+				.withCallback(callback);
+
+		// when
+		queue.newMail() //
+				.withTo(BAR_AT_EXAMPLE_DOT_COM) //
+				.withSubject(FOO) //
+				.withContent(PLAIN_TEXT_CONTENT) //
+				.add();
+
+		// then
+		verify(callback).added(eq(0));
+
+		// and when
+		queue.newMail() //
+				.withTo(BAR_AT_EXAMPLE_DOT_COM) //
+				.withSubject(BAR) //
+				.withContent(PLAIN_TEXT_CONTENT) //
+				.add();
+
+		// then
+		verify(callback).added(eq(1));
+
+		// and when
+		queue.sendAll();
+
+		// then
+		final ArgumentCaptor<Integer> captor = ArgumentCaptor.forClass(Integer.class);
+		verify(callback, times(2)).sent(captor.capture());
+		assertThat(captor.getAllValues().get(0), equalTo(0));
+		assertThat(captor.getAllValues().get(1), equalTo(1));
+
+		final List<MimeMessage> receivedMessages = Arrays.asList(greenMail().getReceivedMessages());
+		assertThat(receivedMessages, hasSize(2));
+		Collections.sort(receivedMessages, MESSAGES_BY_SUBJECT);
+		assertThat(receivedMessages.get(0).getSubject(), equalTo(BAR));
+		assertThat(receivedMessages.get(1).getSubject(), equalTo(FOO));
+
 	}
 
 }

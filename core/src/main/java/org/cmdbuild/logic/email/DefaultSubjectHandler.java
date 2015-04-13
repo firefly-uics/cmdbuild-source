@@ -7,8 +7,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.Validate;
-import org.cmdbuild.data.store.email.Email;
 import org.cmdbuild.logger.Log;
+import org.cmdbuild.logic.email.EmailLogic.Email;
 import org.slf4j.Logger;
 
 public class DefaultSubjectHandler implements SubjectHandler {
