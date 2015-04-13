@@ -24,6 +24,7 @@ import org.cmdbuild.logic.email.ConfigurationAwareEmailAttachmentsLogic;
 import org.cmdbuild.logic.email.DefaultEmailAccountLogic;
 import org.cmdbuild.logic.email.DefaultEmailAttachmentsLogic;
 import org.cmdbuild.logic.email.DefaultEmailLogic;
+import org.cmdbuild.logic.email.DefaultEmailQueue;
 import org.cmdbuild.logic.email.DefaultEmailTemplateLogic;
 import org.cmdbuild.logic.email.DefaultSubjectHandler;
 import org.cmdbuild.logic.email.EmailAccountLogic;
@@ -35,7 +36,6 @@ import org.cmdbuild.logic.email.TransactionalEmailTemplateLogic;
 import org.cmdbuild.notification.Notifier;
 import org.cmdbuild.scheduler.command.Command;
 import org.cmdbuild.services.email.ConfigurableEmailServiceFactory;
-import org.cmdbuild.services.email.DefaultEmailQueue;
 import org.cmdbuild.services.email.EmailServiceFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -138,14 +138,8 @@ public class Email {
 	@Bean
 	@Scope(PROTOTYPE)
 	public EmailLogic emailLogic() {
-		return new DefaultEmailLogic( //
-				emailStore(), //
-				emailTemporaryStore(), //
-				emailServiceFactory(), //
-				emailAccountFacade(), //
-				subjectHandler(), //
-				notifier, //
-				emailAttachmentsLogic());
+		return new DefaultEmailLogic(emailStore(), emailTemporaryStore(), emailServiceFactory(), emailAccountFacade(),
+				subjectHandler(), notifier, emailAttachmentsLogic(), emailStatusConverter());
 	}
 
 	@Bean
@@ -172,8 +166,8 @@ public class Email {
 	}
 
 	@Bean
-	public Command emailQueueJob() {
-		return new DefaultEmailQueue(emailStore(), emailStatusConverter(), emailAccountFacade(), mailApiFactory());
+	public Command emailQueue() {
+		return new DefaultEmailQueue(emailAccountFacade(), mailApiFactory(), emailLogic(), emailAttachmentsLogic());
 	}
 
 }

@@ -249,6 +249,8 @@ public interface EmailLogic extends Logic {
 
 	Iterable<Email> readAll(Long reference);
 
+	Iterable<Email> readAll(Status status);
+
 	Email read(Email email);
 
 	void update(Email email);

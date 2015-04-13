@@ -1,4 +1,4 @@
-package org.cmdbuild.services.email;
+package org.cmdbuild.logic.email;
 
 import static com.google.common.base.Optional.absent;
 import static com.google.common.base.Splitter.on;
@@ -9,19 +9,20 @@ import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
 import static org.apache.commons.lang3.StringUtils.defaultString;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.cmdbuild.data.store.email.EmailConstants.ADDRESSES_SEPARATOR;
-import static org.cmdbuild.data.store.email.EmailStatus.OUTGOING;
-import static org.cmdbuild.data.store.email.Groupables.status;
+import static org.cmdbuild.logic.email.EmailLogic.Statuses.outgoing;
 import static org.joda.time.DateTime.now;
+
+import javax.activation.DataHandler;
 
 import org.cmdbuild.common.api.mail.MailApi;
 import org.cmdbuild.common.api.mail.MailApiFactory;
 import org.cmdbuild.common.api.mail.NewMailQueue;
 import org.cmdbuild.common.api.mail.QueueableNewMail;
-import org.cmdbuild.data.store.Store;
-import org.cmdbuild.data.store.email.Email;
 import org.cmdbuild.data.store.email.EmailAccount;
 import org.cmdbuild.data.store.email.EmailAccountFacade;
-import org.cmdbuild.data.store.email.EmailStatusConverter;
+import org.cmdbuild.logic.email.EmailAttachmentsLogic.Attachment;
+import org.cmdbuild.logic.email.EmailLogic.Email;
+import org.cmdbuild.services.email.AllConfigurationWrapper;
 
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
@@ -52,22 +53,22 @@ public class DefaultEmailQueue implements EmailQueue {
 
 	private static final String CONTENT_TYPE = "text/html; charset=UTF-8";
 
-	private final Store<Email> emailStore;
-	private final EmailStatusConverter emailStatusConverter;
 	private final EmailAccountFacade emailAccountFacade;
 	private final MailApiFactory mailApiFactory;
+	private final EmailLogic emailLogic;
+	private final EmailAttachmentsLogic emailAttachmensLogic;
 
-	public DefaultEmailQueue(final Store<Email> emailStore, final EmailStatusConverter emailStatusConverter,
-			final EmailAccountFacade emailAccountFacade, final MailApiFactory mailApiFactory) {
-		this.emailStore = emailStore;
-		this.emailStatusConverter = emailStatusConverter;
+	public DefaultEmailQueue(final EmailAccountFacade emailAccountFacade, final MailApiFactory mailApiFactory,
+			final EmailLogic emailLogic, final EmailAttachmentsLogic emailAttachmensLogic) {
 		this.emailAccountFacade = emailAccountFacade;
 		this.mailApiFactory = mailApiFactory;
+		this.emailLogic = emailLogic;
+		this.emailAttachmensLogic = emailAttachmensLogic;
 	}
 
 	@Override
 	public void execute() {
-		final Iterable<Email> elements = from(emailStore.readAll(status(emailStatusConverter.toId(OUTGOING)))) //
+		final Iterable<Email> elements = from(emailLogic.readAll(outgoing())) //
 				.filter(DELAY_ELAPSED);
 		final Multimap<Optional<String>, Email> emailsByAccount = index(elements, ACCOUNT_NAME_OR_ABSENT);
 		for (final Optional<String> accountName : emailsByAccount.keySet()) {
@@ -89,7 +90,12 @@ public class DefaultEmailQueue implements EmailQueue {
 							.withSubject(email.getSubject()) //
 							.withContent(email.getContent()) //
 							.withContentType(CONTENT_TYPE);
-					// TODO attachments
+					for (final Attachment attachment : emailAttachmensLogic.readAll(email)) {
+						final Optional<DataHandler> dataHandler = emailAttachmensLogic.read(email, attachment);
+						if (dataHandler.isPresent()) {
+							newMail.withAttachment(dataHandler.get(), attachment.getFileName());
+						}
+					}
 					newMail.add();
 				}
 				queue.sendAll();
