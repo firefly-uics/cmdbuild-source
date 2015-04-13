@@ -20,24 +20,19 @@ import static org.cmdbuild.data.store.email.EmailConstants.TEMPLATE_ATTRIBUTE;
 import static org.cmdbuild.data.store.email.EmailConstants.TO_ADDRESSES_ATTRIBUTE;
 
 import java.util.Map;
-import java.util.NoSuchElementException;
 
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entry.IdAndDescription;
 import org.cmdbuild.data.store.dao.BaseStorableConverter;
-import org.cmdbuild.data.store.lookup.Lookup;
-import org.cmdbuild.data.store.lookup.LookupImpl;
-import org.cmdbuild.data.store.lookup.LookupStore;
-import org.cmdbuild.data.store.lookup.LookupType;
 
 import com.google.common.collect.Maps;
 
 public class EmailConverter extends BaseStorableConverter<Email> {
 
-	private final LookupStore lookupStore;
+	private final EmailStatusConverter converter;
 
-	public EmailConverter(final LookupStore lookupStore) {
-		this.lookupStore = lookupStore;
+	public EmailConverter(final EmailStatusConverter converter) {
+		this.converter = converter;
 	}
 
 	@Override
@@ -62,12 +57,7 @@ public class EmailConverter extends BaseStorableConverter<Email> {
 		email.setPromptSynchronization(defaultIfNull(card.get(PROMPT_SYNCHRONIZATION_ATTRIBUTE, Boolean.class), false));
 		email.setDelay(defaultIfNull(card.get(DELAY_ATTRIBUTE, Integer.class), 0).longValue());
 		email.setDate((card.getBeginDate()));
-
-		final Long emailStatusLookupId = card.get(EMAIL_STATUS_ATTRIBUTE, IdAndDescription.class).getId();
-		final Lookup lookup = lookupStore.read(LookupImpl.newInstance() //
-				.withId(emailStatusLookupId) //
-				.build());
-		email.setStatus(EmailStatus.of(identifierOf(lookup)));
+		email.setStatus(converter.fromId(card.get(EMAIL_STATUS_ATTRIBUTE, IdAndDescription.class).getId()));
 		email.setReference((card.get(CARD_ATTRIBUTE) != null) ? card.get(CARD_ATTRIBUTE, IdAndDescription.class)
 				.getId() : null);
 		return email;
@@ -90,25 +80,8 @@ public class EmailConverter extends BaseStorableConverter<Email> {
 		values.put(KEEP_SYNCHRONIZATION_ATTRIBUTE, email.isKeepSynchronization());
 		values.put(PROMPT_SYNCHRONIZATION_ATTRIBUTE, email.isPromptSynchronization());
 		values.put(DELAY_ATTRIBUTE, email.getDelay());
-		if (email.getStatus() != null) {
-			values.put(EMAIL_STATUS_ATTRIBUTE, getEmailLookupIdFrom(email.getStatus()));
-		}
+		values.put(EMAIL_STATUS_ATTRIBUTE, converter.toId(email.getStatus()));
 		return values;
-	}
-
-	private Long getEmailLookupIdFrom(final EmailStatus emailStatus) {
-		for (final Lookup lookup : lookupStore.readAll(LookupType.newInstance() //
-				.withName(EmailStatus.LOOKUP_TYPE) //
-				.build())) {
-			if (identifierOf(lookup).equals(emailStatus.getLookupName())) {
-				return lookup.getId();
-			}
-		}
-		throw new NoSuchElementException();
-	}
-
-	private String identifierOf(final Lookup lookup) {
-		return lookup.code();
 	}
 
 }

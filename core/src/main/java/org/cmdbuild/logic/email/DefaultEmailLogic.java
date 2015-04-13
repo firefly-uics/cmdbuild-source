@@ -11,6 +11,7 @@ import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
 import static org.cmdbuild.common.utils.Reflection.unsupported;
 import static org.cmdbuild.data.store.email.EmailConstants.ADDRESSES_SEPARATOR;
+import static org.cmdbuild.data.store.email.Groupables.reference;
 import static org.cmdbuild.logic.email.EmailLogic.Statuses.draft;
 import static org.cmdbuild.logic.email.EmailLogic.Statuses.outgoing;
 import static org.cmdbuild.logic.email.EmailLogic.Statuses.received;
@@ -29,7 +30,6 @@ import org.cmdbuild.data.store.Storable;
 import org.cmdbuild.data.store.Store;
 import org.cmdbuild.data.store.email.EmailAccount;
 import org.cmdbuild.data.store.email.EmailAccountFacade;
-import org.cmdbuild.data.store.email.EmailOwnerGroupable;
 import org.cmdbuild.data.store.email.EmailStatus;
 import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.exception.CMDBWorkflowException;
@@ -389,7 +389,7 @@ public class DefaultEmailLogic implements EmailLogic {
 	@Override
 	public Iterable<Email> readAll(final Long reference) {
 		return from(concat( //
-				from(emailStore.readAll(EmailOwnerGroupable.of(reference))) //
+				from(emailStore.readAll(reference(reference))) //
 						.transform(STORE_TO_LOGIC), //
 				from(temporaryEmailStore.readAll()) //
 						.filter(new Predicate<org.cmdbuild.data.store.email.Email>() {

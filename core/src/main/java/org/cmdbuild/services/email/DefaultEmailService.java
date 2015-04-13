@@ -3,120 +3,28 @@ package org.cmdbuild.services.email;
 import static com.google.common.collect.FluentIterable.from;
 import static com.google.common.collect.Iterables.unmodifiableIterable;
 import static com.google.common.reflect.Reflection.newProxy;
-import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
 import static org.cmdbuild.common.utils.Reflection.unsupported;
-import static org.cmdbuild.system.SystemUtils.isMailDebugEnabled;
 import static org.joda.time.DateTime.now;
-
-import java.util.List;
 
 import javax.activation.DataHandler;
 
-import org.cmdbuild.common.api.mail.Configuration;
 import org.cmdbuild.common.api.mail.FetchedMail;
 import org.cmdbuild.common.api.mail.GetMail;
 import org.cmdbuild.common.api.mail.MailApi;
 import org.cmdbuild.common.api.mail.MailApiFactory;
 import org.cmdbuild.common.api.mail.MailException;
-import org.cmdbuild.common.api.mail.NewMail;
 import org.cmdbuild.common.api.mail.SelectMail;
+import org.cmdbuild.common.api.mail.SendableNewMail;
 import org.cmdbuild.data.store.email.EmailAccount;
 import org.joda.time.DateTime;
-import org.slf4j.Logger;
 
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
 
 public class DefaultEmailService implements EmailService {
-
-	private static class AllConfigurationWrapper implements Configuration.All {
-
-		public static AllConfigurationWrapper of(final EmailAccount account) {
-			return new AllConfigurationWrapper(account);
-		}
-
-		private final EmailAccount account;
-
-		private AllConfigurationWrapper(final EmailAccount account) {
-			this.account = account;
-		}
-
-		@Override
-		public boolean isDebug() {
-			return isMailDebugEnabled();
-		}
-
-		@Override
-		public Logger getLogger() {
-			return logger;
-		}
-
-		@Override
-		public String getOutputProtocol() {
-			final boolean useSsl = Boolean.valueOf(account.isSmtpSsl());
-			return useSsl ? PROTOCOL_SMTPS : PROTOCOL_SMTP;
-		}
-
-		@Override
-		public String getOutputHost() {
-			return account.getSmtpServer();
-		}
-
-		@Override
-		public Integer getOutputPort() {
-			return account.getSmtpPort();
-		}
-
-		@Override
-		public boolean isStartTlsEnabled() {
-			return false;
-		}
-
-		@Override
-		public String getOutputUsername() {
-			return account.getUsername();
-		}
-
-		@Override
-		public String getOutputPassword() {
-			return account.getPassword();
-		}
-
-		@Override
-		public List<String> getOutputFromRecipients() {
-			return asList(account.getAddress());
-		}
-
-		@Override
-		public String getInputProtocol() {
-			final boolean useSsl = Boolean.valueOf(account.isImapSsl());
-			return useSsl ? PROTOCOL_IMAPS : PROTOCOL_IMAP;
-		}
-
-		@Override
-		public String getInputHost() {
-			return account.getImapServer();
-		}
-
-		@Override
-		public Integer getInputPort() {
-			return account.getImapPort();
-		}
-
-		@Override
-		public String getInputUsername() {
-			return account.getUsername();
-		}
-
-		@Override
-		public String getInputPassword() {
-			return account.getPassword();
-		}
-
-	}
 
 	private static class MailApiSupplier implements Supplier<MailApi> {
 
@@ -260,7 +168,7 @@ public class DefaultEmailService implements EmailService {
 	public void send(final Email email) throws EmailServiceException {
 		try {
 			logger.info("sending email '{}'", email);
-			final NewMail newMail = apiSupplier.get().newMail() //
+			final SendableNewMail newMail = apiSupplier.get().newMail() //
 					.withFrom(defaultIfBlank(email.getFromAddress(), accountSupplier.get().getAddress())) //
 					.withTo(defaultIfNull(email.getToAddresses(), NO_ADDRESSES)) //
 					.withCc(defaultIfNull(email.getCcAddresses(), NO_ADDRESSES)) //

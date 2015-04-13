@@ -13,9 +13,11 @@ import org.cmdbuild.data.store.email.EmailAccount;
 import org.cmdbuild.data.store.email.EmailAccountFacade;
 import org.cmdbuild.data.store.email.EmailAccountStorableConverter;
 import org.cmdbuild.data.store.email.EmailConverter;
+import org.cmdbuild.data.store.email.EmailStatusConverter;
 import org.cmdbuild.data.store.email.EmailTemplateStorableConverter;
 import org.cmdbuild.data.store.email.ExtendedEmailTemplate;
 import org.cmdbuild.data.store.email.ExtendedEmailTemplateStore;
+import org.cmdbuild.data.store.email.LookupStoreEmailStatusConverter;
 import org.cmdbuild.data.store.email.StoreBasedEmailAccountFacade;
 import org.cmdbuild.dms.DmsConfiguration;
 import org.cmdbuild.logic.email.ConfigurationAwareEmailAttachmentsLogic;
@@ -31,7 +33,9 @@ import org.cmdbuild.logic.email.EmailTemplateLogic;
 import org.cmdbuild.logic.email.SubjectHandler;
 import org.cmdbuild.logic.email.TransactionalEmailTemplateLogic;
 import org.cmdbuild.notification.Notifier;
+import org.cmdbuild.scheduler.command.Command;
 import org.cmdbuild.services.email.ConfigurableEmailServiceFactory;
+import org.cmdbuild.services.email.DefaultEmailQueue;
 import org.cmdbuild.services.email.EmailServiceFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -92,7 +96,12 @@ public class Email {
 
 	@Bean
 	protected StorableConverter<org.cmdbuild.data.store.email.Email> emailStorableConverter() {
-		return new EmailConverter(data.lookupStore());
+		return new EmailConverter(emailStatusConverter());
+	}
+
+	@Bean
+	protected EmailStatusConverter emailStatusConverter() {
+		return new LookupStoreEmailStatusConverter(data.lookupStore());
 	}
 
 	@Bean
@@ -160,6 +169,11 @@ public class Email {
 	@Bean
 	public EmailAccountLogic emailAccountLogic() {
 		return new DefaultEmailAccountLogic(emailAccountFacade());
+	}
+
+	@Bean
+	public Command emailQueueJob() {
+		return new DefaultEmailQueue(emailStore(), emailStatusConverter(), emailAccountFacade(), mailApiFactory());
 	}
 
 }

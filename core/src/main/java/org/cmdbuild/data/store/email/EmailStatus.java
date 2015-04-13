@@ -27,4 +27,5 @@ public enum EmailStatus {
 		}
 		throw new IllegalArgumentException();
 	}
+
 }
