@@ -2,20 +2,12 @@ package org.cmdbuild.common.api.mail.javax.mail;
 
 import static org.cmdbuild.common.api.mail.javax.mail.Constants.Header.MESSAGE_ID;
 
-import java.util.Properties;
-
 import javax.mail.Message;
 import javax.mail.MessagingException;
 
 class Utils {
 
 	public static final String[] NO_HEADER_FOUND = new String[0];
-
-	public static Properties propertiesPlusSystemOnes(final Properties properties) {
-		final Properties p = new Properties(System.getProperties());
-		p.putAll(properties);
-		return p;
-	}
 
 	public static String messageIdOf(final Message message) throws MessagingException {
 		return headersOf(message, MESSAGE_ID)[0];

@@ -1,0 +1,5 @@
+package org.cmdbuild.common.api.mail.javax.mail;
+
+class NewMailImpl {
+
+}

@@ -28,7 +28,7 @@ import com.icegreen.greenmail.util.GreenMail;
 import com.icegreen.greenmail.util.ServerSetup;
 import com.icegreen.greenmail.util.ServerSetupTest;
 
-public class SendMailTest extends AbstractMailTest {
+public class SendMailWithQueueTest extends AbstractMailTest {
 
 	private static final Comparator<MimeMessage> MESSAGES_BY_SUBJECT = new Comparator<MimeMessage>() {
 
@@ -68,11 +68,13 @@ public class SendMailTest extends AbstractMailTest {
 
 	@Test
 	public void ifNotSpecifiedFromsAreTheValuesSpecifiedWithinTheConfiguration() throws Exception {
-		newMail() //
+		newMailQueue() //
+				.newMail() //
 				.withTo(BAR_AT_EXAMPLE_DOT_COM) //
 				.withSubject(SUBJECT) //
 				.withContent(PLAIN_TEXT_CONTENT) //
-				.send();
+				.add() //
+				.sendAll();
 
 		final MimeMessage receivedMessage = firstReceivedMessage();
 		assertThat(receivedMessage.getFrom().length, equalTo(1));
@@ -81,13 +83,15 @@ public class SendMailTest extends AbstractMailTest {
 
 	@Test
 	public void ifFromIsSpecifiedFromIsNotReadedFromConfiguration() throws Exception {
-		newMail() //
+		newMailQueue() //
+				.newMail() //
 				.withFrom(BAR_AT_EXAMPLE_DOT_COM) //
 				.withFrom(BAZ_AT_EXAMPLE_DOT_COM) //
 				.withTo(FOO_AT_EXAMPLE_DOT_COM) //
 				.withSubject(SUBJECT) //
 				.withContent(PLAIN_TEXT_CONTENT) //
-				.send();
+				.add() //
+				.sendAll();
 
 		final MimeMessage receivedMessage = firstReceivedMessage();
 		assertThat(receivedMessage.getFrom().length, equalTo(2));
@@ -97,7 +101,8 @@ public class SendMailTest extends AbstractMailTest {
 
 	@Test
 	public void multipleFromsWithTheSameValueAreAcceptedButOnlyOneIsUsed() throws Exception {
-		newMail() //
+		newMailQueue() //
+				.newMail() //
 				.withFrom(BAZ_AT_EXAMPLE_DOT_COM) //
 				.withFrom(BAR_AT_EXAMPLE_DOT_COM) //
 				.withFrom(BAZ_AT_EXAMPLE_DOT_COM) //
@@ -106,7 +111,8 @@ public class SendMailTest extends AbstractMailTest {
 				.withTo(FOO_AT_EXAMPLE_DOT_COM) //
 				.withSubject(SUBJECT) //
 				.withContent(PLAIN_TEXT_CONTENT) //
-				.send();
+				.add() //
+				.sendAll();
 
 		final MimeMessage receivedMessage = firstReceivedMessage();
 		assertThat(receivedMessage.getFrom().length, equalTo(2));
@@ -116,11 +122,13 @@ public class SendMailTest extends AbstractMailTest {
 
 	@Test
 	public void onlyToRecipientsOthersAreNull() throws Exception {
-		newMail() //
+		newMailQueue() //
+				.newMail() //
 				.withTo(BAR_AT_EXAMPLE_DOT_COM) //
 				.withSubject(SUBJECT) //
 				.withContent(PLAIN_TEXT_CONTENT) //
-				.send();
+				.add() //
+				.sendAll();
 
 		final MimeMessage receivedMessage = firstReceivedMessage();
 		assertThat(receivedMessage.getRecipients(RecipientType.TO), not(is(nullValue())));
@@ -130,11 +138,13 @@ public class SendMailTest extends AbstractMailTest {
 
 	@Test
 	public void onlyCcRecipientsOthersAreNull() throws Exception {
-		newMail() //
+		newMailQueue() //
+				.newMail() //
 				.withCc(BAR_AT_EXAMPLE_DOT_COM) //
 				.withSubject(SUBJECT) //
 				.withContent(PLAIN_TEXT_CONTENT) //
-				.send();
+				.add() //
+				.sendAll();
 
 		final MimeMessage receivedMessage = firstReceivedMessage();
 		assertThat(receivedMessage.getRecipients(RecipientType.TO), is(nullValue()));
@@ -144,11 +154,13 @@ public class SendMailTest extends AbstractMailTest {
 
 	@Test
 	public void onlyBccRecipientsOthersAreNull() throws Exception {
-		newMail() //
+		newMailQueue() //
+				.newMail() //
 				.withBcc(BAR_AT_EXAMPLE_DOT_COM) //
 				.withSubject(SUBJECT) //
 				.withContent(PLAIN_TEXT_CONTENT) //
-				.send();
+				.add() //
+				.sendAll();
 
 		final MimeMessage receivedMessage = firstReceivedMessage();
 		assertThat(receivedMessage.getRecipients(RecipientType.TO), is(nullValue()));
@@ -158,10 +170,12 @@ public class SendMailTest extends AbstractMailTest {
 
 	@Test
 	public void messageWithoutContentSuccessfullySent() throws Exception {
-		newMail(FOO, PASSWORD) //
+		newMailQueue(FOO, PASSWORD) //
+				.newMail() //
 				.withTo(BAR_AT_EXAMPLE_DOT_COM) //
 				.withSubject(SUBJECT) //
-				.send();
+				.add() //
+				.sendAll();
 
 		final MimeMessage receivedMessage = firstReceivedMessage();
 		assertThat(receivedMessage.getRecipients(RecipientType.TO)[0].toString(), equalTo(BAR_AT_EXAMPLE_DOT_COM));
@@ -170,11 +184,13 @@ public class SendMailTest extends AbstractMailTest {
 
 	@Test
 	public void plainTextMessageSuccessfullySent() throws Exception {
-		newMail() //
+		newMailQueue() //
+				.newMail() //
 				.withTo(BAR_AT_EXAMPLE_DOT_COM) //
 				.withSubject(SUBJECT) //
 				.withContent(PLAIN_TEXT_CONTENT) //
-				.send();
+				.add() //
+				.sendAll();
 
 		final MimeMessage receivedMessage = firstReceivedMessage();
 		assertThat(receivedMessage.getRecipients(RecipientType.TO)[0].toString(), equalTo(BAR_AT_EXAMPLE_DOT_COM));
@@ -186,11 +202,13 @@ public class SendMailTest extends AbstractMailTest {
 	public void plainTextMessageSuccessfullySentWithAutentication() throws Exception {
 		greenMail().setUser(FOO_AT_EXAMPLE_DOT_COM, FOO, PASSWORD);
 
-		newMail(FOO, PASSWORD) //
+		newMailQueue(FOO, PASSWORD) //
+				.newMail() //
 				.withTo(BAR_AT_EXAMPLE_DOT_COM) //
 				.withSubject(SUBJECT) //
 				.withContent(PLAIN_TEXT_CONTENT) //
-				.send();
+				.add() //
+				.sendAll();
 
 		final MimeMessage receivedMessage = firstReceivedMessage();
 		assertThat(receivedMessage.getRecipients(RecipientType.TO)[0].toString(), equalTo(BAR_AT_EXAMPLE_DOT_COM));
@@ -202,12 +220,14 @@ public class SendMailTest extends AbstractMailTest {
 	public void attachmentSuccessfullySent() throws Exception {
 		final URL attachment = newAttachmentFileFromContent(ATTACHMENT_CONTENT);
 
-		newMail() //
+		newMailQueue() //
+				.newMail() //
 				.withTo(BAR_AT_EXAMPLE_DOT_COM) //
 				.withSubject(SUBJECT) //
 				.withContent(PLAIN_TEXT_CONTENT) //
 				.withAttachment(attachment) //
-				.send();
+				.add() //
+				.sendAll();
 
 		final MimeMessage receivedMessage = firstReceivedMessage();
 		final MimeMultipart mimeMultipart = (MimeMultipart) receivedMessage.getContent();
@@ -220,12 +240,14 @@ public class SendMailTest extends AbstractMailTest {
 	public void attachmentByStringSuccessfullySent() throws Exception {
 		final URL attachment = newAttachmentFileFromContent(ATTACHMENT_CONTENT);
 
-		newMail() //
+		newMailQueue() //
+				.newMail() //
 				.withTo(BAR_AT_EXAMPLE_DOT_COM) //
 				.withSubject(SUBJECT) //
 				.withContent(PLAIN_TEXT_CONTENT) //
 				.withAttachment(attachment.toString()) //
-				.send();
+				.add() //
+				.sendAll();
 
 		final MimeMessage receivedMessage = firstReceivedMessage();
 		final MimeMultipart mimeMultipart = (MimeMultipart) receivedMessage.getContent();
@@ -236,23 +258,27 @@ public class SendMailTest extends AbstractMailTest {
 
 	@Test
 	public void defaultMimeTypeIsTextPlain() throws Exception {
-		newMail() //
+		newMailQueue() //
+				.newMail() //
 				.withTo(BAR_AT_EXAMPLE_DOT_COM) //
 				.withSubject(SUBJECT) //
 				.withContent(PLAIN_TEXT_CONTENT) //
-				.send();
+				.add() //
+				.sendAll();
 
 		assertThat(firstReceivedMessage().getContentType(), startsWith(MIME_TEXT_PLAIN));
 	}
 
 	@Test
 	public void customMimeTypeSuccessfullySetted() throws Exception {
-		newMail() //
+		newMailQueue() //
+				.newMail() //
 				.withTo(BAR_AT_EXAMPLE_DOT_COM) //
 				.withSubject(SUBJECT) //
 				.withContent(PLAIN_TEXT_CONTENT) //
 				.withContentType(MIME_TEXT_HTML) //
-				.send();
+				.add() //
+				.sendAll();
 
 		assertThat(((MimeMultipart) firstReceivedMessage().getContent()).getBodyPart(0).getContentType(),
 				startsWith(MIME_TEXT_HTML));
