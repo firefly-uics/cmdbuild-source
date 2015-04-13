@@ -1,6 +1,6 @@
 package org.cmdbuild.common.utils;
 
-import static org.apache.commons.lang3.StringUtils.*;
+import static org.apache.commons.lang3.StringUtils.defaultString;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -18,7 +18,8 @@ public class Reflection {
 		}
 
 		@Override
-		protected Object handleInvocation(Object proxy, Method method, Object[] args) throws Throwable {
+		protected Object handleInvocation(final Object proxy, final Method method, final Object[] args)
+				throws Throwable {
 			throw new UnsupportedOperationException(defaultString(message));
 		}
 

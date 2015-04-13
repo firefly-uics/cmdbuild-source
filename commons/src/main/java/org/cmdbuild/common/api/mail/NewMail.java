@@ -149,6 +149,7 @@ public interface NewMail {
 	 * 
 	 * @deprecated use {@link withAttachment(DataHandler)} instead.
 	 */
+	@Deprecated
 	NewMail withAttachment(URL url);
 
 	/**
@@ -163,36 +164,41 @@ public interface NewMail {
 	 * 
 	 * @deprecated use {@link withAttachment(DataHandler, String)} instead.
 	 */
+	@Deprecated
 	NewMail withAttachment(URL url, String name);
 
 	/**
 	 * @deprecated use {@link withAttachment(DataHandler)} instead.
 	 */
+	@Deprecated
 	NewMail withAttachment(String url);
 
 	/**
 	 * @deprecated use {@link withAttachment(DataHandler, String)} instead.
 	 */
+	@Deprecated
 	NewMail withAttachment(String url, String name);
 
-	NewMail withAttachment(DataHandler dataHandler);
-
-	NewMail withAttachment(DataHandler dataHandler, String name);
-
 	/**
-	 * Sets if the mail will be sent asynchronously or not.
+	 * Adds an attachment.
 	 * 
-	 * @param asyncronous
-	 *            {@code true} if the mail must be sent asynchronously,
-	 *            {@code false} otherwise.
+	 * @param dataHandler
+	 *            is the {@link DataHandler} of the attachment.
 	 * 
 	 * @return a {@link NewMail} object, can be {@code this} or a new instance.
 	 */
-	NewMail withAsynchronousSend(boolean asynchronous);
+	NewMail withAttachment(DataHandler dataHandler);
 
 	/**
-	 * Sends the new mail.
+	 * Adds an attachment with the specified name.
+	 * 
+	 * @param dataHandler
+	 *            is the {@link DataHandler} of the attachment.
+	 * @param name
+	 *            is the name of the attachment.
+	 * 
+	 * @return a {@link NewMail} object, can be {@code this} or a new instance.
 	 */
-	void send();
+	NewMail withAttachment(DataHandler dataHandler, String name);
 
 }

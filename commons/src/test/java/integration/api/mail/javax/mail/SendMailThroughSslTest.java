@@ -39,10 +39,11 @@ public class SendMailThroughSslTest extends AbstractMailTest {
 
 	@Test
 	public void mailSendAndReceived() throws Exception {
-		send(newMail() //
+		newMail() //
 				.withTo(BAR_AT_EXAMPLE_DOT_COM) //
 				.withSubject(SUBJECT) //
-				.withContent(PLAIN_TEXT_CONTENT));
+				.withContent(PLAIN_TEXT_CONTENT) //
+				.send();
 
 		assertThat(greenMail().getReceivedMessages().length, equalTo(1));
 

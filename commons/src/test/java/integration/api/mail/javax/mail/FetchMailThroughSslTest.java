@@ -51,10 +51,11 @@ public class FetchMailThroughSslTest extends AbstractMailTest {
 	@Test
 	public void allMailsFetched() throws Exception {
 		// given
-		send(newMail(FOO, PASSWORD) //
+		newMail(FOO, PASSWORD) //
 				.withTo(FOO_AT_EXAMPLE_DOT_COM) //
 				.withSubject(SUBJECT) //
-				.withContent(PLAIN_TEXT_CONTENT));
+				.withContent(PLAIN_TEXT_CONTENT) //
+				.send();
 
 		// when
 		final Iterable<FetchedMail> fetched = mailApi.selectFolder(INBOX) //
