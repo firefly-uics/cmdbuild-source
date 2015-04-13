@@ -148,8 +148,10 @@ public class ReadEmailTaskJobFactory extends AbstractJobFactory<ReadEmailTask> {
 
 	private Action sendNotification(final ReadEmailTask task) {
 		logger.info(marker, "adding notification action");
+		final Predicate<Email> condition = and(notificationActive(task), addressAndSubjectRespectFilter(task),
+				subjectMatches());
 		return new ConditionalAction( //
-				and(notificationActive(task), addressAndSubjectRespectFilter(task), subjectMatches()), //
+				condition, //
 				new Action() {
 
 					@Override
@@ -283,8 +285,10 @@ public class ReadEmailTaskJobFactory extends AbstractJobFactory<ReadEmailTask> {
 
 	private Action storeAttachments(final ReadEmailTask task) {
 		logger.info(marker, "adding attachments action");
+		final Predicate<Email> condition = and(attachmentsActive(task), addressAndSubjectRespectFilter(task),
+				hasAttachments());
 		return new ConditionalAction( //
-				and(attachmentsActive(task), addressAndSubjectRespectFilter(task), hasAttachments()), //
+				condition, //
 				new Action() {
 
 					@Override
@@ -328,8 +332,9 @@ public class ReadEmailTaskJobFactory extends AbstractJobFactory<ReadEmailTask> {
 
 	private Action startProcess(final ReadEmailTask task) {
 		logger.info(marker, "adding start process action");
+		final Predicate<Email> condition = and(workflowActive(task), addressAndSubjectRespectFilter(task));
 		return new ConditionalAction( //
-				and(workflowActive(task), addressAndSubjectRespectFilter(task)), //
+				condition, //
 				new Action() {
 
 					@Override
