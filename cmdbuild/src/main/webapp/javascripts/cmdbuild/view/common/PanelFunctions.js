@@ -91,12 +91,11 @@
 		 * @param {Boolean} allFields
 		 *
 		 * @private
-		 *
-		 * TODO: implement also item.considerAsFieldToDisable reach
 		 */
 		setDisableFields: function(state, allFields) {
 			allFields = allFields || false;
 
+			// For Ext.form.field.Field objects
 			this.getForm().getFields().each(function(item, i, length) {
 				if (typeof item.setDisabled == 'function')
 					if (state) {
@@ -106,6 +105,37 @@
 							item.setDisabled(state);
 					}
 			}, this);
+
+			// For extra objects (Buttons and objects with considerAsFieldToDisable property)
+			this.cascade(function(item) {
+				if (
+					!Ext.isEmpty(item)
+					&& typeof item.setDisabled == 'function'
+					&& (
+						item instanceof Ext.button.Button
+						|| item.considerAsFieldToDisable
+					)
+				) {
+					if (state) {
+						item.setDisabled(state);
+					} else {
+						if ((allFields || !item.cmImmutable) && item.isVisible())
+							item.setDisabled(state);
+					}
+				}
+			});
+		},
+
+		/**
+		 * @param {Boolean} state
+		 * @param {Boolean} allFields
+		 * @param {Boolean} tBarState
+		 * @param {Boolean} bBarState
+		 */
+		setDisabledModify: function(state, allFields, tBarState, bBarState) {
+			this.setDisableFields(state, allFields);
+			this.setDisabledTopBar(tBarState || !state);
+			this.setDisabledBottomBar(bBarState || state);
 		},
 
 		/**

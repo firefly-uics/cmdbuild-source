@@ -11,28 +11,13 @@
 		],
 
 		mixins: {
-			cmFormFunctions: 'CMDBUild.view.common.CMFormFunctions'
+			panelFunctions: 'CMDBuild.view.common.PanelFunctions'
 		},
 
 		/**
-		 * @cfg {CMDBuild.controller.administration.email.TemplatesController}
+		 * @cfg {CMDBuild.controller.administration.email.templates.Main}
 		 */
 		delegate: undefined,
-
-		/**
-		 * @property {Ext.button.Button}
-		 */
-		addVariablesButton: undefined,
-
-		/**
-		 * @property {Array}
-		 */
-		cmButtons: undefined,
-
-		/**
-		 * @property {Array}
-		 */
-		cmTBar: undefined,
 
 		/**
 		 * @property {CMDBuild.view.common.field.CMErasableCombo}
@@ -51,71 +36,19 @@
 
 		bodyCls: 'cmgraypanel',
 		border: false,
-		buttonAlign: 'center',
 		cls: 'x-panel-body-default-framed cmbordertop',
 		frame: false,
-		layout: 'border',
+		layout: 'fit',
 		split: true,
 
 		initComponent: function() {
-			// Buttons configuration
-				this.cmTBar = [
-					Ext.create('Ext.button.Button', {
-						iconCls: 'modify',
-						text: tr.modify,
-						scope: this,
-
-						handler: function() {
-							this.delegate.cmOn('onModifyButtonClick');
-						}
-					}),
-					Ext.create('Ext.button.Button', {
-						iconCls: 'delete',
-						text: tr.remove,
-						scope: this,
-
-						handler: function() {
-							this.delegate.cmOn('onRemoveButtonClick');
-						}
-					})
-				];
-
-				this.cmButtons = [
-					Ext.create('CMDBuild.buttons.SaveButton', {
-						scope: this,
-
-						handler: function() {
-							this.delegate.cmOn('onSaveButtonClick');
-						}
-					}),
-					Ext.create('CMDBuild.buttons.AbortButton', {
-						scope: this,
-
-						handler: function() {
-							this.delegate.cmOn('onAbortButtonClick');
-						}
-					})
-				];
-			// END: Buttons configuration
-
 			this.nameField = Ext.create('Ext.form.field.Text', {
 				name: CMDBuild.core.proxy.CMProxyConstants.NAME,
 				itemId: CMDBuild.core.proxy.CMProxyConstants.NAME,
 				fieldLabel: CMDBuild.Translation.name,
 				labelWidth: CMDBuild.LABEL_WIDTH,
-				allowBlank: false
-			});
-
-			this.addVariablesButton = Ext.create('Ext.button.Button', {
-				text: tr.valuesWindow.title,
-				scope: this,
-				iconCls: 'modify',
-				anchor: 'auto',
-				margin: '0 0 0 ' + (CMDBuild.LABEL_WIDTH + 5),
-
-				handler: function() {
-					this.delegate.cmOn('onVariablesButtonClick');
-				}
+				allowBlank: false,
+				cmImmutable: true
 			});
 
 			this.defaultAccountCombo = Ext.create('CMDBuild.view.common.field.CMErasableCombo', {
@@ -134,8 +67,7 @@
 
 			// Splitted-view wrapper
 			this.wrapper = Ext.create('Ext.panel.Panel', {
-				region: 'center',
-				frame: true,
+				frame: false,
 				border: false,
 
 				layout: {
@@ -230,7 +162,16 @@
 								maxWidth: CMDBuild.CFG_BIG_FIELD_WIDTH,
 								considerAsFieldToDisable: true
 							}),
-							this.addVariablesButton
+							Ext.create('CMDBuild.core.buttons.Modify', {
+								text: tr.valuesWindow.title,
+								anchor: 'auto',
+								margin: '0 0 0 ' + (CMDBuild.LABEL_WIDTH + 5),
+								scope: this,
+
+								handler: function(button, e) {
+									this.delegate.cmfg('onEmailTemplatesValuesButtonClick');
+								}
+							})
 						]
 					}
 				]
@@ -238,24 +179,64 @@
 
 			Ext.apply(this, {
 				dockedItems: [
-					{
-						xtype: 'toolbar',
+					Ext.create('Ext.toolbar.Toolbar', {
 						dock: 'top',
 						itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_TOP,
-						items: this.cmTBar
-					}
+
+						items: [
+							Ext.create('CMDBuild.core.buttons.Modify', {
+								text: tr.modify,
+								scope: this,
+
+								handler: function(button, e) {
+									this.delegate.cmfg('onEmailTemplatesModifyButtonClick');
+								}
+							}),
+							Ext.create('CMDBuild.core.buttons.Delete', {
+								text: tr.remove,
+								scope: this,
+
+								handler: function(button, e) {
+									this.delegate.cmfg('onEmailTemplatesRemoveButtonClick');
+								}
+							})
+						]
+					}),
+					Ext.create('Ext.toolbar.Toolbar', {
+						dock: 'bottom',
+						itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_BOTTOM,
+						ui: 'footer',
+
+						layout: {
+							type: 'hbox',
+							align: 'middle',
+							pack: 'center'
+						},
+
+						items: [
+							Ext.create('CMDBuild.core.buttons.Save', {
+								scope: this,
+
+								handler: function(button, e) {
+									this.delegate.cmfg('onEmailTemplatesSaveButtonClick');
+								}
+							}),
+							Ext.create('CMDBuild.core.buttons.Abort', {
+								scope: this,
+
+								handler: function(button, e) {
+									this.delegate.cmfg('onEmailTemplatesAbortButtonClick');
+								}
+							})
+						]
+					})
 				],
-				items: [this.wrapper],
-				buttons: this.cmButtons
+				items: [this.wrapper]
 			});
 
 			this.callParent(arguments);
-			this.disableModify();
-			this.disableCMButtons();
-		},
 
-		disableNameField: function() {
-			this.nameField.setDisabled(true);
+			this.setDisabledModify(true);
 		}
 	});
 

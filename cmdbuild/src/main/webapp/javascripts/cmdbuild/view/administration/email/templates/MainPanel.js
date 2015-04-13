@@ -8,7 +8,7 @@
 		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
 
 		/**
-		 * @cfg {CMDBuild.controller.administration.email.TemplatesController}
+		 * @cfg {CMDBuild.controller.administration.email.templates.Main}
 		 */
 		delegate: undefined,
 
@@ -33,16 +33,6 @@
 		title: CMDBuild.Translation.administration.email.title + ' - ' + tr.title,
 
 		initComponent: function() {
-			this.addButton = Ext.create('Ext.button.Button', {
-				iconCls: 'add',
-				text: tr.add,
-				scope: this,
-
-				handler: function() {
-					this.delegate.cmOn('onAddButtonClick');
-				}
-			});
-
 			this.grid = Ext.create('CMDBuild.view.administration.email.templates.GridPanel', {
 				region: 'north',
 				split: true,
@@ -55,12 +45,21 @@
 
 			Ext.apply(this, {
 				dockedItems: [
-					{
-						xtype: 'toolbar',
+					Ext.create('Ext.toolbar.Toolbar', {
 						dock: 'top',
 						itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_TOP,
-						items: [this.addButton]
-					}
+
+						items: [
+							Ext.create('CMDBuild.core.buttons.Add', {
+								text: tr.add,
+								scope: this,
+
+								handler: function(button, e) {
+									this.delegate.cmfg('onEmailTemplatesAddButtonClick');
+								}
+							})
+						]
+					})
 				],
 				items: [this.grid, this.form]
 			});
