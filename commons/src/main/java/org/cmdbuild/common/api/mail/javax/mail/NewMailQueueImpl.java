@@ -1,6 +1,7 @@
 package org.cmdbuild.common.api.mail.javax.mail;
 
 import static com.google.common.collect.Lists.newArrayList;
+import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 
 import java.net.URL;
 import java.util.Collection;
@@ -140,12 +141,14 @@ class NewMailQueueImpl implements NewMailQueue {
 	private static class QueueableNewMailImpl extends ForwardingNewMail implements QueueableNewMail {
 
 		private final NewMailQueue parent;
+		private final Callback callback;
 		private final NewMailImpl newMail;
 		private final Collection<? super NewMailImpl> elements;
 
-		public QueueableNewMailImpl(final NewMailQueue parent, final NewMailImpl newMail,
+		public QueueableNewMailImpl(final NewMailQueue parent, final Callback callback, final NewMailImpl newMail,
 				final Collection<? super NewMailImpl> elements) {
 			this.parent = parent;
+			this.callback = callback;
 			this.newMail = newMail;
 			this.elements = elements;
 		}
@@ -272,39 +275,48 @@ class NewMailQueueImpl implements NewMailQueue {
 		@Override
 		public NewMailQueue add() {
 			elements.add(newMail);
+			callback.added(elements.size() - 1);
 			return parent;
 		}
 
 	}
 
+	private static final Callback NULL_CALLBACK = new Callback() {
+
+		@Override
+		public void added(final int index) {
+			// nothing to do
+		}
+
+		@Override
+		public void sent(final int index) {
+			// nothing to do
+		}
+
+	};
+
 	private final Output configuration;
 	private final Logger logger;
 	private final Collection<NewMailImpl> elements;
+	private Callback callback = NULL_CALLBACK;
 
 	public NewMailQueueImpl(final Output configuration) {
 		this.configuration = configuration;
 		this.logger = configuration.getLogger();
+		// we need to preserve order
 		this.elements = newArrayList();
+	}
+
+	@Override
+	public NewMailQueue withCallback(final Callback callback) {
+		this.callback = defaultIfNull(callback, NULL_CALLBACK);
+		return this;
 	}
 
 	@Override
 	public QueueableNewMail newMail() {
 		final NewMailImpl newMail = new NewMailImpl(logger);
-		final QueueableNewMailImpl element = new QueueableNewMailImpl(this, newMail, elements);
-		return new ForwardingQueueableNewMail() {
-
-			@Override
-			protected QueueableNewMail delegate() {
-				return element;
-			}
-
-			@Override
-			public NewMailQueue add() {
-				elements.add(newMail);
-				return NewMailQueueImpl.this;
-			}
-
-		};
+		return new QueueableNewMailImpl(this, callback, newMail, elements);
 	}
 
 	@Override
@@ -314,11 +326,13 @@ class NewMailQueueImpl implements NewMailQueue {
 			@Override
 			public void connected(final Session session, final Transport transport) throws MailException {
 				try {
+					int count = 0;
 					for (final NewMailImpl element : elements) {
 						final MessageBuilder messageBuilder = new NewMailImplMessageBuilder(configuration, session,
 								element);
 						final Message message = messageBuilder.build();
 						transport.sendMessage(message, message.getAllRecipients());
+						callback.sent(count++);
 					}
 				} catch (final MessagingException e) {
 					logger.error("error sending mail", e);

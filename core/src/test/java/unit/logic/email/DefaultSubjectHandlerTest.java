@@ -4,8 +4,9 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
-import org.cmdbuild.data.store.email.Email;
 import org.cmdbuild.logic.email.DefaultSubjectHandler;
+import org.cmdbuild.logic.email.EmailImpl;
+import org.cmdbuild.logic.email.EmailLogic.Email;
 import org.cmdbuild.logic.email.SubjectHandler.CompiledSubject;
 import org.cmdbuild.logic.email.SubjectHandler.ParsedSubject;
 import org.junit.Test;
@@ -62,8 +63,10 @@ public class DefaultSubjectHandlerTest {
 	@Test
 	public void compiledSubjectIfEmailHasIdHasExpectedFormat() {
 		// given
-		final Email email = new Email(42);
-		email.setSubject("foo");
+		final Email email = EmailImpl.newInstance() //
+				.withId(42L) //
+				.withSubject("foo") //
+				.build();
 
 		assertThat(compile(email).getSubject(), equalTo("[42] foo"));
 	}
@@ -71,8 +74,9 @@ public class DefaultSubjectHandlerTest {
 	@Test
 	public void compiledSubjectIfEmailHasNoIdHasExpectedFormat() {
 		// given
-		final Email email = new Email();
-		email.setSubject("foo");
+		final Email email = EmailImpl.newInstance() //
+				.withSubject("foo") //
+				.build();
 
 		assertThat(compile(email).getSubject(), equalTo("foo"));
 	}
@@ -84,8 +88,10 @@ public class DefaultSubjectHandlerTest {
 	@Test
 	public void roundTrip() {
 		// given
-		final Email email = new Email(42);
-		email.setSubject(" foo ");
+		final Email email = EmailImpl.newInstance() //
+				.withId(42L) //
+				.withSubject(" foo ") //
+				.build();
 
 		// when
 		final ParsedSubject parsedSubject = parse(compile(email).getSubject());

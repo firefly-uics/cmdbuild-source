@@ -94,16 +94,16 @@ public class Startup {
 	protected Startable startEmailQueueSender() {
 		return new Startable() {
 
-			private final Job job= 
-					BuildableCommandBasedJob.newInstance() //
+			private final Job job = BuildableCommandBasedJob.newInstance() //
 					.withName("e-mail queue") //
 					.withCommand(email.emailQueue()) //
 					.build();
-			private final SchedulerService schedulerService= scheduler.defaultSchedulerService();
+			private final SchedulerService schedulerService = scheduler.defaultSchedulerService();
 
 			@Override
 			public void start() {
-				schedulerService.add(job, everyMinute());				
+				// TODO
+				// schedulerService.add(job, everyMinute());
 			}
 
 		};

@@ -1,14 +1,11 @@
 package org.cmdbuild.logic.email;
 
 import static com.google.common.base.Splitter.on;
-import static com.google.common.base.Suppliers.ofInstance;
 import static com.google.common.collect.FluentIterable.from;
 import static com.google.common.collect.Iterables.concat;
 import static com.google.common.collect.Iterables.contains;
 import static com.google.common.reflect.Reflection.newProxy;
 import static java.util.Arrays.asList;
-import static org.apache.commons.lang3.StringUtils.EMPTY;
-import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
 import static org.cmdbuild.common.utils.Reflection.unsupported;
 import static org.cmdbuild.data.store.email.EmailConstants.ADDRESSES_SEPARATOR;
 import static org.cmdbuild.data.store.email.EmailStatus.OUTGOING;
@@ -19,7 +16,6 @@ import static org.cmdbuild.logic.email.EmailLogic.Statuses.outgoing;
 import static org.cmdbuild.logic.email.EmailLogic.Statuses.received;
 import static org.cmdbuild.logic.email.EmailLogic.Statuses.sent;
 
-import java.io.IOException;
 import java.util.UUID;
 
 import javax.activation.DataHandler;
@@ -30,23 +26,16 @@ import org.cmdbuild.common.utils.TempDataSource;
 import org.cmdbuild.common.utils.UnsupportedProxyFactory;
 import org.cmdbuild.data.store.Storable;
 import org.cmdbuild.data.store.Store;
-import org.cmdbuild.data.store.email.EmailAccount;
-import org.cmdbuild.data.store.email.EmailAccountFacade;
 import org.cmdbuild.data.store.email.EmailStatus;
 import org.cmdbuild.data.store.email.EmailStatusConverter;
-import org.cmdbuild.exception.CMDBException;
-import org.cmdbuild.exception.CMDBWorkflowException;
 import org.cmdbuild.logic.email.EmailAttachmentsLogic.Attachment;
-import org.cmdbuild.notification.Notifier;
 import org.cmdbuild.services.email.EmailService;
-import org.cmdbuild.services.email.EmailServiceFactory;
 import org.cmdbuild.services.email.ForwardingAttachment;
 import org.cmdbuild.services.email.ForwardingEmailService;
 
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
-import com.google.common.base.Supplier;
 
 public class DefaultEmailLogic implements EmailLogic {
 
@@ -357,30 +346,15 @@ public class DefaultEmailLogic implements EmailLogic {
 
 	private final Store<org.cmdbuild.data.store.email.Email> emailStore;
 	private final Store<org.cmdbuild.data.store.email.Email> temporaryEmailStore;
-	private final EmailServiceFactory emailServiceFactory;
-	private final EmailAccountFacade emailAccountFacade;
-	private final SubjectHandler subjectHandler;
-	private final Notifier notifier;
-	private final EmailAttachmentsLogic emailAttachmentsLogic;
 	private final EmailStatusConverter emailStatusConverter;
 
 	public DefaultEmailLogic( //
 			final Store<org.cmdbuild.data.store.email.Email> emailStore, //
 			final Store<org.cmdbuild.data.store.email.Email> temporaryEmailStore, //
-			final EmailServiceFactory emailServiceFactory, //
-			final EmailAccountFacade emailAccountFacade, //
-			final SubjectHandler subjectHandler, //
-			final Notifier notifier, //
-			final EmailAttachmentsLogic emailAttachmentsLogic, //
 			final EmailStatusConverter emailStatusConverter //
 	) {
 		this.emailStore = emailStore;
 		this.temporaryEmailStore = temporaryEmailStore;
-		this.emailServiceFactory = emailServiceFactory;
-		this.emailAccountFacade = emailAccountFacade;
-		this.subjectHandler = subjectHandler;
-		this.notifier = notifier;
-		this.emailAttachmentsLogic = emailAttachmentsLogic;
 		this.emailStatusConverter = emailStatusConverter;
 	}
 
@@ -493,87 +467,14 @@ public class DefaultEmailLogic implements EmailLogic {
 		}
 
 		if (draft().equals(read.getStatus())) {
-			final org.cmdbuild.data.store.email.Email storable = LOGIC_TO_STORE.apply(email);
-			storeOf(email).update(storable);
-		}
-
-		if (outgoing().equals(email.getStatus())) {
-			send(read(email));
+			updateWithNoChecks(email);
 		}
 	}
 
-	private void send(final Email email) {
-		try {
-			final Optional<EmailAccount> account = emailAccountFacade.firstOfOrDefault(asList(email.getAccount()));
-			final Supplier<EmailAccount> accountSupplier = account.isPresent() ? ofInstance(account.get()) : null;
-			final Email _email = new ForwardingEmail() {
-
-				@Override
-				protected Email delegate() {
-					return email;
-				}
-
-				@Override
-				public String getFromAddress() {
-					return defaultIfBlank(super.getFromAddress(), accountSupplier.get().getAddress());
-				}
-
-				@Override
-				public Status getStatus() {
-					return sent();
-				}
-
-			};
-			send0(accountSupplier, _email);
-			storeOf(email).update(LOGIC_TO_STORE.apply(_email));
-		} catch (final CMDBException e) {
-			notifier.warn(e);
-		} catch (final Throwable e) {
-			notifier.warn(CMDBWorkflowException.WorkflowExceptionType.WF_EMAIL_NOT_SENT.createException());
-		}
-	}
-
-	private void send0(final Supplier<EmailAccount> accountSupplier, final Email email) throws IOException {
-		/*
-		 * we don't want to save the altered subject, so we are keeping it in a
-		 * different copy of the e-mail
-		 */
-		final Email _email = new ForwardingEmail() {
-
-			@Override
-			protected Email delegate() {
-				return email;
-			}
-
-			@Override
-			public String getSubject() {
-				final org.cmdbuild.data.store.email.Email storable = LOGIC_TO_STORE.apply(delegate());
-				final String subject;
-				if (subjectHandler.parse(storable.getSubject()).hasExpectedFormat()) {
-					subject = storable.getSubject();
-				} else {
-					subject = defaultIfBlank(subjectHandler.compile(storable).getSubject(), EMPTY);
-				}
-				return subject;
-			}
-
-		};
-		final org.cmdbuild.data.store.email.Email storable = LOGIC_TO_STORE.apply(_email);
-		emailService(storable.getReference(), accountSupplier).send(new EmailAdapter(_email, emailAttachmentsLogic));
-	}
-
-	private EmailService emailService(final Long processCardId, final Supplier<EmailAccount> emailAccountSupplier) {
-		final boolean isValid = (processCardId != null) && (processCardId > 0);
-		if (!isValid) {
-			logger.warn("invalid process id, returning a safe email service");
-		}
-		final EmailService emailService;
-		if (isValid) {
-			emailService = emailServiceFactory.create(emailAccountSupplier);
-		} else {
-			emailService = EMAIL_SERVICE_FOR_INVALID_PROCESS_ID;
-		}
-		return emailService;
+	@Override
+	public void updateWithNoChecks(final Email email) {
+		final org.cmdbuild.data.store.email.Email storable = LOGIC_TO_STORE.apply(email);
+		storeOf(email).update(storable);
 	}
 
 	@Override

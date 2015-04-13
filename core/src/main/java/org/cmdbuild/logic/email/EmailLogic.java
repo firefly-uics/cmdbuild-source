@@ -255,6 +255,8 @@ public interface EmailLogic extends Logic {
 
 	void update(Email email);
 
+	void updateWithNoChecks(Email email);
+
 	void delete(Email email);
 
 }
