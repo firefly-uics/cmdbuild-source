@@ -97,7 +97,7 @@ public class Startup {
 			private final Job job= 
 					BuildableCommandBasedJob.newInstance() //
 					.withName("e-mail queue") //
-					.withCommand(email.emailQueueJob()) //
+					.withCommand(email.emailQueue()) //
 					.build();
 			private final SchedulerService schedulerService= scheduler.defaultSchedulerService();
 

@@ -11,7 +11,9 @@ import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
 import static org.cmdbuild.common.utils.Reflection.unsupported;
 import static org.cmdbuild.data.store.email.EmailConstants.ADDRESSES_SEPARATOR;
+import static org.cmdbuild.data.store.email.EmailStatus.OUTGOING;
 import static org.cmdbuild.data.store.email.Groupables.reference;
+import static org.cmdbuild.data.store.email.Groupables.status;
 import static org.cmdbuild.logic.email.EmailLogic.Statuses.draft;
 import static org.cmdbuild.logic.email.EmailLogic.Statuses.outgoing;
 import static org.cmdbuild.logic.email.EmailLogic.Statuses.received;
@@ -31,6 +33,7 @@ import org.cmdbuild.data.store.Store;
 import org.cmdbuild.data.store.email.EmailAccount;
 import org.cmdbuild.data.store.email.EmailAccountFacade;
 import org.cmdbuild.data.store.email.EmailStatus;
+import org.cmdbuild.data.store.email.EmailStatusConverter;
 import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.exception.CMDBWorkflowException;
 import org.cmdbuild.logic.email.EmailAttachmentsLogic.Attachment;
@@ -214,6 +217,30 @@ public class DefaultEmailLogic implements EmailLogic {
 
 	};
 
+	private static class TemporaryEmail extends ForwardingEmail {
+
+		private final Email delegate;
+
+		public TemporaryEmail(final Email delegate) {
+			this.delegate = delegate;
+		}
+
+		@Override
+		protected Email delegate() {
+			return delegate;
+		}
+
+	}
+
+	private static final Function<Email, Email> TO_TEMPORARY = new Function<Email, Email>() {
+
+		@Override
+		public Email apply(final Email input) {
+			return new TemporaryEmail(input);
+		}
+
+	};
+
 	private static class EmailAdapter extends org.cmdbuild.services.email.ForwardingEmail {
 
 		private final org.cmdbuild.services.email.Email unsupported = newProxy(org.cmdbuild.services.email.Email.class,
@@ -335,6 +362,7 @@ public class DefaultEmailLogic implements EmailLogic {
 	private final SubjectHandler subjectHandler;
 	private final Notifier notifier;
 	private final EmailAttachmentsLogic emailAttachmentsLogic;
+	private final EmailStatusConverter emailStatusConverter;
 
 	public DefaultEmailLogic( //
 			final Store<org.cmdbuild.data.store.email.Email> emailStore, //
@@ -343,7 +371,8 @@ public class DefaultEmailLogic implements EmailLogic {
 			final EmailAccountFacade emailAccountFacade, //
 			final SubjectHandler subjectHandler, //
 			final Notifier notifier, //
-			final EmailAttachmentsLogic emailAttachmentsLogic //
+			final EmailAttachmentsLogic emailAttachmentsLogic, //
+			final EmailStatusConverter emailStatusConverter //
 	) {
 		this.emailStore = emailStore;
 		this.temporaryEmailStore = temporaryEmailStore;
@@ -352,6 +381,7 @@ public class DefaultEmailLogic implements EmailLogic {
 		this.subjectHandler = subjectHandler;
 		this.notifier = notifier;
 		this.emailAttachmentsLogic = emailAttachmentsLogic;
+		this.emailStatusConverter = emailStatusConverter;
 	}
 
 	@Override
@@ -401,27 +431,27 @@ public class DefaultEmailLogic implements EmailLogic {
 
 						}) //
 						.transform(STORE_TO_LOGIC) //
-						.transform(new Function<Email, Email>() {
+						.transform(TO_TEMPORARY) //
+		));
+	}
+
+	@Override
+	public Iterable<Email> readAll(final Status status) {
+		return from(concat( //
+				from(emailStore.readAll(status(emailStatusConverter.toId(OUTGOING)))) //
+						.transform(STORE_TO_LOGIC), //
+				from(temporaryEmailStore.readAll()) //
+						.filter(new Predicate<org.cmdbuild.data.store.email.Email>() {
 
 							@Override
-							public Email apply(final Email input) {
-								return new ForwardingEmail() {
-
-									@Override
-									protected Email delegate() {
-										return input;
-									}
-
-									@Override
-									public boolean isTemporary() {
-										return true;
-									}
-
-								};
+							public boolean apply(final org.cmdbuild.data.store.email.Email input) {
+								return ObjectUtils.equals(status, input.getStatus());
 							}
 
-						})) //
-		);
+						}) //
+						.transform(STORE_TO_LOGIC) //
+						.transform(TO_TEMPORARY) //
+		));
 	}
 
 	@Override
