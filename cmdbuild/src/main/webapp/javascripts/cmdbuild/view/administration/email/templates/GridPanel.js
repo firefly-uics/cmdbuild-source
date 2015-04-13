@@ -9,7 +9,7 @@
 		],
 
 		/**
-		 * @cfg {CMDBuild.controller.administration.email.TemplatesController}
+		 * @cfg {CMDBuild.controller.administration.email.templates.Main}
 		 */
 		delegate: undefined,
 
@@ -44,11 +44,11 @@
 
 		listeners: {
 			itemdblclick: function(grid, record, item, index, e, eOpts) {
-				this.delegate.cmOn('onItemDoubleClick');
+				this.delegate.cmfg('onEmailTemplatesItemDoubleClick');
 			},
 
 			select: function(row, record, index) {
-				this.delegate.cmOn('onRowSelected');
+				this.delegate.cmfg('onEmailTemplatesRowSelected');
 			},
 
 			// Event to load store on view display and first row selection as CMDbuild standard

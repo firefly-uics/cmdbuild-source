@@ -103,7 +103,7 @@
 				this.onUserRowSelected();
 			} else {
 				this.form.reset();
-				this.form.disableModify();
+				this.form.setDisabledModify(true, true, true);
 			}
 		},
 
@@ -111,7 +111,7 @@
 			this.selectedUser = null;
 
 			this.form.reset();
-			this.form.enableModify(true);
+			this.form.setDisabledModify(false, true);
 			this.form.defaultGroup.disable();
 
 			this.grid.getSelectionModel().deselectAll();
@@ -144,7 +144,7 @@
 				this.selectedUser = this.grid.getSelectionModel().getSelection()[0];
 
 				this.form.reset();
-				this.form.disableModify(false);
+				this.form.setDisabledModify(true, true);
 
 				// Update disableUser button
 				if (this.selectedUser.get(CMDBuild.core.proxy.CMProxyConstants.IS_ACTIVE)) {
@@ -207,7 +207,7 @@
 					var rowIndex = this.find('userid', decodedResult.rows.userid);
 
 					me.grid.getSelectionModel().select(rowIndex, true);
-					me.form.disableModify(false);
+					me.form.setDisabledModify(true);
 				}
 			});
 		}

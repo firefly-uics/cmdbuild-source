@@ -232,7 +232,7 @@
 
 			this.callParent(arguments);
 
-			this.disableModify();
+			this.setDisabledModify(true);
 		},
 
 		/**

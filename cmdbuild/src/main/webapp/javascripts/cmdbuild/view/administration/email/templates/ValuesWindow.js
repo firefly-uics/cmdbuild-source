@@ -1,10 +1,10 @@
 (function() {
 
-	Ext.define('CMDBuild.view.administration.email.templates.VariablesWindow', {
-		extend: 'CMDBuild.PopupWindow',
+	Ext.define('CMDBuild.view.administration.email.templates.ValuesWindow', {
+		extend: 'CMDBuild.core.PopupWindow',
 
 		/**
-		 * @cfg {CMDBuild.controller.administration.email.TemplatesController}
+		 * @cfg {CMDBuild.controller.administration.email.templates.Main}
 		 */
 		delegate: undefined,
 
@@ -14,7 +14,6 @@
 		grid: undefined,
 
 		title: CMDBuild.Translation.administration.email.templates.valuesWindow.title,
-		buttonsAlign: 'center',
 
 		initComponent: function() {
 			this.grid = Ext.create('Ext.grid.Panel', {
@@ -67,47 +66,56 @@
 					Ext.create('Ext.grid.plugin.CellEditing', {
 						clicksToEdit: 1
 					})
-				],
+				]
+			});
 
+			Ext.apply(this, {
 				dockedItems: [
-					{
-						xtype: 'toolbar',
+					Ext.create('Ext.toolbar.Toolbar', {
 						dock: 'top',
 						itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_TOP,
 
 						items: [
-							{
+							Ext.create('CMDBuild.core.buttons.Add', {
 								text: CMDBuild.Translation.common.buttons.add,
-								iconCls: 'add',
 								scope: this,
 
 								handler: function() {
 									this.grid.getStore().insert(0, Ext.create('CMDBuild.model.EmailTemplates.variablesWindow'));
 								}
-							}
+							})
 						]
-					}
-				]
-			});
-
-			Ext.apply(this, {
-				items: [this.grid],
-				buttons: [
-					Ext.create('CMDBuild.buttons.ConfirmButton', {
-						scope: this,
-
-						handler: function() {
-							this.delegate.cmOn('onVariablesWindowSave');
-						}
 					}),
-					Ext.create('CMDBuild.buttons.AbortButton', {
-						scope: this,
+					Ext.create('Ext.toolbar.Toolbar', {
+						dock: 'bottom',
+						itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_BOTTOM,
+						ui: 'footer',
 
-						handler: function() {
-							this.delegate.cmOn('onVariablesWindowAbort');
-						}
+						layout: {
+							type: 'hbox',
+							align: 'middle',
+							pack: 'center'
+						},
+
+						items: [
+							Ext.create('CMDBuild.core.buttons.Confirm', {
+								scope: this,
+
+								handler: function(button, e) {
+									this.delegate.cmfg('onValuesWindowSaveButtonClick');
+								}
+							}),
+							Ext.create('CMDBuild.core.buttons.Abort', {
+								scope: this,
+
+								handler: function(button, e) {
+									this.delegate.cmfg('onValuesWindowAbortButtonClick');
+								}
+							})
+						]
 					})
-				]
+				],
+				items: [this.grid]
 			});
 
 			this.callParent(arguments);
