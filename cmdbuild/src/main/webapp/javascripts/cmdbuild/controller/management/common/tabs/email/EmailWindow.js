@@ -316,7 +316,7 @@
 				failure: function(response, options, decodedResponse) {
 					CMDBuild.Msg.error(
 						CMDBuild.Translation.common.failure,
-						Ext.String.format(CMDBuild.Translation.errors.getTemplateWithNameFailure, this.selectedName),
+						Ext.String.format(CMDBuild.Translation.errors.getTemplateWithNameFailure),
 						false
 					);
 				},

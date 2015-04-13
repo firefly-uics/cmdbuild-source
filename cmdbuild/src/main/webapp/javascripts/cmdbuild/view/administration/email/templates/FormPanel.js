@@ -165,11 +165,7 @@
 							{
 								xtype: 'textareafield',
 								name: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
-								fieldLabel: CMDBuild.Translation.description_
-							},
-							{
-								xtype: 'hiddenfield',
-								name: CMDBuild.core.proxy.CMProxyConstants.ID
+								fieldLabel: CMDBuild.Translation.descriptionLabel
 							},
 							{
 								xtype: 'checkbox',
@@ -184,6 +180,10 @@
 								inputValue: true,
 								uncheckedValue: false,
 								name: CMDBuild.core.proxy.CMProxyConstants.PROMPT_SYNCHRONIZATION
+							},
+							{
+								xtype: 'hiddenfield',
+								name: CMDBuild.core.proxy.CMProxyConstants.ID
 							}
 						]
 					},
@@ -202,6 +202,11 @@
 
 						items: [
 							this.defaultAccountCombo,
+							{
+								name: CMDBuild.core.proxy.CMProxyConstants.FROM,
+								fieldLabel: CMDBuild.Translation.from,
+								vtype: 'email'
+							},
 							{
 								name: CMDBuild.core.proxy.CMProxyConstants.TO,
 								fieldLabel: CMDBuild.Translation.to

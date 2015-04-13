@@ -27,7 +27,7 @@
 					},
 					{
 						dataIndex: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
-						text: CMDBuild.Translation.description_,
+						text: CMDBuild.Translation.descriptionLabel,
 						flex: 3
 					},
 					{
