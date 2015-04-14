@@ -136,9 +136,8 @@ public class Email {
 	}
 
 	@Bean
-	@Scope(PROTOTYPE)
 	public EmailLogic emailLogic() {
-		return new DefaultEmailLogic(emailStore(), emailTemporaryStore(), emailStatusConverter());
+		return new DefaultEmailLogic(emailStore(), emailTemporaryStore(), emailStatusConverter(), emailAccountFacade());
 	}
 
 	@Bean
