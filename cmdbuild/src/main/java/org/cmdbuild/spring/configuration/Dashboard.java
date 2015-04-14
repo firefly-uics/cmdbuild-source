@@ -2,7 +2,6 @@ package org.cmdbuild.spring.configuration;
 
 import static org.cmdbuild.spring.util.Constants.PROTOTYPE;
 
-import org.cmdbuild.auth.LanguageStore;
 import org.cmdbuild.auth.UserStore;
 import org.cmdbuild.logic.DashboardLogic;
 import org.cmdbuild.services.store.DBDashboardStore;

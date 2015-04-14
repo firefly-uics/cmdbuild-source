@@ -1,9 +1,9 @@
 package org.cmdbuild.logic.email;
 
-import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 import static org.cmdbuild.scheduler.Triggers.everyMinute;
 
 import org.apache.commons.lang3.Validate;
+import org.cmdbuild.config.EmailConfiguration;
 import org.cmdbuild.scheduler.Job;
 import org.cmdbuild.scheduler.SchedulerService;
 import org.cmdbuild.scheduler.command.BuildableCommandBasedJob;
@@ -11,19 +11,13 @@ import org.cmdbuild.scheduler.command.Command;
 
 public class DefaultEmailQueueLogic implements EmailQueueLogic {
 
-	private static final Configuration NULL_CONFIGURATION = new Configuration() {
-
-		@Override
-		public long time() {
-			return 0;
-		}
-	};
-
+	private final EmailConfiguration configuration;
 	private final SchedulerService schedulerService;
 	private final Job job;
-	private Configuration configuration = NULL_CONFIGURATION;
 
-	public DefaultEmailQueueLogic(final SchedulerService schedulerService, final Command command) {
+	public DefaultEmailQueueLogic(final EmailConfiguration configuration, final SchedulerService schedulerService,
+			final Command command) {
+		this.configuration = configuration;
 		this.schedulerService = schedulerService;
 		this.job = BuildableCommandBasedJob.newInstance() //
 				.withName(DefaultEmailQueueLogic.class.getName()) //
@@ -51,16 +45,25 @@ public class DefaultEmailQueueLogic implements EmailQueueLogic {
 
 	@Override
 	public Configuration configuration() {
-		return this.configuration;
+		return new Configuration() {
+
+			@Override
+			public long time() {
+				return configuration.getQueueTime();
+			}
+
+		};
 	}
 
 	@Override
 	public void configure(final Configuration configuration) {
 		validate(configuration);
-		this.configuration = defaultIfNull(configuration, this.configuration);
+		this.configuration.setQueueTime(configuration.time());
+		this.configuration.save();
 	}
 
 	private void validate(final Configuration configuration) {
+		Validate.notNull(configuration, "missing configuration");
 		Validate.isTrue(configuration.time() >= 0, "invalid time");
 	}
 
