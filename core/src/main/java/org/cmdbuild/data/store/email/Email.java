@@ -26,7 +26,7 @@ public class Email extends AbstractEmail implements Storable {
 		this.id = null;
 	}
 
-	public Email(final long id) {
+	public Email(final Long id) {
 		this.id = id;
 	}
 

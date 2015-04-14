@@ -253,7 +253,7 @@ public class DefaultEmailLogic implements EmailLogic {
 
 			@Override
 			public Long getId() {
-				return isTemporary() ? generateId() : super.getId();
+				return isTemporary() ? Long.valueOf(generateId()) : super.getId();
 			}
 
 			private int generateId() {
