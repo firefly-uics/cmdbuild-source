@@ -1,13 +1,9 @@
 package org.cmdbuild.logic.email;
 
-import static com.google.common.base.Splitter.on;
 import static com.google.common.collect.FluentIterable.from;
 import static com.google.common.collect.Iterables.concat;
 import static com.google.common.collect.Iterables.contains;
-import static com.google.common.reflect.Reflection.newProxy;
 import static java.util.Arrays.asList;
-import static org.cmdbuild.common.utils.Reflection.unsupported;
-import static org.cmdbuild.data.store.email.EmailConstants.ADDRESSES_SEPARATOR;
 import static org.cmdbuild.data.store.email.EmailStatus.OUTGOING;
 import static org.cmdbuild.data.store.email.Groupables.reference;
 import static org.cmdbuild.data.store.email.Groupables.status;
@@ -18,23 +14,17 @@ import static org.cmdbuild.logic.email.EmailLogic.Statuses.sent;
 
 import java.util.UUID;
 
-import javax.activation.DataHandler;
-
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.Validate;
-import org.cmdbuild.common.utils.TempDataSource;
 import org.cmdbuild.common.utils.UnsupportedProxyFactory;
 import org.cmdbuild.data.store.Storable;
 import org.cmdbuild.data.store.Store;
 import org.cmdbuild.data.store.email.EmailStatus;
 import org.cmdbuild.data.store.email.EmailStatusConverter;
-import org.cmdbuild.logic.email.EmailAttachmentsLogic.Attachment;
 import org.cmdbuild.services.email.EmailService;
-import org.cmdbuild.services.email.ForwardingAttachment;
 import org.cmdbuild.services.email.ForwardingEmailService;
 
 import com.google.common.base.Function;
-import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 
 public class DefaultEmailLogic implements EmailLogic {
@@ -209,14 +199,21 @@ public class DefaultEmailLogic implements EmailLogic {
 	private static class TemporaryEmail extends ForwardingEmail {
 
 		private final Email delegate;
+		private final boolean temporary;
 
-		public TemporaryEmail(final Email delegate) {
+		public TemporaryEmail(final Email delegate, final boolean temporary) {
 			this.delegate = delegate;
+			this.temporary = temporary;
 		}
 
 		@Override
 		protected Email delegate() {
 			return delegate;
+		}
+
+		@Override
+		public boolean isTemporary() {
+			return temporary;
 		}
 
 	}
@@ -225,124 +222,10 @@ public class DefaultEmailLogic implements EmailLogic {
 
 		@Override
 		public Email apply(final Email input) {
-			return new TemporaryEmail(input);
+			return new TemporaryEmail(input, true);
 		}
 
 	};
-
-	private static class EmailAdapter extends org.cmdbuild.services.email.ForwardingEmail {
-
-		private final org.cmdbuild.services.email.Email unsupported = newProxy(org.cmdbuild.services.email.Email.class,
-				unsupported("method not supported"));
-
-		private final Email delegate;
-		private final EmailAttachmentsLogic emailAttachmentsLogic;
-
-		public EmailAdapter(final Email delegate, final EmailAttachmentsLogic emailAttachmentsLogic) {
-			this.delegate = delegate;
-			this.emailAttachmentsLogic = emailAttachmentsLogic;
-		}
-
-		@Override
-		protected org.cmdbuild.services.email.Email delegate() {
-			return unsupported;
-		}
-
-		@Override
-		public String getFromAddress() {
-			return delegate.getFromAddress();
-		}
-
-		@Override
-		public Iterable<String> getToAddresses() {
-			return on(ADDRESSES_SEPARATOR) //
-					.omitEmptyStrings() //
-					.trimResults() //
-					.split(delegate.getToAddresses());
-		}
-
-		@Override
-		public Iterable<String> getCcAddresses() {
-			return on(ADDRESSES_SEPARATOR) //
-					.omitEmptyStrings() //
-					.trimResults() //
-					.split(delegate.getCcAddresses());
-		}
-
-		@Override
-		public Iterable<String> getBccAddresses() {
-			return on(ADDRESSES_SEPARATOR) //
-					.omitEmptyStrings() //
-					.trimResults() //
-					.split(delegate.getBccAddresses());
-		}
-
-		@Override
-		public String getSubject() {
-			return delegate.getSubject();
-		}
-
-		@Override
-		public String getContent() {
-			return delegate.getContent();
-		}
-
-		@Override
-		public Iterable<org.cmdbuild.services.email.Attachment> getAttachments() {
-			return from(emailAttachmentsLogic.readAll(delegate)) //
-					.transform(new Function<Attachment, org.cmdbuild.services.email.Attachment>() {
-
-						@Override
-						public org.cmdbuild.services.email.Attachment apply(final Attachment input) {
-							final org.cmdbuild.services.email.Attachment output;
-							final Optional<DataHandler> dataHandler = emailAttachmentsLogic.read(delegate, input);
-							if (dataHandler.isPresent()) {
-								final TempDataSource tempDataSource = TempDataSource.newInstance() //
-										.withName(input.getFileName()) //
-										.build();
-								output = new ForwardingAttachment() {
-
-									private final org.cmdbuild.services.email.Attachment unsupported = newProxy(
-											org.cmdbuild.services.email.Attachment.class,
-											unsupported("method not supported"));
-
-									@Override
-									protected org.cmdbuild.services.email.Attachment delegate() {
-										return unsupported;
-									}
-
-									@Override
-									public String getName() {
-										return input.getFileName();
-									};
-
-									@Override
-									public DataHandler getDataHandler() {
-										return new DataHandler(tempDataSource);
-									};
-
-								};
-							} else {
-								output = null;
-							}
-							return output;
-						}
-
-					}) //
-					.filter(org.cmdbuild.services.email.Attachment.class);
-		}
-
-		@Override
-		public String getAccount() {
-			return delegate.getAccount();
-		}
-
-		@Override
-		public long getDelay() {
-			return delegate.getDelay();
-		}
-
-	}
 
 	private final Store<org.cmdbuild.data.store.email.Email> emailStore;
 	private final Store<org.cmdbuild.data.store.email.Email> temporaryEmailStore;
@@ -431,19 +314,7 @@ public class DefaultEmailLogic implements EmailLogic {
 	@Override
 	public Email read(final Email email) {
 		final org.cmdbuild.data.store.email.Email read = storeOf(email).read(LOGIC_TO_STORE.apply(email));
-		return new ForwardingEmail() {
-
-			@Override
-			protected Email delegate() {
-				return STORE_TO_LOGIC.apply(read);
-			}
-
-			@Override
-			public boolean isTemporary() {
-				return email.isTemporary();
-			}
-
-		};
+		return new TemporaryEmail(STORE_TO_LOGIC.apply(read), email.isTemporary());
 	}
 
 	@Override
