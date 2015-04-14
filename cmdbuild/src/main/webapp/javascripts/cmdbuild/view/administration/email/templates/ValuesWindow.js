@@ -13,7 +13,7 @@
 		 */
 		grid: undefined,
 
-		title: CMDBuild.Translation.administration.email.templates.valuesWindow.title,
+		title: CMDBuild.Translation.editValues,
 
 		initComponent: function() {
 			this.grid = Ext.create('Ext.grid.Panel', {

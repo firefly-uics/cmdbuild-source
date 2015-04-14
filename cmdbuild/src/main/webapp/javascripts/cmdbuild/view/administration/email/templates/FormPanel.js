@@ -1,7 +1,5 @@
 (function() {
 
-	var tr = CMDBuild.Translation.administration.email.templates;
-
 	Ext.define('CMDBuild.view.administration.email.templates.FormPanel', {
 		extend: 'Ext.form.Panel',
 
@@ -23,6 +21,11 @@
 		 * @property {CMDBuild.view.common.field.CMErasableCombo}
 		 */
 		defaultAccountCombo: undefined,
+
+		/**
+		 * @property {CMDBuild.view.common.field.delay.Delay}
+		 */
+		delayField: undefined,
 
 		/**
 		 * @property {Ext.form.field.Text}
@@ -65,8 +68,15 @@
 				queryMode: 'local'
 			});
 
+			this.delayField = Ext.create('CMDBuild.view.common.field.delay.Delay', {
+				fieldLabel: CMDBuild.Translation.delay,
+				labelWidth: CMDBuild.LABEL_WIDTH,
+				name: CMDBuild.core.proxy.CMProxyConstants.DELAY
+			});
+
 			// Splitted-view wrapper
-			this.wrapper = Ext.create('Ext.panel.Panel', {
+			this.wrapper = Ext.create('Ext.form.Panel', {
+				bodyCls: 'cmgraypanel-nopadding',
 				frame: false,
 				border: false,
 
@@ -83,13 +93,18 @@
 				items: [
 					{
 						xtype: 'fieldset',
-						title: CMDBuild.Translation.administration.modClass.attributeProperties.baseProperties,
+						title: CMDBuild.Translation.baseProperties,
 						flex: 1,
 
 						defaults: {
 							labelWidth: CMDBuild.LABEL_WIDTH,
 							maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
 							anchor: '100%'
+						},
+
+						layout: {
+							type: 'vbox',
+							align: 'stretch'
 						},
 
 						items: [
@@ -113,6 +128,7 @@
 								uncheckedValue: false,
 								name: CMDBuild.core.proxy.CMProxyConstants.PROMPT_SYNCHRONIZATION
 							},
+							this.delayField,
 							{
 								xtype: 'hiddenfield',
 								name: CMDBuild.core.proxy.CMProxyConstants.ID
@@ -122,7 +138,7 @@
 					{ xtype: 'splitter' },
 					{
 						xtype: 'fieldset',
-						title: CMDBuild.Translation.administration.email.templates.template,
+						title: CMDBuild.Translation.template,
 						flex: 1,
 
 						defaults: {
@@ -130,6 +146,11 @@
 							labelWidth: CMDBuild.LABEL_WIDTH,
 							maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
 							anchor: '100%'
+						},
+
+						layout: {
+							type: 'vbox',
+							align: 'stretch'
 						},
 
 						items: [
@@ -157,15 +178,15 @@
 							},
 							Ext.create('CMDBuild.view.common.field.CMHtmlEditorField', {
 								name: CMDBuild.core.proxy.CMProxyConstants.BODY,
-								fieldLabel: CMDBuild.Translation.administration.email.templates.body,
+								fieldLabel: CMDBuild.Translation.body,
 								labelWidth: CMDBuild.LABEL_WIDTH,
 								maxWidth: CMDBuild.CFG_BIG_FIELD_WIDTH,
 								considerAsFieldToDisable: true
 							}),
 							Ext.create('CMDBuild.core.buttons.Modify', {
-								text: tr.valuesWindow.title,
-								anchor: 'auto',
+								text: CMDBuild.Translation.editValues,
 								margin: '0 0 0 ' + (CMDBuild.LABEL_WIDTH + 5),
+								maxWidth: 100,
 								scope: this,
 
 								handler: function(button, e) {
@@ -185,7 +206,7 @@
 
 						items: [
 							Ext.create('CMDBuild.core.buttons.Modify', {
-								text: tr.modify,
+								text: CMDBuild.Translation.modifyTemplate,
 								scope: this,
 
 								handler: function(button, e) {
@@ -193,7 +214,7 @@
 								}
 							}),
 							Ext.create('CMDBuild.core.buttons.Delete', {
-								text: tr.remove,
+								text: CMDBuild.Translation.removeTemplate,
 								scope: this,
 
 								handler: function(button, e) {

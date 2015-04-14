@@ -31,14 +31,15 @@
 		getData: function(withDisabled) {
 			if (withDisabled) {
 				var data = {};
+
 				this.cascade(function(item) {
 					if (
 						item
-						&& item.submitValue
 						&& (
-							(item instanceof Ext.form.Field)
-							|| (item instanceof Ext.form.field.Base)
-							|| (item instanceof Ext.form.field.HtmlEditor)
+							item instanceof Ext.form.Field
+							|| item instanceof Ext.form.field.Base
+							|| item instanceof Ext.form.field.HtmlEditor
+							|| item instanceof Ext.form.FieldContainer
 						)
 					) {
 						data[item.name] = item.getValue();
