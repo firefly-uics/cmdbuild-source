@@ -1,7 +1,6 @@
 package org.cmdbuild.spring.configuration;
 
 import org.cmdbuild.auth.UserStore;
-import org.cmdbuild.config.DatabaseConfiguration;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.data.store.Store;
 import org.cmdbuild.data.store.dao.DataViewStore;
@@ -12,7 +11,6 @@ import org.cmdbuild.data.store.task.TaskDefinitionConverter;
 import org.cmdbuild.data.store.task.TaskParameter;
 import org.cmdbuild.data.store.task.TaskParameterConverter;
 import org.cmdbuild.data.store.task.TaskStore;
-import org.cmdbuild.dms.DmsConfiguration;
 import org.cmdbuild.logic.taskmanager.DefaultTaskManagerLogic;
 import org.cmdbuild.logic.taskmanager.DefinitiveTaskManagerLogic;
 import org.cmdbuild.logic.taskmanager.TaskManagerLogic;
