@@ -25,6 +25,8 @@
 			});
 
 			this.delaySelectionCombo = Ext.create('Ext.form.field.ComboBox', {
+				name: this.name, // Property forward
+				value: this.valueFilter(this.value), // Property forward
 				displayField: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
 				valueField: CMDBuild.core.proxy.CMProxyConstants.VALUE,
 				editable: false,
@@ -73,6 +75,15 @@
 		 *
 		 * @return {String}
 		 */
+		getRawValue: function() {
+			return this.delaySelectionCombo.getRawValue();
+		},
+
+		/**
+		 * Forward method
+		 *
+		 * @return {Number}
+		 */
 		getValue: function() {
 			return this.delaySelectionCombo.getValue();
 		},
@@ -89,12 +100,10 @@
 		/**
 		 * Forward method
 		 *
-		 * @param {String} value
+		 * @param {Number} value
 		 */
 		setValue: function(value) {
-			value = (value > 0) ? value : null;
-
-			return this.delaySelectionCombo.setValue(value);
+			return this.delaySelectionCombo.setValue(this.valueFilter(value));
 		},
 
 		/**
@@ -102,6 +111,17 @@
 		 */
 		reset: function() {
 			this.delaySelectionCombo.reset();
+		},
+
+		/**
+		 * @param {Number} value
+		 *
+		 * @return {Number} or null
+		 *
+		 * @private
+		 */
+		valueFilter: function(value) {
+			return (Ext.isNumber(value) && value > 0) ? value : null;
 		}
 	});
 

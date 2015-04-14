@@ -12,6 +12,7 @@
 			{ name: CMDBuild.core.proxy.CMProxyConstants.BODY, type: 'string' },
 			{ name: CMDBuild.core.proxy.CMProxyConstants.CC, type: 'auto' },
 			{ name: CMDBuild.core.proxy.CMProxyConstants.DATE, type: 'auto' },
+			{ name: CMDBuild.core.proxy.CMProxyConstants.DELAY, type: 'int', useNull: true },
 			{ name: CMDBuild.core.proxy.CMProxyConstants.FROM, type: 'auto' },
 			{ name: CMDBuild.core.proxy.CMProxyConstants.ID, type: 'int', useNull: true },
 			{ name: CMDBuild.core.proxy.CMProxyConstants.KEEP_SYNCHRONIZATION, type: 'boolean', defaultValue: true },
