@@ -20,9 +20,6 @@ public class Setup {
 	private static final String BIM_MODULE_NAME = "bim";
 
 	@Autowired
-	private Email email;
-
-	@Autowired
 	private LanguageStore languageStore;
 
 	@Autowired

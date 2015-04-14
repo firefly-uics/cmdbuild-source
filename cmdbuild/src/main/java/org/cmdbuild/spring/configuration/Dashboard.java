@@ -21,12 +21,6 @@ public class Dashboard {
 	@Autowired
 	private UserStore userStore;
 
-	@Autowired
-	private Translation translation;
-
-	@Autowired
-	private LanguageStore languageStore;
-
 	@Bean
 	public DashboardStore dashboardStore() {
 		return new DBDashboardStore(data.systemDataView());

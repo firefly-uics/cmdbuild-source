@@ -24,9 +24,6 @@ public class Translation {
 	private Data data;
 
 	@Autowired
-	private LanguageStore languageStore;
-
-	@Autowired
 	private Setup setup;
 
 	@Bean

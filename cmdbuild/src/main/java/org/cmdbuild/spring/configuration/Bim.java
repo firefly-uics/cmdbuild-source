@@ -66,9 +66,6 @@ public class Bim {
 	private LookupLogic lookupLogic;
 
 	@Autowired
-	private SystemDataAccessLogicBuilder dataAccessLogicBuilder;
-
-	@Autowired
 	private DataSource dataSource;
 
 	@Autowired
