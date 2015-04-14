@@ -4,7 +4,7 @@
 		extend: 'CMDBuild.core.PopupWindow',
 
 		/**
-		 * @cfg {CMDBuild.controller.administration.email.templates.Main}
+		 * @cfg {CMDBuild.controller.administration.email.templates.Templates}
 		 */
 		delegate: undefined,
 
