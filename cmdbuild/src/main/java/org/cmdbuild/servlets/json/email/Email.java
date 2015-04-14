@@ -1,5 +1,6 @@
 package org.cmdbuild.servlets.json.email;
 
+import static com.google.common.collect.FluentIterable.from;
 import static java.lang.String.format;
 import static org.cmdbuild.logic.email.EmailLogic.Statuses.draft;
 import static org.cmdbuild.logic.email.EmailLogic.Statuses.outgoing;
@@ -46,7 +47,6 @@ import org.cmdbuild.servlets.utils.Parameter;
 import org.codehaus.jackson.annotate.JsonProperty;
 
 import com.google.common.base.Function;
-import com.google.common.collect.Iterators;
 
 public class Email extends JSONBaseWithSpringContext {
 
@@ -304,7 +304,9 @@ public class Email extends JSONBaseWithSpringContext {
 			@Parameter(REFERENCE) final Long reference //
 	) {
 		final Iterable<EmailLogic.Email> emails = emailLogic().readAll(reference);
-		return JsonResponse.success(Iterators.transform(emails.iterator(), TO_JSON_EMAIL));
+		return JsonResponse.success(from(emails) //
+				.transform(TO_JSON_EMAIL) //
+				.toList());
 	}
 
 	@JSONExported
