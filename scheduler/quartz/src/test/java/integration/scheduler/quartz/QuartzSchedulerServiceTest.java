@@ -1,5 +1,7 @@
 package integration.scheduler.quartz;
 
+import static org.junit.Assert.*;
+import static org.hamcrest.Matchers.*;
 import static org.cmdbuild.scheduler.Triggers.everySecond;
 
 import java.util.Date;
@@ -98,6 +100,22 @@ public class QuartzSchedulerServiceTest {
 	public void quartzRemovesARecurringJob() throws InterruptedException {
 		final Job nullJob = createSelfRemovingJob();
 		assertEventually(nullJob, willBeExecuted(everySecond(), ONCE), IN_THREE_SECONDS);
+	}
+
+	@Test
+	public void quartzKnowsWhenJobIsAdded() throws InterruptedException {
+		// given
+		final Job job = createNullJob();
+		final Trigger timeout = OneTimeTrigger.at(farFarAway());
+
+		// then
+		assertThat(scheduler.isStarted(job), equalTo(false));
+
+		// and when
+		scheduler.add(job, timeout);
+
+		// then
+		assertThat(scheduler.isStarted(job), equalTo(true));
 	}
 
 	/*

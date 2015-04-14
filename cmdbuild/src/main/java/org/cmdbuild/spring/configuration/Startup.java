@@ -11,9 +11,6 @@ import org.cmdbuild.logic.dms.DmsLogic;
 import org.cmdbuild.logic.scheduler.SchedulerLogic;
 import org.cmdbuild.logic.taskmanager.Task;
 import org.cmdbuild.logic.taskmanager.TaskManagerLogic;
-import org.cmdbuild.scheduler.Job;
-import org.cmdbuild.scheduler.SchedulerService;
-import org.cmdbuild.scheduler.command.BuildableCommandBasedJob;
 import org.cmdbuild.services.startup.DefaultStartupLogic;
 import org.cmdbuild.services.startup.DefaultStartupManager;
 import org.cmdbuild.services.startup.StartupLogic;
@@ -24,8 +21,6 @@ import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
-import static org.cmdbuild.scheduler.Triggers.*;
 
 @Configuration
 public class Startup {
@@ -64,7 +59,7 @@ public class Startup {
 	protected StartupManager startupManager() {
 		final StartupManager startupManager = new DefaultStartupManager();
 		startupManager.add(startScheduler(), databaseIsOk());
-		startupManager.add(startEmailQueueSender(), databaseIsOk());
+		startupManager.add(startEmailQueue(), databaseIsOk());
 		startupManager.add(clearDmsTemporaryFolder(), always());
 		return startupManager;
 	}
@@ -91,19 +86,12 @@ public class Startup {
 	}
 
 	@Bean
-	protected Startable startEmailQueueSender() {
+	protected Startable startEmailQueue() {
 		return new Startable() {
-
-			private final Job job = BuildableCommandBasedJob.newInstance() //
-					.withName("e-mail queue") //
-					.withCommand(email.emailQueue()) //
-					.build();
-			private final SchedulerService schedulerService = scheduler.defaultSchedulerService();
 
 			@Override
 			public void start() {
-				// TODO
-				// schedulerService.add(job, everyMinute());
+				email.emailQueue().start();
 			}
 
 		};
