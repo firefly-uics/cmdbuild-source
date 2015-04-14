@@ -66,9 +66,19 @@
 				value: this.delegate.record.get(CMDBuild.core.proxy.CMProxyConstants.KEEP_SYNCHRONIZATION)
 			});
 
+			this.delayField = Ext.create('CMDBuild.view.common.field.delay.Delay', {
+				fieldLabel: CMDBuild.Translation.delay,
+				labelWidth: CMDBuild.LABEL_WIDTH,
+				labelAlign: 'right',
+				maxWidth: CMDBuild.MEDIUM_FIELD_WIDTH,
+				name: CMDBuild.core.proxy.CMProxyConstants.DELAY,
+				value: this.delegate.record.get(CMDBuild.core.proxy.CMProxyConstants.DELAY),
+			});
+
 			Ext.apply(this, {
 				items: [
 					this.keepSynchronizationCheckbox,
+					this.delayField,
 					{
 						xtype: 'displayfield',
 						name: CMDBuild.core.proxy.CMProxyConstants.FROM,
