@@ -24,17 +24,19 @@ import org.cmdbuild.logic.email.ConfigurationAwareEmailAttachmentsLogic;
 import org.cmdbuild.logic.email.DefaultEmailAccountLogic;
 import org.cmdbuild.logic.email.DefaultEmailAttachmentsLogic;
 import org.cmdbuild.logic.email.DefaultEmailLogic;
-import org.cmdbuild.logic.email.DefaultEmailQueue;
+import org.cmdbuild.logic.email.DefaultEmailQueueLogic;
 import org.cmdbuild.logic.email.DefaultEmailTemplateLogic;
 import org.cmdbuild.logic.email.DefaultSubjectHandler;
 import org.cmdbuild.logic.email.EmailAccountLogic;
 import org.cmdbuild.logic.email.EmailAttachmentsLogic;
 import org.cmdbuild.logic.email.EmailLogic;
+import org.cmdbuild.logic.email.EmailQueueCommand;
 import org.cmdbuild.logic.email.EmailQueueLogic;
 import org.cmdbuild.logic.email.EmailTemplateLogic;
 import org.cmdbuild.logic.email.SubjectHandler;
 import org.cmdbuild.logic.email.TransactionalEmailTemplateLogic;
 import org.cmdbuild.notification.Notifier;
+import org.cmdbuild.scheduler.command.Command;
 import org.cmdbuild.services.email.ConfigurableEmailServiceFactory;
 import org.cmdbuild.services.email.EmailServiceFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -168,8 +170,13 @@ public class Email {
 
 	@Bean
 	public EmailQueueLogic emailQueue() {
-		return new DefaultEmailQueue(emailAccountFacade(), mailApiFactory(), emailLogic(), emailAttachmentsLogic(),
-				subjectHandler(), scheduler.defaultSchedulerService());
+		return new DefaultEmailQueueLogic(scheduler.defaultSchedulerService(), emailQueueCommand());
+	}
+
+	@Bean
+	protected Command emailQueueCommand() {
+		return new EmailQueueCommand(emailAccountFacade(), mailApiFactory(), emailLogic(), emailAttachmentsLogic(),
+				subjectHandler());
 	}
 
 }
