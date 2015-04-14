@@ -1,0 +1,108 @@
+(function() {
+
+	Ext.define('CMDBuild.view.common.field.delay.Delay', {
+		extend: 'Ext.form.FieldContainer',
+
+		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+
+		/**
+		 * @cfg {CMDBuild.controller.common.field.delay.Delay}
+		 */
+		delegate: undefined,
+
+		considerAsFieldToDisable: true,
+
+		// TODO: setup right width when i implement also advanced button
+
+		layout: {
+			type: 'hbox',
+			align: 'stretch'
+		},
+
+		initComponent: function() {
+			this.delegate = Ext.create('CMDBuild.controller.common.field.delay.Delay', {
+				view: this
+			});
+
+			this.delaySelectionCombo = Ext.create('Ext.form.field.ComboBox', {
+				displayField: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
+				valueField: CMDBuild.core.proxy.CMProxyConstants.VALUE,
+				editable: false,
+				allowBlank: true,
+				flex: 2,
+
+				listConfig: {
+					getInnerTpl: function(displayField) { // Custom rendering template for each item
+						return '<div class="x-combo-list-item">{description}&nbsp;<\/div>';
+					}
+				},
+
+				store: this.delegate.cmfg('getDelayStore'),
+				queryMode: 'local',
+
+				listeners: {
+					scope: this,
+					beforeselect: function(combo, record, index, eOpts) {
+						return this.delegate.cmfg('onDelayBeforeSelect', record);
+					}
+				}
+			});
+
+			Ext.apply(this, {
+				items: [
+					this.delaySelectionCombo
+// TODO: Future implementation
+//					,
+//					Ext.create('Ext.button.Button', {
+//						icon: 'images/icons/table.png',
+//						margin: '0 0 0 3',
+//						scope: this,
+//
+//						handler: function(button, e) {
+//							_debug('ButtonClick');
+//						}
+//					})
+				]
+			});
+
+			this.callParent(arguments);
+		},
+
+		/**
+		 * Forward method
+		 *
+		 * @return {String}
+		 */
+		getValue: function() {
+			return this.delaySelectionCombo.getValue();
+		},
+
+		/**
+		 * Forward method
+		 *
+		 * @return {Boolean}
+		 */
+		isValid: function() {
+			return this.delaySelectionCombo.isValid();
+		},
+
+		/**
+		 * Forward method
+		 *
+		 * @param {String} value
+		 */
+		setValue: function(value) {
+			value = (value > 0) ? value : null;
+
+			return this.delaySelectionCombo.setValue(value);
+		},
+
+		/**
+		 * Forward method
+		 */
+		reset: function() {
+			this.delaySelectionCombo.reset();
+		}
+	});
+
+})();
