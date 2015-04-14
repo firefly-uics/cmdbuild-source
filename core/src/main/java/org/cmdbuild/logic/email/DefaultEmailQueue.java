@@ -6,18 +6,21 @@ import static com.google.common.collect.FluentIterable.from;
 import static com.google.common.collect.Maps.newHashMap;
 import static com.google.common.collect.Multimaps.index;
 import static java.util.Arrays.asList;
+import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
 import static org.apache.commons.lang3.StringUtils.defaultString;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.cmdbuild.data.store.email.EmailConstants.ADDRESSES_SEPARATOR;
 import static org.cmdbuild.logic.email.EmailLogic.Statuses.outgoing;
+import static org.cmdbuild.scheduler.Triggers.everyMinute;
 import static org.joda.time.DateTime.now;
 
 import java.util.Map;
 
 import javax.activation.DataHandler;
 
+import org.apache.commons.lang3.Validate;
 import org.cmdbuild.common.api.mail.MailApi;
 import org.cmdbuild.common.api.mail.MailApiFactory;
 import org.cmdbuild.common.api.mail.NewMailQueue;
@@ -30,6 +33,9 @@ import org.cmdbuild.logic.email.EmailLogic.Email;
 import org.cmdbuild.logic.email.EmailLogic.ForwardingEmail;
 import org.cmdbuild.logic.email.EmailLogic.Status;
 import org.cmdbuild.logic.email.EmailLogic.Statuses;
+import org.cmdbuild.scheduler.Job;
+import org.cmdbuild.scheduler.SchedulerService;
+import org.cmdbuild.scheduler.command.BuildableCommandBasedJob;
 import org.cmdbuild.services.email.AllConfigurationWrapper;
 
 import com.google.common.base.Function;
@@ -37,7 +43,7 @@ import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Multimap;
 
-public class DefaultEmailQueue implements EmailQueue, Callback {
+public class DefaultEmailQueue implements EmailQueueLogic, Callback {
 
 	private static final Predicate<Email> DELAY_ELAPSED = new Predicate<Email>() {
 
@@ -81,6 +87,18 @@ public class DefaultEmailQueue implements EmailQueue, Callback {
 
 	private static final String CONTENT_TYPE = "text/html; charset=UTF-8";
 
+	private static final Configuration NULL_CONFIGURATION = new Configuration() {
+
+		@Override
+		public long time() {
+			return 0;
+		}
+	};
+
+	private final SchedulerService schedulerService;
+	private final Job job;
+	private Configuration configuration = NULL_CONFIGURATION;
+
 	private final EmailAccountFacade emailAccountFacade;
 	private final MailApiFactory mailApiFactory;
 	private final EmailLogic emailLogic;
@@ -92,12 +110,50 @@ public class DefaultEmailQueue implements EmailQueue, Callback {
 
 	public DefaultEmailQueue(final EmailAccountFacade emailAccountFacade, final MailApiFactory mailApiFactory,
 			final EmailLogic emailLogic, final EmailAttachmentsLogic emailAttachmensLogic,
-			final SubjectHandler subjectHandler) {
+			final SubjectHandler subjectHandler, final SchedulerService schedulerService) {
 		this.emailAccountFacade = emailAccountFacade;
 		this.mailApiFactory = mailApiFactory;
 		this.emailLogic = emailLogic;
 		this.emailAttachmensLogic = emailAttachmensLogic;
 		this.subjectHandler = subjectHandler;
+		this.schedulerService = schedulerService;
+		this.job = BuildableCommandBasedJob.newInstance() //
+				.withName(DefaultEmailQueue.class.getName()) //
+				.withCommand(this) //
+				.build();
+	}
+
+	@Override
+	public boolean running() {
+		return schedulerService.isStarted(job);
+	}
+
+	@Override
+	public void start() {
+		// TODO add time check
+		schedulerService.add(job, everyMinute());
+	}
+
+	@Override
+	public void stop() {
+		if (running()) {
+			schedulerService.remove(job);
+		}
+	}
+
+	@Override
+	public Configuration configuration() {
+		return this.configuration;
+	}
+
+	@Override
+	public void configure(final Configuration configuration) {
+		validate(configuration);
+		this.configuration = defaultIfNull(configuration, this.configuration);
+	}
+
+	private void validate(final Configuration configuration) {
+		Validate.isTrue(configuration.time() >= 0, "invalid time");
 	}
 
 	@Override

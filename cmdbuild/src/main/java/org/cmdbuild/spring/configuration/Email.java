@@ -30,11 +30,11 @@ import org.cmdbuild.logic.email.DefaultSubjectHandler;
 import org.cmdbuild.logic.email.EmailAccountLogic;
 import org.cmdbuild.logic.email.EmailAttachmentsLogic;
 import org.cmdbuild.logic.email.EmailLogic;
+import org.cmdbuild.logic.email.EmailQueueLogic;
 import org.cmdbuild.logic.email.EmailTemplateLogic;
 import org.cmdbuild.logic.email.SubjectHandler;
 import org.cmdbuild.logic.email.TransactionalEmailTemplateLogic;
 import org.cmdbuild.notification.Notifier;
-import org.cmdbuild.scheduler.command.Command;
 import org.cmdbuild.services.email.ConfigurableEmailServiceFactory;
 import org.cmdbuild.services.email.EmailServiceFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,6 +59,9 @@ public class Email {
 
 	@Autowired
 	private Properties properties;
+
+	@Autowired
+	private Scheduler scheduler;
 
 	@Autowired
 	private UserStore userStore;
@@ -164,9 +167,9 @@ public class Email {
 	}
 
 	@Bean
-	public Command emailQueue() {
+	public EmailQueueLogic emailQueue() {
 		return new DefaultEmailQueue(emailAccountFacade(), mailApiFactory(), emailLogic(), emailAttachmentsLogic(),
-				subjectHandler());
+				subjectHandler(), scheduler.defaultSchedulerService());
 	}
 
 }

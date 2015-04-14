@@ -279,6 +279,7 @@ public class CommunicationConstants {
 			TEMPLATES = "templates", //
 			TEMPORARY = "temporary", //
 			TEMPORARY_ID = TEMPORARY + ID_CAPITAL, //
+			TIME = "time", //
 			TITLE = "title", //
 			TO = "to", //
 			TRANSLATIONS = "translations", //

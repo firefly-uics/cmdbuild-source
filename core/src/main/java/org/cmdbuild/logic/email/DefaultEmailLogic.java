@@ -16,14 +16,11 @@ import java.util.UUID;
 
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.Validate;
-import org.cmdbuild.common.utils.UnsupportedProxyFactory;
 import org.cmdbuild.data.store.Storable;
 import org.cmdbuild.data.store.Store;
 import org.cmdbuild.data.store.email.EmailAccountFacade;
 import org.cmdbuild.data.store.email.EmailStatus;
 import org.cmdbuild.data.store.email.EmailStatusConverter;
-import org.cmdbuild.services.email.EmailService;
-import org.cmdbuild.services.email.ForwardingEmailService;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
@@ -182,17 +179,6 @@ public class DefaultEmailLogic implements EmailLogic {
 					.withPromptSynchronization(input.isPromptSynchronization()) //
 					.withDelay(input.getDelay()) //
 					.build();
-		}
-
-	};
-
-	private static final EmailService EMAIL_SERVICE_FOR_INVALID_PROCESS_ID = new ForwardingEmailService() {
-
-		private final EmailService UNSUPPORTED = UnsupportedProxyFactory.of(EmailService.class).create();
-
-		@Override
-		protected EmailService delegate() {
-			return UNSUPPORTED;
 		}
 
 	};
