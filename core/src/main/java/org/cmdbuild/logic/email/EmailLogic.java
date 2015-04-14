@@ -245,6 +245,8 @@ public interface EmailLogic extends Logic {
 
 	}
 
+	boolean isEnabled(String className, Long cardId);
+
 	Long create(Email email);
 
 	Iterable<Email> readAll(Long reference);

@@ -19,6 +19,7 @@ import org.apache.commons.lang3.Validate;
 import org.cmdbuild.common.utils.UnsupportedProxyFactory;
 import org.cmdbuild.data.store.Storable;
 import org.cmdbuild.data.store.Store;
+import org.cmdbuild.data.store.email.EmailAccountFacade;
 import org.cmdbuild.data.store.email.EmailStatus;
 import org.cmdbuild.data.store.email.EmailStatusConverter;
 import org.cmdbuild.services.email.EmailService;
@@ -230,15 +231,29 @@ public class DefaultEmailLogic implements EmailLogic {
 	private final Store<org.cmdbuild.data.store.email.Email> emailStore;
 	private final Store<org.cmdbuild.data.store.email.Email> temporaryEmailStore;
 	private final EmailStatusConverter emailStatusConverter;
+	private final EmailAccountFacade emailAccountFacade;
 
 	public DefaultEmailLogic( //
 			final Store<org.cmdbuild.data.store.email.Email> emailStore, //
 			final Store<org.cmdbuild.data.store.email.Email> temporaryEmailStore, //
-			final EmailStatusConverter emailStatusConverter //
+			final EmailStatusConverter emailStatusConverter, //
+			final EmailAccountFacade emailAccountFacade //
 	) {
 		this.emailStore = emailStore;
 		this.temporaryEmailStore = temporaryEmailStore;
 		this.emailStatusConverter = emailStatusConverter;
+		this.emailAccountFacade = emailAccountFacade;
+	}
+
+	@Override
+	public boolean isEnabled(final String className, final Long cardId) {
+		/*
+		 * TODO classes should have grants
+		 * 
+		 * TODO processes should always return false because the behavior is
+		 * controlled by process definition
+		 */
+		return emailAccountFacade.defaultAccount().isPresent();
 	}
 
 	@Override

@@ -8,7 +8,9 @@ import static org.cmdbuild.logic.email.EmailLogic.Statuses.sent;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ACCOUNT;
 import static org.cmdbuild.servlets.json.CommunicationConstants.BCC;
 import static org.cmdbuild.servlets.json.CommunicationConstants.BODY;
+import static org.cmdbuild.servlets.json.CommunicationConstants.CARD_ID;
 import static org.cmdbuild.servlets.json.CommunicationConstants.CC;
+import static org.cmdbuild.servlets.json.CommunicationConstants.CLASS_NAME;
 import static org.cmdbuild.servlets.json.CommunicationConstants.DATE;
 import static org.cmdbuild.servlets.json.CommunicationConstants.DELAY;
 import static org.cmdbuild.servlets.json.CommunicationConstants.FROM;
@@ -248,6 +250,15 @@ public class Email extends JSONBaseWithSpringContext {
 		}
 
 	};
+
+	@JSONExported
+	public JsonResponse enabled( //
+			@Parameter(CLASS_NAME) final String className, //
+			@Parameter(CARD_ID) final Long cardId //
+	) {
+		final boolean enabled = emailLogic().isEnabled(className, cardId);
+		return JsonResponse.success(enabled);
+	}
 
 	@JSONExported
 	public JsonResponse create( //
