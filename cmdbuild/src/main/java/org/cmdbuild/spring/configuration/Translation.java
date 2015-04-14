@@ -1,6 +1,5 @@
 package org.cmdbuild.spring.configuration;
 
-import org.cmdbuild.auth.LanguageStore;
 import org.cmdbuild.data.store.Groupable;
 import org.cmdbuild.data.store.Store;
 import org.cmdbuild.data.store.StoreFactory;
