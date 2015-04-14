@@ -6,7 +6,7 @@
 		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
 
 		/**
-		 * @cfg {CMDBuild.controller.administration.email.templates.Main}
+		 * @cfg {CMDBuild.controller.administration.email.templates.Templates}
 		 */
 		parentDelegate: undefined,
 
@@ -30,7 +30,7 @@
 
 		/**
 		 * @param {Object} configurationObject
-		 * @param {CMDBuild.controller.administration.email.templates.Main} configurationObject.parentDelegate
+		 * @param {CMDBuild.controller.administration.email.templates.Templates} configurationObject.parentDelegate
 		 */
 		constructor: function(configurationObject) {
 			this.callParent(arguments);

@@ -1,6 +1,6 @@
 (function() {
 
-	Ext.define('CMDBuild.controller.administration.email.templates.Main', {
+	Ext.define('CMDBuild.controller.administration.email.templates.Templates', {
 		extend: 'CMDBuild.controller.common.AbstractController',
 
 		requires: [
