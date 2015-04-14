@@ -57,9 +57,6 @@ public class Email {
 	private DmsConfiguration dmsConfiguration;
 
 	@Autowired
-	private Notifier notifier;
-
-	@Autowired
 	private Properties properties;
 
 	@Autowired

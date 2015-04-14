@@ -54,13 +54,7 @@ public class TaskManager {
 	private Data data;
 
 	@Autowired
-	private DatabaseConfiguration databaseConfiguration;
-
-	@Autowired
 	private Dms dms;
-
-	@Autowired
-	private DmsConfiguration dmsConfiguration;
 
 	@Autowired
 	private Email email;
