@@ -28,17 +28,6 @@
 				"smtpServer": "SMTP server",
 				"title": "Gebruikers",
 				"username": "Gebruikersnaam"
-			},
-			"templates": {
-				"add": "Sjabloon toevoegen",
-				"body": "Sjabloon tekst",
-				"modify": "Sjabloon wijzigen",
-				"remove": "Sjabloon verwijderen",
-				"template": "Sjabloon",
-				"title": "Sjablonen",
-				"valuesWindow": {
-					"title": "Aanpassen instellingen",
-				}
 			}
 		},
 		"modClass": {
@@ -802,6 +791,17 @@
 			"range": "In een bereik"
 		}
 	},
+	"delayLabels": {
+		"hour1": "<em>1 hour</em>",
+		"hours2": "<em>2 hours</em>",
+		"hours4": "<em>4 hours</em>",
+		"day1": "<em>In 1 day</em>",
+		"days2": "<em>In 2 days</em>",
+		"days4": "<em>In 4 days</em>",
+		"week1": "<em>In 1 week</em>",
+		"weeks2": "<em>In 2 weeks</em>",
+		"month1": "<em>In 1 month</em>"
+	},
 	"errors": {
 		"busy_wf_widgets": "De visuele controls zijn bezig, controleer de status van de server voor volgende poging.",
 		"copyAttachmentFailure": "<em>Copy attachment with name \"{0}\" failure</em>",
@@ -1309,6 +1309,7 @@
 		"saveMenuBeforeAccess": "Het menu moet worden opgeslagen voor toegang tot de vertalingen van dit element.",
 		"warning_message": "Waarschuwing"
 	},
+	"accounts": "Gebruikers",
 	"active": "Aktief",
 	"add": "Toevoegen",
 	"addFilter": "Filter toevoegen",
@@ -1327,8 +1328,10 @@
 	"attention": "Attentie",
 	"attribute": "Attribuut",
 	"availableFilters": "Beschikbare Filters",
+	"baseProperties": "Basis Eigenschappen",
 	"bcc": "Bcc",
 	"bim": "BIM",
+	"body": "Sjabloon tekst",
 	"bottom": "Bodem",
 	"buttons_to_disable": "Te blokkeren drukknoppen",
 	"cacheManagement": "Cache beheer",
@@ -1366,6 +1369,7 @@
 	"defaultGroup": "Standaard Groep",
 	"defaultLanguage": "Standaard Taal",
 	"defaultLevel": "Standaard niveau",
+	"delay": "<em>Delay</em>",
 	"deleteLabel": "Verwijderen",
 	"descriptionLabel": "Omschrijving",
 	"description_": "Omschrijving",
@@ -1378,6 +1382,7 @@
 	"download": "<em>Download</em>",
 	"download_ifc_file": "Ophalen Ifc bestand",
 	"edit": "Modificeer",
+	"editValues": "Aanpassen instellingen",
 	"email": "<em>E-mail</em>",
 	"emailBody": "Hoofddeel",
 	"emailRegenerationConfirmPopupText": "Dit zal alle niet-verstuurde emails verwijderen.",
@@ -1510,6 +1515,8 @@
 	"subject": "Onderwerp",
 	"tabPositioInCardPanel": "Tabs positie in kaart paneel",
 	"targetClass": "Doel Klas",
+	"template": "Sjabloon",
+	"templates": "Sjablonen",
 	"thresholdForClusteringNodes": "Drempelwaarde voor samenvoegen nodes",
 	"to": "Aan",
 	"top": "Top",

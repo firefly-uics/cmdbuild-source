@@ -28,17 +28,6 @@
 				"smtpServer": "SMTP сервер",
 				"title": "Учетные записи",
 				"username": "Имя пользователя"
-			},
-			"templates": {
-				"add": "Создать шаблон",
-				"body": "Текст письма",
-				"modify": "Редактировать шаблон",
-				"remove": "Удалить шаблон",
-				"template": "Шаблон",
-				"title": "Шаблоны",
-				"valuesWindow": {
-					"title": "<em>Edit values</em>",
-				}
 			}
 		},
 		"modClass": {
@@ -802,6 +791,17 @@
 			"range": "В диапазоне"
 		}
 	},
+	"delayLabels": {
+		"hour1": "<em>1 hour</em>",
+		"hours2": "<em>2 hours</em>",
+		"hours4": "<em>4 hours</em>",
+		"day1": "<em>In 1 day</em>",
+		"days2": "<em>In 2 days</em>",
+		"days4": "<em>In 4 days</em>",
+		"week1": "<em>In 1 week</em>",
+		"weeks2": "<em>In 2 weeks</em>",
+		"month1": "<em>In 1 month</em>"
+	},
 	"errors": {
 		"busy_wf_widgets": "Виджеты заняты. Проверьте состояние сервера перед повторной попыткой.",
 		"copyAttachmentFailure": "<em>Copy attachment with name \"{0}\" failure</em>",
@@ -1309,6 +1309,7 @@
 		"saveMenuBeforeAccess": "<em>The menu has to been saved before access at the translations of this element.</em>",
 		"warning_message": "Предупреждение"
 	},
+	"accounts": "Учетные записи",
 	"active": "Активный",
 	"add": "Добавить",
 	"addFilter": "Создать фильтр",
@@ -1327,8 +1328,10 @@
 	"attention": "Внимание",
 	"attribute": "Атрибут",
 	"availableFilters": "Доступные фильтры",
+	"baseProperties": "Основные свойства",
 	"bcc": "Скрытая копия",
 	"bim": "BIM",
+	"body": "Текст письма",
 	"bottom": "В нижней части",
 	"buttons_to_disable": "Отключать кнопки",
 	"cacheManagement": "Управление кэшем",
@@ -1366,6 +1369,7 @@
 	"defaultGroup": "Основная группа",
 	"defaultLanguage": "Язык по умолчанию",
 	"defaultLevel": "Уровень по умолчанию",
+	"delay": "<em>Delay</em>",
 	"deleteLabel": "<em>Delete</em>",
 	"descriptionLabel": "Описание",
 	"description_": "Описание",
@@ -1378,6 +1382,7 @@
 	"download": "<em>Download</em>",
 	"download_ifc_file": "Скачать Ifc-файл",
 	"edit": "<em>Edit</em>",
+	"editValues": "<em>Edit values</em>",
 	"email": "<em>E-mail</em>",
 	"emailBody": "Текст письма",
 	"emailRegenerationConfirmPopupText": "Это действие удалит все неотправленные сообщения",
@@ -1510,6 +1515,8 @@
 	"subject": "Тема",
 	"tabPositioInCardPanel": "Положение закладок в панели карточек",
 	"targetClass": "Целевой класс",
+	"template": "Шаблон",
+	"templates": "Шаблоны",
 	"thresholdForClusteringNodes": "Лимит числа отображаемых по отдельности узлов",
 	"to": "До",
 	"top": "Сверху",

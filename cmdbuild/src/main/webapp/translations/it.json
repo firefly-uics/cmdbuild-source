@@ -28,17 +28,6 @@
 				"smtpServer": "Server SMTP",
 				"title": "Account",
 				"username": "Nome utente"
-			},
-			"templates": {
-				"add": "Aggiungi template",
-				"body": "Corpo",
-				"modify": "Modifica template",
-				"remove": "Rimuovi template",
-				"template": "Template",
-				"title": "Templates",
-				"valuesWindow": {
-					"title": "Modifica valori",
-				}
 			}
 		},
 		"modClass": {
@@ -802,6 +791,17 @@
 			"range": "In un intervallo"
 		}
 	},
+	"delayLabels": {
+		"hour1": "1 ora",
+		"hours2": "2 ore",
+		"hours4": "4 ore",
+		"day1": "1 giorno",
+		"days2": "2 giorni",
+		"days4": "4 giorni",
+		"week1": "1 settimana",
+		"weeks2": "2 settimane",
+		"month1": "1 mese"
+	},
 	"errors": {
 		"busy_wf_widgets": "I controlli visuali risultano occupati, controlla lo stato del server prima di riprovare.",
 		"copyAttachmentFailure": "Copia dell'allegato \"{0}\" fallita",
@@ -1309,6 +1309,7 @@
 		"saveMenuBeforeAccess": "Il menu deve essere salvato prima di accedere alla traduzione di questo elemento.",
 		"warning_message": "Attenzione"
 	},
+	"accounts": "Account",
 	"active": "Attivo",
 	"add": "Aggiungi",
 	"addFilter": "Aggiungi Filtro",
@@ -1327,8 +1328,10 @@
 	"attention": "Attenzione",
 	"attribute": "Attributo",
 	"availableFilters": "Filtri disponibili",
+	"baseProperties": "Proprietà generiche",
 	"bcc": "Ccn",
 	"bim": "BIM",
+	"body": "Corpo",
 	"bottom": "Sotto",
 	"buttons_to_disable": "Bottoni da disabilitare",
 	"cacheManagement": "Gestione cache",
@@ -1366,6 +1369,7 @@
 	"defaultGroup": "Gruppo predefinito",
 	"defaultLanguage": "Lingua di default",
 	"defaultLevel": "Livello di default",
+	"delay": "Ritardo",
 	"deleteLabel": "Cancella",
 	"descriptionLabel": "Descrizione",
 	"description_": "Descrizione",
@@ -1378,6 +1382,7 @@
 	"download": "Scarica",
 	"download_ifc_file": "Scarica il file Ifc",
 	"edit": "Modifica",
+	"editValues": "Modifica valori",
 	"email": "E-mail",
 	"emailBody": "Contenuto",
 	"emailRegenerationConfirmPopupText": "Le e-mail non inviate verranno perse.",
@@ -1510,6 +1515,8 @@
 	"subject": "Oggetto",
 	"tabPositioInCardPanel": "Posizione TAB sottopagine nel pannello scheda",
 	"targetClass": "Classe",
+	"template": "Template",
+	"templates": "Templates",
 	"thresholdForClusteringNodes": "Soglia per il raggruppamento dei nodi",
 	"to": "A",
 	"top": "Alto",

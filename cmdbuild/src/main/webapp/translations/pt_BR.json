@@ -28,17 +28,6 @@
 				"smtpServer": "<em>SMTP server</em>",
 				"title": "<em>Accounts</em>",
 				"username": "<em>Username</em>"
-			},
-			"templates": {
-				"add": "<em>Add template</em>",
-				"body": "<em>Body</em>",
-				"modify": "<em>Modify template</em>",
-				"remove": "<em>Remove template</em>",
-				"template": "<em>Template</em>",
-				"title": "<em>Templates</em>",
-				"valuesWindow": {
-					"title": "<em>Edit values</em>",
-				}
 			}
 		},
 		"modClass": {
@@ -802,6 +791,17 @@
 			"range": "<em>In a range</em>"
 		}
 	},
+	"delayLabels": {
+		"hour1": "<em>1 hour</em>",
+		"hours2": "<em>2 hours</em>",
+		"hours4": "<em>4 hours</em>",
+		"day1": "<em>In 1 day</em>",
+		"days2": "<em>In 2 days</em>",
+		"days4": "<em>In 4 days</em>",
+		"week1": "<em>In 1 week</em>",
+		"weeks2": "<em>In 2 weeks</em>",
+		"month1": "<em>In 1 month</em>"
+	},
 	"errors": {
 		"busy_wf_widgets": "Os controles visuais estão ocupados, confira o estado do servidor antes de tentar novamente.",
 		"copyAttachmentFailure": "<em>Copy attachment with name \"{0}\" failure</em>",
@@ -1309,6 +1309,7 @@
 		"saveMenuBeforeAccess": "<em>The menu has to been saved before access at the translations of this element.</em>",
 		"warning_message": "Aviso"
 	},
+	"accounts": "<em>Accounts</em>",
 	"active": "Ativo",
 	"add": "Adicionar",
 	"addFilter": "Adicionar Filtro",
@@ -1327,8 +1328,10 @@
 	"attention": "Atenção",
 	"attribute": "<em>Attribute</em>",
 	"availableFilters": "Filtros Disponíveis",
+	"baseProperties": "Propriedades base",
 	"bcc": "<em>Bcc</em>",
 	"bim": "<em>BIM</em>",
+	"body": "<em>Body</em>",
 	"bottom": "Inferior",
 	"buttons_to_disable": "<em>Buttons to disable</em>",
 	"cacheManagement": "Gerenciamento do Cache",
@@ -1366,6 +1369,7 @@
 	"defaultGroup": "Grupo padrão",
 	"defaultLanguage": "Idioma padrão",
 	"defaultLevel": "Nível Padrão",
+	"delay": "<em>Delay</em>",
 	"deleteLabel": "<em>Delete</em>",
 	"descriptionLabel": "Descrição",
 	"description_": "Descrição",
@@ -1378,6 +1382,7 @@
 	"download": "<em>Download</em>",
 	"download_ifc_file": "<em>Download Ifc file</em>",
 	"edit": "<em>Edit</em>",
+	"editValues": "<em>Edit values</em>",
 	"email": "<em>E-mail</em>",
 	"emailBody": "<em>Body</em>",
 	"emailRegenerationConfirmPopupText": "Isto irá remover todos os e-mails não enviados.",
@@ -1510,6 +1515,8 @@
 	"subject": "<em>Subject</em>",
 	"tabPositioInCardPanel": "Posição dos Tabs no painel do cartão",
 	"targetClass": "Classe Alvo",
+	"template": "<em>Template</em>",
+	"templates": "<em>Templates</em>",
 	"thresholdForClusteringNodes": "Limites para nós do cluster",
 	"to": "<em>To</em>",
 	"top": "<em>Top</em>",
