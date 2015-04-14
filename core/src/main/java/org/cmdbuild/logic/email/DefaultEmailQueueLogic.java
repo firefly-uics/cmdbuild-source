@@ -24,14 +24,14 @@ public class DefaultEmailQueueLogic implements EmailQueueLogic {
 		private final AtomicBoolean running = new AtomicBoolean(false);
 		private DateTime lastExecution;
 
-		public AdvancedCommand(final Command delegate, EmailConfiguration configuration) {
+		public AdvancedCommand(final Command delegate, final EmailConfiguration configuration) {
 			this.delegate = delegate;
 			this.configuration = configuration;
 		}
 
 		@Override
 		public void execute() {
-			if (running.getAndSet(true)) {
+			if (!running.getAndSet(true)) {
 				if ((lastExecution == null) || now().isAfter(lastExecution.plus(configuration.getQueueTime()))) {
 					safe(delegate).execute();
 					lastExecution = now();

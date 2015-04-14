@@ -48,7 +48,7 @@ public class EmailQueueCommand implements Command, Callback {
 
 		@Override
 		public boolean apply(final Email input) {
-			return input.getDate().plus(input.getDelay()).isAfter(now());
+			return now().isAfter(input.getDate().plus(input.getDelay()));
 		}
 
 	};
