@@ -213,6 +213,10 @@
 					} else {
 						setValueArray.push(
 							{
+								id: CMDBuild.core.proxy.CMProxyConstants.DELAY,
+								value: values[CMDBuild.core.proxy.CMProxyConstants.DELAY]
+							},
+							{
 								id: CMDBuild.core.proxy.CMProxyConstants.FROM,
 								value: values[CMDBuild.core.proxy.CMProxyConstants.FROM]
 							},

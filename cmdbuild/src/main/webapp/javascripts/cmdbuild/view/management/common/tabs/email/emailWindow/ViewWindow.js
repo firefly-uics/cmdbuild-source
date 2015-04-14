@@ -51,6 +51,11 @@
 				readOnly: true
 			});
 
+			// Use real field to translate values
+			this.delayField = Ext.create('CMDBuild.view.common.field.delay.Delay', {
+				value: this.delegate.record.get(CMDBuild.core.proxy.CMProxyConstants.DELAY),
+			});
+
 			this.formPanel = Ext.create('Ext.panel.Panel', {
 				region: 'center',
 				frame: false,
@@ -75,6 +80,13 @@
 						readOnly: true,
 						name: CMDBuild.core.proxy.CMProxyConstants.KEEP_SYNCHRONIZATION,
 						value: this.delegate.record.get(CMDBuild.core.proxy.CMProxyConstants.KEEP_SYNCHRONIZATION)
+					},
+					{
+						xtype: 'displayfield',
+						fieldLabel: CMDBuild.Translation.delay,
+						readOnly: true,
+						name: CMDBuild.core.proxy.CMProxyConstants.DELAY,
+						value: this.delayField.getRawValue()
 					},
 					{
 						xtype: 'displayfield',
