@@ -28,17 +28,6 @@
 				"smtpServer": "SMTP server",
 				"title": "Korisnički nalozi",
 				"username": "KOrisničko ime"
-			},
-			"templates": {
-				"add": "Dodaj šablon",
-				"body": "Telo poruke",
-				"modify": "Izmeni šablon",
-				"remove": "Ukloni šablon",
-				"template": "Šablon",
-				"title": "Šabloni",
-				"valuesWindow": {
-					"title": "Izmena vrednosti"
-				}
 			}
 		},
 		"modClass": {
@@ -802,6 +791,17 @@
 			"range": "U rasponu"
 		}
 	},
+	"delayLabels": {
+		"hour1": "<em>1 hour</em>",
+		"hours2": "<em>2 hours</em>",
+		"hours4": "<em>4 hours</em>",
+		"day1": "<em>In 1 day</em>",
+		"days2": "<em>In 2 days</em>",
+		"days4": "<em>In 4 days</em>",
+		"week1": "<em>In 1 week</em>",
+		"weeks2": "<em>In 2 weeks</em>",
+		"month1": "<em>In 1 month</em>"
+	},
 	"errors": {
 		"busy_wf_widgets": "Vizelne kontrole su nedostupne, proverite status servera pre ponovnog pokušaja.",
 		"copyAttachmentFailure": "<em>Copy attachment with name \"{0}\" failure</em>",
@@ -1309,6 +1309,7 @@
 		"saveMenuBeforeAccess": "Meni mora biti snimljen pre pristupa prevodu elementa.",
 		"warning_message": "Pažnja"
 	},
+	"accounts": "Korisnički nalozi",
 	"active": "Aktivan",
 	"add": "Dodaj",
 	"addFilter": "Dodaj filter",
@@ -1327,8 +1328,10 @@
 	"attention": "Pažnja",
 	"attribute": "Atribut",
 	"availableFilters": "Dostupni filteri",
+	"baseProperties": "Osnovna obeležja",
 	"bcc": "Bcc",
 	"bim": "BIM",
+	"body": "Telo poruke",
 	"bottom": "Pri dnu",
 	"buttons_to_disable": "Onemogućiti tastere",
 	"cacheManagement": "Podešavanje keš memorije",
@@ -1366,6 +1369,7 @@
 	"defaultGroup": "Podrazumevana grupa",
 	"defaultLanguage": "Podrazumevani jezik",
 	"defaultLevel": "Podrazumevani broj nivoa",
+	"delay": "<em>Delay</em>",
 	"deleteLabel": "Obriši",
 	"descriptionLabel": "Opis",
 	"description_": "Opis",
@@ -1378,6 +1382,7 @@
 	"download": "<em>Download</em>",
 	"download_ifc_file": "Preuzmi Ifc datoteku",
 	"edit": "Izmeni",
+	"editValues": "Izmena vrednosti",
 	"email": "<em>E-mail</em>",
 	"emailBody": "Telo poruke",
 	"emailRegenerationConfirmPopupText": "Ovo će obrisati sve neisporučene poruke e-pošte.",
@@ -1510,6 +1515,8 @@
 	"subject": "Subjekat",
 	"tabPositioInCardPanel": "Pozicija tab-a u panelu kartice",
 	"targetClass": "Ciljna klasa",
+	"template": "Šablon",
+	"templates": "Šabloni",
 	"thresholdForClusteringNodes": "Prag za pregrupisavanje čvorova",
 	"to": "Za",
 	"top": "Vrh",

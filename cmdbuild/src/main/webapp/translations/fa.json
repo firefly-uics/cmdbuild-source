@@ -28,17 +28,6 @@
 				"smtpServer": "SMTP server",
 				"title": "حسابها",
 				"username": "نام کاربری"
-			},
-			"templates": {
-				"add": "اضافه کردن قالب",
-				"body": "بدنه",
-				"modify": "تغییر قالب",
-				"remove": "حذف قالب",
-				"template": "قالب",
-				"title": "قالبها",
-				"valuesWindow": {
-					"title": "<em>Edit values</em>",
-				}
 			}
 		},
 		"modClass": {
@@ -802,6 +791,17 @@
 			"range": "در یک محدوده"
 		}
 	},
+	"delayLabels": {
+		"hour1": "<em>1 hour</em>",
+		"hours2": "<em>2 hours</em>",
+		"hours4": "<em>4 hours</em>",
+		"day1": "<em>In 1 day</em>",
+		"days2": "<em>In 2 days</em>",
+		"days4": "<em>In 4 days</em>",
+		"week1": "<em>In 1 week</em>",
+		"weeks2": "<em>In 2 weeks</em>",
+		"month1": "<em>In 1 month</em>"
+	},
 	"errors": {
 		"busy_wf_widgets": "کنترل های تصویری شلوغ اند، لطفا قبل از اینکه دوباره تکرار کنید وضعیت سرور را چک کنید",
 		"copyAttachmentFailure": "<em>Copy attachment with name \"{0}\" failure</em>",
@@ -1309,6 +1309,7 @@
 		"saveMenuBeforeAccess": "<em>The menu has to been saved before access at the translations of this element.</em>",
 		"warning_message": "هشدار"
 	},
+	"accounts": "حسابها",
 	"active": "فعال",
 	"add": "اضافه",
 	"addFilter": "اضافه کردن فیلتر",
@@ -1327,8 +1328,10 @@
 	"attention": "توجه",
 	"attribute": "خاصیت",
 	"availableFilters": "فیلترهای موجود",
+	"baseProperties": "ویژگی های پایه",
 	"bcc": "Bcc",
 	"bim": "BIM",
+	"body": "بدنه",
 	"bottom": "Bottom",
 	"buttons_to_disable": "Buttons to disable",
 	"cacheManagement": "Cache management",
@@ -1366,6 +1369,7 @@
 	"defaultGroup": "گروه پیش فرض",
 	"defaultLanguage": "زبان پیش فرض",
 	"defaultLevel": "Default level",
+	"delay": "<em>Delay</em>",
 	"deleteLabel": "<em>Delete</em>",
 	"descriptionLabel": "توضیحات",
 	"description_": "توضیحات",
@@ -1378,6 +1382,7 @@
 	"download": "<em>Download</em>",
 	"download_ifc_file": "Download Ifc file",
 	"edit": "<em>Edit</em>",
+	"editValues": "<em>Edit values</em>",
 	"email": "<em>E-mail</em>",
 	"emailBody": "بدنه",
 	"emailRegenerationConfirmPopupText": "این تمام ایمیل های ست نشده را حذف میکند.",
@@ -1510,6 +1515,8 @@
 	"subject": "موضوع",
 	"tabPositioInCardPanel": "Tabs position in card panel",
 	"targetClass": "کلاس مقصد",
+	"template": "قالب",
+	"templates": "قالبها",
 	"thresholdForClusteringNodes": "Threshold for clustering nodes",
 	"to": "به",
 	"top": "بالا",

@@ -28,17 +28,6 @@
 				"smtpServer": "SMTP Server",
 				"title": "Benutzerkonten",
 				"username": "Benutzername"
-			},
-			"templates": {
-				"add": "Template hinzufügen",
-				"body": "Body",
-				"modify": "Template verändern",
-				"remove": "Template entfernen",
-				"template": "Template",
-				"title": "Templates",
-				"valuesWindow": {
-					"title": "<em>Edit values</em>",
-				}
 			}
 		},
 		"modClass": {
@@ -802,6 +791,17 @@
 			"range": "In einem Intervall"
 		}
 	},
+	"delayLabels": {
+		"hour1": "<em>1 hour</em>",
+		"hours2": "<em>2 hours</em>",
+		"hours4": "<em>4 hours</em>",
+		"day1": "<em>In 1 day</em>",
+		"days2": "<em>In 2 days</em>",
+		"days4": "<em>In 4 days</em>",
+		"week1": "<em>In 1 week</em>",
+		"weeks2": "<em>In 2 weeks</em>",
+		"month1": "<em>In 1 month</em>"
+	},
 	"errors": {
 		"busy_wf_widgets": "Das Widget antwortet nicht. Prüfen Sie den Server-Status, bevor Sie die Operation wiederholen.",
 		"copyAttachmentFailure": "<em>Copy attachment with name \"{0}\" failure</em>",
@@ -1309,6 +1309,7 @@
 		"saveMenuBeforeAccess": "<em>The menu has to been saved before access at the translations of this element.</em>",
 		"warning_message": "Achtung"
 	},
+	"accounts": "Benutzerkonten",
 	"active": "Aktiv",
 	"add": "Hinzufügen",
 	"addFilter": "Filter hinzufügen",
@@ -1327,8 +1328,10 @@
 	"attention": "Achtung",
 	"attribute": "Attribut",
 	"availableFilters": "Verfügbare Filters",
+	"baseProperties": "Allgemeine Eigenschaften",
 	"bcc": "Bcc",
 	"bim": "BIM",
+	"body": "Body",
 	"bottom": "Unten",
 	"buttons_to_disable": "Schaltfläche zum Ausschalten",
 	"cacheManagement": "Cache Verwaltung",
@@ -1366,6 +1369,7 @@
 	"defaultGroup": "Standard gruppe",
 	"defaultLanguage": "Default sprache",
 	"defaultLevel": "Default Ebene",
+	"delay": "<em>Delay</em>",
 	"deleteLabel": "<em>Delete</em>",
 	"descriptionLabel": "Beschreibung",
 	"description_": "Beschreibung",
@@ -1378,6 +1382,7 @@
 	"download": "<em>Download</em>",
 	"download_ifc_file": "Ifc File herunterladen",
 	"edit": "<em>Edit</em>",
+	"editValues": "<em>Edit values</em>",
 	"email": "E-mail",
 	"emailBody": "Inhalt",
 	"emailRegenerationConfirmPopupText": "Das wird alle nicht gesendete E-Mails löschen",
@@ -1510,6 +1515,8 @@
 	"subject": "Betreff",
 	"tabPositioInCardPanel": "Unterseiten TAB-Position in der Karte",
 	"targetClass": "Ursprungsklasse",
+	"template": "Template",
+	"templates": "Templates",
 	"thresholdForClusteringNodes": "Grenzwert für die Ballung von Knoten",
 	"to": "An",
 	"top": "Oben",

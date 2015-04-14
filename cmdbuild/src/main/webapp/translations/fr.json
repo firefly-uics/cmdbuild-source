@@ -28,17 +28,6 @@
 				"smtpServer": "Serveur SMTP",
 				"title": "Comptes",
 				"username": "Nom d'utilisateur"
-			},
-			"templates": {
-				"add": "Ajouter un modèle",
-				"body": "Corps",
-				"modify": "Modifier le modèle",
-				"remove": "Supprimer le modèle",
-				"template": "Modèle",
-				"title": "Modèles",
-				"valuesWindow": {
-					"title": "Modifier les valeurs"
-				}
 			}
 		},
 		"modClass": {
@@ -802,6 +791,17 @@
 			"range": "Dans une plage"
 		}
 	},
+	"delayLabels": {
+		"hour1": "<em>1 hour</em>",
+		"hours2": "<em>2 hours</em>",
+		"hours4": "<em>4 hours</em>",
+		"day1": "<em>In 1 day</em>",
+		"days2": "<em>In 2 days</em>",
+		"days4": "<em>In 4 days</em>",
+		"week1": "<em>In 1 week</em>",
+		"weeks2": "<em>In 2 weeks</em>",
+		"month1": "<em>In 1 month</em>"
+	},
 	"errors": {
 		"busy_wf_widgets": "Les widgets sont occupés, regardez le statut du serveur avant de recommencer l'opération.",
 		"copyAttachmentFailure": "<em>Copy attachment with name \"{0}\" failure</em>",
@@ -1309,6 +1309,7 @@
 		"saveMenuBeforeAccess": "Le menu doit être enregistré avant de pouvoir accéder aux traductions de cet élément.",
 		"warning_message": "Attention"
 	},
+	"accounts": "Comptes",
 	"active": "Actif",
 	"add": "Ajouter",
 	"addFilter": "Ajouter un filtre",
@@ -1327,8 +1328,10 @@
 	"attention": "Attention",
 	"attribute": "Attribut",
 	"availableFilters": "Filtres disponibles",
+	"baseProperties": "Propriétés de base",
 	"bcc": "Bcc",
 	"bim": "BIM",
+	"body": "Corps",
 	"bottom": "En dessous",
 	"buttons_to_disable": "Boutons à désactiver",
 	"cacheManagement": "Gestion du cache",
@@ -1366,6 +1369,7 @@
 	"defaultGroup": "Groupe par défaut",
 	"defaultLanguage": "Langue par défaut",
 	"defaultLevel": "Niveau par défaut",
+	"delay": "<em>Delay</em>",
 	"deleteLabel": "<em>Delete</em>",
 	"descriptionLabel": "Description",
 	"description_": "Description",
@@ -1378,6 +1382,7 @@
 	"download": "<em>Download</em>",
 	"download_ifc_file": "Télécharger un fichier Ifc",
 	"edit": "<em>Edit</em>",
+	"editValues": "Modifier les valeurs",
 	"email": "<em>E-mail</em>",
 	"emailBody": "Corps",
 	"emailRegenerationConfirmPopupText": "Cela effacera tous les emails non sélectionnés",
@@ -1510,6 +1515,8 @@
 	"subject": "Sujet",
 	"tabPositioInCardPanel": "Dans le panneau",
 	"targetClass": "Classe destination",
+	"template": "Modèle",
+	"templates": "Modèles",
 	"thresholdForClusteringNodes": "Seuil des groupes de noeuds",
 	"to": "À",
 	"top": "Haut",

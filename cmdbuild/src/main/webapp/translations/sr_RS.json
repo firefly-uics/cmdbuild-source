@@ -28,17 +28,6 @@
 				"smtpServer": "SMTP сервер",
 				"title": "Кориснички налози",
 				"username": "КОрисничко име"
-			},
-			"templates": {
-				"add": "Додај шаблон",
-				"body": "Тело поруке",
-				"modify": "Измени шаблон",
-				"remove": "Уклони шаблон",
-				"template": "Шаблон",
-				"title": "Шаблони",
-				"valuesWindow": {
-					"title": "Измена вредности"
-				}
 			}
 		},
 		"modClass": {
@@ -802,6 +791,17 @@
 			"range": "У распону"
 		}
 	},
+	"delayLabels": {
+		"hour1": "<em>1 hour</em>",
+		"hours2": "<em>2 hours</em>",
+		"hours4": "<em>4 hours</em>",
+		"day1": "<em>In 1 day</em>",
+		"days2": "<em>In 2 days</em>",
+		"days4": "<em>In 4 days</em>",
+		"week1": "<em>In 1 week</em>",
+		"weeks2": "<em>In 2 weeks</em>",
+		"month1": "<em>In 1 month</em>"
+	},
 	"errors": {
 		"busy_wf_widgets": "Визелне контроле су недоступне, проверите статус сервера пре поновног покушаја.",
 		"copyAttachmentFailure": "<em>Copy attachment with name \"{0}\" failure</em>",
@@ -1309,6 +1309,7 @@
 		"saveMenuBeforeAccess": "Мени мора бити снимљен пре приступа преводу елемента.",
 		"warning_message": "Пажња"
 	},
+	"accounts": "Кориснички налози",
 	"active": "Активан",
 	"add": "Додај",
 	"addFilter": "Додај филтер",
@@ -1327,8 +1328,10 @@
 	"attention": "Пажња",
 	"attribute": "Атрибут",
 	"availableFilters": "Доступни филтери",
+	"baseProperties": "Основна обележја",
 	"bcc": "Bcc",
 	"bim": "BIM",
+	"body": "Тело поруке",
 	"bottom": "При дну",
 	"buttons_to_disable": "Онемогућити тастере",
 	"cacheManagement": "Подешавање кеш меморије",
@@ -1366,6 +1369,7 @@
 	"defaultGroup": "Подразумевана група",
 	"defaultLanguage": "Подразумевани језик",
 	"defaultLevel": "Подразумевани број нивоа",
+	"delay": "<em>Delay</em>",
 	"deleteLabel": "Обриши",
 	"descriptionLabel": "Опис",
 	"description_": "Опис",
@@ -1378,6 +1382,7 @@
 	"download": "<em>Download</em>",
 	"download_ifc_file": "Преузми Ifc датотеку",
 	"edit": "Измени",
+	"editValues": "Измена вредности",
 	"email": "<em>E-mail</em>",
 	"emailBody": "Тело поруке",
 	"emailRegenerationConfirmPopupText": "Ово ће обрисати све неиспоручене поруке е-поште.",
@@ -1510,6 +1515,8 @@
 	"subject": "Субјекат",
 	"tabPositioInCardPanel": "Позиција таб-а у панелу картице",
 	"targetClass": "Циљна класа",
+	"template": "Шаблон",
+	"templates": "Шаблони",
 	"thresholdForClusteringNodes": "Праг за прегруписавање чворова",
 	"to": "За",
 	"top": "Врх",

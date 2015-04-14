@@ -28,17 +28,6 @@
 				"smtpServer": "SMTPサーバー",
 				"title": "アカウント",
 				"username": "ユーザー名"
-			},
-			"templates": {
-				"add": "テンプレートを追加",
-				"body": "本文",
-				"modify": "テンプレートを変更",
-				"remove": "テンプレートを削除",
-				"template": "テンプレート",
-				"title": "テンプレート",
-				"valuesWindow": {
-					"title": "値を編集",
-				}
 			}
 		},
 		"modClass": {
@@ -802,6 +791,17 @@
 			"range": "範囲"
 		}
 	},
+	"delayLabels": {
+		"hour1": "<em>1 hour</em>",
+		"hours2": "<em>2 hours</em>",
+		"hours4": "<em>4 hours</em>",
+		"day1": "<em>In 1 day</em>",
+		"days2": "<em>In 2 days</em>",
+		"days4": "<em>In 4 days</em>",
+		"week1": "<em>In 1 week</em>",
+		"weeks2": "<em>In 2 weeks</em>",
+		"month1": "<em>In 1 month</em>"
+	},
 	"errors": {
 		"busy_wf_widgets": "画面コントロールがビジーです、再実行する前にサーバのステータスをチェックください。",
 		"copyAttachmentFailure": "<em>Copy attachment with name \"{0}\" failure</em>",
@@ -1309,6 +1309,7 @@
 		"saveMenuBeforeAccess": "このエレメントの翻訳にアクセスする前にメニューは保存される必要があります。",
 		"warning_message": "警告"
 	},
+	"accounts": "アカウント",
 	"active": "アクティブ",
 	"add": "追加",
 	"addFilter": "フィルタを追加",
@@ -1327,8 +1328,10 @@
 	"attention": "注意",
 	"attribute": "属性",
 	"availableFilters": "使用可能なフィルタ",
+	"baseProperties": "基本プロパティ",
 	"bcc": "Bcc",
 	"bim": "BIM",
+	"body": "本文",
 	"bottom": "ボトム",
 	"buttons_to_disable": "無効にするボタン",
 	"cacheManagement": "キャッシュ管理",
@@ -1366,6 +1369,7 @@
 	"defaultGroup": "既定のグループ",
 	"defaultLanguage": "既定の言語",
 	"defaultLevel": "既定のレベル",
+	"delay": "<em>Delay</em>",
 	"deleteLabel": "を削除",
 	"descriptionLabel": "説明",
 	"description_": "説明",
@@ -1378,6 +1382,7 @@
 	"download": "<em>Download</em>",
 	"download_ifc_file": "Ifcファイルをダウンロード",
 	"edit": "を編集",
+	"editValues": "値を編集",
 	"email": "<em>E-mail</em>",
 	"emailBody": "本文",
 	"emailRegenerationConfirmPopupText": "これは、全ての未送信メールを削除します。",
@@ -1510,6 +1515,8 @@
 	"subject": "サブジェクト",
 	"tabPositioInCardPanel": "カードパネル中のタブ位置",
 	"targetClass": "ターゲットクラス",
+	"template": "テンプレート",
+	"templates": "テンプレート",
 	"thresholdForClusteringNodes": "クラスタノードの閾値",
 	"to": "To",
 	"top": "トップ",
