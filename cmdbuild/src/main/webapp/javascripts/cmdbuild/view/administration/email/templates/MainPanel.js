@@ -1,7 +1,5 @@
 (function() {
 
-	var tr = CMDBuild.Translation.administration.email.templates;
-
 	Ext.define('CMDBuild.view.administration.email.templates.MainPanel', {
 		extend: 'Ext.panel.Panel',
 
@@ -30,7 +28,7 @@
 		border: true,
 		frame: false,
 		layout: 'border',
-		title: CMDBuild.Translation.administration.email.title + ' - ' + tr.title,
+		title: CMDBuild.Translation.email + ' - ' + CMDBuild.Translation.templates,
 
 		initComponent: function() {
 			this.grid = Ext.create('CMDBuild.view.administration.email.templates.GridPanel', {
@@ -51,7 +49,7 @@
 
 						items: [
 							Ext.create('CMDBuild.core.buttons.Add', {
-								text: tr.add,
+								text: CMDBuild.Translation.addTemplate,
 								scope: this,
 
 								handler: function(button, e) {

@@ -1,12 +1,10 @@
 (function() {
 
-	var tr = CMDBuild.Translation.administration.email;
-
 	Ext.define('CMDBuild.view.administration.accordion.CMAccordionEmail', {
 		extend: 'CMDBuild.view.common.CMBaseAccordion',
 
 		cmName: 'email',
-		title: tr.title,
+		title: CMDBuild.Translation.email,
 
 		constructor: function(){
 			this.callParent(arguments);
@@ -20,12 +18,12 @@
 		updateStore: function() {
 			this.store.getRootNode().appendChild([
 				{
-					text: tr.accounts.title,
+					text: CMDBuild.Translation.accounts,
 					leaf: true,
 					cmName: 'emailAccounts'
 				},
 				{
-					text: tr.templates.title,
+					text: CMDBuild.Translation.templates,
 					leaf: true,
 					cmName: 'emailTemplates'
 				}
