@@ -153,7 +153,7 @@ public class Card implements Storable {
 	 */
 	@Deprecated
 	public String getClassDescription() {
-		return getType().getDescription();
+		return getType() == null ? null : getType().getDescription();
 	}
 
 	/**
@@ -161,7 +161,7 @@ public class Card implements Storable {
 	 */
 	@Deprecated
 	public Long getClassId() {
-		return getType().getId();
+		return getType() == null ? null : getType().getId();
 	}
 
 	public DateTime getBeginDate() {
