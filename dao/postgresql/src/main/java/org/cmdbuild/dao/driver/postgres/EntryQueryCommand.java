@@ -29,8 +29,8 @@ import org.cmdbuild.dao.entry.DBFunctionCallOutput;
 import org.cmdbuild.dao.entry.DBRelation;
 import org.cmdbuild.dao.entry.IdAndDescription;
 import org.cmdbuild.dao.entry.LookupValue;
+import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMEntryType;
-import org.cmdbuild.dao.entrytype.DBAttribute;
 import org.cmdbuild.dao.entrytype.DBClass;
 import org.cmdbuild.dao.entrytype.DBDomain;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
@@ -209,15 +209,15 @@ class EntryQueryCommand implements LoggingSupport {
 
 			final Iterable<EntryTypeAttribute> attributes = columnMapper.getAttributes(typeAlias, entry.getType());
 			if (attributes != null) {
-				for (final EntryTypeAttribute attribute : attributes) {
-					if (attribute.name != null) {
-						final DBAttribute dbAttribute = entry.getType().getAttribute(attribute.name);
-						final CMAttributeType<?> attributeType = dbAttribute.getType();
+				for (final EntryTypeAttribute element : attributes) {
+					if (element.name != null) {
+						final CMAttribute attribute = entry.getType().getAttribute(element.name);
+						final CMAttributeType<?> attributeType = attribute.getType();
 
 						Object value;
 						if (mustBeMappedWithIdAndDescription(attributeType)) {
-							final Long id = valueId(rs, attribute);
-							final String description = valueDescription(rs, dbAttribute);
+							final Long id = valueId(rs, element);
+							final String description = valueDescription(rs, attribute);
 
 							if (isLookup(attributeType)) {
 								final String type = ((LookupAttributeType) attributeType).getLookupTypeName(); //
@@ -232,10 +232,10 @@ class EntryQueryCommand implements LoggingSupport {
 							}
 
 						} else {
-							value = rs.getObject(attribute.index);
+							value = rs.getObject(element.index);
 						}
 
-						entry.setOnly(attribute.name, attribute.sqlType.sqlToJavaValue(value));
+						entry.setOnly(element.name, element.sqlType.sqlToJavaValue(value));
 					} else {
 						// skipping, not belonging to this entry type
 					}
@@ -245,12 +245,12 @@ class EntryQueryCommand implements LoggingSupport {
 
 		/**
 		 * @param rs
-		 * @param dbAttribute
+		 * @param attribute
 		 * @return
 		 */
-		private String valueDescription(final ResultSet rs, final DBAttribute dbAttribute) {
+		private String valueDescription(final ResultSet rs, final CMAttribute attribute) {
 			String description = null;
-			final String referenceAttributeAlias = referenceAttributeAlias(dbAttribute);
+			final String referenceAttributeAlias = referenceAttributeAlias(attribute);
 			try {
 				/**
 				 * FIXME: ugly solution introduced to prevent that an exception
@@ -265,12 +265,12 @@ class EntryQueryCommand implements LoggingSupport {
 		}
 
 		/**
-		 * @param dbAttribute
+		 * @param attribute
 		 * @return
 		 */
-		private String referenceAttributeAlias(final DBAttribute dbAttribute) {
+		private String referenceAttributeAlias(final CMAttribute attribute) {
 			final String referenceAttributeAlias = new ExternalReferenceAliasHandler(querySpecs.getFromClause()
-					.getType(), dbAttribute).forResult();
+					.getType(), attribute).forResult();
 			return referenceAttributeAlias;
 		}
 
