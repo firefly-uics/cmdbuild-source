@@ -206,8 +206,7 @@
 					_CMCache.onClassContentChanged(idClass);
 				}, this);
 
-				this.mon(this.cardPanelController, this.cardPanelController.CMEVENTS.cardSaved,
-					function(cardData) {
+				this.mon(this.cardPanelController, this.cardPanelController.CMEVENTS.cardSaved, function(cardData) {
 						var et = _CMCardModuleState.entryType;
 
 						this.gridController.onCardSaved(cardData);

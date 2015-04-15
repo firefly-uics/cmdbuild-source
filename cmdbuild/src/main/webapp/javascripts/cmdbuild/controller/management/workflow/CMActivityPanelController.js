@@ -144,6 +144,9 @@
 		// override
 		onSaveCardClick: function() {
 			this.isAdvance = false;
+
+			this.superController.onSaveCardClick(); // Forward save event
+
 			this.widgetControllerManager.waitForBusyWidgets(save, this); // Check for busy widgets also on save
 		},
 
@@ -424,7 +427,10 @@
 				&& processInstance.getId() == me.idToAdvance) {
 
 			me.view.editMode();
+			me.superController.onModifyCardClick(); // Call modify event for email tab
+
 			me.isAdvance = false;
+
 			return;
 		}
 
