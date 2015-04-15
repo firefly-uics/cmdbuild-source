@@ -290,6 +290,7 @@ public class CxfRelations implements Relations {
 
 	private RelationDTO relationDto(final CMDomain domain, final Relation relation) {
 		final RelationDTO relationDTO = new RelationDTO();
+		relationDTO.relationId = relation.getId();
 		relationDTO.domainName = domain.getName();
 		relationDTO.master = "_1";
 		relationDTO.addSourceCard(relation.getSource().getId(), relation.getSource().getType());

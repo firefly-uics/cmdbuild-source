@@ -8,8 +8,8 @@ import java.util.Map.Entry;
 
 import org.cmdbuild.dao.driver.DBDriver;
 import org.cmdbuild.dao.entry.CMEntry.CMEntryDefinition;
-import org.cmdbuild.dao.entrytype.DBAttribute;
-import org.cmdbuild.dao.entrytype.DBEntryType;
+import org.cmdbuild.dao.entrytype.CMAttribute;
+import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.joda.time.DateTime;
 
 import com.google.common.base.Predicate;
@@ -19,7 +19,7 @@ public abstract class DBEntry implements CMEntryDefinition, CMValueSet {
 
 	private final DBDriver driver;
 
-	private final DBEntryType type;
+	private final CMEntryType type;
 	private final Map<String, Object> values;
 
 	private Long id;
@@ -27,14 +27,14 @@ public abstract class DBEntry implements CMEntryDefinition, CMValueSet {
 	private DateTime beginDate;
 	private DateTime endDate;
 
-	protected DBEntry(final DBDriver driver, final DBEntryType type, final Long id) {
+	protected DBEntry(final DBDriver driver, final CMEntryType type, final Long id) {
 		this.driver = driver;
 		this.type = type;
 		this.values = Maps.newHashMap();
 		this.id = id;
 	}
 
-	public DBEntryType getType() {
+	public CMEntryType getType() {
 		return type;
 	}
 
@@ -104,7 +104,7 @@ public abstract class DBEntry implements CMEntryDefinition, CMValueSet {
 					@Override
 					public boolean apply(final Entry<String, Object> input) {
 						final String name = input.getKey();
-						final DBAttribute attribute = type.getAttribute(name);
+						final CMAttribute attribute = type.getAttribute(name);
 						return !attribute.isSystem();
 					}
 				});
