@@ -41,11 +41,11 @@ public class DefaultTranslationLogic implements TranslationLogic {
 	private static class ElementCreator implements TranslationObjectVisitor {
 
 		private static final String DESCRIPTION = "description";
-		private static final String DIRECT_DESCRIPTION = "directDescription";
+		private static final String DIRECT_DESCRIPTION = "directdescription";
 		private static final String GROUP = "group";
 		private static final String INSTANCENAME = "instancename";
-		private static final String INVERSE_DESCRIPTION = "inverseDescription";
-		private static final String MASTERDETAIL_LABEL = "masterDetail";
+		private static final String INVERSE_DESCRIPTION = "inversedescription";
+		private static final String MASTERDETAIL_LABEL = "masterdetaillabel";
 
 		private static ElementCreator of(final TranslationObject translationObject) {
 			return new ElementCreator(translationObject);
