@@ -9,6 +9,7 @@
 		extend: 'CMDBuild.controller.common.AbstractController',
 
 		requires: [
+			'CMDBuild.controller.management.common.widgets.CMWidgetController',
 			'CMDBuild.core.proxy.CMProxyConstants',
 			'CMDBuild.core.proxy.EmailTemplates',
 			'CMDBuild.core.proxy.Utils'
@@ -27,7 +28,7 @@
 		/**
 		 * Form where to get fields data
 		 *
-		 * @cfg {Mixed}
+		 * @cfg {Ext.form.Basic}
 		 */
 		clientForm: undefined,
 
@@ -512,39 +513,6 @@
 			return this;
 		},
 
-		/**
-		 * Same CMDBuild.controller.management.common.widgets.CMWidgetController function
-		 *
-		 * @return {Object} out
-		 */
-		getTemplateResolverServerVars: function() {
-			var out = {};
-			var model = this.selectedEntity.get(CMDBuild.core.proxy.CMProxyConstants.ENTITY);
-
-			if (model) {
-				var pi = null;
-
-				if (Ext.getClassName(model) == 'CMDBuild.model.CMActivityInstance') {
-					// Retrieve the process instance because it stores the data. this.card has only the varibles to show in this step (is the activity instance)
-					pi = _CMWFState.getProcessInstance();
-				} else if (Ext.getClassName(model) == 'CMDBuild.model.CMProcessInstance') {
-					pi = model;
-				}
-
-				if (pi != null) { // The processes use a new serialization. Add backward compatibility attributes to the card values
-					out = Ext.apply({
-						'Id': pi.get('Id'),
-						'IdClass': pi.get('IdClass'),
-						'IdClass_value': pi.get('IdClass_value')
-					}, pi.getValues());
-				} else {
-					out = model.raw || model.data;
-				}
-			}
-
-			return out;
-		},
-
 		onAddCardButtonClick: function() {
 			this.editModeSet(true);
 		},
@@ -709,7 +677,9 @@
 				var templateResolver = new CMDBuild.Management.TemplateResolver({
 					clientForm: this.clientForm,
 					xaVars: xaVars,
-					serverVars: this.getTemplateResolverServerVars()
+					serverVars: CMDBuild.controller.management.common.widgets.CMWidgetController.getTemplateResolverServerVars(
+						this.selectedEntity.get(CMDBuild.core.proxy.CMProxyConstants.ENTITY)
+					)
 				});
 
 				templateResolver.resolveTemplates({
@@ -774,9 +744,11 @@
 				var xaVars = Ext.apply({}, template.getData(), template.get(CMDBuild.core.proxy.CMProxyConstants.VARIABLES));
 
 				var templateResolver = new CMDBuild.Management.TemplateResolver({
-					clientForm: me.clientForm,
+					clientForm: this.clientForm,
 					xaVars: xaVars,
-					serverVars: this.getTemplateResolverServerVars()
+					serverVars: CMDBuild.controller.management.common.widgets.CMWidgetController.getTemplateResolverServerVars(
+						this.selectedEntity.get(CMDBuild.core.proxy.CMProxyConstants.ENTITY)
+					)
 				});
 
 				templateResolver.resolveTemplates({

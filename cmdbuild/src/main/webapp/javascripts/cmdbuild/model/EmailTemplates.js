@@ -24,6 +24,7 @@
 			{ name: CMDBuild.core.proxy.CMProxyConstants.DEFAULT_ACCOUNT, type: 'string' },
 			{ name: CMDBuild.core.proxy.CMProxyConstants.DELAY, type: 'int', useNull: true },
 			{ name: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION, type: 'string' },
+			{ name: CMDBuild.core.proxy.CMProxyConstants.FROM, type: 'string' },
 			{ name: CMDBuild.core.proxy.CMProxyConstants.ID, type: 'int', useNull: true },
 			{ name: CMDBuild.core.proxy.CMProxyConstants.KEEP_SYNCHRONIZATION, type: 'boolean', defaultValue: true },
 			{ name: CMDBuild.core.proxy.CMProxyConstants.NAME, type: 'string' },

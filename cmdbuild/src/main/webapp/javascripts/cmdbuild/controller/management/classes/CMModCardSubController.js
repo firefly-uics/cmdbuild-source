@@ -45,13 +45,6 @@ Ext.define("CMDBuild.controller.management.classes.CMModCardSubController", {
 		this.superController.onModifyCardClick(); // Forward modify event
 	},
 
-	/**
-	 * Forward onSaveSuccess event to superController
-	 */
-	onSaveSuccess: function() {
-		this.superController.onSaveCardClick(); // Forward save event
-	},
-
 	onShowGraphClick: function() {
 		var classId = this.card.get("IdClass"),
 			cardId = this.card.get("Id");

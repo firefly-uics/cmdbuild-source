@@ -162,8 +162,6 @@
 				IdClass: me.entryType.get("id")
 			};
 
-			this.callParent(arguments); // Forward save event
-
 			me.fireEvent(me.CMEVENTS.cardSaved, cardData);
 		},
 
