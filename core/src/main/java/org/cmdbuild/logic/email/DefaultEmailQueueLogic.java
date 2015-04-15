@@ -33,8 +33,8 @@ public class DefaultEmailQueueLogic implements EmailQueueLogic {
 		public void execute() {
 			if (!running.getAndSet(true)) {
 				if ((lastExecution == null) || now().isAfter(lastExecution.plus(configuration.getQueueTime()))) {
-					safe(delegate).execute();
 					lastExecution = now();
+					safe(delegate).execute();
 				} else {
 					logger.debug("time not elapsed");
 				}
