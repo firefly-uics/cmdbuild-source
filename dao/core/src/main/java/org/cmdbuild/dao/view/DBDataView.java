@@ -441,11 +441,7 @@ public class DBDataView extends AbstractDataView {
 
 	@Override
 	public CMRelationDefinition update(final CMRelation relation) {
-		if (relation instanceof DBRelation) {
-			final DBRelation dbRelation = (DBRelation) relation;
-			return DBRelation.newInstance(driver, dbRelation);
-		}
-		throw new IllegalArgumentException();
+		return DBRelation.newInstance(driver, relation);
 	}
 
 	@Override
