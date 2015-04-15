@@ -195,7 +195,7 @@ public class Card implements Storable {
 	@Override
 	public int hashCode() {
 		return new HashCodeBuilder() //
-				.append(getType().getId()) //
+				.append(getType()) //
 				.append(className) //
 				.append(id) //
 				.toHashCode();
@@ -214,7 +214,7 @@ public class Card implements Storable {
 		}
 		final Card other = (Card) obj;
 		return new EqualsBuilder() //
-				.append(this.getType().getId(), other.getType().getId()) //
+				.append(this.getType(), other.getType()) //
 				.append(this.className, other.className) //
 				.append(this.id, other.id) //
 				.isEquals();
