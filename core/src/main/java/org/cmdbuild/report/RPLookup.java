@@ -2,6 +2,7 @@ package org.cmdbuild.report;
 
 import net.sf.jasperreports.engine.JRParameter;
 
+import org.cmdbuild.dao.entrytype.attributetype.IntegerAttributeType;
 import org.cmdbuild.exception.ReportException.ReportExceptionType;
 
 public class RPLookup extends ReportParameter {
@@ -30,10 +31,8 @@ public class RPLookup extends ReportParameter {
 	}
 
 	@Override
-	public void parseValue(final String value) {
-		if (value != null && !value.equals("")) {
-			setValue(Integer.parseInt(value));
-		}
+	public void parseValue(final Object value) {
+		setValue(new IntegerAttributeType().convertValue(value));
 	}
 
 }
