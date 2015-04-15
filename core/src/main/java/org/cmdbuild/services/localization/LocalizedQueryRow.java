@@ -31,6 +31,8 @@ public class LocalizedQueryRow extends ForwardingQueryRow {
 
 	private final CMQueryRow delegate;
 	private final Function<CMCard, CMCard> TO_LOCALIZED_CARD;
+	private final Function<CMClass, CMClass> TO_LOCALIZED_CLASS;
+	private final Function<CMDomain, CMDomain> TO_LOCALIZED_DOMAIN;
 	private final Function<CMRelation, CMRelation> TO_LOCALIZED_RELATION;
 	private final Function<LookupValue, LookupValue> TRANSLATE;
 	private final Function<Entry<String, Object>, Entry<String, Object>> TRANSLATE_LOOKUPS;
@@ -49,6 +51,11 @@ public class LocalizedQueryRow extends ForwardingQueryRow {
 					@Override
 					protected CMCard delegate() {
 						return input;
+					}
+
+					@Override
+					public CMClass getType() {
+						return proxy(super.getType());
 					}
 
 					@Override
@@ -74,6 +81,24 @@ public class LocalizedQueryRow extends ForwardingQueryRow {
 			}
 		};
 
+		this.TO_LOCALIZED_CLASS = new Function<CMClass, CMClass>() {
+
+			@Override
+			public CMClass apply(final CMClass input) {
+				return new LocalizedClass(input, facade);
+			}
+
+		};
+
+		this.TO_LOCALIZED_DOMAIN = new Function<CMDomain, CMDomain>() {
+
+			@Override
+			public CMDomain apply(final CMDomain input) {
+				return new LocalizedDomain(input, facade);
+			}
+
+		};
+
 		this.TO_LOCALIZED_RELATION = new Function<CMRelation, CMRelation>() {
 			@Override
 			public CMRelation apply(final CMRelation input) {
@@ -86,6 +111,11 @@ public class LocalizedQueryRow extends ForwardingQueryRow {
 					@Override
 					protected CMRelation delegate() {
 						return input;
+					}
+
+					@Override
+					public CMDomain getType() {
+						return proxy(super.getType());
 					}
 
 					@Override
@@ -174,6 +204,14 @@ public class LocalizedQueryRow extends ForwardingQueryRow {
 
 	private CMCard proxy(final CMCard card) {
 		return TO_LOCALIZED_CARD.apply(card);
+	}
+
+	private CMClass proxy(final CMClass type) {
+		return TO_LOCALIZED_CLASS.apply(type);
+	}
+
+	private CMDomain proxy(final CMDomain type) {
+		return TO_LOCALIZED_DOMAIN.apply(type);
 	}
 
 	private QueryRelation proxy(final QueryRelation queryRelation) {

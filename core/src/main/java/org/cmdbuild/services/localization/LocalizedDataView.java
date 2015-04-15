@@ -1,6 +1,9 @@
 package org.cmdbuild.services.localization;
 
 import static com.google.common.collect.FluentIterable.from;
+import static com.google.common.collect.Maps.newHashMap;
+
+import java.util.Map;
 
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
@@ -20,14 +23,32 @@ import com.google.common.base.Function;
 
 public class LocalizedDataView extends ForwardingDataView {
 
+	private static class ToLocalizedAttribute implements Function<CMAttribute, CMAttribute> {
+
+		private final TranslationFacade facade;
+		private final Map<String, String> cacheForGroupsOptimization;
+
+		public ToLocalizedAttribute(final TranslationFacade facade, final Map<String, String> cacheForGroupsOptimization) {
+			this.facade = facade;
+			this.cacheForGroupsOptimization = cacheForGroupsOptimization;
+		}
+
+		@Override
+		public CMAttribute apply(final CMAttribute input) {
+			return (input == null) ? null : new LocalizedAttribute(input, facade, cacheForGroupsOptimization);
+		}
+
+	}
+
 	private final CMDataView delegate;
+	private final TranslationFacade facade;
 	private final Function<CMClass, CMClass> TO_LOCALIZED_CLASS;
 	private final Function<CMDomain, CMDomain> TO_LOCALIZED_DOMAIN;
-	private final Function<CMAttribute, CMAttribute> TO_LOCALIZED_ATTRIBUTE;
 	private Function<CMQueryResult, CMQueryResult> TO_LOCALIZED_QUERYRESULT;
 
 	public LocalizedDataView(final CMDataView delegate, final TranslationFacade facade, final LookupStore lookupStore) {
 		this.delegate = delegate;
+		this.facade = facade;
 		this.TO_LOCALIZED_CLASS = new Function<CMClass, CMClass>() {
 
 			@Override
@@ -106,15 +127,6 @@ public class LocalizedDataView extends ForwardingDataView {
 			}
 
 		};
-		this.TO_LOCALIZED_ATTRIBUTE = new Function<CMAttribute, CMAttribute>() {
-
-			@Override
-			public CMAttribute apply(final CMAttribute input) {
-				return (input == null) ? null : new LocalizedAttribute(input, facade);
-			}
-
-		};
-
 		this.TO_LOCALIZED_QUERYRESULT = new Function<CMQueryResult, CMQueryResult>() {
 
 			@Override
@@ -221,12 +233,14 @@ public class LocalizedDataView extends ForwardingDataView {
 	}
 
 	private CMAttribute proxyAttribute(final CMAttribute attribute) {
-		return TO_LOCALIZED_ATTRIBUTE.apply(attribute);
+		final Map<String, String> cacheForGroupsOptimization = newHashMap();
+		return new ToLocalizedAttribute(facade, cacheForGroupsOptimization).apply(attribute);
 	}
 
 	private Iterable<CMAttribute> proxyAttribute(final Iterable<? extends CMAttribute> attributes) {
+		final Map<String, String> cacheForGroupsOptimization = newHashMap();
 		return from(attributes) //
-				.transform(TO_LOCALIZED_ATTRIBUTE) //
+				.transform(new ToLocalizedAttribute(facade, cacheForGroupsOptimization)) //
 				.filter(CMAttribute.class);
 	}
 

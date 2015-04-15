@@ -3,8 +3,8 @@ package org.cmdbuild.services.localization;
 import org.cmdbuild.data.store.lookup.Lookup;
 import org.cmdbuild.model.view.View;
 import org.cmdbuild.model.widget.Widget;
-import org.cmdbuild.services.store.menu.MenuElement;
 import org.cmdbuild.services.store.FilterStore.Filter;
+import org.cmdbuild.services.store.menu.MenuElement;
 
 public interface LocalizableStorableVisitor {
 
