@@ -339,13 +339,13 @@
 		},
 
 		/**
-		 * @param {Object} model - relation grid model
+		 * @param {CMRelationPanelModel} model - relation grid model
 		 */
 		onEditRelationClick: function(model) {
 			var me = this;
-			var data = model.raw || model.data;
-			var classData = _CMCache.getClassById(model.dst_cid);
-			var domain = _CMCache.getDomainById(model.dom_id);
+			var data = model.raw || model.getData();
+			var classData = _CMCache.getClassById(model.get('dst_cid'));
+			var domain = _CMCache.getDomainById(model.get('dom_id'));
 			var masterAndSlave = getMasterAndSlave(model.get(CMDBuild.core.proxy.CMProxyConstants.SOURCE));
 
 			var editRelationWindow = Ext.create('CMDBuild.view.management.classes.relations.CMEditRelationWindow', {
