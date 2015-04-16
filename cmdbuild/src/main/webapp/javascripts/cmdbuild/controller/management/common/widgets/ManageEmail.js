@@ -78,28 +78,30 @@
 
 		buildBottomToolbar: function() {
 			this.tabController.grid.addCls('cmborderbottom');
-			this.tabController.getView().addDocked({
-				xtype: 'toolbar',
-				dock: 'bottom',
-				itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_BOTTOM,
-				ui: 'footer',
+			this.tabController.getView().removeDocked(this.tabController.getView().getDockedComponent('bottom'));
+			this.tabController.getView().addDocked(
+				Ext.create('Ext.toolbar.Toolbar', {
+					dock: 'bottom',
+					itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_BOTTOM,
+					ui: 'footer',
 
-				layout: {
-					type: 'hbox',
-					align: 'middle',
-					pack: 'center'
-				},
+					layout: {
+						type: 'hbox',
+						align: 'middle',
+						pack: 'center'
+					},
 
-				items: [
-					Ext.create('CMDBuild.core.buttons.Back', {
-						scope: this,
+					items: [
+						Ext.create('CMDBuild.core.buttons.Back', {
+							scope: this,
 
-						handler: function(button, e) {
-							this.ownerController.activateFirstTab();
-						}
-					})
-				]
-			});
+							handler: function(button, e) {
+								this.ownerController.activateFirstTab();
+							}
+						})
+					]
+				})
+			);
 		},
 
 		/**

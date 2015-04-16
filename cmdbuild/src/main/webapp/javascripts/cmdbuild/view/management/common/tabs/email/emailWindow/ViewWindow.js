@@ -31,8 +31,6 @@
 		layout: 'border',
 
 		initComponent: function() {
-			var me = this;
-
 			// Buttons configuration
 				this.fillFromTemplateButton = Ext.create('Ext.button.Split', {
 					iconCls: 'clone',
@@ -132,14 +130,12 @@
 
 			Ext.apply(this, {
 				dockedItems: [
-					{
-						xtype: 'toolbar',
+					Ext.create('Ext.toolbar.Toolbar', {
 						dock: 'top',
 						itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_TOP,
 						items: [this.fillFromTemplateButton]
-					},
-					{
-						xtype: 'toolbar',
+					}),
+					Ext.create('Ext.toolbar.Toolbar', {
 						dock: 'bottom',
 						itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_BOTTOM,
 						ui: 'footer',
@@ -152,12 +148,14 @@
 
 						items: [
 							Ext.create('CMDBuild.core.buttons.Close', {
+								scope: this,
+
 								handler: function(button, e) {
-									me.delegate.cmfg('onEmailWindowAbortButtonClick');
+									this.delegate.cmfg('onEmailWindowAbortButtonClick');
 								}
 							})
 						]
-					}
+					})
 				],
 				items: [this.formPanel, this.attachmentContainer]
 			});

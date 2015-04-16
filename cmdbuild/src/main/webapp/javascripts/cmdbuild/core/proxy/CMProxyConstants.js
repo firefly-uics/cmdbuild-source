@@ -236,6 +236,7 @@
 		SCALE: 'scale',
 		SCOPE: 'scope',
 		SENDER_ACCOUNT: 'senderAccount',
+		SENT: 'sent',
 		SINGLE_SELECT: 'singleSelect',
 		SKIP_DISABLED_CLASSES: 'skipDisabledClasses',
 		SMTP_PORT: 'smtpPort',

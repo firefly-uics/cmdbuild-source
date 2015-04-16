@@ -34,8 +34,6 @@
 		title: CMDBuild.Translation.confirmRegeneration,
 
 		initComponent: function() {
-			var me = this;
-
 			this.grid = Ext.create('Ext.grid.Panel', {
 				region: 'center',
 				autoScroll: true,
@@ -96,8 +94,7 @@
 
 			Ext.apply(this, {
 				dockedItems: [
-					{
-						xtype: 'toolbar',
+					Ext.create('Ext.toolbar.Toolbar', {
 						dock: 'bottom',
 						itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_BOTTOM,
 						ui: 'footer',
@@ -110,12 +107,14 @@
 
 						items: [
 							Ext.create('CMDBuild.core.buttons.Confirm', {
+								scope: this,
+
 								handler: function(button, e) {
-									me.delegate.cmfg('onConfirmRegenerationWindowConfirmButtonClick');
+									this.delegate.cmfg('onConfirmRegenerationWindowConfirmButtonClick');
 								}
 							})
 						]
-					}
+					})
 				],
 				items: [
 					{
