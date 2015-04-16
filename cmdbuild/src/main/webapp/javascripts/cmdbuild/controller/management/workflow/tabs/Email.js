@@ -24,7 +24,6 @@
 		/**
 		 * @param {Object} configObject
 		 * @param {Mixed} configObject.parentDelegate - CMModWorkflowController
-		 * @param {Mixed} configObject.clientForm
 		 */
 		constructor: function(configObject) {
 			this.mixins.observable.constructor.call(this, arguments);
@@ -93,6 +92,8 @@
 			var me = this;
 
 			if (!Ext.isEmpty(processIstance)) {
+				this.parentDelegate.activityPanelController.ensureEditPanel(); // Creates editPanel with relative form fields
+
 				this.configurationReset();
 
 				this.selectedEntitySet(processIstance, function() {
@@ -101,10 +102,9 @@
 					me.cmfg('storeLoad');
 				});
 
-				if (!Ext.isEmpty(this.view))
-					this.editModeSet(processIstance.isNew()); // Enable/Disable tab based on model new state to separate create/view mode
+				this.editModeSet(processIstance.isNew()); // Enable/Disable tab based on model new state to separate create/view mode
 			} else {
-				_error('Empty processIstance on onProcessInstanceChange', 'CMDBuild.controller.management.workflow.tabs.Email');
+				_error('Empty processIstance on onProcessInstanceChange', this);
 			}
 		},
 

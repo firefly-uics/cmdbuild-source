@@ -33,7 +33,6 @@
 		/**
 		 * @param {Object} configObject
 		 * @param {Mixed} configObject.parentDelegate - CMModCardController
-		 * @param {Mixed} configObject.clientForm
 		 */
 		constructor: function(configObject) {
 			this.mixins.observable.constructor.call(this, arguments);

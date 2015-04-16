@@ -58,11 +58,13 @@
 
 		/**
 		 * @param {String} message
-		 * @param {String} className
+		 * @param {Mixed} classWithError
 		 */
-		_error = function(message, className) {
+		_error = function(message, classWithError) {
+			classWithError = typeof classWithError == 'string' ? classWithError : Ext.getClassName(classWithError);
+
 			if (!Ext.isEmpty(message))
-				CMDBuild.log.error('ERROR: ' + className + ' - ' + message);
+				CMDBuild.log.error('ERROR (' + classWithError + '): ' + message);
 		};
 
 		/**
@@ -82,11 +84,13 @@
 
 		/**
 		 * @param {String} message
-		 * @param {String} className
+		 * @param {Mixed} classWithError
 		 */
-		_warning = function(message, className) {
+		_warning = function(message, classWithError) {
+			classWithError = typeof classWithError == 'string' ? classWithError : Ext.getClassName(classWithError);
+
 			if (!Ext.isEmpty(message))
-				CMDBuild.log.debug.apply(CMDBuild.log, 'WARNING: ' + className + ' - ' + message);
+				CMDBuild.log.debug.apply(CMDBuild.log, 'WARNING (' + classWithError + '): ' + message);
 		};
 	// END: Logger configuration
 

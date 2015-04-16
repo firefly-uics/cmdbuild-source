@@ -215,6 +215,8 @@
 			if (processInstance != null) {
 				this.view.loadCard(processInstance.asDummyModel());
 				this.view.displayModeForNotEditableCard();
+
+				this.ensureEditPanel(); // Creates editPanel with relative form fields
 			}
 		},
 
