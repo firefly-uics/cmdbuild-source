@@ -77,7 +77,9 @@
 
 						_CMCache.setActiveTranslations(decodedResult.enabled_languages);
 
-						view.getForm().setValues(decodedResult);
+						// FIX bug with Firefox that breaks UI on fast configuration page switch
+						if (view.isVisible())
+							view.getForm().setValues(decodedResult);
 
 						// TODO: to delete when localization module will be released
 						if (configFileName == 'cmdbuild')
