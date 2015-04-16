@@ -213,10 +213,6 @@
 					} else {
 						setValueArray.push(
 							{
-								id: CMDBuild.core.proxy.CMProxyConstants.DELAY,
-								value: values[CMDBuild.core.proxy.CMProxyConstants.DELAY]
-							},
-							{
 								id: CMDBuild.core.proxy.CMProxyConstants.FROM,
 								value: values[CMDBuild.core.proxy.CMProxyConstants.FROM]
 							},
@@ -248,6 +244,8 @@
 					}
 
 					me.view.formPanel.getForm().setValues(setValueArray);
+
+					me.view.formPanel.delayField.setValue(values[CMDBuild.core.proxy.CMProxyConstants.DELAY]);
 
 					// Updates record's prompt synchronizations flag
 					me.record.set(CMDBuild.core.proxy.CMProxyConstants.PROMPT_SYNCHRONIZATION, values[CMDBuild.core.proxy.CMProxyConstants.PROMPT_SYNCHRONIZATION]);

@@ -30,8 +30,6 @@
 		title: CMDBuild.Translation.chooseAttachmentFromDb,
 
 		initComponent: function() {
-			var me = this;
-
 			this.classComboBox = Ext.create('Ext.form.field.ComboBox', {
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				fieldLabel: CMDBuild.Translation.selectAClass,
@@ -65,14 +63,12 @@
 
 			Ext.apply(this, {
 				dockedItems: [
-					{
-						xtype: 'toolbar',
+					Ext.create('Ext.toolbar.Toolbar', {
 						dock: 'top',
 						itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_TOP,
 						items: [this.classComboBox]
-					},
-					{
-						xtype: 'toolbar',
+					}),
+					Ext.create('Ext.toolbar.Toolbar', {
 						dock: 'bottom',
 						itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_BOTTOM,
 						ui: 'footer',
@@ -85,17 +81,21 @@
 
 						items: [
 							Ext.create('CMDBuild.core.buttons.Confirm', {
+								scope: this,
+
 								handler: function(button, e) {
-									me.delegate.cmfg('onPickerWindowConfirmButtonClick');
+									this.delegate.cmfg('onPickerWindowConfirmButtonClick');
 								}
 							}),
 							Ext.create('CMDBuild.core.buttons.Abort', {
+								scope: this,
+
 								handler: function(button, e) {
-									me.delegate.cmfg('onPickerWindowAbortButtonClick');
+									this.delegate.cmfg('onPickerWindowAbortButtonClick');
 								}
 							})
 						]
-					}
+					})
 				],
 				items: [this.cardGrid, this.attachmentGrid]
 			});

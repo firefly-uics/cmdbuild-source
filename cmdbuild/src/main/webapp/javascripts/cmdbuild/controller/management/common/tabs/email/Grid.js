@@ -291,6 +291,7 @@
 				!Ext.isEmpty(record.get(CMDBuild.core.proxy.CMProxyConstants.TO))
 				&& !Ext.isEmpty(record.get(CMDBuild.core.proxy.CMProxyConstants.SUBJECT))
 				&& record.get(CMDBuild.core.proxy.CMProxyConstants.STATUS) != CMDBuild.core.proxy.CMProxyConstants.OUTGOING
+				&& record.get(CMDBuild.core.proxy.CMProxyConstants.STATUS) != CMDBuild.core.proxy.CMProxyConstants.SENT
 			);
 		},
 

@@ -27,14 +27,14 @@
 
 			Ext.apply(this, {
 				dockedItems: [
-					{
-						xtype: 'toolbar',
+					Ext.create('Ext.toolbar.Toolbar', {
 						dock: 'top',
 						itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_TOP,
 
 						items: [
 							Ext.create('CMDBuild.core.buttons.Add', {
 								text: CMDBuild.Translation.composeEmail,
+								scope: this,
 
 								disabled: (
 									this.delegate.cmfg('configurationGet')[CMDBuild.core.proxy.CMProxyConstants.READ_ONLY]
@@ -42,12 +42,14 @@
 								),
 
 								handler: function(button, e) {
-									me.delegate.cmfg('onGridAddEmailButtonClick');
+									this.delegate.cmfg('onGridAddEmailButtonClick');
 								}
 							}),
 							{
 								iconCls: 'x-tbar-loading',
 								text: CMDBuild.Translation.regenerateEmail,
+								scope: this,
+
 								disabled: (
 									this.delegate.cmfg('configurationGet')[CMDBuild.core.proxy.CMProxyConstants.READ_ONLY]
 									|| !this.delegate.cmfg('editModeGet')
@@ -68,7 +70,7 @@
 								}
 							}
 						]
-					}
+					})
 				],
 				columns: [
 					{

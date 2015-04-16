@@ -79,8 +79,8 @@
 			this.buildTabControllerNote();
 			this.buildTabControllerRelations();
 			this.buildTabControllerHistory();
-			this.buildTabControllerAttachments();
 			this.buildTabControllerEmail();
+			this.buildTabControllerAttachments();
 
 			// Generic controllers
 			buildGridController(this);
