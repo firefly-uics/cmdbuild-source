@@ -234,7 +234,6 @@
 		 *
 		 * @param {Object} configurationObject
 		 * @param {Mixed} configurationObject.parentDelegate - CMModCardController or CMModWorkflowController
-		 * @param {Mixed} configurationObject.clientForm
 		 *
 		 * @abstract
 		 */
@@ -242,6 +241,8 @@
 			this.configurationReset();
 
 			this.callParent(arguments);
+
+			this.clientForm = this.parentDelegate.getFormForTemplateResolver();
 
 			// Build controllers
 			this.controllerGrid = Ext.create('CMDBuild.controller.management.common.tabs.email.Grid', {
@@ -806,7 +807,7 @@
 			 */
 			selectedEntityIdGet: function() {
 				if (Ext.isEmpty(this.selectedEntity)) {
-					_warning('Selected entity object is empty', 'CMDBuild.controller.management.common.tabs.email.Email');
+					_warning('Selected entity object is empty', this);
 
 					return null;
 				}

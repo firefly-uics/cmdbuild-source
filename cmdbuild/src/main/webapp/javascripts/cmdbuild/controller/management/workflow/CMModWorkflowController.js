@@ -115,8 +115,7 @@
 
 		buildTabControllerEmail: function() {
 			this.controllerTabEmail = Ext.create('CMDBuild.controller.management.workflow.tabs.Email', {
-				parentDelegate: this,
-				clientForm: this.getFormForTemplateResolver()
+				parentDelegate: this
 			});
 
 			this.subControllers.push(this.controllerTabEmail);

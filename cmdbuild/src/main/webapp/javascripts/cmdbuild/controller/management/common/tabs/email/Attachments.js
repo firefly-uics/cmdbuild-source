@@ -46,7 +46,7 @@
 				this.view.delegate = this;
 				this.view.attachmentButtonsContainer.delegate = this;
 			} else {
-				_error('Alfresco DMS not enabled', 'CMDBuild.controller.management.common.tabs.email.Attachments');
+				_error('Alfresco DMS not enabled', this);
 			}
 		},
 
