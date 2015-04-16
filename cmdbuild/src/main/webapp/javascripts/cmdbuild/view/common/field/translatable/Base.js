@@ -8,6 +8,11 @@
 		/**
 		 * @cfg {Boolean}
 		 */
+		allowBlank: true,
+
+		/**
+		 * @cfg {Boolean}
+		 */
 		considerAsFieldToDisable: true,
 
 		/**
