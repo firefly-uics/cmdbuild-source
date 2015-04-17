@@ -21,9 +21,9 @@
 		fillFromTemplateButton: undefined,
 
 		/**
-		 * @property {Ext.panel.Panel}
+		 * @property {Ext.form.Panel}
 		 */
-		formPanel: undefined,
+		form: undefined,
 
 		buttonAlign: 'center',
 		title: CMDBuild.Translation.viewEmail,
@@ -49,12 +49,8 @@
 				readOnly: true
 			});
 
-			// Use real field to translate values
-			this.delayField = Ext.create('CMDBuild.view.common.field.delay.Delay', {
-				value: this.delegate.record.get(CMDBuild.core.proxy.CMProxyConstants.DELAY),
-			});
-
-			this.formPanel = Ext.create('Ext.panel.Panel', {
+			// Used Ext.form.Panel to be able to use loadRecord() function to load fields values
+			this.form = Ext.create('Ext.form.Panel', {
 				region: 'center',
 				frame: false,
 				border: false,
@@ -76,47 +72,41 @@
 						xtype: 'checkbox',
 						fieldLabel: CMDBuild.Translation.keepSync,
 						readOnly: true,
-						name: CMDBuild.core.proxy.CMProxyConstants.KEEP_SYNCHRONIZATION,
-						value: this.delegate.record.get(CMDBuild.core.proxy.CMProxyConstants.KEEP_SYNCHRONIZATION)
+						name: CMDBuild.core.proxy.CMProxyConstants.KEEP_SYNCHRONIZATION
 					},
-					{
-						xtype: 'displayfield',
-						fieldLabel: CMDBuild.Translation.delay,
-						readOnly: true,
+					Ext.create('CMDBuild.view.common.field.delay.Display', {
 						name: CMDBuild.core.proxy.CMProxyConstants.DELAY,
-						value: this.delayField.getRawValue()
-					},
+						fieldLabel: CMDBuild.Translation.delay,
+						labelAlign: 'right',
+						labelWidth: CMDBuild.LABEL_WIDTH,
+						readOnly: true
+					}),
 					{
 						xtype: 'displayfield',
 						name: CMDBuild.core.proxy.CMProxyConstants.FROM,
-						fieldLabel: CMDBuild.Translation.from,
-						value: this.delegate.record.get(CMDBuild.core.proxy.CMProxyConstants.FROM)
+						fieldLabel: CMDBuild.Translation.from
 					},
 					{
 						xtype: 'displayfield',
 						name: CMDBuild.core.proxy.CMProxyConstants.TO,
-						fieldLabel: CMDBuild.Translation.to,
-						value: this.delegate.record.get(CMDBuild.core.proxy.CMProxyConstants.TO)
+						fieldLabel: CMDBuild.Translation.to
 					},
 					{
 						xtype: 'displayfield',
 						name: CMDBuild.core.proxy.CMProxyConstants.CC,
-						fieldLabel: CMDBuild.Translation.cc,
-						value: this.delegate.record.get(CMDBuild.core.proxy.CMProxyConstants.CC)
+						fieldLabel: CMDBuild.Translation.cc
 					},
 					{
 						xtype: 'displayfield',
 						name: CMDBuild.core.proxy.CMProxyConstants.BCC,
-						fieldLabel: CMDBuild.Translation.bcc,
-						value: this.delegate.record.get(CMDBuild.core.proxy.CMProxyConstants.BCC)
+						fieldLabel: CMDBuild.Translation.bcc
 					},
 					{
 						xtype: 'displayfield',
 						name: CMDBuild.core.proxy.CMProxyConstants.SUBJECT,
-						fieldLabel: CMDBuild.Translation.subject,
-						value: this.delegate.record.get(CMDBuild.core.proxy.CMProxyConstants.SUBJECT)
+						fieldLabel: CMDBuild.Translation.subject
 					},
-					{
+					{ // Thisn't a good way to display email content, but i don't know better one
 						xtype: 'panel',
 						autoScroll: true,
 						frame: true,
@@ -157,7 +147,7 @@
 						]
 					})
 				],
-				items: [this.formPanel, this.attachmentContainer]
+				items: [this.form, this.attachmentContainer]
 			});
 
 			this.callParent(arguments);

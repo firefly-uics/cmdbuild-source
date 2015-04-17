@@ -44,7 +44,6 @@
 			this.emailContentField = Ext.create('CMDBuild.view.common.field.CMHtmlEditorField', {
 				name: CMDBuild.core.proxy.CMProxyConstants.BODY,
 				hideLabel: true,
-				value: this.delegate.record.get(CMDBuild.core.proxy.CMProxyConstants.BODY),
 				flex: 1,
 
 				listeners: {
@@ -62,8 +61,7 @@
 				name: CMDBuild.core.proxy.CMProxyConstants.KEEP_SYNCHRONIZATION,
 				disabled: true,
 				inputValue: true,
-				uncheckedValue: false,
-				value: this.delegate.record.get(CMDBuild.core.proxy.CMProxyConstants.KEEP_SYNCHRONIZATION)
+				uncheckedValue: false
 			});
 
 			this.delayField = Ext.create('CMDBuild.view.common.field.delay.Delay', {
@@ -71,8 +69,7 @@
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				labelAlign: 'right',
 				maxWidth: CMDBuild.MEDIUM_FIELD_WIDTH,
-				name: CMDBuild.core.proxy.CMProxyConstants.DELAY,
-				value: this.delegate.record.get(CMDBuild.core.proxy.CMProxyConstants.DELAY),
+				name: CMDBuild.core.proxy.CMProxyConstants.DELAY
 			});
 
 			Ext.apply(this, {
@@ -84,7 +81,6 @@
 						name: CMDBuild.core.proxy.CMProxyConstants.FROM,
 						fieldLabel: CMDBuild.Translation.from,
 						vtype: 'multiemail',
-						value: this.delegate.record.get(CMDBuild.core.proxy.CMProxyConstants.FROM),
 
 						listeners: {
 							scope: this,
@@ -99,7 +95,6 @@
 						allowBlank: false,
 						fieldLabel: CMDBuild.Translation.to,
 						vtype: 'multiemail',
-						value: this.delegate.record.get(CMDBuild.core.proxy.CMProxyConstants.TO),
 
 						listeners: {
 							scope: this,
@@ -113,7 +108,6 @@
 						name: CMDBuild.core.proxy.CMProxyConstants.CC,
 						fieldLabel: CMDBuild.Translation.cc,
 						vtype: 'multiemail',
-						value: this.delegate.record.get(CMDBuild.core.proxy.CMProxyConstants.CC),
 
 						listeners: {
 							scope: this,
@@ -127,7 +121,6 @@
 						name: CMDBuild.core.proxy.CMProxyConstants.BCC,
 						fieldLabel: CMDBuild.Translation.bcc,
 						vtype: 'multiemail',
-						value: this.delegate.record.get(CMDBuild.core.proxy.CMProxyConstants.BCC),
 
 						listeners: {
 							scope: this,
@@ -141,7 +134,6 @@
 						name: CMDBuild.core.proxy.CMProxyConstants.SUBJECT,
 						allowBlank: false,
 						fieldLabel: CMDBuild.Translation.subject,
-						value: this.delegate.record.get(CMDBuild.core.proxy.CMProxyConstants.SUBJECT),
 
 						listeners: {
 							scope: this,

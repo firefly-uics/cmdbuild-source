@@ -31,6 +31,11 @@
 		],
 
 		/**
+		 * @property {CMDBuild.view.management.common.tabs.email.emailWindow.EditForm}
+		 */
+		form: undefined,
+
+		/**
 		 * Used as flag to avoid pop-up spam
 		 *
 		 * @cfg {Boolean}
@@ -96,6 +101,9 @@
 					}
 				});
 
+				// Shorthands
+				this.form = this.view.form;
+
 				// Fill from template button store configuration
 				CMDBuild.core.proxy.EmailTemplates.getAll({
 					scope: this,
@@ -160,9 +168,11 @@
 					});
 				}
 
+				this.form.loadRecord(this.record); // Fill view form with record data
+
 				// If email has template enable keep-synch checkbox
 				if (!Ext.isEmpty(this.record.get(CMDBuild.core.proxy.CMProxyConstants.TEMPLATE)) && this.windowMode != 'view')
-					this.view.formPanel.keepSynchronizationCheckbox.setDisabled(false);
+					this.form.keepSynchronizationCheckbox.setDisabled(false);
 
 				// Show window
 				if (!Ext.isEmpty(this.view))
@@ -174,7 +184,7 @@
 		 * @return {Boolean}
 		 */
 		isKeepSynchronizationChecked: function() {
-			return this.view.formPanel.keepSynchronizationCheckbox.getValue();
+			return this.form.keepSynchronizationCheckbox.getValue();
 		},
 
 		/**
@@ -243,9 +253,9 @@
 						);
 					}
 
-					me.view.formPanel.getForm().setValues(setValueArray);
+					me.form.getForm().setValues(setValueArray);
 
-					me.view.formPanel.delayField.setValue(values[CMDBuild.core.proxy.CMProxyConstants.DELAY]);
+					me.form.delayField.setValue(values[CMDBuild.core.proxy.CMProxyConstants.DELAY]);
 
 					// Updates record's prompt synchronizations flag
 					me.record.set(CMDBuild.core.proxy.CMProxyConstants.PROMPT_SYNCHRONIZATION, values[CMDBuild.core.proxy.CMProxyConstants.PROMPT_SYNCHRONIZATION]);
@@ -265,9 +275,9 @@
 		 */
 		onEmailWindowConfirmButtonClick: function() {
 			// Validate before save
-			if (this.validate(this.view.formPanel)) {
+			if (this.validate(this.form)) {
 
-				var formValues = this.view.formPanel.getForm().getValues();
+				var formValues = this.form.getForm().getValues();
 
 				// Apply formValues to record object
 				for (var key in formValues)
@@ -331,7 +341,7 @@
 					this.record.set(CMDBuild.core.proxy.CMProxyConstants.TEMPLATE, response[CMDBuild.core.proxy.CMProxyConstants.NAME]);
 					this.record.set(CMDBuild.core.proxy.CMProxyConstants.ACCOUNT, response[CMDBuild.core.proxy.CMProxyConstants.DEFAULT_ACCOUNT]);
 
-					this.view.formPanel.keepSynchronizationCheckbox.setDisabled(false);
+					this.form.keepSynchronizationCheckbox.setDisabled(false);
 				}
 			});
 		}
