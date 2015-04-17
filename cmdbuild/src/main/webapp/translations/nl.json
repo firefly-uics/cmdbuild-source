@@ -806,6 +806,7 @@
 		"busy_wf_widgets": "De visuele controls zijn bezig, controleer de status van de server voor volgende poging.",
 		"copyAttachmentFailure": "<em>Copy attachment with name \"{0}\" failure</em>",
 		"createReportFilure": "<em>Create report failure</em>",
+		"csvUploadOrDecodeFailure": "<em>CSV upload or decode error</em>",
 		"detail": "Details",
 		"domainCardinalityViolation": "Domein kardinaliteits schending",
 		"emailChangedWithAutoSynch": "<em>E-mail changed and \"Keep sync\" is active. <br />Some changes could be lost.</em>",

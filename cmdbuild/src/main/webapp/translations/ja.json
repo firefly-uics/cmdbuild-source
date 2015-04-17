@@ -806,6 +806,7 @@
 		"busy_wf_widgets": "画面コントロールがビジーです、再実行する前にサーバのステータスをチェックください。",
 		"copyAttachmentFailure": "<em>Copy attachment with name \"{0}\" failure</em>",
 		"createReportFilure": "<em>Create report failure</em>",
+		"csvUploadOrDecodeFailure": "<em>CSV upload or decode error</em>",
 		"detail": "詳細",
 		"domainCardinalityViolation": "ドメインカーディナリティ違反",
 		"emailChangedWithAutoSynch": "<em>E-mail changed and \"Keep sync\" is active. <br />Some changes could be lost.</em>",
