@@ -122,10 +122,6 @@
 
 		addActionColumns: function() {
 			var me = this;
-			var readOnly = this.widgetConf.hasOwnProperty(CMDBuild.core.proxy.CMProxyConstants.READ_ONLY)
-				&& this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.READ_ONLY];
-			var disableDeleteRow = this.widgetConf.hasOwnProperty(CMDBuild.core.proxy.CMProxyConstants.DISABLE_DELETE_ROW)
-				&& this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.DISABLE_DELETE_ROW];
 
 			this.columns.headers.push(
 				{
@@ -139,7 +135,7 @@
 					items: [
 						{
 							iconCls: 'modify',
-							tooltip: CMDBuild.Translation.row_edit,
+							tooltip: CMDBuild.Translation.editRow,
 
 							handler: function(grid, rowIndex, colIndex) {
 								var record = grid.getStore().getAt(rowIndex);
@@ -150,7 +146,7 @@
 							},
 
 							isDisabled: function(grid, rowIndex, colIndex, item, record) {
-								return readOnly;
+								return this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.READ_ONLY];
 							}
 						}
 					]
@@ -166,7 +162,7 @@
 					items: [
 						{
 							iconCls: 'delete',
-							tooltip: CMDBuild.Translation.row_delete,
+							tooltip: CMDBuild.Translation.deleteRow,
 
 							handler: function(grid, rowIndex, colIndex) {
 								me.cmOn('onDeleteRowButtonClick', {
@@ -175,7 +171,10 @@
 							},
 
 							isDisabled: function(grid, rowIndex, colIndex, item, record) {
-								return readOnly || disableDeleteRow;
+								return (
+									this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.READ_ONLY]
+									|| this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.DISABLE_DELETE_ROW]
+								);
 							}
 						}
 					]
