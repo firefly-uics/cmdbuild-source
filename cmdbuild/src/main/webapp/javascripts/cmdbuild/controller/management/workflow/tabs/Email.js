@@ -92,9 +92,12 @@
 			var me = this;
 
 			if (!Ext.isEmpty(processIstance)) {
-				this.parentDelegate.activityPanelController.ensureEditPanel(); // Creates editPanel with relative form fields
+				if (!processIstance.isNew())
+					this.parentDelegate.activityPanelController.ensureEditPanel(); // Creates editPanel with relative form fields
 
-				this.configurationReset();
+				// Reset configuration attributes
+				this.configurationSet();
+				this.configurationTemplatesSet();
 
 				this.selectedEntitySet(processIstance, function() {
 					me.regenerateAllEmailsSet(processIstance.isNew());

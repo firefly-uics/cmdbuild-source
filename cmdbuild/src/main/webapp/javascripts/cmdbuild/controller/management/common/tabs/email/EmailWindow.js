@@ -192,7 +192,7 @@
 			var xaVars = Ext.apply({}, record.getData(), record.get(CMDBuild.core.proxy.CMProxyConstants.VARIABLES));
 
 			this.templateResolver = new CMDBuild.Management.TemplateResolver({
-				clientForm: this.cmfg('getMainController').clientForm,
+				clientForm: this.cmfg('getMainController').parentDelegate.getFormForTemplateResolver(),
 				xaVars: xaVars,
 				serverVars: CMDBuild.controller.management.common.widgets.CMWidgetController.getTemplateResolverServerVars(
 					this.cmfg('getMainController').selectedEntity.get(CMDBuild.core.proxy.CMProxyConstants.ENTITY)
