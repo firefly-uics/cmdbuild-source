@@ -1,12 +1,25 @@
 (function () {
 
 	Ext.define('CMDBuild.controller.management.common.widgets.grid.ImportCSV', {
-		extend: 'CMDBuild.controller.common.CMBasePanelController',
+		extend: 'CMDBuild.controller.common.AbstractController',
+
+		requires: [
+			'CMDBuild.core.proxy.CMProxyConstants',
+			'CMDBuild.core.proxy.Csv'
+		],
 
 		/**
 		 * @cfg {CMDBuild.controller.management.common.widgets.grid.Main}
 		 */
 		parentDelegate: undefined,
+
+		/**
+		 * @cfg {Array}
+		 */
+		cmfgCatchedFunctions: [
+			'onImportCSVAbortButtonClick',
+			'onImportCSVUploadButtonClick'
+		],
 
 		/**
 		 * @cfg {Number}
@@ -19,46 +32,26 @@
 		view: undefined,
 
 		/**
-		 * @param {Object} configObject
-		 * @param {CMDBuild.controller.management.common.widgets.grid.Main} configObject.parentDelegate
-		 * @param {Number} configObject.classId
+		 * @param {Object} configurationObject
+		 * @param {CMDBuild.controller.management.common.widgets.grid.Main} configurationObject.parentDelegate
+		 * @param {Number} configurationObject.classId
 		 */
-		constructor: function(configObject) {
-			Ext.apply(this, configObject); // Apply config
+		constructor: function(configurationObject) {
+			this.callParent(arguments);
 
 			this.view = Ext.create('CMDBuild.view.management.common.widgets.grid.ImportCSVWindow', {
 				delegate: this
 			});
+
+			this.view.classIdField.setValue(this.classId);
 
 			// Show window
 			if (!Ext.isEmpty(this.view))
 				this.view.show();
 		},
 
-		/**
-		 * Gatherer function to catch events
-		 *
-		 * @param {String} name
-		 * @param {Object} param
-		 * @param {Function} callback
-		 */
-		cmOn: function(name, param, callBack) {
-			switch (name) {
-				case 'onImportCSVAbortButtonClick':
-					return this.onImportCSVAbortButtonClick();
-
-				case 'onImportCSVUploadButtonClick':
-					return this.onImportCSVUploadButtonClick();
-
-				default: {
-					if (!Ext.isEmpty(this.parentDelegate))
-						return this.parentDelegate.cmOn(name, param, callBack);
-				}
-			}
-		},
-
 		onImportCSVAbortButtonClick: function() {
-			this.view.destroy();
+			this.getView().destroy();
 		},
 
 		/**
@@ -66,21 +59,27 @@
 		 */
 		onImportCSVUploadButtonClick: function() {
 			CMDBuild.LoadMask.get().show();
-			CMDBuild.core.proxy.widgets.Grid.uploadCsv({
-				form: this.view.csvUploadForm.getForm(),
+			CMDBuild.core.proxy.Csv.upload({
+				form: this.getView().csvUploadForm.getForm(),
 				scope: this,
-				success: function(response, options) {
-					CMDBuild.core.proxy.widgets.Grid.getCsvRecords({
+				success: function(form, action) {
+					CMDBuild.core.proxy.Csv.getRecords({
 						scope: this,
 						success: function(result, options, decodedResult) {
-							this.parentDelegate.setGridDataFromCsv(decodedResult.rows);
+							this.parentDelegate.setGridDataFromCsv(decodedResult.rows); // TODO: to implement AbstractController also in main class
 
 							this.onImportCSVAbortButtonClick();
 						}
 					});
 				},
-				failure: function() {
+				failure: function(form, action) {
 					CMDBuild.LoadMask.get().hide();
+
+					CMDBuild.Msg.error(
+						CMDBuild.Translation.common.failure,
+						CMDBuild.Translation.errors.csvUploadOrDecodeFailure,
+						false
+					);
 				}
 			});
 		}

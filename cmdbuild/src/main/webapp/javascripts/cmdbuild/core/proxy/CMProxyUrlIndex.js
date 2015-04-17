@@ -48,6 +48,12 @@
 			remove: 'services/json/schema/modclass/deletetable'
 		},
 
+		csv: {
+			clearSession: 'services/json/management/importcsv/clearsession',
+			getCsvRecords: 'services/json/management/importcsv/getcsvrecords',
+			uploadCsv: 'services/json/management/importcsv/uploadcsv'
+		},
+
 		configuration: {
 			getConfiguration: 'services/json/schema/setup/getconfiguration',
 			getConfigurations: 'services/json/schema/setup/getconfigurations',
@@ -269,10 +275,7 @@
 
 		widgets: {
 			grid: {
-				clearSession: 'services/json/management/importcsv/clearsession',
-				getSqlCardList: 'services/json/management/modcard/getsqlcardlist',
-				getCsvRecords: 'services/json/management/importcsv/getcsvrecords',
-				uploadCsv: 'services/json/management/importcsv/uploadcsv'
+				getSqlCardList: 'services/json/management/modcard/getsqlcardlist'
 			}
 		},
 

@@ -90,7 +90,7 @@
 			classWithError = typeof classWithError == 'string' ? classWithError : Ext.getClassName(classWithError);
 
 			if (!Ext.isEmpty(message))
-				CMDBuild.log.debug.apply(CMDBuild.log, 'WARNING (' + classWithError + '): ' + message);
+				CMDBuild.log.warn('WARNING (' + classWithError + '): ' + message);
 		};
 	// END: Logger configuration
 
