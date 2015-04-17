@@ -15,7 +15,7 @@
 		grid: undefined,
 
 		/**
-		 * @cfg {CMDBuild.view.management.common.widgets.grid.MainPanel}
+		 * @cfg {CMDBuild.view.management.report.MainPanel}
 		 */
 		view: undefined,
 
