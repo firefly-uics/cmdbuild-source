@@ -238,11 +238,9 @@
 		 * @abstract
 		 */
 		constructor: function(configurationObject) {
-			this.configurationReset();
+			this.configurationSet();
 
 			this.callParent(arguments);
-
-			this.clientForm = this.parentDelegate.getFormForTemplateResolver();
 
 			// Build controllers
 			this.controllerGrid = Ext.create('CMDBuild.controller.management.common.tabs.email.Grid', {
@@ -311,10 +309,11 @@
 		 */
 		checkTemplatesToRegenerate: function() {
 			var templatesToRegenerate = [];
-			var dirtyVariables = Ext.Object.getKeys(this.clientForm.getValues(false, true));
+			var clientForm = this.parentDelegate.getFormForTemplateResolver();
+			var dirtyVariables = Ext.Object.getKeys(clientForm.getValues(false, true));
 			var xaVars = this.extractVariablesForTemplateResolver();
 
-			this.clientForm.owner.initValues(); // Clear form fields dirty state to reset state after regeneration
+			clientForm.owner.initValues(); // Clear form fields dirty state to reset state after regeneration
 
 			// Complete dirtyVariables array also with multilevel variables (ex. var1 = '... {client:var2} ...')
 			for (var i in xaVars) {
@@ -363,19 +362,14 @@
 			},
 
 			/**
-			 * Setup local variable to default values
-			 */
-			configurationReset: function() {
-				this.configuration = this.defaultConfiguration;
-			},
-
-			/**
 			 * Set configure object and enable UI and all contained components
 			 *
 			 * @param {Object} configuration
 			 */
 			configurationSet: function(configuration) {
-				if (!Ext.Object.isEmpty(configuration)) {
+				if (Ext.Object.isEmpty(configuration)) {
+					this.configuration = this.defaultConfiguration;
+				} else {
 					// Setup class configuration applying configuration attributes to defaultConfiguration
 					this.configuration = Ext.apply({}, configuration, this.defaultConfiguration);
 
@@ -388,8 +382,11 @@
 			 * @param {Array} configurationTemplatesArray
 			 */
 			configurationTemplatesSet: function(configurationTemplatesArray) {
-				if (Ext.isArray(configurationTemplatesArray) && !Ext.isEmpty(configurationTemplatesArray))
+				if (Ext.isArray(configurationTemplatesArray) && !Ext.isEmpty(configurationTemplatesArray)) {
 					this.configurationTemplates = configurationTemplatesArray;
+				} else {
+					this.configurationTemplates = [];
+				}
 			},
 
 		// EditMode property functions
@@ -676,7 +673,7 @@
 				var xaVars = Ext.apply({}, templateData, record.getData());
 
 				var templateResolver = new CMDBuild.Management.TemplateResolver({
-					clientForm: this.clientForm,
+					clientForm: this.parentDelegate.getFormForTemplateResolver(),
 					xaVars: xaVars,
 					serverVars: CMDBuild.controller.management.common.widgets.CMWidgetController.getTemplateResolverServerVars(
 						this.selectedEntity.get(CMDBuild.core.proxy.CMProxyConstants.ENTITY)
@@ -745,7 +742,7 @@
 				var xaVars = Ext.apply({}, template.getData(), template.get(CMDBuild.core.proxy.CMProxyConstants.VARIABLES));
 
 				var templateResolver = new CMDBuild.Management.TemplateResolver({
-					clientForm: this.clientForm,
+					clientForm: this.parentDelegate.getFormForTemplateResolver(),
 					xaVars: xaVars,
 					serverVars: CMDBuild.controller.management.common.widgets.CMWidgetController.getTemplateResolverServerVars(
 						this.selectedEntity.get(CMDBuild.core.proxy.CMProxyConstants.ENTITY)
