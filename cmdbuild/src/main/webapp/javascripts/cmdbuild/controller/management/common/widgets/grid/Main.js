@@ -220,20 +220,16 @@
 		 */
 		beforeActiveView: function() {
 			// Disable add button
-			if (
+			this.view.addButton.setDisabled(
 				this.widgetConf.hasOwnProperty(CMDBuild.core.proxy.CMProxyConstants.DISABLE_ADD_ROW)
 				&& this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.DISABLE_ADD_ROW]
-			) {
-				this.view.addButton.setDisabled(true);
-			}
+			);
 
 			// Disable import from CSV button
-			if (
+			this.view.importFromCSVButton.setDisabled(
 				this.widgetConf.hasOwnProperty(CMDBuild.core.proxy.CMProxyConstants.DISABLE_IMPORT_FROM_CSV)
 				&& this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.DISABLE_IMPORT_FROM_CSV]
-			) {
-				this.view.importFromCSVButton.setDisabled(true);
-			}
+			);
 
 			// Disable buttons for readOnly mode
 			if (
@@ -464,7 +460,7 @@
 
 			for (var i = 0; i < store.getCount(); i++) {
 				var item = store.getAt(i);
-				var xaVars = item.getData();
+				var xaVars = item.data;
 
 				// Resolve templates for widget configuration "text" type
 				var templateResolver = new CMDBuild.Management.TemplateResolver({
@@ -485,7 +481,7 @@
 
 						data.push(
 							Ext.encode(
-								Ext.Object.merge(item.getData(), out)
+								Ext.Object.merge(item.data, out)
 							)
 						);
 					}
@@ -496,21 +492,6 @@
 				out[CMDBuild.core.proxy.CMProxyConstants.OUTPUT] = data;
 
 			return out;
-		},
-
-		/**
-		 * @param {Array} fields
-		 *
-		 * @return {Ext.data.Store}
-		 */
-		getStoreForFields: function(fields) {
-			fields.push({ name: 'Id', type: 'int' });
-			fields.push({ name: 'IdClass', type: 'int' });
-
-			return Ext.create('Ext.data.Store', {
-				fields: fields,
-				data: []
-			});
 		},
 
 		/**
@@ -579,8 +560,11 @@
 			}
 		},
 
+		/**
+		 * Add empty row to grid store
+		 */
 		onAddRowButtonClick: function() {
-			this.grid.getStore().add(this.getStoreForFields(this.columns.fields));
+			this.grid.getStore().insert(0, {});
 		},
 
 		/**
@@ -621,7 +605,7 @@
 			this.addActionColumns();
 
 			this.grid.reconfigure(
-				this.getStoreForFields(this.columns.fields),
+				this.grid.getStore(),
 				this.columns.headers
 			);
 		},

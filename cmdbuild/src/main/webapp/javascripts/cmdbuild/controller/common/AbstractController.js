@@ -60,11 +60,13 @@
 				&& this.stringToFunctionNameMap.hasOwnProperty(name)
 				&& !Ext.isEmpty(this.stringToFunctionNameMap[name])
 			) {
+				// Normal function manage
 				if (typeof this.stringToFunctionNameMap[name] == 'string' && typeof this[this.stringToFunctionNameMap[name]] == 'function')
 					return this[this.stringToFunctionNameMap[name]](param, callBack);
 
 				if (typeof this.stringToFunctionNameMap[name] == 'object') {
 					switch (this.stringToFunctionNameMap[name].action) {
+						// Forwarded function manage
 						case 'forward':
 							return this[this.stringToFunctionNameMap[name].target][name](param, callBack);
 					}
@@ -75,7 +77,7 @@
 			if (!Ext.isEmpty(this.parentDelegate) && typeof this.parentDelegate.cmfg == 'function')
 				return this.parentDelegate.cmfg(name, param, callBack);
 
-			_msg('CMDBuild.controller.common.AbstractController WARNING: unmanaged function with name "' + name + '"');
+			_warning('unmanaged function with name "' + name + '"', this);
 		},
 
 		/**

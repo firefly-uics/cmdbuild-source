@@ -85,4 +85,10 @@
 		text: CMDBuild.Translation.common.buttons.update
 	});
 
+	Ext.define('CMDBuild.core.buttons.Upload', {
+		extend: 'CMDBuild.core.buttons.Base',
+
+		text: CMDBuild.Translation.upload
+	});
+
 })();

@@ -9,7 +9,6 @@
 			WIDGET_NAME: '.Grid'
 		},
 
-
 		/**
 		 * @cfg {CMDBuild.controller.management.common.widgets.grid.Main}
 		 */
@@ -33,7 +32,7 @@
 		autoScroll: true,
 		border: false,
 		frame: false,
-		layout: 'border',
+		layout: 'fit',
 
 		initComponent: function() {
 			// Buttons configuration
@@ -58,18 +57,15 @@
 				});
 			// END: Buttons configuration
 
-			this.grid = Ext.create('CMDBuild.view.management.common.widgets.grid.GridPanel', {
-				region: 'center'
-			});
+			this.grid = Ext.create('CMDBuild.view.management.common.widgets.grid.GridPanel');
 
 			Ext.apply(this, {
 				dockedItems: [
-					{
-						xtype: 'toolbar',
+					Ext.create('Ext.toolbar.Toolbar', {
 						dock: 'top',
 						itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_TOP,
 						items: [this.addButton, this.importFromCSVButton]
-					}
+					})
 				],
 				items: [this.grid]
 			});
