@@ -16,6 +16,13 @@
 		text: CMDBuild.Translation.deleteLabel
 	});
 
+	Ext.define('CMDBuild.core.buttons.Import', {
+		extend: 'Ext.button.Button',
+
+		iconCls: 'import',
+		text: CMDBuild.Translation.common.buttons.modify
+	});
+
 	Ext.define('CMDBuild.core.buttons.Modify', {
 		extend: 'Ext.button.Button',
 

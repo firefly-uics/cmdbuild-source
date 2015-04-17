@@ -18,7 +18,7 @@
 		border: false,
 		defaultSizeW: 0.90,
 		defaultSizeH: 0.80,
-		title: CMDBuild.Translation.row_edit,
+		title: CMDBuild.Translation.editRow,
 
 		initComponent: function() {
 			this.form = Ext.create('Ext.form.Panel', {

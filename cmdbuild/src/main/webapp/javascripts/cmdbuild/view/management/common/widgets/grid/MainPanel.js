@@ -36,22 +36,20 @@
 
 		initComponent: function() {
 			// Buttons configuration
-				this.addButton = Ext.create('Ext.button.Button', {
-					iconCls: 'add',
-					text: CMDBuild.Translation.row_add,
+				this.addButton = Ext.create('CMDBuild.core.buttons.Add', {
+					text: CMDBuild.Translation.addRow,
 					scope: this,
 
-					handler: function() {
+					handler: function(button, e) {
 						this.delegate.cmOn('onAddRowButtonClick');
 					}
 				});
 
-				this.importFromCSVButton = Ext.create('Ext.button.Button', {
-					iconCls: 'import',
+				this.importFromCSVButton = Ext.create('CMDBuild.core.buttons.Import', {
 					text: CMDBuild.Translation.importFromCSV,
 					scope: this,
 
-					handler: function() {
+					handler: function(button, e) {
 						this.delegate.cmOn('onCSVImportButtonClick');
 					}
 				});

@@ -51,7 +51,7 @@
 		},
 
 		onImportCSVAbortButtonClick: function() {
-			this.getView().destroy();
+			this.view.destroy();
 		},
 
 		/**
@@ -60,13 +60,13 @@
 		onImportCSVUploadButtonClick: function() {
 			CMDBuild.LoadMask.get().show();
 			CMDBuild.core.proxy.Csv.upload({
-				form: this.getView().csvUploadForm.getForm(),
+				form: this.view.csvUploadForm.getForm(),
 				scope: this,
 				success: function(form, action) {
 					CMDBuild.core.proxy.Csv.getRecords({
 						scope: this,
 						success: function(result, options, decodedResult) {
-							this.parentDelegate.setGridDataFromCsv(decodedResult.rows); // TODO: to implement AbstractController also in main class
+							this.parentDelegate.setGridDataFromCsv(decodedResult.rows);
 
 							this.onImportCSVAbortButtonClick();
 						}
