@@ -806,6 +806,7 @@
 		"busy_wf_widgets": "The visual controls are busy, check the status of the server before trying again.",
 		"copyAttachmentFailure": "Copy attachment with name \"{0}\" failure",
 		"createReportFilure": "Create report failure",
+		"csvUploadOrDecodeFailure": "CSV upload or decode error",
 		"detail": "Details",
 		"domainCardinalityViolation": "Domain cardinality violation",
 		"emailChangedWithAutoSynch": "E-mail changed and \"Keep sync\" is active. <br />Some changes could be lost.",

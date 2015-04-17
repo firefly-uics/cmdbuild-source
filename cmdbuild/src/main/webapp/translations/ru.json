@@ -806,6 +806,7 @@
 		"busy_wf_widgets": "Виджеты заняты. Проверьте состояние сервера перед повторной попыткой.",
 		"copyAttachmentFailure": "<em>Copy attachment with name \"{0}\" failure</em>",
 		"createReportFilure": "<em>Create report failure</em>",
+		"csvUploadOrDecodeFailure": "<em>CSV upload or decode error</em>",
 		"detail": "Подробно",
 		"domainCardinalityViolation": "<em>Domain cardinality violation</em>",
 		"emailChangedWithAutoSynch": "<em>E-mail changed and \"Keep sync\" is active. <br />Some changes could be lost.</em>",

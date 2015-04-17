@@ -806,6 +806,7 @@
 		"busy_wf_widgets": "Визелне контроле су недоступне, проверите статус сервера пре поновног покушаја.",
 		"copyAttachmentFailure": "<em>Copy attachment with name \"{0}\" failure</em>",
 		"createReportFilure": "<em>Create report failure</em>",
+		"csvUploadOrDecodeFailure": "<em>CSV upload or decode error</em>",
 		"detail": "Детаљи",
 		"domainCardinalityViolation": "Грешка у кардиналитету релације",
 		"emailChangedWithAutoSynch": "<em>E-mail changed and \"Keep sync\" is active. <br />Some changes could be lost.</em>",

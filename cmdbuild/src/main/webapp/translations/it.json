@@ -1,4 +1,4 @@
-{
+l{
 	"description": "Italiano",
 	"release": "2.3-dev",
 	"administration": {
@@ -806,6 +806,7 @@
 		"busy_wf_widgets": "I controlli visuali risultano occupati, controlla lo stato del server prima di riprovare.",
 		"copyAttachmentFailure": "Copia dell'allegato \"{0}\" fallita",
 		"createReportFilure": "Errore nella creazione del report",
+		"csvUploadOrDecodeFailure": "Errore nel caricamento o decodifica del file CSV",
 		"detail": "Dettagli",
 		"domainCardinalityViolation": "Violazione della cardinalità del dominio",
 		"emailChangedWithAutoSynch": "E-mail modificata e \"Mantieni sync\" attivo. <br />Qualche cambiamento potrebbe essere perso.",
