@@ -26,7 +26,7 @@
 		/**
 		 * @property {CMDBuild.view.management.common.tabs.email.emailWindow.EditForm}
 		 */
-		formPanel: undefined,
+		form: undefined,
 
 		buttonAlign: 'center',
 		title: CMDBuild.Translation.composeEmail,
@@ -49,7 +49,7 @@
 				});
 			// END: Buttons configuration
 
-			this.formPanel = Ext.create('CMDBuild.view.management.common.tabs.email.emailWindow.EditForm', {
+			this.form = Ext.create('CMDBuild.view.management.common.tabs.email.emailWindow.EditForm', {
 				delegate: this.delegate,
 				region: 'center'
 			});
@@ -95,7 +95,7 @@
 						]
 					})
 				],
-				items: [this.formPanel, this.attachmentContainer]
+				items: [this.form, this.attachmentContainer]
 			});
 
 			this.callParent(arguments);

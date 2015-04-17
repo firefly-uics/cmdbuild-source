@@ -6,7 +6,7 @@
 		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
 
 		/**
-		 * @cfg {CMDBuild.controller.common.field.delay.Delay}
+		 * @property {CMDBuild.controller.common.field.delay.Delay}
 		 */
 		delegate: undefined,
 
