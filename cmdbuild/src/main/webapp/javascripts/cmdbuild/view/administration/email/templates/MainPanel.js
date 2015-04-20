@@ -25,19 +25,21 @@
 		 */
 		grid: undefined,
 
-		border: true,
+		border: false,
 		frame: false,
 		layout: 'border',
-		title: CMDBuild.Translation.email + ' - ' + CMDBuild.Translation.templates,
+//		title: CMDBuild.Translation.email + ' - ' + CMDBuild.Translation.templates,
 
 		initComponent: function() {
 			this.grid = Ext.create('CMDBuild.view.administration.email.templates.GridPanel', {
+				delegate: this.delegate,
 				region: 'north',
 				split: true,
 				height: '30%'
 			});
 
 			this.form = Ext.create('CMDBuild.view.administration.email.templates.FormPanel', {
+				delegate: this.delegate,
 				region: 'center'
 			});
 

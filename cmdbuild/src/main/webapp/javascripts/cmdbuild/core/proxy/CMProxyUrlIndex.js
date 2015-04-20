@@ -97,6 +97,21 @@
 				setDefault: 'services/json/schema/emailaccount/setdefault'
 			},
 
+			attachment: {
+				copy: 'services/json/email/attachment/copy',
+				readAll: 'services/json/email/attachment/readall',
+				remove: 'services/json/email/attachment/delete',
+				upload: 'services/json/email/attachment/upload',
+			},
+
+			queue: {
+				configuration: 'services/json/email/queue/configuration',
+				configure: 'services/json/email/queue/configure',
+				running: 'services/json/email/queue/running',
+				start: 'services/json/email/queue/start',
+				stop: 'services/json/email/queue/stop'
+			},
+
 			templates:{
 				remove: 'services/json/email/template/delete',
 				get: 'services/json/email/template/read',
@@ -104,13 +119,6 @@
 				put: 'services/json/email/template/update',
 
 				getStore: 'services/json/email/template/readall'
-			},
-
-			attachment: {
-				copy: 'services/json/email/attachment/copy',
-				readAll: 'services/json/email/attachment/readall',
-				remove: 'services/json/email/attachment/delete',
-				upload: 'services/json/email/attachment/upload',
 			},
 
 			remove: 'services/json/email/email/delete',

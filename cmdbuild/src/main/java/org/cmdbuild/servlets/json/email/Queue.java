@@ -9,8 +9,7 @@ import org.cmdbuild.logic.email.EmailQueueLogic;
 import org.cmdbuild.servlets.json.JSONBaseWithSpringContext;
 import org.cmdbuild.servlets.json.management.JsonResponse;
 import org.cmdbuild.servlets.utils.Parameter;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
+import org.codehaus.jackson.annotate.JsonProperty;
 
 public class Queue extends JSONBaseWithSpringContext {
 

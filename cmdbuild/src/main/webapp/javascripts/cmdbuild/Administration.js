@@ -109,13 +109,9 @@
 											cmControllerType: 'CMDBuild.controller.administration.tasks.CMTasksController',
 											cmName: 'tasks'
 										}),
-										Ext.create('CMDBuild.view.administration.email.CMEmailAccounts', {
-											cmControllerType: 'CMDBuild.controller.administration.email.CMEmailAccountsController',
-											cmName: 'emailAccounts'
-										}),
-										Ext.create('CMDBuild.view.administration.email.templates.MainPanel', {
-											cmControllerType: 'CMDBuild.controller.administration.email.templates.Templates',
-											cmName: 'emailTemplates'
+										Ext.create('CMDBuild.view.administration.email.EmailView', {
+											cmControllerType: 'CMDBuild.controller.administration.email.Email',
+											cmName: 'email'
 										}),
 										Ext.create('CMDBuild.view.administration.localizations.MainPanel', {
 											cmControllerType: 'CMDBuild.controller.administration.localizations.Main',
@@ -163,7 +159,7 @@
 							menuAccordion,
 							groupsAccordion,
 							Ext.create('CMDBuild.view.administration.accordion.CMAccordionTasks'),
-							Ext.create('CMDBuild.view.administration.accordion.CMAccordionEmail'),
+							Ext.create('CMDBuild.view.administration.accordion.Email'),
 							gisAccordion,
 							bimAccordion,
 //							Ext.create('CMDBuild.view.administration.accordion.Localizations'), // TODO: will be implemented in future releases

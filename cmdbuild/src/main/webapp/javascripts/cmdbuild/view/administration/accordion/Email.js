@@ -1,6 +1,6 @@
 (function() {
 
-	Ext.define('CMDBuild.view.administration.accordion.CMAccordionEmail', {
+	Ext.define('CMDBuild.view.administration.accordion.Email', {
 		extend: 'CMDBuild.view.common.CMBaseAccordion',
 
 		cmName: 'email',
@@ -18,14 +18,22 @@
 		updateStore: function() {
 			this.store.getRootNode().appendChild([
 				{
-					text: CMDBuild.Translation.accounts,
+					id: 'accounts',
+					cmName: 'email',
 					leaf: true,
-					cmName: 'emailAccounts'
+					text: CMDBuild.Translation.accounts
 				},
 				{
-					text: CMDBuild.Translation.templates,
+					id: 'templates',
+					cmName: 'email',
 					leaf: true,
-					cmName: 'emailTemplates'
+					text: CMDBuild.Translation.templates,
+				},
+				{
+					id: 'queue',
+					cmName: 'email',
+					leaf: true,
+					text: '@@ Queue',
 				}
 			]);
 		}
