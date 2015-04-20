@@ -108,7 +108,9 @@
 		 */
 		isDirty: function() {
 			if (!Ext.isEmpty(this.getEditor()))
-				return this.getEditor().isDirty() || this.dirty;
+				try { // Avoids a getBody of null error
+					return this.getEditor().isDirty() || this.dirty;
+				} catch(e) {}
 
 			return false;
 		},

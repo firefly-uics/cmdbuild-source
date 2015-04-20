@@ -11,8 +11,8 @@
 		requires: [
 			'CMDBuild.controller.management.common.widgets.CMWidgetController',
 			'CMDBuild.core.proxy.CMProxyConstants',
-			'CMDBuild.core.proxy.EmailTemplates',
-			'CMDBuild.core.proxy.Utils'
+			'CMDBuild.core.proxy.Utils',
+			'CMDBuild.core.proxy.email.Templates'
 		],
 
 		/**
@@ -471,7 +471,7 @@
 					this.emailTemplatesIdentifiers.push(templateIdentifier);
 			}, this);
 
-			CMDBuild.core.proxy.EmailTemplates.getAll({
+			CMDBuild.core.proxy.email.Templates.getAll({
 				params: {
 					templates: Ext.encode(this.emailTemplatesIdentifiers)
 				},

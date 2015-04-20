@@ -5,8 +5,7 @@
 
 		requires: [
 			'CMDBuild.core.proxy.CMProxyConstants',
-			'CMDBuild.core.proxy.CMProxyTasks',
-			'CMDBuild.core.proxy.EmailTemplates'
+			'CMDBuild.core.proxy.CMProxyTasks'
 		],
 
 		/**

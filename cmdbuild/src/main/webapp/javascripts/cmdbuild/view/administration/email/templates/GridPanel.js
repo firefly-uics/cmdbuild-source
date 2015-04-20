@@ -5,7 +5,7 @@
 
 		requires: [
 			'CMDBuild.core.proxy.CMProxyConstants',
-			'CMDBuild.core.proxy.EmailTemplates'
+			'CMDBuild.core.proxy.email.Templates'
 		],
 
 		/**
@@ -14,7 +14,6 @@
 		delegate: undefined,
 
 		border: false,
-		cls: 'cmborderbottom',
 		frame: false,
 
 		initComponent: function() {
@@ -36,7 +35,7 @@
 						flex: 2
 					}
 				],
-				store: CMDBuild.core.proxy.EmailTemplates.getStore()
+				store: CMDBuild.core.proxy.email.Templates.getStore()
 			});
 
 			this.callParent(arguments);

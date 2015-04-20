@@ -28,7 +28,6 @@
 		border: false,
 		frame: false,
 		layout: 'border',
-//		title: CMDBuild.Translation.email + ' - ' + CMDBuild.Translation.templates,
 
 		initComponent: function() {
 			this.grid = Ext.create('CMDBuild.view.administration.email.templates.GridPanel', {

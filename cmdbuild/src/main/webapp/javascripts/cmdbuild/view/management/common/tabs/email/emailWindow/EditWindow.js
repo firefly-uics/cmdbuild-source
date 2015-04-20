@@ -3,10 +3,7 @@
 	Ext.define('CMDBuild.view.management.common.tabs.email.emailWindow.EditWindow', {
 		extend: 'CMDBuild.PopupWindow',
 
-		requires: [
-			'CMDBuild.core.proxy.CMProxyConstants',
-			'CMDBuild.core.proxy.EmailTemplates'
-		],
+		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
 
 		/**
 		 * @cfg {CMDBuild.controller.management.common.tabs.email.EmailWindow}

@@ -2,7 +2,7 @@
 
 	Ext.require('CMDBuild.core.proxy.CMProxyConstants');
 
-	Ext.define('CMDBuild.model.EmailTemplates.grid', {
+	Ext.define('CMDBuild.model.email.Templates.grid', {
 		extend: 'Ext.data.Model',
 
 		fields: [
@@ -14,7 +14,7 @@
 
 	});
 
-	Ext.define('CMDBuild.model.EmailTemplates.singleTemplate', {
+	Ext.define('CMDBuild.model.email.Templates.singleTemplate', {
 		extend: 'Ext.data.Model',
 
 		fields: [
@@ -35,7 +35,7 @@
 		]
 	});
 
-	Ext.define('CMDBuild.model.EmailTemplates.variablesWindow', {
+	Ext.define('CMDBuild.model.email.Templates.variablesWindow', {
 		extend: 'Ext.data.Model',
 
 		fields: [

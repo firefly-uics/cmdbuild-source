@@ -5,7 +5,7 @@
 
 		requires: [
 			'CMDBuild.core.proxy.CMProxyConstants',
-			'CMDBuild.core.proxy.EmailTemplates'
+			'CMDBuild.core.proxy.email.Templates'
 		],
 
 		/**
@@ -24,7 +24,7 @@
 		editable: false,
 		anchor: '100%',
 
-		store: CMDBuild.core.proxy.EmailTemplates.getStore()
+		store: CMDBuild.core.proxy.email.Templates.getStore()
 	});
 
 })();

@@ -5,7 +5,7 @@
 
 		requires: [
 			'CMDBuild.core.proxy.CMProxyConstants',
-			'CMDBuild.core.proxy.EmailTemplates'
+			'CMDBuild.core.proxy.email.Templates'
 		],
 
 		/**
@@ -114,7 +114,7 @@
 			if (this.grid.getSelectionModel().hasSelection()) {
 				this.selectedTemplate = this.grid.getSelectionModel().getSelection()[0];
 
-				CMDBuild.core.proxy.EmailTemplates.get({
+				CMDBuild.core.proxy.email.Templates.get({
 					params: {
 						name: this.selectedTemplate.get(CMDBuild.core.proxy.CMProxyConstants.NAME)
 					},
@@ -128,7 +128,7 @@
 						);
 					},
 					success: function(response, options, decodedResponse) {
-						var templateModel = Ext.create('CMDBuild.model.EmailTemplates.singleTemplate', decodedResponse.response);
+						var templateModel = Ext.create('CMDBuild.model.email.Templates.singleTemplate', decodedResponse.response);
 
 						this.form.loadRecord(templateModel);
 						this.form.delayField.setValue(templateModel.get(CMDBuild.core.proxy.CMProxyConstants.DELAY)); // Manual setup to avoid load record bug
@@ -148,14 +148,14 @@
 				formData[CMDBuild.core.proxy.CMProxyConstants.VARIABLES] = Ext.encode(this.valuesData);
 
 				if (Ext.isEmpty(formData.id)) {
-					CMDBuild.core.proxy.EmailTemplates.create({
+					CMDBuild.core.proxy.email.Templates.create({
 						params: formData,
 						loadMask: true,
 						scope: this,
 						success: this.success
 					});
 				} else {
-					CMDBuild.core.proxy.EmailTemplates.update({
+					CMDBuild.core.proxy.email.Templates.update({
 						params: formData,
 						loadMask: true,
 						scope: this,
@@ -173,7 +173,7 @@
 
 		removeItem: function() {
 			if (!Ext.isEmpty(this.selectedTemplate)) {
-				CMDBuild.core.proxy.EmailTemplates.remove({
+				CMDBuild.core.proxy.email.Templates.remove({
 					params: {
 						name: this.selectedTemplate.get(CMDBuild.core.proxy.CMProxyConstants.NAME)
 					},

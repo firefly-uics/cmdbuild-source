@@ -6,8 +6,8 @@
 		requires: [
 			'CMDBuild.controller.management.common.widgets.CMWidgetController',
 			'CMDBuild.core.proxy.CMProxyConstants',
-			'CMDBuild.core.proxy.EmailTemplates',
-			'CMDBuild.core.proxy.common.tabs.email.Attachment'
+			'CMDBuild.core.proxy.common.tabs.email.Attachment',
+			'CMDBuild.core.proxy.email.Templates'
 		],
 
 		/**
@@ -105,7 +105,7 @@
 				this.form = this.view.form;
 
 				// Fill from template button store configuration
-				CMDBuild.core.proxy.EmailTemplates.getAll({
+				CMDBuild.core.proxy.email.Templates.getAll({
 					scope: this,
 					loadMask: true,
 					success: function(response, options, decodedResponse) {
@@ -319,7 +319,7 @@
 		 * @param {String} templateName
 		 */
 		onEmailWindowFillFromTemplateButtonClick: function(templateName) {
-			CMDBuild.core.proxy.EmailTemplates.get({
+			CMDBuild.core.proxy.email.Templates.get({
 				params: {
 					name: templateName
 				},

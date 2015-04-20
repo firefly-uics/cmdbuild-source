@@ -1,11 +1,11 @@
 (function() {
 
-	Ext.define('CMDBuild.core.proxy.EmailTemplates', {
+	Ext.define('CMDBuild.core.proxy.email.Templates', {
 
 		requires: [
 			'CMDBuild.core.proxy.CMProxyConstants',
 			'CMDBuild.core.proxy.CMProxyUrlIndex',
-			'CMDBuild.model.EmailTemplates'
+			'CMDBuild.model.email.Templates'
 		],
 
 		singleton: true,
@@ -64,7 +64,7 @@
 		getStore: function() {
 			return Ext.create('Ext.data.Store', {
 				autoLoad: false,
-				model: 'CMDBuild.model.EmailTemplates.grid',
+				model: 'CMDBuild.model.email.Templates.grid',
 				proxy: {
 					type: 'ajax',
 					url: CMDBuild.core.proxy.CMProxyUrlIndex.email.templates.getStore,
