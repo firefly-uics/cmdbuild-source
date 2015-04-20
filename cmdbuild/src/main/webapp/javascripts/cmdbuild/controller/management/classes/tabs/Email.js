@@ -6,9 +6,19 @@
 	Ext.define('CMDBuild.controller.management.classes.tabs.Email', {
 		extend: 'CMDBuild.controller.management.common.tabs.email.Email',
 
+		requires: [
+			'CMDBuild.core.proxy.CMProxyConstants',
+			'CMDBuild.core.proxy.common.tabs.email.Email'
+		],
+
 		mixins: {
 			observable: 'Ext.util.Observable'
 		},
+
+		/**
+		 * @property {Ext.data.Model}
+		 */
+		card: undefined,
 
 		/**
 		 * @property {CMDBuild.state.CMCardModuleStateDelegate}
@@ -96,17 +106,19 @@
 		onCardSelected: function(card) {
 			var me = this;
 
+			this.card = card;
+
 			this.selectedEntitySet(card, function() {
 				me.regenerateAllEmailsSet(Ext.isEmpty(card));
 				me.forceRegenerationSet(Ext.isEmpty(card));
 				me.cmfg('storeLoad');
 			});
 
-			// TODO: Enable/Disable tab with server call response
-			if (!Ext.isEmpty(this.view)) {
+			if (!Ext.isEmpty(this.view))
 				this.view.setDisabled(false);
-				this.editModeSet(Ext.isEmpty(card)); // Enable/Disable tab based on model state to separate create/view mode
-			}
+
+			this.editModeSet(false);
+			this.cmfg('setUiState');
 		},
 
 		onCloneCard: function() {
@@ -123,6 +135,33 @@
 			this.entryType = entryType;
 
 			this.editModeSet(false);
+		},
+
+		/**
+		 * Works in place of ManageEmail widget for Workflows
+		 *
+		 * @override
+		 */
+		onModifyCardClick: function() {
+			var params = {};
+			params[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME] = _CMCache.getEntryTypeNameById(this.card.get('IdClass'));
+			params[CMDBuild.core.proxy.CMProxyConstants.CARD_ID] = this.card.get(CMDBuild.core.proxy.CMProxyConstants.ID);
+
+			CMDBuild.core.proxy.common.tabs.email.Email.isEmailEnabledForCard({
+				params: params,
+				scope: this,
+				loadMask: true,
+				failure: function(response, options, decodedResponse) {
+					_warning('Emails enabled for card (' + this.card.get(CMDBuild.core.proxy.CMProxyConstants.ID) + ') unknown', this);
+				},
+				success: function(response, options, decodedResponse) {
+					this.cmfg('configurationSet', {
+						readOnly: !decodedResponse.response
+					});
+				}
+			});
+
+			this.callParent(arguments);
 		},
 
 		/**

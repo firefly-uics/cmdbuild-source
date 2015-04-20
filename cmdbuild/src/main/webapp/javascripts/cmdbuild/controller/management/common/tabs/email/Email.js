@@ -51,9 +51,10 @@
 			'regenerateAllEmailsSet',
 			'regenerateSelectedEmails',
 			'selectedEntityIdGet',
+			'sendAll -> controllerGrid',
 			'sendAllOnSaveGet',
 			'sendAllOnSaveSet',
-			'sendAll -> controllerGrid',
+			'setUiState -> controllerGrid',
 			'storeLoad -> controllerGrid'
 		],
 
