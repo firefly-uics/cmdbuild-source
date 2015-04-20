@@ -1,30 +1,34 @@
 (function() {
 
 	Ext.define('CMDBuild.controller.administration.email.CMEmailAccountsController', {
-		extend: 'CMDBuild.controller.common.CMBasePanelController',
+		extend: 'CMDBuild.controller.common.AbstractController',
+
+		/**
+		 * @cfg {CMDBuild.controller.administration.email.Email}
+		 */
+		parentDelegate: undefined,
 
 		form: undefined,
 		grid: undefined,
 		selectedName: undefined,
-		selectionModel: undefined,
 		view: undefined,
 
 		/**
-		 * @param {CMDBuild.view.administration.email.CMEmailAccounts} view
+		 * @param {Object} configurationObject
+		 * @param {CMDBuild.controller.administration.email.Email} configurationObject.parentDelegate
 		 *
-		 * @overwrite
+		 * @override
 		 */
-		constructor: function(view) {
+		constructor: function(configurationObject) {
 			this.callParent(arguments);
 
-			// Handlers exchange
-			this.grid = view.grid;
-			this.form = view.form;
-			this.view.delegate = this;
-			this.grid.delegate = this;
-			this.form.delegate = this;
+			this.view = Ext.create('CMDBuild.view.administration.email.CMEmailAccounts', {
+				delegate: this
+			});
 
-			this.selectionModel = this.grid.getSelectionModel();
+			// Shorthands
+			this.form = this.view.form;
+			this.grid = this.view.grid;
 		},
 
 		/**
@@ -75,7 +79,7 @@
 		},
 
 		onAddButtonClick: function() {
-			this.selectionModel.deselectAll();
+			this.grid.getSelectionModel().deselectAll();
 			this.selectedName = null;
 			this.form.reset();
 			this.form.enableModify(true);
@@ -102,9 +106,9 @@
 		},
 
 		onRowSelected: function() {
-			if (this.selectionModel.hasSelection()) {
+			if (this.grid.getSelectionModel().hasSelection()) {
 				var me = this;
-				this.selectedName = this.selectionModel.getSelection()[0].get(CMDBuild.core.proxy.CMProxyConstants.NAME);
+				this.selectedName = this.grid.getSelectionModel().getSelection()[0].get(CMDBuild.core.proxy.CMProxyConstants.NAME);
 
 				// Selected user asynchronous store query
 				this.selectedDataStore = CMDBuild.core.proxy.CMProxyEmailAccounts.get();
@@ -127,7 +131,6 @@
 				var formData = this.form.getData(true);
 
 				CMDBuild.LoadMask.get().show();
-
 				if (Ext.isEmpty(formData.id)) {
 					CMDBuild.core.proxy.CMProxyEmailAccounts.create({
 						params: formData,
@@ -174,9 +177,9 @@
 
 						store.load({
 							callback: function() {
-								me.selectionModel.select(0, true);
+								me.grid.getSelectionModel().select(0, true);
 
-								if (!me.selectionModel.hasSelection())
+								if (!me.grid.getSelectionModel().hasSelection())
 									me.form.disableModify();
 							}
 						});
@@ -202,10 +205,14 @@
 						me.form.getForm().findField(CMDBuild.core.proxy.CMProxyConstants.NAME).getValue()
 					);
 
-					me.selectionModel.select(rowIndex, true);
+					me.grid.getSelectionModel().select(rowIndex, true);
 					me.form.disableModify(true);
 				}
 			});
+		},
+
+		callback: function() {
+			CMDBuild.LoadMask.get().hide();
 		}
 	});
 

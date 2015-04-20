@@ -266,6 +266,7 @@
 		TEMPORARY: 'temporary',
 		TEMPORARY_ID: 'temporaryId',
 		TEXT: 'text',
+		TIME: 'time',
 		TITLE: 'title',
 		TO: 'to',
 		TOOLBAR_BOTTOM: 'bottomToolbar',

@@ -56,17 +56,15 @@
 		 * @override
 		 */
 		constructor: function(view) {
-			// TODO: in future would be nice to implement "this.callParent(arguments);" ... mainwhile i do it manually
-			this.stringToFunctionNameMap = {};
-			this.decodeCatchedFunctionsArray();
-			this.view = view;
+			this.callParent(arguments);
 
-			// Handlers exchange
-			this.grid = view.grid;
-			this.form = view.form;
-			this.view.delegate = this;
-			this.grid.delegate = this;
-			this.form.delegate = this;
+			this.view = Ext.create('CMDBuild.view.administration.email.templates.MainPanel', {
+				delegate: this
+			});
+
+			// Shorthands
+			this.grid = this.view.grid;
+			this.form = this.view.form;
 
 		},
 

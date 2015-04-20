@@ -30,4 +30,18 @@
 		text: CMDBuild.Translation.common.buttons.modify
 	});
 
+	Ext.define('CMDBuild.core.buttons.Start', {
+		extend: 'Ext.button.Button',
+
+		iconCls: 'start',
+		text: CMDBuild.Translation.common.buttons.modify
+	});
+
+	Ext.define('CMDBuild.core.buttons.Stop', {
+		extend: 'Ext.button.Button',
+
+		iconCls: 'stop',
+		text: CMDBuild.Translation.common.buttons.modify
+	});
+
 })();
