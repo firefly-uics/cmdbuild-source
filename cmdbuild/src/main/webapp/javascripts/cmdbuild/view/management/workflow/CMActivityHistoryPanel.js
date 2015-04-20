@@ -18,7 +18,8 @@
 					for(var i in rawAttributesData) {
 						var attribute = rawAttributesData[i];
 
-						record.set(attribute.d, attribute.v);
+						if (attribute.d == 'Status')
+							record.set(attribute.d, attribute.v);
 					}
 
 					record.commit();
