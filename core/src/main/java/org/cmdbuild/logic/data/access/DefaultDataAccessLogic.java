@@ -6,7 +6,7 @@ import static com.google.common.collect.Iterables.filter;
 import static com.google.common.collect.Iterables.size;
 import static java.lang.String.format;
 import static java.util.Arrays.asList;
-import static org.apache.commons.lang3.RandomStringUtils.randomAscii;
+import static org.apache.commons.lang3.RandomStringUtils.randomAlphanumeric;
 import static org.cmdbuild.dao.constants.Cardinality.CARDINALITY_1N;
 import static org.cmdbuild.dao.constants.Cardinality.CARDINALITY_N1;
 import static org.cmdbuild.dao.entrytype.Deactivable.IsActivePredicate.activeOnes;
@@ -677,6 +677,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 			final Card userGivenCard, //
 			final CMClass entryType //
 	) {
+		logger.debug("updating relation attributes for references of card '{}'", storedCardId);
 
 		final Map<String, Object> fetchedCardAttributes = fetchedCard.getAttributes();
 		final Map<String, Object> userGivenCardAttributes = userGivenCard.getAttributes();
@@ -687,6 +688,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 			Long destinationCardId = null;
 			try {
 				final String referenceAttributeName = attribute.getName();
+				logger.debug("checking attribute '{}'", referenceAttributeName);
 
 				/*
 				 * Before save, some trigger can update the card If the
@@ -733,8 +735,8 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 				}
 
 				final Alias DOM = name("DOM");
-				final Alias DST = name(format("DST-%s-%s", destinationClass.getName(), randomAscii(10)));
-				final CMQueryRow row = dataView.select(anyAttribute(sourceClass), anyAttribute(DST), anyAttribute(DOM)) //
+				final Alias DST = name(format("DST-%s-%s", destinationClass.getName(), randomAlphanumeric(10)));
+				final CMQueryRow row = dataView.select(anyAttribute(DOM)) //
 						.from(sourceClass) //
 						.join(destinationClass, DST, over(domain, as(DOM))) //
 						.where(and( //
@@ -759,8 +761,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 				}
 
 			} catch (final Exception ex) {
-				logger.error("Cannot update relation attributes. SourceCardId: {}, DestinationCardId: {}",
-						sourceCardId, destinationCardId);
+				logger.error("error updating attributes", ex);
 			}
 		}
 	}
@@ -1037,7 +1038,9 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 		row = dataView.select(anyAttribute(directedSource)) //
 				.from(directedSource) //
 				.join(anyClass(), destinationAlias, over(domain, domainAlias)) //
-				.where(whereCondition).run().getOnlyRow(); //
+				.where(whereCondition) //
+				.run() //
+				.getOnlyRow(); //
 
 		final CMRelation relation = row.getRelation(domainAlias).getRelation();
 		final CMRelationDefinition mutableRelation = dataView.update(relation) //
@@ -1089,7 +1092,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 		 * reflective domains
 		 */
 		final Alias DOM = name("DOM");
-		final Alias DST = name(format("DST-%s-%s", destinationClass.getName(), randomAscii(10)));
+		final Alias DST = name(format("DST-%s-%s", destinationClass.getName(), randomAlphanumeric(10)));
 		final CMQueryRow row = dataView.select(anyAttribute(sourceClass), anyAttribute(DOM)) //
 				.from(sourceClass) //
 				.join(destinationClass, DST, over(domain, as(DOM))) //
