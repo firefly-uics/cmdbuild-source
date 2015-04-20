@@ -106,6 +106,7 @@
 				});
 
 				this.editModeSet(processIstance.isNew()); // Enable/Disable tab based on model new state to separate create/view mode
+				this.cmfg('setUiState');
 			} else {
 				_error('Empty processIstance on onProcessInstanceChange', this);
 			}

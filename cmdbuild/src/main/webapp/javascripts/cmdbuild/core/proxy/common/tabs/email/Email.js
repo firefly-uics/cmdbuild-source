@@ -57,6 +57,22 @@
 		/**
 		 * @param {Object} parameters
 		 */
+		isEmailEnabledForCard: function(parameters) {
+			CMDBuild.Ajax.request({
+				method: 'POST',
+				url: CMDBuild.core.proxy.CMProxyUrlIndex.email.enabled,
+				params: parameters.params,
+				scope: parameters.scope || this,
+				loadMask: parameters.loadMask || false,
+				failure: parameters.failure || Ext.emptyFn(),
+				success: parameters.success || Ext.emptyFn(),
+				callback: parameters.callback || Ext.emptyFn()
+			});
+		},
+
+		/**
+		 * @param {Object} parameters
+		 */
 		remove: function(parameters) {
 			CMDBuild.Ajax.request({
 				method: 'POST',

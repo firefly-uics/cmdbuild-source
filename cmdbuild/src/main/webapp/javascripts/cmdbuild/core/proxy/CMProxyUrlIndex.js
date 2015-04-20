@@ -96,6 +96,7 @@
 				getStoreColumns: '',
 				setDefault: 'services/json/schema/emailaccount/setdefault'
 			},
+
 			templates:{
 				remove: 'services/json/email/template/delete',
 				get: 'services/json/email/template/read',
@@ -117,6 +118,7 @@
 			post: 'services/json/email/email/create',
 			put: 'services/json/email/email/update',
 
+			enabled: 'services/json/email/email/enabled',
 			getStore: 'services/json/email/email/readall'
 		},
 
