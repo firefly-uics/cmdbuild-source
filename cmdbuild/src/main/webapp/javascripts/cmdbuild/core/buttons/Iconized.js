@@ -30,6 +30,13 @@
 		text: CMDBuild.Translation.common.buttons.modify
 	});
 
+	Ext.define('CMDBuild.core.buttons.Reload', {
+		extend: 'Ext.button.Button',
+
+		iconCls: 'x-tbar-loading',
+		text: CMDBuild.Translation.common.buttons.reload
+	});
+
 	Ext.define('CMDBuild.core.buttons.Start', {
 		extend: 'Ext.button.Button',
 

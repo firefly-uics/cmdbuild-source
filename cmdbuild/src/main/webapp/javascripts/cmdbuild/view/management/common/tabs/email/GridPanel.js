@@ -45,8 +45,7 @@
 									this.delegate.cmfg('onGridAddEmailButtonClick');
 								}
 							}),
-							{
-								iconCls: 'x-tbar-loading',
+							Ext.create('CMDBuild.core.buttons.Reload', {
 								text: CMDBuild.Translation.regenerateEmail,
 								scope: this,
 
@@ -68,7 +67,23 @@
 										}
 									});
 								}
-							}
+							})
+						]
+					}),
+					Ext.create('Ext.toolbar.Toolbar', {
+						dock: 'bottom',
+						itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_BOTTOM,
+
+						items: [
+							Ext.create('CMDBuild.core.buttons.Reload', {
+								text: null,
+								tooltip: '@@ Grid reload',
+								scope: this,
+
+								handler: function(button, e) {
+									this.delegate.cmfg('storeLoad');
+								}
+							})
 						]
 					})
 				],
