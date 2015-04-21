@@ -27,6 +27,7 @@
 					dataIndex: CMDBuild.core.proxy.CMProxyConstants.TYPE,
 					flex: 1,
 					scope: this,
+
 					renderer: function(value, metaData, record) {
 						return this.typeGridColumnRenderer(value, metaData, record);
 					}
@@ -45,54 +46,59 @@
 					menuDisabled: true,
 					fixed: true,
 					scope: this,
+
 					renderer: function(value, metaData, record) {
 						return this.activeGridColumnRenderer(value, metaData, record);
 					}
 				},
-				{
-					xtype: 'actioncolumn',
+				Ext.create('Ext.grid.column.Action', {
 					align: 'center',
 					width: 25,
 					sortable: false,
 					hideable: false,
 					menuDisabled: true,
 					fixed: true,
+
 					items: [
 						{
 							icon: 'images/icons/control_play.png',
 							tooltip: tr.startLabel,
 							scope: this,
-							handler: function(grid, rowIndex, colIndex, node, e, record, rowNode) {
-								this.delegate.cmOn('onStartButtonClick', record);
-							},
+
 							isDisabled: function(grid, rowIndex, colIndex, item, record) {
 								return record.get(CMDBuild.core.proxy.CMProxyConstants.ACTIVE);
+							},
+
+							handler: function(grid, rowIndex, colIndex, node, e, record, rowNode) {
+								this.delegate.cmOn('onStartButtonClick', record);
 							}
 						}
 					]
-				},
-				{
-					xtype: 'actioncolumn',
+				}),
+				Ext.create('Ext.grid.column.Action', {
 					align: 'center',
 					width: 25,
 					sortable: false,
 					hideable: false,
 					menuDisabled: true,
 					fixed: true,
+
 					items: [
 						{
 							icon: 'images/icons/control_stop.png',
 							tooltip: tr.stopLabel,
 							scope: this,
-							handler: function(grid, rowIndex, colIndex, node, e, record, rowNode) {
-								this.delegate.cmOn('onStopButtonClick', record);
-							},
+
 							isDisabled: function(grid, rowIndex, colIndex, item, record) {
 								return !record.get(CMDBuild.core.proxy.CMProxyConstants.ACTIVE);
+							},
+
+							handler: function(grid, rowIndex, colIndex, node, e, record, rowNode) {
+								this.delegate.cmOn('onStopButtonClick', record);
 							}
 						}
 					]
-				}
+				})
 			];
 
 			Ext.apply(this, {

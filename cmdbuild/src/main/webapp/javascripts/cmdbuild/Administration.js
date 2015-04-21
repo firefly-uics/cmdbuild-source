@@ -158,7 +158,7 @@
 							reportAccordion,
 							menuAccordion,
 							groupsAccordion,
-							Ext.create('CMDBuild.view.administration.accordion.CMAccordionTasks'),
+							Ext.create('CMDBuild.view.administration.accordion.Tasks'),
 							Ext.create('CMDBuild.view.administration.accordion.Email'),
 							gisAccordion,
 							bimAccordion,

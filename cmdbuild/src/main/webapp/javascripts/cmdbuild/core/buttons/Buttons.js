@@ -58,7 +58,6 @@
 	});
 
 	Ext.define('CMDBuild.core.buttons.Previous', {
-		alternateClassName: 'CMDBuild.buttons.PreviousButton', // Legacy class name
 		extend: 'CMDBuild.core.buttons.Base',
 
 		text: CMDBuild.Translation.common.buttons.previous
@@ -72,7 +71,6 @@
 	});
 
 	Ext.define('CMDBuild.core.buttons.Next', {
-		alternateClassName: 'CMDBuild.buttons.NextButton', // Legacy class name
 		extend: 'CMDBuild.core.buttons.Base',
 
 		text: CMDBuild.Translation.common.buttons.next

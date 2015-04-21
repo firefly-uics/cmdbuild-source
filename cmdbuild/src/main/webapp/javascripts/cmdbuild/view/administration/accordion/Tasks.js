@@ -2,7 +2,7 @@
 
 	var tr = CMDBuild.Translation.administration.tasks;
 
-	Ext.define('CMDBuild.view.administration.accordion.CMAccordionTasks', {
+	Ext.define('CMDBuild.view.administration.accordion.Tasks', {
 		extend: 'CMDBuild.view.common.CMBaseAccordion',
 
 		cmName: 'tasks',
@@ -15,7 +15,7 @@
 		},
 
 		/**
-		 * @overwrite
+		 * @override
 		 */
 		updateStore: function() {
 			this.store.getRootNode().appendChild([
