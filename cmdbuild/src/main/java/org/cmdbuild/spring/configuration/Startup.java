@@ -1,5 +1,7 @@
 package org.cmdbuild.spring.configuration;
 
+import static com.google.common.base.Predicates.*;
+
 import java.util.Collections;
 
 import org.cmdbuild.dms.DmsConfiguration;
@@ -15,15 +17,18 @@ import org.cmdbuild.services.startup.DefaultStartupLogic;
 import org.cmdbuild.services.startup.DefaultStartupManager;
 import org.cmdbuild.services.startup.StartupLogic;
 import org.cmdbuild.services.startup.StartupManager;
-import org.cmdbuild.services.startup.StartupManager.Condition;
 import org.cmdbuild.services.startup.StartupManager.Startable;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import com.google.common.base.Predicate;
+
 @Configuration
 public class Startup {
+
+	private static final Predicate<Void> ALWAYS = alwaysTrue();
 
 	@Autowired
 	private Cache cache;
@@ -59,8 +64,8 @@ public class Startup {
 	protected StartupManager startupManager() {
 		final StartupManager startupManager = new DefaultStartupManager();
 		startupManager.add(startScheduler(), databaseIsOk());
-		startupManager.add(startEmailQueue(), databaseIsOk());
-		startupManager.add(clearDmsTemporaryFolder(), always());
+		startupManager.add(startEmailQueue(), and(databaseIsOk(), emailQueueEnabled()));
+		startupManager.add(clearDmsTemporaryFolder(), ALWAYS);
 		return startupManager;
 	}
 
@@ -133,11 +138,11 @@ public class Startup {
 	}
 
 	@Bean
-	protected Condition databaseIsOk() {
-		return new Condition() {
+	protected Predicate<Void> databaseIsOk() {
+		return new Predicate<Void>() {
 
 			@Override
-			public boolean satisfied() {
+			public boolean apply(Void input) {
 				return properties.databaseProperties().isConfigured() && other.patchManager().isUpdated();
 			}
 
@@ -145,12 +150,12 @@ public class Startup {
 	}
 
 	@Bean
-	protected Condition always() {
-		return new Condition() {
+	protected Predicate<Void> emailQueueEnabled() {
+		return new Predicate<Void>() {
 
 			@Override
-			public boolean satisfied() {
-				return true;
+			public boolean apply(Void input) {
+				return properties.emailProperties().isEnabled();
 			}
 
 		};
