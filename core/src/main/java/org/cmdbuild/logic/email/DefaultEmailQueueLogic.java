@@ -67,6 +67,8 @@ public class DefaultEmailQueueLogic implements EmailQueueLogic {
 
 	@Override
 	public void start() {
+		configuration.setEnabled(true);
+		configuration.save();
 		schedulerService.add(job, everyMinute());
 	}
 
@@ -74,6 +76,8 @@ public class DefaultEmailQueueLogic implements EmailQueueLogic {
 	public void stop() {
 		if (running()) {
 			schedulerService.remove(job);
+			configuration.setEnabled(false);
+			configuration.save();
 		}
 	}
 

@@ -10,15 +10,27 @@ public class EmailProperties extends DefaultProperties implements EmailConfigura
 
 	private static final String MODULE_NAME = "email";
 
+	private static final String QUEUE_ENABLED = "email.queue.enabled";
 	private static final String QUEUE_TIME = "email.queue.time";
 
 	public EmailProperties() {
 		super();
-		setProperty(QUEUE_TIME, "0");
+		setEnabled(false);
+		setQueueTime(0L);
 	}
 
 	public static EmailProperties getInstance() {
 		return (EmailProperties) Settings.getInstance().getModule(MODULE_NAME);
+	}
+
+	@Override
+	public boolean isEnabled() {
+		return Boolean.parseBoolean(getProperty(QUEUE_ENABLED));
+	}
+
+	@Override
+	public void setEnabled(final boolean enabled) {
+		setProperty(QUEUE_ENABLED, Boolean.toString(enabled));
 	}
 
 	@Override
@@ -27,10 +39,11 @@ public class EmailProperties extends DefaultProperties implements EmailConfigura
 	}
 
 	@Override
-	public void setQueueTime(long value) {
+	public void setQueueTime(final long value) {
 		setProperty(QUEUE_TIME, Long.toString(value));
 	}
 
+	@Override
 	public void save() {
 		try {
 			store();
