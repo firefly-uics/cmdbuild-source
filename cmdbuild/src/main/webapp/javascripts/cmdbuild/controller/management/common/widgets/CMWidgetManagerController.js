@@ -3,6 +3,7 @@
 	// Requires all widget controllers to avoid to include manually
 	// TODO: rename of this class to use property "requires"
 	Ext.require('CMDBuild.controller.management.common.widgets.ManageEmail');
+	Ext.require('CMDBuild.controller.management.common.widgets.grid.Grid');
 
 	Ext.define("CMDBuild.controller.management.common.CMWidgetManagerController", {
 
@@ -265,7 +266,7 @@
 		addControllerClass(commonControllers.CMNavigationTreeController);
 
 		// Grid
-		addControllerClass(CMDBuild.controller.management.common.widgets.grid.Main);
+		addControllerClass(CMDBuild.controller.management.common.widgets.grid.Grid);
 
 		// openReport
 		addControllerClass(commonControllers.CMOpenReportController);

@@ -59,7 +59,7 @@
 <!-- SELECTION -->
 <script type="text/javascript" src="javascripts/cmdbuild/selection/CMMultiPageSelectionModel.js"></script>
 
-<!-- CHACHE -->
+<!-- CACHE -->
 <script type="text/javascript" src="javascripts/cmdbuild/cache/CMCacheNavigationTreesFunctions.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/cache/CMCacheFilterFunctions.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/cache/CMCacheClassFunctions.js"></script>

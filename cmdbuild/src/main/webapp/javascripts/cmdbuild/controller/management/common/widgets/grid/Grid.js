@@ -1,6 +1,6 @@
 (function() {
 
-	Ext.define('CMDBuild.controller.management.common.widgets.grid.Main', {
+	Ext.define('CMDBuild.controller.management.common.widgets.grid.Grid', {
 		extend: 'CMDBuild.controller.management.common.widgets.CMWidgetController',
 
 		requires: [
@@ -13,7 +13,7 @@
 		},
 
 		statics: {
-			WIDGET_NAME: CMDBuild.view.management.common.widgets.grid.MainPanel.WIDGET_NAME
+			WIDGET_NAME: '.Grid'
 		},
 
 		/**

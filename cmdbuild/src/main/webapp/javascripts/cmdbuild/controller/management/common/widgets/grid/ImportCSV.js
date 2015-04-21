@@ -9,7 +9,7 @@
 		],
 
 		/**
-		 * @cfg {CMDBuild.controller.management.common.widgets.grid.Main}
+		 * @cfg {CMDBuild.controller.management.common.widgets.grid.Grid}
 		 */
 		parentDelegate: undefined,
 
@@ -33,7 +33,7 @@
 
 		/**
 		 * @param {Object} configurationObject
-		 * @param {CMDBuild.controller.management.common.widgets.grid.Main} configurationObject.parentDelegate
+		 * @param {CMDBuild.controller.management.common.widgets.grid.Grid} configurationObject.parentDelegate
 		 * @param {Number} configurationObject.classId
 		 */
 		constructor: function(configurationObject) {
