@@ -3,13 +3,12 @@ package org.cmdbuild.service.rest.v2.cxf.configuration;
 import static com.google.common.base.Predicates.assignableFrom;
 import static com.google.common.base.Predicates.or;
 import static java.util.Arrays.asList;
-import static org.cmdbuild.service.rest.v2.cxf.security.FirstPresent.firstPresent;
 
 import org.cmdbuild.service.rest.v2.Sessions;
-import org.cmdbuild.service.rest.v2.cxf.security.FirstPresent;
-import org.cmdbuild.service.rest.v2.cxf.security.HeaderTokenExtractor;
-import org.cmdbuild.service.rest.v2.cxf.security.QueryStringTokenExtractor;
 import org.cmdbuild.service.rest.v2.cxf.security.TokenHandler;
+import org.cmdbuild.service.rest.v2.cxf.util.Messages.FirstPresentOrAbsent;
+import org.cmdbuild.service.rest.v2.cxf.util.Messages.HeaderValue;
+import org.cmdbuild.service.rest.v2.cxf.util.Messages.ParameterValue;
 import org.cmdbuild.service.rest.v2.logging.LoggingSupport;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -20,6 +19,8 @@ import com.google.common.base.Predicate;
 @Configuration
 public class SecurityV2 implements LoggingSupport {
 
+	private static final String TOKEN_KEY = "CMDBuild-Authorization";
+
 	@Autowired
 	private ApplicationContextHelperV2 helper;
 
@@ -28,23 +29,23 @@ public class SecurityV2 implements LoggingSupport {
 
 	@Bean
 	public TokenHandler v2_tokenHandler() {
-		return new TokenHandler(v2_tokenExtractor(), unauthorizedServices(), services.v2_sessionStore(),
+		return new TokenHandler(v2_tokenFromMessage(), unauthorizedServices(), services.v2_sessionStore(),
 				services.v2_operationUserStore(), helper.userStore());
 	}
 
 	@Bean
-	protected FirstPresent v2_tokenExtractor() {
-		return firstPresent(asList(v2_header(), v2_queryString()));
+	protected FirstPresentOrAbsent v2_tokenFromMessage() {
+		return FirstPresentOrAbsent.of(asList(v2_tokenFromHeader(), v2_tokenFromParameter()));
 	}
 
 	@Bean
-	protected HeaderTokenExtractor v2_header() {
-		return new HeaderTokenExtractor();
+	protected HeaderValue v2_tokenFromHeader() {
+		return HeaderValue.of(TOKEN_KEY);
 	}
 
 	@Bean
-	protected QueryStringTokenExtractor v2_queryString() {
-		return new QueryStringTokenExtractor();
+	protected ParameterValue v2_tokenFromParameter() {
+		return ParameterValue.of(TOKEN_KEY);
 	}
 
 	private Predicate<Class<?>> unauthorizedServices() {

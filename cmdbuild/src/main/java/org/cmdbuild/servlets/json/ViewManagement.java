@@ -11,7 +11,9 @@ import static org.cmdbuild.servlets.json.CommunicationConstants.SOURCE_FUNCTION;
 import java.util.List;
 
 import org.apache.commons.lang3.Validate;
-import org.cmdbuild.model.View;
+import org.cmdbuild.model.view.View;
+import org.cmdbuild.model.view.ViewImpl;
+import org.cmdbuild.model.view.View.ViewType;
 import org.cmdbuild.servlets.json.serializers.ViewSerializer;
 import org.cmdbuild.servlets.utils.Parameter;
 import org.json.JSONException;
@@ -25,7 +27,7 @@ public class ViewManagement extends JSONBaseWithSpringContext {
 
 	@JSONExported
 	public JSONObject read() throws JSONException {
-		return new ViewSerializer(translationFacade()).toClient(viewLogic().fetchViewsOfAllTypes());
+		return new ViewSerializer().toClient(viewLogic().fetchViewsOfAllTypes());
 	}
 
 	/* ************************************************
@@ -42,7 +44,7 @@ public class ViewManagement extends JSONBaseWithSpringContext {
 
 	@JSONExported
 	public JSONObject readSQLView() throws JSONException {
-		return new ViewSerializer(translationFacade()).toClient(readByType(View.ViewType.SQL));
+		return new ViewSerializer().toClient(readByType(View.ViewType.SQL));
 	}
 
 	@JSONExported
@@ -74,7 +76,7 @@ public class ViewManagement extends JSONBaseWithSpringContext {
 
 	@JSONExported
 	public JSONObject readFilterView() throws JSONException {
-		return new ViewSerializer(translationFacade()).toClient(readByType(View.ViewType.FILTER));
+		return new ViewSerializer().toClient(readByType(View.ViewType.FILTER));
 	}
 
 	@JSONExported
@@ -102,7 +104,7 @@ public class ViewManagement extends JSONBaseWithSpringContext {
 		viewLogic().create(view);
 	}
 
-	private List<View> readByType(final View.ViewType type) {
+	private List<View> readByType(final ViewType type) {
 		return viewLogic().read(type);
 	}
 
@@ -120,7 +122,7 @@ public class ViewManagement extends JSONBaseWithSpringContext {
 			final String className, //
 			final String filter) {
 
-		final View view = new View();
+		final ViewImpl view = new ViewImpl();
 		view.setId(id);
 		Validate.isTrue(isNotBlank(name));
 		view.setName(name);
@@ -137,7 +139,7 @@ public class ViewManagement extends JSONBaseWithSpringContext {
 			final String description, //
 			final String sourceFunction) {
 
-		final View view = new View();
+		final ViewImpl view = new ViewImpl();
 		view.setId(id);
 		Validate.isTrue(isNotBlank(name));
 		view.setName(name);

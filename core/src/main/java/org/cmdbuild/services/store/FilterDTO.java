@@ -1,6 +1,7 @@
 package org.cmdbuild.services.store;
 
-import org.cmdbuild.common.Builder;
+import org.apache.commons.lang3.builder.Builder;
+import org.cmdbuild.services.localization.LocalizableStorableVisitor;
 import org.cmdbuild.services.store.FilterStore.Filter;
 
 public class FilterDTO implements Filter {
@@ -105,6 +106,16 @@ public class FilterDTO implements Filter {
 	@Override
 	public String getPrivilegeId() {
 		return String.format("Filter:%d", getId());
+	}
+
+	@Override
+	public void accept(final LocalizableStorableVisitor visitor) {
+		visitor.visit(this);
+	}
+
+	@Override
+	public String getIdentifier() {
+		throw new UnsupportedOperationException("should be never called");
 	}
 
 }

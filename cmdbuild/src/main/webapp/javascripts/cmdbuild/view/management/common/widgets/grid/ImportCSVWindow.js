@@ -5,18 +5,13 @@
 
 		requires: [
 			'CMDBuild.core.proxy.CMProxyConstants',
-			'CMDBuild.core.proxy.widgets.Grid'
+			'CMDBuild.core.proxy.Csv'
 		],
 
 		/**
 		 * @cfg {CMDBuild.controller.management.common.widgets.grid.ImportCSV}
 		 */
 		delegate: undefined,
-
-		/**
-		 * @property {CMDBuild.buttons.AbortButton}
-		 */
-		abortButton: undefined,
 
 		/**
 		 * @property {Ext.form.field.Hidden}
@@ -43,40 +38,14 @@
 		 */
 		csvUploadForm: undefined,
 
-		/**
-		 * @property {Ext.button.Button}
-		 */
-		uploadButton: undefined,
-
-		buttonAlign: 'center',
 		border: false,
 		defaultSizeW: 0.90,
 		autoHeight: true,
 		title: CMDBuild.Translation.importFromCSV,
 
 		initComponent: function() {
-			// Buttons configuration
-				this.abortButton = Ext.create('CMDBuild.buttons.AbortButton', {
-					scope: this,
-
-					handler: function() {
-						this.delegate.cmOn('onImportCSVAbortButtonClick');
-					}
-				});
-
-				this.uploadButton = Ext.create('Ext.button.Button', {
-					scope: this,
-					text: CMDBuild.Translation.upload,
-
-					handler: function() {
-						this.delegate.cmOn('onImportCSVUploadButtonClick');
-					}
-				});
-			// END: Buttons configuration
-
 			this.classIdField = Ext.create('Ext.form.field.Hidden', {
-				name: 'idClass',
-				value: this.delegate.classId
+				name: 'idClass'
 			});
 
 			this.csvFileField = Ext.create('Ext.form.field.File', {
@@ -100,7 +69,7 @@
 				editable: false,
 				allowBlank: false,
 
-				store: CMDBuild.core.proxy.widgets.Grid.getCsvSeparatorStore(),
+				store: CMDBuild.core.proxy.Csv.getSeparatorStore(),
 				queryMode: 'local'
 			});
 
@@ -116,13 +85,7 @@
 				editable: false,
 				allowBlank: false,
 
-				store: Ext.create('Ext.data.SimpleStore', {
-					fields: [CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION, CMDBuild.core.proxy.CMProxyConstants.VALUE],
-					data: [
-						[CMDBuild.Translation.add, 'add'],
-						[CMDBuild.Translation.replace , 'replace']
-					]
-				}),
+				store: CMDBuild.core.proxy.Csv.getImportModeStore(),
 				queryMode: 'local'
 			});
 
@@ -133,12 +96,41 @@
 				fileUpload: true,
 				monitorValid: true,
 
-				items: [this.classIdField, this.csvFileField, this.csvSeparatorCombo, this.csvImportModeCombo]
+				items: [this.csvFileField, this.csvSeparatorCombo, this.csvImportModeCombo, this.classIdField]
 			});
 
 			Ext.apply(this, {
-				items: [this.csvUploadForm],
-				buttons: [this.uploadButton, this.abortButton]
+				dockedItems: [
+					Ext.create('Ext.toolbar.Toolbar', {
+						dock: 'bottom',
+						itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_BOTTOM,
+						ui: 'footer',
+
+						layout: {
+							type: 'hbox',
+							align: 'middle',
+							pack: 'center'
+						},
+
+						items: [
+							Ext.create('CMDBuild.core.buttons.Upload', {
+								scope: this,
+
+								handler: function(button, e) {
+									this.delegate.cmfg('onImportCSVUploadButtonClick');
+								}
+							}),
+							Ext.create('CMDBuild.core.buttons.Abort', {
+								scope: this,
+
+								handler: function(button, e) {
+									this.delegate.cmfg('onImportCSVAbortButtonClick');
+								}
+							})
+						]
+					})
+				],
+				items: [this.csvUploadForm]
 			});
 
 			this.callParent(arguments);

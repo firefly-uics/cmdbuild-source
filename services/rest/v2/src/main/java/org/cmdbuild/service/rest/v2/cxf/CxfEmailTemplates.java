@@ -45,6 +45,7 @@ public class CxfEmailTemplates implements EmailTemplates {
 					.withAccount(input.getAccount()) //
 					.withKeepSynchronization(input.isKeepSynchronization()) //
 					.withPromptSynchronization(input.isPromptSynchronization()) //
+					.withDelay(input.getDelay()) //
 					.build();
 		}
 

@@ -13,10 +13,12 @@ import org.cmdbuild.common.reflect.AnnouncingInvocationHandler;
 import org.cmdbuild.common.reflect.AnnouncingInvocationHandler.Announceable;
 import org.cmdbuild.service.rest.v2.AttachmentsConfiguration;
 import org.cmdbuild.service.rest.v2.CardAttachments;
+import org.cmdbuild.service.rest.v2.CardEmails;
 import org.cmdbuild.service.rest.v2.Cards;
 import org.cmdbuild.service.rest.v2.ClassAttributes;
 import org.cmdbuild.service.rest.v2.ClassPrivileges;
 import org.cmdbuild.service.rest.v2.Classes;
+import org.cmdbuild.service.rest.v2.Cql;
 import org.cmdbuild.service.rest.v2.DomainAttributes;
 import org.cmdbuild.service.rest.v2.Domains;
 import org.cmdbuild.service.rest.v2.EmailTemplates;
@@ -39,10 +41,12 @@ import org.cmdbuild.service.rest.v2.cxf.AttachmentsHelper;
 import org.cmdbuild.service.rest.v2.cxf.AttachmentsManagement;
 import org.cmdbuild.service.rest.v2.cxf.CxfAttachmentsConfiguration;
 import org.cmdbuild.service.rest.v2.cxf.CxfCardAttachments;
+import org.cmdbuild.service.rest.v2.cxf.CxfCardEmails;
 import org.cmdbuild.service.rest.v2.cxf.CxfCards;
 import org.cmdbuild.service.rest.v2.cxf.CxfClassAttributes;
 import org.cmdbuild.service.rest.v2.cxf.CxfClassPrivileges;
 import org.cmdbuild.service.rest.v2.cxf.CxfClasses;
+import org.cmdbuild.service.rest.v2.cxf.CxfCql;
 import org.cmdbuild.service.rest.v2.cxf.CxfDomainAttributes;
 import org.cmdbuild.service.rest.v2.cxf.CxfDomains;
 import org.cmdbuild.service.rest.v2.cxf.CxfEmailTemplates;
@@ -110,6 +114,14 @@ public class ServicesV2 implements LoggingSupport {
 
 	@Bean
 	@Scope(value = SCOPE_REQUEST, proxyMode = TARGET_CLASS)
+	public CardEmails v2_cardEmails() {
+		final CxfCardEmails service = new CxfCardEmails(v2_errorHandler(), helper.userDataAccessLogic(),
+				helper.emailLogic(), v2_idGenerator());
+		return proxy(CardEmails.class, service);
+	}
+
+	@Bean
+	@Scope(value = SCOPE_REQUEST, proxyMode = TARGET_CLASS)
 	public Cards v2_cards() {
 		final CxfCards service = new CxfCards(v2_errorHandler(), helper.userDataAccessLogic());
 		return proxy(Cards.class, service);
@@ -140,18 +152,17 @@ public class ServicesV2 implements LoggingSupport {
 
 	@Bean
 	@Scope(value = SCOPE_REQUEST, proxyMode = TARGET_CLASS)
-	public DomainAttributes v2_domainAttributes() {
-		final CxfDomainAttributes service = new CxfDomainAttributes(v2_errorHandler(), helper.userDataAccessLogic(),
-				helper.systemDataView(), helper.metadataStoreFactory(), helper.lookupLogic());
-		return proxy(DomainAttributes.class, service);
+	public Cql v2_cql() {
+		final CxfCql service = new CxfCql(helper.userDataAccessLogic());
+		return proxy(Cql.class, service);
 	}
 
 	@Bean
 	@Scope(value = SCOPE_REQUEST, proxyMode = TARGET_CLASS)
-	public ProcessInstanceEmails v2_emails() {
-		final CxfProcessInstanceEmails service = new CxfProcessInstanceEmails(v2_errorHandler(),
-				helper.userWorkflowLogic(), helper.emailLogic(), v2_idGenerator());
-		return proxy(ProcessInstanceEmails.class, service);
+	public DomainAttributes v2_domainAttributes() {
+		final CxfDomainAttributes service = new CxfDomainAttributes(v2_errorHandler(), helper.userDataAccessLogic(),
+				helper.systemDataView(), helper.metadataStoreFactory(), helper.lookupLogic());
+		return proxy(DomainAttributes.class, service);
 	}
 
 	@Bean
@@ -273,6 +284,14 @@ public class ServicesV2 implements LoggingSupport {
 		final CxfProcessInstanceAttachments service = new CxfProcessInstanceAttachments(v2_errorHandler(),
 				helper.userWorkflowLogic(), v2_attachmentsHelper());
 		return proxy(ProcessInstanceAttachments.class, service);
+	}
+
+	@Bean
+	@Scope(value = SCOPE_REQUEST, proxyMode = TARGET_CLASS)
+	public ProcessInstanceEmails v2_processInstanceEmails() {
+		final CxfProcessInstanceEmails service = new CxfProcessInstanceEmails(v2_errorHandler(),
+				helper.userWorkflowLogic(), helper.emailLogic(), v2_idGenerator());
+		return proxy(ProcessInstanceEmails.class, service);
 	}
 
 	@Bean

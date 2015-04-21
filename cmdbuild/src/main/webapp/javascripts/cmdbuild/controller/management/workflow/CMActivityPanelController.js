@@ -13,7 +13,7 @@
 			wfStateDelegate: "CMDBuild.state.CMWorkflowStateDelegate"
 		},
 
-		constructor: function(v, owner, widgetControllerManager, delegate) {
+		constructor: function(view, supercontroller, widgetControllerManager, delegate) {
 			this.callParent(arguments);
 
 			// this flag is used to define if the user has click on the
@@ -119,6 +119,8 @@
 					&& ai && ai.isWritable()) {
 
 				this.view.editMode();
+
+				this.callParent(arguments);
 			}
 		},
 
@@ -142,6 +144,9 @@
 		// override
 		onSaveCardClick: function() {
 			this.isAdvance = false;
+
+			this.superController.onSaveCardClick(); // Forward save event
+
 			this.widgetControllerManager.waitForBusyWidgets(save, this); // Check for busy widgets also on save
 		},
 
@@ -155,6 +160,8 @@
 			} else {
 				this.onActivityInstanceChange(activityInstance);
 			}
+
+			this.callParent(arguments); // Forward save event
 
 			_CMUIState.onlyGridIfFullScreen();
 		},
@@ -208,6 +215,9 @@
 			if (processInstance != null) {
 				this.view.loadCard(processInstance.asDummyModel());
 				this.view.displayModeForNotEditableCard();
+
+				if (!processInstance.isNew())
+					this.ensureEditPanel(); // Creates editPanel with relative form fields
 			}
 		},
 
@@ -340,13 +350,15 @@
 				_debug("save the process with params", requestParams);
 
 				CMDBuild.LoadMask.get().show();
-
 				CMDBuild.ServiceProxy.workflow.saveActivity({
 					params: requestParams,
 					scope : this,
 					clientValidation: this.isAdvance, //to force the save request
 					callback: function(operation, success, response) {
 						CMDBuild.LoadMask.get().hide();
+					},
+					failure: function(response, options, decodedResponse) {
+						this.delegate.reload(); // Reload store also on failure
 					},
 					success: function(operation, requestConfiguration, decodedResponse) {
 						var savedCardId = decodedResponse.response.Id;
@@ -418,7 +430,10 @@
 				&& processInstance.getId() == me.idToAdvance) {
 
 			me.view.editMode();
+			me.superController.onModifyCardClick(); // Call modify event for email tab
+
 			me.isAdvance = false;
+
 			return;
 		}
 

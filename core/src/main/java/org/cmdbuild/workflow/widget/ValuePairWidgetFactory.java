@@ -1,5 +1,8 @@
 package org.cmdbuild.workflow.widget;
 
+import static java.lang.String.format;
+import static org.cmdbuild.logger.Log.WORKFLOW;
+
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -19,12 +22,15 @@ import org.cmdbuild.services.template.engine.EngineNames;
 import org.cmdbuild.services.template.store.TemplateRepository;
 import org.cmdbuild.workflow.CMActivityWidget;
 import org.cmdbuild.workflow.xpdl.SingleActivityWidgetFactory;
+import org.slf4j.Logger;
 
 /**
  * Single activity widget factory that knows how to decode a list of key/value
  * pairs.
  */
 public abstract class ValuePairWidgetFactory implements SingleActivityWidgetFactory {
+
+	private static final Logger logger = WORKFLOW;
 
 	public static final String BUTTON_LABEL = "ButtonLabel";
 
@@ -184,6 +190,7 @@ public abstract class ValuePairWidgetFactory implements SingleActivityWidgetFact
 			try {
 				return Integer.parseInt((String) value);
 			} catch (final NumberFormatException e) {
+				logger.warn(format("error converting '%s' to '%s'", value, Long.class), e);
 				return null;
 			}
 		} else if (value instanceof Integer) {

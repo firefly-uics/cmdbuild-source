@@ -47,6 +47,16 @@ public class QuartzSchedulerService implements SchedulerService {
 	}
 
 	@Override
+	public boolean isStarted(final Job job) {
+		try {
+			final JobKey jobKey = QuartzJob.createJobKey(job);
+			return scheduler.checkExists(jobKey);
+		} catch (final SchedulerException e) {
+			throw exeptionFactory.internal(e);
+		}
+	}
+
+	@Override
 	public void start() {
 		try {
 			scheduler.start();

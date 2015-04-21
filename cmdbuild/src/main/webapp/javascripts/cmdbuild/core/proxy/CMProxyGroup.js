@@ -60,25 +60,6 @@
 			});
 		},
 
-		getUserStoreForGrid: function() {
-			return new Ext.data.Store({
-				model : "CMDBuild.cache.CMUserForGridModel",
-				autoLoad : true,
-				proxy : {
-					type : 'ajax',
-					url : "services/json/schema/modsecurity/getuserlist",
-					reader : {
-						type : 'json',
-						root : 'rows'
-					}
-				},
-				sorters : [ {
-					property : 'username',
-					direction : "ASC"
-				}]
-			});
-		},
-
 		getUIConfiguration: function(cbs) {
 			cbs = cbs || {};
 
@@ -130,28 +111,6 @@
 			p.method = 'GET';
 			p.url = _CMProxy.url.privileges.classes.loadClassUiConfiguration;
 			CMDBuild.ServiceProxy.core.doRequest(p);
-		},
-
-		/**
-		 * @return {Ext.data.JsonStore}
-		 */
-		getDefaultGroupStore: function() {
-			return Ext.create('Ext.data.JsonStore', {
-				autoLoad: false,
-				model: 'CMDBuild.model.CMGroupModels.comboBox',
-				proxy: {
-					type: 'ajax',
-					url: CMDBuild.core.proxy.CMProxyUrlIndex.users.getusergrouplist,
-					reader: {
-						root: 'result',
-						type: 'json'
-					}
-				},
-				sorters: [{
-					property: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
-					direction: 'ASC'
-				}]
-			});
 		},
 
 		/**

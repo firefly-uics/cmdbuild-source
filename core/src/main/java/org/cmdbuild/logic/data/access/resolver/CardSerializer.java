@@ -9,7 +9,7 @@ import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
-public class CardSerializer<T extends CMEntry> extends ReferenceAndLookupSerializer<T> {
+public class CardSerializer<T extends CMEntry> extends AbstractSerializer<T> {
 
 	@Override
 	public void visit(final DateAttributeType attributeType) {

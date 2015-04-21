@@ -25,18 +25,20 @@
 			<ref bean="jsonProvider" />
 			<ref bean="wadlProvider" />
 			<ref bean="v2_tokenHandler" />
+			<ref bean="v2_localizationHandler" />
 			<ref bean="v2_headerResponseHandler" />
 		</jaxrs:providers>
 		<jaxrs:serviceBeans>
 			<ref bean="v2_attachmentsConfiguration" />
 			<ref bean="v2_cardAttachments" />
+			<ref bean="v2_cardEmails" />
 			<ref bean="v2_cards" />
 			<ref bean="v2_classes" />
 			<ref bean="v2_classAttributes" />
 			<ref bean="v2_classPrivileges" />
+			<ref bean="v2_cql" />
 			<ref bean="v2_domains" />
 			<ref bean="v2_domainAttributes" />
-			<ref bean="v2_emails" />
 			<ref bean="v2_emailTemplates" />
 			<ref bean="v2_relations" />
 			<ref bean="v2_impersonate" />
@@ -48,6 +50,7 @@
 			<ref bean="v2_processesConfiguration" />
 			<ref bean="v2_processInstanceActivities" />
 			<ref bean="v2_processInstanceAttachments" />
+			<ref bean="v2_processInstanceEmails" />
 			<ref bean="v2_processInstances" />
 			<ref bean="v2_processStartActivities" />
 			<ref bean="v2_reports" />

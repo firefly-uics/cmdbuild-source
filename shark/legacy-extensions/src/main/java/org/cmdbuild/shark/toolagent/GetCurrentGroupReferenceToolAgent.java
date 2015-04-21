@@ -8,7 +8,7 @@ public class GetCurrentGroupReferenceToolAgent extends AbstractConditionalToolAg
 
 	@Override
 	protected void innerInvoke() throws Exception {
-		final ReferenceType groupReference = getProcessAttributeValue(Constants.CURRENT_GROUP_VARIABLE);
+		final ReferenceType groupReference = getProcessAttributeValue(Constants.CURRENT_PERFORMER_VARIABLE);
 		setAllReferenceOutputParametersTo(groupReference);
 	}
 

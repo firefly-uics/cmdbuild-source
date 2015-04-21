@@ -1,7 +1,5 @@
 package org.cmdbuild.data.store.email;
 
-import static java.util.Collections.emptyList;
-import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 import static org.apache.commons.lang3.builder.ToStringStyle.SHORT_PREFIX_STYLE;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -13,24 +11,22 @@ import org.joda.time.DateTime;
 
 public class Email extends AbstractEmail implements Storable {
 
-	private static Iterable<Attachment> NO_ATTACHMENTS = emptyList();
-
 	private final Long id;
 	private DateTime date;
 	private EmailStatus status;
-	private Long activityId;
-	private Iterable<Attachment> attachments;
+	private Long reference;
 	private boolean noSubjectPrefix;
 	private String account;
 	private String template;
 	private boolean keepSynchronization;
 	private boolean promptSynchronization;
+	private long delay;
 
 	public Email() {
 		this.id = null;
 	}
 
-	public Email(final long id) {
+	public Email(final Long id) {
 		this.id = id;
 	}
 
@@ -59,20 +55,12 @@ public class Email extends AbstractEmail implements Storable {
 		this.status = status;
 	}
 
-	public Long getActivityId() {
-		return activityId;
+	public Long getReference() {
+		return reference;
 	}
 
-	public void setActivityId(final Long activityId) {
-		this.activityId = activityId;
-	}
-
-	public Iterable<Attachment> getAttachments() {
-		return defaultIfNull(attachments, NO_ATTACHMENTS);
-	}
-
-	public void setAttachments(final Iterable<Attachment> attachments) {
-		this.attachments = attachments;
+	public void setReference(final Long value) {
+		this.reference = value;
 	}
 
 	public boolean isNoSubjectPrefix() {
@@ -115,6 +103,14 @@ public class Email extends AbstractEmail implements Storable {
 		this.promptSynchronization = promptSynchronization;
 	}
 
+	public long getDelay() {
+		return delay;
+	}
+
+	public void setDelay(final long delay) {
+		this.delay = delay;
+	}
+
 	@Override
 	public boolean equals(final Object obj) {
 		if (this == obj) {
@@ -136,7 +132,7 @@ public class Email extends AbstractEmail implements Storable {
 				.append(this.getContent(), other.getContent()) //
 				.append(this.getDate(), other.getDate()) //
 				.append(this.getStatus(), other.getStatus()) //
-				.append(this.getActivityId(), other.getActivityId()) //
+				.append(this.getReference(), other.getReference()) //
 				.append(this.getNotifyWith(), other.getNotifyWith()) //
 				.append(this.isNoSubjectPrefix(), other.isNoSubjectPrefix()) //
 				.append(this.getAccount(), other.getAccount()) //
@@ -158,7 +154,7 @@ public class Email extends AbstractEmail implements Storable {
 				.append(this.getContent()) //
 				.append(this.getDate()) //
 				.append(this.getStatus()) //
-				.append(this.getActivityId()) //
+				.append(this.getReference()) //
 				.append(this.getNotifyWith()) //
 				.append(this.isNoSubjectPrefix()) //
 				.append(this.getAccount()) //

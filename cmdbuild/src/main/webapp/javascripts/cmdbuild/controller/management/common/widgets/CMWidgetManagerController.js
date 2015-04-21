@@ -1,5 +1,10 @@
 (function() {
 
+	// Requires all widget controllers to avoid to include manually
+	// TODO: rename of this class to use property "requires"
+	Ext.require('CMDBuild.controller.management.common.widgets.ManageEmail');
+	Ext.require('CMDBuild.controller.management.common.widgets.grid.Grid');
+
 	Ext.define("CMDBuild.controller.management.common.CMWidgetManagerController", {
 
 		constructor: function(view) {
@@ -134,11 +139,11 @@
 					if (!Ext.isEmpty(controllersArray[0]) && typeof controllersArray[0].onBeforeSave == 'function') {
 						controllersArray[0].onBeforeSave(chainArray, 0);
 					} else {
-						_debug('CMDBuild.controller.management.common.CMWidgetManagerController onBeforeSaveTrigger controllersArray head function error!');
+						_msg('CMDBuild.controller.management.common.CMWidgetManagerController onBeforeSaveTrigger controllersArray head function error!');
 					}
 				}
 			} else {
-				_debug('CMDBuild.controller.management.common.CMWidgetManagerController onBeforeSaveTrigger lastCallback function error!');
+				_msg('CMDBuild.controller.management.common.CMWidgetManagerController onBeforeSaveTrigger lastCallback function error!');
 			}
 		},
 
@@ -234,7 +239,9 @@
 
 	function initBuilders(me) {
 		var commonControllers = CMDBuild.controller.management.common.widgets;
+
 		me.controllerClasses = {};
+		me.controllerClasses['.ManageEmail'] = CMDBuild.controller.management.common.widgets.ManageEmail;
 
 		function addControllerClass(controller) {
 			me.controllerClasses[controller.WIDGET_NAME] = controller;
@@ -259,7 +266,7 @@
 		addControllerClass(commonControllers.CMNavigationTreeController);
 
 		// Grid
-		addControllerClass(CMDBuild.controller.management.common.widgets.grid.Main);
+		addControllerClass(CMDBuild.controller.management.common.widgets.grid.Grid);
 
 		// openReport
 		addControllerClass(commonControllers.CMOpenReportController);
@@ -269,9 +276,6 @@
 
 		// manageRelation
 		addControllerClass(commonControllers.CMManageRelationController);
-
-		// ManageEmail
-		addControllerClass(CMDBuild.controller.management.common.widgets.manageEmail.ManageEmail);
 
 		// ping
 		addControllerClass(commonControllers.CMPingController);

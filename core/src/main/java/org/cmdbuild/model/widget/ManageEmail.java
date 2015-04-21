@@ -38,6 +38,7 @@ public class ManageEmail extends Widget {
 		private String account;
 		private boolean keepSynchronization = true;
 		private boolean promptSynchronization;
+		private long delay;
 
 		public String getKey() {
 			return key;
@@ -95,9 +96,66 @@ public class ManageEmail extends Widget {
 			this.promptSynchronization = promptSynchronization;
 		}
 
+		public long getDelay() {
+			return delay;
+		}
+
+		public void setDelay(final long delay) {
+			this.delay = delay;
+		}
+
 		@Override
 		public String toString() {
 			return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
+		}
+
+	}
+
+	private static class CreatedWithId extends ForwardingEmail {
+
+		private final Email delegate;
+		private final Long id;
+
+		public CreatedWithId(final Email delegate, final Long id) {
+			this.delegate = delegate;
+			this.id = id;
+		}
+
+		@Override
+		protected Email delegate() {
+			return delegate;
+		}
+
+		@Override
+		public Long getId() {
+			return id;
+		}
+
+	}
+
+	private static class CreatedForInstance extends ForwardingEmail {
+
+		private final Email delegate;
+		private final Long instanceId;
+
+		public CreatedForInstance(final Email delegate, final Long instanceId) {
+			this.delegate = delegate;
+			this.instanceId = instanceId;
+		}
+
+		@Override
+		protected Email delegate() {
+			return delegate;
+		}
+
+		@Override
+		public boolean isTemporary() {
+			return false;
+		}
+
+		@Override
+		public Long getReference() {
+			return instanceId;
 		}
 
 	}
@@ -161,24 +219,7 @@ public class ManageEmail extends Widget {
 		for (final Email email : emails) {
 			if (email.isTemporary()) {
 				toBeDeleted.add(email);
-				toBeCreatedWithOriginal.put(new ForwardingEmail() {
-
-					@Override
-					protected Email delegate() {
-						return email;
-					}
-
-					@Override
-					public boolean isTemporary() {
-						return false;
-					}
-
-					@Override
-					public Long getActivityId() {
-						return instanceId;
-					}
-
-				}, email);
+				toBeCreatedWithOriginal.put(new CreatedForInstance(email, instanceId), email);
 			}
 		}
 		for (final Email email : toBeDeleted) {
@@ -188,19 +229,7 @@ public class ManageEmail extends Widget {
 			final Email toBeCreated = entry.getKey();
 			final Email original = entry.getValue();
 			final Long createdId = emailLogic.create(toBeCreated);
-			emailAttachmentsLogic.copyAll(original, new ForwardingEmail() {
-
-				@Override
-				protected Email delegate() {
-					return toBeCreated;
-				}
-
-				@Override
-				public Long getId() {
-					return createdId;
-				}
-
-			});
+			emailAttachmentsLogic.copyAll(original, new CreatedWithId(toBeCreated, createdId));
 			for (final EmailAttachmentsLogic.Attachment attachment : emailAttachmentsLogic.readAll(original)) {
 				emailAttachmentsLogic.delete(original, attachment);
 			}

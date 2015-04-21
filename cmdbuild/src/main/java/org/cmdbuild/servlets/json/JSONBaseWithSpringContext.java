@@ -13,7 +13,6 @@ import org.cmdbuild.common.java.sql.DataSourceHelper;
 import org.cmdbuild.config.CmdbuildProperties;
 import org.cmdbuild.config.GraphProperties;
 import org.cmdbuild.dao.view.CMDataView;
-import org.cmdbuild.dao.view.DBDataView;
 import org.cmdbuild.data.store.lookup.LookupStore;
 import org.cmdbuild.dms.DmsConfiguration;
 import org.cmdbuild.logic.DashboardLogic;
@@ -41,6 +40,7 @@ import org.cmdbuild.logic.dms.PrivilegedDmsLogic;
 import org.cmdbuild.logic.email.EmailAccountLogic;
 import org.cmdbuild.logic.email.EmailAttachmentsLogic;
 import org.cmdbuild.logic.email.EmailLogic;
+import org.cmdbuild.logic.email.EmailQueueLogic;
 import org.cmdbuild.logic.email.EmailTemplateLogic;
 import org.cmdbuild.logic.menu.MenuLogic;
 import org.cmdbuild.logic.privileges.SecurityLogic;
@@ -48,8 +48,10 @@ import org.cmdbuild.logic.scheduler.SchedulerLogic;
 import org.cmdbuild.logic.setup.SetupLogic;
 import org.cmdbuild.logic.taskmanager.DefinitiveTaskManagerLogic;
 import org.cmdbuild.logic.taskmanager.TaskManagerLogic;
+import org.cmdbuild.logic.translation.TranslationFacade;
 import org.cmdbuild.logic.translation.TranslationLogic;
 import org.cmdbuild.logic.view.ViewLogic;
+import org.cmdbuild.logic.widget.WidgetLogic;
 import org.cmdbuild.logic.workflow.SystemWorkflowLogicBuilder;
 import org.cmdbuild.logic.workflow.UserWorkflowLogicBuilder;
 import org.cmdbuild.logic.workflow.WorkflowLogic;
@@ -65,7 +67,6 @@ import org.cmdbuild.servlets.json.serializers.CardSerializer;
 import org.cmdbuild.servlets.json.serializers.ClassSerializer;
 import org.cmdbuild.servlets.json.serializers.DomainSerializer;
 import org.cmdbuild.servlets.json.serializers.RelationAttributeSerializer;
-import org.cmdbuild.servlets.json.serializers.TranslationFacade;
 import org.cmdbuild.workflow.ActivityPerformerTemplateResolverFactory;
 import org.cmdbuild.workflow.LookupHelper;
 
@@ -104,7 +105,7 @@ public class JSONBaseWithSpringContext extends JSONBase {
 	}
 
 	protected CMDataView systemDataView() {
-		return applicationContext().getBean(BEAN_SYSTEM_DATA_VIEW, DBDataView.class);
+		return applicationContext().getBean(BEAN_SYSTEM_DATA_VIEW, CMDataView.class);
 	}
 
 	protected CMDataView userDataView() {
@@ -195,6 +196,10 @@ public class JSONBaseWithSpringContext extends JSONBase {
 		return applicationContext().getBean(EmailLogic.class);
 	}
 
+	protected EmailQueueLogic emailQueueLogic() {
+		return applicationContext().getBean(EmailQueueLogic.class);
+	}
+
 	protected EmailTemplateLogic emailTemplateLogic() {
 		return applicationContext().getBean(EmailTemplateLogic.class);
 	}
@@ -237,6 +242,10 @@ public class JSONBaseWithSpringContext extends JSONBase {
 
 	protected ViewLogic viewLogic() {
 		return applicationContext().getBean(ViewLogic.class);
+	}
+
+	protected WidgetLogic widgetLogic() {
+		return applicationContext().getBean(WidgetLogic.class);
 	}
 
 	protected WorkflowLogic workflowLogic() {

@@ -9,9 +9,8 @@
 			WIDGET_NAME: '.Grid'
 		},
 
-
 		/**
-		 * @cfg {CMDBuild.controller.management.common.widgets.grid.Main}
+		 * @cfg {CMDBuild.controller.management.common.widgets.grid.Grid}
 		 */
 		delegate: undefined,
 
@@ -33,43 +32,38 @@
 		autoScroll: true,
 		border: false,
 		frame: false,
-		layout: 'border',
+		layout: 'fit',
 
 		initComponent: function() {
 			// Buttons configuration
-				this.addButton = Ext.create('Ext.button.Button', {
-					iconCls: 'add',
-					text: CMDBuild.Translation.row_add,
+				this.addButton = Ext.create('CMDBuild.core.buttons.Add', {
+					text: CMDBuild.Translation.addRow,
 					scope: this,
 
-					handler: function() {
+					handler: function(button, e) {
 						this.delegate.cmOn('onAddRowButtonClick');
 					}
 				});
 
-				this.importFromCSVButton = Ext.create('Ext.button.Button', {
-					iconCls: 'import',
+				this.importFromCSVButton = Ext.create('CMDBuild.core.buttons.Import', {
 					text: CMDBuild.Translation.importFromCSV,
 					scope: this,
 
-					handler: function() {
+					handler: function(button, e) {
 						this.delegate.cmOn('onCSVImportButtonClick');
 					}
 				});
 			// END: Buttons configuration
 
-			this.grid = Ext.create('CMDBuild.view.management.common.widgets.grid.GridPanel', {
-				region: 'center'
-			});
+			this.grid = Ext.create('CMDBuild.view.management.common.widgets.grid.GridPanel');
 
 			Ext.apply(this, {
 				dockedItems: [
-					{
-						xtype: 'toolbar',
+					Ext.create('Ext.toolbar.Toolbar', {
 						dock: 'top',
 						itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_TOP,
 						items: [this.addButton, this.importFromCSVButton]
-					}
+					})
 				],
 				items: [this.grid]
 			});

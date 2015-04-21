@@ -2,6 +2,16 @@ package org.cmdbuild.dao.query.clause.where;
 
 public class NullOperatorAndValueVisitor implements OperatorAndValueVisitor {
 
+	private static final NullOperatorAndValueVisitor INSTANCE = new NullOperatorAndValueVisitor();
+
+	public static NullOperatorAndValueVisitor getInstance() {
+		return INSTANCE;
+	}
+
+	private NullOperatorAndValueVisitor() {
+		// use factory method
+	}
+
 	@Override
 	public void visit(final BeginsWithOperatorAndValue operatorAndValue) {
 		// nothing to do

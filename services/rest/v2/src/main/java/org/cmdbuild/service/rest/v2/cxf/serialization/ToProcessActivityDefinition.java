@@ -12,8 +12,10 @@ import static org.cmdbuild.service.rest.v2.model.Models.newWidget;
 import java.util.Collection;
 import java.util.Map;
 
+import org.cmdbuild.model.widget.ForwardingWidgetVisitor;
 import org.cmdbuild.model.widget.NullWidgetVisitor;
 import org.cmdbuild.model.widget.OpenNote;
+import org.cmdbuild.model.widget.WidgetVisitor;
 import org.cmdbuild.service.rest.v2.model.ProcessActivityWithFullDetails;
 import org.cmdbuild.service.rest.v2.model.ProcessActivityWithFullDetails.AttributeStatus;
 import org.cmdbuild.service.rest.v2.model.Widget;
@@ -71,7 +73,14 @@ public class ToProcessActivityDefinition implements Function<CMActivity, Process
 			}
 			for (final org.cmdbuild.model.widget.Widget widget : from(input.getWidgets()) //
 					.filter(org.cmdbuild.model.widget.Widget.class)) {
-				widget.accept(new NullWidgetVisitor() {
+				widget.accept(new ForwardingWidgetVisitor() {
+
+					private final WidgetVisitor delegate = NullWidgetVisitor.getInstance();
+
+					@Override
+					protected WidgetVisitor delegate() {
+						return delegate;
+					}
 
 					@Override
 					public void visit(final OpenNote widget) {

@@ -182,7 +182,7 @@ public class WebService extends Widget {
 	}
 
 	@Override
-	protected WidgetAction getActionCommand(final String action, final Map<String, Object> params,
+	public WidgetAction getActionCommand(final String action, final Map<String, Object> params,
 			final Map<String, Object> dsVars) {
 
 		// cast to string the objects in the map

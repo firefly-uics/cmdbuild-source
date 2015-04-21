@@ -2,6 +2,7 @@ package org.cmdbuild.spring.configuration;
 
 import static org.cmdbuild.spring.util.Constants.PROTOTYPE;
 
+import org.cmdbuild.auth.LanguageStore;
 import org.cmdbuild.logic.setup.DefaultModulesHandler;
 import org.cmdbuild.logic.setup.SetupLogic;
 import org.cmdbuild.logic.translation.DefaultSetupFacade;
@@ -19,7 +20,7 @@ public class Setup {
 	private static final String BIM_MODULE_NAME = "bim";
 
 	@Autowired
-	private Email email;
+	private LanguageStore languageStore;
 
 	@Autowired
 	private PrivilegeManagement privilegeManagement;
@@ -34,7 +35,7 @@ public class Setup {
 	@Scope(PROTOTYPE)
 	// TODO: check!
 	public SetupFacade setupFacade() {
-		return new DefaultSetupFacade(setupLogic());
+		return new DefaultSetupFacade(setupLogic(), languageStore);
 	}
 
 	@Bean

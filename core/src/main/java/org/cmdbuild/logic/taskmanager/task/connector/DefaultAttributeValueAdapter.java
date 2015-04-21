@@ -18,6 +18,8 @@ import org.cmdbuild.dao.entry.IdAndDescription;
 import org.cmdbuild.dao.entry.LookupValue;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
+import org.cmdbuild.dao.entrytype.attributetype.CMAttributeTypeVisitor;
+import org.cmdbuild.dao.entrytype.attributetype.ForwardingAttributeTypeVisitor;
 import org.cmdbuild.dao.entrytype.attributetype.LookupAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.NullAttributeTypeVisitor;
 import org.cmdbuild.dao.entrytype.attributetype.ReferenceAttributeType;
@@ -53,9 +55,16 @@ public class DefaultAttributeValueAdapter implements AttributeValueAdapter {
 		for (final Map.Entry<String, ? extends Object> entry : values) {
 			final String attributeName = entry.getKey();
 			final Object attributeValue = entry.getValue();
-			new NullAttributeTypeVisitor() {
+			new ForwardingAttributeTypeVisitor() {
+
+				private final CMAttributeTypeVisitor DELEGATE = NullAttributeTypeVisitor.getInstance();
 
 				private Object adaptedValue;
+
+				@Override
+				protected CMAttributeTypeVisitor delegate() {
+					return DELEGATE;
+				}
 
 				public void adapt() {
 					adaptedValue = attributeValue;
@@ -80,8 +89,10 @@ public class DefaultAttributeValueAdapter implements AttributeValueAdapter {
 							}
 							if (destination != null) {
 								final CMQueryResult queryResult = dataView.select(anyAttribute(destination)) //
-										.from(destination) //
-										.where(condition(attribute(destination, DESCRIPTION_ATTRIBUTE), eq(shouldBeCode))) //
+										.from(destination)
+										//
+										.where(condition(attribute(destination, DESCRIPTION_ATTRIBUTE),
+												eq(shouldBeCode))) //
 										.run();
 								if (!queryResult.isEmpty()) {
 									final CMQueryRow row = queryResult.iterator().next();
@@ -128,9 +139,16 @@ public class DefaultAttributeValueAdapter implements AttributeValueAdapter {
 		for (final Map.Entry<String, ? extends Object> entry : values) {
 			final String attributeName = entry.getKey();
 			final Object attributeValue = entry.getValue();
-			new NullAttributeTypeVisitor() {
+			new ForwardingAttributeTypeVisitor() {
+
+				private final CMAttributeTypeVisitor DELEGATE = NullAttributeTypeVisitor.getInstance();
 
 				private Object adaptedValue;
+
+				@Override
+				protected CMAttributeTypeVisitor delegate() {
+					return DELEGATE;
+				}
 
 				public void adapt() {
 					adaptedValue = attributeValue;

@@ -47,8 +47,8 @@ public class Utils extends JSONBaseWithSpringContext {
 
 		for (final String lang : trs.keySet()) {
 			final JSONObject j = new JSONObject();
-			j.put("name", lang);
-			j.put("value", trs.get(lang));
+			j.put("tag", lang);
+			j.put("description", trs.get(lang));
 			serializer.append("translations", j);
 		}
 

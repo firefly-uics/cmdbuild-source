@@ -75,13 +75,13 @@
 			});
 
 			this.layout = "border",
-			this.description = new Ext.form.CMTranslatableText( {
+			this.description = Ext.create('CMDBuild.view.common.field.translatable.Text', {
 				labelWidth: CMDBuild.LABEL_WIDTH,
-				fieldLabel : tr.description,
-				name : LOOKUP_FIELDS.Description,
+				fieldLabel: tr.description,
+				name: LOOKUP_FIELDS.Description,
 				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
-				allowBlank : false,
-				disabled : true,
+				allowBlank: false,
+				disabled: true,
 				translationsKeyType: "Lookup",
 				translationsKeyField: LOOKUP_FIELDS.Description
 			});

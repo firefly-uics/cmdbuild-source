@@ -6,8 +6,10 @@ import static org.cmdbuild.servlets.json.CommunicationConstants.BCC;
 import static org.cmdbuild.servlets.json.CommunicationConstants.BODY;
 import static org.cmdbuild.servlets.json.CommunicationConstants.CC;
 import static org.cmdbuild.servlets.json.CommunicationConstants.DEFAULT_ACCOUNT;
+import static org.cmdbuild.servlets.json.CommunicationConstants.DELAY;
 import static org.cmdbuild.servlets.json.CommunicationConstants.DESCRIPTION;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ELEMENTS;
+import static org.cmdbuild.servlets.json.CommunicationConstants.FROM;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ID;
 import static org.cmdbuild.servlets.json.CommunicationConstants.KEEP_SYNCHRONIZATION;
 import static org.cmdbuild.servlets.json.CommunicationConstants.NAME;
@@ -60,6 +62,7 @@ public class Template extends JSONBaseWithSpringContext {
 			private String account;
 			private boolean keepSynchronization;
 			private boolean promptSynchronization;
+			private long delay;
 			private Map<String, String> variables;
 
 			private Builder() {
@@ -131,6 +134,11 @@ public class Template extends JSONBaseWithSpringContext {
 				return this;
 			}
 
+			public Builder withDelay(final long delay) {
+				this.delay = delay;
+				return this;
+			}
+
 			public Builder withVariables(final Map<String, String> variables) {
 				this.variables = variables;
 				return this;
@@ -159,6 +167,7 @@ public class Template extends JSONBaseWithSpringContext {
 		private final String account;
 		private final boolean keepSynchronization;
 		private final boolean promptSynchronization;
+		private final long delay;
 		private final Map<String, String> variables;
 
 		private JsonTemplate(final Builder builder) {
@@ -175,6 +184,7 @@ public class Template extends JSONBaseWithSpringContext {
 			this.account = builder.account;
 			this.keepSynchronization = builder.keepSynchronization;
 			this.promptSynchronization = builder.promptSynchronization;
+			this.delay = builder.delay;
 		}
 
 		@Override
@@ -196,6 +206,7 @@ public class Template extends JSONBaseWithSpringContext {
 		}
 
 		@Override
+		@JsonProperty(FROM)
 		public String getFrom() {
 			return from;
 		}
@@ -249,6 +260,12 @@ public class Template extends JSONBaseWithSpringContext {
 		}
 
 		@Override
+		@JsonProperty(DELAY)
+		public long getDelay() {
+			return delay;
+		}
+
+		@Override
 		@JsonProperty(VARIABLES)
 		public Map<String, String> getVariables() {
 			return defaultIfNull(variables, NO_VARIABLES);
@@ -276,6 +293,7 @@ public class Template extends JSONBaseWithSpringContext {
 					.append(this.getAccount(), other.getAccount()) //
 					.append(this.isKeepSynchronization(), other.isKeepSynchronization()) //
 					.append(this.isPromptSynchronization(), other.isPromptSynchronization()) //
+					.append(this.getDelay(), other.getDelay()) //
 					.append(this.getVariables(), other.getVariables()) //
 					.isEquals();
 		}
@@ -295,6 +313,7 @@ public class Template extends JSONBaseWithSpringContext {
 					.append(account) //
 					.append(keepSynchronization) //
 					.append(promptSynchronization) //
+					.append(delay) //
 					.append(variables) //
 					.toHashCode();
 		}
@@ -389,6 +408,7 @@ public class Template extends JSONBaseWithSpringContext {
 					.withAccount(input.getAccount()) //
 					.withKeepSynchronization(input.isKeepSynchronization()) //
 					.withPromptSynchronization(input.isPromptSynchronization()) //
+					.withDelay(input.getDelay()) //
 					.build();
 		}
 
@@ -399,6 +419,7 @@ public class Template extends JSONBaseWithSpringContext {
 	public JsonResponse create( //
 			@Parameter(NAME) final String name, //
 			@Parameter(DESCRIPTION) final String description, //
+			@Parameter(FROM) final String from, //
 			@Parameter(TO) final String to, //
 			@Parameter(CC) final String cc, //
 			@Parameter(BCC) final String bcc, //
@@ -407,11 +428,13 @@ public class Template extends JSONBaseWithSpringContext {
 			@Parameter(value = VARIABLES, required = false) final JSONObject jsonVariables, //
 			@Parameter(value = DEFAULT_ACCOUNT, required = false) final String accountName, //
 			@Parameter(value = KEEP_SYNCHRONIZATION, required = false) final boolean keepSynchronization, //
-			@Parameter(value = PROMPT_SYNCHRONIZATION, required = false) final boolean promptSynchronization //
+			@Parameter(value = PROMPT_SYNCHRONIZATION, required = false) final boolean promptSynchronization, //
+			@Parameter(value = DELAY, required = false) final long delay //
 	) {
 		final Long id = emailTemplateLogic().create(JsonTemplate.newInstance() //
 				.withName(name) //
 				.withDescription(description) //
+				.withFrom(from) //
 				.withTo(to) //
 				.withCc(cc) //
 				.withBcc(bcc) //
@@ -421,6 +444,7 @@ public class Template extends JSONBaseWithSpringContext {
 				.withAccount(accountName) //
 				.withKeepSynchronization(keepSynchronization) //
 				.withPromptSynchronization(promptSynchronization) //
+				.withDelay(delay) //
 				.build());
 		return JsonResponse.success(id);
 	}
@@ -459,6 +483,7 @@ public class Template extends JSONBaseWithSpringContext {
 	public void update( //
 			@Parameter(NAME) final String name, //
 			@Parameter(DESCRIPTION) final String description, //
+			@Parameter(FROM) final String from, //
 			@Parameter(TO) final String to, //
 			@Parameter(CC) final String cc, //
 			@Parameter(BCC) final String bcc, //
@@ -467,11 +492,13 @@ public class Template extends JSONBaseWithSpringContext {
 			@Parameter(value = VARIABLES, required = false) final JSONObject jsonVariables, //
 			@Parameter(value = DEFAULT_ACCOUNT, required = false) final String accountName, //
 			@Parameter(value = KEEP_SYNCHRONIZATION, required = false) final boolean keepSynchronization, //
-			@Parameter(value = PROMPT_SYNCHRONIZATION, required = false) final boolean promptSynchronization //
+			@Parameter(value = PROMPT_SYNCHRONIZATION, required = false) final boolean promptSynchronization, //
+			@Parameter(value = DELAY, required = false) final long delay //
 	) {
 		emailTemplateLogic().update(JsonTemplate.newInstance() //
 				.withName(name) //
 				.withDescription(description) //
+				.withFrom(from) //
 				.withTo(to) //
 				.withCc(cc) //
 				.withBcc(bcc) //
@@ -481,6 +508,7 @@ public class Template extends JSONBaseWithSpringContext {
 				.withAccount(accountName) //
 				.withKeepSynchronization(keepSynchronization) //
 				.withPromptSynchronization(promptSynchronization) //
+				.withDelay(delay) //
 				.build());
 	}
 

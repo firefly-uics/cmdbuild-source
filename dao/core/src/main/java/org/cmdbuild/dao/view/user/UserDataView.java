@@ -1,11 +1,9 @@
 package org.cmdbuild.dao.view.user;
 
-import static org.cmdbuild.common.collect.Iterables.filterNotNull;
-import static org.cmdbuild.common.collect.Iterables.map;
+import static com.google.common.collect.FluentIterable.from;
 
 import org.cmdbuild.auth.acl.PrivilegeContext;
 import org.cmdbuild.auth.user.OperationUser;
-import org.cmdbuild.common.collect.Mapper;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entry.CMCard.CMCardDefinition;
 import org.cmdbuild.dao.entry.CMRelation;
@@ -31,6 +29,8 @@ import org.cmdbuild.dao.view.AbstractDataView;
 import org.cmdbuild.dao.view.CMAttributeDefinition;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.dao.view.user.privileges.RowAndColumnPrivilegeFetcher;
+
+import com.google.common.base.Function;
 
 public class UserDataView extends AbstractDataView {
 
@@ -135,20 +135,6 @@ public class UserDataView extends AbstractDataView {
 		return proxyDomains(view.findDomains());
 	}
 
-	/**
-	 * Returns the active domains for a class for which the user has read
-	 * access.
-	 * 
-	 * @param type
-	 *            the class i'm requesting the domains for
-	 * 
-	 * @return active domains for that class
-	 */
-	@Override
-	public Iterable<CMDomain> findDomainsFor(final CMClass type) {
-		return proxyDomains(view.findDomainsFor(type));
-	}
-
 	@Override
 	public CMDomain create(final CMDomainDefinition definition) {
 		return proxy(view.create(definition));
@@ -210,30 +196,42 @@ public class UserDataView extends AbstractDataView {
 	 * @return
 	 */
 	Iterable<CMClass> proxyClasses(final Iterable<? extends CMClass> source) {
-		return filterNotNull(map(source, new Mapper<CMClass, CMClass>() {
-			@Override
-			public CMClass map(final CMClass o) {
-				return proxy(o);
-			}
-		}));
+		return from(source) //
+				.transform(new Function<CMClass, CMClass>() {
+
+					@Override
+					public CMClass apply(final CMClass input) {
+						return proxy(input);
+					}
+
+				}) //
+				.filter(CMClass.class);
 	}
 
 	Iterable<CMDomain> proxyDomains(final Iterable<? extends CMDomain> source) {
-		return filterNotNull(map(source, new Mapper<CMDomain, CMDomain>() {
-			@Override
-			public CMDomain map(final CMDomain o) {
-				return proxy(o);
-			}
-		}));
+		return from(source) //
+				.transform(new Function<CMDomain, CMDomain>() {
+
+					@Override
+					public CMDomain apply(final CMDomain input) {
+						return proxy(input);
+					}
+
+				}) //
+				.filter(CMDomain.class);
 	}
 
 	Iterable<CMAttribute> proxyAttributes(final Iterable<? extends CMAttribute> source) {
-		return filterNotNull(map(source, new Mapper<CMAttribute, CMAttribute>() {
-			@Override
-			public CMAttribute map(final CMAttribute inner) {
-				return proxy(inner);
-			}
-		}));
+		return from(source) //
+				.transform(new Function<CMAttribute, CMAttribute>() {
+
+					@Override
+					public CMAttribute apply(final CMAttribute input) {
+						return proxy(input);
+					}
+
+				}) //
+				.filter(CMAttribute.class);
 	}
 
 	CMEntryType proxy(final CMEntryType entryType) {

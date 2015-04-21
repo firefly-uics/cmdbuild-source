@@ -6,9 +6,9 @@
  *
  * @class Ext.ux.Notification
  * @extends Ext.Window
- * 
+ *
  * Modified by Tecnoteca
- * 
+ *
  *  - Use close instead of hide
  *  - Something else not documented
  */
@@ -75,11 +75,13 @@ Ext.define("Ext.ux.Notification", {
 		Ext.ux.NotificationMgr.push(this.pos);
 		this.el.alignTo(document, "br-br", [ -BORDER_X_OFFSET, -BORDER_Y_OFFSET-((this.getSize().height+10)*this.pos) ]);
 
-		Ext.fly(this.body.dom).on('click', this.cancelHiding, this);
+		if (!Ext.isEmpty(this.body) && !Ext.isEmpty(this.body.dom))
+			Ext.fly(this.body.dom).on('click', this.cancelHiding, this);
+
 		if (this.autoDestroy) {
 			this.task.delay(this.hideDelay || 5000);
 		}
-		
+
 		this.toFront();
 	},
 
@@ -88,7 +90,7 @@ Ext.define("Ext.ux.Notification", {
 		this.callParent(arguments);
 	},
 
-	focus: Ext.emptyFn 
+	focus: Ext.emptyFn
 
-}); 
+});
 })();

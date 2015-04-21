@@ -13,8 +13,10 @@ import org.cmdbuild.common.utils.UnsupportedProxyFactory;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
+import org.cmdbuild.dao.entrytype.attributetype.CMAttributeTypeVisitor;
 import org.cmdbuild.dao.entrytype.attributetype.DecimalAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.ForeignKeyAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.ForwardingAttributeTypeVisitor;
 import org.cmdbuild.dao.entrytype.attributetype.LookupAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.NullAttributeTypeVisitor;
 import org.cmdbuild.dao.entrytype.attributetype.ReferenceAttributeType;
@@ -146,10 +148,17 @@ public class ToAttributeDetail implements Function<CMAttribute, Attribute> {
 				.withIndex(Long.valueOf(input.getIndex())) //
 				.withDefaultValue(input.getDefaultValue()) //
 				.withGroup(input.getGroup());
-		new NullAttributeTypeVisitor() {
+		new ForwardingAttributeTypeVisitor() {
+
+			private final CMAttributeTypeVisitor DELEGATE = NullAttributeTypeVisitor.getInstance();
 
 			private CMAttribute attribute;
 			private AttributeBuilder builder;
+
+			@Override
+			protected CMAttributeTypeVisitor delegate() {
+				return DELEGATE;
+			}
 
 			public void fill(final CMAttribute attribute, final AttributeBuilder builder) {
 				this.attribute = attribute;

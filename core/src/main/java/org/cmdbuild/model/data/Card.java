@@ -5,6 +5,8 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import java.util.Map;
 
 import org.apache.commons.lang3.Validate;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.cmdbuild.dao.entrytype.CMClass;
@@ -20,8 +22,6 @@ public class Card implements Storable {
 		private Long id;
 		private CMClass type;
 		private String className;
-		private Long classId;
-		private String classDescription;
 		private DateTime begin;
 		private DateTime end;
 		private String user;
@@ -30,8 +30,6 @@ public class Card implements Storable {
 		public Builder clone(final Card card) {
 			this.id = card.id;
 			this.className = card.className;
-			this.classDescription = card.classDescription;
-			this.classId = card.classId;
 			this.begin = card.begin;
 			this.end = card.end;
 			this.user = card.user;
@@ -58,16 +56,6 @@ public class Card implements Storable {
 			return this;
 		}
 
-		public Builder withClassId(final Long value) {
-			this.classId = value;
-			return this;
-		}
-
-		public Builder withClassDescription(final String classDescription) {
-			this.classDescription = classDescription;
-			return this;
-		}
-
 		public Builder withBeginDate(final DateTime value) {
 			this.begin = value;
 			return this;
@@ -80,6 +68,11 @@ public class Card implements Storable {
 
 		public Builder withUser(final String value) {
 			this.user = value;
+			return this;
+		}
+
+		public Builder clearAttributes() {
+			this.attributes.clear();
 			return this;
 		}
 
@@ -119,8 +112,6 @@ public class Card implements Storable {
 	private final Long id;
 	private final CMClass type;
 	private final String className;
-	private final String classDescription;
-	private final Long classId;
 	private final DateTime begin;
 	private final DateTime end;
 	private final String user;
@@ -132,8 +123,6 @@ public class Card implements Storable {
 		this.id = builder.id;
 		this.type = builder.type;
 		this.className = builder.className;
-		this.classDescription = builder.classDescription;
-		this.classId = builder.classId;
 		this.begin = builder.begin;
 		this.end = builder.end;
 		this.user = builder.user;
@@ -159,12 +148,20 @@ public class Card implements Storable {
 		return className;
 	}
 
+	/**
+	 * @deprecated use {@link getType().getDescription()} instead.
+	 */
+	@Deprecated
 	public String getClassDescription() {
-		return classDescription;
+		return getType() == null ? null : getType().getDescription();
 	}
 
+	/**
+	 * @deprecated use {@link getType().getId()} instead.
+	 */
+	@Deprecated
 	public Long getClassId() {
-		return classId;
+		return getType() == null ? null : getType().getId();
 	}
 
 	public DateTime getBeginDate() {
@@ -197,12 +194,11 @@ public class Card implements Storable {
 
 	@Override
 	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((classId == null) ? 0 : classId.hashCode());
-		result = prime * result + ((className == null) ? 0 : className.hashCode());
-		result = prime * result + ((id == null) ? 0 : id.hashCode());
-		return result;
+		return new HashCodeBuilder() //
+				.append(getType()) //
+				.append(className) //
+				.append(id) //
+				.toHashCode();
 	}
 
 	@Override
@@ -217,28 +213,11 @@ public class Card implements Storable {
 			return false;
 		}
 		final Card other = (Card) obj;
-		if (classId == null) {
-			if (other.classId != null) {
-				return false;
-			}
-		} else if (!classId.equals(other.classId)) {
-			return false;
-		}
-		if (className == null) {
-			if (other.className != null) {
-				return false;
-			}
-		} else if (!className.equals(other.className)) {
-			return false;
-		}
-		if (id == null) {
-			if (other.id != null) {
-				return false;
-			}
-		} else if (!id.equals(other.id)) {
-			return false;
-		}
-		return true;
+		return new EqualsBuilder() //
+				.append(this.getType(), other.getType()) //
+				.append(this.className, other.className) //
+				.append(this.id, other.id) //
+				.isEquals();
 	}
 
 }

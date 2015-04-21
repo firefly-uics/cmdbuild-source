@@ -49,6 +49,7 @@ public class CxfEmailTemplatesTest {
 			private String account;
 			private boolean keepSynchronization;
 			private boolean promptSynchronization;
+			private long delay;
 			private Map<String, String> variables;
 
 			private Builder() {
@@ -120,6 +121,11 @@ public class CxfEmailTemplatesTest {
 				return this;
 			}
 
+			public Builder withDelay(final long delay) {
+				this.delay = delay;
+				return this;
+			}
+
 			public Builder withVariables(final Map<String, String> variables) {
 				this.variables = variables;
 				return this;
@@ -148,6 +154,7 @@ public class CxfEmailTemplatesTest {
 		private final String account;
 		private final boolean keepSynchronization;
 		private final boolean promptSynchronization;
+		private final long delay;
 		private final Map<String, String> variables;
 
 		private TestDoubleTemplate(final Builder builder) {
@@ -160,10 +167,11 @@ public class CxfEmailTemplatesTest {
 			this.bcc = builder.bcc;
 			this.subject = builder.subject;
 			this.body = builder.body;
-			this.variables = builder.variables;
 			this.account = builder.account;
 			this.keepSynchronization = builder.keepSynchronization;
 			this.promptSynchronization = builder.promptSynchronization;
+			this.delay = builder.delay;
+			this.variables = builder.variables;
 		}
 
 		@Override
@@ -227,6 +235,11 @@ public class CxfEmailTemplatesTest {
 		}
 
 		@Override
+		public long getDelay() {
+			return delay;
+		}
+
+		@Override
 		public Map<String, String> getVariables() {
 			return defaultIfNull(variables, NO_VARIABLES);
 		}
@@ -253,6 +266,7 @@ public class CxfEmailTemplatesTest {
 					.append(this.getAccount(), other.getAccount()) //
 					.append(this.isKeepSynchronization(), other.isKeepSynchronization()) //
 					.append(this.isPromptSynchronization(), other.isPromptSynchronization()) //
+					.append(this.getDelay(), other.getDelay()) //
 					.append(this.getVariables(), other.getVariables()) //
 					.isEquals();
 		}
@@ -272,6 +286,7 @@ public class CxfEmailTemplatesTest {
 					.append(account) //
 					.append(keepSynchronization) //
 					.append(promptSynchronization) //
+					.append(delay) //
 					.append(variables) //
 					.toHashCode();
 		}
@@ -359,6 +374,7 @@ public class CxfEmailTemplatesTest {
 				.withAccount("bar") //
 				.withKeepSynchronization(true) //
 				.withPromptSynchronization(true) //
+				.withDelay(123L) //
 				.build();
 		doReturn(read) //
 				.when(emailTemplateLogic).read(anyString());
@@ -380,6 +396,7 @@ public class CxfEmailTemplatesTest {
 				.withAccount("bar") //
 				.withKeepSynchronization(true) //
 				.withPromptSynchronization(true) //
+				.withDelay(123L) //
 				.build()));
 
 		verify(emailTemplateLogic).read(eq("dummy"));

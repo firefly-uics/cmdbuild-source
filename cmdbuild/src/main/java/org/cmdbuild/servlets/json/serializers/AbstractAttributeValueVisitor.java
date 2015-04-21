@@ -17,6 +17,7 @@ import org.cmdbuild.dao.entrytype.attributetype.StringAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TextAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TimeAttributeType;
 import org.cmdbuild.data.store.lookup.LookupStore;
+import org.cmdbuild.logic.translation.TranslationFacade;
 import org.joda.time.DateTime;
 
 public abstract class AbstractAttributeValueVisitor implements CMAttributeTypeVisitor {

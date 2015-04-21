@@ -92,7 +92,8 @@ public class ProcessInstanceEmailsTest {
 				+ "    \"account\" : \"bar\"," //
 				+ "    \"template\" : \"baz\"," //
 				+ "    \"keepSynchronization\" : true," //
-				+ "    \"promptSynchronization\" : true" //
+				+ "    \"promptSynchronization\" : true," //
+				+ "    \"delay\" : 42" //
 				+ "}", //
 				APPLICATION_JSON) //
 		);
@@ -116,6 +117,7 @@ public class ProcessInstanceEmailsTest {
 				.withTemplate("baz") //
 				.withKeepSynchronization(true) //
 				.withPromptSynchronization(true) //
+				.withDelay(42L) //
 				.build()));
 	}
 
@@ -192,7 +194,8 @@ public class ProcessInstanceEmailsTest {
 				+ "    \"account\" : \"bar\"," //
 				+ "    \"template\" : \"baz\"," //
 				+ "    \"keepSynchronization\" : true," //
-				+ "    \"promptSynchronization\" : true" //
+				+ "    \"promptSynchronization\" : true," //
+				+ "    \"delay\" : 42" //
 				+ "}", //
 				APPLICATION_JSON) //
 		);
@@ -215,6 +218,7 @@ public class ProcessInstanceEmailsTest {
 				.withTemplate("baz") //
 				.withKeepSynchronization(true) //
 				.withPromptSynchronization(true) //
+				.withDelay(42L) //
 				.build()));
 	}
 

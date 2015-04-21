@@ -487,7 +487,7 @@ abstract public class EntryNamespace extends AbstractNamespace {
 			if (value != null) {
 				final CMEntryType type = userDataAccessLogic.findClass((Long) value);
 				if (type == null) {
-					throw NotFoundException.NotFoundExceptionType.CLASS_NOTFOUND.createException();
+					throw NotFoundException.NotFoundExceptionType.CLASS_NOTFOUND.createException(value.toString());
 				}
 				xml.setTextContent(type.getIdentifier().getLocalName());
 			}

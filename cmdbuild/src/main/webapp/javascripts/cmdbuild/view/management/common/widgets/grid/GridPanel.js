@@ -4,7 +4,7 @@
 		extend: 'Ext.grid.Panel',
 
 		/**
-		 * @cfg {CMDBuild.controller.management.common.widgets.grid.Main}
+		 * @cfg {CMDBuild.controller.management.common.widgets.grid.Grid}
 		 */
 		delegate: undefined,
 

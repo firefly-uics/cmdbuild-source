@@ -27,7 +27,7 @@ import net.sf.jasperreports.engine.xml.JRXmlWriter;
 
 import org.cmdbuild.config.CmdbuildConfiguration;
 import org.cmdbuild.logger.Log;
-import org.cmdbuild.model.Report;
+import org.cmdbuild.services.store.report.Report;
 import org.cmdbuild.services.store.report.ReportStore;
 
 public class ReportFactoryDB extends ReportFactory {
