@@ -13,6 +13,9 @@
 	});
 
 	Ext.define("CMDBuild.view.management.common.widgets.CMWidgetManager", {
+
+		requires: ['CMDBuild.view.management.common.widgets.grid.MainPanel'],
+
 		constructor: function(mainView, tabbedWidgetDelegate) {
 			this.mainView = mainView;
 			this.tabbedWidgetDelegate = tabbedWidgetDelegate || null;

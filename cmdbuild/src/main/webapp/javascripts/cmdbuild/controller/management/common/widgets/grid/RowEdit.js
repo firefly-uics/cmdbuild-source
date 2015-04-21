@@ -6,7 +6,7 @@
 		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
 
 		/**
-		 * @cfg {CMDBuild.controller.management.common.widgets.grid.Main}
+		 * @cfg {CMDBuild.controller.management.common.widgets.grid.Grid}
 		 */
 		parentDelegate: undefined,
 
@@ -35,7 +35,7 @@
 
 		/**
 		 * @param {Object} configurationObject
-		 * @param {CMDBuild.controller.management.common.widgets.grid.Main} configurationObject.parentDelegate
+		 * @param {CMDBuild.controller.management.common.widgets.grid.Grid} configurationObject.parentDelegate
 		 * @param {Object} configurationObject.record
 		 */
 		constructor: function(configurationObject) {
