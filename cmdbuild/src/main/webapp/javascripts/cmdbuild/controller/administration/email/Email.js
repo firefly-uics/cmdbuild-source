@@ -18,15 +18,6 @@
 		sectionController: undefined,
 
 		/**
-		 * @cfg {Array}
-		 */
-		subSections: [
-			'accounts', // Default
-			'queue',
-			'templates'
-		],
-
-		/**
 		 * @cfg {String}
 		 */
 		titleSeparator: ' - ',
@@ -58,13 +49,9 @@
 		 */
 		onViewOnFront: function(parameters) {
 			if (!Ext.Object.isEmpty(parameters)) {
-_debug('onViewOnFront parameters', parameters);
-				var subSection = Ext.Array.contains(this.subSections, parameters.get(CMDBuild.core.proxy.CMProxyConstants.ID))
-					? parameters.get(CMDBuild.core.proxy.CMProxyConstants.ID) : this.subSections[0];
-
 				this.view.removeAll(true);
 
-				switch(subSection) {
+				switch(parameters.get(CMDBuild.core.proxy.CMProxyConstants.ID)) {
 					case 'queue': {
 						this.sectionController = Ext.create('CMDBuild.controller.administration.email.Queue', { parentDelegate: this });
 					} break;

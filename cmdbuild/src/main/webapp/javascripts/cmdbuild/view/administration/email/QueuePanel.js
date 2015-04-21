@@ -40,7 +40,7 @@
 
 		initComponent: function() {
 			this.queueStartButton = Ext.create('CMDBuild.core.buttons.Start', {
-				text: '@@ Start',
+				text: CMDBuild.Translation.start,
 				scope: this,
 
 				handler: function(button, e) {
@@ -49,7 +49,7 @@
 			});
 
 			this.queueStopButton = Ext.create('CMDBuild.core.buttons.Stop', {
-				text: '@@ Stop',
+				text: CMDBuild.Translation.stop,
 				scope: this,
 
 				handler: function(button, e) {
@@ -57,22 +57,12 @@
 				}
 			});
 
-//			this.cycleIntervalField = Ext.create('Ext.form.field.Number', {
-//				name: CMDBuild.core.proxy.CMProxyConstants.TIME,
-//				fieldLabel: '@@ Cycle interval (min)',
-//				labelWidth: CMDBuild.LABEL_WIDTH,
-//				maxWidth: CMDBuild.MEDIUM_FIELD_WIDTH,
-//				allowBlank: false,
-//				maxValue: 10,
-//				minValue: 1
-//			});
-
 			this.cycleIntervalField = Ext.create('CMDBuild.view.common.field.slider.SingleWithExtremeLabels', {
 				name: CMDBuild.core.proxy.CMProxyConstants.TIME,
-				fieldLabel: '@@ Cycle interval (min)',
+				fieldLabel: CMDBuild.Translation.frequencyCheck,
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				maxWidth: CMDBuild.CFG_BIG_FIELD_WIDTH,
-				minValue: 0,
+				minValue: 1,
 				maxValue: 10
 			});
 

@@ -60,8 +60,8 @@
 					fixed: true,
 
 					items: [
-						{
-							icon: 'images/icons/control_play.png',
+						Ext.create('CMDBuild.core.buttons.Start', {
+							text: null,
 							tooltip: tr.startLabel,
 							scope: this,
 
@@ -72,7 +72,7 @@
 							handler: function(grid, rowIndex, colIndex, node, e, record, rowNode) {
 								this.delegate.cmOn('onStartButtonClick', record);
 							}
-						}
+						})
 					]
 				}),
 				Ext.create('Ext.grid.column.Action', {
@@ -84,8 +84,8 @@
 					fixed: true,
 
 					items: [
-						{
-							icon: 'images/icons/control_stop.png',
+						Ext.create('CMDBuild.core.buttons.Stop', {
+							text: null,
 							tooltip: tr.stopLabel,
 							scope: this,
 
@@ -96,7 +96,7 @@
 							handler: function(grid, rowIndex, colIndex, node, e, record, rowNode) {
 								this.delegate.cmOn('onStopButtonClick', record);
 							}
-						}
+						})
 					]
 				})
 			];

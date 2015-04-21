@@ -33,7 +33,7 @@
 					id: 'queue',
 					cmName: 'email',
 					leaf: true,
-					text: '@@ Queue',
+					text: CMDBuild.Translation.queue,
 				}
 			]);
 		}
