@@ -1,3 +1,6 @@
+@import url("./icons.css");
+@import url("./trees.css");
+
 html {
 	height: 100%;
 	width: 100%;
@@ -389,52 +392,6 @@ em { font-style: oblique !important; }
 	font-size: 1.8em;
 }
 
-/* ICONS */
-	.add { background-image: url("../images/icons/add.png") !important; }
-	.add_filter { background-image: url("../images/icons/add_filter.png") !important; }
-	.arrow_left { background-image: url("../images/icons/arrow_left.png") !important; }
-	.arrow_refresh { background-image: url("../images/icons/arrow_refresh.png") !important; }
-	.arrow_right { background-image: url("../images/icons/arrow_right.png") !important; }
-	.attach { background-image: url("../images/icons/attach.png") !important; }
-	.clear_filter { background-image: url("../images/icons/clear_find.png") !important; }
-	.clear_privileges { background-image: url("../images/icons/privilege_filter_remove.png") !important; }
-	.clone { background-image: url("../images/icons/clone.png") !important; }
-	.csv { background-image: url("../images/icons/ico_csv.png") !important; }
-	.delete { background-image: url("../images/icons/cross.png") !important; }
-	.down { background-image: url("../images/icons/down.gif") !important;}
-	.down-hover { background-image: url("../images/icons/down-hover.gif") !important; }
-	.download { background-image: url("../images/icons/page_white_put.png") !important; }
-	.edit_form { background-image: url("../images/icons/application_form_edit.png") !important; }
-	.find { background-image: url("../images/icons/find.png") !important; }
-	.foreignkey { background-image: url("../images/icons/database_table.png") !important; }
-	.graph { background-image: url("../images/icons/chart_organisation.png") !important; }
-	.import { background-image: url("../images/icons/page_white_go.png") !important; }
-	.map { background-image: url("../images/icons/map.png") !important; }
-	.modify { background-image: url("../images/icons/modify.png") !important; }
-	.note { background-image: url("../images/icons/note.png") !important; }
-	.odt { background-image: url("../images/icons/ico_odt.png") !important; }
-	.ok { background-image: url("../images/icons/tick.png") !important; }
-	.order { background-image: url("../images/icons/order.png") !important; }
-	.password { background-image: url("../images/icons/key.png") !important; }
-	.pdf { background-image: url("../images/icons/ico_pdf.png") !important; }
-	.preview { background-image: url("../images/icons/preview.png") !important; }
-	.print { background-image: url("../images/icons/print.png") !important; }
-	.privileges { background-image: url("../images/icons/privilege_filter.png") !important; }
-	.rtf { background-image: url("../images/icons/ico_rtf.png") !important; }
-	.save { background-image: url("../images/icons/disk.png") !important; }
-	.search { background-image: url("../images/icons/search.gif") !important; }
-	.start { background-image: url("../images/icons/start.png") !important; }
-	.stop { background-image: url("../images/icons/stop.png") !important; }
-	.table { background-image: url("../images/icons/table.png") !important; }
-	.translate { background-image: url("../images/icons/translate.png") !important; }
-	.up { background-image: url("../images/icons/up.gif") !important; }
-	.up-hover { background-image: url("../images/icons/up-hover.gif") !important; }
-
-	.detail,
-	.domain { background-image: url("../images/icons/table_link.png") !important; }
-	.expand,
-	.cmdisplayfield-expandbutton { background-image: url("../images/icons/expand.png") !important; }
-
 .cmdisplayfield-expandbutton { margin: "0 20px 0 0"; }
 
 .cmdb-displayfield-disabled * { color: #666666 !important; }
@@ -512,42 +469,6 @@ em { font-style: oblique !important; }
 	padding-right: 1em;
 	cursor: pointer;
 }
-
-/**
- * MENU TREE
- */
-	.cmdbuild-tree-superclass-icon { background-image: url("../images/icons/tree/superclass_collapsed.png") !important; }
-
-	.cmdbuild-tree-class-icon { background-image: url("../images/icons/tree/class.png") !important; }
-
-	.cmdbuild-tree-superprocessclass-icon { background-image: url("../images/icons/tree/superclassprocess_collapsed.png") !important; }
-
-	.cmdbuild-tree-processclass-icon { background-image: url("../images/icons/tree/process.png") !important; }
-
-	.cmdbuild-tree-reportpdf-icon { background-image: url("../images/icons/ico_pdf.png") !important; }
-
-	.cmdbuild-tree-reportcsv-icon { background-image: url("../images/icons/ico_csv.png") !important; }
-
-	.cmdbuild-tree-reportodt-icon { background-image: url("../images/icons/ico_odt_enabled.png") !important; }
-
-	.cmdbuild-tree-reportxml-icon { background-image: url("../images/icons/ico_xml.png") !important; }
-
-	.cmdbuild-tree-user-icon { background-image: url("../images/icons/tree/user.png") !important; }
-
-	.cmdbuild-tree-user-group-icon { background-image: url("../images/icons/tree/folder_user.png") !important; }
-
-	.cmdbuild-tree-group-icon { background-image: url("../images/icons/tree/group.png") !important; }
-
-	.cmdbuild-tree-dashboard-icon { background-image: url("../images/icons/tree/dashboard.png") !important; }
-
-	.cmdbuild-tree-no-icon { background-image: url("../images/transparentPixel.png") !important; }
-
-	.cmdbuild-tree-localization-icon { background-image: url("../images/icons/tree/world.png") !important; }
-
-	/* Tasks */
-		.cmdbuild-tree-tasks-icon { background-image: url("../images/icons/tree/wrench.png") !important; }
-
-		.cmdbuild-tree-tasks-group-icon { background-image: url("../images/icons/tree/superclassprocess_collapsed.png") !important; }
 
 /* Ext.ux.CheckColumn*/
 	.x-grid-checkheader {
