@@ -16,7 +16,7 @@
 		 */
 		getCardHistory: function(params) {
 			var headers = {};
-			headers[CMDBuild.core.proxy.CMProxyConstants.LOCALIZED] = true;
+			headers['CMDBuild-Localized'] = true;
 
 			return Ext.create('Ext.data.Store', {
 				autoLoad: false,
