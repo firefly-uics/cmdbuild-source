@@ -1,12 +1,11 @@
 (function() {
 
+	// Here because requires property doesn't work
+	Ext.require('CMDBuild.core.proxy.CMProxyConstants');
+	Ext.require('CMDBuild.core.proxy.email.Templates');
+
 	Ext.define('CMDBuild.view.administration.tasks.common.notificationForm.CMNotificationFormTemplateCombo', {
 		extend: 'Ext.form.field.ComboBox',
-
-		requires: [
-			'CMDBuild.core.proxy.CMProxyConstants',
-			'CMDBuild.core.proxy.email.Templates'
-		],
 
 		/**
 		 * @cfg {CMDBuild.controller.administration.tasks.common.notificationForm.CMNotificationFormController}
