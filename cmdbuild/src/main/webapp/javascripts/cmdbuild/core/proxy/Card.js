@@ -15,25 +15,23 @@
 		 * @property {Object} params
 		 */
 		getCardHistory: function(params) {
+			var headers = {};
+			headers[CMDBuild.core.proxy.CMProxyConstants.LOCALIZED] = true;
+
 			return Ext.create('Ext.data.Store', {
 				autoLoad: false,
 				proxy: {
 					type: 'ajax',
 					url: CMDBuild.core.proxy.CMProxyUrlIndex.card.getCardHistory,
+					headers: headers,
 					reader: {
 						type: 'json',
 						root: 'rows'
 					}
 				},
 				sorters: [
-					{
-						property: 'BeginDate',
-						direction: 'DESC'
-					},
-					{
-						property: '_EndDate',
-						direction: 'DESC'
-					}
+					{ property: 'BeginDate', direction: 'DESC' },
+					{ property: '_EndDate', direction: 'DESC' }
 				],
 				fields: params.fields,
 				baseParams: params.baseParams
