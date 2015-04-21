@@ -121,64 +121,64 @@
 		},
 
 		addActionColumns: function() {
-			var me = this;
-
 			this.columns.headers.push(
-				{
-					xtype: 'actioncolumn',
-					width: 30,
+				Ext.create('Ext.grid.column.Action', {
 					align: 'center',
+					width: 25,
 					sortable: false,
 					hideable: false,
 					menuDisabled: true,
 					fixed: true,
+
 					items: [
-						{
-							iconCls: 'modify',
+						Ext.create('CMDBuild.core.buttons.Modify', {
+							text: null,
 							tooltip: CMDBuild.Translation.editRow,
+							scope: this,
+
+							isDisabled: function(grid, rowIndex, colIndex, item, record) {
+								return this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.READ_ONLY];
+							},
 
 							handler: function(grid, rowIndex, colIndex) {
 								var record = grid.getStore().getAt(rowIndex);
 
-								me.cmOn('onEditRowButtonClick', {
+								this.cmOn('onEditRowButtonClick', {
 									record: record
 								});
-							},
-
-							isDisabled: function(grid, rowIndex, colIndex, item, record) {
-								return this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.READ_ONLY];
 							}
-						}
+						})
 					]
-				},
-				{
-					xtype: 'actioncolumn',
-					width: 30,
+				}),
+				Ext.create('Ext.grid.column.Action', {
 					align: 'center',
+					width: 25,
 					sortable: false,
 					hideable: false,
 					menuDisabled: true,
 					fixed: true,
-					items: [
-						{
-							iconCls: 'delete',
-							tooltip: CMDBuild.Translation.deleteRow,
 
-							handler: function(grid, rowIndex, colIndex) {
-								me.cmOn('onDeleteRowButtonClick', {
-									rowIndex: rowIndex
-								});
-							},
+					items: [
+						Ext.create('CMDBuild.core.buttons.Delete', {
+							text: null,
+							tooltip: CMDBuild.Translation.deleteRow,
+							scope: this,
 
 							isDisabled: function(grid, rowIndex, colIndex, item, record) {
 								return (
 									this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.READ_ONLY]
 									|| this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.DISABLE_DELETE_ROW]
 								);
+							},
+
+							handler: function(grid, rowIndex, colIndex) {
+								this.cmOn('onDeleteRowButtonClick', {
+									rowIndex: rowIndex
+								});
 							}
-						}
+						})
 					]
-				}
+				})
 			);
 		},
 
@@ -600,9 +600,9 @@
 		 */
 		setColumnsForClass: function() {
 			this.columns = this.buildColumnsForAttributes();
-
+_debug('this.columns 1', this.columns);
 			this.addActionColumns();
-
+_debug('this.columns 2', this.columns);
 			this.grid.reconfigure(
 				this.grid.getStore(),
 				this.columns.headers
