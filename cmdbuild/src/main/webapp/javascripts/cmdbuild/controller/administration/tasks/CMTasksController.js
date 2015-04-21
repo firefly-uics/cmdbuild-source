@@ -5,7 +5,8 @@
 
 		requires: [
 			'CMDBuild.core.proxy.CMProxyConstants',
-			'CMDBuild.core.proxy.CMProxyTasks'
+			'CMDBuild.core.proxy.CMProxyTasks',
+			'CMDBuild.core.Utils'
 		],
 
 		/**
@@ -29,6 +30,11 @@
 		selectionModel: undefined,
 
 		/**
+		 * @cfg {String}
+		 */
+		titleSeparator: ' - ',
+
+		/**
 		 * Used to validate tasks
 		 *
 		 * @cfg {Array}
@@ -44,12 +50,12 @@
 		],
 
 		/**
-		 * @cfg {CMDBuild.core.proxy.CMProxyTasks}
+		 * @cfg {"CMDBuild.view.administration.tasks.CMTasks"}
 		 */
 		view: undefined,
 
 		/**
-		 * @param {Object} view
+		 * @param {CMDBuild.view.administration.tasks.CMTasks} view
 		 *
 		 * @override
 		 */
@@ -76,7 +82,7 @@
 				this.taskType = (this.correctTaskTypeCheck(parameters.internalId)) ? parameters.internalId : this.tasksDatas[0];
 
 				this.grid.reconfigure(CMDBuild.core.proxy.CMProxyTasks.getStore(this.taskType));
-				this.grid.store.load({
+				this.grid.getStore().load({
 					scope: this,
 					callback: function() {
 						if (!this.selectionModel.hasSelection()) {
@@ -89,6 +95,8 @@
 
 				// Fire show event on accordion click
 				this.view.fireEvent('show');
+
+				this.setViewTitle(parameters.get(CMDBuild.core.proxy.CMProxyConstants.TEXT));
 
 				this.callParent(arguments);
 			}
@@ -139,26 +147,12 @@
 		buildFormController: function(type) {
 			if (this.correctTaskTypeCheck(type)) {
 				this.form.delegate = Ext.create(
-					'CMDBuild.controller.administration.tasks.CMTasksForm' + this.capitalizeFirstLetter(this.typeSerialize(type, 1)) + 'Controller',
+					'CMDBuild.controller.administration.tasks.CMTasksForm' + CMDBuild.core.Utils.toTitleCase(this.typeSerialize(type, 1)) + 'Controller',
 					this.form
 				);
 				this.form.delegate.parentDelegate = this;
 				this.form.delegate.selectionModel = this.selectionModel;
 			}
-		},
-
-		/**
-		 * Capitalize first string's letter
-		 *
-		 * @param {String} string
-		 *
-		 * @return {String} string - capitalized string
-		 */
-		capitalizeFirstLetter: function(string) {
-			if (typeof string == 'string')
-				string = string.charAt(0).toUpperCase() + string.slice(1);
-
-			return string;
 		},
 
 		/**
@@ -317,6 +311,16 @@
 				success: this.success,
 				callback: this.callback
 			});
+		},
+
+		/**
+		 * Setup view panel title as a breadcrumbs component
+		 *
+		 * @param {String} titlePart
+		 */
+		setViewTitle: function(titlePart) {
+			if (!Ext.isEmpty(titlePart))
+				this.view.setTitle(this.view.baseTitle + this.titleSeparator + titlePart);
 		},
 
 		/**

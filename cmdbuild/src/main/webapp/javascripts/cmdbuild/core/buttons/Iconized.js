@@ -9,6 +9,13 @@
 		text: CMDBuild.Translation.add
 	});
 
+	Ext.define('CMDBuild.core.buttons.Clone', {
+		extend: 'Ext.button.Button',
+
+		iconCls: 'clone',
+		text: CMDBuild.Translation.common.buttons.clone
+	});
+
 	Ext.define('CMDBuild.core.buttons.Delete', {
 		extend: 'Ext.button.Button',
 
