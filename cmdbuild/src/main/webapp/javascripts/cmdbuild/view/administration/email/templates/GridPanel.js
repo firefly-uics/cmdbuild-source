@@ -5,16 +5,15 @@
 
 		requires: [
 			'CMDBuild.core.proxy.CMProxyConstants',
-			'CMDBuild.core.proxy.EmailTemplates'
+			'CMDBuild.core.proxy.email.Templates'
 		],
 
 		/**
-		 * @cfg {CMDBuild.controller.administration.email.TemplatesController}
+		 * @cfg {CMDBuild.controller.administration.email.templates.Templates}
 		 */
 		delegate: undefined,
 
 		border: false,
-		cls: 'cmborderbottom',
 		frame: false,
 
 		initComponent: function() {
@@ -27,7 +26,7 @@
 					},
 					{
 						dataIndex: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
-						text: CMDBuild.Translation.description_,
+						text: CMDBuild.Translation.descriptionLabel,
 						flex: 3
 					},
 					{
@@ -36,7 +35,7 @@
 						flex: 2
 					}
 				],
-				store: CMDBuild.core.proxy.EmailTemplates.getStore()
+				store: CMDBuild.core.proxy.email.Templates.getStore()
 			});
 
 			this.callParent(arguments);
@@ -44,11 +43,11 @@
 
 		listeners: {
 			itemdblclick: function(grid, record, item, index, e, eOpts) {
-				this.delegate.cmOn('onItemDoubleClick');
+				this.delegate.cmfg('onEmailTemplatesItemDoubleClick');
 			},
 
 			select: function(row, record, index) {
-				this.delegate.cmOn('onRowSelected');
+				this.delegate.cmfg('onEmailTemplatesRowSelected');
 			},
 
 			// Event to load store on view display and first row selection as CMDbuild standard

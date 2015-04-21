@@ -1,7 +1,5 @@
 package org.cmdbuild.servlets.json.serializers;
 
-import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
-import static org.cmdbuild.logic.translation.DefaultTranslationLogic.DESCRIPTION_FOR_CLIENT;
 import static org.cmdbuild.servlets.json.CommunicationConstants.CLASS_ID_CAPITAL;
 import static org.cmdbuild.servlets.json.CommunicationConstants.CLASS_NAME;
 import static org.cmdbuild.servlets.json.CommunicationConstants.DESCRIPTION;
@@ -26,8 +24,7 @@ import org.cmdbuild.logic.commands.GetRelationList.DomainWithSource;
 import org.cmdbuild.logic.commands.GetRelationList.GetRelationListResponse;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.logic.data.access.SystemDataAccessLogicBuilder;
-import org.cmdbuild.logic.translation.ClassTranslation;
-import org.cmdbuild.logic.translation.TranslationObject;
+import org.cmdbuild.logic.translation.TranslationFacade;
 import org.cmdbuild.model.data.Card;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -67,7 +64,7 @@ public class CardSerializer {
 			if (input instanceof IdAndDescription) {
 
 				if (input instanceof LookupValue) {
-					final LookupSerializer lookupSerializer = new LookupSerializer(translationFacade, lookupStore);
+					final LookupSerializer lookupSerializer = new LookupSerializer(lookupStore);
 					output = lookupSerializer.serializeLookupValue((LookupValue) input);
 				} else {
 					final IdAndDescription idAndDescription = IdAndDescription.class.cast(input);
@@ -88,7 +85,7 @@ public class CardSerializer {
 		json.put(ID_CAPITAL, card.getId());
 		// TODO if IdClass is no more needed, remove getClassId() method too
 		json.put(CLASS_ID_CAPITAL, card.getClassId());
-		
+
 		json.put(CLASS_NAME, card.getClassName());
 
 		/*
@@ -97,12 +94,7 @@ public class CardSerializer {
 		 * backward compatibility
 		 */
 		json.put("IdClass_value_default", card.getClassDescription());
-
-		final TranslationObject classTranslationObject = ClassTranslation.newInstance().withName(card.getClassName())
-				.withField(DESCRIPTION_FOR_CLIENT).build();
-
-		final String translatedClassDescription = translationFacade.read(classTranslationObject);
-		json.put("IdClass_value", defaultIfNull(translatedClassDescription, card.getClassDescription()));
+		json.put("IdClass_value", card.getClassDescription());
 
 		// wrap in a JSON object if required
 		if (wrapperLabel != null) {

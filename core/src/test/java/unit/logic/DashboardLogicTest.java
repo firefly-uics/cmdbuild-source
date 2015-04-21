@@ -35,7 +35,7 @@ public class DashboardLogicTest {
 		final CMGroup selectedGroup = mock(CMGroup.class);
 		operationUser = new OperationUser(authUser, privilegeCtx, selectedGroup);
 		store = mock(DashboardStore.class);
-		logic = new DashboardLogic(null, store, operationUser, null, null);
+		logic = new DashboardLogic(null, store, operationUser);
 	}
 
 	@SuppressWarnings("serial")

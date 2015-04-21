@@ -25,7 +25,7 @@ public class Util {
 
 			@Override
 			public LookupType apply(final Lookup input) {
-				return input.type;
+				return input.type();
 			}
 
 		};
@@ -88,7 +88,7 @@ public class Util {
 
 			@Override
 			public boolean apply(final Lookup input) {
-				return !activeOnly || input.active;
+				return !activeOnly || input.active();
 			}
 
 		};

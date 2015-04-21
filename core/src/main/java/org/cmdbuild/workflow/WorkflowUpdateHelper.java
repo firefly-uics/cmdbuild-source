@@ -28,6 +28,7 @@ import java.util.Set;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.builder.Builder;
+import org.cmdbuild.auth.context.SystemPrivilegeContext;
 import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.common.template.TemplateResolver;
 import org.cmdbuild.dao.entry.CMCard;
@@ -190,6 +191,9 @@ class WorkflowUpdateHelper {
 		// FIXME operation user must be always valid
 		if (operationUser.isValid()) {
 			cardDefinition.setUser(operationUser.getAuthenticatedUser().getUsername());
+		} 
+		else if (operationUser.getPrivilegeContext() instanceof SystemPrivilegeContext) {
+			cardDefinition.setUser("system");
 		}
 		cardDefinition.setCode(code);
 		cardDefinition.set(UniqueProcessDefinition.dbColumnName(), uniqueProcessDefinition);

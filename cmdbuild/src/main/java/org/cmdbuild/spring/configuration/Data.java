@@ -7,8 +7,8 @@ import org.cmdbuild.auth.UserStore;
 import org.cmdbuild.dao.driver.DBDriver;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.dao.view.DBDataView;
-import org.cmdbuild.data.converter.ViewConverter;
 import org.cmdbuild.data.store.dao.DataViewStore;
+import org.cmdbuild.data.store.dao.StorableConverter;
 import org.cmdbuild.data.store.lookup.DataViewLookupStore;
 import org.cmdbuild.data.store.lookup.Lookup;
 import org.cmdbuild.data.store.lookup.LookupStorableConverter;
@@ -21,6 +21,8 @@ import org.cmdbuild.logic.data.lookup.LookupLogic;
 import org.cmdbuild.logic.privileges.DefaultSecurityLogic;
 import org.cmdbuild.logic.privileges.SecurityLogic;
 import org.cmdbuild.services.cache.wrappers.CachingStore;
+import org.cmdbuild.services.localization.LocalizedDataView;
+import org.cmdbuild.services.localization.LocalizedStorableConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
@@ -41,19 +43,26 @@ public class Data {
 	private LockCardManager systemLockCardManager;
 
 	@Autowired
-	private ViewConverter viewConverter;
+	private Report report;
+
+	@Autowired
+	private Translation translation;
 
 	@Autowired
 	private UserStore userStore;
 
+	@Autowired
+	private View view;
+
 	@Bean
-	protected LookupStorableConverter lookupStorableConverter() {
-		return new LookupStorableConverter();
+	protected StorableConverter<Lookup> lookupStorableConverter() {
+		return new LocalizedStorableConverter<Lookup>(new LookupStorableConverter(), translation.translationFacade(),
+				_systemDataView(), report.reportLogic());
 	}
 
 	@Bean
 	protected DataViewStore<Lookup> baseLookupStore() {
-		return DataViewStore.newInstance(systemDataView(), lookupStorableConverter());
+		return DataViewStore.newInstance(_systemDataView(), lookupStorableConverter());
 	}
 
 	@Bean
@@ -81,7 +90,7 @@ public class Data {
 	@Bean
 	@Scope(PROTOTYPE)
 	public SecurityLogic securityLogic() {
-		return new DefaultSecurityLogic(systemDataView(), viewConverter, filter.dataViewFilterStore());
+		return new DefaultSecurityLogic(systemDataView(), view.viewConverter(), filter.dataViewFilterStore());
 	}
 
 	@Bean
@@ -101,6 +110,14 @@ public class Data {
 	@Bean(name = BEAN_SYSTEM_DATA_VIEW)
 	@Qualifier(SYSTEM)
 	public CMDataView systemDataView() {
+		return new LocalizedDataView( //
+				_systemDataView(), //
+				translation.translationFacade(), //
+				lookupStore());
+	}
+
+	@Bean
+	protected DBDataView _systemDataView() {
 		return new DBDataView(dbDriver);
 	}
 

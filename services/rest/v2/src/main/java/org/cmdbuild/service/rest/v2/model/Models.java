@@ -735,6 +735,7 @@ public class Models {
 		private String template;
 		private boolean keepSynchronization;
 		private boolean promptSynchronization;
+		private long delay;
 
 		private EmailBuilder() {
 			// use factory method
@@ -758,6 +759,7 @@ public class Models {
 			output.setTemplate(template);
 			output.setKeepSynchronization(keepSynchronization);
 			output.setPromptSynchronization(promptSynchronization);
+			output.setDelay(delay);
 			return output;
 		}
 
@@ -836,6 +838,11 @@ public class Models {
 			return this;
 		}
 
+		public EmailBuilder withDelay(final long delay) {
+			this.delay = delay;
+			return this;
+		}
+
 	}
 
 	public static class EmailTemplateBuilder extends ModelBuilder<EmailTemplate> {
@@ -852,6 +859,7 @@ public class Models {
 		private String account;
 		private boolean keepSynchronization;
 		private boolean promptSynchronization;
+		private long delay;
 
 		private EmailTemplateBuilder() {
 			// use factory method
@@ -872,6 +880,7 @@ public class Models {
 			output.setAccount(account);
 			output.setKeepSynchronization(keepSynchronization);
 			output.setPromptSynchronization(promptSynchronization);
+			output.setDelay(delay);
 			return output;
 		}
 
@@ -932,6 +941,11 @@ public class Models {
 
 		public EmailTemplateBuilder withPromptSynchronization(final boolean promptSynchronization) {
 			this.promptSynchronization = promptSynchronization;
+			return this;
+		}
+
+		public EmailTemplateBuilder withDelay(final long delay) {
+			this.delay = delay;
 			return this;
 		}
 

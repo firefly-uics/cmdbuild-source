@@ -1,22 +1,26 @@
 package org.cmdbuild.servlets.json.email;
 
+import static com.google.common.collect.FluentIterable.from;
 import static java.lang.String.format;
 import static org.cmdbuild.logic.email.EmailLogic.Statuses.draft;
 import static org.cmdbuild.logic.email.EmailLogic.Statuses.outgoing;
 import static org.cmdbuild.logic.email.EmailLogic.Statuses.received;
 import static org.cmdbuild.logic.email.EmailLogic.Statuses.sent;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ACCOUNT;
-import static org.cmdbuild.servlets.json.CommunicationConstants.ACTIVITY_ID;
 import static org.cmdbuild.servlets.json.CommunicationConstants.BCC;
 import static org.cmdbuild.servlets.json.CommunicationConstants.BODY;
+import static org.cmdbuild.servlets.json.CommunicationConstants.CARD_ID;
 import static org.cmdbuild.servlets.json.CommunicationConstants.CC;
+import static org.cmdbuild.servlets.json.CommunicationConstants.CLASS_NAME;
 import static org.cmdbuild.servlets.json.CommunicationConstants.DATE;
+import static org.cmdbuild.servlets.json.CommunicationConstants.DELAY;
 import static org.cmdbuild.servlets.json.CommunicationConstants.FROM;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ID;
 import static org.cmdbuild.servlets.json.CommunicationConstants.KEEP_SYNCHRONIZATION;
 import static org.cmdbuild.servlets.json.CommunicationConstants.NOTIFY_WITH;
 import static org.cmdbuild.servlets.json.CommunicationConstants.NO_SUBJECT_PREFIX;
 import static org.cmdbuild.servlets.json.CommunicationConstants.PROMPT_SYNCHRONIZATION;
+import static org.cmdbuild.servlets.json.CommunicationConstants.REFERENCE;
 import static org.cmdbuild.servlets.json.CommunicationConstants.STATUS;
 import static org.cmdbuild.servlets.json.CommunicationConstants.STATUS_DRAFT;
 import static org.cmdbuild.servlets.json.CommunicationConstants.STATUS_OUTGOING;
@@ -43,7 +47,6 @@ import org.cmdbuild.servlets.utils.Parameter;
 import org.codehaus.jackson.annotate.JsonProperty;
 
 import com.google.common.base.Function;
-import com.google.common.collect.Iterators;
 
 public class Email extends JSONBaseWithSpringContext {
 
@@ -192,9 +195,9 @@ public class Email extends JSONBaseWithSpringContext {
 			return StatusConverter.of(delegate.getStatus()).string();
 		}
 
-		@JsonProperty(ACTIVITY_ID)
-		public Long getActivityId() {
-			return delegate.getActivityId();
+		@JsonProperty(REFERENCE)
+		public Long getReference() {
+			return delegate.getReference();
 		}
 
 		@JsonProperty(NOTIFY_WITH)
@@ -232,6 +235,11 @@ public class Email extends JSONBaseWithSpringContext {
 			return delegate.isPromptSynchronization();
 		}
 
+		@JsonProperty(DELAY)
+		public long getDelay() {
+			return delegate.getDelay();
+		}
+
 	}
 
 	private static final Function<EmailLogic.Email, JsonEmail> TO_JSON_EMAIL = new Function<EmailLogic.Email, JsonEmail>() {
@@ -244,6 +252,15 @@ public class Email extends JSONBaseWithSpringContext {
 	};
 
 	@JSONExported
+	public JsonResponse enabled( //
+			@Parameter(CLASS_NAME) final String className, //
+			@Parameter(CARD_ID) final Long cardId //
+	) {
+		final boolean enabled = emailLogic().isEnabled(className, cardId);
+		return JsonResponse.success(enabled);
+	}
+
+	@JSONExported
 	public JsonResponse create( //
 			@Parameter(value = FROM, required = false) final String from, //
 			@Parameter(TO) final String to, //
@@ -252,13 +269,14 @@ public class Email extends JSONBaseWithSpringContext {
 			@Parameter(SUBJECT) final String subject, //
 			@Parameter(BODY) final String body, //
 			@Parameter(value = NOTIFY_WITH, required = false) final String notifyWith, //
-			@Parameter(value = ACTIVITY_ID, required = false) final Long activityId, //
+			@Parameter(value = REFERENCE, required = false) final Long reference, //
 			@Parameter(value = NO_SUBJECT_PREFIX, required = false) final boolean noSubjectPrefix, //
 			@Parameter(value = ACCOUNT, required = false) final String account, //
 			@Parameter(value = TEMPORARY, required = false) final boolean temporary, //
 			@Parameter(value = TEMPLATE, required = false) final String template, //
 			@Parameter(value = KEEP_SYNCHRONIZATION, required = false) final boolean keepSynchronization, //
-			@Parameter(value = PROMPT_SYNCHRONIZATION, required = false) final boolean promptSynchronization //
+			@Parameter(value = PROMPT_SYNCHRONIZATION, required = false) final boolean promptSynchronization, //
+			@Parameter(value = DELAY, required = false) final long delay //
 	) {
 		final Long id = emailLogic().create(EmailImpl.newInstance() //
 				.withFromAddress(from) //
@@ -269,23 +287,26 @@ public class Email extends JSONBaseWithSpringContext {
 				.withContent(body) //
 				.withNotifyWith(notifyWith) //
 				.withStatus(draft()) //
-				.withActivityId(activityId) //
+				.withReference(reference) //
 				.withNoSubjectPrefix(noSubjectPrefix) //
 				.withAccount(account) //
 				.withTemporary(temporary) //
 				.withTemplate(template) //
 				.withKeepSynchronization(keepSynchronization) //
 				.withPromptSynchronization(promptSynchronization) //
+				.withDelay(delay) //
 				.build());
 		return JsonResponse.success(id);
 	}
 
 	@JSONExported
 	public JsonResponse readAll( //
-			@Parameter(ACTIVITY_ID) final Long activityId //
+			@Parameter(REFERENCE) final Long reference //
 	) {
-		final Iterable<EmailLogic.Email> emails = emailLogic().readAll(activityId);
-		return JsonResponse.success(Iterators.transform(emails.iterator(), TO_JSON_EMAIL));
+		final Iterable<EmailLogic.Email> emails = emailLogic().readAll(reference);
+		return JsonResponse.success(from(emails) //
+				.transform(TO_JSON_EMAIL) //
+				.toList());
 	}
 
 	@JSONExported
@@ -311,13 +332,14 @@ public class Email extends JSONBaseWithSpringContext {
 			@Parameter(BODY) final String body, //
 			@Parameter(value = STATUS) final String status, //
 			@Parameter(value = NOTIFY_WITH, required = false) final String notifyWith, //
-			@Parameter(value = ACTIVITY_ID, required = false) final Long activityId, //
+			@Parameter(value = REFERENCE, required = false) final Long reference, //
 			@Parameter(value = NO_SUBJECT_PREFIX, required = false) final boolean noSubjectPrefix, //
 			@Parameter(value = ACCOUNT, required = false) final String account, //
 			@Parameter(value = TEMPORARY, required = false) final boolean temporary, //
 			@Parameter(value = TEMPLATE, required = false) final String template, //
 			@Parameter(value = KEEP_SYNCHRONIZATION, required = false) final boolean keepSynchronization, //
-			@Parameter(value = PROMPT_SYNCHRONIZATION, required = false) final boolean promptSynchronization //
+			@Parameter(value = PROMPT_SYNCHRONIZATION, required = false) final boolean promptSynchronization, //
+			@Parameter(value = DELAY, required = false) final long delay //
 	) {
 		emailLogic().update(EmailImpl.newInstance() //
 				.withId(id) //
@@ -329,13 +351,14 @@ public class Email extends JSONBaseWithSpringContext {
 				.withContent(body) //
 				.withNotifyWith(notifyWith) //
 				.withStatus(StatusConverter.of(status).status()) //
-				.withActivityId(activityId) //
+				.withReference(reference) //
 				.withNoSubjectPrefix(noSubjectPrefix) //
 				.withAccount(account) //
 				.withTemporary(temporary) //
 				.withTemplate(template) //
 				.withKeepSynchronization(keepSynchronization) //
 				.withPromptSynchronization(promptSynchronization) //
+				.withDelay(delay) //
 				.build());
 		return JsonResponse.success(id);
 	}

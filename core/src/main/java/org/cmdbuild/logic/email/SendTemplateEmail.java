@@ -1,17 +1,25 @@
 package org.cmdbuild.logic.email;
 
-import static com.google.common.base.Suppliers.ofInstance;
+import static com.google.common.base.Splitter.on;
+import static com.google.common.reflect.Reflection.newProxy;
+import static java.util.Collections.emptyList;
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 import static org.cmdbuild.common.template.TemplateResolvers.identity;
+import static org.cmdbuild.common.utils.Reflection.unsupported;
+import static org.cmdbuild.data.store.email.EmailConstants.ADDRESSES_SEPARATOR;
+import static org.joda.time.DateTime.now;
 
 import org.apache.commons.lang3.Validate;
 import org.cmdbuild.common.template.TemplateResolver;
-import org.cmdbuild.data.store.email.Email;
+import org.cmdbuild.data.store.email.EmailAccount;
 import org.cmdbuild.logic.Action;
 import org.cmdbuild.logic.email.EmailTemplateLogic.Template;
-import org.cmdbuild.services.email.EmailAccount;
+import org.cmdbuild.services.email.Attachment;
+import org.cmdbuild.services.email.Email;
 import org.cmdbuild.services.email.EmailService;
 import org.cmdbuild.services.email.EmailServiceFactory;
+import org.cmdbuild.services.email.ForwardingEmail;
+import org.joda.time.DateTime;
 
 import com.google.common.base.Supplier;
 
@@ -68,6 +76,88 @@ public class SendTemplateEmail implements Action {
 		return new Builder();
 	}
 
+	private static class TemplateAdapter extends ForwardingEmail {
+
+		private static final Email unsupported = newProxy(Email.class, unsupported("method not supported"));
+
+		private static final Iterable<Attachment> NO_ATTACHMENTS = emptyList();
+
+		private final DateTime OBJECT_CREATION_TIME = now();
+
+		private final Template delegate;
+		private final TemplateResolver templateResolver;
+
+		public TemplateAdapter(final Template delegate, final TemplateResolver templateResolver) {
+			this.delegate = delegate;
+			this.templateResolver = templateResolver;
+		}
+
+		@Override
+		protected Email delegate() {
+			return unsupported;
+		}
+
+		@Override
+		public DateTime getDate() {
+			return OBJECT_CREATION_TIME;
+		}
+
+		@Override
+		public String getFromAddress() {
+			return templateResolver.resolve(delegate.getFrom());
+		}
+
+		@Override
+		public Iterable<String> getToAddresses() {
+			return on(ADDRESSES_SEPARATOR) //
+					.omitEmptyStrings() //
+					.trimResults() //
+					.split(templateResolver.resolve(delegate.getTo()));
+		}
+
+		@Override
+		public Iterable<String> getCcAddresses() {
+			return on(ADDRESSES_SEPARATOR) //
+					.omitEmptyStrings() //
+					.trimResults() //
+					.split(templateResolver.resolve(delegate.getCc()));
+		}
+
+		@Override
+		public Iterable<String> getBccAddresses() {
+			return on(ADDRESSES_SEPARATOR) //
+					.omitEmptyStrings() //
+					.trimResults() //
+					.split(templateResolver.resolve(delegate.getBcc()));
+		}
+
+		@Override
+		public String getSubject() {
+			return templateResolver.resolve(delegate.getSubject());
+		}
+
+		@Override
+		public String getContent() {
+			return templateResolver.resolve(delegate.getBody());
+		}
+
+		@Override
+		public Iterable<Attachment> getAttachments() {
+			return NO_ATTACHMENTS;
+		}
+
+		@Override
+		public String getAccount() {
+			return delegate.getAccount();
+		}
+
+		@Override
+		public long getDelay() {
+			return 0;
+		}
+
+	}
+
 	private final Supplier<EmailAccount> emailAccoutSupplier;
 	private final EmailServiceFactory emailServiceFactory;
 	private final Supplier<Template> emailTemplateSupplier;
@@ -82,17 +172,9 @@ public class SendTemplateEmail implements Action {
 
 	@Override
 	public void execute() {
-		final EmailAccount emailAccount = emailAccoutSupplier.get();
-		final EmailService emailService = emailServiceFactory.create(ofInstance(emailAccount));
+		final EmailService emailService = emailServiceFactory.create(emailAccoutSupplier);
 		final Template template = emailTemplateSupplier.get();
-		final Email email = new Email();
-		email.setFromAddress(templateResolver.resolve(template.getFrom()));
-		email.setToAddresses(templateResolver.resolve(template.getTo()));
-		email.setCcAddresses(templateResolver.resolve(template.getCc()));
-		email.setBccAddresses(templateResolver.resolve(template.getBcc()));
-		email.setSubject(templateResolver.resolve(template.getSubject()));
-		email.setContent(templateResolver.resolve(template.getBody()));
-		emailService.send(email);
+		emailService.send(new TemplateAdapter(template, templateResolver));
 	}
 
 }

@@ -11,50 +11,16 @@
 		delegate: undefined,
 
 		/**
-		 * @property {CMDBuild.buttons.AbortButton}
-		 */
-		abortButton: undefined,
-
-		/**
 		 * @property {Ext.form.Panel}
 		 */
 		form: undefined,
 
-		/**
-		 * @cfg {Object}
-		 */
-		record: undefined,
-
-		/**
-		 * @cfg {CMDBuild.buttons.SaveButton}
-		 */
-		saveButton: undefined,
-
-		buttonAlign: 'center',
 		border: false,
 		defaultSizeW: 0.90,
 		defaultSizeH: 0.80,
-		title: CMDBuild.Translation.row_edit,
+		title: CMDBuild.Translation.editRow,
 
 		initComponent: function() {
-			// Buttons configuration
-				this.saveButton = Ext.create('CMDBuild.buttons.SaveButton', {
-					scope: this,
-
-					handler: function() {
-						this.delegate.cmOn('onRowEditWindowSaveButtonClick');
-					}
-				});
-
-				this.abortButton = Ext.create('CMDBuild.buttons.AbortButton', {
-					scope: this,
-
-					handler: function() {
-						this.delegate.cmOn('onRowEditWindowAbortButtonClick');
-					}
-				});
-			// END: Buttons configuration
-
 			this.form = Ext.create('Ext.form.Panel', {
 				autoScroll: true,
 				frame: true,
@@ -62,8 +28,37 @@
 			});
 
 			Ext.apply(this, {
-				items: [this.form],
-				buttons: [this.saveButton, this.abortButton]
+				dockedItems: [
+					Ext.create('Ext.toolbar.Toolbar', {
+						dock: 'bottom',
+						itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_BOTTOM,
+						ui: 'footer',
+
+						layout: {
+							type: 'hbox',
+							align: 'middle',
+							pack: 'center'
+						},
+
+						items: [
+							Ext.create('CMDBuild.core.buttons.Save', {
+								scope: this,
+
+								handler: function(button, e) {
+									this.delegate.cmfg('onRowEditWindowSaveButtonClick');
+								}
+							}),
+							Ext.create('CMDBuild.core.buttons.Abort', {
+								scope: this,
+
+								handler: function(button, e) {
+									this.delegate.cmfg('onRowEditWindowAbortButtonClick');
+								}
+							})
+						]
+					})
+				],
+				items: [this.form]
 			});
 
 			this.callParent(arguments);

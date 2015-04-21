@@ -233,7 +233,7 @@
 			this.columns = [{
 				xtype: 'checkcolumn',
 				dataIndex: 'baseNode',
-				text: CMDBuild.Translation.administration.setup.graph.baseLevel,
+				text: CMDBuild.Translation.defaultLevel,
 				width: 100,
 				sortable: false,
 				cmExclusive: true

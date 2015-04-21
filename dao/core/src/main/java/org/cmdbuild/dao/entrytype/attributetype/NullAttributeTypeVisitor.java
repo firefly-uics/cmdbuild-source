@@ -2,6 +2,16 @@ package org.cmdbuild.dao.entrytype.attributetype;
 
 public class NullAttributeTypeVisitor implements CMAttributeTypeVisitor {
 
+	private static final NullAttributeTypeVisitor INSTANCE = new NullAttributeTypeVisitor();
+
+	public static NullAttributeTypeVisitor getInstance() {
+		return INSTANCE;
+	}
+
+	private NullAttributeTypeVisitor() {
+		// use factory method
+	}
+
 	@Override
 	public void visit(final BooleanAttributeType attributeType) {
 		// nothing to do

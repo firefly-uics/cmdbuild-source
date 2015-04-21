@@ -367,10 +367,11 @@ END;
 $$ LANGUAGE plpgsql;
 
 
-CREATE OR REPLACE FUNCTION _cm_update_reference(TableId oid, AttributeName text, CardId integer, ReferenceId integer) RETURNS void AS $$
+CREATE OR REPLACE FUNCTION _cm_update_reference(username text, TableId oid, AttributeName text, CardId integer, ReferenceId integer) RETURNS void AS $$
 BEGIN
 	EXECUTE 'UPDATE ' || TableId::regclass ||
 		' SET ' || quote_ident(AttributeName) || ' = ' || coalesce(ReferenceId::text, 'NULL') ||
+		', "User" = ' || coalesce(quote_literal(UserName),'NULL') ||
 		' WHERE "Status"=''A'' AND "Id" = ' || CardId::text ||
 		' AND coalesce(' || quote_ident(AttributeName) || ', 0) <> ' || coalesce(ReferenceId, 0)::text;
 END;

@@ -59,6 +59,7 @@ public class LogicFluentApiExecutor extends ForwardingFluentApiExecutor {
 		}
 	};
 
+
 	@Override
 	public Iterable<Lookup> fetch(final QueryAllLookup queryLookup) {
 		final LookupType type = LookupType.newInstance().withName(queryLookup.getType()).build();
@@ -84,5 +85,4 @@ public class LogicFluentApiExecutor extends ForwardingFluentApiExecutor {
 			return new LookupWrapper(input);
 		}
 	};
-
 }

@@ -70,6 +70,7 @@ public class CxfProcessInstanceEmails implements ProcessInstanceEmails {
 					.withTemplate(input.getTemplate()) //
 					.withKeepSynchronization(input.isKeepSynchronization()) //
 					.withPromptSynchronization(input.isPromptSynchronization()) //
+					.withDelay(input.getDelay()) //
 					.build();
 		}
 
@@ -114,6 +115,7 @@ public class CxfProcessInstanceEmails implements ProcessInstanceEmails {
 					.withTemplate(input.getTemplate()) //
 					.withKeepSynchronization(input.isKeepSynchronization()) //
 					.withPromptSynchronization(input.isPromptSynchronization()) //
+					.withDelay(input.getDelay()) //
 					.build();
 		}
 
@@ -169,7 +171,7 @@ public class CxfProcessInstanceEmails implements ProcessInstanceEmails {
 			}
 
 			@Override
-			public Long getActivityId() {
+			public Long getReference() {
 				return processInstanceId;
 			}
 
@@ -223,7 +225,7 @@ public class CxfProcessInstanceEmails implements ProcessInstanceEmails {
 			}
 
 			@Override
-			public Long getActivityId() {
+			public Long getReference() {
 				return processInstanceId;
 			}
 

@@ -13,17 +13,17 @@ import org.cmdbuild.auth.privileges.constants.PrivilegeMode;
 import org.cmdbuild.auth.privileges.constants.PrivilegedObjectType;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.view.CMDataView;
-import org.cmdbuild.data.converter.ViewConverter;
 import org.cmdbuild.data.store.dao.DataViewStore;
+import org.cmdbuild.data.store.dao.StorableConverter;
 import org.cmdbuild.logger.Log;
-import org.cmdbuild.model.View;
+import org.cmdbuild.model.view.View;
 
 public class ViewPrivilegeFetcher extends AbstractPrivilegeFetcher {
 
 	private final CMDataView view;
-	private final ViewConverter converter;
+	private final StorableConverter<View> converter;
 
-	public ViewPrivilegeFetcher(final CMDataView view, final Long groupId, final ViewConverter converter) {
+	public ViewPrivilegeFetcher(final CMDataView view, final Long groupId, final StorableConverter<View> converter) {
 		super(view, groupId);
 		this.view = view;
 		this.converter = converter;

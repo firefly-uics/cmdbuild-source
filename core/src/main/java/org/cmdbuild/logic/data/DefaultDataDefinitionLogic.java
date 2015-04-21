@@ -1,11 +1,16 @@
 package org.cmdbuild.logic.data;
 
 import static com.google.common.collect.FluentIterable.from;
+import static com.google.common.collect.Iterables.concat;
+import static com.google.common.collect.Iterables.isEmpty;
 import static com.google.common.collect.Iterables.size;
 import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
+import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 import static org.cmdbuild.dao.constants.Cardinality.CARDINALITY_11;
 import static org.cmdbuild.dao.constants.Cardinality.CARDINALITY_1N;
 import static org.cmdbuild.dao.constants.Cardinality.CARDINALITY_N1;
+import static org.cmdbuild.dao.entrytype.Predicates.attributeTypeInstanceOf;
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
 import static org.cmdbuild.dao.query.clause.FunctionCall.call;
 import static org.cmdbuild.logic.data.Utils.definitionForClassOrdering;
@@ -13,7 +18,6 @@ import static org.cmdbuild.logic.data.Utils.definitionForExisting;
 import static org.cmdbuild.logic.data.Utils.definitionForNew;
 import static org.cmdbuild.logic.data.Utils.definitionForReordering;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -22,28 +26,20 @@ import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.entrytype.CMEntryType;
+import org.cmdbuild.dao.entrytype.CMEntryTypeVisitor;
 import org.cmdbuild.dao.entrytype.CMIdentifier;
-import org.cmdbuild.dao.entrytype.attributetype.BooleanAttributeType;
+import org.cmdbuild.dao.entrytype.ForwardingEntryTypeVisitor;
+import org.cmdbuild.dao.entrytype.NullEntryTypeVisitor;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeTypeVisitor;
-import org.cmdbuild.dao.entrytype.attributetype.CharAttributeType;
-import org.cmdbuild.dao.entrytype.attributetype.DateAttributeType;
-import org.cmdbuild.dao.entrytype.attributetype.DateTimeAttributeType;
-import org.cmdbuild.dao.entrytype.attributetype.DecimalAttributeType;
-import org.cmdbuild.dao.entrytype.attributetype.DoubleAttributeType;
-import org.cmdbuild.dao.entrytype.attributetype.EntryTypeAttributeType;
-import org.cmdbuild.dao.entrytype.attributetype.ForeignKeyAttributeType;
-import org.cmdbuild.dao.entrytype.attributetype.IntegerAttributeType;
-import org.cmdbuild.dao.entrytype.attributetype.IpAddressAttributeType;
-import org.cmdbuild.dao.entrytype.attributetype.LookupAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.ForwardingAttributeTypeVisitor;
+import org.cmdbuild.dao.entrytype.attributetype.NullAttributeTypeVisitor;
 import org.cmdbuild.dao.entrytype.attributetype.ReferenceAttributeType;
-import org.cmdbuild.dao.entrytype.attributetype.StringArrayAttributeType;
-import org.cmdbuild.dao.entrytype.attributetype.StringAttributeType;
-import org.cmdbuild.dao.entrytype.attributetype.TextAttributeType;
-import org.cmdbuild.dao.entrytype.attributetype.TimeAttributeType;
 import org.cmdbuild.dao.function.CMFunction;
 import org.cmdbuild.dao.query.clause.alias.NameAlias;
+import org.cmdbuild.dao.view.CMAttributeDefinition;
 import org.cmdbuild.dao.view.CMDataView;
+import org.cmdbuild.dao.view.ForwardingAttributeDefinition;
 import org.cmdbuild.data.store.Store;
 import org.cmdbuild.data.store.dao.DataViewStore;
 import org.cmdbuild.data.store.metadata.Metadata;
@@ -141,6 +137,8 @@ public class DefaultDataDefinitionLogic implements DataDefinitionLogic {
 
 	private static final NameAlias FUNCTION_ALIAS = NameAlias.as("f");
 
+	private static final Iterable<String> NO_DISABLED = emptyList();
+
 	private static CMClass NO_PARENT = null;
 
 	private final CMDataView view;
@@ -219,7 +217,7 @@ public class DefaultDataDefinitionLogic implements DataDefinitionLogic {
 			logger.warn("class '{}' not found", className);
 			return;
 		}
-		final boolean hasChildren = size(existingClass.getChildren()) > 0;
+		final boolean hasChildren = !isEmpty(existingClass.getChildren());
 		if (existingClass.isSuperclass() && hasChildren) {
 			throw ORMException.ORMExceptionType.ORM_TABLE_HAS_CHILDREN.createException();
 		}
@@ -241,20 +239,142 @@ public class DefaultDataDefinitionLogic implements DataDefinitionLogic {
 		final CMEntryType owner = findOwnerOf(attribute);
 		final CMAttribute existingAttribute = owner.getAttribute(attribute.getName());
 
+		logger.info("checking common pre-conditions");
+		if (existingAttribute == null) {
+			logger.info("force for the new attribute to have the last (1 based) index");
+			final int numberOfAttribute = size(owner.getAttributes());
+			attribute.setIndex(numberOfAttribute + 1);
+		}
+
+		logger.info("checking specific pre-conditions");
+		owner.accept(new ForwardingEntryTypeVisitor() {
+
+			private final CMEntryTypeVisitor delegate = NullEntryTypeVisitor.getInstance();
+
+			@Override
+			protected CMEntryTypeVisitor delegate() {
+				return delegate;
+			}
+
+			@Override
+			public void visit(final CMClass type) {
+				attribute.getType().accept(new ForwardingAttributeTypeVisitor() {
+
+					private final CMAttributeTypeVisitor delegate = NullAttributeTypeVisitor.getInstance();
+
+					@Override
+					protected CMAttributeTypeVisitor delegate() {
+						return delegate;
+					}
+
+					@Override
+					public void visit(final ReferenceAttributeType attributeType) {
+						logger.info("checking domain");
+						final String domainName = attributeType.getDomainName();
+						final CMDomain domain = view.findDomain(domainName);
+						if (domain == null) {
+							throw NotFoundExceptionType.DOMAIN_NOTFOUND.createException(domainName);
+						}
+
+						logger.info("checking namespace");
+						final CMIdentifier identifier = attributeType.getIdentifier();
+						Validate.isTrue(identifier.getNameSpace() == CMIdentifier.DEFAULT_NAMESPACE,
+								"non-default namespaces not supported at this level");
+
+						logger.info("checking cardinality");
+						Validate.isTrue(asList(CARDINALITY_1N.value(), CARDINALITY_N1.value()).contains(
+								domain.getCardinality()));
+					}
+
+				});
+			}
+
+		});
+
+		final CMAttributeDefinition definition;
 		final CMAttribute createdOrUpdatedAttribute;
 		if (existingAttribute == null) {
 			logger.info("attribute not already created, creating a new one");
-
-			// force for the new attribute to have the last (1 based) index
-			final int numberOfAttribute = size(owner.getAttributes());
-			attribute.setIndex(numberOfAttribute + 1);
-
-			validate(attribute);
-			createdOrUpdatedAttribute = view.createAttribute(definitionForNew(attribute, owner));
+			definition = definitionForNew(attribute, owner);
+			createdOrUpdatedAttribute = view.createAttribute(definition);
 		} else {
 			logger.info("attribute already created, updating existing one");
-			createdOrUpdatedAttribute = view.updateAttribute(definitionForExisting(attribute, existingAttribute));
+			definition = definitionForExisting(attribute, existingAttribute);
+			createdOrUpdatedAttribute = view.updateAttribute(definition);
 		}
+
+		logger.info("checking post-conditions");
+		owner.accept(new ForwardingEntryTypeVisitor() {
+
+			private final CMEntryTypeVisitor delegate = NullEntryTypeVisitor.getInstance();
+
+			@Override
+			protected CMEntryTypeVisitor delegate() {
+				return delegate;
+			}
+
+			@Override
+			public void visit(final CMClass type) {
+				attribute.getType().accept(new ForwardingAttributeTypeVisitor() {
+
+					private final CMAttributeTypeVisitor delegate = NullAttributeTypeVisitor.getInstance();
+
+					@Override
+					protected CMAttributeTypeVisitor delegate() {
+						return delegate;
+					}
+
+					@Override
+					public void visit(final ReferenceAttributeType attributeType) {
+						if (attribute.isActive()) {
+							logger.info("checking disabled classes for domain");
+							final String domainName = attributeType.getDomainName();
+							final CMDomain domain = view.findDomain(domainName);
+							final Iterable<String> disabled;
+							final String cardinality = domain.getCardinality();
+							if (CARDINALITY_1N.value().equals(cardinality)) {
+								disabled = domain.getDisabled2();
+							} else if (CARDINALITY_N1.value().equals(cardinality)) {
+								disabled = domain.getDisabled1();
+							} else {
+								throw new AssertionError("should never come here");
+							}
+							if (!isEmpty(disabled)) {
+								fixAttribute(type, disabled);
+							}
+						}
+					}
+
+					private void fixAttribute(final CMClass target, final Iterable<String> disabled) {
+						logger.info("updating attribute for (sub)class '{}'", target.getName());
+						view.updateAttribute(new ForwardingAttributeDefinition() {
+
+							@Override
+							protected CMAttributeDefinition delegate() {
+								return definition;
+							}
+
+							@Override
+							public CMEntryType getOwner() {
+								return target;
+							}
+
+							@Override
+							public boolean isActive() {
+								return !from(disabled) //
+										.contains(target.getName());
+							}
+
+						});
+						for (final CMClass subclass : target.getChildren()) {
+							fixAttribute(subclass, disabled);
+						}
+					}
+
+				});
+			}
+
+		});
 
 		logger.info("setting metadata for attribute '{}'", attribute.getName());
 		final Map<MetadataAction, List<Metadata>> elementsByAction = attribute.getMetadata();
@@ -311,87 +431,6 @@ public class DefaultDataDefinitionLogic implements DataDefinitionLogic {
 
 		logger.warn("not found");
 		throw ORMExceptionType.ORM_TYPE_ERROR.createException();
-	}
-
-	private void validate(final Attribute attribute) {
-		new CMAttributeTypeVisitor() {
-
-			@Override
-			public void visit(final BooleanAttributeType attributeType) {
-			}
-
-			@Override
-			public void visit(final CharAttributeType attributeType) {
-			}
-
-			@Override
-			public void visit(final EntryTypeAttributeType attributeType) {
-			}
-
-			@Override
-			public void visit(final DateTimeAttributeType attributeType) {
-			}
-
-			@Override
-			public void visit(final DateAttributeType attributeType) {
-			}
-
-			@Override
-			public void visit(final DecimalAttributeType attributeType) {
-			}
-
-			@Override
-			public void visit(final DoubleAttributeType attributeType) {
-			}
-
-			@Override
-			public void visit(final ForeignKeyAttributeType attributeType) {
-			}
-
-			@Override
-			public void visit(final IntegerAttributeType attributeType) {
-			}
-
-			@Override
-			public void visit(final IpAddressAttributeType attributeType) {
-			}
-
-			@Override
-			public void visit(final LookupAttributeType attributeType) {
-			}
-
-			@Override
-			public void visit(final ReferenceAttributeType attributeType) {
-				final CMIdentifier identifier = attributeType.getIdentifier();
-				Validate.isTrue(identifier.getNameSpace() == CMIdentifier.DEFAULT_NAMESPACE,
-						"non-default namespaces not supported at this level");
-				final CMDomain domain = view.findDomain(identifier.getLocalName());
-				Validate.isTrue(Arrays.asList(CARDINALITY_1N.value(), CARDINALITY_N1.value()).contains(
-						domain.getCardinality()));
-			}
-
-			@Override
-			public void visit(final StringAttributeType attributeType) {
-			}
-
-			@Override
-			public void visit(final TextAttributeType attributeType) {
-			}
-
-			@Override
-			public void visit(final TimeAttributeType attributeType) {
-			}
-
-			public void validate(final Attribute attribute) {
-				attribute.getType().accept(this);
-			}
-
-			@Override
-			public void visit(final StringArrayAttributeType attributeType) {
-			}
-
-		} //
-		.validate(attribute);
 	}
 
 	@Override
@@ -469,29 +508,6 @@ public class DefaultDataDefinitionLogic implements DataDefinitionLogic {
 		return (classOrder == null) ? 0 : classOrder.value;
 	}
 
-	/**
-	 * TODO: remove it and use the create method and update method
-	 */
-	@Override
-	@Deprecated
-	public CMDomain createOrUpdate(final Domain domain) {
-		logger.info("creating or updating domain '{}'", domain);
-
-		final CMDomain existing = view.findDomain(domain.getName());
-
-		final CMDomain createdOrUpdated;
-		if (existing == null) {
-			logger.info("domain not already created, creating a new one");
-			final CMClass class1 = view.findClass(domain.getIdClass1());
-			final CMClass class2 = view.findClass(domain.getIdClass2());
-			createdOrUpdated = view.create(definitionForNew(domain, class1, class2));
-		} else {
-			logger.info("domain already created, updating existing one");
-			createdOrUpdated = view.update(definitionForExisting(domain, existing));
-		}
-		return createdOrUpdated;
-	}
-
 	@Override
 	public CMDomain create(final Domain domain) {
 		final CMDomain existing = view.findDomain(domain.getName());
@@ -501,7 +517,6 @@ public class DefaultDataDefinitionLogic implements DataDefinitionLogic {
 					domain.getName());
 			throw ORMExceptionType.ORM_ERROR_DOMAIN_CREATE.createException();
 		}
-
 		logger.info("Domain not already created, creating a new one");
 		final CMClass class1 = view.findClass(domain.getIdClass1());
 		final CMClass class2 = view.findClass(domain.getIdClass2());
@@ -515,7 +530,35 @@ public class DefaultDataDefinitionLogic implements DataDefinitionLogic {
 		final CMDomain updatedDomain;
 		if (existing == null) {
 			logger.error("Cannot update the domain with name {}. It does not exist", domain.getName());
-			throw NotFoundExceptionType.DOMAIN_NOTFOUND.createException();
+			throw NotFoundExceptionType.DOMAIN_NOTFOUND.createException(domain.getName());
+		}
+
+		for (final String disabled : concat(defaultIfNull(domain.getDisabled1(), NO_DISABLED),
+				defaultIfNull(domain.getDisabled2(), NO_DISABLED))) {
+			final CMClass target = view.findClass(disabled);
+			if (target == null) {
+				throw NotFoundExceptionType.CLASS_NOTFOUND.createException(disabled);
+			}
+			for (final CMAttribute attribute : from(target.getActiveAttributes()) //
+					.filter(attributeTypeInstanceOf(ReferenceAttributeType.class))) {
+				attribute.getType().accept(new ForwardingAttributeTypeVisitor() {
+
+					private final CMAttributeTypeVisitor DELEGATE = NullAttributeTypeVisitor.getInstance();
+
+					@Override
+					protected CMAttributeTypeVisitor delegate() {
+						return DELEGATE;
+					}
+
+					@Override
+					public void visit(final ReferenceAttributeType attributeType) {
+						if (attributeType.getDomainName().equals(domain.getName()) && attribute.isActive()) {
+							throw ORMExceptionType.ORM_ACTIVE_ATTRIBUTE.createException(target.getName(), attribute.getName());
+						}
+					}
+
+				});
+			}
 		}
 
 		logger.info("Updating domain with name {}", domain.getName());

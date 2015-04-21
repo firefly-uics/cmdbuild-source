@@ -27,7 +27,7 @@
 				this.view.updateTitleForEntry(node);
 				store.load({
 					callback: function (records, operation, success) {
-						if (records 
+						if (records
 								&& records.length > 0) {
 
 							me.view.selectRecord(records[0]);
@@ -36,7 +36,7 @@
 				});
 			}
 		},
-	
+
 		// as CMModSqlDataViewDelegte
 
 		onModSQLDataViewGridSelected: function(panel, record) {

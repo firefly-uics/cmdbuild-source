@@ -122,7 +122,7 @@ public interface EmailLogic extends Logic {
 
 		Status getStatus();
 
-		Long getActivityId();
+		Long getReference();
 
 		String getNotifyWith();
 
@@ -138,9 +138,17 @@ public interface EmailLogic extends Logic {
 
 		boolean isPromptSynchronization();
 
+		long getDelay();
+
 	}
 
 	abstract class ForwardingEmail extends ForwardingObject implements Email {
+
+		/**
+		 * Usable by subclasses only.
+		 */
+		protected ForwardingEmail() {
+		}
 
 		@Override
 		protected abstract Email delegate();
@@ -191,8 +199,8 @@ public interface EmailLogic extends Logic {
 		}
 
 		@Override
-		public Long getActivityId() {
-			return delegate().getActivityId();
+		public Long getReference() {
+			return delegate().getReference();
 		}
 
 		@Override
@@ -230,37 +238,26 @@ public interface EmailLogic extends Logic {
 			return delegate().isPromptSynchronization();
 		}
 
-	}
-
-	class EmailSubmission extends org.cmdbuild.data.store.email.Email {
-
-		private String temporaryId;
-
-		public EmailSubmission() {
-			super();
-		}
-
-		public EmailSubmission(final long id) {
-			super(id);
-		}
-
-		public String getTemporaryId() {
-			return temporaryId;
-		}
-
-		public void setTemporaryId(final String temporaryId) {
-			this.temporaryId = temporaryId;
+		@Override
+		public long getDelay() {
+			return delegate().getDelay();
 		}
 
 	}
+
+	boolean isEnabled(String className, Long cardId);
 
 	Long create(Email email);
 
-	Iterable<Email> readAll(Long processCardId);
+	Iterable<Email> readAll(Long reference);
+
+	Iterable<Email> readAll(Status status);
 
 	Email read(Email email);
 
 	void update(Email email);
+
+	void updateWithNoChecks(Email email);
 
 	void delete(Email email);
 

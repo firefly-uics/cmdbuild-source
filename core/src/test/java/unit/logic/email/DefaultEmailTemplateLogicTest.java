@@ -19,11 +19,11 @@ import org.cmdbuild.data.store.Storable;
 import org.cmdbuild.data.store.Store;
 import org.cmdbuild.data.store.email.DefaultEmailTemplate;
 import org.cmdbuild.data.store.email.DefaultExtendedEmailTemplate;
+import org.cmdbuild.data.store.email.EmailAccountFacade;
 import org.cmdbuild.data.store.email.EmailTemplate;
 import org.cmdbuild.data.store.email.ExtendedEmailTemplate;
 import org.cmdbuild.logic.email.DefaultEmailTemplateLogic;
 import org.cmdbuild.logic.email.EmailTemplateLogic.Template;
-import org.cmdbuild.services.email.EmailAccount;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -41,7 +41,7 @@ public class DefaultEmailTemplateLogicTest {
 	private Store<ExtendedEmailTemplate> store;
 
 	@Mock
-	private Store<EmailAccount> accountStore;
+	private EmailAccountFacade emailAccountFacade;
 
 	private DefaultEmailTemplateLogic logic;
 
@@ -49,7 +49,7 @@ public class DefaultEmailTemplateLogicTest {
 
 	@Before
 	public void setUp() throws Exception {
-		logic = new DefaultEmailTemplateLogic(store, accountStore);
+		logic = new DefaultEmailTemplateLogic(store, emailAccountFacade);
 	}
 
 	@Test

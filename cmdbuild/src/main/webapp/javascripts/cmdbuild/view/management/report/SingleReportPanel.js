@@ -68,7 +68,7 @@
 							}
 						}),
 						'->',
-						Ext.create('CMDBuild.buttons.Download', {
+						Ext.create('CMDBuild.core.buttons.Download', {
 							scope: this,
 
 							handler: function() {

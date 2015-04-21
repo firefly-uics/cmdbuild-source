@@ -34,7 +34,7 @@ public class RelationFilterOverReflexiveDomainTest extends FilteredCardsFixture 
 				.thatIsActive(true)));
 
 		// domains
-		foo_foo = dataDefinitionLogic().createOrUpdate(a(newDomain("foo_foo") //
+		foo_foo = dataDefinitionLogic().create(a(newDomain("foo_foo") //
 				.withIdClass1(foo.getId()) //
 				.withIdClass2(foo.getId()) //
 				.thatIsActive(true)));

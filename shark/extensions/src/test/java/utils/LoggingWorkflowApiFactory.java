@@ -1,11 +1,13 @@
 package utils;
 
+import static com.google.common.reflect.Reflection.newProxy;
 import static java.lang.String.format;
 import static java.util.Arrays.asList;
 import static org.cmdbuild.common.Constants.DESCRIPTION_ATTRIBUTE;
 import static org.cmdbuild.common.collect.Factory.entry;
 import static org.cmdbuild.common.collect.Factory.linkedHashMapOf;
 import static org.cmdbuild.common.collect.Factory.treeMapOf;
+import static org.cmdbuild.common.utils.Reflection.unsupported;
 import static utils.TestLoggerConstants.LOGGER_CATEGORY;
 import static utils.TestLoggerConstants.UNUSED_SHANDLE;
 
@@ -14,7 +16,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -22,6 +23,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
+
+import javax.activation.DataHandler;
+import javax.activation.URLDataSource;
 
 import org.cmdbuild.api.fluent.Card;
 import org.cmdbuild.api.fluent.CardDescriptor;
@@ -43,13 +47,9 @@ import org.cmdbuild.api.fluent.Relation;
 import org.cmdbuild.api.fluent.RelationsQuery;
 import org.cmdbuild.api.fluent.ws.EntryTypeAttribute;
 import org.cmdbuild.api.fluent.ws.WsFluentApiExecutor.WsType;
-import org.cmdbuild.common.api.mail.FetchedMail;
-import org.cmdbuild.common.api.mail.GetMail;
+import org.cmdbuild.common.api.mail.ForwardingMailApi;
 import org.cmdbuild.common.api.mail.MailApi;
-import org.cmdbuild.common.api.mail.MailException;
-import org.cmdbuild.common.api.mail.NewMail;
-import org.cmdbuild.common.api.mail.SelectFolder;
-import org.cmdbuild.common.api.mail.SelectMail;
+import org.cmdbuild.common.api.mail.SendableNewMail;
 import org.cmdbuild.common.utils.UnsupportedProxyFactory;
 import org.cmdbuild.workflow.api.SchemaApi;
 import org.cmdbuild.workflow.api.SharkWorkflowApiFactory;
@@ -329,11 +329,19 @@ public class LoggingWorkflowApiFactory implements SharkWorkflowApiFactory {
 				return FOUND_LOOKUP;
 			}
 
-		}, new MailApi() {
+		}, new ForwardingMailApi() {
+
+			private final MailApi unsupported = newProxy(MailApi.class,
+					unsupported("method not supported, implement if needed"));
 
 			@Override
-			public NewMail newMail() {
-				return new NewMail() {
+			protected MailApi delegate() {
+				return unsupported;
+			}
+
+			@Override
+			public SendableNewMail newMail() {
+				return new SendableNewMail() {
 
 					private final List<String> froms = new ArrayList<String>();
 					private final List<String> tos = new ArrayList<String>();
@@ -342,116 +350,124 @@ public class LoggingWorkflowApiFactory implements SharkWorkflowApiFactory {
 					private String subject;
 					private String content;
 					private String contentType;
-					private final Map<URL, String> attachments = Maps.newHashMap();
+					private final Map<DataHandler, String> attachments = Maps.newHashMap();
 					private boolean asynchronous;
 
 					@Override
-					public NewMail withFrom(final String from) {
+					public SendableNewMail withFrom(final String from) {
 						this.froms.add(from);
 						return this;
 					}
 
 					@Override
-					public NewMail withTo(final String to) {
+					public SendableNewMail withTo(final String to) {
 						this.tos.add(to);
 						return this;
 					}
 
 					@Override
-					public NewMail withTo(final String... tos) {
+					public SendableNewMail withTo(final String... tos) {
 						this.tos.addAll(Arrays.asList(tos));
 						return this;
 					}
 
 					@Override
-					public NewMail withTo(final Iterable<String> tos) {
+					public SendableNewMail withTo(final Iterable<String> tos) {
 						this.tos.addAll(Lists.newArrayList(tos));
 						return this;
 					}
 
 					@Override
-					public NewMail withCc(final String cc) {
+					public SendableNewMail withCc(final String cc) {
 						this.ccs.add(cc);
 						return this;
 					}
 
 					@Override
-					public NewMail withCc(final String... ccs) {
+					public SendableNewMail withCc(final String... ccs) {
 						this.ccs.addAll(Arrays.asList(ccs));
 						return this;
 					}
 
 					@Override
-					public NewMail withCc(final Iterable<String> ccs) {
+					public SendableNewMail withCc(final Iterable<String> ccs) {
 						this.ccs.addAll(Lists.newArrayList(ccs));
 						return this;
 					}
 
 					@Override
-					public NewMail withBcc(final String bcc) {
+					public SendableNewMail withBcc(final String bcc) {
 						this.bccs.add(bcc);
 						return this;
 					}
 
 					@Override
-					public NewMail withBcc(final String... bccs) {
+					public SendableNewMail withBcc(final String... bccs) {
 						this.bccs.addAll(Arrays.asList(bccs));
 						return this;
 					}
 
 					@Override
-					public NewMail withBcc(final Iterable<String> bccs) {
+					public SendableNewMail withBcc(final Iterable<String> bccs) {
 						this.bccs.addAll(Lists.newArrayList(bccs));
 						return this;
 					}
 
 					@Override
-					public NewMail withSubject(final String subject) {
+					public SendableNewMail withSubject(final String subject) {
 						this.subject = subject;
 						return this;
 					}
 
 					@Override
-					public NewMail withContent(final String content) {
+					public SendableNewMail withContent(final String content) {
 						this.content = content;
 						return this;
 					}
 
 					@Override
-					public NewMail withContentType(final String contentType) {
+					public SendableNewMail withContentType(final String contentType) {
 						this.contentType = contentType;
 						return this;
 					}
 
 					@Override
-					public NewMail withAttachment(final URL url) {
+					public SendableNewMail withAttachment(final URL url) {
 						return withAttachment(url, null);
 					}
 
 					@Override
-					public NewMail withAttachment(final URL url, final String name) {
-						this.attachments.put(url, name);
-						return this;
+					public SendableNewMail withAttachment(final URL url, final String name) {
+						return withAttachment(new DataHandler(new URLDataSource(url)), name);
 					}
 
 					@Override
-					public NewMail withAttachment(final String url) {
+					public SendableNewMail withAttachment(final String url) {
 						return withAttachment(url, null);
 					}
 
 					@Override
-					public NewMail withAttachment(final String url, final String name) {
+					public SendableNewMail withAttachment(final String url, final String name) {
 						try {
-							final URL realUrl = new URL(url);
-							attachments.put(realUrl, name);
+							return withAttachment(new URL(url), name);
 						} catch (final MalformedURLException e) {
 							throw new IllegalArgumentException(e);
 						}
+					}
+
+					@Override
+					public SendableNewMail withAttachment(final DataHandler dataHandler) {
+						return withAttachment(dataHandler, null);
+					}
+
+					@Override
+					public SendableNewMail withAttachment(final DataHandler dataHandler, final String name) {
+						attachments.put(dataHandler, name);
 						return this;
 					}
 
 					@Override
-					public NewMail withAsynchronousSend(final boolean asynchronous) {
+					public SendableNewMail withAsynchronousSend(final boolean asynchronous) {
 						this.asynchronous = asynchronous;
 						return this;
 					}
@@ -471,59 +487,6 @@ public class LoggingWorkflowApiFactory implements SharkWorkflowApiFactory {
 										contentType, //
 										attachments, //
 										asynchronous));
-					}
-
-				};
-
-			}
-
-			@Override
-			public SelectFolder selectFolder(final String folder) {
-				return new SelectFolder() {
-
-					@Override
-					public List<FetchedMail> fetch() {
-						cus.info( //
-								UNUSED_SHANDLE, //
-								LOGGER_CATEGORY, //
-								fetchFolder(folder));
-						return Collections.emptyList();
-					}
-
-				};
-			}
-
-			@Override
-			public SelectMail selectMail(final FetchedMail mail) {
-				return new SelectMail() {
-
-					private String targetFolder;
-
-					@Override
-					public GetMail get() {
-						cus.info( //
-								UNUSED_SHANDLE, //
-								LOGGER_CATEGORY, //
-								selectFetchedMail(mail));
-						return UnsupportedProxyFactory.of(GetMail.class).create();
-					}
-
-					@Override
-					public SelectMail selectTargetFolder(final String folder) {
-						this.targetFolder = folder;
-						cus.info( //
-								UNUSED_SHANDLE, //
-								LOGGER_CATEGORY, //
-								_selectTargetFolder(folder));
-						return this;
-					}
-
-					@Override
-					public void move() throws MailException {
-						cus.info( //
-								UNUSED_SHANDLE, //
-								LOGGER_CATEGORY, //
-								moveMailToFolder(mail, targetFolder));
 					}
 
 				};
@@ -665,7 +628,7 @@ public class LoggingWorkflowApiFactory implements SharkWorkflowApiFactory {
 
 	public static String sendMail(final List<String> froms, final List<String> tos, final List<String> ccs,
 			final List<String> bccs, final String subject, final String content, final String contentType,
-			final Map<URL, String> attachments, final boolean asynchronous) {
+			final Map<DataHandler, String> attachments, final boolean asynchronous) {
 		return logLine("sendMail", new StringBuilder() //
 				.append(tos) //
 				.append(ccs) //
@@ -675,31 +638,6 @@ public class LoggingWorkflowApiFactory implements SharkWorkflowApiFactory {
 				.append(contentType) //
 				.append(attachments) //
 				.append(asynchronous) //
-				.toString());
-	}
-
-	public static String fetchFolder(final String folder) {
-		return logLine("fetchFolder", new StringBuilder() //
-				.append(folder) //
-				.toString());
-	}
-
-	public static String selectFetchedMail(final FetchedMail fetchedMail) {
-		return logLine("select", new StringBuilder() //
-				.append(fetchedMail) //
-				.toString());
-	}
-
-	private static String _selectTargetFolder(final String folder) {
-		return logLine("selectTargetFolder", new StringBuilder() //
-				.append(folder) //
-				.toString());
-	}
-
-	private static String moveMailToFolder(final FetchedMail fetchedMail, final String folder) {
-		return logLine("moveMailToFolder", new StringBuilder() //
-				.append(fetchedMail) //
-				.append(folder) //
 				.toString());
 	}
 

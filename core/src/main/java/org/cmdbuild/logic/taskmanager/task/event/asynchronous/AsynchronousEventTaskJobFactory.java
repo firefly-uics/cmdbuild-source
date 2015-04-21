@@ -1,14 +1,13 @@
 package org.cmdbuild.logic.taskmanager.task.event.asynchronous;
 
 import static com.google.common.base.Suppliers.memoize;
+import static com.google.common.base.Suppliers.ofInstance;
 import static com.google.common.collect.FluentIterable.from;
 import static java.util.Arrays.asList;
 import static org.apache.commons.lang3.StringUtils.defaultString;
 import static org.cmdbuild.common.template.engine.Engines.emptyStringOnNull;
 import static org.cmdbuild.common.template.engine.Engines.nullOnError;
 import static org.cmdbuild.common.utils.BuilderUtils.a;
-import static org.cmdbuild.common.utils.guava.Suppliers.firstNotNull;
-import static org.cmdbuild.common.utils.guava.Suppliers.nullOnException;
 import static org.cmdbuild.dao.guava.Functions.toCard;
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
 import static org.cmdbuild.dao.query.clause.ClassHistory.history;
@@ -18,7 +17,6 @@ import static org.cmdbuild.dao.query.clause.where.OperatorAndValues.lt;
 import static org.cmdbuild.dao.query.clause.where.WhereClauses.and;
 import static org.cmdbuild.dao.query.clause.where.WhereClauses.condition;
 import static org.cmdbuild.scheduler.command.Commands.conditional;
-import static org.cmdbuild.services.email.Predicates.named;
 import static org.cmdbuild.services.template.engine.EngineNames.CARD_PREFIX;
 
 import java.util.Comparator;
@@ -28,7 +26,8 @@ import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.view.CMDataView;
-import org.cmdbuild.data.store.StoreSupplier;
+import org.cmdbuild.data.store.email.EmailAccount;
+import org.cmdbuild.data.store.email.EmailAccountFacade;
 import org.cmdbuild.data.store.task.TaskStore;
 import org.cmdbuild.logic.data.QueryOptions;
 import org.cmdbuild.logic.data.access.QuerySpecsBuilderFiller;
@@ -41,7 +40,6 @@ import org.cmdbuild.logic.taskmanager.scheduler.AbstractJobFactory;
 import org.cmdbuild.logic.taskmanager.store.LogicAndStoreConverter;
 import org.cmdbuild.logic.taskmanager.util.CardIdFilterElementGetter;
 import org.cmdbuild.scheduler.command.Command;
-import org.cmdbuild.services.email.EmailAccount;
 import org.cmdbuild.services.email.EmailServiceFactory;
 import org.cmdbuild.services.template.engine.CardEngine;
 import org.joda.time.DateTime;
@@ -50,7 +48,6 @@ import org.json.JSONObject;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Supplier;
-import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Ordering;
 
 public class AsynchronousEventTaskJobFactory extends AbstractJobFactory<AsynchronousEventTask> {
@@ -65,19 +62,18 @@ public class AsynchronousEventTaskJobFactory extends AbstractJobFactory<Asynchro
 	};
 
 	private final CMDataView dataView;
-	private final org.cmdbuild.data.store.Store<EmailAccount> emailAccountStore;
+	private final EmailAccountFacade emailAccountFacade;
 	private final EmailServiceFactory emailServiceFactory;
 	private final EmailTemplateLogic emailTemplateLogic;
 	private final TaskStore taskStore;
 	private final LogicAndStoreConverter logicAndStoreConverter;
 
-	public AsynchronousEventTaskJobFactory(final CMDataView dataView,
-			final org.cmdbuild.data.store.Store<EmailAccount> emailAccountStore,
+	public AsynchronousEventTaskJobFactory(final CMDataView dataView, final EmailAccountFacade emailAccountFacade,
 			final EmailServiceFactory emailServiceFactory, final EmailTemplateLogic emailTemplateLogic,
 			final TaskStore taskStore, final LogicAndStoreConverter logicAndStoreConverter) {
 		this.dataView = dataView;
 		this.emailServiceFactory = emailServiceFactory;
-		this.emailAccountStore = emailAccountStore;
+		this.emailAccountFacade = emailAccountFacade;
 		this.emailTemplateLogic = emailTemplateLogic;
 		this.taskStore = taskStore;
 		this.logicAndStoreConverter = logicAndStoreConverter;
@@ -139,7 +135,7 @@ public class AsynchronousEventTaskJobFactory extends AbstractJobFactory<Asynchro
 				}
 			}
 
-			private FluentIterable<CMCard> currentCardsMatchingFilter(final String classname,
+			private Iterable<CMCard> currentCardsMatchingFilter(final String classname,
 					final JSONObject jsonFilter) {
 				logger.debug(marker, "getting current cards matching filter");
 				final CMClass sourceClass = dataView.findClass(classname);
@@ -211,12 +207,9 @@ public class AsynchronousEventTaskJobFactory extends AbstractJobFactory<Asynchro
 			}
 
 		});
-		final Supplier<EmailAccount> templateEmailAccountSupplier = nullOnException(StoreSupplier.of(
-				EmailAccount.class, emailAccountStore, named(emailTemplateSupplier.get().getAccount())));
-		final Supplier<EmailAccount> taskEmailAccountSupplier = nullOnException(StoreSupplier.of(EmailAccount.class,
-				emailAccountStore, named(task.getNotificationAccount())));
-		final Supplier<EmailAccount> emailAccountSupplier = firstNotNull(asList(templateEmailAccountSupplier,
-				taskEmailAccountSupplier));
+		final Optional<EmailAccount> account = emailAccountFacade.firstOf(asList(emailTemplateSupplier.get()
+				.getAccount(), task.getNotificationAccount()));
+		final Supplier<EmailAccount> emailAccountSupplier = account.isPresent() ? ofInstance(account.get()) : null;
 		final EngineBasedTemplateResolver templateResolver = EngineBasedTemplateResolver.newInstance() //
 				.withEngine(emptyStringOnNull(nullOnError( //
 						CardEngine.newInstance() //

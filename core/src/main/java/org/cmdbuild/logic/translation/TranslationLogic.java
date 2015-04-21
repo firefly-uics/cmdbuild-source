@@ -8,7 +8,9 @@ public interface TranslationLogic extends Logic {
 
 	void create(TranslationObject translationObject);
 
-	Map<String, String> read(TranslationObject translationObject);
+	Map<String, String> readAll(TranslationObject translationObject);
+
+	String read(TranslationObject translationObject, String lang);
 
 	void update(TranslationObject translationObject);
 

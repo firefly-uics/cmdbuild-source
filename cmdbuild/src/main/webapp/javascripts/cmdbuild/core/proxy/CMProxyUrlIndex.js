@@ -48,6 +48,12 @@
 			remove: 'services/json/schema/modclass/deletetable'
 		},
 
+		csv: {
+			clearSession: 'services/json/management/importcsv/clearsession',
+			getCsvRecords: 'services/json/management/importcsv/getcsvrecords',
+			uploadCsv: 'services/json/management/importcsv/uploadcsv'
+		},
+
 		configuration: {
 			getConfiguration: 'services/json/schema/setup/getconfiguration',
 			getConfigurations: 'services/json/schema/setup/getconfigurations',
@@ -58,7 +64,9 @@
 			create: 'services/json/schema/modclass/savedomain',
 			read: 'services/json/schema/modclass/getalldomains',
 			update: 'services/json/schema/modclass/savedomain',
-			remove: 'services/json/schema/modclass/deletedomain'
+			remove: 'services/json/schema/modclass/deletedomain',
+
+			getDomainList: 'services/json/schema/modclass/getdomainlist'
 		},
 
 		dataView: {
@@ -88,6 +96,22 @@
 				getStoreColumns: '',
 				setDefault: 'services/json/schema/emailaccount/setdefault'
 			},
+
+			attachment: {
+				copy: 'services/json/email/attachment/copy',
+				readAll: 'services/json/email/attachment/readall',
+				remove: 'services/json/email/attachment/delete',
+				upload: 'services/json/email/attachment/upload',
+			},
+
+			queue: {
+				configuration: 'services/json/email/queue/configuration',
+				configure: 'services/json/email/queue/configure',
+				running: 'services/json/email/queue/running',
+				start: 'services/json/email/queue/start',
+				stop: 'services/json/email/queue/stop'
+			},
+
 			templates:{
 				remove: 'services/json/email/template/delete',
 				get: 'services/json/email/template/read',
@@ -95,7 +119,15 @@
 				put: 'services/json/email/template/update',
 
 				getStore: 'services/json/email/template/readall'
-			}
+			},
+
+			remove: 'services/json/email/email/delete',
+			get: 'services/json/email/email/read',
+			post: 'services/json/email/email/create',
+			put: 'services/json/email/email/update',
+
+			enabled: 'services/json/email/email/enabled',
+			getStore: 'services/json/email/email/readall'
 		},
 
 		fkTargetClass: 'services/json/schema/modclass/getfktargetingclass',
@@ -113,6 +145,15 @@
 
 		functions: {
 			getFunctions: 'services/json/schema/modclass/getfunctions'
+		},
+
+		localizations: { // TODO: refactor with server side
+			classAttributeCreate: 'services/json/schema/translation/createforclassattribute',
+			classAttributeRead: 'services/json/schema/translation/readforclassattribute',
+			classAttributeUpdate: 'services/json/schema/translation/updateforclassattribute',
+			classCreate: 'services/json/schema/translation/createforclass',
+			classRead: 'services/json/schema/translation/readforclass',
+			classUpdate: 'services/json/schema/translation/updateforclass',
 		},
 
 		login: 'services/json/login/login',
@@ -229,35 +270,22 @@
 		},
 
 		users: {
-			getusergrouplist: 'services/json/schema/modsecurity/getusergrouplist'
+			disable: 'services/json/schema/modsecurity/disableuser',
+			getGroupList: 'services/json/schema/modsecurity/getusergrouplist',
+			getList: 'services/json/schema/modsecurity/getuserlist',
+			save: 'services/json/schema/modsecurity/saveuser'
 		},
 
 		utils: {
+			clearCache: 'services/json/utils/clearcache',
 			generateId: 'services/json/utils/generateid',
-			getLanguage: 'services/json/utils/getlanguage'
+			getLanguage: 'services/json/utils/getlanguage',
+			listAvailableTranslations: 'services/json/utils/listavailabletranslations'
 		},
 
 		widgets: {
 			grid: {
-				clearSession: 'services/json/management/importcsv/clearsession',
-				getSqlCardList: 'services/json/management/modcard/getsqlcardlist',
-				getCsvRecords: 'services/json/management/importcsv/getcsvrecords',
-				uploadCsv: 'services/json/management/importcsv/uploadcsv'
-			},
-			manageEmail: {
-				attachment: {
-					copy: 'services/json/email/attachment/copy',
-					readAll: 'services/json/email/attachment/readall',
-					remove: 'services/json/email/attachment/delete',
-					upload: 'services/json/email/attachment/upload',
-				},
-
-				remove: 'services/json/email/email/delete',
-				get: 'services/json/email/email/read',
-				post: 'services/json/email/email/create',
-				put: 'services/json/email/email/update',
-
-				getStore: 'services/json/email/email/readall'
+				getSqlCardList: 'services/json/management/modcard/getsqlcardlist'
 			}
 		},
 
@@ -267,6 +295,7 @@
 			getStartActivity: 'services/json/workflow/getstartactivity',
 			isProcessUpdated: 'services/json/workflow/isprocessupdated',
 			saveActivity: 'services/json/workflow/saveactivity',
+			synchronize: 'services/json/workflow/sync',
 			xpdlDownload: 'services/json/workflow/downloadxpdl',
 			xpdlDownloadTemplate: 'services/json/workflow/downloadxpdltemplate',
 			xpdlUpload: 'services/json/workflow/uploadxpdl',

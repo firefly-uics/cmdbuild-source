@@ -10,7 +10,6 @@
 		fields: [
 			{name: "type", type: "string"},
 			{name: "text", type: "string"},
-			{name: "description_default", type: "string"},
 			{name: "index", type: "ingeter"},
 			{name: "referencedClassName", type: "string"},
 			{name: "referencedElementId", type: "string"},
@@ -29,13 +28,12 @@ Ext.define("CMDBuild.Administration.MenuPanel", {
 	extend: "Ext.panel.Panel",
 	statics: {
 		openTranslationsWindow: function(uuid) {
-			var translationsWindow = new CMDBuild.view.common.CMTranslationsWindow({
+			Ext.create('CMDBuild.controller.common.field.translatable.Window', {
 				title: CMDBuild.Translation.translations,
 				translationsKeyType: "MenuItem",
 				translationsKeyField: "Description",
 				translationsKeyName: uuid
 			});
-			translationsWindow.show();
 		},
 		warningNoSaveWindow: function() {
 			message = htmlComposeMessage(warningNoSaved);

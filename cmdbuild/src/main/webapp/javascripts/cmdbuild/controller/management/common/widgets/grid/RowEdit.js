@@ -1,17 +1,30 @@
 (function () {
 
 	Ext.define('CMDBuild.controller.management.common.widgets.grid.RowEdit', {
-		extend: 'CMDBuild.controller.common.CMBasePanelController',
+		extend: 'CMDBuild.controller.common.AbstractController',
 
 		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
 
 		/**
-		 * @cfg {CMDBuild.controller.management.common.widgets.grid.Main}
+		 * @cfg {CMDBuild.controller.management.common.widgets.grid.Grid}
 		 */
 		parentDelegate: undefined,
 
 		/**
-		 * @cfg {Object}
+		 * @cfg {Array}
+		 */
+		cmfgCatchedFunctions: [
+			'onRowEditWindowAbortButtonClick',
+			'onRowEditWindowSaveButtonClick'
+		],
+
+		/**
+		 * @property {Ext.form.Panel}
+		 */
+		form: undefined,
+
+		/**
+		 * @cfg {Ext.data.Model}
 		 */
 		record: undefined,
 
@@ -21,19 +34,22 @@
 		view: undefined,
 
 		/**
-		 * @param {Object} configObject
-		 * @param {CMDBuild.controller.management.common.widgets.grid.Main} configObject.parentDelegate
-		 * @param {Object} configObject.record
+		 * @param {Object} configurationObject
+		 * @param {CMDBuild.controller.management.common.widgets.grid.Grid} configurationObject.parentDelegate
+		 * @param {Object} configurationObject.record
 		 */
-		constructor: function(configObject) {
-			Ext.apply(this, configObject); // Apply config
+		constructor: function(configurationObject) {
+			this.callParent(arguments);
 
 			this.view = Ext.create('CMDBuild.view.management.common.widgets.grid.RowEditWindow', {
 				delegate: this
 			});
 
-			this.view.form.add(this.buildFormFields());
-			this.view.form.getForm().loadRecord(this.record);
+			// Shorthand
+			this.form = this.view.form;
+
+			this.form.add(this.buildFormFields());
+			this.form.getForm().setValues(this.record.data); // record.getData() doesn't returns all values (Description and Code) so it's used record.data
 
 			this.fieldsInitialization();
 
@@ -43,39 +59,16 @@
 		},
 
 		/**
-		 * Gatherer function to catch events
-		 *
-		 * @param {String} name
-		 * @param {Object} param
-		 * @param {Function} callback
-		 */
-		cmOn: function(name, param, callBack) {
-			switch (name) {
-				case 'onRowEditWindowAbortButtonClick':
-					return this.onRowEditWindowAbortButtonClick();
-
-				case 'onRowEditWindowSaveButtonClick':
-					return this.onRowEditWindowSaveButtonClick();
-
-				default: {
-					if (!Ext.isEmpty(this.parentDelegate))
-						return this.parentDelegate.cmOn(name, param, callBack);
-				}
-			}
-		},
-
-		/**
 		 * @return {Array} itemsArray
 		 */
 		buildFormFields: function() {
 			var itemsArray = [];
-			var attributes = this.parentDelegate.getCardAttributes();
 
-			Ext.Array.forEach(attributes, function(attribute, index, allAttributes) {
+			Ext.Array.forEach(this.parentDelegate.getCardAttributes(), function(attribute, i, allAttributes) {
 				var item = CMDBuild.Management.FieldManager.getFieldForAttr(attribute, false, false);
 
 				if (attribute[CMDBuild.core.proxy.CMProxyConstants.FIELD_MODE] == 'read')
-					item.disabled = true;
+					item.setDisabled(true);
 
 				itemsArray.push(item);
 			}, this);
@@ -87,9 +80,7 @@
 		 * Calls field template resolver and store load
 		 */
 		fieldsInitialization: function() {
-			var fields = this.view.form.getForm().getFields().getRange();
-
-			Ext.Array.forEach(fields, function(field, index, allFields) {
+			Ext.Array.forEach(this.form.getForm().getFields().getRange(), function(field, i, allFields) {
 				if (!Ext.Object.isEmpty(field) && !Ext.isEmpty(field.resolveTemplate))
 					field.resolveTemplate();
 
@@ -106,10 +97,9 @@
 		 * Saves data to widget's grid
 		 */
 		onRowEditWindowSaveButtonClick: function() {
-			var values = this.view.form.getValues();
-
-			for (var property in values)
-				this.record.set(property, values[property]);
+			Ext.Object.each(this.form.getValues(), function(key, value, myself) {
+				this.record.set(key, value);
+			}, this);
 
 			this.onRowEditWindowAbortButtonClick();
 		}

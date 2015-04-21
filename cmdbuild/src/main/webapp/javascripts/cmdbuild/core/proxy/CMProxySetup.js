@@ -1,7 +1,5 @@
 (function() {
 
-	var languageStore = null;
-
 	CMDBuild.ServiceProxy.setup = {
 		testDBConnection: function(p) {
 			p.method = "GET";

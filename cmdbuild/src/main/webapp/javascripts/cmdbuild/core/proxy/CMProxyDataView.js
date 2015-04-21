@@ -1,6 +1,7 @@
 (function() {
 
 	Ext.require('CMDBuild.core.proxy.CMProxyUrlIndex');
+	Ext.require('CMDBuild.model.DataView');
 
 	_CMProxy.dataView = {
 

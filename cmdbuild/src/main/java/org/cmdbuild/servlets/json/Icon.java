@@ -1,8 +1,5 @@
 package org.cmdbuild.servlets.json;
 
-import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
-import static org.cmdbuild.logic.translation.DefaultTranslationLogic.DESCRIPTION_FOR_CLIENT;
-import static org.cmdbuild.servlets.json.CommunicationConstants.DEFAULT_DESCRIPTION;
 import static org.cmdbuild.servlets.json.CommunicationConstants.DESCRIPTION;
 
 import java.io.File;
@@ -13,7 +10,6 @@ import org.apache.commons.fileupload.FileItem;
 import org.cmdbuild.exception.AuthException;
 import org.cmdbuild.exception.ORMException;
 import org.cmdbuild.exception.ORMException.ORMExceptionType;
-import org.cmdbuild.logic.translation.GisIconTranslation;
 import org.cmdbuild.services.CustomFilesStore;
 import org.cmdbuild.services.FilesStore;
 import org.cmdbuild.servlets.utils.Parameter;
@@ -96,15 +92,7 @@ public class Icon extends JSONBaseWithSpringContext {
 
 		final String description = iconsFileStore.removeExtension(iconFileName);
 
-		final GisIconTranslation translationObject = GisIconTranslation.newInstance() //
-				.withName(description) //
-				.withField(DESCRIPTION_FOR_CLIENT) //
-				.build();
-		translationLogic().create(translationObject);
-		final String translatedDescription = translationFacade().read(translationObject);
-
-		jsonIcon.put(DESCRIPTION, defaultIfNull(translatedDescription, description));
-		jsonIcon.put(DEFAULT_DESCRIPTION, description);
+		jsonIcon.put(DESCRIPTION, description);
 		final String path = iconsFileStore.getRelativeRootDirectory() + getRelativePath(iconFileName);
 		jsonIcon.put("path", path.replace(File.separator, "/")); // because is
 																	// used as

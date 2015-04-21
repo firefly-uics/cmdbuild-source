@@ -1,56 +1,29 @@
 package org.cmdbuild.logic.email;
 
-import static com.google.common.base.Suppliers.memoize;
 import static com.google.common.collect.FluentIterable.from;
 import static com.google.common.collect.Iterables.concat;
 import static com.google.common.collect.Iterables.contains;
-import static com.google.common.collect.Maps.newHashMap;
 import static java.util.Arrays.asList;
-import static org.apache.commons.lang3.StringUtils.EMPTY;
-import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
-import static org.cmdbuild.common.utils.guava.Suppliers.firstNotNull;
-import static org.cmdbuild.common.utils.guava.Suppliers.nullOnException;
+import static org.cmdbuild.data.store.email.EmailStatus.OUTGOING;
+import static org.cmdbuild.data.store.email.Groupables.reference;
+import static org.cmdbuild.data.store.email.Groupables.status;
 import static org.cmdbuild.logic.email.EmailLogic.Statuses.draft;
 import static org.cmdbuild.logic.email.EmailLogic.Statuses.outgoing;
 import static org.cmdbuild.logic.email.EmailLogic.Statuses.received;
 import static org.cmdbuild.logic.email.EmailLogic.Statuses.sent;
-import static org.cmdbuild.services.email.Predicates.isDefault;
-import static org.cmdbuild.services.email.Predicates.named;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.URL;
-import java.util.Map;
 import java.util.UUID;
 
-import javax.activation.DataHandler;
-import javax.activation.DataSource;
-
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.Validate;
-import org.cmdbuild.common.utils.TempDataSource;
-import org.cmdbuild.common.utils.UnsupportedProxyFactory;
 import org.cmdbuild.data.store.Storable;
 import org.cmdbuild.data.store.Store;
-import org.cmdbuild.data.store.StoreSupplier;
-import org.cmdbuild.data.store.email.EmailOwnerGroupable;
+import org.cmdbuild.data.store.email.EmailAccountFacade;
 import org.cmdbuild.data.store.email.EmailStatus;
-import org.cmdbuild.exception.CMDBException;
-import org.cmdbuild.exception.CMDBWorkflowException;
-import org.cmdbuild.logic.email.EmailAttachmentsLogic.Attachment;
-import org.cmdbuild.notification.Notifier;
-import org.cmdbuild.services.email.EmailAccount;
-import org.cmdbuild.services.email.EmailService;
-import org.cmdbuild.services.email.EmailServiceFactory;
-import org.cmdbuild.services.email.ForwardingEmailService;
-import org.cmdbuild.services.email.SubjectHandler;
+import org.cmdbuild.data.store.email.EmailStatusConverter;
 
 import com.google.common.base.Function;
-import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
-import com.google.common.base.Supplier;
 
 public class DefaultEmailLogic implements EmailLogic {
 
@@ -171,12 +144,13 @@ public class DefaultEmailLogic implements EmailLogic {
 			output.setNotifyWith(input.getNotifyWith());
 			output.setDate(input.getDate());
 			output.setStatus(StatusConverter.of(input.getStatus()).value());
-			output.setActivityId(input.getActivityId());
+			output.setReference(input.getReference());
 			output.setNoSubjectPrefix(input.isNoSubjectPrefix());
 			output.setAccount(input.getAccount());
 			output.setTemplate(input.getTemplate());
 			output.setKeepSynchronization(input.isKeepSynchronization());
 			output.setPromptSynchronization(input.isPromptSynchronization());
+			output.setDelay(input.getDelay());
 			return output;
 		}
 
@@ -197,52 +171,75 @@ public class DefaultEmailLogic implements EmailLogic {
 					.withNotifyWith(input.getNotifyWith()) //
 					.withDate(input.getDate()) //
 					.withStatus(StatusConverter.of(input.getStatus()).status()) //
-					.withActivityId(input.getActivityId()) //
+					.withReference(input.getReference()) //
 					.withNoSubjectPrefix(input.isNoSubjectPrefix()) //
 					.withAccount(input.getAccount()) //
 					.withTemplate(input.getTemplate()) //
 					.withKeepSynchronization(input.isKeepSynchronization()) //
 					.withPromptSynchronization(input.isPromptSynchronization()) //
+					.withDelay(input.getDelay()) //
 					.build();
 		}
 
 	};
 
-	private static final EmailService EMAIL_SERVICE_FOR_INVALID_PROCESS_ID = new ForwardingEmailService() {
+	private static class TemporaryEmail extends ForwardingEmail {
 
-		private final EmailService UNSUPPORTED = UnsupportedProxyFactory.of(EmailService.class).create();
+		private final Email delegate;
+		private final boolean temporary;
+
+		public TemporaryEmail(final Email delegate, final boolean temporary) {
+			this.delegate = delegate;
+			this.temporary = temporary;
+		}
 
 		@Override
-		protected EmailService delegate() {
-			return UNSUPPORTED;
+		protected Email delegate() {
+			return delegate;
+		}
+
+		@Override
+		public boolean isTemporary() {
+			return temporary;
+		}
+
+	}
+
+	private static final Function<Email, Email> TO_TEMPORARY = new Function<Email, Email>() {
+
+		@Override
+		public Email apply(final Email input) {
+			return new TemporaryEmail(input, true);
 		}
 
 	};
 
 	private final Store<org.cmdbuild.data.store.email.Email> emailStore;
 	private final Store<org.cmdbuild.data.store.email.Email> temporaryEmailStore;
-	private final EmailServiceFactory emailServiceFactory;
-	private final Store<EmailAccount> emailAccountStore;
-	private final SubjectHandler subjectHandler;
-	private final Notifier notifier;
-	private final EmailAttachmentsLogic emailAttachmentsLogic;
+	private final EmailStatusConverter emailStatusConverter;
+	private final EmailAccountFacade emailAccountFacade;
 
 	public DefaultEmailLogic( //
 			final Store<org.cmdbuild.data.store.email.Email> emailStore, //
 			final Store<org.cmdbuild.data.store.email.Email> temporaryEmailStore, //
-			final EmailServiceFactory emailServiceFactory, //
-			final Store<EmailAccount> emailAccountStore, //
-			final SubjectHandler subjectHandler, //
-			final Notifier notifier, //
-			final EmailAttachmentsLogic emailAttachmentsLogic //
+			final EmailStatusConverter emailStatusConverter, //
+			final EmailAccountFacade emailAccountFacade //
 	) {
 		this.emailStore = emailStore;
 		this.temporaryEmailStore = temporaryEmailStore;
-		this.emailServiceFactory = emailServiceFactory;
-		this.emailAccountStore = emailAccountStore;
-		this.subjectHandler = subjectHandler;
-		this.notifier = notifier;
-		this.emailAttachmentsLogic = emailAttachmentsLogic;
+		this.emailStatusConverter = emailStatusConverter;
+		this.emailAccountFacade = emailAccountFacade;
+	}
+
+	@Override
+	public boolean isEnabled(final String className, final Long cardId) {
+		/*
+		 * TODO classes should have grants
+		 * 
+		 * TODO processes should always return false because the behavior is
+		 * controlled by process definition
+		 */
+		return emailAccountFacade.defaultAccount().isPresent();
 	}
 
 	@Override
@@ -256,7 +253,7 @@ public class DefaultEmailLogic implements EmailLogic {
 
 			@Override
 			public Long getId() {
-				return isTemporary() ? generateId() : super.getId();
+				return isTemporary() ? Long.valueOf(generateId()) : super.getId();
 			}
 
 			private int generateId() {
@@ -278,59 +275,47 @@ public class DefaultEmailLogic implements EmailLogic {
 	}
 
 	@Override
-	public Iterable<Email> readAll(final Long processCardId) {
+	public Iterable<Email> readAll(final Long reference) {
 		return from(concat( //
-				from(emailStore.readAll(EmailOwnerGroupable.of(processCardId))) //
+				from(emailStore.readAll(reference(reference))) //
 						.transform(STORE_TO_LOGIC), //
 				from(temporaryEmailStore.readAll()) //
 						.filter(new Predicate<org.cmdbuild.data.store.email.Email>() {
 
 							@Override
 							public boolean apply(final org.cmdbuild.data.store.email.Email input) {
-								return ObjectUtils.equals(processCardId, input.getActivityId());
+								return ObjectUtils.equals(reference, input.getReference());
 							}
 
 						}) //
 						.transform(STORE_TO_LOGIC) //
-						.transform(new Function<Email, Email>() {
+						.transform(TO_TEMPORARY) //
+		));
+	}
+
+	@Override
+	public Iterable<Email> readAll(final Status status) {
+		return from(concat( //
+				from(emailStore.readAll(status(emailStatusConverter.toId(OUTGOING)))) //
+						.transform(STORE_TO_LOGIC), //
+				from(temporaryEmailStore.readAll()) //
+						.filter(new Predicate<org.cmdbuild.data.store.email.Email>() {
 
 							@Override
-							public Email apply(final Email input) {
-								return new ForwardingEmail() {
-
-									@Override
-									protected Email delegate() {
-										return input;
-									}
-
-									@Override
-									public boolean isTemporary() {
-										return true;
-									}
-
-								};
+							public boolean apply(final org.cmdbuild.data.store.email.Email input) {
+								return ObjectUtils.equals(status, input.getStatus());
 							}
 
-						})) //
-		);
+						}) //
+						.transform(STORE_TO_LOGIC) //
+						.transform(TO_TEMPORARY) //
+		));
 	}
 
 	@Override
 	public Email read(final Email email) {
 		final org.cmdbuild.data.store.email.Email read = storeOf(email).read(LOGIC_TO_STORE.apply(email));
-		return new ForwardingEmail() {
-
-			@Override
-			protected Email delegate() {
-				return STORE_TO_LOGIC.apply(read);
-			}
-
-			@Override
-			public boolean isTemporary() {
-				return email.isTemporary();
-			}
-
-		};
+		return new TemporaryEmail(STORE_TO_LOGIC.apply(read), email.isTemporary());
 	}
 
 	@Override
@@ -354,123 +339,14 @@ public class DefaultEmailLogic implements EmailLogic {
 		}
 
 		if (draft().equals(read.getStatus())) {
-			final org.cmdbuild.data.store.email.Email storable = LOGIC_TO_STORE.apply(email);
-			storeOf(email).update(storable);
-		}
-
-		if (outgoing().equals(email.getStatus())) {
-			send(read(email));
+			updateWithNoChecks(email);
 		}
 	}
 
-	private void send(final Email email) {
-		try {
-			final Supplier<EmailAccount> accountSupplier = accountSupplierOf(email);
-			final Email _email = new ForwardingEmail() {
-
-				@Override
-				protected Email delegate() {
-					return email;
-				}
-
-				@Override
-				public String getFromAddress() {
-					return defaultIfBlank(super.getFromAddress(), accountSupplier.get().getAddress());
-				}
-
-				@Override
-				public Status getStatus() {
-					return sent();
-				}
-
-			};
-			send0(accountSupplier, _email);
-			storeOf(email).update(LOGIC_TO_STORE.apply(_email));
-		} catch (final CMDBException e) {
-			notifier.warn(e);
-		} catch (final Throwable e) {
-			notifier.warn(CMDBWorkflowException.WorkflowExceptionType.WF_EMAIL_NOT_SENT.createException());
-		}
-	}
-
-	private Supplier<EmailAccount> accountSupplierOf(final Email email) {
-		final Supplier<EmailAccount> defaultAccountSupplier = memoize(nullOnException(defaultAccountSupplier()));
-		final Supplier<EmailAccount> emailAccountSupplier = nullOnException(StoreSupplier.of(EmailAccount.class,
-				emailAccountStore, named(email.getAccount())));
-		final Supplier<EmailAccount> accountSupplier = memoize(firstNotNull(asList(emailAccountSupplier,
-				defaultAccountSupplier)));
-		return accountSupplier;
-	}
-
-	private void send0(final Supplier<EmailAccount> accountSupplier, final Email email) throws IOException {
-		/*
-		 * we don't want to save the altered subject, so we are keeping it in a
-		 * different copy of the e-mail
-		 */
-		final Email _email = new ForwardingEmail() {
-
-			@Override
-			protected Email delegate() {
-				return email;
-			}
-
-			@Override
-			public String getSubject() {
-				final org.cmdbuild.data.store.email.Email storable = LOGIC_TO_STORE.apply(delegate());
-				final String subject;
-				if (subjectHandler.parse(storable.getSubject()).hasExpectedFormat()) {
-					subject = storable.getSubject();
-				} else {
-					subject = defaultIfBlank(subjectHandler.compile(storable).getSubject(), EMPTY);
-				}
-				return subject;
-			}
-
-		};
-		final org.cmdbuild.data.store.email.Email storable = LOGIC_TO_STORE.apply(_email);
-		emailService(storable.getActivityId(), accountSupplier).send(storable, attachmentsOf(_email));
-	}
-
-	private Map<URL, String> attachmentsOf(final Email read) throws IOException {
-		final Map<URL, String> attachments = newHashMap();
-		for (final Attachment attachment : emailAttachmentsLogic.readAll(read)) {
-			final Optional<DataHandler> dataHandler = emailAttachmentsLogic.read(read, attachment);
-			if (dataHandler.isPresent()) {
-				final TempDataSource tempDataSource = TempDataSource.newInstance() //
-						.withName(attachment.getFileName()) //
-						.build();
-				copy(dataHandler.get(), tempDataSource);
-				final URL url = tempDataSource.getFile().toURI().toURL();
-				attachments.put(url, attachment.getFileName());
-			}
-		}
-		return attachments;
-	}
-
-	private void copy(final DataHandler from, final DataSource to) throws IOException {
-		final InputStream inputStream = from.getInputStream();
-		final OutputStream outputStream = to.getOutputStream();
-		IOUtils.copy(inputStream, outputStream);
-		IOUtils.closeQuietly(inputStream);
-		IOUtils.closeQuietly(outputStream);
-	}
-
-	private EmailService emailService(final Long processCardId, final Supplier<EmailAccount> emailAccountSupplier) {
-		final boolean isValid = (processCardId != null) && (processCardId > 0);
-		if (!isValid) {
-			logger.warn("invalid process id, returning a safe email service");
-		}
-		final EmailService emailService;
-		if (isValid) {
-			emailService = emailServiceFactory.create(emailAccountSupplier);
-		} else {
-			emailService = EMAIL_SERVICE_FOR_INVALID_PROCESS_ID;
-		}
-		return emailService;
-	}
-
-	private StoreSupplier<EmailAccount> defaultAccountSupplier() {
-		return StoreSupplier.of(EmailAccount.class, emailAccountStore, isDefault());
+	@Override
+	public void updateWithNoChecks(final Email email) {
+		final org.cmdbuild.data.store.email.Email storable = LOGIC_TO_STORE.apply(email);
+		storeOf(email).update(storable);
 	}
 
 	@Override

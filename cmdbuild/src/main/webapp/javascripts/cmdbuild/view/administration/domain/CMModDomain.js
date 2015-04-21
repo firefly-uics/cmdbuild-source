@@ -1,15 +1,15 @@
 (function() {
 	var translationDomainProp = CMDBuild.Translation.administration.modClass.domainProperties;
 	var translationModClass = CMDBuild.Translation.administration.modClass;
-	
+
 	var baseTitle = translationModClass.tabs.domains;
-	
+
 	Ext.define("CMDBuild.view.administration.domain.CMModDomain", {
 		extend: "Ext.panel.Panel",
-		
-		cmName:'domain',	
+
+		cmName:'domain',
 		translation: CMDBuild.Translation.administration.modClass,
-		
+
 		NAME: "CMModDomain",
 
 		constructor: function() {
@@ -33,7 +33,7 @@
 				items: [this.domainForm, this.domainAttributes],
 				activeTab: 0
 			});
-			
+
 			this.callParent(arguments);
 		},
 
@@ -62,7 +62,7 @@
 			} else {
 				this.setTitle(baseTitle);
 			}
-		} 
+		}
 	});
 
 })();

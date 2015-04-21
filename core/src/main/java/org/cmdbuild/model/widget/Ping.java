@@ -43,7 +43,7 @@ public class Ping extends AbstractCommandExecutionWidget {
 	}
 
 	@Override
-	protected WidgetAction getActionCommand(final String action, final Map<String, Object> params,
+	public WidgetAction getActionCommand(final String action, final Map<String, Object> params,
 			final Map<String, Object> dsVars) {
 		if ("legacytr".equals(action)) {
 			final String address = String.valueOf(params.get("address"));

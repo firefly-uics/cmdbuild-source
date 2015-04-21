@@ -115,17 +115,6 @@ public class DBDataViewTest {
 	}
 
 	@Test
-	public void findDomainsFor() throws Exception {
-		final CMClass cmClass = mock(CMClass.class);
-		when(driver.findAllDomains()).thenReturn(Lists.<DBDomain> newArrayList());
-
-		view.findDomainsFor(cmClass);
-
-		verify(driver).findAllDomains();
-		verifyNoMoreInteractions(driver);
-	}
-
-	@Test
 	public void domainFoundById() throws Exception {
 		view.findDomain(ID);
 

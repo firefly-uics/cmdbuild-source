@@ -67,7 +67,7 @@
 		},
 
 		/**
-		 * @param {Object} parameters - AccordionStoreModel
+		 * @param {CMDBuild.view.common.CMAccordionStoreModel} parameters
 		 *
 		 * @override
 		 */

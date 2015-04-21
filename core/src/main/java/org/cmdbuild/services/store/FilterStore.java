@@ -2,13 +2,14 @@ package org.cmdbuild.services.store;
 
 import org.cmdbuild.auth.acl.SerializablePrivilege;
 import org.cmdbuild.data.store.Store;
+import org.cmdbuild.services.localization.LocalizableStorable;
 import org.slf4j.Logger;
 
 public interface FilterStore {
 
 	Logger logger = Store.logger;
 
-	interface Filter extends SerializablePrivilege {
+	interface Filter extends SerializablePrivilege, LocalizableStorable {
 
 		@Override
 		Long getId();

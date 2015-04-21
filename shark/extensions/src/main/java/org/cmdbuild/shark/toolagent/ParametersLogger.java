@@ -23,12 +23,12 @@ public class ParametersLogger {
 		this.sessionHandle = sessionHandle;
 	}
 
-	public void beforeInvocation(AppParameter[] parameters) {
+	public void beforeInvocation(final AppParameter[] parameters) {
 		callbackUtilities.debug(sessionHandle, Logging.LOGGER_NAME, "parameters before invocation...");
 		dumpParameters(parameters);
 	}
 
-	public void afterInvocation(AppParameter[] parameters) {
+	public void afterInvocation(final AppParameter[] parameters) {
 		callbackUtilities.debug(sessionHandle, Logging.LOGGER_NAME, "parameters after invocation...");
 		dumpParameters(parameters);
 	}

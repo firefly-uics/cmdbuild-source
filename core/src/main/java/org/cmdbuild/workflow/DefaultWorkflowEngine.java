@@ -375,7 +375,7 @@ public class DefaultWorkflowEngine implements QueryableUserWorkflowEngine {
 		nativeValues.put(Constants.CURRENT_USER_USERNAME_VARIABLE, currentUserUsername());
 		nativeValues.put(Constants.CURRENT_GROUP_NAME_VARIABLE, currentGroupName());
 		nativeValues.put(Constants.CURRENT_USER_VARIABLE, currentUserReference());
-		nativeValues.put(Constants.CURRENT_GROUP_VARIABLE, currentGroupReference(activityInstance));
+		nativeValues.put(Constants.CURRENT_PERFORMER_VARIABLE, currentGroupReference(activityInstance));
 
 		saveWidgets(activityInstance, widgetSubmission, nativeValues);
 		service.setProcessInstanceVariables(processInstance.getProcessInstanceId(),
