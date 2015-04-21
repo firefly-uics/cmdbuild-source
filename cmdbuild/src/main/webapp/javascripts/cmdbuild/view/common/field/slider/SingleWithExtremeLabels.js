@@ -6,11 +6,6 @@
 		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
 
 		/**
-		 * @property {CMDBuild.controller.common.field.slider.SingleWithTextField}
-		 */
-		delegate: undefined,
-
-		/**
 		 * @cfg {Number}
 		 */
 		maxValue: 100,
@@ -20,6 +15,11 @@
 		 */
 		minValue: 0,
 
+		/**
+		 * @property {Ext.slider.Single}
+		 */
+		sliderField: undefined,
+
 		considerAsFieldToDisable: true,
 
 		layout: {
@@ -28,34 +28,15 @@
 		},
 
 		initComponent: function() {
-//			this.delegate = Ext.create('CMDBuild.controller.common.field.slider.SingleWithTextField', { // TODO delete if not used
-//				view: this
-//			});
-
 			this.sliderField = Ext.create('Ext.slider.Single', {
 				flex: 1,
 				useTips: true,
 				minValue: this.minValue,
-				maxValue: this.maxValue,
-
-//				listeners: {
-//					scope: this,
-//					change: function(slider, newValue, thumb, eOpts) {
-//						this.delegate.cmfg('onSliederChange');
-//					}
-//				}
+				maxValue: this.maxValue
 			});
-
-//			this.textField = Ext.create('Ext.form.field.Text', {
-//				padding: '0 0 0 5',
-//				readOnly: true,
-//				disabled: true,
-//				width: 25
-//			});
 
 			Ext.apply(this, {
 				items: [
-//					this.textField,
 					{
 						xtype: 'displayfield',
 						padding: '0 5',
@@ -98,6 +79,13 @@
 		 */
 		isValid: function() {
 			return this.sliderField.isValid();
+		},
+
+		/**
+		 * @param {Boolean} state
+		 */
+		setDisabled: function(state) {
+			this.sliderField.setDisabled(state);
 		},
 
 		/**
