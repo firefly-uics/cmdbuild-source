@@ -406,23 +406,22 @@
 			var cardsArray = presetsString.split(this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.CARD_SEPARATOR]);
 			var decodedArray = [];
 
-			for (var item in cardsArray) { // Decode cards
-				var card = cardsArray[item];
-
+			// Decode cards
+			Ext.Array.forEach(cardsArray, function(card, i, allCards) {
 				if (!Ext.isEmpty(card)) {
 					var buffer = {};
 					var cardAttributes = card.split(this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.ATTRIBUTE_SEPARATOR]);
 
-					for (var index in cardAttributes) { // Decode card's attributes
-						var attribute = cardAttributes[index];
+					Ext.Array.forEach(cardAttributes, function(attribute, i, allAttributes) {
 						var keyValueArray = attribute.split(this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.KEY_VALUE_SEPARATOR]);
 
-						buffer[keyValueArray[0]] = keyValueArray[1];
-					}
+						if (!Ext.isEmpty(keyValueArray[0]))
+							buffer[keyValueArray[0]] = keyValueArray[1];
+					}, this);
 
 					decodedArray.push(buffer);
 				}
-			}
+			}, this);
 
 			return decodedArray;
 		},
@@ -600,9 +599,9 @@
 		 */
 		setColumnsForClass: function() {
 			this.columns = this.buildColumnsForAttributes();
-_debug('this.columns 1', this.columns);
+
 			this.addActionColumns();
-_debug('this.columns 2', this.columns);
+
 			this.grid.reconfigure(
 				this.grid.getStore(),
 				this.columns.headers
@@ -635,7 +634,11 @@ _debug('this.columns 2', this.columns);
 		 * @param {Array} data
 		 */
 		setGridDataFromTextPresets: function(data) {
-			this.grid.getStore().loadData(data);
+			this.grid.getStore().removeAll();
+
+			Ext.Array.forEach(data, function(recordObject, i, allRecordsObjects) {
+				this.grid.getStore().add(Ext.create('CMDBuild.DummyModel', recordObject));
+			}, this);
 		}
 	});
 
