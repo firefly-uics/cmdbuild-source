@@ -42,3 +42,11 @@
 .domain { background-image: url("../images/icons/table_link.png") !important; }
 .expand,
 .cmdisplayfield-expandbutton { background-image: url("../images/icons/expand.png") !important; }
+
+/* Email */
+	.email-delete { background-image: url("../images/icons/email/email-delete.png") !important; }
+	.email-edit { background-image: url("../images/icons/email/email-edit.png") !important; }
+	.email-regenerate { background-image: url("../images/icons/email/email-regenerate.png") !important; }
+	.email-reply { background-image: url("../images/icons/email/email-reply.png") !important; }
+	.email-send { background-image: url("../images/icons/email/email-send.png") !important; }
+	.email-view { background-image: url("../images/icons/email/email-view.png") !important; }
