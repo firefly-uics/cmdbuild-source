@@ -156,29 +156,24 @@
 				];
 
 				this.cmPanels = [
-					new Ext.panel.Panel({}),
+					Ext.create('Ext.panel.Panel'),
 					this.cardPanel = new CMDBuild.view.management.classes.CMModCard({
 						cmControllerType: CMDBuild.controller.management.classes.CMModCardController
 					}),
-
 					this.processPanel = new CMDBuild.view.management.workflow.CMModProcess({
 						cmControllerType: CMDBuild.controller.management.workflow.CMModWorkflowController
 					}),
-
 					Ext.create('CMDBuild.view.management.report.MainPanel', {
 						cmControllerType: 'CMDBuild.controller.management.report.Main',
 						cmName: 'report'
 					}),
-
 					Ext.create('CMDBuild.view.management.report.SingleReportPanel', {
 						cmControllerType: 'CMDBuild.controller.management.report.SingleReport',
 						cmName: 'singlereport'
 					}),
-
 					this.dashboardPanel = new CMDBuild.view.management.dashboard.CMModDashboard({
 						cmControllerType: CMDBuild.controller.management.dashboard.CMModDashboardController
 					}),
-
 					this.dataViewPanel = new CMDBuild.view.management.dataView.CMModSQLDataView({
 						cmControllerType: CMDBuild.controller.management.dataView.CMModCardController
 					})
