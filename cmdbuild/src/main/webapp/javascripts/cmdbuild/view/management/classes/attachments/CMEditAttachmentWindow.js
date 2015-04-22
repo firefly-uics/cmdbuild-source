@@ -1,15 +1,105 @@
 (function() {
 
-	Ext.define("CMDBuild.view.management.CMEditAttachmentWindow", {
-		extend: "CMDBuild.core.PopupWindow",
+	Ext.define('CMDBuild.view.management.CMEditAttachmentWindow', {
+		extend: 'CMDBuild.core.PopupWindow',
 
-		translation: CMDBuild.Translation.management.modcard.add_attachment_window,
+		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
 
 		delegate: undefined, // set on creation
 		attachmentRecord: undefined, // could be set on creation
 
+		title: CMDBuild.Translation.management.modcard.add_attachment_window.window_title,
+
 		initComponent: function() {
-			buildComponent(this);
+			var me = this;
+
+			this.metadataContainer = Ext.create('CMDBuild.view.management.CMEditAttachmentWindowFieldContainer');
+
+			this.form = Ext.create('Ext.form.Panel', {
+				encoding: 'multipart/form-data',
+				fileUpload: true,
+				frame: false,
+				border: false,
+				padding: '5',
+				bodyCls: 'x-panel-body-default-framed',
+				autoScroll: true,
+
+				items: [
+					Ext.create('Ext.form.ComboBox', {
+						name: 'Category',
+						labelAlign: 'right',
+						fieldLabel: CMDBuild.Translation.management.modcard.add_attachment_window.category,
+						labelWidth: CMDBuild.LABEL_WIDTH,
+						emptyText: CMDBuild.Translation.management.modcard.add_attachment_window.select_category,
+						valueField: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
+						displayField: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
+						triggerAction: 'all',
+						allowBlank: false,
+						forceSelection: true,
+
+						store: _CMCache.getAttechmentCategoryStore(),
+						queryMode: 'local',
+
+						setValue: function(v) {
+							Ext.form.ComboBox.prototype.setValue.call(this, v);
+
+							me.updateMetadataFieldsForCategory(v);
+						}
+					}),
+					Ext.create('Ext.form.field.File', {
+						name: 'File',
+						width: CMDBuild.BIG_FIELD_ONLY_WIDTH,
+						labelAlign: 'right',
+						fieldLabel: CMDBuild.Translation.management.modcard.add_attachment_window.load_attachment,
+						labelWidth: CMDBuild.LABEL_WIDTH,
+						allowBlank: false
+					}),
+					Ext.create('Ext.form.field.TextArea', {
+						name: 'Description',
+						fieldLabel: CMDBuild.Translation.descriptionLabel,
+						labelAlign: 'right',
+						labelWidth: CMDBuild.LABEL_WIDTH,
+						width: CMDBuild.BIG_FIELD_ONLY_WIDTH,
+						allowBlank: false
+					}),
+					this.metadataContainer
+				]
+			});
+
+			Ext.apply(this, {
+				dockedItems: [
+					Ext.create('Ext.toolbar.Toolbar', {
+						dock: 'bottom',
+						itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_BOTTOM,
+						ui: 'footer',
+
+						layout: {
+							type: 'hbox',
+							align: 'middle',
+							pack: 'center'
+						},
+
+						items: [
+							Ext.create('CMDBuild.core.buttons.Confirm', {
+								scope: this,
+
+								handler: function(button, e) {
+									this.delegate.onConfirmButtonClick(me);
+								}
+							}),
+							Ext.create('CMDBuild.core.buttons.Abort', {
+								scope: this,
+
+								handler: function(button, e) {
+									this.destroy();
+								}
+							})
+						]
+					})
+				],
+				items: [this.form]
+			});
+
 			fillFields(this);
 			this.callParent(arguments);
 
@@ -32,7 +122,7 @@
 
 			// if set by a user selection of the combo, category is a record
 			// otherwise category is a string
-			var categoryName = (typeof category == "string") ? category : category.get("name");
+			var categoryName = (typeof category == 'string') ? category : category.get('name');
 
 			if (categoryName) {
 				var categoryModel = _CMCache.getAttachmentCategoryWithName(categoryName);
@@ -57,17 +147,17 @@
 		}
 	});
 
-	Ext.define("CMDBuild.view.management.CMEditAttachmentWindowDelegate", {
+	Ext.define('CMDBuild.view.management.CMEditAttachmentWindowDelegate', {
 		/*
 		 * called when click on the confirm button of the attachment window
 		 */
 		onConfirmButtonClick: Ext.emptyFn
 	});
 
-	Ext.define("CMDBuild.view.management.CMEditAttachmentWindowFieldContainer", {
-		extend: "Ext.container.Container",
+	Ext.define('CMDBuild.view.management.CMEditAttachmentWindowFieldContainer', {
+		extend: 'Ext.container.Container',
 
-		cls: "cm_attachement_metadata_container",
+		cls: 'cm_attachement_metadata_container',
 
 		getMetadataValues: function() {
 			var fields = this.items.getRange();
@@ -77,7 +167,7 @@
 				f = fields[i];
 
 				// create the group if necessary
-				if (typeof out[f.cmMetadataGroupName] == "undefined") {
+				if (typeof out[f.cmMetadataGroupName] == 'undefined') {
 					out[f.cmMetadataGroupName] = {};
 				}
 
@@ -147,98 +237,18 @@
 			type: definition.type
 		};
 
-		if (definition.type == "DECIMAL") {
+		if (definition.type == 'DECIMAL') {
 			// Unbound the decimal digits
 			adapted.scale = undefined;
 			adapted.precision = undefined;
 		}
 
-		if (definition.type == "LIST") {
+		if (definition.type == 'LIST') {
 			adapted.values = definition.values;
 		}
 
 		return adapted;
 	};
-
-	function buildComponent(me) {
-		me.metadataContainer = new CMDBuild.view.management.CMEditAttachmentWindowFieldContainer();
-
-		var avaiableCategoryCombo = new Ext.form.ComboBox({
-			labelAlign: "right",
-			fieldLabel: me.translation.category,
-			labelWidth: CMDBuild.LABEL_WIDTH,
-			emptyText: me.translation.select_category,
-			name: 'Category',
-			store: _CMCache.getAttechmentCategoryStore(),
-			valueField: "description",
-			displayField: "description",
-			triggerAction: 'all',
-			allowBlank: false,
-			forceSelection: true,
-			queryMode: 'local',
-			setValue: function(v) {
-				Ext.form.ComboBox.prototype.setValue.call(this, v);
-				me.updateMetadataFieldsForCategory(v);
-			}
-		});
-
-		me.form = Ext.create('Ext.form.Panel', {
-			encoding: 'multipart/form-data',
-			fileUpload: true,
-			frame: false,
-			border: false,
-			padding: '5',
-			bodyCls: 'x-panel-body-default-framed',
-			autoScroll: true,
-			items: [
-				avaiableCategoryCombo,
-				{
-					xtype: 'filefield',
-					width: CMDBuild.BIG_FIELD_ONLY_WIDTH,
-					labelAlign: "right",
-					fieldLabel: me.translation.load_attachment,
-					labelWidth: CMDBuild.LABEL_WIDTH,
-					allowBlank: false,
-					name: 'File'
-				},{
-					xtype: 'textarea',
-					fieldLabel: me.translation.description,
-					labelAlign: "right",
-					labelWidth: CMDBuild.LABEL_WIDTH,
-					name: 'Description',
-					allowBlank: false,
-					width: CMDBuild.BIG_FIELD_ONLY_WIDTH
-				},
-				me.metadataContainer
-			]
-		});
-
-		me.title = me.translation.window_title;
-		me.items = [me.form];
-
-		me.buttons = [
-			new CMDBuild.buttons.ConfirmButton({
-				scope: me,
-				handler: function() {
-					if (me.delegate &&
-							typeof me.delegate.onConfirmButtonClick == "function") {
-
-						me.delegate.onConfirmButtonClick(me);
-					}
-				}
-			}), new CMDBuild.buttons.AbortButton({
-				scope: me,
-				handler: function() {
-					me.destroy();
-				}
-			})
-		];
-
-		// auto width does not work for upload field
-		if (Ext.isGecko) {
-			me.width = 450;
-		}
-	}
 
 	/*
 	 * If there is the attachment record
@@ -253,31 +263,28 @@
 		} else {
 			var form = me.form.getForm();
 
-			var category = form.findField("Category");
+			var category = form.findField('Category');
 			if (category) {
-				category.setValue(me.attachmentRecord.get("Category"));
+				category.setValue(me.attachmentRecord.get('Category'));
 				category.disable();
 			}
 
-			var filename = form.findField("File");
+			var filename = form.findField('File');
 			if (filename) {
-				filename.setValue(me.attachmentRecord.get("Filename"));
+				filename.setValue(me.attachmentRecord.get('Filename'));
 				filename.disable();
 			}
 
-			var description = form.findField("Description");
+			var description = form.findField('Description');
 			if (description) {
-				description.setValue(me.attachmentRecord.get("Description"));
+				description.setValue(me.attachmentRecord.get('Description'));
 			}
 		}
 	}
 
-	/*
-	 * If there is the attachment record
-	 * we are editing an existing attachment.
-	 * Notify this to the user changing
-	 * the title of the window and showing the
-	 * file name
+	/**
+	 * If there is the attachment record we are editing an existing attachment.
+	 * Notify this to the user changing the title of the window and showing the file name
 	 */
 	function updateTitle(me) {
 		if (!me.attachmentRecord) {
@@ -287,7 +294,8 @@
 		var fileName = me.attachmentRecord.getFileName();
 
 		if (fileName) {
-			me.setTitle(Ext.String.format("{0}: {1}",title, fileName));
+			me.setTitle(Ext.String.format('{0}: {1}',title, fileName));
 		}
 	}
+
 })();
