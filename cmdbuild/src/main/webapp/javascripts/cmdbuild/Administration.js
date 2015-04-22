@@ -77,12 +77,24 @@
 								/* ***********************************************/
 
 								var panels = [
-									new Ext.Panel({
+									Ext.create('Ext.panel.Panel', {
 										cls: 'empty_panel x-panel-body'
 									}),
 									Ext.create('CMDBuild.view.administration.configuration.MainPanel', {
 										cmControllerType: 'CMDBuild.controller.administration.configuration.Main',
 										cmName: 'configuration'
+									}),
+									Ext.create('CMDBuild.view.administration.tasks.CMTasks', {
+										cmControllerType: 'CMDBuild.controller.administration.tasks.CMTasksController',
+										cmName: 'tasks'
+									}),
+									Ext.create('CMDBuild.view.administration.email.EmailView', {
+										cmControllerType: 'CMDBuild.controller.administration.email.Email',
+										cmName: 'email'
+									}),
+									Ext.create('CMDBuild.view.administration.localizations.MainPanel', {
+										cmControllerType: 'CMDBuild.controller.administration.localizations.Main',
+										cmName: 'localizations'
 									}),
 									new CMDBuild.view.administration.filter.CMGroupFilterPanel({
 										cmControllerType: controllerNS.administration.filter.CMGroupFilterPanelController,
@@ -106,18 +118,6 @@
 									dataViewAccordion = new CMDBuild.view.administration.accordion.CMDataViewAccordion();
 
 									panels = panels.concat([
-										Ext.create('CMDBuild.view.administration.tasks.CMTasks', {
-											cmControllerType: 'CMDBuild.controller.administration.tasks.CMTasksController',
-											cmName: 'tasks'
-										}),
-										Ext.create('CMDBuild.view.administration.email.EmailView', {
-											cmControllerType: 'CMDBuild.controller.administration.email.Email',
-											cmName: 'email'
-										}),
-										Ext.create('CMDBuild.view.administration.localizations.MainPanel', {
-											cmControllerType: 'CMDBuild.controller.administration.localizations.Main',
-											cmName: 'localizations'
-										}),
 										new CMDBuild.view.administration.dataview.CMSqlDataView({
 											cmControllerType: controllerNS.administration.dataview.CMSqlDataViewController,
 											cmName: 'sqldataview'
@@ -146,7 +146,6 @@
 			loadResources: function() {
 				var reqBarrier = new CMDBuild.Utils.CMRequestBarrier(
 					function callback() {
-
 						_CMMainViewportController.addAccordion([
 							classesAccordion,
 							processAccordion,
@@ -176,7 +175,6 @@
 							_CMMainViewportController.setInstanceName(CMDBuild.Config.cmdbuild.instance_name);
 							_CMMainViewportController.selectFirstSelectableLeafOfOpenedAccordion();
 						});
-
 					}
 				);
 
