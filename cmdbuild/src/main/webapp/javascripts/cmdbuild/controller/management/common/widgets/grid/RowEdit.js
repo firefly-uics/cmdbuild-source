@@ -84,6 +84,7 @@
 				if (!Ext.Object.isEmpty(field) && !Ext.isEmpty(field.resolveTemplate))
 					field.resolveTemplate();
 
+				// Force editor fields store load (must be done because FieldManager field don't works properly)
 				if (!Ext.Object.isEmpty(field) && !Ext.Object.isEmpty(field.store) && field.store.count() == 0)
 					field.store.load();
 			}, this);
