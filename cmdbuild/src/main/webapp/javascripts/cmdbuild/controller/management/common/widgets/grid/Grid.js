@@ -320,7 +320,7 @@
 				}
 
 				// Force editor fields store load (must be done because FieldManager field don't works properly)
-				if (!Ext.isEmpty(editor) && !Ext.isEmpty(editor.store))
+				if (!Ext.isEmpty(editor) && !Ext.isEmpty(editor.store) && editor.store.count() == 0)
 					editor.store.load();
 			}
 
