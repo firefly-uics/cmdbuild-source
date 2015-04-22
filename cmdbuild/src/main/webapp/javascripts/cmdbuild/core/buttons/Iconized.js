@@ -1,61 +1,64 @@
 (function() {
 
-	// Class not well formatted but it's a good solution to avoid tons of little class files
+	/**
+	 * Fake class to be able to include this file with Extjs loader
+	 */
+	Ext.define('CMDBuild.core.buttons.Iconized', {});
 
 	Ext.define('CMDBuild.core.buttons.Add', {
-		extend: 'Ext.button.Button',
+		extend: 'CMDBuild.core.buttons.Base',
 
 		iconCls: 'add',
-		text: CMDBuild.Translation.add
+		textDefault: CMDBuild.Translation.add
 	});
 
 	Ext.define('CMDBuild.core.buttons.Clone', {
-		extend: 'Ext.button.Button',
+		extend: 'CMDBuild.core.buttons.Base',
 
 		iconCls: 'clone',
-		text: CMDBuild.Translation.common.buttons.clone
+		textDefault: CMDBuild.Translation.common.buttons.clone
 	});
 
 	Ext.define('CMDBuild.core.buttons.Delete', {
-		extend: 'Ext.button.Button',
+		extend: 'CMDBuild.core.buttons.Base',
 
 		iconCls: 'delete',
-		text: CMDBuild.Translation.deleteLabel
+		textDefault: CMDBuild.Translation.deleteLabel
 	});
 
 	Ext.define('CMDBuild.core.buttons.Import', {
-		extend: 'Ext.button.Button',
+		extend: 'CMDBuild.core.buttons.Base',
 
 		iconCls: 'import',
-		text: CMDBuild.Translation.common.buttons.modify
+		textDefault: CMDBuild.Translation.common.buttons.modify
 	});
 
 	Ext.define('CMDBuild.core.buttons.Modify', {
-		extend: 'Ext.button.Button',
+		extend: 'CMDBuild.core.buttons.Base',
 
 		iconCls: 'modify',
-		text: CMDBuild.Translation.common.buttons.modify
+		textDefault: CMDBuild.Translation.common.buttons.modify
 	});
 
 	Ext.define('CMDBuild.core.buttons.Reload', {
-		extend: 'Ext.button.Button',
+		extend: 'CMDBuild.core.buttons.Base',
 
 		iconCls: 'x-tbar-loading',
-		text: CMDBuild.Translation.common.buttons.reload
+		textDefault: CMDBuild.Translation.common.buttons.reload
 	});
 
 	Ext.define('CMDBuild.core.buttons.Start', {
-		extend: 'Ext.button.Button',
+		extend: 'CMDBuild.core.buttons.Base',
 
 		iconCls: 'start',
-		text: CMDBuild.Translation.common.buttons.modify
+		textDefault: CMDBuild.Translation.common.buttons.modify
 	});
 
 	Ext.define('CMDBuild.core.buttons.Stop', {
-		extend: 'Ext.button.Button',
+		extend: 'CMDBuild.core.buttons.Base',
 
 		iconCls: 'stop',
-		text: CMDBuild.Translation.common.buttons.modify
+		textDefault: CMDBuild.Translation.common.buttons.modify
 	});
 
 })();

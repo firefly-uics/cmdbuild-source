@@ -26,12 +26,13 @@
 
 		requires: [
 			'Ext.ux.Router',
+			'CMDBuild.routes.management.Cards',
+			'CMDBuild.routes.management.Classes',
+			'CMDBuild.core.buttons.Buttons',
 			'CMDBuild.core.proxy.CMProxyConstants',
 			'CMDBuild.core.proxy.Classes',
 			'CMDBuild.core.proxy.Configuration',
-			'CMDBuild.core.proxy.Report',
-			'CMDBuild.routes.management.Cards',
-			'CMDBuild.routes.management.Classes'
+			'CMDBuild.core.proxy.Report'
 		],
 
 		name: 'CMDBuild',
