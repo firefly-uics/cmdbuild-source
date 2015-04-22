@@ -1,7 +1,7 @@
 (function() {
 
 	Ext.define("CMDBuild.view.management.CMEditAttachmentWindow", {
-		extend: "Ext.window.Window",
+		extend: "CMDBuild.core.PopupWindow",
 
 		translation: CMDBuild.Translation.management.modcard.add_attachment_window,
 
@@ -40,7 +40,7 @@
 					var metadataByGroups = categoryModel.getMetadataGroups();
 					for (var i=0, group=null; i<metadataByGroups.length; ++i) {
 						var fields = getFieldsForMetadataGroup(metadataByGroups[i], this.metadataValues);
-						if (fields 
+						if (fields
 								&& Ext.isArray(fields)
 								&& fields.length > 0) {
 							this.metadataContainer.show();
@@ -182,10 +182,14 @@
 			}
 		});
 
-		me.form = new Ext.form.Panel({
+		me.form = Ext.create('Ext.form.Panel', {
 			encoding: 'multipart/form-data',
-			fileUpload:true,
-			frame: true,
+			fileUpload: true,
+			frame: false,
+			border: false,
+			padding: '5',
+			bodyCls: 'x-panel-body-default-framed',
+			autoScroll: true,
 			items: [
 				avaiableCategoryCombo,
 				{
@@ -211,18 +215,12 @@
 
 		me.title = me.translation.window_title;
 		me.items = [me.form];
-		me.autoScroll = true;
-		me.autoHeight = true;
-		me.modal = true;
-		me.frame = false;
-		me.border = false;
-		me.buttonAlign = 'center';
 
 		me.buttons = [
 			new CMDBuild.buttons.ConfirmButton({
 				scope: me,
 				handler: function() {
-					if (me.delegate && 
+					if (me.delegate &&
 							typeof me.delegate.onConfirmButtonClick == "function") {
 
 						me.delegate.onConfirmButtonClick(me);
@@ -247,7 +245,7 @@
 	 * we are editing an existing attachment.
 	 * Fill the category, filename and description.
 	 * Disable the category and filename, because
-	 * that fields can not be changed. 
+	 * that fields can not be changed.
 	 */
 	function fillFields(me) {
 		if (!me.attachmentRecord) {
