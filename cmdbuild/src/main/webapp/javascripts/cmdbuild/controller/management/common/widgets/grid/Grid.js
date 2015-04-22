@@ -318,6 +318,10 @@
 					// FIXME Always add Description, even if hidden, for the reference popup
 					fields.push('Description');
 				}
+
+				// Force editor fields store load (must be done because FieldManager field don't works properly)
+				if (!Ext.isEmpty(editor) && !Ext.isEmpty(editor.store))
+					editor.store.load();
 			}
 
 			return {
