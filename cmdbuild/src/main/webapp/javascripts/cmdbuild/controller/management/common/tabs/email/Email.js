@@ -804,11 +804,8 @@
 			 * @return {Number}
 			 */
 			selectedEntityIdGet: function() {
-				if (Ext.isEmpty(this.selectedEntity)) {
-					_warning('Selected entity object is empty', this);
-
+				if (Ext.Object.isEmpty(this.selectedEntity))
 					return null;
-				}
 
 				return this.selectedEntity.get(CMDBuild.core.proxy.CMProxyConstants.ID);
 			},
