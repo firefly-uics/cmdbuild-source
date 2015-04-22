@@ -1,7 +1,7 @@
 (function() {
 
 	Ext.define('CMDBuild.view.management.common.tabs.email.emailWindow.ViewWindow', {
-		extend: 'CMDBuild.PopupWindow',
+		extend: 'CMDBuild.core.PopupWindow',
 
 		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
 
@@ -25,7 +25,6 @@
 		 */
 		form: undefined,
 
-		buttonAlign: 'center',
 		title: CMDBuild.Translation.viewEmail,
 
 		layout: 'border',
