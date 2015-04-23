@@ -1,5 +1,7 @@
 package org.cmdbuild.service.rest.v2.cxf.serialization;
 
+import static java.util.Collections.emptyList;
+import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 import static org.cmdbuild.service.rest.v2.model.Models.newAttribute;
 import static org.cmdbuild.service.rest.v2.model.Models.newFilter;
 
@@ -7,17 +9,22 @@ import java.util.Collection;
 import java.util.Map;
 
 import org.apache.commons.lang3.Validate;
+import org.cmdbuild.common.utils.UnsupportedProxyFactory;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
+import org.cmdbuild.dao.entrytype.attributetype.CMAttributeTypeVisitor;
 import org.cmdbuild.dao.entrytype.attributetype.DecimalAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.ForeignKeyAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.ForwardingAttributeTypeVisitor;
 import org.cmdbuild.dao.entrytype.attributetype.LookupAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.NullAttributeTypeVisitor;
 import org.cmdbuild.dao.entrytype.attributetype.ReferenceAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.StringAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TextAttributeType;
 import org.cmdbuild.dao.view.CMDataView;
+import org.cmdbuild.data.store.ForwardingStore;
+import org.cmdbuild.data.store.Store;
 import org.cmdbuild.data.store.lookup.LookupType;
 import org.cmdbuild.data.store.metadata.Metadata;
 import org.cmdbuild.logic.data.lookup.LookupLogic;
@@ -30,6 +37,29 @@ import com.google.common.base.Function;
 import com.google.common.collect.Maps;
 
 public class ToAttributeDetail implements Function<CMAttribute, Attribute> {
+
+	private static MetadataStoreFactory NULL = new MetadataStoreFactory() {
+
+		private final Store<Metadata> UNSUPPORTED = UnsupportedProxyFactory.of(Store.class).create();
+		private final Collection<Metadata> NO_METADATA = emptyList();
+
+		@Override
+		public Store<Metadata> storeForAttribute(final CMAttribute attribute) {
+			return new ForwardingStore<Metadata>() {
+
+				@Override
+				protected Store<Metadata> delegate() {
+					return UNSUPPORTED;
+				}
+
+				@Override
+				public Collection<Metadata> readAll() {
+					return NO_METADATA;
+				};
+
+			};
+		}
+	};
 
 	public static class Builder implements org.apache.commons.lang3.builder.Builder<ToAttributeDetail> {
 
@@ -53,8 +83,9 @@ public class ToAttributeDetail implements Function<CMAttribute, Attribute> {
 			Validate.notNull(errorHandler, "missing '%s'", ErrorHandler.class);
 			Validate.notNull(attributeTypeResolver, "missing '%s'", AttributeTypeResolver.class);
 			Validate.notNull(dataView, "missing '%s'", CMDataView.class);
-			Validate.notNull(metadataStoreFactory, "missing '%s'", MetadataStoreFactory.class);
 			Validate.notNull(lookupLogic, "missing '%s'", LookupLogic.class);
+
+			metadataStoreFactory = defaultIfNull(metadataStoreFactory, NULL);
 		}
 
 		public Builder withAttributeTypeResolver(final AttributeTypeResolver attributeTypeResolver) {
@@ -117,10 +148,17 @@ public class ToAttributeDetail implements Function<CMAttribute, Attribute> {
 				.withIndex(Long.valueOf(input.getIndex())) //
 				.withDefaultValue(input.getDefaultValue()) //
 				.withGroup(input.getGroup());
-		new NullAttributeTypeVisitor() {
+		new ForwardingAttributeTypeVisitor() {
+
+			private final CMAttributeTypeVisitor DELEGATE = NullAttributeTypeVisitor.getInstance();
 
 			private CMAttribute attribute;
 			private AttributeBuilder builder;
+
+			@Override
+			protected CMAttributeTypeVisitor delegate() {
+				return DELEGATE;
+			}
 
 			public void fill(final CMAttribute attribute, final AttributeBuilder builder) {
 				this.attribute = attribute;

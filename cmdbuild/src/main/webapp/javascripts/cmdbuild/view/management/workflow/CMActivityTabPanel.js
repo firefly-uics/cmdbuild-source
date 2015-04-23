@@ -1,10 +1,10 @@
 (function() {
+
 	Ext.define("CMDBuild.view.management.workflow.CMActivityTabPanel", {
 		extend: "Ext.panel.Panel",
 
-		mixins: {
-			// cmTabbedWidgetDelegate: "CMDBuild.view.management.common.widgets.CMTabbedWidgetDelegate"
-		},
+		frame: false,
+		layout: 'border',
 
 		constructor: function(config) {
 
@@ -46,14 +46,7 @@
 				activeTab: 0,
 				frame: false,
 				border: false,
-				split: true,
-				items: [
-					this.activityTab,
-					this.openNotePanel,
-					this.relationsPanel,
-					this.cardHistoryPanel,
-					this.openAttachmentPanel
-				]
+				split: true
 			});
 
 			this.docPanel = new CMDBuild.view.management.workflow.CMActivityTabPanel.DocPanel();
@@ -65,9 +58,7 @@
 
 		initComponent : function() {
 			Ext.apply(this,{
-				frame: false,
-				layout: 'border',
-				items : [this.acutalPanel, this.docPanel]
+				items: [this.acutalPanel, this.docPanel]
 			});
 
 			this.callParent(arguments);
@@ -150,20 +141,26 @@
 			return this.openNotePanel;
 		},
 
+		getEmailPanel: function() {
+			return this.emailPanel;
+		},
+
 		// return false if is not able to manage the widget
 		showWidget: function (w) {
-
 			var managedClasses = {
 				"CMDBuild.view.management.common.widgets.CMOpenAttachment": function(me) {
 					if (me.openAttachmentPanel != null) {
 						me.openAttachmentPanel.cmActivate();
 					}
 				},
-
 				"CMDBuild.view.management.common.widgets.CMOpenNotes": function(me) {
 					if (me.openNotePanel != null) {
 						me.openNotePanel.cmActivate();
 					}
+				},
+				'CMDBuild.view.management.workflow.tabs.Email': function(me) {
+					if (!Ext.isEmpty(me.emailPanel))
+						me.emailPanel.cmActivate();
 				}
 			};
 
@@ -214,4 +211,5 @@
 	function isEnabled(disabledTabs, name) {
 		return !Ext.Array.contains(disabledTabs, name);
 	}
+
 })();

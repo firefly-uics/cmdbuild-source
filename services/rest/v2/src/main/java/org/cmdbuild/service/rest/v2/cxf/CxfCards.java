@@ -60,7 +60,7 @@ public class CxfCards implements Cards, LoggingSupport {
 		try {
 			final CMCard fetched = dataAccessLogic.fetchCMCard(targetClass.getName(), id);
 			final Card element = newCard() //
-					.withType(targetClass.getName()) //
+					.withType(fetched.getType().getName()) //
 					.withId(fetched.getId()) //
 					.withValues(adaptOutputValues(targetClass, fetched)) //
 					.build();
@@ -91,7 +91,7 @@ public class CxfCards implements Cards, LoggingSupport {
 					@Override
 					public Card apply(final org.cmdbuild.model.data.Card input) {
 						return newCard() //
-								.withType(targetClass.getName()) //
+								.withType(input.getType().getName()) //
 								.withId(input.getId()) //
 								.withValues(adaptOutputValues(targetClass, input)) //
 								.build();
@@ -191,4 +191,5 @@ public class CxfCards implements Cards, LoggingSupport {
 
 		}).entrySet();
 	}
+
 }

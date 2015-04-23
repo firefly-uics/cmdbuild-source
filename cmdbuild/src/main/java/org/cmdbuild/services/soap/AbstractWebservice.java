@@ -26,6 +26,8 @@ import org.cmdbuild.logic.data.access.UserDataAccessLogicBuilder;
 import org.cmdbuild.logic.data.lookup.LookupLogic;
 import org.cmdbuild.logic.dms.DmsLogic;
 import org.cmdbuild.logic.dms.PrivilegedDmsLogic;
+import org.cmdbuild.logic.report.ReportLogic;
+import org.cmdbuild.logic.translation.TranslationFacade;
 import org.cmdbuild.logic.workflow.UserWorkflowLogicBuilder;
 import org.cmdbuild.services.meta.MetadataStoreFactory;
 import org.cmdbuild.services.soap.operation.AuthenticationLogicHelper;
@@ -36,7 +38,6 @@ import org.cmdbuild.services.soap.operation.LookupLogicHelper;
 import org.cmdbuild.services.soap.operation.WorkflowLogicHelper;
 import org.cmdbuild.services.store.menu.MenuStore;
 import org.cmdbuild.services.store.report.ReportStore;
-import org.cmdbuild.servlets.json.serializers.TranslationFacade;
 import org.cmdbuild.workflow.event.WorkflowEventManager;
 import org.slf4j.Logger;
 import org.springframework.beans.BeansException;
@@ -112,10 +113,11 @@ abstract class AbstractWebservice implements ApplicationContextAware {
 				authenticationStore, //
 				configuration, //
 				metadataStoreFactory, //
-				cardAdapter());
+				cardAdapter(), //
+				applicationContext.getBean(ReportLogic.class) //
+		);
 		helper.setMenuStore(menuStore());
 		helper.setLookupStore(lookupStore());
-		helper.setReportStore(reportStore());
 		return helper;
 	}
 

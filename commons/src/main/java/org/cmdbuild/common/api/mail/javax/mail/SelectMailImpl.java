@@ -37,7 +37,7 @@ import org.cmdbuild.common.api.mail.GetMail;
 import org.cmdbuild.common.api.mail.GetMail.Attachment;
 import org.cmdbuild.common.api.mail.MailException;
 import org.cmdbuild.common.api.mail.SelectMail;
-import org.cmdbuild.common.api.mail.javax.mail.InputTemplate.Hooks;
+import org.cmdbuild.common.api.mail.javax.mail.InputTemplate.Hook;
 import org.slf4j.Logger;
 
 import com.google.common.base.Function;
@@ -211,10 +211,10 @@ class SelectMailImpl implements SelectMail {
 	public GetMail get() throws MailException {
 		logger.info("getting specified mail");
 		final InputTemplate inputTemplate = new InputTemplate(configuration);
-		inputTemplate.execute(new Hooks() {
+		inputTemplate.execute(new Hook() {
 
 			@Override
-			public void connected(final Store store) {
+			public void connected(final Store store) throws MailException {
 				try {
 					final Folder inbox = store.getFolder(mail.getFolder());
 					inbox.open(Folder.READ_ONLY);
@@ -291,10 +291,10 @@ class SelectMailImpl implements SelectMail {
 	public void move() throws MailException {
 		logger.info("moving mail with id '{}' to folder '{}'", mail.getId(), targetFolder);
 		final InputTemplate inputTemplate = new InputTemplate(configuration);
-		inputTemplate.execute(new Hooks() {
+		inputTemplate.execute(new Hook() {
 
 			@Override
-			public void connected(final Store store) {
+			public void connected(final Store store) throws MailException {
 				try {
 					final Folder inbox = store.getFolder(mail.getFolder());
 					inbox.open(Folder.READ_WRITE);

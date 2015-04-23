@@ -1,7 +1,5 @@
 package org.cmdbuild.dao.entrytype;
 
-import static com.google.common.collect.Iterables.filter;
-
 import com.google.common.base.Predicate;
 
 public interface Deactivable {
@@ -19,10 +17,6 @@ public interface Deactivable {
 
 		public static final IsActivePredicate activeOnes() {
 			return INSTANCE;
-		}
-
-		public static <T extends Deactivable> Iterable<T> filterActive(final Iterable<T> unfiltered) {
-			return filter(unfiltered, activeOnes());
 		}
 
 	}

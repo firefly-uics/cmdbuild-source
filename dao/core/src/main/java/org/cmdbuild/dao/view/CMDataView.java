@@ -58,16 +58,6 @@ public interface CMDataView {
 	 */
 	Iterable<? extends CMDomain> findDomains();
 
-	/**
-	 * Returns the active domains for a class
-	 * 
-	 * @param type
-	 *            the class i'm requesting the domains for
-	 * 
-	 * @return active domains for that class
-	 */
-	Iterable<? extends CMDomain> findDomainsFor(CMClass type);
-
 	CMDomain create(CMDomainDefinition definition);
 
 	CMDomain update(CMDomainDefinition definition);

@@ -19,7 +19,7 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 
-import org.cmdbuild.data.store.lookup.Lookup;
+import org.cmdbuild.data.store.lookup.LookupImpl;
 import org.cmdbuild.service.rest.v2.cxf.DefaultProcessStatusHelper;
 import org.cmdbuild.service.rest.v2.model.ProcessStatus;
 import org.cmdbuild.workflow.LookupHelper;
@@ -44,27 +44,27 @@ public class DefaultProcessStatusHelperTest {
 	public void notAllLookupAreTransformedAndReturned() throws Exception {
 		// given
 		long id = 0;
-		final Lookup running = Lookup.newInstance() //
+		final LookupImpl running = LookupImpl.newInstance() //
 				.withId(++id) //
 				.withCode(STATE_OPEN_RUNNING) //
 				.withDescription("this is the 'open' state") //
 				.build();
-		final Lookup suspended = Lookup.newInstance() //
+		final LookupImpl suspended = LookupImpl.newInstance() //
 				.withId(++id) //
 				.withCode(STATE_OPEN_NOT_RUNNING_SUSPENDED) //
 				.withDescription("this is the 'suspended' state") //
 				.build();
-		final Lookup completed = Lookup.newInstance() //
+		final LookupImpl completed = LookupImpl.newInstance() //
 				.withId(++id) //
 				.withCode(STATE_CLOSED_COMPLETED) //
 				.withDescription("this is the 'completed' state") //
 				.build();
-		final Lookup aborted = Lookup.newInstance() //
+		final LookupImpl aborted = LookupImpl.newInstance() //
 				.withId(++id) //
 				.withCode(STATE_CLOSED_ABORTED) //
 				.withDescription("this is the 'aborted' state") //
 				.build();
-		final Lookup terminated = Lookup.newInstance() //
+		final LookupImpl terminated = LookupImpl.newInstance() //
 				.withId(++id) //
 				.withCode(STATE_CLOSED_TERMINATED) //
 				.withDescription("this should not be converted") //
@@ -102,27 +102,27 @@ public class DefaultProcessStatusHelperTest {
 	public void missingDefaultValue() throws Exception {
 		// given
 		long id = 0;
-		final Lookup running = Lookup.newInstance() //
+		final LookupImpl running = LookupImpl.newInstance() //
 				.withId(++id) //
 				.withCode(STATE_OPEN_RUNNING) //
 				.withDescription("this is the 'open' state") //
 				.build();
-		final Lookup suspended = Lookup.newInstance() //
+		final LookupImpl suspended = LookupImpl.newInstance() //
 				.withId(++id) //
 				.withCode(STATE_OPEN_NOT_RUNNING_SUSPENDED) //
 				.withDescription("this is the 'suspended' state") //
 				.build();
-		final Lookup completed = Lookup.newInstance() //
+		final LookupImpl completed = LookupImpl.newInstance() //
 				.withId(++id) //
 				.withCode(STATE_CLOSED_COMPLETED) //
 				.withDescription("this is the 'completed' state") //
 				.build();
-		final Lookup aborted = Lookup.newInstance() //
+		final LookupImpl aborted = LookupImpl.newInstance() //
 				.withId(++id) //
 				.withCode(STATE_CLOSED_ABORTED) //
 				.withDescription("this is the 'aborted' state") //
 				.build();
-		final Lookup terminated = Lookup.newInstance() //
+		final LookupImpl terminated = LookupImpl.newInstance() //
 				.withId(++id) //
 				.withCode(STATE_CLOSED_TERMINATED) //
 				.withDescription("this should not be converted") //
@@ -145,28 +145,28 @@ public class DefaultProcessStatusHelperTest {
 	public void singleDefaultValue() throws Exception {
 		// given
 		long id = 0;
-		final Lookup running = Lookup.newInstance() //
+		final LookupImpl running = LookupImpl.newInstance() //
 				.withId(++id) //
 				.withCode(STATE_OPEN_RUNNING) //
 				.withDescription("this is the 'open' state") //
 				.withDefaultStatus(true) //
 				.build();
-		final Lookup suspended = Lookup.newInstance() //
+		final LookupImpl suspended = LookupImpl.newInstance() //
 				.withId(++id) //
 				.withCode(STATE_OPEN_NOT_RUNNING_SUSPENDED) //
 				.withDescription("this is the 'suspended' state") //
 				.build();
-		final Lookup completed = Lookup.newInstance() //
+		final LookupImpl completed = LookupImpl.newInstance() //
 				.withId(++id) //
 				.withCode(STATE_CLOSED_COMPLETED) //
 				.withDescription("this is the 'completed' state") //
 				.build();
-		final Lookup aborted = Lookup.newInstance() //
+		final LookupImpl aborted = LookupImpl.newInstance() //
 				.withId(++id) //
 				.withCode(STATE_CLOSED_ABORTED) //
 				.withDescription("this is the 'aborted' state") //
 				.build();
-		final Lookup terminated = Lookup.newInstance() //
+		final LookupImpl terminated = LookupImpl.newInstance() //
 				.withId(++id) //
 				.withCode(STATE_CLOSED_TERMINATED) //
 				.withDescription("this should not be converted") //
@@ -193,29 +193,29 @@ public class DefaultProcessStatusHelperTest {
 	public void multipleDefaultValuesFirstIsReturned() throws Exception {
 		// given
 		long id = 0;
-		final Lookup running = Lookup.newInstance() //
+		final LookupImpl running = LookupImpl.newInstance() //
 				.withId(++id) //
 				.withCode(STATE_OPEN_RUNNING) //
 				.withDescription("this is the 'open' state") //
 				.build();
-		final Lookup suspended = Lookup.newInstance() //
+		final LookupImpl suspended = LookupImpl.newInstance() //
 				.withId(++id) //
 				.withCode(STATE_OPEN_NOT_RUNNING_SUSPENDED) //
 				.withDescription("this is the 'suspended' state") //
 				.withDefaultStatus(true) //
 				.build();
-		final Lookup completed = Lookup.newInstance() //
+		final LookupImpl completed = LookupImpl.newInstance() //
 				.withId(++id) //
 				.withCode(STATE_CLOSED_COMPLETED) //
 				.withDescription("this is the 'completed' state") //
 				.build();
-		final Lookup aborted = Lookup.newInstance() //
+		final LookupImpl aborted = LookupImpl.newInstance() //
 				.withId(++id) //
 				.withCode(STATE_CLOSED_ABORTED) //
 				.withDescription("this is the 'aborted' state") //
 				.withDefaultStatus(true) //
 				.build();
-		final Lookup terminated = Lookup.newInstance() //
+		final LookupImpl terminated = LookupImpl.newInstance() //
 				.withId(++id) //
 				.withCode(STATE_CLOSED_TERMINATED) //
 				.withDescription("this should not be converted") //

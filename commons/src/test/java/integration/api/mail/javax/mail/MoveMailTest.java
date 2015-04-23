@@ -52,10 +52,11 @@ public class MoveMailTest extends AbstractMailTest {
 	@Test
 	public void moveMailInUnexistingFolder() throws Exception {
 		// given
-		send(newMail(FOO, PASSWORD) //
+		newMail(FOO, PASSWORD) //
 				.withTo(FOO_AT_EXAMPLE_DOT_COM) //
 				.withSubject(SUBJECT) //
-				.withContent(PLAIN_TEXT_CONTENT));
+				.withContent(PLAIN_TEXT_CONTENT) //
+				.send();
 		final FetchedMail fetchedMail = mailApi.selectFolder(INBOX) //
 				.fetch() //
 				.iterator().next();

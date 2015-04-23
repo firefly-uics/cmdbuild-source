@@ -27,6 +27,7 @@
 				scope: this,
 
 				handler: function() {
+					this.delegate.cmOn('onModifyButtonClick');
 					this.enableModify();
 					_CMCache.initModifyingTranslations();
 				}
@@ -38,14 +39,23 @@
 			});
 
 			this.saveButton = Ext.create('Ext.button.Button', {
-				text: CMDBuild.Translation.common.buttons.save
+				text: CMDBuild.Translation.common.buttons.save,
+				scope: this,
+
+				handler: function() {
+					this.delegate.cmOn('onSaveButtonClick');
+				}
 			});
 
 			this.abortButton = Ext.create('Ext.button.Button', {
-				text: CMDBuild.Translation.common.buttons.abort
+				text: CMDBuild.Translation.common.buttons.abort,
+				scope: this,
+
+				handler: function() {
+					this.delegate.cmOn('onAbortButtonClick');
+				}
 			});
 			// END: Buttons configuration
-
 
 			this.cmTBar = [this.modifyButton, this.deleteButton];
 			this.cmButtons = [this.saveButton, this.abortButton];
@@ -57,12 +67,12 @@
 				name: 'isMasterDetail'
 			});
 
-			this.masterDetailLabel = Ext.create('Ext.form.CMTranslatableText', {
+			this.masterDetailLabel = Ext.create('CMDBuild.view.common.field.translatable.Text', {
 				fieldLabel: this.translation.md_label,
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
 				translationsKeyType: 'Domain',
-				translationsKeyField: 'masterDetailLabel',
+				translationsKeyField: 'masterDetail',
 				name: 'md_label'
 			});
 
@@ -110,7 +120,7 @@
 				cmImmutable: true
 			});
 
-			this.domainDescription = Ext.create('Ext.form.CMTranslatableText', {
+			this.domainDescription = Ext.create('CMDBuild.view.common.field.translatable.Text', {
 				fieldLabel: this.translation.description,
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
@@ -121,7 +131,7 @@
 				vtype: 'cmdbcomment'
 			});
 
-			this.directDescription = Ext.create('Ext.form.CMTranslatableText', {
+			this.directDescription = Ext.create('CMDBuild.view.common.field.translatable.Text', {
 				fieldLabel: this.translation.description_direct,
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
@@ -132,7 +142,7 @@
 				vtype: 'cmdbcomment'
 			});
 
-			this.inverseDescription = Ext.create('Ext.form.CMTranslatableText', {
+			this.inverseDescription = Ext.create('CMDBuild.view.common.field.translatable.Text', {
 				fieldLabel: this.translation.description_inverse,
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				width: CMDBuild.ADM_BIG_FIELD_WIDTH,

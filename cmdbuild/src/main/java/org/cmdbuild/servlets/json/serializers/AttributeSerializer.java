@@ -2,18 +2,13 @@ package org.cmdbuild.servlets.json.serializers;
 
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
-import static org.apache.commons.lang3.StringUtils.isBlank;
-import static org.cmdbuild.logic.translation.DefaultTranslationLogic.DESCRIPTION_FOR_CLIENT;
-import static org.cmdbuild.logic.translation.DefaultTranslationLogic.GROUP_FOR_CLIENT;
-import static org.cmdbuild.logic.translation.TranslationObjects.nullTranslationObject;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ACTIVE;
-import static org.cmdbuild.servlets.json.CommunicationConstants.DEFAULT_DESCRIPTION;
 import static org.cmdbuild.servlets.json.CommunicationConstants.DEFAULT_VALUE;
 import static org.cmdbuild.servlets.json.CommunicationConstants.DESCRIPTION;
 import static org.cmdbuild.servlets.json.CommunicationConstants.EDITOR_TYPE;
 import static org.cmdbuild.servlets.json.CommunicationConstants.FIELD_MODE;
 import static org.cmdbuild.servlets.json.CommunicationConstants.GROUP;
-import static org.cmdbuild.servlets.json.CommunicationConstants.GROUP_DEFAULT;
+import static org.cmdbuild.servlets.json.CommunicationConstants.INDEX;
 import static org.cmdbuild.servlets.json.CommunicationConstants.INHERITED;
 import static org.cmdbuild.servlets.json.CommunicationConstants.IP_TYPE;
 import static org.cmdbuild.servlets.json.CommunicationConstants.LENGTH;
@@ -35,9 +30,6 @@ import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMAttribute.Mode;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
-import org.cmdbuild.dao.entrytype.CMEntryType;
-import org.cmdbuild.dao.entrytype.CMEntryTypeVisitor;
-import org.cmdbuild.dao.entrytype.CMFunctionCall;
 import org.cmdbuild.dao.entrytype.attributetype.BooleanAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeTypeVisitor;
@@ -48,9 +40,11 @@ import org.cmdbuild.dao.entrytype.attributetype.DecimalAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.DoubleAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.EntryTypeAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.ForeignKeyAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.ForwardingAttributeTypeVisitor;
 import org.cmdbuild.dao.entrytype.attributetype.IntegerAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.IpAddressAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.LookupAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.NullAttributeTypeVisitor;
 import org.cmdbuild.dao.entrytype.attributetype.ReferenceAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.StringArrayAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.StringAttributeType;
@@ -62,9 +56,6 @@ import org.cmdbuild.data.store.lookup.LookupType;
 import org.cmdbuild.data.store.metadata.Metadata;
 import org.cmdbuild.exception.NotFoundException.NotFoundExceptionType;
 import org.cmdbuild.logic.data.lookup.LookupLogic;
-import org.cmdbuild.logic.translation.AttributeClassTranslation;
-import org.cmdbuild.logic.translation.AttributeDomainTranslation;
-import org.cmdbuild.logic.translation.TranslationObject;
 import org.cmdbuild.model.data.Attribute.IpType;
 import org.cmdbuild.services.meta.MetadataStoreFactory;
 import org.json.JSONArray;
@@ -178,12 +169,6 @@ public class AttributeSerializer extends Serializer {
 		return jsonObject;
 	}
 
-	// FIXME: cambiare nome o fare un builder
-	// public static AttributeSerializer withView(final CMDataView view, final
-	// TranslationFacade translationFacade) {
-	// return new AttributeSerializer(view, translationFacade);
-	// }
-
 	public static Builder newInstance() {
 		return new Builder();
 	}
@@ -191,7 +176,6 @@ public class AttributeSerializer extends Serializer {
 	public static class Builder implements org.apache.commons.lang3.builder.Builder<AttributeSerializer> {
 
 		CMDataView dataView;
-		TranslationFacade translationFacade;
 
 		@Override
 		public AttributeSerializer build() {
@@ -203,18 +187,12 @@ public class AttributeSerializer extends Serializer {
 			return this;
 		}
 
-		public Builder withTranslationFacade(final TranslationFacade translationFacade) {
-			this.translationFacade = translationFacade;
-			return this;
-		}
 	}
 
 	private final CMDataView view;
-	private final TranslationFacade translationFacade;
 
 	private AttributeSerializer(final Builder builder) {
 		this.view = builder.dataView;
-		this.translationFacade = builder.translationFacade;
 	}
 
 	// FIXME: replace List<CMAttributeType<?>> with List<String> with attribute
@@ -342,7 +320,9 @@ public class AttributeSerializer extends Serializer {
 		return out;
 	}
 
-	private class SerializerAttributeVisitor implements CMAttributeTypeVisitor {
+	private class SerializerAttributeVisitor extends ForwardingAttributeTypeVisitor {
+
+		private final CMAttributeTypeVisitor DELEGATE = NullAttributeTypeVisitor.getInstance();
 
 		private final CMAttribute attribute;
 		private final Iterable<Metadata> metadata;
@@ -356,23 +336,8 @@ public class AttributeSerializer extends Serializer {
 		}
 
 		@Override
-		public void visit(final BooleanAttributeType attributeType) {
-		}
-
-		@Override
-		public void visit(final CharAttributeType attributeType) {
-		}
-
-		@Override
-		public void visit(final EntryTypeAttributeType attributeType) {
-		}
-
-		@Override
-		public void visit(final DateTimeAttributeType attributeType) {
-		}
-
-		@Override
-		public void visit(final DateAttributeType attributeType) {
+		protected CMAttributeTypeVisitor delegate() {
+			return DELEGATE;
 		}
 
 		@Override
@@ -382,16 +347,8 @@ public class AttributeSerializer extends Serializer {
 		}
 
 		@Override
-		public void visit(final DoubleAttributeType attributeType) {
-		}
-
-		@Override
 		public void visit(final ForeignKeyAttributeType attributeType) {
 			serialization.put("fkDestination", attributeType.getForeignKeyDestinationClassName());
-		}
-
-		@Override
-		public void visit(final IntegerAttributeType attributeType) {
 		}
 
 		@Override
@@ -447,10 +404,6 @@ public class AttributeSerializer extends Serializer {
 			serialization.put(EDITOR_TYPE, attribute.getEditorType());
 		}
 
-		@Override
-		public void visit(final TimeAttributeType attributeType) {
-		}
-
 		public Map<String, Object> serialize() {
 
 			/*
@@ -462,49 +415,7 @@ public class AttributeSerializer extends Serializer {
 			 * common
 			 */
 			serialization.put(NAME, attribute.getName());
-
-			final TranslationObject descriptionTranslationObject = new CMEntryTypeVisitor() {
-
-				TranslationObject translationObject = nullTranslationObject();
-
-				public TranslationObject buildTranslationObject() {
-					attribute.getOwner().accept(this);
-					return translationObject;
-				}
-
-				@Override
-				public void visit(final CMFunctionCall type) {
-					throw new UnsupportedOperationException();
-				}
-
-				@Override
-				public void visit(final CMDomain type) {
-					translationObject = AttributeDomainTranslation.newInstance() //
-							.forDomain(attribute.getOwner().getName()) //
-							.withField(DESCRIPTION_FOR_CLIENT) //
-							.withAttributeName(attribute.getName()) //
-							.build();
-				}
-
-				@Override
-				public void visit(final CMClass type) {
-					translationObject = AttributeClassTranslation.newInstance() //
-							.forClass(attribute.getOwner().getName()) //
-							.withField(DESCRIPTION_FOR_CLIENT) //
-							.withName(attribute.getName()) //
-							.build();
-				}
-			}.buildTranslationObject();
-
-			String translatedDescription = translationFacade.read(descriptionTranslationObject);
-			if (isBlank(translatedDescription) && attribute.getOwner() instanceof CMClass) {
-				translatedDescription = getTranslationFromParent(attribute, DESCRIPTION_FOR_CLIENT);
-			}
-			final String description = defaultIfBlank(attribute.getDescription(), attribute.getName());
-
-			serialization.put(DESCRIPTION, defaultIfBlank(translatedDescription, description));
-			serialization.put(DEFAULT_DESCRIPTION, description);
-
+			serialization.put(DESCRIPTION, defaultIfBlank(attribute.getDescription(), attribute.getName()));
 			serialization.put(TYPE,
 					new JsonDashboardDTO.JsonDataSourceParameter.TypeConverter(attribute.getType()).getTypeName());
 			serialization.put(SHOW_IN_GRID, attribute.isDisplayableInList());
@@ -513,26 +424,9 @@ public class AttributeSerializer extends Serializer {
 			serialization.put(INHERITED, attribute.isInherited());
 			serialization.put(ACTIVE, attribute.isActive());
 			serialization.put(FIELD_MODE, JsonModeMapper.textFrom(attribute.getMode()));
-			serialization.put("index", attribute.getIndex()); // TODO: constant
+			serialization.put(INDEX, attribute.getIndex());
 			serialization.put(DEFAULT_VALUE, attribute.getDefaultValue());
-
-			String groupNameTranslation = null;
-			if (!isBlank(attribute.getGroup()) && attribute.getOwner() instanceof CMClass) {
-				final TranslationObject groupNameTranslationObject = AttributeClassTranslation.newInstance() //
-						.forClass(attribute.getOwner().getName()) //
-						.withField("group") //
-						.withName(attribute.getName()) //
-						.build();
-
-				groupNameTranslation = translationFacade.read(groupNameTranslationObject);
-				if (isBlank(groupNameTranslation)) {
-					groupNameTranslation = searchGroupNameTranslationFromOtherAttributes(attribute);
-				}
-			}
-			final String defaultGroupName = defaultIfBlank(attribute.getGroup(), EMPTY);
-			final String translatedGroupName = defaultIfBlank(groupNameTranslation, defaultGroupName);
-			serialization.put(GROUP, translatedGroupName);
-			serialization.put(GROUP_DEFAULT, defaultGroupName);
+			serialization.put(GROUP, defaultIfBlank(attribute.getGroup(), EMPTY));
 
 			final Map<String, String> metadataMap = Maps.newHashMap();
 			for (final Metadata element : metadata) {
@@ -558,85 +452,6 @@ public class AttributeSerializer extends Serializer {
 			serialization.put("absoluteClassOrder", absoluteClassOrder); // TODO
 																			// constant
 			return serialization;
-		}
-
-		private String searchGroupNameTranslationFromOtherAttributes(final CMAttribute attribute) {
-			final String groupName = attribute.getGroup();
-			final CMClass owner = (CMClass) attribute.getOwner();
-
-			final String translatedGroupName = new CMEntryTypeVisitor() {
-
-				String translatedGroupName;
-				String groupName;
-
-				public String searchGroupNameTranslation(final CMClass owner, final String groupName) {
-					this.groupName = groupName;
-					owner.accept(this);
-					return translatedGroupName;
-				}
-
-				@Override
-				public void visit(final CMFunctionCall type) {
-					throw new UnsupportedOperationException();
-				}
-
-				@Override
-				public void visit(final CMDomain type) {
-					throw new UnsupportedOperationException();
-				}
-
-				@Override
-				public void visit(final CMClass type) {
-					final Iterable<? extends CMAttribute> allAttributes = owner.getAttributes();
-					for (final CMAttribute a : allAttributes) {
-						if (!groupName.equals(a.getGroup())) {
-							continue;
-						}
-						final TranslationObject groupNameTranslationObject = AttributeClassTranslation.newInstance() //
-								.forClass(owner.getName()) //
-								.withField(GROUP_FOR_CLIENT) //
-								.withName(a.getName()) //
-								.build();
-						final String groupNameTranslation = translationFacade.read(groupNameTranslationObject);
-						if (!isBlank(groupNameTranslation)) {
-							translatedGroupName = groupNameTranslation;
-							break;
-						}
-
-					}
-				}
-			}.searchGroupNameTranslation(owner, groupName);
-			return translatedGroupName;
-		}
-
-		private String getTranslationFromParent(final CMAttribute attribute, final String field) {
-			final CMEntryType attributeOwner = attribute.getOwner();
-			final String fieldToTranslate = field;
-			return searchTranslationAmongAllAncestors(attribute, (CMClass) attributeOwner, fieldToTranslate);
-		}
-
-		private String searchTranslationAmongAllAncestors(final CMAttribute attribute, final CMClass entryType,
-				final String fieldToTranslate) {
-			String inheritedTranslation = EMPTY;
-			if (isBlank(inheritedTranslation)) {
-				final CMClass parent = CMClass.class.cast(entryType).getParent();
-				if (parent != null) {
-					final CMAttribute inheritedAttribute = parent.getAttribute(attribute.getName());
-					if (inheritedAttribute != null) {
-						final AttributeClassTranslation translationObject = AttributeClassTranslation.newInstance() //
-								.forClass(parent.getName()) //
-								.withField(fieldToTranslate) //
-								.withName(attribute.getName()) //
-								.build();
-						inheritedTranslation = translationFacade.read(translationObject);
-						if (isBlank(inheritedTranslation)) {
-							inheritedTranslation = searchTranslationAmongAllAncestors(inheritedAttribute, parent,
-									fieldToTranslate);
-						}
-					}
-				}
-			}
-			return inheritedTranslation;
 		}
 
 		@Override

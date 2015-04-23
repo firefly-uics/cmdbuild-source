@@ -1,10 +1,5 @@
 package org.cmdbuild.services.email;
 
-import java.net.URL;
-import java.util.Map;
-
-import org.cmdbuild.data.store.email.Email;
-import org.cmdbuild.data.store.email.ExtendedEmailTemplate;
 import org.cmdbuild.logger.Log;
 import org.slf4j.Logger;
 
@@ -25,17 +20,6 @@ public interface EmailService {
 	 */
 	void send(Email email) throws EmailServiceException;
 
-	/**
-	 * Sends the specified {@link Email} with some attachments.
-	 * 
-	 * @param email
-	 * @param attachments
-	 * 
-	 * @throws EmailServiceException
-	 *             if there is any problem.
-	 */
-	void send(final Email email, final Map<URL, String> attachments) throws EmailServiceException;
-
 	void receive(EmailCallbackHandler callback) throws EmailServiceException;
 
 	/**
@@ -45,22 +29,5 @@ public interface EmailService {
 	 *             if there is any problem.
 	 */
 	Iterable<Email> receive() throws EmailServiceException;
-
-	/**
-	 * Gets all email templates associated with specified email.
-	 * 
-	 * @param email
-	 * 
-	 * @return all templates.
-	 */
-	Iterable<ExtendedEmailTemplate> getEmailTemplates(Email email);
-
-	Long save(Email email);
-
-	void delete(Email email);
-
-	Iterable<Email> getEmails(Long processId);
-
-	Iterable<Email> getOutgoingEmails(Long processId);
 
 }

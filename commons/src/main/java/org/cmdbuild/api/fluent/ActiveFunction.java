@@ -2,15 +2,15 @@ package org.cmdbuild.api.fluent;
 
 abstract class ActiveFunction extends Function {
 
-	private final FluentApi api;
+	private final FluentApiExecutor executor;
 
-	ActiveFunction(final FluentApi api, final String functionName) {
+	ActiveFunction(final FluentApiExecutor executor, final String functionName) {
 		super(functionName);
-		this.api = api;
+		this.executor = executor;
 	}
 
-	protected FluentApi getApi() {
-		return api;
+	protected FluentApiExecutor executor() {
+		return executor;
 	}
 
 }

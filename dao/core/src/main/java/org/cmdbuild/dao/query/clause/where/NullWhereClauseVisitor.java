@@ -2,6 +2,16 @@ package org.cmdbuild.dao.query.clause.where;
 
 public class NullWhereClauseVisitor implements WhereClauseVisitor {
 
+	private static final NullWhereClauseVisitor INSTANCE = new NullWhereClauseVisitor();
+
+	public static NullWhereClauseVisitor getInstance() {
+		return INSTANCE;
+	}
+
+	private NullWhereClauseVisitor() {
+		// use factory method
+	}
+
 	@Override
 	public void visit(final AndWhereClause whereClause) {
 		// nothing to do

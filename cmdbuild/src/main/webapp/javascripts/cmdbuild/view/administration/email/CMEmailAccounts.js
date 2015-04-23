@@ -7,12 +7,14 @@
 	Ext.define('CMDBuild.view.administration.email.CMEmailAccounts', {
 		extend: 'Ext.panel.Panel',
 
+		/**
+		 * @cfg {CMDBuild.controller.administration.email.CMEmailAccountsController}
+		 */
 		delegate: undefined,
 
-		border: true,
+		border: false,
 		frame: false,
 		layout: 'border',
-		title: tr.title,
 
 		initComponent: function() {
 			this.addButton = Ext.create('Ext.Button', {
@@ -25,12 +27,14 @@
 			});
 
 			this.grid = Ext.create('CMDBuild.view.administration.email.CMEmailAccountsGrid', {
+				delegate: this.delegate,
 				region: 'north',
 				split: true,
 				height: '30%'
 			});
 
 			this.form = Ext.create('CMDBuild.view.administration.email.CMEmailAccountsForm', {
+				delegate: this.delegate,
 				region: 'center'
 			});
 

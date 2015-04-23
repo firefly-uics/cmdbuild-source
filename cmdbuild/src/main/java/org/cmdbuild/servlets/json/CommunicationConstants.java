@@ -3,6 +3,11 @@ package org.cmdbuild.servlets.json;
 public class CommunicationConstants {
 
 	public static final String //
+			ID = "id", //
+			ID_CAPITAL = "Id";
+
+	public static final String //
+			ACCOUNT = "account", //
 			ACTIVE = "active", //
 			ACTIVE_CAPITAL = "Active", //
 			ADDRESS = "address", //
@@ -56,11 +61,11 @@ public class CommunicationConstants {
 			DATA_SOURCE_INSTANCE = "dataSourceInstance", //
 			DATA_SOURCE_TYPE = "dataSourceType", //
 			DATA_SOURCE_TYPE_SQL = "db", //
+			DATE = "date", //
 			DB_NAME = "db_name", //
 			DB_TYPE = "db_type", //
 			DEFAULT = "Default", //
 			DEFAULT_ACCOUNT = "defaultAccount", //
-			DEFAULT_CLASS_DESCRIPTION = "text_default", //
 			DEFAULT_DESCRIPTION = "description_default", //
 			DEFAULT_DESCRIPTION_CAPITAL = "Description_default", //
 			DEFAULT_DIRECT_DESCRIPTION = "descrdir_default", //
@@ -69,12 +74,16 @@ public class CommunicationConstants {
 			DEFAULT_MASTERDETAIL_LABEL = "md_label_default", //
 			DEFAULT_PARENT_DESCRIPTION = "ParentDescription_default", //
 			DEFAULT_VALUE = "defaultvalue", //
+			DELAY = "delay", //
 			DELETE = "delete", //
 			DESCRIPTION_CAPITAL = "Description", //
 			DESCRIPTION = "description", //
+			DESTINATION = "destination", //
 			DETAIL_CARD_ID = "detailCardId", //
 			DETAIL_CLASS_NAME = "detailClassName", //
 			DIRECT_DESCRIPTION = "descrdir", //
+			DISABLED1 = "disabled1", //
+			DISABLED2 = "disabled2", //
 			DISABLED_ATTRIBUTES = "disabledAttributes", //
 			DISABLE = "disable", //
 			DMS_ATTACHMENTS_LOOKUP = "alfrescoLookupType", //
@@ -86,9 +95,9 @@ public class CommunicationConstants {
 			DOMAIN_FIRST_CLASS_ID = "idClass1", //
 			DOMAIN_ID = "domainId", //
 			DOMAIN_IS_MASTER_DETAIL = "isMasterDetail", //
-			DOMAIN_LIMIT = "domainlimit", //
+			DOMAIN_LIMIT = DOMAIN + "limit", //
 			DOMAIN_MASTER_DETAIL_LABEL = "md_label", //
-			DOMAIN_NAME = "domainName", //
+			DOMAIN_NAME = DOMAIN + "Name", //
 			DOMAINS = "domains", //
 			DOMAIN_SECOND_CLASS_ID = "idClass2", //
 			DOMAIN_SOURCE = "src", //
@@ -122,14 +131,11 @@ public class CommunicationConstants {
 			FROM = "from", //
 			FUNCTION = "function", //
 			GROUP = "group", //
-			GROUP_DEFAULT = "group_default", //
 			GROUP_ID = "groupId", //
 			GROUP_NAME = "groupName", //
 			GROUPS = "groups", //
 			HOST = "host", //
 			ICONNAME = "iconName", //
-			ID_CAPITAL = "Id", //
-			ID = "id", //
 			IMAP_PORT = "imapPort", //
 			IMAP_SERVER = "imapServer", //
 			IMAP_SSL = "imapSsl", //
@@ -146,6 +152,7 @@ public class CommunicationConstants {
 			IS_KEY = "isKey", //
 			IS_PROCESS = "isprocess", //
 			JRXML = "jrxml", //
+			KEEP_SYNCHRONIZATION = "keepSynchronization", //
 			KEY = "key", //
 			LANGUAGE = "language", //
 			LANGUAGE_PROMPT = "language_prompt", //
@@ -169,17 +176,22 @@ public class CommunicationConstants {
 			MASTER = "master", //
 			MENU = "menu", //
 			META_DATA = "meta", //
+			MODE = "mode", //
 			MYSQL_LABEL = "MySQL", //
 			MYSQL = "mysql", //
 			NAME = "name", //
 			NAMES = "names", //
 			NEW_PASSWORD = "newpassword", //
 			NOTES = "Notes", //
+			NO_SUBJECT_PREFIX = "noSubjectPrefix", //
 			NOTIFICATION_ACTIVE = "notificationActive", //
 			NOTIFICATION_EMAIL_ACCOUNT = "notificationEmailAccount", //
 			NOTIFICATION_EMAIL_TEMPLATE = "notificationEmailTemplate", //
 			NOTIFICATION_EMAIL_TEMPLATE_ERROR = "notificationEmailTemplateError", //
+			NOTIFY_WITH = "notifyWith", //
+			NOT_NEGATIVES = "notNegatives", //
 			NOT_NULL = "isnotnull", //
+			NOT_POSITIVES = "notPositives", //
 			NUMBER = "Number", //
 			OLD_PASSWORD = "oldpassword", //
 			ORACLE_LABEL = "Oracle", //
@@ -213,7 +225,9 @@ public class CommunicationConstants {
 			PRIVILEGE_WRITE = "write_privilege", //
 			PROCESSED_FOLDER = "processedFolder", //
 			PROCESS_ID = "ProcessId", //
+			PROMPT_SYNCHRONIZATION = "promptSynchronization", //
 			QUERY = "query", //
+			REFERENCE = "reference", //
 			REJECTED_FOLDER = "rejectedFolder", //
 			REJECT_NOT_MATCHING = "rejectNotMatching", //
 			RELATION_ID = "relationId", //
@@ -230,19 +244,26 @@ public class CommunicationConstants {
 			SHARK_SCHEMA = "shark_schema", //
 			SHORT = "short", //
 			SHOW_IN_GRID = "isbasedsp", //
+			SKIP_DISABLED_CLASSES = "skipDisabledClasses", //
 			SMTP_PORT = "smtpPort", //
 			SMTP_SERVER = "smtpServer", //
 			SMTP_SSL = "smtpSsl", //
 			SORT = "sort", //
-			SOURCE_ATTRIBUTE = "sourceAttribute", //
-			SOURCE_CLASS_NAME = "sourceClassName", //
-			SOURCE_FUNCTION = "sourceFunction", //
-			SOURCE_NAME = "sourceName", //
+			SOURCE = "source", //
+			SOURCE_ATTRIBUTE = SOURCE + "Attribute", //
+			SOURCE_CLASS_NAME = SOURCE + "ClassName", //
+			SOURCE_FUNCTION = SOURCE + "Function", //
+			SOURCE_NAME = SOURCE + "Name", //
 			SQLSERVER_LABEL = "SQLServer", //
 			SQLSERVER = "sqlserver", //
 			STARTING_CLASS = "startingClass", //
 			START = "start", //
 			STATE = "state", //
+			STATUS = "status", //
+			STATUS_DRAFT = "draft", //
+			STATUS_OUTGOING = "outgoing", //
+			STATUS_RECEIVED = "received", //
+			STATUS_SENT = "sent", //
 			SUBJECT = "subject", //
 			SUCCESS = "success", //
 			SUPERCLASS = "superclass", //
@@ -256,8 +277,10 @@ public class CommunicationConstants {
 			TASK_SYNCHRONOUS_EVENT = "event_synchronous", //
 			TEMPLATE = "template", //
 			TEMPLATES = "templates", //
+			TEMPORARY = "temporary", //
+			TEMPORARY_ID = TEMPORARY + ID_CAPITAL, //
+			TIME = "time", //
 			TITLE = "title", //
-			TEMPORARY_ID = "temporaryId", //
 			TO = "to", //
 			TRANSLATIONS = "translations", //
 			TRANSLATION_UUID = "translationUuid", //

@@ -58,12 +58,13 @@ public class AddressesTest extends AbstractMailTest {
 	@Test
 	public void allAddresses() throws Exception {
 		// given
-		send(newMail(FOO, PASSWORD) //
+		newMail(FOO, PASSWORD) //
 				.withTo(collectionOf(FOO_AT_EXAMPLE_DOT_COM, ANOTHER_FOO_AT_EXAMPLE_DOT_COM)) //
 				.withCc(arrayOf(BAR_AT_EXAMPLE_DOT_COM, ANOTHER_BAR_AT_EXAMPLE_DOT_COM)) //
 				.withBcc(BAZ_AT_EXAMPLE_DOT_COM, ANOTHER_BAZ_AT_EXAMPLE_DOT_COM) //
 				.withSubject(SUBJECT) //
-				.withContent(PLAIN_TEXT_CONTENT));
+				.withContent(PLAIN_TEXT_CONTENT) //
+				.send();
 		final FetchedMail fetchedMail = mailApi.selectFolder(INBOX) //
 				.fetch() //
 				.iterator().next();
@@ -82,12 +83,13 @@ public class AddressesTest extends AbstractMailTest {
 	@Test
 	public void addressesStrippedFromContactDetails() throws Exception {
 		// given
-		send(newMail(FOO, PASSWORD) //
+		newMail(FOO, PASSWORD) //
 				.withFrom(address(BAZ, BAZ_AT_EXAMPLE_DOT_COM)) //
 				.withTo(address(FOO, FOO_AT_EXAMPLE_DOT_COM)) //
 				.withCc(address(BAR, BAR_AT_EXAMPLE_DOT_COM)) //
 				.withSubject(SUBJECT) //
-				.withContent(PLAIN_TEXT_CONTENT));
+				.withContent(PLAIN_TEXT_CONTENT) //
+				.send();
 		final FetchedMail fetchedMail = mailApi.selectFolder(INBOX) //
 				.fetch() //
 				.iterator().next();

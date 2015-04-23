@@ -7,7 +7,8 @@ public class NullTranslationObject implements TranslationObject {
 
 	private static final Map<String, String> NO_TRANSLATIONS = Collections.emptyMap();
 
-	public void accept(TranslationObjectVisitor visitor) {
+	@Override
+	public void accept(final TranslationObjectVisitor visitor) {
 		visitor.visit(this);
 	};
 

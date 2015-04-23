@@ -76,7 +76,7 @@
 					items: [
 						{
 							iconCls: 'modify',
-							tooltip: CMDBuild.Translation.row_edit,
+							tooltip: CMDBuild.Translation.editRow,
 							scope: this,
 
 							handler: function(grid, rowIndex, colIndex, node, e, record, rowNode) {

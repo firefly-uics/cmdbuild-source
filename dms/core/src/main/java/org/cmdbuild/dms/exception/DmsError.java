@@ -14,7 +14,7 @@ public final class DmsError extends Exception {
 		super(cause);
 	}
 
-	public static DmsError fileNotFound(final String fileName, final String className, final String cardId) {
+	public static DmsError fileNotFound(final String fileName, final String className, final Long cardId) {
 		return new DmsError(format("file '%s' not found for class '%s' with identifier '%s'", fileName, className,
 				cardId));
 	}

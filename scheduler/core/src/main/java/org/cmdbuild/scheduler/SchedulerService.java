@@ -6,6 +6,8 @@ public interface SchedulerService {
 
 	void remove(Job job);
 
+	boolean isStarted(Job job);
+
 	void start();
 
 	void stop();

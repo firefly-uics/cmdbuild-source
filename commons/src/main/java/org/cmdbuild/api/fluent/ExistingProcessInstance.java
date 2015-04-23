@@ -4,8 +4,8 @@ import org.cmdbuild.api.fluent.FluentApiExecutor.AdvanceProcess;
 
 public class ExistingProcessInstance extends ActiveCard {
 
-	ExistingProcessInstance(final FluentApi api, final String className, final Integer processId) {
-		super(api, className, processId);
+	ExistingProcessInstance(final FluentApiExecutor executor, final String className, final Integer processId) {
+		super(executor, className, processId);
 	}
 
 	public ExistingProcessInstance withProcessInstanceId(final String value) {
@@ -28,19 +28,23 @@ public class ExistingProcessInstance extends ActiveCard {
 	}
 
 	public void update() {
-		api().getExecutor().updateProcessInstance(this, AdvanceProcess.NO);
+		executor().updateProcessInstance(this, AdvanceProcess.NO);
 	}
 
 	public void advance() {
-		api().getExecutor().updateProcessInstance(this, AdvanceProcess.YES);
+		executor().updateProcessInstance(this, AdvanceProcess.YES);
 	}
 
 	public void suspend() {
-		api().getExecutor().suspendProcessInstance(this);
+		executor().suspendProcessInstance(this);
 	}
 
 	public void resume() {
-		api().getExecutor().resumeProcessInstance(this);
+		executor().resumeProcessInstance(this);
+	}
+
+	public Attachments attachments() {
+		return new AttachmentsImpl(executor(), this);
 	}
 
 }

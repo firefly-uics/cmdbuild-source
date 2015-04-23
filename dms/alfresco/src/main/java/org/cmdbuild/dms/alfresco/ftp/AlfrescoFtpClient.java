@@ -198,7 +198,9 @@ class AlfrescoFtpClient implements FtpClient, LoggingSupport {
 		 */
 		try {
 			ftpClient.setFileType(FTP.BINARY_FILE_TYPE);
-			final DataSource dataSource = TempDataSource.create(filename);
+			final DataSource dataSource = TempDataSource.newInstance() //
+					.withName(filename) //
+					.build();
 			final OutputStream os = dataSource.getOutputStream();
 			if (ftpClient.retrieveFile(filename, os)) {
 				os.flush();

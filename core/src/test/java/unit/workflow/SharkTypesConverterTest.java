@@ -69,7 +69,7 @@ public class SharkTypesConverterTest {
 				.thenReturn(42L);
 
 		when(lookupStore.read(any(Storable.class))) //
-				.thenReturn(org.cmdbuild.data.store.lookup.Lookup.newInstance() //
+				.thenReturn(org.cmdbuild.data.store.lookup.LookupImpl.newInstance() //
 						.withId(42L) //
 						.withType(LookupType.newInstance() //
 								.withName("t")) //

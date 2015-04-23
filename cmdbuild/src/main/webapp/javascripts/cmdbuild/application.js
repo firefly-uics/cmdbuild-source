@@ -34,12 +34,12 @@
 			Ext.Error.ignore = true;
 		}
 
-		// Convenience methods to debug
+		/**
+		 * Convenience methods to debug
+		 */
 		_debug = function() {
-			var prefix = 'DEBUG';
-
-			if (typeof arguments[0] == 'string')
-				arguments[0] = prefix + ': ' + arguments[0];
+			if (!Ext.isEmpty(arguments[0]) && typeof arguments[0] == 'string')
+				arguments[0] = 'DEBUG: ' + arguments[0];
 
 			CMDBuild.log.debug.apply(CMDBuild.log, arguments);
 		};
@@ -50,30 +50,47 @@
 			try {
 				name  = arguments.callee.caller.name;
 			} catch (e) {
-				_debug('DEPRECATED', _trace());
+				CMDBuild.log.debug('DEPRECATED: ' + _trace());
 			}
 
-			_debug('DEPRECATED: ' + name, _trace());
+			CMDBuild.log.debug('DEPRECATED: ' + name, _trace());
 		};
 
-		_msg = function() {
-			CMDBuild.log.debug.apply(CMDBuild.log, arguments);
+		/**
+		 * @param {String} message
+		 * @param {Mixed} classWithError
+		 */
+		_error = function(message, classWithError) {
+			classWithError = typeof classWithError == 'string' ? classWithError : Ext.getClassName(classWithError);
+
+			if (!Ext.isEmpty(message))
+				CMDBuild.log.error('ERROR (' + classWithError + '): ' + message);
+		};
+
+		/**
+		 * @param {String} message
+		 */
+		_msg = function(message) {
+			if (!Ext.isEmpty(message))
+				CMDBuild.log.info('INFO: ' + message);
 		};
 
 		_trace = function() {
-			_debug('TRACE', arguments);
+			CMDBuild.log.trace('TRACE: ', arguments);
 
 			if (console && typeof console.trace == 'function')
 				console.trace();
 		};
 
-		_warning = function() {
-			var prefix = 'WARNING';
+		/**
+		 * @param {String} message
+		 * @param {Mixed} classWithError
+		 */
+		_warning = function(message, classWithError) {
+			classWithError = typeof classWithError == 'string' ? classWithError : Ext.getClassName(classWithError);
 
-			if (typeof arguments[0] == 'string')
-				arguments[0] = prefix + ': ' + arguments[0];
-
-			CMDBuild.log.warn.apply(CMDBuild.log, arguments);
+			if (!Ext.isEmpty(message))
+				CMDBuild.log.warn('WARNING (' + classWithError + '): ' + message);
 		};
 	// END: Logger configuration
 

@@ -1,6 +1,7 @@
 package org.cmdbuild.data.converter;
 
 import static java.lang.String.format;
+import static org.codehaus.jackson.map.DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES;
 
 import java.util.Map;
 
@@ -51,7 +52,9 @@ public class WidgetConverter extends BaseStorableConverter<Widget> {
 	}
 
 	private ObjectMapper mapper() {
-		return new ObjectMapper();
+		final ObjectMapper objectMapper = new ObjectMapper();
+		objectMapper.disable(FAIL_ON_UNKNOWN_PROPERTIES);
+		return objectMapper;
 	}
 
 	@Override

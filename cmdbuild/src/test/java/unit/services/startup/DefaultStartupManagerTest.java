@@ -1,5 +1,7 @@
 package unit.services.startup;
 
+import static com.google.common.base.Predicates.alwaysFalse;
+import static com.google.common.base.Predicates.alwaysTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -8,12 +10,16 @@ import static org.mockito.Mockito.when;
 
 import org.cmdbuild.services.startup.DefaultStartupManager;
 import org.cmdbuild.services.startup.StartupManager;
-import org.cmdbuild.services.startup.StartupManager.Condition;
 import org.cmdbuild.services.startup.StartupManager.Startable;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.google.common.base.Predicate;
+
 public class DefaultStartupManagerTest {
+
+	private static final Predicate<Void> ALWAYS = alwaysTrue();
+	private static final Predicate<Void> NEVER = alwaysFalse();
 
 	private StartupManager startupManager;
 
@@ -27,7 +33,7 @@ public class DefaultStartupManagerTest {
 		// given
 		final Startable startable = mock(Startable.class);
 		startupManager = new DefaultStartupManager();
-		startupManager.add(startable, condition(false));
+		startupManager.add(startable, NEVER);
 
 		// when
 		startupManager.start();
@@ -40,7 +46,7 @@ public class DefaultStartupManagerTest {
 	public void serviceStartedIfConditionIsSatisfied() throws Exception {
 		final Startable startable = mock(Startable.class);
 		startupManager = new DefaultStartupManager();
-		startupManager.add(startable, condition(true));
+		startupManager.add(startable, ALWAYS);
 
 		// when
 		startupManager.start();
@@ -75,7 +81,7 @@ public class DefaultStartupManagerTest {
 	public void serviceNoMoreStartedAfterTheFirstStart() throws Exception {
 		final Startable startable = mock(Startable.class);
 		startupManager = new DefaultStartupManager();
-		startupManager.add(startable, condition(true));
+		startupManager.add(startable, ALWAYS);
 
 		// when
 		startupManager.start();
@@ -96,7 +102,7 @@ public class DefaultStartupManagerTest {
 		final Startable firstStartable = mock(Startable.class);
 		final Startable secondStartable = mock(Startable.class);
 		startupManager = new DefaultStartupManager();
-		startupManager.add(firstStartable, condition(true));
+		startupManager.add(firstStartable, ALWAYS);
 		startupManager.add(secondStartable, condition(false, true));
 
 		// when
@@ -118,9 +124,9 @@ public class DefaultStartupManagerTest {
 	 * Utilities
 	 */
 
-	private Condition condition(final Boolean value, final Boolean... values) {
-		final Condition condition = mock(Condition.class);
-		when(condition.satisfied()) //
+	private Predicate<Void> condition(final Boolean value, final Boolean... values) {
+		final Predicate<Void> condition = mock(Predicate.class);
+		when(condition.apply(null)) //
 				.thenReturn(value, values);
 		return condition;
 	}

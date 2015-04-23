@@ -31,7 +31,8 @@ import org.apache.ws.commons.schema.XmlSchemaType;
 import org.cmdbuild.config.CmdbfConfiguration;
 import org.cmdbuild.dao.entry.LookupValue;
 import org.cmdbuild.data.store.lookup.Lookup;
-import org.cmdbuild.data.store.lookup.Lookup.LookupBuilder;
+import org.cmdbuild.data.store.lookup.LookupImpl;
+import org.cmdbuild.data.store.lookup.LookupImpl.LookupBuilder;
 import org.cmdbuild.data.store.lookup.LookupType;
 import org.cmdbuild.data.store.lookup.LookupType.LookupTypeBuilder;
 import org.cmdbuild.exception.NotFoundException;
@@ -172,9 +173,8 @@ public class LookupNamespace extends AbstractNamespace {
 				if (lookupId <= 0 && lookupTypeName != null && !lookupTypeName.isEmpty()) {
 					final LookupType lookupType = getType(new QName(getNamespaceURI(), lookupTypeName));
 					if (lookupType != null) {
-						for (final Lookup lookup : lookupLogic.getAllLookup(lookupType, true,
-								UNUSED_LOOKUP_QUERY)) {
-							if (lookup.description != null && ObjectUtils.equals(lookup.description, lookupValue)) {
+						for (final Lookup lookup : lookupLogic.getAllLookup(lookupType, true, UNUSED_LOOKUP_QUERY)) {
+							if (lookup.description() != null && ObjectUtils.equals(lookup.description(), lookupValue)) {
 								lookupId = lookup.getId();
 							}
 						}
@@ -200,18 +200,18 @@ public class LookupNamespace extends AbstractNamespace {
 		imports.add(baseLookupQName.getNamespaceURI());
 		restriction.setBaseTypeName(baseLookupQName);
 		for (final Lookup lookup : lookupLogic.getAllLookup(lookupType, true, UNUSED_LOOKUP_QUERY)) {
-			if (lookup.description != null && lookup.description.length() > 0) {
+			if (lookup.description() != null && lookup.description().length() > 0) {
 				final XmlSchemaFacet facet = new XmlSchemaEnumerationFacet();
-				facet.setValue(lookup.description);
+				facet.setValue(lookup.description());
 				final Map<String, String> lookupProperties = new HashMap<String, String>();
-				if (lookup.parent != null) {
-					lookupProperties.put(LOOKUP_PARENTNAME, lookup.parent.description);
-					lookupProperties.put(LOOKUP_PARENTID, Long.toString(lookup.parent.getId()));
+				if (lookup.parent() != null) {
+					lookupProperties.put(LOOKUP_PARENTNAME, lookup.parent().description());
+					lookupProperties.put(LOOKUP_PARENTID, Long.toString(lookup.parent().getId()));
 				}
 				lookupProperties.put(SystemNamespace.LOOKUP_ID, Long.toString(lookup.getId()));
-				lookupProperties.put(LOOKUP_CODE, lookup.code);
-				lookupProperties.put(LOOKUP_NOTES, lookup.notes);
-				lookupProperties.put(LOOKUP_DEFAULT, Boolean.toString(lookup.isDefault));
+				lookupProperties.put(LOOKUP_CODE, lookup.code());
+				lookupProperties.put(LOOKUP_NOTES, lookup.notes());
+				lookupProperties.put(LOOKUP_DEFAULT, Boolean.toString(lookup.isDefault()));
 				setAnnotations(facet, lookupProperties, document);
 				restriction.getFacets().add(facet);
 			}
@@ -273,7 +273,7 @@ public class LookupNamespace extends AbstractNamespace {
 											idMap);
 									final String lookupId = lookupProperties.get(SystemNamespace.LOOKUP_ID);
 									final Lookup oldLookup = getLookup(lookupType, lookupId, value, lookupParent, idMap);
-									final LookupBuilder lookupBuilder = Lookup.newInstance().withType(lookupType);
+									final LookupBuilder lookupBuilder = LookupImpl.newInstance().withType(lookupType);
 									if (oldLookup != null) {
 										lookupBuilder.withId(oldLookup.getId());
 									}
@@ -301,13 +301,12 @@ public class LookupNamespace extends AbstractNamespace {
 	}
 
 	private LookupType getLookupType(final String name) {
-		return Iterables.find(lookupLogic.getAllTypes(UNUSED_LOOKUP_TYPE_QUERY),
-				new Predicate<LookupType>() {
-					@Override
-					public boolean apply(final LookupType input) {
-						return input.name.equals(name);
-					}
-				}, null);
+		return Iterables.find(lookupLogic.getAllTypes(UNUSED_LOOKUP_TYPE_QUERY), new Predicate<LookupType>() {
+			@Override
+			public boolean apply(final LookupType input) {
+				return input.name.equals(name);
+			}
+		}, null);
 	}
 
 	private Lookup getLookup(final LookupType type, final String id, final String name, final Lookup parent,
@@ -328,8 +327,8 @@ public class LookupNamespace extends AbstractNamespace {
 					new Predicate<Lookup>() {
 						@Override
 						public boolean apply(final Lookup input) {
-							return input.description != null && input.description.equals(name)
-									&& (parent == null || input.parent.equals(parent));
+							return input.description() != null && input.description().equals(name)
+									&& (parent == null || input.parent().equals(parent));
 						}
 					}, null);
 		}

@@ -15,14 +15,6 @@
 			this._addTargetToLinks();
 		},
 
-		setRawValue: function(v) {
-			if (typeof v == "string") {
-				v = v.replace(/(\r\n|\n|\r)/gm,"<br />");
-			}
-
-			this.callParent([v]);
-		},
-
 		_addTargetToLinks: function() {
 			var ct = this.getContentTarget();
 			if (ct) {

@@ -32,6 +32,8 @@
 				this.view.configureGrid(this.gridConfigurator);
 			}
 
+			this.fieldManager.classes.getStore().cmFill(); // Fixes a FireFox bug where store wasn't been filled
+
 			// TODO say to the store the group id to load for
 			this.gridConfigurator.getStore().load({
 				scope: this,

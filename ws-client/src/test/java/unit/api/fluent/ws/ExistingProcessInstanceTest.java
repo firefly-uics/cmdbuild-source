@@ -78,25 +78,25 @@ public class ExistingProcessInstanceTest extends AbstractWsFluentApiTest {
 		verify(proxy()).updateWorkflow(any(Card.class), eq(true), any(List.class));
 		verifyNoMoreInteractions(proxy());
 	}
-	
+
 	@Test
 	public void suspendHandledCorrectly() throws Exception {
 		// when
 		existingProcessInstance.suspend();
-		
+
 		// then
 		verify(proxy()).suspendWorkflow(any(Card.class));
 		verifyNoMoreInteractions(proxy());
 	}
-	
+
 	@Test
 	public void resumeHandledCorrectly() throws Exception {
 		// when
 		existingProcessInstance.resume();
-		
+
 		// then
 		verify(proxy()).resumeWorkflow(any(Card.class));
 		verifyNoMoreInteractions(proxy());
 	}
-	
+
 }

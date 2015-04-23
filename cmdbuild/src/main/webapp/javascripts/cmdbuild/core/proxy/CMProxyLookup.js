@@ -4,7 +4,6 @@
 		Id: 'Id',
 		Code: 'Code',
 		Description: 'Description',
-		Description_default: 'Description_default',
 		ParentId: 'ParentId',
 		Index: 'Number',
 		Type: 'Type',
@@ -37,7 +36,8 @@
 					extraParams: {
 						type: type,
 						active: true,
-						'short': true
+						'short': true,
+						localized: true
 					},
 					actionMethods: 'POST' // Lookup types can have UTF-8 names  not handled correctly
 				},

@@ -33,6 +33,7 @@ import org.cmdbuild.dao.entrytype.attributetype.ReferenceAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.StringAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TextAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TimeAttributeType;
+import static org.cmdbuild.model.data.Attribute.AttributeTypeBuilder.*;
 import org.cmdbuild.model.data.ClassOrder;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -314,7 +315,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 	public void referenceAttributeCreatedAndRead() throws Exception {
 		// given
 		final CMClass anotherClass = dataDefinitionLogic().createOrUpdate(a(newClass(ANOTHER_CLASS_NAME)));
-		final CMDomain domain = dataDefinitionLogic().createOrUpdate(a(newDomain("domain") //
+		final CMDomain domain = dataDefinitionLogic().create(a(newDomain("domain") //
 				.withIdClass1(testClass.getId()) //
 				.withIdClass2(anotherClass.getId()) //
 				.withCardinality(CARDINALITY_N1.value()) //
@@ -341,7 +342,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 	@Test(expected = IllegalArgumentException.class)
 	public void cannotCreateReferenceForDomainWithCardinality_1_1() throws Exception {
 		final CMClass anotherClass = dataDefinitionLogic().createOrUpdate(a(newClass(ANOTHER_CLASS_NAME)));
-		final CMDomain domain = dataDefinitionLogic().createOrUpdate(a(newDomain("domain") //
+		final CMDomain domain = dataDefinitionLogic().create(a(newDomain("domain") //
 				.withIdClass1(testClass.getId()) //
 				.withIdClass2(anotherClass.getId()) //
 				.withCardinality(CARDINALITY_11.value()) //
@@ -356,7 +357,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 	@Test(expected = IllegalArgumentException.class)
 	public void cannotCreateReferenceForDomainWithCardinality_N_N() throws Exception {
 		final CMClass anotherClass = dataDefinitionLogic().createOrUpdate(a(newClass(ANOTHER_CLASS_NAME)));
-		final CMDomain domain = dataDefinitionLogic().createOrUpdate(a(newDomain("domain") //
+		final CMDomain domain = dataDefinitionLogic().create(a(newDomain("domain") //
 				.withIdClass1(testClass.getId()) //
 				.withIdClass2(anotherClass.getId()) //
 				.withCardinality(CARDINALITY_NN.value()) //
@@ -572,6 +573,7 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 		// when
 		dataDefinitionLogic().createOrUpdate( //
 				a(newAttribute(ATTRIBUTE_NAME) //
+						.withType(TEXT) //
 						.withOwnerName(testClass.getIdentifier().getLocalName()) //
 						.withDescription(DESCRIPTION) //
 						.thatIsActive(false) //
@@ -587,10 +589,8 @@ public class AttributeDefinitionTest extends DataDefinitionLogicTest {
 		assertThat(updatedAttribute.isDisplayableInList(), equalTo(true));
 		assertThat(updatedAttribute.isMandatory(), equalTo(true));
 		assertThat(updatedAttribute.isUnique(), equalTo(true));
-		assertThat(updatedAttribute.getIndex(), equalTo(DEFAULT_ATTRIBUTE_INDEX)); // index
-																					// is
-																					// not
-		// changed
+		// index is not changed
+		assertThat(updatedAttribute.getIndex(), equalTo(DEFAULT_ATTRIBUTE_INDEX));
 	}
 
 	@Test

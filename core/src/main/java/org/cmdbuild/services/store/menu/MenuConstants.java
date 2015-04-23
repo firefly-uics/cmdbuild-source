@@ -8,6 +8,7 @@ public class MenuConstants {
 	public static final String ELEMENT_OBJECT_ID_ATTRIBUTE = "IdElementObj";
 	public static final String ELEMENT_CLASS_ATTRIBUTE = "IdElementClass";
 	public static final String PARENT_ID_ATTRIBUTE = "IdParent";
-
+	public static final String DEFAULT_MENU_GROUP_NAME = "*";
 	public static final String MENU_CLASS_NAME = "Menu";
+
 }

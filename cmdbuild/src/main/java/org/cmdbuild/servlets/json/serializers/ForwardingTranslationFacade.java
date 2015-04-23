@@ -1,5 +1,6 @@
 package org.cmdbuild.servlets.json.serializers;
 
+import org.cmdbuild.logic.translation.TranslationFacade;
 import org.cmdbuild.logic.translation.TranslationObject;
 
 import com.google.common.collect.ForwardingObject;

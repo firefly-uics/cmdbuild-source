@@ -1,12 +1,12 @@
 package unit.utils;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 
 import javax.activation.DataSource;
-
-import junit.framework.Assert;
 
 import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -25,7 +25,9 @@ public class TempDataSourceTest {
 	public TempDataSourceTest(final Context context) throws IOException {
 		Validate.notNull(context);
 		this.context = context;
-		this.dataSource = TempDataSource.create(context.getName());
+		this.dataSource = TempDataSource.newInstance() //
+				.withName(context.getName()) //
+				.build();
 	}
 
 	@Parameters
@@ -101,12 +103,12 @@ public class TempDataSourceTest {
 
 	@Test
 	public void testGetName() {
-		Assert.assertEquals(context.getName(), dataSource.getName());
+		assertEquals(context.getName(), dataSource.getName());
 	}
 
 	@Test
 	public void testGetContentType() {
-		Assert.assertEquals(context.getContentType(), dataSource.getContentType());
+		assertEquals(context.getContentType(), dataSource.getContentType());
 	}
 
 	private static class Context {

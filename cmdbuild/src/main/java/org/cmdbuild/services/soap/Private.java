@@ -216,4 +216,20 @@ public interface Private {
 
 	public void resumeWorkflow(@WebParam(name = "card") Card card);
 
+	public void copyAttachment( //
+			@WebParam(name = "sourceClassName") String sourceClassName, //
+			@WebParam(name = "sourceId") int sourceId, //
+			@WebParam(name = "filename") String filename, //
+			@WebParam(name = "destinationClassName") String destinationClassName, //
+			@WebParam(name = "destinationId") int destinationId //
+	);
+	
+	public void moveAttachment( //
+			@WebParam(name = "sourceClassName") String sourceClassName, //
+			@WebParam(name = "sourceId") int sourceId, //
+			@WebParam(name = "filename") String filename, //
+			@WebParam(name = "destinationClassName") String destinationClassName, //
+			@WebParam(name = "destinationId") int destinationId //
+	);
+
 }

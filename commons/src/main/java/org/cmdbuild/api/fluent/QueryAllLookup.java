@@ -2,20 +2,20 @@ package org.cmdbuild.api.fluent;
 
 public class QueryAllLookup {
 
-	private final FluentApi api;
+	private final FluentApiExecutor executor;
 	private final String type;
 
-	QueryAllLookup(final FluentApi api, final String type) {
-		this.api = api;
+	QueryAllLookup(final FluentApiExecutor executor, final String type) {
+		this.executor = executor;
 		this.type = type;
 	}
 
 	public Iterable<Lookup> fetch() {
-		return api.getExecutor().fetch(this);
+		return executor.fetch(this);
 	}
 
 	public QuerySingleLookup elementWithId(final Integer id) {
-		return new QuerySingleLookup(api, id);
+		return new QuerySingleLookup(executor, id);
 	}
 
 	public String getType() {

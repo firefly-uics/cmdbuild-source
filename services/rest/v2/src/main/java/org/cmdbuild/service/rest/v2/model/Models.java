@@ -718,6 +718,239 @@ public class Models {
 
 	}
 
+	public static class EmailBuilder extends ModelBuilder<Email> {
+
+		private Long id;
+		private String from;
+		private String to;
+		private String cc;
+		private String bcc;
+		private String subject;
+		private String body;
+		private String notifyWith;
+		private String date;
+		private String status;
+		private boolean noSubjectPrefix;
+		private String account;
+		private String template;
+		private boolean keepSynchronization;
+		private boolean promptSynchronization;
+		private long delay;
+
+		private EmailBuilder() {
+			// use factory method
+		}
+
+		@Override
+		protected Email doBuild() {
+			final Email output = new Email();
+			output.setId(id);
+			output.setFrom(from);
+			output.setTo(to);
+			output.setCc(cc);
+			output.setBcc(bcc);
+			output.setSubject(subject);
+			output.setBody(body);
+			output.setDate(date);
+			output.setStatus(status);
+			output.setNotifyWith(notifyWith);
+			output.setNoSubjectPrefix(noSubjectPrefix);
+			output.setAccount(account);
+			output.setTemplate(template);
+			output.setKeepSynchronization(keepSynchronization);
+			output.setPromptSynchronization(promptSynchronization);
+			output.setDelay(delay);
+			return output;
+		}
+
+		public EmailBuilder withId(final Long id) {
+			this.id = id;
+			return this;
+		}
+
+		public EmailBuilder withFrom(final String from) {
+			this.from = from;
+			return this;
+		}
+
+		public EmailBuilder withTo(final String to) {
+			this.to = to;
+			return this;
+		}
+
+		public EmailBuilder withCc(final String cc) {
+			this.cc = cc;
+			return this;
+		}
+
+		public EmailBuilder withBcc(final String bcc) {
+			this.bcc = bcc;
+			return this;
+		}
+
+		public EmailBuilder withSubject(final String subject) {
+			this.subject = subject;
+			return this;
+		}
+
+		public EmailBuilder withBody(final String body) {
+			this.body = body;
+			return this;
+		}
+
+		public EmailBuilder withNotifyWith(final String notifyWith) {
+			this.notifyWith = notifyWith;
+			return this;
+		}
+
+		public EmailBuilder withDate(final String date) {
+			this.date = date;
+			return this;
+		}
+
+		public EmailBuilder withStatus(final String status) {
+			this.status = status;
+			return this;
+		}
+
+		public EmailBuilder withNoSubjectPrefix(final boolean noSubjectPrefix) {
+			this.noSubjectPrefix = noSubjectPrefix;
+			return this;
+		}
+
+		public EmailBuilder withAccount(final String account) {
+			this.account = account;
+			return this;
+		}
+
+		public EmailBuilder withTemplate(final String template) {
+			this.template = template;
+			return this;
+		}
+
+		public EmailBuilder withKeepSynchronization(final boolean keepSynchronization) {
+			this.keepSynchronization = keepSynchronization;
+			return this;
+		}
+
+		public EmailBuilder withPromptSynchronization(final boolean promptSynchronization) {
+			this.promptSynchronization = promptSynchronization;
+			return this;
+		}
+
+		public EmailBuilder withDelay(final long delay) {
+			this.delay = delay;
+			return this;
+		}
+
+	}
+
+	public static class EmailTemplateBuilder extends ModelBuilder<EmailTemplate> {
+
+		private String id;
+		private String name;
+		private String description;
+		private String from;
+		private String to;
+		private String cc;
+		private String bcc;
+		private String subject;
+		private String body;
+		private String account;
+		private boolean keepSynchronization;
+		private boolean promptSynchronization;
+		private long delay;
+
+		private EmailTemplateBuilder() {
+			// use factory method
+		}
+
+		@Override
+		protected EmailTemplate doBuild() {
+			final EmailTemplate output = new EmailTemplate();
+			output.setId(id);
+			output.setName(name);
+			output.setDescription(description);
+			output.setFrom(from);
+			output.setTo(to);
+			output.setCc(cc);
+			output.setBcc(bcc);
+			output.setSubject(subject);
+			output.setBody(body);
+			output.setAccount(account);
+			output.setKeepSynchronization(keepSynchronization);
+			output.setPromptSynchronization(promptSynchronization);
+			output.setDelay(delay);
+			return output;
+		}
+
+		public EmailTemplateBuilder withId(final String id) {
+			this.id = id;
+			return this;
+		}
+
+		public EmailTemplateBuilder withName(final String name) {
+			this.name = name;
+			return this;
+		}
+
+		public EmailTemplateBuilder withDescription(final String description) {
+			this.description = description;
+			return this;
+		}
+
+		public EmailTemplateBuilder withFrom(final String from) {
+			this.from = from;
+			return this;
+		}
+
+		public EmailTemplateBuilder withTo(final String to) {
+			this.to = to;
+			return this;
+		}
+
+		public EmailTemplateBuilder withCc(final String cc) {
+			this.cc = cc;
+			return this;
+		}
+
+		public EmailTemplateBuilder withBcc(final String bcc) {
+			this.bcc = bcc;
+			return this;
+		}
+
+		public EmailTemplateBuilder withSubject(final String subject) {
+			this.subject = subject;
+			return this;
+		}
+
+		public EmailTemplateBuilder withBody(final String body) {
+			this.body = body;
+			return this;
+		}
+
+		public EmailTemplateBuilder withAccount(final String account) {
+			this.account = account;
+			return this;
+		}
+
+		public EmailTemplateBuilder withKeepSynchronization(final boolean keepSynchronization) {
+			this.keepSynchronization = keepSynchronization;
+			return this;
+		}
+
+		public EmailTemplateBuilder withPromptSynchronization(final boolean promptSynchronization) {
+			this.promptSynchronization = promptSynchronization;
+			return this;
+		}
+
+		public EmailTemplateBuilder withDelay(final long delay) {
+			this.delay = delay;
+			return this;
+		}
+
+	}
+
 	public static class FilterBuilder extends ModelBuilder<Filter> {
 
 		private String text;
@@ -742,6 +975,57 @@ public class Models {
 
 		public FilterBuilder withParams(final Map<String, String> params) {
 			this.params = params;
+			return this;
+		}
+
+	}
+
+	public static class LongIdBuilder extends ModelBuilder<LongId> {
+
+		private Long id;
+
+		private LongIdBuilder() {
+			// use factory method
+		}
+
+		@Override
+		protected LongId doBuild() {
+			final LongId output = new LongId();
+			output.setId(id);
+			return output;
+		}
+
+		public LongIdBuilder withId(final Long id) {
+			this.id = id;
+			return this;
+		}
+
+	}
+
+	public static class LongIdAndDescriptionBuilder extends ModelBuilder<LongIdAndDescription> {
+
+		private Long id;
+		private String description;
+
+		private LongIdAndDescriptionBuilder() {
+			// use factory method
+		}
+
+		@Override
+		protected LongIdAndDescription doBuild() {
+			final LongIdAndDescription output = new LongIdAndDescription();
+			output.setId(id);
+			output.setDescription(description);
+			return output;
+		}
+
+		public LongIdAndDescriptionBuilder withId(final Long id) {
+			this.id = id;
+			return this;
+		}
+
+		public LongIdAndDescriptionBuilder withDescription(final String description) {
+			this.description = description;
 			return this;
 		}
 
@@ -946,6 +1230,11 @@ public class Models {
 			return this;
 		}
 
+		public MetadataBuilder withTotal(final Integer total) {
+			this.total = total.longValue();
+			return this;
+		}
+
 	}
 
 	public static class ProcessActivityWithBasicDetailsBuilder extends ModelBuilder<ProcessActivityWithBasicDetails> {
@@ -1110,13 +1399,18 @@ public class Models {
 		private static final Function<Entry<? extends String, ? extends Object>, String> KEY = toKey();
 		private static final Function<Entry<? extends String, ? extends Object>, Object> VALUE = toValue();
 
+		private static final Map<String, Object> EMPTY_MAP = emptyMap();
+		private static final Values NO_VALUES = newValues().withValues(EMPTY_MAP).build();
+		private static final Collection<Widget> NO_WIDGETS = emptyList();
+
 		private String type;
 		private Long id;
 		private String name;
 		private Long status;
-		final Values values = newValues().build();
+		private Values values;
 		private String activityId;
 		private Boolean advance;
+		private Collection<Widget> widgets;
 
 		private ProcessInstanceAdvanceBuilder() {
 			// use factory method
@@ -1124,7 +1418,9 @@ public class Models {
 
 		@Override
 		protected void doValidate() {
+			values = defaultIfNull(values, NO_VALUES);
 			advance = defaultIfNull(advance, FALSE);
+			widgets = defaultIfNull(widgets, NO_WIDGETS);
 		}
 
 		@Override
@@ -1137,6 +1433,7 @@ public class Models {
 			output.setValues(values);
 			output.setActivity(activityId);
 			output.setAdvance(advance);
+			output.setWidgets(widgets);
 			return output;
 		}
 
@@ -1165,7 +1462,9 @@ public class Models {
 		}
 
 		public ProcessInstanceAdvanceBuilder withValues(final Map<String, ? extends Object> values) {
-			this.values.putAll(values);
+			this.values = newValues() //
+					.withValues(values) //
+					.build();
 			return this;
 		}
 
@@ -1176,6 +1475,11 @@ public class Models {
 
 		public ProcessInstanceAdvanceBuilder withAdvance(final boolean advance) {
 			this.advance = advance;
+			return this;
+		}
+
+		public ProcessInstanceAdvanceBuilder withWidgets(final Collection<Widget> widgets) {
+			this.widgets = widgets;
 			return this;
 		}
 
@@ -1416,6 +1720,38 @@ public class Models {
 
 	}
 
+	public static class ReportBuilder extends ModelBuilder<Report> {
+
+		private Long id;
+		private String title;
+		private String description;
+
+		@Override
+		protected Report doBuild() {
+			final Report output = new Report();
+			output.setId(id);
+			output.setTitle(title);
+			output.setDescription(description);
+			return output;
+		}
+
+		public ReportBuilder withId(final Long id) {
+			this.id = id;
+			return this;
+		}
+
+		public ReportBuilder withTitle(final String title) {
+			this.title = title;
+			return this;
+		}
+
+		public ReportBuilder withDescription(final String description) {
+			this.description = description;
+			return this;
+		}
+
+	}
+
 	public static class ResponseSingleBuilder<T> extends ModelBuilder<ResponseSingle<T>> {
 
 		private T element;
@@ -1569,6 +1905,7 @@ public class Models {
 		private boolean required;
 		private String label;
 		private Values data;
+		private Object output;
 
 		private WidgetBuilder() {
 			// use factory method
@@ -1576,14 +1913,15 @@ public class Models {
 
 		@Override
 		protected Widget doBuild() {
-			final Widget output = new Widget();
-			output.setId(id);
-			output.setType(type);
-			output.setActive(active);
-			output.setRequired(required);
-			output.setLabel(label);
-			output.setData(data);
-			return output;
+			final Widget _output = new Widget();
+			_output.setId(id);
+			_output.setType(type);
+			_output.setActive(active);
+			_output.setRequired(required);
+			_output.setLabel(label);
+			_output.setData(data);
+			_output.setOutput(output);
+			return _output;
 		}
 
 		public WidgetBuilder withId(final String id) {
@@ -1613,6 +1951,11 @@ public class Models {
 
 		public WidgetBuilder withData(final Values data) {
 			this.data = data;
+			return this;
+		}
+
+		public WidgetBuilder withOutput(final Object output) {
+			this.output = output;
 			return this;
 		}
 
@@ -1668,8 +2011,24 @@ public class Models {
 		return new DomainWithFullDetailsBuilder();
 	}
 
+	public static EmailBuilder newEmail() {
+		return new EmailBuilder();
+	}
+
+	public static EmailTemplateBuilder newEmailTemplate() {
+		return new EmailTemplateBuilder();
+	}
+
 	public static FilterBuilder newFilter() {
 		return new FilterBuilder();
+	}
+
+	public static LongIdBuilder newLongId() {
+		return new LongIdBuilder();
+	}
+
+	public static LongIdAndDescriptionBuilder newLongIdAndDescription() {
+		return new LongIdAndDescriptionBuilder();
 	}
 
 	public static LookupDetailBuilder newLookupDetail() {
@@ -1718,6 +2077,10 @@ public class Models {
 
 	public static RelationBuilder newRelation() {
 		return new RelationBuilder();
+	}
+
+	public static ReportBuilder newReport() {
+		return new ReportBuilder();
 	}
 
 	@Deprecated

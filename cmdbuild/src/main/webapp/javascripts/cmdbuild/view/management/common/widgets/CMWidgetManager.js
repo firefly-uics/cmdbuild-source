@@ -13,6 +13,9 @@
 	});
 
 	Ext.define("CMDBuild.view.management.common.widgets.CMWidgetManager", {
+
+		requires: ['CMDBuild.view.management.common.widgets.grid.MainPanel'],
+
 		constructor: function(mainView, tabbedWidgetDelegate) {
 			this.mainView = mainView;
 			this.tabbedWidgetDelegate = tabbedWidgetDelegate || null;
@@ -73,8 +76,7 @@
 
 	function initBuilders(me) {
 		me.builders = {
-			// Special guests in the Widgets show, they have to open a tab in the activityTabPanel,
-			// and not a separate window
+			// Special guests in the Widgets show, they have to open a tab in the activityTabPanel, and not a separate window
 			'.OpenNote': function(widget, card) {
 				var widgetUI = null;
 				if (me.tabbedWidgetDelegate) {
@@ -105,6 +107,19 @@
 				}
 
 				return widgetUI;
+			},
+
+			/**
+			 * @param {Object} widget
+			 * @param {Ext.data.Model or CMDBuild.model.CMActivityInstance} card or activity
+			 */
+			'.ManageEmail': function(widget, card) {
+				var widgetView = me.tabbedWidgetDelegate.getEmailPanel();
+
+				if (!Ext.isEmpty(me.tabbedWidgetDelegate) && !Ext.isEmpty(widgetView))
+					return widgetView;
+
+				return null;
 			}
 		};
 
@@ -159,16 +174,6 @@
 			return w;
 		};
 
-		// ManageEmail
-		me.builders[CMDBuild.view.management.common.widgets.email.CMManageEmail.WIDGET_NAME] = function(widget, card) {
-			var w = Ext.create('CMDBuild.view.management.common.widgets.email.CMManageEmail', {
-				widgetConf: widget
-			});
-			me.widgetsContainer.addWidgt(w);
-
-			return w;
-		};
-
 		// workflow
 		me.builders[pkg.CMWorkflow.WIDGET_NAME] = function(widget, card) {
 			var w = new pkg.CMWorkflow();
@@ -184,8 +189,8 @@
 		};
 
 		// Grid
-		me.builders[CMDBuild.view.management.common.widgets.grid.CMGrid.WIDGET_NAME] = function(widget, card) {
-			var w = Ext.create('CMDBuild.view.management.common.widgets.grid.CMGrid');
+		me.builders[CMDBuild.view.management.common.widgets.grid.MainPanel.WIDGET_NAME] = function(widget, card) {
+			var w = Ext.create('CMDBuild.view.management.common.widgets.grid.MainPanel');
 			me.widgetsContainer.addWidgt(w);
 
 			return w;

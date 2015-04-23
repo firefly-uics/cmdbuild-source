@@ -160,7 +160,6 @@
 			me.card = new CMDBuild.DummyModel(values);
 			me.loadCard();
 		} else {
-_debug('loadAndFillFields');
 			me.loadCard(true, {
 				Id: me.cardId,
 				IdClass: classId

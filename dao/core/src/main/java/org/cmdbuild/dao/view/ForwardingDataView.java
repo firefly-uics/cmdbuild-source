@@ -96,11 +96,6 @@ public abstract class ForwardingDataView extends ForwardingObject implements CMD
 	}
 
 	@Override
-	public Iterable<? extends CMDomain> findDomainsFor(final CMClass type) {
-		return delegate().findDomainsFor(type);
-	}
-
-	@Override
 	public CMDomain create(final CMDomainDefinition definition) {
 		return delegate().create(definition);
 	}

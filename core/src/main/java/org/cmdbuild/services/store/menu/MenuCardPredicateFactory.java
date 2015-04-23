@@ -1,15 +1,18 @@
 package org.cmdbuild.services.store.menu;
 
+import static org.cmdbuild.logic.report.Predicates.currentGroupAllowed;
 import static org.cmdbuild.services.store.menu.MenuConstants.MENU_CLASS_NAME;
 import static org.cmdbuild.services.store.menu.MenuConstants.TYPE_ATTRIBUTE;
 import static org.cmdbuild.spring.SpringIntegrationUtils.applicationContext;
 
 import org.apache.commons.lang3.Validate;
+import org.cmdbuild.auth.UserStore;
 import org.cmdbuild.auth.acl.CMGroup;
 import org.cmdbuild.auth.acl.PrivilegeContext;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.view.CMDataView;
-import org.cmdbuild.data.converter.ViewConverter;
+import org.cmdbuild.data.store.dao.StorableConverter;
+import org.cmdbuild.model.view.View;
 import org.cmdbuild.privileges.predicates.IsAlwaysReadable;
 import org.cmdbuild.privileges.predicates.IsReadableClass;
 import org.cmdbuild.privileges.predicates.IsReadableDashboard;
@@ -25,18 +28,21 @@ public class MenuCardPredicateFactory {
 	private final CMGroup group;
 	private final CMDataView dataView;
 	private final Supplier<PrivilegeContext> privilegeContext;
-	private final ViewConverter viewConverter;
+	private final StorableConverter<View> viewConverter;
+	private final UserStore userStore;
 
 	public MenuCardPredicateFactory( //
 			final CMDataView view, //
 			final CMGroup group, //
 			final Supplier<PrivilegeContext> privilegeContext, //
-			final ViewConverter viewConverter //
+			final StorableConverter<View> viewConverter, //
+			final UserStore userStore //
 	) {
 		this.group = group;
 		this.dataView = view;
 		this.privilegeContext = privilegeContext;
 		this.viewConverter = viewConverter;
+		this.userStore = userStore;
 	}
 
 	// TODO: change it (privileges on processes and reports)
@@ -52,9 +58,9 @@ public class MenuCardPredicateFactory {
 		} else if (menuCard.get(TYPE_ATTRIBUTE).equals(MenuItemType.PROCESS.getValue())) {
 			return new IsReadableClass(dataView, privilegeContext.get());
 		} else if (menuCard.get(TYPE_ATTRIBUTE).equals(MenuItemType.REPORT_CSV.getValue())) {
-			return new IsReadableReport(applicationContext().getBean(ReportStore.class));
+			return new IsReadableReport(applicationContext().getBean(ReportStore.class), currentGroupAllowed(userStore));
 		} else if (menuCard.get(TYPE_ATTRIBUTE).equals(MenuItemType.REPORT_PDF.getValue())) {
-			return new IsReadableReport(applicationContext().getBean(ReportStore.class));
+			return new IsReadableReport(applicationContext().getBean(ReportStore.class), currentGroupAllowed(userStore));
 		} else if (menuCard.get(TYPE_ATTRIBUTE).equals(MenuItemType.DASHBOARD.getValue())) {
 			return new IsReadableDashboard(dataView, group);
 		} else if (menuCard.get(TYPE_ATTRIBUTE).equals(MenuItemType.VIEW.getValue())) {

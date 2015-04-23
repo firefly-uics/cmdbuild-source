@@ -6,6 +6,8 @@ import net.sf.jasperreports.engine.util.ObjectUtils;
 
 import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.CMAttributeTypeVisitor;
+import org.cmdbuild.dao.entrytype.attributetype.ForwardingAttributeTypeVisitor;
 import org.cmdbuild.dao.entrytype.attributetype.LookupAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.NullAttributeTypeVisitor;
 import org.cmdbuild.dao.view.CMDataView;
@@ -29,7 +31,14 @@ public class CardAdapter {
 		for (final Attribute attribute : card.getAttributeList()) {
 			final String name = attribute.getName();
 			final CMAttributeType<?> attributeType = entryType.getAttribute(name).getType();
-			attributeType.accept(new NullAttributeTypeVisitor() {
+			attributeType.accept(new ForwardingAttributeTypeVisitor() {
+
+				private final CMAttributeTypeVisitor DELEGATE = NullAttributeTypeVisitor.getInstance();
+
+				@Override
+				protected CMAttributeTypeVisitor delegate() {
+					return DELEGATE;
+				}
 
 				@Override
 				public void visit(final LookupAttributeType attributeType) {
@@ -42,10 +51,10 @@ public class CardAdapter {
 					} else {
 						final Iterable<Lookup> lookupList = lookupStore.readAll();
 						for (final Lookup lookup : lookupList) {
-							if (lookup.active && //
-									lookup.type.name.equals(lookupTypeName) && //
-									lookup.description != null && //
-									ObjectUtils.equals(lookup.description, value)) {
+							if (lookup.active() && //
+									lookup.type().name.equals(lookupTypeName) && //
+									lookup.description() != null && //
+									ObjectUtils.equals(lookup.description(), value)) {
 								attribute.setValue(lookup.getId().toString());
 								break;
 							}
@@ -56,7 +65,7 @@ public class CardAdapter {
 				private boolean existsLookup(final String lookupTypeName, final Long lookupId) {
 					final Iterable<Lookup> lookupList = lookupStore.readAll();
 					for (final Lookup lookup : lookupList) {
-						if (lookup.type.name.equals(lookupTypeName) && lookup.getId().equals(lookupId)) {
+						if (lookup.type().name.equals(lookupTypeName) && lookup.getId().equals(lookupId)) {
 							return true;
 						}
 					}

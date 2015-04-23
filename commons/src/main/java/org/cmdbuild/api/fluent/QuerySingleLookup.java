@@ -2,16 +2,16 @@ package org.cmdbuild.api.fluent;
 
 public class QuerySingleLookup {
 
-	private final FluentApi api;
+	private final FluentApiExecutor executor;
 	private final Integer id;
 
-	QuerySingleLookup(final FluentApi api, final Integer id) {
-		this.api = api;
+	QuerySingleLookup(final FluentApiExecutor executor, final Integer id) {
+		this.executor = executor;
 		this.id = id;
 	}
 
 	public Lookup fetch() {
-		return api.getExecutor().fetch(this);
+		return executor.fetch(this);
 	}
 
 	public Integer getId() {
