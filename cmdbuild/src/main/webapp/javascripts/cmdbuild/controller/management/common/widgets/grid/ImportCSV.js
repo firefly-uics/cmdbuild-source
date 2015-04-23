@@ -66,7 +66,10 @@
 					CMDBuild.core.proxy.Csv.getRecords({
 						scope: this,
 						success: function(result, options, decodedResult) {
-							this.parentDelegate.setGridDataFromCsv(decodedResult.rows);
+							this.cmfg('setGridDataFromCsv', {
+								rawData: decodedResult.rows,
+								mode: this.view.csvImportModeCombo.getValue()
+							});
 
 							this.onImportCSVAbortButtonClick();
 						}

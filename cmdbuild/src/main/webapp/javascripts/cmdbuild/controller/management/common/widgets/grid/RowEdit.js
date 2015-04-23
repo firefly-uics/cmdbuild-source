@@ -64,7 +64,7 @@
 		buildFormFields: function() {
 			var itemsArray = [];
 
-			Ext.Array.forEach(this.parentDelegate.getCardAttributes(), function(attribute, i, allAttributes) {
+			Ext.Array.forEach(this.cmfg('getCardAttributes'), function(attribute, i, allAttributes) {
 				var item = CMDBuild.Management.FieldManager.getFieldForAttr(attribute, false, false);
 
 				if (attribute[CMDBuild.core.proxy.CMProxyConstants.FIELD_MODE] == 'read')

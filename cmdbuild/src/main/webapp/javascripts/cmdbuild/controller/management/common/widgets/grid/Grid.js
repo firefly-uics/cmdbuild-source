@@ -94,13 +94,17 @@
 
 		/**
 		 * Gatherer function to catch events
+		 * TODO: this is just an emulation of real cmfg (AbstractController), in future will be created an AbstractWidgetController
 		 *
 		 * @param {String} name
 		 * @param {Object} param
 		 * @param {Function} callback
 		 */
-		cmOn: function(name, param, callBack) {
+		cmfg: function(name, param, callBack) {
 			switch (name) {
+				case 'getCardAttributes':
+					return this.getCardAttributes();
+
 				case 'onAddRowButtonClick' :
 					return this.onAddRowButtonClick();
 
@@ -113,9 +117,12 @@
 				case 'onEditRowButtonClick' :
 					return this.onEditRowButtonClick(param.record);
 
+				case 'setGridDataFromCsv':
+					return this.setGridDataFromCsv(param);
+
 				default: {
-					if (!Ext.isEmpty(this.parentDelegate))
-						return this.parentDelegate.cmOn(name, param, callBack);
+					if (!Ext.isEmpty(this.parentDelegate) && Ext.isFunction(this.parentDelegate.cmfg))
+						return this.parentDelegate.cmfg(name, param, callBack);
 				}
 			}
 		},
@@ -143,7 +150,7 @@
 							handler: function(grid, rowIndex, colIndex) {
 								var record = grid.getStore().getAt(rowIndex);
 
-								this.cmOn('onEditRowButtonClick', {
+								this.cmfg('onEditRowButtonClick', {
 									record: record
 								});
 							}
@@ -172,7 +179,7 @@
 							},
 
 							handler: function(grid, rowIndex, colIndex) {
-								this.cmOn('onDeleteRowButtonClick', {
+								this.cmfg('onDeleteRowButtonClick', {
 									rowIndex: rowIndex
 								});
 							}
@@ -615,22 +622,29 @@
 		/**
 		 * Adapter for grid's loarRecords function
 		 *
-		 * @param {Array} rawData - Ex. [{ card: {...}, not_valid_fields: {...} }, {...}]
+		 * @param {Object} parameters
+		 * @param {Array} parameters.rawData - Ex. [{ card: {...}, not_valid_fields: {...} }, {...}]
+		 * @param {String} parameters.mode
 		 */
-		setGridDataFromCsv: function(rawData) {
-			// To clear all grid data if mode = 'replace'
-			if (!Ext.isEmpty(this.importCSVWindow) && this.importCSVWindow.csvImportModeCombo.getValue() == 'replace')
-				this.grid.getStore().removeAll();
+		setGridDataFromCsv: function(parameters) {
+			if (
+				!Ext.isEmpty(parameters)
+				&& !Ext.isEmpty(parameters.rawData)
+			) {
+				// To clear all grid data if mode = 'replace'
+				if (!Ext.isEmpty(parameters.mode) && parameters.mode == 'replace')
+					this.grid.getStore().removeAll();
 
-			for (var i = 0; i < rawData.length; ++i) {
-				var cardData = rawData[i][CMDBuild.core.proxy.CMProxyConstants.CARD];
+				Ext.Array.forEach(parameters.rawData, function(rowData, i, allRowsData) {
+					var cardData = rowData[CMDBuild.core.proxy.CMProxyConstants.CARD];
 
-				// Resolve objects returned for reference fields, just rewrite with object's id
-				for (var item in cardData)
-					if (typeof cardData[item] == 'object' && !Ext.isEmpty(cardData[item][CMDBuild.core.proxy.CMProxyConstants.ID]))
-						cardData[item] = cardData[item][CMDBuild.core.proxy.CMProxyConstants.ID];
+					// Resolve objects returned for reference fields, just rewrite with object's id
+					for (var item in cardData)
+						if (typeof cardData[item] == 'object' && !Ext.isEmpty(cardData[item][CMDBuild.core.proxy.CMProxyConstants.ID]))
+							cardData[item] = cardData[item][CMDBuild.core.proxy.CMProxyConstants.ID];
 
-				this.grid.getStore().add(Ext.create('CMDBuild.DummyModel', cardData));
+					this.grid.getStore().add(Ext.create('CMDBuild.DummyModel', cardData));
+				}, this);
 			}
 		},
 

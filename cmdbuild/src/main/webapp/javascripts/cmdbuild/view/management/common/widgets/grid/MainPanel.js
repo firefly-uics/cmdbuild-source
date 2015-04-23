@@ -41,7 +41,7 @@
 					scope: this,
 
 					handler: function(button, e) {
-						this.delegate.cmOn('onAddRowButtonClick');
+						this.delegate.cmfg('onAddRowButtonClick');
 					}
 				});
 
@@ -50,7 +50,7 @@
 					scope: this,
 
 					handler: function(button, e) {
-						this.delegate.cmOn('onCSVImportButtonClick');
+						this.delegate.cmfg('onCSVImportButtonClick');
 					}
 				});
 			// END: Buttons configuration
