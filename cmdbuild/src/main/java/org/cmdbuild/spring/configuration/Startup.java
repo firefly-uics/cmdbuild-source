@@ -1,6 +1,7 @@
 package org.cmdbuild.spring.configuration;
 
-import static com.google.common.base.Predicates.*;
+import static com.google.common.base.Predicates.alwaysTrue;
+import static com.google.common.base.Predicates.and;
 
 import java.util.Collections;
 
@@ -64,7 +65,12 @@ public class Startup {
 	protected StartupManager startupManager() {
 		final StartupManager startupManager = new DefaultStartupManager();
 		startupManager.add(startScheduler(), databaseIsOk());
-		startupManager.add(startEmailQueue(), and(databaseIsOk(), emailQueueEnabled()));
+		/*
+		 * needed because some Java compilers are not able to deduce generic
+		 * type
+		 */
+		final Predicate<Void> and = and(databaseIsOk(), emailQueueEnabled());
+		startupManager.add(startEmailQueue(), and);
 		startupManager.add(clearDmsTemporaryFolder(), ALWAYS);
 		return startupManager;
 	}
