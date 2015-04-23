@@ -8,7 +8,6 @@ import java.util.Collection;
 
 import javax.activation.DataHandler;
 import javax.mail.Message;
-import javax.mail.MessagingException;
 import javax.mail.Session;
 import javax.mail.Transport;
 
@@ -299,6 +298,7 @@ class NewMailQueueImpl implements NewMailQueue {
 	private final Logger logger;
 	private final Collection<NewMailImpl> elements;
 	private Callback callback = NULL_CALLBACK;
+	private boolean forgiving;
 
 	public NewMailQueueImpl(final Output configuration) {
 		this.configuration = configuration;
@@ -314,6 +314,12 @@ class NewMailQueueImpl implements NewMailQueue {
 	}
 
 	@Override
+	public NewMailQueue withForgiving(final boolean forgiving) {
+		this.forgiving = forgiving;
+		return this;
+	}
+
+	@Override
 	public QueueableNewMail newMail() {
 		final NewMailImpl newMail = new NewMailImpl(logger);
 		return new QueueableNewMailImpl(this, callback, newMail, elements);
@@ -325,18 +331,20 @@ class NewMailQueueImpl implements NewMailQueue {
 
 			@Override
 			public void connected(final Session session, final Transport transport) throws MailException {
-				try {
-					int count = 0;
-					for (final NewMailImpl element : elements) {
+				int count = 0;
+				for (final NewMailImpl element : elements) {
+					try {
 						final MessageBuilder messageBuilder = new NewMailImplMessageBuilder(configuration, session,
 								element);
 						final Message message = messageBuilder.build();
 						transport.sendMessage(message, message.getAllRecipients());
 						callback.sent(count++);
+					} catch (final Exception e) {
+						logger.error("error sending mail", e);
+						if (!forgiving) {
+							throw MailException.send(e);
+						}
 					}
-				} catch (final MessagingException e) {
-					logger.error("error sending mail", e);
-					throw MailException.send(e);
 				}
 			}
 
