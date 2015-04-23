@@ -26,7 +26,8 @@ public class DBFunction extends DBTypeObject implements CMFunction {
 
 		private static Function<String, Category> STRING_TO_CATEGORY = new Function<String, Category>() {
 
-			public Category apply(String input) {
+			@Override
+			public Category apply(final String input) {
 				return Category.of(input);
 			};
 

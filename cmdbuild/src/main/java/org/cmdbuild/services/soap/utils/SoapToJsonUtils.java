@@ -197,8 +197,8 @@ public class SoapToJsonUtils {
 		return jsonObject;
 	}
 
-	private static JSONObject jsonForFilter(final CMClass targetClass, final LookupStore lookupStore, final Filter filter)
-			throws JSONException {
+	private static JSONObject jsonForFilter(final CMClass targetClass, final LookupStore lookupStore,
+			final Filter filter) throws JSONException {
 		final String attributeToFilter = filter.getName();
 		final JSONObject simple = new JSONObject();
 		final List<Object> values = Lists.newArrayList();
@@ -253,7 +253,7 @@ public class SoapToJsonUtils {
 				.build();
 		final Iterable<Lookup> lookupList = lookupStore.readAll(lookupType);
 		for (final Lookup lookup : lookupList) {
-			if (lookup.description.equals(description)) {
+			if (lookup.description().equals(description)) {
 				return lookup.getId();
 			}
 		}

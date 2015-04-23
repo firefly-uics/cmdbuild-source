@@ -1,9 +1,5 @@
 package org.cmdbuild.scheduler.command;
 
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
-
 import org.cmdbuild.scheduler.logging.LoggingSupport;
 import org.slf4j.Logger;
 import org.slf4j.Marker;
@@ -12,6 +8,8 @@ import org.slf4j.MarkerFactory;
 import com.google.common.base.Predicate;
 
 public class Commands {
+
+	private static final Logger logger = LoggingSupport.logger;
 
 	private static class NullCommand implements Command {
 
@@ -22,33 +20,13 @@ public class Commands {
 
 	}
 
-	private static class SafeCommand extends ForwardingCommand {
+	private static final NullCommand INSTANCE = new NullCommand();
 
-		private static final Logger logger = LoggingSupport.logger;
-		private static final Marker marker = MarkerFactory.getMarker(SafeCommand.class.getName());
+	public static Command nullCommand() {
+		return INSTANCE;
+	}
 
-		public static SafeCommand of(final Command delegate) {
-			final Object proxy = Proxy.newProxyInstance( //
-					SafeCommand.class.getClassLoader(), //
-					new Class<?>[] { Command.class }, //
-					new InvocationHandler() {
-
-						@Override
-						public Object invoke(final Object proxy, final Method method, final Object[] args)
-								throws Throwable {
-							try {
-								return method.invoke(delegate, args);
-							} catch (final Throwable e) {
-								logger.warn(marker, "error calling method '{}'", method);
-								logger.warn(marker, "\tcaused by", e);
-								return null;
-							}
-						}
-
-					});
-			final Command proxiedAction = Command.class.cast(proxy);
-			return new SafeCommand(proxiedAction);
-		}
+	private static class SafeCommand implements Command {
 
 		private final Command delegate;
 
@@ -57,10 +35,18 @@ public class Commands {
 		}
 
 		@Override
-		protected Command delegate() {
-			return delegate;
+		public void execute() {
+			try {
+				delegate.execute();
+			} catch (final Throwable e) {
+				logger.warn("error executing command", e);
+			}
 		}
 
+	}
+
+	public static Command safe(final Command delegate) {
+		return new SafeCommand(delegate);
 	}
 
 	private static class ComposeOnExeption extends ForwardingCommand {
@@ -93,46 +79,31 @@ public class Commands {
 
 	}
 
-	private static class Conditional extends ForwardingCommand {
+	public static Command composeOnExeption(final Command delegate, final Command onException) {
+		return new ComposeOnExeption(delegate, onException);
+	}
+
+	private static class ConditionalCommand implements Command {
 
 		private final Command delegate;
 		private final Predicate<Void> predicate;
 
-		public Conditional(final Command delegate, final Predicate<Void> predicate) {
+		public ConditionalCommand(final Command delegate, final Predicate<Void> predicate) {
 			this.delegate = delegate;
 			this.predicate = predicate;
 		}
 
 		@Override
-		protected Command delegate() {
-			return delegate;
-		}
-
-		@Override
 		public void execute() {
 			if (predicate.apply(null)) {
-				super.execute();
+				delegate.execute();
 			}
 		}
 
 	}
 
-	private static final NullCommand INSTANCE = new NullCommand();
-
-	public static Command nullCommand() {
-		return INSTANCE;
-	}
-
-	public static Command safe(final Command delegate) {
-		return SafeCommand.of(delegate);
-	}
-
-	public static Command composeOnExeption(final Command delegate, final Command onException) {
-		return new ComposeOnExeption(delegate, onException);
-	}
-
 	public static Command conditional(final Command delegate, final Predicate<Void> predicate) {
-		return new Conditional(delegate, predicate);
+		return new ConditionalCommand(delegate, predicate);
 	}
 
 	private Commands() {

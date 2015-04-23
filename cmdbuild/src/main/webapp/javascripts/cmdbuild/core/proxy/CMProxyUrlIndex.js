@@ -8,6 +8,10 @@
 
 		singleton: true,
 
+		attachments: {
+			getAttachmentList: 'services/json/attachments/getattachmentlist'
+		},
+
 		attribute: {
 			create: '',
 			read: 'services/json/schema/modclass/getattributelist',
@@ -44,6 +48,12 @@
 			remove: 'services/json/schema/modclass/deletetable'
 		},
 
+		csv: {
+			clearSession: 'services/json/management/importcsv/clearsession',
+			getCsvRecords: 'services/json/management/importcsv/getcsvrecords',
+			uploadCsv: 'services/json/management/importcsv/uploadcsv'
+		},
+
 		configuration: {
 			getConfiguration: 'services/json/schema/setup/getconfiguration',
 			getConfigurations: 'services/json/schema/setup/getconfigurations',
@@ -54,7 +64,9 @@
 			create: 'services/json/schema/modclass/savedomain',
 			read: 'services/json/schema/modclass/getalldomains',
 			update: 'services/json/schema/modclass/savedomain',
-			remove: 'services/json/schema/modclass/deletedomain'
+			remove: 'services/json/schema/modclass/deletedomain',
+
+			getDomainList: 'services/json/schema/modclass/getdomainlist'
 		},
 
 		dataView: {
@@ -84,14 +96,38 @@
 				getStoreColumns: '',
 				setDefault: 'services/json/schema/emailaccount/setdefault'
 			},
-			templates:{
-				remove: 'services/json/emailtemplate/deletetemplate',
-				get: 'services/json/emailtemplate/readtemplate',
-				post: 'services/json/emailtemplate/createtemplate',
-				put: 'services/json/emailtemplate/updatetemplate',
 
-				getStore: 'services/json/emailtemplate/readtemplates'
-			}
+			attachment: {
+				copy: 'services/json/email/attachment/copy',
+				readAll: 'services/json/email/attachment/readall',
+				remove: 'services/json/email/attachment/delete',
+				upload: 'services/json/email/attachment/upload',
+			},
+
+			queue: {
+				configuration: 'services/json/email/queue/configuration',
+				configure: 'services/json/email/queue/configure',
+				running: 'services/json/email/queue/running',
+				start: 'services/json/email/queue/start',
+				stop: 'services/json/email/queue/stop'
+			},
+
+			templates:{
+				remove: 'services/json/email/template/delete',
+				get: 'services/json/email/template/read',
+				post: 'services/json/email/template/create',
+				put: 'services/json/email/template/update',
+
+				getStore: 'services/json/email/template/readall'
+			},
+
+			remove: 'services/json/email/email/delete',
+			get: 'services/json/email/email/read',
+			post: 'services/json/email/email/create',
+			put: 'services/json/email/email/update',
+
+			enabled: 'services/json/email/email/enabled',
+			getStore: 'services/json/email/email/readall'
 		},
 
 		fkTargetClass: 'services/json/schema/modclass/getfktargetingclass',
@@ -111,7 +147,14 @@
 			getFunctions: 'services/json/schema/modclass/getfunctions'
 		},
 
-		getLanguage: 'services/json/utils/getlanguage',
+		localizations: { // TODO: refactor with server side
+			classAttributeCreate: 'services/json/schema/translation/createforclassattribute',
+			classAttributeRead: 'services/json/schema/translation/readforclassattribute',
+			classAttributeUpdate: 'services/json/schema/translation/updateforclassattribute',
+			classCreate: 'services/json/schema/translation/createforclass',
+			classRead: 'services/json/schema/translation/readforclass',
+			classUpdate: 'services/json/schema/translation/updateforclass',
+		},
 
 		login: 'services/json/login/login',
 
@@ -138,8 +181,8 @@
 				read: 'services/json/schema/modsecurity/getclassprivilegelist',
 				update: 'services/json/schema/modsecurity/saveclassprivilege',
 
-				clearRowAndColumnPrivileges: "services/json/schema/modsecurity/clearrowandcolumnprivileges",
-				setRowAndColumnPrivileges: "services/json/schema/modsecurity/setrowandcolumnprivileges",
+				clearRowAndColumnPrivileges: 'services/json/schema/modsecurity/clearrowandcolumnprivileges',
+				setRowAndColumnPrivileges: 'services/json/schema/modsecurity/setrowandcolumnprivileges',
 				saveClassUiConfiguration: 'services/json/schema/modsecurity/saveclassuiconfiguration',
 				loadClassUiConfiguration: 'services/json/schema/modsecurity/loadclassuiconfiguration'
 			},
@@ -169,7 +212,8 @@
 			getReportTypesTree: 'services/json/management/modreport/getreporttypestree',
 			getReportsByType: 'services/json/management/modreport/getreportsbytype',
 			menuTree: 'services/json/schema/modreport/menutree',
-			updateReportFactoryParams: 'services/json/management/modreport/updatereportfactoryparams',
+			printReportFactory: 'services/json/management/modreport/printreportfactory',
+			updateReportFactoryParams: 'services/json/management/modreport/updatereportfactoryparams'
 		},
 
 		tasks: {
@@ -226,24 +270,22 @@
 		},
 
 		users: {
-			getusergrouplist: 'services/json/schema/modsecurity/getusergrouplist'
+			disable: 'services/json/schema/modsecurity/disableuser',
+			getGroupList: 'services/json/schema/modsecurity/getusergrouplist',
+			getList: 'services/json/schema/modsecurity/getuserlist',
+			save: 'services/json/schema/modsecurity/saveuser'
+		},
+
+		utils: {
+			clearCache: 'services/json/utils/clearcache',
+			generateId: 'services/json/utils/generateid',
+			getLanguage: 'services/json/utils/getlanguage',
+			listAvailableTranslations: 'services/json/utils/listavailabletranslations'
 		},
 
 		widgets: {
 			grid: {
-				clearSession: 'services/json/management/importcsv/clearsession',
-				getSqlCardList: 'services/json/management/modcard/getsqlcardlist',
-				getCsvRecords: 'services/json/management/importcsv/getcsvrecords',
-				uploadCsv: 'services/json/management/importcsv/uploadcsv'
-			},
-			manageEmail: {
-				addAttachmentFromExistingEmail: 'services/json/management/email/uploadattachmentfromexistingemail',
-				addAttachmentFromNewEmail: 'services/json/management/email/uploadattachmentfromnewemail',
-				copyAttachmentFromCardForExistingEmail: 'services/json/management/email/copyattachmentsfromcardforexistingemail',
-				copyAttachmentFromCardForNewEmail: 'services/json/management/email/copyattachmentsfromcardfornewemail',
-				getEmailList: 'services/json/management/email/getemaillist',
-				removeAttachmentFromExistingEmail: 'services/json/management/email/deleteattachmentfromexistingemail',
-				removeAttachmentFromNewEmail: 'services/json/management/email/deleteattachmentfromnewemail',
+				getSqlCardList: 'services/json/management/modcard/getsqlcardlist'
 			}
 		},
 
@@ -253,6 +295,7 @@
 			getStartActivity: 'services/json/workflow/getstartactivity',
 			isProcessUpdated: 'services/json/workflow/isprocessupdated',
 			saveActivity: 'services/json/workflow/saveactivity',
+			synchronize: 'services/json/workflow/sync',
 			xpdlDownload: 'services/json/workflow/downloadxpdl',
 			xpdlDownloadTemplate: 'services/json/workflow/downloadxpdltemplate',
 			xpdlUpload: 'services/json/workflow/uploadxpdl',

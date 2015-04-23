@@ -7,7 +7,7 @@ import java.util.Map;
 
 import javax.activation.DataHandler;
 
-import org.cmdbuild.data.store.lookup.Lookup;
+import org.cmdbuild.data.store.lookup.LookupImpl;
 import org.cmdbuild.dms.DocumentTypeDefinition;
 import org.cmdbuild.dms.MetadataGroup;
 import org.cmdbuild.dms.StoredDocument;
@@ -33,7 +33,7 @@ public interface DmsLogic extends Logic {
 	 * category.
 	 * 
 	 * @param category
-	 *            is the {@code Code} of the {@link Lookup}.
+	 *            is the {@code Code} of the {@link LookupImpl}.
 	 * 
 	 * @return the {@link DocumentTypeDefinition} for the specified category.
 	 * 
@@ -86,5 +86,9 @@ public interface DmsLogic extends Logic {
 
 	void updateDescriptionAndMetadata(String className, Long cardId, String filename, String category,
 			String description, Iterable<MetadataGroup> metadataGroups);
+
+	void copy(String sourceClassName, Long sourceId, String filename, String destinationClassName, Long destinationId);
+
+	void move(String sourceClassName, Long sourceId, String filename, String destinationClassName, Long destinationId);
 
 }

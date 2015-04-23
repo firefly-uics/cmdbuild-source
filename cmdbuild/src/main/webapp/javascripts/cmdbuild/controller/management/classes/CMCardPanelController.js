@@ -96,12 +96,13 @@
 		},
 
 		onModifyCardClick: function() {
-			// If wanna clone the card
-			// skip the locking
-			if (this.cloneCard
-					&& this.isEditable(this.card)) {
+			var me = this;
 
-				this.view.editMode();
+			// If wanna clone the card skip the locking
+			if (this.cloneCard && this.isEditable(this.card)) {
+				me.loadCard(true, null, function() { // Force card load before entering in edit mode
+					me.view.editMode();
+				});
 			} else {
 				this.callParent(arguments);
 			}

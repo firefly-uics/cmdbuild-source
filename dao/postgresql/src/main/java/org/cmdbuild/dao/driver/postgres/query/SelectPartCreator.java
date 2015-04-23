@@ -22,7 +22,8 @@ import org.cmdbuild.dao.driver.postgres.quote.AliasQuoter;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.entrytype.CMEntryTypeVisitor;
-import org.cmdbuild.dao.entrytype.CMFunctionCall;
+import org.cmdbuild.dao.entrytype.ForwardingEntryTypeVisitor;
+import org.cmdbuild.dao.entrytype.NullEntryTypeVisitor;
 import org.cmdbuild.dao.query.QuerySpecs;
 import org.cmdbuild.dao.query.clause.alias.Alias;
 import org.cmdbuild.dao.query.clause.from.FromClause;
@@ -44,7 +45,14 @@ public class SelectPartCreator extends PartCreator {
 		this.selectAttributesExpressions = selectAttributesExpressions;
 
 		final FromClause fromClause = querySpecs.getFromClause();
-		fromClause.getType().accept(new CMEntryTypeVisitor() {
+		fromClause.getType().accept(new ForwardingEntryTypeVisitor() {
+
+			private final CMEntryTypeVisitor delegate = NullEntryTypeVisitor.getInstance();
+
+			@Override
+			protected CMEntryTypeVisitor delegate() {
+				return delegate;
+			}
 
 			@Override
 			public void visit(final CMClass type) {
@@ -69,11 +77,6 @@ public class SelectPartCreator extends PartCreator {
 			@Override
 			public void visit(final CMDomain type) {
 				throw new IllegalArgumentException("domains should not be used in the from clauses");
-			}
-
-			@Override
-			public void visit(final CMFunctionCall type) {
-				// functions has no system attributes
 			}
 
 		});

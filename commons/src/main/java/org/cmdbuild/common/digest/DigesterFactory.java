@@ -2,10 +2,9 @@ package org.cmdbuild.common.digest;
 
 import java.security.NoSuchAlgorithmException;
 
-
 public class DigesterFactory {
-	
-	public static Digester createDigester(String digestAlgorithm) throws NoSuchAlgorithmException {
+
+	public static Digester createDigester(final String digestAlgorithm) throws NoSuchAlgorithmException {
 		if (digestAlgorithm.equalsIgnoreCase("SHA1")) {
 			return new Sha1Digester();
 		} else if (digestAlgorithm.equalsIgnoreCase("MD5")) {
@@ -15,5 +14,5 @@ public class DigesterFactory {
 		}
 		throw new NoSuchAlgorithmException("Not existent digest algorithm: available algorithms are SHA1, MD5, BASE64");
 	}
-	
+
 }

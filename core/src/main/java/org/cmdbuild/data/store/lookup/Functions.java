@@ -17,7 +17,7 @@ public class Functions {
 
 		@Override
 		public LookupType apply(final Lookup input) {
-			return input.type;
+			return input.type();
 		}
 
 	};

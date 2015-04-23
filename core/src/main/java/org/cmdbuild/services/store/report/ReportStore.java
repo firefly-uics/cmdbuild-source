@@ -5,7 +5,6 @@ import java.sql.SQLException;
 import java.util.List;
 
 import org.cmdbuild.exception.ORMException;
-import org.cmdbuild.model.Report;
 import org.cmdbuild.report.ReportFactory.ReportType;
 
 public interface ReportStore {

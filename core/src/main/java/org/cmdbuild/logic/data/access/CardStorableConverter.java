@@ -54,8 +54,6 @@ public class CardStorableConverter extends BaseStorableConverter<Card> {
 		return Card.newInstance(card.getType()) //
 				.withId(card.getId()) //
 				.withClassName(card.getType().getIdentifier().getLocalName()) //
-				.withClassId(card.getType().getId()) //
-				.withClassDescription(card.getType().getDescription()) //
 				.withBeginDate(card.getBeginDate()) //
 				.withEndDate(card.getEndDate()) //
 				.withUser(card.getUser()) //

@@ -6,12 +6,12 @@ public interface DocumentCreator {
 
 	DocumentSearch createDocumentSearch( //
 			String className, //
-			String cardId);
+			Long cardId);
 
 	StorableDocument createStorableDocument( //
 			String author, //
 			String className, //
-			String cardId, //
+			Long cardId, //
 			InputStream inputStream, //
 			String fileName, //
 			String category, //
@@ -20,7 +20,7 @@ public interface DocumentCreator {
 	StorableDocument createStorableDocument( //
 			String author, //
 			String className, //
-			String cardId, //
+			Long cardId, //
 			InputStream inputStream, //
 			String fileName, //
 			String category, //
@@ -29,24 +29,24 @@ public interface DocumentCreator {
 
 	DocumentDownload createDocumentDownload( //
 			String className, //
-			String cardId, //
+			Long cardId, //
 			String fileName);
 
 	DocumentDelete createDocumentDelete( //
 			String className, //
-			String cardId, //
+			Long cardId, //
 			String fileName);
 
 	DocumentUpdate createDocumentUpdate( //
 			String className, //
-			String cardId, //
+			Long cardId, //
 			String filename, //
 			String category, //
 			String description);
 
 	DocumentUpdate createDocumentUpdate( //
 			String className, //
-			String cardId, //
+			Long cardId, //
 			String filename, //
 			String category, //
 			String description, //

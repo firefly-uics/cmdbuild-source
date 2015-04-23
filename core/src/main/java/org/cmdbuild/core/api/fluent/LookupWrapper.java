@@ -12,12 +12,12 @@ public class LookupWrapper implements Lookup {
 
 	@Override
 	public String getType() {
-		return inner.type.name;
+		return inner.type().name;
 	}
 
 	@Override
 	public String getCode() {
-		return inner.code;
+		return inner.code();
 	}
 
 	@Override

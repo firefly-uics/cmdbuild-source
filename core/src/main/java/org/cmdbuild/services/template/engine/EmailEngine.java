@@ -4,7 +4,7 @@ import static org.apache.commons.lang3.StringUtils.EMPTY;
 
 import org.apache.commons.lang3.Validate;
 import org.cmdbuild.common.template.engine.Engine;
-import org.cmdbuild.data.store.email.Email;
+import org.cmdbuild.services.email.Email;
 
 public class EmailEngine implements Engine {
 

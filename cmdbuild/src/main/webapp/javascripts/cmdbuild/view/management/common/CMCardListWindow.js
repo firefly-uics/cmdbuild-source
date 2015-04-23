@@ -34,14 +34,14 @@
 			this.callParent(arguments);
 			var id = this.getIdClass();
 			this.grid.updateStoreForClassId(id);
-			
+
 			return this;
 		},
 
 		// protected
 		setItems: function() {
 			this.items = [this.grid];
-			
+
 			if (!this.readOnly) {
 				this.addCardButton = this.buildAddButton();
 				this.tbar = [this.addCardButton];
@@ -51,27 +51,27 @@
 		buildAddButton: function() {
 			var addCardButton = new CMDBuild.AddCardMenuButton();
 			var entry = _CMCache.getEntryTypeById(this.getIdClass());
-			
+
 			addCardButton.updateForEntry(entry);
 			this.mon(addCardButton, "cmClick", function buildTheAddWindow(p) {
 				var w = new CMDBuild.view.management.common.CMCardWindow({
 					withButtons: true,
 					title: p.className
 				});
-				
+
 				new CMDBuild.controller.management.common.CMCardWindowController(w, {
 					cmEditMode: true,
 					card: null,
 					entryType: p.classId
 				});
 				w.show();
-				
+
 				this.mon(w, "destroy", function() {
 					this.grid.reload();
 				}, this);
-				
+
 			}, this);
-			
+
 			return addCardButton;
 		},
 
@@ -84,7 +84,7 @@
 					return et.getId();
 				}
 			}
-			
+
 			throw "No class info for " + Ext.getClassName(this);
 		},
 
@@ -92,6 +92,7 @@
 			var gridConfig = Ext.apply(this.gridConfig, {
 				cmAdvancedFilter: false,
 				columns: [],
+				CQL: this.extraParams,
 				frame: false,
 				border: false,
 				selType: this.selType,

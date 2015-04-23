@@ -2,10 +2,8 @@ package org.cmdbuild.logic;
 
 import static com.google.common.collect.FluentIterable.from;
 import static com.google.common.collect.Iterables.contains;
-import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
 import static org.cmdbuild.dao.query.clause.FunctionCall.call;
-import static org.cmdbuild.logic.translation.DefaultTranslationLogic.DESCRIPTION_FOR_CLIENT;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -14,7 +12,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.UUID;
 
-import org.cmdbuild.auth.LanguageStore;
 import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.dao.function.CMFunction;
 import org.cmdbuild.dao.function.CMFunction.Category;
@@ -22,8 +19,6 @@ import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.CMQueryRow;
 import org.cmdbuild.dao.query.clause.alias.NameAlias;
 import org.cmdbuild.dao.view.CMDataView;
-import org.cmdbuild.logic.translation.DashboardTranslation;
-import org.cmdbuild.logic.translation.TranslationLogic;
 import org.cmdbuild.model.dashboard.ChartDefinition;
 import org.cmdbuild.model.dashboard.DashboardDefinition;
 import org.cmdbuild.model.dashboard.DefaultDashboardDefinition.DashboardColumn;
@@ -50,20 +45,14 @@ public class DashboardLogic implements Logic {
 	private final CMDataView view;
 	private final DashboardStore store;
 	private final OperationUser operationUser;
-	private final TranslationLogic translationLogic;
-	private final LanguageStore languageStore;
 
 	public DashboardLogic( //
 			final CMDataView view, //
 			final DashboardStore store, //
-			final OperationUser operationUser, //
-			final TranslationLogic translationLogic, //
-			final LanguageStore languageStore) {
+			final OperationUser operationUser) {
 		this.view = view;
 		this.store = store;
 		this.operationUser = operationUser;
-		this.translationLogic = translationLogic;
-		this.languageStore = languageStore;
 	}
 
 	public Long add(final DashboardDefinition dashboardDefinition) {
@@ -120,21 +109,12 @@ public class DashboardLogic implements Logic {
 		return dashboardsWithTranslation;
 	}
 
-	private final Function<DashboardDefinition, DashboardDefinition> ADD_TRANSLATION = new Function<DashboardDefinition, DashboardDefinition>() {
-		@Override
-		public DashboardDefinition apply(final DashboardDefinition input) {
-			final String translatedDescription = readTranslation(input);
-			input.setDescription(defaultIfNull(translatedDescription, input.getDescription()));
-			return input;
-		}
-	};
-
 	private final Function<Map<Integer, DashboardDefinition>, Map<Integer, DashboardDefinition>> ADD_TRANSLATION_TO_ALL = new Function<Map<Integer, DashboardDefinition>, Map<Integer, DashboardDefinition>>() {
 		@Override
 		public Map<Integer, DashboardDefinition> apply(final Map<Integer, DashboardDefinition> input) {
 			final Map<Integer, DashboardDefinition> dashboardsWithTranslation = Maps.newHashMap();
 			for (final Entry<Integer, DashboardDefinition> entry : input.entrySet()) {
-				dashboardsWithTranslation.put(entry.getKey(), ADD_TRANSLATION.apply(entry.getValue()));
+				dashboardsWithTranslation.put(entry.getKey(), entry.getValue());
 			}
 			return dashboardsWithTranslation;
 		}
@@ -247,13 +227,5 @@ public class DashboardLogic implements Logic {
 			final String errorFormat = "There is no dashboard with id %d";
 			return String.format(errorFormat, dashboardId);
 		}
-	}
-
-	private String readTranslation(final DashboardDefinition dahsboard) {
-		final DashboardTranslation translationObject = new DashboardTranslation();
-		translationObject.setName(dahsboard.getName());
-		translationObject.setField(DESCRIPTION_FOR_CLIENT);
-		final String translatedDescription = translationLogic.read(translationObject).get(languageStore.getLanguage());
-		return translatedDescription;
 	}
 }

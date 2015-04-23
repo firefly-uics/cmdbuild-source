@@ -90,12 +90,14 @@ public class User {
 	@Scope(PROTOTYPE)
 	@Qualifier(USER)
 	public CMDataView userDataView() {
-		final CMDataView dataView = new UserDataView( //
+		final CMDataView userDataView = new UserDataView( //
 				data.systemDataView(), //
 				userStore.getUser().getPrivilegeContext(), //
 				privilegeManagement.rowAndColumnPrivilegeFetcher(), //
 				userStore.getUser());
-		return new ObservableDataView(dataView, taskManager.defaultObserverCollector().allInOneObserver());
+		return new ObservableDataView( //
+				userDataView, //
+				taskManager.defaultObserverCollector().allInOneObserver());
 	}
 
 	@Bean

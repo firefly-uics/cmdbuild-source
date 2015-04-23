@@ -497,4 +497,18 @@ public class PrivateImpl extends AbstractWebservice implements Private {
 		workflowLogicHelper().resumeProcess(card);
 	}
 
+	@Override
+	public void copyAttachment(final String sourceClassName, final int sourceId, final String filename,
+			final String destinationClassName, final int destinationId) {
+		dmsLogicHelper().copy(sourceClassName, Long.valueOf(sourceId), filename, destinationClassName,
+				Long.valueOf(destinationId));
+	}
+
+	@Override
+	public void moveAttachment(String sourceClassName, int sourceId, String filename, String destinationClassName,
+			int destinationId) {
+		dmsLogicHelper().move(sourceClassName, Long.valueOf(sourceId), filename, destinationClassName,
+				Long.valueOf(destinationId));
+	}
+
 }

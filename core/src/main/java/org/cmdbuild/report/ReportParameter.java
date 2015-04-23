@@ -123,7 +123,7 @@ public abstract class ReportParameter {
 		}
 	}
 
-	public void parseValue(final String newValue) {
+	public void parseValue(final Object newValue) {
 		setValue(newValue);
 	}
 

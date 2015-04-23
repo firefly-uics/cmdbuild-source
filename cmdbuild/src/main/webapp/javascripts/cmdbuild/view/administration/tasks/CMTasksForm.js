@@ -38,57 +38,61 @@
 
 		initComponent: function() {
 			// Buttons configuration
-			this.abortButton = Ext.create('CMDBuild.buttons.AbortButton', {
+			this.abortButton = Ext.create('CMDBuild.core.buttons.Abort', {
 				scope: this,
-				handler: function() {
+
+				handler: function(button, e) {
 					this.delegate.cmOn('onAbortButtonClick');
 				}
 			});
 
-			this.cloneButton = Ext.create('Ext.button.Button', {
-				iconCls: 'clone',
+			this.cloneButton = Ext.create('CMDBuild.core.buttons.Clone', {
 				text: tr.clone,
 				scope: this,
-				handler: function() {
+
+				handler: function(button, e) {
 					this.delegate.cmOn('onCloneButtonClick');
 				}
 			});
 
-			this.modifyButton = Ext.create('Ext.button.Button', {
-				iconCls: 'modify',
+			this.modifyButton = Ext.create('CMDBuild.core.buttons.Modify', {
 				text: tr.modify,
 				scope: this,
-				handler: function() {
+
+				handler: function(button, e) {
 					this.delegate.cmOn('onModifyButtonClick');
 				}
 			});
 
-			this.nextButton = Ext.create('CMDBuild.buttons.NextButton', {
+			this.nextButton = Ext.create('CMDBuild.core.buttons.Next', {
 				scope: this,
-				handler: function() {
+
+				handler: function(button, e) {
 					this.delegate.cmOn('onNextButtonClick');
 				}
 			});
 
-			this.previousButton = Ext.create('CMDBuild.buttons.PreviousButton', {
+			this.previousButton = Ext.create('CMDBuild.core.buttons.Previous', {
 				scope: this,
-				handler: function() {
+
+				handler: function(button, e) {
 					this.delegate.cmOn('onPreviousButtonClick');
 				}
 			});
 
-			this.removeButton = Ext.create('Ext.button.Button', {
-				iconCls: 'delete',
+			this.removeButton = Ext.create('CMDBuild.core.buttons.Delete', {
 				text: tr.remove,
 				scope: this,
-				handler: function() {
+
+				handler: function(button, e) {
 					this.delegate.cmOn('onRemoveButtonClick');
 				}
 			});
 
-			this.saveButton = Ext.create('CMDBuild.buttons.SaveButton', {
+			this.saveButton = Ext.create('CMDBuild.core.buttons.Save', {
 				scope: this,
-				handler: function() {
+
+				handler: function(button, e) {
 					this.delegate.cmOn('onSaveButtonClick');
 				}
 			});
@@ -99,17 +103,17 @@
 
 			Ext.apply(this, {
 				dockedItems: [
-					{
-						xtype: 'toolbar',
+					Ext.create('Ext.toolbar.Toolbar', {
 						dock: 'top',
 						itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_TOP,
 						items: this.cmTBar
-					}
+					})
 				],
 				buttons: this.cmButtons
 			});
 
 			this.callParent(arguments);
+
 			this.disableModify();
 		}
 	});

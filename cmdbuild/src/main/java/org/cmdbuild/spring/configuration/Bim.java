@@ -24,7 +24,6 @@ import org.cmdbuild.logic.bim.ViewerLogic;
 import org.cmdbuild.logic.bim.project.DefaultProjectLogic;
 import org.cmdbuild.logic.bim.project.ProjectLogic;
 import org.cmdbuild.logic.data.DataDefinitionLogic;
-import org.cmdbuild.logic.data.access.SystemDataAccessLogicBuilder;
 import org.cmdbuild.logic.data.lookup.LookupLogic;
 import org.cmdbuild.model.bim.StorableLayer;
 import org.cmdbuild.model.bim.StorableProject;
@@ -64,9 +63,6 @@ public class Bim {
 
 	@Autowired
 	private LookupLogic lookupLogic;
-
-	@Autowired
-	private SystemDataAccessLogicBuilder dataAccessLogicBuilder;
 
 	@Autowired
 	private DataSource dataSource;

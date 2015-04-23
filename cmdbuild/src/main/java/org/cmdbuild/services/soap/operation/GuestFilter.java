@@ -20,6 +20,8 @@ import org.cmdbuild.auth.AuthenticationStore;
 import org.cmdbuild.auth.Login;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
+import org.cmdbuild.dao.entrytype.attributetype.CMAttributeTypeVisitor;
+import org.cmdbuild.dao.entrytype.attributetype.ForwardingAttributeTypeVisitor;
 import org.cmdbuild.dao.entrytype.attributetype.NullAttributeTypeVisitor;
 import org.cmdbuild.dao.entrytype.attributetype.ReferenceAttributeType;
 import org.cmdbuild.dao.view.CMDataView;
@@ -66,10 +68,17 @@ class GuestFilter {
 			final MetadataStoreFactory metadataStoreFactory = applicationContext().getBean(MetadataStoreFactory.class);
 			for (final CMAttribute attribute : target.getAttributes()) {
 				logger.debug("trying filtering attribute '{}'", attribute.getName());
-				attribute.getType().accept(new NullAttributeTypeVisitor() {
+				attribute.getType().accept(new ForwardingAttributeTypeVisitor() {
+
+					private final CMAttributeTypeVisitor DELEGATE = NullAttributeTypeVisitor.getInstance();
 
 					private final Store<Metadata> _store = metadataStoreFactory.storeForAttribute(attribute);
 					private final Store<Metadata> store = Stores.nullOnNotFoundRead(_store);
+
+					@Override
+					protected CMAttributeTypeVisitor delegate() {
+						return DELEGATE;
+					}
 
 					@Override
 					public void visit(final ReferenceAttributeType attributeType) {

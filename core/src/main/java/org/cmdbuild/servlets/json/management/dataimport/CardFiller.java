@@ -133,12 +133,12 @@ public class CardFiller {
 
 		boolean set = false;
 		for (final Lookup lookup : lookupStore.readAll(lookupType)) {
-			if (value.equals(lookup.description)) {
+			if (value.equals(lookup.description())) {
 				mutableCard.set( //
 						attributeName, //
 						new LookupValue( //
 								lookup.getId(), //
-								lookup.description, //
+								lookup.description(), //
 								lookupTypeName, //
 								null) //
 						);

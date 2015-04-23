@@ -1,5 +1,7 @@
 package org.cmdbuild.services.email;
 
+import org.cmdbuild.data.store.email.EmailAccount;
+
 import com.google.common.base.Supplier;
 
 /**

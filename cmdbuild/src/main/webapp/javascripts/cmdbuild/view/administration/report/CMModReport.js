@@ -4,7 +4,7 @@ Ext.define("CMDBuild.view.administration.report.CMModReport", {
 	translation: CMDBuild.Translation.administration.modreport,
 	cmName: 'report',
 	activeTab: 0,
-	
+
 	initComponent: function() {
 
 		this.addReportButton = new Ext.button.Button( {
@@ -12,7 +12,7 @@ Ext.define("CMDBuild.view.administration.report.CMModReport", {
 			text : this.translation.add
 		});
 
-		this.grid = new CMDBuild.view.common.report.CMReportGrid({
+		this.grid = Ext.create('CMDBuild.view.administration.report.CMReportGrid', {
 			border: false,
 			exportMode: true,
 			split: true,

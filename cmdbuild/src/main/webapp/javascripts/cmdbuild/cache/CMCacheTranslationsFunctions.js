@@ -20,7 +20,7 @@
 		flushTranslationsToSave: function(translationsKeyName, translationsKeySubName) {
 			for (var i = 0; i < translationsToSave.length; i++) {
 				var t = translationsToSave[i];
-				createDeleteUpdateTranslations(t.translationsKeyType, translationsKeyName, 
+				createDeleteUpdateTranslations(t.translationsKeyType, translationsKeyName,
 						translationsKeySubName, t.translationsKeyField, t.values, {});
 				// oldValues is always {} because we are inserting a new class
 				// and then we have no precedent translations
@@ -29,7 +29,7 @@
 		pushAddingTranslations: function(addingTranslations) {
 			for (var i = 0; i < translationsToSave.length; i++) {
 				var t = translationsToSave[i];
-				if (t.translationsKeyType == addingTranslations.translationsKeyType && 
+				if (t.translationsKeyType == addingTranslations.translationsKeyType &&
 						t.translationsKeyField == addingTranslations.translationsKeyField) {
 					t.values = addingTranslations.values;
 					return;
@@ -40,32 +40,32 @@
 		popAddingTranslations: function(translationsKeyType, translationsKeyField) {
 			for (var i = 0; i < translationsToSave.length; i++) {
 				var t = translationsToSave[i];
-				if (t.translationsKeyType == translationsKeyType && 
+				if (t.translationsKeyType == translationsKeyType &&
 						t.translationsKeyField == translationsKeyField) {
 					return t;
 				}
 			}
 			return undefined;
 		},
-		createTranslations: function(translationsKeyType, translationsKeyName, 
-				translationsKeySubName, translationsKeyField, values, oldValues) {	
+		createTranslations: function(translationsKeyType, translationsKeyName,
+				translationsKeySubName, translationsKeyField, values, oldValues) {
 			if (translationsInAdding) {
 				var t = {
-					"translationsKeyType" : translationsKeyType, 
-					//"translationsKeyName": translationsKeyName, during the adding i don't have this value 
+					"translationsKeyType" : translationsKeyType,
+					//"translationsKeyName": translationsKeyName, during the adding i don't have this value
 					//"translationsKeySubName": translationsKeySubName, during the adding i don't have this value
-					"translationsKeyField": translationsKeyField, 
+					"translationsKeyField": translationsKeyField,
 					"values": values
 				};
 				this.pushAddingTranslations(t);
 			}
 			else {
-				createDeleteUpdateTranslations(translationsKeyType, translationsKeyName, 
+				createDeleteUpdateTranslations(translationsKeyType, translationsKeyName,
 						translationsKeySubName, translationsKeyField, values, oldValues);
 			}
 		},
-		readTranslations: function(translationsKeyType, translationsKeyName, 
-				translationsKeySubName, translationsKeyField, callBack) {	
+		readTranslations: function(translationsKeyType, translationsKeyName,
+				translationsKeySubName, translationsKeyField, callBack) {
 			if (translationsInAdding) {
 				var translations = this.popAddingTranslations(translationsKeyType, translationsKeyField);
 				if (translations) {
@@ -76,7 +76,7 @@
 				}
 			}
 			else {
-				readTranslations(translationsKeyType, translationsKeyName, 
+				readTranslations(translationsKeyType, translationsKeyName,
 					translationsKeySubName, translationsKeyField, callBack);
 			}
 		},
@@ -107,13 +107,13 @@
 			success : function(response, options, decoded) {
 				withTranslations = false;
 				for (key in decoded.translations) {
-					if (! Ext.Array.contains(activeLanguages, decoded.translations[key].name)) {
+					if (! Ext.Array.contains(activeLanguages, decoded.translations[key].tag)) {
 						continue;
 					}
 					var item = {
-						name: decoded.translations[key].name,
-						image: "ux-flag-" + decoded.translations[key].name,
-						language: decoded.translations[key].value
+						name: decoded.translations[key].tag,
+						image: "ux-flag-" + decoded.translations[key].tag,
+						language: decoded.translations[key].description
 					};
 					activeTranslations.push(item);
 					withTranslations = true;
@@ -125,11 +125,13 @@
 	function callObservers() {
 		for (var i = 0; i < observers.length; i++) {
 			var observer = observers[i];
-			observer.resetLanguages();
+
+			if (typeof observer.resetLanguages == 'function')
+				observer.resetLanguages();
 		}
 	}
 	function isEmpty(o) {
-	    for ( var p in o ) { 
+	    for ( var p in o ) {
 	        if (o.hasOwnProperty(p)) { return false; }
 	    }
 	    return true;
@@ -137,7 +139,7 @@
 	function emptyValue(value) {
 		return (! value || Ext.String.trim(value) == "");
 	}
-	function createDeleteUpdateTranslations(translationsKeyType, translationsKeyName, 
+	function createDeleteUpdateTranslations(translationsKeyType, translationsKeyName,
 			translationsKeySubName, translationsKeyField, values, oldValues) {
 		var createValues = {};
 		var updateValues = {};
@@ -165,12 +167,12 @@
 		if (! isEmpty(deleteValues)) {
 			deleteTranslations(translationsKeyType, translationsKeyName, translationsKeySubName, translationsKeyField, deleteValues);
 		}
-		
+
 	}
 	/*
 	 * CREATE
 	 */
-	function createTranslations(translationsKeyType, translationsKeyName, 
+	function createTranslations(translationsKeyType, translationsKeyName,
 			translationsKeySubName, translationsKeyField, values) {
 		switch(translationsKeyType) {
 			case "Class" :
@@ -216,7 +218,7 @@
 				createForMenuItem(translationsKeyName, translationsKeyField, values);
 				break;
 		}
-		
+
 	}
 	function createForClass(translationsKeyName, translationsKeyField, values) {
 		var params = {
@@ -334,7 +336,7 @@
 	/*
 	 * READ
 	 */
-	function readTranslations(translationsKeyType, translationsKeyName, 
+	function readTranslations(translationsKeyType, translationsKeyName,
 			translationsKeySubName, translationsKeyField, callBack) {
 		switch(translationsKeyType) {
 			case "Class" :
@@ -479,11 +481,11 @@
 		};
 		CMDBuild.ServiceProxy.translations.manageTranslations({params : params, success: callBack}, CMDBuild.ServiceProxy.url.translations.readForMenuItem);
 	}
-		
+
 	/*
 	 * UPDATE
 	 */
-	function updateTranslations(translationsKeyType, translationsKeyName, 
+	function updateTranslations(translationsKeyType, translationsKeyName,
 			translationsKeySubName, translationsKeyField, values) {
 		switch(translationsKeyType) {
 			case "Class" :
@@ -529,7 +531,7 @@
 				updateForMenuItem(translationsKeyName, translationsKeyField, values);
 				break;
 		}
-		
+
 	}
 	function updateForClass(translationsKeyName, translationsKeyField, values) {
 		var params = {
@@ -643,11 +645,11 @@
 		};
 		CMDBuild.ServiceProxy.translations.manageTranslations({params : params}, CMDBuild.ServiceProxy.url.translations.updateForMenuItem);
 	}
-		
+
 	/*
 	 * DELETE
 	 */
-	function deleteTranslations(translationsKeyType, translationsKeyName, 
+	function deleteTranslations(translationsKeyType, translationsKeyName,
 			translationsKeySubName, translationsKeyField, values) {
 		switch(translationsKeyType) {
 			case "Class" :
@@ -693,7 +695,7 @@
 				deleteForMenuItem(translationsKeyName, translationsKeyField, values);
 				break;
 		}
-		
+
 	}
 	function deleteForClass(translationsKeyName, translationsKeyField, values) {
 		var params = {
@@ -807,6 +809,6 @@
 		};
 		CMDBuild.ServiceProxy.translations.manageTranslations({params : params}, CMDBuild.ServiceProxy.url.translations.deleteForMenuItem);
 	}
-		
+
 
 })();

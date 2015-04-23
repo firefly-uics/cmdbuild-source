@@ -14,7 +14,7 @@ import org.cmdbuild.common.api.mail.Configuration.Input;
 import org.cmdbuild.common.api.mail.FetchedMail;
 import org.cmdbuild.common.api.mail.MailException;
 import org.cmdbuild.common.api.mail.SelectFolder;
-import org.cmdbuild.common.api.mail.javax.mail.InputTemplate.Hooks;
+import org.cmdbuild.common.api.mail.javax.mail.InputTemplate.Hook;
 import org.slf4j.Logger;
 
 import com.google.common.collect.Lists;
@@ -36,10 +36,10 @@ class SelectFolderImpl implements SelectFolder {
 		logger.info("fetching folder '{}' for mails", folderName);
 		final List<FetchedMail> fetchedMails = Lists.newArrayList();
 		final InputTemplate inputTemplate = new InputTemplate(configuration);
-		inputTemplate.execute(new Hooks() {
+		inputTemplate.execute(new Hook() {
 
 			@Override
-			public void connected(final Store store) {
+			public void connected(final Store store) throws MailException {
 				try {
 					final Folder folder = store.getFolder(folderName);
 					folder.open(Folder.READ_ONLY);

@@ -39,12 +39,12 @@ import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.CMQueryRow;
 import org.cmdbuild.dao.view.CMDataView;
-import org.cmdbuild.data.converter.ViewConverter;
 import org.cmdbuild.data.store.dao.DataViewStore;
+import org.cmdbuild.data.store.dao.StorableConverter;
 import org.cmdbuild.logic.Logic;
 import org.cmdbuild.logic.privileges.PrivilegeInfo.Builder;
-import org.cmdbuild.model.View;
 import org.cmdbuild.model.profile.UIConfiguration;
+import org.cmdbuild.model.view.View;
 import org.cmdbuild.privileges.fetchers.PrivilegeFetcher;
 import org.cmdbuild.privileges.fetchers.factories.CMClassPrivilegeFetcherFactory;
 import org.cmdbuild.privileges.fetchers.factories.FilterPrivilegeFetcherFactory;
@@ -60,12 +60,12 @@ public class DefaultSecurityLogic implements Logic, SecurityLogic {
 
 	private final CMDataView view;
 	private final CMClass grantClass;
-	private final ViewConverter viewConverter;
+	private final StorableConverter<View> viewConverter;
 	private final DataViewFilterStore filterStore;
 
 	public DefaultSecurityLogic( //
 			final CMDataView view, //
-			final ViewConverter viewConverter, //
+			final StorableConverter<View> viewConverter, //
 			final DataViewFilterStore filterStore //
 	) {
 		this.view = view;
@@ -114,7 +114,7 @@ public class DefaultSecurityLogic implements Logic, SecurityLogic {
 				break;
 			}
 		}
-		cardEditMode = (CardEditMode) defaultIfNull(cardEditMode, CardEditMode.ALLOW_ALL);
+		cardEditMode = defaultIfNull(cardEditMode, CardEditMode.ALLOW_ALL);
 		return cardEditMode;
 	}
 
@@ -374,7 +374,7 @@ public class DefaultSecurityLogic implements Logic, SecurityLogic {
 
 		// manage the null value for the privilege mode
 		// it could happen updating row and column privileges
-		final PrivilegeMode privilegeMode = (PrivilegeMode) defaultIfNull(privilegeInfo.getMode(), PrivilegeMode.NONE);
+		final PrivilegeMode privilegeMode = defaultIfNull(privilegeInfo.getMode(), PrivilegeMode.NONE);
 
 		final String persistenceCardEditMode = CardEditMode.LOGIC_TO_PERSISTENCE.apply(privilegeInfo.getCardEditMode());
 

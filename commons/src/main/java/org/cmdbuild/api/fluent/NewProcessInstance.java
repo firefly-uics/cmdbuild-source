@@ -4,8 +4,8 @@ import org.cmdbuild.api.fluent.FluentApiExecutor.AdvanceProcess;
 
 public class NewProcessInstance extends ActiveCard {
 
-	NewProcessInstance(final FluentApi api, final String className) {
-		super(api, className, null);
+	NewProcessInstance(final FluentApiExecutor executor, final String className) {
+		super(executor, className, null);
 	}
 
 	public NewProcessInstance withDescription(final String value) {
@@ -23,10 +23,10 @@ public class NewProcessInstance extends ActiveCard {
 	}
 
 	public ProcessInstanceDescriptor start() {
-		return api().getExecutor().createProcessInstance(this, AdvanceProcess.NO);
+		return executor().createProcessInstance(this, AdvanceProcess.NO);
 	}
 
 	public ProcessInstanceDescriptor startAndAdvance() {
-		return api().getExecutor().createProcessInstance(this, AdvanceProcess.YES);
+		return executor().createProcessInstance(this, AdvanceProcess.YES);
 	}
 }

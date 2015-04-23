@@ -100,14 +100,18 @@
 				var me = this;
 
 				this.lockCard(function() {
-					me.view.editMode();
+					me.loadCard(true, null, function() { // Force card load before entering in edit mode
+						me.view.editMode();
+					});
 				});
 			}
+
+			this.callParent(arguments);
 		},
 
 		onSaveCardClick: function() {
-
 			var me = this;
+
 			var params = {};
 			params[_CMProxy.parameter.CARD_ID] = this.cloneCard ? -1 : this.card.get("Id");
 			params[_CMProxy.parameter.CLASS_NAME] = _CMCache.getEntryTypeNameById(this.card.get("IdClass"));
@@ -167,6 +171,8 @@
 			} else {
 				this.onCardSelected(this.card);
 			}
+
+			this.callParent(arguments); // Forward save event
 
 			this.fireEvent(this.CMEVENTS.abortedModify);
 		},

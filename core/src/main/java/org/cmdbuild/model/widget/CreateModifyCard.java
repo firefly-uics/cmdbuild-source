@@ -21,8 +21,6 @@ public class CreateModifyCard extends Widget {
 		}
 	}
 
-	public static final String CREATED_CARD_ID_SUBMISSION_PARAM = "output";
-
 	private String idcardcqlselector;
 	private String targetClass;
 	private boolean readonly;
@@ -95,11 +93,8 @@ public class CreateModifyCard extends Widget {
 		if (input instanceof Submission) {
 			return (Submission) input;
 		} else {
-			@SuppressWarnings("unchecked")
-			final Map<String, Object> inputMap = (Map<String, Object>) input;
-			final Object createdCardId = inputMap.get(CREATED_CARD_ID_SUBMISSION_PARAM);
 			final Submission submission = new Submission();
-			submission.setOutput(createdCardId);
+			submission.setOutput(input);
 			return submission;
 		}
 	}
@@ -120,7 +115,7 @@ public class CreateModifyCard extends Widget {
 
 		};
 	}
-	
+
 	private Long toLong(final Object cardId) {
 		return new AbstractReferenceAttributeType() {
 

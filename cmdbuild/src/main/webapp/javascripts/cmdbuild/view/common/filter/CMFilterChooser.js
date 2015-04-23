@@ -112,7 +112,7 @@
 		 */
 		buildGrid: function() {
 			var me = this;
-			var store = _CMProxy.Filter.newSystemStore(this.className);
+			var store = CMDBuild.core.proxy.Filter.newSystemStore(this.className);
 
 			this.grid = Ext.create('Ext.grid.Panel', {
 				autoScroll: true,

@@ -17,7 +17,6 @@ public class NavigationTree extends Widget {
 	private Map<String, Object> preset;
 	private String outputName;
 
-	public static final String CREATED_CARD_ID_SUBMISSION_PARAM = "output";
 	private static final String CLASSNAME_FIELD = "className";
 	private static final String CARDID_FIELD = "cardId";
 
@@ -61,7 +60,7 @@ public class NavigationTree extends Widget {
 		return description;
 	}
 
-	public void setDescription(String description) {
+	public void setDescription(final String description) {
 		this.description = description;
 	}
 
@@ -84,8 +83,7 @@ public class NavigationTree extends Widget {
 			return (Submission) input;
 		} else {
 			@SuppressWarnings("unchecked")
-			final Map<String, List<Object>> inputMap = (Map<String, List<Object>>) input;
-			final List<Object> selectedCardIds = inputMap.get(CREATED_CARD_ID_SUBMISSION_PARAM);
+			final List<Object> selectedCardIds = List.class.cast(input);
 			final Submission submission = new Submission();
 			submission.setOutput(selectedCardIds);
 			return submission;

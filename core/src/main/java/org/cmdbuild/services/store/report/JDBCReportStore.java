@@ -8,24 +8,20 @@ import java.util.List;
 
 import javax.sql.DataSource;
 
-import org.cmdbuild.auth.UserStore;
 import org.cmdbuild.exception.NotFoundException;
 import org.cmdbuild.exception.ORMException;
-import org.cmdbuild.model.Report;
 import org.cmdbuild.report.ReportFactory.ReportType;
 import org.cmdbuild.services.store.report.ReportQuery.QueryConfiguration;
-import org.postgresql.jdbc4.Jdbc4Array;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowCallbackHandler;
+
+import com.google.common.base.Function;
 
 public class JDBCReportStore implements ReportStore {
 
 	public static final String REPORT_CLASS_NAME = "Report";
 
-	private final UserStore userStore;
-	private final JdbcTemplate jdbcTemplate;
-
-	private enum Attributes {
+	private static enum Attributes {
 		Id, //
 		Code, //
 		Description, //
@@ -45,12 +41,15 @@ public class JDBCReportStore implements ReportStore {
 		Groups, //
 	};
 
+	private final JdbcTemplate jdbcTemplate;
+	private final Function<ResultSet, Report> function;
+
 	public JDBCReportStore( //
-			final UserStore userStore, //
-			final DataSource dataSource //
+			final DataSource dataSource, //
+			final Function<ResultSet, Report> function //
 	) {
-		this.userStore = userStore;
 		this.jdbcTemplate = new JdbcTemplate(dataSource);
+		this.function = function;
 	}
 
 	@Override
@@ -139,50 +138,7 @@ public class JDBCReportStore implements ReportStore {
 	}
 
 	private Report fromResultSet(final ResultSet rs) throws SQLException {
-		final Report report = new Report(userStore);
-		report.setId(rs.getInt(Attributes.Id.toString()));
-		report.setCode(rs.getString(Attributes.Code.toString()));
-		report.setDescription(rs.getString(Attributes.Description.toString()));
-		report.setStatus(rs.getString(Attributes.Status.toString()));
-		report.setUser(rs.getString(Attributes.User.toString()));
-		report.setBeginDate(rs.getDate(Attributes.BeginDate.toString()));
-		final String typeString = rs.getString(Attributes.Type.toString());
-		report.setType(ReportType.valueOf(typeString.toUpperCase()));
-		report.setQuery(rs.getString(Attributes.Query.toString()));
-		report.setSimpleReport(rs.getBytes(Attributes.SimpleReport.toString()));
-		report.setRichReport(rs.getBytes(Attributes.RichReport.toString()));
-		report.setWizard(rs.getBytes(Attributes.Wizard.toString()));
-		report.setImages(rs.getBytes(Attributes.Images.toString()));
-		report.setImagesLength(toIntegerArray(rs.getObject((Attributes.ImagesLength.toString()))));
-		report.setImagesName(toStringArray(rs.getObject(Attributes.ImagesName.toString())));
-		report.setReportLength(toIntegerArray(rs.getObject((Attributes.ReportLength.toString()))));
-		report.setGroups(toStringArray(rs.getObject((Attributes.Groups.toString()))));
-
-		return report;
+		return function.apply(rs);
 	}
 
-	private Integer[] toIntegerArray(final Object resultSetOutput) throws SQLException {
-		final Integer[] out;
-		if (resultSetOutput != null) {
-			final Jdbc4Array array = (Jdbc4Array) resultSetOutput;
-			out = (Integer[]) array.getArray();
-		} else {
-			out = new Integer[0];
-		}
-
-		return out;
-	}
-
-	private String[] toStringArray(final Object resultSetOutput) throws SQLException {
-		final String[] out;
-
-		if (resultSetOutput != null) {
-			final Jdbc4Array array = (Jdbc4Array) resultSetOutput;
-			out = (String[]) array.getArray();
-		} else {
-			out = new String[0];
-		}
-
-		return out;
-	}
 }

@@ -1,13 +1,12 @@
 package org.cmdbuild.services.store.menu;
 
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
-import static org.cmdbuild.data.converter.ViewConverter.VIEW_CLASS_NAME;
+import static org.cmdbuild.model.view.ViewConverter.VIEW_CLASS_NAME;
 import static org.cmdbuild.services.store.menu.MenuConstants.ELEMENT_CLASS_ATTRIBUTE;
 import static org.cmdbuild.services.store.menu.MenuConstants.ELEMENT_OBJECT_ID_ATTRIBUTE;
 import static org.cmdbuild.services.store.menu.MenuConstants.GROUP_NAME_ATTRIBUTE;
 import static org.cmdbuild.services.store.menu.MenuConstants.MENU_CLASS_NAME;
 import static org.cmdbuild.services.store.menu.MenuConstants.NUMBER_ATTRIBUTE;
-import static org.cmdbuild.services.store.menu.MenuConstants.PARENT_ID_ATTRIBUTE;
 import static org.cmdbuild.services.store.menu.MenuConstants.TYPE_ATTRIBUTE;
 
 import java.util.HashMap;
@@ -21,9 +20,9 @@ import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.logic.data.access.SystemDataAccessLogicBuilder;
-import org.cmdbuild.model.View;
 import org.cmdbuild.model.dashboard.DashboardDefinition;
 import org.cmdbuild.model.data.Card;
+import org.cmdbuild.model.view.View;
 
 public class MenuItemConverter {
 
@@ -76,23 +75,23 @@ public class MenuItemConverter {
 
 	/**
 	 * 
-	 * @param menuCards
-	 * @return a MenuItem starting to a list of MenuCard
+	 * @param elements
+	 * @return a MenuItem starting to a list of MenuElement
 	 */
-	public MenuItem fromMenuCard(final Iterable<CMCard> menuCards) {
+	public MenuItem fromMenuElement(final Iterable<MenuElement> elements) {
 		final MenuItem root = new MenuItemDTO();
 		root.setType(MenuItemType.ROOT);
 		final Map<Number, ConvertingItem> items = new HashMap<Number, ConvertingItem>();
-		for (final CMCard menuCard : menuCards) {
-			final Number id = menuCard.getId();
+		for (final MenuElement menuElement : elements) {
+			final Number id = menuElement.getId();
 			try {
-				items.put(id, convertMenuCardToMenuItemBuilder(menuCard));
+				items.put(id, convertMenuElementToMenuItemBuilder(menuElement));
 			} catch (final Exception e) {
 				Log.CMDBUILD.debug("Error converting MenuItem");
 			}
 		}
 		for (final ConvertingItem item : items.values()) {
-			final Number parentId = (Number) item.menuCard.get(PARENT_ID_ATTRIBUTE);
+			final Number parentId = item.menuElement.getParentId();
 			if (parentId.longValue() > 0) {
 				final ConvertingItem parent = items.get(parentId.longValue());
 				parent.menuItem.addChild(item.menuItem);
@@ -100,7 +99,6 @@ public class MenuItemConverter {
 				root.addChild(item.menuItem);
 			}
 		}
-
 		return root;
 	}
 
@@ -170,20 +168,18 @@ public class MenuItemConverter {
 		return menuItem;
 	}
 
-	private ConvertingItem convertMenuCardToMenuItemBuilder(final CMCard menuCard) {
+	private ConvertingItem convertMenuElementToMenuItemBuilder(final MenuElement menuElement) {
 		final MenuItem menuItem = new MenuItemDTO();
-		menuItem.setId(new Long(menuCard.getId()));
-		menuItem.setUniqueIdentifier((String) menuCard.getCode());
-		menuItem.setType(MenuItemType.getType(menuCard.get(TYPE_ATTRIBUTE, String.class)));
-		menuItem.setDescription((String) menuCard.getDescription());
-		menuItem.setParentId((Integer) menuCard.get(PARENT_ID_ATTRIBUTE));
-		menuItem.setIndex((Integer) menuCard.get(NUMBER_ATTRIBUTE));
+		menuItem.setId(new Long(menuElement.getId()));
+		menuItem.setUniqueIdentifier(menuElement.getCode());
+		menuItem.setType(menuElement.getType());
+		menuItem.setDescription(menuElement.getDescription());
+		menuItem.setParentId(menuElement.getParentId());
+		menuItem.setIndex(menuElement.getNumber());
 
 		if (!MenuItemType.FOLDER.equals(menuItem.getType())) {
-			final Long etr = menuCard.get(ELEMENT_CLASS_ATTRIBUTE, Long.class);
-			final String className = dataView.findClass(etr).getIdentifier().getLocalName();
-			menuItem.setReferedClassName(className);
-			menuItem.setReferencedElementId((Integer) menuCard.get(ELEMENT_OBJECT_ID_ATTRIBUTE));
+			menuItem.setReferedClassName(menuElement.getElementClassName());
+			menuItem.setReferencedElementId(menuElement.getElementId());
 
 			if (MenuItemType.VIEW.equals(menuItem.getType())) {
 				final Card viewCard = dataAccessLogic.fetchCard(menuItem.getReferedClassName(), //
@@ -203,9 +199,8 @@ public class MenuItemConverter {
 				menuItem.setSpecificTypeValues(specificTypeValues);
 			}
 		}
-
-		menuItem.setGroupName((String) menuCard.get(GROUP_NAME_ATTRIBUTE));
-		return new ConvertingItem(menuCard, menuItem);
+		menuItem.setGroupName(menuElement.getGroupName());
+		return new ConvertingItem(menuElement, menuItem);
 	}
 
 	CMCardDefinition fromMenuItemToMenuCard(final String groupName, final MenuItem menuItem) {
@@ -305,12 +300,12 @@ public class MenuItemConverter {
 	}
 
 	private static class ConvertingItem {
-		public final CMCard menuCard;
+		public final MenuElement menuElement;
 		public final MenuItem menuItem;
 
-		public ConvertingItem(final CMCard menuCard, final MenuItem menuItemBuilder) {
-			this.menuCard = menuCard;
-			this.menuItem = menuItemBuilder;
+		public ConvertingItem(final MenuElement menuElement, final MenuItem menuItem) {
+			this.menuElement = menuElement;
+			this.menuItem = menuItem;
 		}
 	}
 }

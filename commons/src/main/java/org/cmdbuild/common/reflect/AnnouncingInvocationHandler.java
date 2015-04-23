@@ -12,7 +12,7 @@ public class AnnouncingInvocationHandler implements InvocationHandler {
 
 	}
 
-	public static  AnnouncingInvocationHandler of(final Object delegate, final Announceable announceable) {
+	public static AnnouncingInvocationHandler of(final Object delegate, final Announceable announceable) {
 		return new AnnouncingInvocationHandler(delegate, announceable);
 	}
 

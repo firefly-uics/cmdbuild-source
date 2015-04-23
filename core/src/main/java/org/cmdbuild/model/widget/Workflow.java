@@ -14,7 +14,6 @@ public class Workflow extends Widget {
 	private String filterType;
 	private String outputName;
 
-	public static final String SUBMISSION_PARAM = "output";
 	private static final String CARDID_FIELD = "id";
 	private static final String CLASSNAME_FIELD = "className";
 
@@ -32,7 +31,7 @@ public class Workflow extends Widget {
 		this.outputName = outputName;
 	}
 
-	public void setFilterType(String filterType) {
+	public void setFilterType(final String filterType) {
 		this.filterType = filterType;
 	}
 
@@ -40,7 +39,7 @@ public class Workflow extends Widget {
 		return filter;
 	}
 
-	public void setFilter(String filter) {
+	public void setFilter(final String filter) {
 		this.filter = filter;
 	}
 
@@ -48,7 +47,7 @@ public class Workflow extends Widget {
 		return workflowName;
 	}
 
-	public void setWorkflowName(String workflowName) {
+	public void setWorkflowName(final String workflowName) {
 		this.workflowName = workflowName;
 	}
 
@@ -82,11 +81,8 @@ public class Workflow extends Widget {
 		if (input instanceof Submission) {
 			return (Submission) input;
 		} else {
-			@SuppressWarnings("unchecked")
-			final Map<String, Object> inputMap = (Map<String, Object>) input;
-			Object output = inputMap.get(SUBMISSION_PARAM);
 			final Submission submission = new Submission();
-			submission.setOutput(output);
+			submission.setOutput(input);
 			return submission;
 		}
 	}
@@ -97,24 +93,26 @@ public class Workflow extends Widget {
 		final Map<String, String> idAndClassname = (Map<String, String>) output;
 		final Object id = idAndClassname.get(CARDID_FIELD);
 		final String className = idAndClassname.get(CLASSNAME_FIELD);
-		if(id != null){
+		if (id != null) {
 			final Reference outputReference = new Reference() {
 				@Override
 				public Long getId() {
 					return toLong(id);
 				}
+
 				@Override
 				public String getClassName() {
 					return className;
 				}
 			};
 			return outputReference;
-		}else{
+		} else {
 			final Reference outputReference = new Reference() {
 				@Override
 				public Long getId() {
 					return toLong(-1);
 				}
+
 				@Override
 				public String getClassName() {
 					return className;

@@ -9,6 +9,9 @@ Ext.define("CMDBuild.view.management.classes.attachments.CMCardAttachmentsPanel"
 	eventmastertype: 'class',
 	hideMode: "offsets",
 
+	frame: false,
+	border: false,
+
 	initComponent: function() {
 		var col_tr = CMDBuild.Translation.management.modcard.attachment_columns;
 
@@ -43,7 +46,7 @@ Ext.define("CMDBuild.view.management.classes.attachments.CMCardAttachmentsPanel"
 
 	reloadCard: function() {
 		this.loaded = false;
-		if (this.ownerCt.layout.getActiveItem) { 
+		if (this.ownerCt.layout.getActiveItem) {
 			if (this.ownerCt.layout.getActiveItem().id == this.id) {
 				this.loadCardAttachments();
 			}

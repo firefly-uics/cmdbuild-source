@@ -90,4 +90,24 @@ public class DmsLogicHelper implements SoapLogicHelper {
 		}
 	}
 
+	public void copy(final String sourceClassName, final Long sourceId, final String filename,
+			final String destinationClassName, final Long destinationId) {
+		dmsLogic.copy( //
+				sourceClassName, //
+				sourceId, //
+				filename, //
+				destinationClassName, //
+				destinationId);
+	}
+
+	public void move(final String sourceClassName, final Long sourceId, final String filename,
+			final String destinationClassName, final Long destinationId) {
+		dmsLogic.move( //
+				sourceClassName, //
+				sourceId, //
+				filename, //
+				destinationClassName, //
+				destinationId);
+	}
+
 }

@@ -31,8 +31,7 @@ public class RollbackOperations extends ExternalResource {
 
 	};
 
-	public static class Builder implements
-			org.cmdbuild.common.Builder<RollbackOperations> {
+	public static class Builder implements org.cmdbuild.common.Builder<RollbackOperations> {
 
 		private DBDriver dbDriver;
 		private Hook hook = NULL_HOOK;

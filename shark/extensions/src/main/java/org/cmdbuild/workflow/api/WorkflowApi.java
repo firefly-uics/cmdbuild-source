@@ -10,9 +10,10 @@ import org.cmdbuild.api.fluent.ws.EntryTypeAttribute;
 import org.cmdbuild.common.Constants;
 import org.cmdbuild.common.api.mail.FetchedMail;
 import org.cmdbuild.common.api.mail.MailApi;
-import org.cmdbuild.common.api.mail.NewMail;
+import org.cmdbuild.common.api.mail.NewMailQueue;
 import org.cmdbuild.common.api.mail.SelectFolder;
 import org.cmdbuild.common.api.mail.SelectMail;
+import org.cmdbuild.common.api.mail.SendableNewMail;
 import org.cmdbuild.workflow.type.LookupType;
 import org.cmdbuild.workflow.type.ReferenceType;
 
@@ -74,8 +75,13 @@ public class WorkflowApi extends FluentApi implements SchemaApi, MailApi {
 	 */
 
 	@Override
-	public NewMail newMail() {
+	public SendableNewMail newMail() {
 		return mailApi.newMail();
+	}
+
+	@Override
+	public NewMailQueue newMailQueue() {
+		return mailApi.newMailQueue();
 	}
 
 	@Override

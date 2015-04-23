@@ -5,7 +5,6 @@ import static org.cmdbuild.spring.util.Constants.PROTOTYPE;
 import javax.sql.DataSource;
 
 import org.cmdbuild.config.GisConfiguration;
-import org.cmdbuild.dao.view.DBDataView;
 import org.cmdbuild.logic.DefaultGISLogic;
 import org.cmdbuild.logic.GISLogic;
 import org.cmdbuild.services.gis.GeoFeatureStore;
@@ -20,13 +19,13 @@ import org.springframework.context.annotation.Scope;
 public class Gis {
 
 	@Autowired
+	private Data data;
+
+	@Autowired
 	private DataSource dataSource;
 
 	@Autowired
 	private GisConfiguration gisConfiguration;
-
-	@Autowired
-	private DBDataView systemDataView;
 
 	@Bean
 	protected GeoServerService geoServerService() {
@@ -47,7 +46,7 @@ public class Gis {
 	@Scope(PROTOTYPE)
 	public GISLogic gisLogic() {
 		return new DefaultGISLogic( //
-				systemDataView, //
+				data.systemDataView(), //
 				geoFeatureStore(), //
 				gisConfiguration, //
 				geoServerService());

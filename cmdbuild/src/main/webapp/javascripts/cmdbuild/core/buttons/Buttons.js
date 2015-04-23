@@ -1,79 +1,101 @@
 (function() {
 
-	Ext.define('CMDBuild.buttons.BaseButton', {
-		extend: 'Ext.button.Button',
+	/**
+	 * Fake class to require all button classes
+	 */
+	Ext.define('CMDBuild.core.buttons.Buttons', {
 
-		withIcon: false,
-		classIcon: undefined,
-
-		initComponent: function() {
-			if (this.withIcon && classIcon)
-				Ext.apply(this, {
-					cls: this.classIcon
-				});
-
-			this.callParent(arguments);
-		}
+		requires: [
+			'CMDBuild.core.buttons.Email',
+			'CMDBuild.core.buttons.Iconized'
+		]
 	});
 
-	Ext.define('CMDBuild.buttons.SaveButton', {
-		extend: 'CMDBuild.buttons.BaseButton',
+	Ext.define('CMDBuild.core.buttons.Abort', {
+		alternateClassName: 'CMDBuild.buttons.AbortButton', // Legacy class name
+		extend: 'CMDBuild.core.buttons.Base',
 
-		text: CMDBuild.Translation.common.buttons.save
+		textDefault: CMDBuild.Translation.common.buttons.abort
 	});
 
-	Ext.define('CMDBuild.buttons.ConfirmButton', {
-		extend: 'CMDBuild.buttons.BaseButton',
+	Ext.define('CMDBuild.core.buttons.Apply', {
+		alternateClassName: 'CMDBuild.buttons.ApplyButton', // Legacy class name
+		extend: 'CMDBuild.core.buttons.Base',
 
-		text: CMDBuild.Translation.common.buttons.confirm
+		textDefault: CMDBuild.Translation.common.buttons.apply
 	});
 
-	Ext.define('CMDBuild.buttons.AbortButton', {
-		extend: 'CMDBuild.buttons.BaseButton',
+	Ext.define('CMDBuild.core.buttons.Back', {
+		extend: 'CMDBuild.core.buttons.Base',
 
-		text: CMDBuild.Translation.common.buttons.abort
+		textDefault: CMDBuild.Translation.common.buttons.workflow.back
 	});
 
-	Ext.define('CMDBuild.buttons.ImportButton', {
-		extend: 'CMDBuild.buttons.BaseButton',
+	Ext.define('CMDBuild.core.buttons.Close', {
+		alternateClassName: 'CMDBuild.buttons.CloseButton', // Legacy class name
+		extend: 'CMDBuild.core.buttons.Base',
 
-		text: CMDBuild.Translation.common.buttons.importLabel
+		textDefault: CMDBuild.Translation.common.buttons.close
 	});
 
-	Ext.define('CMDBuild.buttons.ExportButton', {
-		extend: 'CMDBuild.buttons.BaseButton',
+	Ext.define('CMDBuild.core.buttons.Confirm', {
+		alternateClassName: 'CMDBuild.buttons.ConfirmButton', // Legacy class name
+		extend: 'CMDBuild.core.buttons.Base',
 
-		text: CMDBuild.Translation.common.buttons.exportLabel
+		textDefault: CMDBuild.Translation.common.buttons.confirm
 	});
 
-	Ext.define('CMDBuild.buttons.UpdateButton', {
-		extend: 'CMDBuild.buttons.BaseButton',
+	Ext.define('CMDBuild.core.buttons.Download', {
+		extend: 'CMDBuild.core.buttons.Base',
 
-		text: CMDBuild.Translation.common.buttons.update
+		iconCls: 'download',
+		textDefault: CMDBuild.Translation.download
 	});
 
-	Ext.define('CMDBuild.buttons.CloseButton', {
-		extend: 'CMDBuild.buttons.BaseButton',
+	Ext.define('CMDBuild.core.buttons.Export', {
+		alternateClassName: 'CMDBuild.buttons.ExportButton', // Legacy class name
+		extend: 'CMDBuild.core.buttons.Base',
 
-		text: CMDBuild.Translation.common.buttons.close
+		textDefault: CMDBuild.Translation.common.buttons.exportLabel
 	});
 
-	Ext.define('CMDBuild.buttons.ApplyButton', {
-		extend: 'CMDBuild.buttons.BaseButton',
+	Ext.define('CMDBuild.core.buttons.Import', {
+		alternateClassName: 'CMDBuild.buttons.ImportButton', // Legacy class name
+		extend: 'CMDBuild.core.buttons.Base',
 
-		text: CMDBuild.Translation.common.buttons.apply
+		textDefault: CMDBuild.Translation.common.buttons.importLabel
 	});
 
-	Ext.define('CMDBuild.buttons.PreviousButton', {
-		extend: 'CMDBuild.buttons.BaseButton',
+	Ext.define('CMDBuild.core.buttons.Previous', {
+		extend: 'CMDBuild.core.buttons.Base',
 
-		text: CMDBuild.Translation.common.buttons.previous
+		textDefault: CMDBuild.Translation.common.buttons.previous
 	});
 
-	Ext.define('CMDBuild.buttons.NextButton', {
-		extend: 'CMDBuild.buttons.BaseButton',
+	Ext.define('CMDBuild.core.buttons.Save', {
+		alternateClassName: 'CMDBuild.buttons.SaveButton', // Legacy class name
+		extend: 'CMDBuild.core.buttons.Base',
 
-		text: CMDBuild.Translation.common.buttons.next
+		textDefault: CMDBuild.Translation.common.buttons.save
+	});
+
+	Ext.define('CMDBuild.core.buttons.Next', {
+		extend: 'CMDBuild.core.buttons.Base',
+
+		textDefault: CMDBuild.Translation.common.buttons.next
+	});
+
+	Ext.define('CMDBuild.core.buttons.Update', {
+		alternateClassName: 'CMDBuild.buttons.UpdateButton', // Legacy class name
+		extend: 'CMDBuild.core.buttons.Base',
+
+		textDefault: CMDBuild.Translation.common.buttons.update
+	});
+
+	Ext.define('CMDBuild.core.buttons.Upload', {
+		extend: 'CMDBuild.core.buttons.Base',
+
+		textDefault: CMDBuild.Translation.upload
 	});
 
 })();

@@ -76,4 +76,14 @@ public class UserDomain extends UserEntryType implements CMDomain {
 		return inner.getMasterDetailDescription();
 	}
 
+	@Override
+	public Iterable<String> getDisabled1() {
+		return inner.getDisabled1();
+	}
+
+	@Override
+	public Iterable<String> getDisabled2() {
+		return inner.getDisabled2();
+	}
+
 }

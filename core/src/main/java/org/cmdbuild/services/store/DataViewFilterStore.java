@@ -22,7 +22,9 @@ import org.cmdbuild.dao.query.CMQueryRow;
 import org.cmdbuild.dao.query.clause.OrderByClause.Direction;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
 import org.cmdbuild.dao.view.CMDataView;
+import org.cmdbuild.data.store.dao.StorableConverter;
 import org.cmdbuild.privileges.GrantCleaner;
+import org.cmdbuild.services.localization.LocalizableStorableVisitor;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
@@ -32,37 +34,35 @@ public class DataViewFilterStore implements FilterStore {
 
 	private class FilterCard implements Filter {
 
-		private final CMCard card;
+		private final Filter filter;
 
-		public FilterCard(final CMCard card) {
-			this.card = card;
+		public FilterCard(final Filter filter) {
+			this.filter = filter;
 		}
 
 		@Override
 		public Long getId() {
-			return card.getId();
+			return filter.getId();
 		}
 
 		@Override
 		public String getName() {
-			return (String) card.get(NAME_ATTRIBUTE_NAME);
+			return filter.getName();
 		}
 
 		@Override
 		public String getDescription() {
-			return (String) card.get(DESCRIPTION_ATTRIBUTE_NAME);
+			return filter.getDescription();
 		}
 
 		@Override
 		public String getValue() {
-			return (String) card.get(FILTER_ATTRIBUTE_NAME);
+			return filter.getValue();
 		}
 
 		@Override
 		public String getClassName() {
-			final Long etr = card.get(ENTRYTYPE_ATTRIBUTE_NAME, Long.class);
-			final CMClass clazz = view.findClass(etr);
-			return clazz.getIdentifier().getLocalName();
+			return filter.getClassName();
 		}
 
 		@Override
@@ -90,7 +90,17 @@ public class DataViewFilterStore implements FilterStore {
 
 		@Override
 		public boolean isTemplate() {
-			return (Boolean) card.get(TEMPLATE_ATTRIBUTE_NAME);
+			return filter.isTemplate();
+		}
+
+		@Override
+		public void accept(final LocalizableStorableVisitor visitor) {
+			visitor.visit(this);
+		}
+
+		@Override
+		public String getIdentifier() {
+			throw new UnsupportedOperationException("should be never called");
 		}
 
 	}
@@ -116,23 +126,26 @@ public class DataViewFilterStore implements FilterStore {
 
 	}
 
-	private static final String FILTERS_CLASS_NAME = "_Filter";
+	protected static final String FILTERS_CLASS_NAME = "_Filter";
 	private static final String ID_ATTRIBUTE_NAME = "Id";
 	private static final String MASTER_ATTRIBUTE_NAME = "IdOwner";
-	private static final String NAME_ATTRIBUTE_NAME = "Code";
-	private static final String DESCRIPTION_ATTRIBUTE_NAME = "Description";
-	private static final String FILTER_ATTRIBUTE_NAME = "Filter";
-	private static final String ENTRYTYPE_ATTRIBUTE_NAME = "IdSourceClass";
-	private static final String TEMPLATE_ATTRIBUTE_NAME = "Template";
+	protected static final String NAME_ATTRIBUTE_NAME = "Code";
+	protected static final String DESCRIPTION_ATTRIBUTE_NAME = "Description";
+	protected static final String FILTER_ATTRIBUTE_NAME = "Filter";
+	protected static final String ENTRYTYPE_ATTRIBUTE_NAME = "IdSourceClass";
+	protected static final String TEMPLATE_ATTRIBUTE_NAME = "Template";
 
 	private final CMDataView view;
 	private final OperationUser operationUser;
 	private final GrantCleaner grantCleaner;
+	private final StorableConverter<FilterStore.Filter> converter;
 
-	public DataViewFilterStore(final CMDataView dataView, final OperationUser operationUser) {
+	public DataViewFilterStore(final CMDataView dataView, final OperationUser operationUser,
+			final StorableConverter<FilterStore.Filter> converter) {
 		this.view = dataView;
 		this.operationUser = operationUser;
 		this.grantCleaner = new GrantCleaner(view);
+		this.converter = converter;
 	}
 
 	public CMClass getFilterClass() {
@@ -149,7 +162,7 @@ public class DataViewFilterStore implements FilterStore {
 				.orderBy(filterClass.getCodeAttributeName(), //
 						Direction.ASC) //
 				.run().getOnlyRow();
-		return new FilterCard(row.getCard(filterClass));
+		return new FilterCard(converter.convert(row.getCard(filterClass)));
 	}
 
 	@Override
@@ -161,7 +174,7 @@ public class DataViewFilterStore implements FilterStore {
 			@Override
 			public Filter apply(final CMQueryRow input) {
 				final CMCard filterCard = input.getCard(getFilterClass());
-				return new FilterCard(filterCard);
+				return new FilterCard(converter.convert(filterCard));
 			}
 		});
 
@@ -179,7 +192,7 @@ public class DataViewFilterStore implements FilterStore {
 			@Override
 			public Filter apply(final CMQueryRow input) {
 				final CMCard filterCard = input.getCard(getFilterClass());
-				return new FilterCard(filterCard);
+				return new FilterCard(converter.convert(filterCard));
 			}
 		});
 
@@ -264,7 +277,7 @@ public class DataViewFilterStore implements FilterStore {
 			@Override
 			public Filter apply(final CMQueryRow input) {
 				final CMCard filterCard = input.getCard(getFilterClass());
-				return new FilterCard(filterCard);
+				return new FilterCard(converter.convert(filterCard));
 			}
 		});
 
@@ -305,7 +318,8 @@ public class DataViewFilterStore implements FilterStore {
 
 	private GetFiltersResponse convertResultsToFilterList(final List<Filter> groupFilters, final CMQueryResult result) {
 		for (final CMQueryRow row : result) {
-			final Filter filter = new FilterCard(row.getCard(getFilterClass()));
+			final CMCard card = row.getCard(getFilterClass());
+			final Filter filter = new FilterCard(converter.convert(card));
 			if (operationUser.hasReadAccess(filter)) {
 				groupFilters.add(filter);
 			}
@@ -340,8 +354,8 @@ public class DataViewFilterStore implements FilterStore {
 				.set(FILTER_ATTRIBUTE_NAME, filter.getValue()) //
 				.set(TEMPLATE_ATTRIBUTE_NAME, filter.isTemplate()) //
 				.set(ENTRYTYPE_ATTRIBUTE_NAME, clazz.getId());
-
-		return new FilterCard(filterCardDefinition.save());
+		final CMCard cardSaved = filterCardDefinition.save();
+		return new FilterCard(converter.convert(cardSaved));
 	}
 
 	@Override
@@ -353,7 +367,8 @@ public class DataViewFilterStore implements FilterStore {
 				.set(NAME_ATTRIBUTE_NAME, filter.getName()) //
 				.set(FILTER_ATTRIBUTE_NAME, filter.getValue()) //
 				.set(ENTRYTYPE_ATTRIBUTE_NAME, clazz.getId()); //
-		return new FilterCard(filterCardDefinition.save());
+		final CMCard cardSaved = filterCardDefinition.save();
+		return new FilterCard(converter.convert(cardSaved));
 	}
 
 	@Override

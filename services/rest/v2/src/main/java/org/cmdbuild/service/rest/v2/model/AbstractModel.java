@@ -26,7 +26,7 @@ public abstract class AbstractModel implements Model {
 
 	@Override
 	public final String toString() {
-		return ToStringBuilder.reflectionToString(this, SHORT_PREFIX_STYLE).toString();
+		return ToStringBuilder.reflectionToString(this, SHORT_PREFIX_STYLE);
 	}
 
 }

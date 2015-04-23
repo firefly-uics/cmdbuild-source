@@ -2,16 +2,6 @@
 
 	Ext.require('CMDBuild.core.proxy.CMProxyConstants');
 
-	Ext.define('CMDBuild.model.CMGroupModels.comboBox', {
-		extend: 'Ext.data.Model',
-
-		fields: [
-			{ name: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION, type: 'string' },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.ID, type: 'int' },
-			{ name: 'isdefault', type: 'boolean' }
-		]
-	});
-
 	Ext.define('CMDBuild.model.CMGroupModels.startingClass', {
 		extend: 'Ext.data.Model',
 

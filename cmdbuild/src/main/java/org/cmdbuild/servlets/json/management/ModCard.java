@@ -318,7 +318,7 @@ public class ModCard extends JSONBaseWithSpringContext {
 			final Object retrievedFlowStatus = card.card.get(FlowStatus.dbColumnName());
 			if (retrievedFlowStatus != null) {
 				final Lookup lookupFlowStatus = lookupLogic().getLookup(((LookupValue) retrievedFlowStatus).getId());
-				out.put("FlowStatus", lookupFlowStatus.code);
+				out.put("FlowStatus", lookupFlowStatus.code());
 			}
 		}
 
@@ -329,7 +329,7 @@ public class ModCard extends JSONBaseWithSpringContext {
 		final Object retrievedFlowStatus = card.get(FlowStatus.dbColumnName());
 		if (retrievedFlowStatus != null) {
 			final Lookup lookupFlowStatus = lookupLogic().getLookup(((LookupValue) retrievedFlowStatus).getId());
-			return lookupFlowStatus.code;
+			return lookupFlowStatus.code();
 		} else {
 			return null;
 		}
@@ -412,6 +412,7 @@ public class ModCard extends JSONBaseWithSpringContext {
 			final Card cardToUpdate = Card.newInstance() //
 					.withId(entry.getKey()) //
 					.withClassName(entry.getValue()).withAllAttributes(attributes) //
+					.withUser(operationUser().getAuthenticatedUser().getUsername()) //
 					.build();
 			dataLogic.updateCard(cardToUpdate);
 		}
@@ -463,7 +464,7 @@ public class ModCard extends JSONBaseWithSpringContext {
 		final DataAccessLogic dataLogic = userDataAccessLogic();
 		final CMClass found = dataLogic.findClass(classId);
 		if (found == null) {
-			throw NotFoundException.NotFoundExceptionType.CLASS_NOTFOUND.createException();
+			throw NotFoundException.NotFoundExceptionType.CLASS_NOTFOUND.createException(classId.toString());
 		}
 		final String className = found.getIdentifier().getLocalName();
 		dataLogic.deleteCard(className, cardId);

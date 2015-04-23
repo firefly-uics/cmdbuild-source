@@ -7,9 +7,9 @@ import org.cmdbuild.auth.LanguageStore;
 import org.cmdbuild.auth.Login;
 import org.cmdbuild.config.CmdbuildConfiguration;
 import org.cmdbuild.listeners.ValuesStore;
-import org.cmdbuild.model.Report;
 import org.cmdbuild.report.ReportFactory;
 import org.cmdbuild.services.auth.UserType;
+import org.cmdbuild.services.store.report.Report;
 import org.cmdbuild.servlets.json.management.dataimport.csv.CSVData;
 import org.springframework.beans.factory.annotation.Autowired;
 

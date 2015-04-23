@@ -7,6 +7,10 @@ import static com.google.common.collect.Maps.newHashMap;
 import static com.google.common.collect.Maps.transformEntries;
 import static java.util.Collections.emptyMap;
 import static org.apache.commons.lang3.StringUtils.defaultString;
+import static org.cmdbuild.logic.mapping.json.Constants.FilterOperator.EQUAL;
+import static org.cmdbuild.logic.mapping.json.Constants.Filters.ATTRIBUTE_KEY;
+import static org.cmdbuild.logic.mapping.json.Constants.Filters.OPERATOR_KEY;
+import static org.cmdbuild.logic.mapping.json.Constants.Filters.VALUE_KEY;
 import static org.cmdbuild.service.rest.v2.constants.Serialization.UNDERSCORED_DESTINATION_ID;
 import static org.cmdbuild.service.rest.v2.constants.Serialization.UNDERSCORED_SOURCE_ID;
 import static org.cmdbuild.service.rest.v2.cxf.util.Json.safeJsonObject;
@@ -31,11 +35,16 @@ import org.cmdbuild.logic.commands.GetRelationList.GetRelationListResponse;
 import org.cmdbuild.logic.data.QueryOptions;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.logic.data.access.RelationDTO;
+import org.cmdbuild.logic.mapping.json.JsonFilterHelper;
+import org.cmdbuild.logic.mapping.json.JsonFilterHelper.FilterElementGetter;
 import org.cmdbuild.service.rest.v2.Relations;
 import org.cmdbuild.service.rest.v2.cxf.serialization.DefaultConverter;
 import org.cmdbuild.service.rest.v2.model.Relation;
 import org.cmdbuild.service.rest.v2.model.ResponseMultiple;
 import org.cmdbuild.service.rest.v2.model.ResponseSingle;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
@@ -186,7 +195,26 @@ public class CxfRelations implements Relations {
 			_filter = _filter.replaceAll(regex_2, replacement_2);
 			// <<<<<
 			final QueryOptions queryOptions = QueryOptions.newQueryOption() //
-					.filter(safeJsonObject(_filter)) //
+					.filter(new JsonFilterHelper(safeJsonObject(_filter)).merge(new FilterElementGetter() {
+
+						@Override
+						public boolean hasElement() {
+							return true;
+						}
+
+						@Override
+						public JSONObject getElement() throws JSONException {
+							final JSONArray jsonValues = new JSONArray();
+							jsonValues.put("_1");
+
+							final JSONObject jsonObject = new JSONObject();
+							jsonObject.put(ATTRIBUTE_KEY, "_Src");
+							jsonObject.put(OPERATOR_KEY, EQUAL);
+							jsonObject.put(VALUE_KEY, jsonValues);
+
+							return jsonObject;
+						}
+					})) //
 					.limit(limit) //
 					.offset(offset) //
 					.build();
@@ -262,6 +290,7 @@ public class CxfRelations implements Relations {
 
 	private RelationDTO relationDto(final CMDomain domain, final Relation relation) {
 		final RelationDTO relationDTO = new RelationDTO();
+		relationDTO.relationId = relation.getId();
 		relationDTO.domainName = domain.getName();
 		relationDTO.master = "_1";
 		relationDTO.addSourceCard(relation.getSource().getId(), relation.getSource().getType());

@@ -24,9 +24,11 @@ import org.cmdbuild.dao.query.clause.OrderByClause;
 import org.cmdbuild.dao.query.clause.QueryAliasAttribute;
 import org.cmdbuild.dao.query.clause.QueryDomain;
 import org.cmdbuild.dao.query.clause.QueryRelation;
+import org.cmdbuild.dao.query.clause.where.ForwardingWhereClauseVisitor;
 import org.cmdbuild.dao.query.clause.where.NullWhereClauseVisitor;
 import org.cmdbuild.dao.query.clause.where.SimpleWhereClause;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
+import org.cmdbuild.dao.query.clause.where.WhereClauseVisitor;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.logic.data.QueryOptions;
 import org.cmdbuild.logic.mapping.FilterMapper;
@@ -139,13 +141,20 @@ public class GetRelationList extends AbstractGetRelation {
 
 					@Override
 					public WhereClause apply(final WhereClause input) {
-						return new NullWhereClauseVisitor() {
+						return new ForwardingWhereClauseVisitor() {
+
+							private final WhereClauseVisitor delegate = NullWhereClauseVisitor.getInstance();
 
 							private WhereClause output;
 
 							public WhereClause apply() {
 								input.accept(this);
 								return output;
+							}
+
+							@Override
+							protected WhereClauseVisitor delegate() {
+								return delegate;
 							}
 
 							@Override
@@ -158,6 +167,8 @@ public class GetRelationList extends AbstractGetRelation {
 								} else if (IDOBJ1.equals(name)) {
 									_attribute = attribute(DOM_ALIAS, name);
 								} else if (IDOBJ2.equals(name)) {
+									_attribute = attribute(DOM_ALIAS, name);
+								} else if ("_Src".equals(name)) {
 									_attribute = attribute(DOM_ALIAS, name);
 								} else {
 									_attribute = attribute;
