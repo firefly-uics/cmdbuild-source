@@ -12,6 +12,8 @@ public interface NewMailQueue {
 
 	NewMailQueue withCallback(Callback callback);
 
+	NewMailQueue withForgiving(boolean forgiving);
+
 	/**
 	 * Creates a new mail.
 	 * 

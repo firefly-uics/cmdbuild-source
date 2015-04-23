@@ -364,7 +364,38 @@ public class SendMailWithQueueTest extends AbstractMailTest {
 		Collections.sort(receivedMessages, MESSAGES_BY_SUBJECT);
 		assertThat(receivedMessages.get(0).getSubject(), equalTo(BAR));
 		assertThat(receivedMessages.get(1).getSubject(), equalTo(FOO));
+	}
 
+	@Test
+	public void almostAllMessagesSuccessfullySent() throws Exception {
+		newMailQueue() //
+				//
+				.withForgiving(true) //
+				// ---
+				.newMail() //
+				.withTo(BAR_AT_EXAMPLE_DOT_COM) //
+				.withSubject(FOO) //
+				.withContent(PLAIN_TEXT_CONTENT) //
+				.add() //
+				// ---
+				.newMail() //
+				.withSubject(BAR) //
+				.withContent(PLAIN_TEXT_CONTENT) //
+				.add() //
+				// ---
+				.newMail() //
+				.withTo(BAR_AT_EXAMPLE_DOT_COM) //
+				.withSubject(BAZ) //
+				.withContent(PLAIN_TEXT_CONTENT) //
+				.add() //
+				// ---
+				.sendAll();
+
+		final List<MimeMessage> receivedMessages = Arrays.asList(greenMail().getReceivedMessages());
+		assertThat(receivedMessages, hasSize(2));
+		Collections.sort(receivedMessages, MESSAGES_BY_SUBJECT);
+		assertThat(receivedMessages.get(0).getSubject(), equalTo(BAZ));
+		assertThat(receivedMessages.get(1).getSubject(), equalTo(FOO));
 	}
 
 }

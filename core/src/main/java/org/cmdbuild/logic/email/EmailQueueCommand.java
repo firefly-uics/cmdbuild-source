@@ -119,8 +119,9 @@ public class EmailQueueCommand implements Command, Callback {
 			}
 			if (account.isPresent()) {
 				final MailApi api = mailApiFactory.create(AllConfigurationWrapper.of(account.get()));
-				final NewMailQueue queue = api.newMailQueue();
-				queue.withCallback(this);
+				final NewMailQueue queue = api.newMailQueue() //
+						.withCallback(this) //
+						.withForgiving(true);
 				emailByIndex.clear();
 				for (final Email email : emailsByAccount.get(accountName)) {
 					currentEmail = email;
