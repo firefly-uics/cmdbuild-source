@@ -26,11 +26,6 @@ public abstract class ForwardingRowAndColumnPrivilegeFetcher extends ForwardingO
 	}
 
 	@Override
-	public Iterable<? extends WhereClause> fetchPrivilegeFiltersFor(final CMEntryType entryType, final Alias alias) {
-		return delegate().fetchPrivilegeFiltersFor(entryType, alias);
-	}
-
-	@Override
 	public Iterable<? extends WhereClause> fetchPrivilegeFiltersFor(final CMEntryType entryType,
 			final CMEntryType entryTypeForClauses, final Alias entryTypeForClausesAlias) {
 		return delegate().fetchPrivilegeFiltersFor(entryType, entryTypeForClauses, entryTypeForClausesAlias);

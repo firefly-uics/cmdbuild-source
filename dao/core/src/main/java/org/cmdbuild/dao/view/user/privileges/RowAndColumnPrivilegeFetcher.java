@@ -19,8 +19,6 @@ public interface RowAndColumnPrivilegeFetcher {
 	 */
 	Iterable<? extends WhereClause> fetchPrivilegeFiltersFor(CMEntryType entryType);
 
-	Iterable<? extends WhereClause> fetchPrivilegeFiltersFor(CMEntryType entryType, Alias alias);
-
 	Iterable<? extends WhereClause> fetchPrivilegeFiltersFor(CMEntryType entryType, CMEntryType entryTypeForClauses,
 			Alias entryTypeForClausesAlias);
 

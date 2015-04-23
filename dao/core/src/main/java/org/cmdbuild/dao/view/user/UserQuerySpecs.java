@@ -166,7 +166,7 @@ public class UserQuerySpecs extends ForwardingQuerySpecs {
 	 */
 	private WhereClause filterFor(final Alias alias, final CMClass root, final CMClass type) {
 		final Iterable<? extends WhereClause> currentWhereClauses = rowAndColumnPrivilegeFetcher
-				.fetchPrivilegeFiltersFor(type, alias);
+				.fetchPrivilegeFiltersFor(root, type, alias);
 		final List<WhereClause> childrenWhereClauses = Lists.newArrayList();
 		final List<Long> childrenWithNoFilter = Lists.newArrayList();
 		for (final CMClass child : type.getChildren()) {
