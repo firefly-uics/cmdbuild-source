@@ -55,26 +55,28 @@
 			});
 
 			this.keepSynchronizationCheckbox = Ext.create('Ext.form.field.Checkbox', {
+				name: CMDBuild.core.proxy.CMProxyConstants.KEEP_SYNCHRONIZATION,
 				fieldLabel: CMDBuild.Translation.keepSync,
 				labelAlign: 'right',
 				labelWidth: CMDBuild.LABEL_WIDTH,
-				name: CMDBuild.core.proxy.CMProxyConstants.KEEP_SYNCHRONIZATION,
 				disabled: true,
 				inputValue: true,
 				uncheckedValue: false
 			});
 
 			this.delayField = Ext.create('CMDBuild.view.common.field.delay.Delay', {
+				name: CMDBuild.core.proxy.CMProxyConstants.DELAY,
 				fieldLabel: CMDBuild.Translation.delay,
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				labelAlign: 'right',
-				maxWidth: CMDBuild.MEDIUM_FIELD_WIDTH,
-				name: CMDBuild.core.proxy.CMProxyConstants.DELAY
+				maxWidth: CMDBuild.MEDIUM_FIELD_WIDTH
 			});
 
 			this.fromField = Ext.create('Ext.form.field.Display', {
 				name: CMDBuild.core.proxy.CMProxyConstants.FROM,
 				fieldLabel: CMDBuild.Translation.from,
+				labelWidth: CMDBuild.LABEL_WIDTH,
+				labelAlign: 'right',
 				vtype: 'multiemail',
 				submitValue: true,
 
