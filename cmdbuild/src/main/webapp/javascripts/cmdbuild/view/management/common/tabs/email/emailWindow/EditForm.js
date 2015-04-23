@@ -72,23 +72,25 @@
 				name: CMDBuild.core.proxy.CMProxyConstants.DELAY
 			});
 
+			this.fromField = Ext.create('Ext.form.field.Display', {
+				name: CMDBuild.core.proxy.CMProxyConstants.FROM,
+				fieldLabel: CMDBuild.Translation.from,
+				vtype: 'multiemail',
+				submitValue: true,
+
+				listeners: {
+					scope: this,
+					change: function(field, newValue, oldValue, eOpts) {
+						this.delegate.cmfg('onEmailWindowFieldChange');
+					}
+				}
+			});
+
 			Ext.apply(this, {
 				items: [
 					this.keepSynchronizationCheckbox,
 					this.delayField,
-					{
-						xtype: 'displayfield',
-						name: CMDBuild.core.proxy.CMProxyConstants.FROM,
-						fieldLabel: CMDBuild.Translation.from,
-						vtype: 'multiemail',
-
-						listeners: {
-							scope: this,
-							change: function() {
-								this.delegate.cmfg('onEmailWindowFieldChange');
-							}
-						}
-					},
+					this.fromField,
 					{
 						xtype: 'textfield',
 						name: CMDBuild.core.proxy.CMProxyConstants.TO,
@@ -98,7 +100,7 @@
 
 						listeners: {
 							scope: this,
-							change: function() {
+							change: function(field, newValue, oldValue, eOpts) {
 								this.delegate.cmfg('onEmailWindowFieldChange');
 							}
 						}
@@ -111,7 +113,7 @@
 
 						listeners: {
 							scope: this,
-							change: function() {
+							change: function(field, newValue, oldValue, eOpts) {
 								this.delegate.cmfg('onEmailWindowFieldChange');
 							}
 						}
@@ -124,7 +126,7 @@
 
 						listeners: {
 							scope: this,
-							change: function() {
+							change: function(field, newValue, oldValue, eOpts) {
 								this.delegate.cmfg('onEmailWindowFieldChange');
 							}
 						}
@@ -137,7 +139,7 @@
 
 						listeners: {
 							scope: this,
-							change: function() {
+							change: function(field, newValue, oldValue, eOpts) {
 								this.delegate.cmfg('onEmailWindowFieldChange');
 							}
 						}

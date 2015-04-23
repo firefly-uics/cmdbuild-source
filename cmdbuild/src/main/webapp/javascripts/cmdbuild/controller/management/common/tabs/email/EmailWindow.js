@@ -43,7 +43,7 @@
 		isAdvicePrompted: false,
 
 		/**
-		 * @property {Mixed}
+		 * @property {CMDBuild.model.common.tabs.email.Email}
 		 */
 		record: undefined,
 
@@ -276,7 +276,6 @@
 		onEmailWindowConfirmButtonClick: function() {
 			// Validate before save
 			if (this.validate(this.form)) {
-
 				var formValues = this.form.getForm().getValues();
 
 				// Apply formValues to record object
