@@ -75,10 +75,7 @@
 			this.mixins.observable.constructor.call(this);
 
 			this.callParent(arguments);
-this.widgetConf['readOnly'] = false;
-this.widgetConf['disableAddRow'] = false;
-this.widgetConf['disableDeleteRow'] = false;
-this.widgetConf['disableImportFromCsv'] = false;
+
 			this.classType = _CMCache.getEntryTypeByName(this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME]);
 			this.grid = this.view.grid;
 			this.view.delegate = this;
