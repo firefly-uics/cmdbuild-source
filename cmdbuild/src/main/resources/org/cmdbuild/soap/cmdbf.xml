@@ -41,7 +41,7 @@
 		</property>
 	</bean>
 
-	<jaxws:endpoint address="/CMDBfQuery">
+	<jaxws:endpoint address="/soap/CMDBfQuery">
 		<jaxws:implementor>
 			<bean class="org.cmdbuild.services.soap.CMDBfQueryImpl" />
 		</jaxws:implementor>
@@ -57,7 +57,7 @@
 		</jaxws:features>
 	</jaxws:endpoint>
 
-	<jaxws:endpoint address="/CMDBfRegistration">
+	<jaxws:endpoint address="/soap/CMDBfRegistration">
 		<jaxws:implementor>
 			<bean class="org.cmdbuild.services.soap.CMDBfRegistrationImpl" />
 		</jaxws:implementor>
