@@ -76,9 +76,12 @@
 
 		onEmailAccountsAddButtonClick: function() {
 			this.grid.getSelectionModel().deselectAll();
+
 			this.selectedAccount = null;
+
 			this.form.reset();
 			this.form.setDisabledModify(false, true);
+			this.form.loadRecord(Ext.create('CMDBuild.model.email.Accounts.singleAccount'));
 		},
 
 		onEmailAccountsModifyButtonClick: function() {

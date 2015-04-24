@@ -64,7 +64,7 @@
 				forceSelection: true,
 				editable: false,
 
-				store: CMDBuild.core.proxy.email.Accounts.getStore(),
+				store: CMDBuild.core.proxy.email.Accounts.getStore(true),
 				queryMode: 'local'
 			});
 

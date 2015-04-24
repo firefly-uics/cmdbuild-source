@@ -52,19 +52,19 @@
 		valuesData: undefined,
 
 		/**
-		 * @property {CMDBuild.view.administration.email.templates.MainPanel}
+		 * @property {CMDBuild.view.administration.email.templates.TemplatesView}
 		 */
 		view: undefined,
 
 		/**
-		 * @param {CMDBuild.view.administration.email.templates.MainPanel} view
+		 * @param {CMDBuild.view.administration.email.templates.TemplatesView} view
 		 *
 		 * @override
 		 */
 		constructor: function(view) {
 			this.callParent(arguments);
 
-			this.view = Ext.create('CMDBuild.view.administration.email.templates.MainPanel', {
+			this.view = Ext.create('CMDBuild.view.administration.email.templates.TemplatesView', {
 				delegate: this
 			});
 
@@ -72,10 +72,6 @@
 			this.grid = this.view.grid;
 			this.form = this.view.form;
 
-		},
-
-		loadFieldsStore: function() {
-			this.form.defaultAccountCombo.getStore().load();
 		},
 
 		onEmailTemplatesAbortButtonClick: function() {
@@ -89,18 +85,17 @@
 
 		onEmailTemplatesAddButtonClick: function() {
 			this.grid.getSelectionModel().deselectAll();
+
 			this.selectedTemplate = null;
 			this.valuesData = null;
+
 			this.form.reset();
 			this.form.setDisabledModify(false, true);
-
-			this.loadFieldsStore();
+			this.form.loadRecord(Ext.create('CMDBuild.model.email.Templates.singleTemplate'));
 		},
 
 		onEmailTemplatesModifyButtonClick: function() {
 			this.form.setDisabledModify(false);
-
-			this.loadFieldsStore();
 		},
 
 		onEmailTemplatesRemoveButtonClick: function() {
