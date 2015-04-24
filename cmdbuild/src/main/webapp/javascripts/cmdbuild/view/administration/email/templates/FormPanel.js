@@ -5,7 +5,7 @@
 
 		requires: [
 			'CMDBuild.core.proxy.CMProxyConstants',
-			'CMDBuild.core.proxy.CMProxyEmailAccounts'
+			'CMDBuild.core.proxy.email.Accounts'
 		],
 
 		mixins: {
@@ -64,7 +64,7 @@
 				forceSelection: true,
 				editable: false,
 
-				store: CMDBuild.core.proxy.CMProxyEmailAccounts.getStore(),
+				store: CMDBuild.core.proxy.email.Accounts.getStore(),
 				queryMode: 'local'
 			});
 

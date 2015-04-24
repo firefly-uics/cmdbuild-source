@@ -62,7 +62,7 @@
 
 					case 'accounts':
 					default: {
-						this.sectionController = Ext.create('CMDBuild.controller.administration.email.CMEmailAccountsController', { parentDelegate: this });
+						this.sectionController = Ext.create('CMDBuild.controller.administration.email.Accounts', { parentDelegate: this });
 					}
 				}
 

@@ -5,8 +5,14 @@
 
 		requires: [
 			'CMDBuild.core.proxy.CMProxyConstants',
-			'CMDBuild.core.proxy.email.Templates'
+			'CMDBuild.core.proxy.email.Templates',
+			'CMDBuild.model.email.Templates'
 		],
+
+		/**
+		 * @cfg {CMDBuild.controller.administration.email.Email}
+		 */
+		parentDelegate: undefined,
 
 		/**
 		 * @cfg {Array}
@@ -34,7 +40,7 @@
 		grid: undefined,
 
 		/**
-		 * @property {String}
+		 * @property {CMDBuild.model.email.Templates.singleTemplate}
 		 */
 		selectedTemplate: undefined,
 
@@ -112,11 +118,9 @@
 
 		onEmailTemplatesRowSelected: function() {
 			if (this.grid.getSelectionModel().hasSelection()) {
-				this.selectedTemplate = this.grid.getSelectionModel().getSelection()[0];
-
 				CMDBuild.core.proxy.email.Templates.get({
 					params: {
-						name: this.selectedTemplate.get(CMDBuild.core.proxy.CMProxyConstants.NAME)
+						name: this.grid.getSelectionModel().getSelection()[0].get(CMDBuild.core.proxy.CMProxyConstants.NAME)
 					},
 					loadMask: true,
 					scope: this,
@@ -128,11 +132,11 @@
 						);
 					},
 					success: function(response, options, decodedResponse) {
-						var templateModel = Ext.create('CMDBuild.model.email.Templates.singleTemplate', decodedResponse.response);
+						this.selectedTemplate = Ext.create('CMDBuild.model.email.Templates.singleTemplate', decodedResponse.response);
 
-						this.form.loadRecord(templateModel);
-						this.form.delayField.setValue(templateModel.get(CMDBuild.core.proxy.CMProxyConstants.DELAY)); // Manual setup to avoid load record bug
-						this.valuesData = templateModel.get(CMDBuild.core.proxy.CMProxyConstants.VARIABLES);
+						this.form.loadRecord(this.selectedTemplate);
+						this.form.delayField.setValue(this.selectedTemplate.get(CMDBuild.core.proxy.CMProxyConstants.DELAY)); // Manual setup to avoid load record bug
+						this.valuesData = this.selectedTemplate.get(CMDBuild.core.proxy.CMProxyConstants.VARIABLES);
 						this.form.setDisabledModify(true, true);
 					}
 				});
@@ -179,12 +183,12 @@
 					},
 					loadMask: true,
 					scope: this,
-					success: function() {
+					success: function(response, options, decodedResponse) {
 						this.form.reset();
 
 						this.grid.getStore().load({
 							scope: this,
-							callback: function() {
+							callback: function(records, operation, success) {
 								this.grid.getSelectionModel().select(0, true);
 
 								if (!this.grid.getSelectionModel().hasSelection())

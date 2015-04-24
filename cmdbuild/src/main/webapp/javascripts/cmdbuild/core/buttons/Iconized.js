@@ -12,6 +12,13 @@
 		textDefault: CMDBuild.Translation.add
 	});
 
+	Ext.define('CMDBuild.core.buttons.Check', {
+		extend: 'CMDBuild.core.buttons.Base',
+
+		iconCls: 'ok',
+		textDefault: CMDBuild.Translation.common.buttons.check
+	});
+
 	Ext.define('CMDBuild.core.buttons.Clone', {
 		extend: 'CMDBuild.core.buttons.Base',
 

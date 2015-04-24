@@ -1,23 +1,25 @@
 (function() {
 
-	Ext.define('CMDBuild.model.CMModelEmailAccounts.grid', {
+	Ext.require('CMDBuild.core.proxy.CMProxyConstants');
+
+	Ext.define('CMDBuild.model.email.Accounts.grid', {
 		extend: 'Ext.data.Model',
 
 		fields: [
 			{ name: CMDBuild.core.proxy.CMProxyConstants.ADDRESS, type: 'string' },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.ID, type: 'int' },
+			{ name: CMDBuild.core.proxy.CMProxyConstants.ID, type: 'int', useNull: true },
 			{ name: CMDBuild.core.proxy.CMProxyConstants.IS_DEFAULT, type: 'boolean' },
 			{ name: CMDBuild.core.proxy.CMProxyConstants.NAME, type: 'string' }
 		]
 	});
 
-	Ext.define('CMDBuild.model.CMModelEmailAccounts.singleAccount', {
+	Ext.define('CMDBuild.model.email.Accounts.singleAccount', {
 		extend: 'Ext.data.Model',
 
 		fields: [
 			{ name: CMDBuild.core.proxy.CMProxyConstants.ADDRESS, type: 'string' },
 			{ name: CMDBuild.core.proxy.CMProxyConstants.ENABLE_MOVE_REJECTED_NOT_MATCHING, type: 'boolean' },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.ID, type: 'int' },
+			{ name: CMDBuild.core.proxy.CMProxyConstants.ID, type: 'int', useNull: true },
 			{ name: CMDBuild.core.proxy.CMProxyConstants.IMAP_PORT, type: 'int' },
 			{ name: CMDBuild.core.proxy.CMProxyConstants.IMAP_SERVER, type: 'string' },
 			{ name: CMDBuild.core.proxy.CMProxyConstants.IMAP_SSL, type: 'boolean' },

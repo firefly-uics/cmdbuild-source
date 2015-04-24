@@ -21,7 +21,7 @@
 		editable: false,
 		anchor: '100%',
 
-		store: CMDBuild.core.proxy.CMProxyEmailAccounts.getStore()
+		store: CMDBuild.core.proxy.email.Accounts.getStore()
 	});
 
 })();
