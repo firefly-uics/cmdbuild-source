@@ -47,6 +47,13 @@
 		textDefault: CMDBuild.Translation.common.buttons.modify
 	});
 
+	Ext.define('CMDBuild.core.buttons.Password', {
+		extend: 'CMDBuild.core.buttons.Base',
+
+		iconCls: 'password',
+		textDefault: CMDBuild.Translation.common.buttons.password
+	});
+
 	Ext.define('CMDBuild.core.buttons.Reload', {
 		extend: 'CMDBuild.core.buttons.Base',
 

@@ -1,11 +1,12 @@
 (function() {
 
-	Ext.define('CMDBuild.controller.administration.users.Main', {
+	Ext.define('CMDBuild.controller.administration.users.Users', {
 		extend: 'CMDBuild.controller.CMBasePanelController',
 
 		requires: [
 			'CMDBuild.core.proxy.CMProxyConstants',
-			'CMDBuild.core.proxy.Users'
+			'CMDBuild.core.proxy.Users',
+			'CMDBuild.model.Users'
 		],
 
 		/**
@@ -24,7 +25,12 @@
 		grid: undefined,
 
 		/**
-		 * @param {CMDBuild.view.administration.users.MainPanel} view
+		 * @property {CMDBuild.view.administration.users.UsersView}
+		 */
+		view: undefined,
+
+		/**
+		 * @param {CMDBuild.view.administration.users.UsersView} view
 		 */
 		constructor: function(view) {
 			this.callParent(arguments);
@@ -58,7 +64,7 @@
 				case 'onUserDisableButtonClick':
 					return this.onUserDisableButtonClick();
 
-				case 'onItemDoubleClick':
+				case 'onUserItemDoubleClick':
 				case 'onUserModifyButtonClick':
 					return this.onUserModifyButtonClick();
 
@@ -112,9 +118,10 @@
 
 			this.form.reset();
 			this.form.setDisabledModify(false, true);
-			this.form.defaultGroup.disable();
+			this.form.defaultGroup.setDisabled(true);
 
 			this.grid.getSelectionModel().deselectAll();
+			this.form.loadRecord(Ext.create('CMDBuild.model.Users.single'));
 		},
 
 		onUserChangePasswordButtonClick: function() {
