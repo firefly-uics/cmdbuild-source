@@ -108,7 +108,7 @@ public class ClassSerializer extends Serializer {
 
 		// TODO complete
 		// addGeoFeatureTypes(jsonTable, table);
-		addMetadata(jsonObject, cmClass);
+		addMetadata(jsonObject);
 		addAccessPrivileges(cmClass, jsonObject);
 		addUiCardModePrivileges(cmClass, jsonObject);
 

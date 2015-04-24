@@ -271,6 +271,8 @@ public class DefaultAuthenticationService implements AuthenticationService {
 				.set(User.PASSWORD, digester.encrypt(userDTO.getPassword())) //
 				.set(User.EMAIL, userDTO.getEmail()) //
 				.set(User.ACTIVE, userDTO.isActive()) //
+				.set(User.SERVICE, userDTO.isService()) //
+				.set(User.PRIVILEGED, userDTO.isPrivileged()) //
 				.save();
 		return fetchUserById(createdUserCard.getId());
 	}
@@ -280,7 +282,9 @@ public class DefaultAuthenticationService implements AuthenticationService {
 		final Digester digester = new Base64Digester();
 		final CMCard userCard = fetchUserCardWithId(userDTO.getUserId());
 		final CMCardDefinition cardToBeUpdated = view.update(userCard) //
-				.set(User.ACTIVE, userDTO.isActive());
+				.set(User.ACTIVE, userDTO.isActive()) //
+				.set(User.SERVICE, userDTO.isService()) //
+				.set(User.PRIVILEGED, userDTO.isPrivileged());
 		if (userDTO.getDescription() != null) {
 			cardToBeUpdated.set(User.DESCRIPTION, userDTO.getDescription());
 		}
