@@ -19,12 +19,12 @@
 		],
 
 		/**
-		 * @property {CMDBuild.view.administration.email.templates.MainPanel}
+		 * @property {CMDBuild.view.administration.email.QueuePanel}
 		 */
 		view: undefined,
 
 		/**
-		 * @param {CMDBuild.view.administration.email.templates.MainPanel} view
+		 * @param {CMDBuild.view.administration.email.QueuePanel} view
 		 *
 		 * @override
 		 */

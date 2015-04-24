@@ -43,11 +43,13 @@
 		},
 
 		/**
+		 * @params {Boolean} autoLoad
+		 *
 		 * @return {Ext.data.Store} store
 		 */
-		getStore: function() {
+		getStore: function(autoLoad) {
 			return Ext.create('Ext.data.Store', {
-				autoLoad: false,
+				autoLoad: autoLoad || false,
 				model: 'CMDBuild.model.email.Accounts.grid',
 				proxy: {
 					type: 'ajax',
