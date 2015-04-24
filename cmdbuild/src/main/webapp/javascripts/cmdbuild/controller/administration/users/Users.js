@@ -114,13 +114,13 @@
 		},
 
 		onUserAddButtonClick: function() {
+			this.grid.getSelectionModel().deselectAll();
+
 			this.selectedUser = null;
 
 			this.form.reset();
 			this.form.setDisabledModify(false, true);
 			this.form.defaultGroup.setDisabled(true);
-
-			this.grid.getSelectionModel().deselectAll();
 			this.form.loadRecord(Ext.create('CMDBuild.model.Users.single'));
 		},
 
@@ -180,25 +180,17 @@
 		},
 
 		onUserSaveButtonClick: function() {
-			var nonvalid = this.form.getNonValidFields();
-			if (nonvalid.length > 0) {
-				CMDBuild.Msg.error(
-					CMDBuild.Translation.common.failure,
-					CMDBuild.Translation.errors.invalid_fields,
-					false
-				);
+			// Validate before save
+			if (this.validate(this.form)) {
+				var params = this.form.getData(true);
+				params['userid'] = Ext.isEmpty(this.selectedUser) ? -1 : this.selectedUser.get('userid');
 
-				return;
+				CMDBuild.core.proxy.Users.save({
+					params: params,
+					scope: this,
+					success: this.success
+				});
 			}
-
-			var params = this.form.getData(true);
-			params['userid'] = Ext.isEmpty(this.selectedUser) ? -1 : this.selectedUser.get('userid');
-
-			CMDBuild.core.proxy.Users.save({
-				params: params,
-				scope: this,
-				success: this.success
-			});
 		},
 
 		/**
