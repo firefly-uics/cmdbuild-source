@@ -1,7 +1,5 @@
 (function() {
 
-	var tr = CMDBuild.Translation.administration.email.accounts;
-
 	Ext.define('CMDBuild.view.administration.email.accounts.GridPanel', {
 		extend: 'Ext.grid.Panel',
 
@@ -22,7 +20,7 @@
 			Ext.apply(this, {
 				columns: [
 					{
-						text: tr.isDefault,
+						text: CMDBuild.Translation.defaultLabel,
 						dataIndex: CMDBuild.core.proxy.CMProxyConstants.IS_DEFAULT,
 						align: 'center',
 						width: 50,
@@ -32,7 +30,7 @@
 						fixed: true,
 
 						renderer: function(value, metaData, record) {
-							return value ? '<img src="images/icons/tick.png" alt="' + tr.isDefault + '" />' : null;
+							return value ? '<img src="images/icons/tick.png" alt="' + CMDBuild.Translation.defaultLabel + '" />' : null;
 						}
 					},
 					{
