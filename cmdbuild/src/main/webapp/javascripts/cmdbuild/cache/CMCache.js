@@ -173,7 +173,7 @@
 		getForeignKeyStore: function(foreignKye) {
 			var maxCards = parseInt(CMDBuild.Config.cmdbuild.referencecombolimit),
 				baseParams = {
-					limit: maxCards,
+					// limit: maxCards, // TODO: no one know why this field should limit store to referencecombolimit value
 					className: foreignKye.fkDestination,
 					NoFilter: true
 				};
