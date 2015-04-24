@@ -8,6 +8,8 @@ import static org.cmdbuild.service.rest.v1.model.Models.newMetadata;
 import static org.cmdbuild.service.rest.v1.model.Models.newResponseMultiple;
 import static org.cmdbuild.service.rest.v1.model.Models.newResponseSingle;
 
+import java.util.List;
+
 import org.cmdbuild.common.utils.PagedElements;
 import org.cmdbuild.logic.data.QueryOptions;
 import org.cmdbuild.logic.mapping.json.FilterElementGetters;
@@ -21,6 +23,9 @@ import org.cmdbuild.service.rest.v1.model.ProcessActivityWithFullDetails;
 import org.cmdbuild.service.rest.v1.model.ResponseMultiple;
 import org.cmdbuild.service.rest.v1.model.ResponseSingle;
 import org.cmdbuild.workflow.CMActivity;
+import org.cmdbuild.workflow.CMActivityWidget;
+import org.cmdbuild.workflow.CMWorkflowException;
+import org.cmdbuild.workflow.ForwardingActivity;
 import org.cmdbuild.workflow.user.UserActivityInstance;
 import org.cmdbuild.workflow.user.UserProcessClass;
 import org.cmdbuild.workflow.user.UserProcessInstance;
@@ -93,26 +98,37 @@ public class CxfProcessInstanceActivities implements ProcessInstanceActivities {
 		if (foundInstance == null) {
 			errorHandler.processInstanceNotFound(processInstanceId);
 		}
-		CMActivity foundActivity = null;
-		for (final UserActivityInstance element : foundInstance.getActivities()) {
-			if (element.getId().equals(processActivityId)) {
-				try {
-					foundActivity = element.getDefinition();
-				} catch (final Throwable e) {
-					errorHandler.propagate(e);
-				}
-			}
-		}
-		if (foundActivity == null) {
+		final UserActivityInstance activityInstance = workflowLogic.getActivityInstance(processId, processInstanceId,
+				processActivityId);
+		if (activityInstance == null) {
 			errorHandler.processActivityNotFound(processActivityId);
 		}
-		return newResponseSingle(ProcessActivityWithFullDetails.class) //
-				.withElement(from(asList(foundActivity)) //
-						.filter(Predicates.notNull()) //
-						.transform(TO_PROCESS_ACTIVITY) //
-						.first() //
-						.get()) //
-				.build();
+		try {
+			final CMActivity delegate = activityInstance.getDefinition();
+			final CMActivity foundActivity = new ForwardingActivity() {
+
+				@Override
+				protected CMActivity delegate() {
+					return delegate;
+				}
+
+				@Override
+				public List<CMActivityWidget> getWidgets() throws CMWorkflowException {
+					return activityInstance.getWidgets();
+				}
+
+			};
+			return newResponseSingle(ProcessActivityWithFullDetails.class) //
+					.withElement(from(asList(foundActivity)) //
+							.filter(Predicates.notNull()) //
+							.transform(TO_PROCESS_ACTIVITY) //
+							.first() //
+							.get()) //
+					.build();
+		} catch (final CMWorkflowException e) {
+			errorHandler.propagate(e);
+			return null;
+		}
 	}
 
 }
