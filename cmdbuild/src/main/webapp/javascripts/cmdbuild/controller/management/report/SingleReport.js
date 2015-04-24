@@ -90,11 +90,11 @@
 							if (Ext.isIE) // FIX: in IE PDF is painted on top of the regular page content so remove it before display parameter window
 								this.view.removeAll();
 
-							Ext.create('CMDBuild.view.management.report.ParametersWindow', {
-								delegate: this,
+							Ext.create('CMDBuild.controller.management.report.Parameters', {
+								parentDelegate: this,
 								attributeList: decodedResponse.attribute,
 								forceDownload: forceDownload
-							}).show();
+							});
 						}
 					}
 				});

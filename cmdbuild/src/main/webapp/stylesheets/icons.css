@@ -7,7 +7,6 @@
 .clear_filter { background-image: url("../images/icons/clear_find.png") !important; }
 .clear_privileges { background-image: url("../images/icons/privilege_filter_remove.png") !important; }
 .clone { background-image: url("../images/icons/clone.png") !important; }
-.csv { background-image: url("../images/icons/ico_csv.png") !important; }
 .delete { background-image: url("../images/icons/cross.png") !important; }
 .down { background-image: url("../images/icons/down.gif") !important;}
 .down-hover { background-image: url("../images/icons/down-hover.gif") !important; }
@@ -20,15 +19,12 @@
 .map { background-image: url("../images/icons/map.png") !important; }
 .modify { background-image: url("../images/icons/modify.png") !important; }
 .note { background-image: url("../images/icons/note.png") !important; }
-.odt { background-image: url("../images/icons/ico_odt.png") !important; }
 .ok { background-image: url("../images/icons/tick.png") !important; }
 .order { background-image: url("../images/icons/order.png") !important; }
 .password { background-image: url("../images/icons/key.png") !important; }
-.pdf { background-image: url("../images/icons/ico_pdf.png") !important; }
 .preview { background-image: url("../images/icons/preview.png") !important; }
 .print { background-image: url("../images/icons/print.png") !important; }
 .privileges { background-image: url("../images/icons/privilege_filter.png") !important; }
-.rtf { background-image: url("../images/icons/ico_rtf.png") !important; }
 .save { background-image: url("../images/icons/disk.png") !important; }
 .search { background-image: url("../images/icons/search.gif") !important; }
 .start { background-image: url("../images/icons/start.png") !important; }
@@ -50,3 +46,12 @@
 	.email-reply { background-image: url("../images/icons/email/email-reply.png") !important; }
 	.email-send { background-image: url("../images/icons/email/email-send.png") !important; }
 	.email-view { background-image: url("../images/icons/email/email-view.png") !important; }
+
+/* File formats */
+	.csv { background-image: url("../images/icons/fileFormats/csv.png") !important; }
+	.odt { background-image: url("../images/icons/fileFormats/odt.png") !important; }
+	.pdf { background-image: url("../images/icons/fileFormats/pdf.png") !important; }
+	.rtf { background-image: url("../images/icons/fileFormats/rtf.png") !important; }
+	.sql { background-image: url("../images/icons/fileFormats/sql.png") !important; }
+	.xml { background-image: url("../images/icons/fileFormats/xml.png") !important; }
+	.zip { background-image: url("../images/icons/fileFormats/zip.png") !important; }

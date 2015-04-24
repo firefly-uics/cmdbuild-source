@@ -1,12 +1,12 @@
 (function() {
 
-	Ext.define('CMDBuild.view.management.report.MainPanel', {
+	Ext.define('CMDBuild.view.management.report.ReportView', {
 		extend: 'Ext.panel.Panel',
 
 		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
 
 		/**
-		 * @cfg {CMDBuild.controller.management.report.SingleReport}
+		 * @cfg {CMDBuild.controller.management.report.Report}
 		 */
 		delegate: undefined,
 

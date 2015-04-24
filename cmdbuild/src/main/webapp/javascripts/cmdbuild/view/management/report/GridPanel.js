@@ -8,9 +8,13 @@
 			'CMDBuild.core.proxy.Report'
 		],
 
+		/**
+		 * @cfg {CMDBuild.controller.management.report.Report}
+		 */
+		delegate: undefined,
+
 		border: false,
 		frame: false,
-
 		layout: 'fit',
 
 		initComponent: function() {
@@ -51,15 +55,12 @@
 						hideable: false,
 						menuDisabled: true,
 						fixed: true,
+
 						items: [
-							{
-								icon: 'images/icons/ico_pdf.png',
+							Ext.create('CMDBuild.core.buttons.FileFormatsPdf', {
+								text: null,
 								tooltip: CMDBuild.Translation.pdf,
 								scope: this,
-
-								getClass: function(value, metadata, record, rowIndex, colIndex, store) {
-									return 'cm-action-col-icon-spacer';
-								},
 
 								handler: function(grid, rowIndex, colIndex, node, e, record, rowNode) {
 									this.delegate.cmOn('onReportGenerateButtonClick', {
@@ -67,15 +68,11 @@
 										type: CMDBuild.core.proxy.CMProxyConstants.PDF
 									});
 								}
-							},
-							{
-								icon: 'images/icons/ico_odt.png',
+							}),
+							Ext.create('CMDBuild.core.buttons.FileFormatsOdt', {
+								text: null,
 								tooltip: CMDBuild.Translation.odt,
 								scope: this,
-
-								getClass: function(value, metadata, record, rowIndex, colIndex, store) {
-									return 'cm-action-col-icon-spacer';
-								},
 
 								handler: function(grid, rowIndex, colIndex, node, e, record, rowNode) {
 									this.delegate.cmOn('onReportGenerateButtonClick', {
@@ -83,15 +80,11 @@
 										type: CMDBuild.core.proxy.CMProxyConstants.ODT
 									});
 								}
-							},
-							{
-								icon: 'images/icons/ico_rtf.png',
+							}),
+							Ext.create('CMDBuild.core.buttons.FileFormatsRtf', {
+								text: null,
 								tooltip: CMDBuild.Translation.rtf,
 								scope: this,
-
-								getClass: function(value, metadata, record, rowIndex, colIndex, store) {
-									return 'cm-action-col-icon-spacer';
-								},
 
 								handler: function(grid, rowIndex, colIndex, node, e, record, rowNode) {
 									this.delegate.cmOn('onReportGenerateButtonClick', {
@@ -99,15 +92,11 @@
 										type: CMDBuild.core.proxy.CMProxyConstants.RTF
 									});
 								}
-							},
-							{
-								icon: 'images/icons/ico_csv.png',
+							}),
+							Ext.create('CMDBuild.core.buttons.FileFormatsCsv', {
+								text: null,
 								tooltip: CMDBuild.Translation.csv,
 								scope: this,
-
-								getClass: function(value, metadata, record, rowIndex, colIndex, store) {
-									return 'cm-action-col-icon-spacer';
-								},
 
 								handler: function(grid, rowIndex, colIndex, node, e, record, rowNode) {
 									this.delegate.cmOn('onReportGenerateButtonClick', {
@@ -115,7 +104,7 @@
 										type: CMDBuild.core.proxy.CMProxyConstants.CSV
 									});
 								}
-							}
+							})
 						]
 					})
 				]
