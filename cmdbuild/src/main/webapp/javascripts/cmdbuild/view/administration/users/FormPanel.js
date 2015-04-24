@@ -13,7 +13,7 @@
 		},
 
 		/**
-		 * @cfg {CMDBuild.controller.administration.users.Main}
+		 * @cfg {CMDBuild.controller.administration.users.Users}
 		 */
 		delegate: undefined,
 
@@ -52,8 +52,7 @@
 		initComponent: function () {
 			var me = this;
 
-			this.disableUser = Ext.create('Ext.button.Button', {
-				iconCls: 'delete',
+			this.disableUser = Ext.create('CMDBuild.core.buttons.Delete', {
 				text: CMDBuild.Translation.disableUser,
 				scope: this,
 
@@ -116,11 +115,20 @@
 								vtype: 'emailOrBlank'
 							},
 							this.defaultGroup,
-							Ext.create('Ext.ux.form.XCheckbox', {
+							Ext.create('Ext.form.field.Checkbox', {
 								name: CMDBuild.core.proxy.CMProxyConstants.IS_ACTIVE,
 								fieldLabel: CMDBuild.Translation.active,
-								labelWidth: CMDBuild.LABEL_WIDTH,
-								checked: true
+								labelWidth: CMDBuild.LABEL_WIDTH
+							}),
+							Ext.create('Ext.form.field.Checkbox', {
+								name: CMDBuild.core.proxy.CMProxyConstants.SERVICE,
+								fieldLabel: '@@ Service',
+								labelWidth: CMDBuild.LABEL_WIDTH
+							}),
+							Ext.create('Ext.form.field.Checkbox', {
+								name: CMDBuild.core.proxy.CMProxyConstants.PRIVILEGED,
+								fieldLabel: '@@ Privileged',
+								labelWidth: CMDBuild.LABEL_WIDTH
 							})
 						]
 					});
@@ -152,7 +160,8 @@
 								fieldLabel: CMDBuild.Translation.confirmation,
 								allowBlank: false,
 								initialPassField: 'user_password',
-								vtype: 'password'
+								vtype: 'password',
+								submitValue: false
 							}
 						]
 					});
@@ -178,31 +187,30 @@
 
 			Ext.apply(this, {
 				dockedItems: [
-					{
-						xtype: 'toolbar',
+					Ext.create('Ext.toolbar.Toolbar', {
 						dock: 'top',
 						itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_TOP,
 						items: [
 							Ext.create('CMDBuild.core.buttons.Modify', {
 								text: CMDBuild.Translation.modifyUser,
+								scope: this,
 
 								handler: function (button, e) {
-									me.delegate.cmOn('onUserModifyButtonClick');
+									this.delegate.cmOn('onUserModifyButtonClick');
 								}
 							}),
-							Ext.create('Ext.button.Button', {
-								iconCls: 'password',
+							Ext.create('CMDBuild.core.buttons.Password', {
 								text: CMDBuild.Translation.changePassword,
+								scope: this,
 
 								handler: function (button, e) {
-									me.delegate.cmOn('onUserChangePasswordButtonClick');
+									this.delegate.cmOn('onUserChangePasswordButtonClick');
 								}
 							}),
 							this.disableUser
 						]
-					},
-					{
-						xtype: 'toolbar',
+					}),
+					Ext.create('Ext.toolbar.Toolbar', {
 						dock: 'bottom',
 						itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_BOTTOM,
 						ui: 'footer',
@@ -215,17 +223,21 @@
 
 						items: [
 							Ext.create('CMDBuild.core.buttons.Save', {
+								scope: this,
+
 								handler: function(button, e) {
-									me.delegate.cmOn('onUserSaveButtonClick');
+									this.delegate.cmOn('onUserSaveButtonClick');
 								}
 							}),
 							Ext.create('CMDBuild.core.buttons.Abort', {
+								scope: this,
+
 								handler: function(button, e) {
-									me.delegate.cmOn('onUserAbortButtonClick');
+									this.delegate.cmOn('onUserAbortButtonClick');
 								}
 							})
 						]
-					}
+					})
 				],
 				items: [this.wrapper]
 			});

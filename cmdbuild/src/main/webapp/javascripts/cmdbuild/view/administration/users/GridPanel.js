@@ -9,7 +9,7 @@
 		],
 
 		/**
-		 * @cfg {CMDBuild.controller.administration.users.Main}
+		 * @cfg {CMDBuild.controller.administration.users.Users}
 		 */
 		delegate: undefined,
 
@@ -20,13 +20,13 @@
 			Ext.apply(this, {
 				columns: [
 					{
-						header: CMDBuild.Translation.username,
 						dataIndex: CMDBuild.core.proxy.CMProxyConstants.USERNAME,
+						text: CMDBuild.Translation.username,
 						flex: 1
 					},
 					{
-						header: CMDBuild.Translation.descriptionLabel,
 						dataIndex: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
+						text: CMDBuild.Translation.descriptionLabel,
 						flex: 1
 					}
 				],
@@ -38,7 +38,7 @@
 
 		listeners: {
 			itemdblclick: function(grid, record, item, index, e, eOpts) {
-				this.delegate.cmOn('onItemDoubleClick');
+				this.delegate.cmOn('onUserItemDoubleClick');
 			},
 
 			select: function(row, record, index) {

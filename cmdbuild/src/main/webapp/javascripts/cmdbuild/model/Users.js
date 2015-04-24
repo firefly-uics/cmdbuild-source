@@ -21,7 +21,9 @@
 			{ name: 'username', type: 'string' },
 			{ name: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION, type: 'string' },
 			{ name: CMDBuild.core.proxy.CMProxyConstants.EMAIL, type: 'string' },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.IS_ACTIVE, type: 'boolean', defaultValue: true }
+			{ name: CMDBuild.core.proxy.CMProxyConstants.IS_ACTIVE, type: 'boolean', defaultValue: true },
+			{ name: CMDBuild.core.proxy.CMProxyConstants.PRIVILEGED, type: 'boolean', defaultValue: false },
+			{ name: CMDBuild.core.proxy.CMProxyConstants.SERVICE, type: 'boolean', defaultValue: false }
 		]
 	});
 
