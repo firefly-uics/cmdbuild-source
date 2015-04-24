@@ -148,8 +148,8 @@
 		loadReportIcons: function(reportType) {
 			if(reportType == 'CUSTOM') {
 				var html ='<div class="cmcenter">';
-				html += '<img qtip="Sql" style="cursor:pointer" class="sql" src="images/icons/ico_sql.png"/>&nbsp;&nbsp;';
-				html += '<img qtip="Zip" style="cursor:pointer" class="zip" src="images/icons/ico_zip.png"/>&nbsp;&nbsp;';
+				html += '<img qtip="Sql" style="cursor:pointer" class="sql" src="images/icons/ico_sql.png"/>&nbsp;&nbsp;'; // TODO: refactor and delete image file
+				html += '<img qtip="Zip" style="cursor:pointer" class="zip" src="images/icons/ico_zip.png"/>&nbsp;&nbsp;'; // TODO: refactor and delete image file
 				html += '</div>';
 
 				return html;
@@ -192,9 +192,9 @@
 						if (!popup)
 							CMDBuild.Msg.warn(CMDBuild.Translation.warnings.warning_message,CMDBuild.Translation.warnings.popup_block);
 					} else { // Show form with launch parameters
-						Ext.create('CMDBuild.view.management.report.ParametersWindow', {
+						Ext.create('CMDBuild.controller.management.report.Parameters', {
 							attributeList: decodedResult.attribute
-						}).show();
+						});
 					}
 				},
 				failure: function() {

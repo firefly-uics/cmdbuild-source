@@ -1,6 +1,6 @@
 (function() {
 
-	Ext.define('CMDBuild.controller.management.report.Main', {
+	Ext.define('CMDBuild.controller.management.report.Report', {
 		extend: 'CMDBuild.controller.CMBasePanelController',
 
 		requires: [
@@ -15,7 +15,7 @@
 		grid: undefined,
 
 		/**
-		 * @cfg {CMDBuild.view.management.report.MainPanel}
+		 * @cfg {CMDBuild.view.management.report.ReportView}
 		 */
 		view: undefined,
 
@@ -84,11 +84,11 @@
 						if(decodedResponse.filled) { // Report with no parameters
 							this.showReport(forceDownload);
 						} else { // Show parameters window
-							Ext.create('CMDBuild.view.management.report.ParametersWindow', {
-								delegate: this,
+							Ext.create('CMDBuild.controller.management.report.Parameters', {
+								parentDelegate: this,
 								attributeList: decodedResponse.attribute,
 								forceDownload: forceDownload
-							}).show();
+							});
 						}
 					}
 				});

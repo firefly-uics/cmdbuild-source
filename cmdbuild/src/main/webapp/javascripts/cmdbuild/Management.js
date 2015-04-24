@@ -163,8 +163,8 @@
 					this.processPanel = new CMDBuild.view.management.workflow.CMModProcess({
 						cmControllerType: CMDBuild.controller.management.workflow.CMModWorkflowController
 					}),
-					Ext.create('CMDBuild.view.management.report.MainPanel', {
-						cmControllerType: 'CMDBuild.controller.management.report.Main',
+					Ext.create('CMDBuild.view.management.report.ReportView', {
+						cmControllerType: 'CMDBuild.controller.management.report.Report',
 						cmName: 'report'
 					}),
 					Ext.create('CMDBuild.view.management.report.SingleReportPanel', {

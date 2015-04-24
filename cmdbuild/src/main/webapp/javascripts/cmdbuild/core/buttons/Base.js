@@ -23,6 +23,12 @@
 					text: this.textDefault
 				});
 
+			// Add spacer class when button is used as grid icon
+			if (!Ext.isEmpty(this.tooltip))
+				Ext.apply(this, {
+					iconCls: this.iconCls + ' cm-action-col-icon-spacer'
+				});
+
 			this.callParent(arguments);
 		}
 	});

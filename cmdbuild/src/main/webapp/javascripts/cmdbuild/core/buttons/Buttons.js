@@ -7,6 +7,7 @@
 
 		requires: [
 			'CMDBuild.core.buttons.Email',
+			'CMDBuild.core.buttons.FileFormats',
 			'CMDBuild.core.buttons.Iconized'
 		]
 	});
