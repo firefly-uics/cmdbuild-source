@@ -42,7 +42,6 @@ public class CommunicationConstants {
 			CODE_CAPITAL = "Code", //
 			CODE = "code", //
 			CONFIGURATION = "configuration", //
-			CONFIRMATION = "confirmation", //
 			CONFIRMED = "confirmed", //
 			CONTAINER = "container", //
 			COUNT = "count", //
@@ -221,6 +220,7 @@ public class CommunicationConstants {
 			PRIVILEGE_OBJ_ID = "privilegedObjectId", //
 			PRIVILEGE_OBJ_NAME = "privilegedObjectName", //
 			PRIVILEGE_READ = "read_privilege", //
+			PRIVILEGED = "privileged", //
 			PRIVILEGES = "privileges", //
 			PRIVILEGE_WRITE = "write_privilege", //
 			PROCESSED_FOLDER = "processedFolder", //
@@ -241,6 +241,7 @@ public class CommunicationConstants {
 			ROWS = "rows", //
 			SCALE = "scale", //
 			SEPARATOR = "separator", //
+			SERVICE = "service", //
 			SHARK_SCHEMA = "shark_schema", //
 			SHORT = "short", //
 			SHOW_IN_GRID = "isbasedsp", //

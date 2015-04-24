@@ -3,7 +3,6 @@ package org.cmdbuild.servlets.json.schema;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ALREADY_ASSOCIATED;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ATTRIBUTES;
 import static org.cmdbuild.servlets.json.CommunicationConstants.CLASS_ID;
-import static org.cmdbuild.servlets.json.CommunicationConstants.CONFIRMATION;
 import static org.cmdbuild.servlets.json.CommunicationConstants.DEFAULT_GROUP;
 import static org.cmdbuild.servlets.json.CommunicationConstants.DESCRIPTION;
 import static org.cmdbuild.servlets.json.CommunicationConstants.DISABLE;
@@ -18,12 +17,14 @@ import static org.cmdbuild.servlets.json.CommunicationConstants.NAME;
 import static org.cmdbuild.servlets.json.CommunicationConstants.NEW_PASSWORD;
 import static org.cmdbuild.servlets.json.CommunicationConstants.OLD_PASSWORD;
 import static org.cmdbuild.servlets.json.CommunicationConstants.PASSWORD;
+import static org.cmdbuild.servlets.json.CommunicationConstants.PRIVILEGED;
 import static org.cmdbuild.servlets.json.CommunicationConstants.PRIVILEGE_MODE;
 import static org.cmdbuild.servlets.json.CommunicationConstants.PRIVILEGE_OBJ_ID;
 import static org.cmdbuild.servlets.json.CommunicationConstants.PRIVILEGE_READ;
 import static org.cmdbuild.servlets.json.CommunicationConstants.PRIVILEGE_WRITE;
 import static org.cmdbuild.servlets.json.CommunicationConstants.RESULT;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ROWS;
+import static org.cmdbuild.servlets.json.CommunicationConstants.SERVICE;
 import static org.cmdbuild.servlets.json.CommunicationConstants.STARTING_CLASS;
 import static org.cmdbuild.servlets.json.CommunicationConstants.TYPE;
 import static org.cmdbuild.servlets.json.CommunicationConstants.UI_CONFIGURATION;
@@ -406,10 +407,11 @@ public class ModSecurity extends JSONBaseWithSpringContext {
 			@Parameter(value = DESCRIPTION, required = false) final String description, //
 			@Parameter(value = USER_NAME, required = false) final String username, //
 			@Parameter(value = PASSWORD, required = false) final String password, //
-			@Parameter(value = CONFIRMATION, required = false) final String confirmation, //
 			@Parameter(value = EMAIL, required = false) final String email, //
 			@Parameter(IS_ACTIVE) final boolean isActive, //
-			@Parameter(DEFAULT_GROUP) final Long defaultGroupId //
+			@Parameter(DEFAULT_GROUP) final Long defaultGroupId, //
+			@Parameter(value = SERVICE, required = false) final boolean service, //
+			@Parameter(value = PRIVILEGED, required = false) final boolean privileged //
 	) throws JSONException, AuthException {
 		// TODO: check if password and confirmation match
 		final boolean newUser = userId <= -1;
@@ -420,7 +422,9 @@ public class ModSecurity extends JSONBaseWithSpringContext {
 				.withPassword(password) //
 				.withEmail(email) //
 				.withDefaultGroupId(defaultGroupId) //
-				.withActiveStatus(isActive);
+				.withActiveStatus(isActive) //
+				.withService(service) //
+				.withPrivileged(privileged);
 		final AuthenticationLogic authLogic = authLogic();
 		if (newUser) {
 			final UserDTO userDTO = userDTOBuilder.build();

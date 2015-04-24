@@ -1,6 +1,6 @@
 package org.cmdbuild.logic.auth;
 
-import org.cmdbuild.common.Builder;
+import org.apache.commons.lang3.builder.Builder;
 
 public class UserDTO {
 
@@ -13,6 +13,8 @@ public class UserDTO {
 		private String email;
 		private boolean active = true;
 		private Long defaultGroupId;
+		private boolean service;
+		private boolean privileged;
 
 		public UserDTOBuilder withUserId(final Long userId) {
 			this.userId = userId;
@@ -49,10 +51,21 @@ public class UserDTO {
 			return this;
 		}
 
+		public UserDTOBuilder withService(final boolean service) {
+			this.service = service;
+			return this;
+		}
+
+		public UserDTOBuilder withPrivileged(final boolean privileged) {
+			this.privileged = privileged;
+			return this;
+		}
+
 		@Override
 		public UserDTO build() {
 			return new UserDTO(this);
 		}
+
 	}
 
 	public static class UserDTOCreationValidator implements ModelValidator<UserDTO> {
@@ -82,6 +95,8 @@ public class UserDTO {
 	private final String email;
 	private final boolean active;
 	private final Long defaultGroupId;
+	private final boolean service;
+	private final boolean privileged;
 
 	private UserDTO(final UserDTOBuilder builder) {
 		this.userId = builder.userId;
@@ -91,6 +106,8 @@ public class UserDTO {
 		this.email = builder.email;
 		this.active = builder.active;
 		this.defaultGroupId = builder.defaultGroupId;
+		this.service = builder.service;
+		this.privileged = builder.privileged;
 	}
 
 	public static UserDTOBuilder newInstance() {
@@ -123,6 +140,14 @@ public class UserDTO {
 
 	public Long getDefaultGroupId() {
 		return defaultGroupId;
+	}
+
+	public boolean isService() {
+		return service;
+	}
+
+	public boolean isPrivileged() {
+		return privileged;
 	}
 
 }
