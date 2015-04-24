@@ -180,11 +180,8 @@ public class CxfProcessInstanceActivitiesTest {
 		final UserProcessClass userProcessClass = mock(UserProcessClass.class);
 		doReturn(userProcessClass) //
 				.when(workflowLogic).findProcessClass(anyString());
-		final UserProcessInstance userProcessInstance = mock(UserProcessInstance.class);
-		doReturn(asList()) //
-				.when(userProcessInstance).getActivities();
-		doReturn(userProcessInstance) //
-				.when(workflowLogic).getProcessInstance(anyString(), anyLong());
+		doReturn(null) //
+				.when(workflowLogic).getActivityInstance(eq("123"), eq(456L), eq("bar"));
 		doThrow(WebApplicationException.class) //
 				.when(errorHandler).processActivityNotFound(anyString());
 
@@ -212,8 +209,8 @@ public class CxfProcessInstanceActivitiesTest {
 		doThrow(exception) //
 				.when(userActivityInstance).getDefinition();
 		final UserProcessInstance userProcessInstance = mock(UserProcessInstance.class);
-		doReturn(asList(userActivityInstance)) //
-				.when(userProcessInstance).getActivities();
+		doReturn(userActivityInstance) //
+				.when(workflowLogic).getActivityInstance(eq("123"), eq(456L), eq("bar"));
 		doReturn(userProcessInstance) //
 				.when(workflowLogic).getProcessInstance(anyString(), anyLong());
 		doThrow(WebApplicationException.class) //
@@ -258,8 +255,8 @@ public class CxfProcessInstanceActivitiesTest {
 		doReturn(activity) //
 				.when(userActivityInstance).getDefinition();
 		final UserProcessInstance userProcessInstance = mock(UserProcessInstance.class);
-		doReturn(asList(userActivityInstance)) //
-				.when(userProcessInstance).getActivities();
+		doReturn(userActivityInstance) //
+				.when(workflowLogic).getActivityInstance(anyString(), anyLong(), anyString());
 		doReturn(userProcessInstance) //
 				.when(workflowLogic).getProcessInstance(anyString(), anyLong());
 		doThrow(WebApplicationException.class) //
@@ -273,6 +270,7 @@ public class CxfProcessInstanceActivitiesTest {
 		final InOrder inOrder = inOrder(errorHandler, workflowLogic);
 		inOrder.verify(workflowLogic).findProcessClass(eq("123"));
 		inOrder.verify(workflowLogic).getProcessInstance(eq("123"), eq(456L));
+		inOrder.verify(workflowLogic).getActivityInstance(eq("123"), eq(456L), eq("bar"));
 		inOrder.verifyNoMoreInteractions();
 		final ProcessActivityWithFullDetails element = response.getElement();
 		assertThat(element.getId(), equalTo(activity.getId()));
