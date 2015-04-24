@@ -1,7 +1,5 @@
 (function() {
 
-	var tr = CMDBuild.Translation.administration.email.accounts;
-
 	Ext.define('CMDBuild.view.administration.email.accounts.FormPanel', {
 		extend: 'Ext.form.Panel',
 
@@ -71,7 +69,7 @@
 		initComponent: function() {
 			// Buttons configuration
 				this.removeButton = Ext.create('CMDBuild.core.buttons.Delete', {
-					text: tr.remove,
+					text: CMDBuild.Translation.removeAccount,
 					scope: this,
 
 					handler: function(button, e) {
@@ -80,7 +78,7 @@
 				});
 
 				this.setDefaultButton = Ext.create('CMDBuild.core.buttons.Check', {
-					text: tr.setDefault,
+					text: CMDBuild.Translation.setAsDefault,
 					scope: this,
 
 					handler: function(button, e) {
@@ -107,7 +105,7 @@
 				});
 
 				this.emailAccountFieldset = Ext.create('Ext.form.FieldSet', {
-					title: tr.account,
+					title: CMDBuild.Translation.account,
 					overflowY: 'auto',
 
 					defaults: {
@@ -133,7 +131,7 @@
 
 				// Credentials
 				this.credentialsFieldset = Ext.create('Ext.form.FieldSet', {
-					title: tr.credentials,
+					title: CMDBuild.Translation.credentials,
 					overflowY: 'auto',
 
 					defaults: {
@@ -151,19 +149,19 @@
 						{
 							xtype: 'textfield',
 							name: CMDBuild.core.proxy.CMProxyConstants.USERNAME,
-							fieldLabel: tr.username
+							fieldLabel: CMDBuild.Translation.username
 						},
 						{
 							xtype: 'textfield',
 							inputType: 'password',
 							name: CMDBuild.core.proxy.CMProxyConstants.PASSWORD,
-							fieldLabel: tr.password
+							fieldLabel: CMDBuild.Translation.password
 						}
 					]
 				});
 
 				this.outgoingFieldset = Ext.create('Ext.form.FieldSet', {
-					title: tr.outgoing,
+					title: CMDBuild.Translation.outgoing,
 					overflowY: 'auto',
 
 					defaults: {
@@ -188,12 +186,12 @@
 						{
 							xtype: 'textfield',
 							name: CMDBuild.core.proxy.CMProxyConstants.SMTP_SERVER,
-							fieldLabel: tr.smtpServer
+							fieldLabel: CMDBuild.Translation.smtpServer
 						},
 						{
 							xtype: 'numberfield',
 							name: CMDBuild.core.proxy.CMProxyConstants.SMTP_PORT,
-							fieldLabel: tr.smtpPort,
+							fieldLabel: CMDBuild.Translation.smtpPort,
 							allowBlank: true,
 							width: CMDBuild.ADM_SMALL_FIELD_WIDTH,
 							minValue: 1,
@@ -203,13 +201,13 @@
 						{
 							xtype: 'checkbox',
 							name: CMDBuild.core.proxy.CMProxyConstants.SMTP_SSL,
-							fieldLabel: tr.enableSsl
+							fieldLabel: CMDBuild.Translation.enableSsl
 						}
 					]
 				});
 
 				this.incomingFieldset = Ext.create('Ext.form.FieldSet', {
-					title: tr.incoming,
+					title: CMDBuild.Translation.incoming,
 					overflowY: 'auto',
 
 					defaults: {
@@ -226,13 +224,13 @@
 					items: [
 						{
 							xtype: 'textfield',
-							fieldLabel: tr.imapServer,
+							fieldLabel: CMDBuild.Translation.imapServer,
 							name: CMDBuild.core.proxy.CMProxyConstants.IMAP_SERVER
 						},
 						{
 							xtype: 'numberfield',
 							name: CMDBuild.core.proxy.CMProxyConstants.IMAP_PORT,
-							fieldLabel: tr.imapPort,
+							fieldLabel: CMDBuild.Translation.imapPort,
 							allowBlank: true,
 							minValue: 1,
 							maxValue: 65535,
@@ -241,7 +239,7 @@
 						{
 							xtype: 'checkbox',
 							name: CMDBuild.core.proxy.CMProxyConstants.IMAP_SSL,
-							fieldLabel: tr.enableSsl
+							fieldLabel: CMDBuild.Translation.enableSsl
 						},
 						{ // Splitter line
 							xtype: 'container',
@@ -252,22 +250,22 @@
 						{
 							xtype: 'textfield',
 							name: CMDBuild.core.proxy.CMProxyConstants.INCOMING_FOLDER,
-							fieldLabel: tr.incomingFolder
+							fieldLabel: CMDBuild.Translation.incomingFolder
 						},
 						{
 							xtype: 'textfield',
 							name: CMDBuild.core.proxy.CMProxyConstants.PROCESSED_FOLDER,
-							fieldLabel: tr.processedFolder
+							fieldLabel: CMDBuild.Translation.processedFolder
 						},
 						{
 							xtype: 'textfield',
 							name: CMDBuild.core.proxy.CMProxyConstants.REJECTED_FOLDER,
-							fieldLabel: tr.rejectedFolder
+							fieldLabel: CMDBuild.Translation.rejectedFolder
 						},
 						{
 							xtype: 'checkbox',
 							name: CMDBuild.core.proxy.CMProxyConstants.ENABLE_MOVE_REJECTED_NOT_MATCHING,
-							fieldLabel: tr.enableMoveRejectedNotMatching
+							fieldLabel: CMDBuild.Translation.enableMoveRejectedNotMatching
 						}
 					]
 				});
@@ -312,7 +310,7 @@
 
 						items: [
 							Ext.create('CMDBuild.core.buttons.Modify', {
-								text: tr.modify,
+								text: CMDBuild.Translation.modifyAccount,
 								scope: this,
 
 								handler: function(button, e) {

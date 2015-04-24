@@ -1,7 +1,5 @@
 (function() {
 
-	var tr = CMDBuild.Translation.administration.email.accounts;
-
 	Ext.define('CMDBuild.view.administration.email.accounts.AccountsView', {
 		extend: 'Ext.panel.Panel',
 
@@ -47,7 +45,7 @@
 
 						items: [
 							Ext.create('CMDBuild.core.buttons.Add', {
-								text: tr.add,
+								text: CMDBuild.Translation.addAccount,
 								scope: this,
 
 								handler: function(button, e) {
