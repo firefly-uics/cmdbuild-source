@@ -148,7 +148,7 @@ public class Startup {
 		return new Predicate<Void>() {
 
 			@Override
-			public boolean apply(Void input) {
+			public boolean apply(final Void input) {
 				return properties.databaseProperties().isConfigured() && other.patchManager().isUpdated();
 			}
 
@@ -160,7 +160,7 @@ public class Startup {
 		return new Predicate<Void>() {
 
 			@Override
-			public boolean apply(Void input) {
+			public boolean apply(final Void input) {
 				return properties.emailProperties().isEnabled();
 			}
 

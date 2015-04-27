@@ -6,7 +6,6 @@ import static org.cmdbuild.data.store.email.EmailConstants.EMAIL_CLASS_NAME;
 
 import java.io.InputStream;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import javax.activation.DataHandler;
@@ -15,14 +14,12 @@ import org.apache.commons.io.IOUtils;
 import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.view.CMDataView;
-import org.cmdbuild.dms.DmsConfiguration;
 import org.cmdbuild.dms.DmsService;
 import org.cmdbuild.dms.DocumentCreator;
 import org.cmdbuild.dms.DocumentCreatorFactory;
 import org.cmdbuild.dms.DocumentDelete;
 import org.cmdbuild.dms.DocumentDownload;
 import org.cmdbuild.dms.DocumentSearch;
-import org.cmdbuild.dms.ForwardingDmsService;
 import org.cmdbuild.dms.StorableDocument;
 import org.cmdbuild.dms.StoredDocument;
 import org.cmdbuild.dms.exception.DmsError;
@@ -35,46 +32,21 @@ import com.google.common.base.Optional;
 
 public class DefaultEmailAttachmentsLogic implements EmailAttachmentsLogic {
 
-	private static class ConfigurationAwareDmsService extends ForwardingDmsService {
-
-		private static final List<StoredDocument> EMPTY = Collections.emptyList();
-
-		private final DmsService delegate;
-		private final DmsConfiguration dmsConfiguration;
-
-		public ConfigurationAwareDmsService(final DmsService delegate, final DmsConfiguration dmsConfiguration) {
-			this.delegate = delegate;
-			this.dmsConfiguration = dmsConfiguration;
-		}
-
-		@Override
-		protected DmsService delegate() {
-			return delegate;
-		}
-
-		@Override
-		public List<StoredDocument> search(final DocumentSearch document) throws DmsError {
-			return dmsConfiguration.isEnabled() ? super.search(document) : EMPTY;
-		}
-
-	}
+	private static final String CATEGORY_NOT_USED = null;
 
 	private final CMDataView dataView;
-	private final DmsConfiguration dmsConfiguration;
 	private final DmsService dmsService;
 	private final DocumentCreatorFactory documentCreatorFactory;
 	private final OperationUser operationUser;
 
 	public DefaultEmailAttachmentsLogic( //
 			final CMDataView dataView, //
-			final DmsConfiguration dmsConfiguration, //
 			final DmsService dmsService, //
 			final DocumentCreatorFactory documentCreatorFactory, //
 			final OperationUser operationUser //
 	) {
 		this.dataView = dataView;
-		this.dmsConfiguration = dmsConfiguration;
-		this.dmsService = new ConfigurationAwareDmsService(dmsService, dmsConfiguration);
+		this.dmsService = dmsService;
 		this.documentCreatorFactory = documentCreatorFactory;
 		this.operationUser = operationUser;
 	}
@@ -91,7 +63,7 @@ public class DefaultEmailAttachmentsLogic implements EmailAttachmentsLogic {
 							email.getId(), //
 							inputStream, //
 							dataHandler.getName(), //
-							dmsConfiguration.getLookupNameForAttachments(), //
+							CATEGORY_NOT_USED, //
 							EMPTY);
 			dmsService.upload(document);
 		} catch (final Exception e) {

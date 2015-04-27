@@ -19,6 +19,7 @@ import org.cmdbuild.data.store.email.ExtendedEmailTemplate;
 import org.cmdbuild.data.store.email.ExtendedEmailTemplateStore;
 import org.cmdbuild.data.store.email.LookupStoreEmailStatusConverter;
 import org.cmdbuild.data.store.email.StoreBasedEmailAccountFacade;
+import org.cmdbuild.dms.ConfigurationAwareDmsService;
 import org.cmdbuild.dms.DmsConfiguration;
 import org.cmdbuild.logic.email.ConfigurationAwareEmailAttachmentsLogic;
 import org.cmdbuild.logic.email.DefaultEmailAccountLogic;
@@ -129,8 +130,7 @@ public class Email {
 		return new ConfigurationAwareEmailAttachmentsLogic( //
 				new DefaultEmailAttachmentsLogic( //
 						data.systemDataView(), //
-						properties.dmsProperties(), //
-						dms.dmsService(), //
+						new ConfigurationAwareDmsService(dms.dmsService(), properties.dmsProperties()), //
 						dms.documentCreatorFactory(), //
 						userStore.getUser()), //
 				dmsConfiguration);
