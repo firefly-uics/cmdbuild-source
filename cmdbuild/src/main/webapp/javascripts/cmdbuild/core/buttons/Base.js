@@ -10,6 +10,11 @@
 		 */
 		textDefault: undefined,
 
+		/**
+		 * @cfg {Boolean}
+		 */
+		withSpacer: false,
+
 		initComponent: function() {
 			// Button minWidth setup
 			if (Ext.isEmpty(this.iconCls))
@@ -24,7 +29,7 @@
 				});
 
 			// Add spacer class when button is used as grid icon
-			if (!Ext.isEmpty(this.tooltip))
+			if (!Ext.isEmpty(this.tooltip) && this.withSpacer)
 				Ext.apply(this, {
 					iconCls: this.iconCls + ' cm-action-col-icon-spacer'
 				});
