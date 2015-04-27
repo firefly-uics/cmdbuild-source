@@ -34,6 +34,8 @@ import org.cmdbuild.logic.email.EmailLogic.Statuses;
 import org.cmdbuild.scheduler.command.Command;
 import org.cmdbuild.services.email.AllConfigurationWrapper;
 import org.slf4j.Logger;
+import org.slf4j.Marker;
+import org.slf4j.MarkerFactory;
 
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
@@ -43,6 +45,7 @@ import com.google.common.collect.Multimap;
 public class EmailQueueCommand implements Command, Callback {
 
 	private static final Logger logger = Log.EMAIL;
+	private static final Marker MARKER = MarkerFactory.getMarker(EmailQueueCommand.class.getName());
 
 	private static final Predicate<Email> DELAY_ELAPSED = new Predicate<Email>() {
 
@@ -107,23 +110,38 @@ public class EmailQueueCommand implements Command, Callback {
 
 	@Override
 	public void execute() {
+		logger.info(MARKER, "starting e-mail queue management");
+		try {
+			execute0();
+		} catch (final Exception e) {
+			logger.error(MARKER, "error executing e-mail queue management", e);
+		}
+	}
+
+	private void execute0() {
+		logger.debug(MARKER, "getting all outgoing e-mails where delay is elapsed");
 		final Iterable<Email> elements = from(emailLogic.readAll(outgoing())) //
 				.filter(DELAY_ELAPSED);
+		logger.debug(MARKER, "grouping e-mails by account");
 		final Multimap<Optional<String>, Email> emailsByAccount = index(elements, ACCOUNT_NAME_OR_ABSENT);
 		for (final Optional<String> accountName : emailsByAccount.keySet()) {
 			final Optional<EmailAccount> account;
 			if (accountName.isPresent()) {
+				logger.debug(MARKER, "account is present, using '{}'", accountName.get());
 				account = emailAccountFacade.firstOfOrDefault(asList(accountName.get()));
 			} else {
+				logger.debug(MARKER, "account is absent, using default one");
 				account = emailAccountFacade.defaultAccount();
 			}
 			if (account.isPresent()) {
 				final MailApi api = mailApiFactory.create(AllConfigurationWrapper.of(account.get()));
+				logger.debug(MARKER, "creating new mail queue");
 				final NewMailQueue queue = api.newMailQueue() //
 						.withCallback(this) //
 						.withForgiving(true);
 				emailByIndex.clear();
 				for (final Email email : emailsByAccount.get(accountName)) {
+					logger.debug(MARKER, "adding e-mail '{}'", email);
 					currentEmail = email;
 					final QueueableNewMail newMail = queue.newMail() //
 							.withFrom(defaultIfBlank(email.getFromAddress(), account.get().getAddress())) //
@@ -141,12 +159,12 @@ public class EmailQueueCommand implements Command, Callback {
 					}
 					newMail.add();
 				}
+				logger.debug(MARKER, "sending all queued e-mails");
 				queue.sendAll();
 			} else {
-				logger.warn("missing account (even default) going to next one");
+				logger.warn(MARKER, "missing account (even default) going to next one");
 			}
 		}
-
 	}
 
 	private Iterable<String> splitAddresses(final String addresses) {
@@ -164,6 +182,7 @@ public class EmailQueueCommand implements Command, Callback {
 	@Override
 	public void sent(final int index) {
 		final Email email = emailByIndex.get(index);
+		logger.debug(MARKER, "e-mail '{}' successfully sent");
 		emailLogic.updateWithNoChecks(new SentEmail(email));
 	}
 

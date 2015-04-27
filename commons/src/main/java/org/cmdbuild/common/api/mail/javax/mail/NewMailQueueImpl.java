@@ -331,14 +331,15 @@ class NewMailQueueImpl implements NewMailQueue {
 
 			@Override
 			public void connected(final Session session, final Transport transport) throws MailException {
-				int count = 0;
+				int count = -1;
 				for (final NewMailImpl element : elements) {
 					try {
+						count++;
 						final MessageBuilder messageBuilder = new NewMailImplMessageBuilder(configuration, session,
 								element);
 						final Message message = messageBuilder.build();
 						transport.sendMessage(message, message.getAllRecipients());
-						callback.sent(count++);
+						callback.sent(count);
 					} catch (final Exception e) {
 						logger.error("error sending mail", e);
 						if (!forgiving) {
