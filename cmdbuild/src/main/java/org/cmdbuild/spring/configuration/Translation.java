@@ -11,7 +11,6 @@ import org.cmdbuild.logic.translation.TranslationFacade;
 import org.cmdbuild.logic.translation.TranslationLogic;
 import org.cmdbuild.services.localization.RequestHandlerSetupFacade;
 import org.cmdbuild.servlets.json.serializers.DefaultTranslationFacade;
-import org.cmdbuild.servlets.json.serializers.SetupAwareTranslationFacade;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -27,13 +26,7 @@ public class Translation {
 
 	@Bean
 	public TranslationFacade translationFacade() {
-		final DefaultTranslationFacade defaultTranslationFacade = new DefaultTranslationFacade( //
-				translationLogic(), //
-				requestHandlerSetupFacade());
-		final SetupAwareTranslationFacade setupAwareTranslationFacade = new SetupAwareTranslationFacade( //
-				defaultTranslationFacade, //
-				setup.setupFacade());
-		return setupAwareTranslationFacade;
+		return new DefaultTranslationFacade(translationLogic(), requestHandlerSetupFacade());
 	}
 
 	@Bean

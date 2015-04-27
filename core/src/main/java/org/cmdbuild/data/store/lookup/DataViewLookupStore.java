@@ -1,9 +1,10 @@
 package org.cmdbuild.data.store.lookup;
 
 import static com.google.common.collect.FluentIterable.from;
-import static com.google.common.collect.Maps.newHashMap;
+import static com.google.common.collect.Maps.uniqueIndex;
 import static com.google.common.reflect.Reflection.newProxy;
 import static org.cmdbuild.common.utils.Reflection.unsupported;
+import static org.cmdbuild.data.store.lookup.Functions.toLookupId;
 import static org.cmdbuild.data.store.lookup.Functions.toLookupType;
 import static org.cmdbuild.data.store.lookup.Predicates.lookupWithType;
 
@@ -14,6 +15,8 @@ import org.cmdbuild.data.store.Storable;
 import org.cmdbuild.data.store.Store;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
+
+import com.google.common.base.Function;
 
 public class DataViewLookupStore extends ForwardingStore<Lookup> implements LookupStore {
 
@@ -41,42 +44,33 @@ public class DataViewLookupStore extends ForwardingStore<Lookup> implements Look
 	@Override
 	public Iterable<Lookup> readAll(final LookupType type) {
 		logger.debug(marker, "getting lookups with type '{}'", type);
-
-		final Iterable<Lookup> lookups = readAll();
-
-		final Map<Long, Lookup> lookupsById = newHashMap();
-		for (final Lookup lookup : lookups) {
-			lookupsById.put(lookup.getId(), lookup);
-		}
-
-		for (final Lookup lookup : lookups) {
-			final Lookup lookupWithParent = buildLookupWithParentLookup(lookup, lookupsById);
-			lookupsById.put(lookupWithParent.getId(), lookupWithParent);
-		}
-
-		return from(lookupsById.values()) //
-				.filter(lookupWithType(type));
+		final Iterable<Lookup> elements = readAll();
+		return from(elements) //
+				.filter(lookupWithType(type)) //
+				.transform(toLookupWithParent(elements));
 	}
 
-	private Lookup buildLookupWithParentLookup(final Lookup lookup, final Map<Long, Lookup> lookupsById) {
-		final Lookup lookupWithParent;
-		final Lookup parent = lookupsById.get(lookup.parentId());
-		if (parent != null) {
-			final Long grandparentId = parent.parentId();
-			final Lookup parentWithGrandparent;
-			if (grandparentId != null) {
-				parentWithGrandparent = buildLookupWithParentLookup(parent, lookupsById);
-			} else {
-				parentWithGrandparent = parent;
+	private static Function<Lookup, Lookup> toLookupWithParent(final Iterable<Lookup> elements) {
+		return new Function<Lookup, Lookup>() {
+
+			private final Map<Long, Lookup> lookupsById = uniqueIndex(elements, toLookupId());
+
+			@Override
+			public Lookup apply(final Lookup input) {
+				final Lookup output;
+				final Lookup parent = lookupsById.get(input.parentId());
+				if (parent != null) {
+					output = LookupImpl.newInstance() //
+							.clone(input) //
+							.withParent(apply(parent)) //
+							.build();
+				} else {
+					output = input;
+				}
+				return output;
 			}
-			lookupWithParent = LookupImpl.newInstance() //
-					.clone(lookup) //
-					.withParent(parentWithGrandparent) //
-					.build();
-		} else {
-			lookupWithParent = lookup;
-		}
-		return lookupWithParent;
+
+		};
 	}
 
 	@Override
