@@ -182,7 +182,7 @@ public class EmailQueueCommand implements Command, Callback {
 	@Override
 	public void sent(final int index) {
 		final Email email = emailByIndex.get(index);
-		logger.debug(MARKER, "e-mail '{}' successfully sent");
+		logger.debug(MARKER, "e-mail '{}' successfully sent", email);
 		emailLogic.updateWithNoChecks(new SentEmail(email));
 	}
 
