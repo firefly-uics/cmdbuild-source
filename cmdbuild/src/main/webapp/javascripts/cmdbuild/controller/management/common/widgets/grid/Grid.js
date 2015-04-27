@@ -173,7 +173,7 @@
 			return [
 				Ext.create('Ext.grid.column.Action', {
 					align: 'center',
-					width: 25,
+					width: 50,
 					sortable: false,
 					hideable: false,
 					menuDisabled: true,
@@ -181,7 +181,7 @@
 
 					items: [
 						Ext.create('CMDBuild.core.buttons.Modify', {
-							text: null,
+							withSpacer: true,
 							tooltip: CMDBuild.Translation.editRow,
 							scope: this,
 
@@ -196,20 +196,9 @@
 									record: record
 								});
 							}
-						})
-					]
-				}),
-				Ext.create('Ext.grid.column.Action', {
-					align: 'center',
-					width: 25,
-					sortable: false,
-					hideable: false,
-					menuDisabled: true,
-					fixed: true,
-
-					items: [
+						}),
 						Ext.create('CMDBuild.core.buttons.Delete', {
-							text: null,
+							withSpacer: true,
 							tooltip: CMDBuild.Translation.deleteRow,
 							scope: this,
 
