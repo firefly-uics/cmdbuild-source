@@ -10,13 +10,31 @@ BEGIN
 	PERFORM cm_create_class_attribute('Email', 'Card', 'integer', null, false, false, 'MODE: read|FIELDMODE: write|DESCR: Card|INDEX: 4|REFERENCEDOM: ClassEmail|REFERENCEDIRECT: false|REFERENCETYPE: restrict|STATUS: active');
 
 	RAISE INFO 'copying old reference values into new one';
-	UPDATE "Email" SET "Card" = "Activity" WHERE "Status" = 'A';
+	ALTER TABLE "Email" DISABLE TRIGGER USER;
+	UPDATE "Email" SET "Card" = "Activity";
+	ALTER TABLE "Email" ENABLE TRIGGER USER;
+
+	RAISE INFO 'copying old relations into new domain';
+	ALTER TABLE "Map_ClassEmail" DISABLE TRIGGER USER;
+	INSERT INTO "Map_ClassEmail"("IdDomain", "IdClass1", "IdObj1", "IdClass2", "IdObj2", "Status", "User", "BeginDate", "EndDate", "Id")
+		SELECT '"Map_ClassEmail"'::regclass, "IdClass1", "IdObj1", "IdClass2", "IdObj2", "Status",  "User", "BeginDate", "EndDate", "Id"
+			FROM ONLY "Map_ActivityEmail";
+	INSERT INTO "Map_ClassEmail_history"("IdDomain", "IdClass1", "IdObj1", "IdClass2", "IdObj2", "Status", "User", "BeginDate", "EndDate", "Id")
+		SELECT '"Map_ClassEmail"'::regclass, "IdClass1", "IdObj1", "IdClass2", "IdObj2", "Status",  "User", "BeginDate", "EndDate", "Id"
+			FROM "Map_ActivityEmail_history";
+	ALTER TABLE "Map_ClassEmail" ENABLE TRIGGER USER;
 
 	RAISE INFO 'deleting old reference attribute';
 	ALTER TABLE "Email" DISABLE TRIGGER USER;
 	UPDATE "Email" SET "Activity" = null;
 	ALTER TABLE "Email" ENABLE TRIGGER USER;
 	PERFORM cm_delete_class_attribute('Email', 'Activity');
+
+	RAISE INFO 'deleting old domain';
+	ALTER TABLE "Map_ActivityEmail" DISABLE TRIGGER USER;
+	TRUNCATE TABLE "Map_ActivityEmail", "Map_ActivityEmail_history";
+	ALTER TABLE "Map_ActivityEmail" ENABLE TRIGGER USER;
+	PERFORM cm_delete_domain('ActivityEmail');
 END;
 $$ LANGUAGE PLPGSQL;
 
