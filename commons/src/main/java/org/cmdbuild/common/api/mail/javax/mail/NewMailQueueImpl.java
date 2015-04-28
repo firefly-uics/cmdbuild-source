@@ -1,11 +1,14 @@
 package org.cmdbuild.common.api.mail.javax.mail;
 
 import static com.google.common.collect.Lists.newArrayList;
+import static com.google.common.collect.Maps.newHashMap;
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 import java.net.URL;
 import java.util.Collection;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.activation.DataHandler;
 import javax.mail.Flags;
@@ -218,6 +221,12 @@ class NewMailQueueImpl implements NewMailQueue {
 
 	@Override
 	public void sendAll() {
+		final Map<Message, NewMail> sent = send();
+		store(sent);
+	}
+
+	private Map<Message, NewMail> send() {
+		final Map<Message, NewMail> sent = newHashMap();
 		new OutputTemplate(output).execute(new OutputTemplate.Hook() {
 
 			@Override
@@ -225,36 +234,43 @@ class NewMailQueueImpl implements NewMailQueue {
 				int count = -1;
 				for (final NewMailImpl element : elements) {
 					try {
+						logger.debug("sending e-mail '{}'", element);
 						count++;
 						final MessageBuilder messageBuilder = new NewMailImplMessageBuilder(output, session, element);
 						final Message message = messageBuilder.build();
 						transport.sendMessage(message, message.getAllRecipients());
 						callback.sent(count);
-						tryStoreMessage(message);
+						sent.put(message, element);
 					} catch (final MessagingException e) {
-						logger.error("error sending mail", e);
+						logger.error("error sending e-mail", e);
 						if (!forgiving) {
 							throw e;
 						}
 					} catch (final Exception e) {
-						logger.error("error sending mail", e);
+						logger.error("error sending e-mail", e);
 						if (!forgiving) {
-							throw new MessagingException("error sending mail", e);
+							throw new MessagingException("error sending e-mail", e);
 						}
 					}
 				}
 			}
 
-			private void tryStoreMessage(final Message message) {
-				try {
-					/*
-					 * TODO open single connection for whole queue operation
-					 */
-					new InputTemplate(input).execute(new InputTemplate.Hook() {
+		});
+		return sent;
+	}
 
-						@Override
-						public void connected(final Store store) throws MessagingException {
-							if (isNotBlank(output.getOutputFolder())) {
+	private void store(final Map<Message, NewMail> sent) {
+		try {
+			if (isNotBlank(output.getOutputFolder()) && !sent.isEmpty()) {
+				new InputTemplate(input).execute(new InputTemplate.Hook() {
+
+					@Override
+					public void connected(final Store store) throws MessagingException {
+						for (final Entry<Message, NewMail> entry : sent.entrySet()) {
+							try {
+								final Message message = entry.getKey();
+								final NewMail newMail = entry.getValue();
+								logger.error("storing e-mail '{}'", newMail);
 								final Folder folder = store.getFolder(output.getOutputFolder());
 								if (!folder.exists()) {
 									folder.create(Folder.HOLDS_MESSAGES);
@@ -262,16 +278,25 @@ class NewMailQueueImpl implements NewMailQueue {
 								folder.open(Folder.READ_WRITE);
 								folder.appendMessages(new Message[] { message });
 								message.setFlag(Flags.Flag.RECENT, true);
+							} catch (final MessagingException e) {
+								logger.error("error storing e-mail", e);
+								if (!forgiving) {
+									throw e;
+								}
+							} catch (final Exception e) {
+								logger.error("error storing e-mail", e);
+								if (!forgiving) {
+									throw new MessagingException("error storing e-mail", e);
+								}
 							}
 						}
+					}
 
-					});
-				} catch (final Exception e) {
-					logger.error("error storing sent e-mail", e);
-				}
+				});
 			}
-
-		});
+		} catch (final Exception e) {
+			logger.error("error storing e-mail", e);
+		}
 	}
 
 }
