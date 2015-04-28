@@ -193,6 +193,7 @@ class SendableNewMailImpl extends ForwardingNewMail implements SendableNewMail {
 
 			@Override
 			public void connected(final Session session, final Transport transport) throws MessagingException {
+				logger.debug("sending e-mail '{}'", newMail);
 				final MessageBuilder messageBuilder = new NewMailImplMessageBuilder(output, session, newMail);
 				final Message message = messageBuilder.build();
 				transport.sendMessage(message, message.getAllRecipients());
@@ -201,11 +202,12 @@ class SendableNewMailImpl extends ForwardingNewMail implements SendableNewMail {
 
 			private void tryStoreMessage(final Message message) {
 				try {
-					new InputTemplate(input).execute(new InputTemplate.Hook() {
+					if (isNotBlank(output.getOutputFolder())) {
+						new InputTemplate(input).execute(new InputTemplate.Hook() {
 
-						@Override
-						public void connected(final Store store) throws MessagingException {
-							if (isNotBlank(output.getOutputFolder())) {
+							@Override
+							public void connected(final Store store) throws MessagingException {
+								logger.debug("storing e-mail '{}'", newMail);
 								final Folder folder = store.getFolder(output.getOutputFolder());
 								if (!folder.exists()) {
 									folder.create(Folder.HOLDS_MESSAGES);
@@ -214,11 +216,11 @@ class SendableNewMailImpl extends ForwardingNewMail implements SendableNewMail {
 								folder.appendMessages(new Message[] { message });
 								message.setFlag(Flags.Flag.RECENT, true);
 							}
-						}
 
-					});
+						});
+					}
 				} catch (final Exception e) {
-					logger.error("error storing sent e-mail", e);
+					logger.error("error storing e-mail", e);
 				}
 			}
 
