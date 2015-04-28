@@ -194,6 +194,7 @@ SELECT cm_create_class_attribute('_EmailAccount', 'InputFolder', 'varchar(50)', 
 SELECT cm_create_class_attribute('_EmailAccount', 'ProcessedFolder', 'varchar(50)', null, false, false, 'MODE: write|DESCR: Processed folder|INDEX: 12|STATUS: active');
 SELECT cm_create_class_attribute('_EmailAccount', 'RejectedFolder', 'varchar(50)', null, false, false, 'MODE: write|DESCR: Rejected folder|INDEX: 13|STATUS: active');
 SELECT cm_create_class_attribute('_EmailAccount', 'RejectNotMatching', 'boolean', null, false, false, 'MODE: write|DESCR: Reject not matching|INDEX: 14|STATUS: active');
+SELECT cm_create_class_attribute('_EmailAccount', 'OutputFolder', 'varchar(100)', null, false, false, 'MODE: write|DESCR: Output Folder|INDEX: 15|STATUS: active');
 SELECT _cm_attribute_set_uniqueness('"_EmailAccount"'::regclass::oid, 'Code', TRUE);
 
 ---------------------------------------------

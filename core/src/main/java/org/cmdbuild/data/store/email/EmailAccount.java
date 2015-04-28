@@ -24,6 +24,8 @@ public interface EmailAccount extends Storable {
 
 	boolean isSmtpConfigured();
 
+	String getOutputFolder();
+
 	String getImapServer();
 
 	Integer getImapPort();

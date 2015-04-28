@@ -1,16 +1,21 @@
 package org.cmdbuild.common.api.mail.javax.mail;
 
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+
 import java.net.URL;
 
 import javax.activation.DataHandler;
+import javax.mail.Flags;
+import javax.mail.Folder;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Session;
+import javax.mail.Store;
 import javax.mail.Transport;
 
+import org.cmdbuild.common.api.mail.Configuration.Input;
 import org.cmdbuild.common.api.mail.Configuration.Output;
 import org.cmdbuild.common.api.mail.ForwardingNewMail;
-import org.cmdbuild.common.api.mail.MailException;
 import org.cmdbuild.common.api.mail.NewMail;
 import org.cmdbuild.common.api.mail.SendableNewMail;
 import org.cmdbuild.common.api.mail.javax.mail.OutputTemplate.Hook;
@@ -18,15 +23,17 @@ import org.slf4j.Logger;
 
 class SendableNewMailImpl extends ForwardingNewMail implements SendableNewMail {
 
-	private final Output configuration;
+	private final Input input;
+	private final Output output;
 	private final Logger logger;
 
 	private final NewMailImpl newMail;
 	private boolean asynchronous;
 
-	public SendableNewMailImpl(final Output configuration) {
-		this.configuration = configuration;
-		this.logger = configuration.getLogger();
+	public SendableNewMailImpl(final Input input, final Output output) {
+		this.input = input;
+		this.output = output;
+		this.logger = output.getLogger();
 		newMail = new NewMailImpl(logger);
 	}
 
@@ -171,23 +178,7 @@ class SendableNewMailImpl extends ForwardingNewMail implements SendableNewMail {
 			@Override
 			public void run() {
 				try {
-					new OutputTemplate(configuration).execute(new Hook() {
-
-						@Override
-						public void connected(final Session session, final Transport transport) throws MailException {
-							try {
-								final MessageBuilder messageBuilder = new NewMailImplMessageBuilder(configuration,
-										session, newMail);
-								final Message message = messageBuilder.build();
-								transport.sendMessage(message, message.getAllRecipients());
-							} catch (final MessagingException e) {
-								logger.error("error sending mail", e);
-								throw MailException.send(e);
-							}
-						}
-
-					});
-
+					send0();
 				} catch (final RuntimeException e) {
 					logger.error("error sending e-mail", e);
 					throw e;
@@ -195,6 +186,43 @@ class SendableNewMailImpl extends ForwardingNewMail implements SendableNewMail {
 			}
 
 		};
+	}
+
+	private void send0() {
+		new OutputTemplate(output).execute(new Hook() {
+
+			@Override
+			public void connected(final Session session, final Transport transport) throws MessagingException {
+				final MessageBuilder messageBuilder = new NewMailImplMessageBuilder(output, session, newMail);
+				final Message message = messageBuilder.build();
+				transport.sendMessage(message, message.getAllRecipients());
+				tryStoreMessage(message);
+			}
+
+			private void tryStoreMessage(final Message message) {
+				try {
+					new InputTemplate(input).execute(new InputTemplate.Hook() {
+
+						@Override
+						public void connected(final Store store) throws MessagingException {
+							if (isNotBlank(output.getOutputFolder())) {
+								final Folder folder = store.getFolder(output.getOutputFolder());
+								if (!folder.exists()) {
+									folder.create(Folder.HOLDS_MESSAGES);
+								}
+								folder.open(Folder.READ_WRITE);
+								folder.appendMessages(new Message[] { message });
+								message.setFlag(Flags.Flag.RECENT, true);
+							}
+						}
+
+					});
+				} catch (final Exception e) {
+					logger.error("error storing sent e-mail", e);
+				}
+			}
+
+		});
 	}
 
 	private void runInAnotherThread(final Runnable job) {

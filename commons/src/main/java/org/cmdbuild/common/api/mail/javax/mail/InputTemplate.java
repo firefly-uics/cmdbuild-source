@@ -29,7 +29,7 @@ class InputTemplate {
 
 	public static interface Hook {
 
-		void connected(Store store) throws MailException;
+		void connected(Store store) throws MessagingException;
 
 	}
 
@@ -52,6 +52,9 @@ class InputTemplate {
 			hook.connected(store);
 			store.close();
 		} catch (final MessagingException e) {
+			logger.error("error while connecting/connected to store", e);
+			throw MailException.input(e);
+		} catch (final Exception e) {
 			logger.error("error while connecting/connected to store", e);
 			throw MailException.input(e);
 		} finally {

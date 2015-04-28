@@ -81,6 +81,11 @@ public class DefaultEmailAccountLogic implements EmailAccountLogic {
 		}
 
 		@Override
+		public String getOutputFolder() {
+			return delegate().getOutputFolder();
+		}
+
+		@Override
 		public String getImapServer() {
 			return delegate().getImapServer();
 		}
@@ -265,6 +270,11 @@ public class DefaultEmailAccountLogic implements EmailAccountLogic {
 		}
 
 		@Override
+		public String getOutputFolder() {
+			return delegate.getOutputFolder();
+		}
+
+		@Override
 		public String getImapServer() {
 			return delegate.getImapServer();
 		}
@@ -328,6 +338,7 @@ public class DefaultEmailAccountLogic implements EmailAccountLogic {
 					.withSmtpServer(input.getSmtpServer()) //
 					.withSmtpPort(input.getSmtpPort()) //
 					.withSmtpSsl(input.isSmtpSsl()) //
+					.withOutputFolder(input.getOutputFolder()) //
 					.withImapServer(input.getImapServer()) //
 					.withImapPort(input.getImapPort()) //
 					.withImapSsl(input.isImapSsl()) //

@@ -119,6 +119,11 @@ public class ConfigurationHelper {
 			}
 
 			@Override
+			public String getOutputFolder() {
+				return null;
+			}
+
+			@Override
 			public String getInputProtocol() {
 				return INPUT_NOT_SUPPORTED.getInputProtocol();
 			}

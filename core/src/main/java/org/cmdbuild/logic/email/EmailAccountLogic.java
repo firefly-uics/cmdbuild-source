@@ -24,6 +24,8 @@ public interface EmailAccountLogic extends Logic {
 
 		boolean isSmtpSsl();
 
+		String getOutputFolder();
+
 		String getImapServer();
 
 		Integer getImapPort();

@@ -151,6 +151,11 @@ public abstract class AbstractMailTest {
 			}
 
 			@Override
+			public String getOutputFolder() {
+				return "Sent";
+			}
+
+			@Override
 			public String getInputProtocol() {
 				return inputServerSetup().getProtocol();
 			}
