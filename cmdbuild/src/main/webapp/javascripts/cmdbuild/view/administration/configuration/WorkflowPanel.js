@@ -38,9 +38,38 @@
 			});
 
 			Ext.apply(this, {
+				dockedItems: [
+					Ext.create('Ext.toolbar.Toolbar', {
+						dock: 'bottom',
+						itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_BOTTOM,
+						ui: 'footer',
+
+						layout: {
+							type: 'hbox',
+							align: 'middle',
+							pack: 'center'
+						},
+
+						items: [
+							Ext.create('CMDBuild.core.buttons.Save', {
+								scope: this,
+
+								handler: function(button, e) {
+									this.delegate.cmfg('onWorkflowSaveButtonClick');
+								}
+							}),
+							Ext.create('CMDBuild.core.buttons.Abort', {
+								scope: this,
+
+								handler: function(button, e) {
+									this.delegate.cmfg('onWorkflowAbortButtonClick');
+								}
+							})
+						]
+					})
+				],
 				items: [
-					{
-						xtype: 'fieldset',
+					Ext.create('Ext.form.FieldSet', {
 						title: CMDBuild.Translation.general,
 						autoHeight: true,
 						defaultType: 'textfield',
@@ -59,9 +88,8 @@
 								maxWidth: CMDBuild.CFG_BIG_FIELD_WIDTH
 							}
 						]
-					},
-					{
-						xtype: 'fieldset',
+					}),
+					Ext.create('Ext.form.FieldSet', {
 						title: CMDBuild.Translation.credentials,
 						autoHeight: true,
 						defaultType: 'textfield',
@@ -96,38 +124,7 @@
 								disabled: true
 							}
 						]
-					}
-				],
-				dockedItems: [
-					{
-						xtype: 'toolbar',
-						dock: 'bottom',
-						itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_BOTTOM,
-						ui: 'footer',
-
-						layout: {
-							type: 'hbox',
-							align: 'middle',
-							pack: 'center'
-						},
-
-						items: [
-							Ext.create('CMDBuild.core.buttons.Save', {
-								scope: this,
-
-								handler: function(button, e) {
-									this.delegate.cmOn('onWorkflowSaveButtonClick');
-								}
-							}),
-							Ext.create('CMDBuild.core.buttons.Abort', {
-								scope: this,
-
-								handler: function(button, e) {
-									this.delegate.cmOn('onWorkflowAbortButtonClick');
-								}
-							})
-						]
-					}
+					})
 				]
 			});
 

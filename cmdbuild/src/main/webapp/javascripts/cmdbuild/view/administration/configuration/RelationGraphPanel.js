@@ -28,6 +28,36 @@
 
 		initComponent: function() {
 			Ext.apply(this, {
+				dockedItems: [
+					Ext.create('Ext.toolbar.Toolbar', {
+						dock: 'bottom',
+						itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_BOTTOM,
+						ui: 'footer',
+
+						layout: {
+							type: 'hbox',
+							align: 'middle',
+							pack: 'center'
+						},
+
+						items: [
+							Ext.create('CMDBuild.core.buttons.Save', {
+								scope: this,
+
+								handler: function(button, e) {
+									this.delegate.cmfg('onRelationGraphSaveButtonClick');
+								}
+							}),
+							Ext.create('CMDBuild.core.buttons.Abort', {
+								scope: this,
+
+								handler: function(button, e) {
+									this.delegate.cmfg('onRelationGraphAbortButtonClick');
+								}
+							})
+						]
+					})
+				],
 				items: [
 					{
 						xtype: 'xcheckbox',
@@ -57,37 +87,6 @@
 						allowBlank: false,
 						minValue: 2,
 						maxValue: 20
-					}
-				],
-				dockedItems: [
-					{
-						xtype: 'toolbar',
-						dock: 'bottom',
-						itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_BOTTOM,
-						ui: 'footer',
-
-						layout: {
-							type: 'hbox',
-							align: 'middle',
-							pack: 'center'
-						},
-
-						items: [
-							Ext.create('CMDBuild.core.buttons.Save', {
-								scope: this,
-
-								handler: function(button, e) {
-									this.delegate.cmOn('onRelationGraphSaveButtonClick');
-								}
-							}),
-							Ext.create('CMDBuild.core.buttons.Abort', {
-								scope: this,
-
-								handler: function(button, e) {
-									this.delegate.cmOn('onRelationGraphAbortButtonClick');
-								}
-							})
-						]
 					}
 				]
 			});

@@ -33,6 +33,36 @@
 			});
 
 			Ext.apply(this, {
+				dockedItems: [
+					Ext.create('Ext.toolbar.Toolbar', {
+						dock: 'bottom',
+						itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_BOTTOM,
+						ui: 'footer',
+
+						layout: {
+							type: 'hbox',
+							align: 'middle',
+							pack: 'center'
+						},
+
+						items: [
+							Ext.create('CMDBuild.core.buttons.Save', {
+								scope: this,
+
+								handler: function(button, e) {
+									this.delegate.cmfg('onBimSaveButtonClick');
+								}
+							}),
+							Ext.create('CMDBuild.core.buttons.Abort', {
+								scope: this,
+
+								handler: function(button, e) {
+									this.delegate.cmfg('onBimAbortButtonClick');
+								}
+							})
+						]
+					})
+				],
 				items: [
 					this.enabledCheckBox,
 					{
@@ -51,37 +81,6 @@
 						name: CMDBuild.core.proxy.CMProxyConstants.PASSWORD,
 						fieldLabel: CMDBuild.Translation.password,
 						inputType: 'password'
-					}
-				],
-				dockedItems: [
-					{
-						xtype: 'toolbar',
-						dock: 'bottom',
-						itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_BOTTOM,
-						ui: 'footer',
-
-						layout: {
-							type: 'hbox',
-							align: 'middle',
-							pack: 'center'
-						},
-
-						items: [
-							Ext.create('CMDBuild.core.buttons.Save', {
-								scope: this,
-
-								handler: function(button, e) {
-									this.delegate.cmOn('onBimSaveButtonClick');
-								}
-							}),
-							Ext.create('CMDBuild.core.buttons.Abort', {
-								scope: this,
-
-								handler: function(button, e) {
-									this.delegate.cmOn('onBimAbortButtonClick');
-								}
-							})
-						]
 					}
 				]
 			});

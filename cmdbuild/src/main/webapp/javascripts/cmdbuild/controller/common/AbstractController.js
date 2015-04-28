@@ -61,10 +61,10 @@
 				&& !Ext.isEmpty(this.stringToFunctionNameMap[name])
 			) {
 				// Normal function manage
-				if (typeof this.stringToFunctionNameMap[name] == 'string' && typeof this[this.stringToFunctionNameMap[name]] == 'function')
+				if (Ext.isString(this.stringToFunctionNameMap[name]) && Ext.isFunction(this[this.stringToFunctionNameMap[name]]))
 					return this[this.stringToFunctionNameMap[name]](param, callBack);
 
-				if (typeof this.stringToFunctionNameMap[name] == 'object') {
+				if (Ext.isObject(this.stringToFunctionNameMap[name])) {
 					switch (this.stringToFunctionNameMap[name].action) {
 						// Forwarded function manage
 						case 'forward':
@@ -74,7 +74,7 @@
 			}
 
 			// If function is not managed from this controller forward to parentDelegate
-			if (!Ext.isEmpty(this.parentDelegate) && typeof this.parentDelegate.cmfg == 'function')
+			if (!Ext.isEmpty(this.parentDelegate) && Ext.isFunction(this.parentDelegate.cmfg))
 				return this.parentDelegate.cmfg(name, param, callBack);
 
 			_warning('unmanaged function with name "' + name + '"', this);
@@ -87,7 +87,7 @@
 		 */
 		decodeCatchedFunctionsArray: function() {
 			Ext.Array.forEach(this.cmfgCatchedFunctions, function(managedFnString, i, allManagedFnString) {
-				if (typeof managedFnString == 'string') {
+				if (Ext.isString(managedFnString)) {
 					// Forward inline tag
 					if (managedFnString.indexOf('->') >= 0) {
 						var splittedString = managedFnString.split('->');
