@@ -10,26 +10,6 @@
 		 */
 		delegate: undefined,
 
-		/**
-		 * @property {Mixed}
-		 */
-		attachmentLookup: undefined,
-
-		/**
-		 * @cfg {Boolean}
-		 */
-		attachmentLookupFirstLoad: true,
-
-		/**
-		 * @property {Ext.form.FieldSet}
-		 */
-		credentialsFieldset: undefined,
-
-		/**
-		 * @property {Ext.form.field.ComboBox}
-		 */
-		lookupTypeCombo: undefined,
-
 		bodyCls: 'cmgraypanel',
 		border: false,
 		frame: false,
@@ -47,51 +27,10 @@
 		},
 
 		initComponent: function() {
-			this.lookupTypeCombo = Ext.create('Ext.form.field.ComboBox', {
-				name: 'category.lookup',
-				fieldLabel: CMDBuild.Translation.cmdbuildCategory,
-				valueField: CMDBuild.core.proxy.CMProxyConstants.TYPE,
-				displayField: CMDBuild.core.proxy.CMProxyConstants.TYPE,
-				allowBlank: false,
-
-				store: CMDBuild.Cache.getLookupTypeLeavesAsStore(),
-				queryMode: 'local'
-			});
-
-			updateAttachementLookupAfterSetValueOnLookupTypeCombo(this);
-
-			this.credentialsFieldset = Ext.create('Ext.form.FieldSet', {
-				title: CMDBuild.Translation.credentials,
-				autoHeight: true,
-				defaultType: 'textfield',
-
-				layout: {
-					type: 'vbox',
-					align:'stretch'
-				},
-
-				items: [
-					{
-						name: 'credential.user',
-						fieldLabel: CMDBuild.Translation.username,
-						allowBlank: false
-					},
-					{
-						name: 'credential.password',
-						fieldLabel: CMDBuild.Translation.password,
-						inputType: 'password',
-						allowBlank: false
-					},
-					this.lookupTypeCombo
-				]
-			});
-
 			Ext.apply(this, {
 				items: [
-					{
-						xtype: 'fieldset',
+					Ext.create('Ext.form.FieldSet', {
 						title: CMDBuild.Translation.general,
-						autoHeight: true,
 						defaultType: 'textfield',
 
 						layout: {
@@ -118,11 +57,9 @@
 								allowBlank: false
 							}
 						]
-					},
-					{
-						xtype: 'fieldset',
+					}),
+					Ext.create('Ext.form.FieldSet', {
 						title: CMDBuild.Translation.fileServer,
-						autoHeight: true,
 						defaultType: 'textfield',
 
 						layout: {
@@ -150,11 +87,9 @@
 								allowBlank: false
 							}
 						]
-					},
-					{
-						xtype: 'fieldset',
+					}),
+					Ext.create('Ext.form.FieldSet', {
 						title: CMDBuild.Translation.repository,
-						autoHeight: true,
 						defaultType: 'textfield',
 
 						layout: {
@@ -181,8 +116,40 @@
 								allowBlank: false
 							}
 						]
-					},
-					this.credentialsFieldset
+					}),
+					Ext.create('Ext.form.FieldSet', {
+						title: CMDBuild.Translation.credentials,
+						defaultType: 'textfield',
+
+						layout: {
+							type: 'vbox',
+							align:'stretch'
+						},
+
+						items: [
+							{
+								name: 'credential.user',
+								fieldLabel: CMDBuild.Translation.username,
+								allowBlank: false
+							},
+							{
+								name: 'credential.password',
+								fieldLabel: CMDBuild.Translation.password,
+								inputType: 'password',
+								allowBlank: false
+							},
+							Ext.create('Ext.form.field.ComboBox', {
+								name: 'category.lookup',
+								fieldLabel: CMDBuild.Translation.cmdbuildCategory,
+								valueField: CMDBuild.core.proxy.CMProxyConstants.TYPE,
+								displayField: CMDBuild.core.proxy.CMProxyConstants.TYPE,
+								allowBlank: false,
+
+								store: CMDBuild.Cache.getLookupTypeLeavesAsStore(),
+								queryMode: 'local'
+							})
+						]
+					})
 				],
 				dockedItems: [
 					{
@@ -218,71 +185,7 @@
 			});
 
 			this.callParent(arguments);
-		},
-
-		/**
-		 * @param {Object} saveDataObject
-		 *
-		 * @override
-		 */
-		afterSubmit: function(saveDataObject) {
-			if (this.valuesFromServer && this.attachmentLookup)
-				this.attachmentLookup.setValue(this.valuesFromServer[this.attachmentLookup.name]);
 		}
 	});
-
-	function updateAttachementLookupAfterSetValueOnLookupTypeCombo(me) {
-		me.lookupTypeCombo.setValue = Ext.Function.createSequence(
-			me.lookupTypeCombo.setValue,
-			function(value) {
-				me.credentialsFieldset.remove(me.attachmentLookup);
-				if (value == null) {
-					return;
-				}
-
-				var ltype = null;
-				if (Ext.isArray(value)) {
-					value = value[0];
-				}
-
-				if (typeof value == 'string') {
-					ltype = value;
-				} else {
-					ltype = value.get('type');
-				}
-				var lookupchain = _CMCache.getLookupchainForType(ltype);
-				if (lookupchain.length == 0) {
-					value = '';
-					return;
-				}
-				var conf = {
-					description: CMDBuild.Translation.attachmentsLookup,
-					name: 'category.lookup.attachments',
-					isnotnull: false,
-					fieldmode: 'write',
-					type: 'LOOKUP',
-					lookup: ltype,
-					lookupchain: lookupchain
-				};
-
-				me.attachmentLookup = CMDBuild.Management.FieldManager.getFieldForAttr(conf, false, true);
-				me.attachmentLookup.labelWidth = CMDBuild.CFG_LABEL_WIDTH;
-				me.attachmentLookup.width = CMDBuild.CFG_MEDIUM_FIELD_WIDTH;
-				me.attachmentLookup.labelAlign = 'left';
-
-				// There is a rendering issue that appear resolved adding a delay to add the combo to the field-set
-				Ext.Function.createDelayed(
-					function() {
-						me.credentialsFieldset.add(me.attachmentLookup);
-						if (me.attachmentLookupFirstLoad) {
-							me.attachmentLookupFirstLoad = false;
-							me.afterSubmit();
-						}
-					},
-					200
-				)();
-			}
-		);
-	}
 
 })();
