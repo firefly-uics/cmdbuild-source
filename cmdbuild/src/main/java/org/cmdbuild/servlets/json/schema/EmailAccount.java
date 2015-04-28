@@ -328,7 +328,7 @@ public class EmailAccount extends JSONBaseWithSpringContext {
 			@Parameter(SMTP_SERVER) final String smtpServer, //
 			@Parameter(SMTP_PORT) final Integer smtpPort, //
 			@Parameter(SMTP_SSL) final Boolean smtpSsl, //
-			@Parameter(OUTPUT_FOLDER) final String outputFolder, //
+			@Parameter(value = OUTPUT_FOLDER, required = false) final String outputFolder, //
 			@Parameter(IMAP_SERVER) final String imapServer, //
 			@Parameter(IMAP_PORT) final Integer imapPort, //
 			@Parameter(IMAP_SSL) final Boolean imapSsl, //
@@ -374,7 +374,7 @@ public class EmailAccount extends JSONBaseWithSpringContext {
 			@Parameter(SMTP_SERVER) final String smtpServer, //
 			@Parameter(SMTP_PORT) final Integer smtpPort, //
 			@Parameter(SMTP_SSL) final Boolean smtpSsl, //
-			@Parameter(OUTPUT_FOLDER) final String outputFolder, //
+			@Parameter(value = OUTPUT_FOLDER, required = false) final String outputFolder, //
 			@Parameter(IMAP_SERVER) final String imapServer, //
 			@Parameter(IMAP_PORT) final Integer imapPort, //
 			@Parameter(IMAP_SSL) final Boolean imapSsl, //
