@@ -1491,6 +1491,7 @@
 	"selectAClass": "Выберите класс",
 	"selected_object": "Выбранный объект",
 	"send": "<em>Send</em>",
+	"sentFolder": "<em>Sent folder</em>",
 	"separator": "Разделитель",
 	"serverManagement": "Настройки сервера",
 	"serverUrl": "URL сервера",
