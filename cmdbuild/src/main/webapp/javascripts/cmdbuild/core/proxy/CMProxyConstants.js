@@ -189,6 +189,7 @@
 		ORACLE: 'oracle',
 		OUTGOING: 'outgoing',
 		OUTPUT: 'output',
+		OUTPUT_FOLDER: 'outputFolder',
 		PARENT: 'parent',
 		PARSING_ACTIVE: 'parsingActive',
 		PARSING_KEY_END: 'parsingKeyEnd',
