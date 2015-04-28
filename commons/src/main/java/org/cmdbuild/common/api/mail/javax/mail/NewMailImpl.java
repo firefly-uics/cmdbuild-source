@@ -8,6 +8,7 @@ import static javax.mail.Message.RecipientType.CC;
 import static javax.mail.Message.RecipientType.TO;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.trim;
+import static org.apache.commons.lang3.builder.ToStringStyle.SHORT_PREFIX_STYLE;
 import static org.cmdbuild.common.api.mail.javax.mail.Constants.CONTENT_TYPE_TEXT_PLAIN;
 
 import java.net.MalformedURLException;
@@ -20,6 +21,7 @@ import javax.activation.DataHandler;
 import javax.activation.URLDataSource;
 import javax.mail.Message.RecipientType;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.cmdbuild.common.api.mail.NewMail;
 import org.slf4j.Logger;
 
@@ -197,6 +199,18 @@ class NewMailImpl implements NewMail {
 
 	public Map<DataHandler, String> getAttachments() {
 		return attachments;
+	}
+
+	@Override
+	public String toString() {
+		return new ToStringBuilder(this, SHORT_PREFIX_STYLE) //
+				.append(froms) //
+				.append(recipients) //
+				.append(subject) //
+				.append(content) //
+				.append(contentType) //
+				.append(attachments.values()) //
+				.toString();
 	}
 
 }
