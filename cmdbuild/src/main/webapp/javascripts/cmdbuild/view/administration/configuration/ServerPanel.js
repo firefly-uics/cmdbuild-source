@@ -16,8 +16,7 @@
 		initComponent: function() {
 			Ext.apply(this, {
 				items: [
-					{
-						xtype: 'fieldset',
+					Ext.create('Ext.form.FieldSet', {
 						title: CMDBuild.Translation.cacheManagement,
 						padding: '5',
 
@@ -26,14 +25,13 @@
 								text: CMDBuild.Translation.clearCache,
 								scope: this,
 
-								handler: function() {
-									this.delegate.cmOn('onServerClearCacheButtonClick');
+								handler: function(button, e) {
+									this.delegate.cmfg('onServerClearCacheButtonClick');
 								}
 							})
 						]
-					},
-					{
-						xtype: 'fieldset',
+					}),
+					Ext.create('Ext.form.FieldSet', {
 						title: CMDBuild.Translation.serviceSynchronization,
 						padding: '5',
 
@@ -42,14 +40,13 @@
 								text: CMDBuild.Translation.serviceSynchronization,
 								scope: this,
 
-								handler: function() {
-									this.delegate.cmOn('onServerServiceSynchButtonClick');
+								handler: function(button, e) {
+									this.delegate.cmfg('onServerServiceSynchButtonClick');
 								}
 							})
 						]
-					},
-					{
-						xtype: 'fieldset',
+					}),
+					Ext.create('Ext.form.FieldSet', {
 						title: CMDBuild.Translation.lockCardsInEdit,
 						padding: '5',
 
@@ -58,12 +55,12 @@
 								text: CMDBuild.Translation.unlockAllCards,
 								scope: this,
 
-								handler: function() {
-									this.delegate.cmOn('onServerUnlockCardsButtonClick');
+								handler: function(button, e) {
+									this.delegate.cmfg('onServerUnlockCardsButtonClick');
 								}
 							})
 						]
-					}
+					})
 				]
 			});
 

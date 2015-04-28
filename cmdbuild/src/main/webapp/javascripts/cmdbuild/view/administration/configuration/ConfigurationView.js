@@ -1,6 +1,6 @@
 (function() {
 
-	Ext.define('CMDBuild.view.administration.configuration.MainPanel', {
+	Ext.define('CMDBuild.view.administration.configuration.ConfigurationView', {
 		extend: 'Ext.panel.Panel',
 
 		/**

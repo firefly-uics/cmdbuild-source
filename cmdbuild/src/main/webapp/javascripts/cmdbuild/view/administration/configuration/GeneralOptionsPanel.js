@@ -82,9 +82,38 @@
 			// END TODO: to delete when localization module will be released
 
 			Ext.apply(this, {
+				dockedItems: [
+					Ext.create('Ext.toolbar.Toolbar', {
+						dock: 'bottom',
+						itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_BOTTOM,
+						ui: 'footer',
+
+						layout: {
+							type: 'hbox',
+							align: 'middle',
+							pack: 'center'
+						},
+
+						items: [
+							Ext.create('CMDBuild.core.buttons.Save', {
+								scope: this,
+
+								handler: function(button, e) {
+									this.delegate.cmfg('onGeneralOptionsSaveButtonClick');
+								}
+							}),
+							Ext.create('CMDBuild.core.buttons.Abort', {
+								scope: this,
+
+								handler: function(button, e) {
+									this.delegate.cmfg('onGeneralOptionsAbortButtonClick');
+								}
+							})
+						]
+					})
+				],
 				items: [
-					{
-						xtype: 'fieldset',
+					Ext.create('Ext.form.FieldSet', {
 						title: CMDBuild.Translation.general,
 
 						layout: {
@@ -168,9 +197,8 @@
 								minValue: 0
 							}
 						]
-					},
-					{
-						xtype: 'fieldset',
+					}),
+					Ext.create('Ext.form.FieldSet', {
 						title: CMDBuild.Translation.popupWindows,
 
 						layout: {
@@ -201,11 +229,10 @@
 								allowBlank: false
 							}
 						]
-					},
+					}),
 					this.languageFieldset, // TODO: to delete when localization module will be released
 					this.enabledLanguagesFieldset, // TODO: to delete when localization module will be released
-					{
-						xtype: 'fieldset',
+					Ext.create('Ext.form.FieldSet', {
 						title: CMDBuild.Translation.lockCardsInEdit,
 
 						layout: {
@@ -237,38 +264,7 @@
 								fieldLabel: CMDBuild.Translation.lockTimeout
 							}
 						]
-					}
-				],
-				dockedItems: [
-					{
-						xtype: 'toolbar',
-						dock: 'bottom',
-						itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_BOTTOM,
-						ui: 'footer',
-
-						layout: {
-							type: 'hbox',
-							align: 'middle',
-							pack: 'center'
-						},
-
-						items: [
-							Ext.create('CMDBuild.core.buttons.Save', {
-								scope: this,
-
-								handler: function(button, e) {
-									this.delegate.cmOn('onGeneralOptionsSaveButtonClick');
-								}
-							}),
-							Ext.create('CMDBuild.core.buttons.Abort', {
-								scope: this,
-
-								handler: function(button, e) {
-									this.delegate.cmOn('onGeneralOptionsAbortButtonClick');
-								}
-							})
-						]
-					}
+					})
 				]
 			});
 

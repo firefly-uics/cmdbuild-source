@@ -1,6 +1,6 @@
 (function() {
 
-	Ext.define('CMDBuild.controller.administration.configuration.Main', {
+	Ext.define('CMDBuild.controller.administration.configuration.Configuration', {
 		extend: 'CMDBuild.controller.common.CMBasePanelController',
 
 		requires: [
@@ -27,12 +27,12 @@
 		titleSeparator: ' - ',
 
 		/**
-		 * @property {CMDBuild.view.administration.configuration.MainPanel}
+		 * @property {CMDBuild.view.administration.configuration.ConfigurationView}
 		 */
 		view: undefined,
 
 		/**
-		 * @param {CMDBuild.view.administration.configuration.MainPanel} view
+		 * @param {CMDBuild.view.administration.configuration.ConfigurationView} view
 		 */
 		constructor: function(view) {
 			this.callParent(arguments);
@@ -48,17 +48,17 @@
 		 * @param {Object} param
 		 * @param {Function} callback
 		 */
-		cmOn: function(name, param, callBack) {
+		cmfg: function(name, param, callBack) {
 			switch (name) {
-				case 'onReadConfiguration':
-					return this.onReadConfiguration(param.configFileName, param.view);
+				case 'onConfigurationRead':
+					return this.onConfigurationRead(param.configFileName, param.view);
 
-				case 'onSaveConfiguration':
-					return this.onSaveConfiguration(param.configFileName, param.view);
+				case 'onConfigurationSave':
+					return this.onConfigurationSave(param.configFileName, param.view);
 
 				default: {
-					if (!Ext.isEmpty(this.parentDelegate))
-						return this.parentDelegate.cmOn(name, param, callBack);
+					if (!Ext.isEmpty(this.parentDelegate) && Ext.isFunction(this.parentDelegate.cmfg))
+						return this.parentDelegate.cmfg(name, param, callBack);
 				}
 			}
 		},
@@ -67,7 +67,7 @@
 		 * @param {String} configFileName
 		 * @param {Mixed} view
 		 */
-		onReadConfiguration: function(configFileName, view) {
+		onConfigurationRead: function(configFileName, view) {
 			if (!Ext.isEmpty(configFileName) && !Ext.isEmpty(view)) {
 				CMDBuild.core.proxy.Configuration.read({
 					scope: this,
@@ -96,7 +96,7 @@
 		 * @param {String} configFileName
 		 * @param {Mixed} view
 		 */
-		onSaveConfiguration: function(configFileName, view) {
+		onConfigurationSave: function(configFileName, view) {
 			if (!Ext.isEmpty(configFileName) && !Ext.isEmpty(view)) {
 				var params = view.getValues();
 
@@ -109,7 +109,7 @@
 					params: params,
 					loadMask: true,
 					success: function(result, options, decodedResult) {
-						this.onReadConfiguration(configFileName, view);
+						this.onConfigurationRead(configFileName, view);
 
 						CMDBuild.Msg.success();
 					}
@@ -126,12 +126,9 @@
 		 */
 		onViewOnFront: function(parameters) {
 			if (!Ext.Object.isEmpty(parameters)) {
-				var subSection = Ext.Array.contains(this.subSections, parameters.get(CMDBuild.core.proxy.CMProxyConstants.ID))
-					? parameters.get(CMDBuild.core.proxy.CMProxyConstants.ID) : this.subSections[0];
-
 				this.view.removeAll(true);
 
-				switch(subSection) {
+				switch(parameters.get(CMDBuild.core.proxy.CMProxyConstants.ID)) {
 					case 'alfresco': {
 						this.sectionController = Ext.create('CMDBuild.controller.administration.configuration.Alfresco', { parentDelegate: this });
 					} break;

@@ -1,7 +1,7 @@
 (function() {
 
 	Ext.define('CMDBuild.controller.administration.configuration.Server', {
-		extend: 'CMDBuild.controller.common.CMBasePanelController',
+		extend: 'CMDBuild.controller.common.AbstractController',
 
 		requires: [
 			'CMDBuild.core.proxy.CMProxyWorkflow',
@@ -10,9 +10,18 @@
 		],
 
 		/**
-		 * @cfg {CMDBuild.controller.administration.configuration.Main}
+		 * @cfg {CMDBuild.controller.administration.configuration.Configuration}
 		 */
 		parentDelegate: undefined,
+
+		/**
+		 * @cfg {Array}
+		 */
+		cmfgCatchedFunctions: [
+			'onServerClearCacheButtonClick',
+			'onServerServiceSynchButtonClick',
+			'onServerUnlockCardsButtonClick'
+		],
 
 		/**
 		 * @cfg {String}
@@ -26,53 +35,21 @@
 
 		/**
 		 * @param {Object} configObject
-		 * @param {CMDBuild.controller.administration.configuration.Main} configObject.parentDelegate
+		 * @param {CMDBuild.controller.administration.configuration.Configuration} configObject.parentDelegate
 		 *
 		 * @override
 		 */
 		constructor: function(configObject) {
-			Ext.apply(this, configObject); // Apply config
+			this.callParent(arguments);
 
 			this.view = Ext.create('CMDBuild.view.administration.configuration.ServerPanel', {
 				delegate: this
 			});
 
-			this.cmOn('onReadConfiguration', {
+			this.cmfg('onConfigurationRead', {
 				configFileName: this.configFileName,
-				view: this.getView()
+				view: this.view
 			});
-		},
-
-		/**
-		 * Gatherer function to catch events
-		 *
-		 * @param {String} name
-		 * @param {Object} param
-		 * @param {Function} callback
-		 */
-		cmOn: function(name, param, callBack) {
-			switch (name) {
-				case 'onServerClearCacheButtonClick':
-					return this.onServerClearCacheButtonClick();
-
-				case 'onServerServiceSynchButtonClick':
-					return this.onServerServiceSynchButtonClick();
-
-				case 'onServerUnlockCardsButtonClick':
-					return this.onServerUnlockCardsButtonClick();
-
-				default: {
-					if (!Ext.isEmpty(this.parentDelegate))
-						return this.parentDelegate.cmOn(name, param, callBack);
-				}
-			}
-		},
-
-		/**
-		 * @return {CMDBuild.view.administration.configuration.GeneralOptionsPanel}
-		 */
-		getView: function() {
-			return this.view;
 		},
 
 		onServerClearCacheButtonClick: function() {

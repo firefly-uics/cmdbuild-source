@@ -80,8 +80,8 @@
 									Ext.create('Ext.panel.Panel', {
 										cls: 'empty_panel x-panel-body'
 									}),
-									Ext.create('CMDBuild.view.administration.configuration.MainPanel', {
-										cmControllerType: 'CMDBuild.controller.administration.configuration.Main',
+									Ext.create('CMDBuild.view.administration.configuration.ConfigurationView', {
+										cmControllerType: 'CMDBuild.controller.administration.configuration.Configuration',
 										cmName: 'configuration'
 									}),
 									Ext.create('CMDBuild.view.administration.tasks.CMTasks', {
