@@ -160,6 +160,7 @@
 					]
 				});
 
+				// Outgoing
 				this.outgoingFieldset = Ext.create('Ext.form.FieldSet', {
 					title: CMDBuild.Translation.outgoing,
 					overflowY: 'auto',
@@ -202,10 +203,16 @@
 							xtype: 'checkbox',
 							name: CMDBuild.core.proxy.CMProxyConstants.SMTP_SSL,
 							fieldLabel: CMDBuild.Translation.enableSsl
+						},
+						{
+							xtype: 'textfield',
+							name: CMDBuild.core.proxy.CMProxyConstants.OUTPUT_FOLDER,
+							fieldLabel: CMDBuild.Translation.sentFolder
 						}
 					]
 				});
 
+				// Incoming
 				this.incomingFieldset = Ext.create('Ext.form.FieldSet', {
 					title: CMDBuild.Translation.incoming,
 					overflowY: 'auto',
