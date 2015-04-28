@@ -2,140 +2,29 @@ package org.cmdbuild.common.api.mail.javax.mail;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 import java.net.URL;
 import java.util.Collection;
 
 import javax.activation.DataHandler;
+import javax.mail.Flags;
+import javax.mail.Folder;
 import javax.mail.Message;
+import javax.mail.MessagingException;
 import javax.mail.Session;
+import javax.mail.Store;
 import javax.mail.Transport;
 
+import org.cmdbuild.common.api.mail.Configuration.Input;
 import org.cmdbuild.common.api.mail.Configuration.Output;
 import org.cmdbuild.common.api.mail.ForwardingNewMail;
-import org.cmdbuild.common.api.mail.MailException;
 import org.cmdbuild.common.api.mail.NewMail;
 import org.cmdbuild.common.api.mail.NewMailQueue;
 import org.cmdbuild.common.api.mail.QueueableNewMail;
-import org.cmdbuild.common.api.mail.javax.mail.OutputTemplate.Hook;
 import org.slf4j.Logger;
 
-import com.google.common.collect.ForwardingObject;
-
 class NewMailQueueImpl implements NewMailQueue {
-
-	private static abstract class ForwardingQueueableNewMail extends ForwardingObject implements QueueableNewMail {
-
-		/**
-		 * Usable by subclasses only.
-		 */
-		protected ForwardingQueueableNewMail() {
-		}
-
-		@Override
-		protected abstract QueueableNewMail delegate();
-
-		@Override
-		public QueueableNewMail withTo(final Iterable<String> tos) {
-			return delegate().withTo(tos);
-		}
-
-		@Override
-		public QueueableNewMail withTo(final String... tos) {
-			return delegate().withTo(tos);
-		}
-
-		@Override
-		public QueueableNewMail withTo(final String to) {
-			return delegate().withTo(to);
-		}
-
-		@Override
-		public QueueableNewMail withSubject(final String subject) {
-			return delegate().withSubject(subject);
-		}
-
-		@Override
-		public QueueableNewMail withFrom(final String from) {
-			return delegate().withFrom(from);
-		}
-
-		@Override
-		public QueueableNewMail withContentType(final String contentType) {
-			return delegate().withContentType(contentType);
-		}
-
-		@Override
-		public QueueableNewMail withContent(final String content) {
-			return delegate().withContent(content);
-		}
-
-		@Override
-		public QueueableNewMail withCc(final Iterable<String> ccs) {
-			return delegate().withCc(ccs);
-		}
-
-		@Override
-		public QueueableNewMail withCc(final String... ccs) {
-			return delegate().withCc(ccs);
-		}
-
-		@Override
-		public QueueableNewMail withCc(final String cc) {
-			return delegate().withCc(cc);
-		}
-
-		@Override
-		public QueueableNewMail withBcc(final Iterable<String> bccs) {
-			return delegate().withBcc(bccs);
-		}
-
-		@Override
-		public QueueableNewMail withBcc(final String... bccs) {
-			return delegate().withBcc(bccs);
-		}
-
-		@Override
-		public QueueableNewMail withBcc(final String bcc) {
-			return delegate().withBcc(bcc);
-		}
-
-		@Override
-		public QueueableNewMail withAttachment(final DataHandler dataHandler, final String name) {
-			return delegate().withAttachment(dataHandler, name);
-		}
-
-		@Override
-		public QueueableNewMail withAttachment(final DataHandler dataHandler) {
-			return delegate().withAttachment(dataHandler);
-		}
-
-		@Override
-		public QueueableNewMail withAttachment(final String url, final String name) {
-			return delegate().withAttachment(url, name);
-		}
-
-		@Override
-		public QueueableNewMail withAttachment(final String url) {
-			return delegate().withAttachment(url);
-		}
-
-		@Override
-		public QueueableNewMail withAttachment(final URL url, final String name) {
-			return delegate().withAttachment(url, name);
-		}
-
-		@Override
-		public QueueableNewMail withAttachment(final URL url) {
-			return delegate().withAttachment(url);
-		}
-
-		@Override
-		public NewMailQueue add() {
-			return delegate().add();
-		}
-
-	}
 
 	private static class QueueableNewMailImpl extends ForwardingNewMail implements QueueableNewMail {
 
@@ -294,15 +183,17 @@ class NewMailQueueImpl implements NewMailQueue {
 
 	};
 
-	private final Output configuration;
+	private final Input input;
+	private final Output output;
 	private final Logger logger;
 	private final Collection<NewMailImpl> elements;
 	private Callback callback = NULL_CALLBACK;
 	private boolean forgiving;
 
-	public NewMailQueueImpl(final Output configuration) {
-		this.configuration = configuration;
-		this.logger = configuration.getLogger();
+	public NewMailQueueImpl(final Input input, final Output output) {
+		this.input = input;
+		this.output = output;
+		this.logger = output.getLogger();
 		// we need to preserve order
 		this.elements = newArrayList();
 	}
@@ -327,25 +218,56 @@ class NewMailQueueImpl implements NewMailQueue {
 
 	@Override
 	public void sendAll() {
-		new OutputTemplate(configuration).execute(new Hook() {
+		new OutputTemplate(output).execute(new OutputTemplate.Hook() {
 
 			@Override
-			public void connected(final Session session, final Transport transport) throws MailException {
+			public void connected(final Session session, final Transport transport) throws MessagingException {
 				int count = -1;
 				for (final NewMailImpl element : elements) {
 					try {
 						count++;
-						final MessageBuilder messageBuilder = new NewMailImplMessageBuilder(configuration, session,
-								element);
+						final MessageBuilder messageBuilder = new NewMailImplMessageBuilder(output, session, element);
 						final Message message = messageBuilder.build();
 						transport.sendMessage(message, message.getAllRecipients());
 						callback.sent(count);
+						tryStoreMessage(message);
+					} catch (final MessagingException e) {
+						logger.error("error sending mail", e);
+						if (!forgiving) {
+							throw e;
+						}
 					} catch (final Exception e) {
 						logger.error("error sending mail", e);
 						if (!forgiving) {
-							throw MailException.send(e);
+							throw new MessagingException("error sending mail", e);
 						}
 					}
+				}
+			}
+
+			private void tryStoreMessage(final Message message) {
+				try {
+					/*
+					 * TODO open single connection for whole queue operation
+					 */
+					new InputTemplate(input).execute(new InputTemplate.Hook() {
+
+						@Override
+						public void connected(final Store store) throws MessagingException {
+							if (isNotBlank(output.getOutputFolder())) {
+								final Folder folder = store.getFolder(output.getOutputFolder());
+								if (!folder.exists()) {
+									folder.create(Folder.HOLDS_MESSAGES);
+								}
+								folder.open(Folder.READ_WRITE);
+								folder.appendMessages(new Message[] { message });
+								message.setFlag(Flags.Flag.RECENT, true);
+							}
+						}
+
+					});
+				} catch (final Exception e) {
+					logger.error("error storing sent e-mail", e);
 				}
 			}
 

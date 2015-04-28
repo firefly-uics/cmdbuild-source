@@ -35,7 +35,7 @@ class OutputTemplate {
 
 	public static interface Hook {
 
-		void connected(Session session, Transport transport) throws MailException;
+		void connected(Session session, Transport transport) throws MessagingException;
 
 	}
 
@@ -57,6 +57,10 @@ class OutputTemplate {
 			transport.connect();
 			hook.connected(session, transport);
 		} catch (final MessagingException e) {
+			logger.error("error while connecting/connected to store", e);
+			throw MailException.send(e);
+		} catch (final Exception e) {
+			logger.error("error while connecting/connected to store", e);
 			throw MailException.send(e);
 		} finally {
 			if (transport != null && transport.isConnected()) {

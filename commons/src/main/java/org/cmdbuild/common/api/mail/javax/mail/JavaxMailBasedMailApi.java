@@ -37,12 +37,12 @@ public class JavaxMailBasedMailApi implements MailApi {
 
 	@Override
 	public SendableNewMail newMail() {
-		return new SendableNewMailImpl(output);
+		return new SendableNewMailImpl(input, output);
 	}
 
 	@Override
 	public NewMailQueue newMailQueue() {
-		return new NewMailQueueImpl(output);
+		return new NewMailQueueImpl(input, output);
 	}
 
 	@Override

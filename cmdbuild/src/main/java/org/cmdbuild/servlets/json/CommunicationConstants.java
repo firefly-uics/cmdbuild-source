@@ -196,6 +196,7 @@ public class CommunicationConstants {
 			ORACLE_LABEL = "Oracle", //
 			ORACLE = "oracle", //
 			ORIG_TYPE = "orig_type", //
+			OUTPUT_FOLDER = "outputFolder", //
 			OUT_OF_FILTER = "outOfFilter", //
 			PARAMS = "params", //
 			PARENT_DESCRIPTION = "ParentDescription", //
