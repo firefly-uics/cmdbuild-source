@@ -1491,6 +1491,7 @@
 	"selectAClass": "クラスを選択",
 	"selected_object": "選択されたオブジェクト",
 	"send": "<em>Send</em>",
+	"sentFolder": "<em>Sent folder</em>",
 	"separator": "セパレータ",
 	"serverManagement": "サーバ管理",
 	"serverUrl": "サーバ URL",

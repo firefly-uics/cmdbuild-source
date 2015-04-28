@@ -1491,6 +1491,7 @@
 	"selectAClass": "Choisir une classe",
 	"selected_object": "Choisir un objet",
 	"send": "<em>Send</em>",
+	"sentFolder": "<em>Sent folder</em>",
 	"separator": "Separateur",
 	"serverManagement": "Gestion du serveur",
 	"serverUrl": "URL du serveur",
