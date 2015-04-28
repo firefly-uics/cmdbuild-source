@@ -7,6 +7,7 @@ import static org.cmdbuild.service.rest.v2.constants.Serialization.WIDGETS;
 import java.util.Collection;
 
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
@@ -44,7 +45,7 @@ public class ProcessInstanceAdvanceable extends ProcessInstance {
 		this.advance = advance;
 	}
 
-	@XmlAttribute(name = WIDGETS)
+	@XmlElement(name = WIDGETS)
 	public Collection<Widget> getWidgets() {
 		return widgets;
 	}
