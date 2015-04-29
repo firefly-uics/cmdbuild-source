@@ -767,15 +767,16 @@
 		}
 	},
 	"delayLabels": {
-		"hour1": "1 hour",
-		"hours2": "2 hours",
-		"hours4": "4 hours",
 		"day1": "In 1 day",
 		"days2": "In 2 days",
 		"days4": "In 4 days",
+		"hour1": "1 hour",
+		"hours2": "2 hours",
+		"hours4": "4 hours",
+		"month1": "In 1 month",
+		"none": "None",
 		"week1": "In 1 week",
-		"weeks2": "In 2 weeks",
-		"month1": "In 1 month"
+		"weeks2": "In 2 weeks"
 	},
 	"errors": {
 		"busy_wf_widgets": "The visual controls are busy, check the status of the server before trying again.",
