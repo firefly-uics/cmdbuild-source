@@ -6,7 +6,7 @@
 		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
 
 		mixins: {
-			cmFormFunctions: 'CMDBUild.view.common.CMFormFunctions'
+			panelFunctions: 'CMDBuild.view.common.PanelFunctions'
 		},
 
 		/**
@@ -48,7 +48,7 @@
 
 				listeners: {
 					scope: this,
-					change: function() {
+					change: function(field, newValue, oldValue, eOpts) {
 						this.delegate.cmfg('onEmailWindowFieldChange');
 					}
 				}

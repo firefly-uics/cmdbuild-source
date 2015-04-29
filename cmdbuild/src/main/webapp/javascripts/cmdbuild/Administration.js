@@ -19,6 +19,7 @@
 
 		requires: [
 			'CMDBuild.core.buttons.Buttons',
+			'CMDBuild.core.proxy.CMProxyConstants',
 			'CMDBuild.core.proxy.Classes',
 			'CMDBuild.core.proxy.Configuration',
 			'CMDBuild.core.proxy.Localizations',
