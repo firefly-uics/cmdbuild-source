@@ -8,11 +8,11 @@
 <%@ page import="java.util.Collection" %>
 <%@ page import="com.google.common.base.Joiner" %>
 <%@ page import="org.apache.commons.lang3.StringEscapeUtils" %>
-<%@ page import="org.cmdbuild.auth.acl.CMGroup" %>
 <%@ page import="org.cmdbuild.auth.UserStore" %>
+<%@ page import="org.cmdbuild.auth.acl.CMGroup" %>
 <%@ page import="org.cmdbuild.auth.user.OperationUser" %>
 <%@ page import="org.cmdbuild.services.SessionVars" %>
-<%@ page import="org.cmdbuild.spring.SpringIntegrationUtils"%>
+<%@ page import="org.cmdbuild.spring.SpringIntegrationUtils" %>
 
 <%
 	final SessionVars sessionVars = SpringIntegrationUtils.applicationContext().getBean(SessionVars.class);

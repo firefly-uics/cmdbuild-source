@@ -117,8 +117,6 @@
 					tinymce.dom.Event.add(editor.getBody(), 'blur', function(e) {
 						me.fireEvent('blur', me);
 						me.fireEvent('change', me); // Fake changeEvent
-
-						me.setValue(me.getValue()); // Fixes problems of lose content on blur
 					});
 				});
 

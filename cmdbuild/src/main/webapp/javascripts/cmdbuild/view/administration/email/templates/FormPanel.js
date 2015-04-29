@@ -180,8 +180,7 @@
 								name: CMDBuild.core.proxy.CMProxyConstants.BODY,
 								fieldLabel: CMDBuild.Translation.body,
 								labelWidth: CMDBuild.LABEL_WIDTH,
-								maxWidth: CMDBuild.CFG_BIG_FIELD_WIDTH,
-								considerAsFieldToDisable: true
+								maxWidth: CMDBuild.CFG_BIG_FIELD_WIDTH
 							}),
 							Ext.create('CMDBuild.core.buttons.Modify', {
 								text: CMDBuild.Translation.editValues,

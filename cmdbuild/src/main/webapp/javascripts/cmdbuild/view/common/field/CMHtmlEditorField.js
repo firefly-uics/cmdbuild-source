@@ -64,6 +64,8 @@
 			}
 		},
 
+		considerAsFieldToDisable: true,
+
 		initComponent: function() {
 			// Setup TinyMCE configuration from string identifier
 			if (
