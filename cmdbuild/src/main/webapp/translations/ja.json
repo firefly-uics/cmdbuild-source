@@ -767,15 +767,16 @@
 		}
 	},
 	"delayLabels": {
-		"hour1": "<em>1 hour</em>",
-		"hours2": "<em>2 hours</em>",
-		"hours4": "<em>4 hours</em>",
 		"day1": "<em>In 1 day</em>",
 		"days2": "<em>In 2 days</em>",
 		"days4": "<em>In 4 days</em>",
+		"hour1": "<em>1 hour</em>",
+		"hours2": "<em>2 hours</em>",
+		"hours4": "<em>4 hours</em>",
+		"month1": "<em>In 1 month</em>",
+		"none": "<em>None</em>",
 		"week1": "<em>In 1 week</em>",
-		"weeks2": "<em>In 2 weeks</em>",
-		"month1": "<em>In 1 month</em>"
+		"weeks2": "<em>In 2 weeks</em>"
 	},
 	"errors": {
 		"busy_wf_widgets": "画面コントロールがビジーです、再実行する前にサーバのステータスをチェックください。",

@@ -27,6 +27,7 @@
 			return Ext.create('Ext.data.Store', {
 				fields: [CMDBuild.core.proxy.CMProxyConstants.VALUE, CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION],
 				data: [
+					{ value: 0, description: CMDBuild.Translation.delayLabels.none },
 					{ value: 3600000, description: CMDBuild.Translation.delayLabels.hour1 },
 					{ value: 7200000, description: CMDBuild.Translation.delayLabels.hours2 },
 					{ value: 14400000, description: CMDBuild.Translation.delayLabels.hours4 },
