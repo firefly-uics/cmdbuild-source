@@ -23,6 +23,8 @@ import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.dao.entrytype.CMEntryTypeVisitor;
 import org.cmdbuild.dao.entrytype.CMFunctionCall;
+import org.cmdbuild.dao.entrytype.ForwardingEntryTypeVisitor;
+import org.cmdbuild.dao.entrytype.NullEntryTypeVisitor;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.UndefinedAttributeType;
 import org.cmdbuild.dao.query.QuerySpecs;
@@ -30,10 +32,7 @@ import org.cmdbuild.dao.query.clause.QueryAliasAttribute;
 import org.cmdbuild.dao.query.clause.from.FromClause;
 import org.cmdbuild.dao.query.clause.where.AndWhereClause;
 import org.cmdbuild.dao.query.clause.where.BeginsWithOperatorAndValue;
-import org.cmdbuild.dao.query.clause.where.NetworkContained;
-import org.cmdbuild.dao.query.clause.where.NetworkContains;
 import org.cmdbuild.dao.query.clause.where.ContainsOperatorAndValue;
-import org.cmdbuild.dao.query.clause.where.NetworkContainsOrEqual;
 import org.cmdbuild.dao.query.clause.where.EmptyArrayOperatorAndValue;
 import org.cmdbuild.dao.query.clause.where.EmptyWhereClause;
 import org.cmdbuild.dao.query.clause.where.EndsWithOperatorAndValue;
@@ -42,9 +41,12 @@ import org.cmdbuild.dao.query.clause.where.FalseWhereClause;
 import org.cmdbuild.dao.query.clause.where.FunctionWhereClause;
 import org.cmdbuild.dao.query.clause.where.GreaterThanOperatorAndValue;
 import org.cmdbuild.dao.query.clause.where.InOperatorAndValue;
-import org.cmdbuild.dao.query.clause.where.NetworkRelationed;
-import org.cmdbuild.dao.query.clause.where.NetworkContainedOrEqual;
 import org.cmdbuild.dao.query.clause.where.LessThanOperatorAndValue;
+import org.cmdbuild.dao.query.clause.where.NetworkContained;
+import org.cmdbuild.dao.query.clause.where.NetworkContainedOrEqual;
+import org.cmdbuild.dao.query.clause.where.NetworkContains;
+import org.cmdbuild.dao.query.clause.where.NetworkContainsOrEqual;
+import org.cmdbuild.dao.query.clause.where.NetworkRelationed;
 import org.cmdbuild.dao.query.clause.where.NotWhereClause;
 import org.cmdbuild.dao.query.clause.where.NullOperatorAndValue;
 import org.cmdbuild.dao.query.clause.where.OperatorAndValueVisitor;
@@ -99,7 +101,14 @@ public class WherePartCreator extends PartCreator implements WhereClauseVisitor 
 	 * privileges)
 	 */
 	private void excludeEntryTypes() {
-		querySpecs.getFromClause().getType().accept(new CMEntryTypeVisitor() {
+		querySpecs.getFromClause().getType().accept(new ForwardingEntryTypeVisitor() {
+
+			private final CMEntryTypeVisitor delegate = NullEntryTypeVisitor.getInstance();
+
+			@Override
+			protected CMEntryTypeVisitor delegate() {
+				return delegate;
+			}
 
 			@Override
 			public void visit(final CMClass type) {
@@ -111,16 +120,6 @@ public class WherePartCreator extends PartCreator implements WhereClauseVisitor 
 								null, OPERATOR_EQ, valuesOf(cmClass.getId())));
 					}
 				}
-			}
-
-			@Override
-			public void visit(final CMDomain type) {
-				// nothing to do
-			}
-
-			@Override
-			public void visit(final CMFunctionCall type) {
-				// nothing to do
 			}
 
 		});
@@ -247,7 +246,7 @@ public class WherePartCreator extends PartCreator implements WhereClauseVisitor 
 			}
 
 			@Override
-			public void visit(NetworkContained operatorAndValue) {
+			public void visit(final NetworkContained operatorAndValue) {
 				append(attributeFilter(whereClause.getAttribute(), whereClause.getAttributeNameCast(),
 						OPERATOR_INET_IS_CONTAINED_WITHIN, valueOf(operatorAndValue.getValue())));
 			}

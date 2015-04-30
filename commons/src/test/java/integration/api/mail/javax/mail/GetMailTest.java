@@ -61,10 +61,11 @@ public class GetMailTest extends AbstractMailTest {
 	@Test
 	public void simpleMail() throws Exception {
 		// given
-		send(newMail(FOO, PASSWORD) //
+		newMail(FOO, PASSWORD) //
 				.withTo(FOO_AT_EXAMPLE_DOT_COM) //
 				.withSubject(SUBJECT) //
-				.withContent(PLAIN_TEXT_CONTENT));
+				.withContent(PLAIN_TEXT_CONTENT) //
+				.send();
 		final FetchedMail fetchedMail = mailApi.selectFolder(INBOX) //
 				.fetch() //
 				.iterator().next();
@@ -82,11 +83,12 @@ public class GetMailTest extends AbstractMailTest {
 	@Test
 	public void mailWithOneAttachment() throws Exception {
 		// given
-		send(newMail(FOO, PASSWORD) //
+		newMail(FOO, PASSWORD) //
 				.withTo(FOO_AT_EXAMPLE_DOT_COM) //
 				.withSubject(SUBJECT) //
 				.withContent(PLAIN_TEXT_CONTENT) //
-				.withAttachment(newAttachmentFileFromContent(BAZ)));
+				.withAttachment(newAttachmentFileFromContent(BAZ)) //
+				.send();
 		final FetchedMail fetchedMail = mailApi.selectFolder(INBOX) //
 				.fetch() //
 				.iterator().next();
@@ -111,13 +113,14 @@ public class GetMailTest extends AbstractMailTest {
 	@Test
 	public void mailWithMultipleAttachments() throws Exception {
 		// given
-		send(newMail(FOO, PASSWORD) //
+		newMail(FOO, PASSWORD) //
 				.withTo(FOO_AT_EXAMPLE_DOT_COM) //
 				.withSubject(SUBJECT) //
 				.withContent(PLAIN_TEXT_CONTENT) //
 				.withAttachment(newAttachmentFileFromContent(FOO)) //
 				.withAttachment(newAttachmentFileFromContent(BAR)) //
-				.withAttachment(newAttachmentFileFromContent(BAZ)));
+				.withAttachment(newAttachmentFileFromContent(BAZ)) //
+				.send();
 		final FetchedMail fetchedMail = mailApi.selectFolder(INBOX) //
 				.fetch() //
 				.iterator().next();

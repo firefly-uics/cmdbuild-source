@@ -1,10 +1,11 @@
 package org.cmdbuild.services.store.menu;
 
-import static com.google.common.collect.Iterables.isEmpty;
+import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
 import static org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue.eq;
 import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
+import static org.cmdbuild.services.store.menu.MenuConstants.DEFAULT_MENU_GROUP_NAME;
 import static org.cmdbuild.services.store.menu.MenuConstants.ELEMENT_CLASS_ATTRIBUTE;
 import static org.cmdbuild.services.store.menu.MenuConstants.ELEMENT_OBJECT_ID_ATTRIBUTE;
 import static org.cmdbuild.services.store.menu.MenuConstants.GROUP_NAME_ATTRIBUTE;
@@ -15,8 +16,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.cmdbuild.auth.GroupFetcher;
-import org.cmdbuild.auth.acl.CMGroup;
-import org.cmdbuild.auth.acl.PrivilegeContext;
 import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.common.utils.PagedElements;
 import org.cmdbuild.dao.entry.CMCard;
@@ -25,30 +24,35 @@ import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.CMQueryRow;
 import org.cmdbuild.dao.view.CMDataView;
-import org.cmdbuild.data.converter.ViewConverter;
+import org.cmdbuild.data.store.Groupable;
+import org.cmdbuild.data.store.MenuElementStore;
 import org.cmdbuild.logic.DashboardLogic;
 import org.cmdbuild.logic.data.QueryOptions;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.logic.data.access.DataViewCardFetcher;
 import org.cmdbuild.logic.data.access.UserDataAccessLogicBuilder;
 import org.cmdbuild.logic.view.ViewLogic;
-import org.cmdbuild.model.View;
 import org.cmdbuild.model.dashboard.DashboardDefinition;
+import org.cmdbuild.model.view.View;
 
-import com.google.common.base.Supplier;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
+/**
+ * MenuElementStore is now used for reading elements in order to support
+ * localizations. Refactoring should be completed using MenuElementStore also
+ * for save and delete operations.
+ **/
 public class DataViewMenuStore implements MenuStore {
 
-	private static final String DEFAULT_MENU_GROUP_NAME = "*";
 	private final CMDataView view;
 	private final GroupFetcher groupFetcher;
 	private final DashboardLogic dashboardLogic;
 	private final DataAccessLogic dataAccessLogic;
 	private final ViewLogic viewLogic;
 	private final MenuItemConverter converter;
-	private final ViewConverter viewConverter;
 	private final OperationUser operationUser;
+	private final MenuElementStore menuElementStore;
 
 	public DataViewMenuStore( //
 			final CMDataView view, //
@@ -57,37 +61,39 @@ public class DataViewMenuStore implements MenuStore {
 			final UserDataAccessLogicBuilder dataAccessLogicBuilder, //
 			final ViewLogic viewLogic, //
 			final MenuItemConverter converter, //
-			final ViewConverter viewConverter, //
-			final OperationUser operationUser //
-	) {
+			final OperationUser operationUser, //
+			final MenuElementStore menuElementStore) {
 		this.view = view;
 		this.groupFetcher = groupFetcher;
 		this.dashboardLogic = dashboardLogic;
 		this.dataAccessLogic = dataAccessLogicBuilder.build();
 		this.viewLogic = viewLogic;
 		this.converter = converter;
-		this.viewConverter = viewConverter;
 		this.operationUser = operationUser;
+		this.menuElementStore = menuElementStore;
 	}
 
 	@Override
-	public MenuItem read(String groupName) {
-		groupName = groupNameOrDefaultMenuGroupName(groupName);
+	public MenuItem read(final String groupName) {
+		final String _groupName = defaultIfBlank(groupName, DEFAULT_MENU_GROUP_NAME);
 
-		final Iterable<CMCard> menuCards = fetchMenuCardsForGroup(groupName);
-		return converter.fromMenuCard(menuCards);
-	}
+		final Iterable<MenuElement> elements = menuElementStore.readAll(new Groupable() {
+			@Override
+			public String getGroupAttributeName() {
+				return GROUP_NAME_ATTRIBUTE;
+			}
 
-	private String groupNameOrDefaultMenuGroupName(String groupName) {
-		if ("".equals(groupName) || groupName == null) {
-			groupName = DEFAULT_MENU_GROUP_NAME;
-		}
-		return groupName;
+			@Override
+			public Object getGroupAttributeValue() {
+				return _groupName;
+			}
+		});
+		return converter.fromMenuElement(elements);
 	}
 
 	@Override
 	public void delete(String groupName) {
-		groupName = groupNameOrDefaultMenuGroupName(groupName);
+		groupName = defaultIfBlank(groupName, DEFAULT_MENU_GROUP_NAME);
 
 		final Iterable<CMCard> cardsToDelete = fetchMenuCardsForGroup(groupName);
 		for (final CMCard cardToDelete : cardsToDelete) {
@@ -97,15 +103,14 @@ public class DataViewMenuStore implements MenuStore {
 
 	@Override
 	public void save(String groupName, final MenuItem menuItem) {
-		groupName = groupNameOrDefaultMenuGroupName(groupName);
-
+		groupName = defaultIfBlank(groupName, DEFAULT_MENU_GROUP_NAME);
 		delete(groupName);
 		saveNode(groupName, menuItem, null);
 	}
 
 	@Override
 	public MenuItem getAvailableItems(final String groupName) {
-		final Iterable<CMCard> menuCards = fetchMenuCardsForGroup(groupNameOrDefaultMenuGroupName(groupName));
+		final Iterable<CMCard> menuCards = fetchMenuCardsForGroup(defaultIfBlank(groupName, DEFAULT_MENU_GROUP_NAME));
 		final MenuItem root = new MenuItemDTO();
 		root.setType(MenuItemType.ROOT);
 		root.addChild(getAvailableClasses(menuCards));
@@ -131,20 +136,12 @@ public class DataViewMenuStore implements MenuStore {
 
 	@Override
 	public MenuItem getMenuToUseForGroup(final String groupName) {
-		final Iterable<CMCard> menuCardsForGroup = fetchMenuCardsForGroup(groupName);
-		final Iterable<CMCard> menuCards = isEmpty(menuCardsForGroup) ? fetchMenuCardsForGroup(DEFAULT_MENU_GROUP_NAME)
-				: menuCardsForGroup;
-		final CMGroup group = groupFetcher.fetchGroupWithName(groupName);
-		final MenuCardFilter menuCardFilter = new MenuCardFilter(view, group, new Supplier<PrivilegeContext>() {
 
-			@Override
-			public PrivilegeContext get() {
-				return operationUser.getPrivilegeContext();
-			}
-
-		}, viewConverter);
-		final Iterable<CMCard> readableMenuCards = menuCardFilter.filterReadableMenuCards(menuCards);
-		return converter.fromMenuCard(readableMenuCards);
+		Iterable<MenuElement> menuElementsForGroup = menuElementStore.readAndFilter(groupName, groupFetcher);
+		if (Iterables.isEmpty(menuElementsForGroup)) {
+			menuElementsForGroup = menuElementStore.readAndFilter(DEFAULT_MENU_GROUP_NAME, groupFetcher);
+		}
+		return converter.fromMenuElement(menuElementsForGroup);
 	}
 
 	private void saveNode(final String groupName, final MenuItem menuItem, final Long parentId) {
@@ -161,7 +158,6 @@ public class DataViewMenuStore implements MenuStore {
 			final CMCard savedCard = mutableMenuCard.save();
 			savedNodeId = savedCard.getId();
 		}
-		// save the children (comment not useful but funny)
 		for (final MenuItem child : menuItem.getChildren()) {
 			saveNode(groupName, child, savedNodeId);
 		}

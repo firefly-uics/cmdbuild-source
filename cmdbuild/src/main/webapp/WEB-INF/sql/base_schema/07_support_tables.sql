@@ -194,6 +194,7 @@ SELECT cm_create_class_attribute('_EmailAccount', 'InputFolder', 'varchar(50)', 
 SELECT cm_create_class_attribute('_EmailAccount', 'ProcessedFolder', 'varchar(50)', null, false, false, 'MODE: write|DESCR: Processed folder|INDEX: 12|STATUS: active');
 SELECT cm_create_class_attribute('_EmailAccount', 'RejectedFolder', 'varchar(50)', null, false, false, 'MODE: write|DESCR: Rejected folder|INDEX: 13|STATUS: active');
 SELECT cm_create_class_attribute('_EmailAccount', 'RejectNotMatching', 'boolean', null, false, false, 'MODE: write|DESCR: Reject not matching|INDEX: 14|STATUS: active');
+SELECT cm_create_class_attribute('_EmailAccount', 'OutputFolder', 'varchar(100)', null, false, false, 'MODE: write|DESCR: Output Folder|INDEX: 15|STATUS: active');
 SELECT _cm_attribute_set_uniqueness('"_EmailAccount"'::regclass::oid, 'Code', TRUE);
 
 ---------------------------------------------
@@ -201,18 +202,20 @@ SELECT _cm_attribute_set_uniqueness('"_EmailAccount"'::regclass::oid, 'Code', TR
 ---------------------------------------------
 
 SELECT cm_create_class('_EmailTemplate', 'Class', 'MODE: reserved|TYPE: class|DESCR: Email Templates|SUPERCLASS: false|STATUS: active');
-SELECT cm_create_class_attribute('_EmailTemplate', 'From', 'text', null, false, false, 'MODE: write|DESCR: From|INDEX: 2|STATUS: active');
-SELECT cm_create_class_attribute('_EmailTemplate', 'To', 'text', null, false, false, 'MODE: write|DESCR: To|INDEX: 3|STATUS: active');
-SELECT cm_create_class_attribute('_EmailTemplate', 'CC', 'text', null, false, false, 'MODE: write|DESCR: CC|INDEX: 4|STATUS: active');
-SELECT cm_create_class_attribute('_EmailTemplate', 'BCC', 'text', null, false, false, 'MODE: write|DESCR: BCC|INDEX: 5|STATUS: active');
-SELECT cm_create_class_attribute('_EmailTemplate', 'Subject', 'text', null, false, false, 'MODE: write|DESCR: Subject|INDEX: 6|STATUS: active');
-SELECT cm_create_class_attribute('_EmailTemplate', 'Body', 'text', null, false, false, 'MODE: write|DESCR: Body|INDEX: 7|STATUS: active');
+SELECT _cm_attribute_set_uniqueness('"_EmailTemplate"'::regclass::oid, 'Code', TRUE);
+SELECT cm_create_class_attribute('_EmailTemplate', 'From', 'text', null, false, false, 'MODE: user|DESCR: From|INDEX: 2|STATUS: active');
+SELECT cm_create_class_attribute('_EmailTemplate', 'To', 'text', null, false, false, 'MODE: user|DESCR: To|INDEX: 3|STATUS: active');
+SELECT cm_create_class_attribute('_EmailTemplate', 'CC', 'text', null, false, false, 'MODE: user|DESCR: Cc|INDEX: 4|STATUS: active');
+SELECT cm_create_class_attribute('_EmailTemplate', 'BCC', 'text', null, false, false, 'MODE: user|DESCR: Bcc|INDEX: 5|STATUS: active');
+SELECT cm_create_class_attribute('_EmailTemplate', 'Subject', 'text', null, false, false, 'MODE: user|DESCR: Subject|INDEX: 6|STATUS: active');
+SELECT cm_create_class_attribute('_EmailTemplate', 'Body', 'text', null, false, false, 'MODE: user|DESCR: Body|INDEX: 7|STATUS: active');
 
 SELECT cm_create_domain('AccountTemplate', 'MODE: reserved|TYPE: domain|CLASS1: _EmailAccount|CLASS2: _EmailTemplate|DESCRDIR: is default|DESCRINV: has default|CARDIN: 1:N|STATUS: active');
 SELECT cm_create_class_attribute('_EmailTemplate', 'Account', 'integer', null, false, false, 'MODE: user|FIELDMODE: write|DESCR: Account|INDEX: 8|REFERENCEDOM: AccountTemplate|REFERENCEDIRECT: false|REFERENCETYPE: restrict|STATUS: active');
 
-SELECT _cm_attribute_set_uniqueness('"_EmailTemplate"'::regclass::oid, 'Code', TRUE);
-
+SELECT cm_create_class_attribute('_EmailTemplate', 'KeepSynchronization', 'boolean', null, false, false, 'MODE: user|FIELDMODE: write|DESCR: Keep synchronization|INDEX: 9|STATUS: active');
+SELECT cm_create_class_attribute('_EmailTemplate', 'PromptSynchronization', 'boolean', null, false, false, 'MODE: user|FIELDMODE: write|DESCR: Prompt synchronization|INDEX: 10|STATUS: active');
+SELECT cm_create_class_attribute('_EmailTemplate', 'Delay', 'int4', null, false, false, 'MODE: user|FIELDMODE: write|DESCR: Delay|INDEX: 11|STATUS: active');
 
 ---------------------------------------------
 -- Bim Projects
@@ -250,3 +253,46 @@ SELECT cm_create_class('_Translation', NULL, 'MODE: reserved|TYPE: simpleclass|D
 SELECT cm_create_class_attribute('_Translation', 'Element', 'text', null, true, false, 'MODE: write|DESCR: Element|INDEX: 1|STATUS: active');
 SELECT cm_create_class_attribute('_Translation', 'Lang', 'text', null, true, false, 'MODE: write|DESCR: Lang|INDEX: 2|STATUS: active');
 SELECT cm_create_class_attribute('_Translation', 'Value', 'text', null, true, false, 'MODE: write|DESCR: Value|INDEX: 3|STATUS: active');
+
+---------------------------------------------
+-- EmailStatus lookup
+---------------------------------------------
+INSERT INTO "LookUp" ("IdClass", "Code", "Description", "Status", "Type", "Number", "IsDefault")
+    VALUES ('"LookUp"'::regclass, 'New', 'New', 'A', 'EmailStatus', 1, false);
+INSERT INTO "LookUp" ("IdClass", "Code", "Description", "Status", "Type", "Number", "IsDefault")
+    VALUES ('"LookUp"'::regclass, 'Received', 'Received', 'A', 'EmailStatus', 2, false);
+INSERT INTO "LookUp" ("IdClass", "Code", "Description", "Status", "Type", "Number", "IsDefault")
+    VALUES ('"LookUp"'::regclass, 'Draft', 'Draft', 'A', 'EmailStatus', 3, false);
+INSERT INTO "LookUp" ("IdClass", "Code", "Description", "Status", "Type", "Number", "IsDefault")
+    VALUES ('"LookUp"'::regclass, 'Outgoing', 'Outgoing', 'A', 'EmailStatus', 4, false);
+INSERT INTO "LookUp" ("IdClass", "Code", "Description", "Status", "Type", "Number", "IsDefault")
+    VALUES ('"LookUp"'::regclass, 'Sent', 'Sent', 'A', 'EmailStatus', 5, false);
+
+---------------------------------------------
+-- Email (class only)
+---------------------------------------------
+SELECT cm_create_class('Email', 'Class', 'MODE: reserved|TYPE: class|DESCR: Email|SUPERCLASS: false|STATUS: active');
+
+---------------------------------------------
+-- ClassEmail
+---------------------------------------------
+SELECT cm_create_domain('ClassEmail', 'MODE: reserved|TYPE: domain|CLASS1: Class|CLASS2: Email|DESCRDIR: |DESCRINV: |CARDIN: 1:N|STATUS: active');
+
+---------------------------------------------
+-- Email (attributes)
+---------------------------------------------
+SELECT cm_create_class_attribute('Email', 'Card', 'integer', null, false, false, 'MODE: user|FIELDMODE: write|DESCR: Card|INDEX: 4|REFERENCEDOM: ClassEmail|REFERENCEDIRECT: false|REFERENCETYPE: restrict|STATUS: active');
+SELECT cm_create_class_attribute('Email', 'EmailStatus', 'integer', null, true, false, 'MODE: user|FIELDMODE: write|DESCR: EmailStatus|INDEX: 5|LOOKUP: EmailStatus|STATUS: active');
+SELECT cm_create_class_attribute('Email', 'FromAddress', 'text', null, false, false, 'MODE: user|FIELDMODE: write|DESCR: From|INDEX: 6|STATUS: active');
+SELECT cm_create_class_attribute('Email', 'ToAddresses', 'text', null, false, false, 'MODE: user|FIELDMODE: write|DESCR: To|INDEX: 7|STATUS: active');
+SELECT cm_create_class_attribute('Email', 'CcAddresses', 'text', null, false, false, 'MODE: user|FIELDMODE: write|DESCR: Cc|INDEX: 8|STATUS: active');
+SELECT cm_create_class_attribute('Email', 'BccAddresses', 'text', null, false, false, 'MODE: user|FIELDMODE: write|DESCR: Bcc|INDEX: 9|STATUS: active');
+SELECT cm_create_class_attribute('Email', 'Subject', 'text', null, false, false, 'MODE: user|FIELDMODE: write|DESCR: Subject|INDEX: 10|STATUS: active');
+SELECT cm_create_class_attribute('Email', 'Content', 'text', null, false, false, 'MODE: user|FIELDMODE: write|DESCR: Body|INDEX: 11|STATUS: active');
+SELECT cm_create_class_attribute('Email', 'NotifyWith', 'text', null, false, false, 'MODE: user|FIELDMODE: write|DESCR: NotifyWith|INDEX: 12|STATUS: active');
+SELECT cm_create_class_attribute('Email', 'NoSubjectPrefix', 'boolean', null, false, false, 'MODE: user|FIELDMODE: write|DESCR: No subject prefix|INDEX: 13|STATUS: active');
+SELECT cm_create_class_attribute('Email', 'Account', 'text', null, false, false, 'MODE: user|FIELDMODE: write|DESCR: Account|INDEX: 14|STATUS: active');
+SELECT cm_create_class_attribute('Email', 'Template', 'text', null, false, false, 'MODE: user|FIELDMODE: write|DESCR: Template|INDEX: 15|STATUS: active');
+SELECT cm_create_class_attribute('Email', 'KeepSynchronization', 'boolean', null, false, false, 'MODE: user|FIELDMODE: write|DESCR: Keep synchronization|INDEX: 16|STATUS: active');
+SELECT cm_create_class_attribute('Email', 'PromptSynchronization', 'boolean', null, false, false, 'MODE: user|FIELDMODE: write|DESCR: Prompt synchronization|INDEX: 17|STATUS: active');
+SELECT cm_create_class_attribute('Email', 'Delay', 'int4', null, false, false, 'MODE: user|FIELDMODE: write|DESCR: Delay|INDEX: 18|STATUS: active');

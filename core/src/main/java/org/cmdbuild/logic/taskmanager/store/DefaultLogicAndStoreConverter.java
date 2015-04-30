@@ -1,5 +1,6 @@
 package org.cmdbuild.logic.taskmanager.store;
 
+import static com.google.common.collect.Maps.newHashMap;
 import static java.util.Arrays.asList;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.defaultString;
@@ -163,8 +164,8 @@ public class DefaultLogicAndStoreConverter implements LogicAndStoreConverter {
 	 * Used for separate those elements that should be separated by a line-feed
 	 * but that cannot be used because:<br>
 	 * 1) it could be used inside values<br>
-	 * 2) someone could edit database manually from a Windows host It's the HTML
-	 * entity for the '|' character.
+	 * 2) someone could edit database manually from a Windows host<br>
+	 * It's the HTML entity for the '|' character.
 	 */
 	public static final String SPECIAL_SEPARATOR = "&#124;";
 
@@ -616,9 +617,7 @@ public class DefaultLogicAndStoreConverter implements LogicAndStoreConverter {
 							Boolean.valueOf(task.getParameter(ReadEmail.WORKFLOW_ACTIVE))) //
 					.withWorkflowClassName(task.getParameter(ReadEmail.WORKFLOW_CLASS_NAME)) //
 					.withWorkflowAttributes( //
-							isEmpty(attributesAsString) ? EMPTY_PARAMETERS : Splitter.on(SPECIAL_SEPARATOR) //
-									.withKeyValueSeparator(KEY_VALUE_SEPARATOR) //
-									.split(attributesAsString)) //
+							isEmpty(attributesAsString) ? EMPTY_PARAMETERS : splitProperties(attributesAsString)) //
 					.withWorkflowAdvanceableStatus( //
 							Boolean.valueOf(task.getParameter(ReadEmail.WORKFLOW_ADVANCE))) //
 					.withWorkflowAttachmentsStatus( //
@@ -644,9 +643,7 @@ public class DefaultLogicAndStoreConverter implements LogicAndStoreConverter {
 					.withLastExecution(task.getLastExecution()) //
 					.withProcessClass(task.getParameter(StartWorkflow.CLASSNAME)) //
 					.withAttributes( //
-							isEmpty(attributesAsString) ? EMPTY_PARAMETERS : Splitter.on(SPECIAL_SEPARATOR) //
-									.withKeyValueSeparator(KEY_VALUE_SEPARATOR) //
-									.split(attributesAsString)) //
+							isEmpty(attributesAsString) ? EMPTY_PARAMETERS : splitProperties(attributesAsString)) //
 					.build();
 		}
 
@@ -673,9 +670,7 @@ public class DefaultLogicAndStoreConverter implements LogicAndStoreConverter {
 							Boolean.valueOf(task.getParameter(SynchronousEvent.WORKFLOW_ACTIVE))) //
 					.withWorkflowClassName(task.getParameter(SynchronousEvent.WORKFLOW_CLASS_NAME)) //
 					.withWorkflowAttributes( //
-							isEmpty(attributesAsString) ? EMPTY_PARAMETERS : Splitter.on(SPECIAL_SEPARATOR) //
-									.withKeyValueSeparator(KEY_VALUE_SEPARATOR) //
-									.split(attributesAsString)) //
+							isEmpty(attributesAsString) ? EMPTY_PARAMETERS : splitProperties(attributesAsString)) //
 					.withWorkflowAdvanceable( //
 							Boolean.valueOf(task.getParameter(SynchronousEvent.WORKFLOW_ADVANCE))) //
 					.withScriptingEnableStatus( //
@@ -686,6 +681,21 @@ public class DefaultLogicAndStoreConverter implements LogicAndStoreConverter {
 							Boolean.valueOf(task.getParameter(SynchronousEvent.ACTION_SCRIPT_SAFE))) //
 					.build();
 		}
+
+		private Map<String, String> splitProperties(final String value) {
+			final Iterable<String> lines = Splitter.on(SPECIAL_SEPARATOR) //
+					.omitEmptyStrings() //
+					.split(value);
+			final Map<String, String> properties = newHashMap();
+			for (final String line : lines) {
+				final List<String> elements = Splitter.on(KEY_VALUE_SEPARATOR) //
+						.limit(2) //
+						.splitToList(line);
+				properties.put(elements.get(0), elements.get(1));
+			}
+			return properties;
+		}
+
 	}
 
 	@Override

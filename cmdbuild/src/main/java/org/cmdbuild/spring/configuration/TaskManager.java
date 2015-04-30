@@ -1,9 +1,7 @@
 package org.cmdbuild.spring.configuration;
 
 import org.cmdbuild.auth.UserStore;
-import org.cmdbuild.config.DatabaseConfiguration;
 import org.cmdbuild.dao.view.CMDataView;
-import org.cmdbuild.dao.view.DBDataView;
 import org.cmdbuild.data.store.Store;
 import org.cmdbuild.data.store.dao.DataViewStore;
 import org.cmdbuild.data.store.dao.StorableConverter;
@@ -13,7 +11,6 @@ import org.cmdbuild.data.store.task.TaskDefinitionConverter;
 import org.cmdbuild.data.store.task.TaskParameter;
 import org.cmdbuild.data.store.task.TaskParameterConverter;
 import org.cmdbuild.data.store.task.TaskStore;
-import org.cmdbuild.dms.DmsConfiguration;
 import org.cmdbuild.logic.taskmanager.DefaultTaskManagerLogic;
 import org.cmdbuild.logic.taskmanager.DefinitiveTaskManagerLogic;
 import org.cmdbuild.logic.taskmanager.TaskManagerLogic;
@@ -55,13 +52,7 @@ public class TaskManager {
 	private Data data;
 
 	@Autowired
-	private DatabaseConfiguration databaseConfiguration;
-
-	@Autowired
 	private Dms dms;
-
-	@Autowired
-	private DmsConfiguration dmsConfiguration;
 
 	@Autowired
 	private Email email;
@@ -71,9 +62,6 @@ public class TaskManager {
 
 	@Autowired
 	private Scheduler scheduler;
-
-	@Autowired
-	private DBDataView systemDataView;
 
 	@Autowired
 	private Template template;
@@ -129,7 +117,7 @@ public class TaskManager {
 
 	@Bean
 	protected Store<TaskDefinition> dataViewSchedulerJobStore() {
-		return DataViewStore.newInstance(systemDataView, schedulerJobConverter());
+		return DataViewStore.newInstance(data.systemDataView(), schedulerJobConverter());
 	}
 
 	@Bean
@@ -139,7 +127,7 @@ public class TaskManager {
 
 	@Bean
 	protected Store<TaskParameter> dataViewSchedulerJobParameterStore() {
-		return DataViewStore.newInstance(systemDataView, schedulerJobParameterStoreConverter());
+		return DataViewStore.newInstance(data.systemDataView(), schedulerJobParameterStoreConverter());
 	}
 
 	@Bean
@@ -161,7 +149,7 @@ public class TaskManager {
 	protected AsynchronousEventTaskJobFactory asynchronousEventTaskJobFactory() {
 		return new AsynchronousEventTaskJobFactory( //
 				data.systemDataView(), //
-				email.emailAccountStore(), //
+				email.emailAccountFacade(), //
 				email.emailServiceFactory(), //
 				email.emailTemplateLogic(), //
 				defaultTaskStore(), //
@@ -175,7 +163,7 @@ public class TaskManager {
 				data.systemDataView(), //
 				other.dataSourceHelper(), //
 				defaultAttributeValueAdapter(),//
-				email.emailAccountStore(), //
+				email.emailAccountFacade(), //
 				email.emailServiceFactory(), //
 				email.emailTemplateLogic() //
 		);
@@ -189,10 +177,10 @@ public class TaskManager {
 	@Bean
 	protected ReadEmailTaskJobFactory readEmailTaskJobFactory() {
 		return new ReadEmailTaskJobFactory( //
-				email.emailAccountStore(), //
+				email.emailAccountFacade(), //
 				email.emailServiceFactory(), //
 				email.subjectHandler(), //
-				email.emailPersistence(), //
+				email.emailStore(), //
 				workflow.systemWorkflowLogicBuilder() //
 						.build(), //
 				dms.defaultDmsLogic(), //
@@ -223,7 +211,7 @@ public class TaskManager {
 				userStore, //
 				api.systemFluentApi(), //
 				workflow.systemWorkflowLogicBuilder().build(), //
-				email.emailAccountStore(), //
+				email.emailAccountFacade(), //
 				email.emailServiceFactory(), //
 				email.emailTemplateLogic(), //
 				data.systemDataView(), //

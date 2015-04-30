@@ -1,5 +1,7 @@
 package org.cmdbuild.report;
 
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+
 import java.math.BigDecimal;
 import java.sql.Time;
 import java.sql.Timestamp;
@@ -28,41 +30,49 @@ public class RPSimple extends ReportParameter {
 	}
 
 	@Override
-	public void parseValue(final String newValue) {
+	public void parseValue(final Object value) {
 		try {
-			if (newValue != null && !newValue.equals("")) {
-
+			final Object output;
+			/*
+			 * ugly solution due to missing time to find a more decent way for
+			 * handle all possible conversions
+			 */
+			final String newValue = value.toString();
+			if (isNotBlank(newValue)) {
 				if (getJrParameter().getValueClass() == String.class) {
-					setValue(newValue);
+					output = newValue;
 				} else if (getJrParameter().getValueClass() == Integer.class
 						|| getJrParameter().getValueClass() == Number.class) {
-					setValue(Integer.parseInt(newValue));
+					output = Integer.parseInt(newValue);
 				} else if (getJrParameter().getValueClass() == Long.class) {
-					setValue(Long.parseLong(newValue));
+					output = Long.parseLong(newValue);
 				} else if (getJrParameter().getValueClass() == Short.class) {
-					setValue(Short.parseShort(newValue));
+					output = Short.parseShort(newValue);
 				} else if (getJrParameter().getValueClass() == BigDecimal.class) {
-					setValue(new BigDecimal(Integer.parseInt(newValue)));
+					output = new BigDecimal(Integer.parseInt(newValue));
 				} else if (getJrParameter().getValueClass() == Date.class) {
-					setValue(new SimpleDateFormat(Constants.DATE_TWO_DIGIT_YEAR_FORMAT).parse(newValue));
+					output = new SimpleDateFormat(Constants.DATE_TWO_DIGIT_YEAR_FORMAT).parse(newValue);
 				} else if (getJrParameter().getValueClass() == Timestamp.class) {
 					final Date date = new SimpleDateFormat(Constants.DATETIME_TWO_DIGIT_YEAR_FORMAT).parse(newValue);
-					setValue(new Timestamp(date.getTime()));
+					output = new Timestamp(date.getTime());
 				} else if (getJrParameter().getValueClass() == Time.class) {
 					final Date date = new SimpleDateFormat(Constants.DATETIME_TWO_DIGIT_YEAR_FORMAT).parse(newValue);
-					setValue(new Time(date.getTime()));
+					output = new Time(date.getTime());
 				} else if (getJrParameter().getValueClass() == Double.class) {
-					setValue(Double.parseDouble(newValue));
+					output = Double.parseDouble(newValue);
 				} else if (getJrParameter().getValueClass() == Float.class) {
-					setValue(Float.parseFloat(newValue));
+					output = Float.parseFloat(newValue);
 				} else if (getJrParameter().getValueClass() == Boolean.class) {
-					setValue(Boolean.parseBoolean(newValue));
+					output = Boolean.parseBoolean(newValue);
 				} else {
 					throw ReportExceptionType.REPORT_INVALID_PARAMETER_CLASS.createException();
 				}
+			} else {
+				output = null;
 			}
+			setValue(output);
 		} catch (final Exception e) {
-			Log.REPORT.error("Invalid parameter value \"" + newValue + "\" for \"" + getJrParameter().getValueClass()
+			Log.REPORT.error("Invalid parameter value \"" + value + "\" for \"" + getJrParameter().getValueClass()
 					+ "\"", e);
 			throw ReportExceptionType.REPORT_INVALID_PARAMETER_VALUE.createException();
 		}

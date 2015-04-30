@@ -1,9 +1,10 @@
 package org.cmdbuild.data.store.email;
 
-import java.util.Collections;
+import static org.apache.commons.lang3.builder.ToStringStyle.SHORT_PREFIX_STYLE;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
 import org.cmdbuild.data.store.Storable;
 import org.cmdbuild.model.AbstractEmail;
 import org.joda.time.DateTime;
@@ -11,19 +12,21 @@ import org.joda.time.DateTime;
 public class Email extends AbstractEmail implements Storable {
 
 	private final Long id;
-	private String fromAddress;
 	private DateTime date;
 	private EmailStatus status;
-	private Long activityId;
-	private Iterable<Attachment> attachments;
+	private Long reference;
 	private boolean noSubjectPrefix;
 	private String account;
+	private String template;
+	private boolean keepSynchronization;
+	private boolean promptSynchronization;
+	private long delay;
 
 	public Email() {
 		this.id = null;
 	}
 
-	public Email(final long id) {
+	public Email(final Long id) {
 		this.id = id;
 	}
 
@@ -34,16 +37,6 @@ public class Email extends AbstractEmail implements Storable {
 
 	public Long getId() {
 		return id;
-	}
-
-	@Override
-	public String getFromAddress() {
-		return fromAddress;
-	}
-
-	@Override
-	public void setFromAddress(final String fromAddress) {
-		this.fromAddress = fromAddress;
 	}
 
 	public DateTime getDate() {
@@ -62,20 +55,12 @@ public class Email extends AbstractEmail implements Storable {
 		this.status = status;
 	}
 
-	public Long getActivityId() {
-		return activityId;
+	public Long getReference() {
+		return reference;
 	}
 
-	public void setActivityId(final Long activityId) {
-		this.activityId = activityId;
-	}
-
-	public Iterable<Attachment> getAttachments() {
-		return (attachments == null) ? Collections.<Attachment> emptyList() : attachments;
-	}
-
-	public void setAttachments(final Iterable<Attachment> attachments) {
-		this.attachments = attachments;
+	public void setReference(final Long value) {
+		this.reference = value;
 	}
 
 	public boolean isNoSubjectPrefix() {
@@ -94,9 +79,94 @@ public class Email extends AbstractEmail implements Storable {
 		this.account = account;
 	}
 
+	public String getTemplate() {
+		return template;
+	}
+
+	public void setTemplate(final String template) {
+		this.template = template;
+	}
+
+	public boolean isKeepSynchronization() {
+		return keepSynchronization;
+	}
+
+	public void setKeepSynchronization(final boolean keepSynchronization) {
+		this.keepSynchronization = keepSynchronization;
+	}
+
+	public boolean isPromptSynchronization() {
+		return promptSynchronization;
+	}
+
+	public void setPromptSynchronization(final boolean promptSynchronization) {
+		this.promptSynchronization = promptSynchronization;
+	}
+
+	public long getDelay() {
+		return delay;
+	}
+
+	public void setDelay(final long delay) {
+		this.delay = delay;
+	}
+
 	@Override
-	public String toString() {
-		return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
+	public boolean equals(final Object obj) {
+		if (this == obj) {
+			return true;
+		}
+
+		if (!(obj instanceof Email)) {
+			return false;
+		}
+
+		final Email other = Email.class.cast(obj);
+		return new EqualsBuilder() //
+				.append(this.getId(), other.getId()) //
+				.append(this.getFromAddress(), other.getFromAddress()) //
+				.append(this.getToAddresses(), other.getToAddresses()) //
+				.append(this.getCcAddresses(), other.getCcAddresses()) //
+				.append(this.getBccAddresses(), other.getBccAddresses()) //
+				.append(this.getSubject(), other.getSubject()) //
+				.append(this.getContent(), other.getContent()) //
+				.append(this.getDate(), other.getDate()) //
+				.append(this.getStatus(), other.getStatus()) //
+				.append(this.getReference(), other.getReference()) //
+				.append(this.getNotifyWith(), other.getNotifyWith()) //
+				.append(this.isNoSubjectPrefix(), other.isNoSubjectPrefix()) //
+				.append(this.getAccount(), other.getAccount()) //
+				.append(this.getTemplate(), other.getTemplate()) //
+				.append(this.isKeepSynchronization(), other.isKeepSynchronization()) //
+				.append(this.isPromptSynchronization(), other.isPromptSynchronization()) //
+				.isEquals();
+	}
+
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder() //
+				.append(this.getId()) //
+				.append(this.getFromAddress()) //
+				.append(this.getToAddresses()) //
+				.append(this.getCcAddresses()) //
+				.append(this.getBccAddresses()) //
+				.append(this.getSubject()) //
+				.append(this.getContent()) //
+				.append(this.getDate()) //
+				.append(this.getStatus()) //
+				.append(this.getReference()) //
+				.append(this.getNotifyWith()) //
+				.append(this.isNoSubjectPrefix()) //
+				.append(this.getAccount()) //
+				.append(this.getTemplate()) //
+				.append(this.isKeepSynchronization()) //
+				.append(this.isPromptSynchronization()) //
+				.toHashCode();
+	}
+
+	@Override
+	public final String toString() {
+		return ToStringBuilder.reflectionToString(this, SHORT_PREFIX_STYLE).toString();
 	}
 
 }

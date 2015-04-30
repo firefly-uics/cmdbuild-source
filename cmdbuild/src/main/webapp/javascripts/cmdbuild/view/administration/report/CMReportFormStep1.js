@@ -34,15 +34,15 @@
 				cmImmutable: true
 			});
 
-			this.description = new Ext.form.CMTranslatableTextArea({
-				fieldLabel : tr.description,
-				allowBlank : false,
-				name : 'description',
+			this.description = Ext.create('CMDBuild.view.common.field.translatable.Text', {
+				fieldLabel: tr.description,
+				allowBlank: false,
+				name: 'description',
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
-				translationsKeyType: "Report", 
+				translationsKeyType: "Report",
 				translationsKeyField: "Description",
-				maxLength : 100,
+				maxLength: 100,
 			});
 
 			this.items = [
@@ -73,7 +73,7 @@
 		onReportSelected: function(report) {
 			this.reset();
 			this.name.setValue(report.get("title"));
-			this.description.setValue(report.get("description_default"));
+			this.description.setValue(report.get("description"));
 			setValueToMultiselect(this.groups, report.get("groups"));
 			this.description.translationsKeyName = report.get("title");
 		}

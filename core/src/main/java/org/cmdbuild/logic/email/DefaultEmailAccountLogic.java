@@ -12,7 +12,7 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import org.cmdbuild.data.store.Storable;
 import org.cmdbuild.data.store.Store;
 import org.cmdbuild.data.store.email.DefaultEmailAccount;
-import org.cmdbuild.services.email.EmailAccount;
+import org.cmdbuild.data.store.email.EmailAccount;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
@@ -78,6 +78,11 @@ public class DefaultEmailAccountLogic implements EmailAccountLogic {
 		@Override
 		public boolean isSmtpSsl() {
 			return delegate().isSmtpSsl();
+		}
+
+		@Override
+		public String getOutputFolder() {
+			return delegate().getOutputFolder();
 		}
 
 		@Override
@@ -265,6 +270,11 @@ public class DefaultEmailAccountLogic implements EmailAccountLogic {
 		}
 
 		@Override
+		public String getOutputFolder() {
+			return delegate.getOutputFolder();
+		}
+
+		@Override
 		public String getImapServer() {
 			return delegate.getImapServer();
 		}
@@ -328,6 +338,7 @@ public class DefaultEmailAccountLogic implements EmailAccountLogic {
 					.withSmtpServer(input.getSmtpServer()) //
 					.withSmtpPort(input.getSmtpPort()) //
 					.withSmtpSsl(input.isSmtpSsl()) //
+					.withOutputFolder(input.getOutputFolder()) //
 					.withImapServer(input.getImapServer()) //
 					.withImapPort(input.getImapPort()) //
 					.withImapSsl(input.isImapSsl()) //

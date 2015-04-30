@@ -3,12 +3,17 @@
 	var dashboards = {},
 
 		availableDataSources = {
-			
+
 		},
 
-		availableDataSourcesStore = new Ext.data.SimpleStore({
-			fields : ["name"],
-			data : []
+		availableDataSourcesStore = Ext.create('Ext.data.ArrayStore', {
+			fields: [CMDBuild.core.proxy.CMProxyConstants.NAME],
+			data: [],
+
+			sorters: [{
+				property: CMDBuild.core.proxy.CMProxyConstants.NAME,
+				direction: 'ASC'
+			}]
 		}),
 
 		events = {
@@ -29,7 +34,7 @@
 		 * 	dashboardId: {dashboardDefinition},
 		 * 	dashboardId: {dashboardDefinition},
 		 *  ...
-		 * } 
+		 * }
 		 */
 		addDashboards: function(dd) {
 			for (var key in dd) {

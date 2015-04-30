@@ -5,7 +5,7 @@ import java.util.Map.Entry;
 
 import org.cmdbuild.dao.driver.DBDriver;
 import org.cmdbuild.dao.entry.CMRelation.CMRelationDefinition;
-import org.cmdbuild.dao.entrytype.DBDomain;
+import org.cmdbuild.dao.entrytype.CMDomain;
 
 import com.google.common.collect.Maps;
 
@@ -18,26 +18,26 @@ public class DBRelation extends DBEntry implements CMRelation, CMRelationDefinit
 	private Long card1Id;
 	private Long card2Id;
 
-	public static DBRelation newInstance(final DBDriver driver, final DBDomain type) {
+	public static DBRelation newInstance(final DBDriver driver, final CMDomain type) {
 		return new DBRelation(driver, type, null);
 	}
 
-	public static DBRelation newInstance(final DBDriver driver, final DBDomain type, final Long id) {
+	public static DBRelation newInstance(final DBDriver driver, final CMDomain type, final Long id) {
 		return new DBRelation(driver, type, id);
 	}
 
-	public static DBRelation newInstance(final DBDriver driver, final DBRelation existentRelation) {
+	public static DBRelation newInstance(final DBDriver driver, final CMRelation existentRelation) {
 		return new DBRelation(driver, existentRelation.getType(), existentRelation.getId());
 	}
 
-	private DBRelation(final DBDriver driver, final DBDomain type, final Long id) {
+	private DBRelation(final DBDriver driver, final CMDomain type, final Long id) {
 		super(driver, type, id);
 		cards = Maps.newHashMap();
 	}
 
 	@Override
-	public DBDomain getType() {
-		return (DBDomain) super.getType();
+	public CMDomain getType() {
+		return (CMDomain) super.getType();
 	}
 
 	public CMCard getCard1() {

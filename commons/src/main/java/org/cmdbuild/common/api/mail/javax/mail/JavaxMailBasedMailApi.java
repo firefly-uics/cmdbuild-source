@@ -9,9 +9,10 @@ import org.cmdbuild.common.api.mail.Configuration.Input;
 import org.cmdbuild.common.api.mail.Configuration.Output;
 import org.cmdbuild.common.api.mail.FetchedMail;
 import org.cmdbuild.common.api.mail.MailApi;
-import org.cmdbuild.common.api.mail.NewMail;
+import org.cmdbuild.common.api.mail.NewMailQueue;
 import org.cmdbuild.common.api.mail.SelectFolder;
 import org.cmdbuild.common.api.mail.SelectMail;
+import org.cmdbuild.common.api.mail.SendableNewMail;
 
 public class JavaxMailBasedMailApi implements MailApi {
 
@@ -35,8 +36,13 @@ public class JavaxMailBasedMailApi implements MailApi {
 	}
 
 	@Override
-	public NewMail newMail() {
-		return new NewMailImpl(output);
+	public SendableNewMail newMail() {
+		return new SendableNewMailImpl(input, output);
+	}
+
+	@Override
+	public NewMailQueue newMailQueue() {
+		return new NewMailQueueImpl(input, output);
 	}
 
 	@Override

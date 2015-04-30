@@ -11,7 +11,6 @@ import static org.cmdbuild.common.api.mail.javax.mail.Constants.MAIL_IMAP_SOCKET
 import static org.cmdbuild.common.api.mail.javax.mail.Constants.MAIL_STORE_PROTOCOL;
 import static org.cmdbuild.common.api.mail.javax.mail.Constants.NO_AUTENTICATION;
 import static org.cmdbuild.common.api.mail.javax.mail.Constants.SSL_FACTORY;
-import static org.cmdbuild.common.api.mail.javax.mail.Utils.propertiesPlusSystemOnes;
 
 import java.io.PrintStream;
 import java.util.Properties;
@@ -28,9 +27,9 @@ import org.slf4j.Logger;
 
 class InputTemplate {
 
-	public static interface Hooks {
+	public static interface Hook {
 
-		void connected(Store store);
+		void connected(Store store) throws MessagingException;
 
 	}
 
@@ -44,15 +43,18 @@ class InputTemplate {
 		this.debugOutput = new PrintStream(new WriterOutputStream(new LoggerWriter(logger)), true);
 	}
 
-	public void execute(final Hooks hooks) {
+	public void execute(final Hook hook) {
 		Store store = null;
 		try {
 			final Session session = createSession();
 			store = session.getStore();
 			store.connect();
-			hooks.connected(store);
+			hook.connected(store);
 			store.close();
 		} catch (final MessagingException e) {
+			logger.error("error while connecting/connected to store", e);
+			throw MailException.input(e);
+		} catch (final Exception e) {
 			logger.error("error while connecting/connected to store", e);
 			throw MailException.input(e);
 		} finally {
@@ -75,7 +77,7 @@ class InputTemplate {
 	}
 
 	private Properties createConfigurationProperties() {
-		final Properties properties = new Properties();
+		final Properties properties = new Properties(System.getProperties());
 		properties.setProperty(MAIL_DEBUG, Boolean.toString(configuration.isDebug()));
 		properties.setProperty(MAIL_STORE_PROTOCOL, configuration.getInputProtocol());
 		if (sslRequired()) {
@@ -91,7 +93,7 @@ class InputTemplate {
 			}
 		}
 		logger.trace("properties: {}", properties);
-		return propertiesPlusSystemOnes(properties);
+		return properties;
 	}
 
 	private boolean sslRequired() {

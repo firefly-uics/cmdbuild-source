@@ -65,11 +65,9 @@ abstract class EntryCommand {
 		if (entry instanceof DBRelation) {
 			final DBRelation dbRelation = DBRelation.class.cast(entry);
 			values.add(new AttributeValueType(DomainId1.getDBName(), dbRelation.getCard1Id(), INTEGER));
-			values.add(new AttributeValueType(ClassId1.getDBName(), dbRelation.getCard1().getType()
-					.getId(), ENTRY_TYPE));
+			values.add(new AttributeValueType(ClassId1.getDBName(), dbRelation.getCard1().getType().getId(), ENTRY_TYPE));
 			values.add(new AttributeValueType(DomainId2.getDBName(), dbRelation.getCard2Id(), INTEGER));
-			values.add(new AttributeValueType(ClassId2.getDBName(), dbRelation.getCard2().getType()
-					.getId(), ENTRY_TYPE));
+			values.add(new AttributeValueType(ClassId2.getDBName(), dbRelation.getCard2().getType().getId(), ENTRY_TYPE));
 		}
 	}
 

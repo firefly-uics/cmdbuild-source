@@ -5,6 +5,8 @@ import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 import static org.cmdbuild.servlets.json.CommunicationConstants.DESCRIPTION;
 import static org.cmdbuild.servlets.json.CommunicationConstants.EMAIL;
 import static org.cmdbuild.servlets.json.CommunicationConstants.IS_ACTIVE;
+import static org.cmdbuild.servlets.json.CommunicationConstants.PRIVILEGED;
+import static org.cmdbuild.servlets.json.CommunicationConstants.SERVICE;
 import static org.cmdbuild.servlets.json.CommunicationConstants.USER_ID;
 import static org.cmdbuild.servlets.json.CommunicationConstants.USER_NAME;
 import static org.cmdbuild.spring.SpringIntegrationUtils.applicationContext;
@@ -27,9 +29,9 @@ import org.cmdbuild.exception.DmsException;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.auth.AuthenticationLogic.GroupInfo;
 import org.cmdbuild.logic.dms.DmsLogic;
-import org.cmdbuild.model.Report;
 import org.cmdbuild.model.data.Card;
 import org.cmdbuild.notification.Notifier;
+import org.cmdbuild.services.store.report.Report;
 import org.cmdbuild.servlets.json.serializers.JsonHistory.HistoryItem;
 import org.cmdbuild.servlets.json.serializers.JsonHistory.ValueAndDescription;
 import org.joda.time.DateTime;
@@ -81,7 +83,7 @@ public class Serializer {
 	}
 
 	// FIXME: implement it reading the metadata for the class
-	protected static void addMetadata(final JSONObject serializer, final CMClass cmClass) throws JSONException {
+	protected static void addMetadata(final JSONObject serializer) throws JSONException {
 		final JSONObject jsonMetadata = new JSONObject();
 		serializer.put("meta", jsonMetadata);
 	}
@@ -177,6 +179,8 @@ public class Serializer {
 		row.put(DESCRIPTION, user.getDescription());
 		row.put(EMAIL, user.getEmail());
 		row.put(IS_ACTIVE, user.isActive());
+		row.put(SERVICE, user.isService());
+		row.put(PRIVILEGED, user.isPrivileged());
 		return row;
 	}
 

@@ -1,5 +1,9 @@
 package org.cmdbuild.workflow.widget;
 
+import static java.lang.String.format;
+import static org.cmdbuild.logger.Log.WORKFLOW;
+
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -18,12 +22,15 @@ import org.cmdbuild.services.template.engine.EngineNames;
 import org.cmdbuild.services.template.store.TemplateRepository;
 import org.cmdbuild.workflow.CMActivityWidget;
 import org.cmdbuild.workflow.xpdl.SingleActivityWidgetFactory;
+import org.slf4j.Logger;
 
 /**
  * Single activity widget factory that knows how to decode a list of key/value
  * pairs.
  */
 public abstract class ValuePairWidgetFactory implements SingleActivityWidgetFactory {
+
+	private static final Logger logger = WORKFLOW;
 
 	public static final String BUTTON_LABEL = "ButtonLabel";
 
@@ -165,12 +172,16 @@ public abstract class ValuePairWidgetFactory implements SingleActivityWidgetFact
 	}
 
 	protected final boolean readBooleanTrueIfTrue(final Object value) {
+		return readBooleanTrueIfTrue(value, false);
+	}
+
+	protected final boolean readBooleanTrueIfTrue(final Object value, final boolean defaultValue) {
 		if (value instanceof String) {
 			return Boolean.parseBoolean((String) value);
 		} else if (value instanceof Boolean) {
 			return (Boolean) value;
 		} else {
-			return false;
+			return defaultValue;
 		}
 	}
 
@@ -179,6 +190,7 @@ public abstract class ValuePairWidgetFactory implements SingleActivityWidgetFact
 			try {
 				return Integer.parseInt((String) value);
 			} catch (final NumberFormatException e) {
+				logger.warn(format("error converting '%s' to '%s'", value, Long.class), e);
 				return null;
 			}
 		} else if (value instanceof Integer) {
@@ -203,7 +215,7 @@ public abstract class ValuePairWidgetFactory implements SingleActivityWidgetFact
 	}
 
 	protected final Map<String, Object> extractUnmanagedParameters(final Map<String, Object> valueMap,
-			final Set<String> managedParameters) {
+			final Collection<String> managedParameters) {
 		final Map<String, Object> out = new HashMap<String, Object>();
 
 		for (final String key : valueMap.keySet()) {
@@ -226,7 +238,7 @@ public abstract class ValuePairWidgetFactory implements SingleActivityWidgetFact
 	}
 
 	protected final Map<String, String> extractUnmanagedStringParameters(final Map<String, Object> valueMap,
-			final Set<String> managedParameters) {
+			final Collection<String> managedParameters) {
 		final Map<String, Object> rawParameters = extractUnmanagedParameters(valueMap, managedParameters);
 		final Map<String, String> stringParameters = new HashMap<String, String>();
 		for (final Map.Entry<String, Object> rawEntry : rawParameters.entrySet()) {

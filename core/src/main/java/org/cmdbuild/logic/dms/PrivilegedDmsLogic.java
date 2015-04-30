@@ -4,13 +4,17 @@ import static org.cmdbuild.logic.PrivilegeUtils.assure;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 
 import org.cmdbuild.auth.acl.PrivilegeContext;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.dms.MetadataGroup;
+import org.cmdbuild.dms.StoredDocument;
 import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.exception.DmsException;
+
+import com.google.common.base.Optional;
 
 public class PrivilegedDmsLogic extends ForwardingDmsLogic {
 
@@ -30,9 +34,26 @@ public class PrivilegedDmsLogic extends ForwardingDmsLogic {
 		return delegate;
 	}
 
+	private void assureReadPrivilege(final String className) {
+		final CMClass fetchedClass = dataView.findClass(className);
+		assure(privilegeContext.hasReadAccess(fetchedClass));
+	}
+
 	private void assureWritePrivilege(final String className) {
 		final CMClass fetchedClass = dataView.findClass(className);
 		assure(privilegeContext.hasWriteAccess(fetchedClass));
+	}
+
+	@Override
+	public List<StoredDocument> search(final String className, final Long cardId) {
+		assureReadPrivilege(className);
+		return super.search(className, cardId);
+	}
+
+	@Override
+	public Optional<StoredDocument> search(final String className, final Long cardId, final String fileName) {
+		assureReadPrivilege(className);
+		return super.search(className, cardId, fileName);
 	}
 
 	@Override
@@ -54,6 +75,22 @@ public class PrivilegedDmsLogic extends ForwardingDmsLogic {
 			final String category, final String description, final Iterable<MetadataGroup> metadataGroups) {
 		assureWritePrivilege(className);
 		super.updateDescriptionAndMetadata(className, cardId, filename, category, description, metadataGroups);
+	}
+
+	@Override
+	public void copy(final String sourceClassName, final Long sourceId, final String filename,
+			final String destinationClassName, final Long destinationId) {
+		assureReadPrivilege(sourceClassName);
+		assureWritePrivilege(destinationClassName);
+		super.copy(sourceClassName, sourceId, filename, destinationClassName, destinationId);
+	}
+
+	@Override
+	public void move(final String sourceClassName, final Long sourceId, final String filename,
+			final String destinationClassName, final Long destinationId) {
+		assureReadPrivilege(sourceClassName);
+		assureWritePrivilege(destinationClassName);
+		super.move(sourceClassName, sourceId, filename, destinationClassName, destinationId);
 	}
 
 }

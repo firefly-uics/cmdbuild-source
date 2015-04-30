@@ -6,15 +6,13 @@ import java.util.Map;
 public class PresetFromCard extends Widget {
 
 	/**
-	 * The name of the class for which
-	 * display the cards
+	 * The name of the class for which display the cards
 	 */
 	private String className;
 
 	/**
-	 * An optional CQL filter to display
-	 * a subset of cards.
-	 * If used, the className is ignored
+	 * An optional CQL filter to display a subset of cards. If used, the
+	 * className is ignored
 	 */
 	private String filter;
 
@@ -24,9 +22,7 @@ public class PresetFromCard extends Widget {
 	private Map<String, String> templates;
 
 	/**
-	 * The mapping to use to preset the
-	 * activity, after the selection of
-	 * a card
+	 * The mapping to use to preset the activity, after the selection of a card
 	 */
 	private Map<String, String> presetMapping;
 
@@ -41,7 +37,7 @@ public class PresetFromCard extends Widget {
 		return className;
 	}
 
-	public void setClassName(String className) {
+	public void setClassName(final String className) {
 		this.className = className;
 	}
 
@@ -49,7 +45,7 @@ public class PresetFromCard extends Widget {
 		return filter;
 	}
 
-	public void setFilter(String filter) {
+	public void setFilter(final String filter) {
 		this.filter = filter;
 	}
 
@@ -57,7 +53,7 @@ public class PresetFromCard extends Widget {
 		return templates;
 	}
 
-	public void setTemplates(Map<String, String> templates) {
+	public void setTemplates(final Map<String, String> templates) {
 		this.templates = templates;
 	}
 
@@ -65,12 +61,12 @@ public class PresetFromCard extends Widget {
 		return presetMapping;
 	}
 
-	public void setPresetMapping(Map<String, String> presetMapping) {
+	public void setPresetMapping(final Map<String, String> presetMapping) {
 		this.presetMapping = presetMapping;
 	}
 
 	@Override
-	public void accept(WidgetVisitor visitor) {
+	public void accept(final WidgetVisitor visitor) {
 		visitor.visit(this);
 	}
 }

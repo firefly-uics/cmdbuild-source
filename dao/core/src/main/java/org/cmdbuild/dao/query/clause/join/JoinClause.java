@@ -1,8 +1,12 @@
 package org.cmdbuild.dao.query.clause.join;
 
+import static com.google.common.base.Predicates.not;
+import static com.google.common.collect.FluentIterable.from;
 import static com.google.common.collect.Iterables.isEmpty;
 import static com.google.common.collect.Maps.newHashMap;
 import static com.google.common.collect.Sets.newHashSet;
+import static org.cmdbuild.dao.entrytype.Predicates.disabledClass;
+import static org.cmdbuild.dao.entrytype.Predicates.domainFor;
 import static org.cmdbuild.dao.query.clause.where.OrWhereClause.or;
 import static org.cmdbuild.dao.query.clause.where.TrueWhereClause.trueWhereClause;
 
@@ -11,7 +15,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.commons.lang3.Validate;
-import org.cmdbuild.common.Builder;
+import org.apache.commons.lang3.builder.Builder;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.query.clause.AnyClass;
@@ -96,8 +100,10 @@ public class JoinClause {
 			return new JoinClause(this);
 		}
 
-		private void addAllDomains() {
-			for (final CMDomain domain : viewForBuild.findDomainsFor(source)) {
+		private final void addAllDomains() {
+			for (final CMDomain domain : from(viewForBuild.findDomains()) //
+					.filter(domainFor(source)) //
+					.filter(not(disabledClass(source)))) {
 				addDomain(domain);
 			}
 		}

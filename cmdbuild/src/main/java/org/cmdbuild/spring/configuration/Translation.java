@@ -7,7 +7,10 @@ import org.cmdbuild.data.store.dao.DataViewStore;
 import org.cmdbuild.data.store.translation.TranslationConverter;
 import org.cmdbuild.logic.translation.DefaultTranslationLogic;
 import org.cmdbuild.logic.translation.SetupFacade;
+import org.cmdbuild.logic.translation.TranslationFacade;
 import org.cmdbuild.logic.translation.TranslationLogic;
+import org.cmdbuild.services.localization.RequestHandlerSetupFacade;
+import org.cmdbuild.servlets.json.serializers.DefaultTranslationFacade;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,11 +22,21 @@ public class Translation {
 	private Data data;
 
 	@Autowired
-	private SetupFacade setupFacade;
+	private Setup setup;
+
+	@Bean
+	public TranslationFacade translationFacade() {
+		return new DefaultTranslationFacade(translationLogic(), requestHandlerSetupFacade());
+	}
+
+	@Bean
+	protected SetupFacade requestHandlerSetupFacade() {
+		return new RequestHandlerSetupFacade(setup.setupFacade());
+	}
 
 	@Bean
 	public TranslationLogic translationLogic() {
-		return new DefaultTranslationLogic(translationStoreFactory(), setupFacade);
+		return new DefaultTranslationLogic(translationStoreFactory(), setup.setupFacade());
 	}
 
 	@Bean

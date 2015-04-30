@@ -52,4 +52,12 @@ public class Utils {
 		}
 	}
 
+	public static JSONArray toJsonArray(final Iterable<? extends Object> elements) {
+		final JSONArray json = new JSONArray();
+		for (final Object element : elements) {
+			json.put(element);
+		}
+		return json;
+	}
+
 }

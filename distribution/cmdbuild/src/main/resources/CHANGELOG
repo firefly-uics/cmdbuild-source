@@ -1,3 +1,209 @@
+CMDBuild 2.3.1 (released 2015/04/30)
+
+
+NEW FEATURES
+
+ * Better visualization of process status within process instance's history
+
+ * New HtmlEditor implementation
+
+ * Smart e-mail regeneration for widget ManageEmail
+
+ * Extended API (Fluent API) for DMS management
+
+ * REST web service - Version 2
+
+ * Data model localization review
+
+ * Force download header on report requests
+
+ * Administration grid default order
+
+ * Disabled domains for source/destination classes hierarchy
+
+ * More explicatory variable name for the performer of the process
+
+ * E-mail management review (delay, tab, widget, task, template)
+
+ * HTML editor field color setup optimization
+
+ * CMDBuild localization config model optimizations
+
+ * Starting class combo store order
+
+ * Data source combobox store alphabetical order in from sql view
+
+ * Disabled Notes attribute visualization in widget grid
+
+ * Set service user from administration interface
+
+
+FIXES
+
+ * CQL filters do not work on reference fields in the grid widget
+
+ * Hidden attributes are visible on history tab
+
+ * Report with reference on class with more than maximum items specified in the configuration
+
+ * Task Manager - Created process has no user within history
+
+ * Task Manager - Error when decoding mappings where values uses '=' character
+
+ * Wrong user in history when inserting new relations
+
+ * Cannot create relations on recursive domains
+
+ * No get card query on subclasses selection
+
+ * HTMLEditor submit value problems
+
+ * HTML tags not stripped in class card grids
+
+ * Ifc connector does not check the class of reference attributes
+
+ * Empty combobox for references in grid widget
+
+ * Error getting relations when row provileges are setted
+
+ * Report visualizations problems with IE8
+
+ * Widget grid: date fields blanked when modified
+
+ * Multiple blank rows added on HTML editor fields
+
+ * Suspend/resume process using CMDBuild API not working
+
+ * REST v1 - Relations are returned doubled: the second has source and destination inverted
+
+ * Default group is lost when password is modified
+
+ * History without user when multiple update is performed
+
+ * User not setted when performing operations from REST web services
+
+ * CQL filters in linkCards widget do not support parameters
+
+ * Firefox errors on UI loading
+
+ * Widget grid: blank Code and Description field
+
+ * Error updating relation attribute for reference during card creation
+
+ * WidgetGrid: no data loading data from string presets
+
+ * No content scrollbars on add attachment popup window
+
+ * Search filter target class combobox store is empty
+
+ * With limited administrator user task and email panel's doesn't work
+
+ * REST v1 - Missing widgets when getting activity details
+
+ * Wrong endpoint for CMDBf web services
+
+ * Losing selection while creating link in HTML field
+
+
+
+
+
+CMDBuild 2.3.0 (released 2015/02/03)
+
+
+NEW FEATURES
+
+ *  RESTful API implementation
+
+ *  Removed unused table "_MdrScopedId"
+
+ *  Better visualization of process status within process instance's history
+
+ *  Enable/Disable toggleGridFilter button from widget configuration
+
+ *  Button to answer to received emails
+
+ *  New HtmlEditor implementation
+
+ *  In widget configuration the Description should be mandatory
+
+ *  WidgetGrid configuration improvements
+
+ *  Improvements to logging for lookup operations
+
+ *  Add Processes in TaskManager Event class ComboBox store
+
+ *  Email template UI implementation
+
+ *  Implementation of Alphabetical order in ComboBoxes
+
+ *  PostgreSQL 8.4 no more supported
+
+
+FIXES
+
+ * Demomode doesn't work anymore
+
+ * Filtered Reference Attribute Lost Data on Edit/Clone
+
+ * View create/modify problems
+
+ * Domains attributes form clear problem
+
+ * Tab "details" is always disabled using IE8
+
+ * Widget createModifyCard on classes
+
+ * Errors on LinkCards selections
+
+ * Task manager - Connector does a wrong quote for table's schema
+
+ * ManageEmail widget regenerates all emails on card field edit
+
+ * Grid widget is unable to load a large number of rows
+
+ * Wrong submit format of date readOnly report parameters
+
+ * Wrong values displayed in widgets windows in ComboBox fields and grid editor fields
+
+ * Not logged routes requests are not managed by CMDBuild
+
+ * _TaskParameter, _EmailAccount, _EmailTemplate are classes with no superclass
+
+ * Process not found when a super-process has no privileges
+
+ * ManageEmail undefined is not a function error
+
+ * No Processes accordion update on create/delete/modify actions
+
+ * In widget configuration the Description should be mandatory
+
+ * Duplicates values in ReferenceFields stores
+
+ * No get card query on subclasses selection
+
+ * WidgeLinkCard card selection problems on window open
+
+ * Session expired before expected
+
+ * On CMDBuild card form initialization all precompiled fields are marked as dirty
+
+ * Starting class combo displays class id
+
+ * Javascript problems on usernames/group descriptions/group name with quotes and double quotes
+
+ * Modal windows could go outside browser viewport
+
+ * Processes properties form has white background
+
+ * No LoadingMask visualization on card grid selection
+
+ * Widget LinkCards hasn't card edit column and card show column
+
+
+
+
+
 CMDBuild 2.2.2 (released 2014/11/17)
 
 

@@ -18,7 +18,7 @@
 		icon: 'images/icons/table.png',
 		considerAsFieldToDisable: true,
 		border: true,
-		margin: '2 0 0 2',
+		margin: '0 0 0 3',
 
 		handler: function() {
 			this.delegate.cmOn('onFilterButtonClick', {

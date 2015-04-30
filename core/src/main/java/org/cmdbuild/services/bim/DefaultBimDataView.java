@@ -347,7 +347,9 @@ public class DefaultBimDataView extends ForwardingDataView implements BimDataVie
 		Long id = null;
 		final BimCard cardData = getBimDataFromGlobalid(globalId);
 		if (cardData != null) {
-			id = cardData.getId();
+			if (cardData.getClassName().equals(className)) {
+				id = cardData.getId();
+			}
 		}
 		return id;
 	}

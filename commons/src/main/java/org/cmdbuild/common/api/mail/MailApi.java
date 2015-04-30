@@ -8,9 +8,16 @@ public interface MailApi {
 	/**
 	 * Creates a new mail.
 	 * 
-	 * @return a new mail object
+	 * @return a new mail object.
 	 */
-	NewMail newMail();
+	SendableNewMail newMail();
+
+	/**
+	 * Creates a new mail queue.
+	 * 
+	 * @return a new mail queue object.
+	 */
+	NewMailQueue newMailQueue();
 
 	/**
 	 * Selects a folder.

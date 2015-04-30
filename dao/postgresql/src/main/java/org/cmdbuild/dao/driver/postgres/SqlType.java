@@ -71,7 +71,7 @@ public enum SqlType {
 		}
 
 		@Override
-		protected Object[] getConstructorParams(String[] stringParams, Meta meta) {
+		protected Object[] getConstructorParams(final String[] stringParams, final Meta meta) {
 			if (meta instanceof AttributeMetadata) {
 				final String typeValue = AttributeMetadata.class.cast(meta).get(AttributeMetadata.IP_TYPE);
 				final Type type = Type.of(typeValue, Type.IPV4);

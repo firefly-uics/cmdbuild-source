@@ -1,42 +1,38 @@
 package org.cmdbuild.common.api.mail;
 
-import java.io.IOException;
-
-import javax.mail.MessagingException;
-
 public class MailException extends RuntimeException {
 
 	private static final long serialVersionUID = 1L;
 
-	public static MailException content(final MessagingException cause) {
+	public static MailException content(final Throwable cause) {
 		return new MailException(cause);
 	}
 
-	public static MailException fetch(final MessagingException cause) {
+	public static MailException fetch(final Throwable cause) {
 		return new MailException(cause);
 	}
 
-	public static MailException get(final MessagingException cause) {
+	public static MailException get(final Throwable cause) {
 		return new MailException(cause);
 	}
 
-	public static MailException input(final MessagingException cause) {
+	public static MailException input(final Throwable cause) {
 		return new MailException(cause);
 	}
 
-	public static MailException io(final IOException cause) {
+	public static MailException io(final Throwable cause) {
 		return new MailException(cause);
 	}
 
-	public static MailException move(final MessagingException cause) {
+	public static MailException move(final Throwable cause) {
 		return new MailException(cause);
 	}
 
-	public static MailException creation(final MessagingException cause) {
+	public static MailException creation(final Throwable cause) {
 		return new MailException(cause);
 	}
 
-	public static MailException send(final MessagingException cause) {
+	public static MailException send(final Throwable cause) {
 		return new MailException(cause);
 	}
 

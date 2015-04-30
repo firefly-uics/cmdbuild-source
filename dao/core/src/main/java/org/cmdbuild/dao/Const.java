@@ -17,8 +17,8 @@ public class Const {
 		public static final String PASSWORD = "Password";
 		public static final String EMAIL = "Email";
 		public static final String ACTIVE = "Active";
-		public static final String SERVICE= "Service";
-		public static final String PRIVILEGED= "Privileged";
+		public static final String SERVICE = "Service";
+		public static final String PRIVILEGED = "Privileged";
 
 	}
 

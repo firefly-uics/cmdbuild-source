@@ -18,7 +18,7 @@ public class LookupValue extends IdAndDescription {
 	public String getLooupType() {
 		return lookupType;
 	}
-	
+
 	public String getTranslationUuid() {
 		return translationUuid;
 	}

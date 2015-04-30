@@ -14,13 +14,15 @@ import org.cmdbuild.data.store.Storable;
 import org.cmdbuild.data.store.Store;
 import org.cmdbuild.data.store.email.DefaultEmailTemplate;
 import org.cmdbuild.data.store.email.DefaultExtendedEmailTemplate;
+import org.cmdbuild.data.store.email.EmailAccount;
+import org.cmdbuild.data.store.email.EmailAccountFacade;
 import org.cmdbuild.data.store.email.EmailTemplate;
 import org.cmdbuild.data.store.email.ExtendedEmailTemplate;
-import org.cmdbuild.services.email.EmailAccount;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
 import com.google.common.base.Function;
+import com.google.common.base.Optional;
 
 public class DefaultEmailTemplateLogic implements EmailTemplateLogic {
 
@@ -29,11 +31,11 @@ public class DefaultEmailTemplateLogic implements EmailTemplateLogic {
 	private static class TemplateWrapper implements Template {
 
 		private final ExtendedEmailTemplate delegate;
-		private final Store<EmailAccount> store;
+		private final EmailAccountFacade accountStoreFacade;
 
-		public TemplateWrapper(final ExtendedEmailTemplate delegate, final Store<EmailAccount> store) {
+		public TemplateWrapper(final ExtendedEmailTemplate delegate, final EmailAccountFacade accountStoreFacade) {
 			this.delegate = delegate;
-			this.store = store;
+			this.accountStoreFacade = accountStoreFacade;
 		}
 
 		@Override
@@ -82,25 +84,37 @@ public class DefaultEmailTemplateLogic implements EmailTemplateLogic {
 		}
 
 		@Override
-		public Map<String, String> getVariables() {
-			return delegate.getVariables();
-		}
-
-		@Override
 		public String getAccount() {
 			return accountOf(delegate);
 		}
 
 		private String accountOf(final ExtendedEmailTemplate input) {
 			if (input.getAccount() != null) {
-				for (final EmailAccount account : store.readAll()) {
-					if (input.getAccount().equals(account.getId())) {
-						return account.getName();
-					}
-				}
+				final Optional<EmailAccount> account = accountStoreFacade.fromId(input.getAccount());
+				return account.isPresent() ? account.get().getName() : null;
 			}
 			return null;
 		};
+
+		@Override
+		public boolean isKeepSynchronization() {
+			return delegate.isKeepSynchronization();
+		}
+
+		@Override
+		public boolean isPromptSynchronization() {
+			return delegate.isPromptSynchronization();
+		}
+
+		@Override
+		public long getDelay() {
+			return delegate.getDelay();
+		}
+
+		@Override
+		public Map<String, String> getVariables() {
+			return delegate.getVariables();
+		}
 
 		@Override
 		public String toString() {
@@ -111,15 +125,15 @@ public class DefaultEmailTemplateLogic implements EmailTemplateLogic {
 
 	private static class EmailTemplate_to_Template implements Function<ExtendedEmailTemplate, Template> {
 
-		private final Store<EmailAccount> store;
+		private final EmailAccountFacade emailAccountFacade;
 
-		public EmailTemplate_to_Template(final Store<EmailAccount> store) {
-			this.store = store;
+		public EmailTemplate_to_Template(final EmailAccountFacade emailAccountFacade) {
+			this.emailAccountFacade = emailAccountFacade;
 		}
 
 		@Override
 		public Template apply(final ExtendedEmailTemplate input) {
-			return new TemplateWrapper(input, store);
+			return new TemplateWrapper(input, emailAccountFacade);
 		};
 
 	};
@@ -139,12 +153,16 @@ public class DefaultEmailTemplateLogic implements EmailTemplateLogic {
 							.withId(input.getId()) //
 							.withName(input.getName()) //
 							.withDescription(input.getDescription()) //
+							.withFrom(input.getFrom()) //
 							.withTo(input.getTo()) //
 							.withCc(input.getCc()) //
 							.withBcc(input.getBcc()) //
 							.withSubject(input.getSubject()) //
 							.withBody(input.getBody()) //
 							.withAccount(accountIdOf(input)) //
+							.withKeepSynchronization(input.isKeepSynchronization()) //
+							.withPromptSynchronization(input.isPromptSynchronization()) //
+							.withDelay(input.getDelay()) //
 							.build()) //
 					.withVariables(input.getVariables()) //
 					.build();
@@ -170,10 +188,11 @@ public class DefaultEmailTemplateLogic implements EmailTemplateLogic {
 	private final EmailTemplate_to_Template emailTemplate_to_Template;
 	private final Template_To_EmailTemplate template_To_EmailTemplate;
 
-	public DefaultEmailTemplateLogic(final Store<ExtendedEmailTemplate> store, final Store<EmailAccount> accountStore) {
+	public DefaultEmailTemplateLogic(final Store<ExtendedEmailTemplate> store,
+			final EmailAccountFacade accountStoreFacade) {
 		this.store = store;
-		this.emailTemplate_to_Template = new EmailTemplate_to_Template(accountStore);
-		this.template_To_EmailTemplate = new Template_To_EmailTemplate(accountStore);
+		this.emailTemplate_to_Template = new EmailTemplate_to_Template(accountStoreFacade);
+		this.template_To_EmailTemplate = new Template_To_EmailTemplate(accountStoreFacade);
 	}
 
 	@Override

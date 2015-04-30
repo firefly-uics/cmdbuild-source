@@ -23,6 +23,9 @@ public class EmailTemplateStorableConverter extends BaseStorableConverter<EmailT
 	public static final String SUBJECT = "Subject";
 	public static final String BODY = "Body";
 	public static final String ACCOUNT = "Account";
+	public static final String KEEP_SYNCHRONIZATION = "KeepSynchronization";
+	public static final String PROMPT_SYNCHRONIZATION = "PromptSynchronization";
+	public static final String DELAY = "Delay";
 
 	private static final IdAndDescription NULL_ACCOUNT = new IdAndDescription(null, null);
 
@@ -49,6 +52,9 @@ public class EmailTemplateStorableConverter extends BaseStorableConverter<EmailT
 				.withSubject(card.get(SUBJECT, String.class)) //
 				.withBody(card.get(BODY, String.class)) //
 				.withAccount(defaultIfNull(card.get(ACCOUNT, IdAndDescription.class), NULL_ACCOUNT).getId()) //
+				.withKeepSynchronization(defaultIfNull(card.get(KEEP_SYNCHRONIZATION, Boolean.class), true)) //
+				.withPromptSynchronization(defaultIfNull(card.get(PROMPT_SYNCHRONIZATION, Boolean.class), false)) //
+				.withDelay(defaultIfNull(card.get(DELAY, Integer.class), 0).longValue()) //
 				.build();
 	}
 
@@ -64,6 +70,9 @@ public class EmailTemplateStorableConverter extends BaseStorableConverter<EmailT
 		values.put(SUBJECT, emailTemplate.getSubject());
 		values.put(BODY, emailTemplate.getBody());
 		values.put(ACCOUNT, emailTemplate.getAccount());
+		values.put(KEEP_SYNCHRONIZATION, emailTemplate.isKeepSynchronization());
+		values.put(PROMPT_SYNCHRONIZATION, emailTemplate.isPromptSynchronization());
+		values.put(DELAY, emailTemplate.getDelay());
 		return values;
 	}
 

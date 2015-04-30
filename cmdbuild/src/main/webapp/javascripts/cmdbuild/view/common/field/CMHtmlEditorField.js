@@ -1,17 +1,19 @@
 (function() {
 
 	Ext.define('CMDBuild.view.common.field.CMHtmlEditorField', {
-		extend: 'Ext.ux.form.TinyMCE.TinyMCETextArea',
+		extend: 'Ext.ux.form.field.TinyMCE',
+
+		requires: ['CMDBuild.core.Utils'],
+
+		/**
+		 * @cfg {Boolean}
+		 */
+		dirty: false,
 
 		/**
 		 * @cfg {Mixed} object or string
 		 */
 		tinyMCEConfig: undefined,
-
-		/**
-		 * @cfg {String}
-		 */
-		disableCssClass: 'disable',
 
 		/**
 		 * Custom CMDBuild buttons configurations to use
@@ -23,14 +25,17 @@
 		customConfigurations: {
 			common: {
 				skin: 'extjs',
-				skin_variant: 'blue',
+				skin_variant: 'silver', // Default color is silver
 				schema: 'html5',
 				language: 'en',
 
 				// Original value is 23, hard coded. With 23 the editor calculates the height wrong.
 				// With these settings, you can do the fine tuning of the height by the initialization.
 				theme_advanced_row_height: 27,
-				delta_height: 1
+				delta_height: 1,
+				width: '100%',
+				theme_advanced_resizing: false,
+				theme_advanced_resize_horizontal: false
 			},
 
 			full: {
@@ -59,6 +64,8 @@
 			}
 		},
 
+		considerAsFieldToDisable: true,
+
 		initComponent: function() {
 			// Setup TinyMCE configuration from string identifier
 			if (
@@ -74,57 +81,44 @@
 			}
 
 			// Language setup
-			this.tinyMCEConfig.language = CMDBuild.Config[CMDBuild.core.proxy.CMProxyConstants.LANGUAGE];
+			this.tinyMCEConfig.language = CMDBuild.Config.localization.get(CMDBuild.core.proxy.CMProxyConstants.LANGUAGE);
 
-			// Editor color setup for Administration
+			// Silver editor color setup for Administration
 			if (Ext.isEmpty(CMDBuild.app.Management)) {
 				var extVersion = CMDBuild.core.Utils.getExtJsVersion();
 
-				this.tinyMCEConfig.skin_variant = 'silver';
-				this.tinyMCEConfig.popup_css = 'javascripts/ext-' + extVersion + '-ux/form/TinyMCE/src/themes/advanced/skins/extjs/dialog_silver.css';
+				this.tinyMCEConfig.popup_css = 'javascripts/ext-' + extVersion + '-ux/form/field/tinymce/themes/advanced/skins/extjs/dialog_silver.css';
 			}
 
+			// Blue editor color setup for Management
+			if (Ext.isEmpty(CMDBuild.app.Administration))
+				this.tinyMCEConfig.skin_variant = 'blue';
+
 			this.callParent(arguments);
+
+			this.on('change', function() {
+				this.setDirty(); // Set as dirty
+			}, this);
+		},
+
+		initValue: function() {
+			this.dirty = false;
 		},
 
 		/**
-		 * Custom function to disable all editor items
-		 *
-		 * @override
+		 * Dirty functionality implementation
 		 */
-		disable: function() {
-			// Disable iframe editor body
-			if (tinymce.get(this.getInputId())) {
-				var edIframe = Ext.get(this.getInputId() + '_ifr');
-				var domElClasses = edIframe.dom.contentDocument.body.className.split(' ');
+		isDirty: function() {
+			if (!Ext.isEmpty(this.getEditor()))
+				try { // Avoids a getBody of null error
+					return this.getEditor().isDirty() || this.dirty;
+				} catch(e) {}
 
-				if (!Ext.Array.contains(domElClasses, this.disableCssClass)) {
-					domElClasses.push(this.disableCssClass);
-					edIframe.dom.contentDocument.body.className = domElClasses.join(' ');
-				}
-			}
-
-			this.callParent(arguments);
+			return false;
 		},
 
-		/**
-		 * Custom function to enable all editor items
-		 *
-		 * @override
-		 */
-		enable: function() {
-			// Enable iframe editor body
-			if (tinymce.get(this.getInputId())) {
-				var edIframe = Ext.get(this.getInputId() + '_ifr');
-				var domElClasses = edIframe.dom.contentDocument.body.className.split(' ');
-
-				if (Ext.Array.contains(domElClasses, this.disableCssClass)) {
-					Ext.Array.remove(domElClasses, this.disableCssClass);
-					edIframe.dom.contentDocument.body.className = domElClasses.join(' ');
-				}
-			}
-
-			this.callParent(arguments);
+		setDirty: function() {
+			this.dirty = true;
 		}
 	});
 

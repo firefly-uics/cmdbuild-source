@@ -43,6 +43,8 @@ public class EngineBasedTemplateResolver implements TemplateResolver, LoggingSup
 			return this;
 		}
 
+		// TODO add predicate
+
 		@Override
 		public EngineBasedTemplateResolver build() {
 			return new EngineBasedTemplateResolver(this);

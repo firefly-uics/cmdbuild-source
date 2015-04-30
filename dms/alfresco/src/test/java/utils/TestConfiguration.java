@@ -71,11 +71,6 @@ public class TestConfiguration implements DmsConfiguration {
 	}
 
 	@Override
-	public String getLookupNameForAttachments() {
-		return LOOKUP_NAME_FOR_ATTACHMENTS;
-	}
-
-	@Override
 	public String getAlfrescoUser() {
 		return USERNAME;
 	}

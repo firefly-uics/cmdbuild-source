@@ -8,8 +8,17 @@
 		classStore = getFakeStore(),
 		classesAndProcessesStore = getFakeStore();
 
-	
+
 	Ext.define("CMDBUild.cache.CMCacheClassFunctions", {
+
+		/**
+		 * @param {Number} id
+		 *
+		 * @return {Boolean}
+		 */
+		isClassById: function(id) {
+			return !Ext.isEmpty(classes[id]);
+		},
 
 		getClasses: function() {
 			return classes;
@@ -40,14 +49,14 @@
 		addClass: function(et) {
 			var newEt = Ext.create("CMDBuild.cache.CMEntryTypeModel", et);
 			classes[et.id] = newEt;
-			
+
 			return newEt;
 		},
 
 		addProcess: function(et) {
 			var newEt = Ext.create("CMDBuild.cache.CMEntryTypeModel", et);
 			processes[et.id] = newEt;
-			
+
 			return newEt;
 		},
 
@@ -85,7 +94,7 @@
 		getEntryTypeById: function(id) {
 			var c = this.getClassById(id),
 				p = this.getProcessById(id);
-			
+
 			if (c) {
 				return c;
 			} else if (p) {
@@ -99,7 +108,7 @@
 		isEntryTypeById: function(id) {
 			var c = this.getClassById(id),
 				p = this.getProcessById(id);
-			
+
 			return (c || p);
 		},
 
@@ -150,7 +159,7 @@
 
 			return superclassesStore;
 		},
-		
+
 		getSuperProcessAsStore: function() {
 			if (superProcessStore.cmFake) {
 				superProcessStore = buildSuperProcessStore();
@@ -159,7 +168,7 @@
 
 			return superProcessStore;
 		},
-		
+
 		getClassesStore: function() {
 			if (classStore.cmFake) {
 				classStore = buildClassesStore();
@@ -193,7 +202,7 @@
 
 			return c;
 		},
-		
+
 		onProcessSaved: function(process) {
 			var p = this.addProcess(process);
 			callCmFillForStores();
@@ -206,7 +215,7 @@
 			classes[idClass] = undefined;
 			delete classes[idClass];
 			callCmFillForStores();
-			
+
 			this.fireEvent("cm_class_deleted", idClass);
 		},
 
@@ -214,7 +223,7 @@
 			processes[idClass] = undefined;
 			delete processes[idClass];
 			callCmFillForStores();
-			
+
 			this.fireEvent("cm_process_deleted", idClass);
 		},
 
@@ -281,17 +290,17 @@
 			}]
 		});
 	}
-	
+
 	function buildClassesAndProcessesStore() {
 		return new Ext.data.Store({
 			model: "CMTableForComboModel",
 			cmFill: function() {
 				this.removeAll();
 				var data = [];
-				
+
 				function addToData(t) {
 					if (t.data.tableType != "simpletable"
-						&& t.data.name != "Class" 
+						&& t.data.name != "Class"
 						&& t.data.name != "Activity") {
 
 						data.push({
@@ -318,7 +327,7 @@
 			}]
 		});
 	}
-	
+
 	function buildSuperProcessStore() {
 		return new Ext.data.Store({
 			model: "CMTableForComboModel",
@@ -343,7 +352,7 @@
 			}]
 		});
 	}
-	
+
 	// returns a null object (pattern) to avoid checks on onClassSaved
 	function getFakeStore() {
 		return {
@@ -351,7 +360,7 @@
 			cmFake: true
 		};
 	}
-	
+
 	function buildGeoAttributesStoreForClass(classId) {
 		try {
 			var et = _CMCache.getEntryTypeById(classId);
@@ -375,16 +384,16 @@
 			_debug("I can not build a geoAttribute store for classId with id " + classId);
 		}
 	}
-	
+
 	function getTableIdFromSetByName(set, name) {
 		for (var t in set) {
-			t = set[t]; 
+			t = set[t];
 			if (t.get("name") == name) {
 				return t.get("id");
 			}
 		}
 	}
-	
+
 	function callCmFillForStores() {
 		classStore.cmFill();
 		superProcessStore.cmFill();

@@ -5,7 +5,6 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.cmdbuild.services.email.EmailAccount;
 
 public class DefaultEmailAccount implements EmailAccount {
 
@@ -20,6 +19,7 @@ public class DefaultEmailAccount implements EmailAccount {
 		private String smtpServer;
 		private Integer smtpPort;
 		private boolean smtpSsl;
+		private String outputFolder;
 		private String imapServer;
 		private Integer imapPort;
 		private boolean imapSsl;
@@ -92,6 +92,11 @@ public class DefaultEmailAccount implements EmailAccount {
 			return this;
 		}
 
+		public Builder withOutputFolder(final String outputFolder) {
+			this.outputFolder = outputFolder;
+			return this;
+		}
+
 		public Builder withImapServer(final String imapServer) {
 			this.imapServer = imapServer;
 			return this;
@@ -142,6 +147,7 @@ public class DefaultEmailAccount implements EmailAccount {
 	private final String smtpServer;
 	private final Integer smtpPort;
 	private final boolean smtpSsl;
+	private final String outputFolder;
 	private final String imapServer;
 	private final Integer imapPort;
 	private final boolean imapSsl;
@@ -160,6 +166,7 @@ public class DefaultEmailAccount implements EmailAccount {
 		this.smtpServer = builder.smtpServer;
 		this.smtpPort = builder.smtpPort;
 		this.smtpSsl = builder.smtpSsl;
+		this.outputFolder = builder.outputFolder;
 		this.imapServer = builder.imapServer;
 		this.imapPort = builder.imapPort;
 		this.imapSsl = builder.imapSsl;
@@ -222,6 +229,11 @@ public class DefaultEmailAccount implements EmailAccount {
 	@Override
 	public boolean isSmtpConfigured() {
 		return isNotBlank(smtpServer) && isNotBlank(address);
+	}
+
+	@Override
+	public String getOutputFolder() {
+		return outputFolder;
 	}
 
 	@Override

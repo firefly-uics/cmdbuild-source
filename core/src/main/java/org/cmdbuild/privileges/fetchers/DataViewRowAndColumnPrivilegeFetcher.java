@@ -56,12 +56,6 @@ public class DataViewRowAndColumnPrivilegeFetcher implements RowAndColumnPrivile
 
 	@Override
 	public Iterable<? extends WhereClause> fetchPrivilegeFiltersFor(final CMEntryType entryType,
-			final CMEntryType entryTypeForClauses) {
-		return fetchPrivilegeFiltersFor(entryType, entryTypeForClauses, canonical(entryTypeForClauses));
-	}
-
-	@Override
-	public Iterable<? extends WhereClause> fetchPrivilegeFiltersFor(final CMEntryType entryType,
 			final CMEntryType entryTypeForClauses, final Alias entryTypeForClausesAlias) {
 		if (privilegeContext.hasAdministratorPrivileges() && entryType.isActive()) {
 			return EMPTY_WHERE_CLAUSES;

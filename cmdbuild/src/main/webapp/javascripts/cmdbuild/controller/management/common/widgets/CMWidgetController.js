@@ -1,8 +1,5 @@
 (function() {
 
-	/**
-	 * Use it as mixin to have basic functionalities for CMWidgetController
-	 */
 	Ext.define('CMDBuild.controller.management.common.widgets.CMWidgetController', {
 
 		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
@@ -110,7 +107,7 @@
 		},
 
 		/**
-		 * @return {Int}
+		 * @return {Number}
 		 */
 		getWidgetId: function() {
 			return this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.ID];
@@ -128,6 +125,17 @@
 		 */
 		isValid: function() {
 			return true;
+		},
+
+		/**
+		 * @param {Array} callbackChainArray
+		 */
+		onBeforeSave: function(callbackChainArray, i) {
+			if (!Ext.isEmpty(callbackChainArray[i])) {
+				var callbackObject = callbackChainArray[i];
+
+				Ext.callback(callbackObject.fn, callbackObject.scope, [callbackChainArray, i + 1]);
+			}
 		},
 
 		/**

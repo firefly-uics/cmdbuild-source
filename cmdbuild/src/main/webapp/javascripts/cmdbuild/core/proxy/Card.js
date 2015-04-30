@@ -15,25 +15,23 @@
 		 * @property {Object} params
 		 */
 		getCardHistory: function(params) {
+			var headers = {};
+			headers['CMDBuild-Localized'] = true;
+
 			return Ext.create('Ext.data.Store', {
 				autoLoad: false,
 				proxy: {
 					type: 'ajax',
 					url: CMDBuild.core.proxy.CMProxyUrlIndex.card.getCardHistory,
+					headers: headers,
 					reader: {
 						type: 'json',
 						root: 'rows'
 					}
 				},
 				sorters: [
-					{
-						property: 'BeginDate',
-						direction: 'DESC'
-					},
-					{
-						property: '_EndDate',
-						direction: 'DESC'
-					}
+					{ property: 'BeginDate', direction: 'DESC' },
+					{ property: '_EndDate', direction: 'DESC' }
 				],
 				fields: params.fields,
 				baseParams: params.baseParams
@@ -130,13 +128,19 @@
 		/**
 		 * Unlock all cards that was locked
 		 *
-		 * @param {Object} params
+		 * @param {Object} parameters
 		 */
-		unlockAllCards: function(params) {
-			params.method = 'POST';
-			params.url = CMDBuild.core.proxy.CMProxyUrlIndex.card.unlockAll;
-
-			CMDBuild.ServiceProxy.core.doRequest(params);
+		unlockAllCards: function(parameters) {
+			CMDBuild.Ajax.request({
+				method: 'POST',
+				url: CMDBuild.core.proxy.CMProxyUrlIndex.card.unlockAll,
+				loadMask: true,
+				params: parameters.params,
+				scope: parameters.scope,
+				failure: parameters.failure || Ext.emptyFn(),
+				success: parameters.success || Ext.emptyFn(),
+				callback: parameters.callback || Ext.emptyFn()
+			});
 		}
 	});
 
