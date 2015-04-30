@@ -767,15 +767,16 @@
 		}
 	},
 	"delayLabels": {
-		"hour1": "1 ora",
-		"hours2": "2 ore",
-		"hours4": "4 ore",
 		"day1": "1 giorno",
 		"days2": "2 giorni",
 		"days4": "4 giorni",
+		"hour1": "1 ora",
+		"hours2": "2 ore",
+		"hours4": "4 ore",
+		"month1": "1 mese",
+		"none": "Nessuno",
 		"week1": "1 settimana",
-		"weeks2": "2 settimane",
-		"month1": "1 mese"
+		"weeks2": "2 settimane"
 	},
 	"errors": {
 		"busy_wf_widgets": "I controlli visuali risultano occupati, controlla lo stato del server prima di riprovare.",
