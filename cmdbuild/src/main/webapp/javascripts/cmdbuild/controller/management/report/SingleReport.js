@@ -1,12 +1,20 @@
 (function() {
 
 	Ext.define('CMDBuild.controller.management.report.SingleReport', {
-		extend: 'CMDBuild.controller.CMBasePanelController',
+		extend: 'CMDBuild.controller.common.AbstractBasePanelController',
 
 		requires: [
 			'CMDBuild.core.proxy.CMProxyConstants',
 			'CMDBuild.core.proxy.CMProxyUrlIndex',
 			'CMDBuild.core.proxy.Report'
+		],
+
+		/**
+		 * @cfg {Array}
+		 */
+		cmfgCatchedFunctions: [
+			'onReportDownloadButtonClick',
+			'onReportTypeButtonClick'
 		],
 
 		/**
@@ -28,37 +36,6 @@
 			CMDBuild.core.proxy.CMProxyConstants.PDF,
 			CMDBuild.core.proxy.CMProxyConstants.RTF
 		],
-
-		/**
-		 * @param {Object} view
-		 */
-		constructor: function(view) {
-			this.callParent(arguments);
-
-			this.view.delegate = this;
-		},
-
-		/**
-		 * Gatherer function to catch events
-		 *
-		 * @param {String} name
-		 * @param {Object} param
-		 * @param {Function} callback
-		 */
-		cmOn: function(name, param, callBack) {
-			switch (name) {
-				case 'onReportDownloadButtonClick':
-					return this.onReportDownloadButtonClick();
-
-				case 'onReportTypeButtonClick' :
-					return this.onReportTypeButtonClick(param);
-
-				default: {
-					if (!Ext.isEmpty(this.parentDelegate))
-						return this.parentDelegate.cmOn(name, param, callBack);
-				}
-			}
-		},
 
 		/**
 		 * @param {Object} reportParams
@@ -141,6 +118,8 @@
 					id: node.get(CMDBuild.core.proxy.CMProxyConstants.ID),
 					extension: node.get(CMDBuild.core.proxy.CMProxyConstants.TYPE).replace(/report/i, '') // Removes 'report' string from type property in node object
 				});
+
+				this.callParent(arguments);
 			}
 		},
 
