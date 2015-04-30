@@ -1,13 +1,18 @@
 (function() {
 
 	Ext.define('CMDBuild.controller.management.report.Report', {
-		extend: 'CMDBuild.controller.CMBasePanelController',
+		extend: 'CMDBuild.controller.common.AbstractBasePanelController',
 
 		requires: [
 			'CMDBuild.core.proxy.CMProxyConstants',
 			'CMDBuild.core.proxy.CMProxyUrlIndex',
 			'CMDBuild.core.proxy.Report'
 		],
+
+		/**
+		 * @cfg {Array}
+		 */
+		cmfgCatchedFunctions: ['onReportGenerateButtonClick'],
 
 		/**
 		 * @property {CMDBuild.view.management.report.GridPanel}
@@ -35,28 +40,11 @@
 		constructor: function(view) {
 			this.callParent(arguments);
 
-			this.grid = this.view.grid;
-			this.grid.delegate = this;
-			this.view.delegate = this;
-		},
+			this.grid = Ext.create('CMDBuild.view.management.report.GridPanel', {
+				delegate: this
+			});
 
-		/**
-		 * Gatherer function to catch events
-		 *
-		 * @param {String} name
-		 * @param {Object} param
-		 * @param {Function} callback
-		 */
-		cmOn: function(name, param, callBack) {
-			switch (name) {
-				case 'onReportGenerateButtonClick' :
-					return this.onReportGenerateButtonClick(param);
-
-				default: {
-					if (!Ext.isEmpty(this.parentDelegate))
-						return this.parentDelegate.cmOn(name, param, callBack);
-				}
-			}
+			this.view.add(this.grid);
 		},
 
 		/**
@@ -132,6 +120,8 @@
 						extension: node.get(CMDBuild.core.proxy.CMProxyConstants.TYPE).replace(/report/i, '') // Removes 'report' string from type property in node object
 					});
 				}
+
+				this.callParent(arguments);
 			}
 		},
 

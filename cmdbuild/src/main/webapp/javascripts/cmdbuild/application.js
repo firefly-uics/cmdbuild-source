@@ -71,8 +71,10 @@
 		 * @param {String} message
 		 */
 		_msg = function(message) {
-			if (!Ext.isEmpty(message))
-				CMDBuild.log.info('INFO: ' + message);
+			if (!Ext.isEmpty(arguments[0]) && typeof arguments[0] == 'string')
+				arguments[0] = 'INFO: ' + arguments[0];
+
+			CMDBuild.log.info.apply(CMDBuild.log, arguments);
 		};
 
 		_trace = function() {
