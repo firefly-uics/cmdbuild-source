@@ -1,10 +1,15 @@
 package unit.data.store;
 
+import static com.google.common.collect.Iterables.size;
+import static org.apache.commons.lang3.builder.ToStringStyle.SHORT_PREFIX_STYLE;
 import static org.cmdbuild.data.store.Groupables.nameAndValue;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.cmdbuild.data.store.InMemoryStore;
 import org.cmdbuild.data.store.Storable;
 import org.junit.Before;
@@ -14,24 +19,42 @@ public class InMemoryStoreTest {
 
 	private static class StorableTestDouble implements Storable {
 
-		public static StorableTestDouble of(final String identifier) {
-			return new StorableTestDouble(identifier);
+		public static class Builder implements org.apache.commons.lang3.builder.Builder<StorableTestDouble> {
+
+			private String identifier;
+			private String value;
+
+			private Builder() {
+				// user factory method
+			}
+
+			@Override
+			public StorableTestDouble build() {
+				return new StorableTestDouble(this);
+			}
+
+			public Builder withIdentifier(final String identifier) {
+				this.identifier = identifier;
+				return this;
+			}
+
+			public Builder withValue(final String value) {
+				this.value = value;
+				return this;
+			}
+
 		}
 
-		public static StorableTestDouble of(final String identifier, final String value) {
-			return new StorableTestDouble(identifier, value);
+		public static Builder newInstance() {
+			return new Builder();
 		}
 
 		private final String identifier;
 		private final String value;
 
-		private StorableTestDouble(final String identifier) {
-			this(identifier, null);
-		}
-
-		private StorableTestDouble(final String identifier, final String value) {
-			this.identifier = identifier;
-			this.value = value;
+		private StorableTestDouble(final Builder builder) {
+			this.identifier = builder.identifier;
+			this.value = builder.value;
 		}
 
 		@Override
@@ -45,7 +68,10 @@ public class InMemoryStoreTest {
 
 		@Override
 		public int hashCode() {
-			return identifier.hashCode();
+			return new HashCodeBuilder() //
+					.append(identifier) //
+					.append(value) //
+					.toHashCode();
 		}
 
 		@Override
@@ -57,19 +83,18 @@ public class InMemoryStoreTest {
 				return false;
 			}
 			final StorableTestDouble other = StorableTestDouble.class.cast(obj);
-			return identifier.equals(other.identifier) && value.equals(other.value);
+			return new EqualsBuilder() //
+					.append(this.identifier, other.identifier) //
+					.append(this.value, other.value) //
+					.isEquals();
 		}
 
 		@Override
 		public String toString() {
-			return identifier;
+			return ToStringBuilder.reflectionToString(this, SHORT_PREFIX_STYLE);
 		}
 
 	}
-
-	private static final StorableTestDouble FOO = StorableTestDouble.of("foo");
-	private static final StorableTestDouble BAR = StorableTestDouble.of("bar");
-	private static final StorableTestDouble BAZ = StorableTestDouble.of("baz");
 
 	private InMemoryStore<StorableTestDouble> store;
 
@@ -79,44 +104,84 @@ public class InMemoryStoreTest {
 	}
 
 	@Test
+	public void storableInterfaceHasOneMethodOnly() throws Exception {
+		assertThat(Storable.class.getMethods().length, equalTo(1));
+	}
+
+	@Test
 	public void elementCreatedAndRead() throws Exception {
-		store.create(FOO);
+		// given
+		final StorableTestDouble toBeCreated = StorableTestDouble.newInstance() //
+				.withIdentifier("foo") //
+				.build();
 
-		final StorableTestDouble readed = store.read(FOO);
+		// when
+		final Storable stored = store.create(toBeCreated);
+		final StorableTestDouble readed = store.read(stored);
 
-		assertThat(readed, equalTo(FOO));
+		// then
+		assertThat(readed, equalTo(StorableTestDouble.newInstance() //
+				.withIdentifier("foo") //
+				.build()));
 	}
 
 	@Test
 	public void multipleElementsCreatedAndRead() throws Exception {
-		store.create(FOO);
-		store.create(BAR);
-		store.create(BAZ);
+		// given
+		final StorableTestDouble foo = StorableTestDouble.newInstance() //
+				.withIdentifier("foo") //
+				.build();
+		final StorableTestDouble bar = StorableTestDouble.newInstance() //
+				.withIdentifier("bar") //
+				.build();
+		final StorableTestDouble baz = StorableTestDouble.newInstance() //
+				.withIdentifier("baz") //
+				.build();
 
+		// when
+		store.create(foo);
+		store.create(bar);
+		store.create(baz);
 		final Iterable<StorableTestDouble> elements = store.readAll();
 
-		assertThat(elements, containsInAnyOrder(FOO, BAR, BAZ));
+		// then
+		assertThat(elements, containsInAnyOrder(foo, bar, baz));
 	}
 
 	@Test
 	public void elementCreatedUpdatedAndRead() throws Exception {
-		store.create(StorableTestDouble.of("foo", "foo"));
-		store.update(StorableTestDouble.of("foo", "bar"));
+		// given
+		final StorableTestDouble foo = StorableTestDouble.newInstance() //
+				.withIdentifier("foo") //
+				.build();
 
-		final StorableTestDouble readed = store.read(FOO);
+		// when
+		final Storable stored = store.create(foo);
+		store.update(StorableTestDouble.newInstance() //
+				.withIdentifier("foo") //
+				.withValue("bar") //
+				.build());
+		final StorableTestDouble readed = store.read(stored);
 
+		// then
 		assertThat(readed.getValue(), equalTo("bar"));
 	}
 
 	@Test
-	public void elementsAddedAndDeleted() throws Exception {
-		store.create(FOO);
-		store.create(BAR);
-		store.delete(FOO);
+	public void elementAddedAndDeleted() throws Exception {
+		// given
+		final StorableTestDouble foo = StorableTestDouble.newInstance() //
+				.withIdentifier("foo") //
+				.build();
 
+		// when
+		final Storable created = store.create(foo);
+		store.read(created);
+		store.delete(created);
 		final Iterable<StorableTestDouble> elements = store.readAll();
 
-		assertThat(elements, containsInAnyOrder(BAR));
+		// then
+		assertThat(size(elements), equalTo(0));
 	}
 
 	@Test(expected = UnsupportedOperationException.class)

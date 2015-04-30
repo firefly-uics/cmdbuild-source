@@ -19,20 +19,6 @@ public interface RowAndColumnPrivilegeFetcher {
 	 */
 	Iterable<? extends WhereClause> fetchPrivilegeFiltersFor(CMEntryType entryType);
 
-	/**
-	 * Returns all {@link WhereClause}s related to the specified
-	 * {@link CMEntryType}. All {@link WhereClause}s are referred to the second
-	 * entry type. This is useful when we are looking at the privileges of a
-	 * superclass but we want them referred to a specific subclass.
-	 * 
-	 * @param entryType
-	 * @param entryTypeForClauses
-	 * 
-	 * @return all {@link WhereClause}s related to the specified
-	 *         {@link CMEntryType}.
-	 */
-	Iterable<? extends WhereClause> fetchPrivilegeFiltersFor(CMEntryType entryType, CMEntryType entryTypeForClauses);
-
 	Iterable<? extends WhereClause> fetchPrivilegeFiltersFor(CMEntryType entryType, CMEntryType entryTypeForClauses,
 			Alias entryTypeForClausesAlias);
 

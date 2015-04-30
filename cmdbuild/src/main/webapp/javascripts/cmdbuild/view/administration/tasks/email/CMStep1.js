@@ -212,7 +212,7 @@
 				name: CMDBuild.core.proxy.CMProxyConstants.EMAIL_ACCOUNT,
 				fieldLabel: tr.taskEmail.emailAccount,
 				labelWidth: CMDBuild.LABEL_WIDTH,
-				store: CMDBuild.core.proxy.CMProxyEmailAccounts.getStore(),
+				store: CMDBuild.core.proxy.email.Accounts.getStore(),
 				displayField: CMDBuild.core.proxy.CMProxyConstants.NAME,
 				valueField: CMDBuild.core.proxy.CMProxyConstants.NAME,
 				maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,

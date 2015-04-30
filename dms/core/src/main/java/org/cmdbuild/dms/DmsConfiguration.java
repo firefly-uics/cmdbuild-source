@@ -22,8 +22,6 @@ public interface DmsConfiguration {
 
 	String getCmdbuildCategory();
 
-	String getLookupNameForAttachments();
-
 	String getRepositoryFSPath();
 
 	String getRepositoryWSPath();

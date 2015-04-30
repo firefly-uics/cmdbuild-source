@@ -10,8 +10,6 @@ import static org.cmdbuild.logic.mapping.json.Constants.Filters.OPERATOR_KEY;
 import static org.cmdbuild.logic.mapping.json.Constants.Filters.VALUE_KEY;
 import static org.cmdbuild.workflow.ProcessAttributes.FlowStatus;
 
-import java.util.Collection;
-
 import org.cmdbuild.data.store.lookup.Lookup;
 import org.cmdbuild.logic.mapping.json.JsonFilterHelper.FilterElementGetter;
 import org.cmdbuild.workflow.LookupHelper;

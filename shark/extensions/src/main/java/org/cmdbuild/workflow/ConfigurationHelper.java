@@ -1,13 +1,14 @@
 package org.cmdbuild.workflow;
 
+import static com.google.common.reflect.Reflection.newProxy;
 import static java.lang.String.format;
 import static java.util.Arrays.asList;
+import static org.cmdbuild.common.utils.Reflection.unsupported;
 
 import java.util.List;
 
 import org.cmdbuild.common.api.mail.Configuration;
 import org.cmdbuild.common.api.mail.MailApiFactory;
-import org.cmdbuild.common.utils.UnsupportedProxyFactory;
 import org.cmdbuild.shark.Logging;
 import org.cmdbuild.workflow.api.SharkWorkflowApiFactory;
 import org.enhydra.shark.api.internal.working.CallbackUtilities;
@@ -65,8 +66,9 @@ public class ConfigurationHelper {
 	}
 
 	public Configuration.All getMailApiConfiguration() {
-		final Configuration.Input INPUT_NOT_SUPPORTED = UnsupportedProxyFactory.of(
-				Configuration.Input.class).create();
+		final Configuration.Input INPUT_NOT_SUPPORTED = newProxy(Configuration.Input.class,
+				unsupported("method not supported"));
+
 		return new Configuration.All() {
 
 			@Override
@@ -114,6 +116,11 @@ public class ConfigurationHelper {
 			@Override
 			public List<String> getOutputFromRecipients() {
 				return asList(cus.getProperty(MAIL_FROM_ADDRESS), MAIL_MULTIPLES_SEPARATOR);
+			}
+
+			@Override
+			public String getOutputFolder() {
+				return null;
 			}
 
 			@Override

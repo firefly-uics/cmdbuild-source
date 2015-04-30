@@ -86,8 +86,9 @@
 			var attributesDescriptionArray = [];
 
 			// Build attributesDescriptionArray to test if display attribute
-			for (var i in classAttributes)
-				attributesDescriptionArray.push(classAttributes[i][CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION]);
+			Ext.Array.forEach(classAttributes, function(attribute, i, allAttributes) {
+				attributesDescriptionArray.push(attribute[CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION]);
+			}, this);
 
 			if (record.raw['_RelHist']) {
 				body += this.historyAttribute(tr.domain, record.raw['DomainDesc'])

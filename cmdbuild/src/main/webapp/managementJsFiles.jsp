@@ -1,5 +1,4 @@
 <!-- SELECTIONS -->
-<script type="text/javascript" src="javascripts/cmdbuild/selection/CMCheckboxModel.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/selection/CMMultiPageSelectionModel.js"></script>
 
 <!-- PROXIES -->
@@ -50,7 +49,6 @@
 		<script type="text/javascript" src="javascripts/cmdbuild/view/management/classes/attachments/CMCardAttachmentsTab.js"></script>
 
 		<!-- WIDGETS -->
-		<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/widgets/grid/CMGrid.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/widgets/linkCards/LinkCards.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/widgets/CMNavigationTree.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/widgets/CMWidgetsWindow.js"></script>
@@ -62,8 +60,6 @@
 		<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/widgets/CMCreateModifyCard.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/widgets/CMOpenAttachment.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/widgets/CMOpenNote.js"></script>
-		<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/widgets/email/CMManageEmail.js"></script>
- 		<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/widgets/email/CMDMSAttachmentPicker.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/widgets/CMManageRelation.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/widgets/CMWebService.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/widgets/CMPresetFromCard.js"></script>
@@ -101,9 +97,6 @@
 	<script type="text/javascript" src="javascripts/cmdbuild/view/management/utilities/CMModBulkCardUpdate.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/management/utilities/CMModExportCSV.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/management/utilities/CMModImportCSV.js"></script>
-
-	<!-- REPORT -->
-	<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/report/ReportParamWin.js"></script>
 
 	<!-- MENU -->
 	<script type="text/javascript" src="javascripts/cmdbuild/view/management/menu/CMMenuAccordion.js"></script>
@@ -144,10 +137,8 @@
 
 		<!-- WIDGETS -->
 		<script type="text/javascript" src="javascripts/cmdbuild/controller/management/common/widgets/linkCards/LinkCardsController.js"></script>
-		<script type="text/javascript" src="javascripts/cmdbuild/controller/management/common/widgets/CMGridController.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/controller/management/common/widgets/CMNavigationTreeController.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/controller/management/common/widgets/CMWidgetController.js"></script>
-		<script type="text/javascript" src="javascripts/cmdbuild/controller/management/common/widgets/CMManageEmailController.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/controller/management/common/widgets/CMManageRelationController.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/controller/management/common/widgets/CMOpenNoteController.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/controller/management/common/widgets/CMOpenAttachmentController.js"></script>
@@ -177,10 +168,6 @@
 
 	<!-- DATA VIEW -->
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/management/dataView/CMModSqlDataViewController.js"></script>
-
-	<!-- REPORT-->
-	<script type="text/javascript" src="javascripts/cmdbuild/controller/management/report/CMSingleReportPageController.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/controller/management/report/CMModReportController.js"></script>
 
 	<!-- WORKFLOW -->
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/management/workflow/CMModWorkflowController.js"></script>

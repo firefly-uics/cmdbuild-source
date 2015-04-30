@@ -5,12 +5,12 @@ import org.apache.commons.codec.digest.DigestUtils;
 public class Md5Digester implements Digester {
 
 	@Override
-	public String encrypt(String plainText) {
+	public String encrypt(final String plainText) {
 		return DigestUtils.md5Hex(plainText);
 	}
 
 	@Override
-	public String decrypt(String cipherText) {
+	public String decrypt(final String cipherText) {
 		throw new UnsupportedOperationException("The MD5 algorithm does not support the decrypt operation");
 	}
 
@@ -18,7 +18,7 @@ public class Md5Digester implements Digester {
 	public boolean isReversible() {
 		return false;
 	}
-	
+
 	@Override
 	public String toString() {
 		return "MD5";

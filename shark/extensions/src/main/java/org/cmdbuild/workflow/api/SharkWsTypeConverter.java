@@ -51,12 +51,17 @@ public abstract class SharkWsTypeConverter {
 
 		case FOREIGNKEY:
 		case REFERENCE:
-			final ReferenceType reference = (ReferenceType) value;
-			if (reference.checkValidity()) {
-				return Integer.toString(reference.getId());
+			final String output;
+			if (value instanceof Number) {
+				final Number n = Number.class.cast(value);
+				output = Integer.toString(n.intValue());
+			} else if (value instanceof ReferenceType) {
+				final ReferenceType r = ReferenceType.class.cast(value);
+				output = r.checkValidity() ? Integer.toString(r.getId()) : EMPTY;
 			} else {
-				return EMPTY;
+				output = EMPTY;
 			}
+			return output;
 
 		case LOOKUP:
 			final LookupType lookup = (LookupType) value;

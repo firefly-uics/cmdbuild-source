@@ -171,7 +171,7 @@ CMDBuild.Ajax =  new Ext.data.Connection({
 			return "";
 		}
 	},
-	
+
 	/*
 	 * From Ext.Ajax
 	 */
@@ -182,7 +182,7 @@ CMDBuild.Ajax =  new Ext.data.Connection({
 });
 
 CMDBuild.Ajax.on('beforerequest', CMDBuild.Ajax.showMaskAndTrapCallbacks);
-Ext.Ajax = CMDBuild.Ajax;
+//Ext.Ajax = CMDBuild.Ajax; // Ugly override
 
 /**
  * @class CMDBuild.ChainedAjax
@@ -234,7 +234,7 @@ CMDBuild.ChainedAjax = {
     		Ext.callback(o.fn, o.scope || this);
     	}
     },
-    
+
     //private
     showMask: function(o, index) {
     	if (o.loadMask) {

@@ -14,9 +14,10 @@ import javax.activation.DataHandler;
 
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.view.CMDataView;
-import org.cmdbuild.data.store.lookup.Lookup;
+import org.cmdbuild.data.store.lookup.LookupImpl;
 import org.cmdbuild.data.store.lookup.LookupStore;
 import org.cmdbuild.data.store.lookup.LookupType;
+import org.cmdbuild.data.store.lookup.Lookup;
 import org.cmdbuild.dms.DefaultDefinitionsFactory;
 import org.cmdbuild.dms.DefinitionsFactory;
 import org.cmdbuild.dms.DmsConfiguration;
@@ -83,7 +84,7 @@ public class DefaultDmsLogic implements DmsLogic {
 	 * category.
 	 * 
 	 * @param category
-	 *            is the {@code Description} of the {@link Lookup}.
+	 *            is the {@code Description} of the {@link LookupImpl}.
 	 * 
 	 * @return the {@link DocumentTypeDefinition} for the specified category.
 	 * 
@@ -174,7 +175,7 @@ public class DefaultDmsLogic implements DmsLogic {
 	public List<StoredDocument> search(final String className, final Long cardId) {
 		try {
 			final DocumentSearch document = createDocumentFactory(className) //
-					.createDocumentSearch(className, cardId.toString());
+					.createDocumentSearch(className, cardId);
 			return service.search(document);
 		} catch (final DmsError e) {
 			logger.warn("cannot get stored documents", e);
@@ -201,8 +202,8 @@ public class DefaultDmsLogic implements DmsLogic {
 			final String fileName, final String category, final String description,
 			final Iterable<MetadataGroup> metadataGroups) throws IOException, CMDBException {
 		final StorableDocument document = createDocumentFactory(className) //
-				.createStorableDocument(author, className, cardId.toString(), inputStream, fileName, category,
-						description, metadataGroups);
+				.createStorableDocument(author, className, cardId, inputStream, fileName, category, description,
+						metadataGroups);
 		try {
 			service.upload(document);
 		} catch (final Exception e) {
@@ -216,7 +217,7 @@ public class DefaultDmsLogic implements DmsLogic {
 	@Override
 	public DataHandler download(final String className, final Long cardId, final String fileName) {
 		final DocumentDownload document = createDocumentFactory(className) //
-				.createDocumentDownload(className, cardId.toString(), fileName);
+				.createDocumentDownload(className, cardId, fileName);
 		try {
 			final DataHandler dataHandler = service.download(document);
 			return dataHandler;
@@ -232,7 +233,7 @@ public class DefaultDmsLogic implements DmsLogic {
 	@Override
 	public void delete(final String className, final Long cardId, final String fileName) throws DmsException {
 		final DocumentDelete document = createDocumentFactory(className) //
-				.createDocumentDelete(className, cardId.toString(), fileName);
+				.createDocumentDelete(className, cardId, fileName);
 		try {
 			service.delete(document);
 		} catch (final Exception e) {
@@ -247,12 +248,54 @@ public class DefaultDmsLogic implements DmsLogic {
 	public void updateDescriptionAndMetadata(final String className, final Long cardId, final String filename,
 			final String category, final String description, final Iterable<MetadataGroup> metadataGroups) {
 		final DocumentUpdate document = createDocumentFactory(className) //
-				.createDocumentUpdate(className, cardId.toString(), filename, category, description, metadataGroups);
+				.createDocumentUpdate(className, cardId, filename, category, description, metadataGroups);
 		try {
 			service.updateDescriptionAndMetadata(document);
 		} catch (final Exception e) {
 			final String message = String.format("error updating file '%s' for card '%s' with id '%d'", //
 					filename, className, cardId);
+			logger.error(message, e);
+			throw DmsException.Type.DMS_UPDATE_ERROR.createException();
+		}
+	}
+
+	@Override
+	public void copy(final String sourceClassName, final Long sourceId, final String filename,
+			final String destinationClassName, final Long destinationId) {
+		try {
+			final DocumentSearch source = createDocumentFactory(sourceClassName) //
+					.createDocumentSearch(sourceClassName, sourceId);
+			for (final StoredDocument document : service.search(source)) {
+				if (document.getName().equals(filename)) {
+					final DocumentSearch destination = createDocumentFactory(destinationClassName) //
+							.createDocumentSearch(destinationClassName, destinationId);
+					service.copy(document, source, destination);
+				}
+			}
+		} catch (final Exception e) {
+			final String message = String.format("error copying file '%s' from '%s' with id '%d' to '%s' with id '%d'", //
+					filename, sourceClassName, sourceId, destinationClassName, destinationId);
+			logger.error(message, e);
+			throw DmsException.Type.DMS_UPDATE_ERROR.createException();
+		}
+	}
+
+	@Override
+	public void move(final String sourceClassName, final Long sourceId, final String filename,
+			final String destinationClassName, final Long destinationId) {
+		try {
+			final DocumentSearch source = createDocumentFactory(sourceClassName) //
+					.createDocumentSearch(sourceClassName, sourceId);
+			for (final StoredDocument document : service.search(source)) {
+				if (document.getName().equals(filename)) {
+					final DocumentSearch destination = createDocumentFactory(destinationClassName) //
+							.createDocumentSearch(destinationClassName, destinationId);
+					service.move(document, source, destination);
+				}
+			}
+		} catch (final Exception e) {
+			final String message = String.format("error moving file '%s' from '%s' with id '%d' to '%s' with id '%d'", //
+					filename, sourceClassName, sourceId, destinationClassName, destinationId);
 			logger.error(message, e);
 			throw DmsException.Type.DMS_UPDATE_ERROR.createException();
 		}

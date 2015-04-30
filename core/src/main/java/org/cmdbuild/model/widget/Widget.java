@@ -5,17 +5,24 @@ import java.util.Map;
 import net.jcip.annotations.NotThreadSafe;
 
 import org.apache.commons.lang3.StringUtils;
-import org.cmdbuild.data.store.Storable;
+import org.cmdbuild.logger.Log;
 import org.cmdbuild.model.widget.WidgetVisitor.WidgetVisitable;
+import org.cmdbuild.services.localization.LocalizableStorable;
+import org.cmdbuild.services.localization.LocalizableStorableVisitor;
 import org.cmdbuild.workflow.CMActivityInstance;
 import org.cmdbuild.workflow.CMActivityWidget;
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.annotate.JsonTypeInfo;
+import org.slf4j.Logger;
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.MINIMAL_CLASS, include = JsonTypeInfo.As.PROPERTY, property = "type")
 @NotThreadSafe
-public abstract class Widget implements CMActivityWidget, WidgetVisitable, Storable {
+public abstract class Widget implements CMActivityWidget, WidgetVisitable, LocalizableStorable {
+
+	protected static final Logger logger = Log.WORKFLOW;
+
+	public static final String SUBMISSION_PARAM = "output";
 
 	protected interface WidgetAction {
 		Object execute() throws Exception;
@@ -24,7 +31,6 @@ public abstract class Widget implements CMActivityWidget, WidgetVisitable, Stora
 	@JsonProperty("id")
 	private String identifier;
 	private String label;
-	private String label_default;
 	private boolean active;
 	private boolean alwaysenabled;
 	@JsonIgnore
@@ -97,14 +103,6 @@ public abstract class Widget implements CMActivityWidget, WidgetVisitable, Stora
 		return label;
 	}
 
-	public String getLabel_default() {
-		return label_default;
-	}
-
-	public void setLabel_default(String label_default) {
-		this.label_default = label_default;
-	}
-
 	public final void setActive(final boolean active) {
 		this.active = active;
 	}
@@ -155,6 +153,11 @@ public abstract class Widget implements CMActivityWidget, WidgetVisitable, Stora
 	public final String getType() {
 		final String fullName = this.getClass().getName();
 		return fullName.substring(fullName.lastIndexOf("."));
+	}
+	
+	@Override
+	public void accept(LocalizableStorableVisitor visitor) {
+		visitor.visit(this);
 	}
 
 }

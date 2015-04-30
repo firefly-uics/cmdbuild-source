@@ -56,7 +56,7 @@ public class DefaultLookupHelper implements LookupHelper {
 	@Override
 	public Optional<Lookup> flowStatusWithCode(final String code) {
 		for (final Lookup lookup : allLookups()) {
-			if (code.equals(lookup.code)) {
+			if (code.equals(lookup.code())) {
 				return Optional.of(lookup);
 			}
 		}
@@ -67,7 +67,7 @@ public class DefaultLookupHelper implements LookupHelper {
 	public WSProcessInstanceState stateForLookupId(final Long id) {
 		for (final Lookup lookup : allLookups()) {
 			if (lookup.getId().equals(id)) {
-				final WSProcessInstanceState state = stateForLookupCode(lookup.code);
+				final WSProcessInstanceState state = stateForLookupCode(lookup.code());
 				return (state == null) ? WSProcessInstanceState.UNSUPPORTED : state;
 			}
 		}

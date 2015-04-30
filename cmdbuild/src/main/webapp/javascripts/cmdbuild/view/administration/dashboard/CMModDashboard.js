@@ -3,6 +3,8 @@
 	var BASE_TITLE = CMDBuild.Translation.administration.modDashboard.title;
 		TITLE_SUFFIX_SEPARATOR = " - ";
 
+	Ext.require('CMDBuild.view.common.field.translatable.Text'); // Here to FIX a Firefox Bug
+
 	// interface of the view
 	Ext.define("CMDBuild.view.administration.dashboard.CMModDashboardInterface", {
 		cmName:'dashboard',

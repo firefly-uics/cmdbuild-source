@@ -3,11 +3,11 @@ package org.cmdbuild.model.data;
 import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.apache.commons.lang3.StringUtils.trim;
+import static org.apache.commons.lang3.builder.ToStringStyle.SHORT_PREFIX_STYLE;
 
 import org.apache.commons.lang3.Validate;
+import org.apache.commons.lang3.builder.Builder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
-import org.cmdbuild.common.Builder;
 
 public class Domain {
 
@@ -23,6 +23,8 @@ public class Domain {
 		private boolean masterDetail;
 		private String masterDetailDescription;
 		private boolean active;
+		private Iterable<String> disabled1;
+		private Iterable<String> disabled2;
 
 		private DomainBuilder() {
 			// use factory method
@@ -78,6 +80,16 @@ public class Domain {
 			return this;
 		}
 
+		public DomainBuilder withDisabled1(final Iterable<String> disabled1) {
+			this.disabled1 = disabled1;
+			return this;
+		}
+
+		public DomainBuilder withDisabled2(final Iterable<String> disabled2) {
+			this.disabled2 = disabled2;
+			return this;
+		}
+
 		@Override
 		public Domain build() {
 			Validate.isTrue(isNotBlank(name), "invalid name");
@@ -99,8 +111,8 @@ public class Domain {
 	private final boolean masterDetail;
 	private final String masterDetailDescription;
 	private final boolean active;
-
-	private final String toString;
+	private final Iterable<String> disabled1;
+	private final Iterable<String> disabled2;
 
 	public static DomainBuilder newDomain() {
 		return new DomainBuilder();
@@ -117,7 +129,8 @@ public class Domain {
 		this.masterDetail = builder.masterDetail;
 		this.masterDetailDescription = builder.masterDetailDescription;
 		this.active = builder.active;
-		this.toString = ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
+		this.disabled1 = builder.disabled1;
+		this.disabled2 = builder.disabled2;
 	}
 
 	public String getName() {
@@ -160,9 +173,17 @@ public class Domain {
 		return active;
 	}
 
+	public Iterable<String> getDisabled1() {
+		return disabled1;
+	}
+
+	public Iterable<String> getDisabled2() {
+		return disabled2;
+	}
+
 	@Override
 	public String toString() {
-		return toString;
+		return ToStringBuilder.reflectionToString(this, SHORT_PREFIX_STYLE);
 	}
 
 }

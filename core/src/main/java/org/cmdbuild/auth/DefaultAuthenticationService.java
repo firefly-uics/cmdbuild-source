@@ -1,5 +1,6 @@
 package org.cmdbuild.auth;
 
+import static org.apache.commons.lang3.StringUtils.*;
 import static org.apache.commons.lang3.BooleanUtils.isTrue;
 import static org.cmdbuild.auth.UserStores.unsupported;
 import static org.cmdbuild.auth.user.AuthenticatedUserImpl.ANONYMOUS_USER;
@@ -53,7 +54,7 @@ public class DefaultAuthenticationService implements AuthenticationService {
 		/**
 		 * Returns the names of the authenticators that should be activated, or
 		 * null if all authenticators should be activated.
-		 * 
+		 *
 		 * @return active authenticators or null
 		 */
 		Collection<String> getActiveAuthenticators();
@@ -271,6 +272,8 @@ public class DefaultAuthenticationService implements AuthenticationService {
 				.set(User.PASSWORD, digester.encrypt(userDTO.getPassword())) //
 				.set(User.EMAIL, userDTO.getEmail()) //
 				.set(User.ACTIVE, userDTO.isActive()) //
+				.set(User.SERVICE, userDTO.isService()) //
+				.set(User.PRIVILEGED, userDTO.isPrivileged()) //
 				.save();
 		return fetchUserById(createdUserCard.getId());
 	}
@@ -280,14 +283,16 @@ public class DefaultAuthenticationService implements AuthenticationService {
 		final Digester digester = new Base64Digester();
 		final CMCard userCard = fetchUserCardWithId(userDTO.getUserId());
 		final CMCardDefinition cardToBeUpdated = view.update(userCard) //
-				.set(User.ACTIVE, userDTO.isActive());
+				.set(User.ACTIVE, userDTO.isActive()) //
+				.set(User.SERVICE, userDTO.isService()) //
+				.set(User.PRIVILEGED, userDTO.isPrivileged());
 		if (userDTO.getDescription() != null) {
 			cardToBeUpdated.set(User.DESCRIPTION, userDTO.getDescription());
 		}
-		if (userDTO.getEmail() != null) {
+		if (isNotBlank(userDTO.getEmail())) {
 			cardToBeUpdated.set(User.EMAIL, userDTO.getEmail());
 		}
-		if (userDTO.getPassword() != null) {
+		if (isNotBlank(userDTO.getPassword())) {
 			cardToBeUpdated.set(User.PASSWORD, digester.encrypt(userDTO.getPassword()));
 		}
 		cardToBeUpdated.save();
@@ -300,7 +305,7 @@ public class DefaultAuthenticationService implements AuthenticationService {
 			final CMRelationDefinition definition = view.update(relation) //
 					/*
 					 * TODO implement within dao layer
-					 * 
+					 *
 					 * at the moment queried relations doesn't have card1 and
 					 * card2, so we must set them until it will be fixed
 					 */

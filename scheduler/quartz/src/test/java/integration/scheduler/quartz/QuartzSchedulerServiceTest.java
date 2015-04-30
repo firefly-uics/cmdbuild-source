@@ -1,5 +1,9 @@
 package integration.scheduler.quartz;
 
+import static org.junit.Assert.*;
+import static org.hamcrest.Matchers.*;
+import static org.cmdbuild.scheduler.Triggers.everySecond;
+
 import java.util.Date;
 
 import org.cmdbuild.scheduler.Job;
@@ -26,7 +30,6 @@ public class QuartzSchedulerServiceTest {
 	private static final int ONCE = 1;
 	private static final int THREE_TIMES = 3;
 	private static final long IN_THREE_SECONDS = (3 - 1) * 1000L;
-	private static final String EVERY_SECOND = "0/1 * * * * ?";
 
 	private SchedulerService scheduler;
 
@@ -90,15 +93,29 @@ public class QuartzSchedulerServiceTest {
 	@Test
 	public void quartzExecutesARecurringJob() throws InterruptedException {
 		final Job nullJob = createNullJob();
-		final Trigger everySecond = RecurringTrigger.at(EVERY_SECOND);
-		assertEventually(nullJob, willBeExecutedApproximately(everySecond, THREE_TIMES), IN_THREE_SECONDS);
+		assertEventually(nullJob, willBeExecutedApproximately(everySecond(), THREE_TIMES), IN_THREE_SECONDS);
 	}
 
 	@Test
 	public void quartzRemovesARecurringJob() throws InterruptedException {
 		final Job nullJob = createSelfRemovingJob();
-		final Trigger everySecond = RecurringTrigger.at(EVERY_SECOND);
-		assertEventually(nullJob, willBeExecuted(everySecond, ONCE), IN_THREE_SECONDS);
+		assertEventually(nullJob, willBeExecuted(everySecond(), ONCE), IN_THREE_SECONDS);
+	}
+
+	@Test
+	public void quartzKnowsWhenJobIsAdded() throws InterruptedException {
+		// given
+		final Job job = createNullJob();
+		final Trigger timeout = OneTimeTrigger.at(farFarAway());
+
+		// then
+		assertThat(scheduler.isStarted(job), equalTo(false));
+
+		// and when
+		scheduler.add(job, timeout);
+
+		// then
+		assertThat(scheduler.isStarted(job), equalTo(true));
 	}
 
 	/*

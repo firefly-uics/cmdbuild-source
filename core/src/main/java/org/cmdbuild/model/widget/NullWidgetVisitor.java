@@ -1,6 +1,16 @@
 package org.cmdbuild.model.widget;
 
-public abstract class NullWidgetVisitor implements WidgetVisitor {
+public class NullWidgetVisitor implements WidgetVisitor {
+
+	private static final NullWidgetVisitor INSTANCE = new NullWidgetVisitor();
+
+	public static NullWidgetVisitor getInstance() {
+		return INSTANCE;
+	}
+
+	private NullWidgetVisitor() {
+		// use factory method
+	}
 
 	@Override
 	public void visit(final Calendar widget) {

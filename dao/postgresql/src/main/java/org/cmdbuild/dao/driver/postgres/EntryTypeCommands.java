@@ -1,12 +1,17 @@
 package org.cmdbuild.dao.driver.postgres;
 
+import static com.google.common.base.Joiner.on;
+import static com.google.common.collect.Maps.newLinkedHashMap;
 import static java.lang.String.format;
+import static java.util.Collections.emptyList;
+import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.cmdbuild.dao.driver.postgres.Const.DOMAIN_PREFIX;
 import static org.cmdbuild.dao.driver.postgres.SqlType.createAttributeType;
 import static org.cmdbuild.dao.driver.postgres.SqlType.getSqlTypeString;
+import static org.cmdbuild.dao.entrytype.DBDomain.DomainMetadata.DISABLED_SEPARATOR;
 import static org.cmdbuild.dao.entrytype.DBIdentifier.fromName;
 import static org.cmdbuild.dao.entrytype.DBIdentifier.fromNameAndNamespace;
 
@@ -35,25 +40,15 @@ import org.cmdbuild.dao.entrytype.DBDomain;
 import org.cmdbuild.dao.entrytype.DBDomain.DomainMetadata;
 import org.cmdbuild.dao.entrytype.DBEntryType;
 import org.cmdbuild.dao.entrytype.DBEntryType.EntryTypeMetadata;
-import org.cmdbuild.dao.entrytype.attributetype.BooleanAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeTypeVisitor;
-import org.cmdbuild.dao.entrytype.attributetype.CharAttributeType;
-import org.cmdbuild.dao.entrytype.attributetype.DateAttributeType;
-import org.cmdbuild.dao.entrytype.attributetype.DateTimeAttributeType;
-import org.cmdbuild.dao.entrytype.attributetype.DecimalAttributeType;
-import org.cmdbuild.dao.entrytype.attributetype.DoubleAttributeType;
-import org.cmdbuild.dao.entrytype.attributetype.EntryTypeAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.ForeignKeyAttributeType;
-import org.cmdbuild.dao.entrytype.attributetype.IntegerAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.ForwardingAttributeTypeVisitor;
 import org.cmdbuild.dao.entrytype.attributetype.IpAddressAttributeType;
-import org.cmdbuild.dao.entrytype.attributetype.IpAddressAttributeType.Type;
 import org.cmdbuild.dao.entrytype.attributetype.LookupAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.NullAttributeTypeVisitor;
 import org.cmdbuild.dao.entrytype.attributetype.ReferenceAttributeType;
-import org.cmdbuild.dao.entrytype.attributetype.StringArrayAttributeType;
-import org.cmdbuild.dao.entrytype.attributetype.StringAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TextAttributeType;
-import org.cmdbuild.dao.entrytype.attributetype.TimeAttributeType;
 import org.cmdbuild.dao.function.DBFunction;
 import org.cmdbuild.dao.function.DBFunction.FunctionMetadata;
 import org.cmdbuild.dao.view.DBDataView.DBAttributeDefinition;
@@ -63,14 +58,19 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.jdbc.core.RowMapper;
 
-import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 
 public class EntryTypeCommands implements LoggingSupport {
 
 	private static final String DEFAULT_SCHEMA = "public";
 
-	private static final Pattern COMMENT_PATTERN = Pattern.compile("(([A-Z0-9_]+): ([^|]*))*");
+	private static String SEPARATOR = "|";
+	private static String KEY_VALUE_SEPARATOR = ": ";
+
+	private static final Pattern COMMENT_PATTERN = Pattern.compile("(([A-Z0-9_]+)" + KEY_VALUE_SEPARATOR + "([^"
+			+ SEPARATOR + "]*))*");
+
+	private static final Iterable<String> NO_DISABLED = emptyList();
 
 	private final DBDriver driver;
 	private final JdbcTemplate jdbcTemplate;
@@ -376,45 +376,20 @@ public class EntryTypeCommands implements LoggingSupport {
 	}
 
 	private String commentFrom(final DBAttributeDefinition definition) {
-		return new CMAttributeTypeVisitor() {
+		return new ForwardingAttributeTypeVisitor() {
+
+			private final CMAttributeTypeVisitor DELEGATE = NullAttributeTypeVisitor.getInstance();
 
 			private final Collection<String> elements = Lists.newArrayList();
 
 			@Override
-			public void visit(final BooleanAttributeType attributeType) {
-			}
-
-			@Override
-			public void visit(final CharAttributeType attributeType) {
-			}
-
-			@Override
-			public void visit(final EntryTypeAttributeType attributeType) {
-			}
-
-			@Override
-			public void visit(final DateTimeAttributeType attributeType) {
-			}
-
-			@Override
-			public void visit(final DateAttributeType attributeType) {
-			}
-
-			@Override
-			public void visit(final DecimalAttributeType attributeType) {
-			}
-
-			@Override
-			public void visit(final DoubleAttributeType attributeType) {
+			protected CMAttributeTypeVisitor delegate() {
+				return DELEGATE;
 			}
 
 			@Override
 			public void visit(final ForeignKeyAttributeType attributeType) {
 				append(DBAttribute.AttributeMetadata.FK_TARGET_CLASS, attributeType.getForeignKeyDestinationClassName());
-			}
-
-			@Override
-			public void visit(final IntegerAttributeType attributeType) {
 			}
 
 			@Override
@@ -443,20 +418,8 @@ public class EntryTypeCommands implements LoggingSupport {
 			}
 
 			@Override
-			public void visit(final StringAttributeType attributeType) {
-			}
-
-			@Override
 			public void visit(final TextAttributeType attributeType) {
 				append(DBAttribute.AttributeMetadata.EDITOR_TYPE, definition.getEditorType());
-			}
-
-			@Override
-			public void visit(final TimeAttributeType attributeType) {
-			}
-
-			@Override
-			public void visit(final StringArrayAttributeType attributeType) {
 			}
 
 			private void append(final String key, final String value) {
@@ -477,7 +440,7 @@ public class EntryTypeCommands implements LoggingSupport {
 				append(DBAttribute.AttributeMetadata.INDEX, Integer.toString(definition.getIndex()));
 				append(EntryTypeMetadata.MODE, definition.getMode().toString().toLowerCase());
 				append(DBAttribute.AttributeMetadata.FIELD_MODE, definition.getMode().toString().toLowerCase());
-				return Joiner.on("|").join(elements);
+				return on(SEPARATOR).join(elements);
 			}
 
 		} //
@@ -578,18 +541,30 @@ public class EntryTypeCommands implements LoggingSupport {
 	}
 
 	private String commentFrom(final DBDomainDefinition definition) {
-		// TODO handle more that two classes
-		return format(
-				"LABEL: %s|DESCRDIR: %s|DESCRINV: %s|MODE: write|STATUS: %s|TYPE: domain|CLASS1: %s|CLASS2: %s|CARDIN: %s|MASTERDETAIL: %s|MDLABEL: %s", //
-				definition.getDescription(), //
-				defaultIfBlank(definition.getDirectDescription(), EMPTY), //
-				defaultIfBlank(definition.getInverseDescription(), EMPTY), //
-				definition.isActive() ? "active" : "noactive", //
-				nameFrom(definition.getClass1()), //
-				nameFrom(definition.getClass2()), //
-				defaultIfBlank(definition.getCardinality(), "N:N"), //
-				Boolean.toString(definition.isMasterDetail()), //
-				defaultIfBlank(definition.getMasterDetailDescription(), EMPTY));
+		final Map<String, String> map = newLinkedHashMap();
+		map.put("LABEL", definition.getDescription());
+		map.put("DESCRDIR", defaultIfBlank(definition.getDirectDescription(), EMPTY));
+		map.put("DESCRINV", defaultIfBlank(definition.getInverseDescription(), EMPTY));
+		map.put("MODE", "write");
+		map.put("STATUS", definition.isActive() ? "active" : "noactive");
+		map.put("TYPE", "domain");
+		map.put("CLASS1", nameFrom(definition.getClass1()));
+		map.put("CLASS2", nameFrom(definition.getClass2()));
+		map.put("CARDIN", defaultIfBlank(definition.getCardinality(), "N:N"));
+		map.put("MASTERDETAIL", Boolean.toString(definition.isMasterDetail()));
+		map.put("MDLABEL", defaultIfBlank(definition.getMasterDetailDescription(), EMPTY));
+		map.put("DISABLED1", disabled(definition.getDisabled1()));
+		map.put("DISABLED2", disabled(definition.getDisabled2()));
+		return on(SEPARATOR) //
+				.withKeyValueSeparator(KEY_VALUE_SEPARATOR) //
+				.useForNull(EMPTY) //
+				.join(map);
+	}
+
+	private String disabled(final Iterable<String> values) {
+		return on(DISABLED_SEPARATOR) //
+				.skipNulls() //
+				.join(defaultIfNull(values, NO_DISABLED));
 	}
 
 	public void deleteDomain(final DBDomain dbDomain) {

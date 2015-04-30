@@ -61,6 +61,7 @@
 			var params = {};
 			params[parameterNames.ACTIVE] = true;
 			params[parameterNames.CLASS_NAME] = _CMCache.getEntryTypeNameById(classId);
+			params[CMDBuild.core.proxy.CMProxyConstants.LOCALIZED] = true;
 
 			function success(response, options, result) {
 				var attributes = result.attributes;
@@ -172,7 +173,7 @@
 		getForeignKeyStore: function(foreignKye) {
 			var maxCards = parseInt(CMDBuild.Config.cmdbuild.referencecombolimit),
 				baseParams = {
-					limit: maxCards,
+					// limit: maxCards, // TODO: no one know why this field should limit store to referencecombolimit value
 					className: foreignKye.fkDestination,
 					NoFilter: true
 				};

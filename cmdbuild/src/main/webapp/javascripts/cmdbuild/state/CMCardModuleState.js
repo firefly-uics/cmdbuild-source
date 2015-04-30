@@ -17,6 +17,7 @@
 	});
 
 	Ext.define('CMDBuild.state.CMCardModuleState', {
+
 		mixins: {
 			delegable: 'CMDBuild.core.CMDelegable'
 		},

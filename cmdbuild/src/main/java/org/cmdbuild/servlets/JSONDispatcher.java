@@ -1,5 +1,6 @@
 package org.cmdbuild.servlets;
 
+import static org.apache.commons.lang3.BooleanUtils.toBoolean;
 import static org.cmdbuild.logic.auth.AuthenticationLogicUtils.assureAdmin;
 import static org.cmdbuild.logic.auth.AuthenticationLogicUtils.isLoggedIn;
 import static org.cmdbuild.spring.SpringIntegrationUtils.applicationContext;
@@ -254,8 +255,18 @@ public class JSONDispatcher extends HttpServlet {
 			 */
 			httpResponse.setContentType("text/html");
 		} else if (methodResponse instanceof DataHandler) {
-			final DataHandler dh = (DataHandler) methodResponse;
-			httpResponse.setContentType(dh.getContentType());
+			final String forceDownloadHeader = httpRequest.getHeader("force-download");
+			final String forceDownloadParameter = httpRequest.getParameter("force-download");
+			final DataHandler dh = DataHandler.class.cast(methodResponse);
+			if ((forceDownloadHeader != null) ? toBoolean(forceDownloadHeader) : toBoolean(forceDownloadParameter)) {
+				httpResponse.setContentType("application/force-download");
+				httpResponse.setHeader("Content-Transfer-Encoding", "binary");
+				httpResponse.setHeader("Content-Disposition", String.format("attachment; filename=\"%s\";", dh.getName()));
+			} else {
+				httpResponse.setHeader("Content-Disposition", String.format("inline; filename=\"%s\";", dh.getName()));
+				httpResponse.setHeader("Expires", "0");
+				httpResponse.setContentType(dh.getContentType());
+			}
 		} else if (methodResponse instanceof String) {
 			httpResponse.setContentType("text/plain");
 		} else {
@@ -266,9 +277,7 @@ public class JSONDispatcher extends HttpServlet {
 	private void writeResponseData(final MethodInfo methodInfo, final Object methodResponse,
 			final HttpServletResponse httpResponse) throws IOException {
 		if (methodResponse instanceof DataHandler) {
-			final DataHandler dh = (DataHandler) methodResponse;
-			httpResponse.setHeader("Content-Disposition", String.format("inline; filename=\"%s\";", dh.getName()));
-			httpResponse.setHeader("Expires", "0");
+			final DataHandler dh = DataHandler.class.cast(methodResponse);
 			dh.writeTo(httpResponse.getOutputStream());
 		} else if (methodResponse instanceof Document) {
 			final XMLWriter writer = new XMLWriter(httpResponse.getWriter());

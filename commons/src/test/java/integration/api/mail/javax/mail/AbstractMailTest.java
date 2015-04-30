@@ -21,7 +21,8 @@ import org.apache.commons.io.IOUtils;
 import org.cmdbuild.common.api.mail.Configuration;
 import org.cmdbuild.common.api.mail.MailApi;
 import org.cmdbuild.common.api.mail.MailApiFactory;
-import org.cmdbuild.common.api.mail.NewMail;
+import org.cmdbuild.common.api.mail.NewMailQueue;
+import org.cmdbuild.common.api.mail.SendableNewMail;
 import org.cmdbuild.common.api.mail.javax.mail.JavaxMailBasedMailApiFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -81,18 +82,24 @@ public abstract class AbstractMailTest {
 	 * Utils
 	 */
 
-	protected NewMail newMail() {
+	protected SendableNewMail newMail() {
 		return newMail(NO_USERNAME, NO_PASSWORD);
 	}
 
-	protected NewMail newMail(final String username, final String password) {
+	protected SendableNewMail newMail(final String username, final String password) {
 		final MailApiFactory mailApiFactory = new JavaxMailBasedMailApiFactory();
 		final MailApi mailApi = mailApiFactory.create(configurationFrom(username, password));
 		return mailApi.newMail();
 	}
 
-	protected void send(final NewMail newMail) throws Exception {
-		newMail.send();
+	protected NewMailQueue newMailQueue() {
+		return newMailQueue(NO_USERNAME, NO_PASSWORD);
+	}
+
+	protected NewMailQueue newMailQueue(final String username, final String password) {
+		final MailApiFactory mailApiFactory = new JavaxMailBasedMailApiFactory();
+		final MailApi mailApi = mailApiFactory.create(configurationFrom(username, password));
+		return mailApi.newMailQueue();
 	}
 
 	protected Configuration.All configurationFrom(final String username, final String password) {
@@ -141,6 +148,11 @@ public abstract class AbstractMailTest {
 			@Override
 			public List<String> getOutputFromRecipients() {
 				return asList(FOO_AT_EXAMPLE_DOT_COM);
+			}
+
+			@Override
+			public String getOutputFolder() {
+				return "Sent";
 			}
 
 			@Override

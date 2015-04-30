@@ -36,7 +36,7 @@ import org.junit.rules.ExternalResource;
  */
 public class DmsServiceResource extends ExternalResource {
 
-	public static class Builder implements org.cmdbuild.common.Builder<DmsServiceResource> {
+	public static class Builder implements org.apache.commons.lang3.builder.Builder<DmsServiceResource> {
 
 		private static final List<String> DEFAULT_PATH = asList("path", "of", "test", "documents");
 		private static final String DEFAULT_TARGET_CLASS = "class";
@@ -73,12 +73,12 @@ public class DmsServiceResource extends ExternalResource {
 		return new Builder();
 	}
 
-	private static class StorableDocumentBuilder implements org.cmdbuild.common.Builder<StorableDocument> {
+	private static class StorableDocumentBuilder implements org.apache.commons.lang3.builder.Builder<StorableDocument> {
 
 		private final DocumentCreator documentFactory;
 
 		private String targetClass;
-		private String id;
+		private Long id;
 		private File file;
 		private String category;
 		private Iterable<MetadataGroup> metadataGroups;
@@ -110,10 +110,6 @@ public class DmsServiceResource extends ExternalResource {
 		}
 
 		public StorableDocumentBuilder withId(final Long id) {
-			return withId(id.toString());
-		}
-
-		public StorableDocumentBuilder withId(final String id) {
 			this.id = id;
 			return this;
 		}
@@ -209,7 +205,7 @@ public class DmsServiceResource extends ExternalResource {
 		}
 
 		private DocumentSearch positionAt(final Long id) {
-			return documentFactory.createDocumentSearch(targetClass, id.toString());
+			return documentFactory.createDocumentSearch(targetClass, id);
 		}
 
 		private StorableDocument storableDocumentFrom(final File file) throws FileNotFoundException {
@@ -246,7 +242,7 @@ public class DmsServiceResource extends ExternalResource {
 		}
 
 		private DocumentDelete documentDeleteFrom(final String name) {
-			return documentFactory.createDocumentDelete(targetClass, id.toString(), name);
+			return documentFactory.createDocumentDelete(targetClass, id, name);
 		}
 
 		private static <T> T from(final T t) {
@@ -257,7 +253,7 @@ public class DmsServiceResource extends ExternalResource {
 			return t;
 		}
 
-		private static <T> T a(final org.cmdbuild.common.Builder<T> builder) {
+		private static <T> T a(final org.apache.commons.lang3.builder.Builder<T> builder) {
 			return builder.build();
 		}
 

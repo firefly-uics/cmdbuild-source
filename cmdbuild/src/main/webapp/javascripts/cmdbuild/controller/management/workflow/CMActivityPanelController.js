@@ -13,11 +13,11 @@
 			wfStateDelegate: "CMDBuild.state.CMWorkflowStateDelegate"
 		},
 
-		constructor: function(v, owner, widgetControllerManager, delegate) {
+		constructor: function(view, supercontroller, widgetControllerManager, delegate) {
 			this.callParent(arguments);
 
 			// this flag is used to define if the user has click on the
-			// save or advance button. The difference is that on save 
+			// save or advance button. The difference is that on save
 			// the widgets do nothing and the saved activity goes in display mode.
 			// On advance, otherwise, the widgets do the react (save their state) and
 			// the saved activity lies in edit mode, to continue the data entry.
@@ -65,14 +65,14 @@
 
 			Ext.suspendLayouts();
 
-			if (!activityInstance.nullObject 
+			if (!activityInstance.nullObject
 					&& activityInstance.isNew()) {
 
 				/*
 				 * I could be in a tab different to the first one,
 				 * but to edit a new card is necessary to have the editing form.
 				 * So I force the view to go on the ActivityTab
-				 * 
+				 *
 				 * Do it here instead of in the CMModWorkflowController
 				 * because it must be done before all operation
 				 * over the form for rendering issues
@@ -119,6 +119,8 @@
 					&& ai && ai.isWritable()) {
 
 				this.view.editMode();
+
+				this.callParent(arguments);
 			}
 		},
 
@@ -142,7 +144,10 @@
 		// override
 		onSaveCardClick: function() {
 			this.isAdvance = false;
-			save.call(this);
+
+			this.superController.onSaveCardClick(); // Forward save event
+
+			this.widgetControllerManager.waitForBusyWidgets(save, this); // Check for busy widgets also on save
 		},
 
 		// override
@@ -155,6 +160,8 @@
 			} else {
 				this.onActivityInstanceChange(activityInstance);
 			}
+
+			this.callParent(arguments); // Forward save event
 
 			_CMUIState.onlyGridIfFullScreen();
 		},
@@ -208,6 +215,9 @@
 			if (processInstance != null) {
 				this.view.loadCard(processInstance.asDummyModel());
 				this.view.displayModeForNotEditableCard();
+
+				if (!processInstance.isNew())
+					this.ensureEditPanel(); // Creates editPanel with relative form fields
 			}
 		},
 
@@ -340,13 +350,15 @@
 				_debug("save the process with params", requestParams);
 
 				CMDBuild.LoadMask.get().show();
-
 				CMDBuild.ServiceProxy.workflow.saveActivity({
 					params: requestParams,
 					scope : this,
 					clientValidation: this.isAdvance, //to force the save request
 					callback: function(operation, success, response) {
 						CMDBuild.LoadMask.get().hide();
+					},
+					failure: function(response, options, decodedResponse) {
+						this.delegate.reload(); // Reload store also on failure
 					},
 					success: function(operation, requestConfiguration, decodedResponse) {
 						var savedCardId = decodedResponse.response.Id;
@@ -418,7 +430,10 @@
 				&& processInstance.getId() == me.idToAdvance) {
 
 			me.view.editMode();
+			me.superController.onModifyCardClick(); // Call modify event for email tab
+
 			me.isAdvance = false;
+
 			return;
 		}
 

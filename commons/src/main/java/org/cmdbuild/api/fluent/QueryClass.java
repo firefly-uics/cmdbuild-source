@@ -12,8 +12,8 @@ public class QueryClass extends ActiveCard {
 	private final Set<String> requestedAttributes;
 	private final Set<String> unmodifiableRequestedAttributes;
 
-	QueryClass(final FluentApi api, final String className) {
-		super(api, className, null);
+	QueryClass(final FluentApiExecutor executor, final String className) {
+		super(executor, className, null);
 		requestedAttributes = new HashSet<String>();
 		unmodifiableRequestedAttributes = unmodifiableSet(requestedAttributes);
 	}
@@ -47,7 +47,7 @@ public class QueryClass extends ActiveCard {
 	}
 
 	public List<Card> fetch() {
-		return api().getExecutor().fetchCards(this);
+		return executor().fetchCards(this);
 	}
 
 }

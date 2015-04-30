@@ -80,6 +80,21 @@
 			CMDBuild.ServiceProxy.core.doRequest(p);
 		},
 
+		/**
+		 * @param {Object} parameters
+		 */
+		synchronize: function(parameters) {
+			CMDBuild.Ajax.request( {
+				url: CMDBuild.core.proxy.CMProxyUrlIndex.workflow.synchronize,
+				loadMask: true,
+				params: parameters.params,
+				scope: parameters.scope,
+				failure: parameters.failure || Ext.emptyFn(),
+				success: parameters.success || Ext.emptyFn(),
+				callback: parameters.callback || Ext.emptyFn()
+			});
+		},
+
 		terminateActivity: function(p) {
 			p.url = CMDBuild.ServiceProxy.url.workflow.abortProcess;
 			p.method = 'POST';
@@ -88,7 +103,7 @@
 		},
 
 		/**
-		 * @param {} parameters
+		 * @param {Object} parameters
 		 */
 		xpdlUpload: function(parameters) {
 			parameters.form.submit({

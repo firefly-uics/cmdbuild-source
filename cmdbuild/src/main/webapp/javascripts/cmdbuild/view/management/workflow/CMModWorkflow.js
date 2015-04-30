@@ -50,6 +50,10 @@
 				this.cardTabPanel // as CMTabbedWidgetDelegate
 			);
 
+			this.mon(this.cardGrid.addCardButton, "cmClick", function(p) {
+				this.fireEvent(this.CMEVENTS.addButtonClick, p);
+			}, this);
+
 			this.getWidgetManager = function() {
 				return widgetManager;
 			};

@@ -14,11 +14,11 @@ Ext.define("CMDBuild.view.administration.group.CMGroupUsers", {
 		var availableUsersGrid =  new Ext.grid.Panel({
 			store: this.availableUsersStore,
 			columns: [{
-				header: tr.user.username,
+				header: CMDBuild.Translation.username,
 				dataIndex: 'username',
 				flex: 1
 			},{
-				header: tr.user.description,
+				header: CMDBuild.Translation.descriptionLabel,
 				dataIndex: 'description',
 				flex: 1
 			}],
@@ -56,11 +56,11 @@ Ext.define("CMDBuild.view.administration.group.CMGroupUsers", {
 				}
 			},
 			columns: [{
-				header: tr.user.username,
+				header: CMDBuild.Translation.username,
 				dataIndex: 'username',
 				flex: 1
 			},{
-				header: tr.user.description,
+				header: CMDBuild.Translation.descriptionLabel,
 				dataIndex: 'description',
 				flex: 1
 			}],

@@ -220,7 +220,7 @@
 						defaultGroupTooltip,
 						CMDBuild.Translation.administration.modsecurity.groups,
 						CMDBuild.Runtime.GroupDescriptions,
-						CMDBuild.Translation.administration.modsecurity.user.defaultgroup,
+						CMDBuild.Translation.defaultGroup,
 						CMDBuild.Runtime.DefaultGroupDescription
 					)
 				});

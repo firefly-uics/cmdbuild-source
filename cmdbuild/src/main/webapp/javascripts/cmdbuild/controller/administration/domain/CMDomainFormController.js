@@ -3,12 +3,31 @@
 	Ext.define("CMDBuild.controller.administration.domain.CMDomainFormController", {
 		constructor: function(view) {
 			this.view = view;
+			this.view.delegate = this;
 			this.currentDomain = null;
 
-			this.view.saveButton.on("click", onSaveButtonClick, this);
 			this.view.deleteButton.on("click", onDeleteButtonClick, this);
 			this.view.abortButton.on("click", onAbortButtonClick, this);
 		},
+
+		/**
+		 * Gatherer function to catch events
+		 *
+		 * @param {String} name
+		 * @param {Object} param
+		 * @param {Function} callback
+		 */
+		cmOn: function(name, param, callBack) {
+			switch (name) {
+				default: {
+					if (!Ext.isEmpty(this.parentDelegate))
+						return this.parentDelegate.cmOn(name, param, callBack);
+				}
+			}
+		},
+
+		onAbortButtonClick: onAbortButtonClick,
+
 		onDomainSelected: function(cmDomain) {
 			this.currentDomain = cmDomain;
 			this.view.onDomainSelected(cmDomain);
@@ -19,37 +38,6 @@
 		},
 		onDomainDeleted: Ext.emptyFn
 	});
-
-	function onSaveButtonClick() {
-		var invalidFields = this.view.getNonValidFields();
-
-		if (invalidFields.length == 0) {
-			CMDBuild.LoadMask.get().show();
-			var withDisabled = true;
-			var data = this.view.getData(withDisabled);
-			if (this.currentDomain == null) {
-				data.id = -1;
-			} else {
-				data.id = this.currentDomain.get("id");
-			}
-
-			CMDBuild.ServiceProxy.administration.domain.save({
-				params: data,
-				scope: this,
-				success: function(req, res, decoded) {
-					this.view.disableModify();
-					_CMCache.onDomainSaved(decoded.domain);
-					_CMCache.flushTranslationsToSave(decoded.domain.name);
-				},
-				callback: function() {
-					CMDBuild.LoadMask.get().hide();
-				}
-			});
-
-		} else {
-			CMDBuild.Msg.error(CMDBuild.Translation.common.failure, CMDBuild.Translation.errors.invalid_fields, false);
-		}
-	}
 
 	function onAbortButtonClick() {
 		if (this.currentDomain != null) {

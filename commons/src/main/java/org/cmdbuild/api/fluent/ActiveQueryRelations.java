@@ -5,15 +5,15 @@ import java.util.List;
 
 public class ActiveQueryRelations extends RelationsQuery {
 
-	private final FluentApi api;
+	private final FluentApiExecutor executor;
 
-	ActiveQueryRelations(final FluentApi api, final String className, final Integer id) {
+	ActiveQueryRelations(final FluentApiExecutor executor, final String className, final Integer id) {
 		super(className, id);
-		this.api = api;
+		this.executor = executor;
 	}
 
-	protected FluentApi api() {
-		return api;
+	protected FluentApiExecutor executor() {
+		return executor;
 	}
 
 	public ActiveQueryRelations withDomain(final String domainName) {
@@ -23,7 +23,7 @@ public class ActiveQueryRelations extends RelationsQuery {
 
 	public List<CardDescriptor> fetch() {
 		final List<CardDescriptor> descriptors = new ArrayList<CardDescriptor>();
-		final List<Relation> relations = api.getExecutor().fetch(this);
+		final List<Relation> relations = executor().fetch(this);
 		for (final Relation relation : relations) {
 			descriptors.add(descriptorFrom(relation));
 		}

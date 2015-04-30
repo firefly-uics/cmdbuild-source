@@ -30,9 +30,9 @@ public class DecimalAttributeType extends AbstractAttributeType<BigDecimal> {
 	protected BigDecimal convertNotNullValue(final Object value) {
 		BigDecimal decimalValue;
 		if (value instanceof BigDecimal) {
-			decimalValue = (BigDecimal) value;
+			decimalValue = BigDecimal.class.cast(value);
 		} else if (value instanceof String) {
-			final String stringValue = (String) value;
+			final String stringValue = String.class.cast(value);
 			if (stringValue.isEmpty()) {
 				decimalValue = null;
 			} else {
@@ -40,9 +40,9 @@ public class DecimalAttributeType extends AbstractAttributeType<BigDecimal> {
 				decimalValue = new BigDecimal(stringValue);
 			}
 		} else if (value instanceof Double) {
-			decimalValue = new BigDecimal((Double) value);
+			decimalValue = BigDecimal.valueOf(Double.class.cast(value));
 		} else if (value instanceof Integer) {
-			decimalValue = new BigDecimal(((Integer) value));
+			decimalValue = BigDecimal.valueOf(Integer.class.cast(value).longValue());
 		} else {
 			throw illegalValue(value);
 		}

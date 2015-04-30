@@ -8,12 +8,13 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import org.cmdbuild.auth.UserStore;
 import org.cmdbuild.auth.acl.CMGroup;
 import org.cmdbuild.auth.acl.PrivilegeContext;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.view.CMDataView;
-import org.cmdbuild.data.converter.ViewConverter;
+import org.cmdbuild.model.view.ViewConverter;
 import org.cmdbuild.privileges.predicates.IsAlwaysReadable;
 import org.cmdbuild.privileges.predicates.IsReadableClass;
 import org.cmdbuild.privileges.predicates.IsReadableDashboard;
@@ -31,15 +32,17 @@ public class MenuCardPredicateFactoryTest {
 	private static final Long referencedClassId = 10L;
 	private CMDataView view;
 	private Supplier<PrivilegeContext> privilegeContext;
+	private UserStore userStore;
 
 	@Before
 	public void setUp() {
 		this.view = getDataView();
 		this.privilegeContext = mock(Supplier.class);
+		this.userStore = mock(UserStore.class);
 	}
 
 	private MenuCardPredicateFactory menuCardPredicateFactory(final CMGroup mockGroup) {
-		return new MenuCardPredicateFactory(view, mockGroup, privilegeContext, new ViewConverter(view));
+		return new MenuCardPredicateFactory(view, mockGroup, privilegeContext, new ViewConverter(view), userStore);
 	}
 
 	@Test

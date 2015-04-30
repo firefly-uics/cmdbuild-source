@@ -1,6 +1,7 @@
 package org.cmdbuild.logic.taskmanager.event;
 
 import static com.google.common.base.Suppliers.memoize;
+import static com.google.common.base.Suppliers.ofInstance;
 import static com.google.common.collect.FluentIterable.from;
 import static com.google.common.collect.Iterables.contains;
 import static com.google.common.collect.Iterables.isEmpty;
@@ -10,11 +11,8 @@ import static org.apache.commons.lang3.StringUtils.defaultString;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.cmdbuild.common.template.engine.Engines.emptyStringOnNull;
 import static org.cmdbuild.common.template.engine.Engines.nullOnError;
-import static org.cmdbuild.common.utils.guava.Suppliers.firstNotNull;
-import static org.cmdbuild.common.utils.guava.Suppliers.nullOnException;
 import static org.cmdbuild.dao.entrytype.Functions.allParents;
 import static org.cmdbuild.dao.entrytype.Functions.names;
-import static org.cmdbuild.services.email.Predicates.named;
 import static org.cmdbuild.services.event.Commands.safe;
 import static org.cmdbuild.services.template.engine.EngineNames.CQL_PREFIX;
 import static org.cmdbuild.services.template.engine.EngineNames.CURRENT_CARD_PREFIX;
@@ -35,8 +33,8 @@ import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.logging.LoggingSupport;
 import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.view.CMDataView;
-import org.cmdbuild.data.store.Store;
-import org.cmdbuild.data.store.StoreSupplier;
+import org.cmdbuild.data.store.email.EmailAccount;
+import org.cmdbuild.data.store.email.EmailAccountFacade;
 import org.cmdbuild.data.store.email.EmailConstants;
 import org.cmdbuild.logic.data.QueryOptions;
 import org.cmdbuild.logic.data.access.QuerySpecsBuilderFiller;
@@ -48,7 +46,6 @@ import org.cmdbuild.logic.taskmanager.task.event.synchronous.SynchronousEventTas
 import org.cmdbuild.logic.taskmanager.util.CardIdFilterElementGetter;
 import org.cmdbuild.logic.workflow.StartProcess;
 import org.cmdbuild.logic.workflow.WorkflowLogic;
-import org.cmdbuild.services.email.EmailAccount;
 import org.cmdbuild.services.email.EmailServiceFactory;
 import org.cmdbuild.services.event.Command;
 import org.cmdbuild.services.event.Context;
@@ -73,6 +70,7 @@ import org.slf4j.Logger;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
+import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
 
@@ -187,7 +185,7 @@ public class DefaultObserverFactory implements ObserverFactory {
 	private final UserStore userStore;
 	private final FluentApi fluentApi;
 	private final WorkflowLogic workflowLogic;
-	private final Store<EmailAccount> emailAccountStore;
+	private final EmailAccountFacade emailAccountFacade;
 	private final EmailServiceFactory emailServiceFactory;
 	private final EmailTemplateLogic emailTemplateLogic;
 	private final CMDataView dataView;
@@ -197,7 +195,7 @@ public class DefaultObserverFactory implements ObserverFactory {
 			final UserStore userStore, //
 			final FluentApi fluentApi, //
 			final WorkflowLogic workflowLogic, //
-			final Store<EmailAccount> emailAccountStore, //
+			final EmailAccountFacade emailAccountFacade, //
 			final EmailServiceFactory emailServiceFactory, //
 			final EmailTemplateLogic emailTemplateLogic, //
 			final CMDataView dataView, //
@@ -206,7 +204,7 @@ public class DefaultObserverFactory implements ObserverFactory {
 		this.userStore = userStore;
 		this.fluentApi = fluentApi;
 		this.workflowLogic = workflowLogic;
-		this.emailAccountStore = emailAccountStore;
+		this.emailAccountFacade = emailAccountFacade;
 		this.emailServiceFactory = emailServiceFactory;
 		this.emailTemplateLogic = emailTemplateLogic;
 		this.dataView = dataView;
@@ -303,12 +301,10 @@ public class DefaultObserverFactory implements ObserverFactory {
 					}
 
 				});
-				final Supplier<EmailAccount> templateEmailAccountSupplier = nullOnException(StoreSupplier.of(
-						EmailAccount.class, emailAccountStore, named(emailTemplateSupplier.get().getAccount())));
-				final Supplier<EmailAccount> taskEmailAccountSupplier = nullOnException(StoreSupplier.of(
-						EmailAccount.class, emailAccountStore, named(task.getEmailAccount())));
-				final Supplier<EmailAccount> emailAccountSupplier = firstNotNull(asList(templateEmailAccountSupplier,
-						taskEmailAccountSupplier));
+				final Optional<EmailAccount> account = emailAccountFacade.firstOf(asList(emailTemplateSupplier.get()
+						.getAccount(), task.getEmailAccount()));
+				final Supplier<EmailAccount> emailAccountSupplier = account.isPresent() ? ofInstance(account.get())
+						: null;
 				SendTemplateEmail.newInstance() //
 						.withEmailAccountSupplier(emailAccountSupplier) //
 						.withEmailServiceFactory(emailServiceFactory) //

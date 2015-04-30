@@ -16,7 +16,7 @@ import org.cmdbuild.model.data.Domain;
 import org.cmdbuild.model.data.EntryType;
 
 public interface DataDefinitionLogic extends Logic {
-	
+
 	interface MetadataAction {
 
 		interface Visitor {
@@ -31,7 +31,7 @@ public interface DataDefinitionLogic extends Logic {
 		void accept(Visitor visitor);
 
 	}
-	
+
 	interface FunctionItem {
 
 		String name();
@@ -60,11 +60,6 @@ public interface DataDefinitionLogic extends Logic {
 	void reorder(Attribute attribute);
 
 	void changeClassOrders(String className, List<ClassOrder> classOrders);
-
-	/**
-	 * @deprecated use the create method and update methods only
-	 */
-	CMDomain createOrUpdate(Domain domain);
 
 	CMDomain create(Domain domain);
 

@@ -88,6 +88,8 @@ public class Configuration {
 		 */
 		List<String> getOutputFromRecipients();
 
+		String getOutputFolder();
+
 	}
 
 	/**
@@ -141,7 +143,7 @@ public class Configuration {
 	/**
 	 * Configuration interface for {@link MailApi}.
 	 */
-	public static interface All extends Output, Input {
+	public static interface All extends Input, Output {
 
 	}
 

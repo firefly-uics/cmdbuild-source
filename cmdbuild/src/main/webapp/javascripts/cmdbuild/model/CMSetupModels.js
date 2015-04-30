@@ -2,14 +2,6 @@
 
 	Ext.require('CMDBuild.core.proxy.CMProxyConstants');
 
-	Ext.define("TranslationModel", {
-		extend: 'Ext.data.Model',
-		fields: [
-			{name: "name", type: 'string'},
-			{name: "value",  type: 'string'}
-		]
-	});
-
 	// TODO: should be fixed with id as int but if try to do it all comboboxes will display id in place of description because '123' != 123
 	Ext.define("CMTableForComboModel", {
 		extend: 'Ext.data.Model',

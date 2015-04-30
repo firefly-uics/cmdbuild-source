@@ -123,21 +123,14 @@
 		var out = {};
 		var superclass = false;
 		var type = node.type;
-		var text = node.description_default;
-		if (type == "class" 
+		var text = node.description;
+		if (type == "class"
 			|| (type == "processclass" && _CMCache.isEntryTypeByName(node.referencedClassName)) ) {
 
 			entryType = _CMCache.getEntryTypeByName(node.referencedClassName);
 			if (entryType) {
 				superclass = entryType.isSuperClass();
 			}
-		}
-
-		// hack to manage the folder categories of
-		// the available menu items
-		if (type == "folder") {
-			text = CMDBuild.Translation.administration.modmenu.availabletree[node.description_default] || node.description_default;
-			out.folderType = node.description_default;
 		}
 
 		out.type = type;
