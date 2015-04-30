@@ -1,3 +1,113 @@
+CMDBuild 2.3.1 (released 2015/04/30)
+
+
+NEW FEATURES
+
+ * Better visualization of process status within process instance's history
+
+ * New HtmlEditor implementation
+
+ * Smart e-mail regeneration for widget ManageEmail
+
+ * Extended API (Fluent API) for DMS management
+
+ * REST web service - Version 2
+
+ * Data model localization review
+
+ * Force download header on report requests
+
+ * Administration grid default order
+
+ * Disabled domains for source/destination classes hierarchy
+
+ * More explicatory variable name for the performer of the process
+
+ * E-mail management review (delay, tab, widget, task, template)
+
+ * HTML editor field color setup optimization
+
+ * CMDBuild localization config model optimizations
+
+ * Starting class combo store order
+
+ * Data source combobox store alphabetical order in from sql view
+
+ * Disabled Notes attribute visualization in widget grid
+
+ * Set service user from administration interface
+
+
+FIXES
+
+ * CQL filters do not work on reference fields in the grid widget
+
+ * Hidden attributes are visible on history tab
+
+ * Report with reference on class with more than maximum items specified in the configuration
+
+ * Task Manager - Created process has no user within history
+
+ * Task Manager - Error when decoding mappings where values uses '=' character
+
+ * Wrong user in history when inserting new relations
+
+ * Cannot create relations on recursive domains
+
+ * No get card query on subclasses selection
+
+ * HTMLEditor submit value problems
+
+ * HTML tags not stripped in class card grids
+
+ * Ifc connector does not check the class of reference attributes
+
+ * Empty combobox for references in grid widget
+
+ * Error getting relations when row provileges are setted
+
+ * Report visualizations problems with IE8
+
+ * Widget grid: date fields blanked when modified
+
+ * Multiple blank rows added on HTML editor fields
+
+ * Suspend/resume process using CMDBuild API not working
+
+ * REST v1 - Relations are returned doubled: the second has source and destination inverted
+
+ * Default group is lost when password is modified
+
+ * History without user when multiple update is performed
+
+ * User not setted when performing operations from REST web services
+
+ * CQL filters in linkCards widget do not support parameters
+
+ * Firefox errors on UI loading
+
+ * Widget grid: blank Code and Description field
+
+ * Error updating relation attribute for reference during card creation
+
+ * WidgetGrid: no data loading data from string presets
+
+ * No content scrollbars on add attachment popup window
+
+ * Search filter target class combobox store is empty
+
+ * With limited administrator user task and email panel's doesn't work
+
+ * REST v1 - Missing widgets when getting activity details
+
+ * Wrong endpoint for CMDBf web services
+
+ * Losing selection while creating link in HTML field
+
+
+
+
+
 CMDBuild 2.3.0 (released 2015/02/03)
 
 
