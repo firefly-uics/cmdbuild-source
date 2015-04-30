@@ -60,6 +60,10 @@
 
 		statics: {
 			init: function() {
+
+				// Logger configuration
+				Ext.create('CMDBuild.core.LoggerManager');
+
 				Ext.tip.QuickTipManager.init();
 				// Fix a problem of Ext 4.2 tooltips width
 				// See http://www.sencha.com/forum/showthread.php?260106-Tooltips-on-forms-and-grid-are-not-resizing-to-the-size-of-the-text/page3#24
