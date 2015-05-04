@@ -15,11 +15,10 @@ import org.cmdbuild.data.store.email.EmailAccount;
 import org.cmdbuild.data.store.email.EmailAccountFacade;
 import org.cmdbuild.logic.email.EmailTemplateLogic;
 import org.cmdbuild.logic.email.EmailTemplateLogic.Template;
-import org.cmdbuild.logic.email.SendTemplateEmail;
+import org.cmdbuild.logic.email.EmailTemplateSenderFactory;
 import org.cmdbuild.logic.taskmanager.commons.SchedulerCommandWrapper;
 import org.cmdbuild.logic.taskmanager.scheduler.AbstractJobFactory;
 import org.cmdbuild.scheduler.command.Command;
-import org.cmdbuild.services.email.EmailServiceFactory;
 import org.cmdbuild.services.sync.store.internal.AttributeValueAdapter;
 
 import com.google.common.base.Optional;
@@ -31,18 +30,18 @@ public class ConnectorTaskJobFactory extends AbstractJobFactory<ConnectorTask> {
 	private final DataSourceHelper jdbcService;
 	private final AttributeValueAdapter attributeValueAdapter;
 	private final EmailAccountFacade emailAccountFacade;
-	private final EmailServiceFactory emailServiceFactory;
 	private final EmailTemplateLogic emailTemplateLogic;
+	private final EmailTemplateSenderFactory emailTemplateSenderFactory;
 
 	public ConnectorTaskJobFactory(final CMDataView dataView, final DataSourceHelper jdbcService,
 			final AttributeValueAdapter attributeValueAdapter, final EmailAccountFacade emailAccountFacade,
-			final EmailServiceFactory emailServiceFactory, final EmailTemplateLogic emailTemplateLogic) {
+			final EmailTemplateLogic emailTemplateLogic, final EmailTemplateSenderFactory emailTemplateSenderFactory) {
 		this.dataView = dataView;
 		this.jdbcService = jdbcService;
 		this.attributeValueAdapter = attributeValueAdapter;
-		this.emailServiceFactory = emailServiceFactory;
 		this.emailAccountFacade = emailAccountFacade;
 		this.emailTemplateLogic = emailTemplateLogic;
+		this.emailTemplateSenderFactory = emailTemplateSenderFactory;
 	}
 
 	@Override
@@ -76,10 +75,11 @@ public class ConnectorTaskJobFactory extends AbstractJobFactory<ConnectorTask> {
 			final Optional<EmailAccount> account = emailAccountFacade.firstOf(asList(emailTemplateSupplier.get()
 					.getAccount(), task.getNotificationAccount()));
 			final Supplier<EmailAccount> emailAccountSupplier = account.isPresent() ? ofInstance(account.get()) : null;
-			command = SchedulerCommandWrapper.of(a(SendTemplateEmail.newInstance() //
+			command = SchedulerCommandWrapper.of(a(emailTemplateSenderFactory.queued() //
 					.withEmailAccountSupplier(emailAccountSupplier) //
-					.withEmailServiceFactory(emailServiceFactory) //
-					.withEmailTemplateSupplier(emailTemplateSupplier)));
+					.withEmailTemplateSupplier(emailTemplateSupplier) //
+					.withReference(task.getId()) //
+					));
 		} else {
 			command = nullCommand();
 		}

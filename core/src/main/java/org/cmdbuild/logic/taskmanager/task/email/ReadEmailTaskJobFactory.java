@@ -43,7 +43,7 @@ import org.cmdbuild.logic.dms.StoreDocument;
 import org.cmdbuild.logic.dms.StoreDocument.Document;
 import org.cmdbuild.logic.email.EmailTemplateLogic;
 import org.cmdbuild.logic.email.EmailTemplateLogic.Template;
-import org.cmdbuild.logic.email.SendTemplateEmail;
+import org.cmdbuild.logic.email.EmailTemplateSenderFactory;
 import org.cmdbuild.logic.email.SubjectHandler;
 import org.cmdbuild.logic.email.SubjectHandler.ParsedSubject;
 import org.cmdbuild.logic.taskmanager.scheduler.AbstractJobFactory;
@@ -100,17 +100,13 @@ public class ReadEmailTaskJobFactory extends AbstractJobFactory<ReadEmailTask> {
 	private final CMDataView dataView;
 	private final EmailTemplateLogic emailTemplateLogic;
 	private final DatabaseEngine databaseEngine;
+	private final EmailTemplateSenderFactory emailTemplateSenderFactory;
 
-	public ReadEmailTaskJobFactory( //
-			final EmailAccountFacade emailAccountFacade, //
-			final EmailServiceFactory emailServiceFactory, //
-			final SubjectHandler subjectHandler, //
-			final Store<org.cmdbuild.data.store.email.Email> emailStore, //
-			final WorkflowLogic workflowLogic, //
-			final DmsLogic dmsLogic, //
-			final CMDataView dataView, //
-			final EmailTemplateLogic emailTemplateLogic, //
-			final DatabaseEngine databaseEngine) {
+	public ReadEmailTaskJobFactory(final EmailAccountFacade emailAccountFacade,
+			final EmailServiceFactory emailServiceFactory, final SubjectHandler subjectHandler,
+			final Store<org.cmdbuild.data.store.email.Email> emailStore, final WorkflowLogic workflowLogic,
+			final DmsLogic dmsLogic, final CMDataView dataView, final EmailTemplateLogic emailTemplateLogic,
+			final DatabaseEngine databaseEngine, final EmailTemplateSenderFactory emailTemplateSenderFactory) {
 		this.emailAccountFacade = emailAccountFacade;
 		this.emailServiceFactory = emailServiceFactory;
 		this.subjectHandler = subjectHandler;
@@ -120,6 +116,7 @@ public class ReadEmailTaskJobFactory extends AbstractJobFactory<ReadEmailTask> {
 		this.dataView = dataView;
 		this.emailTemplateLogic = emailTemplateLogic;
 		this.databaseEngine = databaseEngine;
+		this.emailTemplateSenderFactory = emailTemplateSenderFactory;
 	}
 
 	@Override
@@ -238,11 +235,11 @@ public class ReadEmailTaskJobFactory extends AbstractJobFactory<ReadEmailTask> {
 										)), //
 										DB_TEMPLATE) //
 								.build();
-						SendTemplateEmail.newInstance() //
+						emailTemplateSenderFactory.queued() //
 								.withEmailAccountSupplier(emailAccountSupplier) //
-								.withEmailServiceFactory(emailServiceFactory) //
 								.withEmailTemplateSupplier(emailTemplateSupplier) //
 								.withTemplateResolver(templateResolver) //
+								.withReference(task.getId()) //
 								.build() //
 								.execute();
 					}

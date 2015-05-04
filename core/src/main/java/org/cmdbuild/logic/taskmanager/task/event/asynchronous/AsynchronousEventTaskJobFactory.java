@@ -33,14 +33,13 @@ import org.cmdbuild.logic.data.QueryOptions;
 import org.cmdbuild.logic.data.access.QuerySpecsBuilderFiller;
 import org.cmdbuild.logic.email.EmailTemplateLogic;
 import org.cmdbuild.logic.email.EmailTemplateLogic.Template;
-import org.cmdbuild.logic.email.SendTemplateEmail;
+import org.cmdbuild.logic.email.EmailTemplateSenderFactory;
 import org.cmdbuild.logic.mapping.json.JsonFilterHelper;
 import org.cmdbuild.logic.taskmanager.commons.SchedulerCommandWrapper;
 import org.cmdbuild.logic.taskmanager.scheduler.AbstractJobFactory;
 import org.cmdbuild.logic.taskmanager.store.LogicAndStoreConverter;
 import org.cmdbuild.logic.taskmanager.util.CardIdFilterElementGetter;
 import org.cmdbuild.scheduler.command.Command;
-import org.cmdbuild.services.email.EmailServiceFactory;
 import org.cmdbuild.services.template.engine.CardEngine;
 import org.joda.time.DateTime;
 import org.json.JSONException;
@@ -63,20 +62,21 @@ public class AsynchronousEventTaskJobFactory extends AbstractJobFactory<Asynchro
 
 	private final CMDataView dataView;
 	private final EmailAccountFacade emailAccountFacade;
-	private final EmailServiceFactory emailServiceFactory;
 	private final EmailTemplateLogic emailTemplateLogic;
 	private final TaskStore taskStore;
 	private final LogicAndStoreConverter logicAndStoreConverter;
+	private final EmailTemplateSenderFactory emailTemplateSenderFactory;
 
 	public AsynchronousEventTaskJobFactory(final CMDataView dataView, final EmailAccountFacade emailAccountFacade,
-			final EmailServiceFactory emailServiceFactory, final EmailTemplateLogic emailTemplateLogic,
-			final TaskStore taskStore, final LogicAndStoreConverter logicAndStoreConverter) {
+			final EmailTemplateLogic emailTemplateLogic, final TaskStore taskStore,
+			final LogicAndStoreConverter logicAndStoreConverter,
+			final EmailTemplateSenderFactory emailTemplateSenderFactory) {
 		this.dataView = dataView;
-		this.emailServiceFactory = emailServiceFactory;
 		this.emailAccountFacade = emailAccountFacade;
 		this.emailTemplateLogic = emailTemplateLogic;
 		this.taskStore = taskStore;
 		this.logicAndStoreConverter = logicAndStoreConverter;
+		this.emailTemplateSenderFactory = emailTemplateSenderFactory;
 	}
 
 	@Override
@@ -135,8 +135,7 @@ public class AsynchronousEventTaskJobFactory extends AbstractJobFactory<Asynchro
 				}
 			}
 
-			private Iterable<CMCard> currentCardsMatchingFilter(final String classname,
-					final JSONObject jsonFilter) {
+			private Iterable<CMCard> currentCardsMatchingFilter(final String classname, final JSONObject jsonFilter) {
 				logger.debug(marker, "getting current cards matching filter");
 				final CMClass sourceClass = dataView.findClass(classname);
 				final QueryOptions queryOptions = QueryOptions.newQueryOption() //
@@ -217,11 +216,11 @@ public class AsynchronousEventTaskJobFactory extends AbstractJobFactory<Asynchro
 								.build())), //
 						CARD_PREFIX) //
 				.build();
-		final Command command = SchedulerCommandWrapper.of(a(SendTemplateEmail.newInstance() //
+		final Command command = SchedulerCommandWrapper.of(a(emailTemplateSenderFactory.queued() //
 				.withEmailAccountSupplier(emailAccountSupplier) //
-				.withEmailServiceFactory(emailServiceFactory) //
 				.withEmailTemplateSupplier(emailTemplateSupplier) //
 				.withTemplateResolver(templateResolver) //
+				.withReference(task.getId()) //
 				));
 		conditional(command, new NotificationEnabled(task)).execute();
 	}
