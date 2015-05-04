@@ -1,10 +1,10 @@
 package org.cmdbuild.logic.taskmanager.task.connector;
 
-import static org.cmdbuild.services.sync.store.Stores.*;
 import static com.google.common.collect.Maps.newHashMap;
 import static com.google.common.collect.Maps.transformValues;
 import static com.google.common.collect.Sets.newHashSet;
 import static org.cmdbuild.common.utils.guava.Functions.build;
+import static org.cmdbuild.services.sync.store.Stores.logging;
 
 import java.util.Collection;
 import java.util.Map;

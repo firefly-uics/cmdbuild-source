@@ -11,6 +11,8 @@ import org.cmdbuild.data.store.task.TaskDefinitionConverter;
 import org.cmdbuild.data.store.task.TaskParameter;
 import org.cmdbuild.data.store.task.TaskParameterConverter;
 import org.cmdbuild.data.store.task.TaskStore;
+import org.cmdbuild.logic.email.DefaultEmailTemplateSenderFactory;
+import org.cmdbuild.logic.email.EmailTemplateSenderFactory;
 import org.cmdbuild.logic.taskmanager.DefaultTaskManagerLogic;
 import org.cmdbuild.logic.taskmanager.DefinitiveTaskManagerLogic;
 import org.cmdbuild.logic.taskmanager.TaskManagerLogic;
@@ -150,10 +152,10 @@ public class TaskManager {
 		return new AsynchronousEventTaskJobFactory( //
 				data.systemDataView(), //
 				email.emailAccountFacade(), //
-				email.emailServiceFactory(), //
 				email.emailTemplateLogic(), //
 				defaultTaskStore(), //
-				defaultLogicAndStoreConverter() //
+				defaultLogicAndStoreConverter(), //
+				emailTemplateSenderFactory() //
 		);
 	}
 
@@ -164,8 +166,8 @@ public class TaskManager {
 				other.dataSourceHelper(), //
 				defaultAttributeValueAdapter(),//
 				email.emailAccountFacade(), //
-				email.emailServiceFactory(), //
-				email.emailTemplateLogic() //
+				email.emailTemplateLogic(), //
+				emailTemplateSenderFactory() //
 		);
 	}
 
@@ -186,7 +188,8 @@ public class TaskManager {
 				dms.defaultDmsLogic(), //
 				data.systemDataView(), //
 				email.emailTemplateLogic(), //
-				template.databaseTemplateEngine() //
+				template.databaseTemplateEngine(), //
+				emailTemplateSenderFactory() //
 		);
 	}
 
@@ -212,7 +215,6 @@ public class TaskManager {
 				api.systemFluentApi(), //
 				workflow.systemWorkflowLogicBuilder().build(), //
 				email.emailAccountFacade(), //
-				email.emailServiceFactory(), //
 				email.emailTemplateLogic(), //
 				data.systemDataView(), //
 				new Supplier<CMDataView>() {
@@ -222,8 +224,14 @@ public class TaskManager {
 						return user.userDataView();
 					}
 
-				}
-
+				}, //
+				emailTemplateSenderFactory() //
 		);
 	}
+
+	@Bean
+	protected EmailTemplateSenderFactory emailTemplateSenderFactory() {
+		return new DefaultEmailTemplateSenderFactory(email.emailServiceFactory(), email.emailLogic());
+	}
+
 }

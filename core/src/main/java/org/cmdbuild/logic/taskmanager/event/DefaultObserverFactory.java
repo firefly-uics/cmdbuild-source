@@ -40,13 +40,12 @@ import org.cmdbuild.logic.data.QueryOptions;
 import org.cmdbuild.logic.data.access.QuerySpecsBuilderFiller;
 import org.cmdbuild.logic.email.EmailTemplateLogic;
 import org.cmdbuild.logic.email.EmailTemplateLogic.Template;
-import org.cmdbuild.logic.email.SendTemplateEmail;
+import org.cmdbuild.logic.email.EmailTemplateSenderFactory;
 import org.cmdbuild.logic.mapping.json.JsonFilterHelper;
 import org.cmdbuild.logic.taskmanager.task.event.synchronous.SynchronousEventTask;
 import org.cmdbuild.logic.taskmanager.util.CardIdFilterElementGetter;
 import org.cmdbuild.logic.workflow.StartProcess;
 import org.cmdbuild.logic.workflow.WorkflowLogic;
-import org.cmdbuild.services.email.EmailServiceFactory;
 import org.cmdbuild.services.event.Command;
 import org.cmdbuild.services.event.Context;
 import org.cmdbuild.services.event.ContextVisitor;
@@ -186,29 +185,29 @@ public class DefaultObserverFactory implements ObserverFactory {
 	private final FluentApi fluentApi;
 	private final WorkflowLogic workflowLogic;
 	private final EmailAccountFacade emailAccountFacade;
-	private final EmailServiceFactory emailServiceFactory;
 	private final EmailTemplateLogic emailTemplateLogic;
 	private final CMDataView dataView;
 	private final Supplier<CMDataView> privilegedDataView;
+	private final EmailTemplateSenderFactory emailTemplateSenderFactory;
 
 	public DefaultObserverFactory( //
 			final UserStore userStore, //
 			final FluentApi fluentApi, //
 			final WorkflowLogic workflowLogic, //
 			final EmailAccountFacade emailAccountFacade, //
-			final EmailServiceFactory emailServiceFactory, //
 			final EmailTemplateLogic emailTemplateLogic, //
 			final CMDataView dataView, //
-			final Supplier<CMDataView> privilegedDataView //
+			final Supplier<CMDataView> privilegedDataView, //
+			final EmailTemplateSenderFactory emailTemplateSenderFactory //
 	) {
 		this.userStore = userStore;
 		this.fluentApi = fluentApi;
 		this.workflowLogic = workflowLogic;
 		this.emailAccountFacade = emailAccountFacade;
-		this.emailServiceFactory = emailServiceFactory;
 		this.emailTemplateLogic = emailTemplateLogic;
 		this.dataView = dataView;
 		this.privilegedDataView = privilegedDataView;
+		this.emailTemplateSenderFactory = emailTemplateSenderFactory;
 	}
 
 	@Override
@@ -305,11 +304,11 @@ public class DefaultObserverFactory implements ObserverFactory {
 						.getAccount(), task.getEmailAccount()));
 				final Supplier<EmailAccount> emailAccountSupplier = account.isPresent() ? ofInstance(account.get())
 						: null;
-				SendTemplateEmail.newInstance() //
+				emailTemplateSenderFactory.queued() //
 						.withEmailAccountSupplier(emailAccountSupplier) //
-						.withEmailServiceFactory(emailServiceFactory) //
 						.withEmailTemplateSupplier(emailTemplateSupplier) //
 						.withTemplateResolver(templateResolverOf(context)) //
+						.withReference(task.getId()) //
 						.build() //
 						.execute();
 			}
