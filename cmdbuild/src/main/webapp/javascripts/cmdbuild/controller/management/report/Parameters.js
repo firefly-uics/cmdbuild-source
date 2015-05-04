@@ -96,7 +96,7 @@
 									CMDBuild.Translation.warnings.popup_block
 								);
 						} else if (!Ext.isEmpty(this.parentDelegate) && Ext.isFunction(this.parentDelegate.showReport)) {
-							this.parentDelegate.showReport(this.forceDownload);
+							this.parentDelegate.showReport(this.forceDownload); // TODO: shound be used cmfg()
 						}
 
 						this.onParametersAbortButtonClick();
