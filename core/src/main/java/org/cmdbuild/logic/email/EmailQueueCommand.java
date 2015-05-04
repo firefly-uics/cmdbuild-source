@@ -145,9 +145,9 @@ public class EmailQueueCommand implements Command, Callback {
 					currentEmail = email;
 					final QueueableNewMail newMail = queue.newMail() //
 							.withFrom(defaultIfBlank(email.getFromAddress(), account.get().getAddress())) //
-							.withTo(splitAddresses(defaultString(email.getToAddresses()))) //
-							.withCc(splitAddresses(defaultString(email.getCcAddresses()))) //
-							.withBcc(splitAddresses(defaultString(email.getBccAddresses()))) //
+							.withTo(splitAddresses(email.getToAddresses())) //
+							.withCc(splitAddresses(email.getCcAddresses())) //
+							.withBcc(splitAddresses(email.getBccAddresses())) //
 							.withSubject(defaultIfBlank(subjectHandler.compile(email).getSubject(), EMPTY)) //
 							.withContent(email.getContent()) //
 							.withContentType(CONTENT_TYPE);
@@ -171,7 +171,7 @@ public class EmailQueueCommand implements Command, Callback {
 		return on(ADDRESSES_SEPARATOR) //
 				.omitEmptyStrings() //
 				.trimResults() //
-				.split(addresses);
+				.split(defaultString(addresses));
 	}
 
 	@Override
