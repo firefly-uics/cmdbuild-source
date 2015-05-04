@@ -76,7 +76,6 @@ public class SendTemplateEmail implements Action {
 
 	private static class TemplateAdapter implements Email {
 
-		private static final Iterable<String> NO_ADDRESSES = emptyList();
 		private static final Iterable<Attachment> NO_ATTACHMENTS = emptyList();
 
 		private final DateTime OBJECT_CREATION_TIME = now();
