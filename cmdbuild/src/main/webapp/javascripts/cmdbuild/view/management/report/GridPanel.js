@@ -4,7 +4,6 @@
 		extend: 'Ext.grid.Panel',
 
 		requires: [
-			'CMDBuild.core.proxy.CMProxyConstants',
 			'CMDBuild.core.proxy.Report'
 		],
 
@@ -15,7 +14,6 @@
 
 		border: false,
 		frame: false,
-		layout: 'fit',
 
 		initComponent: function() {
 			// Apply first store to use it in paging bar
@@ -30,7 +28,7 @@
 						itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_BOTTOM,
 						store: this.getStore(),
 						displayInfo: true,
-						displayMsg: ' {0} - {1} ' + CMDBuild.Translation.common.display_topic_of + ' {2}',
+						displayMsg: '{0} - {1} ' + CMDBuild.Translation.common.display_topic_of + ' {2}',
 						emptyMsg: CMDBuild.Translation.common.display_topic_none
 					})
 				],
@@ -58,48 +56,48 @@
 
 						items: [
 							Ext.create('CMDBuild.core.buttons.FileFormatsPdf', {
-								text: null,
+								withSpacer: true,
 								tooltip: CMDBuild.Translation.pdf,
 								scope: this,
 
 								handler: function(grid, rowIndex, colIndex, node, e, record, rowNode) {
-									this.delegate.cmOn('onReportGenerateButtonClick', {
+									this.delegate.cmfg('onReportGenerateButtonClick', {
 										record: record,
 										type: CMDBuild.core.proxy.CMProxyConstants.PDF
 									});
 								}
 							}),
 							Ext.create('CMDBuild.core.buttons.FileFormatsOdt', {
-								text: null,
+								withSpacer: true,
 								tooltip: CMDBuild.Translation.odt,
 								scope: this,
 
 								handler: function(grid, rowIndex, colIndex, node, e, record, rowNode) {
-									this.delegate.cmOn('onReportGenerateButtonClick', {
+									this.delegate.cmfg('onReportGenerateButtonClick', {
 										record: record,
 										type: CMDBuild.core.proxy.CMProxyConstants.ODT
 									});
 								}
 							}),
 							Ext.create('CMDBuild.core.buttons.FileFormatsRtf', {
-								text: null,
+								withSpacer: true,
 								tooltip: CMDBuild.Translation.rtf,
 								scope: this,
 
 								handler: function(grid, rowIndex, colIndex, node, e, record, rowNode) {
-									this.delegate.cmOn('onReportGenerateButtonClick', {
+									this.delegate.cmfg('onReportGenerateButtonClick', {
 										record: record,
 										type: CMDBuild.core.proxy.CMProxyConstants.RTF
 									});
 								}
 							}),
 							Ext.create('CMDBuild.core.buttons.FileFormatsCsv', {
-								text: null,
+								withSpacer: true,
 								tooltip: CMDBuild.Translation.csv,
 								scope: this,
 
 								handler: function(grid, rowIndex, colIndex, node, e, record, rowNode) {
-									this.delegate.cmOn('onReportGenerateButtonClick', {
+									this.delegate.cmfg('onReportGenerateButtonClick', {
 										record: record,
 										type: CMDBuild.core.proxy.CMProxyConstants.CSV
 									});
