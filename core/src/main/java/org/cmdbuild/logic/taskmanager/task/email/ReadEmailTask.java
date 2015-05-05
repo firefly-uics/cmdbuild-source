@@ -32,6 +32,10 @@ public class ReadEmailTask implements ScheduledTask {
 		private String cronExpression;
 		private DateTime lastExecution;
 		private String emailAccount;
+		private String incomingFolder;
+		private String processedFolder;
+		private String rejectedFolder;
+		private Boolean rejectNotMatching;
 		private final Collection<String> regexFromFilter = Lists.newArrayList();
 		private final Collection<String> regexSubjectFilter = Lists.newArrayList();
 		private Boolean notificationActive;
@@ -59,6 +63,8 @@ public class ReadEmailTask implements ScheduledTask {
 		private void validate() {
 			active = defaultIfNull(active, FALSE);
 
+			rejectNotMatching = defaultIfNull(rejectNotMatching, FALSE);
+
 			notificationActive = defaultIfNull(notificationActive, FALSE);
 
 			attachmentsActive = defaultIfNull(attachmentsActive, FALSE);
@@ -80,7 +86,7 @@ public class ReadEmailTask implements ScheduledTask {
 			return this;
 		}
 
-		public Builder withActiveStatus(final boolean active) {
+		public Builder withActiveStatus(final Boolean active) {
 			this.active = active;
 			return this;
 		}
@@ -97,6 +103,26 @@ public class ReadEmailTask implements ScheduledTask {
 
 		public Builder withEmailAccount(final String emailAccount) {
 			this.emailAccount = emailAccount;
+			return this;
+		}
+
+		public Builder withIncomingFolder(final String incomingFolder) {
+			this.incomingFolder = incomingFolder;
+			return this;
+		}
+
+		public Builder withProcessedFolder(final String processedFolder) {
+			this.processedFolder = processedFolder;
+			return this;
+		}
+
+		public Builder withRejectedFolder(final String rejectedFolder) {
+			this.rejectedFolder = rejectedFolder;
+			return this;
+		}
+
+		public Builder withRejectNotMatching(final Boolean rejectNotMatching) {
+			this.rejectNotMatching = rejectNotMatching;
 			return this;
 		}
 
@@ -177,6 +203,10 @@ public class ReadEmailTask implements ScheduledTask {
 	private final String cronExpression;
 	private final DateTime lastExecution;
 	private final String emailAccount;
+	private final String incomingFolder;
+	private final String processedFolder;
+	private final String rejectedFolder;
+	private final boolean rejectNotMatching;
 	private final Iterable<String> regexFromFilter;
 	private final Iterable<String> regexSubjectFilter;
 	private final boolean notificationActive;
@@ -198,6 +228,10 @@ public class ReadEmailTask implements ScheduledTask {
 		this.cronExpression = builder.cronExpression;
 		this.lastExecution = builder.lastExecution;
 		this.emailAccount = builder.emailAccount;
+		this.incomingFolder = builder.incomingFolder;
+		this.processedFolder = builder.processedFolder;
+		this.rejectedFolder = builder.rejectedFolder;
+		this.rejectNotMatching = builder.rejectNotMatching;
 		this.regexFromFilter = builder.regexFromFilter;
 		this.regexSubjectFilter = builder.regexSubjectFilter;
 		this.notificationActive = builder.notificationActive;
@@ -245,6 +279,22 @@ public class ReadEmailTask implements ScheduledTask {
 
 	public String getEmailAccount() {
 		return emailAccount;
+	}
+
+	public String getIncomingFolder() {
+		return incomingFolder;
+	}
+
+	public String getProcessedFolder() {
+		return processedFolder;
+	}
+
+	public String getRejectedFolder() {
+		return rejectedFolder;
+	}
+
+	public boolean isRejectNotMatching() {
+		return rejectNotMatching;
 	}
 
 	public boolean isNotificationActive() {

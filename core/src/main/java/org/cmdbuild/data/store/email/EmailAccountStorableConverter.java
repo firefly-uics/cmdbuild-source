@@ -24,10 +24,6 @@ public class EmailAccountStorableConverter extends BaseStorableConverter<EmailAc
 	private static final String IMAP_SERVER = "ImapServer";
 	private static final String IMAP_PORT = "ImapPort";
 	private static final String IMAP_SSL = "ImapSsl";
-	private static final String INPUT_FOLDER = "InputFolder";
-	private static final String PROCESSED_FOLDER = "ProcessedFolder";
-	private static final String REJECTED_FOLDER = "RejectedFolder";
-	private static final String REJECT_NOT_MATCHING = "RejectNotMatching";
 
 	@Override
 	public String getClassName() {
@@ -50,10 +46,6 @@ public class EmailAccountStorableConverter extends BaseStorableConverter<EmailAc
 				.withImapServer(card.get(IMAP_SERVER, String.class)) //
 				.withImapPort(card.get(IMAP_PORT, Integer.class)) //
 				.withImapSsl(defaultBoolean(card.get(IMAP_SSL, Boolean.class), false)) //
-				.withInputFolder(card.get(INPUT_FOLDER, String.class)) //
-				.withProcessedFolder(card.get(PROCESSED_FOLDER, String.class)) //
-				.withRejectedFolder(card.get(REJECTED_FOLDER, String.class)) //
-				.withRejectNotMatchingStatus(defaultBoolean(card.get(REJECT_NOT_MATCHING, Boolean.class), false)) //
 				.build();
 	}
 
@@ -81,10 +73,6 @@ public class EmailAccountStorableConverter extends BaseStorableConverter<EmailAc
 		values.put(IMAP_SERVER, storable.getImapServer());
 		values.put(IMAP_PORT, storable.getImapPort());
 		values.put(IMAP_SSL, storable.isImapSsl());
-		values.put(INPUT_FOLDER, storable.getInputFolder());
-		values.put(PROCESSED_FOLDER, storable.getProcessedFolder());
-		values.put(REJECTED_FOLDER, storable.getRejectedFolder());
-		values.put(REJECT_NOT_MATCHING, storable.isRejectNotMatching());
 		return values;
 	}
 

@@ -66,7 +66,7 @@ public class AllConfigurationWrapper implements Configuration.All {
 	public List<String> getOutputFromRecipients() {
 		return asList(account.getAddress());
 	}
-	
+
 	@Override
 	public String getOutputFolder() {
 		return account.getOutputFolder();

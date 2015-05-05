@@ -101,26 +101,6 @@ public class DefaultEmailAccountLogic implements EmailAccountLogic {
 		}
 
 		@Override
-		public String getInputFolder() {
-			return delegate().getInputFolder();
-		}
-
-		@Override
-		public String getProcessedFolder() {
-			return delegate().getProcessedFolder();
-		}
-
-		@Override
-		public String getRejectedFolder() {
-			return delegate().getRejectedFolder();
-		}
-
-		@Override
-		public boolean isRejectNotMatching() {
-			return delegate().isRejectNotMatching();
-		}
-
-		@Override
 		public String toString() {
 			return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
 		}
@@ -290,26 +270,6 @@ public class DefaultEmailAccountLogic implements EmailAccountLogic {
 		}
 
 		@Override
-		public String getInputFolder() {
-			return delegate.getInputFolder();
-		}
-
-		@Override
-		public String getProcessedFolder() {
-			return delegate.getProcessedFolder();
-		}
-
-		@Override
-		public String getRejectedFolder() {
-			return delegate.getRejectedFolder();
-		}
-
-		@Override
-		public boolean isRejectNotMatching() {
-			return delegate.isRejectNotMatching();
-		}
-
-		@Override
 		public String toString() {
 			return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
 		}
@@ -342,10 +302,6 @@ public class DefaultEmailAccountLogic implements EmailAccountLogic {
 					.withImapServer(input.getImapServer()) //
 					.withImapPort(input.getImapPort()) //
 					.withImapSsl(input.isImapSsl()) //
-					.withInputFolder(input.getInputFolder()) //
-					.withProcessedFolder(input.getProcessedFolder()) //
-					.withRejectedFolder(input.getRejectedFolder()) //
-					.withRejectNotMatchingStatus(input.isRejectNotMatching()) //
 					.build();
 		};
 

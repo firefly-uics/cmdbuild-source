@@ -3,19 +3,14 @@ package org.cmdbuild.servlets.json.schema;
 import static com.google.common.collect.FluentIterable.from;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ADDRESS;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ELEMENTS;
-import static org.cmdbuild.servlets.json.CommunicationConstants.ENABLE_MOVE_REJECTED_NOT_MATCHING;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ID;
 import static org.cmdbuild.servlets.json.CommunicationConstants.IMAP_PORT;
 import static org.cmdbuild.servlets.json.CommunicationConstants.IMAP_SERVER;
 import static org.cmdbuild.servlets.json.CommunicationConstants.IMAP_SSL;
-import static org.cmdbuild.servlets.json.CommunicationConstants.INCOMING_FOLDER;
 import static org.cmdbuild.servlets.json.CommunicationConstants.IS_DEFAULT;
 import static org.cmdbuild.servlets.json.CommunicationConstants.NAME;
 import static org.cmdbuild.servlets.json.CommunicationConstants.OUTPUT_FOLDER;
 import static org.cmdbuild.servlets.json.CommunicationConstants.PASSWORD;
-import static org.cmdbuild.servlets.json.CommunicationConstants.PROCESSED_FOLDER;
-import static org.cmdbuild.servlets.json.CommunicationConstants.REJECTED_FOLDER;
-import static org.cmdbuild.servlets.json.CommunicationConstants.REJECT_NOT_MATCHING;
 import static org.cmdbuild.servlets.json.CommunicationConstants.SMTP_PORT;
 import static org.cmdbuild.servlets.json.CommunicationConstants.SMTP_SERVER;
 import static org.cmdbuild.servlets.json.CommunicationConstants.SMTP_SSL;
@@ -51,10 +46,6 @@ public class EmailAccount extends JSONBaseWithSpringContext {
 		private String imapServer;
 		private Integer imapPort;
 		private boolean imapSsl;
-		private String incomingFolder;
-		private String processedFolder;
-		private String rejectedFolder;
-		private boolean isRejectNotMatching;
 
 		@Override
 		@JsonProperty(ID)
@@ -187,46 +178,6 @@ public class EmailAccount extends JSONBaseWithSpringContext {
 		}
 
 		@Override
-		@JsonProperty(INCOMING_FOLDER)
-		public String getInputFolder() {
-			return incomingFolder;
-		}
-
-		public void setInputFolder(final String incomingFolder) {
-			this.incomingFolder = incomingFolder;
-		}
-
-		@Override
-		@JsonProperty(PROCESSED_FOLDER)
-		public String getProcessedFolder() {
-			return processedFolder;
-		}
-
-		public void setProcessedFolder(final String processedFolder) {
-			this.processedFolder = processedFolder;
-		}
-
-		@Override
-		@JsonProperty(REJECTED_FOLDER)
-		public String getRejectedFolder() {
-			return rejectedFolder;
-		}
-
-		public void setRejectedFolder(final String rejectedFolder) {
-			this.rejectedFolder = rejectedFolder;
-		}
-
-		@Override
-		@JsonProperty(ENABLE_MOVE_REJECTED_NOT_MATCHING)
-		public boolean isRejectNotMatching() {
-			return isRejectNotMatching;
-		}
-
-		public void setRejectedNotMatching(final Boolean isRejectNotMatching) {
-			this.isRejectNotMatching = (isRejectNotMatching == null) ? false : isRejectNotMatching;
-		}
-
-		@Override
 		public String toString() {
 			return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
 		}
@@ -272,10 +223,6 @@ public class EmailAccount extends JSONBaseWithSpringContext {
 					setImapServer(input.getImapServer());
 					setImapPort(input.getImapPort());
 					setImapSsl(input.isImapSsl());
-					setInputFolder(input.getInputFolder());
-					setProcessedFolder(input.getProcessedFolder());
-					setRejectedFolder(input.getRejectedFolder());
-					setRejectedNotMatching(input.isRejectNotMatching());
 				}
 			};
 		}
@@ -331,11 +278,7 @@ public class EmailAccount extends JSONBaseWithSpringContext {
 			@Parameter(value = OUTPUT_FOLDER, required = false) final String outputFolder, //
 			@Parameter(IMAP_SERVER) final String imapServer, //
 			@Parameter(IMAP_PORT) final Integer imapPort, //
-			@Parameter(IMAP_SSL) final Boolean imapSsl, //
-			@Parameter(INCOMING_FOLDER) final String incomingFolder, //
-			@Parameter(PROCESSED_FOLDER) final String processedFolder, //
-			@Parameter(REJECTED_FOLDER) final String rejectedFolder, //
-			@Parameter(REJECT_NOT_MATCHING) final boolean rejectNotMatching //
+			@Parameter(IMAP_SSL) final Boolean imapSsl //
 	) {
 		final JsonAccount accountDetails = new JsonAccount() {
 			{
@@ -351,10 +294,6 @@ public class EmailAccount extends JSONBaseWithSpringContext {
 				setImapServer(imapServer);
 				setImapPort(imapPort);
 				setImapSsl(imapSsl);
-				setInputFolder(incomingFolder);
-				setProcessedFolder(processedFolder);
-				setRejectedFolder(rejectedFolder);
-				setRejectedNotMatching(rejectNotMatching);
 			}
 		};
 
@@ -377,11 +316,7 @@ public class EmailAccount extends JSONBaseWithSpringContext {
 			@Parameter(value = OUTPUT_FOLDER, required = false) final String outputFolder, //
 			@Parameter(IMAP_SERVER) final String imapServer, //
 			@Parameter(IMAP_PORT) final Integer imapPort, //
-			@Parameter(IMAP_SSL) final Boolean imapSsl, //
-			@Parameter(INCOMING_FOLDER) final String incomingFolder, //
-			@Parameter(PROCESSED_FOLDER) final String processedFolder, //
-			@Parameter(REJECTED_FOLDER) final String rejectedFolder, //
-			@Parameter(REJECT_NOT_MATCHING) final boolean rejectNotMatching //
+			@Parameter(IMAP_SSL) final Boolean imapSsl //
 	) {
 		final JsonAccount accountDetails = new JsonAccount() {
 			{
@@ -397,10 +332,6 @@ public class EmailAccount extends JSONBaseWithSpringContext {
 				setImapServer(imapServer);
 				setImapPort(imapPort);
 				setImapSsl(imapSsl);
-				setInputFolder(incomingFolder);
-				setProcessedFolder(processedFolder);
-				setRejectedFolder(rejectedFolder);
-				setRejectedNotMatching(rejectNotMatching);
 			}
 		};
 

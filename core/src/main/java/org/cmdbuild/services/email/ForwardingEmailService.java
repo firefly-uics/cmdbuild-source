@@ -19,13 +19,13 @@ public abstract class ForwardingEmailService extends ForwardingObject implements
 	}
 
 	@Override
-	public void receive(final EmailCallbackHandler callback) throws EmailServiceException {
-		delegate().receive(callback);
+	public void receive(final Folders folders, final EmailCallbackHandler callback) throws EmailServiceException {
+		delegate().receive(folders, callback);
 	}
 
 	@Override
-	public Iterable<Email> receive() throws EmailServiceException {
-		return delegate().receive();
+	public Iterable<Email> receive(final Folders folders) throws EmailServiceException {
+		return delegate().receive(folders);
 	}
 
 }

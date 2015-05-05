@@ -131,6 +131,10 @@ public class ReadEmailTaskJobFactory extends AbstractJobFactory<ReadEmailTask> {
 		final EmailService service = emailServiceFactory.create(ofInstance(selectedEmailAccount));
 		return ReadEmailCommand.newInstance() //
 				.withEmailService(service) //
+				.withIncomingFolder(task.getIncomingFolder()) //
+				.withProcessedFolder(task.getProcessedFolder()) //
+				.withRejectedFolder(task.getRejectedFolder()) //
+				.withRejectNotMatching(task.isRejectNotMatching()) //
 				.withEmailStore(emailStore) //
 				.withAction(safe(sendNotification(task))) //
 				.withAction(safe(storeAttachments(task))) //
