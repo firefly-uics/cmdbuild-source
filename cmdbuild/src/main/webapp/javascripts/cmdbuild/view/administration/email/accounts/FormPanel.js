@@ -247,32 +247,6 @@
 							xtype: 'checkbox',
 							name: CMDBuild.core.proxy.CMProxyConstants.IMAP_SSL,
 							fieldLabel: CMDBuild.Translation.enableSsl
-						},
-						{ // Splitter line
-							xtype: 'container',
-							margin: '5 0 5 0',
-							maxWidth: '100%',
-							cls: 'x-panel-body-default-framed cmborderbottom'
-						},
-						{
-							xtype: 'textfield',
-							name: CMDBuild.core.proxy.CMProxyConstants.INCOMING_FOLDER,
-							fieldLabel: CMDBuild.Translation.incomingFolder
-						},
-						{
-							xtype: 'textfield',
-							name: CMDBuild.core.proxy.CMProxyConstants.PROCESSED_FOLDER,
-							fieldLabel: CMDBuild.Translation.processedFolder
-						},
-						{
-							xtype: 'textfield',
-							name: CMDBuild.core.proxy.CMProxyConstants.REJECTED_FOLDER,
-							fieldLabel: CMDBuild.Translation.rejectedFolder
-						},
-						{
-							xtype: 'checkbox',
-							name: CMDBuild.core.proxy.CMProxyConstants.ENABLE_MOVE_REJECTED_NOT_MATCHING,
-							fieldLabel: CMDBuild.Translation.enableMoveRejectedNotMatching
 						}
 					]
 				});

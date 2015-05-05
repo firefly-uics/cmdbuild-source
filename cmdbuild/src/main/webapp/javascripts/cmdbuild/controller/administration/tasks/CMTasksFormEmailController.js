@@ -138,6 +138,10 @@
 								)
 							);
 							this.delegateStep[0].setValueId(record.get(CMDBuild.core.proxy.CMProxyConstants.ID));
+							this.delegateStep[0].setValueIncomingFolder(record.get(CMDBuild.core.proxy.CMProxyConstants.INCOMING_FOLDER));
+							this.delegateStep[0].setValueProcessedFolder(record.get(CMDBuild.core.proxy.CMProxyConstants.PROCESSED_FOLDER));
+							this.delegateStep[0].setValueRejectedFieldsetCheckbox(record.get(CMDBuild.core.proxy.CMProxyConstants.REJECT_NOT_MATCHING));
+							this.delegateStep[0].setValueRejectedFolder(record.get(CMDBuild.core.proxy.CMProxyConstants.REJECTED_FOLDER));
 
 							// Set step2 [1] datas
 							this.delegateStep[1].setValueAdvancedFields(record.get(CMDBuild.core.proxy.CMProxyConstants.CRON_EXPRESSION));
@@ -199,6 +203,12 @@
 						);
 
 				// Fieldset submitting filter to avoid to send datas if fieldset are collapsed
+					var rejectedFieldsetCheckboxValue = this.delegateStep[0].getValueRejectedFieldsetCheckbox();
+					if (rejectedFieldsetCheckboxValue) {
+						submitDatas[CMDBuild.core.proxy.CMProxyConstants.REJECT_NOT_MATCHING] = rejectedFieldsetCheckboxValue;
+						submitDatas[CMDBuild.core.proxy.CMProxyConstants.REJECTED_FOLDER] = formData[CMDBuild.core.proxy.CMProxyConstants.REJECTED_FOLDER];
+					}
+
 					var attachmentsFieldsetCheckboxValue = this.delegateStep[2].getValueAttachmentsFieldsetCheckbox();
 					if (attachmentsFieldsetCheckboxValue) {
 						submitDatas[CMDBuild.core.proxy.CMProxyConstants.ATTACHMENTS_ACTIVE] = attachmentsFieldsetCheckboxValue;
@@ -236,6 +246,8 @@
 				submitDatas[CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION] = formData[CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION];
 				submitDatas[CMDBuild.core.proxy.CMProxyConstants.EMAIL_ACCOUNT] = formData[CMDBuild.core.proxy.CMProxyConstants.EMAIL_ACCOUNT];
 				submitDatas[CMDBuild.core.proxy.CMProxyConstants.ID] = formData[CMDBuild.core.proxy.CMProxyConstants.ID];
+				submitDatas[CMDBuild.core.proxy.CMProxyConstants.INCOMING_FOLDER] = formData[CMDBuild.core.proxy.CMProxyConstants.INCOMING_FOLDER];
+				submitDatas[CMDBuild.core.proxy.CMProxyConstants.PROCESSED_FOLDER] = formData[CMDBuild.core.proxy.CMProxyConstants.PROCESSED_FOLDER];
 
 				if (Ext.isEmpty(formData[CMDBuild.core.proxy.CMProxyConstants.ID])) {
 					CMDBuild.core.proxy.CMProxyTasks.create({
