@@ -79,10 +79,6 @@
 						me.view.attachmentsCombo.bindStore(
 							CMDBuild.ServiceProxy.lookup.getLookupFieldStore(decodedJson.data['category.lookup'])
 						);
-
-						// FIX: to avoid default int value (0) to be displayed
-						if (me.view.attachmentsCombo.getValue() == 0)
-							me.view.attachmentsCombo.setValue();
 					}
 				}, 'dms');
 		},

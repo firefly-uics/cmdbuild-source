@@ -54,6 +54,13 @@
 			},
 
 			/**
+			 * @return {Boolean}
+			 */
+			getValueRejectedFieldsetCheckbox: function() {
+				return this.view.rejectedFieldset.checkboxCmp.getValue();
+			},
+
+			/**
 			 * @return {String}
 			 */
 			getValueId: function() {
@@ -108,6 +115,38 @@
 			 */
 			setValueFilterSubject: function(value) {
 				this.getSubjectFilterDelegate().setValue(value);
+			},
+
+			/**
+			 * @param {String} value
+			 */
+			setValueIncomingFolder: function(value) {
+				this.view.incomingFolder.setValue(value);
+			},
+
+			/**
+			 * @param {String} value
+			 */
+			setValueProcessedFolder: function(value) {
+				this.view.processedFolder.setValue(value);
+			},
+
+			/**
+			 * @param {Boolean} state
+			 */
+			setValueRejectedFieldsetCheckbox: function(state) {
+				if (state) {
+					this.view.rejectedFieldset.expand();
+				} else {
+					this.view.rejectedFieldset.collapse();
+				}
+			},
+
+			/**
+			 * @param {String} value
+			 */
+			setValueRejectedFolder: function(value) {
+				this.view.rejectedFolder.setValue(value);
 			},
 
 			/**
@@ -180,81 +219,103 @@
 		initComponent: function() {
 			this.delegate = Ext.create('CMDBuild.view.administration.tasks.email.CMStep1Delegate', this);
 
-			this.typeField = Ext.create('Ext.form.field.Text', {
-				fieldLabel: CMDBuild.Translation.administration.tasks.type,
-				labelWidth: CMDBuild.LABEL_WIDTH,
-				name: CMDBuild.core.proxy.CMProxyConstants.TYPE,
-				value: tr.tasksTypes.email,
-				disabled: true,
-				cmImmutable: true,
-				readOnly: true,
-				submitValue: false
-			});
+			// Rejected configuration
+				this.rejectedFolder = Ext.create('Ext.form.field.Text', {
+					name: CMDBuild.core.proxy.CMProxyConstants.REJECTED_FOLDER,
+					fieldLabel: CMDBuild.Translation.rejectedFolder,
+					labelWidth: CMDBuild.LABEL_WIDTH,
+					maxWidth: CMDBuild.CFG_BIG_FIELD_WIDTH - 10, // FIX: field with inside FieldSet is narrow
+					anchor: '100%'
+				});
 
-			this.idField = Ext.create('Ext.form.field.Hidden', {
-				name: CMDBuild.core.proxy.CMProxyConstants.ID
-			});
+				this.rejectedFieldset = Ext.create('Ext.form.FieldSet', {
+					checkboxName: CMDBuild.core.proxy.CMProxyConstants.REJECT_NOT_MATCHING,
+					title: CMDBuild.Translation.enableMoveRejectedNotMatching,
+					checkboxToggle: true,
+					collapsed: true,
+					collapsible: true,
+					toggleOnTitleClick: true,
+					overflowY: 'auto',
+					maxWidth: 'auto',
 
-			this.descriptionField = Ext.create('Ext.form.field.Text', {
-				name: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
-				fieldLabel: CMDBuild.Translation.description_,
-				labelWidth: CMDBuild.LABEL_WIDTH,
-				allowBlank: false
-			});
+					items: [this.rejectedFolder]
+				});
 
-			this.activeField = Ext.create('Ext.form.field.Checkbox', {
-				name: CMDBuild.core.proxy.CMProxyConstants.ACTIVE,
-				fieldLabel: CMDBuild.Translation.administration.tasks.startOnSave,
-				labelWidth: CMDBuild.LABEL_WIDTH
-			});
-
-			this.emailAccountCombo = Ext.create('Ext.form.field.ComboBox', {
-				name: CMDBuild.core.proxy.CMProxyConstants.EMAIL_ACCOUNT,
-				fieldLabel: tr.taskEmail.emailAccount,
-				labelWidth: CMDBuild.LABEL_WIDTH,
-				store: CMDBuild.core.proxy.email.Accounts.getStore(),
-				displayField: CMDBuild.core.proxy.CMProxyConstants.NAME,
-				valueField: CMDBuild.core.proxy.CMProxyConstants.NAME,
-				maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
-				forceSelection: true,
-				editable: false
-			});
-
-			this.fromAddresFilter = Ext.create('CMDBuild.view.administration.tasks.common.emailFilterForm.CMEmailFilterForm', {
-				fieldContainer: {
-					fieldLabel: tr.taskEmail.fromAddressFilter
-				},
-				textarea: {
-					name: CMDBuild.core.proxy.CMProxyConstants.FILTER_FROM_ADDRESS,
-					id: 'FromAddresFilterField'
-				},
-				button: {
-					titleWindow: tr.taskEmail.fromAddressFilter
-				}
-			});
-
-			this.subjectFilter = Ext.create('CMDBuild.view.administration.tasks.common.emailFilterForm.CMEmailFilterForm', {
-				fieldContainer: {
-					fieldLabel: tr.taskEmail.subjectFilter
-				},
-				textarea: {
-					name: CMDBuild.core.proxy.CMProxyConstants.FILTER_SUBJECT,
-					id: 'SubjectFilterField'
-				},
-				button: {
-					titleWindow: tr.taskEmail.subjectFilter
-				}
-			});
+				this.rejectedFieldset.fieldWidthsFix();
+			// END: Rejected configuration
 
 			Ext.apply(this, {
 				items: [
-					this.typeField,
-					this.idField,
-					this.descriptionField,
-					this.activeField,
-					this.emailAccountCombo,
-					this.fromAddresFilter,
-					this.subjectFilter
+					this.typeField = Ext.create('Ext.form.field.Text', {
+						fieldLabel: CMDBuild.Translation.administration.tasks.type,
+						labelWidth: CMDBuild.LABEL_WIDTH,
+						name: CMDBuild.core.proxy.CMProxyConstants.TYPE,
+						value: tr.tasksTypes.email,
+						disabled: true,
+						cmImmutable: true,
+						readOnly: true,
+						submitValue: false
+					}),
+					this.descriptionField = Ext.create('Ext.form.field.Text', {
+						name: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
+						fieldLabel: CMDBuild.Translation.description_,
+						labelWidth: CMDBuild.LABEL_WIDTH,
+						allowBlank: false
+					}),
+					this.activeField = Ext.create('Ext.form.field.Checkbox', {
+						name: CMDBuild.core.proxy.CMProxyConstants.ACTIVE,
+						fieldLabel: CMDBuild.Translation.administration.tasks.startOnSave,
+						labelWidth: CMDBuild.LABEL_WIDTH
+					}),
+					this.emailAccountCombo = Ext.create('Ext.form.field.ComboBox', {
+						name: CMDBuild.core.proxy.CMProxyConstants.EMAIL_ACCOUNT,
+						fieldLabel: tr.taskEmail.emailAccount,
+						labelWidth: CMDBuild.LABEL_WIDTH,
+						store: CMDBuild.core.proxy.email.Accounts.getStore(),
+						displayField: CMDBuild.core.proxy.CMProxyConstants.NAME,
+						valueField: CMDBuild.core.proxy.CMProxyConstants.NAME,
+						maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
+						forceSelection: true,
+						editable: false
+					}),
+					this.incomingFolder = Ext.create('Ext.form.field.Text', {
+						name: CMDBuild.core.proxy.CMProxyConstants.INCOMING_FOLDER,
+						fieldLabel: CMDBuild.Translation.incomingFolder,
+						labelWidth: CMDBuild.LABEL_WIDTH
+					}),
+					this.fromAddresFilter = Ext.create('CMDBuild.view.administration.tasks.common.emailFilterForm.CMEmailFilterForm', {
+						fieldContainer: {
+							fieldLabel: tr.taskEmail.fromAddressFilter
+						},
+						textarea: {
+							name: CMDBuild.core.proxy.CMProxyConstants.FILTER_FROM_ADDRESS,
+							id: 'FromAddresFilterField'
+						},
+						button: {
+							titleWindow: tr.taskEmail.fromAddressFilter
+						}
+					}),
+					this.subjectFilter = Ext.create('CMDBuild.view.administration.tasks.common.emailFilterForm.CMEmailFilterForm', {
+						fieldContainer: {
+							fieldLabel: tr.taskEmail.subjectFilter
+						},
+						textarea: {
+							name: CMDBuild.core.proxy.CMProxyConstants.FILTER_SUBJECT,
+							id: 'SubjectFilterField'
+						},
+						button: {
+							titleWindow: tr.taskEmail.subjectFilter
+						}
+					}),
+					this.processedFolder = Ext.create('Ext.form.field.Text', {
+						name: CMDBuild.core.proxy.CMProxyConstants.PROCESSED_FOLDER,
+						fieldLabel: CMDBuild.Translation.processedFolder,
+						labelWidth: CMDBuild.LABEL_WIDTH
+					}),
+					this.rejectedFieldset,
+					this.idField = Ext.create('Ext.form.field.Hidden', {
+						name: CMDBuild.core.proxy.CMProxyConstants.ID
+					})
 				]
 			});
 

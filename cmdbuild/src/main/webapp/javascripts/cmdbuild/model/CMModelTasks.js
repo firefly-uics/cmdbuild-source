@@ -49,17 +49,17 @@
 		extend: 'Ext.data.Model',
 
 		fields: [
-			{ name: CMDBuild.core.proxy.CMProxyConstants.ID, type: 'int' },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION, type: 'string' },
 			{ name: CMDBuild.core.proxy.CMProxyConstants.ACTIVE, type: 'boolean'},
-
 			{ name: CMDBuild.core.proxy.CMProxyConstants.ATTACHMENTS_ACTIVE, type: 'boolean'},
-			{ name: CMDBuild.core.proxy.CMProxyConstants.ATTACHMENTS_CATEGORY, type: 'int'},
+			{ name: CMDBuild.core.proxy.CMProxyConstants.ATTACHMENTS_CATEGORY, type: 'int', useNull: true },
 			{ name: CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME, type: 'string'},
 			{ name: CMDBuild.core.proxy.CMProxyConstants.CRON_EXPRESSION, type: 'string'},
+			{ name: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION, type: 'string' },
 			{ name: CMDBuild.core.proxy.CMProxyConstants.EMAIL_ACCOUNT, type: 'string'},
 			{ name: CMDBuild.core.proxy.CMProxyConstants.FILTER_FROM_ADDRESS, type: 'auto'},
 			{ name: CMDBuild.core.proxy.CMProxyConstants.FILTER_SUBJECT, type: 'auto'},
+			{ name: CMDBuild.core.proxy.CMProxyConstants.ID, type: 'int' },
+			{ name: CMDBuild.core.proxy.CMProxyConstants.INCOMING_FOLDER, type: 'string' },
 			{ name: CMDBuild.core.proxy.CMProxyConstants.NOTIFICATION_ACTIVE, type: 'boolean'},
 			{ name: CMDBuild.core.proxy.CMProxyConstants.NOTIFICATION_EMAIL_TEMPLATE, type: 'string'},
 			{ name: CMDBuild.core.proxy.CMProxyConstants.PARSING_ACTIVE, type: 'boolean'},
@@ -67,6 +67,9 @@
 			{ name: CMDBuild.core.proxy.CMProxyConstants.PARSING_KEY_INIT, type: 'string'},
 			{ name: CMDBuild.core.proxy.CMProxyConstants.PARSING_VALUE_END, type: 'string'},
 			{ name: CMDBuild.core.proxy.CMProxyConstants.PARSING_VALUE_INIT, type: 'string'},
+			{ name: CMDBuild.core.proxy.CMProxyConstants.PROCESSED_FOLDER, type: 'string' },
+			{ name: CMDBuild.core.proxy.CMProxyConstants.REJECTED_FOLDER, type: 'string' },
+			{ name: CMDBuild.core.proxy.CMProxyConstants.REJECT_NOT_MATCHING, type: 'boolean' },
 			{ name: CMDBuild.core.proxy.CMProxyConstants.WORKFLOW_ACTIVE, type: 'boolean'},
 			{ name: CMDBuild.core.proxy.CMProxyConstants.WORKFLOW_ATTRIBUTES, type: 'auto'},
 			{ name: CMDBuild.core.proxy.CMProxyConstants.WORKFLOW_CLASS_NAME, type: 'string'}
