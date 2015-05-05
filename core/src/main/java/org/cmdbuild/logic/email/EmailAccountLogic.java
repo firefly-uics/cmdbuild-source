@@ -32,14 +32,6 @@ public interface EmailAccountLogic extends Logic {
 
 		boolean isImapSsl();
 
-		String getInputFolder();
-
-		String getProcessedFolder();
-
-		String getRejectedFolder();
-
-		boolean isRejectNotMatching();
-
 	}
 
 	/**

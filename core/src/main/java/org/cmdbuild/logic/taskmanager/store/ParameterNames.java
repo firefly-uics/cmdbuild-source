@@ -87,9 +87,15 @@ public class ParameterNames {
 
 		public static final String ACCOUNT_NAME = ALL_PREFIX + "account.name";
 
+		private static final String FOLDER_PREFIX = ALL_PREFIX + "folder.";
+		public static final String INCOMING_FOLDER = FOLDER_PREFIX + "incoming";
+		public static final String PROCESSED_FOLDER = FOLDER_PREFIX + "processed";
+		public static final String REJECTED_FOLDER = FOLDER_PREFIX + "rejected";
+
 		private static final String FILTER_PREFIX = ALL_PREFIX + "filter.";
 		public static final String FILTER_FROM_REGEX = FILTER_PREFIX + "from.regex";
 		public static final String FILTER_SUBJECT_REGEX = FILTER_PREFIX + "subject.regex";
+		public static final String FILTER_REJECT = FILTER_PREFIX + "reject";
 
 		private static final String ACTION_PREFIX = ALL_PREFIX + "action.";
 

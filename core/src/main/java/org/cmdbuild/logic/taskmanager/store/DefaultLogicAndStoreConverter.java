@@ -420,6 +420,10 @@ public class DefaultLogicAndStoreConverter implements LogicAndStoreConverter {
 					.withCronExpression(task.getCronExpression()) //
 					.withLastExecution(task.getLastExecution()) //
 					.withParameter(ReadEmail.ACCOUNT_NAME, task.getEmailAccount()) //
+					.withParameter(ReadEmail.INCOMING_FOLDER, task.getIncomingFolder()) //
+					.withParameter(ReadEmail.PROCESSED_FOLDER, task.getProcessedFolder()) //
+					.withParameter(ReadEmail.REJECTED_FOLDER, task.getRejectedFolder()) //
+					.withParameter(ReadEmail.FILTER_REJECT, Boolean.toString(task.isRejectNotMatching())) //
 					.withParameter(ReadEmail.FILTER_FROM_REGEX, Joiner.on(SPECIAL_SEPARATOR) //
 							.join(task.getRegexFromFilter())) //
 					.withParameter(ReadEmail.FILTER_SUBJECT_REGEX, Joiner.on(SPECIAL_SEPARATOR) //
@@ -538,7 +542,6 @@ public class DefaultLogicAndStoreConverter implements LogicAndStoreConverter {
 
 		@Override
 		public void visit(final org.cmdbuild.data.store.task.ConnectorTask task) {
-			final String dataSourceType = task.getParameter(Connector.DATA_SOURCE_TYPE);
 			final String dataSourceConfiguration = task.getParameter(Connector.DATA_SOURCE_CONFIGURATION);
 			final String typeMapping = task.getParameter(Connector.MAPPING_TYPES);
 			final String attributeMapping = task.getParameter(Connector.MAPPING_ATTRIBUTES);
@@ -552,7 +555,7 @@ public class DefaultLogicAndStoreConverter implements LogicAndStoreConverter {
 							Boolean.valueOf(task.getParameter(Connector.NOTIFICATION_ACTIVE))) //
 					.withNotificationAccount(task.getParameter(Connector.NOTIFICATION_ACCOUNT)) //
 					.withNotificationErrorTemplate(task.getParameter(Connector.NOTIFICATION_ERROR_TEMPLATE)) //
-					.withSourceConfiguration(sourceConfigurationOf(dataSourceType, dataSourceConfiguration)) //
+					.withSourceConfiguration(sourceConfigurationOf(dataSourceConfiguration)) //
 					.withClassMappings( //
 							isEmpty(typeMapping) ? NO_CLASS_MAPPINGS : FluentIterable.from( //
 									Splitter.on(SPECIAL_SEPARATOR) //
@@ -566,7 +569,7 @@ public class DefaultLogicAndStoreConverter implements LogicAndStoreConverter {
 					.build();
 		}
 
-		private SourceConfiguration sourceConfigurationOf(final String type, final String configuration) {
+		private SourceConfiguration sourceConfigurationOf(final String configuration) {
 			final SourceConfiguration sourceConfiguration;
 			if (isBlank(configuration)) {
 				sourceConfiguration = NULL_SOURCE_CONFIGURATION;
@@ -600,6 +603,11 @@ public class DefaultLogicAndStoreConverter implements LogicAndStoreConverter {
 					.withCronExpression(task.getCronExpression()) //
 					.withLastExecution(task.getLastExecution()) //
 					.withEmailAccount(task.getParameter(ReadEmail.ACCOUNT_NAME)) //
+					.withIncomingFolder(task.getParameter(ReadEmail.INCOMING_FOLDER)) //
+					.withProcessedFolder(task.getParameter(ReadEmail.PROCESSED_FOLDER)) //
+					.withRejectedFolder(task.getParameter(ReadEmail.REJECTED_FOLDER)) //
+					.withRejectNotMatching( //
+							Boolean.valueOf(task.getParameter(ReadEmail.FILTER_REJECT))) //
 					.withRegexFromFilter( //
 							isEmpty(fromRegexFilters) ? EMPTY_FILTERS : Splitter.on(SPECIAL_SEPARATOR) //
 									.split(fromRegexFilters)) //

@@ -13,6 +13,7 @@ import static org.cmdbuild.servlets.json.CommunicationConstants.EMAIL_ACCOUNT;
 import static org.cmdbuild.servlets.json.CommunicationConstants.FILTER_FROM_ADDRESS;
 import static org.cmdbuild.servlets.json.CommunicationConstants.FILTER_SUBJECT;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ID;
+import static org.cmdbuild.servlets.json.CommunicationConstants.INCOMING_FOLDER;
 import static org.cmdbuild.servlets.json.CommunicationConstants.MAPPER_ACTIVE;
 import static org.cmdbuild.servlets.json.CommunicationConstants.MAPPER_KEY_END;
 import static org.cmdbuild.servlets.json.CommunicationConstants.MAPPER_KEY_INIT;
@@ -20,6 +21,9 @@ import static org.cmdbuild.servlets.json.CommunicationConstants.MAPPER_VALUE_END
 import static org.cmdbuild.servlets.json.CommunicationConstants.MAPPER_VALUE_INIT;
 import static org.cmdbuild.servlets.json.CommunicationConstants.NOTIFICATION_ACTIVE;
 import static org.cmdbuild.servlets.json.CommunicationConstants.NOTIFICATION_EMAIL_TEMPLATE;
+import static org.cmdbuild.servlets.json.CommunicationConstants.PROCESSED_FOLDER;
+import static org.cmdbuild.servlets.json.CommunicationConstants.REJECTED_FOLDER;
+import static org.cmdbuild.servlets.json.CommunicationConstants.REJECT_NOT_MATCHING;
 import static org.cmdbuild.servlets.json.CommunicationConstants.WORKFLOW_ACTIVE;
 import static org.cmdbuild.servlets.json.CommunicationConstants.WORKFLOW_ADVANCEABLE;
 import static org.cmdbuild.servlets.json.CommunicationConstants.WORKFLOW_ATTACHMENTS_CATEGORY;
@@ -88,6 +92,26 @@ public class ReadEmail extends JSONBaseWithSpringContext {
 		@JsonProperty(EMAIL_ACCOUNT)
 		public String getEmailAccount() {
 			return delegate.getEmailAccount();
+		}
+
+		@JsonProperty(INCOMING_FOLDER)
+		public String getInputFolder() {
+			return delegate.getIncomingFolder();
+		}
+
+		@JsonProperty(PROCESSED_FOLDER)
+		public String getProcessedFolder() {
+			return delegate.getProcessedFolder();
+		}
+
+		@JsonProperty(REJECTED_FOLDER)
+		public String getRejectedFolder() {
+			return delegate.getRejectedFolder();
+		}
+
+		@JsonProperty(REJECT_NOT_MATCHING)
+		public boolean isRejectNotMatching() {
+			return delegate.isRejectNotMatching();
 		}
 
 		@JsonProperty(FILTER_FROM_ADDRESS)
@@ -193,6 +217,10 @@ public class ReadEmail extends JSONBaseWithSpringContext {
 			@Parameter(ACTIVE) final Boolean active, //
 			@Parameter(CRON_EXPRESSION) final String cronExpression, //
 			@Parameter(value = EMAIL_ACCOUNT, required = false) final String emailAccount, //
+			@Parameter(value = INCOMING_FOLDER, required = false) final String incomingFolder, //
+			@Parameter(value = PROCESSED_FOLDER, required = false) final String processedFolder, //
+			@Parameter(value = REJECTED_FOLDER, required = false) final String rejectedFolder, //
+			@Parameter(value = REJECT_NOT_MATCHING, required = false) final boolean rejectNotMatching, //
 			@Parameter(value = FILTER_FROM_ADDRESS, required = false) final JSONArray filterFromAddress, //
 			@Parameter(value = FILTER_SUBJECT, required = false) final JSONArray filterSubject, //
 			@Parameter(value = NOTIFICATION_ACTIVE, required = false) final Boolean notificationActive, //
@@ -216,6 +244,10 @@ public class ReadEmail extends JSONBaseWithSpringContext {
 				.withCronExpression(cronExpression) //
 				//
 				.withEmailAccount(emailAccount) //
+				.withIncomingFolder(incomingFolder) //
+				.withProcessedFolder(processedFolder) //
+				.withRejectedFolder(rejectedFolder) //
+				.withRejectNotMatching(rejectNotMatching) //
 				//
 				// filters
 				.withRegexFromFilter(toIterable(filterFromAddress)) //
@@ -273,6 +305,10 @@ public class ReadEmail extends JSONBaseWithSpringContext {
 			@Parameter(ACTIVE) final Boolean active, //
 			@Parameter(CRON_EXPRESSION) final String cronExpression, //
 			@Parameter(value = EMAIL_ACCOUNT, required = false) final String emailAccount, //
+			@Parameter(value = INCOMING_FOLDER, required = false) final String incomingFolder, //
+			@Parameter(value = PROCESSED_FOLDER, required = false) final String processedFolder, //
+			@Parameter(value = REJECTED_FOLDER, required = false) final String rejectedFolder, //
+			@Parameter(value = REJECT_NOT_MATCHING, required = false) final boolean rejectNotMatching, //
 			@Parameter(value = FILTER_FROM_ADDRESS, required = false) final JSONArray filterFromAddress, //
 			@Parameter(value = FILTER_SUBJECT, required = false) final JSONArray filterSubject, //
 			@Parameter(value = NOTIFICATION_ACTIVE, required = false) final Boolean notificationActive, //
@@ -297,6 +333,10 @@ public class ReadEmail extends JSONBaseWithSpringContext {
 				.withCronExpression(cronExpression) //
 				//
 				.withEmailAccount(emailAccount) //
+				.withIncomingFolder(incomingFolder) //
+				.withProcessedFolder(processedFolder) //
+				.withRejectedFolder(rejectedFolder) //
+				.withRejectNotMatching(rejectNotMatching) //
 				//
 				// filters
 				.withRegexFromFilter(toIterable(filterFromAddress)) //

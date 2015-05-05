@@ -23,10 +23,6 @@ public class DefaultEmailAccount implements EmailAccount {
 		private String imapServer;
 		private Integer imapPort;
 		private boolean imapSsl;
-		private String inputFolder;
-		private String processedFolder;
-		private String rejectedFolder;
-		private boolean rejectNotMatching;
 
 		private Builder() {
 			// use factory method
@@ -112,26 +108,6 @@ public class DefaultEmailAccount implements EmailAccount {
 			return this;
 		}
 
-		public Builder withInputFolder(final String inputFolder) {
-			this.inputFolder = inputFolder;
-			return this;
-		}
-
-		public Builder withProcessedFolder(final String processedFolder) {
-			this.processedFolder = processedFolder;
-			return this;
-		}
-
-		public Builder withRejectedFolder(final String rejectedFolder) {
-			this.rejectedFolder = rejectedFolder;
-			return this;
-		}
-
-		public Builder withRejectNotMatchingStatus(final boolean rejectNotMatching) {
-			this.rejectNotMatching = rejectNotMatching;
-			return this;
-		}
-
 	}
 
 	public static Builder newInstance() {
@@ -151,10 +127,6 @@ public class DefaultEmailAccount implements EmailAccount {
 	private final String imapServer;
 	private final Integer imapPort;
 	private final boolean imapSsl;
-	private final String inputFolder;
-	private final String processedFolder;
-	private final String rejectedFolder;
-	private final boolean rejectNotMatching;
 
 	private DefaultEmailAccount(final Builder builder) {
 		this.id = builder.id;
@@ -170,10 +142,6 @@ public class DefaultEmailAccount implements EmailAccount {
 		this.imapServer = builder.imapServer;
 		this.imapPort = builder.imapPort;
 		this.imapSsl = builder.imapSsl;
-		this.inputFolder = builder.inputFolder;
-		this.processedFolder = builder.processedFolder;
-		this.rejectedFolder = builder.rejectedFolder;
-		this.rejectNotMatching = builder.rejectNotMatching;
 	}
 
 	@Override
@@ -254,26 +222,6 @@ public class DefaultEmailAccount implements EmailAccount {
 	@Override
 	public boolean isImapConfigured() {
 		return isNotBlank(imapServer) && isNotBlank(username) && isNotBlank(password);
-	}
-
-	@Override
-	public String getInputFolder() {
-		return inputFolder;
-	}
-
-	@Override
-	public String getProcessedFolder() {
-		return processedFolder;
-	}
-
-	@Override
-	public String getRejectedFolder() {
-		return rejectedFolder;
-	}
-
-	@Override
-	public boolean isRejectNotMatching() {
-		return rejectNotMatching;
 	}
 
 	@Override

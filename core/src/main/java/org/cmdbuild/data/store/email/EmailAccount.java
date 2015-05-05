@@ -34,12 +34,4 @@ public interface EmailAccount extends Storable {
 
 	boolean isImapConfigured();
 
-	String getInputFolder();
-
-	String getProcessedFolder();
-
-	String getRejectedFolder();
-
-	boolean isRejectNotMatching();
-
 }

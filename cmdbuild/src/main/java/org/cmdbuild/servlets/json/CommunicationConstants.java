@@ -108,7 +108,6 @@ public class CommunicationConstants {
 			EMAIL_ID = "emailId", //
 			EMAIL_TEMPLATE = "emailTemplate", //
 			ENABLED = "enabled", //
-			ENABLE_MOVE_REJECTED_NOT_MATCHING = "enableMoveRejectedNotMatching", //
 			ENTRY_TYPE = "entryType", //
 			EXPORTED = "exported", //
 			EXPORT_MAPPING = "ExportMapping", //

@@ -2,12 +2,15 @@ package org.cmdbuild.services.email;
 
 import static com.google.common.collect.FluentIterable.from;
 import static com.google.common.collect.Iterables.unmodifiableIterable;
+import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.reflect.Reflection.newProxy;
 import static java.util.Collections.emptyList;
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
 import static org.cmdbuild.common.utils.Reflection.unsupported;
 import static org.joda.time.DateTime.now;
+
+import java.util.Collection;
 
 import javax.activation.DataHandler;
 
@@ -151,15 +154,28 @@ public class DefaultEmailService implements EmailService {
 
 	}
 
+	private static class CollectingEmailCallbackHandler implements EmailCallbackHandler {
+
+		private final Collection<Email> emails = newArrayList();
+
+		@Override
+		public void handle(final Email email) {
+			emails.add(email);
+		}
+
+		public Iterable<Email> getEmails() {
+			return emails;
+		}
+
+	}
+
 	private static final Iterable<String> NO_ADDRESSES = emptyList();
 	private static final String CONTENT_TYPE = "text/html; charset=UTF-8";
 
 	private final Supplier<EmailAccount> accountSupplier;
 	private final Supplier<MailApi> apiSupplier;
 
-	DefaultEmailService( //
-			final Supplier<EmailAccount> emailAccountSupplier, //
-			final MailApiFactory mailApiFactory) {
+	DefaultEmailService(final Supplier<EmailAccount> emailAccountSupplier, final MailApiFactory mailApiFactory) {
 		this.accountSupplier = emailAccountSupplier;
 		this.apiSupplier = new MailApiSupplier(emailAccountSupplier, mailApiFactory);
 	}
@@ -187,15 +203,16 @@ public class DefaultEmailService implements EmailService {
 	}
 
 	@Override
-	public synchronized Iterable<Email> receive() throws EmailServiceException {
+	public synchronized Iterable<Email> receive(final Folders folders) throws EmailServiceException {
 		logger.info("receiving emails");
 		final CollectingEmailCallbackHandler callbackHandler = new CollectingEmailCallbackHandler();
-		receive(callbackHandler);
+		receive(folders, callbackHandler);
 		return unmodifiableIterable(callbackHandler.getEmails());
 	}
 
 	@Override
-	public synchronized void receive(final EmailCallbackHandler callback) throws EmailServiceException {
+	public synchronized void receive(final Folders folders, final EmailCallbackHandler callback)
+			throws EmailServiceException {
 		logger.info("receiving emails");
 		/**
 		 * Business rule: Consider the configuration of the IMAP Server as check
@@ -204,7 +221,7 @@ public class DefaultEmailService implements EmailService {
 		 */
 		if (accountSupplier.get().isImapConfigured()) {
 			try {
-				receive0(callback);
+				receive0(folders, callback);
 			} catch (final MailException e) {
 				logger.error("error receiving mails", e);
 				throw EmailServiceException.receive(e);
@@ -214,9 +231,9 @@ public class DefaultEmailService implements EmailService {
 		}
 	}
 
-	private void receive0(final EmailCallbackHandler callback) {
+	private void receive0(final Folders folders, final EmailCallbackHandler callback) {
 		final Iterable<FetchedMail> fetchMails = apiSupplier.get() //
-				.selectFolder(accountSupplier.get().getInputFolder()) //
+				.selectFolder(folders.incoming()) //
 				.fetch();
 		for (final FetchedMail fetchedMail : fetchMails) {
 			final SelectMail mailMover = apiSupplier.get().selectMail(fetchedMail);
@@ -224,12 +241,12 @@ public class DefaultEmailService implements EmailService {
 			try {
 				final GetMail getMail = apiSupplier.get().selectMail(fetchedMail).get();
 				final Email email = new GetMailAdapter(getMail, accountSupplier.get().getName());
-				mailMover.selectTargetFolder(accountSupplier.get().getProcessedFolder());
+				mailMover.selectTargetFolder(folders.processed());
 				callback.handle(email);
 			} catch (final Exception e) {
 				logger.error("error getting mail", e);
-				keepMail = !accountSupplier.get().isRejectNotMatching();
-				mailMover.selectTargetFolder(accountSupplier.get().getRejectedFolder());
+				keepMail = !folders.rejectNotMatching();
+				mailMover.selectTargetFolder(folders.rejected());
 			}
 
 			try {

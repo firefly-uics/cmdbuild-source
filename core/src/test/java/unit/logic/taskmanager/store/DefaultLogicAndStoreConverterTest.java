@@ -604,6 +604,10 @@ public class DefaultLogicAndStoreConverterTest {
 				.withCronExpression("cron expression") //
 				.withLastExecution(NOW) //
 				.withEmailAccount("email account") //
+				.withIncomingFolder("incoming folder") //
+				.withProcessedFolder("processed folder") //
+				.withRejectedFolder("rejected folder") //
+				.withRejectNotMatching(true) //
 				.withRegexFromFilter(asList("regex", "from", "filter")) //
 				.withRegexSubjectFilter(asList("regex", "subject", "filter")) //
 				.withNotificationStatus(true) //
@@ -631,6 +635,10 @@ public class DefaultLogicAndStoreConverterTest {
 
 		final Map<String, String> parameters = converted.getParameters();
 		assertThat(parameters, hasEntry(ReadEmail.ACCOUNT_NAME, "email account"));
+		assertThat(parameters, hasEntry(ReadEmail.INCOMING_FOLDER, "incoming folder"));
+		assertThat(parameters, hasEntry(ReadEmail.PROCESSED_FOLDER, "processed folder"));
+		assertThat(parameters, hasEntry(ReadEmail.REJECTED_FOLDER, "rejected folder"));
+		assertThat(parameters, hasEntry(ReadEmail.FILTER_REJECT, "true"));
 		assertThat(parameters, hasEntry(ReadEmail.FILTER_FROM_REGEX, "regex" + SPECIAL_SEPARATOR //
 				+ "from" + SPECIAL_SEPARATOR //
 				+ "filter"));
@@ -689,6 +697,10 @@ public class DefaultLogicAndStoreConverterTest {
 				.withCronExpression("cron expression") //
 				.withLastExecution(NOW) //
 				.withParameter(ReadEmail.ACCOUNT_NAME, "email account") //
+				.withParameter(ReadEmail.INCOMING_FOLDER, "incoming folder") //
+				.withParameter(ReadEmail.PROCESSED_FOLDER, "processed folder") //
+				.withParameter(ReadEmail.REJECTED_FOLDER, "rejected folder") //
+				.withParameter(ReadEmail.FILTER_REJECT, "true") //
 				.withParameter(ReadEmail.FILTER_FROM_REGEX, "regex" + SPECIAL_SEPARATOR //
 						+ "from" + SPECIAL_SEPARATOR //
 						+ "filter") //
@@ -721,6 +733,10 @@ public class DefaultLogicAndStoreConverterTest {
 		assertThat(converted.getCronExpression(), equalTo("cron expression"));
 		assertThat(converted.getLastExecution(), equalTo(NOW));
 		assertThat(converted.getEmailAccount(), equalTo("email account"));
+		assertThat(converted.getIncomingFolder(), equalTo("incoming folder"));
+		assertThat(converted.getProcessedFolder(), equalTo("processed folder"));
+		assertThat(converted.getRejectedFolder(), equalTo("rejected folder"));
+		assertThat(converted.isRejectNotMatching(), equalTo(true));
 		assertThat(converted.isNotificationActive(), equalTo(true));
 		assertThat(converted.getNotificationTemplate(), equalTo("template"));
 		assertThat(converted.getRegexFromFilter(), containsInAnyOrder("regex", "from", "filter"));
