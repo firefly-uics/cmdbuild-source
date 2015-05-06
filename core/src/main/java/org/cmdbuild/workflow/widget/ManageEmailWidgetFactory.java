@@ -152,7 +152,7 @@ public class ManageEmailWidgetFactory extends ValuePairWidgetFactory {
 			final EmailTemplate template = getTemplateForKey(emailTemplatesByName, key, NOTIFY_TEMPLATE_NAME);
 			template.setNotifyWith(readString(valueMap.get(key)));
 		}
-		managedParameters.addAll(subjects.keySet());
+		managedParameters.addAll(notifyWithThemplate.keySet());
 
 		final Map<String, String> contents = filterKeysStartingWith(valueMap, CONTENT);
 		for (final String key : contents.keySet()) {
