@@ -96,8 +96,13 @@ CMDBuild.Management.TemplateResolver.prototype = {
 			}
 		}
 
-		var fields = this.getBasicForm().getFields();
-		var field = fields.findBy(lookForCMAttributeName) || fields.findBy(lookForFieldName);
+		var field = undefined;
+
+		if (!Ext.isEmpty(this.getBasicForm()))
+			var fields = this.getBasicForm().getFields();
+
+		if (!Ext.isEmpty(fields))
+			field = fields.findBy(lookForCMAttributeName) || fields.findBy(lookForFieldName);
 
 		return field;
 	},

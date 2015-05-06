@@ -21,7 +21,10 @@
 					xaVars[FILTER_FIELD] = attribute.filter;
 					templateResolver = new CMDBuild.Management.TemplateResolver({
 						getBasicForm: function() {
-							return getFormPanel(field).getForm();
+							if (!Ext.isEmpty(getFormPanel(field)))
+								return getFormPanel(field).getForm();
+
+							return undefined;
 						},
 						xaVars: xaVars
 					});
