@@ -86,29 +86,31 @@
 		 * Equals to onCardSelected in classes.
 		 * N.B. Enable/Disable email tab is done by widget configurationSet
 		 *
-		 * @param {CMDBuild.model.CMProcessInstance} processIstance
+		 * @param {CMDBuild.model.CMProcessInstance} processInstance
 		 */
-		onProcessInstanceChange: function(processIstance) {
+		onProcessInstanceChange: function(processInstance) {
 			var me = this;
 
-			if (!Ext.isEmpty(processIstance)) {
-				if (!processIstance.isNew())
-					this.parentDelegate.activityPanelController.ensureEditPanel(); // Creates editPanel with relative form fields
+			if (!this.view.isDisabled()) {
+				if (!Ext.isEmpty(processInstance) && processInstance.isStateOpen()) {
+					if (!processInstance.isNew())
+						this.parentDelegate.activityPanelController.ensureEditPanel(); // Creates editPanel with relative form fields
 
-				// Reset configuration attributes
-				this.configurationSet();
-				this.configurationTemplatesSet();
+					// Reset configuration attributes
+					this.configurationSet();
+					this.configurationTemplatesSet();
 
-				this.selectedEntitySet(processIstance, function() {
-					me.regenerateAllEmailsSet(processIstance.isNew());
-					me.forceRegenerationSet(processIstance.isNew());
+					this.selectedEntitySet(processInstance, function() {
+						me.regenerateAllEmailsSet(processInstance.isNew());
+						me.forceRegenerationSet(processInstance.isNew());
+						me.cmfg('storeLoad');
+					});
+
+					this.editModeSet(processInstance.isNew()); // Enable/Disable tab based on model new state to separate create/view mode
+					this.cmfg('setUiState');
+				} else { // We have a closed process instance
 					me.cmfg('storeLoad');
-				});
-
-				this.editModeSet(processIstance.isNew()); // Enable/Disable tab based on model new state to separate create/view mode
-				this.cmfg('setUiState');
-			} else {
-				_error('Empty processIstance on onProcessInstanceChange', this);
+				}
 			}
 		},
 

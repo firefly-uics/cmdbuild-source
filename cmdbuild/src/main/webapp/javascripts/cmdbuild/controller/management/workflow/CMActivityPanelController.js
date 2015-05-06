@@ -216,7 +216,7 @@
 				this.view.loadCard(processInstance.asDummyModel());
 				this.view.displayModeForNotEditableCard();
 
-				if (!processInstance.isNew())
+				if (!processInstance.isNew() && processInstance.isStateOpen())
 					this.ensureEditPanel(); // Creates editPanel with relative form fields
 			}
 		},
