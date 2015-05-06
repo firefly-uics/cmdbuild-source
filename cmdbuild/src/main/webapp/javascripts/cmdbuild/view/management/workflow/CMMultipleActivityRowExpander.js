@@ -10,15 +10,15 @@
 
 	/**
 	 * ATTENTION!
-	 * 
+	 *
 	 * This override is a super hack
 	 * to "resolve" an IE crash
-	 * 
+	 *
 	 * When reconfigure a grid, this
 	 * method are called. The assignment
 	 * surrounded by try-catch throws
 	 * an exception, BUT ONLY ON IE!!!
-	 * 
+	 *
 	 * So, is an assignment, and I
 	 * really don't know what could
 	 * be wrong...
@@ -34,7 +34,7 @@
 				try {
 					items[i].colSpan = colspan;
 				} catch (e) {
-					
+
 				}
 			}
 		}
@@ -50,6 +50,17 @@
 		getRowBodyFeatureData: function(record, idx, rowValues) {
 			Ext.grid.plugin.RowExpander.prototype.getRowBodyFeatureData.apply(this, arguments);
 			var activities = record.getActivityInfoList();
+
+			// Sort activities by description ascending
+			Ext.Array.sort(activities, function(item1, item2) {
+				if (item1[CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION] < item2[CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION])
+					return -1;
+
+				if (item1[CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION] > item2[CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION])
+					return 1;
+
+				return 0;
+			});
 
 			rowValues.rowBody = (function(activities) {
 				var out = "";
