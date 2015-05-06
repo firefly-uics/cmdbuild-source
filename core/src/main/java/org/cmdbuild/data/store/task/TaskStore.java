@@ -6,4 +6,6 @@ public interface TaskStore extends Store<Task> {
 
 	Task read(Long id);
 
+	void updateLastExecution(Task storable);
+
 }

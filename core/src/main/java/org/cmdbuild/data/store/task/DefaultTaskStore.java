@@ -1,6 +1,7 @@
 package org.cmdbuild.data.store.task;
 
 import static com.google.common.collect.FluentIterable.from;
+import static com.google.common.collect.Iterables.getOnlyElement;
 import static com.google.common.collect.Maps.difference;
 import static com.google.common.collect.Maps.transformEntries;
 import static com.google.common.collect.Maps.transformValues;
@@ -32,7 +33,7 @@ import com.google.common.collect.Maps.EntryTransformer;
  */
 public class DefaultTaskStore implements TaskStore {
 
-	private static final Marker MARKER = MarkerFactory.getMarker(DefaultTaskStore.class.getName());
+	private static final Marker MARKER = MarkerFactory.getMarker(TaskStore.class.getName());
 
 	private static final Function<TaskParameter, String> TASK_PARAMETER_TO_KEY = new Function<TaskParameter, String>() {
 
@@ -64,11 +65,13 @@ public class DefaultTaskStore implements TaskStore {
 
 		protected final Store<TaskDefinition> definitionsStore;
 		protected final Store<TaskParameter> parametersStore;
+		protected final Store<TaskRuntime> runtimeStore;
 
 		protected AbstractAction(final Store<TaskDefinition> definitionsStore,
-				final Store<TaskParameter> parametersStore) {
+				final Store<TaskParameter> parametersStore, final Store<TaskRuntime> runtimeStore) {
 			this.definitionsStore = definitionsStore;
 			this.parametersStore = parametersStore;
+			this.runtimeStore = runtimeStore;
 		}
 
 		protected TaskDefinition definitionOf(final Task task) {
@@ -112,11 +115,11 @@ public class DefaultTaskStore implements TaskStore {
 					.withDescription(task.getDescription()) //
 					.withRunning(task.isRunning()) //
 					.withCronExpression(task.getCronExpression()) //
-					.withLastExecution(task.getLastExecution()) //
 					.build();
 		}
 
-		protected Task of(final TaskDefinition definition, final Iterable<TaskParameter> parameters) {
+		protected Task merge(final TaskDefinition definition, final Iterable<TaskParameter> parameters,
+				final TaskRuntime runtime) {
 
 			return new TaskDefinitionVisitor() {
 
@@ -158,7 +161,7 @@ public class DefaultTaskStore implements TaskStore {
 					.withDescription(definition.getDescription()) //
 					.withRunningStatus(definition.isRunning()) //
 					.withCronExpression(definition.getCronExpression()) //
-					.withLastExecution(definition.getLastExecution()) //
+					.withLastExecution(runtime.getLastExecution()) //
 					.withParameters(transformValues( //
 							uniqueIndex(parameters, TASK_PARAMETER_TO_KEY), //
 							TASK_PARAMETER_TO_VALUE)) //
@@ -183,13 +186,13 @@ public class DefaultTaskStore implements TaskStore {
 
 	private static class Create extends AbstractAction<Storable> {
 
-		private static final Iterable<TaskParameter> NOT_NEEDED = Collections.emptyList();
+		private static final Iterable<TaskParameter> NO_PARAMETERS = Collections.emptyList();
 
 		private final Task storable;
 
 		public Create(final Store<TaskDefinition> definitions, final Store<TaskParameter> parametersStore,
-				final Task storable) {
-			super(definitions, parametersStore);
+				final Store<TaskRuntime> runtimeStore, final Task storable) {
+			super(definitions, parametersStore, runtimeStore);
 			this.storable = storable;
 		}
 
@@ -202,7 +205,12 @@ public class DefaultTaskStore implements TaskStore {
 					toTaskParameterMapOf(readedDefinition)).values()) {
 				parametersStore.create(element);
 			}
-			return of(readedDefinition, NOT_NEEDED);
+			final Storable createdRuntime = runtimeStore.create(TaskRuntime.newInstance() //
+					.withOwner(readedDefinition.getId()) //
+					.withLastExecution(storable.getLastExecution()) //
+					.build());
+			final TaskRuntime readedRuntime = runtimeStore.read(createdRuntime);
+			return merge(readedDefinition, NO_PARAMETERS, readedRuntime);
 		}
 	}
 
@@ -211,8 +219,8 @@ public class DefaultTaskStore implements TaskStore {
 		private final Storable storable;
 
 		public Read(final Store<TaskDefinition> definitions, final Store<TaskParameter> parametersStore,
-				final Storable storable) {
-			super(definitions, parametersStore);
+				final Store<TaskRuntime> runtimeStore, final Storable storable) {
+			super(definitions, parametersStore, runtimeStore);
 			this.storable = storable;
 		}
 
@@ -221,7 +229,8 @@ public class DefaultTaskStore implements TaskStore {
 			final Task task = Task.class.cast(storable);
 			final TaskDefinition definition = definitionsStore.read(definitionOf(task));
 			final Iterable<TaskParameter> parameters = parametersStore.readAll(groupedBy(definition));
-			return of(definition, parameters);
+			final TaskRuntime runtime = getOnlyElement(runtimeStore.readAll(groupedBy(definition)));
+			return merge(definition, parameters, runtime);
 		}
 
 	}
@@ -230,13 +239,14 @@ public class DefaultTaskStore implements TaskStore {
 
 		private final Groupable groupable;
 
-		public ReadAll(final Store<TaskDefinition> definitions, final Store<TaskParameter> parametersStore) {
-			this(definitions, parametersStore, null);
+		public ReadAll(final Store<TaskDefinition> definitions, final Store<TaskParameter> parametersStore,
+				final Store<TaskRuntime> runtimeStore) {
+			this(definitions, parametersStore, runtimeStore, null);
 		}
 
 		public ReadAll(final Store<TaskDefinition> definitions, final Store<TaskParameter> parametersStore,
-				final Groupable groupable) {
-			super(definitions, parametersStore);
+				final Store<TaskRuntime> runtimeStore, final Groupable groupable) {
+			super(definitions, parametersStore, runtimeStore);
 			this.groupable = groupable;
 		}
 
@@ -250,7 +260,8 @@ public class DefaultTaskStore implements TaskStore {
 						@Override
 						public Task apply(final TaskDefinition input) {
 							final Iterable<TaskParameter> parameters = parametersStore.readAll(groupedBy(input));
-							return of(input, parameters);
+							final TaskRuntime runtime = getOnlyElement(runtimeStore.readAll(groupedBy(input)));
+							return merge(input, parameters, runtime);
 						}
 
 					}) //
@@ -264,8 +275,8 @@ public class DefaultTaskStore implements TaskStore {
 		private final Task storable;
 
 		public Update(final Store<TaskDefinition> definitions, final Store<TaskParameter> parametersStore,
-				final Task storable) {
-			super(definitions, parametersStore);
+				final Store<TaskRuntime> runtimeStore, final Task storable) {
+			super(definitions, parametersStore, runtimeStore);
 			this.storable = storable;
 		}
 
@@ -273,7 +284,6 @@ public class DefaultTaskStore implements TaskStore {
 		public Void execute() {
 			final TaskDefinition definition = definitionOf(storable);
 			definitionsStore.update(definition);
-
 			final Map<String, TaskParameter> left = transformEntries(storable.getParameters(),
 					toTaskParameterMapOf(definition));
 			final Map<String, TaskParameter> right = uniqueIndex(parametersStore.readAll(groupedBy(definition)),
@@ -294,6 +304,13 @@ public class DefaultTaskStore implements TaskStore {
 			for (final TaskParameter element : difference.entriesOnlyOnRight().values()) {
 				parametersStore.delete(element);
 			}
+			for (final TaskRuntime element : runtimeStore.readAll(groupedBy(definition))) {
+				runtimeStore.update(TaskRuntime.newInstance() //
+						.withId(element.getId()) //
+						.withOwner(element.getOwner()) //
+						.withLastExecution(storable.getLastExecution()) //
+						.build());
+			}
 			return null;
 		}
 
@@ -304,8 +321,8 @@ public class DefaultTaskStore implements TaskStore {
 		private final Storable storable;
 
 		public Delete(final Store<TaskDefinition> definitions, final Store<TaskParameter> parametersStore,
-				final Storable storable) {
-			super(definitions, parametersStore);
+				final Store<TaskRuntime> runtimeStore, final Storable storable) {
+			super(definitions, parametersStore, runtimeStore);
 			this.storable = storable;
 		}
 
@@ -314,7 +331,10 @@ public class DefaultTaskStore implements TaskStore {
 			Validate.isInstanceOf(Task.class, storable);
 			final Task task = Task.class.cast(storable);
 			final TaskDefinition definition = definitionsStore.read(definitionOf(task));
-			for (final TaskParameter element : parametersStore.readAll(groupedBy(definition))) {
+			for (final Storable element : runtimeStore.readAll(groupedBy(definition))) {
+				runtimeStore.delete(element);
+			}
+			for (final Storable element : parametersStore.readAll(groupedBy(definition))) {
 				parametersStore.delete(element);
 			}
 			definitionsStore.delete(definition);
@@ -323,35 +343,40 @@ public class DefaultTaskStore implements TaskStore {
 
 	}
 
-	private static class ReadById extends AbstractAction<Task> {
+	private static class UpdateLastExecution extends AbstractAction<Void> {
 
-		private final Long id;
+		private final Task storable;
 
-		public ReadById(final Store<TaskDefinition> definitions, final Store<TaskParameter> parametersStore,
-				final Long id) {
-			super(definitions, parametersStore);
-			this.id = id;
+		public UpdateLastExecution(final Store<TaskDefinition> definitions, final Store<TaskParameter> parametersStore,
+				final Store<TaskRuntime> runtimeStore, final Task storable) {
+			super(definitions, parametersStore, runtimeStore);
+			this.storable = storable;
 		}
 
 		@Override
-		public Task execute() {
-			for (final TaskDefinition definition : definitionsStore.readAll()) {
-				if (definition.getId().equals(id)) {
-					final Iterable<TaskParameter> parameters = parametersStore.readAll(groupedBy(definition));
-					return of(definition, parameters);
-				}
+		public Void execute() {
+			final TaskDefinition definition = definitionOf(storable);
+			for (final TaskRuntime element : runtimeStore.readAll(groupedBy(definition))) {
+				runtimeStore.update(TaskRuntime.newInstance() //
+						.withId(element.getId()) //
+						.withOwner(element.getOwner()) //
+						.withLastExecution(storable.getLastExecution()) //
+						.build());
 			}
-			throw new NoSuchElementException();
+			return null;
 		}
 
 	}
 
 	private final Store<TaskDefinition> definitionsStore;
 	private final Store<TaskParameter> parametersStore;
+	private final Store<TaskRuntime> runtimeStore;
 
-	public DefaultTaskStore(final Store<TaskDefinition> definitionsStore, final Store<TaskParameter> parametersStore) {
+	public DefaultTaskStore(final Store<TaskDefinition> definitionsStore, final Store<TaskParameter> parametersStore,
+			final Store<TaskRuntime> runtimeStore) {
 		this.definitionsStore = definitionsStore;
 		this.parametersStore = parametersStore;
+		this.runtimeStore = runtimeStore;
 	}
 
 	@Override
@@ -393,35 +418,46 @@ public class DefaultTaskStore implements TaskStore {
 	@Override
 	public Task read(final Long id) {
 		logger.info(MARKER, "reading existing element with id '{}'", id);
-		return execute(doRead(id));
+		for (final Task element : readAll()) {
+			if (element.getId().equals(id)) {
+				return element;
+			}
+		}
+		throw new NoSuchElementException();
+	}
+
+	@Override
+	public void updateLastExecution(final Task storable) {
+		logger.info(MARKER, "updating only last execution for existing element '{}'", storable);
+		execute(doUpdateLastExecution(storable));
 	}
 
 	private Create doCreate(final Task storable) {
-		return new Create(definitionsStore, parametersStore, storable);
+		return new Create(definitionsStore, parametersStore, runtimeStore, storable);
 	}
 
 	private Read doRead(final Storable storable) {
-		return new Read(definitionsStore, parametersStore, storable);
+		return new Read(definitionsStore, parametersStore, runtimeStore, storable);
 	}
 
 	private ReadAll doReadAll() {
-		return new ReadAll(definitionsStore, parametersStore);
+		return new ReadAll(definitionsStore, parametersStore, runtimeStore);
 	}
 
 	private ReadAll doReadAll(final Groupable groupable) {
-		return new ReadAll(definitionsStore, parametersStore, groupable);
+		return new ReadAll(definitionsStore, parametersStore, runtimeStore, groupable);
 	}
 
 	private Update doUpdate(final Task storable) {
-		return new Update(definitionsStore, parametersStore, storable);
+		return new Update(definitionsStore, parametersStore, runtimeStore, storable);
 	}
 
 	private Delete doDelete(final Storable storable) {
-		return new Delete(definitionsStore, parametersStore, storable);
+		return new Delete(definitionsStore, parametersStore, runtimeStore, storable);
 	}
 
-	private ReadById doRead(final Long id) {
-		return new ReadById(definitionsStore, parametersStore, id);
+	private UpdateLastExecution doUpdateLastExecution(final Task storable) {
+		return new UpdateLastExecution(definitionsStore, parametersStore, runtimeStore, storable);
 	}
 
 	private <T> T execute(final Action<T> action) {

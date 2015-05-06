@@ -10,11 +10,12 @@ import org.cmdbuild.data.store.task.TaskDefinition;
 import org.cmdbuild.data.store.task.TaskDefinitionConverter;
 import org.cmdbuild.data.store.task.TaskParameter;
 import org.cmdbuild.data.store.task.TaskParameterConverter;
+import org.cmdbuild.data.store.task.TaskRuntime;
+import org.cmdbuild.data.store.task.TaskRuntimeConverter;
 import org.cmdbuild.data.store.task.TaskStore;
 import org.cmdbuild.logic.email.DefaultEmailTemplateSenderFactory;
 import org.cmdbuild.logic.email.EmailTemplateSenderFactory;
 import org.cmdbuild.logic.taskmanager.DefaultTaskManagerLogic;
-import org.cmdbuild.logic.taskmanager.DefinitiveTaskManagerLogic;
 import org.cmdbuild.logic.taskmanager.TaskManagerLogic;
 import org.cmdbuild.logic.taskmanager.TransactionalTaskManagerLogic;
 import org.cmdbuild.logic.taskmanager.event.DefaultLogicAndObserverConverter;
@@ -78,23 +79,13 @@ public class TaskManager {
 	private Workflow workflow;
 
 	@Bean
-	public DefinitiveTaskManagerLogic definitiveTaskManagerLogic() {
-		return new DefinitiveTaskManagerLogic(transactionalTaskManagerLogic());
-	}
-
-	@Bean
-	protected TaskManagerLogic transactionalTaskManagerLogic() {
-		return new TransactionalTaskManagerLogic(defaultTaskManagerLogic());
-	}
-
-	@Bean
-	protected TaskManagerLogic defaultTaskManagerLogic() {
-		return new DefaultTaskManagerLogic( //
+	public TaskManagerLogic taskManagerLogic() {
+		return new TransactionalTaskManagerLogic(new DefaultTaskManagerLogic( //
 				defaultLogicAndStoreConverter(), //
-				defaultTaskStore(), //
+				taskStore(), //
 				defaultSchedulerTaskFacade(), //
 				defaultSynchronousEventFacade() //
-		);
+				));
 	}
 
 	@Bean
@@ -113,28 +104,47 @@ public class TaskManager {
 	}
 
 	@Bean
-	protected TaskStore defaultTaskStore() {
-		return new DefaultTaskStore(dataViewSchedulerJobStore(), dataViewSchedulerJobParameterStore());
+	protected TaskStore taskStore() {
+		return new DefaultTaskStore(taskDefinitionStore(), taskParameterStore(), taskRuntimeStore());
 	}
 
 	@Bean
-	protected Store<TaskDefinition> dataViewSchedulerJobStore() {
-		return DataViewStore.newInstance(data.systemDataView(), schedulerJobConverter());
+	protected Store<TaskDefinition> taskDefinitionStore() {
+		return DataViewStore.<TaskDefinition> newInstance() //
+				.withDataView(data.systemDataView()) //
+				.withStorableConverter(taskDefinitionConverter()) //
+				.build();
 	}
 
 	@Bean
-	protected StorableConverter<TaskDefinition> schedulerJobConverter() {
+	protected StorableConverter<TaskDefinition> taskDefinitionConverter() {
 		return new TaskDefinitionConverter();
 	}
 
 	@Bean
-	protected Store<TaskParameter> dataViewSchedulerJobParameterStore() {
-		return DataViewStore.newInstance(data.systemDataView(), schedulerJobParameterStoreConverter());
+	protected Store<TaskParameter> taskParameterStore() {
+		return DataViewStore.<TaskParameter> newInstance() //
+				.withDataView(data.systemDataView()) //
+				.withStorableConverter(taskParameterConverter()) //
+				.build();
 	}
 
 	@Bean
-	protected StorableConverter<TaskParameter> schedulerJobParameterStoreConverter() {
+	protected StorableConverter<TaskParameter> taskParameterConverter() {
 		return new TaskParameterConverter();
+	}
+
+	@Bean
+	protected Store<TaskRuntime> taskRuntimeStore() {
+		return DataViewStore.<TaskRuntime> newInstance() //
+				.withDataView(data.systemDataView()) //
+				.withStorableConverter(taskRuntimeConverter()) //
+				.build();
+	}
+
+	@Bean
+	protected StorableConverter<TaskRuntime> taskRuntimeConverter() {
+		return new TaskRuntimeConverter();
 	}
 
 	@Bean
@@ -153,7 +163,7 @@ public class TaskManager {
 				data.systemDataView(), //
 				email.emailAccountFacade(), //
 				email.emailTemplateLogic(), //
-				defaultTaskStore(), //
+				taskStore(), //
 				defaultLogicAndStoreConverter(), //
 				emailTemplateSenderFactory() //
 		);

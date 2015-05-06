@@ -1,12 +1,11 @@
 package org.cmdbuild.data.store.task;
 
+import static org.apache.commons.lang3.builder.ToStringBuilder.reflectionToString;
 import static org.apache.commons.lang3.builder.ToStringStyle.SHORT_PREFIX_STYLE;
 
 import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
 import org.cmdbuild.data.store.Storable;
 
 public class TaskParameter implements Storable {
@@ -35,7 +34,7 @@ public class TaskParameter implements Storable {
 
 		@Override
 		public String toString() {
-			return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
+			return reflectionToString(this, SHORT_PREFIX_STYLE);
 		}
 
 		public Builder withId(final Long id) {
@@ -126,7 +125,7 @@ public class TaskParameter implements Storable {
 
 	@Override
 	public String toString() {
-		return ToStringBuilder.reflectionToString(this, SHORT_PREFIX_STYLE);
+		return reflectionToString(this, SHORT_PREFIX_STYLE);
 	}
 
 }

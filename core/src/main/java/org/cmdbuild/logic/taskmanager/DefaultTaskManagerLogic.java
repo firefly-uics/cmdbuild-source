@@ -46,7 +46,7 @@ public class DefaultTaskManagerLogic implements TaskManagerLogic {
 			final org.cmdbuild.data.store.task.Task updated = readed.modify() //
 					.withLastExecution(now()) //
 					.build();
-			store.update(updated);
+			store.updateLastExecution(updated);
 		}
 
 		@Override

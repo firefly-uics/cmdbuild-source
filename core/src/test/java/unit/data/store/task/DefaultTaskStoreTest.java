@@ -20,12 +20,12 @@ import org.cmdbuild.data.store.Groupable;
 import org.cmdbuild.data.store.Storable;
 import org.cmdbuild.data.store.Store;
 import org.cmdbuild.data.store.task.DefaultTaskStore;
-import org.cmdbuild.data.store.task.ReadEmailTaskDefinition;
 import org.cmdbuild.data.store.task.StartWorkflowTask;
 import org.cmdbuild.data.store.task.StartWorkflowTaskDefinition;
 import org.cmdbuild.data.store.task.Task;
 import org.cmdbuild.data.store.task.TaskDefinition;
 import org.cmdbuild.data.store.task.TaskParameter;
+import org.cmdbuild.data.store.task.TaskRuntime;
 import org.hamcrest.Matcher;
 import org.joda.time.DateTime;
 import org.junit.Before;
@@ -105,11 +105,6 @@ public class DefaultTaskStoreTest {
 			return this;
 		}
 
-		public TaskDefinitionAssert lastExecution(final Matcher<DateTime> matcher) {
-			assertThat(underTest.getLastExecution(), matcher);
-			return this;
-		}
-
 	}
 
 	private static class TaskParameterAssert {
@@ -150,17 +145,48 @@ public class DefaultTaskStoreTest {
 
 	}
 
+	private static class TaskRuntimeAssert {
+
+		public static TaskRuntimeAssert of(final TaskRuntime underTest) {
+			return new TaskRuntimeAssert(underTest);
+		}
+
+		private final TaskRuntime underTest;
+
+		private TaskRuntimeAssert(final TaskRuntime underTest) {
+			this.underTest = underTest;
+		}
+
+		public TaskRuntimeAssert id(final Matcher<Long> matcher) {
+			assertThat(underTest.getId(), matcher);
+			return this;
+		}
+
+		public TaskRuntimeAssert owner(final Matcher<Long> matcher) {
+			assertThat(underTest.getOwner(), matcher);
+			return this;
+		}
+
+		public TaskRuntimeAssert lastExecution(final Matcher<DateTime> matcher) {
+			assertThat(underTest.getLastExecution(), matcher);
+			return this;
+		}
+
+	}
+
 	private static final DateTime now = DateTime.now();
 
 	private Store<TaskDefinition> definitionsStore;
 	private Store<TaskParameter> parametersStore;
+	private Store<TaskRuntime> runtimeStore;
 	private DefaultTaskStore store;
 
 	@Before
 	public void setUp() throws Exception {
 		definitionsStore = mock(Store.class);
 		parametersStore = mock(Store.class);
-		store = new DefaultTaskStore(definitionsStore, parametersStore);
+		runtimeStore = mock(Store.class);
+		store = new DefaultTaskStore(definitionsStore, parametersStore, runtimeStore);
 	}
 
 	@Test
@@ -178,6 +204,11 @@ public class DefaultTaskStoreTest {
 				.thenReturn(StartWorkflowTaskDefinition.newInstance() //
 						.withId(42L) //
 						.build());
+		when(runtimeStore.read(any(Storable.class))) //
+				.thenReturn(TaskRuntime.newInstance() //
+						.withOwner(42L) //
+						.withLastExecution(now) //
+						.build());
 
 		// when
 		store.create(newOne);
@@ -185,20 +216,24 @@ public class DefaultTaskStoreTest {
 		// then
 		final ArgumentCaptor<TaskDefinition> definitionCaptor = ArgumentCaptor.forClass(TaskDefinition.class);
 		final ArgumentCaptor<TaskParameter> parameterCaptor = ArgumentCaptor.forClass(TaskParameter.class);
-		final InOrder inOrder = inOrder(definitionsStore, parametersStore);
+		final ArgumentCaptor<TaskRuntime> runtimeCaptor = ArgumentCaptor.forClass(TaskRuntime.class);
+		final InOrder inOrder = inOrder(definitionsStore, parametersStore, runtimeStore);
 		inOrder.verify(definitionsStore).create(definitionCaptor.capture());
 		inOrder.verify(definitionsStore).read(any(Storable.class));
 		inOrder.verify(parametersStore, times(2)).create(parameterCaptor.capture());
+		inOrder.verify(runtimeStore).create(runtimeCaptor.capture());
+		inOrder.verify(runtimeStore).read(any(Storable.class));
 		inOrder.verifyNoMoreInteractions();
 
 		TaskDefinitionAssert.of(definitionCaptor.getValue()) //
 				.description(equalTo("description")) //
 				.runningStatus(equalTo(true)) //
-				.cronExpression(equalTo("cron expression")) //
-				.lastExecution(equalTo(now));
+				.cronExpression(equalTo("cron expression"));
 		TaskParameterAssert.of(parameterCaptor.getAllValues()) //
 				.valueOfParameter("foo", equalTo("bar")) //
 				.valueOfParameter("bar", equalTo("baz"));
+		TaskRuntimeAssert.of(runtimeCaptor.getValue()) //
+				.lastExecution(equalTo(now));
 	}
 
 	@Test
@@ -208,9 +243,7 @@ public class DefaultTaskStoreTest {
 				.thenReturn(StartWorkflowTaskDefinition.newInstance() //
 						.withId(123L) //
 						.withDescription("description") //
-						.withLastExecution(now) //
 						.build());
-
 		when(parametersStore.readAll(any(Groupable.class))) //
 				.thenReturn(asList( //
 						TaskParameter.newInstance() //
@@ -218,6 +251,12 @@ public class DefaultTaskStoreTest {
 								.build(), //
 						TaskParameter.newInstance() //
 								.withOwner(123L).withKey("bar").withValue("BAR") //
+								.build() //
+						));
+		when(runtimeStore.readAll(any(Groupable.class))) //
+				.thenReturn(asList( //
+						TaskRuntime.newInstance() //
+								.withOwner(123L).withLastExecution(now) //
 								.build() //
 						));
 		final StartWorkflowTask existing = StartWorkflowTask.newInstance() //
@@ -230,14 +269,19 @@ public class DefaultTaskStoreTest {
 		// then
 		final ArgumentCaptor<TaskDefinition> definitionCaptor = ArgumentCaptor.forClass(TaskDefinition.class);
 		final ArgumentCaptor<Groupable> groupableCaptor = ArgumentCaptor.forClass(Groupable.class);
-		final InOrder inOrder = inOrder(definitionsStore, parametersStore);
+		final InOrder inOrder = inOrder(definitionsStore, parametersStore, runtimeStore);
 		inOrder.verify(definitionsStore).read(definitionCaptor.capture());
 		inOrder.verify(parametersStore).readAll(groupableCaptor.capture());
+		inOrder.verify(runtimeStore).readAll(groupableCaptor.capture());
 		inOrder.verifyNoMoreInteractions();
 
-		final Groupable capturedGroupable = groupableCaptor.getValue();
-		assertThat(capturedGroupable.getGroupAttributeName(), equalTo(OWNER));
-		assertThat(capturedGroupable.getGroupAttributeValue(), equalTo((Object) 123L));
+		final Groupable capturedGroupableForParameters = groupableCaptor.getAllValues().get(0);
+		assertThat(capturedGroupableForParameters.getGroupAttributeName(), equalTo(OWNER));
+		assertThat(capturedGroupableForParameters.getGroupAttributeValue(), equalTo((Object) 123L));
+
+		final Groupable capturedGroupableForRuntime = groupableCaptor.getAllValues().get(1);
+		assertThat(capturedGroupableForRuntime.getGroupAttributeName(), equalTo(OWNER));
+		assertThat(capturedGroupableForRuntime.getGroupAttributeValue(), equalTo((Object) 123L));
 
 		TaskDefinitionAssert.of(definitionCaptor.getValue()) //
 				.id(equalTo(123L));
@@ -258,13 +302,12 @@ public class DefaultTaskStoreTest {
 						(TaskDefinition) StartWorkflowTaskDefinition.newInstance() //
 								.withId(123L) //
 								.withDescription("first") //
-								.withLastExecution(now) //
 								.build(), //
 						(TaskDefinition) StartWorkflowTaskDefinition.newInstance() //
 								.withId(456L) //
 								.withDescription("second") //
-								.withLastExecution(now) //
-								.build()));
+								.build() //
+						));
 
 		when(parametersStore.readAll(any(Groupable.class))) //
 				.thenReturn(asList( //
@@ -273,9 +316,24 @@ public class DefaultTaskStoreTest {
 								.build(), //
 						TaskParameter.newInstance() //
 								.withOwner(123L).withKey("bar").withValue("BAR") //
-								.build(), //
+								.build())) //
+				.thenReturn(asList( //
 						TaskParameter.newInstance() //
 								.withOwner(456L).withKey("baz").withValue("BAZ") //
+								.build() //
+						));
+
+		when(runtimeStore.readAll(any(Groupable.class))) //
+				.thenReturn(asList( //
+						TaskRuntime.newInstance() //
+								.withOwner(123L) //
+								.withLastExecution(now) //
+								.build() //
+						)) //
+				.thenReturn(asList( //
+						TaskRuntime.newInstance() //
+								.withOwner(456L) //
+								.withLastExecution(now) //
 								.build() //
 						));
 
@@ -284,9 +342,12 @@ public class DefaultTaskStoreTest {
 
 		// then
 		final ArgumentCaptor<Groupable> groupableCaptor = ArgumentCaptor.forClass(Groupable.class);
-		final InOrder inOrder = inOrder(definitionsStore, parametersStore);
+		final InOrder inOrder = inOrder(definitionsStore, parametersStore, runtimeStore);
 		inOrder.verify(definitionsStore).readAll();
-		inOrder.verify(parametersStore, times(2)).readAll(groupableCaptor.capture());
+		inOrder.verify(parametersStore).readAll(groupableCaptor.capture());
+		inOrder.verify(runtimeStore).readAll(groupableCaptor.capture());
+		inOrder.verify(parametersStore).readAll(groupableCaptor.capture());
+		inOrder.verify(runtimeStore).readAll(groupableCaptor.capture());
 		inOrder.verifyNoMoreInteractions();
 
 		assertThat(elements, hasSize(2));
@@ -297,7 +358,15 @@ public class DefaultTaskStoreTest {
 
 		final Groupable secondCapturedGroupable = groupableCaptor.getAllValues().get(1);
 		assertThat(secondCapturedGroupable.getGroupAttributeName(), equalTo(OWNER));
-		assertThat(secondCapturedGroupable.getGroupAttributeValue(), equalTo((Object) 456L));
+		assertThat(secondCapturedGroupable.getGroupAttributeValue(), equalTo((Object) 123L));
+
+		final Groupable thirdCapturedGroupable = groupableCaptor.getAllValues().get(2);
+		assertThat(thirdCapturedGroupable.getGroupAttributeName(), equalTo(OWNER));
+		assertThat(thirdCapturedGroupable.getGroupAttributeValue(), equalTo((Object) 456L));
+
+		final Groupable fourthCapturedGroupable = groupableCaptor.getAllValues().get(3);
+		assertThat(fourthCapturedGroupable.getGroupAttributeName(), equalTo(OWNER));
+		assertThat(fourthCapturedGroupable.getGroupAttributeValue(), equalTo((Object) 456L));
 
 		TaskAssert.of(get(elements, 0)) //
 				.id(equalTo(123L)) //
@@ -321,13 +390,12 @@ public class DefaultTaskStoreTest {
 						(TaskDefinition) StartWorkflowTaskDefinition.newInstance() //
 								.withId(123L) //
 								.withDescription("first") //
-								.withLastExecution(now) //
 								.build(), //
 						(TaskDefinition) StartWorkflowTaskDefinition.newInstance() //
 								.withId(456L) //
 								.withDescription("second") //
-								.withLastExecution(now) //
-								.build()));
+								.build() //
+						));
 
 		when(parametersStore.readAll(any(Groupable.class))) //
 				.thenReturn(asList( //
@@ -336,11 +404,27 @@ public class DefaultTaskStoreTest {
 								.build(), //
 						TaskParameter.newInstance() //
 								.withOwner(123L).withKey("bar").withValue("BAR") //
-								.build(), //
+								.build())) //
+				.thenReturn(asList( //
 						TaskParameter.newInstance() //
 								.withOwner(456L).withKey("baz").withValue("BAZ") //
 								.build() //
 						));
+
+		when(runtimeStore.readAll(any(Groupable.class))) //
+				.thenReturn(asList( //
+						TaskRuntime.newInstance() //
+								.withOwner(123L) //
+								.withLastExecution(now) //
+								.build() //
+						)) //
+				.thenReturn(asList( //
+						TaskRuntime.newInstance() //
+								.withOwner(456L) //
+								.withLastExecution(now) //
+								.build() //
+						));
+
 		final Groupable groupable = mock(Groupable.class);
 
 		// when
@@ -348,9 +432,12 @@ public class DefaultTaskStoreTest {
 
 		// then
 		final ArgumentCaptor<Groupable> groupableCaptor = ArgumentCaptor.forClass(Groupable.class);
-		final InOrder inOrder = inOrder(definitionsStore, parametersStore);
+		final InOrder inOrder = inOrder(definitionsStore, parametersStore, runtimeStore);
 		inOrder.verify(definitionsStore).readAll(groupable);
-		inOrder.verify(parametersStore, times(2)).readAll(groupableCaptor.capture());
+		inOrder.verify(parametersStore).readAll(groupableCaptor.capture());
+		inOrder.verify(runtimeStore).readAll(groupableCaptor.capture());
+		inOrder.verify(parametersStore).readAll(groupableCaptor.capture());
+		inOrder.verify(runtimeStore).readAll(groupableCaptor.capture());
 		inOrder.verifyNoMoreInteractions();
 
 		assertThat(elements, hasSize(2));
@@ -361,7 +448,15 @@ public class DefaultTaskStoreTest {
 
 		final Groupable secondCapturedGroupable = groupableCaptor.getAllValues().get(1);
 		assertThat(secondCapturedGroupable.getGroupAttributeName(), equalTo(OWNER));
-		assertThat(secondCapturedGroupable.getGroupAttributeValue(), equalTo((Object) 456L));
+		assertThat(secondCapturedGroupable.getGroupAttributeValue(), equalTo((Object) 123L));
+
+		final Groupable thirdCapturedGroupable = groupableCaptor.getAllValues().get(2);
+		assertThat(thirdCapturedGroupable.getGroupAttributeName(), equalTo(OWNER));
+		assertThat(thirdCapturedGroupable.getGroupAttributeValue(), equalTo((Object) 456L));
+
+		final Groupable fourthCapturedGroupable = groupableCaptor.getAllValues().get(3);
+		assertThat(fourthCapturedGroupable.getGroupAttributeName(), equalTo(OWNER));
+		assertThat(fourthCapturedGroupable.getGroupAttributeValue(), equalTo((Object) 456L));
 
 		TaskAssert.of(get(elements, 0)) //
 				.id(equalTo(123L)) //
@@ -400,6 +495,14 @@ public class DefaultTaskStoreTest {
 								.build() //
 						));
 
+		when(runtimeStore.readAll(any(Groupable.class))) //
+				.thenReturn(asList( //
+						TaskRuntime.newInstance() //
+								.withOwner(42L) //
+								.withLastExecution(now) //
+								.build() //
+						));
+
 		// when
 		store.update(newOne);
 
@@ -409,19 +512,21 @@ public class DefaultTaskStoreTest {
 		final ArgumentCaptor<TaskParameter> createParameterCaptor = ArgumentCaptor.forClass(TaskParameter.class);
 		final ArgumentCaptor<TaskParameter> updateParameterCaptor = ArgumentCaptor.forClass(TaskParameter.class);
 		final ArgumentCaptor<TaskParameter> deleteParameterCaptor = ArgumentCaptor.forClass(TaskParameter.class);
-		final InOrder inOrder = inOrder(definitionsStore, parametersStore);
+		final ArgumentCaptor<TaskRuntime> runtimeCaptor = ArgumentCaptor.forClass(TaskRuntime.class);
+		final InOrder inOrder = inOrder(definitionsStore, parametersStore, runtimeStore);
 		inOrder.verify(definitionsStore).update(definitionCaptor.capture());
 		inOrder.verify(parametersStore).readAll(groupableCaptor.capture());
 		inOrder.verify(parametersStore).create(createParameterCaptor.capture());
 		inOrder.verify(parametersStore).update(updateParameterCaptor.capture());
 		inOrder.verify(parametersStore).delete(deleteParameterCaptor.capture());
+		inOrder.verify(runtimeStore).readAll(groupableCaptor.capture());
+		inOrder.verify(runtimeStore).update(runtimeCaptor.capture());
 		inOrder.verifyNoMoreInteractions();
 
 		TaskDefinitionAssert.of(definitionCaptor.getValue()) //
 				.description(equalTo("description")) //
 				.runningStatus(equalTo(true)) //
-				.cronExpression(equalTo("cron expression")) //
-				.lastExecution(equalTo(now));
+				.cronExpression(equalTo("cron expression"));
 
 		TaskParameterAssert.of(createParameterCaptor.getAllValues()) //
 				.valueOfParameter("bar", equalTo("bar"));
@@ -431,6 +536,9 @@ public class DefaultTaskStoreTest {
 
 		TaskParameterAssert.of(deleteParameterCaptor.getAllValues()) //
 				.valueOfParameter("baz", equalTo("baz"));
+
+		TaskRuntimeAssert.of(runtimeCaptor.getValue()) //
+				.lastExecution(equalTo(now));
 	}
 
 	@Test
@@ -443,23 +551,38 @@ public class DefaultTaskStoreTest {
 				.thenReturn(StartWorkflowTaskDefinition.newInstance() //
 						.withId(42L) //
 						.build());
-		final TaskParameter foo = TaskParameter.newInstance() //
-				.withOwner(42L).withKey("foo").withValue("foo") //
-				.build();
-		final TaskParameter bar = TaskParameter.newInstance() //
-				.withOwner(42L).withKey("bar").withValue("bar") //
-				.build();
 		when(parametersStore.readAll(any(Groupable.class))) //
-				.thenReturn(asList(foo, bar));
+				.thenReturn(asList( //
+						TaskParameter.newInstance() //
+								.withOwner(42L).withKey("foo").withValue("foo") //
+								.build(), //
+						TaskParameter.newInstance() //
+								.withOwner(42L).withKey("bar").withValue("bar") //
+								.build() //
+						));
+		when(runtimeStore.readAll(any(Groupable.class))) //
+				.thenReturn(asList( //
+						TaskRuntime.newInstance() //
+								.withOwner(42L) //
+								.withLastExecution(now) //
+								.build(), //
+						TaskRuntime.newInstance() //
+								.withOwner(42L) //
+								.withLastExecution(now) //
+								.build() //
+						));
 
 		// when
 		store.delete(existingOne);
 
 		// then
 		final ArgumentCaptor<Groupable> groupableCaptor = ArgumentCaptor.forClass(Groupable.class);
-		final ArgumentCaptor<TaskParameter> parameterCaptor = ArgumentCaptor.forClass(TaskParameter.class);
 		final ArgumentCaptor<TaskDefinition> definitionCaptor = ArgumentCaptor.forClass(TaskDefinition.class);
-		final InOrder inOrder = inOrder(definitionsStore, parametersStore);
+		final ArgumentCaptor<TaskParameter> parameterCaptor = ArgumentCaptor.forClass(TaskParameter.class);
+		final ArgumentCaptor<TaskRuntime> runtimeCaptor = ArgumentCaptor.forClass(TaskRuntime.class);
+		final InOrder inOrder = inOrder(definitionsStore, parametersStore, runtimeStore);
+		inOrder.verify(runtimeStore).readAll(groupableCaptor.capture());
+		inOrder.verify(runtimeStore, times(2)).delete(runtimeCaptor.capture());
 		inOrder.verify(parametersStore).readAll(groupableCaptor.capture());
 		inOrder.verify(parametersStore, times(2)).delete(parameterCaptor.capture());
 		inOrder.verify(definitionsStore).delete(definitionCaptor.capture());
@@ -482,14 +605,16 @@ public class DefaultTaskStoreTest {
 		// given
 		when(definitionsStore.readAll()) //
 				.thenReturn(asList( //
-						StartWorkflowTaskDefinition.newInstance() //
+						(TaskDefinition) StartWorkflowTaskDefinition.newInstance() //
 								.withId(123L) //
-								.withDescription("description") //
+								.withDescription("first") //
 								.build(), //
-						ReadEmailTaskDefinition.newInstance()//
+						(TaskDefinition) StartWorkflowTaskDefinition.newInstance() //
 								.withId(456L) //
-								.withDescription("another description") //
-								.build()));
+								.withDescription("second") //
+								.build() //
+						));
+
 		when(parametersStore.readAll(any(Groupable.class))) //
 				.thenReturn(asList( //
 						TaskParameter.newInstance() //
@@ -497,25 +622,60 @@ public class DefaultTaskStoreTest {
 								.build(), //
 						TaskParameter.newInstance() //
 								.withOwner(123L).withKey("bar").withValue("BAR") //
-								.build()));
+								.build())) //
+				.thenReturn(asList( //
+						TaskParameter.newInstance() //
+								.withOwner(456L).withKey("baz").withValue("BAZ") //
+								.build() //
+						));
+
+		when(runtimeStore.readAll(any(Groupable.class))) //
+				.thenReturn(asList( //
+						TaskRuntime.newInstance() //
+								.withOwner(123L) //
+								.withLastExecution(now) //
+								.build() //
+						)) //
+				.thenReturn(asList( //
+						TaskRuntime.newInstance() //
+								.withOwner(456L) //
+								.withLastExecution(now) //
+								.build() //
+						));
 
 		// when
 		final Task element = store.read(123L);
 
 		// then
 		final ArgumentCaptor<Groupable> groupableCaptor = ArgumentCaptor.forClass(Groupable.class);
-		final InOrder inOrder = inOrder(definitionsStore, parametersStore);
+		final InOrder inOrder = inOrder(definitionsStore, parametersStore, runtimeStore);
 		inOrder.verify(definitionsStore).readAll();
 		inOrder.verify(parametersStore).readAll(groupableCaptor.capture());
+		inOrder.verify(runtimeStore).readAll(groupableCaptor.capture());
+		inOrder.verify(parametersStore).readAll(groupableCaptor.capture());
+		inOrder.verify(runtimeStore).readAll(groupableCaptor.capture());
 		inOrder.verifyNoMoreInteractions();
 
-		final Groupable capturedGroupable = groupableCaptor.getValue();
-		assertThat(capturedGroupable.getGroupAttributeName(), equalTo(OWNER));
-		assertThat(capturedGroupable.getGroupAttributeValue(), equalTo((Object) 123L));
+		final Groupable firstCapturedGroupable = groupableCaptor.getAllValues().get(0);
+		assertThat(firstCapturedGroupable.getGroupAttributeName(), equalTo(OWNER));
+		assertThat(firstCapturedGroupable.getGroupAttributeValue(), equalTo((Object) 123L));
+
+		final Groupable secondCapturedGroupable = groupableCaptor.getAllValues().get(1);
+		assertThat(secondCapturedGroupable.getGroupAttributeName(), equalTo(OWNER));
+		assertThat(secondCapturedGroupable.getGroupAttributeValue(), equalTo((Object) 123L));
+
+		final Groupable thirdCapturedGroupable = groupableCaptor.getAllValues().get(2);
+		assertThat(thirdCapturedGroupable.getGroupAttributeName(), equalTo(OWNER));
+		assertThat(thirdCapturedGroupable.getGroupAttributeValue(), equalTo((Object) 456L));
+
+		final Groupable fourthCapturedGroupable = groupableCaptor.getAllValues().get(3);
+		assertThat(fourthCapturedGroupable.getGroupAttributeName(), equalTo(OWNER));
+		assertThat(fourthCapturedGroupable.getGroupAttributeValue(), equalTo((Object) 456L));
 
 		TaskAssert.of(element) //
 				.id(equalTo(123L)) //
-				.description(equalTo("description")) //
+				.description(equalTo("first")) //
+				.lastExecution(equalTo(now)) //
 				.valueOfParameter("foo", equalTo("FOO")) //
 				.valueOfParameter("bar", equalTo("BAR"));
 	}

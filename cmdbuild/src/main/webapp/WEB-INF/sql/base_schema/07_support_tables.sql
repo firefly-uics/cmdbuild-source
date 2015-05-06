@@ -83,7 +83,6 @@ SELECT cm_create_class('_Task', 'Class', 'MODE: reserved|TYPE: class|DESCR: Sche
 SELECT cm_create_class_attribute('_Task', 'CronExpression', 'text', null, false, false, 'MODE: write|DESCR: Cron Expression|STATUS: active');
 SELECT cm_create_class_attribute('_Task', 'Type', 'text', null, false, false, 'MODE: write|DESCR: Type|STATUS: active');
 SELECT cm_create_class_attribute('_Task', 'Running', 'boolean', null, false, false, 'MODE: write|DESCR: Running|STATUS: active');
-SELECT cm_create_class_attribute('_Task', 'LastExecution', 'timestamp', null, false, false, 'MODE: write|DESCR: Last Execution|STATUS: active');
 
 ---------------------------------------------
 -- Create Task Parameters class
@@ -93,6 +92,14 @@ SELECT cm_create_class('_TaskParameter', 'Class', 'MODE: reserved|TYPE: class|DE
 SELECT cm_create_class_attribute('_TaskParameter', 'Owner', 'int4', null, false, false, 'MODE: write|DESCR: Owner|INDEX: 1|STATUS: active');
 SELECT cm_create_class_attribute('_TaskParameter', 'Key', 'text', null, true, false, 'MODE: write|DESCR: Key|INDEX: 2|STATUS: active');
 SELECT cm_create_class_attribute('_TaskParameter', 'Value', 'text', null, false, false, 'MODE: write|DESCR: Value|INDEX: 3|STATUS: active');
+
+---------------------------------------------
+-- Create Task Runtime class
+---------------------------------------------
+
+SELECT cm_create_class('_TaskRuntime', NULL, 'MODE: reserved|TYPE: simpleclass|DESCR: _TaskRuntime|SUPERCLASS: false|STATUS: active');
+SELECT cm_create_class_attribute('_TaskRuntime', 'Owner', 'integer', null, false, false, 'MODE: write|DESCR: Owner|STATUS: active|FKTARGETCLASS: _Task');
+SELECT cm_create_class_attribute('_TaskRuntime', 'LastExecution', 'timestamp', null, false, false, 'MODE: write|DESCR: Last Execution|STATUS: active');
 
 ---------------------------------------------
 -- Create Data Store Templates class
