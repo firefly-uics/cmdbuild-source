@@ -533,8 +533,17 @@ public class DefaultDataDefinitionLogic implements DataDefinitionLogic {
 			throw NotFoundExceptionType.DOMAIN_NOTFOUND.createException(domain.getName());
 		}
 
-		for (final String disabled : concat(defaultIfNull(domain.getDisabled1(), NO_DISABLED),
-				defaultIfNull(domain.getDisabled2(), NO_DISABLED))) {
+		validateActivationForReferences(domain);
+
+		logger.info("Updating domain with name {}", domain.getName());
+		updatedDomain = view.update(definitionForExisting(domain, existing));
+		return updatedDomain;
+	}
+
+	private void validateActivationForReferences(final Domain domain) {
+		final Iterable<String> allDisabled = "N:1".equals(domain.getCardinality()) ? defaultIfNull(
+				domain.getDisabled1(), NO_DISABLED) : defaultIfNull(domain.getDisabled2(), NO_DISABLED);
+		for (final String disabled : allDisabled) {
 			final CMClass target = view.findClass(disabled);
 			if (target == null) {
 				throw NotFoundExceptionType.CLASS_NOTFOUND.createException(disabled);
@@ -553,17 +562,14 @@ public class DefaultDataDefinitionLogic implements DataDefinitionLogic {
 					@Override
 					public void visit(final ReferenceAttributeType attributeType) {
 						if (attributeType.getDomainName().equals(domain.getName()) && attribute.isActive()) {
-							throw ORMExceptionType.ORM_ACTIVE_ATTRIBUTE.createException(target.getName(), attribute.getName());
+							throw ORMExceptionType.ORM_ACTIVE_ATTRIBUTE.createException(target.getName(),
+									attribute.getName());
 						}
 					}
 
 				});
 			}
 		}
-
-		logger.info("Updating domain with name {}", domain.getName());
-		updatedDomain = view.update(definitionForExisting(domain, existing));
-		return updatedDomain;
 	}
 
 	@Override
