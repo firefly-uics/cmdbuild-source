@@ -11,7 +11,7 @@ import javax.script.ScriptEngineManager;
 
 import org.apache.commons.lang3.Validate;
 import org.cmdbuild.api.fluent.FluentApi;
-import org.cmdbuild.logic.taskmanager.DefinitiveTaskManagerLogic;
+import org.cmdbuild.logic.taskmanager.TaskManagerLogic;
 import org.cmdbuild.services.event.Contexts.AfterCreate;
 import org.cmdbuild.services.event.Contexts.AfterUpdate;
 import org.cmdbuild.services.event.Contexts.BeforeDelete;
@@ -120,7 +120,7 @@ public class ScriptCommand implements Command {
 	private void fillBindings(final Bindings bindings, final Context context) {
 		// <<<<<<<<<<<<<<<<<<<
 		bindings.put("__taskmanagerlogic__",
-				SpringIntegrationUtils.applicationContext().getBean(DefinitiveTaskManagerLogic.class));
+				SpringIntegrationUtils.applicationContext().getBean(TaskManagerLogic.class));
 		// <<<<<<<<<<<<<<<<<<<
 
 		bindings.put(CMDB, fluentApi);

@@ -1,9 +1,9 @@
 package org.cmdbuild.data.store.task;
 
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
+import static org.apache.commons.lang3.builder.ToStringBuilder.reflectionToString;
+import static org.apache.commons.lang3.builder.ToStringStyle.SHORT_PREFIX_STYLE;
+
 import org.cmdbuild.data.store.Storable;
-import org.joda.time.DateTime;
 
 public abstract class TaskDefinition implements Storable {
 
@@ -14,7 +14,6 @@ public abstract class TaskDefinition implements Storable {
 		private String description;
 		private String cronExpression;
 		private Boolean running;
-		private DateTime lastExecution;
 
 		protected Builder() {
 			// usable by subclasses only
@@ -34,7 +33,7 @@ public abstract class TaskDefinition implements Storable {
 
 		@Override
 		public String toString() {
-			return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
+			return reflectionToString(this, SHORT_PREFIX_STYLE);
 		}
 
 		public Builder<T> withId(final Long id) {
@@ -57,25 +56,18 @@ public abstract class TaskDefinition implements Storable {
 			return this;
 		}
 
-		public Builder<T> withLastExecution(final DateTime lastExecution) {
-			this.lastExecution = lastExecution;
-			return this;
-		}
-
 	}
 
 	private final Long id;
 	private final String description;
 	private final boolean running;
 	private final String cronExpression;
-	private final DateTime lastExecution;
 
 	protected TaskDefinition(final Builder<? extends TaskDefinition> builder) {
 		this.id = builder.id;
 		this.description = builder.description;
 		this.running = builder.running;
 		this.cronExpression = builder.cronExpression;
-		this.lastExecution = builder.lastExecution;
 	}
 
 	public abstract void accept(final TaskDefinitionVisitor visitor);
@@ -101,13 +93,9 @@ public abstract class TaskDefinition implements Storable {
 		return cronExpression;
 	}
 
-	public DateTime getLastExecution() {
-		return lastExecution;
-	}
-
 	@Override
 	public String toString() {
-		return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
+		return reflectionToString(this, SHORT_PREFIX_STYLE);
 	}
 
 }

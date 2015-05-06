@@ -80,7 +80,7 @@ public class Startup {
 		return new Startable() {
 
 			private final SchedulerLogic schedulerLogic = scheduler.defaultSchedulerLogic();
-			private final TaskManagerLogic taskManagerLogic = taskManager.definitiveTaskManagerLogic();
+			private final TaskManagerLogic taskManagerLogic = taskManager.taskManagerLogic();
 
 			@Override
 			public void start() {

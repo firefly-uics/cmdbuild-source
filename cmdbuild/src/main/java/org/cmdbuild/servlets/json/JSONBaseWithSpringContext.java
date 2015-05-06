@@ -46,7 +46,6 @@ import org.cmdbuild.logic.menu.MenuLogic;
 import org.cmdbuild.logic.privileges.SecurityLogic;
 import org.cmdbuild.logic.scheduler.SchedulerLogic;
 import org.cmdbuild.logic.setup.SetupLogic;
-import org.cmdbuild.logic.taskmanager.DefinitiveTaskManagerLogic;
 import org.cmdbuild.logic.taskmanager.TaskManagerLogic;
 import org.cmdbuild.logic.translation.TranslationFacade;
 import org.cmdbuild.logic.translation.TranslationLogic;
@@ -257,7 +256,7 @@ public class JSONBaseWithSpringContext extends JSONBase {
 	}
 
 	protected TaskManagerLogic taskManagerLogic() {
-		return applicationContext().getBean(DefinitiveTaskManagerLogic.class);
+		return applicationContext().getBean(TaskManagerLogic.class);
 	}
 
 	protected TranslationLogic translationLogic() {
