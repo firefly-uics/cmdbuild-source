@@ -110,10 +110,9 @@
 						root: 'translations'
 					}
 				},
-				sorters: {
-					property: CMDBuild.core.proxy.CMProxyConstants.NAME,
-					direction: 'ASC'
-				}
+				sorters: [
+					{ property: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION, direction: 'ASC' }
+				]
 			});
 		},
 
