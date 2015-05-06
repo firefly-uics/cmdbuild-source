@@ -145,7 +145,7 @@
 		 *
 		 * @cfg {CMDBuild.model.common.tabs.email.SelectedEntity}
 		 */
-		selectedEntity: {},
+		selectedEntity: undefined,
 
 		/**
 		 * @property {CMDBuild.Management.TemplateResolver}
@@ -253,6 +253,8 @@
 				parentDelegate: this,
 				gridDelegate: this.controllerGrid
 			});
+
+			this.selectedEntitySet(); // Setup empty object by default
 
 			// Extends to create view
 		},
@@ -817,7 +819,7 @@
 			 * @param {Function} callbackFunction
 			 */
 			selectedEntitySet: function(selectedEntity, callbackFunction) {
-				if (typeof callbackFunction != 'function')
+				if (!Ext.isFunction(callbackFunction))
 					callbackFunction = undefined;
 
 				if (Ext.isEmpty(selectedEntity)) {
@@ -855,7 +857,7 @@
 						entity: selectedEntity
 					});
 
-					if (!Ext.isEmpty(callbackFunction))
+					if (Ext.isFunction(callbackFunction))
 						callbackFunction();
 				}
 			},
