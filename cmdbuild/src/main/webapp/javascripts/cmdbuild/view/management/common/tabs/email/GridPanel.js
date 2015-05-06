@@ -17,7 +17,7 @@
 		 */
 		delegate: undefined,
 
-		autoScroll: true,
+		overflowY: 'auto',
 		border: false,
 		collapsible: false,
 		frame: false,
