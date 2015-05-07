@@ -1,5 +1,6 @@
 package org.cmdbuild.servlets.json.serializers;
 
+import static com.google.common.collect.Maps.newHashMap;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ACTIVE;
@@ -13,6 +14,7 @@ import static org.cmdbuild.servlets.json.CommunicationConstants.INHERITED;
 import static org.cmdbuild.servlets.json.CommunicationConstants.IP_TYPE;
 import static org.cmdbuild.servlets.json.CommunicationConstants.LENGTH;
 import static org.cmdbuild.servlets.json.CommunicationConstants.LOOKUP;
+import static org.cmdbuild.servlets.json.CommunicationConstants.META;
 import static org.cmdbuild.servlets.json.CommunicationConstants.NAME;
 import static org.cmdbuild.servlets.json.CommunicationConstants.NOT_NULL;
 import static org.cmdbuild.servlets.json.CommunicationConstants.PRECISION;
@@ -142,7 +144,11 @@ public class AttributeSerializer extends Serializer {
 	public JSONObject toClient(final CMAttribute attribute, final boolean withClassId) throws JSONException {
 		final MetadataStoreFactory metadataStoreFactory = applicationContext().getBean(MetadataStoreFactory.class);
 		final Store<Metadata> metadataStore = metadataStoreFactory.storeForAttribute(attribute);
-		final JSONObject jsonAttribute = toClient(attribute, metadataStore.readAll());
+		final Map<String, String> metadata = newHashMap();
+		for (final Metadata element : metadataStore.readAll()) {
+			metadata.put(element.name(), element.value());
+		}
+		final JSONObject jsonAttribute = toClient(attribute, metadata);
 		if (withClassId) {
 			jsonAttribute.put("idClass", attribute.getOwner().getId());
 		}
@@ -150,7 +156,7 @@ public class AttributeSerializer extends Serializer {
 		return jsonAttribute;
 	}
 
-	public JSONObject toClient(final CMAttribute attribute, final Iterable<Metadata> metadata) throws JSONException {
+	public JSONObject toClient(final CMAttribute attribute, final Map<String, String> metadata) throws JSONException {
 		final Map<String, Object> serializedAttribute = new SerializerAttributeVisitor(attribute, metadata).serialize();
 		return attributesToJsonObject(serializedAttribute);
 	}
@@ -325,12 +331,12 @@ public class AttributeSerializer extends Serializer {
 		private final CMAttributeTypeVisitor DELEGATE = NullAttributeTypeVisitor.getInstance();
 
 		private final CMAttribute attribute;
-		private final Iterable<Metadata> metadata;
+		private final Map<String, String> metadata;
 		private final Map<String, Object> serialization = Maps.newHashMap();
 
 		private final LookupLogic lookupLogic = applicationContext().getBean(LookupLogic.class);
 
-		private SerializerAttributeVisitor(final CMAttribute attribute, final Iterable<Metadata> metadata) {
+		private SerializerAttributeVisitor(final CMAttribute attribute, final Map<String, String> metadata) {
 			this.attribute = attribute;
 			this.metadata = metadata;
 		}
@@ -429,11 +435,11 @@ public class AttributeSerializer extends Serializer {
 			serialization.put(GROUP, defaultIfBlank(attribute.getGroup(), EMPTY));
 
 			final Map<String, String> metadataMap = Maps.newHashMap();
-			for (final Metadata element : metadata) {
-				metadataMap.put(element.name, element.value);
+			for (final Entry<String, String> entry : metadata.entrySet()) {
+				metadataMap.put(entry.getKey(), entry.getValue());
 			}
 
-			serialization.put("meta", metadataMap);
+			serialization.put(META, metadataMap);
 
 			int absoluteClassOrder = attribute.getClassOrder();
 			int classOrderSign;

@@ -7,30 +7,12 @@ import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.logic.Logic;
-import org.cmdbuild.logic.data.DefaultDataDefinitionLogic.MetadataActions.Create;
-import org.cmdbuild.logic.data.DefaultDataDefinitionLogic.MetadataActions.Delete;
-import org.cmdbuild.logic.data.DefaultDataDefinitionLogic.MetadataActions.Update;
 import org.cmdbuild.model.data.Attribute;
 import org.cmdbuild.model.data.ClassOrder;
 import org.cmdbuild.model.data.Domain;
 import org.cmdbuild.model.data.EntryType;
 
 public interface DataDefinitionLogic extends Logic {
-
-	interface MetadataAction {
-
-		interface Visitor {
-
-			void visit(Create action);
-
-			void visit(Update action);
-
-			void visit(Delete action);
-		}
-
-		void accept(Visitor visitor);
-
-	}
 
 	interface FunctionItem {
 

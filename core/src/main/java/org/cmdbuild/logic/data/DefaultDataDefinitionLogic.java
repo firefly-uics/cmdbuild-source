@@ -1,9 +1,9 @@
 package org.cmdbuild.logic.data;
 
 import static com.google.common.collect.FluentIterable.from;
-import static com.google.common.collect.Iterables.concat;
 import static com.google.common.collect.Iterables.isEmpty;
 import static com.google.common.collect.Iterables.size;
+import static com.google.common.collect.Maps.newHashMap;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
@@ -20,7 +20,9 @@ import static org.cmdbuild.logic.data.Utils.definitionForReordering;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.Validate;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
@@ -42,16 +44,14 @@ import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.dao.view.ForwardingAttributeDefinition;
 import org.cmdbuild.data.store.Store;
 import org.cmdbuild.data.store.dao.DataViewStore;
+import org.cmdbuild.data.store.metadata.ForwardingMetadata;
 import org.cmdbuild.data.store.metadata.Metadata;
 import org.cmdbuild.data.store.metadata.MetadataConverter;
 import org.cmdbuild.data.store.metadata.MetadataGroupable;
+import org.cmdbuild.data.store.metadata.MetadataImpl;
 import org.cmdbuild.exception.NotFoundException.NotFoundExceptionType;
 import org.cmdbuild.exception.ORMException;
 import org.cmdbuild.exception.ORMException.ORMExceptionType;
-import org.cmdbuild.logic.data.DataDefinitionLogic.MetadataAction.Visitor;
-import org.cmdbuild.logic.data.DefaultDataDefinitionLogic.MetadataActions.Create;
-import org.cmdbuild.logic.data.DefaultDataDefinitionLogic.MetadataActions.Delete;
-import org.cmdbuild.logic.data.DefaultDataDefinitionLogic.MetadataActions.Update;
 import org.cmdbuild.model.data.Attribute;
 import org.cmdbuild.model.data.ClassOrder;
 import org.cmdbuild.model.data.Domain;
@@ -64,41 +64,6 @@ import com.google.common.collect.Maps;
  * Business Logic Layer for data definition.
  */
 public class DefaultDataDefinitionLogic implements DataDefinitionLogic {
-
-	public static class MetadataActions {
-
-		public static class Create implements MetadataAction {
-
-			@Override
-			public void accept(final Visitor visitor) {
-				visitor.visit(this);
-			}
-
-		}
-
-		public static class Update implements MetadataAction {
-
-			@Override
-			public void accept(final Visitor visitor) {
-				visitor.visit(this);
-			}
-
-		}
-
-		public static class Delete implements MetadataAction {
-
-			@Override
-			public void accept(final Visitor visitor) {
-				visitor.visit(this);
-			}
-
-		}
-
-		public static final MetadataAction CREATE = new Create();
-		public static final MetadataAction UPDATE = new Update();
-		public static final MetadataAction DELETE = new Delete();
-
-	}
 
 	private static final Function<ClassOrder, String> ATTRIBUTE_NAME_AS_KEY = new Function<ClassOrder, String>() {
 
@@ -377,32 +342,38 @@ public class DefaultDataDefinitionLogic implements DataDefinitionLogic {
 		});
 
 		logger.info("setting metadata for attribute '{}'", attribute.getName());
-		final Map<MetadataAction, List<Metadata>> elementsByAction = attribute.getMetadata();
-		final Store<Metadata> store = DataViewStore.newInstance(view, //
-				MetadataGroupable.of(createdOrUpdatedAttribute), //
-				MetadataConverter.of(MetadataGroupable.of(createdOrUpdatedAttribute)));
-		for (final MetadataAction action : elementsByAction.keySet()) {
-			final Iterable<Metadata> elements = elementsByAction.get(action);
-			for (final Metadata element : elements) {
-				action.accept(new Visitor() {
+		final Store<Metadata> store = DataViewStore.<Metadata> newInstance() //
+				.withDataView(view) //
+				.withGroupable(MetadataGroupable.of(createdOrUpdatedAttribute)) //
+				.withStorableConverter(MetadataConverter.of(MetadataGroupable.of(createdOrUpdatedAttribute))) //
+				.build();
+		final Map<String, String> received = newHashMap(attribute.getMetadata());
+		// TODO check/validate received values?
+		for (final Metadata existing : store.readAll()) {
+			if (received.containsKey(existing.name())) {
+				final String newValue = received.get(existing.name());
+				if (!ObjectUtils.equals(existing.value(), newValue)) {
+					store.update(new ForwardingMetadata() {
 
-					@Override
-					public void visit(final Create action) {
-						store.create(element);
-					}
+						@Override
+						protected Metadata delegate() {
+							return existing;
+						}
 
-					@Override
-					public void visit(final Update action) {
-						store.update(element);
-					}
+						@Override
+						public String value() {
+							return newValue;
+						}
 
-					@Override
-					public void visit(final Delete action) {
-						store.delete(element);
-					}
-
-				});
+					});
+				}
+			} else {
+				store.delete(existing);
 			}
+			received.remove(existing.name());
+		}
+		for (final Entry<String, String> entry : received.entrySet()) {
+			store.create(MetadataImpl.of(entry.getKey(), entry.getValue()));
 		}
 
 		return createdOrUpdatedAttribute;
@@ -444,11 +415,12 @@ public class DefaultDataDefinitionLogic implements DataDefinitionLogic {
 		}
 		try {
 			logger.info("deleting metadata for attribute '{}'", attribute.getName());
-			final Store<Metadata> store = DataViewStore.newInstance(view, //
-					MetadataGroupable.of(existingAttribute), //
-					MetadataConverter.of(MetadataGroupable.of(existingAttribute)));
-			final Iterable<Metadata> allMetadata = store.readAll();
-			for (final Metadata metadata : allMetadata) {
+			final Store<Metadata> store = DataViewStore.<Metadata> newInstance() //
+					.withDataView(view) //
+					.withGroupable(MetadataGroupable.of(existingAttribute)) //
+					.withStorableConverter(MetadataConverter.of(MetadataGroupable.of(existingAttribute))) //
+					.build();
+			for (final Metadata metadata : store.readAll()) {
 				store.delete(metadata);
 			}
 

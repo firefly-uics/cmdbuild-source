@@ -67,8 +67,8 @@ class SerializationStuff {
 		@Override
 		public Metadata apply(final org.cmdbuild.data.store.metadata.Metadata input) {
 			final Metadata element = new Metadata();
-			element.setKey(input.name);
-			element.setValue(input.value);
+			element.setKey(input.name());
+			element.setValue(input.value());
 			return element;
 		}
 
@@ -207,7 +207,8 @@ class SerializationStuff {
 	}
 
 	private FluentIterable<Metadata> storedMetadata(final CMAttribute attribute) {
-		final Store<org.cmdbuild.data.store.metadata.Metadata> store = metadataStoreFactory.storeForAttribute(attribute);
+		final Store<org.cmdbuild.data.store.metadata.Metadata> store = metadataStoreFactory
+				.storeForAttribute(attribute);
 		final Iterable<org.cmdbuild.data.store.metadata.Metadata> elements = store.readAll();
 		return from(elements) //
 				.transform(TO_SOAP_METADATA);

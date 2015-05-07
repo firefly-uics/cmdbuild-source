@@ -1,6 +1,7 @@
 package org.cmdbuild.model.data;
 
 import static java.lang.String.format;
+import static java.util.Collections.emptyMap;
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
@@ -8,7 +9,6 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.apache.commons.lang3.StringUtils.trim;
 
 import java.util.EnumSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -34,9 +34,7 @@ import org.cmdbuild.dao.entrytype.attributetype.StringAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TextAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TimeAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.UndefinedAttributeType;
-import org.cmdbuild.data.store.metadata.Metadata;
 import org.cmdbuild.logger.Log;
-import org.cmdbuild.logic.data.DataDefinitionLogic.MetadataAction;
 
 import com.google.common.collect.Maps;
 
@@ -170,7 +168,7 @@ public class Attribute {
 
 		/**
 		 * Returns the enum constant with the specified name (case-insensitive).
-		 *
+		 * 
 		 * @throws IllegalArgumentException
 		 *             if no enum corresponds with the specified name
 		 */
@@ -206,6 +204,8 @@ public class Attribute {
 
 	public static class AttributeBuilder implements Builder<Attribute> {
 
+		private static final Map<String, String> NO_METADATA = emptyMap();;
+
 		private String name;
 		private String ownerName;
 		private String ownerNamespace;
@@ -227,7 +227,7 @@ public class Attribute {
 		private String editorType;
 		private String filter;
 		private IpType ipType;
-		private Map<MetadataAction, List<Metadata>> metadataByAction = Maps.newHashMap();
+		private final Map<String, String> metadata = Maps.newHashMap();
 		private final Set<Condition> conditions;
 
 		private AttributeBuilder() {
@@ -381,8 +381,9 @@ public class Attribute {
 			return this;
 		}
 
-		public AttributeBuilder withMetadata(final Map<MetadataAction, List<Metadata>> metadataByAction) {
-			this.metadataByAction = metadataByAction;
+		public AttributeBuilder withMetadata(final Map<String, String> metadata) {
+			this.metadata.clear();
+			this.metadata.putAll(defaultIfNull(metadata, NO_METADATA));
 			return this;
 		}
 
@@ -405,7 +406,7 @@ public class Attribute {
 	private final int classOrder;
 	private final String editorType;
 	private final String filter;
-	private final Map<MetadataAction, List<Metadata>> metadataByAction;
+	private final Map<String, String> metadata;
 	private final Set<Condition> conditions;
 	private final transient String toString;
 
@@ -423,7 +424,7 @@ public class Attribute {
 		this.classOrder = builder.classOrder;
 		this.editorType = builder.editorType;
 		this.filter = builder.filter;
-		this.metadataByAction = builder.metadataByAction;
+		this.metadata = builder.metadata;
 		this.conditions = builder.conditions;
 		this.toString = ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
 	}
@@ -500,8 +501,8 @@ public class Attribute {
 		return fkDestinationName;
 	}
 
-	public Map<MetadataAction, List<Metadata>> getMetadata() {
-		return metadataByAction;
+	public Map<String, String> getMetadata() {
+		return metadata;
 	}
 
 	@Override

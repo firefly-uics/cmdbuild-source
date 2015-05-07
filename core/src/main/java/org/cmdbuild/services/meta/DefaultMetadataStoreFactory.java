@@ -18,10 +18,12 @@ public class DefaultMetadataStoreFactory implements MetadataStoreFactory {
 
 	@Override
 	public Store<Metadata> storeForAttribute(final CMAttribute attribute) {
-		return DataViewStore.newInstance( //
-				dataView, //
-				MetadataGroupable.of(attribute), //
-				MetadataConverter.of(MetadataGroupable.of(attribute)));
+		final MetadataGroupable groupable = MetadataGroupable.of(attribute);
+		return DataViewStore.<Metadata> newInstance() //
+				.withDataView(dataView) //
+				.withGroupable(groupable) //
+				.withStorableConverter(MetadataConverter.of(groupable)) //
+				.build();
 	}
 
 }

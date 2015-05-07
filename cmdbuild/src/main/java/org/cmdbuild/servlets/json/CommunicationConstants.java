@@ -173,7 +173,7 @@ public class CommunicationConstants {
 			MASTERDETAIL_LABEL = "md_label", //
 			MASTER = "master", //
 			MENU = "menu", //
-			META_DATA = "meta", //
+			META = "meta", //
 			MODE = "mode", //
 			MYSQL_LABEL = "MySQL", //
 			MYSQL = "mysql", //

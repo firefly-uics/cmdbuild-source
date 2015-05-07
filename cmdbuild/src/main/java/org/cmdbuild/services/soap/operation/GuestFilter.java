@@ -150,7 +150,7 @@ class GuestFilter {
 
 					private Entry<String, String> classAndAttributeOrNull(final Metadata metadata) {
 						logger.debug("parsing metadata '{}'", metadata);
-						return (metadata == null) ? null : classAndAttributeOrNull(metadata.value);
+						return (metadata == null) ? null : classAndAttributeOrNull(metadata.value());
 					}
 
 					private Entry<String, String> classAndAttributeOrNull(final String metadataValue) {

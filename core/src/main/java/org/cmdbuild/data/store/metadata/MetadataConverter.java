@@ -42,7 +42,7 @@ public class MetadataConverter extends BaseStorableConverter<Metadata> {
 	public Metadata convert(final CMCard card) {
 		final String name = (String) card.getDescription();
 		final String value = card.get(VALUE, String.class);
-		return Metadata.of(name, value);
+		return MetadataImpl.of(name, value);
 	}
 
 	@Override
@@ -51,8 +51,8 @@ public class MetadataConverter extends BaseStorableConverter<Metadata> {
 		if (groupable.getGroupAttributeName() != null) {
 			values.put(groupable.getGroupAttributeName(), groupable.getGroupAttributeValue());
 		}
-		values.put(NAME, storable.name);
-		values.put(VALUE, storable.value);
+		values.put(NAME, storable.name());
+		values.put(VALUE, storable.value());
 		return values;
 	}
 

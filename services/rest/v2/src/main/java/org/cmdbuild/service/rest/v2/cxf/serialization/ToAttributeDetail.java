@@ -1,7 +1,9 @@
 package org.cmdbuild.service.rest.v2.cxf.serialization;
 
+import static com.google.common.reflect.Reflection.newProxy;
 import static java.util.Collections.emptyList;
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
+import static org.cmdbuild.common.utils.Reflection.unsupported;
 import static org.cmdbuild.service.rest.v2.model.Models.newAttribute;
 import static org.cmdbuild.service.rest.v2.model.Models.newFilter;
 
@@ -9,7 +11,6 @@ import java.util.Collection;
 import java.util.Map;
 
 import org.apache.commons.lang3.Validate;
-import org.cmdbuild.common.utils.UnsupportedProxyFactory;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
@@ -40,25 +41,29 @@ public class ToAttributeDetail implements Function<CMAttribute, Attribute> {
 
 	private static MetadataStoreFactory NULL = new MetadataStoreFactory() {
 
-		private final Store<Metadata> UNSUPPORTED = UnsupportedProxyFactory.of(Store.class).create();
-		private final Collection<Metadata> NO_METADATA = emptyList();
+		private final Store<Metadata> NULL_STORE = new ForwardingStore<Metadata>() {
+
+			@SuppressWarnings("unchecked")
+			private final Store<Metadata> UNSUPPORTED = newProxy(Store.class, unsupported("method not supported"));
+			private final Collection<Metadata> NO_METADATA = emptyList();
+
+			@Override
+			protected Store<Metadata> delegate() {
+				return UNSUPPORTED;
+			}
+
+			@Override
+			public Collection<Metadata> readAll() {
+				return NO_METADATA;
+			};
+
+		};
 
 		@Override
 		public Store<Metadata> storeForAttribute(final CMAttribute attribute) {
-			return new ForwardingStore<Metadata>() {
-
-				@Override
-				protected Store<Metadata> delegate() {
-					return UNSUPPORTED;
-				}
-
-				@Override
-				public Collection<Metadata> readAll() {
-					return NO_METADATA;
-				};
-
-			};
+			return NULL_STORE;
 		}
+
 	};
 
 	public static class Builder implements org.apache.commons.lang3.builder.Builder<ToAttributeDetail> {
@@ -219,7 +224,7 @@ public class ToAttributeDetail implements Function<CMAttribute, Attribute> {
 			private Map<String, String> toMap(final Collection<Metadata> elements) {
 				final Map<String, String> map = Maps.newHashMap();
 				for (final Metadata element : elements) {
-					map.put(element.name, element.value);
+					map.put(element.name(), element.value());
 				}
 				return map;
 			}
