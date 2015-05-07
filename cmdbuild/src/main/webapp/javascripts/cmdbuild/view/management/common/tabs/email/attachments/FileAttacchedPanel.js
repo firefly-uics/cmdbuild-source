@@ -4,7 +4,7 @@
 		extend: 'Ext.panel.Panel',
 
 		/**
-		 * @cfg {CMDBuild.controller.management.common.tabs.email.Attachments}
+		 * @cfg {CMDBuild.controller.management.common.tabs.email.attachments.Attachments}
 		 */
 		delegate: undefined,
 
@@ -29,24 +29,27 @@
 		initComponent: function() {
 			Ext.apply(this, {
 				items: [
-					{
-						xtype: 'panel',
-						bodyCls: 'x-panel-body-default-framed',
-						border: false,
-						html: this.fileName,
-						frame: false,
+//					{
+//						xtype: 'panel',
+//						bodyCls: 'x-panel-body-default-framed',
+//						border: false,
+//						html: this.fileName,
+//						frame: false,
+//						flex: 1
+//					},
+					Ext.create('Ext.form.field.Display', {
+						value: this.fileName,
 						flex: 1
-					},
-					{
-						xtype: 'button',
-						iconCls: 'delete',
+					}),
+					Ext.create('CMDBuild.core.buttons.Delete', {
+						tooltip: CMDBuild.Translation.deleteLabel,
 						disabled: this.readOnly,
 						scope: this,
 
 						handler: function(button, e) {
 							this.delegate.cmfg('onAttachmentRemoveButtonClick', this);
 						}
-					}
+					})
 				]
 			});
 

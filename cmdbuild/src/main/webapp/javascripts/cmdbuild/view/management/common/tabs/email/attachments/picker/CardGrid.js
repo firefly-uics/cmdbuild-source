@@ -4,7 +4,7 @@
 		extend: 'CMDBuild.view.management.common.CMCardGrid',
 
 		/**
-		 * @cfg {CMDBuild.controller.management.common.tabs.email.AttachmentsPicker}
+		 * @cfg {CMDBuild.controller.management.common.tabs.email.attachments.Picker}
 		 */
 		delegate: undefined,
 

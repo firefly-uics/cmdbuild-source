@@ -6,7 +6,7 @@
 		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
 
 		/**
-		 * @cfg {CMDBuild.controller.management.common.tabs.email.Attachments}
+		 * @cfg {CMDBuild.controller.management.common.tabs.email.attachments.Attachments}
 		 */
 		delegate: undefined,
 

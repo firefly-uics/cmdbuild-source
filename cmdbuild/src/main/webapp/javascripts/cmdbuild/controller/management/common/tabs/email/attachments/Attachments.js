@@ -1,6 +1,6 @@
 (function () {
 
-	Ext.define('CMDBuild.controller.management.common.tabs.email.Attachments', {
+	Ext.define('CMDBuild.controller.management.common.tabs.email.attachments.Attachments', {
 		extend: 'CMDBuild.controller.common.AbstractController',
 
 		requires: [
@@ -79,7 +79,7 @@
 		},
 
 		onAttachmentAddFromDmsButtonClick: function() {
-			Ext.create('CMDBuild.controller.management.common.tabs.email.AttachmentsPicker', {
+			Ext.create('CMDBuild.controller.management.common.tabs.email.attachments.Picker', {
 				parentDelegate: this,
 				record: this.record
 			});

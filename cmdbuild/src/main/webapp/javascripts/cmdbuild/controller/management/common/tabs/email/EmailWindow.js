@@ -16,7 +16,7 @@
 		parentDelegate: undefined,
 
 		/**
-		 * @property {CMDBuild.controller.management.common.tabs.email.Attachments}
+		 * @property {CMDBuild.controller.management.common.tabs.email.attachments.Attachments}
 		 */
 		attachmentsDelegate: undefined,
 
@@ -141,7 +141,7 @@
 
 				if (CMDBuild.Config.dms.enabled) {
 					// Build attachments controller
-					this.attachmentsDelegate = Ext.create('CMDBuild.controller.management.common.tabs.email.Attachments', {
+					this.attachmentsDelegate = Ext.create('CMDBuild.controller.management.common.tabs.email.attachments.Attachments', {
 						parentDelegate: this,
 						record: this.record,
 						view: this.view.attachmentContainer
