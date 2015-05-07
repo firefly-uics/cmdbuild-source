@@ -5,6 +5,7 @@ import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 import static org.cmdbuild.servlets.json.CommunicationConstants.DESCRIPTION;
 import static org.cmdbuild.servlets.json.CommunicationConstants.EMAIL;
 import static org.cmdbuild.servlets.json.CommunicationConstants.IS_ACTIVE;
+import static org.cmdbuild.servlets.json.CommunicationConstants.META;
 import static org.cmdbuild.servlets.json.CommunicationConstants.PRIVILEGED;
 import static org.cmdbuild.servlets.json.CommunicationConstants.SERVICE;
 import static org.cmdbuild.servlets.json.CommunicationConstants.USER_ID;
@@ -40,6 +41,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.google.common.collect.Maps;
+
+;
 
 public class Serializer {
 
@@ -85,7 +88,7 @@ public class Serializer {
 	// FIXME: implement it reading the metadata for the class
 	protected static void addMetadata(final JSONObject serializer) throws JSONException {
 		final JSONObject jsonMetadata = new JSONObject();
-		serializer.put("meta", jsonMetadata);
+		serializer.put(META, jsonMetadata);
 	}
 
 	public static JSONArray buildJsonAvaiableMenuItems() throws JSONException {
@@ -314,7 +317,7 @@ public class Serializer {
 		final JSONObject jsonAutocompletion = new JSONObject();
 		jsonAutocompletion.put("autocompletion", jsonGroups);
 		try {
-			final JSONObject jsonMeta = jsonTable.getJSONObject("meta");
+			final JSONObject jsonMeta = jsonTable.getJSONObject(META);
 			jsonMeta.put("attachments", jsonAutocompletion);
 		} catch (final JSONException ex) {
 			// there is no meta key

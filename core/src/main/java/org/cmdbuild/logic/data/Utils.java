@@ -903,7 +903,7 @@ public class Utils {
 	 * @return
 	 */
 	public static DateTime readDateTime(final CMCard card, final String attributeName) {
-		Object value = card.get(attributeName);
+		final Object value = card.get(attributeName);
 
 		if (value instanceof DateTime) {
 			return (DateTime) value;

@@ -2,7 +2,6 @@ package org.cmdbuild.servlets.json.schema;
 
 import static com.google.common.base.Predicates.not;
 import static com.google.common.collect.FluentIterable.from;
-import static com.google.common.collect.Iterables.filter;
 import static java.util.Collections.emptyList;
 import static org.cmdbuild.dao.entrytype.Predicates.isSystem;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ACTIVE;
@@ -36,12 +35,13 @@ import static org.cmdbuild.servlets.json.CommunicationConstants.IP_TYPE;
 import static org.cmdbuild.servlets.json.CommunicationConstants.IS_PROCESS;
 import static org.cmdbuild.servlets.json.CommunicationConstants.LENGTH;
 import static org.cmdbuild.servlets.json.CommunicationConstants.LOOKUP;
-import static org.cmdbuild.servlets.json.CommunicationConstants.META_DATA;
+import static org.cmdbuild.servlets.json.CommunicationConstants.META;
 import static org.cmdbuild.servlets.json.CommunicationConstants.NAME;
 import static org.cmdbuild.servlets.json.CommunicationConstants.NOT_NULL;
 import static org.cmdbuild.servlets.json.CommunicationConstants.PRECISION;
 import static org.cmdbuild.servlets.json.CommunicationConstants.SCALE;
 import static org.cmdbuild.servlets.json.CommunicationConstants.SHOW_IN_GRID;
+import static org.cmdbuild.servlets.json.CommunicationConstants.SKIP_DISABLED_CLASSES;
 import static org.cmdbuild.servlets.json.CommunicationConstants.SUPERCLASS;
 import static org.cmdbuild.servlets.json.CommunicationConstants.TABLE;
 import static org.cmdbuild.servlets.json.CommunicationConstants.TABLE_TYPE;
@@ -49,20 +49,18 @@ import static org.cmdbuild.servlets.json.CommunicationConstants.TYPE;
 import static org.cmdbuild.servlets.json.CommunicationConstants.TYPES;
 import static org.cmdbuild.servlets.json.CommunicationConstants.UNIQUE;
 import static org.cmdbuild.servlets.json.CommunicationConstants.USER_STOPPABLE;
-import static org.cmdbuild.servlets.json.CommunicationConstants.SKIP_DISABLED_CLASSES;
 import static org.cmdbuild.servlets.json.schema.Utils.toIterable;
+import static org.cmdbuild.servlets.json.schema.Utils.toMap;
 
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.entrytype.CMTableType;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
-import org.cmdbuild.data.store.metadata.Metadata;
 import org.cmdbuild.exception.AuthException;
 import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.exception.CMDBWorkflowException;
@@ -70,12 +68,6 @@ import org.cmdbuild.exception.CMDBWorkflowException.WorkflowExceptionType;
 import org.cmdbuild.exception.NotFoundException;
 import org.cmdbuild.logic.data.DataDefinitionLogic;
 import org.cmdbuild.logic.data.DataDefinitionLogic.FunctionItem;
-import org.cmdbuild.logic.data.DataDefinitionLogic.MetadataAction;
-import org.cmdbuild.logic.data.DataDefinitionLogic.MetadataAction.Visitor;
-import org.cmdbuild.logic.data.DefaultDataDefinitionLogic.MetadataActions;
-import org.cmdbuild.logic.data.DefaultDataDefinitionLogic.MetadataActions.Create;
-import org.cmdbuild.logic.data.DefaultDataDefinitionLogic.MetadataActions.Delete;
-import org.cmdbuild.logic.data.DefaultDataDefinitionLogic.MetadataActions.Update;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.logic.data.access.DataAccessLogic.AttributesQuery;
 import org.cmdbuild.model.data.Attribute;
@@ -99,7 +91,6 @@ import org.json.JSONObject;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 
 public class ModClass extends JSONBaseWithSpringContext {
 
@@ -312,7 +303,7 @@ public class ModClass extends JSONBaseWithSpringContext {
 			@Parameter(value = FILTER, required = false) final String filter, //
 			@Parameter(value = FK_DESTINATION, required = false) final String fkDestinationName, //
 			@Parameter(value = GROUP, required = false) final String group, //
-			@Parameter(value = META_DATA, required = false) final JSONObject meta, //
+			@Parameter(value = META, required = false) final JSONObject meta, //
 			@Parameter(value = EDITOR_TYPE, required = false) final String editorType, //
 			@Parameter(value = IP_TYPE, required = false) final String ipType, //
 			@Parameter(value = CLASS_NAME) final String className //
@@ -338,7 +329,7 @@ public class ModClass extends JSONBaseWithSpringContext {
 				.thatIsMandatory(isNotNull) //
 				.thatIsUnique(isUnique) //
 				.thatIsActive(isActive) //
-				.withMetadata(buildMetadataByAction(meta)) //
+				.withMetadata(toMap(meta)) //
 				.build();
 		final DataDefinitionLogic logic = dataDefinitionLogic();
 		final CMAttribute cmAttribute = logic.createOrUpdate(attribute);
@@ -346,111 +337,9 @@ public class ModClass extends JSONBaseWithSpringContext {
 		final AttributeSerializer attributeSerializer = AttributeSerializer.newInstance() //
 				.withDataView(logic.getView()) //
 				.build();
-		final JSONObject result = attributeSerializer.toClient(cmAttribute,
-				buildMetadataForSerialization(attribute.getMetadata()));
+		final JSONObject result = attributeSerializer.toClient(cmAttribute, attribute.getMetadata());
 		serializer.put(ATTRIBUTE, result);
 		return serializer;
-	}
-
-	private enum MetaStatus {
-
-		DELETED(MetadataActions.DELETE), //
-		MODIFIED(MetadataActions.UPDATE), //
-		NEW(MetadataActions.CREATE), //
-		UNDEFINED(null), //
-		;
-
-		private final MetadataAction action;
-
-		private MetaStatus(final MetadataAction action) {
-			this.action = action;
-		}
-
-		public boolean hasAction() {
-			return (action != null);
-		}
-
-		public MetadataAction getAction() {
-			return action;
-		}
-
-		public static MetaStatus forStatus(final String status) {
-			for (final MetaStatus value : values()) {
-				if (value.name().equals(status)) {
-					return value;
-				}
-			}
-			return UNDEFINED;
-		}
-
-	}
-
-	private Map<MetadataAction, List<Metadata>> buildMetadataByAction(final JSONObject meta) throws Exception {
-		final Map<MetadataAction, List<Metadata>> metadataMap = Maps.newHashMap();
-		if (meta != null) {
-			final Iterator<?> jsonMetadata = meta.keys();
-			while (jsonMetadata.hasNext()) {
-				final String name = (String) jsonMetadata.next();
-				final JSONObject info = meta.getJSONObject(name);
-				final String value = info.getString("value");
-				final MetaStatus status = MetaStatus.forStatus(info.getString("status"));
-				if (status.hasAction()) {
-					final MetadataAction action = status.getAction();
-					List<Metadata> list = metadataMap.get(action);
-					if (list == null) {
-						list = Lists.newArrayList();
-						metadataMap.put(action, list);
-					}
-					list.add(Metadata.of(name, value));
-
-				}
-			}
-		}
-		return metadataMap;
-	}
-
-	private Iterable<Metadata> buildMetadataForSerialization(final Map<MetadataAction, List<Metadata>> metadataByAction) {
-		final List<Metadata> metadata = Lists.newArrayList();
-		for (final MetadataAction action : metadataByAction.keySet()) {
-			final Iterable<Metadata> elements = metadataByAction.get(action);
-			action.accept(new Visitor() {
-
-				@Override
-				public void visit(final Create action) {
-					filter(elements, new Predicate<Metadata>() {
-						@Override
-						public boolean apply(final Metadata input) {
-							metadata.add(input);
-							return true;
-						}
-					});
-				}
-
-				@Override
-				public void visit(final Update action) {
-					filter(elements, new Predicate<Metadata>() {
-						@Override
-						public boolean apply(final Metadata input) {
-							metadata.add(input);
-							return true;
-						}
-					});
-				}
-
-				@Override
-				public void visit(final Delete action) {
-					filter(elements, new Predicate<Metadata>() {
-						@Override
-						public boolean apply(final Metadata input) {
-							// nothing to do
-							return true;
-						}
-					});
-				}
-
-			});
-		}
-		return metadata;
 	}
 
 	@JSONExported
