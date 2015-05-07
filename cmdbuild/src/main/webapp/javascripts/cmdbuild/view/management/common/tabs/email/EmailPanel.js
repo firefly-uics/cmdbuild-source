@@ -13,7 +13,6 @@
 
 		border: false,
 		cls: 'x-panel-body-default-framed',
-		disabled: true,
 		frame: false,
 		layout: 'fit',
 		title: CMDBuild.Translation.email,

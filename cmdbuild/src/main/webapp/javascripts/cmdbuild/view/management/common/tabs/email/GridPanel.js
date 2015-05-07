@@ -70,6 +70,7 @@
 							}),
 							Ext.create('CMDBuild.core.buttons.Reload', {
 								text: CMDBuild.Translation.gridRefresh,
+								forceDisabledState: false, // Force enabled state
 								scope: this,
 
 								handler: function(button, e) {

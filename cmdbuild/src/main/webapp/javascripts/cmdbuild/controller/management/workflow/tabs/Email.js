@@ -41,6 +41,8 @@
 		},
 
 		/**
+		 * It's the change of processIstance step (called activity)
+		 *
 		 * @param {CMDBuild.model.CMActivityInstance} activityIstance
 		 */
 		onActivityInstanceChange: Ext.emptyFn,
@@ -55,18 +57,21 @@
 		 * @override
 		 */
 		onAddCardButtonClick: function() {
+			var me = this;
+
 			this.callParent(arguments);
 
-			if (!Ext.isEmpty(this.view))
-				this.view.setDisabled(true);
+			 // Reset selected entity, regenerate email and load store
+			this.selectedEntitySet(null, function() {
+				me.regenerateAllEmailsSet(true);
+				me.forceRegenerationSet(true);
+				me.cmfg('storeLoad');
+			});
 		},
 
 		onCardSelected: Ext.emptyFn,
 
-		onCloneCard: function() {
-			if (!Ext.isEmpty(this.view))
-				this.view.setDisabled(true);
-		},
+		onCloneCard: Ext.emptyFn,
 
 		onEntryTypeSelected: Ext.emptyFn,
 
@@ -77,9 +82,6 @@
 		 */
 		onProcessClassRefChange: function(entryType) {
 			this.editModeSet(false);
-
-			if (!Ext.isEmpty(this.view))
-				this.view.setDisabled(true);
 		},
 
 		/**
@@ -91,26 +93,20 @@
 		onProcessInstanceChange: function(processInstance) {
 			var me = this;
 
-			if (!this.view.isDisabled()) {
-				if (!Ext.isEmpty(processInstance) && processInstance.isStateOpen()) {
-					if (!processInstance.isNew())
-						this.parentDelegate.activityPanelController.ensureEditPanel(); // Creates editPanel with relative form fields
+			if (!Ext.isEmpty(processInstance) && processInstance.isStateOpen()) {
+				if (!processInstance.isNew())
+					this.parentDelegate.activityPanelController.ensureEditPanel(); // Creates editPanel with relative form fields
 
-					// Reset configuration attributes
-					this.configurationSet();
-					this.configurationTemplatesSet();
-
-					this.selectedEntitySet(processInstance, function() {
-						me.regenerateAllEmailsSet(processInstance.isNew());
-						me.forceRegenerationSet(processInstance.isNew());
-						me.cmfg('storeLoad');
-					});
-
-					this.editModeSet(processInstance.isNew()); // Enable/Disable tab based on model new state to separate create/view mode
-					this.cmfg('setUiState');
-				} else { // We have a closed process instance
+				this.selectedEntitySet(processInstance, function() {
+					me.regenerateAllEmailsSet(processInstance.isNew());
+					me.forceRegenerationSet(processInstance.isNew());
 					me.cmfg('storeLoad');
-				}
+				});
+
+				this.editModeSet(processInstance.isNew()); // Enable/Disable tab based on model new state to separate create/view mode
+				this.cmfg('setUiState');
+			} else { // We have a closed process instance
+				me.cmfg('storeLoad');
 			}
 		},
 

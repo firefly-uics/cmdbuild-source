@@ -89,18 +89,6 @@
 		},
 
 		/**
-		 * Enable action shouldn't be needed but on addCardButtoClick is fired also onCardSelect event
-		 *
-		 * @override
-		 */
-		onAddCardButtonClick: function() {
-			this.callParent(arguments);
-
-			if (!Ext.isEmpty(this.view))
-				this.view.setDisabled(true);
-		},
-
-		/**
 		 * @param {Ext.data.Model} card
 		 */
 		onCardSelected: function(card) {
@@ -114,17 +102,11 @@
 				me.cmfg('storeLoad');
 			});
 
-			if (!Ext.isEmpty(this.view))
-				this.view.setDisabled(false);
-
 			this.editModeSet(false);
 			this.cmfg('setUiState');
 		},
 
-		onCloneCard: function() {
-			if (!Ext.isEmpty(this.view))
-				this.view.setDisabled(true);
-		},
+		onCloneCard: Ext.emptyFn,
 
 		/**
 		 * @param {CMDBuild.cache.CMEntryTypeModel} entryType
