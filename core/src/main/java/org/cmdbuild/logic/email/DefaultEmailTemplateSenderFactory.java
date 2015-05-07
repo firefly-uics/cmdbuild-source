@@ -295,17 +295,17 @@ public class DefaultEmailTemplateSenderFactory implements EmailTemplateSenderFac
 
 		@Override
 		public String getToAddresses() {
-			return template.getTo();
+			return templateResolver.resolve(template.getTo());
 		}
 
 		@Override
 		public String getCcAddresses() {
-			return template.getCc();
+			return templateResolver.resolve(template.getCc());
 		}
 
 		@Override
 		public String getBccAddresses() {
-			return template.getBcc();
+			return templateResolver.resolve(template.getBcc());
 		}
 
 		@Override
