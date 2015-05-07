@@ -1,6 +1,6 @@
 (function () {
 
-	Ext.define('CMDBuild.controller.management.common.tabs.email.AttachmentsPicker', {
+	Ext.define('CMDBuild.controller.management.common.tabs.email.attachments.Picker', {
 		extend: 'CMDBuild.controller.common.AbstractController',
 
 		requires: [
@@ -10,7 +10,7 @@
 		],
 
 		/**
-		 * @cfg {CMDBuild.controller.management.common.tabs.email.Attachments}
+		 * @cfg {CMDBuild.controller.management.common.tabs.email.attachments.Attachments}
 		 */
 		parentDelegate: undefined,
 
@@ -52,7 +52,7 @@
 
 		/**
 		 * @param {Object} configurationObject
-		 * @param {CMDBuild.controller.management.common.tabs.email.Attachments} configurationObject.parentDelegate
+		 * @param {CMDBuild.controller.management.common.tabs.email.attachments.Attachments} configurationObject.parentDelegate
 		 * @param {Mixed} configurationObject.record
 		 */
 		constructor: function(configurationObject) {

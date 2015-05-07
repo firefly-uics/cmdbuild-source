@@ -23,7 +23,7 @@
 				});
 
 			// Apply defaultText property if no defined text and tooltip properties
-			if (Ext.isEmpty(this.text) && Ext.isEmpty(this.tooltip))
+			if (Ext.isEmpty(this.text, true) && Ext.isEmpty(this.tooltip))
 				Ext.apply(this, {
 					text: this.textDefault
 				});

@@ -53,7 +53,7 @@
 				region: 'center',
 				frame: false,
 				border: false,
-				padding: '0 5',
+				padding: '5',
 				bodyCls: 'x-panel-body-default-framed',
 
 				layout: {

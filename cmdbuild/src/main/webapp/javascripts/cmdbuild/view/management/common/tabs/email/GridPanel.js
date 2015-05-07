@@ -115,16 +115,17 @@
 						renderer: 'stripTags',
 						flex: 2
 					},
-					{
-						xtype: 'actioncolumn',
+					Ext.create('Ext.grid.column.Action', {
 						align: 'center',
-						width: 25,
+						width: 150,
 						sortable: false,
 						hideable: false,
 						menuDisabled: true,
 						fixed: true,
+
 						items: [
 							Ext.create('CMDBuild.core.buttons.EmailRegenerate', {
+								withSpacer: true,
 								tooltip: CMDBuild.Translation.manualRegeneration,
 								scope: this,
 
@@ -141,19 +142,9 @@
 										|| !record.get(CMDBuild.core.proxy.CMProxyConstants.KEEP_SYNCHRONIZATION)
 									);
 								}
-							})
-						]
-					},
-					{
-						xtype: 'actioncolumn',
-						align: 'center',
-						width: 25,
-						sortable: false,
-						hideable: false,
-						menuDisabled: true,
-						fixed: true,
-						items: [
+							}),
 							Ext.create('CMDBuild.core.buttons.EmailReply', {
+								withSpacer: true,
 								tooltip: CMDBuild.Translation.reply,
 								scope: this,
 
@@ -168,20 +159,10 @@
 										|| this.delegate.recordIsEditable(record)
 									);
 								}
-							})
-						]
-					},
-					{
-						xtype: 'actioncolumn',
-						align: 'center',
-						width: 25,
-						sortable: false,
-						hideable: false,
-						menuDisabled: true,
-						fixed: true,
-						items: [
+							}),
 							Ext.create('CMDBuild.core.buttons.EmailSend', {
-								toolTip: CMDBuild.Translation.send,
+								withSpacer: true,
+								tooltip: CMDBuild.Translation.send,
 								scope: this,
 
 								handler: function(grid, rowIndex, colIndex, node, e, record, rowNode) {
@@ -195,20 +176,10 @@
 										|| !this.delegate.recordIsSendable(record)
 									);
 								}
-							})
-						]
-					},
-					{
-						xtype: 'actioncolumn',
-						align: 'center',
-						width: 25,
-						sortable: false,
-						hideable: false,
-						menuDisabled: true,
-						fixed: true,
-						items: [
+							}),
 							Ext.create('CMDBuild.core.buttons.EmailEdit', {
-								toolTip: CMDBuild.Translation.edit,
+								withSpacer: true,
+								tooltip: CMDBuild.Translation.edit,
 								scope: this,
 
 								handler: function(grid, rowIndex, colIndex, node, e, record, rowNode) {
@@ -222,38 +193,18 @@
 										|| !this.delegate.recordIsEditable(record)
 									);
 								}
-							})
-						]
-					},
-					{
-						xtype: 'actioncolumn',
-						align: 'center',
-						width: 25,
-						sortable: false,
-						hideable: false,
-						menuDisabled: true,
-						fixed: true,
-						items: [
+							}),
 							Ext.create('CMDBuild.core.buttons.EmailView', {
+								withSpacer: true,
 								tooltip: CMDBuild.Translation.view,
 								scope: this,
 
 								handler: function(grid, rowIndex, colIndex, node, e, record, rowNode) {
 									this.delegate.cmfg('onGridViewEmailButtonClick', record);
 								}
-							})
-						]
-					},
-					{
-						xtype: 'actioncolumn',
-						align: 'center',
-						width: 25,
-						sortable: false,
-						hideable: false,
-						menuDisabled: true,
-						fixed: true,
-						items: [
+							}),
 							Ext.create('CMDBuild.core.buttons.EmailDelete', {
+								withSpacer: true,
 								tooltip: CMDBuild.Translation.deleteLabel,
 								scope: this,
 
@@ -270,7 +221,7 @@
 								}
 							})
 						]
-					}
+					})
 				],
 				features: [
 					{
