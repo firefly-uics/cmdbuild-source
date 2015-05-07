@@ -122,12 +122,12 @@
 							}),
 							Ext.create('Ext.form.field.Checkbox', {
 								name: CMDBuild.core.proxy.CMProxyConstants.SERVICE,
-								fieldLabel: '@@ Service',
+								fieldLabel: CMDBuild.Translation.service,
 								labelWidth: CMDBuild.LABEL_WIDTH
 							}),
 							Ext.create('Ext.form.field.Checkbox', {
 								name: CMDBuild.core.proxy.CMProxyConstants.PRIVILEGED,
-								fieldLabel: '@@ Privileged',
+								fieldLabel: CMDBuild.Translation.privileged,
 								labelWidth: CMDBuild.LABEL_WIDTH
 							})
 						]
