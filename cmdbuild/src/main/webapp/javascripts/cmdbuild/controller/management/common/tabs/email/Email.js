@@ -375,8 +375,6 @@
 				} else {
 					// Setup class configuration applying configuration attributes to defaultConfiguration
 					this.configuration = Ext.apply({}, configuration, this.defaultConfiguration);
-
-					this.view.setDisabled(false);
 				}
 			},
 
@@ -800,6 +798,12 @@
 		 * @abstract
 		 */
 		regenerationEndPointCallback: Ext.emptyFn,
+
+		reset: function() {
+			// Reset configuration attributes
+			this.configurationSet();
+			this.configurationTemplatesSet();
+		},
 
 		// SelectedEntity property functions
 			/**

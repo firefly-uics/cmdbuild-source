@@ -7,6 +7,8 @@
 	});
 
 	Ext.define("CMDBuild.model.CMActivityInstance", {
+		extend: 'Ext.data.Model',
+
 		constructor: function(data) {
 			if (data) {
 				this.data = data;

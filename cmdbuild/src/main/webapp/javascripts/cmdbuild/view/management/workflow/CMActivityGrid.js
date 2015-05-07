@@ -91,7 +91,6 @@
 		// called by the activityrowexpander plugin
 		// when an activity is selected with a mouse click
 		onActivitySelected: function(activityInstanceId) {
-			_debug("Activity selection", activityInstanceId);
 			this.fireEvent("activityInstaceSelect", activityInstanceId);
 		},
 

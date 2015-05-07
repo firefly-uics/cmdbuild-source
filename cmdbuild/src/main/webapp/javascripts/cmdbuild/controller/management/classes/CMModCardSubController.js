@@ -12,6 +12,7 @@ Ext.define("CMDBuild.controller.management.classes.CMModCardSubController", {
 			throw ("OOO snap, you have not passed a view to me");
 		} else {
 			this.view = view;
+			this.view.delegate = this; // Delegate injection
 		}
 
 		this.superController = supercontroller;

@@ -16,9 +16,15 @@
 
 		requires: ['CMDBuild.view.management.common.widgets.grid.MainPanel'],
 
+		/**
+		 * @param {CMDBuild.view.management.classes.CMCardPanel or CMDBuild.view.management.workflow.CMActivityPanel} mainView
+		 * @param {Mixed} tabbedWidgetDelegate
+		 */
 		constructor: function(mainView, tabbedWidgetDelegate) {
 			this.mainView = mainView;
+
 			this.tabbedWidgetDelegate = tabbedWidgetDelegate || null;
+
 			initBuilders(this);
 		},
 
@@ -45,13 +51,18 @@
 			return new CMDBuild.view.management.common.widgets.CMWidgetsWindow();
 		},
 
-		reset: 	function reset() {
-			if (this.widgetsContainer) {
+		reset: function() {
+			if (!Ext.isEmpty(this.widgetsContainer))
 				this.widgetsContainer.destroy();
-			}
+
+			// Email tab configuration reset
+			if (Ext.isFunction(this.mainView.delegate.superController.controllerTabEmail.reset));
+				this.mainView.delegate.superController.controllerTabEmail.reset();
 
 			this.widgetsContainer = this.buildWidgetsContainer();
+
 			this.mainView.getWidgetButtonsPanel().removeAllButtons();
+
 			this.widgetsMap = {};
 		},
 
@@ -114,10 +125,8 @@
 			 * @param {Ext.data.Model or CMDBuild.model.CMActivityInstance} card or activity
 			 */
 			'.ManageEmail': function(widget, card) {
-				var widgetView = me.tabbedWidgetDelegate.getEmailPanel();
-
-				if (!Ext.isEmpty(me.tabbedWidgetDelegate) && !Ext.isEmpty(widgetView))
-					return widgetView;
+				if (!Ext.isEmpty(me.tabbedWidgetDelegate) && !Ext.isEmpty(me.tabbedWidgetDelegate.getEmailPanel()))
+					return me.tabbedWidgetDelegate.getEmailPanel();
 
 				return null;
 			}
