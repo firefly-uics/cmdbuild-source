@@ -164,10 +164,12 @@ public class ReadEmailTaskJobFactory extends AbstractJobFactory<ReadEmailTask> {
 					private void doAdapt(final Email email, final Storable storable) {
 						final ParsedSubject parsedSubject = subjectHandler.parse(email.getSubject());
 						Validate.isTrue(parsedSubject.hasExpectedFormat(), "invalid subject format");
+						final org.cmdbuild.data.store.email.Email parent = emailStore.read(storableOf(parsedSubject
+								.getEmailId()));
 						final org.cmdbuild.data.store.email.Email stored = emailStore.read(storable);
 						stored.setSubject(parsedSubject.getRealSubject());
-						stored.setReference(stored.getReference());
-						stored.setNotifyWith(stored.getNotifyWith());
+						stored.setReference(parent.getReference());
+						stored.setNotifyWith(parent.getNotifyWith());
 						emailStore.update(stored);
 					}
 
