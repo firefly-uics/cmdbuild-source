@@ -48,7 +48,6 @@
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/class/CMSetOrderWindow.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/class/CMClassAttributesPanel.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/class/CMClassForm.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/class/CMMetadataWindow.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/class/CMModClass.js"></script>
 
 		<!-- GIS -->

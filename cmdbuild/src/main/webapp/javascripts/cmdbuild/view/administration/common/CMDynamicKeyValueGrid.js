@@ -35,7 +35,7 @@
 				sortable: false,
 				renderer: function renderDeleteActions() {
 					return '<img style="cursor:pointer" title="' +
-					CMDBuild.Translation.administration.modClass.attributeProperties.meta.remove +
+					CMDBuild.Translation.remove +
 					'" class="action-meta-delete" src="images/icons/cross.png"/>&nbsp;';
 				},
 				align: 'center',
