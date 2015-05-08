@@ -143,6 +143,25 @@
 			this.callParent(arguments);
 		},
 
+		listeners: {
+			// Force store load and manage preselectIfUnique metadata
+			beforerender: function(combo, eOpts) {
+				combo.getStore().load({
+					scope: this,
+					callback: function(records, operation, success) {
+						if (
+							!Ext.Object.isEmpty(this.attribute)
+							&& !Ext.Object.isEmpty(this.attribute.meta)
+							&& this.attribute.meta['system.type.reference.' + CMDBuild.core.proxy.CMProxyConstants.PRESELECT_IF_UNIQUE] === 'true'
+							&& records.length == 1
+						) {
+							combo.setValue(records[0].get('Id'));
+						}
+					}
+				});
+			}
+		},
+
 		getErrors: function(rawValue) {
 			if (this.templateResolver && this.store) {
 				var value = this.getValue();
