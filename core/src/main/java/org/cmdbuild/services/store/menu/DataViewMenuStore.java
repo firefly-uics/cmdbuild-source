@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.cmdbuild.auth.GroupFetcher;
+import org.cmdbuild.auth.acl.CMGroup;
 import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.common.utils.PagedElements;
 import org.cmdbuild.dao.entry.CMCard;
@@ -136,10 +137,10 @@ public class DataViewMenuStore implements MenuStore {
 
 	@Override
 	public MenuItem getMenuToUseForGroup(final String groupName) {
-
-		Iterable<MenuElement> menuElementsForGroup = menuElementStore.readAndFilter(groupName, groupFetcher);
+		final CMGroup group = groupFetcher.fetchGroupWithName(groupName);
+		Iterable<MenuElement> menuElementsForGroup = menuElementStore.readAndFilter(groupName, group);
 		if (Iterables.isEmpty(menuElementsForGroup)) {
-			menuElementsForGroup = menuElementStore.readAndFilter(DEFAULT_MENU_GROUP_NAME, groupFetcher);
+			menuElementsForGroup = menuElementStore.readAndFilter(DEFAULT_MENU_GROUP_NAME, group);
 		}
 		return converter.fromMenuElement(menuElementsForGroup);
 	}
