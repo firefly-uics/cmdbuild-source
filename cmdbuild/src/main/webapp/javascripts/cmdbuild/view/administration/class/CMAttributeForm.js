@@ -228,29 +228,26 @@
 			});
 
 			this.referenceFilterMetadata = {};
-			this.referenceFilterMetadataDirty = false;
 
-			this.addMetadataBtn = new Ext.Button( {
-				text : tr.meta.title,
-				scope : this,
-				iconCls : "modify",
-				margin: "0 0 0 155",
-				handler : function() {
-					var w = new CMDBuild.view.administration.classes.CMMetadataWindow({
-						data : this.referenceFilterMetadata,
-						dirtyFlag: this.referenceFilterMetadataDirty,
-						ns : "system.template."
+			this.addMetadataBtn = Ext.create('CMDBuild.core.buttons.Modify', {
+				text: CMDBuild.Translation.editMetadata,
+				margin: '0 0 0 ' + (CMDBuild.LABEL_WIDTH + 5),
+				maxWidth: 100,
+				scope: this,
+
+				handler: function(button, e) { // TODO: would be better to use controller call (cmfg)
+					Ext.create('CMDBuild.controller.administration.common.attributes.Metadata', {
+						parentDelegate: this,
+						data: this.referenceFilterMetadata,
+						nameSpace: 'system.template.'
 					});
-
-					this.mon(w.saveBtn, "click", function() {
-						this.referenceFilterMetadata = w.getMetaAsMap();
-						this.referenceFilterMetadataDirty = true;
-
-						w.destroy();
-					}, this);
-
-					w.show();
 				}
+			});
+
+			this.preselectIfUniqueCheckbox = Ext.create('Ext.form.field.Checkbox', {
+				name: CMDBuild.core.proxy.CMProxyConstants.PRESELECT_IF_UNIQUE,
+				fieldLabel: CMDBuild.Translation.preselectIfUnique,
+				labelWidth: CMDBuild.LABEL_WIDTH
 			});
 
 			this.decimalScale = new Ext.form.NumberField( {
@@ -369,7 +366,7 @@
 				DECIMAL : [ this.decimalPrecision,this.decimalScale ],
 				LOOKUP : [ this.lookupTypes ],
 				FOREIGNKEY : [ this.foreignKeyDest ],
-				REFERENCE : [ this.referenceDomains, this.fieldFilter, this.addMetadataBtn ],
+				REFERENCE : [ this.referenceDomains, this.fieldFilter, this.addMetadataBtn, this.preselectIfUniqueCheckbox ],
 				TEXT: [this.textAttributeWidget],
 				INET: [this.ipAttributeWidget]
 			};
@@ -392,6 +389,7 @@
 					this.lookupTypes,
 					this.fieldFilter,
 					this.addMetadataBtn,
+					this.preselectIfUniqueCheckbox,
 					this.textAttributeWidget,
 					this.ipAttributeWidget
 				]
@@ -469,7 +467,8 @@
 				this.showContextualFieldsByType(attribute.get("type"));
 
 				this.referenceFilterMetadata = attribute.raw.meta || {};
-				this.referenceFilterMetadataDirty = false;
+				this.preselectIfUniqueCheckbox.setValue(attribute.raw.meta['system.type.reference.' + CMDBuild.core.proxy.CMProxyConstants.PRESELECT_IF_UNIQUE]);
+
 				Ext.apply(this.attributeDescription, {
 					translationsKeyName: this.classObj.get("name"),
 					translationsKeySubName: attribute.get("name")
@@ -481,7 +480,6 @@
 		reset: function() {
 			this.mixins.cmFormFunctions.reset.call(this);
 			this.referenceFilterMetadata = {};
-			this.referenceFilterMetadataDirty = false;
 		},
 
 		iterateOverContextualFields: function(type, fn) {

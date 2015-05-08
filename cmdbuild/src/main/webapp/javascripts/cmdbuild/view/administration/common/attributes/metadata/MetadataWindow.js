@@ -1,15 +1,15 @@
 (function() {
 
-	Ext.define('CMDBuild.view.administration.email.templates.ValuesWindow', {
+	Ext.define('CMDBuild.view.administration.common.attributes.metadata.MetadataWindow', {
 		extend: 'CMDBuild.core.PopupWindow',
 
 		requires: [
 			'CMDBuild.core.proxy.CMProxyConstants',
-			'CMDBuild.model.email.Templates'
+			'CMDBuild.model.common.attributes.Metadata'
 		],
 
 		/**
-		 * @cfg {CMDBuild.controller.administration.email.templates.Templates}
+		 * @cfg {CMDBuild.controller.administration.common.attributes.Metadata}
 		 */
 		delegate: undefined,
 
@@ -18,7 +18,7 @@
 		 */
 		grid: undefined,
 
-		title: CMDBuild.Translation.editValues,
+		title: CMDBuild.Translation.editMetadata,
 
 		initComponent: function() {
 			this.grid = Ext.create('Ext.grid.Panel', {
@@ -27,43 +27,42 @@
 
 				columns: [
 					{
-						dataIndex: CMDBuild.core.proxy.CMProxyConstants.KEY,
 						text: CMDBuild.Translation.key,
+						dataIndex: CMDBuild.core.proxy.CMProxyConstants.KEY,
 						flex: 1,
 
 						editor: { xtype: 'textfield' }
 					},
 					{
-						dataIndex: CMDBuild.core.proxy.CMProxyConstants.VALUE,
 						text: CMDBuild.Translation.value,
+						dataIndex: CMDBuild.core.proxy.CMProxyConstants.VALUE,
 						flex: 1,
 
 						editor: { xtype: 'textfield' }
 					},
-					{
-						xtype: 'actioncolumn',
-						width: 30,
+					Ext.create('Ext.grid.column.Action', {
 						align: 'center',
+						width: 25,
 						sortable: false,
 						hideable: false,
 						menuDisabled: true,
 						fixed: true,
 
 						items: [
-							{
-								icon: 'images/icons/cross.png',
-								tooltip: CMDBuild.Translation.common.buttons.remove,
+							Ext.create('CMDBuild.core.buttons.Delete', {
+								tooltip: CMDBuild.Translation.deleteLabel,
+								scope: this,
 
 								handler: function(grid, rowIndex, colIndex, node, e, record, rowNode) {
 									grid.getStore().remove(record);
 								}
-							}
+							})
 						]
-					}
+					})
 				],
 
 				store: Ext.create('Ext.data.Store', {
-					model: 'CMDBuild.model.email.Templates.variablesWindow',
+					model: 'CMDBuild.model.common.attributes.Metadata',
 					data: []
 				}),
 
@@ -84,8 +83,8 @@
 							Ext.create('CMDBuild.core.buttons.Add', {
 								scope: this,
 
-								handler: function(buttons, e) {
-									this.grid.getStore().insert(0, Ext.create('CMDBuild.model.email.Templates.variablesWindow'));
+								handler: function(button, e) {
+									this.grid.getStore().insert(0, Ext.create('CMDBuild.model.common.attributes.Metadata'));
 								}
 							})
 						]
@@ -106,14 +105,14 @@
 								scope: this,
 
 								handler: function(button, e) {
-									this.delegate.cmfg('onValuesWindowSaveButtonClick');
+									this.delegate.cmfg('onMetadataWindowSaveButtonClick');
 								}
 							}),
 							Ext.create('CMDBuild.core.buttons.Abort', {
 								scope: this,
 
 								handler: function(button, e) {
-									this.delegate.cmfg('onValuesWindowAbortButtonClick');
+									this.delegate.cmfg('onMetadataWindowAbortButtonClick');
 								}
 							})
 						]

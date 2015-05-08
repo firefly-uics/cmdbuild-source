@@ -44,9 +44,12 @@
 	});
 
 	var tr =  CMDBuild.Translation.administration.modClass.attributeProperties;
-	
+
 	Ext.define("CMDBuild.controller.administration.classes.CMClassAttributeController", {
 		extend: "CMDBuild.controller.administration.CMBaseAttributesController",
+
+		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+
 		constructor: function(view) {
 			this.callParent(arguments);
 
@@ -107,12 +110,12 @@
 			return;
 		}
 
-		var data = this.view.formPanel.getData(withDisabled = true);
-		data[_CMProxy.parameter.CLASS_NAME] = _CMCache.getEntryTypeNameById(this.currentClassId);
+		// External metadata injection
+		this.view.formPanel.referenceFilterMetadata['system.type.reference.' + CMDBuild.core.proxy.CMProxyConstants.PRESELECT_IF_UNIQUE] = this.view.formPanel.preselectIfUniqueCheckbox.getValue();
 
-		if (this.view.formPanel.referenceFilterMetadataDirty) {
-			data.meta = Ext.JSON.encode(this.view.formPanel.referenceFilterMetadata);
-		}
+		var data = this.view.formPanel.getData(withDisabled = true);
+		data[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME] = _CMCache.getEntryTypeNameById(this.currentClassId);
+		data[CMDBuild.core.proxy.CMProxyConstants.META] = Ext.JSON.encode(this.view.formPanel.referenceFilterMetadata);
 
 		var me = this;
 		CMDBuild.LoadMask.get().show();
@@ -187,15 +190,15 @@
 		this.view.gridPanel.onAddAttributeClick();
 		_CMCache.initAddingTranslations();
 	}
-	
+
 	function buildOrderingWindow() {
 		if (this.currentClassId) {
 			var win = new CMDBuild.Administration.SetOrderWindow( {
 				idClass : this.currentClassId
-			}).show(); 
+			}).show();
 		}
 	}
-    
+
     function tabIsActive(t) {
 		return t.ownerCt.layout.getActiveItem().id == t.id;
 	}

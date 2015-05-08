@@ -29,14 +29,6 @@
 		initComponent: function() {
 			Ext.apply(this, {
 				items: [
-//					{
-//						xtype: 'panel',
-//						bodyCls: 'x-panel-body-default-framed',
-//						border: false,
-//						html: this.fileName,
-//						frame: false,
-//						flex: 1
-//					},
 					Ext.create('Ext.form.field.Display', {
 						value: this.fileName,
 						flex: 1
