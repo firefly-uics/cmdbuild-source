@@ -12,10 +12,6 @@
 			observable: 'Ext.util.Observable'
 		},
 
-		statics: {
-			WIDGET_NAME: '.Grid'
-		},
-
 		/**
 		 * @property {Array}
 		 */
@@ -51,7 +47,16 @@
 		grid: undefined,
 
 		/**
-		 * @property {CMDBuild.view.management.common.widgets.grid.MainPanel}
+		 * Widget instances data storage
+		 *
+		 * @cfg {Object}
+		 *
+		 * @private
+		 */
+		instancesDataStorage: {},
+
+		/**
+		 * @property {CMDBuild.view.management.common.widgets.grid.GridView}
 		 */
 		view: undefined,
 
@@ -61,7 +66,7 @@
 		widgetConf: undefined,
 
 		/**
-		 * @param {CMDBuild.view.management.common.widgets.grid.MainPanel} view
+		 * @param {CMDBuild.view.management.common.widgets.grid.GridView} view
 		 * @param {CMDBuild.controller.management.common.CMWidgetManagerController} ownerController
 		 * @param {Object} widgetConf
 		 * @param {Ext.form.Basic} clientForm
@@ -70,8 +75,6 @@
 		 * @override
 		 */
 		constructor: function(view, ownerController, widgetConf, clientForm, card) {
-			var me = this;
-
 			this.mixins.observable.constructor.call(this);
 
 			this.callParent(arguments);
@@ -80,23 +83,6 @@
 			this.grid = this.view.grid;
 			this.view.delegate = this;
 			this.view.grid.delegate = this;
-
-			if (!Ext.isEmpty(this.classType)) {
-				CMDBuild.Management.FieldManager.loadAttributes(
-					this.classType.get(CMDBuild.core.proxy.CMProxyConstants.ID),
-					function(attributes) {
-						me.cardAttributes = attributes;
-						me.setColumnsForClass();
-						me.loadPresets();
-					}
-				);
-			} else {
-				CMDBuild.Msg.error(
-					CMDBuild.Translation.error,
-					'GridController error: classType error with className ' + this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME],
-					true
-				);
-			}
 		},
 
 		/**
@@ -151,7 +137,7 @@
 						if (header.field.store) {
 							var comboRecord = header.field.store.findRecord('Id', value);
 
-							value = (comboRecord) ?	comboRecord.get('Description') : '';
+							value = comboRecord ?	comboRecord.get('Description') : '';
 						} else if (value && typeof value == 'object') {
 							value = me.formatDate(value);
 						}
@@ -221,9 +207,18 @@
 		},
 
 		/**
+		 * Save data in storage attribute
+		 */
+		beforeHideView: function() {
+			this.instancesDataStorage[this.getWidgetId()] = this.grid.getStore().getRange();
+		},
+
+		/**
 		 * @override
 		 */
 		beforeActiveView: function() {
+			var me = this;
+
 			// Disable add button
 			this.view.addButton.setDisabled(
 				this.widgetConf.hasOwnProperty(CMDBuild.core.proxy.CMProxyConstants.DISABLE_ADD_ROW)
@@ -247,6 +242,24 @@
 				this.grid.on('beforeedit', function(plugin, edit) {
 					return false;
 				});
+			}
+
+			if (!Ext.isEmpty(this.grid))
+				this.grid.getStore().removeAll();
+
+			if (!Ext.isEmpty(this.instancesDataStorage[this.getWidgetId()])) {
+				this.grid.getStore().loadRecords(this.instancesDataStorage[this.getWidgetId()]);
+			} else if (!Ext.isEmpty(this.classType)) {
+				CMDBuild.Management.FieldManager.loadAttributes(
+					this.classType.get(CMDBuild.core.proxy.CMProxyConstants.ID),
+					function(attributes) {
+						me.cardAttributes = attributes;
+						me.setColumnsForClass();
+						me.loadPresets();
+					}
+				);
+			} else {
+				_warning('classType error with className ' + this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME], this);
 			}
 		},
 
