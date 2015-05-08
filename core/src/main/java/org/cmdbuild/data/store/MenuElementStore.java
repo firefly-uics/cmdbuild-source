@@ -1,5 +1,6 @@
 package org.cmdbuild.data.store;
 
+import static com.google.common.collect.FluentIterable.from;
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
 import static org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue.eq;
@@ -9,7 +10,6 @@ import static org.cmdbuild.services.store.menu.MenuConstants.MENU_CLASS_NAME;
 
 import java.util.List;
 
-import org.cmdbuild.auth.GroupFetcher;
 import org.cmdbuild.auth.UserStore;
 import org.cmdbuild.auth.acl.CMGroup;
 import org.cmdbuild.auth.acl.PrivilegeContext;
@@ -25,7 +25,6 @@ import org.cmdbuild.services.store.menu.MenuElement;
 
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
 public class MenuElementStore extends ForwardingStore<MenuElement> {
@@ -56,20 +55,18 @@ public class MenuElementStore extends ForwardingStore<MenuElement> {
 		return delegate;
 	}
 
-	public Iterable<MenuElement> readAndFilter(final String groupName, final GroupFetcher groupFetcher) {
-
+	public Iterable<MenuElement> readAndFilter(final String groupName, final CMGroup group) {
 		final Iterable<CMCard> menuCards = fetchMenuCardsForGroup(groupName);
-		final CMGroup group = groupFetcher.fetchGroupWithName(groupName);
-
 		final MenuCardFilter menuCardFilter = new MenuCardFilter(dataView, group, new Supplier<PrivilegeContext>() {
 
 			@Override
 			public PrivilegeContext get() {
 				return userStore.getUser().getPrivilegeContext();
 			}
+
 		}, viewConverter, userStore);
-		final Iterable<CMCard> readableMenuCards = menuCardFilter.filterReadableMenuCards(menuCards);
-		return Iterables.transform(readableMenuCards, CONVERT);
+		return from(menuCardFilter.filterReadableMenuCards(menuCards)) //
+				.transform(CONVERT);
 	}
 
 	private Iterable<CMCard> fetchMenuCardsForGroup(final String groupName) {
