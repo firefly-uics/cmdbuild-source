@@ -14,7 +14,12 @@
 
 	Ext.define("CMDBuild.view.management.common.widgets.CMWidgetManager", {
 
-		requires: ['CMDBuild.view.management.common.widgets.grid.MainPanel'],
+		requires: ['CMDBuild.view.management.common.widgets.grid.GridView'],
+
+		/**
+		 * @cfg {CMDBuild.controller.management.common.CMWidgetManagerController}
+		 */
+		delegate: undefined,
 
 		/**
 		 * @param {CMDBuild.view.management.classes.CMCardPanel or CMDBuild.view.management.workflow.CMActivityPanel} mainView
@@ -48,7 +53,9 @@
 		},
 
 		buildWidgetsContainer: function() {
-			return new CMDBuild.view.management.common.widgets.CMWidgetsWindow();
+			return Ext.create('CMDBuild.view.management.common.widgets.CMWidgetsWindow', {
+				delegate: this.delegate
+			});
 		},
 
 		reset: function() {
@@ -134,6 +141,13 @@
 
 		var pkg = CMDBuild.view.management.common.widgets;
 
+		me.builders['.Grid'] = function(widget, card) {
+			var w = Ext.create('CMDBuild.view.management.common.widgets.grid.GridView');
+			me.widgetsContainer.addWidgt(w);
+
+			return w;
+		};
+
 		// createModifyCard
 		me.builders[pkg.CMCreateModifyCard.WIDGET_NAME] = function createModifyCardBuilder(widget, card) {
 			var w = new pkg.CMCreateModifyCard(widget);
@@ -194,14 +208,6 @@
 		me.builders[pkg.CMNavigationTree.WIDGET_NAME] = function(widget, card) {
 			var w = new pkg.CMNavigationTree();
 			me.widgetsContainer.addWidgt(w);
-			return w;
-		};
-
-		// Grid
-		me.builders[CMDBuild.view.management.common.widgets.grid.MainPanel.WIDGET_NAME] = function(widget, card) {
-			var w = Ext.create('CMDBuild.view.management.common.widgets.grid.MainPanel');
-			me.widgetsContainer.addWidgt(w);
-
 			return w;
 		};
 

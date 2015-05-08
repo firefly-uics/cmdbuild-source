@@ -2,6 +2,11 @@
 	Ext.define("CMDBuild.view.management.common.widgets.CMWidgetsWindow", {
 		extend: "CMDBuild.PopupWindow",
 
+		/**
+		 * @cfg {CMDBuild.controller.management.common.CMWidgetManagerController}
+		 */
+		delegate: undefined,
+
 		initComponent: function() {
 			this.widgetsToAdd = {};
 			this.widgetsContainer = new Ext.panel.Panel({
@@ -21,6 +26,8 @@
 					text: CMDBuild.Translation.common.buttons.close,
 					_cmNotRemoveMe: true, // flag to identiry the button when clean the buttons bar
 					handler: function() {
+						me.onWidgetsWindowHide();
+
 						me.hide();
 					}
 				}]
@@ -29,7 +36,21 @@
 			this.callParent(arguments);
 		},
 
+		listeners: {
+			scope: this,
+			close: function(window, eOpts) {
+				this.onWidgetsWindowHide();
+			}
+		},
+
+		onWidgetsWindowHide: function() {
+			if (!Ext.isEmpty(this.delegate) && !Ext.isEmpty(this.currentWidget.delegate))
+				this.delegate.beforeHideView(this.currentWidget.delegate);
+		},
+
 		showWidget: function(widget, title) {
+			this.currentWidget = widget;
+
 			this.setTitle(title);
 			this.show();
 			if (this.widgetsToAdd[widget.id]) {
@@ -43,7 +64,7 @@
 				this.addExtraButtons(extraButtons);
 			}
 			if (widget.buttonLabel) {
-				this.setTitle(widget.buttonLabel)
+				this.setTitle(widget.buttonLabel);
 			}
 		},
 

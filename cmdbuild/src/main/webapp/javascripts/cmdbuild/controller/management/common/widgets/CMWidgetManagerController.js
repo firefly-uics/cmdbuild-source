@@ -2,13 +2,14 @@
 
 	// Requires all widget controllers to avoid to include manually
 	// TODO: rename of this class to use property "requires"
-	Ext.require('CMDBuild.controller.management.common.widgets.ManageEmail');
 	Ext.require('CMDBuild.controller.management.common.widgets.grid.Grid');
+	Ext.require('CMDBuild.controller.management.common.widgets.ManageEmail');
 
 	Ext.define("CMDBuild.controller.management.common.CMWidgetManagerController", {
 
 		constructor: function(view) {
 			this.view = view;
+			this.view.delegate = this;
 			this.controllers = {};
 
 			initBuilders(this);
@@ -16,6 +17,14 @@
 
 		setDelegate: function(delegate) {
 			this.delegate = delegate;
+		},
+
+		/**
+		 * @param {Object} widgetController
+		 */
+		beforeHideView: function(widgetController) {
+			if (!Ext.isEmpty(widgetController) && Ext.isFunction(widgetController.beforeHideView))
+				widgetController.beforeHideView();
 		},
 
 		buildControllers: function(card) {
@@ -241,7 +250,9 @@
 		var commonControllers = CMDBuild.controller.management.common.widgets;
 
 		me.controllerClasses = {};
+		me.controllerClasses['.Grid'] = CMDBuild.controller.management.common.widgets.grid.Grid;
 		me.controllerClasses['.ManageEmail'] = CMDBuild.controller.management.common.widgets.ManageEmail;
+
 
 		function addControllerClass(controller) {
 			me.controllerClasses[controller.WIDGET_NAME] = controller;
@@ -264,9 +275,6 @@
 
 		// navigationTree
 		addControllerClass(commonControllers.CMNavigationTreeController);
-
-		// Grid
-		addControllerClass(CMDBuild.controller.management.common.widgets.grid.Grid);
 
 		// openReport
 		addControllerClass(commonControllers.CMOpenReportController);

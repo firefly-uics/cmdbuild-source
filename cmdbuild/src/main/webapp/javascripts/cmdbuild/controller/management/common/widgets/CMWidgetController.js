@@ -10,7 +10,7 @@
 		},
 
 		/**
-		 * @property {CMDBuild.model.CMActivityInstance}
+		 * @property {Object}
 		 */
 		card: undefined,
 
@@ -67,6 +67,13 @@
 		 * @abstract
 		 */
 		beforeActiveView: Ext.emptyFn,
+
+		/**
+		 * Executed before window hide perform
+		 *
+		 * @abstract
+		 */
+		beforeHideView: Ext.emptyFn,
 
 		/**
 		 * @abstract
