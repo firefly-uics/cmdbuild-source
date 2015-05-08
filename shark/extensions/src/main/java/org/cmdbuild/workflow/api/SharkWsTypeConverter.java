@@ -37,7 +37,7 @@ public abstract class SharkWsTypeConverter {
 		try {
 			return unsafeToWsType(wsType, value);
 		} catch (final RuntimeException e) {
-			logger.warn("error converting to ws type, continuing anyway passing stringified value", e);
+			logger.warn("error converting to ws type, continuing anyway passing stringified value: " + e.getMessage());
 			return value.toString();
 		}
 	}
@@ -51,17 +51,12 @@ public abstract class SharkWsTypeConverter {
 
 		case FOREIGNKEY:
 		case REFERENCE:
-			final String output;
-			if (value instanceof Number) {
-				final Number n = Number.class.cast(value);
-				output = Integer.toString(n.intValue());
-			} else if (value instanceof ReferenceType) {
-				final ReferenceType r = ReferenceType.class.cast(value);
-				output = r.checkValidity() ? Integer.toString(r.getId()) : EMPTY;
+			final ReferenceType reference = (ReferenceType) value;
+			if (reference.checkValidity()) {
+				return Integer.toString(reference.getId());
 			} else {
-				output = EMPTY;
+				return EMPTY;
 			}
-			return output;
 
 		case LOOKUP:
 			final LookupType lookup = (LookupType) value;
