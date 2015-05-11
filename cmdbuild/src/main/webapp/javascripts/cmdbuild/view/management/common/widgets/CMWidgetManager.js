@@ -63,8 +63,15 @@
 				this.widgetsContainer.destroy();
 
 			// Email tab configuration reset
-			if (Ext.isFunction(this.mainView.delegate.superController.controllerTabEmail.reset));
+			// TODO: find a better implementation
+			if (
+				!Ext.isEmpty(this.mainView.delegate)
+				&& !Ext.isEmpty(this.mainView.delegate.superController)
+				&& !Ext.isEmpty(this.mainView.delegate.superController.controllerTabEmail)
+				&& Ext.isFunction(this.mainView.delegate.superController.controllerTabEmail.reset)
+			) {
 				this.mainView.delegate.superController.controllerTabEmail.reset();
+			}
 
 			this.widgetsContainer = this.buildWidgetsContainer();
 
