@@ -282,6 +282,9 @@
 					this.view.toggleGridFilterButton.setDisabled(true);
 				}
 
+				// Hide checkcolumn if readonly mode
+				this.grid.getSelectionModel().setLocked(this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.READ_ONLY]);
+
 				new _CMUtils.PollingFunction({
 					success: function() {
 						me.alertIfChangeDefaultSelection = true;

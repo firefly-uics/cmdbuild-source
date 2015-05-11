@@ -84,7 +84,7 @@
 							},
 
 							isDisabled: function(grid, rowIndex, colIndex, item, record) {
-								return this.delegate.readOnly;
+								return !this.delegate.widgetConf[CMDBuild.core.proxy.CMProxyConstants.ALLOW_CARD_EDITING];
 							}
 						}
 					]
