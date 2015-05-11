@@ -173,14 +173,14 @@
 		getForeignKeyStore: function(foreignKye) {
 			var maxCards = parseInt(CMDBuild.Config.cmdbuild.referencecombolimit),
 				baseParams = {
-					// limit: maxCards, // TODO: no one know why this field should limit store to referencecombolimit value
 					className: foreignKye.fkDestination,
 					NoFilter: true
 				};
 
 			var s = new Ext.data.JsonStore({
-				model : "CMDBuild.cache.CMReferenceStoreModel",
+				model: "CMDBuild.cache.CMReferenceStoreModel",
 				baseParams: baseParams, //retro-compatibility
+				pageSize: maxCards,
 				proxy: {
 					type: 'ajax',
 					url: 'services/json/management/modcard/getcardlistshort',
