@@ -16,11 +16,6 @@
 		addButton: undefined,
 
 		/**
-		 * @property {CMDBuild.view.management.common.widgets.grid.GridPanel}
-		 */
-		grid: undefined,
-
-		/**
 		 * @property {Ext.button.Button}
 		 */
 		importFromCSVButton: undefined,
@@ -31,10 +26,6 @@
 		layout: 'fit',
 
 		initComponent: function() {
-			this.grid = Ext.create('CMDBuild.view.management.common.widgets.grid.GridPanel', {
-				delegate: this.delegate
-			});
-
 			Ext.apply(this, {
 				dockedItems: [
 					Ext.create('Ext.toolbar.Toolbar', {
@@ -59,8 +50,7 @@
 							})
 						]
 					})
-				],
-				items: [this.grid]
+				]
 			});
 
 			this.callParent(arguments);
