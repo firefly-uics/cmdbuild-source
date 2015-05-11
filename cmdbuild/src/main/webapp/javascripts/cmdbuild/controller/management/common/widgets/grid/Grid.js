@@ -1,7 +1,7 @@
 (function() {
 
 	Ext.define('CMDBuild.controller.management.common.widgets.grid.Grid', {
-		extend: 'CMDBuild.controller.management.common.widgets.CMWidgetController',
+		extend: 'CMDBuild.controller.common.AbstractBaseWidgetController',
 
 		requires: [
 			'CMDBuild.core.proxy.CMProxyConstants',
@@ -28,11 +28,23 @@
 		clientForm: undefined,
 
 		/**
+		 * @cfg {Array}
+		 */
+		cmfgCatchedFunctions: [
+			'getCardAttributes',
+			'onAddRowButtonClick' ,
+			'onCSVImportButtonClick',
+			'onDeleteRowButtonClick',
+			'onEditRowButtonClick',
+			'setGridDataFromCsv'
+		],
+
+		/**
 		 * Grid column configuration variable
 		 *
 		 * @proeprty {Array}
 		 */
-		columns: undefined,
+		columns: [],
 
 		/**
 		 * Array of attributes names to hide from grid visualization
@@ -80,44 +92,14 @@
 			this.callParent(arguments);
 
 			this.classType = _CMCache.getEntryTypeByName(this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME]);
-			this.grid = this.view.grid;
-			this.view.delegate = this;
-			this.view.grid.delegate = this;
-		},
 
-		/**
-		 * Gatherer function to catch events
-		 * TODO: this is just an emulation of real cmfg (AbstractController), in future will be created an AbstractWidgetController
-		 *
-		 * @param {String} name
-		 * @param {Object} param
-		 * @param {Function} callback
-		 */
-		cmfg: function(name, param, callBack) {
-			switch (name) {
-				case 'getCardAttributes':
-					return this.getCardAttributes();
+			this.grid = Ext.create('CMDBuild.view.management.common.widgets.grid.GridPanel', {
+				delegate: this
+			});
 
-				case 'onAddRowButtonClick' :
-					return this.onAddRowButtonClick();
+			this.view.removeAll();
 
-				case 'onCSVImportButtonClick':
-					return this.onCSVImportButtonClick();
-
-				case 'onDeleteRowButtonClick' :
-					return this.onDeleteRowButtonClick(param.rowIndex);
-
-				case 'onEditRowButtonClick' :
-					return this.onEditRowButtonClick(param.record);
-
-				case 'setGridDataFromCsv':
-					return this.setGridDataFromCsv(param);
-
-				default: {
-					if (!Ext.isEmpty(this.parentDelegate) && Ext.isFunction(this.parentDelegate.cmfg))
-						return this.parentDelegate.cmfg(name, param, callBack);
-				}
-			}
+			this.view.add(this.grid);
 		},
 
 		/**
@@ -134,11 +116,11 @@
 					value = value || record.get(header.dataIndex);
 
 					if (!Ext.isEmpty(value)) {
-						if (header.field.store) {
+						if (!Ext.isEmpty(header.field.store)) {
 							var comboRecord = header.field.store.findRecord('Id', value);
 
-							value = comboRecord ?	comboRecord.get('Description') : '';
-						} else if (value && typeof value == 'object') {
+							value = comboRecord ? comboRecord.get('Description') : '';
+						} else if (!Ext.isEmpty(value) && Ext.isObject(value)) {
 							value = me.formatDate(value);
 						}
 
@@ -178,9 +160,7 @@
 							handler: function(grid, rowIndex, colIndex) {
 								var record = grid.getStore().getAt(rowIndex);
 
-								this.cmfg('onEditRowButtonClick', {
-									record: record
-								});
+								this.cmfg('onEditRowButtonClick', record);
 							}
 						}),
 						Ext.create('CMDBuild.core.buttons.Delete', {
@@ -196,9 +176,7 @@
 							},
 
 							handler: function(grid, rowIndex, colIndex) {
-								this.cmfg('onDeleteRowButtonClick', {
-									rowIndex: rowIndex
-								});
+								this.cmfg('onDeleteRowButtonClick', rowIndex);
 							}
 						})
 					]
@@ -295,7 +273,7 @@
 						editor = CMDBuild.Management.ReferenceField.buildEditor(attribute, templateResolver);
 
 						// Avoids to resolve field templates when form is in editMode (when you click on abort button)
-						if (!this.clientForm.owner._isInEditMode && !Ext.Object.isEmpty(editor) && typeof editor.resolveTemplate == 'function')
+						if (!this.clientForm.owner._isInEditMode && !Ext.Object.isEmpty(editor) && Ext.isFunction(editor.resolveTemplate))
 							editor.resolveTemplate();
 					} else {
 						// TODO: hack to bypass CMDBuild.Management.FieldManager.getFieldForAttr() control to check if return DisplayField
