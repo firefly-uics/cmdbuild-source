@@ -574,6 +574,13 @@
 		},
 
 		/**
+		 * Reset instance storage property
+		 */
+		onEditMode: function() {
+			this.instancesDataStorage = {};
+		},
+
+		/**
 		 * Edit row data in new pop-up window
 		 *
 		 * @param {Object} record
