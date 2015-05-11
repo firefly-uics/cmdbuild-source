@@ -120,7 +120,7 @@
 							var comboRecord = header.field.store.findRecord('Id', value);
 
 							value = comboRecord ? comboRecord.get('Description') : '';
-						} else if (!Ext.isEmpty(value) && Ext.isObject(value)) {
+						} else if (!Ext.isEmpty(value) && typeof value == 'object') { // NOTE: do not use Ext.isObject because works different than typeof with date
 							value = me.formatDate(value);
 						}
 
