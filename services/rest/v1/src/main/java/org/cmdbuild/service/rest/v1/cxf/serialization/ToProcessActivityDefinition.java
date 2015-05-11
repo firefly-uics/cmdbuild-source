@@ -13,6 +13,9 @@ import java.util.Collection;
 import java.util.Map;
 
 import org.cmdbuild.model.widget.ForwardingWidgetVisitor;
+import org.cmdbuild.model.widget.Grid;
+import org.cmdbuild.model.widget.LinkCards;
+import org.cmdbuild.model.widget.ManageRelation;
 import org.cmdbuild.model.widget.NullWidgetVisitor;
 import org.cmdbuild.model.widget.OpenNote;
 import org.cmdbuild.model.widget.WidgetVisitor;
@@ -118,7 +121,39 @@ public class ToProcessActivityDefinition implements Function<CMActivity, Process
 									.withId(input.getIdentifier()) //
 									.withType(input.getType()) //
 									.withActive(input.isActive()) //
-									// .withRequired(...) //
+									.withRequired(new ForwardingWidgetVisitor() {
+
+										private final WidgetVisitor delegate = NullWidgetVisitor.getInstance();
+										private final org.cmdbuild.model.widget.Widget widget = input;
+										private boolean required;
+
+										@Override
+										protected WidgetVisitor delegate() {
+											return delegate;
+										}
+
+										public boolean isRequired() {
+											required = false;
+											widget.accept(this);
+											return required;
+										}
+
+										@Override
+										public void visit(final Grid widget) {
+											required = widget.isRequired();
+										}
+
+										@Override
+										public void visit(final LinkCards widget) {
+											required = widget.isRequired();
+										}
+
+										@Override
+										public void visit(final ManageRelation widget) {
+											required = widget.isRequired();
+										}
+
+									}.isRequired()) //
 									.withLabel(input.getLabel()) //
 									.withData(newValues() //
 											.withValues(objectAsMap) //
