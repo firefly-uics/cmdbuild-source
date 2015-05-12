@@ -24,7 +24,8 @@
 		},
 
 		getLookupFieldStore: function(type) {
-			var s = Ext.create('Ext.data.Store', {
+			return Ext.create('Ext.data.Store', {
+				autoLoad: true,
 				model: 'CMLookupFieldStoreModel',
 				proxy: {
 					type: 'ajax',
@@ -42,25 +43,20 @@
 					actionMethods: 'POST' // Lookup types can have UTF-8 names  not handled correctly
 				},
 				sorters: [
-					{
-						property: LOOKUP_FIELDS.Index,
-						direction: 'ASC'
-					}
+					{ property: LOOKUP_FIELDS.Index, direction: 'ASC' },
+					{ property: 'Description', direction: 'ASC' }
 				],
-				autoLoad: true,
 
 				// Disable paging
 				defaultPageSize: 0,
 				pageSize: 0
 			});
-
-			return s;
 		},
 
 		getLookupGridStore: function() {
-			return new Ext.data.Store({
-				model: 'CMLookupForGrid',
+			return Ext.create('Ext.data.Store', {
 				autoLoad: false,
+				model: 'CMLookupForGrid',
 				proxy: {
 					type: 'ajax',
 					url: 'services/json/schema/modlookup/getlookuplist',
@@ -71,10 +67,8 @@
 					actionMethods: 'POST' // Lookup types can have UTF-8 names not handled correctly
 				},
 				sorters: [
-					{
-						property: 'Number',
-						direction: 'ASC'
-					}
+					{ property: 'Number', direction: 'ASC' },
+					{ property: 'Description', direction: 'ASC' }
 				]
 			});
 		},
