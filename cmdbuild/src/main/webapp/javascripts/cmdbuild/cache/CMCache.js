@@ -124,8 +124,9 @@
 				isOneTime = baseParams.CQL ? true : false,
 				maxCards = parseInt(CMDBuild.Config.cmdbuild.referencecombolimit);
 
-			var s = new Ext.data.JsonStore({
-				model : "CMDBuild.cache.CMReferenceStoreModel",
+			var s = Ext.create('Ext.data.Store', {
+				autoLoad: !isOneTime,
+				model: "CMDBuild.cache.CMReferenceStoreModel",
 				isOneTime: isOneTime,
 				baseParams: baseParams, //retro-compatibility,
 				pageSize: maxCards,
@@ -139,11 +140,9 @@
 					},
 					extraParams: baseParams
 				},
-				sortInfo: {
-					field: 'Description',
-					direction: 'ASC'
-				},
-				autoLoad : !isOneTime
+				sorters: [
+					{ property: 'Description', direction: 'ASC' }
+				]
 			});
 
 			return s;
@@ -177,8 +176,9 @@
 					NoFilter: true
 				};
 
-			var s = new Ext.data.JsonStore({
-				model: "CMDBuild.cache.CMReferenceStoreModel",
+			var s = Ext.create('Ext.data.Store', {
+				model: 'CMDBuild.cache.CMReferenceStoreModel',
+				autoLoad: true,
 				baseParams: baseParams, //retro-compatibility
 				pageSize: maxCards,
 				proxy: {
@@ -190,11 +190,9 @@
 					},
 					extraParams: baseParams
 				},
-				sortInfo: {
-					field: 'Description',
-					direction: 'ASC'
-				},
-				autoLoad : true
+				sorters: [
+					{ property: 'Description', direction: 'ASC' }
+				]
 			});
 
 			return s;
