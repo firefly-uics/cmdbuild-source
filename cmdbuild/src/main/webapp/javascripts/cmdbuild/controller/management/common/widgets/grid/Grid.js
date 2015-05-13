@@ -104,11 +104,11 @@
 
 		/**
 		 * @param {Object} header
-		 * @param {Boolean} required
+		 * @param {Object} attribute
 		 *
 		 * @return {String} value
 		 */
-		addRendererToHeader: function(header, required) {
+		addRendererToHeader: function(header, attribute) {
 			var me = this;
 
 			if (Ext.isEmpty(header.renderer))
@@ -116,15 +116,15 @@
 					value = value || record.get(header.dataIndex);
 
 					if (!Ext.isEmpty(value)) {
-						if (!Ext.isEmpty(header.field.store)) {
-							var comboRecord = header.field.store.findRecord('Id', value);
+						if (!Ext.isEmpty(header.editor.store)) {
+							var comboRecord = header.editor.store.findRecord('Id', value);
 
-							value = comboRecord ? comboRecord.get('Description') : '';
-						} else if (!Ext.isEmpty(value) && typeof value == 'object') { // NOTE: do not use Ext.isObject because works different than typeof with date
+							value = !Ext.isEmpty(comboRecord) ? comboRecord.get('Description') : '';
+						} else if (attribute.type == 'DATE') {
 							value = me.formatDate(value);
 						}
 
-						if (Ext.isEmpty(Ext.String.trim(value)) && required)
+						if (Ext.isEmpty(Ext.String.trim(value)) && attribute[CMDBuild.core.proxy.CMProxyConstants.NOT_NULL])
 							value = '<div style="width: 100%; height: 100%; border: 1px dotted red;">';
 
 						return value;
@@ -257,7 +257,11 @@
 			Ext.Array.forEach(this.getCardAttributes(), function(attribute, i, allAttributes) {
 				if (!Ext.Array.contains(this.filteredAttributes, attribute[CMDBuild.core.proxy.CMProxyConstants.NAME])) { // Attributes filter
 					var attributesMap = CMDBuild.Management.FieldManager.getAttributesMap();
-					var editor = {};
+
+					// TODO: hack to bypass CMDBuild.Management.FieldManager.getFieldForAttr() control to check if return DisplayField
+					// (correct way "var editor = CMDBuild.Management.FieldManager.getCellEditorForAttribute(attribute);")
+					var editor = attributesMap[attribute.type].buildField(attribute, false, false);
+
 					var header = CMDBuild.Management.FieldManager.getHeaderForAttr(attribute);
 
 					if (attribute.type == 'REFERENCE') { // TODO: hack to force a templateResolver build for editor that haven't a form associated like other fields types
@@ -275,19 +279,15 @@
 						// Avoids to resolve field templates when form is in editMode (when you click on abort button)
 						if (!this.clientForm.owner._isInEditMode && !Ext.Object.isEmpty(editor) && Ext.isFunction(editor.resolveTemplate))
 							editor.resolveTemplate();
-					} else {
-						// TODO: hack to bypass CMDBuild.Management.FieldManager.getFieldForAttr() control to check if return DisplayField
-						// (correct way "var editor = CMDBuild.Management.FieldManager.getCellEditorForAttribute(attribute);")
-						editor = attributesMap[attribute.type].buildField(attribute, false, false);
 					}
+
 					editor.hideLabel = true;
 
-					if (header) {
-						if (attribute[CMDBuild.core.proxy.CMProxyConstants.FIELD_MODE] == CMDBuild.core.proxy.CMProxyConstants.READ)
-							editor.disabled = true;
+					if (!Ext.isEmpty(header)) {
+						editor.disabled = attribute[CMDBuild.core.proxy.CMProxyConstants.FIELD_MODE] == CMDBuild.core.proxy.CMProxyConstants.READ;
 
 						if (attribute[CMDBuild.core.proxy.CMProxyConstants.NOT_NULL]) {
-							header.header = '* ' + header.header;
+							header.text = '* ' + header.header;
 
 							header[CMDBuild.core.proxy.CMProxyConstants.REQUIRED] = true;
 							editor[CMDBuild.core.proxy.CMProxyConstants.REQUIRED] = true;
@@ -298,14 +298,14 @@
 
 						// Do not override renderer, add editor on checkbox columns and make it editable
 						if (attribute[CMDBuild.core.proxy.CMProxyConstants.TYPE] != 'BOOLEAN') {
-							header.field = editor;
-							this.addRendererToHeader(header, attribute[CMDBuild.core.proxy.CMProxyConstants.NOT_NULL]);
+							header.editor = editor;
+							this.addRendererToHeader(header, attribute);
 						} else {
 							header.cmReadOnly = false;
 						}
 
 						// Read only attributes header setup
-						header.disabled = (attribute[CMDBuild.core.proxy.CMProxyConstants.FIELD_MODE] == CMDBuild.core.proxy.CMProxyConstants.READ) ? true : false,
+						header.disabled = attribute[CMDBuild.core.proxy.CMProxyConstants.FIELD_MODE] == CMDBuild.core.proxy.CMProxyConstants.READ;
 
 						columns.push(header);
 					}
@@ -329,7 +329,6 @@
 			CMDBuild.core.proxy.widgets.Grid.getFunctions({
 				scope: this,
 				success: function(result, options, decodedResult) {
-					var me = this;
 					var isPresetsStringValid = false;
 
 					Ext.Array.each(decodedResult.response, function(record) {
@@ -344,7 +343,7 @@
 
 						// Resolve templates for widget configuration "function" type
 						var templateResolver = new CMDBuild.Management.TemplateResolver({
-							clientForm: me.clientForm,
+							clientForm: this.clientForm,
 							xaVars: widgetUnmanagedVariables,
 							serverVars: this.getTemplateResolverServerVars()
 						});
