@@ -309,6 +309,8 @@
 		 * Configure grid and fill store with data from source
 		 */
 		configureGridPanel: function() {
+			var me = this;
+
 			if (!Ext.isEmpty(this.grid))
 				this.grid.getStore().removeAll();
 
