@@ -427,7 +427,7 @@
 			if(Ext.isDate(value))
 				return Ext.Date.format(value, 'd/m/Y');
 
-			return value;
+			return Ext.isEmpty(value) ? '' : value;
 		},
 
 		/**
