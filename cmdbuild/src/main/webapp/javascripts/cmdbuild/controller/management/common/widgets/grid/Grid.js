@@ -100,6 +100,8 @@
 			this.view.removeAll();
 
 			this.view.add(this.grid);
+
+			this.configureGridPanel();
 		},
 
 		/**
@@ -222,23 +224,7 @@
 				});
 			}
 
-			if (!Ext.isEmpty(this.grid))
-				this.grid.getStore().removeAll();
-
-			if (!Ext.isEmpty(this.instancesDataStorage[this.getWidgetId()])) {
-				this.grid.getStore().loadRecords(this.instancesDataStorage[this.getWidgetId()]);
-			} else if (!Ext.isEmpty(this.classType)) {
-				CMDBuild.Management.FieldManager.loadAttributes(
-					this.classType.get(CMDBuild.core.proxy.CMProxyConstants.ID),
-					function(attributes) {
-						me.cardAttributes = attributes;
-						me.setColumnsForClass();
-						me.loadPresets();
-					}
-				);
-			} else {
-				_warning('classType error with className ' + this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME], this);
-			}
+			this.configureGridPanel();
 		},
 
 		/**
@@ -317,6 +303,29 @@
 			}, this);
 
 			return columns;
+		},
+
+		/**
+		 * Configure grid and fill store with data from source
+		 */
+		configureGridPanel: function() {
+			if (!Ext.isEmpty(this.grid))
+				this.grid.getStore().removeAll();
+
+			if (!Ext.isEmpty(this.instancesDataStorage[this.getWidgetId()])) {
+				this.grid.getStore().loadRecords(this.instancesDataStorage[this.getWidgetId()]);
+			} else if (!Ext.isEmpty(this.classType)) {
+				CMDBuild.Management.FieldManager.loadAttributes(
+					this.classType.get(CMDBuild.core.proxy.CMProxyConstants.ID),
+					function(attributes) {
+						me.cardAttributes = attributes;
+						me.setColumnsForClass();
+						me.loadPresets();
+					}
+				);
+			} else {
+				_warning('classType error with className ' + this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME], this);
+			}
 		},
 
 		/**
