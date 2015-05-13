@@ -49,7 +49,7 @@
 			this.form = this.view.form;
 
 			this.form.add(this.buildFormFields());
-			this.form.getForm().setValues(this.record.data); // record.getData() doesn't returns all values (Description and Code) so it's used record.data
+			this.form.loadRecord(this.record);
 
 			this.fieldsInitialization();
 
@@ -90,6 +90,24 @@
 			}, this);
 		},
 
+		/**
+		 * Accept in imput only dates with format "dd/mm/yy" and switch dd and mm to fix a bug that grid columns takes default format and not configured one
+		 *
+		 * @param {Object} value
+		 *
+		 * @return {String or Object}
+		 */
+		formatDate: function(value) {
+			if (!Ext.isEmpty(value) && Ext.isString(value)) {
+				var splittedDate = value.split('/');
+
+				if (splittedDate.length == 3)
+					return new Date(splittedDate[1] + '/' + splittedDate[0] + '/' + splittedDate[2]);
+			}
+
+			return value;
+		},
+
 		onRowEditWindowAbortButtonClick: function() {
 			this.view.destroy();
 		},
@@ -99,7 +117,7 @@
 		 */
 		onRowEditWindowSaveButtonClick: function() {
 			Ext.Object.each(this.form.getValues(), function(key, value, myself) {
-				this.record.set(key, value);
+				this.record.set(key, this.formatDate(value));
 			}, this);
 
 			this.onRowEditWindowAbortButtonClick();
