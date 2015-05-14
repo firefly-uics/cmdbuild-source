@@ -13,7 +13,7 @@ import static org.cmdbuild.common.Constants.DESCRIPTION_ATTRIBUTE;
 import static org.cmdbuild.common.Constants.ID_ATTRIBUTE;
 import static org.cmdbuild.dao.query.clause.DomainHistory.history;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ATTRIBUTES;
-import static org.cmdbuild.servlets.json.CommunicationConstants.BEGIN_DATE;
+import static org.cmdbuild.servlets.json.CommunicationConstants.*;
 import static org.cmdbuild.servlets.json.CommunicationConstants.CARD;
 import static org.cmdbuild.servlets.json.CommunicationConstants.CARDS;
 import static org.cmdbuild.servlets.json.CommunicationConstants.CARD_ID;
@@ -302,9 +302,19 @@ public class ModCard extends JSONBaseWithSpringContext {
 			return delegate.getSourceId();
 		}
 
+		@JsonProperty(SOURCE_DESCRIPTION)
+		public String getSourceDescription() {
+			return delegate.getSourceDescription();
+		}
+
 		@JsonProperty(DESTINATION)
 		public Long getDestination() {
 			return delegate.getTargetId();
+		}
+
+		@JsonProperty(DESTINATION_DESCRIPTION)
+		public String getDestinationDescription() {
+			return delegate.getTargetDescription();
 		}
 
 		@JsonProperty(VALUES)
