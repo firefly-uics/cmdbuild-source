@@ -27,6 +27,7 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
+			'getDisabledTreeVisit -> controllerEnabledClasses',
 			'onDomainAbortButtonClick',
 			'onDomainAddButtonClick',
 			'onDomainModifyButtonClick',
@@ -34,7 +35,7 @@
 			'onDomainSaveButtonClick',
 			'onDomainSelected -> controllerAttributes, controllerEnabledClasses, controllerProperties',
 			'selectedDomainGet',
-			'selectedDomainSet',
+			'selectedDomainSet'
 		],
 
 		/**
@@ -91,7 +92,7 @@
 
 		onDomainRemoveButtonClick: function() {
 			Ext.Msg.show({
-				title: CMDBuild.Translation.common.confirmpopup.title, // TODO delete domain
+				title: CMDBuild.Translation.deleteDomain,
 				msg: CMDBuild.Translation.common.confirmpopup.areyousure,
 				scope: this,
 				buttons: Ext.Msg.YESNO,
@@ -112,10 +113,16 @@
 				var data = this.controllerProperties.getView().getData(true);
 
 				// Get origin disabled classes
-				this.controllerEnabledClasses.getEnabledTreeVisit(this.controllerEnabledClasses.getView().originTree.getStore().getRootNode(), originDisabledClasses);
+				this.cmfg('getDisabledTreeVisit', {
+					node: this.controllerEnabledClasses.getView().originTree.getStore().getRootNode(),
+					destinationArray: originDisabledClasses
+				});
 
 				// Get destination disabled classes
-				this.controllerEnabledClasses.getEnabledTreeVisit(this.controllerEnabledClasses.getView().destinationTree.getStore().getRootNode(), destinationDisabledClasses);
+				this.cmfg('getDisabledTreeVisit', {
+					node: this.controllerEnabledClasses.getView().destinationTree.getStore().getRootNode(),
+					destinationArray: destinationDisabledClasses
+				});
 
 				if (Ext.isEmpty(this.selectedDomain)) {
 					data[CMDBuild.core.proxy.CMProxyConstants.ID] = -1;
