@@ -8,6 +8,7 @@ import static com.google.common.collect.Iterables.isEmpty;
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Maps.filterKeys;
 import static com.google.common.collect.Maps.newHashMap;
+import static com.google.common.collect.Ordering.from;
 import static org.cmdbuild.common.Constants.DESCRIPTION_ATTRIBUTE;
 import static org.cmdbuild.common.Constants.ID_ATTRIBUTE;
 import static org.cmdbuild.dao.query.clause.DomainHistory.history;
@@ -20,6 +21,7 @@ import static org.cmdbuild.servlets.json.CommunicationConstants.CLASS_NAME;
 import static org.cmdbuild.servlets.json.CommunicationConstants.CONFIRMED;
 import static org.cmdbuild.servlets.json.CommunicationConstants.COUNT;
 import static org.cmdbuild.servlets.json.CommunicationConstants.DESCRIPTION;
+import static org.cmdbuild.servlets.json.CommunicationConstants.DESTINATION;
 import static org.cmdbuild.servlets.json.CommunicationConstants.DETAIL_CARD_ID;
 import static org.cmdbuild.servlets.json.CommunicationConstants.DETAIL_CLASS_NAME;
 import static org.cmdbuild.servlets.json.CommunicationConstants.DOMAIN;
@@ -43,14 +45,17 @@ import static org.cmdbuild.servlets.json.CommunicationConstants.POSITION;
 import static org.cmdbuild.servlets.json.CommunicationConstants.RELATION_ID;
 import static org.cmdbuild.servlets.json.CommunicationConstants.RETRY_WITHOUT_FILTER;
 import static org.cmdbuild.servlets.json.CommunicationConstants.SORT;
+import static org.cmdbuild.servlets.json.CommunicationConstants.SOURCE;
 import static org.cmdbuild.servlets.json.CommunicationConstants.START;
 import static org.cmdbuild.servlets.json.CommunicationConstants.STATE;
 import static org.cmdbuild.servlets.json.CommunicationConstants.USER;
+import static org.cmdbuild.servlets.json.CommunicationConstants.VALUES;
 import static org.cmdbuild.servlets.json.schema.Utils.toIterable;
 import static org.cmdbuild.servlets.json.schema.Utils.toMap;
 import static org.cmdbuild.workflow.ProcessAttributes.FlowStatus;
 
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -137,6 +142,19 @@ public class ModCard extends JSONBaseWithSpringContext {
 		String getUser();
 
 	}
+
+	private static class JsonEntryComparator<T extends JsonEntry> implements Comparator<T> {
+
+		public static <T extends JsonEntry> JsonEntryComparator<T> of(final Class<T> type) {
+			return new JsonEntryComparator<T>();
+		}
+
+		@Override
+		public int compare(T o1, T o2) {
+			return o1.getBegiDate().compareTo(o2.getBegiDate());
+		}
+
+	};
 
 	private static interface JsonCard extends JsonEntry {
 
@@ -279,17 +297,17 @@ public class ModCard extends JSONBaseWithSpringContext {
 			this.attributeSerializer = attributeSerializer;
 		}
 
-		@JsonProperty("source")
+		@JsonProperty(SOURCE)
 		public Long getSource() {
 			return delegate.getSourceId();
 		}
 
-		@JsonProperty("destination")
+		@JsonProperty(DESTINATION)
 		public Long getDestination() {
 			return delegate.getTargetId();
 		}
 
-		@JsonProperty("values")
+		@JsonProperty(VALUES)
 		public Map<String, Object> getValues() {
 			final Map<String, Object> values = newHashMap();
 			attributeSerializer.toClient(delegate, new Callback() {
@@ -310,7 +328,7 @@ public class ModCard extends JSONBaseWithSpringContext {
 	 * the cards that match the filter are retrieved. The fetched cards are
 	 * sorted if a sorter is defined. Note that the max number of retrieved
 	 * cards is the 'limit' parameter
-	 * 
+	 *
 	 * @param className
 	 *            the name of the class for which I want to retrieve the cards
 	 * @param filter
@@ -339,7 +357,7 @@ public class ModCard extends JSONBaseWithSpringContext {
 	/**
 	 * Retrieves a list of cards for the specified class, returning only the
 	 * values for a subset of values
-	 * 
+	 *
 	 * @param filter
 	 *            null if no filter is specified
 	 * @param sorters
@@ -376,7 +394,7 @@ public class ModCard extends JSONBaseWithSpringContext {
 	 * the cards that match the filter are retrieved. The fetched cards are
 	 * sorted if a sorter is defined. Note that the max number of retrieved
 	 * cards is the 'limit' parameter
-	 * 
+	 *
 	 * @param className
 	 *            the name of the class for which I want to retrieve the cards
 	 * @param filter
@@ -684,8 +702,12 @@ public class ModCard extends JSONBaseWithSpringContext {
 				.withId(cardId) //
 				.build();
 		final Iterable<Card> response = userDataAccessLogic().getCardHistory(src, false);
-		return JsonResponse.success(new JsonElements<JsonCardSimple>(from(response) //
-				.transform(CARD_JSON_CARD)));
+		final Iterable<JsonCardSimple> elements = from(response) //
+				.transform(CARD_JSON_CARD);
+		final Iterable<JsonCardSimple> ordered = from(JsonEntryComparator.of(JsonCardSimple.class)) //
+				.reverse() //
+				.immutableSortedCopy(elements);
+		return JsonResponse.success(new JsonElements<JsonCardSimple>(ordered));
 	}
 
 	/*
@@ -720,8 +742,12 @@ public class ModCard extends JSONBaseWithSpringContext {
 				.withId(cardId) //
 				.build();
 		final GetRelationHistoryResponse response = userDataAccessLogic().getRelationHistory(src);
-		return JsonResponse.success(new JsonElements<JsonRelationSimple>(from(response) //
-				.transform(RELATION_INFO_TO_JSON_RELATION)));
+		final Iterable<JsonRelationSimple> elements = from(response) //
+				.transform(RELATION_INFO_TO_JSON_RELATION);
+		final Iterable<JsonRelationSimple> ordered = from(JsonEntryComparator.of(JsonRelationSimple.class)) //
+				.reverse() //
+				.immutableSortedCopy(elements);
+		return JsonResponse.success(new JsonElements<JsonRelationSimple>(ordered));
 	}
 
 	@JSONExported
@@ -735,7 +761,7 @@ public class ModCard extends JSONBaseWithSpringContext {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param domainName
 	 *            is the domain between the source class and the destination
 	 *            class
