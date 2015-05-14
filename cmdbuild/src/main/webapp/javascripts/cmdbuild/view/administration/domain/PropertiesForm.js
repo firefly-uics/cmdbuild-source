@@ -1,0 +1,250 @@
+(function() {
+
+	Ext.define('CMDBuild.view.administration.domain.PropertiesForm', {
+		extend: 'Ext.form.Panel',
+
+		requires: [
+			'CMDBuild.core.proxy.CMProxyConstants',
+			'CMDBuild.core.proxy.Domain'
+		],
+
+		mixins: {
+			panelFunctions: 'CMDBuild.view.common.PanelFunctions'
+		},
+
+		/**
+		 * @cfg {CMDBuild.controller.administration.domain.Properties}
+		 */
+		delegate: undefined,
+
+		/**
+		 * @property {Ext.form.field.Checkbox}
+		 */
+		activeCheckbox: undefined,
+
+		/**
+		 * @property {Ext.form.field.ComboBox}
+		 */
+		cardinalityCombo: undefined,
+
+		/**
+		 * @property {CMDBuild.view.common.field.translatable.Text}
+		 */
+		directDescription: undefined,
+
+		/**
+		 * @property {CMDBuild.view.common.field.translatable.Text}
+		 */
+		domainDescription: undefined,
+
+		/**
+		 * @property {CMDBuild.view.common.field.translatable.Text}
+		 */
+		inverseDescription: undefined,
+
+		/**
+		 * @property {Ext.form.field.Checkbox}
+		 */
+		masterDetailCheckbox: undefined,
+
+		/**
+		 * @property {CMDBuild.view.common.field.translatable.Text}
+		 */
+		masterDetailLabel: undefined,
+
+		bodyCls: 'cmgraypanel',
+		border: false,
+		frame: false,
+		title: CMDBuild.Translation.properties,
+
+		layout: {
+			type: 'vbox',
+			align: 'stretch'
+		},
+
+		defaults: {
+			maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH
+		},
+
+		initComponent: function() {
+			Ext.apply(this, {
+				dockedItems: [
+					Ext.create('Ext.toolbar.Toolbar', {
+						dock: 'top',
+						itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_TOP,
+
+						items: [
+							Ext.create('CMDBuild.core.buttons.Modify', {
+								text: CMDBuild.Translation.modifyDomain,
+								scope: this,
+
+								handler: function(button, e) {
+									this.delegate.cmfg('onDomainModifyButtonClick');
+								}
+							}),
+							Ext.create('CMDBuild.core.buttons.Delete', {
+								text: CMDBuild.Translation.deleteDomain,
+								scope: this,
+
+								handler: function(button, e) {
+									this.delegate.cmfg('onDomainRemoveButtonClick');
+								}
+							})
+						]
+					}),
+					Ext.create('Ext.toolbar.Toolbar', {
+						dock: 'bottom',
+						itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_BOTTOM,
+						ui: 'footer',
+
+						layout: {
+							type: 'hbox',
+							align: 'middle',
+							pack: 'center'
+						},
+
+						items: [
+							Ext.create('CMDBuild.core.buttons.Save', {
+								scope: this,
+
+								handler: function(button, e) {
+									this.delegate.cmfg('onDomainSaveButtonClick');
+								}
+							}),
+							Ext.create('CMDBuild.core.buttons.Abort', {
+								scope: this,
+
+								handler: function(button, e) {
+									this.delegate.cmfg('onDomainAbortButtonClick');
+								}
+							})
+						]
+					})
+				],
+				plugins: [new CMDBuild.FormPlugin()], // TODO che sia da toccare e rifare bene la classe????
+				items: [
+					Ext.create('Ext.form.TextField', {
+						name: CMDBuild.core.proxy.CMProxyConstants.NAME,
+						fieldLabel: CMDBuild.Translation.name,
+						labelWidth: CMDBuild.LABEL_WIDTH,
+						allowBlank: false,
+						vtype: 'alphanum',
+						cmImmutable: true,
+
+						listeners: {
+							scope: this,
+							change: function(field, newValue, oldValue) {
+								this.autoComplete(this.domainDescription, newValue, oldValue);
+							}
+						}
+					}),
+					this.domainDescription = Ext.create('CMDBuild.view.common.field.translatable.Text', {
+						name: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
+						fieldLabel: CMDBuild.Translation.descriptionLabel,
+						labelWidth: CMDBuild.LABEL_WIDTH,
+						allowBlank: false,
+						translationsKeyType: 'Domain',
+						translationsKeyField: 'Description',
+						vtype: 'cmdbcomment'
+					}),
+					Ext.create('Ext.form.field.ComboBox', {
+						name: 'idClass1',
+						fieldLabel: CMDBuild.Translation.origin,
+						labelWidth: CMDBuild.LABEL_WIDTH,
+						valueField: CMDBuild.core.proxy.CMProxyConstants.ID,
+						displayField: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
+						allowBlank: false,
+						cmImmutable: true,
+						forceSelection: true,
+						editable: false,
+
+						store: _CMCache.getClassesAndProcessesStore(),
+						queryMode: 'local'
+					}),
+					Ext.create('Ext.form.field.ComboBox', {
+						name: 'idClass2',
+						fieldLabel: CMDBuild.Translation.destination,
+						labelWidth: CMDBuild.LABEL_WIDTH,
+						valueField: CMDBuild.core.proxy.CMProxyConstants.ID,
+						displayField: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
+						allowBlank: false,
+						cmImmutable: true,
+						forceSelection: true,
+						editable: false,
+
+						store: _CMCache.getClassesAndProcessesStore(),
+						queryMode: 'local'
+					}),
+					this.directDescription = Ext.create('CMDBuild.view.common.field.translatable.Text', {
+						name: 'descr_1', // TODO, change the server side
+						fieldLabel: CMDBuild.Translation.directDescription,
+						labelWidth: CMDBuild.LABEL_WIDTH,
+						translationsKeyType: 'Domain',
+						translationsKeyField: CMDBuild.core.proxy.CMProxyConstants.DIRECT_DESCRIPTION,
+						allowBlank: false,
+						vtype: 'cmdbcomment'
+					}),
+					this.inverseDescription = Ext.create('CMDBuild.view.common.field.translatable.Text', {
+						name: 'descr_2', // TODO, change the server side
+						fieldLabel: CMDBuild.Translation.inverseDescription,
+						labelWidth: CMDBuild.LABEL_WIDTH,
+						translationsKeyType: 'Domain',
+						translationsKeyField: CMDBuild.core.proxy.CMProxyConstants.INVERSE_DESCRIPTION,
+						allowBlank: false,
+						vtype: 'cmdbcomment'
+					}),
+					this.cardinalityCombo = Ext.create('Ext.form.field.ComboBox', {
+						name: CMDBuild.core.proxy.CMProxyConstants.CARDINALITY,
+						fieldLabel: CMDBuild.Translation.cardinality,
+						labelWidth: CMDBuild.LABEL_WIDTH,
+						width: CMDBuild.ADM_SMALL_FIELD_WIDTH,
+						valueField: CMDBuild.core.proxy.CMProxyConstants.NAME,
+						displayField: CMDBuild.core.proxy.CMProxyConstants.VALUE,
+						allowBlank: false,
+						cmImmutable: true,
+
+						store: CMDBuild.core.proxy.Domain.getCardinalityStore(),
+						queryMode: 'local',
+
+						listeners: {
+							scope: this,
+							select:	function(combo, records, eOpts) {
+								this.delegate.cmfg('onDomainPropertiesCardinalitySelect');
+							}
+						}
+					}),
+					this.masterDetailCheckbox = Ext.create('Ext.form.field.Checkbox', {
+						name: CMDBuild.core.proxy.CMProxyConstants.IS_MASTER_DETAIL,
+						fieldLabel: CMDBuild.Translation.masterDetail,
+						labelWidth: CMDBuild.LABEL_WIDTH,
+
+						listeners: {
+							scope: this,
+							change: function(field, newValue, oldValue, eOpts) {
+								this.delegate.cmfg('onDomainPropertiesMasterDetailCheckboxChange');
+							}
+						}
+					}),
+					this.masterDetailLabel = Ext.create('CMDBuild.view.common.field.translatable.Text', {
+						name: 'md_label',
+						fieldLabel: CMDBuild.Translation.masterDetailLabel,
+						labelWidth: CMDBuild.LABEL_WIDTH,
+						translationsKeyType: 'Domain',
+						translationsKeyField: CMDBuild.core.proxy.CMProxyConstants.MASTER_DETAIL,
+						hidden: true // Hidden by default
+					}),
+					this.activeCheckbox = Ext.create('Ext.form.field.Checkbox', {
+						name: CMDBuild.core.proxy.CMProxyConstants.ACTIVE,
+						fieldLabel: CMDBuild.Translation.active,
+						labelWidth: CMDBuild.LABEL_WIDTH
+					})
+				]
+			});
+
+			this.callParent(arguments);
+
+			this.setDisabledModify(true);
+		}
+	});
+
+})();

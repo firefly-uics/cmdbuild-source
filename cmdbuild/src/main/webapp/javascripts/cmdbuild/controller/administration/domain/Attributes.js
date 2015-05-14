@@ -1,9 +1,14 @@
 (function() {
 
-	Ext.define('CMDBuild.controller.administration.domain.CMDomainAttributesController', {
+	Ext.define('CMDBuild.controller.administration.domain.Attributes', {
 		extend: 'CMDBuild.controller.administration.CMBaseAttributesController',
 
 		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+
+		/**
+		 * @cfg {CMDBuild.controller.administration.domain.Domain}
+		 */
+		parentDelegate: undefined,
 
 		/**
 		 * @property {Object}
@@ -16,12 +21,12 @@
 		currentDomain: undefined,
 
 		/**
-		 * @property {CMDBuild.view.administration.domain.CMDomainAttributeFormPanel}
+		 * @property {CMDBuild.view.administration.domain.attributes.FormPanel}
 		 */
 		form: undefined,
 
 		/**
-		 * @property {CMDBuild.view.administration.domain.CMDomainAttributeGrid}
+		 * @property {CMDBuild.view.administration.domain.attributes.GridPanel}
 		 */
 		grid: undefined,
 
@@ -31,17 +36,22 @@
 		gridSM: undefined,
 
 		/**
-		 * @property {CMDBuild.administration.domain.CMDomainAttribute}
+		 * @property {CMDBuild.view.administration.domain.attributes.AttributesView}
 		 */
 		view: undefined,
 
 		/**
-		 * @param {CMDBuild.administration.domain.CMDomainAttribute} view
+		 * @param {Object} configurationObject
+		 * @param {CMDBuild.controller.administration.domain.Domain} configurationObject.parentDelegate
 		 *
 		 * @override
 		 */
-		constructor: function(view) {
-			this.callParent(arguments);
+		constructor: function(configurationObject) {
+			Ext.apply(this, configurationObject); // Apply configuration to class
+
+			var view = Ext.create('CMDBuild.view.administration.domain.attributes.AttributesView');
+
+			this.callParent([view]);
 
 			this.form = this.view.form;
 			this.grid = this.view.grid;
@@ -53,6 +63,25 @@
 			this.form.saveButton.on('click', this.onSaveButtonClick, this);
 			this.form.deleteButton.on('click', this.onDeleteButtonClick, this);
 			this.grid.addAttributeButton.on('click', this.onAddAttributeClick, this);
+		},
+
+		/**
+		 * Fake cmfg implementation waiting for future refactor
+		 *
+		 * @param {String} name
+		 * @param {Object} param
+		 * @param {Function} callback
+		 */
+		cmfg: function(name, param, callBack) {
+			switch (name) {
+				case 'onDomainAddButtonClick':
+					return this.onDomainAddButtonClick();
+
+				default: {
+					if (!Ext.isEmpty(this.parentDelegate) && Ext.isFunction(this.parentDelegate.cmfg))
+						return this.parentDelegate.cmfg(name, param, callBack);
+				}
+			}
 		},
 
 		/**
@@ -114,6 +143,13 @@
 		},
 
 		/**
+		 * @return {CMDBuild.view.administration.domain.attributes.AttributesView}
+		 */
+		getView: function() {
+			return this.view;
+		},
+
+		/**
 		 * @override
 		 */
 		getCurrentEntryTypeId: function() {
@@ -134,10 +170,6 @@
 			this.view.onAddAttributeClick();
 
 			_CMCache.initAddingTranslations();
-		},
-
-		onAddButtonClick: function() {
-			this.view.disable();
 		},
 
 		/**
@@ -184,12 +216,14 @@
 			});
 		},
 
-		/**
-		 * @params {CMDBuild.cache.CMDomainModel} domain
-		 */
-		onDomainSelected: function(domain) {
-			this.currentDomain = domain;
-			this.view.onDomainSelected(domain);
+		onDomainAddButtonClick: function() {
+			this.view.disable();
+		},
+
+		onDomainSelected: function() {
+			this.currentDomain = this.cmfg('selectedDomainGet');
+
+			this.view.onDomainSelected(this.currentDomain);
 		},
 
 		onSaveButtonClick: function() {

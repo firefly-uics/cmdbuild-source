@@ -172,8 +172,10 @@
 	};
 
 	function buildAccordionController(me, accordion) {
-		if (typeof accordion.cmControllerType == "function") {
+		if (Ext.isFunction(accordion.cmControllerType)) {
 			me.accordionControllers[accordion.cmName] = new accordion.cmControllerType(accordion);
+		} else if (Ext.isString(accordion.cmControllerType)) { // To use Ext.loader to asynchronous load also controllers
+			me.panelControllers[accordion.cmName] = Ext.create(accordion.cmControllerType, accordion);
 		} else {
 			me.accordionControllers[accordion.cmName] = new ns.accordion.CMBaseAccordionController(accordion);
 		}
@@ -184,14 +186,14 @@
 	 * @param {Object} panel - a view
 	 */
 	function buildPanelController(me, panel) {
-		if (typeof panel.cmControllerType == 'function') {
+		if (Ext.isFunction(panel.cmControllerType)) {
 			// We start to use the cmcreate factory method to have the possibility to inject the sub-controllers in tests
-			if (typeof panel.cmControllerType.cmcreate == "function") {
+			if (Ext.isFunction(panel.cmControllerType.cmcreate)) {
 				me.panelControllers[panel.cmName] = new panel.cmControllerType.cmcreate(panel);
 			} else {
 				me.panelControllers[panel.cmName] = new panel.cmControllerType(panel);
 			}
-		} else if (typeof panel.cmControllerType == "string") { // To use Ext.loader to asynchronous load also controllers
+		} else if (Ext.isString(panel.cmControllerType)) { // To use Ext.loader to asynchronous load also controllers
 			me.panelControllers[panel.cmName] = Ext.create(panel.cmControllerType, panel);
 		} else {
 			me.panelControllers[panel.cmName] = new ns.CMBasePanelController(panel);

@@ -82,7 +82,7 @@
 
 			if (!Ext.isEmpty(bottomToolbar))
 				Ext.Array.forEach(bottomToolbar.items.items, function(button, i, allButtons) {
-					if (typeof button.setDisabled == 'function')
+					if (Ext.isFunction(button.setDisabled))
 						button.setDisabled(state);
 				}, this);
 		},
@@ -98,7 +98,7 @@
 
 			// For Ext.form.field.Field objects
 			this.getForm().getFields().each(function(item, i, length) {
-				if (typeof item.setDisabled == 'function')
+				if (Ext.isFunction(item.setDisabled))
 					if (state) {
 						item.setDisabled(state);
 					} else {
@@ -111,7 +111,7 @@
 			this.cascade(function(item) {
 				if (
 					!Ext.isEmpty(item)
-					&& typeof item.setDisabled == 'function'
+					&& Ext.isFunction(item.setDisabled)
 					&& (
 						item instanceof Ext.button.Button
 						|| item.considerAsFieldToDisable
@@ -147,7 +147,7 @@
 
 			if (!Ext.isEmpty(topToolbar))
 				Ext.Array.forEach(topToolbar.items.items, function(button, i, allButtons) {
-					if (typeof button.setDisabled == 'function')
+					if (Ext.isFunction(button.setDisabled))
 						button.setDisabled(state);
 				}, this);
 		}

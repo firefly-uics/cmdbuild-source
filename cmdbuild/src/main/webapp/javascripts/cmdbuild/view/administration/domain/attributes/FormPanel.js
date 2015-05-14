@@ -2,7 +2,7 @@
 
 	var tr =  CMDBuild.Translation.administration.modClass.attributeProperties;
 
-	Ext.define("CMDBuild.view.administration.domain.CMDomainAttributeFormPanel",{
+	Ext.define("CMDBuild.view.administration.domain.attributes.FormPanel",{
 		extend: "CMDBuild.view.administration.classes.CMAttributeForm",
 		domainName : undefined,
 		initComponent: function() {
