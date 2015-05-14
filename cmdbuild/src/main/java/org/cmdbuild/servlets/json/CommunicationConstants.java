@@ -79,6 +79,7 @@ public class CommunicationConstants {
 			DESCRIPTION_CAPITAL = "Description", //
 			DESCRIPTION = "description", //
 			DESTINATION = "destination", //
+			DESTINATION_DESCRIPTION = "destinationDescrition", //
 			DETAIL_CARD_ID = "detailCardId", //
 			DETAIL_CLASS_NAME = "detailClassName", //
 			DIRECT_DESCRIPTION = "descrdir", //
@@ -255,6 +256,7 @@ public class CommunicationConstants {
 			SOURCE = "source", //
 			SOURCE_ATTRIBUTE = SOURCE + "Attribute", //
 			SOURCE_CLASS_NAME = SOURCE + "ClassName", //
+			SOURCE_DESCRIPTION = "sourceDescription", //
 			SOURCE_FUNCTION = SOURCE + "Function", //
 			SOURCE_NAME = SOURCE + "Name", //
 			SQLSERVER_LABEL = "SQLServer", //
