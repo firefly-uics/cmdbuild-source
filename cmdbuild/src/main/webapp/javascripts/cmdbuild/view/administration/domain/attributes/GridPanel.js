@@ -3,8 +3,10 @@
 	var translation = CMDBuild.Translation.administration.modClass.attributeProperties;
 	var ATTRIBUTES = CMDBuild.view.administration.classes.CMAttributeGrid.ATTRIBUTES;
 
-	Ext.define("CMDBuild.view.administration.domain.CMDomainAttributeGrid", {
+	Ext.define("CMDBuild.view.administration.domain.attributes.GridPanel", {
 		extend: "CMDBuild.view.administration.classes.CMAttributeGrid",
+
+		border: false,
 
 		buildColumnConf: function() {
 			this.columns = [{
@@ -42,7 +44,7 @@
 			}), {
 				header: translation.field_visibility,
 				dataIndex: ATTRIBUTES.FIELD_MODE,
-				renderer: renderEditingMode 
+				renderer: renderEditingMode
 			}];
 		},
 
@@ -53,7 +55,7 @@
 		buildTBar: function() {
 			this.tbar = [this.addAttributeButton];
 		},
-		
+
 		onDomainSelected: function(domain) {
 			this.refreshStore(domain, indexAttributeToSelectAfter = null);
 		},
@@ -69,7 +71,7 @@
 				this.selectRecordAtIndexOrTheFirst(indexAttributeToSelectAfter);
 			}
 		},
-		
+
 		selectAttributeByName: function(name) {
 			var sm = this.getSelectionModel();
 			var r = this.store.findRecord("name", name);
@@ -81,7 +83,7 @@
 		}
 
 	});
-	
+
 	function renderEditingMode(val) {
 		return translation["field_" + val];
 	}

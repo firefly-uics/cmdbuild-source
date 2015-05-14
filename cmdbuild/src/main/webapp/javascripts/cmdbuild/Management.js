@@ -32,6 +32,7 @@
 			'CMDBuild.core.proxy.CMProxyConstants',
 			'CMDBuild.core.proxy.Classes',
 			'CMDBuild.core.proxy.Configuration',
+			'CMDBuild.core.proxy.Domain',
 			'CMDBuild.core.proxy.Report'
 		],
 
@@ -331,17 +332,20 @@
 					callback: reqBarrier.getCallback()
 				});
 
-				params = {};
-				params[CMDBuild.core.proxy.CMProxyConstants.ACTIVE] = true;
-				params[CMDBuild.core.proxy.CMProxyConstants.LOCALIZED] = true;
+				// Domains
+					params = {};
+					params[CMDBuild.core.proxy.CMProxyConstants.ACTIVE] = true;
+					params[CMDBuild.core.proxy.CMProxyConstants.LOCALIZED] = true;
 
-				CMDBuild.ServiceProxy.administration.domain.list({ //TODO change 'administration'
-					params: params,
-					success: function(response, options, decoded) {
-						_CMCache.addDomains(decoded.domains);
-					},
-					callback: reqBarrier.getCallback()
-				});
+					CMDBuild.core.proxy.Domain.getAll({
+						params: params,
+						scope: this,
+						success: function(response, options, decodedResponse) {
+							_CMCache.addDomains(decodedResponse.domains);
+						},
+						callback: reqBarrier.getCallback()
+					});
+				// END: Domains
 
 				CMDBuild.ServiceProxy.Dashboard.fullList({
 					success : function(response, options, decoded) {

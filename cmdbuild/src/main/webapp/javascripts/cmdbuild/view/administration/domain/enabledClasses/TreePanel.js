@@ -23,6 +23,7 @@
 		autoScroll: true,
 		border: true,
 		collapsible: false,
+		considerAsFieldToDisable: true,
 		enableColumnHide: false,
 		flex: 1,
 		frame: false,
@@ -42,7 +43,7 @@
 						draggable: false
 					},
 					Ext.create('Ext.grid.column.CheckColumn', {
-						header: CMDBuild.Translation.enabled,
+						text: CMDBuild.Translation.enabled,
 						dataIndex: CMDBuild.core.proxy.CMProxyConstants.ENABLED,
 						width: 60,
 						align: 'center',
@@ -87,7 +88,7 @@
 				Ext.isEmpty(this.getStore().getRootNode().childNodes)
 				|| ( // if root has more than one child and that child is not a superclass
 					this.getStore().getRootNode().childNodes.length <= 1
-					&& this.getStore().getRootNode().getChildAt(0).childNodes.length <= 1 // TODO: use model function isSuperClass
+					&& this.getStore().getRootNode().getChildAt(0).isLeaf()
 				)
 			) {
 				return this.callParent([true]);

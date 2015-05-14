@@ -156,6 +156,11 @@
 		}
 	});
 
+	/**
+	 * Use "CMDBuild.model.Domain" and complete functionalities
+	 *
+	 * @deprecated
+	 */
 	Ext.define("CMDBuild.cache.CMDomainModel", {
 		extend: 'Ext.data.Model',
 		fields: [
