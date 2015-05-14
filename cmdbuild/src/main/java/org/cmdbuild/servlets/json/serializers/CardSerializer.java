@@ -24,7 +24,6 @@ import org.cmdbuild.logic.commands.GetRelationList.DomainWithSource;
 import org.cmdbuild.logic.commands.GetRelationList.GetRelationListResponse;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.logic.data.access.SystemDataAccessLogicBuilder;
-import org.cmdbuild.logic.translation.TranslationFacade;
 import org.cmdbuild.model.data.Card;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -36,16 +35,12 @@ public class CardSerializer {
 
 	private final DataAccessLogic dataAccessLogic;
 	private final RelationAttributeSerializer relationAttributeSerializer;
-	private final TranslationFacade translationFacade;
 	private final LookupStore lookupStore;
 
-	public CardSerializer( //
-			final SystemDataAccessLogicBuilder dataAccessLogicBuilder, //
-			final RelationAttributeSerializer relationAttributeSerializer, //
-			final TranslationFacade translationFacade, final LookupStore lookupStore) {
+	public CardSerializer(final SystemDataAccessLogicBuilder dataAccessLogicBuilder,
+			final RelationAttributeSerializer relationAttributeSerializer, final LookupStore lookupStore) {
 		this.dataAccessLogic = dataAccessLogicBuilder.build();
 		this.relationAttributeSerializer = relationAttributeSerializer;
-		this.translationFacade = translationFacade;
 		this.lookupStore = lookupStore;
 	}
 

@@ -16,7 +16,6 @@ import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.logic.Logic;
 import org.cmdbuild.logic.commands.AbstractGetRelation.RelationInfo;
-import org.cmdbuild.logic.commands.GetCardHistory.GetCardHistoryResponse;
 import org.cmdbuild.logic.commands.GetRelationHistory.GetRelationHistoryResponse;
 import org.cmdbuild.logic.commands.GetRelationList.DomainWithSource;
 import org.cmdbuild.logic.commands.GetRelationList.GetRelationListResponse;
@@ -54,6 +53,8 @@ public interface DataAccessLogic extends Logic {
 
 	Optional<RelationInfo> getRelation(CMDomain domain, Long id);
 
+	Optional<RelationInfo> getRelation(String domain, Long id);
+
 	GetRelationHistoryResponse getRelationHistory(Card srcCard);
 
 	GetRelationHistoryResponse getRelationHistory(Card srcCard, CMDomain domain);
@@ -61,7 +62,11 @@ public interface DataAccessLogic extends Logic {
 	CMRelation getRelation(final Long srcCardId, final Long dstCardId, final CMDomain domain,
 			final CMClass sourceClass, final CMClass destinationClass);
 
-	GetCardHistoryResponse getCardHistory(Card srcCard);
+	Optional<RelationInfo> getHistoricRelation(String domain, Long id);
+
+	Iterable<Card> getCardHistory(Card srcCard, boolean allAttributes);
+
+	Card fetchHistoricCard(String className, Long cardId);
 
 	CMClass findClass(Long classId);
 
@@ -136,7 +141,7 @@ public interface DataAccessLogic extends Logic {
 	 * @param queryOptions
 	 * @return a FetchCardListResponse
 	 */
-	FetchCardListResponse fetchCards(String className, QueryOptions queryOptions);
+	PagedElements<Card> fetchCards(String className, QueryOptions queryOptions);
 
 	/**
 	 * Execute a given SQL function to select a set of rows Return these rows as
@@ -146,7 +151,7 @@ public interface DataAccessLogic extends Logic {
 	 * @param queryOptions
 	 * @return
 	 */
-	FetchCardListResponse fetchSQLCards(String functionName, QueryOptions queryOptions);
+	PagedElements<Card> fetchSQLCards(String functionName, QueryOptions queryOptions);
 
 	/**
 	 * 

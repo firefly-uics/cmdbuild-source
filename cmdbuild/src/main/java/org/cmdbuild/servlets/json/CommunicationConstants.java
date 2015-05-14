@@ -23,6 +23,7 @@ public class CommunicationConstants {
 			ATTRIBUTES = "attributes", //
 			ATTRIBUTES_PRIVILEGES = "attributesPrivileges", //
 			BCC = "bcc", //
+			BEGIN_DATE = "beginDate", //
 			BIM_LAYER = "bimLayer", //
 			BIM_PROJECTS = "bimProjects", //
 			BIM_ROOT = "root", //
@@ -108,6 +109,7 @@ public class CommunicationConstants {
 			EMAIL_ID = "emailId", //
 			EMAIL_TEMPLATE = "emailTemplate", //
 			ENABLED = "enabled", //
+			END_DATE = "endDate", //
 			ENTRY_TYPE = "entryType", //
 			EXPORTED = "exported", //
 			EXPORT_MAPPING = "ExportMapping", //

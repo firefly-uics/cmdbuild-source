@@ -13,6 +13,7 @@ import static org.cmdbuild.service.rest.v2.model.Models.newResponseSingle;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.cmdbuild.common.utils.PagedElements;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
@@ -20,7 +21,6 @@ import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.exception.NotFoundException;
 import org.cmdbuild.logic.data.QueryOptions;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
-import org.cmdbuild.logic.data.access.FetchCardListResponse;
 import org.cmdbuild.service.rest.v2.Cards;
 import org.cmdbuild.service.rest.v2.cxf.serialization.DefaultConverter;
 import org.cmdbuild.service.rest.v2.logging.LoggingSupport;
@@ -84,7 +84,8 @@ public class CxfCards implements Cards, LoggingSupport {
 				.limit(limit) //
 				.offset(offset) //
 				.build();
-		final FetchCardListResponse response = dataAccessLogic.fetchCards(targetClass.getName(), queryOptions);
+		final PagedElements<org.cmdbuild.model.data.Card> response = dataAccessLogic.fetchCards(targetClass.getName(),
+				queryOptions);
 		final Iterable<Card> elements = from(response.elements()) //
 				.transform(new Function<org.cmdbuild.model.data.Card, Card>() {
 

@@ -142,8 +142,6 @@ public class User {
 				userStore.getUser().getPrivilegeContext(), //
 				userWorkflowEngineBuilder(), //
 				userDataView(), //
-				data.systemDataView(), //
-				data.lookupStore(), //
 				properties.workflowProperties(), //
 				filesStore);
 	}

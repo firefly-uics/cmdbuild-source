@@ -4,7 +4,6 @@ import org.cmdbuild.dao.entry.CMEntry;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeTypeVisitor;
 import org.cmdbuild.dao.entrytype.attributetype.ForwardingAttributeTypeVisitor;
 import org.cmdbuild.dao.entrytype.attributetype.NullAttributeTypeVisitor;
-import org.cmdbuild.data.store.lookup.LookupStore;
 import org.cmdbuild.logic.data.access.resolver.ForeignReferenceResolver.EntryFiller;
 
 public abstract class AbstractSerializer<T extends CMEntry> extends ForwardingAttributeTypeVisitor {
@@ -13,7 +12,6 @@ public abstract class AbstractSerializer<T extends CMEntry> extends ForwardingAt
 
 	protected Object rawValue;
 	protected String attributeName;
-	protected LookupStore lookupStore;
 	protected EntryFiller<T> entryFiller;
 
 	@Override
@@ -27,10 +25,6 @@ public abstract class AbstractSerializer<T extends CMEntry> extends ForwardingAt
 
 	public void setAttributeName(final String attributeName) {
 		this.attributeName = attributeName;
-	}
-
-	public void setLookupStore(final LookupStore lookupStore) {
-		this.lookupStore = lookupStore;
 	}
 
 	public void setEntryFiller(final EntryFiller<T> entryFiller) {

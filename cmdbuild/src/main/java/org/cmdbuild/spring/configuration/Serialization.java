@@ -39,8 +39,7 @@ public class Serialization {
 
 	@Bean
 	public CardSerializer cardSerializer() {
-		return new CardSerializer(data.systemDataAccessLogicBuilder(), relationAttributeSerializer(),
-				translation.translationFacade(), lookupStore);
+		return new CardSerializer(data.systemDataAccessLogicBuilder(), relationAttributeSerializer(), lookupStore);
 	}
 
 	@Bean
