@@ -28,6 +28,7 @@ import net.sf.jasperreports.engine.util.ObjectUtils;
 import org.cmdbuild.auth.AuthenticationStore;
 import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.common.Constants;
+import org.cmdbuild.common.utils.PagedElements;
 import org.cmdbuild.common.utils.TempDataSource;
 import org.cmdbuild.config.CmdbuildConfiguration;
 import org.cmdbuild.dao.CardStatus;
@@ -48,14 +49,12 @@ import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.data.store.lookup.Lookup;
 import org.cmdbuild.data.store.lookup.LookupStore;
 import org.cmdbuild.logic.commands.AbstractGetRelation.RelationInfo;
-import org.cmdbuild.logic.commands.GetCardHistory.GetCardHistoryResponse;
 import org.cmdbuild.logic.commands.GetRelationHistory.GetRelationHistoryResponse;
 import org.cmdbuild.logic.commands.GetRelationList.DomainInfo;
 import org.cmdbuild.logic.commands.GetRelationList.DomainWithSource;
 import org.cmdbuild.logic.commands.GetRelationList.GetRelationListResponse;
 import org.cmdbuild.logic.data.QueryOptions;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
-import org.cmdbuild.logic.data.access.FetchCardListResponse;
 import org.cmdbuild.logic.data.access.RelationDTO;
 import org.cmdbuild.logic.report.ExtensionConverter;
 import org.cmdbuild.logic.report.ReportLogic;
@@ -141,7 +140,7 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 	private static final Function<ReportParams, String> REPORT_PARAM_KEY = new Function<ReportParams, String>() {
 
 		@Override
-		public String apply(ReportParams input) {
+		public String apply(final ReportParams input) {
 			return input.getKey();
 		}
 
@@ -150,7 +149,7 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 	private static final Function<ReportParams, Object> REPORT_PARAM_VALUE = new Function<ReportParams, Object>() {
 
 		@Override
-		public Object apply(ReportParams input) {
+		public Object apply(final ReportParams input) {
 			return input.getValue();
 		}
 
@@ -602,7 +601,7 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 	public CardList getCardList(final String className, final Attribute[] attributeList, final Query queryType,
 			final Order[] orderType, final Integer limit, final Integer offset, final String fullTextQuery,
 			final CQLQuery cqlQuery, final boolean enableLongDateFormat) {
-		final FetchCardListResponse response = cardList(className, attributeList, queryType, orderType, limit, offset,
+		final PagedElements<Card> response = cardList(className, attributeList, queryType, orderType, limit, offset,
 				fullTextQuery, cqlQuery);
 		return toCardList(response, attributeList, enableLongDateFormat);
 	}
@@ -610,12 +609,12 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 	public CardListExt getCardListExt(final String className, final Attribute[] attributeList, final Query queryType,
 			final Order[] orderType, final Integer limit, final Integer offset, final String fullTextQuery,
 			final CQLQuery cqlQuery) {
-		final FetchCardListResponse response = cardList(className, attributeList, queryType, orderType, limit, offset,
+		final PagedElements<Card> response = cardList(className, attributeList, queryType, orderType, limit, offset,
 				fullTextQuery, cqlQuery);
 		return toCardListExt(response);
 	}
 
-	private FetchCardListResponse cardList(final String className, final Attribute[] attributeList,
+	private PagedElements<Card> cardList(final String className, final Attribute[] attributeList,
 			final Query queryType, final Order[] orderType, final Integer limit, final Integer offset,
 			final String fullTextQuery, final CQLQuery cqlQuery) {
 		final CMClass targetClass = dataView.findClass(className);
@@ -636,7 +635,7 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 		return hasParameters ? toMap(cqlQuery.getParameters()) : new HashMap<String, Object>();
 	}
 
-	private CardList toCardList(final FetchCardListResponse response, final Attribute[] subsetAttributesForSelect,
+	private CardList toCardList(final PagedElements<Card> response, final Attribute[] subsetAttributesForSelect,
 			final boolean enableLongDateFormat) {
 		final CardList cardList = new CardList();
 		final int totalNumberOfCards = response.totalSize();
@@ -675,7 +674,7 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 		return false;
 	}
 
-	private CardListExt toCardListExt(final FetchCardListResponse response) {
+	private CardListExt toCardListExt(final PagedElements<Card> response) {
 		final CardListExt cardListExt = new CardListExt();
 		final int totalNumberOfCards = response.totalSize();
 		cardListExt.setTotalRows(totalNumberOfCards);
@@ -729,7 +728,7 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 				.withClassName(className) //
 				.withId(Long.valueOf(cardId)) //
 				.build();
-		final GetCardHistoryResponse response = dataAccessLogic.getCardHistory(card);
+		final Iterable<Card> response = dataAccessLogic.getCardHistory(card, true);
 
 		final List<Card> ordered = Ordering.from(BEGIN_DATE_DESC).sortedCopy(response);
 		for (final org.cmdbuild.services.soap.types.Card element : from(ordered) //

@@ -11,12 +11,12 @@ import static org.cmdbuild.service.rest.v2.model.Models.newResponseMultiple;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.cmdbuild.common.utils.PagedElements;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.logic.data.QueryOptions;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
-import org.cmdbuild.logic.data.access.FetchCardListResponse;
 import org.cmdbuild.service.rest.v2.Cql;
 import org.cmdbuild.service.rest.v2.cxf.serialization.DefaultConverter;
 import org.cmdbuild.service.rest.v2.logging.LoggingSupport;
@@ -42,7 +42,7 @@ public class CxfCql implements Cql, LoggingSupport {
 				.limit(limit) //
 				.offset(offset) //
 				.build();
-		final FetchCardListResponse response = dataAccessLogic.fetchCards(null, queryOptions);
+		final PagedElements<org.cmdbuild.model.data.Card> response = dataAccessLogic.fetchCards(null, queryOptions);
 		final Iterable<Card> elements = from(response.elements()) //
 				.transform(new Function<org.cmdbuild.model.data.Card, Card>() {
 

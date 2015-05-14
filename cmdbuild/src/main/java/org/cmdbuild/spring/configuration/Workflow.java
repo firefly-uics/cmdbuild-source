@@ -185,8 +185,6 @@ public class Workflow {
 				systemPrivilegeContext, //
 				systemWorkflowEngineBuilder(), //
 				data.systemDataView(), //
-				data.systemDataView(), //
-				data.lookupStore(), //
 				workflowConfiguration, //
 				filesStore);
 	}

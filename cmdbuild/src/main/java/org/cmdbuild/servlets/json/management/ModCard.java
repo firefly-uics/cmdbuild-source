@@ -3,10 +3,16 @@ package org.cmdbuild.servlets.json.management;
 import static com.google.common.base.Predicates.in;
 import static com.google.common.base.Predicates.not;
 import static com.google.common.collect.FluentIterable.from;
+import static com.google.common.collect.Iterables.filter;
 import static com.google.common.collect.Iterables.isEmpty;
+import static com.google.common.collect.Lists.newArrayList;
+import static com.google.common.collect.Maps.filterKeys;
+import static com.google.common.collect.Maps.newHashMap;
 import static org.cmdbuild.common.Constants.DESCRIPTION_ATTRIBUTE;
 import static org.cmdbuild.common.Constants.ID_ATTRIBUTE;
+import static org.cmdbuild.dao.query.clause.DomainHistory.history;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ATTRIBUTES;
+import static org.cmdbuild.servlets.json.CommunicationConstants.BEGIN_DATE;
 import static org.cmdbuild.servlets.json.CommunicationConstants.CARD;
 import static org.cmdbuild.servlets.json.CommunicationConstants.CARDS;
 import static org.cmdbuild.servlets.json.CommunicationConstants.CARD_ID;
@@ -16,11 +22,14 @@ import static org.cmdbuild.servlets.json.CommunicationConstants.COUNT;
 import static org.cmdbuild.servlets.json.CommunicationConstants.DESCRIPTION;
 import static org.cmdbuild.servlets.json.CommunicationConstants.DETAIL_CARD_ID;
 import static org.cmdbuild.servlets.json.CommunicationConstants.DETAIL_CLASS_NAME;
+import static org.cmdbuild.servlets.json.CommunicationConstants.DOMAIN;
 import static org.cmdbuild.servlets.json.CommunicationConstants.DOMAIN_DIRECTION;
 import static org.cmdbuild.servlets.json.CommunicationConstants.DOMAIN_ID;
 import static org.cmdbuild.servlets.json.CommunicationConstants.DOMAIN_LIMIT;
 import static org.cmdbuild.servlets.json.CommunicationConstants.DOMAIN_NAME;
 import static org.cmdbuild.servlets.json.CommunicationConstants.DOMAIN_SOURCE;
+import static org.cmdbuild.servlets.json.CommunicationConstants.ELEMENTS;
+import static org.cmdbuild.servlets.json.CommunicationConstants.END_DATE;
 import static org.cmdbuild.servlets.json.CommunicationConstants.FILTER;
 import static org.cmdbuild.servlets.json.CommunicationConstants.FUNCTION;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ID;
@@ -36,15 +45,20 @@ import static org.cmdbuild.servlets.json.CommunicationConstants.RETRY_WITHOUT_FI
 import static org.cmdbuild.servlets.json.CommunicationConstants.SORT;
 import static org.cmdbuild.servlets.json.CommunicationConstants.START;
 import static org.cmdbuild.servlets.json.CommunicationConstants.STATE;
+import static org.cmdbuild.servlets.json.CommunicationConstants.USER;
 import static org.cmdbuild.servlets.json.schema.Utils.toIterable;
 import static org.cmdbuild.servlets.json.schema.Utils.toMap;
 import static org.cmdbuild.workflow.ProcessAttributes.FlowStatus;
 
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+import org.cmdbuild.common.utils.PagedElements;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entry.LookupValue;
 import org.cmdbuild.dao.entrytype.CMClass;
@@ -54,7 +68,7 @@ import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.exception.ConsistencyException;
 import org.cmdbuild.exception.NotFoundException;
 import org.cmdbuild.logic.GISLogic;
-import org.cmdbuild.logic.commands.GetCardHistory.GetCardHistoryResponse;
+import org.cmdbuild.logic.commands.AbstractGetRelation.RelationInfo;
 import org.cmdbuild.logic.commands.GetRelationHistory.GetRelationHistoryResponse;
 import org.cmdbuild.logic.commands.GetRelationList.DomainWithSource;
 import org.cmdbuild.logic.commands.GetRelationList.GetRelationListResponse;
@@ -62,15 +76,15 @@ import org.cmdbuild.logic.data.QueryOptions;
 import org.cmdbuild.logic.data.QueryOptions.QueryOptionsBuilder;
 import org.cmdbuild.logic.data.access.CMCardWithPosition;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
-import org.cmdbuild.logic.data.access.FetchCardListResponse;
 import org.cmdbuild.logic.data.access.RelationDTO;
 import org.cmdbuild.logic.mapping.json.JsonFilterHelper;
 import org.cmdbuild.model.data.Card;
 import org.cmdbuild.services.json.dto.JsonResponse;
 import org.cmdbuild.servlets.json.JSONBaseWithSpringContext;
-import org.cmdbuild.servlets.json.serializers.JsonGetRelationHistoryResponse;
+import org.cmdbuild.servlets.json.serializers.AbstractJsonResponseSerializer;
 import org.cmdbuild.servlets.json.serializers.JsonGetRelationListResponse;
-import org.cmdbuild.servlets.json.serializers.Serializer;
+import org.cmdbuild.servlets.json.serializers.RelationAttributeSerializer;
+import org.cmdbuild.servlets.json.serializers.RelationAttributeSerializer.Callback;
 import org.cmdbuild.servlets.json.util.FlowStatusFilterElementGetter;
 import org.cmdbuild.servlets.utils.Parameter;
 import org.codehaus.jackson.annotate.JsonProperty;
@@ -79,10 +93,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.google.common.base.Function;
+import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 
 public class ModCard extends JSONBaseWithSpringContext {
 
@@ -97,15 +109,198 @@ public class ModCard extends JSONBaseWithSpringContext {
 		@Override
 		public Card apply(final Card input) {
 			if (!isEmpty(whitelist)) {
-				final Collection<String> collection = Lists.newArrayList(whitelist);
+				final Collection<String> collection = newArrayList(whitelist);
 				final Map<String, Object> map = input.getAttributes();
-				final Map<String, Object> filteredMap = Maps.filterKeys(map, not(in(collection)));
-				final Collection<String> removed = Lists.newArrayList(filteredMap.keySet());
+				final Map<String, Object> filteredMap = filterKeys(map, not(in(collection)));
+				final Collection<String> removed = newArrayList(filteredMap.keySet());
 				for (final String remove : removed) {
 					map.remove(remove);
 				}
 			}
 			return input;
+		}
+
+	}
+
+	private static interface JsonEntry {
+
+		@JsonProperty(ID)
+		Long getId();
+
+		@JsonProperty(BEGIN_DATE)
+		String getBegiDate();
+
+		@JsonProperty(END_DATE)
+		String getEndDate();
+
+		@JsonProperty(USER)
+		String getUser();
+
+	}
+
+	private static interface JsonCard extends JsonEntry {
+
+		@JsonProperty(CLASS_NAME)
+		String getClassName();
+
+		@JsonProperty(DESCRIPTION)
+		String getDescription();
+
+	}
+
+	private static class JsonCardSimple extends AbstractJsonResponseSerializer implements JsonCard {
+
+		private final Card delegate;
+
+		public JsonCardSimple(final Card delegate) {
+			this.delegate = delegate;
+		}
+
+		@Override
+		public Long getId() {
+			return delegate.getId();
+		}
+
+		@Override
+		public String getBegiDate() {
+			return formatDateTime(delegate.getBeginDate());
+		}
+
+		@Override
+		public String getEndDate() {
+			return formatDateTime(delegate.getEndDate());
+		}
+
+		@Override
+		public String getUser() {
+			return delegate.getUser();
+		}
+
+		@Override
+		public String getClassName() {
+			return delegate.getClassName();
+		}
+
+		@Override
+		public String getDescription() {
+			return String.class.cast(delegate.getAttribute(DESCRIPTION_ATTRIBUTE));
+		}
+
+	}
+
+	private static Function<Card, JsonCardSimple> CARD_JSON_CARD = new Function<Card, JsonCardSimple>() {
+
+		@Override
+		public JsonCardSimple apply(final Card input) {
+			return new JsonCardSimple(input);
+		}
+
+	};
+
+	private static interface JsonRelation extends JsonEntry {
+
+		@JsonProperty(DOMAIN)
+		String getDomain();
+
+	}
+
+	private static class JsonRelationSimple extends AbstractJsonResponseSerializer implements JsonRelation {
+
+		private final RelationInfo delegate;
+
+		public JsonRelationSimple(final RelationInfo delegate) {
+			this.delegate = delegate;
+		}
+
+		@Override
+		public Long getId() {
+			return delegate.getRelationId();
+		}
+
+		@Override
+		public String getBegiDate() {
+			return formatDateTime(delegate.getRelationBeginDate());
+		}
+
+		@Override
+		public String getEndDate() {
+			return formatDateTime(delegate.getRelationEndDate());
+		}
+
+		@Override
+		public String getUser() {
+			return delegate.getRelation().getUser();
+		}
+
+		@Override
+		public String getDomain() {
+			return delegate.getQueryDomain().getDomain().getName();
+		}
+
+	}
+
+	private static Function<RelationInfo, JsonRelationSimple> RELATION_INFO_TO_JSON_RELATION = new Function<RelationInfo, JsonRelationSimple>() {
+
+		@Override
+		public JsonRelationSimple apply(final RelationInfo input) {
+			return new JsonRelationSimple(input);
+		}
+
+	};
+
+	private static class JsonElements<T> {
+
+		private final List<T> elements;
+
+		public JsonElements(final Iterable<? extends T> elements) {
+			this.elements = newArrayList(elements);
+		}
+
+		@JsonProperty(ELEMENTS)
+		public List<T> getElements() {
+			return elements;
+		}
+
+		@Override
+		public String toString() {
+			return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
+		}
+
+	}
+
+	private static class JsonRelationFull extends JsonRelationSimple {
+
+		private final RelationInfo delegate;
+		private final RelationAttributeSerializer attributeSerializer;
+
+		public JsonRelationFull(final RelationInfo delegate, final RelationAttributeSerializer attributeSerializer) {
+			super(delegate);
+			this.delegate = delegate;
+			this.attributeSerializer = attributeSerializer;
+		}
+
+		@JsonProperty("source")
+		public Long getSource() {
+			return delegate.getSourceId();
+		}
+
+		@JsonProperty("destination")
+		public Long getDestination() {
+			return delegate.getTargetId();
+		}
+
+		@JsonProperty("values")
+		public Map<String, Object> getValues() {
+			final Map<String, Object> values = newHashMap();
+			attributeSerializer.toClient(delegate, new Callback() {
+
+				@Override
+				public void handle(final String name, final Object value) {
+					values.put(name, value);
+				}
+
+			});
+			return values;
 		}
 
 	}
@@ -131,7 +326,6 @@ public class ModCard extends JSONBaseWithSpringContext {
 	 */
 	@JSONExported
 	public JSONObject getCardList( //
-			final JSONObject serializer, //
 			@Parameter(value = CLASS_NAME, required = false) final String className, //
 			@Parameter(value = FILTER, required = false) final JSONObject filter, //
 			@Parameter(LIMIT) final int limit, //
@@ -158,7 +352,6 @@ public class ModCard extends JSONBaseWithSpringContext {
 	@JSONExported
 	// TODO: check the input parameters and serialization
 	public JSONObject getCardListShort( //
-			final JSONObject serializer, //
 			@Parameter(value = CLASS_NAME) final String className, //
 			@Parameter(LIMIT) final int limit, //
 			@Parameter(START) final int offset, //
@@ -216,7 +409,7 @@ public class ModCard extends JSONBaseWithSpringContext {
 				.filter(filter); //
 
 		final QueryOptions queryOptions = queryOptionsBuilder.build();
-		final FetchCardListResponse response = dataLogic.fetchCards(className, queryOptions);
+		final PagedElements<Card> response = dataLogic.fetchCards(className, queryOptions);
 		return cardSerializer().toClient(response.elements(), response.totalSize());
 	}
 
@@ -234,7 +427,7 @@ public class ModCard extends JSONBaseWithSpringContext {
 				.filter(filter);
 
 		final QueryOptions queryOptions = queryOptionsBuilder.build();
-		final FetchCardListResponse response = dataLogic.fetchCards(className, queryOptions);
+		final PagedElements<Card> response = dataLogic.fetchCards(className, queryOptions);
 		return cardSerializer().toClient(removeUnwantedAttributes(response.elements(), attributes),
 				response.totalSize());
 	}
@@ -261,7 +454,7 @@ public class ModCard extends JSONBaseWithSpringContext {
 				.parameters(toMap(jsonParameters)) //
 				.build();
 
-		final FetchCardListResponse response = systemDataAccessLogic().fetchSQLCards(functionName, queryOptions);
+		final PagedElements<Card> response = systemDataAccessLogic().fetchSQLCards(functionName, queryOptions);
 		return cardSerializer().toClient(response.elements(), response.totalSize(), CARDS);
 	}
 
@@ -270,10 +463,17 @@ public class ModCard extends JSONBaseWithSpringContext {
 			@Parameter(value = CLASS_NAME) final String className, //
 			@Parameter(value = CARD_ID) final Long cardId //
 	) throws JSONException {
-		final DataAccessLogic dataLogic = userDataAccessLogic();
-		final Card fetchedCard = dataLogic.fetchCard(className, cardId);
-
+		final Card fetchedCard = userDataAccessLogic().fetchCard(className, cardId);
 		return cardSerializer().toClient(fetchedCard, CARD);
+	}
+
+	@JSONExported
+	public JSONObject getHistoricCard( //
+			@Parameter(value = CLASS_NAME) final String className, //
+			@Parameter(value = CARD_ID) final Long cardId //
+	) throws JSONException {
+		final Card card = userDataAccessLogic().fetchHistoricCard(className, cardId);
+		return cardSerializer().toClient(card, null);
 	}
 
 	@JSONExported
@@ -327,12 +527,14 @@ public class ModCard extends JSONBaseWithSpringContext {
 
 	private String flowStatus(final CMCard card) {
 		final Object retrievedFlowStatus = card.get(FlowStatus.dbColumnName());
+		final String output;
 		if (retrievedFlowStatus != null) {
 			final Lookup lookupFlowStatus = lookupLogic().getLookup(((LookupValue) retrievedFlowStatus).getId());
-			return lookupFlowStatus.code();
+			output = lookupFlowStatus.code();
 		} else {
-			return null;
+			output = null;
 		}
+		return output;
 	}
 
 	private void addFilterToQueryOption(final JSONObject filter, final QueryOptionsBuilder queryOptionsBuilder) {
@@ -432,7 +634,7 @@ public class ModCard extends JSONBaseWithSpringContext {
 		final QueryOptions queryOptions = QueryOptions.newQueryOption() //
 				.filter(filter) //
 				.build();
-		final FetchCardListResponse response = dataLogic.fetchCards(className, queryOptions);
+		final PagedElements<Card> response = dataLogic.fetchCards(className, queryOptions);
 		if (!confirmed) {
 			final int numberOfCardsToUpdate = response.totalSize() - cards.length();
 			return out.put(COUNT, numberOfCardsToUpdate);
@@ -459,7 +661,7 @@ public class ModCard extends JSONBaseWithSpringContext {
 	@JSONExported
 	public JSONObject deleteCard( //
 			@Parameter(value = "Id") final Long cardId, @Parameter(value = "IdClass") final Long classId)
-			throws JSONException, CMDBException {
+			throws CMDBException {
 		final JSONObject out = new JSONObject();
 		final DataAccessLogic dataLogic = userDataAccessLogic();
 		final CMClass found = dataLogic.findClass(classId);
@@ -473,29 +675,17 @@ public class ModCard extends JSONBaseWithSpringContext {
 	}
 
 	@JSONExported
-	public JSONObject getCardHistory(//
+	public JsonResponse getCardHistory(//
 			@Parameter(value = CLASS_NAME) final String className, //
 			@Parameter(value = CARD_ID) final Long cardId //
-	) throws JSONException {
-
-		final DataAccessLogic dataAccessLogic = userDataAccessLogic();
-		final CMClass targetClass = dataAccessLogic.findClass(className);
-		final Card activeCard = dataAccessLogic.fetchCard(className, Long.valueOf(cardId));
+	) {
 		final Card src = Card.newInstance() //
 				.withClassName(className) //
-				.withId(activeCard.getId()) //
+				.withId(cardId) //
 				.build();
-		final GetRelationHistoryResponse relationResponse = dataAccessLogic.getRelationHistory(src);
-		final JSONObject jsonRelations = new JsonGetRelationHistoryResponse(relationResponse).toJson();
-
-		final GetCardHistoryResponse responseContainingOnlyUpdatedCards = dataAccessLogic.getCardHistory(src);
-		Serializer.serializeCardAttributeHistory( //
-				targetClass, //
-				activeCard, //
-				responseContainingOnlyUpdatedCards, //
-				jsonRelations);
-
-		return jsonRelations;
+		final Iterable<Card> response = userDataAccessLogic().getCardHistory(src, false);
+		return JsonResponse.success(new JsonElements<JsonCardSimple>(from(response) //
+				.transform(CARD_JSON_CARD)));
 	}
 
 	/*
@@ -518,6 +708,30 @@ public class ModCard extends JSONBaseWithSpringContext {
 		final DomainWithSource dom = DomainWithSource.create(domainId, querySource);
 		final GetRelationListResponse out = dataAccesslogic.getRelationListEmptyForWrongId(src, dom);
 		return new JsonGetRelationListResponse(out, domainlimit, relationAttributeSerializer()).toJson();
+	}
+
+	@JSONExported
+	public JsonResponse getRelationsHistory(//
+			@Parameter(value = CLASS_NAME) final String className, //
+			@Parameter(value = CARD_ID) final Long cardId //
+	) {
+		final Card src = Card.newInstance() //
+				.withClassName(className) //
+				.withId(cardId) //
+				.build();
+		final GetRelationHistoryResponse response = userDataAccessLogic().getRelationHistory(src);
+		return JsonResponse.success(new JsonElements<JsonRelationSimple>(from(response) //
+				.transform(RELATION_INFO_TO_JSON_RELATION)));
+	}
+
+	@JSONExported
+	public JsonResponse getHistoricRelation(//
+			@Parameter(value = DOMAIN) final String domain, //
+			@Parameter(value = ID) final Long id //
+	) {
+		final CMDomain _domain = userDataAccessLogic().findDomain(domain);
+		final Optional<RelationInfo> relation = userDataAccessLogic().getRelation(history(_domain), id);
+		return JsonResponse.success(new JsonRelationFull(relation.get(), relationAttributeSerializer()));
 	}
 
 	/**
@@ -559,7 +773,7 @@ public class ModCard extends JSONBaseWithSpringContext {
 
 	@SuppressWarnings("unchecked")
 	private Map<String, Object> extractOnlyRelationAttributes(final JSONObject attributes) throws JSONException {
-		final Map<String, Object> relationAttributeToValue = Maps.newHashMap();
+		final Map<String, Object> relationAttributeToValue = newHashMap();
 		final Iterator<String> iterator = attributes.keys();
 		while (iterator.hasNext()) {
 			final String attributeName = iterator.next();
@@ -577,7 +791,7 @@ public class ModCard extends JSONBaseWithSpringContext {
 	}
 
 	private Map<Long, String> extractCardsFromJsonArray(final JSONArray cards) throws JSONException {
-		final Map<Long, String> cardIdToClassName = Maps.newHashMap();
+		final Map<Long, String> cardIdToClassName = newHashMap();
 		for (int i = 0; i < cards.length(); i++) {
 			final JSONObject card = cards.getJSONObject(i);
 			final Long cardId = card.getLong("cardId");
@@ -615,7 +829,7 @@ public class ModCard extends JSONBaseWithSpringContext {
 	public void deleteRelation( //
 			@Parameter(DOMAIN_NAME) final String domainName, //
 			@Parameter(RELATION_ID) final Long relationId //
-	) throws JSONException {
+	) {
 		final DataAccessLogic dataAccessLogic = userDataAccessLogic();
 		dataAccessLogic.deleteRelation(domainName, relationId);
 	}
@@ -694,66 +908,16 @@ public class ModCard extends JSONBaseWithSpringContext {
 			}
 		};
 
-		final Collection<Card> cardsToCheck = Lists.newArrayList();
+		final Collection<Card> cardsToCheck = newArrayList();
 		for (int i = 0; i < cardsIdArray.length(); i++) {
 			final Card card = dataLogic.fetchCard(className, Long.parseLong(String.valueOf(cardsIdArray.get(i))));
 			cardsToCheck.add(card);
 		}
-		final Iterable<Card> alreadyRelatedCards = Iterables.filter(cardsToCheck, isCardAlreadyRelated);
-		final Iterable<JsonCard> alreadyRelatedJsonCards = from(alreadyRelatedCards) //
-				.transform(CARD_TO_JSONCARD).toList();
+		final Iterable<Card> alreadyRelatedCards = filter(cardsToCheck, isCardAlreadyRelated);
+		final Iterable<? extends JsonCard> alreadyRelatedJsonCards = from(alreadyRelatedCards) //
+				.transform(CARD_JSON_CARD) //
+				.toList();
 		return JsonResponse.success(alreadyRelatedJsonCards);
-	}
-
-	private static Function<Card, JsonCard> CARD_TO_JSONCARD = new Function<Card, JsonCard>() {
-
-		@Override
-		public JsonCard apply(final Card input) {
-			return new JsonCard(input);
-		}
-	};
-
-	private static class JsonCard {
-
-		private Long id;
-		private String className;
-		private String description;
-
-		public JsonCard(final Card card) {
-			this.id = card.getId();
-			this.className = card.getClassName();
-			this.description = String.class.cast(card.getAttribute(DESCRIPTION_ATTRIBUTE));
-		}
-
-		@JsonProperty(ID)
-		public Long getId() {
-			return id;
-		}
-
-		@JsonProperty(DESCRIPTION)
-		public String getDescription() {
-			return description;
-		}
-
-		@JsonProperty(CLASS_NAME)
-		public String getClassName() {
-			return className;
-		}
-
-		@JsonProperty(ID)
-		public void setId(final Long id) {
-			this.id = id;
-		}
-
-		@JsonProperty(CLASS_NAME)
-		public void setClassName(final String className) {
-			this.className = className;
-		}
-
-		@JsonProperty(DESCRIPTION)
-		public void setDescription(final String description) {
-			this.description = description;
-		}
 	}
 
 }

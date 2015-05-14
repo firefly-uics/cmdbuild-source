@@ -21,7 +21,6 @@ import org.cmdbuild.common.utils.PagedElements;
 import org.cmdbuild.config.WorkflowConfiguration;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.view.CMDataView;
-import org.cmdbuild.data.store.lookup.LookupStore;
 import org.cmdbuild.exception.CMDBWorkflowException;
 import org.cmdbuild.exception.CMDBWorkflowException.WorkflowExceptionType;
 import org.cmdbuild.exception.ConsistencyException.ConsistencyExceptionType;
@@ -53,8 +52,6 @@ class DefaultWorkflowLogic implements WorkflowLogic {
 	private final PrivilegeContext privilegeContext;
 	private final QueryableUserWorkflowEngine workflowEngine;
 	private final CMDataView dataView;
-	private final CMDataView systemDataView;
-	private final LookupStore lookupStore;
 	private final WorkflowConfiguration configuration;
 	private final FilesStore filesStore;
 
@@ -62,16 +59,12 @@ class DefaultWorkflowLogic implements WorkflowLogic {
 			final PrivilegeContext privilegeContext, //
 			final QueryableUserWorkflowEngine workflowEngine, //
 			final CMDataView dataView, //
-			final CMDataView systemDataView, //
-			final LookupStore lookupStore, //
 			final WorkflowConfiguration configuration, //
 			final FilesStore filesStore //
 	) {
 		this.privilegeContext = privilegeContext;
 		this.workflowEngine = workflowEngine;
 		this.dataView = dataView;
-		this.systemDataView = systemDataView;
-		this.lookupStore = lookupStore;
 		this.configuration = configuration;
 		this.filesStore = filesStore;
 	}
@@ -100,12 +93,10 @@ class DefaultWorkflowLogic implements WorkflowLogic {
 		final PagedElements<UserProcessInstance> fetchedProcesses = workflowEngine.query(processClass.getName(),
 				queryOptions);
 		final Iterable<UserProcessInstance> processes = ForeignReferenceResolver.<UserProcessInstance> newInstance() //
-				.withSystemDataView(systemDataView) //
-				.withEntryType(processClass) //
 				.withEntries(fetchedProcesses) //
 				.withEntryFiller(new ProcessEntryFiller()) //
-				.withLookupStore(lookupStore) //
-				.withSerializer(new AbstractSerializer<UserProcessInstance>(){}) //
+				.withSerializer(new AbstractSerializer<UserProcessInstance>() {
+				}) //
 				.build() //
 				.resolve();
 		return new PagedElements<UserProcessInstance>(processes, fetchedProcesses.totalSize());
@@ -462,11 +453,13 @@ class DefaultWorkflowLogic implements WorkflowLogic {
 	private UserProcessInstance updateActivity(final UserActivityInstance activityInstance, final Map<String, ?> vars,
 			final Map<String, Object> widgetSubmission, final boolean advance) throws CMWorkflowException {
 		workflowEngine.updateActivity(activityInstance, vars, widgetSubmission);
+		final UserProcessInstance output;
 		if (advance) {
-			return workflowEngine.advanceActivity(activityInstance);
+			output = workflowEngine.advanceActivity(activityInstance);
 		} else {
-			return activityInstance.getProcessInstance();
+			output = activityInstance.getProcessInstance();
 		}
+		return output;
 	}
 
 	@Override

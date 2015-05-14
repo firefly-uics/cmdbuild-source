@@ -14,13 +14,11 @@ import static org.cmdbuild.spring.SpringIntegrationUtils.applicationContext;
 
 import java.text.SimpleDateFormat;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
 import org.cmdbuild.auth.acl.CMGroup;
 import org.cmdbuild.auth.user.CMUser;
-import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dms.DmsConfiguration;
 import org.cmdbuild.dms.Metadata;
@@ -30,19 +28,11 @@ import org.cmdbuild.exception.DmsException;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.auth.AuthenticationLogic.GroupInfo;
 import org.cmdbuild.logic.dms.DmsLogic;
-import org.cmdbuild.model.data.Card;
 import org.cmdbuild.notification.Notifier;
 import org.cmdbuild.services.store.report.Report;
-import org.cmdbuild.servlets.json.serializers.JsonHistory.HistoryItem;
-import org.cmdbuild.servlets.json.serializers.JsonHistory.ValueAndDescription;
-import org.joda.time.DateTime;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import com.google.common.collect.Maps;
-
-;
 
 public class Serializer {
 
@@ -193,112 +183,6 @@ public class Serializer {
 			userList.put(Serializer.serialize(user));
 		}
 		return userList;
-	}
-
-	// public static JSONObject serializeProcessAttributeHistory(final ICard
-	// card, final CardQuery cardQuery)
-	// throws JSONException {
-	// final JsonProcessAttributeHistoryFormatter formatter = new
-	// JsonProcessAttributeHistoryFormatter();
-	// formatter.addCard(card);
-	// for (final ICard historyCard : cardQuery) {
-	// final String processCode = historyCard.getCode();
-	// if (processCode != null && processCode.length() != 0) {
-	// formatter.addCard(historyCard);
-	// }
-	// }
-	// final JSONObject jsonResponse = new JSONObject();
-	// jsonResponse.put("rows", formatter.toJson());
-	// return jsonResponse;
-	// }
-
-	public static void serializeCardAttributeHistory( //
-			final CMClass targetClass, //
-			final Card currentCard, //
-			final Iterable<Card> historyCards, //
-			final JSONObject jsonOutput //
-	) throws JSONException {
-		final JsonCardAttributeHistoryFormatter formatter = new JsonCardAttributeHistoryFormatter(targetClass);
-		for (final Card historyCard : historyCards) {
-			formatter.addCard(historyCard);
-		}
-		formatter.addCard(currentCard);
-		final JSONArray rows = jsonOutput.getJSONArray("rows");
-		formatter.addJsonHistoryItems(rows);
-	}
-
-	private static class CardHistoryItem extends AbstractJsonResponseSerializer implements HistoryItem {
-
-		private final CMClass targetClass;
-		protected final Card card;
-
-		public CardHistoryItem(final CMClass targetClass, final Card card) {
-			this.targetClass = targetClass;
-			this.card = card;
-		}
-
-		@Override
-		public Long getId() {
-			return card.getId();
-		}
-
-		@Override
-		public long getInstant() {
-			return card.getBeginDate().getMillis();
-		}
-
-		@Override
-		public Map<String, ValueAndDescription> getAttributes() {
-			final Map<String, ValueAndDescription> map = Maps.newLinkedHashMap();
-			for (final CMAttribute attribute : targetClass.getActiveAttributes()) {
-				try {
-					final String name = attribute.getName();
-					final String description = attribute.getDescription();
-					final Object value = javaToJsonValue(attribute.getType(), card.getAttribute(name));
-					map.put(name, new ValueAndDescription(value, description));
-				} catch (final JSONException ex) {
-					// skip
-				}
-			}
-			return map;
-		}
-
-		@Override
-		public Map<String, Object> getExtraAttributes() {
-			final Map<String, Object> map = Maps.newLinkedHashMap();
-			map.put("_AttrHist", true);
-			map.put("User", card.getUser());
-			map.put("Code", card.getAttribute("Code"));
-			map.put("BeginDate", formatDateTime(card.getBeginDate()));
-
-			final Date endDateForSorting;
-			if (card.getEndDate() != null) {
-				final DateTime endDateTime = card.getEndDate();
-				map.put("EndDate", formatDateTime(endDateTime));
-				endDateForSorting = endDateTime.toDate();
-			} else {
-				endDateForSorting = new Date();
-			}
-			map.put("_EndDate", endDateForSorting.getTime());
-			return map;
-		}
-
-		@Override
-		public boolean isInOutput() {
-			return true;
-		}
-	}
-
-	private static class JsonCardAttributeHistoryFormatter extends JsonHistory {
-
-		public JsonCardAttributeHistoryFormatter(final CMClass targetClass) {
-			super(targetClass);
-		}
-
-		public void addCard(final Card card) {
-			addHistoryItem(new CardHistoryItem(targetClass, card));
-		}
-
 	}
 
 	public static void addAttachmentsData(final JSONObject jsonTable, final CMClass cmClass, final DmsLogic dmsLogic,

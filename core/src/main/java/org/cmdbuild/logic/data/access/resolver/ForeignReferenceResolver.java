@@ -1,17 +1,12 @@
 package org.cmdbuild.logic.data.access.resolver;
 
 import static com.google.common.collect.FluentIterable.from;
-import static com.google.common.collect.Maps.newHashMap;
 
 import java.util.Map;
-import java.util.Set;
 
-import org.cmdbuild.common.Builder;
+import org.apache.commons.lang3.builder.Builder;
 import org.cmdbuild.dao.entry.CMEntry;
 import org.cmdbuild.dao.entrytype.CMAttribute;
-import org.cmdbuild.dao.entrytype.CMClass;
-import org.cmdbuild.dao.view.CMDataView;
-import org.cmdbuild.data.store.lookup.LookupStore;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Maps;
@@ -39,26 +34,13 @@ public class ForeignReferenceResolver<T extends CMEntry> {
 	public static class ForeignReferenceResolverBuilder<T extends CMEntry> implements
 			Builder<ForeignReferenceResolver<T>> {
 
-		private CMDataView systemDataView;
-		private CMClass entryType;
 		private Iterable<T> entries;
 		public EntryFiller<T> entryFiller;
-		public LookupStore lookupStore;
 		public AbstractSerializer<T> serializer;
 
 		@Override
 		public ForeignReferenceResolver<T> build() {
 			return new ForeignReferenceResolver<T>(this);
-		}
-
-		public ForeignReferenceResolverBuilder<T> withSystemDataView(final CMDataView value) {
-			systemDataView = value;
-			return this;
-		}
-
-		public ForeignReferenceResolverBuilder<T> withEntryType(final CMClass value) {
-			entryType = value;
-			return this;
 		}
 
 		public ForeignReferenceResolverBuilder<T> withEntries(final Iterable<T> value) {
@@ -68,11 +50,6 @@ public class ForeignReferenceResolver<T extends CMEntry> {
 
 		public ForeignReferenceResolverBuilder<T> withEntryFiller(final EntryFiller<T> value) {
 			entryFiller = value;
-			return this;
-		}
-
-		public ForeignReferenceResolverBuilder<T> withLookupStore(final LookupStore value) {
-			lookupStore = value;
 			return this;
 		}
 
@@ -87,22 +64,13 @@ public class ForeignReferenceResolver<T extends CMEntry> {
 		return new ForeignReferenceResolverBuilder<T>();
 	}
 
-	private final CMDataView systemDataView;
-	private final CMClass entryType;
 	private final Iterable<T> entries;
 	private final EntryFiller<T> entryFiller;
-	private final LookupStore lookupStore;
 	private final AbstractSerializer<T> serializer;
 
-	private final Map<CMClass, Set<Long>> idsByEntryType = newHashMap();
-	private final Map<Long, String> representationsById = newHashMap();
-
 	public ForeignReferenceResolver(final ForeignReferenceResolverBuilder<T> builder) {
-		this.systemDataView = builder.systemDataView;
-		this.entryType = (builder.entryType == null) ? builder.systemDataView.findClass("Class") : builder.entryType;
 		this.entries = builder.entries;
 		this.entryFiller = builder.entryFiller;
-		this.lookupStore = builder.lookupStore;
 		this.serializer = builder.serializer;
 	}
 
@@ -118,14 +86,16 @@ public class ForeignReferenceResolver<T extends CMEntry> {
 
 						for (final CMAttribute attribute : input.getType().getAllAttributes()) {
 							final String attributeName = attribute.getName();
-							
+
 							final Object rawValue;
 							try {
 								rawValue = input.get(attributeName);
-							} catch (Throwable e) {
-								// This could happen for ImportCSV because
-								// the fake card has no the whole attributes
-								// of the relative CMClass
+							} catch (final Throwable e) {
+								/*
+								 * This could happen for ImportCSV because the
+								 * fake card has no the whole attributes of the
+								 * relative CMClass
+								 */
 								continue;
 							}
 
@@ -140,7 +110,6 @@ public class ForeignReferenceResolver<T extends CMEntry> {
 
 							serializer.setRawValue(rawValue);
 							serializer.setAttributeName(attributeName);
-							serializer.setLookupStore(lookupStore);
 							serializer.setEntryFiller(entryFiller);
 							attribute.getType().accept(serializer);
 

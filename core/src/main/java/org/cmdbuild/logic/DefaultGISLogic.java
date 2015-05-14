@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.fileupload.FileItem;
+import org.cmdbuild.common.utils.PagedElements;
 import org.cmdbuild.config.GisConfiguration;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
@@ -15,7 +16,6 @@ import org.cmdbuild.logic.commands.AbstractGetRelation.RelationInfo;
 import org.cmdbuild.logic.commands.GetRelationList.DomainWithSource;
 import org.cmdbuild.logic.data.QueryOptions;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
-import org.cmdbuild.logic.data.access.FetchCardListResponse;
 import org.cmdbuild.model.data.Card;
 import org.cmdbuild.model.domainTree.DomainTreeCardNode;
 import org.cmdbuild.model.domainTree.DomainTreeNode;
@@ -394,7 +394,7 @@ public class DefaultGISLogic implements GISLogic {
 
 			nodes.put(rootCardNode.getCardId(), rootCardNode);
 
-			final FetchCardListResponse domainTreeCards = dataAccesslogic.fetchCards( //
+			final PagedElements<Card> domainTreeCards = dataAccesslogic.fetchCards( //
 					root.getTargetClassName(), //
 					QueryOptions.newQueryOption().build() //
 					);
