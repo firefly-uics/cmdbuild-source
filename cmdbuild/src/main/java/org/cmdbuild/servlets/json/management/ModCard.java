@@ -143,19 +143,6 @@ public class ModCard extends JSONBaseWithSpringContext {
 
 	}
 
-	private static class JsonEntryComparator<T extends JsonEntry> implements Comparator<T> {
-
-		public static <T extends JsonEntry> JsonEntryComparator<T> of(final Class<T> type) {
-			return new JsonEntryComparator<T>();
-		}
-
-		@Override
-		public int compare(T o1, T o2) {
-			return o1.getBegiDate().compareTo(o2.getBegiDate());
-		}
-
-	};
-
 	private static interface JsonCard extends JsonEntry {
 
 		@JsonProperty(CLASS_NAME)
@@ -712,12 +699,18 @@ public class ModCard extends JSONBaseWithSpringContext {
 				.withId(cardId) //
 				.build();
 		final Iterable<Card> response = userDataAccessLogic().getCardHistory(src, false);
-		final Iterable<JsonCardSimple> elements = from(response) //
-				.transform(CARD_JSON_CARD);
-		final Iterable<JsonCardSimple> ordered = from(JsonEntryComparator.of(JsonCardSimple.class)) //
+		final Iterable<Card> ordered = from( //
+				new Comparator<Card>() {
+
+					@Override
+					public int compare(Card o1, Card o2) {
+						return o1.getBeginDate().compareTo(o2.getBeginDate());
+					}
+
+				}) //
 				.reverse() //
-				.immutableSortedCopy(elements);
-		return JsonResponse.success(new JsonElements<JsonCardSimple>(ordered));
+				.immutableSortedCopy(response);
+		return JsonResponse.success(new JsonElements<JsonCardSimple>(from(ordered).transform(CARD_JSON_CARD)));
 	}
 
 	/*
@@ -752,12 +745,19 @@ public class ModCard extends JSONBaseWithSpringContext {
 				.withId(cardId) //
 				.build();
 		final GetRelationHistoryResponse response = userDataAccessLogic().getRelationHistory(src);
-		final Iterable<JsonRelationSimple> elements = from(response) //
-				.transform(RELATION_INFO_TO_JSON_RELATION);
-		final Iterable<JsonRelationSimple> ordered = from(JsonEntryComparator.of(JsonRelationSimple.class)) //
+		final Iterable<RelationInfo> ordered = from( //
+				new Comparator<RelationInfo>() {
+
+					@Override
+					public int compare(RelationInfo o1, RelationInfo o2) {
+						return o1.getRelationBeginDate().compareTo(o2.getRelationBeginDate());
+					}
+
+				}) //
 				.reverse() //
-				.immutableSortedCopy(elements);
-		return JsonResponse.success(new JsonElements<JsonRelationSimple>(ordered));
+				.immutableSortedCopy(response);
+		return JsonResponse.success(new JsonElements<JsonRelationSimple>(from(ordered).transform(
+				RELATION_INFO_TO_JSON_RELATION)));
 	}
 
 	@JSONExported
