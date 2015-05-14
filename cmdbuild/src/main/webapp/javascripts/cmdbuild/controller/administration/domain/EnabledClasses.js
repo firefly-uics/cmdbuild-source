@@ -18,6 +18,7 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
+			'getDisabledTreeVisit',
 			'onDomainEnabledClassesAbortButtonClick',
 			'onDomainEnabledClassesAddButtonClick',
 			'onDomainEnabledClassesModifyButtonClick',
@@ -145,23 +146,41 @@
 		},
 
 		/**
-		 * @param {Object} node
-		 * @param {Array} destinationArray
+		 * @param {Object} parametersObject
+		 * @param {Object} parametersObject.node
+		 * @param {Array} parametersObject.destinationArray
 		 */
-		getEnabledTreeVisit: function(node, destinationArray) {
-			node.eachChild(function(childNode) {
-				if (!childNode.get(CMDBuild.core.proxy.CMProxyConstants.ENABLED))
-					destinationArray.push(childNode.get(CMDBuild.core.proxy.CMProxyConstants.NAME));
+		getDisabledTreeVisit: function(parametersObject) {
+			if (
+				!Ext.isEmpty(parametersObject)
+				&& !Ext.isEmpty(parametersObject.node)
+				&& Ext.isArray(parametersObject.destinationArray)
+			) {
+				var node = parametersObject.node;
+				var destinationArray = parametersObject.destinationArray;
 
-				if (!Ext.isEmpty(node.hasChildNodes()))
-					this.getEnabledTreeVisit(childNode, destinationArray);
-			}, this);
+				node.eachChild(function(childNode) {
+					if (!childNode.hasChildNodes() && !childNode.get(CMDBuild.core.proxy.CMProxyConstants.ENABLED))
+						destinationArray.push(childNode.get(CMDBuild.core.proxy.CMProxyConstants.NAME));
+
+					if (node.hasChildNodes())
+						this.getDisabledTreeVisit({
+							node: childNode,
+							destinationArray: destinationArray
+						});
+				}, this);
+			} else {
+				_error('wrong getDisabledTreeVisit parametersObject', this);
+			}
 		},
 
 		onDomainEnabledClassesAbortButtonClick: function() {
-			this.view.buildTrees();
-
-			this.view.setDisabledModify(true, true, true);
+			if (Ext.isEmpty(this.cmfg('selectedDomainGet'))) {
+				this.view.reset();
+				this.view.setDisabledModify(true, true, true);
+			} else {
+				this.onDomainSelected(this.cmfg('selectedDomainGet'));
+			}
 		},
 
 		onDomainEnabledClassesAddButtonClick: function() {

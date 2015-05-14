@@ -31,6 +31,10 @@
 		rootVisible: false,
 		sortableColumns: false, // BUGGED in ExtJs 4.2, workaround setting sortable: false to columns
 
+		viewConfig: {
+			markDirty: false // Workaround to avoid dirty mark on hidden checkColumn cells
+		},
+
 		initComponent: function() {
 			Ext.apply(this, {
 				columns: [
