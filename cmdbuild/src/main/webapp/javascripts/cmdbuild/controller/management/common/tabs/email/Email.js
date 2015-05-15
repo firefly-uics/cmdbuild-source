@@ -670,36 +670,38 @@
 					return false;
 				}, this);
 
-				var templateData = Ext.apply({}, recordTemplate.getData(), recordTemplate.get(CMDBuild.core.proxy.CMProxyConstants.VARIABLES));
-				var xaVars = Ext.apply({}, templateData, record.getData());
+				if (!Ext.isEmpty(recordTemplate)) {
+					var templateData = Ext.apply({}, recordTemplate.getData(), recordTemplate.get(CMDBuild.core.proxy.CMProxyConstants.VARIABLES));
+					var xaVars = Ext.apply({}, templateData, record.getData());
 
-				var templateResolver = new CMDBuild.Management.TemplateResolver({
-					clientForm: this.parentDelegate.getFormForTemplateResolver(),
-					xaVars: xaVars,
-					serverVars: CMDBuild.controller.management.common.widgets.CMWidgetController.getTemplateResolverServerVars(
-						this.selectedEntity.get(CMDBuild.core.proxy.CMProxyConstants.ENTITY)
-					)
-				});
+					var templateResolver = new CMDBuild.Management.TemplateResolver({
+						clientForm: this.parentDelegate.getFormForTemplateResolver(),
+						xaVars: xaVars,
+						serverVars: CMDBuild.controller.management.common.widgets.CMWidgetController.getTemplateResolverServerVars(
+							this.selectedEntity.get(CMDBuild.core.proxy.CMProxyConstants.ENTITY)
+						)
+					});
 
-				templateResolver.resolveTemplates({
-					attributes: Ext.Object.getKeys(xaVars),
-					callback: function(values, ctx) {
-						for (var key in values)
-							record.set(key, values[key]);
+					templateResolver.resolveTemplates({
+						attributes: Ext.Object.getKeys(xaVars),
+						callback: function(values, ctx) {
+							for (var key in values)
+								record.set(key, values[key]);
 
-						if (me.checkCondition(values, templateResolver)) {
-							_msg('Email with subject "' + values[CMDBuild.core.proxy.CMProxyConstants.SUBJECT] + '" regenerated');
+							if (me.checkCondition(values, templateResolver)) {
+								_msg('Email with subject "' + values[CMDBuild.core.proxy.CMProxyConstants.SUBJECT] + '" regenerated');
 
-							CMDBuild.controller.management.common.tabs.email.Email.trafficLightSlotBuild(record, regenerationTrafficLightArray);
+								CMDBuild.controller.management.common.tabs.email.Email.trafficLightSlotBuild(record, regenerationTrafficLightArray);
 
-							me.controllerGrid.editRecord(record, regenerationTrafficLightArray);
-						} else {
-							me.controllerGrid.removeRecord(record);
+								me.controllerGrid.editRecord(record, regenerationTrafficLightArray);
+							} else {
+								me.controllerGrid.removeRecord(record);
+							}
+
+							me.bindLocalDepsChangeEvent(record, templateResolver, me);
 						}
-
-						me.bindLocalDepsChangeEvent(record, templateResolver, me);
-					}
-				});
+					});
+				}
 			}
 		},
 
