@@ -122,7 +122,7 @@
 			});
 
 			Ext.apply(this, {
-				plugins: Ext.create('CMDBuild.SetValueOnLoadPlugin'),
+//				plugins: Ext.create('CMDBuild.SetValueOnLoadPlugin'),
 				fieldLabel: attribute.description || attribute.name,
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				name: attribute.name,
@@ -144,7 +144,7 @@
 		},
 
 		listeners: {
-			// Force store load and manage preselectIfUnique metadata
+			// Force store load and Manage preselectIfUnique metadata without CQL filter
 			beforerender: function(combo, eOpts) {
 				combo.getStore().load({
 					scope: this,
@@ -153,7 +153,7 @@
 							!Ext.Object.isEmpty(this.attribute)
 							&& !Ext.Object.isEmpty(this.attribute.meta)
 							&& this.attribute.meta['system.type.reference.' + CMDBuild.core.proxy.CMProxyConstants.PRESELECT_IF_UNIQUE] === 'true'
-							&& records.length == 1
+							&& combo.getStore().getCount() == 1
 						) {
 							combo.setValue(records[0].get('Id'));
 						}
@@ -264,7 +264,18 @@
 
 					var me = this;
 					store.load({
-						callback: function() {
+						scope: this,
+						callback: function(records, operation, success) {
+							// Manage preselectIfUnique metadata with CQL filter
+							if (
+								!Ext.Object.isEmpty(this.attribute)
+								&& !Ext.Object.isEmpty(this.attribute.meta)
+								&& this.attribute.meta['system.type.reference.' + CMDBuild.core.proxy.CMProxyConstants.PRESELECT_IF_UNIQUE] === 'true'
+								&& this.getStore().getCount() == 1
+							) {
+								this.setValue(records[0].get('Id'));
+							}
+
 							// Fail the validation if the current selection is not in the new filter
 							me.validate();
 							afterStoreIsLoaded();
