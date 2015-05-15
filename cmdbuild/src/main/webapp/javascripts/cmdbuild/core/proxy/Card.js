@@ -15,15 +15,11 @@
 		 * @property {Object} params
 		 */
 		getCardHistory: function(params) {
-			var headers = {};
-			headers['CMDBuild-Localized'] = true;
-
 			return Ext.create('Ext.data.Store', {
 				autoLoad: false,
 				proxy: {
 					type: 'ajax',
 					url: CMDBuild.core.proxy.CMProxyUrlIndex.card.getCardHistory,
-					headers: headers,
 					reader: {
 						type: 'json',
 						root: 'rows'
