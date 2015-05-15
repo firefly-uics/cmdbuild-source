@@ -61,7 +61,6 @@
 			var params = {};
 			params[parameterNames.ACTIVE] = true;
 			params[parameterNames.CLASS_NAME] = _CMCache.getEntryTypeNameById(classId);
-			params[CMDBuild.core.proxy.CMProxyConstants.LOCALIZED] = true;
 
 			function success(response, options, result) {
 				var attributes = result.attributes;

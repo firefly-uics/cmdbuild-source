@@ -60,6 +60,8 @@
 
 		statics: {
 			init: function() {
+				Ext.create('CMDBuild.core.Data'); // Data connections configuration
+
 				Ext.tip.QuickTipManager.init();
 				// Fix a problem of Ext 4.2 tooltips width
 				// See http://www.sencha.com/forum/showthread.php?260106-Tooltips-on-forms-and-grid-are-not-resizing-to-the-size-of-the-text/page3#24
@@ -262,7 +264,6 @@
 
 				params = {};
 				params[CMDBuild.core.proxy.CMProxyConstants.ACTIVE] = true;
-				params[CMDBuild.core.proxy.CMProxyConstants.LOCALIZED] = true;
 
 				CMDBuild.ServiceProxy.classes.read({
 					params: params,
@@ -272,12 +273,7 @@
 						classesAccordion.updateStore();
 						processAccordion.updateStore();
 
-						// Do a separate request for the widgets because, at this time it is not possible serialize them with the classes
-						params = {};
-						params[CMDBuild.core.proxy.CMProxyConstants.LOCALIZED] = true;
-
 						CMDBuild.ServiceProxy.CMWidgetConfiguration.read({
-							params: params,
 							scope: this,
 							success: function(response, options, decoded) {
 								// A day I'll can do a request to have only the active, now the cache discards the inactive if the flag onlyActive is true
@@ -289,7 +285,6 @@
 						// To fill the menu is needed that the classes are already loaded
 						params = {};
 						params[CMDBuild.core.proxy.CMProxyConstants.GROUP_NAME] = CMDBuild.Runtime.DefaultGroupName;
-						params[CMDBuild.core.proxy.CMProxyConstants.LOCALIZED] = true;
 
 						CMDBuild.ServiceProxy.menu.read({
 							params: params,
@@ -299,11 +294,7 @@
 							callback: reqBarrier.getCallback()
 						});
 
-						params = {};
-						params[CMDBuild.core.proxy.CMProxyConstants.LOCALIZED] = true;
-
 						_CMProxy.dataView.read({
-							params: params,
 							success: function(response, options, decoded) {
 								dataViewAccordion.updateStore(decoded.views);
 							},
@@ -329,7 +320,6 @@
 
 				params = {};
 				params[CMDBuild.core.proxy.CMProxyConstants.ACTIVE] = true;
-				params[CMDBuild.core.proxy.CMProxyConstants.LOCALIZED] = true;
 
 				CMDBuild.ServiceProxy.administration.domain.list({ //TODO change 'administration'
 					params: params,
@@ -348,11 +338,7 @@
 					callback: reqBarrier.getCallback()
 				});
 
-				params = {};
-				params[CMDBuild.core.proxy.CMProxyConstants.LOCALIZED] = true;
-
 				CMDBuild.ServiceProxy.lookup.readAllTypes({
-					params: params,
 					success : function(response, options, decoded) {
 						_CMCache.addLookupTypes(decoded);
 					},

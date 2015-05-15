@@ -158,6 +158,7 @@
 		LOCAL: 'local',
 		LOCALIZATION: 'localization',
 		LOCALIZED: 'localized',
+		LOCALIZED_HEADER_KEY: 'CMDBuild-Localized',
 		LONGITUDE: 'lon',
 		LOOKUP: 'lookup',
 		MAP_LATITATUDE:'mapLatitude',

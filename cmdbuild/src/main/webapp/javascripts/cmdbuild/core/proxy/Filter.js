@@ -68,9 +68,6 @@
 						idProperty: 'id',
 						type: 'json',
 						root: 'filters'
-					},
-					extraParams: {
-						localized: true
 					}
 				},
 				sorters: [{
@@ -99,8 +96,7 @@
 						totalProperty: 'count'
 					},
 					extraParams: {
-						className: className,
-						localized: true
+						className: className
 					}
 				},
 				sorters: [{
