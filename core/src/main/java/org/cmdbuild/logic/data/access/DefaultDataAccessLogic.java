@@ -102,7 +102,6 @@ import com.google.common.collect.Ordering;
 public class DefaultDataAccessLogic implements DataAccessLogic {
 
 	private static final String ID_ATTRIBUTE = org.cmdbuild.dao.driver.postgres.Const.ID_ATTRIBUTE;
-	private static final String CURRENT_ID = org.cmdbuild.dao.driver.postgres.Const.CURRENT_ID_ATTRIBUTE;
 
 	private static final Alias DOM_ALIAS = name("DOM");
 	private static final Alias DST_ALIAS = name("DST");
@@ -219,7 +218,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 	@Override
 	public Card fetchHistoricCard(final String className, final Long cardId) {
 		final CMClass entryType = dataView.findClass(className);
-		return from(asList(fetchCMCard(history(entryType), CURRENT_ID, cardId))) //
+		return from(asList(fetchCMCard(history(entryType), cardId))) //
 				.transform(CMCARD_TO_CARD) //
 				.first() //
 				.get();
@@ -251,7 +250,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return only active classes (all classes, included superclasses, simple
 	 *         classes and process classes).
 	 */
@@ -262,7 +261,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return active and non active domains
 	 */
 	@Override
@@ -271,7 +270,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return only active domains
 	 */
 	@Override
@@ -315,7 +314,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return a predicate that will filter classes whose mode does not start
 	 *         with sys... (e.g. sysread or syswrite)
 	 */
@@ -364,7 +363,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 	/**
 	 * Fetches the card with the specified Id from the class with the specified
 	 * name
-	 * 
+	 *
 	 * @param className
 	 * @param cardId
 	 * @throws NoSuchElementException
@@ -383,14 +382,14 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 	@Override
 	public CMCard fetchCMCard(final String className, final Long cardId) {
 		final CMClass entryType = dataView.findClass(className);
-		return fetchCMCard(entryType, ID_ATTRIBUTE, cardId);
+		return fetchCMCard(entryType, cardId);
 	}
 
-	private CMCard fetchCMCard(final CMClass entryType, final String attribute, final Long cardId) {
+	private CMCard fetchCMCard(final CMClass entryType, final Long cardId) {
 		try {
 			final CMQueryRow row = dataView.select(anyAttribute(entryType)) //
 					.from(entryType) //
-					.where(condition(attribute(entryType, attribute), eq(cardId))) //
+					.where(condition(attribute(entryType, ID_ATTRIBUTE), eq(cardId))) //
 					.run() //
 					.getOnlyRow();
 			/**
@@ -465,7 +464,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 
 	/**
 	 * Retrieve the cards of a given class that matches the given query options
-	 * 
+	 *
 	 * @param className
 	 * @param queryOptions
 	 * @return a FetchCardListResponse
@@ -553,7 +552,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 	/**
 	 * Execute a given SQL function to select a set of rows Return these rows as
 	 * fake cards
-	 * 
+	 *
 	 * @param functionName
 	 * @param queryOptions
 	 * @return
@@ -592,7 +591,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param className
 	 * @param cardId
 	 * @param queryOptions
@@ -837,7 +836,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 			 * Usually null == null is false. But, here we wanna know if the
 			 * value is been changed, so if it was null, and now is still null,
 			 * the attribute value is not changed.
-			 * 
+			 *
 			 * Do you know that the CardReferences (value of reference and
 			 * lookup attributes) sometimes are null and sometimes is a
 			 * null-object... Cool! isn't it? So compare them could be a little
@@ -910,7 +909,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 
 	/**
 	 * Tells if the given class is a subclass of Activity
-	 * 
+	 *
 	 * @return {@code true} if if the given class is a subclass of Activity,
 	 *         {@code false} otherwise
 	 */
