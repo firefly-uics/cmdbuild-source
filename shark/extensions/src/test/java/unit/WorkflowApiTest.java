@@ -14,6 +14,7 @@ import org.cmdbuild.api.fluent.ExistingCard;
 import org.cmdbuild.api.fluent.FluentApi;
 import org.cmdbuild.api.fluent.FluentApiExecutor;
 import org.cmdbuild.common.api.mail.MailApi;
+import org.cmdbuild.services.soap.Private;
 import org.cmdbuild.workflow.api.SchemaApi;
 import org.cmdbuild.workflow.api.SchemaApi.ClassInfo;
 import org.cmdbuild.workflow.api.WorkflowApi;
@@ -30,6 +31,7 @@ public class WorkflowApiTest {
 	private static final String DESCRIPTION = "description";
 
 	private FluentApiExecutor fluentApiExecutor;
+	private Private proxy;
 	private SchemaApi schemaApi;
 	private MailApi mailApi;
 
@@ -39,11 +41,12 @@ public class WorkflowApiTest {
 	@Before
 	public void createWorkflowApi() throws Exception {
 		fluentApiExecutor = mock(FluentApiExecutor.class);
+		proxy = mock(Private.class);
 		schemaApi = mock(SchemaApi.class);
 		mailApi = mock(MailApi.class);
 
 		fluentApi = new FluentApi(fluentApiExecutor);
-		workflowApi = new WorkflowApi(fluentApiExecutor, schemaApi, mailApi);
+		workflowApi = new WorkflowApi(fluentApiExecutor, proxy, schemaApi, mailApi);
 	}
 
 	@Test
