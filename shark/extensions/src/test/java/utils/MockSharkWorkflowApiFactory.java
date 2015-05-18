@@ -4,6 +4,7 @@ import static org.mockito.Mockito.mock;
 
 import org.cmdbuild.api.fluent.FluentApiExecutor;
 import org.cmdbuild.common.api.mail.MailApi;
+import org.cmdbuild.services.soap.Private;
 import org.cmdbuild.workflow.api.SchemaApi;
 import org.cmdbuild.workflow.api.SharkWorkflowApiFactory;
 import org.cmdbuild.workflow.api.WorkflowApi;
@@ -13,11 +14,13 @@ import org.enhydra.shark.api.internal.working.CallbackUtilities;
 public class MockSharkWorkflowApiFactory implements SharkWorkflowApiFactory {
 
 	public static final FluentApiExecutor fluentApiExecutor;
+	public static final Private proxy;
 	public static final SchemaApi schemaApi;
 	public static final MailApi mailApi;
 
 	static {
 		fluentApiExecutor = mock(FluentApiExecutor.class);
+		proxy = mock(Private.class);
 		schemaApi = mock(SchemaApi.class);
 		mailApi = mock(MailApi.class);
 	}
@@ -36,6 +39,7 @@ public class MockSharkWorkflowApiFactory implements SharkWorkflowApiFactory {
 	public WorkflowApi createWorkflowApi() {
 		return new WorkflowApi( //
 				fluentApiExecutor, //
+				proxy, //
 				schemaApi, //
 				mailApi);
 	}
