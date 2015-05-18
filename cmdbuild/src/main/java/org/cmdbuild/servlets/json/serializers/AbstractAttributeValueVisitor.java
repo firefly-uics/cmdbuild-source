@@ -16,7 +16,6 @@ import org.cmdbuild.dao.entrytype.attributetype.StringArrayAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.StringAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TextAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TimeAttributeType;
-import org.cmdbuild.data.store.lookup.LookupStore;
 import org.cmdbuild.logic.translation.TranslationFacade;
 import org.joda.time.DateTime;
 
@@ -26,15 +25,15 @@ public abstract class AbstractAttributeValueVisitor implements CMAttributeTypeVi
 	protected final CMAttributeType<?> type;
 	protected final TranslationFacade translationFacade;
 	protected Object convertedValue;
-	protected final LookupStore lookupStore;
+	protected final LookupSerializer lookupSerializer;
 
 	public AbstractAttributeValueVisitor(final CMAttributeType<?> type, final Object value,
-			TranslationFacade translationFacade, final LookupStore lookupStore) {
+			final TranslationFacade translationFacade, final LookupSerializer lookupSerializer) {
 		this.value = value;
 		this.type = type;
 		this.convertedValue = null;
 		this.translationFacade = translationFacade;
-		this.lookupStore = lookupStore;
+		this.lookupSerializer = lookupSerializer;
 	}
 
 	@Override

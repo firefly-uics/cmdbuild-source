@@ -87,7 +87,7 @@ public class Workflow extends JSONBaseWithSpringContext {
 		final List<JsonProcessCard> processInstances = Lists.newArrayList();
 		final PagedElements<UserProcessInstance> response = workflowLogic().query(className, queryOptions);
 		for (final UserProcessInstance pi : response) {
-			processInstances.add(new JsonProcessCard(pi, translationFacade(), lookupStore()));
+			processInstances.add(new JsonProcessCard(pi, translationFacade(), lookupSerializer()));
 		}
 
 		return JsonResponse.success(new HashMap<String, Object>() {
@@ -256,7 +256,7 @@ public class Workflow extends JSONBaseWithSpringContext {
 	public JsonResponse uploadXpdl( //
 			@Parameter("idClass") final Long processClassId, //
 			@Parameter(value = "xpdl", required = false) final FileItem xpdlFile //
-	) throws CMWorkflowException, IOException {
+	) throws CMWorkflowException {
 		final List<String> messages = Lists.newArrayList();
 		final WorkflowLogic logic = workflowLogic();
 		if (xpdlFile.getSize() != 0) {

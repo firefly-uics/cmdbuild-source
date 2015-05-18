@@ -13,7 +13,6 @@ import static org.cmdbuild.servlets.json.CommunicationConstants.ID;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ID_CAPITAL;
 import static org.cmdbuild.servlets.json.CommunicationConstants.LOOKUP_LIST;
 import static org.cmdbuild.servlets.json.CommunicationConstants.NOTES;
-import static org.cmdbuild.servlets.json.CommunicationConstants.NUMBER;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ORIG_TYPE;
 import static org.cmdbuild.servlets.json.CommunicationConstants.PARENT;
 import static org.cmdbuild.servlets.json.CommunicationConstants.PARENT_ID;
@@ -153,7 +152,7 @@ public class ModLookup extends JSONBaseWithSpringContext {
 	@Admin
 	public void disableLookup( //
 			@Parameter(ID) final int id //
-	) throws JSONException {
+	) {
 		lookupLogic().disableLookup(Long.valueOf(id));
 	}
 
@@ -161,7 +160,7 @@ public class ModLookup extends JSONBaseWithSpringContext {
 	@Admin
 	public void enableLookup( //
 			@Parameter(ID) final int id //
-	) throws JSONException {
+	) {
 		lookupLogic().enableLookup(Long.valueOf(id));
 	}
 
@@ -176,8 +175,7 @@ public class ModLookup extends JSONBaseWithSpringContext {
 			final @Parameter(PARENT_ID) int parentId, //
 			final @Parameter(NOTES) String notes, //
 			final @Parameter(DEFAULT) boolean isDefault, //
-			final @Parameter(ACTIVE_CAPITAL) boolean isActive, //
-			final @Parameter(NUMBER) int number //
+			final @Parameter(ACTIVE_CAPITAL) boolean isActive //
 	) throws JSONException {
 
 		final String translationUuid = defaultIfBlank(lookupLogic().fetchTranslationUuid(id), UUID.randomUUID()
@@ -220,10 +218,6 @@ public class ModLookup extends JSONBaseWithSpringContext {
 					jsonElement.getInt("index"));
 		}
 		lookupLogic().reorderLookup(lookupType, positions);
-	}
-
-	private LookupSerializer lookupSerializer() {
-		return new LookupSerializer(lookupStore());
 	}
 
 }
