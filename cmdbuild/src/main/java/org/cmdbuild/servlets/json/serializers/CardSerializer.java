@@ -17,7 +17,6 @@ import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.ReferenceAttributeType;
 import org.cmdbuild.dao.query.clause.QueryDomain.Source;
-import org.cmdbuild.data.store.lookup.LookupStore;
 import org.cmdbuild.logic.commands.AbstractGetRelation.RelationInfo;
 import org.cmdbuild.logic.commands.GetRelationList.DomainInfo;
 import org.cmdbuild.logic.commands.GetRelationList.DomainWithSource;
@@ -35,13 +34,13 @@ public class CardSerializer {
 
 	private final DataAccessLogic dataAccessLogic;
 	private final RelationAttributeSerializer relationAttributeSerializer;
-	private final LookupStore lookupStore;
+	private final LookupSerializer lookupSerializer;
 
 	public CardSerializer(final SystemDataAccessLogicBuilder dataAccessLogicBuilder,
-			final RelationAttributeSerializer relationAttributeSerializer, final LookupStore lookupStore) {
+			final RelationAttributeSerializer relationAttributeSerializer, final LookupSerializer lookupSerializer) {
 		this.dataAccessLogic = dataAccessLogicBuilder.build();
 		this.relationAttributeSerializer = relationAttributeSerializer;
-		this.lookupStore = lookupStore;
+		this.lookupSerializer = lookupSerializer;
 	}
 
 	/*
@@ -59,7 +58,6 @@ public class CardSerializer {
 			if (input instanceof IdAndDescription) {
 
 				if (input instanceof LookupValue) {
-					final LookupSerializer lookupSerializer = new LookupSerializer(lookupStore);
 					output = lookupSerializer.serializeLookupValue((LookupValue) input);
 				} else {
 					final IdAndDescription idAndDescription = IdAndDescription.class.cast(input);
@@ -92,21 +90,23 @@ public class CardSerializer {
 		json.put("IdClass_value", card.getClassDescription());
 
 		// wrap in a JSON object if required
+		final JSONObject output;
 		if (wrapperLabel != null) {
 			final JSONObject wrapper = new JSONObject();
 			wrapper.put(wrapperLabel, json);
 			wrapper.put("referenceAttributes", getReferenceAttributes(card));
-			return wrapper;
+			output = wrapper;
 		} else {
-			return json;
+			output = json;
 		}
+		return output;
 	}
 
 	/*
 	 * Return a map with the reference attribute names as keys and a map with
 	 * name-value of the relation attributes
 	 */
-	private Map<String, JSONObject> getReferenceAttributes(final Card card) throws JSONException {
+	private Map<String, JSONObject> getReferenceAttributes(final Card card) {
 		final Map<String, JSONObject> referenceAttributes = Maps.newHashMap();
 		final CMClass owner = card.getType();
 		if (owner == null) {

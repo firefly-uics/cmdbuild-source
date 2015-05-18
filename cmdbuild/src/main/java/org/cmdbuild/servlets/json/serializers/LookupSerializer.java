@@ -101,32 +101,25 @@ public class LookupSerializer {
 	}
 
 	private String description(final LookupValue value) {
-
 		final String lastLevelBaseDescription = value.getDescription();
 		String baseDescription = lastLevelBaseDescription;
 		String jointBaseDescription = lastLevelBaseDescription;
 
-		if (value instanceof LookupValue) {
-			Lookup lookup = lookup(value.getId());
-			if (lookup != null) {
+		Lookup lookup = lookup(value.getId());
+		if (lookup != null) {
+			lookup = lookup(lookup.parentId());
+			while (lookup != null) {
+				final String parentBaseDescription = lookup.description();
+				jointBaseDescription = String.format(MULTILEVEL_FORMAT, parentBaseDescription, baseDescription);
 				lookup = lookup(lookup.parentId());
-				while (lookup != null) {
-					final String parentBaseDescription = lookup.description();
-					jointBaseDescription = String.format(MULTILEVEL_FORMAT, parentBaseDescription, baseDescription);
-					lookup = lookup(lookup.parentId());
-					baseDescription = jointBaseDescription;
-				}
+				baseDescription = jointBaseDescription;
 			}
 		}
 		return jointBaseDescription;
 	}
 
 	private Lookup lookup(final Long id) {
-		if (id != null) {
-			return lookupStore.read(storableOf(id));
-		} else {
-			return null;
-		}
+		return (id == null) ? null : lookupStore.read(storableOf(id));
 	}
 
 }

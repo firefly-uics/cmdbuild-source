@@ -8,12 +8,13 @@ import static com.google.common.collect.Iterables.isEmpty;
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Maps.filterKeys;
 import static com.google.common.collect.Maps.newHashMap;
+import static com.google.common.collect.Maps.transformValues;
 import static com.google.common.collect.Ordering.from;
 import static org.cmdbuild.common.Constants.DESCRIPTION_ATTRIBUTE;
 import static org.cmdbuild.common.Constants.ID_ATTRIBUTE;
 import static org.cmdbuild.dao.query.clause.DomainHistory.history;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ATTRIBUTES;
-import static org.cmdbuild.servlets.json.CommunicationConstants.*;
+import static org.cmdbuild.servlets.json.CommunicationConstants.BEGIN_DATE;
 import static org.cmdbuild.servlets.json.CommunicationConstants.CARD;
 import static org.cmdbuild.servlets.json.CommunicationConstants.CARDS;
 import static org.cmdbuild.servlets.json.CommunicationConstants.CARD_ID;
@@ -22,6 +23,7 @@ import static org.cmdbuild.servlets.json.CommunicationConstants.CONFIRMED;
 import static org.cmdbuild.servlets.json.CommunicationConstants.COUNT;
 import static org.cmdbuild.servlets.json.CommunicationConstants.DESCRIPTION;
 import static org.cmdbuild.servlets.json.CommunicationConstants.DESTINATION;
+import static org.cmdbuild.servlets.json.CommunicationConstants.DESTINATION_DESCRIPTION;
 import static org.cmdbuild.servlets.json.CommunicationConstants.DETAIL_CARD_ID;
 import static org.cmdbuild.servlets.json.CommunicationConstants.DETAIL_CLASS_NAME;
 import static org.cmdbuild.servlets.json.CommunicationConstants.DOMAIN;
@@ -46,6 +48,7 @@ import static org.cmdbuild.servlets.json.CommunicationConstants.RELATION_ID;
 import static org.cmdbuild.servlets.json.CommunicationConstants.RETRY_WITHOUT_FILTER;
 import static org.cmdbuild.servlets.json.CommunicationConstants.SORT;
 import static org.cmdbuild.servlets.json.CommunicationConstants.SOURCE;
+import static org.cmdbuild.servlets.json.CommunicationConstants.SOURCE_DESCRIPTION;
 import static org.cmdbuild.servlets.json.CommunicationConstants.START;
 import static org.cmdbuild.servlets.json.CommunicationConstants.STATE;
 import static org.cmdbuild.servlets.json.CommunicationConstants.USER;
@@ -65,6 +68,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.cmdbuild.common.utils.PagedElements;
 import org.cmdbuild.dao.entry.CMCard;
+import org.cmdbuild.dao.entry.IdAndDescription;
 import org.cmdbuild.dao.entry.LookupValue;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
@@ -88,6 +92,7 @@ import org.cmdbuild.services.json.dto.JsonResponse;
 import org.cmdbuild.servlets.json.JSONBaseWithSpringContext;
 import org.cmdbuild.servlets.json.serializers.AbstractJsonResponseSerializer;
 import org.cmdbuild.servlets.json.serializers.JsonGetRelationListResponse;
+import org.cmdbuild.servlets.json.serializers.LookupSerializer;
 import org.cmdbuild.servlets.json.serializers.RelationAttributeSerializer;
 import org.cmdbuild.servlets.json.serializers.RelationAttributeSerializer.Callback;
 import org.cmdbuild.servlets.json.util.FlowStatusFilterElementGetter;
@@ -148,9 +153,6 @@ public class ModCard extends JSONBaseWithSpringContext {
 		@JsonProperty(CLASS_NAME)
 		String getClassName();
 
-		@JsonProperty(DESCRIPTION)
-		String getDescription();
-
 	}
 
 	private static class JsonCardSimple extends AbstractJsonResponseSerializer implements JsonCard {
@@ -186,11 +188,6 @@ public class ModCard extends JSONBaseWithSpringContext {
 			return delegate.getClassName();
 		}
 
-		@Override
-		public String getDescription() {
-			return String.class.cast(delegate.getAttribute(DESCRIPTION_ATTRIBUTE));
-		}
-
 	}
 
 	private static Function<Card, JsonCardSimple> CARD_JSON_CARD = new Function<Card, JsonCardSimple>() {
@@ -202,10 +199,54 @@ public class ModCard extends JSONBaseWithSpringContext {
 
 	};
 
+	private static class JsonCardFull extends JsonCardSimple {
+
+		private final Card delegate;
+		private final LookupSerializer lookupSerializer;
+
+		public JsonCardFull(final Card delegate, final LookupSerializer lookupSerializer) {
+			super(delegate);
+			this.delegate = delegate;
+			this.lookupSerializer = lookupSerializer;
+		}
+
+		@JsonProperty(VALUES)
+		public Map<String, Object> getValues() {
+			return transformValues(delegate.getAttributes(), new Function<Object, Object>() {
+
+				@Override
+				public Object apply(final Object input) {
+					Object output;
+					if (input instanceof LookupValue) {
+						output = lookupSerializer.serializeLookupValue((LookupValue) input);
+					} else if (input instanceof IdAndDescription) {
+						final IdAndDescription idAndDescription = IdAndDescription.class.cast(input);
+						final Map<String, Object> map = newHashMap();
+						map.put(ID, idAndDescription.getId());
+						map.put(DESCRIPTION, idAndDescription.getDescription());
+						output = map;
+					} else {
+						output = input;
+					}
+					return output;
+				}
+
+			});
+		}
+
+	}
+
 	private static interface JsonRelation extends JsonEntry {
 
 		@JsonProperty(DOMAIN)
 		String getDomain();
+
+		/**
+		 * @deprecated it's an example of client-oriented development.
+		 */
+		@Deprecated
+		@JsonProperty(DESTINATION_DESCRIPTION)
+		String getDestinationDescription();
 
 	}
 
@@ -240,6 +281,11 @@ public class ModCard extends JSONBaseWithSpringContext {
 		@Override
 		public String getDomain() {
 			return delegate.getQueryDomain().getDomain().getName();
+		}
+
+		@Override
+		public String getDestinationDescription() {
+			return delegate.getTargetDescription();
 		}
 
 	}
@@ -299,11 +345,6 @@ public class ModCard extends JSONBaseWithSpringContext {
 			return delegate.getTargetId();
 		}
 
-		@JsonProperty(DESTINATION_DESCRIPTION)
-		public String getDestinationDescription() {
-			return delegate.getTargetDescription();
-		}
-
 		@JsonProperty(VALUES)
 		public Map<String, Object> getValues() {
 			final Map<String, Object> values = newHashMap();
@@ -325,7 +366,7 @@ public class ModCard extends JSONBaseWithSpringContext {
 	 * the cards that match the filter are retrieved. The fetched cards are
 	 * sorted if a sorter is defined. Note that the max number of retrieved
 	 * cards is the 'limit' parameter
-	 *
+	 * 
 	 * @param className
 	 *            the name of the class for which I want to retrieve the cards
 	 * @param filter
@@ -354,7 +395,7 @@ public class ModCard extends JSONBaseWithSpringContext {
 	/**
 	 * Retrieves a list of cards for the specified class, returning only the
 	 * values for a subset of values
-	 *
+	 * 
 	 * @param filter
 	 *            null if no filter is specified
 	 * @param sorters
@@ -391,7 +432,7 @@ public class ModCard extends JSONBaseWithSpringContext {
 	 * the cards that match the filter are retrieved. The fetched cards are
 	 * sorted if a sorter is defined. Note that the max number of retrieved
 	 * cards is the 'limit' parameter
-	 *
+	 * 
 	 * @param className
 	 *            the name of the class for which I want to retrieve the cards
 	 * @param filter
@@ -483,12 +524,12 @@ public class ModCard extends JSONBaseWithSpringContext {
 	}
 
 	@JSONExported
-	public JSONObject getHistoricCard( //
+	public JsonResponse getHistoricCard( //
 			@Parameter(value = CLASS_NAME) final String className, //
 			@Parameter(value = CARD_ID) final Long cardId //
-	) throws JSONException {
+	) {
 		final Card card = userDataAccessLogic().fetchHistoricCard(className, cardId);
-		return cardSerializer().toClient(card, null);
+		return JsonResponse.success(new JsonCardFull(card, lookupSerializer()));
 	}
 
 	@JSONExported
@@ -703,7 +744,7 @@ public class ModCard extends JSONBaseWithSpringContext {
 				new Comparator<Card>() {
 
 					@Override
-					public int compare(Card o1, Card o2) {
+					public int compare(final Card o1, final Card o2) {
 						return o1.getBeginDate().compareTo(o2.getBeginDate());
 					}
 
@@ -749,7 +790,7 @@ public class ModCard extends JSONBaseWithSpringContext {
 				new Comparator<RelationInfo>() {
 
 					@Override
-					public int compare(RelationInfo o1, RelationInfo o2) {
+					public int compare(final RelationInfo o1, final RelationInfo o2) {
 						return o1.getRelationBeginDate().compareTo(o2.getRelationBeginDate());
 					}
 
@@ -771,7 +812,7 @@ public class ModCard extends JSONBaseWithSpringContext {
 	}
 
 	/**
-	 *
+	 * 
 	 * @param domainName
 	 *            is the domain between the source class and the destination
 	 *            class

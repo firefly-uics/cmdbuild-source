@@ -65,6 +65,7 @@ import org.cmdbuild.services.store.report.ReportStore;
 import org.cmdbuild.servlets.json.serializers.CardSerializer;
 import org.cmdbuild.servlets.json.serializers.ClassSerializer;
 import org.cmdbuild.servlets.json.serializers.DomainSerializer;
+import org.cmdbuild.servlets.json.serializers.LookupSerializer;
 import org.cmdbuild.servlets.json.serializers.RelationAttributeSerializer;
 import org.cmdbuild.workflow.ActivityPerformerTemplateResolverFactory;
 import org.cmdbuild.workflow.LookupHelper;
@@ -297,6 +298,10 @@ public class JSONBaseWithSpringContext extends JSONBase {
 
 	protected LookupHelper lookupHelper() {
 		return applicationContext().getBean(LookupHelper.class);
+	}
+
+	protected LookupSerializer lookupSerializer() {
+		return applicationContext().getBean(LookupSerializer.class);
 	}
 
 	protected Notifier notifier() {
