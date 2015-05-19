@@ -3,6 +3,7 @@ package org.cmdbuild.logic.workflow;
 import static com.google.common.collect.FluentIterable.from;
 import static com.google.common.collect.Iterables.filter;
 import static java.lang.String.format;
+import static java.util.Arrays.asList;
 import static org.cmdbuild.logic.PrivilegeUtils.assure;
 
 import java.io.File;
@@ -34,15 +35,40 @@ import org.cmdbuild.workflow.CMProcessClass;
 import org.cmdbuild.workflow.CMProcessInstance;
 import org.cmdbuild.workflow.CMWorkflowException;
 import org.cmdbuild.workflow.QueryableUserWorkflowEngine;
+import org.cmdbuild.workflow.user.ForwardingUserProcessInstance;
 import org.cmdbuild.workflow.user.UserActivityInstance;
 import org.cmdbuild.workflow.user.UserProcessClass;
 import org.cmdbuild.workflow.user.UserProcessInstance;
+import org.cmdbuild.workflow.user.UserProcessInstanceWithPosition;
 import org.joda.time.DateTime;
 
+import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 
 class DefaultWorkflowLogic implements WorkflowLogic {
+
+	private static class UserProcessInstanceWithPositionImpl extends ForwardingUserProcessInstance implements
+			UserProcessInstanceWithPosition {
+
+		private final UserProcessInstance delegate;
+		private final Long position;
+
+		public UserProcessInstanceWithPositionImpl(final UserProcessInstance delegate, final Long position) {
+			this.delegate = delegate;
+			this.position = position;
+		}
+
+		@Override
+		protected UserProcessInstance delegate() {
+			return delegate;
+		}
+
+		public Long getPosition() {
+			return position;
+		}
+
+	}
 
 	private static final UserActivityInstance NULL_ACTIVITY_INSTANCE = null;
 
@@ -92,14 +118,37 @@ class DefaultWorkflowLogic implements WorkflowLogic {
 	public PagedElements<UserProcessInstance> query(CMClass processClass, QueryOptions queryOptions) {
 		final PagedElements<UserProcessInstance> fetchedProcesses = workflowEngine.query(processClass.getName(),
 				queryOptions);
-		final Iterable<UserProcessInstance> processes = ForeignReferenceResolver.<UserProcessInstance> newInstance() //
+		final Iterable<UserProcessInstance> processes = resolve(fetchedProcesses);
+		return new PagedElements<UserProcessInstance>(processes, fetchedProcesses.totalSize());
+	}
+
+	@Override
+	public PagedElements<UserProcessInstanceWithPosition> queryWithPosition(String className,
+			QueryOptions queryOptions, Iterable<Long> cardId) {
+		final PagedElements<UserProcessInstanceWithPosition> fetchedProcesses = workflowEngine.queryWithPosition(
+				className, queryOptions, cardId);
+		return new PagedElements<UserProcessInstanceWithPosition>( //
+				from(fetchedProcesses) //
+						.transform(new Function<UserProcessInstanceWithPosition, UserProcessInstanceWithPosition>() {
+
+							@Override
+							public UserProcessInstanceWithPosition apply(final UserProcessInstanceWithPosition input) {
+								final UserProcessInstance resolved = from(resolve(asList(input))).get(0);
+								return new UserProcessInstanceWithPositionImpl(resolved, input.getPosition());
+							}
+
+						}), //
+				fetchedProcesses.totalSize());
+	}
+
+	private Iterable<UserProcessInstance> resolve(final Iterable<? extends UserProcessInstance> fetchedProcesses) {
+		return ForeignReferenceResolver.<UserProcessInstance> newInstance() //
 				.withEntries(fetchedProcesses) //
 				.withEntryFiller(new ProcessEntryFiller()) //
 				.withSerializer(new AbstractSerializer<UserProcessInstance>() {
 				}) //
 				.build() //
 				.resolve();
-		return new PagedElements<UserProcessInstance>(processes, fetchedProcesses.totalSize());
 	}
 
 	@Override

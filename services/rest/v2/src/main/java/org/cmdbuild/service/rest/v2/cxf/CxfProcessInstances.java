@@ -2,11 +2,15 @@ package org.cmdbuild.service.rest.v2.cxf;
 
 import static com.google.common.collect.FluentIterable.from;
 import static com.google.common.collect.Iterables.concat;
+import static com.google.common.collect.Iterables.isEmpty;
 import static com.google.common.collect.Maps.newHashMap;
 import static com.google.common.collect.Maps.transformEntries;
 import static com.google.common.collect.Maps.transformValues;
 import static com.google.common.collect.Maps.uniqueIndex;
 import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
+import static java.util.Collections.emptyMap;
+import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 import static org.apache.commons.lang3.StringUtils.defaultString;
 import static org.cmdbuild.dao.entrytype.Functions.attributeName;
 import static org.cmdbuild.model.widget.Widget.SUBMISSION_PARAM;
@@ -20,6 +24,7 @@ import static org.cmdbuild.workflow.ProcessAttributes.FlowStatus;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.Set;
 
 import org.cmdbuild.common.utils.PagedElements;
 import org.cmdbuild.dao.entrytype.CMAttribute;
@@ -40,6 +45,7 @@ import org.cmdbuild.workflow.LookupHelper;
 import org.cmdbuild.workflow.user.UserActivityInstance;
 import org.cmdbuild.workflow.user.UserProcessClass;
 import org.cmdbuild.workflow.user.UserProcessInstance;
+import org.cmdbuild.workflow.user.UserProcessInstanceWithPosition;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -47,6 +53,9 @@ import com.google.common.base.Function;
 import com.google.common.collect.Maps.EntryTransformer;
 
 public class CxfProcessInstances implements ProcessInstances {
+
+	private static final Iterable<Long> NO_INSTANCE_IDS = emptyList();
+	private static final Map<Long, Long> NO_POSITIONS = emptyMap();
 
 	private static final Function<Widget, String> WIDGET_ID = new Function<Widget, String>() {
 
@@ -140,7 +149,7 @@ public class CxfProcessInstances implements ProcessInstances {
 
 	@Override
 	public ResponseMultiple<ProcessInstance> read(final String processId, final String filter, final String sort,
-			final Integer limit, final Integer offset) {
+			final Integer limit, final Integer offset, final Set<Long> instanceIds) {
 		final UserProcessClass found = workflowLogic.findProcessClass(processId);
 		if (found == null) {
 			errorHandler.processNotFound(processId);
@@ -160,7 +169,33 @@ public class CxfProcessInstances implements ProcessInstances {
 				.limit(limit) //
 				.offset(offset) //
 				.build();
-		final PagedElements<UserProcessInstance> elements = workflowLogic.query(found.getName(), queryOptions);
+		final PagedElements<? extends UserProcessInstance> elements;
+		final Map<Long, Long> positions;
+		if (isEmpty(defaultIfNull(instanceIds, NO_INSTANCE_IDS))) {
+			elements = workflowLogic.query(found.getName(), queryOptions);
+			positions = NO_POSITIONS;
+		} else {
+			final PagedElements<UserProcessInstanceWithPosition> response0 = workflowLogic.queryWithPosition(
+					found.getName(), queryOptions, instanceIds);
+			elements = response0;
+			positions = transformValues( //
+					uniqueIndex(response0, new Function<UserProcessInstanceWithPosition, Long>() {
+
+						@Override
+						public Long apply(final UserProcessInstanceWithPosition input) {
+							return input.getId();
+						}
+
+					}), //
+					new Function<UserProcessInstanceWithPosition, Long>() {
+
+						@Override
+						public Long apply(final UserProcessInstanceWithPosition input) {
+							return input.getPosition();
+						};
+
+					});
+		}
 		final Function<UserProcessInstance, ProcessInstance> toProcessInstance = ToProcessInstance.newInstance() //
 				.withType(found) //
 				.withLookupHelper(lookupHelper) //
@@ -171,6 +206,7 @@ public class CxfProcessInstances implements ProcessInstances {
 						.transform(toProcessInstance)) //
 				.withMetadata(newMetadata() //
 						.withTotal(Long.valueOf(elements.totalSize())) //
+						.withPositions(positions) //
 						.build()) //
 				.build();
 	}
