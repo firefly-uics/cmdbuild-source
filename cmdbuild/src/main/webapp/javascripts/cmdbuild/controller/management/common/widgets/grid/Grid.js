@@ -273,7 +273,7 @@
 						editor.disabled = attribute[CMDBuild.core.proxy.CMProxyConstants.FIELD_MODE] == CMDBuild.core.proxy.CMProxyConstants.READ;
 
 						if (attribute[CMDBuild.core.proxy.CMProxyConstants.NOT_NULL]) {
-							header.text = '* ' + header.header;
+							header.header = '* ' + header.header; // TODO: header property is deprecated, should use "text" but FieldManager uses header so ...
 
 							header[CMDBuild.core.proxy.CMProxyConstants.REQUIRED] = true;
 							editor[CMDBuild.core.proxy.CMProxyConstants.REQUIRED] = true;
@@ -285,6 +285,7 @@
 						// Do not override renderer, add editor on checkbox columns and make it editable
 						if (attribute[CMDBuild.core.proxy.CMProxyConstants.TYPE] != 'BOOLEAN') {
 							header.editor = editor;
+
 							this.addRendererToHeader(header, attribute);
 						} else {
 							header.cmReadOnly = false;
