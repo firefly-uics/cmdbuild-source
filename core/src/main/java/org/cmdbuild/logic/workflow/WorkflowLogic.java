@@ -15,6 +15,7 @@ import org.cmdbuild.workflow.CMWorkflowException;
 import org.cmdbuild.workflow.user.UserActivityInstance;
 import org.cmdbuild.workflow.user.UserProcessClass;
 import org.cmdbuild.workflow.user.UserProcessInstance;
+import org.cmdbuild.workflow.user.UserProcessInstanceWithPosition;
 import org.joda.time.DateTime;
 
 /**
@@ -166,5 +167,8 @@ public interface WorkflowLogic extends Logic {
 	void abortProcess(String processClassName, long processCardId) throws CMWorkflowException;
 
 	void abortProcess(Long processClassId, long processCardId) throws CMWorkflowException;
+
+	PagedElements<UserProcessInstanceWithPosition> queryWithPosition(String className, QueryOptions queryOptions,
+			Iterable<Long> cardId);
 
 }

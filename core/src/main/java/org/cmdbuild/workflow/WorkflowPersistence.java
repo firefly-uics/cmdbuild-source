@@ -9,6 +9,7 @@ import org.cmdbuild.workflow.service.WSProcessInstInfo;
 import org.cmdbuild.workflow.service.WSProcessInstanceState;
 import org.cmdbuild.workflow.user.UserProcessClass;
 import org.cmdbuild.workflow.user.UserProcessInstance;
+import org.cmdbuild.workflow.user.UserProcessInstanceWithPosition;
 
 public interface WorkflowPersistence {
 
@@ -60,5 +61,8 @@ public interface WorkflowPersistence {
 	Iterable<? extends UserProcessInstance> queryOpenAndSuspended(UserProcessClass processClass);
 
 	PagedElements<UserProcessInstance> query(String className, QueryOptions queryOptions);
+
+	PagedElements<UserProcessInstanceWithPosition> queryWithPosition(String className, QueryOptions queryOptions,
+			Iterable<Long> cardId);
 
 }

@@ -25,6 +25,7 @@ import org.cmdbuild.workflow.service.WSProcessInstInfo;
 import org.cmdbuild.workflow.service.WSProcessInstanceState;
 import org.cmdbuild.workflow.user.UserProcessClass;
 import org.cmdbuild.workflow.user.UserProcessInstance;
+import org.cmdbuild.workflow.user.UserProcessInstanceWithPosition;
 import org.slf4j.Logger;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
@@ -512,6 +513,12 @@ public class DefaultWorkflowEngine implements QueryableUserWorkflowEngine {
 	@Override
 	public PagedElements<UserProcessInstance> query(final String className, final QueryOptions queryOptions) {
 		return persistence.query(className, queryOptions);
+	}
+
+	@Override
+	public PagedElements<UserProcessInstanceWithPosition> queryWithPosition(final String className,
+			final QueryOptions queryOptions, final Iterable<Long> cardId) {
+		return persistence.queryWithPosition(className, queryOptions, cardId);
 	}
 
 	private void removeOutOfSyncProcess(final CMProcessInstance processInstance) throws CMWorkflowException {

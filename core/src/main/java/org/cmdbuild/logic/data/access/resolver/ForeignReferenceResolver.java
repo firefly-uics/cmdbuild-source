@@ -34,7 +34,7 @@ public class ForeignReferenceResolver<T extends CMEntry> {
 	public static class ForeignReferenceResolverBuilder<T extends CMEntry> implements
 			Builder<ForeignReferenceResolver<T>> {
 
-		private Iterable<T> entries;
+		private Iterable<? extends T> entries;
 		public EntryFiller<T> entryFiller;
 		public AbstractSerializer<T> serializer;
 
@@ -43,7 +43,7 @@ public class ForeignReferenceResolver<T extends CMEntry> {
 			return new ForeignReferenceResolver<T>(this);
 		}
 
-		public ForeignReferenceResolverBuilder<T> withEntries(final Iterable<T> value) {
+		public ForeignReferenceResolverBuilder<T> withEntries(final Iterable<? extends T> value) {
 			entries = value;
 			return this;
 		}
@@ -64,7 +64,7 @@ public class ForeignReferenceResolver<T extends CMEntry> {
 		return new ForeignReferenceResolverBuilder<T>();
 	}
 
-	private final Iterable<T> entries;
+	private final Iterable<? extends T> entries;
 	private final EntryFiller<T> entryFiller;
 	private final AbstractSerializer<T> serializer;
 
