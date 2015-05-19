@@ -79,7 +79,7 @@ public class CommunicationConstants {
 			DESCRIPTION_CAPITAL = "Description", //
 			DESCRIPTION = "description", //
 			DESTINATION = "destination", //
-			DESTINATION_DESCRIPTION = "destinationDescrition", //
+			DESTINATION_DESCRIPTION = "destinationDescription", //
 			DETAIL_CARD_ID = "detailCardId", //
 			DETAIL_CLASS_NAME = "detailClassName", //
 			DIRECT_DESCRIPTION = "descrdir", //
