@@ -1,7 +1,7 @@
 package org.cmdbuild.service.rest.test;
 
 import static java.lang.String.format;
-import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 
 import java.util.Random;
 
@@ -20,13 +20,21 @@ public class ServerResource extends ExternalResource {
 
 	public static class Builder implements org.apache.commons.lang3.builder.Builder<ServerResource> {
 
+		private static final int DEFAULT_RETRIES = 3;
+
 		private Class<?> serviceClass;
 		private Object service;
-		private int port;
+		private Range<Integer> portRange;
+		private Integer retries;
 
 		@Override
 		public ServerResource build() {
+			validate();
 			return new ServerResource(this);
+		}
+
+		private void validate() {
+			retries = defaultIfNull(retries, DEFAULT_RETRIES);
 		}
 
 		public Builder withServiceClass(final Class<?> serviceClass) {
@@ -39,8 +47,21 @@ public class ServerResource extends ExternalResource {
 			return this;
 		}
 
-		public Builder withPort(final int port) {
-			this.port = port;
+		/**
+		 * @deprecated use {@link withPortRange(Range)} instead.
+		 */
+		@Deprecated
+		public Builder withPort(final Range<Integer> range) {
+			return withPortRange(range);
+		}
+
+		public Builder withPortRange(final Range<Integer> range) {
+			this.portRange = range;
+			return this;
+		}
+
+		public Builder setRetries(final int retries) {
+			this.retries = retries;
 			return this;
 		}
 
@@ -61,28 +82,46 @@ public class ServerResource extends ExternalResource {
 
 	private final Class<?> serviceClass;
 	private final Object service;
-	private final int port;
+	private final Range<Integer> portRange;
+	private final int retries;
 
+	private String address;
 	private Server server;
 
 	private ServerResource(final Builder builder) {
 		this.serviceClass = builder.serviceClass;
 		this.service = builder.service;
-		this.port = builder.port;
+		this.portRange = builder.portRange;
+		this.retries = builder.retries;
 	}
 
 	@Override
 	protected void before() throws Throwable {
 		super.before();
+		boolean started = false;
+		int count = 0;
+		do {
+			try {
+				logger.info("server starting...");
+				final Integer _port = random.nextInt(portRange.getMaximum() - portRange.getMinimum())
+						+ portRange.getMinimum();
+				address = format("http://localhost:%d", _port);
+				final JAXRSServerFactoryBean serverFactory = new JAXRSServerFactoryBean();
+				serverFactory.setResourceClasses(serviceClass);
+				serverFactory.setResourceProvider(serviceClass, new SingletonResourceProvider(service));
+				serverFactory.setAddress(address);
+				serverFactory.setProvider(JSON_PROVIDER);
 
-		final JAXRSServerFactoryBean serverFactory = new JAXRSServerFactoryBean();
-		serverFactory.setResourceClasses(serviceClass);
-		serverFactory.setResourceProvider(serviceClass, new SingletonResourceProvider(service));
-		serverFactory.setAddress(address());
-		serverFactory.setProvider(JSON_PROVIDER);
-
-		server = serverFactory.create();
-		logger.info(format("server ready on port %d ...", port));
+				server = serverFactory.create();
+				logger.info(format("server ready at ", address));
+				started = true;
+			} catch (final Exception e) {
+				logger.warn("error starting server", e);
+			}
+		} while (!started || (count++ < retries));
+		if (!started) {
+			throw new RuntimeException("server cannot be started");
+		}
 	}
 
 	@Override
@@ -91,20 +130,16 @@ public class ServerResource extends ExternalResource {
 		server.destroy();
 	}
 
-	public String address() {
-		return resource(EMPTY);
-	}
-
 	public String resource(final String resource) {
-		return format("http://localhost:%d/%s", port, resource);
+		return format("%s/%s", address, resource);
 	}
 
-	public static int randomPort() {
+	public static Range<Integer> randomPort() {
 		return randomPort(DEFAULT_RANGE);
 	}
 
-	public static int randomPort(final Range<Integer> range) {
-		return random.nextInt(range.getMaximum() - range.getMinimum()) + range.getMinimum();
+	public static Range<Integer> randomPort(final Range<Integer> range) {
+		return range;
 	}
 
 }

@@ -1,11 +1,15 @@
 package org.cmdbuild.service.rest.v1.cxf;
 
 import static com.google.common.collect.FluentIterable.from;
+import static com.google.common.collect.Iterables.get;
+import static com.google.common.collect.Iterables.isEmpty;
 import static com.google.common.collect.Maps.newHashMap;
 import static com.google.common.collect.Maps.transformEntries;
 import static com.google.common.collect.Maps.transformValues;
 import static com.google.common.collect.Maps.uniqueIndex;
+import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;
+import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 import static org.cmdbuild.service.rest.v1.cxf.util.Json.safeJsonArray;
 import static org.cmdbuild.service.rest.v1.cxf.util.Json.safeJsonObject;
 import static org.cmdbuild.service.rest.v1.model.Models.newCard;
@@ -15,6 +19,7 @@ import static org.cmdbuild.service.rest.v1.model.Models.newResponseSingle;
 
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.cmdbuild.common.utils.PagedElements;
 import org.cmdbuild.dao.entry.CMCard;
@@ -38,6 +43,7 @@ import com.mchange.util.AssertException;
 
 public class CxfCards implements Cards, LoggingSupport {
 
+	private static final Iterable<Long> NO_CARD_IDS = emptyList();
 	private static final Map<Long, Long> NO_POSITIONS = emptyMap();
 
 	private final ErrorHandler errorHandler;
@@ -82,7 +88,7 @@ public class CxfCards implements Cards, LoggingSupport {
 
 	@Override
 	public ResponseMultiple<Card> read(final String classId, final String filter, final String sort,
-			final Integer limit, final Integer offset, final Long cardId) {
+			final Integer limit, final Integer offset, final Set<Long> cardIds) {
 		final CMClass targetClass = assureClass(classId);
 		final QueryOptions queryOptions = QueryOptions.newQueryOption() //
 				.filter(safeJsonObject(filter)) //
@@ -92,12 +98,12 @@ public class CxfCards implements Cards, LoggingSupport {
 				.build();
 		final PagedElements<? extends org.cmdbuild.model.data.Card> response;
 		final Map<Long, Long> positions;
-		if (cardId == null) {
+		if (isEmpty(defaultIfNull(cardIds, NO_CARD_IDS))) {
 			response = dataAccessLogic.fetchCards(targetClass.getName(), queryOptions);
 			positions = NO_POSITIONS;
 		} else {
 			final PagedElements<CMCardWithPosition> response0 = dataAccessLogic.fetchCardsWithPosition(
-					targetClass.getName(), queryOptions, cardId);
+					targetClass.getName(), queryOptions, get(cardIds, 0));
 			response = response0;
 			positions = transformValues( //
 					uniqueIndex(response0, new Function<CMCardWithPosition, Long>() {

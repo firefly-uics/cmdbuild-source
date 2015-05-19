@@ -73,7 +73,7 @@ public class Serialization {
 			PARENT = "parent", //
 			PARENT_TYPE = "parent_type", //
 			PASSWORD = "password", //
-			POSITION = "position", //
+			POSITION_OF = "positionOf", //
 			POSITIONS = "positions", //
 			PRECISION = "precision", //
 			RELATION = "relation", //
