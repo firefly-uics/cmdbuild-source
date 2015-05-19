@@ -3,6 +3,9 @@ package org.cmdbuild.service.rest.v2.cxf;
 import static com.google.common.collect.FluentIterable.from;
 import static com.google.common.collect.Maps.newHashMap;
 import static com.google.common.collect.Maps.transformEntries;
+import static com.google.common.collect.Maps.transformValues;
+import static com.google.common.collect.Maps.uniqueIndex;
+import static java.util.Collections.emptyMap;
 import static org.cmdbuild.service.rest.v2.cxf.util.Json.safeJsonArray;
 import static org.cmdbuild.service.rest.v2.cxf.util.Json.safeJsonObject;
 import static org.cmdbuild.service.rest.v2.model.Models.newCard;
@@ -20,6 +23,7 @@ import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.exception.NotFoundException;
 import org.cmdbuild.logic.data.QueryOptions;
+import org.cmdbuild.logic.data.access.CMCardWithPosition;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.service.rest.v2.Cards;
 import org.cmdbuild.service.rest.v2.cxf.serialization.DefaultConverter;
@@ -33,6 +37,8 @@ import com.google.common.collect.Maps.EntryTransformer;
 import com.mchange.util.AssertException;
 
 public class CxfCards implements Cards, LoggingSupport {
+
+	private static final Map<Long, Long> NO_POSITIONS = emptyMap();
 
 	private final ErrorHandler errorHandler;
 	private final DataAccessLogic dataAccessLogic;
@@ -76,7 +82,7 @@ public class CxfCards implements Cards, LoggingSupport {
 
 	@Override
 	public ResponseMultiple<Card> read(final String classId, final String filter, final String sort,
-			final Integer limit, final Integer offset) {
+			final Integer limit, final Integer offset, final Long cardId) {
 		final CMClass targetClass = assureClass(classId);
 		final QueryOptions queryOptions = QueryOptions.newQueryOption() //
 				.filter(safeJsonObject(filter)) //
@@ -84,8 +90,33 @@ public class CxfCards implements Cards, LoggingSupport {
 				.limit(limit) //
 				.offset(offset) //
 				.build();
-		final PagedElements<org.cmdbuild.model.data.Card> response = dataAccessLogic.fetchCards(targetClass.getName(),
-				queryOptions);
+		final PagedElements<? extends org.cmdbuild.model.data.Card> response;
+		final Map<Long, Long> positions;
+		if (cardId == null) {
+			response = dataAccessLogic.fetchCards(targetClass.getName(), queryOptions);
+			positions = NO_POSITIONS;
+		} else {
+			final PagedElements<CMCardWithPosition> response0 = dataAccessLogic.fetchCardsWithPosition(
+					targetClass.getName(), queryOptions, cardId);
+			response = response0;
+			positions = transformValues( //
+					uniqueIndex(response0, new Function<CMCardWithPosition, Long>() {
+
+						@Override
+						public Long apply(final CMCardWithPosition input) {
+							return input.getId();
+						}
+
+					}), //
+					new Function<CMCardWithPosition, Long>() {
+
+						@Override
+						public Long apply(final CMCardWithPosition input) {
+							return input.getPosition();
+						};
+
+					});
+		}
 		final Iterable<Card> elements = from(response.elements()) //
 				.transform(new Function<org.cmdbuild.model.data.Card, Card>() {
 
@@ -103,6 +134,7 @@ public class CxfCards implements Cards, LoggingSupport {
 				.withElements(elements) //
 				.withMetadata(newMetadata() //
 						.withTotal(Long.valueOf(response.totalSize())) //
+						.withPositions(positions) //
 						.build()) //
 				.build();
 	}

@@ -23,6 +23,7 @@ import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Matchers.isNull;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -121,7 +122,7 @@ public class CardsTest {
 						.build()) //
 				.build();
 		doReturn(sentResponse) //
-				.when(service).read(anyString(), anyString(), anyString(), anyInt(), anyInt());
+				.when(service).read(anyString(), anyString(), anyString(), anyInt(), anyInt(), anyLong());
 
 		// when
 		final HttpGet get = new HttpGet(new URIBuilder(server.resource("classes/123/cards")) //
@@ -136,7 +137,7 @@ public class CardsTest {
 		assertThat(statusCodeOf(response), equalTo(200));
 		assertThat(json.from(contentOf(response)), equalTo(json.from(expectedResponse)));
 
-		verify(service).read(eq("123"), eq("filter"), eq("sort"), eq(456), eq(789));
+		verify(service).read(eq("123"), eq("filter"), eq("sort"), eq(456), eq(789), isNull(Long.class));
 	}
 
 	@Test

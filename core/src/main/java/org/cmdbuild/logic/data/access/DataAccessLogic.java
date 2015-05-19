@@ -163,6 +163,8 @@ public interface DataAccessLogic extends Logic {
 	 */
 	CMCardWithPosition getCardPosition(String className, Long cardId, QueryOptions queryOptions);
 
+	PagedElements<CMCardWithPosition> fetchCardsWithPosition(String className, QueryOptions queryOptions, Long cardId);
+
 	/**
 	 * Call createCard forwarding the given card, and saying to manage also the
 	 * attributes over references domains

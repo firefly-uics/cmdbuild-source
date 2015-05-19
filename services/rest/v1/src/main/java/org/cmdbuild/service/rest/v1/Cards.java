@@ -6,6 +6,7 @@ import static org.cmdbuild.service.rest.v1.constants.Serialization.CARD_ID;
 import static org.cmdbuild.service.rest.v1.constants.Serialization.CLASS_ID;
 import static org.cmdbuild.service.rest.v1.constants.Serialization.FILTER;
 import static org.cmdbuild.service.rest.v1.constants.Serialization.LIMIT;
+import static org.cmdbuild.service.rest.v1.constants.Serialization.POSITION;
 import static org.cmdbuild.service.rest.v1.constants.Serialization.SORT;
 import static org.cmdbuild.service.rest.v1.constants.Serialization.START;
 
@@ -49,7 +50,8 @@ public interface Cards {
 			@QueryParam(FILTER) String filter, //
 			@QueryParam(SORT) String sort, //
 			@QueryParam(LIMIT) Integer limit, //
-			@QueryParam(START) Integer offset //
+			@QueryParam(START) Integer offset, //
+			@QueryParam(POSITION) Long cardId //
 	);
 
 	@PUT

@@ -250,7 +250,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 	}
 
 	/**
-	 *
+	 * 
 	 * @return only active classes (all classes, included superclasses, simple
 	 *         classes and process classes).
 	 */
@@ -261,7 +261,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 	}
 
 	/**
-	 *
+	 * 
 	 * @return active and non active domains
 	 */
 	@Override
@@ -270,7 +270,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 	}
 
 	/**
-	 *
+	 * 
 	 * @return only active domains
 	 */
 	@Override
@@ -314,7 +314,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 	}
 
 	/**
-	 *
+	 * 
 	 * @return a predicate that will filter classes whose mode does not start
 	 *         with sys... (e.g. sysread or syswrite)
 	 */
@@ -363,7 +363,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 	/**
 	 * Fetches the card with the specified Id from the class with the specified
 	 * name
-	 *
+	 * 
 	 * @param className
 	 * @param cardId
 	 * @throws NoSuchElementException
@@ -464,7 +464,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 
 	/**
 	 * Retrieve the cards of a given class that matches the given query options
-	 *
+	 * 
 	 * @param className
 	 * @param queryOptions
 	 * @return a FetchCardListResponse
@@ -512,7 +512,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 	 * @return
 	 */
 	private Iterable<CMCard> resolveCMCardForeignReferences(final CMClass fetchedClass,
-			final PagedElements<CMCard> fetchedCards) {
+			final Iterable<CMCard> fetchedCards) {
 		final Iterable<CMCard> cardsWithForeingReferences = ForeignReferenceResolver.<CMCard> newInstance() //
 				.withEntries(fetchedCards) //
 				.withEntryFiller(new CardEntryFiller()) //
@@ -522,8 +522,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 		return cardsWithForeingReferences;
 	}
 
-	public Iterable<Card> resolveCardForeignReferences(final CMClass fetchedClass,
-			final PagedElements<CMCard> fetchedCards) {
+	public Iterable<Card> resolveCardForeignReferences(final CMClass fetchedClass, final Iterable<CMCard> fetchedCards) {
 		final Iterable<CMCard> cardsWithForeingReferences = resolveCMCardForeignReferences(fetchedClass, fetchedCards);
 		return from(cardsWithForeingReferences) //
 				.transform(CMCARD_TO_CARD);
@@ -552,7 +551,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 	/**
 	 * Execute a given SQL function to select a set of rows Return these rows as
 	 * fake cards
-	 *
+	 * 
 	 * @param functionName
 	 * @param queryOptions
 	 * @return
@@ -591,7 +590,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 	}
 
 	/**
-	 *
+	 * 
 	 * @param className
 	 * @param cardId
 	 * @param queryOptions
@@ -600,25 +599,39 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 	 */
 	@Override
 	public CMCardWithPosition getCardPosition(final String className, final Long cardId, final QueryOptions queryOptions) {
-		final CMClass fetchedClass = strictDataView.findClass(className);
-		Long position = -1L;
-		CMCard card = null;
-
 		try {
-			final PagedElements<CMQueryRow> cards = DataViewCardFetcher.newInstance() //
-					.withClassName(className) //
-					.withQueryOptions(queryOptions) //
-					.withDataView(strictDataView) //
-					.build() //
-					.fetchNumbered(condition(attribute(fetchedClass, ID_ATTRIBUTE), eq(cardId)));
-			final CMQueryRow fetchedRowWithPosition = cards.iterator().next();
-			position = fetchedRowWithPosition.getNumber() - 1;
-			card = fetchedRowWithPosition.getCard(fetchedClass);
+			final PagedElements<CMCardWithPosition> cards = fetchCardsWithPosition(className, queryOptions, cardId);
+			return cards.iterator().next();
 		} catch (final Exception ex) {
 			Log.CMDBUILD.error("Cannot calculate the position for card with id " + cardId + " from class " + className);
+			return new CMCardWithPosition(null, -1L);
 		}
+	}
 
-		return new CMCardWithPosition(position, card);
+	@Override
+	public PagedElements<CMCardWithPosition> fetchCardsWithPosition(final String className,
+			final QueryOptions queryOptions, final Long cardId) {
+		final CMClass fetchedClass = strictDataView.findClass(className);
+		final PagedElements<CMQueryRow> rows = DataViewCardFetcher.newInstance() //
+				.withClassName(className) //
+				.withQueryOptions(queryOptions) //
+				.withDataView(strictDataView) //
+				.build() //
+				.fetchNumbered(condition(attribute(fetchedClass, ID_ATTRIBUTE), eq(cardId)));
+		return new PagedElements<CMCardWithPosition>( //
+				from(rows) //
+						.transform(new Function<CMQueryRow, CMCardWithPosition>() {
+
+							@Override
+							public CMCardWithPosition apply(final CMQueryRow input) {
+								final CMCard card = input.getCard(fetchedClass);
+								final Card _card = from(resolveCardForeignReferences(fetchedClass, asList(card)))
+										.get(0);
+								return new CMCardWithPosition(_card, input.getNumber() - 1);
+							}
+
+						}), //
+				rows.totalSize());
 	}
 
 	@Override
@@ -836,7 +849,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 			 * Usually null == null is false. But, here we wanna know if the
 			 * value is been changed, so if it was null, and now is still null,
 			 * the attribute value is not changed.
-			 *
+			 * 
 			 * Do you know that the CardReferences (value of reference and
 			 * lookup attributes) sometimes are null and sometimes is a
 			 * null-object... Cool! isn't it? So compare them could be a little
@@ -909,7 +922,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 
 	/**
 	 * Tells if the given class is a subclass of Activity
-	 *
+	 * 
 	 * @return {@code true} if if the given class is a subclass of Activity,
 	 *         {@code false} otherwise
 	 */

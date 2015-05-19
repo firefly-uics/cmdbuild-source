@@ -551,7 +551,7 @@ public class ModCard extends JSONBaseWithSpringContext {
 
 		CMCardWithPosition card = dataAccessLogic.getCardPosition(className, cardId, queryOptionsBuilder.build());
 
-		if (card.position < 0 && retryWithoutFilter) {
+		if (card.hasNoPosition() && retryWithoutFilter) {
 			out.put(OUT_OF_FILTER, true);
 			queryOptionsBuilder = QueryOptions.newQueryOption();
 			final CMCard expectedCard = dataAccessLogic.fetchCMCard(className, cardId);
@@ -565,13 +565,13 @@ public class ModCard extends JSONBaseWithSpringContext {
 			card = dataAccessLogic.getCardPosition(className, expectedCard.getId(), queryOptionsBuilder.build());
 		}
 
-		out.put(POSITION, card.position);
+		out.put(POSITION, card.getPosition());
 		/*
 		 * FIXME It's late. We need the flow status if ask for a process
 		 * position. Do it in a better way!
 		 */
-		if (card.card != null) {
-			final Object retrievedFlowStatus = card.card.get(FlowStatus.dbColumnName());
+		if (card.isFound()) {
+			final Object retrievedFlowStatus = card.getAttribute(FlowStatus.dbColumnName());
 			if (retrievedFlowStatus != null) {
 				final Lookup lookupFlowStatus = lookupLogic().getLookup(((LookupValue) retrievedFlowStatus).getId());
 				out.put("FlowStatus", lookupFlowStatus.code());

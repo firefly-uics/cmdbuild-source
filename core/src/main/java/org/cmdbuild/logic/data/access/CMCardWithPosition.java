@@ -1,16 +1,33 @@
 package org.cmdbuild.logic.data.access;
 
-import org.cmdbuild.dao.entry.CMCard;
+import org.cmdbuild.model.data.Card;
 
-public class CMCardWithPosition {
-	final public Long position;
-	final public CMCard card;
+public class CMCardWithPosition extends Card {
 
-	public CMCardWithPosition( //
-			final Long position, //
-			final CMCard card //
-	) {
+	private final Card delegate;
+	private final Long position;
+
+	public CMCardWithPosition(final Card delegate, final Long position) {
+		super(builder(delegate));
+		this.delegate = delegate;
 		this.position = position;
-		this.card = card;
 	}
+
+	private static Builder builder(final Card delegate) {
+		final Builder builder = Card.newInstance();
+		return (delegate == null) ? builder : builder.clone(delegate);
+	}
+
+	public boolean isFound() {
+		return (delegate != null);
+	}
+
+	public Long getPosition() {
+		return position;
+	}
+
+	public boolean hasNoPosition() {
+		return position < 0;
+	}
+
 }
