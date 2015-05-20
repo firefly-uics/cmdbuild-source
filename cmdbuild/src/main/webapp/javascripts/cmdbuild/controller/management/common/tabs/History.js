@@ -8,7 +8,7 @@
 
 		requires: [
 			'CMDBuild.core.proxy.CMProxyConstants',
-			'CMDBuild.core.proxy.common.tabs.history.Classes',
+//			'CMDBuild.core.proxy.common.tabs.history.Classes',
 			'CMDBuild.model.common.tabs.history.RelationRecord'
 		],
 
@@ -27,16 +27,10 @@
 		cmfgCatchedFunctions: [
 			'getGridColumns', // TODO rename con history
 			'getGridStore', // TODO rename con history
-			'getRowExpanderPlugin', // TODO rename con history
 			'onHistoryIncludeRelationCheck',
 			'onHistoryRowExpand',
 			'onHistoryTabPanelShow'
 		],
-
-		/**
-		 * @property {CMDBuild.cache.CMEntryTypeModel}
-		 */
-		entryType: undefined,
 
 		/**
 		 * @property {CMDBuild.view.management.common.tabs.history.GridPanel}
@@ -203,53 +197,62 @@
 		},
 
 		/**
+		 * @return {Ext.data.Store}
+		 */
+		getGridStore: function() {
+			return this.getProxy().getStore();
+		},
+
+		/**
+		 * @return {Object}
+		 *
 		 * @abstract
 		 */
-		getGridStore: Ext.emptyFn,
+		getProxy: Ext.emptyFn,
 
 		onAddCardButtonClick: function() {
 			this.view.disable();
 		},
 
-		/**
-		 * @param {Object} card
-		 */
-		onCardSelected: function(card) {
-			this.selectedEntity = card;
-
-			this.onHistoryTabPanelShow();
-		},
-//		onCardSelected: function(card) { // TODO che sia da implementare questo controllo???
-//			this.callParent(arguments);
+//		/**
+//		 * @param {Object} card
+//		 */
+//		onCardSelected: function(card) {
+//			this.selectedEntity = card;
 //
-//			if (card) {
-//				if (this.entryType.get("tableType") != CMDBuild.Constants.cachedTableType.simpletable) {
-//					var existingCard = (!!this.card);
-//					this.view.setDisabled(!existingCard);
-//
-//					if (this.view.tabIsActive(this.view)) {
-//						this.load();
-//					} else {
-//						this.mon(this.view, "activate", this.load, this, {single: true});
-//					}
-//				} else {
-//					this.view.disable();
-//				}
-//			}
+//			this.onHistoryTabPanelShow();
 //		},
+////		onCardSelected: function(card) { // TODO che sia da implementare questo controllo???
+////			this.callParent(arguments);
+////
+////			if (card) {
+////				if (this.entryType.get("tableType") != CMDBuild.Constants.cachedTableType.simpletable) {
+////					var existingCard = (!!this.card);
+////					this.view.setDisabled(!existingCard);
+////
+////					if (this.view.tabIsActive(this.view)) {
+////						this.load();
+////					} else {
+////						this.mon(this.view, "activate", this.load, this, {single: true});
+////					}
+////				} else {
+////					this.view.disable();
+////				}
+////			}
+////		},
 
 		onCloneCard: function() {
 			this.view.disable();
 		},
 
-		/**
-		 * @param {CMDBuild.cache.CMEntryTypeModel} entryType
-		 */
-		onEntryTypeSelected: function(entryType) {
-			this.entryType = entryType;
-
-			this.view.disable();
-		},
+//		/**
+//		 * @param {CMDBuild.cache.CMEntryTypeModel} entryType
+//		 */
+//		onEntryTypeSelected: function(entryType) {
+//			this.entryType = entryType;
+//
+//			this.view.disable();
+//		},
 
 		/**
 		 * Reloads store to be consistent with includeRelationsCheckbox state
@@ -272,7 +275,7 @@
 					params[CMDBuild.core.proxy.CMProxyConstants.CARD_ID] = record.get(CMDBuild.core.proxy.CMProxyConstants.ID); // Historic card ID
 					params[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME] = record.get(CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME);
 
-					CMDBuild.core.proxy.common.tabs.history.Classes.getHistoric({
+					this.getProxy().getHistoric({
 						params: params,
 						scope: this,
 						failure: function(response, options, decodedResponse) {
@@ -309,7 +312,7 @@
 								predecessorParams[CMDBuild.core.proxy.CMProxyConstants.CARD_ID] = predecessorRecord.get(CMDBuild.core.proxy.CMProxyConstants.ID); // Historic card ID
 								predecessorParams[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME] = record.get(CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME);
 
-								CMDBuild.core.proxy.common.tabs.history.Classes.getHistoric({
+								this.getProxy().getHistoric({
 									params: predecessorParams,
 									scope: this,
 									failure: function(response, options, decodedResponse) {
@@ -334,7 +337,7 @@
 					params[CMDBuild.core.proxy.CMProxyConstants.ID] = record.get(CMDBuild.core.proxy.CMProxyConstants.ID); // Historic relation ID
 					params[CMDBuild.core.proxy.CMProxyConstants.DOMAIN] = record.get(CMDBuild.core.proxy.CMProxyConstants.DOMAIN);
 
-					CMDBuild.core.proxy.common.tabs.history.Classes.getRelationHistoric({
+					this.getProxy().getRelationHistoric({
 						params: params,
 						scope: this,
 						failure: function(response, options, decodedResponse) {
@@ -372,7 +375,7 @@
 					scope: this,
 					callback: function(records, operation, success) {
 						if (this.grid.includeRelationsCheckbox.getValue())
-							CMDBuild.core.proxy.common.tabs.history.Classes.getRelations({
+							this.getProxy().getRelations({
 								params: params,
 								scope: this,
 								failure: function(response, options, decodedResponse) {
