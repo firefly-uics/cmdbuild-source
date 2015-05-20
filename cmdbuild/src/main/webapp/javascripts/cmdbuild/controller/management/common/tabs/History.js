@@ -61,7 +61,7 @@
 				columns = [
 					{
 						dataIndex: CMDBuild.core.proxy.CMProxyConstants.IS_CARD,
-						text: CMDBuild.Translation.management.modcard.history_columns.attributes,
+						text: CMDBuild.Translation.attributes,
 						width: 65,
 						align: 'center',
 						sortable: false,
@@ -70,12 +70,12 @@
 						fixed: true,
 
 						renderer: function(value, metaData, record) {
-							return value ? '<img src="images/icons/tick.png" alt="' + CMDBuild.Translation.management.modcard.history_columns.attributes + '" />' : null;
+							return value ? '<img src="images/icons/tick.png" alt="' + CMDBuild.Translation.attributes + '" />' : null;
 						}
 					},
 					{
 						dataIndex: CMDBuild.core.proxy.CMProxyConstants.IS_RELATION,
-						text: CMDBuild.Translation.management.modcard.history_columns.relation,
+						text: CMDBuild.Translation.relation,
 						width: 65,
 						align: 'center',
 						sortable: false,
@@ -84,12 +84,12 @@
 						fixed: true,
 
 						renderer: function(value, metaData, record) {
-							return value ? '<img src="images/icons/tick.png" alt="' + CMDBuild.Translation.management.modcard.history_columns.relation + '" />' : null;
+							return value ? '<img src="images/icons/tick.png" alt="' + CMDBuild.Translation.relation + '" />' : null;
 						}
 					},
 					{
 						dataIndex: CMDBuild.core.proxy.CMProxyConstants.DOMAIN,
-						text: CMDBuild.Translation.management.modcard.history_columns.domain,
+						text: CMDBuild.Translation.domain,
 						sortable: false,
 						hideable: false,
 						menuDisabled: true,
@@ -118,7 +118,7 @@
 			var defaultColumns = [
 				Ext.create('Ext.grid.column.Date', {
 					dataIndex: CMDBuild.core.proxy.CMProxyConstants.BEGIN_DATE,
-					text: CMDBuild.Translation.management.modcard.history_columns.begin_date,
+					text: CMDBuild.Translation.beginDate,
 					width: 140,
 					format:'d/m/Y H:i:s',
 					sortable: false,
@@ -128,7 +128,7 @@
 				}),
 				Ext.create('Ext.grid.column.Date', {
 					dataIndex: CMDBuild.core.proxy.CMProxyConstants.END_DATE,
-					text: CMDBuild.Translation.management.modcard.history_columns.end_date,
+					text: CMDBuild.Translation.endDate,
 					width: 140,
 					format:'d/m/Y H:i:s',
 					sortable: false,
@@ -138,7 +138,7 @@
 				}),
 				{
 					dataIndex: CMDBuild.core.proxy.CMProxyConstants.USER,
-					text: CMDBuild.Translation.management.modcard.history_columns.user,
+					text: CMDBuild.Translation.user,
 					flex: 1,
 					sortable: false,
 					hideable: false,
