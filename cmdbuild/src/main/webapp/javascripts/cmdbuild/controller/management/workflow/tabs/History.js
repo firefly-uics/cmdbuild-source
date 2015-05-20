@@ -1,7 +1,7 @@
 (function () {
 
 	/**
-	 * Workflow specific history tab controller
+	 * Processes specific history tab controller
 	 */
 	Ext.define('CMDBuild.controller.management.workflow.tabs.History', {
 		extend: 'CMDBuild.controller.management.common.tabs.History',
@@ -53,7 +53,7 @@
 		 *
 		 * @override
 		 */
-		getGridColumns: function() {
+		getHistoryGridColumns: function() {
 			var processesCustoColumns = [
 				{
 					dataIndex: 'Code', // TODO vedere server + proxy constants
