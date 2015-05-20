@@ -6,7 +6,10 @@
 	Ext.define('CMDBuild.controller.management.classes.tabs.History', {
 		extend: 'CMDBuild.controller.management.common.tabs.History',
 
-		requires: ['CMDBuild.core.proxy.common.tabs.history.Classes'],
+		requires: [
+			'CMDBuild.core.proxy.CMProxyConstants',
+			'CMDBuild.core.proxy.common.tabs.history.Classes'
+		],
 
 		mixins: {
 			observable: 'Ext.util.Observable'
@@ -87,26 +90,9 @@
 		onCardSelected: function(card) {
 			this.selectedEntity = card;
 
-			this.onHistoryTabPanelShow();
+			if (!Ext.isEmpty(this.entryType) && this.entryType.get(CMDBuild.core.proxy.CMProxyConstants.TABLE_TYPE) != 'simpletable') // SimpleTables hasn't history
+				this.onHistoryTabPanelShow();
 		},
-//		onCardSelected: function(card) { // TODO che sia da implementare questo controllo???
-//			this.callParent(arguments);
-//
-//			if (card) {
-//				if (this.entryType.get("tableType") != CMDBuild.Constants.cachedTableType.simpletable) {
-//					var existingCard = (!!this.card);
-//					this.view.setDisabled(!existingCard);
-//
-//					if (this.view.tabIsActive(this.view)) {
-//						this.load();
-//					} else {
-//						this.mon(this.view, "activate", this.load, this, {single: true});
-//					}
-//				} else {
-//					this.view.disable();
-//				}
-//			}
-//		},
 
 		/**
 		 * @param {CMDBuild.cache.CMEntryTypeModel} entryType
