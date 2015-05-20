@@ -1,4 +1,4 @@
-(function() {
+(function() { // TODO da eliminare
 	Ext.define("CMDBuild.controller.management.classes.CMCardHistoryPanelController", {
 		extend: "CMDBuild.controller.management.classes.CMModCardSubController",
 

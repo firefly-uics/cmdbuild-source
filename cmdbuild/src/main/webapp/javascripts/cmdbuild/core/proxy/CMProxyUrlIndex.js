@@ -30,13 +30,18 @@
 			update: '',
 			remove: 'services/json/management/modcard/deletecard',
 
+			// TODO spostare sotto history separando???
+			getCardHistory: 'services/json/management/modcard/getcardhistory',
+			getHistoricCard: 'services/json/management/modcard/gethistoriccard',
+			getRelationsHistory: 'services/json/management/modcard/getrelationshistory',
+			getHistoricRelation: 'services/json/management/modcard/gethistoricrelation',
+
 			bulkUpdate: 'services/json/management/modcard/bulkupdate',
 			bulkUpdateFromFilter: 'services/json/management/modcard/bulkupdatefromfilter',
-			getCardHistory: 'services/json/management/modcard/getcardhistory',
 			getPosition: 'services/json/management/modcard/getcardposition',
 			lock: 'services/json/management/modcard/lockcard',
 			unlock: 'services/json/management/modcard/unlockcard',
-			unlockAll: 'services/json/management/modcard/unlockallcards',
+			unlockAll: 'services/json/management/modcard/unlockallcards'
 		},
 
 		cardList: 'services/json/management/modcard/getcardlist',

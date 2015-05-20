@@ -516,12 +516,6 @@
 			this.editModeSet(true);
 		},
 
-		onGlobalRegenerationButtonClick: function() {
-			this.regenerateAllEmailsSet(true);
-			this.forceRegenerationSet(true);
-			this.getAllTemplatesData();
-		},
-
 		/**
 		 * Reload store every time panel is showed
 		 */
@@ -531,6 +525,12 @@
 			// Regenerate all widgets only if editMode otherwise simple store load
 			this.regenerateAllEmailsSet(this.editModeGet());
 			this.cmfg('storeLoad');
+		},
+
+		onGlobalRegenerationButtonClick: function() {
+			this.regenerateAllEmailsSet(true);
+			this.forceRegenerationSet(true);
+			this.getAllTemplatesData();
 		},
 
 		/**
@@ -801,8 +801,10 @@
 		 */
 		regenerationEndPointCallback: Ext.emptyFn,
 
+		/**
+		 * Reset configuration attributes
+		 */
 		reset: function() {
-			// Reset configuration attributes
 			this.configurationSet();
 			this.configurationTemplatesSet();
 		},

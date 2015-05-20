@@ -12,29 +12,6 @@
 		singleton: true,
 
 		/**
-		 * @property {Object} params
-		 */
-		getCardHistory: function(params) {
-			return Ext.create('Ext.data.Store', {
-				autoLoad: false,
-				proxy: {
-					type: 'ajax',
-					url: CMDBuild.core.proxy.CMProxyUrlIndex.card.getCardHistory,
-					reader: {
-						type: 'json',
-						root: 'rows'
-					}
-				},
-				sorters: [
-					{ property: 'BeginDate', direction: 'DESC' },
-					{ property: '_EndDate', direction: 'DESC' }
-				],
-				fields: params.fields,
-				baseParams: params.baseParams
-			});
-		},
-
-		/**
 		 * Retrieve the position on the DB of the required card, considering the sorting and current filter applied on the grid
 		 *
 		 * @param {Object} p
