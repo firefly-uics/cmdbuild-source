@@ -150,12 +150,6 @@
 
 				this.subControllers.push(this.noteController);
 
-				// the history has to know when the notes are changed
-				this.mon(this.noteController, this.noteController.CMEVENTS.noteWasSaved, function() {
-					if (this.controllerTabHistory)
-						this.controllerTabHistory.onProcessInstanceChange(_CMWFState.getProcessInstance());
-				}, this);
-
 				this.view.cardTabPanel.acutalPanel.add(view);
 			}
 		},
