@@ -12,7 +12,7 @@
 		cls: 'x-panel-body-default-framed',
 		frame: false,
 		layout: 'fit',
-		title: CMDBuild.Translation.management.modcard.tabs.history,
+		title: CMDBuild.Translation.history,
 
 		listeners: {
 			show: function(panel, eOpts) {

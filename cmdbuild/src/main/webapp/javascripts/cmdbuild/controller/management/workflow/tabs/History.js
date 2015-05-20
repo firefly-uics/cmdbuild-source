@@ -57,7 +57,7 @@
 			var processesCustoColumns = [
 				{
 					dataIndex: 'Code', // TODO vedere server + proxy constants
-					text: CMDBuild.Translation.management.modcard.history_columns.activity_name,
+					text: CMDBuild.Translation.activityName,
 					sortable: false,
 					hideable: false,
 					menuDisabled: true,
@@ -66,7 +66,7 @@
 				},
 				{
 					dataIndex: 'Executor', // TODO vedere server + proxy constants
-					text: CMDBuild.Translation.management.modcard.history_columns.performer,
+					text: CMDBuild.Translation.activityPerformer,
 					sortable: false,
 					hideable: false,
 					menuDisabled: true,
