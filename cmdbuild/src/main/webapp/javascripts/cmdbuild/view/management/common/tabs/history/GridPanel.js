@@ -49,8 +49,8 @@
 						]
 					})
 				],
-				columns: this.delegate.cmfg('getGridColumns'),
-				store: this.delegate.cmfg('getGridStore')
+				columns: this.delegate.cmfg('getHistoryGridColumns'),
+				store: this.delegate.cmfg('getHistoryGridStore')
 			});
 
 			this.callParent(arguments);

@@ -6,15 +6,7 @@
 	Ext.define('CMDBuild.controller.management.common.tabs.History', {
 		extend: 'CMDBuild.controller.common.AbstractController',
 
-		requires: [
-			'CMDBuild.core.proxy.CMProxyConstants',
-//			'CMDBuild.core.proxy.common.tabs.history.Classes',
-			'CMDBuild.model.common.tabs.history.RelationRecord'
-		],
-
-//		mixins: {
-//			observable: 'Ext.util.Observable'// TODO delete
-//		},
+		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
 
 		/**
 		 * @cfg {Mixed}
@@ -25,8 +17,8 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
-			'getGridColumns', // TODO rename con history
-			'getGridStore', // TODO rename con history
+			'getHistoryGridColumns',
+			'getHistoryGridStore',
 			'onHistoryIncludeRelationCheck',
 			'onHistoryRowExpand',
 			'onHistoryTabPanelShow'
@@ -52,50 +44,12 @@
 		 * @param {Mixed} configurationObject.parentDelegate
 		 */
 		constructor: function(configurationObject) {
-//			this.mixins.observable.constructor.call(this, arguments); // TODO delete
-
 			this.callParent(arguments);
 
 			this.view = Ext.create('CMDBuild.view.management.common.tabs.history.HistoryView', {
 				delegate: this
 			});
-
-//			this.grid = Ext.create('CMDBuild.view.management.common.tabs.history.GridPanel', {
-//				delegate: this
-//			});
-//
-//			this.view.add(this.grid);
-
-//			// Shorthands
-//			this.grid = this.view.grid;
-
-//			this.buildCardModuleStateDelegate();
 		},
-
-//		buildCardModuleStateDelegate: function() { // TODO delete
-//			var me = this;
-//
-//			this.cardStateDelegate = new CMDBuild.state.CMCardModuleStateDelegate();
-//
-//			this.cardStateDelegate.onEntryTypeDidChange = function(state, entryType) {
-//				me.onEntryTypeSelected(entryType);
-//			};
-//
-//			this.cardStateDelegate.onCardDidChange = function(state, card) {
-//				Ext.suspendLayouts();
-//				me.onCardSelected(card);
-//				Ext.resumeLayouts();
-//			};
-//
-//			_CMCardModuleState.addDelegate(this.cardStateDelegate);
-//
-//			if (!Ext.isEmpty(this.view))
-//				this.mon(this.view, 'destroy', function(view) {
-//					_CMCardModuleState.removeDelegate(this.cardStateDelegate);
-//
-//					delete this.cardStateDelegate;
-//				}, this);
-//		},
 
 		/**
 		 * @return {Array} columns
@@ -160,7 +114,7 @@
 		/**
 		 * @return {Array}
 		 */
-		getGridColumns: function() {
+		getHistoryGridColumns: function() {
 			var defaultColumns = [
 				Ext.create('Ext.grid.column.Date', {
 					dataIndex: CMDBuild.core.proxy.CMProxyConstants.BEGIN_DATE,
@@ -199,7 +153,7 @@
 		/**
 		 * @return {Ext.data.Store}
 		 */
-		getGridStore: function() {
+		getHistoryGridStore: function() {
 			return this.getProxy().getStore();
 		},
 
@@ -214,45 +168,9 @@
 			this.view.disable();
 		},
 
-//		/**
-//		 * @param {Object} card
-//		 */
-//		onCardSelected: function(card) {
-//			this.selectedEntity = card;
-//
-//			this.onHistoryTabPanelShow();
-//		},
-////		onCardSelected: function(card) { // TODO che sia da implementare questo controllo???
-////			this.callParent(arguments);
-////
-////			if (card) {
-////				if (this.entryType.get("tableType") != CMDBuild.Constants.cachedTableType.simpletable) {
-////					var existingCard = (!!this.card);
-////					this.view.setDisabled(!existingCard);
-////
-////					if (this.view.tabIsActive(this.view)) {
-////						this.load();
-////					} else {
-////						this.mon(this.view, "activate", this.load, this, {single: true});
-////					}
-////				} else {
-////					this.view.disable();
-////				}
-////			}
-////		},
-
 		onCloneCard: function() {
 			this.view.disable();
 		},
-
-//		/**
-//		 * @param {CMDBuild.cache.CMEntryTypeModel} entryType
-//		 */
-//		onEntryTypeSelected: function(entryType) {
-//			this.entryType = entryType;
-//
-//			this.view.disable();
-//		},
 
 		/**
 		 * Reloads store to be consistent with includeRelationsCheckbox state
@@ -400,8 +318,8 @@
 		},
 
 		/**
-		 * Formats all object1 values as objects { {Mixed} description: "...", {Boolean} changed: "..." }. If value1 is different than value2 modified is true,
-		 * false otherwise.
+		 * Formats all object1 values as objects { {Boolean} changed: "...", {Mixed} description: "..." }. If value1 is different than value2
+		 * modified is true, false otherwise. Strips also HTML tags from "description".
 		 *
 		 * @param {Object} object1
 		 * @param {Object} object2
@@ -410,23 +328,27 @@
 			if (!Ext.isEmpty(object1) && Ext.isObject(object1)) {
 				Ext.Object.each(object1, function(key, value, myself) {
 					if (Ext.isObject(value)) {
-						object1[key].changed = false;
+						object1[key][CMDBuild.core.proxy.CMProxyConstants.CHANGED] = false;
 
 						if (
 							!Ext.isEmpty(value[CMDBuild.core.proxy.CMProxyConstants.ID])
 							&& !Ext.isEmpty(object2)
 							&& !Ext.isEmpty(object2[key][CMDBuild.core.proxy.CMProxyConstants.ID])
 						) {
-							object1[key].changed = (value[CMDBuild.core.proxy.CMProxyConstants.ID] != object2[key][CMDBuild.core.proxy.CMProxyConstants.ID]);
+							object1[key][CMDBuild.core.proxy.CMProxyConstants.CHANGED] = (
+								value[CMDBuild.core.proxy.CMProxyConstants.ID] != object2[key][CMDBuild.core.proxy.CMProxyConstants.ID]
+							);
 						}
-					} else {
-						object1[key] = {
-							description: value,
-							changed: false
-						};
 
-						if (!Ext.isEmpty(object2) && !Ext.isEmpty(object2[key]))
-							object1[key].changed = (value != object2[key]);
+						// Strip HTML tags
+						if (!Ext.isEmpty(object1[key][CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION]))
+							object1[key][CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION] = Ext.util.Format.stripTags(
+								value[CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION]
+							);
+					} else {
+						object1[key] = {};
+						object1[key][CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION] = Ext.util.Format.stripTags(value); // Strip HTML tags
+						object1[key][CMDBuild.core.proxy.CMProxyConstants.CHANGED] = (!Ext.isEmpty(object2) && !Ext.isEmpty(object2[key])) ? (value != object2[key]) : false;
 					}
 				});
 			}

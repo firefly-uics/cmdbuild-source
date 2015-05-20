@@ -40,6 +40,7 @@
 		CARD_SEPARATOR: 'cardSeparator',
 		CC: 'cc',
 		CC_ADDRESSES: 'ccAddresses',
+		CHANGED: 'changed',
 		CHANGE_STATUS: 'changeStatus',
 		CLASS: 'class',
 		CLASS_ATTRIBUTE: 'classAttribute',
