@@ -16,7 +16,7 @@
 		get: function(parameters) {
 			CMDBuild.Ajax.request({
 				method: 'POST',
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.card.getCardHistory,
+				url: CMDBuild.core.proxy.CMProxyUrlIndex.history.classes.getCardHistory,
 				headers: parameters.headers,
 				params: parameters.params,
 				scope: parameters.scope || this,
@@ -33,7 +33,7 @@
 		getHistoric: function(parameters) {
 			CMDBuild.Ajax.request({
 				method: 'POST',
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.card.getHistoricCard,
+				url: CMDBuild.core.proxy.CMProxyUrlIndex.history.classes.getHistoricCard,
 				headers: parameters.headers,
 				params: parameters.params,
 				scope: parameters.scope || this,
@@ -50,7 +50,7 @@
 		getRelations: function(parameters) {
 			CMDBuild.Ajax.request({
 				method: 'POST',
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.card.getRelationsHistory,
+				url: CMDBuild.core.proxy.CMProxyUrlIndex.history.classes.getRelationsHistory,
 				headers: parameters.headers,
 				params: parameters.params,
 				scope: parameters.scope || this,
@@ -67,7 +67,7 @@
 		getRelationHistoric: function(parameters) {
 			CMDBuild.Ajax.request({
 				method: 'POST',
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.card.getHistoricRelation,
+				url: CMDBuild.core.proxy.CMProxyUrlIndex.history.classes.getHistoricRelation,
 				headers: parameters.headers,
 				params: parameters.params,
 				scope: parameters.scope || this,
@@ -87,7 +87,7 @@
 				model: 'CMDBuild.model.common.tabs.history.CardRecord',
 				proxy: {
 					type: 'ajax',
-					url: CMDBuild.core.proxy.CMProxyUrlIndex.card.getCardHistory,
+					url: CMDBuild.core.proxy.CMProxyUrlIndex.history.classes.getCardHistory,
 					reader: {
 						type: 'json',
 						root: 'response.elements'

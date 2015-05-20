@@ -30,12 +30,6 @@
 			update: '',
 			remove: 'services/json/management/modcard/deletecard',
 
-			// TODO spostare sotto history separando???
-			getCardHistory: 'services/json/management/modcard/getcardhistory',
-			getHistoricCard: 'services/json/management/modcard/gethistoriccard',
-			getRelationsHistory: 'services/json/management/modcard/getrelationshistory',
-			getHistoricRelation: 'services/json/management/modcard/gethistoricrelation',
-
 			bulkUpdate: 'services/json/management/modcard/bulkupdate',
 			bulkUpdateFromFilter: 'services/json/management/modcard/bulkupdatefromfilter',
 			getPosition: 'services/json/management/modcard/getcardposition',
@@ -150,6 +144,16 @@
 
 		functions: {
 			getFunctions: 'services/json/schema/modclass/getfunctions'
+		},
+
+		history: {
+			classes: {
+				getCardHistory: 'services/json/management/modcard/getcardhistory',
+				getHistoricCard: 'services/json/management/modcard/gethistoriccard',
+				getRelationsHistory: 'services/json/management/modcard/getrelationshistory',
+				getHistoricRelation: 'services/json/management/modcard/gethistoricrelation'
+			},
+			processes: {}
 		},
 
 		localizations: { // TODO: refactor with server side

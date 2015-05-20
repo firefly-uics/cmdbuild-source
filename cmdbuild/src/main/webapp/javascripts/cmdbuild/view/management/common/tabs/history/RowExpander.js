@@ -9,8 +9,8 @@
 		rowBodyTpl: new Ext.XTemplate(
 			'<tpl exec="this.formatter(' + CMDBuild.core.proxy.CMProxyConstants.VALUES + ')"></tpl>',
 			'<tpl for="this.formattedArray">',
-				'<tpl if="changed">',
-					'<p class="changed">',
+				'<tpl if="' + CMDBuild.core.proxy.CMProxyConstants.CHANGED + '">',
+					'<p class="' + CMDBuild.core.proxy.CMProxyConstants.CHANGED + '">',
 				'<tpl else>',
 					'<p>',
 				'</tpl>',
@@ -28,7 +28,7 @@
 							this.formattedArray.push({
 								key: key,
 								value: value[CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION],
-								changed: value.changed
+								changed: value[CMDBuild.core.proxy.CMProxyConstants.CHANGED]
 							});
 						}, this);
 					}
