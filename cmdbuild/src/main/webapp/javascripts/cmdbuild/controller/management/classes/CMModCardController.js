@@ -285,11 +285,6 @@
 			if (!Ext.isEmpty(view)) {
 				this.noteController = new CMDBuild.controller.management.classes.CMNoteController(view);
 
-				this.mon(this.noteController, this.noteController.CMEVENTS.noteWasSaved, function(card) {
-					if (this.controllerTabHistory)
-						this.controllerTabHistory.onCardSelected(card);
-				}, this);
-
 				this.subControllers.push(this.noteController);
 
 				this.view.cardTabPanel.add(view); // Add panel to view
