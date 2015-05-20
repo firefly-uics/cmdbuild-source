@@ -23,7 +23,7 @@
 
 		/**
 		 * @param {Object} configObject
-		 * @param {Mixed} configObject.parentDelegate - CMModWorkflowController
+		 * @param {CMDBuild.controller.management.workflow.CMModWorkflowController} configObject.parentDelegate
 		 */
 		constructor: function(configObject) {
 			this.mixins.observable.constructor.call(this, arguments);
