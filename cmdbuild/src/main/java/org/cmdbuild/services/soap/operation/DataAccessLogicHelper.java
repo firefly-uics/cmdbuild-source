@@ -338,10 +338,7 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 					attributeType instanceof DateTimeAttributeType) {
 				value = new DateTimeSerializer(attribute.getValue()).getValue();
 			}
-
-			if (value != null) {
-				keysAndValues.put(name, value);
-			}
+			keysAndValues.put(name, value);
 		}
 		return keysAndValues;
 	}
