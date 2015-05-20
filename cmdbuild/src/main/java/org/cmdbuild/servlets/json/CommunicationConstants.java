@@ -66,13 +66,7 @@ public class CommunicationConstants {
 			DB_TYPE = "db_type", //
 			DEFAULT = "Default", //
 			DEFAULT_ACCOUNT = "defaultAccount", //
-			DEFAULT_DESCRIPTION = "description_default", //
-			DEFAULT_DESCRIPTION_CAPITAL = "Description_default", //
-			DEFAULT_DIRECT_DESCRIPTION = "descrdir_default", //
 			DEFAULT_GROUP = "defaultgroup", //
-			DEFAULT_INVERSE_DESCRIPTION = "descrinv_default", //
-			DEFAULT_MASTERDETAIL_LABEL = "md_label_default", //
-			DEFAULT_PARENT_DESCRIPTION = "ParentDescription_default", //
 			DEFAULT_VALUE = "defaultvalue", //
 			DELAY = "delay", //
 			DELETE = "delete", //
