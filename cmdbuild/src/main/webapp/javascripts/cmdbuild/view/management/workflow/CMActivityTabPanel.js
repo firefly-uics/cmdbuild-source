@@ -88,10 +88,6 @@
 				this.relationsPanel.disable();
 			}
 
-//			if (this.cardHistoryPanel != null) {
-//				this.cardHistoryPanel.disable();
-//			}
-
 			if (this.openAttachmentPanel != null) {
 				this.openAttachmentPanel.disable();
 			}
