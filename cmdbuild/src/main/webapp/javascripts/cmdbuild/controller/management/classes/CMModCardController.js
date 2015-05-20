@@ -108,11 +108,6 @@
 		card: undefined,
 
 		/**
-		 * @property {CMDBuild.controller.management.classes.CMCardHistoryPanelController}
-		 */
-		cardHistoryPanelController: undefined,
-
-		/**
 		 * @property {CMDBuild.controller.management.classes.CMCardPanelController}
 		 */
 		cardPanelController: undefined,
@@ -121,6 +116,11 @@
 		 * @property {CMDBuild.controller.management.classes.tabs.Email}
 		 */
 		controllerTabEmail: undefined,
+
+		/**
+		 * @property {CMDBuild.controller.management.classes.tabs.History}
+		 */
+		controllerTabHistory: undefined,
 
 		/**
 		 * @property {CMDBuild.controller.management.classes.masterDetails.CMMasterDetailsController}
@@ -263,14 +263,19 @@
 		},
 
 		buildTabControllerHistory: function() {
-			var view = this.view.getHistoryPanel();
+			if (!Ext.Array.contains(
+				_CMUIConfiguration.getDisabledCardTabs(),
+				CMDBuild.model.CMUIConfigurationModel.cardTabs.history
+			)) {
+				this.controllerTabHistory = Ext.create('CMDBuild.controller.management.classes.tabs.History', {
+					parentDelegate: this
+				});
 
-			if (!Ext.isEmpty(view)) {
-				this.cardHistoryPanelController = new CMDBuild.controller.management.classes.CMCardHistoryPanelController(view);
+				this.subControllers.push(this.controllerTabHistory);
 
-				this.subControllers.push(this.cardHistoryPanelController);
+				this.view.cardTabPanel.cardHistoryPanel = this.controllerTabHistory.getView(); // Creates tabPanel object
 
-				this.view.cardTabPanel.add(view); // Add panel to view
+				this.view.cardTabPanel.add(this.controllerTabHistory.getView());
 			}
 		},
 
@@ -281,8 +286,8 @@
 				this.noteController = new CMDBuild.controller.management.classes.CMNoteController(view);
 
 				this.mon(this.noteController, this.noteController.CMEVENTS.noteWasSaved, function(card) {
-					if (this.cardHistoryPanelController)
-						this.cardHistoryPanelController.onCardSelected(card);
+					if (this.controllerTabHistory)
+						this.controllerTabHistory.onCardSelected(card);
 				}, this);
 
 				this.subControllers.push(this.noteController);

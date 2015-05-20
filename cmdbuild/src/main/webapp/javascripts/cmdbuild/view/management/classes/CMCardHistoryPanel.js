@@ -2,7 +2,7 @@
 
 	var tr = CMDBuild.Translation.management.modcard.history_columns;
 
-	Ext.define('CMDBuild.view.management.classes.CMCardHistoryTab', {
+	Ext.define('CMDBuild.view.management.classes.CMCardHistoryPanel', {
 		extend: 'Ext.grid.Panel',
 
 		requires: [
