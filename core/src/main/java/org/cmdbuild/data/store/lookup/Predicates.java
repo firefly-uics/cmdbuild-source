@@ -31,7 +31,7 @@ public class Predicates {
 
 			@Override
 			public boolean apply(final Lookup input) {
-				return input.type().equals(type);
+				return input.type().name.equals(type.name);
 			}
 
 		};
