@@ -18,12 +18,6 @@
 				withButtons: true
 			});
 
-			this.cardHistoryPanel = isEnabled(disabledTabs, tabs.history) ? new CMDBuild.view.management.classes.CMCardHistoryTab({
-				title: tr.tabs.history,
-				border: false,
-				disabled: true
-			}) : null;
-
 			this.cardNotesPanel = isEnabled(disabledTabs, tabs.notes) ? new CMDBuild.view.management.classes.CMCardNotesPanel({
 				title: tr.tabs.notes,
 				disabled: true
