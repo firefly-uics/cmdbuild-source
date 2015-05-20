@@ -18,6 +18,16 @@
 		parentDelegate: undefined,
 
 		/**
+		 * @property {CMDBuild.cache.CMEntryTypeModel}
+		 */
+		entryType: undefined,
+
+		/**
+		 * @property {Object}
+		 */
+		selectedEntity: undefined,
+
+		/**
 		 * @param {Object} configurationObject
 		 * @param {CMDBuild.controller.management.classes.CMModCardController} configurationObject.parentDelegate
 		 *
@@ -63,15 +73,49 @@
 		},
 
 		/**
-		 * Return grid store
-		 *
-		 * @return {Ext.data.Store}
+		 * @return {CMDBuild.core.proxy.common.tabs.history.Classes}
 		 *
 		 * @override
 		 */
-		getGridStore: function() {
-			return CMDBuild.core.proxy.common.tabs.history.Classes.getStore();
-		}
+		getProxy: function() {
+			return CMDBuild.core.proxy.common.tabs.history.Classes;
+		},
+
+		/**
+		 * @param {Object} card
+		 */
+		onCardSelected: function(card) {
+			this.selectedEntity = card;
+
+			this.onHistoryTabPanelShow();
+		},
+//		onCardSelected: function(card) { // TODO che sia da implementare questo controllo???
+//			this.callParent(arguments);
+//
+//			if (card) {
+//				if (this.entryType.get("tableType") != CMDBuild.Constants.cachedTableType.simpletable) {
+//					var existingCard = (!!this.card);
+//					this.view.setDisabled(!existingCard);
+//
+//					if (this.view.tabIsActive(this.view)) {
+//						this.load();
+//					} else {
+//						this.mon(this.view, "activate", this.load, this, {single: true});
+//					}
+//				} else {
+//					this.view.disable();
+//				}
+//			}
+//		},
+
+		/**
+		 * @param {CMDBuild.cache.CMEntryTypeModel} entryType
+		 */
+		onEntryTypeSelected: function(entryType) {
+			this.entryType = entryType;
+
+			this.view.disable();
+		},
 	});
 
 })();
