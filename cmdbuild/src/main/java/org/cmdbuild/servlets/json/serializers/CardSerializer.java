@@ -82,11 +82,10 @@ public class CardSerializer {
 		json.put(CLASS_NAME, card.getClassName());
 
 		/*
-		 * We must serialize the class description Is used listing the card of a
-		 * superclass to know the effective class The ugly key is driven by
-		 * backward compatibility
+		 * We must serialize the class description because it is used while listing
+		 * the card of a superclass to show the actual class. The ugly key is
+		 * driven by backward compatibility
 		 */
-		json.put("IdClass_value_default", card.getClassDescription());
 		json.put("IdClass_value", card.getClassDescription());
 
 		// wrap in a JSON object if required
