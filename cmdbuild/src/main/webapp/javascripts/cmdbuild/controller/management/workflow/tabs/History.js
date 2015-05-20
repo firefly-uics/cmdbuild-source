@@ -6,7 +6,10 @@
 	Ext.define('CMDBuild.controller.management.workflow.tabs.History', {
 		extend: 'CMDBuild.controller.management.common.tabs.History',
 
+		requires: ['CMDBuild.core.proxy.common.tabs.history.Processes'],
+
 		mixins: {
+			observable: 'Ext.util.Observable',
 			wfStateDelegate: 'CMDBuild.state.CMWorkflowStateDelegate'
 		},
 
@@ -16,77 +19,110 @@
 		parentDelegate: undefined,
 
 		/**
+		 * @property {CMDBuild.cache.CMEntryTypeModel}
+		 */
+		entryType: undefined,
+
+		/**
+		 * @property {CMDBuild.model.CMProcessInstance}
+		 */
+		selectedEntity: undefined,
+
+		/**
 		 * @param {Object} configurationObject
 		 * @param {CMDBuild.controller.management.workflow.CMModWorkflowController} configurationObject.parentDelegate
 		 *
 		 * @override
 		 */
 		constructor: function(configurationObject) {
+			this.mixins.observable.constructor.call(this, arguments);
+
 			this.callParent(arguments);
+
+			this.grid = Ext.create('CMDBuild.view.management.workflow.tabs.history.GridPanel', {
+				delegate: this
+			});
+
+			this.view.add(this.grid);
 
 			_CMWFState.addDelegate(this);
 		},
 
 		/**
-		 * @param {CMDBuild.view.management.common.tabs.history.GridPanel} grid
+		 * @return {Array}
 		 *
 		 * @override
 		 */
-		addExtraColumnsIfNeeded: function(grid) {
-			this.callParent(arguments);
+		getGridColumns: function() {
+			var processesCustoColumns = [
+				{
+					dataIndex: 'Code', // TODO vedere server + proxy constants
+					text: CMDBuild.Translation.management.modcard.history_columns.activity_name,
+					sortable: false,
+					hideable: false,
+					menuDisabled: true,
+					fixed: true,
+					flex: 1
+				},
+				{
+					dataIndex: 'Executor', // TODO vedere server + proxy constants
+					text: CMDBuild.Translation.management.modcard.history_columns.performer,
+					sortable: false,
+					hideable: false,
+					menuDisabled: true,
+					fixed: true,
+					flex: 1
+				},
+				{
+					dataIndex: 'Status', // TODO vedere server + proxy constants
+					text: CMDBuild.Translation.status,
+					sortable: false,
+					hideable: false,
+					menuDisabled: true,
+					fixed: true,
+					flex: 1
+				}
+			];
 
-			Ext.apply(grid, {
-				columns: grid.columns.concat([
-					{
-						dataIndex: 'Code', // TODO vedere server + proxy constants
-						text: CMDBuild.Translation.management.modcard.history_columns.activity_name,
-						sortable: false,
-						hideable: false,
-						menuDisabled: true,
-						fixed: true,
-						flex: 1
-					},
-					{
-						dataIndex: 'Executor', // TODO vedere server + proxy constants
-						text: CMDBuild.Translation.management.modcard.history_columns.performer,
-						sortable: false,
-						hideable: false,
-						menuDisabled: true,
-						fixed: true,
-						flex: 1
-					},
-					{
-						dataIndex: 'Status', // TODO vedere server + proxy constants
-						text: CMDBuild.Translation.status,
-						sortable: false,
-						hideable: false,
-						menuDisabled: true,
-						fixed: true,
-						flex: 1
-					}
-				])
-			});
+			return Ext.Array.push(this.callParent(arguments), processesCustoColumns);
 		},
 
-		// wfStateDelegate
+		/**
+		 * @return {CMDBuild.core.proxy.common.tabs.history.Classes}
+		 *
+		 * @override
+		 */
+		getProxy: function() {
+			return CMDBuild.core.proxy.common.tabs.history.Processes;
+		},
+
+		/**
+		 * Equals to onEntryTypeSelected in classes
+		 *
+		 * @param {CMDBuild.cache.CMEntryTypeModel} entryType
+		 */
+		onProcessClassRefChange: function(entryType) {
+			this.entryType = entryType;
+
+			this.view.disable();
+		},
+
+		/**
+		 * Equals to onCardSelected in classes
+		 *
+		 * @param {CMDBuild.model.CMProcessInstance} processInstance
+		 */
 		onProcessInstanceChange: function(processInstance) {
-			this._loaded = false;
+			this.selectedEntity = processInstance;
 
 			if (processInstance.isNew()) {
 				this.view.disable();
 			} else {
 				this.view.enable();
-				if (this.view.isVisible()) {
-					this.load();
-				}
+
+				this.onHistoryTabPanelShow();
 			}
-
-		},
-
-		// TODO da eliminare togliendo dal controller comune la roba specifica
-		buildCardModuleStateDelegate: Ext.emptyFn,
-		onEntryTypeSelected: Ext.emptyFn,
-		onCardSelected: Ext.emptyFn
+		}
 	});
 
 })();
