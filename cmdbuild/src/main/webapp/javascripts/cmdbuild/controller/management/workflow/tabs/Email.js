@@ -69,12 +69,6 @@
 			});
 		},
 
-		onCardSelected: Ext.emptyFn,
-
-		onCloneCard: Ext.emptyFn,
-
-		onEntryTypeSelected: Ext.emptyFn,
-
 		/**
 		 * Equals to onEntryTypeSelected in classes
 		 *
