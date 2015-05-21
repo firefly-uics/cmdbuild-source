@@ -99,8 +99,7 @@ public class ServerResource extends ExternalResource {
 	protected void before() throws Throwable {
 		super.before();
 		boolean started = false;
-		int count = 0;
-		do {
+		for (int count = 0; (count < retries) && !started; count++) {
 			try {
 				logger.info("server starting...");
 				final Integer _port = random.nextInt(portRange.getMaximum() - portRange.getMinimum())
@@ -118,7 +117,7 @@ public class ServerResource extends ExternalResource {
 			} catch (final Exception e) {
 				logger.warn("error starting server", e);
 			}
-		} while (!started || (count++ < retries));
+		}
 		if (!started) {
 			throw new RuntimeException("server cannot be started");
 		}
