@@ -19,7 +19,7 @@
 		classIdentifier: undefined,
 
 		/**
-		 * @cfg {Object}
+		 * @cfg {CMDBuild.cache.CMEntryTypeModel}
 		 */
 		entryType: undefined,
 
@@ -30,10 +30,12 @@
 
 		/**
 		 * @param {Object} params - url parameters
-		 * @param {String} params.classIdentifier - className
-		 * @param {Int} params.cardIdentifier - cardId
+		 * @param {String} params.classIdentifier - class name
+		 * @param {Int} params.cardIdentifier - card id
 		 * @param {String} path
 		 * @param {Object} router
+		 *
+		 * @return  {Boolean}
 		 */
 		detail: function(params, path, router) {
 			if (this.paramsValidation(params)) {
@@ -59,7 +61,7 @@
 				} else {
 					CMDBuild.Msg.error(
 						CMDBuild.Translation.common.failure,
-						CMDBuild.Translation.errors.routesCardsDetailInvanlidIdentifier + ' (' + this.cardIdentifier + ')',
+						CMDBuild.Translation.errors.routesInvalidCardIdentifier + ' (' + this.cardIdentifier + ')',
 						false
 					);
 				}
@@ -92,7 +94,7 @@
 			}
 
 			// Card identifier validation
-			if (Ext.isEmpty(params[CMDBuild.core.proxy.CMProxyConstants.CARD_IDENTIFIER])) {
+			if (Ext.isEmpty(this.cardIdentifier)) {
 				CMDBuild.Msg.error(
 					CMDBuild.Translation.common.failure,
 					CMDBuild.Translation.errors.routesInvalidCardIdentifier + ' (' + this.cardIdentifier + ')',
@@ -128,9 +130,7 @@
 			this.detail(params, path, router);
 
 			Ext.Function.createDelayed(function() {
-				_CMMainViewportController.panelControllers[CMDBuild.core.proxy.CMProxyConstants.CLASS].cardPanelController.onPrintCardMenuClick(
-					this.printFormat
-				);
+				_CMMainViewportController.panelControllers[CMDBuild.core.proxy.CMProxyConstants.CLASS].cardPanelController.onPrintCardMenuClick(this.printFormat);
 			}, 1500, this)();
 		},
 
