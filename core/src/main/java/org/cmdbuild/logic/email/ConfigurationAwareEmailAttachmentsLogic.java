@@ -1,8 +1,9 @@
 package org.cmdbuild.logic.email;
 
+import static com.google.common.reflect.Reflection.newProxy;
 import static java.util.Collections.emptyList;
+import static org.cmdbuild.common.utils.Reflection.unsupported;
 
-import org.cmdbuild.common.utils.UnsupportedProxyFactory;
 import org.cmdbuild.dms.DmsConfiguration;
 import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.logic.email.EmailAttachmentsLogic.ForwardingEmailAttachmentsLogic;
@@ -19,13 +20,13 @@ public class ConfigurationAwareEmailAttachmentsLogic extends ForwardingEmailAtta
 		this.configuration = configuration;
 	}
 
-	private static final EmailAttachmentsLogic UNSUPPORTED = UnsupportedProxyFactory.of(EmailAttachmentsLogic.class)
-			.create();
+	private static final EmailAttachmentsLogic NOT_CONFIGURED = newProxy(EmailAttachmentsLogic.class,
+			unsupported("method not supported because not configured"));
 	private static final Iterable<Attachment> NO_ATTACHMENTS = emptyList();
 
 	@Override
 	protected EmailAttachmentsLogic delegate() {
-		return configuration.isEnabled() ? delegate : UNSUPPORTED;
+		return configuration.isEnabled() ? delegate : NOT_CONFIGURED;
 	}
 
 	@Override
