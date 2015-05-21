@@ -5,7 +5,10 @@
 	 */
 	Ext.define('CMDBuild.core.proxy.common.tabs.history.Processes', {
 
-		requires: ['CMDBuild.core.proxy.common.tabs.history.Classes'],
+		requires: [
+			'CMDBuild.core.proxy.common.tabs.history.Classes',
+			'CMDBuild.model.common.tabs.history.processes.CardRecord'
+		],
 
 		singleton: true,
 
@@ -41,7 +44,21 @@
 		 * @return {Ext.data.Store}
 		 */
 		getStore: function() {
-			return CMDBuild.core.proxy.common.tabs.history.Classes.getStore();
+			return Ext.create('Ext.data.Store', {
+				autoLoad: false,
+				model: 'CMDBuild.model.common.tabs.history.processes.CardRecord',
+				proxy: {
+					type: 'ajax',
+					url: CMDBuild.core.proxy.CMProxyUrlIndex.history.processes.getProcessHistory,
+					reader: {
+						type: 'json',
+						root: 'response.elements'
+					}
+				},
+				sorters: [ // Setup sorters, also if server returns ordered collection, to use addSorted store function
+					{ property: CMDBuild.core.proxy.CMProxyConstants.BEGIN_DATE, direction: 'DESC' }
+				]
+			});
 		}
 	});
 

@@ -56,30 +56,27 @@
 		getHistoryGridColumns: function() {
 			var processesCustoColumns = [
 				{
-					dataIndex: 'Code', // TODO vedere server + proxy constants
+					dataIndex: CMDBuild.core.proxy.CMProxyConstants.ACTIVITY_NAME,
 					text: CMDBuild.Translation.activityName,
 					sortable: false,
 					hideable: false,
 					menuDisabled: true,
-					fixed: true,
 					flex: 1
 				},
 				{
-					dataIndex: 'Executor', // TODO vedere server + proxy constants
+					dataIndex: CMDBuild.core.proxy.CMProxyConstants.PERFORMERS,
 					text: CMDBuild.Translation.activityPerformer,
 					sortable: false,
 					hideable: false,
 					menuDisabled: true,
-					fixed: true,
 					flex: 1
 				},
 				{
-					dataIndex: 'Status', // TODO vedere server + proxy constants
+					dataIndex: CMDBuild.core.proxy.CMProxyConstants.STATUS,
 					text: CMDBuild.Translation.status,
 					sortable: false,
 					hideable: false,
 					menuDisabled: true,
-					fixed: true,
 					flex: 1
 				}
 			];
