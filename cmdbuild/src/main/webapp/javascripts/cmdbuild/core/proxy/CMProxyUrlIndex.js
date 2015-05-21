@@ -98,9 +98,10 @@
 
 			attachment: {
 				copy: 'services/json/email/attachment/copy',
+				download: 'services/json/email/attachment/download',
 				readAll: 'services/json/email/attachment/readall',
 				remove: 'services/json/email/attachment/delete',
-				upload: 'services/json/email/attachment/upload',
+				upload: 'services/json/email/attachment/upload'
 			},
 
 			queue: {

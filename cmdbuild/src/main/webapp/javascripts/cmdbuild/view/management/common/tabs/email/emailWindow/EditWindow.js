@@ -30,21 +30,6 @@
 		layout: 'border',
 
 		initComponent: function() {
-			// Buttons configuration
-				this.fillFromTemplateButton = Ext.create('Ext.button.Split', {
-					iconCls: 'clone',
-					text: CMDBuild.Translation.composeFromTemplate,
-
-					handler: function() {
-						this.showMenu();
-					},
-
-					menu: Ext.create('Ext.menu.Menu', {
-						items: []
-					})
-				});
-			// END: Buttons configuration
-
 			this.form = Ext.create('CMDBuild.view.management.common.tabs.email.emailWindow.EditForm', {
 				delegate: this.delegate,
 				region: 'center'
@@ -60,7 +45,20 @@
 					Ext.create('Ext.toolbar.Toolbar', {
 						dock: 'top',
 						itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_TOP,
-						items: [this.fillFromTemplateButton]
+						items: [
+							this.fillFromTemplateButton = Ext.create('Ext.button.Split', {
+								iconCls: 'clone',
+								text: CMDBuild.Translation.composeFromTemplate,
+
+								handler: function() {
+									this.showMenu();
+								},
+
+								menu: Ext.create('Ext.menu.Menu', {
+									items: []
+								})
+							})
+						]
 					}),
 					Ext.create('Ext.toolbar.Toolbar', {
 						dock: 'bottom',

@@ -33,6 +33,14 @@
 						value: this.fileName,
 						flex: 1
 					}),
+					Ext.create('CMDBuild.core.buttons.Download', {
+						tooltip: CMDBuild.Translation.download,
+						scope: this,
+
+						handler: function(button, e) {
+							this.delegate.cmfg('onAttachmentDownloadButtonClick', this);
+						}
+					}),
 					Ext.create('CMDBuild.core.buttons.Delete', {
 						tooltip: CMDBuild.Translation.deleteLabel,
 						disabled: this.readOnly,

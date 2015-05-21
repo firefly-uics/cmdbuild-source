@@ -126,6 +126,7 @@
 		FILTER_FROM_ADDRESS: 'filterFromAddress',
 		FILTER_SUBJECT: 'filterSubject',
 		FK_DESTINATION: 'fkDestination',
+		FORCE_DOWNLOAD_PARAM_KEY: 'force-download',
 		FORCE_FORMAT: 'forceFormat',
 		FORMAT: 'format',
 		FROM: 'from',

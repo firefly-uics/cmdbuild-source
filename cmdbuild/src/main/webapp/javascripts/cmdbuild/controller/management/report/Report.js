@@ -133,6 +133,9 @@
 		showReport: function(forceDownload) {
 			forceDownload = forceDownload || false;
 
+			var params = {};
+			params[CMDBuild.core.proxy.CMProxyConstants.FORCE_DOWNLOAD_PARAM_KEY] = true;
+
 			if (forceDownload) { // Force download mode
 				var form = Ext.create('Ext.form.Panel', {
 					standardSubmit: true,
@@ -141,9 +144,7 @@
 
 				form.submit({
 					target: '_blank',
-					params: {
-						'force-download': true
-					}
+					params: params
 				});
 
 				Ext.defer(function() { // Form cleanup
