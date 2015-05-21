@@ -20,6 +20,7 @@
 			'attachmentAddPanel',
 			'onAttachmentAddFromDmsButtonClick',
 			'onAttachmentChangeFile',
+			'onAttachmentDownloadButtonClick',
 			'onAttachmentRemoveButtonClick'
 		],
 
@@ -100,6 +101,20 @@
 
 					this.cmfg('attachmentAddPanel', options.result.response);
 				}
+			});
+		},
+
+		/**
+		 * @param {CMDBuild.view.management.common.tabs.email.attachments.FileAttacchedPanel} attachmentPanel
+		 */
+		onAttachmentDownloadButtonClick: function(attachmentPanel) {
+			var params = {};
+			params[CMDBuild.core.proxy.CMProxyConstants.EMAIL_ID] = this.record.get(CMDBuild.core.proxy.CMProxyConstants.ID);
+			params[CMDBuild.core.proxy.CMProxyConstants.FILE_NAME] = attachmentPanel[CMDBuild.core.proxy.CMProxyConstants.FILE_NAME];
+			params[CMDBuild.core.proxy.CMProxyConstants.TEMPORARY] = this.record.get(CMDBuild.core.proxy.CMProxyConstants.TEMPORARY);
+
+			CMDBuild.core.proxy.common.tabs.email.Attachment.download({
+				params: params
 			});
 		},
 
