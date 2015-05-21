@@ -1074,19 +1074,6 @@
 				"position": "Posizione",
 				"zoom": "Zoom"
 			},
-			"history_columns": {
-				"activity_name": "Nome attività",
-				"attributes": "Attributi",
-				"begin_date": "Data inizio",
-				"code": "Codice",
-				"description": "Descrizione",
-				"destclass": "Classe",
-				"domain": "Dominio",
-				"end_date": "Data fine",
-				"performer": "Esecutore attività",
-				"relation": "Relazione",
-				"user": "Utente"
-			},
 			"maptoolbar": {
 				"add": "Aggiungi",
 				"drag": "Modifica",
@@ -1218,15 +1205,6 @@
 				"notes": {
 					"must_save_to_modify": "Non puoi modificare le note prima di aver salvato l'attività"
 				}
-			},
-			"history_columns": {
-				"attributes": "Attributi",
-				"begin_date": "Data inizio",
-				"description": "Descrizione",
-				"domain": "Dominio",
-				"end_date": "Data fine",
-				"relation": "Relazione",
-				"user": "Utente"
 			},
 			"interrupted": "Interrotto",
 			"modify_card": "Modifica attivita",
@@ -1408,6 +1386,7 @@
 	"imapPort": "Porta IMAP",
 	"imapServer": "Server IMAP",
 	"importFromCSV": "Importa da CSV",
+	"includeRelations": "Includi relazioni",
 	"incoming": "In arrivo",
 	"incomingFolder": "Cartella in arrivo",
 	"initialLatitude": "Latitudine iniziale",

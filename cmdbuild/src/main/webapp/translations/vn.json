@@ -1074,19 +1074,6 @@
 				"position": "Vị trí",
 				"zoom": "Phóng"
 			},
-			"history_columns": {
-				"activity_name": "Tên hoạt động",
-				"attributes": "Các thuộc tính",
-				"begin_date": "Ngày bắt đầu",
-				"code": "Mã",
-				"description": "Mô tả",
-				"destclass": "Class",
-				"domain": "Tên miền",
-				"end_date": "Ngày kết thúc",
-				"performer": "Hoạt động biểu diễn",
-				"relation": "Mối quan hệ",
-				"user": "Người dùng"
-			},
 			"maptoolbar": {
 				"add": "Thêm",
 				"drag": "Sửa đổi",
@@ -1218,15 +1205,6 @@
 				"notes": {
 					"must_save_to_modify": "Bạn không thể sửa đổi các ghi chú trước khi lưu hoạt động"
 				}
-			},
-			"history_columns": {
-				"attributes": "Các thuộc tính",
-				"begin_date": "Ngày bắt đầu",
-				"description": "Mô tả",
-				"domain": "Tên miền",
-				"end_date": "Ngày kết thúc",
-				"relation": "Mối quan hệ",
-				"user": "Người dùng"
 			},
 			"interrupted": "Bị gián đoạn",
 			"modify_card": "Chỉnh sửa hoạt đọng",
@@ -1408,6 +1386,7 @@
 	"imapPort": "<em>IMAP port</em>",
 	"imapServer": "<em>IMAP server</em>",
 	"importFromCSV": "<em>Import from CSV</em>",
+	"includeRelations": "<em>Include relations</em>",
 	"incoming": "<em>Incoming</em>",
 	"incomingFolder": "<em>Incoming folder</em>",
 	"initialLatitude": "Vĩ độ ban đầu",

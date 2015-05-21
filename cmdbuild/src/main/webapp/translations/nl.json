@@ -1074,19 +1074,6 @@
 				"position": "Positie",
 				"zoom": "Zoom"
 			},
-			"history_columns": {
-				"activity_name": "Aktiviteit naam",
-				"attributes": "Attributen",
-				"begin_date": "Begin datum",
-				"code": "Kode",
-				"description": "Omschrijving",
-				"destclass": "Klas",
-				"domain": "Domein",
-				"end_date": "Eind datum",
-				"performer": "Activiteit uitvoerder",
-				"relation": "Relatie",
-				"user": "Gebruiker"
-			},
 			"maptoolbar": {
 				"add": "Toevoegen",
 				"drag": "Aanpassen",
@@ -1218,15 +1205,6 @@
 				"notes": {
 					"must_save_to_modify": "Je kan geen notities aanpassen voordat de aktiviteiten zijn opgeslagen."
 				}
-			},
-			"history_columns": {
-				"attributes": "Attributen",
-				"begin_date": "Begin datum",
-				"description": "Omschrijving",
-				"domain": "Domein",
-				"end_date": "Eind datum",
-				"relation": "Relatie",
-				"user": "Gebruiker"
 			},
 			"interrupted": "Onderbroken",
 			"modify_card": "Aktiviteit aanpassen",
@@ -1408,6 +1386,7 @@
 	"imapPort": "IMAP poort",
 	"imapServer": "IMAP server",
 	"importFromCSV": "Importeer vanaf CSV",
+	"includeRelations": "<em>Include relations</em>",
 	"incoming": "Inkomende",
 	"incomingFolder": "Map inkomend",
 	"initialLatitude": "Initiele latitude",

@@ -1074,19 +1074,6 @@
 				"position": "Позиција",
 				"zoom": "Увећање"
 			},
-			"history_columns": {
-				"activity_name": "Назив активности",
-				"attributes": "Атрибути",
-				"begin_date": "Датум почетка",
-				"code": "Код",
-				"description": "Опис",
-				"destclass": "Класа",
-				"domain": "Релација",
-				"end_date": "Датум завршетка",
-				"performer": "Извршилац активности",
-				"relation": "Релације",
-				"user": "Корисник"
-			},
 			"maptoolbar": {
 				"add": "Додај",
 				"drag": "Измени",
@@ -1218,15 +1205,6 @@
 				"notes": {
 					"must_save_to_modify": "Не можете модификовати напомену пре него што снимите активност"
 				}
-			},
-			"history_columns": {
-				"attributes": "Атрибути",
-				"begin_date": "Датум почетка",
-				"description": "Опис",
-				"domain": "Релација",
-				"end_date": "Датум завршетка",
-				"relation": "Релације",
-				"user": "Корисник"
 			},
 			"interrupted": "Прекинут",
 			"modify_card": "Измени активност",
@@ -1408,6 +1386,7 @@
 	"imapPort": "IMAP порт",
 	"imapServer": "IMAP сервер",
 	"importFromCSV": "Увоз из CSV",
+	"includeRelations": "<em>Include relations</em>",
 	"incoming": "Долазне",
 	"incomingFolder": "Долазни фолдер",
 	"initialLatitude": "Почетна географска ширина",

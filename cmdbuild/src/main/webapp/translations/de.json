@@ -1074,19 +1074,6 @@
 				"position": "Position",
 				"zoom": "Zoom"
 			},
-			"history_columns": {
-				"activity_name": "Aktivitätsname",
-				"attributes": "Attribute",
-				"begin_date": "Anfangsdatum",
-				"code": "Code",
-				"description": "Beschreibung",
-				"destclass": "Klasse",
-				"domain": "Domain",
-				"end_date": "Enddatum",
-				"performer": "Ausführende der Aktivität",
-				"relation": "Beziehung",
-				"user": "Benutzer"
-			},
 			"maptoolbar": {
 				"add": "Hinzufügen",
 				"drag": "Bearbeiten",
@@ -1218,15 +1205,6 @@
 				"notes": {
 					"must_save_to_modify": "Sie können die Notizen vor dem Speichern nicht bearbeiten"
 				}
-			},
-			"history_columns": {
-				"attributes": "Attribute",
-				"begin_date": "Anfangsdatum",
-				"description": "Beschreibung",
-				"domain": "Domain",
-				"end_date": "Enddatum",
-				"relation": "Beziehung",
-				"user": "Benutzer"
 			},
 			"interrupted": "Unterbrochen",
 			"modify_card": "Aktivität bearbeiten",
@@ -1408,6 +1386,7 @@
 	"imapPort": "IMAP port",
 	"imapServer": "IMAP server",
 	"importFromCSV": "<em>Import from CSV</em>",
+	"includeRelations": "<em>Include relations</em>",
 	"incoming": "Eingehend",
 	"incomingFolder": "Ordner für eingegangene E-Mails",
 	"initialLatitude": "Anfangsbreite",
