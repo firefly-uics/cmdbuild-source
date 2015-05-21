@@ -93,7 +93,6 @@
 						sortable: false,
 						hideable: false,
 						menuDisabled: true,
-						fixed: true,
 						flex: 1
 					},
 					{
@@ -102,7 +101,6 @@
 						sortable: false,
 						hideable: false,
 						menuDisabled: true,
-						fixed: true,
 						flex: 1
 					}
 				];
@@ -139,11 +137,10 @@
 				{
 					dataIndex: CMDBuild.core.proxy.CMProxyConstants.USER,
 					text: CMDBuild.Translation.user,
-					flex: 1,
 					sortable: false,
 					hideable: false,
 					menuDisabled: true,
-					fixed: true
+					flex: 1
 				}
 			];
 
@@ -180,7 +177,7 @@
 		},
 
 		/**
-		 * @param {CMDBuild.model.common.tabs.history.CardRecord or CMDBuild.model.common.tabs.history.RelationRecord} record
+		 * @param {CMDBuild.model.common.tabs.history.classes.CardRecord or CMDBuild.model.common.tabs.history.classes.RelationRecord} record
 		 */
 		onHistoryRowExpand: function(record) {
 			if (
@@ -303,7 +300,7 @@
 									var referenceElements = decodedResponse.response.elements;
 
 									Ext.Array.forEach(referenceElements, function(element, i, allElements) {
-										referenceElements[i] = Ext.create('CMDBuild.model.common.tabs.history.RelationRecord', element);
+										referenceElements[i] = Ext.create('CMDBuild.model.common.tabs.history.classes.RelationRecord', element);
 									});
 
 									// Clear store and re-add all records to avoid RowExpander plugin bug that appens with store add action that won't manage
