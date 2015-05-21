@@ -1074,19 +1074,6 @@
 				"position": "Position",
 				"zoom": "Zoom"
 			},
-			"history_columns": {
-				"activity_name": "نام فعالیت",
-				"attributes": "خواص",
-				"begin_date": "تاریخ شروع",
-				"code": "کد",
-				"description": "توضیحات",
-				"destclass": "کلاس",
-				"domain": "دامنه",
-				"end_date": "تاریخ اتمام",
-				"performer": "انجام دهنده",
-				"relation": "رابطه",
-				"user": "کاربر"
-			},
 			"maptoolbar": {
 				"add": "اضافه",
 				"drag": "تغییر",
@@ -1218,15 +1205,6 @@
 				"notes": {
 					"must_save_to_modify": "شما نمیتوانید نت ها را پیش از ذخیره سازی فعالیت تغییر دهید"
 				}
-			},
-			"history_columns": {
-				"attributes": "خواص",
-				"begin_date": "تاریخ شروع",
-				"description": "توضیحات",
-				"domain": "دامین",
-				"end_date": "تاریخ پایان",
-				"relation": "روابط",
-				"user": "کاربر"
 			},
 			"interrupted": "منقطع",
 			"modify_card": "ویرایش فعالیت",
@@ -1408,6 +1386,7 @@
 	"imapPort": "IMAP port",
 	"imapServer": "IMAP server",
 	"importFromCSV": "<em>Import from CSV</em>",
+	"includeRelations": "<em>Include relations</em>",
 	"incoming": "ورودی",
 	"incomingFolder": "فولدر ورودی",
 	"initialLatitude": "Initial latitude",

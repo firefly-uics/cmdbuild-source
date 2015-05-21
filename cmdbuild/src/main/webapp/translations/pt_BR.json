@@ -1074,19 +1074,6 @@
 				"position": "Posição",
 				"zoom": "Zoom"
 			},
-			"history_columns": {
-				"activity_name": "Nome da Atividade",
-				"attributes": "Atributos",
-				"begin_date": "Data de Início",
-				"code": "Código",
-				"description": "Descrição",
-				"destclass": "Classe",
-				"domain": "Domínio",
-				"end_date": "Data de Términio",
-				"performer": "Executante da Atividade",
-				"relation": "Relacionamento",
-				"user": "Usuário"
-			},
 			"maptoolbar": {
 				"add": "Adicionar",
 				"drag": "Modificar",
@@ -1218,15 +1205,6 @@
 				"notes": {
 					"must_save_to_modify": "Você não pode modificar as notas antes de salvar a atividade"
 				}
-			},
-			"history_columns": {
-				"attributes": "Atributos",
-				"begin_date": "Data Início",
-				"description": "Descrição",
-				"domain": "Domínio",
-				"end_date": "Data de Término",
-				"relation": "Relacionamento",
-				"user": "Usuário"
 			},
 			"interrupted": "Interrompida",
 			"modify_card": "Editar Atividade",
@@ -1408,6 +1386,7 @@
 	"imapPort": "<em>IMAP port</em>",
 	"imapServer": "<em>IMAP server</em>",
 	"importFromCSV": "<em>Import from CSV</em>",
+	"includeRelations": "<em>Include relations</em>",
 	"incoming": "<em>Incoming</em>",
 	"incomingFolder": "<em>Incoming folder</em>",
 	"initialLatitude": "Latitude inicial",

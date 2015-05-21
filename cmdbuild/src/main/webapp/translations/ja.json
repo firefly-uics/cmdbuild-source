@@ -1074,19 +1074,6 @@
 				"position": "位置",
 				"zoom": "ズーム"
 			},
-			"history_columns": {
-				"activity_name": "アクティビティ名",
-				"attributes": "アクティビティ",
-				"begin_date": "開始日",
-				"code": "コード",
-				"description": "説明",
-				"destclass": "クラス",
-				"domain": "ドメイン",
-				"end_date": "終了日",
-				"performer": "アクティビティの実施者",
-				"relation": "リレーション",
-				"user": "ユーザー"
-			},
 			"maptoolbar": {
 				"add": "追加",
 				"drag": "ドラッグ",
@@ -1218,15 +1205,6 @@
 				"notes": {
 					"must_save_to_modify": "アクティビティの保存前は、ノートを変更出来ません。"
 				}
-			},
-			"history_columns": {
-				"attributes": "属性",
-				"begin_date": "開始日",
-				"description": "説明",
-				"domain": "ドメイン",
-				"end_date": "終了日",
-				"relation": "リレーション",
-				"user": "ユーザー"
 			},
 			"interrupted": "中断",
 			"modify_card": "アクティビティ編集",
@@ -1408,6 +1386,7 @@
 	"imapPort": "IMAPポート",
 	"imapServer": "IMAPサーバー",
 	"importFromCSV": "CSVからインポート",
+	"includeRelations": "<em>Include relations</em>",
 	"incoming": "受信",
 	"incomingFolder": "受信フォルダー",
 	"initialLatitude": "初期緯度",

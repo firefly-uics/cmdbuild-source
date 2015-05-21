@@ -1074,19 +1074,6 @@
 				"position": "Положение",
 				"zoom": "Масштаб"
 			},
-			"history_columns": {
-				"activity_name": "Действие",
-				"attributes": "Атрибуты",
-				"begin_date": "Начальная дата",
-				"code": "Код",
-				"description": "Описание",
-				"destclass": "Класс",
-				"domain": "Связь",
-				"end_date": "Конечная дата",
-				"performer": "Исполнитель",
-				"relation": "Отношение",
-				"user": "Пользователь"
-			},
 			"maptoolbar": {
 				"add": "Добавить",
 				"drag": "Редактировать",
@@ -1218,15 +1205,6 @@
 				"notes": {
 					"must_save_to_modify": "Нельзя редактировать комментарии до сохранения процесса"
 				}
-			},
-			"history_columns": {
-				"attributes": "Атрибуты",
-				"begin_date": "Начальная дата",
-				"description": "Описание",
-				"domain": "Связь",
-				"end_date": "Конечная дата",
-				"relation": "Отношение",
-				"user": "Пользователь"
 			},
 			"interrupted": "Прерван",
 			"modify_card": "Редактировать процесс",
@@ -1408,6 +1386,7 @@
 	"imapPort": "IMAP порт",
 	"imapServer": "IMAP сервер",
 	"importFromCSV": "<em>Import from CSV</em>",
+	"includeRelations": "<em>Include relations</em>",
 	"incoming": "Входящая почта",
 	"incomingFolder": "Папка входящей почты",
 	"initialLatitude": "Начальная широта",

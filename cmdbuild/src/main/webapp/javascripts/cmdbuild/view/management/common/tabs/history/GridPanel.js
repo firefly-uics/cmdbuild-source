@@ -37,7 +37,7 @@
 						items: [
 							'->',
 							this.includeRelationsCheckbox = Ext.create('Ext.form.field.Checkbox', {
-								boxLabel: '@@ Include relations',
+								boxLabel: CMDBuild.Translation.includeRelations,
 								boxLabelCls: 'cmtoolbaritem',
 								checked: false, // Default as false
 								scope: this,
