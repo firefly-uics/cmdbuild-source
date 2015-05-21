@@ -153,7 +153,9 @@
 				getRelationsHistory: 'services/json/management/modcard/getrelationshistory',
 				getHistoricRelation: 'services/json/management/modcard/gethistoricrelation'
 			},
-			processes: {}
+			processes: {
+				getProcessHistory: 'services/json/management/modcard/getprocesshistory'
+			}
 		},
 
 		localizations: { // TODO: refactor with server side
