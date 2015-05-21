@@ -1,14 +1,17 @@
 package org.cmdbuild.logic.data.access.resolver;
 
+import static org.cmdbuild.dao.entrytype.Functions.*;
 import static com.google.common.collect.FluentIterable.from;
 
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.commons.lang3.builder.Builder;
 import org.cmdbuild.dao.entry.CMEntry;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 
 import com.google.common.base.Function;
+import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Maps;
 
 public class ForeignReferenceResolver<T extends CMEntry> {
@@ -37,6 +40,7 @@ public class ForeignReferenceResolver<T extends CMEntry> {
 		private Iterable<? extends T> entries;
 		public EntryFiller<T> entryFiller;
 		public AbstractSerializer<T> serializer;
+		public boolean minimumAttributes;
 
 		@Override
 		public ForeignReferenceResolver<T> build() {
@@ -58,6 +62,11 @@ public class ForeignReferenceResolver<T extends CMEntry> {
 			return this;
 		}
 
+		public ForeignReferenceResolverBuilder<T> withMinimumAttributes(final boolean value) {
+			minimumAttributes = value;
+			return this;
+		}
+
 	}
 
 	public static <T extends CMEntry> ForeignReferenceResolverBuilder<T> newInstance() {
@@ -67,15 +76,16 @@ public class ForeignReferenceResolver<T extends CMEntry> {
 	private final Iterable<? extends T> entries;
 	private final EntryFiller<T> entryFiller;
 	private final AbstractSerializer<T> serializer;
+	private final boolean minimumAttributes;
 
 	public ForeignReferenceResolver(final ForeignReferenceResolverBuilder<T> builder) {
 		this.entries = builder.entries;
 		this.entryFiller = builder.entryFiller;
 		this.serializer = builder.serializer;
+		this.minimumAttributes = builder.minimumAttributes;
 	}
 
 	public Iterable<T> resolve() {
-
 		return from(entries) //
 				.transform(new Function<T, T>() {
 
@@ -84,8 +94,8 @@ public class ForeignReferenceResolver<T extends CMEntry> {
 
 						entryFiller.setInput(input);
 
-						for (final CMAttribute attribute : input.getType().getAllAttributes()) {
-							final String attributeName = attribute.getName();
+						for (final String attributeName : attributes(input)) {
+							final CMAttribute attribute = input.getType().getAttribute(attributeName);
 
 							final Object rawValue;
 							try {
@@ -117,7 +127,26 @@ public class ForeignReferenceResolver<T extends CMEntry> {
 						return entryFiller.getOutput();
 					}
 
+					private Iterable<String> attributes(T input) {
+						return minimumAttributes ? inputAttributes(input) : allAttributes(input);
+					}
+
+					private FluentIterable<String> inputAttributes(T input) {
+						return from(input.getAllValues()) //
+								.transform(new Function<Entry<String, Object>, String>() {
+
+									public String apply(Entry<String, Object> input) {
+										return input.getKey();
+									};
+
+								});
+					}
+
+					private FluentIterable<String> allAttributes(T input) {
+						return from(input.getType().getAllAttributes()) //
+								.transform(attributeName());
+					}
+
 				});
 	}
-
 }

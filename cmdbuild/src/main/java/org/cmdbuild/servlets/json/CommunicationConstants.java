@@ -10,6 +10,7 @@ public class CommunicationConstants {
 			ACCOUNT = "account", //
 			ACTIVE = "active", //
 			ACTIVE_CAPITAL = "Active", //
+			ACTIVITY_NAME = "activityName", //
 			ADDRESS = "address", //
 			ADMIN_PASSWORD = "admin_password", //
 			ADMIN_USER = "admin_user", //
@@ -200,6 +201,7 @@ public class CommunicationConstants {
 			PARENT = "parent", //
 			PASSWORD = "password", //
 			PATCHES = "patches", //
+			PERFORMERS = "performers", //
 			PHASE_AFTER_CREATE = "afterCreate", //
 			PHASE_AFTER_UPDATE = "afterUpdate", //
 			PHASE_BEFORE_DELETE = "beforeDelete", //

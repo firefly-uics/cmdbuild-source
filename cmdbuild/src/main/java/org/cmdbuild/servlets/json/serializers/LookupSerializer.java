@@ -101,11 +101,12 @@ public class LookupSerializer {
 	}
 
 	private String description(final LookupValue value) {
-		final String lastLevelBaseDescription = value.getDescription();
+		final Lookup _lookup = lookup(value.getId());
+		final String lastLevelBaseDescription = (_lookup == null) ? value.getDescription() : _lookup.getDescription();
 		String baseDescription = lastLevelBaseDescription;
 		String jointBaseDescription = lastLevelBaseDescription;
 
-		Lookup lookup = lookup(value.getId());
+		Lookup lookup = _lookup;
 		if (lookup != null) {
 			lookup = lookup(lookup.parentId());
 			while (lookup != null) {

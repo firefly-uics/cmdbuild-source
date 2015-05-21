@@ -1,12 +1,17 @@
 package org.cmdbuild.logic.commands;
 
 import static com.google.common.collect.FluentIterable.from;
+import static com.google.common.collect.Lists.newArrayList;
+import static java.util.Arrays.asList;
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
 import static org.cmdbuild.dao.query.clause.ClassHistory.history;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
 import static org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue.eq;
 import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
+import static org.cmdbuild.workflow.ProcessAttributes.CurrentActivityPerformers;
+import static org.cmdbuild.workflow.ProcessAttributes.FlowStatus;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.apache.commons.lang3.Validate;
@@ -23,7 +28,6 @@ import org.cmdbuild.logic.data.access.resolver.ForeignReferenceResolver;
 import org.cmdbuild.model.data.Card;
 
 import com.google.common.base.Function;
-import com.google.common.collect.Lists;
 
 public class GetCardHistory {
 
@@ -39,9 +43,19 @@ public class GetCardHistory {
 		Validate.notNull(card);
 		final CMClass target = dataView.findClass(card.getClassName());
 		historyClass = history(target);
-		final QueryAliasAttribute attributes = allAttributes ? anyAttribute(historyClass) : attribute(historyClass,
-				target.getCodeAttributeName());
-		final CMQueryResult historyCardsResult = dataView.select(attributes) //
+		final Collection<? extends QueryAliasAttribute> attributes;
+		if (allAttributes) {
+			attributes = asList(anyAttribute(historyClass));
+		} else if (dataView.getActivityClass().isAncestorOf(target)) {
+			attributes = asList( //
+					attribute(historyClass, target.getCodeAttributeName()), //
+					attribute(historyClass, FlowStatus.dbColumnName()), //
+					attribute(historyClass, CurrentActivityPerformers.dbColumnName()) //
+			);
+		} else {
+			attributes = asList(attribute(historyClass, target.getCodeAttributeName()));
+		}
+		final CMQueryResult historyCardsResult = dataView.select(attributes.toArray()) //
 				.from(historyClass) //
 				.where(condition(attribute(historyClass, "CurrentId"), eq(card.getId()))) //
 				.run();
@@ -49,7 +63,7 @@ public class GetCardHistory {
 	}
 
 	private Iterable<Card> createResponse(final Iterable<CMQueryRow> rows) {
-		final List<CMCard> cards = Lists.newArrayList();
+		final List<CMCard> cards = newArrayList();
 		for (final CMQueryRow row : rows) {
 			final CMCard card = row.getCard(historyClass);
 			cards.add(card);
@@ -57,8 +71,11 @@ public class GetCardHistory {
 
 		final Iterable<CMCard> cardsWithForeingReferences = ForeignReferenceResolver.<CMCard> newInstance() //
 				.withEntries(cards) //
-				.withEntryFiller(new CardEntryFiller()) //
+				.withEntryFiller(CardEntryFiller.newInstance() //
+						.includeSystemAttributes(true) //
+						.build()) //
 				.withSerializer(new CardSerializer<CMCard>()) //
+				.withMinimumAttributes(true) //
 				.build() //
 				.resolve();
 
