@@ -1,6 +1,6 @@
 (function() {
 
-	Ext.define('CMDBuild.model.common.tabs.history.CardRecord', {
+	Ext.define('CMDBuild.model.common.tabs.history.classes.CardRecord', {
 		extend: 'Ext.data.Model',
 
 		require: ['CMDBuild.core.proxy.CMProxyConstants'],
