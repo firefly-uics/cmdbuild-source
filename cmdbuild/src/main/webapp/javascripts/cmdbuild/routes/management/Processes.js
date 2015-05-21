@@ -1,17 +1,19 @@
 (function() {
 
-	Ext.define('CMDBuild.routes.management.Classes', {
+	Ext.define('CMDBuild.routes.management.Processes', {
 		extend: 'CMDBuild.routes.Base',
 
-		/**
-		 * @cfg {String}
-		 */
-		classIdentifier: undefined,
+		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
 
 		/**
 		 * @cfg {String}
 		 */
 		clientFilter: undefined,
+
+		/**
+		 * @cfg {String}
+		 */
+		processIdentifier: undefined,
 
 		/**
 		 * @cfg {CMDBuild.cache.CMEntryTypeModel}
@@ -25,26 +27,28 @@
 
 		/**
 		 * Apply clientFilter to grid
+		 *
+		 * TODO: this functionality is not implemented in processes controller so i leave here the method for a future implementation
 		 */
 		applyClientFilter: function() {
 			if (!Ext.isEmpty(this.clientFilter))
 				Ext.Function.createDelayed(function() {
 					this.entryType.set(CMDBuild.core.proxy.CMProxyConstants.FILTER, this.clientFilter); // Inject filter in entryType object
 
-					_CMMainViewportController.panelControllers[CMDBuild.core.proxy.CMProxyConstants.CLASS].onViewOnFront(this.entryType);
+					_CMMainViewportController.panelControllers[CMDBuild.core.proxy.CMProxyConstants.PROCESS].onViewOnFront(this.entryType);
 				}, 1500, this)();
 		},
 
 		/**
 		 * @param {Object} params - url parameters
-		 * @param {String} params.classIden - class name
+		 * @param {String} params.processIdentifier - process name
 		 * @param {String} params.clientFilter - advanced filter object serialized
 		 * @param {String} path
 		 * @param {Object} router
 		 */
 		detail: function(params, path, router) {
 			if (this.paramsValidation(params)) {
-				this.entryType = _CMCache.getEntryTypeByName(this.classIdentifier);
+				this.entryType = _CMCache.getEntryTypeByName(this.processIdentifier);
 
 				CMDBuild.Runtime.StartingClassId = this.entryType.get(CMDBuild.core.proxy.CMProxyConstants.ID); // Use runtime configuration to select class
 
@@ -58,18 +62,18 @@
 		 * @return  {Boolean}
 		 */
 		paramsValidation: function(params) {
-			this.classIdentifier = params[CMDBuild.core.proxy.CMProxyConstants.CLASS_IDENTIFIER];
+			this.processIdentifier = params[CMDBuild.core.proxy.CMProxyConstants.PROCESS_IDENTIFIER];
 			this.clientFilter = params[CMDBuild.core.proxy.CMProxyConstants.CLIENT_FILTER];
 			this.printFormat = params[CMDBuild.core.proxy.CMProxyConstants.FORMAT] || 'pdf';
 
-			// Class identifier validation
+			// Process identifier validation
 			if (
-				Ext.isEmpty(this.classIdentifier)
-				|| !_CMCache.isEntryTypeByName(this.classIdentifier)
+				Ext.isEmpty(this.processIdentifier)
+				|| !_CMCache.isEntryTypeByName(this.processIdentifier)
 			) {
 				CMDBuild.Msg.error(
 					CMDBuild.Translation.common.failure,
-					CMDBuild.Translation.errors.routesInvalidClassIdentifier + ' (' + this.classIdentifier + ')',
+					CMDBuild.Translation.errors.routesInvalidProcessIdentifier + ' (' + this.processIdentifier + ')',
 					false
 				);
 
@@ -105,7 +109,7 @@
 			this.detail(params, path, router);
 
 			Ext.Function.createDelayed(function() {
-				_CMMainViewportController.panelControllers[CMDBuild.core.proxy.CMProxyConstants.CLASS].gridController.onPrintGridMenuClick(this.printFormat);
+				_CMMainViewportController.panelControllers[CMDBuild.core.proxy.CMProxyConstants.PROCESS].gridController.onPrintGridMenuClick(this.printFormat);
 			}, 500, this)();
 		}
 	});

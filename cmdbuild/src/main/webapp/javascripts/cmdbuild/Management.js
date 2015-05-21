@@ -28,6 +28,8 @@
 			'Ext.ux.Router',
 			'CMDBuild.routes.management.Cards',
 			'CMDBuild.routes.management.Classes',
+			'CMDBuild.routes.management.Instances',
+			'CMDBuild.routes.management.Processes',
 			'CMDBuild.core.buttons.Buttons',
 			'CMDBuild.core.proxy.CMProxyConstants',
 			'CMDBuild.core.proxy.Classes',
@@ -55,7 +57,19 @@
 
 			'exec/classes/:classIdentifier/cards/:cardIdentifier': 'CMDBuild.routes.management.Cards#detail', // Alias (wrong implementation, to delete in future)
 			'exec/classes/:classIdentifier/cards/:cardIdentifier/': 'CMDBuild.routes.management.Cards#detail',
-			'exec/classes/:classIdentifier/cards/:cardIdentifier/print': 'CMDBuild.routes.management.Cards#print'
+			'exec/classes/:classIdentifier/cards/:cardIdentifier/print': 'CMDBuild.routes.management.Cards#print',
+
+			// Processes
+			'processes/:processIdentifier/instances/': 'CMDBuild.routes.management.Processes#saveRoute',
+			'processes/:processIdentifier/print': 'CMDBuild.routes.management.Processes#saveRoute',
+
+			'exec/processes/:processIdentifier/instances/': 'CMDBuild.routes.management.Processes#detail',
+			'exec/processes/:processIdentifier/print': 'CMDBuild.routes.management.Processes#print',
+
+			// Instances
+			'processes/:processIdentifier/instances/:instanceIdentifier/': 'CMDBuild.routes.management.Instances#saveRoute',
+
+			'exec/processes/:processIdentifier/instances/:instanceIdentifier/': 'CMDBuild.routes.management.Instances#detail',
 		},
 
 		statics: {
