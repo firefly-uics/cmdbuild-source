@@ -153,7 +153,7 @@
 		templateResolver: undefined,
 
 		/**
-		 * @property {CMDBuild.view.management.common.tabs.email.EmailPanel}
+		 * @property {CMDBuild.view.management.common.tabs.email.EmailView}
 		 */
 		view: undefined,
 
@@ -272,7 +272,7 @@
 				) {
 					scope.relatedAttributeChanged = true;
 
-					if (!record.get(CMDBuild.core.proxy.CMProxyConstants.PROMPT_SYNCHRONIZATION))
+					if (!record.get(CMDBuild.core.proxy.CMProxyConstants.KEEP_SYNCHRONIZATION) && !record.get(CMDBuild.core.proxy.CMProxyConstants.PROMPT_SYNCHRONIZATION))
 						CMDBuild.Msg.warn(null, CMDBuild.Translation.warnings.emailTemplateRelatedAttributeEdited);
 				}
 			});
@@ -555,7 +555,6 @@
 			 */
 			regenerateAllEmails: function() {
 				if (this.regenerateAllEmailsGet()) {
-
 					var regenerationTrafficLightArray = [];
 
 					this.controllerConfirmRegenerationWindow.reset();
@@ -622,7 +621,7 @@
 					this.sendAllOnSaveSet();
 
 					this.cmfg('sendAll');
-				} else if (typeof this.regenerationEndPointCallback == 'function') {
+				} else if (Ext.isFunction(this.regenerationEndPointCallback)) {
 					Ext.callback(this.regenerationEndPointCallback, this);
 				}
 

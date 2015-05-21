@@ -36,7 +36,7 @@
 		entryType: undefined,
 
 		/**
-		 * @property {CMDBuild.view.management.common.tabs.email.EmailPanel}
+		 * @property {CMDBuild.view.management.common.tabs.email.EmailView}
 		 */
 		view: undefined,
 
@@ -50,7 +50,7 @@
 			this.callParent(arguments);
 
 			// View build
-			this.view = Ext.create('CMDBuild.view.management.common.tabs.email.EmailPanel', {
+			this.view = Ext.create('CMDBuild.view.management.common.tabs.email.EmailView', {
 				delegate: this
 			});
 
@@ -96,9 +96,9 @@
 
 			this.card = card;
 
-			this.selectedEntitySet(card, function() {
-				me.regenerateAllEmailsSet(Ext.isEmpty(card));
-				me.forceRegenerationSet(Ext.isEmpty(card));
+			this.selectedEntitySet(this.card, function() {
+				me.regenerateAllEmailsSet(Ext.isEmpty(this.card));
+				me.forceRegenerationSet(Ext.isEmpty(this.card));
 				me.cmfg('storeLoad');
 			});
 
@@ -106,7 +106,20 @@
 			this.cmfg('setUiState');
 		},
 
-		onCloneCard: Ext.emptyFn,
+		onCloneCard: function() {
+			var me = this;
+
+			this.card = null;
+
+			this.selectedEntitySet(this.card, function() {
+				me.regenerateAllEmailsSet(Ext.isEmpty(this.card));
+				me.forceRegenerationSet(Ext.isEmpty(this.card));
+				me.cmfg('storeLoad');
+			});
+
+			this.editModeSet(true);
+			this.cmfg('setUiState');
+		},
 
 		/**
 		 * @param {CMDBuild.cache.CMEntryTypeModel} entryType

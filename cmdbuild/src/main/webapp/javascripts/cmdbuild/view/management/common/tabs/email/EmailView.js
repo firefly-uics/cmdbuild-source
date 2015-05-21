@@ -1,6 +1,6 @@
 (function () {
 
-	Ext.define('CMDBuild.view.management.common.tabs.email.EmailPanel', {
+	Ext.define('CMDBuild.view.management.common.tabs.email.EmailView', {
 		extend: 'Ext.panel.Panel',
 
 		/**

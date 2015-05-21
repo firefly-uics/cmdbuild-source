@@ -365,20 +365,18 @@
 		 * Loads grid store with activityId parameter
 		 */
 		storeLoad: function() {
-			if (!this.view.getStore().isLoading()) {
-				this.cmfg('busyStateSet', true); // Setup widget busy state and the begin of store load
+			this.cmfg('busyStateSet', true); // Setup widget busy state and the begin of store load
 
-				var params = {};
-				params[CMDBuild.core.proxy.CMProxyConstants.REFERENCE] = this.cmfg('selectedEntityIdGet');
+			var params = {};
+			params[CMDBuild.core.proxy.CMProxyConstants.REFERENCE] = this.cmfg('selectedEntityIdGet');
 
-				this.view.getStore().load({
-					params: params,
-					scope: this,
-					callback: function(records, operation, success) {
-						this.cmfg('getAllTemplatesData');
-					}
-				});
-			}
+			this.view.getStore().load({
+				params: params,
+				scope: this,
+				callback: function(records, operation, success) {
+					this.cmfg('getAllTemplatesData');
+				}
+			});
 		}
 	});
 
