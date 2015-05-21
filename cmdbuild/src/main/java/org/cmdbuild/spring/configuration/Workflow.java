@@ -4,9 +4,9 @@ import static org.cmdbuild.spring.util.Constants.DEFAULT;
 import static org.cmdbuild.spring.util.Constants.PROTOTYPE;
 import static org.cmdbuild.spring.util.Constants.SYSTEM;
 
+import org.apache.commons.lang3.builder.Builder;
 import org.cmdbuild.auth.AuthenticationService;
 import org.cmdbuild.auth.acl.PrivilegeContext;
-import org.cmdbuild.common.Builder;
 import org.cmdbuild.common.template.TemplateResolver;
 import org.cmdbuild.config.WorkflowConfiguration;
 import org.cmdbuild.logger.WorkflowLogger;

@@ -1,7 +1,7 @@
 package org.cmdbuild.logic.workflow;
 
+import org.apache.commons.lang3.builder.Builder;
 import org.cmdbuild.auth.acl.PrivilegeContext;
-import org.cmdbuild.common.Builder;
 import org.cmdbuild.config.WorkflowConfiguration;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.services.FilesStore;

@@ -20,6 +20,7 @@ import org.cmdbuild.auth.acl.PrivilegeContext;
 import org.cmdbuild.common.Constants;
 import org.cmdbuild.common.utils.PagedElements;
 import org.cmdbuild.config.WorkflowConfiguration;
+import org.cmdbuild.dao.entry.IdAndDescription;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.exception.CMDBWorkflowException;
@@ -64,6 +65,7 @@ class DefaultWorkflowLogic implements WorkflowLogic {
 			return delegate;
 		}
 
+		@Override
 		public Long getPosition() {
 			return position;
 		}
@@ -115,7 +117,7 @@ class DefaultWorkflowLogic implements WorkflowLogic {
 	}
 
 	@Override
-	public PagedElements<UserProcessInstance> query(CMClass processClass, QueryOptions queryOptions) {
+	public PagedElements<UserProcessInstance> query(final CMClass processClass, final QueryOptions queryOptions) {
 		final PagedElements<UserProcessInstance> fetchedProcesses = workflowEngine.query(processClass.getName(),
 				queryOptions);
 		final Iterable<UserProcessInstance> processes = resolve(fetchedProcesses);
@@ -123,8 +125,8 @@ class DefaultWorkflowLogic implements WorkflowLogic {
 	}
 
 	@Override
-	public PagedElements<UserProcessInstanceWithPosition> queryWithPosition(String className,
-			QueryOptions queryOptions, Iterable<Long> cardId) {
+	public PagedElements<UserProcessInstanceWithPosition> queryWithPosition(final String className,
+			final QueryOptions queryOptions, final Iterable<Long> cardId) {
 		final PagedElements<UserProcessInstanceWithPosition> fetchedProcesses = workflowEngine.queryWithPosition(
 				className, queryOptions, cardId);
 		return new PagedElements<UserProcessInstanceWithPosition>( //
@@ -392,8 +394,27 @@ class DefaultWorkflowLogic implements WorkflowLogic {
 	private UserProcessInstance startProcess(final CMProcessClass process, final Map<String, ?> vars,
 			final Map<String, Object> widgetSubmission, final boolean advance) throws CMWorkflowException {
 		final UserProcessInstance procInst = workflowEngine.startProcess(process);
-		final Map<String, Object> mergedVars = mergeVars(procInst.getValues(), vars);
+		final Map<String, Object> mergedVars = mergeVars(filterNotNullValues(procInst.getValues()), vars);
 		return updateOnlyActivity(procInst, mergedVars, widgetSubmission, advance);
+	}
+
+	private Iterable<Entry<String, Object>> filterNotNullValues(final Iterable<Entry<String, Object>> values) {
+		return from(values) //
+				.filter(new Predicate<Entry<String, Object>>() {
+
+					@Override
+					public boolean apply(final Entry<String, Object> input) {
+						final Object value = input.getValue();
+						final Object _value;
+						if (value instanceof IdAndDescription) {
+							_value = IdAndDescription.class.cast(value).getId() == null ? null : value;
+						} else {
+							_value = value;
+						}
+						return (_value != null);
+					}
+
+				});
 	}
 
 	/**
@@ -405,6 +426,7 @@ class DefaultWorkflowLogic implements WorkflowLogic {
 	 *            values as they are in the newly created database row
 	 * @param entrySet
 	 *            values submitted in the form
+	 * 
 	 * @return database values overridden by the submitted ones
 	 */
 	private Map<String, Object> mergeVars(final Iterable<Entry<String, Object>> databaseValues,

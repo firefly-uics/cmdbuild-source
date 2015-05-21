@@ -4,9 +4,9 @@ import static org.cmdbuild.spring.util.Constants.PROTOTYPE;
 import static org.cmdbuild.spring.util.Constants.SOAP;
 import static org.cmdbuild.spring.util.Constants.USER;
 
+import org.apache.commons.lang3.builder.Builder;
 import org.cmdbuild.auth.UserStore;
 import org.cmdbuild.auth.user.OperationUser;
-import org.cmdbuild.common.Builder;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.dao.view.user.UserDataView;
 import org.cmdbuild.data.view.PermissiveDataView;
