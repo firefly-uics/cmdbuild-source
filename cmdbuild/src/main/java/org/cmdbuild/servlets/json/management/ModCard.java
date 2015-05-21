@@ -10,9 +10,12 @@ import static com.google.common.collect.Maps.filterKeys;
 import static com.google.common.collect.Maps.newHashMap;
 import static com.google.common.collect.Maps.transformValues;
 import static com.google.common.collect.Ordering.from;
+import static java.util.Arrays.asList;
+import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 import static org.cmdbuild.common.Constants.DESCRIPTION_ATTRIBUTE;
 import static org.cmdbuild.common.Constants.ID_ATTRIBUTE;
 import static org.cmdbuild.dao.query.clause.DomainHistory.history;
+import static org.cmdbuild.servlets.json.CommunicationConstants.ACTIVITY_NAME;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ATTRIBUTES;
 import static org.cmdbuild.servlets.json.CommunicationConstants.BEGIN_DATE;
 import static org.cmdbuild.servlets.json.CommunicationConstants.CARD;
@@ -43,6 +46,7 @@ import static org.cmdbuild.servlets.json.CommunicationConstants.MASTER_CARD_ID;
 import static org.cmdbuild.servlets.json.CommunicationConstants.MASTER_CLASS_NAME;
 import static org.cmdbuild.servlets.json.CommunicationConstants.OUT_OF_FILTER;
 import static org.cmdbuild.servlets.json.CommunicationConstants.PARAMS;
+import static org.cmdbuild.servlets.json.CommunicationConstants.PERFORMERS;
 import static org.cmdbuild.servlets.json.CommunicationConstants.POSITION;
 import static org.cmdbuild.servlets.json.CommunicationConstants.RELATION_ID;
 import static org.cmdbuild.servlets.json.CommunicationConstants.RETRY_WITHOUT_FILTER;
@@ -51,10 +55,12 @@ import static org.cmdbuild.servlets.json.CommunicationConstants.SOURCE;
 import static org.cmdbuild.servlets.json.CommunicationConstants.SOURCE_DESCRIPTION;
 import static org.cmdbuild.servlets.json.CommunicationConstants.START;
 import static org.cmdbuild.servlets.json.CommunicationConstants.STATE;
+import static org.cmdbuild.servlets.json.CommunicationConstants.STATUS;
 import static org.cmdbuild.servlets.json.CommunicationConstants.USER;
 import static org.cmdbuild.servlets.json.CommunicationConstants.VALUES;
 import static org.cmdbuild.servlets.json.schema.Utils.toIterable;
 import static org.cmdbuild.servlets.json.schema.Utils.toMap;
+import static org.cmdbuild.workflow.ProcessAttributes.CurrentActivityPerformers;
 import static org.cmdbuild.workflow.ProcessAttributes.FlowStatus;
 
 import java.util.Collection;
@@ -195,6 +201,64 @@ public class ModCard extends JSONBaseWithSpringContext {
 		@Override
 		public JsonCardSimple apply(final Card input) {
 			return new JsonCardSimple(input);
+		}
+
+	};
+
+	private static interface JsonInstance extends JsonCard {
+
+		@JsonProperty(ACTIVITY_NAME)
+		String getActivityName();
+
+		@JsonProperty(PERFORMERS)
+		Collection<String> getPerformers();
+
+		@JsonProperty(STATUS)
+		Map<String, Object> getStatus();
+
+	}
+
+	private static class JsonInstanceSimple extends JsonCardSimple implements JsonInstance {
+
+		private final Card delegate;
+		private final LookupSerializer lookupSerializer;
+
+		public JsonInstanceSimple(final Card delegate, final LookupSerializer lookupSerializer) {
+			super(delegate);
+			this.delegate = delegate;
+			this.lookupSerializer = lookupSerializer;
+		}
+
+		@Override
+		public String getActivityName() {
+			return delegate.getAttribute(delegate.getType().getCodeAttributeName(), String.class);
+		}
+
+		@Override
+		public Collection<String> getPerformers() {
+			final String[] performers = delegate.getAttribute(CurrentActivityPerformers.dbColumnName(), String[].class);
+			return asList(defaultIfNull(performers, new String[] {}));
+		}
+
+		@Override
+		public Map<String, Object> getStatus() {
+			final LookupValue status = delegate.getAttribute(FlowStatus.dbColumnName(), LookupValue.class);
+			return lookupSerializer.serializeLookupValue(status);
+		}
+
+	}
+
+	private static class CardToJsonInstance implements Function<Card, JsonInstanceSimple> {
+
+		private final LookupSerializer lookupSerializer;
+
+		public CardToJsonInstance(final LookupSerializer lookupSerializer) {
+			this.lookupSerializer = lookupSerializer;
+		}
+
+		@Override
+		public JsonInstanceSimple apply(final Card input) {
+			return new JsonInstanceSimple(input, lookupSerializer);
 		}
 
 	};
@@ -752,6 +816,31 @@ public class ModCard extends JSONBaseWithSpringContext {
 				.reverse() //
 				.immutableSortedCopy(response);
 		return JsonResponse.success(new JsonElements<JsonCardSimple>(from(ordered).transform(CARD_JSON_CARD)));
+	}
+
+	@JSONExported
+	public JsonResponse getProcessHistory(//
+			@Parameter(value = CLASS_NAME) final String processClassName, //
+			@Parameter(value = CARD_ID) final Long processInstaceId //
+	) {
+		final Card src = Card.newInstance() //
+				.withClassName(processClassName) //
+				.withId(processInstaceId) //
+				.build();
+		final Iterable<Card> response = userDataAccessLogic().getCardHistory(src, false);
+		final Iterable<Card> ordered = from( //
+				new Comparator<Card>() {
+
+					@Override
+					public int compare(final Card o1, final Card o2) {
+						return o1.getBeginDate().compareTo(o2.getBeginDate());
+					}
+
+				}) //
+				.reverse() //
+				.immutableSortedCopy(response);
+		return JsonResponse.success(new JsonElements<JsonInstanceSimple>(from(ordered).transform(
+				new CardToJsonInstance(lookupSerializer()))));
 	}
 
 	/*

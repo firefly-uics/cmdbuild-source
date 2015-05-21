@@ -397,7 +397,8 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 			 */
 			final Iterable<CMCard> cards = ForeignReferenceResolver.<CMCard> newInstance() //
 					.withEntries(asList(row.getCard(entryType))) //
-					.withEntryFiller(new CardEntryFiller()) //
+					.withEntryFiller(CardEntryFiller.newInstance() //
+							.build()) //
 					.withSerializer(new CardSerializer<CMCard>()) //
 					.build() //
 					.resolve();
@@ -448,7 +449,8 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 	) {
 		final Iterable<CMCard> cardWithResolvedReference = ForeignReferenceResolver.<CMCard> newInstance() //
 				.withEntries(asList(card)) //
-				.withEntryFiller(new CardEntryFiller()) //
+				.withEntryFiller(CardEntryFiller.newInstance() //
+						.build()) // /
 				.withSerializer(new CardSerializer<CMCard>()) //
 				.build() //
 				.resolve();
@@ -515,7 +517,8 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 			final Iterable<CMCard> fetchedCards) {
 		final Iterable<CMCard> cardsWithForeingReferences = ForeignReferenceResolver.<CMCard> newInstance() //
 				.withEntries(fetchedCards) //
-				.withEntryFiller(new CardEntryFiller()) //
+				.withEntryFiller(CardEntryFiller.newInstance() //
+						.build()) //
 				.withSerializer(new CardSerializer<CMCard>()) //
 				.build() //
 				.resolve();
@@ -537,7 +540,8 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 
 		final Iterable<CMCard> cardsWithForeingReferences = ForeignReferenceResolver.<CMCard> newInstance() //
 				.withEntries(fetchedCards) //
-				.withEntryFiller(new CardEntryFiller()) //
+				.withEntryFiller(CardEntryFiller.newInstance() //
+						.build()) //
 				.withSerializer(new CardSerializer<CMCard>()) //
 				.build() //
 				.resolve();
