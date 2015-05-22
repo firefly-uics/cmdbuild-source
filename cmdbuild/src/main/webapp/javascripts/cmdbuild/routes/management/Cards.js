@@ -26,7 +26,10 @@
 		/**
 		 * @cfg {Array}
 		 */
-		supportedPrintFormats: ['pdf', 'odt'],
+		supportedPrintFormats: [
+			CMDBuild.core.proxy.CMProxyConstants.PDF,
+			CMDBuild.core.proxy.CMProxyConstants.ODT
+		],
 
 		/**
 		 * @param {Object} params - url parameters
@@ -77,7 +80,7 @@
 			this.cardIdentifier = params[CMDBuild.core.proxy.CMProxyConstants.CARD_IDENTIFIER];
 			this.classIdentifier = params[CMDBuild.core.proxy.CMProxyConstants.CLASS_IDENTIFIER];
 			this.clientFilterString = params[CMDBuild.core.proxy.CMProxyConstants.CLIENT_FILTER];
-			this.printFormat = params[CMDBuild.core.proxy.CMProxyConstants.FORMAT] || 'pdf';
+			this.printFormat = params[CMDBuild.core.proxy.CMProxyConstants.FORMAT] || CMDBuild.core.proxy.CMProxyConstants.PDF;
 
 			// Class identifier validation
 			if (

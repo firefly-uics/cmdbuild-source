@@ -23,7 +23,10 @@
 		/**
 		 * @cfg {Array}
 		 */
-		supportedPrintFormats: ['pdf', 'csv'],
+		supportedPrintFormats: [
+			CMDBuild.core.proxy.CMProxyConstants.PDF,
+			CMDBuild.core.proxy.CMProxyConstants.CSV
+		],
 
 		/**
 		 * Apply clientFilter to grid
@@ -64,7 +67,7 @@
 		paramsValidation: function(params) {
 			this.processIdentifier = params[CMDBuild.core.proxy.CMProxyConstants.PROCESS_IDENTIFIER];
 			this.clientFilter = params[CMDBuild.core.proxy.CMProxyConstants.CLIENT_FILTER];
-			this.printFormat = params[CMDBuild.core.proxy.CMProxyConstants.FORMAT] || 'pdf';
+			this.printFormat = params[CMDBuild.core.proxy.CMProxyConstants.FORMAT] || CMDBuild.core.proxy.CMProxyConstants.PDF;
 
 			// Process identifier validation
 			if (
