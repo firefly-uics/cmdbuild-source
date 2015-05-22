@@ -1,7 +1,7 @@
 <!-- MODELS -->
+<script type="text/javascript" src="javascripts/cmdbuild/model/Lookup.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/model/CMSetupModels.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/model/CMGisModels.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/model/CMLookupModels.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/model/CMDomainModels.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/model/CMReportAsComboItem.js"></script>
 
@@ -99,14 +99,6 @@
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/navigationTrees/CMModNavigationTrees.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/navigationTrees/CMNavigationTreesTree.js"></script>
 
-	<!-- DOMAINS -->
-	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/accordion/CMDomainAccordion.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/domain/CMDomainForm.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/domain/CMDomainAttributeForm.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/domain/CMDomainAttributeGrid.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/domain/CMDomainAttributes.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/domain/CMModDomain.js"></script>
-
 	<!-- REPORTS -->
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/report/CMModReport.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/report/CMReportForm.js"></script>
@@ -189,12 +181,6 @@
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/navigationTrees/CMModNavigationTreesController.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/navigationTrees/CMNavigationTreesTreeController.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/navigationTrees/CMNavigationTreesFormController.js"></script>
-
-	<!-- DOMAINS -->
-	<script type="text/javascript" src="javascripts/cmdbuild/controller/accordion/CMDomainAccordionController.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/domain/CMDomainAttributesController.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/domain/CMDomainFormController.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/domain/CMModDomainController.js"></script>
 
 	<!-- REPORTS -->
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/report/CMModReportController.js"></script>

@@ -1,6 +1,6 @@
 {
 	"description": "Tiếng Việt",
-	"release": "2.3-dev",
+	"release": "2.4-dev",
 	"administration": {
 		"description": "Mô-đun Quản lý",
 		"modClass": {
@@ -35,6 +35,13 @@
 				"isunique": "Duy nhất",
 				"length": "Ðộ dài",
 				"lookup": "Tra cứu",
+				"meta": {
+					"add": "Thêm mô tả dữ liệu",
+					"key": "Từ khóa",
+					"remove": "Xóa mô tả dữ liệu ",
+					"title": "Sửa mô tả dữ liệu",
+					"value": "Giá trị"
+				},
 				"modify_attribute": "Sửa đổi thuộc tính",
 				"msg_warning_drop_row": "Sắp xếp lại chỉ áp dụng khi các thuộc tính kế thừa được hiển thị",
 				"name": "Tên",
@@ -84,10 +91,8 @@
 				"md_label": "Nhãn Tổng thể/Chi tiết",
 				"modify_domain": "Sửa đổi tên miền",
 				"name": "Tên",
-				"title_add": "Thêm tên miền",
-				"title_modify": "Sửa đổi tên miền \"{0}\""
+				"title_add": "Thêm tên miền"
 			},
-			"domains_title": "Quản lý tên miền",
 			"errors": {
 				"table": {
 					"cast": "Lỗi khi sửa đổi đặc tính \"superclass\", Lớp đang có chứa dữ liệu hay có các Lớp con",
@@ -323,7 +328,6 @@
 		"modWorkflow": {
 			"add_process": "Thêm quy trình",
 			"attributes_title": "Quản lí thuộc tính",
-			"domains_title": "Quản lí tên miền",
 			"errors": {
 				"table": {
 					"cast": "Không thể thay đổi thuộc tính của \"superclass\", lớp có chứa dữ liệu hoặc lớp con ",
@@ -1268,6 +1272,7 @@
 	"add": "Thêm",
 	"addAccount": "<em>Add account</em>",
 	"addAttachmentFromDms": "<em>Add attachments from DMS</em>",
+	"addDomain": "Thêm tên miền",
 	"addFilter": "Thêm bộ lọc",
 	"addProject": "<em>Add Project</em>",
 	"addRelations": "Thêm các mối quan hệ",
@@ -1275,6 +1280,7 @@
 	"addTemplate": "<em>Add Template</em>",
 	"addUser": "Thêm người dùng",
 	"addView": "Thêm lượt xem",
+	"add_attachment_from_dms": "<em>Add attachments from DMS</em>",
 	"address": "<em>Address</em>",
 	"alfresco": "Alfresco",
 	"application": "Ứng dụng",
@@ -1294,6 +1300,7 @@
 	"cacheManagement": "Quản lý bộ nhớ cache",
 	"camera": "<em>Camera</em>",
 	"cardPanelHeight": "Độ cao bảng điều khiển theo phần trăm",
+	"cardinality": "Số lượng",
 	"cc": "<em>Cc</em>",
 	"changePassword": "Đổi mật khẩu",
 	"checkFrequency": "<em>Check frequency (minutes)</em>",
@@ -1328,17 +1335,20 @@
 	"defaultLanguage": "Ngôn ngữ mặc định",
 	"defaultLevel": "Cấp độ mặc định",
 	"delay": "<em>Delay</em>",
+	"deleteDomain": "Xóa tên miền",
 	"deleteLabel": "<em>Delete</em>",
 	"deleteRow": "<em>Delete row</em>",
 	"descriptionLabel": "Mô tả",
 	"description_": "Mô tả",
 	"destination": "Ðiểm đến",
+	"directDescription": "Mô tả trực tiếp",
 	"disable": "<em>Disable</em>",
 	"disableGridFilter": "<em>Disable grid filter</em>",
 	"disableUser": "Vô hiệu hóa người dùng",
 	"display_less_attributes": "<em>Display less attributes</em>",
 	"display_more_attributes": "<em>Display more attributes</em>",
 	"domain": "Tên miền",
+	"domains": "Tên miền",
 	"download": "<em>Download</em>",
 	"download_ifc_file": "<em>Download Ifc file</em>",
 	"edit": "<em>Edit</em>",
@@ -1395,6 +1405,7 @@
 	"initialLongitude": "Kinh độ ban đầu",
 	"initialZoomLevel": "Mức độ phóng ban đầu",
 	"instanceName": "Tên thực thể",
+	"inverseDescription": "Mô tả ngược",
 	"ipType": "<em>IP type</em>",
 	"ipv4": "ipv4",
 	"ipv6": "ipv6",
@@ -1411,9 +1422,12 @@
 	"loggedUser": "Đăng nhập người dùng",
 	"main": "<em>Main</em>",
 	"manualRegeneration": "<em>Manual Regeneration</em>",
+	"masterDetail": "Tổng thể/Chi tiết",
+	"masterDetailLabel": "Nhãn Tổng thể/Chi tiết",
 	"maximumLevel": "Cấp độ cao nhất",
 	"mode": "<em>Mode</em>",
 	"modifyAccount": "<em>Modify account</em>",
+	"modifyDomain": "Sửa đổi tên miền",
 	"modifyFilter": "Sửa đổi bộ lọc",
 	"modifyProject": "<em>Modify Project</em>",
 	"modifyTemplate": "<em>Modify Template</em>",
@@ -1443,6 +1457,7 @@
 	"processedFolder": "<em>Processed folder</em>",
 	"projects": "Projects",
 	"promptSync": "<em>Prompt sync</em>",
+	"properties": "Đặc tính",
 	"queue": "<em>Queue</em>",
 	"readOnly": "Chỉ đọc",
 	"referenceComboLimit": "<em>References combobox limit</em>",

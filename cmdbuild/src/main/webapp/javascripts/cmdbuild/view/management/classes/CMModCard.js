@@ -184,11 +184,11 @@
 			return this.cardGrid;
 		},
 
-		reset: function(id) { _deprecated();
+		reset: function(id) { _deprecated('reset', this);
 			this.cardTabPanel.reset(id);
 		},
 
-		onEntrySelected: function(entry) { _deprecated();
+		onEntrySelected: function(entry) { _deprecated('onEntrySelected', this);
 			var id = entry.get("id");
 
 			this.cardGrid.updateStoreForClassId(id, {

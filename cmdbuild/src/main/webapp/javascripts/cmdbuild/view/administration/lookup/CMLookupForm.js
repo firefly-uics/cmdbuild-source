@@ -5,6 +5,9 @@
 
 	Ext.define("CMDBuild.view.administration.lookup.CMLookupForm", {
 		extend : "Ext.form.Panel",
+
+		requires: ['CMDBuild.model.Lookup'],
+
 		mixins: {
 			cmFormFunctions: "CMDBUild.view.common.CMFormFunctions"
 		},
@@ -33,7 +36,7 @@
 			this.saveButton = new Ext.button.Button({
 				text: CMDBuild.Translation.common.buttons.save,
 				disabled: true
-			})
+			});
 
 	 		this.abortButton = new Ext.button.Button({
 				text: CMDBuild.Translation.common.buttons.abort,
@@ -42,13 +45,13 @@
 				handler: function() {
 	 				this.disableModify()
 	 			}
-			})
+			});
 
 			this.cmButtons = [this.saveButton, this.abortButton];
 	 		this.cmTBar = [this.modifyButton, this.disabelButton];
 
 			this.parentStore = new Ext.data.Store({
-				model : "CMLookupTypeForParentStoreCombo",
+				model : "CMDBuild.model.Lookup.parentComboStore",
 				autoLoad : false,
 
 				proxy : {

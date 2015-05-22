@@ -1,6 +1,6 @@
 {
 	"description": "Deutsch",
-	"release": "2.3-dev",
+	"release": "2.4-dev",
 	"administration": {
 		"description": "Verwaltungsformular",
 		"modClass": {
@@ -35,6 +35,13 @@
 				"isunique": "Eindeutig",
 				"length": "Länge",
 				"lookup": "Lookup",
+				"meta": {
+					"add": "Metadatei hinzufügen",
+					"key": "Schlüssel",
+					"remove": "Metadatei löschen",
+					"title": "Metadaten bearbeiten",
+					"value": "Wert"
+				},
 				"modify_attribute": "Attribut bearbeiten",
 				"msg_warning_drop_row": "Sie können die Attribute nur sortieren, wenn auch die vererbten Attribute sichtbar sind",
 				"name": "Name",
@@ -84,10 +91,8 @@
 				"md_label": "Master/Detail Label",
 				"modify_domain": "Domain bearbeiten",
 				"name": "Name",
-				"title_add": "Domain hinzufügen",
-				"title_modify": "Domain bearbeiten \"{0}\""
+				"title_add": "Domain hinzufügen"
 			},
-			"domains_title": "Domain Verwaltung",
 			"errors": {
 				"table": {
 					"cast": "Es ist unmöglich die Eigenschaft \"Superklasse\" bearbeiten, diese Klasse enthält Daten oder Unterklassen",
@@ -323,7 +328,6 @@
 		"modWorkflow": {
 			"add_process": "Prozess hinzufügen",
 			"attributes_title": "Attributverwaltung",
-			"domains_title": "Domain Verwaltung",
 			"errors": {
 				"table": {
 					"cast": "Die Eigenschaft \"Superklasse\" kann nicht bearbeitet werden, die Klasse enthält Daten oder Unterklassen",
@@ -1268,6 +1272,7 @@
 	"add": "Hinzufügen",
 	"addAccount": "Benutzerkonto hinzufügen",
 	"addAttachmentFromDms": "Anhänge aus DMS hinzufügen",
+	"addDomain": "Domain hinzufügen",
 	"addFilter": "Filter hinzufügen",
 	"addProject": "Projekt hinzufügen",
 	"addRelations": "Beziehungen hinzufügen",
@@ -1275,6 +1280,7 @@
 	"addTemplate": "Template hinzufügen",
 	"addUser": "Benutzer hinzufügen",
 	"addView": "Sicht hinzufügen",
+	"add_attachment_from_dms": "Anhänge aus DMS hinzufügen",
 	"address": "Adresse",
 	"alfresco": "Alfresco",
 	"application": "Anwendung",
@@ -1294,6 +1300,7 @@
 	"cacheManagement": "Cache Verwaltung",
 	"camera": "Kamera",
 	"cardPanelHeight": "Prozenthöhe der Karte",
+	"cardinality": "Kardinalität",
 	"cc": "Cc",
 	"changePassword": "Passwort ändern",
 	"checkFrequency": "Häufigkeit kontrollieren (Minuten)",
@@ -1328,17 +1335,20 @@
 	"defaultLanguage": "Default sprache",
 	"defaultLevel": "Default Ebene",
 	"delay": "<em>Delay</em>",
+	"deleteDomain": "Domain wegnehmen",
 	"deleteLabel": "<em>Delete</em>",
 	"deleteRow": "Zeile löschen",
 	"descriptionLabel": "Beschreibung",
 	"description_": "Beschreibung",
 	"destination": "Ziel",
+	"directDescription": "Direkte Beschreibung",
 	"disable": "Ausschalten",
 	"disableGridFilter": "<em>Disable grid filter</em>",
 	"disableUser": "Benutzer sperren",
 	"display_less_attributes": "Weniger Attribute zeigen",
 	"display_more_attributes": "Mehr Attribute zeigen",
 	"domain": "Domain",
+	"domains": "Domains",
 	"download": "<em>Download</em>",
 	"download_ifc_file": "Ifc File herunterladen",
 	"edit": "<em>Edit</em>",
@@ -1395,6 +1405,7 @@
 	"initialLongitude": "Anfangslänge",
 	"initialZoomLevel": "Anfangszoom",
 	"instanceName": "Instanzname",
+	"inverseDescription": "Umgekehrte Beschreibung",
 	"ipType": "<em>IP type</em>",
 	"ipv4": "ipv4",
 	"ipv6": "ipv6",
@@ -1411,9 +1422,12 @@
 	"loggedUser": "Angemeldeter Benutzer",
 	"main": "Hauptsächlich",
 	"manualRegeneration": "<em>Manual Regeneration</em>",
+	"masterDetail": "Master/Detail",
+	"masterDetailLabel": "Master/Detail label",
 	"maximumLevel": "Maximal wählbare Ebene",
 	"mode": "Modus",
 	"modifyAccount": "Benutzerkonto verändern",
+	"modifyDomain": "Domain bearbeiten",
 	"modifyFilter": "Filter bearbeiten",
 	"modifyProject": "Projekt verändern",
 	"modifyTemplate": "Template verändern",
@@ -1443,6 +1457,7 @@
 	"processedFolder": "Ordner für verarbeitete E-Mails",
 	"projects": "Projekte",
 	"promptSync": "<em>Prompt sync</em>",
+	"properties": "Eigenschaften",
 	"queue": "<em>Queue</em>",
 	"readOnly": "Nur Anzeige",
 	"referenceComboLimit": "Grenze des Reference-Pulldown-Menüs",
