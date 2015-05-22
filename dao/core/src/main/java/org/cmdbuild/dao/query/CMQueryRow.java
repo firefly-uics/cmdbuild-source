@@ -22,7 +22,11 @@ public interface CMQueryRow {
 
 	CMValueSet getValueSet(Alias alias);
 
+	boolean hasCard(Alias alias);
+
 	CMCard getCard(Alias alias);
+
+	boolean hasCard(CMClass type);
 
 	CMCard getCard(CMClass type);
 
