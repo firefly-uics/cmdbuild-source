@@ -11,7 +11,7 @@
 		singleton: true,
 
 		/**
-		 * @property {Object} params
+		 * @property {Object} parameters
 		 */
 		get: function(parameters) {
 			CMDBuild.Ajax.request({
@@ -28,7 +28,7 @@
 		},
 
 		/**
-		 * @property {Object} params
+		 * @property {Object} parameters
 		 */
 		getHistoric: function(parameters) {
 			CMDBuild.Ajax.request({
@@ -45,7 +45,7 @@
 		},
 
 		/**
-		 * @property {Object} params
+		 * @property {Object} parameters
 		 */
 		getRelations: function(parameters) {
 			CMDBuild.Ajax.request({
@@ -62,7 +62,7 @@
 		},
 
 		/**
-		 * @property {Object} params
+		 * @property {Object} parameters
 		 */
 		getRelationHistoric: function(parameters) {
 			CMDBuild.Ajax.request({

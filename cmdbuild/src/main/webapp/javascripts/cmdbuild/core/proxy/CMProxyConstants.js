@@ -121,6 +121,7 @@
 		EXTENSION: 'extension',
 		EXTENSION_MAXIMUM_LEVEL: 'extensionMaximumLevel',
 		FIELD_MODE: 'fieldmode',
+		FILE: 'file',
 		FILE_NAME: 'fileName',
 		FILTER: 'filter',
 		FILTER_FROM_ADDRESS: 'filterFromAddress',

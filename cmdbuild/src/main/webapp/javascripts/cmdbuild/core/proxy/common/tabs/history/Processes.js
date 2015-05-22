@@ -13,28 +13,28 @@
 		singleton: true,
 
 		/**
-		 * @property {Object} params
+		 * @property {Object} parameters
 		 */
 		get: function(parameters) {
 			CMDBuild.core.proxy.common.tabs.history.Classes.get(parameters);
 		},
 
 		/**
-		 * @property {Object} params
+		 * @property {Object} parameters
 		 */
 		getHistoric: function(parameters) {
 			CMDBuild.core.proxy.common.tabs.history.Classes.getHistoric(parameters);
 		},
 
 		/**
-		 * @property {Object} params
+		 * @property {Object} parameters
 		 */
 		getRelations: function(parameters) {
 			CMDBuild.core.proxy.common.tabs.history.Classes.getRelations(parameters);
 		},
 
 		/**
-		 * @property {Object} params
+		 * @property {Object} parameters
 		 */
 		getRelationHistoric: function(parameters) {
 			CMDBuild.core.proxy.common.tabs.history.Classes.getRelationHistoric(parameters);
