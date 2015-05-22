@@ -328,7 +328,6 @@
 		"modWorkflow": {
 			"add_process": "Dodaj proces",
 			"attributes_title": "Upravljanje atributima",
-			"domains_title": "Upravljanje domenama",
 			"errors": {
 				"table": {
 					"cast": "Obilježje \"superklasa\" ne može biti izmjenjeno, klasa sadrži podatke i/ili podklase",
