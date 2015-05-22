@@ -1,12 +1,25 @@
 (function() {
 
 	Ext.define('CMDBuild.controller.administration.users.Users', {
-		extend: 'CMDBuild.controller.CMBasePanelController',
+		extend: 'CMDBuild.controller.common.AbstractBasePanelController',
 
 		requires: [
 			'CMDBuild.core.proxy.CMProxyConstants',
 			'CMDBuild.core.proxy.Users',
 			'CMDBuild.model.Users'
+		],
+
+		/**
+		 * @cfg {Array}
+		 */
+		cmfgCatchedFunctions: [
+			'onUserAbortButtonClick',
+			'onUserAddButtonClick',
+			'onUserChangePasswordButtonClick',
+			'onUserDisableButtonClick',
+			'onUserModifyButtonClick = onUserItemDoubleClick',
+			'onUserRowSelected',
+			'onUserSaveButtonClick'
 		],
 
 		/**
@@ -35,50 +48,19 @@
 		constructor: function(view) {
 			this.callParent(arguments);
 
-			// Handlers exchange
-			this.grid = view.grid;
-			this.form = view.form;
-			this.view.delegate = this;
-			this.grid.delegate = this;
-			this.form.delegate = this;
-		},
+			this.grid = Ext.create('CMDBuild.view.administration.users.GridPanel', {
+				delegate: this,
+				region: 'north',
+				split: true,
+				height: '30%'
+			});
 
-		/**
-		 * Gatherer function to catch events
-		 *
-		 * @param {String} name
-		 * @param {Object} param
-		 * @param {Function} callback
-		 */
-		cmOn: function(name, param, callBack) {
-			switch (name) {
-				case 'onUserAbortButtonClick':
-					return this.onUserAbortButtonClick();
+			this.form = Ext.create('CMDBuild.view.administration.users.FormPanel', {
+				delegate: this,
+				region: 'center'
+			});
 
-				case 'onUserAddButtonClick':
-					return this.onUserAddButtonClick();
-
-				case 'onUserChangePasswordButtonClick':
-					return this.onUserChangePasswordButtonClick();
-
-				case 'onUserDisableButtonClick':
-					return this.onUserDisableButtonClick();
-
-				case 'onUserItemDoubleClick':
-				case 'onUserModifyButtonClick':
-					return this.onUserModifyButtonClick();
-
-				case 'onUserRowSelected':
-					return this.onUserRowSelected();
-
-				case 'onUserSaveButtonClick':
-					return this.onUserSaveButtonClick();
-
-				default: {
-					if (!Ext.isEmpty(this.parentDelegate))
-						return this.parentDelegate.cmOn(name, param, callBack);
-				}
-			}
+			this.view.add(this.grid, this.form);
 		},
 
 		/**

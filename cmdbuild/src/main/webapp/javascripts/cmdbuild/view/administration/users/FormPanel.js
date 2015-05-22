@@ -57,7 +57,7 @@
 				scope: this,
 
 				handler: function (button, e) {
-					this.delegate.cmOn('onUserDisableButtonClick');
+					this.delegate.cmfg('onUserDisableButtonClick');
 				}
 			});
 
@@ -195,16 +195,16 @@
 								text: CMDBuild.Translation.modifyUser,
 								scope: this,
 
-								handler: function (button, e) {
-									this.delegate.cmOn('onUserModifyButtonClick');
+								handler: function(button, e) {
+									this.delegate.cmfg('onUserModifyButtonClick');
 								}
 							}),
 							Ext.create('CMDBuild.core.buttons.Password', {
 								text: CMDBuild.Translation.changePassword,
 								scope: this,
 
-								handler: function (button, e) {
-									this.delegate.cmOn('onUserChangePasswordButtonClick');
+								handler: function(button, e) {
+									this.delegate.cmfg('onUserChangePasswordButtonClick');
 								}
 							}),
 							this.disableUser
@@ -226,14 +226,14 @@
 								scope: this,
 
 								handler: function(button, e) {
-									this.delegate.cmOn('onUserSaveButtonClick');
+									this.delegate.cmfg('onUserSaveButtonClick');
 								}
 							}),
 							Ext.create('CMDBuild.core.buttons.Abort', {
 								scope: this,
 
 								handler: function(button, e) {
-									this.delegate.cmOn('onUserAbortButtonClick');
+									this.delegate.cmfg('onUserAbortButtonClick');
 								}
 							})
 						]

@@ -10,32 +10,12 @@
 		 */
 		delegate: undefined,
 
-		/**
-		 * @param {CMDBuild.view.administration.users.FormPanel}
-		 */
-		form: undefined,
-
-		/**
-		 * @param {CMDBuild.view.administration.users.GridPanel}
-		 */
-		grid: undefined,
-
 		border: true,
 		frame: false,
 		layout: 'border',
 		title: CMDBuild.Translation.usersAndGroups + ' - ' + CMDBuild.Translation.users,
 
 		initComponent: function() {
-			this.grid = Ext.create('CMDBuild.view.administration.users.GridPanel', {
-				region: 'north',
-				split: true,
-				height: '30%'
-			});
-
-			this.form = Ext.create('CMDBuild.view.administration.users.FormPanel', {
-				region: 'center'
-			});
-
 			Ext.apply(this, {
 				dockedItems: [
 					Ext.create('Ext.toolbar.Toolbar', {
@@ -47,13 +27,13 @@
 								scope: this,
 
 								handler: function(button, e) {
-									this.delegate.cmOn('onUserAddButtonClick');
+									this.delegate.cmfg('onUserAddButtonClick');
 								}
 							})
 						]
 					})
 				],
-				items: [this.grid, this.form]
+//				items: [this.grid, this.form]
 			});
 
 			this.callParent(arguments);
