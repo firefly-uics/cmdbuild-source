@@ -143,21 +143,25 @@ public class EmailQueueCommand implements Command, Callback {
 				for (final Email email : emailsByAccount.get(accountName)) {
 					logger.debug(MARKER, "adding e-mail '{}'", email);
 					currentEmail = email;
-					final QueueableNewMail newMail = queue.newMail() //
-							.withFrom(defaultIfBlank(email.getFromAddress(), account.get().getAddress())) //
-							.withTo(splitAddresses(email.getToAddresses())) //
-							.withCc(splitAddresses(email.getCcAddresses())) //
-							.withBcc(splitAddresses(email.getBccAddresses())) //
-							.withSubject(defaultIfBlank(subjectHandler.compile(email).getSubject(), EMPTY)) //
-							.withContent(email.getContent()) //
-							.withContentType(CONTENT_TYPE);
-					for (final Attachment attachment : emailAttachmensLogic.readAll(email)) {
-						final Optional<DataHandler> dataHandler = emailAttachmensLogic.read(email, attachment);
-						if (dataHandler.isPresent()) {
-							newMail.withAttachment(dataHandler.get(), attachment.getFileName());
+					try {
+						final QueueableNewMail newMail = queue.newMail() //
+								.withFrom(defaultIfBlank(email.getFromAddress(), account.get().getAddress())) //
+								.withTo(splitAddresses(email.getToAddresses())) //
+								.withCc(splitAddresses(email.getCcAddresses())) //
+								.withBcc(splitAddresses(email.getBccAddresses())) //
+								.withSubject(defaultIfBlank(subjectHandler.compile(email).getSubject(), EMPTY)) //
+								.withContent(email.getContent()) //
+								.withContentType(CONTENT_TYPE);
+						for (final Attachment attachment : emailAttachmensLogic.readAll(email)) {
+							final Optional<DataHandler> dataHandler = emailAttachmensLogic.read(email, attachment);
+							if (dataHandler.isPresent()) {
+								newMail.withAttachment(dataHandler.get(), attachment.getFileName());
+							}
 						}
+						newMail.add();
+					} catch (final Exception e) {
+						logger.error("error adding e-mail, skipping", e);
 					}
-					newMail.add();
 				}
 				logger.debug(MARKER, "sending all queued e-mails");
 				queue.sendAll();
