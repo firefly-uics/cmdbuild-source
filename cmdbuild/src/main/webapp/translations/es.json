@@ -1,6 +1,6 @@
 {
 	"description": "Español",
-	"release": "2.3-dev",
+	"release": "2.4-dev",
 	"administration": {
 		"description": "Módulo de Administración",
 		"modClass": {
@@ -35,6 +35,13 @@
 				"isunique": "Unívoco",
 				"length": "Largo",
 				"lookup": "Lookup",
+				"meta": {
+					"add": "Agregar metadato",
+					"key": "Clave",
+					"remove": "Eliminar metadato",
+					"title": "Modificar metadatos",
+					"value": "Valor"
+				},
 				"modify_attribute": "Modificar Atributo",
 				"msg_warning_drop_row": "Puede ordenar los atributos sólo si son visibles también aquellos heredados",
 				"name": "Nombre",
@@ -84,10 +91,8 @@
 				"md_label": "Etiqueta Master/Detail",
 				"modify_domain": "Modificar Dominio",
 				"name": "Nombre",
-				"title_add": "Agregar dominio",
-				"title_modify": "Modificar dominio \"{0}\""
+				"title_add": "Agregar dominio"
 			},
-			"domains_title": "Gestión de dominios",
 			"errors": {
 				"table": {
 					"cast": "No es posible cambiar la propiedad \"superclase\". La clase posee datos o subclases",
@@ -323,7 +328,6 @@
 		"modWorkflow": {
 			"add_process": "Agrega Proceso",
 			"attributes_title": "Gestión atributos",
-			"domains_title": "Gestión dominios",
 			"errors": {
 				"table": {
 					"cast": "No es posible cambiar la propiedad \"superclase\". La clase posee datos o subclases",
@@ -1268,6 +1272,7 @@
 	"add": "Agrega",
 	"addAccount": "Agrega cuenta",
 	"addAttachmentFromDms": "Agrega adjunto desde DMS",
+	"addDomain": "Agregar Dominio",
 	"addFilter": "Añadir filtro",
 	"addProject": "Agrega proyecto",
 	"addRelations": "Agregar relaciones",
@@ -1275,6 +1280,7 @@
 	"addTemplate": "Agrega plantilla",
 	"addUser": "Agregar usuario",
 	"addView": "Añadir vista",
+	"add_attachment_from_dms": "Agrega adjunto desde DMS",
 	"address": "Dirección",
 	"alfresco": "Alfresco",
 	"application": "Aplicación",
@@ -1294,6 +1300,7 @@
 	"cacheManagement": "Gestión caché",
 	"camera": "Cámara",
 	"cardPanelHeight": "Altura porcentual del panel de la tarjeta",
+	"cardinality": "Cardinalidad",
 	"cc": "Cc",
 	"changePassword": "Cambia clave",
 	"checkFrequency": "Frecuencia verificación (minutos)",
@@ -1328,17 +1335,20 @@
 	"defaultLanguage": "Idioma por defecto",
 	"defaultLevel": "Nivel por defecto",
 	"delay": "<em>Delay</em>",
+	"deleteDomain": "Eliminar Dominio",
 	"deleteLabel": "<em>Delete</em>",
 	"deleteRow": "Borra fila",
 	"descriptionLabel": "Descripción",
 	"description_": "Descripción",
 	"destination": "Destino",
+	"directDescription": "Descripción directa",
 	"disable": "Inhabilitar",
 	"disableGridFilter": "<em>Disable grid filter</em>",
 	"disableUser": "Deshabilitar usuario",
 	"display_less_attributes": "Visualiza menos atributos",
 	"display_more_attributes": "Visualiza más atributos",
 	"domain": "Dominio",
+	"domains": "Dominios",
 	"download": "<em>Download</em>",
 	"download_ifc_file": "Descarga archivo Ifc",
 	"edit": "<em>Edit</em>",
@@ -1395,6 +1405,7 @@
 	"initialLongitude": "Longitud inicial",
 	"initialZoomLevel": "Zoom inicial",
 	"instanceName": "Nombre instancia",
+	"inverseDescription": "Descripción inversa",
 	"ipType": "<em>IP type</em>",
 	"ipv4": "ipv4",
 	"ipv6": "ipv6",
@@ -1411,9 +1422,12 @@
 	"loggedUser": "Usuario conectado",
 	"main": "Principal",
 	"manualRegeneration": "<em>Manual Regeneration</em>",
+	"masterDetail": "Master/Detail",
+	"masterDetailLabel": "Etiqueta Master/Detail",
 	"maximumLevel": "Máximo nivel seleccionable",
 	"mode": "Modo",
 	"modifyAccount": "Modifica cuenta",
+	"modifyDomain": "Modificar Dominio",
 	"modifyFilter": "Modificar filtro",
 	"modifyProject": "Modifica proyecto",
 	"modifyTemplate": "Modifica plantilla",
@@ -1443,6 +1457,7 @@
 	"processedFolder": "Carpeta procesadas",
 	"projects": "Projects",
 	"promptSync": "<em>Prompt sync</em>",
+	"properties": "Propiedad",
 	"queue": "<em>Queue</em>",
 	"readOnly": "Sólo lectura",
 	"referenceComboLimit": "Límite menú desplegable de reference",

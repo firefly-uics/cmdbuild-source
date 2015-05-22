@@ -1,6 +1,6 @@
 {
 	"description": "日本語",
-	"release": "2.3-dev",
+	"release": "2.4-dev",
 	"administration": {
 		"description": "アドミニストレーションモジュール",
 		"modClass": {
@@ -35,6 +35,13 @@
 				"isunique": "ユニーク",
 				"length": "長さ",
 				"lookup": "ルックアップ",
+				"meta": {
+					"add": "メタ追加",
+					"key": "キー",
+					"remove": "メタ削除",
+					"title": "メタデータ編集",
+					"value": "値"
+				},
 				"modify_attribute": "属性変更",
 				"msg_warning_drop_row": "再並び替えは継承属性が表示されている場合のみ有効です",
 				"name": "名前",
@@ -84,10 +91,8 @@
 				"md_label": "マスタ/ディテールラベル",
 				"modify_domain": "ドメイン変更",
 				"name": "名前",
-				"title_add": "ドメイン追加",
-				"title_modify": "ドメイン \"{0}\"の変更"
+				"title_add": "ドメイン追加"
 			},
-			"domains_title": "ドメイン管理",
 			"errors": {
 				"table": {
 					"cast": "エラー：データまたは子クラスを含む \"superclass\" のプロパティを変更しようとしています。",
@@ -323,7 +328,6 @@
 		"modWorkflow": {
 			"add_process": "プロセス追加",
 			"attributes_title": "属性管理",
-			"domains_title": "ドメイン管理",
 			"errors": {
 				"table": {
 					"cast": "データまたはサブクラスを持つスパークラスの属性は変更できません",
@@ -1268,6 +1272,7 @@
 	"add": "追加",
 	"addAccount": "アカウントを追加",
 	"addAttachmentFromDms": "DMSから添付を追加",
+	"addDomain": "ドメイン追加",
 	"addFilter": "フィルタを追加",
 	"addProject": "プロジェクトを追加",
 	"addRelations": "リレーション追加",
@@ -1275,6 +1280,7 @@
 	"addTemplate": "テンプレートを追加",
 	"addUser": "ユーザー追加",
 	"addView": "ビューを追加",
+	"add_attachment_from_dms": "DMSから添付を追加",
 	"address": "アドレス",
 	"alfresco": "Alfresco",
 	"application": "アプリケーション",
@@ -1294,6 +1300,7 @@
 	"cacheManagement": "キャッシュ管理",
 	"camera": "カメラ",
 	"cardPanelHeight": "カードパネルの高さ(%)",
+	"cardinality": "関係性",
 	"cc": "Cc",
 	"changePassword": "パスワード変更",
 	"checkFrequency": "確認間隔(分）",
@@ -1328,17 +1335,20 @@
 	"defaultLanguage": "既定の言語",
 	"defaultLevel": "既定のレベル",
 	"delay": "<em>Delay</em>",
+	"deleteDomain": "ドメイン削除",
 	"deleteLabel": "を削除",
 	"deleteRow": "行を削除",
 	"descriptionLabel": "説明",
 	"description_": "説明",
 	"destination": "終点",
+	"directDescription": "順方向の説明",
 	"disable": "無効",
 	"disableGridFilter": "グリッドフィルターを無効に",
 	"disableUser": "無効なユーザー",
 	"display_less_attributes": "より少ない属性を表示",
 	"display_more_attributes": "より多くの属性を表示",
 	"domain": "ドメイン",
+	"domains": "ドメイン",
 	"download": "<em>Download</em>",
 	"download_ifc_file": "Ifcファイルをダウンロード",
 	"edit": "を編集",
@@ -1395,6 +1405,7 @@
 	"initialLongitude": "初期経度",
 	"initialZoomLevel": "初期ズームレベル",
 	"instanceName": "インスタンス名",
+	"inverseDescription": "逆方向の説明",
 	"ipType": "IPタイプ",
 	"ipv4": "ipv4",
 	"ipv6": "ipv6",
@@ -1411,9 +1422,12 @@
 	"loggedUser": "ログユーザー",
 	"main": "メイン",
 	"manualRegeneration": "<em>Manual Regeneration</em>",
+	"masterDetail": "マスタ/ディテール",
+	"masterDetailLabel": "マスタ/ディテールラベル",
 	"maximumLevel": "最大値",
 	"mode": "モード",
 	"modifyAccount": "アカウントの変更",
+	"modifyDomain": "ドメイン変更",
 	"modifyFilter": "フィルターを変更",
 	"modifyProject": "プロジェクトを変更",
 	"modifyTemplate": "テンプレートを変更",
@@ -1443,6 +1457,7 @@
 	"processedFolder": "処理済みフォルダー",
 	"projects": "プロジェクト",
 	"promptSync": "<em>Prompt sync</em>",
+	"properties": "プロパティ",
 	"queue": "<em>Queue</em>",
 	"readOnly": "読み取り専用",
 	"referenceComboLimit": "参照コンボボックスの制限",

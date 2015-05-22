@@ -22,7 +22,9 @@
 			'CMDBuild.core.proxy.CMProxyConstants',
 			'CMDBuild.core.proxy.Classes',
 			'CMDBuild.core.proxy.Configuration',
+			'CMDBuild.core.proxy.Domain',
 			'CMDBuild.core.proxy.Localizations',
+			'CMDBuild.core.proxy.Lookup',
 			'CMDBuild.core.proxy.Report'
 		],
 
@@ -35,6 +37,7 @@
 				var administration = true;
 				var forCredits = false;
 
+				Ext.create('CMDBuild.core.LoggerManager'); // Logger configuration
 				Ext.create('CMDBuild.core.Data'); // Data connections configuration
 
 				Ext.tip.QuickTipManager.init();
@@ -288,9 +291,10 @@
 				/*
 				 * Lookups
 				 */
-				CMDBuild.ServiceProxy.lookup.readAllTypes({
-					success: function(response, options, decoded) {
-						_CMCache.addLookupTypes(decoded);
+				CMDBuild.core.proxy.Lookup.readAll({
+					success: function(response, options, decodedResponse) {
+						_CMCache.addLookupTypes(decodedResponse);
+
 						lookupAccordion = new CMDBuild.view.administration.accordion.CMLookupAccordion({
 							cmControllerType: CMDBuild.controller.accordion.CMLookupAccordionController
 						});
@@ -331,7 +335,7 @@
 							}),
 							Ext.create('CMDBuild.view.administration.users.UsersView', {
 								cmControllerType: 'CMDBuild.controller.administration.users.Users',
-								cmName: 'users',
+								cmName: 'users'
 							})
 						]);
 					},
@@ -357,22 +361,23 @@
 					callback: reqBarrier.getCallback()
 				});
 
-				/*
-				 * Domains
-				 */
-				CMDBuild.ServiceProxy.administration.domain.list({
-					success: function(response, options, decoded) {
-						_CMCache.addDomains(decoded.domains);
+				// Domains
+				CMDBuild.core.proxy.Domain.getAll({
+					scope: this,
+					success: function(response, options, decodedResponse) {
+						_CMCache.addDomains(decodedResponse.domains);
 
 						if (!_CMUIConfiguration.isCloudAdmin()) {
-							domainAccordion = new CMDBuild.view.administration.accordion.CMDomainAccordion({
-								cmControllerType: CMDBuild.controller.accordion.CMDomainAccordionController
+							domainAccordion = Ext.create('CMDBuild.view.administration.accordion.Domain', {
+								cmControllerType: 'CMDBuild.controller.accordion.Domain',
+								cmName: 'domain'
 							});
 							domainAccordion.updateStore();
 
 							_CMMainViewportController.addPanel(
-								new CMDBuild.view.administration.domain.CMModDomain({
-									cmControllerType: controllerNS.administration.domain.CMModDomainController
+								Ext.create('CMDBuild.view.administration.domain.DomainView', {
+									cmControllerType: 'CMDBuild.controller.administration.domain.Domain',
+									cmName:'domain'
 								})
 							);
 						}

@@ -1,17 +1,29 @@
 (function() {
 
 	Ext.define('CMDBuild.controller.administration.domain.EnabledClasses', {
-		extend: 'CMDBuild.controller.common.CMBasePanelController',
+		extend: 'CMDBuild.controller.common.AbstractController',
 
 		requires: [
 			'CMDBuild.core.proxy.CMProxyConstants',
+			'CMDBuild.core.proxy.Classes',
 			'CMDBuild.model.Classes'
 		],
 
 		/**
-		 * @cfg {CMDBuild.controller.administration.domain.CMModDomainController}
+		 * @cfg {CMDBuild.controller.administration.domain.Domain}
 		 */
 		parentDelegate: undefined,
+
+		/**
+		 * @cfg {Array}
+		 */
+		cmfgCatchedFunctions: [
+			'getDisabledTreeVisit',
+			'onDomainEnabledClassesAbortButtonClick',
+			'onDomainEnabledClassesAddButtonClick',
+			'onDomainEnabledClassesModifyButtonClick',
+			'onDomainSelected'
+		],
 
 		/**
 		 * @cfg {Array}
@@ -19,41 +31,22 @@
 		managedTreeTypes: ['destination', 'origin'],
 
 		/**
-		 * @cfg {CMDBuild.view.administration.domain.enabledClasses.MainPanel}
+		 * @cfg {CMDBuild.view.administration.domain.enabledClasses.EnabledClassesView}
 		 */
 		view: undefined,
 
 		/**
-		 * @param {Object} configObject
-		 * @param {CMDBuild.controller.administration.domain.CMModDomainController} configObject.parentDelegate
+		 * @param {Object} configurationObject
+		 * @param {CMDBuild.controller.administration.domain.Domain} configurationObject.parentDelegate
 		 *
 		 * @override
 		 */
-		constructor: function(configObject) {
-			Ext.apply(this, configObject); // Apply config
+		constructor: function(configurationObject) {
+			this.callParent(arguments);
 
-			this.view = Ext.create('CMDBuild.view.administration.domain.enabledClasses.MainPanel', {
+			this.view = Ext.create('CMDBuild.view.administration.domain.enabledClasses.EnabledClassesView', {
 				delegate: this
 			});
-		},
-
-		/**
-		 * Gatherer function to catch events
-		 *
-		 * @param {String} name
-		 * @param {Object} param
-		 * @param {Function} callback
-		 */
-		cmOn: function(name, param, callBack) {
-			switch (name) {
-				case 'onAddButtonClick':
-					return this.onAddButtonClick();
-
-				default: {
-					if (!Ext.isEmpty(this.parentDelegate))
-						return this.parentDelegate.cmOn(name, param, callBack);
-				}
-			}
 		},
 
 		/**
@@ -70,15 +63,14 @@
 					expanded: true,
 					children: []
 				},
-				sorters: [{
-					property: CMDBuild.ServiceProxy.parameter.DESCRIPTION,
-					direction: 'ASC'
-				}]
+				sorters: [
+					{ property: CMDBuild.ServiceProxy.parameter.DESCRIPTION, direction: 'ASC' }
+				]
 			});
 
 			if (
 				Ext.Array.contains(this.managedTreeTypes, type)
-				&& !Ext.isEmpty(this.getSelectedDomain())
+				&& !Ext.isEmpty(this.cmfg('selectedDomainGet'))
 			) {
 				var root = treeStore.getRootNode();
 				var standard = [];
@@ -87,7 +79,7 @@
 				root.removeAll();
 
 				// GetAllClasses data to get default translations
-				CMDBuild.ServiceProxy.classes.read({
+				CMDBuild.core.proxy.Classes.read({
 					params: {
 						active: true
 					},
@@ -121,7 +113,6 @@
 
 							if (!Ext.isEmpty(node[CMDBuild.core.proxy.CMProxyConstants.PARENT]) && !Ext.isEmpty(nodesMap[node[CMDBuild.core.proxy.CMProxyConstants.PARENT]])) {
 								var parentNode = nodesMap[node[CMDBuild.core.proxy.CMProxyConstants.PARENT]];
-
 								parentNode.children = parentNode.children || [];
 								parentNode.children.push(node);
 								parentNode[CMDBuild.core.proxy.CMProxyConstants.LEAF] = false;
@@ -133,11 +124,11 @@
 						// Get root node and build offspring tree
 						switch(type) {
 							case 'destination': {
-								rootId = this.getSelectedDomain().get('idClass2');
+								rootId = this.cmfg('selectedDomainGet').get('idClass2');
 							} break;
 
 							case 'origin': {
-								rootId = this.getSelectedDomain().get('idClass1');
+								rootId = this.cmfg('selectedDomainGet').get('idClass1');
 							} break;
 						}
 
@@ -155,80 +146,55 @@
 		},
 
 		/**
-		 * @param {Object} node
-		 * @param {Array} destinationArray
+		 * @param {Object} parametersObject
+		 * @param {Object} parametersObject.node
+		 * @param {Array} parametersObject.destinationArray
 		 */
-		getEnabledTreeVisit: function(node, destinationArray) {
-			node.eachChild(function(childNode) {
-				if (!childNode.get(CMDBuild.core.proxy.CMProxyConstants.ENABLED))
-					destinationArray.push(childNode.get(CMDBuild.core.proxy.CMProxyConstants.NAME));
+		getDisabledTreeVisit: function(parametersObject) {
+			if (
+				!Ext.isEmpty(parametersObject)
+				&& !Ext.isEmpty(parametersObject.node)
+				&& Ext.isArray(parametersObject.destinationArray)
+			) {
+				var node = parametersObject.node;
+				var destinationArray = parametersObject.destinationArray;
 
-				if (!Ext.isEmpty(node.hasChildNodes()))
-					this.getEnabledTreeVisit(childNode, destinationArray);
-			}, this);
+				node.eachChild(function(childNode) {
+					if (!childNode.hasChildNodes() && !childNode.get(CMDBuild.core.proxy.CMProxyConstants.ENABLED))
+						destinationArray.push(childNode.get(CMDBuild.core.proxy.CMProxyConstants.NAME));
+
+					if (node.hasChildNodes())
+						this.getDisabledTreeVisit({
+							node: childNode,
+							destinationArray: destinationArray
+						});
+				}, this);
+			} else {
+				_error('wrong getDisabledTreeVisit parametersObject', this);
+			}
 		},
 
-		/**
-		 * @return {CMDBuild.cache.CMDomainModel} or null
-		 */
-		getSelectedDomain: function() {
-			if (Ext.isEmpty(this.parentDelegate.selectedDomain))
-				return null;
-
-			return this.parentDelegate.selectedDomain;
+		onDomainEnabledClassesAbortButtonClick: function() {
+			if (Ext.isEmpty(this.cmfg('selectedDomainGet'))) {
+				this.view.reset();
+				this.view.setDisabledModify(true, true, true);
+			} else {
+				this.onDomainSelected(this.cmfg('selectedDomainGet'));
+			}
 		},
 
-		/**
-		 * @return {CMDBuild.view.administration.domain.enabledClasses.MainPanel}
-		 */
-		getView: function() {
-			return this.view;
+		onDomainEnabledClassesAddButtonClick: function() {
+			this.view.disable();
 		},
 
-		onAbortButtonClick: function() {
-			this.view.buildTrees();
-
-			this.setDisabled(true);
-		},
-
-		onAddButtonClick: function() {
-			this.view.setDisabled(true);
+		onDomainEnabledClassesModifyButtonClick: function() {
+			this.view.setDisabledModify(false);
 		},
 
 		onDomainSelected: function() {
 			this.view.buildTrees();
-			this.view.setDisabled(false);
-
-			this.setDisabled(true);
-		},
-
-		onModifyButtonClick: function() {
-			this.setDisabled(false);
-		},
-
-		/**
-		 * Global setDisabled
-		 *
-		 * @param {Boolean} state
-		 *
-		 * @private
-		 *
-		 * TODO: to delete when CMFormCunctions will be refactored
-		 */
-		setDisabled: function(state) {
-			var topToolbar = this.view.getDockedComponent(CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_TOP);
-			var bottomToolbar = this.view.getDockedComponent(CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_BOTTOM);
-
-			this.view.originTree.setDisabled(state);
-			this.view.destinationTree.setDisabled(state);
-
-			Ext.Array.forEach(topToolbar.items.items, function(button, i, allButtons) {
-				button.setDisabled(!state);
-			}, this);
-
-			Ext.Array.forEach(bottomToolbar.items.items, function(button, i, allButtons) {
-				button.setDisabled(state);
-			}, this);
+			this.view.enable();
+			this.view.setDisabledModify(true);
 		}
 	});
 

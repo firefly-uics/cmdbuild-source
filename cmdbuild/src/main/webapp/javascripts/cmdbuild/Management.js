@@ -34,6 +34,8 @@
 			'CMDBuild.core.proxy.CMProxyConstants',
 			'CMDBuild.core.proxy.Classes',
 			'CMDBuild.core.proxy.Configuration',
+			'CMDBuild.core.proxy.Domain',
+			'CMDBuild.core.proxy.Lookup',
 			'CMDBuild.core.proxy.Report'
 		],
 
@@ -74,6 +76,7 @@
 
 		statics: {
 			init: function() {
+				Ext.create('CMDBuild.core.LoggerManager'); // Logger configuration
 				Ext.create('CMDBuild.core.Data'); // Data connections configuration
 
 				Ext.tip.QuickTipManager.init();
@@ -299,6 +302,7 @@
 						// To fill the menu is needed that the classes are already loaded
 						params = {};
 						params[CMDBuild.core.proxy.CMProxyConstants.GROUP_NAME] = CMDBuild.Runtime.DefaultGroupName;
+						params[CMDBuild.core.proxy.CMProxyConstants.LOCALIZED] = true;
 
 						CMDBuild.ServiceProxy.menu.read({
 							params: params,
@@ -332,16 +336,18 @@
 					callback: reqBarrier.getCallback()
 				});
 
-				params = {};
-				params[CMDBuild.core.proxy.CMProxyConstants.ACTIVE] = true;
+				// Domains
+					params = {};
+					params[CMDBuild.core.proxy.CMProxyConstants.ACTIVE] = true;
 
-				CMDBuild.ServiceProxy.administration.domain.list({ //TODO change 'administration'
-					params: params,
-					success: function(response, options, decoded) {
-						_CMCache.addDomains(decoded.domains);
-					},
-					callback: reqBarrier.getCallback()
-				});
+					CMDBuild.core.proxy.Domain.getAll({
+						params: params,
+						success: function(response, options, decodedResponse) {
+							_CMCache.addDomains(decodedResponse.domains);
+						},
+						callback: reqBarrier.getCallback()
+					});
+				// END: Domains
 
 				CMDBuild.ServiceProxy.Dashboard.fullList({
 					success : function(response, options, decoded) {
@@ -352,12 +358,12 @@
 					callback: reqBarrier.getCallback()
 				});
 
-				CMDBuild.ServiceProxy.lookup.readAllTypes({
-					success : function(response, options, decoded) {
-						_CMCache.addLookupTypes(decoded);
-					},
-					callback: reqBarrier.getCallback()
-				});
+				CMDBuild.core.proxy.Lookup.readAll({
+					success: function(response, options, decodedResponse) {
+						_CMCache.addLookupTypes(decodedResponse);
+ 					},
+ 					callback: reqBarrier.getCallback()
+ 				});
 
 				reqBarrier.start();
 			}

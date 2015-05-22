@@ -1,6 +1,6 @@
 {
 	"description": "English",
-	"release": "2.3-dev",
+	"release": "2.4-dev",
 	"administration": {
 		"description": "Administration module",
 		"modClass": {
@@ -35,6 +35,13 @@
 				"isunique": "Unique",
 				"length": "Length",
 				"lookup": "Lookup",
+				"meta": {
+					"add": "Add meta",
+					"key": "Key",
+					"remove": "Delete meta",
+					"title": "Edit metadata",
+					"value": "Value"
+				},
 				"modify_attribute": "Modify Attribute",
 				"msg_warning_drop_row": "Reordering works only if inherited attributes are displayed",
 				"name": "Name",
@@ -84,10 +91,8 @@
 				"md_label": "Master/Detail Label",
 				"modify_domain": "Modify Domain",
 				"name": "Name",
-				"title_add": "Add domain",
-				"title_modify": "Modify domain \"{0}\""
+				"title_add": "Add domain"
 			},
-			"domains_title": "Manage domain",
 			"errors": {
 				"table": {
 					"cast": "Error modifying \"superclass\" property, class either contains data or has child classes",
@@ -323,7 +328,6 @@
 		"modWorkflow": {
 			"add_process": "Add process",
 			"attributes_title": "Manage attributes",
-			"domains_title": "Manage domains",
 			"errors": {
 				"table": {
 					"cast": "It is not possible to change the \"superclass\" property, the class contains data or subclasses",
@@ -1076,6 +1080,19 @@
 				"position": "Position",
 				"zoom": "Zoom"
 			},
+			"history_columns": {
+				"activity_name": "Activity name",
+				"attributes": "Attributes",
+				"begin_date": "Begin date",
+				"code": "Code",
+				"description": "Description",
+				"destclass": "Class",
+				"domain": "Domain",
+				"end_date": "End date",
+				"performer": "Activity performer",
+				"relation": "Relation",
+				"user": "User"
+			},
 			"maptoolbar": {
 				"add": "Add",
 				"drag": "Modify",
@@ -1208,6 +1225,15 @@
 					"must_save_to_modify": "You can not modify the notes before saving the activity"
 				}
 			},
+			"history_columns": {
+				"attributes": "Attributes",
+				"begin_date": "Begin date",
+				"description": "Description",
+				"domain": "Domain",
+				"end_date": "End date",
+				"relation": "Relation",
+				"user": "User"
+			},
 			"interrupted": "Interrupted",
 			"modify_card": "Edit activity",
 			"modify_note": "Edit note",
@@ -1268,13 +1294,15 @@
 	"add": "Add",
 	"addAccount": "Add account",
 	"addAttachmentFromDms": "Add attachments from DMS",
-	"addFilter": "Add Filter",
-	"addProject": "Add Project",
+	"addDomain": "Add domain",
+	"addFilter": "Add filter",
+	"addProject": "Add project",
 	"addRelations": "Add relations",
 	"addRow": "Add row",
 	"addTemplate": "Add template",
 	"addUser": "Add user",
 	"addView": "Add View",
+	"add_attachment_from_dms": "Add attachments from DMS",
 	"address": "Address",
 	"alfresco": "Alfresco",
 	"application": "Application",
@@ -1294,6 +1322,7 @@
 	"cacheManagement": "Cache management",
 	"camera": "Camera",
 	"cardPanelHeight": "Height of card panel in percentiles",
+	"cardinality": "Cardinality",
 	"cc": "Cc",
 	"changePassword": "Change password",
 	"checkFrequency": "Check frequency (minutes)",
@@ -1328,17 +1357,20 @@
 	"defaultLanguage": "Default language",
 	"defaultLevel": "Default level",
 	"delay": "Delay",
+	"deleteDomain": "Delete domain",
 	"deleteLabel": "Delete",
 	"deleteRow": "Delete row",
 	"descriptionLabel": "Description",
 	"description_": "Description",
 	"destination": "Destination",
+	"directDescription": "Direct description",
 	"disable": "Disable",
 	"disableGridFilter": "Disable grid filter",
 	"disableUser": "Disable user",
 	"display_less_attributes": "Display less attributes",
 	"display_more_attributes": "Display more attributes",
 	"domain": "Domain",
+	"domains": "Domains",
 	"download": "Download",
 	"download_ifc_file": "Download Ifc file",
 	"edit": "Edit",
@@ -1395,6 +1427,7 @@
 	"initialLongitude": "Initial longitude",
 	"initialZoomLevel": "Initial zoom level",
 	"instanceName": "Instance name",
+	"inverseDescription": "Inverse description",
 	"ipType": "IP type",
 	"ipv4": "ipv4",
 	"ipv6": "ipv6",
@@ -1411,9 +1444,12 @@
 	"loggedUser": "Logged User",
 	"main": "Main",
 	"manualRegeneration": "Manual regeneration",
+	"masterDetail": "Master/Detail",
+	"masterDetailLabel": "Master/Detail label",
 	"maximumLevel": "Maximum level",
 	"mode": "Mode",
 	"modifyAccount": "Modify account",
+	"modifyDomain": "Modify domain",
 	"modifyFilter": "Modify filter",
 	"modifyProject": "Modify project",
 	"modifyTemplate": "Modify template",
@@ -1443,6 +1479,7 @@
 	"processedFolder": "Processed folder",
 	"projects": "Projects",
 	"promptSync": "Prompt sync",
+	"properties": "Properties",
 	"queue": "Queue",
 	"readOnly": "Read only",
 	"referenceComboLimit": "References combobox limit",

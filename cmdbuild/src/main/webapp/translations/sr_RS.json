@@ -1,6 +1,6 @@
 {
 	"description": "Српски",
-	"release": "2.3-dev",
+	"release": "2.4-dev",
 	"administration": {
 		"description": "Администрациони модул",
 		"modClass": {
@@ -35,6 +35,13 @@
 				"isunique": "Јединствен",
 				"length": "Дужина",
 				"lookup": "Шифарник",
+				"meta": {
+					"add": "Додај метаподатак",
+					"key": "Кључ",
+					"remove": "Уклони метаподатак",
+					"title": "Измени метаподатке",
+					"value": "Вредност"
+				},
 				"modify_attribute": "Измени атрибут",
 				"msg_warning_drop_row": "Атрибуте је могуће сортирати само ако су приказани и наслеђени",
 				"name": "Назив",
@@ -84,10 +91,8 @@
 				"md_label": "Назив везе надређени/подређени (Master/Detail)",
 				"modify_domain": "Измени релацију",
 				"name": "Назив",
-				"title_add": "Додај релацију",
-				"title_modify": "Измени релацију \"{0}\""
+				"title_add": "Додај релацију"
 			},
-			"domains_title": "Управљање релацијама",
 			"errors": {
 				"table": {
 					"cast": "Није могуће изменити обележје \"суперкласа\", јер садржи податке или подкласе",
@@ -323,7 +328,6 @@
 		"modWorkflow": {
 			"add_process": "Додај процес",
 			"attributes_title": "Управљање атрибутима",
-			"domains_title": "Управљање релацијама",
 			"errors": {
 				"table": {
 					"cast": "Обележје \"суперкласа\" не може бити измењено, класа садржи податке и/или подкласе",
@@ -1268,6 +1272,7 @@
 	"add": "Додај",
 	"addAccount": "Додај кориснички налог",
 	"addAttachmentFromDms": "Додај прилог из DMS",
+	"addDomain": "Додај релацију",
 	"addFilter": "Додај филтер",
 	"addProject": "Додај пројекат",
 	"addRelations": "Додај релацију",
@@ -1275,6 +1280,7 @@
 	"addTemplate": "Додај шаблон",
 	"addUser": "Додај корисника",
 	"addView": "Додај поглед",
+	"add_attachment_from_dms": "Додај прилог из DMS",
 	"address": "Адреса",
 	"alfresco": "Alfresco",
 	"application": "Апликација",
@@ -1294,6 +1300,7 @@
 	"cacheManagement": "Подешавање кеш меморије",
 	"camera": "Камера",
 	"cardPanelHeight": "Висина (у процентима) панела за картице ",
+	"cardinality": "Кардиналитет",
 	"cc": "Cc",
 	"changePassword": "Промени лозинку",
 	"checkFrequency": "Фреквенција провере (минуте)",
@@ -1328,17 +1335,20 @@
 	"defaultLanguage": "Подразумевани језик",
 	"defaultLevel": "Подразумевани број нивоа",
 	"delay": "<em>Delay</em>",
+	"deleteDomain": "Уклони релацију",
 	"deleteLabel": "Обриши",
 	"deleteRow": "Обриши ред",
 	"descriptionLabel": "Опис",
 	"description_": "Опис",
 	"destination": "Одредишна класа",
+	"directDescription": "Директни опис",
 	"disable": "Онемогући",
 	"disableGridFilter": "Искључи филтрирање табеле",
 	"disableUser": "Искључи корисника",
 	"display_less_attributes": "Прикажи мање атрибута",
 	"display_more_attributes": "Прикажи више атрибута",
 	"domain": "Релација",
+	"domains": "Релације",
 	"download": "<em>Download</em>",
 	"download_ifc_file": "Преузми Ifc датотеку",
 	"edit": "Измени",
@@ -1395,6 +1405,7 @@
 	"initialLongitude": "Почетна географска дужина",
 	"initialZoomLevel": "Почетно увећање",
 	"instanceName": "Назив инстанце",
+	"inverseDescription": "Инверзни опис",
 	"ipType": "IP тип",
 	"ipv4": "ipv4",
 	"ipv6": "ipv6",
@@ -1411,9 +1422,12 @@
 	"loggedUser": "Пријављени корисник",
 	"main": "Главни",
 	"manualRegeneration": "<em>Manual Regeneration</em>",
+	"masterDetail": "Надређени/подређени (Master/Detail)",
+	"masterDetailLabel": "Назив везе надређени/подређени (Master/Detail)",
 	"maximumLevel": "Максималан број нивоа који се могу селектовати",
 	"mode": "Режим",
 	"modifyAccount": "Измени кор. налог",
+	"modifyDomain": "Измени релацију",
 	"modifyFilter": "Модификуј приказ",
 	"modifyProject": "Измени пројекат",
 	"modifyTemplate": "Измени шаблон",
@@ -1443,6 +1457,7 @@
 	"processedFolder": "Обрађени фолдери",
 	"projects": "Пројекти",
 	"promptSync": "<em>Prompt sync</em>",
+	"properties": "Обележја",
 	"queue": "<em>Queue</em>",
 	"readOnly": "Само преглед",
 	"referenceComboLimit": "Лимит за листу референци",

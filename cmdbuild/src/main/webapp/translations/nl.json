@@ -1,6 +1,6 @@
 {
 	"description": "Nederlands",
-	"release": "2.3-dev",
+	"release": "2.4-dev",
 	"administration": {
 		"description": "Administratie module",
 		"modClass": {
@@ -35,6 +35,13 @@
 				"isunique": "Uniek",
 				"length": "Lengte",
 				"lookup": "Opzoeken",
+				"meta": {
+					"add": "Metadata toevoegen",
+					"key": "Sleutel",
+					"remove": "Metadata verwijderen",
+					"title": "Aanpassen metadata",
+					"value": "Waarde"
+				},
 				"modify_attribute": "Aanpassen attribuut",
 				"msg_warning_drop_row": "Herordering werkt alleen indien ge-erfte attributen worden getoond",
 				"name": "Naam",
@@ -84,10 +91,8 @@
 				"md_label": "Meester/Detail Label",
 				"modify_domain": "Domein aanpassen",
 				"name": "Naam",
-				"title_add": "Domein toevoegen",
-				"title_modify": "Domein aanpassen \"{0}\""
+				"title_add": "Domein toevoegen"
 			},
-			"domains_title": "Domein beheren",
 			"errors": {
 				"table": {
 					"cast": "Fout tijdens aanpassing \"superklas\" eigenschappen, klas bevat gegevens of heeft sub klassen",
@@ -323,7 +328,6 @@
 		"modWorkflow": {
 			"add_process": "Proces toevoegen",
 			"attributes_title": "Beheer attributen",
-			"domains_title": "Beheer domeinen",
 			"errors": {
 				"table": {
 					"cast": "Het is niet mogelijk om de \"superklas\" eigenschappen aan te passen, de klas bevat gegevens of is subklas",
@@ -1268,6 +1272,7 @@
 	"add": "Toevoegen",
 	"addAccount": "Gebruiker toevoegen",
 	"addAttachmentFromDms": "Bijlage van DMS toevoegen",
+	"addDomain": "Domein toevoegen",
 	"addFilter": "Filter toevoegen",
 	"addProject": "Project toevoegen",
 	"addRelations": "Relaties toevoegen",
@@ -1275,6 +1280,7 @@
 	"addTemplate": "Sjabloon toevoegen",
 	"addUser": "Gebruiker toevoegen",
 	"addView": "Venster toevoegen",
+	"add_attachment_from_dms": "Bijlage van DMS toevoegen",
 	"address": "Adres",
 	"alfresco": "Alfresco",
 	"application": "Applikatie",
@@ -1294,6 +1300,7 @@
 	"cacheManagement": "Cache beheer",
 	"camera": "Camera",
 	"cardPanelHeight": "Hoogte van het kaart paneel in procenten",
+	"cardinality": "Cardinaliteit",
 	"cc": "Cc",
 	"changePassword": "Wachtwoord veranderen",
 	"checkFrequency": "Controleer frequentie (minuten)",
@@ -1328,17 +1335,20 @@
 	"defaultLanguage": "Standaard Taal",
 	"defaultLevel": "Standaard niveau",
 	"delay": "<em>Delay</em>",
+	"deleteDomain": "Domein verwijderen",
 	"deleteLabel": "Verwijderen",
 	"deleteRow": "Rij verwijderen",
 	"descriptionLabel": "Omschrijving",
 	"description_": "Omschrijving",
 	"destination": "Bestemming",
+	"directDescription": "Directe omschrijving",
 	"disable": "Blokkeer",
 	"disableGridFilter": "Verwijder raster filter",
 	"disableUser": "Blokkeer gebruiker",
 	"display_less_attributes": "Toon minder attributen",
 	"display_more_attributes": "Toon meer attributen",
 	"domain": "Domein",
+	"domains": "Domeinen",
 	"download": "<em>Download</em>",
 	"download_ifc_file": "Ophalen Ifc bestand",
 	"edit": "Modificeer",
@@ -1395,6 +1405,7 @@
 	"initialLongitude": "Initiele longitude",
 	"initialZoomLevel": "Initieel zoom niveau",
 	"instanceName": "Database naam",
+	"inverseDescription": "Omgekeerde omschrijving",
 	"ipType": "<em>IP type</em>",
 	"ipv4": "ipv4",
 	"ipv6": "ipv6",
@@ -1411,9 +1422,12 @@
 	"loggedUser": "Gelogde gebruiker",
 	"main": "Hoofddeel",
 	"manualRegeneration": "<em>Manual Regeneration</em>",
+	"masterDetail": "Meester/Detail",
+	"masterDetailLabel": "Meester/Detail Label",
 	"maximumLevel": "Maximum niveau",
 	"mode": "Mode",
 	"modifyAccount": "Gebruiker aanpassen",
+	"modifyDomain": "Domein aanpassen",
 	"modifyFilter": "Bijwerken Filter",
 	"modifyProject": "Project aanpassen",
 	"modifyTemplate": "Sjabloon aanpassen",
@@ -1443,6 +1457,7 @@
 	"processedFolder": "Map verwerkt",
 	"projects": "Projects",
 	"promptSync": "<em>Prompt sync</em>",
+	"properties": "Eigenschappen",
 	"queue": "<em>Queue</em>",
 	"readOnly": "Alleen lezen",
 	"referenceComboLimit": "Referentie keuzebox limiet",

@@ -3,6 +3,12 @@
 	/**
 	 * Class to be extended in controllers witch implements new CMDBuild algorithms where controller creates view
 	 *
+	 * Usage and wild cards:
+	 * 	'=' - creates method alias
+	 * 		Ex. 'functionName = aliasFunctionName'
+	 * 	'->' - forwards method to sub-controller (sub-controller could be also multiple as list separated by commas)
+	 * 		Ex. 'functionName -> controllerOne, controllerTwo, controllerThree, ...'
+	 *
 	 * @abstract
 	 */
 	Ext.define('CMDBuild.controller.common.AbstractController', {
@@ -63,12 +69,17 @@
 				// Normal function manage
 				if (Ext.isString(this.stringToFunctionNameMap[name]) && Ext.isFunction(this[this.stringToFunctionNameMap[name]]))
 					return this[this.stringToFunctionNameMap[name]](param, callBack);
-
 				if (Ext.isObject(this.stringToFunctionNameMap[name])) {
 					switch (this.stringToFunctionNameMap[name].action) {
-						// Forwarded function manage
-						case 'forward':
-							return this[this.stringToFunctionNameMap[name].target][name](param, callBack);
+						// Forwarded function manage with multiple controller forwarding management
+						case 'forward': {
+							if (Ext.isArray(this.stringToFunctionNameMap[name].target))
+								Ext.Array.forEach(this.stringToFunctionNameMap[name].target, function(controller, i, allControllers) {
+									this[controller][name](param, callBack);
+								}, this);
+
+							return;
+						}
 					}
 				}
 			}
@@ -92,11 +103,24 @@
 					if (managedFnString.indexOf('->') >= 0) {
 						var splittedString = managedFnString.split('->');
 
-						if (splittedString.length == 2 && Ext.String.trim(splittedString[0]).indexOf(' ') < 0)
+						if (splittedString.length == 2 && Ext.String.trim(splittedString[0]).indexOf(' ') < 0) {
+							var targetString = Ext.String.trim(splittedString[1]);
+
+							if (targetString.indexOf(',') >= 0) { // Multiple controller forwarding decode
+								targetString = targetString.split(',');
+
+								Ext.Array.forEach(targetString, function(controller, i, allControllers) {
+									targetString[i] = Ext.String.trim(controller);
+								}, this);
+							} else { // Single controller forwarding decode
+								targetString = [targetString];
+							}
+
 							this.stringToFunctionNameMap[Ext.String.trim(splittedString[0])] = {
 								action: 'forward',
-								target: Ext.String.trim(splittedString[1])
+								target: targetString
 							};
+						}
 					}
 
 					// Alias inline tag

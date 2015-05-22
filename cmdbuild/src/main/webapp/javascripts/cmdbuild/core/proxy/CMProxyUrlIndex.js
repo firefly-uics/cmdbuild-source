@@ -170,6 +170,15 @@
 
 		login: 'services/json/login/login',
 
+		lookup: {
+			disable: 'services/json/schema/modlookup/disablelookup',
+			enable: 'services/json/schema/modlookup/enablelookup',
+			getList: 'services/json/schema/modlookup/getlookuplist',
+			save: 'services/json/schema/modlookup/savelookup',
+			saveType: 'services/json/schema/modlookup/savelookuptype',
+			tree: 'services/json/schema/modlookup/tree'
+		},
+
 		menu: {
 			create: '',
 			read: 'services/json/schema/modmenu/getassignedmenu',
