@@ -1080,19 +1080,6 @@
 				"position": "Position",
 				"zoom": "Zoom"
 			},
-			"history_columns": {
-				"activity_name": "Activity name",
-				"attributes": "Attributes",
-				"begin_date": "Begin date",
-				"code": "Code",
-				"description": "Description",
-				"destclass": "Class",
-				"domain": "Domain",
-				"end_date": "End date",
-				"performer": "Activity performer",
-				"relation": "Relation",
-				"user": "User"
-			},
 			"maptoolbar": {
 				"add": "Add",
 				"drag": "Modify",
@@ -1224,15 +1211,6 @@
 				"notes": {
 					"must_save_to_modify": "You can not modify the notes before saving the activity"
 				}
-			},
-			"history_columns": {
-				"attributes": "Attributes",
-				"begin_date": "Begin date",
-				"description": "Description",
-				"domain": "Domain",
-				"end_date": "End date",
-				"relation": "Relation",
-				"user": "User"
 			},
 			"interrupted": "Interrupted",
 			"modify_card": "Edit activity",
