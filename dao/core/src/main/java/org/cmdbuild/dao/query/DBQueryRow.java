@@ -1,5 +1,6 @@
 package org.cmdbuild.dao.query;
 
+import static org.cmdbuild.dao.query.clause.alias.Aliases.*;
 import java.util.Map;
 
 import org.cmdbuild.dao.entry.CMCard;
@@ -10,7 +11,6 @@ import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.query.clause.QueryRelation;
 import org.cmdbuild.dao.query.clause.alias.Alias;
-import org.cmdbuild.dao.query.clause.alias.EntryTypeAlias;
 
 import com.google.common.collect.Maps;
 
@@ -55,12 +55,22 @@ public class DBQueryRow implements CMQueryRow {
 	public void setFunctionCallOutput(final Alias alias, final DBFunctionCallOutput functionCallOutput) {
 		other.put(alias, functionCallOutput);
 	}
+	
+	@Override
+	public boolean hasCard(final CMClass type) {
+		return hasCard(canonical(type));
+	}
 
 	@Override
 	public CMCard getCard(final CMClass type) {
-		return getCard(EntryTypeAlias.canonicalAlias(type));
+		return getCard(canonical(type));
 	}
 
+	@Override
+	public boolean hasCard(final Alias alias) {
+		return cards.containsKey(alias);
+	}
+	
 	@Override
 	public CMCard getCard(final Alias alias) {
 		if (cards.containsKey(alias)) {
@@ -81,7 +91,7 @@ public class DBQueryRow implements CMQueryRow {
 
 	@Override
 	public QueryRelation getRelation(final CMDomain type) {
-		return getRelation(EntryTypeAlias.canonicalAlias(type));
+		return getRelation(canonical(type));
 	}
 
 	@Override
