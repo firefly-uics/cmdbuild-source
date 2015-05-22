@@ -33,16 +33,15 @@
 		CMDBuild.log.debug.apply(CMDBuild.log, arguments);
 	};
 
-	_deprecated = function() {
-		var name = '';
+	/**
+	 * @param {String} message
+	 * @param {Mixed} classWithError
+	 */
+	_deprecated = function(method, classWithError) {
+		classWithError = typeof classWithError == 'string' ? classWithError : Ext.getClassName(classWithError);
 
-		try {
-			name  = arguments.callee.caller.name;
-		} catch (e) {
-			CMDBuild.log.debug('DEPRECATED: ' + _trace());
-		}
-
-		CMDBuild.log.debug('DEPRECATED: ' + name, _trace());
+		if (!Ext.isEmpty(method))
+			CMDBuild.log.warn('DEPRECATED: method ' + method + '() of ' + classWithError);
 	};
 
 	/**

@@ -180,11 +180,11 @@
 
 		// DEPRECATED
 
-		onAddCardButtonClick: function() { _deprecated();
+		onAddCardButtonClick: function() { _deprecated('onAddCardButtonClick', this);
 			this.disable();
 		},
 
-		onClassSelected: function() { _deprecated();
+		onClassSelected: function() { _deprecated('onClassSelected', this);
 			this.disable();
 		}
 	});

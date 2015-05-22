@@ -191,20 +191,20 @@
 
 
 		// DEPRECATED
-			reloadCard: function(eventParams) { _deprecated();
+			reloadCard: function(eventParams) { _deprecated('reloadCard', this);
 				this.enable();
 			},
 
-			onAddCardButtonClick: function() { _deprecated();
+			onAddCardButtonClick: function() { _deprecated('onAddCardButtonClick', this);
 				this.disable();
 			},
 
-			onClassSelected: function() { _deprecated();
+			onClassSelected: function() { _deprecated('onClassSelected', this);
 				this.disableModify();
 				this.disable();
 			},
 
-			onCardSelected: function(card) { _deprecated();
+			onCardSelected: function(card) { _deprecated('onCardSelected', this);
 				var idClass = card.raw.IdClass;
 
 				if (CMDBuild.Utils.isSimpleTable(idClass)) {
