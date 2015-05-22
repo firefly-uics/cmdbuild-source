@@ -56,7 +56,6 @@
 			this.instanceIdentifier = params[CMDBuild.core.proxy.CMProxyConstants.INSTANCE_IDENTIFIER];
 			this.processIdentifier = params[CMDBuild.core.proxy.CMProxyConstants.PROCESS_IDENTIFIER];
 			this.clientFilterString = params[CMDBuild.core.proxy.CMProxyConstants.CLIENT_FILTER];
-			this.printFormat = params[CMDBuild.core.proxy.CMProxyConstants.FORMAT] || 'pdf';
 
 			// Process identifier validation
 			if (
