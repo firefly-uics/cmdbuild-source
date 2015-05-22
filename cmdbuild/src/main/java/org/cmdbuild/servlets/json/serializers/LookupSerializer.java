@@ -39,13 +39,12 @@ public class LookupSerializer {
 		if (lookup != null) {
 			serializer = new JSONObject();
 			serializer.put(ID_CAPITAL, lookup.getId());
-
 			serializer.put(DESCRIPTION_CAPITAL, lookup.description());
+			serializer.put("Number", lookup.number());
 
 			if (!shortForm) {
 				serializer.put("Type", lookup.type().name);
 				serializer.put("Code", defaultIfBlank(lookup.code(), EMPTY));
-				serializer.put("Number", lookup.number());
 				serializer.put("Notes", lookup.notes());
 				serializer.put("Default", lookup.isDefault());
 				serializer.put("Active", lookup.active());
