@@ -27,7 +27,7 @@
 		card: {
 			create: '',
 			read: 'services/json/management/modcard/getcard',
-			update: '',
+			update: 'services/json/management/modcard/updatecard',
 			remove: 'services/json/management/modcard/deletecard',
 
 			bulkUpdate: 'services/json/management/modcard/bulkupdate',

@@ -12,6 +12,26 @@
 		singleton: true,
 
 		/**
+		 * @param {Object} params
+		 */
+		bulkUpdate: function(params) {
+			params.method = 'POST';
+			params.url = CMDBuild.core.proxy.CMProxyUrlIndex.card.bulkUpdate;
+
+			CMDBuild.ServiceProxy.core.doRequest(params);
+		},
+
+		/**
+		 * @param {Object} params
+		 */
+		bulkUpdateFromFilter: function(params) {
+			params.method = 'POST';
+			params.url = CMDBuild.core.proxy.CMProxyUrlIndex.card.bulkUpdateFromFilter;
+
+			CMDBuild.ServiceProxy.core.doRequest(params);
+		},
+
+		/**
 		 * Retrieve the position on the DB of the required card, considering the sorting and current filter applied on the grid
 		 *
 		 * @param {Object} p
@@ -43,37 +63,6 @@
 		},
 
 		/**
-		 * @param {Object} params
-		 */
-		remove: function(params) {
-			params.method = 'POST';
-			params.url = CMDBuild.core.proxy.CMProxyUrlIndex.card.remove;
-			params.important = true;
-
-			CMDBuild.ServiceProxy.core.doRequest(params);
-		},
-
-		/**
-		 * @param {Object} params
-		 */
-		bulkUpdate: function(params) {
-			params.method = 'POST';
-			params.url = CMDBuild.core.proxy.CMProxyUrlIndex.card.bulkUpdate;
-
-			CMDBuild.ServiceProxy.core.doRequest(params);
-		},
-
-		/**
-		 * @param {Object} params
-		 */
-		bulkUpdateFromFilter: function(params) {
-			params.method = 'POST';
-			params.url = CMDBuild.core.proxy.CMProxyUrlIndex.card.bulkUpdateFromFilter;
-
-			CMDBuild.ServiceProxy.core.doRequest(params);
-		},
-
-		/**
 		 *
 		 * Id of the card to lock, className is not required because id is unique
 		 *
@@ -87,13 +76,12 @@
 		},
 
 		/**
-		 * Id of card to unlock
-		 *
-		 * @param {Number} params.id
+		 * @param {Object} params
 		 */
-		unlockCard: function(params) {
+		remove: function(params) {
 			params.method = 'POST';
-			params.url = CMDBuild.core.proxy.CMProxyUrlIndex.card.unlock;
+			params.url = CMDBuild.core.proxy.CMProxyUrlIndex.card.remove;
+			params.important = true;
 
 			CMDBuild.ServiceProxy.core.doRequest(params);
 		},
@@ -114,7 +102,36 @@
 				success: parameters.success || Ext.emptyFn(),
 				callback: parameters.callback || Ext.emptyFn()
 			});
-		}
+		},
+
+		/**
+		 * Id of card to unlock
+		 *
+		 * @param {Number} params.id
+		 */
+		unlockCard: function(params) {
+			params.method = 'POST';
+			params.url = CMDBuild.core.proxy.CMProxyUrlIndex.card.unlock;
+
+			CMDBuild.ServiceProxy.core.doRequest(params);
+		},
+
+		/**
+		 * @property {Object} parameters
+		 */
+		update: function(parameters) {
+			CMDBuild.Ajax.request({
+				method: 'POST',
+				url: CMDBuild.core.proxy.CMProxyUrlIndex.card.update,
+				headers: parameters.headers,
+				params: parameters.params,
+				scope: parameters.scope || this,
+				loadMask: parameters.loadMask || true,
+				failure: parameters.failure || Ext.emptyFn(),
+				success: parameters.success || Ext.emptyFn(),
+				callback: parameters.callback || Ext.emptyFn()
+			});
+		},
 	});
 
 	function adaptGetCardCallParams(p) {

@@ -38,7 +38,7 @@
 		initComponent: function() {
 			this.attachmentAddFromDmsButton = Ext.create('Ext.button.Button', {
 				margin: '0 0 0 5',
-				text: CMDBuild.Translation.add_attachment_from_dms,
+				text: CMDBuild.Translation.addAttachmentFromDms,
 				disabled: this.readOnly,
 				scope: this,
 
@@ -48,8 +48,8 @@
 			});
 
 			this.attachmentFileField = Ext.create('Ext.form.field.File', {
-				name: 'file',
-				buttonText: CMDBuild.Translation.attachfile,
+				name: CMDBuild.core.proxy.CMProxyConstants.FILE,
+				buttonText: CMDBuild.Translation.attachFile,
 				buttonOnly: true,
 				disabled: this.readOnly,
 				scope: this,

@@ -1,4 +1,5 @@
 (function() {
+
 	Ext.define("CMDBuild.controller.management.classes.CMBaseCardPanelController", {
 		extend: "CMDBuild.controller.management.classes.CMModCardSubController",
 
@@ -6,7 +7,10 @@
 			observable : "Ext.util.Observable"
 		},
 
-		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+		requires: [
+			'CMDBuild.core.proxy.CMProxyConstants',
+			'CMDBuild.core.proxy.Card'
+		],
 
 		cardDataProviders: [],
 
@@ -123,46 +127,39 @@
 			}
 		},
 
+		/**
+		 * @param {Object} params
+		 */
 		doFormSubmit: function(params) {
-			var form = this.view.getForm();
-/*			var values = form.getFieldValues();
-			var arValues = [];
-			for (var key in values) {
-				if (values[key][0] === undefined)
-					break;
-				if (values[key][1] === undefined) {
-					var ob = {id: key, value: values[key][0]};
-					arValues.push(ob);
-				}
-				else {
-					var ob = {id: key, value: values[key][1]};
-					arValues.push(ob);
-				}
-			}
-			form.setValues(arValues);*/
-			CMDBuild.LoadMask.get().show();
-			form.submit({
-				method : 'POST',
-				url : 'services/json/management/modcard/updatecard',
+			CMDBuild.core.proxy.Card.update({
+				params: Ext.Object.merge(params, this.view.getForm().getValues()),
 				scope: this,
-				params: params,
-				success : this.onSaveSuccess,
-				failure : function() {
-					CMDBuild.LoadMask.get().hide();
+				failure: function(response, options, decodedResponse) {
+					_error('update card error', this);
+				},
+				success: function(response, options, decodedResponse) {
+					// Hack to adapr old method behaviour for classes witch extends this one
+					var fakeOperation = {};
+					fakeOperation['result'] = decodedResponse;
+
+					this.onSaveSuccess(this.view.getForm(), fakeOperation);
 				}
 			});
 		},
 
+		/**
+		 * @param {Ext.form.Basic} form
+		 * @param {Object} operation
+		 */
 		onSaveSuccess: function(form, operation) {
-			var me = this;
-			CMDBuild.LoadMask.get().hide();
-			me.view.displayMode();
+			this.view.displayMode();
+
 			var cardData = {
-				Id: operation.result.id || me.card.get("Id"),// if is a new card, the id is given by the request
-				IdClass: me.entryType.get("id")
+				Id: operation.result[CMDBuild.core.proxy.CMProxyConstants.ID] || this.card.get("Id"), // if is a new card, the id is given by the request
+				IdClass: this.entryType.get(CMDBuild.core.proxy.CMProxyConstants.ID)
 			};
 
-			me.fireEvent(me.CMEVENTS.cardSaved, cardData);
+			this.fireEvent(this.CMEVENTS.cardSaved, cardData);
 		},
 
 		onAbortCardClick: function() {
