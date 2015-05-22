@@ -33,6 +33,7 @@
 			'CMDBuild.core.proxy.Classes',
 			'CMDBuild.core.proxy.Configuration',
 			'CMDBuild.core.proxy.Domain',
+			'CMDBuild.core.proxy.Lookup',
 			'CMDBuild.core.proxy.Report'
 		],
 
@@ -359,13 +360,14 @@
 				params = {};
 				params[CMDBuild.core.proxy.CMProxyConstants.LOCALIZED] = true;
 
-				CMDBuild.ServiceProxy.lookup.readAllTypes({
+				CMDBuild.core.proxy.Lookup.readAll({
 					params: params,
-					success : function(response, options, decoded) {
-						_CMCache.addLookupTypes(decoded);
-					},
-					callback: reqBarrier.getCallback()
-				});
+					scope: this,
+					success: function(response, options, decodedResponse) {
+						_CMCache.addLookupTypes(decodedResponse);
+ 					},
+ 					callback: reqBarrier.getCallback()
+ 				});
 
 				reqBarrier.start();
 			}

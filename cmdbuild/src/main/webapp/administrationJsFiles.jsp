@@ -1,7 +1,7 @@
 <!-- MODELS -->
+<script type="text/javascript" src="javascripts/cmdbuild/model/Lookup.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/model/CMSetupModels.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/model/CMGisModels.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/model/CMLookupModels.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/model/CMDomainModels.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/model/CMReportAsComboItem.js"></script>
 

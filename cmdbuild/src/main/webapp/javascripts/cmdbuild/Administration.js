@@ -24,6 +24,7 @@
 			'CMDBuild.core.proxy.Configuration',
 			'CMDBuild.core.proxy.Domain',
 			'CMDBuild.core.proxy.Localizations',
+			'CMDBuild.core.proxy.Lookup',
 			'CMDBuild.core.proxy.Report'
 		],
 
@@ -290,9 +291,10 @@
 				/*
 				 * Lookups
 				 */
-				CMDBuild.ServiceProxy.lookup.readAllTypes({
-					success: function(response, options, decoded) {
-						_CMCache.addLookupTypes(decoded);
+				CMDBuild.core.proxy.Lookup.readAll({
+					success: function(response, options, decodedResponse) {
+						_CMCache.addLookupTypes(decodedResponse);
+
 						lookupAccordion = new CMDBuild.view.administration.accordion.CMLookupAccordion({
 							cmControllerType: CMDBuild.controller.accordion.CMLookupAccordionController
 						});
