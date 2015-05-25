@@ -73,7 +73,7 @@
 	 * Orphans
 	 =========================================== */
 	// TODO duplicate in card section, remove this
-	CMDBuild.ServiceProxy.getCardList = function(p) {
+	CMDBuild.ServiceProxy.getCardList = function(p) { // TODO: move in card proxy
 		CMDBuild.Ajax.request({
 			url: CMDBuild.ServiceProxy.url.cardList,
 			method: 'GET',
