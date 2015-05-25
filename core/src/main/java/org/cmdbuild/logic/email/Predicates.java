@@ -26,6 +26,29 @@ public class Predicates {
 		return new StatusIs(value);
 	}
 
+	private static class Temporary implements Predicate<Email> {
+
+		private final boolean value;
+
+		public Temporary(final boolean value) {
+			this.value = value;
+		}
+
+		@Override
+		public boolean apply(final Email input) {
+			return (input.isTemporary() == value);
+		};
+
+	}
+
+	public static Predicate<Email> temporary() {
+		return temporary(true);
+	}
+
+	public static Predicate<Email> temporary(final boolean value) {
+		return new Temporary(value);
+	}
+
 	private Predicates() {
 		// prevents instantiation
 	}
