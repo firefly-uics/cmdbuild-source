@@ -91,7 +91,7 @@
 		/**
 		 * @abstract
 		 */
-		buildSubControllers: function() {}
+		buildSubControllers: Ext.emptyFn
 	});
 
 	Ext.define('CMDBuild.controller.management.classes.CMModCardController', {

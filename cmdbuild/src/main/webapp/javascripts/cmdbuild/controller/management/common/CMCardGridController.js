@@ -620,6 +620,10 @@
 						try {
 							me.gridSM.deselectAll();
 							me.gridSM.select(relativeIndex);
+
+							// Force row expanding on select
+							if (!Ext.isEmpty(me.view.plugins[0]) && me.view.plugins[0].ptype == 'activityrowexpander')
+								me.view.plugins[0].toggleRow(relativeIndex, me.view.getStore().getAt(relativeIndex));
 						} catch (e) {
 							view.fireEvent("cmWrongSelection");
 							_trace("I was not able to select the record at " + relativeIndex);
