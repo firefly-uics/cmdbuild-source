@@ -29,9 +29,39 @@
 		/**
 		 * @param {Object} parameters
 		 */
+		createClassSchemaReport: function(parameters) {
+			CMDBuild.Ajax.request({
+				url: CMDBuild.core.proxy.CMProxyUrlIndex.reports.printClassSchema,
+				params: parameters.params,
+				scope: parameters.scope || this,
+				loadMask: parameters.loadMask || true,
+				failure: parameters.failure || Ext.emptyFn(),
+				success: parameters.success || Ext.emptyFn(),
+				callback: parameters.callback || Ext.emptyFn()
+			});
+		},
+
+		/**
+		 * @param {Object} parameters
+		 */
 		createReport: function(parameters) {
 			CMDBuild.Ajax.request({
 				url: CMDBuild.core.proxy.CMProxyUrlIndex.reports.createReportFactory,
+				params: parameters.params,
+				scope: parameters.scope || this,
+				loadMask: parameters.loadMask || true,
+				failure: parameters.failure || Ext.emptyFn(),
+				success: parameters.success || Ext.emptyFn(),
+				callback: parameters.callback || Ext.emptyFn()
+			});
+		},
+
+		/**
+		 * @param {Object} parameters
+		 */
+		createSchemaReport: function(parameters) {
+			CMDBuild.Ajax.request({
+				url: CMDBuild.core.proxy.CMProxyUrlIndex.reports.printSchema,
 				params: parameters.params,
 				scope: parameters.scope || this,
 				loadMask: parameters.loadMask || true,

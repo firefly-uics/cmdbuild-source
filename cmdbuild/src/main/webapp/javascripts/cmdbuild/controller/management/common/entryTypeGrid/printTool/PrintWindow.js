@@ -73,10 +73,44 @@
 		/**
 		 * @param {Boolean} forceDownload
 		 */
-		createDocument: function(forceDownload) {
+		createDocument: function(forceDownload) { // TODO ottimizzare cambiando solo il nome del metodo???
 			switch (this.mode) {
 				case 'cardDetails': {
 					CMDBuild.core.proxy.Report.createCardDetailsReport({
+						params: this.parameters,
+						scope: this,
+						failure: function(response, options, decodedResponse) {
+							CMDBuild.Msg.error(
+								CMDBuild.Translation.error,
+								CMDBuild.Translation.errors.createReportFilure,
+								false
+							);
+						},
+						success: function(response, options, decodedResponse) {
+							this.showReport(forceDownload);
+						}
+					});
+				} break;
+
+				case 'classSchema': {
+					CMDBuild.core.proxy.Report.createClassSchemaReport({
+						params: this.parameters,
+						scope: this,
+						failure: function(response, options, decodedResponse) {
+							CMDBuild.Msg.error(
+								CMDBuild.Translation.error,
+								CMDBuild.Translation.errors.createReportFilure,
+								false
+							);
+						},
+						success: function(response, options, decodedResponse) {
+							this.showReport(forceDownload);
+						}
+					});
+				} break;
+
+				case 'schema': {
+					CMDBuild.core.proxy.Report.createSchemaReport({
 						params: this.parameters,
 						scope: this,
 						failure: function(response, options, decodedResponse) {
