@@ -29,6 +29,21 @@
 		/**
 		 * @param {Object} parameters
 		 */
+		createViewReport: function(parameters) {
+			CMDBuild.Ajax.request({
+				url: CMDBuild.core.proxy.CMProxyUrlIndex.reports.printCurrentView,
+				params: parameters.params,
+				scope: parameters.scope || this,
+				loadMask: parameters.loadMask || true,
+				failure: parameters.failure || Ext.emptyFn(),
+				success: parameters.success || Ext.emptyFn(),
+				callback: parameters.callback || Ext.emptyFn()
+			});
+		},
+
+		/**
+		 * @param {Object} parameters
+		 */
 		getMenuTree: function(parameters) {
 			CMDBuild.ServiceProxy.core.doRequest({
 				method: 'GET',
