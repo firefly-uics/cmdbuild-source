@@ -1451,6 +1451,7 @@
 	"popupWindows": "Ventana popup",
 	"port": "Puerto",
 	"preselectIfUnique": "<em>Preselect if unique</em>",
+	"printPreview": "<em>Print preview</em>",
 	"privileged": "<em>Privileged</em>",
 	"privileges_on_columns": "Privilegios en columnas",
 	"privileges_on_rows": "Privilegios en filas",
