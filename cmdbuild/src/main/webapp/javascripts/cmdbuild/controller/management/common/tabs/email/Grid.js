@@ -72,12 +72,8 @@
 						CMDBuild.Msg.error(CMDBuild.Translation.common.failure, CMDBuild.Translation.errors.emailCreate, false);
 					},
 					success: success || function(response, options, decodedResponse) {
-						if (
-							CMDBuild.controller.management.common.tabs.email.Email.trafficLightArrayCheck(record, regenerationTrafficLightArray)
-							|| Ext.isEmpty(regenerationTrafficLightArray)
-						) {
+						if (CMDBuild.controller.management.common.tabs.email.Email.trafficLightArrayCheck(record, regenerationTrafficLightArray))
 							this.storeLoad();
-						}
 					}
 				});
 			}
@@ -114,12 +110,8 @@
 						CMDBuild.Msg.error(CMDBuild.Translation.common.failure, CMDBuild.Translation.errors.emailUpdate, false);
 					},
 					success: function(response, options, decodedResponse) {
-						if (
-							CMDBuild.controller.management.common.tabs.email.Email.trafficLightArrayCheck(record, regenerationTrafficLightArray)
-							|| Ext.isEmpty(regenerationTrafficLightArray)
-						) {
+						if (CMDBuild.controller.management.common.tabs.email.Email.trafficLightArrayCheck(record, regenerationTrafficLightArray))
 							this.storeLoad();
-						}
 					}
 				});
 			}
@@ -309,12 +301,8 @@
 						CMDBuild.Msg.error(CMDBuild.Translation.common.failure, CMDBuild.Translation.errors.emailRemove, false);
 					},
 					success: function(response, options, decodedResponse) {
-						if (
-							CMDBuild.controller.management.common.tabs.email.Email.trafficLightArrayCheck(record, regenerationTrafficLightArray)
-							|| Ext.isEmpty(regenerationTrafficLightArray)
-						) {
+						if (CMDBuild.controller.management.common.tabs.email.Email.trafficLightArrayCheck(record, regenerationTrafficLightArray))
 							this.storeLoad();
-						}
 					}
 				});
 			}
