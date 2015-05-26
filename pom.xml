@@ -149,11 +149,6 @@
 				<artifactId>jackson-mapper-asl</artifactId>
 				<version>${jackson.version}</version>
 			</dependency>
-			<dependency>
-				<groupId>javax.mail</groupId>
-				<artifactId>mail</artifactId>
-				<version>1.4.4</version>
-			</dependency>
 
 			<dependency>
 				<groupId>commons-configuration</groupId>
