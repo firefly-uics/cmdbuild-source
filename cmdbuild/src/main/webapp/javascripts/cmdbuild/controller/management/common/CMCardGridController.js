@@ -142,34 +142,18 @@
 			this.gridSM.deselectAll();
 		},
 
+		/**
+		 * @params {String} format
+		 */
 		onPrintGridMenuClick: function(format) {
-			if (typeof format != "string") {
-				return;
-			}
-
-			var store = this.view.getStore();
-			// take className, sorting, ad eventual filtering
-			// form the grid's store
-			var params = Ext.apply({}, store.proxy.extraParams);
-			params.columns = Ext.JSON.encode(this.view.getVisibleColumns());
-			params.sort = Ext.JSON.encode(store.getSorters());
-
-			params.type = format;
-
-			CMDBuild.LoadMask.get().show();
-			CMDBuild.Ajax.request({
-				url: 'services/json/management/modreport/printcurrentview',
-				params: params,
-				success: function(response) {
-					var popup = window.open("services/json/management/modreport/printreportfactory", "Report", "height=400,width=550,status=no,toolbar=no,scrollbars=yes,menubar=no,location=no,resizable");
-					if (!popup) {
-						CMDBuild.Msg.warn(CMDBuild.Translation.warnings.warning_message,CMDBuild.Translation.warnings.popup_block);
-					}
-				},
-				callback : function() {
-					CMDBuild.LoadMask.get().hide();
-				}
-			});
+			if (!Ext.isEmpty(format))
+				Ext.create('CMDBuild.controller.management.common.entryTypeGrid.printTool.PrintWindow', {
+					parentDelegate: this,
+					columns: this.view.getVisibleColumns(),
+					extraParams: this.view.getStore().proxy.extraParams,
+					format: format,
+					sort: this.view.getStore().getSorters()
+				});
 		},
 
 		onCardSelected: function(sm, selection) {
