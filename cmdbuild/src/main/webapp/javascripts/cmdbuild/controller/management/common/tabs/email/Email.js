@@ -134,7 +134,7 @@
 		 * @cfg {Boolean}
 		 */
 		globalLoadMask: true,
-		
+
 		/**
 		 * Executed on regeneration end-point, works also as flagSave
 		 *
@@ -203,7 +203,7 @@
 			 * @return {Boolean} storeLoadEnabled
 			 */
 			trafficLightArrayCheck: function(record, regenerationTrafficLightArray) {
-				if (!Ext.isEmpty(regenerationTrafficLightArray) && regenerationTrafficLightArray.length > 0) {
+				if (!Ext.isEmpty(regenerationTrafficLightArray) && Ext.isArray(regenerationTrafficLightArray)) {
 					var storeLoadEnabled = true;
 
 					Ext.Array.forEach(regenerationTrafficLightArray, function(item, index, allItems) {
@@ -217,11 +217,11 @@
 					// Array reset on store load
 					if (storeLoadEnabled)
 						regenerationTrafficLightArray = [];
-					
+
 					return storeLoadEnabled;
 				}
 
-				return false;
+				return true;
 			},
 
 			/**
@@ -229,7 +229,7 @@
 			 * @param {Array} trafficLightArray
 			 */
 			trafficLightSlotBuild: function(record, trafficLightArray) {
-				if (!Ext.isEmpty(trafficLightArray)) {
+				if (!Ext.isEmpty(record) && Ext.isArray(trafficLightArray)) {
 					var trafficLight = [];
 					trafficLight[CMDBuild.core.proxy.CMProxyConstants.STATUS] = false;
 					trafficLight[CMDBuild.core.proxy.CMProxyConstants.RECORD] = record; // Reference to record
@@ -334,7 +334,7 @@
 				if (
 					!Ext.isEmpty(variable)
 					&& !Ext.isObject(variable)
-					&& typeof variable == 'string'
+					&& Ext.isString(variable)
 				) {
 					CMDBuild.controller.management.common.tabs.email.Email.searchForCqlClientVariables(
 						variable,
@@ -351,7 +351,7 @@
 					var mergedTemplate = Ext.apply(template.getData(), template.get(CMDBuild.core.proxy.CMProxyConstants.VARIABLES));
 
 					Ext.Object.each(mergedTemplate, function(key, value, myself) {
-						if (typeof value == 'string') { // Check all types of CQL variables that can contains client variables
+						if (Ext.isString(value)) { // Check all types of CQL variables that can contains client variables
 							CMDBuild.controller.management.common.tabs.email.Email.searchForCqlClientVariables(
 								value,
 								mergedTemplate[CMDBuild.core.proxy.CMProxyConstants.KEY] || mergedTemplate[CMDBuild.core.proxy.CMProxyConstants.NAME],
@@ -564,7 +564,7 @@
 			 */
 			regenerateAllEmails: function() {
 				var isRegenerationStarted = false; // Marks that regeneration process is started
-				
+
 				if (this.regenerateAllEmailsGet()) {
 					var regenerationTrafficLightArray = [];
 
@@ -590,7 +590,7 @@
 									this.controllerConfirmRegenerationWindow.addRecordToArray(item);
 								} else {
 									isRegenerationStarted = true;
-									
+
 									this.regenerateEmail(item, regenerationTrafficLightArray);
 								}
 							}
@@ -614,7 +614,7 @@
 									this.controllerConfirmRegenerationWindow.addTemplateToArray(item);
 								} else {
 									isRegenerationStarted = true;
-									
+
 									this.regenerateTemplate(item, regenerationTrafficLightArray);
 								}
 							}
@@ -815,7 +815,7 @@
 			regenerationEndPointCallbackGet: function() {
 				return this.regenerationEndPointCallback;
 			},
-			
+
 			/**
 			 * @param {Function} callbackFunction
 			 */
