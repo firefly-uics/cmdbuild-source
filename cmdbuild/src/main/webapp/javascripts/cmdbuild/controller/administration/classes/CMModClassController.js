@@ -50,7 +50,7 @@
 				var params = {};
 				params[CMDBuild.core.proxy.CMProxyConstants.FORMAT] = format;
 
-				Ext.create('CMDBuild.controller.management.common.entryTypeGrid.printTool.PrintWindow', {
+				Ext.create('CMDBuild.controller.common.entryTypeGrid.printTool.PrintWindow', {
 					parentDelegate: this,
 					format: format,
 					mode: 'schema',

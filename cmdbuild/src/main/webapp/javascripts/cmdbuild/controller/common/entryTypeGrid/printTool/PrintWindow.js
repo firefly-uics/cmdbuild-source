@@ -1,6 +1,6 @@
 (function() {
 
-	Ext.define('CMDBuild.controller.management.common.entryTypeGrid.printTool.PrintWindow', {
+	Ext.define('CMDBuild.controller.common.entryTypeGrid.printTool.PrintWindow', {
 		extend: 'CMDBuild.controller.common.AbstractController',
 
 		requires: [
@@ -47,7 +47,7 @@
 		parameters: undefined,
 
 		/**
-		 * @property {CMDBuild.view.management.common.entryTypeGrid.printTool.PrintWindow}
+		 * @property {CMDBuild.view.common.entryTypeGrid.printTool.PrintWindow}
 		 */
 		view: undefined,
 
@@ -58,7 +58,7 @@
 		constructor: function(configurationObject) {
 			this.callParent(arguments);
 
-			this.view = Ext.create('CMDBuild.view.management.common.entryTypeGrid.printTool.PrintWindow', {
+			this.view = Ext.create('CMDBuild.view.common.entryTypeGrid.printTool.PrintWindow', {
 				delegate: this
 			});
 
