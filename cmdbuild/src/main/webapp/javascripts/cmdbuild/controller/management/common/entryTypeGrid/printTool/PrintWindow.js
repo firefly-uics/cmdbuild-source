@@ -24,12 +24,10 @@
 		/**
 		 * @cfg {Array}
 		 */
-		columns: [],
-
-		/**
-		 * @cfg {Object}
-		 */
-		extraParams: {},
+		browserManagedFormats: [
+			CMDBuild.core.proxy.CMProxyConstants.PDF,
+			CMDBuild.core.proxy.CMProxyConstants.CSV
+		],
 
 		/**
 		 * @cfg {String}
@@ -37,9 +35,16 @@
 		format: CMDBuild.core.proxy.CMProxyConstants.PDF,
 
 		/**
-		 * @cfg {Array}
+		 * Utilization mode
+		 *
+		 * @cfg {String}
 		 */
-		sort: [],
+		mode: undefined,
+
+		/**
+		 * @cfg {Object}
+		 */
+		parameters: undefined,
 
 		/**
 		 * @property {CMDBuild.view.management.common.entryTypeGrid.printTool.PrintWindow}
@@ -58,32 +63,56 @@
 			});
 
 			if (!Ext.isEmpty(this.view) && Ext.isString(this.format))
-				this.view.show();
+				if (Ext.Array.contains(this.browserManagedFormats, this.format)) { // With browser managed formats show modal pop-up
+					this.view.show();
+				} else { // Otherwise force file download
+					this.createDocument(true);
+				}
 		},
 
 		/**
 		 * @param {Boolean} forceDownload
 		 */
 		createDocument: function(forceDownload) {
-			var params = Ext.apply({}, this.extraParams);
-			params[CMDBuild.core.proxy.CMProxyConstants.COLUMNS] = Ext.encode(this.columns);
-			params[CMDBuild.core.proxy.CMProxyConstants.SORT] = Ext.encode(this.sort);
-			params[CMDBuild.core.proxy.CMProxyConstants.TYPE] = this.format;
+			switch (this.mode) {
+				case 'cardDetails': {
+					CMDBuild.core.proxy.Report.createCardDetailsReport({
+						params: this.parameters,
+						scope: this,
+						failure: function(response, options, decodedResponse) {
+							CMDBuild.Msg.error(
+								CMDBuild.Translation.error,
+								CMDBuild.Translation.errors.createReportFilure,
+								false
+							);
+						},
+						success: function(response, options, decodedResponse) {
+							this.showReport(forceDownload);
+						}
+					});
+				} break;
 
-			CMDBuild.core.proxy.Report.createViewReport({
-				params: params,
-				scope: this,
-				failure: function(response, options, decodedResponse) {
-					CMDBuild.Msg.error(
-						CMDBuild.Translation.error,
-						CMDBuild.Translation.errors.createReportFilure,
-						false
-					);
-				},
-				success: function(response, options, decodedResponse) {
-					this.showReport(forceDownload);
+				case 'view': {
+					CMDBuild.core.proxy.Report.createViewReport({
+						params: this.parameters,
+						scope: this,
+						failure: function(response, options, decodedResponse) {
+							CMDBuild.Msg.error(
+								CMDBuild.Translation.error,
+								CMDBuild.Translation.errors.createReportFilure,
+								false
+							);
+						},
+						success: function(response, options, decodedResponse) {
+							this.showReport(forceDownload);
+						}
+					});
+				} break;
+
+				default: {
+					_error('unmanaged print window mode', this);
 				}
-			});
+			}
 		},
 
 		onPrintWindowDownloadButtonClick: function() {
