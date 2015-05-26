@@ -50,6 +50,8 @@
 			'onModifyCardClick',
 			'regenerateAllEmailsSet',
 			'regenerateSelectedEmails',
+			'regenerationEndPointCallbackGet',
+			'regenerationEndPointCallbackSet',
 			'selectedEntityIdGet',
 			'sendAll -> controllerGrid',
 			'sendAllOnSaveGet',
@@ -132,6 +134,13 @@
 		 * @cfg {Boolean}
 		 */
 		globalLoadMask: true,
+		
+		/**
+		 * Executed on regeneration end-point, works also as flagSave
+		 *
+		 * @cfg {Function} or null
+		 */
+		regenerationEndPointCallback: null,
 
 		/**
 		 * Global attribute change flag
@@ -208,7 +217,7 @@
 					// Array reset on store load
 					if (storeLoadEnabled)
 						regenerationTrafficLightArray = [];
-
+					
 					return storeLoadEnabled;
 				}
 
@@ -554,6 +563,8 @@
 			 * to reload grid only at real end of calls and avoid to have multiple and useless store load calls.
 			 */
 			regenerateAllEmails: function() {
+				var isRegenerationStarted = false; // Marks that regeneration process is started
+				
 				if (this.regenerateAllEmailsGet()) {
 					var regenerationTrafficLightArray = [];
 
@@ -578,6 +589,8 @@
 								if (item.get(CMDBuild.core.proxy.CMProxyConstants.PROMPT_SYNCHRONIZATION) && !this.forceRegenerationGet()) { // PromptSynch implementation
 									this.controllerConfirmRegenerationWindow.addRecordToArray(item);
 								} else {
+									isRegenerationStarted = true;
+									
 									this.regenerateEmail(item, regenerationTrafficLightArray);
 								}
 							}
@@ -600,6 +613,8 @@
 								if (item.get(CMDBuild.core.proxy.CMProxyConstants.PROMPT_SYNCHRONIZATION) && !this.forceRegenerationGet()) { // PromptSynch implementation
 									this.controllerConfirmRegenerationWindow.addTemplateToArray(item);
 								} else {
+									isRegenerationStarted = true;
+									
 									this.regenerateTemplate(item, regenerationTrafficLightArray);
 								}
 							}
@@ -621,7 +636,7 @@
 					this.sendAllOnSaveSet();
 
 					this.cmfg('sendAll');
-				} else if (Ext.isFunction(this.regenerationEndPointCallback)) {
+				} else if (!isRegenerationStarted && Ext.isFunction(this.regenerationEndPointCallback)) { // Executed if no regeneration was performed
 					Ext.callback(this.regenerationEndPointCallback, this);
 				}
 
@@ -647,10 +662,9 @@
 		 * @param {Array} regenerationTrafficLightArray
 		 */
 		regenerateEmail: function(record, regenerationTrafficLightArray) {
-			regenerationTrafficLightArray = regenerationTrafficLightArray || [];
-
 			if (
 				!Ext.Object.isEmpty(record)
+				&& Ext.isArray(regenerationTrafficLightArray)
 				&& !Ext.isEmpty(record.get(CMDBuild.core.proxy.CMProxyConstants.TEMPLATE))
 				&& record.get(CMDBuild.core.proxy.CMProxyConstants.KEEP_SYNCHRONIZATION)
 			) {
@@ -737,9 +751,10 @@
 		 * @param {Array} regenerationTrafficLightArray
 		 */
 		regenerateTemplate: function(template, regenerationTrafficLightArray) {
-			regenerationTrafficLightArray = regenerationTrafficLightArray || [];
-
-			if (!Ext.Object.isEmpty(template)) {
+			if (
+				!Ext.Object.isEmpty(template)
+				&& Ext.isArray(regenerationTrafficLightArray)
+			) {
 				var me = this;
 				var xaVars = Ext.apply({}, template.getData(), template.get(CMDBuild.core.proxy.CMProxyConstants.VARIABLES));
 
@@ -793,12 +808,20 @@
 			}
 		},
 
-		/**
-		 * Executed on regeneration end-point, works also as flagSave
-		 *
-		 * @abstract
-		 */
-		regenerationEndPointCallback: Ext.emptyFn,
+		// RegenerationEndPointCallback property functions
+			/**
+			 * @return {Function} or null
+			 */
+			regenerationEndPointCallbackGet: function() {
+				return this.regenerationEndPointCallback;
+			},
+			
+			/**
+			 * @param {Function} callbackFunction
+			 */
+			regenerationEndPointCallbackSet: function(callbackFunction) {
+				this.regenerationEndPointCallback = Ext.isFunction(callbackFunction) ? callbackFunction : null;
+			},
 
 		/**
 		 * Reset configuration attributes
