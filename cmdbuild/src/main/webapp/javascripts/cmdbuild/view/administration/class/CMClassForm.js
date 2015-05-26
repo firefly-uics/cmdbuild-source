@@ -89,9 +89,12 @@
 				scope: this
 			}),
 
-			this.printClassButton = new CMDBuild.PrintMenuButton( {
-				text : tr.print_class,
-				formatList : [ 'pdf', 'odt' ]
+			this.printClassButton = Ext.create('CMDBuild.core.buttons.Print', {
+				formatList: [
+					CMDBuild.core.proxy.CMProxyConstants.PDF,
+					CMDBuild.core.proxy.CMProxyConstants.ODT
+				],
+				text: tr.print_class
 			});
 
 			if (this.whithSaveAndCancelButtons) {
