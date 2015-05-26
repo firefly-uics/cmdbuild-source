@@ -152,7 +152,7 @@
 				params[CMDBuild.core.proxy.CMProxyConstants.SORT] = Ext.encode(this.view.getStore().getSorters());
 				params[CMDBuild.core.proxy.CMProxyConstants.TYPE] = format;
 
-				Ext.create('CMDBuild.controller.management.common.entryTypeGrid.printTool.PrintWindow', {
+				Ext.create('CMDBuild.controller.common.entryTypeGrid.printTool.PrintWindow', {
 					parentDelegate: this,
 					format: format,
 					mode: 'view',

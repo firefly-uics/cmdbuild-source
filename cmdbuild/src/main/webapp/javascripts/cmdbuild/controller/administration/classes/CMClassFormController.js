@@ -124,7 +124,7 @@
 				params[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME] = _CMCache.getEntryTypeNameById(this.selection.get(CMDBuild.core.proxy.CMProxyConstants.ID));
 				params[CMDBuild.core.proxy.CMProxyConstants.FORMAT] = format;
 
-				Ext.create('CMDBuild.controller.management.common.entryTypeGrid.printTool.PrintWindow', {
+				Ext.create('CMDBuild.controller.common.entryTypeGrid.printTool.PrintWindow', {
 					parentDelegate: this,
 					format: format,
 					mode: 'classSchema',

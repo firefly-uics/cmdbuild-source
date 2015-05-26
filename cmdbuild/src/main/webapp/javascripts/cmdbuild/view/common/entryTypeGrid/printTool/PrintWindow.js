@@ -1,12 +1,12 @@
 (function() {
 
-	Ext.define('CMDBuild.view.management.common.entryTypeGrid.printTool.PrintWindow', {
+	Ext.define('CMDBuild.view.common.entryTypeGrid.printTool.PrintWindow', {
 		extend: 'CMDBuild.core.PopupWindow',
 
 		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
 
 		/**
-		 * @cfg {CMDBuild.controller.management.common.entryTypeGrid.printTool.PrintWindow}
+		 * @cfg {CMDBuild.controller.common.entryTypeGrid.printTool.PrintWindow}
 		 */
 		delegate: undefined,
 
