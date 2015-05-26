@@ -198,7 +198,7 @@
 				new CMDBuild.view.management.common.filter.CMFilterMenuButton({
 					disabled: true
 				}),
-				new CMDBuild.PrintMenuButton({
+				Ext.create('CMDBuild.core.buttons.Print', { // Functionality not implemented on server side
 					disabled: true
 				})
 			]
@@ -224,26 +224,33 @@
 	}
 
 	function getCardTabBarButtons() {
-		var buttons = [{
-			iconCls : "modify",
-			text : tr.modify_card,
-			disabled: true
-		}, {
-			iconCls : "delete",
-			text : tr.delete_card,
-			disabled: true
-		}, {
-			iconCls : "clone",
-			text : tr.clone_card,
-			disabled: true
-		}, {
-			iconCls : "graph",
-			text : CMDBuild.Translation.management.graph.action,
-			disabled: true
-		},
-			new CMDBuild.PrintMenuButton({
-				text : CMDBuild.Translation.common.buttons.print+" "+CMDBuild.Translation.management.modcard.tabs.card.toLowerCase(),
-				formatList: ["pdf", "odt"],
+		var buttons = [
+			{
+				iconCls: "modify",
+				text: tr.modify_card,
+				disabled: true
+			},
+			{
+				iconCls: "delete",
+				text: tr.delete_card,
+				disabled: true
+			},
+			{
+				iconCls: "clone",
+				text: tr.clone_card,
+				disabled: true
+			},
+			{
+				iconCls: "graph",
+				text: CMDBuild.Translation.management.graph.action,
+				disabled: true
+			},
+			Ext.create('CMDBuild.core.buttons.Print', {
+				formatList: [
+					CMDBuild.core.proxy.CMProxyConstants.PDF,
+					CMDBuild.core.proxy.CMProxyConstants.ODT
+				],
+				text: CMDBuild.Translation.common.buttons.print + ' ' + CMDBuild.Translation.management.modcard.tabs.card.toLowerCase(),
 				disabled: true
 			})
 		];
