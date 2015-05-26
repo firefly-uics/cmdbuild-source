@@ -83,7 +83,7 @@
 <script type="text/javascript" src="javascripts/cmdbuild/core/buttons/CMClassesMenuButton.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/buttons/AddCardMenuButton.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/buttons/AddRelationMenuButton.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/core/buttons/PrintMenuButton.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/core/buttons/Print.js"></script>
 
 <!-- FORM STUFF -->
 <script type="text/javascript" src="javascripts/cmdbuild/form/CallbackPlugin.js"></script>

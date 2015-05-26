@@ -233,6 +233,7 @@
 			getReportTypesTree: 'services/json/management/modreport/getreporttypestree',
 			getReportsByType: 'services/json/management/modreport/getreportsbytype',
 			menuTree: 'services/json/schema/modreport/menutree',
+			printCurrentView: 'services/json/management/modreport/printcurrentview',
 			printReportFactory: 'services/json/management/modreport/printreportfactory',
 			updateReportFactoryParams: 'services/json/management/modreport/updatereportfactoryparams'
 		},
