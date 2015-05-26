@@ -409,10 +409,12 @@
 				}
 			});
 
-			this.printCardMenu = new CMDBuild.PrintMenuButton({
-				text : CMDBuild.Translation.common.buttons.print+" "+CMDBuild.Translation.management.modcard.tabs.card.toLowerCase(),
-				callback : function() { this.fireEvent("click");},
-				formatList: ["pdf", "odt"]
+			this.printCardMenu = Ext.create('CMDBuild.core.buttons.Print', {
+				formatList: [
+					CMDBuild.core.proxy.CMProxyConstants.PDF,
+					CMDBuild.core.proxy.CMProxyConstants.ODT
+				],
+				text: CMDBuild.Translation.common.buttons.print + ' ' + CMDBuild.Translation.management.modcard.tabs.card.toLowerCase()
 			});
 
 			this.mon(this.printCardMenu, "click", function(format) {
