@@ -1451,6 +1451,7 @@
 	"popupWindows": "Popup windows",
 	"port": "Port",
 	"preselectIfUnique": "Preselect if unique",
+	"printPreview": "Print preview",
 	"privileged": "Privileged",
 	"privileges_on_columns": "Columns privileges",
 	"privileges_on_rows": "Rows privileges",
