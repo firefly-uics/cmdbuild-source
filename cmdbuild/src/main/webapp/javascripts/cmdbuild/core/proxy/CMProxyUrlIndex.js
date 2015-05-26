@@ -234,8 +234,10 @@
 			getReportsByType: 'services/json/management/modreport/getreportsbytype',
 			menuTree: 'services/json/schema/modreport/menutree',
 			printCardDetails: 'services/json/management/modreport/printcarddetails',
+			printClassSchema: 'services/json/schema/modreport/printclassschema',
 			printCurrentView: 'services/json/management/modreport/printcurrentview',
 			printReportFactory: 'services/json/management/modreport/printreportfactory',
+			printSchema: 'services/json/schema/modreport/printschema',
 			updateReportFactoryParams: 'services/json/management/modreport/updatereportfactoryparams'
 		},
 

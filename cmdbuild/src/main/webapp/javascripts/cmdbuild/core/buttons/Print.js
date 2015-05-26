@@ -1,7 +1,6 @@
 (function() {
 
-	Ext.define('CMDBuild.core.buttons.Print',  {
-		alternateClassName: 'CMDBuild.PrintMenuButton', // Legacy class name TODO eliminare tutti
+	Ext.define('CMDBuild.core.buttons.Print', {
 		extend: 'Ext.button.Split',
 
 		iconCls: 'print',
