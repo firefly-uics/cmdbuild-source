@@ -42,29 +42,21 @@
 			}
 		},
 
+		/**
+		 * @params {String} format
+		 */
 		onPrintSchema: function(format) {
-			if (typeof format != "string") { return; }
-			CMDBuild.LoadMask.get().show();
-			CMDBuild.Ajax.request({
-				url : 'services/json/schema/modreport/printschema',
-				params: {format: format},
-				method : 'POST',
-				success: function(response) {
-					CMDBuild.LoadMask.get().hide();
-					var popup = window.open(
-						"services/json/management/modreport/printreportfactory",
-						"Report",
-						"height=400,width=550,status=no,toolbar=no,scrollbars=yes,menubar=no,location=no,resizable"
-					);
+			if (!Ext.isEmpty(format)) {
+				var params = {};
+				params[CMDBuild.core.proxy.CMProxyConstants.FORMAT] = format;
 
-					if (!popup) {
-						CMDBuild.Msg.warn(CMDBuild.Translation.warnings.warning_message,CMDBuild.Translation.warnings.popup_block);
-					}
-				},
-				failure: function(response) {
-					CMDBuild.LoadMask.get().hide();
-				}
-			});
+				Ext.create('CMDBuild.controller.management.common.entryTypeGrid.printTool.PrintWindow', {
+					parentDelegate: this,
+					format: format,
+					mode: 'schema',
+					parameters: params
+				});
+			}
 		},
 
 		onAddClassButtonClick: function () {
@@ -77,4 +69,5 @@
 
 		}
 	});
+
 })();
