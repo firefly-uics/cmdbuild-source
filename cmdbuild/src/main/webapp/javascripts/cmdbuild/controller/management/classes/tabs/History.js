@@ -167,7 +167,7 @@
 			if (!Ext.isEmpty(this.entryType) && this.entryType.get(CMDBuild.core.proxy.CMProxyConstants.TABLE_TYPE) != 'simpletable') // SimpleTables hasn't history
 				this.view.setDisabled(Ext.isEmpty(this.tabHistorySelectedEntityGet()));
 
-			this.cmfg('onHistoryTabPanelShow');
+			this.cmfg('onTabHistoryPanelShow');
 		},
 
 		/**
