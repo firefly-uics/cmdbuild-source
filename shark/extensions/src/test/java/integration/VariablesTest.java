@@ -1,6 +1,7 @@
 package integration;
 
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.hamcrest.Matchers.hasProperty;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
@@ -11,6 +12,7 @@ import static utils.EventManagerMatchers.isActivity;
 import static utils.EventManagerMatchers.isProcess;
 import static utils.XpdlTestUtils.randomName;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -144,6 +146,7 @@ public class VariablesTest extends AbstractLocalSharkServiceTest {
 
 	@Test
 	public void declaredVariablesAreInitializedWithDefaultValuesOrEmptyConstructors() throws Exception {
+		final Date startOfTest = new Date();
 		process.createActivity(randomName());
 
 		final String procInstId = uploadXpdlAndStartProcess(process).getProcessInstanceId();
@@ -153,6 +156,7 @@ public class VariablesTest extends AbstractLocalSharkServiceTest {
 		assertThat((Boolean) readVariables.get(A_BOOLEAN), equalTo(false));
 		assertThat((Long) readVariables.get(AN_INTEGER), equalTo(0L));
 		assertThat(readVariables.get(A_DATE), is(notNullValue()));
+		assertThat((Date) readVariables.get(A_DATE), greaterThanOrEqualTo(startOfTest));
 		assertThat((Double) readVariables.get(A_FLOAT), equalTo(0.0));
 
 		assertThat((ReferenceType) readVariables.get(A_REFERENCE), equalTo(new ReferenceType()));
