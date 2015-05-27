@@ -77,6 +77,10 @@
 							this.storeLoad();
 					}
 				});
+			} else {
+				_warning('tried to add empty record', this);
+
+				this.storeLoad();
 			}
 		},
 
@@ -115,6 +119,10 @@
 							this.storeLoad();
 					}
 				});
+			} else {
+				_warning('tried to edit empty record', this);
+
+				this.storeLoad();
 			}
 		},
 
@@ -306,6 +314,10 @@
 							this.storeLoad();
 					}
 				});
+			} else {
+				_warning('tried to remove empty record', this);
+
+				this.storeLoad();
 			}
 		},
 
