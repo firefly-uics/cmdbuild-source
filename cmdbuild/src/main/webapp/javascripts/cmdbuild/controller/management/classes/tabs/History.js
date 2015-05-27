@@ -88,10 +88,12 @@
 		 * @param {Object} card
 		 */
 		onCardSelected: function(card) {
-			this.selectedEntity = card;
+			this.tabHistorySelectedEntitySet(card);
 
 			if (!Ext.isEmpty(this.entryType) && this.entryType.get(CMDBuild.core.proxy.CMProxyConstants.TABLE_TYPE) != 'simpletable') // SimpleTables hasn't history
-				this.onHistoryTabPanelShow();
+				this.view.setDisabled(Ext.isEmpty(this.tabHistorySelectedEntityGet()));
+
+			this.cmfg('onHistoryTabPanelShow');
 		},
 
 		/**

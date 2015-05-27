@@ -52,6 +52,7 @@
 			'regenerateSelectedEmails',
 			'regenerationEndPointCallbackGet',
 			'regenerationEndPointCallbackSet',
+			'selectedEntityGet',
 			'selectedEntityIdGet',
 			'sendAll -> controllerGrid',
 			'sendAllOnSaveGet',
@@ -529,17 +530,24 @@
 		 * Reload store every time panel is showed
 		 */
 		onEmailPanelShow: function() {
-			this.controllerGrid.setUiState();
+			this.view.setDisabled(
+				Ext.isEmpty(this.selectedEntity.get(CMDBuild.core.proxy.CMProxyConstants.ENTITY))
+				&& !this.editModeGet() // Evaluate also editMode to enable onAddCardButtonClick
+			);
 
-			// Regenerate all widgets only if editMode otherwise simple store load
-			this.regenerateAllEmailsSet(this.editModeGet());
-			this.cmfg('storeLoad');
+			if (this.view.isVisible()) {
+				this.cmfg('setUiState');
+
+				// Regenerate all widgets only if editMode otherwise simple store load
+				this.regenerateAllEmailsSet(this.editModeGet());
+				this.cmfg('storeLoad');
+			}
 		},
 
 		onGlobalRegenerationButtonClick: function() {
 			this.regenerateAllEmailsSet(true);
 			this.forceRegenerationSet(true);
-			this.getAllTemplatesData();
+			this.getAllTemplatesData(); // Optimization to avoid one useless store load
 		},
 
 		/**
@@ -548,11 +556,8 @@
 		onModifyCardClick: function() {
 			this.editModeSet(true);
 
-			if (!this.grid.getStore().isLoading()) {
-				this.regenerateAllEmailsSet(true);
-				this.forceRegenerationSet(true);
-				this.cmfg('storeLoad');
-			}
+			if (!this.grid.getStore().isLoading())
+				this.onGlobalRegenerationButtonClick();
 		},
 
 		// RegenerateAllEmails property functions
@@ -840,6 +845,13 @@
 					return null;
 
 				return this.selectedEntity.get(CMDBuild.core.proxy.CMProxyConstants.ID);
+			},
+
+			/**
+			 * @return {CMDBuild.model.common.tabs.email.SelectedEntity}
+			 */
+			selectedEntityGet: function() {
+				return this.selectedEntity;
 			},
 
 			/**

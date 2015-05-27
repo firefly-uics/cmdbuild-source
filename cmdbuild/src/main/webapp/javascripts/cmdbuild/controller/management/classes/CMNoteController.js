@@ -1,4 +1,5 @@
 (function() {
+
 	Ext.define("CMDBuild.controller.management.classes.CMNoteController", {
 		extend: "CMDBuild.controller.management.classes.CMModCardSubController",
 		constructor: function(view, supercontroller) {
@@ -138,9 +139,7 @@
 
 		unlockCard: function() {
 			if (_CMUtils.lockCard.isEnabled()) {
-				if (this.card
-						&& this.view.isInEditing()) {
-					
+				if (this.card && this.view.isInEditing()) {
 					var id = this.card.get("Id");
 					_CMProxy.card.unlockCard({
 						params: {
@@ -168,11 +167,12 @@
 
 			if (this.card) {
 				title = Ext.String.format("{0} - {1}"
-					, CMDBuild.Translation.management.modcard.tabs.notes 
+					, CMDBuild.Translation.management.modcard.tabs.notes
 					, this.card.get("Description"));
 			}
 
 			this.view.setTitle(title);
 		}
 	});
+
 })();

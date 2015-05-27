@@ -64,10 +64,6 @@
 					this.delegate.cmfg('onHistoryRowExpand', record);
 				}, this);
 			}
-		},
-
-		reset: function() {
-			this.getStore().removeAll();
 		}
 	});
 

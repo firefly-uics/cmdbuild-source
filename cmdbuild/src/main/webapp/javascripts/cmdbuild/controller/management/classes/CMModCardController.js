@@ -339,7 +339,6 @@
 			if (Ext.isEmpty(args[1])) {
 				this.view.getCardPanel().displayMode();
 				this.view.cardTabPanel.reset();
-				this.view.getHistoryPanel().disable();
 			}
 		},
 

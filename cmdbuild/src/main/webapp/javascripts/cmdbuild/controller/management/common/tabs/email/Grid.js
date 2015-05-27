@@ -27,6 +27,7 @@
 			'onGridSendEmailButtonClick',
 			'onGridViewEmailButtonClick',
 			'sendAll',
+			'setUiState',
 			'storeLoad'
 		],
 
@@ -354,6 +355,8 @@
 		 */
 		storeLoad: function() {
 			this.cmfg('busyStateSet', true); // Setup widget busy state and the begin of store load
+
+			this.view.getStore().removeAll(); // Clear store before load new one
 
 			var params = {};
 			params[CMDBuild.core.proxy.CMProxyConstants.REFERENCE] = this.cmfg('selectedEntityIdGet');

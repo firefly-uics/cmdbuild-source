@@ -193,7 +193,9 @@
 		/**
 		 * @deprecated
 		 */
-		onCardChanged: function(card) { _deprecated();
+		onCardChanged: function(card) {
+			_deprecated('onCardChanged', this);
+
 			var me = this;
 
 			if (card == null) {

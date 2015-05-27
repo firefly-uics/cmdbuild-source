@@ -21,7 +21,9 @@
 			'getHistoryGridStore',
 			'onHistoryIncludeRelationCheck',
 			'onHistoryRowExpand',
-			'onHistoryTabPanelShow'
+			'onHistoryTabPanelShow',
+			'tabHistorySelectedEntityGet',
+			'tabHistorySelectedEntitySet'
 		],
 
 		/**
@@ -275,12 +277,9 @@
 		 * Loads store and if includeRelationsCheckbox is checked fills store with relations rows
 		 */
 		onHistoryTabPanelShow: function() {
-			var isSelectedEntityEmpty = Ext.isEmpty(this.selectedEntity);
-
-			this.view.setDisabled(isSelectedEntityEmpty);
 			this.grid.getStore().removeAll(); // Clear store before load new one
 
-			if (!isSelectedEntityEmpty) {
+			if (!Ext.isEmpty(this.selectedEntity) && this.view.isVisible()) {
 				var params = {};
 				params[CMDBuild.core.proxy.CMProxyConstants.CARD_ID] = this.selectedEntity.get(CMDBuild.core.proxy.CMProxyConstants.ID);
 				params[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME] = _CMCache.getEntryTypeNameById(this.selectedEntity.get('IdClass'));
@@ -313,6 +312,21 @@
 				});
 			}
 		},
+
+		// SelectedEntity property functions
+			/**
+			 * @return {Mixed}
+			 */
+			tabHistorySelectedEntityGet: function() {
+				return this.selectedEntity;
+			},
+
+			/**
+			 * @param {Mixed} selectedEntity
+			 */
+			tabHistorySelectedEntitySet: function(selectedEntity) {
+				this.selectedEntity = Ext.isEmpty(selectedEntity) ? undefined : selectedEntity;
+			},
 
 		/**
 		 * Formats all object1 values as objects { {Boolean} changed: "...", {Mixed} description: "..." }. If value1 is different than value2
