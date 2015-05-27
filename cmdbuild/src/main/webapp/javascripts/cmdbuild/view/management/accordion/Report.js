@@ -5,7 +5,6 @@
 
 		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
 
-		cmName: 'report',
 		title: CMDBuild.Translation.administration.modreport.title,
 
 		/**
