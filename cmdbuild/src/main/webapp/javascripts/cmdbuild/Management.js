@@ -1,6 +1,8 @@
 (function() {
 
-	var reportAccordion = Ext.create('CMDBuild.view.management.accordion.Report');
+	var reportAccordion = Ext.create('CMDBuild.view.management.accordion.Report', {
+		cmName: 'report'
+	});
 
 	// TODO move in common
 	var menuAccordion = new CMDBuild.view.administration.accordion.CMMenuAccordion({
@@ -62,9 +64,11 @@
 			// Processes
 			'processes/:processIdentifier/instances/': 'CMDBuild.routes.management.Processes#saveRoute',
 			'processes/:processIdentifier/print': 'CMDBuild.routes.management.Processes#saveRoute',
+			'processes/': 'CMDBuild.routes.management.Processes#saveRoute',
 
 			'exec/processes/:processIdentifier/instances/': 'CMDBuild.routes.management.Processes#detail',
 			'exec/processes/:processIdentifier/print': 'CMDBuild.routes.management.Processes#print',
+			'exec/processes/': 'CMDBuild.routes.management.Processes#showAll',
 
 			// Instances
 			'processes/:processIdentifier/instances/:instanceIdentifier/': 'CMDBuild.routes.management.Instances#saveRoute',

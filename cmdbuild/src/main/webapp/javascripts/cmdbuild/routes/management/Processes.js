@@ -114,6 +114,19 @@
 			Ext.Function.createDelayed(function() {
 				_CMMainViewportController.panelControllers[CMDBuild.core.proxy.CMProxyConstants.PROCESS].gridController.onPrintGridMenuClick(this.printFormat);
 			}, 500, this)();
+		},
+
+		/**
+		 * @param {Object} params - url parameters
+		 * @param {String} path
+		 * @param {Object} router
+		 */
+		showAll: function(params, path, router) {
+			if (Ext.Object.isEmpty(params)) {
+				Ext.Function.createDelayed(function() {
+					_CMMainViewportController.accordionControllers[CMDBuild.core.proxy.CMProxyConstants.PROCESS].accordion.selectFirstSelectableNode();
+				}, 500, this)();
+			}
 		}
 	});
 
