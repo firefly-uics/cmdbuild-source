@@ -19,9 +19,42 @@
 		parentDelegate: undefined,
 
 		/**
+		 * Attributes to hide from selectedEntity object
+		 *
+		 * @cfg {Array}
+		 */
+		attributesKeysToFilter: [
+			'Code',
+			'Id',
+			'IdClass',
+			'IdClass_value',
+			CMDBuild.core.proxy.CMProxyConstants.BEGIN_DATE,
+			CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME,
+			CMDBuild.core.proxy.CMProxyConstants.USER
+		],
+
+		/**
 		 * @property {CMDBuild.cache.CMEntryTypeModel}
 		 */
 		entryType: undefined,
+
+		/**
+		 * @cfg {Array}
+		 */
+		managedStatuses: ['ABORTED', 'COMPLETED', 'OPEN', 'SUSPENDED', 'TERMINATED'],
+
+		/**
+		 * @cfg {Object}
+		 *
+		 * Ex. {
+		 *		ABORTED: '...',
+		 *		COMPLETED: '...',
+		 *		OPEN: '...',
+		 *		SUSPENDED: '...',
+		 *		TERMINATED: '...'
+		 *	}
+		 */
+		statusTranslationObject: {},
 
 		/**
 		 * @property {CMDBuild.model.CMProcessInstance}
@@ -39,6 +72,8 @@
 
 			this.callParent(arguments);
 
+			this.statusBuildTranslationObject( ); // Build status translation object from lookup
+
 			this.grid = Ext.create('CMDBuild.view.management.workflow.tabs.history.GridPanel', {
 				delegate: this
 			});
@@ -46,6 +81,72 @@
 			this.view.add(this.grid);
 
 			_CMWFState.addDelegate(this);
+		},
+
+		/**
+		 * It's implemented with ugly workarounds because server side ugly code.
+		 *
+		 * @override
+		 */
+		addCurrentCardToStore: function() {
+			var predecessorRecord = this.grid.getStore().getAt(1); // Get expanded record predecessor record
+			var selectedEntityAttributes = {};
+			var selectedEntityValues = this.selectedEntity.get(CMDBuild.core.proxy.CMProxyConstants.VALUES);
+
+			// Filter selectedEntity's attributes values to avoid the display of incorrect data
+			Ext.Object.each(selectedEntityValues, function(key, value, myself) {
+				if (!Ext.Array.contains(this.attributesKeysToFilter, key) && key.indexOf('_') != 0)
+					selectedEntityAttributes[key] = value;
+			}, this);
+
+			selectedEntityValues[CMDBuild.core.proxy.CMProxyConstants.USER] = this.selectedEntity.get(CMDBuild.core.proxy.CMProxyConstants.VALUES)[CMDBuild.core.proxy.CMProxyConstants.USER];
+
+			if (!Ext.isEmpty(predecessorRecord)) {
+				var predecessorParams = {};
+				predecessorParams[CMDBuild.core.proxy.CMProxyConstants.CARD_ID] = predecessorRecord.get(CMDBuild.core.proxy.CMProxyConstants.ID); // Historic card ID
+				predecessorParams[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME] = this.selectedEntity.get(CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME);
+
+				this.getProxy().getHistoric({
+					params: predecessorParams,
+					scope: this,
+					failure: function(response, options, decodedResponse) {
+						_error('get historic predecessor card failure', this);
+					},
+					success: function(response, options, decodedResponse) {
+						this.valuesFormattingAndCompare(selectedEntityAttributes, decodedResponse.response[CMDBuild.core.proxy.CMProxyConstants.VALUES]);
+
+						this.clearStoreAdd(this.buildCurrentEntityModel(selectedEntityAttributes));
+					}
+				});
+			} else {
+				this.valuesFormattingAndCompare(selectedEntityAttributes);
+
+				this.clearStoreAdd(this.buildCurrentEntityModel(selectedEntityAttributes));
+			}
+		},
+
+		/**
+		 * @param {Object} entityAttributeData
+		 *
+		 * @return {CMDBuild.model.common.tabs.history.processes.CardRecord} currentEntityModel
+		 */
+		buildCurrentEntityModel: function(entityAttributeData) {
+			var performers = [];
+
+			// Build performers array
+			Ext.Array.forEach(this.selectedEntity.get(CMDBuild.core.proxy.CMProxyConstants.ACTIVITY_INSTANCE_INFO_LIST), function(activityObject, i, array) {
+				if (!Ext.isEmpty(activityObject[CMDBuild.core.proxy.CMProxyConstants.PERFORMER_NAME]))
+					performers.push(activityObject[CMDBuild.core.proxy.CMProxyConstants.PERFORMER_NAME]);
+			}, this);
+
+			var currentEntityModel = Ext.create('CMDBuild.model.common.tabs.history.processes.CardRecord', this.selectedEntity.getData());
+			currentEntityModel.set(CMDBuild.core.proxy.CMProxyConstants.ACTIVITY_NAME, this.selectedEntity.get(CMDBuild.core.proxy.CMProxyConstants.VALUES)['Code']);
+			currentEntityModel.set(CMDBuild.core.proxy.CMProxyConstants.PERFORMERS, performers);
+			currentEntityModel.set(CMDBuild.core.proxy.CMProxyConstants.STATUS, this.statusTranslationGet(this.selectedEntity.get(CMDBuild.core.proxy.CMProxyConstants.FLOW_STATUS)));
+			currentEntityModel.set(CMDBuild.core.proxy.CMProxyConstants.VALUES, entityAttributeData);
+			currentEntityModel.commit();
+
+			return currentEntityModel;
 		},
 
 		/**
@@ -115,7 +216,60 @@
 			this.view.setDisabled(processInstance.isNew());
 
 			this.cmfg('onHistoryTabPanelShow');
-		}
+		},
+
+		// Status translation management
+			statusBuildTranslationObject: function() {
+				var params = {};
+				params[CMDBuild.core.proxy.CMProxyConstants.TYPE] = 'FlowStatus';
+				params[CMDBuild.core.proxy.CMProxyConstants.ACTIVE] = true;
+				params[CMDBuild.core.proxy.CMProxyConstants.SHORT] = false;
+
+				CMDBuild.ServiceProxy.lookup.get({
+					params: params,
+					scope: this,
+					failure: function(response, options, decodedResponse) {
+						_error('get lookup failure', this);
+					},
+					success: function(response, options, decodedResponse) {
+						Ext.Array.forEach(decodedResponse.rows, function(lookup, i, array) {
+							switch (lookup['Code']) {
+								case 'closed.aborted': {
+									this.statusTranslationObject['ABORTED'] = lookup['Description'];
+								} break;
+
+								case 'closed.completed': {
+									this.statusTranslationObject['COMPLETED'] = lookup['Description'];
+								} break;
+
+								case 'closed.terminated': {
+									this.statusTranslationObject['TERMINATED'] = lookup['Description'];
+								} break;
+
+								case 'open.running': {
+									this.statusTranslationObject['OPEN'] = lookup['Description'];
+								} break;
+
+								case 'open.not_running.suspended': {
+									this.statusTranslationObject['SUSPENDED'] = lookup['Description'];
+								} break;
+							}
+						}, this);
+					}
+				});
+			},
+
+			/**
+			 * @param {String} status
+			 *
+			 * @return {String or null}
+			 */
+			statusTranslationGet: function(status) {
+				if (Ext.Array.contains(this.managedStatuses, status))
+					return this.statusTranslationObject[status];
+
+				return null;
+			}
 	});
 
 })();
