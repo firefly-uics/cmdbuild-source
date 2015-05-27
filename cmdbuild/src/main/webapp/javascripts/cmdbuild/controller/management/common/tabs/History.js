@@ -32,6 +32,8 @@
 		grid: undefined,
 
 		/**
+		 * Selected card
+		 *
 		 * @property {Mixed}
 		 */
 		selectedEntity: undefined,
@@ -51,6 +53,25 @@
 			this.view = Ext.create('CMDBuild.view.management.common.tabs.history.HistoryView', {
 				delegate: this
 			});
+		},
+
+		/**
+		 * Adds current card to history store for a better visualization of differences from last history record and current one.
+		 *
+		 * @abstract
+		 */
+		addCurrentCardToStore: Ext.emptyFn,
+
+		/**
+		 * Clear store and re-add all records to avoid RowExpander plugin bug that appens with store add action that won't manage correctly expand/collapse events
+		 *
+		 * @param {Array or Object} itemsToAdd
+		 */
+		clearStoreAdd: function(itemsToAdd) {
+			var oldStoreDatas = this.grid.getStore().getRange();
+
+			this.grid.getStore().removeAll();
+			this.grid.getStore().add(Ext.Array.merge(oldStoreDatas, itemsToAdd));
 		},
 
 		/**
@@ -288,7 +309,7 @@
 					params: params,
 					scope: this,
 					callback: function(records, operation, success) {
-						if (this.grid.includeRelationsCheckbox.getValue())
+						if (this.grid.includeRelationsCheckbox.getValue()) {
 							this.getProxy().getRelations({
 								params: params,
 								scope: this,
@@ -298,16 +319,19 @@
 								success: function(response, options, decodedResponse) {
 									var referenceElements = decodedResponse.response.elements;
 
+									// Build reference models
 									Ext.Array.forEach(referenceElements, function(element, i, allElements) {
 										referenceElements[i] = Ext.create('CMDBuild.model.common.tabs.history.classes.RelationRecord', element);
 									});
 
-									// Clear store and re-add all records to avoid RowExpander plugin bug that appens with store add action that won't manage
-									// correctly expand/collapse events.
-									this.grid.getStore().removeAll();
-									this.grid.getStore().add(Ext.Array.merge(records, referenceElements));
+									this.clearStoreAdd(referenceElements);
+
+									this.addCurrentCardToStore();
 								}
 							});
+						} else {
+							this.addCurrentCardToStore();
+						}
 					}
 				});
 			}
