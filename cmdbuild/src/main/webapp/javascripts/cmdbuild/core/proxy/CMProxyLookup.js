@@ -16,6 +16,23 @@
 	CMDBuild.ServiceProxy.LOOKUP_FIELDS = LOOKUP_FIELDS;
 
 	CMDBuild.ServiceProxy.lookup = {
+		/**
+		 * @property {Object} parameters
+		 */
+		get: function(parameters) {
+			CMDBuild.Ajax.request({
+				method: 'POST',
+				url: 'services/json/schema/modlookup/getlookuplist',
+				headers: parameters.headers,
+				params: parameters.params,
+				scope: parameters.scope || this,
+				loadMask: parameters.loadMask || false,
+				failure: parameters.failure || Ext.emptyFn(),
+				success: parameters.success || Ext.emptyFn(),
+				callback: parameters.callback || Ext.emptyFn()
+			});
+		},
+
 		readAllTypes: function(p) {
 			p.method = 'GET';
 			p.url = 'services/json/schema/modlookup/tree';
