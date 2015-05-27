@@ -16,12 +16,23 @@ import java.util.Map.Entry;
 
 import javax.activation.DataSource;
 
+import net.jcip.annotations.NotThreadSafe;
+
 import org.cmdbuild.auth.acl.PrivilegeContext;
 import org.cmdbuild.common.Constants;
 import org.cmdbuild.common.utils.PagedElements;
 import org.cmdbuild.config.WorkflowConfiguration;
 import org.cmdbuild.dao.entry.IdAndDescription;
+import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
+import org.cmdbuild.dao.entrytype.attributetype.CMAttributeTypeVisitor;
+import org.cmdbuild.dao.entrytype.attributetype.DateAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.DateTimeAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.ForwardingAttributeTypeVisitor;
+import org.cmdbuild.dao.entrytype.attributetype.LookupAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.NullAttributeTypeVisitor;
+import org.cmdbuild.dao.entrytype.attributetype.ReferenceAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.TimeAttributeType;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.exception.CMDBWorkflowException;
 import org.cmdbuild.exception.CMDBWorkflowException.WorkflowExceptionType;
@@ -394,27 +405,81 @@ class DefaultWorkflowLogic implements WorkflowLogic {
 	private UserProcessInstance startProcess(final CMProcessClass process, final Map<String, ?> vars,
 			final Map<String, Object> widgetSubmission, final boolean advance) throws CMWorkflowException {
 		final UserProcessInstance procInst = workflowEngine.startProcess(process);
-		final Map<String, Object> mergedVars = mergeVars(filterNotNullValues(procInst.getValues()), vars);
+		final Map<String, Object> mergedVars = mergeVars( //
+				from(procInst.getValues()) //
+						.filter(new ValuesFilter(process)), //
+				vars);
 		return updateOnlyActivity(procInst, mergedVars, widgetSubmission, advance);
 	}
 
-	private Iterable<Entry<String, Object>> filterNotNullValues(final Iterable<Entry<String, Object>> values) {
-		return from(values) //
-				.filter(new Predicate<Entry<String, Object>>() {
+	/**
+	 * Only non-null attributes are accepted with the following exceptions:
+	 * date, datetime and time attributes are always set even if null (needed
+	 * for initialize correctly workflow instance variables).
+	 */
+	@NotThreadSafe
+	private static class ValuesFilter extends ForwardingAttributeTypeVisitor implements
+			Predicate<Entry<String, Object>> {
 
-					@Override
-					public boolean apply(final Entry<String, Object> input) {
-						final Object value = input.getValue();
-						final Object _value;
-						if (value instanceof IdAndDescription) {
-							_value = IdAndDescription.class.cast(value).getId() == null ? null : value;
-						} else {
-							_value = value;
-						}
-						return (_value != null);
-					}
+		private final CMAttributeTypeVisitor DELEGATE = NullAttributeTypeVisitor.getInstance();
 
-				});
+		@Override
+		protected CMAttributeTypeVisitor delegate() {
+			return DELEGATE;
+		}
+
+		private final CMProcessClass process;
+		private String name;
+		private Object value;
+		private boolean applies;
+
+		public ValuesFilter(final CMProcessClass process) {
+			this.process = process;
+		}
+
+		@Override
+		public boolean apply(final Entry<String, Object> input) {
+			name = input.getKey();
+			value = input.getValue();
+			applies = (value != null);
+			final CMAttribute attribute = process.getAttribute(name);
+			if (attribute != null) {
+				attribute.getType().accept(this);
+			} else {
+				applies = false;
+			}
+			return applies;
+		}
+
+		@Override
+		public void visit(final DateAttributeType attributeType) {
+			applies = true;
+		}
+
+		@Override
+		public void visit(final DateTimeAttributeType attributeType) {
+			applies = true;
+		}
+
+		@Override
+		public void visit(final LookupAttributeType attributeType) {
+			if (value instanceof IdAndDescription) {
+				applies = IdAndDescription.class.cast(value).getId() != null;
+			}
+		}
+
+		@Override
+		public void visit(final ReferenceAttributeType attributeType) {
+			if (value instanceof IdAndDescription) {
+				applies = IdAndDescription.class.cast(value).getId() != null;
+			}
+		}
+
+		@Override
+		public void visit(final TimeAttributeType attributeType) {
+			applies = true;
+		}
+
 	}
 
 	/**
