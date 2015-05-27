@@ -154,7 +154,7 @@
 		 *
 		 * @override
 		 */
-		getHistoryGridColumns: function() {
+		getTabHistoryGridColumns: function() {
 			var processesCustoColumns = [
 				{
 					dataIndex: CMDBuild.core.proxy.CMProxyConstants.ACTIVITY_NAME,
@@ -215,7 +215,7 @@
 
 			this.view.setDisabled(processInstance.isNew());
 
-			this.cmfg('onHistoryTabPanelShow');
+			this.cmfg('onTabHistoryPanelShow');
 		},
 
 		// Status translation management
