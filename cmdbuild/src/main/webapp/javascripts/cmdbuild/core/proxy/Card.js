@@ -136,7 +136,7 @@
 
 	function adaptGetCardCallParams(p) {
 		if (p.params.Id && p.params.IdClass) {
-			_deprecated();
+			_deprecated('adaptGetCardCallParams', this);
 
 			var parameters = {};
 			parameters[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME] = _CMCache.getEntryTypeNameById(p.params.IdClass);

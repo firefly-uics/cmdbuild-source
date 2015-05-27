@@ -112,13 +112,9 @@
 		onProcessInstanceChange: function(processInstance) {
 			this.selectedEntity = processInstance;
 
-			if (processInstance.isNew()) {
-				this.view.disable();
-			} else {
-				this.view.enable();
+			this.view.setDisabled(processInstance.isNew());
 
-				this.onHistoryTabPanelShow();
-			}
+			this.cmfg('onHistoryTabPanelShow');
 		}
 	});
 

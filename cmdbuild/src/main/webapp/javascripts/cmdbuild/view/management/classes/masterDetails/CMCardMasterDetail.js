@@ -154,15 +154,20 @@
 			this.detailGrid.reload();
 		},
 
-		// DEPRECATED
+		/**
+		 * @deprecated
+		 */
+		onAddCardButtonClick: function() {
+			_deprecated('onAddCardButtonClick', this);
 
-		onAddCardButtonClick: function() { _deprecated();
 			this.disable();
 		},
 
-		onClassSelected: function() {_deprecated();
-			// Something is done on the controller, something else on the view: this is a mess!
-			this.disable();
+		/**
+		 * @deprecated
+		 */
+		onClassSelected: function() {
+			_deprecated('onClassSelected', this);
 		}
 	});
 

@@ -197,7 +197,7 @@
 		 * @deprecated
 		 */
 		getId: function() {
-			_deprecated();
+			_deprecated('getId', this);
 
 			return this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.ID];
 		},
@@ -208,7 +208,7 @@
 		 * @deprecated
 		 */
 		getLabel: function() {
-			_deprecated();
+			_deprecated('getLabel', this);
 
 			return this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.LABEL];
 		}
