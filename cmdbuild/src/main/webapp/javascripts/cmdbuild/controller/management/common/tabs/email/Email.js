@@ -547,7 +547,7 @@
 		onGlobalRegenerationButtonClick: function() {
 			this.regenerateAllEmailsSet(true);
 			this.forceRegenerationSet(true);
-			this.getAllTemplatesData(); // Optimization to avoid one useless store load
+			this.cmfg('storeLoad');
 		},
 
 		/**
