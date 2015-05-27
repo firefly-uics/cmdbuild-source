@@ -17,11 +17,11 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
-			'getHistoryGridColumns',
-			'getHistoryGridStore',
-			'onHistoryIncludeRelationCheck',
-			'onHistoryRowExpand',
-			'onHistoryTabPanelShow',
+			'getTabHistoryGridColumns',
+			'getTabHistoryGridStore',
+			'onTabHistoryIncludeRelationCheck',
+			'onTabHistoryRowExpand',
+			'onTabHistoryPanelShow',
 			'tabHistorySelectedEntityGet',
 			'tabHistorySelectedEntitySet'
 		],
@@ -135,7 +135,7 @@
 		/**
 		 * @return {Array}
 		 */
-		getHistoryGridColumns: function() {
+		getTabHistoryGridColumns: function() {
 			var defaultColumns = [
 				Ext.create('Ext.grid.column.Date', {
 					dataIndex: CMDBuild.core.proxy.CMProxyConstants.BEGIN_DATE,
@@ -173,7 +173,7 @@
 		/**
 		 * @return {Ext.data.Store}
 		 */
-		getHistoryGridStore: function() {
+		getTabHistoryGridStore: function() {
 			return this.getProxy().getStore();
 		},
 
@@ -195,14 +195,14 @@
 		/**
 		 * Reloads store to be consistent with includeRelationsCheckbox state
 		 */
-		onHistoryIncludeRelationCheck: function() {
-			this.onHistoryTabPanelShow();
+		onTabHistoryIncludeRelationCheck: function() {
+			this.onTabHistoryPanelShow();
 		},
 
 		/**
 		 * @param {CMDBuild.model.common.tabs.history.classes.CardRecord or CMDBuild.model.common.tabs.history.classes.RelationRecord} record
 		 */
-		onHistoryRowExpand: function(record) {
+		onTabHistoryRowExpand: function(record) {
 			if (
 				!Ext.isEmpty(record)
 				&& Ext.Object.isEmpty(record.get(CMDBuild.core.proxy.CMProxyConstants.VALUES)) // Optimization to avoid to ask already owned data
@@ -297,7 +297,7 @@
 		/**
 		 * Loads store and if includeRelationsCheckbox is checked fills store with relations rows
 		 */
-		onHistoryTabPanelShow: function() {
+		onTabHistoryPanelShow: function() {
 			this.grid.getStore().removeAll(); // Clear store before load new one
 
 			if (!Ext.isEmpty(this.selectedEntity) && this.view.isVisible()) {

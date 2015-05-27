@@ -43,14 +43,14 @@
 								scope: this,
 
 								handler: function(checkbox, checked) {
-									this.delegate.cmfg('onHistoryIncludeRelationCheck');
+									this.delegate.cmfg('onTabHistoryIncludeRelationCheck');
 								}
 							})
 						]
 					})
 				],
-				columns: this.delegate.cmfg('getHistoryGridColumns'),
-				store: this.delegate.cmfg('getHistoryGridStore')
+				columns: this.delegate.cmfg('getTabHistoryGridColumns'),
+				store: this.delegate.cmfg('getTabHistoryGridStore')
 			});
 
 			this.callParent(arguments);
@@ -61,7 +61,7 @@
 				this.getView().on('expandbody', function(rowNode, record, expandRow, eOpts) {
 					this.doLayout(); // To refresh the scrollbar status and seems to fix also a glitch effect on row collapse
 
-					this.delegate.cmfg('onHistoryRowExpand', record);
+					this.delegate.cmfg('onTabHistoryRowExpand', record);
 				}, this);
 			}
 		}
