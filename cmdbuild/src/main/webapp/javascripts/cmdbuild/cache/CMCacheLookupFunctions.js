@@ -10,6 +10,9 @@
 	var lookupAttributeStoreMap = {};
 
 	Ext.define("CMDBUild.cache.CMCacheLookupFunctions", {
+
+//		requires: ['CMDBuild.core.proxy.Lookup'],
+
 		getLookupTypes: function() {
 			return lookupTypes;
 		},
@@ -79,7 +82,7 @@
 
 		getLookupStore: function(type) {
 			if (!lookupAttributeStoreMap[type]) {
-				lookupAttributeStoreMap[type] = CMDBuild.ServiceProxy.lookup.getLookupFieldStore(type);
+				lookupAttributeStoreMap[type] = CMDBuild.core.proxy.Lookup.getFieldStore(type);
 			}
 			return lookupAttributeStoreMap[type];
 		},

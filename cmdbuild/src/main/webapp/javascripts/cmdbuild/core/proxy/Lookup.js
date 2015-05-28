@@ -24,13 +24,14 @@
 		],
 
 		singleton: true,
+
 		/**
 		 * @property {Object} parameters
 		 */
-		readAll: function(parameters) {
+		get: function(parameters) {
 			CMDBuild.Ajax.request({
-				method: 'GET',
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.lookup.tree,
+				method: 'POST',
+				url: CMDBuild.core.proxy.CMProxyUrlIndex.lookup.getList,
 				headers: parameters.headers,
 				params: parameters.params,
 				scope: parameters.scope || this,
@@ -97,6 +98,23 @@
 		/**
 		 * @property {Object} parameters
 		 */
+		readAll: function(parameters) {
+			CMDBuild.Ajax.request({
+				method: 'GET',
+				url: CMDBuild.core.proxy.CMProxyUrlIndex.lookup.tree,
+				headers: parameters.headers,
+				params: parameters.params,
+				scope: parameters.scope || this,
+				loadMask: parameters.loadMask || false,
+				failure: parameters.failure || Ext.emptyFn(),
+				success: parameters.success || Ext.emptyFn(),
+				callback: parameters.callback || Ext.emptyFn()
+			});
+		},
+
+		/**
+		 * @property {Object} parameters
+		 */
 		save: function(parameters) {
 			CMDBuild.Ajax.request({
 				method: 'POST',
@@ -157,17 +175,6 @@
 			_deprecated('getLookupFieldStore', this);
 
 			return CMDBuild.core.proxy.Lookup.getFieldStore(type);
-		},
-
-		/**
-		 * @return {Ext.data.Store}
-		 *
-		 * @deprecated
-		 */
-		getLookupGridStore: function() {
-			_deprecated('getLookupGridStore', this);
-
-			return CMDBuild.core.proxy.Lookup.getGridStore();
 		},
 
 		/**
