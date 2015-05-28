@@ -1,7 +1,7 @@
 (function() {
 	var LOOKUP_FIELDS = CMDBuild.ServiceProxy.LOOKUP_FIELDS;
 	var tr = CMDBuild.Translation.administration.modLookup.lookupGrid;
-	
+
 	Ext.define("CMDBuild.view.administration.lookup.CMLookupGrid", {
 		extend: "Ext.grid.Panel",
 		alias: "widget.lookupgrid",
@@ -33,7 +33,7 @@
 		},
 
 	constructor: function() {
-		this.store = CMDBuild.ServiceProxy.lookup.getLookupGridStore();
+		this.store = CMDBuild.core.proxy.Lookup.getGridStore(); // TODO: setup requires class property
 
 		this.columns = [{
 			hideable: false,
@@ -60,7 +60,7 @@
 			cmReadOnly: true
 		})];
 
-		this.addButton = new Ext.button.Button({	
+		this.addButton = new Ext.button.Button({
 			iconCls : 'add',
 			text : tr.add_lookup
 		});

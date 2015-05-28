@@ -24,7 +24,13 @@
 		editable: false,
 		anchor: '100%',
 
-		store: CMDBuild.core.proxy.email.Accounts.getStore()
+		initComponent: function() {
+			Ext.apply(this, {
+				store: CMDBuild.core.proxy.email.Accounts.getStore()
+			});
+
+			this.callParent(arguments);
+		}
 	});
 
 })();
