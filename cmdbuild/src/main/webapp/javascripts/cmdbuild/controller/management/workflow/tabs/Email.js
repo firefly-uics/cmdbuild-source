@@ -100,7 +100,9 @@
 				this.editModeSet(processInstance.isNew()); // Enable/Disable tab based on model new state to separate create/view mode
 				this.cmfg('setUiState');
 			} else { // We have a closed process instance
-				me.cmfg('onEmailPanelShow');
+				this.selectedEntitySet(processInstance, function() {
+					me.cmfg('onEmailPanelShow');
+				});
 			}
 		},
 
