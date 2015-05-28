@@ -125,7 +125,7 @@
 
 			var s = Ext.create('Ext.data.Store', {
 				autoLoad: !isOneTime,
-				model: "CMDBuild.cache.CMReferenceStoreModel",
+				model: 'CMDBuild.cache.CMReferenceStoreModel',
 				isOneTime: isOneTime,
 				baseParams: baseParams, //retro-compatibility,
 				pageSize: maxCards,
