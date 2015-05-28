@@ -41,7 +41,7 @@
 		classWithError = typeof classWithError == 'string' ? classWithError : Ext.getClassName(classWithError);
 
 		if (!Ext.isEmpty(method))
-			CMDBuild.log.warn('DEPRECATED: method ' + method + '() of ' + classWithError);
+			CMDBuild.log.warn('DEPRECATED (' + classWithError + '): ' + method);
 	};
 
 	/**

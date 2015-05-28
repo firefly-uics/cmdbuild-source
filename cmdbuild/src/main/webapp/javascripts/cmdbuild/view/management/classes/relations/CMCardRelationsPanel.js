@@ -177,15 +177,20 @@
 		convertRelationInNodes: convertRelationInNodes,
 		renderRelationActions: renderRelationActions,
 
+		/**
+		 * @deprecated
+		 */
+		onAddCardButtonClick: function() {
+			_deprecated('onAddCardButtonClick', this);
 
-		// DEPRECATED
-
-		onAddCardButtonClick: function() { _deprecated('onAddCardButtonClick', this);
 			this.disable();
 		},
 
-		onClassSelected: function() { _deprecated('onClassSelected', this);
-			this.disable();
+		/**
+		 * @deprecated
+		 */
+		onClassSelected: function() {
+			_deprecated('onClassSelected', this);
 		}
 	});
 

@@ -17,11 +17,13 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
-			'getHistoryGridColumns',
-			'getHistoryGridStore',
-			'onHistoryIncludeRelationCheck',
-			'onHistoryRowExpand',
-			'onHistoryTabPanelShow'
+			'getTabHistoryGridColumns',
+			'getTabHistoryGridStore',
+			'onTabHistoryIncludeRelationCheck',
+			'onTabHistoryRowExpand',
+			'onTabHistoryPanelShow',
+			'tabHistorySelectedEntityGet',
+			'tabHistorySelectedEntitySet'
 		],
 
 		/**
@@ -30,6 +32,8 @@
 		grid: undefined,
 
 		/**
+		 * Selected card
+		 *
 		 * @property {Mixed}
 		 */
 		selectedEntity: undefined,
@@ -49,6 +53,25 @@
 			this.view = Ext.create('CMDBuild.view.management.common.tabs.history.HistoryView', {
 				delegate: this
 			});
+		},
+
+		/**
+		 * Adds current card to history store for a better visualization of differences from last history record and current one.
+		 *
+		 * @abstract
+		 */
+		addCurrentCardToStore: Ext.emptyFn,
+
+		/**
+		 * Clear store and re-add all records to avoid RowExpander plugin bug that appens with store add action that won't manage correctly expand/collapse events
+		 *
+		 * @param {Array or Object} itemsToAdd
+		 */
+		clearStoreAdd: function(itemsToAdd) {
+			var oldStoreDatas = this.grid.getStore().getRange();
+
+			this.grid.getStore().removeAll();
+			this.grid.getStore().add(Ext.Array.merge(oldStoreDatas, itemsToAdd));
 		},
 
 		/**
@@ -112,7 +135,7 @@
 		/**
 		 * @return {Array}
 		 */
-		getHistoryGridColumns: function() {
+		getTabHistoryGridColumns: function() {
 			var defaultColumns = [
 				Ext.create('Ext.grid.column.Date', {
 					dataIndex: CMDBuild.core.proxy.CMProxyConstants.BEGIN_DATE,
@@ -150,7 +173,7 @@
 		/**
 		 * @return {Ext.data.Store}
 		 */
-		getHistoryGridStore: function() {
+		getTabHistoryGridStore: function() {
 			return this.getProxy().getStore();
 		},
 
@@ -172,14 +195,14 @@
 		/**
 		 * Reloads store to be consistent with includeRelationsCheckbox state
 		 */
-		onHistoryIncludeRelationCheck: function() {
-			this.onHistoryTabPanelShow();
+		onTabHistoryIncludeRelationCheck: function() {
+			this.onTabHistoryPanelShow();
 		},
 
 		/**
 		 * @param {CMDBuild.model.common.tabs.history.classes.CardRecord or CMDBuild.model.common.tabs.history.classes.RelationRecord} record
 		 */
-		onHistoryRowExpand: function(record) {
+		onTabHistoryRowExpand: function(record) {
 			if (
 				!Ext.isEmpty(record)
 				&& Ext.Object.isEmpty(record.get(CMDBuild.core.proxy.CMProxyConstants.VALUES)) // Optimization to avoid to ask already owned data
@@ -274,13 +297,10 @@
 		/**
 		 * Loads store and if includeRelationsCheckbox is checked fills store with relations rows
 		 */
-		onHistoryTabPanelShow: function() {
-			var isSelectedEntityEmpty = Ext.isEmpty(this.selectedEntity);
-
-			this.view.setDisabled(isSelectedEntityEmpty);
+		onTabHistoryPanelShow: function() {
 			this.grid.getStore().removeAll(); // Clear store before load new one
 
-			if (!isSelectedEntityEmpty) {
+			if (!Ext.isEmpty(this.selectedEntity) && this.view.isVisible()) {
 				var params = {};
 				params[CMDBuild.core.proxy.CMProxyConstants.CARD_ID] = this.selectedEntity.get(CMDBuild.core.proxy.CMProxyConstants.ID);
 				params[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME] = _CMCache.getEntryTypeNameById(this.selectedEntity.get('IdClass'));
@@ -289,7 +309,7 @@
 					params: params,
 					scope: this,
 					callback: function(records, operation, success) {
-						if (this.grid.includeRelationsCheckbox.getValue())
+						if (this.grid.includeRelationsCheckbox.getValue()) {
 							this.getProxy().getRelations({
 								params: params,
 								scope: this,
@@ -299,20 +319,38 @@
 								success: function(response, options, decodedResponse) {
 									var referenceElements = decodedResponse.response.elements;
 
+									// Build reference models
 									Ext.Array.forEach(referenceElements, function(element, i, allElements) {
 										referenceElements[i] = Ext.create('CMDBuild.model.common.tabs.history.classes.RelationRecord', element);
 									});
 
-									// Clear store and re-add all records to avoid RowExpander plugin bug that appens with store add action that won't manage
-									// correctly expand/collapse events.
-									this.grid.getStore().removeAll();
-									this.grid.getStore().add(Ext.Array.merge(records, referenceElements));
+									this.clearStoreAdd(referenceElements);
+
+									this.addCurrentCardToStore();
 								}
 							});
+						} else {
+							this.addCurrentCardToStore();
+						}
 					}
 				});
 			}
 		},
+
+		// SelectedEntity property functions
+			/**
+			 * @return {Mixed}
+			 */
+			tabHistorySelectedEntityGet: function() {
+				return this.selectedEntity;
+			},
+
+			/**
+			 * @param {Mixed} selectedEntity
+			 */
+			tabHistorySelectedEntitySet: function(selectedEntity) {
+				this.selectedEntity = Ext.isEmpty(selectedEntity) ? undefined : selectedEntity;
+			},
 
 		/**
 		 * Formats all object1 values as objects { {Boolean} changed: "...", {Mixed} description: "..." }. If value1 is different than value2

@@ -50,6 +50,9 @@
 			'onModifyCardClick',
 			'regenerateAllEmailsSet',
 			'regenerateSelectedEmails',
+			'regenerationEndPointCallbackGet',
+			'regenerationEndPointCallbackSet',
+			'selectedEntityGet',
 			'selectedEntityIdGet',
 			'sendAll -> controllerGrid',
 			'sendAllOnSaveGet',
@@ -134,6 +137,13 @@
 		globalLoadMask: true,
 
 		/**
+		 * Executed on regeneration end-point, works also as flagSave
+		 *
+		 * @cfg {Function} or null
+		 */
+		regenerationEndPointCallback: null,
+
+		/**
 		 * Global attribute change flag
 		 *
 		 * @cfg {Boolean}
@@ -194,7 +204,7 @@
 			 * @return {Boolean} storeLoadEnabled
 			 */
 			trafficLightArrayCheck: function(record, regenerationTrafficLightArray) {
-				if (!Ext.isEmpty(regenerationTrafficLightArray) && regenerationTrafficLightArray.length > 0) {
+				if (!Ext.isEmpty(regenerationTrafficLightArray) && Ext.isArray(regenerationTrafficLightArray)) {
 					var storeLoadEnabled = true;
 
 					Ext.Array.forEach(regenerationTrafficLightArray, function(item, index, allItems) {
@@ -212,7 +222,7 @@
 					return storeLoadEnabled;
 				}
 
-				return false;
+				return true;
 			},
 
 			/**
@@ -220,7 +230,7 @@
 			 * @param {Array} trafficLightArray
 			 */
 			trafficLightSlotBuild: function(record, trafficLightArray) {
-				if (!Ext.isEmpty(trafficLightArray)) {
+				if (!Ext.isEmpty(record) && Ext.isArray(trafficLightArray)) {
 					var trafficLight = [];
 					trafficLight[CMDBuild.core.proxy.CMProxyConstants.STATUS] = false;
 					trafficLight[CMDBuild.core.proxy.CMProxyConstants.RECORD] = record; // Reference to record
@@ -325,7 +335,7 @@
 				if (
 					!Ext.isEmpty(variable)
 					&& !Ext.isObject(variable)
-					&& typeof variable == 'string'
+					&& Ext.isString(variable)
 				) {
 					CMDBuild.controller.management.common.tabs.email.Email.searchForCqlClientVariables(
 						variable,
@@ -342,7 +352,7 @@
 					var mergedTemplate = Ext.apply(template.getData(), template.get(CMDBuild.core.proxy.CMProxyConstants.VARIABLES));
 
 					Ext.Object.each(mergedTemplate, function(key, value, myself) {
-						if (typeof value == 'string') { // Check all types of CQL variables that can contains client variables
+						if (Ext.isString(value)) { // Check all types of CQL variables that can contains client variables
 							CMDBuild.controller.management.common.tabs.email.Email.searchForCqlClientVariables(
 								value,
 								mergedTemplate[CMDBuild.core.proxy.CMProxyConstants.KEY] || mergedTemplate[CMDBuild.core.proxy.CMProxyConstants.NAME],
@@ -520,17 +530,24 @@
 		 * Reload store every time panel is showed
 		 */
 		onEmailPanelShow: function() {
-			this.controllerGrid.setUiState();
+			this.view.setDisabled(
+				Ext.isEmpty(this.selectedEntity.get(CMDBuild.core.proxy.CMProxyConstants.ENTITY))
+				&& !this.editModeGet() // Evaluate also editMode to enable onAddCardButtonClick
+			);
 
-			// Regenerate all widgets only if editMode otherwise simple store load
-			this.regenerateAllEmailsSet(this.editModeGet());
-			this.cmfg('storeLoad');
+			if (this.view.isVisible()) {
+				this.cmfg('setUiState');
+
+				// Regenerate all widgets only if editMode otherwise simple store load
+				this.regenerateAllEmailsSet(this.editModeGet());
+				this.cmfg('storeLoad');
+			}
 		},
 
 		onGlobalRegenerationButtonClick: function() {
 			this.regenerateAllEmailsSet(true);
 			this.forceRegenerationSet(true);
-			this.getAllTemplatesData();
+			this.cmfg('storeLoad');
 		},
 
 		/**
@@ -539,11 +556,8 @@
 		onModifyCardClick: function() {
 			this.editModeSet(true);
 
-			if (!this.grid.getStore().isLoading()) {
-				this.regenerateAllEmailsSet(true);
-				this.forceRegenerationSet(true);
-				this.cmfg('storeLoad');
-			}
+			if (!this.grid.getStore().isLoading())
+				this.onGlobalRegenerationButtonClick();
 		},
 
 		// RegenerateAllEmails property functions
@@ -554,6 +568,8 @@
 			 * to reload grid only at real end of calls and avoid to have multiple and useless store load calls.
 			 */
 			regenerateAllEmails: function() {
+				var isRegenerationStarted = false; // Marks that regeneration process is started
+
 				if (this.regenerateAllEmailsGet()) {
 					var regenerationTrafficLightArray = [];
 
@@ -578,6 +594,8 @@
 								if (item.get(CMDBuild.core.proxy.CMProxyConstants.PROMPT_SYNCHRONIZATION) && !this.forceRegenerationGet()) { // PromptSynch implementation
 									this.controllerConfirmRegenerationWindow.addRecordToArray(item);
 								} else {
+									isRegenerationStarted = true;
+
 									this.regenerateEmail(item, regenerationTrafficLightArray);
 								}
 							}
@@ -600,6 +618,8 @@
 								if (item.get(CMDBuild.core.proxy.CMProxyConstants.PROMPT_SYNCHRONIZATION) && !this.forceRegenerationGet()) { // PromptSynch implementation
 									this.controllerConfirmRegenerationWindow.addTemplateToArray(item);
 								} else {
+									isRegenerationStarted = true;
+
 									this.regenerateTemplate(item, regenerationTrafficLightArray);
 								}
 							}
@@ -621,7 +641,7 @@
 					this.sendAllOnSaveSet();
 
 					this.cmfg('sendAll');
-				} else if (Ext.isFunction(this.regenerationEndPointCallback)) {
+				} else if (!isRegenerationStarted && Ext.isFunction(this.regenerationEndPointCallback)) { // Executed if no regeneration was performed
 					Ext.callback(this.regenerationEndPointCallback, this);
 				}
 
@@ -647,10 +667,9 @@
 		 * @param {Array} regenerationTrafficLightArray
 		 */
 		regenerateEmail: function(record, regenerationTrafficLightArray) {
-			regenerationTrafficLightArray = regenerationTrafficLightArray || [];
-
 			if (
 				!Ext.Object.isEmpty(record)
+				&& Ext.isArray(regenerationTrafficLightArray)
 				&& !Ext.isEmpty(record.get(CMDBuild.core.proxy.CMProxyConstants.TEMPLATE))
 				&& record.get(CMDBuild.core.proxy.CMProxyConstants.KEEP_SYNCHRONIZATION)
 			) {
@@ -737,9 +756,10 @@
 		 * @param {Array} regenerationTrafficLightArray
 		 */
 		regenerateTemplate: function(template, regenerationTrafficLightArray) {
-			regenerationTrafficLightArray = regenerationTrafficLightArray || [];
-
-			if (!Ext.Object.isEmpty(template)) {
+			if (
+				!Ext.Object.isEmpty(template)
+				&& Ext.isArray(regenerationTrafficLightArray)
+			) {
 				var me = this;
 				var xaVars = Ext.apply({}, template.getData(), template.get(CMDBuild.core.proxy.CMProxyConstants.VARIABLES));
 
@@ -793,12 +813,20 @@
 			}
 		},
 
-		/**
-		 * Executed on regeneration end-point, works also as flagSave
-		 *
-		 * @abstract
-		 */
-		regenerationEndPointCallback: Ext.emptyFn,
+		// RegenerationEndPointCallback property functions
+			/**
+			 * @return {Function} or null
+			 */
+			regenerationEndPointCallbackGet: function() {
+				return this.regenerationEndPointCallback;
+			},
+
+			/**
+			 * @param {Function} callbackFunction
+			 */
+			regenerationEndPointCallbackSet: function(callbackFunction) {
+				this.regenerationEndPointCallback = Ext.isFunction(callbackFunction) ? callbackFunction : null;
+			},
 
 		/**
 		 * Reset configuration attributes
@@ -817,6 +845,13 @@
 					return null;
 
 				return this.selectedEntity.get(CMDBuild.core.proxy.CMProxyConstants.ID);
+			},
+
+			/**
+			 * @return {CMDBuild.model.common.tabs.email.SelectedEntity}
+			 */
+			selectedEntityGet: function() {
+				return this.selectedEntity;
 			},
 
 			/**

@@ -1,5 +1,6 @@
 package org.cmdbuild.servlets.json.serializers;
 
+import static org.cmdbuild.servlets.json.CommunicationConstants.BEGIN_DATE;
 import static org.cmdbuild.servlets.json.CommunicationConstants.CLASS_ID_CAPITAL;
 import static org.cmdbuild.servlets.json.CommunicationConstants.CLASS_NAME;
 import static org.cmdbuild.servlets.json.CommunicationConstants.DESCRIPTION;
@@ -7,6 +8,7 @@ import static org.cmdbuild.servlets.json.CommunicationConstants.ID;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ID_CAPITAL;
 import static org.cmdbuild.servlets.json.CommunicationConstants.RESULTS;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ROWS;
+import static org.cmdbuild.servlets.json.CommunicationConstants.USER;
 
 import java.util.Map;
 
@@ -30,7 +32,7 @@ import org.json.JSONObject;
 
 import com.google.common.collect.Maps;
 
-public class CardSerializer {
+public class CardSerializer extends AbstractJsonResponseSerializer{
 
 	private final DataAccessLogic dataAccessLogic;
 	private final RelationAttributeSerializer relationAttributeSerializer;
@@ -80,6 +82,8 @@ public class CardSerializer {
 		json.put(CLASS_ID_CAPITAL, card.getClassId());
 
 		json.put(CLASS_NAME, card.getClassName());
+		json.put(BEGIN_DATE, formatDateTime(card.getBeginDate()));
+		json.put(USER, card.getUser());
 
 		/*
 		 * We must serialize the class description because it is used while listing

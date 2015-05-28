@@ -1,5 +1,15 @@
 package org.cmdbuild.common.api.mail.javax.mail;
 
+import static com.google.common.collect.FluentIterable.from;
+import static com.google.common.collect.Lists.newArrayList;
+import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
+import static javax.mail.Part.ATTACHMENT;
+import static javax.mail.Part.INLINE;
+import static org.apache.commons.lang3.ArrayUtils.isEmpty;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.defaultString;
+import static org.apache.commons.lang3.StringUtils.trim;
 import static org.cmdbuild.common.api.mail.javax.mail.Constants.Header.CC;
 import static org.cmdbuild.common.api.mail.javax.mail.Constants.Header.RECIPIENTS_SEPARATOR;
 import static org.cmdbuild.common.api.mail.javax.mail.Constants.Header.TO;
@@ -10,10 +20,7 @@ import static org.cmdbuild.common.api.mail.javax.mail.Utils.messageIdOf;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.Collection;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -30,7 +37,6 @@ import javax.mail.Store;
 import javax.mail.internet.MimeUtility;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.cmdbuild.common.api.mail.Configuration.Input;
 import org.cmdbuild.common.api.mail.FetchedMail;
 import org.cmdbuild.common.api.mail.GetMail;
@@ -41,8 +47,6 @@ import org.cmdbuild.common.api.mail.javax.mail.InputTemplate.Hook;
 import org.slf4j.Logger;
 
 import com.google.common.base.Function;
-import com.google.common.collect.FluentIterable;
-import com.google.common.collect.Lists;
 
 class SelectMailImpl implements SelectMail {
 
@@ -51,7 +55,7 @@ class SelectMailImpl implements SelectMail {
 		private final String filename;
 		private final DataHandler dataHandler;
 
-		public DefaultAttachment(final String filename, final File file) throws MalformedURLException {
+		public DefaultAttachment(final String filename, final File file) {
 			this.filename = filename;
 			this.dataHandler = new DataHandler(new FileDataSource(file));
 		}
@@ -70,17 +74,21 @@ class SelectMailImpl implements SelectMail {
 
 	private class ContentExtractor {
 
+		private static final String TEXT_PLAIN = "text/plain";
+
 		private static final String ATTACHMENT_PREFIX = "attachment";
 		private static final String ATTACHMENT_EXTENSION = ".out";
 
 		private final Logger logger = SelectMailImpl.this.logger;
 
-		private String content;
-		private final List<Attachment> attachments = Lists.newArrayList();
+		private String content = EMPTY;
+		private String plainAlternative = EMPTY;
+		private final Collection<Attachment> attachments = newArrayList();
 
 		public ContentExtractor(final Message message) throws MailException {
 			try {
 				handle(message);
+				content = defaultString(defaultString(content, plainAlternative), "Mail content not recognized");
 			} catch (final MessagingException e) {
 				throw MailException.content(e);
 			} catch (final IOException e) {
@@ -108,16 +116,27 @@ class SelectMailImpl implements SelectMail {
 			logger.debug("content-type for current part is '{}'", contentType);
 			final String disposition = part.getDisposition();
 			if (disposition == null) {
-				// content = part.getContent().toString();
-				content = parseContent(part.getContent());
-			} else if (Part.ATTACHMENT.equalsIgnoreCase(disposition)) {
+				final String tempContent = parseContent(part.getContent());
+				if (!tempContent.isEmpty()) {
+					content = tempContent;
+				}
+			} else if (ATTACHMENT.equalsIgnoreCase(disposition)) {
 				logger.debug("attachment with name '{}'", part.getFileName());
 				handleAttachment(part);
-			} else if (Part.INLINE.equalsIgnoreCase(disposition)) {
+			} else if (INLINE.equalsIgnoreCase(disposition)) {
 				logger.debug("in-line with name '{}'", part.getFileName());
-				handleAttachment(part);
+				if (part.getFileName() != null) {
+					handleAttachment(part);
+				} else {
+					content = parseContent(part.getContent());
+				}
 			} else {
 				logger.warn("should never happen, disposition is '{}'", disposition);
+			}
+			if (contentType.toLowerCase().contains(TEXT_PLAIN)) {
+				if (plainAlternative.isEmpty()) {
+					plainAlternative = String.class.cast(part.getContent());
+				}
 			}
 		}
 
@@ -125,8 +144,7 @@ class SelectMailImpl implements SelectMail {
 			if (messageContent == null) {
 				throw new IllegalArgumentException();
 			}
-			String plainAlternative = "";
-			String parsedMessage = "";
+			String parsedMessage = EMPTY;
 			if (messageContent instanceof Multipart) {
 				final Multipart mp = (Multipart) messageContent;
 				for (int i = 0, n = mp.getCount(); i < n; ++i) {
@@ -135,8 +153,10 @@ class SelectMailImpl implements SelectMail {
 					final String disposition = part.getDisposition();
 					if (disposition == null) {
 						final Object content = part.getContent();
-						if (ctype.toLowerCase().contains("text/plain")) {
-							plainAlternative = String.class.cast(content);
+						if (ctype.toLowerCase().contains(TEXT_PLAIN)) {
+							if (plainAlternative.isEmpty()) {
+								plainAlternative = String.class.cast(content);
+							}
 						} else {
 							if (content instanceof String) {
 								parsedMessage += content;
@@ -146,17 +166,9 @@ class SelectMailImpl implements SelectMail {
 						}
 					}
 				}
-
-				if (parsedMessage.equals("")) {
-					parsedMessage += plainAlternative;
-				}
-				if (parsedMessage.equals("")) {
-					parsedMessage += "Mail content not recognized";
-				}
-			} else {
+			} else if (messageContent instanceof String) {
 				parsedMessage = messageContent.toString();
 			}
-
 			return parsedMessage;
 		}
 
@@ -218,9 +230,7 @@ class SelectMailImpl implements SelectMail {
 				try {
 					final Folder inbox = store.getFolder(mail.getFolder());
 					inbox.open(Folder.READ_ONLY);
-
-					final List<Message> messages = Arrays.asList(inbox.getMessages());
-					for (final Message message : messages) {
+					for (final Message message : inbox.getMessages()) {
 						if (mail.getId().equals(messageIdOf(message))) {
 							getMail = transform(message);
 							break;
@@ -229,9 +239,6 @@ class SelectMailImpl implements SelectMail {
 				} catch (final MessagingException e) {
 					logger.error("error getting mail", e);
 					throw MailException.get(e);
-				} catch (final IOException e) {
-					logger.error("error getting mail", e);
-					throw MailException.io(e);
 				}
 			}
 
@@ -239,7 +246,7 @@ class SelectMailImpl implements SelectMail {
 		return getMail;
 	}
 
-	private GetMail transform(final Message message) throws MessagingException, IOException {
+	private GetMail transform(final Message message) throws MessagingException {
 		final ContentExtractor contentExtractor = new ContentExtractor(message);
 		return GetMailImpl.newInstance() //
 				.withId(messageIdOf(message)) //
@@ -254,25 +261,23 @@ class SelectMailImpl implements SelectMail {
 	}
 
 	private String firstOf(final Address[] froms) {
-		if ((froms != null) && (froms.length > 0)) {
-			return froms[0].toString();
-		}
-		return null;
+		return isEmpty(froms) ? null : froms[0].toString();
 	}
 
 	private Iterable<String> splitRecipients(final String[] headers) {
 		if ((headers != NO_HEADER_FOUND) && (headers.length > 0)) {
 			final String recipients = headers[0];
-			return FluentIterable.from(Arrays.asList(recipients.split(RECIPIENTS_SEPARATOR))) //
+			return from(asList(recipients.split(RECIPIENTS_SEPARATOR))) //
 					.transform(new Function<String, String>() {
+
 						@Override
 						public String apply(final String input) {
-							return StringUtils.trim(stripAddress(input));
+							return trim(stripAddress(input));
 						}
 
 					});
 		}
-		return Collections.emptyList();
+		return emptyList();
 	}
 
 	private String stripAddress(final String input) {
@@ -298,9 +303,7 @@ class SelectMailImpl implements SelectMail {
 				try {
 					final Folder inbox = store.getFolder(mail.getFolder());
 					inbox.open(Folder.READ_WRITE);
-
-					final List<Message> messages = Arrays.asList(inbox.getMessages());
-					for (final Message message : messages) {
+					for (final Message message : inbox.getMessages()) {
 						if (mail.getId().equals(messageIdOf(message))) {
 							final Message[] singleMessageArray = new Message[] { message };
 							inbox.copyMessages(singleMessageArray, getOrCreate(store, targetFolder));

@@ -18,6 +18,13 @@
 			show: function(panel, eOpts) {
 				this.delegate.cmfg('onHistoryTabPanelShow');
 			}
+		},
+
+		/**
+		 * Service function executed from module controller
+		 */
+		reset: function() {
+			this.setDisabled(Ext.isEmpty(this.delegate.cmfg('tabHistorySelectedEntityGet')));
 		}
 	});
 
