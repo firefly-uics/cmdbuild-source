@@ -199,12 +199,14 @@
 					params: params,
 					scope: this,
 					success: function(response, options, decodedResult) {
-						this.getStore().add({
-							Id: value,
-							Description: decodedResult.card['Description']
-						});
+						if (!Ext.isEmpty(this.getStore())) {
+							this.getStore().add({
+								Id: value,
+								Description: decodedResult.card['Description']
+							});
 
-						this.validate();
+							this.validate();
+						}
 
 						this.setValue(value);
 					}
