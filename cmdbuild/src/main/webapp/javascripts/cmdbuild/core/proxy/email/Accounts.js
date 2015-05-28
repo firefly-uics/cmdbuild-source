@@ -19,7 +19,7 @@
 				url: CMDBuild.core.proxy.CMProxyUrlIndex.email.accounts.post,
 				params: parameters.params,
 				scope: parameters.scope || this,
-				loadMask: parameters.loadMask || false,
+				loadMask: parameters.loadMask || true,
 				failure: parameters.failure || Ext.emptyFn(),
 				success: parameters.success || Ext.emptyFn(),
 				callback: parameters.callback || Ext.emptyFn()
@@ -35,7 +35,7 @@
 				url: CMDBuild.core.proxy.CMProxyUrlIndex.email.accounts.get,
 				params: parameters.params,
 				scope: parameters.scope || this,
-				loadMask: parameters.loadMask || false,
+				loadMask: parameters.loadMask || true,
 				failure: parameters.failure || Ext.emptyFn(),
 				success: parameters.success || Ext.emptyFn(),
 				callback: parameters.callback || Ext.emptyFn()
@@ -59,10 +59,9 @@
 						root: 'response.elements'
 					}
 				},
-				sorters: [{
-					property: CMDBuild.core.proxy.CMProxyConstants.NAME,
-					direction: 'ASC'
-				}]
+				sorters: [
+					{ property: CMDBuild.core.proxy.CMProxyConstants.NAME, direction: 'ASC' }
+				]
 			});
 		},
 
@@ -75,7 +74,7 @@
 				url: CMDBuild.core.proxy.CMProxyUrlIndex.email.accounts.remove,
 				params: parameters.params,
 				scope: parameters.scope || this,
-				loadMask: parameters.loadMask || false,
+				loadMask: parameters.loadMask || true,
 				failure: parameters.failure || Ext.emptyFn(),
 				success: parameters.success || Ext.emptyFn(),
 				callback: parameters.callback || Ext.emptyFn()
@@ -91,7 +90,7 @@
 				url: CMDBuild.core.proxy.CMProxyUrlIndex.email.accounts.setDefault,
 				params: parameters.params,
 				scope: parameters.scope || this,
-				loadMask: parameters.loadMask || false,
+				loadMask: parameters.loadMask || true,
 				failure: parameters.failure || Ext.emptyFn(),
 				success: parameters.success || Ext.emptyFn(),
 				callback: parameters.callback || Ext.emptyFn()
@@ -107,7 +106,7 @@
 				url: CMDBuild.core.proxy.CMProxyUrlIndex.email.accounts.put,
 				params: parameters.params,
 				scope: parameters.scope || this,
-				loadMask: parameters.loadMask || false,
+				loadMask: parameters.loadMask || true,
 				failure: parameters.failure || Ext.emptyFn(),
 				success: parameters.success || Ext.emptyFn(),
 				callback: parameters.callback || Ext.emptyFn()

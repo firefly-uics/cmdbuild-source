@@ -103,11 +103,11 @@
 
 		onEmailAccountsRowSelected: function() {
 			if (this.grid.getSelectionModel().hasSelection()) {
+				var params = {};
+				params[CMDBuild.core.proxy.CMProxyConstants.NAME] = this.grid.getSelectionModel().getSelection()[0].get(CMDBuild.core.proxy.CMProxyConstants.NAME);
+
 				CMDBuild.core.proxy.email.Accounts.get({
-					params: {
-						name: this.grid.getSelectionModel().getSelection()[0].get(CMDBuild.core.proxy.CMProxyConstants.NAME)
-					},
-					loadMask: true,
+					params: params,
 					scope: this,
 					failure: function(response, options, decodedResponse) {
 						CMDBuild.Msg.error(
@@ -135,14 +135,12 @@
 				if (Ext.isEmpty(formData.id)) {
 					CMDBuild.core.proxy.email.Accounts.create({
 						params: formData,
-						loadMask: true,
 						scope: this,
 						success: this.success
 					});
 				} else {
 					CMDBuild.core.proxy.email.Accounts.update({
 						params: formData,
-						loadMask: true,
 						scope: this,
 						success: this.success
 					});
@@ -151,11 +149,11 @@
 		},
 
 		onEmailAccountsSetDefaultButtonClick: function() {
+			var params = {};
+			params[CMDBuild.core.proxy.CMProxyConstants.NAME] = this.selectedAccount.get(CMDBuild.core.proxy.CMProxyConstants.NAME);
+
 			CMDBuild.core.proxy.email.Accounts.setDefault({
-				params: {
-					name: this.selectedAccount.get(CMDBuild.core.proxy.CMProxyConstants.NAME)
-				},
-				loadMask: true,
+				params: params,
 				scope: this,
 				success: this.success
 			});
@@ -163,11 +161,11 @@
 
 		removeItem: function() {
 			if (!Ext.isEmpty(this.selectedAccount)) {
+				var params = {};
+				params[CMDBuild.core.proxy.CMProxyConstants.NAME] = this.selectedAccount.get(CMDBuild.core.proxy.CMProxyConstants.NAME);
+
 				CMDBuild.core.proxy.email.Accounts.remove({
-					params: {
-						name: this.selectedAccount.get(CMDBuild.core.proxy.CMProxyConstants.NAME)
-					},
-					loadMask: true,
+					params: params,
 					scope: this,
 					success: function(response, options, decodedResponse) {
 						this.form.reset();
