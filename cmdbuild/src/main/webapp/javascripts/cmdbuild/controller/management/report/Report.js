@@ -20,9 +20,14 @@
 		grid: undefined,
 
 		/**
-		 * @cfg {CMDBuild.view.management.report.ReportView}
+		 * Witch report types will be viewed inside modal pop-up
+		 *
+		 * @cfg {Array}
 		 */
-		view: undefined,
+		forceDownloadTypes: [
+			CMDBuild.core.proxy.CMProxyConstants.ODT,
+			CMDBuild.core.proxy.CMProxyConstants.RTF
+		],
 
 		/**
 		 * @cfg {Array}
@@ -33,6 +38,11 @@
 			CMDBuild.core.proxy.CMProxyConstants.PDF,
 			CMDBuild.core.proxy.CMProxyConstants.RTF
 		],
+
+		/**
+		 * @cfg {CMDBuild.view.management.report.ReportView}
+		 */
+		view: undefined,
 
 		/**
 		 * @param {Object} view
@@ -93,7 +103,7 @@
 						id: reportInfo[CMDBuild.core.proxy.CMProxyConstants.RECORD].get(CMDBuild.core.proxy.CMProxyConstants.ID),
 						extension: reportInfo[CMDBuild.core.proxy.CMProxyConstants.TYPE]
 					},
-					true
+					Ext.Array.contains(this.forceDownloadTypes, reportInfo[CMDBuild.core.proxy.CMProxyConstants.TYPE]) // Force download true for PDF and CSV
 				);
 			} else {
 				CMDBuild.Msg.error(
