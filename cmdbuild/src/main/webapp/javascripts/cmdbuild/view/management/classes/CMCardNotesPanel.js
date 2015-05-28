@@ -189,41 +189,47 @@
 		// to implement in subclass to have extra button on instantiation
 		getExtraButtons: Ext.emptyFn,
 
+		/**
+		 * @deprecated
+		 */
+		reloadCard: function(eventParams) {
+			_deprecated('reloadCard', this);
 
-		// DEPRECATED
-			reloadCard: function(eventParams) { _deprecated('reloadCard', this);
+			this.enable();
+		},
+
+		/**
+		 * @deprecated
+		 */
+		onClassSelected: function() {
+			_deprecated('onClassSelected', this);
+		},
+
+		/**
+		 * @deprecated
+		 */
+		onCardSelected: function(card) {
+			_deprecated('onCardSelected', this);
+
+			var idClass = card.raw.IdClass;
+
+			if (CMDBuild.Utils.isSimpleTable(idClass)) {
+				this.disable();
+
+				return;
+			} else {
 				this.enable();
-			},
-
-			onAddCardButtonClick: function() { _deprecated('onAddCardButtonClick', this);
-				this.disable();
-			},
-
-			onClassSelected: function() { _deprecated('onClassSelected', this);
-				this.disableModify();
-				this.disable();
-			},
-
-			onCardSelected: function(card) { _deprecated('onCardSelected', this);
-				var idClass = card.raw.IdClass;
-
-				if (CMDBuild.Utils.isSimpleTable(idClass)) {
-					this.disable();
-
-					return;
-				} else {
-					this.enable();
-				}
-
-				this.currentCardId = card.get("Id");
-				this.currentCardPrivileges = {
-					create: card.raw.priv_create,
-					write: card.raw.priv_write
-				};
-				this.reset();
-				this.loadCard(card);
-				this.disableModify();
 			}
+
+			this.currentCardId = card.get("Id");
+			this.currentCardPrivileges = {
+				create: card.raw.priv_create,
+				write: card.raw.priv_write
+			};
+			this.reset();
+			this.loadCard(card);
+			this.disableModify();
+		}
 	});
 
 })();

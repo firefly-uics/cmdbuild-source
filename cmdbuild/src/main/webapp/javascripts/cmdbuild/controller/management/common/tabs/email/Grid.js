@@ -27,6 +27,7 @@
 			'onGridSendEmailButtonClick',
 			'onGridViewEmailButtonClick',
 			'sendAll',
+			'setUiState',
 			'storeLoad'
 		],
 
@@ -72,14 +73,14 @@
 						CMDBuild.Msg.error(CMDBuild.Translation.common.failure, CMDBuild.Translation.errors.emailCreate, false);
 					},
 					success: success || function(response, options, decodedResponse) {
-						if (
-							CMDBuild.controller.management.common.tabs.email.Email.trafficLightArrayCheck(record, regenerationTrafficLightArray)
-							|| Ext.isEmpty(regenerationTrafficLightArray)
-						) {
+						if (CMDBuild.controller.management.common.tabs.email.Email.trafficLightArrayCheck(record, regenerationTrafficLightArray))
 							this.storeLoad();
-						}
 					}
 				});
+			} else {
+				_warning('tried to add empty record', this);
+
+				this.storeLoad();
 			}
 		},
 
@@ -114,14 +115,14 @@
 						CMDBuild.Msg.error(CMDBuild.Translation.common.failure, CMDBuild.Translation.errors.emailUpdate, false);
 					},
 					success: function(response, options, decodedResponse) {
-						if (
-							CMDBuild.controller.management.common.tabs.email.Email.trafficLightArrayCheck(record, regenerationTrafficLightArray)
-							|| Ext.isEmpty(regenerationTrafficLightArray)
-						) {
+						if (CMDBuild.controller.management.common.tabs.email.Email.trafficLightArrayCheck(record, regenerationTrafficLightArray))
 							this.storeLoad();
-						}
 					}
 				});
+			} else {
+				_warning('tried to edit empty record', this);
+
+				this.storeLoad();
 			}
 		},
 
@@ -309,14 +310,14 @@
 						CMDBuild.Msg.error(CMDBuild.Translation.common.failure, CMDBuild.Translation.errors.emailRemove, false);
 					},
 					success: function(response, options, decodedResponse) {
-						if (
-							CMDBuild.controller.management.common.tabs.email.Email.trafficLightArrayCheck(record, regenerationTrafficLightArray)
-							|| Ext.isEmpty(regenerationTrafficLightArray)
-						) {
+						if (CMDBuild.controller.management.common.tabs.email.Email.trafficLightArrayCheck(record, regenerationTrafficLightArray))
 							this.storeLoad();
-						}
 					}
 				});
+			} else {
+				_warning('tried to remove empty record', this);
+
+				this.storeLoad();
 			}
 		},
 
@@ -366,6 +367,8 @@
 		 */
 		storeLoad: function() {
 			this.cmfg('busyStateSet', true); // Setup widget busy state and the begin of store load
+
+			this.view.getStore().removeAll(); // Clear store before load new one
 
 			var params = {};
 			params[CMDBuild.core.proxy.CMProxyConstants.REFERENCE] = this.cmfg('selectedEntityIdGet');

@@ -96,14 +96,14 @@
 
 			this.card = card;
 
+			this.editModeSet(false);
+			this.cmfg('setUiState');
+
 			this.selectedEntitySet(this.card, function() {
 				me.regenerateAllEmailsSet(Ext.isEmpty(this.card));
 				me.forceRegenerationSet(Ext.isEmpty(this.card));
-				me.cmfg('storeLoad');
+				me.cmfg('onEmailPanelShow');
 			});
-
-			this.editModeSet(false);
-			this.cmfg('setUiState');
 		},
 
 		onCloneCard: function() {
@@ -111,14 +111,14 @@
 
 			this.card = null;
 
+			this.editModeSet(true);
+			this.cmfg('setUiState');
+
 			this.selectedEntitySet(this.card, function() {
 				me.regenerateAllEmailsSet(Ext.isEmpty(this.card));
 				me.forceRegenerationSet(Ext.isEmpty(this.card));
-				me.cmfg('storeLoad');
+				me.cmfg('onEmailPanelShow');
 			});
-
-			this.editModeSet(true);
-			this.cmfg('setUiState');
 		},
 
 		/**
@@ -167,7 +167,7 @@
 
 			if (!this.grid.getStore().isLoading()) {
 				this.regenerateAllEmailsSet(true);
-				this.cmfg('storeLoad');
+				this.cmfg('onEmailPanelShow');
 			}
 		}
 	});

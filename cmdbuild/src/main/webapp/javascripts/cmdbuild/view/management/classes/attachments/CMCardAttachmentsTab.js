@@ -91,13 +91,21 @@ Ext.define("CMDBuild.view.management.classes.attachments.CMCardAttachmentsPanel"
 		this.addAttachmentButton.setDisabled(!priv_write);
 	},
 
-	// DEPRECATED
+	/**
+	 * @deprecated
+	 */
+	onAddCardButtonClick: function() {
+		_deprecated('onAddCardButtonClick', this);
 
-	onAddCardButtonClick: function() { _deprecated('onAddCardButtonClick', this);
 		this.disable();
 	},
 
-	onCardSelected: function(card) { _deprecated('onCardSelected', this);
+	/**
+	 * @deprecated
+	 */
+	onCardSelected: function(card) {
+		_deprecated('onCardSelected', this);
+
 		this.updateWritePrivileges(card.raw.priv_write);
 	}
 });

@@ -91,7 +91,7 @@
 		/**
 		 * @abstract
 		 */
-		buildSubControllers: function() {}
+		buildSubControllers: Ext.emptyFn
 	});
 
 	Ext.define('CMDBuild.controller.management.classes.CMModCardController', {
@@ -339,7 +339,6 @@
 			if (Ext.isEmpty(args[1])) {
 				this.view.getCardPanel().displayMode();
 				this.view.cardTabPanel.reset();
-				this.view.getHistoryPanel().disable();
 			}
 		},
 
