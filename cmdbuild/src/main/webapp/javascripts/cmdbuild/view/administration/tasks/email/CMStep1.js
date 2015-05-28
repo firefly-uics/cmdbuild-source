@@ -160,7 +160,10 @@
 	Ext.define('CMDBuild.view.administration.tasks.email.CMStep1', {
 		extend: 'Ext.panel.Panel',
 
-		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+		requires: [
+			'CMDBuild.core.proxy.CMProxyConstants',
+			'CMDBuild.core.proxy.email.Accounts'
+		],
 
 		/**
 		 * @cfg {CMDBuild.view.administration.tasks.email.CMStep1Delegate}
@@ -271,12 +274,13 @@
 						name: CMDBuild.core.proxy.CMProxyConstants.EMAIL_ACCOUNT,
 						fieldLabel: tr.taskEmail.emailAccount,
 						labelWidth: CMDBuild.LABEL_WIDTH,
-						store: CMDBuild.core.proxy.email.Accounts.getStore(),
 						displayField: CMDBuild.core.proxy.CMProxyConstants.NAME,
 						valueField: CMDBuild.core.proxy.CMProxyConstants.NAME,
 						maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
 						forceSelection: true,
-						editable: false
+						editable: false,
+
+						store: CMDBuild.core.proxy.email.Accounts.getStore(),
 					}),
 					this.incomingFolder = Ext.create('Ext.form.field.Text', {
 						name: CMDBuild.core.proxy.CMProxyConstants.INCOMING_FOLDER,
