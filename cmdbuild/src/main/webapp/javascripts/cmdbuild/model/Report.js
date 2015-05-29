@@ -27,4 +27,19 @@
 		]
 	});
 
+	/**
+	 * @management
+	 */
+	Ext.define('CMDBuild.model.Report.createParameters', {
+		extend: 'Ext.data.Model',
+
+		fields: [
+			{ name: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION, type: 'string' },
+			{ name: CMDBuild.core.proxy.CMProxyConstants.EXTENSION, type: 'string', defaultValue: CMDBuild.core.proxy.CMProxyConstants.PDF },
+			{ name: CMDBuild.core.proxy.CMProxyConstants.FORCE_DOWNLOAD, type: 'boolean', defaultValue: false },
+			{ name: CMDBuild.core.proxy.CMProxyConstants.ID, type: 'int', useNull: true },
+			{ name: CMDBuild.core.proxy.CMProxyConstants.TYPE, type: 'string', defaultValue: 'CUSTOM' }
+		]
+	});
+
 })();

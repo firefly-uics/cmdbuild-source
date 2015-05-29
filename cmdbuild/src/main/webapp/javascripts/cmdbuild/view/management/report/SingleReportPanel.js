@@ -18,7 +18,7 @@
 		/**
 		 * @cfg {String}
 		 */
-		sectionTitle: CMDBuild.Translation.report,
+		baseTitle: CMDBuild.Translation.report,
 
 		border: true,
 		frame: false,
@@ -35,28 +35,28 @@
 							scope: this,
 
 							handler: function(button, e) {
-								this.delegate.cmfg('onReportTypeButtonClick', CMDBuild.core.proxy.CMProxyConstants.PDF);
+								this.delegate.cmfg('onSingleReportTypeButtonClick', CMDBuild.core.proxy.CMProxyConstants.PDF);
 							}
 						}),
 						Ext.create('CMDBuild.core.buttons.FileFormatsOdt', {
 							scope: this,
 
 							handler: function(button, e) {
-								this.delegate.cmfg('onReportTypeButtonClick', CMDBuild.core.proxy.CMProxyConstants.ODT);
+								this.delegate.cmfg('onSingleReportTypeButtonClick', CMDBuild.core.proxy.CMProxyConstants.ODT);
 							}
 						}),
 						Ext.create('CMDBuild.core.buttons.FileFormatsRtf', {
 							scope: this,
 
 							handler: function(button, e) {
-								this.delegate.cmfg('onReportTypeButtonClick', CMDBuild.core.proxy.CMProxyConstants.RTF);
+								this.delegate.cmfg('onSingleReportTypeButtonClick', CMDBuild.core.proxy.CMProxyConstants.RTF);
 							}
 						}),
 						Ext.create('CMDBuild.core.buttons.FileFormatsCsv', {
 							scope: this,
 
 							handler: function(button, e) {
-								this.delegate.cmfg('onReportTypeButtonClick', CMDBuild.core.proxy.CMProxyConstants.CSV);
+								this.delegate.cmfg('onSingleReportTypeButtonClick', CMDBuild.core.proxy.CMProxyConstants.CSV);
 							}
 						}),
 						'->',
@@ -64,7 +64,7 @@
 							scope: this,
 
 							handler: function(button, e) {
-								this.delegate.cmfg('onReportDownloadButtonClick');
+								this.delegate.cmfg('onSingleReportDownloadButtonClick');
 							}
 						})
 					]
