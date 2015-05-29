@@ -46,14 +46,14 @@
 								scope: this,
 
 								handler: function(button, e) {
-									this.delegate.cmfg('onParametersSaveButtonClick');
+									this.delegate.cmfg('onReportParametersWindowSaveButtonClick');
 								}
 							}),
 							Ext.create('CMDBuild.core.buttons.Abort', {
 								scope: this,
 
 								handler: function(button, e) {
-									this.delegate.cmfg('onParametersAbortButtonClick');
+									this.delegate.cmfg('onReportParametersWindowAbortButtonClick');
 								}
 							})
 						]

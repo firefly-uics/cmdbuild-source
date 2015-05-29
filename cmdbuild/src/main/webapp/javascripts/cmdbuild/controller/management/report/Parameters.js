@@ -17,20 +17,20 @@
 		/**
 		 * @cfg {Array}
 		 */
+		cmfgCatchedFunctions: [
+			'onReportParametersWindowAbortButtonClick',
+			'onReportParametersWindowSaveButtonClick'
+		],
+
+		/**
+		 * @cfg {Array}
+		 */
 		attributeList: undefined,
 
 		/**
 		 * @cfg {Boolean}
 		 */
 		forceDownload: undefined,
-
-		/**
-		 * @cfg {Array}
-		 */
-		cmfgCatchedFunctions: [
-			'onParametersAbortButtonClick',
-			'onParametersSaveButtonClick'
-		],
 
 		/**
 		 * @property {CMDBuild.view.management.report.ParametersWindow} emailWindows
@@ -50,9 +50,9 @@
 
 			// Show window
 			if (!Ext.isEmpty(this.view)) {
-				this.view.show();
-
 				this.buildFields();
+
+				this.view.show();
 			}
 		},
 
@@ -70,36 +70,22 @@
 				}, this);
 		},
 
-		onParametersAbortButtonClick: function() {
+		onReportParametersWindowAbortButtonClick: function() {
 			this.view.destroy();
 		},
 
-		onParametersSaveButtonClick: function() {
+		onReportParametersWindowSaveButtonClick: function() {
 			if (this.view.form.getForm().isValid()) {
 				CMDBuild.core.proxy.Report.updateReport({
 					form: this.view.form.getForm(),
 					scope: this,
 					failure: function(response, options, decodedResponse) {
-						this.onParametersAbortButtonClick();
+						this.onReportParametersWindowAbortButtonClick();
 					},
 					success: function(response, options) {
-						if (Ext.isEmpty(this.parentDelegate)) {
-							var popup = window.open(
-								CMDBuild.core.proxy.CMProxyUrlIndex.reports.printReportFactory,
-								'Report',
-								'height=400,width=550,status=no,toolbar=no,scrollbars=yes,menubar=no,location=no,resizable'
-							);
+						this.cmfg('showReport');
 
-							if (Ext.isEmpty(popup))
-								CMDBuild.Msg.warn(
-									CMDBuild.Translation.warnings.warning_message,
-									CMDBuild.Translation.warnings.popup_block
-								);
-						} else if (!Ext.isEmpty(this.parentDelegate) && Ext.isFunction(this.parentDelegate.showReport)) {
-							this.parentDelegate.showReport(this.forceDownload); // TODO: shound be used cmfg()
-						}
-
-						this.onParametersAbortButtonClick();
+						this.onReportParametersWindowAbortButtonClick();
 					}
 				});
 			}

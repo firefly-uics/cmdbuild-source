@@ -63,7 +63,7 @@
 								handler: function(grid, rowIndex, colIndex, node, e, record, rowNode) {
 									this.delegate.cmfg('onReportGenerateButtonClick', {
 										record: record,
-										type: CMDBuild.core.proxy.CMProxyConstants.PDF
+										extension: CMDBuild.core.proxy.CMProxyConstants.PDF
 									});
 								}
 							}),
@@ -75,7 +75,7 @@
 								handler: function(grid, rowIndex, colIndex, node, e, record, rowNode) {
 									this.delegate.cmfg('onReportGenerateButtonClick', {
 										record: record,
-										type: CMDBuild.core.proxy.CMProxyConstants.ODT
+										extension: CMDBuild.core.proxy.CMProxyConstants.ODT
 									});
 								}
 							}),
@@ -87,7 +87,7 @@
 								handler: function(grid, rowIndex, colIndex, node, e, record, rowNode) {
 									this.delegate.cmfg('onReportGenerateButtonClick', {
 										record: record,
-										type: CMDBuild.core.proxy.CMProxyConstants.RTF
+										extension: CMDBuild.core.proxy.CMProxyConstants.RTF
 									});
 								}
 							}),
@@ -99,7 +99,7 @@
 								handler: function(grid, rowIndex, colIndex, node, e, record, rowNode) {
 									this.delegate.cmfg('onReportGenerateButtonClick', {
 										record: record,
-										type: CMDBuild.core.proxy.CMProxyConstants.CSV
+										extension: CMDBuild.core.proxy.CMProxyConstants.CSV
 									});
 								}
 							})

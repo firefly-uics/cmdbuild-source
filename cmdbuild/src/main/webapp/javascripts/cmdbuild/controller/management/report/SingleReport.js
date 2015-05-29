@@ -6,26 +6,25 @@
 		requires: [
 			'CMDBuild.core.proxy.CMProxyConstants',
 			'CMDBuild.core.proxy.CMProxyUrlIndex',
-			'CMDBuild.core.proxy.Report'
+			'CMDBuild.core.proxy.Report',
+			'CMDBuild.model.Report'
 		],
 
 		/**
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
-			'onReportDownloadButtonClick',
-			'onReportTypeButtonClick'
+			'onSingleReportDownloadButtonClick',
+			'onSingleReportTypeButtonClick',
+			'showReport'
 		],
 
 		/**
-		 * @property {Object}
+		 * Parameters of last managed report
+		 *
+		 * @cfg {CMDBuild.model.Report.createParameters}
 		 */
-		displayedReportParams: undefined,
-
-		/**
-		 * @cfg {CMDBuild.view.management.report.SingleReportPanel}
-		 */
-		view: undefined,
+		managedReport: undefined,
 
 		/**
 		 * @cfg {Array}
@@ -38,19 +37,25 @@
 		],
 
 		/**
-		 * @param {Object} reportParams
-		 * @param {Boolean} forceDownload
+		 * @cfg {String}
 		 */
-		createReport: function(reportParams, forceDownload) {
-			forceDownload = forceDownload || false;
+		titleSeparator: ' - ',
 
-			if (!Ext.isEmpty(reportParams[CMDBuild.core.proxy.CMProxyConstants.ID])) {
-				reportParams[CMDBuild.core.proxy.CMProxyConstants.TYPE] = reportParams[CMDBuild.core.proxy.CMProxyConstants.TYPE] || 'CUSTOM';
-				reportParams[CMDBuild.core.proxy.CMProxyConstants.EXTENSION] = reportParams[CMDBuild.core.proxy.CMProxyConstants.EXTENSION] || CMDBuild.core.proxy.CMProxyConstants.PDF;
+		/**
+		 * @cfg {CMDBuild.view.management.report.SingleReportPanel}
+		 */
+		view: undefined,
+
+		/**
+		 * @param {Object} parameters
+		 */
+		createReport: function(parameters) {
+			if (Ext.isObject(parameters) && !Ext.isEmpty(parameters[CMDBuild.core.proxy.CMProxyConstants.ID])) {
+				this.managedReportSet(parameters);
 
 				CMDBuild.core.proxy.Report.createReport({
+					params: this.managedReport.getData(),
 					scope: this,
-					params: reportParams,
 					failure: function(response, options, decodedResponse) {
 						CMDBuild.Msg.error(
 							CMDBuild.Translation.error,
@@ -59,10 +64,8 @@
 						);
 					},
 					success: function(response, options, decodedResponse) {
-						this.displayedReportParams = reportParams;
-
 						if(decodedResponse.filled) { // Report with no parameters
-							this.showReport(forceDownload);
+							this.showReport();
 						} else { // Show parameters window
 							if (Ext.isIE) // FIX: in IE PDF is painted on top of the regular page content so remove it before display parameter window
 								this.view.removeAll();
@@ -70,7 +73,7 @@
 							Ext.create('CMDBuild.controller.management.report.Parameters', {
 								parentDelegate: this,
 								attributeList: decodedResponse.attribute,
-								forceDownload: forceDownload
+								forceDownload: this.managedReport.get(CMDBuild.core.proxy.CMProxyConstants.FORCE_DOWNLOAD)
 							});
 						}
 					}
@@ -78,20 +81,22 @@
 			}
 		},
 
-		onReportDownloadButtonClick: function() {
-			if (!Ext.Object.isEmpty(this.displayedReportParams))
-				this.createReport(this.displayedReportParams, true);
+		onSingleReportDownloadButtonClick: function() {
+			this.managedReport.set(CMDBuild.core.proxy.CMProxyConstants.FORCE_DOWNLOAD, true);
+
+			this.createReport(this.managedReport.getData());
 		},
 
 		/**
 		 * @param {String} type
 		 */
-		onReportTypeButtonClick: function(type) {
-			if (Ext.Array.contains(this.supportedReportTypes, type)) {
-				this.createReport({
-					id: this.reportId,
-					extension: type
-				});
+		onSingleReportTypeButtonClick: function(type) {
+			if (!Ext.Object.isEmpty(this.managedReport) && Ext.Array.contains(this.supportedReportTypes, type)) {
+				var params = {};
+				params[CMDBuild.core.proxy.CMProxyConstants.ID] = this.managedReport.get(CMDBuild.core.proxy.CMProxyConstants.ID);
+				params[CMDBuild.core.proxy.CMProxyConstants.EXTENSION] = type;
+
+				this.createReport(params);
 			} else {
 				CMDBuild.Msg.error(
 					CMDBuild.Translation.error,
@@ -110,9 +115,9 @@
 				&& !Ext.isEmpty(node.get(CMDBuild.core.proxy.CMProxyConstants.ID))
 				&& node.get(CMDBuild.core.proxy.CMProxyConstants.ID) != CMDBuild.core.proxy.CMProxyConstants.CUSTOM
 			) {
-				this.view.setTitle(this.view.sectionTitle + ' - ' + node.get(CMDBuild.core.proxy.CMProxyConstants.TEXT));
+				this.setViewTitle(node.get(CMDBuild.core.proxy.CMProxyConstants.TEXT));
 
-				this.reportId = node.get(CMDBuild.core.proxy.CMProxyConstants.ID);
+				this.managedReportSet(node.get(CMDBuild.core.proxy.CMProxyConstants.ID));
 
 				this.createReport({
 					id: node.get(CMDBuild.core.proxy.CMProxyConstants.ID),
@@ -123,43 +128,65 @@
 			}
 		},
 
+		// Managed report property methods
+			/**
+			 * @param {Object} parameters
+			 */
+			managedReportSet: function(parameters) {
+				if (!Ext.Object.isEmpty(parameters)) {
+					this.managedReport = Ext.create('CMDBuild.model.Report.createParameters', parameters);
+				} else {
+					this.managedReport = null;
+				}
+			},
+
 		/**
-		 * Get created report from server and display it in iframe
+		 * Setup view panel title as a breadcrumbs component
 		 *
-		 * @param {Boolean} forceDownload
+		 * @param {String} titlePart
 		 */
-		showReport: function(forceDownload) {
-			forceDownload = forceDownload || false;
-
-			var params = {};
-			params[CMDBuild.core.proxy.CMProxyConstants.FORCE_DOWNLOAD_PARAM_KEY] = true;
-
-			if (forceDownload) { // Force download mode
-				var form = Ext.create('Ext.form.Panel', {
-					standardSubmit: true,
-					url: CMDBuild.core.proxy.CMProxyUrlIndex.reports.printReportFactory
-				});
-
-				form.submit({
-					target: '_blank',
-					params: params
-				});
-
-				Ext.defer(function() { // Form cleanup
-					form.close();
-				}, 100);
-			} else { // Add to view display mode
-				this.view.removeAll();
-
-				this.view.add({
-					xtype: 'component',
-
-					autoEl: {
-						tag: 'iframe',
-						src: CMDBuild.core.proxy.CMProxyUrlIndex.reports.printReportFactory
-					}
-				});
+		setViewTitle: function(titlePart) {
+			if (Ext.isEmpty(titlePart)) {
+				this.view.setTitle(this.view.baseTitle);
+			} else {
+				this.view.setTitle(this.view.baseTitle + this.titleSeparator + titlePart);
 			}
+		},
+
+		/**
+		 * Get created report from server and display it in popup window
+		 */
+		showReport: function() {
+			if (!Ext.Object.isEmpty(this.managedReport))
+				if (this.managedReport.get(CMDBuild.core.proxy.CMProxyConstants.FORCE_DOWNLOAD)) { // Force download mode
+					var params = {};
+					params[CMDBuild.core.proxy.CMProxyConstants.FORCE_DOWNLOAD_PARAM_KEY] = true;
+
+					var form = Ext.create('Ext.form.Panel', {
+						standardSubmit: true,
+						url: CMDBuild.core.proxy.CMProxyUrlIndex.reports.printReportFactory
+					});
+
+					form.submit({
+						target: '_blank',
+						params: params
+					});
+
+					Ext.defer(function() { // Form cleanup
+						form.close();
+					}, 100);
+				} else { // Add to view display mode
+					this.view.removeAll();
+
+					this.view.add({
+						xtype: 'component',
+
+						autoEl: {
+							tag: 'iframe',
+							src: CMDBuild.core.proxy.CMProxyUrlIndex.reports.printReportFactory
+						}
+					});
+				}
 		}
 	});
 
