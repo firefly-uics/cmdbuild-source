@@ -1389,6 +1389,7 @@
 	"imapServer": "IMAP сервер",
 	"importFromCSV": "Увоз из CSV",
 	"includeRelations": "<em>Include relations</em>",
+	"includeSystemActivities": "<em>Include system activities</em>",
 	"incoming": "Долазне",
 	"incomingFolder": "Долазни фолдер",
 	"initialLatitude": "Почетна географска ширина",
