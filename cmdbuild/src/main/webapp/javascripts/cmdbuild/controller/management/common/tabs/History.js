@@ -14,20 +14,7 @@
 		parentDelegate: undefined,
 
 		/**
-		 * @cfg {Array}
-		 */
-		cmfgCatchedFunctions: [
-			'getTabHistoryGridColumns',
-			'getTabHistoryGridStore',
-			'onTabHistoryIncludeRelationCheck',
-			'onTabHistoryRowExpand',
-			'onTabHistoryPanelShow',
-			'tabHistorySelectedEntityGet',
-			'tabHistorySelectedEntitySet'
-		],
-
-		/**
-		 * @property {CMDBuild.view.management.common.tabs.history.GridPanel}
+		 * @property {CMDBuild.view.management.classes.tabs.history.GridPanel or CMDBuild.view.management.workflow.tabs.history.GridPanel}
 		 */
 		grid: undefined,
 
