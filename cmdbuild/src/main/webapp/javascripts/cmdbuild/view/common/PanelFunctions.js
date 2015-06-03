@@ -57,10 +57,15 @@
 
 			this.cascade(function(item) {
 				if (
-					item
-					&& (item instanceof Ext.form.Field)
+					!Ext.isEmpty(item)
+					&& (
+						item instanceof Ext.form.Field
+						|| item instanceof Ext.form.field.Base
+						|| item instanceof Ext.form.FieldContainer
+					)
 					&& !item.disabled
 					&& !item.isValid()
+					&& !item.disableCascade // Property to disable cascade on fields
 				) {
 					data.push(item);
 				}
