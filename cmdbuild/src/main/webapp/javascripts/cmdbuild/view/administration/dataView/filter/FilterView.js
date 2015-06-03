@@ -45,7 +45,7 @@
 
 						items: [
 							Ext.create('CMDBuild.core.buttons.Add', {
-								text: CMDBuild.Translation.addView, // TODO mettere in minuscolo nella traduzione
+								text: CMDBuild.Translation.addView,
 								scope: this,
 
 								handler: function(button, e) {
