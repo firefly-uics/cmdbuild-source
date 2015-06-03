@@ -1389,6 +1389,7 @@
 	"imapServer": "IMAP server",
 	"importFromCSV": "Uvoz iz CSV",
 	"includeRelations": "<em>Include relations</em>",
+	"includeSystemActivities": "<em>Include system activities</em>",
 	"incoming": "Dolazne",
 	"incomingFolder": "Dolazni folder",
 	"initialLatitude": "Početna geografska širina",

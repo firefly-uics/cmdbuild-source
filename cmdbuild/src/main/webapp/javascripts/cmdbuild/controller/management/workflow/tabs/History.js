@@ -70,6 +70,8 @@
 		constructor: function(configurationObject) {
 			this.mixins.observable.constructor.call(this, arguments);
 
+			this.cmfgCatchedFunctions.push('onTabHistoryProcessesIncludeSystemActivitiesCheck'); // Add custom managed function
+
 			this.callParent(arguments);
 
 			this.statusBuildTranslationObject( ); // Build status translation object from lookup
@@ -78,9 +80,28 @@
 				delegate: this
 			});
 
+			// Add store system user filter check
+			this.grid.getDockedComponent(CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_TOP).add(
+				this.grid.includeSystemActivitiesCheckbox = Ext.create('Ext.form.field.Checkbox', {
+					boxLabel: CMDBuild.Translation.includeSystemActivities,
+					boxLabelCls: 'cmtoolbaritem',
+					checked: false, // Default as false
+					scope: this,
+
+					handler: function(checkbox, checked) {
+						this.cmfg('onTabHistoryProcessesIncludeSystemActivitiesCheck');
+					}
+				})
+			);
+
 			this.view.add(this.grid);
 
 			_CMWFState.addDelegate(this);
+
+			// Apply activitiesStore filter
+			this.grid.getStore().on('load', function(store, records, successful, eOpts) {
+				this.cmfg('onTabHistoryProcessesIncludeSystemActivitiesCheck');
+			}, this);
 		},
 
 		/**
@@ -216,6 +237,22 @@
 			this.view.setDisabled(processInstance.isNew());
 
 			this.cmfg('onTabHistoryPanelShow');
+		},
+
+		/**
+		 * Include or not System activities rows in history grid.
+		 */
+		onTabHistoryProcessesIncludeSystemActivitiesCheck: function() {
+			if (this.grid.includeSystemActivitiesCheckbox.getValue()) { // Checked: Remove any filter from store
+				if (this.grid.getStore().isFiltered()) {
+					this.grid.getStore().clearFilter();
+					this.grid.getStore().sort(); // Resort store because clearFilter() breaks it.
+				}
+			} else { // Unchecked: Apply filter to hide 'System' activities rows
+				this.grid.getStore().filterBy(function(record, id) {
+					return record.get(CMDBuild.core.proxy.CMProxyConstants.USER).indexOf('system') < 0; // System user name
+				}, this);
+			}
 		},
 
 		// Status translation management

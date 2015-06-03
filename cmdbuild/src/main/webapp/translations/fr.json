@@ -1389,6 +1389,7 @@
 	"imapServer": "Serveur IMAP",
 	"importFromCSV": "Import au format CSV",
 	"includeRelations": "<em>Include relations</em>",
+	"includeSystemActivities": "<em>Include system activities</em>",
 	"incoming": "Entrée",
 	"incomingFolder": "Répertoire d'entrée",
 	"initialLatitude": "Latitude Initiale",

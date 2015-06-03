@@ -1389,6 +1389,7 @@
 	"imapServer": "IMAP server",
 	"importFromCSV": "<em>Import from CSV</em>",
 	"includeRelations": "<em>Include relations</em>",
+	"includeSystemActivities": "<em>Include system activities</em>",
 	"incoming": "ورودی",
 	"incomingFolder": "فولدر ورودی",
 	"initialLatitude": "Initial latitude",
