@@ -123,7 +123,7 @@
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/widget/CMWidgetDefinitionPanel.js"></script>
 
 	<!-- DATAVIEW -->
-	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/accordion/CMDataViewAccordion.js"></script>
+<!-- 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/accordion/CMDataViewAccordion.js"></script> -->
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/dataView/CMSqlDataView.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/dataView/CMFilterDataView.js"></script>
 

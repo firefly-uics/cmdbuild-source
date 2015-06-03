@@ -11,6 +11,7 @@
 				name: this.name,
 				allowBlank: this.allowBlank,
 				vtype: this.vtype,
+				disableCascade: true, // Used from PanelFunctions
 				flex: 1 // Full TextField width
 			});
 		}
