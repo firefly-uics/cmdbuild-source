@@ -57,6 +57,11 @@
 					reader: {
 						type: 'json',
 						root: 'response.elements'
+					},
+					extraParams: { // Avoid to send limit, page and start parameters in server calls
+						limitParam: undefined,
+						pageParam: undefined,
+						startParam: undefined
 					}
 				},
 				sorters: [

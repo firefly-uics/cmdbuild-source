@@ -3,7 +3,6 @@
 	Ext.define('CMDBuild.view.administration.accordion.Email', {
 		extend: 'CMDBuild.view.common.CMBaseAccordion',
 
-		cmName: 'email',
 		title: CMDBuild.Translation.email,
 
 		constructor: function(){

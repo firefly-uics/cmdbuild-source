@@ -318,6 +318,22 @@
 			return this.filter;
 		},
 
+		/**
+		 * Alias getFilter()
+		 *
+		 * @return {Object}
+		 */
+		getValue: function() {
+			return this.getFilter();
+		},
+
+		/**
+		 * @return {Boolean}
+		 */
+		isValid: function() {
+			return !Ext.isEmpty(this.getFilter().getConfiguration());
+		},
+
 		disable: function() {
 			this.items.each(function(item) {
 				item.disable();

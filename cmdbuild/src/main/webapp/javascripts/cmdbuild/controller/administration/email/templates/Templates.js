@@ -71,7 +71,6 @@
 			// Shorthands
 			this.grid = this.view.grid;
 			this.form = this.view.form;
-
 		},
 
 		onEmailTemplatesAbortButtonClick: function() {
@@ -187,7 +186,7 @@
 								this.grid.getSelectionModel().select(0, true);
 
 								if (!this.grid.getSelectionModel().hasSelection())
-									this.form.setDisabledModify(true);
+									this.form.setDisabledModify(true, true, true, true);
 							}
 						});
 					}

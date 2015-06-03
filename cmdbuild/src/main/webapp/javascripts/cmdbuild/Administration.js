@@ -121,17 +121,23 @@
 								];
 
 								if (!_CMUIConfiguration.isCloudAdmin()) {
-									dataViewAccordion = new CMDBuild.view.administration.accordion.CMDataViewAccordion();
+									dataViewAccordion = Ext.create('CMDBuild.view.administration.accordion.DataViews', {
+										cmName: 'dataview',
+									});
 
 									panels = panels.concat([
 										new CMDBuild.view.administration.dataview.CMSqlDataView({
 											cmControllerType: controllerNS.administration.dataview.CMSqlDataViewController,
 											cmName: 'sqldataview'
 										}),
-										new CMDBuild.view.administration.dataview.CMFilterDataView({
-											cmControllerType: controllerNS.administration.dataview.CMFilerDataViewController,
+//										new CMDBuild.view.administration.dataview.CMFilterDataView({
+//											cmControllerType: controllerNS.administration.dataview.CMFilerDataViewController,
+//											cmName: 'filterdataview'
+//										})
+										Ext.create('CMDBuild.view.administration.dataView.DataViewsView', {
+											cmControllerType: 'CMDBuild.controller.administration.dataView.DataViews',
 											cmName: 'filterdataview'
-										})
+										}),
 									]);
 								}
 
@@ -164,12 +170,18 @@
 							reportAccordion,
 							menuAccordion,
 							groupsAccordion,
-							Ext.create('CMDBuild.view.administration.accordion.Tasks'),
-							Ext.create('CMDBuild.view.administration.accordion.Email'),
+							Ext.create('CMDBuild.view.administration.accordion.Tasks', {
+								cmName: 'tasks',
+							}),
+							Ext.create('CMDBuild.view.administration.accordion.Email', {
+								cmName: 'email',
+							}),
 							gisAccordion,
 							bimAccordion,
 //							Ext.create('CMDBuild.view.administration.accordion.Localizations'), // TODO: will be implemented in future releases
-							Ext.create('CMDBuild.view.administration.accordion.Configuration')
+							Ext.create('CMDBuild.view.administration.accordion.Configuration', {
+								cmName: 'setup',
+							})
 						]);
 
 						// Resume here the layouts operations
