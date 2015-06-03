@@ -338,12 +338,16 @@
 			this.items.each(function(item) {
 				item.disable();
 			});
+
+			this.callParent(arguments);
 		},
 
 		enable: function() {
 			this.items.each(function(item) {
 				item.enable();
 			});
+
+			this.callParent(arguments);
 		},
 
 		// as filterChooserWindowDelegate

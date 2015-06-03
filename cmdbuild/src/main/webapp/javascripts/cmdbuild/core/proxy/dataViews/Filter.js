@@ -40,7 +40,7 @@
 				model: 'CMDBuild.model.DataView.filter',
 				proxy: {
 					type: 'ajax',
-					url: CMDBuild.core.proxy.CMProxyUrlIndex.dataView.filter.read, // TODO è possibile fare il rename???
+					url: CMDBuild.core.proxy.CMProxyUrlIndex.dataView.filter.read, // TODO: check if rename when delete all old implementation
 					reader: {
 						type: 'json',
 						root: 'views'
