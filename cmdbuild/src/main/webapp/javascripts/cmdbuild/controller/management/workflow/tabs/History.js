@@ -34,6 +34,20 @@
 		],
 
 		/**
+		 * @cfg {Array}
+		 */
+		cmfgCatchedFunctions: [
+			'getTabHistoryGridColumns',
+			'getTabHistoryGridStore',
+			'onProcessesTabHistoryIncludeSystemActivitiesCheck',
+			'onTabHistoryIncludeRelationCheck',
+			'onTabHistoryPanelShow',
+			'onTabHistoryRowExpand',
+			'tabHistorySelectedEntityGet',
+			'tabHistorySelectedEntitySet'
+		],
+
+		/**
 		 * @property {CMDBuild.cache.CMEntryTypeModel}
 		 */
 		entryType: undefined,
@@ -70,8 +84,6 @@
 		constructor: function(configurationObject) {
 			this.mixins.observable.constructor.call(this, arguments);
 
-			this.cmfgCatchedFunctions.push('onTabHistoryProcessesIncludeSystemActivitiesCheck'); // Add custom managed function
-
 			this.callParent(arguments);
 
 			this.statusBuildTranslationObject( ); // Build status translation object from lookup
@@ -80,28 +92,9 @@
 				delegate: this
 			});
 
-			// Add store system user filter check
-			this.grid.getDockedComponent(CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_TOP).add(
-				this.grid.includeSystemActivitiesCheckbox = Ext.create('Ext.form.field.Checkbox', {
-					boxLabel: CMDBuild.Translation.includeSystemActivities,
-					boxLabelCls: 'cmtoolbaritem',
-					checked: false, // Default as false
-					scope: this,
-
-					handler: function(checkbox, checked) {
-						this.cmfg('onTabHistoryProcessesIncludeSystemActivitiesCheck');
-					}
-				})
-			);
-
 			this.view.add(this.grid);
 
 			_CMWFState.addDelegate(this);
-
-			// Apply activitiesStore filter
-			this.grid.getStore().on('load', function(store, records, successful, eOpts) {
-				this.cmfg('onTabHistoryProcessesIncludeSystemActivitiesCheck');
-			}, this);
 		},
 
 		/**
@@ -227,22 +220,9 @@
 		},
 
 		/**
-		 * Equals to onCardSelected in classes
-		 *
-		 * @param {CMDBuild.model.CMProcessInstance} processInstance
-		 */
-		onProcessInstanceChange: function(processInstance) {
-			this.selectedEntity = processInstance;
-
-			this.view.setDisabled(processInstance.isNew());
-
-			this.cmfg('onTabHistoryPanelShow');
-		},
-
-		/**
 		 * Include or not System activities rows in history grid.
 		 */
-		onTabHistoryProcessesIncludeSystemActivitiesCheck: function() {
+		onProcessesTabHistoryIncludeSystemActivitiesCheck: function() {
 			if (this.grid.includeSystemActivitiesCheckbox.getValue()) { // Checked: Remove any filter from store
 				if (this.grid.getStore().isFiltered()) {
 					this.grid.getStore().clearFilter();
@@ -253,6 +233,19 @@
 					return record.get(CMDBuild.core.proxy.CMProxyConstants.USER).indexOf('system') < 0; // System user name
 				}, this);
 			}
+		},
+
+		/**
+		 * Equals to onCardSelected in classes
+		 *
+		 * @param {CMDBuild.model.CMProcessInstance} processInstance
+		 */
+		onProcessInstanceChange: function(processInstance) {
+			this.selectedEntity = processInstance;
+
+			this.view.setDisabled(processInstance.isNew());
+
+			this.cmfg('onTabHistoryPanelShow');
 		},
 
 		// Status translation management
