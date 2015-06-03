@@ -51,7 +51,7 @@
 
 						items: [
 							Ext.create('CMDBuild.core.buttons.Modify', {
-								text: CMDBuild.Translation.modifyView, // TODO mettere in minuscolo
+								text: CMDBuild.Translation.modifyView,
 								scope: this,
 
 								handler: function(button, e) {
@@ -59,7 +59,7 @@
 								}
 							}),
 							Ext.create('CMDBuild.core.buttons.Delete', {
-								text: CMDBuild.Translation.removeView, // TODO mettere in minuscolo
+								text: CMDBuild.Translation.removeView,
 								scope: this,
 
 								handler: function(button, e) {
@@ -103,6 +103,7 @@
 						itemId: CMDBuild.core.proxy.CMProxyConstants.NAME,
 						fieldLabel: CMDBuild.Translation.name,
 						labelWidth: CMDBuild.LABEL_WIDTH,
+						maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
 						allowBlank: false,
 						cmImmutable: true
 					}),
@@ -110,7 +111,7 @@
 						name: _CMProxy.parameter.DESCRIPTION,
 						fieldLabel: CMDBuild.Translation.descriptionLabel,
 						labelWidth: CMDBuild.LABEL_WIDTH,
-						width: CMDBuild.ADM_BIG_FIELD_WIDTH,
+						maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
 						allowBlank: false,
 						vtype: "cmdbcomment",
 						translationsKeyType: 'View',
@@ -120,7 +121,7 @@
 						name: CMDBuild.core.proxy.CMProxyConstants.SOURCE_CLASS_NAME,
 						fieldLabel: CMDBuild.Translation.targetClass,
 						labelWidth: CMDBuild.LABEL_WIDTH,
-						width: CMDBuild.ADM_BIG_FIELD_WIDTH,
+						maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
 						valueField: CMDBuild.core.proxy.CMProxyConstants.NAME,
 						displayField: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
 						forceSelection: true,

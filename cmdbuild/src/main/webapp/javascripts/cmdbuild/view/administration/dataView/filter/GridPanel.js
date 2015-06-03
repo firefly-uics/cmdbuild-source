@@ -31,7 +31,7 @@
 					},
 					{
 						dataIndex: _CMProxy.parameter.SOURCE_CLASS_NAME,
-						text: CMDBuild.Translation.targetClass, // TODO mettere in minuscolo nell'inglese
+						text: CMDBuild.Translation.targetClass,
 						flex: 1
 					}
 				],

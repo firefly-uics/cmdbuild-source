@@ -114,7 +114,7 @@
 		},
 
 		/**
-		 * TODO: needs server implementation to get a single view data
+		 * TODO: server implementation to get a single view data
 		 */
 		onDataViewFilterRowSelected: function() {
 			this.selectedView = this.grid.getSelectionModel().getSelection()[0];
