@@ -1,6 +1,6 @@
 (function() {
 
-	Ext.define('CMDBuild.view.administration.dataView.filter.FormPanel', {
+	Ext.define('CMDBuild.view.administration.dataViews.filter.FormPanel', {
 		extend: 'Ext.form.Panel',
 
 		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
@@ -10,7 +10,7 @@
 		},
 
 		/**
-		 * @cfg {CMDBuild.controller.administration.dataView.Filter}
+		 * @cfg {CMDBuild.controller.administration.dataViews.Filter}
 		 */
 		delegate: undefined,
 
@@ -113,7 +113,7 @@
 						labelWidth: CMDBuild.LABEL_WIDTH,
 						maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
 						allowBlank: false,
-						vtype: "cmdbcomment",
+						vtype: 'cmdbcomment',
 						translationsKeyType: 'View',
 						translationsKeyField: 'Description'
 					}),
@@ -157,7 +157,7 @@
 
 			this.callParent(arguments);
 
-			this.setDisabledModify(true);
+			this.setDisabledModify(true, true, true);
 		}
 	});
 

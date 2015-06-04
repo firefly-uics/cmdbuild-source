@@ -1,6 +1,6 @@
 (function() {
 
-	Ext.define('CMDBuild.view.administration.dataView.filter.GridPanel', {
+	Ext.define('CMDBuild.view.administration.dataViews.filter.GridPanel', {
 		extend: 'Ext.grid.Panel',
 
 		requires: [
@@ -9,7 +9,7 @@
 		],
 
 		/**
-		 * @cfg {CMDBuild.controller.administration.dataView.Filter}
+		 * @cfg {CMDBuild.controller.administration.dataViews.Filter}
 		 */
 		delegate: undefined,
 
