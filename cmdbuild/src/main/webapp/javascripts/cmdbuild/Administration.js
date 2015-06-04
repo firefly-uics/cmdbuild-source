@@ -102,9 +102,9 @@
 										cmControllerType: 'CMDBuild.controller.administration.localizations.Main',
 										cmName: 'localizations'
 									}),
-									new CMDBuild.view.administration.filter.CMGroupFilterPanel({
-										cmControllerType: controllerNS.administration.filter.CMGroupFilterPanelController,
-										cmName: 'groupfilter'
+									Ext.create('CMDBuild.view.administration.filters.FiltersView', {
+										cmControllerType: 'CMDBuild.controller.administration.filters.Filters',
+										cmName: 'filters'
 									}),
 									new CMDBuild.view.administration.bim.CMBIMPanel({
 										cmControllerType: CMDBuild.controller.administration.filter.CMBIMPanelController,
@@ -158,7 +158,7 @@
 							processAccordion,
 							domainAccordion,
 							dataViewAccordion,
-							Ext.create('CMDBuild.view.administration.accordion.CMFilterAccordion', { cmName: 'filters' }),
+							Ext.create('CMDBuild.view.administration.accordion.Filters', { cmName: 'filters' }),
 							navigationTreesAccordion,
 							lookupAccordion,
 							dashboardsAccordion,
