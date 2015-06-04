@@ -16,17 +16,14 @@
 		frame: false,
 
 		initComponent: function() {
-			// Apply first store to use it in paging bar
-			Ext.apply(this, {
-				store: CMDBuild.core.proxy.Report.getStore()
-			});
+			var store = CMDBuild.core.proxy.Report.getStore();
 
 			Ext.apply(this, {
 				dockedItems: [
 					Ext.create('Ext.toolbar.Paging', {
 						dock: 'bottom',
 						itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_BOTTOM,
-						store: this.getStore(),
+						store: store,
 						displayInfo: true,
 						displayMsg: '{0} - {1} ' + CMDBuild.Translation.common.display_topic_of + ' {2}',
 						emptyMsg: CMDBuild.Translation.common.display_topic_none
@@ -105,7 +102,8 @@
 							})
 						]
 					})
-				]
+				],
+				store: store
 			});
 
 			this.callParent(arguments);
