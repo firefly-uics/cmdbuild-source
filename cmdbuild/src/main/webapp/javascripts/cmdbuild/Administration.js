@@ -158,25 +158,19 @@
 							processAccordion,
 							domainAccordion,
 							dataViewAccordion,
-							Ext.create('CMDBuild.view.administration.accordion.CMFilterAccordion'),
+							Ext.create('CMDBuild.view.administration.accordion.CMFilterAccordion', { cmName: 'filters' }),
 							navigationTreesAccordion,
 							lookupAccordion,
 							dashboardsAccordion,
 							reportAccordion,
 							menuAccordion,
 							groupsAccordion,
-							Ext.create('CMDBuild.view.administration.accordion.Tasks', {
-								cmName: 'tasks',
-							}),
-							Ext.create('CMDBuild.view.administration.accordion.Email', {
-								cmName: 'email',
-							}),
+							Ext.create('CMDBuild.view.administration.accordion.Tasks', { cmName: 'tasks' }),
+							Ext.create('CMDBuild.view.administration.accordion.Email', { cmName: 'email' }),
 							gisAccordion,
 							bimAccordion,
 //							Ext.create('CMDBuild.view.administration.accordion.Localizations'), // TODO: will be implemented in future releases
-							Ext.create('CMDBuild.view.administration.accordion.Configuration', {
-								cmName: 'setup',
-							})
+							Ext.create('CMDBuild.view.administration.accordion.Configuration', { cmName: 'setup' })
 						]);
 
 						// Resume here the layouts operations
@@ -191,7 +185,7 @@
 					}
 				);
 
-				/*
+				/**
 				 * BIM Configuration
 				 * */
 				CMDBuild.ServiceProxy.configuration.readBimConfiguration({
@@ -203,7 +197,7 @@
 					}
 				});
 
-				/*
+				/**
 				 * Classes and process
 				 */
 				CMDBuild.ServiceProxy.classes.read({
@@ -248,7 +242,7 @@
 					callback: reqBarrier.getCallback()
 				});
 
-				/*
+				/**
 				 * Workflow configuration
 				 */
 				CMDBuild.ServiceProxy.configuration.readWFConfiguration({
@@ -259,7 +253,7 @@
 					callback: reqBarrier.getCallback()
 				});
 
-				/*
+				/**
 				 * GIS configuration
 				 */
 				CMDBuild.ServiceProxy.configuration.readGisConfiguration({
@@ -295,7 +289,7 @@
 					callback: reqBarrier.getCallback()
 				});
 
-				/*
+				/**
 				 * Lookups
 				 */
 				CMDBuild.core.proxy.Lookup.readAll({
@@ -316,16 +310,14 @@
 					callback: reqBarrier.getCallback()
 				});
 
-				/*
+				/**
 				 * Groups
 				 */
 				CMDBuild.ServiceProxy.group.read({
 					success: function(response, options, decoded) {
 						_CMCache.addGroups(decoded.groups);
 
-						groupsAccordion = Ext.create('CMDBuild.view.administration.accordion.Groups', {
-							cmName: 'groups',
-						});
+						groupsAccordion = Ext.create('CMDBuild.view.administration.accordion.Groups', { cmName: 'groups' });
 						groupsAccordion.updateStore();
 
 						menuAccordion = new CMDBuild.view.administration.accordion.CMMenuAccordion({
@@ -349,14 +341,14 @@
 					callback: reqBarrier.getCallback()
 				});
 
-				/*
+				/**
 				 * Report
 				 */
 				CMDBuild.core.proxy.Report.getMenuTree({
 					success: function(response, options, reports) {
 						_CMCache.addReports(reports);
 
-						reportAccordion = Ext.create('CMDBuild.view.administration.accordion.Report');
+						reportAccordion = Ext.create('CMDBuild.view.administration.accordion.Report', { cmName: 'report' });
 						reportAccordion.updateStore();
 
 						_CMMainViewportController.addPanel(
@@ -368,7 +360,9 @@
 					callback: reqBarrier.getCallback()
 				});
 
-				// Domains
+				/**
+				 * Domains
+				 */
 				CMDBuild.core.proxy.Domain.getAll({
 					scope: this,
 					success: function(response, options, decodedResponse) {
@@ -392,7 +386,7 @@
 					callback: reqBarrier.getCallback()
 				});
 
-				/*
+				/**
 				 * Navigation trees
 				 */
 				_CMCache.listNavigationTrees({
@@ -414,7 +408,7 @@
 					callback: reqBarrier.getCallback()
 				});
 
-				/*
+				/**
 				 * Dashboards
 				 */
 				CMDBuild.ServiceProxy.Dashboard.fullList({

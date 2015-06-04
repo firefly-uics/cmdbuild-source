@@ -31,7 +31,7 @@
 			this.accordion.expandSilently();
 
 			_CMMainViewportController.bringTofrontPanelByCmName(this.accordion.cmName);
-			_CMMainViewportController.panelControllers['domain'].onAddDomainButtonClick();
+			_CMMainViewportController.panelControllers['domain'].cmfg('onDomainAddButtonClick');
 		},
 
 		/**
