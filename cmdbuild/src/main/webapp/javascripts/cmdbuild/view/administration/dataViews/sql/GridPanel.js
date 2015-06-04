@@ -30,7 +30,7 @@
 						flex: 1
 					},
 					{
-						dataIndex: _CMProxy.parameter.SOURCE_FUNCTION,
+						dataIndex: CMDBuild.core.proxy.CMProxyConstants.SOURCE_FUNCTION,
 						text: CMDBuild.Translation.dataSource,
 						flex: 1
 					}
