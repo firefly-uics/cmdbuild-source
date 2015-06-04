@@ -55,7 +55,7 @@
 								scope: this,
 
 								handler: function(button, e) {
-									this.delegate.cmfg('onDataViewFilterModifyButtonClick');
+									this.delegate.cmfg('onDataViewsFilterModifyButtonClick');
 								}
 							}),
 							Ext.create('CMDBuild.core.buttons.Delete', {
@@ -63,7 +63,7 @@
 								scope: this,
 
 								handler: function(button, e) {
-									this.delegate.cmfg('onDataViewFilterRemoveButtonClick');
+									this.delegate.cmfg('onDataViewsFilterRemoveButtonClick');
 								}
 							})
 						]
@@ -84,14 +84,14 @@
 								scope: this,
 
 								handler: function(button, e) {
-									this.delegate.cmfg('onDataViewFilterSaveButtonClick');
+									this.delegate.cmfg('onDataViewsFilterSaveButtonClick');
 								}
 							}),
 							Ext.create('CMDBuild.core.buttons.Abort', {
 								scope: this,
 
 								handler: function(button, e) {
-									this.delegate.cmfg('onDataViewFilterAbortButtonClick');
+									this.delegate.cmfg('onDataViewsFilterAbortButtonClick');
 								}
 							})
 						]
@@ -134,7 +134,7 @@
 						listeners: {
 							scope: this,
 							select: function(combo, records, eOpts) {
-								this.delegate.cmfg('onDataViewFilterClassesComboSelect', combo.getValue());
+								this.delegate.cmfg('onDataViewsFilterClassesComboSelect', combo.getValue());
 							}
 						}
 					}),
