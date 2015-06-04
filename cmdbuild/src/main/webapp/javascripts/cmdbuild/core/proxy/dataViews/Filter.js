@@ -19,7 +19,7 @@
 				url: CMDBuild.core.proxy.CMProxyUrlIndex.dataViews.filter.create,
 				params: parameters.params,
 				scope: parameters.scope || this,
-				loadMask: parameters.loadMask || true,
+				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
 				failure: parameters.failure || Ext.emptyFn(),
 				success: parameters.success || Ext.emptyFn(),
 				callback: parameters.callback || Ext.emptyFn()
@@ -66,7 +66,7 @@
 				url: CMDBuild.core.proxy.CMProxyUrlIndex.dataViews.filter.remove,
 				params: parameters.params,
 				scope: parameters.scope || this,
-				loadMask: parameters.loadMask || true,
+				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
 				failure: parameters.failure || Ext.emptyFn(),
 				success: parameters.success || Ext.emptyFn(),
 				callback: parameters.callback || Ext.emptyFn()
@@ -82,7 +82,7 @@
 				url: CMDBuild.core.proxy.CMProxyUrlIndex.dataViews.filter.update,
 				params: parameters.params,
 				scope: parameters.scope || this,
-				loadMask: parameters.loadMask || true,
+				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
 				failure: parameters.failure || Ext.emptyFn(),
 				success: parameters.success || Ext.emptyFn(),
 				callback: parameters.callback || Ext.emptyFn()

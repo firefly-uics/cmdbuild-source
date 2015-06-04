@@ -95,9 +95,9 @@
 			CMDBuild.Ajax.request({
 				method: 'POST',
 				url: CMDBuild.core.proxy.CMProxyUrlIndex.card.unlockAll,
-				loadMask: true,
 				params: parameters.params,
 				scope: parameters.scope,
+				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
 				failure: parameters.failure || Ext.emptyFn(),
 				success: parameters.success || Ext.emptyFn(),
 				callback: parameters.callback || Ext.emptyFn()
@@ -126,7 +126,7 @@
 				headers: parameters.headers,
 				params: parameters.params,
 				scope: parameters.scope || this,
-				loadMask: parameters.loadMask || true,
+				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
 				failure: parameters.failure || Ext.emptyFn(),
 				success: parameters.success || Ext.emptyFn(),
 				callback: parameters.callback || Ext.emptyFn()

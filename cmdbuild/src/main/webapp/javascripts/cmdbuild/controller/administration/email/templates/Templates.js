@@ -112,11 +112,11 @@
 
 		onEmailTemplatesRowSelected: function() {
 			if (this.grid.getSelectionModel().hasSelection()) {
+				var params = {};
+				params[CMDBuild.core.proxy.CMProxyConstants.NAME] = this.grid.getSelectionModel().getSelection()[0].get(CMDBuild.core.proxy.CMProxyConstants.NAME);
+
 				CMDBuild.core.proxy.email.Templates.get({
-					params: {
-						name: this.grid.getSelectionModel().getSelection()[0].get(CMDBuild.core.proxy.CMProxyConstants.NAME)
-					},
-					loadMask: true,
+					params: params,
 					scope: this,
 					failure: function(response, options, decodedResponse) {
 						CMDBuild.Msg.error(
@@ -148,14 +148,12 @@
 				if (Ext.isEmpty(formData.id)) {
 					CMDBuild.core.proxy.email.Templates.create({
 						params: formData,
-						loadMask: true,
 						scope: this,
 						success: this.success
 					});
 				} else {
 					CMDBuild.core.proxy.email.Templates.update({
 						params: formData,
-						loadMask: true,
 						scope: this,
 						success: this.success
 					});
@@ -171,11 +169,11 @@
 
 		removeItem: function() {
 			if (!Ext.isEmpty(this.selectedTemplate)) {
+				var params = {};
+				params[CMDBuild.core.proxy.CMProxyConstants.NAME] = this.selectedTemplate.get(CMDBuild.core.proxy.CMProxyConstants.NAME);
+
 				CMDBuild.core.proxy.email.Templates.remove({
-					params: {
-						name: this.selectedTemplate.get(CMDBuild.core.proxy.CMProxyConstants.NAME)
-					},
-					loadMask: true,
+					params: params,
 					scope: this,
 					success: function(response, options, decodedResponse) {
 						this.form.reset();
