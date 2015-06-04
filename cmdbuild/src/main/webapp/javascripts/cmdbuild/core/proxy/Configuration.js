@@ -90,7 +90,7 @@
 			parameters.method = 'GET';
 			parameters.url = CMDBuild.core.proxy.CMProxyUrlIndex.configuration.getConfiguration;
 			parameters.params = { name: name };
-			parameters.loadMask = parameters.loadMask || false;
+			parameters.loadMask = Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : false;
 
 			CMDBuild.core.proxy.CMProxy.doRequest(parameters);
 		},
@@ -124,7 +124,7 @@
 			parameters.method = 'POST';
 			parameters.url = CMDBuild.core.proxy.CMProxyUrlIndex.configuration.saveConfiguration;
 			parameters.params.name = name;
-			parameters.loadMask = parameters.loadMask || false;
+			parameters.loadMask = Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : false;
 
 			CMDBuild.ServiceProxy.core.doRequest(parameters);
 		}

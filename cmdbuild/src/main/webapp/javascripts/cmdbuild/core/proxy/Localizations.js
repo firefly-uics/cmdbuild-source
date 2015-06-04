@@ -48,7 +48,7 @@
 				url: url,
 				params: parameters.params,
 				scope: parameters.scope || this,
-				loadMask: parameters.loadMask || false,
+				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : false,
 				failure: parameters.failure || Ext.emptyFn(),
 				success: parameters.success || Ext.emptyFn(),
 				callback: parameters.callback || Ext.emptyFn()
@@ -88,7 +88,7 @@
 			CMDBuild.Ajax.request({
 				url: CMDBuild.core.proxy.CMProxyUrlIndex.utils.listAvailableTranslations,
 				scope: parameters.scope || this,
-				loadMask: parameters.loadMask || false,
+				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : false,
 				success: parameters.success || Ext.emptyFn,
 				failure: parameters.failure || Ext.emptyFn,
 				callback: parameters.callback || Ext.emptyFn
@@ -157,7 +157,7 @@ _debug('Error', parameters);
 				url: url,
 				params: parameters.params,
 				scope: parameters.scope || this,
-				loadMask: parameters.loadMask || false,
+				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : false,
 				failure: parameters.failure || Ext.emptyFn(),
 				success: parameters.success || Ext.emptyFn(),
 				callback: parameters.callback || Ext.emptyFn()
@@ -198,7 +198,7 @@ _debug('Error', parameters);
 				url: url,
 				params: parameters.params,
 				scope: parameters.scope || this,
-				loadMask: parameters.loadMask || false,
+				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : false,
 				failure: parameters.failure || Ext.emptyFn(),
 				success: parameters.success || Ext.emptyFn(),
 				callback: parameters.callback || Ext.emptyFn()

@@ -19,7 +19,7 @@
 				url: CMDBuild.core.proxy.CMProxyUrlIndex.email.post,
 				params: parameters.params,
 				scope: parameters.scope || this,
-				loadMask: parameters.loadMask || false,
+				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : false,
 				failure: parameters.failure || Ext.emptyFn(),
 				success: parameters.success || Ext.emptyFn(),
 				callback: parameters.callback || Ext.emptyFn()
@@ -63,7 +63,7 @@
 				url: CMDBuild.core.proxy.CMProxyUrlIndex.email.enabled,
 				params: parameters.params,
 				scope: parameters.scope || this,
-				loadMask: parameters.loadMask || false,
+				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : false,
 				failure: parameters.failure || Ext.emptyFn(),
 				success: parameters.success || Ext.emptyFn(),
 				callback: parameters.callback || Ext.emptyFn()
@@ -79,7 +79,7 @@
 				url: CMDBuild.core.proxy.CMProxyUrlIndex.email.remove,
 				params: parameters.params,
 				scope: parameters.scope || this,
-				loadMask: parameters.loadMask || false,
+				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : false,
 				failure: parameters.failure || Ext.emptyFn(),
 				success: parameters.success || Ext.emptyFn(),
 				callback: parameters.callback || Ext.emptyFn()
@@ -95,7 +95,7 @@
 				url: CMDBuild.core.proxy.CMProxyUrlIndex.email.put,
 				params: parameters.params,
 				scope: parameters.scope || this,
-				loadMask: parameters.loadMask || false,
+				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : false,
 				failure: parameters.failure || Ext.emptyFn(),
 				success: parameters.success || Ext.emptyFn(),
 				callback: parameters.callback || Ext.emptyFn()

@@ -19,7 +19,7 @@
 				url: CMDBuild.core.proxy.CMProxyUrlIndex.email.templates.post,
 				params: parameters.params,
 				scope: parameters.scope || this,
-				loadMask: parameters.loadMask || false,
+				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
 				failure: parameters.failure || Ext.emptyFn(),
 				success: parameters.success || Ext.emptyFn(),
 				callback: parameters.callback || Ext.emptyFn()
@@ -35,7 +35,7 @@
 				url: CMDBuild.core.proxy.CMProxyUrlIndex.email.templates.get,
 				params: parameters.params,
 				scope: parameters.scope || this,
-				loadMask: parameters.loadMask || false,
+				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
 				failure: parameters.failure || Ext.emptyFn(),
 				success: parameters.success || Ext.emptyFn(),
 				callback: parameters.callback || Ext.emptyFn()
@@ -51,7 +51,7 @@
 				url: CMDBuild.core.proxy.CMProxyUrlIndex.email.templates.getStore,
 				params: parameters.params,
 				scope: parameters.scope || this,
-				loadMask: parameters.loadMask || false,
+				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
 				failure: parameters.failure || Ext.emptyFn(),
 				success: parameters.success || Ext.emptyFn(),
 				callback: parameters.callback || Ext.emptyFn()
@@ -78,10 +78,9 @@
 						startParam: undefined
 					}
 				},
-				sorters: [{
-					property: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
-					direction: 'ASC'
-				}]
+				sorters: [
+					{ property: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION, direction: 'ASC' }
+				]
 			});
 		},
 
@@ -94,7 +93,7 @@
 				url: CMDBuild.core.proxy.CMProxyUrlIndex.email.templates.remove,
 				params: parameters.params,
 				scope: parameters.scope || this,
-				loadMask: parameters.loadMask || false,
+				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
 				failure: parameters.failure || Ext.emptyFn(),
 				success: parameters.success || Ext.emptyFn(),
 				callback: parameters.callback || Ext.emptyFn()
@@ -110,7 +109,7 @@
 				url: CMDBuild.core.proxy.CMProxyUrlIndex.email.templates.put,
 				params: parameters.params,
 				scope: parameters.scope || this,
-				loadMask: parameters.loadMask || false,
+				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
 				failure: parameters.failure || Ext.emptyFn(),
 				success: parameters.success || Ext.emptyFn(),
 				callback: parameters.callback || Ext.emptyFn()

@@ -16,9 +16,9 @@
 			CMDBuild.Ajax.request({
 				method: 'POST',
 				url: CMDBuild.core.proxy.CMProxyUrlIndex.users.disable,
-				loadMask: true,
 				params: parameters.params,
 				scope: parameters.scope,
+				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
 				failure: parameters.failure || Ext.emptyFn(),
 				success: parameters.success || Ext.emptyFn(),
 				callback: parameters.callback || Ext.emptyFn()
@@ -76,9 +76,9 @@
 			CMDBuild.Ajax.request({
 				method: 'POST',
 				url: CMDBuild.core.proxy.CMProxyUrlIndex.users.save,
-				loadMask: true,
 				params: parameters.params,
 				scope: parameters.scope,
+				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
 				failure: parameters.failure || Ext.emptyFn(),
 				success: parameters.success || Ext.emptyFn(),
 				callback: parameters.callback || Ext.emptyFn()
