@@ -49,7 +49,7 @@
 								scope: this,
 
 								handler: function(button, e) {
-									this.delegate.cmfg('onDataViewSqlAddButtonClick');
+									this.delegate.cmfg('onDataViewsSqlAddButtonClick');
 								}
 							})
 						]
