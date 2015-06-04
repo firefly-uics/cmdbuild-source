@@ -16,13 +16,6 @@
 		<script type="text/javascript" src="javascripts/cmdbuild/delegate/administration/common/basepanel/CMBaseGridConfigurator.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/delegate/administration/common/basepanel/CMGridAndFormPanelDelegate.js"></script>
 
-	<!-- DATAVIEW -->
-	<script type="text/javascript" src="javascripts/cmdbuild/delegate/administration/dataView/CMFilterDataViewFormDelegate.js"></script>
-
-	<!-- FILTER -->
-	<script type="text/javascript" src="javascripts/cmdbuild/delegate/administration/filter/CMFiltersForGroupGridConfigurator.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/delegate/administration/filter/CMFiltersForGroupsFormFieldsManager.js"></script>
-
 <!-- VIEWS-->
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/administrationOverrides.js"></script>
 
@@ -118,10 +111,6 @@
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/widget/form/CMWidgetDefinitionMainForm.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/widget/CMWidgetDefinitionPanel.js"></script>
 
-	<!-- FILTRS -->
-	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/accordion/CMFilterAccordion.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/filter/CMGroupFilterPanel.js"></script>
-
 <!-- CONTROLLERS -->
 	<!-- GIS -->
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/gis/CMModGISNavigationConfigurationController.js"></script>
@@ -190,9 +179,6 @@
  	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/widget/CMWorkflowController.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/widget/CMPingController.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/widget/CMCreateModifyCardController.js"></script>
-
-	<!-- FILTER -->
-	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/filter/CMGroupFilterPanelController.js"></script>
 
 <script type="text/javascript" src="javascripts/cmdbuild/Administration.js"></script>
 

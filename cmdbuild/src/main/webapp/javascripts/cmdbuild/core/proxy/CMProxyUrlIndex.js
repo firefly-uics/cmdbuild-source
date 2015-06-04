@@ -132,15 +132,15 @@
 
 		fkTargetClass: 'services/json/schema/modclass/getfktargetingclass',
 
-		filter: {
-			read: 'services/json/filter/read',
+		filters: {
 			create: 'services/json/filter/create',
-			update: 'services/json/filter/update',
+			read: 'services/json/filter/read',
 			remove: 'services/json/filter/delete',
+			update: 'services/json/filter/update',
 
+			groupStore: 'services/json/filter/readallgroupfilters',
 			position: 'services/json/filter/position',
-			userStore: 'services/json/filter/readforuser',
-			groupStore: 'services/json/filter/readallgroupfilters'
+			userStore: 'services/json/filter/readforuser'
 		},
 
 		functions: {
