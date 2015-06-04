@@ -143,7 +143,7 @@
 			if (this.validate(this.form)) {
 				var formData = this.form.getData(true);
 
-				if (this.form.filterChooser.getFilter())
+				if (!Ext.isEmpty(this.form.filterChooser.getFilter()))
 					formData[CMDBuild.core.proxy.CMProxyConstants.FILTER] = Ext.encode(this.form.filterChooser.getFilter().getConfiguration());
 
 				formData = Ext.create('CMDBuild.model.DataViews.filter', formData); // Filter unwanted data of filterChooser internal fields
