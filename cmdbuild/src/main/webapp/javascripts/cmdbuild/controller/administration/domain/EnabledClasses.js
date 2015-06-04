@@ -74,7 +74,7 @@
 			) {
 				var root = treeStore.getRootNode();
 				var standard = [];
-				var rootId = undefined;
+				var rootData = {};
 
 				root.removeAll();
 
@@ -91,7 +91,7 @@
 							if (
 								classObject[CMDBuild.core.proxy.CMProxyConstants.TYPE] == 'class' // Discard processes from visualization
 								&& classObject[CMDBuild.core.proxy.CMProxyConstants.NAME] != 'Class' // Discard root class of all classes
-								&& classObject['tableType'] == 'standard' // Discard simple classes
+								&& classObject[CMDBuild.core.proxy.CMProxyConstants.TABLE_TYPE] == 'standard' // Discard simple classes
 							) {
 								// Class node object
 								var classMainNodeObject = {};
@@ -111,7 +111,10 @@
 						for (var id in nodesMap) {
 							var node = nodesMap[id];
 
-							if (!Ext.isEmpty(node[CMDBuild.core.proxy.CMProxyConstants.PARENT]) && !Ext.isEmpty(nodesMap[node[CMDBuild.core.proxy.CMProxyConstants.PARENT]])) {
+							if (
+								!Ext.isEmpty(node[CMDBuild.core.proxy.CMProxyConstants.PARENT])
+								&& !Ext.isEmpty(nodesMap[node[CMDBuild.core.proxy.CMProxyConstants.PARENT]])
+							) {
 								var parentNode = nodesMap[node[CMDBuild.core.proxy.CMProxyConstants.PARENT]];
 								parentNode.children = parentNode.children || [];
 								parentNode.children.push(node);
@@ -124,16 +127,29 @@
 						// Get root node and build offspring tree
 						switch(type) {
 							case 'destination': {
-								rootId = this.cmfg('selectedDomainGet').get('idClass2');
+								rootData[CMDBuild.core.proxy.CMProxyConstants.ID] = this.cmfg('selectedDomainGet').get('idClass2');
+								rootData[CMDBuild.core.proxy.CMProxyConstants.NAME] = this.cmfg('selectedDomainGet').get('nameClass2');
 							} break;
 
 							case 'origin': {
-								rootId = this.cmfg('selectedDomainGet').get('idClass1');
+								rootData[CMDBuild.core.proxy.CMProxyConstants.ID] = this.cmfg('selectedDomainGet').get('idClass1');
+								rootData[CMDBuild.core.proxy.CMProxyConstants.NAME] = this.cmfg('selectedDomainGet').get('nameClass1');
 							} break;
 						}
 
-						if (!Ext.isEmpty(nodesMap[rootId]))
-							root.appendChild(nodesMap[rootId]);
+						if (!Ext.isEmpty(nodesMap[rootData.id])) { // Node is class
+							root.appendChild(nodesMap[rootData.id]);
+						} else { // Node is process so build custom node
+							var customNodeObject = {};
+							customNodeObject['iconCls'] = 'cmdbuild-tree-processclass-icon';
+							customNodeObject[CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION] = rootData[CMDBuild.core.proxy.CMProxyConstants.NAME];
+							customNodeObject[CMDBuild.core.proxy.CMProxyConstants.ENABLED] = true;
+							customNodeObject[CMDBuild.core.proxy.CMProxyConstants.ID] = rootData[CMDBuild.core.proxy.CMProxyConstants.ID];
+							customNodeObject[CMDBuild.core.proxy.CMProxyConstants.LEAF] = true;
+							customNodeObject[CMDBuild.core.proxy.CMProxyConstants.NAME] = rootData[CMDBuild.core.proxy.CMProxyConstants.NAME];
+
+							root.appendChild(customNodeObject);
+						}
 					},
 					callback: function(records, operation, success) {
 						this.view.originTree.expandAll();
