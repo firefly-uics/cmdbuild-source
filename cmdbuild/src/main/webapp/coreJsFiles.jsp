@@ -37,7 +37,6 @@
 <script type="text/javascript" src="javascripts/cmdbuild/core/proxy/Lookup.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxyAdministration.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxyDashboard.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxyDataView.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxyGIS.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxyGroup.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxyIcon.js"></script>

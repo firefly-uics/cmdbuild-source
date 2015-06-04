@@ -59,17 +59,7 @@
 			saveConfiguration: 'services/json/schema/setup/saveconfiguration'
 		},
 
-		domain: {
-			create: 'services/json/schema/modclass/savedomain',
-			read: 'services/json/schema/modclass/getalldomains',
-			update: 'services/json/schema/modclass/savedomain',
-			remove: 'services/json/schema/modclass/deletedomain',
-
-			getDomainList: 'services/json/schema/modclass/getdomainlist'
-		},
-
-		dataView: {
-			read: 'services/json/viewmanagement/read',
+		dataViews: {
 			filter: {
 				create: 'services/json/viewmanagement/createfilterview',
 				read: 'services/json/viewmanagement/readfilterview',
@@ -81,7 +71,17 @@
 				read: 'services/json/viewmanagement/readsqlview',
 				update: 'services/json/viewmanagement/updatesqlview',
 				remove: 'services/json/viewmanagement/deletesqlview'
-			}
+			},
+			read: 'services/json/viewmanagement/read'
+		},
+
+		domain: {
+			create: 'services/json/schema/modclass/savedomain',
+			read: 'services/json/schema/modclass/getalldomains',
+			update: 'services/json/schema/modclass/savedomain',
+			remove: 'services/json/schema/modclass/deletedomain',
+
+			getDomainList: 'services/json/schema/modclass/getdomainlist'
 		},
 
 		email: {

@@ -18,10 +18,6 @@
 
 	<!-- DATAVIEW -->
 	<script type="text/javascript" src="javascripts/cmdbuild/delegate/administration/dataView/CMFilterDataViewFormDelegate.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/delegate/administration/dataView/CMFilterDataViewFormFieldsManager.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/delegate/administration/dataView/CMFilterDataViewGridConfigurator.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/delegate/administration/dataView/CMSqlDataViewFormFieldsManager.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/delegate/administration/dataView/CMSqlDataViewGridConfigurator.js"></script>
 
 	<!-- FILTER -->
 	<script type="text/javascript" src="javascripts/cmdbuild/delegate/administration/filter/CMFiltersForGroupGridConfigurator.js"></script>
@@ -122,11 +118,6 @@
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/widget/form/CMWidgetDefinitionMainForm.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/widget/CMWidgetDefinitionPanel.js"></script>
 
-	<!-- DATAVIEW -->
-<!-- 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/accordion/CMDataViewAccordion.js"></script> -->
-	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/dataView/CMSqlDataView.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/dataView/CMFilterDataView.js"></script>
-
 	<!-- FILTRS -->
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/accordion/CMFilterAccordion.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/filter/CMGroupFilterPanel.js"></script>
@@ -199,10 +190,6 @@
  	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/widget/CMWorkflowController.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/widget/CMPingController.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/widget/CMCreateModifyCardController.js"></script>
-
-	<!-- DATAVIEW -->
-	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/dataView/CMSqlDataViewController.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/dataView/CMFilterDataViewController.js"></script>
 
 	<!-- FILTER -->
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/filter/CMGroupFilterPanelController.js"></script>
