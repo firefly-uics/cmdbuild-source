@@ -18,13 +18,13 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
-			'onDataViewFilterAbortButtonClick',
-			'onDataViewFilterAddButtonClick',
-			'onDataViewFilterClassesComboSelect',
-			'onDataViewFilterModifyButtonClick = onDataViewFilterItemDoubleClick',
-			'onDataViewFilterRemoveButtonClick',
-			'onDataViewFilterRowSelected',
-			'onDataViewFilterSaveButtonClick'
+			'onDataViewsFilterAbortButtonClick',
+			'onDataViewsFilterAddButtonClick',
+			'onDataViewsFilterClassesComboSelect',
+			'onDataViewsFilterModifyButtonClick = onDataViewsFilterItemDoubleClick',
+			'onDataViewsFilterRemoveButtonClick',
+			'onDataViewsFilterRowSelected',
+			'onDataViewsFilterSaveButtonClick'
 		],
 
 		/**
@@ -65,16 +65,16 @@
 			this.grid = this.view.grid;
 		},
 
-		onDataViewFilterAbortButtonClick: function() {
+		onDataViewsFilterAbortButtonClick: function() {
 			if (!Ext.isEmpty(this.selectedView)) {
-				this.onDataViewFilterRowSelected();
+				this.onDataViewsFilterRowSelected();
 			} else {
 				this.form.reset();
 				this.form.setDisabledModify(true, true, true);
 			}
 		},
 
-		onDataViewFilterAddButtonClick: function() {
+		onDataViewsFilterAddButtonClick: function() {
 			this.grid.getSelectionModel().deselectAll();
 
 			this.selectedView = null;
@@ -88,19 +88,19 @@
 		/**
 		 * @param {String} selectedClassName
 		 */
-		onDataViewFilterClassesComboSelect: function(selectedClassName) {
+		onDataViewsFilterClassesComboSelect: function(selectedClassName) {
 			if (!Ext.isEmpty(selectedClassName)) {
 				this.form.filterChooser.setClassName(selectedClassName);
 			} else {
-				_error('empty selectedClassName in onDataViewFilterClassesComboSelect', this);
+				_error('empty selectedClassName in onDataViewsFilterClassesComboSelect', this);
 			}
 		},
 
-		onDataViewFilterModifyButtonClick: function() {
+		onDataViewsFilterModifyButtonClick: function() {
 			this.form.setDisabledModify(false);
 		},
 
-		onDataViewFilterRemoveButtonClick: function() {
+		onDataViewsFilterRemoveButtonClick: function() {
 			Ext.Msg.show({
 				title: CMDBuild.Translation.common.confirmpopup.title,
 				msg: CMDBuild.Translation.common.confirmpopup.areyousure,
@@ -116,7 +116,7 @@
 		/**
 		 * TODO: server implementation to get a single view data
 		 */
-		onDataViewFilterRowSelected: function() {
+		onDataViewsFilterRowSelected: function() {
 			this.selectedView = this.grid.getSelectionModel().getSelection()[0];
 
 			this.form.loadRecord(this.selectedView);
@@ -138,7 +138,7 @@
 			this.form.setDisabledModify(true, true);
 		},
 
-		onDataViewFilterSaveButtonClick: function() {
+		onDataViewsFilterSaveButtonClick: function() {
 			// Validate before save
 			if (this.validate(this.form)) {
 				var formData = this.form.getData(true);
