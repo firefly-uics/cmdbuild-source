@@ -186,7 +186,7 @@
 								this.grid.getSelectionModel().select(0, true);
 
 								if (!this.grid.getSelectionModel().hasSelection())
-									this.form.setDisabledModify(true, true, true, true);
+									this.form.setDisabledModify(true, true, true);
 							}
 						});
 					}

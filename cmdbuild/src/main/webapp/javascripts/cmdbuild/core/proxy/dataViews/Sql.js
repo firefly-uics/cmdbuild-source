@@ -1,11 +1,11 @@
 (function() {
 
-	Ext.define('CMDBuild.core.proxy.email.Templates', {
+	Ext.define('CMDBuild.core.proxy.dataViews.Sql', {
 
 		requires: [
 			'CMDBuild.core.proxy.CMProxyConstants',
 			'CMDBuild.core.proxy.CMProxyUrlIndex',
-			'CMDBuild.model.email.Templates'
+			'CMDBuild.model.DataViews'
 		],
 
 		singleton: true,
@@ -16,10 +16,10 @@
 		create: function(parameters) {
 			CMDBuild.Ajax.request({
 				method: 'POST',
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.email.templates.post,
+				url: CMDBuild.core.proxy.CMProxyUrlIndex.dataViews.sql.create,
 				params: parameters.params,
 				scope: parameters.scope || this,
-				loadMask: parameters.loadMask || false,
+				loadMask: parameters.loadMask || true,
 				failure: parameters.failure || Ext.emptyFn(),
 				success: parameters.success || Ext.emptyFn(),
 				callback: parameters.callback || Ext.emptyFn()
@@ -29,54 +29,31 @@
 		/**
 		 * @param {Object} parameters
 		 */
-		get: function(parameters) {
-			CMDBuild.Ajax.request({
-				method: 'POST',
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.email.templates.get,
-				params: parameters.params,
-				scope: parameters.scope || this,
-				loadMask: parameters.loadMask || false,
-				failure: parameters.failure || Ext.emptyFn(),
-				success: parameters.success || Ext.emptyFn(),
-				callback: parameters.callback || Ext.emptyFn()
-			});
-		},
+		get: function(parameters) {},
 
 		/**
-		 * @param {Object} parameters
-		 */
-		getAll: function(parameters) {
-			CMDBuild.Ajax.request({
-				method: 'POST',
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.email.templates.getStore,
-				params: parameters.params,
-				scope: parameters.scope || this,
-				loadMask: parameters.loadMask || false,
-				failure: parameters.failure || Ext.emptyFn(),
-				success: parameters.success || Ext.emptyFn(),
-				callback: parameters.callback || Ext.emptyFn()
-			});
-		},
-
-		/**
-		 * @return {Ext.data.Store} store
+		 * @return {Ext.data.Store}
 		 */
 		getStore: function() {
 			return Ext.create('Ext.data.Store', {
 				autoLoad: false,
-				model: 'CMDBuild.model.email.Templates.grid',
+				model: 'CMDBuild.model.DataViews.sql',
 				proxy: {
 					type: 'ajax',
-					url: CMDBuild.core.proxy.CMProxyUrlIndex.email.templates.getStore,
+					url: CMDBuild.core.proxy.CMProxyUrlIndex.dataViews.sql.read, // TODO: check if rename when delete all old implementation
 					reader: {
 						type: 'json',
-						root: 'response.elements'
+						root: 'views'
+					},
+					extraParams: { // Avoid to send limit, page and start parameters in server calls
+						limitParam: undefined,
+						pageParam: undefined,
+						startParam: undefined
 					}
 				},
-				sorters: [{
-					property: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
-					direction: 'ASC'
-				}]
+				sorters: [
+					{ property: CMDBuild.core.proxy.CMProxyConstants.NAME, direction: 'ASC' }
+				]
 			});
 		},
 
@@ -86,10 +63,10 @@
 		remove: function(parameters) {
 			CMDBuild.Ajax.request({
 				method: 'POST',
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.email.templates.remove,
+				url: CMDBuild.core.proxy.CMProxyUrlIndex.dataViews.sql.remove,
 				params: parameters.params,
 				scope: parameters.scope || this,
-				loadMask: parameters.loadMask || false,
+				loadMask: parameters.loadMask || true,
 				failure: parameters.failure || Ext.emptyFn(),
 				success: parameters.success || Ext.emptyFn(),
 				callback: parameters.callback || Ext.emptyFn()
@@ -102,10 +79,10 @@
 		update: function(parameters) {
 			CMDBuild.Ajax.request({
 				method: 'POST',
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.email.templates.put,
+				url: CMDBuild.core.proxy.CMProxyUrlIndex.dataViews.sql.update,
 				params: parameters.params,
 				scope: parameters.scope || this,
-				loadMask: parameters.loadMask || false,
+				loadMask: parameters.loadMask || true,
 				failure: parameters.failure || Ext.emptyFn(),
 				success: parameters.success || Ext.emptyFn(),
 				callback: parameters.callback || Ext.emptyFn()

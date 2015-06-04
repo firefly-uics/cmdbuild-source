@@ -18,13 +18,13 @@
 			this.store.getRootNode().appendChild([
 				{
 					id: 'filter',
-					cmName: 'filterdataview',
+					cmName: 'dataviews',
 					leaf: true,
 					text: CMDBuild.Translation.filterView
 				},
 				{
 					id: 'sql',
-					cmName: 'sqldataview',
+					cmName: 'dataviews',
 					leaf: true,
 					text: CMDBuild.Translation.sqlView,
 				}

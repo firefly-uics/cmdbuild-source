@@ -1,6 +1,6 @@
 (function() {
 
-	Ext.define('CMDBuild.view.administration.dataView.DataViewsView', {
+	Ext.define('CMDBuild.view.administration.dataViews.DataViewsView', {
 		extend: 'Ext.form.Panel',
 
 		/**

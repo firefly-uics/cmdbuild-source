@@ -120,23 +120,18 @@
 									})
 								];
 
+								/**
+								 * DataViews
+								 */
 								if (!_CMUIConfiguration.isCloudAdmin()) {
 									dataViewAccordion = Ext.create('CMDBuild.view.administration.accordion.DataViews', {
 										cmName: 'dataview',
 									});
 
 									panels = panels.concat([
-										new CMDBuild.view.administration.dataview.CMSqlDataView({
-											cmControllerType: controllerNS.administration.dataview.CMSqlDataViewController,
-											cmName: 'sqldataview'
-										}),
-//										new CMDBuild.view.administration.dataview.CMFilterDataView({
-//											cmControllerType: controllerNS.administration.dataview.CMFilerDataViewController,
-//											cmName: 'filterdataview'
-//										})
-										Ext.create('CMDBuild.view.administration.dataView.DataViewsView', {
-											cmControllerType: 'CMDBuild.controller.administration.dataView.DataViews',
-											cmName: 'filterdataview'
+										Ext.create('CMDBuild.view.administration.dataViews.DataViewsView', {
+											cmControllerType: 'CMDBuild.controller.administration.dataViews.DataViews',
+											cmName: 'dataviews'
 										}),
 									]);
 								}

@@ -5,7 +5,7 @@
 		requires: [
 			'CMDBuild.core.proxy.CMProxyConstants',
 			'CMDBuild.core.proxy.CMProxyUrlIndex',
-			'CMDBuild.model.DataView'
+			'CMDBuild.model.DataViews'
 		],
 
 		singleton: true,
@@ -16,7 +16,7 @@
 		create: function(parameters) {
 			CMDBuild.Ajax.request({
 				method: 'POST',
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.dataView.filter.create,
+				url: CMDBuild.core.proxy.CMProxyUrlIndex.dataViews.filter.create,
 				params: parameters.params,
 				scope: parameters.scope || this,
 				loadMask: parameters.loadMask || true,
@@ -37,10 +37,10 @@
 		getStore: function() {
 			return Ext.create('Ext.data.Store', {
 				autoLoad: false,
-				model: 'CMDBuild.model.DataView.filter',
+				model: 'CMDBuild.model.DataViews.filter',
 				proxy: {
 					type: 'ajax',
-					url: CMDBuild.core.proxy.CMProxyUrlIndex.dataView.filter.read, // TODO: check if rename when delete all old implementation
+					url: CMDBuild.core.proxy.CMProxyUrlIndex.dataViews.filter.read, // TODO: check if rename when delete all old implementation
 					reader: {
 						type: 'json',
 						root: 'views'
@@ -63,7 +63,7 @@
 		remove: function(parameters) {
 			CMDBuild.Ajax.request({
 				method: 'POST',
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.dataView.filter.remove,
+				url: CMDBuild.core.proxy.CMProxyUrlIndex.dataViews.filter.remove,
 				params: parameters.params,
 				scope: parameters.scope || this,
 				loadMask: parameters.loadMask || true,
@@ -79,7 +79,7 @@
 		update: function(parameters) {
 			CMDBuild.Ajax.request({
 				method: 'POST',
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.dataView.filter.update,
+				url: CMDBuild.core.proxy.CMProxyUrlIndex.dataViews.filter.update,
 				params: parameters.params,
 				scope: parameters.scope || this,
 				loadMask: parameters.loadMask || true,

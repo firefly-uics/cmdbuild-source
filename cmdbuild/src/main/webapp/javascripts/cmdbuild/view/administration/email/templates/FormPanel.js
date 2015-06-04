@@ -256,7 +256,7 @@
 
 			this.callParent(arguments);
 
-			this.setDisabledModify(true);
+			this.setDisabledModify(true, true, true);
 		}
 	});
 

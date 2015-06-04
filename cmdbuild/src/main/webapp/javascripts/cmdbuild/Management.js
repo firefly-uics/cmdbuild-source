@@ -38,7 +38,8 @@
 			'CMDBuild.core.proxy.Configuration',
 			'CMDBuild.core.proxy.Domain',
 			'CMDBuild.core.proxy.Lookup',
-			'CMDBuild.core.proxy.Report'
+			'CMDBuild.core.proxy.Report',
+			'CMDBuild.core.proxy.dataViews.DataViews'
 		],
 
 		name: 'CMDBuild',
@@ -316,9 +317,9 @@
 							callback: reqBarrier.getCallback()
 						});
 
-						_CMProxy.dataView.read({
-							success: function(response, options, decoded) {
-								dataViewAccordion.updateStore(decoded.views);
+						CMDBuild.core.proxy.dataViews.DataViews.readAll({
+							success: function(response, options, decodedResponse) {
+								dataViewAccordion.updateStore(decodedResponse.views);
 							},
 							callback: reqBarrier.getCallback()
 						});
