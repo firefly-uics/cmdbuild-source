@@ -1,16 +1,16 @@
 (function() {
 
-	Ext.define('CMDBuild.controller.administration.dataView.Filter', {
+	Ext.define('CMDBuild.controller.administration.dataViews.Filter', {
 		extend: 'CMDBuild.controller.common.AbstractController',
 
 		requires: [
 			'CMDBuild.core.proxy.CMProxyConstants',
 			'CMDBuild.core.proxy.dataViews.Filter',
-			'CMDBuild.model.DataView'
+			'CMDBuild.model.DataViews'
 		],
 
 		/**
-		 * @cfg {CMDBuild.controller.administration.dataView.DataViews}
+		 * @cfg {CMDBuild.controller.administration.dataViews.DataViews}
 		 */
 		parentDelegate: undefined,
 
@@ -28,35 +28,35 @@
 		],
 
 		/**
-		 * @property {CMDBuild.view.administration.dataView.filter.FormPanel}
+		 * @property {CMDBuild.view.administration.dataViews.filter.FormPanel}
 		 */
 		form: undefined,
 
 		/**
-		 * @property {CMDBuild.view.administration.dataView.filter.GridPanel}
+		 * @property {CMDBuild.view.administration.dataViews.filter.GridPanel}
 		 */
 		grid: undefined,
 
 		/**
-		 * @property {CMDBuild.model.DataView.filter}
+		 * @property {CMDBuild.model.DataViews.filter}
 		 */
 		selectedView: undefined,
 
 		/**
-		 * @property {CMDBuild.view.administration.dataView.filter.FilterView}
+		 * @property {CMDBuild.view.administration.dataViews.filter.FilterView}
 		 */
 		view: undefined,
 
 		/**
 		 * @param {Object} configurationObject
-		 * @param {CMDBuild.controller.administration.dataView.DataViews} configurationObject.parentDelegate
+		 * @param {CMDBuild.controller.administration.dataViews.DataViews} configurationObject.parentDelegate
 		 *
 		 * @override
 		 */
 		constructor: function(configurationObject) {
 			this.callParent(arguments);
 
-			this.view = Ext.create('CMDBuild.view.administration.dataView.filter.FilterView', {
+			this.view = Ext.create('CMDBuild.view.administration.dataViews.filter.FilterView', {
 				delegate: this
 			});
 
@@ -82,7 +82,7 @@
 			this.form.reset();
 			this.form.filterChooser.reset(); // Manual filter reset
 			this.form.setDisabledModify(false, true);
-			this.form.loadRecord(Ext.create('CMDBuild.model.DataView.filter'));
+			this.form.loadRecord(Ext.create('CMDBuild.model.DataViews.filter'));
 		},
 
 		/**
@@ -146,7 +146,7 @@
 				if (this.form.filterChooser.getFilter())
 					formData[CMDBuild.core.proxy.CMProxyConstants.FILTER] = Ext.encode(this.form.filterChooser.getFilter().getConfiguration());
 
-				formData = Ext.create('CMDBuild.model.DataView.filter', formData); // Filter unwanted data of filterChooser internal fields
+				formData = Ext.create('CMDBuild.model.DataViews.filter', formData); // Filter unwanted data of filterChooser internal fields
 
 				if (Ext.isEmpty(formData.get(CMDBuild.core.proxy.CMProxyConstants.ID))) {
 					CMDBuild.core.proxy.dataViews.Filter.create({
