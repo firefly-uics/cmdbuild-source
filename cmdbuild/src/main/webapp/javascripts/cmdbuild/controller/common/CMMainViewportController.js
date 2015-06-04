@@ -175,7 +175,7 @@
 		if (Ext.isFunction(accordion.cmControllerType)) {
 			me.accordionControllers[accordion.cmName] = new accordion.cmControllerType(accordion);
 		} else if (Ext.isString(accordion.cmControllerType)) { // To use Ext.loader to asynchronous load also controllers
-			me.panelControllers[accordion.cmName] = Ext.create(accordion.cmControllerType, accordion);
+			me.accordionControllers[accordion.cmName] = Ext.create(accordion.cmControllerType, accordion);
 		} else {
 			me.accordionControllers[accordion.cmName] = new ns.accordion.CMBaseAccordionController(accordion);
 		}
