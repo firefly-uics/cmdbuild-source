@@ -4,7 +4,7 @@
 		extend: 'Ext.form.Panel',
 
 		/**
-		 * @cfg {}
+		 * @cfg {CMDBuild.controller.administration.dataViews.DataViews}
 		 */
 		delegate: undefined,
 
