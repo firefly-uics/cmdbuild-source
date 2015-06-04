@@ -1328,6 +1328,7 @@
 	"credentials": "Identifiant",
 	"csv": "CSV",
 	"csvFile": "Fichier CSV",
+	"dataSource": "Source de données",
 	"defaultAccount": "Compte par défaut",
 	"defaultClass": "Classe par défaut",
 	"defaultGroup": "Groupe par défaut",

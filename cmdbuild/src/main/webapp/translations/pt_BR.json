@@ -1328,6 +1328,7 @@
 	"credentials": "Credenciais",
 	"csv": "CSV",
 	"csvFile": "Arquivo CSV",
+	"dataSource": "Origem dos Dados",
 	"defaultAccount": "<em>Default account</em>",
 	"defaultClass": "Classe Padrão",
 	"defaultGroup": "Grupo padrão",

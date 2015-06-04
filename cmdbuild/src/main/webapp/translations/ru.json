@@ -1328,6 +1328,7 @@
 	"credentials": "Учетные данные",
 	"csv": "CSV",
 	"csvFile": "Файл CSV",
+	"dataSource": "Источник данных",
 	"defaultAccount": "<em>Default account</em>",
 	"defaultClass": "Класс по умолчанию",
 	"defaultGroup": "Основная группа",

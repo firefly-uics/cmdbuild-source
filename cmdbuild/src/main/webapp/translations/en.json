@@ -1328,6 +1328,7 @@
 	"credentials": "Credentials",
 	"csv": "CSV",
 	"csvFile": "CSV file",
+	"dataSource": "Data source",
 	"defaultAccount": "Default account",
 	"defaultClass": "Default class",
 	"defaultGroup": "Default group",
