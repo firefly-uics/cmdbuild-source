@@ -43,11 +43,11 @@
 
 		listeners: {
 			itemdblclick: function(grid, record, item, index, e, eOpts) {
-				this.delegate.cmfg('onDataViewSqlItemDoubleClick');
+				this.delegate.cmfg('onDataViewsSqlItemDoubleClick');
 			},
 
 			select: function(row, record, index) {
-				this.delegate.cmfg('onDataViewSqlRowSelected');
+				this.delegate.cmfg('onDataViewsSqlRowSelected');
 			},
 
 			// Event to load store on view display and first row selection as CMDbuild standard
