@@ -1328,6 +1328,7 @@
 	"credentials": "Berechtigungsnachweis",
 	"csv": "CSV",
 	"csvFile": "CSV Datei",
+	"dataSource": "Datasource",
 	"defaultAccount": "<em>Default account</em>",
 	"defaultClass": "Default-Klasse",
 	"defaultGroup": "Standard gruppe",

@@ -1328,6 +1328,7 @@
 	"credentials": "Thông tin mật",
 	"csv": "CSV",
 	"csvFile": "Tập tin CSV",
+	"dataSource": "Dữ liệu gốc",
 	"defaultAccount": "<em>Default account</em>",
 	"defaultClass": "Lớp mặc định",
 	"defaultGroup": "Các nhóm mặc định",
