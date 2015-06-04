@@ -1,6 +1,6 @@
 (function() {
 
-	Ext.define('CMDBuild.controller.administration.dataView.DataViews', {
+	Ext.define('CMDBuild.controller.administration.dataViews.DataViews', {
 		extend: 'CMDBuild.controller.common.CMBasePanelController',
 
 		requires: [
@@ -23,7 +23,7 @@
 		titleSeparator: ' - ',
 
 		/**
-		 * @cfg {CMDBuild.view.administration.dataView.DataViewsView}
+		 * @cfg {CMDBuild.view.administration.dataViews.DataViewsView}
 		 */
 		view: undefined,
 
@@ -35,18 +35,17 @@
 		 * @override
 		 */
 		onViewOnFront: function(parameters) {
-_debug('onViewOnFront', parameters);
 			if (!Ext.Object.isEmpty(parameters)) {
 				this.view.removeAll(true);
 
 				switch(parameters.get(CMDBuild.core.proxy.CMProxyConstants.ID)) {
 					case 'sql': {
-//						this.sectionController = Ext.create('CMDBuild.controller.administration.email.templates.Templates', { parentDelegate: this }); // TODO
+						this.sectionController = Ext.create('CMDBuild.controller.administration.dataViews.Sql', { parentDelegate: this });
 					} break;
 
 					case 'filter':
 					default: {
-						this.sectionController = Ext.create('CMDBuild.controller.administration.dataView.Filter', { parentDelegate: this });
+						this.sectionController = Ext.create('CMDBuild.controller.administration.dataViews.Filter', { parentDelegate: this });
 					}
 				}
 
