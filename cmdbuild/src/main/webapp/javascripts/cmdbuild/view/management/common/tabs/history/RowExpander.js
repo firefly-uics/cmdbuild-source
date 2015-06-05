@@ -14,7 +14,7 @@
 				'<tpl else>',
 					'<p>',
 				'</tpl>',
-				'<b>{key}:</b> {value}</p>',
+				'<b>{attribute}:</b> {value}</p>',
 			'</tpl>',
 			{
 				/**
@@ -26,7 +26,7 @@
 
 						Ext.Object.each(values, function(key, value, myself) {
 							this.formattedArray.push({
-								key: key,
+								attribute: value[CMDBuild.core.proxy.CMProxyConstants.ATTRIBUTE_DESCRIPTION] || key,
 								value: value[CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION],
 								changed: value[CMDBuild.core.proxy.CMProxyConstants.CHANGED]
 							});
