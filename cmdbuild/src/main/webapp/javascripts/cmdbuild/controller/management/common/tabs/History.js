@@ -369,8 +369,8 @@
 		 * Formats all object1 values as objects { {Boolean} changed: "...", {Mixed} description: "..." }. If value1 is different than value2
 		 * modified is true, false otherwise. Strips also HTML tags from "description".
 		 *
-		 * @param {Object} object1
-		 * @param {Object} object2
+		 * @param {Object} object1 - currently expanded record
+		 * @param {Object} object2 - predecessor record
 		 */
 		valuesFormattingAndCompare: function(object1, object2) {
 			if (!Ext.isEmpty(object1) && Ext.isObject(object1)) {
@@ -381,15 +381,11 @@
 					if (Ext.isObject(value)) {
 						object1[key][CMDBuild.core.proxy.CMProxyConstants.CHANGED] = false;
 
-						if (
-							!Ext.isEmpty(value[CMDBuild.core.proxy.CMProxyConstants.ID])
-							&& !Ext.isEmpty(object2)
-							&& !Ext.isEmpty(object2[key][CMDBuild.core.proxy.CMProxyConstants.ID])
-						) {
+						if (!Ext.isEmpty(object2) && object2.hasOwnProperty(key))
 							object1[key][CMDBuild.core.proxy.CMProxyConstants.CHANGED] = (
 								value[CMDBuild.core.proxy.CMProxyConstants.ID] != object2[key][CMDBuild.core.proxy.CMProxyConstants.ID]
+								|| value[CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION] != object2[key][CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION]
 							);
-						}
 
 						// Strip HTML tags
 						if (!Ext.isEmpty(value[CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION]))
