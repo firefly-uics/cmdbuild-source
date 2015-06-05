@@ -19,7 +19,6 @@ import org.cmdbuild.common.api.mail.GetMail;
 import org.cmdbuild.common.api.mail.MailApi;
 import org.cmdbuild.common.api.mail.MailApiFactory;
 import org.cmdbuild.common.api.mail.MailException;
-import org.cmdbuild.common.api.mail.SelectMail;
 import org.cmdbuild.common.api.mail.SendableNewMail;
 import org.cmdbuild.data.store.email.EmailAccount;
 import org.joda.time.DateTime;
@@ -219,8 +218,10 @@ public class DefaultEmailService implements EmailService {
 		 * to sync the e-mails. So don't try to reach always the server but only
 		 * if configured
 		 */
-		if (accountSupplier.get().isImapConfigured()) {
+		final EmailAccount account = accountSupplier.get();
+		if (account.isImapConfigured()) {
 			try {
+				logger.info("reading from account '{}'", account);
 				receive0(folders, callback);
 			} catch (final MailException e) {
 				logger.error("error receiving mails", e);
@@ -232,26 +233,28 @@ public class DefaultEmailService implements EmailService {
 	}
 
 	private void receive0(final Folders folders, final EmailCallbackHandler callback) {
-		final Iterable<FetchedMail> fetchMails = apiSupplier.get() //
+		final MailApi api = apiSupplier.get();
+		final Iterable<FetchedMail> fetchMails = api //
 				.selectFolder(folders.incoming()) //
 				.fetch();
 		for (final FetchedMail fetchedMail : fetchMails) {
-			final SelectMail mailMover = apiSupplier.get().selectMail(fetchedMail);
 			boolean keepMail = false;
+			String targetFolder = folders.processed();
 			try {
-				final GetMail getMail = apiSupplier.get().selectMail(fetchedMail).get();
+				final GetMail getMail = api.selectMail(fetchedMail).get();
 				final Email email = new GetMailAdapter(getMail, accountSupplier.get().getName());
-				mailMover.selectTargetFolder(folders.processed());
 				callback.handle(email);
 			} catch (final Exception e) {
 				logger.error("error getting mail", e);
 				keepMail = !folders.rejectNotMatching();
-				mailMover.selectTargetFolder(folders.rejected());
+				targetFolder = folders.rejected();
 			}
 
 			try {
 				if (!keepMail) {
-					mailMover.move();
+					api.selectMail(fetchedMail) //
+							.selectTargetFolder(targetFolder) //
+							.move();
 				}
 			} catch (final MailException e) {
 				logger.error("error moving mail", e);
