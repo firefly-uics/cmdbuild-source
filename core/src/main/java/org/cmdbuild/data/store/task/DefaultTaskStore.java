@@ -1,7 +1,6 @@
 package org.cmdbuild.data.store.task;
 
 import static com.google.common.collect.FluentIterable.from;
-import static com.google.common.collect.Iterables.getOnlyElement;
 import static com.google.common.collect.Maps.difference;
 import static com.google.common.collect.Maps.transformEntries;
 import static com.google.common.collect.Maps.transformValues;
@@ -22,6 +21,7 @@ import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
 import com.google.common.base.Function;
+import com.google.common.base.Optional;
 import com.google.common.collect.MapDifference;
 import com.google.common.collect.MapDifference.ValueDifference;
 import com.google.common.collect.Maps.EntryTransformer;
@@ -212,6 +212,7 @@ public class DefaultTaskStore implements TaskStore {
 			final TaskRuntime readedRuntime = runtimeStore.read(createdRuntime);
 			return merge(readedDefinition, NO_PARAMETERS, readedRuntime);
 		}
+
 	}
 
 	private static class Read extends AbstractAction<Task> {
@@ -229,7 +230,10 @@ public class DefaultTaskStore implements TaskStore {
 			final Task task = Task.class.cast(storable);
 			final TaskDefinition definition = definitionsStore.read(definitionOf(task));
 			final Iterable<TaskParameter> parameters = parametersStore.readAll(groupedBy(definition));
-			final TaskRuntime runtime = getOnlyElement(runtimeStore.readAll(groupedBy(definition)));
+			final Optional<TaskRuntime> _runtime = from(runtimeStore.readAll(groupedBy(definition))).first();
+			final TaskRuntime runtime = _runtime.isPresent() ? _runtime.get() : TaskRuntime.newInstance() //
+					.withOwner(definition.getId()) //
+					.build();
 			return merge(definition, parameters, runtime);
 		}
 
@@ -260,7 +264,11 @@ public class DefaultTaskStore implements TaskStore {
 						@Override
 						public Task apply(final TaskDefinition input) {
 							final Iterable<TaskParameter> parameters = parametersStore.readAll(groupedBy(input));
-							final TaskRuntime runtime = getOnlyElement(runtimeStore.readAll(groupedBy(input)));
+							final Optional<TaskRuntime> _runtime = from(runtimeStore.readAll(groupedBy(input))).first();
+							final TaskRuntime runtime = _runtime.isPresent() ? _runtime.get() : TaskRuntime
+									.newInstance() //
+									.withOwner(input.getId()) //
+									.build();
 							return merge(input, parameters, runtime);
 						}
 
@@ -304,10 +312,21 @@ public class DefaultTaskStore implements TaskStore {
 			for (final TaskParameter element : difference.entriesOnlyOnRight().values()) {
 				parametersStore.delete(element);
 			}
+			/*
+			 * should be one-only, but who knows...
+			 */
+			boolean done = false;
 			for (final TaskRuntime element : runtimeStore.readAll(groupedBy(definition))) {
 				runtimeStore.update(TaskRuntime.newInstance() //
 						.withId(element.getId()) //
 						.withOwner(element.getOwner()) //
+						.withLastExecution(storable.getLastExecution()) //
+						.build());
+				done = true;
+			}
+			if (!done) {
+				runtimeStore.create(TaskRuntime.newInstance() //
+						.withOwner(storable.getId()) //
 						.withLastExecution(storable.getLastExecution()) //
 						.build());
 			}
@@ -331,6 +350,9 @@ public class DefaultTaskStore implements TaskStore {
 			Validate.isInstanceOf(Task.class, storable);
 			final Task task = Task.class.cast(storable);
 			final TaskDefinition definition = definitionsStore.read(definitionOf(task));
+			/*
+			 * should be one-only, but who knows...
+			 */
 			for (final Storable element : runtimeStore.readAll(groupedBy(definition))) {
 				runtimeStore.delete(element);
 			}
@@ -356,10 +378,21 @@ public class DefaultTaskStore implements TaskStore {
 		@Override
 		public Void execute() {
 			final TaskDefinition definition = definitionOf(storable);
+			/*
+			 * should be one-only, but who knows...
+			 */
+			boolean done = false;
 			for (final TaskRuntime element : runtimeStore.readAll(groupedBy(definition))) {
 				runtimeStore.update(TaskRuntime.newInstance() //
 						.withId(element.getId()) //
 						.withOwner(element.getOwner()) //
+						.withLastExecution(storable.getLastExecution()) //
+						.build());
+				done = true;
+			}
+			if (!done) {
+				runtimeStore.create(TaskRuntime.newInstance() //
+						.withOwner(storable.getId()) //
 						.withLastExecution(storable.getLastExecution()) //
 						.build());
 			}
