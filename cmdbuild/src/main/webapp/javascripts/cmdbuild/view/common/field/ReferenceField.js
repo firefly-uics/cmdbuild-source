@@ -185,12 +185,19 @@
 
 		/*
 		 * Adds the record when the store is not completely loaded (too many records)
+		 * NOTE: if field has preselectIfUnique metadata skip to add value to store, to avoid stores with more than one items (this is an ugly fix but is just temporary)
 		 */
 		ensureToHaveTheValueInStore: function(value) {
 			value = normalizeValue(this, value);
 
 			// Ask to the server the record to add, return false to not set the value, and set it on success
-			if (!Ext.isEmpty(value) && this.getStore().find(this.valueField, value) == -1) {
+			if (
+				!Ext.isEmpty(value)
+				&& this.getStore().find(this.valueField, value) == -1
+				&& !Ext.isEmpty(this.attribute)
+				&& !Ext.Object.isEmpty(this.attribute.meta)
+				&& this.attribute.meta['system.type.reference.' + CMDBuild.core.proxy.CMProxyConstants.PRESELECT_IF_UNIQUE] !== 'true'
+			) {
 				var params = Ext.apply({cardId: value}, this.getStore().baseParams);
 
 				CMDBuild.Ajax.request({
