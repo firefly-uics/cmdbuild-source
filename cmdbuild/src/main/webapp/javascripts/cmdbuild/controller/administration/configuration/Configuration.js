@@ -18,7 +18,8 @@
 			'gis',
 			'relationGraph',
 			'server',
-			'workflow'
+			'workflow',
+			'guiFramework'
 		],
 
 		/**
@@ -151,6 +152,9 @@
 
 					case 'workflow': {
 						this.sectionController = Ext.create('CMDBuild.controller.administration.configuration.Workflow', { parentDelegate: this });
+					} break;
+					case 'guiFramework': {
+						this.sectionController = Ext.create('CMDBuild.controller.administration.configuration.GuiFramework', { parentDelegate: this });
 					} break;
 
 					case 'generalOptions':

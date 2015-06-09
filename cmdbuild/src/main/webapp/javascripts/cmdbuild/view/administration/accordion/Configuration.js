@@ -60,6 +60,12 @@
 						text: CMDBuild.Translation.serverManagement,
 						leaf: true,
 						cmName: 'configuration'
+					},
+					{
+						id: 'guiFramework',
+						text: '@@ GUI Framework',
+						leaf: true,
+						cmName: 'configuration'
 					}
 				]);
 		}
