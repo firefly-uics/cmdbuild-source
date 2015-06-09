@@ -61,9 +61,9 @@
 				&& !Ext.isEmpty(this.stringToFunctionNameMap[name])
 			) {
 				// Normal function manage
-				if (Ext.isString(this.stringToFunctionNameMap[name]) && Ext.isFunction(this[this.stringToFunctionNameMap[name]]))
+				if (Ext.isString(this.stringToFunctionNameMap[name]) && Ext.isFunction(this[this.stringToFunctionNameMap[name]])) {
 					return this[this.stringToFunctionNameMap[name]](param, callBack);
-
+				}
 				if (Ext.isObject(this.stringToFunctionNameMap[name])) {
 					switch (this.stringToFunctionNameMap[name].action) {
 						// Forwarded function manage
