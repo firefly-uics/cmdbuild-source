@@ -232,7 +232,6 @@
 			this.addMetadataBtn = Ext.create('CMDBuild.core.buttons.Modify', {
 				text: CMDBuild.Translation.editMetadata,
 				margin: '0 0 0 ' + (CMDBuild.LABEL_WIDTH + 5),
-				maxWidth: 100,
 				scope: this,
 
 				handler: function(button, e) { // TODO: would be better to use controller call (cmfg)

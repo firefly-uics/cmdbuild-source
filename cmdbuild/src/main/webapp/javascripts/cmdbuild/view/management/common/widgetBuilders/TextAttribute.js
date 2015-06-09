@@ -24,8 +24,8 @@ CMDBuild.WidgetBuilders.TextAttribute.prototype.buildAttributeField = function(a
 		var editor = Ext.create('CMDBuild.view.common.field.CMHtmlEditorField', {
 			labelAlign: 'right',
 			labelWidth: CMDBuild.LABEL_WIDTH,
+			width: CMDBuild.HTML_EDITOR_WIDTH,
  			fieldLabel: attribute.description || attribute.name,
-			width: CMDBuild.BIG_FIELD_WIDTH,
  			name: attribute.name,
  			disabled: false,
 			CMAttribute: attribute
