@@ -212,18 +212,23 @@
 		doLogin: function(field, event) {
 			var form = this.form.getForm();
 			var values = form.getValues();
-
+			var me = this;
 			if (!Ext.isEmpty(values.role) || form.isValid()) {
 				CMDBuild.LoadMask.get().show();
 				CMDBuild.core.proxy.CMProxy.doLogin({
 					params: form.getValues(),
 					scope: this,
 					success: function() {
-						if (/administration.jsp$/.test(window.location)) {
-							window.location = 'administration.jsp' + window.location.hash;
-						} else {
-							window.location = 'management.jsp' + window.location.hash;
-						}
+						me.doRestAuthentication({
+							password: values.password,
+							username: values.username
+						}, function() {
+							if (/administration.jsp$/.test(window.location)) {
+								window.location = 'administration.jsp' + window.location.hash;
+							} else {
+								window.location = 'management.jsp' + window.location.hash;
+							}						
+						});
 					},
 					failure: function(result, options, decodedResult) {
 						CMDBuild.LoadMask.get().hide();
@@ -272,7 +277,30 @@
 			} else {
 				this.disableRoles();
 			}
-		}
+		},
+		doRestAuthentication: function(credentials, callback, callbackScope) {
+			var me = this;
+			var login_params = JSON.stringify(credentials);
+			// show authentication form
+			Ext.Ajax.request({
+				method: "POST",
+				url: 'http://localhost:8080/cmdbuild/services/rest/v2/sessions',
+				jsonData: login_params,
+				success: function (response) {
+					if (response) {
+						var data = JSON.parse(response.responseText);
+						var token = data.data._id;
+						me.onAuthenticationSuccess(token, callback, callbackScope);
+					}
+				},
+				failure: function (XMLHttpRequest, textStatus, errorThrown) {
+					console.log("REST: AuthenticationError");
+				}
+			});
+		},
+		onAuthenticationSuccess : function(token, callback, callbackScope) {
+			document.cookie = "RestSessionToken=" + token;
+			callback.apply(callbackScope, []);
+		}		
 	});
-
 })();
