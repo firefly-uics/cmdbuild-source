@@ -1,0 +1,20 @@
+<pages>
+	<page>
+		<src>http://10.0.0.107:8080/cbap/cbap/demo/managemail/</src>
+		<title>Pagina 1</title>
+		<cmName>onepanelframe</cmName>
+		<leaf>true</leaf>
+	</page>
+	<page>
+		<src>http://en.wikipedia.org/wiki/Robot</src>
+		<title>WIKI</title>
+		<cmName>onepanelframe</cmName>
+		<leaf>true</leaf>
+	</page>
+	<page>
+		<src>http://en.wikipedia.org/wiki/Robot</src>
+		<title>WIKI</title>
+		<cmName>onepanelframe</cmName>
+		<leaf>true</leaf>
+	</page>
+</pages>
