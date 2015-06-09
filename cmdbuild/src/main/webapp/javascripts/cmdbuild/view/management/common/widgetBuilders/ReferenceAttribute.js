@@ -39,7 +39,6 @@ CMDBuild.WidgetBuilders.ReferenceAttribute.prototype.getFieldSetForFilter = func
 // Manage "calculated" values to filter by
 // current User and current Group
 function manageCalculatedValues(field, attribute) {
-	var store = field.getStore();
 	var model = null;
 	var calculatedValueId = 0;
 
@@ -51,42 +50,18 @@ function manageCalculatedValues(field, attribute) {
 		calculatedValueId = MY_GROUP_ID;
 	}
 
-	if (model != null) {
-		// Template for the dropdown menu.
-		// Note the use of "x-boundlist-item" class,
-		// this is required to make the items selectable.
-		field.tpl = Ext.create('Ext.XTemplate',
-			'<tpl for=".">',
-
-				'<tpl if="Id != ' + calculatedValueId + '">',
-					'<div class="x-boundlist-item">{Description}</div>',
-				'</tpl>',
-
-				'<tpl if="Id == ' + calculatedValueId + '">',
-					'<div class="x-boundlist-item cm-calculated-field">{Description}</div>',
-				'</tpl>',
-
-			'</tpl>'
-		);
-
-		// Override the  ensureToHaveTheValueInStore
-		// to deny a getCard() call with -1 as id that
-		// throws a not found exception
+	if (!Ext.isEmpty(model)) {
+		// Override the  ensureToHaveTheValueInStore to deny a getCard() call with -1 as id that throws a not found exception
 		var originalEnsureToHaveTheValueInStore = field.ensureToHaveTheValueInStore;
 		field.ensureToHaveTheValueInStore = function(value) {
-			if (value == MY_USER_ID
-				|| value == MY_USER_ID) {
-
-				return;
+			if (value == MY_USER_ID || value == MY_USER_ID) {
+				return true;
 			}
 
-			originalEnsureToHaveTheValueInStore.call(field, value);
+			return originalEnsureToHaveTheValueInStore.call(field, value);
+		};
 
-		}
-
-		// Override the setValue function to
-		// change the template with the id of
-		// the model (The model id must be a number)
+		// Override the setValue function to change the template with the id of the model (The model id must be a number)
 		var originalSetValue = field.setValue;
 		field.setValue = function(value) {
 			if (value == MY_USER_TEMPLATE) {
@@ -95,24 +70,21 @@ function manageCalculatedValues(field, attribute) {
 				value = MY_GROUP_ID;
 			}
 
-			originalSetValue.call(field, value);
-		}
+			return originalSetValue.call(field, value);
+		};
 
-		store.on("load", function(s, records) {
-			this.sort("Description");
-			this.insert(0, model);
-			// Some ExtJS mechanism call the sorting
-			// after the the ComboBox List expand() call
-			// So, we have already sort the items to add
-			// the new one as first, then override
-			// the sort function to do nothing
-			this.sort = function() { }
+		field.getStore().on('load', function(store, records, successful, eOpts) {
+			store.sort('Description');
+
+			if (store.find('Id', -1) < 0)
+				store.insert(0, model);
+
+			// Some ExtJS mechanism call the sorting after the the ComboBox List expand() call. So, we have already sort the items to add
+			// the new one as first, then override the sort function to do nothing
+			store.sort = Ext.emptyFn;
 
 			field.setValue(field.getValue());
-		}, store, {single: true});
-
-
-
+		}, this);
 	}
 }
 

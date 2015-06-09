@@ -172,20 +172,21 @@
 			return this.callParent(arguments);
 		},
 
-		setValue : function(v) {
-			if (!this.store)
-				return;
-
-			v = this.extractIdIfValueIsObject(v);
-
-			// Is one time seems that has a CQL filter
-			if (this.ensureToHaveTheValueInStore(v) || this.store.isOneTime)
-				this.callParent([v]);
+		setValue: function(v) {
+			if (!Ext.isEmpty(this.store)) {
+				// Is one time seems that has a CQL filter
+				if (this.ensureToHaveTheValueInStore(this.extractIdIfValueIsObject(v)) || this.store.isOneTime)
+					this.callParent([v]);
+			}
 		},
 
-		/*
+		/**
 		 * Adds the record when the store is not completely loaded (too many records)
 		 * NOTE: if field has preselectIfUnique metadata skip to add value to store, to avoid stores with more than one items (this is an ugly fix but is just temporary)
+		 *
+		 * @param {Mixed} value
+		 *
+		 * @return {Boolean}
 		 */
 		ensureToHaveTheValueInStore: function(value) {
 			value = normalizeValue(this, value);
@@ -193,12 +194,13 @@
 			// Ask to the server the record to add, return false to not set the value, and set it on success
 			if (
 				!Ext.isEmpty(value)
+				&& !this.store.isLoading()
 				&& this.getStore().find(this.valueField, value) == -1
 				&& !Ext.isEmpty(this.attribute)
 				&& !Ext.Object.isEmpty(this.attribute.meta)
 				&& this.attribute.meta['system.type.reference.' + CMDBuild.core.proxy.CMProxyConstants.PRESELECT_IF_UNIQUE] !== 'true'
 			) {
-				var params = Ext.apply({cardId: value}, this.getStore().baseParams);
+				var params = Ext.apply({ cardId: value }, this.getStore().baseParams);
 
 				CMDBuild.Ajax.request({
 					method: 'GET',
