@@ -37,6 +37,19 @@
 		],
 
 		/**
+		 * @cfg {Array}
+		 */
+		cmfgCatchedFunctions: [
+			'getTabHistoryGridColumns',
+			'getTabHistoryGridStore',
+			'onTabHistoryIncludeRelationCheck',
+			'onTabHistoryRowExpand',
+			'onTabHistoryPanelShow',
+			'tabHistorySelectedEntityGet',
+			'tabHistorySelectedEntitySet'
+		],
+
+		/**
 		 * @property {CMDBuild.cache.CMEntryTypeModel}
 		 */
 		entryType: undefined,

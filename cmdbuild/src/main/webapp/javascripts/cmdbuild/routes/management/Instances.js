@@ -40,7 +40,7 @@
 				} else {
 					CMDBuild.Msg.error(
 						CMDBuild.Translation.common.failure,
-						'@@ CMDBuild.Translation.errors.routesInvalidCardIdentifier' + ' (' + this.instanceIdentifier + ')',
+						CMDBuild.Translation.errors.routesInvalidInstanceIdentifier + ' (' + this.instanceIdentifier + ')',
 						false
 					);
 				}

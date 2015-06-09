@@ -917,7 +917,7 @@
 			 */
 			sendAllOnSaveSet: function(mode) {
 				this.flagSendAllOnSave = Ext.isBoolean(mode) ? mode : false;
-			},
+			}
 	});
 
 })();

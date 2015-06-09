@@ -6,7 +6,10 @@
 	Ext.define('CMDBuild.controller.management.common.tabs.History', {
 		extend: 'CMDBuild.controller.common.AbstractController',
 
-		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+		requires: [
+			'CMDBuild.core.proxy.CMProxyConstants',
+			'CMDBuild.core.proxy.Attributes'
+		],
 
 		/**
 		 * @cfg {Mixed}
@@ -14,20 +17,12 @@
 		parentDelegate: undefined,
 
 		/**
-		 * @cfg {Array}
+		 * @property {Object}
 		 */
-		cmfgCatchedFunctions: [
-			'getTabHistoryGridColumns',
-			'getTabHistoryGridStore',
-			'onTabHistoryIncludeRelationCheck',
-			'onTabHistoryRowExpand',
-			'onTabHistoryPanelShow',
-			'tabHistorySelectedEntityGet',
-			'tabHistorySelectedEntitySet'
-		],
+		entryTypeAttributes: {},
 
 		/**
-		 * @property {CMDBuild.view.management.common.tabs.history.GridPanel}
+		 * @property {CMDBuild.view.management.classes.tabs.history.GridPanel or CMDBuild.view.management.workflow.tabs.history.GridPanel}
 		 */
 		grid: undefined,
 
@@ -302,6 +297,24 @@
 
 			if (!Ext.isEmpty(this.selectedEntity) && this.view.isVisible()) {
 				var params = {};
+				params[CMDBuild.core.proxy.CMProxyConstants.ACTIVE] = true;
+				params[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME] = _CMCache.getEntryTypeNameById(this.selectedEntity.get('IdClass'));
+
+				// Request all class attributes
+				CMDBuild.core.proxy.Attributes.read({
+					params: params,
+					scope: this,
+					failure: function(response, options, decodedResponse) {
+						_error('get attributes failure', this);
+					},
+					success: function(response, options, decodedResponse) {
+						Ext.Array.forEach(decodedResponse[CMDBuild.core.proxy.CMProxyConstants.ATTRIBUTES], function(attribute, i, allAttributes) {
+							this.entryTypeAttributes[attribute[CMDBuild.core.proxy.CMProxyConstants.NAME]] = attribute;
+						}, this);
+					}
+				});
+
+				params = {};
 				params[CMDBuild.core.proxy.CMProxyConstants.CARD_ID] = this.selectedEntity.get(CMDBuild.core.proxy.CMProxyConstants.ID);
 				params[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME] = _CMCache.getEntryTypeNameById(this.selectedEntity.get('IdClass'));
 
@@ -356,36 +369,41 @@
 		 * Formats all object1 values as objects { {Boolean} changed: "...", {Mixed} description: "..." }. If value1 is different than value2
 		 * modified is true, false otherwise. Strips also HTML tags from "description".
 		 *
-		 * @param {Object} object1
-		 * @param {Object} object2
+		 * @param {Object} object1 - currently expanded record
+		 * @param {Object} object2 - predecessor record
 		 */
 		valuesFormattingAndCompare: function(object1, object2) {
 			if (!Ext.isEmpty(object1) && Ext.isObject(object1)) {
 				Ext.Object.each(object1, function(key, value, myself) {
+					// Get attribute's description
+					var attributeDescription = this.entryTypeAttributes.hasOwnProperty(key) ? this.entryTypeAttributes[key][CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION] : null;
+					var attributeIndex = this.entryTypeAttributes.hasOwnProperty(key) ? this.entryTypeAttributes[key][CMDBuild.core.proxy.CMProxyConstants.INDEX] : 0;
+
 					if (Ext.isObject(value)) {
 						object1[key][CMDBuild.core.proxy.CMProxyConstants.CHANGED] = false;
 
-						if (
-							!Ext.isEmpty(value[CMDBuild.core.proxy.CMProxyConstants.ID])
-							&& !Ext.isEmpty(object2)
-							&& !Ext.isEmpty(object2[key][CMDBuild.core.proxy.CMProxyConstants.ID])
-						) {
+						if (!Ext.isEmpty(object2) && object2.hasOwnProperty(key))
 							object1[key][CMDBuild.core.proxy.CMProxyConstants.CHANGED] = (
 								value[CMDBuild.core.proxy.CMProxyConstants.ID] != object2[key][CMDBuild.core.proxy.CMProxyConstants.ID]
+								|| value[CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION] != object2[key][CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION]
 							);
-						}
 
 						// Strip HTML tags
-						if (!Ext.isEmpty(object1[key][CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION]))
+						if (!Ext.isEmpty(value[CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION]))
 							object1[key][CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION] = Ext.util.Format.stripTags(
 								value[CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION]
 							);
+
+						object1[key][CMDBuild.core.proxy.CMProxyConstants.ATTRIBUTE_DESCRIPTION] = attributeDescription;
+						object1[key][CMDBuild.core.proxy.CMProxyConstants.INDEX] = attributeIndex;
 					} else {
 						object1[key] = {};
-						object1[key][CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION] = Ext.util.Format.stripTags(value); // Strip HTML tags
+						object1[key][CMDBuild.core.proxy.CMProxyConstants.ATTRIBUTE_DESCRIPTION] = attributeDescription;
 						object1[key][CMDBuild.core.proxy.CMProxyConstants.CHANGED] = (!Ext.isEmpty(object2) && !Ext.isEmpty(object2[key])) ? (value != object2[key]) : false;
+						object1[key][CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION] = Ext.util.Format.stripTags(value); // Strip HTML tags
+						object1[key][CMDBuild.core.proxy.CMProxyConstants.INDEX] = attributeIndex;
 					}
-				});
+				}, this);
 			}
 		}
 	});

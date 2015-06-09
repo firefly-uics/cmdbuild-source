@@ -16,7 +16,7 @@
 
 		listeners: {
 			show: function(panel, eOpts) {
-				this.delegate.cmfg('onHistoryTabPanelShow');
+				this.delegate.cmfg('onTabHistoryPanelShow');
 			}
 		},
 

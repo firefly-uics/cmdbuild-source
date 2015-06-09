@@ -85,7 +85,7 @@
 		},
 
 		onAbortCardClick: function() {
-			this.editModeSet(false);
+			this.editModeSet(true);
 		},
 
 		/**
@@ -96,8 +96,8 @@
 
 			this.card = card;
 
-			this.editModeSet(false);
-			this.cmfg('setUiState');
+			this.configuration.readOnly = false; // TODO: fix evaluating functionalities
+			this.editModeSet(true);
 
 			this.selectedEntitySet(this.card, function() {
 				me.regenerateAllEmailsSet(Ext.isEmpty(this.card));
@@ -111,8 +111,8 @@
 
 			this.card = null;
 
+			this.configuration.readOnly = false; // TODO: fix evaluating functionalities
 			this.editModeSet(true);
-			this.cmfg('setUiState');
 
 			this.selectedEntitySet(this.card, function() {
 				me.regenerateAllEmailsSet(Ext.isEmpty(this.card));
@@ -129,7 +129,8 @@
 		onEntryTypeSelected: function(entryType, dc, filter) {
 			this.entryType = entryType;
 
-			this.editModeSet(false);
+			this.configuration.readOnly = false; // TODO: fix evaluating functionalities
+			this.editModeSet(true);
 		},
 
 		/**

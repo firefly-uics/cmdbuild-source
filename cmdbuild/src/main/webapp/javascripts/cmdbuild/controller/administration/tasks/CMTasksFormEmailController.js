@@ -278,8 +278,13 @@
 		 * @override
 		 */
 		validate: function(enable) {
-			// Email account validation
+			// Email account and forlders validation
 			this.delegateStep[0].setAllowBlankEmailAccountCombo(!enable);
+			this.delegateStep[0].setAllowBlankIncomingFolder(!enable);
+			this.delegateStep[0].setAllowBlankProcessedFolder(!enable);
+
+			// Rejected folder validation
+			this.delegateStep[0].setAllowBlankRejectedFolder(!this.delegateStep[0].getValueRejectedFieldsetCheckbox());
 
 			// Cron field validation
 			this.delegateStep[1].getCronDelegate().validate(enable);

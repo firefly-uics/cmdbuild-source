@@ -40,6 +40,7 @@
 		loadRecord: function(record) {
 			this.reset();
 			this.name.setValue(record.get(NAME));
+			this.description.setValue(record.get(_CMProxy.parameter.DESCRIPTION));
 		},
 
 		/**

@@ -64,6 +64,7 @@
 		},
 
 		considerAsFieldToDisable: true,
+		minHeight: 150,
 
 		initComponent: function() {
 			// Setup TinyMCE configuration from string identifier

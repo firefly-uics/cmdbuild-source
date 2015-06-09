@@ -122,7 +122,6 @@
 			});
 
 			Ext.apply(this, {
-//				plugins: Ext.create('CMDBuild.SetValueOnLoadPlugin'),
 				fieldLabel: attribute.description || attribute.name,
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				name: attribute.name,
@@ -180,39 +179,47 @@
 			v = this.extractIdIfValueIsObject(v);
 
 			// Is one time seems that has a CQL filter
-			if (this.ensureToHaveTheValueInStore(v) !== false || this.store.isOneTime)
+			if (this.ensureToHaveTheValueInStore(v) || this.store.isOneTime)
 				this.callParent([v]);
 		},
 
 		/*
 		 * Adds the record when the store is not completely loaded (too many records)
+		 * NOTE: if field has preselectIfUnique metadata skip to add value to store, to avoid stores with more than one items (this is an ugly fix but is just temporary)
 		 */
 		ensureToHaveTheValueInStore: function(value) {
 			value = normalizeValue(this, value);
 
-			if (!value || this.store.isLoading())
-				return true;
-
-			if (this.store.find(this.valueField, value) == -1) {
-				// Ask to the server the record to add, return false to not set the value, and set it on success
-				var params = Ext.apply({cardId: value}, this.store.baseParams);
+			// Ask to the server the record to add, return false to not set the value, and set it on success
+			if (
+				!Ext.isEmpty(value)
+				&& this.getStore().find(this.valueField, value) == -1
+				&& !Ext.isEmpty(this.attribute)
+				&& !Ext.Object.isEmpty(this.attribute.meta)
+				&& this.attribute.meta['system.type.reference.' + CMDBuild.core.proxy.CMProxyConstants.PRESELECT_IF_UNIQUE] !== 'true'
+			) {
+				var params = Ext.apply({cardId: value}, this.getStore().baseParams);
 
 				CMDBuild.Ajax.request({
-					url: "services/json/management/modcard/getcard",
+					method: 'GET',
+					url: 'services/json/management/modcard/getcard',
 					params: params,
-					method: "GET",
 					scope: this,
-					success: function(response, options, decoded) {
-						var data = adaptResult(decoded);
+					success: function(response, options, decodedResult) {
+						if (!Ext.isEmpty(this.getStore())) {
+							this.getStore().add({
+								Id: value,
+								Description: decodedResult.card['Description']
+							});
 
-						if (data) {
-							this.addToStoreIfNotInIt(data);
-							this.setValue(value);
-						} else {
-							_debug("The remote reference is not found", params);
+							this.validate();
 						}
+
+						this.setValue(value);
 					}
 				});
+
+				return false;
 			}
 
 			return true;

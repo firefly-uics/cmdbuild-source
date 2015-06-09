@@ -34,6 +34,20 @@
 		],
 
 		/**
+		 * @cfg {Array}
+		 */
+		cmfgCatchedFunctions: [
+			'getTabHistoryGridColumns',
+			'getTabHistoryGridStore',
+			'onProcessesTabHistoryIncludeSystemActivitiesCheck',
+			'onTabHistoryIncludeRelationCheck',
+			'onTabHistoryPanelShow',
+			'onTabHistoryRowExpand',
+			'tabHistorySelectedEntityGet',
+			'tabHistorySelectedEntitySet'
+		],
+
+		/**
 		 * @property {CMDBuild.cache.CMEntryTypeModel}
 		 */
 		entryType: undefined,
@@ -203,6 +217,22 @@
 			this.entryType = entryType;
 
 			this.view.disable();
+		},
+
+		/**
+		 * Include or not System activities rows in history grid.
+		 */
+		onProcessesTabHistoryIncludeSystemActivitiesCheck: function() {
+			if (this.grid.includeSystemActivitiesCheckbox.getValue()) { // Checked: Remove any filter from store
+				if (this.grid.getStore().isFiltered()) {
+					this.grid.getStore().clearFilter();
+					this.grid.getStore().sort(); // Resort store because clearFilter() breaks it.
+				}
+			} else { // Unchecked: Apply filter to hide 'System' activities rows
+				this.grid.getStore().filterBy(function(record, id) {
+					return record.get(CMDBuild.core.proxy.CMProxyConstants.USER).indexOf('system') < 0; // System user name
+				}, this);
+			}
 		},
 
 		/**

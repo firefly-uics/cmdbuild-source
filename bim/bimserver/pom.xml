@@ -156,7 +156,7 @@
 		<dependency>
 			<groupId>org.cmdbuild</groupId>
 			<artifactId>cmdbuild-commons</artifactId>
-			<version>2.4-SNAPSHOT</version>
+			<version>${project.version}</version>
 		</dependency>
 	</dependencies>
 	<build>
