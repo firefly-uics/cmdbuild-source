@@ -377,6 +377,7 @@
 				Ext.Object.each(object1, function(key, value, myself) {
 					// Get attribute's description
 					var attributeDescription = this.entryTypeAttributes.hasOwnProperty(key) ? this.entryTypeAttributes[key][CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION] : null;
+					var attributeIndex = this.entryTypeAttributes.hasOwnProperty(key) ? this.entryTypeAttributes[key][CMDBuild.core.proxy.CMProxyConstants.INDEX] : 0;
 
 					if (Ext.isObject(value)) {
 						object1[key][CMDBuild.core.proxy.CMProxyConstants.CHANGED] = false;
@@ -394,11 +395,13 @@
 							);
 
 						object1[key][CMDBuild.core.proxy.CMProxyConstants.ATTRIBUTE_DESCRIPTION] = attributeDescription;
+						object1[key][CMDBuild.core.proxy.CMProxyConstants.INDEX] = attributeIndex;
 					} else {
 						object1[key] = {};
 						object1[key][CMDBuild.core.proxy.CMProxyConstants.ATTRIBUTE_DESCRIPTION] = attributeDescription;
 						object1[key][CMDBuild.core.proxy.CMProxyConstants.CHANGED] = (!Ext.isEmpty(object2) && !Ext.isEmpty(object2[key])) ? (value != object2[key]) : false;
 						object1[key][CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION] = Ext.util.Format.stripTags(value); // Strip HTML tags
+						object1[key][CMDBuild.core.proxy.CMProxyConstants.INDEX] = attributeIndex;
 					}
 				}, this);
 			}
