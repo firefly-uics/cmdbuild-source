@@ -149,7 +149,8 @@
 					scope: this,
 					callback: function(records, operation, success) {
 						if (
-							!Ext.Object.isEmpty(this.attribute)
+							!Ext.isEmpty(combo.getStore())
+							&& !Ext.Object.isEmpty(this.attribute)
 							&& !Ext.Object.isEmpty(this.attribute.meta)
 							&& this.attribute.meta['system.type.reference.' + CMDBuild.core.proxy.CMProxyConstants.PRESELECT_IF_UNIQUE] === 'true'
 							&& combo.getStore().getCount() == 1
