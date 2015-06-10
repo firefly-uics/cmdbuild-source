@@ -228,6 +228,18 @@
 		},
 
 		reports: {
+			jasper: {
+				create: 'services/json/management/modreport/createreportfactory',
+				read: '',
+				update: '',
+				remove: 'services/json/schema/modreport/deletereport',
+				save: 'services/json/schema/modreport/savejasperreport',
+
+				analyze: 'services/json/schema/modreport/analyzejasperreport',
+				getReportsByType: 'services/json/management/modreport/getreportsbytype',
+				import: 'services/json/schema/modreport/importjasperreport',
+				resetSession: 'services/json/schema/modreport/resetsession'
+			},
 			createReportFactory: 'services/json/management/modreport/createreportfactory',
 			createReportFactoryByTypeCode: 'services/json/management/modreport/createreportfactorybytypecode',
 			getReportTypesTree: 'services/json/management/modreport/getreporttypestree',

@@ -37,21 +37,21 @@
 		extend: 'CMDBuild.core.buttons.Base',
 
 		iconCls: 'sql',
-		textDefault: CMDBuild.Translation.sql // TODO: probably to add to translations
+		textDefault: CMDBuild.Translation.sql
 	});
 
 	Ext.define('CMDBuild.core.buttons.FileFormatsXml', {
 		extend: 'CMDBuild.core.buttons.Base',
 
 		iconCls: 'xml',
-		textDefault: CMDBuild.Translation.xml // TODO: probably to add to translations
+		textDefault: CMDBuild.Translation.xml // TODO: check translations
 	});
 
 	Ext.define('CMDBuild.core.buttons.FileFormatsZip', {
 		extend: 'CMDBuild.core.buttons.Base',
 
 		iconCls: 'zip',
-		textDefault: CMDBuild.Translation.zip // TODO: probably to add to translations
+		textDefault: CMDBuild.Translation.zip
 	});
 
 })();

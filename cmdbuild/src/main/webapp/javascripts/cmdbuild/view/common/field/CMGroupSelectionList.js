@@ -13,6 +13,7 @@
 		valueField: CMDBuild.ServiceProxy.parameter.ID,
 		displayField: CMDBuild.ServiceProxy.parameter.DESCRIPTION,
 		allowBlank: true,
+		considerAsFieldToDisable: true,
 
 		initComponent: function() {
 			if (!this.store) {

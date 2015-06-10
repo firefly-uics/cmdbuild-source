@@ -88,12 +88,6 @@
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/navigationTrees/CMModNavigationTrees.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/navigationTrees/CMNavigationTreesTree.js"></script>
 
-	<!-- REPORTS -->
-	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/report/CMModReport.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/report/CMReportForm.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/report/CMReportFormStep1.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/report/CMReportFormStep2.js"></script>
-
 	<!-- PROCESS -->
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/workflow/CMProcess.js"></script>
 
@@ -161,9 +155,6 @@
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/navigationTrees/CMModNavigationTreesController.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/navigationTrees/CMNavigationTreesTreeController.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/navigationTrees/CMNavigationTreesFormController.js"></script>
-
-	<!-- REPORTS -->
-	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/report/CMModReportController.js"></script>
 
 	<!-- PROCESS -->
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/accordion/CMAccordionProcessController.js"></script>

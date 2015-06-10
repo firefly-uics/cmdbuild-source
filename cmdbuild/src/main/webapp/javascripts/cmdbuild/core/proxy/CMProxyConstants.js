@@ -162,6 +162,7 @@
 		IS_KEY: 'isKey',
 		IS_MASTER_DETAIL: 'isMasterDetail',
 		IS_RELATION: 'isRelation',
+		JRXML: 'jrxml',
 		KEEP_SYNCHRONIZATION: 'keepSynchronization',
 		KEY: 'key',
 		KEY_VALUE_SEPARATOR: 'keyValueSeparator',
@@ -259,6 +260,7 @@
 		RELATION_ID: 'relationId',
 		RELATION_MASTER_SIDE: 'master',
 		REPORT_CODE: 'reportCode',
+		REPORT_ID: 'reportId',
 		REQUIRED: 'required',
 		RETRY_WITHOUT_FILTER: 'retryWithoutFilter',
 		ROLE: 'role',
@@ -280,6 +282,7 @@
 		SOURCE_CLASS_NAME: 'sourceClassName',
 		SOURCE_FUNCTION: 'sourceFunction',
 		SOURCE_NAME: 'sourceName',
+		SQL: 'sql',
 		SQLSERVER: 'sqlserver',
 		STARTING_CLASS: 'startingClass',
 		START_MAP_WITH_LATITUDE: 'StartMapWithLatitude',
@@ -321,7 +324,8 @@
 		WORKFLOW_ACTIVE: 'workflowActive',
 		WORKFLOW_ATTRIBUTES: 'workflowAttributes',
 		WORKFLOW_CLASS_NAME: 'workflowClassName',
-		WORKFLOW_NAME: 'workflowName'
+		WORKFLOW_NAME: 'workflowName',
+		ZIP: 'zip',
 	});
 
 })();

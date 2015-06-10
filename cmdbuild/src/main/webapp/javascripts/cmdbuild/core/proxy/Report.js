@@ -95,7 +95,7 @@
 				url: CMDBuild.core.proxy.CMProxyUrlIndex.reports.menuTree,
 				params: parameters.params,
 				scope: parameters.scope || this,
-				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
+				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : false,
 				failure: parameters.failure || Ext.emptyFn(),
 				success: parameters.success || Ext.emptyFn(),
 				callback: parameters.callback || Ext.emptyFn()
