@@ -5,7 +5,8 @@
 
 		requires: [
 			'CMDBuild.core.proxy.CMProxyConstants',
-			'CMDBuild.core.proxy.Report'
+			'CMDBuild.core.proxy.CMProxyUrlIndex',
+			'CMDBuild.core.proxy.reports.Print'
 		],
 
 		/**
@@ -33,6 +34,11 @@
 		 * @cfg {String}
 		 */
 		format: CMDBuild.core.proxy.CMProxyConstants.PDF,
+
+		/**
+		 * @cfg {Boolean}
+		 */
+		forceDownload: false,
 
 		/**
 		 * Utilization mode
@@ -70,106 +76,69 @@
 				}
 		},
 
-		/**
-		 * @param {Boolean} forceDownload
-		 */
-		createDocument: function(forceDownload) { // TODO ottimizzare cambiando solo il nome del metodo???
+		createDocument: function() {
+			var proxyCreateFunction = null;
+
 			switch (this.mode) {
 				case 'cardDetails': {
-					CMDBuild.core.proxy.Report.createCardDetailsReport({
-						params: this.parameters,
-						scope: this,
-						failure: function(response, options, decodedResponse) {
-							CMDBuild.Msg.error(
-								CMDBuild.Translation.error,
-								CMDBuild.Translation.errors.createReportFilure,
-								false
-							);
-						},
-						success: function(response, options, decodedResponse) {
-							this.showReport(forceDownload);
-						}
-					});
+					proxyCreateFunction = CMDBuild.core.proxy.reports.Print.createCardDetails;
 				} break;
 
 				case 'classSchema': {
-					CMDBuild.core.proxy.Report.createClassSchemaReport({
-						params: this.parameters,
-						scope: this,
-						failure: function(response, options, decodedResponse) {
-							CMDBuild.Msg.error(
-								CMDBuild.Translation.error,
-								CMDBuild.Translation.errors.createReportFilure,
-								false
-							);
-						},
-						success: function(response, options, decodedResponse) {
-							this.showReport(forceDownload);
-						}
-					});
+					proxyCreateFunction = CMDBuild.core.proxy.reports.Print.createClassSchema;
 				} break;
 
 				case 'schema': {
-					CMDBuild.core.proxy.Report.createSchemaReport({
-						params: this.parameters,
-						scope: this,
-						failure: function(response, options, decodedResponse) {
-							CMDBuild.Msg.error(
-								CMDBuild.Translation.error,
-								CMDBuild.Translation.errors.createReportFilure,
-								false
-							);
-						},
-						success: function(response, options, decodedResponse) {
-							this.showReport(forceDownload);
-						}
-					});
+					proxyCreateFunction = CMDBuild.core.proxy.reports.Print.createSchema;
 				} break;
 
 				case 'view': {
-					CMDBuild.core.proxy.Report.createViewReport({
-						params: this.parameters,
-						scope: this,
-						failure: function(response, options, decodedResponse) {
-							CMDBuild.Msg.error(
-								CMDBuild.Translation.error,
-								CMDBuild.Translation.errors.createReportFilure,
-								false
-							);
-						},
-						success: function(response, options, decodedResponse) {
-							this.showReport(forceDownload);
-						}
-					});
+					proxyCreateFunction = CMDBuild.core.proxy.reports.Print.createView;
 				} break;
 
 				default: {
 					_error('unmanaged print window mode', this);
 				}
 			}
+
+			if (!Ext.isEmpty(proxyCreateFunction))
+				proxyCreateFunction({
+					params: this.parameters,
+					scope: this,
+					failure: function(response, options, decodedResponse) {
+						CMDBuild.Msg.error(
+							CMDBuild.Translation.error,
+							CMDBuild.Translation.errors.createReportFilure,
+							false
+						);
+					},
+					success: function(response, options, decodedResponse) {
+						this.showReport();
+					}
+				});
 		},
 
 		onPrintWindowDownloadButtonClick: function() {
-			this.createDocument(true);
+			this.forceDownload = true;
+
+			this.createDocument();
 		},
 
 		onPrintWindowShow: function() {
+			this.forceDownload = false; // Reset value on show
+
 			if (!Ext.isEmpty(this.format))
 				this.createDocument();
 		},
 
 		/**
 		 * Get created report from server and display it in iframe
-		 *
-		 * @param {Boolean} forceDownload
 		 */
-		showReport: function(forceDownload) {
-			forceDownload = forceDownload || false;
-
+		showReport: function() {
 			var params = {};
 			params[CMDBuild.core.proxy.CMProxyConstants.FORCE_DOWNLOAD_PARAM_KEY] = true;
 
-			if (forceDownload) { // Force download mode
+			if (this.forceDownload) { // Force download mode
 				var form = Ext.create('Ext.form.Panel', {
 					standardSubmit: true,
 					url: CMDBuild.core.proxy.CMProxyUrlIndex.reports.printReportFactory
