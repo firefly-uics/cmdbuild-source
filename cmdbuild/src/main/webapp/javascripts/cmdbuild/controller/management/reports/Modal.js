@@ -1,6 +1,6 @@
 (function() {
 
-	Ext.define('CMDBuild.controller.management.report.Modal', {
+	Ext.define('CMDBuild.controller.management.reports.Modal', {
 		extend: 'CMDBuild.controller.common.AbstractController',
 
 		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
@@ -14,7 +14,7 @@
 		],
 
 		/**
-		 * @cfg {CMDBuild.controller.management.report.Report}
+		 * @cfg {CMDBuild.controller.management.reports.Reports}
 		 */
 		parentDelegate: undefined,
 
@@ -32,7 +32,7 @@
 		format: CMDBuild.core.proxy.CMProxyConstants.PDF,
 
 		/**
-		 * @property {CMDBuild.view.management.report.ModalWindow}
+		 * @property {CMDBuild.view.management.reports.ModalWindow}
 		 */
 		view: undefined,
 
@@ -48,7 +48,7 @@
 		constructor: function(configurationObject) {
 			this.callParent(arguments);
 
-			this.view = Ext.create('CMDBuild.view.management.report.ModalWindow', {
+			this.view = Ext.create('CMDBuild.view.management.reports.ModalWindow', {
 				delegate: this
 			});
 

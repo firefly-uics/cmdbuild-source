@@ -8,7 +8,7 @@
 		title: CMDBuild.Translation.report,
 
 		/**
-		 * @param {CMDBuild.model.Report} report
+		 * @param {CMDBuild.model.reports.Cache} report
 		 *
 		 * @return {Object} nodeConf
 		 */

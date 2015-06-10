@@ -1,15 +1,15 @@
 (function() {
 
-	Ext.define('CMDBuild.view.management.report.ReportView', {
+	Ext.define('CMDBuild.view.management.reports.ReportsView', {
 		extend: 'Ext.panel.Panel',
 
 		/**
-		 * @cfg {CMDBuild.controller.management.report.Report}
+		 * @cfg {CMDBuild.controller.management.reports.Reports}
 		 */
 		delegate: undefined,
 
 		/**
-		 * @property {CMDBuild.view.management.report.GridPanel}
+		 * @property {CMDBuild.view.management.reports.GridPanel}
 		 */
 		grid: undefined,
 

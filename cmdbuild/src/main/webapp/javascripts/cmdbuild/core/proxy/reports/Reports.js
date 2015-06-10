@@ -1,12 +1,12 @@
 (function() {
 
-	Ext.define('CMDBuild.core.proxy.Report', {
+	Ext.define('CMDBuild.core.proxy.reports.Reports', {
 
 		requires: [
 			'CMDBuild.core.Utils',
 			'CMDBuild.core.proxy.CMProxyConstants',
 			'CMDBuild.core.proxy.CMProxyUrlIndex',
-			'CMDBuild.model.Report'
+			'CMDBuild.model.reports.Grid'
 		],
 
 		singleton: true,
@@ -14,37 +14,7 @@
 		/**
 		 * @param {Object} parameters
 		 */
-		createCardDetailsReport: function(parameters) {
-			CMDBuild.Ajax.request({
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.reports.printCardDetails,
-				params: parameters.params,
-				scope: parameters.scope || this,
-				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
-				failure: parameters.failure || Ext.emptyFn(),
-				success: parameters.success || Ext.emptyFn(),
-				callback: parameters.callback || Ext.emptyFn()
-			});
-		},
-
-		/**
-		 * @param {Object} parameters
-		 */
-		createClassSchemaReport: function(parameters) {
-			CMDBuild.Ajax.request({
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.reports.printClassSchema,
-				params: parameters.params,
-				scope: parameters.scope || this,
-				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
-				failure: parameters.failure || Ext.emptyFn(),
-				success: parameters.success || Ext.emptyFn(),
-				callback: parameters.callback || Ext.emptyFn()
-			});
-		},
-
-		/**
-		 * @param {Object} parameters
-		 */
-		createReport: function(parameters) {
+		create: function(parameters) {
 			CMDBuild.Ajax.request({
 				url: CMDBuild.core.proxy.CMProxyUrlIndex.reports.createReportFactory,
 				params: parameters.params,
@@ -58,36 +28,8 @@
 
 		/**
 		 * @param {Object} parameters
-		 */
-		createSchemaReport: function(parameters) {
-			CMDBuild.Ajax.request({
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.reports.printSchema,
-				params: parameters.params,
-				scope: parameters.scope || this,
-				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
-				failure: parameters.failure || Ext.emptyFn(),
-				success: parameters.success || Ext.emptyFn(),
-				callback: parameters.callback || Ext.emptyFn()
-			});
-		},
-
-		/**
-		 * @param {Object} parameters
-		 */
-		createViewReport: function(parameters) {
-			CMDBuild.Ajax.request({
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.reports.printCurrentView,
-				params: parameters.params,
-				scope: parameters.scope || this,
-				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
-				failure: parameters.failure || Ext.emptyFn(),
-				success: parameters.success || Ext.emptyFn(),
-				callback: parameters.callback || Ext.emptyFn()
-			});
-		},
-
-		/**
-		 * @param {Object} parameters
+		 *
+		 * @administration
 		 */
 		getMenuTree: function(parameters) {
 			CMDBuild.ServiceProxy.core.doRequest({
@@ -108,7 +50,7 @@
 		getStore: function() {
 			return Ext.create('Ext.data.Store', {
 				autoLoad: false,
-				model: 'CMDBuild.model.Report.grid',
+				model: 'CMDBuild.model.reports.Grid',
 				proxy: {
 					type: 'ajax',
 					url: CMDBuild.core.proxy.CMProxyUrlIndex.reports.getReportsByType,
@@ -121,15 +63,16 @@
 						type: CMDBuild.core.proxy.CMProxyConstants.CUSTOM
 					}
 				},
-				sorters: [{
-					property: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
-					direction: 'ASC'
-				}]
+				sorters: [
+					{ property: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION, direction: 'ASC' }
+				]
 			});
 		},
 
 		/**
 		 * @param {Object} parameters
+		 *
+		 * @management
 		 */
 		getTypesTree: function(parameters) {
 			CMDBuild.ServiceProxy.core.doRequest({
@@ -147,7 +90,7 @@
 		/**
 		 * @param {Object} parameters
 		 */
-		updateReport: function(parameters) {
+		update: function(parameters) {
 			parameters.form.submit({
 				method: 'POST',
 				url: CMDBuild.core.proxy.CMProxyUrlIndex.reports.updateReportFactoryParams,
@@ -159,7 +102,6 @@
 				callback: parameters.callback || Ext.emptyFn()
 			});
 		}
-
 	});
 
 })();

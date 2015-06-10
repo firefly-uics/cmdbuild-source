@@ -1,13 +1,13 @@
 (function() {
 
-	Ext.define('CMDBuild.controller.management.report.SingleReport', {
+	Ext.define('CMDBuild.controller.management.reports.SingleReport', {
 		extend: 'CMDBuild.controller.common.AbstractBasePanelController',
 
 		requires: [
 			'CMDBuild.core.proxy.CMProxyConstants',
 			'CMDBuild.core.proxy.CMProxyUrlIndex',
-			'CMDBuild.core.proxy.Report',
-			'CMDBuild.model.Report'
+			'CMDBuild.core.proxy.reports.Reports',
+			'CMDBuild.model.reports.ModuleObject'
 		],
 
 		/**
@@ -22,7 +22,7 @@
 		/**
 		 * Parameters of last managed report
 		 *
-		 * @cfg {CMDBuild.model.Report.createParameters}
+		 * @cfg {CMDBuild.model.reports.ModuleObject}
 		 */
 		managedReport: undefined,
 
@@ -42,7 +42,7 @@
 		titleSeparator: ' - ',
 
 		/**
-		 * @cfg {CMDBuild.view.management.report.SingleReportPanel}
+		 * @cfg {CMDBuild.view.management.reports.SingleReportPanel}
 		 */
 		view: undefined,
 
@@ -53,7 +53,7 @@
 			if (Ext.isObject(parameters) && !Ext.isEmpty(parameters[CMDBuild.core.proxy.CMProxyConstants.ID])) {
 				this.managedReportSet(parameters);
 
-				CMDBuild.core.proxy.Report.createReport({
+				CMDBuild.core.proxy.reports.Reports.create({
 					params: this.managedReport.getData(),
 					scope: this,
 					failure: function(response, options, decodedResponse) {
@@ -70,7 +70,7 @@
 							if (Ext.isIE) // FIX: in IE PDF is painted on top of the regular page content so remove it before display parameter window
 								this.view.removeAll();
 
-							Ext.create('CMDBuild.controller.management.report.Parameters', {
+							Ext.create('CMDBuild.controller.management.reports.Parameters', {
 								parentDelegate: this,
 								attributeList: decodedResponse.attribute,
 								forceDownload: this.managedReport.get(CMDBuild.core.proxy.CMProxyConstants.FORCE_DOWNLOAD)
@@ -134,7 +134,7 @@
 			 */
 			managedReportSet: function(parameters) {
 				if (!Ext.Object.isEmpty(parameters)) {
-					this.managedReport = Ext.create('CMDBuild.model.Report.createParameters', parameters);
+					this.managedReport = Ext.create('CMDBuild.model.reports.ModuleObject', parameters);
 				} else {
 					this.managedReport = null;
 				}

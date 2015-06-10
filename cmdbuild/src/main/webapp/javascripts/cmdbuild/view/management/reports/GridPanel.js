@@ -1,14 +1,15 @@
 (function() {
 
-	Ext.define('CMDBuild.view.management.report.GridPanel', {
+	Ext.define('CMDBuild.view.management.reports.GridPanel', {
 		extend: 'Ext.grid.Panel',
 
 		requires: [
-			'CMDBuild.core.proxy.Report'
+			'CMDBuild.core.proxy.CMProxyConstants',
+			'CMDBuild.core.proxy.reports.Reports'
 		],
 
 		/**
-		 * @cfg {CMDBuild.controller.management.report.Report}
+		 * @cfg {CMDBuild.controller.management.reports.Reports}
 		 */
 		delegate: undefined,
 
@@ -16,7 +17,7 @@
 		frame: false,
 
 		initComponent: function() {
-			var store = CMDBuild.core.proxy.Report.getStore();
+			var store = CMDBuild.core.proxy.reports.Reports.getStore();
 
 			Ext.apply(this, {
 				dockedItems: [

@@ -240,16 +240,18 @@
 				import: 'services/json/schema/modreport/importjasperreport',
 				resetSession: 'services/json/schema/modreport/resetsession'
 			},
+			print: {
+				cardDetails: 'services/json/management/modreport/printcarddetails',
+				classSchema: 'services/json/schema/modreport/printclassschema',
+				currentView: 'services/json/management/modreport/printcurrentview',
+				schema: 'services/json/schema/modreport/printschema'
+			},
 			createReportFactory: 'services/json/management/modreport/createreportfactory',
 			createReportFactoryByTypeCode: 'services/json/management/modreport/createreportfactorybytypecode',
 			getReportTypesTree: 'services/json/management/modreport/getreporttypestree',
 			getReportsByType: 'services/json/management/modreport/getreportsbytype',
 			menuTree: 'services/json/schema/modreport/menutree',
-			printCardDetails: 'services/json/management/modreport/printcarddetails',
-			printClassSchema: 'services/json/schema/modreport/printclassschema',
-			printCurrentView: 'services/json/management/modreport/printcurrentview',
 			printReportFactory: 'services/json/management/modreport/printreportfactory',
-			printSchema: 'services/json/schema/modreport/printschema',
 			updateReportFactoryParams: 'services/json/management/modreport/updatereportfactoryparams'
 		},
 
