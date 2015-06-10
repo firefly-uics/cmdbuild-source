@@ -342,20 +342,22 @@
 				});
 
 				/**
-				 * Report
+				 * Reports
 				 */
 				CMDBuild.core.proxy.Report.getMenuTree({
-					success: function(response, options, reports) {
-						_CMCache.addReports(reports);
+					scope: this,
+					success: function(response, options, decodedResponse) {
+						_CMCache.addReports(decodedResponse);
 
-						reportAccordion = Ext.create('CMDBuild.view.administration.accordion.Report', { cmName: 'report' });
+						reportAccordion = Ext.create('CMDBuild.view.administration.accordion.Reports', { cmName: 'report' });
 						reportAccordion.updateStore();
 
-						_CMMainViewportController.addPanel(
-							new CMDBuild.view.administration.report.CMModReport({
-								cmControllerType: controllerNS.administration.report.CMModReportController
+						_CMMainViewportController.addPanel([
+							Ext.create('CMDBuild.view.administration.reports.ReportsView', {
+								cmControllerType: 'CMDBuild.controller.administration.reports.Reports',
+								cmName: 'report'
 							})
-						);
+						]);
 					},
 					callback: reqBarrier.getCallback()
 				});
