@@ -1,13 +1,13 @@
 (function() {
 
-	Ext.define('CMDBuild.controller.management.report.Report', {
+	Ext.define('CMDBuild.controller.management.reports.Reports', {
 		extend: 'CMDBuild.controller.common.AbstractBasePanelController',
 
 		requires: [
 			'CMDBuild.core.proxy.CMProxyConstants',
 			'CMDBuild.core.proxy.CMProxyUrlIndex',
-			'CMDBuild.core.proxy.Report',
-			'CMDBuild.model.Report'
+			'CMDBuild.core.proxy.reports.Reports',
+			'CMDBuild.model.reports.ModuleObject'
 		],
 
 		/**
@@ -31,14 +31,14 @@
 		],
 
 		/**
-		 * @property {CMDBuild.view.management.report.GridPanel}
+		 * @property {CMDBuild.view.management.reports.GridPanel}
 		 */
 		grid: undefined,
 
 		/**
 		 * Parameters of last managed report
 		 *
-		 * @cfg {CMDBuild.model.Report.createParameters}
+		 * @cfg {CMDBuild.model.reports.ModuleObject}
 		 */
 		managedReport: undefined,
 
@@ -53,17 +53,17 @@
 		],
 
 		/**
-		 * @cfg {CMDBuild.view.management.report.ReportView}
+		 * @cfg {CMDBuild.view.management.reports.ReportsView}
 		 */
 		view: undefined,
 
 		/**
-		 * @param {CMDBuild.view.management.report.ReportView} view
+		 * @param {CMDBuild.view.management.reports.ReportsView} view
 		 */
 		constructor: function(view) {
 			this.callParent(arguments);
 
-			this.grid = Ext.create('CMDBuild.view.management.report.GridPanel', {
+			this.grid = Ext.create('CMDBuild.view.management.reports.GridPanel', {
 				delegate: this
 			});
 
@@ -77,8 +77,8 @@
 			if (Ext.isObject(parameters) && !Ext.isEmpty(parameters[CMDBuild.core.proxy.CMProxyConstants.ID])) {
 				this.managedReportSet(parameters);
 
-				CMDBuild.core.proxy.Report.createReport({
-					params: this.managedReport.getData(),
+				CMDBuild.core.proxy.reports.Reports.create({
+					params: this.managedReportGet().getData(),
 					scope: this,
 					failure: function(response, options, decodedResponse) {
 						CMDBuild.Msg.error(
@@ -91,10 +91,10 @@
 						if(decodedResponse.filled) { // Report with no parameters
 							this.showReport();
 						} else { // Show parameters window
-							Ext.create('CMDBuild.controller.management.report.Parameters', {
+							Ext.create('CMDBuild.controller.management.reports.Parameters', {
 								parentDelegate: this,
 								attributeList: decodedResponse.attribute,
-								forceDownload: this.managedReport.get(CMDBuild.core.proxy.CMProxyConstants.FORCE_DOWNLOAD)
+								forceDownload: this.managedReportGet().get(CMDBuild.core.proxy.CMProxyConstants.FORCE_DOWNLOAD)
 							});
 						}
 					}
@@ -115,7 +115,7 @@
 			 */
 			managedReportSet: function(parameters) {
 				if (!Ext.Object.isEmpty(parameters)) {
-					this.managedReport = Ext.create('CMDBuild.model.Report.createParameters', parameters);
+					this.managedReport = Ext.create('CMDBuild.model.reports.ModuleObject', parameters);
 				} else {
 					this.managedReport = null;
 				}
@@ -167,8 +167,8 @@
 		 * Get created report from server and display it in popup window
 		 */
 		showReport: function() {
-			if (!Ext.Object.isEmpty(this.managedReport))
-				if (this.managedReport.get(CMDBuild.core.proxy.CMProxyConstants.FORCE_DOWNLOAD)) { // Force download mode
+			if (!Ext.Object.isEmpty(this.managedReportGet()))
+				if (this.managedReportGet().get(CMDBuild.core.proxy.CMProxyConstants.FORCE_DOWNLOAD)) { // Force download mode
 					var params = {};
 					params[CMDBuild.core.proxy.CMProxyConstants.FORCE_DOWNLOAD_PARAM_KEY] = true;
 
@@ -186,9 +186,9 @@
 						form.close();
 					}, 100);
 				} else { // Pop-up display mode
-					Ext.create('CMDBuild.controller.management.report.Modal', {
+					Ext.create('CMDBuild.controller.management.reports.Modal', {
 						parentDelegate: this,
-						format: this.managedReport.get(CMDBuild.core.proxy.CMProxyConstants.EXTENSION)
+						format: this.managedReportGet().get(CMDBuild.core.proxy.CMProxyConstants.EXTENSION)
 					});
 				}
 		}

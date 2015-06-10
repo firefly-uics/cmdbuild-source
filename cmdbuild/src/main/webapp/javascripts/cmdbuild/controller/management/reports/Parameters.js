@@ -1,12 +1,12 @@
 (function () {
 
-	Ext.define('CMDBuild.controller.management.report.Parameters', {
+	Ext.define('CMDBuild.controller.management.reports.Parameters', {
 		extend: 'CMDBuild.controller.common.AbstractController',
 
 		requires: [
 			'CMDBuild.core.proxy.CMProxyConstants',
 			'CMDBuild.core.proxy.CMProxyUrlIndex',
-			'CMDBuild.core.proxy.Report'
+			'CMDBuild.core.proxy.reports.Reports'
 		],
 
 		/**
@@ -33,7 +33,7 @@
 		forceDownload: undefined,
 
 		/**
-		 * @property {CMDBuild.view.management.report.ParametersWindow} emailWindows
+		 * @property {CMDBuild.view.management.reports.ParametersWindow} emailWindows
 		 */
 		view: undefined,
 
@@ -44,7 +44,7 @@
 		constructor: function(configurationObject) {
 			this.callParent(arguments);
 
-			this.view = Ext.create('CMDBuild.view.management.report.ParametersWindow', {
+			this.view = Ext.create('CMDBuild.view.management.reports.ParametersWindow', {
 				delegate: this
 			});
 
@@ -76,7 +76,7 @@
 
 		onReportParametersWindowSaveButtonClick: function() {
 			if (this.view.form.getForm().isValid()) {
-				CMDBuild.core.proxy.Report.updateReport({
+				CMDBuild.core.proxy.reports.Reports.update({
 					form: this.view.form.getForm(),
 					scope: this,
 					failure: function(response, options, decodedResponse) {

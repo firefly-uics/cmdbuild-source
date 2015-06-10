@@ -1,12 +1,12 @@
 (function() {
 
-	Ext.define('CMDBuild.view.management.report.ParametersWindow', {
+	Ext.define('CMDBuild.view.management.reports.ParametersWindow', {
 		extend: 'CMDBuild.core.PopupWindow',
 
 		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
 
 		/**
-		 * @cfg {CMDBuild.controller.management.report.Parameters}
+		 * @cfg {CMDBuild.controller.management.reports.Parameters}
 		 */
 		delegate: undefined,
 

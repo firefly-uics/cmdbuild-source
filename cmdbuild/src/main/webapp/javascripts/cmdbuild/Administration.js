@@ -25,7 +25,7 @@
 			'CMDBuild.core.proxy.Domain',
 			'CMDBuild.core.proxy.Localizations',
 			'CMDBuild.core.proxy.Lookup',
-			'CMDBuild.core.proxy.Report'
+			'CMDBuild.core.proxy.reports.Reports'
 		],
 
 		name: 'CMDBuild',
@@ -344,7 +344,7 @@
 				/**
 				 * Reports
 				 */
-				CMDBuild.core.proxy.Report.getMenuTree({
+				CMDBuild.core.proxy.reports.Reports.getMenuTree({
 					scope: this,
 					success: function(response, options, decodedResponse) {
 						_CMCache.addReports(decodedResponse);

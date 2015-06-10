@@ -38,8 +38,8 @@
 			'CMDBuild.core.proxy.Configuration',
 			'CMDBuild.core.proxy.Domain',
 			'CMDBuild.core.proxy.Lookup',
-			'CMDBuild.core.proxy.Report',
-			'CMDBuild.core.proxy.dataViews.DataViews'
+			'CMDBuild.core.proxy.dataViews.DataViews',
+			'CMDBuild.core.proxy.reports.Reports'
 		],
 
 		name: 'CMDBuild',
@@ -187,12 +187,12 @@
 					this.processPanel = new CMDBuild.view.management.workflow.CMModProcess({
 						cmControllerType: CMDBuild.controller.management.workflow.CMModWorkflowController
 					}),
-					Ext.create('CMDBuild.view.management.report.ReportView', {
-						cmControllerType: 'CMDBuild.controller.management.report.Report',
+					Ext.create('CMDBuild.view.management.reports.ReportsView', {
+						cmControllerType: 'CMDBuild.controller.management.reports.Reports',
 						cmName: 'report'
 					}),
-					Ext.create('CMDBuild.view.management.report.SingleReportPanel', {
-						cmControllerType: 'CMDBuild.controller.management.report.SingleReport',
+					Ext.create('CMDBuild.view.management.reports.SingleReportPanel', {
+						cmControllerType: 'CMDBuild.controller.management.reports.SingleReport',
 						cmName: 'singlereport'
 					}),
 					this.dashboardPanel = new CMDBuild.view.management.dashboard.CMModDashboard({
@@ -332,10 +332,14 @@
 					callback: reqBarrier.getCallback()
 				});
 
-				CMDBuild.core.proxy.Report.getTypesTree({
+				/**
+				 * Reports
+				 */
+				CMDBuild.core.proxy.reports.Reports.getTypesTree({
 					scope: this,
-					success: function(response, options, reports) {
-						_CMCache.addReports(reports);
+					success: function(response, options, decodedResponse) {
+						_CMCache.addReports(decodedResponse);
+
 						reportAccordion.updateStore();
 					},
 					callback: reqBarrier.getCallback()

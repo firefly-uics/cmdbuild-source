@@ -46,13 +46,13 @@
 <script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxyWidgetConfiguration.js"></script>
 
 <!-- MODELS -->
+<script type="text/javascript" src="javascripts/cmdbuild/model/reports/Cache.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/model/CMCacheModels.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/model/CMFilterModel.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/model/CMDomainModels.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/model/CMGroupModels.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/model/CMDashboardModels.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/model/CMAttachmentModels.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/model/Report.js"></script>
 
 <!-- SELECTION -->
 <script type="text/javascript" src="javascripts/cmdbuild/selection/CMMultiPageSelectionModel.js"></script>
