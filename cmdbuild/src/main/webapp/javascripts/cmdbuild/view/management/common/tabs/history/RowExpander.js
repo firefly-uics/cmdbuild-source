@@ -16,6 +16,9 @@
 				'</tpl>',
 				'<b>{attribute}:</b> {value}</p>',
 			'</tpl>',
+			'<tpl if="this.formattedArray.length == 0">',
+				'<p>' + CMDBuild.Translation.noAvailableData + '<p>',
+			'</tpl>',
 			{
 				/**
 				 * @param {Object} values
@@ -26,10 +29,10 @@
 
 						Ext.Object.each(values, function(key, value, myself) {
 							this.formattedArray.push({
-								attribute: value[CMDBuild.core.proxy.CMProxyConstants.ATTRIBUTE_DESCRIPTION] || key,
-								changed: value[CMDBuild.core.proxy.CMProxyConstants.CHANGED],
-								index: value[CMDBuild.core.proxy.CMProxyConstants.INDEX],
-								value: value[CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION]
+								attribute: value.get(CMDBuild.core.proxy.CMProxyConstants.ATTRIBUTE_DESCRIPTION) || key,
+								changed: value.get(CMDBuild.core.proxy.CMProxyConstants.CHANGED),
+								index: value.get(CMDBuild.core.proxy.CMProxyConstants.INDEX),
+								value: value.get(CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION)
 							});
 						}, this);
 
