@@ -1422,6 +1422,7 @@
 	"modifyView": "Modifier la Vue",
 	"multiGroup": "Multi-groupes",
 	"name": "Nom",
+	"noAvailableData": "<em>No available data</em>",
 	"no_bim_project_for_card": "Il n'existe pas de projet BIM pour cette fiche",
 	"not_set": "Non configuré",
 	"odt": "ODT",

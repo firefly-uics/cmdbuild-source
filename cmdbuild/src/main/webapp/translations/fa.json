@@ -1422,6 +1422,7 @@
 	"modifyView": "ویرایش نمایش",
 	"multiGroup": "چند گروهی",
 	"name": "نام",
+	"noAvailableData": "<em>No available data</em>",
 	"no_bim_project_for_card": "There is no BIM project for this card",
 	"not_set": "Not set",
 	"odt": "ODT",

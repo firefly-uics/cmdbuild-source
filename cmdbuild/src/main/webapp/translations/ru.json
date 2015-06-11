@@ -1422,6 +1422,7 @@
 	"modifyView": "Редактировать представление",
 	"multiGroup": "Несколько групп",
 	"name": "Имя",
+	"noAvailableData": "<em>No available data</em>",
 	"no_bim_project_for_card": "Для данной карточки не задан BIM-проект",
 	"not_set": "Не установлен",
 	"odt": "ODT",

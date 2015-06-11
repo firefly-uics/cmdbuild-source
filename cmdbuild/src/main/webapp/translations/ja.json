@@ -1422,6 +1422,7 @@
 	"modifyView": "ビューを変更",
 	"multiGroup": "マルチグループ",
 	"name": "名前",
+	"noAvailableData": "<em>No available data</em>",
 	"no_bim_project_for_card": "このカードにはBMIプロジェクトがありません",
 	"not_set": "設定されていません",
 	"odt": "ODT",
