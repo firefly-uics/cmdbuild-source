@@ -40,8 +40,7 @@
 			'getTabHistoryGridColumns',
 			'getTabHistoryGridStore',
 			'onProcessesTabHistoryIncludeSystemActivitiesCheck',
-			'onTabHistoryIncludeRelationCheck',
-			'onTabHistoryPanelShow',
+			'onTabHistoryPanelShow = onTabHistoryIncludeRelationCheck', // Reloads store to be consistent with includeRelationsCheckbox state
 			'onTabHistoryRowExpand',
 			'tabHistorySelectedEntityGet',
 			'tabHistorySelectedEntitySet'
@@ -98,11 +97,72 @@
 		},
 
 		/**
-		 * It's implemented with ugly workarounds because server side ugly code.
+		 * It's implemented with ugly workarounds because of server side ugly code.
 		 *
 		 * @override
 		 */
 		addCurrentCardToStore: function() {
+			var selectedEntityAttributes = {};
+			var selectedEntityValues = this.selectedEntity.get(CMDBuild.core.proxy.CMProxyConstants.VALUES);
+
+			// Filter selectedEntity's attributes values to avoid the display of incorrect data
+			Ext.Object.each(selectedEntityValues, function(key, value, myself) {
+				if (!Ext.Array.contains(this.attributesKeysToFilter, key) && key.indexOf('_') != 0)
+					selectedEntityAttributes[key] = value;
+			}, this);
+
+			selectedEntityValues[CMDBuild.core.proxy.CMProxyConstants.USER] = this.selectedEntity.get(CMDBuild.core.proxy.CMProxyConstants.VALUES)[CMDBuild.core.proxy.CMProxyConstants.USER];
+
+			this.valuesFormattingAndCompare(selectedEntityAttributes); // Formats values only
+
+			this.clearStoreAdd(this.buildCurrentEntityModel(selectedEntityAttributes));
+		},
+
+		/**
+		 * @param {Object} entityAttributeData
+		 *
+		 * @return {CMDBuild.model.common.tabs.history.processes.CardRecord} currentEntityModel
+		 */
+		buildCurrentEntityModel: function(entityAttributeData) {
+			var performers = [];
+
+			// Build performers array
+			Ext.Array.forEach(this.selectedEntity.get(CMDBuild.core.proxy.CMProxyConstants.ACTIVITY_INSTANCE_INFO_LIST), function(activityObject, i, array) {
+				if (!Ext.isEmpty(activityObject[CMDBuild.core.proxy.CMProxyConstants.PERFORMER_NAME]))
+					performers.push(activityObject[CMDBuild.core.proxy.CMProxyConstants.PERFORMER_NAME]);
+			}, this);
+
+			var currentEntityModel = Ext.create('CMDBuild.model.common.tabs.history.processes.CardRecord', this.selectedEntity.getData());
+			currentEntityModel.set(CMDBuild.core.proxy.CMProxyConstants.ACTIVITY_NAME, this.selectedEntity.get(CMDBuild.core.proxy.CMProxyConstants.VALUES)['Code']);
+			currentEntityModel.set(CMDBuild.core.proxy.CMProxyConstants.PERFORMERS, performers);
+			currentEntityModel.set(CMDBuild.core.proxy.CMProxyConstants.STATUS, this.statusTranslationGet(this.selectedEntity.get(CMDBuild.core.proxy.CMProxyConstants.FLOW_STATUS)));
+			currentEntityModel.set(CMDBuild.core.proxy.CMProxyConstants.VALUES, entityAttributeData);
+			currentEntityModel.commit();
+
+			return currentEntityModel;
+		},
+
+		/**
+		 * Adds clear and re-apply filters functionalities
+		 *
+		 * @param {Array or Object} itemsToAdd
+		 *
+		 * @override
+		 */
+		clearStoreAdd: function(itemsToAdd) {
+			this.grid.getStore().clearFilter();
+
+			this.callParent(arguments);
+
+			this.onProcessesTabHistoryIncludeSystemActivitiesCheck();
+		},
+
+		/**
+		 * @param {CMDBuild.model.common.tabs.history.classes.CardRecord} record
+		 *
+		 * @override
+		 */
+		currentCardRowExpand: function(record) {
 			var predecessorRecord = this.grid.getStore().getAt(1); // Get expanded record predecessor record
 			var selectedEntityAttributes = {};
 			var selectedEntityValues = this.selectedEntity.get(CMDBuild.core.proxy.CMProxyConstants.VALUES);
@@ -129,38 +189,11 @@
 					success: function(response, options, decodedResponse) {
 						this.valuesFormattingAndCompare(selectedEntityAttributes, decodedResponse.response[CMDBuild.core.proxy.CMProxyConstants.VALUES]);
 
-						this.clearStoreAdd(this.buildCurrentEntityModel(selectedEntityAttributes));
+						// Setup record property with historic card details to use XTemplate functionalities to render
+						record.set(CMDBuild.core.proxy.CMProxyConstants.VALUES, selectedEntityAttributes);
 					}
 				});
-			} else {
-				this.valuesFormattingAndCompare(selectedEntityAttributes);
-
-				this.clearStoreAdd(this.buildCurrentEntityModel(selectedEntityAttributes));
 			}
-		},
-
-		/**
-		 * @param {Object} entityAttributeData
-		 *
-		 * @return {CMDBuild.model.common.tabs.history.processes.CardRecord} currentEntityModel
-		 */
-		buildCurrentEntityModel: function(entityAttributeData) {
-			var performers = [];
-
-			// Build performers array
-			Ext.Array.forEach(this.selectedEntity.get(CMDBuild.core.proxy.CMProxyConstants.ACTIVITY_INSTANCE_INFO_LIST), function(activityObject, i, array) {
-				if (!Ext.isEmpty(activityObject[CMDBuild.core.proxy.CMProxyConstants.PERFORMER_NAME]))
-					performers.push(activityObject[CMDBuild.core.proxy.CMProxyConstants.PERFORMER_NAME]);
-			}, this);
-
-			var currentEntityModel = Ext.create('CMDBuild.model.common.tabs.history.processes.CardRecord', this.selectedEntity.getData());
-			currentEntityModel.set(CMDBuild.core.proxy.CMProxyConstants.ACTIVITY_NAME, this.selectedEntity.get(CMDBuild.core.proxy.CMProxyConstants.VALUES)['Code']);
-			currentEntityModel.set(CMDBuild.core.proxy.CMProxyConstants.PERFORMERS, performers);
-			currentEntityModel.set(CMDBuild.core.proxy.CMProxyConstants.STATUS, this.statusTranslationGet(this.selectedEntity.get(CMDBuild.core.proxy.CMProxyConstants.FLOW_STATUS)));
-			currentEntityModel.set(CMDBuild.core.proxy.CMProxyConstants.VALUES, entityAttributeData);
-			currentEntityModel.commit();
-
-			return currentEntityModel;
 		},
 
 		/**
@@ -223,10 +256,12 @@
 		 * Include or not System activities rows in history grid.
 		 */
 		onProcessesTabHistoryIncludeSystemActivitiesCheck: function() {
+			this.getRowExpanderPlugin().collapseAll();
+
 			if (this.grid.includeSystemActivitiesCheckbox.getValue()) { // Checked: Remove any filter from store
 				if (this.grid.getStore().isFiltered()) {
 					this.grid.getStore().clearFilter();
-					this.grid.getStore().sort(); // Resort store because clearFilter() breaks it.
+					this.grid.getStore().sort(); // Resort store because clearFilter() breaks it
 				}
 			} else { // Unchecked: Apply filter to hide 'System' activities rows
 				this.grid.getStore().filterBy(function(record, id) {
