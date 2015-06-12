@@ -1,7 +1,7 @@
 (function() {
 
 	Ext.require('CMDBuild.core.proxy.CMProxyConstants');
-	Ext.require('CMDBuild.core.proxy.Localizations');
+	Ext.require('CMDBuild.core.proxy.localizations.Localizations');
 
 	Ext.define('CMDBuild.model.configuration.Localization', {
 		extend: 'Ext.data.Model',
@@ -49,7 +49,7 @@
 			}
 
 			// Build languages objects
-			CMDBuild.core.proxy.Localizations.getLanguages({
+			CMDBuild.core.proxy.localizations.Localizations.getLanguages({
 				scope: this,
 				success: function(result, options, decodedResult) {
 					// Build all languages array
@@ -57,7 +57,7 @@
 						languagesTagArray.push(translation[CMDBuild.core.proxy.CMProxyConstants.TAG]);
 
 						languagesArray.push(
-							Ext.create('CMDBuild.model.Localizations.translation', translation)
+							Ext.create('CMDBuild.model.localizations.Localization', translation)
 						);
 					}, this);
 
@@ -70,7 +70,7 @@
 							languagesWithLocalizationsTagArray.push(translation[CMDBuild.core.proxy.CMProxyConstants.TAG]);
 
 							languagesWithLocalizationsArray.push(
-									Ext.create('CMDBuild.model.Localizations.translation', translation)
+								Ext.create('CMDBuild.model.localizations.Localization', translation)
 							);
 						}
 					}, this);
