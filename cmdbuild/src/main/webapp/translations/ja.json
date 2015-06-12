@@ -424,38 +424,6 @@
 			"new_folder": "新しいフォルダ",
 			"title": "メニュー管理"
 		},
-		"modreport": {
-			"add": "レポート追加",
-			"importJRFormStep1": {
-				"description": "レポートの説明",
-				"enabled_groups": "可能なグループ",
-				"fieldset": "jasper レポートインポート",
-				"master_report_jrxml": "マスタレポート(.jrxml)",
-				"menuTitle": "Jasper-reports レポート",
-				"name": "レポート名"
-			},
-			"importJRFormStep2": {
-				"duplicate_images": "警告: 同名のレポートイメージがあります。処理を継続できません。",
-				"fieldset_generic": "jasperレポートをインポート",
-				"fieldset_images": "必要なイメージ",
-				"fieldset_subreports": "必要なサブレポート",
-				"menuTitle": "レポート Jasper-reports",
-				"nothing_to_import": "イメージまたはサブレポートが見つかりません。インポートを続けるにはご確認ください。",
-				"success": {
-					"description": {
-						"add": "インポート完了",
-						"modify": "レポート変更完了"
-					},
-					"title": "成功"
-				}
-			},
-			"importOpenofficeTemplateForm": {
-				"menuTitle": "オープンオフィス　レポート"
-			},
-			"modify": "レポート変更",
-			"remove": "レポート削除",
-			"title": "レポート"
-		},
 		"modsecurity": {
 			"defaultgroup": "* 既定 *",
 			"group": {
@@ -1136,19 +1104,6 @@
 		"modmenu": {
 			"menu": "ナビゲーション"
 		},
-		"modreport": {
-			"add_report": "レポート追加",
-			"delete_report": "レポート削除",
-			"modify_report": "レポート編集",
-			"reportForm": {
-				"description": "説明",
-				"name": "名前",
-				"report": "レポート"
-			},
-			"report_parameters": "レポートパラメータ",
-			"title": "リスト - ",
-			"treetitle": "レポート"
-		},
 		"modutilities": {
 			"bulkupdate": {
 				"title": "多重更新",
@@ -1490,6 +1445,7 @@
 	"replace": "リプレース",
 	"reply": "<em>Reply</em>",
 	"report": "レポート",
+	"reportMenuJasper": "<em>Jasper-reports report</em>",
 	"reportParameters": "<em>Report parameters</em>",
 	"repository": "リポジトリ",
 	"reset": "リセット",

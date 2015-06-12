@@ -424,38 +424,6 @@
 			"new_folder": "Thư mục mới",
 			"title": "Quản lý menu"
 		},
-		"modreport": {
-			"add": "Thêm báo cáo",
-			"importJRFormStep1": {
-				"description": "Mô tả Báo cáo",
-				"enabled_groups": "Những nhóm được cho phép",
-				"fieldset": "Báo cáo nhập Jasper",
-				"master_report_jrxml": "Báo cáo tổng thể (.jrxml)",
-				"menuTitle": "Báo cáo kiểu Jasper ",
-				"name": "Tên báo cáo"
-			},
-			"importJRFormStep2": {
-				"duplicate_images": "Cảnh báo: báo cáo hình ảnh được tìm thấy trùng tên với một tập tin khác- không thể tiến hành.",
-				"fieldset_generic": "Nhập báo cáo Jasper",
-				"fieldset_images": "Hình ảnh cần thiết",
-				"fieldset_subreports": "Báo cáo phụ cần thiết",
-				"menuTitle": "Báo cáo Jasper",
-				"nothing_to_import": "Không có hình ảnh hay báo cáo phụ được tìm thấy. Vui lòng xác nhận để tiến hành nhâp dữ liệu.",
-				"success": {
-					"description": {
-						"add": "Báo cáo hoàn tất",
-						"modify": "Báo cáo được sửa đổi"
-					},
-					"title": "Thành công"
-				}
-			},
-			"importOpenofficeTemplateForm": {
-				"Tiêu đề của lệnh đơn": "Openoffice report"
-			},
-			"modify": "Sửa đổi báo cáo",
-			"remove": "Xóa báo cáo",
-			"title": "Báo cáo"
-		},
 		"modsecurity": {
 			"defaultgroup": "* Mặc định *",
 			"group": {
@@ -1136,19 +1104,6 @@
 		"modmenu": {
 			"menu": "Hướng"
 		},
-		"modreport": {
-			"add_report": "Thêm báo cáo",
-			"delete_report": "Xóa báo cáo",
-			"modify_report": "Chỉnh sửa báo cáo",
-			"reportForm": {
-				"description": "Mô tả",
-				"name": "Tên",
-				"report": "Báo cáo"
-			},
-			"report_parameters": "Các bao cáo thông số",
-			"title": "Danh sách - ",
-			"treetitle": "Báo cáo"
-		},
 		"modutilities": {
 			"bulkupdate": {
 				"title": "Nhiều cập nhật",
@@ -1490,6 +1445,7 @@
 	"replace": "<em>Replace</em>",
 	"reply": "<em>Reply</em>",
 	"report": "Báo cáo",
+	"reportMenuJasper": "<em>Jasper-reports report</em>",
 	"reportParameters": "<em>Report parameters</em>",
 	"repository": "Kho lưu trữ",
 	"reset": "<em>Reset</em>",

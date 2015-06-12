@@ -424,38 +424,6 @@
 			"new_folder": "Nieuwe map",
 			"title": "Menu beheer"
 		},
-		"modreport": {
-			"add": "Rapport toevoegen",
-			"importJRFormStep1": {
-				"description": "Rapport omschrijving",
-				"enabled_groups": "Groepen toestaan",
-				"fieldset": "Importeer jasper rapport",
-				"master_report_jrxml": "Meester Rapport (.jrxml)",
-				"menuTitle": "Jasper-reports rapport",
-				"name": "Rapport naam"
-			},
-			"importJRFormStep2": {
-				"duplicate_images": "Waarschuwing: rapport samenstelling gevonden met gelijke bestandsnaam - kan niet doorgaan.",
-				"fieldset_generic": "Ophalen jasper rapport",
-				"fieldset_images": "Benodigde samenstellingen",
-				"fieldset_subreports": "Benodigde subrapporten",
-				"menuTitle": "Rapport Jasper-reports",
-				"nothing_to_import": "Geen samenstellingen of subrapporten gevonden, aub bevestigen om verder te gaan met importeren.",
-				"success": {
-					"description": {
-						"add": "Ophalen afgerond",
-						"modify": "Rapport aangepast"
-					},
-					"title": "Succes"
-				}
-			},
-			"importOpenofficeTemplateForm": {
-				"menuTitle": "Openoffice rapport"
-			},
-			"modify": "Rapport aanpassen",
-			"remove": "Rapport verwijderen",
-			"title": "Rapport"
-		},
 		"modsecurity": {
 			"defaultgroup": "* Standaard *",
 			"group": {
@@ -1136,19 +1104,6 @@
 		"modmenu": {
 			"menu": "Navigatie"
 		},
-		"modreport": {
-			"add_report": "Rapport toevoegen",
-			"delete_report": "Rapport verwijderen",
-			"modify_report": "Rapport aanpassen",
-			"reportForm": {
-				"description": "Omschrijving",
-				"name": "Naam",
-				"report": "Rapport"
-			},
-			"report_parameters": "Rapport parameters",
-			"title": "Lijst - ",
-			"treetitle": "Rapport"
-		},
 		"modutilities": {
 			"bulkupdate": {
 				"title": "Meerdere aanpassingen",
@@ -1490,6 +1445,7 @@
 	"replace": "Vervang",
 	"reply": "<em>Reply</em>",
 	"report": "Rapport",
+	"reportMenuJasper": "<em>Jasper-reports report</em>",
 	"reportParameters": "<em>Report parameters</em>",
 	"repository": "Bewaarplaats",
 	"reset": "Herstart",

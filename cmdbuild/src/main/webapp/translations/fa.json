@@ -424,38 +424,6 @@
 			"new_folder": "پوشه جدید",
 			"title": "مدیریت منوها"
 		},
-		"modreport": {
-			"add": "اضافه کردن گزارش",
-			"importJRFormStep1": {
-				"description": "توضیحات گزارش",
-				"enabled_groups": "گروههای فعال",
-				"fieldset": "Import jasper report",
-				"master_report_jrxml": "Master Report (.jrxml)",
-				"menuTitle": "Jasper-reports report",
-				"name": "نام گزارش"
-			},
-			"importJRFormStep2": {
-				"duplicate_images": "هشدار: تصویر گزارش با همین نام وجود دارد، نمیشود ادامه داد",
-				"fieldset_generic": "Import jasper report",
-				"fieldset_images": "تصاویر مورد نیاز",
-				"fieldset_subreports": "زیرگزارشهای مورد نیاز",
-				"menuTitle": "Report Jasper-reports",
-				"nothing_to_import": "هیچ تصویر یا زیرگزارشی یافت نشد. لطفا تایید کنید تا بوسیله وارد کردن پروسس شود.",
-				"success": {
-					"description": {
-						"add": "وارد کردن کامل شد",
-						"modify": "گزارش ویرایش شد"
-					},
-					"title": "موفقیت"
-				}
-			},
-			"importOpenofficeTemplateForm": {
-				"menuTitle": "Openoffice report"
-			},
-			"modify": "ویرایش گزارش",
-			"remove": "حذف گزارش",
-			"title": "گزارش"
-		},
 		"modsecurity": {
 			"defaultgroup": "* پیش فرض *",
 			"group": {
@@ -1136,19 +1104,6 @@
 		"modmenu": {
 			"menu": "هدایت"
 		},
-		"modreport": {
-			"add_report": "اضافه کردن گزارش",
-			"delete_report": "حذف گزارش",
-			"modify_report": "ویرایش گزارش",
-			"reportForm": {
-				"description": "توضیحات",
-				"name": "نام",
-				"report": "گزارش"
-			},
-			"report_parameters": "پارامترهای گزارش",
-			"title": "لیست - ",
-			"treetitle": "گزارش"
-		},
 		"modutilities": {
 			"bulkupdate": {
 				"title": "آپدیت چندگانه",
@@ -1490,6 +1445,7 @@
 	"replace": "<em>Replace</em>",
 	"reply": "<em>Reply</em>",
 	"report": "گزارش",
+	"reportMenuJasper": "<em>Jasper-reports report</em>",
 	"reportParameters": "<em>Report parameters</em>",
 	"repository": "Repository",
 	"reset": "ریست",

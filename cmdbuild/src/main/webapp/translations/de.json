@@ -424,38 +424,6 @@
 			"new_folder": "Neuer Ordner",
 			"title": "Menüverwaltung"
 		},
-		"modreport": {
-			"add": "Bericht hinzufügen",
-			"importJRFormStep1": {
-				"description": "Beschreibung des Berichtes",
-				"enabled_groups": "Freigegebene Gruppe",
-				"fieldset": "Jasper Bericht importieren",
-				"master_report_jrxml": "Master Bericht (Datei .jrxml) anwählen",
-				"menuTitle": "JasperReports-Bericht",
-				"name": "Name des Berichtes"
-			},
-			"importJRFormStep2": {
-				"duplicate_images": "Fortsetzen ist unmöglich: Der Bericht enthält Bilddateien mit demselben Name.",
-				"fieldset_generic": "Jasper Bericht importieren",
-				"fieldset_images": "Importieren von im Master Bericht definierten Bildern",
-				"fieldset_subreports": "Importieren von in Master Bericht definierten Unterberichten",
-				"menuTitle": "JasperReports-Bericht",
-				"nothing_to_import": "Kein Bild oder Bericht gefunden; bestätigen, um mit der Eingabe fortzufahren.",
-				"success": {
-					"description": {
-						"add": "Der Bericht ist korrekt eingegeben worden",
-						"modify": "Der Bericht ist korrekt bearbeitet worden"
-					},
-					"title": "Der Upload des Berichts ist beendet"
-				}
-			},
-			"importOpenofficeTemplateForm": {
-				"menuTitle": "Openoffice Bericht"
-			},
-			"modify": "Menü ändern",
-			"remove": "Bericht abbrechen",
-			"title": "Bericht"
-		},
 		"modsecurity": {
 			"defaultgroup": "* Default *",
 			"group": {
@@ -1136,19 +1104,6 @@
 		"modmenu": {
 			"menu": "Navigieren"
 		},
-		"modreport": {
-			"add_report": "Bericht hinzufügen",
-			"delete_report": "Bericht löschen",
-			"modify_report": "Bericht bearbeiten",
-			"reportForm": {
-				"description": "Beschreibung",
-				"name": "Name",
-				"report": "Bericht"
-			},
-			"report_parameters": "Parameter des Berichts",
-			"title": "Liste - ",
-			"treetitle": "Bericht"
-		},
 		"modutilities": {
 			"bulkupdate": {
 				"title": "Mehrfach-Update",
@@ -1490,6 +1445,7 @@
 	"replace": "<em>Replace</em>",
 	"reply": "<em>Reply</em>",
 	"report": "Bericht",
+	"reportMenuJasper": "<em>Jasper-reports report</em>",
 	"reportParameters": "<em>Report parameters</em>",
 	"repository": "Archivdatei",
 	"reset": "Auf null stellen",

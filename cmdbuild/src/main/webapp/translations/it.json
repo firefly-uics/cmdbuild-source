@@ -424,38 +424,6 @@
 			"new_folder": "Nuova cartella",
 			"title": "Gestione menu"
 		},
-		"modreport": {
-			"add": "Aggiungi report",
-			"importJRFormStep1": {
-				"description": "Descrizione report",
-				"enabled_groups": "Gruppi abilitati",
-				"fieldset": "Importazione Report Jasper",
-				"master_report_jrxml": "Seleziona Master Report (file .jrxml)",
-				"menuTitle": "Report Jasperreports",
-				"name": "Nome report"
-			},
-			"importJRFormStep2": {
-				"duplicate_images": "Impossibile continuare: il report contiene file immagini con lo stesso nome.",
-				"fieldset_generic": "Importazione Report Jasper",
-				"fieldset_images": "Importazione immagini definite nel master report",
-				"fieldset_subreports": "Importazione sottoreport definiti nel master report",
-				"menuTitle": "Report Jasper-reports",
-				"nothing_to_import": "Nessuna immagine o sottoreport rilevato; confermare per procedere con l'inserimento.",
-				"success": {
-					"description": {
-						"add": "Il report è stato inserito correttamente",
-						"modify": "Il report è stato modificato correttamente"
-					},
-					"title": "Upload report completato"
-				}
-			},
-			"importOpenofficeTemplateForm": {
-				"menuTitle": "Report Openoffice"
-			},
-			"modify": "Modifica report",
-			"remove": "Cancella report",
-			"title": "Report"
-		},
 		"modsecurity": {
 			"defaultgroup": "* Default *",
 			"group": {
@@ -1136,19 +1104,6 @@
 		"modmenu": {
 			"menu": "Navigazione"
 		},
-		"modreport": {
-			"add_report": "Aggiungi report",
-			"delete_report": "Cancella report",
-			"modify_report": "Modifica report",
-			"reportForm": {
-				"description": "Descrizione",
-				"name": "Nome",
-				"report": "Report"
-			},
-			"report_parameters": "Parametri del report",
-			"title": "Elenco - ",
-			"treetitle": "Report"
-		},
 		"modutilities": {
 			"bulkupdate": {
 				"title": "Modifica massiva schede",
@@ -1490,6 +1445,7 @@
 	"replace": "Sostituisci",
 	"reply": "Rispondi",
 	"report": "Report",
+	"reportMenuJasper": "Jasper-reports report",
 	"reportParameters": "Parametri report",
 	"repository": "Archivio",
 	"reset": "Reset",

@@ -424,38 +424,6 @@
 			"new_folder": "Novi folder",
 			"title": "Upravljanje menijima"
 		},
-		"modreport": {
-			"add": "Dodaj izveštaj",
-			"importJRFormStep1": {
-				"description": "Opis izveštaja",
-				"enabled_groups": "Odobrene grupe",
-				"fieldset": "Uvoz Jasper izveštaja",
-				"master_report_jrxml": "Izbor Glavnog izveštaja (.jrxml datokeke)",
-				"menuTitle": "Jasper Reports izveštaji",
-				"name": "Naziv izveštaja"
-			},
-			"importJRFormStep2": {
-				"duplicate_images": "Pažnja! Nemoguće je obaviti operaciju - Izveštaj sadrži duplirane slike sa istim imenom.",
-				"fieldset_generic": "Uvoz Jasper izveštaja",
-				"fieldset_images": "Uvoz slika definisanih glavnim izveštajem",
-				"fieldset_subreports": "Uvoz podizveštaja definisanih glavnim izveštajem",
-				"menuTitle": "Jasper-reports izveštaj",
-				"nothing_to_import": "Nema referenciranih slika ili podizveštaja; Potvrdite za pokretanje postupka dodavanja.",
-				"success": {
-					"description": {
-						"add": "Izveštaj je uspešno uvežen",
-						"modify": "Izveštaj je uspešno izmenjen"
-					},
-					"title": "Slanje na server završeno"
-				}
-			},
-			"importOpenofficeTemplateForm": {
-				"menuTitle": "OpenOffice izveštaj"
-			},
-			"modify": "Izmeni izveštaj",
-			"remove": "Ukloni izveštaj",
-			"title": "Izveštaji"
-		},
 		"modsecurity": {
 			"defaultgroup": "* Podrazumevana grupa*",
 			"group": {
@@ -1136,19 +1104,6 @@
 		"modmenu": {
 			"menu": "Navigacija"
 		},
-		"modreport": {
-			"add_report": "Dodaj izveštaj",
-			"delete_report": "Ukloni izveštaj",
-			"modify_report": "Izmeni izveštaj",
-			"reportForm": {
-				"description": "Opis",
-				"name": "Naziv",
-				"report": "Izveštaj"
-			},
-			"report_parameters": "Parametri izveštaja",
-			"title": "Lista - ",
-			"treetitle": "Izveštaj"
-		},
 		"modutilities": {
 			"bulkupdate": {
 				"title": "Masovna izmena kartica",
@@ -1490,6 +1445,7 @@
 	"replace": "Zameni",
 	"reply": "<em>Reply</em>",
 	"report": "Izveštaji",
+	"reportMenuJasper": "<em>Jasper-reports report</em>",
 	"reportParameters": "<em>Report parameters</em>",
 	"repository": "Arhiva",
 	"reset": "Poništi",
