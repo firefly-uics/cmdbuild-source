@@ -136,6 +136,45 @@
 		},
 
 		/**
+		 * @override
+		 */
+		beforeActiveView: function() {
+			// Disable add button
+			this.view.addButton.setDisabled(
+				this.widgetConf.hasOwnProperty(CMDBuild.core.proxy.CMProxyConstants.DISABLE_ADD_ROW)
+				&& this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.DISABLE_ADD_ROW]
+			);
+
+			// Disable import from CSV button
+			this.view.importFromCSVButton.setDisabled(
+				this.widgetConf.hasOwnProperty(CMDBuild.core.proxy.CMProxyConstants.DISABLE_IMPORT_FROM_CSV)
+				&& this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.DISABLE_IMPORT_FROM_CSV]
+			);
+
+			// Disable buttons for readOnly mode
+			if (
+				this.widgetConf.hasOwnProperty(CMDBuild.core.proxy.CMProxyConstants.READ_ONLY)
+				&& this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.READ_ONLY]
+			) {
+				this.view.addButton.setDisabled(true);
+				this.view.importFromCSVButton.setDisabled(true);
+
+				this.grid.on('beforeedit', function(plugin, edit) {
+					return false;
+				});
+			}
+
+			this.configureGridPanel();
+		},
+
+		/**
+		 * Save data in storage attribute
+		 */
+		beforeHideView: function() {
+			this.instancesDataStorage[this.getWidgetId()] = this.grid.getStore().getRange();
+		},
+
+		/**
 		 * @return {Array}
 		 */
 		buildActionColumns: function() {
@@ -183,45 +222,6 @@
 					]
 				})
 			];
-		},
-
-		/**
-		 * Save data in storage attribute
-		 */
-		beforeHideView: function() {
-			this.instancesDataStorage[this.getWidgetId()] = this.grid.getStore().getRange();
-		},
-
-		/**
-		 * @override
-		 */
-		beforeActiveView: function() {
-			// Disable add button
-			this.view.addButton.setDisabled(
-				this.widgetConf.hasOwnProperty(CMDBuild.core.proxy.CMProxyConstants.DISABLE_ADD_ROW)
-				&& this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.DISABLE_ADD_ROW]
-			);
-
-			// Disable import from CSV button
-			this.view.importFromCSVButton.setDisabled(
-				this.widgetConf.hasOwnProperty(CMDBuild.core.proxy.CMProxyConstants.DISABLE_IMPORT_FROM_CSV)
-				&& this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.DISABLE_IMPORT_FROM_CSV]
-			);
-
-			// Disable buttons for readOnly mode
-			if (
-				this.widgetConf.hasOwnProperty(CMDBuild.core.proxy.CMProxyConstants.READ_ONLY)
-				&& this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.READ_ONLY]
-			) {
-				this.view.addButton.setDisabled(true);
-				this.view.importFromCSVButton.setDisabled(true);
-
-				this.grid.on('beforeedit', function(plugin, edit) {
-					return false;
-				});
-			}
-
-			this.configureGridPanel();
 		},
 
 		/**
