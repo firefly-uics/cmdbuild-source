@@ -19,7 +19,7 @@
 		border: false,
 		frame: false,
 		layout: 'fit',
-		title: CMDBuild.Translation.management.modreport.report_parameters,
+		title: CMDBuild.Translation.reportParameters,
 
 		initComponent: function() {
 			this.form = Ext.create('Ext.form.Panel', {
