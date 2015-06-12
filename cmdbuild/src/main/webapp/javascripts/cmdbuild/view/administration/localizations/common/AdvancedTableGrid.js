@@ -1,11 +1,10 @@
 (function() {
 
-	Ext.define('CMDBuild.view.administration.localizations.panels.AdvancedTranslationsTableGrid', {
+	Ext.define('CMDBuild.view.administration.localizations.common.AdvancedTableGrid', {
 		extend: 'Ext.tree.Panel',
 
 		requires: [
-			'CMDBuild.core.proxy.CMProxyConstants',
-			'CMDBuild.core.proxy.Localizations'
+			'CMDBuild.core.proxy.CMProxyConstants'
 		],
 
 		/**
@@ -52,10 +51,10 @@
 
 		listeners: {
 			beforeitemexpand: function(node, eOpts) {
-				this.delegate.cmOn('onAdvancedTableNodeExpand', node);
+				this.delegate.cmfg('onAdvancedTableNodeExpand', node);
 			},
 			edit: function(editor, context, eOpts) {
-				this.delegate.cmOn('onAdvancedTableRowUpdateButtonClick', context.record);
+				this.delegate.cmfg('onAdvancedTableRowUpdateButtonClick', context.record);
 			}
 		}
 	});
