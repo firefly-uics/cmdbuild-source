@@ -3,8 +3,6 @@
 	Ext.define('CMDBuild.view.common.field.translatable.Base', {
 		extend: 'Ext.form.FieldContainer',
 
-		requires: ['CMDBuild.core.proxy.Localizations'],
-
 		/**
 		 * @cfg {Boolean}
 		 */
