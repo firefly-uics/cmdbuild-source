@@ -1,11 +1,11 @@
 (function() {
 
-	Ext.define('CMDBuild.view.administration.localizations.panels.LanguagesGrid', {
+	Ext.define('CMDBuild.view.administration.localizations.common.LanguagesGrid', {
 		extend: 'Ext.container.Container',
 
 		requires: [
 			'CMDBuild.core.proxy.CMProxyConstants',
-			'CMDBuild.core.proxy.Localizations'
+			'CMDBuild.core.proxy.localizations.Localizations'
 		],
 
 		/**
@@ -23,15 +23,13 @@
 		layout: 'column',
 
 		initComponent: function() {
-			CMDBuild.core.proxy.Localizations.getLanguages({
+			CMDBuild.core.proxy.localizations.Localizations.getLanguages({
 				scope: this,
 				loadMask: true,
 				success: function(result, options, decodedResult) {
 					var translations = decodedResult[CMDBuild.core.proxy.CMProxyConstants.TRANSLATIONS];
 
-					for (var i in translations) {
-						var translation = translations[i];
-
+					Ext.Array.forEach(translations, function(translation, i, allTranslations) {
 						var item = Ext.create('Ext.form.field.Checkbox', {
 							fieldLabel: translation[CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION],
 							labelWidth: CMDBuild.LABEL_WIDTH,
@@ -45,7 +43,7 @@
 
 						this.languageCheckboxes.push(item);
 						this.add(item);
-					}
+					}, this);
 				}
 			});
 
