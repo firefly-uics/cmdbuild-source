@@ -424,38 +424,6 @@
 			"new_folder": "Nova Pasta",
 			"title": "Gerenciamento do Menu"
 		},
-		"modreport": {
-			"add": "Adicionar relatório",
-			"importJRFormStep1": {
-				"description": "Descrição do relatório",
-				"enabled_groups": "Grupos habilitados",
-				"fieldset": "Importar relatório do jasper",
-				"master_report_jrxml": "Relatório Mestre (.jrxml)",
-				"menuTitle": "Relatório Jasper-reports",
-				"name": "Nome do relatório"
-			},
-			"importJRFormStep2": {
-				"duplicate_images": "Aviso: encontrado images de relatório com o mesmo nomde de arquivo - não se pode prosseguir.",
-				"fieldset_generic": "Importar relatório jasper",
-				"fieldset_images": "Imagens exigidas",
-				"fieldset_subreports": "Sub-relatórios exigidos",
-				"menuTitle": "Relatórios Jasper-reports",
-				"nothing_to_import": "Não foram encontrados imagens ou sub-relatórios. Favor confirmar com o prosseguimento da importação.",
-				"success": {
-					"description": {
-						"add": "Importação completada",
-						"modify": "Relatório modificado"
-					},
-					"title": "Sucesso"
-				}
-			},
-			"importOpenofficeTemplateForm": {
-				"menuTitle": "Relatório Openoffice"
-			},
-			"modify": "Modificar relatório",
-			"remove": "Remover relatório",
-			"title": "Relatório"
-		},
 		"modsecurity": {
 			"defaultgroup": "* Default *",
 			"group": {
@@ -1136,19 +1104,6 @@
 		"modmenu": {
 			"menu": "Navegação"
 		},
-		"modreport": {
-			"add_report": "Adicionar relatório",
-			"delete_report": "Remover relatório",
-			"modify_report": "Editar relatório",
-			"reportForm": {
-				"description": "Descrição",
-				"name": "Nome",
-				"report": "Relatório"
-			},
-			"report_parameters": "Parâmetros do Relatório",
-			"title": "Listar - ",
-			"treetitle": "Relatório"
-		},
 		"modutilities": {
 			"bulkupdate": {
 				"title": "Atualização Múltiplas",
@@ -1490,6 +1445,7 @@
 	"replace": "<em>Replace</em>",
 	"reply": "<em>Reply</em>",
 	"report": "Relatório",
+	"reportMenuJasper": "<em>Jasper-reports report</em>",
 	"reportParameters": "<em>Report parameters</em>",
 	"repository": "Repositório",
 	"reset": "<em>Reset</em>",

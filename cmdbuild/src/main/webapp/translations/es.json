@@ -424,38 +424,6 @@
 			"new_folder": "Nueva carpeta",
 			"title": "Gestión menú"
 		},
-		"modreport": {
-			"add": "Agregar reporte",
-			"importJRFormStep1": {
-				"description": "Descripción informe",
-				"enabled_groups": "Grupos habilitados",
-				"fieldset": "Importación Informe Jasper",
-				"master_report_jrxml": "Selecciona Informe Principal (file .jrxml)",
-				"menuTitle": "Informe Jasperreport",
-				"name": "Nombre informe"
-			},
-			"importJRFormStep2": {
-				"duplicate_images": "Imposible continuar: el reporte contiene archivos de imágenes con el mismo nombre.",
-				"fieldset_generic": "Importación Informe Jasper",
-				"fieldset_images": "Importación de imágenes definidas en el informe principal",
-				"fieldset_subreports": "Importación de subinformes definidos en el informe principal",
-				"menuTitle": "Informe Jasper-report",
-				"nothing_to_import": "Ninguna imagen o subinforme relevado; confirmar para continuar con la inserción.",
-				"success": {
-					"description": {
-						"add": " El reporte se insertó correctamente",
-						"modify": "El reporte se modificó correctamente"
-					},
-					"title": "Cargar informe completo"
-				}
-			},
-			"importOpenofficeTemplateForm": {
-				"menuTitle": "Informe Openoffice"
-			},
-			"modify": "Modificar reporte",
-			"remove": "Eliminar reporte",
-			"title": "Informes"
-		},
 		"modsecurity": {
 			"defaultgroup": "* Por defecto *",
 			"group": {
@@ -1136,19 +1104,6 @@
 		"modmenu": {
 			"menu": "Navegación"
 		},
-		"modreport": {
-			"add_report": "Agrega informe",
-			"delete_report": "Eliminar informe",
-			"modify_report": "Modificar informe",
-			"reportForm": {
-				"description": "Descripción",
-				"name": "Nombre",
-				"report": "Informe"
-			},
-			"report_parameters": "Parámetros del informe",
-			"title": "Elenco - ",
-			"treetitle": "Informe"
-		},
 		"modutilities": {
 			"bulkupdate": {
 				"title": "Modificar tarjetas masivamente",
@@ -1490,6 +1445,7 @@
 	"replace": "<em>Replace</em>",
 	"reply": "<em>Reply</em>",
 	"report": "Informes",
+	"reportMenuJasper": "<em>Jasper-reports report</em>",
 	"reportParameters": "<em>Report parameters</em>",
 	"repository": "Archivo",
 	"reset": "Reset",

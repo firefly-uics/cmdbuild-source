@@ -424,38 +424,6 @@
 			"new_folder": "Nouveau dossier",
 			"title": "Gestion des menus"
 		},
-		"modreport": {
-			"add": "Ajouter un rapport",
-			"importJRFormStep1": {
-				"description": "Libellé du rapport",
-				"enabled_groups": "Groupes activés",
-				"fieldset": "Importer un rapport jasper",
-				"master_report_jrxml": "Rapport maître (.jrxml)",
-				"menuTitle": "Rapports Jasper",
-				"name": "Nom du rapport"
-			},
-			"importJRFormStep2": {
-				"duplicate_images": "Attention : des images du rapport possèdent le même nom - impossible de continuer.",
-				"fieldset_generic": "Importation de rapport jasper",
-				"fieldset_images": "Images obligatoires",
-				"fieldset_subreports": "Sous-rapports obligatoires",
-				"menuTitle": "Rapport Jasper",
-				"nothing_to_import": "Aucune image ou sous-rapport trouvé. Merci de confirmer l'import.",
-				"success": {
-					"description": {
-						"add": "Import complet",
-						"modify": "Rapport modifié"
-					},
-					"title": "Succès"
-				}
-			},
-			"importOpenofficeTemplateForm": {
-				"menuTitle": "Rapport OpenOffice"
-			},
-			"modify": "Modifier le rapport",
-			"remove": "Supprimer le rapport",
-			"title": "Rapport"
-		},
 		"modsecurity": {
 			"defaultgroup": "* par défaut *",
 			"group": {
@@ -1136,19 +1104,6 @@
 		"modmenu": {
 			"menu": "Navigation"
 		},
-		"modreport": {
-			"add_report": "Ajouter un rapport",
-			"delete_report": "Supprimer le rapport",
-			"modify_report": "Modifier le rapport",
-			"reportForm": {
-				"description": "Libellé",
-				"name": "Nom",
-				"report": "Rapport"
-			},
-			"report_parameters": "Paramètres du rapport",
-			"title": "Liste -",
-			"treetitle": "Rapport"
-		},
 		"modutilities": {
 			"bulkupdate": {
 				"title": "Mises à jour multiples",
@@ -1490,6 +1445,7 @@
 	"replace": "Remplacer",
 	"reply": "<em>Reply</em>",
 	"report": "Rapport",
+	"reportMenuJasper": "<em>Jasper-reports report</em>",
 	"reportParameters": "<em>Report parameters</em>",
 	"repository": "Dépôt",
 	"reset": "Réinitialiser",

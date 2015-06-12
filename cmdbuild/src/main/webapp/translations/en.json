@@ -424,38 +424,6 @@
 			"new_folder": "New Folder",
 			"title": "Menu Management"
 		},
-		"modreport": {
-			"add": "Add report",
-			"importJRFormStep1": {
-				"description": "Report description",
-				"enabled_groups": "Enabled groups",
-				"fieldset": "Import jasper report",
-				"master_report_jrxml": "Master Report (.jrxml)",
-				"menuTitle": "Jasper-reports report",
-				"name": "Report name"
-			},
-			"importJRFormStep2": {
-				"duplicate_images": "Warning: found report images with same filename - cannot proceed.",
-				"fieldset_generic": "Import jasper report",
-				"fieldset_images": "Required images",
-				"fieldset_subreports": "Required subreports",
-				"menuTitle": "Report Jasper-reports",
-				"nothing_to_import": "No images or subreports found. Please confirm to proceed with the import.",
-				"success": {
-					"description": {
-						"add": "Import completed",
-						"modify": "Report modified"
-					},
-					"title": "Success"
-				}
-			},
-			"importOpenofficeTemplateForm": {
-				"menuTitle": "Openoffice report"
-			},
-			"modify": "Modify report",
-			"remove": "Remove report",
-			"title": "Report"
-		},
 		"modsecurity": {
 			"defaultgroup": "* Default *",
 			"group": {
@@ -1136,19 +1104,6 @@
 		"modmenu": {
 			"menu": "Navigation"
 		},
-		"modreport": {
-			"add_report": "Add report",
-			"delete_report": "Delete report",
-			"modify_report": "Edit report",
-			"reportForm": {
-				"description": "Description",
-				"name": "Name",
-				"report": "Report"
-			},
-			"report_parameters": "Report parameters",
-			"title": "List - ",
-			"treetitle": "Report"
-		},
 		"modutilities": {
 			"bulkupdate": {
 				"title": "Multiple update",
@@ -1490,6 +1445,7 @@
 	"replace": "Replace",
 	"reply": "Reply",
 	"report": "Report",
+	"reportMenuJasper": "Jasper-reports report",
 	"reportParameters": "Report parameters",
 	"repository": "Repository",
 	"reset": "Reset",

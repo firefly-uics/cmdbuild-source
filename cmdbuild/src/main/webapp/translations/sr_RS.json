@@ -424,38 +424,6 @@
 			"new_folder": "Нови фолдер",
 			"title": "Управљање менијима"
 		},
-		"modreport": {
-			"add": "Додај извештај",
-			"importJRFormStep1": {
-				"description": "Опис извештаја",
-				"enabled_groups": "Одобрене групе",
-				"fieldset": "Увоз Jasper извештаја",
-				"master_report_jrxml": "Избор Главног извештаја (.jrxml датокеке)",
-				"menuTitle": "Jasper Reports извештаји",
-				"name": "Назив извештаја"
-			},
-			"importJRFormStep2": {
-				"duplicate_images": "Пажња! Немогуће је обавити операцију - Извештај садржи дуплиране слике са истим именом.",
-				"fieldset_generic": "Увоз Jasper извештаја",
-				"fieldset_images": "Увоз слика дефинисаних главним извештајем",
-				"fieldset_subreports": "Увоз подизвештаја дефинисаних главним извештајем",
-				"menuTitle": "Jasper-reports извештај",
-				"nothing_to_import": "Нема референцираних слика или подизвештаја; Потврдите за покретање поступка додавања.",
-				"success": {
-					"description": {
-						"add": "Извештај је успешно увежен",
-						"modify": "Извештај је успешно измењен"
-					},
-					"title": "Слање на сервер завршено"
-				}
-			},
-			"importOpenofficeTemplateForm": {
-				"menuTitle": "OpenOffice извештај"
-			},
-			"modify": "Измени извештај",
-			"remove": "Уклони извештај",
-			"title": "Извештаји"
-		},
 		"modsecurity": {
 			"defaultgroup": "* Подразумевана група*",
 			"group": {
@@ -1136,19 +1104,6 @@
 		"modmenu": {
 			"menu": "Навигација"
 		},
-		"modreport": {
-			"add_report": "Додај извештај",
-			"delete_report": "Уклони извештај",
-			"modify_report": "Измени извештај",
-			"reportForm": {
-				"description": "Опис",
-				"name": "Назив",
-				"report": "Извештај"
-			},
-			"report_parameters": "Параметри извештаја",
-			"title": "Листа - ",
-			"treetitle": "Извештај"
-		},
 		"modutilities": {
 			"bulkupdate": {
 				"title": "Масовна измена картица",
@@ -1490,6 +1445,7 @@
 	"replace": "Замени",
 	"reply": "<em>Reply</em>",
 	"report": "Извештаји",
+	"reportMenuJasper": "<em>Jasper-reports report</em>",
 	"reportParameters": "<em>Report parameters</em>",
 	"repository": "Архива",
 	"reset": "Поништи",

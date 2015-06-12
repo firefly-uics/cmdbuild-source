@@ -424,38 +424,6 @@
 			"new_folder": "Novi direktorij",
 			"title": "Upravljanje menijima"
 		},
-		"modreport": {
-			"add": "Dodaj izvještaj",
-			"importJRFormStep1": {
-				"description": "Opis izvještaja",
-				"enabled_groups": "Odobrene grupe",
-				"fieldset": "Uvoz Jasper izvještaja",
-				"master_report_jrxml": "Izbor Glavnog izvještaja (.jrxml datokeke)",
-				"menuTitle": "Jasper Reports izvještaji",
-				"name": "Naziv izvještaja"
-			},
-			"importJRFormStep2": {
-				"duplicate_images": "Pažnja! Nije moguće obaviti radnju - Izvještaj sadrži duple slike sa istim imenom.",
-				"fieldset_generic": "Uvoz Jasper izvještaja",
-				"fieldset_images": "Uvoz slika definiranih glavnim izvještajem",
-				"fieldset_subreports": "Uvoz podizveštaja definiranih glavnim izvještajem",
-				"menuTitle": "Jasper-reports izvještaj",
-				"nothing_to_import": "Nema referenciranih slika ili podizvještaja; Potvrdite za pokretanje postupka dodavanja.",
-				"success": {
-					"description": {
-						"add": "Izvještaj je uspješno uvežen",
-						"modify": "Izvještaj je uspješno izmijenjen"
-					},
-					"title": "Slanje na server završeno"
-				}
-			},
-			"importOpenofficeTemplateForm": {
-				"menuTitle": "OpenOffice izvještaj"
-			},
-			"modify": "Izjmeni izvještaj",
-			"remove": "Ukloni izvještaj",
-			"title": "Izvještaji"
-		},
 		"modsecurity": {
 			"defaultgroup": "* Zadana grupa*",
 			"group": {
@@ -1136,19 +1104,6 @@
 		"modmenu": {
 			"menu": "Navigacija"
 		},
-		"modreport": {
-			"add_report": "Dodaj izvještaj",
-			"delete_report": "Ukloni izvještaj",
-			"modify_report": "Izmeni izvještaj",
-			"reportForm": {
-				"description": "Opis",
-				"name": "Naziv",
-				"report": "Izvještaj"
-			},
-			"report_parameters": "Parametri izvještaja",
-			"title": "Lista - ",
-			"treetitle": "Izvještaj"
-		},
 		"modutilities": {
 			"bulkupdate": {
 				"title": "Grupna izmjena kartica",
@@ -1490,6 +1445,7 @@
 	"replace": "<em>Replace</em>",
 	"reply": "<em>Reply</em>",
 	"report": "Izvještaji",
+	"reportMenuJasper": "<em>Jasper-reports report</em>",
 	"reportParameters": "<em>Report parameters</em>",
 	"repository": "Arhiva",
 	"reset": "<em>Reset</em>",

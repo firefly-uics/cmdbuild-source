@@ -424,38 +424,6 @@
 			"new_folder": "Новая папка",
 			"title": "Настройка меню"
 		},
-		"modreport": {
-			"add": "Создать отчет",
-			"importJRFormStep1": {
-				"description": "Описание",
-				"enabled_groups": "Доступные группы",
-				"fieldset": "Импортировать отчет Jasper",
-				"master_report_jrxml": "Файл отчета (.jrxml)",
-				"menuTitle": "Отчет Jasper",
-				"name": "Название отчета"
-			},
-			"importJRFormStep2": {
-				"duplicate_images": "Невозможно выполнить: найдены изображения с дублирующимися именами файлов.",
-				"fieldset_generic": "Импортировать отчет Jasper",
-				"fieldset_images": "Требуемые изображения",
-				"fieldset_subreports": "Требуемые файлы",
-				"menuTitle": "Отчет Jasper",
-				"nothing_to_import": "Не найдено ни одного изображения или суботчета. Подтвердите выполнение процедуры импорта.",
-				"success": {
-					"description": {
-						"add": "Импорт выполнен",
-						"modify": "Отчет модифицирован"
-					},
-					"title": "Успешное выполнение"
-				}
-			},
-			"importOpenofficeTemplateForm": {
-				"menuTitle": "Отчет OpenOffice"
-			},
-			"modify": "Редактировать отчет",
-			"remove": "Удалить отчет",
-			"title": "Отчеты"
-		},
 		"modsecurity": {
 			"defaultgroup": "* По умолчанию *",
 			"group": {
@@ -1136,19 +1104,6 @@
 		"modmenu": {
 			"menu": "Навигация"
 		},
-		"modreport": {
-			"add_report": "Добавить отчет",
-			"delete_report": "Удалить отчет",
-			"modify_report": "Редактировать отчет",
-			"reportForm": {
-				"description": "Описание",
-				"name": "Название",
-				"report": "Отчеты"
-			},
-			"report_parameters": "Параметры отчета",
-			"title": "Список - ",
-			"treetitle": "Отчеты"
-		},
 		"modutilities": {
 			"bulkupdate": {
 				"title": "Массовое обновление",
@@ -1490,6 +1445,7 @@
 	"replace": "<em>Replace</em>",
 	"reply": "<em>Reply</em>",
 	"report": "Report",
+	"reportMenuJasper": "<em>Jasper-reports report</em>",
 	"reportParameters": "<em>Report parameters</em>",
 	"repository": "Хранилище документов",
 	"reset": "Сброс",
