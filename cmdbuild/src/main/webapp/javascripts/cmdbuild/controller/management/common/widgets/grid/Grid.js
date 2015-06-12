@@ -354,7 +354,7 @@
 						Ext.create('CMDBuild.model.widget.Grid', this.cardAttributes);
 
 						// Resolve templates for widget configuration "function" type
-						var templateResolver = new CMDBuild.Management.TemplateResolver({
+						new CMDBuild.Management.TemplateResolver({
 							clientForm: this.clientForm,
 							xaVars: widgetUnmanagedVariables,
 							serverVars: this.getTemplateResolverServerVars()
@@ -562,7 +562,7 @@
 		 * Add empty row to grid store
 		 */
 		onAddRowButtonClick: function() {
-			this.grid.getStore().insert(0, {});
+			this.grid.getStore().insert(0, Ext.create('CMDBuild.model.widget.Grid', this.cardAttributes));
 		},
 
 		/**

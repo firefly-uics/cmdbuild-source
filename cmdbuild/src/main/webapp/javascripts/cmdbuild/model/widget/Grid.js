@@ -24,7 +24,10 @@
 						} break;
 
 						case 'DECIMAL':
-						case 'DOUBLE':
+						case 'DOUBLE': {
+							fieldsForModel.push({ name: field[CMDBuild.core.proxy.CMProxyConstants.NAME], type: 'float', useNull: true });
+						} break;
+
 						case 'INTEGER': {
 							fieldsForModel.push({ name: field[CMDBuild.core.proxy.CMProxyConstants.NAME], type: 'int', useNull: true });
 						} break;
@@ -38,7 +41,7 @@
 				CMDBuild.model.widget.Grid.setFields(fieldsForModel);
 			}
 
-			this.callParent(arguments);
+			this.callParent();
 		}
 	});
 
