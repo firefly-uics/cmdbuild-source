@@ -22,7 +22,6 @@
 			'CMDBuild.core.proxy.Classes',
 			'CMDBuild.core.proxy.Configuration',
 			'CMDBuild.core.proxy.Domain',
-			'CMDBuild.core.proxy.Localizations',
 			'CMDBuild.core.proxy.Lookup',
 			'CMDBuild.core.proxy.reports.Reports'
 		],
@@ -89,25 +88,25 @@
 										cmControllerType: 'CMDBuild.controller.administration.configuration.Configuration',
 										cmName: 'configuration'
 									}),
-									Ext.create('CMDBuild.view.administration.tasks.CMTasks', {
-										cmControllerType: 'CMDBuild.controller.administration.tasks.CMTasksController',
-										cmName: 'tasks'
-									}),
 									Ext.create('CMDBuild.view.administration.email.EmailView', {
 										cmControllerType: 'CMDBuild.controller.administration.email.Email',
 										cmName: 'email'
-									}),
-									Ext.create('CMDBuild.view.administration.localizations.MainPanel', {
-										cmControllerType: 'CMDBuild.controller.administration.localizations.Main',
-										cmName: 'localizations'
 									}),
 									Ext.create('CMDBuild.view.administration.filters.FiltersView', {
 										cmControllerType: 'CMDBuild.controller.administration.filters.Filters',
 										cmName: 'filters'
 									}),
+									Ext.create('CMDBuild.view.administration.localizations.LocalizationsView', {
+										cmControllerType: 'CMDBuild.controller.administration.localizations.Localizations',
+										cmName: 'localizations'
+									}),
 									Ext.create('CMDBuild.view.administration.reports.ReportsView', {
 										cmControllerType: 'CMDBuild.controller.administration.reports.Reports',
 										cmName: 'report'
+									}),
+									Ext.create('CMDBuild.view.administration.tasks.CMTasks', {
+										cmControllerType: 'CMDBuild.controller.administration.tasks.CMTasksController',
+										cmName: 'tasks'
 									}),
 									new CMDBuild.view.administration.bim.CMBIMPanel({
 										cmControllerType: CMDBuild.controller.administration.filter.CMBIMPanelController,
@@ -172,7 +171,7 @@
 							Ext.create('CMDBuild.view.administration.accordion.Email', { cmName: 'email' }),
 							gisAccordion,
 							bimAccordion,
-//							Ext.create('CMDBuild.view.administration.accordion.Localizations'), // TODO: will be implemented in future releases
+//							Ext.create('CMDBuild.view.administration.accordion.Localizations', { cmName: 'localizations' }),
 							Ext.create('CMDBuild.view.administration.accordion.Configuration', { cmName: 'setup' })
 						]);
 
