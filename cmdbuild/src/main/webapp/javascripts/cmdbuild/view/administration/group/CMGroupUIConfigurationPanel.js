@@ -46,7 +46,7 @@ Ext.define("CMDBuild.view.administration.group.CMGroupUIConfigurationPanel", {
 	loadGroupConfiguration: function(uiConfiguration) {
 		this.reset();
 		var form = this.getForm();
-		var fields = form.getFields(); 
+		var fields = form.getFields();
 
 		// set the check-box that have the same name of an attribute of the model
 		form.loadRecord(uiConfiguration);
@@ -132,14 +132,14 @@ function getGenericProp(me) {
 function getModulesFromStructure(me) {
 	var moduleCkecks = [];
 	var structure = {
-		"class": {	
+		"class": {
 			title:  CMDBuild.Translation.management.modcard.treetitle
 		},
 		process: {
 			title: CMDBuild.Translation.management.modworkflow.treetitle
 		},
 		report: {
-			title: CMDBuild.Translation.management.modreport.treetitle
+			title: CMDBuild.Translation.report
 		},
 		dataView: {
 			title: CMDBuild.Translation.management.modview.title

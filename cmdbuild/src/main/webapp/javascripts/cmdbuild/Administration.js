@@ -12,7 +12,6 @@
 	var menuAccordion = null;
 	var navigationTreesAccordion = null;
 	var processAccordion = null;
-	var reportAccordion = null;
 
 	Ext.define('CMDBuild.app.Administration', {
 		extend: 'Ext.app.Application',
@@ -106,6 +105,10 @@
 										cmControllerType: 'CMDBuild.controller.administration.filters.Filters',
 										cmName: 'filters'
 									}),
+									Ext.create('CMDBuild.view.administration.reports.ReportsView', {
+										cmControllerType: 'CMDBuild.controller.administration.reports.Reports',
+										cmName: 'report'
+									}),
 									new CMDBuild.view.administration.bim.CMBIMPanel({
 										cmControllerType: CMDBuild.controller.administration.filter.CMBIMPanelController,
 										cmName: 'bim-project'
@@ -162,7 +165,7 @@
 							navigationTreesAccordion,
 							lookupAccordion,
 							dashboardsAccordion,
-							reportAccordion,
+							Ext.create('CMDBuild.view.administration.accordion.Reports', { cmName: 'report' }),
 							menuAccordion,
 							groupsAccordion,
 							Ext.create('CMDBuild.view.administration.accordion.Tasks', { cmName: 'tasks' }),
@@ -335,27 +338,6 @@
 							Ext.create('CMDBuild.view.administration.users.UsersView', {
 								cmControllerType: 'CMDBuild.controller.administration.users.Users',
 								cmName: 'users'
-							})
-						]);
-					},
-					callback: reqBarrier.getCallback()
-				});
-
-				/**
-				 * Reports
-				 */
-				CMDBuild.core.proxy.reports.Reports.getMenuTree({
-					scope: this,
-					success: function(response, options, decodedResponse) {
-						_CMCache.addReports(decodedResponse);
-
-						reportAccordion = Ext.create('CMDBuild.view.administration.accordion.Reports', { cmName: 'report' });
-						reportAccordion.updateStore();
-
-						_CMMainViewportController.addPanel([
-							Ext.create('CMDBuild.view.administration.reports.ReportsView', {
-								cmControllerType: 'CMDBuild.controller.administration.reports.Reports',
-								cmName: 'report'
 							})
 						]);
 					},

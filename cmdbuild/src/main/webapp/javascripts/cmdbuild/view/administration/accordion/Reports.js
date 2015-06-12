@@ -7,31 +7,25 @@
 
 		title: CMDBuild.Translation.report,
 
-		/**
-		 * @param {CMDBuild.model.reports.Cache} report
-		 *
-		 * @return {Object} nodeConf
-		 */
-		buildNodeConf: function(report) {
-			var nodeConf = report.getData();
-			nodeConf['cmName'] = this.cmName;
-			nodeConf['leaf'] = true;
+		constructor: function() {
+			this.callParent(arguments);
 
-			return nodeConf;
+			this.updateStore();
 		},
 
 		/**
-		 * @return {Array} nodes
+		 * @override
 		 */
-		buildTreeStructure: function() {
-			var nodes = [];
-			var reports = _CMCache.getReports();
-
-			for (var key in reports)
-				nodes.push(this.buildNodeConf(reports[key]));
-
-			return nodes;
-
+		updateStore: function() {
+			this.getStore().getRootNode().removeAll();
+			this.getStore().getRootNode().appendChild([
+				{
+					id: 'Jasper',
+					cmName: this.cmName,
+					leaf: true,
+					text: CMDBuild.Translation.reportMenuJasper
+				}
+			]);
 		}
 	});
 

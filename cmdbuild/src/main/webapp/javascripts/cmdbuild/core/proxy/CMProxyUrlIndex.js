@@ -250,7 +250,6 @@
 			createReportFactoryByTypeCode: 'services/json/management/modreport/createreportfactorybytypecode',
 			getReportTypesTree: 'services/json/management/modreport/getreporttypestree',
 			getReportsByType: 'services/json/management/modreport/getreportsbytype',
-			menuTree: 'services/json/schema/modreport/menutree',
 			printReportFactory: 'services/json/management/modreport/printreportfactory',
 			updateReportFactoryParams: 'services/json/management/modreport/updatereportfactoryparams'
 		},

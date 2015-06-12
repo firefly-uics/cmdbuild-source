@@ -1,11 +1,11 @@
 (function() {
 
-	Ext.define('CMDBuild.view.management.accordion.Report', {
+	Ext.define('CMDBuild.view.management.accordion.Reports', {
 		extend: 'CMDBuild.view.common.CMBaseAccordion',
 
 		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
 
-		title: CMDBuild.Translation.administration.modreport.title,
+		title: CMDBuild.Translation.report,
 
 		/**
 		 * @param {CMDBuild.model.reports.Cache} report
