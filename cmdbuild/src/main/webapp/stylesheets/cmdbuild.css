@@ -104,8 +104,8 @@ em { font-style: oblique !important; }
 	position: relative;
 	bottom: 2em;
 	right: 0.5em;
-	padding: 0;
-	margin: 0;
+	padding: 0px;
+	margin: 10px 0px 0px 0px;
 }
 
 .cm-credits-links-left,
