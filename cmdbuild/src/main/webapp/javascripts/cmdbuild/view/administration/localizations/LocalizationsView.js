@@ -1,10 +1,10 @@
 (function() {
 
-	Ext.define('CMDBuild.view.administration.localizations.MainPanel', {
+	Ext.define('CMDBuild.view.administration.localizations.LocalizationsView', {
 		extend: 'Ext.form.Panel',
 
 		/**
-		 * @cfg {CMDBuild.controller.administration.localizations.Main}
+		 * @cfg {CMDBuild.controller.administration.localizations.Localizations}
 		 */
 		delegate: undefined,
 

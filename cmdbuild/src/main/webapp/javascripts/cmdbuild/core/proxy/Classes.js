@@ -14,25 +14,11 @@
 		 * @param {Object} parameters
 		 */
 		read: function(parameters) {
-			CMDBuild.ServiceProxy.core.doRequest({
+			CMDBuild.Ajax.request({
 				method: 'GET',
 				url: CMDBuild.core.proxy.CMProxyUrlIndex.classes.read,
 				params: parameters.params,
-				scope: parameters.scope || this,
-				success: parameters.success || Ext.emptyFn,
-				failure: parameters.failure || Ext.emptyFn,
-				callback: parameters.callback || Ext.emptyFn
-			});
-		},
-
-		/**
-		 * @param {Object} parameters
-		 */
-		save: function(parameters) {
-			CMDBuild.ServiceProxy.core.doRequest({
-				method: 'POST',
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.classes.update,
-				params: parameters.params,
+				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : false,
 				scope: parameters.scope || this,
 				success: parameters.success || Ext.emptyFn,
 				failure: parameters.failure || Ext.emptyFn,
@@ -48,6 +34,23 @@
 				method: 'POST',
 				url: CMDBuild.core.proxy.CMProxyUrlIndex.classes.remove,
 				params: parameters.params,
+				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : false,
+				scope: parameters.scope || this,
+				success: parameters.success || Ext.emptyFn,
+				failure: parameters.failure || Ext.emptyFn,
+				callback: parameters.callback || Ext.emptyFn
+			});
+		},
+
+		/**
+		 * @param {Object} parameters
+		 */
+		save: function(parameters) {
+			CMDBuild.ServiceProxy.core.doRequest({
+				method: 'POST',
+				url: CMDBuild.core.proxy.CMProxyUrlIndex.classes.update,
+				params: parameters.params,
+				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : false,
 				scope: parameters.scope || this,
 				success: parameters.success || Ext.emptyFn,
 				failure: parameters.failure || Ext.emptyFn,

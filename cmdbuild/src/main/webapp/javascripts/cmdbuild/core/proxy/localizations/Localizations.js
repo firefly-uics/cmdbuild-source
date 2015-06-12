@@ -1,12 +1,12 @@
 (function() {
 
-	Ext.define('CMDBuild.core.proxy.Localizations', {
+	Ext.define('CMDBuild.core.proxy.localizations.Localizations', {
 
 		requires: [
 			'CMDBuild.core.proxy.CMProxyConstants',
 			'CMDBuild.core.proxy.CMProxyUrlIndex',
 			'CMDBuild.core.proxy.Configuration',
-			'CMDBuild.model.Localizations'
+			'CMDBuild.model.localizations.Localization'
 		],
 
 		singleton: true,
@@ -14,11 +14,11 @@
 		/**
 		 * @param {Object} parameters
 		 */
-		createLocalization: function(parameters) { // TODO: future implementation of server-side parameter for sectionId
+		create: function(parameters) { // TODO: future implementation of server-side parameter for sectionId
 			var url = undefined;
 
 			switch (parameters.params.sectionId) {
-				case 'classes': {
+				case CMDBuild.core.proxy.CMProxyConstants.CLASSES: {
 					url = CMDBuild.core.proxy.CMProxyUrlIndex.localizations.classCreate;
 				} break;
 
@@ -30,15 +30,15 @@
 
 				} break;
 
-				case 'lookups': {
+				case 'lookup': {
 
 				} break;
 
-				case 'menus': {
+				case 'menu': {
 
 				} break;
 
-				case 'reports': {
+				case 'report': {
 
 				} break;
 			}
@@ -48,7 +48,7 @@
 				url: url,
 				params: parameters.params,
 				scope: parameters.scope || this,
-				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : false,
+				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
 				failure: parameters.failure || Ext.emptyFn(),
 				success: parameters.success || Ext.emptyFn(),
 				callback: parameters.callback || Ext.emptyFn()
@@ -56,27 +56,30 @@
 		},
 
 		/**
-		 * @return {Ext.data.Store}
+		 * @return {Ext.data.ArrayStore}
 		 */
 		getCsvSeparatorStore: function() {
-			return Ext.create('Ext.data.Store', {
+			return Ext.create('Ext.data.ArrayStore', {
 				fields: [CMDBuild.core.proxy.CMProxyConstants.VALUE],
 				data: [
-					{ value: ';' },
-					{ value: ',' },
-					{ value: '|' }
+					[';'],
+					[','],
+					['|']
 				]
 			});
 		},
 
 		/**
-		 * @return {Ext.data.Store}
+		 * @return {Ext.data.ArrayStore}
 		 */
 		getFileFormatStore: function() {
-			return Ext.create('Ext.data.Store', {
-				fields: [CMDBuild.core.proxy.CMProxyConstants.NAME, CMDBuild.core.proxy.CMProxyConstants.VALUE],
+			return Ext.create('Ext.data.ArrayStore', {
+				fields: [CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION, CMDBuild.core.proxy.CMProxyConstants.NAME],
 				data: [
-					{ name: '@@ CSV', value: 'csv' }
+					['@@ CSV', CMDBuild.core.proxy.CMProxyConstants.CSV]
+				],
+				sorters: [
+					{ property: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION, direction: 'ASC' }
 				]
 			});
 		},
@@ -101,7 +104,7 @@
 		getLanguagesStore: function() {
 			return Ext.create('Ext.data.Store', {
 				autoLoad: true,
-				model: 'CMDBuild.model.Localizations.translation',
+				model: 'CMDBuild.model.localizations.Localization',
 				proxy: {
 					type: 'ajax',
 					url: CMDBuild.core.proxy.CMProxyUrlIndex.utils.listAvailableTranslations,
@@ -117,13 +120,32 @@
 		},
 
 		/**
+		 * @return {Ext.data.ArrayStore}
+		 */
+		getSectionsStore: function(parameters) { // TODO real implementation
+			return Ext.create('Ext.data.ArrayStore', {
+				fields: [CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION, CMDBuild.core.proxy.CMProxyConstants.NAME],
+				data: [
+					['@@ Classes', CMDBuild.core.proxy.CMProxyConstants.CLASSES],
+					['@@ Domains', 'domains'], // TODO costants
+					['@@ Lookup', 'lookup'], // TODO costants
+					['@@ Menu', 'menu'], // TODO costants
+					['@@ Report', 'report'] // TODO costants
+				],
+				sorters: [
+					{ property: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION, direction: 'ASC' }
+				]
+			});
+		},
+
+		/**
 		 * @param {Object} parameters
 		 */
-		readLocalization: function(parameters) { // TODO: future implementation of server-side parameter for sectionId
+		read: function(parameters) { // TODO: future implementation of server-side parameter for sectionId
 			var url = undefined;
 
 			switch (parameters.params.sectionId) {
-				case 'classes': {
+				case CMDBuild.core.proxy.CMProxyConstants.CLASSES: {
 					url = CMDBuild.core.proxy.CMProxyUrlIndex.localizations.classRead;
 				} break;
 
@@ -135,15 +157,15 @@
 
 				} break;
 
-				case 'lookups': {
+				case 'lookup': {
 
 				} break;
 
-				case 'menus': {
+				case 'menu': {
 
 				} break;
 
-				case 'reports': {
+				case 'report': {
 
 				} break;
 
@@ -164,11 +186,11 @@ _debug('Error', parameters);
 			});
 		},
 
-		updateLocalization: function(parameters) { // TODO: future implementation of server-side parameter for sectionId
+		update: function(parameters) { // TODO: future implementation of server-side parameter for sectionId
 			var url = undefined;
 
 			switch (parameters.params.sectionId) {
-				case 'classes': {
+				case CMDBuild.core.proxy.CMProxyConstants.CLASSES: {
 					url = CMDBuild.core.proxy.CMProxyUrlIndex.localizations.classUpdate;
 				} break;
 
@@ -180,15 +202,15 @@ _debug('Error', parameters);
 
 				} break;
 
-				case 'lookups': {
+				case 'lookup': {
 
 				} break;
 
-				case 'menus': {
+				case 'menu': {
 
 				} break;
 
-				case 'reports': {
+				case 'report': {
 
 				} break;
 			}
@@ -198,7 +220,7 @@ _debug('Error', parameters);
 				url: url,
 				params: parameters.params,
 				scope: parameters.scope || this,
-				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : false,
+				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
 				failure: parameters.failure || Ext.emptyFn(),
 				success: parameters.success || Ext.emptyFn(),
 				callback: parameters.callback || Ext.emptyFn()
