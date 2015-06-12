@@ -97,9 +97,8 @@
 				delegate: this
 			});
 
-			this.view.removeAll();
-
-			this.view.add(this.grid);
+			if (!Ext.isEmpty(this.grid))
+				this.view.add(this.grid);
 
 			this.configureGridPanel();
 		},
@@ -197,8 +196,6 @@
 		 * @override
 		 */
 		beforeActiveView: function() {
-			var me = this;
-
 			// Disable add button
 			this.view.addButton.setDisabled(
 				this.widgetConf.hasOwnProperty(CMDBuild.core.proxy.CMProxyConstants.DISABLE_ADD_ROW)
@@ -353,14 +350,15 @@
 						var params = {};
 						var widgetUnmanagedVariables = this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.VARIABLES];
 
+						// Instantiate model to transform attributes in fields
+						Ext.create('CMDBuild.model.widget.Grid', this.cardAttributes);
+
 						// Resolve templates for widget configuration "function" type
 						var templateResolver = new CMDBuild.Management.TemplateResolver({
 							clientForm: this.clientForm,
 							xaVars: widgetUnmanagedVariables,
 							serverVars: this.getTemplateResolverServerVars()
-						});
-
-						templateResolver.resolveTemplates({
+						}).resolveTemplates({
 							attributes: Ext.Object.getKeys(widgetUnmanagedVariables),
 							callback: function(out, ctx) {
 								widgetUnmanagedVariables = out;
@@ -381,7 +379,7 @@
 
 						this.grid.reconfigure(
 							CMDBuild.core.proxy.widgets.Grid.getStoreFromFunction({
-								fields: _CMCache.getDataSourceOutput(presetsString),
+								fields: CMDBuild.model.widget.Grid.getFields(),
 								extraParams: {
 									'function': presetsString,
 									params: Ext.encode(params)
