@@ -71,7 +71,7 @@
 				]
 			});
 
-			this.languageGrid = Ext.create('CMDBuild.view.administration.localizations.panels.LanguagesGrid');
+			this.languageGrid = Ext.create('CMDBuild.view.administration.localizations.common.LanguagesGrid');
 			this.enabledLanguagesFieldset = Ext.create('Ext.form.FieldSet', {
 				title: CMDBuild.Translation.enabledLanguages,
 				overflowY: 'auto',
