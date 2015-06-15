@@ -26,8 +26,12 @@
 					url = CMDBuild.core.proxy.CMProxyUrlIndex.localizations.classAttributeCreate;
 				} break;
 
-				case 'domains': {
+				case CMDBuild.core.proxy.CMProxyConstants.DOMAINS: {
+					url = CMDBuild.core.proxy.CMProxyUrlIndex.localizations.domainCreate;
+				} break;
 
+				case 'domainsAttributes': {
+					url = CMDBuild.core.proxy.CMProxyUrlIndex.localizations.domainAttributeCreate;
 				} break;
 
 				case 'lookup': {
@@ -144,7 +148,7 @@
 		read: function(parameters) { // TODO: future implementation of server-side parameter for sectionId
 			var url = undefined;
 
-			switch (parameters.params.sectionId) {
+			switch (parameters.params[CMDBuild.core.proxy.CMProxyConstants.SECTION_ID]) {
 				case CMDBuild.core.proxy.CMProxyConstants.CLASSES: {
 					url = CMDBuild.core.proxy.CMProxyUrlIndex.localizations.classRead;
 				} break;
@@ -153,8 +157,12 @@
 					url = CMDBuild.core.proxy.CMProxyUrlIndex.localizations.classAttributeRead;
 				} break;
 
-				case 'domains': {
+				case CMDBuild.core.proxy.CMProxyConstants.DOMAINS: {
+					url = CMDBuild.core.proxy.CMProxyUrlIndex.localizations.domainRead;
+				} break;
 
+				case 'domainsAttributes': {
+					url = CMDBuild.core.proxy.CMProxyUrlIndex.localizations.domainAttributeRead;
 				} break;
 
 				case 'lookup': {
@@ -199,7 +207,11 @@ _debug('Error', parameters);
 				} break;
 
 				case 'domains': {
+					url = CMDBuild.core.proxy.CMProxyUrlIndex.localizations.domainUpdate;
+				} break;
 
+				case 'domainsAttributes': {
+					url = CMDBuild.core.proxy.CMProxyUrlIndex.localizations.domainAttributeUpdate;
 				} break;
 
 				case 'lookup': {

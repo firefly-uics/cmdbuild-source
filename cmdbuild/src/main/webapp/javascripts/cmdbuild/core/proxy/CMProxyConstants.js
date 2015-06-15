@@ -188,6 +188,7 @@
 		MAP_LONGITUDE: 'mapLongitude',
 		MAP_ZOOM: 'mapZoom',
 		MASTER_DETAIL: 'masterDetail',
+		MASTER_DETAIL_LABEL: 'masterDetailLabel',
 		MENU: 'menu',
 		META: 'meta',
 		METADATA: 'metadata',

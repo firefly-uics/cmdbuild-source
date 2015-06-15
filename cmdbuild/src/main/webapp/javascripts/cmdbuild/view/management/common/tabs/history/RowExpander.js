@@ -34,15 +34,7 @@
 						}, this);
 
 						// Sort by index value (CMDBuild attribute sort order)
-						Ext.Array.sort(this.formattedArray, function(item1, item2) {
-							if (item1[CMDBuild.core.proxy.CMProxyConstants.INDEX] < item2[CMDBuild.core.proxy.CMProxyConstants.INDEX])
-								return -1;
-
-							if (item1[CMDBuild.core.proxy.CMProxyConstants.INDEX] > item2[CMDBuild.core.proxy.CMProxyConstants.INDEX])
-								return 1;
-
-							return 0;
-						}, this);
+						CMDBuild.core.Utils.objectArraySort(this.formattedArray, CMDBuild.core.proxy.CMProxyConstants.INDEX);
 					}
 				}
 			}
