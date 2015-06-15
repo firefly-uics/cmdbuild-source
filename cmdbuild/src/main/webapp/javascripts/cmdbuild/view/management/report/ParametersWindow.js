@@ -16,18 +16,14 @@
 		form: undefined,
 
 		autoHeight: true,
+		autoWidth: true,
 		border: false,
 		frame: false,
 		layout: 'fit',
+		width: 660,
 		title: CMDBuild.Translation.management.modreport.report_parameters,
 
 		initComponent: function() {
-			this.form = Ext.create('Ext.form.Panel', {
-				labelAlign: 'right',
-				frame: true,
-				border: false
-			});
-
 			Ext.apply(this, {
 				dockedItems: [
 					Ext.create('Ext.toolbar.Toolbar', {
@@ -59,7 +55,18 @@
 						]
 					})
 				],
-				items: [this.form]
+				items: [
+					this.form = Ext.create('Ext.form.Panel', {
+						labelAlign: 'right',
+						frame: true,
+						border: false,
+
+						layout: {
+							type: 'vbox',
+							align: 'stretch'
+						}
+					})
+				]
 			});
 
 			this.callParent(arguments);
