@@ -26,7 +26,7 @@
 		constrain: true,
 		layout: 'fit',
 		modal: true,
-		resizable: false,
+		resizable: true,
 
 		initComponent: function() {
 			if (!this.autoHeight) {
@@ -53,9 +53,6 @@
 				}
 
 				this.width = Ext.getBody().getWidth() * percentualWidth;
-			} else {
-				this.autoWidth = false;
-				this.y = 10000;
 			}
 
 			this.callParent(arguments);
