@@ -113,15 +113,7 @@
 
 						if (templatesArray.length > 0) {
 							// Sort templatesArray by description ascending
-							Ext.Array.sort(templatesArray, function(item1, item2) {
-								if (item1[CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION] < item2[CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION])
-									return -1;
-
-								if (item1[CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION] > item2[CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION])
-									return 1;
-
-								return 0;
-							});
+							CMDBuild.core.Utils.objectArraySort(templatesArray, CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION);
 
 							Ext.Array.forEach(templatesArray, function(template, index, allItems) {
 								this.view.fillFromTemplateButton.menu.add({

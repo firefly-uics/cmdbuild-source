@@ -166,6 +166,12 @@
 			classCreate: 'services/json/schema/translation/createforclass',
 			classRead: 'services/json/schema/translation/readforclass',
 			classUpdate: 'services/json/schema/translation/updateforclass',
+			domainAttributeCreate: 'services/json/schema/translation/createfordomainattribute',
+			domainAttributeRead: 'services/json/schema/translation/readfordomainattribute',
+			domainAttributeUpdate: 'services/json/schema/translation/updatefordomainattribute',
+			domainCreate: 'services/json/schema/translation/createfordomain',
+			domainRead: 'services/json/schema/translation/readfordomain',
+			domainUpdate: 'services/json/schema/translation/updatefordomain',
 		},
 
 		login: 'services/json/login/login',

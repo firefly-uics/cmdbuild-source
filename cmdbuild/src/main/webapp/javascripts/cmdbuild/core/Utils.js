@@ -124,6 +124,52 @@
 		},
 
 		/**
+		 * Custom function to order objet's array
+		 *
+		 * @param {Array} array
+		 * @param {String} attributeToSort - (Default) description
+		 * @param {String} direction - (Default) ASC
+		 * @param {Boolean} caseSensitive - (Default) true
+		 */
+		objectArraySort: function(array, attributeToSort, direction, caseSensitive) {
+			attributeToSort = Ext.isString(attributeToSort) ? attributeToSort : CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION;
+			direction = Ext.isString(direction) ? direction : 'ASC'; // ASC or DESC
+			caseSensitive = Ext.isBoolean(caseSensitive) ? caseSensitive : false;
+
+			if (Ext.isArray(array)) {
+				Ext.Array.sort(array, function(item1, item2) {
+					if (!Ext.isEmpty(item1[attributeToSort]) && !Ext.isEmpty(item2[attributeToSort])) {
+						var attribute1 = (!caseSensitive && Ext.isFunction(item1[attributeToSort].toLowerCase)) ? item1[attributeToSort].toLowerCase() : item1[attributeToSort];
+						var attribute2 = (!caseSensitive && Ext.isFunction(item2[attributeToSort].toLowerCase)) ? item2[attributeToSort].toLowerCase() : item2[attributeToSort];
+
+						switch (direction) {
+							case 'DESC': {
+								if (attribute1 > attribute2)
+									return -1;
+
+								if (attribute1 < attribute2)
+									return 1;
+
+								return 0;
+							} break;
+
+							case 'ASC':
+							default: {
+								if (attribute1 < attribute2)
+									return -1;
+
+								if (attribute1 > attribute2)
+									return 1;
+
+								return 0;
+							}
+						}
+					}
+				});
+			}
+		},
+
+		/**
 		 * Capitalize first string's char
 		 *
 		 * @param {String} string

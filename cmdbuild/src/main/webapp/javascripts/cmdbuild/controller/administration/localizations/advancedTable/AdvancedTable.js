@@ -3,12 +3,7 @@
 	Ext.define('CMDBuild.controller.administration.localizations.advancedTable.AdvancedTable', {
 		extend: 'CMDBuild.controller.common.AbstractController',
 
-		requires: [
-//			'CMDBuild.core.proxy.Attributes',
-			'CMDBuild.core.proxy.CMProxyConstants',
-//			'CMDBuild.core.proxy.Classes',
-//			'CMDBuild.core.proxy.localizations.Localizations'
-		],
+		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
 
 		/**
 		 * @cfg {CMDBuild.controller.administration.localizations.Localizations}
@@ -19,10 +14,20 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
-			'localizationsAdvancedTableBuildColumns'
+			'onAdvancedTableBuildColumns',
+			'onAdvancedTableBuildStore',
+			'onAdvancedTableTabCreation',
 		],
 
-		sectionClassesController: undefined, // TODO
+		/**
+		 * @property {CMDBuild.controller.administration.localizations.advancedTable.SectionClasses}
+		 */
+		sectionControllerClasses: undefined,
+
+		/**
+		 * @property {CMDBuild.controller.administration.localizations.advancedTable.SectionDomains}
+		 */
+		sectionControllerDomains: undefined,
 
 		/**
 		 * @cfg {CMDBuild.view.administration.localizations.advancedTable.AdvancedTableView}
@@ -43,12 +48,12 @@
 			});
 
 			// Build tabs
-			this.sectionClassesController = Ext.create('CMDBuild.controller.administration.localizations.advancedTable.SectionClasses', { parentDelegate: this });
-
-			if (!Ext.isEmpty(this.sectionClassesController.getView()))
-				this.view.add(this.sectionClassesController.getView());
+			this.sectionControllerClasses = Ext.create('CMDBuild.controller.administration.localizations.advancedTable.SectionClasses', { parentDelegate: this });
+			this.sectionControllerDomains = Ext.create('CMDBuild.controller.administration.localizations.advancedTable.SectionDomains', { parentDelegate: this });
 
 			this.view.setActiveTab(0);
+
+			this.view.getActiveTab().fireEvent('show'); // Manual show event fire because was already selected
 		},
 
 		/**
@@ -56,7 +61,7 @@
 		 *
 		 * @return {Ext.grid.column.Column} or null
 		 */
-		buildColumn: function(languageObject) { // TODO static???
+		buildColumn: function(languageObject) {
 			if (!Ext.isEmpty(languageObject))
 				return Ext.create('Ext.grid.column.Column', {
 					dataIndex: languageObject.get(CMDBuild.core.proxy.CMProxyConstants.TAG),
@@ -78,20 +83,20 @@
 		 *
 		 * @return {Array} columnsArray
 		 */
-		localizationsAdvancedTableBuildColumns: function() { // TODO static??
+		onAdvancedTableBuildColumns: function() {
 			var columnsArray = [
 				{
 					xtype: 'treecolumn',
-					text: '@@ Translation object',
 					dataIndex: CMDBuild.core.proxy.CMProxyConstants.OBJECT,
+					text: '@@ Translation object',
 					width: 300,
 					// locked: true, // There is a performance issue in ExtJs 4.2.0 without locked columns all is fine
 					sortable: false,
 					draggable: false
 				},
 				{
-					text: '@@ defaultTranslation',
 					dataIndex: CMDBuild.core.proxy.CMProxyConstants.DEFAULT,
+					text: '@@ defaultTranslation',
 					width: 300,
 					sortable: false,
 					draggable: false
@@ -103,6 +108,28 @@
 			}, this);
 
 			return columnsArray;
+		},
+
+		/**
+		 * @return {Ext.data.TreeStore}
+		 */
+		onAdvancedTableBuildStore: function() {
+			return Ext.create('Ext.data.TreeStore', {
+				model: 'CMDBuild.model.localizations.advancedTable.TreeStore',
+				root: {
+					text: 'ROOT',
+					expanded: true,
+					children: []
+				}
+			});
+		},
+
+		/**
+		 * @param {Mixed} panel
+		 */
+		onAdvancedTableTabCreation: function(panel) {
+			if (!Ext.isEmpty(panel))
+				this.view.add(panel);
 		}
 	});
 

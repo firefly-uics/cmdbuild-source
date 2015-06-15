@@ -1,18 +1,19 @@
 (function() {
 
 	Ext.define('CMDBuild.controller.administration.localizations.advancedTable.SectionClasses', {
-		extend: 'CMDBuild.controller.common.AbstractController',
+		extend: 'CMDBuild.controller.administration.localizations.advancedTable.SectionBase',
 
 		requires: [
 			'CMDBuild.core.proxy.Attributes',
 			'CMDBuild.core.proxy.CMProxyConstants',
 			'CMDBuild.core.proxy.Classes',
 			'CMDBuild.core.proxy.localizations.Localizations',
-			'CMDBuild.model.localizations.SectionClassesTreeStore'
+			'CMDBuild.model.localizations.advancedTable.TreeStore',
+			'CMDBuild.core.Utils',
 		],
 
 		/**
-		 * @cfg {CMDBuild.controller.administration.localizations.advancedTranslationsTable.AdvancedTranslationsTable}
+		 * @cfg {CMDBuild.controller.administration.localizations.advancedTable.AdvancedTable}
 		 */
 		parentDelegate: undefined,
 
@@ -20,7 +21,7 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
-			'localizationsAdvancedTableClassesBuildStore',
+			'onAdvancedTableClassesShow',
 			'onAdvancedTableNodeExpand',
 			'onAdvancedTableRowUpdateButtonClick'
 		],
@@ -31,13 +32,18 @@
 		sectionId: CMDBuild.core.proxy.CMProxyConstants.CLASSES,
 
 		/**
+		 * @property {CMDBuild.view.administration.localizations.common.AdvancedTableGrid}
+		 */
+		grid: undefined,
+
+		/**
 		 * @cfg {CMDBuild.view.administration.localizations.advancedTable.SectionClassesPanel}
 		 */
 		view: undefined,
 
 		/**
 		 * @param {Object} configObject
-		 * @param {CMDBuild.controller.administration.localizations.advancedTranslationsTable.AdvancedTranslationsTable} configObject.parentDelegate
+		 * @param {CMDBuild.controller.administration.localizations.advancedTable.AdvancedTable} configObject.parentDelegate
 		 *
 		 * @override
 		 */
@@ -47,101 +53,17 @@
 			this.view = Ext.create('CMDBuild.view.administration.localizations.advancedTable.SectionClassesPanel', {
 				delegate: this
 			});
-		},
 
-		/**
-		 * @return {Ext.data.TreeStore} treeStore
-		 */
-		localizationsAdvancedTableClassesBuildStore: function() {
-			var treeStore =  Ext.create('Ext.data.TreeStore', {
-				model: 'CMDBuild.model.localizations.SectionClassesTreeStore',
-				folderSort: true,
-				root: {
-					text: 'ROOT',
-					expanded: true,
-					children: []
-				}
-			});
-			var root = treeStore.getRootNode();
+			// Shorthand
+			this.grid = this.view.grid;
 
-			// GetAllClasses data to get default translations
-			var params = {};
-			params[CMDBuild.core.proxy.CMProxyConstants.ACTIVE] = true;
-
-			CMDBuild.core.proxy.Classes.read({
-				params: params,
-				loadMask: true,
-				scope: this,
-				success: function(response, options, decodedResponse) {
-					Ext.Array.forEach(decodedResponse.classes, function(classObject, index, allClasses) {
-						if (
-							classObject[CMDBuild.core.proxy.CMProxyConstants.TYPE] == 'class' // Discard processes from visualization
-							&& classObject[CMDBuild.core.proxy.CMProxyConstants.NAME] != 'Class' // Discard root class of all classes
-						) {
-							// Class main node
-							var classMainNodeObject = { expandable: true, };
-							classMainNodeObject[CMDBuild.core.proxy.CMProxyConstants.LEAF] = false;
-							classMainNodeObject[CMDBuild.core.proxy.CMProxyConstants.OBJECT] = classObject[CMDBuild.core.proxy.CMProxyConstants.NAME];
-							classMainNodeObject[CMDBuild.core.proxy.CMProxyConstants.PARENT] = root;
-							classMainNodeObject[CMDBuild.core.proxy.CMProxyConstants.PROPERTY] = CMDBuild.core.proxy.CMProxyConstants.CLASSES;
-
-							var classMainNode = root.appendChild(classMainNodeObject);
-
-							// Class description property object
-							var classDescriptionNodeObject = {};
-							classDescriptionNodeObject[CMDBuild.core.proxy.CMProxyConstants.DEFAULT] = classObject[CMDBuild.core.proxy.CMProxyConstants.TEXT];
-							classDescriptionNodeObject[CMDBuild.core.proxy.CMProxyConstants.LEAF] = true;
-							classDescriptionNodeObject[CMDBuild.core.proxy.CMProxyConstants.OBJECT] = '@@ Description';
-							classDescriptionNodeObject[CMDBuild.core.proxy.CMProxyConstants.PARENT] = classMainNode;
-							classDescriptionNodeObject[CMDBuild.core.proxy.CMProxyConstants.PROPERTY] = CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION;
-
-							classMainNode.appendChild(classDescriptionNodeObject);
-
-							// Class attributes node
-							var classAttributeNodeObject = {
-								expandable: true,
-								parent: classMainNode
-							};
-							classAttributeNodeObject[CMDBuild.core.proxy.CMProxyConstants.LEAF] = false;
-							classAttributeNodeObject[CMDBuild.core.proxy.CMProxyConstants.OBJECT] = '@@ Attributes';
-							classAttributeNodeObject[CMDBuild.core.proxy.CMProxyConstants.PARENT] = classMainNode;
-							classAttributeNodeObject[CMDBuild.core.proxy.CMProxyConstants.PROPERTY] = CMDBuild.core.proxy.CMProxyConstants.ATTRIBUTES;
-
-							var classAttributesNode = classMainNode.appendChild(classAttributeNodeObject);
-
-							classAttributesNode.appendChild({}); // FIX: expandable property is bugged so i must build a fake node to make attributes node expandable
-						}
-					}, this);
-				}
-			});
-
-			return treeStore;
-		},
-
-		/**
-		 * @param {CMDBuild.model.localizations.SectionClassesTreeStore} startNode
-		 *
-		 * @return {CMDBuild.model.localizations.SectionClassesTreeStore} classNode
-		 */
-		getClassNode: function(node) {
-			while (node.get(CMDBuild.core.proxy.CMProxyConstants.PROPERTY) != CMDBuild.core.proxy.CMProxyConstants.CLASSES) {
-				node = node.get(CMDBuild.core.proxy.CMProxyConstants.PARENT);
-			}
-
-			return node;
-		},
-
-		/**
-		 * @return {String}
-		 */
-		getSectionId: function() {
-			return this.sectionId;
+			this.cmfg('onAdvancedTableTabCreation', this.view); // Add panel to parent tab panel
 		},
 
 		/**
 		 * Refresh all child node filling them with translations (class description)
 		 *
-		 * @param {CMDBuild.model.localizations.SectionClassesTreeStore} node
+		 * @param {CMDBuild.model.localizations.advancedTable.TreeStore} node
 		 */
 		nodeExpandLevel1: function(node) {
 			node.eachChild(function(childNode) {
@@ -178,7 +100,7 @@
 		/**
 		 * Rebuild all child node with translations (class attributes)
 		 *
-		 * @param {CMDBuild.model.localizations.SectionClassesTreeStore} node
+		 * @param {CMDBuild.model.localizations.advancedTable.TreeStore} node
 		 */
 		nodeExpandLevel2: function(node) {
 			node.removeAll();
@@ -192,7 +114,10 @@
 				params: params,
 				scope: this,
 				success: function(response, options, decodedResponse) {
-					Ext.Array.forEach(decodedResponse.attributes, function(attributeObject, index, allAttributes) {
+					// Sort attributes with CMDBuild sort order
+					CMDBuild.core.Utils.objectArraySort(decodedResponse[CMDBuild.core.proxy.CMProxyConstants.ATTRIBUTES], CMDBuild.core.proxy.CMProxyConstants.INDEX);
+
+					Ext.Array.forEach(decodedResponse[CMDBuild.core.proxy.CMProxyConstants.ATTRIBUTES], function(attributeObject, i, allAttributes) {
 						if (attributeObject[CMDBuild.core.proxy.CMProxyConstants.NAME] != 'Notes') { // Custom CMDBuild behaviour
 							var localizationParams = {};
 							localizationParams[CMDBuild.core.proxy.CMProxyConstants.ATTRIBUTE_NAME] = attributeObject[CMDBuild.core.proxy.CMProxyConstants.NAME];
@@ -233,18 +158,66 @@
 		},
 
 		/**
-		 * @param {CMDBuild.model.localizations.SectionClassesTreeStore} node
+		 * Fill grid store with classes data
 		 */
-		onAdvancedTableNodeExpand: function(node) {
-			if (!Ext.isEmpty(node) && node.getDepth() == 1) { // First level node (class node)
-				this.nodeExpandLevel1(node);
-			} else if (!Ext.isEmpty(node) && node.getDepth() == 2) { // Second level node (attributes node)
-				this.nodeExpandLevel2(node);
-			}
+		onAdvancedTableClassesShow: function() {
+			var root = this.grid.getStore().getRootNode();
+			root.removeAll();
+
+			// GetAllClasses data to get default translations
+			var params = {};
+			params[CMDBuild.core.proxy.CMProxyConstants.ACTIVE] = true;
+
+			CMDBuild.core.proxy.Classes.read({
+				params: params,
+				loadMask: true,
+				scope: this,
+				success: function(response, options, decodedResponse) {
+					// Sort classes with CMDBuild sort order
+					CMDBuild.core.Utils.objectArraySort(decodedResponse[CMDBuild.core.proxy.CMProxyConstants.CLASSES], CMDBuild.core.proxy.CMProxyConstants.TEXT);
+
+					Ext.Array.forEach(decodedResponse[CMDBuild.core.proxy.CMProxyConstants.CLASSES], function(classObject, i, allClasses) {
+						if (
+							classObject[CMDBuild.core.proxy.CMProxyConstants.TYPE] == 'class' // Discard processes from visualization
+							&& classObject[CMDBuild.core.proxy.CMProxyConstants.NAME] != 'Class' // Discard root class of all classes
+						) {
+							// Class main node
+							var classMainNodeObject = { expandable: true, };
+							classMainNodeObject[CMDBuild.core.proxy.CMProxyConstants.LEAF] = false;
+							classMainNodeObject[CMDBuild.core.proxy.CMProxyConstants.OBJECT] = classObject[CMDBuild.core.proxy.CMProxyConstants.NAME];
+							classMainNodeObject[CMDBuild.core.proxy.CMProxyConstants.PARENT] = root;
+							classMainNodeObject[CMDBuild.core.proxy.CMProxyConstants.PROPERTY] = CMDBuild.core.proxy.CMProxyConstants.CLASSES;
+
+							var classMainNode = root.appendChild(classMainNodeObject);
+
+							// Class description property object
+							var classDescriptionNodeObject = {};
+							classDescriptionNodeObject[CMDBuild.core.proxy.CMProxyConstants.DEFAULT] = classObject[CMDBuild.core.proxy.CMProxyConstants.TEXT];
+							classDescriptionNodeObject[CMDBuild.core.proxy.CMProxyConstants.LEAF] = true;
+							classDescriptionNodeObject[CMDBuild.core.proxy.CMProxyConstants.OBJECT] = '@@ Description';
+							classDescriptionNodeObject[CMDBuild.core.proxy.CMProxyConstants.PARENT] = classMainNode;
+							classDescriptionNodeObject[CMDBuild.core.proxy.CMProxyConstants.PROPERTY] = CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION;
+
+							classMainNode.appendChild(classDescriptionNodeObject);
+
+							// Class attributes node
+							var classAttributeNodeObject = { expandable: true };
+							classAttributeNodeObject[CMDBuild.core.proxy.CMProxyConstants.LEAF] = false;
+							classAttributeNodeObject[CMDBuild.core.proxy.CMProxyConstants.OBJECT] = '@@ Attributes';
+							classAttributeNodeObject[CMDBuild.core.proxy.CMProxyConstants.PARENT] = classMainNode;
+							classAttributeNodeObject[CMDBuild.core.proxy.CMProxyConstants.PROPERTY] = CMDBuild.core.proxy.CMProxyConstants.ATTRIBUTES;
+
+							var classAttributesNode = classMainNode.appendChild(classAttributeNodeObject);
+
+							classAttributesNode.appendChild({}); // FIX: expandable property is bugged so i must build a fake node to make attributes node expandable
+						}
+					}, this);
+				}
+			});
 		},
 
 		/**
-		 * @param {CMDBuild.model.localizations.SectionClassesTreeStore} node
+		 * @param {CMDBuild.model.localizations.advancedTable.TreeStore} node
 		 */
 		onAdvancedTableRowUpdateButtonClick: function(node) {
 			if (!Ext.Object.isEmpty(node)) {
@@ -252,7 +225,7 @@
 
 				var localizationParams = {};
 				localizationParams[CMDBuild.core.proxy.CMProxyConstants.ATTRIBUTE_NAME] = node.get(CMDBuild.core.proxy.CMProxyConstants.NAME);
-				localizationParams[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME] = this.getClassNode(node).get(CMDBuild.core.proxy.CMProxyConstants.OBJECT);
+				localizationParams[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME] = this.getFirstLevelNode(node).get(CMDBuild.core.proxy.CMProxyConstants.OBJECT);
 				localizationParams[CMDBuild.core.proxy.CMProxyConstants.FIELD] = CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION;
 				localizationParams[CMDBuild.core.proxy.CMProxyConstants.ATTRIBUTE_NAME] = node.get(CMDBuild.core.proxy.CMProxyConstants.OBJECT);
 				localizationParams[CMDBuild.core.proxy.CMProxyConstants.TRANSLATIONS] = Ext.encode(node.getChanges());

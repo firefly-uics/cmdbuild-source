@@ -1,12 +1,10 @@
 (function() {
 
-	Ext.define('CMDBuild.view.administration.localizations.advancedTable.SectionClassesPanel', {
+	Ext.define('CMDBuild.view.administration.localizations.advancedTable.SectionDomainsPanel', {
 		extend: 'Ext.panel.Panel',
 
-		requires: ['CMDBuild.model.localizations.advancedTable.TreeStore'],
-
 		/**
-		 * @cfg {CMDBuild.controller.administration.localizations.advancedTable.SectionClasses}
+		 * @cfg {CMDBuild.controller.administration.localizations.advancedTable.SectionDomains}
 		 */
 		delegate: undefined,
 
@@ -17,7 +15,7 @@
 
 		bodyCls: 'cmgraypanel',
 		layout: 'fit',
-		title: '@@ Classes',
+		title: '@@ Domains',
 
 		initComponent: function() {
 			Ext.apply(this, {
@@ -35,7 +33,7 @@
 
 		listeners: {
 			show: function(panel, eOpts) {
-				this.delegate.cmfg('onAdvancedTableClassesShow');
+				this.delegate.cmfg('onAdvancedTableDomainShow');
 			}
 		}
 	});
