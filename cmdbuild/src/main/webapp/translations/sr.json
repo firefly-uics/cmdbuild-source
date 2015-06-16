@@ -1400,6 +1400,7 @@
 	"modifyView": "Modifikuj prikaz",
 	"multiGroup": "Više grupa",
 	"name": "Naziv",
+	"noAvailableData": "<em>No available data</em>",
 	"no_bim_project_for_card": "Ne postoji BIM projekat za ovu karticu",
 	"not_set": "Nije postavljeno",
 	"odt": "ODT",

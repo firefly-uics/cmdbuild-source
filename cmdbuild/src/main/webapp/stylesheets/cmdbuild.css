@@ -21,11 +21,6 @@ body {
 
 em { font-style: oblique !important; }
 
-.cm-calculated-field {
-	color: green;
-	background-color: #f0fff0;
-}
-
 .cmdb-tab p {
 	color: #15428B;
 	background-image: url("../images/tabs/pressedbg.png");
@@ -109,8 +104,8 @@ em { font-style: oblique !important; }
 	position: relative;
 	bottom: 2em;
 	right: 0.5em;
-	padding: 0;
-	margin: 0;
+	padding: 0px;
+	margin: 10px 0px 0px 0px;
 }
 
 .cm-credits-links-left,

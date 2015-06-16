@@ -163,8 +163,12 @@ public class EmailQueueCommand implements Command, Callback {
 						logger.error("error adding e-mail, skipping", e);
 					}
 				}
-				logger.debug(MARKER, "sending all queued e-mails");
-				queue.sendAll();
+				try {
+					logger.debug(MARKER, "sending all queued e-mails");
+					queue.sendAll();
+				} catch (final Exception e) {
+					logger.error("error sending queued e-mails", e);
+				}
 			} else {
 				logger.warn(MARKER, "missing account (even default) going to next one");
 			}

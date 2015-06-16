@@ -62,6 +62,8 @@
 					var field = CMDBuild.Management.FieldManager.getFieldForAttr(attribute, false, false);
 
 					if (!Ext.isEmpty(field)) {
+						field.maxWidth = field.width;
+
 						if (attribute.defaultvalue)
 							field.setValue(attribute.defaultvalue);
 

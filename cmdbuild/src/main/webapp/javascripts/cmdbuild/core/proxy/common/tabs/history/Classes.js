@@ -93,7 +93,7 @@
 						root: 'response.elements'
 					}
 				},
-				sorters: [ // Setup sorters, also if server returns ordered collection, to use addSorted store function
+				sorters: [ // Setup sorters, also if server returns ordered collection
 					{ property: CMDBuild.core.proxy.CMProxyConstants.BEGIN_DATE, direction: 'DESC' }
 				]
 			});
