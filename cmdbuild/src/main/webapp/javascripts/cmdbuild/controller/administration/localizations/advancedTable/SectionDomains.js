@@ -195,25 +195,30 @@
 						}
 
 						// Domain attributes node
-						var domainAttributeNodeObject = { expandable: true };
-						domainAttributeNodeObject[CMDBuild.core.proxy.CMProxyConstants.LEAF] = false;
-						domainAttributeNodeObject[CMDBuild.core.proxy.CMProxyConstants.OBJECT] = '@@ Attributes';
-						domainAttributeNodeObject[CMDBuild.core.proxy.CMProxyConstants.PARENT] = domainMainNode;
-						domainAttributeNodeObject[CMDBuild.core.proxy.CMProxyConstants.PROPERTY] = CMDBuild.core.proxy.CMProxyConstants.ATTRIBUTES;
+						if (
+							Ext.isArray(domainObject[CMDBuild.core.proxy.CMProxyConstants.ATTRIBUTES])
+							&& !Ext.isEmpty(domainObject[CMDBuild.core.proxy.CMProxyConstants.ATTRIBUTES])
+						) {
+							var domainAttributeNodeObject = { expandable: true };
+							domainAttributeNodeObject[CMDBuild.core.proxy.CMProxyConstants.LEAF] = false;
+							domainAttributeNodeObject[CMDBuild.core.proxy.CMProxyConstants.OBJECT] = '@@ Attributes';
+							domainAttributeNodeObject[CMDBuild.core.proxy.CMProxyConstants.PARENT] = domainMainNode;
+							domainAttributeNodeObject[CMDBuild.core.proxy.CMProxyConstants.PROPERTY] = CMDBuild.core.proxy.CMProxyConstants.ATTRIBUTES;
 
-						var domainAttributesNode = domainMainNode.appendChild(domainAttributeNodeObject);
+							var domainAttributesNode = domainMainNode.appendChild(domainAttributeNodeObject);
 
-						// Domain attributes child node
-						Ext.Array.forEach(domainObject[CMDBuild.core.proxy.CMProxyConstants.ATTRIBUTES], function(attributeObject, i, allAttributes) {
-							var domainAttributeNodeObject = {};
-							domainAttributeNodeObject[CMDBuild.core.proxy.CMProxyConstants.DEFAULT] = attributeObject[CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION];
-							domainAttributeNodeObject[CMDBuild.core.proxy.CMProxyConstants.LEAF] = true;
-							domainAttributeNodeObject[CMDBuild.core.proxy.CMProxyConstants.PARENT] = domainAttributesNode;
-							domainAttributeNodeObject[CMDBuild.core.proxy.CMProxyConstants.PROPERTY] = CMDBuild.core.proxy.CMProxyConstants.ATTRIBUTE;
-							domainAttributeNodeObject[CMDBuild.core.proxy.CMProxyConstants.OBJECT] = attributeObject[CMDBuild.core.proxy.CMProxyConstants.NAME];
+							// Domain attributes child node
+							Ext.Array.forEach(domainObject[CMDBuild.core.proxy.CMProxyConstants.ATTRIBUTES], function(attributeObject, i, allAttributes) {
+								var domainAttributeNodeObject = {};
+								domainAttributeNodeObject[CMDBuild.core.proxy.CMProxyConstants.DEFAULT] = attributeObject[CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION];
+								domainAttributeNodeObject[CMDBuild.core.proxy.CMProxyConstants.LEAF] = true;
+								domainAttributeNodeObject[CMDBuild.core.proxy.CMProxyConstants.PARENT] = domainAttributesNode;
+								domainAttributeNodeObject[CMDBuild.core.proxy.CMProxyConstants.PROPERTY] = CMDBuild.core.proxy.CMProxyConstants.ATTRIBUTE;
+								domainAttributeNodeObject[CMDBuild.core.proxy.CMProxyConstants.OBJECT] = attributeObject[CMDBuild.core.proxy.CMProxyConstants.NAME];
 
-							domainAttributesNode.appendChild(domainAttributeNodeObject);
-						}, this);
+								domainAttributesNode.appendChild(domainAttributeNodeObject);
+							}, this);
+						}
 					}, this);
 				}
 			});
