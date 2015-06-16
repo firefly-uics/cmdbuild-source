@@ -22,8 +22,7 @@
 		},
 
 		defaults: {
-			maxWidth: CMDBuild.CFG_BIG_FIELD_WIDTH,
-			anchor: '100%'
+			maxWidth: CMDBuild.CFG_BIG_FIELD_WIDTH
 		},
 
 		/**
