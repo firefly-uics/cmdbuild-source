@@ -38,7 +38,7 @@
 		 * @override
 		 */
 		onViewOnFront: function(parameters) {
-_debug('CMDBuild.Config', CMDBuild.Config);
+_debug('CMDBuild', CMDBuild);
 			if (!Ext.Object.isEmpty(parameters)) {
 _debug('parameters', parameters);
 				this.view.removeAll(true);
