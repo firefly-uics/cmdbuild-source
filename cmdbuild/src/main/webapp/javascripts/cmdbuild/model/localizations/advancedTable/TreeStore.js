@@ -18,10 +18,10 @@
 		 */
 		constructor: function() {
 			var modelFields = CMDBuild.model.localizations.advancedTable.TreeStore.getFields();
-			var languages = CMDBuild.Config.localization.get(CMDBuild.core.proxy.CMProxyConstants.LANGUAGES);
+			var languages = CMDBuild.configuration[CMDBuild.core.proxy.CMProxyConstants.LOCALIZATION].get(CMDBuild.core.proxy.CMProxyConstants.LANGUAGES);
 
-			Ext.Array.forEach(languages, function(language, i, allLanguages) {
-				modelFields.push({ name: language.get(CMDBuild.core.proxy.CMProxyConstants.TAG), type: 'string' });
+			Ext.Object.each(languages, function(key, value, myself) {
+				modelFields.push({ name: value.get(CMDBuild.core.proxy.CMProxyConstants.TAG), type: 'string' });
 			}, this);
 
 			CMDBuild.model.localizations.advancedTable.TreeStore.setFields(modelFields);
@@ -39,7 +39,7 @@
 
 			Ext.Object.each(this.getData(), function(key, value, myself) {
 				if (
-					Ext.Array.contains(CMDBuild.Config.localization.get(CMDBuild.core.proxy.CMProxyConstants.LANGUAGES_TAGS), key)
+					Ext.Array.contains(CMDBuild.configuration[CMDBuild.core.proxy.CMProxyConstants.LOCALIZATION].get(CMDBuild.core.proxy.CMProxyConstants.LANGUAGES_TAGS), key)
 					&& !Ext.isEmpty(value)
 				) {
 					returnValue = false;

@@ -37,6 +37,7 @@
 
 				Ext.create('CMDBuild.core.LoggerManager'); // Logger configuration
 				Ext.create('CMDBuild.core.Data'); // Data connections configuration
+				Ext.create('CMDBuild.core.Localization'); // CMDBuild localization configuration
 
 				Ext.tip.QuickTipManager.init();
 				// fix a problem of Ext 4.2 tooltips width
@@ -44,19 +45,6 @@
 				delete Ext.tip.Tip.prototype.minWidth;
 
 				CMDBuild.view.CMMainViewport.showSplash(forCredits, administration);
-
-				// Setup config localization model
-				CMDBuild.Config[CMDBuild.core.proxy.CMProxyConstants.LOCALIZATION] = Ext.create('CMDBuild.model.configuration.Localization');
-
-				// Get server language
-				CMDBuild.core.proxy.Configuration.getLanguage({
-					success: function(result, options, decodedResult) {
-						CMDBuild.Config[CMDBuild.core.proxy.CMProxyConstants.LOCALIZATION].set(
-							CMDBuild.core.proxy.CMProxyConstants.LANGUAGE,
-							decodedResult[CMDBuild.core.proxy.CMProxyConstants.LANGUAGE]
-						);
-					}
-				});
 
 				// maybe a single request with all the configuration could be better
 				CMDBuild.ServiceProxy.group.getUIConfiguration({
@@ -71,7 +59,7 @@
 								// Localization
 								// TODO: refactor to avoid to use Cache
 								_CMCache.setActiveTranslations(decoded.data.enabled_languages);
-								CMDBuild.Config[CMDBuild.core.proxy.CMProxyConstants.LOCALIZATION].setLanguagesWithLocalizations(decoded.data.enabled_languages);
+								CMDBuild.configuration[CMDBuild.core.proxy.CMProxyConstants.LOCALIZATION].setEnabledLanguages(decoded.data.enabled_languages);
 
 								/* **********************************************
 								 * Suspend here the layouts, and resume after all

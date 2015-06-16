@@ -74,6 +74,20 @@
 		},
 
 		/**
+		 * @param {Object} parameters
+		 */
+		getCurrentLanguage: function(parameters) {
+			CMDBuild.Ajax.request({
+				method: 'POST',
+				url: CMDBuild.core.proxy.CMProxyUrlIndex.utils.getLanguage,
+				scope: parameters.scope || this,
+				success: parameters.success || Ext.emptyFn,
+				failure: parameters.failure || Ext.emptyFn,
+				callback: parameters.callback || Ext.emptyFn
+			});
+		},
+
+		/**
 		 * @return {Ext.data.ArrayStore}
 		 */
 		getFileFormatStore: function() {

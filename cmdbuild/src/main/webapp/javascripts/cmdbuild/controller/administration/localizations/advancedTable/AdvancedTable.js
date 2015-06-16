@@ -62,7 +62,7 @@
 		 * @return {Ext.grid.column.Column} or null
 		 */
 		buildColumn: function(languageObject) {
-			if (!Ext.isEmpty(languageObject))
+			if (!Ext.isEmpty(languageObject)) {
 				return Ext.create('Ext.grid.column.Column', {
 					dataIndex: languageObject.get(CMDBuild.core.proxy.CMProxyConstants.TAG),
 					text: '<img style="margin: 0px 5px 0px 0px;" src="images/icons/flags/'
@@ -74,6 +74,7 @@
 
 					editor: { xtype: 'textfield' }
 				});
+			}
 
 			return null;
 		},
@@ -84,6 +85,7 @@
 		 * @return {Array} columnsArray
 		 */
 		onAdvancedTableBuildColumns: function() {
+			var enabledLanguages = CMDBuild.configuration[CMDBuild.core.proxy.CMProxyConstants.LOCALIZATION].getEnabledLanguages();
 			var columnsArray = [
 				{
 					xtype: 'treecolumn',
@@ -102,9 +104,9 @@
 					draggable: false
 				}
 			];
-
-			Ext.Array.forEach(CMDBuild.Config.localization.get(CMDBuild.core.proxy.CMProxyConstants.LANGUAGES_WITH_LOCALIZATIONS), function(language, i, allLanguages) {
-				columnsArray.push(this.buildColumn(language));
+_debug('enabledLanguages', enabledLanguages);
+			Ext.Object.each(enabledLanguages, function(key, value, myself) {
+				columnsArray.push(this.buildColumn(value));
 			}, this);
 
 			return columnsArray;

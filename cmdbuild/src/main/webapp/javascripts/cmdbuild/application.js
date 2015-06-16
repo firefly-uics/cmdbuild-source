@@ -24,7 +24,8 @@
 	CMDBuild.HTML_EDITOR_WIDTH = CMDBuild.LABEL_WIDTH + 600;
 
 	// Global object with runtime configuration
-	CMDBuild.Config = {};
+	CMDBuild.configuration = {};
+	CMDBuild.Config = {}; // @deprecated
 
 	// Component masks are shown at 20000 z-index. This oddly fixes the problem of masks appearing on top of new windows.
 	// Ext.WindowMgr.zseed = 30000;

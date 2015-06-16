@@ -94,23 +94,21 @@
 		 * @param {Object} translations
 		 */
 		buildWindowItem: function(translationsValues) {
-			var languagesWithLocalizations = CMDBuild.Config.localization.get(CMDBuild.core.proxy.CMProxyConstants.LANGUAGES_WITH_LOCALIZATIONS);
+			var enabledLanguages = CMDBuild.configuration[CMDBuild.core.proxy.CMProxyConstants.LOCALIZATION].getEnabledLanguages();
 
-			Ext.Array.forEach(languagesWithLocalizations, function(language, index, allLanguages) {
+			Ext.Object.each(enabledLanguages, function(key, value, myself) {
 				var item = Ext.create('Ext.form.field.Text', {
-					name: language.get(CMDBuild.core.proxy.CMProxyConstants.TAG),
-					fieldLabel: language.get(CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION),
+					name: value.get(CMDBuild.core.proxy.CMProxyConstants.TAG),
+					fieldLabel: value.get(CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION),
 					labelWidth: CMDBuild.LABEL_WIDTH,
 					flex: 1,
 					padding: '3 5',
-					labelClsExtra: 'ux-flag-' + language.get(CMDBuild.core.proxy.CMProxyConstants.TAG),
+					labelClsExtra: 'ux-flag-' + value.get(CMDBuild.core.proxy.CMProxyConstants.TAG),
 					labelStyle: 'background-repeat: no-repeat; background-position: left; padding-left: 22px;'
 				});
 
 				item.setValue(
-					translationsValues[
-						language.get(CMDBuild.core.proxy.CMProxyConstants.TAG)
-					]
+					translationsValues[value.get(CMDBuild.core.proxy.CMProxyConstants.TAG)]
 				);
 
 				if (!Ext.isEmpty(this.form))

@@ -81,6 +81,7 @@
 			init: function() {
 				Ext.create('CMDBuild.core.LoggerManager'); // Logger configuration
 				Ext.create('CMDBuild.core.Data'); // Data connections configuration
+				Ext.create('CMDBuild.core.Localization'); // CMDBuild localization configuration
 
 				Ext.tip.QuickTipManager.init();
 				// Fix a problem of Ext 4.2 tooltips width
@@ -94,19 +95,6 @@
 
 				CMDBuild.view.CMMainViewport.showSplash();
 
-				// Setup config localization model
-				CMDBuild.Config[CMDBuild.core.proxy.CMProxyConstants.LOCALIZATION] = Ext.create('CMDBuild.model.configuration.Localization');
-
-				// Get server language
-				CMDBuild.core.proxy.Configuration.getLanguage({
-					success: function(result, options, decodedResult) {
-						CMDBuild.Config[CMDBuild.core.proxy.CMProxyConstants.LOCALIZATION].set(
-							CMDBuild.core.proxy.CMProxyConstants.LANGUAGE,
-							decodedResult[CMDBuild.core.proxy.CMProxyConstants.LANGUAGE]
-						);
-					}
-				});
-
 				// Maybe a single request with all the configuration could be better
 				CMDBuild.ServiceProxy.group.getUIConfiguration({
 					success: function(response, options, decoded) {
@@ -118,7 +106,7 @@
 								CMDBuild.Config.cmdbuild = decoded.cmdbuild;
 
 								// Localization
-								CMDBuild.Config[CMDBuild.core.proxy.CMProxyConstants.LOCALIZATION].setLanguagesWithLocalizations(decoded.cmdbuild.enabled_languages);
+								CMDBuild.configuration[CMDBuild.core.proxy.CMProxyConstants.LOCALIZATION].setEnabledLanguages(decoded.cmdbuild.enabled_languages);
 
 								// DMS
 								CMDBuild.Config.dms = decoded.dms;
