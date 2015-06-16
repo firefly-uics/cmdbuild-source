@@ -1400,6 +1400,7 @@
 	"modifyView": "Sicht bearbeiten",
 	"multiGroup": "Multigruppe",
 	"name": "Name",
+	"noAvailableData": "<em>No available data</em>",
 	"no_bim_project_for_card": "Es gibt keinen BIM Projekt für diese Karte",
 	"not_set": "Nicht eingestellt",
 	"odt": "ODT",

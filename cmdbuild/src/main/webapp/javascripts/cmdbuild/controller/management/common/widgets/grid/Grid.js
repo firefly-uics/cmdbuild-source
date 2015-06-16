@@ -97,9 +97,8 @@
 				delegate: this
 			});
 
-			this.view.removeAll();
-
-			this.view.add(this.grid);
+			if (!Ext.isEmpty(this.grid))
+				this.view.add(this.grid);
 
 			this.configureGridPanel();
 		},
@@ -134,6 +133,45 @@
 
 					return null;
 				}
+		},
+
+		/**
+		 * @override
+		 */
+		beforeActiveView: function() {
+			// Disable add button
+			this.view.addButton.setDisabled(
+				this.widgetConf.hasOwnProperty(CMDBuild.core.proxy.CMProxyConstants.DISABLE_ADD_ROW)
+				&& this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.DISABLE_ADD_ROW]
+			);
+
+			// Disable import from CSV button
+			this.view.importFromCSVButton.setDisabled(
+				this.widgetConf.hasOwnProperty(CMDBuild.core.proxy.CMProxyConstants.DISABLE_IMPORT_FROM_CSV)
+				&& this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.DISABLE_IMPORT_FROM_CSV]
+			);
+
+			// Disable buttons for readOnly mode
+			if (
+				this.widgetConf.hasOwnProperty(CMDBuild.core.proxy.CMProxyConstants.READ_ONLY)
+				&& this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.READ_ONLY]
+			) {
+				this.view.addButton.setDisabled(true);
+				this.view.importFromCSVButton.setDisabled(true);
+
+				this.grid.on('beforeedit', function(plugin, edit) {
+					return false;
+				});
+			}
+
+			this.configureGridPanel();
+		},
+
+		/**
+		 * Save data in storage attribute
+		 */
+		beforeHideView: function() {
+			this.instancesDataStorage[this.getWidgetId()] = this.grid.getStore().getRange();
 		},
 
 		/**
@@ -184,47 +222,6 @@
 					]
 				})
 			];
-		},
-
-		/**
-		 * Save data in storage attribute
-		 */
-		beforeHideView: function() {
-			this.instancesDataStorage[this.getWidgetId()] = this.grid.getStore().getRange();
-		},
-
-		/**
-		 * @override
-		 */
-		beforeActiveView: function() {
-			var me = this;
-
-			// Disable add button
-			this.view.addButton.setDisabled(
-				this.widgetConf.hasOwnProperty(CMDBuild.core.proxy.CMProxyConstants.DISABLE_ADD_ROW)
-				&& this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.DISABLE_ADD_ROW]
-			);
-
-			// Disable import from CSV button
-			this.view.importFromCSVButton.setDisabled(
-				this.widgetConf.hasOwnProperty(CMDBuild.core.proxy.CMProxyConstants.DISABLE_IMPORT_FROM_CSV)
-				&& this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.DISABLE_IMPORT_FROM_CSV]
-			);
-
-			// Disable buttons for readOnly mode
-			if (
-				this.widgetConf.hasOwnProperty(CMDBuild.core.proxy.CMProxyConstants.READ_ONLY)
-				&& this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.READ_ONLY]
-			) {
-				this.view.addButton.setDisabled(true);
-				this.view.importFromCSVButton.setDisabled(true);
-
-				this.grid.on('beforeedit', function(plugin, edit) {
-					return false;
-				});
-			}
-
-			this.configureGridPanel();
 		},
 
 		/**
@@ -353,14 +350,15 @@
 						var params = {};
 						var widgetUnmanagedVariables = this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.VARIABLES];
 
+						// Instantiate model to transform attributes in fields
+						Ext.create('CMDBuild.model.widget.Grid', this.cardAttributes);
+
 						// Resolve templates for widget configuration "function" type
-						var templateResolver = new CMDBuild.Management.TemplateResolver({
+						new CMDBuild.Management.TemplateResolver({
 							clientForm: this.clientForm,
 							xaVars: widgetUnmanagedVariables,
 							serverVars: this.getTemplateResolverServerVars()
-						});
-
-						templateResolver.resolveTemplates({
+						}).resolveTemplates({
 							attributes: Ext.Object.getKeys(widgetUnmanagedVariables),
 							callback: function(out, ctx) {
 								widgetUnmanagedVariables = out;
@@ -381,7 +379,7 @@
 
 						this.grid.reconfigure(
 							CMDBuild.core.proxy.widgets.Grid.getStoreFromFunction({
-								fields: _CMCache.getDataSourceOutput(presetsString),
+								fields: CMDBuild.model.widget.Grid.getFields(),
 								extraParams: {
 									'function': presetsString,
 									params: Ext.encode(params)
@@ -564,7 +562,7 @@
 		 * Add empty row to grid store
 		 */
 		onAddRowButtonClick: function() {
-			this.grid.getStore().insert(0, {});
+			this.grid.getStore().insert(0, Ext.create('CMDBuild.model.widget.Grid', this.cardAttributes));
 		},
 
 		/**

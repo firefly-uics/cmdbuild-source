@@ -7,8 +7,10 @@ CMDBuild.WidgetBuilders.DecimalAttribute = function() {};
 CMDBuild.extend(CMDBuild.WidgetBuilders.DecimalAttribute, CMDBuild.WidgetBuilders.RangeQueryAttribute);
 CMDBuild.WidgetBuilders.DecimalAttribute.prototype.MAXWIDTH = CMDBuild.SMALL_FIELD_ONLY_WIDTH;
 CMDBuild.WidgetBuilders.DecimalAttribute.prototype.customVType = "numeric";
-CMDBuild.WidgetBuilders.DecimalAttribute.prototype.gridRenderer = function(v) {
-	return "<div class=\"numeric_column\">" + v + "<div>";
+CMDBuild.WidgetBuilders.DecimalAttribute.prototype.gridRenderer = function(value) {
+	value = Ext.isEmpty(value) ? '' : value;
+
+	return '<div class="numeric_column">' + value + '<div>';
 };
 /**
  * @override

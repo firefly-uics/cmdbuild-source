@@ -42,9 +42,8 @@
 		cmfgCatchedFunctions: [
 			'getTabHistoryGridColumns',
 			'getTabHistoryGridStore',
-			'onTabHistoryIncludeRelationCheck',
 			'onTabHistoryRowExpand',
-			'onTabHistoryPanelShow',
+			'onTabHistoryPanelShow = onTabHistoryIncludeRelationCheck', // Reloads store to be consistent with includeRelationsCheckbox state
 			'tabHistorySelectedEntityGet',
 			'tabHistorySelectedEntitySet'
 		],
@@ -87,7 +86,6 @@
 		 * @override
 		 */
 		addCurrentCardToStore: function() {
-			var predecessorRecord = this.grid.getStore().getAt(1); // Get expanded record predecessor record
 			var selectedEntityAttributes = {};
 			var selectedEntityMergedData = Ext.Object.merge(this.selectedEntity.raw, this.selectedEntity.getData());
 
@@ -99,28 +97,9 @@
 
 			selectedEntityMergedData[CMDBuild.core.proxy.CMProxyConstants.ID] = this.selectedEntity.get(CMDBuild.core.proxy.CMProxyConstants.ID);
 
-			if (!Ext.isEmpty(predecessorRecord)) {
-				var predecessorParams = {};
-				predecessorParams[CMDBuild.core.proxy.CMProxyConstants.CARD_ID] = predecessorRecord.get(CMDBuild.core.proxy.CMProxyConstants.ID); // Historic card ID
-				predecessorParams[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME] = selectedEntityMergedData[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME];
+			this.valuesFormattingAndCompare(selectedEntityAttributes); // Formats values only
 
-				this.getProxy().getHistoric({
-					params: predecessorParams,
-					scope: this,
-					failure: function(response, options, decodedResponse) {
-						_error('get historic predecessor card failure', this);
-					},
-					success: function(response, options, decodedResponse) {
-						this.valuesFormattingAndCompare(selectedEntityAttributes, decodedResponse.response[CMDBuild.core.proxy.CMProxyConstants.VALUES]);
-
-						this.clearStoreAdd(this.buildCurrentEntityModel(selectedEntityMergedData, selectedEntityAttributes));
-					}
-				});
-			} else {
-				this.valuesFormattingAndCompare(selectedEntityAttributes);
-
-				this.clearStoreAdd(this.buildCurrentEntityModel(selectedEntityMergedData, selectedEntityAttributes));
-			}
+			this.clearStoreAdd(this.buildCurrentEntityModel(selectedEntityMergedData, selectedEntityAttributes));
 		},
 
 		buildCardModuleStateDelegate: function() {
@@ -163,6 +142,45 @@
 		},
 
 		/**
+		 * @param {CMDBuild.model.common.tabs.history.classes.RelationRecord} record
+		 *
+		 * @override
+		 */
+		currentCardRowExpand: function(record) {
+			var predecessorRecord = this.getRecordPredecessor(record);
+			var selectedEntityAttributes = {};
+			var selectedEntityMergedData = Ext.Object.merge(this.selectedEntity.raw, this.selectedEntity.getData());
+
+			// Filter selectedEntity's attributes values to avoid the display of incorrect data
+			Ext.Object.each(selectedEntityMergedData, function(key, value, myself) {
+				if (!Ext.Array.contains(this.attributesKeysToFilter, key) && key.indexOf('_') != 0)
+					selectedEntityAttributes[key] = value;
+			}, this);
+
+			selectedEntityMergedData[CMDBuild.core.proxy.CMProxyConstants.ID] = this.selectedEntity.get(CMDBuild.core.proxy.CMProxyConstants.ID);
+
+			if (!Ext.isEmpty(predecessorRecord)) {
+				var predecessorParams = {};
+				predecessorParams[CMDBuild.core.proxy.CMProxyConstants.CARD_ID] = predecessorRecord.get(CMDBuild.core.proxy.CMProxyConstants.ID); // Historic card ID
+				predecessorParams[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME] = selectedEntityMergedData[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME];
+
+				this.getProxy().getHistoric({
+					params: predecessorParams,
+					scope: this,
+					failure: function(response, options, decodedResponse) {
+						_error('get historic predecessor card failure', this);
+					},
+					success: function(response, options, decodedResponse) {
+						this.valuesFormattingAndCompare(selectedEntityAttributes, decodedResponse.response[CMDBuild.core.proxy.CMProxyConstants.VALUES]);
+
+						// Setup record property with historic card details to use XTemplate functionalities to render
+						record.set(CMDBuild.core.proxy.CMProxyConstants.VALUES, selectedEntityAttributes);
+					}
+				});
+			}
+		},
+
+		/**
 		 * @return {CMDBuild.core.proxy.common.tabs.history.Classes}
 		 *
 		 * @override
@@ -190,7 +208,7 @@
 			this.entryType = entryType;
 
 			this.view.disable();
-		},
+		}
 	});
 
 })();
