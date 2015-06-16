@@ -18,7 +18,7 @@
 		 */
 		constructor: function() {
 			var modelFields = CMDBuild.model.localizations.advancedTable.TreeStore.getFields();
-			var languages = CMDBuild.configuration[CMDBuild.core.proxy.CMProxyConstants.LOCALIZATION].get(CMDBuild.core.proxy.CMProxyConstants.LANGUAGES);
+			var languages = CMDBuild.configuration[CMDBuild.core.proxy.CMProxyConstants.LOCALIZATION].getAllLanguages();
 
 			Ext.Object.each(languages, function(key, value, myself) {
 				modelFields.push({ name: value.get(CMDBuild.core.proxy.CMProxyConstants.TAG), type: 'string' });

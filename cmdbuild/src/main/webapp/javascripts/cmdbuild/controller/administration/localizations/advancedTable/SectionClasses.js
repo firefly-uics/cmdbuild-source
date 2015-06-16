@@ -200,7 +200,7 @@
 
 							classMainNode.appendChild(classDescriptionNodeObject);
 
-							// Class attributes node
+							// Class attributes node (always displayed because Code and Description are default class attributes)
 							var classAttributeNodeObject = { expandable: true };
 							classAttributeNodeObject[CMDBuild.core.proxy.CMProxyConstants.LEAF] = false;
 							classAttributeNodeObject[CMDBuild.core.proxy.CMProxyConstants.OBJECT] = '@@ Attributes';
