@@ -16,33 +16,46 @@
 		autoHeight: true,
 		autoScroll: true,
 		border: false,
-		buttonAlign: 'center',
 		frame: false,
 		layout: 'fit',
 
 		title: CMDBuild.Translation.translations,
 
 		initComponent: function() {
-			this.form = Ext.create('CMDBuild.view.common.field.translatable.window.FormPanel', {
-				delegate: this.delegate
-			});
-
 			Ext.apply(this, {
-				items: [this.form],
-				buttons: [
-					Ext.create('CMDBuild.core.buttons.Save', {
-						scope: this,
+				dockedItems: [
+					Ext.create('Ext.toolbar.Toolbar', {
+						dock: 'bottom',
+						itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_BOTTOM,
+						ui: 'footer',
 
-						handler: function(button, e) {
-							this.delegate.cmOn('onTranslatableWindowConfirmButtonClick');
-						}
-					}),
-					Ext.create('CMDBuild.core.buttons.Abort', {
-						scope: this,
+						layout: {
+							type: 'hbox',
+							align: 'middle',
+							pack: 'center'
+						},
 
-						handler: function(button, e) {
-							this.delegate.cmOn('onTranslatableWindowAbortButtonClick');
-						}
+						items: [
+							Ext.create('CMDBuild.core.buttons.Save', {
+								scope: this,
+
+								handler: function(button, e) {
+									this.delegate.cmfg('onTranslatableWindowConfirmButtonClick');
+								}
+							}),
+							Ext.create('CMDBuild.core.buttons.Abort', {
+								scope: this,
+
+								handler: function(button, e) {
+									this.delegate.cmfg('onTranslatableWindowAbortButtonClick');
+								}
+							})
+						]
+					})
+				],
+				items: [
+					this.form = Ext.create('CMDBuild.view.common.field.translatable.window.FormPanel', {
+						delegate: this.delegate
 					})
 				]
 			});

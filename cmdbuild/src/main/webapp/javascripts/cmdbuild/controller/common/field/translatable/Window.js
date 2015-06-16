@@ -1,8 +1,17 @@
 (function() {
 
 	Ext.define('CMDBuild.controller.common.field.translatable.Window', {
+		extend: 'CMDBuild.controller.common.AbstractController',
 
 		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+
+		/**
+		 * @cfg {Array}
+		 */
+		cmfgCatchedFunctions: [
+			'onTranslatableWindowAbortButtonClick',
+			'onTranslatableWindowConfirmButtonClick'
+		],
 
 		/**
 		 * @property {CMDBuild.view.common.field.translatable.window.FormPanel}
@@ -35,20 +44,21 @@
 		view: undefined,
 
 		/**
-		 * @param {Object} configObject
-		 * @param {Mixed} configObject.parentDelegate
+		 * @param {Object} configurationObject
+		 * @param {Mixed} configurationObject.parentDelegate
 		 *
 		 * @override
 		 */
-		constructor: function(configObject) {
-			var me = this;
+		constructor: function(configurationObject) {
+			this.callParent(arguments);
 
-			Ext.apply(this, configObject); // Apply config
+			var me = this;
 
 			this.view = Ext.create('CMDBuild.view.common.field.translatable.window.Window', {
 				delegate: this
 			});
 
+			// Shorthands
 			this.form = this.view.form;
 
 			// Show window
@@ -66,28 +76,6 @@
 					me.buildWindowItem(decodedResult.response);
 				}
 			);
-		},
-
-		/**
-		 * Gatherer function to catch events
-		 *
-		 * @param {String} name
-		 * @param {Object} param
-		 * @param {Function} callback
-		 */
-		cmOn: function(name, param, callBack) {
-			switch (name) {
-				case 'onTranslatableWindowConfirmButtonClick':
-					return this.onTranslatableWindowConfirmButtonClick();
-
-				case 'onTranslatableWindowAbortButtonClick':
-					return this.onTranslatableWindowAbortButtonClick();
-
-				default: {
-					if (!Ext.isEmpty(this.parentDelegate))
-						return this.parentDelegate.cmOn(name, param, callBack);
-				}
-			}
 		},
 
 		/**
@@ -114,13 +102,6 @@
 				if (!Ext.isEmpty(this.form))
 					this.form.add(item);
 			},this);
-		},
-
-		/**
-		 * @return {CMDBuild.view.common.field.translatable.window.Window}
-		 */
-		getView: function() {
-			return this.view;
 		},
 
 		onTranslatableWindowAbortButtonClick: function() {
