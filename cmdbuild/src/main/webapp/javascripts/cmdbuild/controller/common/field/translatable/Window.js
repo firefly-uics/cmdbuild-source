@@ -89,7 +89,6 @@
 					name: value.get(CMDBuild.core.proxy.CMProxyConstants.TAG),
 					fieldLabel: value.get(CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION),
 					labelWidth: CMDBuild.LABEL_WIDTH,
-					flex: 1,
 					padding: '3 5',
 					labelClsExtra: 'ux-flag-' + value.get(CMDBuild.core.proxy.CMProxyConstants.TAG),
 					labelStyle: 'background-repeat: no-repeat; background-position: left; padding-left: 22px;'

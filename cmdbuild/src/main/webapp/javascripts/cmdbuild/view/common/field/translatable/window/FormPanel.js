@@ -15,6 +15,7 @@
 
 		frame: true,
 		border: false,
+		overflowY: 'auto',
 
 		layout: {
 			type: 'vbox',
@@ -22,6 +23,7 @@
 		},
 
 		defaults: {
+			labelWidth: CMDBuild.LABEL_WIDTH,
 			maxWidth: CMDBuild.CFG_BIG_FIELD_WIDTH
 		},
 

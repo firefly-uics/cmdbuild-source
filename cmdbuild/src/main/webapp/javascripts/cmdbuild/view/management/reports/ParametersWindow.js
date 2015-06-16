@@ -20,7 +20,7 @@
 		border: false,
 		frame: false,
 		layout: 'fit',
-		width: 660,
+
 		title: CMDBuild.Translation.reportParameters,
 
 		initComponent: function() {
