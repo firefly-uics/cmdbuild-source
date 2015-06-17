@@ -4,6 +4,7 @@
 		extend: 'CMDBuild.controller.common.AbstractBasePanelController',
 
 		requires: [
+			'CMDBuild.core.Message',
 			'CMDBuild.core.proxy.CMProxyConstants',
 			'CMDBuild.core.proxy.CMProxyUrlIndex',
 			'CMDBuild.core.proxy.Report'
@@ -72,7 +73,7 @@
 					scope: this,
 					params: reportParams,
 					failure: function(response, options, decodedResponse) {
-						CMDBuild.Msg.error(
+						CMDBuild.core.Message.error(
 							CMDBuild.Translation.error,
 							CMDBuild.Translation.errors.createReportFilure,
 							false
@@ -106,7 +107,7 @@
 					Ext.Array.contains(this.forceDownloadTypes, reportInfo[CMDBuild.core.proxy.CMProxyConstants.TYPE]) // Force download true for PDF and CSV
 				);
 			} else {
-				CMDBuild.Msg.error(
+				CMDBuild.core.Message.error(
 					CMDBuild.Translation.error,
 					CMDBuild.Translation.errors.unmanagedReportType,
 					false
@@ -168,7 +169,7 @@
 				);
 
 				if (!popup)
-					CMDBuild.Msg.warn(
+					CMDBuild.core.Message.warn(
 						CMDBuild.Translation.warnings.warning_message,
 						CMDBuild.Translation.warnings.popup_block
 					);
