@@ -7,7 +7,8 @@
 			'CMDBuild.controller.management.common.widgets.CMWidgetController',
 			'CMDBuild.core.proxy.CMProxyConstants',
 			'CMDBuild.core.proxy.common.tabs.email.Attachment',
-			'CMDBuild.core.proxy.email.Templates'
+			'CMDBuild.core.proxy.email.Templates',
+			'CMDBuild.core.Message'
 		],
 
 		/**
@@ -308,7 +309,7 @@
 			if (!this.isAdvicePrompted && this.isKeepSynchronizationChecked()) {
 				this.isAdvicePrompted = true;
 
-				CMDBuild.Msg.warn(null, CMDBuild.Translation.errors.emailChangedWithAutoSynch);
+				CMDBuild.core.Message.warn(null, CMDBuild.Translation.errors.emailChangedWithAutoSynch);
 			}
 		},
 
@@ -325,7 +326,7 @@
 				scope: this,
 				loadMask: true,
 				failure: function(response, options, decodedResponse) {
-					CMDBuild.Msg.error(
+					CMDBuild.core.Message.error(
 						CMDBuild.Translation.common.failure,
 						Ext.String.format(CMDBuild.Translation.errors.getTemplateWithNameFailure),
 						false

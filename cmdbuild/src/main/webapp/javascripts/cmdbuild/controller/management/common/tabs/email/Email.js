@@ -12,7 +12,8 @@
 			'CMDBuild.controller.management.common.widgets.CMWidgetController',
 			'CMDBuild.core.proxy.CMProxyConstants',
 			'CMDBuild.core.proxy.Utils',
-			'CMDBuild.core.proxy.email.Templates'
+			'CMDBuild.core.proxy.email.Templates',
+			'CMDBuild.core.Message'
 		],
 
 		/**
@@ -283,7 +284,7 @@
 					scope.relatedAttributeChanged = true;
 
 					if (!record.get(CMDBuild.core.proxy.CMProxyConstants.KEEP_SYNCHRONIZATION) && !record.get(CMDBuild.core.proxy.CMProxyConstants.PROMPT_SYNCHRONIZATION))
-						CMDBuild.Msg.warn(null, CMDBuild.Translation.warnings.emailTemplateRelatedAttributeEdited);
+						CMDBuild.core.Message.warn(null, CMDBuild.Translation.warnings.emailTemplateRelatedAttributeEdited);
 				}
 			});
 		},
@@ -488,7 +489,7 @@
 				scope: this,
 				loadMask: this.globalLoadMask,
 				failure: function(response, options, decodedResponse) {
-					CMDBuild.Msg.error(
+					CMDBuild.core.Message.error(
 						CMDBuild.Translation.common.failure,
 						Ext.String.format(CMDBuild.Translation.errors.getTemplateWithNameFailure),
 						false
