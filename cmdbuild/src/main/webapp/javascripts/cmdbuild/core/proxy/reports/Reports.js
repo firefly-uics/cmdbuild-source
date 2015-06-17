@@ -18,8 +18,8 @@
 			CMDBuild.Ajax.request({
 				url: CMDBuild.core.proxy.CMProxyUrlIndex.reports.createReportFactory,
 				params: parameters.params,
-				scope: parameters.scope || this,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
+				scope: parameters.scope || this,
 				failure: parameters.failure || Ext.emptyFn(),
 				success: parameters.success || Ext.emptyFn(),
 				callback: parameters.callback || Ext.emptyFn()
@@ -57,12 +57,12 @@
 		 * @management
 		 */
 		getTypesTree: function(parameters) {
-			CMDBuild.ServiceProxy.core.doRequest({
+			CMDBuild.Ajax.request({
 				method: 'GET',
 				url: CMDBuild.core.proxy.CMProxyUrlIndex.reports.getReportTypesTree,
 				params: parameters.params,
-				scope: parameters.scope || this,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : false,
+				scope: parameters.scope || this,
 				failure: parameters.failure || Ext.emptyFn(),
 				success: parameters.success || Ext.emptyFn(),
 				callback: parameters.callback || Ext.emptyFn()
@@ -73,12 +73,12 @@
 		 * @param {Object} parameters
 		 */
 		update: function(parameters) {
-			parameters.form.submit({
+			CMDBuild.Ajax.request({
 				method: 'POST',
 				url: CMDBuild.core.proxy.CMProxyUrlIndex.reports.updateReportFactoryParams,
 				params: parameters.params,
-				scope: parameters.scope || this,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
+				scope: parameters.scope || this,
 				failure: parameters.failure || Ext.emptyFn(),
 				success: parameters.success || Ext.emptyFn(),
 				callback: parameters.callback || Ext.emptyFn()
