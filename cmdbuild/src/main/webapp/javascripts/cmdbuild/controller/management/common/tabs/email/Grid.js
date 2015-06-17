@@ -6,7 +6,8 @@
 		requires: [
 			'CMDBuild.controller.management.common.tabs.email.Email',
 			'CMDBuild.core.proxy.CMProxyConstants',
-			'CMDBuild.core.proxy.common.tabs.email.Email'
+			'CMDBuild.core.proxy.common.tabs.email.Email',
+			'CMDBuild.core.Message'
 		],
 
 		/**
@@ -70,7 +71,7 @@
 					scope: this,
 					loadMask: this.cmfg('getGlobalLoadMask'),
 					failure: function(response, options, decodedResponse) {
-						CMDBuild.Msg.error(CMDBuild.Translation.common.failure, CMDBuild.Translation.errors.emailCreate, false);
+						CMDBuild.core.Message.error(CMDBuild.Translation.common.failure, CMDBuild.Translation.errors.emailCreate, false);
 					},
 					success: success || function(response, options, decodedResponse) {
 						if (CMDBuild.controller.management.common.tabs.email.Email.trafficLightArrayCheck(record, regenerationTrafficLightArray))
@@ -112,7 +113,7 @@
 					scope: this,
 					loadMask: this.cmfg('getGlobalLoadMask'),
 					failure: function(response, options, decodedResponse) {
-						CMDBuild.Msg.error(CMDBuild.Translation.common.failure, CMDBuild.Translation.errors.emailUpdate, false);
+						CMDBuild.core.Message.error(CMDBuild.Translation.common.failure, CMDBuild.Translation.errors.emailUpdate, false);
 					},
 					success: function(response, options, decodedResponse) {
 						if (CMDBuild.controller.management.common.tabs.email.Email.trafficLightArrayCheck(record, regenerationTrafficLightArray))
@@ -307,7 +308,7 @@
 					scope: this,
 					loadMask: this.cmfg('getGlobalLoadMask'),
 					failure: function(response, options, decodedResponse) {
-						CMDBuild.Msg.error(CMDBuild.Translation.common.failure, CMDBuild.Translation.errors.emailRemove, false);
+						CMDBuild.core.Message.error(CMDBuild.Translation.common.failure, CMDBuild.Translation.errors.emailRemove, false);
 					},
 					success: function(response, options, decodedResponse) {
 						if (CMDBuild.controller.management.common.tabs.email.Email.trafficLightArrayCheck(record, regenerationTrafficLightArray))
@@ -377,7 +378,14 @@
 				params: params,
 				scope: this,
 				callback: function(records, operation, success) {
-					this.cmfg('getAllTemplatesData');
+					if (success) {
+						this.cmfg('getAllTemplatesData');
+					} else {
+						CMDBuild.core.Message.error(null, {
+							text: CMDBuild.Translation.errors.unknown_error,
+							detail: operation.error
+						});
+					}
 				}
 			});
 		}

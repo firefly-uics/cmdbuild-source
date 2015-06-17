@@ -278,12 +278,12 @@
 		doRequest: function(attachmentWindow) {
 			var form = attachmentWindow.form.getForm();
 			var me = this;
-			form.submit({
+			form.submit({ // TODO: should uses proxy and needs a refactor to manage errors
 				method: 'POST',
 				url: me.url,
 				scope: me,
 				params: me.forgeRequestParams(attachmentWindow),
-				success: function() {
+				success: function(form, action) {
 					// Defer the call because Alfresco is not responsive
 					Ext.Function.createDelayed(function deferredCall() {
 						me.ownerController.view.reloadCard();
@@ -292,11 +292,74 @@
 						CMDBuild.LoadMask.get().hide();
 					}, CMDBuild.Config.dms.delay, this)();
 				},
-				failure: function () {
+				failure: function(form, action) {
 					attachmentWindow.unmask();
 					CMDBuild.LoadMask.get().hide();
+
+					// Workaround to show form submit error
+					if (action && action.result && action.result.errors && action.result.errors.length) {
+						for (var i=0; i<action.result.errors.length; ++i) {
+							this.showError({ status: null }, action.result.errors[i], action);
+						}
+					} else {
+						this.showError({ status: null }, null, action);
+					}
 				}
 			});
+		},
+
+		showError: function(response, error, options) {
+			var tr = CMDBuild.Translation.errors || {
+				error_message : "Error",
+				unknown_error : "Unknown error",
+				server_error_code : "Server error: ",
+				server_error : "Server error"
+			};
+			var errorTitle = null;
+			var errorBody = {
+					text: tr.unknown_error,
+					detail: undefined
+			};
+
+			if (error) {
+				// if present, add the url that generate the error
+				var detail = "";
+				if (options && options.url) {
+					detail = "Call: " + options.url + "\n";
+					var line = "";
+					for (var i=0; i<detail.length; ++i) {
+						line += "-";
+					}
+
+					detail += line + "\n";
+				}
+
+				// then add to the details the server stacktrace
+				errorBody.detail = detail + "Error: " + error.stacktrace;
+				var reason = error.reason;
+				if (reason) {
+					if (reason == 'AUTH_NOT_LOGGED_IN' || reason == 'AUTH_MULTIPLE_GROUPS') {
+						CMDBuild.LoginWindow.addAjaxOptions(options);
+						CMDBuild.LoginWindow.setAuthFieldsEnabled(reason == 'AUTH_NOT_LOGGED_IN');
+						CMDBuild.LoginWindow.show();
+						return;
+					}
+					var translatedErrorString = CMDBuild.Ajax.formatError(reason, error.reasonParameters);
+					if (translatedErrorString) {
+						errorBody.text = translatedErrorString;
+					}
+				}
+			} else {
+				if (!response || response.status == 200 || response.status == 0) {
+					errorTitle = tr.error_message;
+					errorBody.text = tr.unknown_error;
+				} else if (response.status) {
+					errorTitle = tr.error_message;
+					errorBody.text = tr.server_error_code+response.status;
+				}
+			}
+
+			CMDBuild.Msg.error(errorTitle, errorBody, false);
 		}
 	});
 
