@@ -10,7 +10,7 @@ import org.cmdbuild.logic.translation.object.DomainAttributeDescription;
 
 import com.google.common.collect.Maps;
 
-public enum AttributeConverter {
+public enum AttributeConverter implements Converter {
 
 	CLASSATTRIBUTE_DESCRIPTION(forClass(), description()) {
 
@@ -20,21 +20,15 @@ public enum AttributeConverter {
 		}
 
 		@Override
-		public TranslationObject create(final String className, final String attributeName) {
+		public TranslationObject create() {
 			final org.cmdbuild.logic.translation.object.ClassAttributeDescription.Builder builder = ClassAttributeDescription
 					.newInstance() //
-					.withClassname(className) //
+					.withClassname(parentName) //
 					.withAttributename(attributeName);
 			if (!translations.isEmpty()) {
 				builder.withTranslations(translations);
 			}
 			return builder.build();
-		}
-
-		@Override
-		public AttributeConverter withTranslations(final Map<String, String> map) {
-			translations = map;
-			return this;
 		}
 	},
 
@@ -46,9 +40,9 @@ public enum AttributeConverter {
 		}
 
 		@Override
-		public TranslationObject create(final String domainName, final String attributeName) {
+		public TranslationObject create() {
 			final DomainAttributeDescription.Builder builder = DomainAttributeDescription.newInstance() //
-					.withDomainName(domainName) //
+					.withDomainName(parentName) //
 					.withAttributeName(attributeName);
 			if (!translations.isEmpty()) {
 				builder.withTranslations(translations);
@@ -56,20 +50,15 @@ public enum AttributeConverter {
 			return builder.build();
 		}
 
-		@Override
-		public AttributeConverter withTranslations(final Map<String, String> map) {
-			translations = map;
-			return this;
-		}
 	},
 
 	CLASSATTRIBUTE_GROUP(forClass(), group()) {
 
 		@Override
-		public TranslationObject create(final String className, final String attributeName) {
+		public TranslationObject create() {
 			final org.cmdbuild.logic.translation.object.ClassAttributeGroup.Builder builder = ClassAttributeGroup
 					.newInstance() //
-					.withClassname(className) //
+					.withClassname(parentName) //
 					.withAttributename(attributeName);
 			if (!translations.isEmpty()) {
 				builder.withTranslations(translations);
@@ -83,30 +72,18 @@ public enum AttributeConverter {
 			return true;
 		}
 
-		@Override
-		public AttributeConverter withTranslations(final Map<String, String> map) {
-			translations = map;
-			return this;
-		}
-
 	},
 
 	DOMAINATTRIBUTE_GROUP(forDomain(), group()) {
 
 		@Override
-		public TranslationObject create(final String domainName, final String attributeName) {
+		public TranslationObject create() {
 			return new NullTranslationObject();
 		}
 
 		@Override
 		public boolean isValid() {
 			return true;
-		}
-
-		@Override
-		public AttributeConverter withTranslations(final Map<String, String> map) {
-			translations = map;
-			return this;
 		}
 
 	},
@@ -119,14 +96,10 @@ public enum AttributeConverter {
 		}
 
 		@Override
-		public TranslationObject create(final String entryTypeName, final String attributeName) {
+		public TranslationObject create() {
 			throw new UnsupportedOperationException();
 		}
 
-		@Override
-		public AttributeConverter withTranslations(final Map<String, String> map) {
-			throw new UnsupportedOperationException();
-		}
 	};
 
 	private static final String CLASS = "class";
@@ -137,17 +110,32 @@ public enum AttributeConverter {
 
 	private final String fieldName;
 	private final String entryType;
+
+	private static String parentName;
+	private static String attributeName;
 	private static Map<String, String> translations = Maps.newHashMap();
 
-	public abstract TranslationObject create(String entryTypeName, String attributeName);
+	@Override
+	public Converter withIdentifier(final String identifier) {
+		attributeName = identifier;
+		return this;
+	}
+
+	@Override
+	public Converter withOwner(final String parentIdentifier) {
+		parentName = parentIdentifier;
+		return this;
+	}
+
+	@Override
+	public Converter withTranslations(final Map<String, String> map) {
+		translations = map;
+		return this;
+	}
 
 	private static String undefined() {
 		return UNDEFINED_FIELD;
 	}
-
-	public abstract AttributeConverter withTranslations(Map<String, String> map);
-
-	public abstract boolean isValid();
 
 	public static String description() {
 		return DESCRIPTION;
