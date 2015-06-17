@@ -157,7 +157,9 @@ public class LocalizedQueryRow extends ForwardingQueryRow {
 						break;
 					}
 				}
-				final TranslationObject translationObject = converter.create(uuid);
+				final TranslationObject translationObject = converter //
+						.withIdentifier(uuid)
+						.create();
 				final String translatedDescription = facade.read(translationObject);
 				final String description = defaultIfBlank(translatedDescription, input.getDescription());
 				return new LookupValue(input.getId(), description, input.getLooupType(), input.getTranslationUuid());
