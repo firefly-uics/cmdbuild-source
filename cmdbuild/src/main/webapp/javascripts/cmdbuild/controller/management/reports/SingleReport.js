@@ -4,6 +4,7 @@
 		extend: 'CMDBuild.controller.common.AbstractBasePanelController',
 
 		requires: [
+			'CMDBuild.core.Message',
 			'CMDBuild.core.proxy.CMProxyConstants',
 			'CMDBuild.core.proxy.CMProxyUrlIndex',
 			'CMDBuild.core.proxy.reports.Reports',
@@ -57,7 +58,7 @@
 					params: this.managedReport.getData(),
 					scope: this,
 					failure: function(response, options, decodedResponse) {
-						CMDBuild.Msg.error(
+						CMDBuild.core.Message.error(
 							CMDBuild.Translation.error,
 							CMDBuild.Translation.errors.createReportFilure,
 							false
@@ -98,7 +99,7 @@
 
 				this.createReport(params);
 			} else {
-				CMDBuild.Msg.error(
+				CMDBuild.core.Message.error(
 					CMDBuild.Translation.error,
 					CMDBuild.Translation.errors.unmanagedReportType,
 					false

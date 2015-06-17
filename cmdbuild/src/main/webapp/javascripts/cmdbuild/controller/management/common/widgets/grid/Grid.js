@@ -5,7 +5,8 @@
 
 		requires: [
 			'CMDBuild.core.proxy.CMProxyConstants',
-			'CMDBuild.core.proxy.widgets.Grid'
+			'CMDBuild.core.proxy.widgets.Grid',
+			'CMDBuild.core.Message'
 		],
 
 		mixins: {
@@ -387,7 +388,7 @@
 							})
 						);
 					} else {
-						CMDBuild.Msg.error(
+						CMDBuild.core.Message.error(
 							CMDBuild.Translation.error,
 							'GridController decodeFunctionPresets: SQL function not found',
 							true
@@ -549,7 +550,7 @@
 						);
 
 					default:
-						CMDBuild.Msg.error(
+						CMDBuild.core.Message.error(
 							CMDBuild.Translation.error,
 							'GridController: wrong serializationType (' + this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.SERIALIZATION_TYPE] + ') format or value',
 							true

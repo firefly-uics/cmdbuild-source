@@ -79,7 +79,7 @@
 		onReportParametersWindowSaveButtonClick: function() {
 			if (this.view.form.getForm().isValid()) {
 				CMDBuild.core.proxy.reports.Reports.update({
-					form: this.view.form.getForm(),
+					params: this.view.form.getValues(),
 					scope: this,
 					failure: function(response, options, decodedResponse) {
 						this.onReportParametersWindowAbortButtonClick();
