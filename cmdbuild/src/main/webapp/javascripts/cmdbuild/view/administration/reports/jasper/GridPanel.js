@@ -4,6 +4,7 @@
 		extend: 'Ext.grid.Panel',
 
 		requires: [
+			'CMDBuild.core.Message',
 			'CMDBuild.core.proxy.CMProxyConstants',
 			'CMDBuild.core.proxy.reports.Jasper'
 		],
@@ -88,12 +89,19 @@
 			},
 
 			// Event to load store on view display and first row selection as CMDbuild standard
-			viewready: function() {
+			viewready: function(panel, eOpts) {
 				this.getStore().load({
 					scope: this,
-					callback: function() {
-						if (!this.getSelectionModel().hasSelection())
-							this.getSelectionModel().select(0, true);
+					callback: function(records, operation, success) {
+						if (success) {
+							if (!this.getSelectionModel().hasSelection())
+								this.getSelectionModel().select(0, true);
+						} else {
+							CMDBuild.core.Message.error(null, {
+								text: CMDBuild.Translation.errors.unknown_error,
+								detail: operation.error
+							});
+						}
 					}
 				});
 			}
