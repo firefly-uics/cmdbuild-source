@@ -4,6 +4,7 @@
 		extend: 'CMDBuild.controller.common.AbstractController',
 
 		requires: [
+			'CMDBuild.core.Message',
 			'CMDBuild.core.proxy.CMProxyConstants',
 			'CMDBuild.core.proxy.reports.Jasper',
 			'CMDBuild.model.reports.Grid'
@@ -303,14 +304,21 @@
 						this.grid.getStore().load({
 							scope: this,
 							callback: function(records, operation, success) {
-								this.grid.getSelectionModel().select(0, true);
+								if (success) {
+									this.grid.getSelectionModel().select(0, true);
 
-								// If no selections disable all UI
-								if (!this.grid.getSelectionModel().hasSelection())
-									this.form.setDisabledModify(true, true, true, true);
+									// If no selections disable all UI
+									if (!this.grid.getSelectionModel().hasSelection())
+										this.form.setDisabledModify(true, true, true, true);
 
-								_CMCache.reloadReportStores();
-								_CMCache.flushTranslationsToSave(this.form.step1Panel.name.getValue());
+									_CMCache.reloadReportStores();
+									_CMCache.flushTranslationsToSave(this.form.step1Panel.name.getValue());
+								} else {
+									CMDBuild.core.Message.error(null, {
+										text: CMDBuild.Translation.errors.unknown_error,
+										detail: operation.error
+									});
+								}
 							}
 						});
 					}
@@ -330,26 +338,33 @@
 				callback: function(records, operation, success) {
 					CMDBuild.LoadMask.get().hide();
 
-					me.form.step2Panel.removeAll();
+					if (success) {
+						me.form.step2Panel.removeAll();
 
-					// Reset server session
-					CMDBuild.core.proxy.reports.Jasper.resetSession({
-						scope: me,
-						success: function(response, options, decodedResponse) {
-							me.form.getLayout().setActiveItem(0);
-						}
-					});
+						// Reset server session
+						CMDBuild.core.proxy.reports.Jasper.resetSession({
+							scope: me,
+							success: function(response, options, decodedResponse) {
+								me.form.getLayout().setActiveItem(0);
+							}
+						});
 
-					var rowIndex = this.find(
-						CMDBuild.core.proxy.CMProxyConstants.NAME,
-						me.form.step1Panel.name.getValue()
-					);
+						var rowIndex = this.find(
+							CMDBuild.core.proxy.CMProxyConstants.NAME,
+							me.form.step1Panel.name.getValue()
+						);
 
-					me.grid.getSelectionModel().select(rowIndex, true);
-					me.form.setDisabledModify(true);
+						me.grid.getSelectionModel().select(rowIndex, true);
+						me.form.setDisabledModify(true);
 
-					_CMCache.reloadReportStores();
-					_CMCache.flushTranslationsToSave(me.form.step1Panel.name.getValue());
+						_CMCache.reloadReportStores();
+						_CMCache.flushTranslationsToSave(me.form.step1Panel.name.getValue());
+					} else {
+						CMDBuild.core.Message.error(null, {
+							text: CMDBuild.Translation.errors.unknown_error,
+							detail: operation.error
+						});
+					}
 				}
 			});
 		},

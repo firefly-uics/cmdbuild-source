@@ -148,7 +148,17 @@
 		 */
 		onViewOnFront: function(node) {
 			if (!Ext.Object.isEmpty(node)) {
-				this.grid.getStore().load();
+				this.grid.getStore().load({
+					scope: this,
+					callback: function(records, operation, success) {
+						if (!success) {
+							CMDBuild.core.Message.error(null, {
+								text: CMDBuild.Translation.errors.unknown_error,
+								detail: operation.error
+							});
+						}
+					}
+				});
 
 				if (
 					!Ext.isEmpty(node.get(CMDBuild.core.proxy.CMProxyConstants.ID))
