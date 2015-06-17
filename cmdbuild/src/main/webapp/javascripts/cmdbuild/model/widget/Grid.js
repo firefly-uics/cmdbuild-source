@@ -23,6 +23,10 @@
 							fieldsForModel.push({ name: field[CMDBuild.core.proxy.CMProxyConstants.NAME], type: 'boolean' });
 						} break;
 
+						case 'DATE': {
+							fieldsForModel.push({ name: field[CMDBuild.core.proxy.CMProxyConstants.NAME], type: 'date' });
+						} break;
+
 						case 'DECIMAL':
 						case 'DOUBLE': {
 							fieldsForModel.push({ name: field[CMDBuild.core.proxy.CMProxyConstants.NAME], type: 'float', useNull: true });
