@@ -3,7 +3,7 @@
 	Ext.define('CMDBuild.controller.common.field.translatable.Window', {
 		extend: 'CMDBuild.controller.common.AbstractController',
 
-		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+		requires: ['CMDBuild.core.proxy.Constants'],
 
 		/**
 		 * @cfg {Array}
@@ -82,20 +82,20 @@
 		 * @param {Object} translations
 		 */
 		buildWindowItem: function(translationsValues) {
-			var enabledLanguages = CMDBuild.configuration[CMDBuild.core.proxy.CMProxyConstants.LOCALIZATION].getEnabledLanguages();
+			var enabledLanguages = CMDBuild.configuration[CMDBuild.core.proxy.Constants.LOCALIZATION].getEnabledLanguages();
 
 			Ext.Object.each(enabledLanguages, function(key, value, myself) {
 				var item = Ext.create('Ext.form.field.Text', {
-					name: value.get(CMDBuild.core.proxy.CMProxyConstants.TAG),
-					fieldLabel: value.get(CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION),
+					name: value.get(CMDBuild.core.proxy.Constants.TAG),
+					fieldLabel: value.get(CMDBuild.core.proxy.Constants.DESCRIPTION),
 					labelWidth: CMDBuild.LABEL_WIDTH,
 					padding: '3 5',
-					labelClsExtra: 'ux-flag-' + value.get(CMDBuild.core.proxy.CMProxyConstants.TAG),
+					labelClsExtra: 'ux-flag-' + value.get(CMDBuild.core.proxy.Constants.TAG),
 					labelStyle: 'background-repeat: no-repeat; background-position: left; padding-left: 22px;'
 				});
 
 				item.setValue(
-					translationsValues[value.get(CMDBuild.core.proxy.CMProxyConstants.TAG)]
+					translationsValues[value.get(CMDBuild.core.proxy.Constants.TAG)]
 				);
 
 				if (!Ext.isEmpty(this.form))

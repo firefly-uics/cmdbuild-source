@@ -3,7 +3,7 @@
 	Ext.define('CMDBuild.view.management.accordion.Reports', {
 		extend: 'CMDBuild.view.common.CMBaseAccordion',
 
-		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+		requires: ['CMDBuild.core.proxy.Constants'],
 
 		title: CMDBuild.Translation.report,
 

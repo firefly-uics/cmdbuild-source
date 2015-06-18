@@ -3,7 +3,7 @@
 	Ext.define('CMDBuild.core.proxy.common.tabs.history.Classes', {
 
 		requires: [
-			'CMDBuild.core.proxy.CMProxyConstants',
+			'CMDBuild.core.proxy.Constants',
 			'CMDBuild.core.proxy.CMProxyUrlIndex',
 			'CMDBuild.model.common.tabs.history.classes.CardRecord'
 		],
@@ -94,7 +94,7 @@
 					}
 				},
 				sorters: [ // Setup sorters, also if server returns ordered collection
-					{ property: CMDBuild.core.proxy.CMProxyConstants.BEGIN_DATE, direction: 'DESC' }
+					{ property: CMDBuild.core.proxy.Constants.BEGIN_DATE, direction: 'DESC' }
 				]
 			});
 		}

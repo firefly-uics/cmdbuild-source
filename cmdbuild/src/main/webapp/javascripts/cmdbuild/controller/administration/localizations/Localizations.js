@@ -3,7 +3,7 @@
 	Ext.define('CMDBuild.controller.administration.localizations.Localizations', {
 		extend: 'CMDBuild.controller.common.AbstractBasePanelController',
 
-		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+		requires: ['CMDBuild.core.proxy.Constants'],
 
 		/**
 		 * @cfg {Object}
@@ -43,7 +43,7 @@ _debug('CMDBuild', CMDBuild);
 _debug('parameters', parameters);
 				this.view.removeAll(true);
 
-				switch(parameters.get(CMDBuild.core.proxy.CMProxyConstants.ID)) {
+				switch(parameters.get(CMDBuild.core.proxy.Constants.ID)) {
 					case 'advancedTranslationsTable': {
 						this.sectionController = Ext.create('CMDBuild.controller.administration.localizations.advancedTable.AdvancedTable', {
 							parentDelegate: this
@@ -60,7 +60,7 @@ _debug('parameters', parameters);
 
 				this.view.add(this.sectionController.getView());
 
-				this.setViewTitle(parameters.get(CMDBuild.core.proxy.CMProxyConstants.TEXT));
+				this.setViewTitle(parameters.get(CMDBuild.core.proxy.Constants.TEXT));
 
 				this.callParent(arguments);
 			}

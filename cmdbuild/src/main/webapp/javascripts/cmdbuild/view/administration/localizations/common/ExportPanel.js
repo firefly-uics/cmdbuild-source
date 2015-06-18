@@ -4,7 +4,7 @@
 		extend: 'Ext.form.Panel',
 
 		requires: [
-			'CMDBuild.core.proxy.CMProxyConstants',
+			'CMDBuild.core.proxy.Constants',
 			'CMDBuild.core.proxy.Csv',
 			'CMDBuild.core.proxy.localizations.Localizations'
 		],
@@ -32,7 +32,7 @@
 				dockedItems: [
 					Ext.create('Ext.toolbar.Toolbar', {
 						dock: 'bottom',
-						itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_BOTTOM,
+						itemId: CMDBuild.core.proxy.Constants.TOOLBAR_BOTTOM,
 						ui: 'footer',
 
 						layout: {
@@ -58,8 +58,8 @@
 						fieldLabel: '@@ Export section',
 						labelWidth: CMDBuild.LABEL_WIDTH,
 						maxWidth: CMDBuild.MEDIUM_FIELD_WIDTH,
-						displayField: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
-						valueField: CMDBuild.core.proxy.CMProxyConstants.NAME,
+						displayField: CMDBuild.core.proxy.Constants.DESCRIPTION,
+						valueField: CMDBuild.core.proxy.Constants.NAME,
 						editable: false,
 						allowBlank: false,
 
@@ -71,12 +71,12 @@
 						fieldLabel: '@@ Format',
 						labelWidth: CMDBuild.LABEL_WIDTH,
 						maxWidth: CMDBuild.MEDIUM_FIELD_WIDTH,
-						displayField: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
-						valueField: CMDBuild.core.proxy.CMProxyConstants.NAME,
+						displayField: CMDBuild.core.proxy.Constants.DESCRIPTION,
+						valueField: CMDBuild.core.proxy.Constants.NAME,
 						editable: false,
 						allowBlank: false,
 
-						value: CMDBuild.core.proxy.CMProxyConstants.CSV, // Default value
+						value: CMDBuild.core.proxy.Constants.CSV, // Default value
 
 						store: CMDBuild.core.proxy.localizations.Localizations.getFileFormatStore(),
 						queryMode: 'local'
@@ -86,8 +86,8 @@
 						fieldLabel: CMDBuild.Translation.separator,
 						labelWidth: CMDBuild.LABEL_WIDTH,
 						maxWidth: 200,
-						valueField: CMDBuild.core.proxy.CMProxyConstants.VALUE,
-						displayField: CMDBuild.core.proxy.CMProxyConstants.VALUE,
+						valueField: CMDBuild.core.proxy.Constants.VALUE,
+						displayField: CMDBuild.core.proxy.Constants.VALUE,
 						editable: false,
 						allowBlank: false,
 

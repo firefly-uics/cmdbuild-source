@@ -38,7 +38,7 @@
 		 * @override
 		 */
 		deleteSuccessCB: function(result, options, decodedResult) {
-			var removedClassId = this.selection.get(CMDBuild.core.proxy.CMProxyConstants.ID);
+			var removedClassId = this.selection.get(CMDBuild.core.proxy.Constants.ID);
 
 			_CMCache.onProcessDeleted(removedClassId);
 
@@ -106,13 +106,13 @@
 						}
 
 						store.add({
-							id: CMDBuild.core.proxy.CMProxyConstants.TEMPLATE,
+							id: CMDBuild.core.proxy.Constants.TEMPLATE,
 							index: 0
 						});
 
 						store.sort([
 							{
-								property : CMDBuild.core.proxy.CMProxyConstants.INDEX,
+								property : CMDBuild.core.proxy.Constants.INDEX,
 								direction: 'DESC'
 							}
 						]);
@@ -164,12 +164,12 @@
 		 * @override
 		 */
 		saveSuccessCB: function(result, options, decodedResult) {
-			var savedProcessData = decodedResult[CMDBuild.core.proxy.CMProxyConstants.TABLE];
+			var savedProcessData = decodedResult[CMDBuild.core.proxy.Constants.TABLE];
 			this.selection = _CMCache.onProcessSaved(savedProcessData);
 
 			// Accordion synchronization
 			_CMMainViewportController.findAccordionByCMName('process').updateStore();
-			_CMMainViewportController.findAccordionByCMName('process').selectNodeById(savedProcessData[CMDBuild.core.proxy.CMProxyConstants.ID]);
+			_CMMainViewportController.findAccordionByCMName('process').selectNodeById(savedProcessData[CMDBuild.core.proxy.Constants.ID]);
 		}
 	});
 

@@ -3,7 +3,7 @@
 	Ext.define('CMDBuild.core.proxy.common.tabs.email.Email', {
 
 		requires: [
-			'CMDBuild.core.proxy.CMProxyConstants',
+			'CMDBuild.core.proxy.Constants',
 			'CMDBuild.core.proxy.Index',
 			'CMDBuild.model.common.tabs.email.Email'
 		],
@@ -47,10 +47,10 @@
 					}
 				},
 				sorters: {
-					property: CMDBuild.core.proxy.CMProxyConstants.STATUS,
+					property: CMDBuild.core.proxy.Constants.STATUS,
 					direction: 'ASC'
 				},
-				groupField: CMDBuild.core.proxy.CMProxyConstants.STATUS
+				groupField: CMDBuild.core.proxy.Constants.STATUS
 			});
 		},
 

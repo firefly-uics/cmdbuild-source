@@ -5,7 +5,7 @@
 
 		requires: [
 			'CMDBuild.core.Message',
-			'CMDBuild.core.proxy.CMProxyConstants',
+			'CMDBuild.core.proxy.Constants',
 			'CMDBuild.core.proxy.Index',
 			'CMDBuild.core.proxy.reports.Reports',
 			'CMDBuild.model.reports.ModuleObject'
@@ -31,10 +31,10 @@
 		 * @cfg {Array}
 		 */
 		supportedReportTypes: [
-			CMDBuild.core.proxy.CMProxyConstants.CSV,
-			CMDBuild.core.proxy.CMProxyConstants.ODT,
-			CMDBuild.core.proxy.CMProxyConstants.PDF,
-			CMDBuild.core.proxy.CMProxyConstants.RTF
+			CMDBuild.core.proxy.Constants.CSV,
+			CMDBuild.core.proxy.Constants.ODT,
+			CMDBuild.core.proxy.Constants.PDF,
+			CMDBuild.core.proxy.Constants.RTF
 		],
 
 		/**
@@ -51,7 +51,7 @@
 		 * @param {Object} parameters
 		 */
 		createReport: function(parameters) {
-			if (Ext.isObject(parameters) && !Ext.isEmpty(parameters[CMDBuild.core.proxy.CMProxyConstants.ID])) {
+			if (Ext.isObject(parameters) && !Ext.isEmpty(parameters[CMDBuild.core.proxy.Constants.ID])) {
 				this.managedReportSet(parameters);
 
 				CMDBuild.core.proxy.reports.Reports.create({
@@ -74,7 +74,7 @@
 							Ext.create('CMDBuild.controller.management.reports.Parameters', {
 								parentDelegate: this,
 								attributeList: decodedResponse.attribute,
-								forceDownload: this.managedReport.get(CMDBuild.core.proxy.CMProxyConstants.FORCE_DOWNLOAD)
+								forceDownload: this.managedReport.get(CMDBuild.core.proxy.Constants.FORCE_DOWNLOAD)
 							});
 						}
 					}
@@ -83,7 +83,7 @@
 		},
 
 		onSingleReportDownloadButtonClick: function() {
-			this.managedReport.set(CMDBuild.core.proxy.CMProxyConstants.FORCE_DOWNLOAD, true);
+			this.managedReport.set(CMDBuild.core.proxy.Constants.FORCE_DOWNLOAD, true);
 
 			this.createReport(this.managedReport.getData());
 		},
@@ -94,8 +94,8 @@
 		onSingleReportTypeButtonClick: function(type) {
 			if (!Ext.Object.isEmpty(this.managedReport) && Ext.Array.contains(this.supportedReportTypes, type)) {
 				var params = {};
-				params[CMDBuild.core.proxy.CMProxyConstants.ID] = this.managedReport.get(CMDBuild.core.proxy.CMProxyConstants.ID);
-				params[CMDBuild.core.proxy.CMProxyConstants.EXTENSION] = type;
+				params[CMDBuild.core.proxy.Constants.ID] = this.managedReport.get(CMDBuild.core.proxy.Constants.ID);
+				params[CMDBuild.core.proxy.Constants.EXTENSION] = type;
 
 				this.createReport(params);
 			} else {
@@ -113,16 +113,16 @@
 		onViewOnFront: function(node) {
 			if (
 				!Ext.Object.isEmpty(node)
-				&& !Ext.isEmpty(node.get(CMDBuild.core.proxy.CMProxyConstants.ID))
-				&& node.get(CMDBuild.core.proxy.CMProxyConstants.ID) != CMDBuild.core.proxy.CMProxyConstants.CUSTOM
+				&& !Ext.isEmpty(node.get(CMDBuild.core.proxy.Constants.ID))
+				&& node.get(CMDBuild.core.proxy.Constants.ID) != CMDBuild.core.proxy.Constants.CUSTOM
 			) {
-				this.setViewTitle(node.get(CMDBuild.core.proxy.CMProxyConstants.TEXT));
+				this.setViewTitle(node.get(CMDBuild.core.proxy.Constants.TEXT));
 
-				this.managedReportSet(node.get(CMDBuild.core.proxy.CMProxyConstants.ID));
+				this.managedReportSet(node.get(CMDBuild.core.proxy.Constants.ID));
 
 				this.createReport({
-					id: node.get(CMDBuild.core.proxy.CMProxyConstants.ID),
-					extension: node.get(CMDBuild.core.proxy.CMProxyConstants.TYPE).replace(/report/i, '') // Removes 'report' string from type property in node object
+					id: node.get(CMDBuild.core.proxy.Constants.ID),
+					extension: node.get(CMDBuild.core.proxy.Constants.TYPE).replace(/report/i, '') // Removes 'report' string from type property in node object
 				});
 
 				this.callParent(arguments);
@@ -159,9 +159,9 @@
 		 */
 		showReport: function() {
 			if (!Ext.Object.isEmpty(this.managedReport))
-				if (this.managedReport.get(CMDBuild.core.proxy.CMProxyConstants.FORCE_DOWNLOAD)) { // Force download mode
+				if (this.managedReport.get(CMDBuild.core.proxy.Constants.FORCE_DOWNLOAD)) { // Force download mode
 					var params = {};
-					params[CMDBuild.core.proxy.CMProxyConstants.FORCE_DOWNLOAD_PARAM_KEY] = true;
+					params[CMDBuild.core.proxy.Constants.FORCE_DOWNLOAD_PARAM_KEY] = true;
 
 					var form = Ext.create('Ext.form.Panel', {
 						standardSubmit: true,

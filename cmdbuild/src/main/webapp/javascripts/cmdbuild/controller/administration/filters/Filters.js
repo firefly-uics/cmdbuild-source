@@ -3,7 +3,7 @@
 	Ext.define('CMDBuild.controller.administration.filters.Filters', {
 		extend: 'CMDBuild.controller.common.CMBasePanelController',
 
-		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+		requires: ['CMDBuild.core.proxy.Constants'],
 
 		/**
 		 * @cfg {Object}
@@ -36,7 +36,7 @@
 			if (!Ext.Object.isEmpty(parameters)) {
 				this.view.removeAll(true);
 
-				switch(parameters.get(CMDBuild.core.proxy.CMProxyConstants.ID)) {
+				switch(parameters.get(CMDBuild.core.proxy.Constants.ID)) {
 					case 'groups':
 					default: {
 						this.sectionController = Ext.create('CMDBuild.controller.administration.filters.Groups', { parentDelegate: this });
@@ -45,7 +45,7 @@
 
 				this.view.add(this.sectionController.getView());
 
-				this.setViewTitle(parameters.get(CMDBuild.core.proxy.CMProxyConstants.TEXT));
+				this.setViewTitle(parameters.get(CMDBuild.core.proxy.Constants.TEXT));
 
 				this.callParent(arguments);
 			}

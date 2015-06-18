@@ -5,7 +5,7 @@
 	Ext.define('CMDBuild.view.administration.tasks.common.cronForm.CMCronFormBase', {
 		extend: 'Ext.panel.Panel',
 
-		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+		requires: ['CMDBuild.core.proxy.Constants'],
 
 		/**
 		 * @cfg {CMDBuild.controller.administration.tasks.common.cronForm.CMCronFormController}
@@ -31,8 +31,8 @@
 			var me = this;
 
 			this.baseRadio = Ext.create('Ext.form.field.Radio', {
-				name: CMDBuild.core.proxy.CMProxyConstants.CRON_INPUT_TYPE,
-				inputValue: CMDBuild.core.proxy.CMProxyConstants.BASE,
+				name: CMDBuild.core.proxy.Constants.CRON_INPUT_TYPE,
+				inputValue: CMDBuild.core.proxy.Constants.BASE,
 				boxLabel: tr.basic,
 				width: CMDBuild.LABEL_WIDTH,
 
@@ -45,14 +45,14 @@
 
 			this.baseCombo = Ext.create('Ext.form.field.ComboBox', {
 				name: 'baseCombo',
-				valueField: CMDBuild.core.proxy.CMProxyConstants.VALUE,
-				displayField: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
+				valueField: CMDBuild.core.proxy.Constants.VALUE,
+				displayField: CMDBuild.core.proxy.Constants.DESCRIPTION,
 				forceSelection: true,
 				editable: false,
 				margins: '0 0 0 ' + (CMDBuild.LABEL_WIDTH - 45),
 
 				store: Ext.create('Ext.data.SimpleStore', {
-					fields: [CMDBuild.core.proxy.CMProxyConstants.VALUE, CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION],
+					fields: [CMDBuild.core.proxy.Constants.VALUE, CMDBuild.core.proxy.Constants.DESCRIPTION],
 					data: [
 						['0 * * * ?', tr.everyHour],
 						['0 0 * * ?', tr.everyDay],

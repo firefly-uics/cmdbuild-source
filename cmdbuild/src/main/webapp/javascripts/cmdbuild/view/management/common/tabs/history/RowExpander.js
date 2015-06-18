@@ -7,10 +7,10 @@
 
 		// XTemplate formats all values to an array of key-value objects before display
 		rowBodyTpl: new Ext.XTemplate(
-			'<tpl exec="this.formatter(' + CMDBuild.core.proxy.CMProxyConstants.VALUES + ')"></tpl>',
+			'<tpl exec="this.formatter(' + CMDBuild.core.proxy.Constants.VALUES + ')"></tpl>',
 			'<tpl for="this.formattedArray">',
-				'<tpl if="' + CMDBuild.core.proxy.CMProxyConstants.CHANGED + '">',
-					'<p class="' + CMDBuild.core.proxy.CMProxyConstants.CHANGED + '">',
+				'<tpl if="' + CMDBuild.core.proxy.Constants.CHANGED + '">',
+					'<p class="' + CMDBuild.core.proxy.Constants.CHANGED + '">',
 				'<tpl else>',
 					'<p>',
 				'</tpl>',
@@ -29,15 +29,15 @@
 
 						Ext.Object.each(values, function(key, value, myself) {
 							this.formattedArray.push({
-								attribute: value.get(CMDBuild.core.proxy.CMProxyConstants.ATTRIBUTE_DESCRIPTION) || key,
-								changed: value.get(CMDBuild.core.proxy.CMProxyConstants.CHANGED),
-								index: value.get(CMDBuild.core.proxy.CMProxyConstants.INDEX),
-								value: value.get(CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION)
+								attribute: value.get(CMDBuild.core.proxy.Constants.ATTRIBUTE_DESCRIPTION) || key,
+								changed: value.get(CMDBuild.core.proxy.Constants.CHANGED),
+								index: value.get(CMDBuild.core.proxy.Constants.INDEX),
+								value: value.get(CMDBuild.core.proxy.Constants.DESCRIPTION)
 							});
 						}, this);
 
 						// Sort by index value (CMDBuild attribute sort order)
-						CMDBuild.core.Utils.objectArraySort(this.formattedArray, CMDBuild.core.proxy.CMProxyConstants.INDEX);
+						CMDBuild.core.Utils.objectArraySort(this.formattedArray, CMDBuild.core.proxy.Constants.INDEX);
 					}
 				}
 			}

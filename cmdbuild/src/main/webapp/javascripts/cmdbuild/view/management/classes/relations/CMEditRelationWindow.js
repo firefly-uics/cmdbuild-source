@@ -6,7 +6,7 @@
 	Ext.define('CMDBuild.view.management.classes.relations.CMEditRelationWindow', {
 		extend: 'CMDBuild.Management.CardListWindow', // To choose the card for the relation
 
-		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+		requires: ['CMDBuild.core.proxy.Constants'],
 
 		successCb: Ext.emptyFn,
 
@@ -45,7 +45,7 @@
 
 			// Setup advancedFilter to exclude cards from hidden classes
 			var attributesAndConditionArray = [];
-			var disabledArray = this.classObject.get(CMDBuild.core.proxy.CMProxyConstants.ID) == this.domain.get('idClass1') ? this.domain.get('disabled1') : this.domain.get('disabled2');
+			var disabledArray = this.classObject.get(CMDBuild.core.proxy.Constants.ID) == this.domain.get('idClass1') ? this.domain.get('disabled1') : this.domain.get('disabled2');
 
 			if (!Ext.isEmpty(disabledArray)) {
 				// HACK to avoid filter error for a and condition with only one parameter
@@ -53,7 +53,7 @@
 					'simple': {
 						'attribute': 'IdClass',
 						'operator': 'notequal',
-						'value': [parseInt(_CMCache.getEntryTypeByName(disabledArray[0]).get(CMDBuild.core.proxy.CMProxyConstants.ID))]
+						'value': [parseInt(_CMCache.getEntryTypeByName(disabledArray[0]).get(CMDBuild.core.proxy.Constants.ID))]
 					}
 				});
 
@@ -62,7 +62,7 @@
 						'simple': {
 							'attribute': 'IdClass',
 							'operator': 'notequal',
-							'value': [parseInt(_CMCache.getEntryTypeByName(className).get(CMDBuild.core.proxy.CMProxyConstants.ID))]
+							'value': [parseInt(_CMCache.getEntryTypeByName(className).get(CMDBuild.core.proxy.Constants.ID))]
 						}
 					});
 				}, this);

@@ -3,7 +3,7 @@
 	Ext.define('CMDBuild.view.administration.configuration.GisPanel', {
 		extend: 'Ext.form.Panel',
 
-		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+		requires: ['CMDBuild.core.proxy.Constants'],
 
 		/**
 		 * @cfg {CMDBuild.controller.administration.configuration.Gis}
@@ -31,7 +31,7 @@
 				dockedItems: [
 					Ext.create('Ext.toolbar.Toolbar', {
 						dock: 'bottom',
-						itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_BOTTOM,
+						itemId: CMDBuild.core.proxy.Constants.TOOLBAR_BOTTOM,
 						ui: 'footer',
 
 						layout: {
@@ -61,7 +61,7 @@
 				items: [
 					{
 						xtype: 'xcheckbox',
-						name: CMDBuild.core.proxy.CMProxyConstants.ENABLED,
+						name: CMDBuild.core.proxy.Constants.ENABLED,
 						fieldLabel: CMDBuild.Translation.enable
 					},
 					{
@@ -78,7 +78,7 @@
 					},
 					{
 						xtype: 'numberfield',
-						name: CMDBuild.core.proxy.CMProxyConstants.INITIAL_ZOOM_LEVEL,
+						name: CMDBuild.core.proxy.Constants.INITIAL_ZOOM_LEVEL,
 						fieldLabel: CMDBuild.Translation.initialZoomLevel,
 						minValue: 0,
 						maxValue: 25

@@ -3,7 +3,7 @@
 	Ext.define('CMDBuild.view.administration.dataViews.sql.FormPanel', {
 		extend: 'Ext.form.Panel',
 
-		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+		requires: ['CMDBuild.core.proxy.Constants'],
 
 		mixins: {
 			panelFunctions: 'CMDBuild.view.common.PanelFunctions'
@@ -42,7 +42,7 @@
 				dockedItems: [
 					Ext.create('Ext.toolbar.Toolbar', {
 						dock: 'top',
-						itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_TOP,
+						itemId: CMDBuild.core.proxy.Constants.TOOLBAR_TOP,
 
 						items: [
 							Ext.create('CMDBuild.core.buttons.Modify', {
@@ -65,7 +65,7 @@
 					}),
 					Ext.create('Ext.toolbar.Toolbar', {
 						dock: 'bottom',
-						itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_BOTTOM,
+						itemId: CMDBuild.core.proxy.Constants.TOOLBAR_BOTTOM,
 						ui: 'footer',
 
 						layout: {
@@ -94,8 +94,8 @@
 				],
 				items: [
 					Ext.create('Ext.form.field.Text', {
-						name: CMDBuild.core.proxy.CMProxyConstants.NAME,
-						itemId: CMDBuild.core.proxy.CMProxyConstants.NAME,
+						name: CMDBuild.core.proxy.Constants.NAME,
+						itemId: CMDBuild.core.proxy.Constants.NAME,
 						fieldLabel: CMDBuild.Translation.name,
 						labelWidth: CMDBuild.LABEL_WIDTH,
 						maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
@@ -113,12 +113,12 @@
 						translationsKeyField: 'Description'
 					}),
 					this.sourceFunctionCombobox = Ext.create('Ext.form.field.ComboBox', {
-						name: CMDBuild.core.proxy.CMProxyConstants.SOURCE_FUNCTION,
+						name: CMDBuild.core.proxy.Constants.SOURCE_FUNCTION,
 						fieldLabel: CMDBuild.Translation.dataSource,
 						labelWidth: CMDBuild.LABEL_WIDTH,
 						maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
-						valueField: CMDBuild.core.proxy.CMProxyConstants.NAME,
-						displayField: CMDBuild.core.proxy.CMProxyConstants.NAME,
+						valueField: CMDBuild.core.proxy.Constants.NAME,
+						displayField: CMDBuild.core.proxy.Constants.NAME,
 						forceSelection: true,
 						editable: false,
 						allowBlank: false,
@@ -128,7 +128,7 @@
 					}),
 					{
 						xtype: 'hiddenfield',
-						name: CMDBuild.core.proxy.CMProxyConstants.ID
+						name: CMDBuild.core.proxy.Constants.ID
 					}
 				]
 			});

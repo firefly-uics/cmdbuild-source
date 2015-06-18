@@ -31,7 +31,7 @@
 			'CMDBuild.routes.management.Instances',
 			'CMDBuild.routes.management.Processes',
 			'CMDBuild.core.buttons.Buttons',
-			'CMDBuild.core.proxy.CMProxyConstants',
+			'CMDBuild.core.proxy.Constants',
 			'CMDBuild.core.proxy.Classes',
 			'CMDBuild.core.proxy.Configuration',
 			'CMDBuild.core.proxy.Domain',
@@ -106,7 +106,7 @@
 								CMDBuild.Config.cmdbuild = decoded.cmdbuild;
 
 								// Localization
-								CMDBuild.configuration[CMDBuild.core.proxy.CMProxyConstants.LOCALIZATION].setEnabledLanguages(decoded.cmdbuild.enabled_languages);
+								CMDBuild.configuration[CMDBuild.core.proxy.Constants.LOCALIZATION].setEnabledLanguages(decoded.cmdbuild.enabled_languages);
 
 								// DMS
 								CMDBuild.Config.dms = decoded.dms;
@@ -271,7 +271,7 @@
 				});
 
 				params = {};
-				params[CMDBuild.core.proxy.CMProxyConstants.ACTIVE] = true;
+				params[CMDBuild.core.proxy.Constants.ACTIVE] = true;
 
 				CMDBuild.ServiceProxy.classes.read({
 					params: params,
@@ -292,8 +292,8 @@
 
 						// To fill the menu is needed that the classes are already loaded
 						params = {};
-						params[CMDBuild.core.proxy.CMProxyConstants.GROUP_NAME] = CMDBuild.Runtime.DefaultGroupName;
-						params[CMDBuild.core.proxy.CMProxyConstants.LOCALIZED] = true;
+						params[CMDBuild.core.proxy.Constants.GROUP_NAME] = CMDBuild.Runtime.DefaultGroupName;
+						params[CMDBuild.core.proxy.Constants.LOCALIZED] = true;
 
 						CMDBuild.ServiceProxy.menu.read({
 							params: params,
@@ -333,7 +333,7 @@
 
 				// Domains
 					params = {};
-					params[CMDBuild.core.proxy.CMProxyConstants.ACTIVE] = true;
+					params[CMDBuild.core.proxy.Constants.ACTIVE] = true;
 
 					CMDBuild.core.proxy.Domain.getAll({
 						params: params,

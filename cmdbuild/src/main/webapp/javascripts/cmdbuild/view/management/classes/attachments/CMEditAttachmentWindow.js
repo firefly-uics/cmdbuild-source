@@ -3,7 +3,7 @@
 	Ext.define('CMDBuild.view.management.CMEditAttachmentWindow', {
 		extend: 'CMDBuild.core.PopupWindow',
 
-		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+		requires: ['CMDBuild.core.proxy.Constants'],
 
 		delegate: undefined, // set on creation
 		attachmentRecord: undefined, // could be set on creation
@@ -32,8 +32,8 @@
 						fieldLabel: CMDBuild.Translation.management.modcard.add_attachment_window.category,
 						labelWidth: CMDBuild.LABEL_WIDTH,
 						emptyText: CMDBuild.Translation.management.modcard.add_attachment_window.select_category,
-						valueField: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
-						displayField: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
+						valueField: CMDBuild.core.proxy.Constants.DESCRIPTION,
+						displayField: CMDBuild.core.proxy.Constants.DESCRIPTION,
 						triggerAction: 'all',
 						allowBlank: false,
 						forceSelection: true,
@@ -71,7 +71,7 @@
 				dockedItems: [
 					Ext.create('Ext.toolbar.Toolbar', {
 						dock: 'bottom',
-						itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_BOTTOM,
+						itemId: CMDBuild.core.proxy.Constants.TOOLBAR_BOTTOM,
 						ui: 'footer',
 
 						layout: {

@@ -8,7 +8,7 @@
 	Ext.define('CMDBuild.controller.common.AbstractBaseWidgetController', {
 		extend: 'CMDBuild.controller.common.AbstractController',
 
-		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+		requires: ['CMDBuild.core.proxy.Constants'],
 
 		statics: {
 			/**
@@ -150,14 +150,14 @@
 		 * @return {Number}
 		 */
 		getWidgetId: function() {
-			return this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.ID];
+			return this.widgetConf[CMDBuild.core.proxy.Constants.ID];
 		},
 
 		/**
 		 * @param {String}
 		 */
 		getWidgetLabel: function() {
-			return this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.LABEL];
+			return this.widgetConf[CMDBuild.core.proxy.Constants.LABEL];
 		},
 
 		/**
@@ -199,7 +199,7 @@
 		getId: function() {
 			_deprecated('getId', this);
 
-			return this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.ID];
+			return this.widgetConf[CMDBuild.core.proxy.Constants.ID];
 		},
 
 		/**
@@ -210,7 +210,7 @@
 		getLabel: function() {
 			_deprecated('getLabel', this);
 
-			return this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.LABEL];
+			return this.widgetConf[CMDBuild.core.proxy.Constants.LABEL];
 		}
 	});
 

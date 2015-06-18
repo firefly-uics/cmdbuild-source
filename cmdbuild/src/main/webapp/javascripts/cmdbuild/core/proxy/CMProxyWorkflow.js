@@ -15,7 +15,7 @@
 		downloadSubmit: function(form, version, parameters) {
 			var url = CMDBuild.core.proxy.Index.workflow.xpdlDownload;
 
-			if (version == CMDBuild.core.proxy.CMProxyConstants.TEMPLATE || Ext.isEmpty(version))
+			if (version == CMDBuild.core.proxy.Constants.TEMPLATE || Ext.isEmpty(version))
 				url = CMDBuild.core.proxy.Index.workflow.xpdlDownloadTemplate;
 
 			form.submit({

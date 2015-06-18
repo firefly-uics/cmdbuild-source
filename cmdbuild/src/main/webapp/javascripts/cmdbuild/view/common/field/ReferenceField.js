@@ -152,7 +152,7 @@
 							!Ext.isEmpty(combo.getStore())
 							&& !Ext.Object.isEmpty(this.attribute)
 							&& !Ext.Object.isEmpty(this.attribute.meta)
-							&& this.attribute.meta['system.type.reference.' + CMDBuild.core.proxy.CMProxyConstants.PRESELECT_IF_UNIQUE] === 'true'
+							&& this.attribute.meta['system.type.reference.' + CMDBuild.core.proxy.Constants.PRESELECT_IF_UNIQUE] === 'true'
 							&& combo.getStore().getCount() == 1
 						) {
 							combo.setValue(records[0].get('Id'));
@@ -199,7 +199,7 @@
 				&& this.getStore().find(this.valueField, value) == -1
 				&& !Ext.isEmpty(this.attribute)
 				&& !Ext.Object.isEmpty(this.attribute.meta)
-				&& this.attribute.meta['system.type.reference.' + CMDBuild.core.proxy.CMProxyConstants.PRESELECT_IF_UNIQUE] !== 'true'
+				&& this.attribute.meta['system.type.reference.' + CMDBuild.core.proxy.Constants.PRESELECT_IF_UNIQUE] !== 'true'
 			) {
 				var params = Ext.apply({ cardId: value }, this.getStore().baseParams);
 
@@ -281,7 +281,7 @@
 								!Ext.isEmpty(this.getStore())
 								&& !Ext.Object.isEmpty(this.attribute)
 								&& !Ext.Object.isEmpty(this.attribute.meta)
-								&& this.attribute.meta['system.type.reference.' + CMDBuild.core.proxy.CMProxyConstants.PRESELECT_IF_UNIQUE] === 'true'
+								&& this.attribute.meta['system.type.reference.' + CMDBuild.core.proxy.Constants.PRESELECT_IF_UNIQUE] === 'true'
 								&& this.getStore().getCount() == 1
 							) {
 								this.setValue(records[0].get('Id'));

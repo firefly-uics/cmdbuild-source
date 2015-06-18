@@ -5,7 +5,7 @@
 
 		requires: [
 			'CMDBuild.core.Message',
-			'CMDBuild.core.proxy.CMProxyConstants',
+			'CMDBuild.core.proxy.Constants',
 			'CMDBuild.core.proxy.reports.Jasper'
 		],
 
@@ -24,7 +24,7 @@
 				dockedItems: [
 					Ext.create('Ext.toolbar.Paging', {
 						dock: 'bottom',
-						itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_BOTTOM,
+						itemId: CMDBuild.core.proxy.Constants.TOOLBAR_BOTTOM,
 						store: store,
 						displayInfo: true,
 						displayMsg: '{0} - {1} ' + CMDBuild.Translation.common.display_topic_of + ' {2}',
@@ -33,12 +33,12 @@
 				],
 				columns: [
 					{
-						dataIndex: CMDBuild.core.proxy.CMProxyConstants.TITLE,
+						dataIndex: CMDBuild.core.proxy.Constants.TITLE,
 						text: CMDBuild.Translation.name,
 						flex: 1
 					},
 					{
-						dataIndex: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
+						dataIndex: CMDBuild.core.proxy.Constants.DESCRIPTION,
 						text: CMDBuild.Translation.descriptionLabel,
 						flex: 1
 					},

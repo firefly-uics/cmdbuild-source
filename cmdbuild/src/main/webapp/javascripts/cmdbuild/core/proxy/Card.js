@@ -5,7 +5,7 @@
 
 		requires: [
 			'CMDBuild.core.proxy.CMProxy',
-			'CMDBuild.core.proxy.CMProxyConstants',
+			'CMDBuild.core.proxy.Constants',
 			'CMDBuild.core.proxy.Index'
 		],
 
@@ -139,8 +139,8 @@
 			_deprecated('adaptGetCardCallParams', 'CMDBuild.core.proxy.Card');
 
 			var parameters = {};
-			parameters[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME] = _CMCache.getEntryTypeNameById(p.params.IdClass);
-			parameters[CMDBuild.core.proxy.CMProxyConstants.CARD_ID] = p.params.Id;
+			parameters[CMDBuild.core.proxy.Constants.CLASS_NAME] = _CMCache.getEntryTypeNameById(p.params.IdClass);
+			parameters[CMDBuild.core.proxy.Constants.CARD_ID] = p.params.Id;
 
 			p.params = parameters;
 		}

@@ -52,7 +52,7 @@
 			var activities = record.getActivityInfoList();
 
 			// Sort activities by description ascending
-			CMDBuild.core.Utils.objectArraySort(activities, CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION);
+			CMDBuild.core.Utils.objectArraySort(activities, CMDBuild.core.proxy.Constants.DESCRIPTION);
 
 			rowValues.rowBody = (function(activities) {
 				var out = "";

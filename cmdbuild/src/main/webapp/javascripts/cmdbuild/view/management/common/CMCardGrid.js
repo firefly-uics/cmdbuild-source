@@ -510,8 +510,8 @@
 		if (me.cmAddPrintButton) {
 			me.printGridMenu = Ext.create('CMDBuild.core.buttons.Print', {
 				formatList: [
-					CMDBuild.core.proxy.CMProxyConstants.PDF,
-					CMDBuild.core.proxy.CMProxyConstants.CSV
+					CMDBuild.core.proxy.Constants.PDF,
+					CMDBuild.core.proxy.Constants.CSV
 				],
 				disabled: true
 			});

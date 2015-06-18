@@ -3,7 +3,7 @@
 	Ext.define('CMDBuild.routes.management.Processes', {
 		extend: 'CMDBuild.routes.Base',
 
-		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+		requires: ['CMDBuild.core.proxy.Constants'],
 
 		/**
 		 * @cfg {String}
@@ -24,8 +24,8 @@
 		 * @cfg {Array}
 		 */
 		supportedPrintFormats: [
-			CMDBuild.core.proxy.CMProxyConstants.PDF,
-			CMDBuild.core.proxy.CMProxyConstants.CSV
+			CMDBuild.core.proxy.Constants.PDF,
+			CMDBuild.core.proxy.Constants.CSV
 		],
 
 		/**
@@ -36,9 +36,9 @@
 		applyClientFilter: function() {
 			if (!Ext.isEmpty(this.clientFilter))
 				Ext.Function.createDelayed(function() {
-					this.entryType.set(CMDBuild.core.proxy.CMProxyConstants.FILTER, this.clientFilter); // Inject filter in entryType object
+					this.entryType.set(CMDBuild.core.proxy.Constants.FILTER, this.clientFilter); // Inject filter in entryType object
 
-					_CMMainViewportController.panelControllers[CMDBuild.core.proxy.CMProxyConstants.PROCESS].onViewOnFront(this.entryType);
+					_CMMainViewportController.panelControllers[CMDBuild.core.proxy.Constants.PROCESS].onViewOnFront(this.entryType);
 				}, 1500, this)();
 		},
 
@@ -53,7 +53,7 @@
 			if (this.paramsValidation(params)) {
 				this.entryType = _CMCache.getEntryTypeByName(this.processIdentifier);
 
-				CMDBuild.Runtime.StartingClassId = this.entryType.get(CMDBuild.core.proxy.CMProxyConstants.ID); // Use runtime configuration to select class
+				CMDBuild.Runtime.StartingClassId = this.entryType.get(CMDBuild.core.proxy.Constants.ID); // Use runtime configuration to select class
 
 				this.applyClientFilter();
 			}
@@ -65,9 +65,9 @@
 		 * @return  {Boolean}
 		 */
 		paramsValidation: function(params) {
-			this.processIdentifier = params[CMDBuild.core.proxy.CMProxyConstants.PROCESS_IDENTIFIER];
-			this.clientFilter = params[CMDBuild.core.proxy.CMProxyConstants.CLIENT_FILTER];
-			this.printFormat = params[CMDBuild.core.proxy.CMProxyConstants.FORMAT] || CMDBuild.core.proxy.CMProxyConstants.PDF;
+			this.processIdentifier = params[CMDBuild.core.proxy.Constants.PROCESS_IDENTIFIER];
+			this.clientFilter = params[CMDBuild.core.proxy.Constants.CLIENT_FILTER];
+			this.printFormat = params[CMDBuild.core.proxy.Constants.FORMAT] || CMDBuild.core.proxy.Constants.PDF;
 
 			// Process identifier validation
 			if (
@@ -112,7 +112,7 @@
 			this.detail(params, path, router);
 
 			Ext.Function.createDelayed(function() {
-				_CMMainViewportController.panelControllers[CMDBuild.core.proxy.CMProxyConstants.PROCESS].gridController.onPrintGridMenuClick(this.printFormat);
+				_CMMainViewportController.panelControllers[CMDBuild.core.proxy.Constants.PROCESS].gridController.onPrintGridMenuClick(this.printFormat);
 			}, 500, this)();
 		},
 
@@ -124,7 +124,7 @@
 		showAll: function(params, path, router) {
 			if (Ext.Object.isEmpty(params)) {
 				Ext.Function.createDelayed(function() {
-					_CMMainViewportController.accordionControllers[CMDBuild.core.proxy.CMProxyConstants.PROCESS].accordion.selectFirstSelectableNode();
+					_CMMainViewportController.accordionControllers[CMDBuild.core.proxy.Constants.PROCESS].accordion.selectFirstSelectableNode();
 				}, 500, this)();
 			}
 		}

@@ -4,7 +4,7 @@
 		extend: 'Ext.grid.Panel',
 
 		requires: [
-			'CMDBuild.core.proxy.CMProxyConstants',
+			'CMDBuild.core.proxy.Constants',
 			'CMDBuild.core.proxy.reports.Reports'
 		],
 
@@ -23,7 +23,7 @@
 				dockedItems: [
 					Ext.create('Ext.toolbar.Paging', {
 						dock: 'bottom',
-						itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_BOTTOM,
+						itemId: CMDBuild.core.proxy.Constants.TOOLBAR_BOTTOM,
 						store: store,
 						displayInfo: true,
 						displayMsg: '{0} - {1} ' + CMDBuild.Translation.common.display_topic_of + ' {2}',
@@ -34,13 +34,13 @@
 					{
 						text: CMDBuild.Translation.name,
 						sortable: true,
-						dataIndex: CMDBuild.core.proxy.CMProxyConstants.TITLE,
+						dataIndex: CMDBuild.core.proxy.Constants.TITLE,
 						flex: 1
 					},
 					{
 						text: CMDBuild.Translation.descriptionLabel,
 						sortable: true,
-						dataIndex: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
+						dataIndex: CMDBuild.core.proxy.Constants.DESCRIPTION,
 						flex: 1
 					},
 					Ext.create('Ext.grid.column.Action', {
@@ -61,7 +61,7 @@
 								handler: function(grid, rowIndex, colIndex, node, e, record, rowNode) {
 									this.delegate.cmfg('onReportGenerateButtonClick', {
 										record: record,
-										extension: CMDBuild.core.proxy.CMProxyConstants.PDF
+										extension: CMDBuild.core.proxy.Constants.PDF
 									});
 								}
 							}),
@@ -73,7 +73,7 @@
 								handler: function(grid, rowIndex, colIndex, node, e, record, rowNode) {
 									this.delegate.cmfg('onReportGenerateButtonClick', {
 										record: record,
-										extension: CMDBuild.core.proxy.CMProxyConstants.ODT
+										extension: CMDBuild.core.proxy.Constants.ODT
 									});
 								}
 							}),
@@ -85,7 +85,7 @@
 								handler: function(grid, rowIndex, colIndex, node, e, record, rowNode) {
 									this.delegate.cmfg('onReportGenerateButtonClick', {
 										record: record,
-										extension: CMDBuild.core.proxy.CMProxyConstants.RTF
+										extension: CMDBuild.core.proxy.Constants.RTF
 									});
 								}
 							}),
@@ -97,7 +97,7 @@
 								handler: function(grid, rowIndex, colIndex, node, e, record, rowNode) {
 									this.delegate.cmfg('onReportGenerateButtonClick', {
 										record: record,
-										extension: CMDBuild.core.proxy.CMProxyConstants.CSV
+										extension: CMDBuild.core.proxy.Constants.CSV
 									});
 								}
 							})

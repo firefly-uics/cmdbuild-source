@@ -3,7 +3,7 @@
 	Ext.define('CMDBuild.core.proxy.reports.Jasper', {
 
 		requires: [
-			'CMDBuild.core.proxy.CMProxyConstants',
+			'CMDBuild.core.proxy.Constants',
 			'CMDBuild.core.proxy.Index',
 			'CMDBuild.model.reports.Grid'
 		],
@@ -59,11 +59,11 @@
 						totalProperty: 'results'
 					},
 					extraParams: {
-						type: CMDBuild.core.proxy.CMProxyConstants.CUSTOM
+						type: CMDBuild.core.proxy.Constants.CUSTOM
 					}
 				},
 				sorters: [
-					{ property: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION, direction: 'ASC' }
+					{ property: CMDBuild.core.proxy.Constants.DESCRIPTION, direction: 'ASC' }
 				]
 			});
 		},

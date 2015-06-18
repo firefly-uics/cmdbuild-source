@@ -175,7 +175,7 @@
 	Ext.define('CMDBuild.view.administration.tasks.email.CMStep3', {
 		extend: 'Ext.panel.Panel',
 
-		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+		requires: ['CMDBuild.core.proxy.Constants'],
 
 		/**
 		 * @cfg {CMDBuild.view.administration.tasks.email.CMStep3Delegate}
@@ -246,7 +246,7 @@
 					fieldLabel: tr.parsingKeyStart,
 					labelWidth: CMDBuild.LABEL_WIDTH,
 					maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
-					name: CMDBuild.core.proxy.CMProxyConstants.PARSING_KEY_INIT,
+					name: CMDBuild.core.proxy.Constants.PARSING_KEY_INIT,
 					flex: 1
 				});
 
@@ -254,7 +254,7 @@
 					fieldLabel: tr.parsingKeyEnd,
 					labelWidth: CMDBuild.LABEL_WIDTH,
 					maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
-					name: CMDBuild.core.proxy.CMProxyConstants.PARSING_KEY_END,
+					name: CMDBuild.core.proxy.Constants.PARSING_KEY_END,
 					margin: '0 0 0 20',
 					flex: 1
 				});
@@ -263,7 +263,7 @@
 					fieldLabel: tr.parsingValueStart,
 					labelWidth: CMDBuild.LABEL_WIDTH,
 					maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
-					name: CMDBuild.core.proxy.CMProxyConstants.PARSING_VALUE_INIT,
+					name: CMDBuild.core.proxy.Constants.PARSING_VALUE_INIT,
 					flex: 1
 				});
 
@@ -271,14 +271,14 @@
 					fieldLabel: tr.parsingValueEnd,
 					labelWidth: CMDBuild.LABEL_WIDTH,
 					maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
-					name: CMDBuild.core.proxy.CMProxyConstants.PARSING_VALUE_END,
+					name: CMDBuild.core.proxy.Constants.PARSING_VALUE_END,
 					margin: '0 0 0 20',
 					flex: 1
 				});
 
 				this.parsingFieldset = Ext.create('Ext.form.FieldSet', {
 					title: tr.bodyParsing,
-					checkboxName: CMDBuild.core.proxy.CMProxyConstants.PARSING_ACTIVE,
+					checkboxName: CMDBuild.core.proxy.Constants.PARSING_ACTIVE,
 					checkboxToggle: true,
 					collapsed: true,
 					collapsible: true,
@@ -323,7 +323,7 @@
 
 				this.notificationFieldset = Ext.create('Ext.form.FieldSet', {
 					title: CMDBuild.Translation.administration.tasks.notificationForm.title,
-					checkboxName: CMDBuild.core.proxy.CMProxyConstants.NOTIFICATION_ACTIVE,
+					checkboxName: CMDBuild.core.proxy.Constants.NOTIFICATION_ACTIVE,
 					checkboxToggle: true,
 					collapsed: true,
 					collapsible: true,
@@ -338,7 +338,7 @@
 
 			// Attachments configuration
 				this.attachmentsCombo = Ext.create('Ext.form.field.ComboBox', {
-					name: CMDBuild.core.proxy.CMProxyConstants.ATTACHMENTS_CATEGORY,
+					name: CMDBuild.core.proxy.Constants.ATTACHMENTS_CATEGORY,
 					fieldLabel: tr.attachmentsCategory,
 					labelWidth: CMDBuild.LABEL_WIDTH,
 					maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
@@ -351,7 +351,7 @@
 
 				this.attachmentsFieldset = Ext.create('Ext.form.FieldSet', {
 					title: tr.saveToAlfresco,
-					checkboxName: CMDBuild.core.proxy.CMProxyConstants.ATTACHMENTS_ACTIVE,
+					checkboxName: CMDBuild.core.proxy.Constants.ATTACHMENTS_ACTIVE,
 					checkboxToggle: true,
 					collapsed: true,
 					collapsible: true,

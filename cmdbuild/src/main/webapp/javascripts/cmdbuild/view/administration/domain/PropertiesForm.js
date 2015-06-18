@@ -4,7 +4,7 @@
 		extend: 'Ext.form.Panel',
 
 		requires: [
-			'CMDBuild.core.proxy.CMProxyConstants',
+			'CMDBuild.core.proxy.Constants',
 			'CMDBuild.core.proxy.Domain'
 		],
 
@@ -71,7 +71,7 @@
 				dockedItems: [
 					Ext.create('Ext.toolbar.Toolbar', {
 						dock: 'top',
-						itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_TOP,
+						itemId: CMDBuild.core.proxy.Constants.TOOLBAR_TOP,
 
 						items: [
 							Ext.create('CMDBuild.core.buttons.Modify', {
@@ -94,7 +94,7 @@
 					}),
 					Ext.create('Ext.toolbar.Toolbar', {
 						dock: 'bottom',
-						itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_BOTTOM,
+						itemId: CMDBuild.core.proxy.Constants.TOOLBAR_BOTTOM,
 						ui: 'footer',
 
 						layout: {
@@ -124,7 +124,7 @@
 				plugins: [new CMDBuild.FormPlugin()], // TODO che sia da toccare e rifare bene la classe????
 				items: [
 					Ext.create('Ext.form.TextField', {
-						name: CMDBuild.core.proxy.CMProxyConstants.NAME,
+						name: CMDBuild.core.proxy.Constants.NAME,
 						fieldLabel: CMDBuild.Translation.name,
 						labelWidth: CMDBuild.LABEL_WIDTH,
 						allowBlank: false,
@@ -139,7 +139,7 @@
 						}
 					}),
 					this.domainDescription = Ext.create('CMDBuild.view.common.field.translatable.Text', {
-						name: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
+						name: CMDBuild.core.proxy.Constants.DESCRIPTION,
 						fieldLabel: CMDBuild.Translation.descriptionLabel,
 						labelWidth: CMDBuild.LABEL_WIDTH,
 						allowBlank: false,
@@ -151,8 +151,8 @@
 						name: 'idClass1',
 						fieldLabel: CMDBuild.Translation.origin,
 						labelWidth: CMDBuild.LABEL_WIDTH,
-						valueField: CMDBuild.core.proxy.CMProxyConstants.ID,
-						displayField: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
+						valueField: CMDBuild.core.proxy.Constants.ID,
+						displayField: CMDBuild.core.proxy.Constants.DESCRIPTION,
 						allowBlank: false,
 						cmImmutable: true,
 						forceSelection: true,
@@ -165,8 +165,8 @@
 						name: 'idClass2',
 						fieldLabel: CMDBuild.Translation.destination,
 						labelWidth: CMDBuild.LABEL_WIDTH,
-						valueField: CMDBuild.core.proxy.CMProxyConstants.ID,
-						displayField: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
+						valueField: CMDBuild.core.proxy.Constants.ID,
+						displayField: CMDBuild.core.proxy.Constants.DESCRIPTION,
 						allowBlank: false,
 						cmImmutable: true,
 						forceSelection: true,
@@ -180,7 +180,7 @@
 						fieldLabel: CMDBuild.Translation.directDescription,
 						labelWidth: CMDBuild.LABEL_WIDTH,
 						translationsKeyType: 'Domain',
-						translationsKeyField: CMDBuild.core.proxy.CMProxyConstants.DIRECT_DESCRIPTION,
+						translationsKeyField: CMDBuild.core.proxy.Constants.DIRECT_DESCRIPTION,
 						allowBlank: false,
 						vtype: 'cmdbcomment'
 					}),
@@ -189,17 +189,17 @@
 						fieldLabel: CMDBuild.Translation.inverseDescription,
 						labelWidth: CMDBuild.LABEL_WIDTH,
 						translationsKeyType: 'Domain',
-						translationsKeyField: CMDBuild.core.proxy.CMProxyConstants.INVERSE_DESCRIPTION,
+						translationsKeyField: CMDBuild.core.proxy.Constants.INVERSE_DESCRIPTION,
 						allowBlank: false,
 						vtype: 'cmdbcomment'
 					}),
 					this.cardinalityCombo = Ext.create('Ext.form.field.ComboBox', {
-						name: CMDBuild.core.proxy.CMProxyConstants.CARDINALITY,
+						name: CMDBuild.core.proxy.Constants.CARDINALITY,
 						fieldLabel: CMDBuild.Translation.cardinality,
 						labelWidth: CMDBuild.LABEL_WIDTH,
 						width: CMDBuild.ADM_SMALL_FIELD_WIDTH,
-						valueField: CMDBuild.core.proxy.CMProxyConstants.NAME,
-						displayField: CMDBuild.core.proxy.CMProxyConstants.VALUE,
+						valueField: CMDBuild.core.proxy.Constants.NAME,
+						displayField: CMDBuild.core.proxy.Constants.VALUE,
 						allowBlank: false,
 						cmImmutable: true,
 
@@ -214,7 +214,7 @@
 						}
 					}),
 					this.masterDetailCheckbox = Ext.create('Ext.form.field.Checkbox', {
-						name: CMDBuild.core.proxy.CMProxyConstants.IS_MASTER_DETAIL,
+						name: CMDBuild.core.proxy.Constants.IS_MASTER_DETAIL,
 						fieldLabel: CMDBuild.Translation.masterDetail,
 						labelWidth: CMDBuild.LABEL_WIDTH,
 
@@ -230,11 +230,11 @@
 						fieldLabel: CMDBuild.Translation.masterDetailLabel,
 						labelWidth: CMDBuild.LABEL_WIDTH,
 						translationsKeyType: 'Domain',
-						translationsKeyField: CMDBuild.core.proxy.CMProxyConstants.MASTER_DETAIL,
+						translationsKeyField: CMDBuild.core.proxy.Constants.MASTER_DETAIL,
 						hidden: true // Hidden by default
 					}),
 					this.activeCheckbox = Ext.create('Ext.form.field.Checkbox', {
-						name: CMDBuild.core.proxy.CMProxyConstants.ACTIVE,
+						name: CMDBuild.core.proxy.Constants.ACTIVE,
 						fieldLabel: CMDBuild.Translation.active,
 						labelWidth: CMDBuild.LABEL_WIDTH
 					})

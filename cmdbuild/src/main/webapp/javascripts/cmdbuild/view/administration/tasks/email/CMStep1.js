@@ -182,7 +182,7 @@
 		extend: 'Ext.panel.Panel',
 
 		requires: [
-			'CMDBuild.core.proxy.CMProxyConstants',
+			'CMDBuild.core.proxy.Constants',
 			'CMDBuild.core.proxy.email.Accounts'
 		],
 
@@ -245,7 +245,7 @@
 
 			// Rejected configuration
 				this.rejectedFolder = Ext.create('Ext.form.field.Text', {
-					name: CMDBuild.core.proxy.CMProxyConstants.REJECTED_FOLDER,
+					name: CMDBuild.core.proxy.Constants.REJECTED_FOLDER,
 					fieldLabel: CMDBuild.Translation.rejectedFolder,
 					labelWidth: CMDBuild.LABEL_WIDTH,
 					maxWidth: CMDBuild.CFG_BIG_FIELD_WIDTH - 10, // FIX: field with inside FieldSet is narrow
@@ -253,7 +253,7 @@
 				});
 
 				this.rejectedFieldset = Ext.create('Ext.form.FieldSet', {
-					checkboxName: CMDBuild.core.proxy.CMProxyConstants.REJECT_NOT_MATCHING,
+					checkboxName: CMDBuild.core.proxy.Constants.REJECT_NOT_MATCHING,
 					title: CMDBuild.Translation.enableMoveRejectedNotMatching,
 					checkboxToggle: true,
 					collapsed: true,
@@ -273,7 +273,7 @@
 					this.typeField = Ext.create('Ext.form.field.Text', {
 						fieldLabel: CMDBuild.Translation.administration.tasks.type,
 						labelWidth: CMDBuild.LABEL_WIDTH,
-						name: CMDBuild.core.proxy.CMProxyConstants.TYPE,
+						name: CMDBuild.core.proxy.Constants.TYPE,
 						value: tr.tasksTypes.email,
 						disabled: true,
 						cmImmutable: true,
@@ -281,22 +281,22 @@
 						submitValue: false
 					}),
 					this.descriptionField = Ext.create('Ext.form.field.Text', {
-						name: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
+						name: CMDBuild.core.proxy.Constants.DESCRIPTION,
 						fieldLabel: CMDBuild.Translation.description_,
 						labelWidth: CMDBuild.LABEL_WIDTH,
 						allowBlank: false
 					}),
 					this.activeField = Ext.create('Ext.form.field.Checkbox', {
-						name: CMDBuild.core.proxy.CMProxyConstants.ACTIVE,
+						name: CMDBuild.core.proxy.Constants.ACTIVE,
 						fieldLabel: CMDBuild.Translation.administration.tasks.startOnSave,
 						labelWidth: CMDBuild.LABEL_WIDTH
 					}),
 					this.emailAccountCombo = Ext.create('Ext.form.field.ComboBox', {
-						name: CMDBuild.core.proxy.CMProxyConstants.EMAIL_ACCOUNT,
+						name: CMDBuild.core.proxy.Constants.EMAIL_ACCOUNT,
 						fieldLabel: tr.taskEmail.emailAccount,
 						labelWidth: CMDBuild.LABEL_WIDTH,
-						displayField: CMDBuild.core.proxy.CMProxyConstants.NAME,
-						valueField: CMDBuild.core.proxy.CMProxyConstants.NAME,
+						displayField: CMDBuild.core.proxy.Constants.NAME,
+						valueField: CMDBuild.core.proxy.Constants.NAME,
 						maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
 						forceSelection: true,
 						editable: false,
@@ -304,7 +304,7 @@
 						store: CMDBuild.core.proxy.email.Accounts.getStore(),
 					}),
 					this.incomingFolder = Ext.create('Ext.form.field.Text', {
-						name: CMDBuild.core.proxy.CMProxyConstants.INCOMING_FOLDER,
+						name: CMDBuild.core.proxy.Constants.INCOMING_FOLDER,
 						fieldLabel: CMDBuild.Translation.incomingFolder,
 						labelWidth: CMDBuild.LABEL_WIDTH
 					}),
@@ -313,7 +313,7 @@
 							fieldLabel: tr.taskEmail.fromAddressFilter
 						},
 						textarea: {
-							name: CMDBuild.core.proxy.CMProxyConstants.FILTER_FROM_ADDRESS,
+							name: CMDBuild.core.proxy.Constants.FILTER_FROM_ADDRESS,
 							id: 'FromAddresFilterField'
 						},
 						button: {
@@ -325,7 +325,7 @@
 							fieldLabel: tr.taskEmail.subjectFilter
 						},
 						textarea: {
-							name: CMDBuild.core.proxy.CMProxyConstants.FILTER_SUBJECT,
+							name: CMDBuild.core.proxy.Constants.FILTER_SUBJECT,
 							id: 'SubjectFilterField'
 						},
 						button: {
@@ -333,13 +333,13 @@
 						}
 					}),
 					this.processedFolder = Ext.create('Ext.form.field.Text', {
-						name: CMDBuild.core.proxy.CMProxyConstants.PROCESSED_FOLDER,
+						name: CMDBuild.core.proxy.Constants.PROCESSED_FOLDER,
 						fieldLabel: CMDBuild.Translation.processedFolder,
 						labelWidth: CMDBuild.LABEL_WIDTH
 					}),
 					this.rejectedFieldset,
 					this.idField = Ext.create('Ext.form.field.Hidden', {
-						name: CMDBuild.core.proxy.CMProxyConstants.ID
+						name: CMDBuild.core.proxy.Constants.ID
 					})
 				]
 			});

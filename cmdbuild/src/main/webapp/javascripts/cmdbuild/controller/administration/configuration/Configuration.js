@@ -4,7 +4,7 @@
 		extend: 'CMDBuild.controller.common.CMBasePanelController',
 
 		requires: [
-			'CMDBuild.core.proxy.CMProxyConstants',
+			'CMDBuild.core.proxy.Constants',
 			'CMDBuild.core.proxy.Configuration'
 		],
 
@@ -128,7 +128,7 @@
 			if (!Ext.Object.isEmpty(parameters)) {
 				this.view.removeAll(true);
 
-				switch(parameters.get(CMDBuild.core.proxy.CMProxyConstants.ID)) {
+				switch(parameters.get(CMDBuild.core.proxy.Constants.ID)) {
 					case 'alfresco': {
 						this.sectionController = Ext.create('CMDBuild.controller.administration.configuration.Alfresco', { parentDelegate: this });
 					} break;
@@ -161,7 +161,7 @@
 
 				this.view.add(this.sectionController.getView());
 
-				this.setViewTitle(parameters.get(CMDBuild.core.proxy.CMProxyConstants.TEXT));
+				this.setViewTitle(parameters.get(CMDBuild.core.proxy.Constants.TEXT));
 
 				_CMCache.initModifyingTranslations();
 

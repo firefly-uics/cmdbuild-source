@@ -4,7 +4,7 @@
 		extend: 'CMDBuild.core.PopupWindow',
 
 		requires: [
-			'CMDBuild.core.proxy.CMProxyConstants',
+			'CMDBuild.core.proxy.Constants',
 			'CMDBuild.core.proxy.Csv'
 		],
 
@@ -62,8 +62,8 @@
 				fieldLabel: CMDBuild.Translation.separator,
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				labelAlign: 'right',
-				valueField: CMDBuild.core.proxy.CMProxyConstants.VALUE,
-				displayField: CMDBuild.core.proxy.CMProxyConstants.VALUE,
+				valueField: CMDBuild.core.proxy.Constants.VALUE,
+				displayField: CMDBuild.core.proxy.Constants.VALUE,
 				width: 200,
 				value: ';',
 				editable: false,
@@ -74,12 +74,12 @@
 			});
 
 			this.csvImportModeCombo = Ext.create('Ext.form.field.ComboBox', {
-				name: CMDBuild.core.proxy.CMProxyConstants.MODE,
+				name: CMDBuild.core.proxy.Constants.MODE,
 				fieldLabel: CMDBuild.Translation.mode,
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				labelAlign: 'right',
-				valueField: CMDBuild.core.proxy.CMProxyConstants.VALUE,
-				displayField: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
+				valueField: CMDBuild.core.proxy.Constants.VALUE,
+				displayField: CMDBuild.core.proxy.Constants.DESCRIPTION,
 				width: CMDBuild.MEDIUM_FIELD_WIDTH,
 				value: 'replace',
 				editable: false,
@@ -103,7 +103,7 @@
 				dockedItems: [
 					Ext.create('Ext.toolbar.Toolbar', {
 						dock: 'bottom',
-						itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_BOTTOM,
+						itemId: CMDBuild.core.proxy.Constants.TOOLBAR_BOTTOM,
 						ui: 'footer',
 
 						layout: {

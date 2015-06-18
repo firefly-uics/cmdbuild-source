@@ -12,7 +12,7 @@
 			cmFormFunctions: 'CMDBUild.view.common.CMFormFunctions'
 		},
 
-		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+		requires: ['CMDBuild.core.proxy.Constants'],
 
 		/**
 		 * @cfg {Mixed} Task specific controller
@@ -105,7 +105,7 @@
 				dockedItems: [
 					Ext.create('Ext.toolbar.Toolbar', {
 						dock: 'top',
-						itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_TOP,
+						itemId: CMDBuild.core.proxy.Constants.TOOLBAR_TOP,
 						items: this.cmTBar
 					})
 				],

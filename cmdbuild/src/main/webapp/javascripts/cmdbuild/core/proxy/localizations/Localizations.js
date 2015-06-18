@@ -3,7 +3,7 @@
 	Ext.define('CMDBuild.core.proxy.localizations.Localizations', {
 
 		requires: [
-			'CMDBuild.core.proxy.CMProxyConstants',
+			'CMDBuild.core.proxy.Constants',
 			'CMDBuild.core.proxy.Index',
 			'CMDBuild.core.proxy.Configuration',
 			'CMDBuild.model.localizations.Localization'
@@ -46,12 +46,12 @@
 		 */
 		getFileFormatStore: function() {
 			return Ext.create('Ext.data.ArrayStore', {
-				fields: [CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION, CMDBuild.core.proxy.CMProxyConstants.NAME],
+				fields: [CMDBuild.core.proxy.Constants.DESCRIPTION, CMDBuild.core.proxy.Constants.NAME],
 				data: [
-					['@@ CSV', CMDBuild.core.proxy.CMProxyConstants.CSV]
+					['@@ CSV', CMDBuild.core.proxy.Constants.CSV]
 				],
 				sorters: [
-					{ property: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION, direction: 'ASC' }
+					{ property: CMDBuild.core.proxy.Constants.DESCRIPTION, direction: 'ASC' }
 				]
 			});
 		},
@@ -86,7 +86,7 @@
 					}
 				},
 				sorters: [
-					{ property: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION, direction: 'ASC' }
+					{ property: CMDBuild.core.proxy.Constants.DESCRIPTION, direction: 'ASC' }
 				]
 			});
 		},
@@ -96,9 +96,9 @@
 		 */
 		getSectionsStore: function(parameters) { // TODO real implementation
 			return Ext.create('Ext.data.ArrayStore', {
-				fields: [CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION, CMDBuild.core.proxy.CMProxyConstants.NAME],
+				fields: [CMDBuild.core.proxy.Constants.DESCRIPTION, CMDBuild.core.proxy.Constants.NAME],
 				data: [
-					['@@ Classes', CMDBuild.core.proxy.CMProxyConstants.CLASSES],
+					['@@ Classes', CMDBuild.core.proxy.Constants.CLASSES],
 					['@@ Domains', 'domains'], // TODO costants
 					['@@ Lookup', 'lookup'], // TODO costants
 					['@@ Menu', 'menu'], // TODO costants
@@ -107,7 +107,7 @@
 					['@@ Views', 'views'] // TODO costants
 				],
 				sorters: [
-					{ property: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION, direction: 'ASC' }
+					{ property: CMDBuild.core.proxy.Constants.DESCRIPTION, direction: 'ASC' }
 				]
 			});
 		},

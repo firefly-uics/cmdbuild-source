@@ -3,7 +3,7 @@
 	Ext.define('CMDBuild.core.proxy.Domain', {
 
 		requires: [
-			'CMDBuild.core.proxy.CMProxyConstants',
+			'CMDBuild.core.proxy.Constants',
 			'CMDBuild.core.proxy.Index'
 		],
 
@@ -30,7 +30,7 @@
 		 */
 		getCardinalityStore: function() {
 			return Ext.create('Ext.data.ArrayStore', {
-				fields: [CMDBuild.core.proxy.CMProxyConstants.NAME, CMDBuild.core.proxy.CMProxyConstants.VALUE],
+				fields: [CMDBuild.core.proxy.Constants.NAME, CMDBuild.core.proxy.Constants.VALUE],
 				data: [
 					['1:1', '1:1'],
 					['1:N', '1:N'],

@@ -3,7 +3,7 @@
 	Ext.define('CMDBuild.controller.accordion.Domain', {
 		extend: 'CMDBuild.controller.accordion.CMBaseAccordionController',
 
-		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+		requires: ['CMDBuild.core.proxy.Constants'],
 
 		/**
 		 * @cfg {CMDBuild.view.administration.accordion.Domain}
@@ -54,7 +54,7 @@
 		updateStore: function(domain) {
 			if (!Ext.isEmpty(domain)) {
 				this.accordion.updateStore();
-				this.accordion.selectNodeById(domain.get(CMDBuild.core.proxy.CMProxyConstants.ID));
+				this.accordion.selectNodeById(domain.get(CMDBuild.core.proxy.Constants.ID));
 			} else {
 				_warning('Cannot select domain, object is empty', this);
 			}

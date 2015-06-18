@@ -1,12 +1,12 @@
 (function() {
 
-	Ext.require('CMDBuild.core.proxy.CMProxyConstants');
+	Ext.require('CMDBuild.core.proxy.Constants');
 
 	Ext.define('CMDBuild.model.Lookup.typeComboStore', {
 		extend: 'Ext.data.Model',
 
 		fields: [
-			{ name: CMDBuild.core.proxy.CMProxyConstants.TYPE, type: 'string' }
+			{ name: CMDBuild.core.proxy.Constants.TYPE, type: 'string' }
 		]
 	});
 

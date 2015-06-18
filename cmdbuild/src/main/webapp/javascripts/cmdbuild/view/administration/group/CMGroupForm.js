@@ -6,7 +6,7 @@
 		extend: 'Ext.form.Panel',
 
 		requires: [
-			'CMDBuild.core.proxy.CMProxyConstants',
+			'CMDBuild.core.proxy.Constants',
 			// TODO: Require CMDBuild.ServiceProxy.group class
 		],
 
@@ -108,7 +108,7 @@
 			// END: Buttons configuration
 
 			this.groupName = Ext.create('Ext.form.field.Text', {
-				name: CMDBuild.core.proxy.CMProxyConstants.NAME,
+				name: CMDBuild.core.proxy.Constants.NAME,
 				fieldLabel: tr.group_name,
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
@@ -118,7 +118,7 @@
 			});
 
 			this.groupDescription = Ext.create('Ext.form.field.Text', {
-				name: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
+				name: CMDBuild.core.proxy.Constants.DESCRIPTION,
 				fieldLabel: tr.group_description,
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
@@ -126,12 +126,12 @@
 			});
 
 			this.groupType = Ext.create('Ext.form.field.ComboBox', {
-				name: CMDBuild.core.proxy.CMProxyConstants.TYPE,
+				name: CMDBuild.core.proxy.Constants.TYPE,
 				fieldLabel: CMDBuild.Translation.administration.modClass.attributeProperties.type,
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
-				valueField: CMDBuild.core.proxy.CMProxyConstants.VALUE,
-				displayField: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
+				valueField: CMDBuild.core.proxy.Constants.VALUE,
+				displayField: CMDBuild.core.proxy.Constants.DESCRIPTION,
 				editable: false,
 
 				store: CMDBuild.ServiceProxy.group.getGroupTypeStore(),
@@ -139,7 +139,7 @@
 			});
 
 			this.groupEmail = Ext.create('Ext.form.field.Text', {
-				name: CMDBuild.core.proxy.CMProxyConstants.EMAIL,
+				name: CMDBuild.core.proxy.Constants.EMAIL,
 				fieldLabel: tr.email,
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
@@ -148,19 +148,19 @@
 			});
 
 			this.activeCheck = Ext.create('Ext.ux.form.XCheckbox', {
-				name: CMDBuild.core.proxy.CMProxyConstants.IS_ACTIVE,
+				name: CMDBuild.core.proxy.Constants.IS_ACTIVE,
 				fieldLabel: tr.is_active,
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				checked: true
 			});
 
 			this.startingClass = Ext.create('CMDBuild.field.ErasableCombo', {
-				name: CMDBuild.core.proxy.CMProxyConstants.STARTING_CLASS,
+				name: CMDBuild.core.proxy.Constants.STARTING_CLASS,
 				fieldLabel: tr.starting_class,
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
-				valueField: CMDBuild.core.proxy.CMProxyConstants.ID,
-				displayField: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
+				valueField: CMDBuild.core.proxy.Constants.ID,
+				displayField: CMDBuild.core.proxy.Constants.DESCRIPTION,
 				editable: false,
 
 				store: CMDBuild.ServiceProxy.group.getStartingClassStore(),
@@ -192,7 +192,7 @@
 					{
 						xtype: 'toolbar',
 						dock: 'top',
-						itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_TOP,
+						itemId: CMDBuild.core.proxy.Constants.TOOLBAR_TOP,
 						items: this.cmTBar
 					}
 				],

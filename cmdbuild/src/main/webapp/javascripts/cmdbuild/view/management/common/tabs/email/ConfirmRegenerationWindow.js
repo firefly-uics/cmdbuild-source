@@ -4,7 +4,7 @@
 		extend: 'CMDBuild.core.PopupWindow',
 
 		requires: [
-			'CMDBuild.core.proxy.CMProxyConstants',
+			'CMDBuild.core.proxy.Constants',
 			'CMDBuild.model.common.tabs.email.Email'
 		],
 
@@ -50,7 +50,7 @@
 					{
 						text: CMDBuild.Translation.archivingDate,
 						sortable: true,
-						dataIndex: CMDBuild.core.proxy.CMProxyConstants.DATE,
+						dataIndex: CMDBuild.core.proxy.Constants.DATE,
 						flex: 1
 					},
 					{
@@ -63,13 +63,13 @@
 					{
 						text: CMDBuild.Translation.subject,
 						sortable: false,
-						dataIndex: CMDBuild.core.proxy.CMProxyConstants.SUBJECT,
+						dataIndex: CMDBuild.core.proxy.Constants.SUBJECT,
 						flex: 1
 					},
 					{
 						sortable: false,
 						scope: this,
-						dataIndex: CMDBuild.core.proxy.CMProxyConstants.BODY,
+						dataIndex: CMDBuild.core.proxy.Constants.BODY,
 						menuDisabled: true,
 						hideable: false,
 						renderer: 'stripTags',
@@ -97,7 +97,7 @@
 				dockedItems: [
 					Ext.create('Ext.toolbar.Toolbar', {
 						dock: 'bottom',
-						itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_BOTTOM,
+						itemId: CMDBuild.core.proxy.Constants.TOOLBAR_BOTTOM,
 						ui: 'footer',
 
 						layout: {
@@ -154,9 +154,9 @@
 			 */
 			addressRenderer: function(value, metadata, record) {
 				if (this.delegate.gridDelegate.recordIsReceived(record)) {
-					return record.get(CMDBuild.core.proxy.CMProxyConstants.FROM);
+					return record.get(CMDBuild.core.proxy.Constants.FROM);
 				} else {
-					return record.get(CMDBuild.core.proxy.CMProxyConstants.TO);
+					return record.get(CMDBuild.core.proxy.Constants.TO);
 				}
 			}
 	});

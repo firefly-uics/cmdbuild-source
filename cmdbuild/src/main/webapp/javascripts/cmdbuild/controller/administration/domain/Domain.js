@@ -4,7 +4,7 @@
 		extend: 'CMDBuild.controller.common.AbstractBasePanelController',
 
 		requires: [
-			'CMDBuild.core.proxy.CMProxyConstants',
+			'CMDBuild.core.proxy.Constants',
 			'CMDBuild.core.proxy.Domain'
 		],
 
@@ -125,9 +125,9 @@
 				});
 
 				if (Ext.isEmpty(this.selectedDomain)) {
-					data[CMDBuild.core.proxy.CMProxyConstants.ID] = -1;
+					data[CMDBuild.core.proxy.Constants.ID] = -1;
 				} else {
-					data[CMDBuild.core.proxy.CMProxyConstants.ID] = this.selectedDomain.get(CMDBuild.core.proxy.CMProxyConstants.ID);
+					data[CMDBuild.core.proxy.Constants.ID] = this.selectedDomain.get(CMDBuild.core.proxy.Constants.ID);
 
 					data['disabled1'] = Ext.encode(originDisabledClasses);
 					data['disabled2'] = Ext.encode(destinationDisabledClasses);
@@ -154,11 +154,11 @@
 		 */
 		onViewOnFront: function(parameters) {
 			if (!Ext.isEmpty(parameters)) {
-				this.selectedDomain = _CMCache.getDomainById(parameters.get(CMDBuild.core.proxy.CMProxyConstants.ID)); // TODO: use proxy to read domain
+				this.selectedDomain = _CMCache.getDomainById(parameters.get(CMDBuild.core.proxy.Constants.ID)); // TODO: use proxy to read domain
 
 				this.cmfg('onDomainSelected');
 
-				this.setViewTitle(parameters.get(CMDBuild.core.proxy.CMProxyConstants.TEXT));
+				this.setViewTitle(parameters.get(CMDBuild.core.proxy.Constants.TEXT));
 
 				if (Ext.isEmpty(this.view.tabPanel.getActiveTab()))
 					this.view.tabPanel.setActiveTab(0);
@@ -168,7 +168,7 @@
 		removeItem: function() {
 			if (!Ext.isEmpty(this.selectedDomain)) {
 				var params = {};
-				params[CMDBuild.core.proxy.CMProxyConstants.DOMAIN_NAME] = this.selectedDomain.get(CMDBuild.core.proxy.CMProxyConstants.NAME);
+				params[CMDBuild.core.proxy.Constants.DOMAIN_NAME] = this.selectedDomain.get(CMDBuild.core.proxy.Constants.NAME);
 
 				CMDBuild.core.proxy.Domain.remove({
 					params: params,
@@ -179,7 +179,7 @@
 						this.controllerProperties.getView().setDisabledModify(true);
 
 						// TODO: to delete when old cache system will be disabled
-						_CMCache.onDomainDeleted(this.selectedDomain.get(CMDBuild.core.proxy.CMProxyConstants.ID));
+						_CMCache.onDomainDeleted(this.selectedDomain.get(CMDBuild.core.proxy.Constants.ID));
 					}
 				});
 			}

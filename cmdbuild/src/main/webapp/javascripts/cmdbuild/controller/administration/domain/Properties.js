@@ -4,7 +4,7 @@
 		extend: 'CMDBuild.controller.common.AbstractController',
 
 		requires: [
-			'CMDBuild.core.proxy.CMProxyConstants',
+			'CMDBuild.core.proxy.Constants',
 			'CMDBuild.core.proxy.Domain'
 		],
 
@@ -107,10 +107,10 @@
 			var selectedDomain = this.cmfg('selectedDomainGet');
 
 			if (!Ext.isEmpty(selectedDomain)) {
-				this.view.domainDescription.translationsKeyName = selectedDomain.get(CMDBuild.core.proxy.CMProxyConstants.NAME);
-				this.view.directDescription.translationsKeyName = selectedDomain.get(CMDBuild.core.proxy.CMProxyConstants.NAME);
-				this.view.inverseDescription.translationsKeyName = selectedDomain.get(CMDBuild.core.proxy.CMProxyConstants.NAME);
-				this.view.masterDetailLabel.translationsKeyName = selectedDomain.get(CMDBuild.core.proxy.CMProxyConstants.NAME);
+				this.view.domainDescription.translationsKeyName = selectedDomain.get(CMDBuild.core.proxy.Constants.NAME);
+				this.view.directDescription.translationsKeyName = selectedDomain.get(CMDBuild.core.proxy.Constants.NAME);
+				this.view.inverseDescription.translationsKeyName = selectedDomain.get(CMDBuild.core.proxy.Constants.NAME);
+				this.view.masterDetailLabel.translationsKeyName = selectedDomain.get(CMDBuild.core.proxy.Constants.NAME);
 
 				this.view.reset();
 				this.view.setDisabledModify(true);

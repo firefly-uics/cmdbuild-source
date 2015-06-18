@@ -4,7 +4,7 @@
 		extend: 'Ext.form.field.ComboBox',
 
 		requires: [
-			'CMDBuild.core.proxy.CMProxyConstants',
+			'CMDBuild.core.proxy.Constants',
 			'CMDBuild.core.proxy.email.Accounts'
 		],
 
@@ -14,10 +14,10 @@
 		delegate: undefined,
 
 		fieldLabel: CMDBuild.Translation.administration.tasks.notificationForm.account,
-		name: CMDBuild.core.proxy.CMProxyConstants.NOTIFICATION_EMAIL_ACCOUNT,
+		name: CMDBuild.core.proxy.Constants.NOTIFICATION_EMAIL_ACCOUNT,
 
-		valueField: CMDBuild.core.proxy.CMProxyConstants.NAME,
-		displayField: CMDBuild.core.proxy.CMProxyConstants.NAME,
+		valueField: CMDBuild.core.proxy.Constants.NAME,
+		displayField: CMDBuild.core.proxy.Constants.NAME,
 		labelWidth: CMDBuild.LABEL_WIDTH,
 		maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
 		forceSelection: true,

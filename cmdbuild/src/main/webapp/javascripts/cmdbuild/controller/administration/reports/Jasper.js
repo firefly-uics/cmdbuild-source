@@ -5,7 +5,7 @@
 
 		requires: [
 			'CMDBuild.core.Message',
-			'CMDBuild.core.proxy.CMProxyConstants',
+			'CMDBuild.core.proxy.Constants',
 			'CMDBuild.core.proxy.Index',
 			'CMDBuild.core.proxy.reports.Jasper',
 			'CMDBuild.model.reports.Grid'
@@ -140,14 +140,14 @@
 						frame: false,
 						readOnly: true,
 
-						value: record.get(CMDBuild.core.proxy.CMProxyConstants.QUERY)
+						value: record.get(CMDBuild.core.proxy.Constants.QUERY)
 					})
 				],
 
 				dockedItems: [
 					Ext.create('Ext.toolbar.Toolbar', {
 						dock: 'bottom',
-						itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_BOTTOM,
+						itemId: CMDBuild.core.proxy.Constants.TOOLBAR_BOTTOM,
 						ui: 'footer',
 
 						layout: {
@@ -175,16 +175,16 @@
 		 */
 		onReportsJasperGenerateZipButtonClick: function(record) {
 			var params = {};
-			params[CMDBuild.core.proxy.CMProxyConstants.ID] = record.get(CMDBuild.core.proxy.CMProxyConstants.ID);
-			params[CMDBuild.core.proxy.CMProxyConstants.TYPE] = record.get(CMDBuild.core.proxy.CMProxyConstants.TYPE);
-			params[CMDBuild.core.proxy.CMProxyConstants.EXTENSION] = CMDBuild.core.proxy.CMProxyConstants.ZIP;
+			params[CMDBuild.core.proxy.Constants.ID] = record.get(CMDBuild.core.proxy.Constants.ID);
+			params[CMDBuild.core.proxy.Constants.TYPE] = record.get(CMDBuild.core.proxy.Constants.TYPE);
+			params[CMDBuild.core.proxy.Constants.EXTENSION] = CMDBuild.core.proxy.Constants.ZIP;
 
 			CMDBuild.core.proxy.reports.Jasper.create({
 				params: params,
 				scope: this,
 				success: function(result, options, decodedResult) {
 					params = {};
-					params[CMDBuild.core.proxy.CMProxyConstants.FORCE_DOWNLOAD_PARAM_KEY] = true;
+					params[CMDBuild.core.proxy.Constants.FORCE_DOWNLOAD_PARAM_KEY] = true;
 
 					var form = Ext.create('Ext.form.Panel', {
 						standardSubmit: true,
@@ -231,7 +231,7 @@
 			this.form.reset();
 
 			// Step 1
-			this.form.step1Panel.description.translationsKeyName = this.selectedReport.get(CMDBuild.core.proxy.CMProxyConstants.TITLE);
+			this.form.step1Panel.description.translationsKeyName = this.selectedReport.get(CMDBuild.core.proxy.Constants.TITLE);
 			this.form.step1Panel.fileField.allowBlank = true; // If we edit report file upload is not mandatory
 
 			// Step 2
@@ -246,8 +246,8 @@
 		onReportsJasperSaveButtonClick: function() {
 			if (this.form.getLayout().getActiveItem() == this.form.step1Panel) { // We are on step1
 				var params = {};
-				params[CMDBuild.core.proxy.CMProxyConstants.NAME] = this.form.step1Panel.name.getValue(); // TODO: needed a refactor because i read a title parameter but i write as name
-				params[CMDBuild.core.proxy.CMProxyConstants.REPORT_ID] = this.form.step1Panel.reportId.getValue(); // TODO: needed a refactor because i read a id parameter but i write as reportId
+				params[CMDBuild.core.proxy.Constants.NAME] = this.form.step1Panel.name.getValue(); // TODO: needed a refactor because i read a title parameter but i write as name
+				params[CMDBuild.core.proxy.Constants.REPORT_ID] = this.form.step1Panel.reportId.getValue(); // TODO: needed a refactor because i read a id parameter but i write as reportId
 
 				CMDBuild.LoadMask.get().show();
 				CMDBuild.core.proxy.reports.Jasper.analize({
@@ -286,7 +286,7 @@
 		removeItem: function() {
 			if (!Ext.isEmpty(this.selectedReport)) {
 				var params = {};
-				params[CMDBuild.core.proxy.CMProxyConstants.ID] = this.selectedReport.get(CMDBuild.core.proxy.CMProxyConstants.ID);
+				params[CMDBuild.core.proxy.Constants.ID] = this.selectedReport.get(CMDBuild.core.proxy.Constants.ID);
 
 				CMDBuild.core.proxy.reports.Jasper.remove({
 					params: params,
@@ -352,7 +352,7 @@
 						});
 
 						var rowIndex = this.find(
-							CMDBuild.core.proxy.CMProxyConstants.NAME,
+							CMDBuild.core.proxy.Constants.NAME,
 							me.form.step1Panel.name.getValue()
 						);
 
@@ -415,11 +415,11 @@
 			buildFields: function(refer, namePrefix) {
 				if (!Ext.isEmpty(refer) && Ext.isArray(refer)) {
 					Ext.Array.forEach(refer, function(image, i, allImages) {
-						if (!Ext.isEmpty(image[CMDBuild.core.proxy.CMProxyConstants.NAME])) {
+						if (!Ext.isEmpty(image[CMDBuild.core.proxy.Constants.NAME])) {
 							this.form.step2Panel.add(
 								Ext.create('Ext.form.field.File', {
 									name: namePrefix + i,
-									fieldLabel: image[CMDBuild.core.proxy.CMProxyConstants.NAME],
+									fieldLabel: image[CMDBuild.core.proxy.Constants.NAME],
 									labelWidth: CMDBuild.LABEL_WIDTH,
 									maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
 									allowBlank: true

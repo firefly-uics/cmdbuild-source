@@ -4,7 +4,7 @@
 		extend: 'Ext.tree.Panel',
 
 		requires: [
-			'CMDBuild.core.proxy.CMProxyConstants'
+			'CMDBuild.core.proxy.Constants'
 		],
 
 		/**

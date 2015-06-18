@@ -35,8 +35,8 @@
 					this.loadFields(this.configuration.entryType, function() {
 						if (me.configuration.card) {
 							var params = {};
-							params[CMDBuild.core.proxy.CMProxyConstants.CARD_ID] = me.configuration.card;
-							params[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME] = _CMCache.getEntryTypeNameById(me.configuration.entryType);
+							params[CMDBuild.core.proxy.Constants.CARD_ID] = me.configuration.card;
+							params[CMDBuild.core.proxy.Constants.CLASS_NAME] = _CMCache.getEntryTypeNameById(me.configuration.entryType);
 
 							me.loadCard(true, params, function(card) {
 								me.onCardLoaded(me, card);
@@ -99,7 +99,7 @@
 		onEntryTypeSelected: function(entryType) {
 			this.callParent(arguments);
 
-			this.view.setTitle(this.entryType.get(CMDBuild.core.proxy.CMProxyConstants.TEXT));
+			this.view.setTitle(this.entryType.get(CMDBuild.core.proxy.Constants.TEXT));
 		},
 
 		/**
@@ -109,8 +109,8 @@
 		 */
 		buildSaveParams: function() {
 			var params = {};
-			params[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME] = this.entryType.getName();
-			params[CMDBuild.core.proxy.CMProxyConstants.CARD_ID] = this.card ? this.card.get('Id') : -1;
+			params[CMDBuild.core.proxy.Constants.CLASS_NAME] = this.entryType.getName();
+			params[CMDBuild.core.proxy.Constants.CARD_ID] = this.card ? this.card.get('Id') : -1;
 
 			return params;
 		},
@@ -125,7 +125,7 @@
 		onSaveSuccess: function(form, action) {
 			CMDBuild.LoadMask.get().hide();
 
-			_CMCache.onClassContentChanged(this.entryType.get(CMDBuild.core.proxy.CMProxyConstants.ID));
+			_CMCache.onClassContentChanged(this.entryType.get(CMDBuild.core.proxy.Constants.ID));
 
 			this.view.destroy();
 		},

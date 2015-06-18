@@ -4,7 +4,7 @@
 		extend: 'CMDBuild.controller.common.CMBasePanelController',
 
 		requires: [
-			'CMDBuild.core.proxy.CMProxyConstants'
+			'CMDBuild.core.proxy.Constants'
 		],
 
 		/**
@@ -51,7 +51,7 @@
 			if (!Ext.Object.isEmpty(parameters)) {
 				this.view.removeAll(true);
 
-				switch(parameters.get(CMDBuild.core.proxy.CMProxyConstants.ID)) {
+				switch(parameters.get(CMDBuild.core.proxy.Constants.ID)) {
 					case 'queue': {
 						this.sectionController = Ext.create('CMDBuild.controller.administration.email.Queue', { parentDelegate: this });
 					} break;
@@ -68,7 +68,7 @@
 
 				this.view.add(this.sectionController.getView());
 
-				this.setViewTitle(parameters.get(CMDBuild.core.proxy.CMProxyConstants.TEXT));
+				this.setViewTitle(parameters.get(CMDBuild.core.proxy.Constants.TEXT));
 
 				if (!Ext.isEmpty(this.sectionController) && Ext.isFunction(this.sectionController.onViewOnFront))
 					this.sectionController.onViewOnFront();
