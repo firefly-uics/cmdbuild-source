@@ -65,7 +65,9 @@
 						if(decodedResponse.filled) { // Report with no parameters
 							this.showReport(forceDownload);
 						} else { // Show parameters window
-							if (Ext.isIE) // FIX: in IE PDF is painted on top of the regular page content so remove it before display parameter window
+							// FIX: in IE PDF is painted on top of the regular page content so remove it before display parameter window
+							// Workaround to detect IE 11 witch is not supported from Ext 4.2
+							if (Ext.isIE || !!navigator.userAgent.match(/Trident.*rv[ :]*11\./))
 								this.view.removeAll();
 
 							Ext.create('CMDBuild.controller.management.report.Parameters', {
