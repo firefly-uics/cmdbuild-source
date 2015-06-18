@@ -128,6 +128,7 @@
 		 */
 		onReportsJasperGenerateSqlButtonClick: function(record) {
 			var sqlWindow = Ext.create('CMDBuild.core.PopupWindow', {
+				autoScroll: true,
 				border: false,
 				frame: true,
 				title: CMDBuild.Translation.sql,

@@ -18,6 +18,7 @@
 		 */
 		grid: undefined,
 
+		autoScroll: true,
 		title: CMDBuild.Translation.editMetadata,
 
 		initComponent: function() {

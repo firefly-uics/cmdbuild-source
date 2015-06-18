@@ -15,6 +15,7 @@
 		 */
 		form: undefined,
 
+		autoScroll: true,
 		autoHeight: true,
 		autoWidth: true,
 		border: false,

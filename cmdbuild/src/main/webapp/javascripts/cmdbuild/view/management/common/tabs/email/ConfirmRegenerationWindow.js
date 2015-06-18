@@ -28,10 +28,11 @@
 		 */
 		grid: undefined,
 
-		buttonAlign: 'center',
+		autoScroll: true,
 		closeAction: 'hide',
-		layout: 'border',
 		title: CMDBuild.Translation.confirmRegeneration,
+
+		layout: 'border',
 
 		initComponent: function() {
 			this.grid = Ext.create('Ext.grid.Panel', {

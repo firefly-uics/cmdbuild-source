@@ -22,7 +22,6 @@
 		 */
 		defaultSize: 0.80,
 
-		autoScroll: true,
 		buttonAlign: 'center',
 		constrain: true,
 		layout: 'fit',
