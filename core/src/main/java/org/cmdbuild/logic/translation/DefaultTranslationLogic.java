@@ -5,6 +5,7 @@ import static com.google.common.collect.Maps.newLinkedHashMap;
 import static com.google.common.collect.Maps.uniqueIndex;
 import static java.lang.String.format;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 
 import java.util.Collection;
 import java.util.Map;
@@ -176,6 +177,66 @@ public class DefaultTranslationLogic implements TranslationLogic {
 
 	}
 
+	private static final class MustBeCreated implements Predicate<Translation> {
+
+		private final Iterable<Translation> oldTranslations;
+
+		private static Predicate<Translation> withOldTranslations(final Iterable<Translation> oldTranslations) {
+			return new MustBeCreated(oldTranslations);
+		}
+
+		private MustBeCreated(final Iterable<Translation> oldTranslations) {
+			this.oldTranslations = oldTranslations;
+		}
+
+		@Override
+		public boolean apply(final Translation input) {
+			final boolean toCreate = !isBlank(input.getValue())
+					&& !ContainedInTraslations.containedIn(oldTranslations).apply(input);
+			return toCreate;
+		}
+	}
+
+	private static final class MustBeUpdated implements Predicate<Translation> {
+
+		private final Iterable<Translation> oldTranslations;
+
+		private static Predicate<Translation> withOldTranslations(final Iterable<Translation> oldTranslations) {
+			return new MustBeUpdated(oldTranslations);
+		}
+
+		private MustBeUpdated(final Iterable<Translation> oldTranslations) {
+			this.oldTranslations = oldTranslations;
+		}
+
+		@Override
+		public boolean apply(final Translation input) {
+			final boolean toCreate = !isBlank(input.getValue())
+					&& ContainedInTraslations.containedIn(oldTranslations).apply(input);
+			return toCreate;
+		}
+	}
+
+	private static final class MustBeDeleted implements Predicate<Translation> {
+
+		private final Iterable<Translation> newTranslations;
+
+		private static Predicate<Translation> withNewTranslations(final Iterable<Translation> newTranslations) {
+			return new MustBeUpdated(newTranslations);
+		}
+
+		private MustBeDeleted(final Iterable<Translation> newTranslations) {
+			this.newTranslations = newTranslations;
+		}
+
+		@Override
+		public boolean apply(final Translation input) {
+			final boolean toCreate = isBlank(input.getValue())
+					&& ContainedInTraslations.containedIn(newTranslations).apply(input);
+			return toCreate;
+		}
+	}
+
 	private static final class ContainedInTraslations implements Predicate<Translation> {
 
 		public static final ContainedInTraslations containedIn(final Iterable<? extends Translation> translations) {
@@ -253,16 +314,32 @@ public class DefaultTranslationLogic implements TranslationLogic {
 	public void update(final TranslationObject translationObject) {
 		// TODO element, language and value must not be null
 		final Element element = ElementCreator.of(translationObject).create();
-		final Collection<Translation> translations = extractTranslations(translationObject, element);
-		final Map<String, Translation> translationsByLang = uniqueIndex(translations, TRANSLATION_TO_LANG);
+
+		final Collection<Translation> newTranslations = extractTranslations(translationObject, element);
+		final Map<String, Translation> translationsByLang = uniqueIndex(newTranslations, TRANSLATION_TO_LANG);
 		final Store<Translation> store = storeFactory.create(element);
-		final Iterable<Translation> updateable = from(store.readAll()) //
-				.filter(ContainedInTraslations.containedIn(translations));
-		for (final Translation translationOnStore : updateable) {
+		final Collection<Translation> oldTranslations = store.readAll();
+
+		final Iterable<Translation> toCreate = from(newTranslations).filter(
+				MustBeCreated.withOldTranslations(oldTranslations));
+		final Iterable<Translation> toDelete = from(oldTranslations).filter(
+				MustBeDeleted.withNewTranslations(newTranslations));
+		final Iterable<Translation> toUpdate = from(newTranslations).filter(
+				MustBeUpdated.withOldTranslations(oldTranslations));
+
+		for (final Translation translation : toCreate) {
+			store.create(translation);
+		}
+
+		for (final Translation translationOnStore : toUpdate) {
 			final String lang = translationOnStore.getLang();
 			final Translation translationFromClient = translationsByLang.get(lang);
 			translationOnStore.setValue(translationFromClient.getValue());
 			store.update(translationOnStore);
+		}
+
+		for (final Translation translation : toDelete) {
+			store.delete(translation);
 		}
 	}
 

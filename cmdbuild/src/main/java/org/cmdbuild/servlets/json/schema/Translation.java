@@ -25,29 +25,11 @@ import org.cmdbuild.servlets.utils.Parameter;
 import org.json.JSONObject;
 
 public class Translation extends JSONBaseWithSpringContext {
-	
+
 	private static final String TYPE = "type";
 	private static final String IDENTIFIER = "identifier";
 	private static final String OWNER = "owner";
-	
-	@JSONExported
-	@Admin
-	public void create(
-			@Parameter(value = TYPE) final String type, //
-			@Parameter(value = OWNER, required = false) final String owner, //
-			@Parameter(value = IDENTIFIER) final String identifier, //
-			@Parameter(value = FIELD) final String field, //
-			@Parameter(value = TRANSLATIONS) final JSONObject translations //
-			){
-		final Converter converter = createConverter(type, field);
-		final TranslationObject translationObject = converter //
-				.withOwner(owner) //
-				.withIdentifier(identifier) //
-				.withTranslations(toMap(translations)) //
-				.create();
-		translationLogic().create(translationObject);
-	}
-	
+
 	@JSONExported
 	@Admin
 	public JsonResponse read( //
@@ -57,14 +39,13 @@ public class Translation extends JSONBaseWithSpringContext {
 			@Parameter(value = FIELD) final String field //
 	) {
 		final Converter converter = createConverter(type, field);
-		final TranslationObject translationObject = converter
-				.withOwner(owner) //
+		final TranslationObject translationObject = converter.withOwner(owner) //
 				.withIdentifier(identifier) //
 				.create();
 		final Map<String, String> translations = translationLogic().readAll(translationObject);
 		return JsonResponse.success(translations);
 	}
-	
+
 	@JSONExported
 	@Admin
 	public void update( //
@@ -82,24 +63,6 @@ public class Translation extends JSONBaseWithSpringContext {
 				.create();
 		translationLogic().update(translationObject);
 	}
-	
-	@JSONExported
-	@Admin
-	public void delete( //
-			@Parameter(value = TYPE) final String type, //
-			@Parameter(value = OWNER, required = false) final String owner, //
-			@Parameter(value = IDENTIFIER) final String identifier, //
-			@Parameter(value = FIELD) final String field, //
-			@Parameter(value = TRANSLATIONS) final JSONObject translations //
-	) {
-		final Converter converter = createConverter(type, field);
-		final TranslationObject translationObject = converter //
-				.withOwner(owner) //
-				.withIdentifier(identifier) //
-				.withTranslations(toMap(translations)) //
-				.create();
-		translationLogic().delete(translationObject);
-	}
 
 	private Converter createConverter(final String type, final String field) {
 		final TranslatableElement element = TranslatableElement.of(type);
@@ -107,100 +70,100 @@ public class Translation extends JSONBaseWithSpringContext {
 		Validate.isTrue(converter.isValid());
 		return converter;
 	}
-	
-	private enum TranslatableElement{
-		
-		CLASS("class"){
+
+	private enum TranslatableElement {
+
+		CLASS("class") {
 			@Override
-			Converter createConverter(String field) {
+			Converter createConverter(final String field) {
 				return ClassConverter.of(field);
 			}
 		},
-		CLASSATTRIBUTE("attributeclass"){
+		CLASSATTRIBUTE("attributeclass") {
 			@Override
-			Converter createConverter(String field) {
+			Converter createConverter(final String field) {
 				return AttributeConverter.of(AttributeConverter.forClass(), field);
 			}
 		},
-		DOMAIN("domain"){
+		DOMAIN("domain") {
 			@Override
-			Converter createConverter(String field) {
+			Converter createConverter(final String field) {
 				return DomainConverter.of(field);
 			}
 		},
-		DOMAINATTRIBUTE("attributedomain"){
+		DOMAINATTRIBUTE("attributedomain") {
 			@Override
-			Converter createConverter(String field) {
+			Converter createConverter(final String field) {
 				return AttributeConverter.of(AttributeConverter.forDomain(), field);
 			}
 		},
-		FILTER("filter"){
+		FILTER("filter") {
 			@Override
-			Converter createConverter(String field) {
+			Converter createConverter(final String field) {
 				return FilterConverter.of(field);
 			}
 		},
-		INSTANCE_NAME("instancename"){
+		INSTANCE_NAME("instancename") {
 			@Override
-			Converter createConverter(String field) {
+			Converter createConverter(final String field) {
 				return InstanceConverter.of(field);
 			}
 		},
-		LOOKUP_VALUE("lookupvalue"){
+		LOOKUP_VALUE("lookupvalue") {
 			@Override
-			Converter createConverter(String field) {
+			Converter createConverter(final String field) {
 				return LookupConverter.of(field);
 			}
 		},
-		MENU_ITEM("menuitem"){
-			
+		MENU_ITEM("menuitem") {
+
 			@Override
-			Converter createConverter(String field) {
+			Converter createConverter(final String field) {
 				return MenuItemConverter.of(field);
 			}
-			
+
 		},
-		REPORT("report"){
-			
+		REPORT("report") {
+
 			@Override
-			Converter createConverter(String field) {
+			Converter createConverter(final String field) {
 				return ReportConverter.of(field);
 			}
 		},
-		VIEW("view"){
-			
+		VIEW("view") {
+
 			@Override
-			Converter createConverter(String field) {
+			Converter createConverter(final String field) {
 				return ViewConverter.of(field);
 			}
-			
+
 		},
-		WIDGET("classwidget"){
-			
+		WIDGET("classwidget") {
+
 			@Override
-			Converter createConverter(String field) {
+			Converter createConverter(final String field) {
 				return WidgetConverter.of(field);
 			}
-			
-		}, 
-		
-		UNDEFINED("undefined"){
-			
+
+		},
+
+		UNDEFINED("undefined") {
+
 			@Override
-			Converter createConverter(String field) {
+			Converter createConverter(final String field) {
 				throw new UnsupportedOperationException();
 			}
-			
-		};
-		
-		private String type;
 
-		private TranslatableElement(String type){
+		};
+
+		private final String type;
+
+		private TranslatableElement(final String type) {
 			this.type = type;
 		};
-		
+
 		abstract Converter createConverter(String field);
-		
+
 		private static TranslatableElement of(final String type) {
 			for (final TranslatableElement element : values()) {
 				if (element.type.equalsIgnoreCase(type)) {
@@ -210,5 +173,5 @@ public class Translation extends JSONBaseWithSpringContext {
 			return UNDEFINED;
 		}
 
-	}; 
+	};
 }
