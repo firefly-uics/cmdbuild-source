@@ -15,6 +15,7 @@
 		 */
 		baseTitle: CMDBuild.Translation.report,
 
+		autoScroll: true,
 		border: true,
 		frame: false,
 		layout: 'fit',

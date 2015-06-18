@@ -25,6 +25,7 @@
 		 */
 		form: undefined,
 
+		autoScroll: true,
 		title: CMDBuild.Translation.viewEmail,
 
 		layout: 'border',

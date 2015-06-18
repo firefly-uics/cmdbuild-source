@@ -8,6 +8,7 @@
 		delegate: undefined, // set on creation
 		attachmentRecord: undefined, // could be set on creation
 
+		autoScroll: true,
 		title: CMDBuild.Translation.management.modcard.add_attachment_window.window_title,
 
 		initComponent: function() {

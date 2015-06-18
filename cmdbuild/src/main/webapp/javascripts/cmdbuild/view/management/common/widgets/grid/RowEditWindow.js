@@ -15,6 +15,7 @@
 		 */
 		form: undefined,
 
+		autoScroll: true,
 		border: false,
 		defaultSizeW: 0.90,
 		defaultSizeH: 0.80,
