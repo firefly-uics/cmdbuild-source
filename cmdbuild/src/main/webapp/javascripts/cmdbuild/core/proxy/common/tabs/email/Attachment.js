@@ -4,7 +4,7 @@
 
 		requires: [
 			'CMDBuild.core.proxy.CMProxyConstants',
-			'CMDBuild.core.proxy.CMProxyUrlIndex'
+			'CMDBuild.core.proxy.Index'
 		],
 
 		singleton: true,
@@ -15,7 +15,7 @@
 		copy: function(parameters) {
 			CMDBuild.Ajax.request({
 				method: 'POST',
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.email.attachment.copy,
+				url: CMDBuild.core.proxy.Index.email.attachment.copy,
 				params: parameters.params,
 				scope: parameters.scope || this,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : false,
@@ -33,7 +33,7 @@
 
 			var form = Ext.create('Ext.form.Panel', {
 				standardSubmit: true,
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.email.attachment.download
+				url: CMDBuild.core.proxy.Index.email.attachment.download
 			});
 
 			form.submit({
@@ -52,7 +52,7 @@
 		getAll: function(parameters) {
 			CMDBuild.Ajax.request({
 				method: 'POST',
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.email.attachment.readAll,
+				url: CMDBuild.core.proxy.Index.email.attachment.readAll,
 				params: parameters.params,
 				scope: parameters.scope || this,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : false,
@@ -68,7 +68,7 @@
 		remove: function(parameters) {
 			CMDBuild.Ajax.request({
 				method: 'POST',
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.email.attachment.remove,
+				url: CMDBuild.core.proxy.Index.email.attachment.remove,
 				params: parameters.params,
 				scope: parameters.scope || this,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : false,
@@ -84,7 +84,7 @@
 		upload: function(parameters) {
 			parameters.form.submit({
 				method: 'POST',
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.email.attachment.upload,
+				url: CMDBuild.core.proxy.Index.email.attachment.upload,
 				params: parameters.params,
 				scope: parameters.scope || this,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : false,

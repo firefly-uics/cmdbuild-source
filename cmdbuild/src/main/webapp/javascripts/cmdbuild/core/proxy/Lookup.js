@@ -19,7 +19,7 @@
 
 		requires: [
 			'CMDBuild.core.proxy.CMProxyConstants',
-			'CMDBuild.core.proxy.CMProxyUrlIndex',
+			'CMDBuild.core.proxy.Index',
 			'CMDBuild.model.Lookup'
 		],
 
@@ -31,7 +31,7 @@
 		get: function(parameters) {
 			CMDBuild.Ajax.request({
 				method: 'POST',
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.lookup.getList,
+				url: CMDBuild.core.proxy.Index.lookup.getList,
 				headers: parameters.headers,
 				params: parameters.params,
 				scope: parameters.scope || this,
@@ -53,7 +53,7 @@
 				model: 'CMDBuild.model.Lookup.fieldStore',
 				proxy: {
 					type: 'ajax',
-					url: CMDBuild.core.proxy.CMProxyUrlIndex.lookup.getList,
+					url: CMDBuild.core.proxy.Index.lookup.getList,
 					reader: {
 						type: 'json',
 						root: 'rows'
@@ -81,7 +81,7 @@
 				model: 'CMDBuild.model.Lookup.gridStore',
 				proxy: {
 					type: 'ajax',
-					url: CMDBuild.core.proxy.CMProxyUrlIndex.lookup.getList,
+					url: CMDBuild.core.proxy.Index.lookup.getList,
 					reader: {
 						type: 'json',
 						root: 'rows'
@@ -101,7 +101,7 @@
 		readAll: function(parameters) {
 			CMDBuild.Ajax.request({
 				method: 'GET',
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.lookup.tree,
+				url: CMDBuild.core.proxy.Index.lookup.tree,
 				headers: parameters.headers,
 				params: parameters.params,
 				scope: parameters.scope || this,
@@ -118,7 +118,7 @@
 		save: function(parameters) {
 			CMDBuild.Ajax.request({
 				method: 'POST',
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.lookup.save,
+				url: CMDBuild.core.proxy.Index.lookup.save,
 				headers: parameters.headers,
 				params: parameters.params,
 				scope: parameters.scope || this,
@@ -135,7 +135,7 @@
 		saveType: function(parameters) {
 			CMDBuild.Ajax.request({
 				method: 'POST',
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.lookup.saveType,
+				url: CMDBuild.core.proxy.Index.lookup.saveType,
 				headers: parameters.headers,
 				params: parameters.params,
 				scope: parameters.scope || this,
@@ -152,7 +152,7 @@
 		setDisabled: function(parameters, disable) {
 			CMDBuild.Ajax.request({
 				method: 'POST',
-				url: disable ? CMDBuild.core.proxy.CMProxyUrlIndex.lookup.disable : CMDBuild.core.proxy.CMProxyUrlIndex.lookup.enable,
+				url: disable ? CMDBuild.core.proxy.Index.lookup.disable : CMDBuild.core.proxy.Index.lookup.enable,
 				headers: parameters.headers,
 				params: parameters.params,
 				scope: parameters.scope || this,

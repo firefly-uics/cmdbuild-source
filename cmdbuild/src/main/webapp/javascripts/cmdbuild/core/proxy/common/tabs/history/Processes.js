@@ -49,7 +49,7 @@
 				model: 'CMDBuild.model.common.tabs.history.processes.CardRecord',
 				proxy: {
 					type: 'ajax',
-					url: CMDBuild.core.proxy.CMProxyUrlIndex.history.processes.getProcessHistory,
+					url: CMDBuild.core.proxy.Index.history.processes.getProcessHistory,
 					reader: {
 						type: 'json',
 						root: 'response.elements'

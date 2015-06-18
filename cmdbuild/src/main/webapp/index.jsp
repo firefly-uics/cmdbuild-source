@@ -40,7 +40,7 @@
 		<script type="text/javascript" src="javascripts/cmdbuild/core/PopupWindow.js"></script>
 
 		<script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxyConstants.js"></script>
-		<script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxyUrlIndex.js"></script>
+		<script type="text/javascript" src="javascripts/cmdbuild/core/proxy/Index.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxy.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/core/proxy/Configuration.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxySetup.js"></script>

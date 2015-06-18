@@ -4,7 +4,7 @@
 
 		requires: [
 			'CMDBuild.core.proxy.CMProxyConstants',
-			'CMDBuild.core.proxy.CMProxyUrlIndex',
+			'CMDBuild.core.proxy.Index',
 			'CMDBuild.model.DataViews'
 		],
 
@@ -16,7 +16,7 @@
 		create: function(parameters) {
 			CMDBuild.Ajax.request({
 				method: 'POST',
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.dataViews.sql.create,
+				url: CMDBuild.core.proxy.Index.dataViews.sql.create,
 				params: parameters.params,
 				scope: parameters.scope || this,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
@@ -40,7 +40,7 @@
 				model: 'CMDBuild.model.DataViews.sql',
 				proxy: {
 					type: 'ajax',
-					url: CMDBuild.core.proxy.CMProxyUrlIndex.dataViews.sql.read, // TODO: check if rename when delete all old implementation
+					url: CMDBuild.core.proxy.Index.dataViews.sql.read, // TODO: check if rename when delete all old implementation
 					reader: {
 						type: 'json',
 						root: 'views'
@@ -63,7 +63,7 @@
 		remove: function(parameters) {
 			CMDBuild.Ajax.request({
 				method: 'POST',
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.dataViews.sql.remove,
+				url: CMDBuild.core.proxy.Index.dataViews.sql.remove,
 				params: parameters.params,
 				scope: parameters.scope || this,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
@@ -79,7 +79,7 @@
 		update: function(parameters) {
 			CMDBuild.Ajax.request({
 				method: 'POST',
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.dataViews.sql.update,
+				url: CMDBuild.core.proxy.Index.dataViews.sql.update,
 				params: parameters.params,
 				scope: parameters.scope || this,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,

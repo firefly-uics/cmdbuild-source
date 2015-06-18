@@ -4,7 +4,7 @@
 
 		requires: [
 			'CMDBuild.core.proxy.CMProxyConstants',
-			'CMDBuild.core.proxy.CMProxyUrlIndex',
+			'CMDBuild.core.proxy.Index',
 			'CMDBuild.core.proxy.Configuration',
 			'CMDBuild.model.localizations.Localization'
 		],
@@ -17,7 +17,7 @@
 		create: function(parameters) { // TODO delete for a future implementation of only update function
 			CMDBuild.Ajax.request({
 				method: 'POST',
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.localizations.translation.create,
+				url: CMDBuild.core.proxy.Index.localizations.translation.create,
 				params: parameters.params,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
 				scope: parameters.scope || this,
@@ -33,7 +33,7 @@
 		getCurrentLanguage: function(parameters) {
 			CMDBuild.Ajax.request({
 				method: 'POST',
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.utils.getLanguage,
+				url: CMDBuild.core.proxy.Index.utils.getLanguage,
 				scope: parameters.scope || this,
 				success: parameters.success || Ext.emptyFn,
 				failure: parameters.failure || Ext.emptyFn,
@@ -61,7 +61,7 @@
 		 */
 		getLanguages: function(parameters) {
 			CMDBuild.Ajax.request({
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.utils.listAvailableTranslations,
+				url: CMDBuild.core.proxy.Index.utils.listAvailableTranslations,
 				scope: parameters.scope || this,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : false,
 				success: parameters.success || Ext.emptyFn,
@@ -79,7 +79,7 @@
 				model: 'CMDBuild.model.localizations.Localization',
 				proxy: {
 					type: 'ajax',
-					url: CMDBuild.core.proxy.CMProxyUrlIndex.utils.listAvailableTranslations,
+					url: CMDBuild.core.proxy.Index.utils.listAvailableTranslations,
 					reader: {
 						type: 'json',
 						root: 'translations'
@@ -118,7 +118,7 @@
 		read: function(parameters) {
 			CMDBuild.Ajax.request({
 				method: 'POST',
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.localizations.translation.read,
+				url: CMDBuild.core.proxy.Index.localizations.translation.read,
 				params: parameters.params,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
 				scope: parameters.scope || this,
@@ -134,7 +134,7 @@
 		update: function(parameters) {
 			CMDBuild.Ajax.request({
 				method: 'POST',
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.localizations.translation.update,
+				url: CMDBuild.core.proxy.Index.localizations.translation.update,
 				params: parameters.params,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
 				scope: parameters.scope || this,

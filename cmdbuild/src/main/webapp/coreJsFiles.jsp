@@ -27,7 +27,7 @@
 
 <!--  PROXYES -->
 <script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxyConstants.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxyUrlIndex.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/core/proxy/Index.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxy.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/proxy/Attachment.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/proxy/Attributes.js"></script>

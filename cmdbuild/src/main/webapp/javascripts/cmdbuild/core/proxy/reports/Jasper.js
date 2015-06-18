@@ -4,7 +4,7 @@
 
 		requires: [
 			'CMDBuild.core.proxy.CMProxyConstants',
-			'CMDBuild.core.proxy.CMProxyUrlIndex',
+			'CMDBuild.core.proxy.Index',
 			'CMDBuild.model.reports.Grid'
 		],
 
@@ -17,7 +17,7 @@
 			if (!Ext.isEmpty(parameters.form)) {
 				parameters.form.submit({
 					method: 'POST',
-					url: CMDBuild.core.proxy.CMProxyUrlIndex.reports.jasper.analyze,
+					url: CMDBuild.core.proxy.Index.reports.jasper.analyze,
 					params: parameters.params,
 					scope: parameters.scope || this,
 					failure: parameters.failure || Ext.emptyFn(),
@@ -33,7 +33,7 @@
 		 */
 		create: function(parameters) {
 			CMDBuild.Ajax.request({
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.reports.jasper.create,
+				url: CMDBuild.core.proxy.Index.reports.jasper.create,
 				params: parameters.params,
 				scope: parameters.scope || this,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
@@ -52,7 +52,7 @@
 				model: 'CMDBuild.model.reports.Grid',
 				proxy: {
 					type: 'ajax',
-					url: CMDBuild.core.proxy.CMProxyUrlIndex.reports.jasper.getReportsByType,
+					url: CMDBuild.core.proxy.Index.reports.jasper.getReportsByType,
 					reader: {
 						type: 'json',
 						root: 'rows',
@@ -75,7 +75,7 @@
 			if (!Ext.isEmpty(parameters.form)) {
 				parameters.form.submit({
 					method: 'POST',
-					url: CMDBuild.core.proxy.CMProxyUrlIndex.reports.jasper.import,
+					url: CMDBuild.core.proxy.Index.reports.jasper.import,
 					params: parameters.params,
 					scope: parameters.scope || this,
 					failure: parameters.failure || Ext.emptyFn(),
@@ -92,7 +92,7 @@
 		remove: function(parameters) {
 			CMDBuild.Ajax.request({
 				method: 'POST',
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.reports.jasper.remove,
+				url: CMDBuild.core.proxy.Index.reports.jasper.remove,
 				params: parameters.params,
 				scope: parameters.scope || this,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
@@ -108,7 +108,7 @@
 		resetSession: function(parameters) {
 			CMDBuild.Ajax.request({
 				method: 'POST',
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.reports.jasper.resetSession,
+				url: CMDBuild.core.proxy.Index.reports.jasper.resetSession,
 				scope: parameters.scope || this,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
 				failure: parameters.failure || Ext.emptyFn(),
@@ -123,7 +123,7 @@
 		save: function(parameters) {
 			CMDBuild.Ajax.request({
 				method: 'POST',
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.reports.jasper.save,
+				url: CMDBuild.core.proxy.Index.reports.jasper.save,
 				params: parameters.params,
 				scope: parameters.scope || this,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,

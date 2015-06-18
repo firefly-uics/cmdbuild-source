@@ -96,7 +96,7 @@
 
 				autoEl: {
 					tag: 'iframe',
-					src: CMDBuild.core.proxy.CMProxyUrlIndex.reports.printReportFactory
+					src: CMDBuild.core.proxy.Index.reports.printReportFactory
 				}
 			});
 		}

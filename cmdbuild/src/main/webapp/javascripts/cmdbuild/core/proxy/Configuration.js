@@ -6,7 +6,7 @@
 		requires: [
 			'CMDBuild.core.proxy.CMProxy',
 			'CMDBuild.core.proxy.CMProxyConstants',
-			'CMDBuild.core.proxy.CMProxyUrlIndex'
+			'CMDBuild.core.proxy.Index'
 		],
 
 		singleton: true,
@@ -20,7 +20,7 @@
 				model: 'CMDBuild.model.CMSetupModels.startingClass',
 				proxy: {
 					type: 'ajax',
-					url: CMDBuild.core.proxy.CMProxyUrlIndex.classes.read,
+					url: CMDBuild.core.proxy.Index.classes.read,
 					reader: {
 						type: 'json',
 						root: 'classes'
@@ -51,7 +51,7 @@
 		 */
 		readAll: function(parameters) {
 			parameters.method = 'GET';
-			parameters.url = CMDBuild.core.proxy.CMProxyUrlIndex.configuration.getConfigurations;
+			parameters.url = CMDBuild.core.proxy.Index.configuration.getConfigurations;
 			parameters.params = { names: Ext.JSON.encode(['bim', 'cmdbuild', 'dms', 'gis', 'graph', 'workflow']) };
 
 			CMDBuild.ServiceProxy.core.doRequest(parameters);
@@ -72,7 +72,7 @@
 		 */
 		readConf: function(parameters, name) {
 			parameters.method = 'GET';
-			parameters.url = CMDBuild.core.proxy.CMProxyUrlIndex.configuration.getConfiguration;
+			parameters.url = CMDBuild.core.proxy.Index.configuration.getConfiguration;
 			parameters.params = { name: name };
 			parameters.loadMask = Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : false;
 
@@ -106,7 +106,7 @@
 		 */
 		save: function(parameters, name) {
 			parameters.method = 'POST';
-			parameters.url = CMDBuild.core.proxy.CMProxyUrlIndex.configuration.saveConfiguration;
+			parameters.url = CMDBuild.core.proxy.Index.configuration.saveConfiguration;
 			parameters.params.name = name;
 			parameters.loadMask = Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : false;
 
