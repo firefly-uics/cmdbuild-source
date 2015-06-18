@@ -4,7 +4,7 @@
 
 		requires: [
 			'CMDBuild.core.proxy.CMProxyConstants',
-			'CMDBuild.core.proxy.CMProxyUrlIndex'
+			'CMDBuild.core.proxy.Index'
 		],
 
 		singleton: true,
@@ -15,7 +15,7 @@
 		configurationRead: function(parameters) {
 			CMDBuild.Ajax.request({
 				method: 'POST',
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.email.queue.configuration,
+				url: CMDBuild.core.proxy.Index.email.queue.configuration,
 				scope: parameters.scope || this,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : false,
 				failure: parameters.failure || Ext.emptyFn(),
@@ -30,7 +30,7 @@
 		configurationSave: function(parameters) {
 			CMDBuild.Ajax.request({
 				method: 'GET',
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.email.queue.configure,
+				url: CMDBuild.core.proxy.Index.email.queue.configure,
 				params: parameters.params,
 				scope: parameters.scope || this,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : false,
@@ -46,7 +46,7 @@
 		isRunning: function(parameters) {
 			CMDBuild.Ajax.request({
 				method: 'POST',
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.email.queue.running,
+				url: CMDBuild.core.proxy.Index.email.queue.running,
 				scope: parameters.scope || this,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : false,
 				failure: parameters.failure || Ext.emptyFn(),
@@ -61,7 +61,7 @@
 		start: function(parameters) {
 			CMDBuild.Ajax.request({
 				method: 'POST',
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.email.queue.start,
+				url: CMDBuild.core.proxy.Index.email.queue.start,
 				scope: parameters.scope || this,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : false,
 				failure: parameters.failure || Ext.emptyFn(),
@@ -76,7 +76,7 @@
 		stop: function(parameters) {
 			CMDBuild.Ajax.request({
 				method: 'POST',
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.email.queue.stop,
+				url: CMDBuild.core.proxy.Index.email.queue.stop,
 				scope: parameters.scope || this,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : false,
 				failure: parameters.failure || Ext.emptyFn(),

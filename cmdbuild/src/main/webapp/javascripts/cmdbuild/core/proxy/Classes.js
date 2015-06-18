@@ -5,7 +5,7 @@
 
 		requires: [
 			'CMDBuild.core.proxy.CMProxy',
-			'CMDBuild.core.proxy.CMProxyUrlIndex'
+			'CMDBuild.core.proxy.Index'
 		],
 
 		singleton: true,
@@ -16,7 +16,7 @@
 		read: function(parameters) {
 			CMDBuild.Ajax.request({
 				method: 'GET',
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.classes.read,
+				url: CMDBuild.core.proxy.Index.classes.read,
 				params: parameters.params,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : false,
 				scope: parameters.scope || this,
@@ -32,7 +32,7 @@
 		remove: function(parameters) {
 			CMDBuild.ServiceProxy.core.doRequest({
 				method: 'POST',
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.classes.remove,
+				url: CMDBuild.core.proxy.Index.classes.remove,
 				params: parameters.params,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : false,
 				scope: parameters.scope || this,
@@ -48,7 +48,7 @@
 		save: function(parameters) {
 			CMDBuild.ServiceProxy.core.doRequest({
 				method: 'POST',
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.classes.update,
+				url: CMDBuild.core.proxy.Index.classes.update,
 				params: parameters.params,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : false,
 				scope: parameters.scope || this,

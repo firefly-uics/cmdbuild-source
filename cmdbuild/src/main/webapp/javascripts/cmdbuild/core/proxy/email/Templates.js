@@ -4,7 +4,7 @@
 
 		requires: [
 			'CMDBuild.core.proxy.CMProxyConstants',
-			'CMDBuild.core.proxy.CMProxyUrlIndex',
+			'CMDBuild.core.proxy.Index',
 			'CMDBuild.model.email.Templates'
 		],
 
@@ -16,7 +16,7 @@
 		create: function(parameters) {
 			CMDBuild.Ajax.request({
 				method: 'POST',
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.email.templates.post,
+				url: CMDBuild.core.proxy.Index.email.templates.post,
 				params: parameters.params,
 				scope: parameters.scope || this,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
@@ -32,7 +32,7 @@
 		get: function(parameters) {
 			CMDBuild.Ajax.request({
 				method: 'POST',
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.email.templates.get,
+				url: CMDBuild.core.proxy.Index.email.templates.get,
 				params: parameters.params,
 				scope: parameters.scope || this,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
@@ -48,7 +48,7 @@
 		getAll: function(parameters) {
 			CMDBuild.Ajax.request({
 				method: 'POST',
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.email.templates.getStore,
+				url: CMDBuild.core.proxy.Index.email.templates.getStore,
 				params: parameters.params,
 				scope: parameters.scope || this,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
@@ -67,7 +67,7 @@
 				model: 'CMDBuild.model.email.Templates.grid',
 				proxy: {
 					type: 'ajax',
-					url: CMDBuild.core.proxy.CMProxyUrlIndex.email.templates.getStore,
+					url: CMDBuild.core.proxy.Index.email.templates.getStore,
 					reader: {
 						type: 'json',
 						root: 'response.elements'
@@ -90,7 +90,7 @@
 		remove: function(parameters) {
 			CMDBuild.Ajax.request({
 				method: 'POST',
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.email.templates.remove,
+				url: CMDBuild.core.proxy.Index.email.templates.remove,
 				params: parameters.params,
 				scope: parameters.scope || this,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
@@ -106,7 +106,7 @@
 		update: function(parameters) {
 			CMDBuild.Ajax.request({
 				method: 'POST',
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.email.templates.put,
+				url: CMDBuild.core.proxy.Index.email.templates.put,
 				params: parameters.params,
 				scope: parameters.scope || this,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,

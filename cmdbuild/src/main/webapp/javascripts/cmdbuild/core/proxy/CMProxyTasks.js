@@ -126,25 +126,25 @@
 		getUrl: function(type) {
 			switch (type) {
 				case 'all':
-					return CMDBuild.core.proxy.CMProxyUrlIndex.tasks;
+					return CMDBuild.core.proxy.Index.tasks;
 
 				case 'connector':
-					return CMDBuild.core.proxy.CMProxyUrlIndex.tasks.connector;
+					return CMDBuild.core.proxy.Index.tasks.connector;
 
 				case 'email':
-					return CMDBuild.core.proxy.CMProxyUrlIndex.tasks.email;
+					return CMDBuild.core.proxy.Index.tasks.email;
 
 				case 'event':
-					return CMDBuild.core.proxy.CMProxyUrlIndex.tasks.event;
+					return CMDBuild.core.proxy.Index.tasks.event;
 
 				case 'event_asynchronous':
-					return CMDBuild.core.proxy.CMProxyUrlIndex.tasks.event.asynchronous;
+					return CMDBuild.core.proxy.Index.tasks.event.asynchronous;
 
 				case 'event_synchronous':
-					return CMDBuild.core.proxy.CMProxyUrlIndex.tasks.event.synchronous;
+					return CMDBuild.core.proxy.Index.tasks.event.synchronous;
 
 				case 'workflow':
-					return CMDBuild.core.proxy.CMProxyUrlIndex.tasks.workflow;
+					return CMDBuild.core.proxy.Index.tasks.workflow;
 
 				default:
 					throw 'CMProxyTasks error: url type not recognized';
@@ -313,7 +313,7 @@
 			getWorkflowAttributes: function(parameters) {
 				CMDBuild.Ajax.request({
 					method: 'POST',
-					url: CMDBuild.core.proxy.CMProxyUrlIndex.attribute.read,
+					url: CMDBuild.core.proxy.Index.attribute.read,
 					params: parameters.params,
 					scope: parameters.scope,
 					success: parameters.success,

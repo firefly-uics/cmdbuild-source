@@ -3,7 +3,7 @@
 	Ext.define('CMDBuild.core.proxy.Users', {
 
 		requires: [
-			'CMDBuild.core.proxy.CMProxyUrlIndex',
+			'CMDBuild.core.proxy.Index',
 			'CMDBuild.model.Users'
 		],
 
@@ -15,7 +15,7 @@
 		disable:function(parameters) {
 			CMDBuild.Ajax.request({
 				method: 'POST',
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.users.disable,
+				url: CMDBuild.core.proxy.Index.users.disable,
 				params: parameters.params,
 				scope: parameters.scope,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
@@ -34,7 +34,7 @@
 				autoLoad: true,
 				proxy: {
 					type: 'ajax',
-					url: CMDBuild.core.proxy.CMProxyUrlIndex.users.getList,
+					url: CMDBuild.core.proxy.Index.users.getList,
 					reader: {
 						type: 'json',
 						root: 'rows'
@@ -56,7 +56,7 @@
 				model: 'CMDBuild.model.Users.defaultGroup',
 				proxy: {
 					type: 'ajax',
-					url: CMDBuild.core.proxy.CMProxyUrlIndex.users.getGroupList,
+					url: CMDBuild.core.proxy.Index.users.getGroupList,
 					reader: {
 						root: 'result',
 						type: 'json'
@@ -75,7 +75,7 @@
 		save:function(parameters) {
 			CMDBuild.Ajax.request({
 				method: 'POST',
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.users.save,
+				url: CMDBuild.core.proxy.Index.users.save,
 				params: parameters.params,
 				scope: parameters.scope,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,

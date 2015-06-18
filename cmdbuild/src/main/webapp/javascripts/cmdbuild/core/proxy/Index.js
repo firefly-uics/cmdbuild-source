@@ -3,8 +3,8 @@
 	/**
 	 * A class that works as index of all proxies urls
 	 */
-	Ext.define('CMDBuild.core.proxy.CMProxyUrlIndex', {
-		alternateClassName: 'CMDBuild.ServiceProxy.url', // Legacy class name
+	Ext.define('CMDBuild.core.proxy.Index', {
+		alternateClassName: ['CMDBuild.ServiceProxy.url', 'CMDBuild.core.proxy.CMProxyUrlIndex'], // Legacy class name
 
 		singleton: true,
 

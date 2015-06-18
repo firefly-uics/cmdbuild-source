@@ -5,7 +5,7 @@
 		requires: [
 			'CMDBuild.core.Utils',
 			'CMDBuild.core.proxy.CMProxyConstants',
-			'CMDBuild.core.proxy.CMProxyUrlIndex',
+			'CMDBuild.core.proxy.Index',
 			'CMDBuild.model.reports.Grid'
 		],
 
@@ -16,7 +16,7 @@
 		 */
 		create: function(parameters) {
 			CMDBuild.Ajax.request({
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.reports.createReportFactory,
+				url: CMDBuild.core.proxy.Index.reports.createReportFactory,
 				params: parameters.params,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
 				scope: parameters.scope || this,
@@ -35,7 +35,7 @@
 				model: 'CMDBuild.model.reports.Grid',
 				proxy: {
 					type: 'ajax',
-					url: CMDBuild.core.proxy.CMProxyUrlIndex.reports.getReportsByType,
+					url: CMDBuild.core.proxy.Index.reports.getReportsByType,
 					reader: {
 						type: 'json',
 						root: 'rows',
@@ -59,7 +59,7 @@
 		getTypesTree: function(parameters) {
 			CMDBuild.Ajax.request({
 				method: 'GET',
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.reports.getReportTypesTree,
+				url: CMDBuild.core.proxy.Index.reports.getReportTypesTree,
 				params: parameters.params,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : false,
 				scope: parameters.scope || this,
@@ -75,7 +75,7 @@
 		update: function(parameters) {
 			CMDBuild.Ajax.request({
 				method: 'POST',
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.reports.updateReportFactoryParams,
+				url: CMDBuild.core.proxy.Index.reports.updateReportFactoryParams,
 				params: parameters.params,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
 				scope: parameters.scope || this,

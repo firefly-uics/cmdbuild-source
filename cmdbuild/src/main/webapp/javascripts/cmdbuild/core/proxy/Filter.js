@@ -5,25 +5,25 @@
 
 		requires: [
 			'CMDBuild.core.proxy.CMProxyConstants',
-			'CMDBuild.core.proxy.CMProxyUrlIndex'
+			'CMDBuild.core.proxy.Index'
 		],
 
 		singleton: true,
 
 		create: function(filter, config) {
-			doRequest(filter, config, CMDBuild.core.proxy.CMProxyUrlIndex.filters.create, 'POST', true);
+			doRequest(filter, config, CMDBuild.core.proxy.Index.filters.create, 'POST', true);
 		},
 
 		update: function(filter, config) {
-			doRequest(filter, config, CMDBuild.core.proxy.CMProxyUrlIndex.filters.update, 'POST', true);
+			doRequest(filter, config, CMDBuild.core.proxy.Index.filters.update, 'POST', true);
 		},
 
 		remove: function(filter, config) {
-			doRequest(filter, config, CMDBuild.core.proxy.CMProxyUrlIndex.filters.remove, 'POST', false);
+			doRequest(filter, config, CMDBuild.core.proxy.Index.filters.remove, 'POST', false);
 		},
 
 		position: function(filter, config) {
-			doRequest(filter, config, CMDBuild.core.proxy.CMProxyUrlIndex.filters.position, 'GET', false);
+			doRequest(filter, config, CMDBuild.core.proxy.Index.filters.position, 'GET', false);
 		},
 
 		/**
@@ -37,7 +37,7 @@
 				model: 'CMDBuild.model.CMFilterModel',
 				pageSize: _CMUtils.grid.getPageSize(),
 				proxy: {
-					url: CMDBuild.core.proxy.CMProxyUrlIndex.filters.groupStore,
+					url: CMDBuild.core.proxy.Index.filters.groupStore,
 					type: 'ajax',
 					reader: {
 						root: 'filters',
@@ -63,7 +63,7 @@
 				model: 'CMDBuild.model.CMFilterModel',
 				proxy: {
 					type: 'ajax',
-					url: CMDBuild.core.proxy.CMProxyUrlIndex.filters.userStore,
+					url: CMDBuild.core.proxy.Index.filters.userStore,
 					reader: {
 						idProperty: 'id',
 						type: 'json',
@@ -88,7 +88,7 @@
 				model: 'CMDBuild.model.CMFilterModel',
 				pageSize: _CMUtils.grid.getPageSize(),
 				proxy: {
-					url: CMDBuild.core.proxy.CMProxyUrlIndex.filters.read,
+					url: CMDBuild.core.proxy.Index.filters.read,
 					type: 'ajax',
 					reader: {
 						root: 'filters',

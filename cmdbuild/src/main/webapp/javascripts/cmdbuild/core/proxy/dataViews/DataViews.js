@@ -2,7 +2,7 @@
 
 	Ext.define('CMDBuild.core.proxy.dataViews.DataViews', {
 
-		requires: ['CMDBuild.core.proxy.CMProxyUrlIndex'],
+		requires: ['CMDBuild.core.proxy.Index'],
 
 		singleton: true,
 
@@ -14,7 +14,7 @@
 		readAll: function(parameters) {
 			CMDBuild.Ajax.request({
 				method: 'GET',
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.dataViews.read,
+				url: CMDBuild.core.proxy.Index.dataViews.read,
 				scope: parameters.scope || this,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : false,
 				failure: parameters.failure || Ext.emptyFn(),

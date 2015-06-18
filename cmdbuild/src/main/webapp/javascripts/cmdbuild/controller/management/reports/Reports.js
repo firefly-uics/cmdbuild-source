@@ -6,7 +6,7 @@
 		requires: [
 			'CMDBuild.core.Message',
 			'CMDBuild.core.proxy.CMProxyConstants',
-			'CMDBuild.core.proxy.CMProxyUrlIndex',
+			'CMDBuild.core.proxy.Index',
 			'CMDBuild.core.proxy.reports.Reports',
 			'CMDBuild.model.reports.ModuleObject'
 		],
@@ -185,7 +185,7 @@
 
 					var form = Ext.create('Ext.form.Panel', {
 						standardSubmit: true,
-						url: CMDBuild.core.proxy.CMProxyUrlIndex.reports.printReportFactory
+						url: CMDBuild.core.proxy.Index.reports.printReportFactory
 					});
 
 					form.submit({
