@@ -44,21 +44,15 @@ _debug('parameters', parameters);
 				this.view.removeAll(true);
 
 				switch(parameters.get(CMDBuild.core.proxy.CMProxyConstants.ID)) {
-					case 'advancedTranslations': {
-						this.sectionController = Ext.create('CMDBuild.controller.administration.localizations.Advanced', {
-							parentDelegate: this
-						});
-					} break;
-
 					case 'advancedTranslationsTable': {
 						this.sectionController = Ext.create('CMDBuild.controller.administration.localizations.advancedTable.AdvancedTable', {
 							parentDelegate: this
 						});
 					} break;
 
-					case 'baseTranslations':
+					case 'configurations':
 					default: {
-						this.sectionController = Ext.create('CMDBuild.controller.administration.localizations.Base', {
+						this.sectionController = Ext.create('CMDBuild.controller.administration.localizations.Configurations', {
 							parentDelegate: this
 						});
 					}

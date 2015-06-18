@@ -1,12 +1,12 @@
 (function() {
 
-	Ext.define('CMDBuild.view.administration.localizations.advancedTable.SectionClassesPanel', {
+	Ext.define('CMDBuild.view.administration.localizations.advancedTable.SectionMenuPanel', {
 		extend: 'Ext.panel.Panel',
 
 		requires: ['CMDBuild.model.localizations.advancedTable.TreeStore'],
 
 		/**
-		 * @cfg {CMDBuild.controller.administration.localizations.advancedTable.SectionClasses}
+		 * @cfg {CMDBuild.controller.administration.localizations.advancedTable.SectionMenu}
 		 */
 		delegate: undefined,
 
@@ -17,7 +17,7 @@
 
 		bodyCls: 'cmgraypanel',
 		layout: 'fit',
-		title: '@@ Classes',
+		title: '@@ Menu',
 
 		initComponent: function() {
 			Ext.apply(this, {
@@ -60,7 +60,7 @@
 
 		listeners: {
 			show: function(panel, eOpts) {
-				this.delegate.cmfg('onAdvancedTableClassesShow');
+				this.delegate.cmfg('onAdvancedTableMenuShow');
 			}
 		}
 	});

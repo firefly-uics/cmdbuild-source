@@ -5,6 +5,7 @@
 
 		requires: [
 			'CMDBuild.core.proxy.CMProxyConstants',
+			'CMDBuild.core.proxy.Csv',
 			'CMDBuild.core.proxy.localizations.Localizations'
 		],
 
@@ -90,9 +91,9 @@
 						editable: false,
 						allowBlank: false,
 
-						value: ';',
+						value: ';', // Default value
 
-						store: CMDBuild.core.proxy.localizations.Localizations.getCsvSeparatorStore(),
+						store: CMDBuild.core.proxy.Csv.getSeparatorStore(),
 						queryMode: 'local'
 					})
 				]

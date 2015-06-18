@@ -1,6 +1,6 @@
 (function() {
 
-	Ext.define('CMDBuild.controller.administration.localizations.Base', {
+	Ext.define('CMDBuild.controller.administration.localizations.Configurations', {
 		extend: 'CMDBuild.controller.common.AbstractController',
 
 		/**
@@ -17,7 +17,7 @@
 		],
 
 		/**
-		 * @cfg {CMDBuild.view.administration.localizations.BasePanel}
+		 * @cfg {CMDBuild.view.administration.localizations.ConfigurationsPanel}
 		 */
 		view: undefined,
 
@@ -30,7 +30,7 @@
 		constructor: function(configObject) {
 			this.callParent(arguments);
 
-			this.view = Ext.create('CMDBuild.view.administration.localizations.BasePanel', {
+			this.view = Ext.create('CMDBuild.view.administration.localizations.ConfigurationsPanel', {
 				delegate: this
 			});
 		}

@@ -36,6 +36,7 @@
 
 .detail,
 .domain { background-image: url("../images/icons/table_link.png") !important; }
+.collapse { background-image: url("../images/icons/collapse.png") !important; }
 .expand,
 .cmdisplayfield-expandbutton { background-image: url("../images/icons/expand.png") !important; }
 

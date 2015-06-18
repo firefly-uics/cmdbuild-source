@@ -14,62 +14,16 @@
 		/**
 		 * @param {Object} parameters
 		 */
-		create: function(parameters) { // TODO: future implementation of server-side parameter for sectionId
-			var url = undefined;
-
-			switch (parameters.params.sectionId) {
-				case CMDBuild.core.proxy.CMProxyConstants.CLASSES: {
-					url = CMDBuild.core.proxy.CMProxyUrlIndex.localizations.classCreate;
-				} break;
-
-				case 'classesAttributes': {
-					url = CMDBuild.core.proxy.CMProxyUrlIndex.localizations.classAttributeCreate;
-				} break;
-
-				case CMDBuild.core.proxy.CMProxyConstants.DOMAINS: {
-					url = CMDBuild.core.proxy.CMProxyUrlIndex.localizations.domainCreate;
-				} break;
-
-				case 'domainsAttributes': {
-					url = CMDBuild.core.proxy.CMProxyUrlIndex.localizations.domainAttributeCreate;
-				} break;
-
-				case 'lookup': {
-
-				} break;
-
-				case 'menu': {
-
-				} break;
-
-				case 'report': {
-
-				} break;
-			}
-
+		create: function(parameters) { // TODO delete for a future implementation of only update function
 			CMDBuild.Ajax.request({
 				method: 'POST',
-				url: url,
+				url: CMDBuild.core.proxy.CMProxyUrlIndex.localizations.translation.create,
 				params: parameters.params,
-				scope: parameters.scope || this,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
+				scope: parameters.scope || this,
 				failure: parameters.failure || Ext.emptyFn(),
 				success: parameters.success || Ext.emptyFn(),
 				callback: parameters.callback || Ext.emptyFn()
-			});
-		},
-
-		/**
-		 * @return {Ext.data.ArrayStore}
-		 */
-		getCsvSeparatorStore: function() {
-			return Ext.create('Ext.data.ArrayStore', {
-				fields: [CMDBuild.core.proxy.CMProxyConstants.VALUE],
-				data: [
-					[';'],
-					[','],
-					['|']
-				]
 			});
 		},
 
@@ -148,7 +102,9 @@
 					['@@ Domains', 'domains'], // TODO costants
 					['@@ Lookup', 'lookup'], // TODO costants
 					['@@ Menu', 'menu'], // TODO costants
-					['@@ Report', 'report'] // TODO costants
+					['@@ Reports', 'reports'], // TODO costants
+					['@@ Processes', 'processes'], // TODO costants
+					['@@ Views', 'views'] // TODO costants
 				],
 				sorters: [
 					{ property: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION, direction: 'ASC' }
@@ -159,99 +115,34 @@
 		/**
 		 * @param {Object} parameters
 		 */
-		read: function(parameters) { // TODO: future implementation of server-side parameter for sectionId
-			var url = undefined;
-
-			switch (parameters.params[CMDBuild.core.proxy.CMProxyConstants.SECTION_ID]) {
-				case CMDBuild.core.proxy.CMProxyConstants.CLASSES: {
-					url = CMDBuild.core.proxy.CMProxyUrlIndex.localizations.classRead;
-				} break;
-
-				case 'classesAttributes': {
-					url = CMDBuild.core.proxy.CMProxyUrlIndex.localizations.classAttributeRead;
-				} break;
-
-				case CMDBuild.core.proxy.CMProxyConstants.DOMAINS: {
-					url = CMDBuild.core.proxy.CMProxyUrlIndex.localizations.domainRead;
-				} break;
-
-				case 'domainsAttributes': {
-					url = CMDBuild.core.proxy.CMProxyUrlIndex.localizations.domainAttributeRead;
-				} break;
-
-				case 'lookup': {
-
-				} break;
-
-				case 'menu': {
-
-				} break;
-
-				case 'report': {
-
-				} break;
-
-				default: {
-_debug('Error', parameters);
-				}
-			}
-
+		read: function(parameters) {
 			CMDBuild.Ajax.request({
 				method: 'POST',
-				url: url,
+				url: CMDBuild.core.proxy.CMProxyUrlIndex.localizations.translation.read,
 				params: parameters.params,
-				scope: parameters.scope || this,
-				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : false,
-				failure: parameters.failure || Ext.emptyFn(),
-				success: parameters.success || Ext.emptyFn(),
-				callback: parameters.callback || Ext.emptyFn()
-			});
-		},
-
-		update: function(parameters) { // TODO: future implementation of server-side parameter for sectionId
-			var url = undefined;
-
-			switch (parameters.params.sectionId) {
-				case CMDBuild.core.proxy.CMProxyConstants.CLASSES: {
-					url = CMDBuild.core.proxy.CMProxyUrlIndex.localizations.classUpdate;
-				} break;
-
-				case 'classesAttributes': {
-					url = CMDBuild.core.proxy.CMProxyUrlIndex.localizations.classAttributeUpdate;
-				} break;
-
-				case 'domains': {
-					url = CMDBuild.core.proxy.CMProxyUrlIndex.localizations.domainUpdate;
-				} break;
-
-				case 'domainsAttributes': {
-					url = CMDBuild.core.proxy.CMProxyUrlIndex.localizations.domainAttributeUpdate;
-				} break;
-
-				case 'lookup': {
-
-				} break;
-
-				case 'menu': {
-
-				} break;
-
-				case 'report': {
-
-				} break;
-			}
-
-			CMDBuild.Ajax.request({
-				method: 'POST',
-				url: url,
-				params: parameters.params,
-				scope: parameters.scope || this,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
+				scope: parameters.scope || this,
 				failure: parameters.failure || Ext.emptyFn(),
 				success: parameters.success || Ext.emptyFn(),
 				callback: parameters.callback || Ext.emptyFn()
 			});
 		},
+
+		/**
+		 * @param {Object} parameters
+		 */
+		update: function(parameters) {
+			CMDBuild.Ajax.request({
+				method: 'POST',
+				url: CMDBuild.core.proxy.CMProxyUrlIndex.localizations.translation.update,
+				params: parameters.params,
+				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
+				scope: parameters.scope || this,
+				failure: parameters.failure || Ext.emptyFn(),
+				success: parameters.success || Ext.emptyFn(),
+				callback: parameters.callback || Ext.emptyFn()
+			});
+		}
 	});
 
 })();

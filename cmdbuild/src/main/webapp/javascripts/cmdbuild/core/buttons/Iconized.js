@@ -26,6 +26,13 @@
 		textDefault: CMDBuild.Translation.common.buttons.clone
 	});
 
+	Ext.define('CMDBuild.core.buttons.Collapse', {
+		extend: 'CMDBuild.core.buttons.Base',
+
+		iconCls: 'collapse',
+		textDefault: CMDBuild.Translation.collapse
+	});
+
 	Ext.define('CMDBuild.core.buttons.Delete', {
 		extend: 'CMDBuild.core.buttons.Base',
 
@@ -38,6 +45,13 @@
 
 		iconCls: 'download',
 		textDefault: CMDBuild.Translation.download
+	});
+
+	Ext.define('CMDBuild.core.buttons.Expand', {
+		extend: 'CMDBuild.core.buttons.Base',
+
+		iconCls: 'expand',
+		textDefault: CMDBuild.Translation.expand
 	});
 
 	Ext.define('CMDBuild.core.buttons.Modify', {
