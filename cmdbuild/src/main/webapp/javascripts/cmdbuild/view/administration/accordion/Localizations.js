@@ -17,21 +17,14 @@
 		updateStore: function() {
 			this.store.getRootNode().appendChild([
 				{
-					id: 'baseTranslations',
+					id: 'configurations',
 					cmName: this.cmName,
 					leaf: true,
-					text: '@@ Base',
+					text: '@@ Configurations',
 					iconCls: 'cmdbuild-tree-localization-icon'
 				},
 				{
-					id: 'advancedTranslations',
-					cmName: this.cmName,
-					leaf: true,
-					text: '@@ Advanced',
-					iconCls: 'cmdbuild-tree-localization-icon'
-				},
-				{
-					id: 'advancedTranslationsTable',
+					id: 'advancedTranslationsTable', // TODO rename
 					cmName: this.cmName,
 					leaf: true,
 					text: '@@ Advanced table',

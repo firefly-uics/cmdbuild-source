@@ -16,7 +16,9 @@
 		cmfgCatchedFunctions: [
 			'onAdvancedTableBuildColumns',
 			'onAdvancedTableBuildStore',
-			'onAdvancedTableTabCreation',
+			'onAdvancedTableCollapseAll',
+			'onAdvancedTableExpandAll',
+			'onAdvancedTableTabCreation'
 		],
 
 		/**
@@ -28,6 +30,12 @@
 		 * @property {CMDBuild.controller.administration.localizations.advancedTable.SectionDomains}
 		 */
 		sectionControllerDomains: undefined,
+
+		sectionControllerLookup: undefined,
+		sectionControllerMenu: undefined,
+		sectionControllerReports: undefined,
+		sectionControllerProcesses: undefined,
+		sectionControllerViews: undefined,
 
 		/**
 		 * @cfg {CMDBuild.view.administration.localizations.advancedTable.AdvancedTableView}
@@ -50,6 +58,11 @@
 			// Build tabs
 			this.sectionControllerClasses = Ext.create('CMDBuild.controller.administration.localizations.advancedTable.SectionClasses', { parentDelegate: this });
 			this.sectionControllerDomains = Ext.create('CMDBuild.controller.administration.localizations.advancedTable.SectionDomains', { parentDelegate: this });
+			this.sectionControllerLookup = Ext.create('CMDBuild.controller.administration.localizations.advancedTable.SectionLookup', { parentDelegate: this });
+			this.sectionControllerMenu = Ext.create('CMDBuild.controller.administration.localizations.advancedTable.SectionMenu', { parentDelegate: this });
+			this.sectionControllerReports = Ext.create('CMDBuild.controller.administration.localizations.advancedTable.SectionReports', { parentDelegate: this });
+			this.sectionControllerProcesses = Ext.create('CMDBuild.controller.administration.localizations.advancedTable.SectionProcesses', { parentDelegate: this });
+			this.sectionControllerViews = Ext.create('CMDBuild.controller.administration.localizations.advancedTable.SectionViews', { parentDelegate: this });
 
 			this.view.setActiveTab(0);
 
@@ -89,7 +102,7 @@
 			var columnsArray = [
 				{
 					xtype: 'treecolumn',
-					dataIndex: CMDBuild.core.proxy.CMProxyConstants.OBJECT,
+					dataIndex: CMDBuild.core.proxy.CMProxyConstants.TEXT,
 					text: '@@ Translation object',
 					width: 300,
 					// locked: true, // There is a performance issue in ExtJs 4.2.0 without locked columns all is fine
@@ -104,7 +117,7 @@
 					draggable: false
 				}
 			];
-_debug('enabledLanguages', enabledLanguages);
+
 			Ext.Object.each(enabledLanguages, function(key, value, myself) {
 				columnsArray.push(this.buildColumn(value));
 			}, this);
@@ -124,6 +137,26 @@ _debug('enabledLanguages', enabledLanguages);
 					children: []
 				}
 			});
+		},
+
+		/**
+		 * @param {CMDBuild.view.administration.localizations.common.AdvancedTableGrid}
+		 */
+		onAdvancedTableCollapseAll: function(gridPanel) {
+			CMDBuild.LoadMask.get().show();
+			gridPanel.collapseAll(function() {
+				CMDBuild.LoadMask.get().hide();
+			}, this);
+		},
+
+		/**
+		 * @param {CMDBuild.view.administration.localizations.common.AdvancedTableGrid}
+		 */
+		onAdvancedTableExpandAll: function(gridPanel) {
+			CMDBuild.LoadMask.get().show();
+			gridPanel.expandAll(function() {
+				CMDBuild.LoadMask.get().hide();
+			}, this);
 		},
 
 		/**

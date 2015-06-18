@@ -11,24 +11,27 @@
 		sectionId: undefined,
 
 		/**
-		 * @param {CMDBuild.model.localizations.advancedTable.TreeStore} node
+		 * @param {CMDBuild.model.localizations.advancedTable.TreeStore} startNode
+		 * @param {Number} levelToReach
 		 *
-		 * @return {CMDBuild.model.localizations.advancedTable.TreeStore} node or null
+		 * @returns {CMDBuild.model.localizations.advancedTable.TreeStore} requestedNode or null
 		 */
-		getFirstLevelNode: function(node) {
-			if (!Ext.isEmpty(node)) {
-				while (node.getDepth() > 1) {
-					node = node.get(CMDBuild.core.proxy.CMProxyConstants.PARENT);
+		getLevelNode: function(startNode, levelToReach) {
+			var requestedNode = startNode;
+
+			if (!Ext.isEmpty(requestedNode) && Ext.isNumber(levelToReach)) {
+				while (requestedNode.getDepth() > levelToReach) {
+					requestedNode = requestedNode.get(CMDBuild.core.proxy.CMProxyConstants.PARENT);
 				}
 
-				return node;
+				return requestedNode;
 			}
 
 			return null;
 		},
 
 		/**
-		 * @return {String}
+		 * @returns {String}
 		 */
 		getSectionId: function() {
 			return this.sectionId;
