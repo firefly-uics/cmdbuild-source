@@ -101,7 +101,7 @@
 				reportCode = selectedReport[0];
 
 			if (reportCode.self && reportCode.self.$className == 'CMDBuild.model.widget.CMModelOpenReport.reportCombo')
-				reportCode = reportCode.get(CMDBuild.core.proxy.CMProxyConstants.ID);
+				reportCode = reportCode.get(CMDBuild.core.proxy.Constants.ID);
 
 			return reportCode;
 		},

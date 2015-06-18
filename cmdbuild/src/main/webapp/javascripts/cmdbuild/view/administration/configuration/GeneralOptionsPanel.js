@@ -4,7 +4,7 @@
 		extend: 'Ext.form.Panel',
 
 		requires: [
-			'CMDBuild.core.proxy.CMProxyConstants',
+			'CMDBuild.core.proxy.Constants',
 			'CMDBuild.core.proxy.Configuration'
 		],
 
@@ -85,7 +85,7 @@
 				dockedItems: [
 					Ext.create('Ext.toolbar.Toolbar', {
 						dock: 'bottom',
-						itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_BOTTOM,
+						itemId: CMDBuild.core.proxy.Constants.TOOLBAR_BOTTOM,
 						ui: 'footer',
 
 						layout: {
@@ -133,8 +133,8 @@
 							Ext.create('CMDBuild.field.ErasableCombo', {
 								name: 'startingclass',
 								fieldLabel: CMDBuild.Translation.defaultClass,
-								valueField: CMDBuild.core.proxy.CMProxyConstants.ID,
-								displayField: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
+								valueField: CMDBuild.core.proxy.Constants.ID,
+								displayField: CMDBuild.core.proxy.Constants.DESCRIPTION,
 								editable: false,
 
 								store: CMDBuild.core.proxy.Configuration.getStartingClassStore(),
@@ -171,11 +171,11 @@
 								name: 'card_tab_position',
 								fieldLabel: CMDBuild.Translation.tabPositioInCardPanel,
 								allowBlank: false,
-								displayField: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
-								valueField: CMDBuild.core.proxy.CMProxyConstants.VALUE,
+								displayField: CMDBuild.core.proxy.Constants.DESCRIPTION,
+								valueField: CMDBuild.core.proxy.Constants.VALUE,
 
 								store: Ext.create('Ext.data.Store', {
-									fields: [CMDBuild.core.proxy.CMProxyConstants.VALUE, CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION],
+									fields: [CMDBuild.core.proxy.Constants.VALUE, CMDBuild.core.proxy.Constants.DESCRIPTION],
 									data: [
 										{
 											value: 'top',

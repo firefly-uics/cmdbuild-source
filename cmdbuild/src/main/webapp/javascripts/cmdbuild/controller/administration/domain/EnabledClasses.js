@@ -4,7 +4,7 @@
 		extend: 'CMDBuild.controller.common.AbstractController',
 
 		requires: [
-			'CMDBuild.core.proxy.CMProxyConstants',
+			'CMDBuild.core.proxy.Constants',
 			'CMDBuild.core.proxy.Classes',
 			'CMDBuild.model.Classes'
 		],
@@ -89,19 +89,19 @@
 
 						Ext.Array.forEach(decodedResponse.classes, function(classObject, index, allClasses) {
 							if (
-								classObject[CMDBuild.core.proxy.CMProxyConstants.TYPE] == 'class' // Discard processes from visualization
-								&& classObject[CMDBuild.core.proxy.CMProxyConstants.NAME] != 'Class' // Discard root class of all classes
-								&& classObject[CMDBuild.core.proxy.CMProxyConstants.TABLE_TYPE] == 'standard' // Discard simple classes
+								classObject[CMDBuild.core.proxy.Constants.TYPE] == 'class' // Discard processes from visualization
+								&& classObject[CMDBuild.core.proxy.Constants.NAME] != 'Class' // Discard root class of all classes
+								&& classObject[CMDBuild.core.proxy.Constants.TABLE_TYPE] == 'standard' // Discard simple classes
 							) {
 								// Class node object
 								var classMainNodeObject = {};
 								classMainNodeObject['iconCls'] = classObject['superclass'] ? 'cmdbuild-tree-superclass-icon' : 'cmdbuild-tree-class-icon';
-								classMainNodeObject[CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION] = classObject[CMDBuild.core.proxy.CMProxyConstants.TEXT];
-								classMainNodeObject[CMDBuild.core.proxy.CMProxyConstants.ENABLED] = !Ext.Array.contains(disabledClasses, classObject[CMDBuild.core.proxy.CMProxyConstants.NAME]);
-								classMainNodeObject[CMDBuild.core.proxy.CMProxyConstants.ID] = classObject[CMDBuild.core.proxy.CMProxyConstants.ID];
-								classMainNodeObject[CMDBuild.core.proxy.CMProxyConstants.LEAF] = true;
-								classMainNodeObject[CMDBuild.core.proxy.CMProxyConstants.NAME] = classObject[CMDBuild.core.proxy.CMProxyConstants.NAME];
-								classMainNodeObject[CMDBuild.core.proxy.CMProxyConstants.PARENT] = classObject[CMDBuild.core.proxy.CMProxyConstants.PARENT];
+								classMainNodeObject[CMDBuild.core.proxy.Constants.DESCRIPTION] = classObject[CMDBuild.core.proxy.Constants.TEXT];
+								classMainNodeObject[CMDBuild.core.proxy.Constants.ENABLED] = !Ext.Array.contains(disabledClasses, classObject[CMDBuild.core.proxy.Constants.NAME]);
+								classMainNodeObject[CMDBuild.core.proxy.Constants.ID] = classObject[CMDBuild.core.proxy.Constants.ID];
+								classMainNodeObject[CMDBuild.core.proxy.Constants.LEAF] = true;
+								classMainNodeObject[CMDBuild.core.proxy.Constants.NAME] = classObject[CMDBuild.core.proxy.Constants.NAME];
+								classMainNodeObject[CMDBuild.core.proxy.Constants.PARENT] = classObject[CMDBuild.core.proxy.Constants.PARENT];
 
 								nodesMap[classMainNodeObject.id] = classMainNodeObject;
 							}
@@ -112,13 +112,13 @@
 							var node = nodesMap[id];
 
 							if (
-								!Ext.isEmpty(node[CMDBuild.core.proxy.CMProxyConstants.PARENT])
-								&& !Ext.isEmpty(nodesMap[node[CMDBuild.core.proxy.CMProxyConstants.PARENT]])
+								!Ext.isEmpty(node[CMDBuild.core.proxy.Constants.PARENT])
+								&& !Ext.isEmpty(nodesMap[node[CMDBuild.core.proxy.Constants.PARENT]])
 							) {
-								var parentNode = nodesMap[node[CMDBuild.core.proxy.CMProxyConstants.PARENT]];
+								var parentNode = nodesMap[node[CMDBuild.core.proxy.Constants.PARENT]];
 								parentNode.children = parentNode.children || [];
 								parentNode.children.push(node);
-								parentNode[CMDBuild.core.proxy.CMProxyConstants.LEAF] = false;
+								parentNode[CMDBuild.core.proxy.Constants.LEAF] = false;
 							} else {
 								standard.push(node);
 							}
@@ -127,13 +127,13 @@
 						// Get root node and build offspring tree
 						switch(type) {
 							case 'destination': {
-								rootData[CMDBuild.core.proxy.CMProxyConstants.ID] = this.cmfg('selectedDomainGet').get('idClass2');
-								rootData[CMDBuild.core.proxy.CMProxyConstants.NAME] = this.cmfg('selectedDomainGet').get('nameClass2');
+								rootData[CMDBuild.core.proxy.Constants.ID] = this.cmfg('selectedDomainGet').get('idClass2');
+								rootData[CMDBuild.core.proxy.Constants.NAME] = this.cmfg('selectedDomainGet').get('nameClass2');
 							} break;
 
 							case 'origin': {
-								rootData[CMDBuild.core.proxy.CMProxyConstants.ID] = this.cmfg('selectedDomainGet').get('idClass1');
-								rootData[CMDBuild.core.proxy.CMProxyConstants.NAME] = this.cmfg('selectedDomainGet').get('nameClass1');
+								rootData[CMDBuild.core.proxy.Constants.ID] = this.cmfg('selectedDomainGet').get('idClass1');
+								rootData[CMDBuild.core.proxy.Constants.NAME] = this.cmfg('selectedDomainGet').get('nameClass1');
 							} break;
 						}
 
@@ -142,11 +142,11 @@
 						} else { // Node is process so build custom node
 							var customNodeObject = {};
 							customNodeObject['iconCls'] = 'cmdbuild-tree-processclass-icon';
-							customNodeObject[CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION] = rootData[CMDBuild.core.proxy.CMProxyConstants.NAME];
-							customNodeObject[CMDBuild.core.proxy.CMProxyConstants.ENABLED] = true;
-							customNodeObject[CMDBuild.core.proxy.CMProxyConstants.ID] = rootData[CMDBuild.core.proxy.CMProxyConstants.ID];
-							customNodeObject[CMDBuild.core.proxy.CMProxyConstants.LEAF] = true;
-							customNodeObject[CMDBuild.core.proxy.CMProxyConstants.NAME] = rootData[CMDBuild.core.proxy.CMProxyConstants.NAME];
+							customNodeObject[CMDBuild.core.proxy.Constants.DESCRIPTION] = rootData[CMDBuild.core.proxy.Constants.NAME];
+							customNodeObject[CMDBuild.core.proxy.Constants.ENABLED] = true;
+							customNodeObject[CMDBuild.core.proxy.Constants.ID] = rootData[CMDBuild.core.proxy.Constants.ID];
+							customNodeObject[CMDBuild.core.proxy.Constants.LEAF] = true;
+							customNodeObject[CMDBuild.core.proxy.Constants.NAME] = rootData[CMDBuild.core.proxy.Constants.NAME];
 
 							root.appendChild(customNodeObject);
 						}
@@ -176,8 +176,8 @@
 				var destinationArray = parametersObject.destinationArray;
 
 				node.eachChild(function(childNode) {
-					if (!childNode.hasChildNodes() && !childNode.get(CMDBuild.core.proxy.CMProxyConstants.ENABLED))
-						destinationArray.push(childNode.get(CMDBuild.core.proxy.CMProxyConstants.NAME));
+					if (!childNode.hasChildNodes() && !childNode.get(CMDBuild.core.proxy.Constants.ENABLED))
+						destinationArray.push(childNode.get(CMDBuild.core.proxy.Constants.NAME));
 
 					if (node.hasChildNodes())
 						this.getDisabledTreeVisit({

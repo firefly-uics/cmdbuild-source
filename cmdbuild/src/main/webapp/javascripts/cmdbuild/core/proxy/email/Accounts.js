@@ -3,7 +3,7 @@
 	Ext.define('CMDBuild.core.proxy.email.Accounts', {
 
 		requires: [
-			'CMDBuild.core.proxy.CMProxyConstants',
+			'CMDBuild.core.proxy.Constants',
 			'CMDBuild.core.proxy.Index',
 			'CMDBuild.model.email.Accounts'
 		],
@@ -65,7 +65,7 @@
 					}
 				},
 				sorters: [
-					{ property: CMDBuild.core.proxy.CMProxyConstants.NAME, direction: 'ASC' }
+					{ property: CMDBuild.core.proxy.Constants.NAME, direction: 'ASC' }
 				]
 			});
 		},

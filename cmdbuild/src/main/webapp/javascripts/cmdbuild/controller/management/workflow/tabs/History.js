@@ -28,9 +28,9 @@
 			'Id',
 			'IdClass',
 			'IdClass_value',
-			CMDBuild.core.proxy.CMProxyConstants.BEGIN_DATE,
-			CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME,
-			CMDBuild.core.proxy.CMProxyConstants.USER
+			CMDBuild.core.proxy.Constants.BEGIN_DATE,
+			CMDBuild.core.proxy.Constants.CLASS_NAME,
+			CMDBuild.core.proxy.Constants.USER
 		],
 
 		/**
@@ -103,7 +103,7 @@
 		 */
 		addCurrentCardToStore: function() {
 			var selectedEntityAttributes = {};
-			var selectedEntityValues = this.selectedEntity.get(CMDBuild.core.proxy.CMProxyConstants.VALUES);
+			var selectedEntityValues = this.selectedEntity.get(CMDBuild.core.proxy.Constants.VALUES);
 
 			// Filter selectedEntity's attributes values to avoid the display of incorrect data
 			Ext.Object.each(selectedEntityValues, function(key, value, myself) {
@@ -111,7 +111,7 @@
 					selectedEntityAttributes[key] = value;
 			}, this);
 
-			selectedEntityValues[CMDBuild.core.proxy.CMProxyConstants.USER] = this.selectedEntity.get(CMDBuild.core.proxy.CMProxyConstants.VALUES)[CMDBuild.core.proxy.CMProxyConstants.USER];
+			selectedEntityValues[CMDBuild.core.proxy.Constants.USER] = this.selectedEntity.get(CMDBuild.core.proxy.Constants.VALUES)[CMDBuild.core.proxy.Constants.USER];
 
 			this.valuesFormattingAndCompare(selectedEntityAttributes); // Formats values only
 
@@ -127,16 +127,16 @@
 			var performers = [];
 
 			// Build performers array
-			Ext.Array.forEach(this.selectedEntity.get(CMDBuild.core.proxy.CMProxyConstants.ACTIVITY_INSTANCE_INFO_LIST), function(activityObject, i, array) {
-				if (!Ext.isEmpty(activityObject[CMDBuild.core.proxy.CMProxyConstants.PERFORMER_NAME]))
-					performers.push(activityObject[CMDBuild.core.proxy.CMProxyConstants.PERFORMER_NAME]);
+			Ext.Array.forEach(this.selectedEntity.get(CMDBuild.core.proxy.Constants.ACTIVITY_INSTANCE_INFO_LIST), function(activityObject, i, array) {
+				if (!Ext.isEmpty(activityObject[CMDBuild.core.proxy.Constants.PERFORMER_NAME]))
+					performers.push(activityObject[CMDBuild.core.proxy.Constants.PERFORMER_NAME]);
 			}, this);
 
 			var currentEntityModel = Ext.create('CMDBuild.model.common.tabs.history.processes.CardRecord', this.selectedEntity.getData());
-			currentEntityModel.set(CMDBuild.core.proxy.CMProxyConstants.ACTIVITY_NAME, this.selectedEntity.get(CMDBuild.core.proxy.CMProxyConstants.VALUES)['Code']);
-			currentEntityModel.set(CMDBuild.core.proxy.CMProxyConstants.PERFORMERS, performers);
-			currentEntityModel.set(CMDBuild.core.proxy.CMProxyConstants.STATUS, this.statusTranslationGet(this.selectedEntity.get(CMDBuild.core.proxy.CMProxyConstants.FLOW_STATUS)));
-			currentEntityModel.set(CMDBuild.core.proxy.CMProxyConstants.VALUES, entityAttributeData);
+			currentEntityModel.set(CMDBuild.core.proxy.Constants.ACTIVITY_NAME, this.selectedEntity.get(CMDBuild.core.proxy.Constants.VALUES)['Code']);
+			currentEntityModel.set(CMDBuild.core.proxy.Constants.PERFORMERS, performers);
+			currentEntityModel.set(CMDBuild.core.proxy.Constants.STATUS, this.statusTranslationGet(this.selectedEntity.get(CMDBuild.core.proxy.Constants.FLOW_STATUS)));
+			currentEntityModel.set(CMDBuild.core.proxy.Constants.VALUES, entityAttributeData);
 			currentEntityModel.commit();
 
 			return currentEntityModel;
@@ -165,7 +165,7 @@
 		currentCardRowExpand: function(record) {
 			var predecessorRecord = this.grid.getStore().getAt(1); // Get expanded record predecessor record
 			var selectedEntityAttributes = {};
-			var selectedEntityValues = this.selectedEntity.get(CMDBuild.core.proxy.CMProxyConstants.VALUES);
+			var selectedEntityValues = this.selectedEntity.get(CMDBuild.core.proxy.Constants.VALUES);
 
 			// Filter selectedEntity's attributes values to avoid the display of incorrect data
 			Ext.Object.each(selectedEntityValues, function(key, value, myself) {
@@ -173,12 +173,12 @@
 					selectedEntityAttributes[key] = value;
 			}, this);
 
-			selectedEntityValues[CMDBuild.core.proxy.CMProxyConstants.USER] = this.selectedEntity.get(CMDBuild.core.proxy.CMProxyConstants.VALUES)[CMDBuild.core.proxy.CMProxyConstants.USER];
+			selectedEntityValues[CMDBuild.core.proxy.Constants.USER] = this.selectedEntity.get(CMDBuild.core.proxy.Constants.VALUES)[CMDBuild.core.proxy.Constants.USER];
 
 			if (!Ext.isEmpty(predecessorRecord)) {
 				var predecessorParams = {};
-				predecessorParams[CMDBuild.core.proxy.CMProxyConstants.CARD_ID] = predecessorRecord.get(CMDBuild.core.proxy.CMProxyConstants.ID); // Historic card ID
-				predecessorParams[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME] = this.selectedEntity.get(CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME);
+				predecessorParams[CMDBuild.core.proxy.Constants.CARD_ID] = predecessorRecord.get(CMDBuild.core.proxy.Constants.ID); // Historic card ID
+				predecessorParams[CMDBuild.core.proxy.Constants.CLASS_NAME] = this.selectedEntity.get(CMDBuild.core.proxy.Constants.CLASS_NAME);
 
 				this.getProxy().getHistoric({
 					params: predecessorParams,
@@ -187,10 +187,10 @@
 						_error('get historic predecessor card failure', this);
 					},
 					success: function(response, options, decodedResponse) {
-						this.valuesFormattingAndCompare(selectedEntityAttributes, decodedResponse.response[CMDBuild.core.proxy.CMProxyConstants.VALUES]);
+						this.valuesFormattingAndCompare(selectedEntityAttributes, decodedResponse.response[CMDBuild.core.proxy.Constants.VALUES]);
 
 						// Setup record property with historic card details to use XTemplate functionalities to render
-						record.set(CMDBuild.core.proxy.CMProxyConstants.VALUES, selectedEntityAttributes);
+						record.set(CMDBuild.core.proxy.Constants.VALUES, selectedEntityAttributes);
 					}
 				});
 			}
@@ -204,7 +204,7 @@
 		getTabHistoryGridColumns: function() {
 			var processesCustoColumns = [
 				{
-					dataIndex: CMDBuild.core.proxy.CMProxyConstants.ACTIVITY_NAME,
+					dataIndex: CMDBuild.core.proxy.Constants.ACTIVITY_NAME,
 					text: CMDBuild.Translation.activityName,
 					sortable: false,
 					hideable: false,
@@ -212,7 +212,7 @@
 					flex: 1
 				},
 				{
-					dataIndex: CMDBuild.core.proxy.CMProxyConstants.PERFORMERS,
+					dataIndex: CMDBuild.core.proxy.Constants.PERFORMERS,
 					text: CMDBuild.Translation.activityPerformer,
 					sortable: false,
 					hideable: false,
@@ -220,7 +220,7 @@
 					flex: 1
 				},
 				{
-					dataIndex: CMDBuild.core.proxy.CMProxyConstants.STATUS,
+					dataIndex: CMDBuild.core.proxy.Constants.STATUS,
 					text: CMDBuild.Translation.status,
 					sortable: false,
 					hideable: false,
@@ -265,7 +265,7 @@
 				}
 			} else { // Unchecked: Apply filter to hide 'System' activities rows
 				this.grid.getStore().filterBy(function(record, id) {
-					return record.get(CMDBuild.core.proxy.CMProxyConstants.USER).indexOf('system') < 0; // System user name
+					return record.get(CMDBuild.core.proxy.Constants.USER).indexOf('system') < 0; // System user name
 				}, this);
 			}
 		},
@@ -286,9 +286,9 @@
 		// Status translation management
 			statusBuildTranslationObject: function() {
 				var params = {};
-				params[CMDBuild.core.proxy.CMProxyConstants.TYPE] = 'FlowStatus';
-				params[CMDBuild.core.proxy.CMProxyConstants.ACTIVE] = true;
-				params[CMDBuild.core.proxy.CMProxyConstants.SHORT] = false;
+				params[CMDBuild.core.proxy.Constants.TYPE] = 'FlowStatus';
+				params[CMDBuild.core.proxy.Constants.ACTIVE] = true;
+				params[CMDBuild.core.proxy.Constants.SHORT] = false;
 
 				CMDBuild.ServiceProxy.lookup.get({
 					params: params,

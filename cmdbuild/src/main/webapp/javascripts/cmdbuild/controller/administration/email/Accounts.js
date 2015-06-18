@@ -4,7 +4,7 @@
 		extend: 'CMDBuild.controller.common.AbstractController',
 
 		requires: [
-			'CMDBuild.core.proxy.CMProxyConstants',
+			'CMDBuild.core.proxy.Constants',
 			'CMDBuild.core.proxy.email.Accounts',
 			'CMDBuild.model.email.Accounts'
 		],
@@ -104,7 +104,7 @@
 		onEmailAccountsRowSelected: function() {
 			if (this.grid.getSelectionModel().hasSelection()) {
 				var params = {};
-				params[CMDBuild.core.proxy.CMProxyConstants.NAME] = this.grid.getSelectionModel().getSelection()[0].get(CMDBuild.core.proxy.CMProxyConstants.NAME);
+				params[CMDBuild.core.proxy.Constants.NAME] = this.grid.getSelectionModel().getSelection()[0].get(CMDBuild.core.proxy.Constants.NAME);
 
 				CMDBuild.core.proxy.email.Accounts.get({
 					params: params,
@@ -112,7 +112,7 @@
 					failure: function(response, options, decodedResponse) {
 						CMDBuild.Msg.error(
 							CMDBuild.Translation.common.failure,
-							Ext.String.format(CMDBuild.Translation.errors.getAccountWithNameFailure, this.selectedTemplate.get(CMDBuild.core.proxy.CMProxyConstants.NAME)),
+							Ext.String.format(CMDBuild.Translation.errors.getAccountWithNameFailure, this.selectedTemplate.get(CMDBuild.core.proxy.Constants.NAME)),
 							false
 						);
 					},
@@ -121,7 +121,7 @@
 
 						this.form.loadRecord(this.selectedAccount);
 						this.form.setDisabledModify(true, true);
-						this.setDisabledTopToolbarButtons(this.selectedAccount.get(CMDBuild.core.proxy.CMProxyConstants.IS_DEFAULT));
+						this.setDisabledTopToolbarButtons(this.selectedAccount.get(CMDBuild.core.proxy.Constants.IS_DEFAULT));
 					}
 				});
 			}
@@ -150,7 +150,7 @@
 
 		onEmailAccountsSetDefaultButtonClick: function() {
 			var params = {};
-			params[CMDBuild.core.proxy.CMProxyConstants.NAME] = this.selectedAccount.get(CMDBuild.core.proxy.CMProxyConstants.NAME);
+			params[CMDBuild.core.proxy.Constants.NAME] = this.selectedAccount.get(CMDBuild.core.proxy.Constants.NAME);
 
 			CMDBuild.core.proxy.email.Accounts.setDefault({
 				params: params,
@@ -162,7 +162,7 @@
 		removeItem: function() {
 			if (!Ext.isEmpty(this.selectedAccount)) {
 				var params = {};
-				params[CMDBuild.core.proxy.CMProxyConstants.NAME] = this.selectedAccount.get(CMDBuild.core.proxy.CMProxyConstants.NAME);
+				params[CMDBuild.core.proxy.Constants.NAME] = this.selectedAccount.get(CMDBuild.core.proxy.Constants.NAME);
 
 				CMDBuild.core.proxy.email.Accounts.remove({
 					params: params,
@@ -207,15 +207,15 @@
 			this.grid.getStore().load({
 				callback: function(records, operation, success) {
 					var rowIndex = this.find(
-						CMDBuild.core.proxy.CMProxyConstants.NAME,
-						me.form.getForm().findField(CMDBuild.core.proxy.CMProxyConstants.NAME).getValue()
+						CMDBuild.core.proxy.Constants.NAME,
+						me.form.getForm().findField(CMDBuild.core.proxy.Constants.NAME).getValue()
 					);
 
 					me.grid.getSelectionModel().select(rowIndex, true);
 					me.form.setDisabledModify(true);
 
 					// Disable buttons based on selected record
-					me.setDisabledTopToolbarButtons(this.getAt(rowIndex).get(CMDBuild.core.proxy.CMProxyConstants.IS_DEFAULT));
+					me.setDisabledTopToolbarButtons(this.getAt(rowIndex).get(CMDBuild.core.proxy.Constants.IS_DEFAULT));
 				}
 			});
 		}

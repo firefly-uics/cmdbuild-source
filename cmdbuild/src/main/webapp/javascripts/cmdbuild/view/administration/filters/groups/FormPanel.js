@@ -3,7 +3,7 @@
 	Ext.define('CMDBuild.view.administration.filters.groups.FormPanel', {
 		extend: 'Ext.form.Panel',
 
-		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+		requires: ['CMDBuild.core.proxy.Constants'],
 
 		mixins: {
 			panelFunctions: 'CMDBuild.view.common.PanelFunctions'
@@ -47,7 +47,7 @@
 				dockedItems: [
 					Ext.create('Ext.toolbar.Toolbar', {
 						dock: 'top',
-						itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_TOP,
+						itemId: CMDBuild.core.proxy.Constants.TOOLBAR_TOP,
 
 						items: [
 							Ext.create('CMDBuild.core.buttons.Modify', {
@@ -70,7 +70,7 @@
 					}),
 					Ext.create('Ext.toolbar.Toolbar', {
 						dock: 'bottom',
-						itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_BOTTOM,
+						itemId: CMDBuild.core.proxy.Constants.TOOLBAR_BOTTOM,
 						ui: 'footer',
 
 						layout: {
@@ -99,8 +99,8 @@
 				],
 				items: [
 					Ext.create('Ext.form.field.Text', {
-						name: CMDBuild.core.proxy.CMProxyConstants.NAME,
-						itemId: CMDBuild.core.proxy.CMProxyConstants.NAME,
+						name: CMDBuild.core.proxy.Constants.NAME,
+						itemId: CMDBuild.core.proxy.Constants.NAME,
 						fieldLabel: CMDBuild.Translation.name,
 						labelWidth: CMDBuild.LABEL_WIDTH,
 						maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
@@ -118,12 +118,12 @@
 						translationsKeyField: 'Description'
 					}),
 					this.classesCombobox = Ext.create('Ext.form.field.ComboBox', {
-						name: CMDBuild.core.proxy.CMProxyConstants.ENTRY_TYPE,
+						name: CMDBuild.core.proxy.Constants.ENTRY_TYPE,
 						fieldLabel: CMDBuild.Translation.targetClass,
 						labelWidth: CMDBuild.LABEL_WIDTH,
 						maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
-						valueField: CMDBuild.core.proxy.CMProxyConstants.NAME,
-						displayField: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
+						valueField: CMDBuild.core.proxy.Constants.NAME,
+						displayField: CMDBuild.core.proxy.Constants.DESCRIPTION,
 						forceSelection: true,
 						editable: false,
 						allowBlank: false,
@@ -139,7 +139,7 @@
 						}
 					}),
 					this.filterChooser = Ext.create('CMDBuild.view.common.field.CMFilterChooser', {
-						name: CMDBuild.core.proxy.CMProxyConstants.FILTER,
+						name: CMDBuild.core.proxy.Constants.FILTER,
 						fieldLabel: CMDBuild.Translation.filter,
 						labelWidth: CMDBuild.LABEL_WIDTH,
 						filterTabToEnable: {
@@ -150,7 +150,7 @@
 					}),
 					{
 						xtype: 'hiddenfield',
-						name: CMDBuild.core.proxy.CMProxyConstants.ID
+						name: CMDBuild.core.proxy.Constants.ID
 					}
 				]
 			});

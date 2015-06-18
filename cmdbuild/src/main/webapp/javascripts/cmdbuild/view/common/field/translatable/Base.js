@@ -36,7 +36,7 @@
 		initComponent: function() {
 			this.field = this.createField();
 
-			if (CMDBuild.configuration[CMDBuild.core.proxy.CMProxyConstants.LOCALIZATION].hasEnabledLanguages())
+			if (CMDBuild.configuration[CMDBuild.core.proxy.Constants.LOCALIZATION].hasEnabledLanguages())
 				this.translationButton = Ext.create('CMDBuild.core.buttons.FieldTranslation', {
 					scope: this,
 

@@ -3,7 +3,7 @@
 	Ext.define('CMDBuild.view.administration.configuration.AlfrescoPanel', {
 		extend: 'Ext.form.Panel',
 
-		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+		requires: ['CMDBuild.core.proxy.Constants'],
 
 		/**
 		 * @cfg {CMDBuild.controller.administration.configuration.Alfresco}
@@ -31,7 +31,7 @@
 				dockedItems: [
 					Ext.create('Ext.toolbar.Toolbar', {
 						dock: 'bottom',
-						itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_BOTTOM,
+						itemId: CMDBuild.core.proxy.Constants.TOOLBAR_BOTTOM,
 						ui: 'footer',
 
 						layout: {
@@ -71,7 +71,7 @@
 						items: [
 							{
 								xtype: 'xcheckbox',
-								name: CMDBuild.core.proxy.CMProxyConstants.ENABLED,
+								name: CMDBuild.core.proxy.Constants.ENABLED,
 								fieldLabel: CMDBuild.Translation.enabled
 							},
 							{
@@ -82,7 +82,7 @@
 							},
 							{
 								xtype: 'numberfield',
-								name: CMDBuild.core.proxy.CMProxyConstants.DELAY,
+								name: CMDBuild.core.proxy.Constants.DELAY,
 								fieldLabel: CMDBuild.Translation.operationsDelay,
 								allowBlank: false
 							}
@@ -171,8 +171,8 @@
 							Ext.create('Ext.form.field.ComboBox', {
 								name: 'category.lookup',
 								fieldLabel: CMDBuild.Translation.cmdbuildCategory,
-								valueField: CMDBuild.core.proxy.CMProxyConstants.TYPE,
-								displayField: CMDBuild.core.proxy.CMProxyConstants.TYPE,
+								valueField: CMDBuild.core.proxy.Constants.TYPE,
+								displayField: CMDBuild.core.proxy.Constants.TYPE,
 								allowBlank: false,
 
 								store: CMDBuild.Cache.getLookupTypeLeavesAsStore(),

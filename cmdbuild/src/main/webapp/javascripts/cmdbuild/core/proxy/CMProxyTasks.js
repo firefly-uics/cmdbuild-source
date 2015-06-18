@@ -54,7 +54,7 @@
 					}
 				},
 				sorters: {
-					property: CMDBuild.core.proxy.CMProxyConstants.TYPE,
+					property: CMDBuild.core.proxy.Constants.TYPE,
 					direction: 'ASC'
 				}
 			});
@@ -179,10 +179,10 @@
 				var tr = CMDBuild.Translation.administration.tasks.taskConnector.deletionTypes;
 
 				var store = Ext.create('Ext.data.SimpleStore', {
-					fields: [CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION, CMDBuild.core.proxy.CMProxyConstants.VALUE],
+					fields: [CMDBuild.core.proxy.Constants.DESCRIPTION, CMDBuild.core.proxy.Constants.VALUE],
 					data: [
-						[tr.deleteCard, CMDBuild.core.proxy.CMProxyConstants.DELETE_CARD],
-						[tr.changeStatus, CMDBuild.core.proxy.CMProxyConstants.CHANGE_STATUS]
+						[tr.deleteCard, CMDBuild.core.proxy.Constants.DELETE_CARD],
+						[tr.changeStatus, CMDBuild.core.proxy.Constants.CHANGE_STATUS]
 					]
 				});
 
@@ -202,7 +202,7 @@
 			// TODO: implement real server call
 			getSourceStore: function() {
 //				return Ext.create('Ext.data.SimpleStore', {
-//					fields: [CMDBuild.core.proxy.CMProxyConstants.NAME],
+//					fields: [CMDBuild.core.proxy.Constants.NAME],
 //					data: [
 //						['SourceName1'],
 //						['SourceName2'],
@@ -219,7 +219,7 @@
 			// TODO: implement real server call
 			getSourceAttributeNames: function(viewName) {
 //				return Ext.create('Ext.data.SimpleStore', {
-//					fields: [CMDBuild.core.proxy.CMProxyConstants.NAME],
+//					fields: [CMDBuild.core.proxy.Constants.NAME],
 //					data: [
 //						['SourceAttributeName1'],
 //						['SourceAttributeName2'],
@@ -242,12 +242,12 @@
 				var tr = CMDBuild.Translation.administration.tasks.taskEvent.eventPhases;
 
 				return Ext.create('Ext.data.SimpleStore', {
-					fields: [CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION, CMDBuild.core.proxy.CMProxyConstants.VALUE],
+					fields: [CMDBuild.core.proxy.Constants.DESCRIPTION, CMDBuild.core.proxy.Constants.VALUE],
 					data: [
-						[tr.afterCreate, CMDBuild.core.proxy.CMProxyConstants.PHASE_AFTER_CREATE],
-						[tr.afterUpdate, CMDBuild.core.proxy.CMProxyConstants.PHASE_AFTER_UPDATE],
-						[tr.beforeUpdate, CMDBuild.core.proxy.CMProxyConstants.PHASE_BEFORE_UPDATE],
-						[tr.beforeDelete, CMDBuild.core.proxy.CMProxyConstants.PHASE_BEFORE_DELETE]
+						[tr.afterCreate, CMDBuild.core.proxy.Constants.PHASE_AFTER_CREATE],
+						[tr.afterUpdate, CMDBuild.core.proxy.Constants.PHASE_AFTER_UPDATE],
+						[tr.beforeUpdate, CMDBuild.core.proxy.Constants.PHASE_BEFORE_UPDATE],
+						[tr.beforeDelete, CMDBuild.core.proxy.Constants.PHASE_BEFORE_DELETE]
 					]
 				});
 			},
@@ -273,7 +273,7 @@
 						}
 					},
 					sorters: {
-						property: CMDBuild.core.proxy.CMProxyConstants.TYPE,
+						property: CMDBuild.core.proxy.Constants.TYPE,
 						direction: 'ASC'
 					}
 				});
@@ -286,7 +286,7 @@
 				var processes = _CMCache.getProcesses();
 				var store = Ext.create('Ext.data.Store', {
 					autoLoad: true,
-					fields: [CMDBuild.core.proxy.CMProxyConstants.NAME, CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION],
+					fields: [CMDBuild.core.proxy.Constants.NAME, CMDBuild.core.proxy.Constants.DESCRIPTION],
 					data: []
 				});
 
@@ -297,8 +297,8 @@
 						// Building object to add to store using proxy costants
 						var bufferStoreObj = {};
 
-						bufferStoreObj[CMDBuild.core.proxy.CMProxyConstants.NAME] = _CMCache.getEntryTypeNameById(obj.raw.id);
-						bufferStoreObj[CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION] = obj.raw.text;
+						bufferStoreObj[CMDBuild.core.proxy.Constants.NAME] = _CMCache.getEntryTypeNameById(obj.raw.id);
+						bufferStoreObj[CMDBuild.core.proxy.Constants.DESCRIPTION] = obj.raw.text;
 
 						store.add(bufferStoreObj);
 					}

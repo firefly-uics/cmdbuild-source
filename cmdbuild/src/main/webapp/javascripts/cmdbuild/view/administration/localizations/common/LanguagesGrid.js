@@ -4,7 +4,7 @@
 		extend: 'Ext.container.Container',
 
 		requires: [
-			'CMDBuild.core.proxy.CMProxyConstants',
+			'CMDBuild.core.proxy.Constants',
 			'CMDBuild.core.proxy.localizations.Localizations'
 		],
 
@@ -27,17 +27,17 @@
 				scope: this,
 				loadMask: true,
 				success: function(result, options, decodedResult) {
-					var translations = decodedResult[CMDBuild.core.proxy.CMProxyConstants.TRANSLATIONS];
+					var translations = decodedResult[CMDBuild.core.proxy.Constants.TRANSLATIONS];
 
 					Ext.Array.forEach(translations, function(translation, i, allTranslations) {
 						var item = Ext.create('Ext.form.field.Checkbox', {
-							fieldLabel: translation[CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION],
+							fieldLabel: translation[CMDBuild.core.proxy.Constants.DESCRIPTION],
 							labelWidth: CMDBuild.LABEL_WIDTH,
-							name: translation[CMDBuild.core.proxy.CMProxyConstants.TAG],
+							name: translation[CMDBuild.core.proxy.Constants.TAG],
 							padding: '3 5',
 							margin: '0 20 0 0',
 							submitValue: false,
-							labelClsExtra: 'ux-flag-' + translation[CMDBuild.core.proxy.CMProxyConstants.TAG],
+							labelClsExtra: 'ux-flag-' + translation[CMDBuild.core.proxy.Constants.TAG],
 							labelStyle: 'background-repeat: no-repeat; background-position: left; padding-left: 22px;'
 						});
 

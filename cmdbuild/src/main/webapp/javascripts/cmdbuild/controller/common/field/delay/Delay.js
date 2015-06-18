@@ -3,7 +3,7 @@
 	Ext.define('CMDBuild.controller.common.field.delay.Delay', {
 		extend: 'CMDBuild.controller.common.AbstractController',
 
-		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+		requires: ['CMDBuild.core.proxy.Constants'],
 
 		/**
 		 * @cfg {Array}
@@ -25,7 +25,7 @@
 		 */
 		getDelayStore: function() {
 			return Ext.create('Ext.data.Store', {
-				fields: [CMDBuild.core.proxy.CMProxyConstants.VALUE, CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION],
+				fields: [CMDBuild.core.proxy.Constants.VALUE, CMDBuild.core.proxy.Constants.DESCRIPTION],
 				data: [
 					{ value: 0, description: CMDBuild.Translation.delayLabels.none },
 					{ value: 3600000, description: CMDBuild.Translation.delayLabels.hour1 },
@@ -50,7 +50,7 @@
 		 * @return {Boolean}
 		 */
 		onDelayBeforeSelect: function(record) {
-			if (Ext.isEmpty(record.get(CMDBuild.core.proxy.CMProxyConstants.VALUE)))
+			if (Ext.isEmpty(record.get(CMDBuild.core.proxy.Constants.VALUE)))
 				return false;
 		}
 	});

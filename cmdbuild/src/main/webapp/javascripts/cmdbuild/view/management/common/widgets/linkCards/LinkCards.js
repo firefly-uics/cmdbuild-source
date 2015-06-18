@@ -9,7 +9,7 @@
 			WIDGET_NAME: '.LinkCards'
 		},
 
-		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+		requires: ['CMDBuild.core.proxy.Constants'],
 
 		/**
 		 * @cfg {Object}
@@ -53,8 +53,8 @@
 			var allowEditCard = false;
 			var allowShowCard = false;
 
-			if (this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.ALLOW_CARD_EDITING]) {
-				var priv = _CMUtils.getClassPrivilegesByName(this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME]);
+			if (this.widgetConf[CMDBuild.core.proxy.Constants.ALLOW_CARD_EDITING]) {
+				var priv = _CMUtils.getClassPrivilegesByName(this.widgetConf[CMDBuild.core.proxy.Constants.CLASS_NAME]);
 
 				if (priv && priv.write) {
 					allowEditCard = true;
@@ -94,14 +94,14 @@
 					{
 						xtype: 'toolbar',
 						dock: 'top',
-						itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_TOP,
+						itemId: CMDBuild.core.proxy.Constants.TOOLBAR_TOP,
 						items: [this.toggleGridFilterButton]
 					}
 				],
 				items: [this.grid]
 			});
 
-			if (this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.ENABLE_MAP] && CMDBuild.Config.gis.enabled)
+			if (this.widgetConf[CMDBuild.core.proxy.Constants.ENABLE_MAP] && CMDBuild.Config.gis.enabled)
 				this.buildMap();
 
 			this.callParent(arguments);
@@ -122,9 +122,9 @@
 				frame: false,
 				border: false,
 
-				lon: this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.START_MAP_WITH_LONGITUDE] || this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.MAP_LONGITUDE],
-				lat: this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.START_MAP_WITH_LATITUDE] || this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.MAP_LATITATUDE],
-				initialZoomLevel: this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.START_MAP_WITH_ZOOM] || this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.MAP_ZOOM]
+				lon: this.widgetConf[CMDBuild.core.proxy.Constants.START_MAP_WITH_LONGITUDE] || this.widgetConf[CMDBuild.core.proxy.Constants.MAP_LONGITUDE],
+				lat: this.widgetConf[CMDBuild.core.proxy.Constants.START_MAP_WITH_LATITUDE] || this.widgetConf[CMDBuild.core.proxy.Constants.MAP_LATITATUDE],
+				initialZoomLevel: this.widgetConf[CMDBuild.core.proxy.Constants.START_MAP_WITH_ZOOM] || this.widgetConf[CMDBuild.core.proxy.Constants.MAP_ZOOM]
 			});
 
 			Ext.apply(this, {
@@ -132,7 +132,7 @@
 					{
 						xtype: 'toolbar',
 						dock: 'top',
-						itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_TOP,
+						itemId: CMDBuild.core.proxy.Constants.TOOLBAR_TOP,
 						items: [this.toggleGridFilterButton, '->', this.mapButton]
 					}
 				],
@@ -169,12 +169,12 @@
 		 * @return {CMDBuild.selection.CMMultiPageSelectionModel} single select or multi select
 		 */
 		getSelectionModel: function() {
-			if (this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.READ_ONLY])
+			if (this.widgetConf[CMDBuild.core.proxy.Constants.READ_ONLY])
 				return Ext.create('Ext.selection.RowModel');
 
 			return Ext.create('CMDBuild.selection.CMMultiPageSelectionModel', {
 				avoidCheckerHeader: true,
-				mode: this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.SINGLE_SELECT] ? 'SINGLE' : 'MULTI',
+				mode: this.widgetConf[CMDBuild.core.proxy.Constants.SINGLE_SELECT] ? 'SINGLE' : 'MULTI',
 				idProperty: 'Id' // Required to identify the records for the data and not the id of ext
 			});
 		},

@@ -4,7 +4,7 @@
 		extend: 'Ext.button.Split',
 
 		requires: [
-			'CMDBuild.core.proxy.CMProxyConstants',
+			'CMDBuild.core.proxy.Constants',
 			'CMDBuild.core.proxy.Domain',
 			'CMDBuild.core.Utils'
 		],
@@ -36,14 +36,14 @@
 				var anchestorsId = CMDBuild.core.Utils.getEntryTypeAncestorsId(entryType);
 
 				var params = {};
-				params[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME] = entryType.get(CMDBuild.core.proxy.CMProxyConstants.NAME);
-				params[CMDBuild.core.proxy.CMProxyConstants.SKIP_DISABLED_CLASSES] = true;
+				params[CMDBuild.core.proxy.Constants.CLASS_NAME] = entryType.get(CMDBuild.core.proxy.Constants.NAME);
+				params[CMDBuild.core.proxy.Constants.SKIP_DISABLED_CLASSES] = true;
 
 				CMDBuild.core.proxy.Domain.getList({
 					params: params,
 					scope: this,
 					success: function(result, options, decodedResult) {
-						Ext.Array.forEach(decodedResult[CMDBuild.core.proxy.CMProxyConstants.DOMAINS], function(domain, i, allDomains) {
+						Ext.Array.forEach(decodedResult[CMDBuild.core.proxy.Constants.DOMAINS], function(domain, i, allDomains) {
 							if (_CMCache.isClassById(domain['class1id']) && _CMCache.isClassById(domain['class2id'])) {
 								var domainCMObject = {};
 								var originClass = _CMCache.getEntryTypeByName(domain['class1']);
@@ -52,7 +52,7 @@
 								if (Ext.Array.contains(anchestorsId, domain['class1id'])) {
 									domainCMObject = { // TODO: use domain real object in future
 										dom_id: domain['idDomain'],
-										description: domain['descrdir'] + ' (' + destinationClass.get(CMDBuild.core.proxy.CMProxyConstants.TEXT) + ')',
+										description: domain['descrdir'] + ' (' + destinationClass.get(CMDBuild.core.proxy.Constants.TEXT) + ')',
 										dst_cid: domain['class2id'],
 										src_cid: domain['class1id'],
 										src: '_1'
@@ -60,7 +60,7 @@
 
 									if (domain['priv_create']) // Add menu item only if i have create privileges
 										this.menu.add({
-											text: domainCMObject[CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION],
+											text: domainCMObject[CMDBuild.core.proxy.Constants.DESCRIPTION],
 											domain: domainCMObject,
 											scope: this,
 
@@ -73,7 +73,7 @@
 								if (Ext.Array.contains(anchestorsId, domain['class2id'])) {
 									domainCMObject = { // TODO: use domain real object in future
 										dom_id: domain['idDomain'],
-										description: domain['descrinv'] + ' (' + originClass.get(CMDBuild.core.proxy.CMProxyConstants.TEXT) + ')',
+										description: domain['descrinv'] + ' (' + originClass.get(CMDBuild.core.proxy.Constants.TEXT) + ')',
 										dst_cid: domain['class1id'],
 										src_cid: domain['class2id'],
 										src: '_2'
@@ -81,7 +81,7 @@
 
 									if (domain['priv_create']) // Add menu item only if i have create privileges
 										this.menu.add({
-											text: domainCMObject[CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION],
+											text: domainCMObject[CMDBuild.core.proxy.Constants.DESCRIPTION],
 											domain: domainCMObject,
 											scope: this,
 

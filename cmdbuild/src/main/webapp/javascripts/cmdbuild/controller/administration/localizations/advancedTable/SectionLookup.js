@@ -5,7 +5,7 @@
 
 		requires: [
 			'CMDBuild.core.proxy.Attributes',
-			'CMDBuild.core.proxy.CMProxyConstants',
+			'CMDBuild.core.proxy.Constants',
 			'CMDBuild.core.proxy.Classes',
 			'CMDBuild.core.proxy.localizations.Localizations',
 //			'CMDBuild.model.localizations.advancedTable.TreeStore',
@@ -29,7 +29,7 @@
 		/**
 		 * @cfg {String}
 		 */
-		sectionId: CMDBuild.core.proxy.CMProxyConstants.CLASS, // TODO
+		sectionId: CMDBuild.core.proxy.Constants.CLASS, // TODO
 
 		/**
 		 * @property {CMDBuild.view.administration.localizations.common.AdvancedTableGrid}
@@ -69,10 +69,10 @@
 //			node.eachChild(function(childNode) {
 //				if (childNode.isLeaf()) {
 //					var params = {};
-//					params[CMDBuild.core.proxy.CMProxyConstants.TYPE] = this.getSectionId();
-//					params[CMDBuild.core.proxy.CMProxyConstants.OWNER] = node.get(CMDBuild.core.proxy.CMProxyConstants.ENTITY_IDENTIFIER);
-//					params[CMDBuild.core.proxy.CMProxyConstants.IDENTIFIER] = node.get(CMDBuild.core.proxy.CMProxyConstants.ENTITY_IDENTIFIER);
-//					params[CMDBuild.core.proxy.CMProxyConstants.FIELD] = childNode.get(CMDBuild.core.proxy.CMProxyConstants.PROPERTY_IDENTIFIER);
+//					params[CMDBuild.core.proxy.Constants.TYPE] = this.getSectionId();
+//					params[CMDBuild.core.proxy.Constants.OWNER] = node.get(CMDBuild.core.proxy.Constants.ENTITY_IDENTIFIER);
+//					params[CMDBuild.core.proxy.Constants.IDENTIFIER] = node.get(CMDBuild.core.proxy.Constants.ENTITY_IDENTIFIER);
+//					params[CMDBuild.core.proxy.Constants.FIELD] = childNode.get(CMDBuild.core.proxy.Constants.PROPERTY_IDENTIFIER);
 //
 //					CMDBuild.core.proxy.localizations.Localizations.read({
 //						params: params,
@@ -101,8 +101,8 @@
 //			node.removeAll();
 //
 //			var params = {};
-//			params[CMDBuild.core.proxy.CMProxyConstants.ACTIVE] = true;
-//			params[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME] = this.getLevelNode(node, 1).get(CMDBuild.core.proxy.CMProxyConstants.TEXT);
+//			params[CMDBuild.core.proxy.Constants.ACTIVE] = true;
+//			params[CMDBuild.core.proxy.Constants.CLASS_NAME] = this.getLevelNode(node, 1).get(CMDBuild.core.proxy.Constants.TEXT);
 //
 //			CMDBuild.LoadMask.get().show();
 //			CMDBuild.core.proxy.Attributes.read({
@@ -110,15 +110,15 @@
 //				scope: this,
 //				success: function(response, options, decodedResponse) {
 //					// Sort attributes with CMDBuild sort order
-//					CMDBuild.core.Utils.objectArraySort(decodedResponse[CMDBuild.core.proxy.CMProxyConstants.ATTRIBUTES], CMDBuild.core.proxy.CMProxyConstants.INDEX);
+//					CMDBuild.core.Utils.objectArraySort(decodedResponse[CMDBuild.core.proxy.Constants.ATTRIBUTES], CMDBuild.core.proxy.Constants.INDEX);
 //
-//					Ext.Array.forEach(decodedResponse[CMDBuild.core.proxy.CMProxyConstants.ATTRIBUTES], function(childNode, i, allChildNodes) {
-//						if (childNode[CMDBuild.core.proxy.CMProxyConstants.NAME] != 'Notes') { // Custom CMDBuild behaviour
+//					Ext.Array.forEach(decodedResponse[CMDBuild.core.proxy.Constants.ATTRIBUTES], function(childNode, i, allChildNodes) {
+//						if (childNode[CMDBuild.core.proxy.Constants.NAME] != 'Notes') { // Custom CMDBuild behaviour
 //							var localizationParams = {};
-//							localizationParams[CMDBuild.core.proxy.CMProxyConstants.TYPE] = CMDBuild.core.proxy.CMProxyConstants.ATTRIBUTE + this.getSectionId();
-//							localizationParams[CMDBuild.core.proxy.CMProxyConstants.OWNER] = this.getLevelNode(node, 1).get(CMDBuild.core.proxy.CMProxyConstants.ENTITY_IDENTIFIER);
-//							localizationParams[CMDBuild.core.proxy.CMProxyConstants.IDENTIFIER] = childNode[CMDBuild.core.proxy.CMProxyConstants.NAME];
-//							localizationParams[CMDBuild.core.proxy.CMProxyConstants.FIELD] = CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION;
+//							localizationParams[CMDBuild.core.proxy.Constants.TYPE] = CMDBuild.core.proxy.Constants.ATTRIBUTE + this.getSectionId();
+//							localizationParams[CMDBuild.core.proxy.Constants.OWNER] = this.getLevelNode(node, 1).get(CMDBuild.core.proxy.Constants.ENTITY_IDENTIFIER);
+//							localizationParams[CMDBuild.core.proxy.Constants.IDENTIFIER] = childNode[CMDBuild.core.proxy.Constants.NAME];
+//							localizationParams[CMDBuild.core.proxy.Constants.FIELD] = CMDBuild.core.proxy.Constants.DESCRIPTION;
 //
 //							CMDBuild.core.proxy.localizations.Localizations.read({
 //								params: localizationParams,
@@ -126,19 +126,19 @@
 //								loadMask: true,
 //								success: function(response, options, decodedResponse) {
 //									var childAttributeNodeObject = {};
-//									childAttributeNodeObject[CMDBuild.core.proxy.CMProxyConstants.DEFAULT] = childNode[CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION];
-//									childAttributeNodeObject[CMDBuild.core.proxy.CMProxyConstants.ENTITY_IDENTIFIER] = CMDBuild.core.proxy.CMProxyConstants.ATTRIBUTE + this.getSectionId();
-//									childAttributeNodeObject[CMDBuild.core.proxy.CMProxyConstants.LEAF] = true;
-//									childAttributeNodeObject[CMDBuild.core.proxy.CMProxyConstants.PARENT] = node;
-//									childAttributeNodeObject[CMDBuild.core.proxy.CMProxyConstants.PROPERTY_IDENTIFIER] = childNode[CMDBuild.core.proxy.CMProxyConstants.NAME];
-//									childAttributeNodeObject[CMDBuild.core.proxy.CMProxyConstants.TEXT] = childNode[CMDBuild.core.proxy.CMProxyConstants.NAME];
+//									childAttributeNodeObject[CMDBuild.core.proxy.Constants.DEFAULT] = childNode[CMDBuild.core.proxy.Constants.DESCRIPTION];
+//									childAttributeNodeObject[CMDBuild.core.proxy.Constants.ENTITY_IDENTIFIER] = CMDBuild.core.proxy.Constants.ATTRIBUTE + this.getSectionId();
+//									childAttributeNodeObject[CMDBuild.core.proxy.Constants.LEAF] = true;
+//									childAttributeNodeObject[CMDBuild.core.proxy.Constants.PARENT] = node;
+//									childAttributeNodeObject[CMDBuild.core.proxy.Constants.PROPERTY_IDENTIFIER] = childNode[CMDBuild.core.proxy.Constants.NAME];
+//									childAttributeNodeObject[CMDBuild.core.proxy.Constants.TEXT] = childNode[CMDBuild.core.proxy.Constants.NAME];
 //
 //									if (!Ext.Object.isEmpty(decodedResponse.response)) {
 //										Ext.Object.each(decodedResponse.response, function(tag, translation, myself) {
 //											childAttributeNodeObject[tag] = translation;
 //										});
 //
-//										childAttributeNodeObject[CMDBuild.core.proxy.CMProxyConstants.WAS_EMPTY] = false;
+//										childAttributeNodeObject[CMDBuild.core.proxy.Constants.WAS_EMPTY] = false;
 //									}
 //
 //									node.appendChild(childAttributeNodeObject);
@@ -162,7 +162,7 @@
 //
 //			// GetAllClasses data to get default translations
 //			var params = {};
-//			params[CMDBuild.core.proxy.CMProxyConstants.ACTIVE] = true;
+//			params[CMDBuild.core.proxy.Constants.ACTIVE] = true;
 //
 //			CMDBuild.core.proxy.Classes.read({
 //				params: params,
@@ -170,41 +170,41 @@
 //				scope: this,
 //				success: function(response, options, decodedResponse) {
 //					// Sort classes with CMDBuild sort order
-//					CMDBuild.core.Utils.objectArraySort(decodedResponse[CMDBuild.core.proxy.CMProxyConstants.CLASSES], CMDBuild.core.proxy.CMProxyConstants.TEXT);
+//					CMDBuild.core.Utils.objectArraySort(decodedResponse[CMDBuild.core.proxy.Constants.CLASSES], CMDBuild.core.proxy.Constants.TEXT);
 //
-//					Ext.Array.forEach(decodedResponse[CMDBuild.core.proxy.CMProxyConstants.CLASSES], function(classObject, i, allClasses) {
+//					Ext.Array.forEach(decodedResponse[CMDBuild.core.proxy.Constants.CLASSES], function(classObject, i, allClasses) {
 //						if (
-//							classObject[CMDBuild.core.proxy.CMProxyConstants.TYPE] == 'class' // Discard processes from visualization
-//							&& classObject[CMDBuild.core.proxy.CMProxyConstants.NAME] != 'Class' // Discard root class of all classes
+//							classObject[CMDBuild.core.proxy.Constants.TYPE] == 'class' // Discard processes from visualization
+//							&& classObject[CMDBuild.core.proxy.Constants.NAME] != 'Class' // Discard root class of all classes
 //						) {
 //							// Class main node
 //							var classMainNodeObject = { expandable: true, };
-//							classMainNodeObject[CMDBuild.core.proxy.CMProxyConstants.ENTITY_IDENTIFIER] = classObject[CMDBuild.core.proxy.CMProxyConstants.NAME];
-//							classMainNodeObject[CMDBuild.core.proxy.CMProxyConstants.LEAF] = false;
-//							classMainNodeObject[CMDBuild.core.proxy.CMProxyConstants.PARENT] = root;
-//							classMainNodeObject[CMDBuild.core.proxy.CMProxyConstants.PROPERTY_IDENTIFIER] = classObject[CMDBuild.core.proxy.CMProxyConstants.NAME];
-//							classMainNodeObject[CMDBuild.core.proxy.CMProxyConstants.TEXT] = classObject[CMDBuild.core.proxy.CMProxyConstants.NAME];
+//							classMainNodeObject[CMDBuild.core.proxy.Constants.ENTITY_IDENTIFIER] = classObject[CMDBuild.core.proxy.Constants.NAME];
+//							classMainNodeObject[CMDBuild.core.proxy.Constants.LEAF] = false;
+//							classMainNodeObject[CMDBuild.core.proxy.Constants.PARENT] = root;
+//							classMainNodeObject[CMDBuild.core.proxy.Constants.PROPERTY_IDENTIFIER] = classObject[CMDBuild.core.proxy.Constants.NAME];
+//							classMainNodeObject[CMDBuild.core.proxy.Constants.TEXT] = classObject[CMDBuild.core.proxy.Constants.NAME];
 //
 //							var classMainNode = root.appendChild(classMainNodeObject);
 //
 //							// Class description property object
 //							var classDescriptionNodeObject = {};
-//							classDescriptionNodeObject[CMDBuild.core.proxy.CMProxyConstants.DEFAULT] = classObject[CMDBuild.core.proxy.CMProxyConstants.TEXT];
-//							classDescriptionNodeObject[CMDBuild.core.proxy.CMProxyConstants.ENTITY_IDENTIFIER] = CMDBuild.core.proxy.CMProxyConstants.TEXT;
-//							classDescriptionNodeObject[CMDBuild.core.proxy.CMProxyConstants.LEAF] = true;
-//							classDescriptionNodeObject[CMDBuild.core.proxy.CMProxyConstants.PARENT] = classMainNode;
-//							classDescriptionNodeObject[CMDBuild.core.proxy.CMProxyConstants.PROPERTY_IDENTIFIER] = CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION;
-//							classDescriptionNodeObject[CMDBuild.core.proxy.CMProxyConstants.TEXT] = CMDBuild.Translation.descriptionLabel;
+//							classDescriptionNodeObject[CMDBuild.core.proxy.Constants.DEFAULT] = classObject[CMDBuild.core.proxy.Constants.TEXT];
+//							classDescriptionNodeObject[CMDBuild.core.proxy.Constants.ENTITY_IDENTIFIER] = CMDBuild.core.proxy.Constants.TEXT;
+//							classDescriptionNodeObject[CMDBuild.core.proxy.Constants.LEAF] = true;
+//							classDescriptionNodeObject[CMDBuild.core.proxy.Constants.PARENT] = classMainNode;
+//							classDescriptionNodeObject[CMDBuild.core.proxy.Constants.PROPERTY_IDENTIFIER] = CMDBuild.core.proxy.Constants.DESCRIPTION;
+//							classDescriptionNodeObject[CMDBuild.core.proxy.Constants.TEXT] = CMDBuild.Translation.descriptionLabel;
 //
 //							classMainNode.appendChild(classDescriptionNodeObject);
 //
 //							// Class attributes node (always displayed because Code and Description are default class attributes)
 //							var classAttributeNodeObject = { expandable: true };
-//							classAttributeNodeObject[CMDBuild.core.proxy.CMProxyConstants.ENTITY_IDENTIFIER] = CMDBuild.core.proxy.CMProxyConstants.ATTRIBUTES;
-//							classAttributeNodeObject[CMDBuild.core.proxy.CMProxyConstants.LEAF] = false;
-//							classAttributeNodeObject[CMDBuild.core.proxy.CMProxyConstants.PARENT] = classMainNode;
-//							classAttributeNodeObject[CMDBuild.core.proxy.CMProxyConstants.PROPERTY_IDENTIFIER] = CMDBuild.core.proxy.CMProxyConstants.ATTRIBUTES;
-//							classAttributeNodeObject[CMDBuild.core.proxy.CMProxyConstants.TEXT] = CMDBuild.Translation.attributes;
+//							classAttributeNodeObject[CMDBuild.core.proxy.Constants.ENTITY_IDENTIFIER] = CMDBuild.core.proxy.Constants.ATTRIBUTES;
+//							classAttributeNodeObject[CMDBuild.core.proxy.Constants.LEAF] = false;
+//							classAttributeNodeObject[CMDBuild.core.proxy.Constants.PARENT] = classMainNode;
+//							classAttributeNodeObject[CMDBuild.core.proxy.Constants.PROPERTY_IDENTIFIER] = CMDBuild.core.proxy.Constants.ATTRIBUTES;
+//							classAttributeNodeObject[CMDBuild.core.proxy.Constants.TEXT] = CMDBuild.Translation.attributes;
 //
 //							var classAttributesNode = classMainNode.appendChild(classAttributeNodeObject);
 //
@@ -220,22 +220,22 @@
 		 */
 		onAdvancedTableRowUpdateButtonClick: function(node) {  // TODO implementare nuove chiamate
 //			if (!Ext.Object.isEmpty(node)) {
-//				var parentProperty = node.get(CMDBuild.core.proxy.CMProxyConstants.PARENT).get(CMDBuild.core.proxy.CMProxyConstants.PROPERTY);
+//				var parentProperty = node.get(CMDBuild.core.proxy.Constants.PARENT).get(CMDBuild.core.proxy.Constants.PROPERTY);
 //
 //				var localizationParams = {};
-//				localizationParams[CMDBuild.core.proxy.CMProxyConstants.ATTRIBUTE_NAME] = node.get(CMDBuild.core.proxy.CMProxyConstants.NAME);
-//				localizationParams[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME] = this.getFirstLevelNode(node).get(CMDBuild.core.proxy.CMProxyConstants.OBJECT);
-//				localizationParams[CMDBuild.core.proxy.CMProxyConstants.FIELD] = CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION;
-//				localizationParams[CMDBuild.core.proxy.CMProxyConstants.ATTRIBUTE_NAME] = node.get(CMDBuild.core.proxy.CMProxyConstants.OBJECT);
-//				localizationParams[CMDBuild.core.proxy.CMProxyConstants.TRANSLATIONS] = Ext.encode(node.getChanges());
-//				localizationParams[CMDBuild.core.proxy.CMProxyConstants.SECTION_ID] = (parentProperty == CMDBuild.core.proxy.CMProxyConstants.CLASSES) ? this.getSectionId() : this.getSectionId() + CMDBuild.core.Utils.toTitleCase(parentProperty);
+//				localizationParams[CMDBuild.core.proxy.Constants.ATTRIBUTE_NAME] = node.get(CMDBuild.core.proxy.Constants.NAME);
+//				localizationParams[CMDBuild.core.proxy.Constants.CLASS_NAME] = this.getFirstLevelNode(node).get(CMDBuild.core.proxy.Constants.OBJECT);
+//				localizationParams[CMDBuild.core.proxy.Constants.FIELD] = CMDBuild.core.proxy.Constants.DESCRIPTION;
+//				localizationParams[CMDBuild.core.proxy.Constants.ATTRIBUTE_NAME] = node.get(CMDBuild.core.proxy.Constants.OBJECT);
+//				localizationParams[CMDBuild.core.proxy.Constants.TRANSLATIONS] = Ext.encode(node.getChanges());
+//				localizationParams[CMDBuild.core.proxy.Constants.SECTION_ID] = (parentProperty == CMDBuild.core.proxy.Constants.CLASSES) ? this.getSectionId() : this.getSectionId() + CMDBuild.core.Utils.toTitleCase(parentProperty);
 //
-//				if (node.get(CMDBuild.core.proxy.CMProxyConstants.WAS_EMPTY)) {
+//				if (node.get(CMDBuild.core.proxy.Constants.WAS_EMPTY)) {
 //					CMDBuild.core.proxy.localizations.Localizations.create({
 //						params: localizationParams,
 //						scope: this,
 //						success: function(response, options, decodedResponse) {
-//							node.set(CMDBuild.core.proxy.CMProxyConstants.WAS_EMPTY, false);
+//							node.set(CMDBuild.core.proxy.Constants.WAS_EMPTY, false);
 //						}
 //					});
 //				} else {
@@ -243,7 +243,7 @@
 //						params: localizationParams,
 //						scope: this,
 //						success: function(response, options, decodedResponse) {
-//							node.set(CMDBuild.core.proxy.CMProxyConstants.WAS_EMPTY, false);
+//							node.set(CMDBuild.core.proxy.Constants.WAS_EMPTY, false);
 //						}
 //					});
 //				}

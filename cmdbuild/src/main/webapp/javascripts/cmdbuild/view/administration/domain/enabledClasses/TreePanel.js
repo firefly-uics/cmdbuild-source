@@ -3,7 +3,7 @@
 	Ext.define('CMDBuild.view.administration.domain.enabledClasses.TreePanel', {
 		extend: 'Ext.tree.Panel',
 
-		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+		requires: ['CMDBuild.core.proxy.Constants'],
 
 		/**
 		 * @cfg {CMDBuild.controller.administration.domain.EnabledClasses}
@@ -41,14 +41,14 @@
 					{
 						xtype: 'treecolumn',
 						text: CMDBuild.Translation.className,
-						dataIndex: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
+						dataIndex: CMDBuild.core.proxy.Constants.DESCRIPTION,
 						flex: 1,
 						sortable: false,
 						draggable: false
 					},
 					Ext.create('Ext.grid.column.CheckColumn', {
 						text: CMDBuild.Translation.enabled,
-						dataIndex: CMDBuild.core.proxy.CMProxyConstants.ENABLED,
+						dataIndex: CMDBuild.core.proxy.Constants.ENABLED,
 						width: 60,
 						align: 'center',
 						sortable: false,

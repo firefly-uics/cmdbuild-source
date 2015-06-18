@@ -18,7 +18,7 @@
 		alternateClassName: 'CMDBuild.ServiceProxy.lookup', // Legacy class name
 
 		requires: [
-			'CMDBuild.core.proxy.CMProxyConstants',
+			'CMDBuild.core.proxy.Constants',
 			'CMDBuild.core.proxy.Index',
 			'CMDBuild.model.Lookup'
 		],

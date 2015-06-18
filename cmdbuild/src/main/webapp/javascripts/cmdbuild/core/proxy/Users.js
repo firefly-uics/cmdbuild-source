@@ -63,7 +63,7 @@
 					}
 				},
 				sorters: [{
-					property: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
+					property: CMDBuild.core.proxy.Constants.DESCRIPTION,
 					direction: 'ASC'
 				}]
 			});

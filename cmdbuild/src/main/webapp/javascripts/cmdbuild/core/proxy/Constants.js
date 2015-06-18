@@ -3,8 +3,8 @@
 	/**
 	 * Constants with the standard parameter names
 	 */
-	Ext.define('CMDBuild.core.proxy.CMProxyConstants', {
-		alternateClassName: 'CMDBuild.ServiceProxy.parameter', // Legacy class name
+	Ext.define('CMDBuild.core.proxy.Constants', {
+		alternateClassName: ['CMDBuild.ServiceProxy.parameter', 'CMDBuild.core.proxy.Constants'], // Legacy class name
 
 		singleton: true,
 

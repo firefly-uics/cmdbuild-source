@@ -55,8 +55,8 @@
 			}
 
 			var params = {};
-			params[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME] = _CMCache.getEntryTypeNameById(this.idClass);
-			params[CMDBuild.core.proxy.CMProxyConstants.ATTRIBUTES] = Ext.encode(attributes);
+			params[CMDBuild.core.proxy.Constants.CLASS_NAME] = _CMCache.getEntryTypeNameById(this.idClass);
+			params[CMDBuild.core.proxy.Constants.ATTRIBUTES] = Ext.encode(attributes);
 
 			CMDBuild.ServiceProxy.attributes.updateSortConfiguration({
 				params: params,

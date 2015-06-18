@@ -3,7 +3,7 @@
 	Ext.define('CMDBuild.controller.administration.localizations.advancedTable.AdvancedTable', {
 		extend: 'CMDBuild.controller.common.AbstractController',
 
-		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+		requires: ['CMDBuild.core.proxy.Constants'],
 
 		/**
 		 * @cfg {CMDBuild.controller.administration.localizations.Localizations}
@@ -77,10 +77,10 @@
 		buildColumn: function(languageObject) {
 			if (!Ext.isEmpty(languageObject)) {
 				return Ext.create('Ext.grid.column.Column', {
-					dataIndex: languageObject.get(CMDBuild.core.proxy.CMProxyConstants.TAG),
+					dataIndex: languageObject.get(CMDBuild.core.proxy.Constants.TAG),
 					text: '<img style="margin: 0px 5px 0px 0px;" src="images/icons/flags/'
-						+ languageObject.get(CMDBuild.core.proxy.CMProxyConstants.TAG) + '.png" /> '
-						+ languageObject.get(CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION),
+						+ languageObject.get(CMDBuild.core.proxy.Constants.TAG) + '.png" /> '
+						+ languageObject.get(CMDBuild.core.proxy.Constants.DESCRIPTION),
 					width: 300,
 					sortable: false,
 					draggable: false,
@@ -98,11 +98,11 @@
 		 * @return {Array} columnsArray
 		 */
 		onAdvancedTableBuildColumns: function() {
-			var enabledLanguages = CMDBuild.configuration[CMDBuild.core.proxy.CMProxyConstants.LOCALIZATION].getEnabledLanguages();
+			var enabledLanguages = CMDBuild.configuration[CMDBuild.core.proxy.Constants.LOCALIZATION].getEnabledLanguages();
 			var columnsArray = [
 				{
 					xtype: 'treecolumn',
-					dataIndex: CMDBuild.core.proxy.CMProxyConstants.TEXT,
+					dataIndex: CMDBuild.core.proxy.Constants.TEXT,
 					text: '@@ Translation object',
 					width: 300,
 					// locked: true, // There is a performance issue in ExtJs 4.2.0 without locked columns all is fine
@@ -110,7 +110,7 @@
 					draggable: false
 				},
 				{
-					dataIndex: CMDBuild.core.proxy.CMProxyConstants.DEFAULT,
+					dataIndex: CMDBuild.core.proxy.Constants.DEFAULT,
 					text: '@@ defaultTranslation',
 					width: 300,
 					sortable: false,

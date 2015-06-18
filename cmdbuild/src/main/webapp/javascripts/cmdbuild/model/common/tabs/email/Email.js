@@ -3,29 +3,29 @@
 	Ext.define('CMDBuild.model.common.tabs.email.Email', {
 		extend: 'Ext.data.Model',
 
-		require: ['CMDBuild.core.proxy.CMProxyConstants'],
+		require: ['CMDBuild.core.proxy.Constants'],
 
 		fields: [
-			{ name: CMDBuild.core.proxy.CMProxyConstants.ACCOUNT, type: 'string' },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.ATTACHMENTS, type: 'auto' },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.BCC, type: 'auto' },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.BODY, type: 'string' },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.CC, type: 'auto' },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.DATE, type: 'auto' },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.DELAY, type: 'int', useNull: true },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.FROM, type: 'auto' },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.ID, type: 'int', useNull: true },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.KEEP_SYNCHRONIZATION, type: 'boolean', defaultValue: true },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.KEY, type: 'string' },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.NOTIFY_WITH, type: 'string' },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.NO_SUBJECT_PREFIX, type: 'boolean', defaultValue: false },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.PROMPT_SYNCHRONIZATION, type: 'boolean', defaultValue: false },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.REFERENCE, type: 'int', useNull: true },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.STATUS, type: 'string', defaultValue: CMDBuild.core.proxy.CMProxyConstants.DRAFT },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.SUBJECT, type: 'string' },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.TEMPLATE, type: 'string' },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.TEMPORARY, type: 'boolean', defaultValue: false },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.TO, type: 'auto' }
+			{ name: CMDBuild.core.proxy.Constants.ACCOUNT, type: 'string' },
+			{ name: CMDBuild.core.proxy.Constants.ATTACHMENTS, type: 'auto' },
+			{ name: CMDBuild.core.proxy.Constants.BCC, type: 'auto' },
+			{ name: CMDBuild.core.proxy.Constants.BODY, type: 'string' },
+			{ name: CMDBuild.core.proxy.Constants.CC, type: 'auto' },
+			{ name: CMDBuild.core.proxy.Constants.DATE, type: 'auto' },
+			{ name: CMDBuild.core.proxy.Constants.DELAY, type: 'int', useNull: true },
+			{ name: CMDBuild.core.proxy.Constants.FROM, type: 'auto' },
+			{ name: CMDBuild.core.proxy.Constants.ID, type: 'int', useNull: true },
+			{ name: CMDBuild.core.proxy.Constants.KEEP_SYNCHRONIZATION, type: 'boolean', defaultValue: true },
+			{ name: CMDBuild.core.proxy.Constants.KEY, type: 'string' },
+			{ name: CMDBuild.core.proxy.Constants.NOTIFY_WITH, type: 'string' },
+			{ name: CMDBuild.core.proxy.Constants.NO_SUBJECT_PREFIX, type: 'boolean', defaultValue: false },
+			{ name: CMDBuild.core.proxy.Constants.PROMPT_SYNCHRONIZATION, type: 'boolean', defaultValue: false },
+			{ name: CMDBuild.core.proxy.Constants.REFERENCE, type: 'int', useNull: true },
+			{ name: CMDBuild.core.proxy.Constants.STATUS, type: 'string', defaultValue: CMDBuild.core.proxy.Constants.DRAFT },
+			{ name: CMDBuild.core.proxy.Constants.SUBJECT, type: 'string' },
+			{ name: CMDBuild.core.proxy.Constants.TEMPLATE, type: 'string' },
+			{ name: CMDBuild.core.proxy.Constants.TEMPORARY, type: 'boolean', defaultValue: false },
+			{ name: CMDBuild.core.proxy.Constants.TO, type: 'auto' }
 		],
 
 		/**
@@ -44,10 +44,10 @@
 			} else {
 				// Or returns only required attributes
 				Ext.Array.forEach(requiredAttributes, function(item, index, allItems) {
-					if (item == CMDBuild.core.proxy.CMProxyConstants.TEMPLATE) { // Support for template objects
-						params[CMDBuild.core.proxy.CMProxyConstants.TEMPLATE] =
-							this.get(CMDBuild.core.proxy.CMProxyConstants.TEMPLATE)[CMDBuild.core.proxy.CMProxyConstants.NAME]
-						|| this.get(CMDBuild.core.proxy.CMProxyConstants.TEMPLATE);
+					if (item == CMDBuild.core.proxy.Constants.TEMPLATE) { // Support for template objects
+						params[CMDBuild.core.proxy.Constants.TEMPLATE] =
+							this.get(CMDBuild.core.proxy.Constants.TEMPLATE)[CMDBuild.core.proxy.Constants.NAME]
+						|| this.get(CMDBuild.core.proxy.Constants.TEMPLATE);
 					} else {
 						params[item] = this.get(item) || null;
 					}

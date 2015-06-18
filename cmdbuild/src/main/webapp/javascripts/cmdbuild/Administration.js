@@ -18,7 +18,7 @@
 
 		requires: [
 			'CMDBuild.core.buttons.Buttons',
-			'CMDBuild.core.proxy.CMProxyConstants',
+			'CMDBuild.core.proxy.Constants',
 			'CMDBuild.core.proxy.Classes',
 			'CMDBuild.core.proxy.Configuration',
 			'CMDBuild.core.proxy.Domain',
@@ -59,7 +59,7 @@
 								// Localization
 								// TODO: refactor to avoid to use Cache
 								_CMCache.setActiveTranslations(decoded.data.enabled_languages);
-								CMDBuild.configuration[CMDBuild.core.proxy.CMProxyConstants.LOCALIZATION].setEnabledLanguages(decoded.data.enabled_languages);
+								CMDBuild.configuration[CMDBuild.core.proxy.Constants.LOCALIZATION].setEnabledLanguages(decoded.data.enabled_languages);
 
 								/* **********************************************
 								 * Suspend here the layouts, and resume after all

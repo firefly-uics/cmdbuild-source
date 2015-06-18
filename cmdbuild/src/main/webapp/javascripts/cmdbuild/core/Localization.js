@@ -3,15 +3,15 @@
 	Ext.define('CMDBuild.core.Localization', {
 
 		requires: [
-			'CMDBuild.core.proxy.CMProxyConstants',
+			'CMDBuild.core.proxy.Constants',
 			'CMDBuild.core.proxy.localizations.Localizations'
 		],
 
 		constructor: function() {
 			if (!Ext.isEmpty(CMDBuild) && !Ext.isEmpty(CMDBuild.configuration)) {
-				CMDBuild.configuration[CMDBuild.core.proxy.CMProxyConstants.LOCALIZATION] = Ext.create('CMDBuild.model.configuration.Localization'); // Localization configuration object
+				CMDBuild.configuration[CMDBuild.core.proxy.Constants.LOCALIZATION] = Ext.create('CMDBuild.model.configuration.Localization'); // Localization configuration object
 
-				var configurationObject = CMDBuild.configuration[CMDBuild.core.proxy.CMProxyConstants.LOCALIZATION]; // Shorthand
+				var configurationObject = CMDBuild.configuration[CMDBuild.core.proxy.Constants.LOCALIZATION]; // Shorthand
 
 				CMDBuild.core.proxy.localizations.Localizations.getLanguages({
 					scope: this,
@@ -22,7 +22,7 @@
 						// Get server language
 						CMDBuild.core.proxy.localizations.Localizations.getCurrentLanguage({
 							success: function(result, options, languageDecodedResult) {
-								configurationObject.setCurrentLanguage(languageDecodedResult[CMDBuild.core.proxy.CMProxyConstants.LANGUAGE]);
+								configurationObject.setCurrentLanguage(languageDecodedResult[CMDBuild.core.proxy.Constants.LANGUAGE]);
 							}
 						});
 					}

@@ -3,7 +3,7 @@
 	Ext.define('CMDBuild.controller.administration.localizations.advancedTable.SectionBase', {
 		extend: 'CMDBuild.controller.common.AbstractController',
 
-		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+		requires: ['CMDBuild.core.proxy.Constants'],
 
 		/**
 		 * @cfg {String}
@@ -21,7 +21,7 @@
 
 			if (!Ext.isEmpty(requestedNode) && Ext.isNumber(levelToReach)) {
 				while (requestedNode.getDepth() > levelToReach) {
-					requestedNode = requestedNode.get(CMDBuild.core.proxy.CMProxyConstants.PARENT);
+					requestedNode = requestedNode.get(CMDBuild.core.proxy.Constants.PARENT);
 				}
 
 				return requestedNode;

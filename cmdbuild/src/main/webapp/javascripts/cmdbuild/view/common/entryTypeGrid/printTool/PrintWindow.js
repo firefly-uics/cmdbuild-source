@@ -3,7 +3,7 @@
 	Ext.define('CMDBuild.view.common.entryTypeGrid.printTool.PrintWindow', {
 		extend: 'CMDBuild.core.PopupWindow',
 
-		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+		requires: ['CMDBuild.core.proxy.Constants'],
 
 		/**
 		 * @cfg {CMDBuild.controller.common.entryTypeGrid.printTool.PrintWindow}
@@ -21,7 +21,7 @@
 				dockedItems: [{
 					xtype: 'toolbar',
 					dock: 'top',
-					itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_TOP,
+					itemId: CMDBuild.core.proxy.Constants.TOOLBAR_TOP,
 					items: [
 						'->',
 						Ext.create('CMDBuild.core.buttons.Download', {

@@ -3,7 +3,7 @@
 	Ext.define('CMDBuild.view.management.common.widgets.linkCards.LinkCardsGrid', {
 		extend: 'CMDBuild.view.management.common.CMCardGrid',
 
-		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+		requires: ['CMDBuild.core.proxy.Constants'],
 
 		/**
 		 * @cfg {Object}
@@ -84,7 +84,7 @@
 							},
 
 							isDisabled: function(grid, rowIndex, colIndex, item, record) {
-								return !this.delegate.widgetConf[CMDBuild.core.proxy.CMProxyConstants.ALLOW_CARD_EDITING];
+								return !this.delegate.widgetConf[CMDBuild.core.proxy.Constants.ALLOW_CARD_EDITING];
 							}
 						}
 					]
@@ -111,7 +111,7 @@
 			this.cmVisible = visible;
 
 			if (this.paramsToLoadWhenVisible) {
-				this.updateStoreForClassId(this.paramsToLoadWhenVisible[CMDBuild.core.proxy.CMProxyConstants.CLASS_ID], this.paramsToLoadWhenVisible.o);
+				this.updateStoreForClassId(this.paramsToLoadWhenVisible[CMDBuild.core.proxy.Constants.CLASS_ID], this.paramsToLoadWhenVisible.o);
 				this.paramsToLoadWhenVisible = null;
 			}
 
@@ -131,7 +131,7 @@
 				this.paramsToLoadWhenVisible = null;
 			} else {
 				this.paramsToLoadWhenVisible = {};
-				this.paramsToLoadWhenVisible[CMDBuild.core.proxy.CMProxyConstants.CLASS_ID] = classId;
+				this.paramsToLoadWhenVisible[CMDBuild.core.proxy.Constants.CLASS_ID] = classId;
 			}
 		}
 	});

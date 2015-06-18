@@ -3,15 +3,15 @@
 	Ext.define('CMDBuild.model.reports.Grid', {
 		extend: 'Ext.data.Model',
 
-		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+		requires: ['CMDBuild.core.proxy.Constants'],
 
 		fields: [
-			{ name: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION, type: 'string' },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.GROUPS, type: 'auto' },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.ID, type: 'int', useNull: true },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.QUERY, type: 'string' },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.TITLE, type: 'string' }, // Usually called name
-			{ name: CMDBuild.core.proxy.CMProxyConstants.TYPE, type: 'string', defaultValue: 'CUSTOM' }
+			{ name: CMDBuild.core.proxy.Constants.DESCRIPTION, type: 'string' },
+			{ name: CMDBuild.core.proxy.Constants.GROUPS, type: 'auto' },
+			{ name: CMDBuild.core.proxy.Constants.ID, type: 'int', useNull: true },
+			{ name: CMDBuild.core.proxy.Constants.QUERY, type: 'string' },
+			{ name: CMDBuild.core.proxy.Constants.TITLE, type: 'string' }, // Usually called name
+			{ name: CMDBuild.core.proxy.Constants.TYPE, type: 'string', defaultValue: 'CUSTOM' }
 		]
 	});
 

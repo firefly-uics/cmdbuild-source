@@ -4,7 +4,7 @@
 		extend: 'CMDBuild.controller.common.AbstractController',
 
 		requires: [
-			'CMDBuild.core.proxy.CMProxyConstants',
+			'CMDBuild.core.proxy.Constants',
 			'CMDBuild.core.proxy.email.Templates',
 			'CMDBuild.model.email.Templates'
 		],
@@ -113,7 +113,7 @@
 		onEmailTemplatesRowSelected: function() {
 			if (this.grid.getSelectionModel().hasSelection()) {
 				var params = {};
-				params[CMDBuild.core.proxy.CMProxyConstants.NAME] = this.grid.getSelectionModel().getSelection()[0].get(CMDBuild.core.proxy.CMProxyConstants.NAME);
+				params[CMDBuild.core.proxy.Constants.NAME] = this.grid.getSelectionModel().getSelection()[0].get(CMDBuild.core.proxy.Constants.NAME);
 
 				CMDBuild.core.proxy.email.Templates.get({
 					params: params,
@@ -121,7 +121,7 @@
 					failure: function(response, options, decodedResponse) {
 						CMDBuild.Msg.error(
 							CMDBuild.Translation.common.failure,
-							Ext.String.format(CMDBuild.Translation.errors.getTemplateWithNameFailure, this.selectedTemplate.get(CMDBuild.core.proxy.CMProxyConstants.NAME)),
+							Ext.String.format(CMDBuild.Translation.errors.getTemplateWithNameFailure, this.selectedTemplate.get(CMDBuild.core.proxy.Constants.NAME)),
 							false
 						);
 					},
@@ -129,8 +129,8 @@
 						this.selectedTemplate = Ext.create('CMDBuild.model.email.Templates.singleTemplate', decodedResponse.response);
 
 						this.form.loadRecord(this.selectedTemplate);
-						this.form.delayField.setValue(this.selectedTemplate.get(CMDBuild.core.proxy.CMProxyConstants.DELAY)); // Manual setup to avoid load record bug
-						this.valuesData = this.selectedTemplate.get(CMDBuild.core.proxy.CMProxyConstants.VARIABLES);
+						this.form.delayField.setValue(this.selectedTemplate.get(CMDBuild.core.proxy.Constants.DELAY)); // Manual setup to avoid load record bug
+						this.valuesData = this.selectedTemplate.get(CMDBuild.core.proxy.Constants.VARIABLES);
 						this.form.setDisabledModify(true, true);
 					}
 				});
@@ -143,7 +143,7 @@
 				var formData = this.form.getData(true);
 
 				// To put and encode variablesWindow grid values
-				formData[CMDBuild.core.proxy.CMProxyConstants.VARIABLES] = Ext.encode(this.valuesData);
+				formData[CMDBuild.core.proxy.Constants.VARIABLES] = Ext.encode(this.valuesData);
 
 				if (Ext.isEmpty(formData.id)) {
 					CMDBuild.core.proxy.email.Templates.create({
@@ -170,7 +170,7 @@
 		removeItem: function() {
 			if (!Ext.isEmpty(this.selectedTemplate)) {
 				var params = {};
-				params[CMDBuild.core.proxy.CMProxyConstants.NAME] = this.selectedTemplate.get(CMDBuild.core.proxy.CMProxyConstants.NAME);
+				params[CMDBuild.core.proxy.Constants.NAME] = this.selectedTemplate.get(CMDBuild.core.proxy.Constants.NAME);
 
 				CMDBuild.core.proxy.email.Templates.remove({
 					params: params,
@@ -203,8 +203,8 @@
 			this.grid.getStore().load({
 				callback: function(records, operation, success) {
 					var rowIndex = this.find(
-						CMDBuild.core.proxy.CMProxyConstants.NAME,
-						me.form.getForm().findField(CMDBuild.core.proxy.CMProxyConstants.NAME).getValue()
+						CMDBuild.core.proxy.Constants.NAME,
+						me.form.getForm().findField(CMDBuild.core.proxy.Constants.NAME).getValue()
 					);
 
 					me.grid.getSelectionModel().select(rowIndex, true);

@@ -4,7 +4,7 @@
 		extend: 'CMDBuild.controller.common.AbstractController',
 
 		requires: [
-			'CMDBuild.core.proxy.CMProxyConstants',
+			'CMDBuild.core.proxy.Constants',
 			'CMDBuild.core.proxy.dataViews.Filter',
 			'CMDBuild.model.DataViews'
 		],
@@ -122,17 +122,17 @@
 			this.form.loadRecord(this.selectedView);
 
 			// FilterChooser field setup
-			this.form.filterChooser.setClassName(this.selectedView.get(CMDBuild.core.proxy.CMProxyConstants.SOURCE_CLASS_NAME));
+			this.form.filterChooser.setClassName(this.selectedView.get(CMDBuild.core.proxy.Constants.SOURCE_CLASS_NAME));
 			this.form.filterChooser.setFilter(
 				Ext.create('CMDBuild.model.CMFilterModel', {
-					configuration: Ext.decode(this.selectedView.get(CMDBuild.core.proxy.CMProxyConstants.FILTER)),
-					entryType: this.selectedView.get(CMDBuild.core.proxy.CMProxyConstants.SOURCE_CLASS_NAME)
+					configuration: Ext.decode(this.selectedView.get(CMDBuild.core.proxy.Constants.FILTER)),
+					entryType: this.selectedView.get(CMDBuild.core.proxy.Constants.SOURCE_CLASS_NAME)
 				})
 			);
 
 			// Translation setup
 			Ext.apply(this.form.descriptionTextField, {
-				translationsKeyName: this.selectedView.get(CMDBuild.core.proxy.CMProxyConstants.NAME)
+				translationsKeyName: this.selectedView.get(CMDBuild.core.proxy.Constants.NAME)
 			});
 
 			this.form.setDisabledModify(true, true);
@@ -144,11 +144,11 @@
 				var formData = this.form.getData(true);
 
 				if (!Ext.isEmpty(this.form.filterChooser.getFilter()))
-					formData[CMDBuild.core.proxy.CMProxyConstants.FILTER] = Ext.encode(this.form.filterChooser.getFilter().getConfiguration());
+					formData[CMDBuild.core.proxy.Constants.FILTER] = Ext.encode(this.form.filterChooser.getFilter().getConfiguration());
 
 				formData = Ext.create('CMDBuild.model.DataViews.filter', formData); // Filter unwanted data of filterChooser internal fields
 
-				if (Ext.isEmpty(formData.get(CMDBuild.core.proxy.CMProxyConstants.ID))) {
+				if (Ext.isEmpty(formData.get(CMDBuild.core.proxy.Constants.ID))) {
 					CMDBuild.core.proxy.dataViews.Filter.create({
 						params: formData.getData(),
 						scope: this,
@@ -167,7 +167,7 @@
 		removeItem: function() {
 			if (!Ext.isEmpty(this.selectedView)) {
 				var params = {};
-				params[CMDBuild.core.proxy.CMProxyConstants.ID] = this.selectedView.get(CMDBuild.core.proxy.CMProxyConstants.ID);
+				params[CMDBuild.core.proxy.Constants.ID] = this.selectedView.get(CMDBuild.core.proxy.Constants.ID);
 
 				CMDBuild.core.proxy.dataViews.Filter.remove({
 					params: params,
@@ -198,13 +198,13 @@
 		success: function(result, options, decodedResult) {
 			var me = this;
 
-			_CMCache.flushTranslationsToSave(options.params[CMDBuild.core.proxy.CMProxyConstants.NAME]);
+			_CMCache.flushTranslationsToSave(options.params[CMDBuild.core.proxy.Constants.NAME]);
 
 			this.grid.getStore().load({
 				callback: function(records, operation, success) {
 					var rowIndex = this.find(
-						CMDBuild.core.proxy.CMProxyConstants.NAME,
-						me.form.getForm().findField(CMDBuild.core.proxy.CMProxyConstants.NAME).getValue()
+						CMDBuild.core.proxy.Constants.NAME,
+						me.form.getForm().findField(CMDBuild.core.proxy.Constants.NAME).getValue()
 					);
 
 					me.grid.getSelectionModel().select(rowIndex, true);

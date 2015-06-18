@@ -40,12 +40,12 @@
 			var out = [];
 
 			if (!Ext.Object.isEmpty(entryType)) {
-				out.push(parseInt(entryType.get(CMDBuild.core.proxy.CMProxyConstants.ID)));
+				out.push(parseInt(entryType.get(CMDBuild.core.proxy.Constants.ID)));
 
-				while (!Ext.isEmpty(entryType.get(CMDBuild.core.proxy.CMProxyConstants.PARENT))) {
-					entryType = _CMCache.getEntryTypeById(entryType.get(CMDBuild.core.proxy.CMProxyConstants.PARENT));
+				while (!Ext.isEmpty(entryType.get(CMDBuild.core.proxy.Constants.PARENT))) {
+					entryType = _CMCache.getEntryTypeById(entryType.get(CMDBuild.core.proxy.Constants.PARENT));
 
-					out.push(parseInt(entryType.get(CMDBuild.core.proxy.CMProxyConstants.ID)));
+					out.push(parseInt(entryType.get(CMDBuild.core.proxy.Constants.ID)));
 				}
 			}
 
@@ -132,7 +132,7 @@
 		 * @param {Boolean} caseSensitive - (Default) true
 		 */
 		objectArraySort: function(array, attributeToSort, direction, caseSensitive) {
-			attributeToSort = Ext.isString(attributeToSort) ? attributeToSort : CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION;
+			attributeToSort = Ext.isString(attributeToSort) ? attributeToSort : CMDBuild.core.proxy.Constants.DESCRIPTION;
 			direction = Ext.isString(direction) ? direction : 'ASC'; // ASC or DESC
 			caseSensitive = Ext.isBoolean(caseSensitive) ? caseSensitive : false;
 

@@ -5,7 +5,7 @@
 	Ext.define('CMDBuild.view.administration.widget.form.CMBaseWidgetDefinitionForm', {
 		extend: 'Ext.panel.Panel',
 
-		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+		requires: ['CMDBuild.core.proxy.Constants'],
 
 		statics: {
 			WIDGET_NAME: undefined
@@ -55,7 +55,7 @@
 		 */
 		buildForm: function() {
 			this.buttonLabel = Ext.create('CMDBuild.view.common.field.translatable.Text', {
-				name: CMDBuild.core.proxy.CMProxyConstants.LABEL,
+				name: CMDBuild.core.proxy.Constants.LABEL,
 				allowBlank: false,
 				fieldLabel: tr.commonFields.buttonLabel,
 				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
@@ -66,7 +66,7 @@
 			});
 
 			this.active = Ext.create('Ext.form.field.Checkbox', {
-				name: CMDBuild.core.proxy.CMProxyConstants.ACTIVE,
+				name: CMDBuild.core.proxy.Constants.ACTIVE,
 				fieldLabel: tr.commonFields.active,
 				labelWidth: CMDBuild.LABEL_WIDTH
 			});
@@ -114,8 +114,8 @@
 		 * @param {CMDBuild.model.widget.WidgetDefinition} model
 		 */
 		fillWithModel: function(model) {
-			this.buttonLabel.setValue(model.get(CMDBuild.core.proxy.CMProxyConstants.LABEL));
-			this.active.setValue(model.get(CMDBuild.core.proxy.CMProxyConstants.ACTIVE));
+			this.buttonLabel.setValue(model.get(CMDBuild.core.proxy.Constants.LABEL));
+			this.active.setValue(model.get(CMDBuild.core.proxy.Constants.ACTIVE));
 			this.alwaysenabled.setValue(model.get('alwaysenabled'));
 		}
 	});

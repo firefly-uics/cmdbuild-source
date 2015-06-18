@@ -4,7 +4,7 @@
 		extend: 'Ext.form.Panel',
 
 		requires: [
-			'CMDBuild.core.proxy.CMProxyConstants',
+			'CMDBuild.core.proxy.Constants',
 			'CMDBuild.core.proxy.Users'
 		],
 
@@ -69,8 +69,8 @@
 						labelWidth: CMDBuild.LABEL_WIDTH,
 						width: CMDBuild.ADM_BIG_FIELD_WIDTH,
 						triggerAction: 'all',
-						valueField: CMDBuild.core.proxy.CMProxyConstants.ID,
-						displayField: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
+						valueField: CMDBuild.core.proxy.Constants.ID,
+						displayField: CMDBuild.core.proxy.Constants.DESCRIPTION,
 						editable: false,
 						allowBlank: true,
 
@@ -96,37 +96,37 @@
 
 						items: [
 							{
-								name: CMDBuild.core.proxy.CMProxyConstants.USERNAME,
-								id: CMDBuild.core.proxy.CMProxyConstants.USERNAME,
+								name: CMDBuild.core.proxy.Constants.USERNAME,
+								id: CMDBuild.core.proxy.Constants.USERNAME,
 								fieldLabel: CMDBuild.Translation.username,
 								allowBlank: false,
 								cmImmutable: true,
 								vtype: 'alphanumextended'
 							},
 							{
-								name: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
+								name: CMDBuild.core.proxy.Constants.DESCRIPTION,
 								fieldLabel: CMDBuild.Translation.descriptionLabel,
 								allowBlank: false
 							},
 							{
-								name: CMDBuild.core.proxy.CMProxyConstants.EMAIL,
+								name: CMDBuild.core.proxy.Constants.EMAIL,
 								fieldLabel: CMDBuild.Translation.email,
 								allowBlank: true,
 								vtype: 'emailOrBlank'
 							},
 							this.defaultGroup,
 							Ext.create('Ext.form.field.Checkbox', {
-								name: CMDBuild.core.proxy.CMProxyConstants.IS_ACTIVE,
+								name: CMDBuild.core.proxy.Constants.IS_ACTIVE,
 								fieldLabel: CMDBuild.Translation.active,
 								labelWidth: CMDBuild.LABEL_WIDTH
 							}),
 							Ext.create('Ext.form.field.Checkbox', {
-								name: CMDBuild.core.proxy.CMProxyConstants.SERVICE,
+								name: CMDBuild.core.proxy.Constants.SERVICE,
 								fieldLabel: CMDBuild.Translation.service,
 								labelWidth: CMDBuild.LABEL_WIDTH
 							}),
 							Ext.create('Ext.form.field.Checkbox', {
-								name: CMDBuild.core.proxy.CMProxyConstants.PRIVILEGED,
+								name: CMDBuild.core.proxy.Constants.PRIVILEGED,
 								fieldLabel: CMDBuild.Translation.privileged,
 								labelWidth: CMDBuild.LABEL_WIDTH
 							})
@@ -148,14 +148,14 @@
 
 						items: [
 							{
-								name: CMDBuild.core.proxy.CMProxyConstants.PASSWORD,
+								name: CMDBuild.core.proxy.Constants.PASSWORD,
 								id: 'user_password',
 								inputType: 'password',
 								fieldLabel: CMDBuild.Translation.password,
 								allowBlank: false
 							},
 							{
-								name: CMDBuild.core.proxy.CMProxyConstants.CONFIRMATION,
+								name: CMDBuild.core.proxy.Constants.CONFIRMATION,
 								inputType: 'password',
 								fieldLabel: CMDBuild.Translation.confirmation,
 								allowBlank: false,
@@ -189,7 +189,7 @@
 				dockedItems: [
 					Ext.create('Ext.toolbar.Toolbar', {
 						dock: 'top',
-						itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_TOP,
+						itemId: CMDBuild.core.proxy.Constants.TOOLBAR_TOP,
 						items: [
 							Ext.create('CMDBuild.core.buttons.Modify', {
 								text: CMDBuild.Translation.modifyUser,
@@ -212,7 +212,7 @@
 					}),
 					Ext.create('Ext.toolbar.Toolbar', {
 						dock: 'bottom',
-						itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_BOTTOM,
+						itemId: CMDBuild.core.proxy.Constants.TOOLBAR_BOTTOM,
 						ui: 'footer',
 
 						layout: {

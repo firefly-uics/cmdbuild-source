@@ -244,7 +244,7 @@
 			});
 
 			this.preselectIfUniqueCheckbox = Ext.create('Ext.form.field.Checkbox', {
-				name: CMDBuild.core.proxy.CMProxyConstants.PRESELECT_IF_UNIQUE,
+				name: CMDBuild.core.proxy.Constants.PRESELECT_IF_UNIQUE,
 				fieldLabel: CMDBuild.Translation.preselectIfUnique,
 				labelWidth: CMDBuild.LABEL_WIDTH
 			});
@@ -466,7 +466,7 @@
 				this.showContextualFieldsByType(attribute.get("type"));
 
 				this.referenceFilterMetadata = attribute.raw.meta || {};
-				this.preselectIfUniqueCheckbox.setValue(attribute.raw.meta['system.type.reference.' + CMDBuild.core.proxy.CMProxyConstants.PRESELECT_IF_UNIQUE]);
+				this.preselectIfUniqueCheckbox.setValue(attribute.raw.meta['system.type.reference.' + CMDBuild.core.proxy.Constants.PRESELECT_IF_UNIQUE]);
 
 				Ext.apply(this.attributeDescription, {
 					translationsKeyName: this.classObj.get("name"),

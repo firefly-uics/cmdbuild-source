@@ -135,9 +135,9 @@
 		onPrintCardMenuClick: function(format) {
 			if (!Ext.isEmpty(format)) {
 				var params = {};
-				params[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME] = this.entryType.get(CMDBuild.core.proxy.CMProxyConstants.NAME);
-				params[CMDBuild.core.proxy.CMProxyConstants.CARD_ID] = this.card.get(CMDBuild.core.proxy.CMProxyConstants.ID);
-				params[CMDBuild.core.proxy.CMProxyConstants.FORMAT] = format;
+				params[CMDBuild.core.proxy.Constants.CLASS_NAME] = this.entryType.get(CMDBuild.core.proxy.Constants.NAME);
+				params[CMDBuild.core.proxy.Constants.CARD_ID] = this.card.get(CMDBuild.core.proxy.Constants.ID);
+				params[CMDBuild.core.proxy.Constants.FORMAT] = format;
 
 				Ext.create('CMDBuild.controller.common.entryTypeGrid.printTool.PrintWindow', {
 					parentDelegate: this,

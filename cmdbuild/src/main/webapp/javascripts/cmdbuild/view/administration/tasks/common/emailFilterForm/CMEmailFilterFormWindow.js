@@ -106,7 +106,7 @@
 					{
 						xtype: 'toolbar',
 						dock: 'top',
-						itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_TOP,
+						itemId: CMDBuild.core.proxy.Constants.TOOLBAR_TOP,
 						items: this.addRowButton
 					}
 				],

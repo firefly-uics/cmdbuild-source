@@ -4,7 +4,7 @@
 		extend: 'CMDBuild.controller.administration.localizations.advancedTable.SectionBase',
 
 		requires: [
-			'CMDBuild.core.proxy.CMProxyConstants',
+			'CMDBuild.core.proxy.Constants',
 			'CMDBuild.core.proxy.Domain',
 			'CMDBuild.core.proxy.localizations.Localizations',
 			'CMDBuild.model.localizations.advancedTable.TreeStore'
@@ -27,7 +27,7 @@
 		/**
 		 * @cfg {String}
 		 */
-		sectionId: CMDBuild.core.proxy.CMProxyConstants.DOMAIN,
+		sectionId: CMDBuild.core.proxy.Constants.DOMAIN,
 
 		/**
 		 * @cfg {CMDBuild.view.administration.localizations.advancedTable.SectionDomainsPanel}
@@ -62,10 +62,10 @@
 			node.eachChild(function(childNode) {
 				if (childNode.isLeaf()) {
 					var params = {};
-					params[CMDBuild.core.proxy.CMProxyConstants.TYPE] = this.getSectionId();
-					params[CMDBuild.core.proxy.CMProxyConstants.OWNER] = node.get(CMDBuild.core.proxy.CMProxyConstants.ENTITY_IDENTIFIER);
-					params[CMDBuild.core.proxy.CMProxyConstants.IDENTIFIER] = node.get(CMDBuild.core.proxy.CMProxyConstants.ENTITY_IDENTIFIER);
-					params[CMDBuild.core.proxy.CMProxyConstants.FIELD] = childNode.get(CMDBuild.core.proxy.CMProxyConstants.PROPERTY_IDENTIFIER);
+					params[CMDBuild.core.proxy.Constants.TYPE] = this.getSectionId();
+					params[CMDBuild.core.proxy.Constants.OWNER] = node.get(CMDBuild.core.proxy.Constants.ENTITY_IDENTIFIER);
+					params[CMDBuild.core.proxy.Constants.IDENTIFIER] = node.get(CMDBuild.core.proxy.Constants.ENTITY_IDENTIFIER);
+					params[CMDBuild.core.proxy.Constants.FIELD] = childNode.get(CMDBuild.core.proxy.Constants.PROPERTY_IDENTIFIER);
 
 					CMDBuild.core.proxy.localizations.Localizations.read({
 						params: params,
@@ -92,12 +92,12 @@
 		 */
 		nodeExpandLevel2: function(node) { // TODO implementare chiamate in blocco
 			Ext.Array.forEach(node.childNodes, function(childNode, i, allChildNodes) {
-				if (childNode[CMDBuild.core.proxy.CMProxyConstants.NAME] != 'Notes') { // Custom CMDBuild behaviour
+				if (childNode[CMDBuild.core.proxy.Constants.NAME] != 'Notes') { // Custom CMDBuild behaviour
 					var localizationParams = {};
-					localizationParams[CMDBuild.core.proxy.CMProxyConstants.TYPE] = CMDBuild.core.proxy.CMProxyConstants.ATTRIBUTE + this.getSectionId();
-					localizationParams[CMDBuild.core.proxy.CMProxyConstants.OWNER] = this.getLevelNode(node, 1).get(CMDBuild.core.proxy.CMProxyConstants.ENTITY_IDENTIFIER);
-					localizationParams[CMDBuild.core.proxy.CMProxyConstants.IDENTIFIER] = childNode.get(CMDBuild.core.proxy.CMProxyConstants.PROPERTY_IDENTIFIER);
-					localizationParams[CMDBuild.core.proxy.CMProxyConstants.FIELD] = CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION;
+					localizationParams[CMDBuild.core.proxy.Constants.TYPE] = CMDBuild.core.proxy.Constants.ATTRIBUTE + this.getSectionId();
+					localizationParams[CMDBuild.core.proxy.Constants.OWNER] = this.getLevelNode(node, 1).get(CMDBuild.core.proxy.Constants.ENTITY_IDENTIFIER);
+					localizationParams[CMDBuild.core.proxy.Constants.IDENTIFIER] = childNode.get(CMDBuild.core.proxy.Constants.PROPERTY_IDENTIFIER);
+					localizationParams[CMDBuild.core.proxy.Constants.FIELD] = CMDBuild.core.proxy.Constants.DESCRIPTION;
 
 					CMDBuild.core.proxy.localizations.Localizations.read({
 						params: localizationParams,
@@ -110,7 +110,7 @@
 									node.childNodes[i].set(tag, translation);
 								});
 
-								node.childNodes[i].set(CMDBuild.core.proxy.CMProxyConstants.WAS_EMPTY, false);
+								node.childNodes[i].set(CMDBuild.core.proxy.Constants.WAS_EMPTY, false);
 							}
 
 							node.childNodes[i].commit();
@@ -133,92 +133,92 @@
 				scope: this,
 				success: function(response, options, decodedResponse) {
 					// Sort attributes with CMDBuild sort order
-					CMDBuild.core.Utils.objectArraySort(decodedResponse[CMDBuild.core.proxy.CMProxyConstants.DOMAINS], CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION);
+					CMDBuild.core.Utils.objectArraySort(decodedResponse[CMDBuild.core.proxy.Constants.DOMAINS], CMDBuild.core.proxy.Constants.DESCRIPTION);
 
-					Ext.Array.forEach(decodedResponse[CMDBuild.core.proxy.CMProxyConstants.DOMAINS], function(domainObject, i, allDomains) {
+					Ext.Array.forEach(decodedResponse[CMDBuild.core.proxy.Constants.DOMAINS], function(domainObject, i, allDomains) {
 						// Sort attributes with CMDBuild sort order
-						CMDBuild.core.Utils.objectArraySort(domainObject[CMDBuild.core.proxy.CMProxyConstants.ATTRIBUTES], CMDBuild.core.proxy.CMProxyConstants.INDEX);
+						CMDBuild.core.Utils.objectArraySort(domainObject[CMDBuild.core.proxy.Constants.ATTRIBUTES], CMDBuild.core.proxy.Constants.INDEX);
 
 						// Domain main node
 						var domainMainNodeObject = { expandable: true, };
-						domainMainNodeObject[CMDBuild.core.proxy.CMProxyConstants.DEFAULT] = domainObject[CMDBuild.core.proxy.CMProxyConstants.NAME];
-						domainMainNodeObject[CMDBuild.core.proxy.CMProxyConstants.ENTITY_IDENTIFIER] = domainObject[CMDBuild.core.proxy.CMProxyConstants.NAME];
-						domainMainNodeObject[CMDBuild.core.proxy.CMProxyConstants.LEAF] = false;
-						domainMainNodeObject[CMDBuild.core.proxy.CMProxyConstants.PARENT] = root;
-						domainMainNodeObject[CMDBuild.core.proxy.CMProxyConstants.PROPERTY_IDENTIFIER] = domainObject[CMDBuild.core.proxy.CMProxyConstants.NAME];
-						domainMainNodeObject[CMDBuild.core.proxy.CMProxyConstants.TEXT] = domainObject[CMDBuild.core.proxy.CMProxyConstants.NAME];
+						domainMainNodeObject[CMDBuild.core.proxy.Constants.DEFAULT] = domainObject[CMDBuild.core.proxy.Constants.NAME];
+						domainMainNodeObject[CMDBuild.core.proxy.Constants.ENTITY_IDENTIFIER] = domainObject[CMDBuild.core.proxy.Constants.NAME];
+						domainMainNodeObject[CMDBuild.core.proxy.Constants.LEAF] = false;
+						domainMainNodeObject[CMDBuild.core.proxy.Constants.PARENT] = root;
+						domainMainNodeObject[CMDBuild.core.proxy.Constants.PROPERTY_IDENTIFIER] = domainObject[CMDBuild.core.proxy.Constants.NAME];
+						domainMainNodeObject[CMDBuild.core.proxy.Constants.TEXT] = domainObject[CMDBuild.core.proxy.Constants.NAME];
 
 						var domainMainNode = root.appendChild(domainMainNodeObject);
 
 						// Domain description property object
 						var domainDescriptionNodeObject = {};
-						domainDescriptionNodeObject[CMDBuild.core.proxy.CMProxyConstants.DEFAULT] = domainObject[CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION];
-						domainDescriptionNodeObject[CMDBuild.core.proxy.CMProxyConstants.ENTITY_IDENTIFIER] = domainObject[CMDBuild.core.proxy.CMProxyConstants.NAME];
-						domainDescriptionNodeObject[CMDBuild.core.proxy.CMProxyConstants.LEAF] = true;
-						domainDescriptionNodeObject[CMDBuild.core.proxy.CMProxyConstants.PARENT] = domainMainNode;
-						domainDescriptionNodeObject[CMDBuild.core.proxy.CMProxyConstants.PROPERTY_IDENTIFIER] = CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION;
-						domainDescriptionNodeObject[CMDBuild.core.proxy.CMProxyConstants.TEXT] = CMDBuild.Translation.descriptionLabel;
+						domainDescriptionNodeObject[CMDBuild.core.proxy.Constants.DEFAULT] = domainObject[CMDBuild.core.proxy.Constants.DESCRIPTION];
+						domainDescriptionNodeObject[CMDBuild.core.proxy.Constants.ENTITY_IDENTIFIER] = domainObject[CMDBuild.core.proxy.Constants.NAME];
+						domainDescriptionNodeObject[CMDBuild.core.proxy.Constants.LEAF] = true;
+						domainDescriptionNodeObject[CMDBuild.core.proxy.Constants.PARENT] = domainMainNode;
+						domainDescriptionNodeObject[CMDBuild.core.proxy.Constants.PROPERTY_IDENTIFIER] = CMDBuild.core.proxy.Constants.DESCRIPTION;
+						domainDescriptionNodeObject[CMDBuild.core.proxy.Constants.TEXT] = CMDBuild.Translation.descriptionLabel;
 
 						domainMainNode.appendChild(domainDescriptionNodeObject);
 
 						// Domain direct description property object
 						var domainDirectDescriptionNodeObject = {};
-						domainDirectDescriptionNodeObject[CMDBuild.core.proxy.CMProxyConstants.DEFAULT] = domainObject['descrdir'];
-						domainDirectDescriptionNodeObject[CMDBuild.core.proxy.CMProxyConstants.ENTITY_IDENTIFIER] = domainObject[CMDBuild.core.proxy.CMProxyConstants.NAME];
-						domainDirectDescriptionNodeObject[CMDBuild.core.proxy.CMProxyConstants.LEAF] = true;
-						domainDirectDescriptionNodeObject[CMDBuild.core.proxy.CMProxyConstants.PARENT] = domainMainNode;
-						domainDirectDescriptionNodeObject[CMDBuild.core.proxy.CMProxyConstants.PROPERTY_IDENTIFIER] = CMDBuild.core.proxy.CMProxyConstants.DIRECT_DESCRIPTION;
-						domainDirectDescriptionNodeObject[CMDBuild.core.proxy.CMProxyConstants.TEXT] = CMDBuild.Translation.directDescription;
+						domainDirectDescriptionNodeObject[CMDBuild.core.proxy.Constants.DEFAULT] = domainObject['descrdir'];
+						domainDirectDescriptionNodeObject[CMDBuild.core.proxy.Constants.ENTITY_IDENTIFIER] = domainObject[CMDBuild.core.proxy.Constants.NAME];
+						domainDirectDescriptionNodeObject[CMDBuild.core.proxy.Constants.LEAF] = true;
+						domainDirectDescriptionNodeObject[CMDBuild.core.proxy.Constants.PARENT] = domainMainNode;
+						domainDirectDescriptionNodeObject[CMDBuild.core.proxy.Constants.PROPERTY_IDENTIFIER] = CMDBuild.core.proxy.Constants.DIRECT_DESCRIPTION;
+						domainDirectDescriptionNodeObject[CMDBuild.core.proxy.Constants.TEXT] = CMDBuild.Translation.directDescription;
 
 						domainMainNode.appendChild(domainDirectDescriptionNodeObject);
 
 						// Domain inverse description property object
 						var domainInverseDescriptionNodeObject = {};
-						domainInverseDescriptionNodeObject[CMDBuild.core.proxy.CMProxyConstants.DEFAULT] = domainObject['descrinv'];
-						domainInverseDescriptionNodeObject[CMDBuild.core.proxy.CMProxyConstants.ENTITY_IDENTIFIER] = domainObject[CMDBuild.core.proxy.CMProxyConstants.NAME];
-						domainInverseDescriptionNodeObject[CMDBuild.core.proxy.CMProxyConstants.LEAF] = true;
-						domainInverseDescriptionNodeObject[CMDBuild.core.proxy.CMProxyConstants.PARENT] = domainMainNode;
-						domainInverseDescriptionNodeObject[CMDBuild.core.proxy.CMProxyConstants.PROPERTY_IDENTIFIER] = CMDBuild.core.proxy.CMProxyConstants.INVERSE_DESCRIPTION;
-						domainInverseDescriptionNodeObject[CMDBuild.core.proxy.CMProxyConstants.TEXT] = CMDBuild.Translation.inverseDescription;
+						domainInverseDescriptionNodeObject[CMDBuild.core.proxy.Constants.DEFAULT] = domainObject['descrinv'];
+						domainInverseDescriptionNodeObject[CMDBuild.core.proxy.Constants.ENTITY_IDENTIFIER] = domainObject[CMDBuild.core.proxy.Constants.NAME];
+						domainInverseDescriptionNodeObject[CMDBuild.core.proxy.Constants.LEAF] = true;
+						domainInverseDescriptionNodeObject[CMDBuild.core.proxy.Constants.PARENT] = domainMainNode;
+						domainInverseDescriptionNodeObject[CMDBuild.core.proxy.Constants.PROPERTY_IDENTIFIER] = CMDBuild.core.proxy.Constants.INVERSE_DESCRIPTION;
+						domainInverseDescriptionNodeObject[CMDBuild.core.proxy.Constants.TEXT] = CMDBuild.Translation.inverseDescription;
 
 						domainMainNode.appendChild(domainInverseDescriptionNodeObject);
 
 						// Domain master detail label property object
 						if (Ext.isBoolean(domainObject['md']) && domainObject['md']) {
 							var domainMasterDetailLabelNodeObject = {};
-							domainMasterDetailLabelNodeObject[CMDBuild.core.proxy.CMProxyConstants.DEFAULT] = domainObject['md_label'];
-							domainMasterDetailLabelNodeObject[CMDBuild.core.proxy.CMProxyConstants.ENTITY_IDENTIFIER] = domainObject[CMDBuild.core.proxy.CMProxyConstants.NAME];
-							domainMasterDetailLabelNodeObject[CMDBuild.core.proxy.CMProxyConstants.LEAF] = true;
-							domainMasterDetailLabelNodeObject[CMDBuild.core.proxy.CMProxyConstants.PARENT] = domainMainNode;
-							domainMasterDetailLabelNodeObject[CMDBuild.core.proxy.CMProxyConstants.PROPERTY_IDENTIFIER] = 'md_label';
-							domainMasterDetailLabelNodeObject[CMDBuild.core.proxy.CMProxyConstants.TEXT] = CMDBuild.Translation.masterDetailLabel;
+							domainMasterDetailLabelNodeObject[CMDBuild.core.proxy.Constants.DEFAULT] = domainObject['md_label'];
+							domainMasterDetailLabelNodeObject[CMDBuild.core.proxy.Constants.ENTITY_IDENTIFIER] = domainObject[CMDBuild.core.proxy.Constants.NAME];
+							domainMasterDetailLabelNodeObject[CMDBuild.core.proxy.Constants.LEAF] = true;
+							domainMasterDetailLabelNodeObject[CMDBuild.core.proxy.Constants.PARENT] = domainMainNode;
+							domainMasterDetailLabelNodeObject[CMDBuild.core.proxy.Constants.PROPERTY_IDENTIFIER] = 'md_label';
+							domainMasterDetailLabelNodeObject[CMDBuild.core.proxy.Constants.TEXT] = CMDBuild.Translation.masterDetailLabel;
 
 							domainMainNode.appendChild(domainMasterDetailLabelNodeObject);
 						}
 
 						// Domain attributes node
 						if (
-							Ext.isArray(domainObject[CMDBuild.core.proxy.CMProxyConstants.ATTRIBUTES])
-							&& !Ext.isEmpty(domainObject[CMDBuild.core.proxy.CMProxyConstants.ATTRIBUTES])
+							Ext.isArray(domainObject[CMDBuild.core.proxy.Constants.ATTRIBUTES])
+							&& !Ext.isEmpty(domainObject[CMDBuild.core.proxy.Constants.ATTRIBUTES])
 						) {
 							var domainAttributesNodeObject = { expandable: true };
-							domainAttributesNodeObject[CMDBuild.core.proxy.CMProxyConstants.ENTITY_IDENTIFIER] = domainObject[CMDBuild.core.proxy.CMProxyConstants.NAME];
-							domainAttributesNodeObject[CMDBuild.core.proxy.CMProxyConstants.LEAF] = false;
-							domainAttributesNodeObject[CMDBuild.core.proxy.CMProxyConstants.PARENT] = domainMainNode;
-							domainAttributesNodeObject[CMDBuild.core.proxy.CMProxyConstants.PROPERTY_IDENTIFIER] = CMDBuild.core.proxy.CMProxyConstants.ATTRIBUTES;
-							domainAttributesNodeObject[CMDBuild.core.proxy.CMProxyConstants.TEXT] = CMDBuild.Translation.attributes;
+							domainAttributesNodeObject[CMDBuild.core.proxy.Constants.ENTITY_IDENTIFIER] = domainObject[CMDBuild.core.proxy.Constants.NAME];
+							domainAttributesNodeObject[CMDBuild.core.proxy.Constants.LEAF] = false;
+							domainAttributesNodeObject[CMDBuild.core.proxy.Constants.PARENT] = domainMainNode;
+							domainAttributesNodeObject[CMDBuild.core.proxy.Constants.PROPERTY_IDENTIFIER] = CMDBuild.core.proxy.Constants.ATTRIBUTES;
+							domainAttributesNodeObject[CMDBuild.core.proxy.Constants.TEXT] = CMDBuild.Translation.attributes;
 
 							var domainAttributesNode = domainMainNode.appendChild(domainAttributesNodeObject);
 
 							// Domain attributes child node
-							Ext.Array.forEach(domainObject[CMDBuild.core.proxy.CMProxyConstants.ATTRIBUTES], function(attributeObject, i, allAttributes) {
+							Ext.Array.forEach(domainObject[CMDBuild.core.proxy.Constants.ATTRIBUTES], function(attributeObject, i, allAttributes) {
 								var domainAttributeNodeObject = {};
-								domainAttributeNodeObject[CMDBuild.core.proxy.CMProxyConstants.DEFAULT] = attributeObject[CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION];
-								domainAttributeNodeObject[CMDBuild.core.proxy.CMProxyConstants.ENTITY_IDENTIFIER] = CMDBuild.core.proxy.CMProxyConstants.ATTRIBUTE + this.getSectionId();
-								domainAttributeNodeObject[CMDBuild.core.proxy.CMProxyConstants.LEAF] = true;
-								domainAttributeNodeObject[CMDBuild.core.proxy.CMProxyConstants.PARENT] = domainAttributesNode;
-								domainAttributeNodeObject[CMDBuild.core.proxy.CMProxyConstants.PROPERTY_IDENTIFIER] = attributeObject[CMDBuild.core.proxy.CMProxyConstants.NAME];
-								domainAttributeNodeObject[CMDBuild.core.proxy.CMProxyConstants.TEXT] = attributeObject[CMDBuild.core.proxy.CMProxyConstants.NAME];
+								domainAttributeNodeObject[CMDBuild.core.proxy.Constants.DEFAULT] = attributeObject[CMDBuild.core.proxy.Constants.DESCRIPTION];
+								domainAttributeNodeObject[CMDBuild.core.proxy.Constants.ENTITY_IDENTIFIER] = CMDBuild.core.proxy.Constants.ATTRIBUTE + this.getSectionId();
+								domainAttributeNodeObject[CMDBuild.core.proxy.Constants.LEAF] = true;
+								domainAttributeNodeObject[CMDBuild.core.proxy.Constants.PARENT] = domainAttributesNode;
+								domainAttributeNodeObject[CMDBuild.core.proxy.Constants.PROPERTY_IDENTIFIER] = attributeObject[CMDBuild.core.proxy.Constants.NAME];
+								domainAttributeNodeObject[CMDBuild.core.proxy.Constants.TEXT] = attributeObject[CMDBuild.core.proxy.Constants.NAME];
 
 								domainAttributesNode.appendChild(domainAttributeNodeObject);
 							}, this);
@@ -233,22 +233,22 @@
 		 */
 		onAdvancedTableRowUpdateButtonClick: function(node) {
 //			if (!Ext.Object.isEmpty(node)) {
-//				var parentProperty = node.get(CMDBuild.core.proxy.CMProxyConstants.PARENT).get(CMDBuild.core.proxy.CMProxyConstants.PROPERTY);
+//				var parentProperty = node.get(CMDBuild.core.proxy.Constants.PARENT).get(CMDBuild.core.proxy.Constants.PROPERTY);
 //
 //				var localizationParams = {};
-//				localizationParams[CMDBuild.core.proxy.CMProxyConstants.ATTRIBUTE_NAME] = node.get(CMDBuild.core.proxy.CMProxyConstants.NAME);
-//				localizationParams[CMDBuild.core.proxy.CMProxyConstants.DOMAIN_NAME] = this.getFirstLevelNode(node).get(CMDBuild.core.proxy.CMProxyConstants.OBJECT);
-//				localizationParams[CMDBuild.core.proxy.CMProxyConstants.FIELD] = CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION;
-//				localizationParams[CMDBuild.core.proxy.CMProxyConstants.ATTRIBUTE_NAME] = node.get(CMDBuild.core.proxy.CMProxyConstants.OBJECT);
-//				localizationParams[CMDBuild.core.proxy.CMProxyConstants.TRANSLATIONS] = Ext.encode(node.getChanges());
-//				localizationParams[CMDBuild.core.proxy.CMProxyConstants.SECTION_ID] = (parentProperty == CMDBuild.core.proxy.CMProxyConstants.DOMAINS) ? this.getSectionId() : this.getSectionId() + CMDBuild.core.Utils.toTitleCase(parentProperty);
+//				localizationParams[CMDBuild.core.proxy.Constants.ATTRIBUTE_NAME] = node.get(CMDBuild.core.proxy.Constants.NAME);
+//				localizationParams[CMDBuild.core.proxy.Constants.DOMAIN_NAME] = this.getFirstLevelNode(node).get(CMDBuild.core.proxy.Constants.OBJECT);
+//				localizationParams[CMDBuild.core.proxy.Constants.FIELD] = CMDBuild.core.proxy.Constants.DESCRIPTION;
+//				localizationParams[CMDBuild.core.proxy.Constants.ATTRIBUTE_NAME] = node.get(CMDBuild.core.proxy.Constants.OBJECT);
+//				localizationParams[CMDBuild.core.proxy.Constants.TRANSLATIONS] = Ext.encode(node.getChanges());
+//				localizationParams[CMDBuild.core.proxy.Constants.SECTION_ID] = (parentProperty == CMDBuild.core.proxy.Constants.DOMAINS) ? this.getSectionId() : this.getSectionId() + CMDBuild.core.Utils.toTitleCase(parentProperty);
 //
-//				if (node.get(CMDBuild.core.proxy.CMProxyConstants.WAS_EMPTY)) {
+//				if (node.get(CMDBuild.core.proxy.Constants.WAS_EMPTY)) {
 //					CMDBuild.core.proxy.localizations.Localizations.create({
 //						params: localizationParams,
 //						scope: this,
 //						success: function(response, options, decodedResponse) {
-//							node.set(CMDBuild.core.proxy.CMProxyConstants.WAS_EMPTY, false);
+//							node.set(CMDBuild.core.proxy.Constants.WAS_EMPTY, false);
 //						}
 //					});
 //				} else {
@@ -256,7 +256,7 @@
 //						params: localizationParams,
 //						scope: this,
 //						success: function(response, options, decodedResponse) {
-//							node.set(CMDBuild.core.proxy.CMProxyConstants.WAS_EMPTY, false);
+//							node.set(CMDBuild.core.proxy.Constants.WAS_EMPTY, false);
 //						}
 //					});
 //				}
