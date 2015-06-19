@@ -20,7 +20,7 @@
 		frame: false,
 		layout: 'fit',
 
-		title: CMDBuild.Translation.translations,
+		baseTitle: CMDBuild.Translation.translations,
 
 		initComponent: function() {
 			Ext.apply(this, {
