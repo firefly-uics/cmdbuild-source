@@ -14,6 +14,11 @@
 
 		alias : "widget.lookupform",
 
+		/**
+		 * @property {CMDBuild.model.Lookup.gridStore}
+		 */
+		selectedLookup: undefined,
+
 		constructor : function() {
 
 			this.modifyButton = new Ext.button.Button({
@@ -21,7 +26,6 @@
 				text: tr.update_lookup,
 				handler: function() {
 					this.enableModify();
-					_CMCache.initModifyingTranslations();
 				},
 				scope: this
 			});
@@ -79,14 +83,26 @@
 
 			this.layout = "border",
 			this.description = Ext.create('CMDBuild.view.common.field.translatable.Text', {
+				name: LOOKUP_FIELDS.Description,
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				fieldLabel: tr.description,
-				name: LOOKUP_FIELDS.Description,
 				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
 				allowBlank: false,
 				disabled: true,
-				translationsKeyType: "Lookup",
-				translationsKeyField: LOOKUP_FIELDS.Description
+
+				listeners: {
+					scope: this,
+					enable: function(field, eOpts) { // TODO: on creation, type should be already known (refactor)
+						field.translationFieldConfig = {
+							type: CMDBuild.core.proxy.Constants.LOOKUP_VALUE,
+							owner: this.type,
+							identifier: { sourceType: 'model', key: 'TranslationUuid', source: this.selectedLookup },
+							field: LOOKUP_FIELDS.Description
+						};
+
+						field.translationsRead();
+					}
+				}
 			});
 
 			this.parentDescription = Ext.create('Ext.form.field.ComboBox', {
@@ -161,7 +177,12 @@
 			this.disableModify(enableCMTBar = false);
 		},
 
+		/**
+		 * @param {CMDBuild.model.Lookup.gridStore} selection
+		 */
 		onSelectLookupGrid: function(selection) {
+			this.selectedLookup = selection;
+
 			this.getForm().loadRecord(selection);
 			this.updateDisableEnableLookup();
 			this.disableModify(enableCMTbar = true);
@@ -174,6 +195,8 @@
 		onAddLookupClick: function() {
 			this.getForm().reset();
 			this.enableModify();
+
+			this.selectedLookup = null;
 		},
 
 		_reloadParentStore : function() {

@@ -1,7 +1,10 @@
 (function() {
 	var LOOKUP_FIELDS = CMDBuild.ServiceProxy.LOOKUP_FIELDS;
-	
+
 	Ext.define("CMDBuild.controller.administration.lookup.CMLookupFormController", {
+
+		requires: ['CMDBuild.view.common.field.translatable.Utils'],
+
 		constructor: function(view) {
 			this.view = view;
 			this.currentLookup = null;
@@ -13,7 +16,7 @@
 				this.view.disableModify(enableTBar = modifyMode);
 				reloadLookup.call(this);
 			}, this);
-			
+
 			this.view.saveButton.on("click", onSaveClick, this);
 			this.view.disabelButton.on("click", onDisableButtonClick, this);
 		},
@@ -25,49 +28,49 @@
 		onSelectLookupGrid: function(selection) {
 			this.currentLookup = selection;
 			this.view.onSelectLookupGrid(selection);
-			this.view.description.translationsKeyName = selection.get(LOOKUP_FIELDS.TranslationUuid);
 		},
-		
+
 		onAddLookupClick: function() {
 			this.currentLookup = null;
 			this.view.onAddLookupClick();
-			_CMCache.initAddingTranslations();
-			this.view.description.translationsKeyName = "";
 		},
-		
+
 		onSelectLookupType: function(lookupType) {
 			this.currentLookupType = lookupType;
 			this.view.onSelectLookupType(lookupType);
 		},
-		
+
 		onAddLookupTypeClick: function() {
 			this.currentLookupType = null;
 			this.view.disableModify();
 			this.view.reset();
 		}
 	});
-	
+
 	function reloadLookup() {
 		if (this.currentLookup != null) {
 			this.view.onSelectLookupGrid(this.currentLookup);
 		}
 	}
-	
+
 	function notifySubController(event, params) {
 		this.subController[event](params);
 	}
-	
+
 	function onSaveClick() {
 		CMDBuild.LoadMask.get().show();
 		var data = this.view.getData(true);
 		data.Type = this.currentLookupType;
-		
+
 		CMDBuild.ServiceProxy.lookup.saveLookup({
 			params: data,
 			scope : this,
 			success : function(a, b, decoded) {
 				notifySubController.call(this, "onLookupSaved", decoded.lookup.Id);
-				_CMCache.flushTranslationsToSave(decoded.lookup.TranslationUuid);
+
+				this.view.selectedLookup = Ext.create('CMDBuild.DummyModel', decoded.lookup); // HACK to save translations ... because lookups doesn't have a name
+
+				CMDBuild.view.common.field.translatable.Utils.commit(this.view);
 			},
 			failure : function() {
 				reloadLookup.call(this);
@@ -77,7 +80,7 @@
 			}
 		});
 	}
-	
+
 	function onDisableButtonClick() {
 		CMDBuild.LoadMask.get().show();
 		var disable = this.view.activeCheck.getValue();
