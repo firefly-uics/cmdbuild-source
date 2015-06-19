@@ -10,6 +10,8 @@
 		singleton: true,
 
 		/**
+		 * Service function to save all translatable fields, to call on entity save success
+		 *
 		 * @returns {Ext.form.Panel}
 		 */
 		commit: function(form) {
@@ -21,6 +23,7 @@
 				form.cascade(function(item) {
 					if (
 						!Ext.isEmpty(item)
+						&& item.isVisible()
 						&& item instanceof CMDBuild.view.common.field.translatable.Base
 					) {
 						if (!Ext.Object.isEmpty(item.configurationGet())) {

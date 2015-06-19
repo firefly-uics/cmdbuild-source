@@ -63,14 +63,7 @@
 		listeners: {
 			// Read field's translations
 			enable: function(field, eOpts) {
-				if (field.isConfigurationValid()) {
-					CMDBuild.core.proxy.localizations.Localizations.read({
-						params: field.configurationGet(),
-						success: function(response, options, decodedResponse) {
-							field.translationsSet(decodedResponse.response);
-						}
-					});
-				}
+				field.translationsRead();
 			}
 		},
 
@@ -137,15 +130,29 @@
 			if (!Ext.isEmpty(configurationKey)) {
 				var configurationValue = this.translationFieldConfig[configurationKey];
 
+				decodedValue = configurationValue;
+
 				if(
 					Ext.isObject(configurationValue)
-					&& !Ext.isEmpty(configurationValue.form)
-					&& !Ext.isEmpty(configurationValue.key)
-					&& Ext.isFunction(configurationValue.form.getData)
+					&& configurationValue.hasOwnProperty('sourceType')
+					&& configurationValue.hasOwnProperty('key')
+					&& configurationValue.hasOwnProperty('source')
 				) {
-					decodedValue = configurationValue.form.getData(true)[configurationValue.key];
-				} else {
-					decodedValue = configurationValue;
+					switch (configurationValue.sourceType) {
+						case 'form': {
+							if(!Ext.isEmpty(configurationValue.source) && Ext.isFunction(configurationValue.source.getData))
+								decodedValue = configurationValue.source.getData(true)[configurationValue.key];
+						} break;
+
+						case 'model': {
+							if(!Ext.isEmpty(configurationValue.source) && Ext.isFunction(configurationValue.source.get))
+								decodedValue = configurationValue.source.get(configurationValue.key);
+						} break;
+
+						default: {
+							_error('type not supported', this);
+						}
+					}
 				}
 			}
 
@@ -197,6 +204,18 @@
 					return Ext.encode(this.translationFieldConfig[CMDBuild.core.proxy.Constants.TRANSLATIONS]);
 
 				return this.translationFieldConfig[CMDBuild.core.proxy.Constants.TRANSLATIONS];
+			},
+
+			translationsRead: function() {
+				if (this.isConfigurationValid()) {
+					CMDBuild.core.proxy.localizations.Localizations.read({
+						params: this.configurationGet(),
+						scope: this,
+						success: function(response, options, decodedResponse) {
+							this.translationsSet(decodedResponse.response);
+						}
+					});
+				}
 			},
 
 			/**
