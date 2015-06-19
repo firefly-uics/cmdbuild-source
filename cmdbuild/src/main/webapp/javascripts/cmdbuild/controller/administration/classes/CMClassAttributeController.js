@@ -1,5 +1,7 @@
 (function() {
 
+	Ext.require('CMDBuild.view.common.field.translatable.Utils');
+
 	Ext.define("CMDBuild.controller.administration.CMBaseAttributesController", {
 		constructor: function(view) {
 			this.view = view;
@@ -123,7 +125,8 @@
 			params : data,
 			success : function(form, action, decoded) {
 				me.view.gridPanel.refreshStore(me.currentClassId, decoded.attribute.index);
-				_CMCache.flushTranslationsToSave(_CMCache.getEntryTypeNameById(me.currentClassId), decoded.attribute.name);
+
+				CMDBuild.view.common.field.translatable.Utils.commit(me.view.formPanel);
 			},
 			callback: function() {
 				CMDBuild.LoadMask.get().hide();
@@ -188,7 +191,6 @@
 		this.currentAttribute = null;
 		this.view.formPanel.onAddAttributeClick();
 		this.view.gridPanel.onAddAttributeClick();
-		_CMCache.initAddingTranslations();
 	}
 
 	function buildOrderingWindow() {
