@@ -154,8 +154,8 @@
 
 				translationFieldConfig: {
 					type: CMDBuild.core.proxy.Constants.CLASS,
-					owner: { key: CMDBuild.core.proxy.Constants.NAME, form: this },
-					identifier: { key: CMDBuild.core.proxy.Constants.NAME, form: this },
+					owner: { sourceType: 'form', key: CMDBuild.core.proxy.Constants.NAME, source: this },
+					identifier: { sourceType: 'form', key: CMDBuild.core.proxy.Constants.NAME, source: this },
 					field: CMDBuild.core.proxy.Constants.DESCRIPTION
 				}
 			});
