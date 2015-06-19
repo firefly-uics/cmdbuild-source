@@ -1,0 +1,27 @@
+(function() {
+
+	Ext.define('CMDBuild.core.proxy.dataViews.DataViews', {
+
+		requires: ['CMDBuild.core.proxy.Index'],
+
+		singleton: true,
+
+		/**
+		 * Read all the data view available for the logged user
+		 *
+		 * @param {Object} parameters
+		 */
+		readAll: function(parameters) {
+			CMDBuild.Ajax.request({
+				method: 'GET',
+				url: CMDBuild.core.proxy.Index.dataViews.read,
+				scope: parameters.scope || this,
+				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : false,
+				failure: parameters.failure || Ext.emptyFn(),
+				success: parameters.success || Ext.emptyFn(),
+				callback: parameters.callback || Ext.emptyFn()
+			});
+		}
+	});
+
+})();
