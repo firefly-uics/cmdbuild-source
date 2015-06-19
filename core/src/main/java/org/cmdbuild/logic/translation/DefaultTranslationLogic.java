@@ -199,21 +199,26 @@ public class DefaultTranslationLogic implements TranslationLogic {
 
 	private static final class MustBeUpdated implements Predicate<Translation> {
 
-		private final Iterable<Translation> oldTranslations;
+		private final Iterable<Translation> newTranslations;
 
-		private static Predicate<Translation> withOldTranslations(final Iterable<Translation> oldTranslations) {
-			return new MustBeUpdated(oldTranslations);
+		private static Predicate<Translation> withNewTranslations(final Iterable<Translation> newTranslations) {
+			return new MustBeUpdated(newTranslations);
 		}
 
-		private MustBeUpdated(final Iterable<Translation> oldTranslations) {
-			this.oldTranslations = oldTranslations;
+		private MustBeUpdated(final Iterable<Translation> newTranslations) {
+			this.newTranslations = newTranslations;
 		}
 
 		@Override
 		public boolean apply(final Translation input) {
-			final boolean toCreate = !isBlank(input.getValue())
-					&& ContainedInTraslations.containedIn(oldTranslations).apply(input);
-			return toCreate;
+			boolean toUpdate = false;
+			for (final Translation translation : newTranslations) {
+				if (translation.getLang().equals(input.getLang()) && !isBlank(translation.getValue())) {
+					toUpdate = true;
+					break;
+				}
+			}
+			return toUpdate;
 		}
 	}
 
@@ -222,7 +227,7 @@ public class DefaultTranslationLogic implements TranslationLogic {
 		private final Iterable<Translation> newTranslations;
 
 		private static Predicate<Translation> withNewTranslations(final Iterable<Translation> newTranslations) {
-			return new MustBeUpdated(newTranslations);
+			return new MustBeDeleted(newTranslations);
 		}
 
 		private MustBeDeleted(final Iterable<Translation> newTranslations) {
@@ -230,10 +235,15 @@ public class DefaultTranslationLogic implements TranslationLogic {
 		}
 
 		@Override
-		public boolean apply(final Translation input) {
-			final boolean toCreate = isBlank(input.getValue())
-					&& ContainedInTraslations.containedIn(newTranslations).apply(input);
-			return toCreate;
+		public boolean apply(final Translation oldTranslation) {
+			boolean toDelete = false;
+			for (final Translation newTranslation : newTranslations) {
+				if (newTranslation.getLang().equals(oldTranslation.getLang()) && isBlank(newTranslation.getValue())) {
+					toDelete = true;
+					break;
+				}
+			}
+			return toDelete;
 		}
 	}
 
@@ -324,8 +334,8 @@ public class DefaultTranslationLogic implements TranslationLogic {
 				MustBeCreated.withOldTranslations(oldTranslations));
 		final Iterable<Translation> toDelete = from(oldTranslations).filter(
 				MustBeDeleted.withNewTranslations(newTranslations));
-		final Iterable<Translation> toUpdate = from(newTranslations).filter(
-				MustBeUpdated.withOldTranslations(oldTranslations));
+		final Iterable<Translation> toUpdate = from(oldTranslations).filter(
+				MustBeUpdated.withNewTranslations(newTranslations));
 
 		for (final Translation translation : toCreate) {
 			store.create(translation);

@@ -24,6 +24,8 @@ import org.cmdbuild.servlets.json.management.JsonResponse;
 import org.cmdbuild.servlets.utils.Parameter;
 import org.json.JSONObject;
 
+import com.google.common.collect.Lists;
+
 public class Translation extends JSONBaseWithSpringContext {
 
 	private static final String TYPE = "type";
@@ -78,11 +80,21 @@ public class Translation extends JSONBaseWithSpringContext {
 			Converter createConverter(final String field) {
 				return ClassConverter.of(field);
 			}
+
+			@Override
+			Iterable<String> allowedFields() {
+				return Lists.newArrayList(ClassConverter.description());
+			}
 		},
 		CLASSATTRIBUTE("attributeclass") {
 			@Override
 			Converter createConverter(final String field) {
 				return AttributeConverter.of(AttributeConverter.forClass(), field);
+			}
+
+			@Override
+			Iterable<String> allowedFields() {
+				return Lists.newArrayList(AttributeConverter.description());
 			}
 		},
 		DOMAIN("domain") {
@@ -90,11 +102,22 @@ public class Translation extends JSONBaseWithSpringContext {
 			Converter createConverter(final String field) {
 				return DomainConverter.of(field);
 			}
+
+			@Override
+			Iterable<String> allowedFields() {
+				return Lists.newArrayList(DomainConverter.description(), DomainConverter.directDescription(),
+						DomainConverter.inverseDescription(), DomainConverter.masterDetail());
+			}
 		},
 		DOMAINATTRIBUTE("attributedomain") {
 			@Override
 			Converter createConverter(final String field) {
 				return AttributeConverter.of(AttributeConverter.forDomain(), field);
+			}
+
+			@Override
+			Iterable<String> allowedFields() {
+				return Lists.newArrayList(AttributeConverter.description());
 			}
 		},
 		FILTER("filter") {
@@ -102,17 +125,32 @@ public class Translation extends JSONBaseWithSpringContext {
 			Converter createConverter(final String field) {
 				return FilterConverter.of(field);
 			}
+
+			@Override
+			Iterable<String> allowedFields() {
+				return Lists.newArrayList(FilterConverter.description());
+			}
 		},
 		INSTANCE_NAME("instancename") {
 			@Override
 			Converter createConverter(final String field) {
 				return InstanceConverter.of(field);
 			}
+
+			@Override
+			Iterable<String> allowedFields() {
+				return null;
+			}
 		},
 		LOOKUP_VALUE("lookupvalue") {
 			@Override
 			Converter createConverter(final String field) {
 				return LookupConverter.of(field);
+			}
+
+			@Override
+			Iterable<String> allowedFields() {
+				return Lists.newArrayList(LookupConverter.description());
 			}
 		},
 		MENU_ITEM("menuitem") {
@@ -122,6 +160,11 @@ public class Translation extends JSONBaseWithSpringContext {
 				return MenuItemConverter.of(field);
 			}
 
+			@Override
+			Iterable<String> allowedFields() {
+				return Lists.newArrayList(MenuItemConverter.description());
+			}
+
 		},
 		REPORT("report") {
 
@@ -129,12 +172,23 @@ public class Translation extends JSONBaseWithSpringContext {
 			Converter createConverter(final String field) {
 				return ReportConverter.of(field);
 			}
+
+			@Override
+			Iterable<String> allowedFields() {
+				return Lists.newArrayList(ReportConverter.description());
+			}
+
 		},
 		VIEW("view") {
 
 			@Override
 			Converter createConverter(final String field) {
 				return ViewConverter.of(field);
+			}
+
+			@Override
+			Iterable<String> allowedFields() {
+				return Lists.newArrayList(ViewConverter.description());
 			}
 
 		},
@@ -145,12 +199,22 @@ public class Translation extends JSONBaseWithSpringContext {
 				return WidgetConverter.of(field);
 			}
 
+			@Override
+			Iterable<String> allowedFields() {
+				return Lists.newArrayList(WidgetConverter.label());
+			}
+
 		},
 
 		UNDEFINED("undefined") {
 
 			@Override
 			Converter createConverter(final String field) {
+				throw new UnsupportedOperationException();
+			}
+
+			@Override
+			Iterable<String> allowedFields() {
 				throw new UnsupportedOperationException();
 			}
 
@@ -163,6 +227,8 @@ public class Translation extends JSONBaseWithSpringContext {
 		};
 
 		abstract Converter createConverter(String field);
+
+		abstract Iterable<String> allowedFields();
 
 		private static TranslatableElement of(final String type) {
 			for (final TranslatableElement element : values()) {
