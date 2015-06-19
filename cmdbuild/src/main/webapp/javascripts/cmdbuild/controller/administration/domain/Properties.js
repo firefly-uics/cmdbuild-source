@@ -60,8 +60,6 @@
 			this.view.loadRecord(Ext.create('CMDBuild.model.Domain'));
 
 			this.onDomainPropertiesCardinalitySelect(); // Execute cardinality selection event actions to disable masterDetailCheckbox
-
-			_CMCache.initAddingTranslations();
 		},
 
 		/**
@@ -99,19 +97,12 @@
 			this.view.setDisabledModify(false);
 
 			this.onDomainPropertiesCardinalitySelect(); // Execute cardinality selection event actions to disable masterDetailCheckbox
-
-			_CMCache.initModifyingTranslations();
 		},
 
 		onDomainSelected: function() {
 			var selectedDomain = this.cmfg('selectedDomainGet');
 
 			if (!Ext.isEmpty(selectedDomain)) {
-				this.view.domainDescription.translationsKeyName = selectedDomain.get(CMDBuild.core.proxy.Constants.NAME);
-				this.view.directDescription.translationsKeyName = selectedDomain.get(CMDBuild.core.proxy.Constants.NAME);
-				this.view.inverseDescription.translationsKeyName = selectedDomain.get(CMDBuild.core.proxy.Constants.NAME);
-				this.view.masterDetailLabel.translationsKeyName = selectedDomain.get(CMDBuild.core.proxy.Constants.NAME);
-
 				this.view.reset();
 				this.view.setDisabledModify(true);
 				this.view.loadRecord(selectedDomain);

@@ -5,7 +5,8 @@
 
 		requires: [
 			'CMDBuild.core.proxy.Constants',
-			'CMDBuild.core.proxy.Domain'
+			'CMDBuild.core.proxy.Domain',
+			'CMDBuild.view.common.field.translatable.Utils'
 		],
 
 		/**
@@ -140,12 +141,12 @@
 						this.view.tabPanel.getActiveTab().setDisabledModify(true);
 
 						_CMCache.onDomainSaved(decodedResponse.domain);
-						_CMCache.flushTranslationsToSave(decodedResponse.domain.name);
+
+						CMDBuild.view.common.field.translatable.Utils.commit(this.controllerProperties.getView());
 					}
 				});
-
 			} else {
-				CMDBuild.Msg.error(CMDBuild.Translation.common.failure, CMDBuild.Translation.errors.invalid_fields, false);
+				CMDBuild.core.Message.error(CMDBuild.Translation.common.failure, CMDBuild.Translation.errors.invalid_fields, false);
 			}
 		},
 
