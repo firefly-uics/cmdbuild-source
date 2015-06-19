@@ -7,6 +7,7 @@
 			'CMDBuild.core.Message',
 			'CMDBuild.core.proxy.Constants',
 			'CMDBuild.core.proxy.localizations.Localizations',
+			'CMDBuild.model.common.field.translatable.Window'
 		],
 
 		/**
@@ -27,6 +28,11 @@
 		 * @cfg {Mixed}
 		 */
 		ownerField: undefined,
+
+		/**
+		 * @cfg {String}
+		 */
+		titleSeparator: ' - ',
 
 		/**
 		 * @property {CMDBuild.view.common.field.translatable.window.Window}
@@ -93,11 +99,15 @@
 		 */
 		onTranslatableWindowBeforeShow: function() {
 			if (this.ownerField.isConfigurationValid()) {
+				this.setViewTitle(this.ownerField.getFieldLabel());
+
+				this.form.reset();
+
 				CMDBuild.core.proxy.localizations.Localizations.read({
 					params: this.ownerField.configurationGet(),
 					scope: this,
 					success: function(response, options, decodedResponse) {
-						this.form.loadRecord(Ext.create('CMDBuild.DummyModel', decodedResponse.response));
+						this.form.loadRecord(Ext.create('CMDBuild.model.common.field.translatable.Window', decodedResponse.response));
 
 						this.ownerField.translationsSet(decodedResponse.response);
 					}
@@ -112,6 +122,19 @@
 			this.ownerField.translationsSet(this.form.getValues());
 
 			this.onTranslatableWindowAbortButtonClick();
+		},
+
+		/**
+		 * Setup view panel title as a breadcrumbs component
+		 *
+		 * @param {String} titlePart
+		 */
+		setViewTitle: function(titlePart) {
+			if (Ext.isEmpty(titlePart)) {
+				this.view.setTitle(this.view.baseTitle);
+			} else {
+				this.view.setTitle(this.view.baseTitle + this.titleSeparator + titlePart);
+			}
 		}
 	});
 
