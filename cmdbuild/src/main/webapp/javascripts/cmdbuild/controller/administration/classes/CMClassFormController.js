@@ -23,7 +23,6 @@
 		onAddClassButtonClick: function() {
 			this.selection = null;
 			this.view.onAddClassButtonClick();
-			_CMCache.initAddingTranslations();
 		},
 
 		onSaveClick: function() {
@@ -45,7 +44,8 @@
 			this.view.disableModify(enableCMTBar = true);
 			var result = Ext.JSON.decode(r.responseText);
 			this.selection = _CMCache.onClassSaved(result.table);
-			_CMCache.flushTranslationsToSave(result.table.name);
+
+			CMDBuild.view.common.field.translatable.Utils.commit(this.view.form);
 		},
 
 		buildSaveParams: function() {
@@ -63,7 +63,7 @@
 			params.description = params.text; // adapter: maybe one day everything will be better
 			params.inherits = params.parent; // adapter
 
-			return params
+			return params;
 		},
 
 		onDeleteClick: function() {

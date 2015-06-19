@@ -161,9 +161,9 @@
 
 		localizations: {
 			translation: {
-				create: 'services/json/schema/translation/create',
+				create: '',
 				read: 'services/json/schema/translation/read',
-				remove: 'services/json/schema/translation/delete', // TODO probabilmente non serve e se la gestisce il server
+				remove: '',
 				update: 'services/json/schema/translation/update'
 			}
 
