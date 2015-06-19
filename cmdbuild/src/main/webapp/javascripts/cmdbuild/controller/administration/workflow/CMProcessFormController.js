@@ -3,7 +3,10 @@
 	Ext.define('CMDBuild.controller.administration.workflow.CMProcessFormController', {
 		extend: 'CMDBuild.controller.administration.classes.CMClassFormController',
 
-		requires: ['CMDBuild.core.proxy.CMProxyWorkflow'],
+		requires: [
+			'CMDBuild.core.proxy.CMProxyWorkflow',
+			'CMDBuild.view.common.field.translatable.Utils'
+		],
 
 		/**
 		 * @param {CMDBuild.view.administration.workflow.CMProcessForm} view
@@ -166,6 +169,8 @@
 		saveSuccessCB: function(result, options, decodedResult) {
 			var savedProcessData = decodedResult[CMDBuild.core.proxy.Constants.TABLE];
 			this.selection = _CMCache.onProcessSaved(savedProcessData);
+
+			CMDBuild.view.common.field.translatable.Utils.commit(this.view.form);
 
 			// Accordion synchronization
 			_CMMainViewportController.findAccordionByCMName('process').updateStore();
