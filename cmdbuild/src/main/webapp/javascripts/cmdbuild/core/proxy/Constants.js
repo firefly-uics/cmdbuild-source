@@ -25,6 +25,7 @@
 		ATTRIBUTE: 'attribute',
 		ATTRIBUTES: 'attributes',
 		ATTRIBUTES_NODE: 'attributesNode',
+		ATTRIBUTE_CLASS: 'attributeClass',
 		ATTRIBUTE_DESCRIPTION: 'attributeDescription',
 		ATTRIBUTE_MAPPING: 'attributeMapping',
 		ATTRIBUTE_NAME: 'attributeName',
