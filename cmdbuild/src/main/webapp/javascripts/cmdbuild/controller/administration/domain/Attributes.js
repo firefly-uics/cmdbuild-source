@@ -168,8 +168,6 @@
 		onAddAttributeClick: function() {
 			this.currentAttribute = null;
 			this.view.onAddAttributeClick();
-
-			_CMCache.initAddingTranslations();
 		},
 
 		/**
@@ -252,10 +250,7 @@
 
 					this.grid.selectAttributeByName(attribute[CMDBuild.core.proxy.Constants.NAME]);
 
-					_CMCache.flushTranslationsToSave(
-						this.currentDomain.get(CMDBuild.core.proxy.Constants.NAME),
-						attribute[CMDBuild.core.proxy.Constants.NAME]
-					);
+					CMDBuild.view.common.field.translatable.Utils.commit(this.form);
 				},
 				callback: function() {
 					CMDBuild.LoadMask.get().hide();
