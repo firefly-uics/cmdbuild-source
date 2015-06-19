@@ -108,14 +108,19 @@
 						cmImmutable: true
 					}),
 					this.descriptionTextField = Ext.create('CMDBuild.view.common.field.translatable.Text', {
-						name: _CMProxy.parameter.DESCRIPTION,
+						name: CMDBuild.core.proxy.Constants.DESCRIPTION,
 						fieldLabel: CMDBuild.Translation.descriptionLabel,
 						labelWidth: CMDBuild.LABEL_WIDTH,
 						maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
 						allowBlank: false,
 						vtype: 'cmdbcomment',
-						translationsKeyType: 'View',
-						translationsKeyField: 'Description'
+
+						translationFieldConfig: {
+							type: CMDBuild.core.proxy.Constants.VIEW,
+							owner: { sourceType: 'form', key: CMDBuild.core.proxy.Constants.NAME, source: this },
+							identifier: { sourceType: 'form', key: CMDBuild.core.proxy.Constants.NAME, source: this },
+							field: CMDBuild.core.proxy.Constants.DESCRIPTION
+						}
 					}),
 					this.classesCombobox = Ext.create('Ext.form.field.ComboBox', {
 						name: CMDBuild.core.proxy.Constants.SOURCE_CLASS_NAME,
