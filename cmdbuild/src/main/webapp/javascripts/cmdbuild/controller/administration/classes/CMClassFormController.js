@@ -3,6 +3,9 @@
 	var tr = CMDBuild.Translation.administration.modClass.classProperties;
 
 	Ext.define("CMDBuild.controller.administration.classes.CMClassFormController", {
+
+		requires: ['CMDBuild.view.common.field.translatable.Utils'],
+
 		constructor: function(view) {
 			this.view = view;
 			this.selection = null;

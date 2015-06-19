@@ -11,12 +11,18 @@
 		considerAsFieldToDisable: true,
 
 		/**
+		 * @property {Mixed}
+		 */
+		field: undefined,
+
+		/**
 		 * @property {CMDBuild.core.buttons.FieldTranslation}
 		 */
 		translationButton: undefined,
 
 		/**
-		 * Field translation properties
+		 * Field translation properties.
+		 * NOTE: owner and identifier could be objects (key, form) to use with getData() to get data from server
 		 *
 		 * @cfg {Object}
 		 *
@@ -54,6 +60,20 @@
 			this.callParent(arguments);
 		},
 
+		listeners: {
+			// Read field's translations
+			enable: function(field, eOpts) {
+				if (field.isConfigurationValid()) {
+					CMDBuild.core.proxy.localizations.Localizations.read({
+						params: field.configurationGet(),
+						success: function(response, options, decodedResponse) {
+							field.translationsSet(decodedResponse.response);
+						}
+					});
+				}
+			}
+		},
+
 		/**
 		 * @abstract
 		 */
@@ -78,45 +98,15 @@
 				) {
 					decodedConfigurationObject = {};
 					decodedConfigurationObject[CMDBuild.core.proxy.Constants.TYPE] = this.translationFieldConfig[CMDBuild.core.proxy.Constants.TYPE];
+					decodedConfigurationObject[CMDBuild.core.proxy.Constants.OWNER] = this.decodeConfigurationValue(CMDBuild.core.proxy.Constants.OWNER);
+					decodedConfigurationObject[CMDBuild.core.proxy.Constants.IDENTIFIER] = this.decodeConfigurationValue(CMDBuild.core.proxy.Constants.IDENTIFIER);
 					decodedConfigurationObject[CMDBuild.core.proxy.Constants.FIELD] = this.translationFieldConfig[CMDBuild.core.proxy.Constants.FIELD];
-
-					if(Ext.isObject(this.translationFieldConfig[CMDBuild.core.proxy.Constants.OWNER])) {
-						decodedConfigurationObject[CMDBuild.core.proxy.Constants.OWNER] = this.translationFieldConfig[CMDBuild.core.proxy.Constants.OWNER].form.getData(true)[this.translationFieldConfig[CMDBuild.core.proxy.Constants.OWNER].key];
-					} else {
-						decodedConfigurationObject[CMDBuild.core.proxy.Constants.OWNER] = this.translationFieldConfig[CMDBuild.core.proxy.Constants.OWNER];
-					}
-
-					if(Ext.isObject(this.translationFieldConfig[CMDBuild.core.proxy.Constants.OWNER])) {
-						decodedConfigurationObject[CMDBuild.core.proxy.Constants.IDENTIFIER] = this.translationFieldConfig[CMDBuild.core.proxy.Constants.IDENTIFIER].form.getData(true)[this.translationFieldConfig[CMDBuild.core.proxy.Constants.IDENTIFIER].key];
-					} else {
-						decodedConfigurationObject[CMDBuild.core.proxy.Constants.IDENTIFIER] = this.translationFieldConfig[CMDBuild.core.proxy.Constants.IDENTIFIER];
-					}
 
 					if (withTranslationsObject)
 						decodedConfigurationObject[CMDBuild.core.proxy.Constants.TRANSLATIONS] = this.translationsGet(translationsObjectEncoded);
 				}
 
 				return decodedConfigurationObject;
-			},
-
-			/**
-			 * @param {Object} configurationObject
-			 */
-			configurationSet: function(configurationObject) {
-				if (Ext.isObject(configurationObject)) {
-					this.translationFieldConfig = configurationObject;
-
-					// Read field's translations
-					if (this.isConfigurationValid()) {
-						CMDBuild.core.proxy.localizations.Localizations.read({
-							params: this.configurationGet(),
-							scope: this,
-							success: function(response, options, decodedResponse) {
-								this.translationsSet(decodedResponse.response);
-							}
-						});
-					}
-				}
 			},
 
 			/**
@@ -133,6 +123,34 @@
 					&& !Ext.isEmpty(configuration[CMDBuild.core.proxy.Constants.FIELD])
 				);
 			},
+
+		/**
+		 * Decode object configuration values to get data from form
+		 *
+		 * @param {String} configurationKey
+		 *
+		 * @returns {String or null} decodedValue
+		 */
+		decodeConfigurationValue: function(configurationKey) {
+			var decodedValue = configurationKey;
+
+			if (!Ext.isEmpty(configurationKey)) {
+				var configurationValue = this.translationFieldConfig[configurationKey];
+
+				if(
+					Ext.isObject(configurationValue)
+					&& !Ext.isEmpty(configurationValue.form)
+					&& !Ext.isEmpty(configurationValue.key)
+					&& Ext.isFunction(configurationValue.form.getData)
+				) {
+					decodedValue = configurationValue.form.getData(true)[configurationValue.key];
+				} else {
+					decodedValue = configurationValue;
+				}
+			}
+
+			return decodedValue;
+		},
 
 		/**
 		 * Forward method

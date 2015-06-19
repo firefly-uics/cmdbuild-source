@@ -152,22 +152,11 @@
 				allowBlank: false,
 				vtype: 'cmdbcomment',
 
-				listeners: {
-					scope: this,
-					enable: function(field, eOpts) {
-						field.configurationSet({
-							type: 'class',
-							owner: {
-								key: CMDBuild.core.proxy.Constants.NAME,
-								form: this
-							},
-							identifier: {
-								key: CMDBuild.core.proxy.Constants.NAME,
-								form: this
-							},
-							field: 'Description'
-						});
-					}
+				translationFieldConfig: {
+					type: CMDBuild.core.proxy.Constants.CLASS,
+					owner: { key: CMDBuild.core.proxy.Constants.NAME, form: this },
+					identifier: { key: CMDBuild.core.proxy.Constants.NAME, form: this },
+					field: CMDBuild.core.proxy.Constants.DESCRIPTION
 				}
 			});
 
