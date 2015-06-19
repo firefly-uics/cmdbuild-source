@@ -114,8 +114,13 @@
 						maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
 						allowBlank: false,
 						vtype: 'cmdbcomment',
-						translationsKeyType: 'Filter',
-						translationsKeyField: 'Description'
+
+						translationFieldConfig: {
+							type: CMDBuild.core.proxy.Constants.FILTER,
+							owner: { sourceType: 'form', key: CMDBuild.core.proxy.Constants.NAME, source: this },
+							identifier: { sourceType: 'form', key: CMDBuild.core.proxy.Constants.NAME, source: this },
+							field: CMDBuild.core.proxy.Constants.DESCRIPTION
+						}
 					}),
 					this.classesCombobox = Ext.create('Ext.form.field.ComboBox', {
 						name: CMDBuild.core.proxy.Constants.ENTRY_TYPE,
