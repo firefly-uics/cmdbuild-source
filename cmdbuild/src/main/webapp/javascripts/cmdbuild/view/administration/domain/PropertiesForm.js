@@ -121,7 +121,7 @@
 						]
 					})
 				],
-				plugins: [new CMDBuild.FormPlugin()], // TODO che sia da toccare e rifare bene la classe????
+				plugins: [new CMDBuild.FormPlugin()],
 				items: [
 					Ext.create('Ext.form.TextField', {
 						name: CMDBuild.core.proxy.Constants.NAME,
@@ -143,9 +143,14 @@
 						fieldLabel: CMDBuild.Translation.descriptionLabel,
 						labelWidth: CMDBuild.LABEL_WIDTH,
 						allowBlank: false,
-						translationsKeyType: 'Domain',
-						translationsKeyField: 'Description',
-						vtype: 'cmdbcomment'
+						vtype: 'cmdbcomment',
+
+						translationFieldConfig: {
+							type: CMDBuild.core.proxy.Constants.DOMAIN,
+							owner: { sourceType: 'form', key: CMDBuild.core.proxy.Constants.NAME, source: this },
+							identifier: { sourceType: 'form', key: CMDBuild.core.proxy.Constants.NAME, source: this },
+							field: CMDBuild.core.proxy.Constants.DESCRIPTION
+						}
 					}),
 					Ext.create('Ext.form.field.ComboBox', {
 						name: 'idClass1',
@@ -179,19 +184,29 @@
 						name: 'descr_1', // TODO, change the server side
 						fieldLabel: CMDBuild.Translation.directDescription,
 						labelWidth: CMDBuild.LABEL_WIDTH,
-						translationsKeyType: 'Domain',
-						translationsKeyField: CMDBuild.core.proxy.Constants.DIRECT_DESCRIPTION,
 						allowBlank: false,
-						vtype: 'cmdbcomment'
+						vtype: 'cmdbcomment',
+
+						translationFieldConfig: {
+							type: CMDBuild.core.proxy.Constants.DOMAIN,
+							owner: { sourceType: 'form', key: CMDBuild.core.proxy.Constants.NAME, source: this },
+							identifier: { sourceType: 'form', key: CMDBuild.core.proxy.Constants.NAME, source: this },
+							field: CMDBuild.core.proxy.Constants.DIRECT_DESCRIPTION
+						}
 					}),
 					this.inverseDescription = Ext.create('CMDBuild.view.common.field.translatable.Text', {
 						name: 'descr_2', // TODO, change the server side
 						fieldLabel: CMDBuild.Translation.inverseDescription,
 						labelWidth: CMDBuild.LABEL_WIDTH,
-						translationsKeyType: 'Domain',
-						translationsKeyField: CMDBuild.core.proxy.Constants.INVERSE_DESCRIPTION,
 						allowBlank: false,
-						vtype: 'cmdbcomment'
+						vtype: 'cmdbcomment',
+
+						translationFieldConfig: {
+							type: CMDBuild.core.proxy.Constants.DOMAIN,
+							owner: { sourceType: 'form', key: CMDBuild.core.proxy.Constants.NAME, source: this },
+							identifier: { sourceType: 'form', key: CMDBuild.core.proxy.Constants.NAME, source: this },
+							field: CMDBuild.core.proxy.Constants.INVERSE_DESCRIPTION
+						}
 					}),
 					this.cardinalityCombo = Ext.create('Ext.form.field.ComboBox', {
 						name: CMDBuild.core.proxy.Constants.CARDINALITY,
@@ -229,9 +244,14 @@
 						name: 'md_label',
 						fieldLabel: CMDBuild.Translation.masterDetailLabel,
 						labelWidth: CMDBuild.LABEL_WIDTH,
-						translationsKeyType: 'Domain',
-						translationsKeyField: CMDBuild.core.proxy.Constants.MASTER_DETAIL,
-						hidden: true // Hidden by default
+						hidden: true, // Hidden by default
+
+						translationFieldConfig: {
+							type: CMDBuild.core.proxy.Constants.DOMAIN,
+							owner: { sourceType: 'form', key: CMDBuild.core.proxy.Constants.NAME, source: this },
+							identifier: { sourceType: 'form', key: CMDBuild.core.proxy.Constants.NAME, source: this },
+							field: CMDBuild.core.proxy.Constants.MASTER_DETAIL
+						}
 					}),
 					this.activeCheckbox = Ext.create('Ext.form.field.Checkbox', {
 						name: CMDBuild.core.proxy.Constants.ACTIVE,
