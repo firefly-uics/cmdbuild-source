@@ -51,9 +51,20 @@
 
 	Ext.define("CMDBuild.view.administration.classes.CMAttributeForm", {
 		extend: "Ext.form.Panel",
+
 		mixins: {
 			cmFormFunctions: "CMDBUild.view.common.CMFormFunctions"
 		},
+
+		/**
+		 * @property {CMDBuild.cache.CMEntryTypeModel}
+		 */
+		classObj: undefined,
+
+		/**
+		 * @property {Ext.data.Model}
+		 */
+		selectedAttribute: undefined,
 
 		constructor:function() {
 
@@ -127,14 +138,26 @@
 			});
 
 			this.attributeDescription = Ext.create('CMDBuild.view.common.field.translatable.Text', {
-				fieldLabel: tr.description,
+				name: CMDBuild.core.proxy.Constants.DESCRIPTION,
+				fieldLabel: CMDBuild.Translation.descriptionLabel,
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
-				name: _CMProxy.parameter.DESCRIPTION,
 				allowBlank: false,
-				translationsKeyType: "ClassAttribute",
-				translationsKeyField: "Description",
-				vtype: 'cmdbcomment'
+				vtype: 'cmdbcomment',
+
+				listeners: {
+					scope: this,
+					enable: function(field, eOpts) { // TODO: refactor: on creation should be already known classObj
+						field.translationFieldConfig = {
+							type: CMDBuild.core.proxy.Constants.ATTRIBUTE_CLASS,
+							owner: { sourceType: 'model', key: CMDBuild.core.proxy.Constants.NAME, source: this.classObj },
+							identifier: { sourceType: 'form', key: CMDBuild.core.proxy.Constants.NAME, source: this },
+							field: CMDBuild.core.proxy.Constants.DESCRIPTION
+						};
+
+						field.translationsRead();
+					}
+				}
 			});
 
 			this.attributeNotNull = new Ext.ux.form.XCheckbox({
@@ -455,10 +478,15 @@
 			return _CMCache.getClassById(idClass);
 		},
 
-		onAttributeSelected : function(attribute) {
+		/**
+		 * @param {Ext.data.Model} attribute
+		 */
+		onAttributeSelected: function(attribute) {
 			this.reset();
 
 			if (attribute) {
+				this.selectedAttribute = attribute;
+
 				this.getForm().setValues(attribute.raw);
 				this.disableModify(enableCMTbar = true);
 				this.deleteButton.setDisabled(attribute.get("inherited"));
@@ -467,11 +495,6 @@
 
 				this.referenceFilterMetadata = attribute.raw.meta || {};
 				this.preselectIfUniqueCheckbox.setValue(attribute.raw.meta['system.type.reference.' + CMDBuild.core.proxy.Constants.PRESELECT_IF_UNIQUE]);
-
-				Ext.apply(this.attributeDescription, {
-					translationsKeyName: this.classObj.get("name"),
-					translationsKeySubName: attribute.get("name")
-				});
 			}
 		},
 
