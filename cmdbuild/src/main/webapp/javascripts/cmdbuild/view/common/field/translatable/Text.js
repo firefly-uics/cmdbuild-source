@@ -4,7 +4,7 @@
 		extend: 'CMDBuild.view.common.field.translatable.Base',
 
 		/**
-		 * @return {Ext.form.field.Text}
+		 * @returns {Ext.form.field.Text}
 		 */
 		createField: function() {
 			return Ext.create('Ext.form.field.Text', {

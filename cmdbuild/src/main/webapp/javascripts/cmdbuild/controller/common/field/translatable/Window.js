@@ -3,14 +3,19 @@
 	Ext.define('CMDBuild.controller.common.field.translatable.Window', {
 		extend: 'CMDBuild.controller.common.AbstractController',
 
-		requires: ['CMDBuild.core.proxy.Constants'],
+		requires: [
+			'CMDBuild.core.Message',
+			'CMDBuild.core.proxy.Constants',
+			'CMDBuild.core.proxy.localizations.Localizations',
+		],
 
 		/**
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
 			'onTranslatableWindowAbortButtonClick',
-			'onTranslatableWindowConfirmButtonClick'
+			'onTranslatableWindowBeforeShow',
+			'onTranslatableWindowConfirmButtonClick',
 		],
 
 		/**
@@ -19,24 +24,9 @@
 		form: undefined,
 
 		/**
-		 * @cfg {String}
+		 * @cfg {Mixed}
 		 */
-		translationsKeyField: undefined,
-
-		/**
-		 * @cfg {String}
-		 */
-		translationsKeyName: undefined,
-
-		/**
-		 * @cfg {String}
-		 */
-		translationsKeySubName: undefined,
-
-		/**
-		 * @cfg {String}
-		 */
-		translationsKeyType: undefined,
+		ownerField: undefined,
 
 		/**
 		 * @property {CMDBuild.view.common.field.translatable.window.Window}
@@ -52,70 +42,74 @@
 		constructor: function(configurationObject) {
 			this.callParent(arguments);
 
-			var me = this;
-
-			this.view = Ext.create('CMDBuild.view.common.field.translatable.window.Window', {
-				delegate: this
-			});
-
-			// Shorthands
-			this.form = this.view.form;
-
-			// Show window
-			if (!Ext.isEmpty(this.view))
-				this.view.show();
-
-			_CMCache.readTranslations(
-				this.translationsKeyType,
-				this.translationsKeyName,
-				this.translationsKeySubName,
-				this.translationsKeyField,
-				function(result, options, decodedResult) {
-					me.form.oldValues = decodedResult.response;
-
-					me.buildWindowItem(decodedResult.response);
-				}
-			);
-		},
-
-		/**
-		 * @param {Object} translations
-		 */
-		buildWindowItem: function(translationsValues) {
-			var enabledLanguages = CMDBuild.configuration[CMDBuild.core.proxy.Constants.LOCALIZATION].getEnabledLanguages();
-
-			Ext.Object.each(enabledLanguages, function(key, value, myself) {
-				var item = Ext.create('Ext.form.field.Text', {
-					name: value.get(CMDBuild.core.proxy.Constants.TAG),
-					fieldLabel: value.get(CMDBuild.core.proxy.Constants.DESCRIPTION),
-					labelWidth: CMDBuild.LABEL_WIDTH,
-					padding: '3 5',
-					labelClsExtra: 'ux-flag-' + value.get(CMDBuild.core.proxy.Constants.TAG),
-					labelStyle: 'background-repeat: no-repeat; background-position: left; padding-left: 22px;'
+			if (!Ext.Object.isEmpty(this.ownerField.configurationGet())) {
+				this.view = Ext.create('CMDBuild.view.common.field.translatable.window.Window', {
+					delegate: this
 				});
 
-				item.setValue(
-					translationsValues[value.get(CMDBuild.core.proxy.Constants.TAG)]
-				);
+				// Shorthands
+				this.form = this.view.form;
 
-				if (!Ext.isEmpty(this.form))
-					this.form.add(item);
-			},this);
+				this.buildTranslationsFields();
+
+				// Show window
+				if (!Ext.isEmpty(this.view))
+					this.view.show();
+			} else {
+				_warning('no field configuration on "' + this.ownerField.field.getName() + '"', this);
+			}
+		},
+
+		buildTranslationsFields: function() {
+			var enabledLanguagesObjects = Ext.Object.getValues(CMDBuild.configuration[CMDBuild.core.proxy.Constants.LOCALIZATION].getEnabledLanguages());
+
+			// Sort languages with description alphabetical order
+			CMDBuild.core.Utils.objectArraySort(enabledLanguagesObjects);
+
+			Ext.Array.forEach(enabledLanguagesObjects, function(language, i, allLanguages) {
+				if (!Ext.isEmpty(this.form)) {
+					this.form.add(
+						Ext.create('Ext.form.field.Text', {
+							name: language.get(CMDBuild.core.proxy.Constants.TAG),
+							fieldLabel: language.get(CMDBuild.core.proxy.Constants.DESCRIPTION),
+							labelWidth: CMDBuild.LABEL_WIDTH,
+							padding: '3 5',
+							labelClsExtra: 'ux-flag-' + language.get(CMDBuild.core.proxy.Constants.TAG),
+							labelStyle: 'background-repeat: no-repeat; background-position: left; padding-left: 22px;'
+						})
+					);
+				}
+			}, this);
+
+			this.view.center(); // AutoHeight windows won't be at the center of viewport on show, manually do it
 		},
 
 		onTranslatableWindowAbortButtonClick: function() {
 			this.view.destroy();
 		},
 
+		/**
+		 * Build fields with translations refreshing all data
+		 */
+		onTranslatableWindowBeforeShow: function() {
+			if (this.ownerField.isConfigurationValid()) {
+				CMDBuild.core.proxy.localizations.Localizations.read({
+					params: this.ownerField.configurationGet(),
+					scope: this,
+					success: function(response, options, decodedResponse) {
+						this.form.loadRecord(Ext.create('CMDBuild.DummyModel', decodedResponse.response));
+
+						this.ownerField.translationsSet(decodedResponse.response);
+					}
+				});
+			}
+		},
+
+		/**
+		 * Bufferize translations to save on card save
+		 */
 		onTranslatableWindowConfirmButtonClick: function() {
-			_CMCache.createTranslations(
-				this.translationsKeyType,
-				this.translationsKeyName,
-				this.translationsKeySubName,
-				this.translationsKeyField,
-				this.form.getValues(),
-				this.form.getOldValues() // Control for create, delete or update values
-			);
+			this.ownerField.translationsSet(this.form.getValues());
 
 			this.onTranslatableWindowAbortButtonClick();
 		}

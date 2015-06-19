@@ -100,13 +100,26 @@
 		 * @param {Mixed} body
 		 * @param {Boolean} popup
 		 */
-		warn: function(title, text, popup) {
+		warning: function(title, text, popup) {
 			CMDBuild.core.Message.alert(
 				title || CMDBuild.Translation.warning,
 				text,
 				Ext.isBoolean(popup) ? popup : false,
 				Ext.MessageBox.WARNING
 			);
+		},
+
+		/**
+		 * @param {String} title
+		 * @param {Mixed} body
+		 * @param {Boolean} popup
+		 *
+		 * @deprecated
+		 */
+		warn: function(title, text, popup) {
+			_deprecated('warn', this);
+
+			this.warn(title, text, popup);
 		}
 	});
 

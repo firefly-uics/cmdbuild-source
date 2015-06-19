@@ -62,6 +62,12 @@
 			});
 
 			this.callParent(arguments);
+		},
+
+		listeners: {
+			beforeshow: function(window, eOpts) {
+				this.delegate.cmfg('onTranslatableWindowBeforeShow');
+			}
 		}
 	});
 

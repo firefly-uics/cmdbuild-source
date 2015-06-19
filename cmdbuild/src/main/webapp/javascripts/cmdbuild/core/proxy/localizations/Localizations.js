@@ -14,22 +14,6 @@
 		/**
 		 * @param {Object} parameters
 		 */
-		create: function(parameters) { // TODO delete for a future implementation of only update function
-			CMDBuild.Ajax.request({
-				method: 'POST',
-				url: CMDBuild.core.proxy.Index.localizations.translation.create,
-				params: parameters.params,
-				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
-				scope: parameters.scope || this,
-				failure: parameters.failure || Ext.emptyFn(),
-				success: parameters.success || Ext.emptyFn(),
-				callback: parameters.callback || Ext.emptyFn()
-			});
-		},
-
-		/**
-		 * @param {Object} parameters
-		 */
 		getCurrentLanguage: function(parameters) {
 			CMDBuild.Ajax.request({
 				method: 'POST',
