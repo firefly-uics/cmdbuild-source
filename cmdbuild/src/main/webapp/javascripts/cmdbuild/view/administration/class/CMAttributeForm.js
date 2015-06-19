@@ -147,7 +147,7 @@
 
 				listeners: {
 					scope: this,
-					enable: function(field, eOpts) { // TODO: refactor: on creation should be already known classObj
+					enable: function(field, eOpts) { // TODO: on creation, classObj should be already known (refactor)
 						field.translationFieldConfig = {
 							type: CMDBuild.core.proxy.Constants.ATTRIBUTE_CLASS,
 							owner: { sourceType: 'model', key: CMDBuild.core.proxy.Constants.NAME, source: this.classObj },

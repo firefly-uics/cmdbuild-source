@@ -4,7 +4,14 @@
 
 	Ext.define("CMDBuild.view.administration.domain.attributes.FormPanel",{
 		extend: "CMDBuild.view.administration.classes.CMAttributeForm",
-		domainName : undefined,
+
+		domainName: undefined,
+
+		/**
+		 * @property {Object}
+		 */
+		selectedAttribute: undefined,
+
 		initComponent: function() {
 			this.callParent(arguments);
 			this.attributeTypeStore.load({
@@ -26,15 +33,14 @@
 
 			if (attribute) {
 				var attributeData = attribute.raw || attribute.data;
+
+				this.selectedAttribute = attributeData;
+
 				this.getForm().setValues(attributeData);
 				this.disableModify(enableCMTbar = true);
 				this.deleteButton.setDisabled(attribute.get("inherited"));
 				this.hideContextualFields();
 				this.showContextualFieldsByType(attribute.get("type"));
-				Ext.apply(this.attributeDescription, {
-					translationsKeyName: this.domainName,
-					translationsKeySubName: attribute.get("name")
-				});
 			}
 		},
 
@@ -47,7 +53,28 @@
 				flex: 1,
 				items: [
 					this.attributeName,
-					this.attributeDescription,
+					this.attributeDescription = Ext.create('CMDBuild.view.common.field.translatable.Text', {
+						name: CMDBuild.core.proxy.Constants.DESCRIPTION,
+						fieldLabel: CMDBuild.Translation.descriptionLabel,
+						labelWidth: CMDBuild.LABEL_WIDTH,
+						width: CMDBuild.ADM_BIG_FIELD_WIDTH,
+						allowBlank: false,
+						vtype: 'cmdbcomment',
+
+						listeners: {
+							scope: this,
+							enable: function(field, eOpts) { // TODO: on creation, domainName should be already known (refactor)
+								field.translationFieldConfig = {
+									type: CMDBuild.core.proxy.Constants.ATTRIBUTE_DOMAIN,
+									owner: this.domainName,
+									identifier: { sourceType: 'form', key: CMDBuild.core.proxy.Constants.NAME, source: this },
+									field: CMDBuild.core.proxy.Constants.DESCRIPTION
+								};
+
+								field.translationsRead();
+							}
+						}
+					}),
 					this.isBasedsp,
 					this.attributeUnique,
 					this.attributeNotNull,
@@ -58,10 +85,6 @@
 					},
 					this.fieldMode
 				]
-			});
-			Ext.apply(this.attributeDescription, {
-				translationsKeyType: "DomainAttribute",
-				translationsKeyField: "Description"
 			});
 		}
 

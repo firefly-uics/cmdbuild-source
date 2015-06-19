@@ -6,7 +6,8 @@
 		requires: [
 			'CMDBuild.core.proxy.Constants',
 			'CMDBuild.core.proxy.dataViews.Filter',
-			'CMDBuild.model.DataViews'
+			'CMDBuild.model.DataViews',
+			'CMDBuild.view.common.field.translatable.Utils'
 		],
 
 		/**
@@ -130,11 +131,6 @@
 				})
 			);
 
-			// Translation setup
-			Ext.apply(this.form.descriptionTextField, {
-				translationsKeyName: this.selectedView.get(CMDBuild.core.proxy.Constants.NAME)
-			});
-
 			this.form.setDisabledModify(true, true);
 		},
 
@@ -198,7 +194,7 @@
 		success: function(result, options, decodedResult) {
 			var me = this;
 
-			_CMCache.flushTranslationsToSave(options.params[CMDBuild.core.proxy.Constants.NAME]);
+			CMDBuild.view.common.field.translatable.Utils.commit(this.form);
 
 			this.grid.getStore().load({
 				callback: function(records, operation, success) {

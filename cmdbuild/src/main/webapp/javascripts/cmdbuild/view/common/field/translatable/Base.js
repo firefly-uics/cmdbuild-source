@@ -27,10 +27,11 @@
 		 * @cfg {Object}
 		 *
 		 * Ex. {
-		 * 		type: entity type identifier (class, attributeclass, domain, attributedomain, filter, instancename, lookupvalue, menuitem, report, view, classwidget)
-		 * 		owner: translation owner identifier (className, domainName, ...) used only to translate entities attributes
-		 * 		identifier: entity's attribute/property identifier
-		 * 		field: field to translate (description, inverseDescription, ...)
+		 * 		{String} type: entity type identifier (class, attributeclass, domain, attributedomain, filter, instancename, lookupvalue, menuitem, report, view, classwidget)
+		 * 		{Object or String} owner: translation owner identifier (className, domainName, ...) used only to translate entities attributes
+		 * 		{Object or String} identifier: entity's attribute/property identifier
+		 * 		{String} field: field to translate (description, inverseDescription, ...),
+		 * 		{CMDBuild.model.common.field.translatable.Window} translations
 		 * 	}
 		 */
 		translationFieldConfig: {},
@@ -149,6 +150,11 @@
 								decodedValue = configurationValue.source.get(configurationValue.key);
 						} break;
 
+						case 'object': {
+							if(configurationValue.source.hasOwnProperty(configurationValue.key) && Ext.isObject(configurationValue.source))
+								decodedValue = configurationValue.source[configurationValue.key];
+						} break;
+
 						default: {
 							_error('type not supported', this);
 						}
@@ -201,9 +207,9 @@
 				encoded = encoded || false;
 
 				if (encoded)
-					return Ext.encode(this.translationFieldConfig[CMDBuild.core.proxy.Constants.TRANSLATIONS]);
+					return Ext.encode(this.translationFieldConfig[CMDBuild.core.proxy.Constants.TRANSLATIONS].getData());
 
-				return this.translationFieldConfig[CMDBuild.core.proxy.Constants.TRANSLATIONS];
+				return this.translationFieldConfig[CMDBuild.core.proxy.Constants.TRANSLATIONS].getData();
 			},
 
 			translationsRead: function() {
@@ -222,11 +228,7 @@
 			 * @param {Object} translationsObject
 			 */
 			translationsSet: function(translationsObject) {
-				if (Ext.Object.isEmpty(translationsObject)) {
-					this.translationFieldConfig[CMDBuild.core.proxy.Constants.TRANSLATIONS] = {};
-				} else {
-					this.translationFieldConfig[CMDBuild.core.proxy.Constants.TRANSLATIONS] = translationsObject;
-				}
+				this.translationFieldConfig[CMDBuild.core.proxy.Constants.TRANSLATIONS] = Ext.create('CMDBuild.model.common.field.translatable.Window', translationsObject);
 			}
 	});
 
