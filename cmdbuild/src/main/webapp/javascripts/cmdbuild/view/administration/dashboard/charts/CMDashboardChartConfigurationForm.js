@@ -473,7 +473,7 @@
 	}
 
 	function isAField(item) {
-		return ((item instanceof Ext.form.Field) || (item instanceof Ext.ux.form.MultiSelect) || (item instanceof CMDBuild.view.common.field.translatable.Text));
+		return ((item instanceof Ext.form.Field) || (item instanceof Ext.ux.form.MultiSelect));
 	}
 
 	function addSequenceToTypeSetValue(me) {
