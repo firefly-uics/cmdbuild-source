@@ -3,6 +3,10 @@
 	Ext.define('CMDBuild.view.administration.reports.jasper.form.Step1Panel', {
 		extend: 'Ext.form.Panel',
 
+		mixins: {
+			panelFunctions: 'CMDBuild.view.common.PanelFunctions'
+		},
+
 		border: false,
 		cls: 'x-panel-body-default-framed',
 		encoding: 'multipart/form-data',
@@ -31,9 +35,14 @@
 						fieldLabel: CMDBuild.Translation.descriptionLabel,
 						labelWidth: CMDBuild.LABEL_WIDTH,
 						maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
-						translationsKeyType: 'Report',
-						translationsKeyField: 'Description',
-						allowBlank: false
+						allowBlank: false,
+
+						translationFieldConfig: {
+							type: CMDBuild.core.proxy.Constants.REPORT,
+							owner: { sourceType: 'form', key: CMDBuild.core.proxy.Constants.TITLE, source: this }, // TODO: should be renamed in "name"
+							identifier: { sourceType: 'form', key: CMDBuild.core.proxy.Constants.TITLE, source: this }, // TODO: should be renamed in "name"
+							field: CMDBuild.core.proxy.Constants.DESCRIPTION
+						}
 					}),
 					this.groups = Ext.create('CMDBuild.view.common.field.CMGroupSelectionList', {
 						name: CMDBuild.core.proxy.Constants.GROUPS,
