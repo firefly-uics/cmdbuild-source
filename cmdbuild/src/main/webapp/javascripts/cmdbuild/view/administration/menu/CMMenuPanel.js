@@ -1,6 +1,15 @@
 (function() {
 	var cellEditor = Ext.create('Ext.grid.plugin.CellEditing', {
-		clicksToEdit: 2
+		clicksToEdit: 2,
+		autoCancel: false,
+
+		listeners: {
+			// Prevent to edit root node
+			beforeedit: function(editor, context, eOpts) {
+				if (context.record.isRoot())
+					return false;
+			}
+		}
 	});
 	var tr = CMDBuild.Translation.administration.modmenu;
 	var warningNoSaved = CMDBuild.Translation.warnings.saveMenuBeforeAccess;
@@ -26,21 +35,27 @@
 
 Ext.define("CMDBuild.Administration.MenuPanel", {
 	extend: "Ext.panel.Panel",
-	statics: {
-		openTranslationsWindow: function(uuid) {
-			Ext.create('CMDBuild.controller.common.field.translatable.Window', {
-				title: CMDBuild.Translation.translations,
-				translationsKeyType: "MenuItem",
-				translationsKeyField: "Description",
-				translationsKeyName: uuid
-			});
-		},
-		warningNoSaveWindow: function() {
-			message = htmlComposeMessage(warningNoSaved);
-			CMDBuild.Msg.warn(null, message , false);
-		}
 
-	},
+	/**
+	 * @property {Object}
+	 */
+	translatableAttributesConfigurationsBuffer: {},
+
+//	statics: {
+//		openTranslationsWindow: function(uuid) {
+//			Ext.create('CMDBuild.controller.common.field.translatable.Window', {
+//				title: CMDBuild.Translation.translations,
+//				translationsKeyType: "MenuItem",
+//				translationsKeyField: "Description",
+//				translationsKeyName: uuid
+//			});
+//		},
+//		warningNoSaveWindow: function() {
+//			message = htmlComposeMessage(warningNoSaved);
+//			CMDBuild.Msg.warn(null, message , false);
+//		}
+//
+//	},
 	initComponent : function() {
 		this.groupId = -1,
 
@@ -89,15 +104,58 @@ Ext.define("CMDBuild.Administration.MenuPanel", {
 				},
 				flex: 1,
 				xtype: "treecolumn"
-			}, {
-				width: 30,
+			},
+//			{
+//				width: 30,
+//				align: 'center',
+//				sortable: false,
+//				hideable: false,
+//				menuDisabled: true,
+//				fixed: true,
+//				renderer: renderTranslationButton
+//			}
+			Ext.create('Ext.grid.column.Action', {
 				align: 'center',
+				width: 30,
 				sortable: false,
 				hideable: false,
 				menuDisabled: true,
 				fixed: true,
-				renderer: renderTranslationButton
-			}],
+
+//				renderer: function(value, metaData, record, rowIndex, colIndex, store, view) {
+//					if (record.isRoot())
+//						return '';
+//				},
+
+				items: [
+					Ext.create('CMDBuild.core.buttons.FieldTranslation', {
+						scope: this,
+
+						handler: function(grid, rowIndex, colIndex, node, e, record, rowNode) {
+							Ext.create('CMDBuild.controller.common.field.translatable.NoFieldWindow', {
+								buffer: this.translatableAttributesConfigurationsBuffer,
+								translationFieldConfig: {
+									type: 'menuitem',
+									owner: record.get('uuid'), // TODO: should be group identifier
+									identifier: record.get('uuid'),
+									field: CMDBuild.core.proxy.Constants.DESCRIPTION
+								}
+							});
+						},
+
+//						getClass: function(value, metadata, record, rowIndex, colIndex, store) {
+//_debug('record', record, record.isRoot());
+//							if (record.isRoot())
+//								return 'x-hidden';
+//						},
+
+						isDisabled: function(grid, rowIndex, colIndex, item, record) {
+							return record.isRoot() || !CMDBuild.configuration[CMDBuild.core.proxy.Constants.LOCALIZATION].hasEnabledLanguages();
+						}
+					})
+				]
+			})
+			],
 			plugins : cellEditor,
 			viewConfig : {
 				plugins : {
@@ -206,19 +264,19 @@ function clearNodes(node) {
 		clearNodes(node.childNodes[i]);
 	}
 }
-function renderTranslationButton(value, metadata, record) {
-	if (! record.get("button") || ! _CMCache.isMultiLanguages()) {
-		return '<div/>';
-	}
-	var uuid = record.get("uuid");
-	if (! uuid) {
-		return 	'<img style="cursor:pointer" title="'+warningNoSaved+
-		'" onclick=CMDBuild.Administration.MenuPanel.warningNoSaveWindow() src="images/icons/exclamation.png"/>';
-
-	}
-	return '<img style="cursor:pointer" title="'+CMDBuild.Translation.translations+
-			'" onclick=CMDBuild.Administration.MenuPanel.openTranslationsWindow("' + uuid + '") src="images/icons/translate.png"/>';
-}
+//function renderTranslationButton(value, metadata, record) {
+//	if (! record.get("button") || ! _CMCache.isMultiLanguages()) {
+//		return '<div/>';
+//	}
+//	var uuid = record.get("uuid");
+//	if (! uuid) {
+//		return 	'<img style="cursor:pointer" title="'+warningNoSaved+
+//		'" onclick=CMDBuild.Administration.MenuPanel.warningNoSaveWindow() src="images/icons/exclamation.png"/>';
+//
+//	}
+//	return '<img style="cursor:pointer" title="'+CMDBuild.Translation.translations+
+//			'" onclick=CMDBuild.Administration.MenuPanel.openTranslationsWindow("' + uuid + '") src="images/icons/translate.png"/>';
+//}
 function htmlComposeMessage(msg) {
 	msg = Ext.String.format("<p class=\"{0}\">{1}</p>", CMDBuild.Constants.css.error_msg, msg);
 	return msg;
