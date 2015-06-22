@@ -4,6 +4,8 @@
 	Ext.define("CMDBuild.controller.administration.menu.CMModMenuController", {
 		extend: "CMDBuild.controller.CMBasePanelController",
 
+		requires: ['CMDBuild.core.proxy.localizations.Localizations'],
+
 		constructor: function() {
 			this.callParent(arguments);
 
@@ -207,6 +209,23 @@
 				CMDBuild.LoadMask.get().hide();
 				loadMenuTree(me);
 				loadAvailableItemsTree(me);
+
+				// Customization of CMDBuild.view.common.field.translatable.Utils.commit
+				Ext.Object.each(me.view.mp.translatableAttributesConfigurationsBuffer, function(key, value, myself) {
+					if (
+						!Ext.isEmpty(value)
+						&& !Ext.isEmpty(value[CMDBuild.core.proxy.Constants.TRANSLATIONS])
+					) {
+						value[CMDBuild.core.proxy.Constants.TRANSLATIONS] = Ext.encode(value[CMDBuild.core.proxy.Constants.TRANSLATIONS]);
+
+						CMDBuild.core.proxy.localizations.Localizations.update({
+							params: value,
+							success: function(response, options, decodedResponse) {
+								CMDBuild.core.Message.success();
+							}
+						});
+					}
+				}, this);
 			}
 		});
 	}

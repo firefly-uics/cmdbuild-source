@@ -1,24 +1,37 @@
 (function() {
 
-	Ext.define('CMDBuild.view.common.field.translatable.Base', {
-		extend: 'Ext.form.FieldContainer',
+	/**
+	 * Customization of CMDBuild.controller.common.field.translatable.Window, mainly used in menu translations tree
+	 */
+	Ext.define('CMDBuild.controller.common.field.translatable.NoFieldWindow', {
+		extend: 'CMDBuild.controller.common.AbstractController',
 
-		requires: ['CMDBuild.core.proxy.Constants'],
-
-		/**
-		 * @cfg {Boolean}
-		 */
-		considerAsFieldToDisable: true,
-
-		/**
-		 * @property {Mixed}
-		 */
-		field: undefined,
+		requires: [
+			'CMDBuild.core.Message',
+			'CMDBuild.core.proxy.Constants',
+			'CMDBuild.core.proxy.localizations.Localizations'
+		],
 
 		/**
-		 * @property {CMDBuild.core.buttons.FieldTranslation}
+		 * Buffer object where save translatable values
+		 *
+		 * @cfg {Object}
 		 */
-		translationButton: undefined,
+		buffer: {},
+
+		/**
+		 * @cfg {Array}
+		 */
+		cmfgCatchedFunctions: [
+			'onTranslatableWindowAbortButtonClick',
+			'onTranslatableWindowBeforeShow',
+			'onTranslatableWindowConfirmButtonClick',
+		],
+
+		/**
+		 * @property {CMDBuild.view.common.field.translatable.window.FormPanel}
+		 */
+		form: undefined,
 
 		/**
 		 * Field translation properties.
@@ -36,42 +49,66 @@
 		 */
 		translationFieldConfig: {},
 
-		allowBlank: true,
-		layout: 'hbox',
-
-		initComponent: function() {
-			this.field = this.createField();
-
-			if (CMDBuild.configuration[CMDBuild.core.proxy.Constants.LOCALIZATION].hasEnabledLanguages()) {
-				this.translationButton = Ext.create('CMDBuild.core.buttons.FieldTranslation', {
-					scope: this,
-
-					handler: function(button, e) {
-						Ext.create('CMDBuild.controller.common.field.translatable.Window', {
-							ownerField: this
-						});
-					}
-				});
-			}
-
-			Ext.apply(this, {
-				items: [this.field, this.translationButton]
-			});
-
-			this.callParent(arguments);
-		},
-
-		listeners: {
-			// Read field's translations
-			enable: function(field, eOpts) {
-				field.translationsRead();
-			}
-		},
+		/**
+		 * @cfg {String}
+		 */
+		titleSeparator: ' - ',
 
 		/**
-		 * @abstract
+		 * @property {CMDBuild.view.common.field.translatable.window.Window}
 		 */
-		createField: Ext.emptyFn,
+		view: undefined,
+
+		/**
+		 * @param {Object} configurationObject
+		 * @param {Mixed} configurationObject.parentDelegate
+		 *
+		 * @override
+		 */
+		constructor: function(configurationObject) {
+			this.callParent(arguments);
+
+			if (!Ext.Object.isEmpty(this.configurationGet())) {
+				this.view = Ext.create('CMDBuild.view.common.field.translatable.window.Window', {
+					delegate: this
+				});
+
+				// Shorthands
+				this.form = this.view.form;
+
+				this.buildTranslationsFields();
+
+				// Show window
+				if (!Ext.isEmpty(this.view))
+					this.view.show();
+			} else {
+				_warning('no field configuration', this);
+			}
+		},
+
+		buildTranslationsFields: function() {
+			var enabledLanguagesObjects = Ext.Object.getValues(CMDBuild.configuration[CMDBuild.core.proxy.Constants.LOCALIZATION].getEnabledLanguages());
+
+			// Sort languages with description alphabetical order
+			CMDBuild.core.Utils.objectArraySort(enabledLanguagesObjects);
+
+			Ext.Array.forEach(enabledLanguagesObjects, function(language, i, allLanguages) {
+				if (!Ext.isEmpty(this.form)) {
+					this.form.add(
+						Ext.create('Ext.form.field.Text', {
+							name: language.get(CMDBuild.core.proxy.Constants.TAG),
+							fieldLabel: language.get(CMDBuild.core.proxy.Constants.DESCRIPTION),
+							labelWidth: CMDBuild.LABEL_WIDTH,
+							padding: '3 5',
+							labelClsExtra: 'ux-flag-' + language.get(CMDBuild.core.proxy.Constants.TAG),
+							labelStyle: 'background-repeat: no-repeat; background-position: left; padding-left: 22px;'
+						})
+					);
+				}
+			}, this);
+
+			this.view.center(); // AutoHeight windows won't be at the center of viewport on show, manually do it
+		},
 
 		// Configuration methods
 			/**
@@ -174,45 +211,69 @@
 			return decodedValue;
 		},
 
-		/**
-		 * Forward method
-		 *
-		 * @returns {String}
-		 */
-		getValue: function() {
-			return this.field.getValue();
+		onTranslatableWindowAbortButtonClick: function() {
+			this.view.destroy();
 		},
 
 		/**
-		 * Forward method
-		 *
-		 * @returns {Boolean}
+		 * Build fields with translations refreshing all data
 		 */
-		isValid: function() {
-			return this.field.isValid();
+		onTranslatableWindowBeforeShow: function() {
+			if (this.isConfigurationValid()) {
+				// Get translations object from buffer
+				if (this.buffer.hasOwnProperty(this.translationFieldConfig.identifier))
+					this.translationsSet(this.buffer[this.translationFieldConfig.identifier][CMDBuild.core.proxy.Constants.TRANSLATIONS]);
+
+				this.setViewTitle();
+
+				this.form.reset();
+
+				if (this.translationsGet().isEmpty()) {
+					CMDBuild.core.proxy.localizations.Localizations.read({
+						params: this.configurationGet(),
+						scope: this,
+						success: function(response, options, decodedResponse) {
+							this.translationsSet(decodedResponse.response);
+
+							this.form.loadRecord(this.translationsGet());
+						}
+					});
+				} else {
+					this.form.loadRecord(this.translationsGet());
+				}
+			}
 		},
 
 		/**
-		 * Forward method
-		 *
-		 * @param {String} value
+		 * Bufferize translations to save on card save
 		 */
-		setValue: function(value) {
-			this.field.setValue(value);
+		onTranslatableWindowConfirmButtonClick: function() {
+			this.translationsSet(this.form.getValues());
+
+			this.buffer[this.translationFieldConfig.identifier] = this.translationFieldConfig;
+			this.buffer[this.translationFieldConfig.identifier][CMDBuild.core.proxy.Constants.TRANSLATIONS] = this.translationFieldConfig[CMDBuild.core.proxy.Constants.TRANSLATIONS].getData();
+
+			this.onTranslatableWindowAbortButtonClick();
 		},
 
 		/**
-		 * Forward method
+		 * Setup view panel title as a breadcrumbs component
+		 *
+		 * @param {String} titlePart
 		 */
-		reset: function() {
-			this.field.reset();
+		setViewTitle: function(titlePart) {
+			if (Ext.isEmpty(titlePart)) {
+				this.view.setTitle(this.view.baseTitle);
+			} else {
+				this.view.setTitle(this.view.baseTitle + this.titleSeparator + titlePart);
+			}
 		},
 
 		// Translation method
 			/**
 			 * @param {Boolean} encoded
 			 *
-			 * @returns {CMDBuild.model.common.field.translatable.Window or String}
+			 * @returns {CMDBuild.model.common.field.translatable.Window}
 			 */
 			translationsGet: function(encoded) {
 				encoded = encoded || false;
