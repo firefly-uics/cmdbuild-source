@@ -6,8 +6,7 @@
 		requires: [
 			'CMDBuild.core.Message',
 			'CMDBuild.core.proxy.Constants',
-			'CMDBuild.core.proxy.localizations.Localizations',
-			'CMDBuild.model.common.field.translatable.Window'
+			'CMDBuild.core.proxy.localizations.Localizations'
 		],
 
 		/**
@@ -103,15 +102,20 @@
 
 				this.form.reset();
 
-				CMDBuild.core.proxy.localizations.Localizations.read({
-					params: this.ownerField.configurationGet(),
-					scope: this,
-					success: function(response, options, decodedResponse) {
-						this.form.loadRecord(Ext.create('CMDBuild.model.common.field.translatable.Window', decodedResponse.response));
+				if (this.ownerField.translationsGet().isEmpty()) {
+					CMDBuild.core.proxy.localizations.Localizations.read({
+						params: this.ownerField.configurationGet(),
+						scope: this,
+						success: function(response, options, decodedResponse) {
+							this.ownerField.translationsSet(decodedResponse.response);
 
-						this.ownerField.translationsSet(decodedResponse.response);
-					}
-				});
+							this.form.loadRecord(this.ownerField.translationsGet());
+						}
+					});
+				} else {
+					this.form.loadRecord(this.ownerField.translationsGet());
+				}
+
 			}
 		},
 

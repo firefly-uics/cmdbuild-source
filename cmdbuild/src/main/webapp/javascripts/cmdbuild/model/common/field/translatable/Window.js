@@ -21,6 +21,19 @@
 			CMDBuild.model.common.field.translatable.Window.setFields(modelFields);
 
 			this.callParent(arguments);
+		},
+
+		/**
+		 * @returns {Boolean}
+		 */
+		isEmpty: function() {
+			var result = false;
+
+			result = !Ext.Array.some(Ext.Object.getValues(this.getData()), function(value, i, allValues) { // Returns true at first non empty property
+				return !Ext.isEmpty(value);
+			}, this);
+
+			return result;
 		}
 	});
 
