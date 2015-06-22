@@ -7,6 +7,10 @@
 
 		requires: ['CMDBuild.core.proxy.Constants'],
 
+		mixins: {
+			panelFunctions: 'CMDBuild.view.common.PanelFunctions'
+		},
+
 		statics: {
 			WIDGET_NAME: '.CreateModifyCard'
 		},
@@ -29,9 +33,10 @@
 			this.callParent(arguments);
 
 			this.targetClass = Ext.create('CMDBuild.field.ErasableCombo', {
+				name: CMDBuild.core.proxy.Constants.TARGET_CLASS,
 				fieldLabel: tr[this.self.WIDGET_NAME].fields.target,
 				labelWidth: CMDBuild.LABEL_WIDTH,
-				name: CMDBuild.core.proxy.Constants.TARGET_CLASS,
+				maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
 				valueField: CMDBuild.core.proxy.Constants.NAME,
 				displayField: CMDBuild.core.proxy.Constants.DESCRIPTION,
 				editable: false,
@@ -50,7 +55,7 @@
 			this.cqlText = Ext.create('Ext.form.field.Text', {
 				fieldLabel: tr[this.self.WIDGET_NAME].fields.cql,
 				labelWidth: CMDBuild.LABEL_WIDTH,
-				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
+				maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
 				name: 'idcardcqlselector',
 
 				validator: function(value) {
