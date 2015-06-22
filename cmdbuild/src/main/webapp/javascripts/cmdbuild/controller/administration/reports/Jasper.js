@@ -8,7 +8,8 @@
 			'CMDBuild.core.proxy.Constants',
 			'CMDBuild.core.proxy.Index',
 			'CMDBuild.core.proxy.reports.Jasper',
-			'CMDBuild.model.reports.Grid'
+			'CMDBuild.model.reports.Grid',
+			'CMDBuild.view.common.field.translatable.Utils'
 		],
 
 		/**
@@ -95,7 +96,7 @@
 				failure: function(form, action) {
 					CMDBuild.LoadMask.get().hide();
 
-					CMDBuild.Msg.error(CMDBuild.Translation.errors.error_message, CMDBuild.Translation.errors.reportsImportError, false);
+					CMDBuild.core.Message.error(CMDBuild.Translation.errors.error_message, CMDBuild.Translation.errors.reportsImportError, false);
 				},
 				success: this.success
 			});
@@ -118,8 +119,6 @@
 			this.form.reset();
 			this.form.setDisabledModify(false, true);
 			this.form.loadRecord(Ext.create('CMDBuild.model.reports.Grid'));
-
-			_CMCache.initAddingTranslations();
 		},
 
 		/**
@@ -205,8 +204,6 @@
 
 		onReportsJasperModifyButtonClick: function() {
 			this.form.setDisabledModify(false);
-
-			_CMCache.initModifyingTranslations();
 		},
 
 		onReportsJasperRemoveButtonClick: function() {
@@ -231,7 +228,6 @@
 			this.form.reset();
 
 			// Step 1
-			this.form.step1Panel.description.translationsKeyName = this.selectedReport.get(CMDBuild.core.proxy.Constants.TITLE);
 			this.form.step1Panel.fileField.allowBlank = true; // If we edit report file upload is not mandatory
 
 			// Step 2
@@ -257,7 +253,7 @@
 					failure: function(form, action) {
 						CMDBuild.LoadMask.get().hide();
 
-						CMDBuild.Msg.error(CMDBuild.Translation.errors.error_message, CMDBuild.Translation.errors.reportsAnalizeError, false);
+						CMDBuild.core.Message.error(CMDBuild.Translation.errors.error_message, CMDBuild.Translation.errors.reportsAnalizeError, false);
 					},
 					success: function(form, action) {
 						CMDBuild.LoadMask.get().hide();
@@ -314,7 +310,6 @@
 										this.form.setDisabledModify(true, true, true, true);
 
 									_CMCache.reloadReportStores();
-									_CMCache.flushTranslationsToSave(this.form.step1Panel.name.getValue());
 								} else {
 									CMDBuild.core.Message.error(null, {
 										text: CMDBuild.Translation.errors.unknown_error,
@@ -360,7 +355,8 @@
 						me.form.setDisabledModify(true);
 
 						_CMCache.reloadReportStores();
-						_CMCache.flushTranslationsToSave(me.form.step1Panel.name.getValue());
+
+						CMDBuild.view.common.field.translatable.Utils.commit(me.form.step1Panel);
 					} else {
 						CMDBuild.core.Message.error(null, {
 							text: CMDBuild.Translation.errors.unknown_error,
