@@ -141,18 +141,27 @@
 				) {
 					switch (configurationValue.sourceType) {
 						case 'form': {
-							if(!Ext.isEmpty(configurationValue.source) && Ext.isFunction(configurationValue.source.getData))
+							if(!Ext.isEmpty(configurationValue.source) && Ext.isFunction(configurationValue.source.getData)) {
 								decodedValue = configurationValue.source.getData(true)[configurationValue.key];
+							} else {
+								_error('form getData() function not implemented', this);
+							}
 						} break;
 
 						case 'model': {
-							if(!Ext.isEmpty(configurationValue.source) && Ext.isFunction(configurationValue.source.get))
+							if(!Ext.isEmpty(configurationValue.source) && Ext.isFunction(configurationValue.source.get)) {
 								decodedValue = configurationValue.source.get(configurationValue.key);
+							} else {
+								_error('model get() function not implemented', this);
+							}
 						} break;
 
 						case 'object': {
-							if(configurationValue.source.hasOwnProperty(configurationValue.key) && Ext.isObject(configurationValue.source))
+							if(configurationValue.source.hasOwnProperty(configurationValue.key) && Ext.isObject(configurationValue.source)) {
 								decodedValue = configurationValue.source[configurationValue.key];
+							} else {
+								_error('object declared source is not an object', this);
+							}
 						} break;
 
 						default: {
