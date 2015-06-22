@@ -1,22 +1,6 @@
 package unit.cxf;
 
-import static java.util.Arrays.asList;
-import static org.cmdbuild.service.rest.v1.model.Models.newCard;
-import static org.cmdbuild.service.rest.v1.model.Models.newRelation;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.hasEntry;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.inOrder;
-import static org.mockito.Mockito.mock;
-
-import javax.ws.rs.WebApplicationException;
-
+import com.google.common.base.Optional;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.logic.commands.GetRelationList.DomainWithSource;
@@ -32,7 +16,19 @@ import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InOrder;
 
-import com.google.common.base.Optional;
+import javax.ws.rs.WebApplicationException;
+
+import static java.util.Arrays.asList;
+import static org.cmdbuild.service.rest.v1.model.Models.newCard;
+import static org.cmdbuild.service.rest.v1.model.Models.newRelation;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasEntry;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.*;
 
 public class CxfRelationsTest {
 
@@ -122,7 +118,7 @@ public class CxfRelationsTest {
 				.when(errorHandler).domainNotFound(eq("dummy"));
 
 		// when
-		cxfRelations.read("dummy", null, null, null);
+		cxfRelations.read("dummy", null, null, null, null);
 	}
 
 	@Test(expected = WebApplicationException.class)
@@ -138,7 +134,7 @@ public class CxfRelationsTest {
 				.when(errorHandler).propagate(any(Exception.class));
 
 		// when
-		cxfRelations.read("12", null, null, null);
+		cxfRelations.read("12", null, null, null, null);
 	}
 
 	@Ignore

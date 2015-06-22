@@ -1,29 +1,8 @@
 package org.cmdbuild.service.rest.v2.cxf;
 
-import static com.google.common.collect.FluentIterable.from;
-import static com.google.common.collect.Iterables.addAll;
-import static com.google.common.collect.Lists.newArrayList;
-import static com.google.common.collect.Maps.newHashMap;
-import static com.google.common.collect.Maps.transformEntries;
-import static java.util.Collections.emptyMap;
-import static org.apache.commons.lang3.StringUtils.defaultString;
-import static org.cmdbuild.logic.mapping.json.Constants.FilterOperator.EQUAL;
-import static org.cmdbuild.logic.mapping.json.Constants.Filters.ATTRIBUTE_KEY;
-import static org.cmdbuild.logic.mapping.json.Constants.Filters.OPERATOR_KEY;
-import static org.cmdbuild.logic.mapping.json.Constants.Filters.VALUE_KEY;
-import static org.cmdbuild.service.rest.v2.constants.Serialization.UNDERSCORED_DESTINATION_ID;
-import static org.cmdbuild.service.rest.v2.constants.Serialization.UNDERSCORED_SOURCE_ID;
-import static org.cmdbuild.service.rest.v2.cxf.util.Json.safeJsonObject;
-import static org.cmdbuild.service.rest.v2.model.Models.newCard;
-import static org.cmdbuild.service.rest.v2.model.Models.newMetadata;
-import static org.cmdbuild.service.rest.v2.model.Models.newRelation;
-import static org.cmdbuild.service.rest.v2.model.Models.newResponseMultiple;
-import static org.cmdbuild.service.rest.v2.model.Models.newResponseSingle;
-
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
+import com.google.common.base.Function;
+import com.google.common.base.Optional;
+import com.google.common.collect.Maps.EntryTransformer;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
@@ -46,9 +25,23 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.google.common.base.Function;
-import com.google.common.base.Optional;
-import com.google.common.collect.Maps.EntryTransformer;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import static com.google.common.collect.FluentIterable.from;
+import static com.google.common.collect.Iterables.addAll;
+import static com.google.common.collect.Lists.newArrayList;
+import static com.google.common.collect.Maps.newHashMap;
+import static com.google.common.collect.Maps.transformEntries;
+import static java.util.Collections.emptyMap;
+import static org.apache.commons.lang3.StringUtils.defaultString;
+import static org.cmdbuild.logic.mapping.json.Constants.FilterOperator.EQUAL;
+import static org.cmdbuild.logic.mapping.json.Constants.Filters.*;
+import static org.cmdbuild.service.rest.v2.constants.Serialization.UNDERSCORED_DESTINATION_ID;
+import static org.cmdbuild.service.rest.v2.constants.Serialization.UNDERSCORED_SOURCE_ID;
+import static org.cmdbuild.service.rest.v2.cxf.util.Json.safeJsonObject;
+import static org.cmdbuild.service.rest.v2.model.Models.*;
 
 public class CxfRelations implements Relations {
 
@@ -177,7 +170,7 @@ public class CxfRelations implements Relations {
 
 	@Override
 	public ResponseMultiple<Relation> read(final String domainId, final String filter, final Integer limit,
-			final Integer offset) {
+			final Integer offset, final Boolean detailed) {
 		final CMDomain targetDomain = dataAccessLogic.findDomain(domainId);
 		if (targetDomain == null) {
 			errorHandler.domainNotFound(domainId);
@@ -220,9 +213,11 @@ public class CxfRelations implements Relations {
 					.build();
 			final GetRelationListResponse response = dataAccessLogic.getRelationList(targetDomain, queryOptions);
 			final List<Relation> elements = newArrayList();
+			RelationInfoToRelation info;
+			if(detailed != null && detailed) { info = FULL_DETAILS; } else { info = BASIC_DETAILS; }
 			for (final DomainInfo domainInfo : response) {
 				addAll(elements, from(domainInfo) //
-						.transform(BASIC_DETAILS));
+						.transform(info));
 			}
 			return newResponseMultiple(Relation.class) //
 					.withElements(elements) //
