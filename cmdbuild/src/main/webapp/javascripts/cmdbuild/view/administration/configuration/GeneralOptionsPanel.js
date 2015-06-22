@@ -35,16 +35,6 @@
 //		},
 
 		initComponent: function() {
-			this.instanceNameField = Ext.create('CMDBuild.view.common.field.translatable.Text', {
-				fieldLabel: CMDBuild.Translation.instanceName,
-				name: 'instance_name',
-				allowBlank: true,
-				labelAlign: 'left',
-				labelWidth: CMDBuild.CFG_LABEL_WIDTH,
-				maxWidth: CMDBuild.CFG_BIG_FIELD_WIDTH,
-				translationsKeyType: 'InstanceName'
-			});
-
 			// TODO: to delete when localization module will be released
 			this.languageFieldset = Ext.create('Ext.form.FieldSet', {
 				title: CMDBuild.Translation.language,
@@ -129,7 +119,21 @@
 						},
 
 						items: [
-							this.instanceNameField,
+							this.instanceNameField = Ext.create('CMDBuild.view.common.field.translatable.Text', {
+								name: 'instance_name',
+								fieldLabel: CMDBuild.Translation.instanceName,
+								labelAlign: 'left',
+								labelWidth: CMDBuild.CFG_LABEL_WIDTH,
+								maxWidth: CMDBuild.CFG_BIG_FIELD_WIDTH,
+								allowBlank: true,
+
+								translationFieldConfig: {
+									type: CMDBuild.core.proxy.Constants.INSTANCE_NAME,
+									owner: 'configuration',
+									identifier: 'instance_name',
+									field: 'instance_name'
+								}
+							}),
 							Ext.create('CMDBuild.field.ErasableCombo', {
 								name: 'startingclass',
 								fieldLabel: CMDBuild.Translation.defaultClass,
