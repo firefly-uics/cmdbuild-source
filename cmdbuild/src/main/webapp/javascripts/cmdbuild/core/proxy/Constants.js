@@ -26,8 +26,8 @@
 		ATTRIBUTES: 'attributes',
 		ATTRIBUTES_NODE: 'attributesNode',
 		ATTRIBUTE_CLASS: 'attributeClass',
-		ATTRIBUTE_DOMAIN: 'attributeDomain',
 		ATTRIBUTE_DESCRIPTION: 'attributeDescription',
+		ATTRIBUTE_DOMAIN: 'attributeDomain',
 		ATTRIBUTE_MAPPING: 'attributeMapping',
 		ATTRIBUTE_NAME: 'attributeName',
 		ATTRIBUTE_SEPARATOR: 'attributeSeparator',
@@ -56,6 +56,7 @@
 		CLASS_NAME: 'className',
 		CLASS_ORDER_SIGN: 'classOrderSign',
 		CLASS_TARGET_ID: 'classTargetId',
+		CLASS_WIDGET: 'classwidget',
 		CLIENT_FILTER: 'clientFilter',
 		CLUSTERING_THRESHOLD: 'clusteringThreshold',
 		CODE: 'code',
@@ -338,7 +339,7 @@
 		WORKFLOW_ATTRIBUTES: 'workflowAttributes',
 		WORKFLOW_CLASS_NAME: 'workflowClassName',
 		WORKFLOW_NAME: 'workflowName',
-		ZIP: 'zip',
+		ZIP: 'zip'
 	});
 
 })();
