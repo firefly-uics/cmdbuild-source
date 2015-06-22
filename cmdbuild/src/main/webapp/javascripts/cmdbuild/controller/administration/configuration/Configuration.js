@@ -75,8 +75,6 @@
 					success: function(result, options, decodedResult){
 						var decodedResult = decodedResult.data;
 
-						_CMCache.setActiveTranslations(decodedResult.enabled_languages);
-
 						// FIX bug with Firefox that breaks UI on fast configuration page switch
 						if (view.isVisible())
 							view.getForm().setValues(decodedResult);
@@ -111,7 +109,9 @@
 					success: function(result, options, decodedResult) {
 						this.onConfigurationRead(configFileName, view);
 
-						CMDBuild.Msg.success();
+						CMDBuild.view.common.field.translatable.Utils.commit(this.sectionController.getView());
+
+						CMDBuild.core.Message.success();
 					}
 				}, configFileName);
 			}
@@ -162,8 +162,6 @@
 				this.view.add(this.sectionController.getView());
 
 				this.setViewTitle(parameters.get(CMDBuild.core.proxy.Constants.TEXT));
-
-				_CMCache.initModifyingTranslations();
 
 				this.callParent(arguments);
 			}
