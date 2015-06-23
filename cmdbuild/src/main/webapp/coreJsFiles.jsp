@@ -43,7 +43,6 @@
 <script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxyIcon.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxyMenu.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxyNavigationTrees.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxyTranslations.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxyWidgetConfiguration.js"></script>
 
 <!-- MODELS -->
@@ -66,7 +65,6 @@
 <script type="text/javascript" src="javascripts/cmdbuild/cache/CMCacheLookupFunctions.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/cache/CMCacheGroupsFunctions.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/cache/CMCacheDomainFunctions.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/cache/CMCacheTranslationsFunctions.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/cache/CMCacheDashboardFunctions.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/cache/CMCacheAttachmentCategoryFunctions.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/cache/CMCacheGISFunctions.js"></script>

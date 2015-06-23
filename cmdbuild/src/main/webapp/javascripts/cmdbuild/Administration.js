@@ -57,8 +57,6 @@
 								CMDBuild.Config.cmdbuild = decoded.data;
 
 								// Localization
-								// TODO: refactor to avoid to use Cache
-								_CMCache.setActiveTranslations(decoded.data.enabled_languages);
 								CMDBuild.configuration[CMDBuild.core.proxy.Constants.LOCALIZATION].setEnabledLanguages(decoded.data.enabled_languages);
 
 								/* **********************************************

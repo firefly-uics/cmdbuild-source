@@ -15,7 +15,6 @@
 			attachmentCategories: "CMDBUild.cache.CMCacheAttachmentCategoryFunctions",
 			gis: "CMDBUild.cache.CMCacheGisFunctions",
 			filters: "CMDBuild.cache.CMCacheFilterFunctions",
-			translations: "CMDBUild.cache.CMCacheTranslationsFunctions",
 			navigationTrees: "CMDBUild.cache.CMCacheNavigationTreesFunctions"
 		},
 

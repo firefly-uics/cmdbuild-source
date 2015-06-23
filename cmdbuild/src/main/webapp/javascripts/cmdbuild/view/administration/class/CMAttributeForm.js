@@ -74,7 +74,6 @@
 				scope : this,
 				handler: function() {
 					this.enableModify();
-					_CMCache.initModifyingTranslations();
 				}
 			});
 
