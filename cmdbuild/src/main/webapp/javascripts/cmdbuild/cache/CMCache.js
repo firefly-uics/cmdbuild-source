@@ -185,7 +185,8 @@
 					url: 'services/json/management/modcard/getcardlistshort',
 					reader: {
 						type: 'json',
-						root: 'rows'
+						root: 'rows',
+						totalProperty: 'results'
 					},
 					extraParams: baseParams
 				},
