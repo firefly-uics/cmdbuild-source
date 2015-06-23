@@ -37,6 +37,7 @@ import org.cmdbuild.logic.translation.converter.ViewConverter;
 import org.cmdbuild.logic.translation.converter.WidgetConverter;
 import org.cmdbuild.servlets.json.JSONBaseWithSpringContext;
 import org.cmdbuild.servlets.json.management.JsonResponse;
+import org.cmdbuild.servlets.json.translation.GloabalTranslationSerializer;
 import org.cmdbuild.servlets.utils.Parameter;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.json.JSONException;
@@ -51,7 +52,7 @@ public class Translation extends JSONBaseWithSpringContext {
 	private static final String IDENTIFIER = "identifier";
 	private static final String OWNER = "owner";
 
-	private final DataAccessLogic dataLogic = systemDataAccessLogic();
+	private final DataAccessLogic dataLogic = userDataAccessLogic();
 	private final LookupStore lookupStore = lookupStore();
 
 	@JSONExported
@@ -93,6 +94,12 @@ public class Translation extends JSONBaseWithSpringContext {
 	public JsonResponse readStructure( //
 			@Parameter(value = TYPE) final String type //
 	) throws JSONException {
+	GloabalTranslationSerializer serializer = GloabalTranslationSerializer //
+				.newInstance() //
+				.withDataAccessLogic(dataLogic) //
+				.withLookupStore(lookupStore) //
+				.withType(type) //
+				.build();
 		if (type.equalsIgnoreCase("class")) {
 			return readStructureForClasses();
 		} else if (type.equalsIgnoreCase("process")) {
@@ -227,21 +234,21 @@ public class Translation extends JSONBaseWithSpringContext {
 		final Collection<JsonEntryType> jsonClasses = Lists.newArrayList();
 		for (final CMClass cmclass : classes) {
 			final String className = cmclass.getName();
-			Collection<JsonField> jsonFields = readFields(cmclass);
+			final Collection<JsonField> classFields = readFields(cmclass);
 			final Iterable<? extends CMAttribute> allAttributes = cmclass.getAllAttributes();
 			final Collection<JsonTranslationAttribute> jsonAttributes = Lists.newArrayList();
 			for (final CMAttribute attribute : allAttributes) {
 				final String attributeName = attribute.getName();
-				jsonFields = readFields(attribute);
+				final Collection<JsonField> attributeFields = readFields(attribute);
 				final JsonTranslationAttribute jsonAttribute = new JsonTranslationAttribute();
 				jsonAttribute.setName(attributeName);
-				jsonAttribute.setFields(jsonFields);
+				jsonAttribute.setFields(attributeFields);
 				jsonAttributes.add(jsonAttribute);
 			}
 			final JsonEntryType jsonClass = new JsonEntryType();
 			jsonClass.setName(className);
 			jsonClass.setAttributes(jsonAttributes);
-			jsonClass.setFields(jsonFields);
+			jsonClass.setFields(classFields);
 			jsonClasses.add(jsonClass);
 		}
 		return JsonResponse.success(jsonClasses);
