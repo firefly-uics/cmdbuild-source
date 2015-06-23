@@ -97,9 +97,9 @@
 		 * Build fields with translations refreshing all data
 		 */
 		onTranslatableWindowBeforeShow: function() {
-			if (this.ownerField.isConfigurationValid()) {
-				this.setViewTitle(this.ownerField.getFieldLabel());
+			this.setViewTitle(this.ownerField.getFieldLabel());
 
+			if (this.ownerField.isConfigurationValid()) {
 				this.form.reset();
 
 				if (this.ownerField.translationsGet().isEmpty()) {
