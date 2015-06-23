@@ -129,9 +129,7 @@
 
 								translationFieldConfig: {
 									type: CMDBuild.core.proxy.Constants.INSTANCE_NAME,
-									owner: 'configuration',
-									identifier: 'instance_name',
-									field: 'instance_name'
+									field: CMDBuild.core.proxy.Constants.INSTANCE_NAME
 								}
 							}),
 							Ext.create('CMDBuild.field.ErasableCombo', {
@@ -273,6 +271,12 @@
 			});
 
 			this.callParent(arguments);
+		},
+
+		listeners: {
+			add: function(panel, component, index, eOpts) {
+				panel.instanceNameField.translationsRead(); // Custom function call to read translations data
+			}
 		},
 
 		/**

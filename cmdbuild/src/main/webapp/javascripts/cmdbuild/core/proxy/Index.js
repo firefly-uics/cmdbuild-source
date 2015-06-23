@@ -164,9 +164,10 @@
 				create: '',
 				read: 'services/json/schema/translation/read',
 				remove: '',
-				update: 'services/json/schema/translation/update'
-			}
+				update: 'services/json/schema/translation/update',
 
+				readStructure: 'services/json/schema/translation/readstructure',
+			}
 		},
 
 		login: 'services/json/login/login',

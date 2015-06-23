@@ -135,8 +135,7 @@ Ext.define("CMDBuild.Administration.MenuPanel", {
 							Ext.create('CMDBuild.controller.common.field.translatable.NoFieldWindow', {
 								buffer: this.translatableAttributesConfigurationsBuffer,
 								translationFieldConfig: {
-									type: 'menuitem',
-									owner: record.get('uuid'), // TODO: should be group identifier
+									type: CMDBuild.core.proxy.Constants.MENU_ITEM,
 									identifier: record.get('uuid'),
 									field: CMDBuild.core.proxy.Constants.DESCRIPTION
 								}

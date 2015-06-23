@@ -195,6 +195,7 @@
 		MASTER_DETAIL: 'masterDetail',
 		MASTER_DETAIL_LABEL: 'masterDetailLabel',
 		MENU: 'menu',
+		MENU_ITEM: 'menuItem',
 		META: 'meta',
 		METADATA: 'metadata',
 		METADATA_OUTPUT: 'metadataOutput',
