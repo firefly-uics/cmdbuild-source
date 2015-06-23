@@ -78,6 +78,7 @@
 			if (!Ext.isEmpty(languageObject)) {
 				return Ext.create('Ext.grid.column.Column', {
 					dataIndex: languageObject.get(CMDBuild.core.proxy.Constants.TAG),
+					languageDescription: languageObject.get(CMDBuild.core.proxy.Constants.DESCRIPTION),
 					text: '<img style="margin: 0px 5px 0px 0px;" src="images/icons/flags/'
 						+ languageObject.get(CMDBuild.core.proxy.Constants.TAG) + '.png" /> '
 						+ languageObject.get(CMDBuild.core.proxy.Constants.DESCRIPTION),
@@ -117,12 +118,16 @@
 					draggable: false
 				}
 			];
+			var languagesColumnsArray = [];
 
 			Ext.Object.each(enabledLanguages, function(key, value, myself) {
-				columnsArray.push(this.buildColumn(value));
+				languagesColumnsArray.push(this.buildColumn(value));
 			}, this);
 
-			return columnsArray;
+			// Sort languages columns with alphabetical sort order
+			CMDBuild.core.Utils.objectArraySort(languagesColumnsArray, 'languageDescription');
+
+			return Ext.Array.push(columnsArray, languagesColumnsArray);
 		},
 
 		/**
@@ -143,20 +148,14 @@
 		 * @param {CMDBuild.view.administration.localizations.common.AdvancedTableGrid}
 		 */
 		onAdvancedTableCollapseAll: function(gridPanel) {
-			CMDBuild.LoadMask.get().show();
-			gridPanel.collapseAll(function() {
-				CMDBuild.LoadMask.get().hide();
-			}, this);
+			gridPanel.collapseAll();
 		},
 
 		/**
 		 * @param {CMDBuild.view.administration.localizations.common.AdvancedTableGrid}
 		 */
 		onAdvancedTableExpandAll: function(gridPanel) {
-			CMDBuild.LoadMask.get().show();
-			gridPanel.expandAll(function() {
-				CMDBuild.LoadMask.get().hide();
-			}, this);
+			gridPanel.expandAll();
 		},
 
 		/**
