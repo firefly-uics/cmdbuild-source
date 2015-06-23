@@ -149,8 +149,6 @@
 				return (
 					!Ext.Object.isEmpty(configuration)
 					&& !Ext.isEmpty(configuration[CMDBuild.core.proxy.Constants.TYPE])
-					&& !Ext.isEmpty(configuration[CMDBuild.core.proxy.Constants.OWNER])
-					&& !Ext.isEmpty(configuration[CMDBuild.core.proxy.Constants.IDENTIFIER])
 					&& !Ext.isEmpty(configuration[CMDBuild.core.proxy.Constants.FIELD])
 				);
 			},

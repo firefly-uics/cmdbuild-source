@@ -6,9 +6,8 @@
 		requires: [
 			'CMDBuild.core.proxy.Attributes',
 			'CMDBuild.core.proxy.Constants',
-			'CMDBuild.core.proxy.Classes',
+//			'CMDBuild.core.proxy.Classes',
 			'CMDBuild.core.proxy.localizations.Localizations',
-//			'CMDBuild.model.localizations.advancedTable.TreeStore',
 			'CMDBuild.core.Utils',
 		],
 
@@ -162,57 +161,65 @@
 
 			// GetAllClasses data to get default translations
 			var params = {};
-			params[CMDBuild.core.proxy.Constants.ACTIVE] = true;
+			params[CMDBuild.core.proxy.Constants.TYPE] = this.getSectionId();
 
-			CMDBuild.core.proxy.Classes.read({
+			CMDBuild.core.proxy.localizations.Localizations.readStructure({
 				params: params,
-				loadMask: true,
 				scope: this,
 				success: function(response, options, decodedResponse) {
-					// Sort classes with CMDBuild sort order
-					CMDBuild.core.Utils.objectArraySort(decodedResponse[CMDBuild.core.proxy.Constants.CLASSES], CMDBuild.core.proxy.Constants.TEXT);
-
-					Ext.Array.forEach(decodedResponse[CMDBuild.core.proxy.Constants.CLASSES], function(classObject, i, allClasses) {
-						if (
-							classObject[CMDBuild.core.proxy.Constants.TYPE] == 'class' // Discard processes from visualization
-							&& classObject[CMDBuild.core.proxy.Constants.NAME] != 'Class' // Discard root class of all classes
-						) {
-							// Class main node
-							var classMainNodeObject = { expandable: true, };
-							classMainNodeObject[CMDBuild.core.proxy.Constants.ENTITY_IDENTIFIER] = classObject[CMDBuild.core.proxy.Constants.NAME];
-							classMainNodeObject[CMDBuild.core.proxy.Constants.LEAF] = false;
-							classMainNodeObject[CMDBuild.core.proxy.Constants.PARENT] = root;
-							classMainNodeObject[CMDBuild.core.proxy.Constants.PROPERTY_IDENTIFIER] = classObject[CMDBuild.core.proxy.Constants.NAME];
-							classMainNodeObject[CMDBuild.core.proxy.Constants.TEXT] = classObject[CMDBuild.core.proxy.Constants.NAME];
-
-							var classMainNode = root.appendChild(classMainNodeObject);
-
-							// Class description property object
-							var classDescriptionNodeObject = {};
-							classDescriptionNodeObject[CMDBuild.core.proxy.Constants.DEFAULT] = classObject[CMDBuild.core.proxy.Constants.TEXT];
-							classDescriptionNodeObject[CMDBuild.core.proxy.Constants.ENTITY_IDENTIFIER] = CMDBuild.core.proxy.Constants.TEXT;
-							classDescriptionNodeObject[CMDBuild.core.proxy.Constants.LEAF] = true;
-							classDescriptionNodeObject[CMDBuild.core.proxy.Constants.PARENT] = classMainNode;
-							classDescriptionNodeObject[CMDBuild.core.proxy.Constants.PROPERTY_IDENTIFIER] = CMDBuild.core.proxy.Constants.DESCRIPTION;
-							classDescriptionNodeObject[CMDBuild.core.proxy.Constants.TEXT] = CMDBuild.Translation.descriptionLabel;
-
-							classMainNode.appendChild(classDescriptionNodeObject);
-
-							// Class attributes node (always displayed because Code and Description are default class attributes)
-							var classAttributeNodeObject = { expandable: true };
-							classAttributeNodeObject[CMDBuild.core.proxy.Constants.ENTITY_IDENTIFIER] = CMDBuild.core.proxy.Constants.ATTRIBUTES;
-							classAttributeNodeObject[CMDBuild.core.proxy.Constants.LEAF] = false;
-							classAttributeNodeObject[CMDBuild.core.proxy.Constants.PARENT] = classMainNode;
-							classAttributeNodeObject[CMDBuild.core.proxy.Constants.PROPERTY_IDENTIFIER] = CMDBuild.core.proxy.Constants.ATTRIBUTES;
-							classAttributeNodeObject[CMDBuild.core.proxy.Constants.TEXT] = CMDBuild.Translation.attributes;
-
-							var classAttributesNode = classMainNode.appendChild(classAttributeNodeObject);
-
-							classAttributesNode.appendChild({}); // FIX: expandable property is bugged so i must build a fake node to make attributes node expandable
-						}
-					}, this);
+_debug('decodedResponse', decodedResponse);
 				}
 			});
+
+//			CMDBuild.core.proxy.Classes.read({
+//				params: params,
+//				loadMask: true,
+//				scope: this,
+//				success: function(response, options, decodedResponse) {
+//					// Sort classes with CMDBuild sort order
+//					CMDBuild.core.Utils.objectArraySort(decodedResponse[CMDBuild.core.proxy.Constants.CLASSES], CMDBuild.core.proxy.Constants.TEXT);
+//
+//					Ext.Array.forEach(decodedResponse[CMDBuild.core.proxy.Constants.CLASSES], function(classObject, i, allClasses) {
+//						if (
+//							classObject[CMDBuild.core.proxy.Constants.TYPE] == 'class' // Discard processes from visualization
+//							&& classObject[CMDBuild.core.proxy.Constants.NAME] != 'Class' // Discard root class of all classes
+//						) {
+//							// Class main node
+//							var classMainNodeObject = { expandable: true, };
+//							classMainNodeObject[CMDBuild.core.proxy.Constants.ENTITY_IDENTIFIER] = classObject[CMDBuild.core.proxy.Constants.NAME];
+//							classMainNodeObject[CMDBuild.core.proxy.Constants.LEAF] = false;
+//							classMainNodeObject[CMDBuild.core.proxy.Constants.PARENT] = root;
+//							classMainNodeObject[CMDBuild.core.proxy.Constants.PROPERTY_IDENTIFIER] = classObject[CMDBuild.core.proxy.Constants.NAME];
+//							classMainNodeObject[CMDBuild.core.proxy.Constants.TEXT] = classObject[CMDBuild.core.proxy.Constants.NAME];
+//
+//							var classMainNode = root.appendChild(classMainNodeObject);
+//
+//							// Class description property object
+//							var classDescriptionNodeObject = {};
+//							classDescriptionNodeObject[CMDBuild.core.proxy.Constants.DEFAULT] = classObject[CMDBuild.core.proxy.Constants.TEXT];
+//							classDescriptionNodeObject[CMDBuild.core.proxy.Constants.ENTITY_IDENTIFIER] = CMDBuild.core.proxy.Constants.TEXT;
+//							classDescriptionNodeObject[CMDBuild.core.proxy.Constants.LEAF] = true;
+//							classDescriptionNodeObject[CMDBuild.core.proxy.Constants.PARENT] = classMainNode;
+//							classDescriptionNodeObject[CMDBuild.core.proxy.Constants.PROPERTY_IDENTIFIER] = CMDBuild.core.proxy.Constants.DESCRIPTION;
+//							classDescriptionNodeObject[CMDBuild.core.proxy.Constants.TEXT] = CMDBuild.Translation.descriptionLabel;
+//
+//							classMainNode.appendChild(classDescriptionNodeObject);
+//
+//							// Class attributes node (always displayed because Code and Description are default class attributes)
+//							var classAttributeNodeObject = { expandable: true };
+//							classAttributeNodeObject[CMDBuild.core.proxy.Constants.ENTITY_IDENTIFIER] = CMDBuild.core.proxy.Constants.ATTRIBUTES;
+//							classAttributeNodeObject[CMDBuild.core.proxy.Constants.LEAF] = false;
+//							classAttributeNodeObject[CMDBuild.core.proxy.Constants.PARENT] = classMainNode;
+//							classAttributeNodeObject[CMDBuild.core.proxy.Constants.PROPERTY_IDENTIFIER] = CMDBuild.core.proxy.Constants.ATTRIBUTES;
+//							classAttributeNodeObject[CMDBuild.core.proxy.Constants.TEXT] = CMDBuild.Translation.attributes;
+//
+//							var classAttributesNode = classMainNode.appendChild(classAttributeNodeObject);
+//
+//							classAttributesNode.appendChild({}); // FIX: expandable property is bugged so i must build a fake node to make attributes node expandable
+//						}
+//					}, this);
+//				}
+//			});
 		},
 
 		/**

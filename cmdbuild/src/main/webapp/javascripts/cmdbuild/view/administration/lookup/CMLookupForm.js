@@ -95,7 +95,6 @@
 					enable: function(field, eOpts) { // TODO: on creation, type should be already known (refactor)
 						field.translationFieldConfig = {
 							type: CMDBuild.core.proxy.Constants.LOOKUP_VALUE,
-							owner: this.type,
 							identifier: { sourceType: 'model', key: 'TranslationUuid', source: this.selectedLookup },
 							field: LOOKUP_FIELDS.Description
 						};
@@ -194,9 +193,10 @@
 
 		onAddLookupClick: function() {
 			this.getForm().reset();
-			this.enableModify();
 
-			this.selectedLookup = null;
+			this.selectedLookup = Ext.create('CMDBuild.DummyModel', { TranslationUuid: null }); // Fake model waiting for refactor
+
+			this.enableModify();
 		},
 
 		_reloadParentStore : function() {

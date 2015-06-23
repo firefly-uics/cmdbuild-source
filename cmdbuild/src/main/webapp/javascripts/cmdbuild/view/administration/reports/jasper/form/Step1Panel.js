@@ -39,7 +39,6 @@
 
 						translationFieldConfig: {
 							type: CMDBuild.core.proxy.Constants.REPORT,
-							owner: { sourceType: 'form', key: CMDBuild.core.proxy.Constants.TITLE, source: this }, // TODO: should be renamed in "name"
 							identifier: { sourceType: 'form', key: CMDBuild.core.proxy.Constants.TITLE, source: this }, // TODO: should be renamed in "name"
 							field: CMDBuild.core.proxy.Constants.DESCRIPTION
 						}
