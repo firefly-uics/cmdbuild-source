@@ -132,14 +132,18 @@ Ext.define("CMDBuild.Administration.MenuPanel", {
 						scope: this,
 
 						handler: function(grid, rowIndex, colIndex, node, e, record, rowNode) {
-							Ext.create('CMDBuild.controller.common.field.translatable.NoFieldWindow', {
-								buffer: this.translatableAttributesConfigurationsBuffer,
-								translationFieldConfig: {
-									type: CMDBuild.core.proxy.Constants.MENU_ITEM,
-									identifier: record.get('uuid'),
-									field: CMDBuild.core.proxy.Constants.DESCRIPTION
-								}
-							});
+							if (Ext.isEmpty(record.get('uuid'))) {
+								CMDBuild.core.Message.warning(null, CMDBuild.Translation.warnings.saveMenuBeforeAccess, false);
+							} else {
+								Ext.create('CMDBuild.controller.common.field.translatable.NoFieldWindow', {
+									buffer: this.translatableAttributesConfigurationsBuffer,
+									translationFieldConfig: {
+										type: CMDBuild.core.proxy.Constants.MENU_ITEM,
+										identifier: record.get('uuid'),
+										field: CMDBuild.core.proxy.Constants.DESCRIPTION
+									}
+								});
+							}
 						},
 
 //						getClass: function(value, metadata, record, rowIndex, colIndex, store) {

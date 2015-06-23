@@ -149,6 +149,7 @@
 				return (
 					!Ext.Object.isEmpty(configuration)
 					&& !Ext.isEmpty(configuration[CMDBuild.core.proxy.Constants.TYPE])
+					&& !Ext.isEmpty(configuration[CMDBuild.core.proxy.Constants.IDENTIFIER])
 					&& !Ext.isEmpty(configuration[CMDBuild.core.proxy.Constants.FIELD])
 				);
 			},
@@ -217,12 +218,12 @@
 		 * Build fields with translations refreshing all data
 		 */
 		onTranslatableWindowBeforeShow: function() {
+			this.setViewTitle();
+
 			if (this.isConfigurationValid()) {
 				// Get translations object from buffer
 				if (this.buffer.hasOwnProperty(this.translationFieldConfig.identifier))
 					this.translationsSet(this.buffer[this.translationFieldConfig.identifier][CMDBuild.core.proxy.Constants.TRANSLATIONS]);
-
-				this.setViewTitle();
 
 				this.form.reset();
 

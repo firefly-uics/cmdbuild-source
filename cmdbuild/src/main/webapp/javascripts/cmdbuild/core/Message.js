@@ -119,7 +119,7 @@
 		warn: function(title, text, popup) {
 			_deprecated('warn', this);
 
-			this.warn(title, text, popup);
+			this.warning(title, text, popup);
 		}
 	});
 
