@@ -220,24 +220,6 @@ public class Translation extends JSONBaseWithSpringContext {
 		return jsonFields;
 	}
 
-	private JsonResponse readStructureForClasses(final boolean activeOnly) {
-		final Iterable<? extends CMClass> onlyClasses = dataLogic.findClasses(activeOnly);
-		return readStructureForClassesOrProcesses(onlyClasses);
-	}
-
-	private JsonResponse readStructureForProcesses(String sorter) {
-		final Iterable<? extends CMClass> allClasses = dataLogic.findAllClasses();
-		final Iterable<? extends CMClass> onlyProcessess = from(allClasses).filter(new Predicate<CMClass>() {
-
-			@Override
-			public boolean apply(final CMClass input) {
-				final CMClass processBaseClass = dataLogic.findClass(Constants.BASE_PROCESS_CLASS_NAME);
-				return processBaseClass.isAncestorOf(input);
-			}
-		});
-		return readStructureForClassesOrProcesses(onlyProcessess);
-	}
-
 	private JsonResponse readStructureForLookups() {
 		final Iterable<LookupType> allTypes = lookupStore.readAllTypes();
 		final Collection<JsonLookupType> jsonLookupTypes = Lists.newArrayList();
@@ -270,44 +252,6 @@ public class Translation extends JSONBaseWithSpringContext {
 		}
 	};
 	
-
-	private JsonResponse readStructureForClassesOrProcesses(final Iterable<? extends CMClass> classes) {
-		final Collection<JsonEntryType> jsonClasses = Lists.newArrayList();
-		for (final CMClass cmclass : classes) {
-			final String className = cmclass.getName();
-			final JsonEntryType jsonClass = new JsonEntryType();
-			jsonClass.setName(className);
-			final Collection<JsonField> classFields = readFields(cmclass);
-			final Iterable<? extends CMAttribute> allAttributes = cmclass.getAllAttributes();
-			final Iterable<? extends CMAttribute> sortedAttributes = ORDER_BY_INDEX.sortedCopy(allAttributes);
-			final Collection<JsonAttribute> jsonAttributes = Lists.newArrayList();
-			for (final CMAttribute attribute : sortedAttributes) {
-				final String attributeName = attribute.getName();
-				final Collection<JsonField> attributeFields = readFields(attribute);
-				final JsonAttribute jsonAttribute = new JsonAttribute();
-				jsonAttribute.setName(attributeName);
-				jsonAttribute.setFields(attributeFields);
-				jsonAttributes.add(jsonAttribute);
-			}
-			jsonClass.setAttributes(jsonAttributes);
-			jsonClass.setFields(classFields);
-			jsonClasses.add(jsonClass);
-		}
-		Collection<JsonEntryType> sortedClasses = Lists.newArrayList();
-		if (CLASS_SORTER_DIRECTION.equals("ASC")) {
-			sortedClasses = JsonEntryType.Sorter //
-					.of(CLASS_SORTER) //
-					.getOrdering() //
-					.sortedCopy(jsonClasses);
-		} else if (CLASS_SORTER_DIRECTION.equals("DESC")) {
-			sortedClasses = JsonEntryType.Sorter //
-					.of(CLASS_SORTER) //
-					.getOrdering() //
-					.reverse() //
-					.sortedCopy(jsonClasses);
-		}
-		return JsonResponse.success(sortedClasses);
-	}
 
 	private JsonResponse readStructureForDomains() {
 		final Iterable<? extends CMDomain> allDomains = dataLogic.findAllDomains();

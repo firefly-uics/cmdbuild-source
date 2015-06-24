@@ -19,7 +19,7 @@ public class ProcessTranslationSerializer extends ClassTranslationSerializer {
 
 	@Override
 	public JsonResponse serialize() {
-		final Iterable<? extends CMClass> allClasses = dataLogic.findAllClasses();
+		final Iterable<? extends CMClass> allClasses = dataLogic.findClasses(activeOnly);
 		final Iterable<? extends CMClass> onlyProcessess = from(allClasses).filter(new Predicate<CMClass>() {
 
 			@Override

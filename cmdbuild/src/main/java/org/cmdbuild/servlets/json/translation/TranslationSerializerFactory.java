@@ -37,7 +37,7 @@ public class TranslationSerializerFactory {
 		} else if (type.equalsIgnoreCase("process")) {
 			return new ProcessTranslationSerializer(dataLogic, activeOnly, logic);
 		} else if (type.equalsIgnoreCase("domain")) {
-			return new DomainTranslationSerializer();
+			return new DomainTranslationSerializer(dataLogic, activeOnly, logic);
 		} else if (type.equalsIgnoreCase("lookup")) {
 			return new LookupTranslationSerializer();
 		}
