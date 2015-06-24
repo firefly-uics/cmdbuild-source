@@ -142,7 +142,9 @@ public class Translation extends JSONBaseWithSpringContext {
 
 	private Collection<JsonField> readFields(final CMAttribute attribute) {
 		final Collection<JsonField> jsonFields = Lists.newArrayList();
+		final String ownerName = attribute.getOwner().getName();
 		final TranslationObject translationObject = AttributeConverter.CLASSATTRIBUTE_DESCRIPTION //
+				.withOwner(ownerName)
 				.withIdentifier(attribute.getName()) //
 				.create();
 		final Map<String, String> fieldTranslations = translationLogic().readAll(translationObject);
