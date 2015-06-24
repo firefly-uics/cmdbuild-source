@@ -14,14 +14,6 @@
 		parentDelegate: undefined,
 
 		/**
-		 * @cfg {Array}
-		 */
-		cmfgCatchedFunctions: [
-			'onAdvancedTableShow',
-			'onAdvancedTableRowUpdateButtonClick'
-		],
-
-		/**
 		 * @cfg {String}
 		 */
 		sectionId: CMDBuild.core.proxy.Constants.VIEWS,

@@ -62,10 +62,10 @@
 			this.sectionControllerClasses = Ext.create('CMDBuild.controller.administration.localizations.advancedTable.SectionClasses', { parentDelegate: this });
 			this.sectionControllerProcesses = Ext.create('CMDBuild.controller.administration.localizations.advancedTable.SectionProcesses', { parentDelegate: this });
 			this.sectionControllerDomains = Ext.create('CMDBuild.controller.administration.localizations.advancedTable.SectionDomains', { parentDelegate: this });
-			this.sectionControllerLookup = Ext.create('CMDBuild.controller.administration.localizations.advancedTable.SectionLookup', { parentDelegate: this });
-			this.sectionControllerMenu = Ext.create('CMDBuild.controller.administration.localizations.advancedTable.SectionMenu', { parentDelegate: this });
-			this.sectionControllerReports = Ext.create('CMDBuild.controller.administration.localizations.advancedTable.SectionReports', { parentDelegate: this });
 			this.sectionControllerViews = Ext.create('CMDBuild.controller.administration.localizations.advancedTable.SectionViews', { parentDelegate: this });
+			this.sectionControllerLookup = Ext.create('CMDBuild.controller.administration.localizations.advancedTable.SectionLookup', { parentDelegate: this });
+			this.sectionControllerReports = Ext.create('CMDBuild.controller.administration.localizations.advancedTable.SectionReports', { parentDelegate: this });
+			this.sectionControllerMenu = Ext.create('CMDBuild.controller.administration.localizations.advancedTable.SectionMenu', { parentDelegate: this });
 
 			this.view.setActiveTab(0);
 

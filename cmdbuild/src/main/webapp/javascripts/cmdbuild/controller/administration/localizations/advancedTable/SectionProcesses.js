@@ -16,15 +16,7 @@
 		/**
 		 * @cfg {Array}
 		 */
-		cmfgCatchedFunctions: [
-			'onAdvancedTableShow',
-			'onAdvancedTableRowUpdateButtonClick'
-		],
-
-		/**
-		 * @cfg {Array}
-		 */
-		entityAttributeFilter: ['Notes'],
+		entityAttributeFilter: ['notes'],
 
 		/**
 		 * @cfg {String}
