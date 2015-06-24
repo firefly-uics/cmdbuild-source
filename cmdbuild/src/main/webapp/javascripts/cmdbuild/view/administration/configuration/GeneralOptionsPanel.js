@@ -129,6 +129,7 @@
 
 								translationFieldConfig: {
 									type: CMDBuild.core.proxy.Constants.INSTANCE_NAME,
+									identifier: CMDBuild.core.proxy.Constants.INSTANCE_NAME, // Just for configuration validation
 									field: CMDBuild.core.proxy.Constants.INSTANCE_NAME
 								}
 							}),
