@@ -3,7 +3,10 @@
 	Ext.define('CMDBuild.controller.administration.localizations.advancedTable.AdvancedTable', {
 		extend: 'CMDBuild.controller.common.AbstractController',
 
-		requires: ['CMDBuild.core.proxy.Constants'],
+		requires: [
+			'CMDBuild.core.proxy.Constants',
+			'CMDBuild.model.localizations.advancedTable.TreeStore'
+		],
 
 		/**
 		 * @cfg {CMDBuild.controller.administration.localizations.Localizations}
@@ -55,13 +58,13 @@
 				delegate: this
 			});
 
-			// Build tabs
+			// Build tabs (in display order)
 			this.sectionControllerClasses = Ext.create('CMDBuild.controller.administration.localizations.advancedTable.SectionClasses', { parentDelegate: this });
+			this.sectionControllerProcesses = Ext.create('CMDBuild.controller.administration.localizations.advancedTable.SectionProcesses', { parentDelegate: this });
 			this.sectionControllerDomains = Ext.create('CMDBuild.controller.administration.localizations.advancedTable.SectionDomains', { parentDelegate: this });
 			this.sectionControllerLookup = Ext.create('CMDBuild.controller.administration.localizations.advancedTable.SectionLookup', { parentDelegate: this });
 			this.sectionControllerMenu = Ext.create('CMDBuild.controller.administration.localizations.advancedTable.SectionMenu', { parentDelegate: this });
 			this.sectionControllerReports = Ext.create('CMDBuild.controller.administration.localizations.advancedTable.SectionReports', { parentDelegate: this });
-			this.sectionControllerProcesses = Ext.create('CMDBuild.controller.administration.localizations.advancedTable.SectionProcesses', { parentDelegate: this });
 			this.sectionControllerViews = Ext.create('CMDBuild.controller.administration.localizations.advancedTable.SectionViews', { parentDelegate: this });
 
 			this.view.setActiveTab(0);

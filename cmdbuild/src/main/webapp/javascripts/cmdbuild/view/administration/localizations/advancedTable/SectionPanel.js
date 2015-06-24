@@ -1,12 +1,10 @@
 (function() {
 
-	Ext.define('CMDBuild.view.administration.localizations.advancedTable.SectionLookupPanel', {
+	Ext.define('CMDBuild.view.administration.localizations.advancedTable.SectionPanel', {
 		extend: 'Ext.panel.Panel',
 
-		requires: ['CMDBuild.model.localizations.advancedTable.TreeStore'],
-
 		/**
-		 * @cfg {CMDBuild.controller.administration.localizations.advancedTable.SectionLookup}
+		 * @cfg {CMDBuild.controller.administration.localizations.advancedTable.SectionClasses}
 		 */
 		delegate: undefined,
 
@@ -17,7 +15,6 @@
 
 		bodyCls: 'cmgraypanel',
 		layout: 'fit',
-		title: '@@ Lookup',
 
 		initComponent: function() {
 			Ext.apply(this, {
@@ -60,7 +57,7 @@
 
 		listeners: {
 			show: function(panel, eOpts) {
-				this.delegate.cmfg('onAdvancedTableLookupShow');
+				this.delegate.cmfg('onAdvancedTableShow');
 			}
 		}
 	});

@@ -26,7 +26,7 @@
 
 			this.callParent(arguments);
 
-			this.store.on('load', function() {
+			this.getStore().on('load', function() {
 				this.setValue(this.getCurrentLanguage());
 			}, this);
 		},
