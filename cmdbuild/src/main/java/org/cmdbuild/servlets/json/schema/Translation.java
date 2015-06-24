@@ -1,6 +1,7 @@
 package org.cmdbuild.servlets.json.schema;
 
 import static com.google.common.collect.FluentIterable.from;
+import static org.cmdbuild.servlets.json.CommunicationConstants.ACTIVE;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ATTRIBUTES;
 import static org.cmdbuild.servlets.json.CommunicationConstants.CODE;
 import static org.cmdbuild.servlets.json.CommunicationConstants.DESCRIPTION;
@@ -92,8 +93,10 @@ public class Translation extends JSONBaseWithSpringContext {
 	@JSONExported
 	@Admin
 	public JsonResponse readStructure( //
-			@Parameter(value = TYPE) final String type //
+			@Parameter(value = TYPE) final String type, //
+			@Parameter(value = ACTIVE, required = false) boolean activeOnly //
 	) throws JSONException {
+	activeOnly = true;
 	GloabalTranslationSerializer serializer = GloabalTranslationSerializer //
 				.newInstance() //
 				.withDataAccessLogic(dataLogic) //
@@ -101,7 +104,7 @@ public class Translation extends JSONBaseWithSpringContext {
 				.withType(type) //
 				.build();
 		if (type.equalsIgnoreCase("class")) {
-			return readStructureForClasses();
+			return readStructureForClasses(activeOnly);
 		} else if (type.equalsIgnoreCase("process")) {
 			return readStructureForProcesses();
 		} else if (type.equalsIgnoreCase("domain")) {
@@ -143,16 +146,27 @@ public class Translation extends JSONBaseWithSpringContext {
 	private Collection<JsonField> readFields(final CMAttribute attribute) {
 		final Collection<JsonField> jsonFields = Lists.newArrayList();
 		final String ownerName = attribute.getOwner().getName();
-		final TranslationObject translationObject = AttributeConverter.CLASSATTRIBUTE_DESCRIPTION //
+		final TranslationObject translationObjectForDescription = AttributeConverter.CLASSATTRIBUTE_DESCRIPTION //
 				.withOwner(ownerName)
 				.withIdentifier(attribute.getName()) //
 				.create();
-		final Map<String, String> fieldTranslations = translationLogic().readAll(translationObject);
-		final JsonField field = new JsonField();
-		field.setName(ClassConverter.description());
-		field.setTranslations(fieldTranslations);
-		field.setValue(attribute.getDescription());
-		jsonFields.add(field);
+		final Map<String, String> descriptionTranslations = translationLogic().readAll(translationObjectForDescription);
+		final JsonField descriptionField = new JsonField();
+		descriptionField.setName(AttributeConverter.description());
+		descriptionField.setTranslations(descriptionTranslations);
+		descriptionField.setValue(attribute.getDescription());
+		jsonFields.add(descriptionField);
+		
+		final TranslationObject translationObjectForGroup = AttributeConverter.CLASSATTRIBUTE_GROUP //
+				.withOwner(ownerName)
+				.withIdentifier(attribute.getName()) //
+				.create();
+		final Map<String, String> groupTranslations = translationLogic().readAll(translationObjectForGroup);
+		final JsonField groupField = new JsonField();
+		groupField.setName(AttributeConverter.group());
+		groupField.setTranslations(groupTranslations);
+		groupField.setValue(attribute.getGroup());
+		jsonFields.add(groupField);
 		return jsonFields;
 	}
 
@@ -189,9 +203,8 @@ public class Translation extends JSONBaseWithSpringContext {
 		return jsonFields;
 	}
 
-	private JsonResponse readStructureForClasses() {
-		final boolean ALL = false;
-		final Iterable<? extends CMClass> onlyClasses = dataLogic.findClasses(ALL);
+	private JsonResponse readStructureForClasses(boolean activeOnly) {
+		final Iterable<? extends CMClass> onlyClasses = dataLogic.findClasses(activeOnly);
 		return readStructureForClassesOrProcesses(onlyClasses);
 	}
 
