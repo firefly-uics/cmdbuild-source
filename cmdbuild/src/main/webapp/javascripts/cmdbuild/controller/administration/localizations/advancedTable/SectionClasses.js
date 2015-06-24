@@ -16,15 +16,12 @@
 		/**
 		 * @cfg {Array}
 		 */
-		cmfgCatchedFunctions: [
-			'onAdvancedTableShow',
-			'onAdvancedTableRowUpdateButtonClick'
-		],
+		entityFilter: ['class'],
 
 		/**
 		 * @cfg {Array}
 		 */
-		entityAttributeFilter: ['Notes'],
+		entityAttributeFilter: ['notes'],
 
 		/**
 		 * @cfg {String}
@@ -59,48 +56,6 @@
 			this.grid = this.view.grid;
 
 			this.cmfg('onAdvancedTableTabCreation', this.view); // Add panel to parent tab panel
-		},
-
-		/**
-		 * @param {CMDBuild.model.localizations.advancedTable.TreeStore} rootNode
-		 * @param {Array} arrayToDecode
-		 *
-		 * @override
-		 */
-		decodeStructure: function(rootNode, arrayToDecode) {
-			if (
-				Ext.isArray(arrayToDecode)
-				&& !Ext.isEmpty(rootNode)
-			) {
-				// TODO: class order
-				Ext.Array.forEach(arrayToDecode, function(entityObject, i, allEntitiesObjects) {
-					if (entityObject[CMDBuild.core.proxy.Constants.NAME].toLowerCase() != 'class') { // Discard root class of all classes
-						// Entity main node
-						var entityMainNodeObject = { expandable: true };
-						entityMainNodeObject[CMDBuild.core.proxy.Constants.LEAF] = false;
-						entityMainNodeObject[CMDBuild.core.proxy.Constants.PARENT] = rootNode;
-						entityMainNodeObject[CMDBuild.core.proxy.Constants.TEXT] = entityObject[CMDBuild.core.proxy.Constants.NAME];
-
-						var classMainNode = rootNode.appendChild(entityMainNodeObject);
-
-						this.decodeStructureFields(classMainNode, entityObject[CMDBuild.core.proxy.Constants.FIELDS], entityObject);
-
-						// Entity attribute nodes
-						if (Ext.isArray(entityObject[CMDBuild.core.proxy.Constants.ATTRIBUTES])) {
-							var entityAttributesNodeObject = { expandable: true };
-							entityAttributesNodeObject[CMDBuild.core.proxy.Constants.LEAF] = false;
-							entityAttributesNodeObject[CMDBuild.core.proxy.Constants.PARENT] = classMainNode;
-							entityAttributesNodeObject[CMDBuild.core.proxy.Constants.TEXT] = CMDBuild.Translation.attributes;
-
-							var classAttributesNode = classMainNode.appendChild(entityAttributesNodeObject);
-
-							this.decodeStructureAttributes(classAttributesNode, entityObject[CMDBuild.core.proxy.Constants.ATTRIBUTES], entityObject);
-						}
-					}
-				}, this);
-			} else {
-				_error('[' + this.getSectionId() + '] decodeStructure() wrong parameters', this);
-			}
 		}
 	});
 

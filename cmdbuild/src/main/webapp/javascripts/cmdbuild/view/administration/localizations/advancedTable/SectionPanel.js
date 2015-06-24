@@ -13,6 +13,11 @@
 		 */
 		grid: undefined,
 
+		/**
+		 * @property {Ext.form.field.Checkbox}
+		 */
+		includeOnlyEnabledEntitiesCheckbox: undefined,
+
 		bodyCls: 'cmgraypanel',
 		layout: 'fit',
 
@@ -38,6 +43,17 @@
 
 								handler: function(button, e) {
 									this.delegate.cmfg('onAdvancedTableCollapseAll', this.grid);
+								}
+							}),
+							'->',
+							this.includeOnlyEnabledEntitiesCheckbox = Ext.create('Ext.form.field.Checkbox', {
+								boxLabel: '@@ active only',
+								boxLabelCls: 'cmtoolbaritem',
+								checked: true, // Default as true
+								scope: this,
+
+								handler: function(checkbox, checked) {
+									this.delegate.cmfg('onAdvancedTableOnlyEnabledEntitiesCheck');
 								}
 							})
 						]
