@@ -25,8 +25,8 @@ import com.google.common.collect.Ordering;
 public class ClassTranslationSerializer implements TranslationSerializer {
 
 	protected final DataAccessLogic dataLogic;
-	private final boolean activeOnly;
-	private final TranslationLogic translationLogic;
+	protected final TranslationLogic translationLogic;
+	protected final boolean activeOnly;
 
 	// TODO make it configurable
 	private static final String CLASS_SORTER_PROPERTY = DESCRIPTION;
@@ -80,7 +80,7 @@ public class ClassTranslationSerializer implements TranslationSerializer {
 		return JsonResponse.success(jsonClasses);
 	}
 
-	private Collection<JsonField> readFields(final CMAttribute attribute) {
+	protected Collection<JsonField> readFields(final CMAttribute attribute) {
 		final Collection<JsonField> jsonFields = Lists.newArrayList();
 		final String ownerName = attribute.getOwner().getName();
 		final TranslationObject translationObjectForDescription = AttributeConverter.CLASSATTRIBUTE_DESCRIPTION //
