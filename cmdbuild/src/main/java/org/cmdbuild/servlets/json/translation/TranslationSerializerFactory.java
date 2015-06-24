@@ -5,36 +5,54 @@ import org.cmdbuild.data.store.lookup.LookupStore;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.logic.translation.TranslationLogic;
 import org.cmdbuild.servlets.json.management.JsonResponse;
+import org.cmdbuild.servlets.json.translation.TranslationSerializerFactory.SerializerBuilder;
+import org.json.JSONArray;
 
-public class GloabalTranslationSerializer {
+public class TranslationSerializerFactory {
 
 	private final DataAccessLogic dataLogic;
 	private final LookupStore lookupStore;
 	private final TranslationLogic logic;
 	private final String type;
+	private final JSONArray sorters;
+	private final boolean activeOnly;
 
 	public static SerializerBuilder newInstance(){
 		return new SerializerBuilder();
 	}
 
-	public GloabalTranslationSerializer(SerializerBuilder builder) {
+	public TranslationSerializerFactory(SerializerBuilder builder) {
 		this.dataLogic = builder.dataLogic;
 		this.lookupStore = builder.lookupStore;
 		this.logic = builder.translationLogic;
 		this.type = builder.type;
+		this.sorters = builder.sorters;
+		this.activeOnly = builder.activeOnly;
 	}
 
-	public JsonResponse readStructure(){
+	public TranslationSerializer createSerializer(){
+		// TODO: remove and move to specific serializers
+		if (type.equalsIgnoreCase("class")) {
+			return new ClassTranslationSerializer(dataLogic, activeOnly, logic);
+		} else if (type.equalsIgnoreCase("process")) {
+			return new ProcessTranslationSerializer(dataLogic, activeOnly, logic);
+		} else if (type.equalsIgnoreCase("domain")) {
+			return new DomainTranslationSerializer();
+		} else if (type.equalsIgnoreCase("lookup")) {
+			return new LookupTranslationSerializer();
+		}
 		return null;
 	}
 	
 	
-	public static final class SerializerBuilder implements Builder<GloabalTranslationSerializer> {
+	public static final class SerializerBuilder implements Builder<TranslationSerializerFactory> {
 		
 		private DataAccessLogic dataLogic;
 		private LookupStore lookupStore;
 		private TranslationLogic translationLogic;
 		private String type; 
+		private JSONArray sorters;
+		private boolean activeOnly;
 		
 		public SerializerBuilder withDataAccessLogic(DataAccessLogic dataLogic){
 			this.dataLogic = dataLogic;
@@ -56,9 +74,19 @@ public class GloabalTranslationSerializer {
 			return this;
 		}
 		
+		public SerializerBuilder withSorters(JSONArray sorters) {
+			this.sorters = sorters;
+			return this;
+		}
+		
+		public SerializerBuilder withActiveOnly(boolean activeOnly) {
+			this.activeOnly = activeOnly;
+			return this;
+		}
+		
 		@Override
-		public GloabalTranslationSerializer build() {
-			return new GloabalTranslationSerializer(this);
+		public TranslationSerializerFactory build() {
+			return new TranslationSerializerFactory(this);
 		}
 
 	}

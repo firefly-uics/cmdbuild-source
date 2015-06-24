@@ -36,6 +36,7 @@ import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Ordering;
 
 public class DefaultTranslationLogic implements TranslationLogic {
 
@@ -280,6 +281,14 @@ public class DefaultTranslationLogic implements TranslationLogic {
 
 	};
 
+	private static Ordering<Translation> ORDER_BY_LANG = new Ordering<Translation>() {
+
+		@Override
+		public int compare(final Translation left, final Translation right) {
+			return left.getLang().compareTo(right.getLang());
+		}
+	};
+
 	private final StoreFactory<Translation> storeFactory;
 	private final SetupFacade setupFacade;
 
@@ -306,7 +315,9 @@ public class DefaultTranslationLogic implements TranslationLogic {
 		final Store<Translation> store = storeFactory.create(element);
 		final Map<String, String> map = newLinkedHashMap();
 		final Iterable<String> enabledLanguages = setupFacade.getEnabledLanguages();
-		for (final Translation translation : store.readAll()) {
+		final Collection<Translation> storedTranslations = store.readAll();
+		final Collection<Translation> sortedTranslations = ORDER_BY_LANG.sortedCopy(storedTranslations);
+		for (final Translation translation : sortedTranslations) {
 			final String lang = translation.getLang();
 			if (Iterables.contains(enabledLanguages, lang)) {
 				map.put(lang, translation.getValue());
