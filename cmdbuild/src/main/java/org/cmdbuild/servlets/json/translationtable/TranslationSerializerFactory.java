@@ -1,11 +1,9 @@
-package org.cmdbuild.servlets.json.translation;
+package org.cmdbuild.servlets.json.translationtable;
 
 import org.apache.commons.lang3.builder.Builder;
 import org.cmdbuild.data.store.lookup.LookupStore;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.logic.translation.TranslationLogic;
-import org.cmdbuild.servlets.json.management.JsonResponse;
-import org.cmdbuild.servlets.json.translation.TranslationSerializerFactory.SerializerBuilder;
 import org.json.JSONArray;
 
 public class TranslationSerializerFactory {
@@ -17,11 +15,11 @@ public class TranslationSerializerFactory {
 	private final JSONArray sorters;
 	private final boolean activeOnly;
 
-	public static SerializerBuilder newInstance(){
+	public static SerializerBuilder newInstance() {
 		return new SerializerBuilder();
 	}
 
-	public TranslationSerializerFactory(SerializerBuilder builder) {
+	public TranslationSerializerFactory(final SerializerBuilder builder) {
 		this.dataLogic = builder.dataLogic;
 		this.lookupStore = builder.lookupStore;
 		this.logic = builder.translationLogic;
@@ -30,7 +28,7 @@ public class TranslationSerializerFactory {
 		this.activeOnly = builder.activeOnly;
 	}
 
-	public TranslationSerializer createSerializer(){
+	public TranslationSerializer createSerializer() {
 		// TODO: remove and move to specific serializers
 		if (type.equalsIgnoreCase("class")) {
 			return new ClassTranslationSerializer(dataLogic, activeOnly, logic);
@@ -39,51 +37,51 @@ public class TranslationSerializerFactory {
 		} else if (type.equalsIgnoreCase("domain")) {
 			return new DomainTranslationSerializer(dataLogic, activeOnly, logic);
 		} else if (type.equalsIgnoreCase("lookup")) {
-			return new LookupTranslationSerializer();
+			return new LookupTranslationSerializer(lookupStore, activeOnly, logic);
+		} else {
+			return null;
 		}
-		return null;
 	}
-	
-	
+
 	public static final class SerializerBuilder implements Builder<TranslationSerializerFactory> {
-		
+
 		private DataAccessLogic dataLogic;
 		private LookupStore lookupStore;
 		private TranslationLogic translationLogic;
-		private String type; 
+		private String type;
 		private JSONArray sorters;
 		private boolean activeOnly;
-		
-		public SerializerBuilder withDataAccessLogic(DataAccessLogic dataLogic){
+
+		public SerializerBuilder withDataAccessLogic(final DataAccessLogic dataLogic) {
 			this.dataLogic = dataLogic;
 			return this;
 		}
-		
-		public SerializerBuilder withTranslationLogic(TranslationLogic translationLogic){
+
+		public SerializerBuilder withTranslationLogic(final TranslationLogic translationLogic) {
 			this.translationLogic = translationLogic;
 			return this;
 		}
-		
-		public SerializerBuilder withLookupStore(LookupStore lookupStore){
+
+		public SerializerBuilder withLookupStore(final LookupStore lookupStore) {
 			this.lookupStore = lookupStore;
 			return this;
 		}
-		
-		public SerializerBuilder withType(String type){
+
+		public SerializerBuilder withType(final String type) {
 			this.type = type;
 			return this;
 		}
-		
-		public SerializerBuilder withSorters(JSONArray sorters) {
+
+		public SerializerBuilder withSorters(final JSONArray sorters) {
 			this.sorters = sorters;
 			return this;
 		}
-		
-		public SerializerBuilder withActiveOnly(boolean activeOnly) {
+
+		public SerializerBuilder withActiveOnly(final boolean activeOnly) {
 			this.activeOnly = activeOnly;
 			return this;
 		}
-		
+
 		@Override
 		public TranslationSerializerFactory build() {
 			return new TranslationSerializerFactory(this);

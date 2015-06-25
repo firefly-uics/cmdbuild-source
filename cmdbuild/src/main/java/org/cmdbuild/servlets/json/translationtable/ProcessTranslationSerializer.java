@@ -1,4 +1,4 @@
-package org.cmdbuild.servlets.json.translation;
+package org.cmdbuild.servlets.json.translationtable;
 
 import static com.google.common.collect.FluentIterable.from;
 
@@ -19,7 +19,7 @@ public class ProcessTranslationSerializer extends ClassTranslationSerializer {
 
 	@Override
 	public JsonResponse serialize() {
-		final Iterable<? extends CMClass> allClasses = dataLogic.findClasses(activeOnly);
+		final Iterable<? extends CMClass> allClasses = dataLogic.findAllClasses();
 		final Iterable<? extends CMClass> onlyProcessess = from(allClasses).filter(new Predicate<CMClass>() {
 
 			@Override
@@ -28,7 +28,19 @@ public class ProcessTranslationSerializer extends ClassTranslationSerializer {
 				return processBaseClass.isAncestorOf(input);
 			}
 		});
-		return readStructure(onlyProcessess);
+		if (activeOnly) {
+			from(onlyProcessess).filter(new Predicate<CMClass>() {
+				@Override
+				public boolean apply(final CMClass input) {
+					return input.isActive();
+				}
+			});
+		}
+		final Iterable<? extends CMClass> sortedProcesses = EntryTypeSorter //
+				.of(ENTRYTYPE_SORTER_PROPERTY) //
+				.getOrdering(ENTRYTYPE_SORTER_DIRECTION) //
+				.sortedCopy(onlyProcessess);
+		return readStructure(sortedProcesses);
 	}
 
 }
