@@ -1,4 +1,4 @@
-package org.cmdbuild.servlets.json.translation;
+package org.cmdbuild.servlets.json.translationtable;
 
 import java.util.Collection;
 import java.util.Map;
@@ -11,9 +11,6 @@ import org.cmdbuild.logic.translation.TranslationObject;
 import org.cmdbuild.logic.translation.converter.ClassConverter;
 import org.cmdbuild.logic.translation.converter.DomainConverter;
 import org.cmdbuild.servlets.json.management.JsonResponse;
-import org.cmdbuild.servlets.json.schema.Translation.JsonAttribute;
-import org.cmdbuild.servlets.json.schema.Translation.JsonEntryType;
-import org.cmdbuild.servlets.json.schema.Translation.JsonField;
 
 import com.google.common.collect.Lists;
 
@@ -26,23 +23,23 @@ public class DomainTranslationSerializer extends ClassTranslationSerializer {
 
 	@Override
 	public JsonResponse serialize() {
-		final Iterable<? extends CMDomain> allDomains = dataLogic.findAllDomains();
-		final Collection<JsonEntryType> jsonDomains = Lists.newArrayList();
-		for (final CMDomain domain : allDomains) {
-			final String className = domain.getName();
-			Collection<JsonField> jsonFields = readFields(domain);
+
+		final Iterable<? extends CMDomain> allDomains = activeOnly ? dataLogic.findActiveDomains() : dataLogic
+				.findAllDomains();
+		final Iterable<? extends CMDomain> sortedDomains = EntryTypeSorter //
+				.of(ENTRYTYPE_SORTER_PROPERTY) //
+				.getOrdering(ENTRYTYPE_SORTER_DIRECTION) //
+				.sortedCopy(allDomains);
+
+		final Collection<JsonElement> jsonDomains = Lists.newArrayList();
+		for (final CMDomain domain : sortedDomains) {
+			final String domainName = domain.getName();
+			final Collection<JsonField> jsonFields = readFields(domain);
 			final Iterable<? extends CMAttribute> allAttributes = domain.getAllAttributes();
-			final Collection<JsonAttribute> jsonAttributes = Lists.newArrayList();
-			for (final CMAttribute attribute : allAttributes) {
-				final String attributeName = attribute.getName();
-				jsonFields = readFields(attribute);
-				final JsonAttribute jsonAttribute = new JsonAttribute();
-				jsonAttribute.setName(attributeName);
-				jsonAttribute.setFields(jsonFields);
-				jsonAttributes.add(jsonAttribute);
-			}
-			final JsonEntryType jsonDomain = new JsonEntryType();
-			jsonDomain.setName(className);
+			final Iterable<? extends CMAttribute> sortedAttributes = sortAttributes(allAttributes);
+			final Collection<JsonElement> jsonAttributes = serializeAttributes(sortedAttributes);
+			final JsonElement jsonDomain = new JsonElement();
+			jsonDomain.setName(domainName);
 			jsonDomain.setAttributes(jsonAttributes);
 			jsonDomain.setFields(jsonFields);
 			jsonDomains.add(jsonDomain);

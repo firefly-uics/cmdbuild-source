@@ -1,4 +1,4 @@
-package org.cmdbuild.servlets.json.translation;
+package org.cmdbuild.servlets.json.translationtable;
 
 import static org.cmdbuild.servlets.json.CommunicationConstants.DESCRIPTION;
 import static org.cmdbuild.servlets.json.CommunicationConstants.INDEX;
@@ -9,70 +9,66 @@ import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
+import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
+import org.cmdbuild.logic.data.access.DataAccessLogic.AttributesQuery;
 import org.cmdbuild.logic.translation.TranslationLogic;
 import org.cmdbuild.logic.translation.TranslationObject;
 import org.cmdbuild.logic.translation.converter.AttributeConverter;
 import org.cmdbuild.logic.translation.converter.ClassConverter;
 import org.cmdbuild.servlets.json.management.JsonResponse;
-import org.cmdbuild.servlets.json.schema.Translation.JsonAttribute;
-import org.cmdbuild.servlets.json.schema.Translation.JsonEntryType;
-import org.cmdbuild.servlets.json.schema.Translation.JsonField;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Ordering;
 
-public class ClassTranslationSerializer implements TranslationSerializer {
-
-	protected final DataAccessLogic dataLogic;
-	protected final TranslationLogic translationLogic;
-	protected final boolean activeOnly;
+public class ClassTranslationSerializer extends EntryTypeTranslationSerializer {
 
 	// TODO make it configurable
-	private static final String CLASS_SORTER_PROPERTY = DESCRIPTION;
-	private static final String CLASS_SORTER_DIRECTION = "ASC";
-	private static final String ATTRIBUTE_SORTER_PROPERTY = INDEX;
-	private static final String ATTRIBUTE_SORTER_DIRECTION = "ASC";
+	static final String ENTRYTYPE_SORTER_PROPERTY = DESCRIPTION;
+	static final String ENTRYTYPE_SORTER_DIRECTION = "ASC";
+	static final String ATTRIBUTE_SORTER_PROPERTY = INDEX;
+	static final String ATTRIBUTE_SORTER_DIRECTION = "ASC";
+
+	private static final AttributesQuery NO_LIMIT_AND_OFFSET = new AttributesQuery() {
+
+		@Override
+		public Integer limit() {
+			return null;
+		}
+
+		@Override
+		public Integer offset() {
+			return null;
+		}
+
+	};
 
 	public ClassTranslationSerializer(final DataAccessLogic dataLogic, final boolean activeOnly,
 			final TranslationLogic translationLogic) {
-		this.dataLogic = dataLogic;
-		this.activeOnly = activeOnly;
-		this.translationLogic = translationLogic;
+		super(dataLogic, activeOnly, translationLogic);
 	}
 
 	@Override
 	public JsonResponse serialize() {
 		final Iterable<? extends CMClass> classes = dataLogic.findClasses(activeOnly);
-		final Iterable<? extends CMClass> sortedClasses = ClassSorter //
-				.of(CLASS_SORTER_PROPERTY) //
-				.getOrdering(CLASS_SORTER_DIRECTION) //
+		final Iterable<? extends CMClass> sortedClasses = EntryTypeSorter //
+				.of(ENTRYTYPE_SORTER_PROPERTY) //
+				.getOrdering(ENTRYTYPE_SORTER_DIRECTION) //
 				.sortedCopy(classes);
-
 		return readStructure(sortedClasses);
 	}
 
-	protected JsonResponse readStructure(final Iterable<? extends CMClass> sortedClasses) {
-		final Collection<JsonEntryType> jsonClasses = Lists.newArrayList();
+	JsonResponse readStructure(final Iterable<? extends CMClass> sortedClasses) {
+		final Collection<JsonElement> jsonClasses = Lists.newArrayList();
 		for (final CMClass cmclass : sortedClasses) {
 			final String className = cmclass.getName();
-			final JsonEntryType jsonClass = new JsonEntryType();
+			final JsonElement jsonClass = new JsonElement();
 			jsonClass.setName(className);
 			final Collection<JsonField> classFields = readFields(cmclass);
-			final Iterable<? extends CMAttribute> allAttributes = cmclass.getAllAttributes();
-			final Iterable<? extends CMAttribute> sortedAttributes = AttributeSorter //
-					.of(ATTRIBUTE_SORTER_PROPERTY) //
-					.getOrdering(ATTRIBUTE_SORTER_DIRECTION) //
-					.sortedCopy(allAttributes);
-			final Collection<JsonAttribute> jsonAttributes = Lists.newArrayList();
-			for (final CMAttribute attribute : sortedAttributes) {
-				final String attributeName = attribute.getName();
-				final Collection<JsonField> attributeFields = readFields(attribute);
-				final JsonAttribute jsonAttribute = new JsonAttribute();
-				jsonAttribute.setName(attributeName);
-				jsonAttribute.setFields(attributeFields);
-				jsonAttributes.add(jsonAttribute);
-			}
+			final Iterable<? extends CMAttribute> allAttributes = dataLogic.getAttributes(className, activeOnly,
+					NO_LIMIT_AND_OFFSET);
+			final Iterable<? extends CMAttribute> sortedAttributes = sortAttributes(allAttributes);
+			final Collection<JsonElement> jsonAttributes = serializeAttributes(sortedAttributes);
 			jsonClass.setAttributes(jsonAttributes);
 			jsonClass.setFields(classFields);
 			jsonClasses.add(jsonClass);
@@ -80,7 +76,37 @@ public class ClassTranslationSerializer implements TranslationSerializer {
 		return JsonResponse.success(jsonClasses);
 	}
 
-	protected Collection<JsonField> readFields(final CMAttribute attribute) {
+	Iterable<? extends CMEntryType> sort(final Iterable<? extends CMEntryType> allAttributes) {
+		final Iterable<? extends CMEntryType> sortedAttributes = EntryTypeSorter //
+				.of(ENTRYTYPE_SORTER_PROPERTY) //
+				.getOrdering(ENTRYTYPE_SORTER_DIRECTION) //
+				.sortedCopy(allAttributes);
+		return sortedAttributes;
+	}
+
+	Iterable<? extends CMAttribute> sortAttributes(final Iterable<? extends CMAttribute> allAttributes) {
+		final Iterable<? extends CMAttribute> sortedAttributes = AttributeSorter //
+				.of(ATTRIBUTE_SORTER_PROPERTY) //
+				.getOrdering(ATTRIBUTE_SORTER_DIRECTION) //
+				.sortedCopy(allAttributes);
+		return sortedAttributes;
+	}
+
+	Collection<JsonElement> serializeAttributes(final Iterable<? extends CMAttribute> attributes) {
+		final Collection<JsonElement> attributesSerialization = Lists.newArrayList();
+		for (final CMAttribute attribute : attributes) {
+			final String attributeName = attribute.getName();
+			final Collection<JsonField> attributeFields = readFields(attribute);
+			final JsonElement jsonAttribute = new JsonElement();
+			jsonAttribute.setName(attributeName);
+			jsonAttribute.setFields(attributeFields);
+			attributesSerialization.add(jsonAttribute);
+		}
+		return attributesSerialization;
+	}
+
+	@Override
+	Collection<JsonField> readFields(final CMAttribute attribute) {
 		final Collection<JsonField> jsonFields = Lists.newArrayList();
 		final String ownerName = attribute.getOwner().getName();
 		final TranslationObject translationObjectForDescription = AttributeConverter.CLASSATTRIBUTE_DESCRIPTION //
@@ -119,35 +145,35 @@ public class ClassTranslationSerializer implements TranslationSerializer {
 		return jsonFields;
 	}
 
-	private static enum ClassSorter {
+	static enum EntryTypeSorter {
 		NAME("name") {
 			@Override
-			protected Ordering<CMClass> getOrdering() {
-					return ORDER_CLASS_BY_NAME;
+			protected Ordering<CMEntryType> getOrdering() {
+				return ORDER_ENTRYTYPE_BY_NAME;
 			}
 		},
 		DESCRIPTION("description") {
 			@Override
-			protected Ordering<CMClass> getOrdering() {
-					return ORDER_CLASS_BY_DESCRIPTION;
+			protected Ordering<CMEntryType> getOrdering() {
+				return ORDER_ENTRYTYPE_BY_DESCRIPTION;
 			}
 		},
 		UNDEFINED(StringUtils.EMPTY) {
 			@Override
-			protected Ordering<CMClass> getOrdering() {
+			protected Ordering<CMEntryType> getOrdering() {
 				throw new UnsupportedOperationException();
 			}
 		};
 
 		private final String sorter;
 
-		private ClassSorter(final String sorter) {
+		private EntryTypeSorter(final String sorter) {
 			this.sorter = sorter;
 		}
 
-		abstract Ordering<CMClass> getOrdering();
+		abstract Ordering<CMEntryType> getOrdering();
 
-		protected Ordering<CMClass> getOrdering(final String direction) {
+		Ordering<CMEntryType> getOrdering(final String direction) {
 			if (direction.equalsIgnoreCase("DESC")) {
 				return getOrdering().reverse();
 			} else {
@@ -155,8 +181,8 @@ public class ClassTranslationSerializer implements TranslationSerializer {
 			}
 		}
 
-		private static ClassSorter of(final String field) {
-			for (final ClassSorter element : values()) {
+		static EntryTypeSorter of(final String field) {
+			for (final EntryTypeSorter element : values()) {
 				if (element.sorter.equalsIgnoreCase(field)) {
 					return element;
 				}
@@ -199,7 +225,7 @@ public class ClassTranslationSerializer implements TranslationSerializer {
 
 		abstract Ordering<CMAttribute> getOrdering();
 
-		protected Ordering<CMAttribute> getOrdering(final String direction) {
+		Ordering<CMAttribute> getOrdering(final String direction) {
 			if (direction.equalsIgnoreCase("DESC")) {
 				return getOrdering().reverse();
 			} else {
@@ -217,16 +243,16 @@ public class ClassTranslationSerializer implements TranslationSerializer {
 		}
 	}
 
-	private static final Ordering<CMClass> ORDER_CLASS_BY_NAME = new Ordering<CMClass>() {
+	private static final Ordering<CMEntryType> ORDER_ENTRYTYPE_BY_NAME = new Ordering<CMEntryType>() {
 		@Override
-		public int compare(final CMClass left, final CMClass right) {
+		public int compare(final CMEntryType left, final CMEntryType right) {
 			return left.getName().compareTo(right.getName());
 		}
 	};
 
-	private static final Ordering<CMClass> ORDER_CLASS_BY_DESCRIPTION = new Ordering<CMClass>() {
+	private static final Ordering<CMEntryType> ORDER_ENTRYTYPE_BY_DESCRIPTION = new Ordering<CMEntryType>() {
 		@Override
-		public int compare(final CMClass left, final CMClass right) {
+		public int compare(final CMEntryType left, final CMEntryType right) {
 			return left.getDescription().compareTo(right.getDescription());
 		}
 	};
