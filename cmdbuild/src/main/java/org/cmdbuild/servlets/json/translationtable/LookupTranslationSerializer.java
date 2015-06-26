@@ -1,7 +1,5 @@
 package org.cmdbuild.servlets.json.translationtable;
 
-import static org.cmdbuild.servlets.json.CommunicationConstants.*;
-
 import java.util.Collection;
 import java.util.Map;
 
@@ -12,47 +10,66 @@ import org.cmdbuild.logic.translation.TranslationLogic;
 import org.cmdbuild.logic.translation.TranslationObject;
 import org.cmdbuild.logic.translation.converter.LookupConverter;
 import org.cmdbuild.servlets.json.management.JsonResponse;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Ordering;
 
 public class LookupTranslationSerializer implements TranslationSerializer {
 
+	private static final String LOOKUP_VALUE = "lookupValue";
+	private static final String LOOKUP_TYPE = "lookupType";
 	final TranslationLogic translationLogic;
 	final boolean activeOnly;
 	final LookupStore lookupStore;
 
-	// TODO make it configurable
-	static final String LOOKUPTYPE_SORTER_PROPERTY = DESCRIPTION;
-	static final String LOOKUPTYPE_SORTER_DIRECTION = "ASC";
-	static final String LOOKUPVALUE_SORTER_PROPERTY = NUMBER;
-	static final String LOOKUPVALUE_SORTER_DIRECTION = "ASC";
-	
-	
-	public LookupTranslationSerializer(final LookupStore lookupStore, final boolean activeOnly,
-			final TranslationLogic translationLogic) {
+	Ordering<LookupType> typeOrdering = LookupTypeSorter.DEFAULT.getOrientedOrdering();
+	Ordering<Lookup> valueOrdering = LookupValueSorter.DEFAULT.getOrientedOrdering();
+
+	LookupTranslationSerializer(final LookupStore lookupStore, final boolean activeOnly,
+			final TranslationLogic translationLogic, final JSONArray sorters) {
 		this.lookupStore = lookupStore;
 		this.activeOnly = activeOnly;
 		this.translationLogic = translationLogic;
+		setOrderings(sorters);
+	}
+
+	private void setOrderings(final JSONArray sorters) {
+		if (sorters != null) {
+			try {
+				for (int i = 0; i < sorters.length(); i++) {
+					final JSONObject object = JSONObject.class.cast(sorters.get(i));
+					final String element = object.getString(ELEMENT);
+					if (element.equalsIgnoreCase(LOOKUP_TYPE)) {
+						typeOrdering = LookupTypeSorter.of(object.getString(FIELD)) //
+								.withDirection(object.getString(DIRECTION)) //
+								.getOrientedOrdering();
+					} else if (element.equalsIgnoreCase(LOOKUP_VALUE)) {
+						valueOrdering = LookupValueSorter.of(object.getString(FIELD)) //
+								.withDirection(object.getString(DIRECTION)) //
+								.getOrientedOrdering();
+					}
+				}
+			} catch (final JSONException e) {
+				// nothing to do
+			}
+		}
 	}
 
 	@Override
 	public JsonResponse serialize() {
 		final Iterable<LookupType> allTypes = lookupStore.readAllTypes();
-		
-		final Iterable<? extends LookupType> sortedLookupTypes = LookupTypeSorter //
-				.of(LOOKUPTYPE_SORTER_PROPERTY) //
-				.getOrdering(LOOKUPTYPE_SORTER_DIRECTION) //
-				.sortedCopy(allTypes);
-		
+
+		final Iterable<? extends LookupType> sortedLookupTypes = typeOrdering.sortedCopy(allTypes);
+
 		final Collection<JsonLookupType> jsonLookupTypes = Lists.newArrayList();
 		for (final LookupType type : sortedLookupTypes) {
 			final Iterable<Lookup> valuesOfType = lookupStore.readAll(type);
-			
-			final Iterable<Lookup> sortedLookupValues = LookupValueSorter //
-					.of(LOOKUPVALUE_SORTER_PROPERTY) //
-					.getOrdering(LOOKUPVALUE_SORTER_DIRECTION) //
-					.sortedCopy(valuesOfType);
-			
+
+			final Iterable<Lookup> sortedLookupValues = valueOrdering.sortedCopy(valuesOfType);
+
 			final Collection<JsonLookupValue> jsonValues = Lists.newArrayList();
 			final JsonLookupType jsonType = new JsonLookupType();
 			jsonType.setDescription(type.name);

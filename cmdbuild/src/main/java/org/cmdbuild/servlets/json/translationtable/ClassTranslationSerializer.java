@@ -4,11 +4,13 @@ import java.util.Collection;
 
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
-import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.logic.data.access.DataAccessLogic.AttributesQuery;
 import org.cmdbuild.logic.translation.TranslationLogic;
 import org.cmdbuild.servlets.json.management.JsonResponse;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import com.google.common.collect.Lists;
 
@@ -28,18 +30,38 @@ public class ClassTranslationSerializer extends EntryTypeTranslationSerializer {
 
 	};
 
-	public ClassTranslationSerializer(final DataAccessLogic dataLogic, final boolean activeOnly,
-			final TranslationLogic translationLogic) {
+	ClassTranslationSerializer(final DataAccessLogic dataLogic, final boolean activeOnly,
+			final TranslationLogic translationLogic, final JSONArray sorters) {
 		super(dataLogic, activeOnly, translationLogic);
+		setOrderings(sorters);
 	}
 
+	private void setOrderings(final JSONArray sorters) {
+		if (sorters != null) {
+			try {
+				for (int i = 0; i < sorters.length(); i++) {
+					final JSONObject object = JSONObject.class.cast(sorters.get(i));
+					final String element = object.getString(ELEMENT);
+					if (element.equalsIgnoreCase(CLASS) || element.equalsIgnoreCase(PROCESS)) {
+						entryTypeOrdering = EntryTypeSorter.of(object.getString(FIELD)) //
+								.withDirection(object.getString(DIRECTION)) //
+								.getOrientedOrdering();
+					} else if (element.equalsIgnoreCase(ATTRIBUTE)) {
+						attributeOrdering = AttributeSorter.of(object.getString(FIELD)) //
+								.withDirection(object.getString(DIRECTION)) //
+								.getOrientedOrdering();
+					}
+				}
+			} catch (final JSONException e) {
+				//nothing to do
+			}
+		}
+	}
+	
 	@Override
 	public JsonResponse serialize() {
 		final Iterable<? extends CMClass> classes = dataLogic.findClasses(activeOnly);
-		final Iterable<? extends CMClass> sortedClasses = EntryTypeSorter //
-				.of(ENTRYTYPE_SORTER_PROPERTY) //
-				.getOrdering(ENTRYTYPE_SORTER_DIRECTION) //
-				.sortedCopy(classes);
+		final Iterable<? extends CMClass> sortedClasses = entryTypeOrdering.sortedCopy(classes);
 		return serialize(sortedClasses);
 	}
 
@@ -59,14 +81,6 @@ public class ClassTranslationSerializer extends EntryTypeTranslationSerializer {
 			jsonClasses.add(jsonClass);
 		}
 		return JsonResponse.success(jsonClasses);
-	}
-
-	Iterable<? extends CMEntryType> sort(final Iterable<? extends CMEntryType> allAttributes) {
-		final Iterable<? extends CMEntryType> sortedAttributes = EntryTypeSorter //
-				.of(ENTRYTYPE_SORTER_PROPERTY) //
-				.getOrdering(ENTRYTYPE_SORTER_DIRECTION) //
-				.sortedCopy(allAttributes);
-		return sortedAttributes;
 	}
 
 }

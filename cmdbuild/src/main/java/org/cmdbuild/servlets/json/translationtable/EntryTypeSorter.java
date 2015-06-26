@@ -1,6 +1,8 @@
 package org.cmdbuild.servlets.json.translationtable;
 
-import org.apache.commons.lang3.StringUtils;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
+
 import org.cmdbuild.dao.entrytype.CMEntryType;
 
 import com.google.common.collect.Ordering;
@@ -8,36 +10,43 @@ import com.google.common.collect.Ordering;
 enum EntryTypeSorter {
 	NAME("name") {
 		@Override
-		protected Ordering<CMEntryType> getOrdering() {
+		protected Ordering<CMEntryType> getOrderingForProperty() {
 			return ORDER_ENTRYTYPE_BY_NAME;
 		}
 	},
 	DESCRIPTION("description") {
 		@Override
-		protected Ordering<CMEntryType> getOrdering() {
+		protected Ordering<CMEntryType> getOrderingForProperty() {
 			return ORDER_ENTRYTYPE_BY_DESCRIPTION;
 		}
 	},
-	UNDEFINED(StringUtils.EMPTY) {
+	DEFAULT(EMPTY) {
 		@Override
-		protected Ordering<CMEntryType> getOrdering() {
-			throw new UnsupportedOperationException();
+		protected Ordering<CMEntryType> getOrderingForProperty() {
+			return DEFAULT_ORDER;
 		}
 	};
 
 	private final String sorter;
+	private String direction;
 
 	private EntryTypeSorter(final String sorter) {
 		this.sorter = sorter;
 	}
 
-	abstract Ordering<CMEntryType> getOrdering();
+	EntryTypeSorter withDirection(final String direction) {
+		this.direction = direction;
+		return this;
+	}
 
-	Ordering<CMEntryType> getOrdering(final String direction) {
+	abstract Ordering<CMEntryType> getOrderingForProperty();
+
+	Ordering<CMEntryType> getOrientedOrdering() {
+		direction = defaultIfBlank(direction, "ASC");
 		if (direction.equalsIgnoreCase("DESC")) {
-			return getOrdering().reverse();
+			return getOrderingForProperty().reverse();
 		} else {
-			return getOrdering();
+			return getOrderingForProperty();
 		}
 	}
 
@@ -47,7 +56,7 @@ enum EntryTypeSorter {
 				return element;
 			}
 		}
-		return UNDEFINED;
+		return DEFAULT;
 	}
 
 	private static final Ordering<CMEntryType> ORDER_ENTRYTYPE_BY_NAME = new Ordering<CMEntryType>() {
@@ -63,5 +72,7 @@ enum EntryTypeSorter {
 			return left.getDescription().compareTo(right.getDescription());
 		}
 	};
+
+	private static final Ordering<CMEntryType> DEFAULT_ORDER = ORDER_ENTRYTYPE_BY_DESCRIPTION;
 
 }

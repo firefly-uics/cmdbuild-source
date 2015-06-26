@@ -11,25 +11,47 @@ import org.cmdbuild.logic.translation.TranslationObject;
 import org.cmdbuild.logic.translation.converter.ClassConverter;
 import org.cmdbuild.logic.translation.converter.DomainConverter;
 import org.cmdbuild.servlets.json.management.JsonResponse;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import com.google.common.collect.Lists;
 
 public class DomainTranslationSerializer extends EntryTypeTranslationSerializer {
 
-	public DomainTranslationSerializer(final DataAccessLogic dataLogic, final boolean activeOnly,
-			final TranslationLogic translationLogic) {
+	DomainTranslationSerializer(final DataAccessLogic dataLogic, final boolean activeOnly,
+			final TranslationLogic translationLogic, final JSONArray sorters) {
 		super(dataLogic, activeOnly, translationLogic);
+		setOrderings(sorters);
+	}
+
+	private void setOrderings(final JSONArray sorters) {
+		if (sorters != null) {
+			try {
+				for (int i = 0; i < sorters.length(); i++) {
+					final JSONObject object = JSONObject.class.cast(sorters.get(i));
+					final String element = object.getString(ELEMENT);
+					if (element.equalsIgnoreCase(DOMAIN)) {
+						entryTypeOrdering = EntryTypeSorter.of(object.getString(FIELD)) //
+								.withDirection(object.getString(DIRECTION)) //
+								.getOrientedOrdering();
+					} else if (element.equalsIgnoreCase(ATTRIBUTE)) {
+						attributeOrdering = AttributeSorter.of(object.getString(FIELD)) //
+								.withDirection(object.getString(DIRECTION)) //
+								.getOrientedOrdering();
+					}
+				}
+			} catch (final JSONException e) {
+				// nothing to do
+			}
+		}
 	}
 
 	@Override
 	public JsonResponse serialize() {
-
 		final Iterable<? extends CMDomain> allDomains = activeOnly ? dataLogic.findActiveDomains() : dataLogic
 				.findAllDomains();
-		final Iterable<? extends CMDomain> sortedDomains = EntryTypeSorter //
-				.of(ENTRYTYPE_SORTER_PROPERTY) //
-				.getOrdering(ENTRYTYPE_SORTER_DIRECTION) //
-				.sortedCopy(allDomains);
+		final Iterable<? extends CMDomain> sortedDomains = entryTypeOrdering.sortedCopy(allDomains);
 
 		final Collection<JsonElement> jsonDomains = Lists.newArrayList();
 		for (final CMDomain domain : sortedDomains) {
@@ -46,8 +68,6 @@ public class DomainTranslationSerializer extends EntryTypeTranslationSerializer 
 		}
 		return JsonResponse.success(jsonDomains);
 	}
-	
-
 
 	private Collection<JsonField> readFields(final CMDomain domain) {
 		final Collection<JsonField> jsonFields = Lists.newArrayList();

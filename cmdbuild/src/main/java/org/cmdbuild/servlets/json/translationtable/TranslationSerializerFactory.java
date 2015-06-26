@@ -8,6 +8,10 @@ import org.json.JSONArray;
 
 public class TranslationSerializerFactory {
 
+	private static final String LOOKUP = "lookup";
+	private static final String DOMAIN = "domain";
+	private static final String PROCESS = "process";
+	private static final String CLASS = "class";
 	private final DataAccessLogic dataLogic;
 	private final LookupStore lookupStore;
 	private final TranslationLogic logic;
@@ -29,17 +33,16 @@ public class TranslationSerializerFactory {
 	}
 
 	public TranslationSerializer createSerializer() {
-		// TODO: remove and move to specific serializers
-		if (type.equalsIgnoreCase("class")) {
-			return new ClassTranslationSerializer(dataLogic, activeOnly, logic);
-		} else if (type.equalsIgnoreCase("process")) {
-			return new ProcessTranslationSerializer(dataLogic, activeOnly, logic);
-		} else if (type.equalsIgnoreCase("domain")) {
-			return new DomainTranslationSerializer(dataLogic, activeOnly, logic);
-		} else if (type.equalsIgnoreCase("lookup")) {
-			return new LookupTranslationSerializer(lookupStore, activeOnly, logic);
+		if (type.equalsIgnoreCase(CLASS)) {
+			return new ClassTranslationSerializer(dataLogic, activeOnly, logic, sorters);
+		} else if (type.equalsIgnoreCase(PROCESS)) {
+			return new ProcessTranslationSerializer(dataLogic, activeOnly, logic, sorters);
+		} else if (type.equalsIgnoreCase(DOMAIN)) {
+			return new DomainTranslationSerializer(dataLogic, activeOnly, logic, sorters);
+		} else if (type.equalsIgnoreCase(LOOKUP)) {
+			return new LookupTranslationSerializer(lookupStore, activeOnly, logic, sorters);
 		} else {
-			return null;
+			throw new IllegalArgumentException("type '" + type + "' unsupported");
 		}
 	}
 

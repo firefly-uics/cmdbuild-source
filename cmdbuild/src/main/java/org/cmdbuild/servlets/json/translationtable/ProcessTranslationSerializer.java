@@ -7,14 +7,15 @@ import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.logic.translation.TranslationLogic;
 import org.cmdbuild.servlets.json.management.JsonResponse;
+import org.json.JSONArray;
 
 import com.google.common.base.Predicate;
 
 public class ProcessTranslationSerializer extends ClassTranslationSerializer {
 
-	public ProcessTranslationSerializer(final DataAccessLogic dataLogic, final boolean activeOnly,
-			final TranslationLogic translationLogic) {
-		super(dataLogic, activeOnly, translationLogic);
+	ProcessTranslationSerializer(final DataAccessLogic dataLogic, final boolean activeOnly,
+			final TranslationLogic translationLogic, final JSONArray sorters) {
+		super(dataLogic, activeOnly, translationLogic, sorters);
 	}
 
 	@Override
@@ -36,10 +37,7 @@ public class ProcessTranslationSerializer extends ClassTranslationSerializer {
 				}
 			});
 		}
-		final Iterable<? extends CMClass> sortedProcesses = EntryTypeSorter //
-				.of(ENTRYTYPE_SORTER_PROPERTY) //
-				.getOrdering(ENTRYTYPE_SORTER_DIRECTION) //
-				.sortedCopy(onlyProcessess);
+		final Iterable<? extends CMClass> sortedProcesses = entryTypeOrdering.sortedCopy(onlyProcessess);
 		return serialize(sortedProcesses);
 	}
 

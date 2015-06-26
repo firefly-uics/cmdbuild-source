@@ -84,19 +84,9 @@ public class Translation extends JSONBaseWithSpringContext {
 			@Parameter(value = SORT, required = false) JSONArray sorters, //
 			@Parameter(value = ACTIVE, required = false) final boolean activeOnly //
 	) throws JSONException {
+		
+		mockSorters(sorters);
 
-		final JSONObject classSorter = new JSONObject();
-		classSorter.put("element", "class");
-		classSorter.put("property", "description");
-		classSorter.put("direction", "ASC");
-
-		final JSONObject attributeSorter = new JSONObject();
-		classSorter.put("element", "attribute");
-		classSorter.put("property", "index");
-		classSorter.put("direction", "ASC");
-
-		sorters = new JSONArray().put(classSorter);
-		sorters.put(attributeSorter);
 
 		final TranslationSerializerFactory factory = TranslationSerializerFactory //
 				.newInstance() //
@@ -109,6 +99,23 @@ public class Translation extends JSONBaseWithSpringContext {
 
 		final TranslationSerializer serializer = factory.createSerializer();
 		return serializer.serialize();
+	}
+
+	private void mockSorters(JSONArray sorters) throws JSONException {
+		
+		final JSONObject classSorter = new JSONObject();
+		classSorter.put("element", "class");
+		classSorter.put("property", "description");
+		classSorter.put("direction", "ASC");
+
+		final JSONObject attributeSorter = new JSONObject();
+		classSorter.put("element", "attribute");
+		classSorter.put("property", "index");
+		classSorter.put("direction", "ASC");
+
+		sorters = new JSONArray().put(classSorter);
+		sorters.put(attributeSorter);
+		
 	}
 
 	private Converter createConverter(final String type, final String field) {

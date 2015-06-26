@@ -1,13 +1,11 @@
 package org.cmdbuild.servlets.json.translationtable;
 
-import static org.cmdbuild.servlets.json.CommunicationConstants.DESCRIPTION;
-import static org.cmdbuild.servlets.json.CommunicationConstants.INDEX;
-
 import java.util.Collection;
 import java.util.Map;
 
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
+import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.logic.translation.TranslationLogic;
 import org.cmdbuild.logic.translation.TranslationObject;
@@ -16,6 +14,7 @@ import org.cmdbuild.logic.translation.converter.ClassConverter;
 import org.cmdbuild.servlets.json.management.JsonResponse;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Ordering;
 
 public abstract class EntryTypeTranslationSerializer implements TranslationSerializer {
 
@@ -23,13 +22,10 @@ public abstract class EntryTypeTranslationSerializer implements TranslationSeria
 	final TranslationLogic translationLogic;
 	final boolean activeOnly;
 
-	// TODO make it configurable
-	static final String ENTRYTYPE_SORTER_PROPERTY = DESCRIPTION;
-	static final String ENTRYTYPE_SORTER_DIRECTION = "ASC";
-	static final String ATTRIBUTE_SORTER_PROPERTY = INDEX;
-	static final String ATTRIBUTE_SORTER_DIRECTION = "ASC";
+	Ordering<CMEntryType> entryTypeOrdering = EntryTypeSorter.DEFAULT.getOrientedOrdering();
+	Ordering<CMAttribute> attributeOrdering = AttributeSorter.DEFAULT.getOrientedOrdering();
 
-	public EntryTypeTranslationSerializer(final DataAccessLogic dataLogic, final boolean activeOnly,
+	EntryTypeTranslationSerializer(final DataAccessLogic dataLogic, final boolean activeOnly,
 			final TranslationLogic translationLogic) {
 		this.dataLogic = dataLogic;
 		this.activeOnly = activeOnly;
@@ -40,10 +36,7 @@ public abstract class EntryTypeTranslationSerializer implements TranslationSeria
 	public abstract JsonResponse serialize();
 
 	Iterable<? extends CMAttribute> sortAttributes(final Iterable<? extends CMAttribute> allAttributes) {
-		final Iterable<? extends CMAttribute> sortedAttributes = AttributeSorter //
-				.of(ATTRIBUTE_SORTER_PROPERTY) //
-				.getOrdering(ATTRIBUTE_SORTER_DIRECTION) //
-				.sortedCopy(allAttributes);
+		final Iterable<? extends CMAttribute> sortedAttributes = attributeOrdering.sortedCopy(allAttributes);
 		return sortedAttributes;
 	}
 

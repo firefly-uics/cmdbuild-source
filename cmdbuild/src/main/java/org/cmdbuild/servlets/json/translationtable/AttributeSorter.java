@@ -1,5 +1,7 @@
 package org.cmdbuild.servlets.json.translationtable;
 
+import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
+
 import org.apache.commons.lang3.StringUtils;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 
@@ -9,42 +11,49 @@ enum AttributeSorter {
 
 	NAME("name") {
 		@Override
-		protected Ordering<CMAttribute> getOrdering() {
+		protected Ordering<CMAttribute> getOrderingForProperty() {
 			return ORDER_ATTRIBUTE_BY_NAME;
 		}
 	},
 	DESCRIPTION("description") {
 		@Override
-		protected Ordering<CMAttribute> getOrdering() {
+		protected Ordering<CMAttribute> getOrderingForProperty() {
 			return ORDER_ATTRIBUTE_BY_DESCRIPTION;
 		}
 	},
 	INDEX("index") {
 		@Override
-		protected Ordering<CMAttribute> getOrdering() {
+		protected Ordering<CMAttribute> getOrderingForProperty() {
 			return ORDER_ATTRIBUTE_BY_INDEX;
 		}
 	},
-	UNDEFINED(StringUtils.EMPTY) {
+	DEFAULT(StringUtils.EMPTY) {
 		@Override
-		protected Ordering<CMAttribute> getOrdering() {
-			throw new UnsupportedOperationException();
+		protected Ordering<CMAttribute> getOrderingForProperty() {
+			return DEFAULT_ORDER;
 		}
 	};
 
 	private final String sorter;
+	private String direction;
 
 	private AttributeSorter(final String sorter) {
 		this.sorter = sorter;
 	}
 
-	abstract Ordering<CMAttribute> getOrdering();
+	abstract Ordering<CMAttribute> getOrderingForProperty();
 
-	Ordering<CMAttribute> getOrdering(final String direction) {
+	public AttributeSorter withDirection(final String direction) {
+		this.direction = direction;
+		return this;
+	}
+
+	Ordering<CMAttribute> getOrientedOrdering() {
+		direction = defaultIfBlank(direction, "ASC");
 		if (direction.equalsIgnoreCase("DESC")) {
-			return getOrdering().reverse();
+			return getOrderingForProperty().reverse();
 		} else {
-			return getOrdering();
+			return getOrderingForProperty();
 		}
 	}
 
@@ -54,7 +63,7 @@ enum AttributeSorter {
 				return element;
 			}
 		}
-		return UNDEFINED;
+		return DEFAULT;
 	}
 
 	private static final Ordering<CMAttribute> ORDER_ATTRIBUTE_BY_NAME = new Ordering<CMAttribute>() {
@@ -77,5 +86,7 @@ enum AttributeSorter {
 			return left.getIndex() > right.getIndex() ? +1 : left.getIndex() < right.getIndex() ? -1 : 0;
 		}
 	};
+
+	private static final Ordering<CMAttribute> DEFAULT_ORDER = ORDER_ATTRIBUTE_BY_INDEX;
 
 }

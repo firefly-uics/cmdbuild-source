@@ -1,5 +1,7 @@
 package org.cmdbuild.servlets.json.translationtable;
 
+import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
+
 import org.apache.commons.lang3.StringUtils;
 import org.cmdbuild.data.store.lookup.LookupType;
 
@@ -9,30 +11,37 @@ enum LookupTypeSorter {
 
 	DESCRIPTION("description") {
 		@Override
-		protected Ordering<LookupType> getOrdering() {
+		protected Ordering<LookupType> getOrderingForProperty() {
 			return ORDER_LOOKUPTYPE_BY_DESCRIPTION;
 		}
 	},
-	UNDEFINED(StringUtils.EMPTY) {
+	DEFAULT(StringUtils.EMPTY) {
 		@Override
-		protected Ordering<LookupType> getOrdering() {
-			throw new UnsupportedOperationException();
+		protected Ordering<LookupType> getOrderingForProperty() {
+			return DEFAULT_ORDER;
 		}
 	};
 
 	private final String sorter;
+	private String direction;
 
 	private LookupTypeSorter(final String sorter) {
 		this.sorter = sorter;
 	}
 
-	abstract Ordering<LookupType> getOrdering();
+	public LookupTypeSorter withDirection(final String direction) {
+		this.direction = direction;
+		return this;
+	}
 
-	Ordering<LookupType> getOrdering(final String direction) {
+	abstract Ordering<LookupType> getOrderingForProperty();
+
+	Ordering<LookupType> getOrientedOrdering() {
+		direction = defaultIfBlank(direction, "ASC");
 		if (direction.equalsIgnoreCase("DESC")) {
-			return getOrdering().reverse();
+			return getOrderingForProperty().reverse();
 		} else {
-			return getOrdering();
+			return getOrderingForProperty();
 		}
 	}
 
@@ -42,9 +51,9 @@ enum LookupTypeSorter {
 				return element;
 			}
 		}
-		return UNDEFINED;
+		return DEFAULT;
 	}
-	
+
 	/*
 	 * what the client calls 'description' for the server is 'name'
 	 */
@@ -54,5 +63,7 @@ enum LookupTypeSorter {
 			return left.name.compareTo(right.name);
 		}
 	};
+
+	private static final Ordering<LookupType> DEFAULT_ORDER = ORDER_LOOKUPTYPE_BY_DESCRIPTION;
 
 }
