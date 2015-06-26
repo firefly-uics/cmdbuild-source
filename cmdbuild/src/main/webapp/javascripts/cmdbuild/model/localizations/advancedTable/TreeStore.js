@@ -13,7 +13,7 @@
 			{ name: CMDBuild.core.proxy.Constants.PARENT, type: 'auto' }, // Parent node
 			{ name: CMDBuild.core.proxy.Constants.TEXT, type: 'string'}, // Label to display in grid's tree column (usually name attribute)
 			{ name: CMDBuild.core.proxy.Constants.TYPE, type: 'string'} // Entity type identifier (class, attributeclass, domain, attributedomain, filter, instancename, lookupvalue, menuitem, report, view, classwidget)
-			],
+		],
 
 		/**
 		 * Complete fields properties with all configured languages

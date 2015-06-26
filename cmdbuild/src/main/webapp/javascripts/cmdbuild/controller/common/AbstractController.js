@@ -37,6 +37,11 @@
 		stringToFunctionNameMap: {},
 
 		/**
+		 * @cfg {String}
+		 */
+		titleSeparator: ' - ',
+
+		/**
 		 * @property {Object}
 		 */
 		view: undefined,
@@ -150,6 +155,24 @@
 		 */
 		getView: function() {
 			return this.view;
+		},
+
+		/**
+		 * Setup view panel title as a breadcrumbs component
+		 *
+		 * @param {String} titlePart
+		 */
+		setViewTitle: function(titlePart) {
+			if (
+				!Ext.isEmpty(this.view)
+				&& !Ext.isEmpty(this.view.baseTitle)
+			) {
+				if (Ext.isEmpty(titlePart)) {
+					this.view.setTitle(this.view.baseTitle);
+				} else {
+					this.view.setTitle(this.view.baseTitle + this.titleSeparator + titlePart);
+				}
+			}
 		},
 
 		/**

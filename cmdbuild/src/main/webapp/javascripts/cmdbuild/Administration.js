@@ -308,14 +308,12 @@
 						groupsAccordion = Ext.create('CMDBuild.view.administration.accordion.Groups', { cmName: 'groups' });
 						groupsAccordion.updateStore();
 
-						menuAccordion = new CMDBuild.view.administration.accordion.CMMenuAccordion({
-							cmControllerType: CMDBuild.controller.accordion.CMMenuAccordionController
-						});
-						menuAccordion.updateStore();
+						menuAccordion = Ext.create('CMDBuild.view.administration.accordion.Menu', { cmName: 'menu' });
 
 						_CMMainViewportController.addPanel([
-							new CMDBuild.Administration.ModMenu({
-								cmControllerType: controllerNS.administration.menu.CMModMenuController
+							Ext.create('CMDBuild.view.administration.menu.MenuView', {
+								cmControllerType: 'CMDBuild.controller.administration.menu.Menu',
+								cmName: 'menu'
 							}),
 							new CMDBuild.view.administration.group.CMModGroup({
 								cmControllerType: controllerNS.administration.group.CMModGroupsController

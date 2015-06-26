@@ -41,7 +41,6 @@
 <script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxyGIS.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxyGroup.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxyIcon.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxyMenu.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxyNavigationTrees.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxyWidgetConfiguration.js"></script>
 

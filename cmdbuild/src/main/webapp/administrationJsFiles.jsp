@@ -77,11 +77,6 @@
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/lookup/CMLookupGrid.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/lookup/CMModLookup.js"></script>
 
-	<!-- MENU  -->
-	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/accordion/CMMenuAccordion.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/menu/CMMenuPanel.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/menu/CMModMenu.js"></script>
-
 	<!-- NAVIGATION TREES -->
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/accordion/CMNavigationTreesAccordion.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/navigationTrees/CMNavigationTreesForm.js"></script>
@@ -145,10 +140,6 @@
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/dashboard/CMDashboardChartConfigurationPanelController.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/dashboard/CMDashboardPropertiesPanelController.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/dashboard/CMModDashboardController.js"></script>
-
-	<!-- MENU -->
-	<script type="text/javascript" src="javascripts/cmdbuild/controller/accordion/CMMenuAccordionController.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/menu/CMModMenuController.js"></script>
 
 	<!-- NAVIGATION TREES -->
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/accordion/CMNavigationTreesAccordionController.js"></script>

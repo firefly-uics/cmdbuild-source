@@ -26,7 +26,7 @@
 		singleton: true,
 
 		/**
-		 * @property {Object} parameters
+		 * @param {Object} parameters
 		 */
 		get: function(parameters) {
 			CMDBuild.Ajax.request({
@@ -43,7 +43,7 @@
 		},
 
 		/**
-		 * @property {String} type
+		 * @param {String} type
 		 *
 		 * @return {Ext.data.Store}
 		 */
@@ -96,7 +96,7 @@
 		},
 
 		/**
-		 * @property {Object} parameters
+		 * @param {Object} parameters
 		 */
 		readAll: function(parameters) {
 			CMDBuild.Ajax.request({
@@ -113,7 +113,7 @@
 		},
 
 		/**
-		 * @property {Object} parameters
+		 * @param {Object} parameters
 		 */
 		save: function(parameters) {
 			CMDBuild.Ajax.request({
@@ -130,7 +130,7 @@
 		},
 
 		/**
-		 * @property {Object} parameters
+		 * @param {Object} parameters
 		 */
 		saveType: function(parameters) {
 			CMDBuild.Ajax.request({
@@ -147,7 +147,7 @@
 		},
 
 		/**
-		 * @property {Object} parameters
+		 * @param {Object} parameters
 		 */
 		setDisabled: function(parameters, disable) {
 			CMDBuild.Ajax.request({
@@ -165,7 +165,7 @@
 
 		// Deprecated methods
 		/**
-		 * @property {String} type
+		 * @param {String} type
 		 *
 		 * @return {Ext.data.Store}
 		 *
@@ -178,7 +178,7 @@
 		},
 
 		/**
-		 * @property {Object} parameters
+		 * @param {Object} parameters
 		 *
 		 * @deprecated
 		 */
@@ -189,7 +189,7 @@
 		},
 
 		/**
-		 * @property {Object} parameters
+		 * @param {Object} parameters
 		 *
 		 * @deprecated
 		 */
@@ -200,7 +200,7 @@
 		},
 
 		/**
-		 * @property {Object} parameters
+		 * @param {Object} parameters
 		 *
 		 * @deprecated
 		 */

@@ -1,6 +1,6 @@
 (function() {
 
-	Ext.define('CMDBuild.core.proxy.Domain', {
+	Ext.define('CMDBuild.core.proxy.Menu', {
 
 		requires: [
 			'CMDBuild.core.proxy.Constants',
@@ -10,12 +10,15 @@
 		singleton: true,
 
 		/**
+		 * Read the menu designed for this group. If there are no menu, a default menu is returned. If the configuration of the menu contains some node
+		 * but the group has not the privileges to use it this method does not add it to the menu
+		 *
 		 * @param {Object} parameters
 		 */
-		getAll: function(parameters) {
+		read: function(parameters) {
 			CMDBuild.Ajax.request({
 				method: 'GET',
-				url: CMDBuild.core.proxy.Index.domain.read,
+				url: CMDBuild.core.proxy.Index.menu.read,
 				params: parameters.params,
 				scope: parameters.scope || this,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : false,
@@ -26,26 +29,32 @@
 		},
 
 		/**
-		 * @return {Ext.data.ArrayStore}
+		 * Read the items that are not added to the current menu configuration
+		 *
+		 * @param {Object} parameters
 		 */
-		getCardinalityStore: function() {
-			return Ext.create('Ext.data.ArrayStore', {
-				fields: [CMDBuild.core.proxy.Constants.NAME, CMDBuild.core.proxy.Constants.VALUE],
-				data: [
-					['1:1', '1:1'],
-					['1:N', '1:N'],
-					['N:1', 'N:1'],
-					['N:N', 'N:N']
-				]
+		readAvailableItems: function(parameters) {
+			CMDBuild.Ajax.request({
+				method: 'GET',
+				url: CMDBuild.core.proxy.Index.menu.readAvailableItems,
+				params: parameters.params,
+				scope: parameters.scope || this,
+				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
+				failure: parameters.failure || Ext.emptyFn(),
+				success: parameters.success || Ext.emptyFn(),
+				callback: parameters.callback || Ext.emptyFn()
 			});
 		},
 
 		/**
+		 * Read the full configuration designed for the given group.
+		 *
 		 * @param {Object} parameters
 		 */
-		getList: function(parameters) {
+		readConfiguration: function(parameters) {
 			CMDBuild.Ajax.request({
-				url: CMDBuild.core.proxy.Index.domain.getDomainList,
+				method: 'GET',
+				url: CMDBuild.core.proxy.Index.menu.readConfiguration,
 				params: parameters.params,
 				scope: parameters.scope || this,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
@@ -61,7 +70,7 @@
 		remove: function(parameters) {
 			CMDBuild.Ajax.request({
 				method: 'POST',
-				url: CMDBuild.core.proxy.Index.domain.remove,
+				url: CMDBuild.core.proxy.Index.menu.remove,
 				params: parameters.params,
 				scope: parameters.scope || this,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
@@ -74,10 +83,10 @@
 		/**
 		 * @param {Object} parameters
 		 */
-		update: function(parameters) {
+		save: function(parameters) {
 			CMDBuild.Ajax.request({
 				method: 'POST',
-				url: CMDBuild.core.proxy.Index.domain.update,
+				url: CMDBuild.core.proxy.Index.menu.update,
 				params: parameters.params,
 				scope: parameters.scope || this,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,

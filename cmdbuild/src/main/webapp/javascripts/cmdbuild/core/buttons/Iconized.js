@@ -61,6 +61,13 @@
 		textDefault: CMDBuild.Translation.common.buttons.modify
 	});
 
+	Ext.define('CMDBuild.core.buttons.MoveRight', {
+		extend: 'CMDBuild.core.buttons.Base',
+
+		iconCls: 'arrowRight',
+		textDefault: CMDBuild.Translation.common.buttons.move
+	});
+
 	Ext.define('CMDBuild.core.buttons.Password', {
 		extend: 'CMDBuild.core.buttons.Base',
 

@@ -139,6 +139,7 @@
 		onAdvancedTableBuildStore: function() {
 			return Ext.create('Ext.data.TreeStore', {
 				model: 'CMDBuild.model.localizations.advancedTable.TreeStore',
+
 				root: {
 					text: 'ROOT',
 					expanded: true,

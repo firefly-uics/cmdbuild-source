@@ -96,9 +96,6 @@
 	<script type="text/javascript" src="javascripts/cmdbuild/view/management/utilities/CMModExportCSV.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/management/utilities/CMModImportCSV.js"></script>
 
-	<!-- MENU -->
-	<script type="text/javascript" src="javascripts/cmdbuild/view/management/menu/CMMenuAccordion.js"></script>
-
 	<!-- WORKFLOW -->
 	<script type="text/javascript" src="javascripts/cmdbuild/view/management/workflow/CMModWorkflow.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/management/workflow/CMActivityPanel.js"></script>
@@ -112,7 +109,6 @@
 <!-- CONTROLLER -->
 	<!-- ACCORDION -->
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/management/common/CMFakeIdAccordionController.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/controller/management/menu/CMMenuAccordionController.js"></script>
 
 	<!-- COMMON -->
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/management/classes/CMModCardSubController.js"></script>

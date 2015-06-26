@@ -1,10 +1,9 @@
 (function() {
 
 	var reportAccordion = Ext.create('CMDBuild.view.management.accordion.Reports', { cmName: 'report' });
-
-	// TODO move in common
-	var menuAccordion = new CMDBuild.view.administration.accordion.CMMenuAccordion({
-		cmControllerType: CMDBuild.controller.management.menu.CMMenuAccordionController
+	var menuAccordion = Ext.create('CMDBuild.view.management.accordion.Menu', {
+		cmControllerType: 'CMDBuild.controller.management.accordion.Menu',
+		cmName: 'menu',
 	});
 
 	// TODO move in common
@@ -36,6 +35,7 @@
 			'CMDBuild.core.proxy.Configuration',
 			'CMDBuild.core.proxy.Domain',
 			'CMDBuild.core.proxy.Lookup',
+			'CMDBuild.core.proxy.Menu',
 			'CMDBuild.core.proxy.dataViews.DataViews',
 			'CMDBuild.core.proxy.reports.Reports'
 		],
@@ -295,10 +295,11 @@
 						params[CMDBuild.core.proxy.Constants.GROUP_NAME] = CMDBuild.Runtime.DefaultGroupName;
 						params[CMDBuild.core.proxy.Constants.LOCALIZED] = true;
 
-						CMDBuild.ServiceProxy.menu.read({
+						CMDBuild.core.proxy.Menu.read({
 							params: params,
-							success: function(response, options, decoded) {
-								menuAccordion.updateStore(decoded.menu);
+							scope: this,
+							success: function(response, options, decodedResponse) {
+								menuAccordion.updateStore(decodedResponse.menu);
 							},
 							callback: reqBarrier.getCallback()
 						});
@@ -319,6 +320,20 @@
 				});
 
 				/**
+				 * Domains
+				 */
+				params = {};
+				params[CMDBuild.core.proxy.Constants.ACTIVE] = true;
+
+				CMDBuild.core.proxy.Domain.getAll({
+					params: params,
+					success: function(response, options, decodedResponse) {
+						_CMCache.addDomains(decodedResponse.domains);
+					},
+					callback: reqBarrier.getCallback()
+				});
+
+				/**
 				 * Reports
 				 */
 				CMDBuild.core.proxy.reports.Reports.getTypesTree({
@@ -330,19 +345,6 @@
 					},
 					callback: reqBarrier.getCallback()
 				});
-
-				// Domains
-					params = {};
-					params[CMDBuild.core.proxy.Constants.ACTIVE] = true;
-
-					CMDBuild.core.proxy.Domain.getAll({
-						params: params,
-						success: function(response, options, decodedResponse) {
-							_CMCache.addDomains(decodedResponse.domains);
-						},
-						callback: reqBarrier.getCallback()
-					});
-				// END: Domains
 
 				CMDBuild.ServiceProxy.Dashboard.fullList({
 					success : function(response, options, decoded) {
