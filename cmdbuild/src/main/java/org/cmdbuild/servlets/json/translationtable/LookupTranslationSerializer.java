@@ -1,10 +1,13 @@
 package org.cmdbuild.servlets.json.translationtable;
 
+import static org.cmdbuild.servlets.json.CommunicationConstants.*;
+
 import java.util.Collection;
 import java.util.Map;
 
 import org.cmdbuild.data.store.lookup.Lookup;
 import org.cmdbuild.data.store.lookup.LookupStore;
+import org.cmdbuild.data.store.lookup.LookupType;
 import org.cmdbuild.logic.translation.TranslationLogic;
 import org.cmdbuild.logic.translation.TranslationObject;
 import org.cmdbuild.logic.translation.converter.LookupConverter;
@@ -18,6 +21,13 @@ public class LookupTranslationSerializer implements TranslationSerializer {
 	final boolean activeOnly;
 	final LookupStore lookupStore;
 
+	// TODO make it configurable
+	static final String LOOKUPTYPE_SORTER_PROPERTY = DESCRIPTION;
+	static final String LOOKUPTYPE_SORTER_DIRECTION = "ASC";
+	static final String LOOKUPVALUE_SORTER_PROPERTY = NUMBER;
+	static final String LOOKUPVALUE_SORTER_DIRECTION = "ASC";
+	
+	
 	public LookupTranslationSerializer(final LookupStore lookupStore, final boolean activeOnly,
 			final TranslationLogic translationLogic) {
 		this.lookupStore = lookupStore;
@@ -27,14 +37,26 @@ public class LookupTranslationSerializer implements TranslationSerializer {
 
 	@Override
 	public JsonResponse serialize() {
-		final Iterable<org.cmdbuild.data.store.lookup.LookupType> allTypes = lookupStore.readAllTypes();
+		final Iterable<LookupType> allTypes = lookupStore.readAllTypes();
+		
+		final Iterable<? extends LookupType> sortedLookupTypes = LookupTypeSorter //
+				.of(LOOKUPTYPE_SORTER_PROPERTY) //
+				.getOrdering(LOOKUPTYPE_SORTER_DIRECTION) //
+				.sortedCopy(allTypes);
+		
 		final Collection<JsonLookupType> jsonLookupTypes = Lists.newArrayList();
-		for (final org.cmdbuild.data.store.lookup.LookupType type : allTypes) {
+		for (final LookupType type : sortedLookupTypes) {
 			final Iterable<Lookup> valuesOfType = lookupStore.readAll(type);
+			
+			final Iterable<Lookup> sortedLookupValues = LookupValueSorter //
+					.of(LOOKUPVALUE_SORTER_PROPERTY) //
+					.getOrdering(LOOKUPVALUE_SORTER_DIRECTION) //
+					.sortedCopy(valuesOfType);
+			
 			final Collection<JsonLookupValue> jsonValues = Lists.newArrayList();
 			final JsonLookupType jsonType = new JsonLookupType();
 			jsonType.setDescription(type.name);
-			for (final Lookup value : valuesOfType) {
+			for (final Lookup value : sortedLookupValues) {
 				final JsonLookupValue jsonValue = new JsonLookupValue();
 				final String code = value.code();
 				final String uuid = value.getTranslationUuid();
