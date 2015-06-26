@@ -1,5 +1,7 @@
 package org.cmdbuild.servlets.json.translationtable;
 
+import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
+
 import org.apache.commons.lang3.StringUtils;
 import org.cmdbuild.data.store.lookup.Lookup;
 
@@ -9,42 +11,49 @@ enum LookupValueSorter {
 
 	CODE("code") {
 		@Override
-		protected Ordering<Lookup> getOrdering() {
+		protected Ordering<Lookup> getOrderingForProperty() {
 			return ORDER_LOOKUPVALUE_BY_CODE;
 		}
 	},
 	DESCRIPTION("description") {
 		@Override
-		protected Ordering<Lookup> getOrdering() {
+		protected Ordering<Lookup> getOrderingForProperty() {
 			return ORDER_LOOKUPVALUE_BY_DESCRIPTION;
 		}
 	},
 	NUMBER("number") {
 		@Override
-		protected Ordering<Lookup> getOrdering() {
+		protected Ordering<Lookup> getOrderingForProperty() {
 			return ORDER_LOOKUPVALUE_BY_NUMBER;
 		}
 	},
-	UNDEFINED(StringUtils.EMPTY) {
+	DEFAULT(StringUtils.EMPTY) {
 		@Override
-		protected Ordering<Lookup> getOrdering() {
-			throw new UnsupportedOperationException();
+		protected Ordering<Lookup> getOrderingForProperty() {
+			return DEFAULT_ORDER;
 		}
 	};
 
 	private final String sorter;
+	private String direction;
 
 	private LookupValueSorter(final String sorter) {
 		this.sorter = sorter;
 	}
 
-	abstract Ordering<Lookup> getOrdering();
+	public LookupValueSorter withDirection(final String direction) {
+		this.direction = direction;
+		return this;
+	}
 
-	Ordering<Lookup> getOrdering(final String direction) {
+	abstract Ordering<Lookup> getOrderingForProperty();
+
+	Ordering<Lookup> getOrientedOrdering() {
+		direction = defaultIfBlank(direction, "ASC");
 		if (direction.equalsIgnoreCase("DESC")) {
-			return getOrdering().reverse();
+			return getOrderingForProperty().reverse();
 		} else {
-			return getOrdering();
+			return getOrderingForProperty();
 		}
 	}
 
@@ -54,7 +63,7 @@ enum LookupValueSorter {
 				return element;
 			}
 		}
-		return UNDEFINED;
+		return DEFAULT;
 	}
 
 	private static final Ordering<Lookup> ORDER_LOOKUPVALUE_BY_DESCRIPTION = new Ordering<Lookup>() {
@@ -77,5 +86,7 @@ enum LookupValueSorter {
 			return left.code().compareTo(right.code());
 		}
 	};
+
+	private static final Ordering<Lookup> DEFAULT_ORDER = ORDER_LOOKUPVALUE_BY_NUMBER;
 
 }
