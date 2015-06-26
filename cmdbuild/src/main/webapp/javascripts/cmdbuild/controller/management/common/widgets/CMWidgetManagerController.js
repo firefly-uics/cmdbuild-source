@@ -2,8 +2,11 @@
 
 	// Requires all widget controllers to avoid to include manually
 	// TODO: rename of this class to use property "requires"
-	Ext.require('CMDBuild.controller.management.common.widgets.grid.Grid');
-	Ext.require('CMDBuild.controller.management.common.widgets.ManageEmail');
+	Ext.require([
+		'CMDBuild.controller.management.common.widgets.ManageEmail',
+		'CMDBuild.controller.management.common.widgets.grid.Grid',
+		'CMDBuild.controller.management.common.widgets.manageRelation.CMManageRelationController'
+	]);
 
 	Ext.define("CMDBuild.controller.management.common.CMWidgetManagerController", {
 
@@ -282,8 +285,8 @@
 		// LinkCards
 		addControllerClass(CMDBuild.controller.management.common.widgets.linkCards.LinkCardsController);
 
-		// manageRelation
-		addControllerClass(commonControllers.CMManageRelationController);
+		// ManageRelation
+		addControllerClass(CMDBuild.controller.management.common.widgets.manageRelation.CMManageRelationController);
 
 		// ping
 		addControllerClass(commonControllers.CMPingController);

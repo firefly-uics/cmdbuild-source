@@ -5,8 +5,8 @@
 		OUTPUT = "output",
 		reader = null;
 
-	Ext.define("CMDBuild.controller.management.common.widgets.CMManageRelationController", {
-		extend: "CMDBuild.controller.management.classes.CMCardRelationsController",
+	Ext.define("CMDBuild.controller.management.common.widgets.manageRelation.CMManageRelationController", {
+		extend: "CMDBuild.controller.management.common.widgets.manageRelation.CMCardRelationsController",
 
 		statics: {
 			WIDGET_NAME: ".ManageRelation"
@@ -34,7 +34,7 @@
 
 			this.templateResolverIsBusy = false;
 
-			this.readOnly = !(reader.singleSelection(this.widgetConf) 
+			this.readOnly = !(reader.singleSelection(this.widgetConf)
 				|| reader.multiSelection(this.widgetConf));
 
 			this.idClass = this.targetEntryType.getId();
@@ -92,8 +92,7 @@
 
 		// override
 		beforeActiveView: function() {
-			this.view.addRelationButton.setDomainsForEntryType(this.targetEntryType,
-				this.domain.getId());
+			this.view.addRelationButton.setDomainsForEntryType(this.targetEntryType, this.domain.getId());
 
 			var me = this;
 			this.templateResolver.resolveTemplates({
@@ -177,7 +176,7 @@
 				params: parameters,
 				scope: this,
 				success: function(a,b, response) {
-					if (el) { 
+					if (el) {
 						el.unmask();
 					};
 

@@ -1,20 +1,20 @@
 (function() {
 
+	/**
+	 * Old implementation of relations tab controller class to fix compatibility problems (to delete on widget refactor)
+	 */
+
 	var NO_SELECTION = 'No selection';
 	var parameterNames = CMDBuild.ServiceProxy.parameter;
 
-	Ext.define('CMDBuild.view.management.classes.relations.CMEditRelationWindow', {
+	Ext.define('CMDBuild.view.management.common.widgets.manageRelation.CMEditRelationWindow', {
 		extend: 'CMDBuild.Management.CardListWindow', // To choose the card for the relation
-
-		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
 
 		successCb: Ext.emptyFn,
 
 		// configuration
 			relation: undefined, // {dst_id: '', dst_cid: '', dom_id: '', rel_id: '', masterSide: '_1', slaveSide: '_2', rel_attr: []}
 			sourceCard: undefined, // the source of the relation
-			extraParams: {},
-			classObject: undefined,
 		// configuration
 
 		/**
@@ -42,41 +42,7 @@
 			this.buttonAlign = 'center';
 			this.buttons = [this.saveButton, this.abortButton];
 
-			// Setup advancedFilter to exclude cards from hidden classes
-			var attributesAndConditionArray = [];
-			var disabledArray = this.classObject.get(CMDBuild.core.proxy.CMProxyConstants.ID) == this.domain.get('idClass1') ? this.domain.get('disabled1') : this.domain.get('disabled2');
-
-			if (!Ext.isEmpty(disabledArray)) {
-				// HACK to avoid filter error for a and condition with only one parameter
-				attributesAndConditionArray.push({
-					'simple': {
-						'attribute': 'IdClass',
-						'operator': 'notequal',
-						'value': [parseInt(_CMCache.getEntryTypeByName(disabledArray[0]).get(CMDBuild.core.proxy.CMProxyConstants.ID))]
-					}
-				});
-
-				Ext.Array.forEach(disabledArray, function(className, i, allClassesNames) {
-					attributesAndConditionArray.push({
-						'simple': {
-							'attribute': 'IdClass',
-							'operator': 'notequal',
-							'value': [parseInt(_CMCache.getEntryTypeByName(className).get(CMDBuild.core.proxy.CMProxyConstants.ID))]
-						}
-					});
-				}, this);
-
-				this.extraParams = {
-						'attribute': {
-							'and': attributesAndConditionArray
-						}
-				};
-			}
-
 			this.callParent(arguments);
-
-			this.grid.applyFilterToStore();
-			this.grid.getStore().load();
 		},
 
 		/**

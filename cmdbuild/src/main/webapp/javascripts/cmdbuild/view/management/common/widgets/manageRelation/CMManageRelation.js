@@ -1,6 +1,7 @@
 (function() {
-	Ext.define("CMDBuild.view.management.common.widgets.CMManageRelation", {
-		extend: "CMDBuild.view.management.classes.CMCardRelationsPanel",
+
+	Ext.define("CMDBuild.view.management.common.widgets.manageRelation.CMManageRelation", {
+		extend: "CMDBuild.view.management.common.widgets.manageRelation.CMCardRelationsPanel",
 
 		statics: {
 			WIDGET_NAME: ".ManageRelation"
@@ -22,7 +23,7 @@
 			this.border= false;
 			this.frame = false;
 			this.cls = "x-panel-body-default-framed";
-			this.cmWithAddButton = reader.canCreateAndLinkCard(this.widgetConf) 
+			this.cmWithAddButton = reader.canCreateAndLinkCard(this.widgetConf)
 					|| reader.canCreateRelation(this.widgetConf);
 
 			this.callParent(arguments);
@@ -45,7 +46,7 @@
 					}
 				})(record);
 
-			if (reader.singleSelection(widget) 
+			if (reader.singleSelection(widget)
 					|| reader.multiSelection(widget)) {
 
 				var type = reader.singleSelection(widget) ? 'radio' : 'checkbox';
