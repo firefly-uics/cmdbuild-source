@@ -40,7 +40,7 @@ public class ProcessTranslationSerializer extends ClassTranslationSerializer {
 				.of(ENTRYTYPE_SORTER_PROPERTY) //
 				.getOrdering(ENTRYTYPE_SORTER_DIRECTION) //
 				.sortedCopy(onlyProcessess);
-		return readStructure(sortedProcesses);
+		return serialize(sortedProcesses);
 	}
 
 }

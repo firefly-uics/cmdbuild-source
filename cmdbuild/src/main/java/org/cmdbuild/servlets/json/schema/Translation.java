@@ -82,9 +82,8 @@ public class Translation extends JSONBaseWithSpringContext {
 	public JsonResponse readStructure( //
 			@Parameter(value = TYPE) final String type, //
 			@Parameter(value = SORT, required = false) JSONArray sorters, //
-			@Parameter(value = ACTIVE, required = false) boolean activeOnly //
+			@Parameter(value = ACTIVE, required = false) final boolean activeOnly //
 	) throws JSONException {
-		activeOnly = true;
 
 		final JSONObject classSorter = new JSONObject();
 		classSorter.put("element", "class");

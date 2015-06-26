@@ -14,7 +14,7 @@ import org.cmdbuild.servlets.json.management.JsonResponse;
 
 import com.google.common.collect.Lists;
 
-public class DomainTranslationSerializer extends ClassTranslationSerializer {
+public class DomainTranslationSerializer extends EntryTypeTranslationSerializer {
 
 	public DomainTranslationSerializer(final DataAccessLogic dataLogic, final boolean activeOnly,
 			final TranslationLogic translationLogic) {
@@ -46,6 +46,8 @@ public class DomainTranslationSerializer extends ClassTranslationSerializer {
 		}
 		return JsonResponse.success(jsonDomains);
 	}
+	
+
 
 	private Collection<JsonField> readFields(final CMDomain domain) {
 		final Collection<JsonField> jsonFields = Lists.newArrayList();
