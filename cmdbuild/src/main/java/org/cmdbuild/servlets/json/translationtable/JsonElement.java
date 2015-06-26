@@ -1,4 +1,4 @@
-package org.cmdbuild.servlets.json.translation;
+package org.cmdbuild.servlets.json.translationtable;
 
 import static org.cmdbuild.servlets.json.CommunicationConstants.NAME;
 
@@ -8,24 +8,24 @@ import org.codehaus.jackson.annotate.JsonProperty;
 
 public class JsonElement {
 	private static final String FIELDS = "fields";
-	private static final String CHILDREN = "children";
+	private static final String ATTRIBUTES = "attributes";
 	private String name;
 	private Collection<JsonField> fields;
-	private Collection<JsonElement> children;
+	private Collection<JsonElement> attributes;
 
 	@JsonProperty(NAME)
 	public String getName() {
 		return name;
 	}
-	
+
 	@JsonProperty(FIELDS)
 	public Collection<JsonField> getFields() {
 		return fields;
 	}
 
-	@JsonProperty(CHILDREN)
-	public Collection<JsonElement> getChildren() {
-		return children;
+	@JsonProperty(ATTRIBUTES)
+	public Collection<JsonElement> getAttributes() {
+		return attributes;
 	}
 
 	public void setName(final String name) {
@@ -35,9 +35,9 @@ public class JsonElement {
 	public void setFields(final Collection<JsonField> fields) {
 		this.fields = fields;
 	}
-	
-	public void setChildren(Collection<JsonElement> children) {
-		this.children = children;
+
+	public void setAttributes(final Collection<JsonElement> attributes) {
+		this.attributes = attributes;
 	}
 
 }

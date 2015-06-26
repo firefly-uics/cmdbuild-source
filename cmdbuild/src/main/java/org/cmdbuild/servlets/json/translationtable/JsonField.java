@@ -1,4 +1,4 @@
-package org.cmdbuild.servlets.json.translation;
+package org.cmdbuild.servlets.json.translationtable;
 
 import static org.cmdbuild.servlets.json.CommunicationConstants.NAME;
 import static org.cmdbuild.servlets.json.CommunicationConstants.TRANSLATIONS;
@@ -8,7 +8,7 @@ import java.util.Map;
 import org.codehaus.jackson.annotate.JsonProperty;
 
 public class JsonField {
-	
+
 	private static final String VALUE = "value";
 	private String name;
 	private String value;
