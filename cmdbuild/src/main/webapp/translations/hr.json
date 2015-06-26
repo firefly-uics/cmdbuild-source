@@ -406,24 +406,6 @@
 		"modconnectors": {
 			"title": "Vezni programi"
 		},
-		"modmenu": {
-			"add_menu": "Dodaj meni",
-			"available_elements": "Dostupni elementi",
-			"availabletree": {
-				"class": "Klase",
-				"dashboard": "Kontrolne ploče",
-				"processclass": "Aktivnosti",
-				"report": "Izvještaji",
-				"view": "Pogledi"
-			},
-			"custom_menu": "Osobni meni",
-			"custom_menus": "Osobni meniji",
-			"delete_menu": "Ukloni meni",
-			"menu_root": "Meni",
-			"modify_menu": "Izmjeni meni",
-			"new_folder": "Novi direktorij",
-			"title": "Upravljanje menijima"
-		},
 		"modsecurity": {
 			"defaultgroup": "* Zadana grupa*",
 			"group": {
@@ -609,6 +591,7 @@
 			"importLabel": "Uvezi",
 			"load": "Učitaj",
 			"modify": "Izmjeni",
+			"move": "<em>Move</em>",
 			"next": "<em>Next</em>",
 			"previous": "<em>Previous</em>",
 			"print": "Ispiši",
@@ -1101,9 +1084,6 @@
 			"showgraph": "Prikaži u grafu",
 			"shownotes": "Prikaži napomene"
 		},
-		"modmenu": {
-			"menu": "Navigacija"
-		},
 		"modutilities": {
 			"bulkupdate": {
 				"title": "Grupna izmjena kartica",
@@ -1248,6 +1228,7 @@
 	"attention": "Pažnja",
 	"attribute": "<em>Attribute</em>",
 	"attributes": "Atributi",
+	"availableElements": "Dostupni elementi",
 	"availableFilters": "Dostupni filteri",
 	"baseProperties": "Osnovna obilježja",
 	"bcc": "Bcc",
@@ -1287,6 +1268,7 @@
 	"credentials": "Podaci za pristup",
 	"csv": "CSV",
 	"csvFile": "CSV datoteka",
+	"customMenu": "Osobni meni",
 	"dataSource": "Izvor podataka",
 	"defaultAccount": "<em>Default account</em>",
 	"defaultClass": "Podrazumijevana klasa",
@@ -1390,6 +1372,7 @@
 	"masterDetailLabel": "Naziv veze nadređeni/podređeni (Master/Detail)",
 	"masterReportJrxml": "Izbor glavnog izvještaja (.jrxml)",
 	"maximumLevel": "Maksimalan broj nivoa koji se mogu odabrati",
+	"menu": "Meni",
 	"mode": "<em>Mode</em>",
 	"modifyAccount": "<em>Modify account</em>",
 	"modifyDomain": "Izmijeni domenu",
@@ -1401,6 +1384,8 @@
 	"modifyView": "Uredi prikaz",
 	"multiGroup": "Višestruka grupa",
 	"name": "Naziv",
+	"navigation": "Navigacija",
+	"newFolder": "Novi direktorij",
 	"noAvailableData": "<em>No available data</em>",
 	"no_bim_project_for_card": "<em>There is no BIM project for this card</em>",
 	"not_set": "Nije postavljeno",
@@ -1439,6 +1424,7 @@
 	"remove": "<em>Remove</em>",
 	"removeAccount": "<em>Remove account</em>",
 	"removeFilter": "Ukloni filter",
+	"removeMenu": "Ukloni meni",
 	"removeProject": "<em>Remove Project</em>",
 	"removeReport": "Ukloni izvještaj",
 	"removeTemplate": "Ukloni Predložak",

@@ -406,24 +406,6 @@
 		"modconnectors": {
 			"title": "Connectors"
 		},
-		"modmenu": {
-			"add_menu": "Add Menu",
-			"available_elements": "Available Elements",
-			"availabletree": {
-				"class": "Classes",
-				"dashboard": "Dashboards",
-				"processclass": "Activities",
-				"report": "Reports",
-				"view": "Views"
-			},
-			"custom_menu": "Custom Menu",
-			"custom_menus": "Custom Menus",
-			"delete_menu": "Delete Menu",
-			"menu_root": "Menu",
-			"modify_menu": "Modify Menu",
-			"new_folder": "New Folder",
-			"title": "Menu Management"
-		},
 		"modsecurity": {
 			"defaultgroup": "* Default *",
 			"group": {
@@ -609,6 +591,7 @@
 			"importLabel": "Import",
 			"load": "Load",
 			"modify": "Modify",
+			"move": "Move",
 			"next": "Next",
 			"previous": "Previous",
 			"print": "Print",
@@ -1101,9 +1084,6 @@
 			"showgraph": "Show graph",
 			"shownotes": "Show notes"
 		},
-		"modmenu": {
-			"menu": "Navigation"
-		},
 		"modutilities": {
 			"bulkupdate": {
 				"title": "Multiple update",
@@ -1248,6 +1228,7 @@
 	"attention": "Attention",
 	"attribute": "Attribute",
 	"attributes": "Attributes",
+	"availableElements": "Available elements",
 	"availableFilters": "Available Filters",
 	"baseProperties": "Base properties",
 	"bcc": "Bcc",
@@ -1289,6 +1270,7 @@
 	"credentials": "Credentials",
 	"csv": "CSV",
 	"csvFile": "CSV file",
+	"customMenu": "Custom menu",
 	"dataSource": "Data source",
 	"defaultAccount": "Default account",
 	"defaultClass": "Default class",
@@ -1394,6 +1376,7 @@
 	"masterDetailLabel": "Master/Detail label",
 	"masterReportJrxml": "Master report (.jrxml)",
 	"maximumLevel": "Maximum level",
+	"menu": "Menu",
 	"mode": "Mode",
 	"modifyAccount": "Modify account",
 	"modifyDomain": "Modify domain",
@@ -1405,6 +1388,8 @@
 	"modifyView": "Modify view",
 	"multiGroup": "Multi group",
 	"name": "Name",
+	"navigation": "Navigation",
+	"newFolder": "New folder",
 	"noAvailableData": "No available data",
 	"no_bim_project_for_card": "There is no BIM project for this card",
 	"not_set": "Not set",
@@ -1443,6 +1428,7 @@
 	"remove": "Remove",
 	"removeAccount": "Remove account",
 	"removeFilter": "Remove filter",
+	"removeMenu": "Remove menu",
 	"removeProject": "Remove project",
 	"removeReport": "Remove report",
 	"removeTemplate": "Remove template",

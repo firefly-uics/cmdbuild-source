@@ -406,24 +406,6 @@
 		"modconnectors": {
 			"title": "اتصالات"
 		},
-		"modmenu": {
-			"add_menu": "اضافه کردن منو",
-			"available_elements": "المانهای در دسترس",
-			"availabletree": {
-				"class": "کلاسها",
-				"dashboard": "داشبورد",
-				"processclass": "فعالیتها",
-				"report": "گزارشها",
-				"view": "نمایش"
-			},
-			"custom_menu": "منوی سفارشی",
-			"custom_menus": "منوهای سفارشی",
-			"delete_menu": "حذف منو",
-			"menu_root": "منو",
-			"modify_menu": "تغییر منو",
-			"new_folder": "پوشه جدید",
-			"title": "مدیریت منوها"
-		},
 		"modsecurity": {
 			"defaultgroup": "* پیش فرض *",
 			"group": {
@@ -609,6 +591,7 @@
 			"importLabel": "ورودی دادن",
 			"load": "لود",
 			"modify": "ویرایش",
+			"move": "<em>Move</em>",
 			"next": "بعدی",
 			"previous": "قبلی",
 			"print": "چاپ",
@@ -1101,9 +1084,6 @@
 			"showgraph": "نمایش گراف",
 			"shownotes": "نمایش یاداشتها"
 		},
-		"modmenu": {
-			"menu": "هدایت"
-		},
 		"modutilities": {
 			"bulkupdate": {
 				"title": "آپدیت چندگانه",
@@ -1248,6 +1228,7 @@
 	"attention": "توجه",
 	"attribute": "خاصیت",
 	"attributes": "خواص",
+	"availableElements": "المانهای در دسترس",
 	"availableFilters": "فیلترهای موجود",
 	"baseProperties": "ویژگی های پایه",
 	"bcc": "Bcc",
@@ -1287,6 +1268,7 @@
 	"credentials": "اعتبارات",
 	"csv": "CSV",
 	"csvFile": "<em>CSV file</em>",
+	"customMenu": "منوی سفارشی",
 	"dataSource": "منبع اطلاعات",
 	"defaultAccount": "<em>Default account</em>",
 	"defaultClass": "Default class",
@@ -1390,6 +1372,7 @@
 	"masterDetailLabel": "Master/Detail Label",
 	"masterReportJrxml": "Master report (.jrxml)",
 	"maximumLevel": "Maximum level",
+	"menu": "منو",
 	"mode": "مد",
 	"modifyAccount": "تغییر حساب",
 	"modifyDomain": "تغییر دامنه",
@@ -1401,6 +1384,8 @@
 	"modifyView": "ویرایش نمایش",
 	"multiGroup": "چند گروهی",
 	"name": "نام",
+	"navigation": "هدایت",
+	"newFolder": "پوشه جدید",
 	"noAvailableData": "<em>No available data</em>",
 	"no_bim_project_for_card": "There is no BIM project for this card",
 	"not_set": "Not set",
@@ -1439,6 +1424,7 @@
 	"remove": "Remove",
 	"removeAccount": "حذف حساب",
 	"removeFilter": "حذف فیلتر",
+	"removeMenu": "حذف منو",
 	"removeProject": "حذف پروژه",
 	"removeReport": "حذف گزارش",
 	"removeTemplate": "حذف قالب",

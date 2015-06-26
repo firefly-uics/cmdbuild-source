@@ -406,24 +406,6 @@
 		"modconnectors": {
 			"título": "Conectores"
 		},
-		"modmenu": {
-			"add_menu": "Adicionar Menu",
-			"available_elements": "Elementos Disponíveis",
-			"availabletree": {
-				"class": "Classes",
-				"dashboard": "Dashboards",
-				"processclass": "Atividades",
-				"report": "Relatórios",
-				"view": "Visualizações"
-			},
-			"custom_menu": "Menu customizado",
-			"custom_menus": "Menus customizados",
-			"delete_menu": "Remover menu",
-			"menu_root": "Menu",
-			"modify_menu": "Modificar menu",
-			"new_folder": "Nova Pasta",
-			"title": "Gerenciamento do Menu"
-		},
 		"modsecurity": {
 			"defaultgroup": "* Default *",
 			"group": {
@@ -609,6 +591,7 @@
 			"importLabel": "Importar",
 			"load": "Carregar",
 			"modify": "Modificar",
+			"move": "<em>Move</em>",
 			"next": "<em>Next</em>",
 			"previous": "<em>Previous</em>",
 			"print": "Imprimir",
@@ -1101,9 +1084,6 @@
 			"showgraph": "Visualizar gráfico",
 			"shownotes": "Visualizar notas"
 		},
-		"modmenu": {
-			"menu": "Navegação"
-		},
 		"modutilities": {
 			"bulkupdate": {
 				"title": "Atualização Múltiplas",
@@ -1248,6 +1228,7 @@
 	"attention": "Atenção",
 	"attribute": "<em>Attribute</em>",
 	"attributes": "Atributos",
+	"availableElements": "Elementos disponíveis",
 	"availableFilters": "Filtros Disponíveis",
 	"baseProperties": "Propriedades base",
 	"bcc": "<em>Bcc</em>",
@@ -1287,6 +1268,7 @@
 	"credentials": "Credenciais",
 	"csv": "CSV",
 	"csvFile": "Arquivo CSV",
+	"customMenu": "Menu customizado",
 	"dataSource": "Origem dos Dados",
 	"defaultAccount": "<em>Default account</em>",
 	"defaultClass": "Classe Padrão",
@@ -1390,6 +1372,7 @@
 	"masterDetailLabel": "Rótulo Mestre/Detalhes",
 	"masterReportJrxml": "Relatório mestre (.jrxml)",
 	"maximumLevel": "Nível máximo",
+	"menu": "Menu",
 	"mode": "<em>Mode</em>",
 	"modifyAccount": "<em>Modify account</em>",
 	"modifyDomain": "Modificar domínio",
@@ -1401,6 +1384,8 @@
 	"modifyView": "Modificar Visualização",
 	"multiGroup": "<em>Multi group</em>",
 	"name": "Nome",
+	"navigation": "Navegação",
+	"newFolder": "Nova pasta",
 	"noAvailableData": "<em>No available data</em>",
 	"no_bim_project_for_card": "<em>There is no BIM project for this card</em>",
 	"not_set": "Não configurado",
@@ -1439,6 +1424,7 @@
 	"remove": "<em>Remove</em>",
 	"removeAccount": "<em>Remove account</em>",
 	"removeFilter": "Remover Filtro",
+	"removeMenu": "Remover menu",
 	"removeProject": "<em>Remove Project</em>",
 	"removeReport": "Remover relatório",
 	"removeTemplate": "<em>Remove Template</em>",

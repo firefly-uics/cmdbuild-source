@@ -406,24 +406,6 @@
 		"modconnectors": {
 			"title": "Соединители"
 		},
-		"modmenu": {
-			"add_menu": "Создать меню",
-			"available_elements": "Доступные элементы",
-			"availabletree": {
-				"class": "Классы",
-				"dashboard": "Панели",
-				"processclass": "Процессы",
-				"report": "Отчеты",
-				"view": "Виды"
-			},
-			"custom_menu": "Настраиваемое меню",
-			"custom_menus": "Настраиваемые меню",
-			"delete_menu": "Удалить меню",
-			"menu_root": "Меню",
-			"modify_menu": "Редактировать меню",
-			"new_folder": "Новая папка",
-			"title": "Настройка меню"
-		},
 		"modsecurity": {
 			"defaultgroup": "* По умолчанию *",
 			"group": {
@@ -609,6 +591,7 @@
 			"importLabel": "Импорт",
 			"load": "Загрузить",
 			"modify": "Редактировать",
+			"move": "<em>Move</em>",
 			"next": "Далее",
 			"previous": "Назад",
 			"print": "Распечатать",
@@ -1101,9 +1084,6 @@
 			"showgraph": "Показать диаграмму связей",
 			"shownotes": "Показать комментарии"
 		},
-		"modmenu": {
-			"menu": "Навигация"
-		},
 		"modutilities": {
 			"bulkupdate": {
 				"title": "Массовое обновление",
@@ -1248,6 +1228,7 @@
 	"attention": "Внимание",
 	"attribute": "Атрибут",
 	"attributes": "Атрибуты",
+	"availableElements": "Доступные элементы",
 	"availableFilters": "Доступные фильтры",
 	"baseProperties": "Основные свойства",
 	"bcc": "Скрытая копия",
@@ -1287,6 +1268,7 @@
 	"credentials": "Учетные данные",
 	"csv": "CSV",
 	"csvFile": "Файл CSV",
+	"customMenu": "Настраиваемое меню",
 	"dataSource": "Источник данных",
 	"defaultAccount": "<em>Default account</em>",
 	"defaultClass": "Класс по умолчанию",
@@ -1390,6 +1372,7 @@
 	"masterDetailLabel": "Наименование детализации",
 	"masterReportJrxml": "Файл отчета (.jrxml)",
 	"maximumLevel": "Максимальный уровень",
+	"menu": "Меню",
 	"mode": "Режим",
 	"modifyAccount": "Редактировать учетную запись",
 	"modifyDomain": "Редактировать связь",
@@ -1401,6 +1384,8 @@
 	"modifyView": "Редактировать представление",
 	"multiGroup": "Несколько групп",
 	"name": "Имя",
+	"navigation": "Навигация",
+	"newFolder": "Новая папка",
 	"noAvailableData": "<em>No available data</em>",
 	"no_bim_project_for_card": "Для данной карточки не задан BIM-проект",
 	"not_set": "Не установлен",
@@ -1439,6 +1424,7 @@
 	"remove": "Удалить",
 	"removeAccount": "Удалить учетную запись",
 	"removeFilter": "Удалить представление",
+	"removeMenu": "Удалить меню",
 	"removeProject": "Удалить проект",
 	"removeReport": "Remove report",
 	"removeTemplate": "Удалить шаблон",

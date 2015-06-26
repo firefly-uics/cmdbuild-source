@@ -406,24 +406,6 @@
 		"modconnectors": {
 			"title": "コネクタ"
 		},
-		"modmenu": {
-			"add_menu": "メニュー追加",
-			"available_elements": "利用可能なエレメント",
-			"availabletree": {
-				"class": "クラス",
-				"dashboard": "ダッシュボード",
-				"processclass": "アクティビティ",
-				"report": "レポート",
-				"view": "ビュー"
-			},
-			"custom_menu": "カスタムメニュー",
-			"custom_menus": "カスタムメニュー",
-			"delete_menu": "メニュー削除",
-			"menu_root": "メニュー",
-			"modify_menu": "メニュー変更",
-			"new_folder": "新しいフォルダ",
-			"title": "メニュー管理"
-		},
 		"modsecurity": {
 			"defaultgroup": "* 既定 *",
 			"group": {
@@ -609,6 +591,7 @@
 			"importLabel": "インポート",
 			"load": "ロード",
 			"modify": "更新",
+			"move": "<em>Move</em>",
 			"next": "次",
 			"previous": "前",
 			"print": "印刷",
@@ -1101,9 +1084,6 @@
 			"showgraph": "グラフ表示",
 			"shownotes": "ノート表示"
 		},
-		"modmenu": {
-			"menu": "ナビゲーション"
-		},
 		"modutilities": {
 			"bulkupdate": {
 				"title": "多重更新",
@@ -1248,6 +1228,7 @@
 	"attention": "注意",
 	"attribute": "属性",
 	"attributes": "アクティビティ",
+	"availableElements": "利用可能なエレメント",
 	"availableFilters": "使用可能なフィルタ",
 	"baseProperties": "基本プロパティ",
 	"bcc": "Bcc",
@@ -1287,6 +1268,7 @@
 	"credentials": "資格",
 	"csv": "CSV",
 	"csvFile": "CSV ファイル",
+	"customMenu": "カスタムメニュー",
 	"dataSource": "データソース",
 	"defaultAccount": "既定のアカウント",
 	"defaultClass": "既定のクラス",
@@ -1390,6 +1372,7 @@
 	"masterDetailLabel": "マスタ/ディテールラベル",
 	"masterReportJrxml": "マスタレポート(.jrxml)",
 	"maximumLevel": "最大値",
+	"menu": "メニュー",
 	"mode": "モード",
 	"modifyAccount": "アカウントの変更",
 	"modifyDomain": "ドメイン変更",
@@ -1401,6 +1384,8 @@
 	"modifyView": "ビューを変更",
 	"multiGroup": "マルチグループ",
 	"name": "名前",
+	"navigation": "ナビゲーション",
+	"newFolder": "新しいフォルダ",
 	"noAvailableData": "<em>No available data</em>",
 	"no_bim_project_for_card": "このカードにはBMIプロジェクトがありません",
 	"not_set": "設定されていません",
@@ -1439,6 +1424,7 @@
 	"remove": "削除",
 	"removeAccount": "アカウント削除",
 	"removeFilter": "ビューを削除",
+	"removeMenu": "メニュー削除",
 	"removeProject": "プロジェクトを削除",
 	"removeReport": "レポート削除",
 	"removeTemplate": "テンプレートを削除",
