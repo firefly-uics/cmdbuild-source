@@ -1,6 +1,7 @@
 package org.cmdbuild.servlets.json.translationtable;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
 
 import org.cmdbuild.dao.entrytype.CMAttribute;
@@ -32,17 +33,21 @@ public abstract class EntryTypeTranslationSerializer implements TranslationSeria
 		this.translationLogic = translationLogic;
 	}
 
+	static <T> Iterable<T> nullableIterable(Iterable<T> it) {
+		return it != null ? it : Collections.<T> emptySet();
+	}
+
 	@Override
 	public abstract JsonResponse serialize();
 
 	Iterable<? extends CMAttribute> sortAttributes(final Iterable<? extends CMAttribute> allAttributes) {
-		final Iterable<? extends CMAttribute> sortedAttributes = attributeOrdering.sortedCopy(allAttributes);
+		final Iterable<? extends CMAttribute> sortedAttributes = attributeOrdering.sortedCopy(nullableIterable(allAttributes));
 		return sortedAttributes;
 	}
 
 	Collection<JsonElement> serializeAttributes(final Iterable<? extends CMAttribute> attributes) {
 		final Collection<JsonElement> attributesSerialization = Lists.newArrayList();
-		for (final CMAttribute attribute : attributes) {
+		for (final CMAttribute attribute : nullableIterable(attributes)) {
 			final String attributeName = attribute.getName();
 			final Collection<JsonField> attributeFields = readFields(attribute);
 			final JsonElement jsonAttribute = new JsonElement();
