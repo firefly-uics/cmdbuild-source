@@ -406,24 +406,6 @@
 		"modconnectors": {
 			"title": "Übergangsstelle"
 		},
-		"modmenu": {
-			"add_menu": "Menü hinzufügen",
-			"available_elements": "Verfügbare Daten",
-			"availabletree": {
-				"class": "Klassen",
-				"processclass": "Aktivität",
-				"dashboard": "Dashboards",
-				"report": "Bericht",
-				"view": "Sicht"
-			},
-			"custom_menu": "Kundenspezifisches Menü",
-			"custom_menus": "Menü",
-			"delete_menu": "Menü wegnehmen",
-			"menu_root": "Menü",
-			"modify_menu": "Menü ändern",
-			"new_folder": "Neuer Ordner",
-			"title": "Menüverwaltung"
-		},
 		"modsecurity": {
 			"defaultgroup": "* Default *",
 			"group": {
@@ -609,6 +591,7 @@
 			"importLabel": "Importieren",
 			"load": "Load",
 			"modify": "Bearbeiten",
+			"move": "<em>Move</em>",
 			"next": "Nächste",
 			"previous": "Vorige",
 			"print": "Ausdrucken",
@@ -1101,9 +1084,6 @@
 			"showgraph": "Ansicht Graph",
 			"shownotes": "Ansicht Notizen"
 		},
-		"modmenu": {
-			"menu": "Navigieren"
-		},
 		"modutilities": {
 			"bulkupdate": {
 				"title": "Mehrfach-Update",
@@ -1248,6 +1228,7 @@
 	"attention": "Achtung",
 	"attribute": "Attribut",
 	"attributes": "Attribute",
+	"availableElements": "Verfügbare daten",
 	"availableFilters": "Verfügbare Filters",
 	"baseProperties": "Allgemeine Eigenschaften",
 	"bcc": "Bcc",
@@ -1287,6 +1268,7 @@
 	"credentials": "Berechtigungsnachweis",
 	"csv": "CSV",
 	"csvFile": "CSV Datei",
+	"customMenu": "Kundenspezifisches Menü",
 	"dataSource": "Datasource",
 	"defaultAccount": "<em>Default account</em>",
 	"defaultClass": "Default-Klasse",
@@ -1390,6 +1372,7 @@
 	"masterDetailLabel": "Master/Detail label",
 	"masterReportJrxml": "Master bericht (.jrxml) anwählen",
 	"maximumLevel": "Maximal wählbare Ebene",
+	"menu": "Menü",
 	"mode": "Modus",
 	"modifyAccount": "Benutzerkonto verändern",
 	"modifyDomain": "Domain bearbeiten",
@@ -1401,6 +1384,8 @@
 	"modifyView": "Sicht bearbeiten",
 	"multiGroup": "Multigruppe",
 	"name": "Name",
+	"navigation": "Navigieren",
+	"newFolder": "Neuer ordner",
 	"noAvailableData": "<em>No available data</em>",
 	"no_bim_project_for_card": "Es gibt keinen BIM Projekt für diese Karte",
 	"not_set": "Nicht eingestellt",
@@ -1439,6 +1424,7 @@
 	"remove": "Entfernen",
 	"removeAccount": "Benutzerkonto entfernen",
 	"removeFilter": "Filter löschen",
+	"removeMenu": "Menü wegnehmen",
 	"removeProject": "Projekt entfernen",
 	"removeReport": "Bericht abbrechen",
 	"removeTemplate": "Template entfernen",

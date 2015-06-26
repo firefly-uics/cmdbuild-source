@@ -406,24 +406,6 @@
 		"modconnectors": {
 			"title": "Connectoren"
 		},
-		"modmenu": {
-			"add_menu": "Menu toevoegen",
-			"available_elements": "Beschikbare elementen",
-			"availabletree": {
-				"class": "Klassen",
-				"dashboard": "Dashboards",
-				"processclass": "Aktiviteiten",
-				"report": "Rapporten",
-				"view": "Views"
-			},
-			"custom_menu": "Aangepast Menu",
-			"custom_menus": "Aangepaste Menus",
-			"delete_menu": "Menu verwijderen",
-			"menu_root": "Menu",
-			"modify_menu": "Menu beheren",
-			"new_folder": "Nieuwe map",
-			"title": "Menu beheer"
-		},
 		"modsecurity": {
 			"defaultgroup": "* Standaard *",
 			"group": {
@@ -609,6 +591,7 @@
 			"importLabel": "Import",
 			"load": "Laad",
 			"modify": "Aanpassen",
+			"move": "<em>Move</em>",
 			"next": "Volgende",
 			"previous": "Vorige",
 			"print": "Afdrukken",
@@ -1101,9 +1084,6 @@
 			"showgraph": "Toon grafiek",
 			"shownotes": "Toon notities"
 		},
-		"modmenu": {
-			"menu": "Navigatie"
-		},
 		"modutilities": {
 			"bulkupdate": {
 				"title": "Meerdere aanpassingen",
@@ -1248,6 +1228,7 @@
 	"attention": "Attentie",
 	"attribute": "Attribuut",
 	"attributes": "Attributen",
+	"availableElements": "Beschikbare elementen",
 	"availableFilters": "Beschikbare Filters",
 	"baseProperties": "Basis Eigenschappen",
 	"bcc": "Bcc",
@@ -1287,6 +1268,7 @@
 	"credentials": "Rechten",
 	"csv": "CSV",
 	"csvFile": "CSV bestand",
+	"customMenu": "Aangepast menu",
 	"dataSource": "Gegevens bron",
 	"defaultAccount": "Standaard gebruiker",
 	"defaultClass": "Standaard klas",
@@ -1390,6 +1372,7 @@
 	"masterDetailLabel": "Meester/Detail Label",
 	"masterReportJrxml": "Meester Rapport (.jrxml)",
 	"maximumLevel": "Maximum niveau",
+	"menu": "Menu",
 	"mode": "Mode",
 	"modifyAccount": "Gebruiker aanpassen",
 	"modifyDomain": "Domein aanpassen",
@@ -1401,6 +1384,8 @@
 	"modifyView": "Bijwerken Venster",
 	"multiGroup": "Multi groep",
 	"name": "Naam",
+	"navigation": "Navigatie",
+	"newFolder": "Nieuwe map",
 	"noAvailableData": "<em>No available data</em>",
 	"no_bim_project_for_card": "Er is geen BIM project voor deze kaart",
 	"not_set": "Niet gezet",
@@ -1439,6 +1424,7 @@
 	"remove": "Verwijderen",
 	"removeAccount": "Gebruiker verwijderen",
 	"removeFilter": "Verwijder Filter",
+	"removeMenu": "Menu verwijderen",
 	"removeProject": "Verwijder Project",
 	"removeReport": "Rapport verwijderen",
 	"removeTemplate": "Verwijder sjabloon",

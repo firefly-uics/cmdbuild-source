@@ -406,24 +406,6 @@
 		"modconnectors": {
 			"Tiêu đề": "Kết nối"
 		},
-		"modmenu": {
-			"add_menu": "Thêm Menu",
-			"available_elements": "Các thành tố có sẵn",
-			"availabletree": {
-				"class": "Các lớp",
-				"dashboard": "Các bảng điểu khiển",
-				"processclass": "Các hoạt động",
-				"report": "Các bảng báo cáo",
-				"view": "Lượt xem"
-			},
-			"custom_menu": "Menu tùy chỉnh",
-			"custom_menus": "Các menu tùy chỉnh",
-			"delete_menu": "Xóa menu",
-			"menu_root": "Menu",
-			"modify_menu": "Sửa đổi menu",
-			"new_folder": "Thư mục mới",
-			"title": "Quản lý menu"
-		},
 		"modsecurity": {
 			"defaultgroup": "* Mặc định *",
 			"group": {
@@ -609,6 +591,7 @@
 			"importLabel": "Nhập",
 			"load": "Tải",
 			"modify": "Sửa đổi",
+			"move": "<em>Move</em>",
 			"next": "<em>Next</em>",
 			"previous": "<em>Previous</em>",
 			"print": "In",
@@ -1101,9 +1084,6 @@
 			"showgraph": "Hiện thị đồ thị",
 			"shownotes": "Hiện thị các ghi chú"
 		},
-		"modmenu": {
-			"menu": "Hướng"
-		},
 		"modutilities": {
 			"bulkupdate": {
 				"title": "Nhiều cập nhật",
@@ -1248,6 +1228,7 @@
 	"attention": "Chú ý",
 	"attribute": "<em>Attribute</em>",
 	"attributes": "Các thuộc tính",
+	"availableElements": "Các thành tố có sẵn",
 	"availableFilters": "Các bộ lọc sử dụng được",
 	"baseProperties": "Ðặc tính cơ bản",
 	"bcc": "<em>Bcc</em>",
@@ -1287,6 +1268,7 @@
 	"credentials": "Thông tin mật",
 	"csv": "CSV",
 	"csvFile": "Tập tin CSV",
+	"customMenu": "Menu tùy chỉnh",
 	"dataSource": "Dữ liệu gốc",
 	"defaultAccount": "<em>Default account</em>",
 	"defaultClass": "Lớp mặc định",
@@ -1390,6 +1372,7 @@
 	"masterDetailLabel": "Nhãn Tổng thể/Chi tiết",
 	"masterReportJrxml": "Báo cáo tổng thể (.jrxml)",
 	"maximumLevel": "Cấp độ cao nhất",
+	"menu": "Menu",
 	"mode": "<em>Mode</em>",
 	"modifyAccount": "<em>Modify account</em>",
 	"modifyDomain": "Sửa đổi tên miền",
@@ -1401,6 +1384,8 @@
 	"modifyView": "Sửa đổi lượt xem",
 	"multiGroup": "<em>Multi group</em>",
 	"name": "Tên",
+	"navigation": "Hướng",
+	"newFolder": "Thư mục mới",
 	"noAvailableData": "<em>No available data</em>",
 	"no_bim_project_for_card": "<em>There is no BIM project for this card</em>",
 	"not_set": "Không cài đặt",
@@ -1439,6 +1424,7 @@
 	"remove": "<em>Remove</em>",
 	"removeAccount": "<em>Remove account</em>",
 	"removeFilter": "Hủy bỏ bộ lọc",
+	"removeMenu": "Xóa menu",
 	"removeProject": "<em>Remove Project</em>",
 	"removeReport": "Xóa báo cáo",
 	"removeTemplate": "<em>Remove Template</em>",

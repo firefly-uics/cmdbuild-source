@@ -406,24 +406,6 @@
 		"modconnectors": {
 			"title": "Vezni programi"
 		},
-		"modmenu": {
-			"add_menu": "Dodaj meni",
-			"available_elements": "Dostupni elementi",
-			"availabletree": {
-				"class": "Klase",
-				"dashboard": "Kontrolni paneli",
-				"processclass": "Aktivnosti",
-				"report": "Izveštaji",
-				"view": "Pogledi"
-			},
-			"custom_menu": "Personalizovani meni",
-			"custom_menus": "Personalizovani meniji",
-			"delete_menu": "Ukloni meni",
-			"menu_root": "Meni",
-			"modify_menu": "Izmeni meni",
-			"new_folder": "Novi folder",
-			"title": "Upravljanje menijima"
-		},
 		"modsecurity": {
 			"defaultgroup": "* Podrazumevana grupa*",
 			"group": {
@@ -609,6 +591,7 @@
 			"importLabel": "Uvezi",
 			"load": "Učitaj",
 			"modify": "Izmeni",
+			"move": "<em>Move</em>",
 			"next": "Sledeća",
 			"previous": "Prethodna",
 			"print": "Štampaj",
@@ -1101,9 +1084,6 @@
 			"showgraph": "Prikaži u grafu",
 			"shownotes": "Prikaži napomene"
 		},
-		"modmenu": {
-			"menu": "Navigacija"
-		},
 		"modutilities": {
 			"bulkupdate": {
 				"title": "Masovna izmena kartica",
@@ -1248,6 +1228,7 @@
 	"attention": "Pažnja",
 	"attribute": "Atribut",
 	"attributes": "Atributi",
+	"availableElements": "Dostupni elementi",
 	"availableFilters": "Dostupni filteri",
 	"baseProperties": "Osnovna obeležja",
 	"bcc": "Bcc",
@@ -1287,6 +1268,7 @@
 	"credentials": "Podaci za pristup",
 	"csv": "CSV",
 	"csvFile": "CSV datoteka",
+	"customMenu": "Personalizovani meni",
 	"dataSource": "Izvor podataka",
 	"defaultAccount": "Podrazumevani kor. nalog",
 	"defaultClass": "Podrazumevana klasa",
@@ -1390,6 +1372,7 @@
 	"masterDetailLabel": "Naziv veze nadređeni/podređeni (Master/Detail)",
 	"masterReportJrxml": "Izbor glavnog izveštaja (.jrxml)",
 	"maximumLevel": "Maksimalan broj nivoa koji se mogu selektovati",
+	"menu": "Meni",
 	"mode": "Režim",
 	"modifyAccount": "Izmeni kor. nalog",
 	"modifyDomain": "Izmeni relaciju",
@@ -1401,6 +1384,8 @@
 	"modifyView": "Modifikuj prikaz",
 	"multiGroup": "Više grupa",
 	"name": "Naziv",
+	"navigation": "Navigacija",
+	"newFolder": "Novi folder",
 	"noAvailableData": "<em>No available data</em>",
 	"no_bim_project_for_card": "Ne postoji BIM projekat za ovu karticu",
 	"not_set": "Nije postavljeno",
@@ -1439,6 +1424,7 @@
 	"remove": "Ukloni",
 	"removeAccount": "Ukloni kor. nalog",
 	"removeFilter": "Ukloni prikaz",
+	"removeMenu": "Ukloni meni",
 	"removeProject": "Ukloni projekat",
 	"removeReport": "Ukloni izveštaj",
 	"removeTemplate": "Ukloni šablon",

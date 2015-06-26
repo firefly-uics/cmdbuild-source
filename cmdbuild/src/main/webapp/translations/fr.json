@@ -406,24 +406,6 @@
 		"modconnectors": {
 			"title": "Connecteurs"
 		},
-		"modmenu": {
-			"add_menu": "Ajouter un menu",
-			"available_elements": "Élements disponibles",
-			"availabletree": {
-				"class": "Classe",
-				"dashboard": "Tableau de bord",
-				"processclass": "Activité",
-				"report": "Rapport",
-				"view": "Vues"
-			},
-			"custom_menu": "Menu personnalisé",
-			"custom_menus": "Menus personnalisés",
-			"delete_menu": "Supprimer le menu",
-			"menu_root": "Menu principal",
-			"modify_menu": "Modifier le menu",
-			"new_folder": "Nouveau dossier",
-			"title": "Gestion des menus"
-		},
 		"modsecurity": {
 			"defaultgroup": "* par défaut *",
 			"group": {
@@ -609,6 +591,7 @@
 			"importLabel": "Importer",
 			"load": "Charger",
 			"modify": "Modifier",
+			"move": "<em>Move</em>",
 			"next": "Suivant",
 			"previous": "Précédent",
 			"print": "Imprimer",
@@ -1101,9 +1084,6 @@
 			"showgraph": "Voir le graphe",
 			"shownotes": "Voir les notes"
 		},
-		"modmenu": {
-			"menu": "Navigation"
-		},
 		"modutilities": {
 			"bulkupdate": {
 				"title": "Mises à jour multiples",
@@ -1248,6 +1228,7 @@
 	"attention": "Attention",
 	"attribute": "Attribut",
 	"attributes": "Attributs",
+	"availableElements": "Élements disponibles",
 	"availableFilters": "Filtres disponibles",
 	"baseProperties": "Propriétés de base",
 	"bcc": "Bcc",
@@ -1287,6 +1268,7 @@
 	"credentials": "Identifiant",
 	"csv": "CSV",
 	"csvFile": "Fichier CSV",
+	"customMenu": "Menu personnalisé",
 	"dataSource": "Source de données",
 	"defaultAccount": "Compte par défaut",
 	"defaultClass": "Classe par défaut",
@@ -1390,6 +1372,7 @@
 	"masterDetailLabel": "Libellé Maître/Détail",
 	"masterReportJrxml": "Rapport maître (.jrxml)",
 	"maximumLevel": "Niveau Maximum",
+	"menu": "Menu principal",
 	"mode": "Mode",
 	"modifyAccount": "Modifier le compte",
 	"modifyDomain": "Modifier le lien",
@@ -1401,6 +1384,8 @@
 	"modifyView": "Modifier la Vue",
 	"multiGroup": "Multi-groupes",
 	"name": "Nom",
+	"navigation": "Navigation",
+	"newFolder": "Nouveau dossier",
 	"noAvailableData": "<em>No available data</em>",
 	"no_bim_project_for_card": "Il n'existe pas de projet BIM pour cette fiche",
 	"not_set": "Non configuré",
@@ -1439,6 +1424,7 @@
 	"remove": "Supprimer",
 	"removeAccount": "Supprimer le compte",
 	"removeFilter": "Supprimer le filtre",
+	"removeMenu": "Supprimer le menu",
 	"removeProject": "Supprimer le projet",
 	"removeReport": "Supprimer le rapport",
 	"removeTemplate": "Supprimer le modèle",

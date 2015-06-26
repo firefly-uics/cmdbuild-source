@@ -406,24 +406,6 @@
 		"modconnectors": {
 			"title": "Connettori"
 		},
-		"modmenu": {
-			"add_menu": "Aggiungi Menu",
-			"available_elements": "Elementi disponibili",
-			"availabletree": {
-				"class": "Classi",
-				"dashboard": "Dashboard",
-				"processclass": "Attività",
-				"report": "Report",
-				"view": "Viste"
-			},
-			"custom_menu": "Menu Personalizzato",
-			"custom_menus": "Menu",
-			"delete_menu": "Rimuovi Menu",
-			"menu_root": "Menu",
-			"modify_menu": "Modifica Menu",
-			"new_folder": "Nuova cartella",
-			"title": "Gestione menu"
-		},
 		"modsecurity": {
 			"defaultgroup": "* Default *",
 			"group": {
@@ -609,6 +591,7 @@
 			"importLabel": "Importa",
 			"load": "Carica",
 			"modify": "Modifica",
+			"move": "<em>Move</em>",
 			"next": "Successivo",
 			"previous": "Precedente",
 			"print": "Stampa",
@@ -1101,9 +1084,6 @@
 			"showgraph": "Visualizza grafo",
 			"shownotes": "Visualizza note"
 		},
-		"modmenu": {
-			"menu": "Navigazione"
-		},
 		"modutilities": {
 			"bulkupdate": {
 				"title": "Modifica massiva schede",
@@ -1248,6 +1228,7 @@
 	"attention": "Attenzione",
 	"attribute": "Attributo",
 	"attributes": "Attributi",
+	"availableElements": "Elementi disponibili",
 	"availableFilters": "Filtri disponibili",
 	"baseProperties": "Proprietà generiche",
 	"bcc": "Ccn",
@@ -1287,6 +1268,7 @@
 	"credentials": "Credenziali",
 	"csv": "CSV",
 	"csvFile": "File CSV",
+	"customMenu": "Menu personalizzato",
 	"dataSource": "Sorgente dati",
 	"defaultAccount": "Account di default",
 	"defaultClass": "Classe di default",
@@ -1390,6 +1372,7 @@
 	"masterDetailLabel": "Master/Detail Label",
 	"masterReportJrxml": "Seleziona master report (.jrxml)",
 	"maximumLevel": "Massimo livello selezionabile",
+	"menu": "Menu",
 	"mode": "Modalità",
 	"modifyAccount": "Modifica account",
 	"modifyDomain": "Modifica dominio",
@@ -1401,6 +1384,8 @@
 	"modifyView": "Modifica vista",
 	"multiGroup": "Multi gruppo",
 	"name": "Nome",
+	"navigation": "Navigazione",
+	"newFolder": "Nuova cartella",
 	"noAvailableData": "Dati non disponibili",
 	"no_bim_project_for_card": "Non ho trovato un progetto BIM per questa card",
 	"not_set": "Non impostato",
@@ -1439,6 +1424,7 @@
 	"remove": "Rimuovi",
 	"removeAccount": "Rimuovi account",
 	"removeFilter": "Rimuovi Filtro",
+	"removeMenu": "Rimuovi menu",
 	"removeProject": "Rimuovi Progetto",
 	"removeReport": "Cancella report",
 	"removeTemplate": "Rimuovi Template",
