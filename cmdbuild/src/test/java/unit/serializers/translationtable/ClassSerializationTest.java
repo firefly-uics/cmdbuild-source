@@ -15,6 +15,8 @@ import org.cmdbuild.servlets.json.translationtable.JsonElement;
 import org.cmdbuild.servlets.json.translationtable.JsonField;
 import org.cmdbuild.servlets.json.translationtable.TranslationSerializer;
 import org.cmdbuild.servlets.json.translationtable.TranslationSerializerFactory;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -74,7 +76,7 @@ public class ClassSerializationTest {
 				.withActiveOnly(true) //
 				.withSorters(null) //
 				.build();
-		final ClassTranslationSerializer serializer = ClassTranslationSerializer.class.cast(factory.createSerializer());
+		final TranslationSerializer serializer = factory.createSerializer();
 
 		// when
 		final Object response = serializer.serialize().getResponse();
@@ -87,7 +89,7 @@ public class ClassSerializationTest {
 	}
 
 	@Test
-	public void classesSerializationHaveOnlyDescriptionField() throws Exception {
+	public void serializationHasOnlyDescriptionField() throws Exception {
 
 		// given
 		final DataAccessLogic dataLogic = mock(DataAccessLogic.class);
@@ -102,7 +104,7 @@ public class ClassSerializationTest {
 				.withActiveOnly(true) //
 				.withSorters(null) //
 				.build();
-		final ClassTranslationSerializer serializer = ClassTranslationSerializer.class.cast(factory.createSerializer());
+		final TranslationSerializer serializer = factory.createSerializer();
 
 		// when
 		final Object response = serializer.serialize().getResponse();
@@ -131,7 +133,7 @@ public class ClassSerializationTest {
 				.withActiveOnly(true) //
 				.withSorters(null) //
 				.build();
-		final ClassTranslationSerializer serializer = ClassTranslationSerializer.class.cast(factory.createSerializer());
+		final TranslationSerializer serializer = factory.createSerializer();
 
 		// when
 		final Object response = serializer.serialize().getResponse();
@@ -141,4 +143,71 @@ public class ClassSerializationTest {
 		final JsonElement firstClass = elements.get(0);
 		assertTrue(Iterables.isEmpty(firstClass.getAttributes()));
 	}
+
+	@Test
+	public void orderClassesByName() throws Exception {
+		// given
+		final DataAccessLogic dataLogic = mock(DataAccessLogic.class);
+		final TranslationLogic translationLogic = mock(TranslationLogic.class);
+		doReturn(classes).when(dataLogic).findClasses(true);
+
+		final JSONArray sorters = new JSONArray();
+		final JSONObject classSorter = new JSONObject();
+		classSorter.put("element", "class");
+		classSorter.put("field", "name");
+		classSorter.put("direction", "asc");
+		sorters.put(classSorter);
+
+		final TranslationSerializerFactory factory = TranslationSerializerFactory //
+				.newInstance() //
+				.withDataAccessLogic(dataLogic) //
+				.withLookupStore(null) //
+				.withTranslationLogic(translationLogic).withType("class") //
+				.withActiveOnly(true) //
+				.withSorters(sorters) //
+				.build();
+		final TranslationSerializer serializer = factory.createSerializer();
+
+		// when
+		final Object response = serializer.serialize().getResponse();
+
+		// then
+		final List<JsonElement> elements = Lists.newArrayList((Collection<JsonElement>) response);
+		assertTrue(elements.size() == 2);
+		assertTrue(elements.get(0).getName().equals("a"));
+		assertTrue(elements.get(1).getName().equals("b"));
+	}
+
+	@Test
+	public void wrongSortersSyntaxGetIgnored() throws Exception {
+		// given
+		final DataAccessLogic dataLogic = mock(DataAccessLogic.class);
+		final TranslationLogic translationLogic = mock(TranslationLogic.class);
+		doReturn(classes).when(dataLogic).findClasses(true);
+
+		final JSONArray sorters = new JSONArray();
+		final JSONObject classSorter = new JSONObject();
+		classSorter.put("foo", "bar");
+		sorters.put(classSorter);
+
+		final TranslationSerializerFactory factory = TranslationSerializerFactory //
+				.newInstance() //
+				.withDataAccessLogic(dataLogic) //
+				.withLookupStore(null) //
+				.withTranslationLogic(translationLogic).withType("class") //
+				.withActiveOnly(true) //
+				.withSorters(sorters) //
+				.build();
+		final TranslationSerializer serializer = factory.createSerializer();
+
+		// when
+		final Object response = serializer.serialize().getResponse();
+
+		// then
+		final List<JsonElement> elements = Lists.newArrayList((Collection<JsonElement>) response);
+		assertTrue(elements.size() == 2);
+		assertTrue(elements.get(0).getName().equals("b"));
+		assertTrue(elements.get(1).getName().equals("a"));
+	}
+
 }

@@ -7,62 +7,38 @@ import static org.mockito.Mockito.mock;
 import java.util.Collection;
 import java.util.List;
 
-import org.cmdbuild.common.Constants;
-import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.logic.translation.TranslationLogic;
+import org.cmdbuild.logic.view.ViewLogic;
+import org.cmdbuild.model.view.View;
 import org.cmdbuild.servlets.json.translationtable.JsonElement;
 import org.cmdbuild.servlets.json.translationtable.JsonField;
-import org.cmdbuild.servlets.json.translationtable.ProcessTranslationSerializer;
 import org.cmdbuild.servlets.json.translationtable.TranslationSerializer;
 import org.cmdbuild.servlets.json.translationtable.TranslationSerializerFactory;
+import org.cmdbuild.servlets.json.translationtable.ViewTranslationSerializer;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
-public class ProcessClassSerializationTest {
+public class ViewSerializationTest {
 
-	CMClass class1 = mock(CMClass.class);
-	CMClass class2 = mock(CMClass.class);
-	CMClass class3 = mock(CMClass.class);
-	CMClass activity = mock(CMClass.class);
-	Collection<CMClass> classes = Lists.newArrayList(class1, class2, class3);
-	DataAccessLogic dataLogic = mock(DataAccessLogic.class);
-	TranslationLogic translationLogic = mock(TranslationLogic.class);
+	View view1 = mock(View.class);
+	View view2 = mock(View.class);
+	Collection<View> views = Lists.newArrayList(view1, view2);
 
 	@Before
 	public void setup() {
-		doReturn("a").when(class1).getName();
-		doReturn("b").when(class2).getName();
-		doReturn("c").when(class3).getName();
-		doReturn("B").when(class1).getDescription();
-		doReturn("A").when(class2).getDescription();
-		doReturn("1").when(class3).getDescription();
-		doReturn(activity).when(dataLogic).findClass(Constants.BASE_PROCESS_CLASS_NAME);
-
-		doReturn(classes).when(dataLogic).findAllClasses();
-		doReturn(classes).when(dataLogic).findClasses(true);
+		doReturn("a").when(view1).getName();
+		doReturn("b").when(view2).getName();
+		doReturn("B").when(view1).getDescription();
+		doReturn("A").when(view2).getDescription();
 	}
 
 	@Test
-	public void typeProcessCreatesProcessSerializer() throws Exception {
-		// given
-		final TranslationSerializerFactory factory = TranslationSerializerFactory //
-				.newInstance() //
-				.withType("process") //
-				.build();
-
-		// when
-		final TranslationSerializer serializer = factory.createSerializer();
-
-		// then
-		assertTrue(serializer instanceof ProcessTranslationSerializer);
-	}
-
-	@Test
-	public void nullSortersSetSortersToDefault() throws Exception {
+	public void typeViewCreatesViewSerializer() throws Exception {
 
 		// given
 		final DataAccessLogic dataLogic = mock(DataAccessLogic.class);
@@ -70,18 +46,32 @@ public class ProcessClassSerializationTest {
 
 		final TranslationSerializerFactory factory = TranslationSerializerFactory //
 				.newInstance() //
-				.withDataAccessLogic(dataLogic) //
+				.withType("view") //
+				.build();
+
+		// when
+		final TranslationSerializer serializer = factory.createSerializer();
+
+		// then
+		assertTrue(serializer instanceof ViewTranslationSerializer);
+	}
+
+	@Test
+	public void nullSortersSetSortersToDefault() throws Exception {
+
+		// given
+		final ViewLogic viewLogic = mock(ViewLogic.class);
+		final TranslationLogic translationLogic = mock(TranslationLogic.class);
+		doReturn(views).when(viewLogic).fetchViewsOfAllTypes();
+
+		final TranslationSerializerFactory factory = TranslationSerializerFactory //
+				.newInstance() //
+				.withViewLogic(viewLogic) //
 				.withTranslationLogic(translationLogic) //
-				.withType("process") //
+				.withType("view") //
 				.withActiveOnly(true) //
 				.build();
 		final TranslationSerializer serializer = factory.createSerializer();
-
-		doReturn(classes).when(dataLogic).findAllClasses();
-		doReturn(activity).when(dataLogic).findClass(Constants.BASE_PROCESS_CLASS_NAME);
-		doReturn(true).when(activity).isAncestorOf(class1);
-		doReturn(true).when(activity).isAncestorOf(class2);
-		doReturn(false).when(activity).isAncestorOf(class3);
 
 		// when
 		final Object response = serializer.serialize().getResponse();
@@ -97,25 +87,19 @@ public class ProcessClassSerializationTest {
 	public void serializationHasOnlyDescriptionField() throws Exception {
 
 		// given
-		final DataAccessLogic dataLogic = mock(DataAccessLogic.class);
+		final ViewLogic viewLogic = mock(ViewLogic.class);
 		final TranslationLogic translationLogic = mock(TranslationLogic.class);
-		doReturn(classes).when(dataLogic).findClasses(true);
+		doReturn(views).when(viewLogic).fetchViewsOfAllTypes();
 
 		final TranslationSerializerFactory factory = TranslationSerializerFactory //
 				.newInstance() //
-				.withDataAccessLogic(dataLogic) //
+				.withViewLogic(viewLogic) //
 				.withLookupStore(null) //
-				.withTranslationLogic(translationLogic).withType("process") //
+				.withTranslationLogic(translationLogic).withType("view") //
 				.withActiveOnly(true) //
 				.withSorters(null) //
 				.build();
 		final TranslationSerializer serializer = factory.createSerializer();
-
-		doReturn(classes).when(dataLogic).findAllClasses();
-		doReturn(activity).when(dataLogic).findClass(Constants.BASE_PROCESS_CLASS_NAME);
-		doReturn(true).when(activity).isAncestorOf(class1);
-		doReturn(true).when(activity).isAncestorOf(class2);
-		doReturn(false).when(activity).isAncestorOf(class3);
 
 		// when
 		final Object response = serializer.serialize().getResponse();
@@ -129,35 +113,37 @@ public class ProcessClassSerializationTest {
 	}
 
 	@Test
-	public void ifTheProcessHasNoAttributesThenSerializationHasEmptyAttributesNode() throws Exception {
-
+	public void orderViewsByNameIsNotYetSupported() throws Exception {
 		// given
-		final DataAccessLogic dataLogic = mock(DataAccessLogic.class);
+		final ViewLogic viewLogic = mock(ViewLogic.class);
 		final TranslationLogic translationLogic = mock(TranslationLogic.class);
-		doReturn(classes).when(dataLogic).findClasses(true);
+		doReturn(views).when(viewLogic).fetchViewsOfAllTypes();
+
+		final JSONArray sorters = new JSONArray();
+		final JSONObject classSorter = new JSONObject();
+		classSorter.put("element", "view");
+		classSorter.put("field", "name");
+		classSorter.put("direction", "asc");
+		sorters.put(classSorter);
 
 		final TranslationSerializerFactory factory = TranslationSerializerFactory //
 				.newInstance() //
-				.withDataAccessLogic(dataLogic) //
+				.withViewLogic(viewLogic) //
 				.withLookupStore(null) //
-				.withTranslationLogic(translationLogic).withType("process") //
+				.withTranslationLogic(translationLogic).withType("view") //
 				.withActiveOnly(true) //
-				.withSorters(null) //
+				.withSorters(sorters) //
 				.build();
 		final TranslationSerializer serializer = factory.createSerializer();
-
-		doReturn(classes).when(dataLogic).findAllClasses();
-		doReturn(activity).when(dataLogic).findClass(Constants.BASE_PROCESS_CLASS_NAME);
-		doReturn(true).when(activity).isAncestorOf(class1);
-		doReturn(true).when(activity).isAncestorOf(class2);
-		doReturn(false).when(activity).isAncestorOf(class3);
 
 		// when
 		final Object response = serializer.serialize().getResponse();
 
 		// then
 		final List<JsonElement> elements = Lists.newArrayList((Collection<JsonElement>) response);
-		final JsonElement firstClass = elements.get(0);
-		assertTrue(Iterables.isEmpty(firstClass.getAttributes()));
+		assertTrue(elements.size() == 2);
+		assertTrue(elements.get(0).getName().equals("b"));
+		assertTrue(elements.get(1).getName().equals("a"));
 	}
+
 }

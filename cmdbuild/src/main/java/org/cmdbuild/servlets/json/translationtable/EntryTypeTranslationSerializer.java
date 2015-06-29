@@ -33,7 +33,7 @@ public abstract class EntryTypeTranslationSerializer implements TranslationSeria
 		this.translationLogic = translationLogic;
 	}
 
-	static <T> Iterable<T> nullableIterable(Iterable<T> it) {
+	static <T> Iterable<T> nullableIterable(final Iterable<T> it) {
 		return it != null ? it : Collections.<T> emptySet();
 	}
 
@@ -41,7 +41,8 @@ public abstract class EntryTypeTranslationSerializer implements TranslationSeria
 	public abstract JsonResponse serialize();
 
 	Iterable<? extends CMAttribute> sortAttributes(final Iterable<? extends CMAttribute> allAttributes) {
-		final Iterable<? extends CMAttribute> sortedAttributes = attributeOrdering.sortedCopy(nullableIterable(allAttributes));
+		final Iterable<? extends CMAttribute> sortedAttributes = attributeOrdering
+				.sortedCopy(nullableIterable(allAttributes));
 		return sortedAttributes;
 	}
 
