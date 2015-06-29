@@ -9,8 +9,6 @@ import static org.cmdbuild.servlets.json.schema.Utils.toMap;
 import java.util.Map;
 
 import org.apache.commons.lang3.Validate;
-import org.cmdbuild.data.store.lookup.LookupStore;
-import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.logic.translation.TranslationObject;
 import org.cmdbuild.logic.translation.converter.AttributeConverter;
 import org.cmdbuild.logic.translation.converter.ClassConverter;
@@ -39,9 +37,6 @@ public class Translation extends JSONBaseWithSpringContext {
 	private static final String TYPE = "type";
 	private static final String IDENTIFIER = "identifier";
 	private static final String OWNER = "owner";
-
-	private final DataAccessLogic dataLogic = userDataAccessLogic();
-	private final LookupStore lookupStore = lookupStore();
 
 	@JSONExported
 	@Admin
@@ -81,17 +76,21 @@ public class Translation extends JSONBaseWithSpringContext {
 	@Admin
 	public JsonResponse readStructure( //
 			@Parameter(value = TYPE) final String type, //
-			@Parameter(value = SORT, required = false) JSONArray sorters, //
+			@Parameter(value = SORT, required = false) final JSONArray sorters, //
 			@Parameter(value = ACTIVE, required = false) final boolean activeOnly //
 	) throws JSONException {
-		
+
 		final TranslationSerializerFactory factory = TranslationSerializerFactory //
 				.newInstance() //
-				.withDataAccessLogic(dataLogic) //
-				.withLookupStore(lookupStore) //
-				.withTranslationLogic(translationLogic()).withType(type) //
 				.withActiveOnly(activeOnly) //
+				.withDataAccessLogic(userDataAccessLogic()) //
+				.withFilterStore(filterStore()) //
+				.withLookupStore(lookupStore()) //
+				.withReportStore(reportStore())
 				.withSorters(sorters) //
+				.withTranslationLogic(translationLogic()) //
+				.withType(type) //
+				.withViewLogic(viewLogic()) //
 				.build();
 
 		final TranslationSerializer serializer = factory.createSerializer();

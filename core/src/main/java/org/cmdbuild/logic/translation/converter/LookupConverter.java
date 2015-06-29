@@ -2,7 +2,6 @@ package org.cmdbuild.logic.translation.converter;
 
 import java.util.Map;
 
-import org.apache.commons.lang3.Validate;
 import org.cmdbuild.logic.translation.object.LookupDescription;
 
 import com.google.common.collect.Maps;
@@ -18,7 +17,6 @@ public enum LookupConverter implements Converter {
 
 		@Override
 		public LookupDescription create() {
-			validate();
 			final org.cmdbuild.logic.translation.object.LookupDescription.Builder builder = LookupDescription
 					.newInstance() //
 					.withUuid(uuid);
@@ -64,10 +62,6 @@ public enum LookupConverter implements Converter {
 	public Converter withTranslations(final Map<String, String> map) {
 		translations = map;
 		return this;
-	}
-
-	private static void validate() {
-		Validate.notBlank(uuid);
 	}
 
 	public static String description() {

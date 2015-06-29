@@ -4,6 +4,7 @@ import java.util.Collection;
 
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
+import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.logic.data.access.DataAccessLogic.AttributesQuery;
 import org.cmdbuild.logic.translation.TranslationLogic;
@@ -53,11 +54,11 @@ public class ClassTranslationSerializer extends EntryTypeTranslationSerializer {
 					}
 				}
 			} catch (final JSONException e) {
-				//nothing to do
+				Log.JSONRPC.warn("ignoring malformed sorter");
 			}
 		}
 	}
-	
+
 	@Override
 	public JsonResponse serialize() {
 		final Iterable<? extends CMClass> classes = dataLogic.findClasses(activeOnly);
