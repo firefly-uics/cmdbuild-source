@@ -11,10 +11,10 @@ import org.cmdbuild.logic.translation.TranslationLogic;
 import org.cmdbuild.services.store.DataViewFilterStore;
 import org.cmdbuild.services.store.FilterStore;
 import org.cmdbuild.servlets.json.translationtable.FilterTranslationSerializer;
-import org.cmdbuild.servlets.json.translationtable.JsonElement;
-import org.cmdbuild.servlets.json.translationtable.JsonField;
 import org.cmdbuild.servlets.json.translationtable.TranslationSerializer;
 import org.cmdbuild.servlets.json.translationtable.TranslationSerializerFactory;
+import org.cmdbuild.servlets.json.translationtable.objects.JsonElement;
+import org.cmdbuild.servlets.json.translationtable.objects.JsonField;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.Before;
@@ -103,8 +103,8 @@ public class FilterSerializationTest {
 
 		// then
 		final List<JsonElement> elements = Lists.newArrayList((Collection<JsonElement>) response);
-		final JsonElement firstClass = elements.get(0);
-		final List<JsonField> fields = Lists.newArrayList(firstClass.getFields());
+		final JsonElement firstFilter = elements.get(0);
+		final List<JsonField> fields = Lists.newArrayList(firstFilter.getFields());
 		assertTrue(fields.size() == 1);
 		assertTrue(fields.get(0).getName().equalsIgnoreCase("description"));
 	}

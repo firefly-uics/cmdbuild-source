@@ -1,4 +1,4 @@
-package org.cmdbuild.servlets.json.translationtable;
+package org.cmdbuild.servlets.json.translationtable.objects;
 
 import static org.cmdbuild.servlets.json.CommunicationConstants.CODE;
 import static org.cmdbuild.servlets.json.CommunicationConstants.DESCRIPTION;

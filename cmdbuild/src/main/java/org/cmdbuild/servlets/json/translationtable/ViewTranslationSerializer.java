@@ -9,6 +9,8 @@ import org.cmdbuild.logic.translation.converter.ViewConverter;
 import org.cmdbuild.logic.view.ViewLogic;
 import org.cmdbuild.model.view.View;
 import org.cmdbuild.servlets.json.management.JsonResponse;
+import org.cmdbuild.servlets.json.translationtable.objects.JsonElement;
+import org.cmdbuild.servlets.json.translationtable.objects.JsonField;
 import org.json.JSONArray;
 
 import com.google.common.collect.Lists;
@@ -42,11 +44,11 @@ public class ViewTranslationSerializer implements TranslationSerializer {
 		final Collection<JsonElement> jsonViews = Lists.newArrayList();
 		for (final View view : sortedViews) {
 			final String name = view.getName();
-			final JsonElement jsonClass = new JsonElement();
-			jsonClass.setName(name);
-			final Collection<JsonField> classFields = readFields(view);
-			jsonClass.setFields(classFields);
-			jsonViews.add(jsonClass);
+			final JsonElement jsonView = new JsonElement();
+			jsonView.setName(name);
+			final Collection<JsonField> fields = readFields(view);
+			jsonView.setFields(fields);
+			jsonViews.add(jsonView);
 		}
 		return JsonResponse.success(jsonViews);
 	}

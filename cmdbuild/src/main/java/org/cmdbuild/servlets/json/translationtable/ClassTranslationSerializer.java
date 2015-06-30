@@ -9,6 +9,9 @@ import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.logic.data.access.DataAccessLogic.AttributesQuery;
 import org.cmdbuild.logic.translation.TranslationLogic;
 import org.cmdbuild.servlets.json.management.JsonResponse;
+import org.cmdbuild.servlets.json.translationtable.objects.JsonElement;
+import org.cmdbuild.servlets.json.translationtable.objects.JsonElementWithAttributes;
+import org.cmdbuild.servlets.json.translationtable.objects.JsonField;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -70,7 +73,7 @@ public class ClassTranslationSerializer extends EntryTypeTranslationSerializer {
 		final Collection<JsonElement> jsonClasses = Lists.newArrayList();
 		for (final CMClass cmclass : sortedClasses) {
 			final String className = cmclass.getName();
-			final JsonElement jsonClass = new JsonElement();
+			final JsonElementWithAttributes jsonClass = new JsonElementWithAttributes();
 			jsonClass.setName(className);
 			final Collection<JsonField> classFields = readFields(cmclass);
 			final Iterable<? extends CMAttribute> allAttributes = dataLogic.getAttributes(className, activeOnly,

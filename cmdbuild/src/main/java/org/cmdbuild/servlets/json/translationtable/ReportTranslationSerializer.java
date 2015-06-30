@@ -11,6 +11,8 @@ import org.cmdbuild.report.ReportFactory.ReportType;
 import org.cmdbuild.services.store.report.Report;
 import org.cmdbuild.services.store.report.ReportStore;
 import org.cmdbuild.servlets.json.management.JsonResponse;
+import org.cmdbuild.servlets.json.translationtable.objects.JsonElement;
+import org.cmdbuild.servlets.json.translationtable.objects.JsonField;
 import org.json.JSONArray;
 
 import com.google.common.collect.Iterables;

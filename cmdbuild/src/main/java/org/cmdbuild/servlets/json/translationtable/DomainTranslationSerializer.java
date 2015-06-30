@@ -11,6 +11,9 @@ import org.cmdbuild.logic.translation.TranslationObject;
 import org.cmdbuild.logic.translation.converter.ClassConverter;
 import org.cmdbuild.logic.translation.converter.DomainConverter;
 import org.cmdbuild.servlets.json.management.JsonResponse;
+import org.cmdbuild.servlets.json.translationtable.objects.JsonElement;
+import org.cmdbuild.servlets.json.translationtable.objects.JsonElementWithAttributes;
+import org.cmdbuild.servlets.json.translationtable.objects.JsonField;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -53,14 +56,14 @@ public class DomainTranslationSerializer extends EntryTypeTranslationSerializer 
 				.findAllDomains();
 		final Iterable<? extends CMDomain> sortedDomains = entryTypeOrdering.sortedCopy(allDomains);
 
-		final Collection<JsonElement> jsonDomains = Lists.newArrayList();
+		final Collection<JsonElementWithAttributes> jsonDomains = Lists.newArrayList();
 		for (final CMDomain domain : sortedDomains) {
 			final String domainName = domain.getName();
 			final Collection<JsonField> jsonFields = readFields(domain);
 			final Iterable<? extends CMAttribute> allAttributes = domain.getAllAttributes();
 			final Iterable<? extends CMAttribute> sortedAttributes = sortAttributes(allAttributes);
 			final Collection<JsonElement> jsonAttributes = serializeAttributes(sortedAttributes);
-			final JsonElement jsonDomain = new JsonElement();
+			final JsonElementWithAttributes jsonDomain = new JsonElementWithAttributes();
 			jsonDomain.setName(domainName);
 			jsonDomain.setAttributes(jsonAttributes);
 			jsonDomain.setFields(jsonFields);
