@@ -36,6 +36,9 @@ Ext.ux.NotificationMgr = {
 
 Ext.define("Ext.ux.Notification", {
 	extend: "Ext.Window",
+
+	focusOnToFront: false,
+
 	initComponent: function(){
 		Ext.apply(this, {
 			iconCls: this.iconCls || 'x-icon-information',
