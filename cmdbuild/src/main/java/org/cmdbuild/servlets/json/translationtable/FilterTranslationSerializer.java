@@ -9,6 +9,8 @@ import org.cmdbuild.logic.translation.converter.FilterConverter;
 import org.cmdbuild.services.store.FilterStore;
 import org.cmdbuild.services.store.FilterStore.Filter;
 import org.cmdbuild.servlets.json.management.JsonResponse;
+import org.cmdbuild.servlets.json.translationtable.objects.JsonElement;
+import org.cmdbuild.servlets.json.translationtable.objects.JsonField;
 import org.json.JSONArray;
 
 import com.google.common.collect.Lists;
@@ -33,11 +35,11 @@ public class FilterTranslationSerializer implements TranslationSerializer {
 		final Collection<JsonElement> jsonFilters = Lists.newArrayList();
 		for (final Filter filter : sortedFilters) {
 			final String name = filter.getName();
-			final JsonElement jsonClass = new JsonElement();
-			jsonClass.setName(name);
-			final Collection<JsonField> classFields = readFields(filter);
-			jsonClass.setFields(classFields);
-			jsonFilters.add(jsonClass);
+			final JsonElement jsonFilter = new JsonElement();
+			jsonFilter.setName(name);
+			final Collection<JsonField> fields = readFields(filter);
+			jsonFilter.setFields(fields);
+			jsonFilters.add(jsonFilter);
 		}
 		return JsonResponse.success(jsonFilters);
 	}

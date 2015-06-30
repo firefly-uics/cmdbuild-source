@@ -83,11 +83,12 @@ public class Translation extends JSONBaseWithSpringContext {
 		final TranslationSerializerFactory factory = TranslationSerializerFactory //
 				.newInstance() //
 				.withActiveOnly(activeOnly) //
+				.withAuthLogic(authLogic()) //
 				.withDataAccessLogic(userDataAccessLogic()) //
 				.withFilterStore(filterStore()) //
 				.withLookupStore(lookupStore()) //
-				.withReportStore(reportStore())
-				.withSorters(sorters) //
+				.withMenuLogic(menuLogic()) //
+				.withReportStore(reportStore()).withSorters(sorters) //
 				.withTranslationLogic(translationLogic()) //
 				.withType(type) //
 				.withViewLogic(viewLogic()) //
