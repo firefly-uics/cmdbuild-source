@@ -6,7 +6,10 @@
 	Ext.define('CMDBuild.controller.management.workflow.tabs.History', {
 		extend: 'CMDBuild.controller.management.common.tabs.History',
 
-		requires: ['CMDBuild.core.proxy.common.tabs.history.Processes'],
+		requires: [
+			'CMDBuild.core.proxy.common.tabs.history.Processes',
+			'CMDBuild.core.proxy.lookup.Type'
+		],
 
 		mixins: {
 			observable: 'Ext.util.Observable',
@@ -290,7 +293,7 @@
 				params[CMDBuild.core.proxy.Constants.ACTIVE] = true;
 				params[CMDBuild.core.proxy.Constants.SHORT] = false;
 
-				CMDBuild.ServiceProxy.lookup.get({
+				CMDBuild.core.proxy.lookup.Type.get({
 					params: params,
 					scope: this,
 					failure: function(response, options, decodedResponse) {

@@ -143,7 +143,7 @@
 							if(!Ext.isEmpty(configurationValue.source) && Ext.isFunction(configurationValue.source.getData)) {
 								decodedValue = configurationValue.source.getData(true)[configurationValue.key];
 							} else {
-								_error('form getData() function not implemented', this);
+								_error('form getData() function not implemented or empty source', this);
 							}
 						} break;
 
@@ -151,7 +151,7 @@
 							if(!Ext.isEmpty(configurationValue.source) && Ext.isFunction(configurationValue.source.get)) {
 								decodedValue = configurationValue.source.get(configurationValue.key);
 							} else {
-								_error('model get() function not implemented', this);
+								_error('model get() function not implemented or empty source', this);
 							}
 						} break;
 
