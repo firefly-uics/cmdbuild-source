@@ -1,6 +1,6 @@
 (function() {
 
-	Ext.define('CMDBuild.controller.administration.localizations.advancedTable.SectionViews', {
+	Ext.define('CMDBuild.controller.administration.localizations.advancedTable.SectionFilters', {
 		extend: 'CMDBuild.controller.administration.localizations.advancedTable.SectionAbstract',
 
 		requires: [
@@ -16,7 +16,7 @@
 		/**
 		 * @cfg {String}
 		 */
-		sectionId: CMDBuild.core.proxy.Constants.VIEW,
+		sectionId: CMDBuild.core.proxy.Constants.FILTER,
 
 		/**
 		 * @property {CMDBuild.view.administration.localizations.common.AdvancedTableGrid}
@@ -40,7 +40,7 @@
 			this.view = Ext.create('CMDBuild.view.administration.localizations.advancedTable.SectionPanel', {
 				delegate: this,
 
-				title: '@@ Views'
+				title: '@@ Filters'
 			});
 
 			// Shorthand
