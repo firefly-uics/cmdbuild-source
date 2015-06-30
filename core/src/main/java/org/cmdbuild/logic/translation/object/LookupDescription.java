@@ -47,7 +47,7 @@ public class LookupDescription extends BaseTranslation {
 		}
 
 		private void validate() {
-			Validate.notBlank(uuid);
+			//Validate.notBlank(uuid);
 		}
 
 	}
