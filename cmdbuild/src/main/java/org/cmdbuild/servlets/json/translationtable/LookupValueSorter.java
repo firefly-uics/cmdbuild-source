@@ -1,6 +1,10 @@
 package org.cmdbuild.servlets.json.translationtable;
 
 import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
+import static org.cmdbuild.servlets.json.translationtable.AttributeSorter.ASC;
+import static org.cmdbuild.servlets.json.translationtable.AttributeSorter.DESC;
+import static org.cmdbuild.servlets.json.translationtable.AttributeSorter.safeInteger;
+import static org.cmdbuild.servlets.json.translationtable.AttributeSorter.safeString;
 
 import org.apache.commons.lang3.StringUtils;
 import org.cmdbuild.data.store.lookup.Lookup;
@@ -49,8 +53,8 @@ enum LookupValueSorter {
 	abstract Ordering<Lookup> getOrderingForProperty();
 
 	Ordering<Lookup> getOrientedOrdering() {
-		direction = defaultIfBlank(direction, "ASC");
-		if (direction.equalsIgnoreCase("DESC")) {
+		direction = defaultIfBlank(direction, ASC);
+		if (direction.equalsIgnoreCase(DESC)) {
 			return getOrderingForProperty().reverse();
 		} else {
 			return getOrderingForProperty();
@@ -69,21 +73,21 @@ enum LookupValueSorter {
 	private static final Ordering<Lookup> ORDER_LOOKUPVALUE_BY_DESCRIPTION = new Ordering<Lookup>() {
 		@Override
 		public int compare(final Lookup left, final Lookup right) {
-			return left.description().compareTo(right.description());
+			return safeString(left.description()).compareTo(safeString(right.description()));
 		}
 	};
 
 	private static final Ordering<Lookup> ORDER_LOOKUPVALUE_BY_NUMBER = new Ordering<Lookup>() {
 		@Override
 		public int compare(final Lookup left, final Lookup right) {
-			return left.number().compareTo(right.number());
+			return safeInteger(left.number()).compareTo(safeInteger(right.number()));
 		}
 	};
 
 	private static final Ordering<Lookup> ORDER_LOOKUPVALUE_BY_CODE = new Ordering<Lookup>() {
 		@Override
 		public int compare(final Lookup left, final Lookup right) {
-			return left.code().compareTo(right.code());
+			return safeString(left.code()).compareTo(safeString(right.code()));
 		}
 	};
 

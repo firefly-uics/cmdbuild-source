@@ -2,6 +2,9 @@ package org.cmdbuild.servlets.json.translationtable;
 
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
+import static org.cmdbuild.servlets.json.translationtable.AttributeSorter.ASC;
+import static org.cmdbuild.servlets.json.translationtable.AttributeSorter.DESC;
+import static org.cmdbuild.servlets.json.translationtable.AttributeSorter.safeString;
 
 import org.cmdbuild.dao.entrytype.CMEntryType;
 
@@ -42,8 +45,8 @@ enum EntryTypeSorter {
 	abstract Ordering<CMEntryType> getOrderingForProperty();
 
 	Ordering<CMEntryType> getOrientedOrdering() {
-		direction = defaultIfBlank(direction, "ASC");
-		if (direction.equalsIgnoreCase("DESC")) {
+		direction = defaultIfBlank(direction, ASC);
+		if (direction.equalsIgnoreCase(DESC)) {
 			return getOrderingForProperty().reverse();
 		} else {
 			return getOrderingForProperty();
@@ -62,15 +65,16 @@ enum EntryTypeSorter {
 	private static final Ordering<CMEntryType> ORDER_ENTRYTYPE_BY_NAME = new Ordering<CMEntryType>() {
 		@Override
 		public int compare(final CMEntryType left, final CMEntryType right) {
-			return left.getName().compareTo(right.getName());
+			return safeString(left.getName()) //
+					.compareTo(safeString(right.getName()));
 		}
 	};
 
 	private static final Ordering<CMEntryType> ORDER_ENTRYTYPE_BY_DESCRIPTION = new Ordering<CMEntryType>() {
 		@Override
 		public int compare(final CMEntryType left, final CMEntryType right) {
-			return defaultIfBlank(left.getDescription(),EMPTY) //
-					.compareTo(defaultIfBlank(right.getDescription(),EMPTY));
+			return safeString(left.getDescription()) //
+					.compareTo(safeString(right.getDescription()));
 		}
 	};
 

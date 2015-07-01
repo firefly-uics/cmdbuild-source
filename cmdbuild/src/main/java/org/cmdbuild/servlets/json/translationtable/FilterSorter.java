@@ -1,6 +1,9 @@
 package org.cmdbuild.servlets.json.translationtable;
 
 import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
+import static org.cmdbuild.servlets.json.translationtable.AttributeSorter.ASC;
+import static org.cmdbuild.servlets.json.translationtable.AttributeSorter.DESC;
+import static org.cmdbuild.servlets.json.translationtable.AttributeSorter.safeString;
 
 import org.apache.commons.lang3.StringUtils;
 import org.cmdbuild.services.store.FilterStore;
@@ -43,8 +46,8 @@ enum FilterSorter {
 	}
 
 	Ordering<FilterStore.Filter> getOrientedOrdering() {
-		direction = defaultIfBlank(direction, "ASC");
-		if (direction.equalsIgnoreCase("DESC")) {
+		direction = defaultIfBlank(direction, ASC);
+		if (direction.equalsIgnoreCase(DESC)) {
 			return getOrderingForProperty().reverse();
 		} else {
 			return getOrderingForProperty();
@@ -63,14 +66,16 @@ enum FilterSorter {
 	private static final Ordering<FilterStore.Filter> ORDER_FILTER_BY_NAME = new Ordering<FilterStore.Filter>() {
 		@Override
 		public int compare(final FilterStore.Filter left, final FilterStore.Filter right) {
-			return left.getName().compareTo(right.getName());
+			return safeString(left.getName()) //
+					.compareTo(safeString(right.getName()));
 		}
 	};
 
 	private static final Ordering<FilterStore.Filter> ORDER_FILTER_BY_DESCRIPTION = new Ordering<FilterStore.Filter>() {
 		@Override
 		public int compare(final FilterStore.Filter left, final FilterStore.Filter right) {
-			return left.getDescription().compareTo(right.getDescription());
+			return safeString(left.getDescription()) //
+					.compareTo(safeString(right.getDescription()));
 		}
 	};
 

@@ -1,6 +1,9 @@
 package org.cmdbuild.servlets.json.translationtable;
 
 import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
+import static org.cmdbuild.servlets.json.translationtable.AttributeSorter.ASC;
+import static org.cmdbuild.servlets.json.translationtable.AttributeSorter.DESC;
+import static org.cmdbuild.servlets.json.translationtable.AttributeSorter.safeString;
 
 import org.apache.commons.lang3.StringUtils;
 import org.cmdbuild.data.store.lookup.LookupType;
@@ -37,8 +40,8 @@ enum LookupTypeSorter {
 	abstract Ordering<LookupType> getOrderingForProperty();
 
 	Ordering<LookupType> getOrientedOrdering() {
-		direction = defaultIfBlank(direction, "ASC");
-		if (direction.equalsIgnoreCase("DESC")) {
+		direction = defaultIfBlank(direction, ASC);
+		if (direction.equalsIgnoreCase(DESC)) {
 			return getOrderingForProperty().reverse();
 		} else {
 			return getOrderingForProperty();
@@ -60,7 +63,7 @@ enum LookupTypeSorter {
 	private static final Ordering<LookupType> ORDER_LOOKUPTYPE_BY_DESCRIPTION = new Ordering<LookupType>() {
 		@Override
 		public int compare(final LookupType left, final LookupType right) {
-			return left.name.compareTo(right.name);
+			return safeString(left.name).compareTo(safeString(right.name));
 		}
 	};
 

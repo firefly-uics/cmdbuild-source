@@ -1,6 +1,9 @@
 package org.cmdbuild.servlets.json.translationtable;
 
 import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
+import static org.cmdbuild.servlets.json.translationtable.AttributeSorter.ASC;
+import static org.cmdbuild.servlets.json.translationtable.AttributeSorter.DESC;
+import static org.cmdbuild.servlets.json.translationtable.AttributeSorter.safeString;
 
 import org.apache.commons.lang3.StringUtils;
 import org.cmdbuild.model.view.View;
@@ -43,8 +46,8 @@ enum ViewSorter {
 	}
 
 	Ordering<View> getOrientedOrdering() {
-		direction = defaultIfBlank(direction, "ASC");
-		if (direction.equalsIgnoreCase("DESC")) {
+		direction = defaultIfBlank(direction, ASC);
+		if (direction.equalsIgnoreCase(DESC)) {
 			return getOrderingForProperty().reverse();
 		} else {
 			return getOrderingForProperty();
@@ -63,14 +66,14 @@ enum ViewSorter {
 	private static final Ordering<View> ORDER_VIEW_BY_NAME = new Ordering<View>() {
 		@Override
 		public int compare(final View left, final View right) {
-			return left.getName().compareTo(right.getName());
+			return safeString(left.getName()).compareTo(safeString(right.getName()));
 		}
 	};
 
 	private static final Ordering<View> ORDER_VIEW_BY_DESCRIPTION = new Ordering<View>() {
 		@Override
 		public int compare(final View left, final View right) {
-			return left.getDescription().compareTo(right.getDescription());
+			return safeString(left.getDescription()).compareTo(safeString(right.getDescription()));
 		}
 	};
 
