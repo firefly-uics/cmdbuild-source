@@ -1,6 +1,9 @@
 package org.cmdbuild.servlets.json.translationtable;
 
 import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
+import static org.cmdbuild.servlets.json.translationtable.AttributeSorter.ASC;
+import static org.cmdbuild.servlets.json.translationtable.AttributeSorter.DESC;
+import static org.cmdbuild.servlets.json.translationtable.AttributeSorter.safeString;
 
 import org.apache.commons.lang3.StringUtils;
 import org.cmdbuild.services.store.report.Report;
@@ -43,8 +46,8 @@ enum ReportSorter {
 	}
 
 	Ordering<Report> getOrientedOrdering() {
-		direction = defaultIfBlank(direction, "ASC");
-		if (direction.equalsIgnoreCase("DESC")) {
+		direction = defaultIfBlank(direction, ASC);
+		if (direction.equalsIgnoreCase(DESC)) {
 			return getOrderingForProperty().reverse();
 		} else {
 			return getOrderingForProperty();
@@ -63,14 +66,14 @@ enum ReportSorter {
 	private static final Ordering<Report> ORDER_REPORT_BY_CODE = new Ordering<Report>() {
 		@Override
 		public int compare(final Report left, final Report right) {
-			return left.getCode().compareTo(right.getCode());
+			return safeString(left.getCode()).compareTo(safeString(right.getCode()));
 		}
 	};
 
 	private static final Ordering<Report> ORDER_REPORT_BY_DESCRIPTION = new Ordering<Report>() {
 		@Override
 		public int compare(final Report left, final Report right) {
-			return left.getDescription().compareTo(right.getDescription());
+			return safeString(left.getDescription()).compareTo(safeString(right.getDescription()));
 		}
 	};
 
