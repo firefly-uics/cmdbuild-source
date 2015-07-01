@@ -13,6 +13,7 @@ import org.cmdbuild.logic.menu.MenuLogic;
 import org.cmdbuild.logic.translation.TranslationLogic;
 import org.cmdbuild.services.store.menu.MenuConstants;
 import org.cmdbuild.services.store.menu.MenuItem;
+import org.cmdbuild.services.store.menu.MenuItemType;
 import org.cmdbuild.servlets.json.translationtable.MenuTranslationSerializer;
 import org.cmdbuild.servlets.json.translationtable.TranslationSerializer;
 import org.cmdbuild.servlets.json.translationtable.TranslationSerializerFactory;
@@ -79,6 +80,8 @@ public class MenuSerializationTest {
 		doReturn(item1).when(menuLogic).read("a");
 		doReturn(Lists.newArrayList()).when(item1).getChildren();
 		doReturn(defaultItem).when(menuLogic).read("*");
+		doReturn(MenuItemType.CLASS).when(item1).getType();
+		doReturn(MenuItemType.ROOT).when(defaultItem).getType();
 
 		final TranslationSerializerFactory factory = TranslationSerializerFactory //
 				.newInstance() //
@@ -110,6 +113,8 @@ public class MenuSerializationTest {
 		doReturn(item1).when(menuLogic).read("a");
 		doReturn(Lists.newArrayList()).when(item1).getChildren();
 		doReturn(defaultItem).when(menuLogic).read("*");
+		doReturn(MenuItemType.CLASS).when(item1).getType();
+		doReturn(MenuItemType.ROOT).when(defaultItem).getType();
 
 		final TranslationSerializerFactory factory = TranslationSerializerFactory //
 				.newInstance() //
@@ -145,7 +150,11 @@ public class MenuSerializationTest {
 		doReturn(Lists.newArrayList(child1)).when(item1).getChildren();
 		doReturn(Lists.newArrayList(child2)).when(item2).getChildren();
 		doReturn(defaultItem).when(menuLogic).read(MenuConstants.DEFAULT_MENU_GROUP_NAME);
-
+		doReturn(MenuItemType.FOLDER).when(item1).getType();
+		doReturn(MenuItemType.FOLDER).when(item2).getType();
+		doReturn(MenuItemType.CLASS).when(child1).getType();
+		doReturn(MenuItemType.FOLDER).when(child2).getType();
+		doReturn(MenuItemType.ROOT).when(defaultItem).getType();
 		final TranslationSerializerFactory factory = TranslationSerializerFactory //
 				.newInstance() //
 				.withAuthLogic(authLogic) //

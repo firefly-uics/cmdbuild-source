@@ -18,6 +18,7 @@ import org.cmdbuild.servlets.json.management.JsonResponse;
 import org.cmdbuild.servlets.json.translationtable.objects.JsonElement;
 import org.cmdbuild.servlets.json.translationtable.objects.JsonElementWithChildren;
 import org.cmdbuild.servlets.json.translationtable.objects.JsonField;
+import org.cmdbuild.servlets.json.translationtable.objects.MenuJsonElement;
 import org.json.JSONArray;
 
 import com.google.common.base.Predicate;
@@ -61,14 +62,16 @@ public class MenuTranslationSerializer implements TranslationSerializer {
 		final Collection<JsonElement> jsonMenus = Lists.newArrayList();
 		for (final CMGroup group : sortedGroups) {
 			final MenuItem rootNode = menuLogic.read(group.getName());
-			final JsonElementWithChildren rootElement = new JsonElementWithChildren();
+			final MenuJsonElement rootElement = new MenuJsonElement();
 			rootElement.setName(group.getDescription());
+			rootElement.setType(rootNode.getType().getValue());
 			final Collection<JsonElement> childrenElement = Lists.newArrayList();
 			final Iterable<MenuItem> _children = rootNode.getChildren();
 			final Iterable<MenuItem> sortedChildren = menuNodesOrdering.sortedCopy(_children);
 			for (final MenuItem child : sortedChildren) {
-				final JsonElementWithChildren childElement = new JsonElementWithChildren();
+				final MenuJsonElement childElement = new MenuJsonElement();
 				childElement.setName(child.getUniqueIdentifier());
+				childElement.setType(child.getType().getValue());
 				final Collection<JsonField> childFields = readFields(child);
 				childElement.setFields(childFields);
 				final List<MenuItem> nephews = child.getChildren();
@@ -84,8 +87,9 @@ public class MenuTranslationSerializer implements TranslationSerializer {
 	private void serialize(final JsonElementWithChildren rootElement, final List<MenuItem> children) {
 		final Collection<JsonElement> jsonChildren = Lists.newArrayList();
 		for (final MenuItem child : children) {
-			final JsonElementWithChildren childElement = new JsonElementWithChildren();
+			final MenuJsonElement childElement = new MenuJsonElement();
 			childElement.setName(child.getUniqueIdentifier());
+			childElement.setType(child.getType().getValue());
 			final Collection<JsonField> fields = readFields(child);
 			childElement.setFields(fields);
 			jsonChildren.add(childElement);
