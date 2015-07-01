@@ -52,8 +52,9 @@
 		 */
 		decodeStructure: function(rootNode, arrayToDecode) {
 			if (
-				Ext.isArray(arrayToDecode)
-				&& !Ext.isEmpty(rootNode)
+				!Ext.isEmpty(rootNode)
+				&& !Ext.isEmpty(arrayToDecode)
+				&& Ext.isArray(arrayToDecode)
 			) {
 				Ext.Array.forEach(arrayToDecode, function(entityObject, i, allEntitiesObjects) {
 					if (!Ext.Array.contains(this.entityFilter, entityObject[CMDBuild.core.proxy.Constants.NAME].toLowerCase())) { // Discard unwanted entities
@@ -66,7 +67,8 @@
 
 						var entityMainNode = rootNode.appendChild(entityMainNodeObject);
 
-						this.decodeStructureFields(entityMainNode, entityObject[CMDBuild.core.proxy.Constants.FIELDS], entityObject);
+						if (Ext.isArray(entityObject[CMDBuild.core.proxy.Constants.FIELDS]))
+							this.decodeStructureFields(entityMainNode, entityObject[CMDBuild.core.proxy.Constants.FIELDS], entityObject);
 
 						// Entity attribute nodes
 						if (Ext.isArray(entityObject[CMDBuild.core.proxy.Constants.ATTRIBUTES])) {
@@ -95,6 +97,7 @@
 		decodeStructureAttributeFields: function(rootNode, fieldsArray) {
 			if (
 				!Ext.isEmpty(rootNode)
+				&& !Ext.isEmpty(fieldsArray)
 				&& Ext.isArray(fieldsArray)
 			) {
 				Ext.Array.forEach(fieldsArray, function(fieldObject, i, allAttributesObjects) {
@@ -113,7 +116,7 @@
 					rootNode.appendChild(attributeFieldNodeObject);
 				}, this);
 			} else {
-				_error('[' + this.getSectionId() + '] decodeStructureAttributeFields() - wrong params type', this);
+				_error('[' + this.getSectionId() + '] decodeStructureAttributeFields() - wrong parameters type', this);
 			}
 		},
 
@@ -126,6 +129,7 @@
 		decodeStructureAttributes: function(rootNode, attributesArray) {
 			if (
 				!Ext.isEmpty(rootNode)
+				&& !Ext.isEmpty(attributesArray)
 				&& Ext.isArray(attributesArray)
 			) {
 				Ext.Array.forEach(attributesArray, function(attributeObject, i, allAttributesObjects) {
@@ -142,7 +146,7 @@
 					}
 				}, this);
 			} else {
-				_error('[' + this.getSectionId() + '] decodeStructureAttributes() - wrong params type', this);
+				_error('[' + this.getSectionId() + '] decodeStructureAttributes() - wrong parameters type', this);
 			}
 		},
 
@@ -153,7 +157,11 @@
 		 * @param {Array} fieldsArray
 		 */
 		decodeStructureFields: function(rootNode, fieldsArray) {
-			if (Ext.isArray(fieldsArray)) {
+			if (
+				!Ext.isEmpty(rootNode)
+				&& !Ext.isEmpty(fieldsArray)
+				&& Ext.isArray(fieldsArray)
+			) {
 				Ext.Array.forEach(fieldsArray, function(fieldObject, i, allFields) {
 					var entityFieldNodeObject = {};
 					entityFieldNodeObject[CMDBuild.core.proxy.Constants.DEFAULT] = fieldObject[CMDBuild.core.proxy.Constants.VALUE];
@@ -169,7 +177,7 @@
 					rootNode.appendChild(entityFieldNodeObject);
 				}, this);
 			} else {
-				rootNode.appendChild({}); // FIX: expandable property is bugged so i must build a fake node to make attributes node expandable
+				rootNode.appendChild({}); // FIX: expandable property is bugged so i must build a fake node to make rootNode expandable
 			}
 		},
 
@@ -186,7 +194,7 @@
 					targetObject[tag] = translation;
 				});
 			} else {
-				_debug('[' + this.getSectionId() + '] fillWithTranslations() - wrong params type', this);
+				_debug('[' + this.getSectionId() + '] fillWithTranslations() - wrong parameters type', this);
 			}
 		},
 
