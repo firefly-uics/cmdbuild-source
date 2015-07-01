@@ -1,6 +1,6 @@
 (function() {
 
-	Ext.define('CMDBuild.core.buttons.Print', {
+	Ext.define('CMDBuild.core.buttons.iconized.Print', {
 		extend: 'Ext.button.Split',
 
 		iconCls: 'print',

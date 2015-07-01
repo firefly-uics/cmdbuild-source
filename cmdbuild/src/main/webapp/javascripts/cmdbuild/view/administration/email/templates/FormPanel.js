@@ -182,7 +182,7 @@
 								labelWidth: CMDBuild.LABEL_WIDTH,
 								maxWidth: CMDBuild.CFG_BIG_FIELD_WIDTH
 							}),
-							Ext.create('CMDBuild.core.buttons.Modify', {
+							Ext.create('CMDBuild.core.buttons.iconized.Modify', {
 								text: CMDBuild.Translation.editValues,
 								margin: '0 0 0 ' + (CMDBuild.LABEL_WIDTH + 5),
 								maxWidth: 100,
@@ -204,7 +204,7 @@
 						itemId: CMDBuild.core.proxy.Constants.TOOLBAR_TOP,
 
 						items: [
-							Ext.create('CMDBuild.core.buttons.Modify', {
+							Ext.create('CMDBuild.core.buttons.iconized.Modify', {
 								text: CMDBuild.Translation.modifyTemplate,
 								scope: this,
 
@@ -212,7 +212,7 @@
 									this.delegate.cmfg('onEmailTemplatesModifyButtonClick');
 								}
 							}),
-							Ext.create('CMDBuild.core.buttons.Delete', {
+							Ext.create('CMDBuild.core.buttons.iconized.Delete', {
 								text: CMDBuild.Translation.removeTemplate,
 								scope: this,
 
@@ -234,14 +234,14 @@
 						},
 
 						items: [
-							Ext.create('CMDBuild.core.buttons.Save', {
+							Ext.create('CMDBuild.core.buttons.text.Save', {
 								scope: this,
 
 								handler: function(button, e) {
 									this.delegate.cmfg('onEmailTemplatesSaveButtonClick');
 								}
 							}),
-							Ext.create('CMDBuild.core.buttons.Abort', {
+							Ext.create('CMDBuild.core.buttons.text.Abort', {
 								scope: this,
 
 								handler: function(button, e) {

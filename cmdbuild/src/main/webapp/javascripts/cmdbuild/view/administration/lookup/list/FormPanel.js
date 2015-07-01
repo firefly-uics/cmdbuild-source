@@ -29,7 +29,7 @@
 		parentCombobox: undefined,
 
 		/**
-		 * @property {CMDBuild.core.buttons.Delete}
+		 * @property {CMDBuild.core.buttons.iconized.Delete}
 		 */
 		toggleActiveStateButton: undefined,
 
@@ -53,7 +53,7 @@
 						itemId: CMDBuild.core.proxy.Constants.TOOLBAR_TOP,
 
 						items: [
-							Ext.create('CMDBuild.core.buttons.Modify', {
+							Ext.create('CMDBuild.core.buttons.iconized.Modify', {
 								text: CMDBuild.Translation.modifyLookup,
 								scope: this,
 
@@ -61,7 +61,7 @@
 									this.delegate.cmfg('onLookupListModifyButtonClick');
 								}
 							}),
-							this.toggleActiveStateButton = Ext.create('CMDBuild.core.buttons.Delete', {
+							this.toggleActiveStateButton = Ext.create('CMDBuild.core.buttons.iconized.Delete', {
 								text: CMDBuild.Translation.disableLookup,
 								scope: this,
 
@@ -83,14 +83,14 @@
 						},
 
 						items: [
-							Ext.create('CMDBuild.core.buttons.Save', {
+							Ext.create('CMDBuild.core.buttons.text.Save', {
 								scope: this,
 
 								handler: function(button, e) {
 									this.delegate.cmfg('onLookupListSaveButtonClick');
 								}
 							}),
-							Ext.create('CMDBuild.core.buttons.Abort', {
+							Ext.create('CMDBuild.core.buttons.text.Abort', {
 								scope: this,
 
 								handler: function(button, e) {

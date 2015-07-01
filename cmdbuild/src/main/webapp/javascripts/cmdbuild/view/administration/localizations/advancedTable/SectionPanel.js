@@ -34,7 +34,7 @@
 						itemId: CMDBuild.core.proxy.Constants.TOOLBAR_TOP,
 
 						items: [
-							Ext.create('CMDBuild.core.buttons.Expand', {
+							Ext.create('CMDBuild.core.buttons.iconized.Expand', {
 								text: CMDBuild.Translation.expandAll,
 								scope: this,
 
@@ -42,7 +42,7 @@
 									this.delegate.cmfg('onAdvancedTableExpandAll', this.grid);
 								}
 							}),
-							Ext.create('CMDBuild.core.buttons.Collapse', {
+							Ext.create('CMDBuild.core.buttons.iconized.Collapse', {
 								text: CMDBuild.Translation.collapseAll,
 								scope: this,
 

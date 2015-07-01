@@ -17,7 +17,6 @@
 		extend: 'Ext.app.Application',
 
 		requires: [
-			'CMDBuild.core.buttons.Buttons',
 			'CMDBuild.core.proxy.Constants',
 			'CMDBuild.core.proxy.Classes',
 			'CMDBuild.core.proxy.Configuration',

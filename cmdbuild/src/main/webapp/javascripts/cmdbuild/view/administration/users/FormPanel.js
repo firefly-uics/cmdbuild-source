@@ -52,7 +52,7 @@
 		initComponent: function () {
 			var me = this;
 
-			this.disableUser = Ext.create('CMDBuild.core.buttons.Delete', {
+			this.disableUser = Ext.create('CMDBuild.core.buttons.iconized.Delete', {
 				text: CMDBuild.Translation.disableUser,
 				scope: this,
 
@@ -191,7 +191,7 @@
 						dock: 'top',
 						itemId: CMDBuild.core.proxy.Constants.TOOLBAR_TOP,
 						items: [
-							Ext.create('CMDBuild.core.buttons.Modify', {
+							Ext.create('CMDBuild.core.buttons.iconized.Modify', {
 								text: CMDBuild.Translation.modifyUser,
 								scope: this,
 
@@ -199,7 +199,7 @@
 									this.delegate.cmfg('onUserModifyButtonClick');
 								}
 							}),
-							Ext.create('CMDBuild.core.buttons.Password', {
+							Ext.create('CMDBuild.core.buttons.iconized.Password', {
 								text: CMDBuild.Translation.changePassword,
 								scope: this,
 
@@ -222,14 +222,14 @@
 						},
 
 						items: [
-							Ext.create('CMDBuild.core.buttons.Save', {
+							Ext.create('CMDBuild.core.buttons.text.Save', {
 								scope: this,
 
 								handler: function(button, e) {
 									this.delegate.cmfg('onUserSaveButtonClick');
 								}
 							}),
-							Ext.create('CMDBuild.core.buttons.Abort', {
+							Ext.create('CMDBuild.core.buttons.text.Abort', {
 								scope: this,
 
 								handler: function(button, e) {

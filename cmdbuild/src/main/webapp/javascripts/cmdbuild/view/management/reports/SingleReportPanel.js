@@ -31,28 +31,28 @@
 					dock: 'top',
 					itemId: CMDBuild.core.proxy.Constants.TOOLBAR_TOP,
 					items: [
-						Ext.create('CMDBuild.core.buttons.FileFormatsPdf', {
+						Ext.create('CMDBuild.core.buttons.fileTypes.Pdf', {
 							scope: this,
 
 							handler: function(button, e) {
 								this.delegate.cmfg('onSingleReportTypeButtonClick', CMDBuild.core.proxy.Constants.PDF);
 							}
 						}),
-						Ext.create('CMDBuild.core.buttons.FileFormatsOdt', {
+						Ext.create('CMDBuild.core.buttons.fileTypes.Odt', {
 							scope: this,
 
 							handler: function(button, e) {
 								this.delegate.cmfg('onSingleReportTypeButtonClick', CMDBuild.core.proxy.Constants.ODT);
 							}
 						}),
-						Ext.create('CMDBuild.core.buttons.FileFormatsRtf', {
+						Ext.create('CMDBuild.core.buttons.fileTypes.Rtf', {
 							scope: this,
 
 							handler: function(button, e) {
 								this.delegate.cmfg('onSingleReportTypeButtonClick', CMDBuild.core.proxy.Constants.RTF);
 							}
 						}),
-						Ext.create('CMDBuild.core.buttons.FileFormatsCsv', {
+						Ext.create('CMDBuild.core.buttons.fileTypes.Csv', {
 							scope: this,
 
 							handler: function(button, e) {
@@ -60,7 +60,7 @@
 							}
 						}),
 						'->',
-						Ext.create('CMDBuild.core.buttons.Download', {
+						Ext.create('CMDBuild.core.buttons.iconized.Download', {
 							scope: this,
 
 							handler: function(button, e) {

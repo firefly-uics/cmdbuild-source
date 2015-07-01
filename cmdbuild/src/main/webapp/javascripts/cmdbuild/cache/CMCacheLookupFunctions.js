@@ -9,9 +9,9 @@
 
 	var lookupAttributeStoreMap = {};
 
-	Ext.define("CMDBUild.cache.CMCacheLookupFunctions", {
+	Ext.require('CMDBuild.core.proxy.lookup.Lookup');
 
-//		requires: ['CMDBuild.core.proxy.Lookup'],
+	Ext.define("CMDBUild.cache.CMCacheLookupFunctions", {
 
 		getLookupTypes: function() {
 			return lookupTypes;
