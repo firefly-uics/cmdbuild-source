@@ -10,45 +10,51 @@
 
 		title: CMDBuild.Translation.menu,
 
-		listeners: {
-			beforeexpand: function(panel, animate, eOpts) {
-				CMDBuild.ServiceProxy.group.read({
-					scope: this,
-					loadMask: true,
-					success: function(response, options, decodedResponse) {
-						Ext.suspendLayouts();
+		/**
+		 * @param {Ext.panel.Panel} panel
+		 * @param {Boolean} animate
+		 * @param {Object} eOpts
+		 *
+		 * @override
+		 */
+		beforeExpand: function(panel, animate, eOpts) {
+			CMDBuild.ServiceProxy.group.read({
+				loadMask: true,
+				scope: this,
+				success: function(response, options, decodedResponse) {
+					Ext.suspendLayouts();
 
-						CMDBuild.core.Utils.objectArraySort(decodedResponse.groups, CMDBuild.core.proxy.Constants.TEXT);
+					CMDBuild.core.Utils.objectArraySort(decodedResponse.groups, CMDBuild.core.proxy.Constants.TEXT);
 
-						var out = [{
+					var out = [{
+						cmName: 'menu',
+						iconCls: 'cmdbuild-tree-group-icon',
+						id: 0,
+						leaf: true,
+						text: '*Default*'
+					}];
+
+					Ext.Object.each(decodedResponse.groups, function(key, group, myself) {
+						out.push({
 							cmName: 'menu',
 							iconCls: 'cmdbuild-tree-group-icon',
-							id: 0,
+							id: group[CMDBuild.core.proxy.Constants.ID],
 							leaf: true,
-							text: '*Default*'
-						}];
+							name: group[CMDBuild.core.proxy.Constants.NAME],
+							text: group[CMDBuild.core.proxy.Constants.TEXT]
+						});
+					}, this);
 
-						Ext.Object.each(decodedResponse.groups, function(key, group, myself) {
-							out.push({
-								cmName: 'menu',
-								iconCls: 'cmdbuild-tree-group-icon',
-								id: group[CMDBuild.core.proxy.Constants.ID],
-								leaf: true,
-								name: group[CMDBuild.core.proxy.Constants.NAME],
-								text: group[CMDBuild.core.proxy.Constants.TEXT]
-							});
-						}, this);
+					this.getStore().getRootNode().removeAll();
+					this.getStore().getRootNode().appendChild(out);
 
-						this.getStore().getRootNode().removeAll();
-						this.getStore().getRootNode().appendChild(out);
+					Ext.resumeLayouts(true);
 
-						if (!Ext.isEmpty(this.getRootNode()) && !Ext.isEmpty(this.getRootNode().firstChild))
-							this.getSelectionModel().select(this.getRootNode().firstChild);
+					this.deferExpand();
+				}
+			});
 
-						Ext.resumeLayouts(true);
-					}
-				});
-			}
+			return this.callParent(arguments);
 		}
 	});
 

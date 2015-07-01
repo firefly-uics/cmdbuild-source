@@ -1,7 +1,7 @@
 (function() {
 
 	/**
-	 * Abstract class to be extended from all accordion menu
+	 * Abstract class to be extended from all accordion menu witch implements a delay to load store before expand action.
 	 *
 	 * @abstract
 	 */
@@ -17,6 +17,11 @@
 		 * @cfg {Object}
 		 */
 		delegate: undefined,
+
+		/**
+		 * @cfg {Boolean}
+		 */
+		storeLoaded: false,
 
 		animCollapse: false,
 		autoRender: true,
@@ -50,9 +55,36 @@
 		},
 
 		listeners: {
+			afteritemexpand: function(node, index, item, eOpts) {
+				this.storeLoaded = false; // Restore flag state
+			},
 			beforeexpand: function(panel, animate, eOpts) {
-				_error('beforeexpand event not implemented', this);
+				return this.beforeExpand(panel, animate, eOpts);
 			}
+		},
+
+		/**
+		 * @param {Ext.panel.Panel} panel
+		 * @param {Boolean} animate
+		 * @param {Object} eOpts
+		 */
+		beforeExpand: function(panel, animate, eOpts) {
+			return this.storeLoaded; // Stop expand action
+		},
+
+		/**
+		 * Resumes accordion's expand
+		 */
+		deferExpand: function() {
+			this.storeLoaded = true;
+
+			Ext.Function.defer(function() {
+				this.expand();
+
+				// Auto-select first child
+				if (!Ext.isEmpty(this.getRootNode()) && !Ext.isEmpty(this.getRootNode().firstChild))
+					this.getSelectionModel().select(this.getRootNode().firstChild);
+			}, 100, this);
 		}
 	});
 
