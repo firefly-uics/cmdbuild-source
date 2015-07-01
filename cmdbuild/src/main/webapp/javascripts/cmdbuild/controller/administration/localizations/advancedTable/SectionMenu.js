@@ -125,6 +125,7 @@
 						entityAttributeNodeObject[CMDBuild.core.proxy.Constants.LEAF] = false;
 						entityAttributeNodeObject[CMDBuild.core.proxy.Constants.PARENT] = rootNode;
 						entityAttributeNodeObject[CMDBuild.core.proxy.Constants.TEXT] = attributeObject.fields[0][CMDBuild.core.proxy.Constants.VALUE];
+						entityAttributeNodeObject['iconCls'] = 'cmdbuild-tree-' + attributeObject[CMDBuild.core.proxy.Constants.TYPE] + '-icon';
 
 						var entityAttributeNode = rootNode.appendChild(entityAttributeNodeObject);
 
