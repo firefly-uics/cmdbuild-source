@@ -39,7 +39,6 @@
 
 			this.view = Ext.create('CMDBuild.view.administration.localizations.advancedTable.SectionPanel', {
 				delegate: this,
-
 				title: '@@ Lookup types'
 			});
 
@@ -47,6 +46,28 @@
 			this.grid = this.view.grid;
 
 			this.cmfg('onAdvancedTableTabCreation', this.view); // Add panel to parent tab panel
+		},
+
+		/**
+		 * Build value main node (buildAttributesNode)
+		 *
+		 * @param {CMDBuild.model.localizations.advancedTable.TreeStore} rootNode
+		 *
+		 * @returns {CMDBuild.model.localizations.advancedTable.TreeStore}
+		 *
+		 * @override
+		 */
+		buildValuesNode: function(rootNode) {
+			if (!Ext.isEmpty(rootNode)) {
+				var entityAttributesNodeObject = { expandable: true };
+				entityAttributesNodeObject[CMDBuild.core.proxy.Constants.LEAF] = false;
+				entityAttributesNodeObject[CMDBuild.core.proxy.Constants.PARENT] = rootNode;
+				entityAttributesNodeObject[CMDBuild.core.proxy.Constants.TEXT] = '@@ Lookup'; // TODO: translation???
+
+				return rootNode.appendChild(entityAttributesNodeObject);
+			}
+
+			return rootNode;
 		},
 
 		/**
@@ -71,17 +92,9 @@
 
 					var lookupTypeNode = rootNode.appendChild(lookupTypeNodeObject);
 
-					// Lookup values nodes
-					if (Ext.isArray(lookupTypeObject[CMDBuild.core.proxy.Constants.VALUES])) {
-						var lookupValuesNodeObject = { expandable: true };
-						lookupValuesNodeObject[CMDBuild.core.proxy.Constants.LEAF] = false;
-						lookupValuesNodeObject[CMDBuild.core.proxy.Constants.PARENT] = lookupTypeNode;
-						lookupValuesNodeObject[CMDBuild.core.proxy.Constants.TEXT] = '@@ Lookup'; // TODO: translation???
-
-						var lookupValuesNode = lookupTypeNode.appendChild(lookupValuesNodeObject);
-
-						this.decodeStructureValues(lookupValuesNode, lookupTypeObject[CMDBuild.core.proxy.Constants.VALUES]);
-					}
+					// Lookup's values nodes
+					if (!Ext.isEmpty(lookupTypeObject[CMDBuild.core.proxy.Constants.VALUES]))
+						this.decodeStructureValues(lookupTypeNode, lookupTypeObject[CMDBuild.core.proxy.Constants.VALUES]);
 				}, this);
 			} else {
 				_error('[' + this.getSectionId() + '] decodeStructure() wrong parameters', this);
@@ -89,39 +102,46 @@
 		},
 
 		/**
-		 * Entity attribute node
+		 * Entity translatable fields
 		 *
 		 * @param {CMDBuild.model.localizations.advancedTable.TreeStore} rootNode
 		 * @param {Array} fieldsArray
+		 *
+		 * @override
 		 */
-		decodeStructureAttributeFields: function(rootNode, fieldsArray) {
+		decodeStructureFields: function(rootNode, fieldsArray) {
 			if (
 				!Ext.isEmpty(rootNode)
 				&& !Ext.isEmpty(fieldsArray)
 				&& Ext.isArray(fieldsArray)
 			) {
-				Ext.Array.forEach(fieldsArray, function(fieldObject, i, allAttributesObjects) {
-					var attributeFieldNodeObject = {};
-					attributeFieldNodeObject[CMDBuild.core.proxy.Constants.DEFAULT] = fieldObject[CMDBuild.core.proxy.Constants.VALUE];
-					attributeFieldNodeObject[CMDBuild.core.proxy.Constants.FIELD] = fieldObject[CMDBuild.core.proxy.Constants.NAME];
-					attributeFieldNodeObject[CMDBuild.core.proxy.Constants.IDENTIFIER] = this.getLevelNode(rootNode, 3).get(CMDBuild.core.proxy.Constants.IDENTIFIER);
-					attributeFieldNodeObject[CMDBuild.core.proxy.Constants.LEAF] = true;
-					attributeFieldNodeObject[CMDBuild.core.proxy.Constants.OWNER] = this.getLevelNode(rootNode, 1).get(CMDBuild.core.proxy.Constants.IDENTIFIER);
-					attributeFieldNodeObject[CMDBuild.core.proxy.Constants.PARENT] = rootNode;
-					attributeFieldNodeObject[CMDBuild.core.proxy.Constants.TEXT] = fieldObject[CMDBuild.core.proxy.Constants.NAME];
-					attributeFieldNodeObject[CMDBuild.core.proxy.Constants.TYPE] = this.getSectionId() + CMDBuild.core.Utils.toTitleCase(CMDBuild.core.proxy.Constants.VALUE);
+				Ext.Array.forEach(fieldsArray, function(fieldObject, i, allFields) {
+					var entityFieldNodeObject = {};
+					entityFieldNodeObject[CMDBuild.core.proxy.Constants.DEFAULT] = fieldObject[CMDBuild.core.proxy.Constants.VALUE];
+					entityFieldNodeObject[CMDBuild.core.proxy.Constants.FIELD] = fieldObject[CMDBuild.core.proxy.Constants.NAME];
+					entityFieldNodeObject[CMDBuild.core.proxy.Constants.IDENTIFIER] = this.getLevelNode(rootNode, 3).get(CMDBuild.core.proxy.Constants.IDENTIFIER);
+					entityFieldNodeObject[CMDBuild.core.proxy.Constants.LEAF] = true;
+					entityFieldNodeObject[CMDBuild.core.proxy.Constants.PARENT] = rootNode;
+					entityFieldNodeObject[CMDBuild.core.proxy.Constants.TEXT] = fieldObject[CMDBuild.core.proxy.Constants.NAME];
+					entityFieldNodeObject[CMDBuild.core.proxy.Constants.TYPE] = this.getSectionId();
 
-					this.fillWithTranslations(fieldObject[CMDBuild.core.proxy.Constants.TRANSLATIONS], attributeFieldNodeObject);
+					// Fields adapter for attributes nodes
+					if (rootNode.getDepth() != 1) {
+						entityFieldNodeObject[CMDBuild.core.proxy.Constants.OWNER] = this.getLevelNode(rootNode, 1).get(CMDBuild.core.proxy.Constants.IDENTIFIER);
+						entityFieldNodeObject[CMDBuild.core.proxy.Constants.TYPE] = this.getSectionId() + CMDBuild.core.Utils.toTitleCase(CMDBuild.core.proxy.Constants.VALUE);
+					}
 
-					rootNode.appendChild(attributeFieldNodeObject);
+					this.fillWithTranslations(fieldObject[CMDBuild.core.proxy.Constants.TRANSLATIONS], entityFieldNodeObject);
+
+					rootNode.appendChild(entityFieldNodeObject);
 				}, this);
 			} else {
-				_error('[' + this.getSectionId() + '] decodeStructureAttributeFields() - wrong parameters type', this);
+				rootNode.appendChild({}); // FIX: expandable property is bugged so i must build a fake node to make rootNode expandable
 			}
 		},
 
 		/**
-		 * Entity attribute nodes
+		 * Entity values nodes (decodeStructureAttributes)
 		 *
 		 * @param {CMDBuild.model.localizations.advancedTable.TreeStore} rootNode
 		 * @param {Array} valuesArray
@@ -132,6 +152,8 @@
 				&& !Ext.isEmpty(valuesArray)
 				&& Ext.isArray(valuesArray)
 			) {
+				rootNode = this.buildValuesNode(rootNode);
+
 				Ext.Array.forEach(valuesArray, function(valueObject, i, allValuesObjects) {
 					var lookupValueNodeObject = { expandable: true };
 					lookupValueNodeObject[CMDBuild.core.proxy.Constants.IDENTIFIER] = valueObject[CMDBuild.core.proxy.Constants.TRANSLATION_UUID];
@@ -141,10 +163,10 @@
 
 					var lookupValueNode = rootNode.appendChild(lookupValueNodeObject);
 
-					this.decodeStructureAttributeFields(lookupValueNode, valueObject[CMDBuild.core.proxy.Constants.FIELDS]);
+					this.decodeStructureFields(lookupValueNode, valueObject[CMDBuild.core.proxy.Constants.FIELDS]);
 				}, this);
 			} else {
-				_error('[' + this.getSectionId() + '] decodeStructureAttributes() - wrong parameters type', this);
+				_error('[' + this.getSectionId() + '] decodeStructureValues() - wrong parameters type', this);
 			}
 		}
 	});

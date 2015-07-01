@@ -9,14 +9,19 @@
 		delegate: undefined,
 
 		/**
+		 * @property {Ext.form.field.Checkbox}
+		 */
+		activeOnlyCheckbox: undefined,
+
+		/**
 		 * @property {CMDBuild.view.administration.localizations.common.AdvancedTableGrid}
 		 */
 		grid: undefined,
 
 		/**
-		 * @property {Ext.form.field.Checkbox}
+		 * @cfg {Boolean}
 		 */
-		includeOnlyEnabledEntitiesCheckbox: undefined,
+		hideActiveOnlyCheckbox: false,
 
 		bodyCls: 'cmgraypanel',
 		layout: 'fit',
@@ -46,10 +51,11 @@
 								}
 							}),
 							'->',
-							this.includeOnlyEnabledEntitiesCheckbox = Ext.create('Ext.form.field.Checkbox', {
+							this.activeOnlyCheckbox = Ext.create('Ext.form.field.Checkbox', {
 								boxLabel: '@@ active only',
 								boxLabelCls: 'cmtoolbaritem',
 								checked: true, // Default as true
+								hidden: this.hideActiveOnlyCheckbox,
 								scope: this,
 
 								handler: function(checkbox, checked) {
