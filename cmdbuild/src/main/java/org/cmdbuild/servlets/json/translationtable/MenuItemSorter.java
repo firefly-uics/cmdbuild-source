@@ -1,6 +1,8 @@
 package org.cmdbuild.servlets.json.translationtable;
 
 import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
+import static org.cmdbuild.servlets.json.translationtable.AttributeSorter.ASC;
+import static org.cmdbuild.servlets.json.translationtable.AttributeSorter.DESC;
 
 import org.apache.commons.lang3.StringUtils;
 import org.cmdbuild.services.store.menu.MenuItem;
@@ -37,8 +39,8 @@ enum MenuItemSorter {
 	}
 
 	Ordering<MenuItem> getOrientedOrdering() {
-		direction = defaultIfBlank(direction, "ASC");
-		if (direction.equalsIgnoreCase("DESC")) {
+		direction = defaultIfBlank(direction, ASC);
+		if (direction.equalsIgnoreCase(DESC)) {
 			return getOrderingForProperty().reverse();
 		} else {
 			return getOrderingForProperty();
