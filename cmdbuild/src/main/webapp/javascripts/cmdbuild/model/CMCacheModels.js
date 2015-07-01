@@ -16,6 +16,14 @@
 		}
 	});
 
+	Ext.define('CMDBuild.cache.Lookup.typeComboStore', {
+		extend: 'Ext.data.Model',
+
+		fields: [
+			{ name: CMDBuild.core.proxy.Constants.TYPE, type: 'string' }
+		]
+	});
+
 	Ext.define("CMDBuild.cache.CMLookupTypeModel", {
 		extend: 'Ext.data.Model',
 		fields: [

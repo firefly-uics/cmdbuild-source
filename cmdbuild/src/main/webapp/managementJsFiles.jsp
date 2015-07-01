@@ -4,9 +4,6 @@
 <!-- PROXIES -->
 <script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxyRelations.js"></script>
 
-<!-- MODELS -->
-<script type="text/javascript" src="javascripts/cmdbuild/model/Lookup.js"></script>
-
 <!-- STATES -->
 <script type="text/javascript" src="javascripts/cmdbuild/state/CMWorkflowState.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/state/CMUIState.js"></script>

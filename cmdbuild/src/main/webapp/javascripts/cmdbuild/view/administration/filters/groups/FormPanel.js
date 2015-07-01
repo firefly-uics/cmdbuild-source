@@ -42,7 +42,6 @@
 		},
 
 		initComponent: function() {
-
 			Ext.apply(this, {
 				dockedItems: [
 					Ext.create('Ext.toolbar.Toolbar', {

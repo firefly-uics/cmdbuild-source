@@ -34,7 +34,7 @@
 			'CMDBuild.core.proxy.Classes',
 			'CMDBuild.core.proxy.Configuration',
 			'CMDBuild.core.proxy.Domain',
-			'CMDBuild.core.proxy.Lookup',
+			'CMDBuild.core.proxy.lookup.Type',
 			'CMDBuild.core.proxy.Menu',
 			'CMDBuild.core.proxy.dataViews.DataViews',
 			'CMDBuild.core.proxy.reports.Reports'
@@ -327,6 +327,7 @@
 
 				CMDBuild.core.proxy.Domain.getAll({
 					params: params,
+					scope: this,
 					success: function(response, options, decodedResponse) {
 						_CMCache.addDomains(decodedResponse.domains);
 					},
@@ -355,7 +356,11 @@
 					callback: reqBarrier.getCallback()
 				});
 
-				CMDBuild.core.proxy.Lookup.readAll({
+				/**
+				 * Lookup
+				 */
+				CMDBuild.core.proxy.lookup.Type.readAll({
+					scope: this,
 					success: function(response, options, decodedResponse) {
 						_CMCache.addLookupTypes(decodedResponse);
  					},

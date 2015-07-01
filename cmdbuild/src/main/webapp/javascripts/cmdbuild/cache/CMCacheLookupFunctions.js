@@ -1,7 +1,7 @@
 (function() {
 	var constants = CMDBuild.Constants;
 
-	var lookupTypeStore = getFakeStore()
+	var lookupTypeStore = getFakeStore();
 	var lookupTypeStoreOnlyLeves = getFakeStore();
 
 
@@ -82,7 +82,7 @@
 
 		getLookupStore: function(type) {
 			if (!lookupAttributeStoreMap[type]) {
-				lookupAttributeStoreMap[type] = CMDBuild.core.proxy.Lookup.getFieldStore(type);
+				lookupAttributeStoreMap[type] = CMDBuild.core.proxy.lookup.Lookup.getFieldStore(type);
 			}
 			return lookupAttributeStoreMap[type];
 		},
@@ -113,7 +113,7 @@
 
 	function buildLookupTypeStore(onlyLeaves) {
 		var store = new Ext.data.Store({
-			model: "CMDBuild.model.Lookup.typeComboStore",
+			model: "CMDBuild.cache.Lookup.typeComboStore",
 			cmOnlyLeaves: onlyLeaves,
 			cmFill: function() {
 				this.removeAll();

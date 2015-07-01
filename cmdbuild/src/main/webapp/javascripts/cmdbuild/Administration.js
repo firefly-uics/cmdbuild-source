@@ -22,7 +22,7 @@
 			'CMDBuild.core.proxy.Classes',
 			'CMDBuild.core.proxy.Configuration',
 			'CMDBuild.core.proxy.Domain',
-			'CMDBuild.core.proxy.Lookup',
+			'CMDBuild.core.proxy.lookup.Type',
 			'CMDBuild.core.proxy.reports.Reports'
 		],
 
@@ -278,20 +278,23 @@
 				});
 
 				/**
-				 * Lookups
+				 * Lookup
 				 */
-				CMDBuild.core.proxy.Lookup.readAll({
+				CMDBuild.core.proxy.lookup.Type.readAll({
+					scope: this,
 					success: function(response, options, decodedResponse) {
 						_CMCache.addLookupTypes(decodedResponse);
 
-						lookupAccordion = new CMDBuild.view.administration.accordion.CMLookupAccordion({
-							cmControllerType: CMDBuild.controller.accordion.CMLookupAccordionController
+						lookupAccordion = Ext.create('CMDBuild.view.administration.accordion.Lookup', {
+							cmControllerType: 'CMDBuild.controller.administration.accordion.Lookup',
+							cmName: 'lookuptype',
 						});
 						lookupAccordion.updateStore();
 
 						_CMMainViewportController.addPanel(
-							new CMDBuild.Administration.ModLookup({
-								cmControllerType: controllerNS.administration.lookup.CMModLookupController
+							Ext.create('CMDBuild.view.administration.lookup.LookupView', {
+								cmControllerType: 'CMDBuild.controller.administration.lookup.Lookup',
+								cmName: 'lookuptype'
 							})
 						);
 					},

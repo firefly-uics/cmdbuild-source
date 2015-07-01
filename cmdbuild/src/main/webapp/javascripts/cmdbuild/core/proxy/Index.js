@@ -176,8 +176,10 @@
 			disable: 'services/json/schema/modlookup/disablelookup',
 			enable: 'services/json/schema/modlookup/enablelookup',
 			getList: 'services/json/schema/modlookup/getlookuplist',
+			getParentList: 'services/json/schema/modlookup/getparentlist',
 			save: 'services/json/schema/modlookup/savelookup',
 			saveType: 'services/json/schema/modlookup/savelookuptype',
+			setOrder: 'services/json/schema/modlookup/reorderlookup',
 			tree: 'services/json/schema/modlookup/tree'
 		},
 
