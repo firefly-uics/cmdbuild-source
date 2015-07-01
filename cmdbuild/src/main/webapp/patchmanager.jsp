@@ -54,8 +54,6 @@
 		</script>
 
 		<!-- 4. Modules -->
-		<script type="text/javascript" src="javascripts/cmdbuild/core/buttons/Base.js"></script>
-		<script type="text/javascript" src="javascripts/cmdbuild/core/buttons/Buttons.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/model/CMPatchModel.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/patchmanager.js"></script>
 

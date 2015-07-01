@@ -29,7 +29,6 @@
 			'CMDBuild.routes.management.Classes',
 			'CMDBuild.routes.management.Instances',
 			'CMDBuild.routes.management.Processes',
-			'CMDBuild.core.buttons.Buttons',
 			'CMDBuild.core.proxy.Constants',
 			'CMDBuild.core.proxy.Classes',
 			'CMDBuild.core.proxy.Configuration',

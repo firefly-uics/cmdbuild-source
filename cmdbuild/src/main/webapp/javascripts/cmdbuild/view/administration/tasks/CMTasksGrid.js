@@ -60,7 +60,7 @@
 					fixed: true,
 
 					items: [
-						Ext.create('CMDBuild.core.buttons.Start', {
+						Ext.create('CMDBuild.core.buttons.iconized.Start', {
 							text: null,
 							tooltip: tr.startLabel,
 							scope: this,
@@ -84,7 +84,7 @@
 					fixed: true,
 
 					items: [
-						Ext.create('CMDBuild.core.buttons.Stop', {
+						Ext.create('CMDBuild.core.buttons.iconized.Stop', {
 							text: null,
 							tooltip: tr.stopLabel,
 							scope: this,

@@ -14,7 +14,7 @@
 				text : tr.add_class
 			});
 
-			this.printSchema = Ext.create('CMDBuild.core.buttons.Print', {
+			this.printSchema = Ext.create('CMDBuild.core.buttons.iconized.Print', {
 				formatList: [
 					CMDBuild.core.proxy.Constants.PDF,
 					CMDBuild.core.proxy.Constants.ODT

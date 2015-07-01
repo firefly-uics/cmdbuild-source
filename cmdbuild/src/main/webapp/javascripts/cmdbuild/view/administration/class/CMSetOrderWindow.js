@@ -10,12 +10,12 @@
 		title: CMDBuild.Translation.administration.modClass.attributeProperties.set_sorting_criteria,
 
 		initComponent: function() {
-			this.saveBtn = Ext.create('CMDBuild.buttons.SaveButton', {
+			this.saveBtn = Ext.create('CMDBuild.core.buttons.text.Save', {
 				handler: this.onSave,
 				scope: this
 			});
 
-			this.abortBtn = Ext.create('CMDBuild.buttons.AbortButton', {
+			this.abortBtn = Ext.create('CMDBuild.core.buttons.text.Abort', {
 				handler: this.onAbort,
 				scope: this
 			});

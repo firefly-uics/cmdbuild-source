@@ -145,7 +145,7 @@ function buildDetaiWindow(detailBufferIndex) {
 				},
 
 				items: [
-					Ext.create('CMDBuild.core.buttons.Close', {
+					Ext.create('CMDBuild.core.buttons.text.Close', {
 						scope: this,
 
 						handler: function(button, e) {

@@ -49,7 +49,7 @@
 						itemId: CMDBuild.core.proxy.Constants.TOOLBAR_TOP,
 
 						items: [
-							Ext.create('CMDBuild.core.buttons.Modify', {
+							Ext.create('CMDBuild.core.buttons.iconized.Modify', {
 								text: CMDBuild.Translation.modifyFilter,
 								scope: this,
 
@@ -57,7 +57,7 @@
 									this.delegate.cmfg('onFiltersGroupsModifyButtonClick');
 								}
 							}),
-							Ext.create('CMDBuild.core.buttons.Delete', {
+							Ext.create('CMDBuild.core.buttons.iconized.Delete', {
 								text: CMDBuild.Translation.removeFilter,
 								scope: this,
 
@@ -79,14 +79,14 @@
 						},
 
 						items: [
-							Ext.create('CMDBuild.core.buttons.Save', {
+							Ext.create('CMDBuild.core.buttons.text.Save', {
 								scope: this,
 
 								handler: function(button, e) {
 									this.delegate.cmfg('onFiltersGroupsSaveButtonClick');
 								}
 							}),
-							Ext.create('CMDBuild.core.buttons.Abort', {
+							Ext.create('CMDBuild.core.buttons.text.Abort', {
 								scope: this,
 
 								handler: function(button, e) {

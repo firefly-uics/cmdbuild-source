@@ -62,7 +62,7 @@
 									me.delegate.cmfg('onMenuGroupAddFolderButtonClick', this.getValue());
 								}
 							}),
-							Ext.create('CMDBuild.core.buttons.Delete', {
+							Ext.create('CMDBuild.core.buttons.iconized.Delete', {
 								text: CMDBuild.Translation.removeMenu,
 								scope: this,
 
@@ -84,14 +84,14 @@
 						},
 
 						items: [
-							Ext.create('CMDBuild.core.buttons.Save', {
+							Ext.create('CMDBuild.core.buttons.text.Save', {
 								scope: this,
 
 								handler: function(button, e) {
 									this.delegate.cmfg('onMenuGroupSaveButtonClick');
 								}
 							}),
-							Ext.create('CMDBuild.core.buttons.Abort', {
+							Ext.create('CMDBuild.core.buttons.text.Abort', {
 								scope: this,
 
 								handler: function(button, e) {
@@ -196,7 +196,7 @@
 						},
 
 						items: [
-							Ext.create('CMDBuild.core.buttons.MoveRight', {
+							Ext.create('CMDBuild.core.buttons.iconized.MoveRight', {
 								tooltip: CMDBuild.Translation.remove,
 								scope: this,
 

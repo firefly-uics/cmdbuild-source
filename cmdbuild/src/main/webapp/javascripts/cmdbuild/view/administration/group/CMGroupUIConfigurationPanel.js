@@ -11,8 +11,8 @@ Ext.define("CMDBuild.view.administration.group.CMGroupUIConfigurationPanel", {
 
 	constructor: function() {
 
-		this.saveButton = new CMDBuild.buttons.SaveButton();
-		this.abortButton = new CMDBuild.buttons.AbortButton();
+		this.saveButton = Ext.create('CMDBuild.core.buttons.text.Save');
+		this.abortButton = Ext.create('CMDBuild.core.buttons.text.Abort');
 		this.cmButtons = [this.saveButton, this.abortButton];
 
 		this.callParent(arguments);

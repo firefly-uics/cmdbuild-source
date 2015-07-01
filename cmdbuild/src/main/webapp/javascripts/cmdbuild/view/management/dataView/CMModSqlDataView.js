@@ -198,7 +198,7 @@
 				new CMDBuild.view.management.common.filter.CMFilterMenuButton({
 					disabled: true
 				}),
-				Ext.create('CMDBuild.core.buttons.Print', { // Functionality not implemented on server side
+				Ext.create('CMDBuild.core.buttons.iconized.Print', { // Functionality not implemented on server side
 					disabled: true
 				})
 			]
@@ -245,7 +245,7 @@
 				text: CMDBuild.Translation.management.graph.action,
 				disabled: true
 			},
-			Ext.create('CMDBuild.core.buttons.Print', {
+			Ext.create('CMDBuild.core.buttons.iconized.Print', {
 				formatList: [
 					CMDBuild.core.proxy.Constants.PDF,
 					CMDBuild.core.proxy.Constants.ODT

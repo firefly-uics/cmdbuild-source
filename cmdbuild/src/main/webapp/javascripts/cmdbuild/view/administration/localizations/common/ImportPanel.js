@@ -41,7 +41,7 @@
 						},
 
 						items: [
-							Ext.create('CMDBuild.core.buttons.Import', {
+							Ext.create('CMDBuild.core.buttons.text.Import', {
 								scope: this,
 
 								handler: function(button, e) {

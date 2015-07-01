@@ -17,7 +17,7 @@
 		},
 
 		/**
-		 * @param {CMDBuild.buttons.AbortButton}
+		 * @param {CMDBuild.core.buttons.text.Abort}
 		 */
 		abortButton: undefined,
 
@@ -67,7 +67,7 @@
 		modifyButton: undefined,
 
 		/**
-		 * @param {CMDBuild.buttons.SaveButton}
+		 * @param {CMDBuild.core.buttons.text.Save}
 		 */
 		saveButton: undefined,
 
@@ -102,8 +102,8 @@
 
 				this.cmTBar = [this.modifyButton, this.enableGroupButton ];
 
-				this.saveButton = Ext.create('CMDBuild.buttons.SaveButton');
-				this.abortButton = Ext.create('CMDBuild.buttons.AbortButton');
+				this.saveButton = Ext.create('CMDBuild.core.buttons.text.Save');
+				this.abortButton = Ext.create('CMDBuild.core.buttons.text.Abort');
 				this.cmButtons = [this.saveButton, this.abortButton];
 			// END: Buttons configuration
 

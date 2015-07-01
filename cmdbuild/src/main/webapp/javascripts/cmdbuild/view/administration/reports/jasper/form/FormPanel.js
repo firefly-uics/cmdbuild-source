@@ -42,7 +42,7 @@
 						itemId: CMDBuild.core.proxy.Constants.TOOLBAR_TOP,
 
 						items: [
-							Ext.create('CMDBuild.core.buttons.Modify', {
+							Ext.create('CMDBuild.core.buttons.iconized.Modify', {
 								text: CMDBuild.Translation.modifyReport,
 								scope: this,
 
@@ -50,7 +50,7 @@
 									this.delegate.cmfg('onReportsJasperModifyButtonClick');
 								}
 							}),
-							Ext.create('CMDBuild.core.buttons.Delete', {
+							Ext.create('CMDBuild.core.buttons.iconized.Delete', {
 								text: CMDBuild.Translation.removeReport,
 								scope: this,
 
@@ -72,14 +72,14 @@
 						},
 
 						items: [
-							Ext.create('CMDBuild.core.buttons.Save', {
+							Ext.create('CMDBuild.core.buttons.text.Save', {
 								scope: this,
 
 								handler: function(button, e) {
 									this.delegate.cmfg('onReportsJasperSaveButtonClick');
 								}
 							}),
-							Ext.create('CMDBuild.core.buttons.Abort', {
+							Ext.create('CMDBuild.core.buttons.text.Abort', {
 								scope: this,
 
 								handler: function(button, e) {

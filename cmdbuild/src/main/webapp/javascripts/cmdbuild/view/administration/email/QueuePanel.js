@@ -39,7 +39,7 @@
 		},
 
 		initComponent: function() {
-			this.queueStartButton = Ext.create('CMDBuild.core.buttons.Start', {
+			this.queueStartButton = Ext.create('CMDBuild.core.buttons.iconized.Start', {
 				text: CMDBuild.Translation.start,
 				scope: this,
 
@@ -48,7 +48,7 @@
 				}
 			});
 
-			this.queueStopButton = Ext.create('CMDBuild.core.buttons.Stop', {
+			this.queueStopButton = Ext.create('CMDBuild.core.buttons.iconized.Stop', {
 				text: CMDBuild.Translation.stop,
 				scope: this,
 
@@ -90,14 +90,14 @@
 						},
 
 						items: [
-							Ext.create('CMDBuild.core.buttons.Save', {
+							Ext.create('CMDBuild.core.buttons.text.Save', {
 								scope: this,
 
 								handler: function(button, e) {
 									this.delegate.cmfg('onEmailQueueSaveButtonClick');
 								}
 							}),
-							Ext.create('CMDBuild.core.buttons.Abort', {
+							Ext.create('CMDBuild.core.buttons.text.Abort', {
 								scope: this,
 
 								handler: function(button, e) {
