@@ -69,7 +69,8 @@ enum EntryTypeSorter {
 	private static final Ordering<CMEntryType> ORDER_ENTRYTYPE_BY_DESCRIPTION = new Ordering<CMEntryType>() {
 		@Override
 		public int compare(final CMEntryType left, final CMEntryType right) {
-			return left.getDescription().compareTo(right.getDescription());
+			return defaultIfBlank(left.getDescription(),EMPTY) //
+					.compareTo(defaultIfBlank(right.getDescription(),EMPTY));
 		}
 	};
 
