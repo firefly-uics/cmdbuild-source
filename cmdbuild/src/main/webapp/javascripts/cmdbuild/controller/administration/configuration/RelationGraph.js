@@ -3,6 +3,8 @@
 	Ext.define('CMDBuild.controller.administration.configuration.RelationGraph', {
 		extend: 'CMDBuild.controller.common.AbstractController',
 
+		requires: ['CMDBuild.core.proxy.Constants'],
+
 		/**
 		 * @cfg {CMDBuild.controller.administration.configuration.Configuration}
 		 */
@@ -17,9 +19,14 @@
 		],
 
 		/**
-		 * @cfg {String}
+		 * Proxy parameters
+		 *
+		 * @cfg {Object}
 		 */
-		configFileName: 'graph',
+		params: {
+			fileName: 'graph',
+			view: undefined
+		},
 
 		/**
 		 * @property {CMDBuild.view.administration.configuration.RelationGraphPanel}
@@ -39,24 +46,17 @@
 				delegate: this
 			});
 
-			this.cmfg('onConfigurationRead', {
-				configFileName: this.configFileName,
-				view: this.view
-			});
+			this.params[CMDBuild.core.proxy.Constants.VIEW] = this.view;
+
+			this.cmfg('onConfigurationRead', this.params);
 		},
 
-		onRelationGraphAbortButtonClick: function() {
-			this.cmfg('onConfigurationRead', {
-				configFileName: this.configFileName,
-				view: this.view
-			});
+		onGeneralOptionsAbortButtonClick: function() {
+			this.cmfg('onConfigurationRead', this.params);
 		},
 
-		onRelationGraphSaveButtonClick: function() {
-			this.cmfg('onConfigurationSave', {
-				configFileName: this.configFileName,
-				view: this.view
-			});
+		onGeneralOptionsSaveButtonClick: function() {
+			this.cmfg('onConfigurationSave', this.params);
 		}
 	});
 
