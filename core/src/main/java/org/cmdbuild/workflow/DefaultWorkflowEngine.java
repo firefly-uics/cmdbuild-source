@@ -1,6 +1,8 @@
 package org.cmdbuild.workflow;
 
 import static java.util.Arrays.asList;
+import static java.util.Collections.emptyMap;
+import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 import static org.cmdbuild.model.widget.Widget.SUBMISSION_PARAM;
 
 import java.util.Map;
@@ -16,8 +18,9 @@ import org.cmdbuild.common.utils.PagedElements;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.data.QueryOptions;
-import org.cmdbuild.workflow.WorkflowPersistence.ProcessCreation;
-import org.cmdbuild.workflow.WorkflowPersistence.ProcessUpdate;
+import org.cmdbuild.workflow.WorkflowPersistence.ForwardingProcessData;
+import org.cmdbuild.workflow.WorkflowPersistence.NoProcessData;
+import org.cmdbuild.workflow.WorkflowPersistence.ProcessData;
 import org.cmdbuild.workflow.WorkflowTypesConverter.Reference;
 import org.cmdbuild.workflow.service.CMWorkflowService;
 import org.cmdbuild.workflow.service.WSActivityInstInfo;
@@ -118,6 +121,7 @@ public class DefaultWorkflowEngine implements QueryableUserWorkflowEngine {
 	}
 
 	private static final CMWorkflowEngineListener NULL_EVENT_LISTENER = new NullWorkflowEngineListener();
+	private static final Map<String, ?> NO_VARIABLES = emptyMap();
 
 	private final OperationUser operationUser;
 	private final WorkflowPersistence persistence;
@@ -175,7 +179,13 @@ public class DefaultWorkflowEngine implements QueryableUserWorkflowEngine {
 
 	@Override
 	public UserProcessInstance startProcess(final CMProcessClass processClass) throws CMWorkflowException {
-		logger.info(marker, "starting process for class '{}'", processClass.getName());
+		return startProcess(processClass, NO_VARIABLES);
+	}
+
+	@Override
+	public UserProcessInstance startProcess(final CMProcessClass processClass, final Map<String, ?> vars)
+			throws CMWorkflowException {
+		logger.info(marker, "starting process for class '{}' with variables '{}'", processClass.getName());
 
 		final CMActivity startActivity = processClass.getStartActivity();
 		if (startActivity == null) {
@@ -187,11 +197,13 @@ public class DefaultWorkflowEngine implements QueryableUserWorkflowEngine {
 				procInstInfo.getProcessInstanceId());
 
 		final UserProcessInstance createdProcessInstance = persistence.createProcessInstance(processClass,
-				procInstInfo, new ProcessCreation() {
+				procInstInfo, new ForwardingProcessData() {
+
+					private final ProcessData delegate = NoProcessData.getInstance();
 
 					@Override
-					public WSProcessInstInfo processInstanceInfo() {
-						return procInstInfo;
+					protected ProcessData delegate() {
+						return delegate;
 					}
 
 					@Override
@@ -199,23 +211,25 @@ public class DefaultWorkflowEngine implements QueryableUserWorkflowEngine {
 						return WSProcessInstanceState.OPEN;
 					}
 
-				});
-		final UserProcessInstance processInstance = persistence.updateProcessInstance(createdProcessInstance,
-				new ProcessUpdate() {
+					@Override
+					public WSProcessInstInfo processInstanceInfo() {
+						return procInstInfo;
+					}
 
 					@Override
 					public Map<String, ?> values() {
-						return NO_VALUES;
+						return defaultIfNull(vars, NO_VARIABLES).isEmpty() ? NO_VALUES : vars;
 					}
 
-					@Override
-					public WSProcessInstInfo processInstanceInfo() {
-						return NO_PROCESS_INSTANCE_INFO;
-					}
+				});
+		final UserProcessInstance processInstance = persistence.updateProcessInstance(createdProcessInstance,
+				new ForwardingProcessData() {
+
+					private final ProcessData delegate = NoProcessData.getInstance();
 
 					@Override
-					public WSProcessInstanceState state() {
-						return NO_STATE;
+					protected ProcessData delegate() {
+						return delegate;
 					}
 
 					@Override
@@ -223,11 +237,6 @@ public class DefaultWorkflowEngine implements QueryableUserWorkflowEngine {
 						return new WSActivityInstInfo[] { activityWithSpecificParticipant( //
 								startActInstInfo, //
 								operationUser.getPreferredGroup().getName()) };
-					}
-
-					@Override
-					public WSActivityInstInfo[] activities() {
-						return NO_ACTIVITIES;
 					}
 
 				});
@@ -343,31 +352,18 @@ public class DefaultWorkflowEngine implements QueryableUserWorkflowEngine {
 				activityInstance.getId(), activityInstance.getProcessInstance().getType().getName());
 
 		final CMProcessInstance processInstance = activityInstance.getProcessInstance();
-		persistence.updateProcessInstance(processInstance, new ProcessUpdate() {
+		persistence.updateProcessInstance(processInstance, new ForwardingProcessData() {
+
+			private final ProcessData delegate = NoProcessData.getInstance();
+
+			@Override
+			protected ProcessData delegate() {
+				return delegate;
+			}
 
 			@Override
 			public Map<String, ?> values() {
-				return inputValues;
-			}
-
-			@Override
-			public WSProcessInstanceState state() {
-				return NO_STATE;
-			}
-
-			@Override
-			public WSProcessInstInfo processInstanceInfo() {
-				return NO_PROCESS_INSTANCE_INFO;
-			}
-
-			@Override
-			public WSActivityInstInfo[] addActivities() {
-				return NO_ACTIVITIES;
-			}
-
-			@Override
-			public WSActivityInstInfo[] activities() {
-				return NO_ACTIVITIES;
+				return defaultIfNull(inputValues, NO_VARIABLES).isEmpty() ? NO_VALUES : inputValues;
 			}
 
 		});
@@ -524,31 +520,18 @@ public class DefaultWorkflowEngine implements QueryableUserWorkflowEngine {
 	}
 
 	private void removeOutOfSyncProcess(final CMProcessInstance processInstance) throws CMWorkflowException {
-		persistence.updateProcessInstance(processInstance, new ProcessUpdate() {
+		persistence.updateProcessInstance(processInstance, new ForwardingProcessData() {
+
+			private final ProcessData delegate = NoProcessData.getInstance();
 
 			@Override
-			public Map<String, ?> values() {
-				return NO_VALUES;
+			protected ProcessData delegate() {
+				return delegate;
 			}
 
 			@Override
 			public WSProcessInstanceState state() {
 				return WSProcessInstanceState.ABORTED;
-			}
-
-			@Override
-			public WSProcessInstInfo processInstanceInfo() {
-				return NO_PROCESS_INSTANCE_INFO;
-			}
-
-			@Override
-			public WSActivityInstInfo[] addActivities() {
-				return NO_ACTIVITIES;
-			}
-
-			@Override
-			public WSActivityInstInfo[] activities() {
-				return NO_ACTIVITIES;
 			}
 
 		});

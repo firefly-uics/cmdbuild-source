@@ -7,8 +7,7 @@ import java.util.Map;
 
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.logger.Log;
-import org.cmdbuild.workflow.WorkflowPersistence.ProcessCreation;
-import org.cmdbuild.workflow.WorkflowPersistence.ProcessUpdate;
+import org.cmdbuild.workflow.WorkflowPersistence.ProcessData;
 import org.cmdbuild.workflow.service.CMWorkflowService;
 import org.cmdbuild.workflow.service.WSActivityInstInfo;
 import org.cmdbuild.workflow.service.WSProcessInstInfo;
@@ -79,11 +78,11 @@ public class ProcessSynchronizer {
 					"process instance info is null, setting process as completed (should never happen, but who knows...");
 			state = WSProcessInstanceState.COMPLETED;
 			addActivities = new WSActivityInstInfo[0];
-			activities = ProcessUpdate.NO_ACTIVITIES;
-			uniqueProcessDefinition = ProcessCreation.NO_PROCESS_INSTANCE_INFO;
+			activities = ProcessData.NO_ACTIVITIES;
+			uniqueProcessDefinition = ProcessData.NO_PROCESS_INSTANCE_INFO;
 		} else {
 			uniqueProcessDefinition = processInstanceInfo;
-			addActivities = ProcessUpdate.NO_ACTIVITIES;
+			addActivities = ProcessData.NO_ACTIVITIES;
 			activities = workflowService.findOpenActivitiesForProcessInstance(processInstance.getProcessInstanceId());
 			state = processInstanceInfo.getStatus();
 			if (state == WSProcessInstanceState.COMPLETED) {
@@ -92,7 +91,7 @@ public class ProcessSynchronizer {
 			}
 		}
 
-		return persistence.updateProcessInstance(processInstance, new ProcessUpdate() {
+		return persistence.updateProcessInstance(processInstance, new ProcessData() {
 
 			@Override
 			public Map<String, ?> values() {

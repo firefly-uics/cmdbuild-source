@@ -275,54 +275,49 @@ public class DataViewWorkflowPersistence implements WorkflowPersistence {
 
 	@Override
 	public UserProcessInstance createProcessInstance(final WSProcessInstInfo processInstInfo,
-			final ProcessCreation processCreation) throws CMWorkflowException {
+			final ProcessData processData) throws CMWorkflowException {
 		logger.info(marker, "creating process instance of '{}' '{}'", //
 				processInstInfo.getPackageId(), //
 				processInstInfo.getProcessDefinitionId());
 		final String processClassName = processDefinitionManager.getProcessClassName(processInstInfo
 				.getProcessDefinitionId());
 		final CMProcessClass processClass = wrap(dataView.findClass(processClassName));
-		return createProcessInstance0(processClass, processInstInfo, processCreation);
+		return createProcessInstance(processClass, processInstInfo, processData);
 	}
 
 	@Override
 	public UserProcessInstance createProcessInstance(final CMProcessClass processClass,
-			final WSProcessInstInfo processInstInfo, final ProcessCreation processCreation) throws CMWorkflowException {
+			final WSProcessInstInfo processInstInfo, final ProcessData processData) throws CMWorkflowException {
 		logger.info(marker, "creating process instance for class '{}'", processClass);
-		return createProcessInstance0(processClass, processInstInfo, processCreation);
-	}
-
-	private UserProcessInstance createProcessInstance0(final CMProcessClass processClass,
-			final WSProcessInstInfo processInstInfo, final ProcessCreation processCreation) throws CMWorkflowException {
 		final CMCardDefinition cardDefinition = dataView.createCardFor(processClass);
-		final CMCard updatedCard = newWorkflowUpdateHelper(cardDefinition) //
+		final CMCard createdCard = newWorkflowUpdateHelper(processClass, cardDefinition) //
 				.withProcessInstInfo(processInstInfo) //
 				.build() //
-				.initialize() //
-				.fillForCreation(processCreation) //
+				.set(processData) //
 				.save();
-		return wrap(updatedCard);
+		return wrap(createdCard);
 	}
 
 	@Override
 	public UserProcessInstance updateProcessInstance(final CMProcessInstance processInstance,
-			final ProcessUpdate processUpdate) throws CMWorkflowException {
+			final ProcessData processData) throws CMWorkflowException {
 		logger.info(marker, "updating process instance for class '{}' and id '{}'", //
 				processInstance.getType().getName(), processInstance.getCardId());
 		final CMCard card = findProcessCard(processInstance);
 		final CMCardDefinition cardDefinition = dataView.update(card);
-		final CMCard updatedCard = newWorkflowUpdateHelper(cardDefinition) //
+		final CMCard updatedCard = newWorkflowUpdateHelper(card.getType(), cardDefinition) //
 				.withProcessDefinitionManager(processDefinitionManager) //
 				.withCard(card) //
 				.withProcessInstance(processInstance) //
 				.build() //
-				.fillForModification(processUpdate) //
+				.set(processData) //
 				.save();
 		return wrap(updatedCard);
 	}
 
-	private WorkflowUpdateHelperBuilder newWorkflowUpdateHelper(final CMCardDefinition cardDefinition) {
-		return WorkflowUpdateHelper.newInstance(operationUser, cardDefinition) //
+	private WorkflowUpdateHelperBuilder newWorkflowUpdateHelper(final CMClass processClass,
+			final CMCardDefinition cardDefinition) {
+		return WorkflowUpdateHelper.newInstance(operationUser, processClass, cardDefinition) //
 				.withWorkflowService(workflowService) //
 				.withLookupHelper(lookupHelper) //
 				.withActivityPerformerTemplateResolverFactory(activityPerformerTemplateResolverFactory);

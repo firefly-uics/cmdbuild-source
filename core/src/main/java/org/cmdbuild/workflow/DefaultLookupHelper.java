@@ -1,5 +1,6 @@
 package org.cmdbuild.workflow;
 
+import org.cmdbuild.data.store.lookup.ForwardingLookupStore;
 import org.cmdbuild.data.store.lookup.Lookup;
 import org.cmdbuild.data.store.lookup.LookupStore;
 import org.cmdbuild.data.store.lookup.LookupType;
@@ -10,7 +11,7 @@ import com.google.common.base.Optional;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 
-public class DefaultLookupHelper implements LookupHelper {
+public class DefaultLookupHelper extends ForwardingLookupStore implements LookupHelper {
 
 	private static final String FLOW_STATUS_LOOKUP = "FlowStatus";
 
@@ -31,10 +32,15 @@ public class DefaultLookupHelper implements LookupHelper {
 
 	private static final Optional<Lookup> MISSING_LOOKUP = Optional.absent();
 
-	private final LookupStore lookupStore;
+	private final LookupStore delegate;
 
-	public DefaultLookupHelper(final LookupStore lookupStore) {
-		this.lookupStore = lookupStore;
+	public DefaultLookupHelper(final LookupStore delegate) {
+		this.delegate = delegate;
+	}
+
+	@Override
+	protected LookupStore delegate() {
+		return delegate;
 	}
 
 	@Override
@@ -76,7 +82,7 @@ public class DefaultLookupHelper implements LookupHelper {
 
 	@Override
 	public Iterable<Lookup> allLookups() {
-		return lookupStore.readAll(FLOW_STATUS);
+		return readAll(FLOW_STATUS);
 	}
 
 }
