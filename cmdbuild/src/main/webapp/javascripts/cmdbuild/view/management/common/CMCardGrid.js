@@ -211,6 +211,10 @@
 				scope: this,
 				callback: function(records, operation, success) {
 					if (success) {
+						// If we have a start parameter greater than zero and no loaded records load first page to avoid to stick in empty page also if we have records
+						if (operation.start > 0 && Ext.isEmpty(records))
+							this.loadPage(1);
+
 						if (reselect) {
 							if (this.getSelectionModel().hasSelection()) {
 								var record = this.getStore().findRecord('Id', this.getSelectionModel().getSelection()[0].get('Id'));
