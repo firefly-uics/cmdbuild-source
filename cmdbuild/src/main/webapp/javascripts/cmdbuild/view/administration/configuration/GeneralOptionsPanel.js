@@ -89,14 +89,14 @@
 								scope: this,
 
 								handler: function(button, e) {
-									this.delegate.cmfg('onGeneralOptionsSaveButtonClick');
+									this.delegate.cmfg('onConfigurationGeneralOptionsSaveButtonClick');
 								}
 							}),
 							Ext.create('CMDBuild.core.buttons.text.Abort', {
 								scope: this,
 
 								handler: function(button, e) {
-									this.delegate.cmfg('onGeneralOptionsAbortButtonClick');
+									this.delegate.cmfg('onConfigurationGeneralOptionsAbortButtonClick');
 								}
 							})
 						]

@@ -45,14 +45,14 @@
 								scope: this,
 
 								handler: function(button, e) {
-									this.delegate.cmfg('onAlfrescoSaveButtonClick');
+									this.delegate.cmfg('onConfigurationAlfrescoSaveButtonClick');
 								}
 							}),
 							Ext.create('CMDBuild.core.buttons.text.Abort', {
 								scope: this,
 
 								handler: function(button, e) {
-									this.delegate.cmfg('onAlfrescoAbortButtonClick');
+									this.delegate.cmfg('onConfigurationAlfrescoAbortButtonClick');
 								}
 							})
 						]
