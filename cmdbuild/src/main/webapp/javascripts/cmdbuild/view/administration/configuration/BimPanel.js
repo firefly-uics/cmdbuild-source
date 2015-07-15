@@ -50,14 +50,14 @@
 								scope: this,
 
 								handler: function(button, e) {
-									this.delegate.cmfg('onBimSaveButtonClick');
+									this.delegate.cmfg('onConfigurationBimSaveButtonClick');
 								}
 							}),
 							Ext.create('CMDBuild.core.buttons.text.Abort', {
 								scope: this,
 
 								handler: function(button, e) {
-									this.delegate.cmfg('onBimAbortButtonClick');
+									this.delegate.cmfg('onConfigurationBimAbortButtonClick');
 								}
 							})
 						]

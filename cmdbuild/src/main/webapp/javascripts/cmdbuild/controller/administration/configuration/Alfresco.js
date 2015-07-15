@@ -14,8 +14,8 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
-			'onAlfrescoAbortButtonClick',
-			'onAlfrescoSaveButtonClick'
+			'onConfigurationAlfrescoSaveButtonClick',
+			'onConfigurationAlfrescoAbortButtonClick'
 		],
 
 		/**
@@ -51,11 +51,11 @@
 			this.cmfg('onConfigurationRead', this.params);
 		},
 
-		onGeneralOptionsAbortButtonClick: function() {
+		onConfigurationAlfrescoAbortButtonClick: function() {
 			this.cmfg('onConfigurationRead', this.params);
 		},
 
-		onGeneralOptionsSaveButtonClick: function() {
+		onConfigurationAlfrescoSaveButtonClick: function() {
 			this.cmfg('onConfigurationSave', this.params);
 		}
 	});

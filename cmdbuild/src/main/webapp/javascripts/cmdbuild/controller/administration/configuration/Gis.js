@@ -14,8 +14,8 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
-			'onGisAbortButtonClick',
-			'onGisSaveButtonClick'
+			'onConfigurationGisAbortButtonClick',
+			'onConfigurationGisSaveButtonClick'
 		],
 
 		/**
@@ -51,11 +51,11 @@
 			this.cmfg('onConfigurationRead', this.params);
 		},
 
-		onGeneralOptionsAbortButtonClick: function() {
+		onConfigurationGisAbortButtonClick: function() {
 			this.cmfg('onConfigurationRead', this.params);
 		},
 
-		onGeneralOptionsSaveButtonClick: function() {
+		onConfigurationGisSaveButtonClick: function() {
 			this.cmfg('onConfigurationSave', this.params);
 		}
 	});

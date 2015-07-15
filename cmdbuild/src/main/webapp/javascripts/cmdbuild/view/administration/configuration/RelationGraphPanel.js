@@ -45,14 +45,14 @@
 								scope: this,
 
 								handler: function(button, e) {
-									this.delegate.cmfg('onRelationGraphSaveButtonClick');
+									this.delegate.cmfg('onConfigurationRelationGraphSaveButtonClick');
 								}
 							}),
 							Ext.create('CMDBuild.core.buttons.text.Abort', {
 								scope: this,
 
 								handler: function(button, e) {
-									this.delegate.cmfg('onRelationGraphAbortButtonClick');
+									this.delegate.cmfg('onConfigurationRelationGraphAbortButtonClick');
 								}
 							})
 						]

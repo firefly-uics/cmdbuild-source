@@ -18,9 +18,9 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
-			'onServerClearCacheButtonClick',
-			'onServerServiceSynchButtonClick',
-			'onServerUnlockCardsButtonClick'
+			'onConfigurationServerClearCacheButtonClick',
+			'onConfigurationServerServiceSynchButtonClick',
+			'onConfigurationServerUnlockCardsButtonClick'
 		],
 
 		/**
@@ -56,19 +56,19 @@
 			this.cmfg('onConfigurationRead', this.params);
 		},
 
-		onServerClearCacheButtonClick: function() {
+		onConfigurationServerClearCacheButtonClick: function() {
 			CMDBuild.core.proxy.Utils.clearCache({
 				success: CMDBuild.core.Message.success
 			});
 		},
 
-		onServerServiceSynchButtonClick: function() {
+		onConfigurationServerServiceSynchButtonClick: function() {
 			CMDBuild.core.proxy.CMProxyWorkflow.synchronize({
 				success: CMDBuild.core.Message.success
 			});
 		},
 
-		onServerUnlockCardsButtonClick: function() {
+		onConfigurationServerUnlockCardsButtonClick: function() {
 			CMDBuild.core.proxy.Card.unlockAllCards({
 				success: CMDBuild.core.Message.success
 			});

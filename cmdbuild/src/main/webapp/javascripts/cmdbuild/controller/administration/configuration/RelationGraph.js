@@ -14,8 +14,8 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
-			'onRelationGraphAbortButtonClick',
-			'onRelationGraphSaveButtonClick'
+			'onConfigurationRelationGraphAbortButtonClick',
+			'onConfigurationRelationGraphSaveButtonClick'
 		],
 
 		/**
@@ -51,11 +51,11 @@
 			this.cmfg('onConfigurationRead', this.params);
 		},
 
-		onGeneralOptionsAbortButtonClick: function() {
+		onConfigurationRelationGraphAbortButtonClick: function() {
 			this.cmfg('onConfigurationRead', this.params);
 		},
 
-		onGeneralOptionsSaveButtonClick: function() {
+		onConfigurationRelationGraphSaveButtonClick: function() {
 			this.cmfg('onConfigurationSave', this.params);
 		}
 	});
