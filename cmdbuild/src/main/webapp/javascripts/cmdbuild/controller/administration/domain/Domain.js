@@ -45,11 +45,6 @@
 		selectedDomain: null,
 
 		/**
-		 * @cfg {String}
-		 */
-		titleSeparator: ' - ',
-
-		/**
 		 * @cfg {CMDBuild.view.administration.domain.DomainView}
 		 */
 		view: undefined,
