@@ -111,14 +111,22 @@
 						applyFilter(me, filter);
 					} else {
 						me.view.loadPage(1, {
-							cb: function cbLoadPage(args) {
+							cb: function(args) {
 								var records = args[1];
+
 								if (records && records.length > 0) {
 									try {
 										me.gridSM.select(0);
 									} catch (e) {
 										_debug(e);
 									}
+								}
+
+								// Not a good implementation but don't exists another way
+								if (!args[2]) {
+									CMDBuild.core.Message.error(null, {
+										text: CMDBuild.Translation.errors.unknown_error
+									});
 								}
 							}
 						});
@@ -616,7 +624,7 @@
 					relativeIndex = position % pageSize;
 
 				view.loadPage(pageNumber, {
-					cb: function callBackOfLoadPage(records, operation, success) {
+					cb: function(records, operation, success) {
 						try {
 							me.gridSM.deselectAll();
 							me.gridSM.select(relativeIndex);
@@ -627,6 +635,13 @@
 						} catch (e) {
 							view.fireEvent("cmWrongSelection");
 							_trace("I was not able to select the record at " + relativeIndex);
+						}
+
+						if (!success) {
+							CMDBuild.core.Message.error(null, {
+								text: CMDBuild.Translation.errors.unknown_error,
+								detail: operation.error
+							});
 						}
 					}
 				});
