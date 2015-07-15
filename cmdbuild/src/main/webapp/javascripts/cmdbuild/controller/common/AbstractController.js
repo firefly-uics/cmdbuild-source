@@ -74,6 +74,7 @@
 				// Normal function manage
 				if (Ext.isString(this.stringToFunctionNameMap[name]) && Ext.isFunction(this[this.stringToFunctionNameMap[name]]))
 					return this[this.stringToFunctionNameMap[name]](param, callBack);
+
 				if (Ext.isObject(this.stringToFunctionNameMap[name])) {
 					switch (this.stringToFunctionNameMap[name].action) {
 						// Forwarded function manage with multiple controller forwarding management
@@ -82,9 +83,7 @@
 								Ext.Array.forEach(this.stringToFunctionNameMap[name].target, function(controller, i, allControllers) {
 									this[controller][name](param, callBack);
 								}, this);
-
-							return;
-						}
+						} break;
 					}
 				}
 			}
@@ -131,13 +130,20 @@
 					// Alias inline tag
 					if (managedFnString.indexOf('=') >= 0) {
 						var splittedString = managedFnString.split('=');
-						if (
-							splittedString.length == 2
-							&& Ext.String.trim(splittedString[0]).indexOf(' ') < 0
-							&& Ext.String.trim(splittedString[1]).indexOf(' ') < 0
-						) {
-							this.stringToFunctionNameMap[Ext.String.trim(splittedString[0])] = Ext.String.trim(splittedString[0]);
-							this.stringToFunctionNameMap[Ext.String.trim(splittedString[1])] = Ext.String.trim(splittedString[0]);
+
+						this.stringToFunctionNameMap[Ext.String.trim(splittedString[0])] = Ext.String.trim(splittedString[0]); // Main function
+
+						// Build aliases binds
+						if (splittedString.length == 2 && Ext.String.trim(splittedString[0]).indexOf(' ') < 0) {
+							var aliasesString = Ext.String.trim(splittedString[1]);
+
+							if (aliasesString.indexOf(',') >= 0) { // Multiple alias decode
+								aliasesString = aliasesString.split(',');
+
+								Ext.Array.forEach(aliasesString, function(alias, i, allAliases) {
+									this.stringToFunctionNameMap[Ext.String.trim(alias)] = Ext.String.trim(splittedString[0]);
+								}, this);
+							}
 						}
 					}
 

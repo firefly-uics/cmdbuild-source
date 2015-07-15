@@ -37,11 +37,6 @@
 		view: undefined,
 
 		/**
-		 * @cfg {String}
-		 */
-		titleSeparator: ' - ',
-
-		/**
 		 * @param {Object} configurationObject
 		 * @param {Mixed} configurationObject.parentDelegate
 		 */
@@ -70,19 +65,6 @@
 		onReportModalWindowShow: function() {
 			if (!Ext.isEmpty(this.format))
 				this.showReport();
-		},
-
-		/**
-		 * Setup view panel title as a breadcrumbs component
-		 *
-		 * @param {String} titlePart
-		 */
-		setViewTitle: function(titlePart) {
-			if (Ext.isEmpty(titlePart)) {
-				this.view.setTitle(this.view.baseTitle);
-			} else {
-				this.view.setTitle(this.view.baseTitle + this.titleSeparator + titlePart);
-			}
 		},
 
 		/**
