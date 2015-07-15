@@ -1,11 +1,9 @@
 (function() {
 
 	Ext.define('CMDBuild.controller.administration.dataViews.DataViews', {
-		extend: 'CMDBuild.controller.common.CMBasePanelController',
+		extend: 'CMDBuild.controller.common.AbstractBasePanelController',
 
-		requires: [
-			'CMDBuild.core.proxy.Constants'
-		],
+		requires: ['CMDBuild.core.proxy.Constants'],
 
 		/**
 		 * @cfg {Object}
@@ -16,11 +14,6 @@
 		 * @property {Mixed}
 		 */
 		sectionController: undefined,
-
-		/**
-		 * @cfg {String}
-		 */
-		titleSeparator: ' - ',
 
 		/**
 		 * @cfg {CMDBuild.view.administration.dataViews.DataViewsView}
@@ -54,19 +47,6 @@
 				this.setViewTitle(parameters.get(CMDBuild.core.proxy.Constants.TEXT));
 
 				this.callParent(arguments);
-			}
-		},
-
-		/**
-		 * Setup view panel title as a breadcrumbs component
-		 *
-		 * @param {String} titlePart
-		 */
-		setViewTitle: function(titlePart) {
-			if (Ext.isEmpty(titlePart)) {
-				this.view.setTitle(this.view.baseTitle);
-			} else {
-				this.view.setTitle(this.view.baseTitle + this.titleSeparator + titlePart);
 			}
 		}
 	});

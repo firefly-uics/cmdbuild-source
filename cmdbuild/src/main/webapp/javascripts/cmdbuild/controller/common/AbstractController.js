@@ -75,6 +75,7 @@
 				if (Ext.isString(this.stringToFunctionNameMap[name]) && Ext.isFunction(this[this.stringToFunctionNameMap[name]]))
 					return this[this.stringToFunctionNameMap[name]](param, callBack);
 
+				// Wildcard manage
 				if (Ext.isObject(this.stringToFunctionNameMap[name])) {
 					switch (this.stringToFunctionNameMap[name].action) {
 						// Forwarded function manage with multiple controller forwarding management
@@ -83,7 +84,9 @@
 								Ext.Array.forEach(this.stringToFunctionNameMap[name].target, function(controller, i, allControllers) {
 									this[controller][name](param, callBack);
 								}, this);
-						} break;
+
+							return;
+						}
 					}
 				}
 			}
@@ -108,21 +111,15 @@
 						var splittedString = managedFnString.split('->');
 
 						if (splittedString.length == 2 && Ext.String.trim(splittedString[0]).indexOf(' ') < 0) {
-							var targetString = Ext.String.trim(splittedString[1]);
+							var targetsArray = Ext.String.trim(splittedString[1]).split(',');
 
-							if (targetString.indexOf(',') >= 0) { // Multiple controller forwarding decode
-								targetString = targetString.split(',');
-
-								Ext.Array.forEach(targetString, function(controller, i, allControllers) {
-									targetString[i] = Ext.String.trim(controller);
-								}, this);
-							} else { // Single controller forwarding decode
-								targetString = [targetString];
-							}
+							Ext.Array.forEach(targetsArray, function(controller, i, allControllers) {
+								targetsArray[i] = Ext.String.trim(controller);
+							}, this);
 
 							this.stringToFunctionNameMap[Ext.String.trim(splittedString[0])] = {
 								action: 'forward',
-								target: targetString
+								target: targetsArray
 							};
 						}
 					}
@@ -135,15 +132,11 @@
 
 						// Build aliases binds
 						if (splittedString.length == 2 && Ext.String.trim(splittedString[0]).indexOf(' ') < 0) {
-							var aliasesString = Ext.String.trim(splittedString[1]);
+							var aliasesArray = Ext.String.trim(splittedString[1]).split(',');
 
-							if (aliasesString.indexOf(',') >= 0) { // Multiple alias decode
-								aliasesString = aliasesString.split(',');
-
-								Ext.Array.forEach(aliasesString, function(alias, i, allAliases) {
-									this.stringToFunctionNameMap[Ext.String.trim(alias)] = Ext.String.trim(splittedString[0]);
-								}, this);
-							}
+							Ext.Array.forEach(aliasesArray, function(alias, i, allAliases) {
+								this.stringToFunctionNameMap[Ext.String.trim(alias)] = Ext.String.trim(splittedString[0]);
+							}, this);
 						}
 					}
 
