@@ -51,6 +51,14 @@
 								handler: function(button, e) {
 									this.delegate.cmfg('onEmailAccountsAddButtonClick');
 								}
+							}),
+							Ext.create('CMDBuild.core.buttons.iconized.Add', {
+								text: 'test',
+								scope: this,
+
+								handler: function(button, e) {
+									this.delegate.cmfg('onAsd');
+								}
 							})
 						]
 					})

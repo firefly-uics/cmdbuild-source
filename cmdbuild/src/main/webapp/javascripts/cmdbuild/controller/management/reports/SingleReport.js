@@ -38,11 +38,6 @@
 		],
 
 		/**
-		 * @cfg {String}
-		 */
-		titleSeparator: ' - ',
-
-		/**
 		 * @cfg {CMDBuild.view.management.reports.SingleReportPanel}
 		 */
 		view: undefined,
@@ -140,19 +135,6 @@
 					this.managedReport = null;
 				}
 			},
-
-		/**
-		 * Setup view panel title as a breadcrumbs component
-		 *
-		 * @param {String} titlePart
-		 */
-		setViewTitle: function(titlePart) {
-			if (Ext.isEmpty(titlePart)) {
-				this.view.setTitle(this.view.baseTitle);
-			} else {
-				this.view.setTitle(this.view.baseTitle + this.titleSeparator + titlePart);
-			}
-		},
 
 		/**
 		 * Get created report from server and display it in popup window
