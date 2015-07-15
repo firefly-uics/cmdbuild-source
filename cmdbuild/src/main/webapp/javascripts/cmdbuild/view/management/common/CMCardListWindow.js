@@ -3,7 +3,7 @@
 	var TITLE_PREFIX = CMDBuild.Translation.management.modcard.title;
 
 	Ext.define("CMDBuild.Management.CardListWindow", {
-		extend: "CMDBuild.PopupWindow",
+		extend: "CMDBuild.core.PopupWindow",
 
 		ClassName: undefined, // passed at instantiation
 		idClass: undefined, // passed at instantiation
@@ -38,13 +38,19 @@
 			return this;
 		},
 
-		// protected
+		/**
+		 * @private
+		 */
 		setItems: function() {
 			this.items = [this.grid];
 
-			if (!this.readOnly) {
-				this.addCardButton = this.buildAddButton();
-				this.tbar = [this.addCardButton];
+			if (
+				!this.readOnly
+				&& _CMCache.getEntryTypeById(this.getIdClass()).get('type') == 'class' // Create add button and topBar only for classes (no for processes)
+			) {
+				this.tbar = [
+					this.addCardButton = this.buildAddButton()
+				];
 			}
 		},
 
@@ -121,4 +127,5 @@
 
 		return description;
 	}
+
 })();
