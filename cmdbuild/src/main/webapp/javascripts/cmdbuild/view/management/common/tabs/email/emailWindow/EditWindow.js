@@ -25,7 +25,6 @@
 		 */
 		form: undefined,
 
-		autoScroll: true,
 		title: CMDBuild.Translation.composeEmail,
 
 		layout: 'border',
