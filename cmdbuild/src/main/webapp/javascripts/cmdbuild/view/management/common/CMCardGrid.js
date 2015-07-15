@@ -181,36 +181,57 @@
 			_CMCache.getAttributeList(classId, cb);
 		},
 
-		loadPage: function(pageNumber, o) {
-			o = o || {};
-			scope = o.scope || this;
-			cb = o.cb || Ext.emptyFn;
+		/**
+		 * @param {Number} pageNumber
+		 * @param {Object} options
+		 */
+		loadPage: function(pageNumber, options) {
+			options = options || {};
+			scope = options.scope || this;
+			cb = options.cb || function(args) { // Not a good implementation but don't exists another way
+				if (!args[2]) {
+					CMDBuild.core.Message.error(null, {
+						text: CMDBuild.Translation.errors.unknown_error
+					});
+				}
+			};
 
-			// store.loadPage does not allow the definition of a callBack
-			this.mon(this, "load", cb, scope, {single: true});
-			this.store.loadPage(Math.floor(pageNumber));
+			this.mon(this, 'load', cb, scope, { single: true }); // LoadPage does not allow the definition of a callBack
+
+			this.getStore().loadPage(Math.floor(pageNumber));
 		},
 
+		/**
+		 * @param {Boolean} reselect
+		 */
 		reload: function(reselect) {
-			var cb = Ext.emptyFn;
+			reselect = Ext.isBoolean(reselect) && reselect;
 
-			if (reselect) {
-				var s = this.getSelectionModel().getSelection();
-				cb = function() {
-					if (s && s.length > 0) {
-						var r = this.store.findRecord("Id", s[0].get("Id"));
-						if (r) {
-							this.getSelectionModel().select(r);
+			this.getStore().load({
+				scope: this,
+				callback: function(records, operation, success) {
+					if (success) {
+						// If we have a start parameter greater than zero and no loaded records load first page to avoid to stick in empty page also if we have records
+						if (operation.start > 0 && Ext.isEmpty(records))
+							this.loadPage(1);
+
+						if (reselect) {
+							if (this.getSelectionModel().hasSelection()) {
+								var record = this.getStore().findRecord('Id', this.getSelectionModel().getSelection()[0].get('Id'));
+
+								if (!Ext.isEmpty(record))
+									this.getSelectionModel().select(record);
+							} else {
+								this.getSelectionModel().select(0);
+							}
 						}
 					} else {
-						this.getSelectionModel().select(0);
+						CMDBuild.core.Message.error(null, {
+							text: CMDBuild.Translation.errors.unknown_error,
+							detail: operation.error
+						});
 					}
-				};
-			}
-
-			this.store.load({
-				scope: this,
-				callback: cb
+				}
 			});
 		},
 
