@@ -3,7 +3,7 @@
 	Ext.define('CMDBuild.view.common.field.CMGroupSelectionList', {
 		extend: 'Ext.ux.form.MultiSelect',
 
-		fieldLabel: CMDBuild.Translation.administration.modreport.importJRFormStep1.enabled_groups,
+		fieldLabel: CMDBuild.Translation.enabledGroups,
 		name: CMDBuild.ServiceProxy.parameter.GROUPS,
 		dataFields: [
 			CMDBuild.ServiceProxy.parameter.NAME,
@@ -13,6 +13,7 @@
 		valueField: CMDBuild.ServiceProxy.parameter.ID,
 		displayField: CMDBuild.ServiceProxy.parameter.DESCRIPTION,
 		allowBlank: true,
+		considerAsFieldToDisable: true,
 
 		initComponent: function() {
 			if (!this.store) {

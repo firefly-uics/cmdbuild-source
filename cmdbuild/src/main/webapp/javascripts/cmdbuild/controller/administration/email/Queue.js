@@ -4,7 +4,7 @@
 		extend: 'CMDBuild.controller.common.AbstractController',
 
 		requires: [
-			'CMDBuild.core.proxy.CMProxyConstants',
+			'CMDBuild.core.proxy.Constants',
 			'CMDBuild.core.proxy.email.Queue'
 		],
 
@@ -57,7 +57,7 @@
 		onEmailQueueSaveButtonClick: function() {
 			if (this.validate(this.view)) { // Validate before save
 				var params = {};
-				params[CMDBuild.core.proxy.CMProxyConstants.TIME] = this.toManagedUnit(this.view.cycleIntervalField.getValue());
+				params[CMDBuild.core.proxy.Constants.TIME] = this.toManagedUnit(this.view.cycleIntervalField.getValue());
 
 				CMDBuild.core.proxy.email.Queue.configurationSave({
 					params: params,
@@ -106,7 +106,7 @@
 				success: function(response, options, decodedResponse) {
 					var configurationModel = Ext.create('CMDBuild.model.email.Queue', decodedResponse.response);
 
-					this.view.cycleIntervalField.setValue(this.toDisplayedUnit(configurationModel.get(CMDBuild.core.proxy.CMProxyConstants.TIME)));
+					this.view.cycleIntervalField.setValue(this.toDisplayedUnit(configurationModel.get(CMDBuild.core.proxy.Constants.TIME)));
 				},
 				callback: function(options, success, response) {
 					this.isQueueRunning();

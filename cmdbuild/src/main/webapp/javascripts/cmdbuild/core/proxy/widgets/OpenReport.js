@@ -11,7 +11,7 @@
 		generateReport: function(parameters) {
 			CMDBuild.Ajax.request({
 				method: 'POST',
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.reports.updateReportFactoryParams,
+				url: CMDBuild.core.proxy.Index.reports.updateReportFactoryParams,
 				params: parameters.params,
 				scope: parameters.scope,
 				success: parameters.success,
@@ -24,7 +24,7 @@
 		 */
 		getReportAttributes: function(parameters) {
 			CMDBuild.Ajax.request({
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.reports.createReportFactory,
+				url: CMDBuild.core.proxy.Index.reports.createReportFactory,
 				params: parameters.params,
 				scope: parameters.scope,
 				success: parameters.success
@@ -36,7 +36,7 @@
 		 */
 		getReportParameters: function(parameters) {
 			CMDBuild.Ajax.request({
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.reports.createReportFactoryByTypeCode,
+				url: CMDBuild.core.proxy.Index.reports.createReportFactoryByTypeCode,
 				params: parameters.params,
 				scope: parameters.scope,
 				success: parameters.success
@@ -52,7 +52,7 @@
 				model: 'CMDBuild.model.widget.CMModelOpenReport.reportCombo',
 				proxy: {
 					type: 'ajax',
-					url: CMDBuild.core.proxy.CMProxyUrlIndex.reports.getReportsByType,
+					url: CMDBuild.core.proxy.Index.reports.getReportsByType,
 					reader: {
 						type: 'json',
 						root: 'rows',

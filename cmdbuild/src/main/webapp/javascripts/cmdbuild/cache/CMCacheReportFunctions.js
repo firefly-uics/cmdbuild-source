@@ -12,7 +12,7 @@
 		},
 
 		addReport: function(r) {
-			var report = Ext.create("CMDBuild.model.Report", r);
+			var report = Ext.create("CMDBuild.model.reports.Cache", r);
 			reports[r.id] = report;
 
 			return report;
@@ -30,33 +30,6 @@
 
 		getReportById: function(id) {
 			return reports[id] || null;
-		},
-
-		/**
-		 * @deprecated
-		 */
-		getReportGridStore: function() {
-			if (gridStore == null) {
-				gridStore = new Ext.data.Store({
-					model: "CMDBuild.model.Report.grid",
-					pageSize: getPageSize(),
-					proxy: {
-						type: "ajax",
-						url: 'services/json/management/modreport/getreportsbytype',
-						reader: {
-							type: "json",
-							root: "rows",
-							totalProperty: 'results'
-						},
-						extraParams: {
-							type: "custom"
-						}
-					},
-					autoLoad: false
-				});
-			}
-
-			return gridStore;
 		},
 
 		getReportComboStore: function() {

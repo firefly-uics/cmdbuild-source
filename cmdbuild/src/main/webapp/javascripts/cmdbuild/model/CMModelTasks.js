@@ -4,11 +4,11 @@
 		extend: 'Ext.data.Model',
 
 		fields: [
-			{ name: CMDBuild.core.proxy.CMProxyConstants.ID, type: 'int' },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION, type: 'string' },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.ACTIVE, type: 'boolean'},
+			{ name: CMDBuild.core.proxy.Constants.ID, type: 'int' },
+			{ name: CMDBuild.core.proxy.Constants.DESCRIPTION, type: 'string' },
+			{ name: CMDBuild.core.proxy.Constants.ACTIVE, type: 'boolean'},
 
-			{ name: CMDBuild.core.proxy.CMProxyConstants.TYPE, type: 'string' }
+			{ name: CMDBuild.core.proxy.Constants.TYPE, type: 'string' }
 		]
 	});
 
@@ -17,9 +17,9 @@
 		extend: 'Ext.data.Model',
 
 		fields: [
-			{ name: CMDBuild.core.proxy.CMProxyConstants.ID, type: 'int' },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION, type: 'string' },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.ACTIVE, type: 'boolean'}
+			{ name: CMDBuild.core.proxy.Constants.ID, type: 'int' },
+			{ name: CMDBuild.core.proxy.Constants.DESCRIPTION, type: 'string' },
+			{ name: CMDBuild.core.proxy.Constants.ACTIVE, type: 'boolean'}
 		]
 	});
 
@@ -30,18 +30,18 @@
 		extend: 'Ext.data.Model',
 
 		fields: [
-			{ name: CMDBuild.core.proxy.CMProxyConstants.ID, type: 'int' },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION, type: 'string' },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.ACTIVE, type: 'boolean'},
+			{ name: CMDBuild.core.proxy.Constants.ID, type: 'int' },
+			{ name: CMDBuild.core.proxy.Constants.DESCRIPTION, type: 'string' },
+			{ name: CMDBuild.core.proxy.Constants.ACTIVE, type: 'boolean'},
 
-			{ name: CMDBuild.core.proxy.CMProxyConstants.ATTRIBUTE_MAPPING, type: 'auto'},
-			{ name: CMDBuild.core.proxy.CMProxyConstants.CLASS_MAPPING, type: 'auto'},
-			{ name: CMDBuild.core.proxy.CMProxyConstants.CRON_EXPRESSION, type: 'string'},
-			{ name: CMDBuild.core.proxy.CMProxyConstants.DATASOURCE_CONFIGURATION, type: 'auto'},
-			{ name: CMDBuild.core.proxy.CMProxyConstants.DATASOURCE_TYPE, type: 'string' },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.NOTIFICATION_ACTIVE, type: 'boolean' },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.NOTIFICATION_EMAIL_ACCOUNT, type: 'string' },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.NOTIFICATION_EMAIL_TEMPLATE_ERROR, type: 'string' }
+			{ name: CMDBuild.core.proxy.Constants.ATTRIBUTE_MAPPING, type: 'auto'},
+			{ name: CMDBuild.core.proxy.Constants.CLASS_MAPPING, type: 'auto'},
+			{ name: CMDBuild.core.proxy.Constants.CRON_EXPRESSION, type: 'string'},
+			{ name: CMDBuild.core.proxy.Constants.DATASOURCE_CONFIGURATION, type: 'auto'},
+			{ name: CMDBuild.core.proxy.Constants.DATASOURCE_TYPE, type: 'string' },
+			{ name: CMDBuild.core.proxy.Constants.NOTIFICATION_ACTIVE, type: 'boolean' },
+			{ name: CMDBuild.core.proxy.Constants.NOTIFICATION_EMAIL_ACCOUNT, type: 'string' },
+			{ name: CMDBuild.core.proxy.Constants.NOTIFICATION_EMAIL_TEMPLATE_ERROR, type: 'string' }
 		]
 	});
 
@@ -49,30 +49,30 @@
 		extend: 'Ext.data.Model',
 
 		fields: [
-			{ name: CMDBuild.core.proxy.CMProxyConstants.ACTIVE, type: 'boolean'},
-			{ name: CMDBuild.core.proxy.CMProxyConstants.ATTACHMENTS_ACTIVE, type: 'boolean'},
-			{ name: CMDBuild.core.proxy.CMProxyConstants.ATTACHMENTS_CATEGORY, type: 'int', useNull: true },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME, type: 'string'},
-			{ name: CMDBuild.core.proxy.CMProxyConstants.CRON_EXPRESSION, type: 'string'},
-			{ name: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION, type: 'string' },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.EMAIL_ACCOUNT, type: 'string'},
-			{ name: CMDBuild.core.proxy.CMProxyConstants.FILTER_FROM_ADDRESS, type: 'auto'},
-			{ name: CMDBuild.core.proxy.CMProxyConstants.FILTER_SUBJECT, type: 'auto'},
-			{ name: CMDBuild.core.proxy.CMProxyConstants.ID, type: 'int' },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.INCOMING_FOLDER, type: 'string' },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.NOTIFICATION_ACTIVE, type: 'boolean'},
-			{ name: CMDBuild.core.proxy.CMProxyConstants.NOTIFICATION_EMAIL_TEMPLATE, type: 'string'},
-			{ name: CMDBuild.core.proxy.CMProxyConstants.PARSING_ACTIVE, type: 'boolean'},
-			{ name: CMDBuild.core.proxy.CMProxyConstants.PARSING_KEY_END, type: 'string'},
-			{ name: CMDBuild.core.proxy.CMProxyConstants.PARSING_KEY_INIT, type: 'string'},
-			{ name: CMDBuild.core.proxy.CMProxyConstants.PARSING_VALUE_END, type: 'string'},
-			{ name: CMDBuild.core.proxy.CMProxyConstants.PARSING_VALUE_INIT, type: 'string'},
-			{ name: CMDBuild.core.proxy.CMProxyConstants.PROCESSED_FOLDER, type: 'string' },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.REJECTED_FOLDER, type: 'string' },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.REJECT_NOT_MATCHING, type: 'boolean' },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.WORKFLOW_ACTIVE, type: 'boolean'},
-			{ name: CMDBuild.core.proxy.CMProxyConstants.WORKFLOW_ATTRIBUTES, type: 'auto'},
-			{ name: CMDBuild.core.proxy.CMProxyConstants.WORKFLOW_CLASS_NAME, type: 'string'}
+			{ name: CMDBuild.core.proxy.Constants.ACTIVE, type: 'boolean'},
+			{ name: CMDBuild.core.proxy.Constants.ATTACHMENTS_ACTIVE, type: 'boolean'},
+			{ name: CMDBuild.core.proxy.Constants.ATTACHMENTS_CATEGORY, type: 'int', useNull: true },
+			{ name: CMDBuild.core.proxy.Constants.CLASS_NAME, type: 'string'},
+			{ name: CMDBuild.core.proxy.Constants.CRON_EXPRESSION, type: 'string'},
+			{ name: CMDBuild.core.proxy.Constants.DESCRIPTION, type: 'string' },
+			{ name: CMDBuild.core.proxy.Constants.EMAIL_ACCOUNT, type: 'string'},
+			{ name: CMDBuild.core.proxy.Constants.FILTER_FROM_ADDRESS, type: 'auto'},
+			{ name: CMDBuild.core.proxy.Constants.FILTER_SUBJECT, type: 'auto'},
+			{ name: CMDBuild.core.proxy.Constants.ID, type: 'int' },
+			{ name: CMDBuild.core.proxy.Constants.INCOMING_FOLDER, type: 'string' },
+			{ name: CMDBuild.core.proxy.Constants.NOTIFICATION_ACTIVE, type: 'boolean'},
+			{ name: CMDBuild.core.proxy.Constants.NOTIFICATION_EMAIL_TEMPLATE, type: 'string'},
+			{ name: CMDBuild.core.proxy.Constants.PARSING_ACTIVE, type: 'boolean'},
+			{ name: CMDBuild.core.proxy.Constants.PARSING_KEY_END, type: 'string'},
+			{ name: CMDBuild.core.proxy.Constants.PARSING_KEY_INIT, type: 'string'},
+			{ name: CMDBuild.core.proxy.Constants.PARSING_VALUE_END, type: 'string'},
+			{ name: CMDBuild.core.proxy.Constants.PARSING_VALUE_INIT, type: 'string'},
+			{ name: CMDBuild.core.proxy.Constants.PROCESSED_FOLDER, type: 'string' },
+			{ name: CMDBuild.core.proxy.Constants.REJECTED_FOLDER, type: 'string' },
+			{ name: CMDBuild.core.proxy.Constants.REJECT_NOT_MATCHING, type: 'boolean' },
+			{ name: CMDBuild.core.proxy.Constants.WORKFLOW_ACTIVE, type: 'boolean'},
+			{ name: CMDBuild.core.proxy.Constants.WORKFLOW_ATTRIBUTES, type: 'auto'},
+			{ name: CMDBuild.core.proxy.Constants.WORKFLOW_CLASS_NAME, type: 'string'}
 		]
 	});
 
@@ -80,16 +80,16 @@
 		extend: 'Ext.data.Model',
 
 		fields: [
-			{ name: CMDBuild.core.proxy.CMProxyConstants.ID, type: 'int' },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION, type: 'string' },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.ACTIVE, type: 'boolean'},
+			{ name: CMDBuild.core.proxy.Constants.ID, type: 'int' },
+			{ name: CMDBuild.core.proxy.Constants.DESCRIPTION, type: 'string' },
+			{ name: CMDBuild.core.proxy.Constants.ACTIVE, type: 'boolean'},
 
-			{ name: CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME, type: 'string'},
-			{ name: CMDBuild.core.proxy.CMProxyConstants.CRON_EXPRESSION, type: 'string'},
-			{ name: CMDBuild.core.proxy.CMProxyConstants.FILTER, type: 'auto'},
-			{ name: CMDBuild.core.proxy.CMProxyConstants.NOTIFICATION_ACTIVE, type: 'boolean'},
-			{ name: CMDBuild.core.proxy.CMProxyConstants.NOTIFICATION_EMAIL_ACCOUNT, type: 'string'},
-			{ name: CMDBuild.core.proxy.CMProxyConstants.NOTIFICATION_EMAIL_TEMPLATE, type: 'string'}
+			{ name: CMDBuild.core.proxy.Constants.CLASS_NAME, type: 'string'},
+			{ name: CMDBuild.core.proxy.Constants.CRON_EXPRESSION, type: 'string'},
+			{ name: CMDBuild.core.proxy.Constants.FILTER, type: 'auto'},
+			{ name: CMDBuild.core.proxy.Constants.NOTIFICATION_ACTIVE, type: 'boolean'},
+			{ name: CMDBuild.core.proxy.Constants.NOTIFICATION_EMAIL_ACCOUNT, type: 'string'},
+			{ name: CMDBuild.core.proxy.Constants.NOTIFICATION_EMAIL_TEMPLATE, type: 'string'}
 		]
 	});
 
@@ -97,20 +97,20 @@
 		extend: 'Ext.data.Model',
 
 		fields: [
-			{ name: CMDBuild.core.proxy.CMProxyConstants.ID, type: 'int' },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION, type: 'string' },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.ACTIVE, type: 'boolean'},
+			{ name: CMDBuild.core.proxy.Constants.ID, type: 'int' },
+			{ name: CMDBuild.core.proxy.Constants.DESCRIPTION, type: 'string' },
+			{ name: CMDBuild.core.proxy.Constants.ACTIVE, type: 'boolean'},
 
-			{ name: CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME, type: 'string'},
-			{ name: CMDBuild.core.proxy.CMProxyConstants.FILTER, type: 'auto'},
-			{ name: CMDBuild.core.proxy.CMProxyConstants.GROUPS, type: 'auto'},
-			{ name: CMDBuild.core.proxy.CMProxyConstants.NOTIFICATION_ACTIVE, type: 'boolean'},
-			{ name: CMDBuild.core.proxy.CMProxyConstants.NOTIFICATION_EMAIL_ACCOUNT, type: 'string'},
-			{ name: CMDBuild.core.proxy.CMProxyConstants.NOTIFICATION_EMAIL_TEMPLATE, type: 'string'},
-			{ name: CMDBuild.core.proxy.CMProxyConstants.PHASE, type: 'string'},
-			{ name: CMDBuild.core.proxy.CMProxyConstants.WORKFLOW_ACTIVE, type: 'boolean'},
-			{ name: CMDBuild.core.proxy.CMProxyConstants.WORKFLOW_ATTRIBUTES, type: 'auto'},
-			{ name: CMDBuild.core.proxy.CMProxyConstants.WORKFLOW_CLASS_NAME, type: 'string'}
+			{ name: CMDBuild.core.proxy.Constants.CLASS_NAME, type: 'string'},
+			{ name: CMDBuild.core.proxy.Constants.FILTER, type: 'auto'},
+			{ name: CMDBuild.core.proxy.Constants.GROUPS, type: 'auto'},
+			{ name: CMDBuild.core.proxy.Constants.NOTIFICATION_ACTIVE, type: 'boolean'},
+			{ name: CMDBuild.core.proxy.Constants.NOTIFICATION_EMAIL_ACCOUNT, type: 'string'},
+			{ name: CMDBuild.core.proxy.Constants.NOTIFICATION_EMAIL_TEMPLATE, type: 'string'},
+			{ name: CMDBuild.core.proxy.Constants.PHASE, type: 'string'},
+			{ name: CMDBuild.core.proxy.Constants.WORKFLOW_ACTIVE, type: 'boolean'},
+			{ name: CMDBuild.core.proxy.Constants.WORKFLOW_ATTRIBUTES, type: 'auto'},
+			{ name: CMDBuild.core.proxy.Constants.WORKFLOW_CLASS_NAME, type: 'string'}
 		]
 	});
 
@@ -118,13 +118,13 @@
 		extend: 'Ext.data.Model',
 
 		fields: [
-			{ name: CMDBuild.core.proxy.CMProxyConstants.ID, type: 'int' },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION, type: 'string' },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.ACTIVE, type: 'boolean'},
+			{ name: CMDBuild.core.proxy.Constants.ID, type: 'int' },
+			{ name: CMDBuild.core.proxy.Constants.DESCRIPTION, type: 'string' },
+			{ name: CMDBuild.core.proxy.Constants.ACTIVE, type: 'boolean'},
 
-			{ name: CMDBuild.core.proxy.CMProxyConstants.CRON_EXPRESSION, type: 'string'},
-			{ name: CMDBuild.core.proxy.CMProxyConstants.WORKFLOW_ATTRIBUTES, type: 'auto'},
-			{ name: CMDBuild.core.proxy.CMProxyConstants.WORKFLOW_CLASS_NAME, type: 'string'}
+			{ name: CMDBuild.core.proxy.Constants.CRON_EXPRESSION, type: 'string'},
+			{ name: CMDBuild.core.proxy.Constants.WORKFLOW_ATTRIBUTES, type: 'auto'},
+			{ name: CMDBuild.core.proxy.Constants.WORKFLOW_CLASS_NAME, type: 'string'}
 		]
 	});
 
@@ -136,8 +136,8 @@
 			extend: 'Ext.data.Model',
 
 			fields: [
-				{ name: CMDBuild.core.proxy.CMProxyConstants.KEY, type: 'string' },
-				{ name: CMDBuild.core.proxy.CMProxyConstants.VALUE, type: 'string' }
+				{ name: CMDBuild.core.proxy.Constants.KEY, type: 'string' },
+				{ name: CMDBuild.core.proxy.Constants.VALUE, type: 'string' }
 			]
 		});
 
@@ -145,12 +145,12 @@
 			extend: 'Ext.data.Model',
 
 			fields: [
-				{ name: CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME, type: 'string' },
-				{ name: CMDBuild.core.proxy.CMProxyConstants.SOURCE_NAME, type: 'string' },
-				{ name: CMDBuild.core.proxy.CMProxyConstants.CREATE, type: 'boolean', defaultValue: true },
-				{ name: CMDBuild.core.proxy.CMProxyConstants.UPDATE, type: 'boolean', defaultValue: true },
-				{ name: CMDBuild.core.proxy.CMProxyConstants.DELETE, type: 'boolean', defaultValue: true },
-				{ name: CMDBuild.core.proxy.CMProxyConstants.DELETE_TYPE, type: 'string' }
+				{ name: CMDBuild.core.proxy.Constants.CLASS_NAME, type: 'string' },
+				{ name: CMDBuild.core.proxy.Constants.SOURCE_NAME, type: 'string' },
+				{ name: CMDBuild.core.proxy.Constants.CREATE, type: 'boolean', defaultValue: true },
+				{ name: CMDBuild.core.proxy.Constants.UPDATE, type: 'boolean', defaultValue: true },
+				{ name: CMDBuild.core.proxy.Constants.DELETE, type: 'boolean', defaultValue: true },
+				{ name: CMDBuild.core.proxy.Constants.DELETE_TYPE, type: 'string' }
 			]
 		});
 
@@ -158,11 +158,11 @@
 			extend: 'Ext.data.Model',
 
 			fields: [
-				{ name: CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME, type: 'string' },
-				{ name: CMDBuild.core.proxy.CMProxyConstants.CLASS_ATTRIBUTE, type: 'string' },
-				{ name: CMDBuild.core.proxy.CMProxyConstants.SOURCE_NAME, type: 'string' },
-				{ name: CMDBuild.core.proxy.CMProxyConstants.SOURCE_ATTRIBUTE, type: 'string' },
-				{ name: CMDBuild.core.proxy.CMProxyConstants.IS_KEY, type: 'boolean' }
+				{ name: CMDBuild.core.proxy.Constants.CLASS_NAME, type: 'string' },
+				{ name: CMDBuild.core.proxy.Constants.CLASS_ATTRIBUTE, type: 'string' },
+				{ name: CMDBuild.core.proxy.Constants.SOURCE_NAME, type: 'string' },
+				{ name: CMDBuild.core.proxy.Constants.SOURCE_ATTRIBUTE, type: 'string' },
+				{ name: CMDBuild.core.proxy.Constants.IS_KEY, type: 'boolean' }
 			]
 		});
 
@@ -170,8 +170,8 @@
 			extend: 'Ext.data.Model',
 
 			fields: [
-				{ name: CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME, type: 'string' },
-				{ name: CMDBuild.core.proxy.CMProxyConstants.DOMAIN_NAME, type: 'string' }
+				{ name: CMDBuild.core.proxy.Constants.CLASS_NAME, type: 'string' },
+				{ name: CMDBuild.core.proxy.Constants.DOMAIN_NAME, type: 'string' }
 			]
 		});
 
@@ -180,8 +180,8 @@
 			extend: 'Ext.data.Model',
 
 			fields: [
-				{ name: CMDBuild.core.proxy.CMProxyConstants.NAME, type: 'string' },
-				{ name: CMDBuild.core.proxy.CMProxyConstants.VALUE, type: 'string' }
+				{ name: CMDBuild.core.proxy.Constants.NAME, type: 'string' },
+				{ name: CMDBuild.core.proxy.Constants.VALUE, type: 'string' }
 			]
 		});
 

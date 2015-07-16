@@ -1,6 +1,6 @@
 {
 	"description": "Deutsch",
-	"release": "2.3-dev",
+	"release": "2.4-dev",
 	"administration": {
 		"description": "Verwaltungsformular",
 		"modClass": {
@@ -35,6 +35,13 @@
 				"isunique": "Eindeutig",
 				"length": "Länge",
 				"lookup": "Lookup",
+				"meta": {
+					"add": "Metadatei hinzufügen",
+					"key": "Schlüssel",
+					"remove": "Metadatei löschen",
+					"title": "Metadaten bearbeiten",
+					"value": "Wert"
+				},
 				"modify_attribute": "Attribut bearbeiten",
 				"msg_warning_drop_row": "Sie können die Attribute nur sortieren, wenn auch die vererbten Attribute sichtbar sind",
 				"name": "Name",
@@ -84,10 +91,8 @@
 				"md_label": "Master/Detail Label",
 				"modify_domain": "Domain bearbeiten",
 				"name": "Name",
-				"title_add": "Domain hinzufügen",
-				"title_modify": "Domain bearbeiten \"{0}\""
+				"title_add": "Domain hinzufügen"
 			},
-			"domains_title": "Domain Verwaltung",
 			"errors": {
 				"table": {
 					"cast": "Es ist unmöglich die Eigenschaft \"Superklasse\" bearbeiten, diese Klasse enthält Daten oder Unterklassen",
@@ -282,48 +287,9 @@
 			},
 			"title": "Dashboard"
 		},
-		"modLookup": {
-			"add_lookuptype": "Lookup Typ hinzufügen",
-			"lookupForm": {
-				"active": "Aktiv",
-				"code": "Code",
-				"description": "Beschreibung",
-				"disable_lookup": " Lookup deaktivieren",
-				"enable_lookup": "Lookup aktivieren",
-				"isdefault": "Default",
-				"notes": "Notizen",
-				"parentdescription": "Beschreibung der Superklasse",
-				"update_lookup": "Lookup Punkte bearbeiten"
-			},
-			"lookupGrid": {
-				"active": "Aktiv",
-				"add_lookup": "Lookup Punkt hinzufügen",
-				"code": "Code",
-				"description": "Beschreibung",
-				"isdefault": "Default",
-				"notes": "Notizen",
-				"parentdescription": "Beschreibung der Superklasse"
-			},
-			"lookupType": "Lookup Typ",
-			"lookupTypeForm": {
-				"active": "Aktiv",
-				"delete_lookuptype": "Lookup Typ wegnehmen",
-				"description": "Beschreibung",
-				"modify_lookuptype": "Lookup Typ bearbeiten",
-				"parent": "Superklasse",
-				"title": "Lookup Verwaltung"
-			},
-			"lookupTypes": "Lookup",
-			"tabs": {
-				"lookuplist": "Liste der Punkte",
-				"properties": "Eigenschaften"
-			},
-			"title": "Lookup Verwaltung"
-		},
 		"modWorkflow": {
 			"add_process": "Prozess hinzufügen",
 			"attributes_title": "Attributverwaltung",
-			"domains_title": "Domain Verwaltung",
 			"errors": {
 				"table": {
 					"cast": "Die Eigenschaft \"Superklasse\" kann nicht bearbeitet werden, die Klasse enthält Daten oder Unterklassen",
@@ -401,56 +367,6 @@
 		},
 		"modconnectors": {
 			"title": "Übergangsstelle"
-		},
-		"modmenu": {
-			"add_menu": "Menü hinzufügen",
-			"available_elements": "Verfügbare Daten",
-			"availabletree": {
-				"class": "Klassen",
-				"processclass": "Aktivität",
-				"dashboard": "Dashboards",
-				"report": "Bericht",
-				"view": "Sicht"
-			},
-			"custom_menu": "Kundenspezifisches Menü",
-			"custom_menus": "Menü",
-			"delete_menu": "Menü wegnehmen",
-			"menu_root": "Menü",
-			"modify_menu": "Menü ändern",
-			"new_folder": "Neuer Ordner",
-			"title": "Menüverwaltung"
-		},
-		"modreport": {
-			"add": "Bericht hinzufügen",
-			"importJRFormStep1": {
-				"description": "Beschreibung des Berichtes",
-				"enabled_groups": "Freigegebene Gruppe",
-				"fieldset": "Jasper Bericht importieren",
-				"master_report_jrxml": "Master Bericht (Datei .jrxml) anwählen",
-				"menuTitle": "JasperReports-Bericht",
-				"name": "Name des Berichtes"
-			},
-			"importJRFormStep2": {
-				"duplicate_images": "Fortsetzen ist unmöglich: Der Bericht enthält Bilddateien mit demselben Name.",
-				"fieldset_generic": "Jasper Bericht importieren",
-				"fieldset_images": "Importieren von im Master Bericht definierten Bildern",
-				"fieldset_subreports": "Importieren von in Master Bericht definierten Unterberichten",
-				"menuTitle": "JasperReports-Bericht",
-				"nothing_to_import": "Kein Bild oder Bericht gefunden; bestätigen, um mit der Eingabe fortzufahren.",
-				"success": {
-					"description": {
-						"add": "Der Bericht ist korrekt eingegeben worden",
-						"modify": "Der Bericht ist korrekt bearbeitet worden"
-					},
-					"title": "Der Upload des Berichts ist beendet"
-				}
-			},
-			"importOpenofficeTemplateForm": {
-				"menuTitle": "Openoffice Bericht"
-			},
-			"modify": "Menü ändern",
-			"remove": "Bericht abbrechen",
-			"title": "Bericht"
 		},
 		"modsecurity": {
 			"defaultgroup": "* Default *",
@@ -637,6 +553,7 @@
 			"importLabel": "Importieren",
 			"load": "Load",
 			"modify": "Bearbeiten",
+			"move": "<em>Move</em>",
 			"next": "Nächste",
 			"previous": "Vorige",
 			"print": "Ausdrucken",
@@ -928,6 +845,8 @@
 			"WIDGET_SERVICE_MALFORMED_REQUEST": "Bitte prüfen Sie, ob Namespace, Zugriffsname und Parameters des Web Service korrekt sind"
 		},
 		"reference_invalid": "Der Wert stimmt das Filter nicht überein",
+		"reportsImportError": "<em>Error while importing report</em>",
+		"reportsAnalizeError": "<em>Error while analizing report</em>",
 		"requiredFieldMessage": "Das Feld ist erfordelich",
 		"routesInvalidCardIdentifier": "<em>Route error: invalid card identifier</em>",
 		"routesInvalidClassIdentifier": "<em>Route error: invalid class identifier</em>",
@@ -1127,22 +1046,6 @@
 			"showgraph": "Ansicht Graph",
 			"shownotes": "Ansicht Notizen"
 		},
-		"modmenu": {
-			"menu": "Navigieren"
-		},
-		"modreport": {
-			"add_report": "Bericht hinzufügen",
-			"delete_report": "Bericht löschen",
-			"modify_report": "Bericht bearbeiten",
-			"reportForm": {
-				"description": "Beschreibung",
-				"name": "Name",
-				"report": "Bericht"
-			},
-			"report_parameters": "Parameter des Berichts",
-			"title": "Liste - ",
-			"treetitle": "Bericht"
-		},
 		"modutilities": {
 			"bulkupdate": {
 				"title": "Mehrfach-Update",
@@ -1257,6 +1160,7 @@
 		"link_cards_changed_values": "Die Auswahl von \"{0}\" wurde aktualisiert",
 		"only_filtered": "Die Abänderungen können nur in die das laufende Filter respektierenden Karten Wirkungen zeigen",
 		"popup_block": "Es wurde ein Pop-up-Blocker erkannt. Bitte den Blocker ausschalten, um diese Operation auszuführen",
+		"reportsDuplicateImageFilename": "Fortsetzen ist unmöglich: Der Bericht enthält Bilddateien mit demselben Name.",
 		"saveMenuBeforeAccess": "<em>The menu has to been saved before access at the translations of this element.</em>",
 		"warning_message": "Achtung"
 	},
@@ -1268,13 +1172,18 @@
 	"add": "Hinzufügen",
 	"addAccount": "Benutzerkonto hinzufügen",
 	"addAttachmentFromDms": "Anhänge aus DMS hinzufügen",
+	"addDomain": "Domain hinzufügen",
 	"addFilter": "Filter hinzufügen",
+	"addLookup": "Lookup Punkt hinzufügen",
+	"addLookupType": "Lookup Typ hinzufügen",
 	"addProject": "Projekt hinzufügen",
 	"addRelations": "Beziehungen hinzufügen",
+	"addReport": "Bericht hinzufügen",
 	"addRow": "Zeile hinzufügen",
 	"addTemplate": "Template hinzufügen",
 	"addUser": "Benutzer hinzufügen",
 	"addView": "Sicht hinzufügen",
+	"add_attachment_from_dms": "Anhänge aus DMS hinzufügen",
 	"address": "Adresse",
 	"alfresco": "Alfresco",
 	"application": "Anwendung",
@@ -1283,6 +1192,7 @@
 	"attention": "Achtung",
 	"attribute": "Attribut",
 	"attributes": "Attribute",
+	"availableElements": "Verfügbare daten",
 	"availableFilters": "Verfügbare Filters",
 	"baseProperties": "Allgemeine Eigenschaften",
 	"bcc": "Bcc",
@@ -1294,6 +1204,7 @@
 	"cacheManagement": "Cache Verwaltung",
 	"camera": "Kamera",
 	"cardPanelHeight": "Prozenthöhe der Karte",
+	"cardinality": "Kardinalität",
 	"cc": "Cc",
 	"changePassword": "Passwort ändern",
 	"checkFrequency": "Häufigkeit kontrollieren (Minuten)",
@@ -1306,6 +1217,7 @@
 	"clearFilter": "Filter leeren",
 	"clear_row_and_colun_privilege": "Privilegien auf Zeilen und Spalten leeren",
 	"cmdbuildCategory": "CMDBuild Kategorie",
+	"code": "Code",
 	"composeEmail": "E-Mail schreiben",
 	"composeFromTemplate": "<em>Compose from template</em>",
 	"confirmRegeneration": "<em>Confirm regeneration</em>",
@@ -1321,6 +1233,8 @@
 	"credentials": "Berechtigungsnachweis",
 	"csv": "CSV",
 	"csvFile": "CSV Datei",
+	"customMenu": "Kundenspezifisches Menü",
+	"dataSource": "Datasource",
 	"defaultAccount": "<em>Default account</em>",
 	"defaultClass": "Default-Klasse",
 	"defaultGroup": "Standard gruppe",
@@ -1328,18 +1242,22 @@
 	"defaultLanguage": "Default sprache",
 	"defaultLevel": "Default Ebene",
 	"delay": "<em>Delay</em>",
+	"deleteDomain": "Domain wegnehmen",
 	"deleteLabel": "<em>Delete</em>",
 	"deleteRow": "Zeile löschen",
 	"descriptionLabel": "Beschreibung",
 	"description_": "Beschreibung",
 	"destination": "Ziel",
 	"details": "Details",
+	"directDescription": "Direkte Beschreibung",
 	"disable": "Ausschalten",
 	"disableGridFilter": "<em>Disable grid filter</em>",
+	"disableLookup": "Lookup deaktivieren",
 	"disableUser": "Benutzer sperren",
 	"display_less_attributes": "Weniger Attribute zeigen",
 	"display_more_attributes": "Mehr Attribute zeigen",
 	"domain": "Domain",
+	"domains": "Domains",
 	"download": "<em>Download</em>",
 	"download_ifc_file": "Ifc File herunterladen",
 	"edit": "<em>Edit</em>",
@@ -1352,11 +1270,13 @@
 	"emailTemplate": "E-mail Template",
 	"enable": "Aktivieren",
 	"enableGridFilter": "<em>Enable grid filter</em>",
+	"enableLookup": "Lookup aktivieren",
 	"enableMoveRejectedNotMatching": "unbehandelte E-Mails verschieben",
 	"enableSsl": "SSL aktivieren",
 	"enableUser": "Benutzer freigeben",
 	"enabled": "Freigegeben",
 	"enabledClasses": "<em>Enabled classes</em>",
+	"enabledGroups": "Freigegebene gruppe",
 	"enabledLanguages": "Aktivierte sprachen",
 	"endDate": "Enddatum",
 	"engineName": "Engine-Name",
@@ -1369,7 +1289,7 @@
 	"fileServerPath": "Pfad für das Server Repository",
 	"filter": "Filter",
 	"filterView": "Aus dem Filter",
-	"filters_for_groups": "Gruppenfilter",
+	"filtersForGroups": "Gruppenfilter",
 	"format_csv": "CSV",
 	"format_odt": "OpenOffice Odt",
 	"format_pdf": "Adobe Pdf",
@@ -1389,6 +1309,7 @@
 	"imapPort": "IMAP port",
 	"imapServer": "IMAP server",
 	"importFromCSV": "<em>Import from CSV</em>",
+	"importJasperReport": "Jasper bericht importieren",
 	"includeRelations": "<em>Include relations</em>",
 	"includeSystemActivities": "<em>Include system activities</em>",
 	"incoming": "Eingehend",
@@ -1397,6 +1318,7 @@
 	"initialLongitude": "Anfangslänge",
 	"initialZoomLevel": "Anfangszoom",
 	"instanceName": "Instanzname",
+	"inverseDescription": "Umgekehrte Beschreibung",
 	"ipType": "<em>IP type</em>",
 	"ipv4": "ipv4",
 	"ipv6": "ipv6",
@@ -1411,21 +1333,34 @@
 	"lockTimeout": "Maximale Zeitüberschreitung beim Sperren (Sekunden)",
 	"loggedGroup": "Angemeldete Gruppe",
 	"loggedUser": "Angemeldeter Benutzer",
+	"lookupList": "Liste der Punkte",
+	"lookupTypes": "Lookup Typ",
 	"main": "Hauptsächlich",
 	"manualRegeneration": "<em>Manual Regeneration</em>",
+	"masterDetail": "Master/Detail",
+	"masterDetailLabel": "Master/Detail label",
+	"masterReportJrxml": "Master bericht (.jrxml) anwählen",
 	"maximumLevel": "Maximal wählbare Ebene",
+	"menu": "Menü",
 	"mode": "Modus",
 	"modifyAccount": "Benutzerkonto verändern",
+	"modifyDomain": "Domain bearbeiten",
 	"modifyFilter": "Filter bearbeiten",
+	"modifyLookup": "Lookup Punkte bearbeiten",
+	"modifyLookupType": "Lookup Typ bearbeiten",
 	"modifyProject": "Projekt verändern",
+	"modifyReport": "Menü ändern",
 	"modifyTemplate": "Template verändern",
 	"modifyUser": "Benutzer bearbeiten",
 	"modifyView": "Sicht bearbeiten",
 	"multiGroup": "Multigruppe",
 	"name": "Name",
+	"navigation": "Navigieren",
+	"newFolder": "Neuer ordner",
 	"noAvailableData": "<em>No available data</em>",
 	"no_bim_project_for_card": "Es gibt keinen BIM Projekt für diese Karte",
 	"not_set": "Nicht eingestellt",
+	"notes": "Notizen",
 	"odt": "ODT",
 	"onDay": "<em>On</em>",
 	"open_3d_viewer": "3D-Ansicht öffnen",
@@ -1433,6 +1368,8 @@
 	"origin": "Ursprung",
 	"outgoing": "Ausgehende",
 	"pan": "Schwenken",
+	"parent": "Superklasse",
+	"parentDescription": "Beschreibung der Superklasse",
 	"password": "Passwort",
 	"pdf": "PDF",
 	"popupPercentageHeight": "Prozenthöhe des PopUp Fensters",
@@ -1440,12 +1377,14 @@
 	"popupWindows": "PopUp Fenster",
 	"port": "Port",
 	"preselectIfUnique": "<em>Preselect if unique</em>",
+	"printPreview": "<em>Print preview</em>",
 	"privileged": "<em>Privileged</em>",
 	"privileges_on_columns": "Spalten-Privilegien",
 	"privileges_on_rows": "Zeilen-Privilegien",
 	"processedFolder": "Ordner für verarbeitete E-Mails",
 	"projects": "Projekte",
 	"promptSync": "<em>Prompt sync</em>",
+	"properties": "Eigenschaften",
 	"queue": "<em>Queue</em>",
 	"readOnly": "Nur Anzeige",
 	"referenceComboLimit": "Grenze des Reference-Pulldown-Menüs",
@@ -1459,13 +1398,16 @@
 	"remove": "Entfernen",
 	"removeAccount": "Benutzerkonto entfernen",
 	"removeFilter": "Filter löschen",
+	"removeMenu": "Menü wegnehmen",
 	"removeProject": "Projekt entfernen",
+	"removeReport": "Bericht abbrechen",
 	"removeTemplate": "Template entfernen",
 	"removeView": "Sicht löschen",
 	"remove_formatting": "Formatierung entfernen",
 	"replace": "<em>Replace</em>",
 	"reply": "<em>Reply</em>",
-	"report": "<em>Report</em>",
+	"report": "Bericht",
+	"reportMenuJasper": "<em>Jasper-reports report</em>",
 	"reportParameters": "<em>Report parameters</em>",
 	"repository": "Archivdatei",
 	"reset": "Auf null stellen",
@@ -1475,7 +1417,7 @@
 	"row_and_column_privileges": "Zeilen- und Spalten-Privilegien",
 	"rtf": "RTF",
 	"scope": "Sichtbarkeitsbereich",
-	"search_filters": "Suchfilter",
+	"searchFilters": "Suchfilter",
 	"selectAClass": "Eine Klasse markieren",
 	"selected_object": "Markierter Gegenstand",
 	"send": "<em>Send</em>",
@@ -1498,6 +1440,7 @@
 	"side": "Seitlich",
 	"smtpPort": "SMTP Port",
 	"smtpServer": "SMTP Server",
+	"sql": "SQL",
 	"sqlView": "Aus SQL",
 	"start": "<em>Start</em>",
 	"status": "<em>Status</em>",
@@ -1548,5 +1491,6 @@
 	"workflow_cql_filter": "Cql Filter",
 	"workflow_query_tipology": "Markierung",
 	"you_have_not_set_a_filter": "Sie haben keine Filter eingestellt",
+	"zip": "ZIP",
 	"zoom": "Zoom"
 }

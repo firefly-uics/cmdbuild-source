@@ -3,8 +3,7 @@
 	Ext.define('CMDBuild.view.administration.accordion.Localizations', {
 		extend: 'CMDBuild.view.common.CMBaseAccordion',
 
-		cmName: 'localizations',
-		title: '@@Localizations',
+		title: '@@ Localizations',
 
 		constructor: function(){
 			this.callParent(arguments);
@@ -18,22 +17,15 @@
 		updateStore: function() {
 			this.store.getRootNode().appendChild([
 				{
-					id: 'baseTranslations',
-					cmName: 'localizations',
+					id: 'configurations',
+					cmName: this.cmName,
 					leaf: true,
-					text: '@@ Base',
+					text: '@@ Configurations',
 					iconCls: 'cmdbuild-tree-localization-icon'
 				},
 				{
-					id: 'advancedTranslations',
-					cmName: 'localizations',
-					leaf: true,
-					text: '@@ Advanced',
-					iconCls: 'cmdbuild-tree-localization-icon'
-				},
-				{
-					id: 'advancedTranslationsTable',
-					cmName: 'localizations',
+					id: 'advancedTranslationsTable', // TODO rename
+					cmName: this.cmName,
 					leaf: true,
 					text: '@@ Advanced table',
 					iconCls: 'cmdbuild-tree-localization-icon'

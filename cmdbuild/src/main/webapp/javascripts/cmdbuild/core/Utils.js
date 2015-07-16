@@ -40,12 +40,12 @@
 			var out = [];
 
 			if (!Ext.Object.isEmpty(entryType)) {
-				out.push(parseInt(entryType.get(CMDBuild.core.proxy.CMProxyConstants.ID)));
+				out.push(parseInt(entryType.get(CMDBuild.core.proxy.Constants.ID)));
 
-				while (!Ext.isEmpty(entryType.get(CMDBuild.core.proxy.CMProxyConstants.PARENT))) {
-					entryType = _CMCache.getEntryTypeById(entryType.get(CMDBuild.core.proxy.CMProxyConstants.PARENT));
+				while (!Ext.isEmpty(entryType.get(CMDBuild.core.proxy.Constants.PARENT))) {
+					entryType = _CMCache.getEntryTypeById(entryType.get(CMDBuild.core.proxy.Constants.PARENT));
 
-					out.push(parseInt(entryType.get(CMDBuild.core.proxy.CMProxyConstants.ID)));
+					out.push(parseInt(entryType.get(CMDBuild.core.proxy.Constants.ID)));
 				}
 			}
 
@@ -121,6 +121,58 @@
 				return /<[a-z][\s\S]*>/i.test(inputString);
 
 			return false;
+		},
+
+		/**
+		 * Custom function to order an array of objects or models
+		 *
+		 * @param {Array} array
+		 * @param {String} attributeToSort - (Default) description
+		 * @param {String} direction - (Default) ASC
+		 * @param {Boolean} caseSensitive - (Default) true
+		 */
+		objectArraySort: function(array, attributeToSort, direction, caseSensitive) {
+			attributeToSort = Ext.isString(attributeToSort) ? attributeToSort : CMDBuild.core.proxy.Constants.DESCRIPTION;
+			direction = Ext.isString(direction) ? direction : 'ASC'; // ASC or DESC
+			caseSensitive = Ext.isBoolean(caseSensitive) ? caseSensitive : false;
+
+			if (Ext.isArray(array)) {
+				Ext.Array.sort(array, function(item1, item2) {
+					var attribute1 = undefined;
+					var attribute2 = undefined;
+
+					if (Ext.isFunction(item1.get) && Ext.isFunction(item2.get)) {
+						attribute1 = (!caseSensitive && Ext.isFunction(item1.get(attributeToSort).toLowerCase)) ? item1.get(attributeToSort).toLowerCase() : item1.get(attributeToSort);
+						attribute2 = (!caseSensitive && Ext.isFunction(item2.get(attributeToSort).toLowerCase)) ? item2.get(attributeToSort).toLowerCase() : item2.get(attributeToSort);
+					} else if (item1.hasOwnProperty(attributeToSort) && item2.hasOwnProperty(attributeToSort)) {
+						attribute1 = (!caseSensitive && Ext.isFunction(item1[attributeToSort].toLowerCase)) ? item1[attributeToSort].toLowerCase() : item1[attributeToSort];
+						attribute2 = (!caseSensitive && Ext.isFunction(item2[attributeToSort].toLowerCase)) ? item2[attributeToSort].toLowerCase() : item2[attributeToSort];
+					}
+
+					switch (direction) {
+						case 'DESC': {
+							if (attribute1 > attribute2)
+								return -1;
+
+							if (attribute1 < attribute2)
+								return 1;
+
+							return 0;
+						} break;
+
+						case 'ASC':
+						default: {
+							if (attribute1 < attribute2)
+								return -1;
+
+							if (attribute1 > attribute2)
+								return 1;
+
+							return 0;
+						}
+					}
+				});
+			}
 		},
 
 		/**

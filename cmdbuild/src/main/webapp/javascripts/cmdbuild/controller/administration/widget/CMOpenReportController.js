@@ -1,6 +1,7 @@
 (function() {
 
 //	Ext.require('CMDBuild.model.widget.CMModelOpenReport');
+	Ext.require('CMDBuild.view.administration.widget.form.CMOpenReportDefinitionForm');
 
 	Ext.define('CMDBuild.controller.administration.widget.CMOpenReportController', {
 		extend: 'CMDBuild.controller.administration.widget.CMBaseWidgetDefinitionFormController',
@@ -8,7 +9,7 @@
 		requires: ['CMDBuild.model.widget.CMModelOpenReport', 'CMDBuild.core.proxy.widgets.OpenReport'],
 
 		statics: {
-			WIDGET_NAME: CMDBuild.view.administration.widget.form.CMOpenReportDefinitionForm.WIDGET_NAME
+			WIDGET_NAME: '.OpenReport'
 		},
 
 		/**
@@ -101,7 +102,7 @@
 				reportCode = selectedReport[0];
 
 			if (reportCode.self && reportCode.self.$className == 'CMDBuild.model.widget.CMModelOpenReport.reportCombo')
-				reportCode = reportCode.get(CMDBuild.core.proxy.CMProxyConstants.ID);
+				reportCode = reportCode.get(CMDBuild.core.proxy.Constants.ID);
 
 			return reportCode;
 		},

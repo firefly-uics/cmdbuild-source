@@ -53,6 +53,8 @@
 				}
 
 				this.width = Ext.getBody().getWidth() * percentualWidth;
+			} else {
+				this.width = 660; // Default width setup based on text field default width inside window
 			}
 
 			this.callParent(arguments);

@@ -1,15 +1,18 @@
 (function() {
 	var constants = CMDBuild.Constants;
-	
-	var lookupTypeStore = getFakeStore()
+
+	var lookupTypeStore = getFakeStore();
 	var lookupTypeStoreOnlyLeves = getFakeStore();
 
-	
+
 	var lookupTypes = {};
-	
+
 	var lookupAttributeStoreMap = {};
 
+	Ext.require('CMDBuild.core.proxy.lookup.Lookup');
+
 	Ext.define("CMDBUild.cache.CMCacheLookupFunctions", {
+
 		getLookupTypes: function() {
 			return lookupTypes;
 		},
@@ -31,7 +34,7 @@
 				lookupTypeStore = buildLookupTypeStore(onlyLeaves = false);
 				lookupTypeStore.cmFill();
 			}
-			
+
 			return lookupTypeStore;
 		},
 
@@ -40,7 +43,7 @@
 				lookupTypeStoreOnlyLeves = buildLookupTypeStore(onlyLeaves = true);
 				lookupTypeStoreOnlyLeves.cmFill();
 			}
-	
+
 			return lookupTypeStoreOnlyLeves;
 		},
 
@@ -76,10 +79,10 @@
 				}
 			}
 		},
-		
+
 		getLookupStore: function(type) {
 			if (!lookupAttributeStoreMap[type]) {
-				lookupAttributeStoreMap[type] = CMDBuild.ServiceProxy.lookup.getLookupFieldStore(type);
+				lookupAttributeStoreMap[type] = CMDBuild.core.proxy.lookup.Lookup.getFieldStore(type);
 			}
 			return lookupAttributeStoreMap[type];
 		},
@@ -110,7 +113,7 @@
 
 	function buildLookupTypeStore(onlyLeaves) {
 		var store = new Ext.data.Store({
-			model: "CMLookupTypeForCombo",
+			model: "CMDBuild.cache.Lookup.typeComboStore",
 			cmOnlyLeaves: onlyLeaves,
 			cmFill: function() {
 				this.removeAll();

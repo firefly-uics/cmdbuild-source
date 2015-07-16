@@ -138,7 +138,7 @@
 	Ext.define('CMDBuild.view.administration.tasks.event.synchronous.CMStep1', {
 		extend: 'Ext.panel.Panel',
 
-		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+		requires: ['CMDBuild.core.proxy.Constants'],
 
 		/**
 		 * @cfg {CMDBuild.view.administration.tasks.event.synchronous.CMStep1Delegate}
@@ -165,7 +165,7 @@
 			this.delegate = Ext.create('CMDBuild.view.administration.tasks.event.synchronous.CMStep1Delegate', this);
 
 			this.typeField = Ext.create('Ext.form.field.Text', {
-				name: CMDBuild.core.proxy.CMProxyConstants.TYPE,
+				name: CMDBuild.core.proxy.Constants.TYPE,
 				fieldLabel: tr.type,
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				value: tr.tasksTypes.event + ' ' + tr.tasksTypes.eventTypes.synchronous.toLowerCase(),
@@ -176,29 +176,29 @@
 			});
 
 			this.idField = Ext.create('Ext.form.field.Hidden', {
-				name: CMDBuild.core.proxy.CMProxyConstants.ID
+				name: CMDBuild.core.proxy.Constants.ID
 			});
 
 			this.descriptionField = Ext.create('Ext.form.field.Text', {
-				name: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
+				name: CMDBuild.core.proxy.Constants.DESCRIPTION,
 				fieldLabel: CMDBuild.Translation.description_,
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				allowBlank: false
 			});
 
 			this.activeField = Ext.create('Ext.form.field.Checkbox', {
-				name: CMDBuild.core.proxy.CMProxyConstants.ACTIVE,
+				name: CMDBuild.core.proxy.Constants.ACTIVE,
 				fieldLabel: tr.startOnSave,
 				labelWidth: CMDBuild.LABEL_WIDTH
 			});
 
 			this.phaseCombo = Ext.create('Ext.form.field.ComboBox', {
-				name: CMDBuild.core.proxy.CMProxyConstants.PHASE,
+				name: CMDBuild.core.proxy.Constants.PHASE,
 				fieldLabel: tr.taskEvent.phase,
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				store: CMDBuild.core.proxy.CMProxyTasks.getPhases(),
-				valueField: CMDBuild.core.proxy.CMProxyConstants.VALUE,
-				displayField: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
+				valueField: CMDBuild.core.proxy.Constants.VALUE,
+				displayField: CMDBuild.core.proxy.Constants.DESCRIPTION,
 				maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
 				queryMode: 'local',
 				forceSelection: true,
@@ -206,10 +206,10 @@
 			});
 
 			this.groups = Ext.create('CMDBuild.view.common.field.CMGroupSelectionList', {
-				name: CMDBuild.core.proxy.CMProxyConstants.GROUPS,
+				name: CMDBuild.core.proxy.Constants.GROUPS,
 				fieldLabel: tr.taskEvent.groupsToApply,
 				height: 300,
-				valueField: CMDBuild.core.proxy.CMProxyConstants.NAME,
+				valueField: CMDBuild.core.proxy.Constants.NAME,
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
 				considerAsFieldToDisable: true,
@@ -217,11 +217,11 @@
 			});
 
 			this.classNameCombo = Ext.create('Ext.form.field.ComboBox', {
-				name: CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME,
+				name: CMDBuild.core.proxy.Constants.CLASS_NAME,
 				fieldLabel: CMDBuild.Translation.classLabel,
 				labelWidth: CMDBuild.LABEL_WIDTH,
-				valueField: CMDBuild.core.proxy.CMProxyConstants.NAME,
-				displayField: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
+				valueField: CMDBuild.core.proxy.Constants.NAME,
+				displayField: CMDBuild.core.proxy.Constants.DESCRIPTION,
 				maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
 				allowBlank: false,
 				forceSelection: true,

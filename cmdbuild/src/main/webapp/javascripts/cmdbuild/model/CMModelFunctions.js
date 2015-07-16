@@ -4,7 +4,7 @@
 		extend: 'Ext.data.Model',
 
 		fields: [
-			{ name: CMDBuild.core.proxy.CMProxyConstants.NAME, type: 'string' }
+			{ name: CMDBuild.core.proxy.Constants.NAME, type: 'string' }
 		]
 	});
 

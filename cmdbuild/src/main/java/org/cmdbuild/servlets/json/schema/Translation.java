@@ -1,17 +1,9 @@
 package org.cmdbuild.servlets.json.schema;
 
-import static org.apache.commons.lang3.StringUtils.EMPTY;
-import static org.cmdbuild.servlets.json.CommunicationConstants.ATTRIBUTENAME;
-import static org.cmdbuild.servlets.json.CommunicationConstants.CLASS_NAME;
-import static org.cmdbuild.servlets.json.CommunicationConstants.DOMAIN_NAME;
+import static org.cmdbuild.servlets.json.CommunicationConstants.ACTIVE;
 import static org.cmdbuild.servlets.json.CommunicationConstants.FIELD;
-import static org.cmdbuild.servlets.json.CommunicationConstants.FILTERNAME;
-import static org.cmdbuild.servlets.json.CommunicationConstants.MENU_ITEM_UUID;
-import static org.cmdbuild.servlets.json.CommunicationConstants.REPORTNAME;
+import static org.cmdbuild.servlets.json.CommunicationConstants.SORT;
 import static org.cmdbuild.servlets.json.CommunicationConstants.TRANSLATIONS;
-import static org.cmdbuild.servlets.json.CommunicationConstants.TRANSLATION_UUID;
-import static org.cmdbuild.servlets.json.CommunicationConstants.VIEWNAME;
-import static org.cmdbuild.servlets.json.CommunicationConstants.WIDGET_ID;
 import static org.cmdbuild.servlets.json.schema.Utils.toMap;
 
 import java.util.Map;
@@ -20,6 +12,7 @@ import org.apache.commons.lang3.Validate;
 import org.cmdbuild.logic.translation.TranslationObject;
 import org.cmdbuild.logic.translation.converter.AttributeConverter;
 import org.cmdbuild.logic.translation.converter.ClassConverter;
+import org.cmdbuild.logic.translation.converter.Converter;
 import org.cmdbuild.logic.translation.converter.DomainConverter;
 import org.cmdbuild.logic.translation.converter.FilterConverter;
 import org.cmdbuild.logic.translation.converter.InstanceConverter;
@@ -30,647 +23,254 @@ import org.cmdbuild.logic.translation.converter.ViewConverter;
 import org.cmdbuild.logic.translation.converter.WidgetConverter;
 import org.cmdbuild.servlets.json.JSONBaseWithSpringContext;
 import org.cmdbuild.servlets.json.management.JsonResponse;
+import org.cmdbuild.servlets.json.translationtable.TranslationSerializer;
+import org.cmdbuild.servlets.json.translationtable.TranslationSerializerFactory;
 import org.cmdbuild.servlets.utils.Parameter;
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
+
+import com.google.common.collect.Lists;
 
 public class Translation extends JSONBaseWithSpringContext {
 
-	@JSONExported
-	@Admin
-	public void createForClass( //
-			@Parameter(value = CLASS_NAME) final String className, //
-			@Parameter(value = FIELD) final String field, //
-			@Parameter(value = TRANSLATIONS) final JSONObject translations //
-	) {
-		final ClassConverter converter = ClassConverter.of(field);
-		Validate.isTrue(converter.isValid());
-		final TranslationObject translationObject = converter //
-				.withTranslations(toMap(translations)) //
-				.create(className);
-		translationLogic().create(translationObject);
-	}
+	private static final String TYPE = "type";
+	private static final String IDENTIFIER = "identifier";
+	private static final String OWNER = "owner";
 
 	@JSONExported
 	@Admin
-	public void createForClassAttribute( //
-			@Parameter(value = CLASS_NAME) final String className, //
-			@Parameter(value = ATTRIBUTENAME) final String attributeName, //
-			@Parameter(value = FIELD) final String field, //
-			@Parameter(value = TRANSLATIONS) final JSONObject translations //
-	) {
-
-		final AttributeConverter converter = AttributeConverter.of(AttributeConverter.forClass(), field);
-		Validate.isTrue(converter.isValid());
-		final TranslationObject translationObject = converter //
-				.withTranslations(toMap(translations)) //
-				.create(className, attributeName);
-		translationLogic().create(translationObject);
-	}
-
-	@JSONExported
-	@Admin
-	public void createForDomain( //
-			@Parameter(value = DOMAIN_NAME) final String domainName, //
-			@Parameter(value = FIELD) final String field, //
-			@Parameter(value = TRANSLATIONS) final JSONObject translations //
-	) {
-		final DomainConverter converter = DomainConverter.of(field);
-		Validate.isTrue(converter.isValid());
-		final TranslationObject translationObject = converter //
-				.withTranslations(toMap(translations)) //
-				.create(domainName);
-		translationLogic().create(translationObject);
-	}
-
-	@JSONExported
-	@Admin
-	public void createForDomainAttribute( //
-			@Parameter(value = DOMAIN_NAME) final String domainName, //
-			@Parameter(value = ATTRIBUTENAME) final String attributeName, //
-			@Parameter(value = FIELD) final String field, //
-			@Parameter(value = TRANSLATIONS) final JSONObject translations //
-	) {
-		final AttributeConverter converter = AttributeConverter.of(AttributeConverter.forDomain(), field);
-		Validate.isTrue(converter.isValid());
-		final TranslationObject translationObject = converter //
-				.withTranslations(toMap(translations)) //
-				.create(domainName, attributeName);
-		translationLogic().create(translationObject);
-	}
-
-	@JSONExported
-	@Admin
-	public void createForFilter( //
-			@Parameter(value = FILTERNAME) final String filterName, //
-			@Parameter(value = FIELD) final String field, //
-			@Parameter(value = TRANSLATIONS) final JSONObject translations //
-	) {
-		final FilterConverter converter = FilterConverter.of(field);
-		Validate.isTrue(converter.isValid());
-		final TranslationObject translationObject = converter //
-				.withTranslations(toMap(translations)) //
-				.create(filterName);
-		translationLogic().create(translationObject);
-	}
-
-	@JSONExported
-	@Admin
-	public void createForInstanceName( //
-			@Parameter(value = TRANSLATIONS) final JSONObject translations //
-	) {
-		final InstanceConverter converter = InstanceConverter.of(InstanceConverter.nameField());
-		Validate.isTrue(converter.isValid());
-		final TranslationObject translationObject = converter //
-				.withTranslations(toMap(translations)).create(EMPTY);
-		translationLogic().create(translationObject);
-	}
-
-	@JSONExported
-	@Admin
-	public void createForLookup( //
-			@Parameter(value = TRANSLATION_UUID) final String uuid, //
-			@Parameter(value = FIELD) final String field, //
-			@Parameter(value = TRANSLATIONS) final JSONObject translations //
-	) {
-		final LookupConverter converter = LookupConverter.of(field);
-		Validate.isTrue(converter.isValid());
-		final TranslationObject translationObject = converter //
-				.withTranslations(toMap(translations)).create(uuid);
-		translationLogic().create(translationObject);
-	}
-
-	@JSONExported
-	@Admin
-	public void createForMenuItem( //
-			@Parameter(value = MENU_ITEM_UUID) final String uuid, //
-			@Parameter(value = FIELD) final String field, //
-			@Parameter(value = TRANSLATIONS) final JSONObject translations //
-	) {
-		final MenuItemConverter converter = MenuItemConverter.of(field);
-		Validate.isTrue(converter.isValid());
-		final TranslationObject translationObject = converter //
-				.withTranslations(toMap(translations)) //
-				.create(uuid);
-		translationLogic().create(translationObject);
-	}
-
-	@JSONExported
-	@Admin
-	public void createForReport( //
-			@Parameter(value = REPORTNAME) final String reportName, //
-			@Parameter(value = FIELD) final String field, //
-			@Parameter(value = TRANSLATIONS) final JSONObject translations //
-	) {
-		final ReportConverter converter = ReportConverter.of(field);
-		Validate.isTrue(converter.isValid());
-		final TranslationObject translationObject = converter //
-				.withTranslations(toMap(translations)) //
-				.create(reportName);
-		translationLogic().create(translationObject);
-	}
-
-	@JSONExported
-	@Admin
-	public void createForView( //
-			@Parameter(value = VIEWNAME) final String viewName, //
-			@Parameter(value = FIELD) final String field, //
-			@Parameter(value = TRANSLATIONS) final JSONObject translations //
-	) {
-		final ViewConverter converter = ViewConverter.of(field);
-		Validate.isTrue(converter.isValid());
-		final TranslationObject translationObject = converter //
-				.withTranslations(toMap(translations)) //
-				.create(viewName);
-		translationLogic().create(translationObject);
-	}
-
-	@JSONExported
-	@Admin
-	public void createForWidget( //
-			@Parameter(value = WIDGET_ID) final String widgetId, //
-			@Parameter(value = FIELD) final String field, //
-			@Parameter(value = TRANSLATIONS) final JSONObject translations //
-	) {
-		final WidgetConverter converter = WidgetConverter.of(field);
-		Validate.isTrue(converter.isValid());
-		final TranslationObject translationObject = converter //
-				.withTranslations(toMap(translations)) //
-				.create(widgetId);
-		translationLogic().create(translationObject);
-	}
-
-	@JSONExported
-	@Admin
-	public JsonResponse readForClass( //
-			@Parameter(value = CLASS_NAME) final String className, //
+	public JsonResponse read( //
+			@Parameter(value = TYPE) final String type, //
+			@Parameter(value = OWNER, required = false) final String owner, //
+			@Parameter(value = IDENTIFIER) final String identifier, //
 			@Parameter(value = FIELD) final String field //
 	) {
-		final ClassConverter converter = ClassConverter.of(field);
-		Validate.isTrue(converter.isValid());
-		final TranslationObject translationObject = converter.create(className);
+		final Converter converter = createConverter(type, field);
+		final TranslationObject translationObject = converter.withOwner(owner) //
+				.withIdentifier(identifier) //
+				.create();
 		final Map<String, String> translations = translationLogic().readAll(translationObject);
 		return JsonResponse.success(translations);
 	}
 
 	@JSONExported
 	@Admin
-	public JsonResponse readForClassAttribute( //
-			@Parameter(value = CLASS_NAME) final String className, //
-			@Parameter(value = ATTRIBUTENAME) final String attributeName, //
-			@Parameter(value = FIELD) final String field //
-	) {
-		final AttributeConverter converter = AttributeConverter.of(AttributeConverter.forClass(), field);
-		Validate.isTrue(converter.isValid());
-		final TranslationObject translationObject = converter.create(className, attributeName);
-		final Map<String, String> translations = translationLogic().readAll(translationObject);
-		return JsonResponse.success(translations);
-	}
-
-	@JSONExported
-	@Admin
-	public JsonResponse readForDomain( //
-			@Parameter(value = DOMAIN_NAME) final String domainName, //
-			@Parameter(value = FIELD) final String field //
-	) {
-		final DomainConverter converter = DomainConverter.of(field);
-		Validate.isTrue(converter.isValid());
-		final TranslationObject translationObject = converter.create(domainName);
-		final Map<String, String> translations = translationLogic().readAll(translationObject);
-		return JsonResponse.success(translations);
-	}
-
-	@JSONExported
-	@Admin
-	public JsonResponse readForDomainAttribute( //
-			@Parameter(value = DOMAIN_NAME) final String domainName, //
-			@Parameter(value = ATTRIBUTENAME) final String attributeName, //
-			@Parameter(value = FIELD) final String field //
-	) {
-		final AttributeConverter converter = AttributeConverter.of(AttributeConverter.forDomain(), field);
-		Validate.isTrue(converter.isValid());
-		final TranslationObject translationObject = converter.create(domainName, attributeName);
-		final Map<String, String> translations = translationLogic().readAll(translationObject);
-		return JsonResponse.success(translations);
-	}
-
-	@JSONExported
-	@Admin
-	public JsonResponse readForFilter( //
-			@Parameter(value = FILTERNAME) final String filterName, //
-			@Parameter(value = FIELD) final String field) {
-		final FilterConverter converter = FilterConverter.of(field);
-		Validate.isTrue(converter.isValid());
-		final TranslationObject translationObject = converter.create(filterName);
-		final Map<String, String> translations = translationLogic().readAll(translationObject);
-		return JsonResponse.success(translations);
-	}
-
-	@JSONExported
-	@Admin
-	public JsonResponse readForInstanceName() {
-		final InstanceConverter converter = InstanceConverter.of(InstanceConverter.nameField());
-		Validate.isTrue(converter.isValid());
-		final TranslationObject translationObject = converter.create(EMPTY);
-		final Map<String, String> translations = translationLogic().readAll(translationObject);
-		return JsonResponse.success(translations);
-	}
-
-	@JSONExported
-	@Admin
-	public JsonResponse readForLookup( //
-			@Parameter(value = TRANSLATION_UUID) final String uuid, //
-			@Parameter(value = FIELD) final String field //
-	) {
-		final LookupConverter converter = LookupConverter.of(field);
-		Validate.isTrue(converter.isValid());
-		final TranslationObject translationObject = converter.create(uuid);
-		final Map<String, String> translations = translationLogic().readAll(translationObject);
-		return JsonResponse.success(translations);
-	}
-
-	@JSONExported
-	@Admin
-	public JsonResponse readForMenuItem( //
-			@Parameter(value = MENU_ITEM_UUID) final String uuid, //
-			@Parameter(value = FIELD) final String field //
-	) {
-		final MenuItemConverter converter = MenuItemConverter.of(field);
-		Validate.isTrue(converter.isValid());
-		final TranslationObject translationObject = converter //
-				.create(uuid);
-		final Map<String, String> translations = translationLogic().readAll(translationObject);
-		return JsonResponse.success(translations);
-	}
-
-	@JSONExported
-	@Admin
-	public JsonResponse readForReport( //
-			@Parameter(value = REPORTNAME) final String reportName, //
-			@Parameter(value = FIELD) final String field //
-	) {
-		final ReportConverter converter = ReportConverter.of(field);
-		Validate.isTrue(converter.isValid());
-		final TranslationObject translationObject = converter //
-				.create(reportName);
-		final Map<String, String> translations = translationLogic().readAll(translationObject);
-		return JsonResponse.success(translations);
-	}
-
-	@JSONExported
-	@Admin
-	public JsonResponse readForView( //
-			@Parameter(value = VIEWNAME) final String viewName, //
-			@Parameter(value = FIELD) final String field) {
-		final ViewConverter converter = ViewConverter.of(field);
-		Validate.isTrue(converter.isValid());
-		final TranslationObject translationObject = converter //
-				.create(viewName);
-		final Map<String, String> translations = translationLogic().readAll(translationObject);
-		return JsonResponse.success(translations);
-	}
-
-	@JSONExported
-	@Admin
-	public JsonResponse readForWidget( //
-			@Parameter(value = WIDGET_ID) final String widgetId, //
-			@Parameter(value = FIELD) final String field //
-	) {
-		final WidgetConverter converter = WidgetConverter.of(field);
-		Validate.isTrue(converter.isValid());
-		final TranslationObject translationObject = converter //
-				.create(widgetId);
-		final Map<String, String> translations = translationLogic().readAll(translationObject);
-		return JsonResponse.success(translations);
-	}
-
-	/*
-	 * Translations: UPDATE
-	 */
-	@JSONExported
-	@Admin
-	public void updateForClass( //
-			@Parameter(value = CLASS_NAME) final String className, //
+	public void update( //
+			@Parameter(value = TYPE) final String type, //
+			@Parameter(value = OWNER, required = false) final String owner, //
+			@Parameter(value = IDENTIFIER) final String identifier, //
 			@Parameter(value = FIELD) final String field, //
 			@Parameter(value = TRANSLATIONS) final JSONObject translations //
 	) {
-		final ClassConverter converter = ClassConverter.of(field);
-		Validate.isTrue(converter.isValid());
+		final Converter converter = createConverter(type, field);
 		final TranslationObject translationObject = converter //
+				.withOwner(owner) //
+				.withIdentifier(identifier) //
 				.withTranslations(toMap(translations)) //
-				.create(className);
+				.create();
 		translationLogic().update(translationObject);
 	}
 
 	@JSONExported
 	@Admin
-	public void updateForClassAttribute( //
-			@Parameter(value = CLASS_NAME) final String className, //
-			@Parameter(value = ATTRIBUTENAME) final String attributeName, //
-			@Parameter(value = FIELD) final String field, //
-			@Parameter(value = TRANSLATIONS) final JSONObject translations //
-	) {
-		final AttributeConverter converter = AttributeConverter.of(AttributeConverter.forClass(), field);
-		final TranslationObject translationObject = converter //
-				.withTranslations(toMap(translations)) //
-				.create(className, attributeName);
-		translationLogic().update(translationObject);
+	public JsonResponse readStructure( //
+			@Parameter(value = TYPE) final String type, //
+			@Parameter(value = SORT, required = false) final JSONArray sorters, //
+			@Parameter(value = ACTIVE, required = false) final boolean activeOnly //
+	) throws JSONException {
+
+		final TranslationSerializerFactory factory = TranslationSerializerFactory //
+				.newInstance() //
+				.withActiveOnly(activeOnly) //
+				.withAuthLogic(authLogic()) //
+				.withDataAccessLogic(userDataAccessLogic()) //
+				.withFilterStore(filterStore()) //
+				.withLookupStore(lookupStore()) //
+				.withMenuLogic(menuLogic()) //
+				.withReportStore(reportStore()).withSorters(sorters) //
+				.withTranslationLogic(translationLogic()) //
+				.withType(type) //
+				.withViewLogic(viewLogic()) //
+				.build();
+
+		final TranslationSerializer serializer = factory.createSerializer();
+		return serializer.serialize();
 	}
 
-	@JSONExported
-	@Admin
-	public void updateForDomain( //
-			@Parameter(value = DOMAIN_NAME) final String domainName, //
-			@Parameter(value = FIELD) final String field, //
-			@Parameter(value = TRANSLATIONS) final JSONObject translations //
-	) {
-		final DomainConverter converter = DomainConverter.of(field);
-		final TranslationObject translationObject = converter //
-				.withTranslations(toMap(translations)) //
-				.create(domainName);
-		translationLogic().update(translationObject);
-	}
-
-	@JSONExported
-	@Admin
-	public void updateForDomainAttribute( //
-			@Parameter(value = DOMAIN_NAME) final String domainName, //
-			@Parameter(value = ATTRIBUTENAME) final String attributeName, //
-			@Parameter(value = FIELD) final String field, //
-			@Parameter(value = TRANSLATIONS) final JSONObject translations //
-	) {
-		final AttributeConverter converter = AttributeConverter.of(AttributeConverter.forDomain(), field);
-		final TranslationObject translationObject = converter //
-				.withTranslations(toMap(translations)) //
-				.create(domainName, attributeName);
-		translationLogic().update(translationObject);
-	}
-
-	@JSONExported
-	@Admin
-	public void updateForFilter( //
-			@Parameter(value = FILTERNAME) final String filterName, //
-			@Parameter(value = FIELD) final String field, //
-			@Parameter(value = TRANSLATIONS) final JSONObject translations //
-	) {
-		final FilterConverter converter = FilterConverter.of(field);
-		final TranslationObject translationObject = converter //
-				.withTranslations(toMap(translations)) //
-				.create(filterName);
-		translationLogic().update(translationObject);
-	}
-
-	@JSONExported
-	@Admin
-	public void updateForInstanceName( //
-			@Parameter(value = TRANSLATIONS) final JSONObject translations //
-	) {
-		final InstanceConverter converter = InstanceConverter.of(InstanceConverter.nameField());
-		final TranslationObject translationObject = converter //
-				.withTranslations(toMap(translations)) //
-				.create(EMPTY);
-		translationLogic().update(translationObject);
-	}
-
-	@JSONExported
-	@Admin
-	public void updateForLookup( //
-			@Parameter(value = TRANSLATION_UUID) final String uuid, //
-			@Parameter(value = FIELD) final String field, //
-			@Parameter(value = TRANSLATIONS) final JSONObject translations //
-	) {
-		final LookupConverter converter = LookupConverter.of(field);
-		final TranslationObject translationObject = converter //
-				.withTranslations(toMap(translations)) //
-				.create(uuid);
-		translationLogic().update(translationObject);
-	}
-
-	@JSONExported
-	@Admin
-	public void updateForMenuItem( //
-			@Parameter(value = MENU_ITEM_UUID) final String uuid, //
-			@Parameter(value = FIELD) final String field, //
-			@Parameter(value = TRANSLATIONS) final JSONObject translations //
-	) {
-		final MenuItemConverter converter = MenuItemConverter.of(field);
+	private Converter createConverter(final String type, final String field) {
+		final TranslatableElement element = TranslatableElement.of(type);
+		final Converter converter = element.createConverter(field);
 		Validate.isTrue(converter.isValid());
-		final TranslationObject translationObject = converter //
-				.withTranslations(toMap(translations)) //
-				.create(uuid);
-		translationLogic().update(translationObject);
+		return converter;
 	}
 
-	@JSONExported
-	@Admin
-	public void updateForReport( //
-			@Parameter(value = REPORTNAME) final String reportName, //
-			@Parameter(value = FIELD) final String field, //
-			@Parameter(value = TRANSLATIONS) final JSONObject translations //
-	) {
-		final ReportConverter converter = ReportConverter.of(field);
-		Validate.isTrue(converter.isValid());
-		final TranslationObject translationObject = converter //
-				.withTranslations(toMap(translations)) //
-				.create(reportName);
-		translationLogic().update(translationObject);
-	}
+	private enum TranslatableElement {
 
-	@JSONExported
-	@Admin
-	public void updateForView( //
-			@Parameter(value = VIEWNAME) final String viewName, //
-			@Parameter(value = FIELD) final String field, //
-			@Parameter(value = TRANSLATIONS) final JSONObject translations //
-	) {
-		final ViewConverter converter = ViewConverter.of(field);
-		Validate.isTrue(converter.isValid());
-		final TranslationObject translationObject = converter //
-				.withTranslations(toMap(translations)) //
-				.create(viewName);
-		translationLogic().update(translationObject);
-	}
+		CLASS("class") {
+			@Override
+			Converter createConverter(final String field) {
+				return ClassConverter.of(field);
+			}
 
-	@JSONExported
-	@Admin
-	public void updateForWidget( //
-			@Parameter(value = WIDGET_ID) final String widgetId, //
-			@Parameter(value = FIELD) final String field, //
-			@Parameter(value = TRANSLATIONS) final JSONObject translations //
-	) {
-		final WidgetConverter converter = WidgetConverter.of(field);
-		Validate.isTrue(converter.isValid());
-		final TranslationObject translationObject = converter //
-				.withTranslations(toMap(translations)) //
-				.create(widgetId);
-		translationLogic().update(translationObject);
-	}
+			@Override
+			Iterable<String> allowedFields() {
+				return Lists.newArrayList(ClassConverter.description());
+			}
+		},
+		ATTRIBUTECLASS("attributeclass") {
+			@Override
+			Converter createConverter(final String field) {
+				return AttributeConverter.of(AttributeConverter.forClass(), field);
+			}
 
-	/*
-	 * Translations: DELETE
-	 */
+			@Override
+			Iterable<String> allowedFields() {
+				return Lists.newArrayList(AttributeConverter.description());
+			}
+		},
+		DOMAIN("domain") {
+			@Override
+			Converter createConverter(final String field) {
+				return DomainConverter.of(field);
+			}
 
-	@JSONExported
-	@Admin
-	public void deleteForClass( //
-			@Parameter(value = CLASS_NAME) final String className, //
-			@Parameter(value = FIELD) final String field, //
-			@Parameter(value = TRANSLATIONS) final JSONObject translations //
-	) {
-		final ClassConverter converter = ClassConverter.of(field);
-		Validate.isTrue(converter.isValid());
-		final TranslationObject translationObject = converter //
-				.withTranslations(toMap(translations)) //
-				.create(className);
-		translationLogic().delete(translationObject);
-	}
+			@Override
+			Iterable<String> allowedFields() {
+				return Lists.newArrayList(DomainConverter.description(), DomainConverter.directDescription(),
+						DomainConverter.inverseDescription(), DomainConverter.masterDetail());
+			}
+		},
+		ATTRIBUTEDOMAIN("attributedomain") {
+			@Override
+			Converter createConverter(final String field) {
+				return AttributeConverter.of(AttributeConverter.forDomain(), field);
+			}
 
-	@JSONExported
-	@Admin
-	public void deleteForClassAttribute( //
-			@Parameter(value = CLASS_NAME) final String className, //
-			@Parameter(value = ATTRIBUTENAME) final String attributeName, //
-			@Parameter(value = FIELD) final String field, //
-			@Parameter(value = TRANSLATIONS) final JSONObject translations //
-	) {
-		final AttributeConverter converter = AttributeConverter.of(AttributeConverter.forClass(), field);
-		Validate.isTrue(converter.isValid());
-		final TranslationObject translationObject = converter //
-				.withTranslations(toMap(translations)) //
-				.create(className, attributeName);
-		translationLogic().delete(translationObject);
-	}
+			@Override
+			Iterable<String> allowedFields() {
+				return Lists.newArrayList(AttributeConverter.description());
+			}
+		},
+		FILTER("filter") {
+			@Override
+			Converter createConverter(final String field) {
+				return FilterConverter.of(field);
+			}
 
-	@JSONExported
-	@Admin
-	public void deleteForDomain( //
-			@Parameter(value = DOMAIN_NAME) final String domainName, //
-			@Parameter(value = FIELD) final String field, //
-			@Parameter(value = TRANSLATIONS) final JSONObject translations //
-	) {
-		final DomainConverter converter = DomainConverter.of(field);
-		Validate.isTrue(converter.isValid());
-		final TranslationObject translationObject = converter //
-				.withTranslations(toMap(translations)) //
-				.create(domainName);
-		translationLogic().delete(translationObject);
-	}
+			@Override
+			Iterable<String> allowedFields() {
+				return Lists.newArrayList(FilterConverter.description());
+			}
+		},
+		INSTANCE_NAME("instancename") {
+			@Override
+			Converter createConverter(final String field) {
+				return InstanceConverter.of(field);
+			}
 
-	@JSONExported
-	@Admin
-	public void deleteForDomainAttribute( //
-			@Parameter(value = DOMAIN_NAME) final String domainName, //
-			@Parameter(value = ATTRIBUTENAME) final String attributeName, //
-			@Parameter(value = FIELD) final String field, //
-			@Parameter(value = TRANSLATIONS) final JSONObject translations //
-	) {
-		final AttributeConverter converter = AttributeConverter.of(AttributeConverter.forDomain(), field);
-		Validate.isTrue(converter.isValid());
-		final TranslationObject translationObject = converter //
-				.withTranslations(toMap(translations)) //
-				.create(domainName, attributeName);
-		translationLogic().delete(translationObject);
-	}
+			@Override
+			Iterable<String> allowedFields() {
+				return null;
+			}
+		},
+		LOOKUP_VALUE("lookupvalue") {
+			@Override
+			Converter createConverter(final String field) {
+				return LookupConverter.of(field);
+			}
 
-	@JSONExported
-	@Admin
-	public void deleteForFilter( //
-			@Parameter(value = FILTERNAME) final String filterName, //
-			@Parameter(value = FIELD) final String field, //
-			@Parameter(value = TRANSLATIONS) final JSONObject translations //
-	) {
-		final FilterConverter converter = FilterConverter.of(field);
-		Validate.isTrue(converter.isValid());
-		final TranslationObject translationObject = converter //
-				.withTranslations(toMap(translations)) //
-				.create(filterName);
-		translationLogic().delete(translationObject);
-	}
+			@Override
+			Iterable<String> allowedFields() {
+				return Lists.newArrayList(LookupConverter.description());
+			}
+		},
+		MENU_ITEM("menuitem") {
 
-	@JSONExported
-	@Admin
-	public void deleteForInstanceName( //
-			@Parameter(value = TRANSLATIONS) final JSONObject translations //
-	) {
-		final InstanceConverter converter = InstanceConverter.of(InstanceConverter.nameField());
-		Validate.isTrue(converter.isValid());
-		final TranslationObject translationObject = converter //
-				.withTranslations(toMap(translations)) //
-				.create(EMPTY);
-		translationLogic().delete(translationObject);
-	}
+			@Override
+			Converter createConverter(final String field) {
+				return MenuItemConverter.of(field);
+			}
 
-	@JSONExported
-	@Admin
-	public void deleteForLookup( //
-			@Parameter(value = TRANSLATION_UUID) final String uuid, //
-			@Parameter(value = FIELD) final String field, //
-			@Parameter(value = TRANSLATIONS) final JSONObject translations //
-	) {
-		final LookupConverter converter = LookupConverter.of(field);
-		Validate.isTrue(converter.isValid());
-		final TranslationObject translationObject = converter //
-				.withTranslations(toMap(translations)) //
-				.create(uuid);
-		translationLogic().delete(translationObject);
-	}
+			@Override
+			Iterable<String> allowedFields() {
+				return Lists.newArrayList(MenuItemConverter.description());
+			}
 
-	@JSONExported
-	@Admin
-	public void deleteForMenuItem( //
-			@Parameter(value = MENU_ITEM_UUID) final String uuid, //
-			@Parameter(value = FIELD) final String field, //
-			@Parameter(value = TRANSLATIONS) final JSONObject translations //
-	) {
-		final MenuItemConverter converter = MenuItemConverter.of(field);
-		Validate.isTrue(converter.isValid());
-		final TranslationObject translationObject = converter //
-				.withTranslations(toMap(translations)) //
-				.create(uuid);
-		translationLogic().delete(translationObject);
-	}
+		},
+		REPORT("report") {
 
-	@JSONExported
-	@Admin
-	public void deleteForReport( //
-			@Parameter(value = REPORTNAME) final String reportName, //
-			@Parameter(value = FIELD) final String field, //
-			@Parameter(value = TRANSLATIONS) final JSONObject translations //
-	) {
-		final ReportConverter converter = ReportConverter.of(field);
-		Validate.isTrue(converter.isValid());
-		final TranslationObject translationObject = converter //
-				.withTranslations(toMap(translations)) //
-				.create(reportName);
-		translationLogic().delete(translationObject);
-	}
+			@Override
+			Converter createConverter(final String field) {
+				return ReportConverter.of(field);
+			}
 
-	@JSONExported
-	@Admin
-	public void deleteForView( //
-			@Parameter(value = VIEWNAME) final String viewName, //
-			@Parameter(value = FIELD) final String field, //
-			@Parameter(value = TRANSLATIONS) final JSONObject translations //
-	) {
-		final ViewConverter converter = ViewConverter.of(field);
-		Validate.isTrue(converter.isValid());
-		final TranslationObject translationObject = converter //
-				.withTranslations(toMap(translations)) //
-				.create(viewName);
-		translationLogic().delete(translationObject);
-	}
+			@Override
+			Iterable<String> allowedFields() {
+				return Lists.newArrayList(ReportConverter.description());
+			}
 
-	@JSONExported
-	@Admin
-	public void deleteForWidget( //
-			@Parameter(value = WIDGET_ID) final String widgetId, //
-			@Parameter(value = FIELD) final String field, //
-			@Parameter(value = TRANSLATIONS) final JSONObject translations //
-	) {
-		final WidgetConverter converter = WidgetConverter.of(field);
-		Validate.isTrue(converter.isValid());
-		final TranslationObject translationObject = converter //
-				.withTranslations(toMap(translations)) //
-				.create(widgetId);
-		translationLogic().delete(translationObject);
-	}
+		},
+		VIEW("view") {
+
+			@Override
+			Converter createConverter(final String field) {
+				return ViewConverter.of(field);
+			}
+
+			@Override
+			Iterable<String> allowedFields() {
+				return Lists.newArrayList(ViewConverter.description());
+			}
+
+		},
+		WIDGET("classwidget") {
+
+			@Override
+			Converter createConverter(final String field) {
+				return WidgetConverter.of(field);
+			}
+
+			@Override
+			Iterable<String> allowedFields() {
+				return Lists.newArrayList(WidgetConverter.label());
+			}
+
+		},
+
+		UNDEFINED("undefined") {
+
+			@Override
+			Converter createConverter(final String field) {
+				throw new UnsupportedOperationException();
+			}
+
+			@Override
+			Iterable<String> allowedFields() {
+				throw new UnsupportedOperationException();
+			}
+
+		};
+
+		private final String type;
+
+		private TranslatableElement(final String type) {
+			this.type = type;
+		};
+
+		abstract Converter createConverter(String field);
+
+		abstract Iterable<String> allowedFields();
+
+		private static TranslatableElement of(final String type) {
+			for (final TranslatableElement element : values()) {
+				if (element.type.equalsIgnoreCase(type)) {
+					return element;
+				}
+			}
+			return UNDEFINED;
+		}
+
+	};
+
 }

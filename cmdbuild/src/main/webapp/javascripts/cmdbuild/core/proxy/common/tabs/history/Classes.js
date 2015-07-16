@@ -3,7 +3,7 @@
 	Ext.define('CMDBuild.core.proxy.common.tabs.history.Classes', {
 
 		requires: [
-			'CMDBuild.core.proxy.CMProxyConstants',
+			'CMDBuild.core.proxy.Constants',
 			'CMDBuild.core.proxy.CMProxyUrlIndex',
 			'CMDBuild.model.common.tabs.history.classes.CardRecord'
 		],
@@ -20,7 +20,7 @@
 				headers: parameters.headers,
 				params: parameters.params,
 				scope: parameters.scope || this,
-				loadMask: parameters.loadMask || false,
+				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : false,
 				failure: parameters.failure || Ext.emptyFn(),
 				success: parameters.success || Ext.emptyFn(),
 				callback: parameters.callback || Ext.emptyFn()
@@ -37,7 +37,7 @@
 				headers: parameters.headers,
 				params: parameters.params,
 				scope: parameters.scope || this,
-				loadMask: parameters.loadMask || true,
+				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
 				failure: parameters.failure || Ext.emptyFn(),
 				success: parameters.success || Ext.emptyFn(),
 				callback: parameters.callback || Ext.emptyFn()
@@ -54,7 +54,7 @@
 				headers: parameters.headers,
 				params: parameters.params,
 				scope: parameters.scope || this,
-				loadMask: parameters.loadMask || false,
+				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : false,
 				failure: parameters.failure || Ext.emptyFn(),
 				success: parameters.success || Ext.emptyFn(),
 				callback: parameters.callback || Ext.emptyFn()
@@ -71,7 +71,7 @@
 				headers: parameters.headers,
 				params: parameters.params,
 				scope: parameters.scope || this,
-				loadMask: parameters.loadMask || true,
+				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
 				failure: parameters.failure || Ext.emptyFn(),
 				success: parameters.success || Ext.emptyFn(),
 				callback: parameters.callback || Ext.emptyFn()
@@ -94,7 +94,7 @@
 					}
 				},
 				sorters: [ // Setup sorters, also if server returns ordered collection
-					{ property: CMDBuild.core.proxy.CMProxyConstants.BEGIN_DATE, direction: 'DESC' }
+					{ property: CMDBuild.core.proxy.Constants.BEGIN_DATE, direction: 'DESC' }
 				]
 			});
 		}

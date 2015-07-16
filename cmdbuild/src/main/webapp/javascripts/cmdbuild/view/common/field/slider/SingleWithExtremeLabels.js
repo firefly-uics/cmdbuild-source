@@ -3,7 +3,7 @@
 	Ext.define('CMDBuild.view.common.field.slider.SingleWithExtremeLabels', {
 		extend: 'Ext.form.FieldContainer',
 
-		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+		requires: ['CMDBuild.core.proxy.Constants'],
 
 		/**
 		 * @cfg {Number}

@@ -40,7 +40,7 @@
 
 			this.callParent(arguments);
 
-			this.widgetPreset = this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.PRESET];
+			this.widgetPreset = this.widgetConf[CMDBuild.core.proxy.Constants.PRESET];
 
 			// Handlers exchange
 			this.view.delegate = this;
@@ -81,7 +81,7 @@
 						scope: this,
 						params: {
 							type: 'custom',
-							code: this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.REPORT_CODE]
+							code: this.widgetConf[CMDBuild.core.proxy.Constants.REPORT_CODE]
 						},
 						success: function(result, options, decodedResult) {
 							this.attributes = decodedResult.filled ? [] : decodedResult.attribute; // filled == with no parameters
@@ -161,7 +161,7 @@
 				attributes: Ext.Object.getKeys(me.widgetPreset),
 				callback: function(out, ctx) {
 					me.view.fillFormValues(out);
-					me.view.forceExtension(me.widgetConf[CMDBuild.core.proxy.CMProxyConstants.FORCE_FORMAT]);
+					me.view.forceExtension(me.widgetConf[CMDBuild.core.proxy.Constants.FORCE_FORMAT]);
 				}
 			});
 		}
