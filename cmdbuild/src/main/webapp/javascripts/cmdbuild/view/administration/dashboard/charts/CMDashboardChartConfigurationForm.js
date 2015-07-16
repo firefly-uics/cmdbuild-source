@@ -213,7 +213,7 @@
 
 			me.descriptionArea = Ext.create('Ext.form.field.TextArea', {
 				fieldLabel: tr.fields.description,
-				name: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
+				name: CMDBuild.core.proxy.Constants.DESCRIPTION,
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
 				disabled: true
@@ -473,7 +473,7 @@
 	}
 
 	function isAField(item) {
-		return ((item instanceof Ext.form.Field) || (item instanceof Ext.ux.form.MultiSelect) || (item instanceof CMDBuild.view.common.field.translatable.Text));
+		return ((item instanceof Ext.form.Field) || (item instanceof Ext.ux.form.MultiSelect));
 	}
 
 	function addSequenceToTypeSetValue(me) {

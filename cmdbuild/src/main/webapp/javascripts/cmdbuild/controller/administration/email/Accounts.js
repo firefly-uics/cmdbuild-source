@@ -4,7 +4,8 @@
 		extend: 'CMDBuild.controller.common.AbstractController',
 
 		requires: [
-			'CMDBuild.core.proxy.CMProxyConstants',
+			'CMDBuild.core.Message',
+			'CMDBuild.core.proxy.Constants',
 			'CMDBuild.core.proxy.email.Accounts',
 			'CMDBuild.model.email.Accounts'
 		],
@@ -103,16 +104,16 @@
 
 		onEmailAccountsRowSelected: function() {
 			if (this.grid.getSelectionModel().hasSelection()) {
+				var params = {};
+				params[CMDBuild.core.proxy.Constants.NAME] = this.grid.getSelectionModel().getSelection()[0].get(CMDBuild.core.proxy.Constants.NAME);
+
 				CMDBuild.core.proxy.email.Accounts.get({
-					params: {
-						name: this.grid.getSelectionModel().getSelection()[0].get(CMDBuild.core.proxy.CMProxyConstants.NAME)
-					},
-					loadMask: true,
+					params: params,
 					scope: this,
 					failure: function(response, options, decodedResponse) {
 						CMDBuild.Msg.error(
 							CMDBuild.Translation.common.failure,
-							Ext.String.format(CMDBuild.Translation.errors.getAccountWithNameFailure, this.selectedTemplate.get(CMDBuild.core.proxy.CMProxyConstants.NAME)),
+							Ext.String.format(CMDBuild.Translation.errors.getAccountWithNameFailure, this.selectedTemplate.get(CMDBuild.core.proxy.Constants.NAME)),
 							false
 						);
 					},
@@ -121,7 +122,7 @@
 
 						this.form.loadRecord(this.selectedAccount);
 						this.form.setDisabledModify(true, true);
-						this.setDisabledTopToolbarButtons(this.selectedAccount.get(CMDBuild.core.proxy.CMProxyConstants.IS_DEFAULT));
+						this.setDisabledTopToolbarButtons(this.selectedAccount.get(CMDBuild.core.proxy.Constants.IS_DEFAULT));
 					}
 				});
 			}
@@ -135,14 +136,12 @@
 				if (Ext.isEmpty(formData.id)) {
 					CMDBuild.core.proxy.email.Accounts.create({
 						params: formData,
-						loadMask: true,
 						scope: this,
 						success: this.success
 					});
 				} else {
 					CMDBuild.core.proxy.email.Accounts.update({
 						params: formData,
-						loadMask: true,
 						scope: this,
 						success: this.success
 					});
@@ -151,11 +150,11 @@
 		},
 
 		onEmailAccountsSetDefaultButtonClick: function() {
+			var params = {};
+			params[CMDBuild.core.proxy.Constants.NAME] = this.selectedAccount.get(CMDBuild.core.proxy.Constants.NAME);
+
 			CMDBuild.core.proxy.email.Accounts.setDefault({
-				params: {
-					name: this.selectedAccount.get(CMDBuild.core.proxy.CMProxyConstants.NAME)
-				},
-				loadMask: true,
+				params: params,
 				scope: this,
 				success: this.success
 			});
@@ -163,11 +162,11 @@
 
 		removeItem: function() {
 			if (!Ext.isEmpty(this.selectedAccount)) {
+				var params = {};
+				params[CMDBuild.core.proxy.Constants.NAME] = this.selectedAccount.get(CMDBuild.core.proxy.Constants.NAME);
+
 				CMDBuild.core.proxy.email.Accounts.remove({
-					params: {
-						name: this.selectedAccount.get(CMDBuild.core.proxy.CMProxyConstants.NAME)
-					},
-					loadMask: true,
+					params: params,
 					scope: this,
 					success: function(response, options, decodedResponse) {
 						this.form.reset();
@@ -175,10 +174,18 @@
 						this.grid.getStore().load({
 							scope: this,
 							callback: function(records, operation, success) {
+								// Store load errors manage
+								if (!success) {
+									CMDBuild.core.Message.error(null, {
+										text: CMDBuild.Translation.errors.unknown_error,
+										detail: operation.error
+									});
+								}
+
 								this.grid.getSelectionModel().select(0, true);
 
 								if (!this.grid.getSelectionModel().hasSelection())
-									this.form.setDisabledModify(true);
+									this.form.setDisabledModify(true, true, true);
 							}
 						});
 					}
@@ -208,16 +215,24 @@
 
 			this.grid.getStore().load({
 				callback: function(records, operation, success) {
+					// Store load errors manage
+					if (!success) {
+						CMDBuild.core.Message.error(null, {
+							text: CMDBuild.Translation.errors.unknown_error,
+							detail: operation.error
+						});
+					}
+
 					var rowIndex = this.find(
-						CMDBuild.core.proxy.CMProxyConstants.NAME,
-						me.form.getForm().findField(CMDBuild.core.proxy.CMProxyConstants.NAME).getValue()
+						CMDBuild.core.proxy.Constants.NAME,
+						me.form.getForm().findField(CMDBuild.core.proxy.Constants.NAME).getValue()
 					);
 
 					me.grid.getSelectionModel().select(rowIndex, true);
 					me.form.setDisabledModify(true);
 
 					// Disable buttons based on selected record
-					me.setDisabledTopToolbarButtons(this.getAt(rowIndex).get(CMDBuild.core.proxy.CMProxyConstants.IS_DEFAULT));
+					me.setDisabledTopToolbarButtons(this.getAt(rowIndex).get(CMDBuild.core.proxy.Constants.IS_DEFAULT));
 				}
 			});
 		}

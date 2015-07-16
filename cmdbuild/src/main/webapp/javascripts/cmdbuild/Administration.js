@@ -12,18 +12,17 @@
 	var menuAccordion = null;
 	var navigationTreesAccordion = null;
 	var processAccordion = null;
-	var reportAccordion = null;
 
 	Ext.define('CMDBuild.app.Administration', {
 		extend: 'Ext.app.Application',
 
 		requires: [
-			'CMDBuild.core.buttons.Buttons',
-			'CMDBuild.core.proxy.CMProxyConstants',
+			'CMDBuild.core.proxy.Constants',
 			'CMDBuild.core.proxy.Classes',
 			'CMDBuild.core.proxy.Configuration',
-			'CMDBuild.core.proxy.Localizations',
-			'CMDBuild.core.proxy.Report'
+			'CMDBuild.core.proxy.Domain',
+			'CMDBuild.core.proxy.lookup.Type',
+			'CMDBuild.core.proxy.reports.Reports'
 		],
 
 		name: 'CMDBuild',
@@ -35,7 +34,9 @@
 				var administration = true;
 				var forCredits = false;
 
+				Ext.create('CMDBuild.core.LoggerManager'); // Logger configuration
 				Ext.create('CMDBuild.core.Data'); // Data connections configuration
+				Ext.create('CMDBuild.core.Localization'); // CMDBuild localization configuration
 
 				Ext.tip.QuickTipManager.init();
 				// fix a problem of Ext 4.2 tooltips width
@@ -43,19 +44,6 @@
 				delete Ext.tip.Tip.prototype.minWidth;
 
 				CMDBuild.view.CMMainViewport.showSplash(forCredits, administration);
-
-				// Setup config localization model
-				CMDBuild.Config[CMDBuild.core.proxy.CMProxyConstants.LOCALIZATION] = Ext.create('CMDBuild.model.configuration.Localization');
-
-				// Get server language
-				CMDBuild.core.proxy.Configuration.getLanguage({
-					success: function(result, options, decodedResult) {
-						CMDBuild.Config[CMDBuild.core.proxy.CMProxyConstants.LOCALIZATION].set(
-							CMDBuild.core.proxy.CMProxyConstants.LANGUAGE,
-							decodedResult[CMDBuild.core.proxy.CMProxyConstants.LANGUAGE]
-						);
-					}
-				});
 
 				// maybe a single request with all the configuration could be better
 				CMDBuild.ServiceProxy.group.getUIConfiguration({
@@ -68,9 +56,7 @@
 								CMDBuild.Config.cmdbuild = decoded.data;
 
 								// Localization
-								// TODO: refactor to avoid to use Cache
-								_CMCache.setActiveTranslations(decoded.data.enabled_languages);
-								CMDBuild.Config[CMDBuild.core.proxy.CMProxyConstants.LOCALIZATION].setLanguagesWithLocalizations(decoded.data.enabled_languages);
+								CMDBuild.configuration[CMDBuild.core.proxy.Constants.LOCALIZATION].setEnabledLanguages(decoded.data.enabled_languages);
 
 								/* **********************************************
 								 * Suspend here the layouts, and resume after all
@@ -87,21 +73,25 @@
 										cmControllerType: 'CMDBuild.controller.administration.configuration.Configuration',
 										cmName: 'configuration'
 									}),
-									Ext.create('CMDBuild.view.administration.tasks.CMTasks', {
-										cmControllerType: 'CMDBuild.controller.administration.tasks.CMTasksController',
-										cmName: 'tasks'
-									}),
 									Ext.create('CMDBuild.view.administration.email.EmailView', {
 										cmControllerType: 'CMDBuild.controller.administration.email.Email',
 										cmName: 'email'
 									}),
-									Ext.create('CMDBuild.view.administration.localizations.MainPanel', {
-										cmControllerType: 'CMDBuild.controller.administration.localizations.Main',
+									Ext.create('CMDBuild.view.administration.filters.FiltersView', {
+										cmControllerType: 'CMDBuild.controller.administration.filters.Filters',
+										cmName: 'filters'
+									}),
+									Ext.create('CMDBuild.view.administration.localizations.LocalizationsView', {
+										cmControllerType: 'CMDBuild.controller.administration.localizations.Localizations',
 										cmName: 'localizations'
 									}),
-									new CMDBuild.view.administration.filter.CMGroupFilterPanel({
-										cmControllerType: controllerNS.administration.filter.CMGroupFilterPanelController,
-										cmName: 'groupfilter'
+									Ext.create('CMDBuild.view.administration.reports.ReportsView', {
+										cmControllerType: 'CMDBuild.controller.administration.reports.Reports',
+										cmName: 'report'
+									}),
+									Ext.create('CMDBuild.view.administration.tasks.CMTasks', {
+										cmControllerType: 'CMDBuild.controller.administration.tasks.CMTasksController',
+										cmName: 'tasks'
 									}),
 									new CMDBuild.view.administration.bim.CMBIMPanel({
 										cmControllerType: CMDBuild.controller.administration.filter.CMBIMPanelController,
@@ -117,18 +107,19 @@
 									})
 								];
 
+								/**
+								 * DataViews
+								 */
 								if (!_CMUIConfiguration.isCloudAdmin()) {
-									dataViewAccordion = new CMDBuild.view.administration.accordion.CMDataViewAccordion();
+									dataViewAccordion = Ext.create('CMDBuild.view.administration.accordion.DataViews', {
+										cmName: 'dataview',
+									});
 
 									panels = panels.concat([
-										new CMDBuild.view.administration.dataview.CMSqlDataView({
-											cmControllerType: controllerNS.administration.dataview.CMSqlDataViewController,
-											cmName: 'sqldataview'
+										Ext.create('CMDBuild.view.administration.dataViews.DataViewsView', {
+											cmControllerType: 'CMDBuild.controller.administration.dataViews.DataViews',
+											cmName: 'dataviews'
 										}),
-										new CMDBuild.view.administration.dataview.CMFilterDataView({
-											cmControllerType: controllerNS.administration.dataview.CMFilerDataViewController,
-											cmName: 'filterdataview'
-										})
 									]);
 								}
 
@@ -154,19 +145,19 @@
 							processAccordion,
 							domainAccordion,
 							dataViewAccordion,
-							Ext.create('CMDBuild.view.administration.accordion.CMFilterAccordion'),
+							Ext.create('CMDBuild.view.administration.accordion.Filters', { cmName: 'filters' }),
 							navigationTreesAccordion,
 							lookupAccordion,
 							dashboardsAccordion,
-							reportAccordion,
+							Ext.create('CMDBuild.view.administration.accordion.Reports', { cmName: 'report' }),
 							menuAccordion,
 							groupsAccordion,
-							Ext.create('CMDBuild.view.administration.accordion.Tasks'),
-							Ext.create('CMDBuild.view.administration.accordion.Email'),
+							Ext.create('CMDBuild.view.administration.accordion.Tasks', { cmName: 'tasks' }),
+							Ext.create('CMDBuild.view.administration.accordion.Email', { cmName: 'email' }),
 							gisAccordion,
 							bimAccordion,
-//							Ext.create('CMDBuild.view.administration.accordion.Localizations'), // TODO: will be implemented in future releases
-							Ext.create('CMDBuild.view.administration.accordion.Configuration')
+							Ext.create('CMDBuild.view.administration.accordion.Localizations', { cmName: 'localizations' }),
+							Ext.create('CMDBuild.view.administration.accordion.Configuration', { cmName: 'setup' })
 						]);
 
 						// Resume here the layouts operations
@@ -181,7 +172,7 @@
 					}
 				);
 
-				/*
+				/**
 				 * BIM Configuration
 				 * */
 				CMDBuild.ServiceProxy.configuration.readBimConfiguration({
@@ -193,7 +184,7 @@
 					}
 				});
 
-				/*
+				/**
 				 * Classes and process
 				 */
 				CMDBuild.ServiceProxy.classes.read({
@@ -238,7 +229,7 @@
 					callback: reqBarrier.getCallback()
 				});
 
-				/*
+				/**
 				 * Workflow configuration
 				 */
 				CMDBuild.ServiceProxy.configuration.readWFConfiguration({
@@ -249,7 +240,7 @@
 					callback: reqBarrier.getCallback()
 				});
 
-				/*
+				/**
 				 * GIS configuration
 				 */
 				CMDBuild.ServiceProxy.configuration.readGisConfiguration({
@@ -285,94 +276,78 @@
 					callback: reqBarrier.getCallback()
 				});
 
-				/*
-				 * Lookups
+				/**
+				 * Lookup
 				 */
-				CMDBuild.ServiceProxy.lookup.readAllTypes({
-					success: function(response, options, decoded) {
-						_CMCache.addLookupTypes(decoded);
-						lookupAccordion = new CMDBuild.view.administration.accordion.CMLookupAccordion({
-							cmControllerType: CMDBuild.controller.accordion.CMLookupAccordionController
+				CMDBuild.core.proxy.lookup.Type.readAll({
+					scope: this,
+					success: function(response, options, decodedResponse) {
+						_CMCache.addLookupTypes(decodedResponse);
+
+						lookupAccordion = Ext.create('CMDBuild.view.administration.accordion.Lookup', {
+							cmControllerType: 'CMDBuild.controller.administration.accordion.Lookup',
+							cmName: 'lookuptype',
 						});
 						lookupAccordion.updateStore();
 
 						_CMMainViewportController.addPanel(
-							new CMDBuild.Administration.ModLookup({
-								cmControllerType: controllerNS.administration.lookup.CMModLookupController
+							Ext.create('CMDBuild.view.administration.lookup.LookupView', {
+								cmControllerType: 'CMDBuild.controller.administration.lookup.Lookup',
+								cmName: 'lookuptype'
 							})
 						);
 					},
 					callback: reqBarrier.getCallback()
 				});
 
-				/*
+				/**
 				 * Groups
 				 */
 				CMDBuild.ServiceProxy.group.read({
 					success: function(response, options, decoded) {
 						_CMCache.addGroups(decoded.groups);
 
-						groupsAccordion = Ext.create('CMDBuild.view.administration.accordion.Groups', {
-							cmName: 'groups',
-						});
+						groupsAccordion = Ext.create('CMDBuild.view.administration.accordion.Groups', { cmName: 'groups' });
 						groupsAccordion.updateStore();
 
-						menuAccordion = new CMDBuild.view.administration.accordion.CMMenuAccordion({
-							cmControllerType: CMDBuild.controller.accordion.CMMenuAccordionController
-						});
-						menuAccordion.updateStore();
+						menuAccordion = Ext.create('CMDBuild.view.administration.accordion.Menu', { cmName: 'menu' });
 
 						_CMMainViewportController.addPanel([
-							new CMDBuild.Administration.ModMenu({
-								cmControllerType: controllerNS.administration.menu.CMModMenuController
+							Ext.create('CMDBuild.view.administration.menu.MenuView', {
+								cmControllerType: 'CMDBuild.controller.administration.menu.Menu',
+								cmName: 'menu'
 							}),
 							new CMDBuild.view.administration.group.CMModGroup({
 								cmControllerType: controllerNS.administration.group.CMModGroupsController
 							}),
 							Ext.create('CMDBuild.view.administration.users.UsersView', {
 								cmControllerType: 'CMDBuild.controller.administration.users.Users',
-								cmName: 'users',
+								cmName: 'users'
 							})
 						]);
 					},
 					callback: reqBarrier.getCallback()
 				});
 
-				/*
-				 * Report
-				 */
-				CMDBuild.core.proxy.Report.getMenuTree({
-					success: function(response, options, reports) {
-						_CMCache.addReports(reports);
-
-						reportAccordion = Ext.create('CMDBuild.view.administration.accordion.Report');
-						reportAccordion.updateStore();
-
-						_CMMainViewportController.addPanel(
-							new CMDBuild.view.administration.report.CMModReport({
-								cmControllerType: controllerNS.administration.report.CMModReportController
-							})
-						);
-					},
-					callback: reqBarrier.getCallback()
-				});
-
-				/*
+				/**
 				 * Domains
 				 */
-				CMDBuild.ServiceProxy.administration.domain.list({
-					success: function(response, options, decoded) {
-						_CMCache.addDomains(decoded.domains);
+				CMDBuild.core.proxy.Domain.getAll({
+					scope: this,
+					success: function(response, options, decodedResponse) {
+						_CMCache.addDomains(decodedResponse.domains);
 
 						if (!_CMUIConfiguration.isCloudAdmin()) {
-							domainAccordion = new CMDBuild.view.administration.accordion.CMDomainAccordion({
-								cmControllerType: CMDBuild.controller.accordion.CMDomainAccordionController
+							domainAccordion = Ext.create('CMDBuild.view.administration.accordion.Domain', {
+								cmControllerType: 'CMDBuild.controller.accordion.Domain',
+								cmName: 'domain'
 							});
 							domainAccordion.updateStore();
 
 							_CMMainViewportController.addPanel(
-								new CMDBuild.view.administration.domain.CMModDomain({
-									cmControllerType: controllerNS.administration.domain.CMModDomainController
+								Ext.create('CMDBuild.view.administration.domain.DomainView', {
+									cmControllerType: 'CMDBuild.controller.administration.domain.Domain',
+									cmName:'domain'
 								})
 							);
 						}
@@ -380,7 +355,7 @@
 					callback: reqBarrier.getCallback()
 				});
 
-				/*
+				/**
 				 * Navigation trees
 				 */
 				_CMCache.listNavigationTrees({
@@ -402,7 +377,7 @@
 					callback: reqBarrier.getCallback()
 				});
 
-				/*
+				/**
 				 * Dashboards
 				 */
 				CMDBuild.ServiceProxy.Dashboard.fullList({

@@ -46,7 +46,7 @@
 
 				store: Ext.create('Ext.data.ArrayStore', {
 					autoDestroy: true,
-					fields: [CMDBuild.core.proxy.CMProxyConstants.VALUE, CMDBuild.core.proxy.CMProxyConstants.TEXT],
+					fields: [CMDBuild.core.proxy.Constants.VALUE, CMDBuild.core.proxy.Constants.TEXT],
 					data: [
 						['pdf', 'PDF'],
 						['csv', 'CSV'],
@@ -54,8 +54,8 @@
 						['rtf', 'RTF']
 					]
 				}),
-				valueField: CMDBuild.core.proxy.CMProxyConstants.VALUE,
-				displayField: CMDBuild.core.proxy.CMProxyConstants.TEXT,
+				valueField: CMDBuild.core.proxy.Constants.VALUE,
+				displayField: CMDBuild.core.proxy.Constants.TEXT,
 				value: 'pdf'
 			});
 
@@ -134,8 +134,8 @@
 						// To disable if field name is contained in widgetConfiguration.readOnlyAttributes
 						field.setDisabled(
 							Ext.Array.contains(
-								widgetConfiguration[CMDBuild.core.proxy.CMProxyConstants.READ_ONLY_ATTRIBUTES],
-								attribute[CMDBuild.core.proxy.CMProxyConstants.NAME]
+								widgetConfiguration[CMDBuild.core.proxy.Constants.READ_ONLY_ATTRIBUTES],
+								attribute[CMDBuild.core.proxy.Constants.NAME]
 							)
 						);
 

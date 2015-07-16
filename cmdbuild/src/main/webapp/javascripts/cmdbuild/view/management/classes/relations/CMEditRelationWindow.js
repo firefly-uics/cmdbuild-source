@@ -6,7 +6,7 @@
 	Ext.define('CMDBuild.view.management.classes.relations.CMEditRelationWindow', {
 		extend: 'CMDBuild.Management.CardListWindow', // To choose the card for the relation
 
-		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+		requires: ['CMDBuild.core.proxy.Constants'],
 
 		successCb: Ext.emptyFn,
 
@@ -27,12 +27,12 @@
 				this.idClass = this.relation.dst_cid;
 			}
 
-			this.saveButton = Ext.create('CMDBuild.buttons.SaveButton', {
+			this.saveButton = Ext.create('CMDBuild.core.buttons.text.Save', {
 				scope: this,
 				handler: onSaveButtonClick
 			});
 
-			this.abortButton = Ext.create('CMDBuild.buttons.AbortButton', {
+			this.abortButton = Ext.create('CMDBuild.core.buttons.text.Abort', {
 				scope: this,
 				handler: function() {
 					this.close();
@@ -44,7 +44,7 @@
 
 			// Setup advancedFilter to exclude cards from hidden classes
 			var attributesAndConditionArray = [];
-			var disabledArray = this.classObject.get(CMDBuild.core.proxy.CMProxyConstants.ID) == this.domain.get('idClass1') ? this.domain.get('disabled1') : this.domain.get('disabled2');
+			var disabledArray = this.classObject.get(CMDBuild.core.proxy.Constants.ID) == this.domain.get('idClass1') ? this.domain.get('disabled1') : this.domain.get('disabled2');
 
 			if (!Ext.isEmpty(disabledArray)) {
 				// HACK to avoid filter error for a and condition with only one parameter
@@ -52,7 +52,7 @@
 					'simple': {
 						'attribute': 'IdClass',
 						'operator': 'notequal',
-						'value': [parseInt(_CMCache.getEntryTypeByName(disabledArray[0]).get(CMDBuild.core.proxy.CMProxyConstants.ID))]
+						'value': [parseInt(_CMCache.getEntryTypeByName(disabledArray[0]).get(CMDBuild.core.proxy.Constants.ID))]
 					}
 				});
 
@@ -61,7 +61,7 @@
 						'simple': {
 							'attribute': 'IdClass',
 							'operator': 'notequal',
-							'value': [parseInt(_CMCache.getEntryTypeByName(className).get(CMDBuild.core.proxy.CMProxyConstants.ID))]
+							'value': [parseInt(_CMCache.getEntryTypeByName(className).get(CMDBuild.core.proxy.Constants.ID))]
 						}
 					});
 				}, this);

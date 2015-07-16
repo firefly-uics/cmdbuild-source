@@ -2,7 +2,7 @@
 
 	Ext.define('CMDBuild.core.proxy.Utils', {
 
-		requires: ['CMDBuild.core.proxy.CMProxyUrlIndex'],
+		requires: ['CMDBuild.core.proxy.Index'],
 
 		singleton: true,
 
@@ -11,10 +11,10 @@
 		 */
 		clearCache: function(parameters) {
 			CMDBuild.Ajax.request( {
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.utils.clearCache,
-				loadMask: true,
+				url: CMDBuild.core.proxy.Index.utils.clearCache,
 				params: parameters.params,
 				scope: parameters.scope,
+				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
 				failure: parameters.failure || Ext.emptyFn(),
 				success: parameters.success || Ext.emptyFn(),
 				callback: parameters.callback || Ext.emptyFn()
@@ -26,10 +26,10 @@
 		 */
 		generateId: function(parameters) {
 			CMDBuild.Ajax.request({
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.utils.generateId,
+				url: CMDBuild.core.proxy.Index.utils.generateId,
 				params: parameters.params,
 				scope: parameters.scope,
-				loadMask: parameters.loadMask || false,
+				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : false,
 				failure: parameters.failure || Ext.emptyFn(),
 				success: parameters.success || Ext.emptyFn(),
 				callback: parameters.callback || Ext.emptyFn()

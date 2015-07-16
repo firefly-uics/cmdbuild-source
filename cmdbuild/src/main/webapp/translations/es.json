@@ -1,6 +1,6 @@
 {
 	"description": "Español",
-	"release": "2.3-dev",
+	"release": "2.4-dev",
 	"administration": {
 		"description": "Módulo de Administración",
 		"modClass": {
@@ -35,6 +35,13 @@
 				"isunique": "Unívoco",
 				"length": "Largo",
 				"lookup": "Lookup",
+				"meta": {
+					"add": "Agregar metadato",
+					"key": "Clave",
+					"remove": "Eliminar metadato",
+					"title": "Modificar metadatos",
+					"value": "Valor"
+				},
 				"modify_attribute": "Modificar Atributo",
 				"msg_warning_drop_row": "Puede ordenar los atributos sólo si son visibles también aquellos heredados",
 				"name": "Nombre",
@@ -84,10 +91,8 @@
 				"md_label": "Etiqueta Master/Detail",
 				"modify_domain": "Modificar Dominio",
 				"name": "Nombre",
-				"title_add": "Agregar dominio",
-				"title_modify": "Modificar dominio \"{0}\""
+				"title_add": "Agregar dominio"
 			},
-			"domains_title": "Gestión de dominios",
 			"errors": {
 				"table": {
 					"cast": "No es posible cambiar la propiedad \"superclase\". La clase posee datos o subclases",
@@ -282,48 +287,9 @@
 			},
 			"title": "Cuadro de mando"
 		},
-		"modLookup": {
-			"add_lookuptype": "Agregar Tipo Lookup",
-			"lookupForm": {
-				"active": "Activa",
-				"code": "Código",
-				"description": "Descripción",
-				"disable_lookup": "Deshabilitar Lookup",
-				"enable_lookup": "Habilitar Lookup",
-				"isdefault": "Por defecto",
-				"notes": "Notas",
-				"parentdescription": "Descripción padre",
-				"update_lookup": "Modificar Botón Lookup"
-			},
-			"lookupGrid": {
-				"active": "Activa",
-				"add_lookup": "Agregar Botón Lookup",
-				"code": "Código",
-				"description": "Descripción",
-				"isdefault": "Por defecto",
-				"notes": "Notas",
-				"parentdescription": "Descripción padre"
-			},
-			"lookupType": "Tipo Lookup",
-			"lookupTypeForm": {
-				"active": "Activo",
-				"delete_lookuptype": "Remover Tipo Lookup",
-				"description": "Descripción",
-				"modify_lookuptype": "Modificar Tipo Lookup",
-				"parent": "Padre",
-				"title": "Gestión Lookup"
-			},
-			"lookupTypes": "Lookup",
-			"tabs": {
-				"lookuplist": "Lista botones",
-				"properties": "Propiedad"
-			},
-			"title": "Gestión Lookup"
-		},
 		"modWorkflow": {
 			"add_process": "Agrega Proceso",
 			"attributes_title": "Gestión atributos",
-			"domains_title": "Gestión dominios",
 			"errors": {
 				"table": {
 					"cast": "No es posible cambiar la propiedad \"superclase\". La clase posee datos o subclases",
@@ -401,56 +367,6 @@
 		},
 		"modconnectors": {
 			"title": "Conectores"
-		},
-		"modmenu": {
-			"add_menu": "Agregar Menú",
-			"available_elements": "Elementos disponibles",
-			"availabletree": {
-				"classes": "Clases",
-				"dashboard": "Cuadros de mando",
-				"processes": "Actividad",
-				"reports": "Informe",
-				"views": "Vistas"
-			},
-			"custom_menu": "Menú Personalizado",
-			"custom_menus": "Menú",
-			"delete_menu": "Remover Menú",
-			"menu_root": "Menú",
-			"modify_menu": "Modificar Menú",
-			"new_folder": "Nueva carpeta",
-			"title": "Gestión menú"
-		},
-		"modreport": {
-			"add": "Agregar reporte",
-			"importJRFormStep1": {
-				"description": "Descripción informe",
-				"enabled_groups": "Grupos habilitados",
-				"fieldset": "Importación Informe Jasper",
-				"master_report_jrxml": "Selecciona Informe Principal (file .jrxml)",
-				"menuTitle": "Informe Jasperreport",
-				"name": "Nombre informe"
-			},
-			"importJRFormStep2": {
-				"duplicate_images": "Imposible continuar: el reporte contiene archivos de imágenes con el mismo nombre.",
-				"fieldset_generic": "Importación Informe Jasper",
-				"fieldset_images": "Importación de imágenes definidas en el informe principal",
-				"fieldset_subreports": "Importación de subinformes definidos en el informe principal",
-				"menuTitle": "Informe Jasper-report",
-				"nothing_to_import": "Ninguna imagen o subinforme relevado; confirmar para continuar con la inserción.",
-				"success": {
-					"description": {
-						"add": " El reporte se insertó correctamente",
-						"modify": "El reporte se modificó correctamente"
-					},
-					"title": "Cargar informe completo"
-				}
-			},
-			"importOpenofficeTemplateForm": {
-				"menuTitle": "Informe Openoffice"
-			},
-			"modify": "Modificar reporte",
-			"remove": "Eliminar reporte",
-			"title": "Informes"
 		},
 		"modsecurity": {
 			"defaultgroup": "* Por defecto *",
@@ -637,6 +553,7 @@
 			"importLabel": "Importa",
 			"load": "Cargar",
 			"modify": "Modificar",
+			"move": "<em>Move</em>",
 			"next": "Siguiente",
 			"previous": "Anterior",
 			"print": "Imprimir",
@@ -928,6 +845,8 @@
 			"WIDGET_SERVICE_MALFORMED_REQUEST": "Controlar si el espacio de nombres, el nombre del método y los parámetros del web service son correctos"
 		},
 		"reference_invalid": "El valor no respeta el filtro establecido",
+		"reportsImportError": "<em>Error while importing report</em>",
+		"reportsAnalizeError": "<em>Error while analizing report</em>",
 		"requiredFieldMessage": "Este campo es requerido",
 		"routesInvalidCardIdentifier": "<em>Route error: invalid card identifier</em>",
 		"routesInvalidClassIdentifier": "<em>Route error: invalid class identifier</em>",
@@ -1127,22 +1046,6 @@
 			"showgraph": "Visualizar el gráfico",
 			"shownotes": "Visualizar notas"
 		},
-		"modmenu": {
-			"menu": "Navegación"
-		},
-		"modreport": {
-			"add_report": "Agrega informe",
-			"delete_report": "Eliminar informe",
-			"modify_report": "Modificar informe",
-			"reportForm": {
-				"description": "Descripción",
-				"name": "Nombre",
-				"report": "Informe"
-			},
-			"report_parameters": "Parámetros del informe",
-			"title": "Elenco - ",
-			"treetitle": "Informe"
-		},
 		"modutilities": {
 			"bulkupdate": {
 				"title": "Modificar tarjetas masivamente",
@@ -1257,6 +1160,7 @@
 		"link_cards_changed_values": "La selección de \"{0}\" ha sido actualizada",
 		"only_filtered": "Las modificaciones solo tendrán efecto sobre las tarjetas que respetan el filtro actual ",
 		"popup_block": "Hemos detectado que ud. está usando un software para el bloqueo de popup, desactívelo para continuar con esta operación",
+		"reportsDuplicateImageFilename": "Imposible continuar: el reporte contiene archivos de imágenes con el mismo nombre.",
 		"saveMenuBeforeAccess": "<em>The menu has to been saved before access at the translations of this element.</em>",
 		"warning_message": "Atención"
 	},
@@ -1268,13 +1172,18 @@
 	"add": "Agrega",
 	"addAccount": "Agrega cuenta",
 	"addAttachmentFromDms": "Agrega adjunto desde DMS",
+	"addDomain": "Agregar Dominio",
 	"addFilter": "Añadir filtro",
+	"addLookup": "Agregar Botón Lookup",
+	"addLookupType": "Agregar Tipo Lookup",
 	"addProject": "Agrega proyecto",
 	"addRelations": "Agregar relaciones",
+	"addReport": "Agregar reporte",
 	"addRow": "Agrega fila",
 	"addTemplate": "Agrega plantilla",
 	"addUser": "Agregar usuario",
 	"addView": "Añadir vista",
+	"add_attachment_from_dms": "Agrega adjunto desde DMS",
 	"address": "Dirección",
 	"alfresco": "Alfresco",
 	"application": "Aplicación",
@@ -1283,6 +1192,7 @@
 	"attention": "Atención",
 	"attribute": "Atributo",
 	"attributes": "Atributos",
+	"availableElements": "Elementos disponibles",
 	"availableFilters": "Filtros disponibles",
 	"baseProperties": "Propiedad genérica",
 	"bcc": "Bcc",
@@ -1294,6 +1204,7 @@
 	"cacheManagement": "Gestión caché",
 	"camera": "Cámara",
 	"cardPanelHeight": "Altura porcentual del panel de la tarjeta",
+	"cardinality": "Cardinalidad",
 	"cc": "Cc",
 	"changePassword": "Cambia clave",
 	"checkFrequency": "Frecuencia verificación (minutos)",
@@ -1306,6 +1217,7 @@
 	"clearFilter": "Limpia filtro",
 	"clear_row_and_colun_privilege": "Quitar los privilegios de filas y columnas",
 	"cmdbuildCategory": "Categoría de CMDBuild",
+	"code": "Código",
 	"composeEmail": "<em>Compose email</em>",
 	"composeFromTemplate": "<em>Compose from template</em>",
 	"confirmRegeneration": "<em>Confirm regeneration</em>",
@@ -1321,6 +1233,8 @@
 	"credentials": "Credenciales",
 	"csv": "CSV",
 	"csvFile": "Archivo CSV",
+	"customMenu": "Menú personalizado",
+	"dataSource": "Fuente de datos",
 	"defaultAccount": "<em>Default account</em>",
 	"defaultClass": "Clase por defecto",
 	"defaultGroup": "Grupo por defecto",
@@ -1328,18 +1242,22 @@
 	"defaultLanguage": "Idioma por defecto",
 	"defaultLevel": "Nivel por defecto",
 	"delay": "<em>Delay</em>",
+	"deleteDomain": "Eliminar Dominio",
 	"deleteLabel": "<em>Delete</em>",
 	"deleteRow": "Borra fila",
 	"descriptionLabel": "Descripción",
 	"description_": "Descripción",
 	"destination": "Destino",
 	"details": "Detalles",
+	"directDescription": "Descripción directa",
 	"disable": "Inhabilitar",
 	"disableGridFilter": "<em>Disable grid filter</em>",
+	"disableLookup": "Deshabilitar Lookup",
 	"disableUser": "Deshabilitar usuario",
 	"display_less_attributes": "Visualiza menos atributos",
 	"display_more_attributes": "Visualiza más atributos",
 	"domain": "Dominio",
+	"domains": "Dominios",
 	"download": "<em>Download</em>",
 	"download_ifc_file": "Descarga archivo Ifc",
 	"edit": "<em>Edit</em>",
@@ -1352,11 +1270,13 @@
 	"emailTemplate": "Plantilla correo",
 	"enable": "Habilita",
 	"enableGridFilter": "<em>Enable grid filter</em>",
+	"enableLookup": "Habilitar Lookup",
 	"enableMoveRejectedNotMatching": "Habilita transferencias rechazadas",
 	"enableSsl": "Habilita SSL",
 	"enableUser": "Habilitar usuario",
 	"enabled": "Habilitado",
 	"enabledClasses": "<em>Enabled classes</em>",
+	"enabledGroups": "Grupos habilitados",
 	"enabledLanguages": "Idiomas activados",
 	"endDate": "Fecha de finalización",
 	"engineName": "Nombre del motor",
@@ -1369,7 +1289,7 @@
 	"fileServerPath": "Recorrido para el servidor de archivos",
 	"filter": "Filtro",
 	"filterView": "Desde el filtro",
-	"filters_for_groups": "Filtros para grupos",
+	"filtersForGroups": "Filtros para grupos",
 	"format_csv": "CSV",
 	"format_odt": "OpenOffice Odt",
 	"format_pdf": "Adobe Pdf",
@@ -1389,6 +1309,7 @@
 	"imapPort": "Puerto IMAP",
 	"imapServer": "Servidor IMAP",
 	"importFromCSV": "<em>Import from CSV</em>",
+	"importJasperReport": "Importación informe Jasper",
 	"includeRelations": "<em>Include relations</em>",
 	"includeSystemActivities": "<em>Include system activities</em>",
 	"incoming": "Recibidos",
@@ -1397,6 +1318,7 @@
 	"initialLongitude": "Longitud inicial",
 	"initialZoomLevel": "Zoom inicial",
 	"instanceName": "Nombre instancia",
+	"inverseDescription": "Descripción inversa",
 	"ipType": "<em>IP type</em>",
 	"ipv4": "ipv4",
 	"ipv6": "ipv6",
@@ -1411,21 +1333,34 @@
 	"lockTimeout": "Tiempo máximo de bloqueo (segundos)",
 	"loggedGroup": "Grupo conectado",
 	"loggedUser": "Usuario conectado",
+	"lookupList": "Lista botones",
+	"lookupTypes": "Tipo Lookup",
 	"main": "Principal",
 	"manualRegeneration": "<em>Manual Regeneration</em>",
+	"masterDetail": "Master/Detail",
+	"masterDetailLabel": "Etiqueta Master/Detail",
+	"masterReportJrxml": "Selecciona informe principal (.jrxml)",
 	"maximumLevel": "Máximo nivel seleccionable",
+	"menu": "Menú",
 	"mode": "Modo",
 	"modifyAccount": "Modifica cuenta",
+	"modifyDomain": "Modificar Dominio",
 	"modifyFilter": "Modificar filtro",
+	"modifyLookup": "Modificar Botón Lookup",
+	"modifyLookupType": "Modificar Tipo Lookup",
 	"modifyProject": "Modifica proyecto",
+	"modifyReport": "Modificar reporte",
 	"modifyTemplate": "Modifica plantilla",
 	"modifyUser": "Modificar usuario",
 	"modifyView": "Modificar vista",
 	"multiGroup": "Multi grupo",
 	"name": "Nombre",
+	"navigation": "Navegación",
+	"newFolder": "Nueva carpeta",
 	"noAvailableData": "<em>No available data</em>",
 	"no_bim_project_for_card": "No hay proyectos BIM para esta tarjeta",
 	"not_set": "No establecido",
+	"notes": "Notas",
 	"odt": "ODT",
 	"onDay": "<em>On</em>",
 	"open_3d_viewer": "Abre visor 3D",
@@ -1433,6 +1368,8 @@
 	"origin": "Origen",
 	"outgoing": "Salientes",
 	"pan": "Desplaza",
+	"parent": "Padre",
+	"parentDescription": "Descripción padre",
 	"password": "Clave",
 	"pdf": "PDF",
 	"popupPercentageHeight": "Altura porcentual ventana popup",
@@ -1440,12 +1377,14 @@
 	"popupWindows": "Ventana popup",
 	"port": "Puerto",
 	"preselectIfUnique": "<em>Preselect if unique</em>",
+	"printPreview": "<em>Print preview</em>",
 	"privileged": "<em>Privileged</em>",
 	"privileges_on_columns": "Privilegios en columnas",
 	"privileges_on_rows": "Privilegios en filas",
 	"processedFolder": "Carpeta procesadas",
 	"projects": "Projects",
 	"promptSync": "<em>Prompt sync</em>",
+	"properties": "Propiedad",
 	"queue": "<em>Queue</em>",
 	"readOnly": "Sólo lectura",
 	"referenceComboLimit": "Límite menú desplegable de reference",
@@ -1459,13 +1398,16 @@
 	"remove": "Quitar",
 	"removeAccount": "Quita cuenta",
 	"removeFilter": "Eliminar filtro",
+	"removeMenu": "Remover menú",
 	"removeProject": "Quita proyecto",
+	"removeReport": "Eliminar reporte",
 	"removeTemplate": "Quita plantilla",
 	"removeView": "Eliminar vista",
 	"remove_formatting": "Quita formatting",
 	"replace": "<em>Replace</em>",
 	"reply": "<em>Reply</em>",
-	"report": "<em>Report</em>",
+	"report": "Informes",
+	"reportMenuJasper": "<em>Jasper-reports report</em>",
 	"reportParameters": "<em>Report parameters</em>",
 	"repository": "Archivo",
 	"reset": "Reset",
@@ -1475,7 +1417,7 @@
 	"row_and_column_privileges": "Privilegios en filas y columnas",
 	"rtf": "RTF",
 	"scope": "Ámbito",
-	"search_filters": "Filtros de búsqueda",
+	"searchFilters": "Filtros de búsqueda",
 	"selectAClass": "Selecciona una clase",
 	"selected_object": "Objecto seleccionado",
 	"send": "<em>Send</em>",
@@ -1498,6 +1440,7 @@
 	"side": "Lateral",
 	"smtpPort": "Puerto SMTP",
 	"smtpServer": "Servidor SMTP",
+	"sql": "SQL",
 	"sqlView": "Desde SQL",
 	"start": "<em>Start</em>",
 	"status": "<em>Status</em>",
@@ -1548,5 +1491,6 @@
 	"workflow_cql_filter": "Filtro Cql",
 	"workflow_query_tipology": "Selección",
 	"you_have_not_set_a_filter": "No ha fijado ningún filtro",
+	"zip": "ZIP",
 	"zoom": "Zoom"
 }

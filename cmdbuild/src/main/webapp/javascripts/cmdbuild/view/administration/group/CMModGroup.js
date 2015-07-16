@@ -35,7 +35,7 @@ Ext.define("CMDBuild.view.administration.group.CMModGroup", {
 		});
 
 		this.filterPrivilegesGrid = new CMDBuild.view.administration.group.CMGroupPrivilegeGrid({
-			title: CMDBuild.Translation.search_filters,
+			title: CMDBuild.Translation.searchFilters,
 			store:_CMProxy.group.getFilterPrivilegesGridStore(),
 			actionURL: _CMProxy.url.privileges.filter.update,
 			withPermissionWrite: false,

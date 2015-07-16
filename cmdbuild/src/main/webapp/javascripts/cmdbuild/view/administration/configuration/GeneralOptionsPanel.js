@@ -4,7 +4,7 @@
 		extend: 'Ext.form.Panel',
 
 		requires: [
-			'CMDBuild.core.proxy.CMProxyConstants',
+			'CMDBuild.core.proxy.Constants',
 			'CMDBuild.core.proxy.Configuration'
 		],
 
@@ -35,16 +35,6 @@
 //		},
 
 		initComponent: function() {
-			this.instanceNameField = Ext.create('CMDBuild.view.common.field.translatable.Text', {
-				fieldLabel: CMDBuild.Translation.instanceName,
-				name: 'instance_name',
-				allowBlank: true,
-				labelAlign: 'left',
-				labelWidth: CMDBuild.CFG_LABEL_WIDTH,
-				maxWidth: CMDBuild.CFG_BIG_FIELD_WIDTH,
-				translationsKeyType: 'InstanceName'
-			});
-
 			// TODO: to delete when localization module will be released
 			this.languageFieldset = Ext.create('Ext.form.FieldSet', {
 				title: CMDBuild.Translation.language,
@@ -71,7 +61,7 @@
 				]
 			});
 
-			this.languageGrid = Ext.create('CMDBuild.view.administration.localizations.panels.LanguagesGrid');
+			this.languageGrid = Ext.create('CMDBuild.view.administration.localizations.common.LanguagesGrid');
 			this.enabledLanguagesFieldset = Ext.create('Ext.form.FieldSet', {
 				title: CMDBuild.Translation.enabledLanguages,
 				overflowY: 'auto',
@@ -85,7 +75,7 @@
 				dockedItems: [
 					Ext.create('Ext.toolbar.Toolbar', {
 						dock: 'bottom',
-						itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_BOTTOM,
+						itemId: CMDBuild.core.proxy.Constants.TOOLBAR_BOTTOM,
 						ui: 'footer',
 
 						layout: {
@@ -95,18 +85,18 @@
 						},
 
 						items: [
-							Ext.create('CMDBuild.core.buttons.Save', {
+							Ext.create('CMDBuild.core.buttons.text.Save', {
 								scope: this,
 
 								handler: function(button, e) {
-									this.delegate.cmfg('onGeneralOptionsSaveButtonClick');
+									this.delegate.cmfg('onConfigurationGeneralOptionsSaveButtonClick');
 								}
 							}),
-							Ext.create('CMDBuild.core.buttons.Abort', {
+							Ext.create('CMDBuild.core.buttons.text.Abort', {
 								scope: this,
 
 								handler: function(button, e) {
-									this.delegate.cmfg('onGeneralOptionsAbortButtonClick');
+									this.delegate.cmfg('onConfigurationGeneralOptionsAbortButtonClick');
 								}
 							})
 						]
@@ -129,12 +119,25 @@
 						},
 
 						items: [
-							this.instanceNameField,
+							this.instanceNameField = Ext.create('CMDBuild.view.common.field.translatable.Text', {
+								name: 'instance_name',
+								fieldLabel: CMDBuild.Translation.instanceName,
+								labelAlign: 'left',
+								labelWidth: CMDBuild.CFG_LABEL_WIDTH,
+								maxWidth: CMDBuild.CFG_BIG_FIELD_WIDTH,
+								allowBlank: true,
+
+								translationFieldConfig: {
+									type: CMDBuild.core.proxy.Constants.INSTANCE_NAME,
+									identifier: CMDBuild.core.proxy.Constants.INSTANCE_NAME, // Just for configuration validation
+									field: CMDBuild.core.proxy.Constants.INSTANCE_NAME
+								}
+							}),
 							Ext.create('CMDBuild.field.ErasableCombo', {
 								name: 'startingclass',
 								fieldLabel: CMDBuild.Translation.defaultClass,
-								valueField: CMDBuild.core.proxy.CMProxyConstants.ID,
-								displayField: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
+								valueField: CMDBuild.core.proxy.Constants.ID,
+								displayField: CMDBuild.core.proxy.Constants.DESCRIPTION,
 								editable: false,
 
 								store: CMDBuild.core.proxy.Configuration.getStartingClassStore(),
@@ -171,11 +174,11 @@
 								name: 'card_tab_position',
 								fieldLabel: CMDBuild.Translation.tabPositioInCardPanel,
 								allowBlank: false,
-								displayField: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
-								valueField: CMDBuild.core.proxy.CMProxyConstants.VALUE,
+								displayField: CMDBuild.core.proxy.Constants.DESCRIPTION,
+								valueField: CMDBuild.core.proxy.Constants.VALUE,
 
 								store: Ext.create('Ext.data.Store', {
-									fields: [CMDBuild.core.proxy.CMProxyConstants.VALUE, CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION],
+									fields: [CMDBuild.core.proxy.Constants.VALUE, CMDBuild.core.proxy.Constants.DESCRIPTION],
 									data: [
 										{
 											value: 'top',
@@ -269,6 +272,12 @@
 			});
 
 			this.callParent(arguments);
+		},
+
+		listeners: {
+			add: function(panel, component, index, eOpts) {
+				panel.instanceNameField.translationsRead(); // Custom function call to read translations data
+			}
 		},
 
 		/**

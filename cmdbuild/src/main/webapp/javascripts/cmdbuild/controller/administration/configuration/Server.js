@@ -18,15 +18,20 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
-			'onServerClearCacheButtonClick',
-			'onServerServiceSynchButtonClick',
-			'onServerUnlockCardsButtonClick'
+			'onConfigurationServerClearCacheButtonClick',
+			'onConfigurationServerServiceSynchButtonClick',
+			'onConfigurationServerUnlockCardsButtonClick'
 		],
 
 		/**
-		 * @cfg {String}
+		 * Proxy parameters
+		 *
+		 * @cfg {Object}
 		 */
-		configFileName: 'server',
+		params: {
+			fileName: 'server',
+			view: undefined
+		},
 
 		/**
 		 * @property {CMDBuild.view.administration.configuration.ServerPanel}
@@ -46,27 +51,26 @@
 				delegate: this
 			});
 
-			this.cmfg('onConfigurationRead', {
-				configFileName: this.configFileName,
-				view: this.view
-			});
+			this.params[CMDBuild.core.proxy.Constants.VIEW] = this.view;
+
+			this.cmfg('onConfigurationRead', this.params);
 		},
 
-		onServerClearCacheButtonClick: function() {
+		onConfigurationServerClearCacheButtonClick: function() {
 			CMDBuild.core.proxy.Utils.clearCache({
-				success: CMDBuild.Msg.success
+				success: CMDBuild.core.Message.success
 			});
 		},
 
-		onServerServiceSynchButtonClick: function() {
+		onConfigurationServerServiceSynchButtonClick: function() {
 			CMDBuild.core.proxy.CMProxyWorkflow.synchronize({
-				success: CMDBuild.Msg.success
+				success: CMDBuild.core.Message.success
 			});
 		},
 
-		onServerUnlockCardsButtonClick: function() {
+		onConfigurationServerUnlockCardsButtonClick: function() {
 			CMDBuild.core.proxy.Card.unlockAllCards({
-				success: CMDBuild.Msg.success
+				success: CMDBuild.core.Message.success
 			});
 		}
 	});

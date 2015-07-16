@@ -2,6 +2,7 @@ package org.cmdbuild.logic.translation.object;
 
 import java.util.Map;
 
+import org.apache.commons.lang3.Validate;
 import org.cmdbuild.logic.translation.BaseTranslation;
 import org.cmdbuild.logic.translation.TranslationObjectVisitor;
 
@@ -43,6 +44,7 @@ public class ClassAttributeDescription extends BaseTranslation {
 
 		@Override
 		public ClassAttributeDescription build() {
+			validate();
 			return new ClassAttributeDescription(this);
 		}
 
@@ -59,6 +61,11 @@ public class ClassAttributeDescription extends BaseTranslation {
 		public Builder withTranslations(final Map<String, String> translations) {
 			this.translations = translations;
 			return this;
+		}
+
+		private void validate() {
+			Validate.notBlank(className);
+			Validate.notBlank(attributeName);
 		}
 
 	}

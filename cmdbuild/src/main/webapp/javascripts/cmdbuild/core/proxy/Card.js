@@ -5,8 +5,8 @@
 
 		requires: [
 			'CMDBuild.core.proxy.CMProxy',
-			'CMDBuild.core.proxy.CMProxyConstants',
-			'CMDBuild.core.proxy.CMProxyUrlIndex'
+			'CMDBuild.core.proxy.Constants',
+			'CMDBuild.core.proxy.Index'
 		],
 
 		singleton: true,
@@ -16,7 +16,7 @@
 		 */
 		bulkUpdate: function(params) {
 			params.method = 'POST';
-			params.url = CMDBuild.core.proxy.CMProxyUrlIndex.card.bulkUpdate;
+			params.url = CMDBuild.core.proxy.Index.card.bulkUpdate;
 
 			CMDBuild.ServiceProxy.core.doRequest(params);
 		},
@@ -26,7 +26,7 @@
 		 */
 		bulkUpdateFromFilter: function(params) {
 			params.method = 'POST';
-			params.url = CMDBuild.core.proxy.CMProxyUrlIndex.card.bulkUpdateFromFilter;
+			params.url = CMDBuild.core.proxy.Index.card.bulkUpdateFromFilter;
 
 			CMDBuild.ServiceProxy.core.doRequest(params);
 		},
@@ -46,7 +46,7 @@
 		 */
 		getPosition: function(params) {
 			params.method = 'GET';
-			params.url = CMDBuild.core.proxy.CMProxyUrlIndex.card.getPosition;
+			params.url = CMDBuild.core.proxy.Index.card.getPosition;
 
 			CMDBuild.ServiceProxy.core.doRequest(params);
 		},
@@ -57,7 +57,7 @@
 		get: function(params) {
 			adaptGetCardCallParams(params);
 			params.method = 'GET';
-			params.url = CMDBuild.core.proxy.CMProxyUrlIndex.card.read;
+			params.url = CMDBuild.core.proxy.Index.card.read;
 
 			CMDBuild.ServiceProxy.core.doRequest(params);
 		},
@@ -70,7 +70,7 @@
 		 */
 		lockCard: function(params) {
 			params.method = 'POST';
-			params.url = CMDBuild.core.proxy.CMProxyUrlIndex.card.lock;
+			params.url = CMDBuild.core.proxy.Index.card.lock;
 
 			CMDBuild.ServiceProxy.core.doRequest(params);
 		},
@@ -80,7 +80,7 @@
 		 */
 		remove: function(params) {
 			params.method = 'POST';
-			params.url = CMDBuild.core.proxy.CMProxyUrlIndex.card.remove;
+			params.url = CMDBuild.core.proxy.Index.card.remove;
 			params.important = true;
 
 			CMDBuild.ServiceProxy.core.doRequest(params);
@@ -94,10 +94,10 @@
 		unlockAllCards: function(parameters) {
 			CMDBuild.Ajax.request({
 				method: 'POST',
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.card.unlockAll,
-				loadMask: true,
+				url: CMDBuild.core.proxy.Index.card.unlockAll,
 				params: parameters.params,
 				scope: parameters.scope,
+				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
 				failure: parameters.failure || Ext.emptyFn(),
 				success: parameters.success || Ext.emptyFn(),
 				callback: parameters.callback || Ext.emptyFn()
@@ -111,7 +111,7 @@
 		 */
 		unlockCard: function(params) {
 			params.method = 'POST';
-			params.url = CMDBuild.core.proxy.CMProxyUrlIndex.card.unlock;
+			params.url = CMDBuild.core.proxy.Index.card.unlock;
 
 			CMDBuild.ServiceProxy.core.doRequest(params);
 		},
@@ -122,11 +122,11 @@
 		update: function(parameters) {
 			CMDBuild.Ajax.request({
 				method: 'POST',
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.card.update,
+				url: CMDBuild.core.proxy.Index.card.update,
 				headers: parameters.headers,
 				params: parameters.params,
 				scope: parameters.scope || this,
-				loadMask: parameters.loadMask || true,
+				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
 				failure: parameters.failure || Ext.emptyFn(),
 				success: parameters.success || Ext.emptyFn(),
 				callback: parameters.callback || Ext.emptyFn()
@@ -139,8 +139,8 @@
 			_deprecated('adaptGetCardCallParams', 'CMDBuild.core.proxy.Card');
 
 			var parameters = {};
-			parameters[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME] = _CMCache.getEntryTypeNameById(p.params.IdClass);
-			parameters[CMDBuild.core.proxy.CMProxyConstants.CARD_ID] = p.params.Id;
+			parameters[CMDBuild.core.proxy.Constants.CLASS_NAME] = _CMCache.getEntryTypeNameById(p.params.IdClass);
+			parameters[CMDBuild.core.proxy.Constants.CARD_ID] = p.params.Id;
 
 			p.params = parameters;
 		}

@@ -3,7 +3,7 @@
 	Ext.define('CMDBuild.view.administration.tasks.common.workflowForm.CMWorkflowFormCombo', {
 		extend: 'Ext.form.field.ComboBox',
 
-		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+		requires: ['CMDBuild.core.proxy.Constants'],
 
 		/**
 		 * @cfg {CMDBuild.controller.administration.tasks.common.workflowForm.CMWorkflowFormController}
@@ -17,8 +17,8 @@
 		 */
 		name: undefined,
 
-		valueField: CMDBuild.core.proxy.CMProxyConstants.NAME,
-		displayField: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
+		valueField: CMDBuild.core.proxy.Constants.NAME,
+		displayField: CMDBuild.core.proxy.Constants.DESCRIPTION,
 		maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
 		forceSelection: true,
 		editable: false,

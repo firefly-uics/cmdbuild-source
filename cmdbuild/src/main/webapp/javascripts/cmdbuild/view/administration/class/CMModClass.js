@@ -14,9 +14,12 @@
 				text : tr.add_class
 			});
 
-			this.printSchema = new CMDBuild.PrintMenuButton({
-				text : tr.print_schema,
-				formatList: ['pdf', 'odt']
+			this.printSchema = Ext.create('CMDBuild.core.buttons.iconized.Print', {
+				formatList: [
+					CMDBuild.core.proxy.Constants.PDF,
+					CMDBuild.core.proxy.Constants.ODT
+				],
+				text: tr.print_schema
 			});
 
 			this.classForm = new CMDBuild.view.administration.classes.CMClassForm({
@@ -78,7 +81,7 @@
 
 			this.callParent(arguments);
 		},
-	
+
 		onAddClassButtonClick: function() {
 			this.tabPanel.setActiveTab(0);
 		},

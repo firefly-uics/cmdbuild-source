@@ -1,15 +1,15 @@
 (function() {
 
-	Ext.require('CMDBuild.core.proxy.CMProxyConstants');
+	Ext.require('CMDBuild.core.proxy.Constants');
 
 	Ext.define('CMDBuild.model.CMGroupModels.startingClass', {
 		extend: 'Ext.data.Model',
 
 		fields: [
-			{ name: CMDBuild.core.proxy.CMProxyConstants.ID,  type: 'int' },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.NAME, type: 'string' },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,  type: 'string', mapping: 'text' }, // FIX: "text" attribute alias (wrong property name)
-			{ name: CMDBuild.core.proxy.CMProxyConstants.TEXT,  type: 'string' }
+			{ name: CMDBuild.core.proxy.Constants.ID,  type: 'int' },
+			{ name: CMDBuild.core.proxy.Constants.NAME, type: 'string' },
+			{ name: CMDBuild.core.proxy.Constants.DESCRIPTION,  type: 'string', mapping: 'text' }, // FIX: "text" attribute alias (wrong property name)
+			{ name: CMDBuild.core.proxy.Constants.TEXT,  type: 'string' }
 		]
 	});
 
