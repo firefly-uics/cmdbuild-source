@@ -32,8 +32,7 @@
 							})
 						]
 					})
-				],
-//				items: [this.grid, this.form]
+				]
 			});
 
 			this.callParent(arguments);
