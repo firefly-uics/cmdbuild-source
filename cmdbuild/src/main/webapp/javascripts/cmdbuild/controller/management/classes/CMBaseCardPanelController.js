@@ -169,7 +169,7 @@
 				this.onCardSelected(this.card);
 			}
 
-			this.callParent(arguments); // Forward save event
+			this.callParent(arguments); // Forward abort event
 
 			this.fireEvent(this.CMEVENTS.abortedModify);
 		},
@@ -291,7 +291,7 @@
 			if (_CMUtils.lockCard.isEnabled()) {
 				if (this.card) {
 					var id = this.card.get("Id");
-					_CMProxy.card.lockCard({
+					CMDBuild.core.proxy.Card.lock({
 						params: {
 							id: id
 						},
@@ -312,7 +312,7 @@
 						&& this.view.isInEditing()) {
 
 					var id = this.card.get("Id");
-					_CMProxy.card.unlockCard({
+					CMDBuild.core.proxy.Card.unlock({
 						params: {
 							id: id
 						}
