@@ -1024,37 +1024,6 @@ public class ModCard extends JSONBaseWithSpringContext {
 	}
 
 	@JSONExported
-	public JSONObject lockCard(@Parameter(value = ID) final Long cardId //
-	) throws JSONException { //
-
-		final JSONObject out = new JSONObject();
-		final DataAccessLogic dataLogic = userDataAccessLogic();
-
-		try {
-			dataLogic.lockCard(cardId);
-		} catch (final ConsistencyException e) {
-			notifier().warn(e);
-			out.put("success", false);
-		}
-
-		return out;
-	}
-
-	@JSONExported
-	public void unlockCard(@Parameter(value = ID) final Long cardId //
-	) { //
-		final DataAccessLogic dataLogic = userDataAccessLogic();
-		dataLogic.unlockCard(cardId);
-	}
-
-	@Admin
-	@JSONExported
-	public void unlockAllCards() {
-		final DataAccessLogic dataLogic = userDataAccessLogic();
-		dataLogic.unlockAllCards();
-	}
-
-	@JSONExported
 	public JsonResponse getAlreadyRelatedCards( //
 			@Parameter(value = DOMAIN_NAME) final String domainName, //
 			@Parameter(value = DOMAIN_DIRECTION) final String domainDirection, //
