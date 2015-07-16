@@ -140,7 +140,6 @@
 						});
 					}
 				});
-_debug('CMDBuild', CMDBuild);
 			},
 
 			loadResources: function() {
