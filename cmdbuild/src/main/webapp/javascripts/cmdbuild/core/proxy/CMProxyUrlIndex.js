@@ -41,6 +41,11 @@
 		cardList: 'services/json/management/modcard/getcardlist',
 
 		classes: {
+			cards: {
+				lock: 'services/json/cards/lock',
+				unlock: 'services/json/cards/unlock',
+				unlockAll: 'services/json/cards/unlockall'
+			},
 			create: 'services/json/schema/modclass/savetable',
 			read: 'services/json/schema/modclass/getallclasses',
 			update: 'services/json/schema/modclass/savetable',
@@ -205,6 +210,14 @@
 			filter: {
 				read: 'services/json/schema/modsecurity/getfilterprivilegelist',
 				update: 'services/json/schema/modsecurity/savefilterprivilege'
+			}
+		},
+
+		processes: {
+			instances: {
+				lock: 'services/json/processes/instances/lock',
+				unlock: 'services/json/processes/instances/unlock',
+				unlockAll: 'services/json/processes/instances/unlockall'
 			}
 		},
 

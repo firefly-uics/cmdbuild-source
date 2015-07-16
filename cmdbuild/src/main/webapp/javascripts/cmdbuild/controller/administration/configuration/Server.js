@@ -6,7 +6,8 @@
 		requires: [
 			'CMDBuild.core.proxy.CMProxyWorkflow',
 			'CMDBuild.core.proxy.Card',
-			'CMDBuild.core.proxy.Utils'
+			'CMDBuild.core.proxy.Utils',
+			'CMDBuild.core.proxy.processes.Activity'
 		],
 
 		/**
@@ -64,8 +65,15 @@
 			});
 		},
 
+		/**
+		 * Unlocks cards and processes
+		 */
 		onServerUnlockCardsButtonClick: function() {
-			CMDBuild.core.proxy.Card.unlockAllCards({
+			CMDBuild.core.proxy.Card.unlockAll({
+				success: CMDBuild.Msg.success
+			});
+
+			CMDBuild.core.proxy.processes.Activity.unlockAll({
 				success: CMDBuild.Msg.success
 			});
 		}

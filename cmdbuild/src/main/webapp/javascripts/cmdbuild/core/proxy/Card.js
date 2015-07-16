@@ -63,16 +63,20 @@
 		},
 
 		/**
-		 *
-		 * Id of the card to lock, className is not required because id is unique
-		 *
-		 * @param {Number} params.id
+		 * @param {Object} parameters
 		 */
-		lockCard: function(params) {
-			params.method = 'POST';
-			params.url = CMDBuild.core.proxy.CMProxyUrlIndex.card.lock;
-
-			CMDBuild.ServiceProxy.core.doRequest(params);
+		lock: function(parameters) {
+			CMDBuild.Ajax.request({
+				method: 'POST',
+				url: CMDBuild.core.proxy.CMProxyUrlIndex.classes.cards.lock,
+				headers: parameters.headers,
+				params: parameters.params,
+				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : false,
+				scope: parameters.scope || this,
+				failure: parameters.failure || Ext.emptyFn(),
+				success: parameters.success || Ext.emptyFn(),
+				callback: parameters.callback || Ext.emptyFn()
+			});
 		},
 
 		/**
@@ -87,17 +91,16 @@
 		},
 
 		/**
-		 * Unlock all cards that was locked
-		 *
 		 * @param {Object} parameters
 		 */
-		unlockAllCards: function(parameters) {
+		unlock: function(parameters) {
 			CMDBuild.Ajax.request({
 				method: 'POST',
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.card.unlockAll,
-				loadMask: true,
+				url: CMDBuild.core.proxy.CMProxyUrlIndex.classes.cards.unlock,
+				headers: parameters.headers,
 				params: parameters.params,
-				scope: parameters.scope,
+				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : false,
+				scope: parameters.scope || this,
 				failure: parameters.failure || Ext.emptyFn(),
 				success: parameters.success || Ext.emptyFn(),
 				callback: parameters.callback || Ext.emptyFn()
@@ -105,15 +108,20 @@
 		},
 
 		/**
-		 * Id of card to unlock
-		 *
-		 * @param {Number} params.id
+		 * @param {Object} parameters
 		 */
-		unlockCard: function(params) {
-			params.method = 'POST';
-			params.url = CMDBuild.core.proxy.CMProxyUrlIndex.card.unlock;
-
-			CMDBuild.ServiceProxy.core.doRequest(params);
+		unlockAll: function(parameters) {
+			CMDBuild.Ajax.request({
+				method: 'POST',
+				url: CMDBuild.core.proxy.CMProxyUrlIndex.classes.cards.unlockAll,
+				headers: parameters.headers,
+				params: parameters.params,
+				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
+				scope: parameters.scope || this,
+				failure: parameters.failure || Ext.emptyFn(),
+				success: parameters.success || Ext.emptyFn(),
+				callback: parameters.callback || Ext.emptyFn()
+			});
 		},
 
 		/**

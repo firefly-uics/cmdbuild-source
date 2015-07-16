@@ -9,9 +9,21 @@
 	Ext.define("CMDBuild.controller.management.workflow.CMActivityPanelController", {
 		extend: "CMDBuild.controller.management.classes.CMCardPanelController",
 
+		requires: ['CMDBuild.core.proxy.processes.Activity'],
+
 		mixins: {
 			wfStateDelegate: "CMDBuild.state.CMWorkflowStateDelegate"
 		},
+
+		/**
+		 * @property {Object}
+		 */
+		lastSelectedActivityInstance: undefined,
+
+		/**
+		 * @property {Object}
+		 */
+		lastSelectedProcessInstance: undefined,
 
 		constructor: function(view, supercontroller, widgetControllerManager, delegate) {
 			this.callParent(arguments);
@@ -24,7 +36,7 @@
 			this.isAdvance = false;
 
 			this.mon(this.view, this.view.CMEVENTS.advanceCardButtonClick, this.onAdvanceCardButtonClick, this);
-			this.mon(this.view, this.view.CMEVENTS.editModeDidAcitvate, onEditMode, this);
+			this.mon(this.view, this.view.CMEVENTS.editModeDidAcitvate, this.onEditMode, this);
 			this.mon(this.view, this.view.CMEVENTS.checkEditability, onCheckEditability, this);
 			this.mon(this.view, this.view.CMEVENTS.displayModeDidActivate, onDisplayMode, this);
 
@@ -40,12 +52,17 @@
 		// wfStateDelegate
 		onProcessInstanceChange: function(processInstance) {
 			var me = this;
+
+			this.unlock();
 			this.clearView();
 
-			if (processInstance != null // is null on abort of a new process
-					&& processInstance.isStateCompleted()) {
+			this.lastSelectedProcessInstance = processInstance; // Used to unlock last locked card
 
-				me.loadFields(processInstance.getClassId(), function loadFieldsCb() {
+			if (
+				processInstance != null // is null on abort of a new process
+				&& processInstance.isStateCompleted()
+			) {
+				this.loadFields(processInstance.getClassId(), function loadFieldsCb() {
 					me.fillFormWithProcessInstanceData(processInstance);
 				});
 			} else {
@@ -57,6 +74,10 @@
 		onActivityInstanceChange: function(activityInstance) {
 			var me = this;
 			var processInstance = _CMWFState.getProcessInstance();
+
+			this.unlock();
+
+			this.lastSelectedActivityInstance = activityInstance; // Used to unlock last locked card
 
 			// reduce the layouts work while
 			// fill the panel and build the widgets.
@@ -109,18 +130,58 @@
 
 		},
 
-		// override
+		/**
+		 * @override
+		 */
 		onModifyCardClick: function() {
-			this.isAdvance = false;
-			var pi = _CMWFState.getProcessInstance();
-			var ai = _CMWFState.getActivityInstance();
+			var processInstance = _CMWFState.getProcessInstance();
+			var activityInstance = _CMWFState.getActivityInstance();
 
-			if (pi && pi.isStateOpen()
-					&& ai && ai.isWritable()) {
+			this.isAdvance = false;
+
+			if (
+				!Ext.isEmpty(processInstance)
+				&& processInstance.isStateOpen()
+				&& !Ext.isEmpty(activityInstance)
+				&& activityInstance.isWritable()
+			) {
+				this.lock();
 
 				this.view.editMode();
 
 				this.callParent(arguments);
+			}
+		},
+
+		lock: function() {
+			if (
+				CMDBuild.Config.cmdbuild.lockcardenabled == 'true' // TODO: implementation of model for configuration
+				&& _CMWFState.getActivityInstance()
+				&& _CMWFState.getProcessInstance()
+			) {
+				var params = {};
+				params[CMDBuild.core.proxy.CMProxyConstants.ACTIVITY_INSTANCE_ID] = _CMWFState.getActivityInstance().data[CMDBuild.core.proxy.CMProxyConstants.ID];
+				params[CMDBuild.core.proxy.CMProxyConstants.PROCESS_INSTANCE_ID] = _CMWFState.getProcessInstance().data[CMDBuild.core.proxy.CMProxyConstants.ID];
+
+				CMDBuild.core.proxy.processes.Activity.lock({
+					params: params
+				});
+			}
+		},
+
+		unlock: function() {
+			if (
+				CMDBuild.Config.cmdbuild.lockcardenabled == 'true' // TODO: implementation of model for configuration
+				&& !Ext.isEmpty(this.lastSelectedActivityInstance)
+				&& this.view.isInEditing()
+			) {
+				var params = {};
+				params[CMDBuild.core.proxy.CMProxyConstants.ACTIVITY_INSTANCE_ID] = this.lastSelectedActivityInstance.data[CMDBuild.core.proxy.CMProxyConstants.ID];
+				params[CMDBuild.core.proxy.CMProxyConstants.PROCESS_INSTANCE_ID] = this.lastSelectedProcessInstance.data[CMDBuild.core.proxy.CMProxyConstants.ID];
+
+				CMDBuild.core.proxy.processes.Activity.unlock({
+					params: params
+				});
 			}
 		},
 
@@ -161,7 +222,7 @@
 				this.onActivityInstanceChange(activityInstance);
 			}
 
-			this.callParent(arguments); // Forward save event
+			this.callParent(arguments); // Forward abort event
 
 			_CMUIState.onlyGridIfFullScreen();
 		},
@@ -228,6 +289,16 @@
 			var cardId = pi.getId();
 
 			CMDBuild.Management.showGraphWindow(classId, cardId);
+		},
+
+		onEditMode: function() {
+			this.editMode = true;
+
+			this.lock();
+
+			if (this.widgetControllerManager) {
+				this.widgetControllerManager.onCardGoesInEdit();
+			}
 		},
 
 		// TODO: Needs some refactoring
@@ -300,13 +371,6 @@
 				}
 			}
 		});
-	}
-
-	function onEditMode() {
-		this.editMode = true;
-		if (this.widgetControllerManager) {
-			this.widgetControllerManager.onCardGoesInEdit();
-		}
 	}
 
 	function onDisplayMode() {
