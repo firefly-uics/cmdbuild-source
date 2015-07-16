@@ -80,7 +80,8 @@
 			init: function() {
 				Ext.create('CMDBuild.core.LoggerManager'); // Logger configuration
 				Ext.create('CMDBuild.core.Data'); // Data connections configuration
-				Ext.create('CMDBuild.core.Localization'); // CMDBuild localization configuration
+				Ext.create('CMDBuild.core.configurationBuilders.Instance'); // CMDBuild instance configuration
+				Ext.create('CMDBuild.core.configurationBuilders.Localization'); // CMDBuild localization configuration
 
 				Ext.tip.QuickTipManager.init();
 				// Fix a problem of Ext 4.2 tooltips width
@@ -101,7 +102,11 @@
 
 						CMDBuild.ServiceProxy.configuration.readAll({
 							success: function(response, options, decoded) {
-								// Cmdbuild
+								/**
+								 * CMDBuild
+								 *
+								 * @deprecated
+								 */
 								CMDBuild.Config.cmdbuild = decoded.cmdbuild;
 
 								// Localization

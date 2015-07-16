@@ -1,6 +1,6 @@
 (function() {
 
-	Ext.define('CMDBuild.core.Localization', {
+	Ext.define('CMDBuild.core.configurationBuilders.Localization', {
 
 		requires: [
 			'CMDBuild.core.proxy.Constants',

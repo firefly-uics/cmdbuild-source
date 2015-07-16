@@ -36,7 +36,8 @@
 
 				Ext.create('CMDBuild.core.LoggerManager'); // Logger configuration
 				Ext.create('CMDBuild.core.Data'); // Data connections configuration
-				Ext.create('CMDBuild.core.Localization'); // CMDBuild localization configuration
+				Ext.create('CMDBuild.core.configurationBuilders.Instance'); // CMDBuild instance configuration
+				Ext.create('CMDBuild.core.configurationBuilders.Localization'); // CMDBuild localization configuration
 
 				Ext.tip.QuickTipManager.init();
 				// fix a problem of Ext 4.2 tooltips width
@@ -52,7 +53,11 @@
 
 						CMDBuild.ServiceProxy.configuration.readMainConfiguration({
 							success: function(response, options, decoded) {
-								// CMDBuild
+								/**
+								 * CMDBuild
+								 *
+								 * @deprecated
+								 */
 								CMDBuild.Config.cmdbuild = decoded.data;
 
 								// Localization
@@ -135,6 +140,7 @@
 						});
 					}
 				});
+_debug('CMDBuild', CMDBuild);
 			},
 
 			loadResources: function() {
