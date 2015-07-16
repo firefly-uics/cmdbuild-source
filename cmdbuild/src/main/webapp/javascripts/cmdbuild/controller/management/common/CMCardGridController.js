@@ -624,7 +624,9 @@
 					relativeIndex = position % pageSize;
 
 				view.loadPage(pageNumber, {
-					cb: function(records, operation, success) {
+					cb: function() {
+						var parameters = arguments[0];
+
 						try {
 							me.gridSM.deselectAll();
 							me.gridSM.select(relativeIndex);
@@ -637,10 +639,9 @@
 							_trace("I was not able to select the record at " + relativeIndex);
 						}
 
-						if (!success) {
+						if (!parameters[2]) {
 							CMDBuild.core.Message.error(null, {
-								text: CMDBuild.Translation.errors.unknown_error,
-								detail: operation.error
+								text: CMDBuild.Translation.errors.unknown_error
 							});
 						}
 					}
