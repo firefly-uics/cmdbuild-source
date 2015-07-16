@@ -1230,4 +1230,20 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 	public void unlockAllCards() {
 		this.lockCardManager.unlockAll();
 	}
+
+	@Override
+	public void lockActivity(final Long instanceId, final Long activityId) {
+		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public void unlockActivity(final Long instanceId, final Long activityId) {
+		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public void unlockAllActivities() {
+		// TODO Auto-generated method stub
+	}
+
 }

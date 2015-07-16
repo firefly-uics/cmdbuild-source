@@ -1,11 +1,22 @@
 package org.cmdbuild.servlets.json;
 
+import static org.cmdbuild.servlets.json.CommunicationConstants.ACTIVITY_INSTANCE_ID;
+import static org.cmdbuild.servlets.json.CommunicationConstants.ADVANCE;
+import static org.cmdbuild.servlets.json.CommunicationConstants.ATTRIBUTES;
+import static org.cmdbuild.servlets.json.CommunicationConstants.BEGIN_DATE;
+import static org.cmdbuild.servlets.json.CommunicationConstants.CARD_ID;
+import static org.cmdbuild.servlets.json.CommunicationConstants.CLASS_ID;
 import static org.cmdbuild.servlets.json.CommunicationConstants.CLASS_NAME;
 import static org.cmdbuild.servlets.json.CommunicationConstants.FILTER;
+import static org.cmdbuild.servlets.json.CommunicationConstants.ID_CLASS;
 import static org.cmdbuild.servlets.json.CommunicationConstants.LIMIT;
+import static org.cmdbuild.servlets.json.CommunicationConstants.PROCESS_INSTANCE_ID;
 import static org.cmdbuild.servlets.json.CommunicationConstants.SORT;
 import static org.cmdbuild.servlets.json.CommunicationConstants.START;
 import static org.cmdbuild.servlets.json.CommunicationConstants.STATE;
+import static org.cmdbuild.servlets.json.CommunicationConstants.VERSION;
+import static org.cmdbuild.servlets.json.CommunicationConstants.WW;
+import static org.cmdbuild.servlets.json.CommunicationConstants.XPDL;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -101,7 +112,7 @@ public class Workflow extends JSONBaseWithSpringContext {
 
 	@JSONExported
 	public JsonResponse getStartActivity( //
-			@Parameter("classId") final Long processClassId) throws CMWorkflowException {
+			@Parameter(CLASS_ID) final Long processClassId) throws CMWorkflowException {
 		final CMActivity activityDefinition = workflowLogic().getStartActivityOrDie(processClassId);
 
 		return JsonResponse.success(new JsonActivityDefinition( //
@@ -140,9 +151,9 @@ public class Workflow extends JSONBaseWithSpringContext {
 
 	@JSONExported
 	public JsonResponse getActivityInstance( //
-			@Parameter("classId") final Long processClassId, //
-			@Parameter("cardId") final Long processInstanceId, //
-			@Parameter("activityInstanceId") final String activityInstanceId //
+			@Parameter(CLASS_ID) final Long processClassId, //
+			@Parameter(CARD_ID) final Long processInstanceId, //
+			@Parameter(ACTIVITY_INSTANCE_ID) final String activityInstanceId //
 	) throws CMWorkflowException {
 		final UserActivityInstance activityInstance = workflowLogic().getActivityInstance( //
 				processClassId, processInstanceId, activityInstanceId);
@@ -153,9 +164,9 @@ public class Workflow extends JSONBaseWithSpringContext {
 	@JSONExported
 	@SuppressWarnings("serial")
 	public JsonResponse isProcessUpdated( //
-			@Parameter("className") final String processClassName, //
-			@Parameter("processInstanceId") final Long processInstanceId, //
-			@Parameter("beginDate") final long beginDateAsLong) {
+			@Parameter(CLASS_NAME) final String processClassName, //
+			@Parameter(PROCESS_INSTANCE_ID) final Long processInstanceId, //
+			@Parameter(BEGIN_DATE) final long beginDateAsLong) {
 
 		final DateTime givenBeginDate = new DateTime(beginDateAsLong);
 		final WorkflowLogic logic = workflowLogic();
@@ -175,13 +186,13 @@ public class Workflow extends JSONBaseWithSpringContext {
 	@JSONExported
 	@SuppressWarnings("serial")
 	public JsonResponse saveActivity( //
-			@Parameter("classId") final Long processClassId, //
+			@Parameter(CLASS_ID) final Long processClassId, //
 			// processCardId even with Long, it won't be null
-			@Parameter(value = "cardId", required = false) final long processCardId, //
-			@Parameter(value = "activityInstanceId", required = false) final String activityInstanceId, //
-			@Parameter("attributes") final String jsonVars, //
-			@Parameter("advance") final boolean advance, //
-			@Parameter("ww") final String jsonWidgetSubmission //
+			@Parameter(value = CARD_ID, required = false) final long processCardId, //
+			@Parameter(value = ACTIVITY_INSTANCE_ID, required = false) final String activityInstanceId, //
+			@Parameter(ATTRIBUTES) final String jsonVars, //
+			@Parameter(ADVANCE) final boolean advance, //
+			@Parameter(WW) final String jsonWidgetSubmission //
 	) throws CMWorkflowException, Exception {
 		final WorkflowLogic logic = workflowLogic();
 		final CMProcessInstance processInstance;
@@ -212,8 +223,8 @@ public class Workflow extends JSONBaseWithSpringContext {
 
 	@JSONExported
 	public JsonResponse abortprocess( //
-			@Parameter("classId") final Long processClassId, //
-			@Parameter("cardId") final long processCardId //
+			@Parameter(CLASS_ID) final Long processClassId, //
+			@Parameter(CARD_ID) final long processCardId //
 	) throws CMWorkflowException {
 		workflowLogic().abortProcess(processClassId, processCardId);
 
@@ -223,7 +234,7 @@ public class Workflow extends JSONBaseWithSpringContext {
 	@Admin
 	@JSONExported
 	public DataHandler downloadXpdlTemplate( //
-			@Parameter("idClass") final Long processClassId //
+			@Parameter(ID_CLASS) final Long processClassId //
 	) throws CMWorkflowException {
 		final DataSource ds = workflowLogic().getProcessDefinitionTemplate(processClassId);
 
@@ -233,7 +244,7 @@ public class Workflow extends JSONBaseWithSpringContext {
 	@Admin
 	@JSONExported
 	public JsonResponse xpdlVersions( //
-			@Parameter(value = "idClass", required = true) final Long processClassId //
+			@Parameter(value = ID_CLASS, required = true) final Long processClassId //
 	) throws CMWorkflowException {
 		final String[] versions = workflowLogic().getProcessDefinitionVersions(processClassId);
 
@@ -243,8 +254,8 @@ public class Workflow extends JSONBaseWithSpringContext {
 	@Admin
 	@JSONExported
 	public DataHandler downloadXpdl( //
-			@Parameter("idClass") final Long processClassId, //
-			@Parameter("version") final String version //
+			@Parameter(ID_CLASS) final Long processClassId, //
+			@Parameter(VERSION) final String version //
 	) throws CMWorkflowException {
 		final DataSource ds = workflowLogic().getProcessDefinition(processClassId, version);
 
@@ -254,8 +265,8 @@ public class Workflow extends JSONBaseWithSpringContext {
 	@Admin
 	@JSONExported
 	public JsonResponse uploadXpdl( //
-			@Parameter("idClass") final Long processClassId, //
-			@Parameter(value = "xpdl", required = false) final FileItem xpdlFile //
+			@Parameter(ID_CLASS) final Long processClassId, //
+			@Parameter(value = XPDL, required = false) final FileItem xpdlFile //
 	) throws CMWorkflowException {
 		final List<String> messages = Lists.newArrayList();
 		final WorkflowLogic logic = workflowLogic();
