@@ -232,7 +232,7 @@
 			 */
 			trafficLightSlotBuild: function(record, trafficLightArray) {
 				if (!Ext.isEmpty(record) && Ext.isArray(trafficLightArray)) {
-					var trafficLight = [];
+					var trafficLight = {};
 					trafficLight[CMDBuild.core.proxy.CMProxyConstants.STATUS] = false;
 					trafficLight[CMDBuild.core.proxy.CMProxyConstants.RECORD] = record; // Reference to record
 
@@ -794,10 +794,10 @@
 						emailObject.set(CMDBuild.core.proxy.CMProxyConstants.TEMPLATE, template.get(CMDBuild.core.proxy.CMProxyConstants.KEY));
 						emailObject.set(CMDBuild.core.proxy.CMProxyConstants.TEMPORARY, me.cmfg('selectedEntityIdGet') < 0); // Setup temporary parameter
 
-						CMDBuild.controller.management.common.tabs.email.Email.trafficLightSlotBuild(emailObject, regenerationTrafficLightArray);
-
 						if (me.checkCondition(values, templateResolver)) {
 							_msg('Template with subject "' + values[CMDBuild.core.proxy.CMProxyConstants.SUBJECT] + '" regenerated');
+
+							CMDBuild.controller.management.common.tabs.email.Email.trafficLightSlotBuild(emailObject, regenerationTrafficLightArray);
 
 							if (Ext.isEmpty(record)) {
 								me.controllerGrid.addRecord(emailObject, regenerationTrafficLightArray);
