@@ -4,12 +4,14 @@ import static com.google.common.collect.Iterables.get;
 import static com.google.common.collect.Iterables.isEmpty;
 import static com.google.common.collect.Iterables.size;
 import static java.lang.String.format;
+import static org.apache.commons.lang3.ArrayUtils.EMPTY_STRING_ARRAY;
+import static org.apache.commons.lang3.ArrayUtils.INDEX_NOT_FOUND;
+import static org.apache.commons.lang3.ArrayUtils.add;
+import static org.apache.commons.lang3.ArrayUtils.contains;
 import static org.apache.commons.lang3.ArrayUtils.indexOf;
 import static org.apache.commons.lang3.ArrayUtils.remove;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.defaultString;
-import static org.cmdbuild.common.utils.Arrays.addDistinct;
-import static org.cmdbuild.common.utils.Arrays.append;
 import static org.cmdbuild.workflow.ProcessAttributes.ActivityDefinitionId;
 import static org.cmdbuild.workflow.ProcessAttributes.ActivityInstanceId;
 import static org.cmdbuild.workflow.ProcessAttributes.AllActivityPerformers;
@@ -17,6 +19,10 @@ import static org.cmdbuild.workflow.ProcessAttributes.CurrentActivityPerformers;
 import static org.cmdbuild.workflow.ProcessAttributes.FlowStatus;
 import static org.cmdbuild.workflow.ProcessAttributes.ProcessInstanceId;
 import static org.cmdbuild.workflow.ProcessAttributes.UniqueProcessDefinition;
+import static org.cmdbuild.workflow.WorkflowPersistence.ProcessData.NO_ACTIVITIES;
+import static org.cmdbuild.workflow.WorkflowPersistence.ProcessData.NO_PROCESS_INSTANCE_INFO;
+import static org.cmdbuild.workflow.WorkflowPersistence.ProcessData.NO_STATE;
+import static org.cmdbuild.workflow.WorkflowPersistence.ProcessData.NO_VALUES;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -25,7 +31,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.builder.Builder;
 import org.cmdbuild.auth.context.SystemPrivilegeContext;
@@ -37,8 +42,7 @@ import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.data.store.lookup.Lookup;
 import org.cmdbuild.logger.Log;
-import org.cmdbuild.workflow.WorkflowPersistence.ProcessCreation;
-import org.cmdbuild.workflow.WorkflowPersistence.ProcessUpdate;
+import org.cmdbuild.workflow.WorkflowPersistence.ProcessData;
 import org.cmdbuild.workflow.service.CMWorkflowService;
 import org.cmdbuild.workflow.service.WSActivityInstInfo;
 import org.cmdbuild.workflow.service.WSProcessInstInfo;
@@ -56,6 +60,7 @@ class WorkflowUpdateHelper {
 	public static class WorkflowUpdateHelperBuilder implements Builder<WorkflowUpdateHelper> {
 
 		private OperationUser operationUser;
+		private CMClass processClass;
 		private CMCardDefinition cardDefinition;
 		private WSProcessInstInfo processInstInfo;
 		private CMCard card;
@@ -72,15 +77,19 @@ class WorkflowUpdateHelper {
 		}
 
 		private void validate() {
-			Validate.notNull(operationUser, "invalid operation user");
-			// Validate.isTrue(operationUser.isValid(),
-			// "operation user is not valid");
-			Validate.notNull(cardDefinition, "invalid card definition");
-			Validate.notNull(lookupHelper, "invalid lookup helper");
+			Validate.notNull(operationUser, "invalid %s", OperationUser.class);
+			Validate.notNull(processClass, "invalid %s", CMProcessClass.class);
+			Validate.notNull(cardDefinition, "invalid %s", CMCardDefinition.class);
+			Validate.notNull(lookupHelper, "invalid %s", LookupHelper.class);
 		}
 
 		private WorkflowUpdateHelperBuilder withOperationUser(final OperationUser value) {
 			operationUser = value;
+			return this;
+		}
+
+		private WorkflowUpdateHelperBuilder withProcessClass(final CMClass value) {
+			processClass = value;
 			return this;
 		}
 
@@ -128,15 +137,17 @@ class WorkflowUpdateHelper {
 	}
 
 	public static WorkflowUpdateHelperBuilder newInstance(final OperationUser operationUser,
-			final CMCardDefinition cardDefinition) {
+			final CMClass processClass, final CMCardDefinition cardDefinition) {
 		return new WorkflowUpdateHelperBuilder() //
 				.withOperationUser(operationUser) //
+				.withProcessClass(processClass) //
 				.withCardDefinition(cardDefinition);
 	}
 
 	private static final String UNRESOLVABLE_PARTICIPANT_GROUP = EMPTY;
 
 	private final OperationUser operationUser;
+	private final CMClass processClass;
 	private final CMCardDefinition cardDefinition;
 	private final WSProcessInstInfo processInstInfo;
 	private final CMCard card;
@@ -156,6 +167,7 @@ class WorkflowUpdateHelper {
 
 	private WorkflowUpdateHelper(final WorkflowUpdateHelperBuilder builder) {
 		this.operationUser = builder.operationUser;
+		this.processClass = builder.processClass;
 		this.cardDefinition = builder.cardDefinition;
 		this.processInstInfo = builder.processInstInfo;
 		this.card = builder.card;
@@ -176,23 +188,23 @@ class WorkflowUpdateHelper {
 			this.allActivityPerformers = card.get(AllActivityPerformers.dbColumnName(), String[].class);
 		} else {
 			logger.debug(marker, "card not found, setting default values");
-			this.activityInstanceIds = ArrayUtils.EMPTY_STRING_ARRAY;
-			this.activityDefinitionIds = ArrayUtils.EMPTY_STRING_ARRAY;
-			this.currentActivityPerformers = ArrayUtils.EMPTY_STRING_ARRAY;
-			this.allActivityPerformers = ArrayUtils.EMPTY_STRING_ARRAY;
+			this.processInstanceId = processInstInfo.getProcessInstanceId();
+			this.activityInstanceIds = EMPTY_STRING_ARRAY;
+			this.activityDefinitionIds = EMPTY_STRING_ARRAY;
+			this.currentActivityPerformers = EMPTY_STRING_ARRAY;
+			this.allActivityPerformers = EMPTY_STRING_ARRAY;
 		}
-		logger.debug(marker, "getting stored activity instance ids", activityInstanceIds);
-		logger.debug(marker, "getting stored activity definition ids", activityDefinitionIds);
-		logger.debug(marker, "getting stored current activity performers", currentActivityPerformers);
-		logger.debug(marker, "getting stored all activity performers", allActivityPerformers);
+		logger.debug(marker, "getting stored activity instance ids", Object.class.cast(activityInstanceIds));
+		logger.debug(marker, "getting stored activity definition ids", Object.class.cast(activityDefinitionIds));
+		logger.debug(marker, "getting stored current activity performers", Object.class.cast(currentActivityPerformers));
+		logger.debug(marker, "getting stored all activity performers", Object.class.cast(allActivityPerformers));
 	}
 
 	public CMCard save() {
 		// FIXME operation user must be always valid
 		if (operationUser.isValid()) {
 			cardDefinition.setUser(operationUser.getAuthenticatedUser().getUsername());
-		} 
-		else if (operationUser.getPrivilegeContext() instanceof SystemPrivilegeContext) {
+		} else if (operationUser.getPrivilegeContext() instanceof SystemPrivilegeContext) {
 			cardDefinition.setUser("system");
 		}
 		cardDefinition.setCode(code);
@@ -205,50 +217,24 @@ class WorkflowUpdateHelper {
 		return cardDefinition.save();
 	}
 
-	public WorkflowUpdateHelper initialize() {
-		processInstanceId = processInstInfo.getProcessInstanceId();
-		activityInstanceIds = ArrayUtils.EMPTY_STRING_ARRAY;
-		activityDefinitionIds = ArrayUtils.EMPTY_STRING_ARRAY;
-		currentActivityPerformers = ArrayUtils.EMPTY_STRING_ARRAY;
-		allActivityPerformers = ArrayUtils.EMPTY_STRING_ARRAY;
-		return this;
-	}
-
-	public WorkflowUpdateHelper fillForCreation(final ProcessCreation processCreation) throws CMWorkflowException {
-		logger.info(marker, "filling process card for creation");
-		updateCreationData(processCreation);
-		return this;
-	}
-
-	private void updateCreationData(final ProcessCreation processCreation) {
-		if (processCreation.state() != ProcessCreation.NO_STATE) {
+	public WorkflowUpdateHelper set(final ProcessData processData) throws CMWorkflowException {
+		logger.info(marker, "filling process card");
+		if (processData.state() != NO_STATE) {
 			logger.debug(marker, "updating state");
-			final Optional<Lookup> lookup = lookupHelper.lookupForState(processCreation.state());
+			final Optional<Lookup> lookup = lookupHelper.lookupForState(processData.state());
 			final Object id = lookup.isPresent() ? lookup.get().getId() : null;
 			cardDefinition.set(FlowStatus.dbColumnName(), id);
 		}
-
-		if (processCreation.processInstanceInfo() != ProcessCreation.NO_PROCESS_INSTANCE_INFO) {
+		if (processData.processInstanceInfo() != NO_PROCESS_INSTANCE_INFO) {
 			logger.debug(marker, "updating process instance info");
-			final WSProcessInstInfo info = processCreation.processInstanceInfo();
+			final WSProcessInstInfo info = processData.processInstanceInfo();
 			final String value = format("%s#%s#%s", info.getPackageId(), info.getPackageVersion(),
 					info.getProcessDefinitionId());
 			uniqueProcessDefinition = value;
 		}
-	}
-
-	public WorkflowUpdateHelper fillForModification(final ProcessUpdate processUpdate) throws CMWorkflowException {
-		logger.info(marker, "filling process card for modification");
-		updateModificationData(processUpdate);
-		return this;
-	}
-
-	private void updateModificationData(final ProcessUpdate processUpdate) throws CMWorkflowException {
-		updateCreationData(processUpdate);
-		if (processUpdate.values() != ProcessUpdate.NO_VALUES) {
+		if (processData.values() != NO_VALUES) {
 			logger.debug(marker, "updating values");
-			final CMClass processClass = card.getType();
-			for (final Entry<String, ?> entry : processUpdate.values().entrySet()) {
+			for (final Entry<String, ?> entry : processData.values().entrySet()) {
 				final String name = entry.getKey();
 				final CMAttribute attribute = processClass.getAttribute(name);
 				if (attribute == null) {
@@ -264,22 +250,23 @@ class WorkflowUpdateHelper {
 				cardDefinition.set(name, entry.getValue());
 			}
 		}
-		if (processUpdate.addActivities() != ProcessUpdate.NO_ACTIVITIES) {
+		if (processData.addActivities() != NO_ACTIVITIES) {
 			logger.debug(marker, "adding activities");
-			for (final WSActivityInstInfo activityInstanceInfo : processUpdate.addActivities()) {
+			for (final WSActivityInstInfo activityInstanceInfo : processData.addActivities()) {
 				logger.debug(marker, "adding activity '{}' '{}'", //
 						activityInstanceInfo.getActivityDefinitionId(), //
 						activityInstanceInfo.getActivityInstanceId());
 				addActivity(activityInstanceInfo);
 			}
 		}
-		if (processUpdate.activities() != ProcessUpdate.NO_ACTIVITIES) {
+		if (processData.activities() != NO_ACTIVITIES) {
 			logger.debug(marker, "setting activities");
-			final WSActivityInstInfo[] activityInfos = processUpdate.activities();
+			final WSActivityInstInfo[] activityInfos = processData.activities();
 			removeClosedActivities(activityInfos);
 			addNewActivities(activityInfos);
 			updateCodeWithFirstActivityInfo();
 		}
+		return this;
 	}
 
 	private void addActivity(final WSActivityInstInfo activityInfo) throws CMWorkflowException {
@@ -287,11 +274,11 @@ class WorkflowUpdateHelper {
 		Validate.notNull(activityInfo.getActivityInstanceId());
 		final String participantGroup = extractActivityParticipantGroup(activityInfo);
 		if (participantGroup != UNRESOLVABLE_PARTICIPANT_GROUP) {
-			activityInstanceIds = append(activityInstanceIds, activityInfo.getActivityInstanceId());
-			activityDefinitionIds = append(activityDefinitionIds, activityInfo.getActivityDefinitionId());
+			activityInstanceIds = add(activityInstanceIds, activityInfo.getActivityInstanceId());
+			activityDefinitionIds = add(activityDefinitionIds, activityInfo.getActivityDefinitionId());
 
-			currentActivityPerformers = append(currentActivityPerformers, participantGroup);
-			allActivityPerformers = addDistinct(allActivityPerformers, participantGroup);
+			currentActivityPerformers = add(currentActivityPerformers, participantGroup);
+			allActivityPerformers = addIfMissing(allActivityPerformers, participantGroup);
 			updateCodeWithFirstActivityInfo();
 		}
 	}
@@ -338,6 +325,18 @@ class WorkflowUpdateHelper {
 		return evaluator;
 	}
 
+	private static <T> T[] addIfMissing(final T[] original, final T element) {
+		final T[] output;
+		if (element == null) {
+			output = original;
+		} else if (contains(original, element)) {
+			output = original;
+		} else {
+			output = add(original, element);
+		}
+		return output;
+	}
+
 	private void removeClosedActivities(final WSActivityInstInfo[] activityInfos) throws CMWorkflowException {
 		logger.debug(marker, "removing closed activivities");
 
@@ -362,14 +361,14 @@ class WorkflowUpdateHelper {
 		logger.info(marker, "removing persisted activity '{}'", activityInstanceId);
 		final int index = indexOf(activityInstanceIds, activityInstanceId);
 		logger.debug(marker, "index of '{}' is '{}'", activityInstanceId, index);
-		if (index != ArrayUtils.INDEX_NOT_FOUND) {
+		if (index != INDEX_NOT_FOUND) {
 			activityInstanceIds = String[].class.cast(remove(activityInstanceIds, index));
 			activityDefinitionIds = String[].class.cast(remove(activityDefinitionIds, index));
 			currentActivityPerformers = String[].class.cast(remove(currentActivityPerformers, index));
 
-			logger.debug(marker, "new activity instance ids: '{}'", activityInstanceIds);
-			logger.debug(marker, "new activity definition ids: '{}'", activityDefinitionIds);
-			logger.debug(marker, "new activity instance performers: '{}'", currentActivityPerformers);
+			logger.debug(marker, "new activity instance ids: '{}'", Object.class.cast(activityInstanceIds));
+			logger.debug(marker, "new activity definition ids: '{}'", Object.class.cast(activityDefinitionIds));
+			logger.debug(marker, "new activity instance performers: '{}'", Object.class.cast(currentActivityPerformers));
 
 			updateCodeWithFirstActivityInfo();
 		}

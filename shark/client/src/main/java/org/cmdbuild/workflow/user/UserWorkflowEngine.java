@@ -1,5 +1,7 @@
 package org.cmdbuild.workflow.user;
 
+import java.util.Map;
+
 import org.cmdbuild.workflow.CMActivityInstance;
 import org.cmdbuild.workflow.CMProcessClass;
 import org.cmdbuild.workflow.CMWorkflowEngine;
@@ -21,6 +23,9 @@ public interface UserWorkflowEngine extends CMWorkflowEngine {
 
 	@Override
 	UserProcessInstance startProcess(CMProcessClass type) throws CMWorkflowException;
+
+	@Override
+	UserProcessInstance startProcess(CMProcessClass type, Map<String, ?> vars) throws CMWorkflowException;
 
 	@Override
 	UserProcessInstance advanceActivity(CMActivityInstance activityInstance) throws CMWorkflowException;

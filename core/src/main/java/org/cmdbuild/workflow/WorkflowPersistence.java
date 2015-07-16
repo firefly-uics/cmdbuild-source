@@ -11,23 +11,20 @@ import org.cmdbuild.workflow.user.UserProcessClass;
 import org.cmdbuild.workflow.user.UserProcessInstance;
 import org.cmdbuild.workflow.user.UserProcessInstanceWithPosition;
 
+import com.google.common.collect.ForwardingObject;
+
 public interface WorkflowPersistence {
 
-	interface ProcessCreation {
+	interface ProcessData {
 
 		WSProcessInstanceState NO_STATE = null;
 		WSProcessInstInfo NO_PROCESS_INSTANCE_INFO = null;
+		Map<String, ?> NO_VALUES = null;
+		WSActivityInstInfo[] NO_ACTIVITIES = null;
 
 		WSProcessInstanceState state();
 
 		WSProcessInstInfo processInstanceInfo();
-
-	}
-
-	interface ProcessUpdate extends ProcessCreation {
-
-		Map<String, ?> NO_VALUES = null;
-		WSActivityInstInfo[] NO_ACTIVITIES = null;
 
 		Map<String, ?> values();
 
@@ -37,19 +34,96 @@ public interface WorkflowPersistence {
 
 	}
 
+	class NoProcessData implements ProcessData {
+
+		private static final NoProcessData INSTANCE = new NoProcessData();
+
+		public static NoProcessData getInstance() {
+			return INSTANCE;
+		}
+
+		private NoProcessData() {
+			// use factory method
+		}
+
+		@Override
+		public WSProcessInstanceState state() {
+			return NO_STATE;
+		}
+
+		@Override
+		public WSProcessInstInfo processInstanceInfo() {
+			return NO_PROCESS_INSTANCE_INFO;
+		}
+
+		@Override
+		public Map<String, ?> values() {
+			return NO_VALUES;
+		}
+
+		@Override
+		public WSActivityInstInfo[] addActivities() {
+			return NO_ACTIVITIES;
+		}
+
+		@Override
+		public WSActivityInstInfo[] activities() {
+			return NO_ACTIVITIES;
+		}
+
+	}
+
+	abstract class ForwardingProcessData extends ForwardingObject implements ProcessData {
+
+		/**
+		 * Usable by subclasses only.
+		 */
+		protected ForwardingProcessData() {
+		}
+
+		@Override
+		protected abstract ProcessData delegate();
+
+		@Override
+		public WSProcessInstanceState state() {
+			return delegate().state();
+		}
+
+		@Override
+		public WSProcessInstInfo processInstanceInfo() {
+			return delegate().processInstanceInfo();
+		}
+
+		@Override
+		public Map<String, ?> values() {
+			return delegate().values();
+		}
+
+		@Override
+		public WSActivityInstInfo[] addActivities() {
+			return delegate().addActivities();
+		}
+
+		@Override
+		public WSActivityInstInfo[] activities() {
+			return delegate().activities();
+		}
+
+	}
+
 	Iterable<UserProcessClass> getAllProcessClasses();
 
 	UserProcessClass findProcessClass(Long id);
 
 	UserProcessClass findProcessClass(String name);
 
-	UserProcessInstance createProcessInstance(WSProcessInstInfo processInstInfo, ProcessCreation processCreation)
+	UserProcessInstance createProcessInstance(WSProcessInstInfo processInstInfo, ProcessData processData)
 			throws CMWorkflowException;
 
 	UserProcessInstance createProcessInstance(CMProcessClass processClass, WSProcessInstInfo processInstInfo,
-			ProcessCreation processCreation) throws CMWorkflowException;
+			ProcessData processData) throws CMWorkflowException;
 
-	UserProcessInstance updateProcessInstance(CMProcessInstance processInstance, ProcessUpdate processUpdate)
+	UserProcessInstance updateProcessInstance(CMProcessInstance processInstance, ProcessData processData)
 			throws CMWorkflowException;
 
 	UserProcessInstance findProcessInstance(WSProcessInstInfo processInstInfo) throws CMWorkflowException;
