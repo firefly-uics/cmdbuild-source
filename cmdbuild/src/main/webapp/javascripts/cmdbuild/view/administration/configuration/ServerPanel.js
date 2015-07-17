@@ -47,7 +47,7 @@
 						]
 					}),
 					Ext.create('Ext.form.FieldSet', {
-						title: CMDBuild.Translation.lockCardsInEdit,
+						title: CMDBuild.Translation.lockCardsAndProcessesInEdit,
 						padding: '5',
 
 						items: [

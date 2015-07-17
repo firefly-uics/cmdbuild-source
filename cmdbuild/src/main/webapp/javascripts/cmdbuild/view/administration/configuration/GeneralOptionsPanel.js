@@ -233,7 +233,7 @@
 					this.languageFieldset, // TODO: to delete when localization module will be released
 					this.enabledLanguagesFieldset, // TODO: to delete when localization module will be released
 					Ext.create('Ext.form.FieldSet', {
-						title: CMDBuild.Translation.lockCardsInEdit,
+						title: CMDBuild.Translation.lockCardsAndProcessesInEdit,
 
 						layout: {
 							type: 'vbox',
