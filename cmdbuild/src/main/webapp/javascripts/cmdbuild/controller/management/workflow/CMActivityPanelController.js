@@ -145,15 +145,19 @@
 				&& !Ext.isEmpty(activityInstance)
 				&& activityInstance.isWritable()
 			) {
-				this.lock();
-
-				this.view.editMode();
+				this.lock(function() {
+					this.view.editMode();
+				}, this);
 
 				this.callParent(arguments);
 			}
 		},
 
-		lock: function() {
+		/**
+		 * @param {Function} success
+		 * @param {Object} scope
+		 */
+		lock: function(success, scope) {
 			if (
 				CMDBuild.Config.cmdbuild.lockcardenabled == 'true' // TODO: implementation of model for configuration
 				&& _CMWFState.getActivityInstance()
@@ -164,8 +168,12 @@
 				params[CMDBuild.core.proxy.CMProxyConstants.PROCESS_INSTANCE_ID] = _CMWFState.getProcessInstance().data[CMDBuild.core.proxy.CMProxyConstants.ID];
 
 				CMDBuild.core.proxy.processes.Activity.lock({
-					params: params
+					params: params,
+					scope: scope,
+					success: success
 				});
+			} else {
+				Ext.callback(success, scope); // TODO use Ext.callback + scope
 			}
 		},
 
@@ -293,8 +301,6 @@
 
 		onEditMode: function() {
 			this.editMode = true;
-
-			this.lock();
 
 			if (this.widgetControllerManager) {
 				this.widgetControllerManager.onCardGoesInEdit();
@@ -441,7 +447,7 @@
 				});
 			}
 		} else {
-			_debug("There are no processInstance to save");
+			_error('there are no processInstance to save', this);
 		}
 	}
 
@@ -475,33 +481,43 @@
 	}
 
 	function manageEditability(me, activityInstance, processInstance) {
-
 		if (activityInstance.isNew()) {
 			me.view.editMode();
+
 			return;
 		}
 
-		if (!processInstance.isStateOpen()
-				|| activityInstance.isNullObject()
-				|| !activityInstance.isWritable()) {
-
+		if (
+			!processInstance.isStateOpen()
+			|| activityInstance.isNullObject()
+			|| !activityInstance.isWritable()
+		) {
 			me.view.displayModeForNotEditableCard();
+
 			enableStopButtonIfUserCanUseIt(me, processInstance);
+
 			return;
 		}
 
-		if (me.isAdvance
-				&& processInstance.getId() == me.idToAdvance) {
-
+		if (
+			me.isAdvance
+			&& processInstance.getId() == me.idToAdvance
+		) {
 			me.view.editMode();
 			me.superController.onModifyCardClick(); // Call modify event for email tab
+
+			// Lock card on advance action
+			me.lock(function() {
+				me.view.editMode();
+			});
 
 			me.isAdvance = false;
 
 			return;
 		}
 
-		me.view.displayMode(enableTbar = true);
+		me.view.displayMode(true);
+
 		enableStopButtonIfUserCanUseIt(me, processInstance);
 	}
 
