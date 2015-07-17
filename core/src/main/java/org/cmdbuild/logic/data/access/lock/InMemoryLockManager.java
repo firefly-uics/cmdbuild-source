@@ -2,9 +2,9 @@ package org.cmdbuild.logic.data.access.lock;
 
 import static com.google.common.base.Optional.fromNullable;
 import static com.google.common.collect.Lists.newArrayList;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
 import java.util.Date;
-import static java.util.concurrent.TimeUnit.*;
 
 import org.cmdbuild.exception.ConsistencyException;
 import org.cmdbuild.exception.ConsistencyException.ConsistencyExceptionType;
@@ -107,8 +107,11 @@ public class InMemoryLockManager implements LockManager {
 	}
 
 	private ConsistencyException createLockedCardException(final LockableWithMetadata element) {
+		final long currentTimestamp = new Date().getTime();
+		final long differenceInMilliseconds = currentTimestamp - element.getTime().getTime();
+		final long differenceInSeconds = differenceInMilliseconds / 1000;
 		return ConsistencyExceptionType.LOCKED_CARD //
-				.createException(displayLockerUsername ? element.getUser() : "undefined", "" + element.getTime());
+				.createException(displayLockerUsername ? element.getUser() : "undefined", "" + differenceInSeconds);
 	}
 
 }

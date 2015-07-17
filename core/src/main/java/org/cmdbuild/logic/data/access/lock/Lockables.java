@@ -9,6 +9,11 @@ public class Lockables {
 		return new LockableCard(id);
 	}
 
+	public static Lockable instanceActivity(final Long instanceId, final String activityId) {
+		// TODO use cache
+		return new LockableInstanceActivity(instanceId, activityId);
+	}
+
 	private Lockables() {
 		// prevents instantiation
 	}
