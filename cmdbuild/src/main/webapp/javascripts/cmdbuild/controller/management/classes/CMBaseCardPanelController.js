@@ -295,10 +295,7 @@
 						params: {
 							id: id
 						},
-						success: success,
-						failure: function() {
-							return false;
-						}
+						success: success				}
 					});
 				}
 			} else {

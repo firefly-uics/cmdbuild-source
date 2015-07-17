@@ -125,14 +125,11 @@
 			if (_CMUtils.lockCard.isEnabled()) {
 				if (this.card) {
 					var id = this.card.get("Id");
-					_CMProxy.card.lockCard({
+					CMDBuild.core.proxy.Card.lock({
 						params: {
 							id: id
 						},
-						success: success,
-						failure: function() {
-							return false;
-						}
+						success: success
 					});
 				}
 			} else {
