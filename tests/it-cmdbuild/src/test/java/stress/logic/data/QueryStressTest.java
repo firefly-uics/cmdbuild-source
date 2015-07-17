@@ -14,7 +14,7 @@ import org.cmdbuild.data.store.lookup.LookupStorableConverter;
 import org.cmdbuild.logic.data.QueryOptions;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.logic.data.access.UserDataAccessLogicBuilder;
-import org.cmdbuild.logic.data.access.lock.EmptyLockCard;
+import org.cmdbuild.logic.data.access.lock.EmptyLockManager;
 import org.cmdbuild.model.data.Card;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -44,7 +44,7 @@ public class QueryStressTest extends IntegrationTestBase {
 				dbDataView(), //
 				dbDataView(), //
 				operationUser(), //
-				new EmptyLockCard()) //
+				new EmptyLockManager()) //
 				.build();
 		final DBDriver pgDriver = dbDriver();
 		stressTestClass = pgDriver.findClass(CLASS_NAME);

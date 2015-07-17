@@ -4,7 +4,7 @@ import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.common.Builder;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.data.store.lookup.LookupStore;
-import org.cmdbuild.logic.data.access.lock.LockCardManager;
+import org.cmdbuild.logic.data.access.lock.LockManager;
 
 public abstract class DataAccessLogicBuilder implements Builder<DataAccessLogic> {
 
@@ -13,7 +13,7 @@ public abstract class DataAccessLogicBuilder implements Builder<DataAccessLogic>
 	private final CMDataView dataView;
 	private final CMDataView strictDataView;
 	private final OperationUser operationUser;
-	private final LockCardManager lockCardManager;
+	private final LockManager lockCardManager;
 
 	protected DataAccessLogicBuilder( //
 			final CMDataView systemDataView, //
@@ -21,7 +21,7 @@ public abstract class DataAccessLogicBuilder implements Builder<DataAccessLogic>
 			final CMDataView dataView, //
 			final CMDataView strictDataView, //
 			final OperationUser operationUser, //
-			final LockCardManager lockCardManager //
+			final LockManager lockCardManager //
 	) {
 		this.systemDataView = systemDataView;
 		this.lookupStore = lookupStore;

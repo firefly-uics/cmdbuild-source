@@ -38,7 +38,7 @@ public class User {
 	private FilesStore filesStore;
 
 	@Autowired
-	private LockCard lockCard;
+	private Lock lock;
 
 	@Autowired
 	private PrivilegeManagement privilegeManagement;
@@ -68,7 +68,7 @@ public class User {
 				permissiveDataView(), //
 				userDataView(), //
 				userStore.getUser(), //
-				lockCard.emptyLockCardManager());
+				lock.emptyLockCardManager());
 	}
 
 	@Bean
@@ -81,7 +81,7 @@ public class User {
 				permissiveDataView(), //
 				userDataView(), //
 				userStore.getUser(), //
-				lockCard.userLockCardManager());
+				lock.lockCardManager());
 	}
 
 	public static final String BEAN_USER_DATA_VIEW = "UserDataView";
