@@ -295,7 +295,7 @@
 						params: {
 							id: id
 						},
-						success: success				}
+						success: succes
 					});
 				}
 			} else {
