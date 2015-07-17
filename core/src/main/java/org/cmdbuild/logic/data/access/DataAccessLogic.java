@@ -239,9 +239,9 @@ public interface DataAccessLogic extends Logic {
 
 	void unlockAllCards();
 
-	void lockActivity(Long instanceId, Long activityId);
+	void lockActivity(Long instanceId, String activityId);
 
-	void unlockActivity(Long instanceId, Long activityId);
+	void unlockActivity(Long instanceId, String activityId);
 
 	void unlockAllActivities();
 
