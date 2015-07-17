@@ -27,6 +27,7 @@ import static org.cmdbuild.dao.query.clause.where.AndWhereClause.and;
 import static org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue.eq;
 import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
 import static org.cmdbuild.data.store.Storables.storableOf;
+import static org.cmdbuild.logic.data.access.lock.Lockables.card;
 
 import java.io.File;
 import java.io.IOException;
@@ -74,7 +75,7 @@ import org.cmdbuild.logic.commands.GetRelationList.DomainWithSource;
 import org.cmdbuild.logic.commands.GetRelationList.GetRelationListResponse;
 import org.cmdbuild.logic.commands.GetRelationSingle;
 import org.cmdbuild.logic.data.QueryOptions;
-import org.cmdbuild.logic.data.access.lock.LockCardManager;
+import org.cmdbuild.logic.data.access.lock.LockManager;
 import org.cmdbuild.logic.data.access.resolver.CardSerializer;
 import org.cmdbuild.logic.data.access.resolver.ForeignReferenceResolver;
 import org.cmdbuild.model.data.Card;
@@ -129,7 +130,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 	private final CMDataView dataView;
 	private final CMDataView strictDataView;
 	private final OperationUser operationUser;
-	private final LockCardManager lockCardManager;
+	private final LockManager lockCardManager;
 
 	public DefaultDataAccessLogic( //
 			final CMDataView systemDataView, //
@@ -137,7 +138,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 			final CMDataView view, //
 			final CMDataView strictDataView, //
 			final OperationUser operationUser, //
-			final LockCardManager lockCardManager //
+			final LockManager lockCardManager //
 	) {
 		this.systemDataView = systemDataView;
 		this.dataView = view;
@@ -674,7 +675,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 	@Override
 	public void updateCard(final Card userGivenCard) {
 		final String currentlyLoggedUser = operationUser.getAuthenticatedUser().getUsername();
-		lockCardManager.checkLockerUser(userGivenCard.getId(), currentlyLoggedUser);
+		lockCardManager.checkLockedbyUser(card(userGivenCard.getId()), currentlyLoggedUser);
 
 		final CMClass entryType = dataView.findClass(userGivenCard.getClassName());
 		if (entryType == null) {
@@ -702,7 +703,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 
 		updateRelationAttributesFromReference(updatedCard.getId(), fetchedCard, _userGivenCard, entryType);
 
-		lockCardManager.unlock(_userGivenCard.getId());
+		lockCardManager.unlock(card(_userGivenCard.getId()));
 	}
 
 	private void updateRelationAttributesFromReference( //
@@ -890,7 +891,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 	@Override
 	@Transactional
 	public void deleteCard(final String className, final Long cardId) {
-		lockCardManager.checkLocked(cardId);
+		lockCardManager.checkNotLocked(card(cardId));
 
 		final Card card = Card.newInstance() //
 				.withClassName(className) //
@@ -1218,12 +1219,12 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 
 	@Override
 	public void lockCard(final Long cardId) {
-		this.lockCardManager.lock(cardId);
+		this.lockCardManager.lock(card(cardId));
 	}
 
 	@Override
 	public void unlockCard(final Long cardId) {
-		this.lockCardManager.unlock(cardId);
+		this.lockCardManager.unlock(card(cardId));
 	}
 
 	@Override

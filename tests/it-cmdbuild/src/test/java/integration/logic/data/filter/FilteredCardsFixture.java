@@ -20,7 +20,7 @@ import org.cmdbuild.logic.data.DefaultDataDefinitionLogic;
 import org.cmdbuild.logic.data.QueryOptions;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.logic.data.access.UserDataAccessLogicBuilder;
-import org.cmdbuild.logic.data.access.lock.EmptyLockCard;
+import org.cmdbuild.logic.data.access.lock.EmptyLockManager;
 import org.cmdbuild.logic.mapping.json.Constants.FilterOperator;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -62,7 +62,7 @@ public abstract class FilteredCardsFixture extends IntegrationTestBase {
 				dbDataView(), //
 				dbDataView(), //
 				operationUser(), //
-				new EmptyLockCard()) //
+				new EmptyLockManager()) //
 				.build();
 		createClassesAndDomains();
 		initializeDatabaseData();

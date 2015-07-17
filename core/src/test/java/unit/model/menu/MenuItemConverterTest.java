@@ -15,7 +15,7 @@ import org.cmdbuild.dao.entrytype.CMIdentifier;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.data.store.lookup.LookupStore;
 import org.cmdbuild.logic.data.access.SystemDataAccessLogicBuilder;
-import org.cmdbuild.logic.data.access.lock.LockCardManager;
+import org.cmdbuild.logic.data.access.lock.LockManager;
 import org.cmdbuild.model.dashboard.DashboardDefinition;
 import org.cmdbuild.model.dashboard.DefaultDashboardDefinition;
 import org.cmdbuild.services.store.menu.MenuItem;
@@ -43,7 +43,7 @@ public class MenuItemConverterTest {
 								mock(PrivilegeContext.class), //
 								mock(CMGroup.class) //
 						), //
-						mock(LockCardManager.class) //
+						mock(LockManager.class) //
 				));
 	}
 
