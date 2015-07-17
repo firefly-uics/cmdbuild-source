@@ -1407,7 +1407,7 @@
 	"language": "<em>Language</em>",
 	"last_checkin": "Последња провера",
 	"layers": "Слојеви",
-	"lockCardsInEdit": "Закључај картице при ажурирању",
+	"lockCardsAndProcessesInEdit": "<em>Lock cards and processes in edit</em>",
 	"lockTimeout": "Истек закључавања (секунди)",
 	"loggedGroup": "Пријављена група",
 	"loggedUser": "Пријављени корисник",

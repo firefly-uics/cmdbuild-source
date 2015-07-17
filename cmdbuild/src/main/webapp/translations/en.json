@@ -1407,7 +1407,7 @@
 	"language": "Language",
 	"last_checkin": "Last checkin",
 	"layers": "Layers",
-	"lockCardsInEdit": "Lock cards in edit",
+	"lockCardsAndProcessesInEdit": "Lock cards and processes in edit",
 	"lockTimeout": "Lock timeout (seconds)",
 	"loggedGroup": "Logged Group",
 	"loggedUser": "Logged User",

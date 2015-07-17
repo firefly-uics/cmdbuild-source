@@ -1407,7 +1407,7 @@
 	"language": "<em>Language</em>",
 	"last_checkin": "最後のチェックイン",
 	"layers": "レイヤー",
-	"lockCardsInEdit": "編集中カードをロック",
+	"lockCardsAndProcessesInEdit": "<em>Lock cards and processes in edit</em>",
 	"lockTimeout": "ロックタイムアウト",
 	"loggedGroup": "ロググループ",
 	"loggedUser": "ログユーザー",
