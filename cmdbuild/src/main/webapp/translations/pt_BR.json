@@ -1407,7 +1407,7 @@
 	"language": "Idioma",
 	"last_checkin": "<em>Last checkin</em>",
 	"layers": "<em>Layers</em>",
-	"lockCardsInEdit": "Cartões Travados para Edição",
+	"lockCardsAndProcessesInEdit": "<em>Lock cards and processes in edit</em>",
 	"lockTimeout": "Tempo de Travamento seconds)",
 	"loggedGroup": "<em>Logged Group</em>",
 	"loggedUser": "<em>Logged User</em>",

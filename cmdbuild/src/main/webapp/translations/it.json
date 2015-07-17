@@ -1407,7 +1407,7 @@
 	"language": "Lingua",
 	"last_checkin": "Ultimo Checkin",
 	"layers": "Livelli",
-	"lockCardsInEdit": "Blocco schede in modifica",
+	"lockCardsAndProcessesInEdit": "Blocco schede e processi in modifica",
 	"lockTimeout": "Tempo massimo di blocco (secondi)",
 	"loggedGroup": "Gruppo corrente",
 	"loggedUser": "Utente corrente",

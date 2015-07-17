@@ -1407,7 +1407,7 @@
 	"language": "<em>Language</em>",
 	"last_checkin": "آخرین ورود",
 	"layers": "لایه ها",
-	"lockCardsInEdit": "کارهای در حال ویرایش را قفل کن",
+	"lockCardsAndProcessesInEdit": "<em>Lock cards and processes in edit</em>",
 	"lockTimeout": "مهلت قفل(به ثانیه)",
 	"loggedGroup": "گروه لاگ شده",
 	"loggedUser": "کاربر لاگ شده",
