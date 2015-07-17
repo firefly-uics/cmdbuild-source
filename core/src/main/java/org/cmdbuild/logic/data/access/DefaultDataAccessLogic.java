@@ -28,6 +28,7 @@ import static org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue.eq;
 import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
 import static org.cmdbuild.data.store.Storables.storableOf;
 import static org.cmdbuild.logic.data.access.lock.Lockables.card;
+import static org.cmdbuild.logic.data.access.lock.Lockables.instanceActivity;
 
 import java.io.File;
 import java.io.IOException;
@@ -1233,18 +1234,18 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 	}
 
 	@Override
-	public void lockActivity(final Long instanceId, final Long activityId) {
-		// TODO Auto-generated method stub
+	public void lockActivity(final Long instanceId, final String activityId) {
+		this.lockCardManager.lock(instanceActivity(instanceId, activityId));
 	}
 
 	@Override
-	public void unlockActivity(final Long instanceId, final Long activityId) {
-		// TODO Auto-generated method stub
+	public void unlockActivity(final Long instanceId, final String activityId) {
+		this.lockCardManager.unlock(instanceActivity(instanceId, activityId));
 	}
 
 	@Override
 	public void unlockAllActivities() {
-		// TODO Auto-generated method stub
+		this.lockCardManager.unlockAll();
 	}
 
 }
