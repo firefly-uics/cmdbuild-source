@@ -32,19 +32,16 @@
 
 			bulkUpdate: 'services/json/management/modcard/bulkupdate',
 			bulkUpdateFromFilter: 'services/json/management/modcard/bulkupdatefromfilter',
-			getPosition: 'services/json/management/modcard/getcardposition',
-			lock: 'services/json/management/modcard/lockcard',
-			unlock: 'services/json/management/modcard/unlockcard',
-			unlockAll: 'services/json/management/modcard/unlockallcards'
+			getPosition: 'services/json/management/modcard/getcardposition'
 		},
 
 		cardList: 'services/json/management/modcard/getcardlist',
 
 		classes: {
 			cards: {
-				lock: 'services/json/cards/lock',
-				unlock: 'services/json/cards/unlock',
-				unlockAll: 'services/json/cards/unlockall'
+				lock: 'services/json/lock/lockcard',
+				unlock: 'services/json/lock/unlockcard',
+				unlockAll: 'services/json/lock/unlockall'
 			},
 			create: 'services/json/schema/modclass/savetable',
 			read: 'services/json/schema/modclass/getallclasses',
@@ -215,9 +212,8 @@
 
 		processes: {
 			instances: {
-				lock: 'services/json/processes/instances/lock',
-				unlock: 'services/json/processes/instances/unlock',
-				unlockAll: 'services/json/processes/instances/unlockall'
+				lock: 'services/json/lock/lockactivity',
+				unlock: 'services/json/lock/unlockactivity'
 			}
 		},
 

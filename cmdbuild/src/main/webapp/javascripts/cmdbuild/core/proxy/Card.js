@@ -63,23 +63,6 @@
 		},
 
 		/**
-		 * @param {Object} parameters
-		 */
-		lock: function(parameters) {
-			CMDBuild.Ajax.request({
-				method: 'POST',
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.classes.cards.lock,
-				headers: parameters.headers,
-				params: parameters.params,
-				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : false,
-				scope: parameters.scope || this,
-				failure: parameters.failure || Ext.emptyFn(),
-				success: parameters.success || Ext.emptyFn(),
-				callback: parameters.callback || Ext.emptyFn()
-			});
-		},
-
-		/**
 		 * @param {Object} params
 		 */
 		remove: function(params) {
@@ -88,40 +71,6 @@
 			params.important = true;
 
 			CMDBuild.ServiceProxy.core.doRequest(params);
-		},
-
-		/**
-		 * @param {Object} parameters
-		 */
-		unlock: function(parameters) {
-			CMDBuild.Ajax.request({
-				method: 'POST',
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.classes.cards.unlock,
-				headers: parameters.headers,
-				params: parameters.params,
-				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : false,
-				scope: parameters.scope || this,
-				failure: parameters.failure || Ext.emptyFn(),
-				success: parameters.success || Ext.emptyFn(),
-				callback: parameters.callback || Ext.emptyFn()
-			});
-		},
-
-		/**
-		 * @param {Object} parameters
-		 */
-		unlockAll: function(parameters) {
-			CMDBuild.Ajax.request({
-				method: 'POST',
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.classes.cards.unlockAll,
-				headers: parameters.headers,
-				params: parameters.params,
-				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
-				scope: parameters.scope || this,
-				failure: parameters.failure || Ext.emptyFn(),
-				success: parameters.success || Ext.emptyFn(),
-				callback: parameters.callback || Ext.emptyFn()
-			});
 		},
 
 		/**
@@ -140,6 +89,58 @@
 				callback: parameters.callback || Ext.emptyFn()
 			});
 		},
+
+		// Lock/Unlock methods
+			/**
+			 * @param {Object} parameters
+			 */
+			lock: function(parameters) {
+				CMDBuild.Ajax.request({
+					method: 'POST',
+					url: CMDBuild.core.proxy.CMProxyUrlIndex.classes.cards.lock,
+					headers: parameters.headers,
+					params: parameters.params,
+					loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : false,
+					scope: parameters.scope || this,
+					failure: parameters.failure || Ext.emptyFn(),
+					success: parameters.success || Ext.emptyFn(),
+					callback: parameters.callback || Ext.emptyFn()
+				});
+			},
+
+			/**
+			 * @param {Object} parameters
+			 */
+			unlock: function(parameters) {
+				CMDBuild.Ajax.request({
+					method: 'POST',
+					url: CMDBuild.core.proxy.CMProxyUrlIndex.classes.cards.unlock,
+					headers: parameters.headers,
+					params: parameters.params,
+					loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : false,
+					scope: parameters.scope || this,
+					failure: parameters.failure || Ext.emptyFn(),
+					success: parameters.success || Ext.emptyFn(),
+					callback: parameters.callback || Ext.emptyFn()
+				});
+			},
+
+			/**
+			 * @param {Object} parameters
+			 */
+			unlockAll: function(parameters) {
+				CMDBuild.Ajax.request({
+					method: 'POST',
+					url: CMDBuild.core.proxy.CMProxyUrlIndex.classes.cards.unlockAll,
+					headers: parameters.headers,
+					params: parameters.params,
+					loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
+					scope: parameters.scope || this,
+					failure: parameters.failure || Ext.emptyFn(),
+					success: parameters.success || Ext.emptyFn(),
+					callback: parameters.callback || Ext.emptyFn()
+				});
+			}
 	});
 
 	function adaptGetCardCallParams(p) {
