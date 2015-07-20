@@ -66,14 +66,10 @@
 		},
 
 		/**
-		 * Unlocks cards and processes
+		 * Unlocks all cards and processes also if proxy is specific for cards
 		 */
 		onServerUnlockCardsButtonClick: function() {
 			CMDBuild.core.proxy.Card.unlockAll({
-				success: CMDBuild.Msg.success
-			});
-
-			CMDBuild.core.proxy.processes.Activity.unlockAll({
 				success: CMDBuild.Msg.success
 			});
 		}

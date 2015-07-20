@@ -1,17 +1,35 @@
-package org.cmdbuild.servlets.json.processes;
+package org.cmdbuild.servlets.json;
 
 import static org.cmdbuild.services.json.dto.JsonResponse.success;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ACTIVITY_INSTANCE_ID;
+import static org.cmdbuild.servlets.json.CommunicationConstants.ID;
 import static org.cmdbuild.servlets.json.CommunicationConstants.PROCESS_INSTANCE_ID;
 
 import org.cmdbuild.services.json.dto.JsonResponse;
-import org.cmdbuild.servlets.json.JSONBaseWithSpringContext;
+import org.cmdbuild.servlets.json.JSONBase.Admin;
+import org.cmdbuild.servlets.json.JSONBase.JSONExported;
 import org.cmdbuild.servlets.utils.Parameter;
 
-public class Instances extends JSONBaseWithSpringContext {
+public class Lock extends JSONBaseWithSpringContext {
 
 	@JSONExported
-	public JsonResponse lock( //
+	public JsonResponse lockCard( //
+			@Parameter(value = ID) final Long cardId //
+	) {
+		lockLogic().lockCard(cardId);
+		return success();
+	}
+
+	@JSONExported
+	public JsonResponse unlockCard( //
+			@Parameter(value = ID) final Long cardId //
+	) {
+		lockLogic().unlockCard(cardId);
+		return success();
+	}
+
+	@JSONExported
+	public JsonResponse lockActivity( //
 			@Parameter(value = PROCESS_INSTANCE_ID) final Long instanceId, //
 			@Parameter(value = ACTIVITY_INSTANCE_ID) final String activityId //
 	) {
@@ -20,7 +38,7 @@ public class Instances extends JSONBaseWithSpringContext {
 	}
 
 	@JSONExported
-	public JsonResponse unlock( //
+	public JsonResponse unlockActivity( //
 			@Parameter(value = PROCESS_INSTANCE_ID) final Long instanceId, //
 			@Parameter(value = ACTIVITY_INSTANCE_ID) final String activityId //
 	) {
@@ -31,7 +49,7 @@ public class Instances extends JSONBaseWithSpringContext {
 	@Admin
 	@JSONExported
 	public JsonResponse unlockAll() {
-		lockLogic().unlockAllActivities();
+		lockLogic().unlockAllCards();
 		return success();
 	}
 
