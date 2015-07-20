@@ -68,7 +68,7 @@ public class User {
 				permissiveDataView(), //
 				userDataView(), //
 				userStore.getUser(), //
-				lock.emptyLockCardManager());
+				lock.emptyLockManager());
 	}
 
 	@Bean
@@ -81,7 +81,7 @@ public class User {
 				permissiveDataView(), //
 				userDataView(), //
 				userStore.getUser(), //
-				lock.lockCardManager());
+				lock.lockManager());
 	}
 
 	public static final String BEAN_USER_DATA_VIEW = "UserDataView";
@@ -139,11 +139,13 @@ public class User {
 	@Qualifier(USER)
 	public UserWorkflowLogicBuilder userWorkflowLogicBuilder() {
 		return new UserWorkflowLogicBuilder( //
+				userStore.getUser(), //
 				userStore.getUser().getPrivilegeContext(), //
 				userWorkflowEngineBuilder(), //
 				userDataView(), //
 				properties.workflowProperties(), //
-				filesStore);
+				filesStore, //
+				lock.lockManager());
 	}
 
 }

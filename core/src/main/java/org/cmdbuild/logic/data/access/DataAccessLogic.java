@@ -233,16 +233,4 @@ public interface DataAccessLogic extends Logic {
 
 	CMCard resolveCardReferences(CMClass entryType, CMCard card);
 
-	void lockCard(Long cardId);
-
-	void unlockCard(Long cardId);
-
-	void unlockAllCards();
-
-	void lockActivity(Long instanceId, String activityId);
-
-	void unlockActivity(Long instanceId, String activityId);
-
-	void unlockAllActivities();
-
 }

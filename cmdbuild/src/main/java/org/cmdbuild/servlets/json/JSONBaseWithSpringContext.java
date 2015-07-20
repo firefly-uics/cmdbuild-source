@@ -31,6 +31,7 @@ import org.cmdbuild.logic.bim.project.DefaultProjectLogic;
 import org.cmdbuild.logic.bim.project.ProjectLogic;
 import org.cmdbuild.logic.cache.CachingLogic;
 import org.cmdbuild.logic.data.DataDefinitionLogic;
+import org.cmdbuild.logic.data.LockLogic;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.logic.data.access.SystemDataAccessLogicBuilder;
 import org.cmdbuild.logic.data.access.UserDataAccessLogicBuilder;
@@ -210,6 +211,10 @@ public class JSONBaseWithSpringContext extends JSONBase {
 
 	protected GroupsLogic groupsLogic() {
 		return applicationContext().getBean(GroupsLogic.class);
+	}
+
+	protected LockLogic lockLogic() {
+		return applicationContext().getBean(LockLogic.class);
 	}
 
 	protected LookupLogic lookupLogic() {

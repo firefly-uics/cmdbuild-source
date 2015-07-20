@@ -1,6 +1,8 @@
 package org.cmdbuild.spring.configuration;
 
 import org.cmdbuild.auth.UserStore;
+import org.cmdbuild.logic.data.DefaultLockLogic;
+import org.cmdbuild.logic.data.LockLogic;
 import org.cmdbuild.logic.data.access.lock.CmdbuildConfigurationAdapter;
 import org.cmdbuild.logic.data.access.lock.ConfigurationAwareLockManager;
 import org.cmdbuild.logic.data.access.lock.EmptyLockManager;
@@ -24,13 +26,18 @@ public class Lock {
 	private UserStore userStore;
 
 	@Bean
-	public LockManager lockCardManager() {
-		return new ConfigurationAwareLockManager(properties.cmdbuildProperties(), emptyLockCardManager(),
+	public LockLogic lockLogic() {
+		return new DefaultLockLogic(lockManager());
+	}
+
+	@Bean
+	public LockManager lockManager() {
+		return new ConfigurationAwareLockManager(properties.cmdbuildProperties(), emptyLockManager(),
 				inMemoryLockCardManager());
 	}
 
 	@Bean
-	public LockManager emptyLockCardManager() {
+	public LockManager emptyLockManager() {
 		return new EmptyLockManager();
 	}
 

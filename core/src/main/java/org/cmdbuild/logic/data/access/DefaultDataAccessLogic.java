@@ -28,7 +28,6 @@ import static org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue.eq;
 import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
 import static org.cmdbuild.data.store.Storables.storableOf;
 import static org.cmdbuild.logic.data.access.lock.Lockables.card;
-import static org.cmdbuild.logic.data.access.lock.Lockables.instanceActivity;
 
 import java.io.File;
 import java.io.IOException;
@@ -131,7 +130,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 	private final CMDataView dataView;
 	private final CMDataView strictDataView;
 	private final OperationUser operationUser;
-	private final LockManager lockCardManager;
+	private final LockManager lockManager;
 
 	public DefaultDataAccessLogic( //
 			final CMDataView systemDataView, //
@@ -139,14 +138,14 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 			final CMDataView view, //
 			final CMDataView strictDataView, //
 			final OperationUser operationUser, //
-			final LockManager lockCardManager //
+			final LockManager lockManager //
 	) {
 		this.systemDataView = systemDataView;
 		this.dataView = view;
 		this.lookupStore = lookupStore;
 		this.strictDataView = strictDataView;
 		this.operationUser = operationUser;
-		this.lockCardManager = lockCardManager;
+		this.lockManager = lockManager;
 	}
 
 	@Override
@@ -676,7 +675,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 	@Override
 	public void updateCard(final Card userGivenCard) {
 		final String currentlyLoggedUser = operationUser.getAuthenticatedUser().getUsername();
-		lockCardManager.checkLockedbyUser(card(userGivenCard.getId()), currentlyLoggedUser);
+		lockManager.checkLockedbyUser(card(userGivenCard.getId()), currentlyLoggedUser);
 
 		final CMClass entryType = dataView.findClass(userGivenCard.getClassName());
 		if (entryType == null) {
@@ -704,7 +703,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 
 		updateRelationAttributesFromReference(updatedCard.getId(), fetchedCard, _userGivenCard, entryType);
 
-		lockCardManager.unlock(card(_userGivenCard.getId()));
+		lockManager.unlock(card(_userGivenCard.getId()));
 	}
 
 	private void updateRelationAttributesFromReference( //
@@ -892,7 +891,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 	@Override
 	@Transactional
 	public void deleteCard(final String className, final Long cardId) {
-		lockCardManager.checkNotLocked(card(cardId));
+		lockManager.checkNotLocked(card(cardId));
 
 		final Card card = Card.newInstance() //
 				.withClassName(className) //
@@ -1216,36 +1215,6 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 		}
 		final CMCard card = row.getCard(entryType);
 		return card;
-	}
-
-	@Override
-	public void lockCard(final Long cardId) {
-		this.lockCardManager.lock(card(cardId));
-	}
-
-	@Override
-	public void unlockCard(final Long cardId) {
-		this.lockCardManager.unlock(card(cardId));
-	}
-
-	@Override
-	public void unlockAllCards() {
-		this.lockCardManager.unlockAll();
-	}
-
-	@Override
-	public void lockActivity(final Long instanceId, final String activityId) {
-		this.lockCardManager.lock(instanceActivity(instanceId, activityId));
-	}
-
-	@Override
-	public void unlockActivity(final Long instanceId, final String activityId) {
-		this.lockCardManager.unlock(instanceActivity(instanceId, activityId));
-	}
-
-	@Override
-	public void unlockAllActivities() {
-		this.lockCardManager.unlockAll();
 	}
 
 }
