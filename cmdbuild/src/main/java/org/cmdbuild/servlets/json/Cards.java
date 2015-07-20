@@ -12,7 +12,7 @@ public class Cards extends JSONBaseWithSpringContext {
 	public JsonResponse lock( //
 			@Parameter(value = ID) final Long cardId //
 	) {
-		userDataAccessLogic().lockCard(cardId);
+		lockLogic().lockCard(cardId);
 		return success();
 	}
 
@@ -20,14 +20,14 @@ public class Cards extends JSONBaseWithSpringContext {
 	public JsonResponse unlock( //
 			@Parameter(value = ID) final Long cardId //
 	) {
-		userDataAccessLogic().unlockCard(cardId);
+		lockLogic().unlockCard(cardId);
 		return success();
 	}
 
 	@Admin
 	@JSONExported
 	public JsonResponse unlockAll() {
-		userDataAccessLogic().unlockAllCards();
+		lockLogic().unlockAllCards();
 		return success();
 	}
 

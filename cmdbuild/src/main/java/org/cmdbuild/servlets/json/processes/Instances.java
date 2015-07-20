@@ -15,7 +15,7 @@ public class Instances extends JSONBaseWithSpringContext {
 			@Parameter(value = PROCESS_INSTANCE_ID) final Long instanceId, //
 			@Parameter(value = ACTIVITY_INSTANCE_ID) final String activityId //
 	) {
-		userDataAccessLogic().lockActivity(instanceId, activityId);
+		lockLogic().lockActivity(instanceId, activityId);
 		return success();
 	}
 
@@ -24,14 +24,14 @@ public class Instances extends JSONBaseWithSpringContext {
 			@Parameter(value = PROCESS_INSTANCE_ID) final Long instanceId, //
 			@Parameter(value = ACTIVITY_INSTANCE_ID) final String activityId //
 	) {
-		userDataAccessLogic().unlockActivity(instanceId, activityId);
+		lockLogic().unlockActivity(instanceId, activityId);
 		return success();
 	}
 
 	@Admin
 	@JSONExported
 	public JsonResponse unlockAll() {
-		userDataAccessLogic().unlockAllActivities();
+		lockLogic().unlockAllActivities();
 		return success();
 	}
 
