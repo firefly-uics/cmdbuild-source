@@ -1,11 +1,11 @@
 package org.cmdbuild.spring.configuration;
 
 import org.cmdbuild.auth.UserStore;
+import org.cmdbuild.logic.data.ConfigurationAwareLockLogic;
 import org.cmdbuild.logic.data.DefaultLockLogic;
+import org.cmdbuild.logic.data.DummyLockLogic;
 import org.cmdbuild.logic.data.LockLogic;
 import org.cmdbuild.logic.data.access.lock.CmdbuildConfigurationAdapter;
-import org.cmdbuild.logic.data.access.lock.ConfigurationAwareLockManager;
-import org.cmdbuild.logic.data.access.lock.EmptyLockManager;
 import org.cmdbuild.logic.data.access.lock.InMemoryLockManager;
 import org.cmdbuild.logic.data.access.lock.LockManager;
 import org.cmdbuild.logic.data.access.lock.SynchronizedLockManager;
@@ -25,35 +25,41 @@ public class Lock {
 	@Autowired
 	private UserStore userStore;
 
-	@Bean
-	public LockLogic lockLogic() {
-		return new DefaultLockLogic(lockManager());
+	public static final String USER_LOCK_LOGIC = "UserLockLogic";
+
+	@Bean(name = USER_LOCK_LOGIC)
+	public LockLogic configurationAwareLockLogic() {
+		return new ConfigurationAwareLockLogic(properties.cmdbuildProperties(), dummyLockLogic(), defaultLockLogic());
 	}
 
 	@Bean
-	public LockManager lockManager() {
-		return new ConfigurationAwareLockManager(properties.cmdbuildProperties(), emptyLockManager(),
-				inMemoryLockCardManager());
+	protected LockLogic defaultLockLogic() {
+		return new DefaultLockLogic(synchronizedLockCardManager());
 	}
 
 	@Bean
-	public LockManager emptyLockManager() {
-		return new EmptyLockManager();
+	public LockLogic dummyLockLogic() {
+		return new DummyLockLogic();
 	}
 
 	@Bean
-	protected LockManager inMemoryLockCardManager() {
-		return new SynchronizedLockManager(new InMemoryLockManager(inMemoryLockCardConfiguration(), usernameSupplier()));
+	protected LockManager synchronizedLockCardManager() {
+		return new SynchronizedLockManager(inMemoryLockManager());
+	}
+
+	@Bean
+	protected LockManager inMemoryLockManager() {
+		return new InMemoryLockManager(inMemoryLockManagerConfiguration(), usernameSupplier());
+	}
+
+	@Bean
+	protected InMemoryLockManager.Configuration inMemoryLockManagerConfiguration() {
+		return new CmdbuildConfigurationAdapter(properties.cmdbuildProperties());
 	}
 
 	@Bean
 	protected Supplier<String> usernameSupplier() {
 		return new UsernameSupplier(userStore);
-	}
-
-	@Bean
-	protected InMemoryLockManager.Configuration inMemoryLockCardConfiguration() {
-		return new CmdbuildConfigurationAdapter(properties.cmdbuildProperties());
 	}
 
 }

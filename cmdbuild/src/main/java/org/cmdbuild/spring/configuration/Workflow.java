@@ -195,7 +195,7 @@ public class Workflow {
 				data.systemDataView(), //
 				workflowConfiguration, //
 				filesStore, //
-				lock.emptyLockManager());
+				lock.dummyLockLogic());
 	}
 
 	@Bean

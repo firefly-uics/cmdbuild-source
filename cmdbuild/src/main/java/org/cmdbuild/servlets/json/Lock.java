@@ -49,7 +49,7 @@ public class Lock extends JSONBaseWithSpringContext {
 	@Admin
 	@JSONExported
 	public JsonResponse unlockAll() {
-		lockLogic().unlockAllCards();
+		lockLogic().unlockAll();
 		return success();
 	}
 

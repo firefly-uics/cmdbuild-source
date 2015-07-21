@@ -20,37 +20,50 @@ public class DefaultLockLogic implements LockLogic {
 	@Override
 	public void lockCard(final Long cardId) {
 		logger.debug(MARKER, "locking card '{}'", cardId);
-		this.lockManager.lock(card(cardId));
+		lockManager.lock(card(cardId));
 	}
 
 	@Override
 	public void unlockCard(final Long cardId) {
 		logger.debug(MARKER, "unlocking card '{}'", cardId);
-		this.lockManager.unlock(card(cardId));
+		lockManager.unlock(card(cardId));
 	}
 
 	@Override
-	public void unlockAllCards() {
-		logger.debug(MARKER, "unlocking all cards");
-		this.lockManager.unlockAll();
+	public void checkNotLockedCard(final Long cardId) {
+		logger.debug(MARKER, "checking if card '{}' is unlocked", cardId);
+		lockManager.checkNotLocked(card(cardId));
+	}
+
+	@Override
+	public void checkCardLockedbyUser(final Long cardId, final String user) {
+		logger.debug(MARKER, "checking if card '{}' is locked by user '{}'", cardId, user);
+		lockManager.checkLockedbyUser(card(cardId), user);
 	}
 
 	@Override
 	public void lockActivity(final Long instanceId, final String activityId) {
 		logger.debug(MARKER, "locking activity '{}' for instance '{}'", activityId, instanceId);
-		this.lockManager.lock(instanceActivity(instanceId, activityId));
+		lockManager.lock(instanceActivity(instanceId, activityId));
 	}
 
 	@Override
 	public void unlockActivity(final Long instanceId, final String activityId) {
 		logger.debug(MARKER, "unlocking activity '{}' for instance '{}'", activityId, instanceId);
-		this.lockManager.unlock(instanceActivity(instanceId, activityId));
+		lockManager.unlock(instanceActivity(instanceId, activityId));
 	}
 
 	@Override
-	public void unlockAllActivities() {
-		logger.debug(MARKER, "unlocking all activities");
-		this.lockManager.unlockAll();
+	public void checkActivityLockedbyUser(final Long instanceId, final String activityId, final String user) {
+		logger.debug(MARKER, "checking if activity '{}' of instance '{}' is locked by user '{}'", activityId,
+				instanceId, user);
+		lockManager.checkLockedbyUser(instanceActivity(instanceId, activityId), user);
+	}
+
+	@Override
+	public void unlockAll() {
+		logger.debug(MARKER, "unlocking all cards");
+		lockManager.unlockAll();
 	}
 
 }

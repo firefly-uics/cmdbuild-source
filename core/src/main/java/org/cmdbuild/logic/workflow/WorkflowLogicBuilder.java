@@ -5,7 +5,7 @@ import org.cmdbuild.auth.acl.PrivilegeContext;
 import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.config.WorkflowConfiguration;
 import org.cmdbuild.dao.view.CMDataView;
-import org.cmdbuild.logic.data.access.lock.LockManager;
+import org.cmdbuild.logic.data.LockLogic;
 import org.cmdbuild.services.FilesStore;
 import org.cmdbuild.workflow.DefaultWorkflowEngine;
 import org.cmdbuild.workflow.QueryableUserWorkflowEngine;
@@ -18,7 +18,7 @@ public abstract class WorkflowLogicBuilder implements Builder<WorkflowLogic> {
 	private final CMDataView dataView;
 	private final WorkflowConfiguration configuration;
 	private final FilesStore filesStore;
-	private final LockManager lockManager;
+	private final LockLogic lockLogic;
 
 	protected WorkflowLogicBuilder( //
 			final OperationUser operationUser, //
@@ -27,7 +27,7 @@ public abstract class WorkflowLogicBuilder implements Builder<WorkflowLogic> {
 			final CMDataView dataView, //
 			final WorkflowConfiguration configuration, //
 			final FilesStore filesStore, //
-			final LockManager lockManager //
+			final LockLogic lockLogic //
 	) {
 		this.operationUser = operationUser;
 		this.privilegeContext = privilegeContext;
@@ -35,7 +35,7 @@ public abstract class WorkflowLogicBuilder implements Builder<WorkflowLogic> {
 		this.dataView = dataView;
 		this.configuration = configuration;
 		this.filesStore = filesStore;
-		this.lockManager = lockManager;
+		this.lockLogic = lockLogic;
 	}
 
 	@Override
@@ -47,7 +47,7 @@ public abstract class WorkflowLogicBuilder implements Builder<WorkflowLogic> {
 				dataView, //
 				configuration, //
 				filesStore, //
-				lockManager);
+				lockLogic);
 	}
 
 }
