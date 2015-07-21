@@ -8,12 +8,16 @@ public interface LockLogic extends Logic {
 
 	void unlockCard(Long cardId);
 
-	void unlockAllCards();
+	void checkNotLockedCard(Long cardId);
+
+	void checkCardLockedbyUser(Long cardId, String user);
 
 	void lockActivity(Long instanceId, String activityId);
 
 	void unlockActivity(Long instanceId, String activityId);
 
-	void unlockAllActivities();
+	void checkActivityLockedbyUser(Long instanceId, String activityId, String user);
+
+	void unlockAll();
 
 }

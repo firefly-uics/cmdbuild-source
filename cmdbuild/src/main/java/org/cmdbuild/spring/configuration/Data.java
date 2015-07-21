@@ -100,7 +100,7 @@ public class Data {
 				systemDataView(), //
 				systemDataView(), //
 				userStore.getUser(), //
-				lock.emptyLockManager());
+				lock.dummyLockLogic());
 	}
 
 	public static final String BEAN_SYSTEM_DATA_VIEW = "systemDataView";

@@ -68,7 +68,7 @@ public class User {
 				permissiveDataView(), //
 				userDataView(), //
 				userStore.getUser(), //
-				lock.emptyLockManager());
+				lock.dummyLockLogic());
 	}
 
 	@Bean
@@ -81,7 +81,7 @@ public class User {
 				permissiveDataView(), //
 				userDataView(), //
 				userStore.getUser(), //
-				lock.lockManager());
+				lock.configurationAwareLockLogic());
 	}
 
 	public static final String BEAN_USER_DATA_VIEW = "UserDataView";
@@ -145,7 +145,7 @@ public class User {
 				userDataView(), //
 				properties.workflowProperties(), //
 				filesStore, //
-				lock.lockManager());
+				lock.configurationAwareLockLogic());
 	}
 
 }

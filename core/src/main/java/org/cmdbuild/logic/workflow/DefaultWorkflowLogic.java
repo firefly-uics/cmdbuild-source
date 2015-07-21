@@ -39,9 +39,9 @@ import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.exception.CMDBWorkflowException;
 import org.cmdbuild.exception.CMDBWorkflowException.WorkflowExceptionType;
 import org.cmdbuild.exception.ConsistencyException.ConsistencyExceptionType;
+import org.cmdbuild.logic.data.LockLogic;
 import org.cmdbuild.logic.data.QueryOptions;
 import org.cmdbuild.logic.data.access.ProcessEntryFiller;
-import org.cmdbuild.logic.data.access.lock.LockManager;
 import org.cmdbuild.logic.data.access.resolver.AbstractSerializer;
 import org.cmdbuild.logic.data.access.resolver.ForeignReferenceResolver;
 import org.cmdbuild.services.FilesStore;
@@ -97,7 +97,7 @@ class DefaultWorkflowLogic implements WorkflowLogic {
 	private final CMDataView dataView;
 	private final WorkflowConfiguration configuration;
 	private final FilesStore filesStore;
-	private final LockManager lockManager;
+	private final LockLogic lockLogic;
 
 	public DefaultWorkflowLogic( //
 			final OperationUser operationUser, //
@@ -106,7 +106,7 @@ class DefaultWorkflowLogic implements WorkflowLogic {
 			final CMDataView dataView, //
 			final WorkflowConfiguration configuration, //
 			final FilesStore filesStore, //
-			final LockManager lockManager //
+			final LockLogic lockLogic //
 	) {
 		this.operationUser = operationUser;
 		this.privilegeContext = privilegeContext;
@@ -114,7 +114,7 @@ class DefaultWorkflowLogic implements WorkflowLogic {
 		this.dataView = dataView;
 		this.configuration = configuration;
 		this.filesStore = filesStore;
-		this.lockManager = lockManager;
+		this.lockLogic = lockLogic;
 	}
 
 	/*
@@ -534,7 +534,7 @@ class DefaultWorkflowLogic implements WorkflowLogic {
 			final String activityInstanceId, final Map<String, ?> vars, final Map<String, Object> widgetSubmission,
 			final boolean advance) throws CMWorkflowException {
 		final String currentlyLoggedUser = operationUser.getAuthenticatedUser().getUsername();
-		lockManager.checkLockedbyUser(instanceActivity(processCardId, activityInstanceId), currentlyLoggedUser);
+		lockLogic.checkActivityLockedbyUser(processCardId, activityInstanceId, currentlyLoggedUser);
 
 		final CMProcessClass processClass = workflowEngine.findProcessClassById(processClassId);
 		final UserProcessInstance processInstance = workflowEngine.findProcessInstance(processClass, processCardId);
@@ -563,7 +563,7 @@ class DefaultWorkflowLogic implements WorkflowLogic {
 				widgetSubmission, //
 				advance);
 
-		lockManager.unlock(instanceActivity(processCardId, activityInstanceId));
+		lockLogic.unlockActivity(processCardId, activityInstanceId);
 
 		/*
 		 * retrieve again the processInstance because the updateProcess return

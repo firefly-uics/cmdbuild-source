@@ -3,7 +3,7 @@ package org.cmdbuild.logic.data.access;
 import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.data.store.lookup.LookupStore;
-import org.cmdbuild.logic.data.access.lock.LockManager;
+import org.cmdbuild.logic.data.LockLogic;
 
 public class UserDataAccessLogicBuilder extends DataAccessLogicBuilder {
 
@@ -13,9 +13,9 @@ public class UserDataAccessLogicBuilder extends DataAccessLogicBuilder {
 			final CMDataView dataView, //
 			final CMDataView strictDataView, //
 			final OperationUser operationUser, //
-			final LockManager lockManager //
+			final LockLogic lockLogic //
 	) {
-		super(systemDataView, lookupStore, dataView, strictDataView, operationUser, lockManager);
+		super(systemDataView, lookupStore, dataView, strictDataView, operationUser, lockLogic);
 	}
 
 }

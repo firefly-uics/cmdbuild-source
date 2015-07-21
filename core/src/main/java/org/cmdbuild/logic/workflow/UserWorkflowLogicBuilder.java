@@ -5,7 +5,7 @@ import org.cmdbuild.auth.acl.PrivilegeContext;
 import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.config.WorkflowConfiguration;
 import org.cmdbuild.dao.view.CMDataView;
-import org.cmdbuild.logic.data.access.lock.LockManager;
+import org.cmdbuild.logic.data.LockLogic;
 import org.cmdbuild.services.FilesStore;
 import org.cmdbuild.workflow.DefaultWorkflowEngine;
 
@@ -18,9 +18,9 @@ public class UserWorkflowLogicBuilder extends WorkflowLogicBuilder {
 			final CMDataView dataView, //
 			final WorkflowConfiguration configuration, //
 			final FilesStore filesStore, //
-			final LockManager lockManager //
+			final LockLogic lockLogic //
 	) {
-		super(operationUser, privilegeContext, workflowEngineBuilder, dataView, configuration, filesStore, lockManager);
+		super(operationUser, privilegeContext, workflowEngineBuilder, dataView, configuration, filesStore, lockLogic);
 	}
 
 }

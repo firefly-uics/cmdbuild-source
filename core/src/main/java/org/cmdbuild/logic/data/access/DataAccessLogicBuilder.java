@@ -4,7 +4,7 @@ import org.apache.commons.lang3.builder.Builder;
 import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.data.store.lookup.LookupStore;
-import org.cmdbuild.logic.data.access.lock.LockManager;
+import org.cmdbuild.logic.data.LockLogic;
 
 public abstract class DataAccessLogicBuilder implements Builder<DataAccessLogic> {
 
@@ -13,7 +13,7 @@ public abstract class DataAccessLogicBuilder implements Builder<DataAccessLogic>
 	private final CMDataView dataView;
 	private final CMDataView strictDataView;
 	private final OperationUser operationUser;
-	private final LockManager lockManager;
+	private final LockLogic lockLogic;
 
 	protected DataAccessLogicBuilder( //
 			final CMDataView systemDataView, //
@@ -21,14 +21,14 @@ public abstract class DataAccessLogicBuilder implements Builder<DataAccessLogic>
 			final CMDataView dataView, //
 			final CMDataView strictDataView, //
 			final OperationUser operationUser, //
-			final LockManager lockManager //
+			final LockLogic lockLogic //
 	) {
 		this.systemDataView = systemDataView;
 		this.lookupStore = lookupStore;
 		this.dataView = dataView;
 		this.strictDataView = strictDataView;
 		this.operationUser = operationUser;
-		this.lockManager = lockManager;
+		this.lockLogic = lockLogic;
 	}
 
 	@Override
@@ -39,7 +39,7 @@ public abstract class DataAccessLogicBuilder implements Builder<DataAccessLogic>
 				dataView, //
 				strictDataView, //
 				operationUser, //
-				lockManager);
+				lockLogic);
 	}
 
 }
