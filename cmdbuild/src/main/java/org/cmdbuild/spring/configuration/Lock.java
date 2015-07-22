@@ -6,8 +6,11 @@ import org.cmdbuild.logic.data.DefaultLockLogic;
 import org.cmdbuild.logic.data.DummyLockLogic;
 import org.cmdbuild.logic.data.LockLogic;
 import org.cmdbuild.logic.data.access.lock.CmdbuildConfigurationAdapter;
-import org.cmdbuild.logic.data.access.lock.InMemoryLockManager;
+import org.cmdbuild.logic.data.access.lock.DefaultLockManager;
+import org.cmdbuild.logic.data.access.lock.DefaultLockManager.Metadata;
+import org.cmdbuild.logic.data.access.lock.InMemoryLockableStore;
 import org.cmdbuild.logic.data.access.lock.LockManager;
+import org.cmdbuild.logic.data.access.lock.LockableStore;
 import org.cmdbuild.logic.data.access.lock.SynchronizedLockManager;
 import org.cmdbuild.logic.data.access.lock.UsernameSupplier;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +37,8 @@ public class Lock {
 
 	@Bean
 	protected LockLogic defaultLockLogic() {
-		return new DefaultLockLogic(synchronizedLockCardManager());
+		// TODO wrap properties
+		return new DefaultLockLogic(properties.cmdbuildProperties(), synchronizedLockCardManager());
 	}
 
 	@Bean
@@ -44,16 +48,21 @@ public class Lock {
 
 	@Bean
 	protected LockManager synchronizedLockCardManager() {
-		return new SynchronizedLockManager(inMemoryLockManager());
+		return new SynchronizedLockManager(defaultLockManager());
 	}
 
 	@Bean
-	protected LockManager inMemoryLockManager() {
-		return new InMemoryLockManager(inMemoryLockManagerConfiguration(), usernameSupplier());
+	protected LockManager defaultLockManager() {
+		return new DefaultLockManager(usernameSupplier(), inMemoryLockableStore());
 	}
 
 	@Bean
-	protected InMemoryLockManager.Configuration inMemoryLockManagerConfiguration() {
+	protected LockableStore<Metadata> inMemoryLockableStore() {
+		return new InMemoryLockableStore<DefaultLockManager.Metadata>(cmdbuildConfigurationAdapter());
+	}
+
+	@Bean
+	protected CmdbuildConfigurationAdapter cmdbuildConfigurationAdapter() {
 		return new CmdbuildConfigurationAdapter(properties.cmdbuildProperties());
 	}
 

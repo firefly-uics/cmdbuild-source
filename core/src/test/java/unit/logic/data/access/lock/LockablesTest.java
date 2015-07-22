@@ -5,7 +5,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertThat;
 
-import org.cmdbuild.logic.data.access.lock.LockManager.Lockable;
+import org.cmdbuild.logic.data.access.lock.Lockable;
 import org.junit.Test;
 
 public class LockablesTest {
