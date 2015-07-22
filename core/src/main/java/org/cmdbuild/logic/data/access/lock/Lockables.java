@@ -7,7 +7,6 @@ import static org.apache.commons.lang3.builder.ToStringStyle.SHORT_PREFIX_STYLE;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.cmdbuild.logic.data.access.lock.LockManager.Lockable;
 
 import com.google.common.base.Optional;
 

@@ -1,55 +1,50 @@
 package unit.logic.data.access.lock;
 
+import static com.google.common.base.Optional.absent;
 import static com.google.common.base.Suppliers.ofInstance;
 import static org.cmdbuild.logic.data.access.lock.Lockables.card;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import org.cmdbuild.exception.ConsistencyException;
-import org.cmdbuild.logic.data.access.lock.InMemoryLockManager;
-import org.cmdbuild.logic.data.access.lock.InMemoryLockManager.Configuration;
+import org.cmdbuild.logic.data.access.lock.DefaultLockManager;
 import org.cmdbuild.logic.data.access.lock.LockManager;
-import org.cmdbuild.logic.data.access.lock.LockManager.Lockable;
+import org.cmdbuild.logic.data.access.lock.Lockable;
+import org.cmdbuild.logic.data.access.lock.LockableStore;
 import org.junit.Before;
 import org.junit.Test;
 
 import com.google.common.base.Supplier;
 
-public class InMemoryLockManagerTest {
+public class DefaultLockManagerTest {
 
-	private static Configuration configuration = new Configuration() {
-
-		@Override
-		public boolean isUsernameVisible() {
-			return true;
-		}
-
-		@Override
-		public long getExpirationTimeInMilliseconds() {
-			return 10000;
-		}
-
-	};
 	private static Supplier<String> usernameSupplier = ofInstance("test");
 
+	private LockableStore<DefaultLockManager.Metadata> store;
 	private LockManager manager;
 
 	@Before
 	public void setUp() throws Exception {
-		manager = new InMemoryLockManager(configuration, usernameSupplier);
+		store = mock(LockableStore.class);
+		manager = new DefaultLockManager(usernameSupplier, store);
 	}
 
 	@Test
-	public void checkedWhenNotLocked() {
+	public void checkedWhenNotLocked() throws Exception {
 		// given
 		final Lockable lockable = card(1L);
+		doReturn(absent()) //
+				.when(store).get(lockable);
 
 		// when
 		manager.checkNotLocked(lockable);
+		verify(store).get(lockable);
 	}
 
 	@Test(expected = ConsistencyException.class)
-	public void checkedAfterLocked() {
+	public void checkedAfterLocked() throws Exception {
 		// given
 		final Lockable lockable = card(1L);
 
@@ -59,7 +54,7 @@ public class InMemoryLockManagerTest {
 	}
 
 	@Test
-	public void checkedAfterLockedAndUnlocked() {
+	public void checkedAfterLockedAndUnlocked() throws Exception {
 		// given
 		final Lockable lockable = card(1L);
 
@@ -70,7 +65,7 @@ public class InMemoryLockManagerTest {
 	}
 
 	@Test
-	public void checkedWithUserWhenNotLocked() {
+	public void checkedWithUserWhenNotLocked() throws Exception {
 		// given
 		final Lockable lockable = card(1L);
 
@@ -79,12 +74,12 @@ public class InMemoryLockManagerTest {
 	}
 
 	@Test(expected = ConsistencyException.class)
-	public void checkedWithUserAfterLockedFromDifferentUser() {
+	public void checkedWithUserAfterLockedFromDifferentUser() throws Exception {
 		// given
 		final Supplier<String> usernameSupplier = mock(Supplier.class);
 		when(usernameSupplier.get()) //
 				.thenReturn("foo", "bar");
-		manager = new InMemoryLockManager(configuration, usernameSupplier);
+		manager = new DefaultLockManager( usernameSupplier, store);
 		final Lockable lockable = card(1L);
 
 		// when
@@ -93,7 +88,7 @@ public class InMemoryLockManagerTest {
 	}
 
 	@Test
-	public void lockedTwiceBySameUser() {
+	public void lockedTwiceBySameUser() throws Exception {
 		// given
 		final Lockable lockable = card(1L);
 
@@ -103,12 +98,12 @@ public class InMemoryLockManagerTest {
 	}
 
 	@Test(expected = ConsistencyException.class)
-	public void lockedTwiceByDifferenUser() {
+	public void lockedTwiceByDifferenUser() throws Exception {
 		// given
 		final Supplier<String> usernameSupplier = mock(Supplier.class);
 		when(usernameSupplier.get()) //
 				.thenReturn("foo", "bar");
-		manager = new InMemoryLockManager(configuration, usernameSupplier);
+		manager = new DefaultLockManager( usernameSupplier, store);
 		final Lockable lockable = card(1L);
 
 		// when
@@ -117,7 +112,7 @@ public class InMemoryLockManagerTest {
 	}
 
 	@Test
-	public void unlockedWhenNotLocked() {
+	public void unlockedWhenNotLocked() throws Exception {
 		// given
 		final Lockable lockable = card(1L);
 
@@ -126,12 +121,12 @@ public class InMemoryLockManagerTest {
 	}
 
 	@Test(expected = ConsistencyException.class)
-	public void lockedAndTheUnlockedFromDifferentUsers() {
+	public void lockedAndTheUnlockedFromDifferentUsers() throws Exception {
 		// given
 		final Supplier<String> usernameSupplier = mock(Supplier.class);
 		when(usernameSupplier.get()) //
 				.thenReturn("foo", "bar");
-		manager = new InMemoryLockManager(configuration, usernameSupplier);
+		manager = new DefaultLockManager(usernameSupplier, store);
 		final Lockable lockable = card(1L);
 
 		// when

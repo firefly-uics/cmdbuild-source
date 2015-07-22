@@ -1,23 +1,41 @@
 package org.cmdbuild.logic.data.access.lock;
 
-import com.google.common.base.Optional;
+import static java.lang.String.format;
+
+import java.util.Date;
 
 public interface LockManager {
 
-	interface Lockable {
+	@SuppressWarnings("serial")
+	class LockedByAnotherUser extends Exception {
 
-		Optional<Lockable> parent();
+		private final String user;
+		private final Date time;
+
+		public LockedByAnotherUser(final String user, final Date time) {
+			super(format("locked by user '%s' since '%s'", user, time));
+			this.user = user;
+			this.time = time;
+		}
+
+		public String getUser() {
+			return user;
+		}
+
+		public Date getTime() {
+			return time;
+		}
 
 	}
 
-	void lock(Lockable lockable);
+	void lock(Lockable lockable) throws LockedByAnotherUser;
 
-	void unlock(Lockable lockable);
+	void unlock(Lockable lockable) throws LockedByAnotherUser;
 
 	void unlockAll();
 
-	void checkNotLocked(Lockable lockable);
+	void checkNotLocked(Lockable lockable) throws LockedByAnotherUser;
 
-	void checkLockedbyUser(Lockable lockable, String userName);
+	void checkLockedbyUser(Lockable lockable, String userName) throws LockedByAnotherUser;
 
 }
