@@ -32,6 +32,22 @@
 		},
 
 		/**
+		 * @param {Object} parameters
+		 */
+		getList: function(parameters) {
+			CMDBuild.Ajax.request({
+				method: 'GET',
+				url: CMDBuild.core.proxy.CMProxyUrlIndex.card.getList,
+				params: parameters.params,
+				scope: parameters.scope || this,
+				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : false,
+				failure: parameters.failure || Ext.emptyFn,
+				success: parameters.success || Ext.emptyFn,
+				callback: parameters.callback || Ext.emptyFn
+			});
+		},
+
+		/**
 		 * Retrieve the position on the DB of the required card, considering the sorting and current filter applied on the grid
 		 *
 		 * @param {Object} p

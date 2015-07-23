@@ -16,6 +16,7 @@
 <script type="text/javascript" src="javascripts/cmdbuild/core/LoaderConfig.js"></script>
 
 <!-- OVERRIDES and FIXES -->
+<script type="text/javascript" src="javascripts/cmdbuild/override/JSON.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/override/data/proxy/FixServer.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/override/form/FixFieldSet.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/override/form/field/Display.js"></script>

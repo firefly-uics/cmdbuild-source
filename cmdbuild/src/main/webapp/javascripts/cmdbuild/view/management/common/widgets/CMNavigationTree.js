@@ -1,11 +1,14 @@
 (function() {
-	var DEFAULT_MENU_TEXT = CMDBuild.Translation.tree_navigation; 
+	var DEFAULT_MENU_TEXT = CMDBuild.Translation.tree_navigation;
 	var NODE_TEXT_TMP = "{0} [{1}] {2}";
 	var FILTER_FIELD = "_SystemFieldFilter";
 	var cacheFields = [];
+
+	Ext.require('CMDBuild.core.proxy.Card');
+
 	Ext.define("CMDBuild.view.management.common.widgets.CMNavigationTree", {
 		extend: "Ext.panel.Panel",
-		autoScroll: true,	
+		autoScroll: true,
 		statics: {
 			WIDGET_NAME: ".NavigationTree"
 		},
@@ -31,11 +34,11 @@
 			cacheFields = [];
 			this.tree.loadTree(treeName, tree);
 		},
-		
+
 		getData: function() {
 			return this.tree.getData();
 		}
-		
+
 	});
 
 	Ext.define('CMDBuild.model.widget.NavigationTreeNodeModel', {
@@ -70,7 +73,7 @@
 			});
 		return root;
 	}
-	
+
 	Ext.define("CMDBuild.view.management.widgets.navigationTree.CMTreePanel", {
 		extend: "Ext.tree.Panel",
 		treeName: undefined,
@@ -105,7 +108,7 @@
 			r.commit(); // to remove the F____ing red triangle to the node
 			loadChildren(this.widget, r, tree, tree.childNodes);
 		},
-		
+
 		getData: function() {
 			var node = this.store.getRootNode();
 			var data = [];
@@ -127,7 +130,7 @@
 				var filterEncoded = (! callParams) ? "" : Ext.encode({
 					CQL: callParams.CQL
 				});
-				CMDBuild.ServiceProxy.getCardList({
+				CMDBuild.core.proxy.Card.getList({
 					params: {
 						className: className,
 						filter: filterEncoded
@@ -242,7 +245,7 @@
 		});
 	}
 	function expandNodes(widget, children) {
-		
+
 		if (children.length > 0) {
 			var child = children[0];
 			loadForDomainChildren(widget, child, child.get("nodesIn"), function() {
@@ -268,5 +271,5 @@
 			className: node.get("className"),
 		};
 	}
-        
+
 })();
