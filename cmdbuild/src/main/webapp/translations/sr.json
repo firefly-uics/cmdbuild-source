@@ -1408,7 +1408,7 @@
 	"language": "<em>Language</em>",
 	"last_checkin": "Poslednja provera",
 	"layers": "Slojevi",
-	"lockCardsInEdit": "Zaključaj kartice pri ažuriranju",
+	"lockCardsAndProcessesInEdit": "<em>Lock cards and processes in edit</em>",
 	"lockTimeout": "Istek zaključavanja (sekundi)",
 	"loggedGroup": "Prijavljena grupa",
 	"loggedUser": "Prijavljeni korisnik",

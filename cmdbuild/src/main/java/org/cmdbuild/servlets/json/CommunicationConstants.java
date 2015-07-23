@@ -10,10 +10,12 @@ public class CommunicationConstants {
 			ACCOUNT = "account", //
 			ACTIVE = "active", //
 			ACTIVE_CAPITAL = "Active", //
+			ACTIVITY_INSTANCE_ID = "activityInstanceId", //
 			ACTIVITY_NAME = "activityName", //
 			ADDRESS = "address", //
 			ADMIN_PASSWORD = "admin_password", //
 			ADMIN_USER = "admin_user", //
+			ADVANCE = "advance", //
 			ALREADY_ASSOCIATED = "alreadyAssociated", //
 			ATTACHMENTS_ACTIVE = "attachmentsActive", //
 			ATTACHMENTS = "attachments", //
@@ -141,6 +143,7 @@ public class CommunicationConstants {
 			INHERITED = "inherited", //
 			INHERIT = "inherits", //
 			INVERSE_DESCRIPTION = "descrinv", //
+			ID_CLASS = "idClass", //
 			IP_TYPE = "ipType", //
 			IS_ACTIVE = "isActive", //
 			IS_ADMINISTRATOR = "isAdministrator", //
@@ -224,6 +227,7 @@ public class CommunicationConstants {
 			PRIVILEGE_WRITE = "write_privilege", //
 			PROCESSED_FOLDER = "processedFolder", //
 			PROCESS_ID = "ProcessId", //
+			PROCESS_INSTANCE_ID = "processInstanceId", //
 			PROMPT_SYNCHRONIZATION = "promptSynchronization", //
 			QUERY = "query", //
 			REFERENCE = "reference", //
@@ -302,6 +306,7 @@ public class CommunicationConstants {
 			VALUE = "value",//
 			VALUES = "values",//
 			VARIABLES = "variables",//
+			VERSION = "version", //
 			VIEWNAME = "viewName", //
 			VIEWS = "views", //
 			WIDGET_ID = "widgetId", //
@@ -311,7 +316,9 @@ public class CommunicationConstants {
 			WORKFLOW_ATTACHMENTS_CATEGORY = "workflowAttachmentsCategory", //
 			WORKFLOW_ATTRIBUTES = "workflowAttributes", //
 			WORKFLOW_CLASS_NAME = "workflowClassName", //
-			WORKFLOW_SAVE_ATTACHMENTS = "workflowSaveAttachments" //
+			WORKFLOW_SAVE_ATTACHMENTS = "workflowSaveAttachments", //
+			WW = "ww", //
+			XPDL = "xpdl" //
 			;
 
 }

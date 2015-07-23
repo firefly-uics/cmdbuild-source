@@ -1408,7 +1408,7 @@
 	"language": "Langue",
 	"last_checkin": "Dernier enrôlement",
 	"layers": "Calques",
-	"lockCardsInEdit": "Blocage des fiches en modification",
+	"lockCardsAndProcessesInEdit": "<em>Lock cards and processes in edit</em>",
 	"lockTimeout": "Temps de blocage (secondes)",
 	"loggedGroup": "Groupe connecté",
 	"loggedUser": "Utilisateur connecté",

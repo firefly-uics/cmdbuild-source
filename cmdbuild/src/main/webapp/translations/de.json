@@ -1408,7 +1408,7 @@
 	"language": "Sprache",
 	"last_checkin": "Letzter Check-in",
 	"layers": "Ebenen",
-	"lockCardsInEdit": "Kartensperrung wird bearbeitet",
+	"lockCardsAndProcessesInEdit": "<em>Lock cards and processes in edit</em>",
 	"lockTimeout": "Maximale Zeitüberschreitung beim Sperren (Sekunden)",
 	"loggedGroup": "Angemeldete Gruppe",
 	"loggedUser": "Angemeldeter Benutzer",

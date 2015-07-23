@@ -11,10 +11,10 @@ import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.data.store.dao.DataViewStore;
 import org.cmdbuild.data.store.lookup.DataViewLookupStore;
 import org.cmdbuild.data.store.lookup.LookupStorableConverter;
+import org.cmdbuild.logic.data.DummyLockLogic;
 import org.cmdbuild.logic.data.QueryOptions;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.logic.data.access.UserDataAccessLogicBuilder;
-import org.cmdbuild.logic.data.access.lock.EmptyLockCard;
 import org.cmdbuild.model.data.Card;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -44,7 +44,7 @@ public class QueryStressTest extends IntegrationTestBase {
 				dbDataView(), //
 				dbDataView(), //
 				operationUser(), //
-				new EmptyLockCard()) //
+				new DummyLockLogic()) //
 				.build();
 		final DBDriver pgDriver = dbDriver();
 		stressTestClass = pgDriver.findClass(CLASS_NAME);
