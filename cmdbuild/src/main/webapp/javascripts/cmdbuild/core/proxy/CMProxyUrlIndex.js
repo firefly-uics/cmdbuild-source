@@ -35,8 +35,6 @@
 			getPosition: 'services/json/management/modcard/getcardposition'
 		},
 
-		cardList: 'services/json/management/modcard/getcardlist',
-
 		classes: {
 			cards: {
 				lock: 'services/json/lock/lockcard',
