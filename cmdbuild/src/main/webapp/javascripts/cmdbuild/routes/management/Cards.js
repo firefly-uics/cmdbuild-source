@@ -3,6 +3,8 @@
 	Ext.define('CMDBuild.routes.management.Cards', {
 		extend: 'CMDBuild.routes.Base',
 
+		requires: ['CMDBuild.core.proxy.Card'],
+
 		/**
 		 * @cfg {String}
 		 */
@@ -141,7 +143,7 @@
 		 * @params {Array} splittedIdentifier - ['cardParam', 'value']
 		 */
 		simpleFilter: function(splittedIdentifier) {
-			CMDBuild.ServiceProxy.getCardList({
+			CMDBuild.core.proxy.Card.getList({
 				scope: this,
 				params: {
 					className: this.classIdentifier,

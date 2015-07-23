@@ -53,6 +53,17 @@
 		},
 
 		/**
+		 * @param {String} className
+		 *
+		 * @returns {Object}
+		 */
+		getEntryTypePrivilegesByName: function(className) {
+			return _CMUtils.getEntryTypePrivileges(
+				_CMCache.getEntryTypeByName(className || '')
+			);
+		},
+
+		/**
 		 * Returns string with custom formatted ExtJs version
 		 *
 		 * @param {Object} format
@@ -219,12 +230,6 @@
 			// FIXME: Should be getEntryTypePrivileges
 			getClassPrivileges: function(classId) {
 				var entryType = _CMCache.getEntryTypeById(classId);
-
-				return _CMUtils.getEntryTypePrivileges(entryType);
-			},
-
-			getClassPrivilegesByName: function(className) {
-				var entryType = _CMCache.getEntryTypeByName(className || "");
 
 				return _CMUtils.getEntryTypePrivileges(entryType);
 			},
