@@ -2,6 +2,9 @@
 
 	Ext.define("CMDBuild.controller.management.classes.CMNoteController", {
 		extend: "CMDBuild.controller.management.classes.CMModCardSubController",
+
+		requires: ['CMDBuild.core.proxy.Card'],
+
 		constructor: function(view, supercontroller) {
 
 			this.mixins.observable.constructor.call(this, arguments);
@@ -122,14 +125,11 @@
 			if (_CMUtils.lockCard.isEnabled()) {
 				if (this.card) {
 					var id = this.card.get("Id");
-					_CMProxy.card.lockCard({
+					CMDBuild.core.proxy.Card.lock({
 						params: {
 							id: id
 						},
-						success: success,
-						failure: function() {
-							return false;
-						}
+						success: success
 					});
 				}
 			} else {
@@ -141,7 +141,7 @@
 			if (_CMUtils.lockCard.isEnabled()) {
 				if (this.card && this.view.isInEditing()) {
 					var id = this.card.get("Id");
-					_CMProxy.card.unlockCard({
+					CMDBuild.core.proxy.Card.unlock({
 						params: {
 							id: id
 						}

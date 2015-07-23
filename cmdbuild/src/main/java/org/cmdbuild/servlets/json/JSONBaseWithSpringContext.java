@@ -1,5 +1,6 @@
 package org.cmdbuild.servlets.json;
 
+import static org.cmdbuild.spring.configuration.Lock.*;
 import static org.cmdbuild.spring.SpringIntegrationUtils.applicationContext;
 import static org.cmdbuild.spring.configuration.Data.BEAN_SYSTEM_DATA_VIEW;
 import static org.cmdbuild.spring.configuration.User.BEAN_USER_DATA_VIEW;
@@ -31,6 +32,7 @@ import org.cmdbuild.logic.bim.project.DefaultProjectLogic;
 import org.cmdbuild.logic.bim.project.ProjectLogic;
 import org.cmdbuild.logic.cache.CachingLogic;
 import org.cmdbuild.logic.data.DataDefinitionLogic;
+import org.cmdbuild.logic.data.LockLogic;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.logic.data.access.SystemDataAccessLogicBuilder;
 import org.cmdbuild.logic.data.access.UserDataAccessLogicBuilder;
@@ -210,6 +212,10 @@ public class JSONBaseWithSpringContext extends JSONBase {
 
 	protected GroupsLogic groupsLogic() {
 		return applicationContext().getBean(GroupsLogic.class);
+	}
+
+	protected LockLogic lockLogic() {
+		return applicationContext().getBean(USER_LOCK_LOGIC, LockLogic.class);
 	}
 
 	protected LookupLogic lookupLogic() {

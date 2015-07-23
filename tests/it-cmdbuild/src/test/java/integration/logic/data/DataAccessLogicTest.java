@@ -24,10 +24,10 @@ import org.cmdbuild.logic.commands.GetRelationList.DomainWithSource;
 import org.cmdbuild.logic.commands.GetRelationList.GetRelationListResponse;
 import org.cmdbuild.logic.data.DataDefinitionLogic;
 import org.cmdbuild.logic.data.DefaultDataDefinitionLogic;
+import org.cmdbuild.logic.data.DummyLockLogic;
 import org.cmdbuild.logic.data.QueryOptions;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.logic.data.access.UserDataAccessLogicBuilder;
-import org.cmdbuild.logic.data.access.lock.EmptyLockCard;
 import org.cmdbuild.model.data.Attribute;
 import org.cmdbuild.model.data.Card;
 import org.json.JSONArray;
@@ -64,7 +64,7 @@ public class DataAccessLogicTest extends IntegrationTestBase {
 				dbDataView(), //
 				dbDataView(), //
 				operationUser(), //
-				new EmptyLockCard()) //
+				new DummyLockLogic()) //
 				.build();
 	}
 

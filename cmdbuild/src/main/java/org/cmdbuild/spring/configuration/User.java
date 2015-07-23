@@ -38,7 +38,7 @@ public class User {
 	private FilesStore filesStore;
 
 	@Autowired
-	private LockCard lockCard;
+	private Lock lock;
 
 	@Autowired
 	private PrivilegeManagement privilegeManagement;
@@ -68,7 +68,7 @@ public class User {
 				permissiveDataView(), //
 				userDataView(), //
 				userStore.getUser(), //
-				lockCard.emptyLockCardManager());
+				lock.dummyLockLogic());
 	}
 
 	@Bean
@@ -81,7 +81,7 @@ public class User {
 				permissiveDataView(), //
 				userDataView(), //
 				userStore.getUser(), //
-				lockCard.userLockCardManager());
+				lock.configurationAwareLockLogic());
 	}
 
 	public static final String BEAN_USER_DATA_VIEW = "UserDataView";
@@ -139,11 +139,13 @@ public class User {
 	@Qualifier(USER)
 	public UserWorkflowLogicBuilder userWorkflowLogicBuilder() {
 		return new UserWorkflowLogicBuilder( //
+				userStore.getUser(), //
 				userStore.getUser().getPrivilegeContext(), //
 				userWorkflowEngineBuilder(), //
 				userDataView(), //
 				properties.workflowProperties(), //
-				filesStore);
+				filesStore, //
+				lock.configurationAwareLockLogic());
 	}
 
 }

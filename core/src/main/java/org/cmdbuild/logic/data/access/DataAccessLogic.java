@@ -59,8 +59,8 @@ public interface DataAccessLogic extends Logic {
 
 	GetRelationHistoryResponse getRelationHistory(Card srcCard, CMDomain domain);
 
-	CMRelation getRelation(final Long srcCardId, final Long dstCardId, final CMDomain domain,
-			final CMClass sourceClass, final CMClass destinationClass);
+	CMRelation getRelation(Long srcCardId, Long dstCardId, CMDomain domain, CMClass sourceClass,
+			CMClass destinationClass);
 
 	Optional<RelationInfo> getHistoricRelation(String domain, Long id);
 
@@ -225,19 +225,12 @@ public interface DataAccessLogic extends Logic {
 
 	void deleteDetail(Card master, Card detail, String domainName);
 
-	public void deleteRelation(final String srcClassName, final Long srcCardId, final String dstClassName,
-			final Long dstCardId, final CMDomain domain);
+	public void deleteRelation(String srcClassName, Long srcCardId, String dstClassName, Long dstCardId, CMDomain domain);
 
 	File exportClassAsCsvFile(String className, String separator);
 
 	CSVData importCsvFileFor(FileItem csvFile, Long classId, String separator) throws IOException, JSONException;
 
-	CMCard resolveCardReferences(final CMClass entryType, final CMCard card);
-
-	void lockCard(Long cardId);
-
-	void unlockCard(Long cardId);
-
-	void unlockAllCards();
+	CMCard resolveCardReferences(CMClass entryType, CMCard card);
 
 }
