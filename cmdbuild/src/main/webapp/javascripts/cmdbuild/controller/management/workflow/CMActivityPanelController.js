@@ -320,7 +320,7 @@
 		var me = this;
 		var processInstance = _CMWFState.getProcessInstance();
 
-		if (!Ext.isEmpty(processInstance) && !processInstance.isNew())
+		if (!processInstance && !processInstance.isNew())
 			return;
 
 		this.clearView();
