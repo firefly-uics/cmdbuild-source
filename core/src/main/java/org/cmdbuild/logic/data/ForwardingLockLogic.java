@@ -40,12 +40,17 @@ public abstract class ForwardingLockLogic extends ForwardingObject implements Lo
 
 	@Override
 	public void unlockActivity(final Long instanceId, final String activityId) {
-		delegate().lockActivity(instanceId, activityId);
+		delegate().unlockActivity(instanceId, activityId);
 	}
 
 	@Override
 	public void checkActivityLockedbyUser(final Long instanceId, final String activityId, final String user) {
 		delegate().checkActivityLockedbyUser(instanceId, activityId, user);
+	}
+
+	@Override
+	public void checkNotLockedInstance(final Long instanceId) {
+		delegate().checkNotLockedInstance(instanceId);
 	}
 
 	@Override

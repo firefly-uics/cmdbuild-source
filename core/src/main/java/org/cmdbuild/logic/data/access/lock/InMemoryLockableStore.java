@@ -1,38 +1,30 @@
 package org.cmdbuild.logic.data.access.lock;
 
 import static com.google.common.base.Optional.fromNullable;
-import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static com.google.common.collect.Maps.newHashMap;
 
-import org.cmdbuild.logic.data.access.lock.LockableStore.Metadata;
+import java.util.Map;
+
+import org.cmdbuild.logic.data.access.lock.LockableStore.Lock;
 
 import com.google.common.base.Optional;
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
 
-public class InMemoryLockableStore<M extends Metadata> implements LockableStore<M> {
+public class InMemoryLockableStore<M extends Lock> implements LockableStore<M> {
 
-	public static interface Configuration {
+	private final Map<Lockable, M> map;
 
-		long getExpirationTimeInMilliseconds();
-
-	}
-
-	private final Cache<Lockable, M> cache;
-
-	public InMemoryLockableStore(final Configuration configuration) {
-		this.cache = CacheBuilder.newBuilder() //
-				.expireAfterWrite(configuration.getExpirationTimeInMilliseconds(), MILLISECONDS) //
-				.build();
+	public InMemoryLockableStore() {
+		this.map = newHashMap();
 	}
 
 	@Override
-	public void add(final Lockable lockable, final M metadata) {
-		cache.put(lockable, metadata);
+	public void add(final Lockable lockable, final M lock) {
+		map.put(lockable, lock);
 	}
 
 	@Override
 	public void remove(final Lockable lockable) {
-		cache.invalidate(lockable);
+		map.remove(lockable);
 	}
 
 	@Override
@@ -42,12 +34,17 @@ public class InMemoryLockableStore<M extends Metadata> implements LockableStore<
 
 	@Override
 	public Optional<M> get(final Lockable lockable) {
-		return fromNullable(cache.getIfPresent(lockable));
+		return fromNullable(map.get(lockable));
+	}
+
+	@Override
+	public Iterable<Lockable> stored() {
+		return map.keySet();
 	}
 
 	@Override
 	public void removeAll() {
-		cache.invalidateAll();
+		map.clear();
 	}
 
 }

@@ -2,19 +2,21 @@ package org.cmdbuild.logic.data.access.lock;
 
 import com.google.common.base.Optional;
 
-public interface LockableStore<M extends LockableStore.Metadata> {
+public interface LockableStore<L extends LockableStore.Lock> {
 
-	interface Metadata {
+	interface Lock {
 
 	}
 
-	void add(Lockable lockable, M metadata);
+	void add(Lockable lockable, L lock);
 
 	void remove(Lockable lockable);
 
 	boolean isPresent(Lockable lockable);
 
-	Optional<M> get(Lockable lockable);
+	Optional<L> get(Lockable lockable);
+
+	Iterable<Lockable> stored();
 
 	void removeAll();
 

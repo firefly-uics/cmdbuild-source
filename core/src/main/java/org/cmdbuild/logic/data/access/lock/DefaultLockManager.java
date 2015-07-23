@@ -7,20 +7,14 @@ import com.google.common.base.Supplier;
 
 public class DefaultLockManager implements LockManager {
 
-	public static class Metadata implements LockableStore.Metadata {
+	public static class Lock implements LockableStore.Lock {
 
-		private final Lockable lockable;
 		private final String user;
 		private final Date time;
 
-		public Metadata(final Lockable lockable, final String user, final Date time) {
-			this.lockable = lockable;
+		public Lock(final String user, final Date time) {
 			this.user = user;
 			this.time = time;
-		}
-
-		public Lockable getLockable() {
-			return lockable;
 		}
 
 		public String getUser() {
@@ -33,30 +27,30 @@ public class DefaultLockManager implements LockManager {
 
 	}
 
+	private final LockableStore<Lock> store;
 	private final Supplier<String> usernameSupplier;
-	private final LockableStore<Metadata> store;
 
-	public DefaultLockManager(final Supplier<String> usernameSupplier, final LockableStore<Metadata> store) {
+	public DefaultLockManager(final LockableStore<Lock> store, final Supplier<String> usernameSupplier) {
 		this.usernameSupplier = usernameSupplier;
 		this.store = store;
 	}
 
 	@Override
 	public void lock(final Lockable lockable) throws LockedByAnotherUser {
-		final Optional<Metadata> metadata = store.get(lockable);
-		if (metadata.isPresent() && !usernameSupplier.get().equals(metadata.get().getUser())) {
-			throw new LockedByAnotherUser(metadata.get().getUser(), metadata.get().getTime());
+		final Optional<Lock> lock = store.get(lockable);
+		if (lock.isPresent() && !lock.get().getUser().equals(usernameSupplier.get())) {
+			throw new LockedByAnotherUser(lock.get().getUser(), lock.get().getTime());
 		}
-		store.add(lockable, new Metadata(lockable, usernameSupplier.get(), new Date()));
+		store.add(lockable, new Lock(usernameSupplier.get(), new Date()));
 	}
 
 	@Override
 	public void unlock(final Lockable lockable) throws LockedByAnotherUser {
-		final Optional<Metadata> metadata = store.get(lockable);
-		if (!metadata.isPresent()) {
-			return;
-		} else if (!metadata.get().getUser().equals(usernameSupplier.get())) {
-			throw new LockedByAnotherUser(metadata.get().getUser(), metadata.get().getTime());
+		final Optional<Lock> lock = store.get(lockable);
+		if (!lock.isPresent()) {
+			checkNotLockedAsParent(lockable);
+		} else if (!lock.get().getUser().equals(usernameSupplier.get())) {
+			throw new LockedByAnotherUser(lock.get().getUser(), lock.get().getTime());
 		} else {
 			store.remove(lockable);
 		}
@@ -69,17 +63,32 @@ public class DefaultLockManager implements LockManager {
 
 	@Override
 	public void checkNotLocked(final Lockable lockable) throws LockedByAnotherUser {
-		final Optional<Metadata> metadata = store.get(lockable);
-		if (metadata.isPresent()) {
-			throw new LockedByAnotherUser(metadata.get().getUser(), metadata.get().getTime());
+		final Optional<Lock> lock = store.get(lockable);
+		if (lock.isPresent()) {
+			throw new LockedByAnotherUser(lock.get().getUser(), lock.get().getTime());
+		}
+		checkNotLockedAsParent(lockable);
+	}
+
+	private void checkNotLockedAsParent(final Lockable lockable) throws LockedByAnotherUser {
+		for (final Lockable element : store.stored()) {
+			Optional<Lockable> parent = element.parent();
+			while (parent.isPresent()) {
+				final Lockable _lockable = parent.get();
+				if (_lockable.equals(lockable)) {
+					final Optional<Lock> _lock = store.get(element);
+					throw new LockedByAnotherUser(_lock.get().getUser(), _lock.get().getTime());
+				}
+				parent = _lockable.parent();
+			}
 		}
 	}
 
 	@Override
 	public void checkLockedbyUser(final Lockable lockable, final String userName) throws LockedByAnotherUser {
-		final Optional<Metadata> metadata = store.get(lockable);
-		if (metadata.isPresent() && !metadata.get().getUser().equals(userName)) {
-			throw new LockedByAnotherUser(metadata.get().getUser(), metadata.get().getTime());
+		final Optional<Lock> lock = store.get(lockable);
+		if (lock.isPresent() && !lock.get().getUser().equals(userName)) {
+			throw new LockedByAnotherUser(lock.get().getUser(), lock.get().getTime());
 		}
 	}
 

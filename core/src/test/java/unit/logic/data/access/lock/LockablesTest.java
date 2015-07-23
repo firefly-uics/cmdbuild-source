@@ -1,6 +1,7 @@
 package unit.logic.data.access.lock;
 
-import static org.cmdbuild.logic.data.access.lock.Lockables.*;
+import static org.cmdbuild.logic.data.access.lock.Lockables.card;
+import static org.cmdbuild.logic.data.access.lock.Lockables.instanceActivity;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertThat;
@@ -23,14 +24,14 @@ public class LockablesTest {
 		assertThat(first, not(equalTo(second)));
 		assertThat(first.hashCode(), not(equalTo(second.hashCode())));
 	}
-	
+
 	@Test
 	public void lockableInstanceActivities() {
 		// given
 		final Lockable first = instanceActivity(1L, "foo");
 		final Lockable second = instanceActivity(2L, "bar");
 		final Lockable third = instanceActivity(1L, "baz");
-		final Lockable fourth= instanceActivity(2L, "foo");
+		final Lockable fourth = instanceActivity(2L, "foo");
 		final Lockable sameAsFirst = instanceActivity(1L, "foo");
 
 		// then

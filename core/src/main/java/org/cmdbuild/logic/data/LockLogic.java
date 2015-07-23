@@ -18,6 +18,8 @@ public interface LockLogic extends Logic {
 
 	void checkActivityLockedbyUser(Long instanceId, String activityId, String user);
 
+	void checkNotLockedInstance(Long instanceId);
+
 	void unlockAll();
 
 }
