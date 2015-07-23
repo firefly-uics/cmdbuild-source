@@ -42,7 +42,7 @@ public class DefaultLockLogic implements LockLogic {
 			logger.debug(MARKER, "unlocking card '{}'", cardId);
 			lockManager.unlock(card(cardId));
 		} catch (final LockedByAnotherUser e) {
-			logger.error(MARKER, "error unlocking activity", e);
+			logger.error(MARKER, "error unlocking card", e);
 			throw forward(e);
 		}
 	}
@@ -53,7 +53,7 @@ public class DefaultLockLogic implements LockLogic {
 			logger.debug(MARKER, "checking if card '{}' is unlocked", cardId);
 			lockManager.checkNotLocked(card(cardId));
 		} catch (final LockedByAnotherUser e) {
-			logger.error(MARKER, "error unlocking activity", e);
+			logger.error(MARKER, "card is locked", e);
 			throw forward(e);
 		}
 	}
@@ -99,6 +99,17 @@ public class DefaultLockLogic implements LockLogic {
 			lockManager.checkLockedbyUser(instanceActivity(instanceId, activityId), user);
 		} catch (final LockedByAnotherUser e) {
 			logger.error(MARKER, "activity is locked by another user", e);
+			throw forward(e);
+		}
+	}
+
+	@Override
+	public void checkNotLockedInstance(final Long instanceId) {
+		try {
+			logger.debug(MARKER, "checking if instance '{}' is unlocked", instanceId);
+			lockManager.checkNotLocked(card(instanceId));
+		} catch (final LockedByAnotherUser e) {
+			logger.error(MARKER, "instance is locked", e);
 			throw forward(e);
 		}
 	}

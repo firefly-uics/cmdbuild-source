@@ -2,7 +2,7 @@ package org.cmdbuild.logic.data.access.lock;
 
 import org.cmdbuild.config.CmdbuildConfiguration;
 
-public class CmdbuildConfigurationAdapter implements InMemoryLockableStore.Configuration {
+public class CmdbuildConfigurationAdapter implements ExpiringLockableStore.Configuration {
 
 	private final CmdbuildConfiguration delegate;
 

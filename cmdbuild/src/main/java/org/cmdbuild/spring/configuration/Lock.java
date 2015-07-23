@@ -7,8 +7,7 @@ import org.cmdbuild.logic.data.DummyLockLogic;
 import org.cmdbuild.logic.data.LockLogic;
 import org.cmdbuild.logic.data.access.lock.CmdbuildConfigurationAdapter;
 import org.cmdbuild.logic.data.access.lock.DefaultLockManager;
-import org.cmdbuild.logic.data.access.lock.DefaultLockManager.Metadata;
-import org.cmdbuild.logic.data.access.lock.InMemoryLockableStore;
+import org.cmdbuild.logic.data.access.lock.ExpiringLockableStore;
 import org.cmdbuild.logic.data.access.lock.LockManager;
 import org.cmdbuild.logic.data.access.lock.LockableStore;
 import org.cmdbuild.logic.data.access.lock.SynchronizedLockManager;
@@ -53,12 +52,12 @@ public class Lock {
 
 	@Bean
 	protected LockManager defaultLockManager() {
-		return new DefaultLockManager(usernameSupplier(), inMemoryLockableStore());
+		return new DefaultLockManager(expiringLockableStore(), usernameSupplier());
 	}
 
 	@Bean
-	protected LockableStore<Metadata> inMemoryLockableStore() {
-		return new InMemoryLockableStore<DefaultLockManager.Metadata>(cmdbuildConfigurationAdapter());
+	protected LockableStore<DefaultLockManager.Lock> expiringLockableStore() {
+		return new ExpiringLockableStore<DefaultLockManager.Lock>(cmdbuildConfigurationAdapter());
 	}
 
 	@Bean

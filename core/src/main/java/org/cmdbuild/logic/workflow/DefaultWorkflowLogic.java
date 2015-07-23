@@ -696,6 +696,7 @@ class DefaultWorkflowLogic implements WorkflowLogic {
 	@Override
 	public void abortProcess(final Long processClassId, final long processCardId) throws CMWorkflowException {
 		logger.info("aborting process with id '{}' for class '{}'", processCardId, processClassId);
+		lockLogic.checkNotLockedInstance(processCardId);
 		final CMProcessClass processClass = workflowEngine.findProcessClassById(processClassId);
 		abortProcess(processClass.getName(), processCardId);
 	}
