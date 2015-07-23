@@ -5,6 +5,11 @@
 	Ext.define('CMDBuild.view.management.common.widgets.linkCards.LinkCards', {
 		extend: 'Ext.panel.Panel',
 
+		requires: [
+			'CMDBuild.core.proxy.CMProxyConstants',
+			'CMDBuild.core.Utils'
+		],
+
 		statics: {
 			WIDGET_NAME: '.LinkCards'
 		},
@@ -45,16 +50,14 @@
 		border: false,
 		frame: false,
 
-		layout: {
-			type: 'border'
-		},
+		layout: 'border',
 
 		initComponent: function() {
 			var allowEditCard = false;
 			var allowShowCard = false;
 
 			if (this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.ALLOW_CARD_EDITING]) {
-				var priv = _CMUtils.getClassPrivilegesByName(this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME]);
+				var priv = CMDBuild.core.Utils.getEntryTypePrivilegesByName(this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME]);
 
 				if (priv && priv.write) {
 					allowEditCard = true;
@@ -63,48 +66,56 @@
 				}
 			}
 
-			this.toggleGridFilterButton = Ext.create('Ext.button.Button', {
-				text: tr.disableGridFilter,
-				iconCls: 'clear_filter',
-				scope: this,
-				filterEnabled: true, // FilterEnabled (true/false) used to mark state grid's filter
-
-				handler: function() {
-					this.delegate.cmOn('onToggleGridFilterButtonClick');
-				}
-			});
-
-			this.grid = Ext.create('CMDBuild.view.management.common.widgets.linkCards.LinkCardsGrid', {
-				autoScroll: true,
-				selModel: this.getSelectionModel(),
-				hideMode: 'offsets',
-				region: 'center',
-				border: false,
-				cmAllowEditCard: allowEditCard,
-				cmAllowShowCard: allowShowCard
-			});
-
-			// To listener to select right cards on pageChange
-			this.grid.pagingBar.on('change', function(pagingBar, options) {
-				this.delegate.cmOn('onGridPageChange');
-			}, this);
-
 			Ext.apply(this, {
 				dockedItems: [
-					{
-						xtype: 'toolbar',
+					Ext.create('Ext.toolbar.Toolbar', {
 						dock: 'top',
 						itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_TOP,
-						items: [this.toggleGridFilterButton]
-					}
+
+						items: [
+							this.toggleGridFilterButton = Ext.create('Ext.button.Button', { // TODO: build button class
+								text: tr.disableGridFilter,
+								iconCls: 'clear_filter',
+								scope: this,
+								filterEnabled: true, // FilterEnabled (true/false) used to mark state grid's filter
+
+								handler: function(button, e) {
+									this.delegate.cmOn('onToggleGridFilterButtonClick');
+								}
+							}),
+							this.applyDefaultSelectionButton = Ext.create('CMDBuild.core.buttons.Reload', {
+								text: CMDBuild.Translation.applyDefaultSelection,
+								scope: this,
+
+								handler: function(button, e) {
+									this.delegate.cmOn('onLinkCardApplyDefaultSelectionButtonClick');
+								}
+							})
+						]
+					})
 				],
-				items: [this.grid]
+				items: [
+					this.grid = Ext.create('CMDBuild.view.management.common.widgets.linkCards.LinkCardsGrid', {
+						autoScroll: true,
+						selModel: this.getSelectionModel(),
+						hideMode: 'offsets',
+						region: 'center',
+						border: false,
+						cmAllowEditCard: allowEditCard,
+						cmAllowShowCard: allowShowCard
+					})
+				]
 			});
 
 			if (this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.ENABLE_MAP] && CMDBuild.Config.gis.enabled)
 				this.buildMap();
 
 			this.callParent(arguments);
+
+			// To listener to select right cards on pageChange
+			this.grid.pagingBar.on('change', function(pagingBar, options) {
+				this.delegate.cmOn('onGridPageChange');
+			}, this);
 		},
 
 		buildMap: function() {
@@ -113,7 +124,7 @@
 				iconCls: 'map',
 				scope: this,
 
-				handler: function() {
+				handler: function(button, e) {
 					this.delegate.cmOn('onToggleMapButtonClick');
 				}
 			});
@@ -129,16 +140,14 @@
 
 			Ext.apply(this, {
 				dockedItems: [
-					{
-						xtype: 'toolbar',
+					Ext.create('Ext.toolbar.Toolbar', {
 						dock: 'top',
 						itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_TOP,
+
 						items: [this.toggleGridFilterButton, '->', this.mapButton]
-					}
+					})
 				],
-				layout: {
-					type: 'card'
-				},
+				layout: 'card',
 				items: [this.grid, this.mapPanel]
 			});
 

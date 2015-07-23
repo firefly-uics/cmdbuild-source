@@ -25,10 +25,6 @@
 				this.delegate.cmOn('onDeselect', { record: record });
 			},
 
-			itemdblclick: function(gridView, record, item, index, e, eOpts) {
-				this.delegate.cmOn('onItemDoubleclick', record);
-			},
-
 			select: function(selectionModel, record, index, eOpts) {
 				this.delegate.cmOn('onSelect', { record: record });
 			},

@@ -1,4 +1,7 @@
 (function() {
+
+	Ext.require('CMDBuild.core.proxy.Card');
+
 	Ext.define("CMDBuild.controller.management.common.widgets.CMCalendarController", {
 
 		mixins: {
@@ -164,7 +167,7 @@
 			});
 		}
 
-		CMDBuild.ServiceProxy.getCardList({
+		CMDBuild.core.proxy.Card.getList({
 			params: params,
 			success: function(response, operation, decodedResponse) {
 				me.view.clearStore();
