@@ -320,12 +320,10 @@
 		var me = this;
 		var processInstance = _CMWFState.getProcessInstance();
 
-		if (!processInstance
-				|| processInstance.isNew()) {
+		if (!Ext.isEmpty(processInstance) && !processInstance.isNew())
 			return;
-		}
 
-		me.clearView();
+		this.clearView();
 
 		CMDBuild.LoadMask.get().show();
 		CMDBuild.ServiceProxy.workflow.terminateActivity({
@@ -333,22 +331,15 @@
 				classId: processInstance.getClassId(),
 				cardId: processInstance.getId()
 			},
-			success: success,
-			failure: failure
+			success: function(response) {
+				CMDBuild.LoadMask.get().hide();
+
+				me.fireEvent(me.CMEVENTS.cardRemoved);
+			},
+			failure: function() {
+				CMDBuild.LoadMask.get().hide();
+			}
 		});
-
-		function success(response) {
-			CMDBuild.LoadMask.get().hide();
-			me.fireEvent(me.CMEVENTS.cardRemoved);
-		}
-
-		function failure() {
-			CMDBuild.LoadMask.get().hide();
-			CMDBuild.Msg.error(
-				CMDBuild.Translation.errors.error_message,
-				CMDBuild.Translation.errors.generic_error,
-				true);
-		}
 	}
 
 
