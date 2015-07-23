@@ -65,12 +65,20 @@
 		/**
 		 * @param {Object} params
 		 */
-		remove: function(params) {
-			params.method = 'POST';
-			params.url = CMDBuild.core.proxy.CMProxyUrlIndex.card.remove;
-			params.important = true;
+		remove: function(parameters) {
+			parameters.important = true;
 
-			CMDBuild.ServiceProxy.core.doRequest(params);
+			CMDBuild.Ajax.request({
+				method: 'POST',
+				url: CMDBuild.core.proxy.CMProxyUrlIndex.card.remove,
+				headers: parameters.headers,
+				params: parameters.params,
+				scope: parameters.scope || this,
+				loadMask: parameters.loadMask || true,
+				failure: parameters.failure || Ext.emptyFn(),
+				success: parameters.success || Ext.emptyFn(),
+				callback: parameters.callback || Ext.emptyFn()
+			});
 		},
 
 		/**
@@ -84,9 +92,9 @@
 				params: parameters.params,
 				scope: parameters.scope || this,
 				loadMask: parameters.loadMask || true,
-				failure: parameters.failure || Ext.emptyFn(),
-				success: parameters.success || Ext.emptyFn(),
-				callback: parameters.callback || Ext.emptyFn()
+				failure: parameters.failure || Ext.emptyFn,
+				success: parameters.success || Ext.emptyFn,
+				callback: parameters.callback || Ext.emptyFn
 			});
 		},
 
