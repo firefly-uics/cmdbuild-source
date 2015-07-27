@@ -390,6 +390,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 			final CMQueryRow row = dataView.select(anyAttribute(entryType)) //
 					.from(entryType) //
 					.where(condition(attribute(entryType, ID_ATTRIBUTE), eq(cardId))) //
+					.limit(1) //
 					.run() //
 					.getOnlyRow();
 			/**
@@ -425,6 +426,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 			final CMQueryRow row = dataView.select(attributesToDisplay.toArray()) //
 					.from(entryType) //
 					.where(condition(attribute(entryType, ID_ATTRIBUTE), eq(cardId))) //
+					.limit(1) //
 					.run() //
 					.getOnlyRow();
 
