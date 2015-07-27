@@ -449,6 +449,7 @@ public class DataViewWorkflowPersistence implements WorkflowPersistence {
 		return dataView.select(anyAttribute(processClass)) //
 				.from(processClass) //
 				.where(condition(attribute(processClass, ID_ATTRIBUTE), eq(cardId))) //
+				.limit(1) //
 				.run() //
 				.getOnlyRow() //
 				.getCard(processClass);
