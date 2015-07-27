@@ -8,6 +8,7 @@ import java.util.Date;
 import org.cmdbuild.config.CmdbuildConfiguration;
 import org.cmdbuild.exception.ConsistencyException.ConsistencyExceptionType;
 import org.cmdbuild.logic.data.access.lock.LockManager;
+import org.cmdbuild.logic.data.access.lock.LockManager.ExpectedLocked;
 import org.cmdbuild.logic.data.access.lock.LockManager.LockedByAnotherUser;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
@@ -62,7 +63,10 @@ public class DefaultLockLogic implements LockLogic {
 	public void checkCardLockedbyUser(final Long cardId, final String user) {
 		try {
 			logger.debug(MARKER, "checking if card '{}' is locked by user '{}'", cardId, user);
-			lockManager.checkLockedbyUser(card(cardId), user);
+			lockManager.checkLockedByUser(card(cardId), user);
+		} catch (final ExpectedLocked e) {
+			logger.error(MARKER, "card should be locked", e);
+			throw forward(e);
 		} catch (final LockedByAnotherUser e) {
 			logger.error(MARKER, "card is locked by another user", e);
 			throw forward(e);
@@ -96,7 +100,10 @@ public class DefaultLockLogic implements LockLogic {
 		try {
 			logger.debug(MARKER, "checking if activity '{}' of instance '{}' is locked by user '{}'", activityId,
 					instanceId, user);
-			lockManager.checkLockedbyUser(instanceActivity(instanceId, activityId), user);
+			lockManager.checkLockedByUser(instanceActivity(instanceId, activityId), user);
+		} catch (final ExpectedLocked e) {
+			logger.error(MARKER, "activity should be locked", e);
+			throw forward(e);
 		} catch (final LockedByAnotherUser e) {
 			logger.error(MARKER, "activity is locked by another user", e);
 			throw forward(e);
@@ -118,6 +125,11 @@ public class DefaultLockLogic implements LockLogic {
 	public void unlockAll() {
 		logger.debug(MARKER, "unlocking all cards");
 		lockManager.unlockAll();
+	}
+
+	private RuntimeException forward(final ExpectedLocked e) {
+		return ConsistencyExceptionType.LOCKED_MISSING //
+				.createException();
 	}
 
 	private RuntimeException forward(final LockedByAnotherUser e) {

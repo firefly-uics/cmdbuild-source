@@ -3,6 +3,7 @@ package org.cmdbuild.logic.data.access.lock;
 import java.util.Date;
 
 import com.google.common.base.Optional;
+import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
 
 public class DefaultLockManager implements LockManager {
@@ -25,6 +26,32 @@ public class DefaultLockManager implements LockManager {
 			return time;
 		}
 
+	}
+
+	public static class DurationExpired implements Predicate<Lock> {
+
+		public static interface Configuration {
+
+			long getExpirationTimeInMilliseconds();
+
+		}
+
+		private final Configuration configuration;
+
+		public DurationExpired(final Configuration configuration) {
+			this.configuration = configuration;
+		}
+
+		@Override
+		public boolean apply(final Lock input) {
+			final Date time = input.getTime();
+			return (time == null) ? true : expired(time);
+		}
+
+		private boolean expired(final Date time) {
+			final long now = new Date().getTime();
+			return now > (time.getTime() + configuration.getExpirationTimeInMilliseconds());
+		}
 	}
 
 	private final LockableStore<Lock> store;
@@ -85,9 +112,12 @@ public class DefaultLockManager implements LockManager {
 	}
 
 	@Override
-	public void checkLockedbyUser(final Lockable lockable, final String userName) throws LockedByAnotherUser {
+	public void checkLockedByUser(final Lockable lockable, final String userName) throws ExpectedLocked,
+			LockedByAnotherUser {
 		final Optional<Lock> lock = store.get(lockable);
-		if (lock.isPresent() && !lock.get().getUser().equals(userName)) {
+		if (!lock.isPresent()) {
+			throw new ExpectedLocked();
+		} else if (!lock.get().getUser().equals(userName)) {
 			throw new LockedByAnotherUser(lock.get().getUser(), lock.get().getTime());
 		}
 	}

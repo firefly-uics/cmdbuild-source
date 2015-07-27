@@ -817,6 +817,7 @@
 			"DOMAIN_NOTFOUND": "ドメイン{0}は在りません",
 			"ILLEGAL_CRON_EXPRESSION": "不正なクローン表示",
 			"LOCKED_CARD": "ユーザー {0} は、{1} 秒カードを編集しています。",
+			"LOCKED_MISSING": "<em>Should be locked before</em>",
 			"LOOKUP_NOTFOUND": "タイプ{0}でのルックアップは見つかりません",
 			"LOOKUP_TYPE_NOTFOUND": "ルックアップタイプ{0} は見つかりません",
 			"MENU_NOTFOUND": "メニューが見つかりません",

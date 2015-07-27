@@ -13,6 +13,7 @@ import static org.mockito.Mockito.when;
 import org.cmdbuild.logic.data.access.lock.DefaultLockManager;
 import org.cmdbuild.logic.data.access.lock.InMemoryLockableStore;
 import org.cmdbuild.logic.data.access.lock.LockManager;
+import org.cmdbuild.logic.data.access.lock.LockManager.ExpectedLocked;
 import org.cmdbuild.logic.data.access.lock.LockManager.LockedByAnotherUser;
 import org.cmdbuild.logic.data.access.lock.Lockable;
 import org.cmdbuild.logic.data.access.lock.LockableStore;
@@ -127,13 +128,13 @@ public class DefaultLockManagerTest {
 		manager.checkNotLocked(lockable);
 	}
 
-	@Test
+	@Test(expected = ExpectedLocked.class)
 	public void checkedWithUserWhenNotLocked() throws Exception {
 		// given
 		final Lockable lockable = lockable();
 
 		// when
-		manager.checkLockedbyUser(lockable, "foo");
+		manager.checkLockedByUser(lockable, "foo");
 	}
 
 	@Test(expected = LockedByAnotherUser.class)
@@ -147,7 +148,7 @@ public class DefaultLockManagerTest {
 
 		// when
 		manager.lock(lockable);
-		manager.checkLockedbyUser(lockable, "bar");
+		manager.checkLockedByUser(lockable, "bar");
 	}
 
 	@Test

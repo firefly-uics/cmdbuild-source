@@ -1,8 +1,9 @@
 package org.cmdbuild.logic.data.access.lock;
 
 import org.cmdbuild.config.CmdbuildConfiguration;
+import org.cmdbuild.logic.data.access.lock.DefaultLockManager.DurationExpired;
 
-public class CmdbuildConfigurationAdapter implements ExpiringLockableStore.Configuration {
+public class CmdbuildConfigurationAdapter implements DurationExpired.Configuration {
 
 	private final CmdbuildConfiguration delegate;
 

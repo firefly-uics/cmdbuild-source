@@ -7,6 +7,15 @@ import java.util.Date;
 public interface LockManager {
 
 	@SuppressWarnings("serial")
+	class ExpectedLocked extends Exception {
+
+		public ExpectedLocked() {
+			super("should be locked");
+		}
+
+	}
+
+	@SuppressWarnings("serial")
 	class LockedByAnotherUser extends Exception {
 
 		private final String user;
@@ -36,6 +45,6 @@ public interface LockManager {
 
 	void checkNotLocked(Lockable lockable) throws LockedByAnotherUser;
 
-	void checkLockedbyUser(Lockable lockable, String userName) throws LockedByAnotherUser;
+	void checkLockedByUser(Lockable lockable, String userName) throws LockedByAnotherUser, ExpectedLocked;
 
 }
