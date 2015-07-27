@@ -15,7 +15,7 @@ import org.cmdbuild.logic.auth.AuthenticationLogic;
 import org.cmdbuild.logic.auth.DefaultAuthenticationLogic;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.logic.data.access.SystemDataAccessLogicBuilder;
-import org.cmdbuild.logic.data.access.UserDataAccessLogicBuilder;
+import org.cmdbuild.logic.data.access.WebServiceDataAccessLogicBuilder;
 import org.cmdbuild.logic.data.lookup.LookupLogic;
 import org.cmdbuild.logic.dms.DmsLogic;
 import org.cmdbuild.logic.dms.PrivilegedDmsLogic;
@@ -119,7 +119,7 @@ public class ApplicationContextHelperV2 {
 	}
 
 	public DataAccessLogic userDataAccessLogic() {
-		return applicationContext.getBean(UserDataAccessLogicBuilder.class).build();
+		return applicationContext.getBean(WebServiceDataAccessLogicBuilder.class).build();
 	}
 
 	public CMDataView userDataView() {

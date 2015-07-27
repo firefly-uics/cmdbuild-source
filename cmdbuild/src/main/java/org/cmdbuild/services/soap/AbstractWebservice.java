@@ -21,7 +21,7 @@ import org.cmdbuild.data.store.lookup.LookupStore;
 import org.cmdbuild.dms.MetadataGroup;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
-import org.cmdbuild.logic.data.access.SoapDataAccessLogicBuilder;
+import org.cmdbuild.logic.data.access.WebServiceDataAccessLogicBuilder;
 import org.cmdbuild.logic.data.access.UserDataAccessLogicBuilder;
 import org.cmdbuild.logic.data.lookup.LookupLogic;
 import org.cmdbuild.logic.dms.DmsLogic;
@@ -107,7 +107,7 @@ abstract class AbstractWebservice implements ApplicationContextAware {
 	protected DataAccessLogicHelper dataAccessLogicHelper() {
 		final DataAccessLogicHelper helper = new DataAccessLogicHelper( //
 				applicationContext.getBean(BEAN_USER_DATA_VIEW, CMDataView.class),//
-				applicationContext.getBean(SoapDataAccessLogicBuilder.class).build(), //
+				applicationContext.getBean(WebServiceDataAccessLogicBuilder.class).build(), //
 				applicationContext.getBean(UserWorkflowLogicBuilder.class).build(), //
 				applicationContext.getBean("operationUser", OperationUser.class), //
 				applicationContext.getBean(DataSource.class), //
