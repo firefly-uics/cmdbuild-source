@@ -34,8 +34,9 @@ public abstract class ForwardingLockManager extends ForwardingObject implements 
 	}
 
 	@Override
-	public void checkLockedbyUser(final Lockable lockable, final String userName) throws LockedByAnotherUser {
-		delegate().checkLockedbyUser(lockable, userName);
+	public void checkLockedByUser(final Lockable lockable, final String userName) throws ExpectedLocked,
+			LockedByAnotherUser {
+		delegate().checkLockedByUser(lockable, userName);
 	}
 
 }
