@@ -5,9 +5,9 @@ import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.data.store.lookup.LookupStore;
 import org.cmdbuild.logic.data.LockLogic;
 
-public class SoapDataAccessLogicBuilder extends DataAccessLogicBuilder {
+public class WebServiceDataAccessLogicBuilder extends DataAccessLogicBuilder {
 
-	public SoapDataAccessLogicBuilder( //
+	public WebServiceDataAccessLogicBuilder( //
 			final CMDataView systemDataView, //
 			final LookupStore lookupStore, //
 			final CMDataView dataView, //

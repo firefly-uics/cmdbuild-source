@@ -27,7 +27,6 @@ import static org.cmdbuild.dao.query.clause.where.AndWhereClause.and;
 import static org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue.eq;
 import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
 import static org.cmdbuild.data.store.Storables.storableOf;
-import static org.cmdbuild.logic.data.access.lock.Lockables.card;
 
 import java.io.File;
 import java.io.IOException;
