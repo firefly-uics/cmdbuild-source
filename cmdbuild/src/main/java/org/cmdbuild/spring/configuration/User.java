@@ -10,7 +10,7 @@ import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.dao.view.user.UserDataView;
 import org.cmdbuild.data.view.PermissiveDataView;
-import org.cmdbuild.logic.data.access.SoapDataAccessLogicBuilder;
+import org.cmdbuild.logic.data.access.WebServiceDataAccessLogicBuilder;
 import org.cmdbuild.logic.data.access.UserDataAccessLogicBuilder;
 import org.cmdbuild.logic.workflow.UserWorkflowLogicBuilder;
 import org.cmdbuild.services.FilesStore;
@@ -38,7 +38,7 @@ public class User {
 	private FilesStore filesStore;
 
 	@Autowired
-	private LockCard lockCard;
+	private Lock lock;
 
 	@Autowired
 	private PrivilegeManagement privilegeManagement;
@@ -61,14 +61,14 @@ public class User {
 	@Bean
 	@Scope(PROTOTYPE)
 	@Qualifier(SOAP)
-	public SoapDataAccessLogicBuilder soapDataAccessLogicBuilder() {
-		return new SoapDataAccessLogicBuilder( //
+	public WebServiceDataAccessLogicBuilder webServiceDataAccessLogicBuilder() {
+		return new WebServiceDataAccessLogicBuilder( //
 				data.systemDataView(), //
 				data.lookupStore(), //
 				permissiveDataView(), //
 				userDataView(), //
 				userStore.getUser(), //
-				lockCard.emptyLockCardManager());
+				lock.dummyLockLogic());
 	}
 
 	@Bean
@@ -81,7 +81,7 @@ public class User {
 				permissiveDataView(), //
 				userDataView(), //
 				userStore.getUser(), //
-				lockCard.userLockCardManager());
+				lock.configurationAwareLockLogic());
 	}
 
 	public static final String BEAN_USER_DATA_VIEW = "UserDataView";
@@ -139,11 +139,13 @@ public class User {
 	@Qualifier(USER)
 	public UserWorkflowLogicBuilder userWorkflowLogicBuilder() {
 		return new UserWorkflowLogicBuilder( //
+				userStore.getUser(), //
 				userStore.getUser().getPrivilegeContext(), //
 				userWorkflowEngineBuilder(), //
 				userDataView(), //
 				properties.workflowProperties(), //
-				filesStore);
+				filesStore, //
+				lock.configurationAwareLockLogic());
 	}
 
 }

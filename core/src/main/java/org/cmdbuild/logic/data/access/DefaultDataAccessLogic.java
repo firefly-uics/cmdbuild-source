@@ -73,8 +73,8 @@ import org.cmdbuild.logic.commands.GetRelationList;
 import org.cmdbuild.logic.commands.GetRelationList.DomainWithSource;
 import org.cmdbuild.logic.commands.GetRelationList.GetRelationListResponse;
 import org.cmdbuild.logic.commands.GetRelationSingle;
+import org.cmdbuild.logic.data.LockLogic;
 import org.cmdbuild.logic.data.QueryOptions;
-import org.cmdbuild.logic.data.access.lock.LockCardManager;
 import org.cmdbuild.logic.data.access.resolver.CardSerializer;
 import org.cmdbuild.logic.data.access.resolver.ForeignReferenceResolver;
 import org.cmdbuild.model.data.Card;
@@ -129,7 +129,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 	private final CMDataView dataView;
 	private final CMDataView strictDataView;
 	private final OperationUser operationUser;
-	private final LockCardManager lockCardManager;
+	private final LockLogic lockLogic;
 
 	public DefaultDataAccessLogic( //
 			final CMDataView systemDataView, //
@@ -137,14 +137,14 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 			final CMDataView view, //
 			final CMDataView strictDataView, //
 			final OperationUser operationUser, //
-			final LockCardManager lockCardManager //
+			final LockLogic lockLogic //
 	) {
 		this.systemDataView = systemDataView;
 		this.dataView = view;
 		this.lookupStore = lookupStore;
 		this.strictDataView = strictDataView;
 		this.operationUser = operationUser;
-		this.lockCardManager = lockCardManager;
+		this.lockLogic = lockLogic;
 	}
 
 	@Override
@@ -390,6 +390,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 			final CMQueryRow row = dataView.select(anyAttribute(entryType)) //
 					.from(entryType) //
 					.where(condition(attribute(entryType, ID_ATTRIBUTE), eq(cardId))) //
+					.limit(1) //
 					.run() //
 					.getOnlyRow();
 			/**
@@ -425,6 +426,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 			final CMQueryRow row = dataView.select(attributesToDisplay.toArray()) //
 					.from(entryType) //
 					.where(condition(attribute(entryType, ID_ATTRIBUTE), eq(cardId))) //
+					.limit(1) //
 					.run() //
 					.getOnlyRow();
 
@@ -674,7 +676,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 	@Override
 	public void updateCard(final Card userGivenCard) {
 		final String currentlyLoggedUser = operationUser.getAuthenticatedUser().getUsername();
-		lockCardManager.checkLockerUser(userGivenCard.getId(), currentlyLoggedUser);
+		lockLogic.checkCardLockedbyUser(userGivenCard.getId(), currentlyLoggedUser);
 
 		final CMClass entryType = dataView.findClass(userGivenCard.getClassName());
 		if (entryType == null) {
@@ -702,7 +704,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 
 		updateRelationAttributesFromReference(updatedCard.getId(), fetchedCard, _userGivenCard, entryType);
 
-		lockCardManager.unlock(_userGivenCard.getId());
+		lockLogic.unlockCard(_userGivenCard.getId());
 	}
 
 	private void updateRelationAttributesFromReference( //
@@ -890,7 +892,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 	@Override
 	@Transactional
 	public void deleteCard(final String className, final Long cardId) {
-		lockCardManager.checkLocked(cardId);
+		lockLogic.checkNotLockedCard(cardId);
 
 		final Card card = Card.newInstance() //
 				.withClassName(className) //
@@ -1216,18 +1218,4 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 		return card;
 	}
 
-	@Override
-	public void lockCard(final Long cardId) {
-		this.lockCardManager.lock(cardId);
-	}
-
-	@Override
-	public void unlockCard(final Long cardId) {
-		this.lockCardManager.unlock(cardId);
-	}
-
-	@Override
-	public void unlockAllCards() {
-		this.lockCardManager.unlockAll();
-	}
 }

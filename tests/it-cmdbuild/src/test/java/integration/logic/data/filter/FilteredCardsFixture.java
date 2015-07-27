@@ -17,10 +17,10 @@ import org.cmdbuild.data.store.lookup.DataViewLookupStore;
 import org.cmdbuild.data.store.lookup.LookupStorableConverter;
 import org.cmdbuild.logic.data.DataDefinitionLogic;
 import org.cmdbuild.logic.data.DefaultDataDefinitionLogic;
+import org.cmdbuild.logic.data.DummyLockLogic;
 import org.cmdbuild.logic.data.QueryOptions;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.logic.data.access.UserDataAccessLogicBuilder;
-import org.cmdbuild.logic.data.access.lock.EmptyLockCard;
 import org.cmdbuild.logic.mapping.json.Constants.FilterOperator;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -62,7 +62,7 @@ public abstract class FilteredCardsFixture extends IntegrationTestBase {
 				dbDataView(), //
 				dbDataView(), //
 				operationUser(), //
-				new EmptyLockCard()) //
+				new DummyLockLogic()) //
 				.build();
 		createClassesAndDomains();
 		initializeDatabaseData();

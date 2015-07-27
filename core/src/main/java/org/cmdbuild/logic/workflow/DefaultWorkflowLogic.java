@@ -5,6 +5,7 @@ import static com.google.common.collect.Iterables.filter;
 import static java.lang.String.format;
 import static java.util.Arrays.asList;
 import static org.cmdbuild.logic.PrivilegeUtils.assure;
+import static org.cmdbuild.logic.data.access.lock.Lockables.instanceActivity;
 
 import java.io.File;
 import java.io.IOException;
@@ -19,6 +20,7 @@ import javax.activation.DataSource;
 import net.jcip.annotations.NotThreadSafe;
 
 import org.cmdbuild.auth.acl.PrivilegeContext;
+import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.common.Constants;
 import org.cmdbuild.common.utils.PagedElements;
 import org.cmdbuild.config.WorkflowConfiguration;
@@ -37,6 +39,7 @@ import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.exception.CMDBWorkflowException;
 import org.cmdbuild.exception.CMDBWorkflowException.WorkflowExceptionType;
 import org.cmdbuild.exception.ConsistencyException.ConsistencyExceptionType;
+import org.cmdbuild.logic.data.LockLogic;
 import org.cmdbuild.logic.data.QueryOptions;
 import org.cmdbuild.logic.data.access.ProcessEntryFiller;
 import org.cmdbuild.logic.data.access.resolver.AbstractSerializer;
@@ -88,24 +91,30 @@ class DefaultWorkflowLogic implements WorkflowLogic {
 	private static final String BEGIN_DATE_ATTRIBUTE = "beginDate";
 	private static final String SKETCH_PATH = "images" + File.separator + "workflow" + File.separator;
 
+	private final OperationUser operationUser;
 	private final PrivilegeContext privilegeContext;
 	private final QueryableUserWorkflowEngine workflowEngine;
 	private final CMDataView dataView;
 	private final WorkflowConfiguration configuration;
 	private final FilesStore filesStore;
+	private final LockLogic lockLogic;
 
 	public DefaultWorkflowLogic( //
+			final OperationUser operationUser, //
 			final PrivilegeContext privilegeContext, //
 			final QueryableUserWorkflowEngine workflowEngine, //
 			final CMDataView dataView, //
 			final WorkflowConfiguration configuration, //
-			final FilesStore filesStore //
+			final FilesStore filesStore, //
+			final LockLogic lockLogic //
 	) {
+		this.operationUser = operationUser;
 		this.privilegeContext = privilegeContext;
 		this.workflowEngine = workflowEngine;
 		this.dataView = dataView;
 		this.configuration = configuration;
 		this.filesStore = filesStore;
+		this.lockLogic = lockLogic;
 	}
 
 	/*
@@ -524,9 +533,9 @@ class DefaultWorkflowLogic implements WorkflowLogic {
 			final String activityInstanceId, final Map<String, ?> vars, final Map<String, Object> widgetSubmission,
 			final boolean advance) throws CMWorkflowException {
 		final CMProcessClass processClass = workflowEngine.findProcessClassByName(processClassName);
-		final UserProcessInstance processInstance = workflowEngine.findProcessInstance(processClass, processCardId);
 		return updateProcess( //
-				processInstance, //
+				processClass.getId(), //
+				processCardId, //
 				activityInstanceId, //
 				vars, //
 				widgetSubmission, //
@@ -537,13 +546,16 @@ class DefaultWorkflowLogic implements WorkflowLogic {
 	public UserProcessInstance updateProcess(final Long processClassId, final Long processCardId,
 			final String activityInstanceId, final Map<String, ?> vars, final Map<String, Object> widgetSubmission,
 			final boolean advance) throws CMWorkflowException {
+		final String currentlyLoggedUser = operationUser.getAuthenticatedUser().getUsername();
+		lockLogic.checkActivityLockedbyUser(processCardId, activityInstanceId, currentlyLoggedUser);
 
 		final CMProcessClass processClass = workflowEngine.findProcessClassById(processClassId);
 		final UserProcessInstance processInstance = workflowEngine.findProcessInstance(processClass, processCardId);
 
-		// check if the given begin date is the same
-		// of the stored process, to be sure to deny
-		// the update of old versions
+		/*
+		 * check if the given begin date is the same of the stored process, to
+		 * be sure to deny the update of old versions
+		 */
 		if (vars.containsKey(BEGIN_DATE_ATTRIBUTE)) {
 			final Long givenBeginDateAsLong = (Long) vars.get(BEGIN_DATE_ATTRIBUTE);
 			final DateTime givenBeginDate = new DateTime(givenBeginDateAsLong);
@@ -551,8 +563,9 @@ class DefaultWorkflowLogic implements WorkflowLogic {
 				throw ConsistencyExceptionType.OUT_OF_DATE_PROCESS.createException();
 			}
 
-			// must be removed to not use it
-			// as a custom attribute
+			/*
+			 * must be removed to not use it as a custom attribute
+			 */
 			vars.remove(BEGIN_DATE_ATTRIBUTE);
 		}
 
@@ -563,9 +576,12 @@ class DefaultWorkflowLogic implements WorkflowLogic {
 				widgetSubmission, //
 				advance);
 
-		// retrieve again the processInstance because the updateProcess return
-		// the
-		// old processInstance, not the updated.
+		lockLogic.unlockActivity(processCardId, activityInstanceId);
+
+		/*
+		 * retrieve again the processInstance because the updateProcess return
+		 * the old processInstance, not the updated
+		 */
 		return workflowEngine.findProcessInstance(processClass, processCardId);
 	}
 
@@ -665,6 +681,7 @@ class DefaultWorkflowLogic implements WorkflowLogic {
 	@Override
 	public void abortProcess(final Long processClassId, final long processCardId) throws CMWorkflowException {
 		logger.info("aborting process with id '{}' for class '{}'", processCardId, processClassId);
+		lockLogic.checkNotLockedInstance(processCardId);
 		final CMProcessClass processClass = workflowEngine.findProcessClassById(processClassId);
 		abortProcess(processClass.getName(), processCardId);
 	}
