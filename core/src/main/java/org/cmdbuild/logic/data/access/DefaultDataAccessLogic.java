@@ -7,6 +7,7 @@ import static com.google.common.collect.Iterables.size;
 import static java.lang.String.format;
 import static java.util.Arrays.asList;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphanumeric;
+import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static org.cmdbuild.dao.constants.Cardinality.CARDINALITY_1N;
 import static org.cmdbuild.dao.constants.Cardinality.CARDINALITY_N1;
 import static org.cmdbuild.dao.entrytype.Deactivable.IsActivePredicate.activeOnes;
@@ -822,23 +823,24 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 	}
 
 	private Long getReferenceCardIdAsLong(final Object value) {
-		Long out = null;
-
-		if (value != null) {
-			if (value instanceof IdAndDescription) {
-				out = ((IdAndDescription) value).getId();
-			} else if (value instanceof String) {
-				final String stringCardId = String.class.cast(value);
-				if ("".equals(stringCardId)) {
-					out = null;
-				} else {
-					out = Long.parseLong(stringCardId);
-				}
+		final Long out;
+		if (value instanceof Number) {
+			out = Number.class.cast(value).longValue();
+		} else if (value instanceof IdAndDescription) {
+			out = ((IdAndDescription) value).getId();
+		} else if (value instanceof String) {
+			final String stringCardId = String.class.cast(value);
+			if (isEmpty(stringCardId)) {
+				out = null;
 			} else {
+				out = Long.parseLong(stringCardId);
+			}
+		} else {
+			if (value != null) {
 				throw new UnsupportedOperationException("A reference could have a CardReference value");
 			}
+			out = null;
 		}
-
 		return out;
 	}
 
