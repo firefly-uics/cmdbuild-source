@@ -131,4 +131,26 @@ public class InMemoryLockableStoreTest {
 		assertThat(store.get(first), equalTo(ABSENT));
 	}
 
+	@Test
+	public void allElementsRemovedIteratingOverStoredOnes() throws Exception {
+		// given
+		final Lockable first = card(1L);
+		final DummyLock firstMetadata = new DummyLock();
+		final Lockable second = card(2L);
+		final DummyLock secondMetadata = new DummyLock();
+
+		// when
+		store.add(first, firstMetadata);
+		store.add(second, secondMetadata);
+		for (final Lockable lockable : store.stored()) {
+			store.remove(lockable);
+		}
+
+		// then
+		assertThat(store.isPresent(first), equalTo(false));
+		assertThat(store.get(first), equalTo(ABSENT));
+		assertThat(store.isPresent(second), equalTo(false));
+		assertThat(store.get(first), equalTo(ABSENT));
+	}
+
 }
