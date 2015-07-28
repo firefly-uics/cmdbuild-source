@@ -1,6 +1,7 @@
 package org.cmdbuild.logic.data.access.lock;
 
 import static com.google.common.base.Optional.fromNullable;
+import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Maps.newHashMap;
 
 import java.util.Map;
@@ -39,7 +40,7 @@ public class InMemoryLockableStore<M extends Lock> implements LockableStore<M> {
 
 	@Override
 	public Iterable<Lockable> stored() {
-		return map.keySet();
+		return newArrayList(map.keySet());
 	}
 
 	@Override

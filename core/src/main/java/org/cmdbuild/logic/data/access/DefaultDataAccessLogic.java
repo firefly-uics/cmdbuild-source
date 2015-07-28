@@ -7,6 +7,7 @@ import static com.google.common.collect.Iterables.size;
 import static java.lang.String.format;
 import static java.util.Arrays.asList;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphanumeric;
+import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static org.cmdbuild.dao.constants.Cardinality.CARDINALITY_1N;
 import static org.cmdbuild.dao.constants.Cardinality.CARDINALITY_N1;
 import static org.cmdbuild.dao.entrytype.Deactivable.IsActivePredicate.activeOnes;
@@ -677,7 +678,11 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 	public void updateCard(final Card userGivenCard) {
 		final String currentlyLoggedUser = operationUser.getAuthenticatedUser().getUsername();
 		lockLogic.checkCardLockedbyUser(userGivenCard.getId(), currentlyLoggedUser);
+		final Card _userGivenCard = updateCard0(userGivenCard);
+		lockLogic.unlockCard(_userGivenCard.getId());
+	}
 
+	private Card updateCard0(final Card userGivenCard) {
 		final CMClass entryType = dataView.findClass(userGivenCard.getClassName());
 		if (entryType == null) {
 			throw NotFoundExceptionType.CLASS_NOTFOUND.createException(userGivenCard.getClassName());
@@ -703,8 +708,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 		final Card fetchedCard = store.read(storableOf(_userGivenCard.getIdentifier()));
 
 		updateRelationAttributesFromReference(updatedCard.getId(), fetchedCard, _userGivenCard, entryType);
-
-		lockLogic.unlockCard(_userGivenCard.getId());
+		return _userGivenCard;
 	}
 
 	private void updateRelationAttributesFromReference( //
@@ -822,23 +826,24 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 	}
 
 	private Long getReferenceCardIdAsLong(final Object value) {
-		Long out = null;
-
-		if (value != null) {
-			if (value instanceof IdAndDescription) {
-				out = ((IdAndDescription) value).getId();
-			} else if (value instanceof String) {
-				final String stringCardId = String.class.cast(value);
-				if ("".equals(stringCardId)) {
-					out = null;
-				} else {
-					out = Long.parseLong(stringCardId);
-				}
+		final Long out;
+		if (value instanceof Number) {
+			out = Number.class.cast(value).longValue();
+		} else if (value instanceof IdAndDescription) {
+			out = ((IdAndDescription) value).getId();
+		} else if (value instanceof String) {
+			final String stringCardId = String.class.cast(value);
+			if (isEmpty(stringCardId)) {
+				out = null;
 			} else {
+				out = Long.parseLong(stringCardId);
+			}
+		} else {
+			if (value != null) {
 				throw new UnsupportedOperationException("A reference could have a CardReference value");
 			}
+			out = null;
 		}
-
 		return out;
 	}
 
@@ -875,6 +880,13 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 		}
 
 		return false;
+	}
+
+	@Override
+	public void updateCards(final Iterable<Card> cards) {
+		for (final Card card : cards) {
+			updateCard0(card);
+		}
 	}
 
 	@Override

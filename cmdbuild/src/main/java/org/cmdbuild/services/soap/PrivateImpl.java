@@ -513,4 +513,9 @@ public class PrivateImpl extends AbstractWebservice implements Private {
 				Long.valueOf(destinationId));
 	}
 
+	@Override
+	public void abortWorkflow(final Card card) {
+		workflowLogicHelper().abortProcess(card);
+	}
+
 }

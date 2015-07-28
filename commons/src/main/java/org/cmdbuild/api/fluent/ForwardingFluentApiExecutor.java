@@ -130,4 +130,9 @@ public abstract class ForwardingFluentApiExecutor extends ForwardingObject imple
 		delegate().move(source, attachments, destination);
 	}
 
+	@Override
+	public void abortProcessInstance(final ExistingProcessInstance processCard) {
+		delegate().abortProcessInstance(processCard);
+	}
+
 }
