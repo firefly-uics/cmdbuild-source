@@ -678,7 +678,11 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 	public void updateCard(final Card userGivenCard) {
 		final String currentlyLoggedUser = operationUser.getAuthenticatedUser().getUsername();
 		lockLogic.checkCardLockedbyUser(userGivenCard.getId(), currentlyLoggedUser);
+		final Card _userGivenCard = updateCard0(userGivenCard);
+		lockLogic.unlockCard(_userGivenCard.getId());
+	}
 
+	private Card updateCard0(final Card userGivenCard) {
 		final CMClass entryType = dataView.findClass(userGivenCard.getClassName());
 		if (entryType == null) {
 			throw NotFoundExceptionType.CLASS_NOTFOUND.createException(userGivenCard.getClassName());
@@ -704,8 +708,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 		final Card fetchedCard = store.read(storableOf(_userGivenCard.getIdentifier()));
 
 		updateRelationAttributesFromReference(updatedCard.getId(), fetchedCard, _userGivenCard, entryType);
-
-		lockLogic.unlockCard(_userGivenCard.getId());
+		return _userGivenCard;
 	}
 
 	private void updateRelationAttributesFromReference( //
@@ -877,6 +880,13 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 		}
 
 		return false;
+	}
+
+	@Override
+	public void updateCards(final Iterable<Card> cards) {
+		for (final Card card : cards) {
+			updateCard0(card);
+		}
 	}
 
 	@Override

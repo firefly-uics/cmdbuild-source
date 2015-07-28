@@ -188,6 +188,8 @@ public interface DataAccessLogic extends Logic {
 
 	void updateCard(Card card);
 
+	void updateCards(Iterable<Card> cards);
+
 	void updateFetchedCard(Card card, Map<String, Object> attributes);
 
 	void deleteCard(String className, Long cardId);
