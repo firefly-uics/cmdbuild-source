@@ -304,4 +304,15 @@ public class WorkflowLogicHelper implements SoapLogicHelper {
 		}
 	}
 
+	public void abortProcess(final Card card) {
+		try {
+			workflowLogic.abortProcess(card.getClassName(), longIdFor(card));
+		} catch (final CMWorkflowException e) {
+			final String message = format("cannot abort process for className '%s' and cardId '%d'",
+					card.getClassName(), card.getId());
+			logger.error(message, e);
+			forwardException(message, e);
+		}
+	}
+
 }

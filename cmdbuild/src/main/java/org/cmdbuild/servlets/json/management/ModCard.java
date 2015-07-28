@@ -730,14 +730,19 @@ public class ModCard extends JSONBaseWithSpringContext {
 		final Map<Long, String> cardIdToClassName = extractCardsFromJsonArray(cards);
 		attributes.remove(CARDS);
 		attributes.remove(CONFIRMED);
-		for (final Entry<Long, String> entry : cardIdToClassName.entrySet()) {
-			final Card cardToUpdate = Card.newInstance() //
-					.withId(entry.getKey()) //
-					.withClassName(entry.getValue()).withAllAttributes(attributes) //
-					.withUser(operationUser().getAuthenticatedUser().getUsername()) //
-					.build();
-			dataLogic.updateCard(cardToUpdate);
-		}
+		dataLogic.updateCards(from(cardIdToClassName.entrySet()) //
+				.transform(new Function<Entry<Long, String>, Card>() {
+
+					@Override
+					public Card apply(final Entry<Long, String> input) {
+						return Card.newInstance() //
+								.withId(input.getKey()) //
+								.withClassName(input.getValue()).withAllAttributes(attributes) //
+								.withUser(operationUser().getAuthenticatedUser().getUsername()) //
+								.build();
+					}
+
+				}));
 		return out;
 	}
 

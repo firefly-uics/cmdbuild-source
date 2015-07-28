@@ -541,6 +541,11 @@ public class WsFluentApiExecutor implements FluentApiExecutor, LoggingSupport {
 		}
 	}
 
+	public void abortProcessInstance(final ExistingProcessInstance processCard) {
+		final org.cmdbuild.services.soap.Card soapCard = soapCardFor(processCard);
+		proxy.abortWorkflow(soapCard);
+	}
+
 	/*
 	 * Utils
 	 */
