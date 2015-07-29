@@ -1,5 +1,40 @@
 package integration.rest;
 
+import static java.util.Arrays.asList;
+import static org.apache.http.entity.ContentType.APPLICATION_JSON;
+import static org.cmdbuild.service.rest.test.HttpClientUtils.contentOf;
+import static org.cmdbuild.service.rest.test.HttpClientUtils.statusCodeOf;
+import static org.cmdbuild.service.rest.test.ServerResource.randomPort;
+import static org.cmdbuild.service.rest.v1.constants.Serialization.CLASS_ID;
+import static org.cmdbuild.service.rest.v1.constants.Serialization.FILTER;
+import static org.cmdbuild.service.rest.v1.constants.Serialization.LIMIT;
+import static org.cmdbuild.service.rest.v1.constants.Serialization.START;
+import static org.cmdbuild.service.rest.v1.constants.Serialization.UNDERSCORED_ID;
+import static org.cmdbuild.service.rest.v1.constants.Serialization.UNDERSCORED_TYPE;
+import static org.cmdbuild.service.rest.v1.model.Models.newCard;
+import static org.cmdbuild.service.rest.v1.model.Models.newMetadata;
+import static org.cmdbuild.service.rest.v1.model.Models.newRelation;
+import static org.cmdbuild.service.rest.v1.model.Models.newResponseMultiple;
+import static org.cmdbuild.service.rest.v1.model.Models.newResponseSingle;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasEntry;
+import static org.junit.Assert.assertThat;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyBoolean;
+import static org.mockito.Matchers.anyInt;
+import static org.mockito.Matchers.anyLong;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.ws.rs.core.MultivaluedMap;
+
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpDelete;
@@ -27,29 +62,6 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.runners.MockitoJUnitRunner;
-
-import javax.ws.rs.core.MultivaluedMap;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-
-import static java.util.Arrays.asList;
-import static org.apache.http.entity.ContentType.APPLICATION_JSON;
-import static org.cmdbuild.service.rest.test.HttpClientUtils.contentOf;
-import static org.cmdbuild.service.rest.test.HttpClientUtils.statusCodeOf;
-import static org.cmdbuild.service.rest.test.ServerResource.randomPort;
-import static org.cmdbuild.service.rest.v1.constants.Serialization.*;
-import static org.cmdbuild.service.rest.v1.model.Models.*;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.hasEntry;
-import static org.junit.Assert.assertThat;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyBoolean;
-import static org.mockito.Matchers.anyInt;
-import static org.mockito.Matchers.anyLong;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class RelationsTest {
