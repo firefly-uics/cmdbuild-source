@@ -222,6 +222,7 @@ public class JsonAdvancedFilterMapper implements FilterMapper {
 				whereClauseBuilders.add(JsonFunctionFilterBuilder.newInstance() //
 						.withFilterObject(definition) //
 						.withEntryType(entryType) //
+						.withEntryTypeAlias(entryTypeAlias) //
 						.withOperationUser(operationUser));
 			}
 		}

@@ -156,7 +156,7 @@
 						},
 
 						items: [
-							Ext.create('CMDBuild.core.buttons.Close', {
+							Ext.create('CMDBuild.core.buttons.text.Close', {
 								handler: function(button, e) {
 									sqlWindow.destroy();
 								}

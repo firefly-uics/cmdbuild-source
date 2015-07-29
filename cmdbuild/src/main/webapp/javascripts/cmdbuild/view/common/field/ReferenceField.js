@@ -150,8 +150,8 @@
 					callback: function(records, operation, success) {
 						if (
 							!Ext.isEmpty(combo.getStore())
-							&& !Ext.Object.isEmpty(this.attribute)
-							&& !Ext.Object.isEmpty(this.attribute.meta)
+							&& !Ext.isEmpty(this.attribute)
+							&& !Ext.isEmpty(this.attribute.meta)
 							&& this.attribute.meta['system.type.reference.' + CMDBuild.core.proxy.Constants.PRESELECT_IF_UNIQUE] === 'true'
 							&& combo.getStore().getCount() == 1
 						) {
@@ -175,8 +175,10 @@
 
 		setValue: function(v) {
 			if (!Ext.isEmpty(this.store)) {
+				v = this.extractIdIfValueIsObject(v);
+
 				// Is one time seems that has a CQL filter
-				if (this.ensureToHaveTheValueInStore(this.extractIdIfValueIsObject(v)) || this.store.isOneTime)
+				if (this.ensureToHaveTheValueInStore(v) || this.store.isOneTime)
 					this.callParent([v]);
 			}
 		},
@@ -198,7 +200,7 @@
 				&& !this.store.isLoading()
 				&& this.getStore().find(this.valueField, value) == -1
 				&& !Ext.isEmpty(this.attribute)
-				&& !Ext.Object.isEmpty(this.attribute.meta)
+				&& !Ext.isEmpty(this.attribute.meta)
 				&& this.attribute.meta['system.type.reference.' + CMDBuild.core.proxy.Constants.PRESELECT_IF_UNIQUE] !== 'true'
 			) {
 				var params = Ext.apply({ cardId: value }, this.getStore().baseParams);
@@ -279,8 +281,8 @@
 							// Manage preselectIfUnique metadata with CQL filter
 							if (
 								!Ext.isEmpty(this.getStore())
-								&& !Ext.Object.isEmpty(this.attribute)
-								&& !Ext.Object.isEmpty(this.attribute.meta)
+								&& !Ext.isEmpty(this.attribute)
+								&& !Ext.isEmpty(this.attribute.meta)
 								&& this.attribute.meta['system.type.reference.' + CMDBuild.core.proxy.Constants.PRESELECT_IF_UNIQUE] === 'true'
 								&& this.getStore().getCount() == 1
 							) {

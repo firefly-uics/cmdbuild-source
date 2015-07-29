@@ -38,11 +38,6 @@
 		],
 
 		/**
-		 * @cfg {String}
-		 */
-		titleSeparator: ' - ',
-
-		/**
 		 * @cfg {CMDBuild.view.management.reports.SingleReportPanel}
 		 */
 		view: undefined,
@@ -68,7 +63,9 @@
 						if(decodedResponse.filled) { // Report with no parameters
 							this.showReport();
 						} else { // Show parameters window
-							if (Ext.isIE) // FIX: in IE PDF is painted on top of the regular page content so remove it before display parameter window
+							// FIX: in IE PDF is painted on top of the regular page content so remove it before display parameter window
+							// Workaround to detect IE 11 witch is not supported from Ext 4.2
+							if (Ext.isIE || !!navigator.userAgent.match(/Trident.*rv[ :]*11\./))
 								this.view.removeAll();
 
 							Ext.create('CMDBuild.controller.management.reports.Parameters', {
@@ -140,19 +137,6 @@
 					this.managedReport = null;
 				}
 			},
-
-		/**
-		 * Setup view panel title as a breadcrumbs component
-		 *
-		 * @param {String} titlePart
-		 */
-		setViewTitle: function(titlePart) {
-			if (Ext.isEmpty(titlePart)) {
-				this.view.setTitle(this.view.baseTitle);
-			} else {
-				this.view.setTitle(this.view.baseTitle + this.titleSeparator + titlePart);
-			}
-		},
 
 		/**
 		 * Get created report from server and display it in popup window

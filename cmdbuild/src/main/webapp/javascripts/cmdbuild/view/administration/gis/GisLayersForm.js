@@ -46,8 +46,8 @@
 				];
 
 				this.cmButtons = [
-					this.saveButton = Ext.create('CMDBuild.buttons.SaveButton'),
-					this.abortButton = Ext.create('CMDBuild.buttons.AbortButton')
+					this.saveButton = Ext.create('CMDBuild.core.buttons.text.Save'),
+					this.abortButton = Ext.create('CMDBuild.core.buttons.text.Abort')
 				];
 			// END: Buttons configuration
 

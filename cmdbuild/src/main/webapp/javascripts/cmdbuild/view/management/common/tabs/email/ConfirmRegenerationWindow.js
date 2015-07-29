@@ -107,7 +107,7 @@
 						},
 
 						items: [
-							Ext.create('CMDBuild.core.buttons.Confirm', {
+							Ext.create('CMDBuild.core.buttons.text.Confirm', {
 								scope: this,
 
 								handler: function(button, e) {

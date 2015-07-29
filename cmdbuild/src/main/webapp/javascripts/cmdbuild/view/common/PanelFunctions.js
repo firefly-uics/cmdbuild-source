@@ -35,6 +35,7 @@
 				this.cascade(function(item) {
 					if (
 						item
+						&& Ext.isFunction(item.getValue)
 						&& (
 							item instanceof Ext.form.Field
 							|| item instanceof Ext.form.field.Base

@@ -95,7 +95,7 @@
 				scope: this
 			}),
 
-			this.printClassButton = Ext.create('CMDBuild.core.buttons.Print', {
+			this.printClassButton = Ext.create('CMDBuild.core.buttons.iconized.Print', {
 				formatList: [
 					CMDBuild.core.proxy.Constants.PDF,
 					CMDBuild.core.proxy.Constants.ODT
@@ -154,7 +154,6 @@
 
 				translationFieldConfig: {
 					type: CMDBuild.core.proxy.Constants.CLASS,
-					owner: { sourceType: 'form', key: CMDBuild.core.proxy.Constants.NAME, source: this },
 					identifier: { sourceType: 'form', key: CMDBuild.core.proxy.Constants.NAME, source: this },
 					field: CMDBuild.core.proxy.Constants.DESCRIPTION
 				}

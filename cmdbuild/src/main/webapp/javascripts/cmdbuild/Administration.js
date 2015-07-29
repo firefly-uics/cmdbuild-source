@@ -17,12 +17,11 @@
 		extend: 'Ext.app.Application',
 
 		requires: [
-			'CMDBuild.core.buttons.Buttons',
 			'CMDBuild.core.proxy.Constants',
 			'CMDBuild.core.proxy.Classes',
 			'CMDBuild.core.proxy.Configuration',
 			'CMDBuild.core.proxy.Domain',
-			'CMDBuild.core.proxy.Lookup',
+			'CMDBuild.core.proxy.lookup.Type',
 			'CMDBuild.core.proxy.reports.Reports'
 		],
 
@@ -37,7 +36,8 @@
 
 				Ext.create('CMDBuild.core.LoggerManager'); // Logger configuration
 				Ext.create('CMDBuild.core.Data'); // Data connections configuration
-				Ext.create('CMDBuild.core.Localization'); // CMDBuild localization configuration
+				Ext.create('CMDBuild.core.configurationBuilders.Instance'); // CMDBuild instance configuration
+				Ext.create('CMDBuild.core.configurationBuilders.Localization'); // CMDBuild localization configuration
 
 				Ext.tip.QuickTipManager.init();
 				// fix a problem of Ext 4.2 tooltips width
@@ -53,12 +53,14 @@
 
 						CMDBuild.ServiceProxy.configuration.readMainConfiguration({
 							success: function(response, options, decoded) {
-								// CMDBuild
+								/**
+								 * CMDBuild
+								 *
+								 * @deprecated
+								 */
 								CMDBuild.Config.cmdbuild = decoded.data;
 
 								// Localization
-								// TODO: refactor to avoid to use Cache
-								_CMCache.setActiveTranslations(decoded.data.enabled_languages);
 								CMDBuild.configuration[CMDBuild.core.proxy.Constants.LOCALIZATION].setEnabledLanguages(decoded.data.enabled_languages);
 
 								/* **********************************************
@@ -280,20 +282,23 @@
 				});
 
 				/**
-				 * Lookups
+				 * Lookup
 				 */
-				CMDBuild.core.proxy.Lookup.readAll({
+				CMDBuild.core.proxy.lookup.Type.readAll({
+					scope: this,
 					success: function(response, options, decodedResponse) {
 						_CMCache.addLookupTypes(decodedResponse);
 
-						lookupAccordion = new CMDBuild.view.administration.accordion.CMLookupAccordion({
-							cmControllerType: CMDBuild.controller.accordion.CMLookupAccordionController
+						lookupAccordion = Ext.create('CMDBuild.view.administration.accordion.Lookup', {
+							cmControllerType: 'CMDBuild.controller.administration.accordion.Lookup',
+							cmName: 'lookuptype',
 						});
 						lookupAccordion.updateStore();
 
 						_CMMainViewportController.addPanel(
-							new CMDBuild.Administration.ModLookup({
-								cmControllerType: controllerNS.administration.lookup.CMModLookupController
+							Ext.create('CMDBuild.view.administration.lookup.LookupView', {
+								cmControllerType: 'CMDBuild.controller.administration.lookup.Lookup',
+								cmName: 'lookuptype'
 							})
 						);
 					},
@@ -310,14 +315,12 @@
 						groupsAccordion = Ext.create('CMDBuild.view.administration.accordion.Groups', { cmName: 'groups' });
 						groupsAccordion.updateStore();
 
-						menuAccordion = new CMDBuild.view.administration.accordion.CMMenuAccordion({
-							cmControllerType: CMDBuild.controller.accordion.CMMenuAccordionController
-						});
-						menuAccordion.updateStore();
+						menuAccordion = Ext.create('CMDBuild.view.administration.accordion.Menu', { cmName: 'menu' });
 
 						_CMMainViewportController.addPanel([
-							new CMDBuild.Administration.ModMenu({
-								cmControllerType: controllerNS.administration.menu.CMModMenuController
+							Ext.create('CMDBuild.view.administration.menu.MenuView', {
+								cmControllerType: 'CMDBuild.controller.administration.menu.Menu',
+								cmName: 'menu'
 							}),
 							new CMDBuild.view.administration.group.CMModGroup({
 								cmControllerType: controllerNS.administration.group.CMModGroupsController

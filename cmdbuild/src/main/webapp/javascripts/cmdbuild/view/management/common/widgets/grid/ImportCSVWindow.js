@@ -113,14 +113,14 @@
 						},
 
 						items: [
-							Ext.create('CMDBuild.core.buttons.Upload', {
+							Ext.create('CMDBuild.core.buttons.text.Upload', {
 								scope: this,
 
 								handler: function(button, e) {
 									this.delegate.cmfg('onImportCSVUploadButtonClick');
 								}
 							}),
-							Ext.create('CMDBuild.core.buttons.Abort', {
+							Ext.create('CMDBuild.core.buttons.text.Abort', {
 								scope: this,
 
 								handler: function(button, e) {

@@ -5,7 +5,7 @@
 	Ext.define('CMDBuild.view.administration.tasks.email.CMStep3Delegate', {
 		extend: 'CMDBuild.controller.CMBasePanelController',
 
-		requires: ['CMDBuild.core.proxy.Lookup'],
+		requires: ['CMDBuild.core.proxy.lookup.Lookup'],
 
 		/**
 		 * @cfg {CMDBuild.controller.administration.tasks.CMTasksFormEmailController}
@@ -74,12 +74,12 @@
 			var me = this;
 
 			if (this.view.attachmentsCombo.store.getCount() == 0)
-				CMDBuild.ServiceProxy.configuration.read({
+				CMDBuild.ServiceProxy.configuration.read({ // TODO: [Fix] this isn't needed ... just read from CMDBuild.Config
 					success: function(response) {
 						var decodedJson = Ext.JSON.decode(response.responseText);
 
 						me.view.attachmentsCombo.bindStore(
-							CMDBuild.core.proxy.Lookup.getFieldStore(decodedJson.data['category.lookup'])
+							CMDBuild.core.proxy.lookup.Lookup.getFieldStore(decodedJson.data['category.lookup'])
 						);
 					}
 				}, 'dms');

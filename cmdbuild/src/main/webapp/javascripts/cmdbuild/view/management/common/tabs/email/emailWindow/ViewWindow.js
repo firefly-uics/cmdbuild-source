@@ -25,7 +25,6 @@
 		 */
 		form: undefined,
 
-		autoScroll: true,
 		title: CMDBuild.Translation.viewEmail,
 
 		layout: 'border',
@@ -135,7 +134,7 @@
 						},
 
 						items: [
-							Ext.create('CMDBuild.core.buttons.Close', {
+							Ext.create('CMDBuild.core.buttons.text.Close', {
 								scope: this,
 
 								handler: function(button, e) {

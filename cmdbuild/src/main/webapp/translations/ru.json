@@ -287,44 +287,6 @@
 			},
 			"title": "Панель"
 		},
-		"modLookup": {
-			"add_lookuptype": "Добавить перечень",
-			"lookupForm": {
-				"active": "Активный",
-				"code": "Код",
-				"description": "Описание",
-				"disable_lookup": "Отключить элемент",
-				"enable_lookup": "Включить элемент",
-				"isdefault": "По умолчанию",
-				"notes": "Комментарии",
-				"parentdescription": "Родитель",
-				"update_lookup": "Редактировать элемент"
-			},
-			"lookupGrid": {
-				"active": "Активный",
-				"add_lookup": "Добавить элемент",
-				"code": "Код",
-				"description": "Описание",
-				"isdefault": "По умолчанию",
-				"notes": "Комментарии",
-				"parentdescription": "Родитель"
-			},
-			"lookupType": "Перечень",
-			"lookupTypeForm": {
-				"active": "Активный",
-				"delete_lookuptype": "Удалить перечень",
-				"description": "Описание",
-				"modify_lookuptype": "Редактировать перечень",
-				"parent": "Родитель",
-				"title": "Настройка перечней"
-			},
-			"lookupTypes": "Перечни",
-			"tabs": {
-				"lookuplist": "Перечень",
-				"properties": "Свойства"
-			},
-			"title": "Настройка перечней"
-		},
 		"modWorkflow": {
 			"add_process": "Добавить процесс",
 			"attributes_title": "Атрибуты",
@@ -405,24 +367,6 @@
 		},
 		"modconnectors": {
 			"title": "Соединители"
-		},
-		"modmenu": {
-			"add_menu": "Создать меню",
-			"available_elements": "Доступные элементы",
-			"availabletree": {
-				"class": "Классы",
-				"dashboard": "Панели",
-				"processclass": "Процессы",
-				"report": "Отчеты",
-				"view": "Виды"
-			},
-			"custom_menu": "Настраиваемое меню",
-			"custom_menus": "Настраиваемые меню",
-			"delete_menu": "Удалить меню",
-			"menu_root": "Меню",
-			"modify_menu": "Редактировать меню",
-			"new_folder": "Новая папка",
-			"title": "Настройка меню"
 		},
 		"modsecurity": {
 			"defaultgroup": "* По умолчанию *",
@@ -609,6 +553,7 @@
 			"importLabel": "Импорт",
 			"load": "Загрузить",
 			"modify": "Редактировать",
+			"move": "<em>Move</em>",
 			"next": "Далее",
 			"previous": "Назад",
 			"print": "Распечатать",
@@ -1101,9 +1046,6 @@
 			"showgraph": "Показать диаграмму связей",
 			"shownotes": "Показать комментарии"
 		},
-		"modmenu": {
-			"menu": "Навигация"
-		},
 		"modutilities": {
 			"bulkupdate": {
 				"title": "Массовое обновление",
@@ -1232,6 +1174,8 @@
 	"addAttachmentFromDms": "Вложить файлы из DMS",
 	"addDomain": "Создать связь",
 	"addFilter": "Создать фильтр",
+	"addLookup": "Добавить элемент",
+	"addLookupType": "Добавить перечень",
 	"addProject": "Создать проект",
 	"addRelations": "Добавить связь",
 	"addReport": "Создать отчет",
@@ -1248,6 +1192,7 @@
 	"attention": "Внимание",
 	"attribute": "Атрибут",
 	"attributes": "Атрибуты",
+	"availableElements": "Доступные элементы",
 	"availableFilters": "Доступные фильтры",
 	"baseProperties": "Основные свойства",
 	"bcc": "Скрытая копия",
@@ -1272,6 +1217,7 @@
 	"clearFilter": "Сбросить фильтр",
 	"clear_row_and_colun_privilege": "Сбросить права для строк и колонок",
 	"cmdbuildCategory": "Категория CMDBuild",
+	"code": "Код",
 	"composeEmail": "Составление сообщения",
 	"composeFromTemplate": "<em>Compose from template</em>",
 	"confirmRegeneration": "<em>Confirm regeneration</em>",
@@ -1287,6 +1233,7 @@
 	"credentials": "Учетные данные",
 	"csv": "CSV",
 	"csvFile": "Файл CSV",
+	"customMenu": "Настраиваемое меню",
 	"dataSource": "Источник данных",
 	"defaultAccount": "<em>Default account</em>",
 	"defaultClass": "Класс по умолчанию",
@@ -1305,6 +1252,7 @@
 	"directDescription": "Прямое отношение",
 	"disable": "Отключить",
 	"disableGridFilter": "<em>Disable grid filter</em>",
+	"disableLookup": "Отключить элемент",
 	"disableUser": "Отключить пользователя",
 	"display_less_attributes": "Показать меньше атрибутов",
 	"display_more_attributes": "Показать больше атрибутов",
@@ -1322,6 +1270,7 @@
 	"emailTemplate": "Шаблон письма",
 	"enable": "Включить",
 	"enableGridFilter": "<em>Enable grid filter</em>",
+	"enableLookup": "Включить элемент",
 	"enableMoveRejectedNotMatching": "<em>Enable move rejected not matching</em>",
 	"enableSsl": "Использовать SSL",
 	"enableUser": "Включить пользователя",
@@ -1384,16 +1333,21 @@
 	"lockTimeout": "Таймаут блокировки (секунд)",
 	"loggedGroup": "Группа",
 	"loggedUser": "Пользователь",
+	"lookupList": "Перечень",
+	"lookupTypes": "Перечень",
 	"main": "Основной",
 	"manualRegeneration": "<em>Manual Regeneration</em>",
 	"masterDetail": "Детализированная связь",
 	"masterDetailLabel": "Наименование детализации",
 	"masterReportJrxml": "Файл отчета (.jrxml)",
 	"maximumLevel": "Максимальный уровень",
+	"menu": "Меню",
 	"mode": "Режим",
 	"modifyAccount": "Редактировать учетную запись",
 	"modifyDomain": "Редактировать связь",
 	"modifyFilter": "Редактировать представление",
+	"modifyLookup": "Редактировать элемент",
+	"modifyLookupType": "Редактировать перечень",
 	"modifyProject": "Редактировать проект",
 	"modifyReport": "Modify report",
 	"modifyTemplate": "Редактировать шаблон",
@@ -1401,9 +1355,12 @@
 	"modifyView": "Редактировать представление",
 	"multiGroup": "Несколько групп",
 	"name": "Имя",
+	"navigation": "Навигация",
+	"newFolder": "Новая папка",
 	"noAvailableData": "<em>No available data</em>",
 	"no_bim_project_for_card": "Для данной карточки не задан BIM-проект",
 	"not_set": "Не установлен",
+	"notes": "Комментарии",
 	"odt": "ODT",
 	"onDay": "<em>On</em>",
 	"open_3d_viewer": "Открыть 3D просмотр",
@@ -1411,6 +1368,8 @@
 	"origin": "Исходная таблица",
 	"outgoing": "Исходящая почта",
 	"pan": "Переместить",
+	"parent": "Родитель",
+	"parentDescription": "Родитель",
 	"password": "Пароль",
 	"pdf": "PDF",
 	"popupPercentageHeight": "Высота всплывающего окна в процентах",
@@ -1439,6 +1398,7 @@
 	"remove": "Удалить",
 	"removeAccount": "Удалить учетную запись",
 	"removeFilter": "Удалить представление",
+	"removeMenu": "Удалить меню",
 	"removeProject": "Удалить проект",
 	"removeReport": "Remove report",
 	"removeTemplate": "Удалить шаблон",

@@ -10,7 +10,7 @@
 		singleton: true,
 
 		/**
-		 * @property {Object} parameters
+		 * @param {Object} parameters
 		 */
 		getAll: function(parameters) {
 			CMDBuild.Ajax.request({
@@ -41,7 +41,7 @@
 		},
 
 		/**
-		 * @property {Object} parameters
+		 * @param {Object} parameters
 		 */
 		getList: function(parameters) {
 			CMDBuild.Ajax.request({

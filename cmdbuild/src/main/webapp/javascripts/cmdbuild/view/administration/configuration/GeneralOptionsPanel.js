@@ -85,18 +85,18 @@
 						},
 
 						items: [
-							Ext.create('CMDBuild.core.buttons.Save', {
+							Ext.create('CMDBuild.core.buttons.text.Save', {
 								scope: this,
 
 								handler: function(button, e) {
-									this.delegate.cmfg('onGeneralOptionsSaveButtonClick');
+									this.delegate.cmfg('onConfigurationGeneralOptionsSaveButtonClick');
 								}
 							}),
-							Ext.create('CMDBuild.core.buttons.Abort', {
+							Ext.create('CMDBuild.core.buttons.text.Abort', {
 								scope: this,
 
 								handler: function(button, e) {
-									this.delegate.cmfg('onGeneralOptionsAbortButtonClick');
+									this.delegate.cmfg('onConfigurationGeneralOptionsAbortButtonClick');
 								}
 							})
 						]
@@ -129,9 +129,8 @@
 
 								translationFieldConfig: {
 									type: CMDBuild.core.proxy.Constants.INSTANCE_NAME,
-									owner: 'configuration',
-									identifier: 'instance_name',
-									field: 'instance_name'
+									identifier: CMDBuild.core.proxy.Constants.INSTANCE_NAME, // Just for configuration validation
+									field: CMDBuild.core.proxy.Constants.INSTANCE_NAME
 								}
 							}),
 							Ext.create('CMDBuild.field.ErasableCombo', {
@@ -273,6 +272,12 @@
 			});
 
 			this.callParent(arguments);
+		},
+
+		listeners: {
+			add: function(panel, component, index, eOpts) {
+				panel.instanceNameField.translationsRead(); // Custom function call to read translations data
+			}
 		},
 
 		/**

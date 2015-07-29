@@ -35,15 +35,12 @@
 <script type="text/javascript" src="javascripts/cmdbuild/core/proxy/Classes.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/proxy/Configuration.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/proxy/Filter.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/core/proxy/Lookup.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxyAdministration.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxyDashboard.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxyGIS.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxyGroup.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxyIcon.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxyMenu.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxyNavigationTrees.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxyTranslations.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxyWidgetConfiguration.js"></script>
 
 <!-- MODELS -->
@@ -66,7 +63,6 @@
 <script type="text/javascript" src="javascripts/cmdbuild/cache/CMCacheLookupFunctions.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/cache/CMCacheGroupsFunctions.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/cache/CMCacheDomainFunctions.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/cache/CMCacheTranslationsFunctions.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/cache/CMCacheDashboardFunctions.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/cache/CMCacheAttachmentCategoryFunctions.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/cache/CMCacheGISFunctions.js"></script>
@@ -82,8 +78,6 @@
 <script type="text/javascript" src="javascripts/cmdbuild/core/xml/XMLUtility.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/buttons/CMClassesMenuButton.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/buttons/AddCardMenuButton.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/core/buttons/AddRelationMenuButton.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/core/buttons/Print.js"></script>
 
 <!-- FORM STUFF -->
 <script type="text/javascript" src="javascripts/cmdbuild/form/CallbackPlugin.js"></script>

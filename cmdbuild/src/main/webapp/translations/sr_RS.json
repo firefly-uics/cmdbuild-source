@@ -287,44 +287,6 @@
 			},
 			"title": "Контролни панел"
 		},
-		"modLookup": {
-			"add_lookuptype": "Додај тип у шифарник",
-			"lookupForm": {
-				"active": "Активан",
-				"code": "Код",
-				"description": "Опис",
-				"disable_lookup": "Искључи ставку шифарника",
-				"enable_lookup": "Укључи ставку шифарника",
-				"isdefault": "Подразумевана вредност",
-				"notes": "Напомена",
-				"parentdescription": "Опис родитеља",
-				"update_lookup": "Измени ставку шифарника"
-			},
-			"lookupGrid": {
-				"active": "Активан",
-				"add_lookup": "Додај ставку у шифарник",
-				"code": "Код",
-				"description": "Опис",
-				"isdefault": "Подразумеван",
-				"notes": "Напомена",
-				"parentdescription": "Опис родитеља"
-			},
-			"lookupType": "Тип у шифарнику",
-			"lookupTypeForm": {
-				"active": "Активан",
-				"delete_lookuptype": "Уклони тип из шифарника",
-				"description": "Опис",
-				"modify_lookuptype": "Измени тип у шифарнику",
-				"parent": "Родитељ",
-				"title": "Управљање садржајима шифарника"
-			},
-			"lookupTypes": "Шифарници",
-			"tabs": {
-				"lookuplist": "Листа ставки",
-				"properties": "Обележје"
-			},
-			"title": "Управљање садржајима шифарника"
-		},
 		"modWorkflow": {
 			"add_process": "Додај процес",
 			"attributes_title": "Управљање атрибутима",
@@ -405,24 +367,6 @@
 		},
 		"modconnectors": {
 			"title": "Везни програми"
-		},
-		"modmenu": {
-			"add_menu": "Додај мени",
-			"available_elements": "Доступни елементи",
-			"availabletree": {
-				"class": "Класе",
-				"dashboard": "Контролни панели",
-				"processclass": "Активности",
-				"report": "Извештаји",
-				"view": "Погледи"
-			},
-			"custom_menu": "Персонализовани мени",
-			"custom_menus": "Персонализовани менији",
-			"delete_menu": "Уклони мени",
-			"menu_root": "Мени",
-			"modify_menu": "Измени мени",
-			"new_folder": "Нови фолдер",
-			"title": "Управљање менијима"
 		},
 		"modsecurity": {
 			"defaultgroup": "* Подразумевана група*",
@@ -609,6 +553,7 @@
 			"importLabel": "Увези",
 			"load": "Учитај",
 			"modify": "Измени",
+			"move": "<em>Move</em>",
 			"next": "Следећа",
 			"previous": "Претходна",
 			"print": "Штампај",
@@ -1101,9 +1046,6 @@
 			"showgraph": "Прикажи у графу",
 			"shownotes": "Прикажи напомене"
 		},
-		"modmenu": {
-			"menu": "Навигација"
-		},
 		"modutilities": {
 			"bulkupdate": {
 				"title": "Масовна измена картица",
@@ -1232,6 +1174,8 @@
 	"addAttachmentFromDms": "Додај прилог из DMS",
 	"addDomain": "Додај релацију",
 	"addFilter": "Додај филтер",
+	"addLookup": "Додај ставку у шифарник",
+	"addLookupType": "Додај тип у шифарник",
 	"addProject": "Додај пројекат",
 	"addRelations": "Додај релацију",
 	"addReport": "Додај извештај",
@@ -1248,6 +1192,7 @@
 	"attention": "Пажња",
 	"attribute": "Атрибут",
 	"attributes": "Атрибути",
+	"availableElements": "Доступни елементи",
 	"availableFilters": "Доступни филтери",
 	"baseProperties": "Основна обележја",
 	"bcc": "Bcc",
@@ -1272,6 +1217,7 @@
 	"clearFilter": "Очисти филтер",
 	"clear_row_and_colun_privilege": "Обриши права приступа на редове и колоне",
 	"cmdbuildCategory": "CMDBuild категорија",
+	"code": "Код",
 	"composeEmail": "Креирај е-пошту",
 	"composeFromTemplate": "Креирај из шаблона",
 	"confirmRegeneration": "<em>Confirm regeneration</em>",
@@ -1287,6 +1233,7 @@
 	"credentials": "Подаци за приступ",
 	"csv": "CSV",
 	"csvFile": "CSV датотека",
+	"customMenu": "Персонализовани мени",
 	"dataSource": "Извор података",
 	"defaultAccount": "Подразумевани кор. налог",
 	"defaultClass": "Подразумевана класа",
@@ -1305,6 +1252,7 @@
 	"directDescription": "Директни опис",
 	"disable": "Онемогући",
 	"disableGridFilter": "Искључи филтрирање табеле",
+	"disableLookup": "Искључи ставку шифарника",
 	"disableUser": "Искључи корисника",
 	"display_less_attributes": "Прикажи мање атрибута",
 	"display_more_attributes": "Прикажи више атрибута",
@@ -1322,6 +1270,7 @@
 	"emailTemplate": "ШАблон е-поште",
 	"enable": "Омогући",
 	"enableGridFilter": "Укључи филтрирање табеле",
+	"enableLookup": "Укључи ставку шифарника",
 	"enableMoveRejectedNotMatching": "Enable move rejected not matching",
 	"enableSsl": "Укључи SSL",
 	"enableUser": "Укључи корисника",
@@ -1384,16 +1333,21 @@
 	"lockTimeout": "Истек закључавања (секунди)",
 	"loggedGroup": "Пријављена група",
 	"loggedUser": "Пријављени корисник",
+	"lookupList": "Листа ставки",
+	"lookupTypes": "Тип у шифарнику",
 	"main": "Главни",
 	"manualRegeneration": "<em>Manual Regeneration</em>",
 	"masterDetail": "Надређени/подређени (Master/Detail)",
 	"masterDetailLabel": "Назив везе надређени/подређени (Master/Detail)",
 	"masterReportJrxml": "Избор Главног извештаја (.jrxml)",
 	"maximumLevel": "Максималан број нивоа који се могу селектовати",
+	"menu": "Мени",
 	"mode": "Режим",
 	"modifyAccount": "Измени кор. налог",
 	"modifyDomain": "Измени релацију",
 	"modifyFilter": "Модификуј приказ",
+	"modifyLookup": "Измени ставку шифарника",
+	"modifyLookupType": "Измени тип у шифарнику",
 	"modifyProject": "Измени пројекат",
 	"modifyReport": "Измени извештај",
 	"modifyTemplate": "Измени шаблон",
@@ -1401,9 +1355,12 @@
 	"modifyView": "Модификуј приказ",
 	"multiGroup": "Више група",
 	"name": "Назив",
+	"navigation": "Навигација",
+	"newFolder": "Нови фолдер",
 	"noAvailableData": "<em>No available data</em>",
 	"no_bim_project_for_card": "Не постоји BIM пројекат за ову картицу",
 	"not_set": "Није постављено",
+	"notes": "Напомена",
 	"odt": "ODT",
 	"onDay": "Дана",
 	"open_3d_viewer": "Open 3D viewer",
@@ -1411,6 +1368,8 @@
 	"origin": "Полазна класа",
 	"outgoing": "Одлазне",
 	"pan": "Померање",
+	"parent": "Родитељ",
+	"parentDescription": "Опис родитеља",
 	"password": "Лозинка",
 	"pdf": "PDF",
 	"popupPercentageHeight": "Висина (у процентима) popup прозора",
@@ -1439,6 +1398,7 @@
 	"remove": "Уклони",
 	"removeAccount": "Уклони кор. налог",
 	"removeFilter": "Уклони приказ",
+	"removeMenu": "Уклони мени",
 	"removeProject": "Уклони пројекат",
 	"removeReport": "Уклони извештај",
 	"removeTemplate": "Уклони шаблон",

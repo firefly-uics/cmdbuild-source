@@ -1,10 +1,9 @@
 (function() {
 
 	var reportAccordion = Ext.create('CMDBuild.view.management.accordion.Reports', { cmName: 'report' });
-
-	// TODO move in common
-	var menuAccordion = new CMDBuild.view.administration.accordion.CMMenuAccordion({
-		cmControllerType: CMDBuild.controller.management.menu.CMMenuAccordionController
+	var menuAccordion = Ext.create('CMDBuild.view.management.accordion.Menu', {
+		cmControllerType: 'CMDBuild.controller.management.accordion.Menu',
+		cmName: 'menu',
 	});
 
 	// TODO move in common
@@ -30,12 +29,12 @@
 			'CMDBuild.routes.management.Classes',
 			'CMDBuild.routes.management.Instances',
 			'CMDBuild.routes.management.Processes',
-			'CMDBuild.core.buttons.Buttons',
 			'CMDBuild.core.proxy.Constants',
 			'CMDBuild.core.proxy.Classes',
 			'CMDBuild.core.proxy.Configuration',
 			'CMDBuild.core.proxy.Domain',
-			'CMDBuild.core.proxy.Lookup',
+			'CMDBuild.core.proxy.lookup.Type',
+			'CMDBuild.core.proxy.Menu',
 			'CMDBuild.core.proxy.dataViews.DataViews',
 			'CMDBuild.core.proxy.reports.Reports'
 		],
@@ -81,7 +80,8 @@
 			init: function() {
 				Ext.create('CMDBuild.core.LoggerManager'); // Logger configuration
 				Ext.create('CMDBuild.core.Data'); // Data connections configuration
-				Ext.create('CMDBuild.core.Localization'); // CMDBuild localization configuration
+				Ext.create('CMDBuild.core.configurationBuilders.Instance'); // CMDBuild instance configuration
+				Ext.create('CMDBuild.core.configurationBuilders.Localization'); // CMDBuild localization configuration
 
 				Ext.tip.QuickTipManager.init();
 				// Fix a problem of Ext 4.2 tooltips width
@@ -102,7 +102,11 @@
 
 						CMDBuild.ServiceProxy.configuration.readAll({
 							success: function(response, options, decoded) {
-								// Cmdbuild
+								/**
+								 * CMDBuild
+								 *
+								 * @deprecated
+								 */
 								CMDBuild.Config.cmdbuild = decoded.cmdbuild;
 
 								// Localization
@@ -295,10 +299,11 @@
 						params[CMDBuild.core.proxy.Constants.GROUP_NAME] = CMDBuild.Runtime.DefaultGroupName;
 						params[CMDBuild.core.proxy.Constants.LOCALIZED] = true;
 
-						CMDBuild.ServiceProxy.menu.read({
+						CMDBuild.core.proxy.Menu.read({
 							params: params,
-							success: function(response, options, decoded) {
-								menuAccordion.updateStore(decoded.menu);
+							scope: this,
+							success: function(response, options, decodedResponse) {
+								menuAccordion.updateStore(decodedResponse.menu);
 							},
 							callback: reqBarrier.getCallback()
 						});
@@ -319,6 +324,21 @@
 				});
 
 				/**
+				 * Domains
+				 */
+				params = {};
+				params[CMDBuild.core.proxy.Constants.ACTIVE] = true;
+
+				CMDBuild.core.proxy.Domain.getAll({
+					params: params,
+					scope: this,
+					success: function(response, options, decodedResponse) {
+						_CMCache.addDomains(decodedResponse.domains);
+					},
+					callback: reqBarrier.getCallback()
+				});
+
+				/**
 				 * Reports
 				 */
 				CMDBuild.core.proxy.reports.Reports.getTypesTree({
@@ -331,19 +351,6 @@
 					callback: reqBarrier.getCallback()
 				});
 
-				// Domains
-					params = {};
-					params[CMDBuild.core.proxy.Constants.ACTIVE] = true;
-
-					CMDBuild.core.proxy.Domain.getAll({
-						params: params,
-						success: function(response, options, decodedResponse) {
-							_CMCache.addDomains(decodedResponse.domains);
-						},
-						callback: reqBarrier.getCallback()
-					});
-				// END: Domains
-
 				CMDBuild.ServiceProxy.Dashboard.fullList({
 					success : function(response, options, decoded) {
 						_CMCache.addDashboards(decoded.response.dashboards);
@@ -353,7 +360,11 @@
 					callback: reqBarrier.getCallback()
 				});
 
-				CMDBuild.core.proxy.Lookup.readAll({
+				/**
+				 * Lookup
+				 */
+				CMDBuild.core.proxy.lookup.Type.readAll({
+					scope: this,
 					success: function(response, options, decodedResponse) {
 						_CMCache.addLookupTypes(decodedResponse);
  					},

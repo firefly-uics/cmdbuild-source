@@ -3,7 +3,10 @@
 	Ext.define('CMDBuild.controller.administration.localizations.advancedTable.AdvancedTable', {
 		extend: 'CMDBuild.controller.common.AbstractController',
 
-		requires: ['CMDBuild.core.proxy.Constants'],
+		requires: [
+			'CMDBuild.core.proxy.Constants',
+			'CMDBuild.model.localizations.advancedTable.TreeStore'
+		],
 
 		/**
 		 * @cfg {CMDBuild.controller.administration.localizations.Localizations}
@@ -31,10 +34,34 @@
 		 */
 		sectionControllerDomains: undefined,
 
+		/**
+		 * @property {CMDBuild.controller.administration.localizations.advancedTable.SectionFilters}
+		 */
+		sectionControllerFilters: undefined,
+
+		/**
+		 * @property {CMDBuild.controller.administration.localizations.advancedTable.SectionLookup}
+		 */
 		sectionControllerLookup: undefined,
+
+		/**
+		 * @property {CMDBuild.controller.administration.localizations.advancedTable.SectionMenu}
+		 */
 		sectionControllerMenu: undefined,
-		sectionControllerReports: undefined,
+
+		/**
+		 * @property {CMDBuild.controller.administration.localizations.advancedTable.SectionProcesses}
+		 */
 		sectionControllerProcesses: undefined,
+
+		/**
+		 * @property {CMDBuild.controller.administration.localizations.advancedTable.SectionReports}
+		 */
+		sectionControllerReports: undefined,
+
+		/**
+		 * @property {CMDBuild.controller.administration.localizations.advancedTable.SectionViews}
+		 */
 		sectionControllerViews: undefined,
 
 		/**
@@ -55,14 +82,15 @@
 				delegate: this
 			});
 
-			// Build tabs
+			// Build tabs (in display order)
 			this.sectionControllerClasses = Ext.create('CMDBuild.controller.administration.localizations.advancedTable.SectionClasses', { parentDelegate: this });
-			this.sectionControllerDomains = Ext.create('CMDBuild.controller.administration.localizations.advancedTable.SectionDomains', { parentDelegate: this });
-			this.sectionControllerLookup = Ext.create('CMDBuild.controller.administration.localizations.advancedTable.SectionLookup', { parentDelegate: this });
-			this.sectionControllerMenu = Ext.create('CMDBuild.controller.administration.localizations.advancedTable.SectionMenu', { parentDelegate: this });
-			this.sectionControllerReports = Ext.create('CMDBuild.controller.administration.localizations.advancedTable.SectionReports', { parentDelegate: this });
 			this.sectionControllerProcesses = Ext.create('CMDBuild.controller.administration.localizations.advancedTable.SectionProcesses', { parentDelegate: this });
+			this.sectionControllerDomains = Ext.create('CMDBuild.controller.administration.localizations.advancedTable.SectionDomains', { parentDelegate: this });
 			this.sectionControllerViews = Ext.create('CMDBuild.controller.administration.localizations.advancedTable.SectionViews', { parentDelegate: this });
+			this.sectionControllerFilters = Ext.create('CMDBuild.controller.administration.localizations.advancedTable.SectionFilters', { parentDelegate: this });
+			this.sectionControllerLookup = Ext.create('CMDBuild.controller.administration.localizations.advancedTable.SectionLookup', { parentDelegate: this });
+			this.sectionControllerReports = Ext.create('CMDBuild.controller.administration.localizations.advancedTable.SectionReports', { parentDelegate: this });
+			this.sectionControllerMenu = Ext.create('CMDBuild.controller.administration.localizations.advancedTable.SectionMenu', { parentDelegate: this });
 
 			this.view.setActiveTab(0);
 
@@ -78,6 +106,7 @@
 			if (!Ext.isEmpty(languageObject)) {
 				return Ext.create('Ext.grid.column.Column', {
 					dataIndex: languageObject.get(CMDBuild.core.proxy.Constants.TAG),
+					languageDescription: languageObject.get(CMDBuild.core.proxy.Constants.DESCRIPTION),
 					text: '<img style="margin: 0px 5px 0px 0px;" src="images/icons/flags/'
 						+ languageObject.get(CMDBuild.core.proxy.Constants.TAG) + '.png" /> '
 						+ languageObject.get(CMDBuild.core.proxy.Constants.DESCRIPTION),
@@ -117,12 +146,16 @@
 					draggable: false
 				}
 			];
+			var languagesColumnsArray = [];
 
 			Ext.Object.each(enabledLanguages, function(key, value, myself) {
-				columnsArray.push(this.buildColumn(value));
+				languagesColumnsArray.push(this.buildColumn(value));
 			}, this);
 
-			return columnsArray;
+			// Sort languages columns with alphabetical sort order
+			CMDBuild.core.Utils.objectArraySort(languagesColumnsArray, 'languageDescription');
+
+			return Ext.Array.push(columnsArray, languagesColumnsArray);
 		},
 
 		/**
@@ -131,6 +164,7 @@
 		onAdvancedTableBuildStore: function() {
 			return Ext.create('Ext.data.TreeStore', {
 				model: 'CMDBuild.model.localizations.advancedTable.TreeStore',
+
 				root: {
 					text: 'ROOT',
 					expanded: true,
@@ -144,9 +178,11 @@
 		 */
 		onAdvancedTableCollapseAll: function(gridPanel) {
 			CMDBuild.LoadMask.get().show();
-			gridPanel.collapseAll(function() {
-				CMDBuild.LoadMask.get().hide();
-			}, this);
+			Ext.Function.defer(function() { // HACK: to fix expandAll bug that don't displays loeadMask
+				gridPanel.collapseAll(function() {
+					CMDBuild.LoadMask.get().hide();
+				});
+			}, 100, this);
 		},
 
 		/**
@@ -154,9 +190,11 @@
 		 */
 		onAdvancedTableExpandAll: function(gridPanel) {
 			CMDBuild.LoadMask.get().show();
-			gridPanel.expandAll(function() {
-				CMDBuild.LoadMask.get().hide();
-			}, this);
+			Ext.Function.defer(function() { // HACK: to fix expandAll bug that don't displays loeadMask
+				gridPanel.expandAll(function() {
+					CMDBuild.LoadMask.get().hide();
+				});
+			}, 100, this);
 		},
 
 		/**

@@ -287,44 +287,6 @@
 			},
 			"title": "Dashboard"
 		},
-		"modLookup": {
-			"add_lookuptype": "Aggiungi Tipo Lookup",
-			"lookupForm": {
-				"active": "Attiva",
-				"code": "Codice",
-				"description": "Descrizione",
-				"disable_lookup": "Disabilita Lookup",
-				"enable_lookup": "Abilita Lookup",
-				"isdefault": "Default",
-				"notes": "Note",
-				"parentdescription": "Descrizione padre",
-				"update_lookup": "Modifica Voce Lookup"
-			},
-			"lookupGrid": {
-				"active": "Attiva",
-				"add_lookup": "Aggiungi Voce Lookup",
-				"code": "Codice",
-				"description": "Descrizione",
-				"isdefault": "Default",
-				"notes": "Note",
-				"parentdescription": "Descrizione padre"
-			},
-			"lookupType": "Tipo Lookup",
-			"lookupTypeForm": {
-				"active": "Attivo",
-				"delete_lookuptype": "Rimuovi Tipo Lookup",
-				"description": "Descrizione",
-				"modify_lookuptype": "Modifica Tipo Lookup",
-				"parent": "Padre",
-				"title": "Gestione Lookup"
-			},
-			"lookupTypes": "Lookup",
-			"tabs": {
-				"lookuplist": "Lista voci",
-				"properties": "Proprietà"
-			},
-			"title": "Gestione Lookup"
-		},
 		"modWorkflow": {
 			"add_process": "Aggiungi Processo",
 			"attributes_title": "Gestione attributi",
@@ -405,24 +367,6 @@
 		},
 		"modconnectors": {
 			"title": "Connettori"
-		},
-		"modmenu": {
-			"add_menu": "Aggiungi Menu",
-			"available_elements": "Elementi disponibili",
-			"availabletree": {
-				"class": "Classi",
-				"dashboard": "Dashboard",
-				"processclass": "Attività",
-				"report": "Report",
-				"view": "Viste"
-			},
-			"custom_menu": "Menu Personalizzato",
-			"custom_menus": "Menu",
-			"delete_menu": "Rimuovi Menu",
-			"menu_root": "Menu",
-			"modify_menu": "Modifica Menu",
-			"new_folder": "Nuova cartella",
-			"title": "Gestione menu"
 		},
 		"modsecurity": {
 			"defaultgroup": "* Default *",
@@ -609,6 +553,7 @@
 			"importLabel": "Importa",
 			"load": "Carica",
 			"modify": "Modifica",
+			"move": "<em>Move</em>",
 			"next": "Successivo",
 			"previous": "Precedente",
 			"print": "Stampa",
@@ -1101,9 +1046,6 @@
 			"showgraph": "Visualizza grafo",
 			"shownotes": "Visualizza note"
 		},
-		"modmenu": {
-			"menu": "Navigazione"
-		},
 		"modutilities": {
 			"bulkupdate": {
 				"title": "Modifica massiva schede",
@@ -1232,6 +1174,8 @@
 	"addAttachmentFromDms": "Aggiungi allegato da DMS",
 	"addDomain": "Aggiungi dominio",
 	"addFilter": "Aggiungi filtro",
+	"addLookup": "Aggiungi voce lookup",
+	"addLookupType": "Aggiungi tipo lookup",
 	"addProject": "Aggiungi progetto",
 	"addRelations": "Aggiungi relazioni",
 	"addReport": "Aggiungi report",
@@ -1248,6 +1192,7 @@
 	"attention": "Attenzione",
 	"attribute": "Attributo",
 	"attributes": "Attributi",
+	"availableElements": "Elementi disponibili",
 	"availableFilters": "Filtri disponibili",
 	"baseProperties": "Proprietà generiche",
 	"bcc": "Ccn",
@@ -1272,6 +1217,7 @@
 	"clearFilter": "Cancella Filtro",
 	"clear_row_and_colun_privilege": "Rimuovi privilegi su righe e colonne",
 	"cmdbuildCategory": "Categoria di CMDBuild",
+	"code": "Codice",
 	"composeEmail": "Componi e-mail",
 	"composeFromTemplate": "Componi dal template",
 	"confirmRegeneration": "Conferma rigenerazione",
@@ -1287,6 +1233,7 @@
 	"credentials": "Credenziali",
 	"csv": "CSV",
 	"csvFile": "File CSV",
+	"customMenu": "Menu personalizzato",
 	"dataSource": "Sorgente dati",
 	"defaultAccount": "Account di default",
 	"defaultClass": "Classe di default",
@@ -1305,6 +1252,7 @@
 	"directDescription": "Descrizione diretta",
 	"disable": "Disabilita",
 	"disableGridFilter": "Disabilita filtro griglia",
+	"disableLookup": "Disabilita lookup",
 	"disableUser": "Disabilita utente",
 	"display_less_attributes": "Mostra meno attributi",
 	"display_more_attributes": "Mostra più attributi",
@@ -1322,6 +1270,7 @@
 	"emailTemplate": "E-mail Template",
 	"enable": "Abilita",
 	"enableGridFilter": "Abilita filtro griglia",
+	"enableLookup": "Abilita lookup",
 	"enableMoveRejectedNotMatching": "Abilita spostamento respinte",
 	"enableSsl": "Abilita SSL",
 	"enableUser": "Abilita utente",
@@ -1384,16 +1333,21 @@
 	"lockTimeout": "Tempo massimo di blocco (secondi)",
 	"loggedGroup": "Gruppo corrente",
 	"loggedUser": "Utente corrente",
+	"lookupList": "Lista voci",
+	"lookupTypes": "Tipo lookup",
 	"main": "Principale",
 	"manualRegeneration": "Rigenerazione manuale",
 	"masterDetail": "Master/Detail",
 	"masterDetailLabel": "Master/Detail Label",
 	"masterReportJrxml": "Seleziona master report (.jrxml)",
 	"maximumLevel": "Massimo livello selezionabile",
+	"menu": "Menu",
 	"mode": "Modalità",
 	"modifyAccount": "Modifica account",
 	"modifyDomain": "Modifica dominio",
 	"modifyFilter": "Modifica filtro",
+	"modifyLookup": "Modifica voce lookup",
+	"modifyLookupType": "Modifica tipo lookup",
 	"modifyProject": "Modifica progetto",
 	"modifyReport": "Modifica report",
 	"modifyTemplate": "Modifica template",
@@ -1401,9 +1355,12 @@
 	"modifyView": "Modifica vista",
 	"multiGroup": "Multi gruppo",
 	"name": "Nome",
+	"navigation": "Navigazione",
+	"newFolder": "Nuova cartella",
 	"noAvailableData": "Dati non disponibili",
 	"no_bim_project_for_card": "Non ho trovato un progetto BIM per questa card",
 	"not_set": "Non impostato",
+	"notes": "Note",
 	"odt": "ODT",
 	"onDay": "Il giorno",
 	"open_3d_viewer": "Apri il visualizzatore 3D",
@@ -1411,6 +1368,8 @@
 	"origin": "Origine",
 	"outgoing": "In uscita",
 	"pan": "Sposta",
+	"parent": "Padre",
+	"parentDescription": "Descrizione padre",
 	"password": "Password",
 	"pdf": "PDF",
 	"popupPercentageHeight": "Altezza percentuale finestra popup",
@@ -1439,6 +1398,7 @@
 	"remove": "Rimuovi",
 	"removeAccount": "Rimuovi account",
 	"removeFilter": "Rimuovi Filtro",
+	"removeMenu": "Rimuovi menu",
 	"removeProject": "Rimuovi Progetto",
 	"removeReport": "Cancella report",
 	"removeTemplate": "Rimuovi Template",

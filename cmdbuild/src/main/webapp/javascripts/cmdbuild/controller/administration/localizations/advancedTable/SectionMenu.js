@@ -1,15 +1,11 @@
 (function() {
 
 	Ext.define('CMDBuild.controller.administration.localizations.advancedTable.SectionMenu', {
-		extend: 'CMDBuild.controller.administration.localizations.advancedTable.SectionBase',
+		extend: 'CMDBuild.controller.administration.localizations.advancedTable.SectionAbstract',
 
 		requires: [
-			'CMDBuild.core.proxy.Attributes',
 			'CMDBuild.core.proxy.Constants',
-			'CMDBuild.core.proxy.Classes',
-			'CMDBuild.core.proxy.localizations.Localizations',
-//			'CMDBuild.model.localizations.advancedTable.TreeStore',
-			'CMDBuild.core.Utils',
+			'CMDBuild.core.proxy.localizations.Localizations'
 		],
 
 		/**
@@ -18,18 +14,9 @@
 		parentDelegate: undefined,
 
 		/**
-		 * @cfg {Array}
-		 */
-		cmfgCatchedFunctions: [
-//			'onAdvancedTableClassesShow',
-//			'onAdvancedTableNodeExpand',
-//			'onAdvancedTableRowUpdateButtonClick'
-		],
-
-		/**
 		 * @cfg {String}
 		 */
-		sectionId: CMDBuild.core.proxy.Constants.CLASS, // TODO
+		sectionId: CMDBuild.core.proxy.Constants.MENU,
 
 		/**
 		 * @property {CMDBuild.view.administration.localizations.common.AdvancedTableGrid}
@@ -37,7 +24,7 @@
 		grid: undefined,
 
 		/**
-		 * @cfg {CMDBuild.view.administration.localizations.advancedTable.SectionMenuPanel}
+		 * @cfg {CMDBuild.view.administration.localizations.advancedTable.SectionPanel}
 		 */
 		view: undefined,
 
@@ -50,8 +37,10 @@
 		constructor: function(configObject) {
 			this.callParent(arguments);
 
-			this.view = Ext.create('CMDBuild.view.administration.localizations.advancedTable.SectionMenuPanel', {
-				delegate: this
+			this.view = Ext.create('CMDBuild.view.administration.localizations.advancedTable.SectionPanel', {
+				delegate: this,
+				hideActiveOnlyCheckbox: true,
+				title: '@@ Menu'
 			});
 
 			// Shorthand
@@ -61,195 +50,130 @@
 		},
 
 		/**
-		 * Refresh all child node filling them with translations (class properties)
+		 * Build children main node (buildAttributesNode)
 		 *
-		 * @param {CMDBuild.model.localizations.advancedTable.TreeStore} node
-		 */
-		nodeExpandLevel1: function(node) { // TODO implementare chiamate in blocco
-//			node.eachChild(function(childNode) {
-//				if (childNode.isLeaf()) {
-//					var params = {};
-//					params[CMDBuild.core.proxy.Constants.TYPE] = this.getSectionId();
-//					params[CMDBuild.core.proxy.Constants.OWNER] = node.get(CMDBuild.core.proxy.Constants.ENTITY_IDENTIFIER);
-//					params[CMDBuild.core.proxy.Constants.IDENTIFIER] = node.get(CMDBuild.core.proxy.Constants.ENTITY_IDENTIFIER);
-//					params[CMDBuild.core.proxy.Constants.FIELD] = childNode.get(CMDBuild.core.proxy.Constants.PROPERTY_IDENTIFIER);
-//
-//					CMDBuild.core.proxy.localizations.Localizations.read({
-//						params: params,
-//						scope: this,
-//						success: function(response, options, decodedResponse) {
-//							// Fill node with translations
-//							if (!Ext.Object.isEmpty(decodedResponse.response)) {
-//								Ext.Object.each(decodedResponse.response, function(tag, translation, myself) {
-//									childNode.set(tag, translation);
-//								});
-//
-//								childNode.commit();
-//							}
-//						}
-//					});
-//				}
-//			}, this);
-		},
-
-		/**
-		 * Rebuild all child node with translations (class attributes)
+		 * @param {CMDBuild.model.localizations.advancedTable.TreeStore} rootNode
 		 *
-		 * @param {CMDBuild.model.localizations.advancedTable.TreeStore} node
+		 * @returns {CMDBuild.model.localizations.advancedTable.TreeStore}
 		 */
-		nodeExpandLevel2: function(node) { // TODO implementare chiamate in blocco
-//			node.removeAll();
-//
-//			var params = {};
-//			params[CMDBuild.core.proxy.Constants.ACTIVE] = true;
-//			params[CMDBuild.core.proxy.Constants.CLASS_NAME] = this.getLevelNode(node, 1).get(CMDBuild.core.proxy.Constants.TEXT);
-//
-//			CMDBuild.LoadMask.get().show();
-//			CMDBuild.core.proxy.Attributes.read({
-//				params: params,
-//				scope: this,
-//				success: function(response, options, decodedResponse) {
-//					// Sort attributes with CMDBuild sort order
-//					CMDBuild.core.Utils.objectArraySort(decodedResponse[CMDBuild.core.proxy.Constants.ATTRIBUTES], CMDBuild.core.proxy.Constants.INDEX);
-//
-//					Ext.Array.forEach(decodedResponse[CMDBuild.core.proxy.Constants.ATTRIBUTES], function(childNode, i, allChildNodes) {
-//						if (childNode[CMDBuild.core.proxy.Constants.NAME] != 'Notes') { // Custom CMDBuild behaviour
-//							var localizationParams = {};
-//							localizationParams[CMDBuild.core.proxy.Constants.TYPE] = CMDBuild.core.proxy.Constants.ATTRIBUTE + this.getSectionId();
-//							localizationParams[CMDBuild.core.proxy.Constants.OWNER] = this.getLevelNode(node, 1).get(CMDBuild.core.proxy.Constants.ENTITY_IDENTIFIER);
-//							localizationParams[CMDBuild.core.proxy.Constants.IDENTIFIER] = childNode[CMDBuild.core.proxy.Constants.NAME];
-//							localizationParams[CMDBuild.core.proxy.Constants.FIELD] = CMDBuild.core.proxy.Constants.DESCRIPTION;
-//
-//							CMDBuild.core.proxy.localizations.Localizations.read({
-//								params: localizationParams,
-//								scope: this,
-//								loadMask: true,
-//								success: function(response, options, decodedResponse) {
-//									var childAttributeNodeObject = {};
-//									childAttributeNodeObject[CMDBuild.core.proxy.Constants.DEFAULT] = childNode[CMDBuild.core.proxy.Constants.DESCRIPTION];
-//									childAttributeNodeObject[CMDBuild.core.proxy.Constants.ENTITY_IDENTIFIER] = CMDBuild.core.proxy.Constants.ATTRIBUTE + this.getSectionId();
-//									childAttributeNodeObject[CMDBuild.core.proxy.Constants.LEAF] = true;
-//									childAttributeNodeObject[CMDBuild.core.proxy.Constants.PARENT] = node;
-//									childAttributeNodeObject[CMDBuild.core.proxy.Constants.PROPERTY_IDENTIFIER] = childNode[CMDBuild.core.proxy.Constants.NAME];
-//									childAttributeNodeObject[CMDBuild.core.proxy.Constants.TEXT] = childNode[CMDBuild.core.proxy.Constants.NAME];
-//
-//									if (!Ext.Object.isEmpty(decodedResponse.response)) {
-//										Ext.Object.each(decodedResponse.response, function(tag, translation, myself) {
-//											childAttributeNodeObject[tag] = translation;
-//										});
-//
-//										childAttributeNodeObject[CMDBuild.core.proxy.Constants.WAS_EMPTY] = false;
-//									}
-//
-//									node.appendChild(childAttributeNodeObject);
-//								}
-//							});
-//						}
-//					}, this);
-//				},
-//				callback: function(records, operation, success) {
-//					CMDBuild.LoadMask.get().hide();
-//				}
-//			});
+		buildChildrenNode: function(rootNode) {
+			if (!Ext.isEmpty(rootNode) && rootNode.getDepth() != 1) {
+				var entityAttributesNodeObject = { expandable: true };
+				entityAttributesNodeObject[CMDBuild.core.proxy.Constants.LEAF] = false;
+				entityAttributesNodeObject[CMDBuild.core.proxy.Constants.PARENT] = rootNode;
+				entityAttributesNodeObject[CMDBuild.core.proxy.Constants.TEXT] = '@@ Children';
+
+				return rootNode.appendChild(entityAttributesNodeObject);
+			}
+
+			return rootNode;
 		},
 
 		/**
-		 * Fill grid store with classes data
+		 * @param {CMDBuild.model.localizations.advancedTable.TreeStore} rootNode
+		 * @param {Array} arrayToDecode
 		 */
-		onAdvancedTableClassesShow: function() { // TODO implementare chiamate in blocco
-//			var root = this.grid.getStore().getRootNode();
-//			root.removeAll();
-//
-//			// GetAllClasses data to get default translations
-//			var params = {};
-//			params[CMDBuild.core.proxy.Constants.ACTIVE] = true;
-//
-//			CMDBuild.core.proxy.Classes.read({
-//				params: params,
-//				loadMask: true,
-//				scope: this,
-//				success: function(response, options, decodedResponse) {
-//					// Sort classes with CMDBuild sort order
-//					CMDBuild.core.Utils.objectArraySort(decodedResponse[CMDBuild.core.proxy.Constants.CLASSES], CMDBuild.core.proxy.Constants.TEXT);
-//
-//					Ext.Array.forEach(decodedResponse[CMDBuild.core.proxy.Constants.CLASSES], function(classObject, i, allClasses) {
-//						if (
-//							classObject[CMDBuild.core.proxy.Constants.TYPE] == 'class' // Discard processes from visualization
-//							&& classObject[CMDBuild.core.proxy.Constants.NAME] != 'Class' // Discard root class of all classes
-//						) {
-//							// Class main node
-//							var classMainNodeObject = { expandable: true, };
-//							classMainNodeObject[CMDBuild.core.proxy.Constants.ENTITY_IDENTIFIER] = classObject[CMDBuild.core.proxy.Constants.NAME];
-//							classMainNodeObject[CMDBuild.core.proxy.Constants.LEAF] = false;
-//							classMainNodeObject[CMDBuild.core.proxy.Constants.PARENT] = root;
-//							classMainNodeObject[CMDBuild.core.proxy.Constants.PROPERTY_IDENTIFIER] = classObject[CMDBuild.core.proxy.Constants.NAME];
-//							classMainNodeObject[CMDBuild.core.proxy.Constants.TEXT] = classObject[CMDBuild.core.proxy.Constants.NAME];
-//
-//							var classMainNode = root.appendChild(classMainNodeObject);
-//
-//							// Class description property object
-//							var classDescriptionNodeObject = {};
-//							classDescriptionNodeObject[CMDBuild.core.proxy.Constants.DEFAULT] = classObject[CMDBuild.core.proxy.Constants.TEXT];
-//							classDescriptionNodeObject[CMDBuild.core.proxy.Constants.ENTITY_IDENTIFIER] = CMDBuild.core.proxy.Constants.TEXT;
-//							classDescriptionNodeObject[CMDBuild.core.proxy.Constants.LEAF] = true;
-//							classDescriptionNodeObject[CMDBuild.core.proxy.Constants.PARENT] = classMainNode;
-//							classDescriptionNodeObject[CMDBuild.core.proxy.Constants.PROPERTY_IDENTIFIER] = CMDBuild.core.proxy.Constants.DESCRIPTION;
-//							classDescriptionNodeObject[CMDBuild.core.proxy.Constants.TEXT] = CMDBuild.Translation.descriptionLabel;
-//
-//							classMainNode.appendChild(classDescriptionNodeObject);
-//
-//							// Class attributes node (always displayed because Code and Description are default class attributes)
-//							var classAttributeNodeObject = { expandable: true };
-//							classAttributeNodeObject[CMDBuild.core.proxy.Constants.ENTITY_IDENTIFIER] = CMDBuild.core.proxy.Constants.ATTRIBUTES;
-//							classAttributeNodeObject[CMDBuild.core.proxy.Constants.LEAF] = false;
-//							classAttributeNodeObject[CMDBuild.core.proxy.Constants.PARENT] = classMainNode;
-//							classAttributeNodeObject[CMDBuild.core.proxy.Constants.PROPERTY_IDENTIFIER] = CMDBuild.core.proxy.Constants.ATTRIBUTES;
-//							classAttributeNodeObject[CMDBuild.core.proxy.Constants.TEXT] = CMDBuild.Translation.attributes;
-//
-//							var classAttributesNode = classMainNode.appendChild(classAttributeNodeObject);
-//
-//							classAttributesNode.appendChild({}); // FIX: expandable property is bugged so i must build a fake node to make attributes node expandable
-//						}
-//					}, this);
-//				}
-//			});
+		decodeStructure: function(rootNode, arrayToDecode) { // TODO localize variables names
+			if (
+				!Ext.isEmpty(rootNode)
+				&& !Ext.isEmpty(arrayToDecode)
+				&& Ext.isArray(arrayToDecode)
+			) {
+				Ext.Array.forEach(arrayToDecode, function(entityObject, i, allEntitiesObjects) {
+					if (!Ext.Array.contains(this.entityFilter, entityObject[CMDBuild.core.proxy.Constants.NAME].toLowerCase())) { // Discard unwanted entities
+						// Entity main node
+						var entityMainNodeObject = { expandable: true };
+						entityMainNodeObject[CMDBuild.core.proxy.Constants.IDENTIFIER] = entityObject[CMDBuild.core.proxy.Constants.NAME];
+						entityMainNodeObject[CMDBuild.core.proxy.Constants.LEAF] = false;
+						entityMainNodeObject[CMDBuild.core.proxy.Constants.PARENT] = rootNode;
+						entityMainNodeObject[CMDBuild.core.proxy.Constants.TEXT] = entityObject[CMDBuild.core.proxy.Constants.NAME];
+
+						var entityMainNode = rootNode.appendChild(entityMainNodeObject);
+
+						// Entity's fields nodes
+						if (!Ext.isEmpty(entityObject[CMDBuild.core.proxy.Constants.FIELDS]))
+							this.decodeStructureFields(entityMainNode, entityObject[CMDBuild.core.proxy.Constants.FIELDS], entityObject);
+
+						// Entity's children nodes
+						if (!Ext.isEmpty(entityObject[CMDBuild.core.proxy.Constants.CHILDREN]))
+							this.decodeStructureChildren(entityMainNode, entityObject[CMDBuild.core.proxy.Constants.CHILDREN]);
+					}
+				}, this);
+			} else {
+				_error('[' + this.getSectionId() + '] decodeStructure() wrong parameters', this);
+			}
 		},
 
 		/**
-		 * @param {CMDBuild.model.localizations.advancedTable.TreeStore} node
+		 * Entity children nodes (decodeStructureAttributes)
+		 *
+		 * @param {CMDBuild.model.localizations.advancedTable.TreeStore} rootNode
+		 * @param {Array} attributesArray
 		 */
-		onAdvancedTableRowUpdateButtonClick: function(node) {  // TODO implementare nuove chiamate
-//			if (!Ext.Object.isEmpty(node)) {
-//				var parentProperty = node.get(CMDBuild.core.proxy.Constants.PARENT).get(CMDBuild.core.proxy.Constants.PROPERTY);
-//
-//				var localizationParams = {};
-//				localizationParams[CMDBuild.core.proxy.Constants.ATTRIBUTE_NAME] = node.get(CMDBuild.core.proxy.Constants.NAME);
-//				localizationParams[CMDBuild.core.proxy.Constants.CLASS_NAME] = this.getFirstLevelNode(node).get(CMDBuild.core.proxy.Constants.OBJECT);
-//				localizationParams[CMDBuild.core.proxy.Constants.FIELD] = CMDBuild.core.proxy.Constants.DESCRIPTION;
-//				localizationParams[CMDBuild.core.proxy.Constants.ATTRIBUTE_NAME] = node.get(CMDBuild.core.proxy.Constants.OBJECT);
-//				localizationParams[CMDBuild.core.proxy.Constants.TRANSLATIONS] = Ext.encode(node.getChanges());
-//				localizationParams[CMDBuild.core.proxy.Constants.SECTION_ID] = (parentProperty == CMDBuild.core.proxy.Constants.CLASSES) ? this.getSectionId() : this.getSectionId() + CMDBuild.core.Utils.toTitleCase(parentProperty);
-//
-//				if (node.get(CMDBuild.core.proxy.Constants.WAS_EMPTY)) {
-//					CMDBuild.core.proxy.localizations.Localizations.create({
-//						params: localizationParams,
-//						scope: this,
-//						success: function(response, options, decodedResponse) {
-//							node.set(CMDBuild.core.proxy.Constants.WAS_EMPTY, false);
-//						}
-//					});
-//				} else {
-//					CMDBuild.core.proxy.localizations.Localizations.update({
-//						params: localizationParams,
-//						scope: this,
-//						success: function(response, options, decodedResponse) {
-//							node.set(CMDBuild.core.proxy.Constants.WAS_EMPTY, false);
-//						}
-//					});
-//				}
-//			} else {
-//				_error('empty node on update action', this);
-//			}
+		decodeStructureChildren: function(rootNode, attributesArray) {
+			if (
+				!Ext.isEmpty(rootNode)
+				&& !Ext.isEmpty(attributesArray)
+				&& Ext.isArray(attributesArray)
+			) {
+				rootNode = this.buildChildrenNode(rootNode);
+
+				Ext.Array.forEach(attributesArray, function(attributeObject, i, allAttributesObjects) {
+					if (!Ext.Array.contains(this.entityAttributeFilter, attributeObject[CMDBuild.core.proxy.Constants.NAME].toLowerCase())) { // Discard unwanted attributes
+						var entityAttributeNodeObject = { expandable: true };
+						entityAttributeNodeObject[CMDBuild.core.proxy.Constants.IDENTIFIER] = attributeObject[CMDBuild.core.proxy.Constants.NAME];
+						entityAttributeNodeObject[CMDBuild.core.proxy.Constants.LEAF] = false;
+						entityAttributeNodeObject[CMDBuild.core.proxy.Constants.PARENT] = rootNode;
+						entityAttributeNodeObject[CMDBuild.core.proxy.Constants.TEXT] = attributeObject.fields[0][CMDBuild.core.proxy.Constants.VALUE];
+						entityAttributeNodeObject['iconCls'] = 'cmdbuild-tree-' + attributeObject[CMDBuild.core.proxy.Constants.TYPE] + '-icon';
+
+						var entityAttributeNode = rootNode.appendChild(entityAttributeNodeObject);
+
+						// Entity's fields nodes
+						if (!Ext.isEmpty(attributeObject[CMDBuild.core.proxy.Constants.FIELDS]))
+							this.decodeStructureFields(entityAttributeNode, attributeObject[CMDBuild.core.proxy.Constants.FIELDS]);
+
+						// Entity's children nodes
+						if (!Ext.isEmpty(attributeObject[CMDBuild.core.proxy.Constants.CHILDREN]))
+							this.decodeStructureChildren(entityAttributeNode, attributeObject[CMDBuild.core.proxy.Constants.CHILDREN]);
+					}
+				}, this);
+			} else {
+				_error('[' + this.getSectionId() + '] decodeStructureChildren() - wrong parameters type', this);
+			}
+		},
+
+		/**
+		 * Menu translatable fields
+		 *
+		 * @param {CMDBuild.model.localizations.advancedTable.TreeStore} rootNode
+		 * @param {Array} fieldsArray
+		 *
+		 * @override
+		 */
+		decodeStructureFields: function(rootNode, fieldsArray) {
+			if (
+				!Ext.isEmpty(rootNode)
+				&& !Ext.isEmpty(fieldsArray)
+				&& Ext.isArray(fieldsArray)
+			) {
+				Ext.Array.forEach(fieldsArray, function(fieldObject, i, allFields) {
+					var entityFieldNodeObject = {};
+					entityFieldNodeObject[CMDBuild.core.proxy.Constants.DEFAULT] = fieldObject[CMDBuild.core.proxy.Constants.VALUE];
+					entityFieldNodeObject[CMDBuild.core.proxy.Constants.FIELD] = fieldObject[CMDBuild.core.proxy.Constants.NAME];
+					entityFieldNodeObject[CMDBuild.core.proxy.Constants.IDENTIFIER] = this.getLevelNode(rootNode, 4).get(CMDBuild.core.proxy.Constants.IDENTIFIER);
+					entityFieldNodeObject[CMDBuild.core.proxy.Constants.LEAF] = true;
+					entityFieldNodeObject[CMDBuild.core.proxy.Constants.PARENT] = rootNode;
+					entityFieldNodeObject[CMDBuild.core.proxy.Constants.TEXT] = fieldObject[CMDBuild.core.proxy.Constants.NAME];
+					entityFieldNodeObject[CMDBuild.core.proxy.Constants.TYPE] = CMDBuild.core.proxy.Constants.MENU_ITEM;
+
+					this.fillWithTranslations(fieldObject[CMDBuild.core.proxy.Constants.TRANSLATIONS], entityFieldNodeObject);
+
+					rootNode.appendChild(entityFieldNodeObject);
+				}, this);
+			} else {
+				rootNode.appendChild({}); // FIX: expandable property is bugged so i must build a fake node to make rootNode expandable
+			}
 		}
 	});
 
