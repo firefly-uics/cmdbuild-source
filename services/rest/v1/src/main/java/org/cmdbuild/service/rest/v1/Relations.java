@@ -2,7 +2,12 @@ package org.cmdbuild.service.rest.v1;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
-import static org.cmdbuild.service.rest.v1.constants.Serialization.*;
+import static org.cmdbuild.service.rest.v1.constants.Serialization.DETAILED;
+import static org.cmdbuild.service.rest.v1.constants.Serialization.DOMAIN_ID;
+import static org.cmdbuild.service.rest.v1.constants.Serialization.FILTER;
+import static org.cmdbuild.service.rest.v1.constants.Serialization.LIMIT;
+import static org.cmdbuild.service.rest.v1.constants.Serialization.RELATION_ID;
+import static org.cmdbuild.service.rest.v1.constants.Serialization.START;
 
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -35,7 +40,7 @@ public interface Relations {
 			@QueryParam(FILTER) String filter, //
 			@QueryParam(LIMIT) Integer limit, //
 			@QueryParam(START) Integer offset, //
-			@QueryParam(DETAILED) Boolean detailed //
+			@QueryParam(DETAILED) boolean detailed //
 	);
 
 	@GET
