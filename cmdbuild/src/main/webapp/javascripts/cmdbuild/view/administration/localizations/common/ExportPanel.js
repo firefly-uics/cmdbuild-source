@@ -42,7 +42,7 @@
 						},
 
 						items: [
-							Ext.create('CMDBuild.core.buttons.Export', {
+							Ext.create('CMDBuild.core.buttons.text.Export', {
 								scope: this,
 
 								handler: function(button, e) {

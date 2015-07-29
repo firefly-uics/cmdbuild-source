@@ -287,44 +287,6 @@
 			},
 			"title": "Dashboard"
 		},
-		"modLookup": {
-			"add_lookuptype": "Add Lookup Type",
-			"lookupForm": {
-				"active": "Active",
-				"code": "Code",
-				"description": "Description",
-				"disable_lookup": "Disable Lookup",
-				"enable_lookup": "Enable Lookup",
-				"isdefault": "Default",
-				"notes": "Notes",
-				"parentdescription": "Parent description",
-				"update_lookup": "Modify Lookup"
-			},
-			"lookupGrid": {
-				"active": "Active",
-				"add_lookup": "Add Lookup",
-				"code": "Code",
-				"description": "Description",
-				"isdefault": "Default",
-				"notes": "Notes",
-				"parentdescription": "Parent description"
-			},
-			"lookupType": "Lookup Type",
-			"lookupTypeForm": {
-				"active": "Active",
-				"delete_lookuptype": "Delete Lookup Type",
-				"description": "Description",
-				"modify_lookuptype": "Modify Lookup Type",
-				"parent": "Parent",
-				"title": "Lookup Management"
-			},
-			"lookupTypes": "Lookup Types",
-			"tabs": {
-				"lookuplist": "Lookup List",
-				"properties": "Property"
-			},
-			"title": "Lookup Management"
-		},
 		"modWorkflow": {
 			"add_process": "Add process",
 			"attributes_title": "Manage attributes",
@@ -405,24 +367,6 @@
 		},
 		"modconnectors": {
 			"title": "Connectors"
-		},
-		"modmenu": {
-			"add_menu": "Add Menu",
-			"available_elements": "Available Elements",
-			"availabletree": {
-				"class": "Classes",
-				"dashboard": "Dashboards",
-				"processclass": "Activities",
-				"report": "Reports",
-				"view": "Views"
-			},
-			"custom_menu": "Custom Menu",
-			"custom_menus": "Custom Menus",
-			"delete_menu": "Delete Menu",
-			"menu_root": "Menu",
-			"modify_menu": "Modify Menu",
-			"new_folder": "New Folder",
-			"title": "Menu Management"
 		},
 		"modsecurity": {
 			"defaultgroup": "* Default *",
@@ -609,6 +553,7 @@
 			"importLabel": "Import",
 			"load": "Load",
 			"modify": "Modify",
+			"move": "Move",
 			"next": "Next",
 			"previous": "Previous",
 			"print": "Print",
@@ -1101,9 +1046,6 @@
 			"showgraph": "Show graph",
 			"shownotes": "Show notes"
 		},
-		"modmenu": {
-			"menu": "Navigation"
-		},
 		"modutilities": {
 			"bulkupdate": {
 				"title": "Multiple update",
@@ -1232,6 +1174,8 @@
 	"addAttachmentFromDms": "Add attachments from DMS",
 	"addDomain": "Add domain",
 	"addFilter": "Add filter",
+	"addLookup": "Add lookup",
+	"addLookupType": "Add lookup type",
 	"addProject": "Add project",
 	"addRelations": "Add relations",
 	"addReport": "Add report",
@@ -1248,6 +1192,7 @@
 	"attention": "Attention",
 	"attribute": "Attribute",
 	"attributes": "Attributes",
+	"availableElements": "Available elements",
 	"availableFilters": "Available Filters",
 	"baseProperties": "Base properties",
 	"bcc": "Bcc",
@@ -1272,6 +1217,7 @@
 	"clearFilter": "Clear Filter",
 	"clear_row_and_colun_privilege": "Clear rows and columns privileges",
 	"cmdbuildCategory": "CMDBuild category",
+	"code": "Code",
 	"collapse": "Collapse",
 	"collapseAll": "Collapse all",
 	"composeEmail": "Compose e-mail",
@@ -1289,6 +1235,7 @@
 	"credentials": "Credentials",
 	"csv": "CSV",
 	"csvFile": "CSV file",
+	"customMenu": "Custom menu",
 	"dataSource": "Data source",
 	"defaultAccount": "Default account",
 	"defaultClass": "Default class",
@@ -1307,6 +1254,7 @@
 	"directDescription": "Direct description",
 	"disable": "Disable",
 	"disableGridFilter": "Disable grid filter",
+	"disableLookup": "Disable lookup",
 	"disableUser": "Disable user",
 	"display_less_attributes": "Display less attributes",
 	"display_more_attributes": "Display more attributes",
@@ -1324,6 +1272,7 @@
 	"emailTemplate": "E-mail Template",
 	"enable": "Enable",
 	"enableGridFilter": "Enable grid filter",
+	"enableLookup": "Enable lookup",
 	"enableMoveRejectedNotMatching": "Enable move rejected not matching",
 	"enableSsl": "Enable SSL",
 	"enableUser": "Enable user",
@@ -1388,16 +1337,21 @@
 	"lockTimeout": "Lock timeout (seconds)",
 	"loggedGroup": "Logged Group",
 	"loggedUser": "Logged User",
+	"lookupList": "Lookup list",
+	"lookupTypes": "Lookup types",
 	"main": "Main",
 	"manualRegeneration": "Manual regeneration",
 	"masterDetail": "Master/Detail",
 	"masterDetailLabel": "Master/Detail label",
 	"masterReportJrxml": "Master report (.jrxml)",
 	"maximumLevel": "Maximum level",
+	"menu": "Menu",
 	"mode": "Mode",
 	"modifyAccount": "Modify account",
 	"modifyDomain": "Modify domain",
 	"modifyFilter": "Modify filter",
+	"modifyLookup": "Modify lookup",
+	"modifyLookupType": "Modify lookup type",
 	"modifyProject": "Modify project",
 	"modifyReport": "Modify report",
 	"modifyTemplate": "Modify template",
@@ -1405,9 +1359,12 @@
 	"modifyView": "Modify view",
 	"multiGroup": "Multi group",
 	"name": "Name",
+	"navigation": "Navigation",
+	"newFolder": "New folder",
 	"noAvailableData": "No available data",
 	"no_bim_project_for_card": "There is no BIM project for this card",
 	"not_set": "Not set",
+	"notes": "Notes",
 	"odt": "ODT",
 	"onDay": "On",
 	"open_3d_viewer": "Open 3D viewer",
@@ -1415,6 +1372,8 @@
 	"origin": "Origin",
 	"outgoing": "Outgoing",
 	"pan": "Pan",
+	"parent": "Parent",
+	"parentDescription": "Parent description",
 	"password": "Password",
 	"pdf": "PDF",
 	"popupPercentageHeight": "Popup percentage height",
@@ -1443,6 +1402,7 @@
 	"remove": "Remove",
 	"removeAccount": "Remove account",
 	"removeFilter": "Remove filter",
+	"removeMenu": "Remove menu",
 	"removeProject": "Remove project",
 	"removeReport": "Remove report",
 	"removeTemplate": "Remove template",

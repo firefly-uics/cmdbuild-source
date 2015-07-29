@@ -189,7 +189,7 @@
 					fixed: true,
 
 					items: [
-						Ext.create('CMDBuild.core.buttons.Modify', {
+						Ext.create('CMDBuild.core.buttons.iconized.Modify', {
 							withSpacer: true,
 							tooltip: CMDBuild.Translation.editRow,
 							scope: this,
@@ -204,7 +204,7 @@
 								this.cmfg('onEditRowButtonClick', record);
 							}
 						}),
-						Ext.create('CMDBuild.core.buttons.Delete', {
+						Ext.create('CMDBuild.core.buttons.iconized.Delete', {
 							withSpacer: true,
 							tooltip: CMDBuild.Translation.deleteRow,
 							scope: this,

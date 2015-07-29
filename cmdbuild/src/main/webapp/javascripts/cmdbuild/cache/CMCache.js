@@ -15,7 +15,6 @@
 			attachmentCategories: "CMDBUild.cache.CMCacheAttachmentCategoryFunctions",
 			gis: "CMDBUild.cache.CMCacheGisFunctions",
 			filters: "CMDBuild.cache.CMCacheFilterFunctions",
-			translations: "CMDBUild.cache.CMCacheTranslationsFunctions",
 			navigationTrees: "CMDBUild.cache.CMCacheNavigationTreesFunctions"
 		},
 
@@ -185,7 +184,8 @@
 					url: 'services/json/management/modcard/getcardlistshort',
 					reader: {
 						type: 'json',
-						root: 'rows'
+						root: 'rows',
+						totalProperty: 'results'
 					},
 					extraParams: baseParams
 				},

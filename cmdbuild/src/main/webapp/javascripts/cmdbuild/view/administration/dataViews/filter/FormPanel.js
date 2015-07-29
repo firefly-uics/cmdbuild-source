@@ -50,7 +50,7 @@
 						itemId: CMDBuild.core.proxy.Constants.TOOLBAR_TOP,
 
 						items: [
-							Ext.create('CMDBuild.core.buttons.Modify', {
+							Ext.create('CMDBuild.core.buttons.iconized.Modify', {
 								text: CMDBuild.Translation.modifyView,
 								scope: this,
 
@@ -58,7 +58,7 @@
 									this.delegate.cmfg('onDataViewsFilterModifyButtonClick');
 								}
 							}),
-							Ext.create('CMDBuild.core.buttons.Delete', {
+							Ext.create('CMDBuild.core.buttons.iconized.Delete', {
 								text: CMDBuild.Translation.removeView,
 								scope: this,
 
@@ -80,14 +80,14 @@
 						},
 
 						items: [
-							Ext.create('CMDBuild.core.buttons.Save', {
+							Ext.create('CMDBuild.core.buttons.text.Save', {
 								scope: this,
 
 								handler: function(button, e) {
 									this.delegate.cmfg('onDataViewsFilterSaveButtonClick');
 								}
 							}),
-							Ext.create('CMDBuild.core.buttons.Abort', {
+							Ext.create('CMDBuild.core.buttons.text.Abort', {
 								scope: this,
 
 								handler: function(button, e) {
@@ -117,7 +117,6 @@
 
 						translationFieldConfig: {
 							type: CMDBuild.core.proxy.Constants.VIEW,
-							owner: { sourceType: 'form', key: CMDBuild.core.proxy.Constants.NAME, source: this },
 							identifier: { sourceType: 'form', key: CMDBuild.core.proxy.Constants.NAME, source: this },
 							field: CMDBuild.core.proxy.Constants.DESCRIPTION
 						}

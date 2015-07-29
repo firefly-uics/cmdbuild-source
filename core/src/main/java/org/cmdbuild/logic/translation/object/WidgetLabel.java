@@ -8,6 +8,8 @@ import org.cmdbuild.logic.translation.TranslationObjectVisitor;
 
 public class WidgetLabel extends BaseTranslation {
 
+	//FIXME: add owner
+	
 	private WidgetLabel(final Builder builder) {
 		this.setName(builder.name);
 		this.setTranslations(builder.translations);

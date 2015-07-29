@@ -92,7 +92,7 @@
 					},
 
 					items: [
-						Ext.create('CMDBuild.core.buttons.Back', {
+						Ext.create('CMDBuild.core.buttons.text.Back', {
 							scope: this,
 
 							handler: function(button, e) {

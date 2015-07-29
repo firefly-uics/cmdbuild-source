@@ -39,14 +39,14 @@
 						},
 
 						items: [
-							Ext.create('CMDBuild.core.buttons.Save', {
+							Ext.create('CMDBuild.core.buttons.text.Print', {
 								scope: this,
 
 								handler: function(button, e) {
-									this.delegate.cmfg('onReportParametersWindowSaveButtonClick');
+									this.delegate.cmfg('onReportParametersWindowPrintButtonClick');
 								}
 							}),
-							Ext.create('CMDBuild.core.buttons.Abort', {
+							Ext.create('CMDBuild.core.buttons.text.Abort', {
 								scope: this,
 
 								handler: function(button, e) {

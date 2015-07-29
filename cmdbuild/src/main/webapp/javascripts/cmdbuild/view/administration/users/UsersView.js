@@ -22,7 +22,7 @@
 						dock: 'top',
 						itemId: CMDBuild.core.proxy.Constants.TOOLBAR_TOP,
 						items: [
-							Ext.create('CMDBuild.core.buttons.Add', {
+							Ext.create('CMDBuild.core.buttons.iconized.Add', {
 								text: CMDBuild.Translation.addUser,
 								scope: this,
 
@@ -32,8 +32,7 @@
 							})
 						]
 					})
-				],
-//				items: [this.grid, this.form]
+				]
 			});
 
 			this.callParent(arguments);

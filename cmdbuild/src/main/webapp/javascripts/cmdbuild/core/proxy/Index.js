@@ -164,9 +164,10 @@
 				create: '',
 				read: 'services/json/schema/translation/read',
 				remove: '',
-				update: 'services/json/schema/translation/update'
-			}
+				update: 'services/json/schema/translation/update',
 
+				readStructure: 'services/json/schema/translation/readstructure',
+			}
 		},
 
 		login: 'services/json/login/login',
@@ -175,8 +176,10 @@
 			disable: 'services/json/schema/modlookup/disablelookup',
 			enable: 'services/json/schema/modlookup/enablelookup',
 			getList: 'services/json/schema/modlookup/getlookuplist',
+			getParentList: 'services/json/schema/modlookup/getparentlist',
 			save: 'services/json/schema/modlookup/savelookup',
 			saveType: 'services/json/schema/modlookup/savelookuptype',
+			setOrder: 'services/json/schema/modlookup/reorderlookup',
 			tree: 'services/json/schema/modlookup/tree'
 		},
 

@@ -28,7 +28,7 @@
 		 *
 		 * Ex. {
 		 * 		{String} type: entity type identifier (class, attributeclass, domain, attributedomain, filter, instancename, lookupvalue, menuitem, report, view, classwidget)
-		 * 		{Object or String} owner: translation owner identifier (className, domainName, ...) used only to translate entities attributes
+		 * 		{Object or String} owner: translation owner identifier (className, domainName, ...) used only to translate attribute's entities
 		 * 		{Object or String} identifier: entity's attribute/property identifier
 		 * 		{String} field: field to translate (description, inverseDescription, ...),
 		 * 		{CMDBuild.model.common.field.translatable.Window} translations
@@ -112,7 +112,6 @@
 				return (
 					!Ext.Object.isEmpty(configuration)
 					&& !Ext.isEmpty(configuration[CMDBuild.core.proxy.Constants.TYPE])
-					&& !Ext.isEmpty(configuration[CMDBuild.core.proxy.Constants.OWNER])
 					&& !Ext.isEmpty(configuration[CMDBuild.core.proxy.Constants.IDENTIFIER])
 					&& !Ext.isEmpty(configuration[CMDBuild.core.proxy.Constants.FIELD])
 				);
@@ -144,7 +143,7 @@
 							if(!Ext.isEmpty(configurationValue.source) && Ext.isFunction(configurationValue.source.getData)) {
 								decodedValue = configurationValue.source.getData(true)[configurationValue.key];
 							} else {
-								_error('form getData() function not implemented', this);
+								_error('form getData() function not implemented or empty source', this);
 							}
 						} break;
 
@@ -152,7 +151,7 @@
 							if(!Ext.isEmpty(configurationValue.source) && Ext.isFunction(configurationValue.source.get)) {
 								decodedValue = configurationValue.source.get(configurationValue.key);
 							} else {
-								_error('model get() function not implemented', this);
+								_error('model get() function not implemented or empty source', this);
 							}
 						} break;
 
@@ -239,6 +238,8 @@
 							this.translationsSet(decodedResponse.response);
 						}
 					});
+				} else {
+					this.translationsSet();
 				}
 			},
 

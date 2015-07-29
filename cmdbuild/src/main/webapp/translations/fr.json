@@ -287,44 +287,6 @@
 			},
 			"title": "Tableau de bord"
 		},
-		"modLookup": {
-			"add_lookuptype": "Ajouter une liste de valeurs",
-			"lookupForm": {
-				"active": "Active",
-				"code": "Code",
-				"description": "Nom",
-				"disable_lookup": "Désactiver la liste de valeurs",
-				"enable_lookup": "Activer la liste de valeurs",
-				"isdefault": "Valeur par défaut",
-				"notes": "Notes",
-				"parentdescription": "Description globale",
-				"update_lookup": "Modifier la liste de valeurs"
-			},
-			"lookupGrid": {
-				"active": "Active",
-				"add_lookup": "Ajouter une valeur à la liste",
-				"code": "Code",
-				"description": "Libellé",
-				"isdefault": "Valeur par défaut",
-				"notes": "Notes",
-				"parentdescription": "Description globale"
-			},
-			"lookupType": "Liste de valeurs",
-			"lookupTypeForm": {
-				"active": "Active",
-				"delete_lookuptype": "Supprimer la liste de valeurs",
-				"description": "Libellé",
-				"modify_lookuptype": "Modifier la liste de valeurs",
-				"parent": "Parent",
-				"title": "Gestion des listes de valeurs"
-			},
-			"lookupTypes": "Listes de valeurs",
-			"tabs": {
-				"lookuplist": "Liste de valeurs",
-				"properties": "Propriétés"
-			},
-			"title": "Gestion des listes de valeurs"
-		},
 		"modWorkflow": {
 			"add_process": "Ajouter un processus",
 			"attributes_title": "Gestion des attributs",
@@ -405,24 +367,6 @@
 		},
 		"modconnectors": {
 			"title": "Connecteurs"
-		},
-		"modmenu": {
-			"add_menu": "Ajouter un menu",
-			"available_elements": "Élements disponibles",
-			"availabletree": {
-				"class": "Classe",
-				"dashboard": "Tableau de bord",
-				"processclass": "Activité",
-				"report": "Rapport",
-				"view": "Vues"
-			},
-			"custom_menu": "Menu personnalisé",
-			"custom_menus": "Menus personnalisés",
-			"delete_menu": "Supprimer le menu",
-			"menu_root": "Menu principal",
-			"modify_menu": "Modifier le menu",
-			"new_folder": "Nouveau dossier",
-			"title": "Gestion des menus"
 		},
 		"modsecurity": {
 			"defaultgroup": "* par défaut *",
@@ -609,6 +553,7 @@
 			"importLabel": "Importer",
 			"load": "Charger",
 			"modify": "Modifier",
+			"move": "<em>Move</em>",
 			"next": "Suivant",
 			"previous": "Précédent",
 			"print": "Imprimer",
@@ -1101,9 +1046,6 @@
 			"showgraph": "Voir le graphe",
 			"shownotes": "Voir les notes"
 		},
-		"modmenu": {
-			"menu": "Navigation"
-		},
 		"modutilities": {
 			"bulkupdate": {
 				"title": "Mises à jour multiples",
@@ -1232,6 +1174,8 @@
 	"addAttachmentFromDms": "Ajouter des pièces jointes depuis le dépôt",
 	"addDomain": "Ajouter un lien",
 	"addFilter": "Ajouter un filtre",
+	"addLookup": "Ajouter une valeur à la liste",
+	"addLookupType": "Ajouter une liste de valeurs",
 	"addProject": "Ajouter un projet",
 	"addRelations": "Ajouter des relations",
 	"addReport": "Ajouter un rapport",
@@ -1248,6 +1192,7 @@
 	"attention": "Attention",
 	"attribute": "Attribut",
 	"attributes": "Attributs",
+	"availableElements": "Élements disponibles",
 	"availableFilters": "Filtres disponibles",
 	"baseProperties": "Propriétés de base",
 	"bcc": "Bcc",
@@ -1272,6 +1217,7 @@
 	"clearFilter": "Supprimer les filtres",
 	"clear_row_and_colun_privilege": "Effacer les privilèges des lignes et des colonnes",
 	"cmdbuildCategory": "Catégories de CMDBuild",
+	"code": "Code",
 	"composeEmail": "Nouveau message",
 	"composeFromTemplate": "Créer à partir d'un modèle",
 	"confirmRegeneration": "<em>Confirm regeneration</em>",
@@ -1287,6 +1233,7 @@
 	"credentials": "Identifiant",
 	"csv": "CSV",
 	"csvFile": "Fichier CSV",
+	"customMenu": "Menu personnalisé",
 	"dataSource": "Source de données",
 	"defaultAccount": "Compte par défaut",
 	"defaultClass": "Classe par défaut",
@@ -1305,6 +1252,7 @@
 	"directDescription": "Libellé, sens direct",
 	"disable": "Désactiver",
 	"disableGridFilter": "Désactiver le filtre de la table",
+	"disableLookup": "Désactiver la liste de valeurs",
 	"disableUser": "Désactiver l'utilisateur",
 	"display_less_attributes": "Afficher moins d'attributs",
 	"display_more_attributes": "Afficher plus d'attributs",
@@ -1322,6 +1270,7 @@
 	"emailTemplate": "Modèle d'email",
 	"enable": "Activer",
 	"enableGridFilter": "Activer le filtre de table",
+	"enableLookup": "Activer la liste de valeurs",
 	"enableMoveRejectedNotMatching": "Autoriser le déplacement des rejets ne correspondant pas",
 	"enableSsl": "Activer SSL",
 	"enableUser": "Activer l'utilisateur",
@@ -1384,16 +1333,21 @@
 	"lockTimeout": "Temps de blocage (secondes)",
 	"loggedGroup": "Groupe connecté",
 	"loggedUser": "Utilisateur connecté",
+	"lookupList": "Liste de valeurs",
+	"lookupTypes": "Liste de valeurs",
 	"main": "Principal",
 	"manualRegeneration": "<em>Manual Regeneration</em>",
 	"masterDetail": "Maître/Détail",
 	"masterDetailLabel": "Libellé Maître/Détail",
 	"masterReportJrxml": "Rapport maître (.jrxml)",
 	"maximumLevel": "Niveau Maximum",
+	"menu": "Menu principal",
 	"mode": "Mode",
 	"modifyAccount": "Modifier le compte",
 	"modifyDomain": "Modifier le lien",
 	"modifyFilter": "Modifier le filtre",
+	"modifyLookup": "Modifier la liste de valeurs",
+	"modifyLookupType": "Modifier la liste de valeurs",
 	"modifyProject": "Modifier le projet",
 	"modifyReport": "Modifier le rapport",
 	"modifyTemplate": "Modifier le modèle",
@@ -1401,9 +1355,12 @@
 	"modifyView": "Modifier la Vue",
 	"multiGroup": "Multi-groupes",
 	"name": "Nom",
+	"navigation": "Navigation",
+	"newFolder": "Nouveau dossier",
 	"noAvailableData": "<em>No available data</em>",
 	"no_bim_project_for_card": "Il n'existe pas de projet BIM pour cette fiche",
 	"not_set": "Non configuré",
+	"notes": "Notes",
 	"odt": "ODT",
 	"onDay": "Travaillé",
 	"open_3d_viewer": "Ouvrir la visionneuse 3D",
@@ -1411,6 +1368,8 @@
 	"origin": "Origine",
 	"outgoing": "Sortie",
 	"pan": "Panoramique",
+	"parent": "Parent",
+	"parentDescription": "Description globale",
 	"password": "Mot de passe",
 	"pdf": "PDF",
 	"popupPercentageHeight": "Hauteur de la boîte de dialogue en pourcentage",
@@ -1439,6 +1398,7 @@
 	"remove": "Supprimer",
 	"removeAccount": "Supprimer le compte",
 	"removeFilter": "Supprimer le filtre",
+	"removeMenu": "Supprimer le menu",
 	"removeProject": "Supprimer le projet",
 	"removeReport": "Supprimer le rapport",
 	"removeTemplate": "Supprimer le modèle",

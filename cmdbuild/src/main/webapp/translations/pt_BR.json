@@ -287,44 +287,6 @@
 			},
 			"title": "Dashboard"
 		},
-		"modLookup": {
-			"add_lookuptype": "Adicionar tipo Pesquisa",
-			"lookupForm": {
-				"active": "Ativo",
-				"code": "Código",
-				"description": "Descrição",
-				"disable_lookup": "Desabilitar Pesquisa",
-				"enable_lookup": "Habilitar Pesquisa",
-				"isdefault": "Padrão",
-				"notes": "Notas",
-				"parentdescription": "Descrição do pai",
-				"update_lookup": "Modificar Pesquisa"
-			},
-			"lookupGrid": {
-				"active": "Ativo",
-				"add_lookup": "Adicionar Pesquisa",
-				"code": "Código",
-				"description": "Descrição",
-				"isdefault": "Padrão",
-				"notes": "Notas",
-				"parentdescription": "Descrição do pai"
-			},
-			"lookupType": "Tipo Pesquisa",
-			"lookupTypeForm": {
-				"active": "Ativo",
-				"delete_lookuptype": "Remover Tipo Pesquisa",
-				"description": "Descrição",
-				"modify_lookuptype": "Modificar Tipo Pesquisa",
-				"parent": "Pai",
-				"title": "Gerenciamento Pesquisa"
-			},
-			"lookupTypes": "Tipos de Pesquisa",
-			"tabs": {
-				"lookuplist": "Lista de Pesquisa",
-				"properties": "Propriedade"
-			},
-			"title": "Gerenciamento de Pesquisa"
-		},
 		"modWorkflow": {
 			"add_process": "Adicionar processo",
 			"attributes_title": "Gerenciar atributos",
@@ -405,24 +367,6 @@
 		},
 		"modconnectors": {
 			"título": "Conectores"
-		},
-		"modmenu": {
-			"add_menu": "Adicionar Menu",
-			"available_elements": "Elementos Disponíveis",
-			"availabletree": {
-				"class": "Classes",
-				"dashboard": "Dashboards",
-				"processclass": "Atividades",
-				"report": "Relatórios",
-				"view": "Visualizações"
-			},
-			"custom_menu": "Menu customizado",
-			"custom_menus": "Menus customizados",
-			"delete_menu": "Remover menu",
-			"menu_root": "Menu",
-			"modify_menu": "Modificar menu",
-			"new_folder": "Nova Pasta",
-			"title": "Gerenciamento do Menu"
 		},
 		"modsecurity": {
 			"defaultgroup": "* Default *",
@@ -609,6 +553,7 @@
 			"importLabel": "Importar",
 			"load": "Carregar",
 			"modify": "Modificar",
+			"move": "<em>Move</em>",
 			"next": "<em>Next</em>",
 			"previous": "<em>Previous</em>",
 			"print": "Imprimir",
@@ -1101,9 +1046,6 @@
 			"showgraph": "Visualizar gráfico",
 			"shownotes": "Visualizar notas"
 		},
-		"modmenu": {
-			"menu": "Navegação"
-		},
 		"modutilities": {
 			"bulkupdate": {
 				"title": "Atualização Múltiplas",
@@ -1232,6 +1174,8 @@
 	"addAttachmentFromDms": "<em>Add attachments from DMS</em>",
 	"addDomain": "Adicionar domínio",
 	"addFilter": "Adicionar Filtro",
+	"addLookup": "Adicionar Pesquisa",
+	"addLookupType": "Adicionar tipo Pesquisa",
 	"addProject": "<em>Add Project</em>",
 	"addRelations": "Adicionar relacionamentos",
 	"addReport": "Adicionar relatório",
@@ -1248,6 +1192,7 @@
 	"attention": "Atenção",
 	"attribute": "<em>Attribute</em>",
 	"attributes": "Atributos",
+	"availableElements": "Elementos disponíveis",
 	"availableFilters": "Filtros Disponíveis",
 	"baseProperties": "Propriedades base",
 	"bcc": "<em>Bcc</em>",
@@ -1272,6 +1217,7 @@
 	"clearFilter": "<em>Clear Filter</em>",
 	"clear_row_and_colun_privilege": "Remover privilégios de linhas e colunas",
 	"cmdbuildCategory": "Categoria do CMDBuild",
+	"code": "Código",
 	"composeEmail": "Compor e-mail",
 	"composeFromTemplate": "<em>Compose from template</em>",
 	"confirmRegeneration": "<em>Confirm regeneration</em>",
@@ -1287,6 +1233,7 @@
 	"credentials": "Credenciais",
 	"csv": "CSV",
 	"csvFile": "Arquivo CSV",
+	"customMenu": "Menu customizado",
 	"dataSource": "Origem dos Dados",
 	"defaultAccount": "<em>Default account</em>",
 	"defaultClass": "Classe Padrão",
@@ -1305,6 +1252,7 @@
 	"directDescription": "Descrição direta",
 	"disable": "<em>Disable</em>",
 	"disableGridFilter": "<em>Disable grid filter</em>",
+	"disableLookup": "Desabilitar Pesquisa",
 	"disableUser": "Desabilitar usuário",
 	"display_less_attributes": "<em>Display less attributes</em>",
 	"display_more_attributes": "<em>Display more attributes</em>",
@@ -1322,6 +1270,7 @@
 	"emailTemplate": "<em>Email Template</em>",
 	"enable": "<em>Enable</em>",
 	"enableGridFilter": "<em>Enable grid filter</em>",
+	"enableLookup": "Habilitar Pesquisa",
 	"enableMoveRejectedNotMatching": "<em>Enable move rejected not matching</em>",
 	"enableSsl": "<em>Enable SSL</em>",
 	"enableUser": "Habilitar usuário",
@@ -1384,16 +1333,21 @@
 	"lockTimeout": "Tempo de Travamento seconds)",
 	"loggedGroup": "<em>Logged Group</em>",
 	"loggedUser": "<em>Logged User</em>",
+	"lookupList": "Lista de Pesquisa",
+	"lookupTypes": "Tipo Pesquisa",
 	"main": "<em>Main</em>",
 	"manualRegeneration": "<em>Manual Regeneration</em>",
 	"masterDetail": "Mestre/Detalhes",
 	"masterDetailLabel": "Rótulo Mestre/Detalhes",
 	"masterReportJrxml": "Relatório mestre (.jrxml)",
 	"maximumLevel": "Nível máximo",
+	"menu": "Menu",
 	"mode": "<em>Mode</em>",
 	"modifyAccount": "<em>Modify account</em>",
 	"modifyDomain": "Modificar domínio",
 	"modifyFilter": "Modificar Filtro",
+	"modifyLookup": "Modificar Pesquisa",
+	"modifyLookupType": "Modificar Tipo Pesquisa",
 	"modifyProject": "<em>Modify Project</em>",
 	"modifyReport": "Modificar relatório",
 	"modifyTemplate": "<em>Modify Template</em>",
@@ -1401,9 +1355,12 @@
 	"modifyView": "Modificar Visualização",
 	"multiGroup": "<em>Multi group</em>",
 	"name": "Nome",
+	"navigation": "Navegação",
+	"newFolder": "Nova pasta",
 	"noAvailableData": "<em>No available data</em>",
 	"no_bim_project_for_card": "<em>There is no BIM project for this card</em>",
 	"not_set": "Não configurado",
+	"notes": "Notas",
 	"odt": "ODT",
 	"onDay": "<em>On</em>",
 	"open_3d_viewer": "<em>Open 3D viewer</em>",
@@ -1411,6 +1368,8 @@
 	"origin": "Origem",
 	"outgoing": "<em>Outgoing</em>",
 	"pan": "<em>Pan</em>",
+	"parent": "Pai",
+	"parentDescription": "Descrição do pai",
 	"password": "<em>Password</em>",
 	"pdf": "PDF",
 	"popupPercentageHeight": "Porcentagem Altura Janela Popup",
@@ -1439,6 +1398,7 @@
 	"remove": "<em>Remove</em>",
 	"removeAccount": "<em>Remove account</em>",
 	"removeFilter": "Remover Filtro",
+	"removeMenu": "Remover menu",
 	"removeProject": "<em>Remove Project</em>",
 	"removeReport": "Remover relatório",
 	"removeTemplate": "<em>Remove Template</em>",

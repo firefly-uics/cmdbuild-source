@@ -29,6 +29,9 @@
 				success: function(result, options, decodedResult) {
 					var translations = decodedResult[CMDBuild.core.proxy.Constants.TRANSLATIONS];
 
+					// Sort languages columns with alphabetical sort order
+					CMDBuild.core.Utils.objectArraySort(translations, CMDBuild.core.proxy.Constants.DESCRIPTION);
+
 					Ext.Array.forEach(translations, function(translation, i, allTranslations) {
 						var item = Ext.create('Ext.form.field.Checkbox', {
 							fieldLabel: translation[CMDBuild.core.proxy.Constants.DESCRIPTION],
@@ -42,6 +45,7 @@
 						});
 
 						this.languageCheckboxes.push(item);
+
 						this.add(item);
 					}, this);
 				}

@@ -44,7 +44,7 @@
 						itemId: CMDBuild.core.proxy.Constants.TOOLBAR_TOP,
 
 						items: [
-							Ext.create('CMDBuild.core.buttons.Add', {
+							Ext.create('CMDBuild.core.buttons.iconized.Add', {
 								text: CMDBuild.Translation.addView,
 								scope: this,
 

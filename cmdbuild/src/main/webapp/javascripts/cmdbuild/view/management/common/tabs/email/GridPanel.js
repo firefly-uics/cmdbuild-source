@@ -32,7 +32,7 @@
 						itemId: CMDBuild.core.proxy.Constants.TOOLBAR_TOP,
 
 						items: [
-							Ext.create('CMDBuild.core.buttons.Add', {
+							Ext.create('CMDBuild.core.buttons.iconized.Add', {
 								text: CMDBuild.Translation.composeEmail,
 								scope: this,
 
@@ -45,7 +45,7 @@
 									this.delegate.cmfg('onGridAddEmailButtonClick');
 								}
 							}),
-							Ext.create('CMDBuild.core.buttons.EmailRegenerate', {
+							Ext.create('CMDBuild.core.buttons.email.Regenerate', {
 								text: CMDBuild.Translation.regenerateAllEmails,
 								scope: this,
 
@@ -68,7 +68,7 @@
 									});
 								}
 							}),
-							Ext.create('CMDBuild.core.buttons.Reload', {
+							Ext.create('CMDBuild.core.buttons.iconized.Reload', {
 								text: CMDBuild.Translation.gridRefresh,
 								forceDisabledState: false, // Force enabled state
 								scope: this,
@@ -124,7 +124,7 @@
 						fixed: true,
 
 						items: [
-							Ext.create('CMDBuild.core.buttons.EmailRegenerate', {
+							Ext.create('CMDBuild.core.buttons.email.Regenerate', {
 								withSpacer: true,
 								tooltip: CMDBuild.Translation.manualRegeneration,
 								scope: this,
@@ -143,7 +143,7 @@
 									);
 								}
 							}),
-							Ext.create('CMDBuild.core.buttons.EmailReply', {
+							Ext.create('CMDBuild.core.buttons.email.Reply', {
 								withSpacer: true,
 								tooltip: CMDBuild.Translation.reply,
 								scope: this,
@@ -160,7 +160,7 @@
 									);
 								}
 							}),
-							Ext.create('CMDBuild.core.buttons.EmailSend', {
+							Ext.create('CMDBuild.core.buttons.email.Send', {
 								withSpacer: true,
 								tooltip: CMDBuild.Translation.send,
 								scope: this,
@@ -177,7 +177,7 @@
 									);
 								}
 							}),
-							Ext.create('CMDBuild.core.buttons.EmailEdit', {
+							Ext.create('CMDBuild.core.buttons.email.Edit', {
 								withSpacer: true,
 								tooltip: CMDBuild.Translation.edit,
 								scope: this,
@@ -194,7 +194,7 @@
 									);
 								}
 							}),
-							Ext.create('CMDBuild.core.buttons.EmailView', {
+							Ext.create('CMDBuild.core.buttons.email.View', {
 								withSpacer: true,
 								tooltip: CMDBuild.Translation.view,
 								scope: this,
@@ -203,7 +203,7 @@
 									this.delegate.cmfg('onGridViewEmailButtonClick', record);
 								}
 							}),
-							Ext.create('CMDBuild.core.buttons.EmailDelete', {
+							Ext.create('CMDBuild.core.buttons.email.Delete', {
 								withSpacer: true,
 								tooltip: CMDBuild.Translation.deleteLabel,
 								scope: this,

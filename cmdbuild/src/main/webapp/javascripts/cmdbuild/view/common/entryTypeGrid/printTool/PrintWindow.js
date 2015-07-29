@@ -24,7 +24,7 @@
 					itemId: CMDBuild.core.proxy.Constants.TOOLBAR_TOP,
 					items: [
 						'->',
-						Ext.create('CMDBuild.core.buttons.Download', {
+						Ext.create('CMDBuild.core.buttons.iconized.Download', {
 							scope: this,
 
 							handler: function(button, e) {

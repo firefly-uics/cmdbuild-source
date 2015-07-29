@@ -45,12 +45,12 @@
 		outgoingFieldset: undefined,
 
 		/**
-		 * @property {CMDBuild.core.buttons.Delete}
+		 * @property {CMDBuild.core.buttons.iconized.Delete}
 		 */
 		removeButton: undefined,
 
 		/**
-		 * @property {CMDBuild.core.buttons.Check}
+		 * @property {CMDBuild.core.buttons.iconized.Check}
 		 */
 		setDefaultButton: undefined,
 
@@ -68,7 +68,7 @@
 
 		initComponent: function() {
 			// Buttons configuration
-				this.removeButton = Ext.create('CMDBuild.core.buttons.Delete', {
+				this.removeButton = Ext.create('CMDBuild.core.buttons.iconized.Delete', {
 					text: CMDBuild.Translation.removeAccount,
 					scope: this,
 
@@ -77,7 +77,7 @@
 					}
 				});
 
-				this.setDefaultButton = Ext.create('CMDBuild.core.buttons.Check', {
+				this.setDefaultButton = Ext.create('CMDBuild.core.buttons.iconized.Check', {
 					text: CMDBuild.Translation.setAsDefault,
 					scope: this,
 
@@ -290,7 +290,7 @@
 						itemId: CMDBuild.core.proxy.Constants.TOOLBAR_TOP,
 
 						items: [
-							Ext.create('CMDBuild.core.buttons.Modify', {
+							Ext.create('CMDBuild.core.buttons.iconized.Modify', {
 								text: CMDBuild.Translation.modifyAccount,
 								scope: this,
 
@@ -314,14 +314,14 @@
 						},
 
 						items: [
-							Ext.create('CMDBuild.core.buttons.Save', {
+							Ext.create('CMDBuild.core.buttons.text.Save', {
 								scope: this,
 
 								handler: function(button, e) {
 									this.delegate.cmfg('onEmailAccountsSaveButtonClick');
 								}
 							}),
-							Ext.create('CMDBuild.core.buttons.Abort', {
+							Ext.create('CMDBuild.core.buttons.text.Abort', {
 								scope: this,
 
 								handler: function(button, e) {

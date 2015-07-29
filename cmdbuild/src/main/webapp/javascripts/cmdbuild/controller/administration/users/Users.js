@@ -18,8 +18,10 @@
 			'onUserChangePasswordButtonClick',
 			'onUserDisableButtonClick',
 			'onUserModifyButtonClick = onUserItemDoubleClick',
+			'onUserPrivilegedChange',
 			'onUserRowSelected',
-			'onUserSaveButtonClick'
+			'onUserSaveButtonClick',
+			'onUserServiceChange'
 		],
 
 		/**
@@ -126,6 +128,14 @@
 			this.enableFieldset(this.form.userInfo);
 		},
 
+		/**
+		 * Privileged is a specialization of service, so if someone check privileged is implicit that is a service user
+		 */
+		onUserPrivilegedChange: function() {
+			if (this.form.privilegedCheckbox.getValue())
+				this.form.serviceCheckbox.setValue(true);
+		},
+
 		onUserRowSelected: function() {
 			if (this.grid.getSelectionModel().hasSelection()) {
 				var store = this.form.defaultGroup.getStore();
@@ -149,7 +159,15 @@
 					params: {
 						userid: this.selectedUser.get('userid')
 					},
-					callback: function() {
+					callback: function(records, operation, success) {
+						// Store load errors manage
+						if (!success) {
+							CMDBuild.core.Message.error(null, {
+								text: CMDBuild.Translation.errors.unknown_error,
+								detail: operation.error
+							});
+						}
+
 						var defaultGroup = store.findRecord('isdefault', true);
 
 						if (defaultGroup)
@@ -176,6 +194,14 @@
 		},
 
 		/**
+		 * Privileged is a specialization of service, so if someone uncheck service is implicit that is not a privileged user
+		 */
+		onUserServiceChange: function() {
+			if (!this.form.serviceCheckbox.getValue())
+				this.form.privilegedCheckbox.setValue(false);
+		},
+
+		/**
 		 * @param {Object} result
 		 * @param {Object} options
 		 * @param {Object} decodedResult
@@ -185,6 +211,14 @@
 
 			this.grid.getStore().load({
 				callback: function(records, operation, success) {
+					// Store load errors manage
+					if (!success) {
+						CMDBuild.core.Message.error(null, {
+							text: CMDBuild.Translation.errors.unknown_error,
+							detail: operation.error
+						});
+					}
+
 					var rowIndex = this.find('userid', decodedResult.rows.userid);
 
 					me.grid.getSelectionModel().select(rowIndex, true);

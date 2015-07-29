@@ -53,7 +53,7 @@
 						fixed: true,
 
 						items: [
-							Ext.create('CMDBuild.core.buttons.FileFormatsPdf', {
+							Ext.create('CMDBuild.core.buttons.fileTypes.Pdf', {
 								withSpacer: true,
 								tooltip: CMDBuild.Translation.pdf,
 								scope: this,
@@ -65,7 +65,7 @@
 									});
 								}
 							}),
-							Ext.create('CMDBuild.core.buttons.FileFormatsOdt', {
+							Ext.create('CMDBuild.core.buttons.fileTypes.Odt', {
 								withSpacer: true,
 								tooltip: CMDBuild.Translation.odt,
 								scope: this,
@@ -77,7 +77,7 @@
 									});
 								}
 							}),
-							Ext.create('CMDBuild.core.buttons.FileFormatsRtf', {
+							Ext.create('CMDBuild.core.buttons.fileTypes.Rtf', {
 								withSpacer: true,
 								tooltip: CMDBuild.Translation.rtf,
 								scope: this,
@@ -89,7 +89,7 @@
 									});
 								}
 							}),
-							Ext.create('CMDBuild.core.buttons.FileFormatsCsv', {
+							Ext.create('CMDBuild.core.buttons.fileTypes.Csv', {
 								withSpacer: true,
 								tooltip: CMDBuild.Translation.csv,
 								scope: this,

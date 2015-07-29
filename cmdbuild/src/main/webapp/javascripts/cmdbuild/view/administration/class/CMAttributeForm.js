@@ -74,7 +74,6 @@
 				scope : this,
 				handler: function() {
 					this.enableModify();
-					_CMCache.initModifyingTranslations();
 				}
 			});
 
@@ -83,8 +82,8 @@
 				text : tr.delete_attribute
 			});
 
-			this.saveButton = new CMDBuild.buttons.SaveButton();
-			this.abortButton = new CMDBuild.buttons.AbortButton();
+			this.saveButton = Ext.create('CMDBuild.core.buttons.text.Save');
+			this.abortButton = Ext.create('CMDBuild.core.buttons.text.Abort');
 
 			this.cmTBar = [this.modifyButton, this.deleteButton];
 			this.cmButtons = [this.saveButton, this.abortButton];
@@ -252,7 +251,7 @@
 
 			this.referenceFilterMetadata = {};
 
-			this.addMetadataBtn = Ext.create('CMDBuild.core.buttons.Modify', {
+			this.addMetadataBtn = Ext.create('CMDBuild.core.buttons.iconized.Modify', {
 				text: CMDBuild.Translation.editMetadata,
 				margin: '0 0 0 ' + (CMDBuild.LABEL_WIDTH + 5),
 				scope: this,

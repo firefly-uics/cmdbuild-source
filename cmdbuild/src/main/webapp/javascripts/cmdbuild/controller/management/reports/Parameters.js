@@ -19,7 +19,7 @@
 		 */
 		cmfgCatchedFunctions: [
 			'onReportParametersWindowAbortButtonClick',
-			'onReportParametersWindowSaveButtonClick'
+			'onReportParametersWindowPrintButtonClick'
 		],
 
 		/**
@@ -76,7 +76,7 @@
 			this.view.destroy();
 		},
 
-		onReportParametersWindowSaveButtonClick: function() {
+		onReportParametersWindowPrintButtonClick: function() {
 			if (this.view.form.getForm().isValid()) {
 				CMDBuild.core.proxy.reports.Reports.update({
 					params: this.view.form.getValues(),

@@ -1,7 +1,7 @@
 (function() {
 
 	Ext.define('CMDBuild.controller.administration.configuration.Configuration', {
-		extend: 'CMDBuild.controller.common.CMBasePanelController',
+		extend: 'CMDBuild.controller.common.AbstractBasePanelController',
 
 		requires: [
 			'CMDBuild.core.proxy.Constants',
@@ -9,22 +9,17 @@
 		],
 
 		/**
-		 * @cfg {Array}
+		 * @cfg {Object}
 		 */
-		subSections: [
-			'generalOptions', // Default
-			'alfresco',
-			'bim',
-			'gis',
-			'relationGraph',
-			'server',
-			'workflow'
-		],
+		delegate: undefined,
 
 		/**
-		 * @cfg {String}
+		 * @cfg {Array}
 		 */
-		titleSeparator: ' - ',
+		cmfgCatchedFunctions: [
+			'onConfigurationRead',
+			'onConfigurationSave'
+		],
 
 		/**
 		 * @property {CMDBuild.view.administration.configuration.ConfigurationView}
@@ -32,43 +27,19 @@
 		view: undefined,
 
 		/**
-		 * @param {CMDBuild.view.administration.configuration.ConfigurationView} view
+		 * @param {Object} parameters
+		 * @param {String} parameters.fileName
+		 * @param {Mixed} parameters.view
 		 */
-		constructor: function(view) {
-			this.callParent(arguments);
+		onConfigurationRead: function(parameters) {
+			if (
+				!Ext.isEmpty(parameters)
+				&& !Ext.isEmpty(parameters[CMDBuild.core.proxy.Constants.FILE_NAME])
+				&& !Ext.isEmpty(parameters[CMDBuild.core.proxy.Constants.VIEW])
+			) {
+				var fileName = parameters[CMDBuild.core.proxy.Constants.FILE_NAME];
+				var view = parameters[CMDBuild.core.proxy.Constants.VIEW];
 
-			// Handlers exchange
-			this.view.delegate = this;
-		},
-
-		/**
-		 * Gatherer function to catch events
-		 *
-		 * @param {String} name
-		 * @param {Object} param
-		 * @param {Function} callback
-		 */
-		cmfg: function(name, param, callBack) {
-			switch (name) {
-				case 'onConfigurationRead':
-					return this.onConfigurationRead(param.configFileName, param.view);
-
-				case 'onConfigurationSave':
-					return this.onConfigurationSave(param.configFileName, param.view);
-
-				default: {
-					if (!Ext.isEmpty(this.parentDelegate) && Ext.isFunction(this.parentDelegate.cmfg))
-						return this.parentDelegate.cmfg(name, param, callBack);
-				}
-			}
-		},
-
-		/**
-		 * @param {String} configFileName
-		 * @param {Mixed} view
-		 */
-		onConfigurationRead: function(configFileName, view) {
-			if (!Ext.isEmpty(configFileName) && !Ext.isEmpty(view)) {
 				CMDBuild.core.proxy.Configuration.read({
 					scope: this,
 					loadMask: true,
@@ -80,26 +51,33 @@
 							view.getForm().setValues(decodedResult);
 
 						// TODO: to delete when localization module will be released
-						if (configFileName == 'cmdbuild')
+						if (fileName == 'cmdbuild')
 							view.languageGrid.setValue(decodedResult.enabled_languages.split(', '));
 
-						if (typeof view.afterSubmit == 'function')
+						if (Ext.isFunction(view.afterSubmit))
 							view.afterSubmit(decodedResult);
 					}
-				}, configFileName);
+				}, fileName);
 			}
 		},
 
 		/**
-		 * @param {String} configFileName
-		 * @param {Mixed} view
+		 * @param {Object} parameters
+		 * @param {String} parameters.fileName
+		 * @param {Mixed} parameters.view
 		 */
-		onConfigurationSave: function(configFileName, view) {
-			if (!Ext.isEmpty(configFileName) && !Ext.isEmpty(view)) {
+		onConfigurationSave: function(parameters) {
+			if (
+				!Ext.isEmpty(parameters)
+				&& !Ext.isEmpty(parameters[CMDBuild.core.proxy.Constants.FILE_NAME])
+				&& !Ext.isEmpty(parameters[CMDBuild.core.proxy.Constants.VIEW])
+			) {
+				var fileName = parameters[CMDBuild.core.proxy.Constants.FILE_NAME];
+				var view = parameters[CMDBuild.core.proxy.Constants.VIEW];
 				var params = view.getValues();
 
 				// TODO: to delete when localization module will be released
-				if (configFileName == 'cmdbuild')
+				if (fileName == 'cmdbuild')
 					params['enabled_languages'] = view.languageGrid.getValue().join(', ');
 
 				CMDBuild.core.proxy.Configuration.save({
@@ -107,13 +85,13 @@
 					params: params,
 					loadMask: true,
 					success: function(result, options, decodedResult) {
-						this.onConfigurationRead(configFileName, view);
+						this.onConfigurationRead(fileName, view);
 
-						CMDBuild.view.common.field.translatable.Utils.commit(this.sectionController.getView());
+						CMDBuild.view.common.field.translatable.Utils.commit(view);
 
 						CMDBuild.core.Message.success();
 					}
-				}, configFileName);
+				}, fileName);
 			}
 		},
 
@@ -164,19 +142,6 @@
 				this.setViewTitle(parameters.get(CMDBuild.core.proxy.Constants.TEXT));
 
 				this.callParent(arguments);
-			}
-		},
-
-		/**
-		 * Setup view panel title as a breadcrumbs component
-		 *
-		 * @param {String} titlePart
-		 */
-		setViewTitle: function(titlePart) {
-			if (Ext.isEmpty(titlePart)) {
-				this.view.setTitle(this.view.baseTitle);
-			} else {
-				this.view.setTitle(this.view.baseTitle + this.titleSeparator + titlePart);
 			}
 		}
 	});

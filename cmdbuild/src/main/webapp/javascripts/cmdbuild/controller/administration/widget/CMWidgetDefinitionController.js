@@ -116,11 +116,6 @@
 				this.view.enableModify();
 				this.subController.setDefaultValues();
 			}
-
-			_CMCache.initAddingTranslations();
-
-			var buttonLabel = this.view.query('#ButtonLabel')[0];
-			buttonLabel.translationsKeyName = '';
 		},
 
 		/**
@@ -153,11 +148,6 @@
 
 		onModifyClick: function() {
 			this.view.enableModify();
-
-			_CMCache.initModifyingTranslations();
-
-			var buttonLabel = this.view.query('#ButtonLabel')[0];
-			buttonLabel.translationsKeyName = this.model.get(CMDBuild.core.proxy.Constants.ID);
 		},
 
 		onRemoveClick: function() {
@@ -220,8 +210,8 @@
 
 						me.view.addRecordToGrid(widgetModel, true);
 						me.view.disableModify(true);
-
-						_CMCache.flushTranslationsToSave(widgetModel.get(CMDBuild.core.proxy.Constants.ID));
+_debug('form', me.view.form);
+						CMDBuild.view.common.field.translatable.Utils.commit(me.view.form);
 					}
 				});
 			}

@@ -56,13 +56,20 @@
 		buildForm: function() {
 			this.buttonLabel = Ext.create('CMDBuild.view.common.field.translatable.Text', {
 				name: CMDBuild.core.proxy.Constants.LABEL,
-				allowBlank: false,
 				fieldLabel: tr.commonFields.buttonLabel,
-				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
+				maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
 				labelWidth: CMDBuild.LABEL_WIDTH,
-				translationsKeyType: 'Widget',
-				translationsKeyField: 'ButtonLabel',
-				itemId: 'ButtonLabel'
+				allowBlank: false,
+//				translationsKeyType: 'Widget',
+//				translationsKeyField: 'ButtonLabel',
+//				itemId: 'ButtonLabel',
+
+				translationFieldConfig: {
+					type: CMDBuild.core.proxy.Constants.CLASS_WIDGET,
+					owner: { sourceType: 'form', key: CMDBuild.core.proxy.Constants.NAME, source: this },
+					identifier: { sourceType: 'form', key: CMDBuild.core.proxy.Constants.NAME, source: this },
+					field: CMDBuild.core.proxy.Constants.DESCRIPTION
+				}
 			});
 
 			this.active = Ext.create('Ext.form.field.Checkbox', {
@@ -81,6 +88,15 @@
 				frame: true,
 				border: true,
 				flex: 1,
+
+				layout: {
+					type: 'vbox',
+					align: 'stretch'
+				},
+
+				defaults: {
+					maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH
+				},
 
 				items: [
 					this.buttonLabel,

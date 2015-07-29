@@ -169,7 +169,7 @@
 
 					default: {
 						this.getDockedComponent(CMDBuild.core.proxy.Constants.TOOLBAR_TOP).add(
-							Ext.create('CMDBuild.core.buttons.Add', {
+							Ext.create('CMDBuild.core.buttons.iconized.Add', {
 								text: tr.add,
 								scope: this,
 

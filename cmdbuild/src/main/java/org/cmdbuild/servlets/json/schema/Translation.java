@@ -1,6 +1,8 @@
 package org.cmdbuild.servlets.json.schema;
 
+import static org.cmdbuild.servlets.json.CommunicationConstants.ACTIVE;
 import static org.cmdbuild.servlets.json.CommunicationConstants.FIELD;
+import static org.cmdbuild.servlets.json.CommunicationConstants.SORT;
 import static org.cmdbuild.servlets.json.CommunicationConstants.TRANSLATIONS;
 import static org.cmdbuild.servlets.json.schema.Utils.toMap;
 
@@ -21,7 +23,11 @@ import org.cmdbuild.logic.translation.converter.ViewConverter;
 import org.cmdbuild.logic.translation.converter.WidgetConverter;
 import org.cmdbuild.servlets.json.JSONBaseWithSpringContext;
 import org.cmdbuild.servlets.json.management.JsonResponse;
+import org.cmdbuild.servlets.json.translationtable.TranslationSerializer;
+import org.cmdbuild.servlets.json.translationtable.TranslationSerializerFactory;
 import org.cmdbuild.servlets.utils.Parameter;
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.google.common.collect.Lists;
@@ -66,6 +72,32 @@ public class Translation extends JSONBaseWithSpringContext {
 		translationLogic().update(translationObject);
 	}
 
+	@JSONExported
+	@Admin
+	public JsonResponse readStructure( //
+			@Parameter(value = TYPE) final String type, //
+			@Parameter(value = SORT, required = false) final JSONArray sorters, //
+			@Parameter(value = ACTIVE, required = false) final boolean activeOnly //
+	) throws JSONException {
+
+		final TranslationSerializerFactory factory = TranslationSerializerFactory //
+				.newInstance() //
+				.withActiveOnly(activeOnly) //
+				.withAuthLogic(authLogic()) //
+				.withDataAccessLogic(userDataAccessLogic()) //
+				.withFilterStore(filterStore()) //
+				.withLookupStore(lookupStore()) //
+				.withMenuLogic(menuLogic()) //
+				.withReportStore(reportStore()).withSorters(sorters) //
+				.withTranslationLogic(translationLogic()) //
+				.withType(type) //
+				.withViewLogic(viewLogic()) //
+				.build();
+
+		final TranslationSerializer serializer = factory.createSerializer();
+		return serializer.serialize();
+	}
+
 	private Converter createConverter(final String type, final String field) {
 		final TranslatableElement element = TranslatableElement.of(type);
 		final Converter converter = element.createConverter(field);
@@ -86,7 +118,7 @@ public class Translation extends JSONBaseWithSpringContext {
 				return Lists.newArrayList(ClassConverter.description());
 			}
 		},
-		CLASSATTRIBUTE("attributeclass") {
+		ATTRIBUTECLASS("attributeclass") {
 			@Override
 			Converter createConverter(final String field) {
 				return AttributeConverter.of(AttributeConverter.forClass(), field);
@@ -109,7 +141,7 @@ public class Translation extends JSONBaseWithSpringContext {
 						DomainConverter.inverseDescription(), DomainConverter.masterDetail());
 			}
 		},
-		DOMAINATTRIBUTE("attributedomain") {
+		ATTRIBUTEDOMAIN("attributedomain") {
 			@Override
 			Converter createConverter(final String field) {
 				return AttributeConverter.of(AttributeConverter.forDomain(), field);
@@ -240,4 +272,5 @@ public class Translation extends JSONBaseWithSpringContext {
 		}
 
 	};
+
 }

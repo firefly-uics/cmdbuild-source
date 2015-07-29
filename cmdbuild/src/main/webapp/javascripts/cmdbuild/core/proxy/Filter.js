@@ -80,7 +80,7 @@
 		/**
 		 * @param {String} className
 		 *
-		 * @return {Ext.data.Store}
+		 * @returns {Ext.data.Store}
 		 */
 		newSystemStore: function(className) {
 			return Ext.create('Ext.data.Store', {

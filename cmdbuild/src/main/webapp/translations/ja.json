@@ -287,44 +287,6 @@
 			},
 			"title": "ダッシュボード"
 		},
-		"modLookup": {
-			"add_lookuptype": "ルックアップタイプ追加",
-			"lookupForm": {
-				"active": "アクティブ",
-				"code": "コード",
-				"description": "説明",
-				"disable_lookup": "ルックアップ不可",
-				"enable_lookup": "ルックアップ可能",
-				"isdefault": "既定値",
-				"notes": "ノート",
-				"parentdescription": "親の説明",
-				"update_lookup": "ルックアップ更新"
-			},
-			"lookupGrid": {
-				"active": "アクティブ",
-				"add_lookup": "ルックアップ追加",
-				"code": "コード",
-				"description": "説明",
-				"isdefault": "既定値",
-				"notes": "ノート",
-				"parentdescription": "親の説明"
-			},
-			"lookupType": "ルックアップタイプ",
-			"lookupTypeForm": {
-				"active": "アクティブ",
-				"delete_lookuptype": "ルックアップタイプ削除",
-				"description": "説明",
-				"modify_lookuptype": "ルックアップタイプ変更",
-				"parent": "親",
-				"title": "ルックアップ管理"
-			},
-			"lookupTypes": "ルックアップタイプ",
-			"tabs": {
-				"lookuplist": "ルックアップリスト",
-				"properties": "プロパティ"
-			},
-			"title": "ルックアップ管理"
-		},
 		"modWorkflow": {
 			"add_process": "プロセス追加",
 			"attributes_title": "属性管理",
@@ -405,24 +367,6 @@
 		},
 		"modconnectors": {
 			"title": "コネクタ"
-		},
-		"modmenu": {
-			"add_menu": "メニュー追加",
-			"available_elements": "利用可能なエレメント",
-			"availabletree": {
-				"class": "クラス",
-				"dashboard": "ダッシュボード",
-				"processclass": "アクティビティ",
-				"report": "レポート",
-				"view": "ビュー"
-			},
-			"custom_menu": "カスタムメニュー",
-			"custom_menus": "カスタムメニュー",
-			"delete_menu": "メニュー削除",
-			"menu_root": "メニュー",
-			"modify_menu": "メニュー変更",
-			"new_folder": "新しいフォルダ",
-			"title": "メニュー管理"
 		},
 		"modsecurity": {
 			"defaultgroup": "* 既定 *",
@@ -609,6 +553,7 @@
 			"importLabel": "インポート",
 			"load": "ロード",
 			"modify": "更新",
+			"move": "<em>Move</em>",
 			"next": "次",
 			"previous": "前",
 			"print": "印刷",
@@ -1101,9 +1046,6 @@
 			"showgraph": "グラフ表示",
 			"shownotes": "ノート表示"
 		},
-		"modmenu": {
-			"menu": "ナビゲーション"
-		},
 		"modutilities": {
 			"bulkupdate": {
 				"title": "多重更新",
@@ -1232,6 +1174,8 @@
 	"addAttachmentFromDms": "DMSから添付を追加",
 	"addDomain": "ドメイン追加",
 	"addFilter": "フィルタを追加",
+	"addLookup": "ルックアップ追加",
+	"addLookupType": "ルックアップタイプ追加",
 	"addProject": "プロジェクトを追加",
 	"addRelations": "リレーション追加",
 	"addReport": "レポート追加",
@@ -1248,6 +1192,7 @@
 	"attention": "注意",
 	"attribute": "属性",
 	"attributes": "アクティビティ",
+	"availableElements": "利用可能なエレメント",
 	"availableFilters": "使用可能なフィルタ",
 	"baseProperties": "基本プロパティ",
 	"bcc": "Bcc",
@@ -1272,6 +1217,7 @@
 	"clearFilter": "フィルタークリアー",
 	"clear_row_and_colun_privilege": "行と列の特権をクリア",
 	"cmdbuildCategory": "CMDBuild カテゴリ",
+	"code": "コード",
 	"composeEmail": "email作成",
 	"composeFromTemplate": "テンプレートから作成",
 	"confirmRegeneration": "<em>Confirm regeneration</em>",
@@ -1287,6 +1233,7 @@
 	"credentials": "資格",
 	"csv": "CSV",
 	"csvFile": "CSV ファイル",
+	"customMenu": "カスタムメニュー",
 	"dataSource": "データソース",
 	"defaultAccount": "既定のアカウント",
 	"defaultClass": "既定のクラス",
@@ -1305,6 +1252,7 @@
 	"directDescription": "順方向の説明",
 	"disable": "無効",
 	"disableGridFilter": "グリッドフィルターを無効に",
+	"disableLookup": "ルックアップ不可",
 	"disableUser": "無効なユーザー",
 	"display_less_attributes": "より少ない属性を表示",
 	"display_more_attributes": "より多くの属性を表示",
@@ -1322,6 +1270,7 @@
 	"emailTemplate": "電子メールテンプレート",
 	"enable": "有効にする",
 	"enableGridFilter": "グリッドフィルターを有効に",
+	"enableLookup": "ルックアップ可能",
 	"enableMoveRejectedNotMatching": "マッチせずにリジェクトされた移動を可能にする",
 	"enableSsl": "SSLを有効化",
 	"enableUser": "可能なユーザー",
@@ -1384,16 +1333,21 @@
 	"lockTimeout": "ロックタイムアウト",
 	"loggedGroup": "ロググループ",
 	"loggedUser": "ログユーザー",
+	"lookupList": "ルックアップリスト",
+	"lookupTypes": "ルックアップタイプ",
 	"main": "メイン",
 	"manualRegeneration": "<em>Manual Regeneration</em>",
 	"masterDetail": "マスタ/ディテール",
 	"masterDetailLabel": "マスタ/ディテールラベル",
 	"masterReportJrxml": "マスタレポート(.jrxml)",
 	"maximumLevel": "最大値",
+	"menu": "メニュー",
 	"mode": "モード",
 	"modifyAccount": "アカウントの変更",
 	"modifyDomain": "ドメイン変更",
 	"modifyFilter": "フィルターを変更",
+	"modifyLookup": "ルックアップ更新",
+	"modifyLookupType": "ルックアップタイプ変更",
 	"modifyProject": "プロジェクトを変更",
 	"modifyReport": "レポート変更",
 	"modifyTemplate": "テンプレートを変更",
@@ -1401,9 +1355,12 @@
 	"modifyView": "ビューを変更",
 	"multiGroup": "マルチグループ",
 	"name": "名前",
+	"navigation": "ナビゲーション",
+	"newFolder": "新しいフォルダ",
 	"noAvailableData": "<em>No available data</em>",
 	"no_bim_project_for_card": "このカードにはBMIプロジェクトがありません",
 	"not_set": "設定されていません",
+	"notes": "ノート",
 	"odt": "ODT",
 	"onDay": "On",
 	"open_3d_viewer": "3Dビューアを開く",
@@ -1411,6 +1368,8 @@
 	"origin": "ターゲット（起点)",
 	"outgoing": "送信",
 	"pan": "パン",
+	"parent": "親",
+	"parentDescription": "親の説明",
 	"password": "パスワード",
 	"pdf": "PDF",
 	"popupPercentageHeight": "ポップアップのパーセント高さ",
@@ -1439,6 +1398,7 @@
 	"remove": "削除",
 	"removeAccount": "アカウント削除",
 	"removeFilter": "ビューを削除",
+	"removeMenu": "メニュー削除",
 	"removeProject": "プロジェクトを削除",
 	"removeReport": "レポート削除",
 	"removeTemplate": "テンプレートを削除",

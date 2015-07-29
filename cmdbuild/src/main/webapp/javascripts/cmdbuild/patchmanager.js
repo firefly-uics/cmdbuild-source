@@ -35,7 +35,7 @@ Ext.onReady(function() {
 		]
 	});
 
-	this.applyButton = new CMDBuild.buttons.ApplyButton({
+	this.applyButton = Ext.create('CMDBuild.core.buttons.text.Apply', {
 		handler: function() {
 			var loadMask = new Ext.LoadMask(Ext.getBody(), {msg:CMDBuild.Translation.common.wait_title});
 

@@ -26,7 +26,7 @@
 		buildTreeStructure: function() {
 			var nodes = [];
 
-			Ext.Object.each(_CMCache.getGroups(), function(id, group, myself) {
+			Ext.Object.each(_CMCache.getGroups(), function(id, group, myself) { // TODO: avoid to use cache class (direct server call)
 				nodes.push({
 					text: group.get(CMDBuild.core.proxy.Constants.TEXT),
 					id: group.get(CMDBuild.core.proxy.Constants.ID),
