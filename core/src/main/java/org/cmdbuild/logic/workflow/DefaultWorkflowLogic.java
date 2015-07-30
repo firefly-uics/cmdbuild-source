@@ -3,7 +3,9 @@ package org.cmdbuild.logic.workflow;
 import static com.google.common.collect.FluentIterable.from;
 import static com.google.common.collect.Iterables.filter;
 import static java.lang.String.format;
+import static java.util.Arrays.asList;
 import static org.cmdbuild.logic.PrivilegeUtils.assure;
+import static org.cmdbuild.logic.data.access.lock.Lockables.instanceActivity;
 
 import java.io.File;
 import java.io.IOException;
@@ -15,16 +17,29 @@ import java.util.Map.Entry;
 
 import javax.activation.DataSource;
 
+import net.jcip.annotations.NotThreadSafe;
+
 import org.cmdbuild.auth.acl.PrivilegeContext;
+import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.common.Constants;
 import org.cmdbuild.common.utils.PagedElements;
 import org.cmdbuild.config.WorkflowConfiguration;
+import org.cmdbuild.dao.entry.IdAndDescription;
+import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
+import org.cmdbuild.dao.entrytype.attributetype.CMAttributeTypeVisitor;
+import org.cmdbuild.dao.entrytype.attributetype.DateAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.DateTimeAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.ForwardingAttributeTypeVisitor;
+import org.cmdbuild.dao.entrytype.attributetype.LookupAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.NullAttributeTypeVisitor;
+import org.cmdbuild.dao.entrytype.attributetype.ReferenceAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.TimeAttributeType;
 import org.cmdbuild.dao.view.CMDataView;
-import org.cmdbuild.data.store.lookup.LookupStore;
 import org.cmdbuild.exception.CMDBWorkflowException;
 import org.cmdbuild.exception.CMDBWorkflowException.WorkflowExceptionType;
 import org.cmdbuild.exception.ConsistencyException.ConsistencyExceptionType;
+import org.cmdbuild.logic.data.LockLogic;
 import org.cmdbuild.logic.data.QueryOptions;
 import org.cmdbuild.logic.data.access.ProcessEntryFiller;
 import org.cmdbuild.logic.data.access.resolver.AbstractSerializer;
@@ -35,45 +50,71 @@ import org.cmdbuild.workflow.CMProcessClass;
 import org.cmdbuild.workflow.CMProcessInstance;
 import org.cmdbuild.workflow.CMWorkflowException;
 import org.cmdbuild.workflow.QueryableUserWorkflowEngine;
+import org.cmdbuild.workflow.user.ForwardingUserProcessInstance;
 import org.cmdbuild.workflow.user.UserActivityInstance;
 import org.cmdbuild.workflow.user.UserProcessClass;
 import org.cmdbuild.workflow.user.UserProcessInstance;
+import org.cmdbuild.workflow.user.UserProcessInstanceWithPosition;
 import org.joda.time.DateTime;
 
+import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 
 class DefaultWorkflowLogic implements WorkflowLogic {
+
+	private static class UserProcessInstanceWithPositionImpl extends ForwardingUserProcessInstance implements
+			UserProcessInstanceWithPosition {
+
+		private final UserProcessInstance delegate;
+		private final Long position;
+
+		public UserProcessInstanceWithPositionImpl(final UserProcessInstance delegate, final Long position) {
+			this.delegate = delegate;
+			this.position = position;
+		}
+
+		@Override
+		protected UserProcessInstance delegate() {
+			return delegate;
+		}
+
+		@Override
+		public Long getPosition() {
+			return position;
+		}
+
+	}
 
 	private static final UserActivityInstance NULL_ACTIVITY_INSTANCE = null;
 
 	private static final String BEGIN_DATE_ATTRIBUTE = "beginDate";
 	private static final String SKETCH_PATH = "images" + File.separator + "workflow" + File.separator;
 
+	private final OperationUser operationUser;
 	private final PrivilegeContext privilegeContext;
 	private final QueryableUserWorkflowEngine workflowEngine;
 	private final CMDataView dataView;
-	private final CMDataView systemDataView;
-	private final LookupStore lookupStore;
 	private final WorkflowConfiguration configuration;
 	private final FilesStore filesStore;
+	private final LockLogic lockLogic;
 
 	public DefaultWorkflowLogic( //
+			final OperationUser operationUser, //
 			final PrivilegeContext privilegeContext, //
 			final QueryableUserWorkflowEngine workflowEngine, //
 			final CMDataView dataView, //
-			final CMDataView systemDataView, //
-			final LookupStore lookupStore, //
 			final WorkflowConfiguration configuration, //
-			final FilesStore filesStore //
+			final FilesStore filesStore, //
+			final LockLogic lockLogic //
 	) {
+		this.operationUser = operationUser;
 		this.privilegeContext = privilegeContext;
 		this.workflowEngine = workflowEngine;
 		this.dataView = dataView;
-		this.systemDataView = systemDataView;
-		this.lookupStore = lookupStore;
 		this.configuration = configuration;
 		this.filesStore = filesStore;
+		this.lockLogic = lockLogic;
 	}
 
 	/*
@@ -96,19 +137,40 @@ class DefaultWorkflowLogic implements WorkflowLogic {
 	}
 
 	@Override
-	public PagedElements<UserProcessInstance> query(CMClass processClass, QueryOptions queryOptions) {
+	public PagedElements<UserProcessInstance> query(final CMClass processClass, final QueryOptions queryOptions) {
 		final PagedElements<UserProcessInstance> fetchedProcesses = workflowEngine.query(processClass.getName(),
 				queryOptions);
-		final Iterable<UserProcessInstance> processes = ForeignReferenceResolver.<UserProcessInstance> newInstance() //
-				.withSystemDataView(systemDataView) //
-				.withEntryType(processClass) //
+		final Iterable<UserProcessInstance> processes = resolve(fetchedProcesses);
+		return new PagedElements<UserProcessInstance>(processes, fetchedProcesses.totalSize());
+	}
+
+	@Override
+	public PagedElements<UserProcessInstanceWithPosition> queryWithPosition(final String className,
+			final QueryOptions queryOptions, final Iterable<Long> cardId) {
+		final PagedElements<UserProcessInstanceWithPosition> fetchedProcesses = workflowEngine.queryWithPosition(
+				className, queryOptions, cardId);
+		return new PagedElements<UserProcessInstanceWithPosition>( //
+				from(fetchedProcesses) //
+						.transform(new Function<UserProcessInstanceWithPosition, UserProcessInstanceWithPosition>() {
+
+							@Override
+							public UserProcessInstanceWithPosition apply(final UserProcessInstanceWithPosition input) {
+								final UserProcessInstance resolved = from(resolve(asList(input))).get(0);
+								return new UserProcessInstanceWithPositionImpl(resolved, input.getPosition());
+							}
+
+						}), //
+				fetchedProcesses.totalSize());
+	}
+
+	private Iterable<UserProcessInstance> resolve(final Iterable<? extends UserProcessInstance> fetchedProcesses) {
+		return ForeignReferenceResolver.<UserProcessInstance> newInstance() //
 				.withEntries(fetchedProcesses) //
 				.withEntryFiller(new ProcessEntryFiller()) //
-				.withLookupStore(lookupStore) //
-				.withSerializer(new AbstractSerializer<UserProcessInstance>(){}) //
+				.withSerializer(new AbstractSerializer<UserProcessInstance>() {
+				}) //
 				.build() //
 				.resolve();
-		return new PagedElements<UserProcessInstance>(processes, fetchedProcesses.totalSize());
 	}
 
 	@Override
@@ -352,8 +414,81 @@ class DefaultWorkflowLogic implements WorkflowLogic {
 	private UserProcessInstance startProcess(final CMProcessClass process, final Map<String, ?> vars,
 			final Map<String, Object> widgetSubmission, final boolean advance) throws CMWorkflowException {
 		final UserProcessInstance procInst = workflowEngine.startProcess(process);
-		final Map<String, Object> mergedVars = mergeVars(procInst.getValues(), vars);
+		final Map<String, Object> mergedVars = mergeVars( //
+				from(procInst.getValues()) //
+						.filter(new ValuesFilter(process)), //
+				vars);
 		return updateOnlyActivity(procInst, mergedVars, widgetSubmission, advance);
+	}
+
+	/**
+	 * Only non-null attributes are accepted with the following exceptions:
+	 * date, datetime and time attributes are always set even if null (needed
+	 * for initialize correctly workflow instance variables).
+	 */
+	@NotThreadSafe
+	private static class ValuesFilter extends ForwardingAttributeTypeVisitor implements
+			Predicate<Entry<String, Object>> {
+
+		private final CMAttributeTypeVisitor DELEGATE = NullAttributeTypeVisitor.getInstance();
+
+		@Override
+		protected CMAttributeTypeVisitor delegate() {
+			return DELEGATE;
+		}
+
+		private final CMProcessClass process;
+		private String name;
+		private Object value;
+		private boolean applies;
+
+		public ValuesFilter(final CMProcessClass process) {
+			this.process = process;
+		}
+
+		@Override
+		public boolean apply(final Entry<String, Object> input) {
+			name = input.getKey();
+			value = input.getValue();
+			applies = (value != null);
+			final CMAttribute attribute = process.getAttribute(name);
+			if (attribute != null) {
+				attribute.getType().accept(this);
+			} else {
+				applies = false;
+			}
+			return applies;
+		}
+
+		@Override
+		public void visit(final DateAttributeType attributeType) {
+			applies = true;
+		}
+
+		@Override
+		public void visit(final DateTimeAttributeType attributeType) {
+			applies = true;
+		}
+
+		@Override
+		public void visit(final LookupAttributeType attributeType) {
+			if (value instanceof IdAndDescription) {
+				applies = IdAndDescription.class.cast(value).getId() != null;
+			}
+		}
+
+		@Override
+		public void visit(final ReferenceAttributeType attributeType) {
+			if (value instanceof IdAndDescription) {
+				applies = IdAndDescription.class.cast(value).getId() != null;
+			}
+		}
+
+		@Override
+		public void visit(final TimeAttributeType attributeType) {
+			applies = true;
+		}
+
 	}
 
 	/**
@@ -365,6 +500,7 @@ class DefaultWorkflowLogic implements WorkflowLogic {
 	 *            values as they are in the newly created database row
 	 * @param entrySet
 	 *            values submitted in the form
+	 * 
 	 * @return database values overridden by the submitted ones
 	 */
 	private Map<String, Object> mergeVars(final Iterable<Entry<String, Object>> databaseValues,
@@ -384,9 +520,9 @@ class DefaultWorkflowLogic implements WorkflowLogic {
 			final String activityInstanceId, final Map<String, ?> vars, final Map<String, Object> widgetSubmission,
 			final boolean advance) throws CMWorkflowException {
 		final CMProcessClass processClass = workflowEngine.findProcessClassByName(processClassName);
-		final UserProcessInstance processInstance = workflowEngine.findProcessInstance(processClass, processCardId);
 		return updateProcess( //
-				processInstance, //
+				processClass.getId(), //
+				processCardId, //
 				activityInstanceId, //
 				vars, //
 				widgetSubmission, //
@@ -397,13 +533,16 @@ class DefaultWorkflowLogic implements WorkflowLogic {
 	public UserProcessInstance updateProcess(final Long processClassId, final Long processCardId,
 			final String activityInstanceId, final Map<String, ?> vars, final Map<String, Object> widgetSubmission,
 			final boolean advance) throws CMWorkflowException {
+		final String currentlyLoggedUser = operationUser.getAuthenticatedUser().getUsername();
+		lockLogic.checkActivityLockedbyUser(processCardId, activityInstanceId, currentlyLoggedUser);
 
 		final CMProcessClass processClass = workflowEngine.findProcessClassById(processClassId);
 		final UserProcessInstance processInstance = workflowEngine.findProcessInstance(processClass, processCardId);
 
-		// check if the given begin date is the same
-		// of the stored process, to be sure to deny
-		// the update of old versions
+		/*
+		 * check if the given begin date is the same of the stored process, to
+		 * be sure to deny the update of old versions
+		 */
 		if (vars.containsKey(BEGIN_DATE_ATTRIBUTE)) {
 			final Long givenBeginDateAsLong = (Long) vars.get(BEGIN_DATE_ATTRIBUTE);
 			final DateTime givenBeginDate = new DateTime(givenBeginDateAsLong);
@@ -411,8 +550,9 @@ class DefaultWorkflowLogic implements WorkflowLogic {
 				throw ConsistencyExceptionType.OUT_OF_DATE_PROCESS.createException();
 			}
 
-			// must be removed to not use it
-			// as a custom attribute
+			/*
+			 * must be removed to not use it as a custom attribute
+			 */
 			vars.remove(BEGIN_DATE_ATTRIBUTE);
 		}
 
@@ -423,9 +563,12 @@ class DefaultWorkflowLogic implements WorkflowLogic {
 				widgetSubmission, //
 				advance);
 
-		// retrieve again the processInstance because the updateProcess return
-		// the
-		// old processInstance, not the updated.
+		lockLogic.unlockActivity(processCardId, activityInstanceId);
+
+		/*
+		 * retrieve again the processInstance because the updateProcess return
+		 * the old processInstance, not the updated
+		 */
 		return workflowEngine.findProcessInstance(processClass, processCardId);
 	}
 
@@ -462,11 +605,13 @@ class DefaultWorkflowLogic implements WorkflowLogic {
 	private UserProcessInstance updateActivity(final UserActivityInstance activityInstance, final Map<String, ?> vars,
 			final Map<String, Object> widgetSubmission, final boolean advance) throws CMWorkflowException {
 		workflowEngine.updateActivity(activityInstance, vars, widgetSubmission);
+		final UserProcessInstance output;
 		if (advance) {
-			return workflowEngine.advanceActivity(activityInstance);
+			output = workflowEngine.advanceActivity(activityInstance);
 		} else {
-			return activityInstance.getProcessInstance();
+			output = activityInstance.getProcessInstance();
 		}
+		return output;
 	}
 
 	@Override
@@ -551,6 +696,7 @@ class DefaultWorkflowLogic implements WorkflowLogic {
 	@Override
 	public void abortProcess(final Long processClassId, final long processCardId) throws CMWorkflowException {
 		logger.info("aborting process with id '{}' for class '{}'", processCardId, processClassId);
+		lockLogic.checkNotLockedInstance(processCardId);
 		final CMProcessClass processClass = workflowEngine.findProcessClassById(processClassId);
 		abortProcess(processClass.getName(), processCardId);
 	}

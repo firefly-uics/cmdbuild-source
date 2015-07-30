@@ -33,6 +33,13 @@
 		textDefault: CMDBuild.Translation.deleteLabel
 	});
 
+	Ext.define('CMDBuild.core.buttons.Download', {
+		extend: 'CMDBuild.core.buttons.Base',
+
+		iconCls: 'download',
+		textDefault: CMDBuild.Translation.download
+	});
+
 	Ext.define('CMDBuild.core.buttons.Import', {
 		extend: 'CMDBuild.core.buttons.Base',
 

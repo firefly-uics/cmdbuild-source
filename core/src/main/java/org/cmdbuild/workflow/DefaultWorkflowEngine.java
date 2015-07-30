@@ -6,12 +6,12 @@ import static org.cmdbuild.model.widget.Widget.SUBMISSION_PARAM;
 import java.util.Map;
 
 import org.apache.commons.lang3.Validate;
+import org.apache.commons.lang3.builder.Builder;
 import org.cmdbuild.auth.AuthenticationService;
 import org.cmdbuild.auth.acl.CMGroup;
 import org.cmdbuild.auth.acl.NullGroup;
 import org.cmdbuild.auth.user.AuthenticatedUser;
 import org.cmdbuild.auth.user.OperationUser;
-import org.cmdbuild.common.Builder;
 import org.cmdbuild.common.utils.PagedElements;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.logger.Log;
@@ -25,6 +25,7 @@ import org.cmdbuild.workflow.service.WSProcessInstInfo;
 import org.cmdbuild.workflow.service.WSProcessInstanceState;
 import org.cmdbuild.workflow.user.UserProcessClass;
 import org.cmdbuild.workflow.user.UserProcessInstance;
+import org.cmdbuild.workflow.user.UserProcessInstanceWithPosition;
 import org.slf4j.Logger;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
@@ -409,10 +410,11 @@ public class DefaultWorkflowEngine implements QueryableUserWorkflowEngine {
 
 	private Reference currentGroupReference(final CMActivityInstance activityInstance) {
 		final CMGroup group = authenticationService.fetchGroupWithName(activityInstance.getPerformerName());
+		final Reference output;
 		if (group instanceof NullGroup) {
-			return null;
+			output = null;
 		} else {
-			return new Reference() {
+			output = new Reference() {
 
 				@Override
 				public Long getId() {
@@ -426,6 +428,7 @@ public class DefaultWorkflowEngine implements QueryableUserWorkflowEngine {
 
 			};
 		}
+		return output;
 	}
 
 	private void saveWidgets(final CMActivityInstance activityInstance, final Map<String, Object> widgetSubmission,
@@ -512,6 +515,12 @@ public class DefaultWorkflowEngine implements QueryableUserWorkflowEngine {
 	@Override
 	public PagedElements<UserProcessInstance> query(final String className, final QueryOptions queryOptions) {
 		return persistence.query(className, queryOptions);
+	}
+
+	@Override
+	public PagedElements<UserProcessInstanceWithPosition> queryWithPosition(final String className,
+			final QueryOptions queryOptions, final Iterable<Long> cardId) {
+		return persistence.queryWithPosition(className, queryOptions, cardId);
 	}
 
 	private void removeOutOfSyncProcess(final CMProcessInstance processInstance) throws CMWorkflowException {

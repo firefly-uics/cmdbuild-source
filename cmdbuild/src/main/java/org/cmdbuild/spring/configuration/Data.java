@@ -16,7 +16,6 @@ import org.cmdbuild.data.store.lookup.LookupStore;
 import org.cmdbuild.logic.data.DataDefinitionLogic;
 import org.cmdbuild.logic.data.DefaultDataDefinitionLogic;
 import org.cmdbuild.logic.data.access.SystemDataAccessLogicBuilder;
-import org.cmdbuild.logic.data.access.lock.LockCardManager;
 import org.cmdbuild.logic.data.lookup.LookupLogic;
 import org.cmdbuild.logic.privileges.DefaultSecurityLogic;
 import org.cmdbuild.logic.privileges.SecurityLogic;
@@ -39,8 +38,7 @@ public class Data {
 	private Filter filter;
 
 	@Autowired
-	@Qualifier(SYSTEM)
-	private LockCardManager systemLockCardManager;
+	private Lock lock;
 
 	@Autowired
 	private Report report;
@@ -102,7 +100,7 @@ public class Data {
 				systemDataView(), //
 				systemDataView(), //
 				userStore.getUser(), //
-				systemLockCardManager);
+				lock.dummyLockLogic());
 	}
 
 	public static final String BEAN_SYSTEM_DATA_VIEW = "systemDataView";

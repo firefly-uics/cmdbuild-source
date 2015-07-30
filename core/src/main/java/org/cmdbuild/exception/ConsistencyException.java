@@ -11,20 +11,21 @@ public class ConsistencyException extends CMDBException {
 		 * Parameters must be defined in the following order: lockerUsername,
 		 * timeSinceLock
 		 */
-		LOCKED_CARD,
+		LOCKED_CARD, //
+
+		LOCKED_MISSING, //
 
 		/**
-		 * Thrown when try to update an old version of a processInstance.
-		 * This could happen if try to edit an process from an out of date
-		 * grid
+		 * Thrown when try to update an old version of a processInstance. This
+		 * could happen if try to edit an process from an out of date grid
 		 */
-		OUT_OF_DATE_PROCESS,
+		OUT_OF_DATE_PROCESS, //
 
 		/**
-		 * Thrown when try to delete a card that has
-		 * some active relations
+		 * Thrown when try to delete a card that has some active relations
 		 */
-		ORM_CANT_DELETE_CARD_WITH_RELATION;
+		ORM_CANT_DELETE_CARD_WITH_RELATION, //
+		;
 
 		public ConsistencyException createException(final String... parameters) {
 			return new ConsistencyException(this, parameters);

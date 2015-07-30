@@ -159,7 +159,7 @@
 		 * Sometimes on IE the HtmlEditor is not able to take the focus after the mouse click. With this call it works. The reason is currently unknown.
 		 */
 		fixIEFocusIssue: function() {
-			if (Ext.isIE)
+			if (Ext.isIE || !!navigator.userAgent.match(/Trident.*rv[ :]*11\./)) // Workaround to detect IE 11 witch is not supported from Ext 4.2
 				this.mon(this.emailContentField, 'render', function() {
 					try {
 						this.emailContentField.focus();

@@ -1,19 +1,18 @@
 package org.cmdbuild.model.widget;
 
-import static com.google.common.base.Predicates.or;
+import static com.google.common.base.Predicates.and;
 import static com.google.common.collect.FluentIterable.from;
 import static com.google.common.collect.Lists.newArrayList;
-import static com.google.common.collect.Maps.newHashMap;
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 import static org.cmdbuild.logic.email.EmailLogic.Statuses.draft;
 import static org.cmdbuild.logic.email.EmailLogic.Statuses.outgoing;
 import static org.cmdbuild.logic.email.Predicates.statusIs;
+import static org.cmdbuild.logic.email.Predicates.temporary;
 
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
@@ -213,25 +212,19 @@ public class ManageEmail extends Widget {
 			throws Exception {
 		final Long instanceId = activityInstance.getProcessInstance().getCardId();
 		final Long submittedInstanceId = Number.class.cast(input).longValue();
-		final Iterable<Email> emails = from(emailLogic.readAll(submittedInstanceId)).filter(statusIs(draft()));
-		final Collection<Email> toBeDeleted = newArrayList();
-		final Map<Email, Email> toBeCreatedWithOriginal = newHashMap();
-		for (final Email email : emails) {
-			if (email.isTemporary()) {
-				toBeDeleted.add(email);
-				toBeCreatedWithOriginal.put(new CreatedForInstance(email, instanceId), email);
-			}
-		}
-		for (final Email email : toBeDeleted) {
+		for (final Email email : from(emailLogic.readAll(submittedInstanceId)) //
+				.filter(and(temporary(), statusIs(draft()))) //
+				/*
+				 * immutable copy since we are modifying the backing collection
+				 */
+				.toList()) {
 			emailLogic.delete(email);
-		}
-		for (final Entry<Email, Email> entry : toBeCreatedWithOriginal.entrySet()) {
-			final Email toBeCreated = entry.getKey();
-			final Email original = entry.getValue();
+
+			final Email toBeCreated = new CreatedForInstance(email, instanceId);
 			final Long createdId = emailLogic.create(toBeCreated);
-			emailAttachmentsLogic.copyAll(original, new CreatedWithId(toBeCreated, createdId));
-			for (final EmailAttachmentsLogic.Attachment attachment : emailAttachmentsLogic.readAll(original)) {
-				emailAttachmentsLogic.delete(original, attachment);
+			emailAttachmentsLogic.copyAll(email, new CreatedWithId(toBeCreated, createdId));
+			for (final EmailAttachmentsLogic.Attachment attachment : emailAttachmentsLogic.readAll(email)) {
+				emailAttachmentsLogic.delete(email, attachment);
 			}
 		}
 	}
@@ -239,27 +232,30 @@ public class ManageEmail extends Widget {
 	@Override
 	public void advance(final CMActivityInstance activityInstance) {
 		final Long instanceId = activityInstance.getProcessInstance().getCardId();
-		final Iterable<Email> emails = from(emailLogic.readAll(instanceId)) //
-				.filter(or(statusIs(draft()), statusIs(outgoing())));
-		for (final Email email : emails) {
-			if (email.isTemporary()) {
-				logger.warn("temporary e-mail should not be found on advancement");
-				emailLogic.delete(email);
-			} else {
-				emailLogic.update(new ForwardingEmail() {
+		for (final Email email : from(emailLogic.readAll(instanceId)) //
+				.filter(temporary()) //
+				/*
+				 * immutable copy since we could modify the backing collection
+				 */
+				.toList()) {
+			logger.warn("temporary e-mail should not be found on advancement");
+			emailLogic.delete(email);
+		}
+		for (final Email email : from(emailLogic.readAll(instanceId)) //
+				.filter(statusIs(draft()))) {
+			emailLogic.update(new ForwardingEmail() {
 
-					@Override
-					protected Email delegate() {
-						return email;
-					}
+				@Override
+				protected Email delegate() {
+					return email;
+				}
 
-					@Override
-					public Status getStatus() {
-						return outgoing();
-					}
+				@Override
+				public Status getStatus() {
+					return outgoing();
+				}
 
-				});
-			}
+			});
 		}
 	}
 

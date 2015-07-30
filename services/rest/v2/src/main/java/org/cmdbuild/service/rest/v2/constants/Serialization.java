@@ -89,6 +89,8 @@ public class Serialization {
 			PARENT = "parent", //
 			PARENT_TYPE = "parent_type", //
 			PASSWORD = "password", //
+			POSITION_OF = "positionOf", //
+			POSITIONS = "positions", //
 			PRECISION = "precision", //
 			PROMPT_SYNCHRONIZATION = "promptSynchronization", //
 			PROTOTYPE = "prototype", //

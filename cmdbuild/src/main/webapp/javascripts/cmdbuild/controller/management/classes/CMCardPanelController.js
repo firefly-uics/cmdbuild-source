@@ -68,7 +68,12 @@
 				});
 			};
 
-			Ext.Msg.confirm(CMDBuild.Translation.management.findfilter.msg.attention, CMDBuild.Translation.management.modcard.delete_card_confirm , makeRequest, this);
+			Ext.Msg.confirm(
+				CMDBuild.Translation.management.findfilter.msg.attention,
+				CMDBuild.Translation.management.modcard.delete_card_confirm,
+				makeRequest,
+				this
+			);
 		},
 
 		onCloneCardClick: function() {

@@ -16,12 +16,14 @@
 <script type="text/javascript" src="javascripts/cmdbuild/core/LoaderConfig.js"></script>
 
 <!-- OVERRIDES and FIXES -->
+<script type="text/javascript" src="javascripts/cmdbuild/override/JSON.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/override/data/proxy/FixServer.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/override/form/FixFieldSet.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/override/form/field/Display.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/override/form/field/FixCheckbox.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/override/form/field/FixComboBox.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/override/form/field/VTypes.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/override/grid/plugin/RowExpander.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/override/layout/container/FixEditor.js"></script>
 
 <!--  PROXYES -->
@@ -73,7 +75,7 @@
 <script type="text/javascript" src="javascripts/cmdbuild/cache/CMCache.js"></script>
 
 <!-- THE OTHERS -->
-<script type="text/javascript" src="javascripts/cmdbuild/core/Msg.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/core/Message.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/PopupWindow.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/LoginWindow.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/Ajax.js"></script>

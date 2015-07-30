@@ -7,6 +7,7 @@
 			'CMDBuild.core.proxy.Attachment',
 			'CMDBuild.core.proxy.CMProxyConstants',
 			'CMDBuild.core.proxy.common.tabs.email.Attachment',
+			'CMDBuild.core.Message'
 		],
 
 		/**
@@ -109,7 +110,7 @@
 						scope: this,
 						params: params,
 						failure: function(response, options, decodedResponse) {
-							CMDBuild.Msg.error(
+							CMDBuild.core.Message.error(
 								CMDBuild.Translation.common.failure,
 								Ext.String.format(CMDBuild.Translation.errors.copyAttachmentFailure, attachment.get('Filename')),
 								false

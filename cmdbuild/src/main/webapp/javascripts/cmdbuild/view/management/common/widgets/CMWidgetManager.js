@@ -194,13 +194,14 @@
 			return w;
 		};
 
-		// manageRelation
-		me.builders[pkg.CMManageRelation.WIDGET_NAME] = function(widget, card) {
-			var w = new pkg.CMManageRelation({
+		// ManageRelation
+		me.builders['.ManageRelation'] = function(widget, card) {
+			var w = Ext.create('CMDBuild.view.management.common.widgets.manageRelation.CMManageRelation', {
 				widget: widget
 			});
 
 			me.widgetsContainer.addWidgt(w);
+
 			return w;
 		};
 

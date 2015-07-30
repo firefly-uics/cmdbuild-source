@@ -4,6 +4,7 @@
 		extend: 'CMDBuild.controller.common.AbstractBasePanelController',
 
 		requires: [
+			'CMDBuild.core.Message',
 			'CMDBuild.core.proxy.CMProxyConstants',
 			'CMDBuild.core.proxy.CMProxyUrlIndex',
 			'CMDBuild.core.proxy.Report'
@@ -20,9 +21,14 @@
 		grid: undefined,
 
 		/**
-		 * @cfg {CMDBuild.view.management.report.ReportView}
+		 * Witch report types will be viewed inside modal pop-up
+		 *
+		 * @cfg {Array}
 		 */
-		view: undefined,
+		forceDownloadTypes: [
+			CMDBuild.core.proxy.CMProxyConstants.ODT,
+			CMDBuild.core.proxy.CMProxyConstants.RTF
+		],
 
 		/**
 		 * @cfg {Array}
@@ -33,6 +39,11 @@
 			CMDBuild.core.proxy.CMProxyConstants.PDF,
 			CMDBuild.core.proxy.CMProxyConstants.RTF
 		],
+
+		/**
+		 * @cfg {CMDBuild.view.management.report.ReportView}
+		 */
+		view: undefined,
 
 		/**
 		 * @param {Object} view
@@ -62,7 +73,7 @@
 					scope: this,
 					params: reportParams,
 					failure: function(response, options, decodedResponse) {
-						CMDBuild.Msg.error(
+						CMDBuild.core.Message.error(
 							CMDBuild.Translation.error,
 							CMDBuild.Translation.errors.createReportFilure,
 							false
@@ -93,10 +104,10 @@
 						id: reportInfo[CMDBuild.core.proxy.CMProxyConstants.RECORD].get(CMDBuild.core.proxy.CMProxyConstants.ID),
 						extension: reportInfo[CMDBuild.core.proxy.CMProxyConstants.TYPE]
 					},
-					true
+					Ext.Array.contains(this.forceDownloadTypes, reportInfo[CMDBuild.core.proxy.CMProxyConstants.TYPE]) // Force download true for PDF and CSV
 				);
 			} else {
-				CMDBuild.Msg.error(
+				CMDBuild.core.Message.error(
 					CMDBuild.Translation.error,
 					CMDBuild.Translation.errors.unmanagedReportType,
 					false
@@ -133,6 +144,9 @@
 		showReport: function(forceDownload) {
 			forceDownload = forceDownload || false;
 
+			var params = {};
+			params[CMDBuild.core.proxy.CMProxyConstants.FORCE_DOWNLOAD_PARAM_KEY] = true;
+
 			if (forceDownload) { // Force download mode
 				var form = Ext.create('Ext.form.Panel', {
 					standardSubmit: true,
@@ -141,9 +155,7 @@
 
 				form.submit({
 					target: '_blank',
-					params: {
-						'force-download': true
-					}
+					params: params
 				});
 
 				Ext.defer(function() { // Form cleanup
@@ -157,7 +169,7 @@
 				);
 
 				if (!popup)
-					CMDBuild.Msg.warn(
+					CMDBuild.core.Message.warn(
 						CMDBuild.Translation.warnings.warning_message,
 						CMDBuild.Translation.warnings.popup_block
 					);

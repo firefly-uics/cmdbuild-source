@@ -9,6 +9,8 @@
 
 		cmGreatestItem: '',
 
+		maxWidth: CMDBuild.BIG_FIELD_WIDTH, // Avoid too wide fields
+
 		initComponent : function() {
 			this.callParent(arguments);
 

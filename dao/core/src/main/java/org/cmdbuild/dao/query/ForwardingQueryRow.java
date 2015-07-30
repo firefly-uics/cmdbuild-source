@@ -28,8 +28,18 @@ public abstract class ForwardingQueryRow extends ForwardingObject implements CMQ
 	}
 
 	@Override
+	public boolean hasCard(Alias alias) {
+		return delegate().hasCard(alias);
+	}
+
+	@Override
 	public CMCard getCard(final Alias alias) {
 		return delegate().getCard(alias);
+	}
+
+	@Override
+	public boolean hasCard(CMClass type) {
+		return delegate().hasCard(type);
 	}
 
 	@Override

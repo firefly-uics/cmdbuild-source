@@ -42,7 +42,6 @@
 			this.buttonAlign = 'center';
 			this.buttons = [this.saveButton, this.abortButton];
 
-
 			// Setup advancedFilter to exclude cards from hidden classes
 			var attributesAndConditionArray = [];
 			var disabledArray = this.classObject.get(CMDBuild.core.proxy.CMProxyConstants.ID) == this.domain.get('idClass1') ? this.domain.get('disabled1') : this.domain.get('disabled2');

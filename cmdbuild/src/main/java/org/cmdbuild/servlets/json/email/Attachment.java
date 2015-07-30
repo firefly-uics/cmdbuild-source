@@ -1,10 +1,6 @@
 package org.cmdbuild.servlets.json.email;
 
-import org.cmdbuild.logic.email.EmailAttachmentsLogic;
-import org.cmdbuild.logic.email.EmailImpl;
-import org.cmdbuild.logic.email.EmailAttachmentsLogic.*;
-
-import static com.google.common.collect.FluentIterable.*;
+import static com.google.common.collect.FluentIterable.from;
 import static org.cmdbuild.servlets.json.CommunicationConstants.CARD_ID;
 import static org.cmdbuild.servlets.json.CommunicationConstants.CLASS_NAME;
 import static org.cmdbuild.servlets.json.CommunicationConstants.EMAIL_ID;
@@ -16,6 +12,9 @@ import javax.activation.DataHandler;
 
 import org.apache.commons.fileupload.FileItem;
 import org.cmdbuild.logic.email.AttachmentImpl;
+import org.cmdbuild.logic.email.EmailAttachmentsLogic;
+import org.cmdbuild.logic.email.EmailAttachmentsLogic.ForwardingAttachment;
+import org.cmdbuild.logic.email.EmailImpl;
 import org.cmdbuild.servlets.json.JSONBaseWithSpringContext;
 import org.cmdbuild.servlets.json.management.JsonResponse;
 import org.cmdbuild.servlets.utils.FileItemDataSource;
@@ -28,9 +27,9 @@ public class Attachment extends JSONBaseWithSpringContext {
 
 	private static class JsonAttachment extends ForwardingAttachment {
 
-		private EmailAttachmentsLogic.Attachment delegate;
+		private final EmailAttachmentsLogic.Attachment delegate;
 
-		public JsonAttachment(EmailAttachmentsLogic.Attachment delegate) {
+		public JsonAttachment(final EmailAttachmentsLogic.Attachment delegate) {
 			this.delegate = delegate;
 		}
 
@@ -135,6 +134,22 @@ public class Attachment extends JSONBaseWithSpringContext {
 						.withFileName(fileName) //
 						.build());
 		return JsonResponse.success(null);
+	}
+
+	@JSONExported
+	public DataHandler download( //
+			@Parameter(value = EMAIL_ID) final Long emailId, //
+			@Parameter(value = TEMPORARY, required = false) final boolean temporary, //
+			@Parameter(value = FILE_NAME) final String fileName //
+	) {
+		return emailAttachmentsLogic().download( //
+				EmailImpl.newInstance() //
+						.withId(emailId) //
+						.withTemporary(temporary) //
+						.build(), //
+				AttachmentImpl.newInstance() //
+						.withFileName(fileName) //
+						.build());
 	}
 
 };

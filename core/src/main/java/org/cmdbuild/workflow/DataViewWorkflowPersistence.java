@@ -1,6 +1,10 @@
 package org.cmdbuild.workflow;
 
 import static com.google.common.collect.FluentIterable.from;
+import static com.google.common.collect.Iterables.get;
+import static com.google.common.collect.Iterables.isEmpty;
+import static java.util.Collections.emptyList;
+import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 import static org.cmdbuild.common.Constants.BASE_PROCESS_CLASS_NAME;
 import static org.cmdbuild.dao.driver.postgres.Const.ID_ATTRIBUTE;
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
@@ -30,8 +34,10 @@ import org.cmdbuild.logic.data.access.DataViewCardFetcher;
 import org.cmdbuild.workflow.WorkflowUpdateHelper.WorkflowUpdateHelperBuilder;
 import org.cmdbuild.workflow.service.CMWorkflowService;
 import org.cmdbuild.workflow.service.WSProcessInstInfo;
+import org.cmdbuild.workflow.user.ForwardingUserProcessInstance;
 import org.cmdbuild.workflow.user.UserProcessClass;
 import org.cmdbuild.workflow.user.UserProcessInstance;
+import org.cmdbuild.workflow.user.UserProcessInstanceWithPosition;
 import org.slf4j.Logger;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
@@ -145,6 +151,31 @@ public class DataViewWorkflowPersistence implements WorkflowPersistence {
 	public static DataViewWorkflowPersistenceBuilder newInstance() {
 		return new DataViewWorkflowPersistenceBuilder();
 	}
+
+	private static class UserProcessInstanceWithPositionImpl extends ForwardingUserProcessInstance implements
+			UserProcessInstanceWithPosition {
+
+		private final UserProcessInstance delegate;
+		private final Long position;
+
+		public UserProcessInstanceWithPositionImpl(final UserProcessInstance delegate, final Long position) {
+			this.delegate = delegate;
+			this.position = position;
+		}
+
+		@Override
+		protected UserProcessInstance delegate() {
+			return delegate;
+		}
+
+		@Override
+		public Long getPosition() {
+			return position;
+		}
+
+	}
+
+	private static final Iterable<Long> NO_VALUE = emptyList();
 
 	private final PrivilegeContext privilegeContext;
 	private final OperationUser operationUser;
@@ -356,6 +387,34 @@ public class DataViewWorkflowPersistence implements WorkflowPersistence {
 				.transform(toUserProcessInstance()), cards.totalSize());
 	}
 
+	@Override
+	public PagedElements<UserProcessInstanceWithPosition> queryWithPosition(final String className,
+			final QueryOptions queryOptions, final Iterable<Long> cardId) {
+		final UserProcessClass target = findProcessClass(className);
+		final Iterable<Long> _cardId = defaultIfNull(cardId, NO_VALUE);
+		final Long id = isEmpty(_cardId) ? 0 : get(_cardId, 0);
+		final PagedElements<CMQueryRow> rows = DataViewCardFetcher.newInstance() //
+				.withDataView(dataView) //
+				.withClassName(className) //
+				.withQueryOptions(queryOptions) //
+				.build() //
+				.fetchNumbered(condition(attribute(target, ID_ATTRIBUTE), eq(id)));
+		return new PagedElements<UserProcessInstanceWithPosition>( //
+				from(rows) //
+						.transform(new Function<CMQueryRow, UserProcessInstanceWithPosition>() {
+
+							@Override
+							public UserProcessInstanceWithPosition apply(final CMQueryRow input) {
+								final CMCard card = input.getCard(target);
+								final UserProcessInstance userProcessInstance = toUserProcessInstance().apply(card);
+								return new UserProcessInstanceWithPositionImpl(userProcessInstance,
+										input.getNumber() - 1);
+							}
+
+						}), //
+				rows.totalSize());
+	}
+
 	private Function<CMCard, UserProcessInstance> toUserProcessInstance() {
 		return new Function<CMCard, UserProcessInstance>() {
 			@Override
@@ -390,6 +449,7 @@ public class DataViewWorkflowPersistence implements WorkflowPersistence {
 		return dataView.select(anyAttribute(processClass)) //
 				.from(processClass) //
 				.where(condition(attribute(processClass, ID_ATTRIBUTE), eq(cardId))) //
+				.limit(1) //
 				.run() //
 				.getOnlyRow() //
 				.getCard(processClass);

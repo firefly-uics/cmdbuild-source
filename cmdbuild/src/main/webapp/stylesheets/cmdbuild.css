@@ -21,11 +21,6 @@ body {
 
 em { font-style: oblique !important; }
 
-.cm-calculated-field {
-	color: green;
-	background-color: #f0fff0;
-}
-
 .cmdb-tab p {
 	color: #15428B;
 	background-image: url("../images/tabs/pressedbg.png");
@@ -109,8 +104,8 @@ em { font-style: oblique !important; }
 	position: relative;
 	bottom: 2em;
 	right: 0.5em;
-	padding: 0;
-	margin: 0;
+	padding: 0px;
+	margin: 10px 0px 0px 0px;
 }
 
 .cm-credits-links-left,
@@ -498,6 +493,8 @@ em { font-style: oblique !important; }
 
 	.ux-flag-hr { background-image:url("../images/icons/flags/hr.png") !important; }
 
+	.ux-flag-hu { background-image:url("../images/icons/flags/hu.png") !important; }
+
 	.ux-flag-it { background-image:url("../images/icons/flags/it.png") !important; }
 
 	.ux-flag-ja { background-image:url("../images/icons/flags/ja.png") !important; }
@@ -610,7 +607,7 @@ em { font-style: oblique !important; }
 /* Toolbar*/
 	.cmtoolbaritem {
 		font-size: 11px !important;
-		padding: 0 0.6em 0 0.6em !important;
+		padding: 0px 5px !important;
 		color: #333 !important;
 	}
 
@@ -683,18 +680,6 @@ em { font-style: oblique !important; }
 		background: url("../images/emptyPageBg.png");
 		background-position: bottom right;
 		background-repeat: no-repeat;
-	}
-
-/* history items*/
-	.history_panel .x-grid-rowbody p {
-		white-space: nowrap;
-		padding: 0 0 0 35px;
-		margin: 0 !important;
-	}
-
-	.history_panel .x-grid-rowbody p.changed {
-		background-color: #e9f4e7;
-		color: #0d5f07;
 	}
 
 /* custom icons */
@@ -800,6 +785,20 @@ em { font-style: oblique !important; }
 	height: 100%;
 	width: 100%;
 }
+
+/**
+ * History items
+ */
+.history_panel .x-grid-rowbody p {
+	white-space: nowrap;
+	padding: 0px 0px 0px 35px;
+	margin: 0px !important;
+}
+.history_panel .x-grid-rowbody p.changed {
+	background-color: #e9f4e7;
+	color: #0d5f07;
+}
+
 /**
  * Validation classes
  */

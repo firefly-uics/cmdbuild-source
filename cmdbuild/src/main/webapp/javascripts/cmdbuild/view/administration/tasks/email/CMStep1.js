@@ -71,8 +71,29 @@
 			/**
 			 * @param {Boolean} state
 			 */
+			setAllowBlankIncomingFolder: function(state) {
+				this.view.incomingFolder.allowBlank = state;
+			},
+
+			/**
+			 * @param {Boolean} state
+			 */
 			setAllowBlankEmailAccountCombo: function(state) {
 				this.view.emailAccountCombo.allowBlank = state;
+			},
+
+			/**
+			 * @param {Boolean} state
+			 */
+			setAllowBlankProcessedFolder: function(state) {
+				this.view.processedFolder.allowBlank = state;
+			},
+
+			/**
+			 * @param {Boolean} state
+			 */
+			setAllowBlankRejectedFolder: function(state) {
+				this.view.rejectedFolder.allowBlank = state;
 			},
 
 			/**

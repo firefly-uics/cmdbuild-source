@@ -1,5 +1,6 @@
 package org.cmdbuild.servlets.json;
 
+import static org.cmdbuild.spring.configuration.Lock.*;
 import static org.cmdbuild.spring.SpringIntegrationUtils.applicationContext;
 import static org.cmdbuild.spring.configuration.Data.BEAN_SYSTEM_DATA_VIEW;
 import static org.cmdbuild.spring.configuration.User.BEAN_USER_DATA_VIEW;
@@ -31,6 +32,7 @@ import org.cmdbuild.logic.bim.project.DefaultProjectLogic;
 import org.cmdbuild.logic.bim.project.ProjectLogic;
 import org.cmdbuild.logic.cache.CachingLogic;
 import org.cmdbuild.logic.data.DataDefinitionLogic;
+import org.cmdbuild.logic.data.LockLogic;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.logic.data.access.SystemDataAccessLogicBuilder;
 import org.cmdbuild.logic.data.access.UserDataAccessLogicBuilder;
@@ -65,6 +67,7 @@ import org.cmdbuild.services.store.report.ReportStore;
 import org.cmdbuild.servlets.json.serializers.CardSerializer;
 import org.cmdbuild.servlets.json.serializers.ClassSerializer;
 import org.cmdbuild.servlets.json.serializers.DomainSerializer;
+import org.cmdbuild.servlets.json.serializers.LookupSerializer;
 import org.cmdbuild.servlets.json.serializers.RelationAttributeSerializer;
 import org.cmdbuild.workflow.ActivityPerformerTemplateResolverFactory;
 import org.cmdbuild.workflow.LookupHelper;
@@ -211,6 +214,10 @@ public class JSONBaseWithSpringContext extends JSONBase {
 		return applicationContext().getBean(GroupsLogic.class);
 	}
 
+	protected LockLogic lockLogic() {
+		return applicationContext().getBean(USER_LOCK_LOGIC, LockLogic.class);
+	}
+
 	protected LookupLogic lookupLogic() {
 		return applicationContext().getBean(LookupLogic.class);
 	}
@@ -297,6 +304,10 @@ public class JSONBaseWithSpringContext extends JSONBase {
 
 	protected LookupHelper lookupHelper() {
 		return applicationContext().getBean(LookupHelper.class);
+	}
+
+	protected LookupSerializer lookupSerializer() {
+		return applicationContext().getBean(LookupSerializer.class);
 	}
 
 	protected Notifier notifier() {

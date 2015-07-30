@@ -53,4 +53,6 @@ public interface FluentApiExecutor {
 
 	void move(CardDescriptor source, Iterable<? extends AttachmentDescriptor> attachments, CardDescriptor destination);
 
+	void abortProcessInstance(ExistingProcessInstance processCard);
+
 }

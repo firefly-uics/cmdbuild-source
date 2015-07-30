@@ -3,6 +3,8 @@
 	Ext.define('CMDBuild.routes.management.Cards', {
 		extend: 'CMDBuild.routes.Base',
 
+		requires: ['CMDBuild.core.proxy.Card'],
+
 		/**
 		 * @cfg {String}
 		 */
@@ -19,21 +21,26 @@
 		classIdentifier: undefined,
 
 		/**
-		 * @cfg {Object}
+		 * @cfg {CMDBuild.cache.CMEntryTypeModel}
 		 */
 		entryType: undefined,
 
 		/**
 		 * @cfg {Array}
 		 */
-		supportedPrintFormats: ['pdf', 'odt'],
+		supportedPrintFormats: [
+			CMDBuild.core.proxy.CMProxyConstants.PDF,
+			CMDBuild.core.proxy.CMProxyConstants.ODT
+		],
 
 		/**
 		 * @param {Object} params - url parameters
-		 * @param {String} params.classIdentifier - className
-		 * @param {Int} params.cardIdentifier - cardId
+		 * @param {String} params.classIdentifier - class name
+		 * @param {Int} params.cardIdentifier - card id
 		 * @param {String} path
 		 * @param {Object} router
+		 *
+		 * @return  {Boolean}
 		 */
 		detail: function(params, path, router) {
 			if (this.paramsValidation(params)) {
@@ -59,7 +66,7 @@
 				} else {
 					CMDBuild.Msg.error(
 						CMDBuild.Translation.common.failure,
-						CMDBuild.Translation.errors.routesCardsDetailInvanlidIdentifier + ' (' + this.cardIdentifier + ')',
+						CMDBuild.Translation.errors.routesInvalidCardIdentifier + ' (' + this.cardIdentifier + ')',
 						false
 					);
 				}
@@ -75,7 +82,7 @@
 			this.cardIdentifier = params[CMDBuild.core.proxy.CMProxyConstants.CARD_IDENTIFIER];
 			this.classIdentifier = params[CMDBuild.core.proxy.CMProxyConstants.CLASS_IDENTIFIER];
 			this.clientFilterString = params[CMDBuild.core.proxy.CMProxyConstants.CLIENT_FILTER];
-			this.printFormat = params[CMDBuild.core.proxy.CMProxyConstants.FORMAT] || 'pdf';
+			this.printFormat = params[CMDBuild.core.proxy.CMProxyConstants.FORMAT] || CMDBuild.core.proxy.CMProxyConstants.PDF;
 
 			// Class identifier validation
 			if (
@@ -92,7 +99,7 @@
 			}
 
 			// Card identifier validation
-			if (Ext.isEmpty(params[CMDBuild.core.proxy.CMProxyConstants.CARD_IDENTIFIER])) {
+			if (Ext.isEmpty(this.cardIdentifier)) {
 				CMDBuild.Msg.error(
 					CMDBuild.Translation.common.failure,
 					CMDBuild.Translation.errors.routesInvalidCardIdentifier + ' (' + this.cardIdentifier + ')',
@@ -128,9 +135,7 @@
 			this.detail(params, path, router);
 
 			Ext.Function.createDelayed(function() {
-				_CMMainViewportController.panelControllers[CMDBuild.core.proxy.CMProxyConstants.CLASS].cardPanelController.onPrintCardMenuClick(
-					this.printFormat
-				);
+				_CMMainViewportController.panelControllers[CMDBuild.core.proxy.CMProxyConstants.CLASS].cardPanelController.onPrintCardMenuClick(this.printFormat);
 			}, 1500, this)();
 		},
 
@@ -138,7 +143,7 @@
 		 * @params {Array} splittedIdentifier - ['cardParam', 'value']
 		 */
 		simpleFilter: function(splittedIdentifier) {
-			CMDBuild.ServiceProxy.getCardList({
+			CMDBuild.core.proxy.Card.getList({
 				scope: this,
 				params: {
 					className: this.classIdentifier,

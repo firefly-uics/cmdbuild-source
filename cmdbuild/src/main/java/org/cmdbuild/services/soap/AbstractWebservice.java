@@ -21,7 +21,7 @@ import org.cmdbuild.data.store.lookup.LookupStore;
 import org.cmdbuild.dms.MetadataGroup;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
-import org.cmdbuild.logic.data.access.SoapDataAccessLogicBuilder;
+import org.cmdbuild.logic.data.access.WebServiceDataAccessLogicBuilder;
 import org.cmdbuild.logic.data.access.UserDataAccessLogicBuilder;
 import org.cmdbuild.logic.data.lookup.LookupLogic;
 import org.cmdbuild.logic.dms.DmsLogic;
@@ -38,6 +38,7 @@ import org.cmdbuild.services.soap.operation.LookupLogicHelper;
 import org.cmdbuild.services.soap.operation.WorkflowLogicHelper;
 import org.cmdbuild.services.store.menu.MenuStore;
 import org.cmdbuild.services.store.report.ReportStore;
+import org.cmdbuild.servlets.json.serializers.LookupSerializer;
 import org.cmdbuild.workflow.event.WorkflowEventManager;
 import org.slf4j.Logger;
 import org.springframework.beans.BeansException;
@@ -63,7 +64,7 @@ abstract class AbstractWebservice implements ApplicationContextAware {
 
 	@Autowired
 	private MetadataStoreFactory metadataStoreFactory;
-	
+
 	@Autowired
 	protected TranslationFacade translationFacade;
 
@@ -106,7 +107,7 @@ abstract class AbstractWebservice implements ApplicationContextAware {
 	protected DataAccessLogicHelper dataAccessLogicHelper() {
 		final DataAccessLogicHelper helper = new DataAccessLogicHelper( //
 				applicationContext.getBean(BEAN_USER_DATA_VIEW, CMDataView.class),//
-				applicationContext.getBean(SoapDataAccessLogicBuilder.class).build(), //
+				applicationContext.getBean(WebServiceDataAccessLogicBuilder.class).build(), //
 				applicationContext.getBean(UserWorkflowLogicBuilder.class).build(), //
 				applicationContext.getBean("operationUser", OperationUser.class), //
 				applicationContext.getBean(DataSource.class), //
@@ -135,6 +136,10 @@ abstract class AbstractWebservice implements ApplicationContextAware {
 
 	protected LookupStore lookupStore() {
 		return applicationContext.getBean("lookupStore", LookupStore.class);
+	}
+
+	protected LookupSerializer lookupSerializer() {
+		return applicationContext.getBean(LookupSerializer.class);
 	}
 
 	protected ReportStore reportStore() {

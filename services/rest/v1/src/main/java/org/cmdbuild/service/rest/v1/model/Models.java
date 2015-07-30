@@ -928,21 +928,36 @@ public class Models {
 
 	public static class MetadataBuilder extends ModelBuilder<DetailResponseMetadata> {
 
+		private static final Map<Long, Long> NO_POSITIONS = emptyMap();
+
 		private Long total;
+		private Map<Long, Long> positions;
 
 		private MetadataBuilder() {
 			// use factory method
 		}
 
 		@Override
+		protected void doValidate() {
+			super.doValidate();
+			positions = defaultIfNull(positions, NO_POSITIONS);
+		}
+
+		@Override
 		protected DetailResponseMetadata doBuild() {
 			final DetailResponseMetadata output = new DetailResponseMetadata();
 			output.setTotal(total);
+			output.setPositions(positions);
 			return output;
 		}
 
 		public MetadataBuilder withTotal(final Long total) {
 			this.total = total;
+			return this;
+		}
+
+		public MetadataBuilder withPositions(final Map<Long, Long> positions) {
+			this.positions = positions;
 			return this;
 		}
 

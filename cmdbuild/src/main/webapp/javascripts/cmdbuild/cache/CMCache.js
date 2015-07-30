@@ -61,7 +61,6 @@
 			var params = {};
 			params[parameterNames.ACTIVE] = true;
 			params[parameterNames.CLASS_NAME] = _CMCache.getEntryTypeNameById(classId);
-			params[CMDBuild.core.proxy.CMProxyConstants.LOCALIZED] = true;
 
 			function success(response, options, result) {
 				var attributes = result.attributes;
@@ -124,8 +123,9 @@
 				isOneTime = baseParams.CQL ? true : false,
 				maxCards = parseInt(CMDBuild.Config.cmdbuild.referencecombolimit);
 
-			var s = new Ext.data.JsonStore({
-				model : "CMDBuild.cache.CMReferenceStoreModel",
+			var s = Ext.create('Ext.data.Store', {
+				autoLoad: !isOneTime,
+				model: 'CMDBuild.cache.CMReferenceStoreModel',
 				isOneTime: isOneTime,
 				baseParams: baseParams, //retro-compatibility,
 				pageSize: maxCards,
@@ -139,11 +139,9 @@
 					},
 					extraParams: baseParams
 				},
-				sortInfo: {
-					field: 'Description',
-					direction: 'ASC'
-				},
-				autoLoad : !isOneTime
+				sorters: [
+					{ property: 'Description', direction: 'ASC' }
+				]
 			});
 
 			return s;
@@ -173,28 +171,28 @@
 		getForeignKeyStore: function(foreignKye) {
 			var maxCards = parseInt(CMDBuild.Config.cmdbuild.referencecombolimit),
 				baseParams = {
-					// limit: maxCards, // TODO: no one know why this field should limit store to referencecombolimit value
 					className: foreignKye.fkDestination,
 					NoFilter: true
 				};
 
-			var s = new Ext.data.JsonStore({
-				model : "CMDBuild.cache.CMReferenceStoreModel",
+			var s = Ext.create('Ext.data.Store', {
+				model: 'CMDBuild.cache.CMReferenceStoreModel',
+				autoLoad: true,
 				baseParams: baseParams, //retro-compatibility
+				pageSize: maxCards,
 				proxy: {
 					type: 'ajax',
 					url: 'services/json/management/modcard/getcardlistshort',
 					reader: {
 						type: 'json',
-						root: 'rows'
+						root: 'rows',
+						totalProperty: 'results'
 					},
 					extraParams: baseParams
 				},
-				sortInfo: {
-					field: 'Description',
-					direction: 'ASC'
-				},
-				autoLoad : true
+				sorters: [
+					{ property: 'Description', direction: 'ASC' }
+				]
 			});
 
 			return s;

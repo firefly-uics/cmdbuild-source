@@ -6,7 +6,8 @@
 		requires: [
 			'CMDBuild.controller.management.common.tabs.email.Email',
 			'CMDBuild.core.proxy.CMProxyConstants',
-			'CMDBuild.core.proxy.common.tabs.email.Email'
+			'CMDBuild.core.proxy.common.tabs.email.Email',
+			'CMDBuild.core.Message'
 		],
 
 		/**
@@ -27,6 +28,7 @@
 			'onGridSendEmailButtonClick',
 			'onGridViewEmailButtonClick',
 			'sendAll',
+			'setUiState',
 			'storeLoad'
 		],
 
@@ -69,17 +71,17 @@
 					scope: this,
 					loadMask: this.cmfg('getGlobalLoadMask'),
 					failure: function(response, options, decodedResponse) {
-						CMDBuild.Msg.error(CMDBuild.Translation.common.failure, CMDBuild.Translation.errors.emailCreate, false);
+						CMDBuild.core.Message.error(CMDBuild.Translation.common.failure, CMDBuild.Translation.errors.emailCreate, false);
 					},
 					success: success || function(response, options, decodedResponse) {
-						if (
-							CMDBuild.controller.management.common.tabs.email.Email.trafficLightArrayCheck(record, regenerationTrafficLightArray)
-							|| Ext.isEmpty(regenerationTrafficLightArray)
-						) {
+						if (CMDBuild.controller.management.common.tabs.email.Email.trafficLightArrayCheck(record, regenerationTrafficLightArray))
 							this.storeLoad();
-						}
 					}
 				});
+			} else {
+				_warning('tried to add empty record', this);
+
+				this.storeLoad();
 			}
 		},
 
@@ -111,17 +113,17 @@
 					scope: this,
 					loadMask: this.cmfg('getGlobalLoadMask'),
 					failure: function(response, options, decodedResponse) {
-						CMDBuild.Msg.error(CMDBuild.Translation.common.failure, CMDBuild.Translation.errors.emailUpdate, false);
+						CMDBuild.core.Message.error(CMDBuild.Translation.common.failure, CMDBuild.Translation.errors.emailUpdate, false);
 					},
 					success: function(response, options, decodedResponse) {
-						if (
-							CMDBuild.controller.management.common.tabs.email.Email.trafficLightArrayCheck(record, regenerationTrafficLightArray)
-							|| Ext.isEmpty(regenerationTrafficLightArray)
-						) {
+						if (CMDBuild.controller.management.common.tabs.email.Email.trafficLightArrayCheck(record, regenerationTrafficLightArray))
 							this.storeLoad();
-						}
 					}
 				});
+			} else {
+				_warning('tried to edit empty record', this);
+
+				this.storeLoad();
 			}
 		},
 
@@ -306,17 +308,17 @@
 					scope: this,
 					loadMask: this.cmfg('getGlobalLoadMask'),
 					failure: function(response, options, decodedResponse) {
-						CMDBuild.Msg.error(CMDBuild.Translation.common.failure, CMDBuild.Translation.errors.emailRemove, false);
+						CMDBuild.core.Message.error(CMDBuild.Translation.common.failure, CMDBuild.Translation.errors.emailRemove, false);
 					},
 					success: function(response, options, decodedResponse) {
-						if (
-							CMDBuild.controller.management.common.tabs.email.Email.trafficLightArrayCheck(record, regenerationTrafficLightArray)
-							|| Ext.isEmpty(regenerationTrafficLightArray)
-						) {
+						if (CMDBuild.controller.management.common.tabs.email.Email.trafficLightArrayCheck(record, regenerationTrafficLightArray))
 							this.storeLoad();
-						}
 					}
 				});
+			} else {
+				_warning('tried to remove empty record', this);
+
+				this.storeLoad();
 			}
 		},
 
@@ -365,20 +367,27 @@
 		 * Loads grid store with activityId parameter
 		 */
 		storeLoad: function() {
-			if (!this.view.getStore().isLoading()) {
-				this.cmfg('busyStateSet', true); // Setup widget busy state and the begin of store load
+			this.cmfg('busyStateSet', true); // Setup widget busy state and the begin of store load
 
-				var params = {};
-				params[CMDBuild.core.proxy.CMProxyConstants.REFERENCE] = this.cmfg('selectedEntityIdGet');
+			this.view.getStore().removeAll(); // Clear store before load new one
 
-				this.view.getStore().load({
-					params: params,
-					scope: this,
-					callback: function(records, operation, success) {
+			var params = {};
+			params[CMDBuild.core.proxy.CMProxyConstants.REFERENCE] = this.cmfg('selectedEntityIdGet');
+
+			this.view.getStore().load({
+				params: params,
+				scope: this,
+				callback: function(records, operation, success) {
+					if (success) {
 						this.cmfg('getAllTemplatesData');
+					} else {
+						CMDBuild.core.Message.error(null, {
+							text: CMDBuild.Translation.errors.unknown_error,
+							detail: operation.error
+						});
 					}
-				});
-			}
+				}
+			});
 		}
 	});
 

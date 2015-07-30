@@ -138,7 +138,7 @@ class EntryQueryCommand implements LoggingSupport {
 				final Long classId = rs.getLong(nameForSystemAttribute(alias, IdClass));
 				final DBClass realClass = driver.findClass(classId);
 				if (realClass == null) {
-					sqlLogger.trace("class not found for id '{}', skipping creation", classId);
+					sqlLogger.warn("class not found for {} '{}', skipping creation", IdClass.getDBName(), classId);
 					continue;
 				}
 				sqlLogger.trace("real class for id '{}' is '{}'", classId, realClass.getIdentifier());

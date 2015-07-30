@@ -78,6 +78,11 @@ public interface EmailAttachmentsLogic extends Logic {
 			delegate().delete(email, attachment);
 		}
 
+		@Override
+		public DataHandler download(final Email email, final Attachment attachment) {
+			return delegate().download(email, attachment);
+		}
+
 	}
 
 	void upload(Email email, DataHandler dataHandler) throws CMDBException;
@@ -91,5 +96,7 @@ public interface EmailAttachmentsLogic extends Logic {
 	Optional<DataHandler> read(Email email, Attachment attachment) throws CMDBException;
 
 	void delete(Email email, Attachment attachment) throws CMDBException;
+
+	DataHandler download(Email email, Attachment attachment);
 
 }

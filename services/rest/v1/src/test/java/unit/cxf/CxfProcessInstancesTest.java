@@ -157,7 +157,7 @@ public class CxfProcessInstancesTest {
 				.when(errorHandler).processNotFound(anyString());
 
 		// when
-		cxfProcessInstances.read("123", null, null, null, null);
+		cxfProcessInstances.read("123", null, null, null, null, null);
 
 		// then
 		final InOrder inOrder = inOrder(errorHandler, workflowLogic, lookupHelper);
@@ -202,7 +202,7 @@ public class CxfProcessInstancesTest {
 
 		// when
 		final ResponseMultiple<ProcessInstance> response = cxfProcessInstances.read("123", "{\"the\": \"filter\"}",
-				"[\"foo\", \"bar\", \"baz\"]", null, null);
+				"[\"foo\", \"bar\", \"baz\"]", null, null, null);
 
 		// then
 		final ArgumentCaptor<QueryOptions> queryOptionsCaptor = ArgumentCaptor.forClass(QueryOptions.class);

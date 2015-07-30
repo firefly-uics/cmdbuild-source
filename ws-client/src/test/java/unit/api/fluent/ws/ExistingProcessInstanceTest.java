@@ -99,4 +99,14 @@ public class ExistingProcessInstanceTest extends AbstractWsFluentApiTest {
 		verifyNoMoreInteractions(proxy());
 	}
 
+	@Test
+	public void abortHandledCorrectly() throws Exception {
+		// when
+		existingProcessInstance.abort();
+
+		// then
+		verify(proxy()).abortWorkflow(any(Card.class));
+		verifyNoMoreInteractions(proxy());
+	}
+
 }

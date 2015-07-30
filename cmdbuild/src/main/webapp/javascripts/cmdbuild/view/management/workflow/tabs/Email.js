@@ -4,7 +4,7 @@
 	 * Extends original view to implement function to select tab on widget button click
 	 */
 	Ext.define('CMDBuild.view.management.workflow.tabs.Email', {
-		extend: 'CMDBuild.view.management.common.tabs.email.EmailPanel',
+		extend: 'CMDBuild.view.management.common.tabs.email.EmailView',
 
 		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
 

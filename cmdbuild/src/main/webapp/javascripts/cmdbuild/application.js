@@ -20,6 +20,9 @@
 	CMDBuild.CFG_BIG_FIELD_WIDTH = CMDBuild.CFG_LABEL_WIDTH + 450;
 	CMDBuild.CFG_MEDIUM_FIELD_WIDTH = CMDBuild.CFG_LABEL_WIDTH + 150;
 
+	// Custom widths
+	CMDBuild.HTML_EDITOR_WIDTH = CMDBuild.LABEL_WIDTH + 600;
+
 	// Global object with runtime configuration
 	CMDBuild.Config = {};
 
@@ -44,16 +47,15 @@
 			CMDBuild.log.debug.apply(CMDBuild.log, arguments);
 		};
 
-		_deprecated = function() {
-			var name = '';
+		/**
+		 * @param {String} message
+		 * @param {Mixed} classWithError
+		 */
+		_deprecated = function(message, classWithError) {
+			classWithError = typeof classWithError == 'string' ? classWithError : Ext.getClassName(classWithError);
 
-			try {
-				name  = arguments.callee.caller.name;
-			} catch (e) {
-				CMDBuild.log.debug('DEPRECATED: ' + _trace());
-			}
-
-			CMDBuild.log.debug('DEPRECATED: ' + name, _trace());
+			if (!Ext.isEmpty(message))
+				CMDBuild.log.warn('DEPRECATED (' + classWithError + '): ' + message);
 		};
 
 		/**
@@ -95,30 +97,6 @@
 				CMDBuild.log.warn('WARNING (' + classWithError + '): ' + message);
 		};
 	// END: Logger configuration
-
-	// Setup Ext timeouts
-		// TODO: Read from real configuration
-		CMDBuild.Config.defaultTimeout = 90;
-		Ext.Ajax.timeout = CMDBuild.Config.defaultTimeout * 1000;
-
-		Ext.define('CMDBuild.data.Connection', {
-			override: 'Ext.data.Connection',
-
-			timeout: CMDBuild.Config.defaultTimeout * 1000
-		});
-
-		Ext.define('CMDBuild.data.proxy.Ajax', {
-			override: 'Ext.data.proxy.Ajax',
-
-			timeout: CMDBuild.Config.defaultTimeout * 1000
-		});
-
-		Ext.define('CMDBuild.form.Basic', {
-			override: 'Ext.form.Basic',
-
-			timeout: CMDBuild.Config.defaultTimeout
-		});
-	// END: Setup Ext timeouts
 
 	// Component masks are shown at 20000 z-index. This oddly fixes the problem of masks appearing on top of new windows.
 	// Ext.WindowMgr.zseed = 30000;

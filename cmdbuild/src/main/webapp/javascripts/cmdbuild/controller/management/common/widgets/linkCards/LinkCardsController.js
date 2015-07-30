@@ -2,13 +2,18 @@
 
 	/*
 	 * The grid must be reload when is shown, so resolve the template and load it.
-	 * If there is a defaultSelection, when the activity form goes in edit mode resolve the template to calculate the selection and if needed add dependencies to the fields.
 	 */
 
 	var tr = CMDBuild.Translation;
 
 	Ext.define('CMDBuild.controller.management.common.widgets.linkCards.LinkCardsController', {
 		extend: 'CMDBuild.controller.management.common.widgets.CMWidgetController',
+
+		requires: [
+			'CMDBuild.core.proxy.CMProxyConstants',
+			'CMDBuild.core.proxy.Card',
+			'CMDBuild.model.widget.ModelLinkCards',
+		],
 
 		mixins: {
 			observable: 'Ext.util.Observable'
@@ -17,11 +22,6 @@
 		statics: {
 			WIDGET_NAME: CMDBuild.view.management.common.widgets.linkCards.LinkCards.WIDGET_NAME
 		},
-
-		requires: [
-			'CMDBuild.core.proxy.CMProxyConstants',
-			'CMDBuild.model.widget.ModelLinkCards'
-		],
 
 		/**
 		 * @cfg {Boolean}
@@ -37,6 +37,13 @@
 		 * @property {{Ext.form.Basic}}
 		 */
 		clientForm: undefined,
+
+		/**
+		 * @cfg {Boolean}
+		 *
+		 * @private
+		 */
+		firstWidgetVisualization: true,
 
 		/**
 		 * @property {CMDBuild.view.management.common.widgets.linkCards.LinkCardsGrid}
@@ -57,11 +64,6 @@
 		 * @cfg {Boolean}
 		 */
 		readOnly: undefined,
-
-		/**
-		 * @property {Ext.selection.RowModel} or {CMDBuild.selection.CMMultiPageSelectionModel}
-		 */
-		selectionModel: undefined,
 
 		/**
 		 * @cfg {Boolean}
@@ -154,42 +156,24 @@
 			this.grid = this.view.grid;
 			this.grid.delegate = this;
 			this.view.widgetConf = this.widgetConf;
-			this.selectionModel = this.grid.getSelectionModel();
 
 			this.model = Ext.create('CMDBuild.model.widget.ModelLinkCards', {
 				singleSelect: this.singleSelect
 			});
 
 			this.templateResolver = new CMDBuild.Management.TemplateResolver({
-				clientForm: clientForm,
+				clientForm: this.clientForm,
 				xaVars: me._extractVariablesForTemplateResolver(),
 				serverVars: this.getTemplateResolverServerVars()
 			});
 
-			if (this.view.hasMap()) {
-				if (this.view.hasMap()) {
-					this.mapController = Ext.create('CMDBuild.controller.management.common.widgets.linkCards.LinkCardsMapController', {
-						view: this.view.getMapPanel(),
-						model: this.model,
-						parentDelegate: this,
-						widgetConf: this.widgetConf
-					});
-				} else {
-					this.mapController = {
-						onEntryTypeSelected: Ext.emptyFn,
-						onAddCardButtonClick: Ext.emptyFn,
-						onCardSaved: Ext.emptyFn,
-						getValues: function() { return false; },
-						refresh: Ext.emptyFn,
-						editMode: Ext.emptyFn,
-						displayMode: Ext.emptyFn
-					};
-				}
-			}
-
-			this.mon(this.grid, 'beforeload', this.onBeforeLoad, this);
-			// There is a problem with the loadMask, if remove the delay the selection is done before the unMask, then it is reset
-			this.mon(this.grid, 'load', Ext.Function.createDelayed(this.onLoad, 1), this);
+			if (this.view.hasMap())
+				this.mapController = Ext.create('CMDBuild.controller.management.common.widgets.linkCards.LinkCardsMapController', {
+					view: this.view.getMapPanel(),
+					model: this.model,
+					parentDelegate: this,
+					widgetConf: this.widgetConf
+				});
 		},
 
 		/**
@@ -210,9 +194,6 @@
 				case 'onGridShow':
 					return this.onGridShow();
 
-				case 'onItemDoubleclick':
-					return this.onItemDoubleclick(param);
-
 				case 'onToggleGridFilterButtonClick':
 					return this.onToggleGridFilterButtonClick();
 
@@ -227,6 +208,9 @@
 
 				case 'onSelect':
 					return this.onSelect(param.record);
+
+				case 'onLinkCardApplyDefaultSelectionButtonClick':
+					return this.onLinkCardApplyDefaultSelectionButtonClick();
 
 				default: {
 					if (!Ext.isEmpty(this.parentDelegate))
@@ -296,6 +280,9 @@
 						} else {
 							me.updateViewGrid(classId);
 						}
+
+						if (!me.model.hasSelection())
+							me.resolveDefaultSelectionTemplate();
 
 						me.grid.disableFilterMenuButton();
 						me.onGridShow();
@@ -433,10 +420,6 @@
 			}
 		},
 
-		onBeforeLoad: function() {
-			this.model.freeze();
-		},
-
 		/**
 		 * @param {Object} params
 		 * 	{
@@ -448,22 +431,15 @@
 		},
 
 		/**
-		 * For auto-select of defaultSelection
-		 *
-		 * @override
-		 */
-		onEditMode: function() {
-			this.resolveDefaultSelectionTemplate();
-		},
-
-		/**
 		 * Event to select right cards on grid page change
 		 */
 		onGridPageChange: function() {
 			var modelSelections = this.model.getSelections();
 
+			this.grid.getSelectionModel().deselectAll();
+
 			for (var index in modelSelections)
-				this.selectionModel.select(
+				this.grid.getSelectionModel().select(
 					this.grid.getStore().find(CMDBuild.core.proxy.CMProxyConstants.ID, index)
 				);
 		},
@@ -474,7 +450,7 @@
 		 * @param {Boolean} disableFilter
 		 */
 		onGridShow: function(disableFilter) {
-			disableFilter = Ext.isEmpty(disableFilter) ? false : true;
+			disableFilter = Ext.isBoolean(disableFilter) ? disableFilter : false;
 
 			var lastSelectionId = this.model.getLastSelection();
 
@@ -491,25 +467,25 @@
 				this.model._silent = true;
 
 				CMDBuild.ServiceProxy.card.getPosition({
-					scope: this,
 					params: params,
+					scope: this,
 					success: function(result, options, decodedResult) {
 						var position = decodedResult.position;
 
 						if (position >= 0) {
-							var	pageNumber = _CMUtils.grid.getPageNumber(position);
+							var	pageNumber = _CMUtils.grid.getPageNumber(position); // TODO: move in real class
 
 							this.grid.loadPage(
 								pageNumber,
 								{
 									scope: this,
 									cb: function() {
-										this.selectionModel.select(
+										this.grid.getSelectionModel().select(
 											this.grid.getStore().find(CMDBuild.core.proxy.CMProxyConstants.ID, lastSelectionId)
 										);
 
 										// Retry without grid store filter or server answer out of filter
-										if (!this.selectionModel.hasSelection() && this.view.toggleGridFilterButton.filterEnabled) {
+										if (!this.grid.getSelectionModel().hasSelection() && this.view.toggleGridFilterButton.filterEnabled) {
 											this.onToggleGridFilterButtonClick(false);
 											this.onGridShow();
 										}
@@ -522,28 +498,11 @@
 							this.onToggleGridFilterButtonClick(false);
 							this.onGridShow(true);
 						}
+
+						this.model._silent = false;
 					}
 				});
 			}
-		},
-
-		/**
-		 * @param {Ext.data.Model} params - record
-		 */
-		onItemDoubleclick: function(params) {
-			if (this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.ALLOW_CARD_EDITING]) {
-				var priv = _CMUtils.getClassPrivileges(params.get('IdClass'));
-
-				if (priv && priv.write) {
-					this.onRowEditButtonClick(params);
-				} else {
-					this.onRowViewButtonClick(params);
-				}
-			}
-		},
-
-		onLoad: function() {
-			this.model.defreeze();
 		},
 
 		/**
@@ -575,12 +534,12 @@
 		 * @param {Object} record
 		 */
 		onSelect: function(record) {
-			if (!Ext.isEmpty(record.get('Id'))) {
+			if (!Ext.isEmpty(record) && !Ext.isEmpty(record.get('Id'))) {
 				_CMCardModuleState.setCard(record, null, false);
 
 				this.model.select(record.get('Id'));
 			} else {
-				this.selectionModel.deselectAll();
+				this.grid.getSelectionModel().deselectAll();
 				this.model.reset();
 			}
 		},
@@ -630,6 +589,10 @@
 			}
 		},
 
+		onLinkCardApplyDefaultSelectionButtonClick: function() {
+			this.resolveDefaultSelectionTemplate();
+		},
+
 		resolveDefaultSelectionTemplate: function() {
 			var me = this;
 
@@ -644,28 +607,33 @@
 
 					// Do the request only if there are a default selection
 					if (defaultSelection) {
-						CMDBuild.ServiceProxy.getCardList({
+						CMDBuild.core.proxy.Card.getList({
 							params: defaultSelection,
-							callback: function(request, options, response) {
-								var resp = Ext.JSON.decode(response.responseText);
+							scope: this,
+							success: function(response, options, decodedResponse) {
+								var decodedResponse = decodedResponse.rows;
+								var lastSelection = undefined;
 
-								if (resp.rows)
-									for (var i = 0; i < resp.rows.length; i++) {
-										var r = resp.rows[i];
+								if (!Ext.isEmpty(decodedResponse)) {
+									Ext.Array.forEach(decodedResponse, function(row, i, allRows) {
+										me.model.select(row['Id']);
 
-										_CMCardModuleState.setCard(
-											{
-												Id: r['Id'],
-												IdClass: r['IdClass']
-											},
-											null,
-											false
-										);
+										lastSelection = row;
+									}, this);
 
-										me.model.select(r['Id']);
-									}
+									_CMCardModuleState.setCard(
+										{
+											Id: lastSelection['Id'],
+											IdClass: lastSelection['IdClass']
+										},
+										null,
+										false
+									);
+								}
 
 								me.templateResolverIsBusy = false;
+
+								me.onGridShow();
 							}
 						});
 
@@ -674,8 +642,6 @@
 						});
 					} else {
 						me.templateResolverIsBusy = false;
-
-						me.model.reset();
 					}
 				}
 			});
@@ -712,7 +678,7 @@
 		},
 
 		viewReset: function() {
-			this.selectionModel.deselectAll();
+			this.grid.getSelectionModel().deselectAll();
 			this.model.reset();
 		}
 	});

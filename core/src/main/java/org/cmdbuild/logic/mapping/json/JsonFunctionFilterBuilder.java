@@ -1,5 +1,6 @@
 package org.cmdbuild.logic.mapping.json;
 
+import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
 import static org.cmdbuild.dao.query.clause.where.WhereClauses.function;
 import static org.cmdbuild.logic.mapping.json.Constants.Filters.FUNCTION_NAME_KEY;
 
@@ -9,6 +10,7 @@ import org.cmdbuild.common.Builder;
 import org.cmdbuild.dao.driver.postgres.Const.SystemAttributes;
 import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.dao.query.clause.QueryAliasAttribute;
+import org.cmdbuild.dao.query.clause.alias.Alias;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -19,8 +21,11 @@ public class JsonFunctionFilterBuilder implements Builder<WhereClause> {
 		return new JsonFunctionFilterBuilder();
 	}
 
+	private static final String ATTRIBUTE_NAME = SystemAttributes.Id.getDBName();
+
 	private JSONObject filterObject;
 	private CMEntryType entryType;
+	private Alias entryTypeAlias;
 	private OperationUser operationUser;
 
 	private JsonFunctionFilterBuilder() {
@@ -34,6 +39,11 @@ public class JsonFunctionFilterBuilder implements Builder<WhereClause> {
 
 	public JsonFunctionFilterBuilder withEntryType(final CMEntryType entryType) {
 		this.entryType = entryType;
+		return this;
+	}
+
+	public JsonFunctionFilterBuilder withEntryTypeAlias(final Alias entryTypeAlias) {
+		this.entryTypeAlias = entryTypeAlias;
 		return this;
 	}
 
@@ -60,8 +70,8 @@ public class JsonFunctionFilterBuilder implements Builder<WhereClause> {
 				final String name = filterObject.getString(FUNCTION_NAME_KEY);
 				final Long userId = (operationUser == null) ? null : operationUser.getAuthenticatedUser().getId();
 				final Long roleId = (operationUser == null) ? null : operationUser.getPreferredGroup().getId();
-				final QueryAliasAttribute attribute = QueryAliasAttribute.attribute(entryType,
-						SystemAttributes.Id.getDBName());
+				final QueryAliasAttribute attribute = (entryTypeAlias == null) ? attribute(entryType, ATTRIBUTE_NAME)
+						: attribute(entryTypeAlias, ATTRIBUTE_NAME);
 				return function(attribute, name, userId, roleId, entryType);
 			}
 			throw new IllegalArgumentException("The filter is malformed");

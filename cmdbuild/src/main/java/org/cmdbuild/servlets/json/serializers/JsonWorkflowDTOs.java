@@ -8,7 +8,6 @@ import java.util.Map;
 
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
-import org.cmdbuild.data.store.lookup.LookupStore;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.translation.TranslationFacade;
 import org.cmdbuild.workflow.CMActivity;
@@ -136,13 +135,13 @@ public class JsonWorkflowDTOs {
 
 		private final UserProcessInstance processInstance;
 		private final TranslationFacade translationFacade;
-		private final LookupStore lookupStore;
+		private final LookupSerializer lookupSerializer;
 
 		public JsonProcessCard(final UserProcessInstance processInstance, final TranslationFacade translationFacade,
-				final LookupStore lookupStore) {
+				final LookupSerializer lookupSerializer) {
 			this.processInstance = processInstance;
 			this.translationFacade = translationFacade;
-			this.lookupStore = lookupStore;
+			this.lookupSerializer = lookupSerializer;
 		}
 
 		public Long getId() {
@@ -178,7 +177,7 @@ public class JsonWorkflowDTOs {
 			return output;
 		}
 
-		public List<JsonActivityInstanceInfo> getActivityInstanceInfoList() throws CMWorkflowException {
+		public List<JsonActivityInstanceInfo> getActivityInstanceInfoList() {
 			final List<JsonActivityInstanceInfo> out = new ArrayList<JsonActivityInstanceInfo>();
 
 			for (final UserActivityInstance ai : processInstance.getActivities()) {
@@ -206,7 +205,7 @@ public class JsonWorkflowDTOs {
 
 		@Override
 		protected Object javaToJsonValue(final CMAttributeType<?> type, final Object value) {
-			return new JsonAttributeValueVisitor(type, value, translationFacade, lookupStore).convertValue();
+			return new JsonAttributeValueVisitor(type, value, translationFacade, lookupSerializer).convertValue();
 		}
 	}
 

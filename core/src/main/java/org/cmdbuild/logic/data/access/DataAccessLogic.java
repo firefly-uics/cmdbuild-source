@@ -16,7 +16,6 @@ import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.logic.Logic;
 import org.cmdbuild.logic.commands.AbstractGetRelation.RelationInfo;
-import org.cmdbuild.logic.commands.GetCardHistory.GetCardHistoryResponse;
 import org.cmdbuild.logic.commands.GetRelationHistory.GetRelationHistoryResponse;
 import org.cmdbuild.logic.commands.GetRelationList.DomainWithSource;
 import org.cmdbuild.logic.commands.GetRelationList.GetRelationListResponse;
@@ -54,14 +53,20 @@ public interface DataAccessLogic extends Logic {
 
 	Optional<RelationInfo> getRelation(CMDomain domain, Long id);
 
+	Optional<RelationInfo> getRelation(String domain, Long id);
+
 	GetRelationHistoryResponse getRelationHistory(Card srcCard);
 
 	GetRelationHistoryResponse getRelationHistory(Card srcCard, CMDomain domain);
 
-	CMRelation getRelation(final Long srcCardId, final Long dstCardId, final CMDomain domain,
-			final CMClass sourceClass, final CMClass destinationClass);
+	CMRelation getRelation(Long srcCardId, Long dstCardId, CMDomain domain, CMClass sourceClass,
+			CMClass destinationClass);
 
-	GetCardHistoryResponse getCardHistory(Card srcCard);
+	Optional<RelationInfo> getHistoricRelation(String domain, Long id);
+
+	Iterable<Card> getCardHistory(Card srcCard, boolean allAttributes);
+
+	Card fetchHistoricCard(String className, Long cardId);
 
 	CMClass findClass(Long classId);
 
@@ -136,7 +141,7 @@ public interface DataAccessLogic extends Logic {
 	 * @param queryOptions
 	 * @return a FetchCardListResponse
 	 */
-	FetchCardListResponse fetchCards(String className, QueryOptions queryOptions);
+	PagedElements<Card> fetchCards(String className, QueryOptions queryOptions);
 
 	/**
 	 * Execute a given SQL function to select a set of rows Return these rows as
@@ -146,7 +151,7 @@ public interface DataAccessLogic extends Logic {
 	 * @param queryOptions
 	 * @return
 	 */
-	FetchCardListResponse fetchSQLCards(String functionName, QueryOptions queryOptions);
+	PagedElements<Card> fetchSQLCards(String functionName, QueryOptions queryOptions);
 
 	/**
 	 * 
@@ -157,6 +162,8 @@ public interface DataAccessLogic extends Logic {
 	 *         current sorting and filter
 	 */
 	CMCardWithPosition getCardPosition(String className, Long cardId, QueryOptions queryOptions);
+
+	PagedElements<CMCardWithPosition> fetchCardsWithPosition(String className, QueryOptions queryOptions, Long cardId);
 
 	/**
 	 * Call createCard forwarding the given card, and saying to manage also the
@@ -180,6 +187,8 @@ public interface DataAccessLogic extends Logic {
 	Long createCard(Card userGivenCard, boolean manageAlsoDomainsAttributes);
 
 	void updateCard(Card card);
+
+	void updateCards(Iterable<Card> cards);
 
 	void updateFetchedCard(Card card, Map<String, Object> attributes);
 
@@ -218,19 +227,12 @@ public interface DataAccessLogic extends Logic {
 
 	void deleteDetail(Card master, Card detail, String domainName);
 
-	public void deleteRelation(final String srcClassName, final Long srcCardId, final String dstClassName,
-			final Long dstCardId, final CMDomain domain);
+	public void deleteRelation(String srcClassName, Long srcCardId, String dstClassName, Long dstCardId, CMDomain domain);
 
 	File exportClassAsCsvFile(String className, String separator);
 
 	CSVData importCsvFileFor(FileItem csvFile, Long classId, String separator) throws IOException, JSONException;
 
-	CMCard resolveCardReferences(final CMClass entryType, final CMCard card);
-
-	void lockCard(Long cardId);
-
-	void unlockCard(Long cardId);
-
-	void unlockAllCards();
+	CMCard resolveCardReferences(CMClass entryType, CMCard card);
 
 }

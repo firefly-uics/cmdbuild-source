@@ -331,8 +331,9 @@ public class PrivateImpl extends AbstractWebservice implements Private {
 				.from(call(function, actualParams), f) //
 				.run();
 
+		final Attribute[] output;
 		if (queryResult.isEmpty()) {
-			return new Attribute[0];
+			output = new Attribute[0];
 		} else {
 			final CMQueryRow row = queryResult.iterator().next();
 			final Attribute[] outParams = convertFunctionOutput(function, row.getValueSet(f));
@@ -343,8 +344,9 @@ public class PrivateImpl extends AbstractWebservice implements Private {
 							ToStringBuilder.reflectionToString(attribute, ToStringStyle.SHORT_PREFIX_STYLE)));
 				}
 			}
-			return outParams;
+			output = outParams;
 		}
+		return output;
 	}
 
 	/**
@@ -400,7 +402,7 @@ public class PrivateImpl extends AbstractWebservice implements Private {
 
 	private String nativeValueToWsString(final CMAttributeType<?> type, final Object value) {
 		return (value == null) ? EMPTY : new AbstractAttributeValueVisitor(type, value, translationFacade,
-				lookupStore()) {
+				lookupSerializer()) {
 
 			@Override
 			public void visit(final EntryTypeAttributeType attributeType) {
@@ -505,10 +507,15 @@ public class PrivateImpl extends AbstractWebservice implements Private {
 	}
 
 	@Override
-	public void moveAttachment(String sourceClassName, int sourceId, String filename, String destinationClassName,
-			int destinationId) {
+	public void moveAttachment(final String sourceClassName, final int sourceId, final String filename,
+			final String destinationClassName, final int destinationId) {
 		dmsLogicHelper().move(sourceClassName, Long.valueOf(sourceId), filename, destinationClassName,
 				Long.valueOf(destinationId));
+	}
+
+	@Override
+	public void abortWorkflow(final Card card) {
+		workflowLogicHelper().abortProcess(card);
 	}
 
 }

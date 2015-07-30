@@ -28,14 +28,13 @@
 				skin_variant: 'silver', // Default color is silver
 				schema: 'html5',
 				language: 'en',
-
-				// Original value is 23, hard coded. With 23 the editor calculates the height wrong.
-				// With these settings, you can do the fine tuning of the height by the initialization.
 				theme_advanced_row_height: 27,
 				delta_height: 1,
 				width: '100%',
 				theme_advanced_resizing: false,
-				theme_advanced_resize_horizontal: false
+				theme_advanced_resize_horizontal: false,
+				relative_urls: false,
+				convert_urls: false
 			},
 
 			full: {
@@ -65,6 +64,7 @@
 		},
 
 		considerAsFieldToDisable: true,
+		minHeight: 150,
 
 		initComponent: function() {
 			// Setup TinyMCE configuration from string identifier

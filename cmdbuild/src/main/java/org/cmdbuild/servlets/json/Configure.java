@@ -92,7 +92,7 @@ public class Configure extends JSONBaseWithSpringContext {
 			@Parameter(value = LIM_PASSWORD, required = false) final String limitedPassword, //
 			@Parameter(value = ADMIN_USER, required = false) final String adminUser, //
 			@Parameter(value = ADMIN_PASSWORD, required = false) final String adminPassword //
-	) throws IOException, SQLException {
+	) throws IOException {
 		testDatabaseConnection(host, port, user, password);
 		final CmdbuildProperties cmdbuildProps = cmdbuildConfiguration();
 		cmdbuildProps.setLanguage(language);
@@ -178,6 +178,15 @@ public class Configure extends JSONBaseWithSpringContext {
 			groupsLogic().addUserToGroup(administrator.getId(), superUserGroup.getId());
 		}
 		patchManager().reset();
+		/*
+		 * TODO move elsewhere
+		 * 
+		 * should be moved in another part, maybe in some filter, but being sure
+		 * of keep synchronized some resources
+		 */
+		if (!startupLogic().migrationRequired()) {
+			startupLogic().earlyStart();
+		}
 	}
 
 	@JSONExported

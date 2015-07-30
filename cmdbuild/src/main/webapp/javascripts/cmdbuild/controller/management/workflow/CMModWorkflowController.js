@@ -33,7 +33,7 @@
 		/**
 		 * @property {CMDBuild.controller.management.workflow.CMWorkflowHistoryPanelController}
 		 */
-		historyController: undefined,
+		controllerTabHistory: undefined,
 
 		/**
 		 * @property {CMDBuild.controller.management.workflow.CMNoteController}
@@ -126,14 +126,19 @@
 		},
 
 		buildTabControllerHistory: function() {
-			var view = this.view.getHistoryPanel();
+			if (!Ext.Array.contains(
+				_CMUIConfiguration.getDisabledProcessTabs(),
+				CMDBuild.model.CMUIConfigurationModel.processTabs.history
+			)) {
+				this.controllerTabHistory = Ext.create('CMDBuild.controller.management.workflow.tabs.History', {
+					parentDelegate: this
+				});
 
-			if (!Ext.isEmpty(view)) {
-				this.historyController = new CMDBuild.controller.management.workflow.CMWorkflowHistoryPanelController(view);
+				this.subControllers.push(this.controllerTabHistory);
 
-				this.subControllers.push(this.historyController);
+				this.view.cardTabPanel.cardHistoryPanel = this.controllerTabHistory.getView(); // Creates tabPanel object
 
-				this.view.cardTabPanel.acutalPanel.add(view);
+				this.view.cardTabPanel.acutalPanel.add(this.controllerTabHistory.getView());
 			}
 		},
 
@@ -144,12 +149,6 @@
 				this.noteController = new CMDBuild.controller.management.workflow.CMNoteController(view, this);
 
 				this.subControllers.push(this.noteController);
-
-				// the history has to know when the notes are changed
-				this.mon(this.noteController, this.noteController.CMEVENTS.noteWasSaved, function() {
-					if (this.historyController)
-						this.historyController.onProcessInstanceChange(_CMWFState.getProcessInstance());
-				}, this);
 
 				this.view.cardTabPanel.acutalPanel.add(view);
 			}
@@ -194,7 +193,9 @@
 		/**
 		 * @deprecated
 		 */
-		onCardChanged: function(card) { _deprecated();
+		onCardChanged: function(card) {
+			_deprecated('onCardChanged', this);
+
 			var me = this;
 
 			if (card == null) {

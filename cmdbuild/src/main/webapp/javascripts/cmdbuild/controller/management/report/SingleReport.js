@@ -4,6 +4,7 @@
 		extend: 'CMDBuild.controller.common.AbstractBasePanelController',
 
 		requires: [
+			'CMDBuild.core.Message',
 			'CMDBuild.core.proxy.CMProxyConstants',
 			'CMDBuild.core.proxy.CMProxyUrlIndex',
 			'CMDBuild.core.proxy.Report'
@@ -52,7 +53,7 @@
 					scope: this,
 					params: reportParams,
 					failure: function(response, options, decodedResponse) {
-						CMDBuild.Msg.error(
+						CMDBuild.core.Message.error(
 							CMDBuild.Translation.error,
 							CMDBuild.Translation.errors.createReportFilure,
 							false
@@ -64,7 +65,9 @@
 						if(decodedResponse.filled) { // Report with no parameters
 							this.showReport(forceDownload);
 						} else { // Show parameters window
-							if (Ext.isIE) // FIX: in IE PDF is painted on top of the regular page content so remove it before display parameter window
+							// FIX: in IE PDF is painted on top of the regular page content so remove it before display parameter window
+							// Workaround to detect IE 11 witch is not supported from Ext 4.2
+							if (Ext.isIE || !!navigator.userAgent.match(/Trident.*rv[ :]*11\./))
 								this.view.removeAll();
 
 							Ext.create('CMDBuild.controller.management.report.Parameters', {
@@ -93,7 +96,7 @@
 					extension: type
 				});
 			} else {
-				CMDBuild.Msg.error(
+				CMDBuild.core.Message.error(
 					CMDBuild.Translation.error,
 					CMDBuild.Translation.errors.unmanagedReportType,
 					false
@@ -131,6 +134,9 @@
 		showReport: function(forceDownload) {
 			forceDownload = forceDownload || false;
 
+			var params = {};
+			params[CMDBuild.core.proxy.CMProxyConstants.FORCE_DOWNLOAD_PARAM_KEY] = true;
+
 			if (forceDownload) { // Force download mode
 				var form = Ext.create('Ext.form.Panel', {
 					standardSubmit: true,
@@ -139,9 +145,7 @@
 
 				form.submit({
 					target: '_blank',
-					params: {
-						'force-download': true
-					}
+					params: params
 				});
 
 				Ext.defer(function() { // Form cleanup

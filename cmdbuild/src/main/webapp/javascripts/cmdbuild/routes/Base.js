@@ -13,7 +13,7 @@
 		 * @abstract
 		 */
 		paramsValidation: function(params) {
-			throw 'Routes base controller: paramsValidation() unimplemented method';
+			_error('unimplemented paramsValidation method', this);
 		},
 
 		/**

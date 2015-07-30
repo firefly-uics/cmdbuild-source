@@ -4,6 +4,7 @@
 		extend: 'CMDBuild.controller.common.AbstractController',
 
 		requires: [
+			'CMDBuild.core.Message',
 			'CMDBuild.core.proxy.CMProxyConstants',
 			'CMDBuild.core.proxy.CMProxyUrlIndex',
 			'CMDBuild.core.proxy.Report'
@@ -62,6 +63,8 @@
 					var field = CMDBuild.Management.FieldManager.getFieldForAttr(attribute, false, false);
 
 					if (!Ext.isEmpty(field)) {
+						field.maxWidth = field.width;
+
 						if (attribute.defaultvalue)
 							field.setValue(attribute.defaultvalue);
 
@@ -77,7 +80,7 @@
 		onParametersSaveButtonClick: function() {
 			if (this.view.form.getForm().isValid()) {
 				CMDBuild.core.proxy.Report.updateReport({
-					form: this.view.form.getForm(),
+					params: this.view.form.getValues(),
 					scope: this,
 					failure: function(response, options, decodedResponse) {
 						this.onParametersAbortButtonClick();
@@ -91,7 +94,7 @@
 							);
 
 							if (Ext.isEmpty(popup))
-								CMDBuild.Msg.warn(
+								CMDBuild.core.Message.warn(
 									CMDBuild.Translation.warnings.warning_message,
 									CMDBuild.Translation.warnings.popup_block
 								);

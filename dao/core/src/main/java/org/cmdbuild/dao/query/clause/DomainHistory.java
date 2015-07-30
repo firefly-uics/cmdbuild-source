@@ -1,6 +1,9 @@
 package org.cmdbuild.dao.query.clause;
 
-import org.cmdbuild.common.utils.UnsupportedProxyFactory;
+import static com.google.common.reflect.Reflection.newProxy;
+import static org.cmdbuild.common.utils.Reflection.unsupported;
+
+import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.entrytype.CMEntryTypeVisitor;
 import org.cmdbuild.dao.entrytype.CMIdentifier;
@@ -16,12 +19,12 @@ public class DomainHistory extends ForwardingDomain implements HistoricEntryType
 		return new DomainHistory(current);
 	}
 
-	private static final CMDomain UNSUPPORTED = UnsupportedProxyFactory.of(CMDomain.class).create();
+	private static final CMDomain UNSUPPORTED = newProxy(CMDomain.class, unsupported("method not supported"));
 
-	private final CMDomain current;
+	private final CMDomain delegate;
 
 	private DomainHistory(final CMDomain current) {
-		this.current = current;
+		this.delegate = current;
 	}
 
 	@Override
@@ -36,26 +39,36 @@ public class DomainHistory extends ForwardingDomain implements HistoricEntryType
 
 	@Override
 	public CMDomain getType() {
-		return current;
+		return delegate;
 	}
 
 	@Override
 	public CMIdentifier getIdentifier() {
-		return current.getIdentifier();
+		return delegate.getIdentifier();
 	}
 
 	@Override
 	public Long getId() {
-		return current.getId();
+		return delegate.getId();
 	}
 
 	@Override
 	public String getName() {
-		return current.getName() + " HISTORY";
+		return delegate.getName() + " HISTORY";
+	}
+
+	@Override
+	public CMClass getClass1() {
+		return delegate.getClass1();
+	}
+
+	@Override
+	public CMClass getClass2() {
+		return delegate.getClass2();
 	}
 
 	public CMDomain getCurrent() {
-		return current;
+		return delegate;
 	}
 
 }

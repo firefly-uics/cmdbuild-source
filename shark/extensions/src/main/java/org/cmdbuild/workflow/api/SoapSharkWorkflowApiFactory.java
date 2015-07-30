@@ -62,7 +62,7 @@ public class SoapSharkWorkflowApiFactory implements SharkWorkflowApiFactory {
 		final WsFluentApiExecutor wsFluentApiExecutor = new WsFluentApiExecutor(proxy);
 		final SharkFluentApiExecutor executor = new SharkFluentApiExecutor(wsFluentApiExecutor, currentProcessId(),
 				new MonostateSelfSuspensionRequestHolder());
-		final WorkflowApi workflowApi = new WorkflowApi(executor, schemaApi, mailApi());
+		final WorkflowApi workflowApi = new WorkflowApi(executor, proxy, schemaApi, mailApi());
 
 		// FIXME needed for cut-off circular dependency
 		wsFluentApiExecutor.setEntryTypeConverter(new SharkWsEntryTypeConverter(workflowApi));

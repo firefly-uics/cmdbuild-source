@@ -30,6 +30,7 @@ import static org.mockito.Mockito.verify;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -121,7 +122,7 @@ public class CardsTest {
 						.build()) //
 				.build();
 		doReturn(sentResponse) //
-				.when(service).read(anyString(), anyString(), anyString(), anyInt(), anyInt());
+				.when(service).read(anyString(), anyString(), anyString(), anyInt(), anyInt(), any(Set.class));
 
 		// when
 		final HttpGet get = new HttpGet(new URIBuilder(server.resource("classes/123/cards")) //
@@ -136,7 +137,9 @@ public class CardsTest {
 		assertThat(statusCodeOf(response), equalTo(200));
 		assertThat(json.from(contentOf(response)), equalTo(json.from(expectedResponse)));
 
-		verify(service).read(eq("123"), eq("filter"), eq("sort"), eq(456), eq(789));
+		final ArgumentCaptor<Set> captor = ArgumentCaptor.forClass(Set.class);
+		verify(service).read(eq("123"), eq("filter"), eq("sort"), eq(456), eq(789), captor.capture());
+		assertThat(captor.getValue().isEmpty(), equalTo(true));
 	}
 
 	@Test
