@@ -1,8 +1,8 @@
 package org.cmdbuild.servlets.json;
 
-import static org.cmdbuild.spring.configuration.Lock.*;
 import static org.cmdbuild.spring.SpringIntegrationUtils.applicationContext;
 import static org.cmdbuild.spring.configuration.Data.BEAN_SYSTEM_DATA_VIEW;
+import static org.cmdbuild.spring.configuration.Lock.USER_LOCK_LOGIC;
 import static org.cmdbuild.spring.configuration.User.BEAN_USER_DATA_VIEW;
 
 import javax.sql.DataSource;
@@ -44,6 +44,7 @@ import org.cmdbuild.logic.email.EmailAttachmentsLogic;
 import org.cmdbuild.logic.email.EmailLogic;
 import org.cmdbuild.logic.email.EmailQueueLogic;
 import org.cmdbuild.logic.email.EmailTemplateLogic;
+import org.cmdbuild.logic.filter.FilterLogic;
 import org.cmdbuild.logic.menu.MenuLogic;
 import org.cmdbuild.logic.privileges.SecurityLogic;
 import org.cmdbuild.logic.scheduler.SchedulerLogic;
@@ -62,7 +63,6 @@ import org.cmdbuild.services.SessionVars;
 import org.cmdbuild.services.TranslationService;
 import org.cmdbuild.services.localization.Localization;
 import org.cmdbuild.services.startup.StartupLogic;
-import org.cmdbuild.services.store.FilterStore;
 import org.cmdbuild.services.store.report.ReportStore;
 import org.cmdbuild.servlets.json.serializers.CardSerializer;
 import org.cmdbuild.servlets.json.serializers.ClassSerializer;
@@ -117,10 +117,6 @@ public class JSONBaseWithSpringContext extends JSONBase {
 	/*
 	 * Stores
 	 */
-
-	protected FilterStore filterStore() {
-		return applicationContext().getBean(FilterStore.class);
-	}
 
 	protected LanguageStore languageStore() {
 		return applicationContext().getBean(LanguageStore.class);
@@ -204,6 +200,10 @@ public class JSONBaseWithSpringContext extends JSONBase {
 
 	protected EmailTemplateLogic emailTemplateLogic() {
 		return applicationContext().getBean(EmailTemplateLogic.class);
+	}
+
+	protected FilterLogic filterLogic() {
+		return applicationContext().getBean(FilterLogic.class);
 	}
 
 	protected GISLogic gisLogic() {

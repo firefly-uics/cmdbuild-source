@@ -5,6 +5,8 @@ import static org.cmdbuild.spring.util.Constants.PROTOTYPE;
 import org.cmdbuild.auth.UserStore;
 import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.data.store.dao.StorableConverter;
+import org.cmdbuild.logic.filter.DefaultFilterLogic;
+import org.cmdbuild.logic.filter.FilterLogic;
 import org.cmdbuild.services.localization.LocalizedStorableConverter;
 import org.cmdbuild.services.store.DataViewFilterStore;
 import org.cmdbuild.services.store.FilterConverter;
@@ -31,7 +33,13 @@ public class Filter {
 
 	@Bean
 	@Scope(PROTOTYPE)
-	public DataViewFilterStore dataViewFilterStore() {
+	public FilterLogic defaultFilterLogic() {
+		return new DefaultFilterLogic(dataViewFilterStore());
+	}
+
+	@Bean
+	@Scope(PROTOTYPE)
+	protected DataViewFilterStore dataViewFilterStore() {
 		return new DataViewFilterStore(data.systemDataView(), operationUser(), converter());
 	}
 
