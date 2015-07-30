@@ -10,6 +10,7 @@ import static java.lang.Boolean.FALSE;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;
+import static org.apache.commons.lang3.BooleanUtils.isTrue;
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 import static org.cmdbuild.common.utils.guava.Functions.toKey;
 import static org.cmdbuild.common.utils.guava.Functions.toValue;
@@ -194,6 +195,8 @@ public class Models {
 		private String lookupType;
 		private Attribute.Filter filter;
 		private Iterable<String> values;
+		private Boolean writable;
+		private Boolean hidden;
 
 		private AttributeBuilder() {
 			// use factory method
@@ -206,11 +209,11 @@ public class Models {
 			output.setType(type);
 			output.setName(name);
 			output.setDescription(description);
-			output.setDisplayableInList(displayableInList);
-			output.setUnique(unique);
-			output.setMandatory(mandatory);
-			output.setInherited(inherited);
-			output.setActive(active);
+			output.setDisplayableInList(isTrue(displayableInList));
+			output.setUnique(isTrue(unique));
+			output.setMandatory(isTrue(mandatory));
+			output.setInherited(isTrue(inherited));
+			output.setActive(isTrue(active));
 			output.setIndex(index);
 			output.setDefaultValue(defaultValue);
 			output.setGroup(group);
@@ -222,6 +225,8 @@ public class Models {
 			output.setLookupType(lookupType);
 			output.setFilter(filter);
 			output.setValues(newArrayList(defaultIfNull(values, NO_VALUES)));
+			output.setWritable(isTrue(writable));
+			output.setHidden(isTrue(hidden));
 			return output;
 		}
 
@@ -322,6 +327,16 @@ public class Models {
 
 		public AttributeBuilder withValues(final Iterable<String> values) {
 			this.values = values;
+			return this;
+		}
+
+		public AttributeBuilder thatIsWritable(final Boolean writable) {
+			this.writable = writable;
+			return this;
+		}
+
+		public AttributeBuilder thatIsHidden(final Boolean hidden) {
+			this.hidden = hidden;
 			return this;
 		}
 

@@ -7,6 +7,7 @@ import static org.cmdbuild.service.rest.v1.constants.Serialization.DISPLAYABLE_I
 import static org.cmdbuild.service.rest.v1.constants.Serialization.EDITOR_TYPE;
 import static org.cmdbuild.service.rest.v1.constants.Serialization.FILTER;
 import static org.cmdbuild.service.rest.v1.constants.Serialization.GROUP;
+import static org.cmdbuild.service.rest.v1.constants.Serialization.HIDDEN;
 import static org.cmdbuild.service.rest.v1.constants.Serialization.INDEX;
 import static org.cmdbuild.service.rest.v1.constants.Serialization.INHERITED;
 import static org.cmdbuild.service.rest.v1.constants.Serialization.LENGTH;
@@ -21,6 +22,7 @@ import static org.cmdbuild.service.rest.v1.constants.Serialization.TEXT;
 import static org.cmdbuild.service.rest.v1.constants.Serialization.TYPE;
 import static org.cmdbuild.service.rest.v1.constants.Serialization.UNIQUE;
 import static org.cmdbuild.service.rest.v1.constants.Serialization.VALUES;
+import static org.cmdbuild.service.rest.v1.constants.Serialization.WRITABLE;
 
 import java.util.Collection;
 import java.util.Map;
@@ -92,11 +94,11 @@ public class Attribute extends ModelWithStringId {
 	private String type;
 	private String name;
 	private String description;
-	private Boolean displayableInList;
-	private Boolean unique;
-	private Boolean mandatory;
-	private Boolean inherited;
-	private Boolean active;
+	private boolean displayableInList;
+	private boolean unique;
+	private boolean mandatory;
+	private boolean inherited;
+	private boolean active;
 	private Long index;
 	private String defaultValue;
 	private String group;
@@ -108,6 +110,8 @@ public class Attribute extends ModelWithStringId {
 	private String lookupTypeName;
 	private Filter filter;
 	private Collection<String> values;
+	private boolean writable;
+	private boolean hidden;
 
 	Attribute() {
 		// package visibility
@@ -141,47 +145,47 @@ public class Attribute extends ModelWithStringId {
 	}
 
 	@XmlAttribute(name = DISPLAYABLE_IN_LIST)
-	public Boolean isDisplayableInList() {
+	public boolean isDisplayableInList() {
 		return displayableInList;
 	}
 
-	void setDisplayableInList(final Boolean displayableInList) {
+	void setDisplayableInList(final boolean displayableInList) {
 		this.displayableInList = displayableInList;
 	}
 
 	@XmlAttribute(name = UNIQUE)
-	public Boolean isUnique() {
+	public boolean isUnique() {
 		return unique;
 	}
 
-	void setUnique(final Boolean unique) {
+	void setUnique(final boolean unique) {
 		this.unique = unique;
 	}
 
 	@XmlAttribute(name = MANDATORY)
-	public Boolean isMandatory() {
+	public boolean isMandatory() {
 		return mandatory;
 	}
 
-	void setMandatory(final Boolean mandatory) {
+	void setMandatory(final boolean mandatory) {
 		this.mandatory = mandatory;
 	}
 
 	@XmlAttribute(name = INHERITED)
-	public Boolean isInherited() {
+	public boolean isInherited() {
 		return inherited;
 	}
 
-	void setInherited(final Boolean inherited) {
+	void setInherited(final boolean inherited) {
 		this.inherited = inherited;
 	}
 
 	@XmlAttribute(name = ACTIVE)
-	public Boolean isActive() {
+	public boolean isActive() {
 		return active;
 	}
 
-	void setActive(final Boolean active) {
+	void setActive(final boolean active) {
 		this.active = active;
 	}
 
@@ -280,8 +284,26 @@ public class Attribute extends ModelWithStringId {
 		return values;
 	}
 
-	public void setValues(final Collection<String> values) {
+	void setValues(final Collection<String> values) {
 		this.values = values;
+	}
+
+	@XmlAttribute(name = WRITABLE)
+	public boolean isWritable() {
+		return writable;
+	}
+
+	void setWritable(final boolean writable) {
+		this.writable = writable;
+	}
+
+	@XmlAttribute(name = HIDDEN)
+	public boolean isHidden() {
+		return hidden;
+	}
+
+	void setHidden(final boolean hidden) {
+		this.hidden = hidden;
 	}
 
 	@Override
@@ -315,31 +337,35 @@ public class Attribute extends ModelWithStringId {
 				.append(this.editorType, other.editorType) //
 				.append(this.lookupTypeName, other.lookupTypeName) //
 				.append(this.filter, other.filter) //
+				.append(this.writable, other.writable) //
+				.append(this.hidden, other.hidden) //
 				.isEquals();
 	}
 
 	@Override
 	protected int doHashCode() {
 		return new HashCodeBuilder() //
-				.append(this.getId()) //
-				.append(this.type) //
-				.append(this.name) //
-				.append(this.description) //
-				.append(this.displayableInList) //
-				.append(this.unique) //
-				.append(this.mandatory) //
-				.append(this.inherited) //
-				.append(this.active) //
-				.append(this.index) //
-				.append(this.defaultValue) //
-				.append(this.group) //
-				.append(this.precision) //
-				.append(this.scale) //
-				.append(this.targetClass) //
-				.append(this.length) //
-				.append(this.editorType) //
-				.append(this.lookupTypeName) //
-				.append(this.filter) //
+				.append(getId()) //
+				.append(type) //
+				.append(name) //
+				.append(description) //
+				.append(displayableInList) //
+				.append(unique) //
+				.append(mandatory) //
+				.append(inherited) //
+				.append(active) //
+				.append(index) //
+				.append(defaultValue) //
+				.append(group) //
+				.append(precision) //
+				.append(scale) //
+				.append(targetClass) //
+				.append(length) //
+				.append(editorType) //
+				.append(lookupTypeName) //
+				.append(filter) //
+				.append(writable) //
+				.append(hidden) //
 				.toHashCode();
 	}
 

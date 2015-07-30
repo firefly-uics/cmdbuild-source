@@ -4,6 +4,8 @@ import static com.google.common.reflect.Reflection.newProxy;
 import static java.util.Collections.emptyList;
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 import static org.cmdbuild.common.utils.Reflection.unsupported;
+import static org.cmdbuild.dao.entrytype.CMAttribute.Mode.HIDDEN;
+import static org.cmdbuild.dao.entrytype.CMAttribute.Mode.WRITE;
 import static org.cmdbuild.service.rest.v2.model.Models.newAttribute;
 import static org.cmdbuild.service.rest.v2.model.Models.newFilter;
 
@@ -152,7 +154,9 @@ public class ToAttributeDetail implements Function<CMAttribute, Attribute> {
 				.thatIsActive(input.isActive()) //
 				.withIndex(Long.valueOf(input.getIndex())) //
 				.withDefaultValue(input.getDefaultValue()) //
-				.withGroup(input.getGroup());
+				.withGroup(input.getGroup()) //
+				.thatIsWritable(WRITE.equals(input.getMode())) //
+				.thatIsHidden(HIDDEN.equals(input.getMode()));
 		new ForwardingAttributeTypeVisitor() {
 
 			private final CMAttributeTypeVisitor DELEGATE = NullAttributeTypeVisitor.getInstance();
