@@ -51,6 +51,7 @@ public class Serialization {
 			FILE = "file", //
 			FILTER = "filter", //
 			GROUP = "group", //
+			HIDDEN = "hidden", //
 			INDEX = "index", //
 			INHERITED = "inherited", //
 			INSTRUCTIONS = "instructions", //
