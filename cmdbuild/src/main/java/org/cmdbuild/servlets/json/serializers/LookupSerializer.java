@@ -39,13 +39,12 @@ public class LookupSerializer {
 		if (lookup != null) {
 			serializer = new JSONObject();
 			serializer.put(ID_CAPITAL, lookup.getId());
-
 			serializer.put(DESCRIPTION_CAPITAL, lookup.description());
+			serializer.put("Number", lookup.number());
 
 			if (!shortForm) {
 				serializer.put("Type", lookup.type().name);
 				serializer.put("Code", defaultIfBlank(lookup.code(), EMPTY));
-				serializer.put("Number", lookup.number());
 				serializer.put("Notes", lookup.notes());
 				serializer.put("Default", lookup.isDefault());
 				serializer.put("Active", lookup.active());
@@ -101,32 +100,26 @@ public class LookupSerializer {
 	}
 
 	private String description(final LookupValue value) {
-
-		final String lastLevelBaseDescription = value.getDescription();
+		final Lookup _lookup = lookup(value.getId());
+		final String lastLevelBaseDescription = (_lookup == null) ? value.getDescription() : _lookup.getDescription();
 		String baseDescription = lastLevelBaseDescription;
 		String jointBaseDescription = lastLevelBaseDescription;
 
-		if (value instanceof LookupValue) {
-			Lookup lookup = lookup(value.getId());
-			if (lookup != null) {
+		Lookup lookup = _lookup;
+		if (lookup != null) {
+			lookup = lookup(lookup.parentId());
+			while (lookup != null) {
+				final String parentBaseDescription = lookup.description();
+				jointBaseDescription = String.format(MULTILEVEL_FORMAT, parentBaseDescription, baseDescription);
 				lookup = lookup(lookup.parentId());
-				while (lookup != null) {
-					final String parentBaseDescription = lookup.description();
-					jointBaseDescription = String.format(MULTILEVEL_FORMAT, parentBaseDescription, baseDescription);
-					lookup = lookup(lookup.parentId());
-					baseDescription = jointBaseDescription;
-				}
+				baseDescription = jointBaseDescription;
 			}
 		}
 		return jointBaseDescription;
 	}
 
 	private Lookup lookup(final Long id) {
-		if (id != null) {
-			return lookupStore.read(storableOf(id));
-		} else {
-			return null;
-		}
+		return (id == null) ? null : lookupStore.read(storableOf(id));
 	}
 
 }

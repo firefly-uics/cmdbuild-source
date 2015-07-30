@@ -18,11 +18,6 @@
 				withButtons: true
 			});
 
-			this.cardHistoryPanel = isEnabled(disabledTabs, tabs.history) ? new CMDBuild.view.management.workflow.CMActivityHistoryTab({
-				title: CMDBuild.Translation.management.modworkflow.tabs.history,
-				border: false
-			}) : null;
-
 			this.openNotePanel = isEnabled(disabledTabs, tabs.notes) ? new CMDBuild.view.management.common.widgets.CMOpenNotes({
 				title: CMDBuild.Translation.management.modworkflow.tabs.notes,
 				border: false
@@ -91,10 +86,6 @@
 
 			if (this.relationsPanel != null) {
 				this.relationsPanel.disable();
-			}
-
-			if (this.cardHistoryPanel != null) {
-				this.cardHistoryPanel.disable();
 			}
 
 			if (this.openAttachmentPanel != null) {

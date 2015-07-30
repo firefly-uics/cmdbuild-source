@@ -37,7 +37,7 @@
 		tabController: undefined,
 
 		/**
-		 * @property {CMDBuild.view.management.common.tabs.email.EmailPanel}
+		 * @property {CMDBuild.view.management.common.tabs.email.EmailView}
 		 */
 		view: undefined,
 
@@ -47,7 +47,7 @@
 		widgetConf: undefined,
 
 		/**
-		 * @param {CMDBuild.view.management.common.tabs.email.EmailPanel} view
+		 * @param {CMDBuild.view.management.common.tabs.email.EmailView} view
 		 * @param {CMDBuild.controller.management.common.CMWidgetManagerController} ownerController
 		 * @param {Object} widgetConf
 		 * @param {Ext.form.Basic} clientForm
@@ -178,7 +178,7 @@
 				};
 
 				// Setup end-point callback to close widget save callback loop
-				this.tabController.regenerationEndPointCallback = function() {
+				this.tabController.cmfg('regenerationEndPointCallbackSet', function() {
 					if (!Ext.Object.isEmpty(me.beforeSaveCallbackObject)) {
 						var index = me.beforeSaveCallbackObject.index;
 
@@ -192,8 +192,8 @@
 						);
 					}
 
-					me.tabController.regenerationEndPointCallback = Ext.emptyFn; // Reset callback function
-				};
+					me.tabController.cmfg('regenerationEndPointCallbackSet'); // Reset callback function
+				});
 
 				this.tabController.cmfg('regenerateAllEmailsSet', true);
 				this.tabController.cmfg('storeLoad');

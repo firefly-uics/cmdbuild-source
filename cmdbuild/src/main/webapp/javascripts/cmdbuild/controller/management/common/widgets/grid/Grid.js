@@ -5,7 +5,8 @@
 
 		requires: [
 			'CMDBuild.core.proxy.CMProxyConstants',
-			'CMDBuild.core.proxy.widgets.Grid'
+			'CMDBuild.core.proxy.widgets.Grid',
+			'CMDBuild.core.Message'
 		],
 
 		mixins: {
@@ -97,18 +98,19 @@
 				delegate: this
 			});
 
-			this.view.removeAll();
+			if (!Ext.isEmpty(this.grid))
+				this.view.add(this.grid);
 
-			this.view.add(this.grid);
+			this.configureGridPanel();
 		},
 
 		/**
 		 * @param {Object} header
-		 * @param {Boolean} required
+		 * @param {Object} attribute
 		 *
 		 * @return {String} value
 		 */
-		addRendererToHeader: function(header, required) {
+		addRendererToHeader: function(header, attribute) {
 			var me = this;
 
 			if (Ext.isEmpty(header.renderer))
@@ -116,15 +118,15 @@
 					value = value || record.get(header.dataIndex);
 
 					if (!Ext.isEmpty(value)) {
-						if (!Ext.isEmpty(header.field.store)) {
-							var comboRecord = header.field.store.findRecord('Id', value);
+						if (!Ext.isEmpty(header.editor.store)) {
+							var comboRecord = header.editor.store.findRecord('Id', value);
 
-							value = comboRecord ? comboRecord.get('Description') : '';
-						} else if (!Ext.isEmpty(value) && typeof value == 'object') { // NOTE: do not use Ext.isObject because works different than typeof with date
+							value = !Ext.isEmpty(comboRecord) ? comboRecord.get('Description') : '';
+						} else if (attribute.type == 'DATE') {
 							value = me.formatDate(value);
 						}
 
-						if (Ext.isEmpty(Ext.String.trim(value)) && required)
+						if (Ext.isEmpty(Ext.String.trim(value)) && attribute[CMDBuild.core.proxy.CMProxyConstants.NOT_NULL])
 							value = '<div style="width: 100%; height: 100%; border: 1px dotted red;">';
 
 						return value;
@@ -132,6 +134,45 @@
 
 					return null;
 				}
+		},
+
+		/**
+		 * @override
+		 */
+		beforeActiveView: function() {
+			// Disable add button
+			this.view.addButton.setDisabled(
+				this.widgetConf.hasOwnProperty(CMDBuild.core.proxy.CMProxyConstants.DISABLE_ADD_ROW)
+				&& this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.DISABLE_ADD_ROW]
+			);
+
+			// Disable import from CSV button
+			this.view.importFromCSVButton.setDisabled(
+				this.widgetConf.hasOwnProperty(CMDBuild.core.proxy.CMProxyConstants.DISABLE_IMPORT_FROM_CSV)
+				&& this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.DISABLE_IMPORT_FROM_CSV]
+			);
+
+			// Disable buttons for readOnly mode
+			if (
+				this.widgetConf.hasOwnProperty(CMDBuild.core.proxy.CMProxyConstants.READ_ONLY)
+				&& this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.READ_ONLY]
+			) {
+				this.view.addButton.setDisabled(true);
+				this.view.importFromCSVButton.setDisabled(true);
+
+				this.grid.on('beforeedit', function(plugin, edit) {
+					return false;
+				});
+			}
+
+			this.configureGridPanel();
+		},
+
+		/**
+		 * Save data in storage attribute
+		 */
+		beforeHideView: function() {
+			this.instancesDataStorage[this.getWidgetId()] = this.grid.getStore().getRange();
 		},
 
 		/**
@@ -185,42 +226,89 @@
 		},
 
 		/**
-		 * Save data in storage attribute
+		 * Builds columns for grid with cell editors.
+		 * Builds attributesToTranslate array where stores all attributes with needs translations from Id to Description.
+		 *
+		 * @return {Object}
 		 */
-		beforeHideView: function() {
-			this.instancesDataStorage[this.getWidgetId()] = this.grid.getStore().getRange();
+		buildColumnsForAttributes: function() {
+			var columns = [];
+			var classId = this.classType.get(CMDBuild.core.proxy.CMProxyConstants.ID);
+
+			if (_CMUtils.isSuperclass(classId))
+				columns.push(this.buildClassColumn());
+
+			Ext.Array.forEach(this.getCardAttributes(), function(attribute, i, allAttributes) {
+				if (!Ext.Array.contains(this.filteredAttributes, attribute[CMDBuild.core.proxy.CMProxyConstants.NAME])) { // Attributes filter
+					var attributesMap = CMDBuild.Management.FieldManager.getAttributesMap();
+
+					// TODO: hack to bypass CMDBuild.Management.FieldManager.getFieldForAttr() control to check if return DisplayField
+					// (correct way "var editor = CMDBuild.Management.FieldManager.getCellEditorForAttribute(attribute);")
+					var editor = attributesMap[attribute.type].buildField(attribute, false, false);
+
+					var header = CMDBuild.Management.FieldManager.getHeaderForAttr(attribute);
+
+					if (attribute.type == 'REFERENCE') { // TODO: hack to force a templateResolver build for editor that haven't a form associated like other fields types
+						var xaVars = CMDBuild.Utils.Metadata.extractMetaByNS(attribute.meta, 'system.template.');
+						xaVars['_SystemFieldFilter'] = attribute.filter;
+
+						var templateResolver = new CMDBuild.Management.TemplateResolver({
+							clientForm: this.clientForm,
+							xaVars: xaVars,
+							serverVars: this.getTemplateResolverServerVars()
+						});
+
+						editor = CMDBuild.Management.ReferenceField.buildEditor(attribute, templateResolver);
+
+						// Avoids to resolve field templates when form is in editMode (when you click on abort button)
+						if (!this.clientForm.owner._isInEditMode && !Ext.Object.isEmpty(editor) && Ext.isFunction(editor.resolveTemplate))
+							editor.resolveTemplate();
+					}
+
+					editor.hideLabel = true;
+
+					if (!Ext.isEmpty(header)) {
+						editor.disabled = attribute[CMDBuild.core.proxy.CMProxyConstants.FIELD_MODE] == CMDBuild.core.proxy.CMProxyConstants.READ;
+
+						if (attribute[CMDBuild.core.proxy.CMProxyConstants.NOT_NULL]) {
+							header.header = '* ' + header.header; // TODO: header property is deprecated, should use "text" but FieldManager uses header so ...
+
+							header[CMDBuild.core.proxy.CMProxyConstants.REQUIRED] = true;
+							editor[CMDBuild.core.proxy.CMProxyConstants.REQUIRED] = true;
+						} else {
+							header[CMDBuild.core.proxy.CMProxyConstants.REQUIRED] = false;
+							editor[CMDBuild.core.proxy.CMProxyConstants.REQUIRED] = false;
+						}
+
+						// Do not override renderer, add editor on checkbox columns and make it editable
+						if (attribute[CMDBuild.core.proxy.CMProxyConstants.TYPE] != 'BOOLEAN') {
+							header.editor = editor;
+
+							this.addRendererToHeader(header, attribute);
+						} else {
+							header.cmReadOnly = false;
+						}
+
+						// Read only attributes header setup
+						header.disabled = attribute[CMDBuild.core.proxy.CMProxyConstants.FIELD_MODE] == CMDBuild.core.proxy.CMProxyConstants.READ;
+
+						columns.push(header);
+					}
+
+					// Force editor fields store load (must be done because FieldManager field don't works properly)
+					if (!Ext.isEmpty(editor) && !Ext.isEmpty(editor.store) && editor.store.count() == 0)
+						editor.store.load();
+				}
+			}, this);
+
+			return columns;
 		},
 
 		/**
-		 * @override
+		 * Configure grid and fill store with data from source
 		 */
-		beforeActiveView: function() {
+		configureGridPanel: function() {
 			var me = this;
-
-			// Disable add button
-			this.view.addButton.setDisabled(
-				this.widgetConf.hasOwnProperty(CMDBuild.core.proxy.CMProxyConstants.DISABLE_ADD_ROW)
-				&& this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.DISABLE_ADD_ROW]
-			);
-
-			// Disable import from CSV button
-			this.view.importFromCSVButton.setDisabled(
-				this.widgetConf.hasOwnProperty(CMDBuild.core.proxy.CMProxyConstants.DISABLE_IMPORT_FROM_CSV)
-				&& this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.DISABLE_IMPORT_FROM_CSV]
-			);
-
-			// Disable buttons for readOnly mode
-			if (
-				this.widgetConf.hasOwnProperty(CMDBuild.core.proxy.CMProxyConstants.READ_ONLY)
-				&& this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.READ_ONLY]
-			) {
-				this.view.addButton.setDisabled(true);
-				this.view.importFromCSVButton.setDisabled(true);
-
-				this.grid.on('beforeedit', function(plugin, edit) {
-					return false;
-				});
-			}
 
 			if (!Ext.isEmpty(this.grid))
 				this.grid.getStore().removeAll();
@@ -242,84 +330,6 @@
 		},
 
 		/**
-		 * Builds columns for grid with cell editors.
-		 * Builds attributesToTranslate array where stores all attributes with needs translations from Id to Description.
-		 *
-		 * @return {Object}
-		 */
-		buildColumnsForAttributes: function() {
-			var columns = [];
-			var classId = this.classType.get(CMDBuild.core.proxy.CMProxyConstants.ID);
-
-			if (_CMUtils.isSuperclass(classId))
-				columns.push(this.buildClassColumn());
-
-			Ext.Array.forEach(this.getCardAttributes(), function(attribute, i, allAttributes) {
-				if (!Ext.Array.contains(this.filteredAttributes, attribute[CMDBuild.core.proxy.CMProxyConstants.NAME])) { // Attributes filter
-					var attributesMap = CMDBuild.Management.FieldManager.getAttributesMap();
-					var editor = {};
-					var header = CMDBuild.Management.FieldManager.getHeaderForAttr(attribute);
-
-					if (attribute.type == 'REFERENCE') { // TODO: hack to force a templateResolver build for editor that haven't a form associated like other fields types
-						var xaVars = CMDBuild.Utils.Metadata.extractMetaByNS(attribute.meta, 'system.template.');
-						xaVars['_SystemFieldFilter'] = attribute.filter;
-
-						var templateResolver = new CMDBuild.Management.TemplateResolver({
-							clientForm: this.clientForm,
-							xaVars: xaVars,
-							serverVars: this.getTemplateResolverServerVars()
-						});
-
-						editor = CMDBuild.Management.ReferenceField.buildEditor(attribute, templateResolver);
-
-						// Avoids to resolve field templates when form is in editMode (when you click on abort button)
-						if (!this.clientForm.owner._isInEditMode && !Ext.Object.isEmpty(editor) && Ext.isFunction(editor.resolveTemplate))
-							editor.resolveTemplate();
-					} else {
-						// TODO: hack to bypass CMDBuild.Management.FieldManager.getFieldForAttr() control to check if return DisplayField
-						// (correct way "var editor = CMDBuild.Management.FieldManager.getCellEditorForAttribute(attribute);")
-						editor = attributesMap[attribute.type].buildField(attribute, false, false);
-					}
-					editor.hideLabel = true;
-
-					if (header) {
-						if (attribute[CMDBuild.core.proxy.CMProxyConstants.FIELD_MODE] == CMDBuild.core.proxy.CMProxyConstants.READ)
-							editor.disabled = true;
-
-						if (attribute[CMDBuild.core.proxy.CMProxyConstants.NOT_NULL]) {
-							header.header = '* ' + header.header;
-
-							header[CMDBuild.core.proxy.CMProxyConstants.REQUIRED] = true;
-							editor[CMDBuild.core.proxy.CMProxyConstants.REQUIRED] = true;
-						} else {
-							header[CMDBuild.core.proxy.CMProxyConstants.REQUIRED] = false;
-							editor[CMDBuild.core.proxy.CMProxyConstants.REQUIRED] = false;
-						}
-
-						// Do not override renderer, add editor on checkbox columns and make it editable
-						if (attribute[CMDBuild.core.proxy.CMProxyConstants.TYPE] != 'BOOLEAN') {
-							header.field = editor;
-							this.addRendererToHeader(header, attribute[CMDBuild.core.proxy.CMProxyConstants.NOT_NULL]);
-						} else {
-							header.cmReadOnly = false;
-						}
-
-						// Read only attributes header setup
-						header.disabled = (attribute[CMDBuild.core.proxy.CMProxyConstants.FIELD_MODE] == CMDBuild.core.proxy.CMProxyConstants.READ) ? true : false,
-
-						columns.push(header);
-					}
-
-					// Force editor fields store load (must be done because FieldManager field don't works properly)
-					if (!Ext.isEmpty(editor) && !Ext.isEmpty(editor.store) && editor.store.count() == 0)
-						editor.store.load();
-				}
-			}, this);
-
-			return columns;
-		},
-
-		/**
 		 * To decode "function" presetsType and fill grid store
 		 *
 		 * @param {String} presetsString
@@ -329,7 +339,6 @@
 			CMDBuild.core.proxy.widgets.Grid.getFunctions({
 				scope: this,
 				success: function(result, options, decodedResult) {
-					var me = this;
 					var isPresetsStringValid = false;
 
 					Ext.Array.each(decodedResult.response, function(record) {
@@ -342,14 +351,15 @@
 						var params = {};
 						var widgetUnmanagedVariables = this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.VARIABLES];
 
+						// Instantiate model to transform attributes in fields
+						Ext.create('CMDBuild.model.widget.Grid', this.cardAttributes);
+
 						// Resolve templates for widget configuration "function" type
-						var templateResolver = new CMDBuild.Management.TemplateResolver({
-							clientForm: me.clientForm,
+						new CMDBuild.Management.TemplateResolver({
+							clientForm: this.clientForm,
 							xaVars: widgetUnmanagedVariables,
 							serverVars: this.getTemplateResolverServerVars()
-						});
-
-						templateResolver.resolveTemplates({
+						}).resolveTemplates({
 							attributes: Ext.Object.getKeys(widgetUnmanagedVariables),
 							callback: function(out, ctx) {
 								widgetUnmanagedVariables = out;
@@ -370,7 +380,7 @@
 
 						this.grid.reconfigure(
 							CMDBuild.core.proxy.widgets.Grid.getStoreFromFunction({
-								fields: _CMCache.getDataSourceOutput(presetsString),
+								fields: CMDBuild.model.widget.Grid.getFields(),
 								extraParams: {
 									'function': presetsString,
 									params: Ext.encode(params)
@@ -378,7 +388,7 @@
 							})
 						);
 					} else {
-						CMDBuild.Msg.error(
+						CMDBuild.core.Message.error(
 							CMDBuild.Translation.error,
 							'GridController decodeFunctionPresets: SQL function not found',
 							true
@@ -428,7 +438,7 @@
 			if(Ext.isDate(value))
 				return Ext.Date.format(value, 'd/m/Y');
 
-			return value;
+			return Ext.isEmpty(value) ? '' : value;
 		},
 
 		/**
@@ -540,7 +550,7 @@
 						);
 
 					default:
-						CMDBuild.Msg.error(
+						CMDBuild.core.Message.error(
 							CMDBuild.Translation.error,
 							'GridController: wrong serializationType (' + this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.SERIALIZATION_TYPE] + ') format or value',
 							true
@@ -553,7 +563,7 @@
 		 * Add empty row to grid store
 		 */
 		onAddRowButtonClick: function() {
-			this.grid.getStore().insert(0, {});
+			this.grid.getStore().insert(0, Ext.create('CMDBuild.model.widget.Grid', this.cardAttributes));
 		},
 
 		/**

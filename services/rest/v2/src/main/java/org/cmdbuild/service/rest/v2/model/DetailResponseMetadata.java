@@ -1,8 +1,12 @@
 package org.cmdbuild.service.rest.v2.model;
 
+import static org.cmdbuild.service.rest.v2.constants.Serialization.POSITIONS;
 import static org.cmdbuild.service.rest.v2.constants.Serialization.TOTAL;
 
+import java.util.Map;
+
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -12,6 +16,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 public class DetailResponseMetadata extends AbstractModel {
 
 	private Long total;
+	private Map<Long, Long> positions;
 
 	DetailResponseMetadata() {
 		// package visibility
@@ -26,6 +31,15 @@ public class DetailResponseMetadata extends AbstractModel {
 		this.total = total;
 	}
 
+	@XmlElement(name = POSITIONS)
+	public Map<Long, Long> getPositions() {
+		return positions;
+	}
+
+	void setPositions(final Map<Long, Long> positions) {
+		this.positions = positions;
+	}
+
 	@Override
 	protected boolean doEquals(final Object obj) {
 		if (obj == this) {
@@ -37,6 +51,7 @@ public class DetailResponseMetadata extends AbstractModel {
 		final DetailResponseMetadata other = DetailResponseMetadata.class.cast(obj);
 		return new EqualsBuilder() //
 				.append(this.total, other.total) //
+				.append(this.positions, other.positions) //
 				.isEquals();
 	}
 
@@ -44,6 +59,7 @@ public class DetailResponseMetadata extends AbstractModel {
 	protected int doHashCode() {
 		return new HashCodeBuilder() //
 				.append(this.total) //
+				.append(this.positions) //
 				.toHashCode();
 	}
 

@@ -19,7 +19,7 @@
 				url: CMDBuild.core.proxy.CMProxyUrlIndex.reports.createReportFactory,
 				params: parameters.params,
 				scope: parameters.scope || this,
-				loadMask: parameters.loadMask || true,
+				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
 				failure: parameters.failure || Ext.emptyFn(),
 				success: parameters.success || Ext.emptyFn(),
 				callback: parameters.callback || Ext.emptyFn()
@@ -34,7 +34,7 @@
 				method: 'GET',
 				url: CMDBuild.core.proxy.CMProxyUrlIndex.reports.menuTree,
 				params: parameters.params,
-				loadMask: parameters.loadMask || false,
+				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : false,
 				scope: parameters.scope || this,
 				failure: parameters.failure || Ext.emptyFn(),
 				success: parameters.success || Ext.emptyFn(),
@@ -45,9 +45,7 @@
 		/**
 		 * @return {Ext.data.Store}
 		 */
-		getStore: function(localized) {
-			localized = localized ? true : false;
-
+		getStore: function() {
 			return Ext.create('Ext.data.Store', {
 				autoLoad: false,
 				model: 'CMDBuild.model.Report.grid',
@@ -60,8 +58,7 @@
 						totalProperty: 'results'
 					},
 					extraParams: {
-						type: CMDBuild.core.proxy.CMProxyConstants.CUSTOM,
-						localized: localized
+						type: CMDBuild.core.proxy.CMProxyConstants.CUSTOM
 					}
 				},
 				sorters: [{
@@ -79,7 +76,7 @@
 				method: 'GET',
 				url: CMDBuild.core.proxy.CMProxyUrlIndex.reports.getReportTypesTree,
 				params: parameters.params,
-				loadMask: parameters.loadMask || false,
+				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : false,
 				scope: parameters.scope || this,
 				failure: parameters.failure || Ext.emptyFn(),
 				success: parameters.success || Ext.emptyFn(),
@@ -91,18 +88,17 @@
 		 * @param {Object} parameters
 		 */
 		updateReport: function(parameters) {
-			parameters.form.submit({
+			CMDBuild.Ajax.request({
 				method: 'POST',
 				url: CMDBuild.core.proxy.CMProxyUrlIndex.reports.updateReportFactoryParams,
 				params: parameters.params,
-				loadMask: parameters.loadMask || true,
 				scope: parameters.scope || this,
+				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
 				failure: parameters.failure || Ext.emptyFn(),
 				success: parameters.success || Ext.emptyFn(),
 				callback: parameters.callback || Ext.emptyFn()
 			});
 		}
-
 	});
 
 })();

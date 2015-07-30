@@ -218,8 +218,9 @@ public class DataViewCardFetcher {
 		final List<CMCard> filteredCards = Lists.newArrayList();
 		final CMClass sourceClass = querySpecsBuilderFiller.getSourceClass();
 		for (final CMQueryRow row : result) {
-			final CMCard card = row.getCard(sourceClass);
-			filteredCards.add(card);
+			if (row.hasCard(sourceClass)) {
+				filteredCards.add(row.getCard(sourceClass));
+			}
 		}
 		return new PagedElements<CMCard>(filteredCards, result.totalSize());
 	}

@@ -1,3 +1,109 @@
+CMDBuild 2.3.2 (released 2015/06/05)
+
+
+NEW FEATURES
+
+ * Localization table - Managment server calls with localized parameter
+
+ * Data model localization review
+
+ * E-mail management review (delay, tab, widget, task, template)
+
+ * Incoming, processed and rejected folders moved from account to E-mail task definition
+
+ * Set service user from administration interface
+
+ * Task manager's notifications sent using e-mail queue
+
+ * Pre-selection of a reference value when there is only one value available
+
+ * Move "LastExecution" attribute from "_Task" class to some other simple class
+
+ * Implementation in Processes grid of ordering by code of multiple activities
+
+ * Optimization to cards' history performances
+
+ * SOAP proxy from workflow API
+
+ * REST - Getting the position of cards or process's instances
+
+ * Email attachments download button implementation
+
+ * Optimizations to the performances of the processes management
+
+ * Process/Instances routes implementation
+
+ * Database-rows reading improvement
+
+ * Grid print button modal window implementation - Common
+
+ * Improvements to the parsing of incoming e-mails
+
+ * No startup error when the runtime information of tasks are missing
+
+
+FIXES
+
+ * CQL filters do not work on reference fields in the grid widget
+
+ * Report with reference on class with more than maximum items specified in the configuration
+
+ * Report visualizations problems with IE8
+
+ * Error when sending notification e-mail from tasks
+
+ * Completed processes grid loading slower than usual
+
+ * ManageEmail serialization has unexpected "NotifyWith" variable
+
+ * Too strict checks on active references when disabling domains
+
+ * Processes not shown in EnabledClasses window
+
+ * Task Manager - The relation between received e-mail and the process instance is not created
+
+ * Dashboards are missing within default menu
+
+ * Problems with multiple instances of widget grid on same activity
+
+ * Cannot convert reference values sent as strings from Shark
+
+ * Wiget LinkCard: AllowCardEditing and ReadOnly functionalities problems
+
+ * REST - Wrong value for "required" attribute for Widgets
+
+ * Random order of lookup and reference comboboxes store
+
+ * Widget Grid date format conversion error
+
+ * Cannot reset lookup attributes from soap
+
+ * No SQL errors display on create/update card
+
+ * E-mail queue doesn't send messages when attachments cannot be loaded due to an error
+
+ * Wrong lookup store order
+
+ * No row expand on process instance advance
+
+ * Possible concurrency errors between ManageEmail widget and e-mail queue
+
+ * Error on process advance with email regeneration
+
+ * HTML editor URL conversion problems
+
+ * Wrong classes tabs enable on follow relation click
+
+ * HTML field width/height problems
+
+ * Form fields too wide
+
+ * Description non filled in administration views/filters froms
+
+
+
+
+
 CMDBuild 2.3.1 (released 2015/04/30)
 
 

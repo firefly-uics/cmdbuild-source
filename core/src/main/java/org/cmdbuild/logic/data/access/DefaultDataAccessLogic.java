@@ -7,6 +7,7 @@ import static com.google.common.collect.Iterables.size;
 import static java.lang.String.format;
 import static java.util.Arrays.asList;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphanumeric;
+import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static org.cmdbuild.dao.constants.Cardinality.CARDINALITY_1N;
 import static org.cmdbuild.dao.constants.Cardinality.CARDINALITY_N1;
 import static org.cmdbuild.dao.entrytype.Deactivable.IsActivePredicate.activeOnes;
@@ -17,6 +18,8 @@ import static org.cmdbuild.dao.entrytype.Predicates.domainFor;
 import static org.cmdbuild.dao.entrytype.Predicates.usableForReferences;
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
 import static org.cmdbuild.dao.query.clause.AnyClass.anyClass;
+import static org.cmdbuild.dao.query.clause.ClassHistory.history;
+import static org.cmdbuild.dao.query.clause.DomainHistory.history;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
 import static org.cmdbuild.dao.query.clause.alias.Aliases.name;
 import static org.cmdbuild.dao.query.clause.alias.Utils.as;
@@ -65,15 +68,14 @@ import org.cmdbuild.exception.ORMException.ORMExceptionType;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.commands.AbstractGetRelation.RelationInfo;
 import org.cmdbuild.logic.commands.GetCardHistory;
-import org.cmdbuild.logic.commands.GetCardHistory.GetCardHistoryResponse;
 import org.cmdbuild.logic.commands.GetRelationHistory;
 import org.cmdbuild.logic.commands.GetRelationHistory.GetRelationHistoryResponse;
 import org.cmdbuild.logic.commands.GetRelationList;
 import org.cmdbuild.logic.commands.GetRelationList.DomainWithSource;
 import org.cmdbuild.logic.commands.GetRelationList.GetRelationListResponse;
 import org.cmdbuild.logic.commands.GetRelationSingle;
+import org.cmdbuild.logic.data.LockLogic;
 import org.cmdbuild.logic.data.QueryOptions;
-import org.cmdbuild.logic.data.access.lock.LockCardManager;
 import org.cmdbuild.logic.data.access.resolver.CardSerializer;
 import org.cmdbuild.logic.data.access.resolver.ForeignReferenceResolver;
 import org.cmdbuild.model.data.Card;
@@ -128,7 +130,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 	private final CMDataView dataView;
 	private final CMDataView strictDataView;
 	private final OperationUser operationUser;
-	private final LockCardManager lockCardManager;
+	private final LockLogic lockLogic;
 
 	public DefaultDataAccessLogic( //
 			final CMDataView systemDataView, //
@@ -136,14 +138,14 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 			final CMDataView view, //
 			final CMDataView strictDataView, //
 			final OperationUser operationUser, //
-			final LockCardManager lockCardManager //
+			final LockLogic lockLogic //
 	) {
 		this.systemDataView = systemDataView;
 		this.dataView = view;
 		this.lookupStore = lookupStore;
 		this.strictDataView = strictDataView;
 		this.operationUser = operationUser;
-		this.lockCardManager = lockCardManager;
+		this.lockLogic = lockLogic;
 	}
 
 	@Override
@@ -183,6 +185,12 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 	}
 
 	@Override
+	public Optional<RelationInfo> getRelation(final String domain, final Long id) {
+		final CMDomain _domain = strictDataView.findDomain(domain);
+		return getRelation(_domain, id);
+	}
+
+	@Override
 	public Optional<RelationInfo> getRelation(final CMDomain domain, final Long id) {
 		return new GetRelationSingle(strictDataView).exec(domain, id);
 	}
@@ -198,8 +206,23 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 	}
 
 	@Override
-	public GetCardHistoryResponse getCardHistory(final Card srcCard) {
-		return new GetCardHistory(systemDataView, lookupStore, dataView).exec(srcCard);
+	public Optional<RelationInfo> getHistoricRelation(final String domain, final Long id) {
+		final CMDomain target = strictDataView.findDomain(domain);
+		return new GetRelationSingle(strictDataView).exec(history(target), id);
+	}
+
+	@Override
+	public Iterable<Card> getCardHistory(final Card srcCard, final boolean allAttributes) {
+		return new GetCardHistory(dataView).exec(srcCard, allAttributes);
+	}
+
+	@Override
+	public Card fetchHistoricCard(final String className, final Long cardId) {
+		final CMClass entryType = dataView.findClass(className);
+		return from(asList(fetchCMCard(history(entryType), cardId))) //
+				.transform(CMCARD_TO_CARD) //
+				.first() //
+				.get();
 	}
 
 	@Override
@@ -360,21 +383,24 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 	@Override
 	public CMCard fetchCMCard(final String className, final Long cardId) {
 		final CMClass entryType = dataView.findClass(className);
+		return fetchCMCard(entryType, cardId);
+	}
+
+	private CMCard fetchCMCard(final CMClass entryType, final Long cardId) {
 		try {
 			final CMQueryRow row = dataView.select(anyAttribute(entryType)) //
 					.from(entryType) //
 					.where(condition(attribute(entryType, ID_ATTRIBUTE), eq(cardId))) //
+					.limit(1) //
 					.run() //
 					.getOnlyRow();
 			/**
 			 * FIXME: delete it when ForeignReferenceResolver will be unused.
 			 */
 			final Iterable<CMCard> cards = ForeignReferenceResolver.<CMCard> newInstance() //
-					.withSystemDataView(systemDataView) //
-					.withEntryType(entryType) //
 					.withEntries(asList(row.getCard(entryType))) //
-					.withEntryFiller(new CardEntryFiller()) //
-					.withLookupStore(lookupStore) //
+					.withEntryFiller(CardEntryFiller.newInstance() //
+							.build()) //
 					.withSerializer(new CardSerializer<CMCard>()) //
 					.build() //
 					.resolve();
@@ -383,7 +409,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 					.first() //
 					.get();
 		} catch (final NoSuchElementException ex) {
-			throw NotFoundExceptionType.CARD_NOTFOUND.createException(className);
+			throw NotFoundExceptionType.CARD_NOTFOUND.createException(entryType.getName());
 		}
 	}
 
@@ -401,6 +427,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 			final CMQueryRow row = dataView.select(attributesToDisplay.toArray()) //
 					.from(entryType) //
 					.where(condition(attribute(entryType, ID_ATTRIBUTE), eq(cardId))) //
+					.limit(1) //
 					.run() //
 					.getOnlyRow();
 
@@ -424,11 +451,9 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 			final CMClass entryType, final CMCard card //
 	) {
 		final Iterable<CMCard> cardWithResolvedReference = ForeignReferenceResolver.<CMCard> newInstance() //
-				.withSystemDataView(systemDataView) //
-				.withEntryType(entryType) //
 				.withEntries(asList(card)) //
-				.withEntryFiller(new CardEntryFiller()) //
-				.withLookupStore(lookupStore) //
+				.withEntryFiller(CardEntryFiller.newInstance() //
+						.build()) // /
 				.withSerializer(new CardSerializer<CMCard>()) //
 				.build() //
 				.resolve();
@@ -450,18 +475,20 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 	 * @return a FetchCardListResponse
 	 */
 	@Override
-	public FetchCardListResponse fetchCards(final String className, final QueryOptions queryOptions) {
+	public PagedElements<Card> fetchCards(final String className, final QueryOptions queryOptions) {
 		/*
 		 * preferred solution to avoid pre-release errors
 		 */
+		final PagedElements<Card> output;
 		if (className != null) {
-			return fetchCardsWithClassName(className, queryOptions);
+			output = fetchCardsWithClassName(className, queryOptions);
 		} else {
-			return fetchCardsWithoutClassName(queryOptions);
+			output = fetchCardsWithoutClassName(queryOptions);
 		}
+		return output;
 	}
 
-	private FetchCardListResponse fetchCardsWithClassName(final String className, final QueryOptions queryOptions) {
+	private PagedElements<Card> fetchCardsWithClassName(final String className, final QueryOptions queryOptions) {
 		final CMClass fetchedClass = strictDataView.findClass(className);
 		final PagedElements<CMCard> fetchedCards;
 		final Iterable<Card> cards;
@@ -479,7 +506,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 			cards = Collections.emptyList();
 			fetchedCards = new PagedElements<CMCard>(Collections.<CMCard> emptyList(), 0);
 		}
-		return new FetchCardListResponse(cards, fetchedCards.totalSize());
+		return new PagedElements<Card>(cards, fetchedCards.totalSize());
 	}
 
 	/**
@@ -490,27 +517,24 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 	 * @return
 	 */
 	private Iterable<CMCard> resolveCMCardForeignReferences(final CMClass fetchedClass,
-			final PagedElements<CMCard> fetchedCards) {
+			final Iterable<CMCard> fetchedCards) {
 		final Iterable<CMCard> cardsWithForeingReferences = ForeignReferenceResolver.<CMCard> newInstance() //
-				.withSystemDataView(systemDataView) //
-				.withEntryType(fetchedClass) //
 				.withEntries(fetchedCards) //
-				.withEntryFiller(new CardEntryFiller()) //
-				.withLookupStore(lookupStore) //
+				.withEntryFiller(CardEntryFiller.newInstance() //
+						.build()) //
 				.withSerializer(new CardSerializer<CMCard>()) //
 				.build() //
 				.resolve();
 		return cardsWithForeingReferences;
 	}
 
-	public Iterable<Card> resolveCardForeignReferences(final CMClass fetchedClass,
-			final PagedElements<CMCard> fetchedCards) {
+	public Iterable<Card> resolveCardForeignReferences(final CMClass fetchedClass, final Iterable<CMCard> fetchedCards) {
 		final Iterable<CMCard> cardsWithForeingReferences = resolveCMCardForeignReferences(fetchedClass, fetchedCards);
 		return from(cardsWithForeingReferences) //
 				.transform(CMCARD_TO_CARD);
 	}
 
-	private FetchCardListResponse fetchCardsWithoutClassName(final QueryOptions queryOptions) {
+	private PagedElements<Card> fetchCardsWithoutClassName(final QueryOptions queryOptions) {
 		final PagedElements<CMCard> fetchedCards = DataViewCardFetcher.newInstance() //
 				.withDataView(strictDataView) //
 				.withQueryOptions(queryOptions) //
@@ -518,10 +542,9 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 				.fetch();
 
 		final Iterable<CMCard> cardsWithForeingReferences = ForeignReferenceResolver.<CMCard> newInstance() //
-				.withSystemDataView(systemDataView) //
 				.withEntries(fetchedCards) //
-				.withEntryFiller(new CardEntryFiller()) //
-				.withLookupStore(lookupStore) //
+				.withEntryFiller(CardEntryFiller.newInstance() //
+						.build()) //
 				.withSerializer(new CardSerializer<CMCard>()) //
 				.build() //
 				.resolve();
@@ -529,7 +552,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 		final Iterable<Card> cards = from(cardsWithForeingReferences) //
 				.transform(CMCARD_TO_CARD);
 
-		return new FetchCardListResponse(cards, fetchedCards.totalSize());
+		return new PagedElements<Card>(cards, fetchedCards.totalSize());
 	}
 
 	/**
@@ -541,13 +564,13 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 	 * @return
 	 */
 	@Override
-	public FetchCardListResponse fetchSQLCards(final String functionName, final QueryOptions queryOptions) {
+	public PagedElements<Card> fetchSQLCards(final String functionName, final QueryOptions queryOptions) {
 		final CMFunction fetchedFunction = dataView.findFunctionByName(functionName);
 		final Alias functionAlias = name("f");
 
 		if (fetchedFunction == null) {
 			final List<Card> emptyCardList = Collections.emptyList();
-			return new FetchCardListResponse(emptyCardList, 0);
+			return new PagedElements<Card>(emptyCardList, 0);
 		}
 
 		final CMQueryResult queryResult = new DataViewCardFetcher.SqlQuerySpecsBuilderBuilder() //
@@ -570,7 +593,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 							.build());
 		}
 
-		return new FetchCardListResponse(filteredCards, queryResult.totalSize());
+		return new PagedElements<Card>(filteredCards, queryResult.totalSize());
 	}
 
 	/**
@@ -583,25 +606,39 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 	 */
 	@Override
 	public CMCardWithPosition getCardPosition(final String className, final Long cardId, final QueryOptions queryOptions) {
-		final CMClass fetchedClass = strictDataView.findClass(className);
-		Long position = -1L;
-		CMCard card = null;
-
 		try {
-			final PagedElements<CMQueryRow> cards = DataViewCardFetcher.newInstance() //
-					.withClassName(className) //
-					.withQueryOptions(queryOptions) //
-					.withDataView(strictDataView) //
-					.build() //
-					.fetchNumbered(condition(attribute(fetchedClass, ID_ATTRIBUTE), eq(cardId)));
-			final CMQueryRow fetchedRowWithPosition = cards.iterator().next();
-			position = fetchedRowWithPosition.getNumber() - 1;
-			card = fetchedRowWithPosition.getCard(fetchedClass);
+			final PagedElements<CMCardWithPosition> cards = fetchCardsWithPosition(className, queryOptions, cardId);
+			return cards.iterator().next();
 		} catch (final Exception ex) {
 			Log.CMDBUILD.error("Cannot calculate the position for card with id " + cardId + " from class " + className);
+			return new CMCardWithPosition(null, -1L);
 		}
+	}
 
-		return new CMCardWithPosition(position, card);
+	@Override
+	public PagedElements<CMCardWithPosition> fetchCardsWithPosition(final String className,
+			final QueryOptions queryOptions, final Long cardId) {
+		final CMClass fetchedClass = strictDataView.findClass(className);
+		final PagedElements<CMQueryRow> rows = DataViewCardFetcher.newInstance() //
+				.withClassName(className) //
+				.withQueryOptions(queryOptions) //
+				.withDataView(strictDataView) //
+				.build() //
+				.fetchNumbered(condition(attribute(fetchedClass, ID_ATTRIBUTE), eq(cardId)));
+		return new PagedElements<CMCardWithPosition>( //
+				from(rows) //
+						.transform(new Function<CMQueryRow, CMCardWithPosition>() {
+
+							@Override
+							public CMCardWithPosition apply(final CMQueryRow input) {
+								final CMCard card = input.getCard(fetchedClass);
+								final Card _card = from(resolveCardForeignReferences(fetchedClass, asList(card)))
+										.get(0);
+								return new CMCardWithPosition(_card, input.getNumber() - 1);
+							}
+
+						}), //
+				rows.totalSize());
 	}
 
 	@Override
@@ -640,8 +677,12 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 	@Override
 	public void updateCard(final Card userGivenCard) {
 		final String currentlyLoggedUser = operationUser.getAuthenticatedUser().getUsername();
-		lockCardManager.checkLockerUser(userGivenCard.getId(), currentlyLoggedUser);
+		lockLogic.checkCardLockedbyUser(userGivenCard.getId(), currentlyLoggedUser);
+		final Card _userGivenCard = updateCard0(userGivenCard);
+		lockLogic.unlockCard(_userGivenCard.getId());
+	}
 
+	private Card updateCard0(final Card userGivenCard) {
 		final CMClass entryType = dataView.findClass(userGivenCard.getClassName());
 		if (entryType == null) {
 			throw NotFoundExceptionType.CLASS_NOTFOUND.createException(userGivenCard.getClassName());
@@ -667,8 +708,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 		final Card fetchedCard = store.read(storableOf(_userGivenCard.getIdentifier()));
 
 		updateRelationAttributesFromReference(updatedCard.getId(), fetchedCard, _userGivenCard, entryType);
-
-		lockCardManager.unlock(_userGivenCard.getId());
+		return _userGivenCard;
 	}
 
 	private void updateRelationAttributesFromReference( //
@@ -786,23 +826,24 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 	}
 
 	private Long getReferenceCardIdAsLong(final Object value) {
-		Long out = null;
-
-		if (value != null) {
-			if (value instanceof IdAndDescription) {
-				out = ((IdAndDescription) value).getId();
-			} else if (value instanceof String) {
-				final String stringCardId = String.class.cast(value);
-				if ("".equals(stringCardId)) {
-					out = null;
-				} else {
-					out = Long.parseLong(stringCardId);
-				}
+		final Long out;
+		if (value instanceof Number) {
+			out = Number.class.cast(value).longValue();
+		} else if (value instanceof IdAndDescription) {
+			out = ((IdAndDescription) value).getId();
+		} else if (value instanceof String) {
+			final String stringCardId = String.class.cast(value);
+			if (isEmpty(stringCardId)) {
+				out = null;
 			} else {
+				out = Long.parseLong(stringCardId);
+			}
+		} else {
+			if (value != null) {
 				throw new UnsupportedOperationException("A reference could have a CardReference value");
 			}
+			out = null;
 		}
-
 		return out;
 	}
 
@@ -842,6 +883,13 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 	}
 
 	@Override
+	public void updateCards(final Iterable<Card> cards) {
+		for (final Card card : cards) {
+			updateCard0(card);
+		}
+	}
+
+	@Override
 	public void updateFetchedCard(final Card card, final Map<String, Object> attributes) {
 		if (card != null) {
 			final Card updatedCard = Card.newInstance() //
@@ -856,7 +904,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 	@Override
 	@Transactional
 	public void deleteCard(final String className, final Long cardId) {
-		lockCardManager.checkLocked(cardId);
+		lockLogic.checkNotLockedCard(cardId);
 
 		final Card card = Card.newInstance() //
 				.withClassName(className) //
@@ -1182,18 +1230,4 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 		return card;
 	}
 
-	@Override
-	public void lockCard(final Long cardId) {
-		this.lockCardManager.lock(cardId);
-	}
-
-	@Override
-	public void unlockCard(final Long cardId) {
-		this.lockCardManager.unlock(cardId);
-	}
-
-	@Override
-	public void unlockAllCards() {
-		this.lockCardManager.unlockAll();
-	}
 }

@@ -72,19 +72,6 @@
 	/* ===========================================
 	 * Orphans
 	 =========================================== */
-	// TODO duplicate in card section, remove this
-	CMDBuild.ServiceProxy.getCardList = function(p) {
-		CMDBuild.Ajax.request({
-			url: CMDBuild.ServiceProxy.url.cardList,
-			method: 'GET',
-			scope: p.scope,
-			params: p.params,
-			success: p.success,
-			failure: p.failure,
-			callback: p.callback
-		});
-	};
-
 	CMDBuild.ServiceProxy.getCardBasicInfoList = function(className, success, cb, scope) {
 		CMDBuild.ServiceProxy.core.doRequest({
 			method: 'GET',

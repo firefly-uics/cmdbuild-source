@@ -71,6 +71,13 @@
 			}
 		},
 
+		/**
+		 * @alias reset
+		 */
+		deselectAll: function() {
+			this.reset();
+		},
+
 		_onBeforeStoreLoad: function() {
 			this.cmFreezedSelections = Ext.clone(this.cmSelections);
 		},
@@ -184,9 +191,9 @@
 				for (var i=0; i < viewsLn; i++) {
 					if (typeof recordToSkip == "undefined") {
 						views[i].onRowDeselect(index, suppressEvent=true);
-					} else if (idOfRecordToSkip 
+					} else if (idOfRecordToSkip
 							&& idOfRecordToSkip != getId(recordInThePage, me.idProperty)) {
-	
+
 						views[i].onRowDeselect(index, suppressEvent=true);
 					}
 				}

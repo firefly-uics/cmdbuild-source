@@ -11,6 +11,8 @@ public interface Const {
 	static final String DESCRIPTION_ATTRIBUTE = SystemAttributes.Description.getDBName();
 	@Deprecated
 	static final String ID_ATTRIBUTE = SystemAttributes.Id.getDBName();
+	@Deprecated
+	static final String CURRENT_ID_ATTRIBUTE = SystemAttributes.CurrentId.getDBName();
 
 	/*
 	 * Constants

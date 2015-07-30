@@ -36,7 +36,7 @@
 		entryType: undefined,
 
 		/**
-		 * @property {CMDBuild.view.management.common.tabs.email.EmailPanel}
+		 * @property {CMDBuild.view.management.common.tabs.email.EmailView}
 		 */
 		view: undefined,
 
@@ -50,7 +50,7 @@
 			this.callParent(arguments);
 
 			// View build
-			this.view = Ext.create('CMDBuild.view.management.common.tabs.email.EmailPanel', {
+			this.view = Ext.create('CMDBuild.view.management.common.tabs.email.EmailView', {
 				delegate: this
 			});
 
@@ -85,7 +85,7 @@
 		},
 
 		onAbortCardClick: function() {
-			this.editModeSet(false);
+			this.editModeSet(true);
 		},
 
 		/**
@@ -96,17 +96,30 @@
 
 			this.card = card;
 
-			this.selectedEntitySet(card, function() {
-				me.regenerateAllEmailsSet(Ext.isEmpty(card));
-				me.forceRegenerationSet(Ext.isEmpty(card));
-				me.cmfg('storeLoad');
-			});
+			this.configuration.readOnly = false; // TODO: fix evaluating functionalities
+			this.editModeSet(true);
 
-			this.editModeSet(false);
-			this.cmfg('setUiState');
+			this.selectedEntitySet(this.card, function() {
+				me.regenerateAllEmailsSet(Ext.isEmpty(this.card));
+				me.forceRegenerationSet(Ext.isEmpty(this.card));
+				me.cmfg('onEmailPanelShow');
+			});
 		},
 
-		onCloneCard: Ext.emptyFn,
+		onCloneCard: function() {
+			var me = this;
+
+			this.card = null;
+
+			this.configuration.readOnly = false; // TODO: fix evaluating functionalities
+			this.editModeSet(true);
+
+			this.selectedEntitySet(this.card, function() {
+				me.regenerateAllEmailsSet(Ext.isEmpty(this.card));
+				me.forceRegenerationSet(Ext.isEmpty(this.card));
+				me.cmfg('onEmailPanelShow');
+			});
+		},
 
 		/**
 		 * @param {CMDBuild.cache.CMEntryTypeModel} entryType
@@ -116,7 +129,8 @@
 		onEntryTypeSelected: function(entryType, dc, filter) {
 			this.entryType = entryType;
 
-			this.editModeSet(false);
+			this.configuration.readOnly = false; // TODO: fix evaluating functionalities
+			this.editModeSet(true);
 		},
 
 		/**
@@ -154,7 +168,7 @@
 
 			if (!this.grid.getStore().isLoading()) {
 				this.regenerateAllEmailsSet(true);
-				this.cmfg('storeLoad');
+				this.cmfg('onEmailPanelShow');
 			}
 		}
 	});

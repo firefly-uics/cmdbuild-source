@@ -12,10 +12,6 @@ import static utils.TestLoggerConstants.LOGGER_CATEGORY;
 import static utils.TestLoggerConstants.UNUSED_SHANDLE;
 
 import java.io.File;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -23,9 +19,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
-
-import javax.activation.DataHandler;
-import javax.activation.URLDataSource;
 
 import org.cmdbuild.api.fluent.Card;
 import org.cmdbuild.api.fluent.CardDescriptor;
@@ -47,10 +40,8 @@ import org.cmdbuild.api.fluent.Relation;
 import org.cmdbuild.api.fluent.RelationsQuery;
 import org.cmdbuild.api.fluent.ws.EntryTypeAttribute;
 import org.cmdbuild.api.fluent.ws.WsFluentApiExecutor.WsType;
-import org.cmdbuild.common.api.mail.ForwardingMailApi;
 import org.cmdbuild.common.api.mail.MailApi;
-import org.cmdbuild.common.api.mail.SendableNewMail;
-import org.cmdbuild.common.utils.UnsupportedProxyFactory;
+import org.cmdbuild.services.soap.Private;
 import org.cmdbuild.workflow.api.SchemaApi;
 import org.cmdbuild.workflow.api.SharkWorkflowApiFactory;
 import org.cmdbuild.workflow.api.WorkflowApi;
@@ -58,9 +49,6 @@ import org.cmdbuild.workflow.type.LookupType;
 import org.cmdbuild.workflow.type.ReferenceType;
 import org.enhydra.shark.api.client.wfmc.wapi.WMSessionHandle;
 import org.enhydra.shark.api.internal.working.CallbackUtilities;
-
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 
 public class LoggingWorkflowApiFactory implements SharkWorkflowApiFactory {
 
@@ -124,9 +112,12 @@ public class LoggingWorkflowApiFactory implements SharkWorkflowApiFactory {
 
 	@Override
 	public WorkflowApi createWorkflowApi() {
+		final Private UNSUPPORTED_PRIVATE = newProxy(Private.class, unsupported("method not supported"));
+		final MailApi UNSUPPORTED_MAILAPI = newProxy(MailApi.class, unsupported("method not supported"));
 		return new WorkflowApi(new ForwardingFluentApiExecutor() {
 
-			private final FluentApiExecutor UNSUPPORTED = UnsupportedProxyFactory.of(FluentApiExecutor.class).create();
+			private final FluentApiExecutor UNSUPPORTED = newProxy(FluentApiExecutor.class,
+					unsupported("method not supported"));
 
 			@Override
 			protected FluentApiExecutor delegate() {
@@ -161,11 +152,7 @@ public class LoggingWorkflowApiFactory implements SharkWorkflowApiFactory {
 								card.getClassName(), //
 								card.getId(), //
 								card.getRequestedAttributes()));
-				if (card.getId() == FOUND_REFERENCE.getId()) {
-					return FOUND_CARD_FOR_REFERENCE;
-				} else {
-					return FOUND_CARD;
-				}
+				return (card.getId() == FOUND_REFERENCE.getId()) ? FOUND_CARD_FOR_REFERENCE : FOUND_CARD;
 			}
 
 			@Override
@@ -273,7 +260,7 @@ public class LoggingWorkflowApiFactory implements SharkWorkflowApiFactory {
 								processCard.getId()));
 			}
 
-		}, new SchemaApi() {
+		}, UNSUPPORTED_PRIVATE, new SchemaApi() {
 
 			@Override
 			public ClassInfo findClass(final String className) {
@@ -329,171 +316,7 @@ public class LoggingWorkflowApiFactory implements SharkWorkflowApiFactory {
 				return FOUND_LOOKUP;
 			}
 
-		}, new ForwardingMailApi() {
-
-			private final MailApi unsupported = newProxy(MailApi.class,
-					unsupported("method not supported, implement if needed"));
-
-			@Override
-			protected MailApi delegate() {
-				return unsupported;
-			}
-
-			@Override
-			public SendableNewMail newMail() {
-				return new SendableNewMail() {
-
-					private final List<String> froms = new ArrayList<String>();
-					private final List<String> tos = new ArrayList<String>();
-					private final List<String> ccs = new ArrayList<String>();
-					private final List<String> bccs = new ArrayList<String>();
-					private String subject;
-					private String content;
-					private String contentType;
-					private final Map<DataHandler, String> attachments = Maps.newHashMap();
-					private boolean asynchronous;
-
-					@Override
-					public SendableNewMail withFrom(final String from) {
-						this.froms.add(from);
-						return this;
-					}
-
-					@Override
-					public SendableNewMail withTo(final String to) {
-						this.tos.add(to);
-						return this;
-					}
-
-					@Override
-					public SendableNewMail withTo(final String... tos) {
-						this.tos.addAll(Arrays.asList(tos));
-						return this;
-					}
-
-					@Override
-					public SendableNewMail withTo(final Iterable<String> tos) {
-						this.tos.addAll(Lists.newArrayList(tos));
-						return this;
-					}
-
-					@Override
-					public SendableNewMail withCc(final String cc) {
-						this.ccs.add(cc);
-						return this;
-					}
-
-					@Override
-					public SendableNewMail withCc(final String... ccs) {
-						this.ccs.addAll(Arrays.asList(ccs));
-						return this;
-					}
-
-					@Override
-					public SendableNewMail withCc(final Iterable<String> ccs) {
-						this.ccs.addAll(Lists.newArrayList(ccs));
-						return this;
-					}
-
-					@Override
-					public SendableNewMail withBcc(final String bcc) {
-						this.bccs.add(bcc);
-						return this;
-					}
-
-					@Override
-					public SendableNewMail withBcc(final String... bccs) {
-						this.bccs.addAll(Arrays.asList(bccs));
-						return this;
-					}
-
-					@Override
-					public SendableNewMail withBcc(final Iterable<String> bccs) {
-						this.bccs.addAll(Lists.newArrayList(bccs));
-						return this;
-					}
-
-					@Override
-					public SendableNewMail withSubject(final String subject) {
-						this.subject = subject;
-						return this;
-					}
-
-					@Override
-					public SendableNewMail withContent(final String content) {
-						this.content = content;
-						return this;
-					}
-
-					@Override
-					public SendableNewMail withContentType(final String contentType) {
-						this.contentType = contentType;
-						return this;
-					}
-
-					@Override
-					public SendableNewMail withAttachment(final URL url) {
-						return withAttachment(url, null);
-					}
-
-					@Override
-					public SendableNewMail withAttachment(final URL url, final String name) {
-						return withAttachment(new DataHandler(new URLDataSource(url)), name);
-					}
-
-					@Override
-					public SendableNewMail withAttachment(final String url) {
-						return withAttachment(url, null);
-					}
-
-					@Override
-					public SendableNewMail withAttachment(final String url, final String name) {
-						try {
-							return withAttachment(new URL(url), name);
-						} catch (final MalformedURLException e) {
-							throw new IllegalArgumentException(e);
-						}
-					}
-
-					@Override
-					public SendableNewMail withAttachment(final DataHandler dataHandler) {
-						return withAttachment(dataHandler, null);
-					}
-
-					@Override
-					public SendableNewMail withAttachment(final DataHandler dataHandler, final String name) {
-						attachments.put(dataHandler, name);
-						return this;
-					}
-
-					@Override
-					public SendableNewMail withAsynchronousSend(final boolean asynchronous) {
-						this.asynchronous = asynchronous;
-						return this;
-					}
-
-					@Override
-					public void send() {
-						cus.info( //
-								UNUSED_SHANDLE, //
-								LOGGER_CATEGORY, //
-								sendMail( //
-										froms, //
-										tos, //
-										ccs, //
-										bccs, //
-										subject, //
-										content, //
-										contentType, //
-										attachments, //
-										asynchronous));
-					}
-
-				};
-
-			}
-
-		});
+		}, UNSUPPORTED_MAILAPI);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -624,21 +447,6 @@ public class LoggingWorkflowApiFactory implements SharkWorkflowApiFactory {
 		return logLine("resumeProcessInstance", //
 				linkedHashMapOf(entry("className", className)), //
 				linkedHashMapOf(entry("Id", Id)));
-	}
-
-	public static String sendMail(final List<String> froms, final List<String> tos, final List<String> ccs,
-			final List<String> bccs, final String subject, final String content, final String contentType,
-			final Map<DataHandler, String> attachments, final boolean asynchronous) {
-		return logLine("sendMail", new StringBuilder() //
-				.append(tos) //
-				.append(ccs) //
-				.append(bccs) //
-				.append(subject) //
-				.append(content) //
-				.append(contentType) //
-				.append(attachments) //
-				.append(asynchronous) //
-				.toString());
 	}
 
 	/*

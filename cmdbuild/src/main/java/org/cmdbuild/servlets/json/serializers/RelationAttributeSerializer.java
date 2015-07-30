@@ -16,24 +16,45 @@ import org.json.JSONObject;
 
 public class RelationAttributeSerializer {
 
+	public static interface Callback {
+
+		void handle(final String name, final Object value);
+
+	}
+
 	private final LookupStore lookupStore;
 
 	public RelationAttributeSerializer(final LookupStore lookupStore) {
 		this.lookupStore = lookupStore;
 	}
 
-	public final JSONObject toClient( //
-			final RelationInfo relationInfo //
-	) throws JSONException {
-
+	public final JSONObject toClient(final RelationInfo relationInfo) {
 		return toClient(relationInfo, false);
 	}
 
-	public final JSONObject toClient( //
-			final RelationInfo relationInfo, //
-			final boolean cardReferencesWithIdAndDescription //
-	) throws JSONException {
+	public final JSONObject toClient(final RelationInfo relationInfo, final boolean cardReferencesWithIdAndDescription) {
 		final JSONObject jsonAttributes = new JSONObject();
+		toClient(relationInfo, new Callback() {
+
+			@Override
+			public void handle(final String name, final Object value) {
+				try {
+					jsonAttributes.put(name, value);
+				} catch (final JSONException e) {
+					throw new RuntimeException(e);
+				}
+			}
+
+		}, cardReferencesWithIdAndDescription);
+		return jsonAttributes;
+	}
+
+	public void toClient(final RelationInfo relationInfo, final Callback callback) {
+		toClient(relationInfo, callback, false);
+	}
+
+	public void toClient(final RelationInfo relationInfo, final Callback callback,
+			final boolean cardReferencesWithIdAndDescription) {
 		final CMDomain domain = relationInfo.getRelation().getType();
 
 		for (final Map.Entry<String, Object> attribute : relationInfo.getRelationAttributes()) {
@@ -59,13 +80,8 @@ public class RelationAttributeSerializer {
 					cardReferencesWithIdAndDescription //
 			);
 
-			jsonAttributes.put( //
-					attribute.getKey(), //
-					valueConverter.valueForJson() //
-					);
+			callback.handle(attribute.getKey(), valueConverter.valueForJson());
 		}
-
-		return jsonAttributes;
 	}
 
 }

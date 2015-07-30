@@ -16,8 +16,6 @@ import org.cmdbuild.config.GraphProperties;
 import org.cmdbuild.config.WorkflowConfiguration;
 import org.cmdbuild.config.WorkflowProperties;
 import org.cmdbuild.dms.DmsConfiguration;
-import org.cmdbuild.logic.data.access.lock.DefaultLockCardConfiguration;
-import org.cmdbuild.logic.data.access.lock.LockCardManager.LockCardConfiguration;
 import org.cmdbuild.services.soap.security.SoapConfiguration;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
@@ -59,11 +57,6 @@ public class Properties {
 	@Bean
 	public GraphProperties graphProperties() {
 		return GraphProperties.getInstance();
-	}
-
-	@Bean
-	public LockCardConfiguration lockCardConfiguration() {
-		return new DefaultLockCardConfiguration(cmdbuildProperties());
 	}
 
 	@Bean

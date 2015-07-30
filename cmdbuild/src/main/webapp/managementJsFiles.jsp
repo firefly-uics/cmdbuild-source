@@ -60,16 +60,13 @@
 		<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/widgets/CMCreateModifyCard.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/widgets/CMOpenAttachment.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/widgets/CMOpenNote.js"></script>
-		<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/widgets/CMManageRelation.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/widgets/CMWebService.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/widgets/CMPresetFromCard.js"></script>
 
 	<!-- CLASSES -->
 	<script type="text/javascript" src="javascripts/cmdbuild/view/management/classes/CMModCard.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/management/classes/CMCardPanel.js"></script>
-
 	<script type="text/javascript" src="javascripts/cmdbuild/view/management/classes/CMCardTabPanel.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/view/management/classes/CMCardHistoryPanel.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/common/classes/CMClassAccordion.js"></script>
 
 		<!-- DATAVIEW -->
@@ -107,7 +104,6 @@
 	<script type="text/javascript" src="javascripts/cmdbuild/view/management/workflow/CMActivityTabPanel.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/management/workflow/CMMultipleActivityRowExpander.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/management/workflow/CMActivityGrid.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/view/management/workflow/CMActivityHistoryPanel.js"></script>
 
 	<!-- WIDGET DERIVED -->
 	<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/widgets/CMWorkflow.js"></script>
@@ -119,7 +115,6 @@
 
 	<!-- COMMON -->
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/management/classes/CMModCardSubController.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/controller/management/common/CMHistoryCardPanelController.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/management/common/CMModClassAndWFCommons.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/management/common/CMAttachmentsWindowController.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/management/common/CMCardBrowserTreeDataSource.js"></script>
@@ -133,13 +128,11 @@
 		<script type="text/javascript" src="javascripts/cmdbuild/view/management/classes/map/CMMapPanel.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/view/management/classes/map/CMMapLayerSwitcher.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/view/management/classes/map/MapEditingWindow.js"></script>
-		<!--  -->
 
 		<!-- WIDGETS -->
 		<script type="text/javascript" src="javascripts/cmdbuild/controller/management/common/widgets/linkCards/LinkCardsController.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/controller/management/common/widgets/CMNavigationTreeController.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/controller/management/common/widgets/CMWidgetController.js"></script>
-		<script type="text/javascript" src="javascripts/cmdbuild/controller/management/common/widgets/CMManageRelationController.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/controller/management/common/widgets/CMOpenNoteController.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/controller/management/common/widgets/CMOpenAttachmentController.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/controller/management/common/widgets/CMOpenReportController.js"></script>

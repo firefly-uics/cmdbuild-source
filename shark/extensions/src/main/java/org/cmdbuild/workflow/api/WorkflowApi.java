@@ -14,11 +14,13 @@ import org.cmdbuild.common.api.mail.NewMailQueue;
 import org.cmdbuild.common.api.mail.SelectFolder;
 import org.cmdbuild.common.api.mail.SelectMail;
 import org.cmdbuild.common.api.mail.SendableNewMail;
+import org.cmdbuild.services.soap.Private;
 import org.cmdbuild.workflow.type.LookupType;
 import org.cmdbuild.workflow.type.ReferenceType;
 
 public class WorkflowApi extends FluentApi implements SchemaApi, MailApi {
 
+	private final Private proxy;
 	private final SchemaApi schemaApi;
 	private final MailApi mailApi;
 
@@ -26,10 +28,16 @@ public class WorkflowApi extends FluentApi implements SchemaApi, MailApi {
 	 * It's really ugly but fortunately all is hidden behind the
 	 * {@link SharkWorkflowApiFactory}.
 	 */
-	public WorkflowApi(final FluentApiExecutor executor, final SchemaApi schemaApi, final MailApi mailApi) {
+	public WorkflowApi(final FluentApiExecutor executor, final Private proxy, final SchemaApi schemaApi,
+			final MailApi mailApi) {
 		super(executor);
+		this.proxy = proxy;
 		this.schemaApi = schemaApi;
 		this.mailApi = mailApi;
+	}
+
+	public Private soap() {
+		return proxy;
 	}
 
 	/*
@@ -53,11 +61,7 @@ public class WorkflowApi extends FluentApi implements SchemaApi, MailApi {
 
 	@Override
 	public LookupType selectLookupById(final int id) {
-		if (id <= 0) {
-			return new LookupType();
-		} else {
-			return schemaApi.selectLookupById(id);
-		}
+		return (id <= 0) ? new LookupType() : schemaApi.selectLookupById(id);
 	}
 
 	@Override
@@ -108,14 +112,10 @@ public class WorkflowApi extends FluentApi implements SchemaApi, MailApi {
 
 	public ReferenceType referenceTypeFrom(final Object idAsObject) {
 		final int id = objectToInt(idAsObject);
-		if (id <= 0) {
-			return new ReferenceType();
-		} else {
-			final Card referencedCard = existingCard(Constants.BASE_CLASS_NAME, id) //
-					.limitAttributes(Constants.DESCRIPTION_ATTRIBUTE) //
-					.fetch();
-			return referenceTypeFrom(referencedCard);
-		}
+		return (id <= 0) ? new ReferenceType() : referenceTypeFrom( //
+				existingCard(Constants.BASE_CLASS_NAME, id) //
+						.limitAttributes(Constants.DESCRIPTION_ATTRIBUTE) //
+						.fetch());
 	}
 
 	private int objectToInt(final Object id) {

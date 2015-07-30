@@ -28,12 +28,9 @@ import com.google.common.base.Optional;
 @Configuration("LocalizationFilter")
 public class LocalizationFilter implements Filter, ApplicationContextAware {
 
-	private static final String LOCALIZED_PARAMETER = "localized";
-	private static final String LOCALIZATION_PARAMETER = "localization";
-
 	private static final String HEADER_PREFIX = "CMDBuild-";
-	private static final String LOCALIZED_HEADER = HEADER_PREFIX + capitalize(LOCALIZED_PARAMETER);
-	private static final String LOCALIZATION_HEADER = HEADER_PREFIX + capitalize(LOCALIZATION_PARAMETER);
+	private static final String LOCALIZED_HEADER = HEADER_PREFIX + "Localized";
+	private static final String LOCALIZATION_HEADER = HEADER_PREFIX + "Localization";
 
 	private static interface Extractor {
 
@@ -69,27 +66,11 @@ public class LocalizationFilter implements Filter, ApplicationContextAware {
 
 	}
 
-	private static class ParameterExtractor implements Extractor {
-
-		public static ParameterExtractor of(final String name) {
-			return new ParameterExtractor(name);
-		}
-
-		private final String name;
-
-		private ParameterExtractor(final String name) {
-			this.name = name;
-		}
-
-		@Override
-		public Optional<String> extract(final ServletRequest request) {
-			final String value = request.getParameter(name);
-			return (value == null) ? ABSENT : Optional.of(value);
-		}
-
-	}
-
 	private static class FirstPresentOrAbsentExtractor implements Extractor {
+
+		public static FirstPresentOrAbsentExtractor of(final Extractor... elements) {
+			return of(asList(elements));
+		}
 
 		public static FirstPresentOrAbsentExtractor of(final Iterable<Extractor> elements) {
 			return new FirstPresentOrAbsentExtractor(elements);
@@ -133,15 +114,13 @@ public class LocalizationFilter implements Filter, ApplicationContextAware {
 	public void doFilter(final ServletRequest request, final ServletResponse response, final FilterChain filterChain)
 			throws IOException, ServletException {
 		// TODO log
-		final Optional<String> localized = FirstPresentOrAbsentExtractor.of(asList( //
-				HeaderExtractor.of(LOCALIZED_HEADER), //
-				ParameterExtractor.of(LOCALIZED_PARAMETER) //
-				)) //
+		final Optional<String> localized = FirstPresentOrAbsentExtractor.of( //
+				HeaderExtractor.of(LOCALIZED_HEADER) //
+				) //
 				.extract(request);
-		final Optional<String> localization = FirstPresentOrAbsentExtractor.of(asList( //
-				HeaderExtractor.of(LOCALIZATION_HEADER), //
-				ParameterExtractor.of(LOCALIZATION_PARAMETER) //
-				)) //
+		final Optional<String> localization = FirstPresentOrAbsentExtractor.of( //
+				HeaderExtractor.of(LOCALIZATION_HEADER) //
+				) //
 				.extract(request);
 		requestHandler.setLocalized(localized.isPresent() ? toBoolean(localized.get()) : false);
 		requestHandler.setLocalization(localization.isPresent() ? localization.get() : null);

@@ -1,6 +1,10 @@
 (function() {
+
 	Ext.define("CMDBuild.controller.management.classes.CMNoteController", {
 		extend: "CMDBuild.controller.management.classes.CMModCardSubController",
+
+		requires: ['CMDBuild.core.proxy.Card'],
+
 		constructor: function(view, supercontroller) {
 
 			this.mixins.observable.constructor.call(this, arguments);
@@ -121,14 +125,11 @@
 			if (_CMUtils.lockCard.isEnabled()) {
 				if (this.card) {
 					var id = this.card.get("Id");
-					_CMProxy.card.lockCard({
+					CMDBuild.core.proxy.Card.lock({
 						params: {
 							id: id
 						},
-						success: success,
-						failure: function() {
-							return false;
-						}
+						success: success
 					});
 				}
 			} else {
@@ -138,11 +139,9 @@
 
 		unlockCard: function() {
 			if (_CMUtils.lockCard.isEnabled()) {
-				if (this.card
-						&& this.view.isInEditing()) {
-					
+				if (this.card && this.view.isInEditing()) {
 					var id = this.card.get("Id");
-					_CMProxy.card.unlockCard({
+					CMDBuild.core.proxy.Card.unlock({
 						params: {
 							id: id
 						}
@@ -168,11 +167,12 @@
 
 			if (this.card) {
 				title = Ext.String.format("{0} - {1}"
-					, CMDBuild.Translation.management.modcard.tabs.notes 
+					, CMDBuild.Translation.management.modcard.tabs.notes
 					, this.card.get("Description"));
 			}
 
 			this.view.setTitle(title);
 		}
 	});
+
 })();

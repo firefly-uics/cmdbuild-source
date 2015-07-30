@@ -27,21 +27,20 @@
 		card: {
 			create: '',
 			read: 'services/json/management/modcard/getcard',
-			update: '',
+			update: 'services/json/management/modcard/updatecard',
 			remove: 'services/json/management/modcard/deletecard',
 
 			bulkUpdate: 'services/json/management/modcard/bulkupdate',
 			bulkUpdateFromFilter: 'services/json/management/modcard/bulkupdatefromfilter',
-			getCardHistory: 'services/json/management/modcard/getcardhistory',
-			getPosition: 'services/json/management/modcard/getcardposition',
-			lock: 'services/json/management/modcard/lockcard',
-			unlock: 'services/json/management/modcard/unlockcard',
-			unlockAll: 'services/json/management/modcard/unlockallcards',
+			getPosition: 'services/json/management/modcard/getcardposition'
 		},
 
-		cardList: 'services/json/management/modcard/getcardlist',
-
 		classes: {
+			cards: {
+				lock: 'services/json/lock/lockcard',
+				unlock: 'services/json/lock/unlockcard',
+				unlockAll: 'services/json/lock/unlockall'
+			},
 			create: 'services/json/schema/modclass/savetable',
 			read: 'services/json/schema/modclass/getallclasses',
 			update: 'services/json/schema/modclass/savetable',
@@ -99,9 +98,10 @@
 
 			attachment: {
 				copy: 'services/json/email/attachment/copy',
+				download: 'services/json/email/attachment/download',
 				readAll: 'services/json/email/attachment/readall',
 				remove: 'services/json/email/attachment/delete',
-				upload: 'services/json/email/attachment/upload',
+				upload: 'services/json/email/attachment/upload'
 			},
 
 			queue: {
@@ -145,6 +145,18 @@
 
 		functions: {
 			getFunctions: 'services/json/schema/modclass/getfunctions'
+		},
+
+		history: {
+			classes: {
+				getCardHistory: 'services/json/management/modcard/getcardhistory',
+				getHistoricCard: 'services/json/management/modcard/gethistoriccard',
+				getRelationsHistory: 'services/json/management/modcard/getrelationshistory',
+				getHistoricRelation: 'services/json/management/modcard/gethistoricrelation'
+			},
+			processes: {
+				getProcessHistory: 'services/json/management/modcard/getprocesshistory'
+			}
 		},
 
 		localizations: { // TODO: refactor with server side
@@ -193,6 +205,13 @@
 			filter: {
 				read: 'services/json/schema/modsecurity/getfilterprivilegelist',
 				update: 'services/json/schema/modsecurity/savefilterprivilege'
+			}
+		},
+
+		processes: {
+			instances: {
+				lock: 'services/json/lock/lockactivity',
+				unlock: 'services/json/lock/unlockactivity'
 			}
 		},
 

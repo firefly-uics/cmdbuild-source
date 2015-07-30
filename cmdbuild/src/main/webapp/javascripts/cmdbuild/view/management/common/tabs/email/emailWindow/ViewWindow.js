@@ -30,18 +30,6 @@
 		layout: 'border',
 
 		initComponent: function() {
-			// Buttons configuration
-				this.fillFromTemplateButton = Ext.create('Ext.button.Split', {
-					iconCls: 'clone',
-					text: CMDBuild.Translation.composeFromTemplate,
-					disabled: true,
-
-					menu: Ext.create('Ext.menu.Menu', {
-						items: []
-					})
-				});
-			// END: Buttons configuration
-
 			this.attachmentContainer = Ext.create('CMDBuild.view.management.common.tabs.email.attachments.MainContainer', {
 				height: '30%',
 				region: 'south',
@@ -122,7 +110,17 @@
 					Ext.create('Ext.toolbar.Toolbar', {
 						dock: 'top',
 						itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_TOP,
-						items: [this.fillFromTemplateButton]
+						items: [
+							this.fillFromTemplateButton = Ext.create('Ext.button.Split', {
+								iconCls: 'clone',
+								text: CMDBuild.Translation.composeFromTemplate,
+								disabled: true,
+
+								menu: Ext.create('Ext.menu.Menu', {
+									items: []
+								})
+							})
+						]
 					}),
 					Ext.create('Ext.toolbar.Toolbar', {
 						dock: 'bottom',

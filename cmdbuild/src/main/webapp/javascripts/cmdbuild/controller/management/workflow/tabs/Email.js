@@ -23,7 +23,7 @@
 
 		/**
 		 * @param {Object} configObject
-		 * @param {Mixed} configObject.parentDelegate - CMModWorkflowController
+		 * @param {CMDBuild.controller.management.workflow.CMModWorkflowController} configObject.parentDelegate
 		 */
 		constructor: function(configObject) {
 			this.mixins.observable.constructor.call(this, arguments);
@@ -65,15 +65,9 @@
 			this.selectedEntitySet(null, function() {
 				me.regenerateAllEmailsSet(true);
 				me.forceRegenerationSet(true);
-				me.cmfg('storeLoad');
+				me.cmfg('onEmailPanelShow');
 			});
 		},
-
-		onCardSelected: Ext.emptyFn,
-
-		onCloneCard: Ext.emptyFn,
-
-		onEntryTypeSelected: Ext.emptyFn,
 
 		/**
 		 * Equals to onEntryTypeSelected in classes
@@ -100,13 +94,15 @@
 				this.selectedEntitySet(processInstance, function() {
 					me.regenerateAllEmailsSet(processInstance.isNew());
 					me.forceRegenerationSet(processInstance.isNew());
-					me.cmfg('storeLoad');
+					me.cmfg('onEmailPanelShow');
 				});
 
 				this.editModeSet(processInstance.isNew()); // Enable/Disable tab based on model new state to separate create/view mode
 				this.cmfg('setUiState');
 			} else { // We have a closed process instance
-				me.cmfg('storeLoad');
+				this.selectedEntitySet(processInstance, function() {
+					me.cmfg('onEmailPanelShow');
+				});
 			}
 		},
 
@@ -116,7 +112,7 @@
 		onSaveCardClick: function() {
 			if (!this.grid.getStore().isLoading()) {
 				this.regenerateAllEmailsSet(true);
-				this.cmfg('storeLoad');
+				this.cmfg('onEmailPanelShow');
 			}
 		}
 	});

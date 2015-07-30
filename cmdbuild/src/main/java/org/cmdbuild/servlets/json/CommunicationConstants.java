@@ -10,9 +10,12 @@ public class CommunicationConstants {
 			ACCOUNT = "account", //
 			ACTIVE = "active", //
 			ACTIVE_CAPITAL = "Active", //
+			ACTIVITY_INSTANCE_ID = "activityInstanceId", //
+			ACTIVITY_NAME = "activityName", //
 			ADDRESS = "address", //
 			ADMIN_PASSWORD = "admin_password", //
 			ADMIN_USER = "admin_user", //
+			ADVANCE = "advance", //
 			ALREADY_ASSOCIATED = "alreadyAssociated", //
 			ATTACHMENTS_ACTIVE = "attachmentsActive", //
 			ATTACHMENTS = "attachments", //
@@ -23,6 +26,7 @@ public class CommunicationConstants {
 			ATTRIBUTES = "attributes", //
 			ATTRIBUTES_PRIVILEGES = "attributesPrivileges", //
 			BCC = "bcc", //
+			BEGIN_DATE = "beginDate", //
 			BIM_LAYER = "bimLayer", //
 			BIM_PROJECTS = "bimProjects", //
 			BIM_ROOT = "root", //
@@ -65,19 +69,14 @@ public class CommunicationConstants {
 			DB_TYPE = "db_type", //
 			DEFAULT = "Default", //
 			DEFAULT_ACCOUNT = "defaultAccount", //
-			DEFAULT_DESCRIPTION = "description_default", //
-			DEFAULT_DESCRIPTION_CAPITAL = "Description_default", //
-			DEFAULT_DIRECT_DESCRIPTION = "descrdir_default", //
 			DEFAULT_GROUP = "defaultgroup", //
-			DEFAULT_INVERSE_DESCRIPTION = "descrinv_default", //
-			DEFAULT_MASTERDETAIL_LABEL = "md_label_default", //
-			DEFAULT_PARENT_DESCRIPTION = "ParentDescription_default", //
 			DEFAULT_VALUE = "defaultvalue", //
 			DELAY = "delay", //
 			DELETE = "delete", //
 			DESCRIPTION_CAPITAL = "Description", //
 			DESCRIPTION = "description", //
 			DESTINATION = "destination", //
+			DESTINATION_DESCRIPTION = "destinationDescription", //
 			DETAIL_CARD_ID = "detailCardId", //
 			DETAIL_CLASS_NAME = "detailClassName", //
 			DIRECT_DESCRIPTION = "descrdir", //
@@ -108,6 +107,7 @@ public class CommunicationConstants {
 			EMAIL_ID = "emailId", //
 			EMAIL_TEMPLATE = "emailTemplate", //
 			ENABLED = "enabled", //
+			END_DATE = "endDate", //
 			ENTRY_TYPE = "entryType", //
 			EXPORTED = "exported", //
 			EXPORT_MAPPING = "ExportMapping", //
@@ -143,6 +143,7 @@ public class CommunicationConstants {
 			INHERITED = "inherited", //
 			INHERIT = "inherits", //
 			INVERSE_DESCRIPTION = "descrinv", //
+			ID_CLASS = "idClass", //
 			IP_TYPE = "ipType", //
 			IS_ACTIVE = "isActive", //
 			IS_ADMINISTRATOR = "isAdministrator", //
@@ -203,6 +204,7 @@ public class CommunicationConstants {
 			PARENT = "parent", //
 			PASSWORD = "password", //
 			PATCHES = "patches", //
+			PERFORMERS = "performers", //
 			PHASE_AFTER_CREATE = "afterCreate", //
 			PHASE_AFTER_UPDATE = "afterUpdate", //
 			PHASE_BEFORE_DELETE = "beforeDelete", //
@@ -225,6 +227,7 @@ public class CommunicationConstants {
 			PRIVILEGE_WRITE = "write_privilege", //
 			PROCESSED_FOLDER = "processedFolder", //
 			PROCESS_ID = "ProcessId", //
+			PROCESS_INSTANCE_ID = "processInstanceId", //
 			PROMPT_SYNCHRONIZATION = "promptSynchronization", //
 			QUERY = "query", //
 			REFERENCE = "reference", //
@@ -253,6 +256,7 @@ public class CommunicationConstants {
 			SOURCE = "source", //
 			SOURCE_ATTRIBUTE = SOURCE + "Attribute", //
 			SOURCE_CLASS_NAME = SOURCE + "ClassName", //
+			SOURCE_DESCRIPTION = "sourceDescription", //
 			SOURCE_FUNCTION = SOURCE + "Function", //
 			SOURCE_NAME = SOURCE + "Name", //
 			SQLSERVER_LABEL = "SQLServer", //
@@ -300,7 +304,9 @@ public class CommunicationConstants {
 			USER = "user", //
 			MENU_ITEM_UUID = "uuid", //
 			VALUE = "value",//
+			VALUES = "values",//
 			VARIABLES = "variables",//
+			VERSION = "version", //
 			VIEWNAME = "viewName", //
 			VIEWS = "views", //
 			WIDGET_ID = "widgetId", //
@@ -310,7 +316,9 @@ public class CommunicationConstants {
 			WORKFLOW_ATTACHMENTS_CATEGORY = "workflowAttachmentsCategory", //
 			WORKFLOW_ATTRIBUTES = "workflowAttributes", //
 			WORKFLOW_CLASS_NAME = "workflowClassName", //
-			WORKFLOW_SAVE_ATTACHMENTS = "workflowSaveAttachments" //
+			WORKFLOW_SAVE_ATTACHMENTS = "workflowSaveAttachments", //
+			WW = "ww", //
+			XPDL = "xpdl" //
 			;
 
 }

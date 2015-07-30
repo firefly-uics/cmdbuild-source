@@ -12,7 +12,7 @@
 		 * @return {Boolean}
 		 */
 		alphanumextended: function(value) {
-			var username = /^[a-zA-Z0-9_.-]+$/;
+			var username = /^[a-zA-Z0-9_.+#@-]+$/;
 
 			return username.test(value);
 		},
@@ -20,12 +20,12 @@
 		/**
 		 * @type {String}
 		 */
-		alphanumextendedText: 'This field should only contain letters, numbers and underscore (_), hyphen (-) and dot (.)',
+		alphanumextendedText: 'This field should only contain letters, numbers, underscore (_), hyphen (-). dot (.), hash (#) and at (@)',
 
 		/**
 		 * @type {RegExp}
 		 */
-		alphanumextendedMask: /[a-z0-9_.-]/i,
+		alphanumextendedMask: /[a-z0-9_.+#@-]/i,
 
 		/**
 		 * The function used to validated multiple email addresses on a single line

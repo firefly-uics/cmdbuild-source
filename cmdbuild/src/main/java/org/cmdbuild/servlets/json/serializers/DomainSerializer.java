@@ -1,6 +1,5 @@
 package org.cmdbuild.servlets.json.serializers;
 
-import static org.cmdbuild.servlets.json.CommunicationConstants.DEFAULT_INVERSE_DESCRIPTION;
 import static org.cmdbuild.servlets.json.CommunicationConstants.DESCRIPTION;
 import static org.cmdbuild.servlets.json.CommunicationConstants.DIRECT_DESCRIPTION;
 import static org.cmdbuild.servlets.json.CommunicationConstants.DISABLED1;
@@ -42,7 +41,6 @@ public class DomainSerializer extends Serializer {
 		jsonDomain.put(DESCRIPTION, domain.getDescription());
 		jsonDomain.put(DIRECT_DESCRIPTION, domain.getDescription1());
 		jsonDomain.put(INVERSE_DESCRIPTION, domain.getDescription2());
-		jsonDomain.put(DEFAULT_INVERSE_DESCRIPTION, domain.getDescription2());
 
 		final CMClass class1 = domain.getClass1();
 		if (class1 != null) {

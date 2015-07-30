@@ -185,4 +185,16 @@ public class DefaultEmailAttachmentsLogic implements EmailAttachmentsLogic {
 		}
 	}
 
+	@Override
+	public DataHandler download(final Email email, final Attachment attachment) {
+		try {
+			final DocumentDownload document = documentCreator(email.isTemporary()) //
+					.createDocumentDownload(EMAIL_CLASS_NAME, email.getId(), attachment.getFileName());
+			return dmsService.download(document);
+		} catch (final Exception e) {
+			logger.error("error downloading document");
+			throw DmsException.Type.DMS_ATTACHMENT_NOTFOUND.createException();
+		}
+	}
+
 }

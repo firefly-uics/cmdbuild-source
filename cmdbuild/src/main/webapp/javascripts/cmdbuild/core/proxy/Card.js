@@ -12,29 +12,38 @@
 		singleton: true,
 
 		/**
-		 * @property {Object} params
+		 * @param {Object} params
 		 */
-		getCardHistory: function(params) {
-			var headers = {};
-			headers['CMDBuild-Localized'] = true;
+		bulkUpdate: function(params) {
+			params.method = 'POST';
+			params.url = CMDBuild.core.proxy.CMProxyUrlIndex.card.bulkUpdate;
 
-			return Ext.create('Ext.data.Store', {
-				autoLoad: false,
-				proxy: {
-					type: 'ajax',
-					url: CMDBuild.core.proxy.CMProxyUrlIndex.card.getCardHistory,
-					headers: headers,
-					reader: {
-						type: 'json',
-						root: 'rows'
-					}
-				},
-				sorters: [
-					{ property: 'BeginDate', direction: 'DESC' },
-					{ property: '_EndDate', direction: 'DESC' }
-				],
-				fields: params.fields,
-				baseParams: params.baseParams
+			CMDBuild.ServiceProxy.core.doRequest(params);
+		},
+
+		/**
+		 * @param {Object} params
+		 */
+		bulkUpdateFromFilter: function(params) {
+			params.method = 'POST';
+			params.url = CMDBuild.core.proxy.CMProxyUrlIndex.card.bulkUpdateFromFilter;
+
+			CMDBuild.ServiceProxy.core.doRequest(params);
+		},
+
+		/**
+		 * @param {Object} parameters
+		 */
+		getList: function(parameters) {
+			CMDBuild.Ajax.request({
+				method: 'GET',
+				url: CMDBuild.core.proxy.CMProxyUrlIndex.card.getList,
+				params: parameters.params,
+				scope: parameters.scope || this,
+				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : false,
+				failure: parameters.failure || Ext.emptyFn,
+				success: parameters.success || Ext.emptyFn,
+				callback: parameters.callback || Ext.emptyFn
 			});
 		},
 
@@ -72,81 +81,95 @@
 		/**
 		 * @param {Object} params
 		 */
-		remove: function(params) {
-			params.method = 'POST';
-			params.url = CMDBuild.core.proxy.CMProxyUrlIndex.card.remove;
-			params.important = true;
+		remove: function(parameters) {
+			parameters.important = true;
 
-			CMDBuild.ServiceProxy.core.doRequest(params);
-		},
-
-		/**
-		 * @param {Object} params
-		 */
-		bulkUpdate: function(params) {
-			params.method = 'POST';
-			params.url = CMDBuild.core.proxy.CMProxyUrlIndex.card.bulkUpdate;
-
-			CMDBuild.ServiceProxy.core.doRequest(params);
-		},
-
-		/**
-		 * @param {Object} params
-		 */
-		bulkUpdateFromFilter: function(params) {
-			params.method = 'POST';
-			params.url = CMDBuild.core.proxy.CMProxyUrlIndex.card.bulkUpdateFromFilter;
-
-			CMDBuild.ServiceProxy.core.doRequest(params);
-		},
-
-		/**
-		 *
-		 * Id of the card to lock, className is not required because id is unique
-		 *
-		 * @param {Number} params.id
-		 */
-		lockCard: function(params) {
-			params.method = 'POST';
-			params.url = CMDBuild.core.proxy.CMProxyUrlIndex.card.lock;
-
-			CMDBuild.ServiceProxy.core.doRequest(params);
-		},
-
-		/**
-		 * Id of card to unlock
-		 *
-		 * @param {Number} params.id
-		 */
-		unlockCard: function(params) {
-			params.method = 'POST';
-			params.url = CMDBuild.core.proxy.CMProxyUrlIndex.card.unlock;
-
-			CMDBuild.ServiceProxy.core.doRequest(params);
-		},
-
-		/**
-		 * Unlock all cards that was locked
-		 *
-		 * @param {Object} parameters
-		 */
-		unlockAllCards: function(parameters) {
 			CMDBuild.Ajax.request({
 				method: 'POST',
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.card.unlockAll,
-				loadMask: true,
+				url: CMDBuild.core.proxy.CMProxyUrlIndex.card.remove,
+				headers: parameters.headers,
 				params: parameters.params,
-				scope: parameters.scope,
+				scope: parameters.scope || this,
+				loadMask: parameters.loadMask || true,
 				failure: parameters.failure || Ext.emptyFn(),
 				success: parameters.success || Ext.emptyFn(),
 				callback: parameters.callback || Ext.emptyFn()
 			});
-		}
+		},
+
+		/**
+		 * @property {Object} parameters
+		 */
+		update: function(parameters) {
+			CMDBuild.Ajax.request({
+				method: 'POST',
+				url: CMDBuild.core.proxy.CMProxyUrlIndex.card.update,
+				headers: parameters.headers,
+				params: parameters.params,
+				scope: parameters.scope || this,
+				loadMask: parameters.loadMask || true,
+				failure: parameters.failure || Ext.emptyFn,
+				success: parameters.success || Ext.emptyFn,
+				callback: parameters.callback || Ext.emptyFn
+			});
+		},
+
+		// Lock/Unlock methods
+			/**
+			 * @param {Object} parameters
+			 */
+			lock: function(parameters) {
+				CMDBuild.Ajax.request({
+					method: 'POST',
+					url: CMDBuild.core.proxy.CMProxyUrlIndex.classes.cards.lock,
+					headers: parameters.headers,
+					params: parameters.params,
+					loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : false,
+					scope: parameters.scope || this,
+					failure: parameters.failure || Ext.emptyFn(),
+					success: parameters.success || Ext.emptyFn(),
+					callback: parameters.callback || Ext.emptyFn()
+				});
+			},
+
+			/**
+			 * @param {Object} parameters
+			 */
+			unlock: function(parameters) {
+				CMDBuild.Ajax.request({
+					method: 'POST',
+					url: CMDBuild.core.proxy.CMProxyUrlIndex.classes.cards.unlock,
+					headers: parameters.headers,
+					params: parameters.params,
+					loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : false,
+					scope: parameters.scope || this,
+					failure: parameters.failure || Ext.emptyFn(),
+					success: parameters.success || Ext.emptyFn(),
+					callback: parameters.callback || Ext.emptyFn()
+				});
+			},
+
+			/**
+			 * @param {Object} parameters
+			 */
+			unlockAll: function(parameters) {
+				CMDBuild.Ajax.request({
+					method: 'POST',
+					url: CMDBuild.core.proxy.CMProxyUrlIndex.classes.cards.unlockAll,
+					headers: parameters.headers,
+					params: parameters.params,
+					loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
+					scope: parameters.scope || this,
+					failure: parameters.failure || Ext.emptyFn(),
+					success: parameters.success || Ext.emptyFn(),
+					callback: parameters.callback || Ext.emptyFn()
+				});
+			}
 	});
 
 	function adaptGetCardCallParams(p) {
 		if (p.params.Id && p.params.IdClass) {
-			_deprecated();
+			_deprecated('adaptGetCardCallParams', 'CMDBuild.core.proxy.Card');
 
 			var parameters = {};
 			parameters[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME] = _CMCache.getEntryTypeNameById(p.params.IdClass);

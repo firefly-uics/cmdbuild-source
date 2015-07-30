@@ -120,7 +120,7 @@ public class JSONDispatcher extends HttpServlet {
 			if (t.getMessage() != null) {
 				message.append(": ").append(t.getMessage());
 			}
-			Log.JSONRPC.error(message.toString());
+			Log.JSONRPC.error(message.toString(), t);
 		}
 	}
 
@@ -261,7 +261,8 @@ public class JSONDispatcher extends HttpServlet {
 			if ((forceDownloadHeader != null) ? toBoolean(forceDownloadHeader) : toBoolean(forceDownloadParameter)) {
 				httpResponse.setContentType("application/force-download");
 				httpResponse.setHeader("Content-Transfer-Encoding", "binary");
-				httpResponse.setHeader("Content-Disposition", String.format("attachment; filename=\"%s\";", dh.getName()));
+				httpResponse.setHeader("Content-Disposition",
+						String.format("attachment; filename=\"%s\";", dh.getName()));
 			} else {
 				httpResponse.setHeader("Content-Disposition", String.format("inline; filename=\"%s\";", dh.getName()));
 				httpResponse.setHeader("Expires", "0");

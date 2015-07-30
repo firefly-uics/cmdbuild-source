@@ -5,7 +5,7 @@
 	<groupId>org.cmdbuild</groupId>
 	<artifactId>cmdbuild-main</artifactId>
 	<packaging>pom</packaging>
-	<version>2.3.2-SNAPSHOT</version>
+	<version>2.3.3-SNAPSHOT</version>
 	<name>CMDBuild</name>
 	<url>http://www.cmdbuild.org</url>
 	<properties>
@@ -148,11 +148,6 @@
 				<groupId>org.codehaus.jackson</groupId>
 				<artifactId>jackson-mapper-asl</artifactId>
 				<version>${jackson.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>javax.mail</groupId>
-				<artifactId>mail</artifactId>
-				<version>1.4.4</version>
 			</dependency>
 
 			<dependency>

@@ -28,6 +28,27 @@
 		/**
 		 * @param {Object} parameters
 		 */
+		download: function(parameters) {
+			parameters.params[CMDBuild.core.proxy.CMProxyConstants.FORCE_DOWNLOAD_PARAM_KEY] = true;
+
+			var form = Ext.create('Ext.form.Panel', {
+				standardSubmit: true,
+				url: CMDBuild.core.proxy.CMProxyUrlIndex.email.attachment.download
+			});
+
+			form.submit({
+				target: '_blank',
+				params: parameters.params
+			});
+
+			Ext.defer(function() { // Form cleanup
+				form.close();
+			}, 100);
+		},
+
+		/**
+		 * @param {Object} parameters
+		 */
 		getAll: function(parameters) {
 			CMDBuild.Ajax.request({
 				method: 'POST',

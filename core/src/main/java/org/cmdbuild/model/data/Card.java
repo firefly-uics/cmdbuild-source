@@ -119,7 +119,7 @@ public class Card implements Storable {
 
 	private final transient String toString;
 
-	public Card(final Builder builder) {
+	protected Card(final Builder builder) {
 		this.id = builder.id;
 		this.type = builder.type;
 		this.className = builder.className;

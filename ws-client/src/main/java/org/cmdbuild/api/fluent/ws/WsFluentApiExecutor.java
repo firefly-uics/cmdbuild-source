@@ -259,8 +259,9 @@ public class WsFluentApiExecutor implements FluentApiExecutor, LoggingSupport {
 	}
 
 	private List<Attribute> requestedAttributesFor(final Set<String> names) {
+		final List<Attribute> output;
 		if (names.isEmpty()) {
-			return ALL_ATTRIBUTES;
+			output = ALL_ATTRIBUTES;
 		} else {
 			final List<Attribute> attributeNames = new ArrayList<Attribute>();
 			for (final String attributeName : names) {
@@ -268,13 +269,15 @@ public class WsFluentApiExecutor implements FluentApiExecutor, LoggingSupport {
 				attribute.setName(attributeName);
 				attributeNames.add(attribute);
 			}
-			return attributeNames;
+			output = attributeNames;
 		}
+		return output;
 	}
 
 	private Query queriedAttributesFor(final Card card) {
+		final Query output;
 		if (card.getAttributes().isEmpty()) {
-			return NO_QUERY;
+			output = NO_QUERY;
 		} else {
 			final List<Query> queries = queriesFor(card);
 			if (queries.size() == 1) {
@@ -283,8 +286,9 @@ public class WsFluentApiExecutor implements FluentApiExecutor, LoggingSupport {
 			final FilterOperator filterOperator = new FilterOperator();
 			filterOperator.setOperator(OPERATOR_AND);
 			filterOperator.getSubquery().addAll(queriesFor(card));
-			return queryFor(filterOperator);
+			output = queryFor(filterOperator);
 		}
+		return output;
 	}
 
 	private List<Query> queriesFor(final Card card) {
@@ -535,6 +539,11 @@ public class WsFluentApiExecutor implements FluentApiExecutor, LoggingSupport {
 			proxy.moveAttachment(source.getClassName(), source.getId(), attachment.getName(),
 					destination.getClassName(), destination.getId());
 		}
+	}
+
+	public void abortProcessInstance(final ExistingProcessInstance processCard) {
+		final org.cmdbuild.services.soap.Card soapCard = soapCardFor(processCard);
+		proxy.abortWorkflow(soapCard);
 	}
 
 	/*

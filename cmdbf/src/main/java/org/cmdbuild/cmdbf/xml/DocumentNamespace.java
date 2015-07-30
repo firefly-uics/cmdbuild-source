@@ -1,5 +1,6 @@
 package org.cmdbuild.cmdbf.xml;
 
+import static com.google.common.collect.FluentIterable.from;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.cmdbuild.logic.data.lookup.LookupLogic.UNUSED_LOOKUP_QUERY;
 import static org.cmdbuild.logic.dms.Utils.valueForCategory;
@@ -43,9 +44,8 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 import com.google.common.base.Function;
+import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
-import com.google.common.collect.FluentIterable;
-import com.google.common.collect.Iterables;
 
 public class DocumentNamespace extends AbstractNamespace {
 
@@ -128,33 +128,44 @@ public class DocumentNamespace extends AbstractNamespace {
 
 	@Override
 	public Iterable<DocumentTypeDefinition> getTypes(final Class<?> cls) {
+		Iterable<DocumentTypeDefinition> emptyList;
 		if (DocumentTypeDefinition.class.isAssignableFrom(cls)) {
-			final LookupType lookupType = getLookupType(dmsLogic.getCategoryLookupType());
-			final Iterable<Lookup> allLookups = lookupLogic.getAllLookup(lookupType, true, UNUSED_LOOKUP_QUERY);
-			return FluentIterable.from(allLookups) //
-					.filter(LOOKUP_WITH_DESCRIPTION) //
-					.transform(LOOKUP_TO_DOCUMENT_TYPE_DEFINITION);
+			final Optional<LookupType> lookupType = getLookupType(dmsLogic.getCategoryLookupType());
+			if (lookupType.isPresent()) {
+				final Iterable<Lookup> allLookups = lookupLogic.getAllLookup(lookupType.get(), true,
+						UNUSED_LOOKUP_QUERY);
+				emptyList = from(allLookups) //
+						.filter(LOOKUP_WITH_DESCRIPTION) //
+						.transform(LOOKUP_TO_DOCUMENT_TYPE_DEFINITION);
+			} else {
+				emptyList = Collections.emptyList();
+			}
 		} else {
-			return Collections.emptyList();
+			emptyList = Collections.emptyList();
 		}
+		return emptyList;
 	}
 
 	@Override
 	public QName getTypeQName(final Object type) {
+		final QName output;
 		if (type instanceof DocumentTypeDefinition) {
-			return new QName(getNamespaceURI(), ((DocumentTypeDefinition) type).getName(), getNamespacePrefix());
+			output = new QName(getNamespaceURI(), ((DocumentTypeDefinition) type).getName(), getNamespacePrefix());
 		} else {
-			return null;
+			output = null;
 		}
+		return output;
 	}
 
 	@Override
 	public DocumentTypeDefinition getType(final QName qname) {
+		final DocumentTypeDefinition output;
 		if (getNamespaceURI().equals(qname.getNamespaceURI())) {
-			return dmsLogic.getCategoryDefinition(qname.getLocalPart());
+			output = dmsLogic.getCategoryDefinition(qname.getLocalPart());
 		} else {
-			return null;
+			output = null;
 		}
+		return output;
 	}
 
 	@Override
@@ -339,13 +350,15 @@ public class DocumentNamespace extends AbstractNamespace {
 		return element;
 	}
 
-	private LookupType getLookupType(final String type) {
-		return Iterables.find(lookupLogic.getAllTypes(LookupLogic.UNUSED_LOOKUP_TYPE_QUERY),
-				new Predicate<LookupType>() {
+	private Optional<LookupType> getLookupType(final String type) {
+		return from(lookupLogic.getAllTypes(LookupLogic.UNUSED_LOOKUP_TYPE_QUERY)) //
+				.filter(new Predicate<LookupType>() {
 					@Override
 					public boolean apply(final LookupType input) {
 						return input.name.equals(type);
 					}
-				});
+				}) //
+				.first();
 	}
+
 }

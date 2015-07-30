@@ -111,14 +111,22 @@
 						applyFilter(me, filter);
 					} else {
 						me.view.loadPage(1, {
-							cb: function cbLoadPage(args) {
+							cb: function(args) {
 								var records = args[1];
+
 								if (records && records.length > 0) {
 									try {
 										me.gridSM.select(0);
 									} catch (e) {
 										_debug(e);
 									}
+								}
+
+								// Not a good implementation but don't exists another way
+								if (!args[2]) {
+									CMDBuild.core.Message.error(null, {
+										text: CMDBuild.Translation.errors.unknown_error
+									});
 								}
 							}
 						});
@@ -616,13 +624,25 @@
 					relativeIndex = position % pageSize;
 
 				view.loadPage(pageNumber, {
-					cb: function callBackOfLoadPage(records, operation, success) {
+					cb: function() {
+						var parameters = arguments[0];
+
 						try {
 							me.gridSM.deselectAll();
 							me.gridSM.select(relativeIndex);
+
+							// Force row expanding on select
+							if (!Ext.isEmpty(me.view.plugins[0]) && me.view.plugins[0].ptype == 'activityrowexpander')
+								me.view.plugins[0].toggleRow(relativeIndex, me.view.getStore().getAt(relativeIndex));
 						} catch (e) {
 							view.fireEvent("cmWrongSelection");
 							_trace("I was not able to select the record at " + relativeIndex);
+						}
+
+						if (!parameters[2]) {
+							CMDBuild.core.Message.error(null, {
+								text: CMDBuild.Translation.errors.unknown_error
+							});
 						}
 					}
 				});
