@@ -1,5 +1,7 @@
 package org.cmdbuild.service.rest.v1.cxf.serialization;
 
+import static org.cmdbuild.dao.entrytype.CMAttribute.Mode.HIDDEN;
+import static org.cmdbuild.dao.entrytype.CMAttribute.Mode.WRITE;
 import static org.cmdbuild.service.rest.v1.model.Models.newAttribute;
 import static org.cmdbuild.service.rest.v1.model.Models.newFilter;
 
@@ -118,7 +120,9 @@ public class ToAttributeDetail implements Function<CMAttribute, Attribute> {
 				.thatIsActive(input.isActive()) //
 				.withIndex(Long.valueOf(input.getIndex())) //
 				.withDefaultValue(input.getDefaultValue()) //
-				.withGroup(input.getGroup());
+				.withGroup(input.getGroup()) //
+				.thatIsWritable(WRITE.equals(input.getMode())) //
+				.thatIsHidden(HIDDEN.equals(input.getMode()));
 		new ForwardingAttributeTypeVisitor() {
 
 			private final CMAttributeTypeVisitor DELEGATE = NullAttributeTypeVisitor.getInstance();
