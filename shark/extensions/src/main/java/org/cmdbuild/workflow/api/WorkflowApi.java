@@ -20,6 +20,15 @@ import org.cmdbuild.workflow.type.ReferenceType;
 
 public class WorkflowApi extends FluentApi implements SchemaApi, MailApi {
 
+	@SuppressWarnings("serial")
+	private static class ClassNotFound extends RuntimeException {
+
+		public ClassNotFound(final int id) {
+			super(format("class '%d' not found", id));
+		}
+
+	}
+
 	private final Private proxy;
 	private final SchemaApi schemaApi;
 	private final MailApi mailApi;
@@ -145,8 +154,19 @@ public class WorkflowApi extends FluentApi implements SchemaApi, MailApi {
 	}
 
 	public CardDescriptor cardDescriptorFrom(final ReferenceType referenceType) {
+		final ClassInfo classInfo = findClass(referenceType.getIdClass());
+		final ClassInfo _classInfo;
+		if (classInfo == null) {
+			final ReferenceType fallbackReferenceType = referenceTypeFrom(referenceType.getId());
+			_classInfo = findClass(fallbackReferenceType.getIdClass());
+			if (_classInfo == null) {
+				throw new ClassNotFound(referenceType.getIdClass());
+			}
+		} else {
+			_classInfo = classInfo;
+		}
 		return new CardDescriptor( //
-				findClass(referenceType.getIdClass()).getName(), //
+				_classInfo.getName(), //
 				referenceType.getId());
 	}
 

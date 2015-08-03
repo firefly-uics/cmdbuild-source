@@ -62,6 +62,7 @@ public class Serialization {
 			FILTER = "filter", //
 			FROM = "from", //
 			GROUP = "group", //
+			HIDDEN = "hidden", //
 			INDEX = "index", //
 			INHERITED = "inherited", //
 			INSTRUCTIONS = "instructions", //

@@ -43,6 +43,8 @@ public interface CMWorkflowEngine {
 	 */
 	CMProcessInstance startProcess(CMProcessClass type) throws CMWorkflowException;
 
+	CMProcessInstance startProcess(CMProcessClass type, Map<String, ?> vars) throws CMWorkflowException;
+
 	/**
 	 * Aborts the process instance.
 	 * 

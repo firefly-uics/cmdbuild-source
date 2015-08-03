@@ -68,7 +68,9 @@ public class DefaultAttributeValueAdapter implements AttributeValueAdapter {
 
 				public void adapt() {
 					adaptedValue = attributeValue;
-					targetType.getAttribute(attributeName).getType().accept(this);
+					if (attributeValue != null) {
+						targetType.getAttribute(attributeName).getType().accept(this);
+					}
 					adapted.put(attributeName, adaptedValue);
 				}
 
