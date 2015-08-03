@@ -1,5 +1,7 @@
 package org.cmdbuild.workflow;
 
+import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
+
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -7,7 +9,9 @@ import java.util.Map;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.cmdbuild.logger.Log;
-import org.cmdbuild.workflow.WorkflowPersistence.ProcessCreation;
+import org.cmdbuild.workflow.WorkflowPersistence.ForwardingProcessData;
+import org.cmdbuild.workflow.WorkflowPersistence.NoProcessData;
+import org.cmdbuild.workflow.WorkflowPersistence.ProcessData;
 import org.cmdbuild.workflow.event.WorkflowEvent;
 import org.cmdbuild.workflow.event.WorkflowEventManager;
 import org.cmdbuild.workflow.service.CMWorkflowService;
@@ -61,12 +65,7 @@ public class WorkflowEventManagerImpl implements WorkflowEventManager {
 		}
 
 		public Iterable<WorkflowEvent> pullEvents(final int sessionId) {
-			final EventMap eventMap = sessionEvents.get(sessionId);
-			if (eventMap != null) {
-				return eventMap;
-			} else {
-				return EMPTY_EVENT_MAP;
-			}
+			return defaultIfNull(sessionEvents.get(sessionId), EMPTY_EVENT_MAP);
 		}
 	}
 
@@ -105,7 +104,7 @@ public class WorkflowEventManagerImpl implements WorkflowEventManager {
 		purgeEvents(sessionId);
 	}
 
-	private WSProcessInstInfo fakeClosedProcessInstanceInfo(final WorkflowEvent event) throws CMWorkflowException {
+	private WSProcessInstInfo fakeClosedProcessInstanceInfo(final WorkflowEvent event) {
 		return new WSProcessInstInfo() {
 
 			@Override
@@ -139,7 +138,14 @@ public class WorkflowEventManagerImpl implements WorkflowEventManager {
 			final WSProcessInstInfo procInstInfo) throws CMWorkflowException {
 		switch (event.getType()) {
 		case START:
-			return persistence.createProcessInstance(procInstInfo, new ProcessCreation() {
+			return persistence.createProcessInstance(procInstInfo, new ForwardingProcessData() {
+
+				private final ProcessData delegate = NoProcessData.getInstance();
+
+				@Override
+				protected ProcessData delegate() {
+					return delegate;
+				}
 
 				@Override
 				public WSProcessInstanceState state() {

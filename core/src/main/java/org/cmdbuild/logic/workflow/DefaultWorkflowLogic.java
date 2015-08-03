@@ -413,12 +413,25 @@ class DefaultWorkflowLogic implements WorkflowLogic {
 
 	private UserProcessInstance startProcess(final CMProcessClass process, final Map<String, ?> vars,
 			final Map<String, Object> widgetSubmission, final boolean advance) throws CMWorkflowException {
-		final UserProcessInstance procInst = workflowEngine.startProcess(process);
+		final UserProcessInstance procInst = workflowEngine.startProcess(process, vars);
+		final List<UserActivityInstance> activities = procInst.getActivities();
+		if (activities.size() != 1) {
+			throw new UnsupportedOperationException(format("Not just one activity to advance! (%d activities)",
+					activities.size()));
+		}
+		final UserActivityInstance firstActInst = activities.get(0);
 		final Map<String, Object> mergedVars = mergeVars( //
 				from(procInst.getValues()) //
 						.filter(new ValuesFilter(process)), //
 				vars);
-		return updateOnlyActivity(procInst, mergedVars, widgetSubmission, advance);
+		workflowEngine.updateActivity(firstActInst, mergedVars, widgetSubmission);
+		final UserProcessInstance output;
+		if (advance) {
+			output = workflowEngine.advanceActivity(firstActInst);
+		} else {
+			output = firstActInst.getProcessInstance();
+		}
+		return output;
 	}
 
 	/**
@@ -576,34 +589,6 @@ class DefaultWorkflowLogic implements WorkflowLogic {
 			final String activityInstanceId, final Map<String, ?> vars, final Map<String, Object> widgetSubmission,
 			final boolean advance) throws CMWorkflowException {
 		final UserActivityInstance activityInstance = processInstance.getActivityInstance(activityInstanceId);
-		return updateActivity(activityInstance, vars, widgetSubmission, advance);
-	}
-
-	/**
-	 * Updates and (optionally) advances the only activity of a process
-	 * instance.
-	 * 
-	 * @param procInst
-	 *            process instance
-	 * @param vars
-	 *            variables to update
-	 * @param advance
-	 * @return the updated process instance
-	 * @throws CMWorkflowException
-	 */
-	private UserProcessInstance updateOnlyActivity(final UserProcessInstance procInst, final Map<String, ?> vars,
-			final Map<String, Object> widgetSubmission, final boolean advance) throws CMWorkflowException {
-		final List<UserActivityInstance> activities = procInst.getActivities();
-		if (activities.size() != 1) {
-			throw new UnsupportedOperationException(format("Not just one activity to advance! (%d activities)",
-					activities.size()));
-		}
-		final UserActivityInstance firstActInst = activities.get(0);
-		return updateActivity(firstActInst, vars, widgetSubmission, advance);
-	}
-
-	private UserProcessInstance updateActivity(final UserActivityInstance activityInstance, final Map<String, ?> vars,
-			final Map<String, Object> widgetSubmission, final boolean advance) throws CMWorkflowException {
 		workflowEngine.updateActivity(activityInstance, vars, widgetSubmission);
 		final UserProcessInstance output;
 		if (advance) {
