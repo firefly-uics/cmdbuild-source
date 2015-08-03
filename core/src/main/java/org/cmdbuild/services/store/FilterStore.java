@@ -1,6 +1,7 @@
 package org.cmdbuild.services.store;
 
 import org.cmdbuild.auth.acl.SerializablePrivilege;
+import org.cmdbuild.common.utils.PagedElements;
 import org.cmdbuild.data.store.Store;
 import org.cmdbuild.services.localization.LocalizableStorable;
 import org.slf4j.Logger;
@@ -42,7 +43,10 @@ public interface FilterStore {
 	/**
 	 * 
 	 * Support interface to have also the count of retrieved filters
+	 * 
+	 * @deprecated use {@link PagedElements} instead.
 	 */
+	@Deprecated
 	interface GetFiltersResponse extends Iterable<Filter> {
 		int count();
 	}
