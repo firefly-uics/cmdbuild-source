@@ -31,10 +31,10 @@ public class DefaultLookupHelper implements LookupHelper {
 
 	private static final Optional<Lookup> MISSING_LOOKUP = Optional.absent();
 
-	private final LookupStore lookupStore;
+	private final LookupStore delegate;
 
-	public DefaultLookupHelper(final LookupStore lookupStore) {
-		this.lookupStore = lookupStore;
+	public DefaultLookupHelper(final LookupStore delegate) {
+		this.delegate = delegate;
 	}
 
 	@Override
@@ -76,7 +76,7 @@ public class DefaultLookupHelper implements LookupHelper {
 
 	@Override
 	public Iterable<Lookup> allLookups() {
-		return lookupStore.readAll(FLOW_STATUS);
+		return delegate.readAll(FLOW_STATUS);
 	}
 
 }
