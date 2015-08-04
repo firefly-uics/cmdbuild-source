@@ -21,7 +21,7 @@
 		/**
 		 * @param {Object} params - url parameters
 		 * @param {String} params.processIdentifier - process name
-		 * @param {Int} params.instanceIdentifier - instance id
+		 * @param {Number} params.instanceIdentifier - instance id
 		 * @param {String} path
 		 * @param {Object} router
 		 */
