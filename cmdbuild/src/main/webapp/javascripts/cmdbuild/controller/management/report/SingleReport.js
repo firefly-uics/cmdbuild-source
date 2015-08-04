@@ -165,9 +165,11 @@
 				}
 			},
 
+		/**
+		 * Show report with force download
+		 */
 		onReportDownloadButtonClick: function() {
-			if (!this.currentReportParametersIsEmpty())
-				this.createReport(true);
+			this.showReport(true);
 		},
 
 		/**
@@ -234,7 +236,7 @@
 			if (forceDownload) { // Force download mode
 				var form = Ext.create('Ext.form.Panel', {
 					standardSubmit: true,
-					url: CMDBuild.core.proxy.CMProxyUrlIndex.reports.printReportFactory
+					url: CMDBuild.core.proxy.CMProxyUrlIndex.reports.printReportFactory + '?donotdelete=true' // Add parameter to avoid report delete
 				});
 
 				form.submit({
@@ -253,7 +255,7 @@
 
 					autoEl: {
 						tag: 'iframe',
-						src: CMDBuild.core.proxy.CMProxyUrlIndex.reports.printReportFactory
+						src: CMDBuild.core.proxy.CMProxyUrlIndex.reports.printReportFactory + '?donotdelete=true' // Add parameter to avoid report delete
 					}
 				});
 			}
