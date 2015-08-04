@@ -42,44 +42,33 @@ public interface FilterStore {
 
 	/**
 	 * 
-	 * Support interface to have also the count of retrieved filters
-	 * 
-	 * @deprecated use {@link PagedElements} instead.
+	 * @return the filters for all the users
 	 */
-	@Deprecated
-	interface GetFiltersResponse extends Iterable<Filter> {
-		int count();
-	}
+	// TODO only the administrator
+	PagedElements<Filter> getAllUserFilters(String className, int start, int limit);
 
 	/**
 	 * 
 	 * @return the filters for all the users
 	 */
 	// TODO only the administrator
-	GetFiltersResponse getAllUserFilters(String className, int start, int limit);
-
-	/**
-	 * 
-	 * @return the filters for all the users
-	 */
-	// TODO only the administrator
-	GetFiltersResponse getAllUserFilters();
+	PagedElements<Filter> getAllUserFilters();
 
 	/**
 	 * 
 	 * @return filters for all groups (i.e. filters marked as template in the
 	 *         database)
 	 */
-	GetFiltersResponse fetchAllGroupsFilters();
+	PagedElements<Filter> fetchAllGroupsFilters();
 
-	GetFiltersResponse fetchAllGroupsFilters(int start, int limit);
+	PagedElements<Filter> fetchAllGroupsFilters(int start, int limit);
 
 	/**
 	 * 
 	 * @return the filters defined for the logged user for a given class and
 	 *         group filters that user can see
 	 */
-	GetFiltersResponse getFiltersForCurrentlyLoggedUser(String className);
+	PagedElements<Filter> getFiltersForCurrentlyLoggedUser(String className);
 
 	/**
 	 * Saves a new filter in the database

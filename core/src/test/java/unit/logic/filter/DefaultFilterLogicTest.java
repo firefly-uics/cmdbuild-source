@@ -1,6 +1,7 @@
 package unit.logic.filter;
 
 import static java.util.Arrays.asList;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
@@ -14,41 +15,16 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
-import java.util.Iterator;
-
 import org.cmdbuild.common.utils.PagedElements;
 import org.cmdbuild.logic.filter.DefaultFilterLogic;
 import org.cmdbuild.logic.filter.DefaultFilterLogic.Converter;
 import org.cmdbuild.logic.filter.FilterLogic.Filter;
 import org.cmdbuild.services.store.FilterStore;
-import org.cmdbuild.services.store.FilterStore.GetFiltersResponse;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 
 public class DefaultFilterLogicTest {
-
-	private static class DummyGetFiltersResponse implements GetFiltersResponse {
-
-		private final Iterable<FilterStore.Filter> filters;
-		private final int totalSize;
-
-		public DummyGetFiltersResponse(final Iterable<FilterStore.Filter> filters, final int totalSize) {
-			this.filters = filters;
-			this.totalSize = totalSize;
-		}
-
-		@Override
-		public Iterator<FilterStore.Filter> iterator() {
-			return filters.iterator();
-		}
-
-		@Override
-		public int count() {
-			return totalSize;
-		}
-
-	}
 
 	private FilterStore store;
 	private Converter converter;
@@ -61,10 +37,43 @@ public class DefaultFilterLogicTest {
 		defaultFilterLogic = new DefaultFilterLogic(store, converter);
 	}
 
+	@Test(expected = NullPointerException.class)
+	public void filterCannotBeCreatedWhenNameIsNull() throws Exception {
+		// given
+		final Filter input = mock(Filter.class);
+
+		// when
+		defaultFilterLogic.create(input);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void filterCannotBeCreatedWhenNameIsEmpty() throws Exception {
+		// given
+		final Filter input = mock(Filter.class);
+		doReturn(EMPTY) //
+				.when(input).getName();
+
+		// when
+		defaultFilterLogic.create(input);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void filterCannotBeCreatedWhenNameIsBlank() throws Exception {
+		// given
+		final Filter input = mock(Filter.class);
+		doReturn(" ") //
+				.when(input).getName();
+
+		// when
+		defaultFilterLogic.create(input);
+	}
+
 	@Test
 	public void filterIsCreated() throws Exception {
 		// given
 		final Filter input = mock(Filter.class);
+		doReturn("filter name") //
+				.when(input).getName();
 		final FilterStore.Filter convertedForStore = mock(FilterStore.Filter.class);
 		final Filter convertedForOutput = mock(Filter.class);
 		final FilterStore.Filter created = mock(FilterStore.Filter.class);
@@ -143,7 +152,7 @@ public class DefaultFilterLogicTest {
 		// given
 		final FilterStore.Filter first = mock(FilterStore.Filter.class);
 		final FilterStore.Filter second = mock(FilterStore.Filter.class);
-		doReturn(new DummyGetFiltersResponse(asList(first, second), 42)) //
+		doReturn(new PagedElements<FilterStore.Filter>(asList(first, second), 42)) //
 				.when(store).getFiltersForCurrentlyLoggedUser(anyString());
 		final Filter _first = mock(Filter.class);
 		final Filter _second = mock(Filter.class);
@@ -172,7 +181,7 @@ public class DefaultFilterLogicTest {
 		// given
 		final FilterStore.Filter first = mock(FilterStore.Filter.class);
 		final FilterStore.Filter second = mock(FilterStore.Filter.class);
-		doReturn(new DummyGetFiltersResponse(asList(first, second), 42)) //
+		doReturn(new PagedElements<FilterStore.Filter>(asList(first, second), 42)) //
 				.when(store).fetchAllGroupsFilters(anyInt(), anyInt());
 		final Filter _first = mock(Filter.class);
 		final Filter _second = mock(Filter.class);
@@ -201,7 +210,7 @@ public class DefaultFilterLogicTest {
 		// given
 		final FilterStore.Filter first = mock(FilterStore.Filter.class);
 		final FilterStore.Filter second = mock(FilterStore.Filter.class);
-		doReturn(new DummyGetFiltersResponse(asList(first, second), 42)) //
+		doReturn(new PagedElements<FilterStore.Filter>(asList(first, second), 42)) //
 				.when(store).getAllUserFilters(anyString(), anyInt(), anyInt());
 		final Filter _first = mock(Filter.class);
 		final Filter _second = mock(Filter.class);
