@@ -6,6 +6,7 @@ import org.cmdbuild.auth.UserStore;
 import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.data.store.dao.StorableConverter;
 import org.cmdbuild.logic.filter.DefaultFilterLogic;
+import org.cmdbuild.logic.filter.DefaultFilterLogic.Converter;
 import org.cmdbuild.logic.filter.FilterLogic;
 import org.cmdbuild.services.localization.LocalizedStorableConverter;
 import org.cmdbuild.services.store.DataViewFilterStore;
@@ -34,21 +35,23 @@ public class Filter {
 	@Bean
 	@Scope(PROTOTYPE)
 	public FilterLogic defaultFilterLogic() {
-		return new DefaultFilterLogic(dataViewFilterStore());
+		return new DefaultFilterLogic(dataViewFilterStore(), defaultFilterLogicConverter());
 	}
 
 	@Bean
 	@Scope(PROTOTYPE)
 	protected DataViewFilterStore dataViewFilterStore() {
-		return new DataViewFilterStore(data.systemDataView(), operationUser(), converter());
+		return new DataViewFilterStore(data.systemDataView(), operationUser(), localizedStorableConverter());
 	}
 
-	private StorableConverter<FilterStore.Filter> converter() {
-		return new LocalizedStorableConverter<FilterStore.Filter>(baseConverter(), translation.translationFacade(),
-				data.systemDataView(), report.reportLogic());
+	@Bean
+	protected StorableConverter<FilterStore.Filter> localizedStorableConverter() {
+		return new LocalizedStorableConverter<FilterStore.Filter>(baseStorableConverter(),
+				translation.translationFacade(), data.systemDataView(), report.reportLogic());
 	}
 
-	private StorableConverter<org.cmdbuild.services.store.FilterStore.Filter> baseConverter() {
+	@Bean
+	protected StorableConverter<org.cmdbuild.services.store.FilterStore.Filter> baseStorableConverter() {
 		return new FilterConverter(data.systemDataView());
 	}
 
@@ -56,6 +59,16 @@ public class Filter {
 	@Scope(PROTOTYPE)
 	protected OperationUser operationUser() {
 		return userStore.getUser();
+	}
+
+	@Bean
+	protected Converter defaultFilterLogicConverter() {
+		return new DefaultFilterLogic.DefaultConverter(filterConverter());
+	}
+
+	@Bean
+	protected com.google.common.base.Converter<FilterLogic.Filter, FilterStore.Filter> filterConverter() {
+		return new DefaultFilterLogic.FilterConverter();
 	}
 
 }
