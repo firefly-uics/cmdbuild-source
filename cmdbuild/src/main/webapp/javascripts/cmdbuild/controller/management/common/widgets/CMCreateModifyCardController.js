@@ -31,7 +31,7 @@
 				serverVars: this.getTemplateResolverServerVars()
 			});
 
-			this.mon(this.view.addCardButton, "cmClick", onAddCardClick, this);
+			this.mon(this.view.addCardButton, "cmClick", this.onAddCardClick, this);
 		},
 
 		// override
@@ -90,12 +90,19 @@
 							if (me.cardId == null && me.entryType.isSuperClass()) {
 								// could not add a card for a superclass
 							} else {
-								loadAndFillFields(me);
+								me.loadAndFillFields();
 							}
 						}
 					});
 				}
 			}, 10, this);
+		},
+
+		/**
+		 * @override
+		 */
+		beforeHideView: function() {
+			this.unlockCard();
 		},
 
 		// override
@@ -119,53 +126,65 @@
 		 * cardModule state events
 		 */
 		// override
-		buildCardModuleStateDelegate: function() {}
-	});
+		buildCardModuleStateDelegate: function() {},
 
-	function loadAndFillFields(me, classId) {
-		classId = classId || me.entryType.getId();
-		var isANewCard = me.cardId == null || me.cardId == 0;
+		loadAndFillFields: function(classId) {
+			classId = classId || this.entryType.getId();
 
-		if (isANewCard) {
-			/*
-			 * presets is a map like this:
-			 * {
-			 * 		nameOfActivityAttribute: nameOfCardAttribute,
-			 * 		nameOfActivityAttribute: nameOfCardAttribute,
-			 * 		...
-			 * }
-			 */
-			var presets = me.widgetConf.attributeMappingForCreation || {};
-			var fields = me.clientForm.getFields();
+			var me = this;
+			var isANewCard = this.cardId == null || this.cardId == 0;
 
-			var values = {
-				Id: -1, // to have a new card
-				IdClass: classId
-			}
+			if (isANewCard) {
+				/*
+				 * presets is a map like this:
+				 * {
+				 * 		nameOfActivityAttribute: nameOfCardAttribute,
+				 * 		nameOfActivityAttribute: nameOfCardAttribute,
+				 * 		...
+				 * }
+				 */
+				var presets = this.widgetConf.attributeMappingForCreation || {};
+				var fields = this.clientForm.getFields();
 
-			fields.each(function(field) {
-				if (field._belongToEditableSubpanel
-						&& presets[field.name]) {
-
-					var cardAttributeName = presets[field.name];
-					var cardAttributePresetValue = field.getValue();
-					if (typeof cardAttributePresetValue != "undefined") {
-						values[cardAttributeName] = cardAttributePresetValue;
-					}
+				var values = {
+					Id: -1, // to have a new card
+					IdClass: classId
 				}
-			})
 
-			_debug("Create card with presets", values);
+				fields.each(function(field) {
+					if (field._belongToEditableSubpanel
+							&& presets[field.name]) {
 
-			me.card = new CMDBuild.DummyModel(values);
-			me.loadCard();
-		} else {
-			me.loadCard(true, {
-				Id: me.cardId,
-				IdClass: classId
-			});
+						var cardAttributeName = presets[field.name];
+						var cardAttributePresetValue = field.getValue();
+						if (typeof cardAttributePresetValue != "undefined") {
+							values[cardAttributeName] = cardAttributePresetValue;
+						}
+					}
+				});
+
+				this.card = new CMDBuild.DummyModel(values);
+				this.loadCard();
+			} else {
+				this.card = new CMDBuild.DummyModel({
+					Id: this.cardId
+				});
+
+				this.lockCard(function() {
+					me.loadCard(true, {
+						Id: me.cardId,
+						IdClass: classId
+					});
+				});
+			}
+		},
+
+		onAddCardClick: function() {
+			this.cardId = null;
+
+			this.loadAndFillFields(this.entryType.getId());
 		}
-	}
+	});
 
 	/**
 	 * Parse idCard from input string witch derivates from templateResolver's idcardcqlselector
@@ -222,11 +241,6 @@
 				}
 			}
 		);
-	}
-
-	function onAddCardClick(o) {
-		this.cardId = null;
-		loadAndFillFields(this, o.classId);
 	}
 
 })();
