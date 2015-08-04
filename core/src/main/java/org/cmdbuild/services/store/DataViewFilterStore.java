@@ -9,12 +9,12 @@ import static org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue.eq;
 import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
 import static org.cmdbuild.dao.query.clause.where.TrueWhereClause.trueWhereClause;
 
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.lang3.Validate;
 import org.cmdbuild.auth.user.CMUser;
 import org.cmdbuild.auth.user.OperationUser;
+import org.cmdbuild.common.utils.PagedElements;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.query.CMQueryResult;
@@ -105,27 +105,6 @@ public class DataViewFilterStore implements FilterStore {
 
 	}
 
-	public static class DataViewGetFiltersResponse implements GetFiltersResponse {
-		private final Iterable<Filter> filters;
-		private final int totalSize;
-
-		public DataViewGetFiltersResponse(final Iterable<Filter> filters, final int totalSize) {
-			this.filters = filters;
-			this.totalSize = totalSize;
-		}
-
-		@Override
-		public Iterator<Filter> iterator() {
-			return filters.iterator();
-		}
-
-		@Override
-		public int count() {
-			return totalSize;
-		}
-
-	}
-
 	protected static final String FILTERS_CLASS_NAME = "_Filter";
 	private static final String ID_ATTRIBUTE_NAME = "Id";
 	private static final String MASTER_ATTRIBUTE_NAME = "IdOwner";
@@ -166,7 +145,7 @@ public class DataViewFilterStore implements FilterStore {
 	}
 
 	@Override
-	public GetFiltersResponse getAllUserFilters(final String className, final int offset, final int limit) {
+	public PagedElements<Filter> getAllUserFilters(final String className, final int offset, final int limit) {
 		logger.info("getting all filters");
 		final CMUser user = null;
 		final CMQueryResult rawFilters = fetchUserFilters(className, user, offset, limit);
@@ -178,11 +157,11 @@ public class DataViewFilterStore implements FilterStore {
 			}
 		});
 
-		return new DataViewGetFiltersResponse(filters, rawFilters.totalSize());
+		return new PagedElements<Filter>(filters, rawFilters.totalSize());
 	}
 
 	@Override
-	public GetFiltersResponse getAllUserFilters() {
+	public PagedElements<Filter> getAllUserFilters() {
 		logger.info("getting all filters");
 		final CMUser user = null;
 		final String entryTypeName = null;
@@ -196,7 +175,7 @@ public class DataViewFilterStore implements FilterStore {
 			}
 		});
 
-		return new DataViewGetFiltersResponse(filters, allUserFilters.totalSize());
+		return new PagedElements<Filter>(filters, allUserFilters.totalSize());
 	}
 
 	private CMQueryResult fetchUserFilters(final CMUser user, final String entryTypeName) {
@@ -269,7 +248,7 @@ public class DataViewFilterStore implements FilterStore {
 	 * and readable group filters)
 	 */
 	@Override
-	public GetFiltersResponse getFiltersForCurrentlyLoggedUser(final String className) {
+	public PagedElements<Filter> getFiltersForCurrentlyLoggedUser(final String className) {
 		logger.info("getting all filters");
 		final CMUser user = operationUser.getAuthenticatedUser();
 		final CMQueryResult result = fetchUserFilters(user, className);
@@ -286,7 +265,7 @@ public class DataViewFilterStore implements FilterStore {
 				fetchReadableGroupFiltersForCurrentlyLoggedUser(className) //
 				);
 
-		return new DataViewGetFiltersResponse(readableFiltersForCurrenlyLoggedUser, result.totalSize());
+		return new PagedElements<Filter>(readableFiltersForCurrenlyLoggedUser, result.totalSize());
 	}
 
 	private Iterable<Filter> fetchReadableGroupFiltersForCurrentlyLoggedUser(final String className) {
@@ -302,7 +281,7 @@ public class DataViewFilterStore implements FilterStore {
 	}
 
 	@Override
-	public GetFiltersResponse fetchAllGroupsFilters() {
+	public PagedElements<Filter> fetchAllGroupsFilters() {
 		logger.info("getting all filter cards");
 		final CMClass filterClass = getFilterClass();
 		final List<Filter> groupFilters = Lists.newArrayList();
@@ -316,7 +295,7 @@ public class DataViewFilterStore implements FilterStore {
 		return convertResultsToFilterList(groupFilters, result);
 	}
 
-	private GetFiltersResponse convertResultsToFilterList(final List<Filter> groupFilters, final CMQueryResult result) {
+	private PagedElements<Filter> convertResultsToFilterList(final List<Filter> groupFilters, final CMQueryResult result) {
 		for (final CMQueryRow row : result) {
 			final CMCard card = row.getCard(getFilterClass());
 			final Filter filter = new FilterCard(converter.convert(card));
@@ -324,11 +303,11 @@ public class DataViewFilterStore implements FilterStore {
 				groupFilters.add(filter);
 			}
 		}
-		return new DataViewGetFiltersResponse(groupFilters, result.totalSize());
+		return new PagedElements<Filter>(groupFilters, result.totalSize());
 	}
 
 	@Override
-	public GetFiltersResponse fetchAllGroupsFilters(final int start, final int limit) {
+	public PagedElements<Filter> fetchAllGroupsFilters(final int start, final int limit) {
 		logger.info("getting all filter cards");
 		final CMClass filterClass = getFilterClass();
 		final List<Filter> groupFilters = Lists.newArrayList();
@@ -403,4 +382,5 @@ public class DataViewFilterStore implements FilterStore {
 
 		return row.getCard(filterClass);
 	}
+
 }

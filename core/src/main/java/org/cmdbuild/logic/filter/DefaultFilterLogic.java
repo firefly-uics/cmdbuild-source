@@ -2,6 +2,7 @@ package org.cmdbuild.logic.filter;
 
 import static com.google.common.collect.FluentIterable.from;
 
+import org.apache.commons.lang3.Validate;
 import org.cmdbuild.common.utils.PagedElements;
 import org.cmdbuild.services.store.FilterDTO;
 import org.cmdbuild.services.store.FilterStore;
@@ -106,6 +107,7 @@ public class DefaultFilterLogic implements FilterLogic {
 	@Override
 	public Filter create(final Filter filter) {
 		logger.info(MARKER, "creating filter '{}'", filter);
+		Validate.notBlank(filter.getName(), "missing name");
 		final FilterStore.Filter _filter = converter.logicToStore(filter);
 		final FilterStore.Filter created = store.create(_filter);
 		return converter.storeToLogic(created);
@@ -135,29 +137,29 @@ public class DefaultFilterLogic implements FilterLogic {
 	@Override
 	public PagedElements<Filter> getFiltersForCurrentlyLoggedUser(final String className) {
 		logger.info(MARKER, "getting all filters for class '{}' for the currently logged user", className);
-		final FilterStore.GetFiltersResponse response = store.getFiltersForCurrentlyLoggedUser(className);
-		return new PagedElements<FilterLogic.Filter>(from(response) //
+		final PagedElements<FilterStore.Filter> response = store.getFiltersForCurrentlyLoggedUser(className);
+		return new PagedElements<Filter>(from(response) //
 				.transform(toLogic()), //
-				response.count());
+				response.totalSize());
 	}
 
 	@Override
 	public PagedElements<Filter> fetchAllGroupsFilters(final int start, final int limit) {
 		logger.info(MARKER, "getting all filters starting from '{}' and with a limit of '{}'", start, limit);
-		final FilterStore.GetFiltersResponse response = store.fetchAllGroupsFilters(start, limit);
-		return new PagedElements<FilterLogic.Filter>(from(response) //
+		final PagedElements<FilterStore.Filter> response = store.fetchAllGroupsFilters(start, limit);
+		return new PagedElements<Filter>(from(response) //
 				.transform(toLogic()), //
-				response.count());
+				response.totalSize());
 	}
 
 	@Override
 	public PagedElements<Filter> getAllUserFilters(final String className, final int start, final int limit) {
 		logger.info(MARKER, "getting all filters for class '{}' starting from '{}' and with a limit of '{}'",
 				className, start, limit);
-		final FilterStore.GetFiltersResponse response = store.getAllUserFilters(className, start, limit);
-		return new PagedElements<FilterLogic.Filter>(from(response) //
+		final PagedElements<FilterStore.Filter> response = store.getAllUserFilters(className, start, limit);
+		return new PagedElements<Filter>(from(response) //
 				.transform(toLogic()), //
-				response.count());
+				response.totalSize());
 	}
 
 	private Function<FilterStore.Filter, Filter> toLogic() {

@@ -12,13 +12,13 @@ import org.cmdbuild.auth.acl.CMGroup;
 import org.cmdbuild.auth.acl.PrivilegeContext;
 import org.cmdbuild.auth.user.AuthenticatedUser;
 import org.cmdbuild.auth.user.OperationUser;
+import org.cmdbuild.common.utils.PagedElements;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.services.localization.LocalizableStorableVisitor;
 import org.cmdbuild.services.store.DataViewFilterStore;
 import org.cmdbuild.services.store.FilterConverter;
 import org.cmdbuild.services.store.FilterStore;
 import org.cmdbuild.services.store.FilterStore.Filter;
-import org.cmdbuild.services.store.FilterStore.GetFiltersResponse;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -58,36 +58,6 @@ public class DataViewFilterStoreTest extends IntegrationTestBase {
 
 		// then
 		assertThat(size(filters), equalTo(0));
-	}
-
-	@Test(expected = IllegalArgumentException.class)
-	public void filterNameCannotBeNull() throws Exception {
-		// given
-
-		// when
-		filterStore.create(userFilter(null, "bar", roleClass.getIdentifier().getLocalName(), EMPTY_ID));
-
-		// then
-	}
-
-	@Test(expected = IllegalArgumentException.class)
-	public void filterNameCannotBeEmpty() throws Exception {
-		// given
-
-		// when
-		filterStore.create(userFilter("", "bar", roleClass.getIdentifier().getLocalName(), EMPTY_ID));
-
-		// then
-	}
-
-	@Test(expected = IllegalArgumentException.class)
-	public void filterNameCannotBeBlank() throws Exception {
-		// given
-
-		// when
-		filterStore.create(userFilter(" \t", "bar", roleClass.getIdentifier().getLocalName(), EMPTY_ID));
-
-		// then
 	}
 
 	@Test
@@ -194,11 +164,11 @@ public class DataViewFilterStoreTest extends IntegrationTestBase {
 		filterStore.create(userFilter("foo4", "value4", roleClass.getIdentifier().getLocalName(), EMPTY_ID));
 
 		// when
-		final GetFiltersResponse userFilters = filterStore.getAllUserFilters(roleClass.getIdentifier().getLocalName(),
-				0, 2);
+		final PagedElements<Filter> userFilters = filterStore.getAllUserFilters(roleClass.getIdentifier()
+				.getLocalName(), 0, 2);
 
 		// then
-		assertEquals(4, userFilters.count());
+		assertEquals(4, userFilters.totalSize());
 		assertEquals(2, Iterables.size(userFilters));
 	}
 
