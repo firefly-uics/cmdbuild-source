@@ -15,6 +15,7 @@ import org.cmdbuild.auth.acl.NullGroup;
 import org.cmdbuild.auth.user.AuthenticatedUser;
 import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.common.utils.PagedElements;
+import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.data.QueryOptions;
@@ -373,6 +374,18 @@ public class DefaultWorkflowEngine implements QueryableUserWorkflowEngine {
 		nativeValues.put(Constants.CURRENT_GROUP_NAME_VARIABLE, currentGroupName());
 		nativeValues.put(Constants.CURRENT_USER_VARIABLE, currentUserReference());
 		nativeValues.put(Constants.CURRENT_PERFORMER_VARIABLE, currentGroupReference(activityInstance));
+
+		/**
+		 * Synchronizes missing variables
+		 */
+		final Map<String, Object> workflowServiceVariables = service.getProcessInstanceVariables(processInstance
+				.getProcessInstanceId());
+		for (final CMAttribute attribute : processInstance.getType().getAttributes()) {
+			if (!attribute.isSystem() && !workflowServiceVariables.containsKey(attribute.getName())) {
+				logger.debug(marker, "'{}' is missing, initializing it", attribute.getName());
+				nativeValues.put(attribute.getName(), null);
+			}
+		}
 
 		saveWidgets(activityInstance, widgetSubmission, nativeValues);
 		service.setProcessInstanceVariables(processInstance.getProcessInstanceId(),
