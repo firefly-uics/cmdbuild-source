@@ -32,6 +32,7 @@
 
 			bulkUpdate: 'services/json/management/modcard/bulkupdate',
 			bulkUpdateFromFilter: 'services/json/management/modcard/bulkupdatefromfilter',
+			getList: 'services/json/management/modcard/getcardlist',
 			getPosition: 'services/json/management/modcard/getcardposition'
 		},
 
