@@ -3,7 +3,6 @@
 	Ext.define('CMDBuild.view.administration.accordion.Configuration', {
 		extend: 'CMDBuild.view.common.CMBaseAccordion',
 
-		cmName: 'setup',
 		title: CMDBuild.Translation.setup,
 
 		constructor: function() {

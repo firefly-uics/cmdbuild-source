@@ -16,7 +16,7 @@
 				method: 'POST',
 				scope: parameters.scope || this,
 				important: true,
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.login,
+				url: CMDBuild.core.proxy.Index.login,
 				params: parameters.params,
 				success: parameters.success || Ext.emptyFn,
 				failure: parameters.failure || Ext.emptyFn,

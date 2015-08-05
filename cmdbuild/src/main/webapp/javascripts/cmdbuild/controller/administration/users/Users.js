@@ -4,7 +4,7 @@
 		extend: 'CMDBuild.controller.common.AbstractBasePanelController',
 
 		requires: [
-			'CMDBuild.core.proxy.CMProxyConstants',
+			'CMDBuild.core.proxy.Constants',
 			'CMDBuild.core.proxy.Users',
 			'CMDBuild.model.Users'
 		],
@@ -115,7 +115,7 @@
 		onUserDisableButtonClick: function() {
 			var params = {};
 			params['userid'] = this.selectedUser.get('userid');
-			params[CMDBuild.core.proxy.CMProxyConstants.DISABLE] = this.selectedUser.get(CMDBuild.core.proxy.CMProxyConstants.IS_ACTIVE);
+			params[CMDBuild.core.proxy.Constants.DISABLE] = this.selectedUser.get(CMDBuild.core.proxy.Constants.IS_ACTIVE);
 
 			CMDBuild.core.proxy.Users.disable({
 				params: params,
@@ -146,7 +146,7 @@
 				this.form.setDisabledModify(true, true);
 
 				// Update disableUser button
-				if (this.selectedUser.get(CMDBuild.core.proxy.CMProxyConstants.IS_ACTIVE)) {
+				if (this.selectedUser.get(CMDBuild.core.proxy.Constants.IS_ACTIVE)) {
 					this.form.disableUser.setText(CMDBuild.Translation.disableUser);
 					this.form.disableUser.setIconCls('delete');
 				} else {

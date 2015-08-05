@@ -40,7 +40,7 @@
 
 			this.callParent(arguments);
 
-			this.widgetPreset = this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.PRESET];
+			this.widgetPreset = this.widgetConf[CMDBuild.core.proxy.Constants.PRESET];
 
 			// Handlers exchange
 			this.view.delegate = this;
@@ -66,6 +66,26 @@
 		},
 
 		/**
+		 * TODO: fix
+		 * Gatherer function to catch events
+		 *
+		 * @param {String} name
+		 * @param {Object} param
+		 * @param {Function} callback
+		 */
+		cmfg: function(name, param, callBack) {
+			switch (name) {
+				case 'showReport':
+					return this.showReport();
+
+				default: {
+					if (!Ext.isEmpty(this.parentDelegate))
+						return this.parentDelegate.cmfg(name, param, callBack);
+				}
+			}
+		},
+
+		/**
 		 * @override
 		 */
 		beforeActiveView: function() {
@@ -81,7 +101,7 @@
 						scope: this,
 						params: {
 							type: 'custom',
-							code: this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.REPORT_CODE]
+							code: this.widgetConf[CMDBuild.core.proxy.Constants.REPORT_CODE]
 						},
 						success: function(result, options, decodedResult) {
 							this.attributes = decodedResult.filled ? [] : decodedResult.attribute; // filled == with no parameters
@@ -126,29 +146,24 @@
 				}
 			}
 
+			params['reportExtension'] = params[CMDBuild.core.proxy.Constants.EXTENSION]; // TODO: fix this alias on server side
+
 			if (form.isValid()) {
-				this.view.setLoading(true);
+				this.view.setLoading(true); // TODO: rebuild proxy
 
 				CMDBuild.core.proxy.widgets.OpenReport.generateReport({
 					params: params,
 					scope: this,
-					success: function(form, action) {
-						var popup = window.open(
-							'services/json/management/modreport/printreportfactory?donotdelete=true',
-							'Report',
-							'height=400,width=550,status=no,toolbar=no,scrollbars=yes,menubar=no,location=no,resizable'
-						);
+					success: function(form, action) { // Pop-up display mode
+						Ext.create('CMDBuild.controller.management.reports.Modal', {
+							parentDelegate: this,
+							extension: params[CMDBuild.core.proxy.Constants.EXTENSION]
+						});
 
-						if (!popup)
-							CMDBuild.Msg.warn(
-								CMDBuild.Translation.warnings.warning_message,
-								CMDBuild.Translation.warnings.popup_block
-							);
-
-						this.view.setLoading(false);
+						this.view.setLoading(false); // TODO: rebuild proxy
 					},
 					failure: function() {
-						this.view.setLoading(false);
+						this.view.setLoading(false); // TODO: rebuild proxy
 					}
 				});
 			}
@@ -161,10 +176,34 @@
 				attributes: Ext.Object.getKeys(me.widgetPreset),
 				callback: function(out, ctx) {
 					me.view.fillFormValues(out);
-					me.view.forceExtension(me.widgetConf[CMDBuild.core.proxy.CMProxyConstants.FORCE_FORMAT]);
+					me.view.forceExtension(me.widgetConf[CMDBuild.core.proxy.Constants.FORCE_FORMAT]);
 				}
 			});
-		}
+		},
+
+		/**
+		 * Get created report from server and display it in popup window
+		 *
+		 * @param {Boolean} forceDownload
+		 */
+		showReport: function() {
+			var params = {};
+			params[CMDBuild.core.proxy.Constants.FORCE_DOWNLOAD_PARAM_KEY] = true;
+
+			var form = Ext.create('Ext.form.Panel', {
+				standardSubmit: true,
+				url: CMDBuild.core.proxy.Index.reports.printReportFactory + '?donotdelete=true' // Add parameter to avoid report delete
+			});
+
+			form.submit({
+				target: '_blank',
+				params: params
+			});
+
+			Ext.defer(function() { // Form cleanup
+				form.close();
+			}, 100);
+		},
 	});
 
 })();

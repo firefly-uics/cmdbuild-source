@@ -1,6 +1,6 @@
 {
 	"description": "Hrvatski",
-	"release": "2.3-dev",
+	"release": "2.4-dev",
 	"administration": {
 		"description": "Upravljački modul",
 		"modClass": {
@@ -35,6 +35,13 @@
 				"isunique": "Jedinstven",
 				"length": "Dužina",
 				"lookup": "Šifarnik",
+				"meta": {
+					"add": "Dodaj metapodatak",
+					"key": "Ključ",
+					"remove": "Ukloni metapodatak",
+					"title": "Izmjeni metapodatke",
+					"value": "Vrijednost"
+				},
 				"modify_attribute": "Izmjeni atribut",
 				"msg_warning_drop_row": "Atribute je moguće sortirati samo ako su prikazani i naslijeđeni",
 				"name": "Naziv",
@@ -84,10 +91,8 @@
 				"md_label": "Naziv veze nadređeni/podređeni (Master/Detail)",
 				"modify_domain": "Izmijeni domenu",
 				"name": "Naziv",
-				"title_add": "Dodaj domenu",
-				"title_modify": "Izmjeni domenu \"{0}\""
+				"title_add": "Dodaj domenu"
 			},
-			"domains_title": "Upravljanje domenama",
 			"errors": {
 				"table": {
 					"cast": "Nije moguće izmijeniti obilježje \"superklasa\", jer sadrži podatke ili podklase",
@@ -282,48 +287,9 @@
 			},
 			"title": "Kontrolna ploča"
 		},
-		"modLookup": {
-			"add_lookuptype": "Dodaj tip u šifarnik",
-			"lookupForm": {
-				"active": "Aktivan",
-				"code": "Kod",
-				"description": "Opis",
-				"disable_lookup": "Isključi stavku šifarnika",
-				"enable_lookup": "Uključi stavku šifarnika",
-				"isdefault": "Zadana vrijednost",
-				"notes": "Napomena",
-				"parentdescription": "Opis roditelja",
-				"update_lookup": "Izmjeni stavku šifarnika"
-			},
-			"lookupGrid": {
-				"active": "Aktivan",
-				"add_lookup": "Dodaj stavku u šifarnik",
-				"code": "Kod",
-				"description": "Opis",
-				"isdefault": "Zadan",
-				"notes": "Napomena",
-				"parentdescription": "Opis roditelja"
-			},
-			"lookupType": "Tip u šifarniku",
-			"lookupTypeForm": {
-				"active": "Aktivan",
-				"delete_lookuptype": "Ukloni tip iz šifarnika",
-				"description": "Opis",
-				"modify_lookuptype": "Izmjeni tip u šifarniku",
-				"parent": "Roditelj",
-				"title": "Upravljanje sadržajima šifarnika"
-			},
-			"lookupTypes": "Šifarnici",
-			"tabs": {
-				"lookuplist": "Lista stavki",
-				"properties": "Obilježje"
-			},
-			"title": "Upravljanje sadržajima šifarnika"
-		},
 		"modWorkflow": {
 			"add_process": "Dodaj proces",
 			"attributes_title": "Upravljanje atributima",
-			"domains_title": "Upravljanje domenama",
 			"errors": {
 				"table": {
 					"cast": "Obilježje \"superklasa\" ne može biti izmjenjeno, klasa sadrži podatke i/ili podklase",
@@ -401,56 +367,6 @@
 		},
 		"modconnectors": {
 			"title": "Vezni programi"
-		},
-		"modmenu": {
-			"add_menu": "Dodaj meni",
-			"available_elements": "Dostupni elementi",
-			"availabletree": {
-				"class": "Klase",
-				"dashboard": "Kontrolne ploče",
-				"processclass": "Aktivnosti",
-				"report": "Izvještaji",
-				"view": "Pogledi"
-			},
-			"custom_menu": "Osobni meni",
-			"custom_menus": "Osobni meniji",
-			"delete_menu": "Ukloni meni",
-			"menu_root": "Meni",
-			"modify_menu": "Izmjeni meni",
-			"new_folder": "Novi direktorij",
-			"title": "Upravljanje menijima"
-		},
-		"modreport": {
-			"add": "Dodaj izvještaj",
-			"importJRFormStep1": {
-				"description": "Opis izvještaja",
-				"enabled_groups": "Odobrene grupe",
-				"fieldset": "Uvoz Jasper izvještaja",
-				"master_report_jrxml": "Izbor Glavnog izvještaja (.jrxml datokeke)",
-				"menuTitle": "Jasper Reports izvještaji",
-				"name": "Naziv izvještaja"
-			},
-			"importJRFormStep2": {
-				"duplicate_images": "Pažnja! Nije moguće obaviti radnju - Izvještaj sadrži duple slike sa istim imenom.",
-				"fieldset_generic": "Uvoz Jasper izvještaja",
-				"fieldset_images": "Uvoz slika definiranih glavnim izvještajem",
-				"fieldset_subreports": "Uvoz podizveštaja definiranih glavnim izvještajem",
-				"menuTitle": "Jasper-reports izvještaj",
-				"nothing_to_import": "Nema referenciranih slika ili podizvještaja; Potvrdite za pokretanje postupka dodavanja.",
-				"success": {
-					"description": {
-						"add": "Izvještaj je uspješno uvežen",
-						"modify": "Izvještaj je uspješno izmijenjen"
-					},
-					"title": "Slanje na server završeno"
-				}
-			},
-			"importOpenofficeTemplateForm": {
-				"menuTitle": "OpenOffice izvještaj"
-			},
-			"modify": "Izjmeni izvještaj",
-			"remove": "Ukloni izvještaj",
-			"title": "Izvještaji"
 		},
 		"modsecurity": {
 			"defaultgroup": "* Zadana grupa*",
@@ -637,6 +553,7 @@
 			"importLabel": "Uvezi",
 			"load": "Učitaj",
 			"modify": "Izmjeni",
+			"move": "<em>Move</em>",
 			"next": "<em>Next</em>",
 			"previous": "<em>Previous</em>",
 			"print": "Ispiši",
@@ -929,6 +846,8 @@
 			"WIDGET_SERVICE_MALFORMED_REQUEST": "Provjerite jesu li prostor imena, naziv metode i parametri web servisa točni."
 		},
 		"reference_invalid": "Vrijednost ne zadovoljava postavljeni filter",
+		"reportsImportError": "<em>Error while importing report</em>",
+		"reportsAnalizeError": "<em>Error while analizing report</em>",
 		"requiredFieldMessage": "<em>This field is required</em>",
 		"routesInvalidCardIdentifier": "<em>Route error: invalid card identifier</em>",
 		"routesInvalidClassIdentifier": "<em>Route error: invalid class identifier</em>",
@@ -1128,22 +1047,6 @@
 			"showgraph": "Prikaži u grafu",
 			"shownotes": "Prikaži napomene"
 		},
-		"modmenu": {
-			"menu": "Navigacija"
-		},
-		"modreport": {
-			"add_report": "Dodaj izvještaj",
-			"delete_report": "Ukloni izvještaj",
-			"modify_report": "Izmeni izvještaj",
-			"reportForm": {
-				"description": "Opis",
-				"name": "Naziv",
-				"report": "Izvještaj"
-			},
-			"report_parameters": "Parametri izvještaja",
-			"title": "Lista - ",
-			"treetitle": "Izvještaj"
-		},
 		"modutilities": {
 			"bulkupdate": {
 				"title": "Grupna izmjena kartica",
@@ -1258,6 +1161,7 @@
 		"link_cards_changed_values": "Izabrani(a) \"{0}\" je ažuriran(a)",
 		"only_filtered": "Izjmene će biti primjenjene samo na kartice podataka koje zadovoljavaju postavljeni filter.",
 		"popup_block": "Detektiran je program za blokiranje popup prozora, isključite ga kako biste mogli nastaviti operaciju",
+		"reportsDuplicateImageFilename": "Pažnja! Nije moguće obaviti radnju - Izvještaj sadrži duple slike sa istim imenom.",
 		"saveMenuBeforeAccess": "<em>The menu has to been saved before access at the translations of this element.</em>",
 		"warning_message": "Pažnja"
 	},
@@ -1269,13 +1173,18 @@
 	"add": "Dodaj",
 	"addAccount": "<em>Add account</em>",
 	"addAttachmentFromDms": "<em>Add attachments from DMS</em>",
+	"addDomain": "Dodaj domenu",
 	"addFilter": "Dodaj filter",
+	"addLookup": "Dodaj stavku u šifarnik",
+	"addLookupType": "Dodaj tip u šifarnik",
 	"addProject": "<em>Add Project</em>",
 	"addRelations": "Dodaj relaciju",
+	"addReport": "Dodaj izvještaj",
 	"addRow": "<em>Add row</em>",
 	"addTemplate": "Dodaj Predložak",
 	"addUser": "Dodaj korisnika",
 	"addView": "Dodaj pogled",
+	"add_attachment_from_dms": "<em>Add attachments from DMS</em>",
 	"address": "<em>Address</em>",
 	"alfresco": "Alfresco",
 	"application": "Aplikacija",
@@ -1285,6 +1194,7 @@
 	"attention": "Pažnja",
 	"attribute": "<em>Attribute</em>",
 	"attributes": "Atributi",
+	"availableElements": "Dostupni elementi",
 	"availableFilters": "Dostupni filteri",
 	"baseProperties": "Osnovna obilježja",
 	"bcc": "Bcc",
@@ -1296,6 +1206,7 @@
 	"cacheManagement": "Postavke cache memorije",
 	"camera": "<em>Camera</em>",
 	"cardPanelHeight": "Visina (u postocima) panela za kartice ",
+	"cardinality": "Kardinalnost",
 	"cc": "Cc",
 	"changePassword": "Promijeni lozinku",
 	"checkFrequency": "Učestalost provjere (u minutama)",
@@ -1308,6 +1219,7 @@
 	"clearFilter": "Očisti Filter",
 	"clear_row_and_colun_privilege": "Obriši prava pristupa na redove i kolumne",
 	"cmdbuildCategory": "CMDBuild kategorija",
+	"code": "Kod",
 	"composeEmail": "Pripremi email",
 	"composeFromTemplate": "<em>Compose from template</em>",
 	"confirmRegeneration": "<em>Confirm regeneration</em>",
@@ -1323,6 +1235,8 @@
 	"credentials": "Podaci za pristup",
 	"csv": "CSV",
 	"csvFile": "CSV datoteka",
+	"customMenu": "Osobni meni",
+	"dataSource": "Izvor podataka",
 	"defaultAccount": "<em>Default account</em>",
 	"defaultClass": "Podrazumijevana klasa",
 	"defaultGroup": "Zadana grupa",
@@ -1330,18 +1244,22 @@
 	"defaultLanguage": "Zadani jezik",
 	"defaultLevel": "Zadani broj razina",
 	"delay": "<em>Delay</em>",
+	"deleteDomain": "Ukloni domenu",
 	"deleteLabel": "<em>Delete</em>",
 	"deleteRow": "<em>Delete row</em>",
 	"descriptionLabel": "Opis",
 	"description_": "Opis",
 	"destination": "Odredišna klasa",
 	"details": "Detalji",
+	"directDescription": "Izravni opis",
 	"disable": "<em>Disable</em>",
 	"disableGridFilter": "<em>Disable grid filter</em>",
+	"disableLookup": "Isključi stavku šifarnika",
 	"disableUser": "Isključi korisnika",
 	"display_less_attributes": "<em>Display less attributes</em>",
 	"display_more_attributes": "<em>Display more attributes</em>",
 	"domain": "Domena",
+	"domains": "Domene",
 	"download": "<em>Download</em>",
 	"download_ifc_file": "<em>Download Ifc file</em>",
 	"edit": "<em>Edit</em>",
@@ -1354,11 +1272,13 @@
 	"emailTemplate": "Email Predložak",
 	"enable": "<em>Enable</em>",
 	"enableGridFilter": "<em>Enable grid filter</em>",
+	"enableLookup": "Uključi stavku šifarnika",
 	"enableMoveRejectedNotMatching": "<em>Enable move rejected not matching</em>",
 	"enableSsl": "<em>Enable SSL</em>",
 	"enableUser": "Uključi korisnika",
 	"enabled": "Uključen",
 	"enabledClasses": "<em>Enabled classes</em>",
+	"enabledGroups": "Odobrene grupe",
 	"enabledLanguages": "<em>Enabled languages</em>",
 	"endDate": "Datum završetka",
 	"engineName": "Naziv sistema za upravljanje procesima",
@@ -1371,7 +1291,7 @@
 	"fileServerPath": "Putanja na datotečnom serveru",
 	"filter": "Filter",
 	"filterView": "Filter od",
-	"filters_for_groups": "Grupni filter",
+	"filtersForGroups": "Grupni filter",
 	"format_csv": "<em>CSV</em>",
 	"format_odt": "<em>OpenOffice Odt</em>",
 	"format_pdf": "<em>Adobe Pdf</em>",
@@ -1391,6 +1311,7 @@
 	"imapPort": "<em>IMAP port</em>",
 	"imapServer": "<em>IMAP server</em>",
 	"importFromCSV": "<em>Import from CSV</em>",
+	"importJasperReport": "Uvoz Jasper izvještaja",
 	"includeRelations": "<em>Include relations</em>",
 	"includeSystemActivities": "<em>Include system activities</em>",
 	"incoming": "<em>Incoming</em>",
@@ -1399,6 +1320,7 @@
 	"initialLongitude": "Početna zemljopisna dužina",
 	"initialZoomLevel": "Početno uvećanje",
 	"instanceName": "Naziv instance",
+	"inverseDescription": "Inverzni opis",
 	"ipType": "<em>IP type</em>",
 	"ipv4": "ipv4",
 	"ipv6": "ipv6",
@@ -1413,21 +1335,34 @@
 	"lockTimeout": "Istek zaključavanja (sekundi)",
 	"loggedGroup": "Prijavljena Grupa",
 	"loggedUser": "Prijavljeni Korisnik",
+	"lookupList": "Lista stavki",
+	"lookupTypes": "Tip u šifarniku",
 	"main": "<em>Main</em>",
 	"manualRegeneration": "<em>Manual Regeneration</em>",
+	"masterDetail": "Nadređeni/podređeni (Master/Detail)",
+	"masterDetailLabel": "Naziv veze nadređeni/podređeni (Master/Detail)",
+	"masterReportJrxml": "Izbor glavnog izvještaja (.jrxml)",
 	"maximumLevel": "Maksimalan broj nivoa koji se mogu odabrati",
+	"menu": "Meni",
 	"mode": "<em>Mode</em>",
 	"modifyAccount": "<em>Modify account</em>",
+	"modifyDomain": "Izmijeni domenu",
 	"modifyFilter": "Uredi filter",
+	"modifyLookup": "Izmjeni stavku šifarnika",
+	"modifyLookupType": "Izmjeni tip u šifarniku",
 	"modifyProject": "<em>Modify Project</em>",
+	"modifyReport": "Izjmeni izvještaj",
 	"modifyTemplate": "Uredi Predložak",
 	"modifyUser": "Izmjeni korisnika",
 	"modifyView": "Uredi prikaz",
 	"multiGroup": "Višestruka grupa",
 	"name": "Naziv",
+	"navigation": "Navigacija",
+	"newFolder": "Novi direktorij",
 	"noAvailableData": "<em>No available data</em>",
 	"no_bim_project_for_card": "<em>There is no BIM project for this card</em>",
 	"not_set": "Nije postavljeno",
+	"notes": "Napomena",
 	"odt": "ODT",
 	"onDay": "<em>On</em>",
 	"open_3d_viewer": "<em>Open 3D viewer</em>",
@@ -1435,6 +1370,8 @@
 	"origin": "Početna klasa",
 	"outgoing": "<em>Outgoing</em>",
 	"pan": "<em>Pan</em>",
+	"parent": "Roditelj",
+	"parentDescription": "Opis roditelja",
 	"password": "<em>Password</em>",
 	"pdf": "PDF",
 	"popupPercentageHeight": "Visina (u postocima) popup prozora",
@@ -1442,12 +1379,14 @@
 	"popupWindows": "popup prozor",
 	"port": "<em>Port</em>",
 	"preselectIfUnique": "<em>Preselect if unique</em>",
+	"printPreview": "<em>Print preview</em>",
 	"privileged": "<em>Privileged</em>",
 	"privileges_on_columns": "Prava nad kolumnama",
 	"privileges_on_rows": "Prava nad redovima",
 	"processedFolder": "<em>Processed folder</em>",
 	"projects": "Projects",
 	"promptSync": "<em>Prompt sync</em>",
+	"properties": "Obilježja",
 	"queue": "<em>Queue</em>",
 	"readOnly": "Samo čitanje",
 	"referenceComboLimit": "Ograničenje broja stavki u padajućim menijima za reference i šifarnike",
@@ -1461,13 +1400,16 @@
 	"remove": "<em>Remove</em>",
 	"removeAccount": "<em>Remove account</em>",
 	"removeFilter": "Ukloni filter",
+	"removeMenu": "Ukloni meni",
 	"removeProject": "<em>Remove Project</em>",
+	"removeReport": "Ukloni izvještaj",
 	"removeTemplate": "Ukloni Predložak",
 	"removeView": "Ukloni prikaz",
 	"remove_formatting": "<em>Remove formatting</em>",
 	"replace": "<em>Replace</em>",
 	"reply": "<em>Reply</em>",
-	"report": "<em>Report</em>",
+	"report": "Izvještaji",
+	"reportMenuJasper": "<em>Jasper-reports report</em>",
 	"reportParameters": "<em>Report parameters</em>",
 	"repository": "Arhiva",
 	"reset": "<em>Reset</em>",
@@ -1477,7 +1419,7 @@
 	"row_and_column_privileges": "Prava nad redovima i kolumnama",
 	"rtf": "RTF",
 	"scope": "Opseg (scope)",
-	"search_filters": "Filteri za pretraživanje",
+	"searchFilters": "Filteri za pretraživanje",
 	"selectAClass": "<em>Select a Class</em>",
 	"selected_object": "<em>Selected Object</em>",
 	"send": "<em>Send</em>",
@@ -1500,6 +1442,7 @@
 	"side": "<em>Side</em>",
 	"smtpPort": "<em>SMTP port</em>",
 	"smtpServer": "<em>SMTP server</em>",
+	"sql": "SQL",
 	"sqlView": "Iz SQL-a",
 	"start": "<em>Start</em>",
 	"status": "<em>Status</em>",
@@ -1550,5 +1493,6 @@
 	"workflow_cql_filter": "<em>Cql filter</em>",
 	"workflow_query_tipology": "<em>Selection</em>",
 	"you_have_not_set_a_filter": "Niste postavili filter",
+	"zip": "ZIP",
 	"zoom": "<em>Zoom</em>"
 }

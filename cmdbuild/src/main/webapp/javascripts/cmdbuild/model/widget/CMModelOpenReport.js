@@ -7,9 +7,9 @@
 		extend: 'Ext.data.Model',
 
 		fields: [
-			{ name: CMDBuild.core.proxy.CMProxyConstants.NAME, type: 'string' },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.VALUE, type: 'string' },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.READ_ONLY, type: 'boolean' }
+			{ name: CMDBuild.core.proxy.Constants.NAME, type: 'string' },
+			{ name: CMDBuild.core.proxy.Constants.VALUE, type: 'string' },
+			{ name: CMDBuild.core.proxy.Constants.READ_ONLY, type: 'boolean' }
 		]
 	});
 
@@ -20,9 +20,9 @@
 		extend: 'Ext.data.Model',
 
 		fields: [
-			{ name: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION, type: 'string' },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.ID, type: 'int' },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.TITLE, type: 'string' }
+			{ name: CMDBuild.core.proxy.Constants.DESCRIPTION, type: 'string' },
+			{ name: CMDBuild.core.proxy.Constants.ID, type: 'int' },
+			{ name: CMDBuild.core.proxy.Constants.TITLE, type: 'string' }
 		]
 	});
 

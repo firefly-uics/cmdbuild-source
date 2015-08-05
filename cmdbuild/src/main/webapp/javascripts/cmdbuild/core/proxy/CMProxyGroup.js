@@ -118,7 +118,7 @@
 		 */
 		getGroupTypeStore: function() {
 			return Ext.create('Ext.data.JsonStore', {
-				fields: [CMDBuild.core.proxy.CMProxyConstants.VALUE, CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION],
+				fields: [CMDBuild.core.proxy.Constants.VALUE, CMDBuild.core.proxy.Constants.DESCRIPTION],
 				data: [
 					{
 						value: CMDBuild.cache.CMGroupModel.type.NORMAL,
@@ -145,7 +145,7 @@
 				model: 'CMDBuild.model.CMGroupModels.startingClass',
 				proxy: {
 					type: 'ajax',
-					url: CMDBuild.core.proxy.CMProxyUrlIndex.classes.read,
+					url: CMDBuild.core.proxy.Index.classes.read,
 					reader: {
 						type: 'json',
 						root: 'classes'
@@ -157,7 +157,7 @@
 					}
 				},
 				sorters: [{
-					property: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
+					property: CMDBuild.core.proxy.Constants.DESCRIPTION,
 					direction: 'ASC'
 				}]
 			});

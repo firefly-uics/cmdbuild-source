@@ -253,7 +253,7 @@
 			var canEditTheName = this.filter.isLocal();
 
 			this.nameField = Ext.create('Ext.form.field.Text', {
-				name: CMDBuild.core.proxy.CMProxyConstants.NAME,
+				name: CMDBuild.core.proxy.Constants.NAME,
 				fieldLabel: CMDBuild.Translation.administration.modClass.attributeProperties.name,
 				value: this.filter.getName(),
 				disabled: !canEditTheName,
@@ -262,7 +262,7 @@
 			});
 
 			this.descriptionField = Ext.create('Ext.form.field.TextArea', {
-				name: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
+				name: CMDBuild.core.proxy.Constants.DESCRIPTION,
 				fieldLabel: CMDBuild.Translation.administration.modClass.attributeProperties.description,
 				value: this.filter.getDescription(),
 				width: CMDBuild.BIG_FIELD_WIDTH,

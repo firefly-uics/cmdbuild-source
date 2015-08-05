@@ -3,7 +3,7 @@
 	Ext.define('CMDBuild.view.administration.configuration.WorkflowPanel', {
 		extend: 'Ext.form.Panel',
 
-		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+		requires: ['CMDBuild.core.proxy.Constants'],
 
 		/**
 		 * @cfg {CMDBuild.controller.administration.configuration.Workflow}
@@ -33,7 +33,7 @@
 
 		initComponent: function() {
 			this.enabledCheckBox = Ext.create('Ext.ux.form.XCheckbox', {
-				name: CMDBuild.core.proxy.CMProxyConstants.ENABLED,
+				name: CMDBuild.core.proxy.Constants.ENABLED,
 				fieldLabel: CMDBuild.Translation.enabled
 			});
 
@@ -41,7 +41,7 @@
 				dockedItems: [
 					Ext.create('Ext.toolbar.Toolbar', {
 						dock: 'bottom',
-						itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_BOTTOM,
+						itemId: CMDBuild.core.proxy.Constants.TOOLBAR_BOTTOM,
 						ui: 'footer',
 
 						layout: {
@@ -51,18 +51,18 @@
 						},
 
 						items: [
-							Ext.create('CMDBuild.core.buttons.Save', {
+							Ext.create('CMDBuild.core.buttons.text.Save', {
 								scope: this,
 
 								handler: function(button, e) {
-									this.delegate.cmfg('onWorkflowSaveButtonClick');
+									this.delegate.cmfg('onConfigurationWorkflowSaveButtonClick');
 								}
 							}),
-							Ext.create('CMDBuild.core.buttons.Abort', {
+							Ext.create('CMDBuild.core.buttons.text.Abort', {
 								scope: this,
 
 								handler: function(button, e) {
-									this.delegate.cmfg('onWorkflowAbortButtonClick');
+									this.delegate.cmfg('onConfigurationWorkflowAbortButtonClick');
 								}
 							})
 						]
@@ -102,24 +102,24 @@
 						items: [
 							{
 								fieldLabel: CMDBuild.Translation.username,
-								name: CMDBuild.core.proxy.CMProxyConstants.USER,
+								name: CMDBuild.core.proxy.Constants.USER,
 								allowBlank: false
 							},
 							{
 								fieldLabel: CMDBuild.Translation.password,
-								name: CMDBuild.core.proxy.CMProxyConstants.PASSWORD,
+								name: CMDBuild.core.proxy.Constants.PASSWORD,
 								allowBlank: false,
 								inputType: 'password'
 							},
 							{
 								fieldLabel: CMDBuild.Translation.engineName,
-								name: CMDBuild.core.proxy.CMProxyConstants.ENGINE,
+								name: CMDBuild.core.proxy.Constants.ENGINE,
 								allowBlank: false,
 								disabled: true
 							},
 							{
 								fieldLabel: CMDBuild.Translation.scope,
-								name: CMDBuild.core.proxy.CMProxyConstants.SCOPE,
+								name: CMDBuild.core.proxy.Constants.SCOPE,
 								allowBlank: true,
 								disabled: true
 							}
