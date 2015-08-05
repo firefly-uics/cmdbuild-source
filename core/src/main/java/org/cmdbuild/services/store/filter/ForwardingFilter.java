@@ -1,7 +1,7 @@
-package org.cmdbuild.services.store;
+package org.cmdbuild.services.store.filter;
 
 import org.cmdbuild.services.localization.LocalizableStorableVisitor;
-import org.cmdbuild.services.store.FilterStore.Filter;
+import org.cmdbuild.services.store.filter.FilterStore.Filter;
 
 import com.google.common.collect.ForwardingObject;
 
@@ -47,8 +47,8 @@ public abstract class ForwardingFilter extends ForwardingObject implements Filte
 	}
 
 	@Override
-	public boolean isTemplate() {
-		return delegate().isTemplate();
+	public String getClassName() {
+		return delegate().getClassName();
 	}
 
 	@Override
@@ -57,8 +57,8 @@ public abstract class ForwardingFilter extends ForwardingObject implements Filte
 	}
 
 	@Override
-	public String getClassName() {
-		return delegate().getClassName();
+	public boolean isTemplate() {
+		return delegate().isTemplate();
 	}
 
 }

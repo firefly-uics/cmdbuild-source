@@ -50,8 +50,8 @@ import org.cmdbuild.privileges.fetchers.factories.CMClassPrivilegeFetcherFactory
 import org.cmdbuild.privileges.fetchers.factories.FilterPrivilegeFetcherFactory;
 import org.cmdbuild.privileges.fetchers.factories.PrivilegeFetcherFactory;
 import org.cmdbuild.privileges.fetchers.factories.ViewPrivilegeFetcherFactory;
-import org.cmdbuild.services.store.DataViewFilterStore;
-import org.cmdbuild.services.store.FilterStore.Filter;
+import org.cmdbuild.services.store.filter.DataViewFilterStore;
+import org.cmdbuild.services.store.filter.FilterStore.Filter;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.Lists;

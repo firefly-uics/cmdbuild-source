@@ -4,8 +4,8 @@ import static com.google.common.collect.FluentIterable.from;
 
 import org.apache.commons.lang3.Validate;
 import org.cmdbuild.common.utils.PagedElements;
-import org.cmdbuild.services.store.FilterDTO;
-import org.cmdbuild.services.store.FilterStore;
+import org.cmdbuild.services.store.filter.FilterDTO;
+import org.cmdbuild.services.store.filter.FilterStore;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
@@ -109,7 +109,8 @@ public class DefaultFilterLogic implements FilterLogic {
 		logger.info(MARKER, "creating filter '{}'", filter);
 		Validate.notBlank(filter.getName(), "missing name");
 		final FilterStore.Filter _filter = converter.logicToStore(filter);
-		final FilterStore.Filter created = store.create(_filter);
+		final Long createdId = store.create(_filter);
+		final FilterStore.Filter created = store.fetchFilter(createdId);
 		return converter.storeToLogic(created);
 	}
 

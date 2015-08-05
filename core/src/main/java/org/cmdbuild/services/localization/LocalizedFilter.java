@@ -5,8 +5,8 @@ import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
 import org.cmdbuild.logic.translation.TranslationFacade;
 import org.cmdbuild.logic.translation.TranslationObject;
 import org.cmdbuild.logic.translation.converter.FilterConverter;
-import org.cmdbuild.services.store.FilterStore.Filter;
-import org.cmdbuild.services.store.ForwardingFilter;
+import org.cmdbuild.services.store.filter.FilterStore.Filter;
+import org.cmdbuild.services.store.filter.ForwardingFilter;
 
 public class LocalizedFilter extends ForwardingFilter {
 
