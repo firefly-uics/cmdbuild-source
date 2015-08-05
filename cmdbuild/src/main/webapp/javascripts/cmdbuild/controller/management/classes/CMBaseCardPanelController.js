@@ -134,9 +134,6 @@
 			CMDBuild.core.proxy.Card.update({
 				params: Ext.Object.merge(params, this.view.getForm().getValues()),
 				scope: this,
-				failure: function(response, options, decodedResponse) {
-					_error('update card error', this);
-				},
 				success: function(response, options, decodedResponse) {
 					// Hack to adapr old method behaviour for classes witch extends this one
 					var fakeOperation = {};
