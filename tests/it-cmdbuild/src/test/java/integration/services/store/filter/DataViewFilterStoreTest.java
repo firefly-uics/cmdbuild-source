@@ -1,4 +1,4 @@
-package integration.services.store;
+package integration.services.store.filter;
 
 import static com.google.common.collect.Iterables.size;
 import static org.hamcrest.Matchers.contains;
@@ -14,11 +14,11 @@ import org.cmdbuild.auth.user.AuthenticatedUser;
 import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.common.utils.PagedElements;
 import org.cmdbuild.dao.entrytype.CMClass;
-import org.cmdbuild.services.localization.LocalizableStorableVisitor;
-import org.cmdbuild.services.store.DataViewFilterStore;
-import org.cmdbuild.services.store.FilterConverter;
-import org.cmdbuild.services.store.FilterStore;
-import org.cmdbuild.services.store.FilterStore.Filter;
+import org.cmdbuild.services.store.filter.DataViewFilterStore;
+import org.cmdbuild.services.store.filter.FilterConverter;
+import org.cmdbuild.services.store.filter.FilterDTO;
+import org.cmdbuild.services.store.filter.FilterStore;
+import org.cmdbuild.services.store.filter.FilterStore.Filter;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -63,7 +63,8 @@ public class DataViewFilterStoreTest extends IntegrationTestBase {
 	@Test
 	public void shouldFetchOnlyUserFilters() throws Exception {
 		// given
-		filterStore.create(userFilter("foo", "bar", roleClass.getIdentifier().getLocalName(), EMPTY_ID));
+		final Long id = filterStore
+				.create(userFilter("foo", "bar", roleClass.getIdentifier().getLocalName(), EMPTY_ID));
 		filterStore.create(groupFilter("group_filter", "value", roleClass.getIdentifier().getLocalName(), EMPTY_ID));
 
 		// when
@@ -71,39 +72,38 @@ public class DataViewFilterStoreTest extends IntegrationTestBase {
 
 		// then
 		assertThat(size(filters), equalTo(1));
-		assertThat(filters, contains(userFilter("foo", "bar", roleClass.getIdentifier().getLocalName(), EMPTY_ID)));
+		assertThat(filters, contains(userFilter("foo", "bar", roleClass.getIdentifier().getLocalName(), id)));
 	}
 
 	@Test
 	public void filterModified() throws Exception {
 		// given
-		final Filter createdFilter = filterStore.create(userFilter("foo", "bar", roleClass.getIdentifier()
-				.getLocalName(), EMPTY_ID));
+		final Long createdId = filterStore.create(userFilter("foo", "bar", roleClass.getIdentifier().getLocalName(),
+				EMPTY_ID));
 
 		// when
 		Iterable<FilterStore.Filter> filters = filterStore.getAllUserFilters();
 
 		// then
 		assertThat(size(filters), equalTo(1));
-		assertThat(filters,
-				contains(userFilter("foo", "bar", roleClass.getIdentifier().getLocalName(), createdFilter.getId())));
+		assertThat(filters, contains(userFilter("foo", "bar", roleClass.getIdentifier().getLocalName(), createdId)));
 
 		// but
-		filterStore.update(userFilter("foo", "baz", roleClass.getIdentifier().getLocalName(), createdFilter.getId()));
+		filterStore.update(userFilter("foo", "baz", roleClass.getIdentifier().getLocalName(), createdId));
 
 		// when
 		filters = filterStore.getAllUserFilters();
 
 		// then
 		assertThat(size(filters), equalTo(1));
-		assertThat(filters,
-				contains(userFilter("foo", "baz", roleClass.getIdentifier().getLocalName(), createdFilter.getId())));
+		assertThat(filters, contains(userFilter("foo", "baz", roleClass.getIdentifier().getLocalName(), createdId)));
 	}
 
 	@Test
 	public void filterSavedAndReadByUserIdAndClassName() throws Exception {
 		// given
-		filterStore.create(userFilter("bar", "baz", roleClass.getIdentifier().getLocalName(), EMPTY_ID));
+		final Long id = filterStore
+				.create(userFilter("bar", "baz", roleClass.getIdentifier().getLocalName(), EMPTY_ID));
 		final DataViewFilterStore anotherFilterStore = new DataViewFilterStore( //
 				dbDataView(), operationUser(ANOTHER_USER_ID), new FilterConverter(dbDataView()));
 		anotherFilterStore.create(userFilter("foo", "baz", roleClass.getIdentifier().getLocalName(), EMPTY_ID));
@@ -114,7 +114,7 @@ public class DataViewFilterStoreTest extends IntegrationTestBase {
 
 		// then
 		assertThat(size(filters), equalTo(1));
-		assertThat(filters, contains(userFilter("bar", "baz", roleClass.getIdentifier().getLocalName(), EMPTY_ID)));
+		assertThat(filters, contains(userFilter("bar", "baz", roleClass.getIdentifier().getLocalName(), id)));
 
 		// but
 		filters = filterStore.getFiltersForCurrentlyLoggedUser(userClass.getIdentifier().getLocalName());
@@ -194,75 +194,16 @@ public class DataViewFilterStoreTest extends IntegrationTestBase {
 		return filter(name, name, value, className, id, true);
 	}
 
-	// But, a mock instead an in-line implementation?
 	private Filter filter(final String name, final String description, final String value, final String className,
 			final Long id, final boolean asTemplate) {
-		return new Filter() {
-
-			@Override
-			public void accept(final LocalizableStorableVisitor visitor) {
-				visitor.visit(this);
-			}
-
-			@Override
-			public String getIdentifier() {
-				return name;
-			}
-
-			@Override
-			public String getName() {
-				return name;
-			}
-
-			@Override
-			public String getDescription() {
-				return description;
-			}
-
-			@Override
-			public String getValue() {
-				return value;
-			}
-
-			@Override
-			public String getClassName() {
-				return className;
-			}
-
-			@Override
-			public boolean equals(final Object obj) {
-				if (obj == this) {
-					return true;
-				}
-				if (!(obj instanceof Filter)) {
-					return false;
-				}
-				final Filter filter = Filter.class.cast(obj);
-				return this.getName().equals(filter.getName()) //
-						&& this.getValue().equals(filter.getValue());
-			}
-
-			@Override
-			public String toString() {
-				return getValue();
-			}
-
-			@Override
-			public Long getId() {
-				return id;
-			}
-
-			@Override
-			public boolean isTemplate() {
-				return asTemplate;
-			}
-
-			@Override
-			public String getPrivilegeId() {
-				return String.format("Filter:%d", getId());
-			}
-
-		};
+		return FilterDTO.newFilter() //
+				.withId(id) //
+				.withName(name) //
+				.withDescription(description) //
+				.forClass(className) //
+				.withValue(value) //
+				.asTemplate(asTemplate) //
+				.build();
 	}
 
 }

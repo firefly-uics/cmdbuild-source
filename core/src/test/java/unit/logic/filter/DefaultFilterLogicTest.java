@@ -7,6 +7,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyInt;
+import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
@@ -19,7 +20,7 @@ import org.cmdbuild.common.utils.PagedElements;
 import org.cmdbuild.logic.filter.DefaultFilterLogic;
 import org.cmdbuild.logic.filter.DefaultFilterLogic.Converter;
 import org.cmdbuild.logic.filter.FilterLogic.Filter;
-import org.cmdbuild.services.store.FilterStore;
+import org.cmdbuild.services.store.filter.FilterStore;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -77,8 +78,10 @@ public class DefaultFilterLogicTest {
 		final FilterStore.Filter convertedForStore = mock(FilterStore.Filter.class);
 		final Filter convertedForOutput = mock(Filter.class);
 		final FilterStore.Filter created = mock(FilterStore.Filter.class);
-		doReturn(created) //
+		doReturn(42L) //
 				.when(store).create(any(FilterStore.Filter.class));
+		doReturn(created) //
+				.when(store).fetchFilter(anyLong());
 		doReturn(convertedForStore) //
 				.when(converter).logicToStore(any(Filter.class));
 		doReturn(convertedForOutput) //
@@ -92,6 +95,7 @@ public class DefaultFilterLogicTest {
 
 		verify(converter).logicToStore(eq(input));
 		verify(store).create(eq(convertedForStore));
+		verify(store).fetchFilter(eq(42L));
 		verify(converter).storeToLogic(eq(created));
 		verifyNoMoreInteractions(store, converter);
 	}

@@ -1,4 +1,4 @@
-package org.cmdbuild.services.store;
+package org.cmdbuild.services.store.filter;
 
 import org.cmdbuild.auth.acl.SerializablePrivilege;
 import org.cmdbuild.common.utils.PagedElements;
@@ -22,22 +22,21 @@ public interface FilterStore {
 		String getDescription();
 
 		/**
-		 * Mark the filter as a template for a group filter
-		 * 
-		 * @return
+		 * @return the name of the class to which the filter is associated.
 		 */
-		boolean isTemplate();
+		String getClassName();
 
 		/**
-		 * It is the filter that contains rules for filtering the cards
+		 * @return the filter that contains rules for filtering the cards.
 		 */
 		String getValue();
 
 		/**
-		 * 
-		 * @return the name of the class to which the filter is associated.
+		 * @return {@code true} if the filter is a template for a group filter,
+		 *         {@code false} otherwise.
 		 */
-		String getClassName();
+		boolean isTemplate();
+
 	}
 
 	/**
@@ -75,7 +74,7 @@ public interface FilterStore {
 	 * 
 	 * @return the saved filter
 	 */
-	Filter create(Filter filter);
+	Long create(Filter filter);
 
 	/**
 	 * Update an existent filter
@@ -101,4 +100,7 @@ public interface FilterStore {
 	 * @return the position of this filter in the stored order
 	 */
 	Long getPosition(Filter filter);
+
+	Filter fetchFilter(Long filterId);
+
 }

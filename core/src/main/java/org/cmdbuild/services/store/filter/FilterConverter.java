@@ -1,10 +1,10 @@
-package org.cmdbuild.services.store;
+package org.cmdbuild.services.store.filter;
 
-import static org.cmdbuild.services.store.DataViewFilterStore.DESCRIPTION_ATTRIBUTE_NAME;
-import static org.cmdbuild.services.store.DataViewFilterStore.ENTRYTYPE_ATTRIBUTE_NAME;
-import static org.cmdbuild.services.store.DataViewFilterStore.FILTER_ATTRIBUTE_NAME;
-import static org.cmdbuild.services.store.DataViewFilterStore.NAME_ATTRIBUTE_NAME;
-import static org.cmdbuild.services.store.DataViewFilterStore.TEMPLATE_ATTRIBUTE_NAME;
+import static org.cmdbuild.services.store.filter.DataViewFilterStore.DESCRIPTION_ATTRIBUTE_NAME;
+import static org.cmdbuild.services.store.filter.DataViewFilterStore.ENTRYTYPE_ATTRIBUTE_NAME;
+import static org.cmdbuild.services.store.filter.DataViewFilterStore.FILTER_ATTRIBUTE_NAME;
+import static org.cmdbuild.services.store.filter.DataViewFilterStore.NAME_ATTRIBUTE_NAME;
+import static org.cmdbuild.services.store.filter.DataViewFilterStore.TEMPLATE_ATTRIBUTE_NAME;
 
 import java.util.Map;
 
@@ -12,7 +12,7 @@ import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.data.store.dao.BaseStorableConverter;
-import org.cmdbuild.services.store.FilterStore.Filter;
+import org.cmdbuild.services.store.filter.FilterStore.Filter;
 
 public class FilterConverter extends BaseStorableConverter<Filter> {
 
@@ -33,12 +33,13 @@ public class FilterConverter extends BaseStorableConverter<Filter> {
 		final Long etr = card.get(ENTRYTYPE_ATTRIBUTE_NAME, Long.class);
 		final CMClass clazz = dataView.findClass(etr);
 
-		return FilterDTO.newFilter().withId(card.getId()) //
+		return FilterDTO.newFilter() //
+				.withId(card.getId()) //
+				.withName(card.get(NAME_ATTRIBUTE_NAME, String.class)) //
+				.withDescription(card.get(DESCRIPTION_ATTRIBUTE_NAME, String.class)) //
 				.forClass(clazz.getIdentifier().getLocalName()) //
-				.withName((String) card.get(NAME_ATTRIBUTE_NAME)) //
-				.withDescription((String) card.get(DESCRIPTION_ATTRIBUTE_NAME)) //
-				.withValue((String) card.get(FILTER_ATTRIBUTE_NAME)) //
-				.asTemplate((Boolean) card.get(TEMPLATE_ATTRIBUTE_NAME)) //
+				.withValue(card.get(FILTER_ATTRIBUTE_NAME, String.class)) //
+				.asTemplate(card.get(TEMPLATE_ATTRIBUTE_NAME, Boolean.class)) //
 				.build();
 	}
 

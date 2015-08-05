@@ -9,9 +9,9 @@ import org.cmdbuild.logic.filter.DefaultFilterLogic;
 import org.cmdbuild.logic.filter.DefaultFilterLogic.Converter;
 import org.cmdbuild.logic.filter.FilterLogic;
 import org.cmdbuild.services.localization.LocalizedStorableConverter;
-import org.cmdbuild.services.store.DataViewFilterStore;
-import org.cmdbuild.services.store.FilterConverter;
-import org.cmdbuild.services.store.FilterStore;
+import org.cmdbuild.services.store.filter.DataViewFilterStore;
+import org.cmdbuild.services.store.filter.FilterConverter;
+import org.cmdbuild.services.store.filter.FilterStore;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -51,7 +51,7 @@ public class Filter {
 	}
 
 	@Bean
-	protected StorableConverter<org.cmdbuild.services.store.FilterStore.Filter> baseStorableConverter() {
+	protected StorableConverter<org.cmdbuild.services.store.filter.FilterStore.Filter> baseStorableConverter() {
 		return new FilterConverter(data.systemDataView());
 	}
 
