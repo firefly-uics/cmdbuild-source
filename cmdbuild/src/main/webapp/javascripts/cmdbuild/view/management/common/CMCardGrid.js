@@ -529,11 +529,14 @@
 		}
 
 		if (me.cmAddPrintButton) {
-			me.printGridMenu = new CMDBuild.PrintMenuButton({
-				callback : function() { me.fireEvent("click"); },
-				formatList: ["pdf", "csv"],
+			me.printGridMenu = Ext.create('CMDBuild.core.buttons.iconized.Print', {
+				formatList: [
+					CMDBuild.core.proxy.Constants.PDF,
+					CMDBuild.core.proxy.Constants.CSV
+				],
 				disabled: true
 			});
+
 			items.push(me.printGridMenu);
 		}
 
@@ -550,9 +553,9 @@
 	}
 
 	function buildGraphIconColumn(headers) {
-		 var c = _CMCache.getClassById(this.currentClassId);
+		var c = _CMCache.getClassById(this.currentClassId);
 
-		 if (c && c.get("tableType") != "simpletable") {
+		if (c && c.get("tableType") != "simpletable") {
 			var graphHeader = {
 					noWrap: true,
 				header: '&nbsp',
@@ -584,4 +587,5 @@
 
 		this.callDelegates("onCMCardGridIconRowClick", [grid, action, model]);
 	}
+
 })();

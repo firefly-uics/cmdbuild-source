@@ -35,10 +35,10 @@
 			};
 
 			this.formatCombo = Ext.create('Ext.form.field.ComboBox', {
+				name: CMDBuild.core.proxy.Constants.EXTENSION,
 				fieldLabel: CMDBuild.Translation.management.modworkflow.extattrs.createreport.format_label,
 				labelAlign: 'right',
 				labelWidth: CMDBuild.LABEL_WIDTH,
-				name: 'reportExtension',
 				editable: false,
 				disableKeyFilter: true,
 				forceSelection: true,
@@ -46,16 +46,16 @@
 
 				store: Ext.create('Ext.data.ArrayStore', {
 					autoDestroy: true,
-					fields: [CMDBuild.core.proxy.CMProxyConstants.VALUE, CMDBuild.core.proxy.CMProxyConstants.TEXT],
-					data: [
+					fields: [CMDBuild.core.proxy.Constants.VALUE, CMDBuild.core.proxy.Constants.TEXT],
+					data: [ // TODO: use proxy constants
 						['pdf', 'PDF'],
 						['csv', 'CSV'],
 						['odt', 'ODT'],
 						['rtf', 'RTF']
 					]
 				}),
-				valueField: CMDBuild.core.proxy.CMProxyConstants.VALUE,
-				displayField: CMDBuild.core.proxy.CMProxyConstants.TEXT,
+				valueField: CMDBuild.core.proxy.Constants.VALUE,
+				displayField: CMDBuild.core.proxy.Constants.TEXT,
 				value: 'pdf'
 			});
 
@@ -134,8 +134,8 @@
 						// To disable if field name is contained in widgetConfiguration.readOnlyAttributes
 						field.setDisabled(
 							Ext.Array.contains(
-								widgetConfiguration[CMDBuild.core.proxy.CMProxyConstants.READ_ONLY_ATTRIBUTES],
-								attribute[CMDBuild.core.proxy.CMProxyConstants.NAME]
+								widgetConfiguration[CMDBuild.core.proxy.Constants.READ_ONLY_ATTRIBUTES],
+								attribute[CMDBuild.core.proxy.Constants.NAME]
 							)
 						);
 

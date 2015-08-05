@@ -3,7 +3,7 @@
 	Ext.define('CMDBuild.core.proxy.Users', {
 
 		requires: [
-			'CMDBuild.core.proxy.CMProxyUrlIndex',
+			'CMDBuild.core.proxy.Index',
 			'CMDBuild.model.Users'
 		],
 
@@ -15,10 +15,10 @@
 		disable:function(parameters) {
 			CMDBuild.Ajax.request({
 				method: 'POST',
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.users.disable,
-				loadMask: true,
+				url: CMDBuild.core.proxy.Index.users.disable,
 				params: parameters.params,
 				scope: parameters.scope,
+				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
 				failure: parameters.failure || Ext.emptyFn(),
 				success: parameters.success || Ext.emptyFn(),
 				callback: parameters.callback || Ext.emptyFn()
@@ -34,7 +34,7 @@
 				autoLoad: true,
 				proxy: {
 					type: 'ajax',
-					url: CMDBuild.core.proxy.CMProxyUrlIndex.users.getList,
+					url: CMDBuild.core.proxy.Index.users.getList,
 					reader: {
 						type: 'json',
 						root: 'rows'
@@ -56,14 +56,14 @@
 				model: 'CMDBuild.model.Users.defaultGroup',
 				proxy: {
 					type: 'ajax',
-					url: CMDBuild.core.proxy.CMProxyUrlIndex.users.getGroupList,
+					url: CMDBuild.core.proxy.Index.users.getGroupList,
 					reader: {
 						root: 'result',
 						type: 'json'
 					}
 				},
 				sorters: [{
-					property: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
+					property: CMDBuild.core.proxy.Constants.DESCRIPTION,
 					direction: 'ASC'
 				}]
 			});
@@ -75,10 +75,10 @@
 		save:function(parameters) {
 			CMDBuild.Ajax.request({
 				method: 'POST',
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.users.save,
-				loadMask: true,
+				url: CMDBuild.core.proxy.Index.users.save,
 				params: parameters.params,
 				scope: parameters.scope,
+				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
 				failure: parameters.failure || Ext.emptyFn(),
 				success: parameters.success || Ext.emptyFn(),
 				callback: parameters.callback || Ext.emptyFn()

@@ -65,7 +65,7 @@ public class LocalizedMenuElement extends ForwardingMenuElement {
 	private String searchTranslation() {
 		final TranslationObject translationObject = org.cmdbuild.logic.translation.converter.MenuItemConverter //
 				.of(org.cmdbuild.logic.translation.converter.MenuItemConverter.description()) //
-				.create(getUuid());
+				.withIdentifier(getUuid()).create();
 		String translatedDescription = facade.read(translationObject);
 
 		if (isBlank(translatedDescription)) {
@@ -73,7 +73,9 @@ public class LocalizedMenuElement extends ForwardingMenuElement {
 			if (isClassOrProcess(type)) {
 				final String className = getElementClassName();
 				final ClassConverter converter = ClassConverter.of(ClassConverter.description());
-				final TranslationObject classTranslation = converter.create(className);
+				final TranslationObject classTranslation = converter //
+						.withIdentifier(className) //
+						.create();
 				translatedDescription = facade.read(classTranslation);
 
 			} else if (isReport(type)) {
@@ -81,7 +83,9 @@ public class LocalizedMenuElement extends ForwardingMenuElement {
 				if (_reportName.isPresent()) {
 					final ReportConverter converter = ReportConverter.of(ReportConverter.description());
 					Validate.isTrue(converter.isValid());
-					final TranslationObject reportTranslationObject = converter.create(_reportName.get());
+					final TranslationObject reportTranslationObject = converter //
+							.withIdentifier(_reportName.get()) //
+							.create();
 					translatedDescription = facade.read(reportTranslationObject);
 				}
 			} else if (isView(type)) {
@@ -89,7 +93,8 @@ public class LocalizedMenuElement extends ForwardingMenuElement {
 				if (_viewName.isPresent()) {
 					final ViewConverter converter = ViewConverter.of(ViewConverter.description());
 					Validate.isTrue(converter.isValid());
-					final TranslationObject viewTranslationObject = converter.create(_viewName.get());
+					final TranslationObject viewTranslationObject = converter //
+							.withIdentifier(_viewName.get()).create();
 					translatedDescription = facade.read(viewTranslationObject);
 				}
 			} else if (isDashboard(type)) {

@@ -1,6 +1,6 @@
 {
 	"description": "Русский",
-	"release": "2.3-dev",
+	"release": "2.4-dev",
 	"administration": {
 		"description": "Администрирование",
 		"modClass": {
@@ -35,6 +35,13 @@
 				"isunique": "Уникальный",
 				"length": "Длина",
 				"lookup": "Список",
+				"meta": {
+					"add": "Добавить метаданные",
+					"key": "Параметр",
+					"remove": "Удалить метаданные",
+					"title": "Редактировать метаданные",
+					"value": "Значение"
+				},
 				"modify_attribute": "Редактировать атрибут",
 				"msg_warning_drop_row": "Изменение порядка атрибутов возможно только, если отображены наследуемые атрибуты",
 				"name": "Имя",
@@ -84,10 +91,8 @@
 				"md_label": "Наименование детализации",
 				"modify_domain": "Редактировать связь",
 				"name": "Имя",
-				"title_add": "Создать связь",
-				"title_modify": "Редактировать связь \"{0}\""
+				"title_add": "Создать связь"
 			},
-			"domains_title": "Настройка связей",
 			"errors": {
 				"table": {
 					"cast": "Ошибка изменения свойства \"Суперкласс\". Класс содержит данные или имеет дочерние классы",
@@ -282,48 +287,9 @@
 			},
 			"title": "Панель"
 		},
-		"modLookup": {
-			"add_lookuptype": "Добавить перечень",
-			"lookupForm": {
-				"active": "Активный",
-				"code": "Код",
-				"description": "Описание",
-				"disable_lookup": "Отключить элемент",
-				"enable_lookup": "Включить элемент",
-				"isdefault": "По умолчанию",
-				"notes": "Комментарии",
-				"parentdescription": "Родитель",
-				"update_lookup": "Редактировать элемент"
-			},
-			"lookupGrid": {
-				"active": "Активный",
-				"add_lookup": "Добавить элемент",
-				"code": "Код",
-				"description": "Описание",
-				"isdefault": "По умолчанию",
-				"notes": "Комментарии",
-				"parentdescription": "Родитель"
-			},
-			"lookupType": "Перечень",
-			"lookupTypeForm": {
-				"active": "Активный",
-				"delete_lookuptype": "Удалить перечень",
-				"description": "Описание",
-				"modify_lookuptype": "Редактировать перечень",
-				"parent": "Родитель",
-				"title": "Настройка перечней"
-			},
-			"lookupTypes": "Перечни",
-			"tabs": {
-				"lookuplist": "Перечень",
-				"properties": "Свойства"
-			},
-			"title": "Настройка перечней"
-		},
 		"modWorkflow": {
 			"add_process": "Добавить процесс",
 			"attributes_title": "Атрибуты",
-			"domains_title": "Связи",
 			"errors": {
 				"table": {
 					"cast": "Ошибка изменения свойства \"Суперкласс\". Класс содержит данные или имеет дочерние классы",
@@ -401,56 +367,6 @@
 		},
 		"modconnectors": {
 			"title": "Соединители"
-		},
-		"modmenu": {
-			"add_menu": "Создать меню",
-			"available_elements": "Доступные элементы",
-			"availabletree": {
-				"class": "Классы",
-				"dashboard": "Панели",
-				"processclass": "Процессы",
-				"report": "Отчеты",
-				"view": "Виды"
-			},
-			"custom_menu": "Настраиваемое меню",
-			"custom_menus": "Настраиваемые меню",
-			"delete_menu": "Удалить меню",
-			"menu_root": "Меню",
-			"modify_menu": "Редактировать меню",
-			"new_folder": "Новая папка",
-			"title": "Настройка меню"
-		},
-		"modreport": {
-			"add": "Создать отчет",
-			"importJRFormStep1": {
-				"description": "Описание",
-				"enabled_groups": "Доступные группы",
-				"fieldset": "Импортировать отчет Jasper",
-				"master_report_jrxml": "Файл отчета (.jrxml)",
-				"menuTitle": "Отчет Jasper",
-				"name": "Название отчета"
-			},
-			"importJRFormStep2": {
-				"duplicate_images": "Невозможно выполнить: найдены изображения с дублирующимися именами файлов.",
-				"fieldset_generic": "Импортировать отчет Jasper",
-				"fieldset_images": "Требуемые изображения",
-				"fieldset_subreports": "Требуемые файлы",
-				"menuTitle": "Отчет Jasper",
-				"nothing_to_import": "Не найдено ни одного изображения или суботчета. Подтвердите выполнение процедуры импорта.",
-				"success": {
-					"description": {
-						"add": "Импорт выполнен",
-						"modify": "Отчет модифицирован"
-					},
-					"title": "Успешное выполнение"
-				}
-			},
-			"importOpenofficeTemplateForm": {
-				"menuTitle": "Отчет OpenOffice"
-			},
-			"modify": "Редактировать отчет",
-			"remove": "Удалить отчет",
-			"title": "Отчеты"
 		},
 		"modsecurity": {
 			"defaultgroup": "* По умолчанию *",
@@ -637,6 +553,7 @@
 			"importLabel": "Импорт",
 			"load": "Загрузить",
 			"modify": "Редактировать",
+			"move": "<em>Move</em>",
 			"next": "Далее",
 			"previous": "Назад",
 			"print": "Распечатать",
@@ -929,6 +846,8 @@
 			"WIDGET_SERVICE_MALFORMED_REQUEST": "Проверьте, что пространство имен, имя метода и параметры в вызове веб-процедуры указаны верно."
 		},
 		"reference_invalid": "Значение не совпадает с текущим фильтром",
+		"reportsImportError": "<em>Error while importing report</em>",
+		"reportsAnalizeError": "<em>Error while analizing report</em>",
 		"requiredFieldMessage": "Это поле является обязательным",
 		"routesInvalidCardIdentifier": "<em>Route error: invalid card identifier</em>",
 		"routesInvalidClassIdentifier": "<em>Route error: invalid class identifier</em>",
@@ -1128,22 +1047,6 @@
 			"showgraph": "Показать диаграмму связей",
 			"shownotes": "Показать комментарии"
 		},
-		"modmenu": {
-			"menu": "Навигация"
-		},
-		"modreport": {
-			"add_report": "Добавить отчет",
-			"delete_report": "Удалить отчет",
-			"modify_report": "Редактировать отчет",
-			"reportForm": {
-				"description": "Описание",
-				"name": "Название",
-				"report": "Отчеты"
-			},
-			"report_parameters": "Параметры отчета",
-			"title": "Список - ",
-			"treetitle": "Отчеты"
-		},
 		"modutilities": {
 			"bulkupdate": {
 				"title": "Массовое обновление",
@@ -1258,6 +1161,7 @@
 		"link_cards_changed_values": "<em>The selection of \"{0}\" has been updated.</em>",
 		"only_filtered": "Изменения будут применены только к карточкам, совпадающим с текущим фильтром",
 		"popup_block": "Пожалуйста, отключите блокировку всплывающих окон в браузере для нормальной работы",
+		"reportsDuplicateImageFilename": "Невозможно выполнить: найдены изображения с дублирующимися именами файлов.",
 		"saveMenuBeforeAccess": "<em>The menu has to been saved before access at the translations of this element.</em>",
 		"warning_message": "Предупреждение"
 	},
@@ -1269,13 +1173,18 @@
 	"add": "Добавить",
 	"addAccount": "Создать учетную запись",
 	"addAttachmentFromDms": "Вложить файлы из DMS",
+	"addDomain": "Создать связь",
 	"addFilter": "Создать фильтр",
+	"addLookup": "Добавить элемент",
+	"addLookupType": "Добавить перечень",
 	"addProject": "Создать проект",
 	"addRelations": "Добавить связь",
+	"addReport": "Создать отчет",
 	"addRow": "Добавить строку",
 	"addTemplate": "Создать шаблон",
 	"addUser": "Добавить пользователя",
 	"addView": "Создать представление",
+	"add_attachment_from_dms": "Вложить файлы из DMS",
 	"address": "Адрес",
 	"alfresco": "Документы Alfresco",
 	"application": "Приложение",
@@ -1285,6 +1194,7 @@
 	"attention": "Внимание",
 	"attribute": "Атрибут",
 	"attributes": "Атрибуты",
+	"availableElements": "Доступные элементы",
 	"availableFilters": "Доступные фильтры",
 	"baseProperties": "Основные свойства",
 	"bcc": "Скрытая копия",
@@ -1296,6 +1206,7 @@
 	"cacheManagement": "Управление кэшем",
 	"camera": "Камера",
 	"cardPanelHeight": "Высота панели карточек в процентах",
+	"cardinality": "Тип связи",
 	"cc": "Копия",
 	"changePassword": "Изменить пароль",
 	"checkFrequency": "Периодичность проверки (мин)",
@@ -1308,6 +1219,7 @@
 	"clearFilter": "Сбросить фильтр",
 	"clear_row_and_colun_privilege": "Сбросить права для строк и колонок",
 	"cmdbuildCategory": "Категория CMDBuild",
+	"code": "Код",
 	"composeEmail": "Составление сообщения",
 	"composeFromTemplate": "<em>Compose from template</em>",
 	"confirmRegeneration": "<em>Confirm regeneration</em>",
@@ -1323,6 +1235,8 @@
 	"credentials": "Учетные данные",
 	"csv": "CSV",
 	"csvFile": "Файл CSV",
+	"customMenu": "Настраиваемое меню",
+	"dataSource": "Источник данных",
 	"defaultAccount": "<em>Default account</em>",
 	"defaultClass": "Класс по умолчанию",
 	"defaultGroup": "Основная группа",
@@ -1330,18 +1244,22 @@
 	"defaultLanguage": "Язык по умолчанию",
 	"defaultLevel": "Уровень по умолчанию",
 	"delay": "<em>Delay</em>",
+	"deleteDomain": "Удалить связь",
 	"deleteLabel": "<em>Delete</em>",
 	"deleteRow": "Удалить строку",
 	"descriptionLabel": "Описание",
 	"description_": "Описание",
 	"destination": "Связанная таблица",
 	"details": "Подробно",
+	"directDescription": "Прямое отношение",
 	"disable": "Отключить",
 	"disableGridFilter": "<em>Disable grid filter</em>",
+	"disableLookup": "Отключить элемент",
 	"disableUser": "Отключить пользователя",
 	"display_less_attributes": "Показать меньше атрибутов",
 	"display_more_attributes": "Показать больше атрибутов",
 	"domain": "Связь",
+	"domains": "Связи",
 	"download": "<em>Download</em>",
 	"download_ifc_file": "Скачать Ifc-файл",
 	"edit": "<em>Edit</em>",
@@ -1354,11 +1272,13 @@
 	"emailTemplate": "Шаблон письма",
 	"enable": "Включить",
 	"enableGridFilter": "<em>Enable grid filter</em>",
+	"enableLookup": "Включить элемент",
 	"enableMoveRejectedNotMatching": "<em>Enable move rejected not matching</em>",
 	"enableSsl": "Использовать SSL",
 	"enableUser": "Включить пользователя",
 	"enabled": "Включено",
 	"enabledClasses": "<em>Enabled classes</em>",
+	"enabledGroups": "Доступные группы",
 	"enabledLanguages": "Включенные языки",
 	"endDate": "Конечная дата",
 	"engineName": "Имя движка",
@@ -1371,7 +1291,7 @@
 	"fileServerPath": "Путь на файловом сервере",
 	"filter": "Фильтр",
 	"filterView": "На основе фильтра",
-	"filters_for_groups": "Фильтры для групп",
+	"filtersForGroups": "Фильтры для групп",
 	"format_csv": "Текст CSV",
 	"format_odt": "Документ OpenOffice",
 	"format_pdf": "Документ Adobe PDF",
@@ -1391,6 +1311,7 @@
 	"imapPort": "IMAP порт",
 	"imapServer": "IMAP сервер",
 	"importFromCSV": "<em>Import from CSV</em>",
+	"importJasperReport": "Импортировать отчет Jasper",
 	"includeRelations": "<em>Include relations</em>",
 	"includeSystemActivities": "<em>Include system activities</em>",
 	"incoming": "Входящая почта",
@@ -1399,6 +1320,7 @@
 	"initialLongitude": "Начальная долгота",
 	"initialZoomLevel": "Начальный масштаб",
 	"instanceName": "Имя инстанса",
+	"inverseDescription": "Обратное отношение",
 	"ipType": "<em>IP type</em>",
 	"ipv4": "ipv4",
 	"ipv6": "ipv6",
@@ -1413,21 +1335,34 @@
 	"lockTimeout": "Таймаут блокировки (секунд)",
 	"loggedGroup": "Группа",
 	"loggedUser": "Пользователь",
+	"lookupList": "Перечень",
+	"lookupTypes": "Перечень",
 	"main": "Основной",
 	"manualRegeneration": "<em>Manual Regeneration</em>",
+	"masterDetail": "Детализированная связь",
+	"masterDetailLabel": "Наименование детализации",
+	"masterReportJrxml": "Файл отчета (.jrxml)",
 	"maximumLevel": "Максимальный уровень",
+	"menu": "Меню",
 	"mode": "Режим",
 	"modifyAccount": "Редактировать учетную запись",
+	"modifyDomain": "Редактировать связь",
 	"modifyFilter": "Редактировать представление",
+	"modifyLookup": "Редактировать элемент",
+	"modifyLookupType": "Редактировать перечень",
 	"modifyProject": "Редактировать проект",
+	"modifyReport": "Modify report",
 	"modifyTemplate": "Редактировать шаблон",
 	"modifyUser": "Редактировать пользователя",
 	"modifyView": "Редактировать представление",
 	"multiGroup": "Несколько групп",
 	"name": "Имя",
+	"navigation": "Навигация",
+	"newFolder": "Новая папка",
 	"noAvailableData": "<em>No available data</em>",
 	"no_bim_project_for_card": "Для данной карточки не задан BIM-проект",
 	"not_set": "Не установлен",
+	"notes": "Комментарии",
 	"odt": "ODT",
 	"onDay": "<em>On</em>",
 	"open_3d_viewer": "Открыть 3D просмотр",
@@ -1435,6 +1370,8 @@
 	"origin": "Исходная таблица",
 	"outgoing": "Исходящая почта",
 	"pan": "Переместить",
+	"parent": "Родитель",
+	"parentDescription": "Родитель",
 	"password": "Пароль",
 	"pdf": "PDF",
 	"popupPercentageHeight": "Высота всплывающего окна в процентах",
@@ -1442,12 +1379,14 @@
 	"popupWindows": "Всплывающие окна",
 	"port": "Порт",
 	"preselectIfUnique": "<em>Preselect if unique</em>",
+	"printPreview": "<em>Print preview</em>",
 	"privileged": "<em>Privileged</em>",
 	"privileges_on_columns": "Права доступа к колонкам",
 	"privileges_on_rows": "Права доступа к строкам",
 	"processedFolder": "Папка обработанной почты",
 	"projects": "Проекты",
 	"promptSync": "<em>Prompt sync</em>",
+	"properties": "Свойства",
 	"queue": "<em>Queue</em>",
 	"readOnly": "Только чтение",
 	"referenceComboLimit": "Лимит числа элементов в списках связей и перечней",
@@ -1461,13 +1400,16 @@
 	"remove": "Удалить",
 	"removeAccount": "Удалить учетную запись",
 	"removeFilter": "Удалить представление",
+	"removeMenu": "Удалить меню",
 	"removeProject": "Удалить проект",
+	"removeReport": "Remove report",
 	"removeTemplate": "Удалить шаблон",
 	"removeView": "Удалить представление",
 	"remove_formatting": "Очистить форматирование",
 	"replace": "<em>Replace</em>",
 	"reply": "<em>Reply</em>",
-	"report": "<em>Report</em>",
+	"report": "Report",
+	"reportMenuJasper": "<em>Jasper-reports report</em>",
 	"reportParameters": "<em>Report parameters</em>",
 	"repository": "Хранилище документов",
 	"reset": "Сброс",
@@ -1477,7 +1419,7 @@
 	"row_and_column_privileges": "Права доступа к строкам и колонкам",
 	"rtf": "RTF",
 	"scope": "Область",
-	"search_filters": "Поисковые фильтры",
+	"searchFilters": "Поисковые фильтры",
 	"selectAClass": "Выберите класс",
 	"selected_object": "Выбранный объект",
 	"send": "<em>Send</em>",
@@ -1500,6 +1442,7 @@
 	"side": "Сбоку",
 	"smtpPort": "SMTP порт",
 	"smtpServer": "SMTP сервер",
+	"sql": "SQL",
 	"sqlView": "На основе SQL-запроса",
 	"start": "<em>Start</em>",
 	"status": "<em>Status</em>",
@@ -1550,5 +1493,6 @@
 	"workflow_cql_filter": "CQL-фильтр",
 	"workflow_query_tipology": "Отбор",
 	"you_have_not_set_a_filter": "Фильтр не установлен",
+	"zip": "ZIP",
 	"zoom": "Масштабировать"
 }

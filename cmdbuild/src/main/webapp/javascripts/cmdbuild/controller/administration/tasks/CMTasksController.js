@@ -4,7 +4,7 @@
 		extend: 'CMDBuild.controller.common.CMBasePanelController',
 
 		requires: [
-			'CMDBuild.core.proxy.CMProxyConstants',
+			'CMDBuild.core.proxy.Constants',
 			'CMDBuild.core.proxy.CMProxyTasks',
 			'CMDBuild.core.Utils'
 		],
@@ -96,7 +96,7 @@
 				// Fire show event on accordion click
 				this.view.fireEvent('show');
 
-				this.setViewTitle(parameters.get(CMDBuild.core.proxy.CMProxyConstants.TEXT));
+				this.setViewTitle(parameters.get(CMDBuild.core.proxy.Constants.TEXT));
 
 				this.callParent(arguments);
 			}
@@ -268,7 +268,7 @@
 		 * @param {Function} callback
 		 */
 		onRowSelected: function(name, param, callBack) {
-			var selectedType = this.selectionModel.getSelection()[0].get(CMDBuild.core.proxy.CMProxyConstants.TYPE);
+			var selectedType = this.selectionModel.getSelection()[0].get(CMDBuild.core.proxy.Constants.TYPE);
 
 			if (
 				!this.form.delegate
@@ -290,7 +290,7 @@
 			CMDBuild.core.proxy.CMProxyTasks.start({
 				scope: this,
 				params: {
-					id: record.get(CMDBuild.core.proxy.CMProxyConstants.ID)
+					id: record.get(CMDBuild.core.proxy.Constants.ID)
 				},
 				success: this.success,
 				callback: this.callback
@@ -306,7 +306,7 @@
 			CMDBuild.core.proxy.CMProxyTasks.stop({
 				scope: this,
 				params: {
-					id: record.get(CMDBuild.core.proxy.CMProxyConstants.ID)
+					id: record.get(CMDBuild.core.proxy.Constants.ID)
 				},
 				success: this.success,
 				callback: this.callback
@@ -337,8 +337,8 @@
 					me.form.disableModify(true);
 
 					var rowIndex = this.find(
-						CMDBuild.core.proxy.CMProxyConstants.ID,
-						options.params[CMDBuild.core.proxy.CMProxyConstants.ID]
+						CMDBuild.core.proxy.Constants.ID,
+						options.params[CMDBuild.core.proxy.Constants.ID]
 					);
 
 					me.selectionModel.deselectAll();

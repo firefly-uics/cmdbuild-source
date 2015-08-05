@@ -4,7 +4,8 @@
 		extend: 'Ext.grid.Panel',
 
 		requires: [
-			'CMDBuild.core.proxy.CMProxyConstants',
+			'CMDBuild.core.Message',
+			'CMDBuild.core.proxy.Constants',
 			'CMDBuild.core.proxy.email.Accounts'
 		],
 
@@ -21,7 +22,7 @@
 				columns: [
 					{
 						text: CMDBuild.Translation.defaultLabel,
-						dataIndex: CMDBuild.core.proxy.CMProxyConstants.IS_DEFAULT,
+						dataIndex: CMDBuild.core.proxy.Constants.IS_DEFAULT,
 						align: 'center',
 						width: 50,
 						sortable: false,
@@ -34,12 +35,12 @@
 						}
 					},
 					{
-						dataIndex: CMDBuild.core.proxy.CMProxyConstants.NAME,
+						dataIndex: CMDBuild.core.proxy.Constants.NAME,
 						text: CMDBuild.Translation.name,
 						flex: 1
 					},
 					{
-						dataIndex: CMDBuild.core.proxy.CMProxyConstants.ADDRESS,
+						dataIndex: CMDBuild.core.proxy.Constants.ADDRESS,
 						text: CMDBuild.Translation.address,
 						flex: 1
 					}
@@ -63,7 +64,15 @@
 			viewready: function() {
 				this.getStore().load({
 					scope: this,
-					callback: function() {
+					callback: function(records, operation, success) {
+						// Store load errors manage
+						if (!success) {
+							CMDBuild.core.Message.error(null, {
+								text: CMDBuild.Translation.errors.unknown_error,
+								detail: operation.error
+							});
+						}
+
 						if (!this.getSelectionModel().hasSelection())
 							this.getSelectionModel().select(0, true);
 					}

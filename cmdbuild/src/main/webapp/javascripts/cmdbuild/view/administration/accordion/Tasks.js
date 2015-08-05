@@ -5,7 +5,6 @@
 	Ext.define('CMDBuild.view.administration.accordion.Tasks', {
 		extend: 'CMDBuild.view.common.CMBaseAccordion',
 
-		cmName: 'tasks',
 		title: tr.title,
 
 		constructor: function(){

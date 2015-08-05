@@ -27,8 +27,8 @@
 <script type="text/javascript" src="javascripts/cmdbuild/override/layout/container/FixEditor.js"></script>
 
 <!--  PROXYES -->
-<script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxyConstants.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxyUrlIndex.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/core/proxy/Constants.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/core/proxy/Index.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxy.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/proxy/Attachment.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/proxy/Attributes.js"></script>
@@ -38,24 +38,20 @@
 <script type="text/javascript" src="javascripts/cmdbuild/core/proxy/Filter.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxyAdministration.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxyDashboard.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxyDataView.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxyGIS.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxyGroup.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxyIcon.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxyLookup.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxyMenu.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxyNavigationTrees.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxyTranslations.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxyWidgetConfiguration.js"></script>
 
 <!-- MODELS -->
+<script type="text/javascript" src="javascripts/cmdbuild/model/reports/Cache.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/model/CMCacheModels.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/model/CMFilterModel.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/model/CMDomainModels.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/model/CMGroupModels.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/model/CMDashboardModels.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/model/CMAttachmentModels.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/model/Report.js"></script>
 
 <!-- SELECTION -->
 <script type="text/javascript" src="javascripts/cmdbuild/selection/CMMultiPageSelectionModel.js"></script>
@@ -68,7 +64,6 @@
 <script type="text/javascript" src="javascripts/cmdbuild/cache/CMCacheLookupFunctions.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/cache/CMCacheGroupsFunctions.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/cache/CMCacheDomainFunctions.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/cache/CMCacheTranslationsFunctions.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/cache/CMCacheDashboardFunctions.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/cache/CMCacheAttachmentCategoryFunctions.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/cache/CMCacheGISFunctions.js"></script>
@@ -84,8 +79,6 @@
 <script type="text/javascript" src="javascripts/cmdbuild/core/xml/XMLUtility.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/buttons/CMClassesMenuButton.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/buttons/AddCardMenuButton.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/core/buttons/AddRelationMenuButton.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/core/buttons/PrintMenuButton.js"></script>
 
 <!-- FORM STUFF -->
 <script type="text/javascript" src="javascripts/cmdbuild/form/CallbackPlugin.js"></script>

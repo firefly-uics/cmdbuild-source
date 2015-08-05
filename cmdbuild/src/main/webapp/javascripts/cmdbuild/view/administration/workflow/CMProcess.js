@@ -15,9 +15,12 @@
 				text: tr.add_process
 			});
 
-			this.printSchema = Ext.create('CMDBuild.PrintMenuButton', {
-				text: CMDBuild.Translation.administration.modClass.print_schema,
-				formatList: ['pdf', 'odt']
+			this.printSchema = Ext.create('CMDBuild.core.buttons.iconized.Print', {
+				formatList: [
+					CMDBuild.core.proxy.Constants.PDF,
+					CMDBuild.core.proxy.Constants.ODT
+				],
+				text: CMDBuild.Translation.administration.modClass.print_schema
 			});
 
 			this.processForm = Ext.create('CMDBuild.view.administration.workflow.CMProcessForm', {

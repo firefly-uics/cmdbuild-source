@@ -4,26 +4,26 @@
 		alternateClassName: 'CMDBuild.ServiceProxy.Filter', // Legacy class name
 
 		requires: [
-			'CMDBuild.core.proxy.CMProxyConstants',
-			'CMDBuild.core.proxy.CMProxyUrlIndex'
+			'CMDBuild.core.proxy.Constants',
+			'CMDBuild.core.proxy.Index'
 		],
 
 		singleton: true,
 
 		create: function(filter, config) {
-			doRequest(filter, config, CMDBuild.core.proxy.CMProxyUrlIndex.filter.create, 'POST', true);
+			doRequest(filter, config, CMDBuild.core.proxy.Index.filters.create, 'POST', true);
 		},
 
 		update: function(filter, config) {
-			doRequest(filter, config, CMDBuild.core.proxy.CMProxyUrlIndex.filter.update, 'POST', true);
+			doRequest(filter, config, CMDBuild.core.proxy.Index.filters.update, 'POST', true);
 		},
 
 		remove: function(filter, config) {
-			doRequest(filter, config, CMDBuild.core.proxy.CMProxyUrlIndex.filter.remove, 'POST', false);
+			doRequest(filter, config, CMDBuild.core.proxy.Index.filters.remove, 'POST', false);
 		},
 
 		position: function(filter, config) {
-			doRequest(filter, config, CMDBuild.core.proxy.CMProxyUrlIndex.filter.position, 'GET', false);
+			doRequest(filter, config, CMDBuild.core.proxy.Index.filters.position, 'GET', false);
 		},
 
 		/**
@@ -37,7 +37,7 @@
 				model: 'CMDBuild.model.CMFilterModel',
 				pageSize: _CMUtils.grid.getPageSize(),
 				proxy: {
-					url: CMDBuild.core.proxy.CMProxyUrlIndex.filter.groupStore,
+					url: CMDBuild.core.proxy.Index.filters.groupStore,
 					type: 'ajax',
 					reader: {
 						root: 'filters',
@@ -46,7 +46,7 @@
 					}
 				},
 				sorters: [{
-					property: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
+					property: CMDBuild.core.proxy.Constants.DESCRIPTION,
 					direction: 'ASC'
 				}]
 			});
@@ -63,7 +63,7 @@
 				model: 'CMDBuild.model.CMFilterModel',
 				proxy: {
 					type: 'ajax',
-					url: CMDBuild.core.proxy.CMProxyUrlIndex.filter.userStore,
+					url: CMDBuild.core.proxy.Index.filters.userStore,
 					reader: {
 						idProperty: 'id',
 						type: 'json',
@@ -71,7 +71,7 @@
 					}
 				},
 				sorters: [{
-					property: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
+					property: CMDBuild.core.proxy.Constants.DESCRIPTION,
 					direction: 'ASC'
 				}]
 			 });
@@ -80,7 +80,7 @@
 		/**
 		 * @param {String} className
 		 *
-		 * @return {Ext.data.Store}
+		 * @returns {Ext.data.Store}
 		 */
 		newSystemStore: function(className) {
 			return Ext.create('Ext.data.Store', {
@@ -88,7 +88,7 @@
 				model: 'CMDBuild.model.CMFilterModel',
 				pageSize: _CMUtils.grid.getPageSize(),
 				proxy: {
-					url: CMDBuild.core.proxy.CMProxyUrlIndex.filter.read,
+					url: CMDBuild.core.proxy.Index.filters.read,
 					type: 'ajax',
 					reader: {
 						root: 'filters',
@@ -100,7 +100,7 @@
 					}
 				},
 				sorters: [{
-					property: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
+					property: CMDBuild.core.proxy.Constants.DESCRIPTION,
 					direction: 'ASC'
 				}]
 			});

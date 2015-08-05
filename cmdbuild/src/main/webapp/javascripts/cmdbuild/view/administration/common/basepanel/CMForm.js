@@ -63,13 +63,13 @@ Ext.define("CMDBuild.view.administration.common.basepanel.CMForm", {
 			this.cmTBar.push(this.enableDisableButton);
 		}
 
-		this.saveButton = new CMDBuild.buttons.SaveButton({
+		this.saveButton = Ext.create('CMDBuild.core.buttons.text.Save', {
 			handler: function() {
 				me.callDelegates("onFormSaveButtonClick", me);
 			}
 		});
 
-		this.abortButton = new CMDBuild.buttons.AbortButton({
+		this.abortButton = Ext.create('CMDBuild.core.buttons.text.Abort', {
 			handler: function() {
 				me.callDelegates("onFormAbortButtonClick", me);
 			}

@@ -5,7 +5,7 @@
 	Ext.define('CMDBuild.view.administration.tasks.common.workflowForm.CMWorkflowFormGrid', {
 		extend: 'Ext.grid.Panel',
 
-		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+		requires: ['CMDBuild.core.proxy.Constants'],
 
 		/**
 		 * @cfg {CMDBuild.controller.administration.tasks.common.workflowForm.CMWorkflowFormController}
@@ -25,14 +25,14 @@
 		columns: [
 			{
 				header: CMDBuild.Translation.name,
-				dataIndex: CMDBuild.core.proxy.CMProxyConstants.NAME,
+				dataIndex: CMDBuild.core.proxy.Constants.NAME,
 				flex: 1,
 
 				editor: { xtype: 'textfield' }
 			},
 			{
 				header: CMDBuild.Translation.value,
-				dataIndex: CMDBuild.core.proxy.CMProxyConstants.VALUE,
+				dataIndex: CMDBuild.core.proxy.Constants.VALUE,
 				flex: 1,
 
 				editor: { xtype: 'textfield' }
@@ -84,7 +84,7 @@
 					{
 						xtype: 'toolbar',
 						dock: 'top',
-						itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_TOP,
+						itemId: CMDBuild.core.proxy.Constants.TOOLBAR_TOP,
 						items: [
 							{
 								text: CMDBuild.Translation.common.buttons.add,
