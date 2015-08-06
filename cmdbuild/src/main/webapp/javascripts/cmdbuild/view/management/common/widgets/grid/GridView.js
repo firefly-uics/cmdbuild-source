@@ -32,7 +32,7 @@
 						dock: 'top',
 						itemId: CMDBuild.core.proxy.Constants.TOOLBAR_TOP,
 						items: [
-							this.addButton = Ext.create('CMDBuild.core.buttons.iconized.Add', {
+							this.addButton = Ext.create('CMDBuild.core.buttons.iconized.add.Add', {
 								text: CMDBuild.Translation.addRow,
 								scope: this,
 

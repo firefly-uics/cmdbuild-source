@@ -1,6 +1,6 @@
 (function() {
 
-	Ext.define('CMDBuild.core.buttons.iconized.Add', {
+	Ext.define('CMDBuild.core.buttons.iconized.add.Add', {
 		extend: 'CMDBuild.core.buttons.Base',
 
 		iconCls: 'add',

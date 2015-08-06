@@ -31,7 +31,7 @@
 				bodyCls: "x-panel-body-default-framed cmborder"
 			});
 
-			this.addButton = new CMDBuild.view.administration.widget.CMAddWidgetDefinitionButton();
+			this.addButton = Ext.create('CMDBuild.core.buttons.iconized.add.WidgetDefinition');
 
 			this.grid = new CMDBuild.view.administration.widget.CMWidgetDefinitionGrid({
 				region: "north",
