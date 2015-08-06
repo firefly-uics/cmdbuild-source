@@ -91,14 +91,19 @@
 		},
 
 		/**
-		 * Accept in imput only dates with format "dd/mm/yy" and switch dd and mm to fix a bug that grid columns takes default format and not configured one
+		 * Accept in input only dates with format "dd/mm/yy" and switch dd and mm to fix a bug that grid columns takes default format and not configured one
+		 * TODO: should be fixed applying this function only to date fields (testing attributes object)
 		 *
 		 * @param {Object} value
 		 *
 		 * @return {String or Object}
 		 */
 		formatDate: function(value) {
-			if (!Ext.isEmpty(value) && Ext.isString(value)) {
+			if (
+				!Ext.isEmpty(value)
+				&& Ext.isString(value)
+				&& !/<[a-z][\s\S]*>/i.test(value) // Avoids to format HTML strings
+			) {
 				var splittedDate = value.split('/');
 
 				if (splittedDate.length == 3)
