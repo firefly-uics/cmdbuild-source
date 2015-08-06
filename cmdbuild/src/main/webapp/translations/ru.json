@@ -1099,9 +1099,6 @@
 				"attachments": {
 					"must_save_to_add": "Нельзя добавлять вложенный файл в карточку до сохранения процесса"
 				},
-				"createreport": {
-					"format_label": "Формат"
-				},
 				"linkcards": {
 					"required": "Пожалуйста, выберите карточки - "
 				},
@@ -1292,6 +1289,7 @@
 	"filter": "Фильтр",
 	"filterView": "На основе фильтра",
 	"filtersForGroups": "Фильтры для групп",
+	"format": "Формат",
 	"format_csv": "Текст CSV",
 	"format_odt": "Документ OpenOffice",
 	"format_pdf": "Документ Adobe PDF",

@@ -1099,9 +1099,6 @@
 				"calendar": {
 					"wrong_config": "Lịch không được cấu hình tốt"
 				},
-				"createreport": {
-					"format_label": "Mẫu"
-				},
 				"linkcards": {
 					"required": "Xin vui lòng chọn một vài thẻ- "
 				},
@@ -1292,6 +1289,7 @@
 	"filter": "Bộ lọc",
 	"filterView": "Bộ lọc từ",
 	"filtersForGroups": "Các bộ lọc của các nhóm",
+	"format": "Mẫu",
 	"format_csv": "<em>CSV</em>",
 	"format_odt": "<em>OpenOffice Odt</em>",
 	"format_pdf": "<em>Adobe Pdf</em>",
