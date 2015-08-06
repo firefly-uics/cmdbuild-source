@@ -63,10 +63,17 @@
 			if (subControllerClass) {
 				var subView = this.view.buildWidgetForm(widgetName);
 
-				this.subController = subControllerClass.create({
-					view: subView,
-					classId: classId
-				});
+				if (Ext.isString(subControllerClass)) {
+					this.subController = Ext.create(subControllerClass, {
+						view: subView,
+						classId: classId
+					});
+				} else {
+					this.subController = subControllerClass.create({
+						view: subView,
+						classId: classId
+					});
+				}
 
 				if (!Ext.Object.isEmpty(record))
 					this.subController.fillFormWithModel(record);
@@ -79,12 +86,20 @@
 			function findController(widgetName) {
 				var controller = null;
 
-				for (var key in CMDBuild.controller.administration.widget)
-					if (CMDBuild.controller.administration.widget[key].WIDGET_NAME == widgetName) {
-						controller = CMDBuild.controller.administration.widget[key];
+				switch (widgetName) {
+					case '.OpenReport': {
+						controller = 'CMDBuild.controller.administration.widget.OpenReport';
+					} break;
 
-						break;
+					default: {
+						for (var key in CMDBuild.controller.administration.widget)
+							if (CMDBuild.controller.administration.widget[key].WIDGET_NAME == widgetName) {
+								controller = CMDBuild.controller.administration.widget[key];
+
+								break;
+							}
 					}
+				}
 
 				return controller;
 			}
@@ -210,7 +225,7 @@
 
 						me.view.addRecordToGrid(widgetModel, true);
 						me.view.disableModify(true);
-_debug('form', me.view.form);
+
 						CMDBuild.view.common.field.translatable.Utils.commit(me.view.form);
 					}
 				});

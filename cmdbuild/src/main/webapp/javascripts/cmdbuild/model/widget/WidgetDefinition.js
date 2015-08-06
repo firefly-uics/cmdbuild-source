@@ -7,7 +7,7 @@
 
 		fields: [
 			{ name: CMDBuild.core.proxy.Constants.ACTIVE, type: 'boolean', defaultValue: true },
-			{ name: CMDBuild.core.proxy.Constants.ID, type: 'string' },
+			{ name: CMDBuild.core.proxy.Constants.ID, type: 'int', useNull: true },
 			{ name: CMDBuild.core.proxy.Constants.LABEL, type: 'string' },
 			{ name: CMDBuild.core.proxy.Constants.TYPE, type: 'string' }
 		],

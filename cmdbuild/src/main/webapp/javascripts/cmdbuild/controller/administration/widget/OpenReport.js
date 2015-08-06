@@ -1,6 +1,6 @@
 (function() {
 
-	Ext.define('CMDBuild.controller.administration.widget.CMOpenReportController', {
+	Ext.define('CMDBuild.controller.administration.widget.OpenReport', {
 		extend: 'CMDBuild.controller.administration.widget.CMBaseWidgetDefinitionFormController',
 
 		requires: [
@@ -14,14 +14,14 @@
 		},
 
 		/**
-		 * @property {CMDBuild.view.administration.widget.form.CMOpenReportDefinitionForm}
+		 * @property {CMDBuild.view.administration.widget.form.OpenReport}
 		 */
 		view: undefined,
 
 		/**
 		 * @param {Object} configuration
 		 * @param {Number} configuration.classId
-		 * @param {CMDBuild.view.administration.widget.form.CMOpenReportDefinitionForm} configuration.view
+		 * @param {CMDBuild.view.administration.widget.form.OpenReport} configuration.view
 		 */
 		constructor: function(configuration) {
 			this.callParent(arguments);
@@ -72,7 +72,7 @@
 			// Reset presetGrid store
 			this.view.presetGrid.getStore().removeAll();
 
-			CMDBuild.core.proxy.widgets.OpenReport.getReportAttributes({
+			CMDBuild.core.proxy.widgets.OpenReport.create({
 				scope: this,
 				params: {
 					id: reportCode,

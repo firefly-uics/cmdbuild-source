@@ -2,10 +2,13 @@
 
 	var tr = CMDBuild.Translation.administration.modClass.widgets;
 
-	Ext.define('CMDBuild.view.administration.widget.form.CMOpenReportDefinitionForm', {
+	Ext.define('CMDBuild.view.administration.widget.form.OpenReport', {
 		extend: 'CMDBuild.view.administration.widget.form.CMBaseWidgetDefinitionForm',
 
-		requires: ['CMDBuild.core.proxy.Constants'],
+		requires: [
+			'CMDBuild.core.proxy.Constants',
+			'CMDBuild.core.proxy.widgets.OpenReport'
+		],
 
 		mixins: {
 			panelFunctions: 'CMDBuild.view.common.PanelFunctions'
@@ -16,7 +19,7 @@
 		},
 
 		/**
-		 * @cfg {CMDBuild.controller.administration.widget.CMOpenReportController}
+		 * @cfg {CMDBuild.controller.administration.widget.OpenReport}
 		 */
 		delegate: undefined,
 
@@ -71,7 +74,8 @@
 				forceSelection: true,
 				editable: false,
 
-				store: CMDBuild.core.proxy.widgets.OpenReport.getReportsStore()
+				store: CMDBuild.core.proxy.widgets.OpenReport.getReportsStore(),
+				queryMode: 'local'
 			});
 
 			this.forceFormatCheck = Ext.create('Ext.form.field.Checkbox', {
