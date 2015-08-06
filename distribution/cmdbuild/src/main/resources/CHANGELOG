@@ -1,3 +1,83 @@
+CMDBuild 2.3.3 (released 2015/08/06)
+
+
+NEW FEATURES
+
+ * Added Hungarian translation
+
+ * API for aborting a process
+
+ * Lock for process instance's activities
+
+ * Optimization for queries whose expected results are one single record
+
+ * Optimization to cards' history performances
+
+ * Pre-selection of a reference value when there is only one value available
+
+ * Updated Dutch translations
+
+
+FIXES
+
+ * Cannot advance a process instance after a database has been restored
+
+ * Characters filtering for JSON management
+
+ * Classes routes: using simple filter (Attribute~value) returns indexOf null javascript error
+
+ * E-mail queue stops sending all messages when there is a connection error to a single SMTP server
+
+ * Email Task folder not marked as required
+
+ * Error from workflow engine when there are missing variables
+
+ * Error getting relations when row privileges are applied using a function
+
+ * Error (on logs only) when updating a reference attribute that have its own attributes
+
+ * Errors not managed on grid store load
+
+ * ForeignKey fieds doesn't manage correctly reference combo store limits
+
+ * History attributes sort order
+
+ * Logged user and Logged group items not visible in filter reference fields
+
+ * ManageRelations widget add relation button disabled
+
+ * Modal windows width problems
+
+ * Multiple attribute request for reports
+
+ * Navigation is impossible within grid visualization when all elements are removed from a page after the first
+
+ * No SQL errors display on create/update card
+
+ * OpenReport widget has problems with attributes
+
+ * Report's parameter popup visualization problems with IE11
+
+ * REST API - Missing hidden/writable statuses for class attributes
+
+ * Some field displays HTML tags on cell edit mode with firefox
+
+ * Usernames too restricted allowed characters
+
+ * Warning modal windows steals focus from underlying form
+
+ * WidgetGrid: HTML field chages value with "Invalid date" after editing by pencil icon
+
+ * WidgetGrid: numeric fields show "undefined" when adding new row
+
+ * Widget LinkCard default selection not correctly managed
+
+ * Wizard connector execution fails for null lookup-attribute values
+
+
+
+
+
 CMDBuild 2.3.2 (released 2015/06/05)
 
 
