@@ -80,7 +80,6 @@
 
 	<!-- WIDGET -->
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/widget/CMWidgetDefinitionGrid.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/widget/CMAddWidgetDefinitionButton.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/widget/form/CMBaseWidgetDefinitionForm.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/widget/form/CMCalendarDefinitionForm.js"></script>
 <!-- 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/widget/form/CMNavigationTreeDefinitionForm.js"></script>

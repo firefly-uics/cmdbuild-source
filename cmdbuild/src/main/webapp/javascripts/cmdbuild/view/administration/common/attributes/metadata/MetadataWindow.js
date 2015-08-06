@@ -81,7 +81,7 @@
 						itemId: CMDBuild.core.proxy.Constants.TOOLBAR_TOP,
 
 						items: [
-							Ext.create('CMDBuild.core.buttons.iconized.Add', {
+							Ext.create('CMDBuild.core.buttons.iconized.add.Add', {
 								scope: this,
 
 								handler: function(button, e) {

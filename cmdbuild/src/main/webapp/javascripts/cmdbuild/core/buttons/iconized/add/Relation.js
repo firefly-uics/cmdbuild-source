@@ -1,6 +1,6 @@
 (function() {
 
-	Ext.define('CMDBuild.core.buttons.iconized.AddRelationMenuButton', {
+	Ext.define('CMDBuild.core.buttons.iconized.add.Relation', {
 		extend: 'Ext.button.Split',
 
 		requires: [
