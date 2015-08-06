@@ -509,14 +509,9 @@
 		onRowEditButtonClick: function(model) {
 			var cardWindow = this.getCardWindow(model, true);
 
-			cardWindow.on(
-				'destroy',
-				function() {
-					this.grid.reload();
-				},
-				this,
-				{ single: true }
-			);
+			cardWindow.on('destroy', function() {
+				this.grid.reload();
+			}, this, { single: true });
 
 			cardWindow.show();
 		},
