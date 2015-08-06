@@ -35,6 +35,13 @@
 				"isunique": "Egyedi",
 				"length": "Hossz",
 				"lookup": "Lista",
+				"meta": {
+					"add": "<em>Add meta</em>",
+					"key": "<em>Key</em>",
+					"remove": "<em>Delete meta</em>",
+					"title": "<em>Edit metadata</em>",
+					"value": "<em>Value</em>"
+				},
 				"modify_attribute": "Attribútum módosítása",
 				"msg_warning_drop_row": "Az újrarendezés csak az örökölt attribútumok megjelenítése esetén működik",
 				"name": "Név",
@@ -84,10 +91,8 @@
 				"md_label": "Mester/Részlet címke",
 				"modify_domain": "Domain módosítása",
 				"name": "Név",
-				"title_add": "Domain hozzáadása",
-				"title_modify": "Domain módosítása \"{0}\""
+				"title_add": "Domain hozzáadása"
 			},
-			"domains_title": "Domain kezelése",
 			"errors": {
 				"table": {
 					"cast": "Hiba a \"superclass\" módosítása közben, az osztály vagy adatokat, vagy gyermek osztályokat tartalmaz ",
@@ -282,48 +287,9 @@
 			},
 			"title": "Dashboard"
 		},
-		"modLookup": {
-			"add_lookuptype": "Lista típus hozzáadása",
-			"lookupForm": {
-				"active": "Aktív",
-				"code": "Kód",
-				"description": "Leírás",
-				"disable_lookup": "Lista tiltása",
-				"enable_lookup": "Lista engedélyezése",
-				"isdefault": "Alapértelmezett",
-				"notes": "Jegyzetek",
-				"parentdescription": "Szülő leírása",
-				"update_lookup": "Lista módosítása"
-			},
-			"lookupGrid": {
-				"active": "Aktív",
-				"add_lookup": "Lista hozzáadása",
-				"code": "Kód",
-				"description": "Leírás",
-				"isdefault": "Alapértelmezett",
-				"notes": "Jegyzetek",
-				"parentdescription": "Szülő leírása"
-			},
-			"lookupType": "Listatípus",
-			"lookupTypeForm": {
-				"active": "Aktív",
-				"delete_lookuptype": "Lista törlése",
-				"description": "Leírás",
-				"modify_lookuptype": "Lista módosítása",
-				"parent": "Szülő",
-				"title": "Listakezelés"
-			},
-			"lookupTypes": "Lista típusok",
-			"tabs": {
-				"lookuplist": "Lista elemek",
-				"properties": "Tulajdonság"
-			},
-			"title": "Lista kezelése"
-		},
 		"modWorkflow": {
 			"add_process": "Folyamat hozzáadása",
 			"attributes_title": "Attribútumok kezelése",
-			"domains_title": "Domainek kezelése",
 			"errors": {
 				"table": {
 					"cast": "A \"superclass\" tulajdonsága nem módosítható, az osztály vagy adatokat, vagy gyermek osztályokat tartalmaz",
@@ -401,56 +367,6 @@
 		},
 		"modconnectors": {
 			"title": "Connectors"
-		},
-		"modmenu": {
-			"add_menu": "Menü hozzáadása",
-			"available_elements": "Rendelkezésre álló elemek",
-			"availabletree": {
-				"class": "Osztályok",
-				"dashboard": "Dashboardok",
-				"processclass": "Aktivitások",
-				"report": "Jelentések",
-				"view": "Nézetek"
-			},
-			"custom_menu": "Egyedi menü",
-			"custom_menus": "Egyedi menük",
-			"delete_menu": "Menü eltávolítása",
-			"menu_root": "Menü",
-			"modify_menu": "Menü módosítása",
-			"new_folder": "Új mappa",
-			"title": "Menü kezelés"
-		},
-		"modreport": {
-			"add": "Jelentés hozzáadása",
-			"importJRFormStep1": {
-				"description": "Leírás",
-				"enabled_groups": "Amely csoportok láthatják",
-				"fieldset": "Jasper jelentés importálása",
-				"master_report_jrxml": "Mester jelentés (.jrxml)",
-				"menuTitle": "Jasper-reports report",
-				"name": "Jelentés neve"
-			},
-			"importJRFormStep2": {
-				"duplicate_images": "Figyelem: megegyező nevű képek találhatóak a jelentésben, művelet nem folytatható.",
-				"fieldset_generic": "Import jasper report",
-				"fieldset_images": "Kötelező képek",
-				"fieldset_subreports": "Kötelező altjelentések",
-				"menuTitle": "Report Jasper-reports",
-				"nothing_to_import": "Nem találhatóak képek vagy altjelentések, kérem erősítse meg az importálás folytatását.",
-				"success": {
-					"description": {
-						"add": "Az importálás befejeződött",
-						"modify": "A jelentés módosult"
-					},
-					"title": "Sikeres jelentés készítés"
-				}
-			},
-			"importOpenofficeTemplateForm": {
-				"menuTitle": "Openoffice jelentés"
-			},
-			"modify": "Jelentés módosítása",
-			"remove": "Jelentés eltávolítása",
-			"title": "Jelentés"
 		},
 		"modsecurity": {
 			"defaultgroup": "* Alapértelmezett *",
@@ -637,6 +553,7 @@
 			"importLabel": "Importálás",
 			"load": "Megnyitás",
 			"modify": "Módosítás",
+			"move": "<em>Move</em>",
 			"next": "Következő",
 			"previous": "Előző",
 			"print": "Nyomtatás",
@@ -929,6 +846,8 @@
 			"WIDGET_SERVICE_MALFORMED_REQUEST": "Ellenőrizze, hogy a web szolgáltatás névtere, a metódus neve és paraméterei helyesek"
 		},
 		"reference_invalid": "Az értéknem illeszkedik a szűrőre",
+		"reportsImportError": "<em>Error while importing report</em>",
+		"reportsAnalizeError": "<em>Error while analizing report</em>",
 		"requiredFieldMessage": "Ez a mező kötelező",
 		"routesInvalidCardIdentifier": "Hiba: érvénytelen kártya azonosító",
 		"routesInvalidClassIdentifier": "Hiba: érvénytelen osztály azonosító",
@@ -962,8 +881,8 @@
 		"change_user": "Felhasználóváltás",
 		"failed": "A bejelentkezés nem sikerült",
 		"language": "Nyelv",
-		"multi_group": "Válasszon csoportot",
 		"login": "Bejelentkezés",
+		"multi_group": "Válasszon csoportot",
 		"password": "Jelszó",
 		"relogin_message": "A hitelesített session lejárt. Kérem adja meg újra a jelszavát.",
 		"relogin_title": "A Session lejárt",
@@ -1128,22 +1047,6 @@
 			"showgraph": "Gráf megjelenítése",
 			"shownotes": "Jegyzet megjelenítése"
 		},
-		"modmenu": {
-			"menu": "Navigáció"
-		},
-		"modreport": {
-			"add_report": "Jelentés hozzáadása",
-			"delete_report": "Jelentés törlése",
-			"modify_report": "Jelentés szerkesztése",
-			"reportForm": {
-				"description": "Leírás",
-				"name": "Név",
-				"report": "Jelentés"
-			},
-			"report_parameters": "Jelentés paraméterei",
-			"title": "Lista - ",
-			"treetitle": "Jelentés"
-		},
 		"modutilities": {
 			"bulkupdate": {
 				"title": "Többszörös frissítés",
@@ -1195,9 +1098,6 @@
 				},
 				"calendar": {
 					"wrong_config": "A naptár nincs megfelelően beállítva"
-				},
-				"createreport": {
-					"format_label": "Formátum"
 				},
 				"linkcards": {
 					"required": "Kérem válasszon kártyákat - "
@@ -1258,6 +1158,7 @@
 		"link_cards_changed_values": "A \"{0}\" kiválasztott értékei frissítve lettek",
 		"only_filtered": "A változtatások csak a szűrőre illeszkedő kártyákon lesznek végrehajtva",
 		"popup_block": "Kérem kapcsolja ki a popup blokkolást ezen az oldalon.",
+		"reportsDuplicateImageFilename": "<em>Warning: found report images with same filename - cannot proceed.</em>",
 		"saveMenuBeforeAccess": "A menüt el kell menteni mielőtt az elem fordításához kezd.",
 		"warning_message": "Figyelem"
 	},
@@ -1269,13 +1170,18 @@
 	"add": "Hozzáadás",
 	"addAccount": "Fiók hozzáadása",
 	"addAttachmentFromDms": "Csatolmány hozzáadása DMS-ből",
+	"addDomain": "<em>Add domain</em>",
 	"addFilter": "Szűrő hozzáadása",
+	"addLookup": "<em>Add lookup</em>",
+	"addLookupType": "<em>Add lookup type</em>",
 	"addProject": "Projekt hozzáadása",
 	"addRelations": "Reláció hozzáadása",
+	"addReport": "<em>Add report</em>",
 	"addRow": "Sor hozzáadása",
 	"addTemplate": "Sablon hozzáadása",
 	"addUser": "Felhasználó hozzáadása",
 	"addView": "Nézet hozzáadása",
+	"add_attachment_from_dms": "<em>Add attachments from DMS</em>",
 	"address": "Cím",
 	"alfresco": "Alfresco",
 	"application": "Applikáció",
@@ -1285,6 +1191,7 @@
 	"attention": "Figyelem",
 	"attribute": "Attribútum",
 	"attributes": "Attribútumok",
+	"availableElements": "<em>Available elements</em>",
 	"availableFilters": "Rendelkezésre álló szűrők",
 	"baseProperties": "Alapvető beállítások",
 	"bcc": "Rejtett másolat",
@@ -1296,6 +1203,7 @@
 	"cacheManagement": "Cache kezelés",
 	"camera": "Kamera",
 	"cardPanelHeight": "Kártyapanel magassága százalékban",
+	"cardinality": "<em>Cardinality</em>",
 	"cc": "Másolat",
 	"changePassword": "Jelszó változtatás",
 	"checkFrequency": "Ellenőrzés gyakorisága (percek)",
@@ -1308,6 +1216,9 @@
 	"clearFilter": "Szűrő törlése",
 	"clear_row_and_colun_privilege": "Sor és oszlop privilégiumok törlése",
 	"cmdbuildCategory": "CMDBuild kategória",
+	"code": "<em>Code</em>",
+	"collapse": "<em>Collapse</em>",
+	"collapseAll": "<em>Collapse all</em>",
 	"composeEmail": "E-mail írása",
 	"composeFromTemplate": "E-mail írása sablonból",
 	"confirmRegeneration": "Erősítse meg az újra generálást",
@@ -1323,6 +1234,8 @@
 	"credentials": "Ajánlók",
 	"csv": "CSV",
 	"csvFile": "CSV fájl",
+	"customMenu": "<em>Custom menu</em>",
+	"dataSource": "<em>Data source</em>",
 	"defaultAccount": "Alapértelmezett fiók",
 	"defaultClass": "Alapértelmezett osztály",
 	"defaultGroup": "Alapértelmezett csoport",
@@ -1330,18 +1243,22 @@
 	"defaultLanguage": "Alapértelmezett nyelv",
 	"defaultLevel": "Alapértelmezett szint",
 	"delay": "Késleltetés",
+	"deleteDomain": "<em>Delete domain</em>",
 	"deleteLabel": "Törlés",
 	"deleteRow": "Sor törlése",
 	"descriptionLabel": "Leírás",
 	"description_": "Leírás",
 	"destination": "Cél",
 	"details": "<em>Details</em>",
+	"directDescription": "<em>Direct description</em>",
 	"disable": "Tiltás",
 	"disableGridFilter": "Rács szűrő tiltása",
+	"disableLookup": "<em>Disable lookup</em>",
 	"disableUser": "Felhasználó tiltása",
 	"display_less_attributes": "Kevesebb attribútum megjelenítése",
 	"display_more_attributes": "Több attribútum megjelenítése",
 	"domain": "Domain",
+	"domains": "Domains",
 	"download": "Letöltés",
 	"download_ifc_file": "IFC fájl letöltése",
 	"edit": "Szerkesztés",
@@ -1353,17 +1270,21 @@
 	"emailRegenerationConfirmPopupText": "Minden elküldetlen levél törlése.",
 	"emailTemplate": "E-mail Sablon",
 	"enable": "Engedélyezés",
-	"enableGridFilter": "Rács szűrő engedélyezése",
+	"enableGridFilter": "<em>Rács szűrő engedélyezése</em>",
+	"enableLookup": "Enable lookup",
 	"enableMoveRejectedNotMatching": "Nem egyezők mozgatásának engedélyezése",
 	"enableSsl": "SSL engedélyezése",
 	"enableUser": "Felhasználó engedélyezése",
 	"enabled": "Engedélyezve",
 	"enabledClasses": "Engedélyezett osztályok",
+	"enabledGroups": "<em>Enabled groups</em>",
 	"enabledLanguages": "Engedélyezett nyelvek",
 	"endDate": "Befejező dátum",
 	"engineName": "Engine neve",
 	"error": "Hiba",
 	"error_bimserver_connection": "Nem lehet csatlakozni a Bimserver-hez",
+	"expand": "<em>Expand</em>",
+	"expandAll": "<em>Expand all</em>",
 	"exportLabel": "Exportálás",
 	"expose": "Tegye",
 	"fileName": "Fájl neve",
@@ -1372,6 +1293,7 @@
 	"filter": "Szűrő",
 	"filterView": "Szűrőkből",
 	"filters_for_groups": "Szűrők csoportoknak",
+	"format": "Formátum",
 	"format_csv": "CSV",
 	"format_odt": "OpenOffice Odt",
 	"format_pdf": "Adobe Pdf",
@@ -1391,6 +1313,7 @@
 	"imapPort": "IMAP port",
 	"imapServer": "IMAP szerver",
 	"importFromCSV": "CSV importálása",
+	"importJasperReport": "<em>Import Jasper report</em>",
 	"includeRelations": "Relációk belefoglalása",
 	"includeSystemActivities": "Rendszer aktivitások belefoglalása",
 	"incoming": "Bejövő",
@@ -1399,6 +1322,7 @@
 	"initialLongitude": "Kezdeti hosszúság",
 	"initialZoomLevel": "Kezdeti zoom szint",
 	"instanceName": "Szerver neve",
+	"inverseDescription": "<em>Inverse description</em>",
 	"ipType": "IP típus",
 	"ipv4": "ipv4",
 	"ipv6": "ipv6",
@@ -1413,21 +1337,34 @@
 	"lockTimeout": "Zárolási idő",
 	"loggedGroup": "Bejelentkezett csoport",
 	"loggedUser": "Bejelentkezett felhasználó",
+	"lookupList": "<em>Lookup list</em>",
+	"lookupTypes": "<em>Lookup types</em>",
 	"main": "Fő",
 	"manualRegeneration": "Manuális regeneráció",
+	"masterDetail": "<em>Master/Detail</em>",
+	"masterDetailLabel": "<em>Master/Detail label</em>",
+	"masterReportJrxml": "<em>Master report (.jrxml)</em>",
 	"maximumLevel": "Maximum szint",
+	"menu": "<em>Menu</em>",
 	"mode": "Mód",
 	"modifyAccount": "Fiók módosítása",
+	"modifyDomain": "Modify domain",
 	"modifyFilter": "Szűrő módosítása",
+	"modifyLookup": "Modify lookup",
+	"modifyLookupType": "Modify lookup type",
 	"modifyProject": "Projekt módosítása",
+	"modifyReport": "<em>Modify report</em>",
 	"modifyTemplate": "Sablon módosítása",
 	"modifyUser": "Felhasználó módosítása",
 	"modifyView": "Nézet módosítása",
 	"multiGroup": "Több csoport",
 	"name": "Név",
+	"navigation": "Navigation",
+	"newFolder": "New folder",
 	"noAvailableData": "<em>No available data</em>",
 	"no_bim_project_for_card": "Nincs BIM projekt ehhez a kártyához",
 	"not_set": "Nincs beállítva",
+	"notes": "<em>Notes</em>",
 	"odt": "ODT",
 	"onDay": "Be",
 	"open_3d_viewer": "3D megtekintő megnyitása",
@@ -1435,6 +1372,8 @@
 	"origin": "Eredet",
 	"outgoing": "Kimenő",
 	"pan": "Pan",
+	"parent": "<em>Parent</em>",
+	"parentDescription": "<em>Parent description</em>",
 	"password": "Jelszó",
 	"pdf": "PDF",
 	"popupPercentageHeight": "Popup százalékos magasság",
@@ -1442,12 +1381,14 @@
 	"popupWindows": "Popup ablak",
 	"port": "Port",
 	"preselectIfUnique": "Előszelektálás ha egyedi",
+	"printPreview": "<em>Print preview</em>",
 	"privileged": "Kiváltságos",
 	"privileges_on_columns": "Oszlop kiváltságok",
 	"privileges_on_rows": "Sor kiváltságok",
 	"processedFolder": "Feldolgozott mappa",
 	"projects": "Projektek",
 	"promptSync": "Azonnali szinkronizálás",
+	"properties": "<em>Properties</em>",
 	"queue": "Sor",
 	"readOnly": "Csak olvasható",
 	"referenceComboLimit": "Referencia combobox limit",
@@ -1461,13 +1402,16 @@
 	"remove": "Eltávolítás",
 	"removeAccount": "Fiók eltávolítása",
 	"removeFilter": "Szűrő eltávolítása",
+	"removeMenu": "<em>Remove menu</em>",
 	"removeProject": "Projekt eltávolítása",
+	"removeReport": "<em>Remove report</em>",
 	"removeTemplate": "Sablon eltávolítása",
 	"removeView": "Nézet eltávolítása",
 	"remove_formatting": "Formázás eltávolítása",
 	"replace": "Kicserél",
 	"reply": "Válasz",
 	"report": "Jelentés",
+	"reportMenuJasper": "<em>Jasper-reports report</em>",
 	"reportParameters": "Jelentés paraméter",
 	"repository": "Gyűjtemény",
 	"reset": "Reset",
@@ -1500,6 +1444,7 @@
 	"side": "Oldal",
 	"smtpPort": "SMTP port",
 	"smtpServer": "SMTP szerver",
+	"sql": "SQL",
 	"sqlView": "SQL-ből",
 	"start": "Indítás",
 	"status": "Státusz",
@@ -1550,5 +1495,6 @@
 	"workflow_cql_filter": "Cql szűrő",
 	"workflow_query_tipology": "kiválasztás",
 	"you_have_not_set_a_filter": "Nem állított be szűrőt",
+	"zip": "ZIP",
 	"zoom": "Zoom"
 }

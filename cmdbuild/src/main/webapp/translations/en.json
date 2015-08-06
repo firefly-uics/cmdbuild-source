@@ -1099,9 +1099,6 @@
 				"calendar": {
 					"wrong_config": "The calendar is not well configured"
 				},
-				"createreport": {
-					"format_label": "Format"
-				},
 				"linkcards": {
 					"required": "Please select some cards - "
 				},
@@ -1296,6 +1293,7 @@
 	"filter": "Filter",
 	"filterView": "From Filter",
 	"filtersForGroups": "Filters for groups",
+	"format": "Format",
 	"format_csv": "CSV",
 	"format_odt": "OpenOffice Odt",
 	"format_pdf": "Adobe Pdf",

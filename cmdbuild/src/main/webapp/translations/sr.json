@@ -1099,9 +1099,6 @@
 				"calendar": {
 					"wrong_config": "Kalendar nije dobro podešen"
 				},
-				"createreport": {
-					"format_label": "Formatiraj"
-				},
 				"linkcards": {
 					"required": "Morate izabrati karticu - "
 				},
@@ -1292,6 +1289,7 @@
 	"filter": "Filter",
 	"filterView": "Filter od",
 	"filtersForGroups": "Grupni filter",
+	"format": "Formatiraj",
 	"format_csv": "CSV",
 	"format_odt": "OpenOffice Odt",
 	"format_pdf": "Adobe Pdf",

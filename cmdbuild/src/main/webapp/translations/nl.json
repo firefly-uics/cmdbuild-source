@@ -1099,9 +1099,6 @@
 				"calendar": {
 					"wrong_config": "De kalender is niet goed geconfigureerd"
 				},
-				"createreport": {
-					"format_label": "Formaat"
-				},
 				"linkcards": {
 					"required": "Selecteer alstublieft een aantal kaarten - "
 				},
@@ -1292,6 +1289,7 @@
 	"filter": "Filter",
 	"filterView": "Van Filter",
 	"filtersForGroups": "Filters for groepen",
+	"format": "Formaat",
 	"format_csv": "CSV",
 	"format_odt": "OpenOffice Odt",
 	"format_pdf": "Adobe Pdf",

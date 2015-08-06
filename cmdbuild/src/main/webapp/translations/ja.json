@@ -1099,9 +1099,6 @@
 				"calendar": {
 					"wrong_config": "カレンダは正しく設定されていません"
 				},
-				"createreport": {
-					"format_label": "フォーマット"
-				},
 				"linkcards": {
 					"required": "カードを選択ください - "
 				},
@@ -1292,6 +1289,7 @@
 	"filter": "フィルタ",
 	"filterView": "フィルタから",
 	"filtersForGroups": "グループへのフィルタ",
+	"format": "フォーマット",
 	"format_csv": "CSV",
 	"format_odt": "OpenOffice Odt",
 	"format_pdf": "Adobe Pdf",

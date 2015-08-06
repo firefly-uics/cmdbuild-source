@@ -1099,9 +1099,6 @@
 				"calendar": {
 					"wrong_config": "تقویم به درستی تنظیم نشده است"
 				},
-				"createreport": {
-					"format_label": "Format"
-				},
 				"linkcards": {
 					"required": "لطفا چند کارت انتخاب کنید - "
 				},
@@ -1292,6 +1289,7 @@
 	"filter": "فیلتر",
 	"filterView": "از فیلتر",
 	"filtersForGroups": "فیلترها برای گروهها",
+	"format": "Format",
 	"format_csv": "CSV",
 	"format_odt": "OpenOffice Odt",
 	"format_pdf": "Adobe Pdf",
