@@ -7,7 +7,8 @@
 
 		requires: [
 			'CMDBuild.core.proxy.Constants',
-			'CMDBuild.core.proxy.widgets.OpenReport'
+			'CMDBuild.core.proxy.widgets.OpenReport',
+			'CMDBuild.model.widget.openReport.PresetGrid'
 		],
 
 		mixins: {
@@ -152,7 +153,7 @@
 					],
 
 					store: Ext.create('Ext.data.Store', {
-						model: 'CMDBuild.model.widget.CMModelOpenReport.presetGrid',
+						model: 'CMDBuild.model.widget.openReport.PresetGrid',
 						data: []
 					})
 				});

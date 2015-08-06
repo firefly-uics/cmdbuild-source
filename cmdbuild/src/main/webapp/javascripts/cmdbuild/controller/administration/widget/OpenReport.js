@@ -6,7 +6,7 @@
 		requires: [
 			'CMDBuild.core.proxy.Constants',
 			'CMDBuild.core.proxy.widgets.OpenReport',
-			'CMDBuild.model.widget.CMModelOpenReport'
+			'CMDBuild.model.widget.openReport.ReportCombo'
 		],
 
 		statics: {
@@ -102,7 +102,7 @@
 			if (Ext.isArray(selectedReport))
 				reportCode = selectedReport[0];
 
-			if (reportCode.self && reportCode.self.$className == 'CMDBuild.model.widget.CMModelOpenReport.reportCombo')
+			if (reportCode.self && reportCode.self.$className == 'CMDBuild.model.widget.openReport.ReportCombo')
 				reportCode = reportCode.get(CMDBuild.core.proxy.Constants.ID);
 
 			return reportCode;

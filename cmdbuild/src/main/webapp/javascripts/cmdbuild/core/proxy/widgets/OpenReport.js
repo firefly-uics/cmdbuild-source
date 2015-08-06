@@ -2,7 +2,11 @@
 
 	Ext.define('CMDBuild.core.proxy.widgets.OpenReport', {
 
-		requires: ['CMDBuild.model.widget.CMModelOpenReport'],
+		requires: [
+			'CMDBuild.core.proxy.Constants',
+			'CMDBuild.core.proxy.Index',
+			'CMDBuild.model.widget.openReport.ReportCombo'
+		],
 
 		singleton: true,
 
@@ -62,7 +66,7 @@
 		getReportsStore: function() {
 			return Ext.create('Ext.data.Store', {
 				autoLoad: true,
-				model: 'CMDBuild.model.widget.CMModelOpenReport.reportCombo',
+				model: 'CMDBuild.model.widget.openReport.ReportCombo',
 				proxy: {
 					type: 'ajax',
 					url: CMDBuild.core.proxy.Index.reports.getReportsByType,
