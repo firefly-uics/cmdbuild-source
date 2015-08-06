@@ -27,7 +27,7 @@
 		},
 
 		/**
-		 * @return {Ext.data.Store}
+		 * @returns {Ext.data.Store}
 		 */
 		getStore: function() {
 			return Ext.create('Ext.data.Store', {

@@ -148,13 +148,6 @@
 
 		var pkg = CMDBuild.view.management.common.widgets;
 
-		me.builders['.Grid'] = function(widget, card) {
-			var w = Ext.create('CMDBuild.view.management.common.widgets.grid.GridView');
-			me.widgetsContainer.addWidgt(w);
-
-			return w;
-		};
-
 		// createModifyCard
 		me.builders[pkg.CMCreateModifyCard.WIDGET_NAME] = function createModifyCardBuilder(widget, card) {
 			var w = new pkg.CMCreateModifyCard(widget);
@@ -176,9 +169,10 @@
 			return w;
 		};
 
-		// openReport
-		me.builders[pkg.CMOpenReport.WIDGET_NAME] = function() {
-			var w = new pkg.CMOpenReport();
+		// Grid
+		me.builders['.Grid'] = function(widget, card) {
+			var w = Ext.create('CMDBuild.view.management.common.widgets.grid.GridView');
+
 			me.widgetsContainer.addWidgt(w);
 
 			return w;
@@ -198,6 +192,17 @@
 		me.builders['.ManageRelation'] = function(widget, card) {
 			var w = Ext.create('CMDBuild.view.management.common.widgets.manageRelation.CMManageRelation', {
 				widget: widget
+			});
+
+			me.widgetsContainer.addWidgt(w);
+
+			return w;
+		};
+
+		// OpenReport
+		me.builders['.OpenReport'] = function(widget, card) {
+			var w = Ext.create('CMDBuild.view.management.common.widgets.OpenReport', {
+				widgetConf: widget
 			});
 
 			me.widgetsContainer.addWidgt(w);
@@ -243,9 +248,10 @@
 
 	Ext.define("CMDBuild.view.management.common.widgets.CMWidgetManagerPopup", {
 		extend: "CMDBuild.view.management.common.widgets.CMWidgetManager",
-			buildWidgetsContainer: function() {
-				return new CMDBuild.view.management.common.widgets.CMWidgetsWindowPopup();
-			}
+
+		buildWidgetsContainer: function() {
+			return new CMDBuild.view.management.common.widgets.CMWidgetsWindowPopup();
+		}
 	});
 
 })();

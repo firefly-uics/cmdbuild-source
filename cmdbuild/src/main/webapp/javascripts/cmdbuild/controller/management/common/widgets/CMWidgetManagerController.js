@@ -4,6 +4,7 @@
 	// TODO: rename of this class to use property "requires"
 	Ext.require([
 		'CMDBuild.controller.management.common.widgets.ManageEmail',
+		'CMDBuild.controller.management.common.widgets.OpenReport',
 		'CMDBuild.controller.management.common.widgets.grid.Grid',
 		'CMDBuild.controller.management.common.widgets.manageRelation.CMManageRelationController'
 	]);
@@ -279,14 +280,14 @@
 		// navigationTree
 		addControllerClass(commonControllers.CMNavigationTreeController);
 
-		// openReport
-		addControllerClass(commonControllers.CMOpenReportController);
-
 		// LinkCards
 		addControllerClass(CMDBuild.controller.management.common.widgets.linkCards.LinkCardsController);
 
 		// ManageRelation
 		addControllerClass(CMDBuild.controller.management.common.widgets.manageRelation.CMManageRelationController);
+
+		// OpenReport
+		addControllerClass(CMDBuild.controller.management.common.widgets.OpenReport);
 
 		// ping
 		addControllerClass(commonControllers.CMPingController);
