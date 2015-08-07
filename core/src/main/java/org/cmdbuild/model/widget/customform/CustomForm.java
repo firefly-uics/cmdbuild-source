@@ -274,7 +274,9 @@ public class CustomForm extends Widget {
 	}
 
 	private boolean required;
+	private boolean readOnly;
 	private List<Attribute> attributes;
+	private String layout;
 	private Map<String, Object> variables;
 
 	@Override
@@ -297,12 +299,28 @@ public class CustomForm extends Widget {
 		this.required = required;
 	}
 
+	public boolean isReadOnly() {
+		return readOnly;
+	}
+
+	public void setReadOnly(final boolean readOnly) {
+		this.readOnly = readOnly;
+	}
+
 	public List<Attribute> getAttributes() {
 		return attributes;
 	}
 
 	public void setAttributes(final List<Attribute> attributes) {
 		this.attributes = attributes;
+	}
+
+	public String getLayout() {
+		return layout;
+	}
+
+	public void setLayout(final String layout) {
+		this.layout = layout;
 	}
 
 	public Map<String, Object> getVariables() {

@@ -6,6 +6,7 @@ import org.cmdbuild.logic.email.EmailLogic;
 import org.cmdbuild.logic.email.EmailTemplateLogic;
 import org.cmdbuild.model.widget.customform.CustomFormWidgetFactory;
 import org.cmdbuild.notification.Notifier;
+import org.cmdbuild.services.meta.MetadataStoreFactory;
 import org.cmdbuild.services.template.store.TemplateRepository;
 import org.cmdbuild.workflow.widget.CalendarWidgetFactory;
 import org.cmdbuild.workflow.widget.CreateModifyCardWidgetFactory;
@@ -26,10 +27,11 @@ public class DefaultXpdlExtendedAttributeWidgetFactory extends ValuePairXpdlExte
 
 	public DefaultXpdlExtendedAttributeWidgetFactory(final TemplateRepository templateRepository,
 			final Notifier notifier, final CMDataView dataView, final EmailLogic emailLogic,
-			final EmailAttachmentsLogic emailAttachmentsLogic, final EmailTemplateLogic emailTemplateLogic) {
+			final EmailAttachmentsLogic emailAttachmentsLogic, final EmailTemplateLogic emailTemplateLogic,
+			final MetadataStoreFactory metadataStoreFactory) {
 		addWidgetFactory(new CalendarWidgetFactory(templateRepository, notifier));
 		addWidgetFactory(new CreateModifyCardWidgetFactory(templateRepository, notifier, dataView));
-		addWidgetFactory(new CustomFormWidgetFactory(templateRepository, notifier));
+		addWidgetFactory(new CustomFormWidgetFactory(templateRepository, notifier, dataView, metadataStoreFactory));
 		addWidgetFactory(new GridWidgetFactory(templateRepository, notifier));
 		addWidgetFactory(new LinkCardsWidgetFactory(templateRepository, notifier));
 		addWidgetFactory(new ManageEmailWidgetFactory(templateRepository, notifier, emailLogic, emailAttachmentsLogic,
