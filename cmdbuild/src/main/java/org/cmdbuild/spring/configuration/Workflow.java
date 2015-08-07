@@ -68,6 +68,9 @@ public class Workflow {
 	private Notifier notifier;
 
 	@Autowired
+	private Other other;
+
+	@Autowired
 	@Qualifier(SYSTEM)
 	private PrivilegeContext systemPrivilegeContext;
 
@@ -111,7 +114,8 @@ public class Workflow {
 				data.systemDataView(), //
 				email.emailLogic(), //
 				email.emailAttachmentsLogic(), //
-				email.emailTemplateLogic());
+				email.emailTemplateLogic(), //
+				other.metadataStoreFactory());
 	}
 
 	@Bean
