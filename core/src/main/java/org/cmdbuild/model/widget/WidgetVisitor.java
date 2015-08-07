@@ -1,5 +1,6 @@
 package org.cmdbuild.model.widget;
 
+import org.cmdbuild.model.widget.customform.CustomForm;
 import org.cmdbuild.workflow.CMActivityWidget;
 
 /**
@@ -21,6 +22,8 @@ public interface WidgetVisitor {
 	void visit(Calendar widget);
 
 	void visit(CreateModifyCard widget);
+
+	void visit(CustomForm widget);
 
 	void visit(Grid widget);
 

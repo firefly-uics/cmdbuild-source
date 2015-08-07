@@ -1,5 +1,11 @@
 package org.cmdbuild.exception;
 
+import static org.apache.commons.lang3.builder.ToStringBuilder.reflectionToString;
+import static org.apache.commons.lang3.builder.ToStringStyle.SHORT_PREFIX_STYLE;
+
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
 public class CMDBWorkflowException extends CMDBException {
 
 	public enum WorkflowExceptionType {
@@ -38,8 +44,7 @@ public class CMDBWorkflowException extends CMDBException {
 		WF_WAPI_CONNECTION_ERROR, //
 		WF_WORKITEM_VARIABLES_REQUIRED, //
 		WF_WRONG_CREDENTIALS, //
-		WF_WRONG_SUPERCLASS_OPERATION,
-		WF_WRONG_XPDL_CLASSNAME; //
+		WF_WRONG_SUPERCLASS_OPERATION, WF_WRONG_XPDL_CLASSNAME; //
 
 		public CMDBWorkflowException createException(final String... parameters) {
 			return new CMDBWorkflowException(this, parameters);
@@ -52,7 +57,6 @@ public class CMDBWorkflowException extends CMDBException {
 	private static final long serialVersionUID = 1L;
 
 	WorkflowExceptionType type;
-	Exception originalException;
 
 	public CMDBWorkflowException() {
 		this(WorkflowExceptionType.WF_GENERIC_ERROR);
@@ -70,6 +74,32 @@ public class CMDBWorkflowException extends CMDBException {
 	@Override
 	public String getExceptionTypeText() {
 		return type.name();
+	}
+
+	@Override
+	public boolean equals(final Object obj) {
+		if (obj == this) {
+			return true;
+		}
+		if (!(obj instanceof CMDBWorkflowException)) {
+			return false;
+		}
+		final CMDBWorkflowException other = CMDBWorkflowException.class.cast(obj);
+		return new EqualsBuilder() //
+				.append(this.type, other.type) //
+				.isEquals();
+	}
+
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder() //
+				.append(type) //
+				.toHashCode();
+	}
+
+	@Override
+	public String toString() {
+		return reflectionToString(this, SHORT_PREFIX_STYLE);
 	}
 
 }
