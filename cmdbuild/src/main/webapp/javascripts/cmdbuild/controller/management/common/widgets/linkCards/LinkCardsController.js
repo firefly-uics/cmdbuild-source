@@ -17,10 +17,6 @@
 			observable: 'Ext.util.Observable'
 		},
 
-		statics: {
-			WIDGET_NAME: CMDBuild.view.management.common.widgets.linkCards.LinkCards.WIDGET_NAME
-		},
-
 		/**
 		 * @cfg {Boolean}
 		 */

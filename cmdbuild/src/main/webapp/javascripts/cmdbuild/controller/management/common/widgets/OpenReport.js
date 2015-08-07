@@ -12,10 +12,6 @@
 			observable: 'Ext.util.Observable'
 		},
 
-		statics: {
-			WIDGET_NAME: '.OpenReport'
-		},
-
 		/**
 		 * @property {Ext.form.Basic}
 		 */

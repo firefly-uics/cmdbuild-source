@@ -11,12 +11,38 @@
 
 	Ext.define("CMDBuild.controller.management.common.CMWidgetManagerController", {
 
-		constructor: function(view) {
-			this.view = view;
-			this.view.delegate = this;
-			this.controllers = {};
+		/**
+		 * @property {Object}
+		 */
+		controllerClasses: {},
 
-			initBuilders(this);
+		/**
+		 * @property {Object}
+		 */
+		controllers: {},
+
+		constructor: function(view) {
+			Ext.apply(this, {
+				controllerClasses: {
+					'.Calendar': CMDBuild.controller.management.common.widgets.CMCalendarController,
+					'.CreateModifyCard': CMDBuild.controller.management.common.widgets.CMCreateModifyCardController,
+					'.Grid': CMDBuild.controller.management.common.widgets.grid.Grid,
+					'.LinkCards': CMDBuild.controller.management.common.widgets.linkCards.LinkCardsController,
+					'.ManageEmail': CMDBuild.controller.management.common.widgets.ManageEmail,
+					'.ManageRelation': CMDBuild.controller.management.common.widgets.manageRelation.CMManageRelationController,
+					'.NavigationTree': CMDBuild.controller.management.common.widgets.CMNavigationTreeController,
+					'.OpenAttachment': CMDBuild.controller.management.common.widgets.CMOpenAttachmentController,
+					'.OpenNote': CMDBuild.controller.management.common.widgets.CMOpenNoteController,
+					'.OpenReport': CMDBuild.controller.management.common.widgets.OpenReport,
+					'.Ping': CMDBuild.controller.management.common.widgets.CMPingController,
+					'.PresetFromCard': CMDBuild.controller.management.common.widgets.CMPresetFromCardController,
+					'.WebService': CMDBuild.controller.management.common.widgets.CMWebServiceController,
+					'.Workflow': CMDBuild.controller.management.common.widgets.CMWorkflowController
+				},
+				view: view
+			});
+
+			this.view.delegate = this;
 		},
 
 		setDelegate: function(delegate) {
@@ -202,21 +228,38 @@
 			this.view.widgetsContainer.hide();
 		},
 
-		buildWidgetController: function buildWidgetController(ui, widgetDef, card) {
-			var me = this,
-				controllerClass = me.controllerClasses[widgetDef.type];
+		/**
+		 * @param {Object} view
+		 * @param {Object} widgetDef
+		 * @param {Ext.data.Model or CMDBuild.model.CMActivityInstance} card
+		 *
+		 * @returns {Object or null} controller
+		 */
+		buildWidgetController: function(view, widgetDef, card) {
+			var controller = null;
+			var controllerClass = this.controllerClasses[widgetDef.type];
 
-			if (controllerClass && typeof controllerClass == "function") {
-				return new controllerClass(
-					ui,
-					superController = me,
-					widgetDef,
-					clientForm = me.view.getFormForTemplateResolver(),
-					card
-				);
-			} else {
-				return null;
+			if (!Ext.isEmpty(controllerClass)) {
+				if (Ext.isFunction(controllerClass)) { // @deprecated
+					controller = new controllerClass(
+						view,
+						superController = this,
+						widgetDef,
+						clientForm = this.view.getFormForTemplateResolver(),
+						card
+					);
+				} else if (Ext.isString(controllerClass)) { // New widget controller declaration mode
+					controller = Ext.create(controllerClass, {
+						view: view,
+						parentDelegate: this,
+						widgetDef: widgetDef,
+						clientForm: this.view.getFormForTemplateResolver(),
+						card: card
+					});
+				}
 			}
+
+			return controller;
 		},
 
 		hideWidgetsContainer: function() {
@@ -249,55 +292,6 @@
 			this.view.activateFirstTab();
 		}
 	});
-
-	function initBuilders(me) {
-		var commonControllers = CMDBuild.controller.management.common.widgets;
-
-		me.controllerClasses = {};
-		me.controllerClasses['.Grid'] = CMDBuild.controller.management.common.widgets.grid.Grid;
-		me.controllerClasses['.ManageEmail'] = CMDBuild.controller.management.common.widgets.ManageEmail;
-
-
-		function addControllerClass(controller) {
-			me.controllerClasses[controller.WIDGET_NAME] = controller;
-		}
-
-		// openNote
-		addControllerClass(commonControllers.CMOpenNoteController);
-
-		// openAttachment
-		addControllerClass(commonControllers.CMOpenAttachmentController);
-
-		// createModifyCard
-		addControllerClass(commonControllers.CMCreateModifyCardController);
-
-		// calendar
-		addControllerClass(commonControllers.CMCalendarController);
-
-		// workflow
-		addControllerClass(commonControllers.CMWorkflowController);
-
-		// navigationTree
-		addControllerClass(commonControllers.CMNavigationTreeController);
-
-		// LinkCards
-		addControllerClass(CMDBuild.controller.management.common.widgets.linkCards.LinkCardsController);
-
-		// ManageRelation
-		addControllerClass(CMDBuild.controller.management.common.widgets.manageRelation.CMManageRelationController);
-
-		// OpenReport
-		addControllerClass(CMDBuild.controller.management.common.widgets.OpenReport);
-
-		// ping
-		addControllerClass(commonControllers.CMPingController);
-
-		// webService
-		addControllerClass(commonControllers.CMWebServiceController);
-
-		// presetFromCard
-		addControllerClass(commonControllers.CMPresetFromCardController);
-	}
 
 	Ext.define("CMDBuild.controller.management.common.CMWidgetManagerControllerPopup", {
 		extend: "CMDBuild.controller.management.common.CMWidgetManagerController",

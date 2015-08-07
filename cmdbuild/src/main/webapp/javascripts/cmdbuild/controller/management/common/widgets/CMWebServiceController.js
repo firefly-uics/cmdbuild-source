@@ -9,10 +9,6 @@
 			webServiceWidgetDelegate: "CMDBuild.view.management.common.widgets.CMWebServiceDelegate"
 		},
 
-		statics: {
-			WIDGET_NAME: CMDBuild.view.management.common.widgets.CMWebService.WIDGET_NAME
-		},
-
 		constructor: function(view, ownerController, widgetDef, clientForm, card) {
 			this.mixins.observable.constructor.call(this);
 			this.mixins.widgetcontroller.constructor.apply(this, arguments);
@@ -86,9 +82,9 @@
 
 		// as WebServiceWidgetDelegate
 		/**
-		 * 
+		 *
 		 * @param {CMDBuild.view.management.common.widgets.CMWebService} widget
-		 * the widget that calls the method 
+		 * the widget that calls the method
 		 * @param {Ext.data.Model} model
 		 * the model of the grid row for which the button was clicked
 		 */

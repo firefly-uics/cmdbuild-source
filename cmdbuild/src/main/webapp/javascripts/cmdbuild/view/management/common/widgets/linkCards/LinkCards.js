@@ -8,10 +8,6 @@
 			'CMDBuild.core.Utils'
 		],
 
-		statics: {
-			WIDGET_NAME: '.LinkCards'
-		},
-
 		/**
 		 * @cfg {Object}
 		 */

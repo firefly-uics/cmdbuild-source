@@ -27,12 +27,12 @@
 				this.idClass = this.relation.dst_cid;
 			}
 
-			this.saveButton = Ext.create('CMDBuild.buttons.SaveButton', {
+			this.saveButton = Ext.create('CMDBuild.core.buttons.text.Save', {
 				scope: this,
 				handler: onSaveButtonClick
 			});
 
-			this.abortButton = Ext.create('CMDBuild.buttons.AbortButton', {
+			this.abortButton = Ext.create('CMDBuild.core.buttons.text.Abort', {
 				scope: this,
 				handler: function() {
 					this.close();
