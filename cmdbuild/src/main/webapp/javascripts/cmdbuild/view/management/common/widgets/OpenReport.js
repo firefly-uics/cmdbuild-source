@@ -8,10 +8,6 @@
 			'CMDBuild.core.proxy.widgets.OpenReport'
 		],
 
-		statics: {
-			WIDGET_NAME: '.OpenReport'
-		},
-
 		/**
 		 * @cfg {CMDBuild.controller.management.common.widgets.OpenReport}
 		 */

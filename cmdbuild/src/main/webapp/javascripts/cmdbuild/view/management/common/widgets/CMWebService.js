@@ -48,10 +48,6 @@
 			this.callParent(arguments);
 		},
 
-		statics : {
-			WIDGET_NAME: ".WebService"
-		},
-
 		getSelectedRecords: function() {
 			var selection = [];
 			// if the widget is never opened
