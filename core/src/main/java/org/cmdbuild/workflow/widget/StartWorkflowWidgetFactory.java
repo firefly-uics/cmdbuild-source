@@ -16,7 +16,7 @@ public class StartWorkflowWidgetFactory extends ValuePairWidgetFactory {
 	public static final String WORKFLOW_FILTER_TYPE = "FilterType";
 	public static final String WORKFLOW_FILTER = "Filter";
 
-	//FILTER TYPES
+	// FILTER TYPES
 	public static final String NAMEFILTERTYPE = "name";
 	public static final String CQLFILTERTYPE = "cql";
 
@@ -34,9 +34,10 @@ public class StartWorkflowWidgetFactory extends ValuePairWidgetFactory {
 	@Override
 	protected Widget createWidget(final Map<String, Object> valueMap) {
 		final String filterType = readString(valueMap.get(WORKFLOW_FILTER_TYPE));
-		if (filterType != null && CQLFILTERTYPE.equals(CQLFILTERTYPE) ) {
-			/*TODO Control on filter types
-			 * At the moment there is only one filter type and is 'cql'
+		if (filterType != null && CQLFILTERTYPE.equals(CQLFILTERTYPE)) {
+			/*
+			 * TODO Control on filter types At the moment there is only one
+			 * filter type and is 'cql'
 			 */
 			final String filter = readString(valueMap.get(WORKFLOW_FILTER));
 			Validate.notEmpty(filter, WORKFLOW_FILTER + " is required");
@@ -45,8 +46,7 @@ public class StartWorkflowWidgetFactory extends ValuePairWidgetFactory {
 			widget.setFilter(filter);
 			widget.setOutputName(readString(valueMap.get(OUTPUT_KEY)));
 			return widget;
-		}
-		else {
+		} else {
 			final String workflowCode = readString(valueMap.get(WORKFLOW_CODE));
 			Validate.notEmpty(workflowCode, WORKFLOW_CODE + " is required");
 			final Workflow widget = new Workflow();

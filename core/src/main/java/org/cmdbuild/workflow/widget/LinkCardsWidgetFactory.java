@@ -49,17 +49,17 @@ public class LinkCardsWidgetFactory extends ValuePairWidgetFactory {
 		setFilterAndClassName(valueMap, widget);
 		widget.setOutputName(readString(valueMap.get(OUTPUT_KEY)));
 		widget.setDefaultSelection(readString(valueMap.get(DEFAULT_SELECTION)));
-		widget.setReadOnly(readBooleanTrueIfPresent(valueMap.get(READ_ONLY)));
-		widget.setSingleSelect(readBooleanTrueIfPresent(valueMap.get(SINGLE_SELECT)));
-		widget.setAllowCardEditing(readBooleanTrueIfPresent(valueMap.get(ALLOW_CARD_EDITING)));
-		widget.setEnableMap(readBooleanTrueIfPresent(valueMap.get(WITH_MAP)));
+		widget.setReadOnly(valueMap.containsKey(READ_ONLY));
+		widget.setSingleSelect(valueMap.containsKey(SINGLE_SELECT));
+		widget.setAllowCardEditing(valueMap.containsKey(ALLOW_CARD_EDITING));
+		widget.setEnableMap(valueMap.containsKey(WITH_MAP));
 		widget.setMapLatitude(readInteger(valueMap.get(MAP_LATITUDE)));
 		widget.setMapLongitude(readInteger(valueMap.get(MAP_LONGITUDE)));
 		widget.setMapZoom(readInteger(valueMap.get(MAP_ZOOM)));
-		widget.setRequired(readBooleanTrueIfPresent(valueMap.get(REQUIRED)));
+		widget.setRequired(valueMap.containsKey(REQUIRED));
 		widget.setMetadata(toMap(readString(valueMap.get(METADATA))));
 		widget.setMetadataOutput(readString(valueMap.get(METADATA_OUTPUT)));
-		widget.setDisableGridFilterToggler(readBooleanTrueIfTrue(valueMap.get(DISABLE_GRID_FILTER_TOGGLER)));
+		widget.setDisableGridFilterToggler(readBooleanFalseIfMissing(valueMap.get(DISABLE_GRID_FILTER_TOGGLER)));
 		widget.setTemplates(extractUnmanagedStringParameters(valueMap, FILTER, CLASS_NAME, DEFAULT_SELECTION,
 				READ_ONLY, SINGLE_SELECT, ALLOW_CARD_EDITING, WITH_MAP, MAP_LATITUDE, MAP_LONGITUDE, MAP_ZOOM,
 				REQUIRED, BUTTON_LABEL, DISABLE_GRID_FILTER_TOGGLER));
@@ -81,7 +81,7 @@ public class LinkCardsWidgetFactory extends ValuePairWidgetFactory {
 		}
 	}
 
-	private Map<String, String> toMap(String value) {
+	private Map<String, String> toMap(final String value) {
 		Map<String, String> map;
 		if (isBlank(value)) {
 			map = Collections.emptyMap();
