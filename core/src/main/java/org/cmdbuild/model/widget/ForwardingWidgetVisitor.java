@@ -24,12 +24,22 @@ public abstract class ForwardingWidgetVisitor extends ForwardingObject implement
 	}
 
 	@Override
+	public void visit(final Grid widget) {
+		delegate().visit(widget);
+	}
+
+	@Override
 	public void visit(final LinkCards widget) {
 		delegate().visit(widget);
 	}
 
 	@Override
 	public void visit(final ManageEmail widget) {
+		delegate().visit(widget);
+	}
+
+	@Override
+	public void visit(final NavigationTree widget) {
 		delegate().visit(widget);
 	}
 
@@ -59,27 +69,17 @@ public abstract class ForwardingWidgetVisitor extends ForwardingObject implement
 	}
 
 	@Override
-	public void visit(final WebService widget) {
-		delegate().visit(widget);
-	}
-
-	@Override
 	public void visit(final PresetFromCard widget) {
 		delegate().visit(widget);
 	}
 
 	@Override
+	public void visit(final WebService widget) {
+		delegate().visit(widget);
+	}
+
+	@Override
 	public void visit(final Workflow widget) {
-		delegate().visit(widget);
-	}
-
-	@Override
-	public void visit(final NavigationTree widget) {
-		delegate().visit(widget);
-	}
-
-	@Override
-	public void visit(final Grid widget) {
 		delegate().visit(widget);
 	}
 
