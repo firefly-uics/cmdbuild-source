@@ -4,6 +4,7 @@ import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.logic.email.EmailAttachmentsLogic;
 import org.cmdbuild.logic.email.EmailLogic;
 import org.cmdbuild.logic.email.EmailTemplateLogic;
+import org.cmdbuild.model.widget.customform.CustomFormWidgetFactory;
 import org.cmdbuild.notification.Notifier;
 import org.cmdbuild.services.template.store.TemplateRepository;
 import org.cmdbuild.workflow.widget.CalendarWidgetFactory;
@@ -28,18 +29,19 @@ public class DefaultXpdlExtendedAttributeWidgetFactory extends ValuePairXpdlExte
 			final EmailAttachmentsLogic emailAttachmentsLogic, final EmailTemplateLogic emailTemplateLogic) {
 		addWidgetFactory(new CalendarWidgetFactory(templateRepository, notifier));
 		addWidgetFactory(new CreateModifyCardWidgetFactory(templateRepository, notifier, dataView));
+		addWidgetFactory(new CustomFormWidgetFactory(templateRepository, notifier));
+		addWidgetFactory(new GridWidgetFactory(templateRepository, notifier));
 		addWidgetFactory(new LinkCardsWidgetFactory(templateRepository, notifier));
-		addWidgetFactory(new ManageRelationWidgetFactory(templateRepository, notifier, dataView));
 		addWidgetFactory(new ManageEmailWidgetFactory(templateRepository, notifier, emailLogic, emailAttachmentsLogic,
 				emailTemplateLogic));
+		addWidgetFactory(new ManageRelationWidgetFactory(templateRepository, notifier, dataView));
+		addWidgetFactory(new NavigationTreeWidgetFactory(templateRepository, notifier));
 		addWidgetFactory(new OpenAttachmentWidgetFactory(templateRepository, notifier));
 		addWidgetFactory(new OpenNoteWidgetFactory(templateRepository, notifier));
 		addWidgetFactory(new OpenReportWidgetFactory(templateRepository, notifier));
-		addWidgetFactory(new WebServiceWidgetFactory(templateRepository, notifier));
 		addWidgetFactory(new PresetFromCardWidgetFactory(templateRepository, notifier));
 		addWidgetFactory(new StartWorkflowWidgetFactory(templateRepository, notifier));
-		addWidgetFactory(new NavigationTreeWidgetFactory(templateRepository, notifier));
-		addWidgetFactory(new GridWidgetFactory(templateRepository, notifier));
+		addWidgetFactory(new WebServiceWidgetFactory(templateRepository, notifier));
 	}
 
 }
