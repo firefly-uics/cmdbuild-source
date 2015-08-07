@@ -167,15 +167,11 @@ public abstract class ValuePairWidgetFactory implements SingleActivityWidgetFact
 		return out;
 	}
 
-	protected final boolean readBooleanTrueIfPresent(final Object value) {
-		return (value != null);
+	protected final boolean readBooleanFalseIfMissing(final Object value) {
+		return readBoolean(value, false);
 	}
 
-	protected final boolean readBooleanTrueIfTrue(final Object value) {
-		return readBooleanTrueIfTrue(value, false);
-	}
-
-	protected final boolean readBooleanTrueIfTrue(final Object value, final boolean defaultValue) {
+	protected final boolean readBoolean(final Object value, final boolean defaultValue) {
 		if (value instanceof String) {
 			return Boolean.parseBoolean((String) value);
 		} else if (value instanceof Boolean) {
