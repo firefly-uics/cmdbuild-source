@@ -87,8 +87,9 @@ public class StoreSynchronizer implements Synchronizer, LoggingSupport {
 			logger.info(marker, "synchronization started");
 			doSync();
 			logger.info(marker, "synchronization finished");
-		} catch (final RuntimeException e) {
+		} catch (final Exception e) {
 			logger.error(marker, "error while synchronizing", e);
+			throw new RuntimeException(e);
 		}
 	}
 
