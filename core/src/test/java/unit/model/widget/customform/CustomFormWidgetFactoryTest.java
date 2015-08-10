@@ -4,6 +4,7 @@ import static java.util.Arrays.asList;
 import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.CLASSNAME;
 import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.CONFIGURATION_TYPE;
 import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.FORM;
+import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.FUNCTIONNAME;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
@@ -25,6 +26,8 @@ import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TextAttributeType;
+import org.cmdbuild.dao.function.CMFunction;
+import org.cmdbuild.dao.function.CMFunction.CMFunctionParameter;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.exception.CMDBWorkflowException;
 import org.cmdbuild.exception.CMDBWorkflowException.WorkflowExceptionType;
@@ -267,8 +270,65 @@ public class CustomFormWidgetFactoryTest {
 		verifyNoMoreInteractions(templateRespository, notifier, dataView, metadataStoreFactory);
 	}
 
+	@Test
+	public void functionConfigurationTypeAndMissingFunctionProducesNoWidgetAndNotification() throws Exception {
+		// given
+		final String serialization = "" //
+				+ CONFIGURATION_TYPE + "=\"function\"\n" //
+				+ FUNCTIONNAME + "=\"foo\"";
+		doReturn(null) //
+				.when(dataView).findFunctionByName(any(String.class));
+
+		// when
+		final CustomForm created = (CustomForm) widgetFactory.createWidget(serialization, mock(CMValueSet.class));
+
+		// then
+		assertThat(created, nullValue());
+		verify(dataView).findFunctionByName(eq("foo"));
+		verify(notifier).warn(
+				eq(new CMDBWorkflowException(WorkflowExceptionType.WF_CANNOT_CONFIGURE_CMDBEXTATTR, widgetFactory
+						.getWidgetName())));
+		verifyNoMoreInteractions(templateRespository, notifier, dataView, metadataStoreFactory);
+	}
+
+	@Test
+	public void attributesForFunctionSuccessfullyConverted() throws Exception {
+		// given
+		final String serialization = "" //
+				+ CONFIGURATION_TYPE + "=\"function\"\n" //
+				+ FUNCTIONNAME + "=\"foo\"";
+		final CMFunction target = mock(CMFunction.class);
+		doReturn(target) //
+				.when(dataView).findFunctionByName(any(String.class));
+		final CMFunctionParameter first = parameter(new TextAttributeType(), "bar");
+		final CMFunctionParameter second = parameter(new TextAttributeType(), "baz");
+		doReturn(asList(first, second)) //
+				.when(target).getInputParameters();
+
+		// when
+		final CustomForm created = (CustomForm) widgetFactory.createWidget(serialization, mock(CMValueSet.class));
+
+		// then
+		assertThat(created.getAttributes(), not(empty()));
+		assertThat(created.getAttributes(), hasSize(2));
+		assertThat(created.getAttributes().get(0).getName(), equalTo("bar"));
+		// TODO test all attribute conversion
+		assertThat(created.getAttributes().get(1).getName(), equalTo("baz"));
+		verify(dataView).findFunctionByName(eq("foo"));
+		verifyNoMoreInteractions(templateRespository, notifier, dataView, metadataStoreFactory);
+	}
+
 	private static CMAttribute attribute(final CMAttributeType<?> type, final String name) {
 		final CMAttribute output = mock(CMAttribute.class);
+		doReturn(type) //
+				.when(output).getType();
+		doReturn(name) //
+				.when(output).getName();
+		return output;
+	}
+
+	private static CMFunctionParameter parameter(final CMAttributeType<?> type, final String name) {
+		final CMFunctionParameter output = mock(CMFunctionParameter.class);
 		doReturn(type) //
 				.when(output).getType();
 		doReturn(name) //
