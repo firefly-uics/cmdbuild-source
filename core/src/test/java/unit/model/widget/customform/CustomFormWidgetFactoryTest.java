@@ -1,5 +1,7 @@
 package unit.model.widget.customform;
 
+import static java.util.Arrays.asList;
+import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.CLASSNAME;
 import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.CONFIGURATION_TYPE;
 import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.FORM;
 import static org.hamcrest.Matchers.empty;
@@ -8,7 +10,9 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -17,6 +21,10 @@ import java.util.HashMap;
 
 import org.cmdbuild.common.collect.ChainablePutMap;
 import org.cmdbuild.dao.entry.CMValueSet;
+import org.cmdbuild.dao.entrytype.CMAttribute;
+import org.cmdbuild.dao.entrytype.CMClass;
+import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.TextAttributeType;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.exception.CMDBWorkflowException;
 import org.cmdbuild.exception.CMDBWorkflowException.WorkflowExceptionType;
@@ -60,7 +68,7 @@ public class CustomFormWidgetFactoryTest {
 		verify(notifier).warn(
 				eq(new CMDBWorkflowException(WorkflowExceptionType.WF_CANNOT_CONFIGURE_CMDBEXTATTR, widgetFactory
 						.getWidgetName())));
-		verifyNoMoreInteractions(templateRespository, notifier);
+		verifyNoMoreInteractions(templateRespository, notifier, dataView, metadataStoreFactory);
 	}
 
 	@Test
@@ -76,7 +84,7 @@ public class CustomFormWidgetFactoryTest {
 		verify(notifier).warn(
 				eq(new CMDBWorkflowException(WorkflowExceptionType.WF_CANNOT_CONFIGURE_CMDBEXTATTR, widgetFactory
 						.getWidgetName())));
-		verifyNoMoreInteractions(templateRespository, notifier);
+		verifyNoMoreInteractions(templateRespository, notifier, dataView, metadataStoreFactory);
 	}
 
 	@Test
@@ -94,7 +102,7 @@ public class CustomFormWidgetFactoryTest {
 		verify(notifier).warn(
 				eq(new CMDBWorkflowException(WorkflowExceptionType.WF_CANNOT_CONFIGURE_CMDBEXTATTR, widgetFactory
 						.getWidgetName())));
-		verifyNoMoreInteractions(templateRespository, notifier);
+		verifyNoMoreInteractions(templateRespository, notifier, dataView, metadataStoreFactory);
 	}
 
 	@Test
@@ -112,7 +120,7 @@ public class CustomFormWidgetFactoryTest {
 		verify(notifier).warn(
 				eq(new CMDBWorkflowException(WorkflowExceptionType.WF_CANNOT_CONFIGURE_CMDBEXTATTR, widgetFactory
 						.getWidgetName())));
-		verifyNoMoreInteractions(templateRespository, notifier);
+		verifyNoMoreInteractions(templateRespository, notifier, dataView, metadataStoreFactory);
 	}
 
 	@Test
@@ -130,7 +138,7 @@ public class CustomFormWidgetFactoryTest {
 		verify(notifier).warn(
 				eq(new CMDBWorkflowException(WorkflowExceptionType.WF_CANNOT_CONFIGURE_CMDBEXTATTR, widgetFactory
 						.getWidgetName())));
-		verifyNoMoreInteractions(templateRespository, notifier);
+		verifyNoMoreInteractions(templateRespository, notifier, dataView, metadataStoreFactory);
 	}
 
 	@Test
@@ -148,7 +156,7 @@ public class CustomFormWidgetFactoryTest {
 		assertThat(created.getAttributes(), hasSize(2));
 		assertThat(created.getAttributes().get(0).getName(), equalTo("foo"));
 		assertThat(created.getAttributes().get(1).getName(), equalTo("bar"));
-		verifyNoMoreInteractions(templateRespository, notifier);
+		verifyNoMoreInteractions(templateRespository, notifier, dataView, metadataStoreFactory);
 	}
 
 	@Test
@@ -208,7 +216,64 @@ public class CustomFormWidgetFactoryTest {
 						.chainablePut("bar", "baz"));
 			}
 		})));
-		verifyNoMoreInteractions(templateRespository, notifier);
+		verifyNoMoreInteractions(templateRespository, notifier, dataView, metadataStoreFactory);
+	}
+
+	@Test
+	public void classConfigurationTypeAndMissingClassProducesNoWidgetAndNotification() throws Exception {
+		// given
+		final String serialization = "" //
+				+ CONFIGURATION_TYPE + "=\"class\"\n" //
+				+ CLASSNAME + "=\"foo\"";
+		doReturn(null) //
+				.when(dataView).findClass(any(String.class));
+
+		// when
+		final CustomForm created = (CustomForm) widgetFactory.createWidget(serialization, mock(CMValueSet.class));
+
+		// then
+		assertThat(created, nullValue());
+		verify(dataView).findClass(eq("foo"));
+		verify(notifier).warn(
+				eq(new CMDBWorkflowException(WorkflowExceptionType.WF_CANNOT_CONFIGURE_CMDBEXTATTR, widgetFactory
+						.getWidgetName())));
+		verifyNoMoreInteractions(templateRespository, notifier, dataView, metadataStoreFactory);
+	}
+
+	@Test
+	public void attributesForClassSuccessfullyConverted() throws Exception {
+		// given
+		final String serialization = "" //
+				+ CONFIGURATION_TYPE + "=\"class\"\n" //
+				+ CLASSNAME + "=\"foo\"";
+		final CMClass target = mock(CMClass.class);
+		doReturn(target) //
+				.when(dataView).findClass(any(String.class));
+		final CMAttribute first = attribute(new TextAttributeType(), "bar");
+		final CMAttribute second = attribute(new TextAttributeType(), "baz");
+		doReturn(asList(first, second)) //
+				.when(target).getAttributes();
+
+		// when
+		final CustomForm created = (CustomForm) widgetFactory.createWidget(serialization, mock(CMValueSet.class));
+
+		// then
+		assertThat(created.getAttributes(), not(empty()));
+		assertThat(created.getAttributes(), hasSize(2));
+		assertThat(created.getAttributes().get(0).getName(), equalTo("bar"));
+		// TODO test all attribute conversion
+		assertThat(created.getAttributes().get(1).getName(), equalTo("baz"));
+		verify(dataView).findClass(eq("foo"));
+		verifyNoMoreInteractions(templateRespository, notifier, dataView, metadataStoreFactory);
+	}
+
+	private static CMAttribute attribute(final CMAttributeType<?> type, final String name) {
+		final CMAttribute output = mock(CMAttribute.class);
+		doReturn(type) //
+				.when(output).getType();
+		doReturn(name) //
+				.when(output).getName();
+		return output;
 	}
 
 }

@@ -363,4 +363,5 @@ public class CustomFormWidgetFactory extends ValuePairWidgetFactory {
 		}
 		return attributeFetcher;
 	}
+
 }
