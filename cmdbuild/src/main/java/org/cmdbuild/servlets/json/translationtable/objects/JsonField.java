@@ -12,7 +12,7 @@ public class JsonField {
 	private static final String VALUE = "value";
 	private String name;
 	private String value;
-	private Map<String, String> translations;
+	private Map<String, String> translations; //key = the language, value = the translation
 
 	@JsonProperty(NAME)
 	public String getName() {

@@ -1,5 +1,13 @@
 package org.cmdbuild.servlets.json.translationtable;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+
+import javax.activation.DataHandler;
+import javax.mail.util.ByteArrayDataSource;
+
 import org.cmdbuild.servlets.json.management.JsonResponse;
 
 public interface TranslationSerializer {
@@ -13,5 +21,7 @@ public interface TranslationSerializer {
 	static final String ATTRIBUTE = "attribute";
 
 	JsonResponse serialize();
-
+	
+	DataHandler serializeCsv() throws IOException;
+	
 }

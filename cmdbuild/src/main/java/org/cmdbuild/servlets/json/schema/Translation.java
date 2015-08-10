@@ -6,21 +6,20 @@ import static org.cmdbuild.servlets.json.CommunicationConstants.SORT;
 import static org.cmdbuild.servlets.json.CommunicationConstants.TRANSLATIONS;
 import static org.cmdbuild.servlets.json.schema.Utils.toMap;
 
+import java.io.IOException;
 import java.util.Map;
+import java.util.Map.Entry;
+
+import javax.activation.DataHandler;
 
 import org.apache.commons.lang3.Validate;
+import org.cmdbuild.dao.entrytype.CMAttribute;
+import org.cmdbuild.dao.entrytype.CMClass;
+import org.cmdbuild.dao.entrytype.CMDomain;
+import org.cmdbuild.dao.view.CMDataView;
+import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.logic.translation.TranslationObject;
-import org.cmdbuild.logic.translation.converter.AttributeConverter;
-import org.cmdbuild.logic.translation.converter.ClassConverter;
 import org.cmdbuild.logic.translation.converter.Converter;
-import org.cmdbuild.logic.translation.converter.DomainConverter;
-import org.cmdbuild.logic.translation.converter.FilterConverter;
-import org.cmdbuild.logic.translation.converter.InstanceConverter;
-import org.cmdbuild.logic.translation.converter.LookupConverter;
-import org.cmdbuild.logic.translation.converter.MenuItemConverter;
-import org.cmdbuild.logic.translation.converter.ReportConverter;
-import org.cmdbuild.logic.translation.converter.ViewConverter;
-import org.cmdbuild.logic.translation.converter.WidgetConverter;
 import org.cmdbuild.servlets.json.JSONBaseWithSpringContext;
 import org.cmdbuild.servlets.json.management.JsonResponse;
 import org.cmdbuild.servlets.json.translationtable.TranslationSerializer;
@@ -30,13 +29,13 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.google.common.collect.Lists;
-
 public class Translation extends JSONBaseWithSpringContext {
 
 	private static final String TYPE = "type";
 	private static final String IDENTIFIER = "identifier";
 	private static final String OWNER = "owner";
+	private final CMDataView dataView = userDataView();
+	private final DataAccessLogic dataLogic = userDataAccessLogic();
 
 	@JSONExported
 	@Admin
@@ -72,6 +71,38 @@ public class Translation extends JSONBaseWithSpringContext {
 		translationLogic().update(translationObject);
 	}
 
+	@Admin
+	@JSONExported(contentType = "text/csv")
+	public DataHandler exportCsv(@Parameter(value = TYPE) final String type, //
+			@Parameter(value = SORT, required = false) final JSONArray sorters, //
+			@Parameter(value = ACTIVE, required = false) final boolean activeOnly //
+	) throws JSONException {
+
+		final TranslationSerializerFactory factory = TranslationSerializerFactory //
+				.newInstance() //
+				.withActiveOnly(activeOnly) //
+				.withAuthLogic(authLogic()) //
+				.withDataAccessLogic(userDataAccessLogic()) //
+				.withFilterStore(filterStore()) //
+				.withLookupStore(lookupStore()) //
+				.withMenuLogic(menuLogic()) //
+				.withReportStore(reportStore()).withSorters(sorters) //
+				.withTranslationLogic(translationLogic()) //
+				.withType(type) //
+				.withViewLogic(viewLogic()) //
+				.build();
+
+		final TranslationSerializer serializer = factory.createSerializer();
+		DataHandler output = null;
+		try {
+			output = serializer.serializeCsv();
+		} catch (final IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return output;
+	}
+
 	@JSONExported
 	@Admin
 	public JsonResponse readStructure( //
@@ -104,173 +135,4 @@ public class Translation extends JSONBaseWithSpringContext {
 		Validate.isTrue(converter.isValid());
 		return converter;
 	}
-
-	private enum TranslatableElement {
-
-		CLASS("class") {
-			@Override
-			Converter createConverter(final String field) {
-				return ClassConverter.of(field);
-			}
-
-			@Override
-			Iterable<String> allowedFields() {
-				return Lists.newArrayList(ClassConverter.description());
-			}
-		},
-		ATTRIBUTECLASS("attributeclass") {
-			@Override
-			Converter createConverter(final String field) {
-				return AttributeConverter.of(AttributeConverter.forClass(), field);
-			}
-
-			@Override
-			Iterable<String> allowedFields() {
-				return Lists.newArrayList(AttributeConverter.description());
-			}
-		},
-		DOMAIN("domain") {
-			@Override
-			Converter createConverter(final String field) {
-				return DomainConverter.of(field);
-			}
-
-			@Override
-			Iterable<String> allowedFields() {
-				return Lists.newArrayList(DomainConverter.description(), DomainConverter.directDescription(),
-						DomainConverter.inverseDescription(), DomainConverter.masterDetail());
-			}
-		},
-		ATTRIBUTEDOMAIN("attributedomain") {
-			@Override
-			Converter createConverter(final String field) {
-				return AttributeConverter.of(AttributeConverter.forDomain(), field);
-			}
-
-			@Override
-			Iterable<String> allowedFields() {
-				return Lists.newArrayList(AttributeConverter.description());
-			}
-		},
-		FILTER("filter") {
-			@Override
-			Converter createConverter(final String field) {
-				return FilterConverter.of(field);
-			}
-
-			@Override
-			Iterable<String> allowedFields() {
-				return Lists.newArrayList(FilterConverter.description());
-			}
-		},
-		INSTANCE_NAME("instancename") {
-			@Override
-			Converter createConverter(final String field) {
-				return InstanceConverter.of(field);
-			}
-
-			@Override
-			Iterable<String> allowedFields() {
-				return null;
-			}
-		},
-		LOOKUP_VALUE("lookupvalue") {
-			@Override
-			Converter createConverter(final String field) {
-				return LookupConverter.of(field);
-			}
-
-			@Override
-			Iterable<String> allowedFields() {
-				return Lists.newArrayList(LookupConverter.description());
-			}
-		},
-		MENU_ITEM("menuitem") {
-
-			@Override
-			Converter createConverter(final String field) {
-				return MenuItemConverter.of(field);
-			}
-
-			@Override
-			Iterable<String> allowedFields() {
-				return Lists.newArrayList(MenuItemConverter.description());
-			}
-
-		},
-		REPORT("report") {
-
-			@Override
-			Converter createConverter(final String field) {
-				return ReportConverter.of(field);
-			}
-
-			@Override
-			Iterable<String> allowedFields() {
-				return Lists.newArrayList(ReportConverter.description());
-			}
-
-		},
-		VIEW("view") {
-
-			@Override
-			Converter createConverter(final String field) {
-				return ViewConverter.of(field);
-			}
-
-			@Override
-			Iterable<String> allowedFields() {
-				return Lists.newArrayList(ViewConverter.description());
-			}
-
-		},
-		WIDGET("classwidget") {
-
-			@Override
-			Converter createConverter(final String field) {
-				return WidgetConverter.of(field);
-			}
-
-			@Override
-			Iterable<String> allowedFields() {
-				return Lists.newArrayList(WidgetConverter.label());
-			}
-
-		},
-
-		UNDEFINED("undefined") {
-
-			@Override
-			Converter createConverter(final String field) {
-				throw new UnsupportedOperationException();
-			}
-
-			@Override
-			Iterable<String> allowedFields() {
-				throw new UnsupportedOperationException();
-			}
-
-		};
-
-		private final String type;
-
-		private TranslatableElement(final String type) {
-			this.type = type;
-		};
-
-		abstract Converter createConverter(String field);
-
-		abstract Iterable<String> allowedFields();
-
-		private static TranslatableElement of(final String type) {
-			for (final TranslatableElement element : values()) {
-				if (element.type.equalsIgnoreCase(type)) {
-					return element;
-				}
-			}
-			return UNDEFINED;
-		}
-
-	};
-
 }

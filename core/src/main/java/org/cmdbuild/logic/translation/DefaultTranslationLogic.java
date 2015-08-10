@@ -307,7 +307,7 @@ public class DefaultTranslationLogic implements TranslationLogic {
 			store.create(translation);
 		}
 	}
-
+	
 	@Override
 	public Map<String, String> readAll(final TranslationObject translationObject) {
 		// TODO element, language and value must not be null

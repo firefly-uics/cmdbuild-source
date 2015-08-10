@@ -1,8 +1,11 @@
 package org.cmdbuild.servlets.json.translationtable;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
+
+import javax.activation.DataHandler;
 
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
@@ -16,6 +19,7 @@ import org.cmdbuild.servlets.json.management.JsonResponse;
 import org.cmdbuild.servlets.json.translationtable.objects.JsonElement;
 import org.cmdbuild.servlets.json.translationtable.objects.JsonField;
 
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Ordering;
 
@@ -24,6 +28,7 @@ public abstract class EntryTypeTranslationSerializer implements TranslationSeria
 	final DataAccessLogic dataLogic;
 	final TranslationLogic translationLogic;
 	final boolean activeOnly;
+	final String[] headers = {"type", "owner","identifier","field","lang","value"};
 
 	Ordering<CMEntryType> entryTypeOrdering = EntryTypeSorter.DEFAULT.getOrientedOrdering();
 	Ordering<CMAttribute> attributeOrdering = AttributeSorter.DEFAULT.getOrientedOrdering();
@@ -41,6 +46,9 @@ public abstract class EntryTypeTranslationSerializer implements TranslationSeria
 
 	@Override
 	public abstract JsonResponse serialize();
+	
+	@Override
+	public abstract DataHandler serializeCsv() throws IOException;
 
 	Iterable<? extends CMAttribute> sortAttributes(final Iterable<? extends CMAttribute> allAttributes) {
 		final Iterable<? extends CMAttribute> sortedAttributes = attributeOrdering

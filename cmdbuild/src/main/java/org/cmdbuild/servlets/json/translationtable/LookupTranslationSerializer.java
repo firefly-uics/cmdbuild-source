@@ -3,6 +3,8 @@ package org.cmdbuild.servlets.json.translationtable;
 import java.util.Collection;
 import java.util.Map;
 
+import javax.activation.DataHandler;
+
 import org.cmdbuild.data.store.lookup.Lookup;
 import org.cmdbuild.data.store.lookup.LookupStore;
 import org.cmdbuild.data.store.lookup.LookupType;
@@ -104,5 +106,10 @@ public class LookupTranslationSerializer implements TranslationSerializer {
 		field.setValue(value.getDescription());
 		jsonFields.add(field);
 		return jsonFields;
+	}
+	
+	@Override
+	public DataHandler serializeCsv() {
+		throw new UnsupportedOperationException("to do");
 	}
 }

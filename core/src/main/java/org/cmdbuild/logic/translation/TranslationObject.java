@@ -7,5 +7,5 @@ public interface TranslationObject {
 	void accept(TranslationObjectVisitor visitor);
 
 	Map<String, String> getTranslations();
-
+	
 }
