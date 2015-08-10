@@ -33,6 +33,7 @@ import org.cmdbuild.dao.entrytype.attributetype.StringArrayAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.StringAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TextAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TimeAttributeType;
+import org.cmdbuild.dao.function.CMFunction.CMFunctionParameter;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.data.store.metadata.Metadata;
 import org.cmdbuild.model.widget.Widget;
@@ -295,6 +296,122 @@ public class CustomFormWidgetFactory extends ValuePairWidgetFactory {
 
 					});
 		}
+
+	}
+
+	private static class FunctionAttributeFetcher implements AttributesFetcher {
+
+		private final CMDataView dataView;
+		private final String functionName;
+
+		public FunctionAttributeFetcher(final CMDataView dataView, final String functionName) {
+			this.dataView = dataView;
+			this.functionName = functionName;
+		}
+
+		@Override
+		public Iterable<Attribute> attributes() {
+			return from(dataView.findFunctionByName(functionName).getInputParameters()) //
+					// TODO filter?
+					.transform(new Function<CMFunctionParameter, Attribute>() {
+
+						@Override
+						public Attribute apply(final CMFunctionParameter input) {
+							final Attribute output = new Attribute();
+							input.getType().accept(new CMAttributeTypeVisitor() {
+
+								@Override
+								public void visit(final BooleanAttributeType attributeType) {
+									output.setType(TYPE_BOOLEAN);
+								}
+
+								@Override
+								public void visit(final CharAttributeType attributeType) {
+									output.setType(TYPE_CHAR);
+								}
+
+								@Override
+								public void visit(final DateAttributeType attributeType) {
+									output.setType(TYPE_DATE);
+								}
+
+								@Override
+								public void visit(final DateTimeAttributeType attributeType) {
+									output.setType(TYPE_DATE_TIME);
+								}
+
+								@Override
+								public void visit(final DoubleAttributeType attributeType) {
+									output.setType(TYPE_DOUBLE);
+								}
+
+								@Override
+								public void visit(final DecimalAttributeType attributeType) {
+									output.setType(TYPE_DECIMAL);
+								}
+
+								@Override
+								public void visit(final EntryTypeAttributeType attributeType) {
+									output.setType(TYPE_ENTRY_TYPE);
+								}
+
+								@Override
+								public void visit(final ForeignKeyAttributeType attributeType) {
+									output.setType(TYPE_REFERENCE);
+								}
+
+								@Override
+								public void visit(final IntegerAttributeType attributeType) {
+									output.setType(TYPE_INTEGER);
+								}
+
+								@Override
+								public void visit(final IpAddressAttributeType attributeType) {
+									output.setType(TYPE_IP_ADDRESS);
+								}
+
+								@Override
+								public void visit(final LookupAttributeType attributeType) {
+									output.setType(TYPE_LOOKUP);
+								}
+
+								@Override
+								public void visit(final ReferenceAttributeType attributeType) {
+									output.setType(TYPE_REFERENCE);
+								}
+
+								@Override
+								public void visit(final StringAttributeType attributeType) {
+									output.setType(TYPE_STRING);
+								}
+
+								@Override
+								public void visit(final StringArrayAttributeType attributeType) {
+									output.setType(TYPE_STRING_ARRAY);
+								}
+
+								@Override
+								public void visit(final TextAttributeType attributeType) {
+									output.setType(TYPE_TEXT);
+								}
+
+								@Override
+								public void visit(final TimeAttributeType attributeType) {
+									output.setType(TYPE_TIME);
+								}
+
+							});
+							output.setName(input.getName());
+							output.setDescription(input.getName());
+							output.setUnique(false);
+							output.setMandatory(false);
+							output.setWritable(true);
+							return output;
+						}
+
+					});
+		}
+
 	}
 
 	private static final Marker MARKER = MarkerFactory.getMarker(CustomFormWidgetFactory.class.getName());
@@ -307,6 +424,7 @@ public class CustomFormWidgetFactory extends ValuePairWidgetFactory {
 			CONFIGURATION_TYPE = "ConfigurationType", //
 			FORM = "Form", //
 			CLASSNAME = "ClassName", //
+			FUNCTIONNAME = "FunctionName", //
 			LAYOUT = "Layout";
 
 	private static final String[] KNOWN_PARAMETERS = { BUTTON_LABEL, REQUIRED, READ_ONLY, //
@@ -318,7 +436,8 @@ public class CustomFormWidgetFactory extends ValuePairWidgetFactory {
 
 	private static final String //
 			TYPE_FORM = "form", //
-			TYPE_CLASS = "class";
+			TYPE_CLASS = "class", //
+			TYPE_FUNCTION = "function";
 
 	private final CMDataView dataView;
 	private final MetadataStoreFactory metadataStoreFactory;
@@ -357,6 +476,10 @@ public class CustomFormWidgetFactory extends ValuePairWidgetFactory {
 			final String className = String.class.cast(valueMap.get(CLASSNAME));
 			Validate.isTrue(isNotBlank(className), "invalid value for '%s'", CLASSNAME);
 			attributeFetcher = new ClassAttributeFetcher(dataView, metadataStoreFactory, className);
+		} else if (TYPE_FUNCTION.equalsIgnoreCase(configurationType)) {
+			final String functionName = String.class.cast(valueMap.get(FUNCTIONNAME));
+			Validate.isTrue(isNotBlank(functionName), "invalid value for '%s'", FUNCTIONNAME);
+			attributeFetcher = new FunctionAttributeFetcher(dataView, functionName);
 		} else {
 			Validate.isTrue(false, "invalid '%s'", CONFIGURATION_TYPE);
 			attributeFetcher = new NullAttributeFetcher();
