@@ -86,7 +86,7 @@ public class CustomFormWidgetFactory extends ValuePairWidgetFactory {
 
 	}
 
-	private static class RawAttributeFetcher implements AttributesFetcher {
+	private static class FormAttributeFetcher implements AttributesFetcher {
 
 		private static final ObjectMapper mapper = new ObjectMapper();
 
@@ -95,7 +95,7 @@ public class CustomFormWidgetFactory extends ValuePairWidgetFactory {
 
 		private final String expression;
 
-		public RawAttributeFetcher(final String expression) {
+		public FormAttributeFetcher(final String expression) {
 			this.expression = expression;
 		}
 
@@ -301,18 +301,24 @@ public class CustomFormWidgetFactory extends ValuePairWidgetFactory {
 
 	private static final String WIDGET_NAME = "customForm";
 
-	public static final String REQUIRED = "Required";
-	public static final String READ_ONLY = "ReadOnly";
-	public static final String CONFIGURATION_TYPE = "ConfigurationType";
-	public static final String RAW_ATTRIBUTES = "RawAttributes";
-	public static final String CLASSNAME = "ClassName";
-	public static final String LAYOUT = "Layout";
+	public static final String //
+			REQUIRED = "Required", //
+			READ_ONLY = "ReadOnly", //
+			CONFIGURATION_TYPE = "ConfigurationType", //
+			FORM = "Form", //
+			CLASSNAME = "ClassName", //
+			LAYOUT = "Layout";
 
-	private static final String[] KNOWN_PARAMETERS = { BUTTON_LABEL, REQUIRED, READ_ONLY, CONFIGURATION_TYPE,
-			RAW_ATTRIBUTES, CLASSNAME, LAYOUT };
+	private static final String[] KNOWN_PARAMETERS = { BUTTON_LABEL, REQUIRED, READ_ONLY, //
+			CONFIGURATION_TYPE, //
+			FORM, //
+			CLASSNAME, //
+			LAYOUT //
+	};
 
-	private static final String RAW = "raw";
-	private static final String CLASS = "class";
+	private static final String //
+			TYPE_FORM = "form", //
+			TYPE_CLASS = "class";
 
 	private final CMDataView dataView;
 	private final MetadataStoreFactory metadataStoreFactory;
@@ -343,11 +349,11 @@ public class CustomFormWidgetFactory extends ValuePairWidgetFactory {
 	private AttributesFetcher attributesFetcherOf(final Map<String, Object> valueMap) {
 		final AttributesFetcher attributeFetcher;
 		final String configurationType = String.class.cast(valueMap.get(CONFIGURATION_TYPE));
-		if (RAW.equalsIgnoreCase(configurationType)) {
-			final String expression = defaultString(String.class.cast(valueMap.get(RAW_ATTRIBUTES)));
-			Validate.isTrue(isNotBlank(expression), "invalid value for '%s'", RAW_ATTRIBUTES);
-			attributeFetcher = new RawAttributeFetcher(expression);
-		} else if (CLASS.equalsIgnoreCase(configurationType)) {
+		if (TYPE_FORM.equalsIgnoreCase(configurationType)) {
+			final String expression = defaultString(String.class.cast(valueMap.get(FORM)));
+			Validate.isTrue(isNotBlank(expression), "invalid value for '%s'", FORM);
+			attributeFetcher = new FormAttributeFetcher(expression);
+		} else if (TYPE_CLASS.equalsIgnoreCase(configurationType)) {
 			final String className = String.class.cast(valueMap.get(CLASSNAME));
 			Validate.isTrue(isNotBlank(className), "invalid value for '%s'", CLASSNAME);
 			attributeFetcher = new ClassAttributeFetcher(dataView, metadataStoreFactory, className);

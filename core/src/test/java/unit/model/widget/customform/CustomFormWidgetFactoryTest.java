@@ -1,7 +1,7 @@
 package unit.model.widget.customform;
 
 import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.CONFIGURATION_TYPE;
-import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.RAW_ATTRIBUTES;
+import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.FORM;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
@@ -64,9 +64,9 @@ public class CustomFormWidgetFactoryTest {
 	}
 
 	@Test
-	public void rawConfigurationTypeAndMissingDefinitionProducesNoWidgetAndNotification() throws Exception {
+	public void formConfigurationTypeAndMissingDefinitionProducesNoWidgetAndNotification() throws Exception {
 		// given
-		final String serialization = CONFIGURATION_TYPE + "=\"raw\"";
+		final String serialization = CONFIGURATION_TYPE + "=\"form\"";
 
 		// when
 		final CustomForm created = (CustomForm) widgetFactory.createWidget(serialization, mock(CMValueSet.class));
@@ -80,11 +80,11 @@ public class CustomFormWidgetFactoryTest {
 	}
 
 	@Test
-	public void rawConfigurationTypeAndEmptyDefinitionProducesNoWidgetAndNotification() throws Exception {
+	public void formConfigurationTypeAndEmptyDefinitionProducesNoWidgetAndNotification() throws Exception {
 		// given
 		final String serialization = "" //
-				+ CONFIGURATION_TYPE + "=\"raw\"\n" //
-				+ RAW_ATTRIBUTES + "=\"\"";
+				+ CONFIGURATION_TYPE + "=\"form\"\n" //
+				+ FORM + "=\"\"";
 
 		// when
 		final CustomForm created = (CustomForm) widgetFactory.createWidget(serialization, mock(CMValueSet.class));
@@ -98,11 +98,11 @@ public class CustomFormWidgetFactoryTest {
 	}
 
 	@Test
-	public void rawConfigurationTypeAndBlankDefinitionProducesNoWidgetAndNotification() throws Exception {
+	public void formConfigurationTypeAndBlankDefinitionProducesNoWidgetAndNotification() throws Exception {
 		// given
 		final String serialization = "" //
-				+ CONFIGURATION_TYPE + "=\"raw\"\n" //
-				+ RAW_ATTRIBUTES + "=\" \"";
+				+ CONFIGURATION_TYPE + "=\"form\"\n" //
+				+ FORM + "=\" \"";
 
 		// when
 		final CustomForm created = (CustomForm) widgetFactory.createWidget(serialization, mock(CMValueSet.class));
@@ -116,11 +116,11 @@ public class CustomFormWidgetFactoryTest {
 	}
 
 	@Test
-	public void rawConfigurationTypeAndInvalidDefinitionProducesNoWidgetAndNotification() throws Exception {
+	public void formConfigurationTypeAndInvalidDefinitionProducesNoWidgetAndNotification() throws Exception {
 		// given
 		final String serialization = "" //
-				+ CONFIGURATION_TYPE + "=\"raw\"\n" //
-				+ RAW_ATTRIBUTES + "=\"[{name_with_no_quotes: foo}]\"";
+				+ CONFIGURATION_TYPE + "=\"form\"\n" //
+				+ FORM + "=\"[{name_with_no_quotes: foo}]\"";
 
 		// when
 		final CustomForm created = (CustomForm) widgetFactory.createWidget(serialization, mock(CMValueSet.class));
@@ -134,11 +134,11 @@ public class CustomFormWidgetFactoryTest {
 	}
 
 	@Test
-	public void rawConfigurationTypeAndValidDefinitionProducesAttributesAndNoNotification() throws Exception {
+	public void formConfigurationTypeAndValidDefinitionProducesAttributesAndNoNotification() throws Exception {
 		// given
 		final String serialization = "" //
-				+ CONFIGURATION_TYPE + "=\"raw\"\n" //
-				+ RAW_ATTRIBUTES + "=\"[{\"name\": \"foo\"},{\"name\": \"bar\"}]\"";
+				+ CONFIGURATION_TYPE + "=\"form\"\n" //
+				+ FORM + "=\"[{\"name\": \"foo\"},{\"name\": \"bar\"}]\"";
 
 		// when
 		final CustomForm created = (CustomForm) widgetFactory.createWidget(serialization, mock(CMValueSet.class));
@@ -152,11 +152,11 @@ public class CustomFormWidgetFactoryTest {
 	}
 
 	@Test
-	public void definitionForRawConfigurationSuccessfullyParsed() throws Exception {
+	public void definitionForFormConfigurationSuccessfullyParsed() throws Exception {
 		// given
 		final String serialization = "" //
-				+ CONFIGURATION_TYPE + "=\"raw\"\n" //
-				+ RAW_ATTRIBUTES + "=" //
+				+ CONFIGURATION_TYPE + "=\"form\"\n" //
+				+ FORM + "=" //
 				+ "    \"[" //
 				+ "        {" //
 				+ "            \"type\": \"text\"," //
@@ -209,6 +209,6 @@ public class CustomFormWidgetFactoryTest {
 			}
 		})));
 		verifyNoMoreInteractions(templateRespository, notifier);
-
 	}
+
 }
