@@ -3,7 +3,6 @@ package org.cmdbuild.model.widget.customform;
 import static org.apache.commons.lang3.builder.ToStringBuilder.reflectionToString;
 import static org.apache.commons.lang3.builder.ToStringStyle.SHORT_PREFIX_STYLE;
 
-import java.util.List;
 import java.util.Map;
 
 import javax.xml.bind.annotation.XmlAttribute;
@@ -275,7 +274,7 @@ public class CustomForm extends Widget {
 
 	private boolean required;
 	private boolean readOnly;
-	private List<Attribute> attributes;
+	private String form;
 	private String layout;
 	private Map<String, Object> variables;
 
@@ -307,12 +306,12 @@ public class CustomForm extends Widget {
 		this.readOnly = readOnly;
 	}
 
-	public List<Attribute> getAttributes() {
-		return attributes;
+	public String getForm() {
+		return form;
 	}
 
-	public void setAttributes(final List<Attribute> attributes) {
-		this.attributes = attributes;
+	public void setForm(final String form) {
+		this.form = form;
 	}
 
 	public String getLayout() {

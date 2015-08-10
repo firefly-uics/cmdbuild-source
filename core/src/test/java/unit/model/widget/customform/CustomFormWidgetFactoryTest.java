@@ -5,6 +5,7 @@ import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.CLASS
 import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.CONFIGURATION_TYPE;
 import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.FORM;
 import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.FUNCTIONNAME;
+import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.readJsonString;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
@@ -19,6 +20,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 import java.util.HashMap;
+import java.util.List;
 
 import org.cmdbuild.common.collect.ChainablePutMap;
 import org.cmdbuild.dao.entry.CMValueSet;
@@ -155,10 +157,11 @@ public class CustomFormWidgetFactoryTest {
 		final CustomForm created = (CustomForm) widgetFactory.createWidget(serialization, mock(CMValueSet.class));
 
 		// then
-		assertThat(created.getAttributes(), not(empty()));
-		assertThat(created.getAttributes(), hasSize(2));
-		assertThat(created.getAttributes().get(0).getName(), equalTo("foo"));
-		assertThat(created.getAttributes().get(1).getName(), equalTo("bar"));
+		final List<Attribute> form = readJsonString(created.getForm());
+		assertThat(form, not(empty()));
+		assertThat(form, hasSize(2));
+		assertThat(form.get(0).getName(), equalTo("foo"));
+		assertThat(form.get(1).getName(), equalTo("bar"));
 		verifyNoMoreInteractions(templateRespository, notifier, dataView, metadataStoreFactory);
 	}
 
@@ -196,9 +199,10 @@ public class CustomFormWidgetFactoryTest {
 		final CustomForm created = (CustomForm) widgetFactory.createWidget(serialization, mock(CMValueSet.class));
 
 		// then
-		assertThat(created.getAttributes(), not(empty()));
-		assertThat(created.getAttributes(), hasSize(1));
-		final Attribute attribute = created.getAttributes().get(0);
+		final List<Attribute> form = readJsonString(created.getForm());
+		assertThat(form, not(empty()));
+		assertThat(form, hasSize(1));
+		final Attribute attribute = form.get(0);
 		assertThat(attribute.getType(), equalTo("text"));
 		assertThat(attribute.getName(), equalTo("foo"));
 		assertThat(attribute.getDescription(), equalTo("this is foo"));
@@ -261,11 +265,12 @@ public class CustomFormWidgetFactoryTest {
 		final CustomForm created = (CustomForm) widgetFactory.createWidget(serialization, mock(CMValueSet.class));
 
 		// then
-		assertThat(created.getAttributes(), not(empty()));
-		assertThat(created.getAttributes(), hasSize(2));
-		assertThat(created.getAttributes().get(0).getName(), equalTo("bar"));
+		final List<Attribute> form = readJsonString(created.getForm());
+		assertThat(form, not(empty()));
+		assertThat(form, hasSize(2));
+		assertThat(form.get(0).getName(), equalTo("bar"));
 		// TODO test all attribute conversion
-		assertThat(created.getAttributes().get(1).getName(), equalTo("baz"));
+		assertThat(form.get(1).getName(), equalTo("baz"));
 		verify(dataView).findClass(eq("foo"));
 		verifyNoMoreInteractions(templateRespository, notifier, dataView, metadataStoreFactory);
 	}
@@ -309,11 +314,12 @@ public class CustomFormWidgetFactoryTest {
 		final CustomForm created = (CustomForm) widgetFactory.createWidget(serialization, mock(CMValueSet.class));
 
 		// then
-		assertThat(created.getAttributes(), not(empty()));
-		assertThat(created.getAttributes(), hasSize(2));
-		assertThat(created.getAttributes().get(0).getName(), equalTo("bar"));
+		final List<Attribute> form = readJsonString(created.getForm());
+		assertThat(form, not(empty()));
+		assertThat(form, hasSize(2));
+		assertThat(form.get(0).getName(), equalTo("bar"));
 		// TODO test all attribute conversion
-		assertThat(created.getAttributes().get(1).getName(), equalTo("baz"));
+		assertThat(form.get(1).getName(), equalTo("baz"));
 		verify(dataView).findFunctionByName(eq("foo"));
 		verifyNoMoreInteractions(templateRespository, notifier, dataView, metadataStoreFactory);
 	}

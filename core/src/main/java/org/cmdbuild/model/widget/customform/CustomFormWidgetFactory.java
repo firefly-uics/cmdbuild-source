@@ -8,6 +8,7 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.cmdbuild.dao.entrytype.CMAttribute.Mode.WRITE;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.Validate;
@@ -459,7 +460,7 @@ public class CustomFormWidgetFactory extends ValuePairWidgetFactory {
 		final CustomForm widget = new CustomForm();
 		widget.setRequired(readBooleanFalseIfMissing(valueMap.get(REQUIRED)));
 		widget.setReadOnly(readBooleanFalseIfMissing(valueMap.get(READ_ONLY)));
-		widget.setAttributes(newArrayList(attributesFetcherOf(valueMap).attributes()));
+		widget.setForm(writeJsonString(newArrayList(attributesFetcherOf(valueMap).attributes())));
 		widget.setLayout(String.class.cast(valueMap.get(LAYOUT)));
 		widget.setVariables(extractUnmanagedParameters(valueMap, KNOWN_PARAMETERS));
 		return widget;
@@ -485,6 +486,25 @@ public class CustomFormWidgetFactory extends ValuePairWidgetFactory {
 			attributeFetcher = new NullAttributeFetcher();
 		}
 		return attributeFetcher;
+	}
+
+	private static String writeJsonString(final Collection<Attribute> attributes) {
+		try {
+			final ObjectMapper mapper = new ObjectMapper();
+			return mapper.writeValueAsString(attributes);
+		} catch (final Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	public static List<Attribute> readJsonString(final String value) {
+		try {
+			final ObjectMapper mapper = new ObjectMapper();
+			return mapper.readValue(value, new TypeReference<List<Attribute>>() {
+			});
+		} catch (final Exception e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 }
