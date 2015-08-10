@@ -3,6 +3,8 @@ package org.cmdbuild.servlets.json.translationtable;
 import java.util.Collection;
 import java.util.Map;
 
+import javax.activation.DataHandler;
+
 import org.cmdbuild.logic.translation.TranslationLogic;
 import org.cmdbuild.logic.translation.TranslationObject;
 import org.cmdbuild.logic.translation.converter.FilterConverter;
@@ -56,6 +58,11 @@ public class FilterTranslationSerializer implements TranslationSerializer {
 		field.setValue(filter.getDescription());
 		jsonFields.add(field);
 		return jsonFields;
+	}
+	
+	@Override
+	public DataHandler serializeCsv() {
+		throw new UnsupportedOperationException("to do");
 	}
 
 }

@@ -3,6 +3,8 @@ package org.cmdbuild.servlets.json.translationtable;
 import java.util.Collection;
 import java.util.Map;
 
+import javax.activation.DataHandler;
+
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
@@ -108,6 +110,11 @@ public class DomainTranslationSerializer extends EntryTypeTranslationSerializer 
 		jsonFields.add(inverseDescriptionField);
 
 		return jsonFields;
+	}
+	
+	@Override
+	public DataHandler serializeCsv() {
+		throw new UnsupportedOperationException("to do");
 	}
 
 }

@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.activation.DataHandler;
+
 import org.cmdbuild.auth.acl.CMGroup;
 import org.cmdbuild.auth.acl.PrivilegePair;
 import org.cmdbuild.logic.auth.AuthenticationLogic;
@@ -165,5 +167,10 @@ public class MenuTranslationSerializer implements TranslationSerializer {
 			throw new UnsupportedOperationException();
 		}
 	};
+	
+	@Override
+	public DataHandler serializeCsv() {
+		throw new UnsupportedOperationException("to do");
+	}
 
 }

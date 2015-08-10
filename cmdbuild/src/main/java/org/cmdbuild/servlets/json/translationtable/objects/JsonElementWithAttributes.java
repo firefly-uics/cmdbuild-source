@@ -4,6 +4,8 @@ import java.util.Collection;
 
 import org.codehaus.jackson.annotate.JsonProperty;
 
+@Deprecated 
+//use JsonElementWithChildren instead
 public class JsonElementWithAttributes extends JsonElement {
 
 	private static final String ATTRIBUTES = "attributes";
