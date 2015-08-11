@@ -38,6 +38,7 @@ import org.cmdbuild.exception.CMDBWorkflowException.WorkflowExceptionType;
 import org.cmdbuild.model.widget.customform.Attribute;
 import org.cmdbuild.model.widget.customform.Attribute.Filter;
 import org.cmdbuild.model.widget.customform.CustomForm;
+import org.cmdbuild.model.widget.customform.CustomForm.Capabilities;
 import org.cmdbuild.model.widget.customform.CustomFormWidgetFactory;
 import org.cmdbuild.notification.Notifier;
 import org.cmdbuild.services.meta.MetadataStoreFactory;
@@ -352,7 +353,7 @@ public class CustomFormWidgetFactoryTest {
 	}
 
 	@Test
-	public void functionalitiesAreNotDisabledByDefault() throws Exception {
+	public void capabilitiesAreNotDisabledByDefault() throws Exception {
 		// given
 		final String serialization = "" //
 				+ CONFIGURATION_TYPE + "=\"form\"\n" //
@@ -363,14 +364,15 @@ public class CustomFormWidgetFactoryTest {
 		final CustomForm created = (CustomForm) widgetFactory.createWidget(serialization, mock(CMValueSet.class));
 
 		// then
-		assertThat(created.isAddRowDisabled(), equalTo(false));
-		assertThat(created.isDeleteRowDisabled(), equalTo(false));
-		assertThat(created.isImportCsvDisabled(), equalTo(false));
+		final Capabilities capabilities = created.getCapabilities();
+		assertThat(capabilities.isAddDisabled(), equalTo(false));
+		assertThat(capabilities.isDeleteDisabled(), equalTo(false));
+		assertThat(capabilities.isImportCsvDisabled(), equalTo(false));
 		verifyNoMoreInteractions(templateRespository, notifier, dataView, metadataStoreFactory);
 	}
 
 	@Test
-	public void functionalitiesAreNotDisabledOnlyIfKeyIsPresent() throws Exception {
+	public void capabilitiesAreNotDisabledOnlyIfKeyIsPresent() throws Exception {
 		// given
 		final String serialization = "" //
 				+ CONFIGURATION_TYPE + "=\"form\"\n" //
@@ -384,14 +386,15 @@ public class CustomFormWidgetFactoryTest {
 		final CustomForm created = (CustomForm) widgetFactory.createWidget(serialization, mock(CMValueSet.class));
 
 		// then
-		assertThat(created.isAddRowDisabled(), equalTo(false));
-		assertThat(created.isDeleteRowDisabled(), equalTo(false));
-		assertThat(created.isImportCsvDisabled(), equalTo(false));
+		final Capabilities capabilities = created.getCapabilities();
+		assertThat(capabilities.isAddDisabled(), equalTo(false));
+		assertThat(capabilities.isDeleteDisabled(), equalTo(false));
+		assertThat(capabilities.isImportCsvDisabled(), equalTo(false));
 		verifyNoMoreInteractions(templateRespository, notifier, dataView, metadataStoreFactory);
 	}
 
 	@Test
-	public void functionalitiesAreAlwaysDisabledWhenSpecifiedWithoutQuotes() throws Exception {
+	public void capabilitiesAreAlwaysDisabledWhenSpecifiedWithoutQuotes() throws Exception {
 		// given
 		final String serialization = "" //
 				+ CONFIGURATION_TYPE + "=\"form\"\n" //
@@ -405,14 +408,15 @@ public class CustomFormWidgetFactoryTest {
 		final CustomForm created = (CustomForm) widgetFactory.createWidget(serialization, mock(CMValueSet.class));
 
 		// then
-		assertThat(created.isAddRowDisabled(), equalTo(false));
-		assertThat(created.isDeleteRowDisabled(), equalTo(false));
-		assertThat(created.isImportCsvDisabled(), equalTo(false));
+		final Capabilities capabilities = created.getCapabilities();
+		assertThat(capabilities.isAddDisabled(), equalTo(false));
+		assertThat(capabilities.isDeleteDisabled(), equalTo(false));
+		assertThat(capabilities.isImportCsvDisabled(), equalTo(false));
 		verifyNoMoreInteractions(templateRespository, notifier, dataView, metadataStoreFactory);
 	}
 
 	@Test
-	public void functionalitiesAreDisabledOnlyWhenSpecified() throws Exception {
+	public void capabilitiesAreDisabledOnlyWhenSpecified() throws Exception {
 		// given
 		final String serialization = "" //
 				+ CONFIGURATION_TYPE + "=\"form\"\n" //
@@ -426,9 +430,10 @@ public class CustomFormWidgetFactoryTest {
 		final CustomForm created = (CustomForm) widgetFactory.createWidget(serialization, mock(CMValueSet.class));
 
 		// then
-		assertThat(created.isAddRowDisabled(), equalTo(true));
-		assertThat(created.isDeleteRowDisabled(), equalTo(true));
-		assertThat(created.isImportCsvDisabled(), equalTo(true));
+		final Capabilities capabilities = created.getCapabilities();
+		assertThat(capabilities.isAddDisabled(), equalTo(true));
+		assertThat(capabilities.isDeleteDisabled(), equalTo(true));
+		assertThat(capabilities.isImportCsvDisabled(), equalTo(true));
 		verifyNoMoreInteractions(templateRespository, notifier, dataView, metadataStoreFactory);
 	}
 
