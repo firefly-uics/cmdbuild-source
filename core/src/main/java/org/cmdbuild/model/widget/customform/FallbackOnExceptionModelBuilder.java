@@ -1,11 +1,11 @@
 package org.cmdbuild.model.widget.customform;
 
-class FallbackOnExceptionFormBuilder implements FormBuilder {
+class FallbackOnExceptionModelBuilder implements ModelBuilder {
 
-	private final FormBuilder delegate;
-	private final FormBuilder fallback;
+	private final ModelBuilder delegate;
+	private final ModelBuilder fallback;
 
-	public FallbackOnExceptionFormBuilder(final FormBuilder delegate, final FormBuilder fallback) {
+	public FallbackOnExceptionModelBuilder(final ModelBuilder delegate, final ModelBuilder fallback) {
 		this.delegate = delegate;
 		this.fallback = fallback;
 	}

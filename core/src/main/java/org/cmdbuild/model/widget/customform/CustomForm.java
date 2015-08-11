@@ -120,7 +120,8 @@ public class CustomForm extends Widget {
 	}
 
 	private boolean required;
-	private String form;
+	private String model;
+	private String data;
 	private String layout;
 	private Capabilities capabilities;
 	private Serialization serialization;
@@ -146,12 +147,20 @@ public class CustomForm extends Widget {
 		this.required = required;
 	}
 
-	public String getForm() {
-		return form;
+	public String getModel() {
+		return model;
 	}
 
-	public void setForm(final String form) {
-		this.form = form;
+	public void setModel(final String model) {
+		this.model = model;
+	}
+
+	public String getData() {
+		return data;
+	}
+
+	public void setData(final String data) {
+		this.data = data;
 	}
 
 	public String getLayout() {

@@ -6,7 +6,7 @@ import java.util.Collection;
 
 import org.codehaus.jackson.map.ObjectMapper;
 
-abstract class AttributesBasedFormBuilder implements FormBuilder {
+abstract class AttributesBasedModelBuilder implements ModelBuilder {
 
 	protected static final String //
 			TYPE_BOOLEAN = "boolean", //
@@ -28,7 +28,7 @@ abstract class AttributesBasedFormBuilder implements FormBuilder {
 	/**
 	 * Usable by subclasses only.
 	 */
-	protected AttributesBasedFormBuilder() {
+	protected AttributesBasedModelBuilder() {
 	}
 
 	@Override

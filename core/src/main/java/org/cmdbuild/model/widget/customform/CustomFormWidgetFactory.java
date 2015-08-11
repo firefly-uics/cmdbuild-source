@@ -25,10 +25,12 @@ public class CustomFormWidgetFactory extends ValuePairWidgetFactory {
 
 	public static final String //
 			REQUIRED = "Required", //
-			CONFIGURATION_TYPE = "ConfigurationType", //
+			MODEL_TYPE = "ModelType", //
 			FORM = "Form", //
 			CLASSNAME = "ClassName", //
 			FUNCTIONNAME = "FunctionName", //
+			DATA_TYPE = "DataType", //
+			RAW_DATA = "RawData", //
 			LAYOUT = "Layout", //
 			READ_ONLY = "ReadOnly", //
 			ADD_DISABLED = "AddRowDisabled", //
@@ -41,9 +43,8 @@ public class CustomFormWidgetFactory extends ValuePairWidgetFactory {
 			ROWS_SEPARATOR = "RowsSeparator";
 
 	private static final String[] KNOWN_PARAMETERS = { BUTTON_LABEL, REQUIRED, //
-			CONFIGURATION_TYPE, //
-			FORM, //
-			CLASSNAME, //
+			MODEL_TYPE, FORM, CLASSNAME, FUNCTIONNAME, //
+			DATA_TYPE, RAW_DATA, //
 			LAYOUT, //
 			READ_ONLY, ADD_DISABLED, DELETE_DISABLED, IMPORT_DISABLED, MODIFY_DISABLED, //
 			SERIALIZATION_TYPE, KEY_VALUE_SEPARATOR, ATTRIBUTES_SEPARATOR, ROWS_SEPARATOR //
@@ -52,7 +53,8 @@ public class CustomFormWidgetFactory extends ValuePairWidgetFactory {
 	private static final String //
 			TYPE_FORM = "form", //
 			TYPE_CLASS = "class", //
-			TYPE_FUNCTION = "function";
+			TYPE_FUNCTION = "function", //
+			TYPE_RAW = "raw";
 
 	private static final String //
 			JSON_SERIALIZATION = "json", //
@@ -82,7 +84,8 @@ public class CustomFormWidgetFactory extends ValuePairWidgetFactory {
 	protected Widget createWidget(final Map<String, Object> valueMap) {
 		final CustomForm widget = new CustomForm();
 		widget.setRequired(readBooleanFalseIfMissing(valueMap.get(REQUIRED)));
-		widget.setForm(formBuilderOf(valueMap).build());
+		widget.setModel(modelOf(valueMap).build());
+		widget.setData(dataOf(valueMap).build());
 		widget.setLayout(String.class.cast(valueMap.get(LAYOUT)));
 		widget.setCapabilities(capabilitiesOf(valueMap));
 		widget.setSerialization(serializationOf(valueMap));
@@ -90,24 +93,36 @@ public class CustomFormWidgetFactory extends ValuePairWidgetFactory {
 		return widget;
 	}
 
-	private FormBuilder formBuilderOf(final Map<String, Object> valueMap) {
-		final FormBuilder output;
-		final String configurationType = String.class.cast(valueMap.get(CONFIGURATION_TYPE));
-		if (TYPE_FORM.equalsIgnoreCase(configurationType)) {
+	private ModelBuilder modelOf(final Map<String, Object> valueMap) {
+		final ModelBuilder output;
+		final String value = String.class.cast(valueMap.get(MODEL_TYPE));
+		if (TYPE_FORM.equalsIgnoreCase(value)) {
 			final String expression = defaultString(String.class.cast(valueMap.get(FORM)));
 			Validate.isTrue(isNotBlank(expression), "invalid value for '%s'", FORM);
-			output = new FallbackOnExceptionFormBuilder(new JsonStringFormBuilder(expression), new IdentityFormBuilder(
-					expression));
-		} else if (TYPE_CLASS.equalsIgnoreCase(configurationType)) {
+			output = new FallbackOnExceptionModelBuilder(new JsonStringModelBuilder(expression),
+					new IdentityModelBuilder(expression));
+		} else if (TYPE_CLASS.equalsIgnoreCase(value)) {
 			final String className = String.class.cast(valueMap.get(CLASSNAME));
 			Validate.isTrue(isNotBlank(className), "invalid value for '%s'", CLASSNAME);
-			output = new ClassFormBuilder(dataView, metadataStoreFactory, className);
-		} else if (TYPE_FUNCTION.equalsIgnoreCase(configurationType)) {
+			output = new ClassModelBuilder(dataView, metadataStoreFactory, className);
+		} else if (TYPE_FUNCTION.equalsIgnoreCase(value)) {
 			final String functionName = String.class.cast(valueMap.get(FUNCTIONNAME));
 			Validate.isTrue(isNotBlank(functionName), "invalid value for '%s'", FUNCTIONNAME);
-			output = new FunctionFormBuilder(dataView, functionName);
+			output = new FunctionModelBuilder(dataView, functionName);
 		} else {
-			output = new InvalidFormBuilder(format("'%s' is not a valid value for '%s'", CONFIGURATION_TYPE));
+			output = new InvalidModelBuilder(format("'%s' is not a valid value for '%s'", value, MODEL_TYPE));
+		}
+		return output;
+	}
+
+	private DataBuilder dataOf(final Map<String, Object> valueMap) {
+		final DataBuilder output;
+		final String value = String.class.cast(valueMap.get(DATA_TYPE));
+		if (TYPE_RAW.equalsIgnoreCase(value)) {
+			final String expression = defaultString(String.class.cast(valueMap.get(RAW_DATA)));
+			output = new IdentityDataBuilder(expression);
+		} else {
+			output = new IdentityDataBuilder(null);
 		}
 		return output;
 	}

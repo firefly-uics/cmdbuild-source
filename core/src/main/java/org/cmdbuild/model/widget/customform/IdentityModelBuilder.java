@@ -1,10 +1,10 @@
 package org.cmdbuild.model.widget.customform;
 
-class IdentityFormBuilder implements FormBuilder {
+class IdentityModelBuilder implements ModelBuilder {
 
 	private final String value;
 
-	public IdentityFormBuilder(final String value) {
+	public IdentityModelBuilder(final String value) {
 		this.value = value;
 	}
 

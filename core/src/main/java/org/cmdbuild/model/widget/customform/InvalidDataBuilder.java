@@ -1,10 +1,10 @@
 package org.cmdbuild.model.widget.customform;
 
-class InvalidFormBuilder implements FormBuilder {
+class InvalidDataBuilder implements DataBuilder {
 
 	private final String message;
 
-	public InvalidFormBuilder(final String message) {
+	public InvalidDataBuilder(final String message) {
 		this.message = message;
 	}
 
