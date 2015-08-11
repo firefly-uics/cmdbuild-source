@@ -32,9 +32,10 @@ public class CustomFormWidgetFactory extends ValuePairWidgetFactory {
 			CLASSNAME = "ClassName", //
 			FUNCTIONNAME = "FunctionName", //
 			LAYOUT = "Layout", //
-			ADD_ROW_DISABLED = "AddRowDisabled", //
-			DELETE_ROW_DISABLED = "DeleteRowDisabled", //
-			IMPORT_CSV_DISABLED = "ImportCsvDisabled", //
+			ADD_DISABLED = "AddRowDisabled", //
+			DELETE_DISABLED = "DeleteRowDisabled", //
+			IMPORT_DISABLED = "ImportCsvDisabled", //
+			MODIFY_DISABLED = "ModifyRowDisabled", //
 			SERIALIZATION_TYPE = "SerializationType", //
 			KEY_VALUE_SEPARATOR = "KeyValueSeparator", //
 			ATTRIBUTES_SEPARATOR = "AttributesSeparator", //
@@ -45,7 +46,7 @@ public class CustomFormWidgetFactory extends ValuePairWidgetFactory {
 			FORM, //
 			CLASSNAME, //
 			LAYOUT, //
-			ADD_ROW_DISABLED, IMPORT_CSV_DISABLED, DELETE_ROW_DISABLED, //
+			ADD_DISABLED, DELETE_DISABLED, IMPORT_DISABLED, MODIFY_DISABLED, //
 			SERIALIZATION_TYPE, KEY_VALUE_SEPARATOR, ATTRIBUTES_SEPARATOR, ROWS_SEPARATOR //
 	};
 
@@ -115,9 +116,10 @@ public class CustomFormWidgetFactory extends ValuePairWidgetFactory {
 
 	private Capabilities capabilitiesOf(final Map<String, Object> valueMap) {
 		final Capabilities output = new Capabilities();
-		output.setAddDisabled(toBoolean(String.class.cast(valueMap.get(ADD_ROW_DISABLED))));
-		output.setDeleteDisabled(toBoolean(String.class.cast(valueMap.get(DELETE_ROW_DISABLED))));
-		output.setImportCsvDisabled(toBoolean(String.class.cast(valueMap.get(IMPORT_CSV_DISABLED))));
+		output.setAddDisabled(toBoolean(String.class.cast(valueMap.get(ADD_DISABLED))));
+		output.setDeleteDisabled(toBoolean(String.class.cast(valueMap.get(DELETE_DISABLED))));
+		output.setImportDisabled(toBoolean(String.class.cast(valueMap.get(IMPORT_DISABLED))));
+		output.setModifyDisabled(toBoolean(String.class.cast(valueMap.get(MODIFY_DISABLED))));
 		return output;
 	}
 
@@ -143,4 +145,5 @@ public class CustomFormWidgetFactory extends ValuePairWidgetFactory {
 		output.setConfiguration(configuration);
 		return output;
 	}
+
 }

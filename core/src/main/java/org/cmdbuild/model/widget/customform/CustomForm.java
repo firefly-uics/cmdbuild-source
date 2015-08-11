@@ -14,6 +14,7 @@ public class CustomForm extends Widget {
 		private boolean addDisabled;
 		private boolean deleteDisabled;
 		private boolean importCsvDisabled;
+		private boolean modifyDisabled;
 
 		public boolean isAddDisabled() {
 			return addDisabled;
@@ -31,12 +32,20 @@ public class CustomForm extends Widget {
 			this.deleteDisabled = deleteDisabled;
 		}
 
-		public boolean isImportCsvDisabled() {
+		public boolean isImportDisabled() {
 			return importCsvDisabled;
 		}
 
-		public void setImportCsvDisabled(final boolean importCsvDisabled) {
+		public void setImportDisabled(final boolean importCsvDisabled) {
 			this.importCsvDisabled = importCsvDisabled;
+		}
+
+		public Boolean isModifyDisabled() {
+			return modifyDisabled;
+		}
+
+		public void setModifyDisabled(final boolean modifyDisabled) {
+			this.modifyDisabled = modifyDisabled;
 		}
 
 	}
