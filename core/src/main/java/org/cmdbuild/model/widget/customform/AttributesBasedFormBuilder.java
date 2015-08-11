@@ -2,6 +2,10 @@ package org.cmdbuild.model.widget.customform;
 
 import static com.google.common.collect.Lists.newArrayList;
 
+import java.util.Collection;
+
+import org.codehaus.jackson.map.ObjectMapper;
+
 abstract class AttributesBasedFormBuilder implements FormBuilder {
 
 	protected static final String //
@@ -29,7 +33,16 @@ abstract class AttributesBasedFormBuilder implements FormBuilder {
 
 	@Override
 	public final String build() {
-		return CustomFormWidgetFactory.writeJsonString(newArrayList(attributes()));
+		return writeJsonString(newArrayList(attributes()));
+	}
+
+	private static String writeJsonString(final Collection<Attribute> attributes) {
+		try {
+			final ObjectMapper mapper = new ObjectMapper();
+			return mapper.writeValueAsString(attributes);
+		} catch (final Exception e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	protected abstract Iterable<Attribute> attributes();

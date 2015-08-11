@@ -4,8 +4,12 @@ import java.util.Collection;
 
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
+import org.slf4j.Marker;
+import org.slf4j.MarkerFactory;
 
 class JsonStringFormBuilder extends AttributesBasedFormBuilder {
+
+	private static final Marker MARKER = MarkerFactory.getMarker(JsonStringFormBuilder.class.getName());
 
 	private static final ObjectMapper mapper = new ObjectMapper();
 
@@ -21,10 +25,10 @@ class JsonStringFormBuilder extends AttributesBasedFormBuilder {
 	@Override
 	public Iterable<Attribute> attributes() {
 		try {
-			logger.debug(CustomFormWidgetFactory.MARKER, "parsing expression '{}'", expression);
+			logger.debug(MARKER, "parsing expression '{}'", expression);
 			return mapper.readValue(expression, TYPE_REFERENCE);
 		} catch (final Exception e) {
-			logger.error(CustomFormWidgetFactory.MARKER, "error parsing expression", e);
+			logger.error(MARKER, "error parsing expression", e);
 			throw new RuntimeException(e);
 		}
 	}

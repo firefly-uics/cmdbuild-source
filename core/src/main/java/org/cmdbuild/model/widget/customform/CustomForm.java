@@ -8,13 +8,43 @@ import org.cmdbuild.workflow.CMActivityInstance;
 
 public class CustomForm extends Widget {
 
+	public static class Capabilities {
+
+		private boolean addDisabled;
+		private boolean deleteDisabled;
+		private boolean importCsvDisabled;
+
+		public boolean isAddDisabled() {
+			return addDisabled;
+		}
+
+		public void setAddDisabled(final boolean addDisabled) {
+			this.addDisabled = addDisabled;
+		}
+
+		public boolean isDeleteDisabled() {
+			return deleteDisabled;
+		}
+
+		public void setDeleteDisabled(final boolean deleteDisabled) {
+			this.deleteDisabled = deleteDisabled;
+		}
+
+		public boolean isImportCsvDisabled() {
+			return importCsvDisabled;
+		}
+
+		public void setImportCsvDisabled(final boolean importCsvDisabled) {
+			this.importCsvDisabled = importCsvDisabled;
+		}
+
+	}
+
 	private boolean required;
 	private boolean readOnly;
 	private String form;
 	private String layout;
-	private boolean addRowDisabled;
-	private boolean deleteRowDisabled;
-	private boolean importCsvDisabled;
+	private Capabilities capabilities;
 	private Map<String, Object> variables;
 
 	@Override
@@ -57,32 +87,16 @@ public class CustomForm extends Widget {
 		return layout;
 	}
 
-	public boolean isAddRowDisabled() {
-		return addRowDisabled;
-	}
-
-	public void setAddRowDisabled(final boolean addRowDisabled) {
-		this.addRowDisabled = addRowDisabled;
-	}
-
-	public boolean isDeleteRowDisabled() {
-		return deleteRowDisabled;
-	}
-
-	public void setDeleteRowDisabled(final boolean deleteRowDisabled) {
-		this.deleteRowDisabled = deleteRowDisabled;
-	}
-
-	public boolean isImportCsvDisabled() {
-		return importCsvDisabled;
-	}
-
-	public void setImportCsvDisabled(final boolean importCsvDisabled) {
-		this.importCsvDisabled = importCsvDisabled;
-	}
-
 	public void setLayout(final String layout) {
 		this.layout = layout;
+	}
+
+	public Capabilities getCapabilities() {
+		return capabilities;
+	}
+
+	public void setCapabilities(final Capabilities capabilities) {
+		this.capabilities = capabilities;
 	}
 
 	public Map<String, Object> getVariables() {

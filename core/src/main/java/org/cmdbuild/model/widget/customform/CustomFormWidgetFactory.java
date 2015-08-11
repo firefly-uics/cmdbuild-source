@@ -5,23 +5,18 @@ import static org.apache.commons.lang3.BooleanUtils.toBoolean;
 import static org.apache.commons.lang3.StringUtils.defaultString;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
-import java.util.Collection;
 import java.util.Map;
 
 import org.apache.commons.lang3.Validate;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.model.widget.Widget;
+import org.cmdbuild.model.widget.customform.CustomForm.Capabilities;
 import org.cmdbuild.notification.Notifier;
 import org.cmdbuild.services.meta.MetadataStoreFactory;
 import org.cmdbuild.services.template.store.TemplateRepository;
 import org.cmdbuild.workflow.widget.ValuePairWidgetFactory;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.slf4j.Marker;
-import org.slf4j.MarkerFactory;
 
 public class CustomFormWidgetFactory extends ValuePairWidgetFactory {
-
-	static final Marker MARKER = MarkerFactory.getMarker(CustomFormWidgetFactory.class.getName());
 
 	private static final String WIDGET_NAME = "customForm";
 
@@ -72,9 +67,7 @@ public class CustomFormWidgetFactory extends ValuePairWidgetFactory {
 		widget.setReadOnly(readBooleanFalseIfMissing(valueMap.get(READ_ONLY)));
 		widget.setForm(formBuilderOf(valueMap).build());
 		widget.setLayout(String.class.cast(valueMap.get(LAYOUT)));
-		widget.setAddRowDisabled(toBoolean(String.class.cast(valueMap.get(DISABLE_ADD_ROW))));
-		widget.setDeleteRowDisabled(toBoolean(String.class.cast(valueMap.get(DISABLE_DELETE_ROW))));
-		widget.setImportCsvDisabled(toBoolean(String.class.cast(valueMap.get(DISABLE_IMPORT_FROM_CSV))));
+		widget.setCapabilities(capabilitiesOf(valueMap));
 		widget.setVariables(extractUnmanagedParameters(valueMap, KNOWN_PARAMETERS));
 		return widget;
 	}
@@ -101,13 +94,12 @@ public class CustomFormWidgetFactory extends ValuePairWidgetFactory {
 		return output;
 	}
 
-	static String writeJsonString(final Collection<Attribute> attributes) {
-		try {
-			final ObjectMapper mapper = new ObjectMapper();
-			return mapper.writeValueAsString(attributes);
-		} catch (final Exception e) {
-			throw new RuntimeException(e);
-		}
+	private Capabilities capabilitiesOf(final Map<String, Object> valueMap) {
+		final Capabilities output = new Capabilities();
+		output.setAddDisabled(toBoolean(String.class.cast(valueMap.get(DISABLE_ADD_ROW))));
+		output.setDeleteDisabled(toBoolean(String.class.cast(valueMap.get(DISABLE_DELETE_ROW))));
+		output.setImportCsvDisabled(toBoolean(String.class.cast(valueMap.get(DISABLE_IMPORT_FROM_CSV))));
+		return output;
 	}
 
 }
