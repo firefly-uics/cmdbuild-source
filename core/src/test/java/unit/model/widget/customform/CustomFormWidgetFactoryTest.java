@@ -14,6 +14,7 @@ import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.FUNCT
 import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.IMPORT_DISABLED;
 import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.KEY_VALUE_SEPARATOR;
 import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.MODIFY_DISABLED;
+import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.READ_ONLY;
 import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.ROWS_SEPARATOR;
 import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.SERIALIZATION_TYPE;
 import static org.hamcrest.Matchers.empty;
@@ -376,6 +377,7 @@ public class CustomFormWidgetFactoryTest {
 
 		// then
 		final Capabilities capabilities = created.getCapabilities();
+		assertThat(capabilities.isReadOnly(), equalTo(false));
 		assertThat(capabilities.isAddDisabled(), equalTo(false));
 		assertThat(capabilities.isDeleteDisabled(), equalTo(false));
 		assertThat(capabilities.isImportDisabled(), equalTo(false));
@@ -389,6 +391,7 @@ public class CustomFormWidgetFactoryTest {
 		final String serialization = "" //
 				+ CONFIGURATION_TYPE + "=\"form\"\n" //
 				+ FORM + "=\"foo\"\n" //
+				+ READ_ONLY + "\n" //
 				+ ADD_DISABLED + "\n" //
 				+ DELETE_DISABLED + "\n" //
 				+ IMPORT_DISABLED + "\n" //
@@ -400,6 +403,7 @@ public class CustomFormWidgetFactoryTest {
 
 		// then
 		final Capabilities capabilities = created.getCapabilities();
+		assertThat(capabilities.isReadOnly(), equalTo(false));
 		assertThat(capabilities.isAddDisabled(), equalTo(false));
 		assertThat(capabilities.isDeleteDisabled(), equalTo(false));
 		assertThat(capabilities.isImportDisabled(), equalTo(false));
@@ -413,6 +417,7 @@ public class CustomFormWidgetFactoryTest {
 		final String serialization = "" //
 				+ CONFIGURATION_TYPE + "=\"form\"\n" //
 				+ FORM + "=\"foo\"\n" //
+				+ READ_ONLY + "=true\n" //
 				+ ADD_DISABLED + "=true\n" //
 				+ DELETE_DISABLED + "=true\n" //
 				+ IMPORT_DISABLED + "=true\n" //
@@ -424,6 +429,7 @@ public class CustomFormWidgetFactoryTest {
 
 		// then
 		final Capabilities capabilities = created.getCapabilities();
+		assertThat(capabilities.isReadOnly(), equalTo(false));
 		assertThat(capabilities.isAddDisabled(), equalTo(false));
 		assertThat(capabilities.isDeleteDisabled(), equalTo(false));
 		assertThat(capabilities.isImportDisabled(), equalTo(false));
@@ -437,6 +443,7 @@ public class CustomFormWidgetFactoryTest {
 		final String serialization = "" //
 				+ CONFIGURATION_TYPE + "=\"form\"\n" //
 				+ FORM + "=\"foo\"\n" //
+				+ READ_ONLY + "=\"true\"\n" //
 				+ ADD_DISABLED + "=\"true\"\n" //
 				+ DELETE_DISABLED + "=\"true\"\n" //
 				+ IMPORT_DISABLED + "=\"true\"\n" //
@@ -448,6 +455,7 @@ public class CustomFormWidgetFactoryTest {
 
 		// then
 		final Capabilities capabilities = created.getCapabilities();
+		assertThat(capabilities.isReadOnly(), equalTo(true));
 		assertThat(capabilities.isAddDisabled(), equalTo(true));
 		assertThat(capabilities.isDeleteDisabled(), equalTo(true));
 		assertThat(capabilities.isImportDisabled(), equalTo(true));
