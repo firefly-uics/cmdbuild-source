@@ -46,12 +46,12 @@
 		},
 
 		/**
-		 * @cfg {Object}
+		 * @cfg {CMDBuild.controller.management.common.CMWidgetManagerController}
 		 */
 		parentDelegate: undefined,
 
 		/**
-		 * @property {CMDBuild.model.CMActivityInstance}
+		 * @property {Ext.data.Model or CMDBuild.model.CMActivityInstance}
 		 */
 		card: undefined,
 
@@ -61,9 +61,13 @@
 		clientForm: undefined,
 
 		/**
-		 * @cfg {CMDBuild.controller.management.common.CMWidgetManagerController}
+		 * Multiple widget instances data storage buffer
+		 *
+		 * @property {Object}
+		 *
+		 * @private
 		 */
-		ownerController: undefined,
+		instancesDataStorage: {},
 
 		/**
 		 * @property {CMDBuild.Management.TemplateResolver}
@@ -76,37 +80,48 @@
 		view: undefined,
 
 		/**
-		 * @cfg {Object}
+		 * Plain widget configuration object
+		 *
+		 * @property {Object}
 		 */
-		widgetConf: undefined,
+		widgetConfiguration: undefined,
 
 		/**
-		 * @param {CMDBuild.view.management.common.widgets.CMWidgetManager} view
-		 * @param {CMDBuild.controller.management.common.CMWidgetManagerController} ownerController
-		 * @param {Object} widgetConf
-		 * @param {Ext.form.Basic} clientForm
-		 * @param {CMDBuild.model.CMActivityInstance} card
+		 * Widget configuration model built with WidgetConfiguration methods
+		 *
+		 * @property {Object}
+		 *
+		 * @private
 		 */
-		constructor: function(view, ownerController, widgetConf, clientForm, card) {
-			if (!Ext.isEmpty(view) && !Ext.Object.isEmpty(widgetConf)) {
-				this.callParent([{
-					view: view,
-					parentDelegate: ownerController,
-					widgetConf: widgetConf,
-					clientForm: clientForm,
-					card: card
-				}]);
+		widgetConfigurationModel: undefined,
+
+		/**
+		 * @param {CMDBuild.view.management.common.widgets.CMWidgetManager} configurationObject.view
+		 * @param {CMDBuild.controller.management.common.CMWidgetManagerController} configurationObject.parentDelegate
+		 * @param {Object} configurationObject.widgetConfiguration
+		 * @param {Ext.form.Basic} configurationObject.clientForm
+		 * @param {CMDBuild.model.CMActivityInstance} configurationObject.card
+		 */
+		constructor: function(configurationObject) {
+			if (!Ext.isEmpty(configurationObject) && !Ext.Object.isEmpty(configurationObject.widgetConfiguration)) {
+				this.callParent(arguments);
+
+				this.widgetConfigurationSet(this.widgetConfiguration); // Setup widget configuration model
 
 				this.view.delegate = this; // Apply delegate to view
 			} else {
-				_error('Wrong or empty widget view or configuration objects', this);
+				_error('Wrong or empty widget view or configuration object', this);
 			}
 		},
 
 		/**
 		 * @abstract
 		 */
-		beforeActiveView: Ext.emptyFn,
+		beforeActiveView: function() {
+			// Setup widgetConfiguration on widget view activation to switch configuration on multiple instances
+			if (!Ext.isEmpty(this.widgetConfiguration))
+				this.widgetConfigurationSet(this.widgetConfiguration);
+		},
 
 		/**
 		 * Executed before window hide perform
@@ -150,15 +165,48 @@
 		 * @return {Number}
 		 */
 		getWidgetId: function() {
-			return this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.ID];
+			return this.widgetConfigurationGet(CMDBuild.core.proxy.CMProxyConstants.ID);
 		},
 
 		/**
 		 * @param {String}
 		 */
 		getWidgetLabel: function() {
-			return this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.LABEL];
+			return this.widgetConfigurationGet(CMDBuild.core.proxy.CMProxyConstants.LABEL);
 		},
+
+		// InstancesDataStorage methods (multiple widget instances support)
+			/**
+			 * @returns {Mixed} or null
+			 */
+			instancesDataStorageGet: function() {
+				if (!Ext.isEmpty(this.getWidgetId()) && !Ext.isEmpty(this.instancesDataStorage[this.getWidgetId()]))
+					return this.instancesDataStorage[this.getWidgetId()];
+
+				return null;
+			},
+
+			/**
+			 * @returns {Boolean}
+			 */
+			instancesDataStorageIsEmpty: function() {
+				if (!Ext.isEmpty(this.getWidgetId()))
+					return Ext.isEmpty(this.instancesDataStorage[this.getWidgetId()]);
+
+				return true;
+			},
+
+			instancesDataStorageReset: function() {
+				this.instancesDataStorage = {};
+			},
+
+			/**
+			 * @param {Mixed} instanceData
+			 */
+			instancesDataStorageSet: function(instanceData) {
+				if (!Ext.isEmpty(this.getWidgetId()) && !Ext.isEmpty(instanceData))
+					this.instancesDataStorage[this.getWidgetId()] = instanceData;
+			},
 
 		/**
 		 * @return {Boolean}
@@ -190,28 +238,54 @@
 		 */
 		onEditMode: Ext.emptyFn,
 
-		// Compatibility with old implementations
-		/**
-		 * @return {Number}
-		 *
-		 * @deprecated
-		 */
-		getId: function() {
-			_deprecated('getId', this);
+		// WidgetConfiguration methods
+			/**
+			 * Attribute could be a single string (attribute name) or an array of strings that declares path to required attribute through model object's properties
+			 *
+			 * @param {Array or String} attributePath
+			 *
+			 * @returns {Mixed}
+			 */
+			widgetConfigurationGet: function(attributePath) {
+				attributePath = Ext.isArray(attributePath) ? attributePath : [attributePath];
 
-			return this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.ID];
-		},
+				var requiredAttribute = this.widgetConfigurationModel;
 
-		/**
-		 * @param {String}
-		 *
-		 * @deprecated
-		 */
-		getLabel: function() {
-			_deprecated('getLabel', this);
+				if (!Ext.isEmpty(attributePath))
+					Ext.Array.forEach(attributePath, function(attributeName, i, allAttributeNames) {
+						if (!Ext.isEmpty(attributeName) && Ext.isString(attributeName))
+							if (Ext.isObject(requiredAttribute) && Ext.isFunction(requiredAttribute.get)) { // Model management
+								requiredAttribute = requiredAttribute.get(attributeName);
+							} else if (Ext.isObject(requiredAttribute)) { // Simple object management
+								requiredAttribute = requiredAttribute[attributeName];
+							}
+					}, this);
 
-			return this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.LABEL];
-		}
+				return requiredAttribute;
+			},
+
+			/**
+			 * @param {String} attributeName
+			 *
+			 * @returns {Mixed}
+			 */
+			widgetConfigurationIsAttributeEmpty: function(attributeName) {
+				if (!Ext.isEmpty(attributeName) && Ext.isString(attributeName))
+					if (Ext.isObject(this.widgetConfigurationModel) && Ext.isFunction(this.widgetConfigurationModel.get)) { // Model management
+						return Ext.isEmpty(this.widgetConfigurationModel.get(attributeName));
+					} else if (Ext.isObject(this.widgetConfigurationModel)) { // Simple object management
+						return Ext.isEmpty(this.widgetConfigurationModel[attributeName]);
+					}
+
+				return true;
+			},
+
+			/**
+			 * @param {Object} widgetConfigurationObject
+			 */
+			widgetConfigurationSet: function(widgetConfigurationObject) {
+				this.widgetConfigurationModel = widgetConfigurationObject;
+			}
 	});
 
 })();

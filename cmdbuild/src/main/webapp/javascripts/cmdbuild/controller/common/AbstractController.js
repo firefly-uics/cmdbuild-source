@@ -36,7 +36,7 @@
 		view: undefined,
 
 		/**
-		 * @param {Object} configObject
+		 * @param {Object} configurationObject
 		 */
 		constructor: function(configurationObject) {
 			this.stringToFunctionNameMap = {};
