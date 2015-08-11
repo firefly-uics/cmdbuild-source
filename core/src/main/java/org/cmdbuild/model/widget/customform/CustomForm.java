@@ -11,10 +11,19 @@ public class CustomForm extends Widget {
 
 	public static class Capabilities {
 
+		private boolean readOnly;
 		private boolean addDisabled;
 		private boolean deleteDisabled;
 		private boolean importCsvDisabled;
 		private boolean modifyDisabled;
+
+		public boolean isReadOnly() {
+			return readOnly;
+		}
+
+		public void setReadOnly(final boolean readOnly) {
+			this.readOnly = readOnly;
+		}
 
 		public boolean isAddDisabled() {
 			return addDisabled;
@@ -111,7 +120,6 @@ public class CustomForm extends Widget {
 	}
 
 	private boolean required;
-	private boolean readOnly;
 	private String form;
 	private String layout;
 	private Capabilities capabilities;
@@ -136,14 +144,6 @@ public class CustomForm extends Widget {
 
 	public void setRequired(final boolean required) {
 		this.required = required;
-	}
-
-	public boolean isReadOnly() {
-		return readOnly;
-	}
-
-	public void setReadOnly(final boolean readOnly) {
-		this.readOnly = readOnly;
 	}
 
 	public String getForm() {

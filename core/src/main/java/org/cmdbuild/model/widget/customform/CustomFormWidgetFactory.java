@@ -1,7 +1,6 @@
 package org.cmdbuild.model.widget.customform;
 
 import static java.lang.String.format;
-import static org.apache.commons.lang3.BooleanUtils.toBoolean;
 import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
 import static org.apache.commons.lang3.StringUtils.defaultString;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
@@ -26,12 +25,12 @@ public class CustomFormWidgetFactory extends ValuePairWidgetFactory {
 
 	public static final String //
 			REQUIRED = "Required", //
-			READ_ONLY = "ReadOnly", //
 			CONFIGURATION_TYPE = "ConfigurationType", //
 			FORM = "Form", //
 			CLASSNAME = "ClassName", //
 			FUNCTIONNAME = "FunctionName", //
 			LAYOUT = "Layout", //
+			READ_ONLY = "ReadOnly", //
 			ADD_DISABLED = "AddRowDisabled", //
 			DELETE_DISABLED = "DeleteRowDisabled", //
 			IMPORT_DISABLED = "ImportCsvDisabled", //
@@ -41,12 +40,12 @@ public class CustomFormWidgetFactory extends ValuePairWidgetFactory {
 			ATTRIBUTES_SEPARATOR = "AttributesSeparator", //
 			ROWS_SEPARATOR = "RowsSeparator";
 
-	private static final String[] KNOWN_PARAMETERS = { BUTTON_LABEL, REQUIRED, READ_ONLY, //
+	private static final String[] KNOWN_PARAMETERS = { BUTTON_LABEL, REQUIRED, //
 			CONFIGURATION_TYPE, //
 			FORM, //
 			CLASSNAME, //
 			LAYOUT, //
-			ADD_DISABLED, DELETE_DISABLED, IMPORT_DISABLED, MODIFY_DISABLED, //
+			READ_ONLY, ADD_DISABLED, DELETE_DISABLED, IMPORT_DISABLED, MODIFY_DISABLED, //
 			SERIALIZATION_TYPE, KEY_VALUE_SEPARATOR, ATTRIBUTES_SEPARATOR, ROWS_SEPARATOR //
 	};
 
@@ -83,7 +82,6 @@ public class CustomFormWidgetFactory extends ValuePairWidgetFactory {
 	protected Widget createWidget(final Map<String, Object> valueMap) {
 		final CustomForm widget = new CustomForm();
 		widget.setRequired(readBooleanFalseIfMissing(valueMap.get(REQUIRED)));
-		widget.setReadOnly(readBooleanFalseIfMissing(valueMap.get(READ_ONLY)));
 		widget.setForm(formBuilderOf(valueMap).build());
 		widget.setLayout(String.class.cast(valueMap.get(LAYOUT)));
 		widget.setCapabilities(capabilitiesOf(valueMap));
@@ -116,10 +114,11 @@ public class CustomFormWidgetFactory extends ValuePairWidgetFactory {
 
 	private Capabilities capabilitiesOf(final Map<String, Object> valueMap) {
 		final Capabilities output = new Capabilities();
-		output.setAddDisabled(toBoolean(String.class.cast(valueMap.get(ADD_DISABLED))));
-		output.setDeleteDisabled(toBoolean(String.class.cast(valueMap.get(DELETE_DISABLED))));
-		output.setImportDisabled(toBoolean(String.class.cast(valueMap.get(IMPORT_DISABLED))));
-		output.setModifyDisabled(toBoolean(String.class.cast(valueMap.get(MODIFY_DISABLED))));
+		output.setReadOnly(readBooleanFalseIfMissing(valueMap.get(READ_ONLY)));
+		output.setAddDisabled(readBooleanFalseIfMissing(valueMap.get(ADD_DISABLED)));
+		output.setDeleteDisabled(readBooleanFalseIfMissing(valueMap.get(DELETE_DISABLED)));
+		output.setImportDisabled(readBooleanFalseIfMissing(valueMap.get(IMPORT_DISABLED)));
+		output.setModifyDisabled(readBooleanFalseIfMissing(valueMap.get(MODIFY_DISABLED)));
 		return output;
 	}
 
