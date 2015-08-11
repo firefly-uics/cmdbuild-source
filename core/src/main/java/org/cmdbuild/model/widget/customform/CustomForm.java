@@ -5,6 +5,7 @@ import java.util.Map;
 import org.cmdbuild.model.widget.Widget;
 import org.cmdbuild.model.widget.WidgetVisitor;
 import org.cmdbuild.workflow.CMActivityInstance;
+import org.codehaus.jackson.annotate.JsonTypeInfo;
 
 public class CustomForm extends Widget {
 
@@ -40,11 +41,72 @@ public class CustomForm extends Widget {
 
 	}
 
+	public static class Serialization {
+
+		@JsonTypeInfo(use = JsonTypeInfo.Id.MINIMAL_CLASS, include = JsonTypeInfo.As.PROPERTY, property = "__type__")
+		public static interface Configuration {
+
+		}
+
+		private String type;
+		private Configuration configuration;
+
+		public String getType() {
+			return type;
+		}
+
+		public void setType(final String type) {
+			this.type = type;
+		}
+
+		public Configuration getConfiguration() {
+			return configuration;
+		}
+
+		public void setConfiguration(final Configuration configuration) {
+			this.configuration = configuration;
+		}
+
+	}
+
+	public static class TextConfiguration implements Serialization.Configuration {
+
+		private String keyValueSeparator;
+		private String attributesSeparator;
+		private String rowsSeparator;
+
+		public String getKeyValueSeparator() {
+			return keyValueSeparator;
+		}
+
+		public void setKeyValueSeparator(final String keyValueSeparator) {
+			this.keyValueSeparator = keyValueSeparator;
+		}
+
+		public String getAttributesSeparator() {
+			return attributesSeparator;
+		}
+
+		public void setAttributesSeparator(final String attributesSeparator) {
+			this.attributesSeparator = attributesSeparator;
+		}
+
+		public String getRowsSeparator() {
+			return rowsSeparator;
+		}
+
+		public void setRowsSeparator(final String rowsSeparator) {
+			this.rowsSeparator = rowsSeparator;
+		}
+
+	}
+
 	private boolean required;
 	private boolean readOnly;
 	private String form;
 	private String layout;
 	private Capabilities capabilities;
+	private Serialization serialization;
 	private Map<String, Object> variables;
 
 	@Override
@@ -97,6 +159,14 @@ public class CustomForm extends Widget {
 
 	public void setCapabilities(final Capabilities capabilities) {
 		this.capabilities = capabilities;
+	}
+
+	public Serialization getSerialization() {
+		return serialization;
+	}
+
+	public void setSerialization(final Serialization serialization) {
+		this.serialization = serialization;
 	}
 
 	public Map<String, Object> getVariables() {

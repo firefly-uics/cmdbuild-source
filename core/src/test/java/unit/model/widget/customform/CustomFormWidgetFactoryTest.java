@@ -1,16 +1,24 @@
 package unit.model.widget.customform;
 
 import static java.util.Arrays.asList;
+import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.ADD_ROW_DISABLED;
+import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.ATTRIBUTES_SEPARATOR;
 import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.CLASSNAME;
 import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.CONFIGURATION_TYPE;
-import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.DISABLE_ADD_ROW;
-import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.DISABLE_DELETE_ROW;
-import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.DISABLE_IMPORT_FROM_CSV;
+import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.DEFAULT_ATTRIBUTES_SEPARATOR;
+import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.DEFAULT_KEY_VALUE_SEPARATOR;
+import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.DEFAULT_ROWS_SEPARATOR;
+import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.DELETE_ROW_DISABLED;
 import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.FORM;
 import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.FUNCTIONNAME;
+import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.IMPORT_CSV_DISABLED;
+import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.KEY_VALUE_SEPARATOR;
+import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.ROWS_SEPARATOR;
+import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.SERIALIZATION_TYPE;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
@@ -39,6 +47,8 @@ import org.cmdbuild.model.widget.customform.Attribute;
 import org.cmdbuild.model.widget.customform.Attribute.Filter;
 import org.cmdbuild.model.widget.customform.CustomForm;
 import org.cmdbuild.model.widget.customform.CustomForm.Capabilities;
+import org.cmdbuild.model.widget.customform.CustomForm.Serialization;
+import org.cmdbuild.model.widget.customform.CustomForm.TextConfiguration;
 import org.cmdbuild.model.widget.customform.CustomFormWidgetFactory;
 import org.cmdbuild.notification.Notifier;
 import org.cmdbuild.services.meta.MetadataStoreFactory;
@@ -377,9 +387,9 @@ public class CustomFormWidgetFactoryTest {
 		final String serialization = "" //
 				+ CONFIGURATION_TYPE + "=\"form\"\n" //
 				+ FORM + "=\"foo\"\n" //
-				+ DISABLE_ADD_ROW + "\n" //
-				+ DISABLE_DELETE_ROW + "\n" //
-				+ DISABLE_IMPORT_FROM_CSV + "\n" //
+				+ ADD_ROW_DISABLED + "\n" //
+				+ DELETE_ROW_DISABLED + "\n" //
+				+ IMPORT_CSV_DISABLED + "\n" //
 		;
 
 		// when
@@ -399,9 +409,9 @@ public class CustomFormWidgetFactoryTest {
 		final String serialization = "" //
 				+ CONFIGURATION_TYPE + "=\"form\"\n" //
 				+ FORM + "=\"foo\"\n" //
-				+ DISABLE_ADD_ROW + "=true\n" //
-				+ DISABLE_DELETE_ROW + "=true\n" //
-				+ DISABLE_IMPORT_FROM_CSV + "=true\n" //
+				+ ADD_ROW_DISABLED + "=true\n" //
+				+ DELETE_ROW_DISABLED + "=true\n" //
+				+ IMPORT_CSV_DISABLED + "=true\n" //
 		;
 
 		// when
@@ -421,9 +431,9 @@ public class CustomFormWidgetFactoryTest {
 		final String serialization = "" //
 				+ CONFIGURATION_TYPE + "=\"form\"\n" //
 				+ FORM + "=\"foo\"\n" //
-				+ DISABLE_ADD_ROW + "=\"true\"\n" //
-				+ DISABLE_DELETE_ROW + "=\"true\"\n" //
-				+ DISABLE_IMPORT_FROM_CSV + "=\"true\"\n" //
+				+ ADD_ROW_DISABLED + "=\"true\"\n" //
+				+ DELETE_ROW_DISABLED + "=\"true\"\n" //
+				+ IMPORT_CSV_DISABLED + "=\"true\"\n" //
 		;
 
 		// when
@@ -434,6 +444,96 @@ public class CustomFormWidgetFactoryTest {
 		assertThat(capabilities.isAddDisabled(), equalTo(true));
 		assertThat(capabilities.isDeleteDisabled(), equalTo(true));
 		assertThat(capabilities.isImportCsvDisabled(), equalTo(true));
+		verifyNoMoreInteractions(templateRespository, notifier, dataView, metadataStoreFactory);
+	}
+
+	@Test
+	public void noSerializationSpecifiedSoTextIsAssumedWithDefaultValues() throws Exception {
+		// given
+		final String serialization = "" //
+				+ CONFIGURATION_TYPE + "=\"form\"\n" //
+				+ FORM + "=\"foo\"\n" //
+		;
+
+		// when
+		final CustomForm created = (CustomForm) widgetFactory.createWidget(serialization, mock(CMValueSet.class));
+
+		// then
+		final Serialization _serialization = created.getSerialization();
+		assertThat(_serialization.getType(), equalTo("text"));
+		assertThat(_serialization.getConfiguration(), instanceOf(TextConfiguration.class));
+		final TextConfiguration configuration = TextConfiguration.class.cast(_serialization.getConfiguration());
+		assertThat(configuration.getKeyValueSeparator(), equalTo(DEFAULT_KEY_VALUE_SEPARATOR));
+		assertThat(configuration.getAttributesSeparator(), equalTo(DEFAULT_ATTRIBUTES_SEPARATOR));
+		assertThat(configuration.getRowsSeparator(), equalTo(DEFAULT_ROWS_SEPARATOR));
+		verifyNoMoreInteractions(templateRespository, notifier, dataView, metadataStoreFactory);
+	}
+
+	@Test
+	public void textSerializationSpecifiedWithNoDetailsReturnsDefaultValues() throws Exception {
+		// given
+		final String serialization = "" //
+				+ CONFIGURATION_TYPE + "=\"form\"\n" //
+				+ FORM + "=\"foo\"\n" //
+				+ SERIALIZATION_TYPE + "=\"text\"\n" //
+		;
+
+		// when
+		final CustomForm created = (CustomForm) widgetFactory.createWidget(serialization, mock(CMValueSet.class));
+
+		// then
+		final Serialization _serialization = created.getSerialization();
+		assertThat(_serialization.getType(), equalTo("text"));
+		assertThat(_serialization.getConfiguration(), instanceOf(TextConfiguration.class));
+		final TextConfiguration configuration = TextConfiguration.class.cast(_serialization.getConfiguration());
+		assertThat(configuration.getKeyValueSeparator(), equalTo(DEFAULT_KEY_VALUE_SEPARATOR));
+		assertThat(configuration.getAttributesSeparator(), equalTo(DEFAULT_ATTRIBUTES_SEPARATOR));
+		assertThat(configuration.getRowsSeparator(), equalTo(DEFAULT_ROWS_SEPARATOR));
+		verifyNoMoreInteractions(templateRespository, notifier, dataView, metadataStoreFactory);
+	}
+
+	@Test
+	public void textSerializationSpecifiedWithDetails() throws Exception {
+		// given
+		final String serialization = "" //
+				+ CONFIGURATION_TYPE + "=\"form\"\n" //
+				+ FORM + "=\"foo\"\n" //
+				+ SERIALIZATION_TYPE + "=\"text\"\n" //
+				+ KEY_VALUE_SEPARATOR + "=\"1\"\n" //
+				+ ATTRIBUTES_SEPARATOR + "=\"2\"\n" //
+				+ ROWS_SEPARATOR + "=\"3\"\n" //
+		;
+
+		// when
+		final CustomForm created = (CustomForm) widgetFactory.createWidget(serialization, mock(CMValueSet.class));
+
+		// then
+		final Serialization _serialization = created.getSerialization();
+		assertThat(_serialization.getType(), equalTo("text"));
+		assertThat(_serialization.getConfiguration(), instanceOf(TextConfiguration.class));
+		final TextConfiguration configuration = TextConfiguration.class.cast(_serialization.getConfiguration());
+		assertThat(configuration.getKeyValueSeparator(), equalTo("1"));
+		assertThat(configuration.getAttributesSeparator(), equalTo("2"));
+		assertThat(configuration.getRowsSeparator(), equalTo("3"));
+		verifyNoMoreInteractions(templateRespository, notifier, dataView, metadataStoreFactory);
+	}
+
+	@Test
+	public void jsonSerializationDoesNotRequireConfiguration() throws Exception {
+		// given
+		final String serialization = "" //
+				+ CONFIGURATION_TYPE + "=\"form\"\n" //
+				+ FORM + "=\"foo\"\n" //
+				+ SERIALIZATION_TYPE + "=\"json\"\n" //
+		;
+
+		// when
+		final CustomForm created = (CustomForm) widgetFactory.createWidget(serialization, mock(CMValueSet.class));
+
+		// then
+		final Serialization _serialization = created.getSerialization();
+		assertThat(_serialization.getType(), equalTo("json"));
+		assertThat(_serialization.getConfiguration(), nullValue());
 		verifyNoMoreInteractions(templateRespository, notifier, dataView, metadataStoreFactory);
 	}
 
