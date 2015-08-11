@@ -7,9 +7,9 @@ import org.codehaus.jackson.type.TypeReference;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
-class JsonStringFormBuilder extends AttributesBasedFormBuilder {
+class JsonStringModelBuilder extends AttributesBasedModelBuilder {
 
-	private static final Marker MARKER = MarkerFactory.getMarker(JsonStringFormBuilder.class.getName());
+	private static final Marker MARKER = MarkerFactory.getMarker(JsonStringModelBuilder.class.getName());
 
 	private static final ObjectMapper mapper = new ObjectMapper();
 
@@ -18,7 +18,7 @@ class JsonStringFormBuilder extends AttributesBasedFormBuilder {
 
 	private final String expression;
 
-	public JsonStringFormBuilder(final String expression) {
+	public JsonStringModelBuilder(final String expression) {
 		this.expression = expression;
 	}
 

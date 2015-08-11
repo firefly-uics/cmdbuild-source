@@ -4,7 +4,7 @@ import static java.util.Arrays.asList;
 import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.ADD_DISABLED;
 import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.ATTRIBUTES_SEPARATOR;
 import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.CLASSNAME;
-import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.CONFIGURATION_TYPE;
+import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.DATA_TYPE;
 import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.DEFAULT_ATTRIBUTES_SEPARATOR;
 import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.DEFAULT_KEY_VALUE_SEPARATOR;
 import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.DEFAULT_ROWS_SEPARATOR;
@@ -13,7 +13,9 @@ import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.FORM;
 import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.FUNCTIONNAME;
 import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.IMPORT_DISABLED;
 import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.KEY_VALUE_SEPARATOR;
+import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.MODEL_TYPE;
 import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.MODIFY_DISABLED;
+import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.RAW_DATA;
 import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.READ_ONLY;
 import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.ROWS_SEPARATOR;
 import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.SERIALIZATION_TYPE;
@@ -78,9 +80,9 @@ public class CustomFormWidgetFactoryTest {
 	}
 
 	@Test
-	public void undefinedConfigurationTypeProducesNoWidgetAndNotification() throws Exception {
+	public void undefinedModelProducesNoWidgetAndNotification() throws Exception {
 		// given
-		final String serialization = CONFIGURATION_TYPE + "=\"foo\"";
+		final String serialization = MODEL_TYPE + "=\"foo\"";
 
 		// when
 		final CustomForm created = (CustomForm) widgetFactory.createWidget(serialization, mock(CMValueSet.class));
@@ -94,9 +96,9 @@ public class CustomFormWidgetFactoryTest {
 	}
 
 	@Test
-	public void formConfigurationTypeAndMissingDefinitionProducesNoWidgetAndNotification() throws Exception {
+	public void formModelAndMissingDefinitionProducesNoWidgetAndNotification() throws Exception {
 		// given
-		final String serialization = CONFIGURATION_TYPE + "=\"form\"";
+		final String serialization = MODEL_TYPE + "=\"form\"";
 
 		// when
 		final CustomForm created = (CustomForm) widgetFactory.createWidget(serialization, mock(CMValueSet.class));
@@ -110,11 +112,11 @@ public class CustomFormWidgetFactoryTest {
 	}
 
 	@Test
-	public void formConfigurationTypeAndEmptyDefinitionProducesNoWidgetAndNotification() throws Exception {
+	public void formModelAndEmptyDefinitionProducesNoWidgetAndNotification() throws Exception {
 		// given
 		final String serialization = "" //
-				+ CONFIGURATION_TYPE + "=\"form\"\n" //
-				+ FORM + "=\"\"" //
+				+ MODEL_TYPE + "=\"form\"\n" //
+				+ FORM + "=\"\"\n" //
 		;
 
 		// when
@@ -129,11 +131,11 @@ public class CustomFormWidgetFactoryTest {
 	}
 
 	@Test
-	public void formConfigurationTypeAndBlankDefinitionProducesNoWidgetAndNotification() throws Exception {
+	public void formModelAndBlankDefinitionProducesNoWidgetAndNotification() throws Exception {
 		// given
 		final String serialization = "" //
-				+ CONFIGURATION_TYPE + "=\"form\"\n" //
-				+ FORM + "=\" \"" //
+				+ MODEL_TYPE + "=\"form\"\n" //
+				+ FORM + "=\" \"\n" //
 		;
 
 		// when
@@ -148,35 +150,34 @@ public class CustomFormWidgetFactoryTest {
 	}
 
 	@Test
-	public void formConfigurationTypeAndInvalidJsonDefinitionProducesWidgetWithDefinitionAsIsAndNoNotification()
-			throws Exception {
+	public void formModelAndInvalidJsonDefinitionProducesWidgetWithDefinitionAsIsAndNoNotification() throws Exception {
 		// given
 		final String serialization = "" //
-				+ CONFIGURATION_TYPE + "=\"form\"\n" //
-				+ FORM + "=\"foo {form:bar} baz\"" //
+				+ MODEL_TYPE + "=\"form\"\n" //
+				+ FORM + "=\"foo {form:bar} baz\"\n" //
 		;
 
 		// when
 		final CustomForm created = (CustomForm) widgetFactory.createWidget(serialization, mock(CMValueSet.class));
 
 		// then
-		assertThat(created.getForm(), equalTo("foo {form:bar} baz"));
+		assertThat(created.getModel(), equalTo("foo {form:bar} baz"));
 		verifyNoMoreInteractions(templateRespository, notifier, dataView, metadataStoreFactory);
 	}
 
 	@Test
-	public void formConfigurationTypeAndValidDefinitionProducesAttributesAndNoNotification() throws Exception {
+	public void formModelAndValidDefinitionProducesAttributesAndNoNotification() throws Exception {
 		// given
 		final String serialization = "" //
-				+ CONFIGURATION_TYPE + "=\"form\"\n" //
-				+ FORM + "=\"[{\"name\": \"foo\"},{\"name\": \"bar\"}]\"" //
+				+ MODEL_TYPE + "=\"form\"\n" //
+				+ FORM + "=\"[{\"name\": \"foo\"},{\"name\": \"bar\"}]\"\n" //
 		;
 
 		// when
 		final CustomForm created = (CustomForm) widgetFactory.createWidget(serialization, mock(CMValueSet.class));
 
 		// then
-		final List<Attribute> form = readJsonString(created.getForm());
+		final List<Attribute> form = readJsonString(created.getModel());
 		assertThat(form, not(empty()));
 		assertThat(form, hasSize(2));
 		assertThat(form.get(0).getName(), equalTo("foo"));
@@ -188,7 +189,7 @@ public class CustomFormWidgetFactoryTest {
 	public void definitionForFormConfigurationSuccessfullyParsed() throws Exception {
 		// given
 		final String serialization = "" //
-				+ CONFIGURATION_TYPE + "=\"form\"\n" //
+				+ MODEL_TYPE + "=\"form\"\n" //
 				+ FORM + "=" //
 				+ "    \"[" //
 				+ "        {" //
@@ -219,7 +220,7 @@ public class CustomFormWidgetFactoryTest {
 		final CustomForm created = (CustomForm) widgetFactory.createWidget(serialization, mock(CMValueSet.class));
 
 		// then
-		final List<Attribute> form = readJsonString(created.getForm());
+		final List<Attribute> form = readJsonString(created.getModel());
 		assertThat(form, not(empty()));
 		assertThat(form, hasSize(1));
 		final Attribute attribute = form.get(0);
@@ -250,24 +251,24 @@ public class CustomFormWidgetFactoryTest {
 	public void definitionForFormConfigurationLeavedAsIsWhenContainsTemplate() throws Exception {
 		// given
 		final String serialization = "" //
-				+ CONFIGURATION_TYPE + "=\"form\"\n" //
-				+ FORM + "=\"foo {form:bar} baz\"" //
+				+ MODEL_TYPE + "=\"form\"\n" //
+				+ FORM + "=\"foo {form:bar} baz\"\n" //
 		;
 
 		// when
 		final CustomForm created = (CustomForm) widgetFactory.createWidget(serialization, mock(CMValueSet.class));
 
 		// then
-		assertThat(created.getForm(), equalTo("foo {form:bar} baz"));
+		assertThat(created.getModel(), equalTo("foo {form:bar} baz"));
 		verifyNoMoreInteractions(templateRespository, notifier, dataView, metadataStoreFactory);
 	}
 
 	@Test
-	public void classConfigurationTypeAndMissingClassProducesNoWidgetAndNotification() throws Exception {
+	public void classModelAndMissingClassProducesNoWidgetAndNotification() throws Exception {
 		// given
 		final String serialization = "" //
-				+ CONFIGURATION_TYPE + "=\"class\"\n" //
-				+ CLASSNAME + "=\"foo\"" //
+				+ MODEL_TYPE + "=\"class\"\n" //
+				+ CLASSNAME + "=\"foo\"\n" //
 		;
 		doReturn(null) //
 				.when(dataView).findClass(any(String.class));
@@ -288,8 +289,8 @@ public class CustomFormWidgetFactoryTest {
 	public void attributesForClassSuccessfullyConverted() throws Exception {
 		// given
 		final String serialization = "" //
-				+ CONFIGURATION_TYPE + "=\"class\"\n" //
-				+ CLASSNAME + "=\"foo\"" //
+				+ MODEL_TYPE + "=\"class\"\n" //
+				+ CLASSNAME + "=\"foo\"\n" //
 		;
 		final CMClass target = mock(CMClass.class);
 		doReturn(target) //
@@ -303,7 +304,7 @@ public class CustomFormWidgetFactoryTest {
 		final CustomForm created = (CustomForm) widgetFactory.createWidget(serialization, mock(CMValueSet.class));
 
 		// then
-		final List<Attribute> form = readJsonString(created.getForm());
+		final List<Attribute> form = readJsonString(created.getModel());
 		assertThat(form, not(empty()));
 		assertThat(form, hasSize(2));
 		assertThat(form.get(0).getName(), equalTo("bar"));
@@ -314,11 +315,11 @@ public class CustomFormWidgetFactoryTest {
 	}
 
 	@Test
-	public void functionConfigurationTypeAndMissingFunctionProducesNoWidgetAndNotification() throws Exception {
+	public void functionModelAndMissingFunctionProducesNoWidgetAndNotification() throws Exception {
 		// given
 		final String serialization = "" //
-				+ CONFIGURATION_TYPE + "=\"function\"\n" //
-				+ FUNCTIONNAME + "=\"foo\"" //
+				+ MODEL_TYPE + "=\"function\"\n" //
+				+ FUNCTIONNAME + "=\"foo\"\n" //
 		;
 		doReturn(null) //
 				.when(dataView).findFunctionByName(any(String.class));
@@ -339,8 +340,8 @@ public class CustomFormWidgetFactoryTest {
 	public void attributesForFunctionSuccessfullyConverted() throws Exception {
 		// given
 		final String serialization = "" //
-				+ CONFIGURATION_TYPE + "=\"function\"\n" //
-				+ FUNCTIONNAME + "=\"foo\"" //
+				+ MODEL_TYPE + "=\"function\"\n" //
+				+ FUNCTIONNAME + "=\"foo\"\n" //
 		;
 		final CMFunction target = mock(CMFunction.class);
 		doReturn(target) //
@@ -354,7 +355,7 @@ public class CustomFormWidgetFactoryTest {
 		final CustomForm created = (CustomForm) widgetFactory.createWidget(serialization, mock(CMValueSet.class));
 
 		// then
-		final List<Attribute> form = readJsonString(created.getForm());
+		final List<Attribute> form = readJsonString(created.getModel());
 		assertThat(form, not(empty()));
 		assertThat(form, hasSize(2));
 		assertThat(form.get(0).getName(), equalTo("bar"));
@@ -368,7 +369,7 @@ public class CustomFormWidgetFactoryTest {
 	public void capabilitiesAreNotDisabledByDefault() throws Exception {
 		// given
 		final String serialization = "" //
-				+ CONFIGURATION_TYPE + "=\"form\"\n" //
+				+ MODEL_TYPE + "=\"form\"\n" //
 				+ FORM + "=\"foo\"\n" //
 		;
 
@@ -389,7 +390,7 @@ public class CustomFormWidgetFactoryTest {
 	public void capabilitiesAreNotDisabledOnlyIfKeyIsPresent() throws Exception {
 		// given
 		final String serialization = "" //
-				+ CONFIGURATION_TYPE + "=\"form\"\n" //
+				+ MODEL_TYPE + "=\"form\"\n" //
 				+ FORM + "=\"foo\"\n" //
 				+ READ_ONLY + "\n" //
 				+ ADD_DISABLED + "\n" //
@@ -415,7 +416,7 @@ public class CustomFormWidgetFactoryTest {
 	public void capabilitiesAreAlwaysDisabledWhenSpecifiedWithoutQuotes() throws Exception {
 		// given
 		final String serialization = "" //
-				+ CONFIGURATION_TYPE + "=\"form\"\n" //
+				+ MODEL_TYPE + "=\"form\"\n" //
 				+ FORM + "=\"foo\"\n" //
 				+ READ_ONLY + "=true\n" //
 				+ ADD_DISABLED + "=true\n" //
@@ -441,7 +442,7 @@ public class CustomFormWidgetFactoryTest {
 	public void capabilitiesAreDisabledOnlyWhenSpecified() throws Exception {
 		// given
 		final String serialization = "" //
-				+ CONFIGURATION_TYPE + "=\"form\"\n" //
+				+ MODEL_TYPE + "=\"form\"\n" //
 				+ FORM + "=\"foo\"\n" //
 				+ READ_ONLY + "=\"true\"\n" //
 				+ ADD_DISABLED + "=\"true\"\n" //
@@ -467,7 +468,7 @@ public class CustomFormWidgetFactoryTest {
 	public void noSerializationSpecifiedSoTextIsAssumedWithDefaultValues() throws Exception {
 		// given
 		final String serialization = "" //
-				+ CONFIGURATION_TYPE + "=\"form\"\n" //
+				+ MODEL_TYPE + "=\"form\"\n" //
 				+ FORM + "=\"foo\"\n" //
 		;
 
@@ -489,7 +490,7 @@ public class CustomFormWidgetFactoryTest {
 	public void textSerializationSpecifiedWithNoDetailsReturnsDefaultValues() throws Exception {
 		// given
 		final String serialization = "" //
-				+ CONFIGURATION_TYPE + "=\"form\"\n" //
+				+ MODEL_TYPE + "=\"form\"\n" //
 				+ FORM + "=\"foo\"\n" //
 				+ SERIALIZATION_TYPE + "=\"text\"\n" //
 		;
@@ -512,7 +513,7 @@ public class CustomFormWidgetFactoryTest {
 	public void textSerializationSpecifiedWithDetails() throws Exception {
 		// given
 		final String serialization = "" //
-				+ CONFIGURATION_TYPE + "=\"form\"\n" //
+				+ MODEL_TYPE + "=\"form\"\n" //
 				+ FORM + "=\"foo\"\n" //
 				+ SERIALIZATION_TYPE + "=\"text\"\n" //
 				+ KEY_VALUE_SEPARATOR + "=\"1\"\n" //
@@ -538,7 +539,7 @@ public class CustomFormWidgetFactoryTest {
 	public void jsonSerializationDoesNotRequireConfiguration() throws Exception {
 		// given
 		final String serialization = "" //
-				+ CONFIGURATION_TYPE + "=\"form\"\n" //
+				+ MODEL_TYPE + "=\"form\"\n" //
 				+ FORM + "=\"foo\"\n" //
 				+ SERIALIZATION_TYPE + "=\"json\"\n" //
 		;
@@ -550,6 +551,24 @@ public class CustomFormWidgetFactoryTest {
 		final Serialization _serialization = created.getSerialization();
 		assertThat(_serialization.getType(), equalTo("json"));
 		assertThat(_serialization.getConfiguration(), nullValue());
+		verifyNoMoreInteractions(templateRespository, notifier, dataView, metadataStoreFactory);
+	}
+
+	@Test
+	public void rawDataReturnsDataAsIs() throws Exception {
+		// given
+		final String serialization = "" //
+				+ MODEL_TYPE + "=\"form\"\n" //
+				+ FORM + "=\"foo\"\n" //
+				+ DATA_TYPE + "=\"raw\"\n" //
+				+ RAW_DATA + "=\"foo bar baz\"\n" //
+		;
+
+		// when
+		final CustomForm created = (CustomForm) widgetFactory.createWidget(serialization, mock(CMValueSet.class));
+
+		// then
+		assertThat(created.getData(), equalTo("foo bar baz"));
 		verifyNoMoreInteractions(templateRespository, notifier, dataView, metadataStoreFactory);
 	}
 
