@@ -35,9 +35,9 @@ import org.cmdbuild.dao.function.CMFunction.CMFunctionParameter;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.exception.CMDBWorkflowException;
 import org.cmdbuild.exception.CMDBWorkflowException.WorkflowExceptionType;
+import org.cmdbuild.model.widget.customform.Attribute;
+import org.cmdbuild.model.widget.customform.Attribute.Filter;
 import org.cmdbuild.model.widget.customform.CustomForm;
-import org.cmdbuild.model.widget.customform.CustomForm.Attribute;
-import org.cmdbuild.model.widget.customform.CustomForm.Attribute.Filter;
 import org.cmdbuild.model.widget.customform.CustomFormWidgetFactory;
 import org.cmdbuild.notification.Notifier;
 import org.cmdbuild.services.meta.MetadataStoreFactory;
@@ -101,7 +101,8 @@ public class CustomFormWidgetFactoryTest {
 		// given
 		final String serialization = "" //
 				+ CONFIGURATION_TYPE + "=\"form\"\n" //
-				+ FORM + "=\"\"";
+				+ FORM + "=\"\"" //
+		;
 
 		// when
 		final CustomForm created = (CustomForm) widgetFactory.createWidget(serialization, mock(CMValueSet.class));
@@ -119,7 +120,8 @@ public class CustomFormWidgetFactoryTest {
 		// given
 		final String serialization = "" //
 				+ CONFIGURATION_TYPE + "=\"form\"\n" //
-				+ FORM + "=\" \"";
+				+ FORM + "=\" \"" //
+		;
 
 		// when
 		final CustomForm created = (CustomForm) widgetFactory.createWidget(serialization, mock(CMValueSet.class));
@@ -138,7 +140,8 @@ public class CustomFormWidgetFactoryTest {
 		// given
 		final String serialization = "" //
 				+ CONFIGURATION_TYPE + "=\"form\"\n" //
-				+ FORM + "=\"foo {form:bar} baz\"";
+				+ FORM + "=\"foo {form:bar} baz\"" //
+		;
 
 		// when
 		final CustomForm created = (CustomForm) widgetFactory.createWidget(serialization, mock(CMValueSet.class));
@@ -153,7 +156,8 @@ public class CustomFormWidgetFactoryTest {
 		// given
 		final String serialization = "" //
 				+ CONFIGURATION_TYPE + "=\"form\"\n" //
-				+ FORM + "=\"[{\"name\": \"foo\"},{\"name\": \"bar\"}]\"";
+				+ FORM + "=\"[{\"name\": \"foo\"},{\"name\": \"bar\"}]\"" //
+		;
 
 		// when
 		final CustomForm created = (CustomForm) widgetFactory.createWidget(serialization, mock(CMValueSet.class));
@@ -195,7 +199,8 @@ public class CustomFormWidgetFactoryTest {
 				+ "                }" //
 				+ "            }" //
 				+ "        }" //
-				+ "    ]\"";
+				+ "    ]\"" //
+		;
 
 		// when
 		final CustomForm created = (CustomForm) widgetFactory.createWidget(serialization, mock(CMValueSet.class));
@@ -233,7 +238,8 @@ public class CustomFormWidgetFactoryTest {
 		// given
 		final String serialization = "" //
 				+ CONFIGURATION_TYPE + "=\"form\"\n" //
-				+ FORM + "=\"foo {form:bar} baz\"";
+				+ FORM + "=\"foo {form:bar} baz\"" //
+		;
 
 		// when
 		final CustomForm created = (CustomForm) widgetFactory.createWidget(serialization, mock(CMValueSet.class));
@@ -248,7 +254,8 @@ public class CustomFormWidgetFactoryTest {
 		// given
 		final String serialization = "" //
 				+ CONFIGURATION_TYPE + "=\"class\"\n" //
-				+ CLASSNAME + "=\"foo\"";
+				+ CLASSNAME + "=\"foo\"" //
+		;
 		doReturn(null) //
 				.when(dataView).findClass(any(String.class));
 
@@ -269,7 +276,8 @@ public class CustomFormWidgetFactoryTest {
 		// given
 		final String serialization = "" //
 				+ CONFIGURATION_TYPE + "=\"class\"\n" //
-				+ CLASSNAME + "=\"foo\"";
+				+ CLASSNAME + "=\"foo\"" //
+		;
 		final CMClass target = mock(CMClass.class);
 		doReturn(target) //
 				.when(dataView).findClass(any(String.class));
@@ -297,7 +305,8 @@ public class CustomFormWidgetFactoryTest {
 		// given
 		final String serialization = "" //
 				+ CONFIGURATION_TYPE + "=\"function\"\n" //
-				+ FUNCTIONNAME + "=\"foo\"";
+				+ FUNCTIONNAME + "=\"foo\"" //
+		;
 		doReturn(null) //
 				.when(dataView).findFunctionByName(any(String.class));
 
@@ -318,7 +327,8 @@ public class CustomFormWidgetFactoryTest {
 		// given
 		final String serialization = "" //
 				+ CONFIGURATION_TYPE + "=\"function\"\n" //
-				+ FUNCTIONNAME + "=\"foo\"";
+				+ FUNCTIONNAME + "=\"foo\"" //
+		;
 		final CMFunction target = mock(CMFunction.class);
 		doReturn(target) //
 				.when(dataView).findFunctionByName(any(String.class));
