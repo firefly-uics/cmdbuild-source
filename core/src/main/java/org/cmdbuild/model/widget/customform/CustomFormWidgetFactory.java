@@ -2,16 +2,16 @@ package org.cmdbuild.model.widget.customform;
 
 import static com.google.common.collect.FluentIterable.from;
 import static com.google.common.collect.Lists.newArrayList;
-import static java.util.Collections.emptyList;
+import static java.lang.String.format;
 import static org.apache.commons.lang3.StringUtils.defaultString;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.cmdbuild.dao.entrytype.CMAttribute.Mode.WRITE;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.Validate;
+import org.apache.commons.lang3.builder.Builder;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
@@ -71,24 +71,79 @@ public class CustomFormWidgetFactory extends ValuePairWidgetFactory {
 			TYPE_TEXT = "text", //
 			TYPE_TIME = "time";
 
-	private static interface AttributesFetcher {
-
-		Iterable<Attribute> attributes();
+	private static interface FormBuilder extends Builder<String> {
 
 	}
 
-	private static class NullAttributeFetcher implements AttributesFetcher {
+	private static class InvalidFormBuilder implements FormBuilder {
 
-		private static Iterable<Attribute> empty = emptyList();
+		private final String message;
+
+		public InvalidFormBuilder(final String message) {
+			this.message = message;
+		}
 
 		@Override
-		public Iterable<Attribute> attributes() {
-			return empty;
+		public String build() {
+			throw new RuntimeException(message);
 		}
 
 	}
 
-	private static class FormAttributeFetcher implements AttributesFetcher {
+	private static class FallbackOnExceptionFormBuilder implements FormBuilder {
+
+		private final FormBuilder delegate;
+		private final FormBuilder fallback;
+
+		public FallbackOnExceptionFormBuilder(final FormBuilder delegate, final FormBuilder fallback) {
+			this.delegate = delegate;
+			this.fallback = fallback;
+		}
+
+		@Override
+		public String build() {
+			try {
+				return delegate.build();
+			} catch (final Exception e) {
+				return fallback.build();
+			}
+		}
+
+	}
+
+	private static class IdentityFormBuilder implements FormBuilder {
+
+		private final String value;
+
+		public IdentityFormBuilder(final String value) {
+			this.value = value;
+		}
+
+		@Override
+		public String build() {
+			return value;
+		}
+
+	}
+
+	private static abstract class AttributesBasedFormBuilder implements FormBuilder {
+
+		/**
+		 * Usable by subclasses only.
+		 */
+		protected AttributesBasedFormBuilder() {
+		}
+
+		@Override
+		public final String build() {
+			return writeJsonString(newArrayList(attributes()));
+		}
+
+		protected abstract Iterable<Attribute> attributes();
+
+	}
+
+	private static class JsonStringFormBuilder extends AttributesBasedFormBuilder {
 
 		private static final ObjectMapper mapper = new ObjectMapper();
 
@@ -97,7 +152,7 @@ public class CustomFormWidgetFactory extends ValuePairWidgetFactory {
 
 		private final String expression;
 
-		public FormAttributeFetcher(final String expression) {
+		public JsonStringFormBuilder(final String expression) {
 			this.expression = expression;
 		}
 
@@ -114,13 +169,13 @@ public class CustomFormWidgetFactory extends ValuePairWidgetFactory {
 
 	}
 
-	private static class ClassAttributeFetcher implements AttributesFetcher {
+	private static class ClassFormBuilder extends AttributesBasedFormBuilder {
 
 		private final CMDataView dataView;
 		private final MetadataStoreFactory metadataStoreFactory;
 		private final String className;
 
-		public ClassAttributeFetcher(final CMDataView dataView, final MetadataStoreFactory metadataStoreFactory,
+		public ClassFormBuilder(final CMDataView dataView, final MetadataStoreFactory metadataStoreFactory,
 				final String className) {
 			this.dataView = dataView;
 			this.metadataStoreFactory = metadataStoreFactory;
@@ -300,12 +355,12 @@ public class CustomFormWidgetFactory extends ValuePairWidgetFactory {
 
 	}
 
-	private static class FunctionAttributeFetcher implements AttributesFetcher {
+	private static class FunctionFormBuilder extends AttributesBasedFormBuilder {
 
 		private final CMDataView dataView;
 		private final String functionName;
 
-		public FunctionAttributeFetcher(final CMDataView dataView, final String functionName) {
+		public FunctionFormBuilder(final CMDataView dataView, final String functionName) {
 			this.dataView = dataView;
 			this.functionName = functionName;
 		}
@@ -460,48 +515,38 @@ public class CustomFormWidgetFactory extends ValuePairWidgetFactory {
 		final CustomForm widget = new CustomForm();
 		widget.setRequired(readBooleanFalseIfMissing(valueMap.get(REQUIRED)));
 		widget.setReadOnly(readBooleanFalseIfMissing(valueMap.get(READ_ONLY)));
-		widget.setForm(writeJsonString(newArrayList(attributesFetcherOf(valueMap).attributes())));
+		widget.setForm(formBuilderOf(valueMap).build());
 		widget.setLayout(String.class.cast(valueMap.get(LAYOUT)));
 		widget.setVariables(extractUnmanagedParameters(valueMap, KNOWN_PARAMETERS));
 		return widget;
 	}
 
-	private AttributesFetcher attributesFetcherOf(final Map<String, Object> valueMap) {
-		final AttributesFetcher attributeFetcher;
+	private FormBuilder formBuilderOf(final Map<String, Object> valueMap) {
+		final FormBuilder output;
 		final String configurationType = String.class.cast(valueMap.get(CONFIGURATION_TYPE));
 		if (TYPE_FORM.equalsIgnoreCase(configurationType)) {
 			final String expression = defaultString(String.class.cast(valueMap.get(FORM)));
 			Validate.isTrue(isNotBlank(expression), "invalid value for '%s'", FORM);
-			attributeFetcher = new FormAttributeFetcher(expression);
+			output = new FallbackOnExceptionFormBuilder(new JsonStringFormBuilder(expression), new IdentityFormBuilder(
+					expression));
 		} else if (TYPE_CLASS.equalsIgnoreCase(configurationType)) {
 			final String className = String.class.cast(valueMap.get(CLASSNAME));
 			Validate.isTrue(isNotBlank(className), "invalid value for '%s'", CLASSNAME);
-			attributeFetcher = new ClassAttributeFetcher(dataView, metadataStoreFactory, className);
+			output = new ClassFormBuilder(dataView, metadataStoreFactory, className);
 		} else if (TYPE_FUNCTION.equalsIgnoreCase(configurationType)) {
 			final String functionName = String.class.cast(valueMap.get(FUNCTIONNAME));
 			Validate.isTrue(isNotBlank(functionName), "invalid value for '%s'", FUNCTIONNAME);
-			attributeFetcher = new FunctionAttributeFetcher(dataView, functionName);
+			output = new FunctionFormBuilder(dataView, functionName);
 		} else {
-			Validate.isTrue(false, "invalid '%s'", CONFIGURATION_TYPE);
-			attributeFetcher = new NullAttributeFetcher();
+			output = new InvalidFormBuilder(format("'%s' is not a valid value for '%s'", CONFIGURATION_TYPE));
 		}
-		return attributeFetcher;
+		return output;
 	}
 
 	private static String writeJsonString(final Collection<Attribute> attributes) {
 		try {
 			final ObjectMapper mapper = new ObjectMapper();
 			return mapper.writeValueAsString(attributes);
-		} catch (final Exception e) {
-			throw new RuntimeException(e);
-		}
-	}
-
-	public static List<Attribute> readJsonString(final String value) {
-		try {
-			final ObjectMapper mapper = new ObjectMapper();
-			return mapper.readValue(value, new TypeReference<List<Attribute>>() {
-			});
 		} catch (final Exception e) {
 			throw new RuntimeException(e);
 		}

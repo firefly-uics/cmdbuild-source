@@ -5,7 +5,6 @@ import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.CLASS
 import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.CONFIGURATION_TYPE;
 import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.FORM;
 import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.FUNCTIONNAME;
-import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.readJsonString;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
@@ -40,6 +39,8 @@ import org.cmdbuild.model.widget.customform.CustomFormWidgetFactory;
 import org.cmdbuild.notification.Notifier;
 import org.cmdbuild.services.meta.MetadataStoreFactory;
 import org.cmdbuild.services.template.store.TemplateRepository;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.type.TypeReference;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -129,20 +130,18 @@ public class CustomFormWidgetFactoryTest {
 	}
 
 	@Test
-	public void formConfigurationTypeAndInvalidDefinitionProducesNoWidgetAndNotification() throws Exception {
+	public void formConfigurationTypeAndInvalidJsonDefinitionProducesWidgetWithDefinitionAsIsAndNoNotification()
+			throws Exception {
 		// given
 		final String serialization = "" //
 				+ CONFIGURATION_TYPE + "=\"form\"\n" //
-				+ FORM + "=\"[{name_with_no_quotes: foo}]\"";
+				+ FORM + "=\"foo {form:bar} baz\"";
 
 		// when
 		final CustomForm created = (CustomForm) widgetFactory.createWidget(serialization, mock(CMValueSet.class));
 
 		// then
-		assertThat(created, nullValue());
-		verify(notifier).warn(
-				eq(new CMDBWorkflowException(WorkflowExceptionType.WF_CANNOT_CONFIGURE_CMDBEXTATTR, widgetFactory
-						.getWidgetName())));
+		assertThat(created.getForm(), equalTo("foo {form:bar} baz"));
 		verifyNoMoreInteractions(templateRespository, notifier, dataView, metadataStoreFactory);
 	}
 
@@ -223,6 +222,21 @@ public class CustomFormWidgetFactoryTest {
 						.chainablePut("bar", "baz"));
 			}
 		})));
+		verifyNoMoreInteractions(templateRespository, notifier, dataView, metadataStoreFactory);
+	}
+
+	@Test
+	public void definitionForFormConfigurationLeavedAsIsWhenContainsTemplate() throws Exception {
+		// given
+		final String serialization = "" //
+				+ CONFIGURATION_TYPE + "=\"form\"\n" //
+				+ FORM + "=\"foo {form:bar} baz\"";
+
+		// when
+		final CustomForm created = (CustomForm) widgetFactory.createWidget(serialization, mock(CMValueSet.class));
+
+		// then
+		assertThat(created.getForm(), equalTo("foo {form:bar} baz"));
 		verifyNoMoreInteractions(templateRespository, notifier, dataView, metadataStoreFactory);
 	}
 
@@ -340,6 +354,16 @@ public class CustomFormWidgetFactoryTest {
 		doReturn(name) //
 				.when(output).getName();
 		return output;
+	}
+	
+	private static List<Attribute> readJsonString(final String value) {
+		try {
+			final ObjectMapper mapper = new ObjectMapper();
+			return mapper.readValue(value, new TypeReference<List<Attribute>>() {
+			});
+		} catch (final Exception e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 }
