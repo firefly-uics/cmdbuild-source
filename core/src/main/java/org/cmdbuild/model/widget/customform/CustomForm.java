@@ -276,6 +276,9 @@ public class CustomForm extends Widget {
 	private boolean readOnly;
 	private String form;
 	private String layout;
+	private boolean addRowDisabled;
+	private boolean deleteRowDisabled;
+	private boolean importCsvDisabled;
 	private Map<String, Object> variables;
 
 	@Override
@@ -316,6 +319,30 @@ public class CustomForm extends Widget {
 
 	public String getLayout() {
 		return layout;
+	}
+
+	public boolean isAddRowDisabled() {
+		return addRowDisabled;
+	}
+
+	public void setAddRowDisabled(final boolean addRowDisabled) {
+		this.addRowDisabled = addRowDisabled;
+	}
+
+	public boolean isDeleteRowDisabled() {
+		return deleteRowDisabled;
+	}
+
+	public void setDeleteRowDisabled(final boolean deleteRowDisabled) {
+		this.deleteRowDisabled = deleteRowDisabled;
+	}
+
+	public boolean isImportCsvDisabled() {
+		return importCsvDisabled;
+	}
+
+	public void setImportCsvDisabled(final boolean importCsvDisabled) {
+		this.importCsvDisabled = importCsvDisabled;
 	}
 
 	public void setLayout(final String layout) {

@@ -3,6 +3,7 @@ package org.cmdbuild.model.widget.customform;
 import static com.google.common.collect.FluentIterable.from;
 import static com.google.common.collect.Lists.newArrayList;
 import static java.lang.String.format;
+import static org.apache.commons.lang3.BooleanUtils.toBoolean;
 import static org.apache.commons.lang3.StringUtils.defaultString;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.cmdbuild.dao.entrytype.CMAttribute.Mode.WRITE;
@@ -481,13 +482,17 @@ public class CustomFormWidgetFactory extends ValuePairWidgetFactory {
 			FORM = "Form", //
 			CLASSNAME = "ClassName", //
 			FUNCTIONNAME = "FunctionName", //
-			LAYOUT = "Layout";
+			LAYOUT = "Layout", //
+			DISABLE_ADD_ROW = "AddRowDisabled", //
+			DISABLE_IMPORT_FROM_CSV = "ImportCsvDisabled", //
+			DISABLE_DELETE_ROW = "DeleteRowDisabled";
 
 	private static final String[] KNOWN_PARAMETERS = { BUTTON_LABEL, REQUIRED, READ_ONLY, //
 			CONFIGURATION_TYPE, //
 			FORM, //
 			CLASSNAME, //
-			LAYOUT //
+			LAYOUT, //
+			DISABLE_ADD_ROW, DISABLE_IMPORT_FROM_CSV, DISABLE_DELETE_ROW //
 	};
 
 	private static final String //
@@ -517,6 +522,9 @@ public class CustomFormWidgetFactory extends ValuePairWidgetFactory {
 		widget.setReadOnly(readBooleanFalseIfMissing(valueMap.get(READ_ONLY)));
 		widget.setForm(formBuilderOf(valueMap).build());
 		widget.setLayout(String.class.cast(valueMap.get(LAYOUT)));
+		widget.setAddRowDisabled(toBoolean(String.class.cast(valueMap.get(DISABLE_ADD_ROW))));
+		widget.setDeleteRowDisabled(toBoolean(String.class.cast(valueMap.get(DISABLE_DELETE_ROW))));
+		widget.setImportCsvDisabled(toBoolean(String.class.cast(valueMap.get(DISABLE_IMPORT_FROM_CSV))));
 		widget.setVariables(extractUnmanagedParameters(valueMap, KNOWN_PARAMETERS));
 		return widget;
 	}

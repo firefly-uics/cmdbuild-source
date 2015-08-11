@@ -3,6 +3,9 @@ package unit.model.widget.customform;
 import static java.util.Arrays.asList;
 import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.CLASSNAME;
 import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.CONFIGURATION_TYPE;
+import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.DISABLE_ADD_ROW;
+import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.DISABLE_DELETE_ROW;
+import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.DISABLE_IMPORT_FROM_CSV;
 import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.FORM;
 import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.FUNCTIONNAME;
 import static org.hamcrest.Matchers.empty;
@@ -338,6 +341,87 @@ public class CustomFormWidgetFactoryTest {
 		verifyNoMoreInteractions(templateRespository, notifier, dataView, metadataStoreFactory);
 	}
 
+	@Test
+	public void functionalitiesAreNotDisabledByDefault() throws Exception {
+		// given
+		final String serialization = "" //
+				+ CONFIGURATION_TYPE + "=\"form\"\n" //
+				+ FORM + "=\"foo\"\n" //
+		;
+
+		// when
+		final CustomForm created = (CustomForm) widgetFactory.createWidget(serialization, mock(CMValueSet.class));
+
+		// then
+		assertThat(created.isAddRowDisabled(), equalTo(false));
+		assertThat(created.isDeleteRowDisabled(), equalTo(false));
+		assertThat(created.isImportCsvDisabled(), equalTo(false));
+		verifyNoMoreInteractions(templateRespository, notifier, dataView, metadataStoreFactory);
+	}
+
+	@Test
+	public void functionalitiesAreNotDisabledOnlyIfKeyIsPresent() throws Exception {
+		// given
+		final String serialization = "" //
+				+ CONFIGURATION_TYPE + "=\"form\"\n" //
+				+ FORM + "=\"foo\"\n" //
+				+ DISABLE_ADD_ROW + "\n" //
+				+ DISABLE_DELETE_ROW + "\n" //
+				+ DISABLE_IMPORT_FROM_CSV + "\n" //
+		;
+
+		// when
+		final CustomForm created = (CustomForm) widgetFactory.createWidget(serialization, mock(CMValueSet.class));
+
+		// then
+		assertThat(created.isAddRowDisabled(), equalTo(false));
+		assertThat(created.isDeleteRowDisabled(), equalTo(false));
+		assertThat(created.isImportCsvDisabled(), equalTo(false));
+		verifyNoMoreInteractions(templateRespository, notifier, dataView, metadataStoreFactory);
+	}
+
+	@Test
+	public void functionalitiesAreAlwaysDisabledWhenSpecifiedWithoutQuotes() throws Exception {
+		// given
+		final String serialization = "" //
+				+ CONFIGURATION_TYPE + "=\"form\"\n" //
+				+ FORM + "=\"foo\"\n" //
+				+ DISABLE_ADD_ROW + "=true\n" //
+				+ DISABLE_DELETE_ROW + "=true\n" //
+				+ DISABLE_IMPORT_FROM_CSV + "=true\n" //
+		;
+
+		// when
+		final CustomForm created = (CustomForm) widgetFactory.createWidget(serialization, mock(CMValueSet.class));
+
+		// then
+		assertThat(created.isAddRowDisabled(), equalTo(false));
+		assertThat(created.isDeleteRowDisabled(), equalTo(false));
+		assertThat(created.isImportCsvDisabled(), equalTo(false));
+		verifyNoMoreInteractions(templateRespository, notifier, dataView, metadataStoreFactory);
+	}
+
+	@Test
+	public void functionalitiesAreDisabledOnlyWhenSpecified() throws Exception {
+		// given
+		final String serialization = "" //
+				+ CONFIGURATION_TYPE + "=\"form\"\n" //
+				+ FORM + "=\"foo\"\n" //
+				+ DISABLE_ADD_ROW + "=\"true\"\n" //
+				+ DISABLE_DELETE_ROW + "=\"true\"\n" //
+				+ DISABLE_IMPORT_FROM_CSV + "=\"true\"\n" //
+		;
+
+		// when
+		final CustomForm created = (CustomForm) widgetFactory.createWidget(serialization, mock(CMValueSet.class));
+
+		// then
+		assertThat(created.isAddRowDisabled(), equalTo(true));
+		assertThat(created.isDeleteRowDisabled(), equalTo(true));
+		assertThat(created.isImportCsvDisabled(), equalTo(true));
+		verifyNoMoreInteractions(templateRespository, notifier, dataView, metadataStoreFactory);
+	}
+
 	private static CMAttribute attribute(final CMAttributeType<?> type, final String name) {
 		final CMAttribute output = mock(CMAttribute.class);
 		doReturn(type) //
@@ -355,7 +439,7 @@ public class CustomFormWidgetFactoryTest {
 				.when(output).getName();
 		return output;
 	}
-	
+
 	private static List<Attribute> readJsonString(final String value) {
 		try {
 			final ObjectMapper mapper = new ObjectMapper();
