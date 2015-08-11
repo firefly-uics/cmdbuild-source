@@ -1,18 +1,19 @@
 package unit.model.widget.customform;
 
 import static java.util.Arrays.asList;
-import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.ADD_ROW_DISABLED;
+import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.ADD_DISABLED;
 import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.ATTRIBUTES_SEPARATOR;
 import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.CLASSNAME;
 import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.CONFIGURATION_TYPE;
 import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.DEFAULT_ATTRIBUTES_SEPARATOR;
 import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.DEFAULT_KEY_VALUE_SEPARATOR;
 import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.DEFAULT_ROWS_SEPARATOR;
-import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.DELETE_ROW_DISABLED;
+import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.DELETE_DISABLED;
 import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.FORM;
 import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.FUNCTIONNAME;
-import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.IMPORT_CSV_DISABLED;
+import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.IMPORT_DISABLED;
 import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.KEY_VALUE_SEPARATOR;
+import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.MODIFY_DISABLED;
 import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.ROWS_SEPARATOR;
 import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.SERIALIZATION_TYPE;
 import static org.hamcrest.Matchers.empty;
@@ -377,7 +378,8 @@ public class CustomFormWidgetFactoryTest {
 		final Capabilities capabilities = created.getCapabilities();
 		assertThat(capabilities.isAddDisabled(), equalTo(false));
 		assertThat(capabilities.isDeleteDisabled(), equalTo(false));
-		assertThat(capabilities.isImportCsvDisabled(), equalTo(false));
+		assertThat(capabilities.isImportDisabled(), equalTo(false));
+		assertThat(capabilities.isModifyDisabled(), equalTo(false));
 		verifyNoMoreInteractions(templateRespository, notifier, dataView, metadataStoreFactory);
 	}
 
@@ -387,9 +389,10 @@ public class CustomFormWidgetFactoryTest {
 		final String serialization = "" //
 				+ CONFIGURATION_TYPE + "=\"form\"\n" //
 				+ FORM + "=\"foo\"\n" //
-				+ ADD_ROW_DISABLED + "\n" //
-				+ DELETE_ROW_DISABLED + "\n" //
-				+ IMPORT_CSV_DISABLED + "\n" //
+				+ ADD_DISABLED + "\n" //
+				+ DELETE_DISABLED + "\n" //
+				+ IMPORT_DISABLED + "\n" //
+				+ MODIFY_DISABLED + "\n" //
 		;
 
 		// when
@@ -399,7 +402,8 @@ public class CustomFormWidgetFactoryTest {
 		final Capabilities capabilities = created.getCapabilities();
 		assertThat(capabilities.isAddDisabled(), equalTo(false));
 		assertThat(capabilities.isDeleteDisabled(), equalTo(false));
-		assertThat(capabilities.isImportCsvDisabled(), equalTo(false));
+		assertThat(capabilities.isImportDisabled(), equalTo(false));
+		assertThat(capabilities.isModifyDisabled(), equalTo(false));
 		verifyNoMoreInteractions(templateRespository, notifier, dataView, metadataStoreFactory);
 	}
 
@@ -409,9 +413,10 @@ public class CustomFormWidgetFactoryTest {
 		final String serialization = "" //
 				+ CONFIGURATION_TYPE + "=\"form\"\n" //
 				+ FORM + "=\"foo\"\n" //
-				+ ADD_ROW_DISABLED + "=true\n" //
-				+ DELETE_ROW_DISABLED + "=true\n" //
-				+ IMPORT_CSV_DISABLED + "=true\n" //
+				+ ADD_DISABLED + "=true\n" //
+				+ DELETE_DISABLED + "=true\n" //
+				+ IMPORT_DISABLED + "=true\n" //
+				+ MODIFY_DISABLED + "=true\n" //
 		;
 
 		// when
@@ -421,7 +426,8 @@ public class CustomFormWidgetFactoryTest {
 		final Capabilities capabilities = created.getCapabilities();
 		assertThat(capabilities.isAddDisabled(), equalTo(false));
 		assertThat(capabilities.isDeleteDisabled(), equalTo(false));
-		assertThat(capabilities.isImportCsvDisabled(), equalTo(false));
+		assertThat(capabilities.isImportDisabled(), equalTo(false));
+		assertThat(capabilities.isModifyDisabled(), equalTo(false));
 		verifyNoMoreInteractions(templateRespository, notifier, dataView, metadataStoreFactory);
 	}
 
@@ -431,9 +437,10 @@ public class CustomFormWidgetFactoryTest {
 		final String serialization = "" //
 				+ CONFIGURATION_TYPE + "=\"form\"\n" //
 				+ FORM + "=\"foo\"\n" //
-				+ ADD_ROW_DISABLED + "=\"true\"\n" //
-				+ DELETE_ROW_DISABLED + "=\"true\"\n" //
-				+ IMPORT_CSV_DISABLED + "=\"true\"\n" //
+				+ ADD_DISABLED + "=\"true\"\n" //
+				+ DELETE_DISABLED + "=\"true\"\n" //
+				+ IMPORT_DISABLED + "=\"true\"\n" //
+				+ MODIFY_DISABLED + "=\"true\"\n" //
 		;
 
 		// when
@@ -443,7 +450,8 @@ public class CustomFormWidgetFactoryTest {
 		final Capabilities capabilities = created.getCapabilities();
 		assertThat(capabilities.isAddDisabled(), equalTo(true));
 		assertThat(capabilities.isDeleteDisabled(), equalTo(true));
-		assertThat(capabilities.isImportCsvDisabled(), equalTo(true));
+		assertThat(capabilities.isImportDisabled(), equalTo(true));
+		assertThat(capabilities.isModifyDisabled(), equalTo(true));
 		verifyNoMoreInteractions(templateRespository, notifier, dataView, metadataStoreFactory);
 	}
 
