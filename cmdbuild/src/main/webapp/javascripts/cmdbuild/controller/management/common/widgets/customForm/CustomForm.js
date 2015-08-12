@@ -40,7 +40,7 @@
 		beforeActiveView: function() {
 			this.callParent(arguments);
 
-			if (!this.widgetConfigurationIsAttributeEmpty(CMDBuild.core.proxy.CMProxyConstants.FORM)) {
+			if (!this.widgetConfigurationIsAttributeEmpty(CMDBuild.core.proxy.CMProxyConstants.MODEL)) {
 				this.buildLayout();
 
 				if (!this.instancesDataStorageIsEmpty())

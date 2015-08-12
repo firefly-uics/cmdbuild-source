@@ -9,7 +9,7 @@
 			{ name: 'alwaysenabled', type: 'boolean' },
 			{ name: CMDBuild.core.proxy.CMProxyConstants.ACTIVE, type: 'boolean' },
 			{ name: CMDBuild.core.proxy.CMProxyConstants.CAPABILITIES, type: 'auto' }, // Object to gather all UI disable flags
-			{ name: CMDBuild.core.proxy.CMProxyConstants.FORM, type: 'auto' }, // Encoded string of array of CMDBuild.model.widgets.customForm.Attribute models
+			{ name: CMDBuild.core.proxy.CMProxyConstants.MODEL, type: 'auto' }, // Encoded array of CMDBuild.model.widgets.customForm.Attribute models strings
 			{ name: CMDBuild.core.proxy.CMProxyConstants.ID, type: 'string' },
 			{ name: CMDBuild.core.proxy.CMProxyConstants.LABEL, type: 'string' },
 			{ name: CMDBuild.core.proxy.CMProxyConstants.LAYOUT, type: 'string', defaultValue: 'grid' }, // Widget view mode
@@ -31,14 +31,14 @@
 			this.callParent(arguments);
 
 			// Apply form attributes model
-			if (Ext.isString(data[CMDBuild.core.proxy.CMProxyConstants.FORM]))
-				data[CMDBuild.core.proxy.CMProxyConstants.FORM] = Ext.decode(data[CMDBuild.core.proxy.CMProxyConstants.FORM]);
+			if (Ext.isString(data[CMDBuild.core.proxy.CMProxyConstants.MODEL]))
+				data[CMDBuild.core.proxy.CMProxyConstants.MODEL] = Ext.decode(data[CMDBuild.core.proxy.CMProxyConstants.MODEL]);
 
-			Ext.Array.forEach(data[CMDBuild.core.proxy.CMProxyConstants.FORM], function(attributeObject, i, AllAttributesObjects) {
+			Ext.Array.forEach(data[CMDBuild.core.proxy.CMProxyConstants.MODEL], function(attributeObject, i, AllAttributesObjects) {
 				attributesArray.push(Ext.create('CMDBuild.model.widgets.customForm.Attribute', attributeObject));
 			}, this);
 
-			this.set(CMDBuild.core.proxy.CMProxyConstants.FORM, attributesArray);
+			this.set(CMDBuild.core.proxy.CMProxyConstants.MODEL, attributesArray);
 
 			// Apply capabilities model
 			this.set(
