@@ -142,8 +142,8 @@
 		buildColumns: function() {
 			var columns = [];
 
-			if (!this.cmfg('widgetConfigurationIsAttributeEmpty',  CMDBuild.core.proxy.CMProxyConstants.FORM)) {
-				Ext.Array.forEach(this.cmfg('widgetConfigurationGet', CMDBuild.core.proxy.CMProxyConstants.FORM), function(attribute, i, allAttributes) {
+			if (!this.cmfg('widgetConfigurationIsAttributeEmpty',  CMDBuild.core.proxy.CMProxyConstants.MODEL)) {
+				Ext.Array.forEach(this.cmfg('widgetConfigurationGet', CMDBuild.core.proxy.CMProxyConstants.MODEL), function(attribute, i, allAttributes) {
 					var attribute = attribute.getAdaptedData();
 					var attributesMap = CMDBuild.Management.FieldManager.getAttributesMap();
 

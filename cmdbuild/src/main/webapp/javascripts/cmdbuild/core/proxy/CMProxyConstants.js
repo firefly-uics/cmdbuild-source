@@ -194,6 +194,7 @@
 		METADATA_OUTPUT: 'metadataOutput',
 		MINUTE: 'minute',
 		MODE: 'mode',
+		MODEL: 'model',
 		MODIFY_DISABLED: 'modifyDisabled',
 		MOUNTH: 'mounth',
 		MYSQL: 'mysql',
