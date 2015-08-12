@@ -26,25 +26,25 @@ public class CustomFormWidgetFactory extends ValuePairWidgetFactory {
 	public static final String //
 			REQUIRED = "Required", //
 			MODEL_TYPE = "ModelType", //
-			FORM = "Form", //
-			CLASSNAME = "ClassName", //
-			FUNCTIONNAME = "FunctionName", //
+			FORM_MODEL = "FormModel", //
+			CLASS_MODEL = "ClassModel", //
+			FUNCTION_MODEL = "FunctionModel", //
 			DATA_TYPE = "DataType", //
 			RAW_DATA = "RawData", //
 			FUNCTION_DATA = "FunctionData", //
 			LAYOUT = "Layout", //
 			READ_ONLY = "ReadOnly", //
-			ADD_DISABLED = "AddRowDisabled", //
-			DELETE_DISABLED = "DeleteRowDisabled", //
-			IMPORT_DISABLED = "ImportCsvDisabled", //
-			MODIFY_DISABLED = "ModifyRowDisabled", //
+			ADD_DISABLED = "AddDisabled", //
+			DELETE_DISABLED = "DeleteDisabled", //
+			IMPORT_DISABLED = "ImportDisabled", //
+			MODIFY_DISABLED = "ModifyDisabled", //
 			SERIALIZATION_TYPE = "SerializationType", //
 			KEY_VALUE_SEPARATOR = "KeyValueSeparator", //
 			ATTRIBUTES_SEPARATOR = "AttributesSeparator", //
 			ROWS_SEPARATOR = "RowsSeparator";
 
 	private static final String[] KNOWN_PARAMETERS = { BUTTON_LABEL, REQUIRED, //
-			MODEL_TYPE, FORM, CLASSNAME, FUNCTIONNAME, //
+			MODEL_TYPE, FORM_MODEL, CLASS_MODEL, FUNCTION_MODEL, //
 			DATA_TYPE, RAW_DATA, FUNCTION_DATA, //
 			LAYOUT, //
 			READ_ONLY, ADD_DISABLED, DELETE_DISABLED, IMPORT_DISABLED, MODIFY_DISABLED, //
@@ -98,17 +98,17 @@ public class CustomFormWidgetFactory extends ValuePairWidgetFactory {
 		final ModelBuilder output;
 		final String value = String.class.cast(valueMap.get(MODEL_TYPE));
 		if (TYPE_FORM.equalsIgnoreCase(value)) {
-			final String expression = defaultString(String.class.cast(valueMap.get(FORM)));
-			Validate.isTrue(isNotBlank(expression), "invalid value for '%s'", FORM);
+			final String expression = defaultString(String.class.cast(valueMap.get(FORM_MODEL)));
+			Validate.isTrue(isNotBlank(expression), "invalid value for '%s'", FORM_MODEL);
 			output = new FallbackOnExceptionModelBuilder(new JsonStringModelBuilder(expression),
 					new IdentityModelBuilder(expression));
 		} else if (TYPE_CLASS.equalsIgnoreCase(value)) {
-			final String className = String.class.cast(valueMap.get(CLASSNAME));
-			Validate.isTrue(isNotBlank(className), "invalid value for '%s'", CLASSNAME);
+			final String className = String.class.cast(valueMap.get(CLASS_MODEL));
+			Validate.isTrue(isNotBlank(className), "invalid value for '%s'", CLASS_MODEL);
 			output = new ClassModelBuilder(dataView, metadataStoreFactory, className);
 		} else if (TYPE_FUNCTION.equalsIgnoreCase(value)) {
-			final String functionName = String.class.cast(valueMap.get(FUNCTIONNAME));
-			Validate.isTrue(isNotBlank(functionName), "invalid value for '%s'", FUNCTIONNAME);
+			final String functionName = String.class.cast(valueMap.get(FUNCTION_MODEL));
+			Validate.isTrue(isNotBlank(functionName), "invalid value for '%s'", FUNCTION_MODEL);
 			output = new FunctionModelBuilder(dataView, functionName);
 		} else {
 			output = new InvalidModelBuilder(format("'%s' is not a valid value for '%s'", value, MODEL_TYPE));
