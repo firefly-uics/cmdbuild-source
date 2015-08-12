@@ -11,6 +11,7 @@ import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.DEFAU
 import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.DELETE_DISABLED;
 import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.FORM;
 import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.FUNCTIONNAME;
+import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.FUNCTION_DATA;
 import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.IMPORT_DISABLED;
 import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.KEY_VALUE_SEPARATOR;
 import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.MODEL_TYPE;
@@ -555,7 +556,7 @@ public class CustomFormWidgetFactoryTest {
 	}
 
 	@Test
-	public void rawDataReturnsDataAsIs() throws Exception {
+	public void dataFromRawSourceReturnsExpressionAsIs() throws Exception {
 		// given
 		final String serialization = "" //
 				+ MODEL_TYPE + "=\"form\"\n" //
@@ -569,6 +570,50 @@ public class CustomFormWidgetFactoryTest {
 
 		// then
 		assertThat(created.getData(), equalTo("foo bar baz"));
+		verifyNoMoreInteractions(templateRespository, notifier, dataView, metadataStoreFactory);
+	}
+
+	@Test
+	public void dataFromFunctionAndMissingFunctionNameProducesNoWidget() throws Exception {
+		// given
+		final String serialization = "" //
+				+ MODEL_TYPE + "=\"form\"\n" //
+				+ FORM + "=\"foo\"\n" //
+				+ DATA_TYPE + "=\"function\"\n" //
+		;
+
+		// when
+		final CustomForm created = (CustomForm) widgetFactory.createWidget(serialization, mock(CMValueSet.class));
+
+		// then
+		assertThat(created, nullValue());
+		verify(notifier).warn(
+				eq(new CMDBWorkflowException(WorkflowExceptionType.WF_CANNOT_CONFIGURE_CMDBEXTATTR, widgetFactory
+						.getWidgetName())));
+		verifyNoMoreInteractions(templateRespository, notifier, dataView, metadataStoreFactory);
+	}
+
+	@Test
+	public void dataFromFunctionAndMissingFunctionProducesNoWidget() throws Exception {
+		// given
+		final String serialization = "" //
+				+ MODEL_TYPE + "=\"form\"\n" //
+				+ FORM + "=\"foo\"\n" //
+				+ DATA_TYPE + "=\"function\"\n" //
+				+ FUNCTION_DATA + "=\"missing\"\n" //
+		;
+		doReturn(null) //
+				.when(dataView).findFunctionByName(any(String.class));
+
+		// when
+		final CustomForm created = (CustomForm) widgetFactory.createWidget(serialization, mock(CMValueSet.class));
+
+		// then
+		assertThat(created, nullValue());
+		verify(dataView).findFunctionByName(eq("missing"));
+		verify(notifier).warn(
+				eq(new CMDBWorkflowException(WorkflowExceptionType.WF_CANNOT_CONFIGURE_CMDBEXTATTR, widgetFactory
+						.getWidgetName())));
 		verifyNoMoreInteractions(templateRespository, notifier, dataView, metadataStoreFactory);
 	}
 

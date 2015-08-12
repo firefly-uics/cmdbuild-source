@@ -1,8 +1,10 @@
 package org.cmdbuild.dao.guava;
 
 import org.cmdbuild.dao.entry.CMCard;
+import org.cmdbuild.dao.entry.CMValueSet;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.query.CMQueryRow;
+import org.cmdbuild.dao.query.clause.alias.Alias;
 
 import com.google.common.base.Function;
 
@@ -14,6 +16,17 @@ public class Functions {
 			@Override
 			public CMCard apply(final CMQueryRow input) {
 				return input.getCard(type);
+			}
+
+		};
+	}
+
+	public static Function<CMQueryRow, CMValueSet> toValueSet(final Alias alias) {
+		return new Function<CMQueryRow, CMValueSet>() {
+
+			@Override
+			public CMValueSet apply(final CMQueryRow input) {
+				return input.getValueSet(alias);
 			}
 
 		};

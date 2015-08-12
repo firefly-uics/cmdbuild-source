@@ -31,6 +31,7 @@ public class CustomFormWidgetFactory extends ValuePairWidgetFactory {
 			FUNCTIONNAME = "FunctionName", //
 			DATA_TYPE = "DataType", //
 			RAW_DATA = "RawData", //
+			FUNCTION_DATA = "FunctionData", //
 			LAYOUT = "Layout", //
 			READ_ONLY = "ReadOnly", //
 			ADD_DISABLED = "AddRowDisabled", //
@@ -44,7 +45,7 @@ public class CustomFormWidgetFactory extends ValuePairWidgetFactory {
 
 	private static final String[] KNOWN_PARAMETERS = { BUTTON_LABEL, REQUIRED, //
 			MODEL_TYPE, FORM, CLASSNAME, FUNCTIONNAME, //
-			DATA_TYPE, RAW_DATA, //
+			DATA_TYPE, RAW_DATA, FUNCTION_DATA, //
 			LAYOUT, //
 			READ_ONLY, ADD_DISABLED, DELETE_DISABLED, IMPORT_DISABLED, MODIFY_DISABLED, //
 			SERIALIZATION_TYPE, KEY_VALUE_SEPARATOR, ATTRIBUTES_SEPARATOR, ROWS_SEPARATOR //
@@ -121,6 +122,10 @@ public class CustomFormWidgetFactory extends ValuePairWidgetFactory {
 		if (TYPE_RAW.equalsIgnoreCase(value)) {
 			final String expression = defaultString(String.class.cast(valueMap.get(RAW_DATA)));
 			output = new IdentityDataBuilder(expression);
+		} else if (TYPE_FUNCTION.equalsIgnoreCase(value)) {
+			final String functionName = defaultString(String.class.cast(valueMap.get(FUNCTION_DATA)));
+			Validate.isTrue(isNotBlank(functionName), "invalid value for '%s'", FUNCTION_DATA);
+			output = new FunctionDataBuilder(dataView, functionName, valueMap);
 		} else {
 			output = new IdentityDataBuilder(null);
 		}
