@@ -1,5 +1,8 @@
 package org.cmdbuild.model.widget.customform;
 
+import static org.apache.commons.lang3.builder.ToStringBuilder.reflectionToString;
+import static org.apache.commons.lang3.builder.ToStringStyle.SHORT_PREFIX_STYLE;
+
 import java.util.Map;
 
 import org.cmdbuild.model.widget.Widget;
@@ -57,6 +60,11 @@ public class CustomForm extends Widget {
 			this.modifyDisabled = modifyDisabled;
 		}
 
+		@Override
+		public String toString() {
+			return reflectionToString(this, SHORT_PREFIX_STYLE);
+		}
+
 	}
 
 	public static class Serialization {
@@ -83,6 +91,11 @@ public class CustomForm extends Widget {
 
 		public void setConfiguration(final Configuration configuration) {
 			this.configuration = configuration;
+		}
+
+		@Override
+		public String toString() {
+			return reflectionToString(this, SHORT_PREFIX_STYLE);
 		}
 
 	}
@@ -115,6 +128,11 @@ public class CustomForm extends Widget {
 
 		public void setRowsSeparator(final String rowsSeparator) {
 			this.rowsSeparator = rowsSeparator;
+		}
+
+		@Override
+		public String toString() {
+			return reflectionToString(this, SHORT_PREFIX_STYLE);
 		}
 
 	}
@@ -193,6 +211,11 @@ public class CustomForm extends Widget {
 
 	public void setVariables(final Map<String, Object> variables) {
 		this.variables = variables;
+	}
+
+	@Override
+	public String toString() {
+		return reflectionToString(this, SHORT_PREFIX_STYLE);
 	}
 
 }
