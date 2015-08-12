@@ -1,41 +1,31 @@
 package org.cmdbuild.servlets.json.serializers.translations.csv;
 
-import static org.cmdbuild.servlets.json.CommunicationConstants.NOTES;
-import static org.cmdbuild.servlets.json.serializers.translations.commons.Constants.NO_LIMIT_AND_OFFSET;
-
 import java.util.Collection;
 
+import org.bouncycastle.util.Strings;
 import org.cmdbuild.dao.entrytype.CMAttribute;
-import org.cmdbuild.dao.entrytype.CMClass;
-import org.cmdbuild.logger.Log;
+import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.logic.translation.SetupFacade;
 import org.cmdbuild.logic.translation.TranslationLogic;
+import org.cmdbuild.logic.translation.converter.DomainConverter;
 import org.cmdbuild.servlets.json.serializers.translations.commons.AttributeSorter;
 import org.cmdbuild.servlets.json.serializers.translations.commons.EntryTypeSorter;
-import org.cmdbuild.servlets.json.serializers.translations.commons.TranslationSerializer;
 import org.cmdbuild.servlets.json.translationtable.objects.TranslationSerialization;
+import org.cmdbuild.servlets.json.translationtable.objects.csv.CsvTranslationRecord;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.google.common.base.Predicate;
-import com.google.common.collect.Iterables;
+import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 
-public class ClassTranslationSerializer extends EntryTypeTranslationSerializer implements TranslationSerializer {
+public class DomainTranslationSerializer extends EntryTypeTranslationSerializer {
 
 	private final Collection<TranslationSerialization> records = Lists.newArrayList();
-	private Predicate<CMAttribute> REMOVE_NOTES = new Predicate<CMAttribute>() {
 
-		@Override
-		public boolean apply(CMAttribute input) {
-			return !input.getName().equalsIgnoreCase(NOTES);
-		}
-
-	};
-
-	public ClassTranslationSerializer(final DataAccessLogic dataLogic, final boolean activeOnly,
+	public DomainTranslationSerializer(final DataAccessLogic dataLogic, final boolean activeOnly,
 			final TranslationLogic translationLogic, final JSONArray sorters, final String separator,
 			final SetupFacade setupFacade) {
 		super(dataLogic, activeOnly, translationLogic, separator, setupFacade);
@@ -48,7 +38,7 @@ public class ClassTranslationSerializer extends EntryTypeTranslationSerializer i
 				for (int i = 0; i < sorters.length(); i++) {
 					final JSONObject object = JSONObject.class.cast(sorters.get(i));
 					final String element = object.getString(ELEMENT);
-					if (element.equalsIgnoreCase(CLASS) || element.equalsIgnoreCase(PROCESS)) {
+					if (element.equalsIgnoreCase(DOMAIN)) {
 						entryTypeOrdering = EntryTypeSorter.of(object.getString(FIELD)) //
 								.withDirection(object.getString(DIRECTION)) //
 								.getOrientedOrdering();
@@ -59,34 +49,62 @@ public class ClassTranslationSerializer extends EntryTypeTranslationSerializer i
 					}
 				}
 			} catch (final JSONException e) {
-				Log.JSONRPC.warn("ignoring malformed sorter");
+				// nothing to do
 			}
 		}
+	}
+
+	private Predicate<CMDomain> remove(DataAccessLogic dataLogic) {
+
+		return new Predicate<CMDomain>() {
+
+			@Override
+			public boolean apply(CMDomain input) {
+				// TODO Auto-generated method stub
+				return false;
+			}
+		};
+
 	}
 
 	@Override
 	public Iterable<TranslationSerialization> serialize() {
 
-		final Iterable<? extends CMClass> sortedClasses = sortedClasses();
+		final Iterable<? extends CMDomain> allDomains = activeOnly ? dataLogic.findActiveDomains() : dataLogic
+				.findAllDomains();
+		final Iterable<? extends CMDomain> sortedDomains = entryTypeOrdering.sortedCopy(allDomains);
 
-		for (final CMClass aClass : sortedClasses) {
+		for (final CMDomain aDomain : sortedDomains) {
 
-			records.addAll(ClassSerializer.newInstance() //
-					.withClass(aClass) //
+			Collection<? extends CsvTranslationRecord> allFieldsForDomain = DomainSerializer.newInstance() //
+					.withDomain(aDomain) //
 					.withEnabledLanguages(enabledLanguages) //
 					.withTranslationLogic(translationLogic) //
 					.withDataAccessLogic(dataLogic) //
 					.build() //
-					.serialize());
+					.serialize();
 
-			final Iterable<? extends CMAttribute> allAttributes = dataLogic.getAttributes(aClass.getName(), activeOnly,
-					NO_LIMIT_AND_OFFSET);
+			Collection<? extends CsvTranslationRecord> filteredDomainFields = Collections2.filter(allFieldsForDomain, new Predicate<CsvTranslationRecord>() {
 
-			final Iterable<? extends CMAttribute> sortedAttributes = sortAttributes(Iterables.filter(allAttributes,
-					REMOVE_NOTES));
+				@Override
+				public boolean apply(CsvTranslationRecord input) {
+					String identifier = String.class.cast(input.getRecord().get(IDENTIFIER));
+					String domainName = Strings.split(identifier, '.')[1];
+					String fieldName = Strings.split(identifier, '.')[2];
+					boolean isMasterDetail = dataLogic.findDomain(domainName).isMasterDetail();
+					return !fieldName.equalsIgnoreCase(DomainConverter.masterDetail()) || isMasterDetail;
+				}
+
+			});
+			
+			records.addAll(filteredDomainFields);
+
+			final Iterable<? extends CMAttribute> allAttributes = activeOnly ? aDomain.getActiveAttributes() : aDomain
+					.getAllAttributes();
+
+			final Iterable<? extends CMAttribute> sortedAttributes = sortAttributes(allAttributes);
 			for (final CMAttribute anAttribute : sortedAttributes) {
-
-				records.addAll(AttributeSerializer.newInstance() //
+				records.addAll(DomainAttributeSerializer.newInstance() //
 						.withAttribute(anAttribute) //
 						.withEnabledLanguages(enabledLanguages) //
 						.withTranslationLogic(translationLogic) //
@@ -96,12 +114,6 @@ public class ClassTranslationSerializer extends EntryTypeTranslationSerializer i
 			}
 		}
 		return records;
-	}
-
-	private Iterable<? extends CMClass> sortedClasses() {
-		final Iterable<? extends CMClass> classes = dataLogic.findClasses(activeOnly);
-		final Iterable<? extends CMClass> sortedClasses = entryTypeOrdering.sortedCopy(classes);
-		return sortedClasses;
 	}
 
 }

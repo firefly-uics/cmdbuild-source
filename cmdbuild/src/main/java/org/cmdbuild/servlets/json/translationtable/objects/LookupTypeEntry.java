@@ -8,7 +8,7 @@ import java.util.Collection;
 
 import org.codehaus.jackson.annotate.JsonProperty;
 
-public class LookupTypeEntry implements GenericTableEntry {
+public class LookupTypeEntry implements TranslationSerialization {
 
 	private String code;
 	private String description;

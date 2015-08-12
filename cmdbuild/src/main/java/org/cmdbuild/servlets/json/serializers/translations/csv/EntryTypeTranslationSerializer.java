@@ -1,12 +1,9 @@
 package org.cmdbuild.servlets.json.serializers.translations.csv;
 
-import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-
-import javax.activation.DataHandler;
 
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
@@ -19,10 +16,10 @@ import org.cmdbuild.logic.translation.converter.AttributeConverter;
 import org.cmdbuild.logic.translation.converter.ClassConverter;
 import org.cmdbuild.servlets.json.serializers.translations.commons.AttributeSorter;
 import org.cmdbuild.servlets.json.serializers.translations.commons.EntryTypeSorter;
-import org.cmdbuild.servlets.json.serializers.translations.table.TranslationSerializer;
+import org.cmdbuild.servlets.json.serializers.translations.commons.TranslationSerializer;
 import org.cmdbuild.servlets.json.translationtable.objects.EntryField;
-import org.cmdbuild.servlets.json.translationtable.objects.GenericTableEntry;
 import org.cmdbuild.servlets.json.translationtable.objects.TableEntry;
+import org.cmdbuild.servlets.json.translationtable.objects.TranslationSerialization;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Ordering;
@@ -30,8 +27,8 @@ import com.google.common.collect.Ordering;
 public abstract class EntryTypeTranslationSerializer implements TranslationSerializer {
 
 	final DataAccessLogic dataLogic;
+	Iterable<String> enabledLanguages;
 	final TranslationLogic translationLogic;
-	final SetupFacade setupFacade;
 	final boolean activeOnly;
 	final String separator;
 	final String IDENTIFIER = "identifier";
@@ -48,7 +45,7 @@ public abstract class EntryTypeTranslationSerializer implements TranslationSeria
 		this.activeOnly = activeOnly;
 		this.translationLogic = translationLogic;
 		this.separator = separator;
-		this.setupFacade = setupFacade;
+		this.enabledLanguages = setupFacade.getEnabledLanguages();
 	}
 
 	static <T> Iterable<T> nullableIterable(final Iterable<T> it) {
@@ -56,10 +53,7 @@ public abstract class EntryTypeTranslationSerializer implements TranslationSeria
 	}
 
 	@Override
-	public abstract Iterable<GenericTableEntry> serialize();
-
-	@Override
-	public abstract DataHandler exportCsv() throws IOException;
+	public abstract Iterable<TranslationSerialization> serialize();
 
 	Iterable<? extends CMAttribute> sortAttributes(final Iterable<? extends CMAttribute> allAttributes) {
 		final Iterable<? extends CMAttribute> sortedAttributes = attributeOrdering

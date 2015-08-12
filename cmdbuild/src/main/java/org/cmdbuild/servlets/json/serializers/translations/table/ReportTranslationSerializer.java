@@ -3,8 +3,6 @@ package org.cmdbuild.servlets.json.serializers.translations.table;
 import java.util.Collection;
 import java.util.Map;
 
-import javax.activation.DataHandler;
-
 import org.cmdbuild.logic.translation.SetupFacade;
 import org.cmdbuild.logic.translation.TranslationLogic;
 import org.cmdbuild.logic.translation.TranslationObject;
@@ -14,9 +12,10 @@ import org.cmdbuild.report.ReportFactory.ReportType;
 import org.cmdbuild.services.store.report.Report;
 import org.cmdbuild.services.store.report.ReportStore;
 import org.cmdbuild.servlets.json.serializers.translations.commons.ReportSorter;
+import org.cmdbuild.servlets.json.serializers.translations.commons.TranslationSerializer;
 import org.cmdbuild.servlets.json.translationtable.objects.EntryField;
-import org.cmdbuild.servlets.json.translationtable.objects.GenericTableEntry;
 import org.cmdbuild.servlets.json.translationtable.objects.TableEntry;
+import org.cmdbuild.servlets.json.translationtable.objects.TranslationSerialization;
 import org.json.JSONArray;
 
 import com.google.common.collect.Iterables;
@@ -41,7 +40,7 @@ public class ReportTranslationSerializer implements TranslationSerializer {
 	}
 
 	@Override
-	public Iterable<GenericTableEntry> serialize() {
+	public Iterable<TranslationSerialization> serialize() {
 		final Collection<Report> allReports = Lists.newArrayList();
 		for (final ReportType type : ReportType.values()) {
 			final Iterable<Report> reportsOfType = reportStore.findReportsByType(type);
@@ -51,8 +50,8 @@ public class ReportTranslationSerializer implements TranslationSerializer {
 		return serialize(sorterReports);
 	}
 
-	private Iterable<GenericTableEntry> serialize(final Iterable<Report> sortedReports) {
-		final Collection<GenericTableEntry> jsonReports = Lists.newArrayList();
+	private Iterable<TranslationSerialization> serialize(final Iterable<Report> sortedReports) {
+		final Collection<TranslationSerialization> jsonReports = Lists.newArrayList();
 		for (final Report report : sortedReports) {
 			final String name = report.getCode();
 			final TableEntry jsonReport = new TableEntry();
@@ -76,11 +75,6 @@ public class ReportTranslationSerializer implements TranslationSerializer {
 		field.setValue(report.getDescription());
 		jsonFields.add(field);
 		return jsonFields;
-	}
-
-	@Override
-	public DataHandler exportCsv() {
-		throw new UnsupportedOperationException("to do");
 	}
 
 }

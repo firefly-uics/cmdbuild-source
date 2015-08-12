@@ -1,11 +1,8 @@
 package org.cmdbuild.servlets.json.serializers.translations.table;
 
-import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
-
-import javax.activation.DataHandler;
 
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
@@ -17,9 +14,10 @@ import org.cmdbuild.logic.translation.converter.AttributeConverter;
 import org.cmdbuild.logic.translation.converter.ClassConverter;
 import org.cmdbuild.servlets.json.serializers.translations.commons.AttributeSorter;
 import org.cmdbuild.servlets.json.serializers.translations.commons.EntryTypeSorter;
+import org.cmdbuild.servlets.json.serializers.translations.commons.TranslationSerializer;
 import org.cmdbuild.servlets.json.translationtable.objects.EntryField;
-import org.cmdbuild.servlets.json.translationtable.objects.GenericTableEntry;
 import org.cmdbuild.servlets.json.translationtable.objects.TableEntry;
+import org.cmdbuild.servlets.json.translationtable.objects.TranslationSerialization;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Ordering;
@@ -45,10 +43,7 @@ public abstract class EntryTypeTranslationSerializer implements TranslationSeria
 	}
 
 	@Override
-	public abstract Iterable<GenericTableEntry> serialize();
-
-	@Override
-	public abstract DataHandler exportCsv() throws IOException;
+	public abstract Iterable<TranslationSerialization> serialize();
 
 	Iterable<? extends CMAttribute> sortAttributes(final Iterable<? extends CMAttribute> allAttributes) {
 		final Iterable<? extends CMAttribute> sortedAttributes = attributeOrdering

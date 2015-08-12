@@ -1,9 +1,6 @@
 package org.cmdbuild.servlets.json.serializers.translations.table;
 
-import java.io.IOException;
 import java.util.Collection;
-
-import javax.activation.DataHandler;
 
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
@@ -14,9 +11,9 @@ import org.cmdbuild.logic.translation.TranslationLogic;
 import org.cmdbuild.servlets.json.serializers.translations.commons.AttributeSorter;
 import org.cmdbuild.servlets.json.serializers.translations.commons.EntryTypeSorter;
 import org.cmdbuild.servlets.json.translationtable.objects.EntryField;
-import org.cmdbuild.servlets.json.translationtable.objects.GenericTableEntry;
 import org.cmdbuild.servlets.json.translationtable.objects.ParentEntry;
 import org.cmdbuild.servlets.json.translationtable.objects.TableEntry;
+import org.cmdbuild.servlets.json.translationtable.objects.TranslationSerialization;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -46,15 +43,9 @@ public class ClassTranslationSerializer extends EntryTypeTranslationSerializer {
 	}
 
 	@Override
-	public Iterable<GenericTableEntry> serialize() {
+	public Iterable<TranslationSerialization> serialize() {
 		final Iterable<? extends CMClass> sortedClasses = sortedClasses();
 		return serialize(sortedClasses);
-	}
-
-	@Deprecated
-	@Override
-	public DataHandler exportCsv() throws IOException {
-		return null;
 	}
 
 	private void setOrderings(final JSONArray sorters) {
@@ -85,8 +76,8 @@ public class ClassTranslationSerializer extends EntryTypeTranslationSerializer {
 		return sortedClasses;
 	}
 
-	Iterable<GenericTableEntry> serialize(final Iterable<? extends CMClass> sortedClasses) {
-		final Collection<GenericTableEntry> jsonClasses = Lists.newArrayList();
+	Iterable<TranslationSerialization> serialize(final Iterable<? extends CMClass> sortedClasses) {
+		final Collection<TranslationSerialization> jsonClasses = Lists.newArrayList();
 		for (final CMClass cmclass : sortedClasses) {
 			final String className = cmclass.getName();
 			final ParentEntry jsonClass = new ParentEntry();

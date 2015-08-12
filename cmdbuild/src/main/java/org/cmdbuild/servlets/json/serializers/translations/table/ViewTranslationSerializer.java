@@ -3,18 +3,17 @@ package org.cmdbuild.servlets.json.serializers.translations.table;
 import java.util.Collection;
 import java.util.Map;
 
-import javax.activation.DataHandler;
-
 import org.cmdbuild.logic.translation.SetupFacade;
 import org.cmdbuild.logic.translation.TranslationLogic;
 import org.cmdbuild.logic.translation.TranslationObject;
 import org.cmdbuild.logic.translation.converter.ViewConverter;
 import org.cmdbuild.logic.view.ViewLogic;
 import org.cmdbuild.model.view.View;
+import org.cmdbuild.servlets.json.serializers.translations.commons.TranslationSerializer;
 import org.cmdbuild.servlets.json.serializers.translations.commons.ViewSorter;
 import org.cmdbuild.servlets.json.translationtable.objects.EntryField;
-import org.cmdbuild.servlets.json.translationtable.objects.GenericTableEntry;
 import org.cmdbuild.servlets.json.translationtable.objects.TableEntry;
+import org.cmdbuild.servlets.json.translationtable.objects.TranslationSerialization;
 import org.json.JSONArray;
 
 import com.google.common.collect.Lists;
@@ -38,14 +37,14 @@ public class ViewTranslationSerializer implements TranslationSerializer {
 	}
 
 	@Override
-	public Iterable<GenericTableEntry> serialize() {
+	public Iterable<TranslationSerialization> serialize() {
 		final Iterable<View> views = viewLogic.fetchViewsOfAllTypes();
 		final Iterable<View> sortedViews = viewOrdering.sortedCopy(views);
 		return serialize(sortedViews);
 	}
 
-	Iterable<GenericTableEntry> serialize(final Iterable<View> sortedViews) {
-		final Collection<GenericTableEntry> jsonViews = Lists.newArrayList();
+	Iterable<TranslationSerialization> serialize(final Iterable<View> sortedViews) {
+		final Collection<TranslationSerialization> jsonViews = Lists.newArrayList();
 		for (final View view : sortedViews) {
 			final String name = view.getName();
 			final TableEntry jsonView = new TableEntry();
@@ -69,11 +68,6 @@ public class ViewTranslationSerializer implements TranslationSerializer {
 		field.setValue(view.getDescription());
 		jsonFields.add(field);
 		return jsonFields;
-	}
-
-	@Override
-	public DataHandler exportCsv() {
-		throw new UnsupportedOperationException("to do");
 	}
 
 }

@@ -3,8 +3,6 @@ package org.cmdbuild.servlets.json.serializers.translations.table;
 import java.util.Collection;
 import java.util.Map;
 
-import javax.activation.DataHandler;
-
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
@@ -16,9 +14,9 @@ import org.cmdbuild.logic.translation.converter.DomainConverter;
 import org.cmdbuild.servlets.json.serializers.translations.commons.AttributeSorter;
 import org.cmdbuild.servlets.json.serializers.translations.commons.EntryTypeSorter;
 import org.cmdbuild.servlets.json.translationtable.objects.EntryField;
-import org.cmdbuild.servlets.json.translationtable.objects.EntryWithAttributes;
-import org.cmdbuild.servlets.json.translationtable.objects.GenericTableEntry;
+import org.cmdbuild.servlets.json.translationtable.objects.ParentEntry;
 import org.cmdbuild.servlets.json.translationtable.objects.TableEntry;
+import org.cmdbuild.servlets.json.translationtable.objects.TranslationSerialization;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -57,21 +55,21 @@ public class DomainTranslationSerializer extends EntryTypeTranslationSerializer 
 	}
 
 	@Override
-	public Iterable<GenericTableEntry> serialize() {
+	public Iterable<TranslationSerialization> serialize() {
 		final Iterable<? extends CMDomain> allDomains = activeOnly ? dataLogic.findActiveDomains() : dataLogic
 				.findAllDomains();
 		final Iterable<? extends CMDomain> sortedDomains = entryTypeOrdering.sortedCopy(allDomains);
 
-		final Collection<GenericTableEntry> jsonDomains = Lists.newArrayList();
+		final Collection<TranslationSerialization> jsonDomains = Lists.newArrayList();
 		for (final CMDomain domain : sortedDomains) {
 			final String domainName = domain.getName();
 			final Collection<EntryField> jsonFields = readFields(domain);
 			final Iterable<? extends CMAttribute> allAttributes = domain.getAllAttributes();
 			final Iterable<? extends CMAttribute> sortedAttributes = sortAttributes(allAttributes);
 			final Collection<TableEntry> jsonAttributes = serializeAttributes(sortedAttributes);
-			final EntryWithAttributes jsonDomain = new EntryWithAttributes();
+			final ParentEntry jsonDomain = new ParentEntry();
 			jsonDomain.setName(domainName);
-			jsonDomain.setAttributes(jsonAttributes);
+			jsonDomain.setChildren(jsonAttributes);
 			jsonDomain.setFields(jsonFields);
 			jsonDomains.add(jsonDomain);
 		}
@@ -114,11 +112,6 @@ public class DomainTranslationSerializer extends EntryTypeTranslationSerializer 
 		jsonFields.add(inverseDescriptionField);
 
 		return jsonFields;
-	}
-
-	@Override
-	public DataHandler exportCsv() {
-		throw new UnsupportedOperationException("to do");
 	}
 
 }

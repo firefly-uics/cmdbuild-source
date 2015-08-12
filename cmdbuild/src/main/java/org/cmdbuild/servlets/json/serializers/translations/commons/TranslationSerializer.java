@@ -1,13 +1,10 @@
-package org.cmdbuild.servlets.json.serializers.translations.table;
+package org.cmdbuild.servlets.json.serializers.translations.commons;
 
-import java.io.IOException;
-
-import javax.activation.DataHandler;
-
-import org.cmdbuild.servlets.json.translationtable.objects.GenericTableEntry;
+import org.cmdbuild.servlets.json.translationtable.objects.TranslationSerialization;
 
 public interface TranslationSerializer {
-
+	
+	//TODO: move somewhere else
 	static final String FIELD = "field";
 	static final String ELEMENT = "element";
 	static final String DIRECTION = "direction";
@@ -16,8 +13,6 @@ public interface TranslationSerializer {
 	static final String DOMAIN = "domain";
 	static final String ATTRIBUTE = "attribute";
 
-	Iterable<GenericTableEntry> serialize();
-
-	DataHandler exportCsv() throws IOException;
+	Iterable<TranslationSerialization> serialize();
 
 }

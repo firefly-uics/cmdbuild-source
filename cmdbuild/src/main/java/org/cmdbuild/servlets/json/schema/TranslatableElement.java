@@ -17,6 +17,12 @@ import com.google.common.collect.Lists;
 public enum TranslatableElement {
 
 	CLASS("class") {
+		
+		@Override
+		public String humanReadableType() {
+			return THE_CLASS;
+		}
+		
 		@Override
 		public Converter createConverter(final String field) {
 			return ClassConverter.of(field);
@@ -28,6 +34,12 @@ public enum TranslatableElement {
 		}
 	},
 	ATTRIBUTECLASS("attributeclass") {
+		
+		@Override
+		public String humanReadableType() {
+			return THE_ATTRIBUTE;
+		}
+		
 		@Override
 		public Converter createConverter(final String field) {
 			return AttributeConverter.of(AttributeConverter.forClass(), field);
@@ -39,6 +51,12 @@ public enum TranslatableElement {
 		}
 	},
 	DOMAIN("domain") {
+		
+		@Override
+		public String humanReadableType() {
+			return THE_DOMAIN;
+		}
+		
 		@Override
 		public Converter createConverter(final String field) {
 			return DomainConverter.of(field);
@@ -51,6 +69,12 @@ public enum TranslatableElement {
 		}
 	},
 	ATTRIBUTEDOMAIN("attributedomain") {
+		
+		@Override
+		public String humanReadableType() {
+			return THE_ATTRIBUTE;
+		}
+		
 		@Override
 		public Converter createConverter(final String field) {
 			return AttributeConverter.of(AttributeConverter.forDomain(), field);
@@ -62,6 +86,12 @@ public enum TranslatableElement {
 		}
 	},
 	FILTER("filter") {
+		
+		@Override
+		public String humanReadableType() {
+			return "the filter";
+		}
+		
 		@Override
 		public Converter createConverter(final String field) {
 			return FilterConverter.of(field);
@@ -72,7 +102,9 @@ public enum TranslatableElement {
 			return Lists.newArrayList(FilterConverter.description());
 		}
 	},
+	@Deprecated
 	INSTANCE_NAME("instancename") {
+		
 		@Override
 		public Converter createConverter(final String field) {
 			return InstanceConverter.of(field);
@@ -84,6 +116,12 @@ public enum TranslatableElement {
 		}
 	},
 	LOOKUP_VALUE("lookupvalue") {
+		
+		@Override
+		public String humanReadableType() {
+			return "the lookup value";
+		}
+		
 		@Override
 		public Converter createConverter(final String field) {
 			return LookupConverter.of(field);
@@ -95,6 +133,11 @@ public enum TranslatableElement {
 		}
 	},
 	MENU_ITEM("menuitem") {
+		
+		@Override
+		public String humanReadableType() {
+			return "the menu entry";
+		}
 
 		@Override
 		public Converter createConverter(final String field) {
@@ -108,6 +151,11 @@ public enum TranslatableElement {
 
 	},
 	REPORT("report") {
+		
+		@Override
+		public String humanReadableType() {
+			return "the report";
+		}
 
 		@Override
 		public Converter createConverter(final String field) {
@@ -121,6 +169,11 @@ public enum TranslatableElement {
 
 	},
 	VIEW("view") {
+		
+		@Override
+		public String humanReadableType() {
+			return "the view";
+		}
 
 		@Override
 		public Converter createConverter(final String field) {
@@ -134,6 +187,11 @@ public enum TranslatableElement {
 
 	},
 	WIDGET("classwidget") {
+		
+		@Override
+		public String humanReadableType() {
+			return "the widget";
+		}
 
 		@Override
 		public Converter createConverter(final String field) {
@@ -148,6 +206,11 @@ public enum TranslatableElement {
 	},
 
 	UNDEFINED("undefined") {
+		
+		@Override
+		public String humanReadableType() {
+			throw new UnsupportedOperationException();
+		}
 
 		@Override
 		public Converter createConverter(final String field) {
@@ -161,7 +224,11 @@ public enum TranslatableElement {
 
 	};
 
+	private static final String THE_CLASS = "the class";
+	private static final String THE_DOMAIN = "the domain";
+	private static final String THE_ATTRIBUTE = "the attribute";
 	private final String type;
+	private String humanReadableType;
 
 	private TranslatableElement(final String type) {
 		this.type = type;
@@ -169,6 +236,10 @@ public enum TranslatableElement {
 	
 	public String getType(){
 		return type;
+	}
+	
+	public String humanReadableType(){
+		return humanReadableType;
 	}
 
 	public abstract Converter createConverter(String field);
