@@ -92,8 +92,8 @@
 							this.decodeStructureFields(entityMainNode, entityObject[CMDBuild.core.proxy.Constants.FIELDS], entityObject);
 
 						// Entity's attributes nodes
-						if (!Ext.isEmpty(entityObject[CMDBuild.core.proxy.Constants.ATTRIBUTES]))
-							this.decodeStructureAttributes(entityMainNode, entityObject[CMDBuild.core.proxy.Constants.ATTRIBUTES]);
+						if (!Ext.isEmpty(entityObject[CMDBuild.core.proxy.Constants.CHILDREN]))
+							this.decodeStructureAttributes(entityMainNode, entityObject[CMDBuild.core.proxy.Constants.CHILDREN]);
 					}
 				}, this);
 			} else {

@@ -2,22 +2,20 @@ package org.cmdbuild.servlets.json.schema;
 
 import static org.cmdbuild.servlets.json.CommunicationConstants.ACTIVE;
 import static org.cmdbuild.servlets.json.CommunicationConstants.FIELD;
+import static org.cmdbuild.servlets.json.CommunicationConstants.FILE_CSV;
+import static org.cmdbuild.servlets.json.CommunicationConstants.SEPARATOR;
 import static org.cmdbuild.servlets.json.CommunicationConstants.SORT;
 import static org.cmdbuild.servlets.json.CommunicationConstants.TRANSLATIONS;
 import static org.cmdbuild.servlets.json.schema.Utils.toMap;
 
 import java.io.IOException;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import javax.activation.DataHandler;
 
+import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.lang3.Validate;
-import org.cmdbuild.dao.entrytype.CMAttribute;
-import org.cmdbuild.dao.entrytype.CMClass;
-import org.cmdbuild.dao.entrytype.CMDomain;
-import org.cmdbuild.dao.view.CMDataView;
-import org.cmdbuild.logic.data.access.DataAccessLogic;
+import org.cmdbuild.logic.translation.SetupFacade;
 import org.cmdbuild.logic.translation.TranslationObject;
 import org.cmdbuild.logic.translation.converter.Converter;
 import org.cmdbuild.servlets.json.JSONBaseWithSpringContext;
@@ -34,8 +32,6 @@ public class Translation extends JSONBaseWithSpringContext {
 	private static final String TYPE = "type";
 	private static final String IDENTIFIER = "identifier";
 	private static final String OWNER = "owner";
-	private final CMDataView dataView = userDataView();
-	private final DataAccessLogic dataLogic = userDataAccessLogic();
 
 	@JSONExported
 	@Admin
@@ -74,9 +70,12 @@ public class Translation extends JSONBaseWithSpringContext {
 	@Admin
 	@JSONExported(contentType = "text/csv")
 	public DataHandler exportCsv(@Parameter(value = TYPE) final String type, //
+			@Parameter(value = SEPARATOR, required = false) final String separator, //
 			@Parameter(value = SORT, required = false) final JSONArray sorters, //
-			@Parameter(value = ACTIVE, required = false) final boolean activeOnly //
-	) throws JSONException {
+			@Parameter(value = ACTIVE, required = false) boolean activeOnly //
+	) throws JSONException, IOException {
+		// TODO: discuss if we want this option
+		activeOnly = false;
 
 		final TranslationSerializerFactory factory = TranslationSerializerFactory //
 				.newInstance() //
@@ -90,17 +89,21 @@ public class Translation extends JSONBaseWithSpringContext {
 				.withTranslationLogic(translationLogic()) //
 				.withType(type) //
 				.withViewLogic(viewLogic()) //
+				.withSetupFacade(setupFacade()) //
 				.build();
 
 		final TranslationSerializer serializer = factory.createSerializer();
-		DataHandler output = null;
-		try {
-			output = serializer.serializeCsv();
-		} catch (final IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		final DataHandler output = serializer.exportCsv();
 		return output;
+	}
+
+	@JSONExported
+	public JsonResponse uploadCSV(@Parameter(FILE_CSV) final FileItem file, //
+			@Parameter(value = TYPE) final String type, //
+			@Parameter(SEPARATOR) final String separatorString //
+	) throws IOException, JSONException {
+
+		return null;
 	}
 
 	@JSONExported
@@ -126,7 +129,7 @@ public class Translation extends JSONBaseWithSpringContext {
 				.build();
 
 		final TranslationSerializer serializer = factory.createSerializer();
-		return serializer.serialize();
+		return JsonResponse.success(serializer.serialize());
 	}
 
 	private Converter createConverter(final String type, final String field) {

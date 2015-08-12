@@ -3,6 +3,7 @@ package org.cmdbuild.servlets.json.translationtable;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 import javax.activation.DataHandler;
@@ -11,15 +12,15 @@ import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
+import org.cmdbuild.logic.translation.SetupFacade;
 import org.cmdbuild.logic.translation.TranslationLogic;
 import org.cmdbuild.logic.translation.TranslationObject;
 import org.cmdbuild.logic.translation.converter.AttributeConverter;
 import org.cmdbuild.logic.translation.converter.ClassConverter;
-import org.cmdbuild.servlets.json.management.JsonResponse;
-import org.cmdbuild.servlets.json.translationtable.objects.JsonElement;
-import org.cmdbuild.servlets.json.translationtable.objects.JsonField;
+import org.cmdbuild.servlets.json.translationtable.objects.EntryField;
+import org.cmdbuild.servlets.json.translationtable.objects.GenericTableEntry;
+import org.cmdbuild.servlets.json.translationtable.objects.TableEntry;
 
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Ordering;
 
@@ -27,17 +28,24 @@ public abstract class EntryTypeTranslationSerializer implements TranslationSeria
 
 	final DataAccessLogic dataLogic;
 	final TranslationLogic translationLogic;
+	final SetupFacade setupFacade;
 	final boolean activeOnly;
-	final String[] headers = {"type", "owner","identifier","field","lang","value"};
+	final String separator;
+	final String IDENTIFIER = "identifier";
+	final String DESCRIPTION = "description";
+	final List<String> commonHeaders = Lists.newArrayList(IDENTIFIER, DESCRIPTION);
+	String[] csvHeader;
 
 	Ordering<CMEntryType> entryTypeOrdering = EntryTypeSorter.DEFAULT.getOrientedOrdering();
 	Ordering<CMAttribute> attributeOrdering = AttributeSorter.DEFAULT.getOrientedOrdering();
 
 	EntryTypeTranslationSerializer(final DataAccessLogic dataLogic, final boolean activeOnly,
-			final TranslationLogic translationLogic) {
+			final TranslationLogic translationLogic, final String separator, final SetupFacade setupFacade) {
 		this.dataLogic = dataLogic;
 		this.activeOnly = activeOnly;
 		this.translationLogic = translationLogic;
+		this.separator = separator;
+		this.setupFacade = setupFacade;
 	}
 
 	static <T> Iterable<T> nullableIterable(final Iterable<T> it) {
@@ -45,10 +53,10 @@ public abstract class EntryTypeTranslationSerializer implements TranslationSeria
 	}
 
 	@Override
-	public abstract JsonResponse serialize();
-	
+	public abstract Iterable<GenericTableEntry> serialize();
+
 	@Override
-	public abstract DataHandler serializeCsv() throws IOException;
+	public abstract DataHandler exportCsv() throws IOException;
 
 	Iterable<? extends CMAttribute> sortAttributes(final Iterable<? extends CMAttribute> allAttributes) {
 		final Iterable<? extends CMAttribute> sortedAttributes = attributeOrdering
@@ -56,12 +64,12 @@ public abstract class EntryTypeTranslationSerializer implements TranslationSeria
 		return sortedAttributes;
 	}
 
-	Collection<JsonElement> serializeAttributes(final Iterable<? extends CMAttribute> attributes) {
-		final Collection<JsonElement> attributesSerialization = Lists.newArrayList();
+	Collection<TableEntry> serializeAttributes(final Iterable<? extends CMAttribute> attributes) {
+		final Collection<TableEntry> attributesSerialization = Lists.newArrayList();
 		for (final CMAttribute attribute : nullableIterable(attributes)) {
 			final String attributeName = attribute.getName();
-			final Collection<JsonField> attributeFields = readFields(attribute);
-			final JsonElement jsonAttribute = new JsonElement();
+			final Collection<EntryField> attributeFields = readFields(attribute);
+			final TableEntry jsonAttribute = new TableEntry();
 			jsonAttribute.setName(attributeName);
 			jsonAttribute.setFields(attributeFields);
 			attributesSerialization.add(jsonAttribute);
@@ -69,13 +77,13 @@ public abstract class EntryTypeTranslationSerializer implements TranslationSeria
 		return attributesSerialization;
 	}
 
-	Collection<JsonField> readFields(final CMClass cmclass) {
-		final Collection<JsonField> jsonFields = Lists.newArrayList();
+	Collection<EntryField> readFields(final CMClass cmclass) {
+		final Collection<EntryField> jsonFields = Lists.newArrayList();
 		final TranslationObject translationObject = ClassConverter.DESCRIPTION //
 				.withIdentifier(cmclass.getName()) //
 				.create();
 		final Map<String, String> fieldTranslations = translationLogic.readAll(translationObject);
-		final JsonField field = new JsonField();
+		final EntryField field = new EntryField();
 		field.setName(ClassConverter.description());
 		field.setTranslations(fieldTranslations);
 		field.setValue(cmclass.getDescription());
@@ -83,14 +91,14 @@ public abstract class EntryTypeTranslationSerializer implements TranslationSeria
 		return jsonFields;
 	}
 
-	Collection<JsonField> readFields(final CMAttribute attribute) {
-		final Collection<JsonField> jsonFields = Lists.newArrayList();
+	Collection<EntryField> readFields(final CMAttribute attribute) {
+		final Collection<EntryField> jsonFields = Lists.newArrayList();
 		final String ownerName = attribute.getOwner().getName();
 		final TranslationObject translationObjectForDescription = AttributeConverter.CLASSATTRIBUTE_DESCRIPTION //
 				.withOwner(ownerName).withIdentifier(attribute.getName()) //
 				.create();
 		final Map<String, String> descriptionTranslations = translationLogic.readAll(translationObjectForDescription);
-		final JsonField descriptionField = new JsonField();
+		final EntryField descriptionField = new EntryField();
 		descriptionField.setName(AttributeConverter.description());
 		descriptionField.setTranslations(descriptionTranslations);
 		descriptionField.setValue(attribute.getDescription());
@@ -100,7 +108,7 @@ public abstract class EntryTypeTranslationSerializer implements TranslationSeria
 				.withOwner(ownerName).withIdentifier(attribute.getName()) //
 				.create();
 		final Map<String, String> groupTranslations = translationLogic.readAll(translationObjectForGroup);
-		final JsonField groupField = new JsonField();
+		final EntryField groupField = new EntryField();
 		groupField.setName(AttributeConverter.group());
 		groupField.setTranslations(groupTranslations);
 		groupField.setValue(attribute.getGroup());

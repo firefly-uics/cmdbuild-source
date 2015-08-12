@@ -4,18 +4,18 @@ import java.util.Collection;
 
 import org.codehaus.jackson.annotate.JsonProperty;
 
-public class JsonElementWithChildren extends JsonElement {
+public class ParentEntry extends TableEntry {
 
 	private static final String CHILDREN = "children";
 
-	private Collection<JsonElement> children;
+	private Collection<TableEntry> children;
 
 	@JsonProperty(CHILDREN)
-	public Collection<JsonElement> getChildren() {
+	public Collection<TableEntry> getChildren() {
 		return children;
 	}
 
-	public void setChildren(final Collection<JsonElement> children) {
+	public void setChildren(final Collection<TableEntry> children) {
 		this.children = children;
 	}
 

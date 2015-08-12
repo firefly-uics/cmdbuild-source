@@ -6,10 +6,10 @@ import java.util.Collection;
 
 import org.codehaus.jackson.annotate.JsonProperty;
 
-public class JsonElement {
+public class TableEntry implements GenericTableEntry {
 	private static final String FIELDS = "fields";
 	private String name;
-	private Collection<JsonField> fields;
+	private Collection<EntryField> fields;
 
 	@JsonProperty(NAME)
 	public String getName() {
@@ -17,7 +17,7 @@ public class JsonElement {
 	}
 
 	@JsonProperty(FIELDS)
-	public Collection<JsonField> getFields() {
+	public Collection<EntryField> getFields() {
 		return fields;
 	}
 
@@ -25,7 +25,7 @@ public class JsonElement {
 		this.name = name;
 	}
 
-	public void setFields(final Collection<JsonField> fields) {
+	public void setFields(final Collection<EntryField> fields) {
 		this.fields = fields;
 	}
 

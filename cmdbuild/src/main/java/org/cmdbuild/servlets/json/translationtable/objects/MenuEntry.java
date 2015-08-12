@@ -2,7 +2,7 @@ package org.cmdbuild.servlets.json.translationtable.objects;
 
 import org.codehaus.jackson.annotate.JsonProperty;
 
-public class MenuJsonElement extends JsonElementWithChildren {
+public class MenuEntry extends ParentEntry {
 
 	private static final String TYPE = "type";
 

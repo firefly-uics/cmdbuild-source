@@ -5,6 +5,7 @@ import java.util.Map;
 
 import javax.activation.DataHandler;
 
+import org.cmdbuild.logic.translation.SetupFacade;
 import org.cmdbuild.logic.translation.TranslationLogic;
 import org.cmdbuild.logic.translation.TranslationObject;
 import org.cmdbuild.logic.translation.converter.ReportConverter;
@@ -12,9 +13,9 @@ import org.cmdbuild.logic.translation.converter.ViewConverter;
 import org.cmdbuild.report.ReportFactory.ReportType;
 import org.cmdbuild.services.store.report.Report;
 import org.cmdbuild.services.store.report.ReportStore;
-import org.cmdbuild.servlets.json.management.JsonResponse;
-import org.cmdbuild.servlets.json.translationtable.objects.JsonElement;
-import org.cmdbuild.servlets.json.translationtable.objects.JsonField;
+import org.cmdbuild.servlets.json.translationtable.objects.EntryField;
+import org.cmdbuild.servlets.json.translationtable.objects.GenericTableEntry;
+import org.cmdbuild.servlets.json.translationtable.objects.TableEntry;
 import org.json.JSONArray;
 
 import com.google.common.collect.Iterables;
@@ -28,7 +29,7 @@ public class ReportTranslationSerializer implements TranslationSerializer {
 	Ordering<Report> ordering = ReportSorter.DEFAULT.getOrientedOrdering();
 
 	public ReportTranslationSerializer(final ReportStore reportStore, final TranslationLogic translationLogic,
-			final JSONArray sorters) {
+			final JSONArray sorters, String separator, SetupFacade setupFacade) {
 		this.reportStore = reportStore;
 		this.translationLogic = translationLogic;
 		setOrderings(sorters);
@@ -39,7 +40,7 @@ public class ReportTranslationSerializer implements TranslationSerializer {
 	}
 
 	@Override
-	public JsonResponse serialize() {
+	public Iterable<GenericTableEntry> serialize() {
 		final Collection<Report> allReports = Lists.newArrayList();
 		for (final ReportType type : ReportType.values()) {
 			final Iterable<Report> reportsOfType = reportStore.findReportsByType(type);
@@ -49,35 +50,35 @@ public class ReportTranslationSerializer implements TranslationSerializer {
 		return serialize(sorterReports);
 	}
 
-	private JsonResponse serialize(final Iterable<Report> sortedReports) {
-		final Collection<JsonElement> jsonReports = Lists.newArrayList();
+	private Iterable<GenericTableEntry> serialize(final Iterable<Report> sortedReports) {
+		final Collection<GenericTableEntry> jsonReports = Lists.newArrayList();
 		for (final Report report : sortedReports) {
 			final String name = report.getCode();
-			final JsonElement jsonReport = new JsonElement();
+			final TableEntry jsonReport = new TableEntry();
 			jsonReport.setName(name);
-			final Collection<JsonField> classFields = readFields(report);
+			final Collection<EntryField> classFields = readFields(report);
 			jsonReport.setFields(classFields);
 			jsonReports.add(jsonReport);
 		}
-		return JsonResponse.success(jsonReports);
+		return jsonReports;
 	}
 
-	private Collection<JsonField> readFields(final Report report) {
-		final Collection<JsonField> jsonFields = Lists.newArrayList();
+	private Collection<EntryField> readFields(final Report report) {
+		final Collection<EntryField> jsonFields = Lists.newArrayList();
 		final TranslationObject translationObject = ReportConverter.DESCRIPTION //
 				.withIdentifier(report.getCode()) //
 				.create();
 		final Map<String, String> fieldTranslations = translationLogic.readAll(translationObject);
-		final JsonField field = new JsonField();
+		final EntryField field = new EntryField();
 		field.setName(ViewConverter.description());
 		field.setTranslations(fieldTranslations);
 		field.setValue(report.getDescription());
 		jsonFields.add(field);
 		return jsonFields;
 	}
-	
+
 	@Override
-	public DataHandler serializeCsv() {
+	public DataHandler exportCsv() {
 		throw new UnsupportedOperationException("to do");
 	}
 

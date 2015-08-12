@@ -5,14 +5,15 @@ import java.util.Map;
 
 import javax.activation.DataHandler;
 
+import org.cmdbuild.logic.translation.SetupFacade;
 import org.cmdbuild.logic.translation.TranslationLogic;
 import org.cmdbuild.logic.translation.TranslationObject;
 import org.cmdbuild.logic.translation.converter.FilterConverter;
 import org.cmdbuild.services.store.FilterStore;
 import org.cmdbuild.services.store.FilterStore.Filter;
-import org.cmdbuild.servlets.json.management.JsonResponse;
-import org.cmdbuild.servlets.json.translationtable.objects.JsonElement;
-import org.cmdbuild.servlets.json.translationtable.objects.JsonField;
+import org.cmdbuild.servlets.json.translationtable.objects.EntryField;
+import org.cmdbuild.servlets.json.translationtable.objects.GenericTableEntry;
+import org.cmdbuild.servlets.json.translationtable.objects.TableEntry;
 import org.json.JSONArray;
 
 import com.google.common.collect.Lists;
@@ -25,43 +26,43 @@ public class FilterTranslationSerializer implements TranslationSerializer {
 	Ordering<Filter> filterOrdering = FilterSorter.DEFAULT.getOrientedOrdering();
 
 	public FilterTranslationSerializer(final FilterStore filterStore, final TranslationLogic translationLogic,
-			final JSONArray sorters) {
+			final JSONArray sorters, String separator, SetupFacade setupFacade) {
 		this.filterStore = filterStore;
 		this.translationLogic = translationLogic;
 	}
 
 	@Override
-	public JsonResponse serialize() {
+	public Iterable<GenericTableEntry> serialize() {
 		final Iterable<Filter> allFilters = filterStore.fetchAllGroupsFilters();
 		final Iterable<Filter> sortedFilters = filterOrdering.sortedCopy(allFilters);
-		final Collection<JsonElement> jsonFilters = Lists.newArrayList();
+		final Collection<GenericTableEntry> jsonFilters = Lists.newArrayList();
 		for (final Filter filter : sortedFilters) {
 			final String name = filter.getName();
-			final JsonElement jsonFilter = new JsonElement();
+			final TableEntry jsonFilter = new TableEntry();
 			jsonFilter.setName(name);
-			final Collection<JsonField> fields = readFields(filter);
+			final Collection<EntryField> fields = readFields(filter);
 			jsonFilter.setFields(fields);
 			jsonFilters.add(jsonFilter);
 		}
-		return JsonResponse.success(jsonFilters);
+		return jsonFilters;
 	}
 
-	private Collection<JsonField> readFields(final Filter filter) {
-		final Collection<JsonField> jsonFields = Lists.newArrayList();
+	private Collection<EntryField> readFields(final Filter filter) {
+		final Collection<EntryField> jsonFields = Lists.newArrayList();
 		final TranslationObject translationObject = FilterConverter.DESCRIPTION //
 				.withIdentifier(filter.getName()) //
 				.create();
 		final Map<String, String> fieldTranslations = translationLogic.readAll(translationObject);
-		final JsonField field = new JsonField();
+		final EntryField field = new EntryField();
 		field.setName(FilterConverter.description());
 		field.setTranslations(fieldTranslations);
 		field.setValue(filter.getDescription());
 		jsonFields.add(field);
 		return jsonFields;
 	}
-	
+
 	@Override
-	public DataHandler serializeCsv() {
+	public DataHandler exportCsv() {
 		throw new UnsupportedOperationException("to do");
 	}
 

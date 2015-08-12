@@ -14,8 +14,8 @@ import org.cmdbuild.services.store.report.ReportStore;
 import org.cmdbuild.servlets.json.translationtable.ReportTranslationSerializer;
 import org.cmdbuild.servlets.json.translationtable.TranslationSerializer;
 import org.cmdbuild.servlets.json.translationtable.TranslationSerializerFactory;
-import org.cmdbuild.servlets.json.translationtable.objects.JsonElement;
-import org.cmdbuild.servlets.json.translationtable.objects.JsonField;
+import org.cmdbuild.servlets.json.translationtable.objects.EntryField;
+import org.cmdbuild.servlets.json.translationtable.objects.TableEntry;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.Before;
@@ -70,10 +70,10 @@ public class ReportSerializationTest {
 		final TranslationSerializer serializer = factory.createSerializer();
 
 		// when
-		final Object response = serializer.serialize().getResponse();
+		final Object response = serializer.serialize();
 
 		// then
-		final List<JsonElement> elements = Lists.newArrayList((Collection<JsonElement>) response);
+		final List<TableEntry> elements = Lists.newArrayList((Collection<TableEntry>) response);
 		assertTrue(elements.size() == 2);
 		assertTrue(elements.get(0).getName().equals("b"));
 		assertTrue(elements.get(1).getName().equals("a"));
@@ -96,12 +96,12 @@ public class ReportSerializationTest {
 		final TranslationSerializer serializer = factory.createSerializer();
 
 		// when
-		final Object response = serializer.serialize().getResponse();
+		final Object response = serializer.serialize();
 
 		// then
-		final List<JsonElement> elements = Lists.newArrayList((Collection<JsonElement>) response);
-		final JsonElement firstClass = elements.get(0);
-		final List<JsonField> fields = Lists.newArrayList(firstClass.getFields());
+		final List<TableEntry> elements = Lists.newArrayList((Collection<TableEntry>) response);
+		final TableEntry firstClass = elements.get(0);
+		final List<EntryField> fields = Lists.newArrayList(firstClass.getFields());
 		assertTrue(fields.size() == 1);
 		assertTrue(fields.get(0).getName().equalsIgnoreCase("description"));
 	}
@@ -129,10 +129,10 @@ public class ReportSerializationTest {
 		final TranslationSerializer serializer = factory.createSerializer();
 
 		// when
-		final Object response = serializer.serialize().getResponse();
+		final Object response = serializer.serialize();
 
 		// then
-		final List<JsonElement> elements = Lists.newArrayList((Collection<JsonElement>) response);
+		final List<TableEntry> elements = Lists.newArrayList((Collection<TableEntry>) response);
 		assertTrue(elements.size() == 2);
 		assertTrue(elements.get(0).getName().equals("b"));
 		assertTrue(elements.get(1).getName().equals("a"));

@@ -8,11 +8,11 @@ import java.util.Collection;
 
 import org.codehaus.jackson.annotate.JsonProperty;
 
-public class JsonLookupType {
+public class LookupTypeEntry implements GenericTableEntry {
 
 	private String code;
 	private String description;
-	private Collection<JsonLookupValue> values;
+	private Collection<LookupValueEntry> values;
 
 	@JsonProperty(CODE)
 	public String getCode() {
@@ -25,7 +25,7 @@ public class JsonLookupType {
 	}
 
 	@JsonProperty(VALUES)
-	public Collection<JsonLookupValue> getValues() {
+	public Collection<LookupValueEntry> getValues() {
 		return values;
 	}
 
@@ -37,7 +37,7 @@ public class JsonLookupType {
 		this.description = description;
 	}
 
-	public void setValues(final Collection<JsonLookupValue> values) {
+	public void setValues(final Collection<LookupValueEntry> values) {
 		this.values = values;
 	}
 }
