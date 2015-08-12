@@ -1,4 +1,4 @@
-package org.cmdbuild.servlets.json.translationtable;
+package org.cmdbuild.servlets.json.serializers.translations.table;
 
 import java.util.Collection;
 import java.util.Map;
@@ -12,6 +12,8 @@ import org.cmdbuild.logic.translation.SetupFacade;
 import org.cmdbuild.logic.translation.TranslationLogic;
 import org.cmdbuild.logic.translation.TranslationObject;
 import org.cmdbuild.logic.translation.converter.LookupConverter;
+import org.cmdbuild.servlets.json.serializers.translations.commons.LookupTypeSorter;
+import org.cmdbuild.servlets.json.serializers.translations.commons.LookupValueSorter;
 import org.cmdbuild.servlets.json.translationtable.objects.EntryField;
 import org.cmdbuild.servlets.json.translationtable.objects.GenericTableEntry;
 import org.cmdbuild.servlets.json.translationtable.objects.LookupTypeEntry;
@@ -35,7 +37,8 @@ public class LookupTranslationSerializer implements TranslationSerializer {
 	Ordering<Lookup> valueOrdering = LookupValueSorter.DEFAULT.getOrientedOrdering();
 
 	LookupTranslationSerializer(final LookupStore lookupStore, final boolean activeOnly,
-			final TranslationLogic translationLogic, final JSONArray sorters, String separator, SetupFacade setupFacade) {
+			final TranslationLogic translationLogic, final JSONArray sorters, final String separator,
+			final SetupFacade setupFacade) {
 		this.lookupStore = lookupStore;
 		this.activeOnly = activeOnly;
 		this.translationLogic = translationLogic;

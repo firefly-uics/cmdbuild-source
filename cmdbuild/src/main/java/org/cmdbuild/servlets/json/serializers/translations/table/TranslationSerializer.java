@@ -1,10 +1,9 @@
-package org.cmdbuild.servlets.json.translationtable;
+package org.cmdbuild.servlets.json.serializers.translations.table;
 
 import java.io.IOException;
 
 import javax.activation.DataHandler;
 
-import org.apache.commons.fileupload.FileItem;
 import org.cmdbuild.servlets.json.translationtable.objects.GenericTableEntry;
 
 public interface TranslationSerializer {

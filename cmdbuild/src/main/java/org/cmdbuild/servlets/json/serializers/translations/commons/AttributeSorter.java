@@ -1,4 +1,4 @@
-package org.cmdbuild.servlets.json.translationtable;
+package org.cmdbuild.servlets.json.serializers.translations.commons;
 
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
@@ -9,7 +9,7 @@ import org.cmdbuild.dao.entrytype.CMAttribute;
 
 import com.google.common.collect.Ordering;
 
-enum AttributeSorter {
+public enum AttributeSorter {
 
 	NAME("name") {
 		@Override
@@ -53,7 +53,7 @@ enum AttributeSorter {
 		return this;
 	}
 
-	Ordering<CMAttribute> getOrientedOrdering() {
+	public Ordering<CMAttribute> getOrientedOrdering() {
 		direction = defaultIfBlank(direction, ASC);
 		if (direction.equalsIgnoreCase(DESC)) {
 			return getOrderingForProperty().reverse();
@@ -62,7 +62,7 @@ enum AttributeSorter {
 		}
 	}
 
-	static AttributeSorter of(final String field) {
+	public static AttributeSorter of(final String field) {
 		for (final AttributeSorter element : values()) {
 			if (element.sorter.equalsIgnoreCase(field)) {
 				return element;

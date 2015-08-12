@@ -1,4 +1,4 @@
-package org.cmdbuild.servlets.json.translationtable;
+package org.cmdbuild.servlets.json.serializers.translations.table;
 
 import static com.google.common.collect.FluentIterable.from;
 
@@ -15,8 +15,9 @@ import com.google.common.base.Predicate;
 public class ProcessTranslationSerializer extends ClassTranslationSerializer {
 
 	ProcessTranslationSerializer(final DataAccessLogic dataLogic, final boolean activeOnly,
-			final TranslationLogic translationLogic, final JSONArray sorters, final String separator, final SetupFacade setupFacade) {
-		super(dataLogic, activeOnly, translationLogic, sorters, separator, setupFacade);
+			final TranslationLogic translationLogic, final JSONArray sorters, final String separator,
+			final SetupFacade setupFacade) {
+		super(dataLogic, activeOnly, translationLogic, sorters);
 	}
 
 	@Override

@@ -1,16 +1,16 @@
-package org.cmdbuild.servlets.json.translationtable;
+package org.cmdbuild.servlets.json.serializers.translations.commons;
 
 import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
-import static org.cmdbuild.servlets.json.translationtable.AttributeSorter.ASC;
-import static org.cmdbuild.servlets.json.translationtable.AttributeSorter.DESC;
-import static org.cmdbuild.servlets.json.translationtable.AttributeSorter.safeString;
+import static org.cmdbuild.servlets.json.serializers.translations.commons.AttributeSorter.ASC;
+import static org.cmdbuild.servlets.json.serializers.translations.commons.AttributeSorter.DESC;
+import static org.cmdbuild.servlets.json.serializers.translations.commons.AttributeSorter.safeString;
 
 import org.apache.commons.lang3.StringUtils;
 import org.cmdbuild.model.view.View;
 
 import com.google.common.collect.Ordering;
 
-enum ViewSorter {
+public enum ViewSorter {
 
 	NAME("name") {
 		@Override
@@ -45,7 +45,7 @@ enum ViewSorter {
 		return this;
 	}
 
-	Ordering<View> getOrientedOrdering() {
+	public Ordering<View> getOrientedOrdering() {
 		direction = defaultIfBlank(direction, ASC);
 		if (direction.equalsIgnoreCase(DESC)) {
 			return getOrderingForProperty().reverse();

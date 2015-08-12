@@ -1,4 +1,4 @@
-package org.cmdbuild.servlets.json.translationtable;
+package org.cmdbuild.servlets.json.serializers.translations.table;
 
 import java.util.Collection;
 import java.util.Map;
@@ -11,6 +11,7 @@ import org.cmdbuild.logic.translation.TranslationObject;
 import org.cmdbuild.logic.translation.converter.FilterConverter;
 import org.cmdbuild.services.store.FilterStore;
 import org.cmdbuild.services.store.FilterStore.Filter;
+import org.cmdbuild.servlets.json.serializers.translations.commons.FilterSorter;
 import org.cmdbuild.servlets.json.translationtable.objects.EntryField;
 import org.cmdbuild.servlets.json.translationtable.objects.GenericTableEntry;
 import org.cmdbuild.servlets.json.translationtable.objects.TableEntry;
@@ -26,7 +27,7 @@ public class FilterTranslationSerializer implements TranslationSerializer {
 	Ordering<Filter> filterOrdering = FilterSorter.DEFAULT.getOrientedOrdering();
 
 	public FilterTranslationSerializer(final FilterStore filterStore, final TranslationLogic translationLogic,
-			final JSONArray sorters, String separator, SetupFacade setupFacade) {
+			final JSONArray sorters, final String separator, final SetupFacade setupFacade) {
 		this.filterStore = filterStore;
 		this.translationLogic = translationLogic;
 	}

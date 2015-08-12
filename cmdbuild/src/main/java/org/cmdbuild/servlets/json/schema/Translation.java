@@ -15,13 +15,13 @@ import javax.activation.DataHandler;
 
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.lang3.Validate;
-import org.cmdbuild.logic.translation.SetupFacade;
 import org.cmdbuild.logic.translation.TranslationObject;
 import org.cmdbuild.logic.translation.converter.Converter;
 import org.cmdbuild.servlets.json.JSONBaseWithSpringContext;
 import org.cmdbuild.servlets.json.management.JsonResponse;
-import org.cmdbuild.servlets.json.translationtable.TranslationSerializer;
-import org.cmdbuild.servlets.json.translationtable.TranslationSerializerFactory;
+import org.cmdbuild.servlets.json.serializers.translations.table.TranslationSerializer;
+import org.cmdbuild.servlets.json.serializers.translations.table.TranslationSerializerFactory;
+import org.cmdbuild.servlets.json.serializers.translations.table.TranslationSerializerFactory.Output;
 import org.cmdbuild.servlets.utils.Parameter;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -79,6 +79,7 @@ public class Translation extends JSONBaseWithSpringContext {
 
 		final TranslationSerializerFactory factory = TranslationSerializerFactory //
 				.newInstance() //
+				.withOutput(Output.CSV) //
 				.withActiveOnly(activeOnly) //
 				.withAuthLogic(authLogic()) //
 				.withDataAccessLogic(userDataAccessLogic()) //
@@ -96,6 +97,7 @@ public class Translation extends JSONBaseWithSpringContext {
 		final DataHandler output = serializer.exportCsv();
 		return output;
 	}
+
 
 	@JSONExported
 	public JsonResponse uploadCSV(@Parameter(FILE_CSV) final FileItem file, //
@@ -122,6 +124,7 @@ public class Translation extends JSONBaseWithSpringContext {
 				.withFilterStore(filterStore()) //
 				.withLookupStore(lookupStore()) //
 				.withMenuLogic(menuLogic()) //
+				.withOutput(Output.TABLE) //
 				.withReportStore(reportStore()).withSorters(sorters) //
 				.withTranslationLogic(translationLogic()) //
 				.withType(type) //

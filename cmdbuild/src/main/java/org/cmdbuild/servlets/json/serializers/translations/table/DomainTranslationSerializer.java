@@ -1,4 +1,4 @@
-package org.cmdbuild.servlets.json.translationtable;
+package org.cmdbuild.servlets.json.serializers.translations.table;
 
 import java.util.Collection;
 import java.util.Map;
@@ -13,6 +13,8 @@ import org.cmdbuild.logic.translation.TranslationLogic;
 import org.cmdbuild.logic.translation.TranslationObject;
 import org.cmdbuild.logic.translation.converter.ClassConverter;
 import org.cmdbuild.logic.translation.converter.DomainConverter;
+import org.cmdbuild.servlets.json.serializers.translations.commons.AttributeSorter;
+import org.cmdbuild.servlets.json.serializers.translations.commons.EntryTypeSorter;
 import org.cmdbuild.servlets.json.translationtable.objects.EntryField;
 import org.cmdbuild.servlets.json.translationtable.objects.EntryWithAttributes;
 import org.cmdbuild.servlets.json.translationtable.objects.GenericTableEntry;
@@ -26,8 +28,9 @@ import com.google.common.collect.Lists;
 public class DomainTranslationSerializer extends EntryTypeTranslationSerializer {
 
 	DomainTranslationSerializer(final DataAccessLogic dataLogic, final boolean activeOnly,
-			final TranslationLogic translationLogic, final JSONArray sorters, final String separator, final SetupFacade setupFacade) {
-		super(dataLogic, activeOnly, translationLogic, separator, setupFacade);
+			final TranslationLogic translationLogic, final JSONArray sorters, final String separator,
+			final SetupFacade setupFacade) {
+		super(dataLogic, activeOnly, translationLogic);
 		setOrderings(sorters);
 	}
 

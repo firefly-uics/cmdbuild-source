@@ -1,15 +1,15 @@
-package org.cmdbuild.servlets.json.translationtable;
+package org.cmdbuild.servlets.json.serializers.translations.commons;
 
 import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
-import static org.cmdbuild.servlets.json.translationtable.AttributeSorter.ASC;
-import static org.cmdbuild.servlets.json.translationtable.AttributeSorter.DESC;
+import static org.cmdbuild.servlets.json.serializers.translations.commons.AttributeSorter.ASC;
+import static org.cmdbuild.servlets.json.serializers.translations.commons.AttributeSorter.DESC;
 
 import org.apache.commons.lang3.StringUtils;
 import org.cmdbuild.services.store.menu.MenuItem;
 
 import com.google.common.collect.Ordering;
 
-enum MenuItemSorter {
+public enum MenuItemSorter {
 
 	NUMBER("number") {
 		@Override
@@ -38,7 +38,7 @@ enum MenuItemSorter {
 		return this;
 	}
 
-	Ordering<MenuItem> getOrientedOrdering() {
+	public Ordering<MenuItem> getOrientedOrdering() {
 		direction = defaultIfBlank(direction, ASC);
 		if (direction.equalsIgnoreCase(DESC)) {
 			return getOrderingForProperty().reverse();

@@ -1,4 +1,4 @@
-package org.cmdbuild.servlets.json.translationtable;
+package org.cmdbuild.servlets.json.serializers.translations.table;
 
 import java.util.Collection;
 import java.util.Map;
@@ -13,6 +13,7 @@ import org.cmdbuild.logic.translation.converter.ViewConverter;
 import org.cmdbuild.report.ReportFactory.ReportType;
 import org.cmdbuild.services.store.report.Report;
 import org.cmdbuild.services.store.report.ReportStore;
+import org.cmdbuild.servlets.json.serializers.translations.commons.ReportSorter;
 import org.cmdbuild.servlets.json.translationtable.objects.EntryField;
 import org.cmdbuild.servlets.json.translationtable.objects.GenericTableEntry;
 import org.cmdbuild.servlets.json.translationtable.objects.TableEntry;
@@ -29,7 +30,7 @@ public class ReportTranslationSerializer implements TranslationSerializer {
 	Ordering<Report> ordering = ReportSorter.DEFAULT.getOrientedOrdering();
 
 	public ReportTranslationSerializer(final ReportStore reportStore, final TranslationLogic translationLogic,
-			final JSONArray sorters, String separator, SetupFacade setupFacade) {
+			final JSONArray sorters, final String separator, final SetupFacade setupFacade) {
 		this.reportStore = reportStore;
 		this.translationLogic = translationLogic;
 		setOrderings(sorters);
