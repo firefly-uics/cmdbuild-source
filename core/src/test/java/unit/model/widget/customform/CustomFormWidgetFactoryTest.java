@@ -3,15 +3,15 @@ package unit.model.widget.customform;
 import static java.util.Arrays.asList;
 import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.ADD_DISABLED;
 import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.ATTRIBUTES_SEPARATOR;
-import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.CLASSNAME;
+import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.CLASS_MODEL;
 import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.DATA_TYPE;
 import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.DEFAULT_ATTRIBUTES_SEPARATOR;
 import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.DEFAULT_KEY_VALUE_SEPARATOR;
 import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.DEFAULT_ROWS_SEPARATOR;
 import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.DELETE_DISABLED;
-import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.FORM;
-import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.FUNCTIONNAME;
+import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.FORM_MODEL;
 import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.FUNCTION_DATA;
+import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.FUNCTION_MODEL;
 import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.IMPORT_DISABLED;
 import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.KEY_VALUE_SEPARATOR;
 import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.MODEL_TYPE;
@@ -117,7 +117,7 @@ public class CustomFormWidgetFactoryTest {
 		// given
 		final String serialization = "" //
 				+ MODEL_TYPE + "=\"form\"\n" //
-				+ FORM + "=\"\"\n" //
+				+ FORM_MODEL + "=\"\"\n" //
 		;
 
 		// when
@@ -136,7 +136,7 @@ public class CustomFormWidgetFactoryTest {
 		// given
 		final String serialization = "" //
 				+ MODEL_TYPE + "=\"form\"\n" //
-				+ FORM + "=\" \"\n" //
+				+ FORM_MODEL + "=\" \"\n" //
 		;
 
 		// when
@@ -155,7 +155,7 @@ public class CustomFormWidgetFactoryTest {
 		// given
 		final String serialization = "" //
 				+ MODEL_TYPE + "=\"form\"\n" //
-				+ FORM + "=\"foo {form:bar} baz\"\n" //
+				+ FORM_MODEL + "=\"foo {form:bar} baz\"\n" //
 		;
 
 		// when
@@ -171,7 +171,7 @@ public class CustomFormWidgetFactoryTest {
 		// given
 		final String serialization = "" //
 				+ MODEL_TYPE + "=\"form\"\n" //
-				+ FORM + "=\"[{\"name\": \"foo\"},{\"name\": \"bar\"}]\"\n" //
+				+ FORM_MODEL + "=\"[{\"name\": \"foo\"},{\"name\": \"bar\"}]\"\n" //
 		;
 
 		// when
@@ -191,7 +191,7 @@ public class CustomFormWidgetFactoryTest {
 		// given
 		final String serialization = "" //
 				+ MODEL_TYPE + "=\"form\"\n" //
-				+ FORM + "=" //
+				+ FORM_MODEL + "=" //
 				+ "    \"[" //
 				+ "        {" //
 				+ "            \"type\": \"text\"," //
@@ -253,7 +253,7 @@ public class CustomFormWidgetFactoryTest {
 		// given
 		final String serialization = "" //
 				+ MODEL_TYPE + "=\"form\"\n" //
-				+ FORM + "=\"foo {form:bar} baz\"\n" //
+				+ FORM_MODEL + "=\"foo {form:bar} baz\"\n" //
 		;
 
 		// when
@@ -269,7 +269,7 @@ public class CustomFormWidgetFactoryTest {
 		// given
 		final String serialization = "" //
 				+ MODEL_TYPE + "=\"class\"\n" //
-				+ CLASSNAME + "=\"foo\"\n" //
+				+ CLASS_MODEL + "=\"foo\"\n" //
 		;
 		doReturn(null) //
 				.when(dataView).findClass(any(String.class));
@@ -291,7 +291,7 @@ public class CustomFormWidgetFactoryTest {
 		// given
 		final String serialization = "" //
 				+ MODEL_TYPE + "=\"class\"\n" //
-				+ CLASSNAME + "=\"foo\"\n" //
+				+ CLASS_MODEL + "=\"foo\"\n" //
 		;
 		final CMClass target = mock(CMClass.class);
 		doReturn(target) //
@@ -320,7 +320,7 @@ public class CustomFormWidgetFactoryTest {
 		// given
 		final String serialization = "" //
 				+ MODEL_TYPE + "=\"function\"\n" //
-				+ FUNCTIONNAME + "=\"foo\"\n" //
+				+ FUNCTION_MODEL + "=\"foo\"\n" //
 		;
 		doReturn(null) //
 				.when(dataView).findFunctionByName(any(String.class));
@@ -342,7 +342,7 @@ public class CustomFormWidgetFactoryTest {
 		// given
 		final String serialization = "" //
 				+ MODEL_TYPE + "=\"function\"\n" //
-				+ FUNCTIONNAME + "=\"foo\"\n" //
+				+ FUNCTION_MODEL + "=\"foo\"\n" //
 		;
 		final CMFunction target = mock(CMFunction.class);
 		doReturn(target) //
@@ -371,7 +371,7 @@ public class CustomFormWidgetFactoryTest {
 		// given
 		final String serialization = "" //
 				+ MODEL_TYPE + "=\"form\"\n" //
-				+ FORM + "=\"foo\"\n" //
+				+ FORM_MODEL + "=\"foo\"\n" //
 		;
 
 		// when
@@ -392,7 +392,7 @@ public class CustomFormWidgetFactoryTest {
 		// given
 		final String serialization = "" //
 				+ MODEL_TYPE + "=\"form\"\n" //
-				+ FORM + "=\"foo\"\n" //
+				+ FORM_MODEL + "=\"foo\"\n" //
 				+ READ_ONLY + "\n" //
 				+ ADD_DISABLED + "\n" //
 				+ DELETE_DISABLED + "\n" //
@@ -418,7 +418,7 @@ public class CustomFormWidgetFactoryTest {
 		// given
 		final String serialization = "" //
 				+ MODEL_TYPE + "=\"form\"\n" //
-				+ FORM + "=\"foo\"\n" //
+				+ FORM_MODEL + "=\"foo\"\n" //
 				+ READ_ONLY + "=true\n" //
 				+ ADD_DISABLED + "=true\n" //
 				+ DELETE_DISABLED + "=true\n" //
@@ -444,7 +444,7 @@ public class CustomFormWidgetFactoryTest {
 		// given
 		final String serialization = "" //
 				+ MODEL_TYPE + "=\"form\"\n" //
-				+ FORM + "=\"foo\"\n" //
+				+ FORM_MODEL + "=\"foo\"\n" //
 				+ READ_ONLY + "=\"true\"\n" //
 				+ ADD_DISABLED + "=\"true\"\n" //
 				+ DELETE_DISABLED + "=\"true\"\n" //
@@ -470,7 +470,7 @@ public class CustomFormWidgetFactoryTest {
 		// given
 		final String serialization = "" //
 				+ MODEL_TYPE + "=\"form\"\n" //
-				+ FORM + "=\"foo\"\n" //
+				+ FORM_MODEL + "=\"foo\"\n" //
 		;
 
 		// when
@@ -492,7 +492,7 @@ public class CustomFormWidgetFactoryTest {
 		// given
 		final String serialization = "" //
 				+ MODEL_TYPE + "=\"form\"\n" //
-				+ FORM + "=\"foo\"\n" //
+				+ FORM_MODEL + "=\"foo\"\n" //
 				+ SERIALIZATION_TYPE + "=\"text\"\n" //
 		;
 
@@ -515,7 +515,7 @@ public class CustomFormWidgetFactoryTest {
 		// given
 		final String serialization = "" //
 				+ MODEL_TYPE + "=\"form\"\n" //
-				+ FORM + "=\"foo\"\n" //
+				+ FORM_MODEL + "=\"foo\"\n" //
 				+ SERIALIZATION_TYPE + "=\"text\"\n" //
 				+ KEY_VALUE_SEPARATOR + "=\"1\"\n" //
 				+ ATTRIBUTES_SEPARATOR + "=\"2\"\n" //
@@ -541,7 +541,7 @@ public class CustomFormWidgetFactoryTest {
 		// given
 		final String serialization = "" //
 				+ MODEL_TYPE + "=\"form\"\n" //
-				+ FORM + "=\"foo\"\n" //
+				+ FORM_MODEL + "=\"foo\"\n" //
 				+ SERIALIZATION_TYPE + "=\"json\"\n" //
 		;
 
@@ -560,7 +560,7 @@ public class CustomFormWidgetFactoryTest {
 		// given
 		final String serialization = "" //
 				+ MODEL_TYPE + "=\"form\"\n" //
-				+ FORM + "=\"foo\"\n" //
+				+ FORM_MODEL + "=\"foo\"\n" //
 				+ DATA_TYPE + "=\"raw\"\n" //
 				+ RAW_DATA + "=\"foo bar baz\"\n" //
 		;
@@ -578,7 +578,7 @@ public class CustomFormWidgetFactoryTest {
 		// given
 		final String serialization = "" //
 				+ MODEL_TYPE + "=\"form\"\n" //
-				+ FORM + "=\"foo\"\n" //
+				+ FORM_MODEL + "=\"foo\"\n" //
 				+ DATA_TYPE + "=\"function\"\n" //
 		;
 
@@ -598,7 +598,7 @@ public class CustomFormWidgetFactoryTest {
 		// given
 		final String serialization = "" //
 				+ MODEL_TYPE + "=\"form\"\n" //
-				+ FORM + "=\"foo\"\n" //
+				+ FORM_MODEL + "=\"foo\"\n" //
 				+ DATA_TYPE + "=\"function\"\n" //
 				+ FUNCTION_DATA + "=\"missing\"\n" //
 		;
