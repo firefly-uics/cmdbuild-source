@@ -1,4 +1,4 @@
-package org.cmdbuild.servlets.json.translationtable;
+package org.cmdbuild.servlets.json.serializers.translations.table;
 
 import java.util.Collection;
 import java.util.Map;
@@ -11,6 +11,7 @@ import org.cmdbuild.logic.translation.TranslationObject;
 import org.cmdbuild.logic.translation.converter.ViewConverter;
 import org.cmdbuild.logic.view.ViewLogic;
 import org.cmdbuild.model.view.View;
+import org.cmdbuild.servlets.json.serializers.translations.commons.ViewSorter;
 import org.cmdbuild.servlets.json.translationtable.objects.EntryField;
 import org.cmdbuild.servlets.json.translationtable.objects.GenericTableEntry;
 import org.cmdbuild.servlets.json.translationtable.objects.TableEntry;
@@ -26,7 +27,7 @@ public class ViewTranslationSerializer implements TranslationSerializer {
 	Ordering<View> viewOrdering = ViewSorter.DEFAULT.getOrientedOrdering();
 
 	ViewTranslationSerializer(final ViewLogic viewLogic, final TranslationLogic translationLogic,
-			final JSONArray sorters, String separator, SetupFacade setupFacade) {
+			final JSONArray sorters, final String separator, final SetupFacade setupFacade) {
 		this.viewLogic = viewLogic;
 		this.translationLogic = translationLogic;
 		setOrderings(sorters);

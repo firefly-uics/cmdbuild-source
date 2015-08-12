@@ -1,4 +1,4 @@
-package org.cmdbuild.servlets.json.translationtable;
+package org.cmdbuild.servlets.json.serializers.translations.table;
 
 import java.util.Collection;
 import java.util.List;
@@ -17,6 +17,8 @@ import org.cmdbuild.logic.translation.TranslationObject;
 import org.cmdbuild.logic.translation.converter.MenuItemConverter;
 import org.cmdbuild.services.store.menu.MenuConstants;
 import org.cmdbuild.services.store.menu.MenuItem;
+import org.cmdbuild.servlets.json.serializers.translations.commons.MenuItemSorter;
+import org.cmdbuild.servlets.json.serializers.translations.commons.MenuSorter;
 import org.cmdbuild.servlets.json.translationtable.objects.EntryField;
 import org.cmdbuild.servlets.json.translationtable.objects.GenericTableEntry;
 import org.cmdbuild.servlets.json.translationtable.objects.MenuEntry;
@@ -49,7 +51,8 @@ public class MenuTranslationSerializer implements TranslationSerializer {
 	};
 
 	public MenuTranslationSerializer(final AuthenticationLogic authLogic, final MenuLogic menuLogic,
-			final TranslationLogic translationLogic, final JSONArray sorters, String separator, SetupFacade setupFacade) {
+			final TranslationLogic translationLogic, final JSONArray sorters, final String separator,
+			final SetupFacade setupFacade) {
 		this.authLogic = authLogic;
 		this.menuLogic = menuLogic;
 		this.translationLogic = translationLogic;

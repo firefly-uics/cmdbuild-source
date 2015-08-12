@@ -1,17 +1,17 @@
-package org.cmdbuild.servlets.json.translationtable;
+package org.cmdbuild.servlets.json.serializers.translations.commons;
 
 import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
-import static org.cmdbuild.servlets.json.translationtable.AttributeSorter.ASC;
-import static org.cmdbuild.servlets.json.translationtable.AttributeSorter.DESC;
-import static org.cmdbuild.servlets.json.translationtable.AttributeSorter.safeInteger;
-import static org.cmdbuild.servlets.json.translationtable.AttributeSorter.safeString;
+import static org.cmdbuild.servlets.json.serializers.translations.commons.AttributeSorter.ASC;
+import static org.cmdbuild.servlets.json.serializers.translations.commons.AttributeSorter.DESC;
+import static org.cmdbuild.servlets.json.serializers.translations.commons.AttributeSorter.safeInteger;
+import static org.cmdbuild.servlets.json.serializers.translations.commons.AttributeSorter.safeString;
 
 import org.apache.commons.lang3.StringUtils;
 import org.cmdbuild.data.store.lookup.Lookup;
 
 import com.google.common.collect.Ordering;
 
-enum LookupValueSorter {
+public enum LookupValueSorter {
 
 	CODE("code") {
 		@Override
@@ -52,7 +52,7 @@ enum LookupValueSorter {
 
 	abstract Ordering<Lookup> getOrderingForProperty();
 
-	Ordering<Lookup> getOrientedOrdering() {
+	public Ordering<Lookup> getOrientedOrdering() {
 		direction = defaultIfBlank(direction, ASC);
 		if (direction.equalsIgnoreCase(DESC)) {
 			return getOrderingForProperty().reverse();
@@ -61,7 +61,7 @@ enum LookupValueSorter {
 		}
 	}
 
-	static LookupValueSorter of(final String field) {
+	public static LookupValueSorter of(final String field) {
 		for (final LookupValueSorter element : values()) {
 			if (element.sorter.equalsIgnoreCase(field)) {
 				return element;

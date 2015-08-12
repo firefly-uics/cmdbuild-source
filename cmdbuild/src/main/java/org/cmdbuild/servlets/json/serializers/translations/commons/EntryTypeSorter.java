@@ -1,16 +1,16 @@
-package org.cmdbuild.servlets.json.translationtable;
+package org.cmdbuild.servlets.json.serializers.translations.commons;
 
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
-import static org.cmdbuild.servlets.json.translationtable.AttributeSorter.ASC;
-import static org.cmdbuild.servlets.json.translationtable.AttributeSorter.DESC;
-import static org.cmdbuild.servlets.json.translationtable.AttributeSorter.safeString;
+import static org.cmdbuild.servlets.json.serializers.translations.commons.AttributeSorter.ASC;
+import static org.cmdbuild.servlets.json.serializers.translations.commons.AttributeSorter.DESC;
+import static org.cmdbuild.servlets.json.serializers.translations.commons.AttributeSorter.safeString;
 
 import org.cmdbuild.dao.entrytype.CMEntryType;
 
 import com.google.common.collect.Ordering;
 
-enum EntryTypeSorter {
+public enum EntryTypeSorter {
 	NAME("name") {
 		@Override
 		protected Ordering<CMEntryType> getOrderingForProperty() {
@@ -37,14 +37,14 @@ enum EntryTypeSorter {
 		this.sorter = sorter;
 	}
 
-	EntryTypeSorter withDirection(final String direction) {
+	public EntryTypeSorter withDirection(final String direction) {
 		this.direction = direction;
 		return this;
 	}
 
 	abstract Ordering<CMEntryType> getOrderingForProperty();
 
-	Ordering<CMEntryType> getOrientedOrdering() {
+	public Ordering<CMEntryType> getOrientedOrdering() {
 		direction = defaultIfBlank(direction, ASC);
 		if (direction.equalsIgnoreCase(DESC)) {
 			return getOrderingForProperty().reverse();
@@ -53,7 +53,7 @@ enum EntryTypeSorter {
 		}
 	}
 
-	static EntryTypeSorter of(final String field) {
+	public static EntryTypeSorter of(final String field) {
 		for (final EntryTypeSorter element : values()) {
 			if (element.sorter.equalsIgnoreCase(field)) {
 				return element;
