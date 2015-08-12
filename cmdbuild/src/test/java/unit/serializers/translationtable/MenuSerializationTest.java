@@ -17,6 +17,7 @@ import org.cmdbuild.services.store.menu.MenuItemType;
 import org.cmdbuild.servlets.json.serializers.translations.table.MenuTranslationSerializer;
 import org.cmdbuild.servlets.json.serializers.translations.table.TranslationSerializer;
 import org.cmdbuild.servlets.json.serializers.translations.table.TranslationSerializerFactory;
+import org.cmdbuild.servlets.json.serializers.translations.table.TranslationSerializerFactory.Output;
 import org.cmdbuild.servlets.json.translationtable.objects.TableEntry;
 import org.junit.Before;
 import org.junit.Test;
@@ -60,6 +61,7 @@ public class MenuSerializationTest {
 				.withMenuLogic(menuLogic) //
 				.withTranslationLogic(translationLogic) //
 				.withType("menu") //
+				.withOutput(Output.TABLE) //
 				.build();
 
 		// when
@@ -89,6 +91,7 @@ public class MenuSerializationTest {
 				.withMenuLogic(menuLogic) //
 				.withTranslationLogic(translationLogic) //
 				.withType("menu") //
+				.withOutput(Output.TABLE) //
 				.build();
 
 		final TranslationSerializer serializer = factory.createSerializer();
@@ -122,6 +125,7 @@ public class MenuSerializationTest {
 				.withMenuLogic(menuLogic) //
 				.withTranslationLogic(translationLogic) //
 				.withType("menu") //
+				.withOutput(Output.TABLE) //
 				.build();
 
 		final TranslationSerializer serializer = factory.createSerializer();
@@ -161,6 +165,7 @@ public class MenuSerializationTest {
 				.withMenuLogic(menuLogic) //
 				.withTranslationLogic(translationLogic) //
 				.withType("menu") //
+				.withOutput(Output.TABLE) //
 				.build();
 
 		final TranslationSerializer serializer = factory.createSerializer();

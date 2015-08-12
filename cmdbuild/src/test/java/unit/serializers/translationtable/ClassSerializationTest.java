@@ -13,6 +13,7 @@ import org.cmdbuild.logic.translation.TranslationLogic;
 import org.cmdbuild.servlets.json.serializers.translations.table.ClassTranslationSerializer;
 import org.cmdbuild.servlets.json.serializers.translations.table.TranslationSerializer;
 import org.cmdbuild.servlets.json.serializers.translations.table.TranslationSerializerFactory;
+import org.cmdbuild.servlets.json.serializers.translations.table.TranslationSerializerFactory.Output;
 import org.cmdbuild.servlets.json.translationtable.objects.EntryField;
 import org.cmdbuild.servlets.json.translationtable.objects.ParentEntry;
 import org.json.JSONArray;
@@ -48,7 +49,9 @@ public class ClassSerializationTest {
 				.newInstance() //
 				.withDataAccessLogic(dataLogic) //
 				.withLookupStore(null) //
-				.withTranslationLogic(translationLogic).withType("class") //
+				.withOutput(Output.TABLE) //
+				.withTranslationLogic(translationLogic) //
+				.withType("class") //
 				.withActiveOnly(true) //
 				.withSorters(null) //
 				.build();
@@ -72,6 +75,7 @@ public class ClassSerializationTest {
 				.newInstance() //
 				.withDataAccessLogic(dataLogic) //
 				.withLookupStore(null) //
+				.withOutput(Output.TABLE) //
 				.withTranslationLogic(translationLogic).withType("class") //
 				.withActiveOnly(true) //
 				.withSorters(null) //
@@ -99,6 +103,7 @@ public class ClassSerializationTest {
 		final TranslationSerializerFactory factory = TranslationSerializerFactory //
 				.newInstance() //
 				.withDataAccessLogic(dataLogic) //
+				.withOutput(Output.TABLE) //
 				.withLookupStore(null) //
 				.withTranslationLogic(translationLogic).withType("class") //
 				.withActiveOnly(true) //
@@ -127,6 +132,7 @@ public class ClassSerializationTest {
 
 		final TranslationSerializerFactory factory = TranslationSerializerFactory //
 				.newInstance() //
+				.withOutput(Output.TABLE) //
 				.withDataAccessLogic(dataLogic) //
 				.withLookupStore(null) //
 				.withTranslationLogic(translationLogic).withType("class") //
@@ -162,6 +168,7 @@ public class ClassSerializationTest {
 				.newInstance() //
 				.withDataAccessLogic(dataLogic) //
 				.withLookupStore(null) //
+				.withOutput(Output.TABLE) //
 				.withTranslationLogic(translationLogic).withType("class") //
 				.withActiveOnly(true) //
 				.withSorters(sorters) //
@@ -194,6 +201,7 @@ public class ClassSerializationTest {
 				.newInstance() //
 				.withDataAccessLogic(dataLogic) //
 				.withLookupStore(null) //
+				.withOutput(Output.TABLE) //
 				.withTranslationLogic(translationLogic).withType("class") //
 				.withActiveOnly(true) //
 				.withSorters(sorters) //

@@ -13,8 +13,9 @@ import org.cmdbuild.services.store.FilterStore;
 import org.cmdbuild.servlets.json.serializers.translations.table.FilterTranslationSerializer;
 import org.cmdbuild.servlets.json.serializers.translations.table.TranslationSerializer;
 import org.cmdbuild.servlets.json.serializers.translations.table.TranslationSerializerFactory;
-import org.cmdbuild.servlets.json.translationtable.objects.TableEntry;
+import org.cmdbuild.servlets.json.serializers.translations.table.TranslationSerializerFactory.Output;
 import org.cmdbuild.servlets.json.translationtable.objects.EntryField;
+import org.cmdbuild.servlets.json.translationtable.objects.TableEntry;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.Before;
@@ -47,6 +48,7 @@ public class FilterSerializationTest {
 		final TranslationSerializerFactory factory = TranslationSerializerFactory //
 				.newInstance() //
 				.withType("filter") //
+				.withOutput(Output.TABLE) //
 				.build();
 
 		// when
@@ -68,6 +70,7 @@ public class FilterSerializationTest {
 				.newInstance() //
 				.withFilterStore(filterStore) //
 				.withTranslationLogic(translationLogic) //
+				.withOutput(Output.TABLE) //
 				.withType("filter") //
 				.build();
 		final TranslationSerializer serializer = factory.createSerializer();
@@ -94,6 +97,7 @@ public class FilterSerializationTest {
 				.newInstance() //
 				.withFilterStore(filterStore) //
 				.withTranslationLogic(translationLogic) //
+				.withOutput(Output.TABLE) //
 				.withType("filter") //
 				.build();
 		final TranslationSerializer serializer = factory.createSerializer();
@@ -128,6 +132,7 @@ public class FilterSerializationTest {
 				.withFilterStore(filterStore) //
 				.withTranslationLogic(translationLogic) //
 				.withType("filter") //
+				.withOutput(Output.TABLE) //
 				.build();
 		final TranslationSerializer serializer = factory.createSerializer();
 
