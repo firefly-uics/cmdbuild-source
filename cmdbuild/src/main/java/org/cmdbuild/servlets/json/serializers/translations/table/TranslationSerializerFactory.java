@@ -10,6 +10,7 @@ import org.cmdbuild.logic.translation.TranslationLogic;
 import org.cmdbuild.logic.view.ViewLogic;
 import org.cmdbuild.services.store.FilterStore;
 import org.cmdbuild.services.store.report.ReportStore;
+import org.cmdbuild.servlets.json.serializers.translations.commons.TranslationSerializer;
 import org.json.JSONArray;
 
 public class TranslationSerializerFactory {
@@ -72,6 +73,9 @@ public class TranslationSerializerFactory {
 		} else if (type.equalsIgnoreCase(DOMAIN) && output.equals(Output.TABLE)) {
 			return new DomainTranslationSerializer(dataLogic, activeOnly, translationLogic, sorters, separator,
 					setupFacade);
+		} else if (type.equalsIgnoreCase(DOMAIN) && output.equals(Output.CSV)) {
+			return new org.cmdbuild.servlets.json.serializers.translations.csv.DomainTranslationSerializer(dataLogic,
+					activeOnly, translationLogic, sorters, separator, setupFacade);
 		} else if (type.equalsIgnoreCase(FILTER) && output.equals(Output.TABLE)) {
 			return new FilterTranslationSerializer(filterStore, translationLogic, sorters, separator, setupFacade);
 		} else if (type.equalsIgnoreCase(LOOKUP) && output.equals(Output.TABLE)) {

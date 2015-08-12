@@ -6,7 +6,7 @@ import java.util.Collection;
 
 import org.codehaus.jackson.annotate.JsonProperty;
 
-public class TableEntry implements GenericTableEntry {
+public class TableEntry implements TranslationSerialization {
 	private static final String FIELDS = "fields";
 	private String name;
 	private Collection<EntryField> fields;

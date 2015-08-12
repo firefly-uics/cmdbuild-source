@@ -11,7 +11,7 @@ public class EntryField {
 
 	private static final String VALUE = "value";
 	private String name;
-	private String value; //default value
+	private String value; // default value
 	private Map<String, String> translations; // key = the language, value = the
 												// translation
 

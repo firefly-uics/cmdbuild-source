@@ -3,8 +3,6 @@ package org.cmdbuild.servlets.json.serializers.translations.table;
 import java.util.Collection;
 import java.util.Map;
 
-import javax.activation.DataHandler;
-
 import org.cmdbuild.logic.translation.SetupFacade;
 import org.cmdbuild.logic.translation.TranslationLogic;
 import org.cmdbuild.logic.translation.TranslationObject;
@@ -12,9 +10,10 @@ import org.cmdbuild.logic.translation.converter.FilterConverter;
 import org.cmdbuild.services.store.FilterStore;
 import org.cmdbuild.services.store.FilterStore.Filter;
 import org.cmdbuild.servlets.json.serializers.translations.commons.FilterSorter;
+import org.cmdbuild.servlets.json.serializers.translations.commons.TranslationSerializer;
 import org.cmdbuild.servlets.json.translationtable.objects.EntryField;
-import org.cmdbuild.servlets.json.translationtable.objects.GenericTableEntry;
 import org.cmdbuild.servlets.json.translationtable.objects.TableEntry;
+import org.cmdbuild.servlets.json.translationtable.objects.TranslationSerialization;
 import org.json.JSONArray;
 
 import com.google.common.collect.Lists;
@@ -33,10 +32,10 @@ public class FilterTranslationSerializer implements TranslationSerializer {
 	}
 
 	@Override
-	public Iterable<GenericTableEntry> serialize() {
+	public Iterable<TranslationSerialization> serialize() {
 		final Iterable<Filter> allFilters = filterStore.fetchAllGroupsFilters();
 		final Iterable<Filter> sortedFilters = filterOrdering.sortedCopy(allFilters);
-		final Collection<GenericTableEntry> jsonFilters = Lists.newArrayList();
+		final Collection<TranslationSerialization> jsonFilters = Lists.newArrayList();
 		for (final Filter filter : sortedFilters) {
 			final String name = filter.getName();
 			final TableEntry jsonFilter = new TableEntry();
@@ -60,11 +59,6 @@ public class FilterTranslationSerializer implements TranslationSerializer {
 		field.setValue(filter.getDescription());
 		jsonFields.add(field);
 		return jsonFields;
-	}
-
-	@Override
-	public DataHandler exportCsv() {
-		throw new UnsupportedOperationException("to do");
 	}
 
 }

@@ -11,7 +11,7 @@ import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.logic.translation.TranslationLogic;
 import org.cmdbuild.logic.view.ViewLogic;
 import org.cmdbuild.model.view.View;
-import org.cmdbuild.servlets.json.serializers.translations.table.TranslationSerializer;
+import org.cmdbuild.servlets.json.serializers.translations.commons.TranslationSerializer;
 import org.cmdbuild.servlets.json.serializers.translations.table.TranslationSerializerFactory;
 import org.cmdbuild.servlets.json.serializers.translations.table.TranslationSerializerFactory.Output;
 import org.cmdbuild.servlets.json.serializers.translations.table.ViewTranslationSerializer;

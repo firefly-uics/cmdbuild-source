@@ -7,7 +7,7 @@ import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.logic.translation.SetupFacade;
 import org.cmdbuild.logic.translation.TranslationLogic;
-import org.cmdbuild.servlets.json.translationtable.objects.GenericTableEntry;
+import org.cmdbuild.servlets.json.translationtable.objects.TranslationSerialization;
 import org.json.JSONArray;
 
 import com.google.common.base.Predicate;
@@ -21,7 +21,7 @@ public class ProcessTranslationSerializer extends ClassTranslationSerializer {
 	}
 
 	@Override
-	public Iterable<GenericTableEntry> serialize() {
+	public Iterable<TranslationSerialization> serialize() {
 		final Iterable<? extends CMClass> allClasses = dataLogic.findAllClasses();
 		final Iterable<? extends CMClass> onlyProcessess = from(allClasses).filter(new Predicate<CMClass>() {
 

@@ -3,8 +3,6 @@ package org.cmdbuild.servlets.json.serializers.translations.table;
 import java.util.Collection;
 import java.util.Map;
 
-import javax.activation.DataHandler;
-
 import org.cmdbuild.data.store.lookup.Lookup;
 import org.cmdbuild.data.store.lookup.LookupStore;
 import org.cmdbuild.data.store.lookup.LookupType;
@@ -14,10 +12,11 @@ import org.cmdbuild.logic.translation.TranslationObject;
 import org.cmdbuild.logic.translation.converter.LookupConverter;
 import org.cmdbuild.servlets.json.serializers.translations.commons.LookupTypeSorter;
 import org.cmdbuild.servlets.json.serializers.translations.commons.LookupValueSorter;
+import org.cmdbuild.servlets.json.serializers.translations.commons.TranslationSerializer;
 import org.cmdbuild.servlets.json.translationtable.objects.EntryField;
-import org.cmdbuild.servlets.json.translationtable.objects.GenericTableEntry;
 import org.cmdbuild.servlets.json.translationtable.objects.LookupTypeEntry;
 import org.cmdbuild.servlets.json.translationtable.objects.LookupValueEntry;
+import org.cmdbuild.servlets.json.translationtable.objects.TranslationSerialization;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -68,12 +67,12 @@ public class LookupTranslationSerializer implements TranslationSerializer {
 	}
 
 	@Override
-	public Iterable<GenericTableEntry> serialize() {
+	public Iterable<TranslationSerialization> serialize() {
 		final Iterable<LookupType> allTypes = lookupStore.readAllTypes();
 
 		final Iterable<? extends LookupType> sortedLookupTypes = typeOrdering.sortedCopy(allTypes);
 
-		final Collection<GenericTableEntry> jsonLookupTypes = Lists.newArrayList();
+		final Collection<TranslationSerialization> jsonLookupTypes = Lists.newArrayList();
 		for (final LookupType type : sortedLookupTypes) {
 			final Iterable<Lookup> valuesOfType = lookupStore.readAll(type);
 
@@ -110,11 +109,6 @@ public class LookupTranslationSerializer implements TranslationSerializer {
 		field.setValue(value.getDescription());
 		jsonFields.add(field);
 		return jsonFields;
-	}
-
-	@Override
-	public DataHandler exportCsv() {
-		throw new UnsupportedOperationException("to do");
 	}
 
 }

@@ -5,8 +5,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.activation.DataHandler;
-
 import org.cmdbuild.auth.acl.CMGroup;
 import org.cmdbuild.auth.acl.PrivilegePair;
 import org.cmdbuild.logic.auth.AuthenticationLogic;
@@ -19,11 +17,12 @@ import org.cmdbuild.services.store.menu.MenuConstants;
 import org.cmdbuild.services.store.menu.MenuItem;
 import org.cmdbuild.servlets.json.serializers.translations.commons.MenuItemSorter;
 import org.cmdbuild.servlets.json.serializers.translations.commons.MenuSorter;
+import org.cmdbuild.servlets.json.serializers.translations.commons.TranslationSerializer;
 import org.cmdbuild.servlets.json.translationtable.objects.EntryField;
-import org.cmdbuild.servlets.json.translationtable.objects.GenericTableEntry;
 import org.cmdbuild.servlets.json.translationtable.objects.MenuEntry;
 import org.cmdbuild.servlets.json.translationtable.objects.ParentEntry;
 import org.cmdbuild.servlets.json.translationtable.objects.TableEntry;
+import org.cmdbuild.servlets.json.translationtable.objects.TranslationSerialization;
 import org.json.JSONArray;
 
 import com.google.common.base.Predicate;
@@ -59,13 +58,13 @@ public class MenuTranslationSerializer implements TranslationSerializer {
 	}
 
 	@Override
-	public Iterable<GenericTableEntry> serialize() {
+	public Iterable<TranslationSerialization> serialize() {
 		final Iterable<CMGroup> groups = authLogic.getAllGroups();
 		final Iterable<CMGroup> groupsWithMenu = Iterables.filter(groups, HAS_MENU);
 		final Collection<CMGroup> allGroupsPlusDefault = Lists.newArrayList(groupsWithMenu);
 		allGroupsPlusDefault.add(fakeGroupForDefaultMenu);
 		final Collection<CMGroup> sortedGroups = menusOrdering.sortedCopy(allGroupsPlusDefault);
-		final Collection<GenericTableEntry> jsonMenus = Lists.newArrayList();
+		final Collection<TranslationSerialization> jsonMenus = Lists.newArrayList();
 		for (final CMGroup group : sortedGroups) {
 			final MenuItem rootNode = menuLogic.read(group.getName());
 			final MenuEntry rootElement = new MenuEntry();
@@ -171,10 +170,5 @@ public class MenuTranslationSerializer implements TranslationSerializer {
 			throw new UnsupportedOperationException();
 		}
 	};
-
-	@Override
-	public DataHandler exportCsv() {
-		throw new UnsupportedOperationException("to do");
-	}
 
 }
