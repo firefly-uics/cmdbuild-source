@@ -7,11 +7,11 @@ import java.util.Collection;
 
 import org.codehaus.jackson.annotate.JsonProperty;
 
-public class JsonLookupValue {
+public class LookupValueEntry {
 
 	private String code;
 	private String translationUuid;
-	private Collection<JsonField> fields;
+	private Collection<EntryField> fields;
 
 	@JsonProperty(CODE)
 	public String getDescription() {
@@ -24,7 +24,7 @@ public class JsonLookupValue {
 	}
 
 	@JsonProperty("fields")
-	public Collection<JsonField> getFields() {
+	public Collection<EntryField> getFields() {
 		return fields;
 	}
 
@@ -36,7 +36,7 @@ public class JsonLookupValue {
 		this.translationUuid = translationUuid;
 	}
 
-	public void setFields(final Collection<JsonField> fields) {
+	public void setFields(final Collection<EntryField> fields) {
 		this.fields = fields;
 	}
 

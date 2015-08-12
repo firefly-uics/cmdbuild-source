@@ -8,13 +8,14 @@ import javax.activation.DataHandler;
 import org.cmdbuild.data.store.lookup.Lookup;
 import org.cmdbuild.data.store.lookup.LookupStore;
 import org.cmdbuild.data.store.lookup.LookupType;
+import org.cmdbuild.logic.translation.SetupFacade;
 import org.cmdbuild.logic.translation.TranslationLogic;
 import org.cmdbuild.logic.translation.TranslationObject;
 import org.cmdbuild.logic.translation.converter.LookupConverter;
-import org.cmdbuild.servlets.json.management.JsonResponse;
-import org.cmdbuild.servlets.json.translationtable.objects.JsonField;
-import org.cmdbuild.servlets.json.translationtable.objects.JsonLookupType;
-import org.cmdbuild.servlets.json.translationtable.objects.JsonLookupValue;
+import org.cmdbuild.servlets.json.translationtable.objects.EntryField;
+import org.cmdbuild.servlets.json.translationtable.objects.GenericTableEntry;
+import org.cmdbuild.servlets.json.translationtable.objects.LookupTypeEntry;
+import org.cmdbuild.servlets.json.translationtable.objects.LookupValueEntry;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -34,7 +35,7 @@ public class LookupTranslationSerializer implements TranslationSerializer {
 	Ordering<Lookup> valueOrdering = LookupValueSorter.DEFAULT.getOrientedOrdering();
 
 	LookupTranslationSerializer(final LookupStore lookupStore, final boolean activeOnly,
-			final TranslationLogic translationLogic, final JSONArray sorters) {
+			final TranslationLogic translationLogic, final JSONArray sorters, String separator, SetupFacade setupFacade) {
 		this.lookupStore = lookupStore;
 		this.activeOnly = activeOnly;
 		this.translationLogic = translationLogic;
@@ -64,52 +65,53 @@ public class LookupTranslationSerializer implements TranslationSerializer {
 	}
 
 	@Override
-	public JsonResponse serialize() {
+	public Iterable<GenericTableEntry> serialize() {
 		final Iterable<LookupType> allTypes = lookupStore.readAllTypes();
 
 		final Iterable<? extends LookupType> sortedLookupTypes = typeOrdering.sortedCopy(allTypes);
 
-		final Collection<JsonLookupType> jsonLookupTypes = Lists.newArrayList();
+		final Collection<GenericTableEntry> jsonLookupTypes = Lists.newArrayList();
 		for (final LookupType type : sortedLookupTypes) {
 			final Iterable<Lookup> valuesOfType = lookupStore.readAll(type);
 
 			final Iterable<Lookup> sortedLookupValues = valueOrdering.sortedCopy(valuesOfType);
 
-			final Collection<JsonLookupValue> jsonValues = Lists.newArrayList();
-			final JsonLookupType jsonType = new JsonLookupType();
+			final Collection<LookupValueEntry> jsonValues = Lists.newArrayList();
+			final LookupTypeEntry jsonType = new LookupTypeEntry();
 			jsonType.setDescription(type.name);
 			for (final Lookup value : sortedLookupValues) {
-				final JsonLookupValue jsonValue = new JsonLookupValue();
+				final LookupValueEntry jsonValue = new LookupValueEntry();
 				final String code = value.code();
 				final String uuid = value.getTranslationUuid();
 				jsonValue.setCode(code);
 				jsonValue.setTranslationUuid(uuid);
-				final Collection<JsonField> jsonFields = readFields(value);
+				final Collection<EntryField> jsonFields = readFields(value);
 				jsonValue.setFields(jsonFields);
 				jsonValues.add(jsonValue);
 			}
 			jsonType.setValues(jsonValues);
 			jsonLookupTypes.add(jsonType);
 		}
-		return JsonResponse.success(jsonLookupTypes);
+		return jsonLookupTypes;
 	}
 
-	private Collection<JsonField> readFields(final Lookup value) {
-		final Collection<JsonField> jsonFields = Lists.newArrayList();
+	private Collection<EntryField> readFields(final Lookup value) {
+		final Collection<EntryField> jsonFields = Lists.newArrayList();
 		final TranslationObject translationObject = LookupConverter.DESCRIPTION //
 				.withIdentifier(value.getTranslationUuid()) //
 				.create();
 		final Map<String, String> fieldTranslations = translationLogic.readAll(translationObject);
-		final JsonField field = new JsonField();
+		final EntryField field = new EntryField();
 		field.setName(LookupConverter.description());
 		field.setTranslations(fieldTranslations);
 		field.setValue(value.getDescription());
 		jsonFields.add(field);
 		return jsonFields;
 	}
-	
+
 	@Override
-	public DataHandler serializeCsv() {
+	public DataHandler exportCsv() {
 		throw new UnsupportedOperationException("to do");
 	}
+
 }

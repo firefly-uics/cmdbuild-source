@@ -11,16 +11,17 @@ import org.cmdbuild.auth.acl.CMGroup;
 import org.cmdbuild.auth.acl.PrivilegePair;
 import org.cmdbuild.logic.auth.AuthenticationLogic;
 import org.cmdbuild.logic.menu.MenuLogic;
+import org.cmdbuild.logic.translation.SetupFacade;
 import org.cmdbuild.logic.translation.TranslationLogic;
 import org.cmdbuild.logic.translation.TranslationObject;
 import org.cmdbuild.logic.translation.converter.MenuItemConverter;
 import org.cmdbuild.services.store.menu.MenuConstants;
 import org.cmdbuild.services.store.menu.MenuItem;
-import org.cmdbuild.servlets.json.management.JsonResponse;
-import org.cmdbuild.servlets.json.translationtable.objects.JsonElement;
-import org.cmdbuild.servlets.json.translationtable.objects.JsonElementWithChildren;
-import org.cmdbuild.servlets.json.translationtable.objects.JsonField;
-import org.cmdbuild.servlets.json.translationtable.objects.MenuJsonElement;
+import org.cmdbuild.servlets.json.translationtable.objects.EntryField;
+import org.cmdbuild.servlets.json.translationtable.objects.GenericTableEntry;
+import org.cmdbuild.servlets.json.translationtable.objects.MenuEntry;
+import org.cmdbuild.servlets.json.translationtable.objects.ParentEntry;
+import org.cmdbuild.servlets.json.translationtable.objects.TableEntry;
 import org.json.JSONArray;
 
 import com.google.common.base.Predicate;
@@ -48,33 +49,33 @@ public class MenuTranslationSerializer implements TranslationSerializer {
 	};
 
 	public MenuTranslationSerializer(final AuthenticationLogic authLogic, final MenuLogic menuLogic,
-			final TranslationLogic translationLogic, final JSONArray sorters) {
+			final TranslationLogic translationLogic, final JSONArray sorters, String separator, SetupFacade setupFacade) {
 		this.authLogic = authLogic;
 		this.menuLogic = menuLogic;
 		this.translationLogic = translationLogic;
 	}
 
 	@Override
-	public JsonResponse serialize() {
+	public Iterable<GenericTableEntry> serialize() {
 		final Iterable<CMGroup> groups = authLogic.getAllGroups();
 		final Iterable<CMGroup> groupsWithMenu = Iterables.filter(groups, HAS_MENU);
 		final Collection<CMGroup> allGroupsPlusDefault = Lists.newArrayList(groupsWithMenu);
 		allGroupsPlusDefault.add(fakeGroupForDefaultMenu);
 		final Collection<CMGroup> sortedGroups = menusOrdering.sortedCopy(allGroupsPlusDefault);
-		final Collection<JsonElement> jsonMenus = Lists.newArrayList();
+		final Collection<GenericTableEntry> jsonMenus = Lists.newArrayList();
 		for (final CMGroup group : sortedGroups) {
 			final MenuItem rootNode = menuLogic.read(group.getName());
-			final MenuJsonElement rootElement = new MenuJsonElement();
+			final MenuEntry rootElement = new MenuEntry();
 			rootElement.setName(group.getDescription());
 			rootElement.setType(rootNode.getType().getValue());
-			final Collection<JsonElement> childrenElement = Lists.newArrayList();
+			final Collection<TableEntry> childrenElement = Lists.newArrayList();
 			final Iterable<MenuItem> _children = rootNode.getChildren();
 			final Iterable<MenuItem> sortedChildren = menuNodesOrdering.sortedCopy(_children);
 			for (final MenuItem child : sortedChildren) {
-				final MenuJsonElement childElement = new MenuJsonElement();
+				final MenuEntry childElement = new MenuEntry();
 				childElement.setName(child.getUniqueIdentifier());
 				childElement.setType(child.getType().getValue());
-				final Collection<JsonField> childFields = readFields(child);
+				final Collection<EntryField> childFields = readFields(child);
 				childElement.setFields(childFields);
 				final List<MenuItem> nephews = child.getChildren();
 				serialize(childElement, nephews);
@@ -83,16 +84,16 @@ public class MenuTranslationSerializer implements TranslationSerializer {
 			rootElement.setChildren(childrenElement);
 			jsonMenus.add(rootElement);
 		}
-		return JsonResponse.success(jsonMenus);
+		return jsonMenus;
 	}
 
-	private void serialize(final JsonElementWithChildren rootElement, final List<MenuItem> children) {
-		final Collection<JsonElement> jsonChildren = Lists.newArrayList();
+	private void serialize(final ParentEntry rootElement, final List<MenuItem> children) {
+		final Collection<TableEntry> jsonChildren = Lists.newArrayList();
 		for (final MenuItem child : children) {
-			final MenuJsonElement childElement = new MenuJsonElement();
+			final MenuEntry childElement = new MenuEntry();
 			childElement.setName(child.getUniqueIdentifier());
 			childElement.setType(child.getType().getValue());
-			final Collection<JsonField> fields = readFields(child);
+			final Collection<EntryField> fields = readFields(child);
 			childElement.setFields(fields);
 			jsonChildren.add(childElement);
 			serialize(childElement, child.getChildren());
@@ -101,13 +102,13 @@ public class MenuTranslationSerializer implements TranslationSerializer {
 
 	}
 
-	private Collection<JsonField> readFields(final MenuItem child) {
-		final Collection<JsonField> jsonFields = Lists.newArrayList();
+	private Collection<EntryField> readFields(final MenuItem child) {
+		final Collection<EntryField> jsonFields = Lists.newArrayList();
 		final TranslationObject translationObject = MenuItemConverter.DESCRIPTION //
 				.withIdentifier(child.getUniqueIdentifier()) //
 				.create();
 		final Map<String, String> fieldTranslations = translationLogic.readAll(translationObject);
-		final JsonField field = new JsonField();
+		final EntryField field = new EntryField();
 		field.setName(MenuItemConverter.description());
 		field.setTranslations(fieldTranslations);
 		field.setValue(child.getDescription());
@@ -167,9 +168,9 @@ public class MenuTranslationSerializer implements TranslationSerializer {
 			throw new UnsupportedOperationException();
 		}
 	};
-	
+
 	@Override
-	public DataHandler serializeCsv() {
+	public DataHandler exportCsv() {
 		throw new UnsupportedOperationException("to do");
 	}
 

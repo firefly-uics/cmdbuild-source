@@ -17,7 +17,7 @@ import org.cmdbuild.services.store.menu.MenuItemType;
 import org.cmdbuild.servlets.json.translationtable.MenuTranslationSerializer;
 import org.cmdbuild.servlets.json.translationtable.TranslationSerializer;
 import org.cmdbuild.servlets.json.translationtable.TranslationSerializerFactory;
-import org.cmdbuild.servlets.json.translationtable.objects.JsonElement;
+import org.cmdbuild.servlets.json.translationtable.objects.TableEntry;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -94,10 +94,10 @@ public class MenuSerializationTest {
 		final TranslationSerializer serializer = factory.createSerializer();
 
 		// when
-		final Object response = serializer.serialize().getResponse();
+		final Object response = serializer.serialize();
 
 		// then
-		final List<JsonElement> elements = Lists.newArrayList((Collection<JsonElement>) response);
+		final List<TableEntry> elements = Lists.newArrayList((Collection<TableEntry>) response);
 		assertTrue(elements.size() == 1);
 		assertTrue(elements.get(0).getName().equals("*Default*"));
 	}
@@ -127,11 +127,11 @@ public class MenuSerializationTest {
 		final TranslationSerializer serializer = factory.createSerializer();
 
 		// when
-		final Object response = serializer.serialize().getResponse();
+		final Object response = serializer.serialize();
 
 		// then
 		// then
-		final List<JsonElement> elements = Lists.newArrayList((Collection<JsonElement>) response);
+		final List<TableEntry> elements = Lists.newArrayList((Collection<TableEntry>) response);
 		assertTrue(elements.size() == 1);
 		assertTrue(elements.get(0).getName().equals("*Default*"));
 		assertTrue(elements.get(0).getFields() == null);
@@ -166,10 +166,10 @@ public class MenuSerializationTest {
 		final TranslationSerializer serializer = factory.createSerializer();
 
 		// when
-		final Object response = serializer.serialize().getResponse();
+		final Object response = serializer.serialize();
 
 		// then
-		final List<JsonElement> elements = Lists.newArrayList((Collection<JsonElement>) response);
+		final List<TableEntry> elements = Lists.newArrayList((Collection<TableEntry>) response);
 		assertTrue(elements.get(0).getName().equals("*Default*"));
 		assertTrue(elements.get(1).getName().equals("A"));
 		assertTrue(elements.get(2).getName().equals("B"));

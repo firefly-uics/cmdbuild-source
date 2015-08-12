@@ -4,20 +4,20 @@ import java.util.Collection;
 
 import org.codehaus.jackson.annotate.JsonProperty;
 
-@Deprecated 
-//use JsonElementWithChildren instead
-public class JsonElementWithAttributes extends JsonElement {
+@Deprecated
+// use JsonElementWithChildren instead
+public class EntryWithAttributes extends TableEntry {
 
 	private static final String ATTRIBUTES = "attributes";
 
-	private Collection<JsonElement> attributes;
+	private Collection<TableEntry> attributes;
 
 	@JsonProperty(ATTRIBUTES)
-	public Collection<JsonElement> getAttributes() {
+	public Collection<TableEntry> getAttributes() {
 		return attributes;
 	}
 
-	public void setAttributes(final Collection<JsonElement> attributes) {
+	public void setAttributes(final Collection<TableEntry> attributes) {
 		this.attributes = attributes;
 	}
 

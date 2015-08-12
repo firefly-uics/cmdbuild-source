@@ -5,10 +5,12 @@ import org.cmdbuild.data.store.lookup.LookupStore;
 import org.cmdbuild.logic.auth.AuthenticationLogic;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.logic.menu.MenuLogic;
+import org.cmdbuild.logic.translation.SetupFacade;
 import org.cmdbuild.logic.translation.TranslationLogic;
 import org.cmdbuild.logic.view.ViewLogic;
 import org.cmdbuild.services.store.FilterStore;
 import org.cmdbuild.services.store.report.ReportStore;
+import org.cmdbuild.servlets.json.translationtable.TranslationSerializerFactory.SerializerBuilder;
 import org.json.JSONArray;
 
 public class TranslationSerializerFactory {
@@ -33,6 +35,8 @@ public class TranslationSerializerFactory {
 	private final ReportStore reportStore;
 	private final AuthenticationLogic authLogic;
 	private final MenuLogic menuLogic;
+	private final String separator;
+	private SetupFacade setupFacade;
 
 	public static SerializerBuilder newInstance() {
 		return new SerializerBuilder();
@@ -50,25 +54,27 @@ public class TranslationSerializerFactory {
 		this.translationLogic = builder.translationLogic;
 		this.type = builder.type;
 		this.viewLogic = builder.viewLogic;
+		this.separator = builder.separator;
+		this.setupFacade = builder.setupFacade;
 	}
 
 	public TranslationSerializer createSerializer() {
 		if (type.equalsIgnoreCase(CLASS)) {
-			return new ClassTranslationSerializer(dataLogic, activeOnly, translationLogic, sorters);
+			return new ClassTranslationSerializer(dataLogic, activeOnly, translationLogic, sorters, separator, setupFacade);
 		} else if (type.equalsIgnoreCase(DOMAIN)) {
-			return new DomainTranslationSerializer(dataLogic, activeOnly, translationLogic, sorters);
+			return new DomainTranslationSerializer(dataLogic, activeOnly, translationLogic, sorters, separator, setupFacade);
 		} else if (type.equalsIgnoreCase(FILTER)) {
-			return new FilterTranslationSerializer(filterStore, translationLogic, sorters);
+			return new FilterTranslationSerializer(filterStore, translationLogic, sorters, separator, setupFacade);
 		} else if (type.equalsIgnoreCase(LOOKUP)) {
-			return new LookupTranslationSerializer(lookupStore, activeOnly, translationLogic, sorters);
+			return new LookupTranslationSerializer(lookupStore, activeOnly, translationLogic, sorters, separator, setupFacade);
 		} else if (type.equalsIgnoreCase(MENU)) {
-			return new MenuTranslationSerializer(authLogic, menuLogic, translationLogic, sorters);
+			return new MenuTranslationSerializer(authLogic, menuLogic, translationLogic, sorters, separator, setupFacade);
 		} else if (type.equalsIgnoreCase(PROCESS)) {
-			return new ProcessTranslationSerializer(dataLogic, activeOnly, translationLogic, sorters);
+			return new ProcessTranslationSerializer(dataLogic, activeOnly, translationLogic, sorters, separator, setupFacade);
 		} else if (type.equalsIgnoreCase(REPORT)) {
-			return new ReportTranslationSerializer(reportStore, translationLogic, sorters);
+			return new ReportTranslationSerializer(reportStore, translationLogic, sorters, separator, setupFacade);
 		} else if (type.equalsIgnoreCase(VIEW)) {
-			return new ViewTranslationSerializer(viewLogic, translationLogic, sorters);
+			return new ViewTranslationSerializer(viewLogic, translationLogic, sorters, separator, setupFacade);
 		} else {
 			throw new IllegalArgumentException("type '" + type + "' unsupported");
 		}
@@ -76,6 +82,7 @@ public class TranslationSerializerFactory {
 
 	public static final class SerializerBuilder implements Builder<TranslationSerializerFactory> {
 
+		public String separator;
 		private boolean activeOnly;
 		private AuthenticationLogic authLogic;
 		private DataAccessLogic dataLogic;
@@ -87,6 +94,7 @@ public class TranslationSerializerFactory {
 		private TranslationLogic translationLogic;
 		private String type;
 		private ViewLogic viewLogic;
+		private SetupFacade setupFacade;
 
 		public SerializerBuilder withActiveOnly(final boolean activeOnly) {
 			this.activeOnly = activeOnly;
@@ -120,6 +128,16 @@ public class TranslationSerializerFactory {
 
 		public SerializerBuilder withReportStore(final ReportStore reportStore) {
 			this.reportStore = reportStore;
+			return this;
+		}
+
+		public SerializerBuilder withSeparator(final String separator) {
+			this.separator = separator;
+			return this;
+		}
+		
+		public SerializerBuilder withSetupFacade(SetupFacade setupFacade) {
+			this.setupFacade = setupFacade;
 			return this;
 		}
 

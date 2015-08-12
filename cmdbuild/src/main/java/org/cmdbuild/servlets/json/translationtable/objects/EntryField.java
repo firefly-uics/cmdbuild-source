@@ -7,12 +7,13 @@ import java.util.Map;
 
 import org.codehaus.jackson.annotate.JsonProperty;
 
-public class JsonField {
+public class EntryField {
 
 	private static final String VALUE = "value";
 	private String name;
-	private String value;
-	private Map<String, String> translations; //key = the language, value = the translation
+	private String value; //default value
+	private Map<String, String> translations; // key = the language, value = the
+												// translation
 
 	@JsonProperty(NAME)
 	public String getName() {

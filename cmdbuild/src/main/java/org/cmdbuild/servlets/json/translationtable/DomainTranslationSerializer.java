@@ -8,14 +8,15 @@ import javax.activation.DataHandler;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
+import org.cmdbuild.logic.translation.SetupFacade;
 import org.cmdbuild.logic.translation.TranslationLogic;
 import org.cmdbuild.logic.translation.TranslationObject;
 import org.cmdbuild.logic.translation.converter.ClassConverter;
 import org.cmdbuild.logic.translation.converter.DomainConverter;
-import org.cmdbuild.servlets.json.management.JsonResponse;
-import org.cmdbuild.servlets.json.translationtable.objects.JsonElement;
-import org.cmdbuild.servlets.json.translationtable.objects.JsonElementWithAttributes;
-import org.cmdbuild.servlets.json.translationtable.objects.JsonField;
+import org.cmdbuild.servlets.json.translationtable.objects.EntryField;
+import org.cmdbuild.servlets.json.translationtable.objects.EntryWithAttributes;
+import org.cmdbuild.servlets.json.translationtable.objects.GenericTableEntry;
+import org.cmdbuild.servlets.json.translationtable.objects.TableEntry;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -25,8 +26,8 @@ import com.google.common.collect.Lists;
 public class DomainTranslationSerializer extends EntryTypeTranslationSerializer {
 
 	DomainTranslationSerializer(final DataAccessLogic dataLogic, final boolean activeOnly,
-			final TranslationLogic translationLogic, final JSONArray sorters) {
-		super(dataLogic, activeOnly, translationLogic);
+			final TranslationLogic translationLogic, final JSONArray sorters, final String separator, final SetupFacade setupFacade) {
+		super(dataLogic, activeOnly, translationLogic, separator, setupFacade);
 		setOrderings(sorters);
 	}
 
@@ -53,35 +54,35 @@ public class DomainTranslationSerializer extends EntryTypeTranslationSerializer 
 	}
 
 	@Override
-	public JsonResponse serialize() {
+	public Iterable<GenericTableEntry> serialize() {
 		final Iterable<? extends CMDomain> allDomains = activeOnly ? dataLogic.findActiveDomains() : dataLogic
 				.findAllDomains();
 		final Iterable<? extends CMDomain> sortedDomains = entryTypeOrdering.sortedCopy(allDomains);
 
-		final Collection<JsonElementWithAttributes> jsonDomains = Lists.newArrayList();
+		final Collection<GenericTableEntry> jsonDomains = Lists.newArrayList();
 		for (final CMDomain domain : sortedDomains) {
 			final String domainName = domain.getName();
-			final Collection<JsonField> jsonFields = readFields(domain);
+			final Collection<EntryField> jsonFields = readFields(domain);
 			final Iterable<? extends CMAttribute> allAttributes = domain.getAllAttributes();
 			final Iterable<? extends CMAttribute> sortedAttributes = sortAttributes(allAttributes);
-			final Collection<JsonElement> jsonAttributes = serializeAttributes(sortedAttributes);
-			final JsonElementWithAttributes jsonDomain = new JsonElementWithAttributes();
+			final Collection<TableEntry> jsonAttributes = serializeAttributes(sortedAttributes);
+			final EntryWithAttributes jsonDomain = new EntryWithAttributes();
 			jsonDomain.setName(domainName);
 			jsonDomain.setAttributes(jsonAttributes);
 			jsonDomain.setFields(jsonFields);
 			jsonDomains.add(jsonDomain);
 		}
-		return JsonResponse.success(jsonDomains);
+		return jsonDomains;
 	}
 
-	private Collection<JsonField> readFields(final CMDomain domain) {
-		final Collection<JsonField> jsonFields = Lists.newArrayList();
+	private Collection<EntryField> readFields(final CMDomain domain) {
+		final Collection<EntryField> jsonFields = Lists.newArrayList();
 		final TranslationObject descriptionTranslationObject = DomainConverter.DESCRIPTION //
 				.withIdentifier(domain.getName()) //
 				.create();
 		final Map<String, String> descriptionTranslations = translationLogic //
 				.readAll(descriptionTranslationObject);
-		final JsonField descriptionField = new JsonField();
+		final EntryField descriptionField = new EntryField();
 		descriptionField.setName(ClassConverter.description());
 		descriptionField.setTranslations(descriptionTranslations);
 		descriptionField.setValue(domain.getDescription());
@@ -92,7 +93,7 @@ public class DomainTranslationSerializer extends EntryTypeTranslationSerializer 
 				.create();
 		final Map<String, String> directDescriptionTranslations = translationLogic //
 				.readAll(directDescriptionTranslationObject);
-		final JsonField directDescriptionField = new JsonField();
+		final EntryField directDescriptionField = new EntryField();
 		directDescriptionField.setName(DomainConverter.directDescription());
 		directDescriptionField.setTranslations(directDescriptionTranslations);
 		directDescriptionField.setValue(domain.getDescription1());
@@ -103,7 +104,7 @@ public class DomainTranslationSerializer extends EntryTypeTranslationSerializer 
 				.create();
 		final Map<String, String> inverseDescriptionTranslations = translationLogic //
 				.readAll(inverseDescriptionTranslationObject);
-		final JsonField inverseDescriptionField = new JsonField();
+		final EntryField inverseDescriptionField = new EntryField();
 		inverseDescriptionField.setName(DomainConverter.inverseDescription());
 		inverseDescriptionField.setTranslations(inverseDescriptionTranslations);
 		inverseDescriptionField.setValue(domain.getDescription2());
@@ -111,9 +112,9 @@ public class DomainTranslationSerializer extends EntryTypeTranslationSerializer 
 
 		return jsonFields;
 	}
-	
+
 	@Override
-	public DataHandler serializeCsv() {
+	public DataHandler exportCsv() {
 		throw new UnsupportedOperationException("to do");
 	}
 
