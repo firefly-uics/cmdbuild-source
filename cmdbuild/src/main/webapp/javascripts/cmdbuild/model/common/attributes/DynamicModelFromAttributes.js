@@ -42,7 +42,7 @@
 					}
 				}, this);
 
-				CMDBuild.model.common.attributes.DynamicModelFromAttributes.setFields(fieldsForModel);
+				this.self.setFields(fieldsForModel);
 			}
 
 			this.callParent();

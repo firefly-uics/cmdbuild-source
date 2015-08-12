@@ -43,7 +43,7 @@
 		 *
 		 * @returns {String} value
 		 *
-		 * TODO: refactor
+		 * TODO: delete when old FieldManager will be replaced
 		 */
 		addRendererToHeader: function(header, attribute) {
 			var me = this;
@@ -143,64 +143,72 @@
 			var columns = [];
 
 			if (!this.cmfg('widgetConfigurationIsAttributeEmpty',  CMDBuild.core.proxy.CMProxyConstants.MODEL)) {
+				var fieldManager = Ext.create('CMDBuild.core.fieldManager.FieldManager', { parentDelegate: this });
+
 				Ext.Array.forEach(this.cmfg('widgetConfigurationGet', CMDBuild.core.proxy.CMProxyConstants.MODEL), function(attribute, i, allAttributes) {
-					var attribute = attribute.getAdaptedData();
-					var attributesMap = CMDBuild.Management.FieldManager.getAttributesMap();
+					if (fieldManager.isAttributeManaged(attribute.get(CMDBuild.core.proxy.CMProxyConstants.TYPE))) {
+						fieldManager.attributeModelSet(Ext.create('CMDBuild.model.common.attributes.Attribute', attribute.getData()));
 
-					// TODO: hack to bypass CMDBuild.Management.FieldManager.getFieldForAttr() control to check if return DisplayField
-					// (correct way "var editor = CMDBuild.Management.FieldManager.getCellEditorForAttribute(attribute);")
-					var editor = attributesMap[attribute.type].buildField(attribute, false, false);
+						columns.push(fieldManager.buildColumn(true));
+					} else { // @deprecated - Old field manager
+						var attribute = attribute.getAdaptedData();
+						var attributesMap = CMDBuild.Management.FieldManager.getAttributesMap();
 
-					var header = CMDBuild.Management.FieldManager.getHeaderForAttr(attribute);
+						// TODO: hack to bypass CMDBuild.Management.FieldManager.getFieldForAttr() control to check if return DisplayField
+						// (correct way "var editor = CMDBuild.Management.FieldManager.getCellEditorForAttribute(attribute);")
+						var editor = attributesMap[attribute.type].buildField(attribute, false, false);
 
-					header.flex = 1; // Apply flex 1 by default to avoid unused empty space on grids
+						var header = CMDBuild.Management.FieldManager.getHeaderForAttr(attribute);
 
-					if (attribute.type == 'REFERENCE') { // TODO: hack to force a templateResolver build for editor that haven't a form associated like other fields types
-						var xaVars = CMDBuild.Utils.Metadata.extractMetaByNS(attribute.meta, 'system.template.');
-						xaVars['_SystemFieldFilter'] = attribute.filter;
+						header.flex = 1; // Apply flex 1 by default to avoid unused empty space on grids
 
-						var templateResolver = new CMDBuild.Management.TemplateResolver({ // TODO: implementation of serverside template resolver
-							clientForm: this.parentDelegate.clientForm,
-							xaVars: xaVars,
-							serverVars: this.cmfg('getTemplateResolverServerVars')
-						});
+						if (attribute.type == 'REFERENCE') { // TODO: hack to force a templateResolver build for editor that haven't a form associated like other fields types
+							var xaVars = CMDBuild.Utils.Metadata.extractMetaByNS(attribute.meta, 'system.template.');
+							xaVars['_SystemFieldFilter'] = attribute.filter;
 
-						editor = CMDBuild.Management.ReferenceField.buildEditor(attribute, templateResolver);
+							var templateResolver = new CMDBuild.Management.TemplateResolver({ // TODO: implementation of serverside template resolver
+								clientForm: this.parentDelegate.clientForm,
+								xaVars: xaVars,
+								serverVars: this.cmfg('getTemplateResolverServerVars')
+							});
 
-						// Avoids to resolve field templates when form is in editMode (when you click on abort button) // TODO
-//						if (!this.parentDelegate.owner._isInEditMode && !Ext.Object.isEmpty(editor) && Ext.isFunction(editor.resolveTemplate))
-//							editor.resolveTemplate();
-					}
+							editor = CMDBuild.Management.ReferenceField.buildEditor(attribute, templateResolver);
 
-					if (!Ext.isEmpty(header)) {
-						editor.hideLabel = true;
-
-						// Read only attributes header/editor setup
-						header[CMDBuild.core.proxy.CMProxyConstants.DISABLED] = !attribute[CMDBuild.core.proxy.CMProxyConstants.WRITABLE];
-						header[CMDBuild.core.proxy.CMProxyConstants.REQUIRED] = false;
-						editor[CMDBuild.core.proxy.CMProxyConstants.DISABLED] = !attribute[CMDBuild.core.proxy.CMProxyConstants.WRITABLE];
-						editor[CMDBuild.core.proxy.CMProxyConstants.REQUIRED] = false;
-
-						if (attribute[CMDBuild.core.proxy.CMProxyConstants.MANDATORY]) {
-							header.header = '* ' + header.header; // TODO: header property is deprecated, should use "text" but FieldManager uses header so ...
-
-							header[CMDBuild.core.proxy.CMProxyConstants.REQUIRED] = true;
-							editor[CMDBuild.core.proxy.CMProxyConstants.REQUIRED] = true;
+							// Avoids to resolve field templates when form is in editMode (when you click on abort button) // TODO
+	//						if (!this.parentDelegate.owner._isInEditMode && !Ext.Object.isEmpty(editor) && Ext.isFunction(editor.resolveTemplate))
+	//							editor.resolveTemplate();
 						}
 
-						// Do not override renderer, add editor on checkbox columns and make it editable
-						if (attribute[CMDBuild.core.proxy.CMProxyConstants.TYPE] != 'BOOLEAN') {
-							header.editor = editor;
+						if (!Ext.isEmpty(header)) {
+							editor.hideLabel = true;
 
-							this.addRendererToHeader(header, attribute);
+							// Read only attributes header/editor setup
+							header[CMDBuild.core.proxy.CMProxyConstants.DISABLED] = !attribute[CMDBuild.core.proxy.CMProxyConstants.WRITABLE];
+							header[CMDBuild.core.proxy.CMProxyConstants.REQUIRED] = false;
+							editor[CMDBuild.core.proxy.CMProxyConstants.DISABLED] = !attribute[CMDBuild.core.proxy.CMProxyConstants.WRITABLE];
+							editor[CMDBuild.core.proxy.CMProxyConstants.REQUIRED] = false;
+
+							if (attribute[CMDBuild.core.proxy.CMProxyConstants.MANDATORY]) {
+								header.header = '* ' + header.header; // TODO: header property is deprecated, should use "text" but FieldManager uses header so ...
+
+								header[CMDBuild.core.proxy.CMProxyConstants.REQUIRED] = true;
+								editor[CMDBuild.core.proxy.CMProxyConstants.REQUIRED] = true;
+							}
+
+							// Do not override renderer, add editor on checkbox columns and make it editable
+							if (attribute[CMDBuild.core.proxy.CMProxyConstants.TYPE] != 'BOOLEAN') {
+								header.editor = editor;
+
+								this.addRendererToHeader(header, attribute);
+							}
+
+							columns.push(header);
 						}
 
-						columns.push(header);
+						// Force editor fields store load (must be done because FieldManager field don't works properly)
+						if (!Ext.isEmpty(editor) && !Ext.isEmpty(editor.store) && editor.store.count() == 0)
+							editor.store.load();
 					}
-
-					// Force editor fields store load (must be done because FieldManager field don't works properly)
-					if (!Ext.isEmpty(editor) && !Ext.isEmpty(editor.store) && editor.store.count() == 0)
-						editor.store.load();
 				}, this);
 			}
 

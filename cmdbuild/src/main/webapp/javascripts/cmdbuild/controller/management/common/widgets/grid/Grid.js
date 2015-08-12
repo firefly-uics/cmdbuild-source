@@ -451,6 +451,13 @@
 		},
 
 		/**
+		 * @return {Number}
+		 */
+		getWidgetId: function() {
+			return this.widgetConfiguration[CMDBuild.core.proxy.CMProxyConstants.ID];
+		},
+
+		/**
 		 * @return {Object} out
 		 *
 		 * @override

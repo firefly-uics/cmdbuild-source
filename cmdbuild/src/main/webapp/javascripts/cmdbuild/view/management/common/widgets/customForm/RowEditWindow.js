@@ -56,7 +56,12 @@
 					this.form = Ext.create('Ext.form.Panel', {
 						autoScroll: true,
 						frame: true,
-						border: false
+						border: false,
+
+						layout: {
+							type: 'vbox',
+//							align: 'stretch'
+						}
 					})
 				]
 			});

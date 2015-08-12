@@ -9,13 +9,14 @@
 			{ name: 'alwaysenabled', type: 'boolean' },
 			{ name: CMDBuild.core.proxy.CMProxyConstants.ACTIVE, type: 'boolean' },
 			{ name: CMDBuild.core.proxy.CMProxyConstants.CAPABILITIES, type: 'auto' }, // Object to gather all UI disable flags
-			{ name: CMDBuild.core.proxy.CMProxyConstants.MODEL, type: 'auto' }, // Encoded array of CMDBuild.model.widgets.customForm.Attribute models strings
+			{ name: CMDBuild.core.proxy.CMProxyConstants.DATA, type: 'auto' }, // Encoded array of CMDBuild.model.common.Generic models strings
 			{ name: CMDBuild.core.proxy.CMProxyConstants.ID, type: 'string' },
 			{ name: CMDBuild.core.proxy.CMProxyConstants.LABEL, type: 'string' },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.LAYOUT, type: 'string', defaultValue: 'grid' }, // Widget view mode
+			{ name: CMDBuild.core.proxy.CMProxyConstants.LAYOUT, type: 'string', defaultValue: 'grid' }, // Widget view mode [grid|form]
+			{ name: CMDBuild.core.proxy.CMProxyConstants.MODEL, type: 'auto' }, // Encoded array of CMDBuild.model.widgets.customForm.Attribute models strings
 			{ name: CMDBuild.core.proxy.CMProxyConstants.REQUIRED, type: 'boolean' },
 			{ name: CMDBuild.core.proxy.CMProxyConstants.TYPE, type: 'string' },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.VARIABLES, type: 'auto' } // TODO
+			{ name: CMDBuild.core.proxy.CMProxyConstants.VARIABLES, type: 'auto' } // Unmanaged variables
 
 		],
 
@@ -23,28 +24,63 @@
 		 * @param {Object} data
 		 */
 		constructor: function(data) {
-			var attributesArray = [];
-
-			if (Ext.isFunction(data.getData))
-				data = data.getData();
-
 			this.callParent(arguments);
 
-			// Apply form attributes model
-			if (Ext.isString(data[CMDBuild.core.proxy.CMProxyConstants.MODEL]))
-				data[CMDBuild.core.proxy.CMProxyConstants.MODEL] = Ext.decode(data[CMDBuild.core.proxy.CMProxyConstants.MODEL]);
+			// Apply form model attributes model
+			this.set(CMDBuild.core.proxy.CMProxyConstants.MODEL, data[CMDBuild.core.proxy.CMProxyConstants.MODEL]);
 
-			Ext.Array.forEach(data[CMDBuild.core.proxy.CMProxyConstants.MODEL], function(attributeObject, i, AllAttributesObjects) {
-				attributesArray.push(Ext.create('CMDBuild.model.widgets.customForm.Attribute', attributeObject));
-			}, this);
-
-			this.set(CMDBuild.core.proxy.CMProxyConstants.MODEL, attributesArray);
+			// Decode data string
+			this.set(CMDBuild.core.proxy.CMProxyConstants.DATA, data[CMDBuild.core.proxy.CMProxyConstants.DATA]);
 
 			// Apply capabilities model
-			this.set(
-				CMDBuild.core.proxy.CMProxyConstants.CAPABILITIES,
-				Ext.create('CMDBuild.model.widgets.customForm.Capabilities', data[CMDBuild.core.proxy.CMProxyConstants.CAPABILITIES])
-			);
+			this.set(CMDBuild.core.proxy.CMProxyConstants.CAPABILITIES, data[CMDBuild.core.proxy.CMProxyConstants.CAPABILITIES]);
+		},
+
+		/**
+		 * @param {String} fieldName
+		 * @param {Object} newValue
+		 *
+		 * @returns {String}
+		 *
+		 * @override
+		 */
+		set: function(fieldName, newValue) {
+			switch (fieldName) {
+				case CMDBuild.core.proxy.CMProxyConstants.CAPABILITIES: {
+					newValue = Ext.create('CMDBuild.model.widgets.customForm.Capabilities', newValue);
+				} break;
+
+				case CMDBuild.core.proxy.CMProxyConstants.DATA: {
+					newValue = Ext.isString(newValue) ? Ext.decode(newValue) : newValue;
+
+					var attributesArray = [];
+
+					Ext.Array.forEach(newValue, function(attributeObject, i, AllAttributesObjects) {
+						attributesArray.push(Ext.create('CMDBuild.model.common.Generic', attributeObject));
+					}, this);
+
+					newValue = attributesArray;
+				} break;
+
+				case CMDBuild.core.proxy.CMProxyConstants.MODEL: {
+					newValue = Ext.isString(newValue) ? Ext.decode(newValue) : newValue;
+
+					var attributesArray = [];
+
+					Ext.Array.forEach(newValue, function(attributeObject, i, AllAttributesObjects) {
+						attributesArray.push(Ext.create('CMDBuild.model.widgets.customForm.Attribute', attributeObject));
+					}, this);
+
+					newValue = attributesArray;
+				} break;
+
+				default: {
+					if (Ext.isString(newValue))
+						newValue = Ext.decode(newValue);
+				}
+			}
+
+			this.callParent(arguments);
 		}
 	});
 
