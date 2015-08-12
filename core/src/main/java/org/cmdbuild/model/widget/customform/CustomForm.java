@@ -1,16 +1,29 @@
 package org.cmdbuild.model.widget.customform;
 
+import static com.google.common.base.Optional.absent;
+import static com.google.common.base.Optional.of;
+import static java.lang.String.format;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.builder.ToStringBuilder.reflectionToString;
 import static org.apache.commons.lang3.builder.ToStringStyle.SHORT_PREFIX_STYLE;
 
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.cmdbuild.model.widget.Widget;
 import org.cmdbuild.model.widget.WidgetVisitor;
 import org.cmdbuild.workflow.CMActivityInstance;
 import org.codehaus.jackson.annotate.JsonTypeInfo;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.slf4j.Marker;
+import org.slf4j.MarkerFactory;
+
+import com.google.common.base.Optional;
 
 public class CustomForm extends Widget {
+
+	private static final Marker MARKER = MarkerFactory.getMarker(CustomForm.class.getName());
 
 	public static class Capabilities {
 
@@ -137,6 +150,7 @@ public class CustomForm extends Widget {
 
 	}
 
+	private String outputName;
 	private boolean required;
 	private String model;
 	private String data;
@@ -153,8 +167,61 @@ public class CustomForm extends Widget {
 	@Override
 	public void save(final CMActivityInstance activityInstance, final Object input, final Map<String, Object> output)
 			throws Exception {
-		// TODO Auto-generated method stub
-		super.save(activityInstance, input, output);
+		if (outputName != null) {
+			final Optional<String> submission = decodeInput(input);
+			output.put(outputName, submission.or(of(EMPTY)));
+		}
+	}
+
+	private Optional<String> decodeInput(final Object input) {
+		final Optional<String> output;
+		if (serialization.configuration instanceof TextConfiguration) {
+			final TextConfiguration configuration = TextConfiguration.class.cast(serialization.configuration);
+			final StringBuilder outputBuilder = new StringBuilder();
+			@SuppressWarnings("unchecked")
+			final Iterable<String> inputElements = (Iterable<String>) input;
+			for (final String element : inputElements) {
+				if (outputBuilder.length() != 0) {
+					outputBuilder.append(configuration.rowsSeparator);
+				}
+				try {
+					final StringBuilder entryString = new StringBuilder();
+					@SuppressWarnings("unchecked")
+					final Map<String, Object> elementAsMap = new ObjectMapper().readValue(element, HashMap.class);
+					for (final Entry<String, Object> entry : elementAsMap.entrySet()) {
+						logger.debug(MARKER, "serializing entry '{}'", element);
+						final String key = entry.getKey();
+						if (key.equals("Id") || key.equals("IdClass")) {
+							continue;
+						}
+						final Object value = entry.getValue();
+						if (value == null) {
+							continue;
+						}
+						if (entryString.length() != 0) {
+							entryString.append(configuration.attributesSeparator);
+						}
+						final String keyValueString = format("%s%s%s", key, configuration.keyValueSeparator, value);
+						entryString.append(keyValueString);
+					}
+					outputBuilder.append(entryString);
+				} catch (final Exception e) {
+					logger.warn(MARKER, format("error serializing entry '%s'", element), e);
+				}
+			}
+			output = of(outputBuilder.toString());
+		} else {
+			output = absent();
+		}
+		return output;
+	}
+
+	public String getOutputName() {
+		return outputName;
+	}
+
+	public void setOutputName(final String outputName) {
+		this.outputName = outputName;
 	}
 
 	public boolean isRequired() {

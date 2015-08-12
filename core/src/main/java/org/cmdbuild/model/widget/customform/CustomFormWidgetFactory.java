@@ -84,6 +84,7 @@ public class CustomFormWidgetFactory extends ValuePairWidgetFactory {
 	@Override
 	protected Widget createWidget(final Map<String, Object> valueMap) {
 		final CustomForm widget = new CustomForm();
+		widget.setOutputName(readString(valueMap.get(OUTPUT_KEY)));
 		widget.setRequired(readBooleanFalseIfMissing(valueMap.get(REQUIRED)));
 		widget.setModel(modelOf(valueMap).build());
 		widget.setData(dataOf(valueMap).build());
