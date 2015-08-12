@@ -22,11 +22,9 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
-			'widgetConfigurationGet',
 			'getTemplateResolverServerVars',
-			'widgetConfigurationIsAttributeEmpty',
-//			'onEditRowButtonClick',
-//			'setGridDataFromCsv'
+			'widgetConfigurationGet',
+			'widgetConfigurationIsAttributeEmpty'
 		],
 
 		/**
@@ -35,10 +33,54 @@
 		view: undefined,
 
 		/**
+		 * @param {CMDBuild.view.management.common.widgets.CMWidgetManager} configurationObject.view
+		 * @param {CMDBuild.controller.management.common.CMWidgetManagerController} configurationObject.parentDelegate
+		 * @param {Object} configurationObject.widgetConfiguration
+		 * @param {Ext.form.Basic} configurationObject.clientForm
+		 * @param {CMDBuild.model.CMActivityInstance} configurationObject.card
+		 */
+		constructor: function(configurationObject) {
+			this.callParent(arguments);
+
+			this.beforeActiveView();
+		},
+
+		/**
+		 * @param {Array} target
+		 */
+		applyTemplateResolver: function(target) {
+			var decodedOutput = [];
+
+			target = Ext.isString(target) ? Ext.decode(target) : target;
+			target = Ext.isArray(target) ? target : [target];
+
+			Ext.Array.forEach(target, function(object, i, allObjects) {
+				new CMDBuild.Management.TemplateResolver({
+					clientForm: this.clientForm,
+					xaVars: object,
+					serverVars: this.getTemplateResolverServerVars()
+				}).resolveTemplates({
+					attributes: Ext.Object.getKeys(object),
+					callback: function(out, ctx) {
+						decodedOutput.push(out);
+					}
+				});
+			}, this);
+
+			return decodedOutput;
+		},
+
+		/**
 		 * @override
 		 */
 		beforeActiveView: function() {
 			this.callParent(arguments);
+
+			// Execute template resolver on model property
+			this.widgetConfigurationSet(
+				this.applyTemplateResolver(this.widgetConfiguration[CMDBuild.core.proxy.CMProxyConstants.MODEL])
+				, CMDBuild.core.proxy.CMProxyConstants.MODEL
+			);
 
 			if (!this.widgetConfigurationIsAttributeEmpty(CMDBuild.core.proxy.CMProxyConstants.MODEL)) {
 				this.buildLayout();
@@ -72,6 +114,8 @@
 				}
 			}
 
+			this.controllerLayout.setData(this.widgetConfigurationGet(CMDBuild.core.proxy.CMProxyConstants.DATA));
+
 			// Add related layout panel
 			if (!Ext.isEmpty(this.view)) {
 				this.view.removeAll();
@@ -84,36 +128,26 @@
 		 *
 		 * @override
 		 */
-		getData: function() { // TODO: implementation of serverside template resolver
-			var me = this;
+		getData: function() { // TODO: finish implementation
 			var out = {};
-			var data = [];
 
-			this.grid.getStore().each(function(record) {
-				new CMDBuild.Management.TemplateResolver({
-					clientForm: this.clientForm,
-					xaVars: record.getData(),
-					serverVars: this.getTemplateResolverServerVars()
-				}).resolveTemplates({
-					attributes: Ext.Object.getKeys(record.getData()),
-					callback: function(out, ctx) {
-						// Date field format fix: date field gives wrong formatted value used as cell editor.
-						// To delete when FieldManager will be refactored
-						Ext.Object.each(out, function(key, value, object) {
-							out[key] = me.formatDate(value);
-						});
+			if (!this.widgetConfigurationGet([CMDBuild.core.proxy.CMProxyConstants.CAPABILITIES, CMDBuild.core.proxy.CMProxyConstants.READ_ONLY])) {
+				out[CMDBuild.core.proxy.CMProxyConstants.OUTPUT] = [];
 
-						data.push(
-							Ext.encode(
-								Ext.Object.merge(record.getData(), out)
-							)
-						);
-					}
-				});
-			}, this);
-
-			if (this.cmfg('widgetConfigurationGet', [CMDBuild.core.proxy.CMProxyConstants.CAPABILITIES, CMDBuild.core.proxy.CMProxyConstants.READ_ONLY]))
-				out[CMDBuild.core.proxy.CMProxyConstants.OUTPUT] = data;
+				// Uses direct data property access to avoid a get problem because of generic model
+				Ext.Array.forEach(this.controllerLayout.getData(), function(rowModel, i, allRowModels) {
+					new CMDBuild.Management.TemplateResolver({
+						clientForm: this.clientForm,
+						xaVars: rowModel.data,
+						serverVars: this.getTemplateResolverServerVars()
+					}).resolveTemplates({
+						attributes: Ext.Object.getKeys(rowModel.data),
+						callback: function(out, ctx) {
+							out[CMDBuild.core.proxy.CMProxyConstants.OUTPUT].push(Ext.encode(out));
+						}
+					});
+				}, this);
+			}
 
 			return out;
 		},
@@ -121,7 +155,7 @@
 		/**
 		 * Check required field value of grid store records
 		 *
-		 * TODO: this function should be called with cmfg functionalities but that's requires a refactor of widgets base classes.
+		 * FIXME: this function should be called with cmfg functionalities but that's requires a refactor of widgets base classes.
 		 *
 		 * @returns {Boolean}
 		 *
@@ -145,12 +179,18 @@
 
 		// WidgetConfiguration methods
 			/**
-			 * @param {Object} widgetConfigurationObject
+			 * @param {Object} configurationObject
+			 * @param {String} propertyName
+			 *
+			 * @returns {Mixed}
 			 *
 			 * @override
 			 */
-			widgetConfigurationSet: function(widgetConfigurationObject) {
-				this.widgetConfigurationModel = Ext.create('CMDBuild.model.widgets.customForm.Configuration', widgetConfigurationObject);
+			widgetConfigurationSet: function(configurationObject, propertyName) {
+				this.callParent(arguments);
+
+				if (Ext.isEmpty(propertyName))
+					this.widgetConfigurationModel = Ext.create('CMDBuild.model.widgets.customForm.Configuration', configurationObject);
 			}
 	});
 

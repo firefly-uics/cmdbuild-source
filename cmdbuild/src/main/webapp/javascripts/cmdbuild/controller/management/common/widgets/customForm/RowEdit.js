@@ -65,14 +65,22 @@
 			var itemsArray = [];
 
 			if (!this.cmfg('widgetConfigurationIsAttributeEmpty',  CMDBuild.core.proxy.CMProxyConstants.MODEL)) {
+				var fieldManager = Ext.create('CMDBuild.core.fieldManager.FieldManager', { parentDelegate: this });
+
 				Ext.Array.forEach(this.cmfg('widgetConfigurationGet', CMDBuild.core.proxy.CMProxyConstants.MODEL), function(attribute, i, allAttributes) {
-					var attribute = attribute.getAdaptedData();
-					var item = CMDBuild.Management.FieldManager.getFieldForAttr(attribute, false, false);
+					if (fieldManager.isAttributeManaged(attribute.get(CMDBuild.core.proxy.CMProxyConstants.TYPE))) {
+						fieldManager.attributeModelSet(Ext.create('CMDBuild.model.common.attributes.Attribute', attribute.getData()));
+_debug(fieldManager.buildField());
+						itemsArray.push(fieldManager.buildField());
+					} else { // @deprecated - Old field manager
+						var attribute = attribute.getAdaptedData();
+						var item = CMDBuild.Management.FieldManager.getFieldForAttr(attribute, false, false);
 
-					if (attribute[CMDBuild.core.proxy.CMProxyConstants.FIELD_MODE] == 'read')
-						item.setDisabled(true);
+						if (attribute[CMDBuild.core.proxy.CMProxyConstants.FIELD_MODE] == 'read')
+							item.setDisabled(true);
 
-					itemsArray.push(item);
+						itemsArray.push(item);
+					}
 				}, this);
 			}
 
