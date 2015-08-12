@@ -14,6 +14,7 @@ import org.cmdbuild.logic.translation.TranslationLogic;
 import org.cmdbuild.servlets.json.serializers.translations.table.ProcessTranslationSerializer;
 import org.cmdbuild.servlets.json.serializers.translations.table.TranslationSerializer;
 import org.cmdbuild.servlets.json.serializers.translations.table.TranslationSerializerFactory;
+import org.cmdbuild.servlets.json.serializers.translations.table.TranslationSerializerFactory.Output;
 import org.cmdbuild.servlets.json.translationtable.objects.EntryField;
 import org.cmdbuild.servlets.json.translationtable.objects.ParentEntry;
 import org.junit.Before;
@@ -52,6 +53,7 @@ public class ProcessClassSerializationTest {
 		final TranslationSerializerFactory factory = TranslationSerializerFactory //
 				.newInstance() //
 				.withType("process") //
+				.withOutput(Output.TABLE) //
 				.build();
 
 		// when
@@ -73,6 +75,7 @@ public class ProcessClassSerializationTest {
 				.withDataAccessLogic(dataLogic) //
 				.withTranslationLogic(translationLogic) //
 				.withType("process") //
+				.withOutput(Output.TABLE) //
 				.withActiveOnly(true) //
 				.build();
 		final TranslationSerializer serializer = factory.createSerializer();
@@ -105,7 +108,9 @@ public class ProcessClassSerializationTest {
 				.newInstance() //
 				.withDataAccessLogic(dataLogic) //
 				.withLookupStore(null) //
-				.withTranslationLogic(translationLogic).withType("process") //
+				.withTranslationLogic(translationLogic) //
+				.withType("process") //
+				.withOutput(Output.TABLE) //
 				.withActiveOnly(true) //
 				.withSorters(null) //
 				.build();
@@ -140,7 +145,9 @@ public class ProcessClassSerializationTest {
 				.newInstance() //
 				.withDataAccessLogic(dataLogic) //
 				.withLookupStore(null) //
-				.withTranslationLogic(translationLogic).withType("process") //
+				.withTranslationLogic(translationLogic) //
+				.withType("process") //
+				.withOutput(Output.TABLE) //
 				.withActiveOnly(true) //
 				.withSorters(null) //
 				.build();

@@ -14,6 +14,7 @@ import org.cmdbuild.services.store.report.ReportStore;
 import org.cmdbuild.servlets.json.serializers.translations.table.ReportTranslationSerializer;
 import org.cmdbuild.servlets.json.serializers.translations.table.TranslationSerializer;
 import org.cmdbuild.servlets.json.serializers.translations.table.TranslationSerializerFactory;
+import org.cmdbuild.servlets.json.serializers.translations.table.TranslationSerializerFactory.Output;
 import org.cmdbuild.servlets.json.translationtable.objects.EntryField;
 import org.cmdbuild.servlets.json.translationtable.objects.TableEntry;
 import org.json.JSONArray;
@@ -44,6 +45,7 @@ public class ReportSerializationTest {
 		final TranslationSerializerFactory factory = TranslationSerializerFactory //
 				.newInstance() //
 				.withType("report") //
+				.withOutput(Output.TABLE) //
 				.build();
 
 		// when
@@ -65,6 +67,7 @@ public class ReportSerializationTest {
 				.newInstance() //
 				.withReportStore(reportStore).withTranslationLogic(translationLogic) //
 				.withType("report") //
+				.withOutput(Output.TABLE) //
 				.withSorters(null) //
 				.build();
 		final TranslationSerializer serializer = factory.createSerializer();
@@ -92,6 +95,7 @@ public class ReportSerializationTest {
 				.withReportStore(reportStore) //
 				.withTranslationLogic(translationLogic) //
 				.withType("report") //
+				.withOutput(Output.TABLE) //
 				.build();
 		final TranslationSerializer serializer = factory.createSerializer();
 
@@ -125,6 +129,7 @@ public class ReportSerializationTest {
 				.withReportStore(reportStore) //
 				.withTranslationLogic(translationLogic) //
 				.withType("report") //
+				.withOutput(Output.TABLE) //
 				.build();
 		final TranslationSerializer serializer = factory.createSerializer();
 

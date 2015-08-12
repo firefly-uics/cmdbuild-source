@@ -13,6 +13,7 @@ import org.cmdbuild.logic.view.ViewLogic;
 import org.cmdbuild.model.view.View;
 import org.cmdbuild.servlets.json.serializers.translations.table.TranslationSerializer;
 import org.cmdbuild.servlets.json.serializers.translations.table.TranslationSerializerFactory;
+import org.cmdbuild.servlets.json.serializers.translations.table.TranslationSerializerFactory.Output;
 import org.cmdbuild.servlets.json.serializers.translations.table.ViewTranslationSerializer;
 import org.cmdbuild.servlets.json.translationtable.objects.EntryField;
 import org.cmdbuild.servlets.json.translationtable.objects.TableEntry;
@@ -47,6 +48,7 @@ public class ViewSerializationTest {
 		final TranslationSerializerFactory factory = TranslationSerializerFactory //
 				.newInstance() //
 				.withType("view") //
+				.withOutput(Output.TABLE) //
 				.build();
 
 		// when
@@ -69,6 +71,7 @@ public class ViewSerializationTest {
 				.withViewLogic(viewLogic) //
 				.withTranslationLogic(translationLogic) //
 				.withType("view") //
+				.withOutput(Output.TABLE) //
 				.withActiveOnly(true) //
 				.build();
 		final TranslationSerializer serializer = factory.createSerializer();
@@ -95,7 +98,9 @@ public class ViewSerializationTest {
 				.newInstance() //
 				.withViewLogic(viewLogic) //
 				.withLookupStore(null) //
-				.withTranslationLogic(translationLogic).withType("view") //
+				.withTranslationLogic(translationLogic) //
+				.withType("view") //
+				.withOutput(Output.TABLE) //
 				.withActiveOnly(true) //
 				.withSorters(null) //
 				.build();
@@ -130,7 +135,9 @@ public class ViewSerializationTest {
 				.newInstance() //
 				.withViewLogic(viewLogic) //
 				.withLookupStore(null) //
-				.withTranslationLogic(translationLogic).withType("view") //
+				.withTranslationLogic(translationLogic) //
+				.withType("view") //
+				.withOutput(Output.TABLE) //
 				.withActiveOnly(true) //
 				.withSorters(sorters) //
 				.build();
