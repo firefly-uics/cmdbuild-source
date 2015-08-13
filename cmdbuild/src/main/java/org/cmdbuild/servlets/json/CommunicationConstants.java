@@ -108,6 +108,7 @@ public class CommunicationConstants {
 			EMAIL_TEMPLATE = "emailTemplate", //
 			ENABLED = "enabled", //
 			END_DATE = "endDate", //
+			ENTRIES = "entries", //
 			ENTRY_TYPE = "entryType", //
 			EXPORTED = "exported", //
 			EXPORT_MAPPING = "ExportMapping", //
