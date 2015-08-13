@@ -8,8 +8,10 @@ import static org.cmdbuild.servlets.json.CommunicationConstants.SEPARATOR;
 import static org.cmdbuild.servlets.json.CommunicationConstants.SORT;
 import static org.cmdbuild.servlets.json.CommunicationConstants.TRANSLATIONS;
 import static org.cmdbuild.servlets.json.schema.Utils.toMap;
-
-import static org.cmdbuild.servlets.json.serializers.translations.commons.Constants.*;
+import static org.cmdbuild.servlets.json.serializers.translations.commons.Constants.DEFAULT;
+import static org.cmdbuild.servlets.json.serializers.translations.commons.Constants.IDENTIFIER;
+import static org.cmdbuild.servlets.json.serializers.translations.commons.Constants.OWNER;
+import static org.cmdbuild.servlets.json.serializers.translations.commons.Constants.TYPE;
 
 import java.io.File;
 import java.io.IOException;
@@ -97,9 +99,9 @@ public class Translation extends JSONBaseWithSpringContext {
 	public DataHandler exportCsv(@Parameter(value = TYPE) final String type, //
 			@Parameter(value = SEPARATOR, required = false) final String separator, //
 			@Parameter(value = SORT, required = false) final JSONArray sorters, //
-			@Parameter(value = ACTIVE, required = false) boolean activeOnly //
+			@Parameter(value = ACTIVE, required = false) final boolean activeOnly //
 	) throws JSONException, IOException {
-		
+
 		final TranslationSerializerFactory factory = TranslationSerializerFactory //
 				.newInstance() //
 				.withOutput(Output.CSV) //

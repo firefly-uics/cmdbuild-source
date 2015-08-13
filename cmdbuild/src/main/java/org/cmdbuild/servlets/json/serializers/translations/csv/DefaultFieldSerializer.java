@@ -47,7 +47,6 @@ import org.cmdbuild.servlets.json.schema.TranslatableElement;
 import org.cmdbuild.servlets.json.translationtable.objects.csv.CsvTranslationRecord;
 
 import com.google.common.base.Function;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 
 public class DefaultFieldSerializer implements FieldSerializer {
