@@ -9,7 +9,7 @@ import org.cmdbuild.logic.translation.SetupFacade;
 import org.cmdbuild.logic.translation.TranslationLogic;
 import org.cmdbuild.servlets.json.serializers.translations.commons.LookupTypeSorter;
 import org.cmdbuild.servlets.json.serializers.translations.commons.LookupValueSorter;
-import org.cmdbuild.servlets.json.serializers.translations.commons.TranslationSerializer;
+import org.cmdbuild.servlets.json.serializers.translations.commons.TranslationSectionSerializer;
 import org.cmdbuild.servlets.json.translationtable.objects.TranslationSerialization;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -18,7 +18,7 @@ import org.json.JSONObject;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Ordering;
 
-public class LookupTranslationSerializer implements TranslationSerializer {
+public class LookupSectionSerializer implements TranslationSectionSerializer {
 
 	private static final String LOOKUP_VALUE = "lookupValue";
 	private static final String LOOKUP_TYPE = "lookupType";
@@ -32,7 +32,7 @@ public class LookupTranslationSerializer implements TranslationSerializer {
 
 	private final Collection<TranslationSerialization> records = Lists.newArrayList();
 
-	public LookupTranslationSerializer(final LookupStore lookupStore, final boolean activeOnly,
+	public LookupSectionSerializer(final LookupStore lookupStore, final boolean activeOnly,
 			final TranslationLogic translationLogic, final JSONArray sorters, final String separator,
 			final SetupFacade setupFacade) {
 		this.enabledLanguages = setupFacade.getEnabledLanguages();

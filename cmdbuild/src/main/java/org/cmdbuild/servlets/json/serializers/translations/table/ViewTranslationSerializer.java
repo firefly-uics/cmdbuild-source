@@ -9,7 +9,7 @@ import org.cmdbuild.logic.translation.TranslationObject;
 import org.cmdbuild.logic.translation.converter.ViewConverter;
 import org.cmdbuild.logic.view.ViewLogic;
 import org.cmdbuild.model.view.View;
-import org.cmdbuild.servlets.json.serializers.translations.commons.TranslationSerializer;
+import org.cmdbuild.servlets.json.serializers.translations.commons.TranslationSectionSerializer;
 import org.cmdbuild.servlets.json.serializers.translations.commons.ViewSorter;
 import org.cmdbuild.servlets.json.translationtable.objects.EntryField;
 import org.cmdbuild.servlets.json.translationtable.objects.TableEntry;
@@ -19,7 +19,7 @@ import org.json.JSONArray;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Ordering;
 
-public class ViewTranslationSerializer implements TranslationSerializer {
+public class ViewTranslationSerializer implements TranslationSectionSerializer {
 
 	private final ViewLogic viewLogic;
 	final TranslationLogic translationLogic;

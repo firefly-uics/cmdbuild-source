@@ -21,11 +21,11 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 
-public class DomainTranslationSerializer extends EntryTypeTranslationSerializer {
+public class DomainSectionSerializer extends EntryTypeTranslationSerializer {
 
 	private final Collection<TranslationSerialization> records = Lists.newArrayList();
 
-	public DomainTranslationSerializer(final DataAccessLogic dataLogic, final boolean activeOnly,
+	public DomainSectionSerializer(final DataAccessLogic dataLogic, final boolean activeOnly,
 			final TranslationLogic translationLogic, final JSONArray sorters, final String separator,
 			final SetupFacade setupFacade) {
 		super(dataLogic, activeOnly, translationLogic, separator, setupFacade);

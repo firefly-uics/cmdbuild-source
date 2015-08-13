@@ -12,7 +12,7 @@ import org.cmdbuild.report.ReportFactory.ReportType;
 import org.cmdbuild.services.store.report.Report;
 import org.cmdbuild.services.store.report.ReportStore;
 import org.cmdbuild.servlets.json.serializers.translations.commons.ReportSorter;
-import org.cmdbuild.servlets.json.serializers.translations.commons.TranslationSerializer;
+import org.cmdbuild.servlets.json.serializers.translations.commons.TranslationSectionSerializer;
 import org.cmdbuild.servlets.json.translationtable.objects.EntryField;
 import org.cmdbuild.servlets.json.translationtable.objects.TableEntry;
 import org.cmdbuild.servlets.json.translationtable.objects.TranslationSerialization;
@@ -22,7 +22,7 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Ordering;
 
-public class ReportTranslationSerializer implements TranslationSerializer {
+public class ReportTranslationSerializer implements TranslationSectionSerializer {
 
 	private final ReportStore reportStore;
 	private final TranslationLogic translationLogic;

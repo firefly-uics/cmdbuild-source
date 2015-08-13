@@ -12,7 +12,7 @@ import org.cmdbuild.logic.translation.TranslationObject;
 import org.cmdbuild.logic.translation.converter.LookupConverter;
 import org.cmdbuild.servlets.json.serializers.translations.commons.LookupTypeSorter;
 import org.cmdbuild.servlets.json.serializers.translations.commons.LookupValueSorter;
-import org.cmdbuild.servlets.json.serializers.translations.commons.TranslationSerializer;
+import org.cmdbuild.servlets.json.serializers.translations.commons.TranslationSectionSerializer;
 import org.cmdbuild.servlets.json.translationtable.objects.EntryField;
 import org.cmdbuild.servlets.json.translationtable.objects.LookupTypeEntry;
 import org.cmdbuild.servlets.json.translationtable.objects.LookupValueEntry;
@@ -24,7 +24,7 @@ import org.json.JSONObject;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Ordering;
 
-public class LookupTranslationSerializer implements TranslationSerializer {
+public class LookupTranslationSerializer implements TranslationSectionSerializer {
 
 	private static final String LOOKUP_VALUE = "lookupValue";
 	private static final String LOOKUP_TYPE = "lookupType";

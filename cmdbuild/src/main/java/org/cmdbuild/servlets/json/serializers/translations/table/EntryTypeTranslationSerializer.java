@@ -14,7 +14,7 @@ import org.cmdbuild.logic.translation.converter.AttributeConverter;
 import org.cmdbuild.logic.translation.converter.ClassConverter;
 import org.cmdbuild.servlets.json.serializers.translations.commons.AttributeSorter;
 import org.cmdbuild.servlets.json.serializers.translations.commons.EntryTypeSorter;
-import org.cmdbuild.servlets.json.serializers.translations.commons.TranslationSerializer;
+import org.cmdbuild.servlets.json.serializers.translations.commons.TranslationSectionSerializer;
 import org.cmdbuild.servlets.json.translationtable.objects.EntryField;
 import org.cmdbuild.servlets.json.translationtable.objects.TableEntry;
 import org.cmdbuild.servlets.json.translationtable.objects.TranslationSerialization;
@@ -22,7 +22,7 @@ import org.cmdbuild.servlets.json.translationtable.objects.TranslationSerializat
 import com.google.common.collect.Lists;
 import com.google.common.collect.Ordering;
 
-public abstract class EntryTypeTranslationSerializer implements TranslationSerializer {
+public abstract class EntryTypeTranslationSerializer implements TranslationSectionSerializer {
 
 	final DataAccessLogic dataLogic;
 	final TranslationLogic translationLogic;

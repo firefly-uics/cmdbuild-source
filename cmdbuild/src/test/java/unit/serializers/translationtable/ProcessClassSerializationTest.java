@@ -11,7 +11,7 @@ import org.cmdbuild.common.Constants;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.logic.translation.TranslationLogic;
-import org.cmdbuild.servlets.json.serializers.translations.commons.TranslationSerializer;
+import org.cmdbuild.servlets.json.serializers.translations.commons.TranslationSectionSerializer;
 import org.cmdbuild.servlets.json.serializers.translations.table.ProcessTranslationSerializer;
 import org.cmdbuild.servlets.json.serializers.translations.table.TranslationSerializerFactory;
 import org.cmdbuild.servlets.json.serializers.translations.table.TranslationSerializerFactory.Output;
@@ -57,7 +57,7 @@ public class ProcessClassSerializationTest {
 				.build();
 
 		// when
-		final TranslationSerializer serializer = factory.createSerializer();
+		final TranslationSectionSerializer serializer = factory.createSerializer();
 
 		// then
 		assertTrue(serializer instanceof ProcessTranslationSerializer);
@@ -78,7 +78,7 @@ public class ProcessClassSerializationTest {
 				.withOutput(Output.TABLE) //
 				.withActiveOnly(true) //
 				.build();
-		final TranslationSerializer serializer = factory.createSerializer();
+		final TranslationSectionSerializer serializer = factory.createSerializer();
 
 		doReturn(classes).when(dataLogic).findAllClasses();
 		doReturn(activity).when(dataLogic).findClass(Constants.BASE_PROCESS_CLASS_NAME);
@@ -114,7 +114,7 @@ public class ProcessClassSerializationTest {
 				.withActiveOnly(true) //
 				.withSorters(null) //
 				.build();
-		final TranslationSerializer serializer = factory.createSerializer();
+		final TranslationSectionSerializer serializer = factory.createSerializer();
 
 		doReturn(classes).when(dataLogic).findAllClasses();
 		doReturn(activity).when(dataLogic).findClass(Constants.BASE_PROCESS_CLASS_NAME);
@@ -151,7 +151,7 @@ public class ProcessClassSerializationTest {
 				.withActiveOnly(true) //
 				.withSorters(null) //
 				.build();
-		final TranslationSerializer serializer = factory.createSerializer();
+		final TranslationSectionSerializer serializer = factory.createSerializer();
 
 		doReturn(classes).when(dataLogic).findAllClasses();
 		doReturn(activity).when(dataLogic).findClass(Constants.BASE_PROCESS_CLASS_NAME);
