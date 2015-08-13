@@ -43,6 +43,10 @@ public class TranslationSerializerFactory {
 		return new SerializerBuilder();
 	}
 
+	public static enum Sections {
+		CLASS, DOMAIN, FILTER, LOOKUP, MENU, PROCESS, REPORT, VIEW;
+	}
+
 	public static enum Output {
 		CSV, TABLE;
 	}
@@ -110,8 +114,13 @@ public class TranslationSerializerFactory {
 				return new org.cmdbuild.servlets.json.serializers.translations.csv.ProcessSectionSerializer(dataLogic,
 						activeOnly, translationLogic, sorters, separator, setupFacade);
 			}
-		} else if (type.equalsIgnoreCase(REPORT) && output.equals(Output.TABLE)) {
-			return new ReportTranslationSerializer(reportStore, translationLogic, sorters, separator, setupFacade);
+		} else if (type.equalsIgnoreCase(REPORT)) {
+			if (output.equals(Output.TABLE)) {
+				return new ReportTranslationSerializer(reportStore, translationLogic, sorters, separator, setupFacade);
+			} else if (output.equals(Output.CSV)) {
+				return new org.cmdbuild.servlets.json.serializers.translations.csv.ReportSectionSerializer(
+						translationLogic, sorters, setupFacade, reportStore);
+			}
 		} else if (type.equalsIgnoreCase(VIEW)) {
 			if (output.equals(Output.TABLE)) {
 				return new ViewTranslationSerializer(viewLogic, translationLogic, sorters, separator, setupFacade);

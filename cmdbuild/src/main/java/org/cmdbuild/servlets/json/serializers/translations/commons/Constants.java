@@ -7,6 +7,7 @@ import java.util.Collections;
 import org.cmdbuild.logic.data.access.DataAccessLogic.AttributesQuery;
 import org.cmdbuild.model.view.View;
 import org.cmdbuild.services.store.FilterStore.Filter;
+import org.cmdbuild.services.store.report.Report;
 
 import com.google.common.base.Predicate;
 
@@ -55,6 +56,16 @@ public class Constants {
 			}
 		};
 	}
+	
+	public static Predicate<Report> matchReportByCode(final String name) {
+		return new Predicate<Report>() {
+			@Override
+			public boolean apply(final Report input) {
+				return name.equals(input.getCode());
+			}
+		};
+	}
+	
 	
 	private Constants() {
 		// prevents instantiation
