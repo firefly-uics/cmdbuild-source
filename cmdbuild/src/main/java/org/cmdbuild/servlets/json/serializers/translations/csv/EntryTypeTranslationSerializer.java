@@ -11,13 +11,13 @@ import org.cmdbuild.logic.translation.SetupFacade;
 import org.cmdbuild.logic.translation.TranslationLogic;
 import org.cmdbuild.servlets.json.serializers.translations.commons.AttributeSorter;
 import org.cmdbuild.servlets.json.serializers.translations.commons.EntryTypeSorter;
-import org.cmdbuild.servlets.json.serializers.translations.commons.TranslationSerializer;
+import org.cmdbuild.servlets.json.serializers.translations.commons.TranslationSectionSerializer;
 import org.cmdbuild.servlets.json.translationtable.objects.TranslationSerialization;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Ordering;
 
-public abstract class EntryTypeTranslationSerializer implements TranslationSerializer {
+public abstract class EntryTypeTranslationSerializer implements TranslationSectionSerializer {
 
 	final DataAccessLogic dataLogic;
 	Iterable<String> enabledLanguages;

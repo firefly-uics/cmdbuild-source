@@ -10,7 +10,7 @@ import java.util.List;
 import org.cmdbuild.logic.translation.TranslationLogic;
 import org.cmdbuild.services.store.DataViewFilterStore;
 import org.cmdbuild.services.store.FilterStore;
-import org.cmdbuild.servlets.json.serializers.translations.commons.TranslationSerializer;
+import org.cmdbuild.servlets.json.serializers.translations.commons.TranslationSectionSerializer;
 import org.cmdbuild.servlets.json.serializers.translations.table.FilterTranslationSerializer;
 import org.cmdbuild.servlets.json.serializers.translations.table.TranslationSerializerFactory;
 import org.cmdbuild.servlets.json.serializers.translations.table.TranslationSerializerFactory.Output;
@@ -52,7 +52,7 @@ public class FilterSerializationTest {
 				.build();
 
 		// when
-		final TranslationSerializer serializer = factory.createSerializer();
+		final TranslationSectionSerializer serializer = factory.createSerializer();
 
 		// then
 		assertTrue(serializer instanceof FilterTranslationSerializer);
@@ -73,7 +73,7 @@ public class FilterSerializationTest {
 				.withOutput(Output.TABLE) //
 				.withType("filter") //
 				.build();
-		final TranslationSerializer serializer = factory.createSerializer();
+		final TranslationSectionSerializer serializer = factory.createSerializer();
 
 		// when
 		final Object response = serializer.serialize();
@@ -100,7 +100,7 @@ public class FilterSerializationTest {
 				.withOutput(Output.TABLE) //
 				.withType("filter") //
 				.build();
-		final TranslationSerializer serializer = factory.createSerializer();
+		final TranslationSectionSerializer serializer = factory.createSerializer();
 
 		// when
 		final Object response = serializer.serialize();
@@ -134,7 +134,7 @@ public class FilterSerializationTest {
 				.withType("filter") //
 				.withOutput(Output.TABLE) //
 				.build();
-		final TranslationSerializer serializer = factory.createSerializer();
+		final TranslationSectionSerializer serializer = factory.createSerializer();
 
 		// when
 		final Object response = serializer.serialize();

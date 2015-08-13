@@ -10,7 +10,7 @@ import org.cmdbuild.logic.translation.converter.FilterConverter;
 import org.cmdbuild.services.store.FilterStore;
 import org.cmdbuild.services.store.FilterStore.Filter;
 import org.cmdbuild.servlets.json.serializers.translations.commons.FilterSorter;
-import org.cmdbuild.servlets.json.serializers.translations.commons.TranslationSerializer;
+import org.cmdbuild.servlets.json.serializers.translations.commons.TranslationSectionSerializer;
 import org.cmdbuild.servlets.json.translationtable.objects.EntryField;
 import org.cmdbuild.servlets.json.translationtable.objects.TableEntry;
 import org.cmdbuild.servlets.json.translationtable.objects.TranslationSerialization;
@@ -19,7 +19,7 @@ import org.json.JSONArray;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Ordering;
 
-public class FilterTranslationSerializer implements TranslationSerializer {
+public class FilterTranslationSerializer implements TranslationSectionSerializer {
 
 	private final FilterStore filterStore;
 	private final TranslationLogic translationLogic;

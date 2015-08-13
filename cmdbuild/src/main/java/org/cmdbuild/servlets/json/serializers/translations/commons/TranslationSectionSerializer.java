@@ -2,7 +2,7 @@ package org.cmdbuild.servlets.json.serializers.translations.commons;
 
 import org.cmdbuild.servlets.json.translationtable.objects.TranslationSerialization;
 
-public interface TranslationSerializer {
+public interface TranslationSectionSerializer {
 	
 	//TODO: move somewhere else
 	static final String FIELD = "field";

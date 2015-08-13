@@ -11,7 +11,7 @@ import org.cmdbuild.logic.translation.TranslationLogic;
 import org.cmdbuild.report.ReportFactory;
 import org.cmdbuild.services.store.report.Report;
 import org.cmdbuild.services.store.report.ReportStore;
-import org.cmdbuild.servlets.json.serializers.translations.commons.TranslationSerializer;
+import org.cmdbuild.servlets.json.serializers.translations.commons.TranslationSectionSerializer;
 import org.cmdbuild.servlets.json.serializers.translations.table.ReportTranslationSerializer;
 import org.cmdbuild.servlets.json.serializers.translations.table.TranslationSerializerFactory;
 import org.cmdbuild.servlets.json.serializers.translations.table.TranslationSerializerFactory.Output;
@@ -49,7 +49,7 @@ public class ReportSerializationTest {
 				.build();
 
 		// when
-		final TranslationSerializer serializer = factory.createSerializer();
+		final TranslationSectionSerializer serializer = factory.createSerializer();
 
 		// then
 		assertTrue(serializer instanceof ReportTranslationSerializer);
@@ -70,7 +70,7 @@ public class ReportSerializationTest {
 				.withOutput(Output.TABLE) //
 				.withSorters(null) //
 				.build();
-		final TranslationSerializer serializer = factory.createSerializer();
+		final TranslationSectionSerializer serializer = factory.createSerializer();
 
 		// when
 		final Object response = serializer.serialize();
@@ -97,7 +97,7 @@ public class ReportSerializationTest {
 				.withType("report") //
 				.withOutput(Output.TABLE) //
 				.build();
-		final TranslationSerializer serializer = factory.createSerializer();
+		final TranslationSectionSerializer serializer = factory.createSerializer();
 
 		// when
 		final Object response = serializer.serialize();
@@ -131,7 +131,7 @@ public class ReportSerializationTest {
 				.withType("report") //
 				.withOutput(Output.TABLE) //
 				.build();
-		final TranslationSerializer serializer = factory.createSerializer();
+		final TranslationSectionSerializer serializer = factory.createSerializer();
 
 		// when
 		final Object response = serializer.serialize();

@@ -25,7 +25,7 @@ import org.cmdbuild.logic.translation.TranslationObject;
 import org.cmdbuild.logic.translation.converter.Converter;
 import org.cmdbuild.servlets.json.JSONBaseWithSpringContext;
 import org.cmdbuild.servlets.json.management.JsonResponse;
-import org.cmdbuild.servlets.json.serializers.translations.commons.TranslationSerializer;
+import org.cmdbuild.servlets.json.serializers.translations.commons.TranslationSectionSerializer;
 import org.cmdbuild.servlets.json.serializers.translations.table.TranslationSerializerFactory;
 import org.cmdbuild.servlets.json.serializers.translations.table.TranslationSerializerFactory.Output;
 import org.cmdbuild.servlets.json.translationtable.objects.TranslationSerialization;
@@ -117,7 +117,7 @@ public class Translation extends JSONBaseWithSpringContext {
 				.withSetupFacade(setupFacade()) //
 				.build();
 
-		final TranslationSerializer serializer = factory.createSerializer();
+		final TranslationSectionSerializer serializer = factory.createSerializer();
 		final Iterable<TranslationSerialization> records = serializer.serialize();
 
 		final File outputFile = new File(type);
@@ -177,7 +177,7 @@ public class Translation extends JSONBaseWithSpringContext {
 				.withViewLogic(viewLogic()) //
 				.build();
 
-		final TranslationSerializer serializer = factory.createSerializer();
+		final TranslationSectionSerializer serializer = factory.createSerializer();
 		return JsonResponse.success(serializer.serialize());
 	}
 

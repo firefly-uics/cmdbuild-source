@@ -11,7 +11,7 @@ import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.logic.translation.TranslationLogic;
 import org.cmdbuild.logic.view.ViewLogic;
 import org.cmdbuild.model.view.View;
-import org.cmdbuild.servlets.json.serializers.translations.commons.TranslationSerializer;
+import org.cmdbuild.servlets.json.serializers.translations.commons.TranslationSectionSerializer;
 import org.cmdbuild.servlets.json.serializers.translations.table.TranslationSerializerFactory;
 import org.cmdbuild.servlets.json.serializers.translations.table.TranslationSerializerFactory.Output;
 import org.cmdbuild.servlets.json.serializers.translations.table.ViewTranslationSerializer;
@@ -52,7 +52,7 @@ public class ViewSerializationTest {
 				.build();
 
 		// when
-		final TranslationSerializer serializer = factory.createSerializer();
+		final TranslationSectionSerializer serializer = factory.createSerializer();
 
 		// then
 		assertTrue(serializer instanceof ViewTranslationSerializer);
@@ -74,7 +74,7 @@ public class ViewSerializationTest {
 				.withOutput(Output.TABLE) //
 				.withActiveOnly(true) //
 				.build();
-		final TranslationSerializer serializer = factory.createSerializer();
+		final TranslationSectionSerializer serializer = factory.createSerializer();
 
 		// when
 		final Object response = serializer.serialize();
@@ -104,7 +104,7 @@ public class ViewSerializationTest {
 				.withActiveOnly(true) //
 				.withSorters(null) //
 				.build();
-		final TranslationSerializer serializer = factory.createSerializer();
+		final TranslationSectionSerializer serializer = factory.createSerializer();
 
 		// when
 		final Object response = serializer.serialize();
@@ -141,7 +141,7 @@ public class ViewSerializationTest {
 				.withActiveOnly(true) //
 				.withSorters(sorters) //
 				.build();
-		final TranslationSerializer serializer = factory.createSerializer();
+		final TranslationSectionSerializer serializer = factory.createSerializer();
 
 		// when
 		final Object response = serializer.serialize();

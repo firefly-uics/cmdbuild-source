@@ -10,7 +10,7 @@ import org.cmdbuild.logic.translation.TranslationLogic;
 import org.cmdbuild.logic.view.ViewLogic;
 import org.cmdbuild.services.store.FilterStore;
 import org.cmdbuild.services.store.report.ReportStore;
-import org.cmdbuild.servlets.json.serializers.translations.commons.TranslationSerializer;
+import org.cmdbuild.servlets.json.serializers.translations.commons.TranslationSectionSerializer;
 import org.json.JSONArray;
 
 public class TranslationSerializerFactory {
@@ -64,7 +64,7 @@ public class TranslationSerializerFactory {
 		this.viewLogic = builder.viewLogic;
 	}
 
-	public TranslationSerializer createSerializer() {
+	public TranslationSectionSerializer createSerializer() {
 		if (type.equalsIgnoreCase(CLASS)) {
 			if (output.equals(Output.TABLE)) {
 				return new ClassTranslationSerializer(dataLogic, activeOnly, translationLogic, sorters);
@@ -77,7 +77,7 @@ public class TranslationSerializerFactory {
 				return new DomainTranslationSerializer(dataLogic, activeOnly, translationLogic, sorters, separator,
 						setupFacade);
 			} else if (output.equals(Output.CSV)) {
-				return new org.cmdbuild.servlets.json.serializers.translations.csv.DomainTranslationSerializer(
+				return new org.cmdbuild.servlets.json.serializers.translations.csv.DomainSectionSerializer(
 						dataLogic, activeOnly, translationLogic, sorters, separator, setupFacade);
 			}
 		} else if (type.equalsIgnoreCase(FILTER)) {
@@ -89,7 +89,7 @@ public class TranslationSerializerFactory {
 				return new LookupTranslationSerializer(lookupStore, activeOnly, translationLogic, sorters, separator,
 						setupFacade);
 			} else if (output.equals(Output.CSV)) {
-				return new org.cmdbuild.servlets.json.serializers.translations.csv.LookupTranslationSerializer(
+				return new org.cmdbuild.servlets.json.serializers.translations.csv.LookupSectionSerializer(
 						lookupStore, activeOnly, translationLogic, sorters, separator, setupFacade);
 			}
 		} else if (type.equalsIgnoreCase(MENU) && output.equals(Output.TABLE)) {

@@ -17,7 +17,7 @@ import org.cmdbuild.services.store.menu.MenuConstants;
 import org.cmdbuild.services.store.menu.MenuItem;
 import org.cmdbuild.servlets.json.serializers.translations.commons.MenuItemSorter;
 import org.cmdbuild.servlets.json.serializers.translations.commons.MenuSorter;
-import org.cmdbuild.servlets.json.serializers.translations.commons.TranslationSerializer;
+import org.cmdbuild.servlets.json.serializers.translations.commons.TranslationSectionSerializer;
 import org.cmdbuild.servlets.json.translationtable.objects.EntryField;
 import org.cmdbuild.servlets.json.translationtable.objects.MenuEntry;
 import org.cmdbuild.servlets.json.translationtable.objects.ParentEntry;
@@ -30,7 +30,7 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Ordering;
 
-public class MenuTranslationSerializer implements TranslationSerializer {
+public class MenuTranslationSerializer implements TranslationSectionSerializer {
 
 	private static final String DEFAULT_MENU_GROUP_DESCRIPTION = "*Default*";
 	private final AuthenticationLogic authLogic;

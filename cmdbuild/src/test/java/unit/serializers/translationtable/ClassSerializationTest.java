@@ -10,7 +10,7 @@ import java.util.List;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.logic.translation.TranslationLogic;
-import org.cmdbuild.servlets.json.serializers.translations.commons.TranslationSerializer;
+import org.cmdbuild.servlets.json.serializers.translations.commons.TranslationSectionSerializer;
 import org.cmdbuild.servlets.json.serializers.translations.table.ClassTranslationSerializer;
 import org.cmdbuild.servlets.json.serializers.translations.table.TranslationSerializerFactory;
 import org.cmdbuild.servlets.json.serializers.translations.table.TranslationSerializerFactory.Output;
@@ -57,7 +57,7 @@ public class ClassSerializationTest {
 				.build();
 
 		// when
-		final TranslationSerializer serializer = factory.createSerializer();
+		final TranslationSectionSerializer serializer = factory.createSerializer();
 
 		// then
 		assertTrue(serializer instanceof ClassTranslationSerializer);
@@ -80,7 +80,7 @@ public class ClassSerializationTest {
 				.withActiveOnly(true) //
 				.withSorters(null) //
 				.build();
-		final TranslationSerializer serializer = factory.createSerializer();
+		final TranslationSectionSerializer serializer = factory.createSerializer();
 
 		// when
 		final Object response = serializer.serialize();
@@ -109,7 +109,7 @@ public class ClassSerializationTest {
 				.withActiveOnly(true) //
 				.withSorters(null) //
 				.build();
-		final TranslationSerializer serializer = factory.createSerializer();
+		final TranslationSectionSerializer serializer = factory.createSerializer();
 
 		// when
 		final Object response = serializer.serialize();
@@ -139,7 +139,7 @@ public class ClassSerializationTest {
 				.withActiveOnly(true) //
 				.withSorters(null) //
 				.build();
-		final TranslationSerializer serializer = factory.createSerializer();
+		final TranslationSectionSerializer serializer = factory.createSerializer();
 
 		// when
 		final Object response = serializer.serialize();
@@ -173,7 +173,7 @@ public class ClassSerializationTest {
 				.withActiveOnly(true) //
 				.withSorters(sorters) //
 				.build();
-		final TranslationSerializer serializer = factory.createSerializer();
+		final TranslationSectionSerializer serializer = factory.createSerializer();
 
 		// when
 		final Object response = serializer.serialize();
@@ -206,7 +206,7 @@ public class ClassSerializationTest {
 				.withActiveOnly(true) //
 				.withSorters(sorters) //
 				.build();
-		final TranslationSerializer serializer = factory.createSerializer();
+		final TranslationSectionSerializer serializer = factory.createSerializer();
 
 		// when
 		final Object response = serializer.serialize();

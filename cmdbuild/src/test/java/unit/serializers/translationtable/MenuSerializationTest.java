@@ -14,7 +14,7 @@ import org.cmdbuild.logic.translation.TranslationLogic;
 import org.cmdbuild.services.store.menu.MenuConstants;
 import org.cmdbuild.services.store.menu.MenuItem;
 import org.cmdbuild.services.store.menu.MenuItemType;
-import org.cmdbuild.servlets.json.serializers.translations.commons.TranslationSerializer;
+import org.cmdbuild.servlets.json.serializers.translations.commons.TranslationSectionSerializer;
 import org.cmdbuild.servlets.json.serializers.translations.table.MenuTranslationSerializer;
 import org.cmdbuild.servlets.json.serializers.translations.table.TranslationSerializerFactory;
 import org.cmdbuild.servlets.json.serializers.translations.table.TranslationSerializerFactory.Output;
@@ -65,7 +65,7 @@ public class MenuSerializationTest {
 				.build();
 
 		// when
-		final TranslationSerializer serializer = factory.createSerializer();
+		final TranslationSectionSerializer serializer = factory.createSerializer();
 
 		// then
 		assertTrue(serializer instanceof MenuTranslationSerializer);
@@ -94,7 +94,7 @@ public class MenuSerializationTest {
 				.withOutput(Output.TABLE) //
 				.build();
 
-		final TranslationSerializer serializer = factory.createSerializer();
+		final TranslationSectionSerializer serializer = factory.createSerializer();
 
 		// when
 		final Object response = serializer.serialize();
@@ -128,7 +128,7 @@ public class MenuSerializationTest {
 				.withOutput(Output.TABLE) //
 				.build();
 
-		final TranslationSerializer serializer = factory.createSerializer();
+		final TranslationSectionSerializer serializer = factory.createSerializer();
 
 		// when
 		final Object response = serializer.serialize();
@@ -168,7 +168,7 @@ public class MenuSerializationTest {
 				.withOutput(Output.TABLE) //
 				.build();
 
-		final TranslationSerializer serializer = factory.createSerializer();
+		final TranslationSectionSerializer serializer = factory.createSerializer();
 
 		// when
 		final Object response = serializer.serialize();
