@@ -11,6 +11,7 @@ import static org.cmdbuild.servlets.json.serializers.translations.commons.Consta
 import static org.cmdbuild.servlets.json.serializers.translations.commons.Constants.DESCRIPTION;
 import static org.cmdbuild.servlets.json.serializers.translations.commons.Constants.IDENTIFIER;
 import static org.cmdbuild.servlets.json.serializers.translations.commons.Constants.KEY_SEPARATOR;
+import static org.cmdbuild.servlets.json.serializers.translations.commons.Constants.nullableIterable;
 
 import java.util.Map;
 
@@ -149,7 +150,7 @@ public class DefaultFieldSerializer implements FieldSerializer {
 			}
 		} else if (element.equals(TranslatableElement.LOOKUP_VALUE)) {
 			if (fieldName.equals(LookupConverter.description())) {
-				final Iterable<Lookup> storables = lookupStore.readFromUuid(identifier);
+				final Iterable<Lookup> storables = nullableIterable(lookupStore.readFromUuid(identifier));
 				if (Iterables.size(storables) > 1) {
 					// TO DO : log
 				}

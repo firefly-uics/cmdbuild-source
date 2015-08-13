@@ -1,6 +1,7 @@
 package org.cmdbuild.servlets.json.serializers.translations.csv;
 
-import java.util.Collections;
+import static org.cmdbuild.servlets.json.serializers.translations.commons.Constants.nullableIterable;
+
 import java.util.List;
 
 import org.cmdbuild.dao.entrytype.CMAttribute;
@@ -49,7 +50,4 @@ public abstract class EntryTypeTranslationSerializer implements TranslationSeria
 		return sortedAttributes;
 	}
 
-	static <T> Iterable<T> nullableIterable(final Iterable<T> it) {
-		return it != null ? it : Collections.<T> emptySet();
-	}
 }

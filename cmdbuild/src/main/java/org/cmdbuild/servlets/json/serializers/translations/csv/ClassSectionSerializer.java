@@ -22,9 +22,9 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
-public class ClassTranslationSerializer extends EntryTypeTranslationSerializer {
+public class ClassSectionSerializer extends EntryTypeTranslationSerializer {
 
-	private final Collection<TranslationSerialization> records = Lists.newArrayList();
+	protected final Collection<TranslationSerialization> records = Lists.newArrayList();
 	private final Predicate<CMAttribute> REMOVE_NOTES = new Predicate<CMAttribute>() {
 
 		@Override
@@ -34,7 +34,7 @@ public class ClassTranslationSerializer extends EntryTypeTranslationSerializer {
 
 	};
 
-	public ClassTranslationSerializer(final DataAccessLogic dataLogic, final boolean activeOnly,
+	public ClassSectionSerializer(final DataAccessLogic dataLogic, final boolean activeOnly,
 			final TranslationLogic translationLogic, final JSONArray sorters, final String separator,
 			final SetupFacade setupFacade) {
 		super(dataLogic, activeOnly, translationLogic, separator, setupFacade);
@@ -65,10 +65,13 @@ public class ClassTranslationSerializer extends EntryTypeTranslationSerializer {
 
 	@Override
 	public Iterable<TranslationSerialization> serialize() {
-
 		final Iterable<? extends CMClass> sortedClasses = sortedClasses();
+		serialize(sortedClasses);
+		return records;
+	}
 
-		for (final CMClass aClass : sortedClasses) {
+	protected void serialize(final Iterable<? extends CMClass> classes) {
+		for (final CMClass aClass : classes) {
 
 			records.addAll(ClassSerializer.newInstance() //
 					.withClass(aClass) //
@@ -94,7 +97,6 @@ public class ClassTranslationSerializer extends EntryTypeTranslationSerializer {
 						.serialize());
 			}
 		}
-		return records;
 	}
 
 	private Iterable<? extends CMClass> sortedClasses() {
