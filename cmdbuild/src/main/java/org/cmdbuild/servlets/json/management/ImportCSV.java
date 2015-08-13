@@ -1,14 +1,31 @@
 package org.cmdbuild.servlets.json.management;
 
+import static com.google.common.collect.FluentIterable.from;
+import static com.google.common.collect.Maps.transformValues;
+import static com.google.common.collect.Maps.uniqueIndex;
+import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
+import static org.apache.commons.lang3.builder.ToStringBuilder.reflectionToString;
+import static org.apache.commons.lang3.builder.ToStringStyle.SHORT_PREFIX_STYLE;
+import static org.cmdbuild.common.utils.guava.Functions.toKey;
+import static org.cmdbuild.common.utils.guava.Functions.toValue;
+import static org.cmdbuild.servlets.json.CommunicationConstants.ELEMENTS;
 import static org.cmdbuild.servlets.json.CommunicationConstants.FILE_CSV;
+import static org.cmdbuild.servlets.json.CommunicationConstants.ID_CLASS;
 import static org.cmdbuild.servlets.json.CommunicationConstants.SEPARATOR;
+import static org.cmdbuild.servlets.json.CommunicationConstants.VARIABLES;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 
+import javax.activation.DataHandler;
+
 import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entry.DBCard;
 import org.cmdbuild.dao.entrytype.CMAttribute;
@@ -20,16 +37,188 @@ import org.cmdbuild.servlets.json.JSONBaseWithSpringContext;
 import org.cmdbuild.servlets.json.management.dataimport.CardFiller;
 import org.cmdbuild.servlets.json.management.dataimport.csv.CSVCard;
 import org.cmdbuild.servlets.json.management.dataimport.csv.CSVData;
+import org.cmdbuild.servlets.json.management.dataimport.csv.CsvReader;
+import org.cmdbuild.servlets.json.management.dataimport.csv.CsvReader.CsvLine;
+import org.cmdbuild.servlets.json.management.dataimport.csv.SuperCsvCsvReader;
+import org.cmdbuild.servlets.utils.FileItemDataSource;
 import org.cmdbuild.servlets.utils.Parameter;
+import org.codehaus.jackson.annotate.JsonProperty;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.supercsv.prefs.CsvPreference;
+
+import com.google.common.base.Function;
+import com.google.common.collect.Lists;
 
 public class ImportCSV extends JSONBaseWithSpringContext {
 
+	private static class JsonCsvLine {
+
+		private static class Builder implements org.apache.commons.lang3.builder.Builder<JsonCsvLine> {
+
+			private static final Map<String, String> NO_ENTRIES = Collections.emptyMap();
+
+			private Map<String, String> entries;
+
+			private Builder() {
+				// use factory method
+			}
+
+			@Override
+			public JsonCsvLine build() {
+				entries = defaultIfNull(entries, NO_ENTRIES);
+				return new JsonCsvLine(this);
+			}
+
+			public Builder withEntries(final Map<String, String> entries) {
+				this.entries = entries;
+				return this;
+			}
+
+			@Override
+			public String toString() {
+				return reflectionToString(this, SHORT_PREFIX_STYLE);
+			}
+
+		}
+
+		public static Builder newInstance() {
+			return new Builder();
+		}
+
+		private final Map<String, String> entries;
+
+		private JsonCsvLine(final Builder builder) {
+			this.entries = builder.entries;
+		}
+
+		@JsonProperty(VARIABLES)
+		public Map<String, String> getEntries() {
+			return entries;
+		}
+
+		@Override
+		public boolean equals(final Object obj) {
+			if (obj == this) {
+				return true;
+			}
+			if (!(obj instanceof JsonCsvLine)) {
+				return false;
+			}
+			final JsonCsvLine other = JsonCsvLine.class.cast(obj);
+			return new EqualsBuilder() //
+					.append(this.getEntries(), other.getEntries()) //
+					.isEquals();
+		}
+
+		@Override
+		public int hashCode() {
+			return new HashCodeBuilder() //
+					.append(entries) //
+					.toHashCode();
+		}
+
+		@Override
+		public String toString() {
+			return reflectionToString(this, SHORT_PREFIX_STYLE);
+		}
+
+	}
+
+	private static class JsonCsvData {
+
+		private static class Builder implements org.apache.commons.lang3.builder.Builder<JsonCsvData> {
+
+			private List<? super JsonCsvLine> elements;
+
+			private Builder() {
+				// use factory method
+			}
+
+			@Override
+			public JsonCsvData build() {
+				return new JsonCsvData(this);
+			}
+
+			public Builder withElements(final Iterable<? extends JsonCsvLine> elements) {
+				this.elements = Lists.newArrayList(elements);
+				return this;
+			}
+
+		}
+
+		public static Builder newInstance() {
+			return new Builder();
+		}
+
+		private final List<? super JsonCsvLine> elements;
+
+		private JsonCsvData(final Builder builder) {
+			this.elements = builder.elements;
+		}
+
+		@JsonProperty(ELEMENTS)
+		public List<? super JsonCsvLine> getElements() {
+			return elements;
+		}
+
+		@Override
+		public boolean equals(final Object obj) {
+			if (obj == this) {
+				return true;
+			}
+			if (!(obj instanceof JsonCsvData)) {
+				return false;
+			}
+			final JsonCsvData other = JsonCsvData.class.cast(obj);
+			return new EqualsBuilder() //
+					.append(this.elements, other.elements) //
+					.isEquals();
+		}
+
+		@Override
+		public int hashCode() {
+			return new HashCodeBuilder() //
+					.append(elements) //
+					.toHashCode();
+		}
+
+		@Override
+		public String toString() {
+			return reflectionToString(this, SHORT_PREFIX_STYLE);
+		}
+
+	}
+
+	@JSONExported
+	public JsonResponse readCsv( //
+			@Parameter(FILE_CSV) final FileItem file, //
+			@Parameter(SEPARATOR) final String separator //
+	) throws IOException {
+		final CsvPreference importCsvPreferences = new CsvPreference('"', separator.charAt(0), "\n");
+		final CsvReader csvReader = new SuperCsvCsvReader(importCsvPreferences);
+		final CsvReader.CsvData data = csvReader.read(new DataHandler(FileItemDataSource.of(file)));
+		return JsonResponse.success(JsonCsvData.newInstance() //
+				.withElements(from(data.lines()) //
+						.transform(new Function<CsvReader.CsvLine, JsonCsvLine>() {
+
+							private final Function<Entry<? extends String, ? extends String>, String> key = toKey();
+							private final Function<Entry<? extends String, ? extends String>, String> value = toValue();
+
+							@Override
+							public JsonCsvLine apply(final CsvLine input) {
+								return JsonCsvLine.newInstance() //
+										.withEntries(transformValues(uniqueIndex(input.entries(), key), value)) //
+										.build();
+							}
+
+						})).build());
+	}
+
 	/**
 	 * Stores in the session the records of the file that the user has uploaded
-	 *
+	 * 
 	 * @param file
 	 *            is the uploaded file
 	 * @param separatorString
@@ -38,17 +227,20 @@ public class ImportCSV extends JSONBaseWithSpringContext {
 	 *            the id of the class where the records will be stored
 	 */
 	@JSONExported
-	public void uploadCSV(@Parameter(FILE_CSV) final FileItem file, //
+	public void uploadCSV( //
+			@Parameter(FILE_CSV) final FileItem file, //
 			@Parameter(SEPARATOR) final String separatorString, //
-			@Parameter("idClass") final Long classId) throws IOException, JSONException {
+			@Parameter(ID_CLASS) final Long classId //
+	) throws IOException, JSONException {
 		clearSession();
 		final DataAccessLogic dataAccessLogic = systemDataAccessLogic();
-		final CSVData importedCsvData = dataAccessLogic.importCsvFileFor(file, classId, separatorString);
+		final CSVData importedCsvData = dataAccessLogic.importCsvFileFor(new DataHandler(FileItemDataSource.of(file)),
+				classId, separatorString);
 		sessionVars().setCsvData(importedCsvData);
 	}
 
 	/**
-	 *
+	 * 
 	 * @return the serialization of the cards
 	 */
 	@JSONExported
