@@ -1,5 +1,7 @@
 package org.cmdbuild.servlets.json.serializers.translations.commons;
 
+import java.util.Collections;
+
 import org.cmdbuild.logic.data.access.DataAccessLogic.AttributesQuery;
 
 public class Constants {
@@ -25,9 +27,12 @@ public class Constants {
 
 	};
 	
+	public static <T> Iterable<T> nullableIterable(final Iterable<T> it) {
+		return it != null ? it : Collections.<T> emptySet();
+	}
+	
 	private Constants() {
 		// prevents instantiation
 	}
-	
 	
 }
