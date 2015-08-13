@@ -32,6 +32,56 @@ public class DomainTranslationSerializer extends EntryTypeTranslationSerializer 
 		setOrderings(sorters);
 	}
 
+	@Override
+	public Iterable<TranslationSerialization> serialize() {
+
+		final Iterable<? extends CMDomain> allDomains = activeOnly ? dataLogic.findActiveDomains() : dataLogic
+				.findAllDomains();
+		final Iterable<? extends CMDomain> sortedDomains = entryTypeOrdering.sortedCopy(allDomains);
+
+		for (final CMDomain aDomain : sortedDomains) {
+
+			final Collection<? extends CsvTranslationRecord> allFieldsForDomain = DomainSerializer.newInstance() //
+					.withDomain(aDomain) //
+					.withEnabledLanguages(enabledLanguages) //
+					.withTranslationLogic(translationLogic) //
+					.withDataAccessLogic(dataLogic) //
+					.build() //
+					.serialize();
+
+			final Collection<? extends CsvTranslationRecord> filteredDomainFields = Collections2.filter(
+					allFieldsForDomain, new Predicate<CsvTranslationRecord>() {
+
+						@Override
+						public boolean apply(final CsvTranslationRecord input) {
+							final String identifier = String.class.cast(input.getRecord().get(IDENTIFIER));
+							final String domainName = Strings.split(identifier, '.')[1];
+							final String fieldName = Strings.split(identifier, '.')[2];
+							final boolean isMasterDetail = dataLogic.findDomain(domainName).isMasterDetail();
+							return !fieldName.equalsIgnoreCase(DomainConverter.masterDetail()) || isMasterDetail;
+						}
+
+					});
+
+			records.addAll(filteredDomainFields);
+
+			final Iterable<? extends CMAttribute> allAttributes = activeOnly ? aDomain.getActiveAttributes() : aDomain
+					.getAllAttributes();
+
+			final Iterable<? extends CMAttribute> sortedAttributes = sortAttributes(allAttributes);
+			for (final CMAttribute anAttribute : sortedAttributes) {
+				records.addAll(DomainAttributeSerializer.newInstance() //
+						.withAttribute(anAttribute) //
+						.withEnabledLanguages(enabledLanguages) //
+						.withTranslationLogic(translationLogic) //
+						.withDataAccessLogic(dataLogic) //
+						.build() //
+						.serialize());
+			}
+		}
+		return records;
+	}
+
 	private void setOrderings(final JSONArray sorters) {
 		if (sorters != null) {
 			try {
@@ -53,67 +103,4 @@ public class DomainTranslationSerializer extends EntryTypeTranslationSerializer 
 			}
 		}
 	}
-
-	private Predicate<CMDomain> remove(DataAccessLogic dataLogic) {
-
-		return new Predicate<CMDomain>() {
-
-			@Override
-			public boolean apply(CMDomain input) {
-				// TODO Auto-generated method stub
-				return false;
-			}
-		};
-
-	}
-
-	@Override
-	public Iterable<TranslationSerialization> serialize() {
-
-		final Iterable<? extends CMDomain> allDomains = activeOnly ? dataLogic.findActiveDomains() : dataLogic
-				.findAllDomains();
-		final Iterable<? extends CMDomain> sortedDomains = entryTypeOrdering.sortedCopy(allDomains);
-
-		for (final CMDomain aDomain : sortedDomains) {
-
-			Collection<? extends CsvTranslationRecord> allFieldsForDomain = DomainSerializer.newInstance() //
-					.withDomain(aDomain) //
-					.withEnabledLanguages(enabledLanguages) //
-					.withTranslationLogic(translationLogic) //
-					.withDataAccessLogic(dataLogic) //
-					.build() //
-					.serialize();
-
-			Collection<? extends CsvTranslationRecord> filteredDomainFields = Collections2.filter(allFieldsForDomain, new Predicate<CsvTranslationRecord>() {
-
-				@Override
-				public boolean apply(CsvTranslationRecord input) {
-					String identifier = String.class.cast(input.getRecord().get(IDENTIFIER));
-					String domainName = Strings.split(identifier, '.')[1];
-					String fieldName = Strings.split(identifier, '.')[2];
-					boolean isMasterDetail = dataLogic.findDomain(domainName).isMasterDetail();
-					return !fieldName.equalsIgnoreCase(DomainConverter.masterDetail()) || isMasterDetail;
-				}
-
-			});
-			
-			records.addAll(filteredDomainFields);
-
-			final Iterable<? extends CMAttribute> allAttributes = activeOnly ? aDomain.getActiveAttributes() : aDomain
-					.getAllAttributes();
-
-			final Iterable<? extends CMAttribute> sortedAttributes = sortAttributes(allAttributes);
-			for (final CMAttribute anAttribute : sortedAttributes) {
-				records.addAll(DomainAttributeSerializer.newInstance() //
-						.withAttribute(anAttribute) //
-						.withEnabledLanguages(enabledLanguages) //
-						.withTranslationLogic(translationLogic) //
-						.withDataAccessLogic(dataLogic) //
-						.build() //
-						.serialize());
-			}
-		}
-		return records;
-	}
-
 }

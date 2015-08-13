@@ -15,6 +15,8 @@ import static org.cmdbuild.servlets.json.serializers.translations.commons.Consta
 import java.util.Map;
 
 import org.cmdbuild.dao.entrytype.CMClass;
+import org.cmdbuild.data.store.lookup.Lookup;
+import org.cmdbuild.data.store.lookup.LookupStore;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.logic.translation.TranslationLogic;
 import org.cmdbuild.logic.translation.TranslationObject;
@@ -22,9 +24,11 @@ import org.cmdbuild.logic.translation.converter.AttributeConverter;
 import org.cmdbuild.logic.translation.converter.ClassConverter;
 import org.cmdbuild.logic.translation.converter.Converter;
 import org.cmdbuild.logic.translation.converter.DomainConverter;
+import org.cmdbuild.logic.translation.converter.LookupConverter;
 import org.cmdbuild.servlets.json.schema.TranslatableElement;
 import org.cmdbuild.servlets.json.translationtable.objects.csv.CsvTranslationRecord;
 
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 
 public class DefaultFieldSerializer implements FieldSerializer {
@@ -36,6 +40,7 @@ public class DefaultFieldSerializer implements FieldSerializer {
 	private final TranslationLogic translationLogic;
 	private final Iterable<String> enabledLanguages;
 	private final DataAccessLogic dataLogic;
+	private final LookupStore lookupStore;
 
 	public static Builder newInstance() {
 		return new Builder();
@@ -50,6 +55,7 @@ public class DefaultFieldSerializer implements FieldSerializer {
 		private TranslationLogic translationLogic;
 		private Iterable<String> enabledLanguages;
 		private DataAccessLogic dataLogic;
+		private LookupStore lookupStore;
 
 		@Override
 		public FieldSerializer build() {
@@ -91,6 +97,11 @@ public class DefaultFieldSerializer implements FieldSerializer {
 			return this;
 		}
 
+		public Builder withLookupStore(final LookupStore lookupStore) {
+			this.lookupStore = lookupStore;
+			return this;
+		}
+
 	}
 
 	private DefaultFieldSerializer(final Builder builder) {
@@ -101,6 +112,7 @@ public class DefaultFieldSerializer implements FieldSerializer {
 		this.owner = builder.owner;
 		this.translationLogic = builder.translationLogic;
 		this.dataLogic = builder.dataLogic;
+		this.lookupStore = builder.lookupStore;
 	}
 
 	@Override
@@ -135,6 +147,17 @@ public class DefaultFieldSerializer implements FieldSerializer {
 			} else if (fieldName.equals(DomainConverter.masterDetail())) {
 				defaultValue = dataLogic.findDomain(identifier).getMasterDetailDescription();
 			}
+		} else if (element.equals(TranslatableElement.LOOKUP_VALUE)) {
+			if (fieldName.equals(LookupConverter.description())) {
+				final Iterable<Lookup> storables = lookupStore.readFromUuid(identifier);
+				if (Iterables.size(storables) > 1) {
+					// TO DO : log
+				}
+				for (final Lookup lookup : storables) {
+					defaultValue = lookup.getDescription();
+					break; // there should be only one
+				}
+			}
 		}
 		return defaultIfBlank(defaultValue, EMPTY);
 	}
@@ -161,17 +184,13 @@ public class DefaultFieldSerializer implements FieldSerializer {
 	}
 
 	private String buildDescription() {
-		// TODO: perhaps they should be moved inside each TranslatableElement
-		final String FORMAT_NO_OWNER = "%s of %s '%s'";
-		final String FORMAT_WITH_OWNER = "%s of %s '%s' of class '%s'";
+		final String FORMAT = element.extendedDescriptionFormat();
 		String description = EMPTY;
 		if (isBlank(owner)) {
-			description = String.format(FORMAT_NO_OWNER,
-					lowerCase(join(splitByCharacterTypeCamelCase(fieldName), " ")), element.humanReadableType(),
+			description = String.format(FORMAT, lowerCase(join(splitByCharacterTypeCamelCase(fieldName), " ")),
 					identifier);
 		} else {
-			description = String.format(FORMAT_WITH_OWNER,
-					lowerCase(join(splitByCharacterTypeCamelCase(fieldName), " ")), element.humanReadableType(),
+			description = String.format(FORMAT, lowerCase(join(splitByCharacterTypeCamelCase(fieldName), " ")),
 					identifier, owner);
 		}
 		return description;
