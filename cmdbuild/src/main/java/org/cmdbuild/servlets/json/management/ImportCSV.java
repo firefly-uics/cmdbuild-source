@@ -12,7 +12,7 @@ import static org.cmdbuild.servlets.json.CommunicationConstants.ELEMENTS;
 import static org.cmdbuild.servlets.json.CommunicationConstants.FILE_CSV;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ID_CLASS;
 import static org.cmdbuild.servlets.json.CommunicationConstants.SEPARATOR;
-import static org.cmdbuild.servlets.json.CommunicationConstants.VARIABLES;
+import static org.cmdbuild.servlets.json.CommunicationConstants.ENTRIES;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -93,7 +93,7 @@ public class ImportCSV extends JSONBaseWithSpringContext {
 			this.entries = builder.entries;
 		}
 
-		@JsonProperty(VARIABLES)
+		@JsonProperty(ENTRIES)
 		public Map<String, String> getEntries() {
 			return entries;
 		}
