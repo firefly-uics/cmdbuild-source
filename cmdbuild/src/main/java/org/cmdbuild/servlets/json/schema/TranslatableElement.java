@@ -17,12 +17,7 @@ import com.google.common.collect.Lists;
 public enum TranslatableElement {
 
 	CLASS("class") {
-		
-		@Override
-		public String humanReadableType() {
-			return THE_CLASS;
-		}
-		
+
 		@Override
 		public Converter createConverter(final String field) {
 			return ClassConverter.of(field);
@@ -32,14 +27,14 @@ public enum TranslatableElement {
 		public Iterable<String> allowedFields() {
 			return Lists.newArrayList(ClassConverter.description());
 		}
+
+		@Override
+		public String extendedDescriptionFormat() {
+			return "%s of class '%s'";
+		}
 	},
 	ATTRIBUTECLASS("attributeclass") {
-		
-		@Override
-		public String humanReadableType() {
-			return THE_ATTRIBUTE;
-		}
-		
+
 		@Override
 		public Converter createConverter(final String field) {
 			return AttributeConverter.of(AttributeConverter.forClass(), field);
@@ -49,14 +44,15 @@ public enum TranslatableElement {
 		public Iterable<String> allowedFields() {
 			return Lists.newArrayList(AttributeConverter.description(), AttributeConverter.group());
 		}
+
+		@Override
+		public String extendedDescriptionFormat() {
+			return "%s of attribute '%s' of class '%s'";
+		}
+
 	},
 	DOMAIN("domain") {
-		
-		@Override
-		public String humanReadableType() {
-			return THE_DOMAIN;
-		}
-		
+
 		@Override
 		public Converter createConverter(final String field) {
 			return DomainConverter.of(field);
@@ -67,14 +63,14 @@ public enum TranslatableElement {
 			return Lists.newArrayList(DomainConverter.description(), DomainConverter.directDescription(),
 					DomainConverter.inverseDescription(), DomainConverter.masterDetail());
 		}
+
+		@Override
+		public String extendedDescriptionFormat() {
+			return "%s of domain '%s'";
+		}
 	},
 	ATTRIBUTEDOMAIN("attributedomain") {
-		
-		@Override
-		public String humanReadableType() {
-			return THE_ATTRIBUTE;
-		}
-		
+
 		@Override
 		public Converter createConverter(final String field) {
 			return AttributeConverter.of(AttributeConverter.forDomain(), field);
@@ -84,14 +80,15 @@ public enum TranslatableElement {
 		public Iterable<String> allowedFields() {
 			return Lists.newArrayList(AttributeConverter.description());
 		}
+
+		@Override
+		public String extendedDescriptionFormat() {
+			return "%s of attribute '%s' of domain '%s'";
+		}
+
 	},
 	FILTER("filter") {
-		
-		@Override
-		public String humanReadableType() {
-			return "the filter";
-		}
-		
+
 		@Override
 		public Converter createConverter(final String field) {
 			return FilterConverter.of(field);
@@ -101,10 +98,15 @@ public enum TranslatableElement {
 		public Iterable<String> allowedFields() {
 			return Lists.newArrayList(FilterConverter.description());
 		}
+
+		@Override
+		public String extendedDescriptionFormat() {
+			return "%s of filter '%s'";
+		}
 	},
 	@Deprecated
 	INSTANCE_NAME("instancename") {
-		
+
 		@Override
 		public Converter createConverter(final String field) {
 			return InstanceConverter.of(field);
@@ -114,14 +116,14 @@ public enum TranslatableElement {
 		public Iterable<String> allowedFields() {
 			return null;
 		}
+
+		@Override
+		public String extendedDescriptionFormat() {
+			throw new UnsupportedOperationException();
+		}
 	},
 	LOOKUP_VALUE("lookupvalue") {
-		
-		@Override
-		public String humanReadableType() {
-			return "the lookup value";
-		}
-		
+
 		@Override
 		public Converter createConverter(final String field) {
 			return LookupConverter.of(field);
@@ -131,13 +133,14 @@ public enum TranslatableElement {
 		public Iterable<String> allowedFields() {
 			return Lists.newArrayList(LookupConverter.description());
 		}
+
+		@Override
+		public String extendedDescriptionFormat() {
+			return "%s of lookup '%s' of type '%s'";
+		}
+
 	},
 	MENU_ITEM("menuitem") {
-		
-		@Override
-		public String humanReadableType() {
-			return "the menu entry";
-		}
 
 		@Override
 		public Converter createConverter(final String field) {
@@ -149,13 +152,13 @@ public enum TranslatableElement {
 			return Lists.newArrayList(MenuItemConverter.description());
 		}
 
+		@Override
+		public String extendedDescriptionFormat() {
+			return "%s of menu entry '%s' child of '%s'";
+		}
+
 	},
 	REPORT("report") {
-		
-		@Override
-		public String humanReadableType() {
-			return "the report";
-		}
 
 		@Override
 		public Converter createConverter(final String field) {
@@ -167,13 +170,13 @@ public enum TranslatableElement {
 			return Lists.newArrayList(ReportConverter.description());
 		}
 
+		@Override
+		public String extendedDescriptionFormat() {
+			return "%s of report '%s'";
+		}
+
 	},
 	VIEW("view") {
-		
-		@Override
-		public String humanReadableType() {
-			return "the view";
-		}
 
 		@Override
 		public Converter createConverter(final String field) {
@@ -185,13 +188,13 @@ public enum TranslatableElement {
 			return Lists.newArrayList(ViewConverter.description());
 		}
 
+		@Override
+		public String extendedDescriptionFormat() {
+			return "%s of view '%s'";
+		}
+
 	},
 	WIDGET("classwidget") {
-		
-		@Override
-		public String humanReadableType() {
-			return "the widget";
-		}
 
 		@Override
 		public Converter createConverter(final String field) {
@@ -203,14 +206,14 @@ public enum TranslatableElement {
 			return Lists.newArrayList(WidgetConverter.label());
 		}
 
+		@Override
+		public String extendedDescriptionFormat() {
+			return "%s of widget '%s'";
+		}
+
 	},
 
 	UNDEFINED("undefined") {
-		
-		@Override
-		public String humanReadableType() {
-			throw new UnsupportedOperationException();
-		}
 
 		@Override
 		public Converter createConverter(final String field) {
@@ -222,25 +225,24 @@ public enum TranslatableElement {
 			throw new UnsupportedOperationException();
 		}
 
+		@Override
+		public String extendedDescriptionFormat() {
+			throw new UnsupportedOperationException();
+		}
+
 	};
 
-	private static final String THE_CLASS = "the class";
-	private static final String THE_DOMAIN = "the domain";
-	private static final String THE_ATTRIBUTE = "the attribute";
 	private final String type;
-	private String humanReadableType;
 
 	private TranslatableElement(final String type) {
 		this.type = type;
 	};
-	
-	public String getType(){
+
+	public String getType() {
 		return type;
 	}
-	
-	public String humanReadableType(){
-		return humanReadableType;
-	}
+
+	public abstract String extendedDescriptionFormat();
 
 	public abstract Converter createConverter(String field);
 

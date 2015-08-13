@@ -65,22 +65,33 @@ public class TranslationSerializerFactory {
 	}
 
 	public TranslationSerializer createSerializer() {
-		if (type.equalsIgnoreCase(CLASS) && output.equals(Output.TABLE)) {
-			return new ClassTranslationSerializer(dataLogic, activeOnly, translationLogic, sorters);
-		} else if (type.equalsIgnoreCase(CLASS) && output.equals(Output.CSV)) {
-			return new org.cmdbuild.servlets.json.serializers.translations.csv.ClassTranslationSerializer(dataLogic,
-					activeOnly, translationLogic, sorters, separator, setupFacade);
-		} else if (type.equalsIgnoreCase(DOMAIN) && output.equals(Output.TABLE)) {
-			return new DomainTranslationSerializer(dataLogic, activeOnly, translationLogic, sorters, separator,
-					setupFacade);
-		} else if (type.equalsIgnoreCase(DOMAIN) && output.equals(Output.CSV)) {
-			return new org.cmdbuild.servlets.json.serializers.translations.csv.DomainTranslationSerializer(dataLogic,
-					activeOnly, translationLogic, sorters, separator, setupFacade);
-		} else if (type.equalsIgnoreCase(FILTER) && output.equals(Output.TABLE)) {
-			return new FilterTranslationSerializer(filterStore, translationLogic, sorters, separator, setupFacade);
-		} else if (type.equalsIgnoreCase(LOOKUP) && output.equals(Output.TABLE)) {
-			return new LookupTranslationSerializer(lookupStore, activeOnly, translationLogic, sorters, separator,
-					setupFacade);
+		if (type.equalsIgnoreCase(CLASS)) {
+			if (output.equals(Output.TABLE)) {
+				return new ClassTranslationSerializer(dataLogic, activeOnly, translationLogic, sorters);
+			} else if (output.equals(Output.CSV)) {
+				return new org.cmdbuild.servlets.json.serializers.translations.csv.ClassTranslationSerializer(
+						dataLogic, activeOnly, translationLogic, sorters, separator, setupFacade);
+			}
+		} else if (type.equalsIgnoreCase(DOMAIN)) {
+			if (output.equals(Output.TABLE)) {
+				return new DomainTranslationSerializer(dataLogic, activeOnly, translationLogic, sorters, separator,
+						setupFacade);
+			} else if (output.equals(Output.CSV)) {
+				return new org.cmdbuild.servlets.json.serializers.translations.csv.DomainTranslationSerializer(
+						dataLogic, activeOnly, translationLogic, sorters, separator, setupFacade);
+			}
+		} else if (type.equalsIgnoreCase(FILTER)) {
+			if (output.equals(Output.TABLE)) {
+				return new FilterTranslationSerializer(filterStore, translationLogic, sorters, separator, setupFacade);
+			}
+		} else if (type.equalsIgnoreCase(LOOKUP)) {
+			if (output.equals(Output.TABLE)) {
+				return new LookupTranslationSerializer(lookupStore, activeOnly, translationLogic, sorters, separator,
+						setupFacade);
+			} else if (output.equals(Output.CSV)) {
+				return new org.cmdbuild.servlets.json.serializers.translations.csv.LookupTranslationSerializer(
+						lookupStore, activeOnly, translationLogic, sorters, separator, setupFacade);
+			}
 		} else if (type.equalsIgnoreCase(MENU) && output.equals(Output.TABLE)) {
 			return new MenuTranslationSerializer(authLogic, menuLogic, translationLogic, sorters, separator,
 					setupFacade);
@@ -91,9 +102,8 @@ public class TranslationSerializerFactory {
 			return new ReportTranslationSerializer(reportStore, translationLogic, sorters, separator, setupFacade);
 		} else if (type.equalsIgnoreCase(VIEW) && output.equals(Output.TABLE)) {
 			return new ViewTranslationSerializer(viewLogic, translationLogic, sorters, separator, setupFacade);
-		} else {
-			throw new IllegalArgumentException("type '" + type + "' unsupported");
 		}
+		throw new IllegalArgumentException("type '" + type + "' unsupported");
 	}
 
 	public static final class SerializerBuilder implements Builder<TranslationSerializerFactory> {

@@ -2,6 +2,7 @@ package org.cmdbuild.servlets.json.serializers.translations.csv;
 
 import java.util.Collection;
 
+import org.cmdbuild.data.store.lookup.LookupStore;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.logic.translation.TranslationLogic;
 import org.cmdbuild.servlets.json.schema.TranslatableElement;
@@ -14,6 +15,7 @@ public abstract class DefaultElementSerializer implements ElementSerializer {
 	Iterable<String> enabledLanguages;
 	TranslationLogic translationLogic;
 	DataAccessLogic dataLogic;
+	LookupStore lookupStore;
 
 	@Override
 	public abstract Collection<? extends CsvTranslationRecord> serialize();
@@ -31,6 +33,7 @@ public abstract class DefaultElementSerializer implements ElementSerializer {
 					.withTranslationLogic(translationLogic) //
 					.withEnabledLanguages(enabledLanguages) //
 					.withDataLogic(dataLogic) //
+					.withLookupStore(lookupStore) //
 					.build() //
 					.serialize();
 			records.add(record);

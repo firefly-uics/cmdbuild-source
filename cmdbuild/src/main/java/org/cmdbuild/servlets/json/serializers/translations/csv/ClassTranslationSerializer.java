@@ -13,7 +13,6 @@ import org.cmdbuild.logic.translation.SetupFacade;
 import org.cmdbuild.logic.translation.TranslationLogic;
 import org.cmdbuild.servlets.json.serializers.translations.commons.AttributeSorter;
 import org.cmdbuild.servlets.json.serializers.translations.commons.EntryTypeSorter;
-import org.cmdbuild.servlets.json.serializers.translations.commons.TranslationSerializer;
 import org.cmdbuild.servlets.json.translationtable.objects.TranslationSerialization;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -23,13 +22,13 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
-public class ClassTranslationSerializer extends EntryTypeTranslationSerializer implements TranslationSerializer {
+public class ClassTranslationSerializer extends EntryTypeTranslationSerializer {
 
 	private final Collection<TranslationSerialization> records = Lists.newArrayList();
-	private Predicate<CMAttribute> REMOVE_NOTES = new Predicate<CMAttribute>() {
+	private final Predicate<CMAttribute> REMOVE_NOTES = new Predicate<CMAttribute>() {
 
 		@Override
-		public boolean apply(CMAttribute input) {
+		public boolean apply(final CMAttribute input) {
 			return !input.getName().equalsIgnoreCase(NOTES);
 		}
 
