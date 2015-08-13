@@ -4,15 +4,15 @@ import static org.cmdbuild.servlets.json.serializers.translations.commons.Consta
 
 import java.util.Collection;
 
-import org.cmdbuild.dao.entrytype.CMClass;
-import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.logic.translation.TranslationLogic;
+import org.cmdbuild.services.store.FilterStore;
+import org.cmdbuild.services.store.FilterStore.Filter;
 import org.cmdbuild.servlets.json.schema.TranslatableElement;
 import org.cmdbuild.servlets.json.translationtable.objects.csv.CsvTranslationRecord;
 
-public class ClassSerializer extends DefaultElementSerializer {
+public class FilterSerializer extends DefaultElementSerializer {
 
-	private final CMClass aClass;
+	private final Filter theFilter;
 
 	public static Builder newInstance() {
 		return new Builder();
@@ -20,30 +20,25 @@ public class ClassSerializer extends DefaultElementSerializer {
 
 	@Override
 	public Collection<? extends CsvTranslationRecord> serialize() {
-		final String className = aClass.getName();
-		final TranslatableElement element = TranslatableElement.CLASS;
-		return serializeFields(NO_OWNER, className, element);
+		final String filterName = theFilter.getName();
+		final TranslatableElement element = TranslatableElement.FILTER;
+		return serializeFields(NO_OWNER, filterName, element);
 	}
 
-	public static class Builder implements org.apache.commons.lang3.builder.Builder<ClassSerializer> {
+	public static class Builder implements org.apache.commons.lang3.builder.Builder<FilterSerializer> {
 
-		private DataAccessLogic dataLogic;
 		private Iterable<String> enabledLanguages;
 		private TranslationLogic translationLogic;
-		public CMClass theClass;
+		public Filter theFilter;
+		public FilterStore filterStore;
 
 		@Override
-		public ClassSerializer build() {
-			return new ClassSerializer(this);
+		public FilterSerializer build() {
+			return new FilterSerializer(this);
 		}
 
-		public Builder withClass(final CMClass theClass) {
-			this.theClass = theClass;
-			return this;
-		}
-
-		public Builder withDataAccessLogic(DataAccessLogic dataLogic) {
-			this.dataLogic = dataLogic;
+		public Builder withFilter(final Filter theFilter) {
+			this.theFilter = theFilter;
 			return this;
 		}
 
@@ -51,19 +46,29 @@ public class ClassSerializer extends DefaultElementSerializer {
 			this.enabledLanguages = enabledLanguages;
 			return this;
 		}
-
+		
+		public Builder withFilterStore(FilterStore filterStore) {
+			this.filterStore = filterStore;
+			return this;
+		}
+		
 		public Builder withTranslationLogic(final TranslationLogic translationLogic) {
 			this.translationLogic = translationLogic;
 			return this;
 		}
 
+		public Builder withViewLogic(FilterStore filterStore) {
+			this.filterStore = filterStore;
+			return this;
+		}
+
 	}
 
-	private ClassSerializer(final Builder builder) {
-		super.dataLogic = builder.dataLogic;
+	private FilterSerializer(final Builder builder) {
+		super.filterStore = builder.filterStore;
 		super.enabledLanguages = builder.enabledLanguages;
 		super.translationLogic = builder.translationLogic;
-		this.aClass = builder.theClass;
+		this.theFilter = builder.theFilter;
 	}
 
 }

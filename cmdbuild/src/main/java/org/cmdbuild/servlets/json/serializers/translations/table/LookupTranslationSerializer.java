@@ -6,7 +6,6 @@ import java.util.Map;
 import org.cmdbuild.data.store.lookup.Lookup;
 import org.cmdbuild.data.store.lookup.LookupStore;
 import org.cmdbuild.data.store.lookup.LookupType;
-import org.cmdbuild.logic.translation.SetupFacade;
 import org.cmdbuild.logic.translation.TranslationLogic;
 import org.cmdbuild.logic.translation.TranslationObject;
 import org.cmdbuild.logic.translation.converter.LookupConverter;
@@ -36,8 +35,7 @@ public class LookupTranslationSerializer implements TranslationSectionSerializer
 	Ordering<Lookup> valueOrdering = LookupValueSorter.DEFAULT.getOrientedOrdering();
 
 	LookupTranslationSerializer(final LookupStore lookupStore, final boolean activeOnly,
-			final TranslationLogic translationLogic, final JSONArray sorters, final String separator,
-			final SetupFacade setupFacade) {
+			final TranslationLogic translationLogic, final JSONArray sorters) {
 		this.lookupStore = lookupStore;
 		this.activeOnly = activeOnly;
 		this.translationLogic = translationLogic;

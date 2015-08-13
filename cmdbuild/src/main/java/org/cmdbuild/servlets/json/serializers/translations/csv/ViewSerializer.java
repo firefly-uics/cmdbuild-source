@@ -4,15 +4,16 @@ import static org.cmdbuild.servlets.json.serializers.translations.commons.Consta
 
 import java.util.Collection;
 
-import org.cmdbuild.dao.entrytype.CMClass;
-import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.logic.translation.TranslationLogic;
+import org.cmdbuild.logic.view.ViewLogic;
+import org.cmdbuild.model.view.View;
 import org.cmdbuild.servlets.json.schema.TranslatableElement;
+import org.cmdbuild.servlets.json.serializers.translations.csv.ViewSerializer.Builder;
 import org.cmdbuild.servlets.json.translationtable.objects.csv.CsvTranslationRecord;
 
-public class ClassSerializer extends DefaultElementSerializer {
+public class ViewSerializer extends DefaultElementSerializer {
 
-	private final CMClass aClass;
+	private final View theView;
 
 	public static Builder newInstance() {
 		return new Builder();
@@ -20,30 +21,25 @@ public class ClassSerializer extends DefaultElementSerializer {
 
 	@Override
 	public Collection<? extends CsvTranslationRecord> serialize() {
-		final String className = aClass.getName();
-		final TranslatableElement element = TranslatableElement.CLASS;
-		return serializeFields(NO_OWNER, className, element);
+		final String viewName = theView.getName();
+		final TranslatableElement element = TranslatableElement.VIEW;
+		return serializeFields(NO_OWNER, viewName, element);
 	}
 
-	public static class Builder implements org.apache.commons.lang3.builder.Builder<ClassSerializer> {
+	public static class Builder implements org.apache.commons.lang3.builder.Builder<ViewSerializer> {
 
-		private DataAccessLogic dataLogic;
 		private Iterable<String> enabledLanguages;
 		private TranslationLogic translationLogic;
-		public CMClass theClass;
+		public View theView;
+		public ViewLogic viewLogic;
 
 		@Override
-		public ClassSerializer build() {
-			return new ClassSerializer(this);
+		public ViewSerializer build() {
+			return new ViewSerializer(this);
 		}
 
-		public Builder withClass(final CMClass theClass) {
-			this.theClass = theClass;
-			return this;
-		}
-
-		public Builder withDataAccessLogic(DataAccessLogic dataLogic) {
-			this.dataLogic = dataLogic;
+		public Builder withView(final View theView) {
+			this.theView = theView;
 			return this;
 		}
 
@@ -57,13 +53,18 @@ public class ClassSerializer extends DefaultElementSerializer {
 			return this;
 		}
 
+		public Builder withViewLogic(ViewLogic viewLogic) {
+			this.viewLogic = viewLogic;
+			return this;
+		}
+
 	}
 
-	private ClassSerializer(final Builder builder) {
-		super.dataLogic = builder.dataLogic;
+	private ViewSerializer(final Builder builder) {
+		super.viewLogic = builder.viewLogic;
 		super.enabledLanguages = builder.enabledLanguages;
 		super.translationLogic = builder.translationLogic;
-		this.aClass = builder.theClass;
+		this.theView = builder.theView;
 	}
 
 }

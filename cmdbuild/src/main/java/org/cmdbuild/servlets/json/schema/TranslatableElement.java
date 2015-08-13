@@ -154,7 +154,7 @@ public enum TranslatableElement {
 
 		@Override
 		public String extendedDescriptionFormat() {
-			return "%s of menu entry '%s' child of '%s'";
+			return "%s of menu entry '%s' for group '%s'";
 		}
 
 	},
