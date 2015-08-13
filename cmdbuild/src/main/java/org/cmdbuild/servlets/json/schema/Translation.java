@@ -30,6 +30,7 @@ import org.cmdbuild.servlets.json.management.JsonResponse;
 import org.cmdbuild.servlets.json.serializers.translations.commons.TranslationSectionSerializer;
 import org.cmdbuild.servlets.json.serializers.translations.table.TranslationSerializerFactory;
 import org.cmdbuild.servlets.json.serializers.translations.table.TranslationSerializerFactory.Output;
+import org.cmdbuild.servlets.json.serializers.translations.table.TranslationSerializerFactory.Sections;
 import org.cmdbuild.servlets.json.translationtable.objects.TranslationSerialization;
 import org.cmdbuild.servlets.json.translationtable.objects.csv.CsvTranslationRecord;
 import org.cmdbuild.servlets.json.translationtable.objects.csv.DefaultCsvExporter;
@@ -39,6 +40,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.google.common.base.Function;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
 public class Translation extends JSONBaseWithSpringContext {
@@ -102,6 +104,33 @@ public class Translation extends JSONBaseWithSpringContext {
 			@Parameter(value = ACTIVE, required = false) final boolean activeOnly //
 	) throws JSONException, IOException {
 
+		final Collection<TranslationSerialization> records = Lists.newArrayList();
+
+		if (type.equalsIgnoreCase("ALL")) {
+			for (final Sections section : Sections.values()) {
+				System.out.println(section.name());
+				Iterables.addAll(records, serialize(section.name(), sorters, activeOnly));
+			}
+		} else {
+			Iterables.addAll(records, serialize(type, sorters, activeOnly));
+		}
+
+		final File outputFile = new File(type);
+		final Iterable<Map<String, Object>> rows = TO_MAP.apply(records);
+
+		final DataHandler dataHandler = DefaultCsvExporter.newInstance() //
+				.withRecords(rows) //
+				.withFile(outputFile) //
+				.withHeaders(initHeaders()) //
+				.withSeparator(separator) //
+				.build() //
+				.export();
+
+		return dataHandler;
+	}
+
+	private Iterable<TranslationSerialization> serialize(final String type, final JSONArray sorters,
+			final boolean activeOnly) {
 		final TranslationSerializerFactory factory = TranslationSerializerFactory //
 				.newInstance() //
 				.withOutput(Output.CSV) //
@@ -121,19 +150,7 @@ public class Translation extends JSONBaseWithSpringContext {
 
 		final TranslationSectionSerializer serializer = factory.createSerializer();
 		final Iterable<TranslationSerialization> records = serializer.serialize();
-
-		final File outputFile = new File(type);
-		final Iterable<Map<String, Object>> rows = TO_MAP.apply(records);
-
-		final DataHandler dataHandler = DefaultCsvExporter.newInstance() //
-				.withRecords(rows) //
-				.withFile(outputFile) //
-				.withHeaders(initHeaders()) //
-				.withSeparator(separator) //
-				.build() //
-				.export();
-
-		return dataHandler;
+		return records;
 	}
 
 	private String[] initHeaders() {

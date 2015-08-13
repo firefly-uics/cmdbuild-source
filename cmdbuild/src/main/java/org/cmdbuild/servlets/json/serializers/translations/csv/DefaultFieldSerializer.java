@@ -16,7 +16,7 @@ import static org.cmdbuild.servlets.json.serializers.translations.commons.Consta
 import static org.cmdbuild.servlets.json.serializers.translations.commons.Constants.IDENTIFIER;
 import static org.cmdbuild.servlets.json.serializers.translations.commons.Constants.KEY_SEPARATOR;
 import static org.cmdbuild.servlets.json.serializers.translations.commons.Constants.matchFilterByName;
-import static org.cmdbuild.servlets.json.serializers.translations.commons.Constants.matchViewByName;
+import static org.cmdbuild.servlets.json.serializers.translations.commons.Constants.*;
 import static org.cmdbuild.servlets.json.serializers.translations.commons.Constants.nullableIterable;
 
 import java.util.List;
@@ -36,17 +36,24 @@ import org.cmdbuild.logic.translation.converter.DomainConverter;
 import org.cmdbuild.logic.translation.converter.FilterConverter;
 import org.cmdbuild.logic.translation.converter.LookupConverter;
 import org.cmdbuild.logic.translation.converter.MenuItemConverter;
+import org.cmdbuild.logic.translation.converter.ReportConverter;
 import org.cmdbuild.logic.translation.converter.ViewConverter;
 import org.cmdbuild.logic.view.ViewLogic;
 import org.cmdbuild.model.view.View;
 import org.cmdbuild.model.view.View.ViewType;
+import org.cmdbuild.report.ReportFactory.ReportType;
 import org.cmdbuild.services.store.FilterStore;
 import org.cmdbuild.services.store.FilterStore.Filter;
 import org.cmdbuild.services.store.menu.MenuItem;
+import org.cmdbuild.services.store.report.Report;
+import org.cmdbuild.services.store.report.ReportStore;
 import org.cmdbuild.servlets.json.schema.TranslatableElement;
+import org.cmdbuild.servlets.json.serializers.translations.csv.DefaultFieldSerializer.Builder;
 import org.cmdbuild.servlets.json.translationtable.objects.csv.CsvTranslationRecord;
 
 import com.google.common.base.Function;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 public class DefaultFieldSerializer implements FieldSerializer {
@@ -62,6 +69,7 @@ public class DefaultFieldSerializer implements FieldSerializer {
 	private final MenuLogic menuLogic;
 	private final ViewLogic viewLogic;
 	private final FilterStore filterStore;
+	private final ReportStore reportStore;
 
 	public static Builder newInstance() {
 		return new Builder();
@@ -80,6 +88,7 @@ public class DefaultFieldSerializer implements FieldSerializer {
 		private MenuLogic menuLogic;
 		private ViewLogic viewLogic;
 		private FilterStore filterStore;
+		private ReportStore reportStore;
 
 		@Override
 		public FieldSerializer build() {
@@ -141,6 +150,11 @@ public class DefaultFieldSerializer implements FieldSerializer {
 			return this;
 		}
 
+		public Builder withReportStore(final ReportStore reportStore) {
+			this.reportStore = reportStore;
+			return this;
+		}
+
 	}
 
 	private DefaultFieldSerializer(final Builder builder) {
@@ -155,6 +169,7 @@ public class DefaultFieldSerializer implements FieldSerializer {
 		this.lookupStore = builder.lookupStore;
 		this.viewLogic = builder.viewLogic;
 		this.filterStore = builder.filterStore;
+		this.reportStore = builder.reportStore;
 	}
 
 	@Override
@@ -203,6 +218,10 @@ public class DefaultFieldSerializer implements FieldSerializer {
 			if (fieldName.equals(MenuItemConverter.description())) {
 				defaultValue = loadMenuDescription(identifier, owner);
 			}
+		} else if (element.equals(TranslatableElement.REPORT)) {
+			if (fieldName.equals(ReportConverter.description())){
+				defaultValue = loadReportDescription(identifier);
+			}
 		} else if (element.equals(TranslatableElement.VIEW)) {
 			if (fieldName.equals(ViewConverter.description())) {
 				defaultValue = loadViewDescription(identifier);
@@ -223,6 +242,18 @@ public class DefaultFieldSerializer implements FieldSerializer {
 			matchingViews = filter(sqlViews, matchViewByName(name));
 		}
 		return getOnlyElement(matchingViews).getDescription();
+	}
+	
+	private String loadReportDescription(final String code) {
+		Iterable<Report> matchingReports = Lists.newArrayList();
+		for (final ReportType type : ReportType.values()) {
+			final Iterable<Report> reportsOfType = reportStore.findReportsByType(type);
+			matchingReports = filter(reportsOfType, matchReportByCode(code));
+			if(!Iterables.isEmpty(matchingReports)){
+				break;
+			}
+		}
+		return getOnlyElement(matchingReports).getDescription();
 	}
 
 	private String loadMenuDescription(final String uuid, final String group) {

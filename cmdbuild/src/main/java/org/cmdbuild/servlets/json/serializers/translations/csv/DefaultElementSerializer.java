@@ -8,6 +8,7 @@ import org.cmdbuild.logic.menu.MenuLogic;
 import org.cmdbuild.logic.translation.TranslationLogic;
 import org.cmdbuild.logic.view.ViewLogic;
 import org.cmdbuild.services.store.FilterStore;
+import org.cmdbuild.services.store.report.ReportStore;
 import org.cmdbuild.servlets.json.schema.TranslatableElement;
 import org.cmdbuild.servlets.json.translationtable.objects.csv.CsvTranslationRecord;
 
@@ -22,6 +23,7 @@ public abstract class DefaultElementSerializer implements ElementSerializer {
 	MenuLogic menuLogic;
 	ViewLogic viewLogic;
 	FilterStore filterStore;
+	ReportStore reportStore;
 
 	@Override
 	public abstract Collection<? extends CsvTranslationRecord> serialize();
@@ -43,6 +45,7 @@ public abstract class DefaultElementSerializer implements ElementSerializer {
 					.withLookupStore(lookupStore) //
 					.withMenuLogic(menuLogic) //
 					.withViewLogic(viewLogic) //
+					.withReportStore(reportStore) //
 					.build() //
 					.serialize();
 			records.add(record);
