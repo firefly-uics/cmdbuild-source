@@ -4,7 +4,10 @@ import java.util.Collection;
 
 import org.cmdbuild.data.store.lookup.LookupStore;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
+import org.cmdbuild.logic.menu.MenuLogic;
 import org.cmdbuild.logic.translation.TranslationLogic;
+import org.cmdbuild.logic.view.ViewLogic;
+import org.cmdbuild.services.store.FilterStore;
 import org.cmdbuild.servlets.json.schema.TranslatableElement;
 import org.cmdbuild.servlets.json.translationtable.objects.csv.CsvTranslationRecord;
 
@@ -16,6 +19,9 @@ public abstract class DefaultElementSerializer implements ElementSerializer {
 	TranslationLogic translationLogic;
 	DataAccessLogic dataLogic;
 	LookupStore lookupStore;
+	MenuLogic menuLogic;
+	ViewLogic viewLogic;
+	FilterStore filterStore;
 
 	@Override
 	public abstract Collection<? extends CsvTranslationRecord> serialize();
@@ -33,7 +39,10 @@ public abstract class DefaultElementSerializer implements ElementSerializer {
 					.withTranslationLogic(translationLogic) //
 					.withEnabledLanguages(enabledLanguages) //
 					.withDataLogic(dataLogic) //
+					.withFilterStore(filterStore) //
 					.withLookupStore(lookupStore) //
+					.withMenuLogic(menuLogic) //
+					.withViewLogic(viewLogic) //
 					.build() //
 					.serialize();
 			records.add(record);

@@ -1,5 +1,8 @@
 package org.cmdbuild.servlets.json.serializers.translations.csv;
 
+import static com.google.common.collect.Iterables.filter;
+import static com.google.common.collect.Iterables.getOnlyElement;
+import static com.google.common.collect.Iterables.isEmpty;
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
@@ -7,28 +10,43 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.join;
 import static org.apache.commons.lang3.StringUtils.lowerCase;
 import static org.apache.commons.lang3.StringUtils.splitByCharacterTypeCamelCase;
+import static org.cmdbuild.services.store.menu.MenuConstants.DEFAULT_MENU_GROUP_NAME;
 import static org.cmdbuild.servlets.json.serializers.translations.commons.Constants.DEFAULT;
 import static org.cmdbuild.servlets.json.serializers.translations.commons.Constants.DESCRIPTION;
 import static org.cmdbuild.servlets.json.serializers.translations.commons.Constants.IDENTIFIER;
 import static org.cmdbuild.servlets.json.serializers.translations.commons.Constants.KEY_SEPARATOR;
+import static org.cmdbuild.servlets.json.serializers.translations.commons.Constants.matchFilterByName;
+import static org.cmdbuild.servlets.json.serializers.translations.commons.Constants.matchViewByName;
 import static org.cmdbuild.servlets.json.serializers.translations.commons.Constants.nullableIterable;
 
+import java.util.List;
 import java.util.Map;
 
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.data.store.lookup.Lookup;
 import org.cmdbuild.data.store.lookup.LookupStore;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
+import org.cmdbuild.logic.menu.MenuLogic;
 import org.cmdbuild.logic.translation.TranslationLogic;
 import org.cmdbuild.logic.translation.TranslationObject;
 import org.cmdbuild.logic.translation.converter.AttributeConverter;
 import org.cmdbuild.logic.translation.converter.ClassConverter;
 import org.cmdbuild.logic.translation.converter.Converter;
 import org.cmdbuild.logic.translation.converter.DomainConverter;
+import org.cmdbuild.logic.translation.converter.FilterConverter;
 import org.cmdbuild.logic.translation.converter.LookupConverter;
+import org.cmdbuild.logic.translation.converter.MenuItemConverter;
+import org.cmdbuild.logic.translation.converter.ViewConverter;
+import org.cmdbuild.logic.view.ViewLogic;
+import org.cmdbuild.model.view.View;
+import org.cmdbuild.model.view.View.ViewType;
+import org.cmdbuild.services.store.FilterStore;
+import org.cmdbuild.services.store.FilterStore.Filter;
+import org.cmdbuild.services.store.menu.MenuItem;
 import org.cmdbuild.servlets.json.schema.TranslatableElement;
 import org.cmdbuild.servlets.json.translationtable.objects.csv.CsvTranslationRecord;
 
+import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 
@@ -42,6 +60,9 @@ public class DefaultFieldSerializer implements FieldSerializer {
 	private final Iterable<String> enabledLanguages;
 	private final DataAccessLogic dataLogic;
 	private final LookupStore lookupStore;
+	private final MenuLogic menuLogic;
+	private final ViewLogic viewLogic;
+	private final FilterStore filterStore;
 
 	public static Builder newInstance() {
 		return new Builder();
@@ -57,6 +78,9 @@ public class DefaultFieldSerializer implements FieldSerializer {
 		private Iterable<String> enabledLanguages;
 		private DataAccessLogic dataLogic;
 		private LookupStore lookupStore;
+		private MenuLogic menuLogic;
+		private ViewLogic viewLogic;
+		private FilterStore filterStore;
 
 		@Override
 		public FieldSerializer build() {
@@ -83,6 +107,16 @@ public class DefaultFieldSerializer implements FieldSerializer {
 			return this;
 		}
 
+		public Builder withFilterStore(final FilterStore filterStore) {
+			this.filterStore = filterStore;
+			return this;
+		}
+
+		public Builder withMenuLogic(final MenuLogic menuLogic) {
+			this.menuLogic = menuLogic;
+			return this;
+		}
+
 		public Builder withIdentifier(final String identifier) {
 			this.identifier = identifier;
 			return this;
@@ -103,6 +137,11 @@ public class DefaultFieldSerializer implements FieldSerializer {
 			return this;
 		}
 
+		public Builder withViewLogic(final ViewLogic viewLogic) {
+			this.viewLogic = viewLogic;
+			return this;
+		}
+
 	}
 
 	private DefaultFieldSerializer(final Builder builder) {
@@ -113,7 +152,10 @@ public class DefaultFieldSerializer implements FieldSerializer {
 		this.owner = builder.owner;
 		this.translationLogic = builder.translationLogic;
 		this.dataLogic = builder.dataLogic;
+		this.menuLogic = builder.menuLogic;
 		this.lookupStore = builder.lookupStore;
+		this.viewLogic = builder.viewLogic;
+		this.filterStore = builder.filterStore;
 	}
 
 	@Override
@@ -148,24 +190,69 @@ public class DefaultFieldSerializer implements FieldSerializer {
 			} else if (fieldName.equals(DomainConverter.masterDetail())) {
 				defaultValue = dataLogic.findDomain(identifier).getMasterDetailDescription();
 			}
+		} else if (element.equals(TranslatableElement.FILTER)) {
+			if (fieldName.equals(FilterConverter.description())) {
+				final Filter matchingFilter = getOnlyElement((readByName(identifier, filterStore)));
+				defaultValue = matchingFilter.getDescription();
+			}
 		} else if (element.equals(TranslatableElement.LOOKUP_VALUE)) {
 			if (fieldName.equals(LookupConverter.description())) {
-				final Iterable<Lookup> storables = nullableIterable(lookupStore.readFromUuid(identifier));
-				if (Iterables.size(storables) > 1) {
-					// TO DO : log
-				}
-				for (final Lookup lookup : storables) {
-					defaultValue = lookup.getDescription();
-					break; // there should be only one
-				}
+				final Lookup matchingLookup = getOnlyElement(lookupStore.readFromUuid(identifier));
+				defaultValue = matchingLookup.getDescription();
+			}
+		} else if (element.equals(TranslatableElement.MENU_ITEM)) {
+			if (fieldName.equals(MenuItemConverter.description())) {
+				defaultValue = loadMenuDescription(identifier, owner);
+			}
+		} else if (element.equals(TranslatableElement.VIEW)) {
+			if (fieldName.equals(ViewConverter.description())) {
+				defaultValue = loadViewDescription(identifier);
 			}
 		}
 		return defaultIfBlank(defaultValue, EMPTY);
 	}
 
+	private Iterable<Filter> readByName(final String identifier, final FilterStore filterStore) {
+		return filter(filterStore.fetchAllGroupsFilters(), matchFilterByName(identifier));
+	}
+
+	private String loadViewDescription(final String name) {
+		final List<View> filterViews = viewLogic.read(ViewType.FILTER);
+		Iterable<View> matchingViews = filter(filterViews, matchViewByName(name));
+		if (isEmpty(matchingViews)) {
+			final List<View> sqlViews = viewLogic.read(ViewType.SQL);
+			matchingViews = filter(sqlViews, matchViewByName(name));
+		}
+		return getOnlyElement(matchingViews).getDescription();
+	}
+
+	private String loadMenuDescription(final String uuid, final String group) {
+		final MenuItem rootEntry = menuLogic.read(group);
+		return fetchMenuItemByUuid(rootEntry, uuid).getDescription();
+	}
+
+	private static MenuItem fetchMenuItemByUuid(final MenuItem root, final String uuid) {
+		MenuItem matchingItem = null;
+		if (uuid.equals(root.getUniqueIdentifier())) {
+			matchingItem = root;
+		}
+		if (matchingItem == null) {
+			for (final MenuItem child : nullableIterable(root.getChildren())) {
+				matchingItem = fetchMenuItemByUuid(child, uuid);
+				if (matchingItem != null) {
+					break;
+				}
+			}
+		}
+		return matchingItem;
+	}
+
 	private Map<String, String> readTranslations() {
 		final Converter converter = element.createConverter(fieldName);
-		final TranslationObject translationObject = converter.withIdentifier(identifier).withOwner(owner).create();
+		final TranslationObject translationObject = converter //
+				.withIdentifier(identifier) //
+				.withOwner(owner) //
+				.create();
 		final Map<String, String> translations = translationLogic.readAll(translationObject);
 		return translations;
 	}
@@ -192,10 +279,23 @@ public class DefaultFieldSerializer implements FieldSerializer {
 					identifier);
 		} else {
 			description = String.format(FORMAT, lowerCase(join(splitByCharacterTypeCamelCase(fieldName), " ")),
-					identifier, owner);
+					identifier, FOR_MENU_REPLACE_DEFAULT.apply(owner));
 		}
 		return description;
 	}
+
+	private final Function<String, String> FOR_MENU_REPLACE_DEFAULT = new Function<String, String>() {
+
+		@Override
+		public String apply(final String input) {
+			String convertedGroupName = input;
+			if (element == TranslatableElement.MENU_ITEM && input.equals(DEFAULT_MENU_GROUP_NAME)) {
+				convertedGroupName = DEFAULT;
+			}
+			return convertedGroupName;
+		}
+
+	};
 
 	CsvTranslationRecord writeRow(final String key, final String description, final String defaultValue,
 			final Map<String, String> translations) {

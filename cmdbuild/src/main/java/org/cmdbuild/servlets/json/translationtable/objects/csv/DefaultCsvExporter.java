@@ -92,7 +92,6 @@ public class DefaultCsvExporter implements CsvExporter {
 		final ICsvMapWriter writer = new CsvMapWriter(new FileWriter(file), exportCsvPrefs);
 		writer.writeHeader(headers);
 		for (final Map<String, Object> row : records) {
-			System.out.println(row);
 			writer.write(row, headers);
 		}
 		writer.close();

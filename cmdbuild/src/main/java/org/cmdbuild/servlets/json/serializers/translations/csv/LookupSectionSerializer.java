@@ -33,8 +33,7 @@ public class LookupSectionSerializer implements TranslationSectionSerializer {
 	private final Collection<TranslationSerialization> records = Lists.newArrayList();
 
 	public LookupSectionSerializer(final LookupStore lookupStore, final boolean activeOnly,
-			final TranslationLogic translationLogic, final JSONArray sorters, final String separator,
-			final SetupFacade setupFacade) {
+			final TranslationLogic translationLogic, final JSONArray sorters, final SetupFacade setupFacade) {
 		this.enabledLanguages = setupFacade.getEnabledLanguages();
 		this.translationLogic = translationLogic;
 		this.lookupStore = lookupStore;
