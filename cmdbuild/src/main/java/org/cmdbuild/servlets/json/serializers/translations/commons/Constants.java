@@ -3,13 +3,18 @@ package org.cmdbuild.servlets.json.serializers.translations.commons;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 
 import java.util.Collections;
+import java.util.List;
 
+import org.apache.commons.lang3.Validate;
 import org.cmdbuild.logic.data.access.DataAccessLogic.AttributesQuery;
+import org.cmdbuild.logic.translation.converter.Converter;
 import org.cmdbuild.model.view.View;
 import org.cmdbuild.services.store.FilterStore.Filter;
 import org.cmdbuild.services.store.report.Report;
+import org.cmdbuild.servlets.json.schema.TranslatableElement;
 
 import com.google.common.base.Predicate;
+import com.google.common.collect.Lists;
 
 public class Constants {
 	
@@ -18,8 +23,10 @@ public class Constants {
 	public static final String DEFAULT = "default";
 	public static final String TYPE = "type";
 	public static final String OWNER = "owner";
-	public static final String KEY_SEPARATOR = ".";
+	public static final char KEY_SEPARATOR = '.';
 	public static final String NO_OWNER = EMPTY;
+	
+	public static final List<String> commonHeaders = Lists.newArrayList(IDENTIFIER, DESCRIPTION, DEFAULT);
 	
 	public static final AttributesQuery NO_LIMIT_AND_OFFSET = new AttributesQuery() {
 
@@ -64,6 +71,13 @@ public class Constants {
 				return name.equals(input.getCode());
 			}
 		};
+	}
+	
+	public static Converter createConverter(final String type, final String field) {
+		final TranslatableElement element = TranslatableElement.of(type);
+		final Converter converter = element.createConverter(field);
+		Validate.isTrue(converter.isValid());
+		return converter;
 	}
 	
 	

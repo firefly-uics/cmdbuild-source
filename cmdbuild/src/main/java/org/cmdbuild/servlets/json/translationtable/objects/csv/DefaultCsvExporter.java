@@ -87,7 +87,7 @@ public class DefaultCsvExporter implements CsvExporter {
 	}
 
 	@Override
-	public DataHandler export() throws IOException {
+	public DataHandler write() throws IOException {
 		final CsvPreference exportCsvPrefs = new CsvPreference(quoteCharacter, columnSeparator, lineSeparator);
 		final ICsvMapWriter writer = new CsvMapWriter(new FileWriter(file), exportCsvPrefs);
 		writer.writeHeader(headers);

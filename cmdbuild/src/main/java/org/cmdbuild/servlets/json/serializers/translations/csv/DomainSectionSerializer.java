@@ -54,7 +54,7 @@ public class DomainSectionSerializer extends EntryTypeTranslationSerializer {
 
 						@Override
 						public boolean apply(final CsvTranslationRecord input) {
-							final String identifier = String.class.cast(input.getRecord().get(IDENTIFIER));
+							final String identifier = String.class.cast(input.getValues().get(IDENTIFIER));
 							final String domainName = Strings.split(identifier, '.')[1];
 							final String fieldName = Strings.split(identifier, '.')[2];
 							final boolean isMasterDetail = dataLogic.findDomain(domainName).isMasterDetail();

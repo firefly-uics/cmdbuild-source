@@ -6,6 +6,6 @@ import javax.activation.DataHandler;
 
 public interface CsvExporter {
 
-	DataHandler export() throws IOException;
+	DataHandler write() throws IOException;
 
 }
