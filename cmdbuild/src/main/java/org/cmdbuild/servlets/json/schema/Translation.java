@@ -1,39 +1,41 @@
 package org.cmdbuild.servlets.json.schema;
 
+import static org.cmdbuild.common.utils.BuilderUtils.a;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ACTIVE;
-import static org.cmdbuild.servlets.json.CommunicationConstants.DESCRIPTION;
 import static org.cmdbuild.servlets.json.CommunicationConstants.FIELD;
 import static org.cmdbuild.servlets.json.CommunicationConstants.FILE_CSV;
 import static org.cmdbuild.servlets.json.CommunicationConstants.SEPARATOR;
 import static org.cmdbuild.servlets.json.CommunicationConstants.SORT;
 import static org.cmdbuild.servlets.json.CommunicationConstants.TRANSLATIONS;
 import static org.cmdbuild.servlets.json.schema.Utils.toMap;
-import static org.cmdbuild.servlets.json.serializers.translations.commons.Constants.DEFAULT;
 import static org.cmdbuild.servlets.json.serializers.translations.commons.Constants.IDENTIFIER;
 import static org.cmdbuild.servlets.json.serializers.translations.commons.Constants.OWNER;
 import static org.cmdbuild.servlets.json.serializers.translations.commons.Constants.TYPE;
+import static org.cmdbuild.servlets.json.serializers.translations.commons.Constants.commonHeaders;
+import static org.cmdbuild.servlets.json.serializers.translations.commons.Constants.createConverter;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 
 import javax.activation.DataHandler;
 
 import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.lang3.Validate;
 import org.cmdbuild.logic.translation.TranslationObject;
 import org.cmdbuild.logic.translation.converter.Converter;
 import org.cmdbuild.servlets.json.JSONBaseWithSpringContext;
 import org.cmdbuild.servlets.json.management.JsonResponse;
 import org.cmdbuild.servlets.json.serializers.translations.commons.TranslationSectionSerializer;
+import org.cmdbuild.servlets.json.serializers.translations.csv.read.DefaultRecordDeserializer;
+import org.cmdbuild.servlets.json.serializers.translations.csv.read.RecordDeserializer;
 import org.cmdbuild.servlets.json.serializers.translations.table.TranslationSerializerFactory;
 import org.cmdbuild.servlets.json.serializers.translations.table.TranslationSerializerFactory.Output;
 import org.cmdbuild.servlets.json.serializers.translations.table.TranslationSerializerFactory.Sections;
 import org.cmdbuild.servlets.json.translationtable.objects.TranslationSerialization;
 import org.cmdbuild.servlets.json.translationtable.objects.csv.CsvTranslationRecord;
 import org.cmdbuild.servlets.json.translationtable.objects.csv.DefaultCsvExporter;
+import org.cmdbuild.servlets.json.translationtable.objects.csv.DefaultCsvImporter;
 import org.cmdbuild.servlets.utils.Parameter;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -54,13 +56,11 @@ public class Translation extends JSONBaseWithSpringContext {
 
 			for (final TranslationSerialization serialization : input) {
 				final CsvTranslationRecord record = CsvTranslationRecord.class.cast(serialization);
-				records.add(record.getRecord());
+				records.add(record.getValues());
 			}
 			return records;
 		}
 	};
-
-	final List<String> commonHeaders = Lists.newArrayList(IDENTIFIER, DESCRIPTION, DEFAULT);
 
 	@JSONExported
 	@Admin
@@ -108,7 +108,6 @@ public class Translation extends JSONBaseWithSpringContext {
 
 		if (type.equalsIgnoreCase("ALL")) {
 			for (final Sections section : Sections.values()) {
-				System.out.println(section.name());
 				Iterables.addAll(records, serialize(section.name(), sorters, activeOnly));
 			}
 		} else {
@@ -124,9 +123,38 @@ public class Translation extends JSONBaseWithSpringContext {
 				.withHeaders(initHeaders()) //
 				.withSeparator(separator) //
 				.build() //
-				.export();
+				.write();
 
 		return dataHandler;
+	}
+
+	@JSONExported
+	@Admin
+	public void importCsv(@Parameter(value = FILE_CSV, required = false) final FileItem file, //
+			@Parameter(value = TYPE) final String type, //
+			@Parameter(value = SEPARATOR, required = false) final String separator //
+	) throws JSONException, IOException {
+
+		// DataHandler input = new DataHandler(FileItemDataSource.of(file));
+		final File testFile = new File("/home/tecnoteca/Desktop/test.csv");
+		final DataHandler input = new DataHandler(testFile.toURI().toURL());
+
+		final Iterable<CsvTranslationRecord> records = DefaultCsvImporter.newInstance() //
+				.withDataHandler(input) //
+				.withSeparator(separator) //
+				.build() //
+				.read();
+
+		for (final CsvTranslationRecord record : records) {
+			final RecordDeserializer importer = a(DefaultRecordDeserializer.newInstance() //
+					.withRecord(record));
+			final TranslationObject translationObject = importer.deserialize();
+			if (translationObject.equals(TranslationObject.INVALID)) {
+				continue;
+			}
+			translationLogic().update(translationObject);
+		}
+
 	}
 
 	private Iterable<TranslationSerialization> serialize(final String type, final JSONArray sorters,
@@ -200,10 +228,4 @@ public class Translation extends JSONBaseWithSpringContext {
 		return JsonResponse.success(serializer.serialize());
 	}
 
-	private Converter createConverter(final String type, final String field) {
-		final TranslatableElement element = TranslatableElement.of(type);
-		final Converter converter = element.createConverter(field);
-		Validate.isTrue(converter.isValid());
-		return converter;
-	}
 }

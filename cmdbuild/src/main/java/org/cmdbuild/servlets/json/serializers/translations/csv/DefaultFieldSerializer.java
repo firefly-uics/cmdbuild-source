@@ -16,7 +16,8 @@ import static org.cmdbuild.servlets.json.serializers.translations.commons.Consta
 import static org.cmdbuild.servlets.json.serializers.translations.commons.Constants.IDENTIFIER;
 import static org.cmdbuild.servlets.json.serializers.translations.commons.Constants.KEY_SEPARATOR;
 import static org.cmdbuild.servlets.json.serializers.translations.commons.Constants.matchFilterByName;
-import static org.cmdbuild.servlets.json.serializers.translations.commons.Constants.*;
+import static org.cmdbuild.servlets.json.serializers.translations.commons.Constants.matchReportByCode;
+import static org.cmdbuild.servlets.json.serializers.translations.commons.Constants.matchViewByName;
 import static org.cmdbuild.servlets.json.serializers.translations.commons.Constants.nullableIterable;
 
 import java.util.List;
@@ -48,7 +49,6 @@ import org.cmdbuild.services.store.menu.MenuItem;
 import org.cmdbuild.services.store.report.Report;
 import org.cmdbuild.services.store.report.ReportStore;
 import org.cmdbuild.servlets.json.schema.TranslatableElement;
-import org.cmdbuild.servlets.json.serializers.translations.csv.DefaultFieldSerializer.Builder;
 import org.cmdbuild.servlets.json.translationtable.objects.csv.CsvTranslationRecord;
 
 import com.google.common.base.Function;
@@ -219,7 +219,7 @@ public class DefaultFieldSerializer implements FieldSerializer {
 				defaultValue = loadMenuDescription(identifier, owner);
 			}
 		} else if (element.equals(TranslatableElement.REPORT)) {
-			if (fieldName.equals(ReportConverter.description())){
+			if (fieldName.equals(ReportConverter.description())) {
 				defaultValue = loadReportDescription(identifier);
 			}
 		} else if (element.equals(TranslatableElement.VIEW)) {
@@ -243,13 +243,13 @@ public class DefaultFieldSerializer implements FieldSerializer {
 		}
 		return getOnlyElement(matchingViews).getDescription();
 	}
-	
+
 	private String loadReportDescription(final String code) {
 		Iterable<Report> matchingReports = Lists.newArrayList();
 		for (final ReportType type : ReportType.values()) {
 			final Iterable<Report> reportsOfType = reportStore.findReportsByType(type);
 			matchingReports = filter(reportsOfType, matchReportByCode(code));
-			if(!Iterables.isEmpty(matchingReports)){
+			if (!Iterables.isEmpty(matchingReports)) {
 				break;
 			}
 		}
@@ -289,8 +289,8 @@ public class DefaultFieldSerializer implements FieldSerializer {
 
 	private String buildKey() {
 		String key = EMPTY;
-		final String FORMAT_NO_OWNER = "%s%s%s%s%s";
-		final String FORMAT_WITH_OWNER = "%s%s%s%s%s%s%s";
+		final String FORMAT_NO_OWNER = "%s%c%s%c%s";
+		final String FORMAT_WITH_OWNER = "%s%c%s%c%s%c%s";
 		if (isBlank(owner)) {
 			key = String
 					.format(FORMAT_NO_OWNER, element.getType(), KEY_SEPARATOR, identifier, KEY_SEPARATOR, fieldName);
