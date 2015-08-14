@@ -3,22 +3,12 @@
 	Ext.define('CMDBuild.controller.management.common.widgets.customForm.layout.Form', {
 		extend: 'CMDBuild.controller.common.AbstractController',
 
-		requires: [
-			'CMDBuild.core.proxy.CMProxyConstants',
-			'CMDBuild.core.Message'
-		],
+		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
 
 		/**
 		 * @cfg {Array}
 		 */
-		cmfgCatchedFunctions: [
-			'onCustomFormLayoutFormCSVImportButtonClick',
-//			'onAddRowButtonClick' ,
-//			'onCSVImportButtonClick',
-//			'onDeleteRowButtonClick',
-//			'onEditRowButtonClick',
-//			'setGridDataFromCsv'
-		],
+		cmfgCatchedFunctions: ['importData'],
 
 		/**
 		 * @property {CMDBuild.view.management.common.widgets.customForm.layout.FormPanel}
@@ -34,30 +24,79 @@
 			this.view = Ext.create('CMDBuild.view.management.common.widgets.customForm.layout.FormPanel', {
 				delegate: this
 			});
+
+			this.view.add(this.buildFields());
+		},
+
+		/**
+		 * Setup form items disabled state.
+		 * Disable topToolBar only if is readOnly.
+		 */
+		beforeActiveView: function() {
+			var isWidgetReadOnly = this.cmfg('widgetConfigurationGet', [
+				CMDBuild.core.proxy.CMProxyConstants.CAPABILITIES,
+				CMDBuild.core.proxy.CMProxyConstants.READ_ONLY
+			]);
+
+			if (
+				isWidgetReadOnly
+ 				|| this.cmfg('widgetConfigurationGet', [
+					CMDBuild.core.proxy.CMProxyConstants.CAPABILITIES,
+					CMDBuild.core.proxy.CMProxyConstants.MODIFY_DISABLED
+				])
+			) {
+				this.view.setDisabledModify(true, true, isWidgetReadOnly);
+			}
+		},
+
+		/**
+		 * @return {Array} itemsArray
+		 */
+		buildFields: function() {
+			var itemsArray = [];
+
+			if (!this.cmfg('widgetConfigurationIsAttributeEmpty',  CMDBuild.core.proxy.CMProxyConstants.MODEL)) {
+				var fieldManager = Ext.create('CMDBuild.core.fieldManager.FieldManager', { parentDelegate: this });
+
+				Ext.Array.forEach(this.cmfg('widgetConfigurationGet', CMDBuild.core.proxy.CMProxyConstants.MODEL), function(attribute, i, allAttributes) {
+					if (fieldManager.isAttributeManaged(attribute.get(CMDBuild.core.proxy.CMProxyConstants.TYPE))) {
+						fieldManager.attributeModelSet(Ext.create('CMDBuild.model.common.attributes.Attribute', attribute.getData()));
+
+						itemsArray.push(fieldManager.buildField());
+					} else { // @deprecated - Old field manager
+						var attribute = attribute.getAdaptedData();
+						var item = CMDBuild.Management.FieldManager.getFieldForAttr(attribute, false, false);
+
+						if (attribute[CMDBuild.core.proxy.CMProxyConstants.FIELD_MODE] == 'read')
+							item.setDisabled(true);
+
+						itemsArray.push(item);
+					}
+				}, this);
+			}
+
+			return itemsArray;
 		},
 
 		/**
 		 * @returns {Array}
 		 */
-		getData: function() { // TODO: implementation
-			return this.view.getRecord();
+		getData: function() {
+			return [this.view.getValues()];
 		},
 
 		/**
-		 * Opens importCSV configuration pop-up window
+		 * @param {Array} data
 		 */
-		onCustomFormLayoutFormCSVImportButtonClick: function() {
-			Ext.create('CMDBuild.controller.management.common.widgets.customForm.ImportCSV', {
-				parentDelegate: this,
-				classId: this.classType.get(CMDBuild.core.proxy.CMProxyConstants.ID) // TODO: why??? Should be deleted??
-			});
-		},
+		setData: function(data) {
+			data = (Ext.isArray(data) && !Ext.isEmpty(data[0])) ? data[0] : data;
 
-		/**
-		 * @param {Object} data // TODO: edit with record's model
-		 */
-		setData: function(data) { // TODO: implementation
-			return this.view.loadRecord(data);
+			if (Ext.isObject(data))
+				if (Ext.isFunction(data.getData)) {
+					return this.view.getForm().setValues(data.getData());
+				} else {
+					return this.view.getForm().setValues(data);
+				}
 		}
 	});
 

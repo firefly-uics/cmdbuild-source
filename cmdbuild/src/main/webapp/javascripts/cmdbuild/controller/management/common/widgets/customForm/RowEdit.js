@@ -48,7 +48,7 @@
 			// Shorthand
 			this.form = this.view.form;
 
-			this.form.add(this.buildFormFields());
+			this.form.add(this.buildFields());
 			this.form.loadRecord(this.record);
 
 			this.fieldsInitialization();
@@ -61,7 +61,7 @@
 		/**
 		 * @return {Array} itemsArray
 		 */
-		buildFormFields: function() {
+		buildFields: function() {
 			var itemsArray = [];
 
 			if (!this.cmfg('widgetConfigurationIsAttributeEmpty',  CMDBuild.core.proxy.CMProxyConstants.MODEL)) {
@@ -70,7 +70,7 @@
 				Ext.Array.forEach(this.cmfg('widgetConfigurationGet', CMDBuild.core.proxy.CMProxyConstants.MODEL), function(attribute, i, allAttributes) {
 					if (fieldManager.isAttributeManaged(attribute.get(CMDBuild.core.proxy.CMProxyConstants.TYPE))) {
 						fieldManager.attributeModelSet(Ext.create('CMDBuild.model.common.attributes.Attribute', attribute.getData()));
-_debug(fieldManager.buildField());
+
 						itemsArray.push(fieldManager.buildField());
 					} else { // @deprecated - Old field manager
 						var attribute = attribute.getAdaptedData();

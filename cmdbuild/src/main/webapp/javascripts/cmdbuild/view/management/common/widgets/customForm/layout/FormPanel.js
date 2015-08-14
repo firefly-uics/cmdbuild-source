@@ -3,20 +3,24 @@
 	Ext.define('CMDBuild.view.management.common.widgets.customForm.layout.FormPanel', {
 		extend: 'Ext.form.Panel',
 
-		mixins: {
-			panelFunctions: 'CMDBuild.view.common.PanelFunctions'
-		},
+		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+
+		mixins: ['CMDBuild.view.common.PanelFunctions'],
 
 		/**
 		 * @cfg {CMDBuild.controller.management.common.widgets.customForm.layout.Form}
 		 */
 		delegate: undefined,
 
-//		importButton = Ext.create('CMDBuild.core.buttons.Import
-
+		bodyCls: 'x-panel-body-default-framed',
 		border: false,
 		frame: false,
 		overflowY: 'auto',
+
+		layout: {
+			type: 'vbox',
+//			align: 'stretch' // TODO: uncomment on new fieldManager full implementation
+		},
 
 		initComponent: function() {
 			Ext.apply(this, {
@@ -26,12 +30,23 @@
 						itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_TOP,
 
 						items: [
-							this.importButton = Ext.create('CMDBuild.core.buttons.Import', {
+							Ext.create('CMDBuild.core.buttons.Import', {
 								text: CMDBuild.Translation.importFromCSV,
 								scope: this,
 
+								disabled: (
+									this.delegate.cmfg('widgetConfigurationGet', [
+										CMDBuild.core.proxy.CMProxyConstants.CAPABILITIES,
+										CMDBuild.core.proxy.CMProxyConstants.READ_ONLY
+									])
+									|| this.delegate.cmfg('widgetConfigurationGet', [
+										CMDBuild.core.proxy.CMProxyConstants.CAPABILITIES,
+										CMDBuild.core.proxy.CMProxyConstants.IMPORT_DISABLED
+									])
+								),
+
 								handler: function(button, e) {
-									this.delegate.cmfg('onCustomFormLayoutFormCSVImportButtonClick');
+									this.delegate.cmfg('onCustomFormImportButtonClick');
 								}
 							})
 						]

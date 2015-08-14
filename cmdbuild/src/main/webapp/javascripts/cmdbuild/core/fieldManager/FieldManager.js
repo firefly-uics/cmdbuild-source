@@ -21,11 +21,6 @@
 		attributeModel: undefined,
 
 		/**
-		 * @property {Mixed}
-		 */
-		attributeController: undefined,
-
-		/**
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
@@ -37,9 +32,7 @@
 		 *
 		 * @private
 		 */
-		managedAttributesTypes: ['CHAR', 'DATE'
-//		                         , 'TEXT'
-		],
+		managedAttributesTypes: ['BOOLEAN', 'CHAR', 'DATE', 'DECIMAL', 'DOUBLE', 'INTEGER', 'TEXT'],
 
 		// AttributeModel methods
 			/**
@@ -54,7 +47,7 @@
 
 				if (!Ext.isEmpty(attributePath))
 					Ext.Array.forEach(attributePath, function(attributeName, i, allAttributeNames) {
-						if (!Ext.isEmpty(attributeName) && Ext.isString(attributeName))
+						if (!Ext.isEmpty(attributeName) && Ext.isString(attributeName)) {
 							if (
 								!Ext.isEmpty(requiredAttribute)
 								&& Ext.isObject(requiredAttribute)
@@ -67,6 +60,7 @@
 							) { // Simple object management
 								requiredAttribute = requiredAttribute[attributeName];
 							}
+						}
 					}, this);
 
 				return requiredAttribute;
@@ -86,19 +80,18 @@
 				}
 			},
 
+		/**
+		 * @returns {Mixed}
+		 */
 		buildAttributeController: function(attributeModel) {
 			switch (this.attributeModelGet(CMDBuild.core.proxy.CMProxyConstants.TYPE)) {
-				case 'CHAR': {
-					this.attributeController = Ext.create('CMDBuild.core.fieldManager.builders.Char', { parentDelegate: this });
-				} break;
-
-				case 'DATE': {
-					this.attributeController = Ext.create('CMDBuild.core.fieldManager.builders.Date', { parentDelegate: this });
-				} break;
-
-				case 'TEXT': {
-					this.attributeController = Ext.create('CMDBuild.core.fieldManager.builders.Text', { parentDelegate: this });
-				} break;
+				case 'BOOLEAN': return Ext.create('CMDBuild.core.fieldManager.builders.Boolean', { parentDelegate: this });
+				case 'CHAR': return Ext.create('CMDBuild.core.fieldManager.builders.Char', { parentDelegate: this });
+				case 'DATE': return Ext.create('CMDBuild.core.fieldManager.builders.Date', { parentDelegate: this });
+				case 'DECIMAL': return Ext.create('CMDBuild.core.fieldManager.builders.Decimal', { parentDelegate: this });
+				case 'DOUBLE': return Ext.create('CMDBuild.core.fieldManager.builders.Double', { parentDelegate: this });
+				case 'INTEGER': return Ext.create('CMDBuild.core.fieldManager.builders.Integer', { parentDelegate: this });
+				case 'TEXT': return Ext.create('CMDBuild.core.fieldManager.builders.text.Text', { parentDelegate: this });
 			}
 		},
 
@@ -110,9 +103,7 @@
 		buildColumn: function(withEditor) {
 			withEditor = Ext.isBoolean(withEditor) ? withEditor : false;
 
-			this.buildAttributeController();
-
-			return this.attributeController.buildColumn(withEditor);
+			return this.buildAttributeController().buildColumn(withEditor);
 		},
 
 		/**
@@ -121,9 +112,7 @@
 		 * @returns {Mixed}
 		 */
 		buildField: function() {
-			this.buildAttributeController();
-
-			return this.attributeController.buildField();
+			return this.buildAttributeController().buildField();
 		},
 
 		/**
