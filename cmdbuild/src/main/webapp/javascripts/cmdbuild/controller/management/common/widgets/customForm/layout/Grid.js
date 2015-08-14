@@ -5,7 +5,6 @@
 
 		requires: [
 			'CMDBuild.core.proxy.CMProxyConstants',
-			'CMDBuild.core.Message',
 			'CMDBuild.model.common.attributes.DynamicModelFromAttributes',
 		],
 
@@ -13,8 +12,8 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
+			'importData',
 			'onCustomFormLayoutGridAddRowButtonClick',
-			'onCustomFormLayoutGridCSVImportButtonClick',
 			'onCustomFormLayoutGridDeleteRowButtonClick' ,
 			'onCustomFormLayoutGridEditRowButtonClick',
 		],
@@ -95,7 +94,7 @@
 									CMDBuild.core.proxy.CMProxyConstants.CAPABILITIES,
 									CMDBuild.core.proxy.CMProxyConstants.READ_ONLY
 								])
- 								|| this.cmfg('widgetConfigurationGet', [
+								|| this.cmfg('widgetConfigurationGet', [
 									CMDBuild.core.proxy.CMProxyConstants.CAPABILITIES,
 									CMDBuild.core.proxy.CMProxyConstants.MODIFY_DISABLED
 								])
@@ -236,6 +235,16 @@
 		},
 
 		/**
+		 * @param {Array} data
+		 */
+		importData: function(data) {
+_debug('importData grid', data);
+_debug('importData view', this.view);
+			if (Ext.isArray(data))
+				this.view.getStore().loadData(data); // TODO: nsert mode
+		},
+
+		/**
 		 * Check required field value of grid store records
 		 *
 		 * @returns {Boolean}
@@ -279,16 +288,6 @@
 		 */
 		onCustomFormLayoutGridAddRowButtonClick: function() {
 			this.view.getStore().insert(0, Ext.create('CMDBuild.model.common.attributes.DynamicModelFromAttributes'));
-		},
-
-		/**
-		 * Opens importCSV configuration pop-up window
-		 */
-		onCustomFormLayoutGridCSVImportButtonClick: function() {
-			Ext.create('CMDBuild.controller.management.common.widgets.customForm.ImportCSV', { // TODO: implementation
-				parentDelegate: this,
-//				classId: this.classType.get(CMDBuild.core.proxy.CMProxyConstants.ID) // TODO: why??? Should be deleted??
-			});
 		},
 
 		/**

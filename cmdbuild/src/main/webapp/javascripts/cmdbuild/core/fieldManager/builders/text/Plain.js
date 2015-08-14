@@ -1,6 +1,6 @@
 (function () {
 
-	Ext.define('CMDBuild.core.fieldManager.builders.Char', {
+	Ext.define('CMDBuild.core.fieldManager.builders.text.Plain', {
 		extend: 'CMDBuild.core.fieldManager.builders.Abstract',
 
 		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
@@ -16,8 +16,6 @@
 		 * @returns {Ext.grid.column.Column}
 		 */
 		buildColumn: function(withEditor) {
-			withEditor = Ext.isBoolean(withEditor) ? withEditor : false;
-
 			return Ext.create('Ext.grid.column.Column', {
 				dataIndex: this.cmfg('attributeModelGet', CMDBuild.core.proxy.CMProxyConstants.NAME),
 				disabled: !this.cmfg('attributeModelGet', CMDBuild.core.proxy.CMProxyConstants.WRITABLE),
@@ -29,36 +27,32 @@
 		},
 
 		/**
-		 * @returns {Object}
+		 * @returns {Object} editorObject
 		 */
 		buildEditor: function() {
 			return {
 				xtype: 'textfield',
 				allowBlank: !this.cmfg('attributeModelGet', CMDBuild.core.proxy.CMProxyConstants.MANDATORY),
 				disabled: !this.cmfg('attributeModelGet', CMDBuild.core.proxy.CMProxyConstants.WRITABLE),
-				enforceMaxLength: true,
-				maxLength: 1,
 				name: this.cmfg('attributeModelGet', CMDBuild.core.proxy.CMProxyConstants.NAME),
 				readOnly: !this.cmfg('attributeModelGet', CMDBuild.core.proxy.CMProxyConstants.WRITABLE)
 			};
 		},
 
 		/**
-		 * @returns {Ext.form.field.Text}
+		 * @returns {Ext.form.field.TextArea} field
 		 */
 		buildField: function() {
-			return Ext.create('Ext.form.field.Text', {
+			return Ext.create('Ext.form.field.TextArea', {
 				allowBlank: !this.cmfg('attributeModelGet', CMDBuild.core.proxy.CMProxyConstants.MANDATORY),
 				disabled: !this.cmfg('attributeModelGet', CMDBuild.core.proxy.CMProxyConstants.WRITABLE),
-				enforceMaxLength: true,
 				fieldLabel: this.applyMandatoryLabelFlag(
 					this.cmfg('attributeModelGet', CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION)
 					|| this.cmfg('attributeModelGet', CMDBuild.core.proxy.CMProxyConstants.NAME)
 				),
 				labelAlign: 'right',
 				labelWidth: CMDBuild.LABEL_WIDTH,
-				maxLength: 1,
-				maxWidth: CMDBuild.LABEL_WIDTH + 30,
+				maxWidth: CMDBuild.BIG_FIELD_WIDTH,
 				name: this.cmfg('attributeModelGet', CMDBuild.core.proxy.CMProxyConstants.NAME),
 				readOnly: !this.cmfg('attributeModelGet', CMDBuild.core.proxy.CMProxyConstants.WRITABLE)
 			});

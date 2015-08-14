@@ -23,6 +23,8 @@
 		 */
 		cmfgCatchedFunctions: [
 			'getTemplateResolverServerVars',
+			'importData -> controllerLayout',
+			'onCustomFormImportButtonClick',
 			'widgetConfigurationGet',
 			'widgetConfigurationIsAttributeEmpty'
 		],
@@ -78,8 +80,8 @@
 
 			// Execute template resolver on model property
 			this.widgetConfigurationSet(
-				this.applyTemplateResolver(this.widgetConfiguration[CMDBuild.core.proxy.CMProxyConstants.MODEL])
-				, CMDBuild.core.proxy.CMProxyConstants.MODEL
+				this.applyTemplateResolver(this.widgetConfiguration[CMDBuild.core.proxy.CMProxyConstants.MODEL]),
+				CMDBuild.core.proxy.CMProxyConstants.MODEL
 			);
 
 			if (!this.widgetConfigurationIsAttributeEmpty(CMDBuild.core.proxy.CMProxyConstants.MODEL)) {
@@ -87,7 +89,12 @@
 
 				if (!this.instancesDataStorageIsEmpty())
 					this.controllerLayout.setData(this.instancesDataStorageGet());
+
+				// Function forward
+				if (Ext.isFunction(this.controllerLayout.beforeActiveView))
+					this.controllerLayout.beforeActiveView();
 			}
+_debug('this.widgetConfiguration', this.widgetConfigurationModel);
 		},
 
 		/**
@@ -124,32 +131,33 @@
 		},
 
 		/**
-		 * @return {Object} out
+		 * @return {Object} output
 		 *
 		 * @override
 		 */
-		getData: function() { // TODO: finish implementation
-			var out = {};
+		getData: function() {
+			var output = {};
+			output[CMDBuild.core.proxy.CMProxyConstants.OUTPUT] = [];
 
 			if (!this.widgetConfigurationGet([CMDBuild.core.proxy.CMProxyConstants.CAPABILITIES, CMDBuild.core.proxy.CMProxyConstants.READ_ONLY])) {
-				out[CMDBuild.core.proxy.CMProxyConstants.OUTPUT] = [];
-
 				// Uses direct data property access to avoid a get problem because of generic model
-				Ext.Array.forEach(this.controllerLayout.getData(), function(rowModel, i, allRowModels) {
+				Ext.Array.forEach(this.controllerLayout.getData(), function(rowObject, i, allRowObjects) {
+					var dataObject = Ext.isEmpty(rowObject.data) ? rowObject : rowObject.data; // Model/Objects management
+
 					new CMDBuild.Management.TemplateResolver({
 						clientForm: this.clientForm,
-						xaVars: rowModel.data,
+						xaVars: dataObject,
 						serverVars: this.getTemplateResolverServerVars()
 					}).resolveTemplates({
-						attributes: Ext.Object.getKeys(rowModel.data),
+						attributes: Ext.Object.getKeys(dataObject),
 						callback: function(out, ctx) {
-							out[CMDBuild.core.proxy.CMProxyConstants.OUTPUT].push(Ext.encode(out));
+							output[CMDBuild.core.proxy.CMProxyConstants.OUTPUT].push(Ext.encode(out));
 						}
 					});
 				}, this);
 			}
 
-			return out;
+			return output;
 		},
 
 		/**
@@ -166,6 +174,16 @@
 				return this.controllerLayout.isValid();
 
 			return true;
+		},
+
+		/**
+		 * Opens import configuration pop-up window
+		 */
+		onCustomFormImportButtonClick: function() { // TODO: move to parent controller
+			Ext.create('CMDBuild.controller.management.common.widgets.customForm.Import', {
+				parentDelegate: this,
+//				classId: this.classType.get(CMDBuild.core.proxy.CMProxyConstants.ID) // TODO: why??? Should be deleted??
+			});
 		},
 
 		/**

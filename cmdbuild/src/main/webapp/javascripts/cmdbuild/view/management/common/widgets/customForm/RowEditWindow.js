@@ -54,13 +54,13 @@
 				],
 				items: [
 					this.form = Ext.create('Ext.form.Panel', {
-						autoScroll: true,
-						frame: true,
 						border: false,
+						frame: true,
+						overflowY: 'auto',
 
 						layout: {
 							type: 'vbox',
-//							align: 'stretch'
+//							align: 'stretch' // TODO: uncomment on new fieldManager full implementation
 						}
 					})
 				]

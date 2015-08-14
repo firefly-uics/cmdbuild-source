@@ -17,6 +17,17 @@
 			this.self.setFields(Ext.Object.getKeys(data));
 
 			this.callParent(arguments);
+		},
+
+		/**
+		 * Override to get real data values because of a strange behaviour that for multiple model instances on getData returns only fields that where setup on last instance
+		 *
+		 * @returns {Object}
+		 *
+		 * @override
+		 */
+		getData: function() {
+			return this.data;
 		}
 	});
 
