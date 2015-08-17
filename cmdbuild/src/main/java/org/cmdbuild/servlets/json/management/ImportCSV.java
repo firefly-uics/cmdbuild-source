@@ -191,7 +191,7 @@ public class ImportCSV extends JSONBaseWithSpringContext {
 
 	}
 
-	@JSONExported
+	@JSONExported(forceContentType = true)
 	public JsonResponse readCsv( //
 			@Parameter(FILE_CSV) final FileItem file, //
 			@Parameter(SEPARATOR) final String separator //
@@ -218,7 +218,7 @@ public class ImportCSV extends JSONBaseWithSpringContext {
 
 	/**
 	 * Stores in the session the records of the file that the user has uploaded
-	 * 
+	 *
 	 * @param file
 	 *            is the uploaded file
 	 * @param separatorString
@@ -240,7 +240,7 @@ public class ImportCSV extends JSONBaseWithSpringContext {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return the serialization of the cards
 	 */
 	@JSONExported
