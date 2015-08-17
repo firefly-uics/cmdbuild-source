@@ -18,6 +18,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.activation.DataHandler;
 
@@ -28,7 +29,9 @@ import org.cmdbuild.servlets.json.JSONBaseWithSpringContext;
 import org.cmdbuild.servlets.json.management.JsonResponse;
 import org.cmdbuild.servlets.json.serializers.translations.commons.TranslationSectionSerializer;
 import org.cmdbuild.servlets.json.serializers.translations.csv.read.DefaultRecordDeserializer;
+import org.cmdbuild.servlets.json.serializers.translations.csv.read.ErrorListener;
 import org.cmdbuild.servlets.json.serializers.translations.csv.read.RecordDeserializer;
+import org.cmdbuild.servlets.json.serializers.translations.csv.read.SafeRecordDeserializer;
 import org.cmdbuild.servlets.json.serializers.translations.table.TranslationSerializerFactory;
 import org.cmdbuild.servlets.json.serializers.translations.table.TranslationSerializerFactory.Output;
 import org.cmdbuild.servlets.json.serializers.translations.table.TranslationSerializerFactory.Sections;
@@ -44,8 +47,13 @@ import org.json.JSONObject;
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 public class Translation extends JSONBaseWithSpringContext {
+
+	private static final String ALL = "ALL";
+
+	private static final String FAILURES = "failures";
 
 	private static final Function<Iterable<TranslationSerialization>, Iterable<Map<String, Object>>> TO_MAP = //
 	new Function<Iterable<TranslationSerialization>, Iterable<Map<String, Object>>>() {
@@ -60,6 +68,23 @@ public class Translation extends JSONBaseWithSpringContext {
 			}
 			return records;
 		}
+	};
+
+	private static final Function<Map<TranslationSerialization, Throwable>, Iterable<Map<String, String>>> TO_CLIENT = //
+	new Function<Map<TranslationSerialization, Throwable>, Iterable<Map<String, String>>>() {
+
+		@Override
+		public Iterable<Map<String, String>> apply(final Map<TranslationSerialization, Throwable> input) {
+			final Collection<Map<String, String>> output = Lists.newArrayList();
+			for (final Entry<TranslationSerialization, Throwable> entry : input.entrySet()) {
+				final Map<String, String> inner = Maps.newHashMap();
+				inner.put("record", entry.getKey().toString());
+				inner.put("message", entry.getValue().getMessage());
+				output.add(inner);
+			}
+			return output;
+		}
+
 	};
 
 	@JSONExported
@@ -106,7 +131,7 @@ public class Translation extends JSONBaseWithSpringContext {
 
 		final Collection<TranslationSerialization> records = Lists.newArrayList();
 
-		if (type.equalsIgnoreCase("ALL")) {
+		if (type.equalsIgnoreCase(ALL)) {
 			for (final Sections section : Sections.values()) {
 				Iterables.addAll(records, serialize(section.name(), sorters, activeOnly));
 			}
@@ -130,8 +155,7 @@ public class Translation extends JSONBaseWithSpringContext {
 
 	@JSONExported
 	@Admin
-	public void importCsv(@Parameter(value = FILE_CSV, required = false) final FileItem file, //
-			@Parameter(value = TYPE) final String type, //
+	public JsonResponse importCsv(@Parameter(value = FILE_CSV, required = false) final FileItem file, //
 			@Parameter(value = SEPARATOR, required = false) final String separator //
 	) throws JSONException, IOException {
 
@@ -145,16 +169,35 @@ public class Translation extends JSONBaseWithSpringContext {
 				.build() //
 				.read();
 
+		final ErrorListener listener = new ErrorListener() {
+
+			private final Map<TranslationSerialization, Throwable> failures = Maps.newHashMap();
+
+			@Override
+			public void handleError(final TranslationSerialization input, final Throwable throwable) {
+				failures.put(input, throwable);
+			}
+
+			@Override
+			public Map<TranslationSerialization, Throwable> getFailures() {
+				return failures;
+			}
+
+		};
 		for (final CsvTranslationRecord record : records) {
-			final RecordDeserializer importer = a(DefaultRecordDeserializer.newInstance() //
-					.withRecord(record));
+			final RecordDeserializer importer = SafeRecordDeserializer //
+					.of(a(DefaultRecordDeserializer.newInstance() //
+							.withRecord(record))) //
+					.withErrorListener(listener);
 			final TranslationObject translationObject = importer.deserialize();
 			if (translationObject.equals(TranslationObject.INVALID)) {
 				continue;
 			}
 			translationLogic().update(translationObject);
 		}
-
+		final Map<String, Object> response = Maps.newHashMap();
+		response.put(FAILURES, TO_CLIENT.apply(listener.getFailures()));
+		return JsonResponse.success(response);
 	}
 
 	private Iterable<TranslationSerialization> serialize(final String type, final JSONArray sorters,

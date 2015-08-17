@@ -12,18 +12,24 @@ import java.util.Set;
 
 import org.apache.axis.utils.StringUtils;
 import org.apache.commons.lang3.Validate;
+import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.translation.TranslationObject;
 import org.cmdbuild.logic.translation.converter.Converter;
 import org.cmdbuild.servlets.json.schema.TranslatableElement;
+import org.cmdbuild.servlets.json.translationtable.objects.TranslationSerialization;
 import org.cmdbuild.servlets.json.translationtable.objects.csv.CsvTranslationRecord;
+import org.slf4j.Logger;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
+import static org.apache.commons.lang3.Validate.*;
+
 public class DefaultRecordDeserializer implements RecordDeserializer {
 
+	private static final Logger logger = Log.CMDBUILD;
 	private String type = EMPTY;
 	private String identifier = EMPTY;
 	private String owner = EMPTY;
@@ -56,28 +62,29 @@ public class DefaultRecordDeserializer implements RecordDeserializer {
 	}
 
 	@Override
-	public TranslationObject deserialize() {
+	public TranslationSerialization getInput() {
+		return record;
+	}
 
+	@Override
+	public TranslationObject deserialize() {
+		logger.info("parsing record '%s'", record.toString());
 		final String key = record.get(IDENTIFIER);
 		unpack(key);
-		// TODO log
+		logger.debug("identifier deserialized to type: '{}' owner: '{}' identifier: '{}' field: '{}'", type, owner,
+				identifier, field);
 
 		final TranslatableElement element = TO_ELEMENT_TYPE.apply(type);
-		if (element == TranslatableElement.UNDEFINED) {
-			// TODO log
-		}
+		isTrue(!element.equals(TranslatableElement.UNDEFINED), "unsupported type '" + type + "'");
 
 		final boolean contains = Iterables.contains(element.allowedFields(), field);
-		if (!contains) {
-			// TODO log
-		}
+		isTrue(contains, "unsupported field '" + field + "'");
 
 		final Converter converter = createConverter(type, field);
-		if (!converter.isValid()) {
-			// TODO log
-		}
+		isTrue(converter.isValid(), "unsupported type and field pair '" + type + "' '" + field + "'");
 
 		extractTranslations(record);
+		logger.debug("translations: '{}'" + translations);
 
 		final TranslationObject translationObject = converter //
 				.withOwner(owner) //
@@ -117,9 +124,10 @@ public class DefaultRecordDeserializer implements RecordDeserializer {
 	}
 
 	private static void validate(final String key) {
-		Validate.notBlank(key);
-		Validate.isTrue(StringUtils.split(key, KEY_SEPARATOR).length == 3
-				|| StringUtils.split(key, KEY_SEPARATOR).length == 4);
+		notBlank(key, "missing identifier");
+		isTrue(StringUtils.split(key, KEY_SEPARATOR).length == 3 //
+				|| StringUtils.split(key, KEY_SEPARATOR).length == 4, //
+				"unsupported identifier '" + key + "'");
 	}
 
 	private static final Function<String, TranslatableElement> TO_ELEMENT_TYPE = new Function<String, TranslatableElement>() {

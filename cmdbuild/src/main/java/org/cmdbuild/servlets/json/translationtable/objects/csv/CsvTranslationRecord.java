@@ -8,26 +8,31 @@ import org.cmdbuild.servlets.json.translationtable.objects.TranslationSerializat
 
 public class CsvTranslationRecord implements TranslationSerialization {
 
-	private final Map<String, Object> record;
+	private final Map<String, Object> map;
 
 	public CsvTranslationRecord(final Map<String, Object> record) {
-		this.record = record;
+		this.map = record;
 	}
 
 	public Map<String, Object> getValues() {
-		return record;
+		return map;
 	}
 	
 	public String get(String key) {
-		return String.class.cast(record.get(key));
+		return String.class.cast(map.get(key));
 	}
 	
 	public Set<Entry<String, Object>> getEntrySet(){
-		return record.entrySet();
+		return map.entrySet();
 	}
 	
 	public Set<String> getKeySet(){
-		return record.keySet();
+		return map.keySet();
+	}
+	
+	@Override
+	public String toString() {
+		return map.toString();
 	}
 
 }
