@@ -3,6 +3,7 @@ package org.cmdbuild.services.store.filter;
 import static org.cmdbuild.services.store.filter.DataViewFilterStore.DESCRIPTION_ATTRIBUTE_NAME;
 import static org.cmdbuild.services.store.filter.DataViewFilterStore.ENTRYTYPE_ATTRIBUTE_NAME;
 import static org.cmdbuild.services.store.filter.DataViewFilterStore.FILTER_ATTRIBUTE_NAME;
+import static org.cmdbuild.services.store.filter.DataViewFilterStore.MASTER_ATTRIBUTE_NAME;
 import static org.cmdbuild.services.store.filter.DataViewFilterStore.NAME_ATTRIBUTE_NAME;
 import static org.cmdbuild.services.store.filter.DataViewFilterStore.TEMPLATE_ATTRIBUTE_NAME;
 
@@ -40,6 +41,7 @@ public class FilterConverter extends BaseStorableConverter<Filter> {
 				.forClass(clazz.getIdentifier().getLocalName()) //
 				.withValue(card.get(FILTER_ATTRIBUTE_NAME, String.class)) //
 				.asTemplate(card.get(TEMPLATE_ATTRIBUTE_NAME, Boolean.class)) //
+				.withOwner(Number.class.cast(card.get(MASTER_ATTRIBUTE_NAME, Integer.class)).longValue()) //
 				.build();
 	}
 
