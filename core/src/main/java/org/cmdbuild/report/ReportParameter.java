@@ -1,5 +1,6 @@
 package org.cmdbuild.report;
 
+import static org.cmdbuild.report.CustomProperties.REQUIRED;
 import groovy.lang.GroovyShell;
 import groovy.lang.Script;
 
@@ -137,7 +138,7 @@ public abstract class ReportParameter {
 
 	public boolean isRequired() {
 		final JRPropertiesMap properties = jrParameter.getPropertiesMap();
-		final String required = properties.getProperty("required");
+		final String required = properties.getProperty(REQUIRED);
 		if (required != null && required.equalsIgnoreCase("false")) {
 			return false;
 		}
