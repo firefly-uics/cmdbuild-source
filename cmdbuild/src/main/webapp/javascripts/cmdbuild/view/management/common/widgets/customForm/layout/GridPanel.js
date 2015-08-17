@@ -65,7 +65,7 @@
 								),
 
 								handler: function(button, e) {
-									this.delegate.cmfg('onCustomFormImportButtonClick');
+									this.delegate.cmfg('onCustomFormLayoutGridImportButtonClick');
 								}
 							})
 						]

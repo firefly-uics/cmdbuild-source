@@ -273,6 +273,7 @@
 		SCOPE: 'scope',
 		SENDER_ACCOUNT: 'senderAccount',
 		SENT: 'sent',
+		SEPARATOR: 'separator',
 		SERVICE: 'service',
 		SHORT: 'short',
 		SINGLE_SELECT: 'singleSelect',

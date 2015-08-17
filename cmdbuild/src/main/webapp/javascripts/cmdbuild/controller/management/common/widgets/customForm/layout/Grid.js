@@ -3,10 +3,7 @@
 	Ext.define('CMDBuild.controller.management.common.widgets.customForm.layout.Grid', {
 		extend: 'CMDBuild.controller.common.AbstractController',
 
-		requires: [
-			'CMDBuild.core.proxy.CMProxyConstants',
-			'CMDBuild.model.common.attributes.DynamicModelFromAttributes',
-		],
+		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
 
 		/**
 		 * @cfg {Array}
@@ -16,6 +13,7 @@
 			'onCustomFormLayoutGridAddRowButtonClick',
 			'onCustomFormLayoutGridDeleteRowButtonClick' ,
 			'onCustomFormLayoutGridEditRowButtonClick',
+			'onCustomFormLayoutGridImportButtonClick'
 		],
 
 		/**
@@ -173,9 +171,9 @@
 
 							editor = CMDBuild.Management.ReferenceField.buildEditor(attribute, templateResolver);
 
-							// Avoids to resolve field templates when form is in editMode (when you click on abort button) // TODO
-	//						if (!this.parentDelegate.owner._isInEditMode && !Ext.Object.isEmpty(editor) && Ext.isFunction(editor.resolveTemplate))
-	//							editor.resolveTemplate();
+							// Avoids to resolve field templates when form is in editMode (when you click on abort button) // TODO: probabply broken
+//							if (!this.parentDelegate.owner._isInEditMode && !Ext.Object.isEmpty(editor) && Ext.isFunction(editor.resolveTemplate))
+//								editor.resolveTemplate();
 						}
 
 						if (!Ext.isEmpty(header)) {
@@ -220,9 +218,38 @@
 		 * @returns {Ext.data.Store}
 		 */
 		buildDataStore: function() {
+			var fieldsForModel = [];
+
+			if (!this.cmfg('widgetConfigurationIsAttributeEmpty',  CMDBuild.core.proxy.CMProxyConstants.MODEL)) {
+				Ext.Array.forEach(this.cmfg('widgetConfigurationGet', CMDBuild.core.proxy.CMProxyConstants.MODEL), function(field, i, allFields) {
+					switch (field.get(CMDBuild.core.proxy.CMProxyConstants.TYPE)) {
+						case 'BOOLEAN': {
+							fieldsForModel.push({ name: field.get(CMDBuild.core.proxy.CMProxyConstants.NAME), type: 'boolean' });
+						} break;
+
+						case 'DATE': {
+							fieldsForModel.push({ name: field.get(CMDBuild.core.proxy.CMProxyConstants.NAME), type: 'date', dateFormat: 'd/m/Y' });
+						} break;
+
+						case 'DECIMAL':
+						case 'DOUBLE': {
+							fieldsForModel.push({ name: field.get(CMDBuild.core.proxy.CMProxyConstants.NAME), type: 'float', useNull: true });
+						} break;
+
+						case 'INTEGER': {
+							fieldsForModel.push({ name: field.get(CMDBuild.core.proxy.CMProxyConstants.NAME), type: 'int', useNull: true });
+						} break;
+
+						default: {
+							fieldsForModel.push({ name: field.get(CMDBuild.core.proxy.CMProxyConstants.NAME), type: 'string' });
+						}
+					}
+				}, this);
+			}
+
 			return Ext.create('Ext.data.Store', {
 				autoLoad: true,
-				model: 'CMDBuild.model.common.attributes.DynamicModelFromAttributes',
+				fields: fieldsForModel,
 				data: []
 			});
 		},
@@ -235,13 +262,15 @@
 		},
 
 		/**
-		 * @param {Array} data
+		 * @param {Object} parameters
+		 * @param {String} parameters.append
+		 * @param {Array} parameters.rowsObjects
 		 */
-		importData: function(data) {
-_debug('importData grid', data);
-_debug('importData view', this.view);
-			if (Ext.isArray(data))
-				this.view.getStore().loadData(data); // TODO: nsert mode
+		importData: function(parameters) {
+			var append = Ext.isBoolean(parameters.append) ? parameters.append : false;
+			var rowsObjects = Ext.isArray(parameters.rowsObjects) ? parameters.rowsObjects : [];
+
+			this.view.getStore().loadData(rowsObjects, append);
 		},
 
 		/**
@@ -287,7 +316,7 @@ _debug('importData view', this.view);
 		 * Add empty row to grid store
 		 */
 		onCustomFormLayoutGridAddRowButtonClick: function() {
-			this.view.getStore().insert(0, Ext.create('CMDBuild.model.common.attributes.DynamicModelFromAttributes'));
+			this.view.getStore().insert(0, {});
 		},
 
 		/**
@@ -298,12 +327,21 @@ _debug('importData view', this.view);
 		},
 
 		/**
-		 * @param {CMDBuild.model.common.attributes.DynamicModelFromAttributes} record
+		 * @param {Ext.data.Model} record
 		 */
 		onCustomFormLayoutGridEditRowButtonClick: function(record) {
-			Ext.create('CMDBuild.controller.management.common.widgets.customForm.RowEdit', { // TODO: date fields check
+			Ext.create('CMDBuild.controller.management.common.widgets.customForm.RowEdit', {
 				parentDelegate: this,
 				record: record
+			});
+		},
+
+		/**
+		 * Opens import configuration pop-up window
+		 */
+		onCustomFormLayoutGridImportButtonClick: function() {
+			Ext.create('CMDBuild.controller.management.common.widgets.customForm.Import', {
+				parentDelegate: this
 			});
 		},
 

@@ -23,8 +23,6 @@
 		 */
 		cmfgCatchedFunctions: [
 			'getTemplateResolverServerVars',
-			'importData -> controllerLayout',
-			'onCustomFormImportButtonClick',
 			'widgetConfigurationGet',
 			'widgetConfigurationIsAttributeEmpty'
 		],
@@ -94,7 +92,6 @@
 				if (Ext.isFunction(this.controllerLayout.beforeActiveView))
 					this.controllerLayout.beforeActiveView();
 			}
-_debug('this.widgetConfiguration', this.widgetConfigurationModel);
 		},
 
 		/**
@@ -163,7 +160,7 @@ _debug('this.widgetConfiguration', this.widgetConfigurationModel);
 		/**
 		 * Check required field value of grid store records
 		 *
-		 * FIXME: this function should be called with cmfg functionalities but that's requires a refactor of widgets base classes.
+		 * FIXME: this function should be called with cmfg functionalities but that's requires a refactor of widgets base classes
 		 *
 		 * @returns {Boolean}
 		 *
@@ -174,16 +171,6 @@ _debug('this.widgetConfiguration', this.widgetConfigurationModel);
 				return this.controllerLayout.isValid();
 
 			return true;
-		},
-
-		/**
-		 * Opens import configuration pop-up window
-		 */
-		onCustomFormImportButtonClick: function() { // TODO: move to parent controller
-			Ext.create('CMDBuild.controller.management.common.widgets.customForm.Import', {
-				parentDelegate: this,
-//				classId: this.classType.get(CMDBuild.core.proxy.CMProxyConstants.ID) // TODO: why??? Should be deleted??
-			});
 		},
 
 		/**

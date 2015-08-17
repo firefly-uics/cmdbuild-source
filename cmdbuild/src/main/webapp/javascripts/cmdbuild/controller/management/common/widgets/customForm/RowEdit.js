@@ -24,7 +24,7 @@
 		form: undefined,
 
 		/**
-		 * @cfg {CMDBuild.model.common.attributes.DynamicModelFromAttributes}
+		 * @cfg {Ext.data.Model}
 		 */
 		record: undefined,
 
@@ -101,29 +101,6 @@
 			}, this);
 		},
 
-		/**
-		 * Accept in input only dates with format "dd/mm/yy" and switch dd and mm to fix a bug that grid columns takes default format and not configured one
-		 * TODO: should be fixed applying this function only to date fields (testing attributes object)
-		 *
-		 * @param {Object} value
-		 *
-		 * @return {String or Object}
-		 */
-		formatDate: function(value) {
-			if (
-				!Ext.isEmpty(value)
-				&& Ext.isString(value)
-				&& !/<[a-z][\s\S]*>/i.test(value) // Avoids to format HTML strings
-			) {
-				var splittedDate = value.split('/');
-
-				if (splittedDate.length == 3)
-					return new Date(splittedDate[1] + '/' + splittedDate[0] + '/' + splittedDate[2]);
-			}
-
-			return value;
-		},
-
 		onRowEditWindowAbortButtonClick: function() {
 			this.view.destroy();
 		},
@@ -133,7 +110,7 @@
 		 */
 		onRowEditWindowSaveButtonClick: function() {
 			Ext.Object.each(this.form.getValues(), function(key, value, myself) {
-				this.record.set(key, this.formatDate(value));
+				this.record.set(key, value);
 			}, this);
 
 			this.onRowEditWindowAbortButtonClick();
