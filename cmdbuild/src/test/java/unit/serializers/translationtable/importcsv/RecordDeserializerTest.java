@@ -8,6 +8,9 @@ import java.util.Map;
 import org.cmdbuild.logic.translation.TranslationObject;
 import org.cmdbuild.logic.translation.object.ClassDescription;
 import org.cmdbuild.servlets.json.serializers.translations.csv.read.DefaultRecordDeserializer;
+import org.cmdbuild.servlets.json.serializers.translations.csv.read.ErrorListener;
+import org.cmdbuild.servlets.json.serializers.translations.csv.read.SafeRecordDeserializer;
+import org.cmdbuild.servlets.json.translationtable.objects.TranslationSerialization;
 import org.cmdbuild.servlets.json.translationtable.objects.csv.CsvTranslationRecord;
 import org.junit.Test;
 
@@ -18,17 +21,17 @@ public class RecordDeserializerTest {
 	@Test
 	public void validRecordForClassReturnsTranslationObject() throws Exception {
 		// given
-		Map<String, Object> map = Maps.newHashMap();
+		final Map<String, Object> map = Maps.newHashMap();
 		map.put("identifier", "class.Application.description");
 		map.put("description", "description of the class 'Application'");
 		map.put("default", "Application");
 		map.put("it", "Applicazione");
 		map.put("ja", "アプリケーション");
-		CsvTranslationRecord record = new CsvTranslationRecord(map);
+		final CsvTranslationRecord record = new CsvTranslationRecord(map);
 
 		// when
-		TranslationObject object = a(DefaultRecordDeserializer.newInstance() //
-				.withRecord(record)) //
+		final TranslationObject object = SafeRecordDeserializer.of(a(DefaultRecordDeserializer.newInstance() //
+				.withRecord(record))) //
 				.deserialize();
 
 		// then
@@ -40,18 +43,18 @@ public class RecordDeserializerTest {
 	@Test
 	public void extraColumnsAreInterpretedAsLanguages() throws Exception {
 		// given
-		Map<String, Object> map = Maps.newHashMap();
+		final Map<String, Object> map = Maps.newHashMap();
 		map.put("identifier", "class.Application.description");
 		map.put("description", "description of the class 'Application'");
 		map.put("default", "Application");
 		map.put("foo", "bar");
 		map.put("it", "Applicazione");
 		map.put("ja", "アプリケーション");
-		CsvTranslationRecord record = new CsvTranslationRecord(map);
+		final CsvTranslationRecord record = new CsvTranslationRecord(map);
 
 		// when
-		TranslationObject object = a(DefaultRecordDeserializer.newInstance() //
-				.withRecord(record)) //
+		final TranslationObject object = SafeRecordDeserializer.of(a(DefaultRecordDeserializer.newInstance() //
+				.withRecord(record))) //
 				.deserialize();
 
 		// then
@@ -61,22 +64,107 @@ public class RecordDeserializerTest {
 		assertTrue(ClassDescription.class.cast(object).getTranslations().get("foo").equals("bar"));
 	}
 
-	@Test(expected = NullPointerException.class)
-	public void missingColumns() throws Exception {
+	@Test
+	public void missingColumnsReturnsInvalidObjectAndOneFailure() throws Exception {
 		// given
-		Map<String, Object> map = Maps.newHashMap();
+		final Map<String, Object> map = Maps.newHashMap();
 		map.put("description", "description of the class 'Application'");
 		map.put("default", "Application");
 		map.put("it", "Applicazione");
 		map.put("ja", "アプリケーション");
-		CsvTranslationRecord record = new CsvTranslationRecord(map);
+		final CsvTranslationRecord record = new CsvTranslationRecord(map);
+		final ErrorListener listener = new ErrorListener() {
+
+			Map<TranslationSerialization, Throwable> failures = Maps.newHashMap();
+
+			@Override
+			public void handleError(final TranslationSerialization input, final Throwable throwable) {
+				failures.put(input, throwable);
+			}
+
+			@Override
+			public Map<TranslationSerialization, Throwable> getFailures() {
+				return failures;
+			}
+		};
 
 		// when
-		a(DefaultRecordDeserializer.newInstance() //
-				.withRecord(record)) //
+		final TranslationObject translationObject = SafeRecordDeserializer.of(a(DefaultRecordDeserializer.newInstance() //
+				.withRecord(record))) //
+				.withErrorListener(listener) //
 				.deserialize();
 		// then
+		assertTrue(translationObject == TranslationObject.INVALID);
+		assertTrue(listener.getFailures().size() == 1);
+		assertTrue(listener.getFailures().get(record).getLocalizedMessage().equals("missing identifier"));
+	}
 
+	@Test
+	public void failureMessageWhenWrongIdentifierSyntax() throws Exception {
+		// given
+		final Map<String, Object> map = Maps.newHashMap();
+		map.put("description", "description of the class 'Application'");
+		map.put("default", "Application");
+		map.put("it", "Applicazione");
+		map.put("ja", "アプリケーション");
+		map.put("identifier", "bbb.ccc");
+		final CsvTranslationRecord record = new CsvTranslationRecord(map);
+		final ErrorListener listener = new ErrorListener() {
+
+			Map<TranslationSerialization, Throwable> failures = Maps.newHashMap();
+
+			@Override
+			public void handleError(final TranslationSerialization input, final Throwable throwable) {
+				failures.put(input, throwable);
+			}
+
+			@Override
+			public Map<TranslationSerialization, Throwable> getFailures() {
+				return failures;
+			}
+		};
+
+		// when
+		SafeRecordDeserializer.of(a(DefaultRecordDeserializer.newInstance() //
+				.withRecord(record))) //
+				.withErrorListener(listener) //
+				.deserialize();
+		// then
+		assertTrue(listener.getFailures().get(record).getLocalizedMessage().equals("unsupported identifier 'bbb.ccc'"));
+	}
+
+	@Test
+	public void failureMessageWhenUnsupportedTypeFieldPair() throws Exception {
+		// given
+		final Map<String, Object> map = Maps.newHashMap();
+		map.put("description", "description of the class 'Application'");
+		map.put("default", "Application");
+		map.put("it", "Applicazione");
+		map.put("ja", "アプリケーション");
+		map.put("identifier", "class.Application.wrongfield");
+		final CsvTranslationRecord record = new CsvTranslationRecord(map);
+		final ErrorListener listener = new ErrorListener() {
+
+			Map<TranslationSerialization, Throwable> failures = Maps.newHashMap();
+
+			@Override
+			public void handleError(final TranslationSerialization input, final Throwable throwable) {
+				failures.put(input, throwable);
+			}
+
+			@Override
+			public Map<TranslationSerialization, Throwable> getFailures() {
+				return failures;
+			}
+		};
+
+		// when
+		SafeRecordDeserializer.of(a(DefaultRecordDeserializer.newInstance() //
+				.withRecord(record))) //
+				.withErrorListener(listener) //
+				.deserialize();
+		// then
+		assertTrue(listener.getFailures().get(record).getLocalizedMessage().equals("unsupported field 'wrongfield'"));
 	}
 
 }
