@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.cmdbuild.auth.LanguageStore;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.services.TranslationService;
+import org.cmdbuild.servlets.JSONDispatcher;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.springframework.context.ApplicationContext;
@@ -74,7 +75,16 @@ public class JSONBase {
 	@Retention(RetentionPolicy.RUNTIME)
 	@Target(ElementType.METHOD)
 	public @interface JSONExported {
+
 		String contentType() default ("application/json");
+
+		/**
+		 * {@link JSONDispatcher} sets the Content-Type of the response
+		 * according to some strategies (e.g. always "text/html" for multipart
+		 * requests). If set to {@code true} the trick is not performed.
+		 */
+		boolean forceContentType() default (false);
+
 	}
 
 	/**
