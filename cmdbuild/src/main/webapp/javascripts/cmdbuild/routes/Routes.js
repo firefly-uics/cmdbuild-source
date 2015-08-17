@@ -1,6 +1,7 @@
 (function() {
 
 	Ext.define('CMDBuild.routes.Routes', {
+
 		singleton: true,
 
 		/**

@@ -14,24 +14,35 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
+			'currentReportParametersSet',
 			'onReportDownloadButtonClick',
-			'onReportTypeButtonClick'
+			'onReportTypeButtonClick',
+			'updateReport'
 		],
 
 		/**
+		 * All server calls parameters
+		 *
 		 * @property {Object}
+		 *
+		 * Ex. {
+		 * 		{Object} create, create call parameters
+		 * 		{Object} update update call parameters
+		 * }
+		 *
+		 * @private
 		 */
-		displayedReportParams: undefined,
-
-		/**
-		 * @cfg {CMDBuild.view.management.report.SingleReportPanel}
-		 */
-		view: undefined,
+		currentReportParameters: {},
 
 		/**
 		 * @cfg {Array}
 		 */
-		supportedReportTypes: [
+		managedCurrentReportParametersCallIdentifiers: ['create', 'update'],
+
+		/**
+		 * @cfg {Array}
+		 */
+		managedReportTypes: [
 			CMDBuild.core.proxy.CMProxyConstants.CSV,
 			CMDBuild.core.proxy.CMProxyConstants.ODT,
 			CMDBuild.core.proxy.CMProxyConstants.PDF,
@@ -39,19 +50,20 @@
 		],
 
 		/**
-		 * @param {Object} reportParams
+		 * @cfg {CMDBuild.view.management.report.SingleReportPanel}
+		 */
+		view: undefined,
+
+		/**
 		 * @param {Boolean} forceDownload
 		 */
-		createReport: function(reportParams, forceDownload) {
+		createReport: function(forceDownload) {
 			forceDownload = forceDownload || false;
 
-			if (!Ext.isEmpty(reportParams[CMDBuild.core.proxy.CMProxyConstants.ID])) {
-				reportParams[CMDBuild.core.proxy.CMProxyConstants.TYPE] = reportParams[CMDBuild.core.proxy.CMProxyConstants.TYPE] || 'CUSTOM';
-				reportParams[CMDBuild.core.proxy.CMProxyConstants.EXTENSION] = reportParams[CMDBuild.core.proxy.CMProxyConstants.EXTENSION] || CMDBuild.core.proxy.CMProxyConstants.PDF;
-
+			if (!Ext.isEmpty(this.currentReportParametersGet('create', CMDBuild.core.proxy.CMProxyConstants.ID))) {
 				CMDBuild.core.proxy.Report.createReport({
 					scope: this,
-					params: reportParams,
+					params: this.currentReportParametersGet('create'),
 					failure: function(response, options, decodedResponse) {
 						CMDBuild.core.Message.error(
 							CMDBuild.Translation.error,
@@ -60,8 +72,6 @@
 						);
 					},
 					success: function(response, options, decodedResponse) {
-						this.displayedReportParams = reportParams;
-
 						if(decodedResponse.filled) { // Report with no parameters
 							this.showReport(forceDownload);
 						} else { // Show parameters window
@@ -70,31 +80,112 @@
 							if (Ext.isIE || !!navigator.userAgent.match(/Trident.*rv[ :]*11\./))
 								this.view.removeAll();
 
-							Ext.create('CMDBuild.controller.management.report.Parameters', {
-								parentDelegate: this,
-								attributeList: decodedResponse.attribute,
-								forceDownload: forceDownload
-							});
+							if (this.currentReportParametersIsEmpty('update')) {
+								Ext.create('CMDBuild.controller.management.report.Parameters', {
+									parentDelegate: this,
+									attributeList: decodedResponse.attribute,
+									forceDownload: forceDownload
+								});
+							} else {
+								this.updateReport(forceDownload);
+							}
 						}
 					}
 				});
 			}
 		},
 
+		// CurrentReportParameters methods
+			/**
+			 * @param {String} callIdentifier
+			 * @param {String} property
+			 *
+			 * @returns {Object}
+			 */
+			currentReportParametersGet: function(callIdentifier, property) {
+				if (
+					!Ext.isEmpty(callIdentifier)
+					&& Ext.isString(callIdentifier)
+					&& Ext.Array.contains(this.managedCurrentReportParametersCallIdentifiers, callIdentifier)
+				) {
+					if (!Ext.isEmpty(property) && Ext.isString(property) && !Ext.isEmpty(this.currentReportParameters[callIdentifier]))
+						return this.currentReportParameters[callIdentifier][property];
+
+					return this.currentReportParameters[callIdentifier];
+				}
+
+				return this.currentReportParameters;
+			},
+
+			/**
+			 * @param {String} callIdentifier
+			 *
+			 * @returns {Boolean}
+			 */
+			currentReportParametersIsEmpty: function(callIdentifier) {
+				if (
+					!Ext.isEmpty(callIdentifier)
+					&& Ext.isString(callIdentifier)
+					&& Ext.Array.contains(this.managedCurrentReportParametersCallIdentifiers, callIdentifier)
+				) {
+					return Ext.isEmpty(this.currentReportParametersGet(callIdentifier));
+				}
+
+				return Ext.isEmpty(this.currentReportParametersGet());
+			},
+
+			/**
+			 * @param {Object} parameters
+			 * @param {Object} parameters.params
+			 * @param {String} parameters.callIdentifier - managed identifiers (create, update)
+			 */
+			currentReportParametersSet: function(parameters) {
+				if (!Ext.isEmpty(parameters) && Ext.isObject(parameters)) {
+					var params = parameters.params || null;
+					var callIdentifier = parameters.callIdentifier || null;
+
+					switch(callIdentifier) {
+						case 'create': {
+							this.currentReportParameters['create'] = Ext.applyIf(params, { // Apply default values
+								extension: CMDBuild.core.proxy.CMProxyConstants.PDF,
+								type: 'CUSTOM'
+							});
+						} break;
+
+						case 'update': {
+							this.currentReportParameters['update'] = params;
+						} break;
+
+						default: {
+							_error('unsupported report parameter call identifier', this);
+						}
+					}
+				} else {
+					this.currentReportParameters = {};
+				}
+			},
+
+		/**
+		 * Show report with force download
+		 */
 		onReportDownloadButtonClick: function() {
-			if (!Ext.Object.isEmpty(this.displayedReportParams))
-				this.createReport(this.displayedReportParams, true);
+			this.showReport(true);
 		},
 
 		/**
 		 * @param {String} type
 		 */
 		onReportTypeButtonClick: function(type) {
-			if (Ext.Array.contains(this.supportedReportTypes, type)) {
-				this.createReport({
-					id: this.reportId,
-					extension: type
+			if (Ext.Array.contains(this.managedReportTypes, type)) {
+				this.currentReportParametersSet({
+					callIdentifier: 'create',
+					params: {
+						extension: type,
+						id: this.currentReportParametersGet('create', CMDBuild.core.proxy.CMProxyConstants.ID)
+					}
 				});
+
+				this.createReport();
 			} else {
 				CMDBuild.core.Message.error(
 					CMDBuild.Translation.error,
@@ -108,6 +199,8 @@
 		 * @param {CMDBuild.view.common.CMAccordionStoreModel} node
 		 */
 		onViewOnFront: function(node) {
+			this.currentReportParametersSet(); // Reset class property
+
 			if (
 				!Ext.Object.isEmpty(node)
 				&& !Ext.isEmpty(node.get(CMDBuild.core.proxy.CMProxyConstants.ID))
@@ -115,12 +208,15 @@
 			) {
 				this.view.setTitle(this.view.sectionTitle + ' - ' + node.get(CMDBuild.core.proxy.CMProxyConstants.TEXT));
 
-				this.reportId = node.get(CMDBuild.core.proxy.CMProxyConstants.ID);
-
-				this.createReport({
-					id: node.get(CMDBuild.core.proxy.CMProxyConstants.ID),
-					extension: node.get(CMDBuild.core.proxy.CMProxyConstants.TYPE).replace(/report/i, '') // Removes 'report' string from type property in node object
+				this.currentReportParametersSet({
+					callIdentifier: 'create',
+					params: {
+						extension: node.get(CMDBuild.core.proxy.CMProxyConstants.TYPE).replace(/report/i, ''), // Removes 'report' string from type property in node object
+						id: node.get(CMDBuild.core.proxy.CMProxyConstants.ID)
+					}
 				});
+
+				this.createReport();
 
 				this.callParent(arguments);
 			}
@@ -140,7 +236,7 @@
 			if (forceDownload) { // Force download mode
 				var form = Ext.create('Ext.form.Panel', {
 					standardSubmit: true,
-					url: CMDBuild.core.proxy.CMProxyUrlIndex.reports.printReportFactory
+					url: CMDBuild.core.proxy.CMProxyUrlIndex.reports.printReportFactory + '?donotdelete=true' // Add parameter to avoid report delete
 				});
 
 				form.submit({
@@ -159,7 +255,22 @@
 
 					autoEl: {
 						tag: 'iframe',
-						src: CMDBuild.core.proxy.CMProxyUrlIndex.reports.printReportFactory
+						src: CMDBuild.core.proxy.CMProxyUrlIndex.reports.printReportFactory + '?donotdelete=true' // Add parameter to avoid report delete
+					}
+				});
+			}
+		},
+
+		/**
+		 * @param {Boolean} forceDownload
+		 */
+		updateReport: function(forceDownload) {
+			if (!this.currentReportParametersIsEmpty('update')) {
+				CMDBuild.core.proxy.Report.updateReport({
+					params: this.currentReportParametersGet('update'),
+					scope: this,
+					success: function(response, options, decodedResponse) {
+						this.showReport(forceDownload);
 					}
 				});
 			}

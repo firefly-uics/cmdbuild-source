@@ -173,7 +173,7 @@
 					success: success
 				});
 			} else {
-				Ext.callback(success, scope); // TODO use Ext.callback + scope
+				Ext.callback(success, scope);
 			}
 		},
 

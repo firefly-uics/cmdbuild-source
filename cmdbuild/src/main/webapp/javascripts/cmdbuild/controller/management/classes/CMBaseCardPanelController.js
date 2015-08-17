@@ -134,9 +134,6 @@
 			CMDBuild.core.proxy.Card.update({
 				params: Ext.Object.merge(params, this.view.getForm().getValues()),
 				scope: this,
-				failure: function(response, options, decodedResponse) {
-					_error('update card error', this);
-				},
 				success: function(response, options, decodedResponse) {
 					// Hack to adapr old method behaviour for classes witch extends this one
 					var fakeOperation = {};
@@ -287,13 +284,18 @@
 			}
 		},
 
+		/**
+		 * @param {Function} success
+		 */
 		lockCard: function(success) {
 			if (_CMUtils.lockCard.isEnabled()) {
-				if (this.card) {
-					var id = this.card.get("Id");
+				if (
+					this.card
+					&& this.card.get("Id") >= 0 // Avoid lock on card create
+				) {
 					CMDBuild.core.proxy.Card.lock({
 						params: {
-							id: id
+							id: this.card.get("Id")
 						},
 						success: success
 					});
@@ -305,13 +307,14 @@
 
 		unlockCard: function() {
 			if (_CMUtils.lockCard.isEnabled()) {
-				if (this.card
-						&& this.view.isInEditing()) {
-
-					var id = this.card.get("Id");
+				if (
+					this.card
+					&& this.view.isInEditing()
+					&& this.card.get("Id") >= 0 // Avoid unlock on card create
+				) {
 					CMDBuild.core.proxy.Card.unlock({
 						params: {
-							id: id
+							id: this.card.get("Id")
 						}
 					});
 				}

@@ -162,7 +162,6 @@
 				me.view.displayMode();
 			}
 		}
-
 	});
 
 })();

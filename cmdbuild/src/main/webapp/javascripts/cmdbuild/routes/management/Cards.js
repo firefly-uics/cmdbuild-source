@@ -144,11 +144,11 @@
 		 */
 		simpleFilter: function(splittedIdentifier) {
 			CMDBuild.core.proxy.Card.getList({
-				scope: this,
 				params: {
 					className: this.classIdentifier,
 					filter: '{"attribute":{"simple":{"attribute":"' + splittedIdentifier[0] + '","operator":"equal","value":["' + splittedIdentifier[1] + '"]}}}'
 				},
+				scope: this,
 				success: function(result, options, decodedResult) {
 					if (decodedResult.results == 1) {
 						Ext.Router.parse('exec/classes/' + this.classIdentifier + '/cards/' + decodedResult.rows[0]['Id']);
