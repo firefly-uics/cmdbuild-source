@@ -218,38 +218,25 @@
 		 * @returns {Ext.data.Store}
 		 */
 		buildDataStore: function() {
-			var fieldsForModel = [];
+			var storeFields = [];
 
 			if (!this.cmfg('widgetConfigurationIsAttributeEmpty',  CMDBuild.core.proxy.CMProxyConstants.MODEL)) {
-				Ext.Array.forEach(this.cmfg('widgetConfigurationGet', CMDBuild.core.proxy.CMProxyConstants.MODEL), function(field, i, allFields) {
-					switch (field.get(CMDBuild.core.proxy.CMProxyConstants.TYPE)) {
-						case 'BOOLEAN': {
-							fieldsForModel.push({ name: field.get(CMDBuild.core.proxy.CMProxyConstants.NAME), type: 'boolean' });
-						} break;
+				var fieldManager = Ext.create('CMDBuild.core.fieldManager.FieldManager', { parentDelegate: this });
 
-						case 'DATE': {
-							fieldsForModel.push({ name: field.get(CMDBuild.core.proxy.CMProxyConstants.NAME), type: 'date', dateFormat: 'd/m/Y' });
-						} break;
+				Ext.Array.forEach(this.cmfg('widgetConfigurationGet', CMDBuild.core.proxy.CMProxyConstants.MODEL), function(attribute, i, allAttributes) {
+					if (fieldManager.isAttributeManaged(attribute.get(CMDBuild.core.proxy.CMProxyConstants.TYPE))) {
+						fieldManager.attributeModelSet(Ext.create('CMDBuild.model.common.attributes.Attribute', attribute.getData()));
 
-						case 'DECIMAL':
-						case 'DOUBLE': {
-							fieldsForModel.push({ name: field.get(CMDBuild.core.proxy.CMProxyConstants.NAME), type: 'float', useNull: true });
-						} break;
-
-						case 'INTEGER': {
-							fieldsForModel.push({ name: field.get(CMDBuild.core.proxy.CMProxyConstants.NAME), type: 'int', useNull: true });
-						} break;
-
-						default: {
-							fieldsForModel.push({ name: field.get(CMDBuild.core.proxy.CMProxyConstants.NAME), type: 'string' });
-						}
+						storeFields.push(fieldManager.buildStoreField());
+					} else {
+						storeFields.push({ name: attribute.get(CMDBuild.core.proxy.CMProxyConstants.NAME), type: 'string' });
 					}
 				}, this);
 			}
 
 			return Ext.create('Ext.data.Store', {
 				autoLoad: true,
-				fields: fieldsForModel,
+				fields: storeFields,
 				data: []
 			});
 		},

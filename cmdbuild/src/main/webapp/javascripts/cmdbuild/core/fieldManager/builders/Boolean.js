@@ -45,6 +45,13 @@
 				readOnly: !this.cmfg('attributeModelGet', CMDBuild.core.proxy.CMProxyConstants.WRITABLE),
 				submitValue: false
 			});
+		},
+
+		/**
+		 * @returns {Object}
+		 */
+		buildStoreField: function() {
+			return { name: this.cmfg('attributeModelGet', CMDBuild.core.proxy.CMProxyConstants.NAME), type: 'boolean' };
 		}
 	});
 

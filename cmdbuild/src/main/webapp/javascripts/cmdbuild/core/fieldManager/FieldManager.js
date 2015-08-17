@@ -32,7 +32,7 @@
 		 *
 		 * @private
 		 */
-		managedAttributesTypes: ['BOOLEAN', 'CHAR', 'DATE', 'DECIMAL', 'DOUBLE', 'INTEGER', 'TEXT'],
+		managedAttributesTypes: ['BOOLEAN', 'CHAR', 'DATE', 'DECIMAL', 'DOUBLE', 'INTEGER', 'TEXT', 'TIME', 'TIMESTAMP', 'STRING'],
 
 		// AttributeModel methods
 			/**
@@ -73,6 +73,7 @@
 				if (
 					!Ext.isEmpty(attributeModel)
 					&& Ext.getClassName(attributeModel) == 'CMDBuild.model.common.attributes.Attribute'
+					&& attributeModel.isValid() // Validate attribute model
 				) {
 					this.attributeModel = attributeModel;
 				} else {
@@ -82,6 +83,8 @@
 
 		/**
 		 * @returns {Mixed}
+		 *
+		 * @private
 		 */
 		buildAttributeController: function(attributeModel) {
 			switch (this.attributeModelGet(CMDBuild.core.proxy.CMProxyConstants.TYPE)) {
@@ -91,11 +94,16 @@
 				case 'DECIMAL': return Ext.create('CMDBuild.core.fieldManager.builders.Decimal', { parentDelegate: this });
 				case 'DOUBLE': return Ext.create('CMDBuild.core.fieldManager.builders.Double', { parentDelegate: this });
 				case 'INTEGER': return Ext.create('CMDBuild.core.fieldManager.builders.Integer', { parentDelegate: this });
+				case 'STRING': return Ext.create('CMDBuild.core.fieldManager.builders.String', { parentDelegate: this });
 				case 'TEXT': return Ext.create('CMDBuild.core.fieldManager.builders.text.Text', { parentDelegate: this });
+				case 'TIME': return Ext.create('CMDBuild.core.fieldManager.builders.Time', { parentDelegate: this });
+				case 'TIMESTAMP': return Ext.create('CMDBuild.core.fieldManager.builders.TimeStamp', { parentDelegate: this });
 			}
 		},
 
 		/**
+		 * Builds Ext.grid.column.* object
+		 *
 		 * @param {Boolean} withEditor
 		 *
 		 * @returns {Mixed}
@@ -107,12 +115,25 @@
 		},
 
 		/**
+		 * Builds Ext.form.field.* object
+		 *
 		 * @param {CMDBuild.model.common.attributes.Attribute} attributeModel
 		 *
 		 * @returns {Mixed}
 		 */
 		buildField: function() {
 			return this.buildAttributeController().buildField();
+		},
+
+		/**
+		 * Builds Ext.data.Store field definition object
+		 *
+		 * @param {CMDBuild.model.common.attributes.Attribute} attributeModel
+		 *
+		 * @returns {Mixed}
+		 */
+		buildStoreField: function() {
+			return this.buildAttributeController().buildStoreField();
 		},
 
 		/**

@@ -68,8 +68,6 @@
 					var attributesArray = [];
 
 					Ext.Array.forEach(newValue, function(attributeObject, i, AllAttributesObjects) {
-//attributeObject.precision = 6;
-//attributeObject.scale = 4;
 						attributesArray.push(Ext.create('CMDBuild.model.widgets.customForm.Attribute', attributeObject));
 					}, this);
 

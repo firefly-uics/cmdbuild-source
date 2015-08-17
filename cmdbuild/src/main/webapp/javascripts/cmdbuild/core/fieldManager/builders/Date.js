@@ -72,6 +72,13 @@
 				name: this.cmfg('attributeModelGet', CMDBuild.core.proxy.CMProxyConstants.NAME),
 				readOnly: !this.cmfg('attributeModelGet', CMDBuild.core.proxy.CMProxyConstants.WRITABLE)
 			});
+		},
+
+		/**
+		 * @returns {Object}
+		 */
+		buildStoreField: function() {
+			return { name: this.cmfg('attributeModelGet', CMDBuild.core.proxy.CMProxyConstants.NAME), type: 'date', dateFormat: this.format };
 		}
 	});
 
