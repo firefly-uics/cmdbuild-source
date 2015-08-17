@@ -183,6 +183,7 @@ public class Filter extends JSONBaseWithSpringContext {
 	 * @throws CMDBException
 	 */
 	@JSONExported
+	@Admin
 	public JSONObject read( //
 			final @Parameter(value = CLASS_NAME) String className, //
 			final @Parameter(value = START) int start, //
@@ -204,6 +205,7 @@ public class Filter extends JSONBaseWithSpringContext {
 	 * @throws CMDBException
 	 */
 	@JSONExported
+	@Admin
 	public JSONObject readAllGroupFilters( //
 			@Parameter(value = START) final int start, //
 			@Parameter(value = LIMIT) final int limit //
@@ -224,7 +226,7 @@ public class Filter extends JSONBaseWithSpringContext {
 	public JSONObject readForUser( //
 			@Parameter(value = CLASS_NAME) final String className //
 	) throws JSONException {
-		final PagedElements<FilterLogic.Filter> filters = filterLogic().getFiltersForCurrentlyLoggedUser(className);
+		final PagedElements<FilterLogic.Filter> filters = filterLogic().getFiltersForCurrentUser(className);
 		return serialize(filters);
 	}
 

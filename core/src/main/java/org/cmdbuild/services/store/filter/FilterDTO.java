@@ -21,6 +21,7 @@ public class FilterDTO extends ForwardingFilter {
 		private String value;
 		private String className;
 		private boolean template;
+		private Long owner;
 
 		/**
 		 * Use factory method.
@@ -58,6 +59,11 @@ public class FilterDTO extends ForwardingFilter {
 			return this;
 		}
 
+		public FilterDTOBuilder withOwner(final Long owner) {
+			this.owner = owner;
+			return this;
+		}
+
 		@Override
 		public FilterDTO build() {
 			return new FilterDTO(this);
@@ -77,6 +83,7 @@ public class FilterDTO extends ForwardingFilter {
 	private final String value;
 	private final String className;
 	private final boolean template;
+	private final Long owner;
 
 	private FilterDTO(final FilterDTOBuilder builder) {
 		this.name = builder.name;
@@ -85,6 +92,7 @@ public class FilterDTO extends ForwardingFilter {
 		this.className = builder.className;
 		this.id = builder.id;
 		this.template = builder.template;
+		this.owner = builder.owner;
 	}
 
 	@Override
@@ -118,11 +126,6 @@ public class FilterDTO extends ForwardingFilter {
 	}
 
 	@Override
-	public boolean isTemplate() {
-		return template;
-	}
-
-	@Override
 	public String getClassName() {
 		return className;
 	}
@@ -130,6 +133,16 @@ public class FilterDTO extends ForwardingFilter {
 	@Override
 	public String getValue() {
 		return value;
+	}
+
+	@Override
+	public boolean isTemplate() {
+		return template;
+	}
+
+	@Override
+	public Long getOwner() {
+		return owner;
 	}
 
 	@Override
@@ -148,6 +161,7 @@ public class FilterDTO extends ForwardingFilter {
 				.append(this.isTemplate(), other.isTemplate()) //
 				.append(this.getClassName(), other.getClassName()) //
 				.append(this.getValue(), other.getValue()) //
+				.append(this.getOwner(), other.getOwner()) //
 				.isEquals();
 	}
 
@@ -160,6 +174,7 @@ public class FilterDTO extends ForwardingFilter {
 				.append(isTemplate()) //
 				.append(getClassName()) //
 				.append(getValue()) //
+				.append(getOwner()) //
 				.toHashCode();
 	}
 

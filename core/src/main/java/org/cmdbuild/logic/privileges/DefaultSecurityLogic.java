@@ -1,5 +1,6 @@
 package org.cmdbuild.logic.privileges;
 
+import static java.lang.Integer.MAX_VALUE;
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 import static org.cmdbuild.auth.privileges.constants.GrantConstants.ATTRIBUTES_PRIVILEGES_ATTRIBUTE;
 import static org.cmdbuild.auth.privileges.constants.GrantConstants.GRANT_CLASS_NAME;
@@ -50,7 +51,7 @@ import org.cmdbuild.privileges.fetchers.factories.CMClassPrivilegeFetcherFactory
 import org.cmdbuild.privileges.fetchers.factories.FilterPrivilegeFetcherFactory;
 import org.cmdbuild.privileges.fetchers.factories.PrivilegeFetcherFactory;
 import org.cmdbuild.privileges.fetchers.factories.ViewPrivilegeFetcherFactory;
-import org.cmdbuild.services.store.filter.DataViewFilterStore;
+import org.cmdbuild.services.store.filter.FilterStore;
 import org.cmdbuild.services.store.filter.FilterStore.Filter;
 
 import com.google.common.base.Optional;
@@ -61,12 +62,12 @@ public class DefaultSecurityLogic implements Logic, SecurityLogic {
 	private final CMDataView view;
 	private final CMClass grantClass;
 	private final StorableConverter<View> viewConverter;
-	private final DataViewFilterStore filterStore;
+	private final FilterStore filterStore;
 
 	public DefaultSecurityLogic( //
 			final CMDataView view, //
 			final StorableConverter<View> viewConverter, //
-			final DataViewFilterStore filterStore //
+			final FilterStore filterStore //
 	) {
 		this.view = view;
 		this.grantClass = view.findClass(GRANT_CLASS_NAME);
@@ -137,7 +138,7 @@ public class DefaultSecurityLogic implements Logic, SecurityLogic {
 	public List<PrivilegeInfo> fetchFilterPrivilegesForGroup(final Long groupId) {
 		final List<PrivilegeInfo> fetchedFilterPrivileges = fetchStoredPrivilegesForGroup(groupId,
 				PrivilegedObjectType.FILTER);
-		final Iterable<Filter> allGroupsFilters = fetchAllGroupsFilters();
+		final Iterable<Filter> allGroupsFilters = filterStore.fetchAllGroupsFilters(null, 0, MAX_VALUE);
 		for (final Filter filter : allGroupsFilters) {
 			final Long filterId = Long.valueOf(filter.getId());
 			if (!isPrivilegeAlreadyStored(filterId, fetchedFilterPrivileges)) {
@@ -152,10 +153,6 @@ public class DefaultSecurityLogic implements Logic, SecurityLogic {
 		// TODO must be an external dependency
 		final DataViewStore<View> viewStore = DataViewStore.newInstance(view, viewConverter);
 		return viewStore.readAll();
-	}
-
-	private Iterable<Filter> fetchAllGroupsFilters() {
-		return filterStore.fetchAllGroupsFilters();
 	}
 
 	/**

@@ -1,9 +1,6 @@
 package org.cmdbuild.spring.configuration;
 
-import static org.cmdbuild.spring.util.Constants.PROTOTYPE;
-
 import org.cmdbuild.auth.UserStore;
-import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.data.store.dao.StorableConverter;
 import org.cmdbuild.logic.filter.DefaultFilterLogic;
 import org.cmdbuild.logic.filter.DefaultFilterLogic.Converter;
@@ -15,7 +12,6 @@ import org.cmdbuild.services.store.filter.FilterStore;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Scope;
 
 @Configuration
 public class Filter {
@@ -33,15 +29,13 @@ public class Filter {
 	private UserStore userStore;
 
 	@Bean
-	@Scope(PROTOTYPE)
 	public FilterLogic defaultFilterLogic() {
-		return new DefaultFilterLogic(dataViewFilterStore(), defaultFilterLogicConverter());
+		return new DefaultFilterLogic(dataViewFilterStore(), defaultFilterLogicConverter(), userStore);
 	}
 
 	@Bean
-	@Scope(PROTOTYPE)
 	protected DataViewFilterStore dataViewFilterStore() {
-		return new DataViewFilterStore(data.systemDataView(), operationUser(), localizedStorableConverter());
+		return new DataViewFilterStore(data.systemDataView(), localizedStorableConverter());
 	}
 
 	@Bean
@@ -56,19 +50,13 @@ public class Filter {
 	}
 
 	@Bean
-	@Scope(PROTOTYPE)
-	protected OperationUser operationUser() {
-		return userStore.getUser();
-	}
-
-	@Bean
 	protected Converter defaultFilterLogicConverter() {
 		return new DefaultFilterLogic.DefaultConverter(filterConverter());
 	}
 
 	@Bean
 	protected com.google.common.base.Converter<FilterLogic.Filter, FilterStore.Filter> filterConverter() {
-		return new DefaultFilterLogic.FilterConverter();
+		return new DefaultFilterLogic.FilterConverter(userStore);
 	}
 
 }

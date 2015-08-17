@@ -1,7 +1,11 @@
 package unit.logic.filter;
 
+import static com.google.common.reflect.Reflection.newProxy;
+import static java.lang.Integer.MAX_VALUE;
 import static java.util.Arrays.asList;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.cmdbuild.common.utils.PagedElements.empty;
+import static org.cmdbuild.common.utils.Reflection.unsupported;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
@@ -10,12 +14,19 @@ import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Matchers.isNull;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
+import org.cmdbuild.auth.UserStore;
+import org.cmdbuild.auth.acl.CMGroup;
+import org.cmdbuild.auth.acl.CMPrivilegedObject;
+import org.cmdbuild.auth.acl.PrivilegeContext;
+import org.cmdbuild.auth.user.AuthenticatedUser;
+import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.common.utils.PagedElements;
 import org.cmdbuild.logic.filter.DefaultFilterLogic;
 import org.cmdbuild.logic.filter.DefaultFilterLogic.Converter;
@@ -29,13 +40,26 @@ public class DefaultFilterLogicTest {
 
 	private FilterStore store;
 	private Converter converter;
+	private UserStore userStore;
 	private DefaultFilterLogic defaultFilterLogic;
+
+	private AuthenticatedUser authenticatedUser;
+	private PrivilegeContext privilegeContext;
 
 	@Before
 	public void setUp() throws Exception {
 		store = mock(FilterStore.class);
 		converter = mock(Converter.class);
-		defaultFilterLogic = new DefaultFilterLogic(store, converter);
+		userStore = mock(UserStore.class);
+		defaultFilterLogic = new DefaultFilterLogic(store, converter, userStore);
+
+		authenticatedUser = mock(AuthenticatedUser.class);
+		privilegeContext = mock(PrivilegeContext.class);
+		final CMGroup selectedGroup = newProxy(CMGroup.class, unsupported("method not supported"));
+		final OperationUser operationUser = new OperationUser(authenticatedUser, privilegeContext, selectedGroup);
+		doReturn(operationUser) //
+				.when(userStore).getUser();
+
 	}
 
 	@Test(expected = NullPointerException.class)
@@ -70,7 +94,7 @@ public class DefaultFilterLogicTest {
 	}
 
 	@Test
-	public void filterIsCreated() throws Exception {
+	public void filterCreated() throws Exception {
 		// given
 		final Filter input = mock(Filter.class);
 		doReturn("filter name") //
@@ -97,11 +121,11 @@ public class DefaultFilterLogicTest {
 		verify(store).create(eq(convertedForStore));
 		verify(store).fetchFilter(eq(42L));
 		verify(converter).storeToLogic(eq(created));
-		verifyNoMoreInteractions(store, converter);
+		verifyNoMoreInteractions(store, converter, userStore, authenticatedUser, privilegeContext);
 	}
 
 	@Test
-	public void filterIsUpdated() throws Exception {
+	public void filterUpdated() throws Exception {
 		// given
 		final Filter input = mock(Filter.class);
 		final FilterStore.Filter convertedForStore = mock(FilterStore.Filter.class);
@@ -114,11 +138,11 @@ public class DefaultFilterLogicTest {
 		// then
 		verify(converter).logicToStore(eq(input));
 		verify(store).update(eq(convertedForStore));
-		verifyNoMoreInteractions(store, converter);
+		verifyNoMoreInteractions(store, converter, userStore, authenticatedUser, privilegeContext);
 	}
 
 	@Test
-	public void filterIsDeleted() throws Exception {
+	public void filterDeleted() throws Exception {
 		// given
 		final Filter input = mock(Filter.class);
 		final FilterStore.Filter convertedForStore = mock(FilterStore.Filter.class);
@@ -131,11 +155,11 @@ public class DefaultFilterLogicTest {
 		// then
 		verify(converter).logicToStore(eq(input));
 		verify(store).delete(eq(convertedForStore));
-		verifyNoMoreInteractions(store, converter);
+		verifyNoMoreInteractions(store, converter, userStore, authenticatedUser, privilegeContext);
 	}
 
 	@Test
-	public void positionIsRequested() throws Exception {
+	public void positionRequested() throws Exception {
 		// given(Filter.class)
 		final Filter input = mock(Filter.class);
 		final FilterStore.Filter convertedForStore = mock(FilterStore.Filter.class);
@@ -148,36 +172,131 @@ public class DefaultFilterLogicTest {
 		// then
 		verify(converter).logicToStore(eq(input));
 		verify(store).getPosition(eq(convertedForStore));
-		verifyNoMoreInteractions(store, converter);
+		verifyNoMoreInteractions(store, converter, userStore, authenticatedUser, privilegeContext);
 	}
 
 	@Test
-	public void allFiltersForCurrentUserAreRequested() throws Exception {
+	public void filtersForCurrentUserAreRequested_OnlyUserFiltersAreReturned() throws Exception {
 		// given
 		final FilterStore.Filter first = mock(FilterStore.Filter.class);
 		final FilterStore.Filter second = mock(FilterStore.Filter.class);
-		doReturn(new PagedElements<FilterStore.Filter>(asList(first, second), 42)) //
-				.when(store).getFiltersForCurrentlyLoggedUser(anyString());
+		doReturn(new PagedElements<FilterStore.Filter>(asList(first, second), 123)) //
+				.when(store).getAllUserFilters(anyString(), anyLong(), anyInt(), anyInt());
+		doReturn(empty()) //
+				.when(store).fetchAllGroupsFilters(anyString(), anyInt(), anyInt());
 		final Filter _first = mock(Filter.class);
 		final Filter _second = mock(Filter.class);
 		doReturn(_first).doReturn(_second) //
 				.when(converter).storeToLogic(any(FilterStore.Filter.class));
+		doReturn(42L) //
+				.when(authenticatedUser).getId();
 
 		// when
-		final PagedElements<Filter> output = defaultFilterLogic.getFiltersForCurrentlyLoggedUser("a classname");
+		final PagedElements<Filter> output = defaultFilterLogic.getFiltersForCurrentUser("a classname");
 
 		// then
 		assertThat(output.elements(), containsInAnyOrder(_first, _second));
-		assertThat(output.totalSize(), equalTo(42));
+		assertThat(output.totalSize(), equalTo(0));
 
 		final ArgumentCaptor<FilterStore.Filter> captor = ArgumentCaptor.forClass(FilterStore.Filter.class);
 
-		verify(store).getFiltersForCurrentlyLoggedUser(eq("a classname"));
+		verify(userStore).getUser();
+		verify(authenticatedUser).getId();
+		verify(store).getAllUserFilters(eq("a classname"), eq(42L), eq(0), eq(MAX_VALUE));
+		verify(store).fetchAllGroupsFilters(eq("a classname"), eq(0), eq(MAX_VALUE));
 		verify(converter, times(2)).storeToLogic(captor.capture());
-		verifyNoMoreInteractions(store, converter);
+		verifyNoMoreInteractions(store, converter, userStore, authenticatedUser, privilegeContext);
 
 		assertThat(captor.getAllValues().get(0), equalTo(first));
 		assertThat(captor.getAllValues().get(1), equalTo(second));
+	}
+
+	@Test
+	public void filtersForCurrentUserAreRequested_OnlyGroupFiltersAreReturned_UserHasAdministratorPrivileges()
+			throws Exception {
+		// given
+		doReturn(empty()) //
+				.when(store).getAllUserFilters(anyString(), anyLong(), anyInt(), anyInt());
+		final FilterStore.Filter first = mock(FilterStore.Filter.class);
+		final FilterStore.Filter second = mock(FilterStore.Filter.class);
+		doReturn(new PagedElements<FilterStore.Filter>(asList(first, second), 123)) //
+				.when(store).fetchAllGroupsFilters(anyString(), anyInt(), anyInt());
+		final Filter _first = mock(Filter.class);
+		final Filter _second = mock(Filter.class);
+		doReturn(_first).doReturn(_second) //
+				.when(converter).storeToLogic(any(FilterStore.Filter.class));
+		doReturn(42L) //
+				.when(authenticatedUser).getId();
+		doReturn(true) //
+				.when(privilegeContext).hasAdministratorPrivileges();
+
+		// when
+		final PagedElements<Filter> output = defaultFilterLogic.getFiltersForCurrentUser("a classname");
+
+		// then
+		assertThat(output.elements(), containsInAnyOrder(_first, _second));
+		assertThat(output.totalSize(), equalTo(0));
+
+		final ArgumentCaptor<FilterStore.Filter> captor = ArgumentCaptor.forClass(FilterStore.Filter.class);
+
+		verify(userStore).getUser();
+		verify(authenticatedUser).getId();
+		verify(store).getAllUserFilters(eq("a classname"), eq(42L), eq(0), eq(MAX_VALUE));
+		verify(store).fetchAllGroupsFilters(eq("a classname"), eq(0), eq(MAX_VALUE));
+		verify(privilegeContext, times(2)).hasAdministratorPrivileges();
+		verify(converter, times(2)).storeToLogic(captor.capture());
+		verifyNoMoreInteractions(store, converter, userStore, authenticatedUser, privilegeContext);
+
+		assertThat(captor.getAllValues().get(0), equalTo(first));
+		assertThat(captor.getAllValues().get(1), equalTo(second));
+	}
+
+	@Test
+	public void filtersForCurrentUserAreRequested_OnlyGroupFiltersAreReturned_UserHasNotAdministratorPrivilegesButReadAccess()
+			throws Exception {
+		// given
+		doReturn(empty()) //
+				.when(store).getAllUserFilters(anyString(), anyLong(), anyInt(), anyInt());
+		final FilterStore.Filter first = mock(FilterStore.Filter.class);
+		final FilterStore.Filter second = mock(FilterStore.Filter.class);
+		doReturn(new PagedElements<FilterStore.Filter>(asList(first, second), 123)) //
+				.when(store).fetchAllGroupsFilters(anyString(), anyInt(), anyInt());
+		final Filter _first = mock(Filter.class);
+		final Filter _second = mock(Filter.class);
+		doReturn(_first).doReturn(_second) //
+				.when(converter).storeToLogic(any(FilterStore.Filter.class));
+		doReturn(42L) //
+				.when(authenticatedUser).getId();
+		doReturn(false) //
+				.when(privilegeContext).hasAdministratorPrivileges();
+		doReturn(true) //
+				.when(privilegeContext).hasReadAccess(any(FilterStore.Filter.class));
+
+		// when
+		final PagedElements<Filter> output = defaultFilterLogic.getFiltersForCurrentUser("a classname");
+
+		// then
+		assertThat(output.elements(), containsInAnyOrder(_first, _second));
+		assertThat(output.totalSize(), equalTo(0));
+
+		final ArgumentCaptor<CMPrivilegedObject> privilegeContextCaptor = ArgumentCaptor
+				.forClass(CMPrivilegedObject.class);
+		final ArgumentCaptor<FilterStore.Filter> converterCaptor = ArgumentCaptor.forClass(FilterStore.Filter.class);
+
+		verify(userStore).getUser();
+		verify(authenticatedUser).getId();
+		verify(store).getAllUserFilters(eq("a classname"), eq(42L), eq(0), eq(MAX_VALUE));
+		verify(store).fetchAllGroupsFilters(eq("a classname"), eq(0), eq(MAX_VALUE));
+		verify(privilegeContext, times(2)).hasAdministratorPrivileges();
+		verify(privilegeContext, times(2)).hasReadAccess(privilegeContextCaptor.capture());
+		verify(converter, times(2)).storeToLogic(converterCaptor.capture());
+		verifyNoMoreInteractions(store, converter, userStore, authenticatedUser, privilegeContext);
+
+		assertThat(privilegeContextCaptor.getAllValues().get(0), equalTo(CMPrivilegedObject.class.cast(first)));
+		assertThat(privilegeContextCaptor.getAllValues().get(1), equalTo(CMPrivilegedObject.class.cast(second)));
+
+		assertThat(converterCaptor.getAllValues().get(0), equalTo(first));
+		assertThat(converterCaptor.getAllValues().get(1), equalTo(second));
 	}
 
 	@Test
@@ -186,7 +305,7 @@ public class DefaultFilterLogicTest {
 		final FilterStore.Filter first = mock(FilterStore.Filter.class);
 		final FilterStore.Filter second = mock(FilterStore.Filter.class);
 		doReturn(new PagedElements<FilterStore.Filter>(asList(first, second), 42)) //
-				.when(store).fetchAllGroupsFilters(anyInt(), anyInt());
+				.when(store).fetchAllGroupsFilters(anyString(), anyInt(), anyInt());
 		final Filter _first = mock(Filter.class);
 		final Filter _second = mock(Filter.class);
 		doReturn(_first).doReturn(_second) //
@@ -201,9 +320,9 @@ public class DefaultFilterLogicTest {
 
 		final ArgumentCaptor<FilterStore.Filter> captor = ArgumentCaptor.forClass(FilterStore.Filter.class);
 
-		verify(store).fetchAllGroupsFilters(eq(123), eq(456));
+		verify(store).fetchAllGroupsFilters(isNull(String.class), eq(123), eq(456));
 		verify(converter, times(2)).storeToLogic(captor.capture());
-		verifyNoMoreInteractions(store, converter);
+		verifyNoMoreInteractions(store, converter, userStore, authenticatedUser, privilegeContext);
 
 		assertThat(captor.getAllValues().get(0), equalTo(first));
 		assertThat(captor.getAllValues().get(1), equalTo(second));
@@ -215,7 +334,7 @@ public class DefaultFilterLogicTest {
 		final FilterStore.Filter first = mock(FilterStore.Filter.class);
 		final FilterStore.Filter second = mock(FilterStore.Filter.class);
 		doReturn(new PagedElements<FilterStore.Filter>(asList(first, second), 42)) //
-				.when(store).getAllUserFilters(anyString(), anyInt(), anyInt());
+				.when(store).getAllUserFilters(anyString(), anyLong(), anyInt(), anyInt());
 		final Filter _first = mock(Filter.class);
 		final Filter _second = mock(Filter.class);
 		doReturn(_first).doReturn(_second) //
@@ -230,9 +349,9 @@ public class DefaultFilterLogicTest {
 
 		final ArgumentCaptor<FilterStore.Filter> captor = ArgumentCaptor.forClass(FilterStore.Filter.class);
 
-		verify(store).getAllUserFilters(eq("a classname"), eq(123), eq(456));
+		verify(store).getAllUserFilters(eq("a classname"), isNull(Long.class), eq(123), eq(456));
 		verify(converter, times(2)).storeToLogic(captor.capture());
-		verifyNoMoreInteractions(store, converter);
+		verifyNoMoreInteractions(store, converter, userStore, authenticatedUser, privilegeContext);
 
 		assertThat(captor.getAllValues().get(0), equalTo(first));
 		assertThat(captor.getAllValues().get(1), equalTo(second));

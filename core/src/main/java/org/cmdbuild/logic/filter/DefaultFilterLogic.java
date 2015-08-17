@@ -1,8 +1,13 @@
 package org.cmdbuild.logic.filter;
 
 import static com.google.common.collect.FluentIterable.from;
+import static com.google.common.collect.Iterables.concat;
+import static java.lang.Integer.MAX_VALUE;
 
 import org.apache.commons.lang3.Validate;
+import org.cmdbuild.auth.UserStore;
+import org.cmdbuild.auth.user.CMUser;
+import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.common.utils.PagedElements;
 import org.cmdbuild.services.store.filter.FilterDTO;
 import org.cmdbuild.services.store.filter.FilterStore;
@@ -10,6 +15,7 @@ import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
 import com.google.common.base.Function;
+import com.google.common.base.Predicate;
 
 public class DefaultFilterLogic implements FilterLogic {
 
@@ -43,6 +49,12 @@ public class DefaultFilterLogic implements FilterLogic {
 
 	public static class FilterConverter extends com.google.common.base.Converter<Filter, FilterStore.Filter> {
 
+		private final UserStore userStore;
+
+		public FilterConverter(final UserStore userStore) {
+			this.userStore = userStore;
+		}
+
 		@Override
 		protected FilterStore.Filter doForward(final Filter a) {
 			return FilterDTO.newFilter() //
@@ -52,6 +64,7 @@ public class DefaultFilterLogic implements FilterLogic {
 					.withValue(a.getConfiguration()) //
 					.forClass(a.getClassName()) //
 					.asTemplate(a.isTemplate()) //
+					.withOwner(userStore.getUser().getAuthenticatedUser().getId()) //
 					.build();
 		}
 
@@ -98,10 +111,12 @@ public class DefaultFilterLogic implements FilterLogic {
 
 	private final FilterStore store;
 	private final Converter converter;
+	private final UserStore userStore;
 
-	public DefaultFilterLogic(final FilterStore store, final Converter converter) {
+	public DefaultFilterLogic(final FilterStore store, final Converter converter, final UserStore userStore) {
 		this.store = store;
 		this.converter = converter;
+		this.userStore = userStore;
 	}
 
 	@Override
@@ -136,18 +151,34 @@ public class DefaultFilterLogic implements FilterLogic {
 	}
 
 	@Override
-	public PagedElements<Filter> getFiltersForCurrentlyLoggedUser(final String className) {
+	public PagedElements<Filter> getFiltersForCurrentUser(final String className) {
 		logger.info(MARKER, "getting all filters for class '{}' for the currently logged user", className);
-		final PagedElements<FilterStore.Filter> response = store.getFiltersForCurrentlyLoggedUser(className);
-		return new PagedElements<Filter>(from(response) //
-				.transform(toLogic()), //
-				response.totalSize());
+		final OperationUser operationUser = userStore.getUser();
+		final CMUser user = operationUser.getAuthenticatedUser();
+		final PagedElements<FilterStore.Filter> userFilters = store.getAllUserFilters(className, user.getId(), 0,
+				MAX_VALUE);
+		final PagedElements<org.cmdbuild.services.store.filter.FilterStore.Filter> fetchAllGroupsFilters = store
+				.fetchAllGroupsFilters(className, 0, MAX_VALUE);
+		final Iterable<FilterStore.Filter> groupFilters = from(fetchAllGroupsFilters) //
+				.filter(new Predicate<FilterStore.Filter>() {
+
+					@Override
+					public boolean apply(final FilterStore.Filter input) {
+						return (operationUser.hasAdministratorPrivileges() || operationUser.hasReadAccess(input));
+					}
+
+				});
+		final Iterable<FilterStore.Filter> allFilters = concat(userFilters, groupFilters);
+		return new PagedElements<Filter>( //
+				from(allFilters) //
+						.transform(toLogic()), //
+				0);
 	}
 
 	@Override
 	public PagedElements<Filter> fetchAllGroupsFilters(final int start, final int limit) {
 		logger.info(MARKER, "getting all filters starting from '{}' and with a limit of '{}'", start, limit);
-		final PagedElements<FilterStore.Filter> response = store.fetchAllGroupsFilters(start, limit);
+		final PagedElements<FilterStore.Filter> response = store.fetchAllGroupsFilters(null, start, limit);
 		return new PagedElements<Filter>(from(response) //
 				.transform(toLogic()), //
 				response.totalSize());
@@ -157,7 +188,7 @@ public class DefaultFilterLogic implements FilterLogic {
 	public PagedElements<Filter> getAllUserFilters(final String className, final int start, final int limit) {
 		logger.info(MARKER, "getting all filters for class '{}' starting from '{}' and with a limit of '{}'",
 				className, start, limit);
-		final PagedElements<FilterStore.Filter> response = store.getAllUserFilters(className, start, limit);
+		final PagedElements<FilterStore.Filter> response = store.getAllUserFilters(className, null, start, limit);
 		return new PagedElements<Filter>(from(response) //
 				.transform(toLogic()), //
 				response.totalSize());

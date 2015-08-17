@@ -61,4 +61,9 @@ public abstract class ForwardingFilter extends ForwardingObject implements Filte
 		return delegate().isTemplate();
 	}
 
+	@Override
+	public Long getOwner() {
+		return delegate().getOwner();
+	}
+
 }

@@ -37,37 +37,27 @@ public interface FilterStore {
 		 */
 		boolean isTemplate();
 
+		Long getOwner();
+
 	}
 
 	/**
+	 * Gets the all user filters.
 	 * 
-	 * @return the filters for all the users
+	 * @param className
+	 *            the name of the class, {@code null} means all classes.
+	 * @param userId
+	 *            the id of the user, {@code null} means all users.
 	 */
-	// TODO only the administrator
-	PagedElements<Filter> getAllUserFilters(String className, int start, int limit);
+	PagedElements<Filter> getAllUserFilters(String className, Long userId, int start, int limit);
 
 	/**
+	 * Gets the all group filters.
 	 * 
-	 * @return the filters for all the users
+	 * @param className
+	 *            the name of the class, {@code null} means all classes.
 	 */
-	// TODO only the administrator
-	PagedElements<Filter> getAllUserFilters();
-
-	/**
-	 * 
-	 * @return filters for all groups (i.e. filters marked as template in the
-	 *         database)
-	 */
-	PagedElements<Filter> fetchAllGroupsFilters();
-
-	PagedElements<Filter> fetchAllGroupsFilters(int start, int limit);
-
-	/**
-	 * 
-	 * @return the filters defined for the logged user for a given class and
-	 *         group filters that user can see
-	 */
-	PagedElements<Filter> getFiltersForCurrentlyLoggedUser(String className);
+	PagedElements<Filter> fetchAllGroupsFilters(String className, int start, int limit);
 
 	/**
 	 * Saves a new filter in the database
