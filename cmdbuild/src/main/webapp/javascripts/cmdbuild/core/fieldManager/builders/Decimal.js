@@ -2,11 +2,11 @@
 
 	/**
 	 * Specific field attributes:
-	 * 		- Scale: max number digits
-	 * 		- Precision: max digits after comma
+	 * 		- {Number} precision: max number digits
+	 * 		- {Number} scale: max digits after comma
 	 *
 	 * Examples:
-	 * 		12.345 -> { scale: 5, precision: 3 }
+	 * 		12.345 -> { precision: 5, scale: 3 }
 	 */
 	Ext.define('CMDBuild.core.fieldManager.builders.Decimal', {
 		extend: 'CMDBuild.core.fieldManager.builders.Abstract',
@@ -44,9 +44,10 @@
 		 */
 		buildEditor: function() {
 			return {
-				xtype: 'textfield',
+				xtype: 'numberfield',
 				allowBlank: !this.cmfg('attributeModelGet', CMDBuild.core.proxy.CMProxyConstants.MANDATORY),
 				disabled: !this.cmfg('attributeModelGet', CMDBuild.core.proxy.CMProxyConstants.WRITABLE),
+				hideTrigger: true, // Hides selecting arrows
 				name: this.cmfg('attributeModelGet', CMDBuild.core.proxy.CMProxyConstants.NAME),
 				precision: this.cmfg('attributeModelGet', CMDBuild.core.proxy.CMProxyConstants.PRECISION),
 				readOnly: !this.cmfg('attributeModelGet', CMDBuild.core.proxy.CMProxyConstants.WRITABLE),
@@ -56,16 +57,17 @@
 		},
 
 		/**
-		 * @returns {Ext.form.field.Text}
+		 * @returns {Ext.form.field.Number}
 		 */
 		buildField: function() {
-			return Ext.create('Ext.form.field.Text', {
+			return Ext.create('Ext.form.field.Number', {
 				allowBlank: !this.cmfg('attributeModelGet', CMDBuild.core.proxy.CMProxyConstants.MANDATORY),
 				disabled: !this.cmfg('attributeModelGet', CMDBuild.core.proxy.CMProxyConstants.WRITABLE),
 				fieldLabel: this.applyMandatoryLabelFlag(
 					this.cmfg('attributeModelGet', CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION)
 					|| this.cmfg('attributeModelGet', CMDBuild.core.proxy.CMProxyConstants.NAME)
 				),
+				hideTrigger: true, // Hides selecting arrows
 				labelAlign: 'right',
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				maxWidth: CMDBuild.SMALL_FIELD_WIDTH,
@@ -75,6 +77,13 @@
 				scale: this.cmfg('attributeModelGet', CMDBuild.core.proxy.CMProxyConstants.SCALE),
 				vtype: 'numeric'
 			});
+		},
+
+		/**
+		 * @returns {Object}
+		 */
+		buildStoreField: function() {
+			return { name: this.cmfg('attributeModelGet', CMDBuild.core.proxy.CMProxyConstants.NAME), type: 'float', useNull: true };
 		}
 	});
 

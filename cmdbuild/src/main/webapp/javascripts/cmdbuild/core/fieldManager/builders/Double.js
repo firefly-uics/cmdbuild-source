@@ -36,27 +36,28 @@
 		 */
 		buildEditor: function() {
 			return {
-				xtype: 'textfield',
+				xtype: 'numberfield',
 				allowBlank: !this.cmfg('attributeModelGet', CMDBuild.core.proxy.CMProxyConstants.MANDATORY),
 				disabled: !this.cmfg('attributeModelGet', CMDBuild.core.proxy.CMProxyConstants.WRITABLE),
+				hideTrigger: true, // Hides selecting arrows
 				name: this.cmfg('attributeModelGet', CMDBuild.core.proxy.CMProxyConstants.NAME),
 				readOnly: !this.cmfg('attributeModelGet', CMDBuild.core.proxy.CMProxyConstants.WRITABLE),
-				scale: 0,
 				vtype: 'numeric'
 			};
 		},
 
 		/**
-		 * @returns {Ext.form.field.Text}
+		 * @returns {Ext.form.field.Number}
 		 */
 		buildField: function() {
-			return Ext.create('Ext.form.field.Text', {
+			return Ext.create('Ext.form.field.Number', {
 				allowBlank: !this.cmfg('attributeModelGet', CMDBuild.core.proxy.CMProxyConstants.MANDATORY),
 				disabled: !this.cmfg('attributeModelGet', CMDBuild.core.proxy.CMProxyConstants.WRITABLE),
 				fieldLabel: this.applyMandatoryLabelFlag(
 					this.cmfg('attributeModelGet', CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION)
 					|| this.cmfg('attributeModelGet', CMDBuild.core.proxy.CMProxyConstants.NAME)
 				),
+				hideTrigger: true, // Hides selecting arrows
 				labelAlign: 'right',
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				maxWidth: CMDBuild.SMALL_FIELD_WIDTH,
@@ -64,6 +65,13 @@
 				readOnly: !this.cmfg('attributeModelGet', CMDBuild.core.proxy.CMProxyConstants.WRITABLE),
 				vtype: 'numeric'
 			});
+		},
+
+		/**
+		 * @returns {Object}
+		 */
+		buildStoreField: function() {
+			return { name: this.cmfg('attributeModelGet', CMDBuild.core.proxy.CMProxyConstants.NAME), type: 'float', useNull: true };
 		}
 	});
 

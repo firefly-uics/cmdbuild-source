@@ -2,7 +2,7 @@
 
 	/**
 	 * Specific field attributes:
-	 * 		- editorType
+	 * 		- {String} editorType: PLAIN or HTML
 	 */
 	Ext.define('CMDBuild.core.fieldManager.builders.text.Text', {
 		extend: 'CMDBuild.core.fieldManager.builders.Abstract',
