@@ -3,7 +3,7 @@
 	/**
 	 * Subset of all attribute's properties
 	 */
-	Ext.define('CMDBuild.model.widgets.customForm.Attribute', {
+	Ext.define('CMDBuild.model.widget.customForm.Attribute', {
 		extend: 'Ext.data.Model',
 
 		requires: ['CMDBuild.core.proxy.CMProxyConstants'],

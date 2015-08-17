@@ -195,7 +195,7 @@
 				this.callParent(arguments);
 
 				if (Ext.isEmpty(propertyName))
-					this.widgetConfigurationModel = Ext.create('CMDBuild.model.widgets.customForm.Configuration', configurationObject);
+					this.widgetConfigurationModel = Ext.create('CMDBuild.model.widget.customForm.Configuration', configurationObject);
 			}
 	});
 
