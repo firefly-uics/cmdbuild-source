@@ -1,11 +1,13 @@
 (function() {
 
-//	Ext.require('CMDBuild.model.widget.CMModelOpenReport');
-
 	Ext.define('CMDBuild.controller.administration.widget.CMOpenReportController', {
 		extend: 'CMDBuild.controller.administration.widget.CMBaseWidgetDefinitionFormController',
 
-		requires: ['CMDBuild.model.widget.CMModelOpenReport', 'CMDBuild.core.proxy.widgets.OpenReport'],
+		requires: [
+			'CMDBuild.core.proxy.CMProxyConstants',
+			'CMDBuild.core.proxy.widgets.OpenReport',
+			'CMDBuild.model.widget.CMModelOpenReport'
+		],
 
 		statics: {
 			WIDGET_NAME: CMDBuild.view.administration.widget.form.CMOpenReportDefinitionForm.WIDGET_NAME
@@ -18,7 +20,7 @@
 
 		/**
 		 * @param {Object} configuration
-		 * @param {Int} configuration.classId
+		 * @param {Number} configuration.classId
 		 * @param {CMDBuild.view.administration.widget.form.CMOpenReportDefinitionForm} configuration.view
 		 */
 		constructor: function(configuration) {

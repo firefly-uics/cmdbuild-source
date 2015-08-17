@@ -5,12 +5,10 @@
 	Ext.define('CMDBuild.view.administration.widget.form.CMOpenReportDefinitionForm', {
 		extend: 'CMDBuild.view.administration.widget.form.CMBaseWidgetDefinitionForm',
 
+		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+
 		statics: {
 			WIDGET_NAME: '.OpenReport'
-		},
-
-		layout: {
-			type: 'hbox'
 		},
 
 		/**
@@ -37,6 +35,8 @@
 		 * @property {Ext.form.field.ComboBox}
 		 */
 		reportCode: undefined,
+
+		layout: 'hbox',
 
 		initComponent: function() {
 			this.callParent(arguments);
@@ -261,7 +261,7 @@
 					);
 			}, this);
 
-//			this.fillPresetWithData(model.get(CMDBuild.core.proxy.CMProxyConstants.PRESET), model.get(CMDBuild.core.proxy.CMProxyConstants.READ_ONLY_ATTRIBUTES));
+			this.fillPresetWithData(model.get(CMDBuild.core.proxy.CMProxyConstants.PRESET), model.get(CMDBuild.core.proxy.CMProxyConstants.READ_ONLY_ATTRIBUTES));
 		},
 
 		/**

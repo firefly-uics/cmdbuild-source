@@ -1,7 +1,10 @@
 (function() {
 
+	/**
+	 * This class uses only partially currentReportParameters methods, because update functionalities to keep parameters selection aren't required.
+	 */
 	Ext.define('CMDBuild.controller.management.report.Report', {
-		extend: 'CMDBuild.controller.common.AbstractBasePanelController',
+		extend: 'CMDBuild.controller.management.report.SingleReport',
 
 		requires: [
 			'CMDBuild.core.Message',
@@ -13,12 +16,11 @@
 		/**
 		 * @cfg {Array}
 		 */
-		cmfgCatchedFunctions: ['onReportGenerateButtonClick'],
-
-		/**
-		 * @property {CMDBuild.view.management.report.GridPanel}
-		 */
-		grid: undefined,
+		cmfgCatchedFunctions: [
+			'currentReportParametersSet',
+			'onReportGenerateButtonClick',
+			'updateReport'
+		],
 
 		/**
 		 * Witch report types will be viewed inside modal pop-up
@@ -31,9 +33,14 @@
 		],
 
 		/**
+		 * @property {CMDBuild.view.management.report.GridPanel}
+		 */
+		grid: undefined,
+
+		/**
 		 * @cfg {Array}
 		 */
-		supportedReportTypes: [
+		managedReportTypes: [
 			CMDBuild.core.proxy.CMProxyConstants.CSV,
 			CMDBuild.core.proxy.CMProxyConstants.ODT,
 			CMDBuild.core.proxy.CMProxyConstants.PDF,
@@ -62,16 +69,13 @@
 		 * @param {Object} reportParams
 		 * @param {Boolean} forceDownload
 		 */
-		createReport: function(reportParams, forceDownload) {
+		createReport: function(forceDownload) {
 			forceDownload = forceDownload || false;
 
-			if (!Ext.isEmpty(reportParams[CMDBuild.core.proxy.CMProxyConstants.ID])) {
-				reportParams[CMDBuild.core.proxy.CMProxyConstants.TYPE] = reportParams[CMDBuild.core.proxy.CMProxyConstants.TYPE] || 'CUSTOM';
-				reportParams[CMDBuild.core.proxy.CMProxyConstants.EXTENSION] = reportParams[CMDBuild.core.proxy.CMProxyConstants.EXTENSION] || CMDBuild.core.proxy.CMProxyConstants.PDF;
-
+			if (!Ext.isEmpty(this.currentReportParametersGet('create', CMDBuild.core.proxy.CMProxyConstants.ID))) {
 				CMDBuild.core.proxy.Report.createReport({
 					scope: this,
-					params: reportParams,
+					params: this.currentReportParametersGet('create'),
 					failure: function(response, options, decodedResponse) {
 						CMDBuild.core.Message.error(
 							CMDBuild.Translation.error,
@@ -98,14 +102,17 @@
 		 * @param {Object} reportInfo
 		 */
 		onReportGenerateButtonClick: function(reportInfo) {
-			if (Ext.Array.contains(this.supportedReportTypes, reportInfo[CMDBuild.core.proxy.CMProxyConstants.TYPE])) {
-				this.createReport(
-					{
-						id: reportInfo[CMDBuild.core.proxy.CMProxyConstants.RECORD].get(CMDBuild.core.proxy.CMProxyConstants.ID),
-						extension: reportInfo[CMDBuild.core.proxy.CMProxyConstants.TYPE]
-					},
-					Ext.Array.contains(this.forceDownloadTypes, reportInfo[CMDBuild.core.proxy.CMProxyConstants.TYPE]) // Force download true for PDF and CSV
-				);
+			if (Ext.Array.contains(this.managedReportTypes, reportInfo[CMDBuild.core.proxy.CMProxyConstants.TYPE])) {
+				this.currentReportParametersSet({
+					callIdentifier: 'create',
+					params: {
+						extension: reportInfo[CMDBuild.core.proxy.CMProxyConstants.TYPE],
+						id: reportInfo[CMDBuild.core.proxy.CMProxyConstants.RECORD].get(CMDBuild.core.proxy.CMProxyConstants.ID)
+					}
+				});
+
+				// Force download true for PDF and CSV
+				this.createReport(Ext.Array.contains(this.forceDownloadTypes, reportInfo[CMDBuild.core.proxy.CMProxyConstants.TYPE]));
 			} else {
 				CMDBuild.core.Message.error(
 					CMDBuild.Translation.error,
@@ -126,13 +133,18 @@
 					!Ext.isEmpty(node.get(CMDBuild.core.proxy.CMProxyConstants.ID))
 					&& node.get(CMDBuild.core.proxy.CMProxyConstants.ID) != CMDBuild.core.proxy.CMProxyConstants.CUSTOM
 				) {
-					this.createReport({
-						id: node.get(CMDBuild.core.proxy.CMProxyConstants.ID),
-						extension: node.get(CMDBuild.core.proxy.CMProxyConstants.TYPE).replace(/report/i, '') // Removes 'report' string from type property in node object
+					this.currentReportParametersSet({
+						callIdentifier: 'create',
+						params: {
+							extension: node.get(CMDBuild.core.proxy.CMProxyConstants.TYPE).replace(/report/i, ''), // Removes 'report' string from type property in node object
+							id: node.get(CMDBuild.core.proxy.CMProxyConstants.ID),
+						}
 					});
-				}
 
-				this.callParent(arguments);
+					this.createReport();
+
+					this.callParent(arguments);
+				}
 			}
 		},
 
@@ -173,6 +185,21 @@
 						CMDBuild.Translation.warnings.warning_message,
 						CMDBuild.Translation.warnings.popup_block
 					);
+			}
+		},
+
+		/**
+		 * @param {Boolean} forceDownload
+		 */
+		updateReport: function(forceDownload) {
+			if (!this.currentReportParametersIsEmpty('update')) {
+				CMDBuild.core.proxy.Report.updateReport({
+					params: this.currentReportParametersGet('update'),
+					scope: this,
+					success: function(response, options, decodedResponse) {
+						this.showReport(forceDownload);
+					}
+				});
 			}
 		}
 	});

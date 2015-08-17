@@ -14,8 +14,6 @@
 			WIDGET_NAME: '.LinkCards'
 		},
 
-		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
-
 		/**
 		 * @cfg {Object}
 		 */
