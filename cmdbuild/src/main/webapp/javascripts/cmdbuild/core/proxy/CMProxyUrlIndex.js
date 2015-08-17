@@ -51,6 +51,7 @@
 		csv: {
 			clearSession: 'services/json/management/importcsv/clearsession',
 			getCsvRecords: 'services/json/management/importcsv/getcsvrecords',
+			readCsv: 'services/json/management/importcsv/readcsv',
 			uploadCsv: 'services/json/management/importcsv/uploadcsv'
 		},
 

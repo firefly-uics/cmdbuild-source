@@ -8,7 +8,10 @@
 		/**
 		 * @cfg {Array}
 		 */
-		cmfgCatchedFunctions: ['importData'],
+		cmfgCatchedFunctions: [
+			'importData',
+			'onCustomFormLayoutFormImportButtonClick'
+		],
 
 		/**
 		 * @property {CMDBuild.view.management.common.widgets.customForm.layout.FormPanel}
@@ -83,6 +86,27 @@
 		 */
 		getData: function() {
 			return [this.view.getValues()];
+		},
+
+		/**
+		 * @param {Object} parameters
+		 * @param {String} parameters.append
+		 * @param {Array} parameters.rowsObjects
+		 */
+		importData: function(parameters) {
+			var rowsObjects = Ext.isArray(parameters.rowsObjects) ? parameters.rowsObjects : [];
+
+			this.setData(rowsObjects);
+		},
+
+		/**
+		 * Opens import configuration pop-up window
+		 */
+		onCustomFormLayoutFormImportButtonClick: function() {
+			Ext.create('CMDBuild.controller.management.common.widgets.customForm.Import', {
+				parentDelegate: this,
+				modeDisabled: true
+			});
 		},
 
 		/**
