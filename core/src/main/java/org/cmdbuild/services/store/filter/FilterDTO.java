@@ -1,11 +1,11 @@
 package org.cmdbuild.services.store.filter;
 
 import static com.google.common.reflect.Reflection.newProxy;
+import static org.apache.commons.lang3.BooleanUtils.isTrue;
 import static org.apache.commons.lang3.builder.ToStringBuilder.reflectionToString;
 import static org.apache.commons.lang3.builder.ToStringStyle.SHORT_PREFIX_STYLE;
 import static org.cmdbuild.common.utils.Reflection.unsupported;
 
-import org.apache.commons.lang3.builder.Builder;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.cmdbuild.services.localization.LocalizableStorableVisitor;
@@ -13,66 +13,67 @@ import org.cmdbuild.services.store.filter.FilterStore.Filter;
 
 public class FilterDTO extends ForwardingFilter {
 
-	public static class FilterDTOBuilder implements Builder<FilterDTO> {
+	public static class Builder implements org.apache.commons.lang3.builder.Builder<FilterDTO> {
 
 		private Long id;
 		private String name;
 		private String description;
-		private String value;
+		private String configuration;
 		private String className;
-		private boolean template;
-		private Long owner;
+		private boolean shared;
+		private Long userId;
 
 		/**
 		 * Use factory method.
 		 */
-		private FilterDTOBuilder() {
-		}
-
-		public FilterDTOBuilder withId(final Long id) {
-			this.id = id;
-			return this;
-		}
-
-		public FilterDTOBuilder withName(final String name) {
-			this.name = name;
-			return this;
-		}
-
-		public FilterDTOBuilder withDescription(final String description) {
-			this.description = description;
-			return this;
-		}
-
-		public FilterDTOBuilder forClass(final String className) {
-			this.className = className;
-			return this;
-		}
-
-		public FilterDTOBuilder withValue(final String value) {
-			this.value = value;
-			return this;
-		}
-
-		public FilterDTOBuilder asTemplate(final boolean template) {
-			this.template = template;
-			return this;
-		}
-
-		public FilterDTOBuilder withOwner(final Long owner) {
-			this.owner = owner;
-			return this;
+		private Builder() {
 		}
 
 		@Override
 		public FilterDTO build() {
+			shared = isTrue(shared);
 			return new FilterDTO(this);
+		}
+
+		public Builder withId(final Long id) {
+			this.id = id;
+			return this;
+		}
+
+		public Builder withName(final String name) {
+			this.name = name;
+			return this;
+		}
+
+		public Builder withDescription(final String description) {
+			this.description = description;
+			return this;
+		}
+
+		public Builder withClassName(final String className) {
+			this.className = className;
+			return this;
+		}
+
+		public Builder withConfiguration(final String configuration) {
+			this.configuration = configuration;
+			return this;
+		}
+
+		public Builder thatIsShared(final Boolean shared) {
+			this.shared = shared;
+			return this;
+		}
+
+		public Builder withUserId(final Long userId) {
+			this.userId = userId;
+			return this;
 		}
 
 	}
 
-	public static FilterDTOBuilder newFilter() {
-		return new FilterDTOBuilder();
+	public static Builder newFilter() {
+		return new Builder();
 	}
 
 	private static final Filter unsupported = newProxy(Filter.class, unsupported("should be never called"));
@@ -80,19 +81,19 @@ public class FilterDTO extends ForwardingFilter {
 	private final Long id;
 	private final String name;
 	private final String description;
-	private final String value;
+	private final String configuration;
 	private final String className;
-	private final boolean template;
-	private final Long owner;
+	private final boolean shared;
+	private final Long userId;
 
-	private FilterDTO(final FilterDTOBuilder builder) {
+	private FilterDTO(final Builder builder) {
+		this.id = builder.id;
 		this.name = builder.name;
 		this.description = builder.description;
-		this.value = builder.value;
 		this.className = builder.className;
-		this.id = builder.id;
-		this.template = builder.template;
-		this.owner = builder.owner;
+		this.configuration = builder.configuration;
+		this.shared = builder.shared;
+		this.userId = builder.userId;
 	}
 
 	@Override
@@ -131,18 +132,18 @@ public class FilterDTO extends ForwardingFilter {
 	}
 
 	@Override
-	public String getValue() {
-		return value;
+	public String getConfiguration() {
+		return configuration;
 	}
 
 	@Override
-	public boolean isTemplate() {
-		return template;
+	public boolean isShared() {
+		return shared;
 	}
 
 	@Override
-	public Long getOwner() {
-		return owner;
+	public Long getUserId() {
+		return userId;
 	}
 
 	@Override
@@ -158,10 +159,10 @@ public class FilterDTO extends ForwardingFilter {
 				.append(this.getId(), other.getId()) //
 				.append(this.getName(), other.getName()) //
 				.append(this.getDescription(), other.getDescription()) //
-				.append(this.isTemplate(), other.isTemplate()) //
+				.append(this.isShared(), other.isShared()) //
 				.append(this.getClassName(), other.getClassName()) //
-				.append(this.getValue(), other.getValue()) //
-				.append(this.getOwner(), other.getOwner()) //
+				.append(this.getConfiguration(), other.getConfiguration()) //
+				.append(this.getUserId(), other.getUserId()) //
 				.isEquals();
 	}
 
@@ -171,10 +172,10 @@ public class FilterDTO extends ForwardingFilter {
 				.append(getId()) //
 				.append(getName()) //
 				.append(getDescription()) //
-				.append(isTemplate()) //
+				.append(isShared()) //
 				.append(getClassName()) //
-				.append(getValue()) //
-				.append(getOwner()) //
+				.append(getConfiguration()) //
+				.append(getUserId()) //
 				.toHashCode();
 	}
 

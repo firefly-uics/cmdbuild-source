@@ -12,10 +12,10 @@ import static org.cmdbuild.dao.query.clause.where.WhereClauses.condition;
 import static org.cmdbuild.dao.query.clause.where.WhereClauses.not;
 import static org.cmdbuild.services.store.filter.FilterConverter.CLASS_NAME;
 import static org.cmdbuild.services.store.filter.FilterConverter.ENTRYTYPE;
-import static org.cmdbuild.services.store.filter.FilterConverter.FOR_GROUP;
 import static org.cmdbuild.services.store.filter.FilterConverter.ID;
 import static org.cmdbuild.services.store.filter.FilterConverter.NAME;
 import static org.cmdbuild.services.store.filter.FilterConverter.OWNER;
+import static org.cmdbuild.services.store.filter.FilterConverter.SHARED;
 
 import org.cmdbuild.common.utils.PagedElements;
 import org.cmdbuild.dao.entry.CMCard;
@@ -102,7 +102,7 @@ public class DataViewFilterStore implements FilterStore {
 	}
 
 	private WhereClause isUserFilter() {
-		return condition(attribute(getFilterClass(), FOR_GROUP), eq(false));
+		return condition(attribute(getFilterClass(), SHARED), eq(false));
 	}
 
 	@Override

@@ -17,7 +17,7 @@ public interface FilterLogic extends Logic {
 
 		String getConfiguration();
 
-		boolean isTemplate();
+		boolean isShared();
 
 	}
 

@@ -62,16 +62,15 @@ public class DefaultFilterLogic implements FilterLogic {
 					.withId(a.getId()) //
 					.withName(a.getName()) //
 					.withDescription(a.getDescription()) //
-					.withValue(a.getConfiguration()) //
-					.forClass(a.getClassName()) //
-					.asTemplate(a.isTemplate()) //
-					.withOwner(userStore.getUser().getAuthenticatedUser().getId()) //
+					.withConfiguration(a.getConfiguration()) //
+					.withClassName(a.getClassName()) //
+					.thatIsShared(a.isShared()) //
+					.withUserId(userStore.getUser().getAuthenticatedUser().getId()) //
 					.build();
 		}
 
 		@Override
 		protected Filter doBackward(final FilterStore.Filter b) {
-			// TODO do it better
 			return new Filter() {
 
 				@Override
@@ -96,12 +95,12 @@ public class DefaultFilterLogic implements FilterLogic {
 
 				@Override
 				public String getConfiguration() {
-					return b.getValue();
+					return b.getConfiguration();
 				}
 
 				@Override
-				public boolean isTemplate() {
-					return b.isTemplate();
+				public boolean isShared() {
+					return b.isShared();
 				}
 
 			};
@@ -158,8 +157,8 @@ public class DefaultFilterLogic implements FilterLogic {
 			}
 
 			@Override
-			public String getValue() {
-				return _filter.getValue();
+			public String getConfiguration() {
+				return _filter.getConfiguration();
 			}
 
 		};
