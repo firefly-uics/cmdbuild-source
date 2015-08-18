@@ -121,6 +121,7 @@
 		ENGINE: 'engine',
 		ENTITY: 'entity',
 		ENTRY_TYPE: 'entryType',
+		EXPRESSION: 'expression',
 		EXTENSION: 'extension',
 		EXTENSION_MAXIMUM_LEVEL: 'extensionMaximumLevel',
 		FIELD_MODE: 'fieldmode',
