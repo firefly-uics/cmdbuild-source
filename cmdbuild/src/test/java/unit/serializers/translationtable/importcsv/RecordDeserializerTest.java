@@ -9,6 +9,7 @@ import org.cmdbuild.logic.translation.TranslationObject;
 import org.cmdbuild.logic.translation.object.ClassDescription;
 import org.cmdbuild.servlets.json.serializers.translations.csv.read.DefaultRecordDeserializer;
 import org.cmdbuild.servlets.json.serializers.translations.csv.read.ErrorListener;
+import org.cmdbuild.servlets.json.serializers.translations.csv.read.ErrorNotifier;
 import org.cmdbuild.servlets.json.serializers.translations.csv.read.SafeRecordDeserializer;
 import org.cmdbuild.servlets.json.translationtable.objects.TranslationSerialization;
 import org.cmdbuild.servlets.json.translationtable.objects.csv.CsvTranslationRecord;
@@ -31,7 +32,8 @@ public class RecordDeserializerTest {
 
 		// when
 		final TranslationObject object = SafeRecordDeserializer.of(a(DefaultRecordDeserializer.newInstance() //
-				.withRecord(record))) //
+				.withRecord(record) //
+				.withNotifier(ErrorNotifier.THROWS_EXCEPTION))) //
 				.deserialize();
 
 		// then
@@ -54,7 +56,8 @@ public class RecordDeserializerTest {
 
 		// when
 		final TranslationObject object = SafeRecordDeserializer.of(a(DefaultRecordDeserializer.newInstance() //
-				.withRecord(record))) //
+				.withRecord(record) //
+				.withNotifier(ErrorNotifier.THROWS_EXCEPTION))) //
 				.deserialize();
 
 		// then
@@ -90,13 +93,14 @@ public class RecordDeserializerTest {
 
 		// when
 		final TranslationObject translationObject = SafeRecordDeserializer.of(a(DefaultRecordDeserializer.newInstance() //
-				.withRecord(record))) //
+				.withRecord(record) //
+				.withNotifier(ErrorNotifier.THROWS_EXCEPTION))) //
 				.withErrorListener(listener) //
 				.deserialize();
 		// then
-		assertTrue(translationObject == TranslationObject.INVALID);
+		assertTrue(!translationObject.isValid());
 		assertTrue(listener.getFailures().size() == 1);
-		assertTrue(listener.getFailures().get(record).getLocalizedMessage().equals("missing identifier"));
+		assertTrue(listener.getFailures().get(record).getLocalizedMessage().equals("unsupported identifier 'null'"));
 	}
 
 	@Test
@@ -126,7 +130,8 @@ public class RecordDeserializerTest {
 
 		// when
 		SafeRecordDeserializer.of(a(DefaultRecordDeserializer.newInstance() //
-				.withRecord(record))) //
+				.withRecord(record) //
+				.withNotifier(ErrorNotifier.THROWS_EXCEPTION))) //
 				.withErrorListener(listener) //
 				.deserialize();
 		// then
@@ -160,7 +165,8 @@ public class RecordDeserializerTest {
 
 		// when
 		SafeRecordDeserializer.of(a(DefaultRecordDeserializer.newInstance() //
-				.withRecord(record))) //
+				.withRecord(record) //
+				.withNotifier(ErrorNotifier.THROWS_EXCEPTION))) //
 				.withErrorListener(listener) //
 				.deserialize();
 		// then

@@ -20,6 +20,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Ordering;
 
@@ -72,7 +74,16 @@ public class LookupTranslationSerializer implements TranslationSectionSerializer
 
 		final Collection<TranslationSerialization> jsonLookupTypes = Lists.newArrayList();
 		for (final LookupType type : sortedLookupTypes) {
-			final Iterable<Lookup> valuesOfType = lookupStore.readAll(type);
+			Iterable<Lookup> valuesOfType = lookupStore.readAll(type);
+			if(activeOnly){
+				valuesOfType = Iterables.filter(valuesOfType, new Predicate<Lookup>(){
+
+					@Override
+					public boolean apply(Lookup input) {
+						return input.active();
+					}
+				});
+			}
 
 			final Iterable<Lookup> sortedLookupValues = valueOrdering.sortedCopy(valuesOfType);
 

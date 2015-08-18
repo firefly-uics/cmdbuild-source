@@ -59,18 +59,18 @@ public class DefaultCsvImporter implements CsvImporter {
 
 	public static class Builder implements org.apache.commons.lang3.builder.Builder<DefaultCsvImporter> {
 
-		private String separator;
+		private DataHandler dataHandler;
 		private String lineSeparator;
 		private String quoteCharacter;
-		private DataHandler dataHandler;
+		private String separator;
 
 		@Override
 		public DefaultCsvImporter build() {
 			return new DefaultCsvImporter(this);
 		}
 
-		public Builder withSeparator(final String separator) {
-			this.separator = separator;
+		public Builder withDataHandler(final DataHandler dataHandler) {
+			this.dataHandler = dataHandler;
 			return this;
 		}
 
@@ -84,8 +84,8 @@ public class DefaultCsvImporter implements CsvImporter {
 			return this;
 		}
 
-		public Builder withDataHandler(final DataHandler dataHandler) {
-			this.dataHandler = dataHandler;
+		public Builder withSeparator(final String separator) {
+			this.separator = separator;
 			return this;
 		}
 
