@@ -22,8 +22,6 @@
 			updateSortConfiguration: 'services/json/schema/modclass/saveordercriteria'
 		},
 
-		basicCardList: 'services/json/management/modcard/getcardlistshort',
-
 		card: {
 			create: '',
 			read: 'services/json/management/modcard/getcard',
@@ -33,6 +31,7 @@
 			bulkUpdate: 'services/json/management/modcard/bulkupdate',
 			bulkUpdateFromFilter: 'services/json/management/modcard/bulkupdatefromfilter',
 			getList: 'services/json/management/modcard/getcardlist',
+			getListShort: 'services/json/management/modcard/getcardlistshort',
 			getPosition: 'services/json/management/modcard/getcardposition'
 		},
 
