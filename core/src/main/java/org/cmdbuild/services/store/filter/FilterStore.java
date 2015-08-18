@@ -29,15 +29,15 @@ public interface FilterStore {
 		/**
 		 * @return the filter that contains rules for filtering the cards.
 		 */
-		String getValue();
+		String getConfiguration();
 
 		/**
-		 * @return {@code true} if the filter is a template for a group filter,
+		 * @return {@code true} if the filter is shared between all users,
 		 *         {@code false} otherwise.
 		 */
-		boolean isTemplate();
+		boolean isShared();
 
-		Long getOwner();
+		Long getUserId();
 
 	}
 

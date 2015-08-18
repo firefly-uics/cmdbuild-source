@@ -1,7 +1,7 @@
 package org.cmdbuild.servlets.json;
 
-import static org.apache.commons.lang3.builder.ToStringBuilder.*;
-import static org.apache.commons.lang3.builder.ToStringStyle.*;
+import static org.apache.commons.lang3.builder.ToStringBuilder.reflectionToString;
+import static org.apache.commons.lang3.builder.ToStringStyle.SHORT_PREFIX_STYLE;
 import static org.cmdbuild.servlets.json.CommunicationConstants.CLASS_NAME;
 import static org.cmdbuild.servlets.json.CommunicationConstants.CONFIGURATION;
 import static org.cmdbuild.servlets.json.CommunicationConstants.COUNT;
@@ -37,7 +37,7 @@ public class Filter extends JSONBaseWithSpringContext {
 			private String description;
 			private String className;
 			private String configuration;
-			private boolean template;
+			private boolean shared;
 
 			/**
 			 * Use factory method.
@@ -75,8 +75,8 @@ public class Filter extends JSONBaseWithSpringContext {
 				return this;
 			}
 
-			public Builder withTemplate(final boolean template) {
-				this.template = template;
+			public Builder thatIsShared(final boolean shared) {
+				this.shared = shared;
 				return this;
 			}
 
@@ -91,7 +91,7 @@ public class Filter extends JSONBaseWithSpringContext {
 		private final String description;
 		private final String className;
 		private final String configuration;
-		private final boolean template;
+		private final boolean shared;
 
 		private FilterImpl(final Builder builder) {
 			this.id = builder.id;
@@ -99,7 +99,7 @@ public class Filter extends JSONBaseWithSpringContext {
 			this.description = builder.description;
 			this.className = builder.className;
 			this.configuration = builder.configuration;
-			this.template = builder.template;
+			this.shared = builder.shared;
 		}
 
 		@Override
@@ -128,8 +128,8 @@ public class Filter extends JSONBaseWithSpringContext {
 		}
 
 		@Override
-		public boolean isTemplate() {
-			return template;
+		public boolean isShared() {
+			return shared;
 		}
 
 		@Override
@@ -147,7 +147,7 @@ public class Filter extends JSONBaseWithSpringContext {
 					.append(this.getDescription(), other.getDescription()) //
 					.append(this.getClassName(), other.getClassName()) //
 					.append(this.getConfiguration(), other.getConfiguration()) //
-					.append(this.isTemplate(), other.isTemplate()) //
+					.append(this.isShared(), other.isShared()) //
 					.isEquals();
 		}
 
@@ -159,7 +159,7 @@ public class Filter extends JSONBaseWithSpringContext {
 					.append(getDescription()) //
 					.append(getClassName()) //
 					.append(getConfiguration()) //
-					.append(isTemplate()) //
+					.append(isShared()) //
 					.toHashCode();
 		}
 
@@ -243,7 +243,7 @@ public class Filter extends JSONBaseWithSpringContext {
 				.withDescription(description) //
 				.withClassName(className) //
 				.withConfiguration(configuration.toString()) //
-				.withTemplate(template) //
+				.thatIsShared(template) //
 				.build());
 		return serialize(filter, FILTER);
 	}
@@ -319,7 +319,7 @@ public class Filter extends JSONBaseWithSpringContext {
 		jsonFilter.put(NAME, filter.getName());
 		jsonFilter.put(DESCRIPTION, filter.getDescription());
 		jsonFilter.put(ENTRY_TYPE, filter.getClassName());
-		jsonFilter.put(TEMPLATE, filter.isTemplate());
+		jsonFilter.put(TEMPLATE, filter.isShared());
 		jsonFilter.put(CONFIGURATION, new JSONObject(filter.getConfiguration()));
 		final JSONObject out;
 		if (wrapperName != null) {

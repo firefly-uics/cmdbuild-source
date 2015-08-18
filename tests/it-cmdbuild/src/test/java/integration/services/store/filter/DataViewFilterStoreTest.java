@@ -102,7 +102,7 @@ public class DataViewFilterStoreTest extends IntegrationTestBase {
 		// then
 		assertThat(filter.getName(), equalTo("foo"));
 		assertThat(filter.getDescription(), equalTo("bar"));
-		assertThat(filter.getValue(), equalTo("baz"));
+		assertThat(filter.getConfiguration(), equalTo("baz"));
 	}
 
 	@Test
@@ -164,10 +164,10 @@ public class DataViewFilterStoreTest extends IntegrationTestBase {
 				.withId(id) //
 				.withName(name) //
 				.withDescription(description) //
-				.forClass(className) //
-				.withValue(value) //
-				.asTemplate(asTemplate) //
-				.withOwner(USER_ID) //
+				.withClassName(className) //
+				.withConfiguration(value) //
+				.thatIsShared(asTemplate) //
+				.withUserId(USER_ID) //
 				.build();
 	}
 

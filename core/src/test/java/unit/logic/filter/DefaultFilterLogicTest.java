@@ -133,10 +133,10 @@ public class DefaultFilterLogicTest {
 				.withId(12L) //
 				.withName("foo") //
 				.withDescription("foo description") //
-				.forClass("foo classname") //
-				.withValue("foo value") //
-				.asTemplate(true) //
-				.withOwner(34L) //
+				.withClassName("foo classname") //
+				.withConfiguration("foo value") //
+				.thatIsShared(true) //
+				.withUserId(34L) //
 				.build();
 		doReturn(convertedForStore) //
 				.when(converter).logicToStore(any(Filter.class));
@@ -144,10 +144,10 @@ public class DefaultFilterLogicTest {
 				.withId(56L) //
 				.withName("bar") //
 				.withDescription("bar description") //
-				.forClass("bar classname") //
-				.withValue("bar value") //
-				.asTemplate(false) //
-				.withOwner(78L) //
+				.withClassName("bar classname") //
+				.withConfiguration("bar value") //
+				.thatIsShared(false) //
+				.withUserId(78L) //
 				.build();
 		doReturn(alreadyStored) //
 				.when(store).fetchFilter(anyLong());
@@ -167,9 +167,9 @@ public class DefaultFilterLogicTest {
 		assertThat(captured.getName(), equalTo(convertedForStore.getName()));
 		assertThat(captured.getDescription(), equalTo(convertedForStore.getDescription()));
 		assertThat(captured.getClassName(), equalTo(convertedForStore.getClassName()));
-		assertThat(captured.getValue(), equalTo(convertedForStore.getValue()));
-		assertThat(captured.isTemplate(), equalTo(alreadyStored.isTemplate()));
-		assertThat(captured.getOwner(), equalTo(alreadyStored.getOwner()));
+		assertThat(captured.getConfiguration(), equalTo(convertedForStore.getConfiguration()));
+		assertThat(captured.isShared(), equalTo(alreadyStored.isShared()));
+		assertThat(captured.getUserId(), equalTo(alreadyStored.getUserId()));
 	}
 
 	@Test

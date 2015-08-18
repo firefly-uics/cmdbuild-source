@@ -22,7 +22,7 @@ public class FilterConverter extends BaseStorableConverter<Filter> {
 	public static final String DESCRIPTION = DESCRIPTION_ATTRIBUTE;
 	public static final String ENTRYTYPE = "IdSourceClass";
 	public static final String FILTER = "Filter";
-	public static final String FOR_GROUP = "Template";
+	public static final String SHARED = "Template";
 	public static final String OWNER = "IdOwner";
 
 	private final CMDataView dataView;
@@ -44,10 +44,10 @@ public class FilterConverter extends BaseStorableConverter<Filter> {
 				.withId(card.getId()) //
 				.withName(card.get(NAME, String.class)) //
 				.withDescription(card.get(DESCRIPTION, String.class)) //
-				.forClass(clazz.getIdentifier().getLocalName()) //
-				.withValue(card.get(FILTER, String.class)) //
-				.asTemplate(card.get(FOR_GROUP, Boolean.class)) //
-				.withOwner(Number.class.cast(card.get(OWNER, Integer.class)).longValue()) //
+				.withClassName(clazz.getIdentifier().getLocalName()) //
+				.withConfiguration(card.get(FILTER, String.class)) //
+				.thatIsShared(card.get(SHARED, Boolean.class)) //
+				.withUserId(Number.class.cast(card.get(OWNER, Integer.class)).longValue()) //
 				.build();
 	}
 
@@ -57,9 +57,9 @@ public class FilterConverter extends BaseStorableConverter<Filter> {
 		values.put(NAME, storable.getName());
 		values.put(DESCRIPTION, storable.getDescription());
 		values.put(ENTRYTYPE, dataView.findClass(storable.getClassName()).getId());
-		values.put(FILTER, storable.getValue());
-		values.put(FOR_GROUP, storable.isTemplate());
-		values.put(OWNER, storable.getOwner());
+		values.put(FILTER, storable.getConfiguration());
+		values.put(SHARED, storable.isShared());
+		values.put(OWNER, storable.getUserId());
 		return values;
 	}
 

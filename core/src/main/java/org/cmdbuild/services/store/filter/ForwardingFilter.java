@@ -52,18 +52,18 @@ public abstract class ForwardingFilter extends ForwardingObject implements Filte
 	}
 
 	@Override
-	public String getValue() {
-		return delegate().getValue();
+	public String getConfiguration() {
+		return delegate().getConfiguration();
 	}
 
 	@Override
-	public boolean isTemplate() {
-		return delegate().isTemplate();
+	public boolean isShared() {
+		return delegate().isShared();
 	}
 
 	@Override
-	public Long getOwner() {
-		return delegate().getOwner();
+	public Long getUserId() {
+		return delegate().getUserId();
 	}
 
 }
