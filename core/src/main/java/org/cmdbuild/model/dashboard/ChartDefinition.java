@@ -1,6 +1,7 @@
 package org.cmdbuild.model.dashboard;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 /*
  * A representation of the definition of a chart
@@ -37,11 +38,11 @@ public class ChartDefinition {
 	public void setDescription(final String description) {
 		this.description = description;
 	}
-	
+
 	public void setDefaultDescription(final String description) {
 		this.description = description;
 	}
-	
+
 	public String getDataSourceName() {
 		return dataSourceName;
 	}
@@ -212,14 +213,41 @@ public class ChartDefinition {
 		this.valueAxisFields.remove(field);
 	}
 
-	/*
+	public static class Filter {
+		
+		private String expression;
+		private Map<String, String> context;
+		
+		public String getExpression() {
+			return expression;
+		}
+		public void setExpression(String expression) {
+			this.expression = expression;
+		}
+		public Map<String, String> getContext() {
+			return context;
+		}
+		
+		public void setContext(Map<String, String> context) {
+			this.context = context;
+		}
+		
+	}
+
+	/**
 	 * The representation of how the user could insert the value for a input of
 	 * the data source of the chart
 	 */
-
 	public static class ChartInput {
 
-		private String name, type, fieldType, defaultValue, lookupType, className, classToUseForReferenceWidget;
+		private String name;
+		private String type;
+		private String fieldType;
+		private String defaultValue;
+		private String lookupType;
+		private String className;
+		private String classToUseForReferenceWidget;
+		private Filter filter;
 
 		private boolean required;
 
@@ -286,5 +314,14 @@ public class ChartDefinition {
 		public void setRequired(final boolean required) {
 			this.required = required;
 		}
+
+		public Filter getFilter() {
+			return filter;
+		}
+
+		public void setFilter(final Filter filter) {
+			this.filter = filter;
+		}
+
 	}
 }
