@@ -238,7 +238,7 @@ public class Translation extends JSONBaseWithSpringContext {
 
 	@JSONExported
 	@Admin
-	public JsonResponse readStructure( //
+	public JsonResponse readAll( //
 			@Parameter(value = TYPE) final String type, //
 			@Parameter(value = SORT, required = false) final JSONArray sorters, //
 			@Parameter(value = ACTIVE, required = false) final boolean activeOnly //
