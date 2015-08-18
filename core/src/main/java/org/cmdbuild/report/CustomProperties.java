@@ -3,7 +3,8 @@ package org.cmdbuild.report;
 public class CustomProperties {
 
 	public static final String //
-			FILTER = "filter", //
+			FILTER = "org.cmdbuild.filter", //
+			FILTER_PREFIX = FILTER + ".", //
 			REQUIRED = "required";
 
 	/**
