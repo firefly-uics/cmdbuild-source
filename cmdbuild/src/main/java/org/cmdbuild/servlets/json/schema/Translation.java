@@ -3,7 +3,7 @@ package org.cmdbuild.servlets.json.schema;
 import static org.cmdbuild.common.utils.BuilderUtils.a;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ACTIVE;
 import static org.cmdbuild.servlets.json.CommunicationConstants.FIELD;
-import static org.cmdbuild.servlets.json.CommunicationConstants.FILE_CSV;
+import static org.cmdbuild.servlets.json.CommunicationConstants.FILE;
 import static org.cmdbuild.servlets.json.CommunicationConstants.SEPARATOR;
 import static org.cmdbuild.servlets.json.CommunicationConstants.SORT;
 import static org.cmdbuild.servlets.json.CommunicationConstants.TRANSLATIONS;
@@ -13,6 +13,7 @@ import static org.cmdbuild.servlets.json.serializers.translations.commons.Consta
 import static org.cmdbuild.servlets.json.serializers.translations.commons.Constants.TYPE;
 import static org.cmdbuild.servlets.json.serializers.translations.commons.Constants.commonHeaders;
 import static org.cmdbuild.servlets.json.serializers.translations.commons.Constants.createConverter;
+import static org.cmdbuild.servlets.json.serializers.translations.csv.read.ErrorNotifier.THROWS_EXCEPTION;
 
 import java.io.File;
 import java.io.IOException;
@@ -30,6 +31,7 @@ import org.cmdbuild.servlets.json.management.JsonResponse;
 import org.cmdbuild.servlets.json.serializers.translations.commons.TranslationSectionSerializer;
 import org.cmdbuild.servlets.json.serializers.translations.csv.read.DefaultRecordDeserializer;
 import org.cmdbuild.servlets.json.serializers.translations.csv.read.ErrorListener;
+import org.cmdbuild.servlets.json.serializers.translations.csv.read.LoggingErrorNotifier;
 import org.cmdbuild.servlets.json.serializers.translations.csv.read.RecordDeserializer;
 import org.cmdbuild.servlets.json.serializers.translations.csv.read.SafeRecordDeserializer;
 import org.cmdbuild.servlets.json.serializers.translations.table.TranslationSerializerFactory;
@@ -72,7 +74,6 @@ public class Translation extends JSONBaseWithSpringContext {
 
 	private static final Function<Map<TranslationSerialization, Throwable>, Iterable<Map<String, String>>> TO_CLIENT = //
 	new Function<Map<TranslationSerialization, Throwable>, Iterable<Map<String, String>>>() {
-
 		@Override
 		public Iterable<Map<String, String>> apply(final Map<TranslationSerialization, Throwable> input) {
 			final Collection<Map<String, String>> output = Lists.newArrayList();
@@ -84,7 +85,6 @@ public class Translation extends JSONBaseWithSpringContext {
 			}
 			return output;
 		}
-
 	};
 
 	@JSONExported
@@ -155,12 +155,12 @@ public class Translation extends JSONBaseWithSpringContext {
 
 	@JSONExported
 	@Admin
-	public JsonResponse importCsv(@Parameter(value = FILE_CSV, required = false) final FileItem file, //
+	public JsonResponse importCsv(@Parameter(value = FILE) final FileItem file, //
 			@Parameter(value = SEPARATOR, required = false) final String separator //
 	) throws JSONException, IOException {
 
-		// DataHandler input = new DataHandler(FileItemDataSource.of(file));
 		final File testFile = new File("/home/tecnoteca/Desktop/test.csv");
+		// DataHandler input = new DataHandler(FileItemDataSource.of(file));
 		final DataHandler input = new DataHandler(testFile.toURI().toURL());
 
 		final Iterable<CsvTranslationRecord> records = DefaultCsvImporter.newInstance() //
@@ -187,10 +187,11 @@ public class Translation extends JSONBaseWithSpringContext {
 		for (final CsvTranslationRecord record : records) {
 			final RecordDeserializer importer = SafeRecordDeserializer //
 					.of(a(DefaultRecordDeserializer.newInstance() //
-							.withRecord(record))) //
+							.withRecord(record) //
+							.withNotifier(LoggingErrorNotifier.of(THROWS_EXCEPTION)))) //
 					.withErrorListener(listener);
 			final TranslationObject translationObject = importer.deserialize();
-			if (translationObject.equals(TranslationObject.INVALID)) {
+			if (!translationObject.isValid()) {
 				continue;
 			}
 			translationLogic().update(translationObject);
@@ -233,15 +234,6 @@ public class Translation extends JSONBaseWithSpringContext {
 		String[] csvHeader = new String[allHeaders.size()];
 		csvHeader = allHeaders.toArray(new String[0]);
 		return csvHeader;
-	}
-
-	@JSONExported
-	public JsonResponse uploadCSV(@Parameter(FILE_CSV) final FileItem file, //
-			@Parameter(value = TYPE) final String type, //
-			@Parameter(SEPARATOR) final String separatorString //
-	) throws IOException, JSONException {
-
-		return null;
 	}
 
 	@JSONExported

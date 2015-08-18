@@ -44,7 +44,7 @@ public class TranslationSerializerFactory {
 	}
 
 	public static enum Sections {
-		CLASS, DOMAIN, FILTER, LOOKUP, MENU, PROCESS, REPORT, VIEW;
+		CLASS, PROCESS, DOMAIN, VIEW, FILTER, LOOKUP, REPORT, MENU;
 	}
 
 	public static enum Output {
@@ -68,6 +68,7 @@ public class TranslationSerializerFactory {
 		this.viewLogic = builder.viewLogic;
 	}
 
+	// TODO use the enum Section instead of the constants
 	public TranslationSectionSerializer createSerializer() {
 		if (type.equalsIgnoreCase(CLASS)) {
 			if (output.equals(Output.TABLE)) {

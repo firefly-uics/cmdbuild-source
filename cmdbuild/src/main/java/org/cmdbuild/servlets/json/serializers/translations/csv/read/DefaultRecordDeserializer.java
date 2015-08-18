@@ -1,6 +1,7 @@
 package org.cmdbuild.servlets.json.serializers.translations.csv.read;
 
-import static org.apache.commons.lang3.StringUtils.*;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.cmdbuild.servlets.json.serializers.translations.commons.Constants.IDENTIFIER;
 import static org.cmdbuild.servlets.json.serializers.translations.commons.Constants.KEY_SEPARATOR;
 import static org.cmdbuild.servlets.json.serializers.translations.commons.Constants.commonHeaders;
@@ -11,7 +12,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.axis.utils.StringUtils;
-import org.apache.commons.lang3.Validate;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.translation.TranslationObject;
 import org.cmdbuild.logic.translation.converter.Converter;
@@ -19,26 +19,30 @@ import org.cmdbuild.servlets.json.schema.TranslatableElement;
 import org.cmdbuild.servlets.json.translationtable.objects.TranslationSerialization;
 import org.cmdbuild.servlets.json.translationtable.objects.csv.CsvTranslationRecord;
 import org.slf4j.Logger;
+import org.slf4j.Marker;
+import org.slf4j.MarkerFactory;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
-import static org.apache.commons.lang3.Validate.*;
-
 public class DefaultRecordDeserializer implements RecordDeserializer {
 
-	private static final Logger logger = Log.CMDBUILD;
-	private String type = EMPTY;
-	private String identifier = EMPTY;
-	private String owner = EMPTY;
+	private static final Logger logger = Log.JSONRPC;
+	private static final Marker marker = MarkerFactory.getMarker(DefaultRecordDeserializer.class.getName());
+
 	private String field = EMPTY;
-	private final Map<String, String> translations = Maps.newHashMap();
+	private String identifier = EMPTY;
+	private final ErrorNotifier notifier;
+	private String owner = EMPTY;
 	private final CsvTranslationRecord record;
+	private final Map<String, String> translations = Maps.newHashMap();
+	private String type = EMPTY;
 
 	public DefaultRecordDeserializer(final Builder builder) {
 		this.record = builder.record;
+		this.notifier = builder.notifier;
 	}
 
 	public static Builder newInstance() {
@@ -47,11 +51,17 @@ public class DefaultRecordDeserializer implements RecordDeserializer {
 
 	public static class Builder implements org.apache.commons.lang3.builder.Builder<RecordDeserializer> {
 
-		public CsvTranslationRecord record;
+		private CsvTranslationRecord record;
+		private ErrorNotifier notifier;
 
 		@Override
 		public RecordDeserializer build() {
 			return new DefaultRecordDeserializer(this);
+		}
+
+		public Builder withNotifier(final ErrorNotifier notifier) {
+			this.notifier = notifier;
+			return this;
 		}
 
 		public Builder withRecord(final CsvTranslationRecord record) {
@@ -68,23 +78,26 @@ public class DefaultRecordDeserializer implements RecordDeserializer {
 
 	@Override
 	public TranslationObject deserialize() {
-		logger.info("parsing record '%s'", record.toString());
+		logger.info(marker, "parsing record '{}'", record.toString());
 		final String key = record.get(IDENTIFIER);
 		unpack(key);
-		logger.debug("identifier deserialized to type: '{}' owner: '{}' identifier: '{}' field: '{}'", type, owner,
-				identifier, field);
+		logger.debug(marker, "identifier deserialized to type: '{}', owner: '{}', identifier: '{}', field: '{}'", type,
+				owner, identifier, field);
 
 		final TranslatableElement element = TO_ELEMENT_TYPE.apply(type);
-		isTrue(!element.equals(TranslatableElement.UNDEFINED), "unsupported type '" + type + "'");
-
-		final boolean contains = Iterables.contains(element.allowedFields(), field);
-		isTrue(contains, "unsupported field '" + field + "'");
+		if (element.equals(TranslatableElement.UNDEFINED)) {
+			notifier.unsupportedType(type);
+		}
+		if (!Iterables.contains(element.allowedFields(), field)) {
+			notifier.unsupportedField(field);
+		}
 
 		final Converter converter = createConverter(type, field);
-		isTrue(converter.isValid(), "unsupported type and field pair '" + type + "' '" + field + "'");
-
+		if (!converter.isValid()) {
+			notifier.invalidConverter();
+		}
 		extractTranslations(record);
-		logger.debug("translations: '{}'" + translations);
+		logger.debug(marker, "translations: '{}'", translations);
 
 		final TranslationObject translationObject = converter //
 				.withOwner(owner) //
@@ -109,7 +122,7 @@ public class DefaultRecordDeserializer implements RecordDeserializer {
 		validate(key);
 		final String[] parts = StringUtils.split(key, KEY_SEPARATOR);
 		type = parts[0];
-		if (hasOwner(key)) {
+		if (shouldHaveOwnerField(key)) {
 			owner = parts[1];
 			identifier = parts[2];
 			field = parts[3];
@@ -119,15 +132,18 @@ public class DefaultRecordDeserializer implements RecordDeserializer {
 		}
 	}
 
-	private static boolean hasOwner(final String key) {
+	private static boolean shouldHaveOwnerField(final String key) {
 		return StringUtils.split(key, KEY_SEPARATOR).length == 4;
 	}
 
-	private static void validate(final String key) {
-		notBlank(key, "missing identifier");
-		isTrue(StringUtils.split(key, KEY_SEPARATOR).length == 3 //
-				|| StringUtils.split(key, KEY_SEPARATOR).length == 4, //
-				"unsupported identifier '" + key + "'");
+	private void validate(final String key) {
+		if (isBlank(key)) {
+			notifier.unsupportedIdentifier(key);
+		}
+		final int fields = StringUtils.split(key, KEY_SEPARATOR).length;
+		if (fields != 3 && fields != 4) {
+			notifier.unsupportedIdentifier(key);
+		}
 	}
 
 	private static final Function<String, TranslatableElement> TO_ELEMENT_TYPE = new Function<String, TranslatableElement>() {

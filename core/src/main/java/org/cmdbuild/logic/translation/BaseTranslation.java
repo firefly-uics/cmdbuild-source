@@ -28,6 +28,11 @@ public abstract class BaseTranslation implements TranslationObject {
 	public Map<String, String> getTranslations() {
 		return defaultIfNull(translations, NO_TRANSLATIONS);
 	}
+	
+	@Override
+	public boolean isValid() {
+		return true;
+	}
 
 	public void setTranslations(final Map<String, String> translations) {
 		this.translations = translations;
