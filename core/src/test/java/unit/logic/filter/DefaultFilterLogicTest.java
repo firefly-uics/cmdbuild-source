@@ -31,6 +31,7 @@ import org.cmdbuild.common.utils.PagedElements;
 import org.cmdbuild.logic.filter.DefaultFilterLogic;
 import org.cmdbuild.logic.filter.DefaultFilterLogic.Converter;
 import org.cmdbuild.logic.filter.FilterLogic.Filter;
+import org.cmdbuild.services.store.filter.FilterDTO;
 import org.cmdbuild.services.store.filter.FilterStore;
 import org.junit.Before;
 import org.junit.Test;
@@ -125,20 +126,50 @@ public class DefaultFilterLogicTest {
 	}
 
 	@Test
-	public void filterUpdated() throws Exception {
+	public void onlySomeAttributesCanBeChangedDuringUpdate() throws Exception {
 		// given
 		final Filter input = mock(Filter.class);
-		final FilterStore.Filter convertedForStore = mock(FilterStore.Filter.class);
+		final FilterStore.Filter convertedForStore = FilterDTO.newFilter() //
+				.withId(12L) //
+				.withName("foo") //
+				.withDescription("foo description") //
+				.forClass("foo classname") //
+				.withValue("foo value") //
+				.asTemplate(true) //
+				.withOwner(34L) //
+				.build();
 		doReturn(convertedForStore) //
 				.when(converter).logicToStore(any(Filter.class));
+		final FilterStore.Filter alreadyStored = FilterDTO.newFilter() //
+				.withId(56L) //
+				.withName("bar") //
+				.withDescription("bar description") //
+				.forClass("bar classname") //
+				.withValue("bar value") //
+				.asTemplate(false) //
+				.withOwner(78L) //
+				.build();
+		doReturn(alreadyStored) //
+				.when(store).fetchFilter(anyLong());
 
 		// when
 		defaultFilterLogic.update(input);
 
 		// then
+		final ArgumentCaptor<FilterStore.Filter> captor = ArgumentCaptor.forClass(FilterStore.Filter.class);
 		verify(converter).logicToStore(eq(input));
-		verify(store).update(eq(convertedForStore));
+		verify(store).fetchFilter(eq(12L));
+		verify(store).update(captor.capture());
 		verifyNoMoreInteractions(store, converter, userStore, authenticatedUser, privilegeContext);
+
+		final FilterStore.Filter captured = captor.getValue();
+		assertThat(captured.getId(), equalTo(alreadyStored.getId()));
+		assertThat(captured.getName(), equalTo(convertedForStore.getName()));
+		assertThat(captured.getDescription(), equalTo(convertedForStore.getDescription()));
+		assertThat(captured.getClassName(), equalTo(convertedForStore.getClassName()));
+		assertThat(captured.getValue(), equalTo(convertedForStore.getValue()));
+		assertThat(captured.isTemplate(), equalTo(alreadyStored.isTemplate()));
+		assertThat(captured.getOwner(), equalTo(alreadyStored.getOwner()));
 	}
 
 	@Test

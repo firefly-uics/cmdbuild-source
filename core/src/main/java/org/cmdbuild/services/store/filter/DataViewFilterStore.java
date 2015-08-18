@@ -10,8 +10,13 @@ import static org.cmdbuild.dao.query.clause.where.WhereClauses.alwaysTrue;
 import static org.cmdbuild.dao.query.clause.where.WhereClauses.and;
 import static org.cmdbuild.dao.query.clause.where.WhereClauses.condition;
 import static org.cmdbuild.dao.query.clause.where.WhereClauses.not;
+import static org.cmdbuild.services.store.filter.FilterConverter.CLASS_NAME;
+import static org.cmdbuild.services.store.filter.FilterConverter.ENTRYTYPE;
+import static org.cmdbuild.services.store.filter.FilterConverter.FOR_GROUP;
+import static org.cmdbuild.services.store.filter.FilterConverter.ID;
+import static org.cmdbuild.services.store.filter.FilterConverter.NAME;
+import static org.cmdbuild.services.store.filter.FilterConverter.OWNER;
 
-import org.apache.commons.lang3.Validate;
 import org.cmdbuild.common.utils.PagedElements;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entrytype.CMClass;
@@ -26,15 +31,6 @@ import com.google.common.base.Function;
 
 public class DataViewFilterStore implements FilterStore {
 
-	protected static final String FILTERS_CLASS_NAME = "_Filter";
-	private static final String ID_ATTRIBUTE_NAME = "Id";
-	protected static final String NAME_ATTRIBUTE_NAME = "Code";
-	protected static final String DESCRIPTION_ATTRIBUTE_NAME = "Description";
-	protected static final String FILTER_ATTRIBUTE_NAME = "Filter";
-	protected static final String ENTRYTYPE_ATTRIBUTE_NAME = "IdSourceClass";
-	protected static final String TEMPLATE_ATTRIBUTE_NAME = "Template";
-	public static final String MASTER_ATTRIBUTE_NAME = "IdOwner";
-
 	private final CMDataView view;
 	private final GrantCleaner grantCleaner;
 	private final StorableConverter<FilterStore.Filter> converter;
@@ -46,7 +42,7 @@ public class DataViewFilterStore implements FilterStore {
 	}
 
 	public CMClass getFilterClass() {
-		return view.findClass(FILTERS_CLASS_NAME);
+		return view.findClass(CLASS_NAME);
 	}
 
 	@Override
@@ -65,7 +61,7 @@ public class DataViewFilterStore implements FilterStore {
 				.where(and(isUserFilter(), filtersAssociatedTo(userId), forClass(className))) //
 				.offset(offset) //
 				.limit(limit) //
-				.orderBy(NAME_ATTRIBUTE_NAME, ASC) //
+				.orderBy(NAME, ASC) //
 				.count() //
 				.run();
 		final Iterable<Filter> filters = from(result) //
@@ -90,7 +86,7 @@ public class DataViewFilterStore implements FilterStore {
 		if (entryType == null) {
 			clause = alwaysTrue();
 		} else {
-			clause = condition(attribute(getFilterClass(), ENTRYTYPE_ATTRIBUTE_NAME), eq(entryType.getId()));
+			clause = condition(attribute(getFilterClass(), ENTRYTYPE), eq(entryType.getId()));
 		}
 		return clause;
 	}
@@ -100,13 +96,13 @@ public class DataViewFilterStore implements FilterStore {
 		if (id == null) {
 			clause = alwaysTrue();
 		} else {
-			clause = condition(attribute(getFilterClass(), MASTER_ATTRIBUTE_NAME), eq(id));
+			clause = condition(attribute(getFilterClass(), OWNER), eq(id));
 		}
 		return clause;
 	}
 
 	private WhereClause isUserFilter() {
-		return condition(attribute(getFilterClass(), TEMPLATE_ATTRIBUTE_NAME), eq(false));
+		return condition(attribute(getFilterClass(), FOR_GROUP), eq(false));
 	}
 
 	@Override
@@ -118,7 +114,7 @@ public class DataViewFilterStore implements FilterStore {
 				.where(and(not(isUserFilter()), forClass(className))) //
 				.offset(start) //
 				.limit(limit) //
-				.orderBy(NAME_ATTRIBUTE_NAME, ASC) //
+				.orderBy(NAME, ASC) //
 				.count() //
 				.run();
 		final Iterable<Filter> filters = from(result) //
@@ -129,29 +125,15 @@ public class DataViewFilterStore implements FilterStore {
 
 	@Override
 	public Long create(final Filter filter) {
-		Validate.notNull(filter.getClassName());
-		final CMClass clazz = view.findClass(filter.getClassName());
-		return view.createCardFor(getFilterClass()) //
-				.set(NAME_ATTRIBUTE_NAME, filter.getName()) //
-				.set(DESCRIPTION_ATTRIBUTE_NAME, filter.getDescription()) //
-				.set(ENTRYTYPE_ATTRIBUTE_NAME, clazz.getId()) //
-				.set(FILTER_ATTRIBUTE_NAME, filter.getValue()) //
-				.set(TEMPLATE_ATTRIBUTE_NAME, filter.isTemplate()) //
-				.set(MASTER_ATTRIBUTE_NAME, filter.getOwner()) //
+		return converter.fill(view.createCardFor(getFilterClass()), filter) //
 				.save() //
 				.getId();
 	}
 
 	@Override
-	public Filter update(final Filter filter) {
-		final CMClass clazz = view.findClass(filter.getClassName());
-		final CMCard updated = view.update(card(filter.getId())) //
-				.set(DESCRIPTION_ATTRIBUTE_NAME, filter.getDescription()) //
-				.set(NAME_ATTRIBUTE_NAME, filter.getName()) //
-				.set(FILTER_ATTRIBUTE_NAME, filter.getValue()) //
-				.set(ENTRYTYPE_ATTRIBUTE_NAME, clazz.getId()) //
+	public void update(final Filter filter) {
+		converter.fill(view.update(card(filter.getId())), filter) //
 				.save();
-		return cardToFilter().apply(updated);
 	}
 
 	@Override
@@ -165,8 +147,8 @@ public class DataViewFilterStore implements FilterStore {
 		final CMClass filterClass = getFilterClass();
 		return view.select(anyAttribute(filterClass)) //
 				.from(filterClass) //
-				.numbered(condition(attribute(filterClass, ID_ATTRIBUTE_NAME), eq(filter.getId()))) //
-				.orderBy(NAME_ATTRIBUTE_NAME, ASC) //
+				.numbered(condition(attribute(filterClass, ID), eq(filter.getId()))) //
+				.orderBy(NAME, ASC) //
 				.run() //
 				.getOnlyRow() //
 				.getNumber();
@@ -188,7 +170,7 @@ public class DataViewFilterStore implements FilterStore {
 		final CMClass filterClass = getFilterClass();
 		return view.select(anyAttribute(filterClass)) //
 				.from(filterClass) //
-				.where(condition(attribute(filterClass, ID_ATTRIBUTE_NAME), eq(id))) //
+				.where(condition(attribute(filterClass, ID), eq(id))) //
 				.limit(1) //
 				.run() //
 				.getOnlyRow() //

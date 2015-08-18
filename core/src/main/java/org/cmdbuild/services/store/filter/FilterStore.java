@@ -71,7 +71,7 @@ public interface FilterStore {
 	 * 
 	 * @return
 	 */
-	Filter update(Filter filter);
+	void update(Filter filter);
 
 	/**
 	 * Deletes the filter from the database

@@ -45,7 +45,7 @@ public class Filter {
 	}
 
 	@Bean
-	protected StorableConverter<org.cmdbuild.services.store.filter.FilterStore.Filter> baseStorableConverter() {
+	protected StorableConverter<FilterStore.Filter> baseStorableConverter() {
 		return new FilterConverter(data.systemDataView());
 	}
 

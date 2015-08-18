@@ -11,6 +11,7 @@ import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.common.utils.PagedElements;
 import org.cmdbuild.services.store.filter.FilterDTO;
 import org.cmdbuild.services.store.filter.FilterStore;
+import org.cmdbuild.services.store.filter.ForwardingFilter;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
@@ -133,7 +134,36 @@ public class DefaultFilterLogic implements FilterLogic {
 	public void update(final Filter filter) {
 		logger.info(MARKER, "updating filter '{}'", filter);
 		final FilterStore.Filter _filter = converter.logicToStore(filter);
-		store.update(_filter);
+		final FilterStore.Filter stored = store.fetchFilter(_filter.getId());
+		final FilterStore.Filter notAllAttributesCanBeUpdated = new ForwardingFilter() {
+
+			@Override
+			protected FilterStore.Filter delegate() {
+				return stored;
+			}
+
+			@Override
+			public String getName() {
+				return _filter.getName();
+			}
+
+			@Override
+			public String getDescription() {
+				return _filter.getDescription();
+			}
+
+			@Override
+			public String getClassName() {
+				return _filter.getClassName();
+			}
+
+			@Override
+			public String getValue() {
+				return _filter.getValue();
+			}
+
+		};
+		store.update(notAllAttributesCanBeUpdated);
 	}
 
 	@Override
