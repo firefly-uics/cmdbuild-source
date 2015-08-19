@@ -62,6 +62,7 @@
 		CONFIRMATION: 'confirmation',
 		CONFIRMED: 'confirmed',
 		CONTENT: 'content',
+		CONTEXT: 'context',
 		CREATE: 'create',
 		CRON_EXPRESSION: 'cronExpression',
 		CRON_INPUT_TYPE: 'cronInputType',

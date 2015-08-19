@@ -158,6 +158,9 @@
 					},
 
 					/**
+					 * Creates reference field for card field type.
+					 * Adapted from new filter object structure to old one for old FieldManager implementation.
+					 *
 					 * @param {Object} parameterConfiguration
 					 *
 					 * @returns {CMDBuild.Management.ReferenceField.Field} field
@@ -165,13 +168,25 @@
 					card: function(parameterConfiguration) {
 						var required = parameterConfiguration[CMDBuild.core.proxy.CMProxyConstants.REQUIRED];
 						var filter = parameterConfiguration[CMDBuild.core.proxy.CMProxyConstants.FILTER];
+						var meta = {};
+
+						if (!Ext.isEmpty(filter))
+							Ext.Object.each(filter[CMDBuild.core.proxy.CMProxyConstants.CONTEXT], function(key, value, myself) {
+								meta['system.template.' + key] = value;
+							}, this);
+
 						var field = CMDBuild.Management.ReferenceField.build({
 							description: (required ? '* ' : '' ) + parameterConfiguration[CMDBuild.core.proxy.CMProxyConstants.NAME],
 							filter: !Ext.isEmpty(filter) ? filter[CMDBuild.core.proxy.CMProxyConstants.EXPRESSION] : null,
 							isnotnull: required,
+							meta: meta,
 							name: parameterConfiguration[CMDBuild.core.proxy.CMProxyConstants.NAME],
 							referencedIdClass: parameterConfiguration.classToUseForReferenceWidget
 						});
+
+						// Force execution of template resolver
+						if (!Ext.isEmpty(field) && Ext.isFunction(field.resolveTemplate))
+							field.resolveTemplate();
 
 						field.setValue(defaultValue);
 

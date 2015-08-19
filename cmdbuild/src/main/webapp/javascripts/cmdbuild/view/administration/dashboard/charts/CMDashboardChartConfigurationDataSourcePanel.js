@@ -308,12 +308,14 @@
 
 			// Configure filter only on integer attributes type
 			if (this.input.type == 'INTEGER') {
-				this.fieldFilter = Ext.create('Ext.form.field.Text', {
-					name: CMDBuild.core.proxy.CMProxyConstants.FILTER,
-					fieldLabel: '@@ Filter',
-					labelWidth: SUBFIELD_LABEL_WIDTH,
-					width: CMDBuild.ADM_BIG_FIELD_WIDTH
+				this.fieldFilter = Ext.create('CMDBuild.view.common.field.filter.cql.Cql', {
+					fieldLabel: CMDBuild.Translation.filter,
+					fieldName: CMDBuild.core.proxy.CMProxyConstants.FILTER,
+					labelWidth: CMDBuild.LABEL_WIDTH - 15,
+					maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH
 				});
+
+				this.fieldFilter.setDisabled(this.typeComboIsdisabled());
 
 				this.add(this.fieldFilter);
 			}
@@ -436,10 +438,9 @@
 
 			// Build filter object
 			if (!Ext.isEmpty(this.fieldFilter)) {
-				data.filter = {};
-				data.filter[CMDBuild.core.proxy.CMProxyConstants.EXPRESSION] = this.fieldFilter.getValue();
+				data.filter = this.fieldFilter.getValue();
 			}
-_debug('getData', data, this);
+
 			return data;
 		},
 
@@ -459,7 +460,7 @@ _debug('getData', data, this);
 					this.classToUseForReferenceWidget.setValue(data.classToUseForReferenceWidget);
 
 				if (!Ext.isEmpty(data.filter) && !Ext.isEmpty(this.fieldFilter))
-					this.fieldFilter.setValue(data.filter[CMDBuild.core.proxy.CMProxyConstants.EXPRESSION]);
+					this.fieldFilter.setValue(data[CMDBuild.core.proxy.CMProxyConstants.FILTER]);
 			}
 
 			if (data.defaultValue && this.defaultField)
