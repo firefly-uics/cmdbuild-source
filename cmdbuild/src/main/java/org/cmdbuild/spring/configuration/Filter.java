@@ -34,7 +34,7 @@ public class Filter {
 	}
 
 	@Bean
-	protected DataViewFilterStore dataViewFilterStore() {
+	protected FilterStore dataViewFilterStore() {
 		return new DataViewFilterStore(data.systemDataView(), localizedStorableConverter());
 	}
 
