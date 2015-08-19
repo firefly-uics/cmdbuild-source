@@ -164,16 +164,16 @@
 							xaVars['_SystemFieldFilter'] = attribute.filter;
 
 							var templateResolver = new CMDBuild.Management.TemplateResolver({ // TODO: implementation of serverside template resolver
-								clientForm: this.parentDelegate.clientForm,
+								clientForm: this.cmfg('widgetControllerPropertyGet', 'getClientForm'),
 								xaVars: xaVars,
 								serverVars: this.cmfg('getTemplateResolverServerVars')
 							});
 
 							editor = CMDBuild.Management.ReferenceField.buildEditor(attribute, templateResolver);
 
-							// Avoids to resolve field templates when form is in editMode (when you click on abort button) // TODO: probabply broken
-//							if (!this.parentDelegate.owner._isInEditMode && !Ext.Object.isEmpty(editor) && Ext.isFunction(editor.resolveTemplate))
-//								editor.resolveTemplate();
+							// Force execution of template resolver
+							if (!Ext.isEmpty(editor) && Ext.isFunction(editor.resolveTemplate))
+								editor.resolveTemplate();
 						}
 
 						if (!Ext.isEmpty(header)) {

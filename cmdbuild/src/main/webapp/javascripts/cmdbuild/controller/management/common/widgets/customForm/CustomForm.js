@@ -24,7 +24,8 @@
 		cmfgCatchedFunctions: [
 			'getTemplateResolverServerVars',
 			'widgetConfigurationGet',
-			'widgetConfigurationIsAttributeEmpty'
+			'widgetConfigurationIsAttributeEmpty',
+			'widgetControllerPropertyGet'
 		],
 
 		/**

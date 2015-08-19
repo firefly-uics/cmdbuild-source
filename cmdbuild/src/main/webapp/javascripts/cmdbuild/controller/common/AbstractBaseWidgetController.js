@@ -318,6 +318,19 @@
 					) { // Simple object management
 						return this.widgetConfigurationModel[propertyName] = configurationObject;
 					}
+			},
+
+		// WidgetCntroller methods
+			/**
+			 * @param {String} propertyName
+			 *
+			 * @returns {Mixed}
+			 */
+			widgetControllerPropertyGet: function(propertyName) {
+				if (!Ext.isEmpty(this[propertyName]))
+					return this[propertyName];
+
+				return null;
 			}
 	});
 

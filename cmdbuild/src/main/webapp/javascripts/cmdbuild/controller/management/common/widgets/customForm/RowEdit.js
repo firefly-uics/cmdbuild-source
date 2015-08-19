@@ -74,10 +74,33 @@
 						itemsArray.push(fieldManager.buildField());
 					} else { // @deprecated - Old field manager
 						var attribute = attribute.getAdaptedData();
-						var item = CMDBuild.Management.FieldManager.getFieldForAttr(attribute, false, false);
+						var item = undefined;
+
+						if (attribute.type == 'REFERENCE') { // TODO: hack to force a templateResolver build for editor that haven't a form associated like other fields types
+							var xaVars = CMDBuild.Utils.Metadata.extractMetaByNS(attribute.meta, 'system.template.');
+							xaVars['_SystemFieldFilter'] = attribute.filter;
+
+							var templateResolver = new CMDBuild.Management.TemplateResolver({ // TODO: implementation of serverside template resolver
+								clientForm: this.cmfg('widgetControllerPropertyGet', 'getClientForm'),
+								xaVars: xaVars,
+								serverVars: this.cmfg('getTemplateResolverServerVars')
+							});
+
+							item = CMDBuild.Management.ReferenceField.buildEditor(attribute, templateResolver);
+
+							// Force execution of template resolver
+							if (!Ext.isEmpty(item) && Ext.isFunction(item.resolveTemplate))
+								item.resolveTemplate();
+						} else {
+							item = CMDBuild.Management.FieldManager.getFieldForAttr(attribute, false, false);
+						}
 
 						if (attribute[CMDBuild.core.proxy.CMProxyConstants.FIELD_MODE] == 'read')
 							item.setDisabled(true);
+
+						// Force execution of template resolver
+						if (!Ext.isEmpty(item) && Ext.isFunction(item.resolveTemplate))
+							item.resolveTemplate();
 
 						itemsArray.push(item);
 					}
