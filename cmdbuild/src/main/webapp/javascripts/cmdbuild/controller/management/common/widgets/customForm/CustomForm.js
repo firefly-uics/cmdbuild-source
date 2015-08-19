@@ -78,10 +78,10 @@
 			this.callParent(arguments);
 
 			// Execute template resolver on model property
-			this.widgetConfigurationSet(
-				this.applyTemplateResolver(this.widgetConfiguration[CMDBuild.core.proxy.CMProxyConstants.MODEL]),
-				CMDBuild.core.proxy.CMProxyConstants.MODEL
-			);
+			this.widgetConfigurationSet({
+				configurationObject: this.applyTemplateResolver(this.widgetConfiguration[CMDBuild.core.proxy.CMProxyConstants.MODEL]),
+				propertyName: CMDBuild.core.proxy.CMProxyConstants.MODEL
+			});
 
 			if (!this.widgetConfigurationIsAttributeEmpty(CMDBuild.core.proxy.CMProxyConstants.MODEL)) {
 				this.buildLayout();
@@ -185,17 +185,22 @@
 
 		// WidgetConfiguration methods
 			/**
-			 * @param {Object} configurationObject
-			 * @param {String} propertyName
+			 * @param {Object} parameters
+			 * @param {Object} parameters.configurationObject
+			 * @param {String} parameters.propertyName
 			 *
 			 * @returns {Mixed}
 			 *
 			 * @override
 			 */
-			widgetConfigurationSet: function(configurationObject, propertyName) {
+			widgetConfigurationSet: function(parameters) {
+				var configurationObject = parameters.configurationObject;
+				var propertyName = parameters.propertyName;
+
 				this.callParent(arguments);
 
-				if (Ext.isEmpty(propertyName))
+				// Full model setup management
+				if (!Ext.isEmpty(configurationObject) && Ext.isEmpty(propertyName))
 					this.widgetConfigurationModel = Ext.create('CMDBuild.model.widget.customForm.Configuration', configurationObject);
 			}
 	});
