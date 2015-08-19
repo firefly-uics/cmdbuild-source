@@ -106,7 +106,7 @@
 			if (!Ext.isEmpty(configurationObject) && !Ext.Object.isEmpty(configurationObject.widgetConfiguration)) {
 				this.callParent(arguments);
 
-				this.widgetConfigurationSet(this.widgetConfiguration); // Setup widget configuration model
+				this.widgetConfigurationSet({ configurationObject: this.widgetConfiguration }); // Setup widget configuration model
 
 				this.view.delegate = this; // Apply delegate to view
 			} else {
@@ -120,7 +120,7 @@
 		beforeActiveView: function() {
 			// Setup widgetConfiguration on widget view activation to switch configuration on multiple instances
 			if (!Ext.isEmpty(this.widgetConfiguration))
-				this.widgetConfigurationSet(this.widgetConfiguration);
+				this.widgetConfigurationSet({ configurationObject: this.widgetConfiguration });
 		},
 
 		/**
@@ -297,27 +297,36 @@
 			/**
 			 * Setup all widgetConfigurationModel or only one model property. Needs to be extended from widget controller to set value of widgetConfigurationModel.
 			 *
-			 * @param {Object} configurationObject
-			 * @param {String} propertyName
+			 * @param {Object} parameters
+			 * @param {Object} parameters.configurationObject
+			 * @param {String} parameters.propertyName
 			 *
 			 * @returns {Mixed}
 			 *
 			 * @abstract
 			 */
-			widgetConfigurationSet: function(configurationObject, propertyName) {
-				if (!Ext.isEmpty(propertyName) && Ext.isString(propertyName))
-					if (
-						!Ext.isEmpty(this.widgetConfigurationModel)
-						&& Ext.isObject(this.widgetConfigurationModel)
-						&& Ext.isFunction(this.widgetConfigurationModel.set)
-					) { // Model management
-						return this.widgetConfigurationModel.set(propertyName, configurationObject);
-					} else if (
-						!Ext.isEmpty(this.widgetConfigurationModel)
-						&& Ext.isObject(this.widgetConfigurationModel)
-					) { // Simple object management
-						return this.widgetConfigurationModel[propertyName] = configurationObject;
-					}
+			widgetConfigurationSet: function(parameters) {
+				if (!Ext.isEmpty(parameters)) {
+					var configurationObject = parameters.configurationObject;
+					var propertyName = parameters.propertyName;
+
+					// Single property management
+					if (!Ext.isEmpty(propertyName) && Ext.isString(propertyName))
+						if (
+							!Ext.isEmpty(this.widgetConfigurationModel)
+							&& Ext.isObject(this.widgetConfigurationModel)
+							&& Ext.isFunction(this.widgetConfigurationModel.set)
+						) { // Model management
+							return this.widgetConfigurationModel.set(propertyName, configurationObject);
+						} else if (
+							!Ext.isEmpty(this.widgetConfigurationModel)
+							&& Ext.isObject(this.widgetConfigurationModel)
+						) { // Simple object management
+							return this.widgetConfigurationModel[propertyName] = configurationObject;
+						}
+				}
+
+				// Extends to implement full model setup
 			},
 
 		// WidgetCntroller methods
