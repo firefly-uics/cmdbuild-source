@@ -1,22 +1,22 @@
 (function() {
 
-	Ext.define('CMDBuild.view.administration.dataViews.filter.FilterView', {
+	Ext.define('CMDBuild.view.administration.dataView.filter.FilterView', {
 		extend: 'Ext.panel.Panel',
 
 		requires: ['CMDBuild.core.proxy.Constants'],
 
 		/**
-		 * @cfg {CMDBuild.controller.administration.dataViews.Filter}
+		 * @cfg {CMDBuild.controller.administration.dataView.Filter}
 		 */
 		delegate: undefined,
 
 		/**
-		 * @property {CMDBuild.view.administration.dataViews.filter.FormPanel}
+		 * @property {CMDBuild.view.administration.dataView.filter.FormPanel}
 		 */
 		form: undefined,
 
 		/**
-		 * @property {CMDBuild.view.administration.dataViews.filter.GridPanel}
+		 * @property {CMDBuild.view.administration.dataView.filter.GridPanel}
 		 */
 		grid: undefined,
 
@@ -25,18 +25,6 @@
 		layout: 'border',
 
 		initComponent: function() {
-			this.grid = Ext.create('CMDBuild.view.administration.dataViews.filter.GridPanel', {
-				delegate: this.delegate,
-				region: 'north',
-				split: true,
-				height: '30%'
-			});
-
-			this.form = Ext.create('CMDBuild.view.administration.dataViews.filter.FormPanel', {
-				delegate: this.delegate,
-				region: 'center'
-			});
-
 			Ext.apply(this, {
 				dockedItems: [
 					Ext.create('Ext.toolbar.Toolbar', {
@@ -55,7 +43,18 @@
 						]
 					})
 				],
-				items: [this.grid, this.form]
+				items: [
+					this.grid = Ext.create('CMDBuild.view.administration.dataView.filter.GridPanel', {
+						delegate: this.delegate,
+						region: 'north',
+						split: true,
+						height: '30%'
+					}),
+					this.form = Ext.create('CMDBuild.view.administration.dataView.filter.FormPanel', {
+						delegate: this.delegate,
+						region: 'center'
+					})
+				]
 			});
 
 			this.callParent(arguments);

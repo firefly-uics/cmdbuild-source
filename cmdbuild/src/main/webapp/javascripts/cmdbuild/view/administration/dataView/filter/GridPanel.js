@@ -1,15 +1,15 @@
 (function() {
 
-	Ext.define('CMDBuild.view.administration.dataViews.filter.GridPanel', {
+	Ext.define('CMDBuild.view.administration.dataView.filter.GridPanel', {
 		extend: 'Ext.grid.Panel',
 
 		requires: [
 			'CMDBuild.core.proxy.Constants',
-			'CMDBuild.core.proxy.dataViews.Filter'
+			'CMDBuild.core.proxy.dataView.Filter'
 		],
 
 		/**
-		 * @cfg {CMDBuild.controller.administration.dataViews.Filter}
+		 * @cfg {CMDBuild.controller.administration.dataView.Filter}
 		 */
 		delegate: undefined,
 
@@ -35,7 +35,7 @@
 						flex: 1
 					}
 				],
-				store: CMDBuild.core.proxy.dataViews.Filter.getStore()
+				store: CMDBuild.core.proxy.dataView.Filter.getStore()
 			});
 
 			this.callParent(arguments);

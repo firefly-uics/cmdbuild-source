@@ -1,11 +1,11 @@
 (function() {
 
-	Ext.define('CMDBuild.core.proxy.dataViews.Filter', {
+	Ext.define('CMDBuild.core.proxy.dataView.Filter', {
 
 		requires: [
 			'CMDBuild.core.proxy.Constants',
 			'CMDBuild.core.proxy.Index',
-			'CMDBuild.model.DataViews'
+			'CMDBuild.model.dataView.Filter'
 		],
 
 		singleton: true,
@@ -18,11 +18,11 @@
 				method: 'POST',
 				url: CMDBuild.core.proxy.Index.dataViews.filter.create,
 				params: parameters.params,
-				scope: parameters.scope || this,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
-				failure: parameters.failure || Ext.emptyFn(),
-				success: parameters.success || Ext.emptyFn(),
-				callback: parameters.callback || Ext.emptyFn()
+				scope: parameters.scope || this,
+				failure: parameters.failure || Ext.emptyFn,
+				success: parameters.success || Ext.emptyFn,
+				callback: parameters.callback || Ext.emptyFn
 			});
 		},
 
@@ -37,10 +37,10 @@
 		getStore: function() {
 			return Ext.create('Ext.data.Store', {
 				autoLoad: false,
-				model: 'CMDBuild.model.DataViews.filter',
+				model: 'CMDBuild.model.dataView.Filter',
 				proxy: {
 					type: 'ajax',
-					url: CMDBuild.core.proxy.Index.dataViews.filter.read, // TODO: check if rename when delete all old implementation
+					url: CMDBuild.core.proxy.Index.dataViews.filter.read,
 					reader: {
 						type: 'json',
 						root: 'views'
@@ -65,11 +65,11 @@
 				method: 'POST',
 				url: CMDBuild.core.proxy.Index.dataViews.filter.remove,
 				params: parameters.params,
-				scope: parameters.scope || this,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
-				failure: parameters.failure || Ext.emptyFn(),
-				success: parameters.success || Ext.emptyFn(),
-				callback: parameters.callback || Ext.emptyFn()
+				scope: parameters.scope || this,
+				failure: parameters.failure || Ext.emptyFn,
+				success: parameters.success || Ext.emptyFn,
+				callback: parameters.callback || Ext.emptyFn
 			});
 		},
 
@@ -81,11 +81,11 @@
 				method: 'POST',
 				url: CMDBuild.core.proxy.Index.dataViews.filter.update,
 				params: parameters.params,
-				scope: parameters.scope || this,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
-				failure: parameters.failure || Ext.emptyFn(),
-				success: parameters.success || Ext.emptyFn(),
-				callback: parameters.callback || Ext.emptyFn()
+				scope: parameters.scope || this,
+				failure: parameters.failure || Ext.emptyFn,
+				success: parameters.success || Ext.emptyFn,
+				callback: parameters.callback || Ext.emptyFn
 			});
 		}
 	});
