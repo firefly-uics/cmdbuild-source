@@ -1,6 +1,6 @@
 (function() {
 
-	Ext.define('CMDBuild.controller.administration.dataViews.DataViews', {
+	Ext.define('CMDBuild.controller.administration.dataView.DataView', {
 		extend: 'CMDBuild.controller.common.AbstractBasePanelController',
 
 		requires: ['CMDBuild.core.proxy.Constants'],
@@ -16,7 +16,7 @@
 		sectionController: undefined,
 
 		/**
-		 * @cfg {CMDBuild.view.administration.dataViews.DataViewsView}
+		 * @cfg {CMDBuild.view.administration.dataView.DataViewView}
 		 */
 		view: undefined,
 
@@ -33,12 +33,12 @@
 
 				switch(parameters.get(CMDBuild.core.proxy.Constants.ID)) {
 					case 'sql': {
-						this.sectionController = Ext.create('CMDBuild.controller.administration.dataViews.Sql', { parentDelegate: this });
+						this.sectionController = Ext.create('CMDBuild.controller.administration.dataView.Sql', { parentDelegate: this });
 					} break;
 
 					case 'filter':
 					default: {
-						this.sectionController = Ext.create('CMDBuild.controller.administration.dataViews.Filter', { parentDelegate: this });
+						this.sectionController = Ext.create('CMDBuild.controller.administration.dataView.Filter', { parentDelegate: this });
 					}
 				}
 
