@@ -1,22 +1,22 @@
 (function() {
 
-	Ext.define('CMDBuild.view.administration.filters.groups.GroupsView', {
+	Ext.define('CMDBuild.view.administration.filter.groups.GroupsView', {
 		extend: 'Ext.panel.Panel',
 
 		requires: ['CMDBuild.core.proxy.Constants'],
 
 		/**
-		 * @cfg {CMDBuild.controller.administration.filters.Groups}
+		 * @cfg {CMDBuild.controller.administration.filter.Groups}
 		 */
 		delegate: undefined,
 
 		/**
-		 * @property {CMDBuild.view.administration.filters.groups.FormPanel}
+		 * @property {CMDBuild.view.administration.filter.groups.FormPanel}
 		 */
 		form: undefined,
 
 		/**
-		 * @property {CMDBuild.view.administration.filters.groups.GridPanel}
+		 * @property {CMDBuild.view.administration.filter.groups.GridPanel}
 		 */
 		grid: undefined,
 
@@ -25,18 +25,6 @@
 		layout: 'border',
 
 		initComponent: function() {
-			this.form = Ext.create('CMDBuild.view.administration.filters.groups.FormPanel', {
-				delegate: this.delegate,
-				region: 'center'
-			});
-
-			this.grid = Ext.create('CMDBuild.view.administration.filters.groups.GridPanel', {
-				delegate: this.delegate,
-				region: 'north',
-				split: true,
-				height: '30%'
-			});
-
 			Ext.apply(this, {
 				dockedItems: [
 					Ext.create('Ext.toolbar.Toolbar', {
@@ -49,13 +37,24 @@
 								scope: this,
 
 								handler: function(button, e) {
-									this.delegate.cmfg('onFiltersGroupsAddButtonClick');
+									this.delegate.cmfg('onFilterGroupsAddButtonClick');
 								}
 							})
 						]
 					})
 				],
-				items: [this.grid, this.form]
+				items: [
+					this.grid = Ext.create('CMDBuild.view.administration.filter.groups.GridPanel', {
+						delegate: this.delegate,
+						region: 'north',
+						split: true,
+						height: '30%'
+					}),
+					this.form = Ext.create('CMDBuild.view.administration.filter.groups.FormPanel', {
+						delegate: this.delegate,
+						region: 'center'
+					})
+				]
 			});
 
 			this.callParent(arguments);

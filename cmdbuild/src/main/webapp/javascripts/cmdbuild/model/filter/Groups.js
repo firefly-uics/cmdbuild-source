@@ -1,9 +1,9 @@
 (function() {
 
-	Ext.require('CMDBuild.core.proxy.Constants');
-
-	Ext.define('CMDBuild.model.filters.Groups', {
+	Ext.define('CMDBuild.model.filter.Groups', {
 		extend: 'Ext.data.Model',
+
+		requires: ['CMDBuild.core.proxy.Constants'],
 
 		fields: [
 			{ name: CMDBuild.core.proxy.Constants.CONFIGURATION, type: 'auto' },

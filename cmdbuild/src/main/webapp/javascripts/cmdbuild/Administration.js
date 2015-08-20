@@ -79,8 +79,8 @@
 										cmControllerType: 'CMDBuild.controller.administration.email.Email',
 										cmName: 'email'
 									}),
-									Ext.create('CMDBuild.view.administration.filters.FiltersView', {
-										cmControllerType: 'CMDBuild.controller.administration.filters.Filters',
+									Ext.create('CMDBuild.view.administration.filter.FilterView', {
+										cmControllerType: 'CMDBuild.controller.administration.filter.Filter',
 										cmName: 'filters'
 									}),
 									Ext.create('CMDBuild.view.administration.localization.LocalizationView', {

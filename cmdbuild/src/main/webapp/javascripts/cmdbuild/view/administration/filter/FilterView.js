@@ -1,10 +1,10 @@
 (function() {
 
-	Ext.define('CMDBuild.view.administration.filters.FiltersView', {
+	Ext.define('CMDBuild.view.administration.filter.FilterView', {
 		extend: 'Ext.form.Panel',
 
 		/**
-		 * @cfg {CMDBuild.controller.administration.filters.Filters}
+		 * @cfg {CMDBuild.controller.administration.filter.Filter}
 		 */
 		delegate: undefined,
 

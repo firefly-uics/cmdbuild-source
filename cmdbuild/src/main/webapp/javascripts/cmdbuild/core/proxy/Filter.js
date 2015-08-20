@@ -1,5 +1,8 @@
 (function() {
 
+	/**
+	 * FilterChooser proxy
+	 */
 	Ext.define('CMDBuild.core.proxy.Filter', {
 		alternateClassName: 'CMDBuild.ServiceProxy.Filter', // Legacy class name
 

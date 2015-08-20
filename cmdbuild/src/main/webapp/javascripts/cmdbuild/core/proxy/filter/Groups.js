@@ -1,11 +1,11 @@
 (function() {
 
-	Ext.define('CMDBuild.core.proxy.filters.Groups', {
+	Ext.define('CMDBuild.core.proxy.filter.Groups', {
 
 		requires: [
 			'CMDBuild.core.proxy.Constants',
 			'CMDBuild.core.proxy.Index',
-			'CMDBuild.model.filters.Groups'
+			'CMDBuild.model.filter.Groups'
 		],
 
 		singleton: true,
@@ -18,16 +18,18 @@
 				method: 'POST',
 				url: CMDBuild.core.proxy.Index.filters.create,
 				params: parameters.params,
-				scope: parameters.scope || this,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
-				failure: parameters.failure || Ext.emptyFn(),
-				success: parameters.success || Ext.emptyFn(),
-				callback: parameters.callback || Ext.emptyFn()
+				scope: parameters.scope || this,
+				failure: parameters.failure || Ext.emptyFn,
+				success: parameters.success || Ext.emptyFn,
+				callback: parameters.callback || Ext.emptyFn
 			});
 		},
 
 		/**
 		 * @param {Object} parameters
+		 *
+		 * TODO: waiting for refactor
 		 */
 		get: function(parameters) {},
 
@@ -39,7 +41,7 @@
 		getStore: function() {
 			return Ext.create('Ext.data.Store', {
 				autoLoad: false,
-				model: 'CMDBuild.model.filters.Groups',
+				model: 'CMDBuild.model.filter.Groups',
 				pageSize: _CMUtils.grid.getPageSize(),
 				proxy: {
 					url: CMDBuild.core.proxy.Index.filters.groupStore,
@@ -64,11 +66,11 @@
 				method: 'POST',
 				url: CMDBuild.core.proxy.Index.filters.remove,
 				params: parameters.params,
-				scope: parameters.scope || this,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
-				failure: parameters.failure || Ext.emptyFn(),
-				success: parameters.success || Ext.emptyFn(),
-				callback: parameters.callback || Ext.emptyFn()
+				scope: parameters.scope || this,
+				failure: parameters.failure || Ext.emptyFn,
+				success: parameters.success || Ext.emptyFn,
+				callback: parameters.callback || Ext.emptyFn
 			});
 		},
 
@@ -80,11 +82,11 @@
 				method: 'POST',
 				url: CMDBuild.core.proxy.Index.filters.update,
 				params: parameters.params,
-				scope: parameters.scope || this,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
-				failure: parameters.failure || Ext.emptyFn(),
-				success: parameters.success || Ext.emptyFn(),
-				callback: parameters.callback || Ext.emptyFn()
+				scope: parameters.scope || this,
+				failure: parameters.failure || Ext.emptyFn,
+				success: parameters.success || Ext.emptyFn,
+				callback: parameters.callback || Ext.emptyFn
 			});
 		}
 	});

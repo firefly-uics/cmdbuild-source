@@ -13,7 +13,7 @@
 		],
 
 		/**
-		 * @cfg {CMDBuild.controller.administration.filters.Filters}
+		 * @cfg {CMDBuild.controller.administration.filter.Filter}
 		 */
 		parentDelegate: undefined,
 
@@ -72,7 +72,7 @@
 
 		/**
 		 * @param {Object} configurationObject
-		 * @param {CMDBuild.controller.administration.filters.Filters} configurationObject.parentDelegate
+		 * @param {CMDBuild.controller.administration.filter.Filter} configurationObject.parentDelegate
 		 *
 		 * @override
 		 */
