@@ -37,7 +37,7 @@
 								scope: this,
 
 								handler: function(button, e) {
-									this.delegate.cmfg('onDataViewsFilterAddButtonClick');
+									this.delegate.cmfg('onDataViewFilterAddButtonClick');
 								}
 							})
 						]
