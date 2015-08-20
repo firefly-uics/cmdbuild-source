@@ -1,22 +1,22 @@
 (function() {
 
-	Ext.define('CMDBuild.view.administration.dataViews.sql.SqlView', {
+	Ext.define('CMDBuild.view.administration.dataView.sql.SqlView', {
 		extend: 'Ext.panel.Panel',
 
 		requires: ['CMDBuild.core.proxy.Constants'],
 
 		/**
-		 * @cfg {CMDBuild.controller.administration.dataViews.Sql}
+		 * @cfg {CMDBuild.controller.administration.dataView.Sql}
 		 */
 		delegate: undefined,
 
 		/**
-		 * @property {CMDBuild.view.administration.dataViews.sql.FormPanel}
+		 * @property {CMDBuild.view.administration.dataView.sql.FormPanel}
 		 */
 		form: undefined,
 
 		/**
-		 * @property {CMDBuild.view.administration.dataViews.sql.GridPanel}
+		 * @property {CMDBuild.view.administration.dataView.sql.GridPanel}
 		 */
 		grid: undefined,
 
@@ -25,18 +25,6 @@
 		layout: 'border',
 
 		initComponent: function() {
-			this.grid = Ext.create('CMDBuild.view.administration.dataViews.sql.GridPanel', {
-				delegate: this.delegate,
-				region: 'north',
-				split: true,
-				height: '30%'
-			});
-
-			this.form = Ext.create('CMDBuild.view.administration.dataViews.sql.FormPanel', {
-				delegate: this.delegate,
-				region: 'center'
-			});
-
 			Ext.apply(this, {
 				dockedItems: [
 					Ext.create('Ext.toolbar.Toolbar', {
@@ -55,7 +43,18 @@
 						]
 					})
 				],
-				items: [this.grid, this.form]
+				items: [
+					this.grid = Ext.create('CMDBuild.view.administration.dataView.sql.GridPanel', {
+						delegate: this.delegate,
+						region: 'north',
+						split: true,
+						height: '30%'
+					}),
+					this.form = Ext.create('CMDBuild.view.administration.dataView.sql.FormPanel', {
+						delegate: this.delegate,
+						region: 'center'
+					})
+				]
 			});
 
 			this.callParent(arguments);

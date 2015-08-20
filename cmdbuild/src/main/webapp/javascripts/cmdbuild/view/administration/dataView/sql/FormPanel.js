@@ -1,16 +1,14 @@
 (function() {
 
-	Ext.define('CMDBuild.view.administration.dataViews.sql.FormPanel', {
+	Ext.define('CMDBuild.view.administration.dataView.sql.FormPanel', {
 		extend: 'Ext.form.Panel',
 
 		requires: ['CMDBuild.core.proxy.Constants'],
 
-		mixins: {
-			panelFunctions: 'CMDBuild.view.common.PanelFunctions'
-		},
+		mixins: ['CMDBuild.view.common.PanelFunctions'],
 
 		/**
-		 * @cfg {CMDBuild.controller.administration.dataViews.Sql}
+		 * @cfg {CMDBuild.controller.administration.dataView.Sql}
 		 */
 		delegate: undefined,
 
@@ -37,7 +35,6 @@
 		},
 
 		initComponent: function() {
-
 			Ext.apply(this, {
 				dockedItems: [
 					Ext.create('Ext.toolbar.Toolbar', {

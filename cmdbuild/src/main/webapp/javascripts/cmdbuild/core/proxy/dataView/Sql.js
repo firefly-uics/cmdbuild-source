@@ -1,11 +1,11 @@
 (function() {
 
-	Ext.define('CMDBuild.core.proxy.dataViews.Sql', {
+	Ext.define('CMDBuild.core.proxy.dataView.Sql', {
 
 		requires: [
 			'CMDBuild.core.proxy.Constants',
 			'CMDBuild.core.proxy.Index',
-			'CMDBuild.model.DataViews'
+			'CMDBuild.model.dataView.Sql'
 		],
 
 		singleton: true,
@@ -18,11 +18,11 @@
 				method: 'POST',
 				url: CMDBuild.core.proxy.Index.dataViews.sql.create,
 				params: parameters.params,
-				scope: parameters.scope || this,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
-				failure: parameters.failure || Ext.emptyFn(),
-				success: parameters.success || Ext.emptyFn(),
-				callback: parameters.callback || Ext.emptyFn()
+				scope: parameters.scope || this,
+				failure: parameters.failure || Ext.emptyFn,
+				success: parameters.success || Ext.emptyFn,
+				callback: parameters.callback || Ext.emptyFn
 			});
 		},
 
@@ -37,10 +37,10 @@
 		getStore: function() {
 			return Ext.create('Ext.data.Store', {
 				autoLoad: false,
-				model: 'CMDBuild.model.DataViews.sql',
+				model: 'CMDBuild.model.dataView.Sql',
 				proxy: {
 					type: 'ajax',
-					url: CMDBuild.core.proxy.Index.dataViews.sql.read, // TODO: check if rename when delete all old implementation
+					url: CMDBuild.core.proxy.Index.dataViews.sql.read,
 					reader: {
 						type: 'json',
 						root: 'views'
@@ -65,11 +65,11 @@
 				method: 'POST',
 				url: CMDBuild.core.proxy.Index.dataViews.sql.remove,
 				params: parameters.params,
-				scope: parameters.scope || this,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
-				failure: parameters.failure || Ext.emptyFn(),
-				success: parameters.success || Ext.emptyFn(),
-				callback: parameters.callback || Ext.emptyFn()
+				scope: parameters.scope || this,
+				failure: parameters.failure || Ext.emptyFn,
+				success: parameters.success || Ext.emptyFn,
+				callback: parameters.callback || Ext.emptyFn
 			});
 		},
 
@@ -81,11 +81,11 @@
 				method: 'POST',
 				url: CMDBuild.core.proxy.Index.dataViews.sql.update,
 				params: parameters.params,
-				scope: parameters.scope || this,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
-				failure: parameters.failure || Ext.emptyFn(),
-				success: parameters.success || Ext.emptyFn(),
-				callback: parameters.callback || Ext.emptyFn()
+				scope: parameters.scope || this,
+				failure: parameters.failure || Ext.emptyFn,
+				success: parameters.success || Ext.emptyFn,
+				callback: parameters.callback || Ext.emptyFn
 			});
 		}
 	});
