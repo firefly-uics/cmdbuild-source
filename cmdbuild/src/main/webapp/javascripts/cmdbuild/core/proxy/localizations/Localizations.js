@@ -78,20 +78,19 @@
 		/**
 		 * @return {Ext.data.ArrayStore}
 		 */
-		getSectionsStore: function(parameters) { // TODO real implementation
+		getSectionsStore: function(parameters) {
 			return Ext.create('Ext.data.ArrayStore', {
 				fields: [CMDBuild.core.proxy.Constants.DESCRIPTION, CMDBuild.core.proxy.Constants.NAME],
 				data: [
-					['@@ Classes', CMDBuild.core.proxy.Constants.CLASSES],
-					['@@ Domains', 'domains'], // TODO costants
-					['@@ Lookup', 'lookup'], // TODO costants
-					['@@ Menu', 'menu'], // TODO costants
-					['@@ Reports', 'reports'], // TODO costants
-					['@@ Processes', 'processes'], // TODO costants
-					['@@ Views', 'views'] // TODO costants
-				],
-				sorters: [
-					{ property: CMDBuild.core.proxy.Constants.DESCRIPTION, direction: 'ASC' }
+					['@@ All', CMDBuild.core.proxy.Constants.ALL],
+					['@@ Class', CMDBuild.core.proxy.Constants.CLASS],
+					['@@ Processes', CMDBuild.core.proxy.Constants.PROCESS],
+					['@@ Domains', CMDBuild.core.proxy.Constants.DOMAIN],
+					['@@ Views', CMDBuild.core.proxy.Constants.VIEW],
+					['@@ Search filters', CMDBuild.core.proxy.Constants.FILTER],
+					['@@ Lookup', CMDBuild.core.proxy.Constants.LOOKUP],
+					['@@ Reports', CMDBuild.core.proxy.Constants.REPORT],
+					['@@ Menu', CMDBuild.core.proxy.Constants.MENU]
 				]
 			});
 		},
@@ -106,25 +105,25 @@
 				params: parameters.params,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
 				scope: parameters.scope || this,
-				failure: parameters.failure || Ext.emptyFn(),
-				success: parameters.success || Ext.emptyFn(),
-				callback: parameters.callback || Ext.emptyFn()
+				failure: parameters.failure || Ext.emptyFn,
+				success: parameters.success || Ext.emptyFn,
+				callback: parameters.callback || Ext.emptyFn
 			});
 		},
 
 		/**
 		 * @param {Object} parameters
 		 */
-		readStructure: function(parameters) {
+		readAll: function(parameters) {
 			CMDBuild.Ajax.request({
 				method: 'POST',
-				url: CMDBuild.core.proxy.Index.localizations.translation.readStructure,
+				url: CMDBuild.core.proxy.Index.localizations.translation.readAll,
 				params: parameters.params,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
 				scope: parameters.scope || this,
-				failure: parameters.failure || Ext.emptyFn(),
-				success: parameters.success || Ext.emptyFn(),
-				callback: parameters.callback || Ext.emptyFn()
+				failure: parameters.failure || Ext.emptyFn,
+				success: parameters.success || Ext.emptyFn,
+				callback: parameters.callback || Ext.emptyFn
 			});
 		},
 
@@ -138,9 +137,9 @@
 				params: parameters.params,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
 				scope: parameters.scope || this,
-				failure: parameters.failure || Ext.emptyFn(),
-				success: parameters.success || Ext.emptyFn(),
-				callback: parameters.callback || Ext.emptyFn()
+				failure: parameters.failure || Ext.emptyFn,
+				success: parameters.success || Ext.emptyFn,
+				callback: parameters.callback || Ext.emptyFn
 			});
 		}
 	});

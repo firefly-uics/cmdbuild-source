@@ -1,6 +1,6 @@
 (function() {
 
-	Ext.define('CMDBuild.controller.administration.localizations.advancedTable.SectionClasses', {
+	Ext.define('CMDBuild.controller.administration.localizations.advancedTable.SectionClasses', { // TODO: rename to class all single
 		extend: 'CMDBuild.controller.administration.localizations.advancedTable.SectionAbstract',
 
 		requires: [

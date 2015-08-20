@@ -15,6 +15,7 @@
 		delegate: undefined,
 
 		bodyCls: 'cmgraypanel',
+		bodyPadding: '0 0 32 0', // Hack to fix panel height to be same as right one
 		border: false,
 		encoding: 'multipart/form-data',
 		fileUpload: true,
@@ -45,26 +46,13 @@
 								scope: this,
 
 								handler: function(button, e) {
-									this.delegate.cmfg('onLocalizationsImportButtonClick');
+									this.delegate.cmfg('onLocalizationConfigurationImportButtonClick');
 								}
 							})
 						]
 					})
 				],
 				items: [
-					Ext.create('Ext.form.field.ComboBox', {
-						name: '@@ importSection',
-						fieldLabel: '@@ Import section',
-						labelWidth: CMDBuild.LABEL_WIDTH,
-						maxWidth: CMDBuild.MEDIUM_FIELD_WIDTH,
-						displayField: CMDBuild.core.proxy.Constants.DESCRIPTION,
-						valueField: CMDBuild.core.proxy.Constants.NAME,
-						editable: false,
-						allowBlank: false,
-
-						store: CMDBuild.core.proxy.localizations.Localizations.getSectionsStore(),
-						queryMode: 'local'
-					}),
 					Ext.create('Ext.form.field.ComboBox', {
 						name: '@@ importFormat',
 						fieldLabel: '@@ Format',
@@ -81,14 +69,14 @@
 						queryMode: 'local'
 					}),
 					Ext.create('Ext.form.field.File', {
-						name: '@@ importFile',
+						name: CMDBuild.core.proxy.Constants.FILE,
 						fieldLabel: CMDBuild.Translation.csvFile,
 						labelWidth: CMDBuild.LABEL_WIDTH,
 						maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
 						allowBlank: false
 					}),
 					Ext.create('Ext.form.field.ComboBox', {
-						name: '@@ importSeparator',
+						name: CMDBuild.core.proxy.Constants.SEPARATOR,
 						fieldLabel: CMDBuild.Translation.separator,
 						labelWidth: CMDBuild.LABEL_WIDTH,
 						maxWidth: 200,

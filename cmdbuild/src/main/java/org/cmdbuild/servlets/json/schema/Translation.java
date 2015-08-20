@@ -41,6 +41,7 @@ import org.cmdbuild.servlets.json.translationtable.objects.TranslationSerializat
 import org.cmdbuild.servlets.json.translationtable.objects.csv.CsvTranslationRecord;
 import org.cmdbuild.servlets.json.translationtable.objects.csv.DefaultCsvExporter;
 import org.cmdbuild.servlets.json.translationtable.objects.csv.DefaultCsvImporter;
+import org.cmdbuild.servlets.utils.FileItemDataSource;
 import org.cmdbuild.servlets.utils.Parameter;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -159,9 +160,9 @@ public class Translation extends JSONBaseWithSpringContext {
 			@Parameter(value = SEPARATOR, required = false) final String separator //
 	) throws JSONException, IOException {
 
-		final File testFile = new File("/home/tecnoteca/Desktop/test.csv");
-		// DataHandler input = new DataHandler(FileItemDataSource.of(file));
-		final DataHandler input = new DataHandler(testFile.toURI().toURL());
+		//final File testFile = new File("/home/tecnoteca/Desktop/test.csv");
+		final DataHandler input = new DataHandler(FileItemDataSource.of(file));
+		//final DataHandler input = new DataHandler(testFile.toURI().toURL());
 
 		final Iterable<CsvTranslationRecord> records = DefaultCsvImporter.newInstance() //
 				.withDataHandler(input) //

@@ -17,10 +17,10 @@
 		updateStore: function() {
 			this.store.getRootNode().appendChild([
 				{
-					id: 'configurations',
+					id: 'configuration',
 					cmName: this.cmName,
 					leaf: true,
-					text: '@@ Configurations',
+					text: '@@ Configuration',
 					iconCls: 'cmdbuild-tree-localization-icon'
 				},
 				{

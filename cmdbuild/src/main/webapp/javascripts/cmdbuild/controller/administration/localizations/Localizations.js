@@ -40,16 +40,12 @@ _debug('parameters', parameters);
 
 				switch(parameters.get(CMDBuild.core.proxy.Constants.ID)) {
 					case 'advancedTranslationsTable': {
-						this.sectionController = Ext.create('CMDBuild.controller.administration.localizations.advancedTable.AdvancedTable', {
-							parentDelegate: this
-						});
+						this.sectionController = Ext.create('CMDBuild.controller.administration.localizations.advancedTable.AdvancedTable', { parentDelegate: this });
 					} break;
 
-					case 'configurations':
+					case 'configuration':
 					default: {
-						this.sectionController = Ext.create('CMDBuild.controller.administration.localizations.Configurations', {
-							parentDelegate: this
-						});
+						this.sectionController = Ext.create('CMDBuild.controller.administration.localizations.Configuration', { parentDelegate: this });
 					}
 				}
 
