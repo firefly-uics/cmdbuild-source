@@ -17,25 +17,25 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
-			'onAdvancedTableBuildColumns',
-			'onAdvancedTableBuildStore',
-			'onAdvancedTableCollapseAll',
-			'onAdvancedTableExpandAll',
-			'onAdvancedTableTabCreation'
+			'onLocalizationAdvancedTableBuildColumns',
+			'onLocalizationAdvancedTableBuildStore',
+			'onLocalizationAdvancedTableCollapseAll',
+			'onLocalizationAdvancedTableExpandAll',
+			'onLocalizationAdvancedTableTabCreation'
 		],
 
 		/**
-		 * @property {CMDBuild.controller.administration.localization.advancedTable.SectionClasses}
+		 * @property {CMDBuild.controller.administration.localization.advancedTable.SectionClass}
 		 */
 		sectionControllerClasses: undefined,
 
 		/**
-		 * @property {CMDBuild.controller.administration.localization.advancedTable.SectionDomains}
+		 * @property {CMDBuild.controller.administration.localization.advancedTable.SectionDomain}
 		 */
 		sectionControllerDomains: undefined,
 
 		/**
-		 * @property {CMDBuild.controller.administration.localization.advancedTable.SectionFilters}
+		 * @property {CMDBuild.controller.administration.localization.advancedTable.SectionFilter}
 		 */
 		sectionControllerFilters: undefined,
 
@@ -50,17 +50,17 @@
 		sectionControllerMenu: undefined,
 
 		/**
-		 * @property {CMDBuild.controller.administration.localization.advancedTable.SectionProcesses}
+		 * @property {CMDBuild.controller.administration.localization.advancedTable.SectionProcess}
 		 */
 		sectionControllerProcesses: undefined,
 
 		/**
-		 * @property {CMDBuild.controller.administration.localization.advancedTable.SectionReports}
+		 * @property {CMDBuild.controller.administration.localization.advancedTable.SectionReport}
 		 */
 		sectionControllerReports: undefined,
 
 		/**
-		 * @property {CMDBuild.controller.administration.localization.advancedTable.SectionViews}
+		 * @property {CMDBuild.controller.administration.localization.advancedTable.SectionView}
 		 */
 		sectionControllerViews: undefined,
 
@@ -83,13 +83,13 @@
 			});
 
 			// Build tabs (in display order)
-			this.sectionControllerClasses = Ext.create('CMDBuild.controller.administration.localization.advancedTable.SectionClasses', { parentDelegate: this });
-			this.sectionControllerProcesses = Ext.create('CMDBuild.controller.administration.localization.advancedTable.SectionProcesses', { parentDelegate: this });
-			this.sectionControllerDomains = Ext.create('CMDBuild.controller.administration.localization.advancedTable.SectionDomains', { parentDelegate: this });
-			this.sectionControllerViews = Ext.create('CMDBuild.controller.administration.localization.advancedTable.SectionViews', { parentDelegate: this });
-			this.sectionControllerFilters = Ext.create('CMDBuild.controller.administration.localization.advancedTable.SectionFilters', { parentDelegate: this });
+			this.sectionControllerClasses = Ext.create('CMDBuild.controller.administration.localization.advancedTable.SectionClass', { parentDelegate: this });
+			this.sectionControllerProcesses = Ext.create('CMDBuild.controller.administration.localization.advancedTable.SectionProcess', { parentDelegate: this });
+			this.sectionControllerDomains = Ext.create('CMDBuild.controller.administration.localization.advancedTable.SectionDomain', { parentDelegate: this });
+			this.sectionControllerViews = Ext.create('CMDBuild.controller.administration.localization.advancedTable.SectionView', { parentDelegate: this });
+			this.sectionControllerFilters = Ext.create('CMDBuild.controller.administration.localization.advancedTable.SectionFilter', { parentDelegate: this });
 			this.sectionControllerLookup = Ext.create('CMDBuild.controller.administration.localization.advancedTable.SectionLookup', { parentDelegate: this });
-			this.sectionControllerReports = Ext.create('CMDBuild.controller.administration.localization.advancedTable.SectionReports', { parentDelegate: this });
+			this.sectionControllerReports = Ext.create('CMDBuild.controller.administration.localization.advancedTable.SectionReport', { parentDelegate: this });
 			this.sectionControllerMenu = Ext.create('CMDBuild.controller.administration.localization.advancedTable.SectionMenu', { parentDelegate: this });
 
 			this.view.setActiveTab(0);
@@ -126,7 +126,7 @@
 		 *
 		 * @return {Array} columnsArray
 		 */
-		onAdvancedTableBuildColumns: function() {
+		onLocalizationAdvancedTableBuildColumns: function() {
 			var enabledLanguages = CMDBuild.configuration[CMDBuild.core.proxy.Constants.LOCALIZATION].getEnabledLanguages();
 			var columnsArray = [
 				{
@@ -140,7 +140,7 @@
 				},
 				{
 					dataIndex: CMDBuild.core.proxy.Constants.DEFAULT,
-					text: '@@ defaultTranslation',
+					text: '@@ Default translation',
 					width: 300,
 					sortable: false,
 					draggable: false
@@ -161,7 +161,7 @@
 		/**
 		 * @return {Ext.data.TreeStore}
 		 */
-		onAdvancedTableBuildStore: function() {
+		onLocalizationAdvancedTableBuildStore: function() {
 			return Ext.create('Ext.data.TreeStore', {
 				model: 'CMDBuild.model.localization.advancedTable.TreeStore',
 
@@ -176,7 +176,7 @@
 		/**
 		 * @param {CMDBuild.view.administration.localization.common.AdvancedTableGrid}
 		 */
-		onAdvancedTableCollapseAll: function(gridPanel) {
+		onLocalizationAdvancedTableCollapseAll: function(gridPanel) {
 			CMDBuild.LoadMask.get().show();
 			Ext.Function.defer(function() { // HACK: to fix expandAll bug that don't displays loeadMask
 				gridPanel.collapseAll(function() {
@@ -188,7 +188,7 @@
 		/**
 		 * @param {CMDBuild.view.administration.localization.common.AdvancedTableGrid}
 		 */
-		onAdvancedTableExpandAll: function(gridPanel) {
+		onLocalizationAdvancedTableExpandAll: function(gridPanel) {
 			CMDBuild.LoadMask.get().show();
 			Ext.Function.defer(function() { // HACK: to fix expandAll bug that don't displays loeadMask
 				gridPanel.expandAll(function() {
@@ -200,7 +200,7 @@
 		/**
 		 * @param {Mixed} panel
 		 */
-		onAdvancedTableTabCreation: function(panel) {
+		onLocalizationAdvancedTableTabCreation: function(panel) {
 			if (!Ext.isEmpty(panel))
 				this.view.add(panel);
 		}

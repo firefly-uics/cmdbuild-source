@@ -119,37 +119,39 @@
 			this.view.exportPanel.activeOnlyCheckbox.setDisabled(!Ext.Array.contains(this.activeOnlySections, selection));
 		},
 
-		onLocalizationConfigurationImportButtonClick: function() { // TODO: finish implementation
-			CMDBuild.LoadMask.get().show();
-			CMDBuild.core.proxy.localization.importExport.Csv.imports({
-				form: this.view.importPanel.getForm(),
-				scope: this,
-				success: function(form, action) {
-					var importFailures = action.result.response.failures;
+		onLocalizationConfigurationImportButtonClick: function() {
+			if (this.validate(this.view.importPanel)) {
+				CMDBuild.LoadMask.get().show();
+				CMDBuild.core.proxy.localization.importExport.Csv.imports({
+					form: this.view.importPanel.getForm(),
+					scope: this,
+					success: function(form, action) {
+						var importFailures = action.result.response.failures;
 
-					if (Ext.isEmpty(importFailures)) {
-						CMDBuild.core.Message.success();
-					} else {
-						// TODO: import error visualization/download
+						if (Ext.isEmpty(importFailures)) {
+							CMDBuild.core.Message.success();
+						} else {
+							// TODO: import error visualization/download
+							CMDBuild.core.Message.error(
+								CMDBuild.Translation.common.failure,
+								importFailures.toString(),
+								true
+							);
+						}
+
+						CMDBuild.LoadMask.get().hide();
+					},
+					failure: function(form, action) {
+						CMDBuild.LoadMask.get().hide();
+
 						CMDBuild.core.Message.error(
 							CMDBuild.Translation.common.failure,
-							importFailures.toString(),
-							true
+							CMDBuild.Translation.errors.csvUploadOrDecodeFailure,
+							false
 						);
 					}
-
-					CMDBuild.LoadMask.get().hide();
-				},
-				failure: function(form, action) {
-					CMDBuild.LoadMask.get().hide();
-
-					CMDBuild.core.Message.error(
-						CMDBuild.Translation.common.failure,
-						CMDBuild.Translation.errors.csvUploadOrDecodeFailure,
-						false
-					);
-				}
-			});
+				});
+			}
 		},
 
 		/**

@@ -45,7 +45,7 @@
 			// Shorthand
 			this.grid = this.view.grid;
 
-			this.cmfg('onAdvancedTableTabCreation', this.view); // Add panel to parent tab panel
+			this.cmfg('onLocalizationAdvancedTableTabCreation', this.view); // Add panel to parent tab panel
 		},
 
 		/**

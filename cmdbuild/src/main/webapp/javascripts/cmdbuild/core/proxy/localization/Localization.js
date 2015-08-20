@@ -46,8 +46,8 @@
 		getLanguages: function(parameters) {
 			CMDBuild.Ajax.request({
 				url: CMDBuild.core.proxy.Index.utils.listAvailableTranslations,
-				scope: parameters.scope || this,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : false,
+				scope: parameters.scope || this,
 				success: parameters.success || Ext.emptyFn,
 				failure: parameters.failure || Ext.emptyFn,
 				callback: parameters.callback || Ext.emptyFn
