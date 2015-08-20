@@ -50,10 +50,6 @@
 						if (view.isVisible())
 							view.getForm().setValues(decodedResult);
 
-						// TODO: to delete when localization module will be released
-						if (fileName == 'cmdbuild')
-							view.languageGrid.setValue(decodedResult.enabled_languages.split(', '));
-
 						if (Ext.isFunction(view.afterSubmit))
 							view.afterSubmit(decodedResult);
 					}
@@ -74,22 +70,27 @@
 			) {
 				var fileName = parameters[CMDBuild.core.proxy.Constants.FILE_NAME];
 				var view = parameters[CMDBuild.core.proxy.Constants.VIEW];
-				var params = view.getValues();
 
-				// TODO: to delete when localization module will be released
-				if (fileName == 'cmdbuild')
-					params['enabled_languages'] = view.languageGrid.getValue().join(', ');
-
-				CMDBuild.core.proxy.Configuration.save({
+				CMDBuild.core.proxy.Configuration.read({
 					scope: this,
-					params: params,
 					loadMask: true,
-					success: function(result, options, decodedResult) {
-						this.onConfigurationRead(fileName, view);
+					success: function(result, options, decodedResult){
+						var decodedResult = decodedResult.data;
 
-						CMDBuild.view.common.field.translatable.Utils.commit(view);
+						Ext.apply(decodedResult, view.getValues());
 
-						CMDBuild.core.Message.success();
+						CMDBuild.core.proxy.Configuration.save({
+							scope: this,
+							params: decodedResult,
+							loadMask: true,
+							success: function(result, options, decodedResult) {
+								this.onConfigurationRead(fileName, view);
+
+								CMDBuild.view.common.field.translatable.Utils.commit(view);
+
+								CMDBuild.core.Message.success();
+							}
+						}, fileName);
 					}
 				}, fileName);
 			}
