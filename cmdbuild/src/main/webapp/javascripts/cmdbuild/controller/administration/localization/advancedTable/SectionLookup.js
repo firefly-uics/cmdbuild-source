@@ -62,7 +62,7 @@
 				var entityAttributesNodeObject = { expandable: true };
 				entityAttributesNodeObject[CMDBuild.core.proxy.Constants.LEAF] = false;
 				entityAttributesNodeObject[CMDBuild.core.proxy.Constants.PARENT] = rootNode;
-				entityAttributesNodeObject[CMDBuild.core.proxy.Constants.TEXT] = '@@ Lookup'; // TODO: translation???
+				entityAttributesNodeObject[CMDBuild.core.proxy.Constants.TEXT] = '@@ Lookup';
 
 				return rootNode.appendChild(entityAttributesNodeObject);
 			}
