@@ -1,17 +1,16 @@
 (function() {
 
-	Ext.define('CMDBuild.controller.administration.dataViews.Sql', {
+	Ext.define('CMDBuild.controller.administration.dataView.Sql', {
 		extend: 'CMDBuild.controller.common.AbstractController',
 
 		requires: [
 			'CMDBuild.core.proxy.Constants',
-			'CMDBuild.core.proxy.dataViews.Filter',
-			'CMDBuild.model.DataViews',
+			'CMDBuild.core.proxy.dataView.Sql',
 			'CMDBuild.view.common.field.translatable.Utils'
 		],
 
 		/**
-		 * @cfg {CMDBuild.controller.administration.dataViews.DataViews}
+		 * @cfg {CMDBuild.controller.administration.dataView.DataView}
 		 */
 		parentDelegate: undefined,
 
@@ -28,35 +27,35 @@
 		],
 
 		/**
-		 * @property {CMDBuild.view.administration.dataViews.sql.FormPanel}
+		 * @property {CMDBuild.view.administration.dataView.sql.FormPanel}
 		 */
 		form: undefined,
 
 		/**
-		 * @property {CMDBuild.view.administration.dataViews.sql.GridPanel}
+		 * @property {CMDBuild.view.administration.dataView.sql.GridPanel}
 		 */
 		grid: undefined,
 
 		/**
-		 * @property {CMDBuild.model.DataViews.sql}
+		 * @property {CMDBuild.model.dataView.Sql}
 		 */
 		selectedView: undefined,
 
 		/**
-		 * @property {CMDBuild.view.administration.dataViews.sql.SqlView}
+		 * @property {CMDBuild.view.administration.dataView.sql.SqlView}
 		 */
 		view: undefined,
 
 		/**
 		 * @param {Object} configurationObject
-		 * @param {CMDBuild.controller.administration.dataViews.DataViews} configurationObject.parentDelegate
+		 * @param {CMDBuild.controller.administration.dataView.DataView} configurationObject.parentDelegate
 		 *
 		 * @override
 		 */
 		constructor: function(configurationObject) {
 			this.callParent(arguments);
 
-			this.view = Ext.create('CMDBuild.view.administration.dataViews.sql.SqlView', {
+			this.view = Ext.create('CMDBuild.view.administration.dataView.sql.SqlView', {
 				delegate: this
 			});
 
@@ -81,7 +80,7 @@
 
 			this.form.reset();
 			this.form.setDisabledModify(false, true);
-			this.form.loadRecord(Ext.create('CMDBuild.model.DataViews.sql'));
+			this.form.loadRecord(Ext.create('CMDBuild.model.dataView.Sql'));
 		},
 
 		onDataViewsSqlModifyButtonClick: function() {
@@ -115,16 +114,16 @@
 		onDataViewsSqlSaveButtonClick: function() {
 			// Validate before save
 			if (this.validate(this.form)) {
-				var formData = Ext.create('CMDBuild.model.DataViews.sql',this.form.getData(true));
+				var formData = Ext.create('CMDBuild.model.dataView.Sql',this.form.getData(true));
 
 				if (Ext.isEmpty(formData.get(CMDBuild.core.proxy.Constants.ID))) {
-					CMDBuild.core.proxy.dataViews.Sql.create({
+					CMDBuild.core.proxy.dataView.Sql.create({
 						params: formData.getData(),
 						scope: this,
 						success: this.success
 					});
 				} else {
-					CMDBuild.core.proxy.dataViews.Sql.update({
+					CMDBuild.core.proxy.dataView.Sql.update({
 						params: formData.getData(),
 						scope: this,
 						success: this.success
@@ -138,7 +137,7 @@
 				var params = {};
 				params[CMDBuild.core.proxy.Constants.ID] = this.selectedView.get(CMDBuild.core.proxy.Constants.ID);
 
-				CMDBuild.core.proxy.dataViews.Sql.remove({
+				CMDBuild.core.proxy.dataView.Sql.remove({
 					params: params,
 					scope: this,
 					success: function(response, options, decodedResponse) {
