@@ -1,6 +1,6 @@
 (function() {
 
-	Ext.define('CMDBuild.view.administration.accordion.Filters', {
+	Ext.define('CMDBuild.view.administration.accordion.Filter', {
 		extend: 'CMDBuild.view.common.CMBaseAccordion',
 
 		title: CMDBuild.Translation.searchFilters,
@@ -19,7 +19,7 @@
 			this.getStore().getRootNode().appendChild([
 				{
 					id: 'groups',
-					cmName: 'filters',
+					cmName: 'filter',
 					text: CMDBuild.Translation.filtersForGroups,
 					leaf: true
 				}
