@@ -5,7 +5,7 @@
 
 		requires: [
 			'CMDBuild.core.proxy.Constants',
-			'CMDBuild.core.proxy.localizations.Localizations'
+			'CMDBuild.core.proxy.localization.Localization'
 		],
 
 		fields: [
@@ -37,7 +37,7 @@
 		/**
 		 * @param {String} languageTag
 		 *
-		 * @return {CMDBuild.model.localizations.Localization} or null
+		 * @return {CMDBuild.model.localization.Localization} or null
 		 */
 		getLanguageObject: function(languageTag) {
 			if (this.isManagedLanguage(languageTag))
@@ -112,7 +112,7 @@
 
 			if (Ext.isArray(languages)) {
 				Ext.Array.forEach(languages, function(language, i, allLanguages) {
-					languagesObjectsArray[language[CMDBuild.core.proxy.Constants.TAG]] = Ext.create('CMDBuild.model.localizations.Localization', language);
+					languagesObjectsArray[language[CMDBuild.core.proxy.Constants.TAG]] = Ext.create('CMDBuild.model.localization.Localization', language);
 				}, this);
 
 				this.set(CMDBuild.core.proxy.Constants.LANGUAGES, languagesObjectsArray);

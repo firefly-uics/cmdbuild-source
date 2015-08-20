@@ -5,7 +5,7 @@
 
 		requires: [
 			'CMDBuild.core.proxy.Constants',
-			'CMDBuild.core.proxy.localizations.Localizations',
+			'CMDBuild.core.proxy.localization.Localization',
 			'CMDBuild.core.proxy.Menu',
 			'CMDBuild.model.menu.TreeStore'
 		],
@@ -218,7 +218,7 @@
 						) {
 							value[CMDBuild.core.proxy.Constants.TRANSLATIONS] = Ext.encode(value[CMDBuild.core.proxy.Constants.TRANSLATIONS]);
 
-							CMDBuild.core.proxy.localizations.Localizations.update({
+							CMDBuild.core.proxy.localization.Localization.update({
 								params: value,
 								success: function(response, options, decodedResponse) {
 									CMDBuild.core.Message.success();

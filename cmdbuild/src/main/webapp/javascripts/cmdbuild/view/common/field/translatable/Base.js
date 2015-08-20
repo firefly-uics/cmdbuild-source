@@ -231,7 +231,7 @@
 
 			translationsRead: function() {
 				if (this.isConfigurationValid()) {
-					CMDBuild.core.proxy.localizations.Localizations.read({
+					CMDBuild.core.proxy.localization.Localization.read({
 						params: this.configurationGet(),
 						scope: this,
 						success: function(response, options, decodedResponse) {

@@ -4,7 +4,7 @@
 
 		requires: [
 			'CMDBuild.core.proxy.Constants',
-			'CMDBuild.core.proxy.localizations.Localizations'
+			'CMDBuild.core.proxy.localization.Localization'
 		],
 
 		constructor: function() {
@@ -13,14 +13,14 @@
 
 				var configurationObject = CMDBuild.configuration[CMDBuild.core.proxy.Constants.LOCALIZATION]; // Shorthand
 
-				CMDBuild.core.proxy.localizations.Localizations.getLanguages({
+				CMDBuild.core.proxy.localization.Localization.getLanguages({
 					scope: this,
 					success: function(result, options, decodedResult) {
 						// Build all languages array
 						configurationObject.setLanguages(decodedResult.translations);
 
 						// Get server language
-						CMDBuild.core.proxy.localizations.Localizations.getCurrentLanguage({
+						CMDBuild.core.proxy.localization.Localization.getCurrentLanguage({
 							success: function(result, options, languageDecodedResult) {
 								configurationObject.setCurrentLanguage(languageDecodedResult[CMDBuild.core.proxy.Constants.LANGUAGE]);
 							}

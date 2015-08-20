@@ -86,8 +86,8 @@
 										cmControllerType: 'CMDBuild.controller.administration.filters.Filters',
 										cmName: 'filters'
 									}),
-									Ext.create('CMDBuild.view.administration.localizations.LocalizationsView', {
-										cmControllerType: 'CMDBuild.controller.administration.localizations.Localizations',
+									Ext.create('CMDBuild.view.administration.localization.LocalizationView', {
+										cmControllerType: 'CMDBuild.controller.administration.localization.Localization',
 										cmName: 'localizations'
 									}),
 									Ext.create('CMDBuild.view.administration.reports.ReportsView', {
