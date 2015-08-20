@@ -1,17 +1,16 @@
 (function() {
 
-	Ext.define('CMDBuild.controller.administration.filters.Groups', {
+	Ext.define('CMDBuild.controller.administration.filter.Groups', {
 		extend: 'CMDBuild.controller.common.AbstractController',
 
 		requires: [
 			'CMDBuild.core.proxy.Constants',
-			'CMDBuild.core.proxy.filters.Groups',
-			'CMDBuild.model.filters.Groups',
+			'CMDBuild.core.proxy.filter.Groups',
 			'CMDBuild.view.common.field.translatable.Utils'
 		],
 
 		/**
-		 * @cfg {CMDBuild.controller.administration.filters.Filters}
+		 * @cfg {CMDBuild.controller.administration.filter.Filter}
 		 */
 		parentDelegate: undefined,
 
@@ -19,27 +18,27 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
-			'onFiltersGroupsAbortButtonClick',
-			'onFiltersGroupsAddButtonClick',
-			'onFiltersGroupsClassesComboSelect',
-			'onFiltersGroupsModifyButtonClick = onFiltersGroupsItemDoubleClick',
-			'onFiltersGroupsRemoveButtonClick',
-			'onFiltersGroupsRowSelected',
-			'onFiltersGroupsSaveButtonClick'
+			'onFilterGroupsAbortButtonClick',
+			'onFilterGroupsAddButtonClick',
+			'onFilterGroupsClassesComboSelect',
+			'onFilterGroupsModifyButtonClick = onFilterGroupsItemDoubleClick',
+			'onFilterGroupsRemoveButtonClick',
+			'onFilterGroupsRowSelected',
+			'onFilterGroupsSaveButtonClick'
 		],
 
 		/**
-		 * @property {CMDBuild.view.administration.filters.groups.FormPanel}
+		 * @property {CMDBuild.view.administration.filter.groups.FormPanel}
 		 */
 		form: undefined,
 
 		/**
-		 * @property {CMDBuild.view.administration.filters.groups.GridPanel}
+		 * @property {CMDBuild.view.administration.filter.groups.GridPanel}
 		 */
 		grid: undefined,
 
 		/**
-		 * @property {CMDBuild.model.filters.Groups}
+		 * @property {CMDBuild.model.filter.Groups}
 		 */
 		selectedFilter: undefined,
 
@@ -50,14 +49,14 @@
 
 		/**
 		 * @param {Object} configurationObject
-		 * @param {CMDBuild.controller.administration.filters.Filters} configurationObject.parentDelegate
+		 * @param {CMDBuild.controller.administration.filter.Filter} configurationObject.parentDelegate
 		 *
 		 * @override
 		 */
 		constructor: function(configurationObject) {
 			this.callParent(arguments);
 
-			this.view = Ext.create('CMDBuild.view.administration.filters.groups.GroupsView', {
+			this.view = Ext.create('CMDBuild.view.administration.filter.groups.GroupsView', {
 				delegate: this
 			});
 
@@ -66,16 +65,16 @@
 			this.grid = this.view.grid;
 		},
 
-		onFiltersGroupsAbortButtonClick: function() {
+		onFilterGroupsAbortButtonClick: function() {
 			if (!Ext.isEmpty(this.selectedFilter)) {
-				this.onFiltersGroupsRowSelected();
+				this.onFilterGroupsRowSelected();
 			} else {
 				this.form.reset();
 				this.form.setDisabledModify(true, true, true);
 			}
 		},
 
-		onFiltersGroupsAddButtonClick: function() {
+		onFilterGroupsAddButtonClick: function() {
 			this.grid.getSelectionModel().deselectAll();
 
 			this.selectedFilter = null;
@@ -83,25 +82,25 @@
 			this.form.reset();
 			this.form.filterChooser.reset(); // Manual filter reset
 			this.form.setDisabledModify(false, true);
-			this.form.loadRecord(Ext.create('CMDBuild.model.filters.Groups'));
+			this.form.loadRecord(Ext.create('CMDBuild.model.filter.Groups'));
 		},
 
 		/**
 		 * @param {String} selectedClassName
 		 */
-		onFiltersGroupsClassesComboSelect: function(selectedClassName) {
+		onFilterGroupsClassesComboSelect: function(selectedClassName) {
 			if (!Ext.isEmpty(selectedClassName)) {
 				this.form.filterChooser.setClassName(selectedClassName);
 			} else {
-				_error('empty selectedClassName in onFiltersGroupsClassesComboSelect', this);
+				_error('empty selectedClassName in onFilterGroupsClassesComboSelect', this);
 			}
 		},
 
-		onFiltersGroupsModifyButtonClick: function() {
+		onFilterGroupsModifyButtonClick: function() {
 			this.form.setDisabledModify(false);
 		},
 
-		onFiltersGroupsRemoveButtonClick: function() {
+		onFilterGroupsRemoveButtonClick: function() {
 			Ext.Msg.show({
 				title: CMDBuild.Translation.common.confirmpopup.title,
 				msg: CMDBuild.Translation.common.confirmpopup.areyousure,
@@ -117,7 +116,7 @@
 		/**
 		 * TODO: server implementation to get a single view data
 		 */
-		onFiltersGroupsRowSelected: function() {
+		onFilterGroupsRowSelected: function() {
 			this.selectedFilter = this.grid.getSelectionModel().getSelection()[0];
 
 			this.form.loadRecord(this.selectedFilter);
@@ -134,7 +133,7 @@
 			this.form.setDisabledModify(true, true);
 		},
 
-		onFiltersGroupsSaveButtonClick: function() {
+		onFilterGroupsSaveButtonClick: function() {
 			// Validate before save
 			if (this.validate(this.form)) {
 				var formData = this.form.getData(true);
@@ -142,20 +141,20 @@
 				if (!Ext.isEmpty(this.form.filterChooser.getFilter()))
 					formData[CMDBuild.core.proxy.Constants.CONFIGURATION] = Ext.encode(this.form.filterChooser.getFilter().getConfiguration());
 
-				formData = Ext.create('CMDBuild.model.filters.Groups', formData); // Filter unwanted data of filterChooser internal fields
+				formData = Ext.create('CMDBuild.model.filter.Groups', formData); // Filter unwanted data of filterChooser internal fields
 
 				// TODO: needed a refactor because i read a entryType parameter but i write as className
 				var params = formData.getData();
 				params[CMDBuild.core.proxy.Constants.CLASS_NAME] = params[CMDBuild.core.proxy.Constants.ENTRY_TYPE];
 
 				if (Ext.isEmpty(formData.get(CMDBuild.core.proxy.Constants.ID))) {
-					CMDBuild.core.proxy.filters.Groups.create({
+					CMDBuild.core.proxy.filter.Groups.create({
 						params: params,
 						scope: this,
 						success: this.success
 					});
 				} else {
-					CMDBuild.core.proxy.filters.Groups.update({
+					CMDBuild.core.proxy.filter.Groups.update({
 						params: params,
 						scope: this,
 						success: this.success
@@ -169,7 +168,7 @@
 				var params = {};
 				params[CMDBuild.core.proxy.Constants.ID] = this.selectedFilter.get(CMDBuild.core.proxy.Constants.ID);
 
-				CMDBuild.core.proxy.filters.Groups.remove({
+				CMDBuild.core.proxy.filter.Groups.remove({
 					params: params,
 					scope: this,
 					success: function(response, options, decodedResponse) {

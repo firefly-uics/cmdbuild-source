@@ -1,16 +1,14 @@
 (function() {
 
-	Ext.define('CMDBuild.view.administration.filters.groups.FormPanel', {
+	Ext.define('CMDBuild.view.administration.filter.groups.FormPanel', {
 		extend: 'Ext.form.Panel',
 
 		requires: ['CMDBuild.core.proxy.Constants'],
 
-		mixins: {
-			panelFunctions: 'CMDBuild.view.common.PanelFunctions'
-		},
+		mixins: ['CMDBuild.view.common.PanelFunctions'],
 
 		/**
-		 * @cfg {CMDBuild.controller.administration.filters.Groups}
+		 * @cfg {CMDBuild.controller.administration.filter.Groups}
 		 */
 		delegate: undefined,
 
@@ -54,7 +52,7 @@
 								scope: this,
 
 								handler: function(button, e) {
-									this.delegate.cmfg('onFiltersGroupsModifyButtonClick');
+									this.delegate.cmfg('onFilterGroupsModifyButtonClick');
 								}
 							}),
 							Ext.create('CMDBuild.core.buttons.iconized.Delete', {
@@ -62,7 +60,7 @@
 								scope: this,
 
 								handler: function(button, e) {
-									this.delegate.cmfg('onFiltersGroupsRemoveButtonClick');
+									this.delegate.cmfg('onFilterGroupsRemoveButtonClick');
 								}
 							})
 						]
@@ -83,14 +81,14 @@
 								scope: this,
 
 								handler: function(button, e) {
-									this.delegate.cmfg('onFiltersGroupsSaveButtonClick');
+									this.delegate.cmfg('onFilterGroupsSaveButtonClick');
 								}
 							}),
 							Ext.create('CMDBuild.core.buttons.text.Abort', {
 								scope: this,
 
 								handler: function(button, e) {
-									this.delegate.cmfg('onFiltersGroupsAbortButtonClick');
+									this.delegate.cmfg('onFilterGroupsAbortButtonClick');
 								}
 							})
 						]
@@ -137,7 +135,7 @@
 						listeners: {
 							scope: this,
 							select: function(combo, records, eOpts) {
-								this.delegate.cmfg('onFiltersGroupsClassesComboSelect', combo.getValue());
+								this.delegate.cmfg('onFilterGroupsClassesComboSelect', combo.getValue());
 							}
 						}
 					}),

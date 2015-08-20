@@ -1,6 +1,6 @@
 (function() {
 
-	Ext.define('CMDBuild.controller.administration.filters.Filters', {
+	Ext.define('CMDBuild.controller.administration.filter.Filter', {
 		extend: 'CMDBuild.controller.common.AbstractBasePanelController',
 
 		requires: ['CMDBuild.core.proxy.Constants'],
@@ -16,7 +16,7 @@
 		sectionController: undefined,
 
 		/**
-		 * @cfg {CMDBuild.view.administration.filters.FiltersView}
+		 * @cfg {CMDBuild.view.administration.filter.FilterView}
 		 */
 		view: undefined,
 
@@ -34,7 +34,7 @@
 				switch(parameters.get(CMDBuild.core.proxy.Constants.ID)) {
 					case 'groups':
 					default: {
-						this.sectionController = Ext.create('CMDBuild.controller.administration.filters.Groups', { parentDelegate: this });
+						this.sectionController = Ext.create('CMDBuild.controller.administration.filter.Groups', { parentDelegate: this });
 					}
 				}
 

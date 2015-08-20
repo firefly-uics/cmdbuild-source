@@ -1,15 +1,15 @@
 (function() {
 
-	Ext.define('CMDBuild.view.administration.filters.groups.GridPanel', {
+	Ext.define('CMDBuild.view.administration.filter.groups.GridPanel', {
 		extend: 'Ext.grid.Panel',
 
 		requires: [
 			'CMDBuild.core.proxy.Constants',
-			'CMDBuild.core.proxy.filters.Groups'
+			'CMDBuild.core.proxy.filter.Groups'
 		],
 
 		/**
-		 * @cfg {CMDBuild.controller.administration.filters.Groups}
+		 * @cfg {CMDBuild.controller.administration.filter.Groups}
 		 */
 		delegate: undefined,
 
@@ -17,7 +17,7 @@
 		frame: false,
 
 		initComponent: function() {
-			var store = CMDBuild.core.proxy.filters.Groups.getStore();
+			var store = CMDBuild.core.proxy.filter.Groups.getStore();
 
 			Ext.apply(this, {
 				dockedItems: [
@@ -55,11 +55,11 @@
 
 		listeners: {
 			itemdblclick: function(grid, record, item, index, e, eOpts) {
-				this.delegate.cmfg('onFiltersGroupsItemDoubleClick');
+				this.delegate.cmfg('onFilterGroupsItemDoubleClick');
 			},
 
 			select: function(row, record, index) {
-				this.delegate.cmfg('onFiltersGroupsRowSelected');
+				this.delegate.cmfg('onFilterGroupsRowSelected');
 			},
 
 			// Event to load store on view display and first row selection as CMDbuild standard
