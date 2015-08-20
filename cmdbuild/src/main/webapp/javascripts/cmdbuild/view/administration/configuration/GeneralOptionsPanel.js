@@ -27,50 +27,14 @@
 			type: 'vbox',
 			align:'stretch'
 		},
-// TODO: use when localization module will be released
-//		fieldDefaults: {
-//			labelAlign: 'left',
-//			labelWidth: CMDBuild.CFG_LABEL_WIDTH,
-//			maxWidth: CMDBuild.CFG_MEDIUM_FIELD_WIDTH
-//		},
+
+		fieldDefaults: {
+			labelAlign: 'left',
+			labelWidth: CMDBuild.CFG_LABEL_WIDTH,
+			maxWidth: CMDBuild.CFG_MEDIUM_FIELD_WIDTH
+		},
 
 		initComponent: function() {
-			// TODO: to delete when localization module will be released
-			this.languageFieldset = Ext.create('Ext.form.FieldSet', {
-				title: CMDBuild.Translation.language,
-				overflowY: 'auto',
-
-				layout: {
-					type: 'vbox',
-					align:'stretch'
-				},
-
-				items: [
-					Ext.create('CMDBuild.view.common.field.LanguageCombo', {
-						fieldLabel: CMDBuild.Translation.defaultLanguage,
-						labelWidth: CMDBuild.CFG_LABEL_WIDTH,
-						maxWidth: CMDBuild.CFG_MEDIUM_FIELD_WIDTH,
-						name: 'language',
-						enableChangeLanguage: false
-					}),
-					Ext.create('Ext.ux.form.XCheckbox', {
-						fieldLabel: CMDBuild.Translation.showLanguageChoice,
-						labelWidth: CMDBuild.CFG_LABEL_WIDTH,
-						name: 'languageprompt'
-					})
-				]
-			});
-
-			this.languageGrid = Ext.create('CMDBuild.view.administration.localizations.common.LanguagesGrid');
-			this.enabledLanguagesFieldset = Ext.create('Ext.form.FieldSet', {
-				title: CMDBuild.Translation.enabledLanguages,
-				overflowY: 'auto',
-				name: 'enabled_languages',
-
-				items: [this.languageGrid]
-			});
-			// END TODO: to delete when localization module will be released
-
 			Ext.apply(this, {
 				dockedItems: [
 					Ext.create('Ext.toolbar.Toolbar', {
@@ -109,13 +73,6 @@
 						layout: {
 							type: 'vbox',
 							align:'stretch'
-						},
-
-						// TODO: to delete when localization module will be released
-						fieldDefaults: {
-							labelAlign: 'left',
-							labelWidth: CMDBuild.CFG_LABEL_WIDTH,
-							maxWidth: CMDBuild.CFG_MEDIUM_FIELD_WIDTH
 						},
 
 						items: [
@@ -209,13 +166,6 @@
 							align:'stretch'
 						},
 
-						// TODO: to delete when localization module will be released
-						fieldDefaults: {
-							labelAlign: 'left',
-							labelWidth: CMDBuild.CFG_LABEL_WIDTH,
-							maxWidth: CMDBuild.CFG_MEDIUM_FIELD_WIDTH
-						},
-
 						items: [
 							{
 								xtype: 'numberfield',
@@ -233,21 +183,12 @@
 							}
 						]
 					}),
-					this.languageFieldset, // TODO: to delete when localization module will be released
-					this.enabledLanguagesFieldset, // TODO: to delete when localization module will be released
 					Ext.create('Ext.form.FieldSet', {
 						title: CMDBuild.Translation.lockCardsAndProcessesInEdit,
 
 						layout: {
 							type: 'vbox',
 							align:'stretch'
-						},
-
-						// TODO: to delete when localization module will be released
-						fieldDefaults: {
-							labelAlign: 'left',
-							labelWidth: CMDBuild.CFG_LABEL_WIDTH,
-							maxWidth: CMDBuild.CFG_MEDIUM_FIELD_WIDTH
 						},
 
 						items: [
