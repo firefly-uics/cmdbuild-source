@@ -1,6 +1,6 @@
 (function() {
 
-	Ext.define('CMDBuild.controller.administration.localization.advancedTable.SectionProcesses', {
+	Ext.define('CMDBuild.controller.administration.localization.advancedTable.SectionProcess', {
 		extend: 'CMDBuild.controller.administration.localization.advancedTable.SectionAbstract',
 
 		requires: [
@@ -50,7 +50,7 @@
 			// Shorthand
 			this.grid = this.view.grid;
 
-			this.cmfg('onAdvancedTableTabCreation', this.view); // Add panel to parent tab panel
+			this.cmfg('onLocalizationAdvancedTableTabCreation', this.view); // Add panel to parent tab panel
 		},
 
 		/**

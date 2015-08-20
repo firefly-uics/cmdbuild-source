@@ -20,8 +20,8 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
-			'onAdvancedTableRowUpdateButtonClick',
-			'onAdvancedTableShow = onAdvancedTableOnlyEnabledEntitiesCheck'
+			'onLocalizationAdvancedTableRowUpdateButtonClick',
+			'onLocalizationAdvancedTableShow = onLocalizationAdvancedTableOnlyEnabledEntitiesCheck'
 		],
 
 		/**
@@ -73,7 +73,6 @@
 		decodeStructure: function(rootNode, arrayToDecode) {
 			if (
 				!Ext.isEmpty(rootNode)
-				&& !Ext.isEmpty(arrayToDecode)
 				&& Ext.isArray(arrayToDecode)
 			) {
 				Ext.Array.forEach(arrayToDecode, function(entityObject, i, allEntitiesObjects) {
@@ -216,7 +215,7 @@
 		/**
 		 * Fill grid store with entities data
 		 */
-		onAdvancedTableShow: function() {
+		onLocalizationAdvancedTableShow: function() {
 			var root = this.grid.getStore().getRootNode();
 			root.removeAll();
 
@@ -240,7 +239,7 @@
 		/**
 		 * @param {CMDBuild.model.localization.advancedTable.TreeStore} node
 		 */
-		onAdvancedTableRowUpdateButtonClick: function(node) {
+		onLocalizationAdvancedTableRowUpdateButtonClick: function(node) {
 			if (!Ext.isEmpty(node)) {
 				var params = {};
 				params[CMDBuild.core.proxy.Constants.TYPE] = node.get(CMDBuild.core.proxy.Constants.TYPE);

@@ -1,6 +1,6 @@
 (function() {
 
-	Ext.define('CMDBuild.controller.administration.localization.advancedTable.SectionReports', {
+	Ext.define('CMDBuild.controller.administration.localization.advancedTable.SectionFilter', {
 		extend: 'CMDBuild.controller.administration.localization.advancedTable.SectionAbstract',
 
 		requires: [
@@ -16,7 +16,7 @@
 		/**
 		 * @cfg {String}
 		 */
-		sectionId: CMDBuild.core.proxy.Constants.REPORT,
+		sectionId: CMDBuild.core.proxy.Constants.FILTER,
 
 		/**
 		 * @property {CMDBuild.view.administration.localization.common.AdvancedTableGrid}
@@ -40,13 +40,13 @@
 			this.view = Ext.create('CMDBuild.view.administration.localization.advancedTable.SectionPanel', {
 				delegate: this,
 				hideActiveOnlyCheckbox: true,
-				title: '@@ Report'
+				title: '@@ Search filters'
 			});
 
 			// Shorthand
 			this.grid = this.view.grid;
 
-			this.cmfg('onAdvancedTableTabCreation', this.view); // Add panel to parent tab panel
+			this.cmfg('onLocalizationAdvancedTableTabCreation', this.view); // Add panel to parent tab panel
 		}
 	});
 

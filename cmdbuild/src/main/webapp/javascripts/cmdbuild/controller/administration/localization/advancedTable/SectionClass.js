@@ -1,6 +1,6 @@
 (function() {
 
-	Ext.define('CMDBuild.controller.administration.localization.advancedTable.SectionViews', {
+	Ext.define('CMDBuild.controller.administration.localization.advancedTable.SectionClass', {
 		extend: 'CMDBuild.controller.administration.localization.advancedTable.SectionAbstract',
 
 		requires: [
@@ -14,9 +14,19 @@
 		parentDelegate: undefined,
 
 		/**
+		 * @cfg {Array}
+		 */
+		entityFilter: ['class'],
+
+		/**
+		 * @cfg {Array}
+		 */
+		entityAttributeFilter: ['notes'],
+
+		/**
 		 * @cfg {String}
 		 */
-		sectionId: CMDBuild.core.proxy.Constants.VIEW,
+		sectionId: CMDBuild.core.proxy.Constants.CLASS,
 
 		/**
 		 * @property {CMDBuild.view.administration.localization.common.AdvancedTableGrid}
@@ -39,14 +49,13 @@
 
 			this.view = Ext.create('CMDBuild.view.administration.localization.advancedTable.SectionPanel', {
 				delegate: this,
-				hideActiveOnlyCheckbox: true,
-				title: '@@ Views'
+				title: '@@ Classes'
 			});
 
 			// Shorthand
 			this.grid = this.view.grid;
 
-			this.cmfg('onAdvancedTableTabCreation', this.view); // Add panel to parent tab panel
+			this.cmfg('onLocalizationAdvancedTableTabCreation', this.view); // Add panel to parent tab panel
 		}
 	});
 

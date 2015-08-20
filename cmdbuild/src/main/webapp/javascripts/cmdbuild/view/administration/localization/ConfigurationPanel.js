@@ -10,11 +10,30 @@
 		 */
 		delegate: undefined,
 
-//		enabledLanguagesGrid = Ext.create('CMDBuild.view.administration.localization.common.LanguagesGrid
-//		importPanel = Ext.create('CMDBuild.view.administration.localization.common.ImportPanel
-//		exportPanel = Ext.create('CMDBuild.view.administration.localization.common.ExportPanel
-//		defaultLanguageCombobox = Ext.create('CMDBuild.view.common.field.LanguageCombo
-//		languagePromptCheckbox = Ext.create('Ext.form.field.Checkbox
+		/**
+		 * @property {CMDBuild.view.common.field.LanguageCombo}
+		 */
+		defaultLanguageCombobox: undefined,
+
+		/**
+		 * @property {CMDBuild.view.administration.localization.common.LanguagesGrid}
+		 */
+		enabledLanguagesGrid: undefined,
+
+		/**
+		 * @property {CMDBuild.view.administration.localization.common.ExportPanel}
+		 */
+		exportPanel: undefined,
+
+		/**
+		 * @property {CMDBuild.view.administration.localization.common.ImportPanel}
+		 */
+		importPanel: undefined,
+
+		/**
+		 * @property {Ext.form.field.Checkbox}
+		 */
+		languagePromptCheckbox: undefined,
 
 		bodyCls: 'cmgraypanel-nopadding',
 		border: false,

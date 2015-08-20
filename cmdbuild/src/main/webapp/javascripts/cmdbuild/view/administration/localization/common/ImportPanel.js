@@ -9,6 +9,10 @@
 			'CMDBuild.core.proxy.localization.Localization'
 		],
 
+		mixins: {
+			panelFunctions: 'CMDBuild.view.common.PanelFunctions'
+		},
+
 		/**
 		 * @cfg {CMDBuild.controller.administration.localizations.Advanced}
 		 */

@@ -3,8 +3,10 @@
 	Ext.define('CMDBuild.view.administration.localization.advancedTable.SectionPanel', {
 		extend: 'Ext.panel.Panel',
 
+		requires: ['CMDBuild.core.proxy.Constants'],
+
 		/**
-		 * @cfg {CMDBuild.controller.administration.localization.advancedTable.SectionClasses}
+		 * @cfg {CMDBuild.controller.administration.localization.advancedTable.SectionClass}
 		 */
 		delegate: undefined,
 
@@ -39,7 +41,7 @@
 								scope: this,
 
 								handler: function(button, e) {
-									this.delegate.cmfg('onAdvancedTableExpandAll', this.grid);
+									this.delegate.cmfg('onLocalizationAdvancedTableExpandAll', this.grid);
 								}
 							}),
 							Ext.create('CMDBuild.core.buttons.iconized.Collapse', {
@@ -47,19 +49,19 @@
 								scope: this,
 
 								handler: function(button, e) {
-									this.delegate.cmfg('onAdvancedTableCollapseAll', this.grid);
+									this.delegate.cmfg('onLocalizationAdvancedTableCollapseAll', this.grid);
 								}
 							}),
 							'->',
 							this.activeOnlyCheckbox = Ext.create('Ext.form.field.Checkbox', {
-								boxLabel: '@@ active only',
+								boxLabel: '@@ Only active',
 								boxLabelCls: 'cmtoolbaritem',
 								checked: true, // Default as true
 								hidden: this.hideActiveOnlyCheckbox,
 								scope: this,
 
 								handler: function(checkbox, checked) {
-									this.delegate.cmfg('onAdvancedTableOnlyEnabledEntitiesCheck');
+									this.delegate.cmfg('onLocalizationAdvancedTableOnlyEnabledEntitiesCheck');
 								}
 							})
 						]
@@ -68,8 +70,8 @@
 				items: [
 					this.grid = Ext.create('CMDBuild.view.administration.localization.common.AdvancedTableGrid', {
 						delegate: this.delegate,
-						columns: this.delegate.cmfg('onAdvancedTableBuildColumns'),
-						store: this.delegate.cmfg('onAdvancedTableBuildStore')
+						columns: this.delegate.cmfg('onLocalizationAdvancedTableBuildColumns'),
+						store: this.delegate.cmfg('onLocalizationAdvancedTableBuildStore')
 					})
 				]
 			});
@@ -79,7 +81,7 @@
 
 		listeners: {
 			show: function(panel, eOpts) {
-				this.delegate.cmfg('onAdvancedTableShow');
+				this.delegate.cmfg('onLocalizationAdvancedTableShow');
 			}
 		}
 	});

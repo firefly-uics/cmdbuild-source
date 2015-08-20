@@ -14,7 +14,10 @@
 		 */
 		delegate: undefined,
 
-//		activeOnlyCheckbox = Ext.create('Ext.form.field.Checkbox
+		/**
+		 * @property {Ext.form.field.Checkbox}
+		 */
+		activeOnlyCheckbox: undefined,
 
 		bodyCls: 'cmgraypanel',
 		border: false,

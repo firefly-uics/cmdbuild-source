@@ -11,6 +11,11 @@
 		delegate: undefined,
 
 		/**
+		 * @property {Ext.grid.plugin.RowEditing}
+		 */
+		gridEditorPlugin: undefined,
+
+		/**
 		 * @cfg {String}
 		 */
 		sectionId: undefined,
@@ -50,7 +55,7 @@
 
 		listeners: {
 			edit: function(editor, context, eOpts) {
-				this.delegate.cmfg('onAdvancedTableRowUpdateButtonClick', context.record);
+				this.delegate.cmfg('onLocalizationAdvancedTableRowUpdateButtonClick', context.record);
 			}
 		}
 	});
