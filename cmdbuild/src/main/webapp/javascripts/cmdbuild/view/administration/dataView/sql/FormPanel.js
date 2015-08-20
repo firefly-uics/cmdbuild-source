@@ -47,7 +47,7 @@
 								scope: this,
 
 								handler: function(button, e) {
-									this.delegate.cmfg('onDataViewsSqlModifyButtonClick');
+									this.delegate.cmfg('onDataViewSqlModifyButtonClick');
 								}
 							}),
 							Ext.create('CMDBuild.core.buttons.iconized.Delete', {
@@ -55,7 +55,7 @@
 								scope: this,
 
 								handler: function(button, e) {
-									this.delegate.cmfg('onDataViewsSqlRemoveButtonClick');
+									this.delegate.cmfg('onDataViewSqlRemoveButtonClick');
 								}
 							})
 						]
@@ -76,14 +76,14 @@
 								scope: this,
 
 								handler: function(button, e) {
-									this.delegate.cmfg('onDataViewsSqlSaveButtonClick');
+									this.delegate.cmfg('onDataViewSqlSaveButtonClick');
 								}
 							}),
 							Ext.create('CMDBuild.core.buttons.text.Abort', {
 								scope: this,
 
 								handler: function(button, e) {
-									this.delegate.cmfg('onDataViewsSqlAbortButtonClick');
+									this.delegate.cmfg('onDataViewSqlAbortButtonClick');
 								}
 							})
 						]

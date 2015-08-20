@@ -18,12 +18,12 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
-			'onDataViewsSqlAbortButtonClick',
-			'onDataViewsSqlAddButtonClick',
-			'onDataViewsSqlModifyButtonClick = onDataViewsSqlItemDoubleClick',
-			'onDataViewsSqlRemoveButtonClick',
-			'onDataViewsSqlRowSelected',
-			'onDataViewsSqlSaveButtonClick'
+			'onDataViewSqlAbortButtonClick',
+			'onDataViewSqlAddButtonClick',
+			'onDataViewSqlModifyButtonClick = onDataViewSqlItemDoubleClick',
+			'onDataViewSqlRemoveButtonClick',
+			'onDataViewSqlRowSelected',
+			'onDataViewSqlSaveButtonClick'
 		],
 
 		/**
@@ -64,16 +64,16 @@
 			this.grid = this.view.grid;
 		},
 
-		onDataViewsSqlAbortButtonClick: function() {
+		onDataViewSqlAbortButtonClick: function() {
 			if (!Ext.isEmpty(this.selectedView)) {
-				this.onDataViewsSqlRowSelected();
+				this.onDataViewSqlRowSelected();
 			} else {
 				this.form.reset();
 				this.form.setDisabledModify(true, true, true);
 			}
 		},
 
-		onDataViewsSqlAddButtonClick: function() {
+		onDataViewSqlAddButtonClick: function() {
 			this.grid.getSelectionModel().deselectAll();
 
 			this.selectedView = null;
@@ -83,11 +83,11 @@
 			this.form.loadRecord(Ext.create('CMDBuild.model.dataView.Sql'));
 		},
 
-		onDataViewsSqlModifyButtonClick: function() {
+		onDataViewSqlModifyButtonClick: function() {
 			this.form.setDisabledModify(false);
 		},
 
-		onDataViewsSqlRemoveButtonClick: function() {
+		onDataViewSqlRemoveButtonClick: function() {
 			Ext.Msg.show({
 				title: CMDBuild.Translation.common.confirmpopup.title,
 				msg: CMDBuild.Translation.common.confirmpopup.areyousure,
@@ -103,7 +103,7 @@
 		/**
 		 * TODO: server implementation to get a single view data
 		 */
-		onDataViewsSqlRowSelected: function() {
+		onDataViewSqlRowSelected: function() {
 			this.selectedView = this.grid.getSelectionModel().getSelection()[0];
 
 			this.form.loadRecord(this.selectedView);
@@ -111,7 +111,7 @@
 			this.form.setDisabledModify(true, true);
 		},
 
-		onDataViewsSqlSaveButtonClick: function() {
+		onDataViewSqlSaveButtonClick: function() {
 			// Validate before save
 			if (this.validate(this.form)) {
 				var formData = Ext.create('CMDBuild.model.dataView.Sql',this.form.getData(true));
