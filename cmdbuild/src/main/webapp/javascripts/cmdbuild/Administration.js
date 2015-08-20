@@ -113,14 +113,12 @@
 								 * DataViews
 								 */
 								if (!_CMUIConfiguration.isCloudAdmin()) {
-									dataViewAccordion = Ext.create('CMDBuild.view.administration.accordion.DataViews', {
-										cmName: 'dataview',
-									});
+									dataViewAccordion = Ext.create('CMDBuild.view.administration.accordion.DataView', { cmName: 'dataview' });
 
 									panels = panels.concat([
-										Ext.create('CMDBuild.view.administration.dataViews.DataViewsView', {
-											cmControllerType: 'CMDBuild.controller.administration.dataViews.DataViews',
-											cmName: 'dataviews'
+										Ext.create('CMDBuild.view.administration.dataView.DataViewView', {
+											cmControllerType: 'CMDBuild.controller.administration.dataView.DataView',
+											cmName: 'dataview'
 										}),
 									]);
 								}

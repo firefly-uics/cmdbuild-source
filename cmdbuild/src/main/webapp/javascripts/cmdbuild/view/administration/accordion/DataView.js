@@ -1,6 +1,6 @@
 (function() {
 
-	Ext.define('CMDBuild.view.administration.accordion.DataViews', {
+	Ext.define('CMDBuild.view.administration.accordion.DataView', {
 		extend: 'CMDBuild.view.common.CMBaseAccordion',
 
 		title: CMDBuild.Translation.views,
@@ -18,13 +18,13 @@
 			this.store.getRootNode().appendChild([
 				{
 					id: 'filter',
-					cmName: 'dataviews',
+					cmName: 'dataview',
 					leaf: true,
 					text: CMDBuild.Translation.filterView
 				},
 				{
 					id: 'sql',
-					cmName: 'dataviews',
+					cmName: 'dataview',
 					leaf: true,
 					text: CMDBuild.Translation.sqlView,
 				}
