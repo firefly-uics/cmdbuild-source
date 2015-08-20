@@ -6,7 +6,7 @@
 		requires: [
 			'CMDBuild.core.Message',
 			'CMDBuild.core.proxy.Constants',
-			'CMDBuild.core.proxy.localizations.Localizations'
+			'CMDBuild.core.proxy.localization.Localization'
 		],
 
 		/**
@@ -98,7 +98,7 @@
 				this.form.reset();
 
 				if (this.ownerField.translationsGet().isEmpty()) {
-					CMDBuild.core.proxy.localizations.Localizations.read({
+					CMDBuild.core.proxy.localization.Localization.read({
 						params: this.ownerField.configurationGet(),
 						scope: this,
 						success: function(response, options, decodedResponse) {

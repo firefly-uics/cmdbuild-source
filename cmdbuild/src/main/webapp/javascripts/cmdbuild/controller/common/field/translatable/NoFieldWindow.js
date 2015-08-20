@@ -9,7 +9,7 @@
 		requires: [
 			'CMDBuild.core.Message',
 			'CMDBuild.core.proxy.Constants',
-			'CMDBuild.core.proxy.localizations.Localizations'
+			'CMDBuild.core.proxy.localization.Localization'
 		],
 
 		/**
@@ -228,7 +228,7 @@
 				this.form.reset();
 
 				if (this.translationsGet().isEmpty()) {
-					CMDBuild.core.proxy.localizations.Localizations.read({
+					CMDBuild.core.proxy.localization.Localization.read({
 						params: this.configurationGet(),
 						scope: this,
 						success: function(response, options, decodedResponse) {
@@ -292,7 +292,7 @@
 
 			translationsRead: function() {
 				if (this.isConfigurationValid()) {
-					CMDBuild.core.proxy.localizations.Localizations.read({
+					CMDBuild.core.proxy.localization.Localization.read({
 						params: this.configurationGet(),
 						scope: this,
 						success: function(response, options, decodedResponse) {

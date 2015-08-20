@@ -1,0 +1,53 @@
+(function() {
+
+	Ext.define('CMDBuild.controller.administration.localization.advancedTable.SectionReports', {
+		extend: 'CMDBuild.controller.administration.localization.advancedTable.SectionAbstract',
+
+		requires: [
+			'CMDBuild.core.proxy.Constants',
+			'CMDBuild.core.proxy.localization.Localization'
+		],
+
+		/**
+		 * @cfg {CMDBuild.controller.administration.localization.advancedTable.AdvancedTable}
+		 */
+		parentDelegate: undefined,
+
+		/**
+		 * @cfg {String}
+		 */
+		sectionId: CMDBuild.core.proxy.Constants.REPORT,
+
+		/**
+		 * @property {CMDBuild.view.administration.localization.common.AdvancedTableGrid}
+		 */
+		grid: undefined,
+
+		/**
+		 * @cfg {CMDBuild.view.administration.localization.advancedTable.SectionPanel}
+		 */
+		view: undefined,
+
+		/**
+		 * @param {Object} configObject
+		 * @param {CMDBuild.controller.administration.localization.advancedTable.AdvancedTable} configObject.parentDelegate
+		 *
+		 * @override
+		 */
+		constructor: function(configObject) {
+			this.callParent(arguments);
+
+			this.view = Ext.create('CMDBuild.view.administration.localization.advancedTable.SectionPanel', {
+				delegate: this,
+				hideActiveOnlyCheckbox: true,
+				title: '@@ Report'
+			});
+
+			// Shorthand
+			this.grid = this.view.grid;
+
+			this.cmfg('onAdvancedTableTabCreation', this.view); // Add panel to parent tab panel
+		}
+	});
+
+})();

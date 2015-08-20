@@ -6,7 +6,7 @@
 
 		requires: [
 			'CMDBuild.core.proxy.Constants',
-			'CMDBuild.core.proxy.localizations.Localizations'
+			'CMDBuild.core.proxy.localization.Localization'
 		],
 
 		/**
@@ -20,7 +20,7 @@
 
 		initComponent: function() {
 			Ext.apply(this, {
-				store: CMDBuild.core.proxy.localizations.Localizations.getLanguagesStore(),
+				store: CMDBuild.core.proxy.localization.Localization.getLanguagesStore(),
 				queryMode: 'local'
 			});
 
