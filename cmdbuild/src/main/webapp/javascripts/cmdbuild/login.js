@@ -7,6 +7,7 @@
 
 		requires: [
 			'CMDBuild.core.proxy.CMProxy',
+			'CMDBuild.core.proxy.Configuration',
 			'CMDBuild.core.proxy.Constants'
 		],
 
@@ -42,7 +43,7 @@
 
 		statics: {
 			buildAfterRequest: function() {
-				CMDBuild.ServiceProxy.configuration.readMainConfiguration({
+				CMDBuild.core.proxy.Configuration.readMainConfiguration({
 					scope: this,
 					success: function(result, options, decodedResult) {
 						CMDBuild.Config.cmdbuild = decodedResult.data;

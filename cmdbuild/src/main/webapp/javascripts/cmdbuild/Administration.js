@@ -51,7 +51,7 @@
 					success: function(response, options,decoded) {
 						_CMUIConfiguration = new CMDBuild.model.CMUIConfigurationModel(decoded.response);
 
-						CMDBuild.ServiceProxy.configuration.readMainConfiguration({
+						CMDBuild.core.proxy.Configuration.readMainConfiguration({
 							success: function(response, options, decoded) {
 								/**
 								 * CMDBuild
@@ -59,9 +59,6 @@
 								 * @deprecated
 								 */
 								CMDBuild.Config.cmdbuild = decoded.data;
-
-								// Localization
-								CMDBuild.configuration[CMDBuild.core.proxy.Constants.LOCALIZATION].setEnabledLanguages(decoded.data.enabled_languages);
 
 								/* **********************************************
 								 * Suspend here the layouts, and resume after all
@@ -180,7 +177,7 @@
 				/**
 				 * BIM Configuration
 				 * */
-				CMDBuild.ServiceProxy.configuration.readBimConfiguration({
+				CMDBuild.core.proxy.Configuration.readBimConfiguration({
 					success: function(response, option, decoded) {
 						var disabled = decoded.data.enabled == 'false';
 						bimAccordion = new CMDBuild.view.administration.accordion.CMBIMAccordion({
@@ -237,7 +234,7 @@
 				/**
 				 * Workflow configuration
 				 */
-				CMDBuild.ServiceProxy.configuration.readWFConfiguration({
+				CMDBuild.core.proxy.Configuration.readWFConfiguration({
 					success: function(response, options, decoded) {
 						CMDBuild.Config.workflow = decoded.data;
 						CMDBuild.Config.workflow.enabled = ('true' == CMDBuild.Config.workflow.enabled);
@@ -248,7 +245,7 @@
 				/**
 				 * GIS configuration
 				 */
-				CMDBuild.ServiceProxy.configuration.readGisConfiguration({
+				CMDBuild.core.proxy.Configuration.readGisConfiguration({
 					success: function(response, options, decoded) {
 						CMDBuild.Config.gis = decoded.data;
 						CMDBuild.Config.gis.enabled = ('true' == CMDBuild.Config.gis.enabled);

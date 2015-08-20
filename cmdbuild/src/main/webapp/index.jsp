@@ -42,13 +42,12 @@
 		<script type="text/javascript" src="javascripts/cmdbuild/core/proxy/Constants.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/core/proxy/Index.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxy.js"></script>
-		<script type="text/javascript" src="javascripts/cmdbuild/core/proxy/Configuration.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxySetup.js"></script>
-		<script type="text/javascript" src="javascripts/cmdbuild/core/proxy/localizations/Localizations.js"></script>
+		<script type="text/javascript" src="javascripts/cmdbuild/core/proxy/localization/Localization.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/view/common/field/CMIconCombo.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/view/common/field/LanguageCombo.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/model/CMSetupModels.js"></script>
-		<script type="text/javascript" src="javascripts/cmdbuild/model/localizations/Localization.js"></script>
+		<script type="text/javascript" src="javascripts/cmdbuild/model/localization/Localization.js"></script>
 
 		<!-- 2. Translations -->
 		<script type="text/javascript" src="javascripts/ext-<%= extVersion %>/locale/ext-lang-<%= lang %>.js"></script>

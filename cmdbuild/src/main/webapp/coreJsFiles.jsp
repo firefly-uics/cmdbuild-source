@@ -34,7 +34,7 @@
 <script type="text/javascript" src="javascripts/cmdbuild/core/proxy/Attributes.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/proxy/Card.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/proxy/Classes.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/core/proxy/Configuration.js"></script>
+<!-- <script type="text/javascript" src="javascripts/cmdbuild/core/proxy/Configuration.js"></script> -->
 <script type="text/javascript" src="javascripts/cmdbuild/core/proxy/Filter.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxyAdministration.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxyDashboard.js"></script>

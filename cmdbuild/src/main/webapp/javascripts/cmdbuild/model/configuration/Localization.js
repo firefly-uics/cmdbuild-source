@@ -3,10 +3,7 @@
 	Ext.define('CMDBuild.model.configuration.Localization', {
 		extend: 'Ext.data.Model',
 
-		requires: [
-			'CMDBuild.core.proxy.Constants',
-			'CMDBuild.core.proxy.localization.Localization'
-		],
+		requires: ['CMDBuild.core.proxy.Constants'],
 
 		fields: [
 			{ name: CMDBuild.core.proxy.Constants.LANGUAGE, type: 'string' },
@@ -15,14 +12,14 @@
 		],
 
 		/**
-		 * @return {Object}
+		 * @returns {Object}
 		 */
 		getAllLanguages: function() {
 			return this.get(CMDBuild.core.proxy.Constants.LANGUAGES) || {};
 		},
 
 		/**
-		 * @return {Object}
+		 * @returns {Object}
 		 */
 		getEnabledLanguages: function() {
 			var enabledLanguages = {};
@@ -37,7 +34,7 @@
 		/**
 		 * @param {String} languageTag
 		 *
-		 * @return {CMDBuild.model.localization.Localization} or null
+		 * @returns {CMDBuild.model.localization.Localization} or null
 		 */
 		getLanguageObject: function(languageTag) {
 			if (this.isManagedLanguage(languageTag))
@@ -47,7 +44,7 @@
 		},
 
 		/**
-		 * @return {Boolean}
+		 * @returns {Boolean}
 		 */
 		hasEnabledLanguages: function() {
 			var enabledLanguages = this.get(CMDBuild.core.proxy.Constants.ENABLED_LANGUAGES);
@@ -58,7 +55,7 @@
 		/**
 		 * @param {String} languageTag
 		 *
-		 * @return {Boolean}
+		 * @returns {Boolean}
 		 */
 		isManagedLanguage: function(languageTag) {
 			return this.get(CMDBuild.core.proxy.Constants.LANGUAGES).hasOwnProperty(languageTag);

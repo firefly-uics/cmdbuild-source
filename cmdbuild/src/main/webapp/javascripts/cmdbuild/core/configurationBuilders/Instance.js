@@ -2,7 +2,10 @@
 
 	Ext.define('CMDBuild.core.configurationBuilders.Instance', {
 
-		requires: ['CMDBuild.core.proxy.Constants'],
+		requires: [
+			'CMDBuild.core.proxy.Constants',
+			'CMDBuild.core.proxy.Configuration'
+		],
 
 		constructor: function() {
 			if (
@@ -13,10 +16,10 @@
 
 				var configurationObject = CMDBuild.configuration[CMDBuild.core.proxy.Constants.INSTANCE]; // Shorthand
 
-				CMDBuild.ServiceProxy.configuration.readMainConfiguration({
+				CMDBuild.core.proxy.Configuration.readMainConfiguration({
 					scope: this,
 					success: function(result, options, decodedResult) {
-						// Attributes translation waiting for a server side refactor
+						// TODO: attributes translation waiting for a server side refactor
 						configurationObject.set(CMDBuild.core.proxy.Constants.CARD_GRID_RATIO, decodedResult.data['grid_card_ratio']);
 						configurationObject.set(CMDBuild.core.proxy.Constants.CARD_LOCK_TIMEOUT, decodedResult.data['lockcardtimeout']);
 						configurationObject.set(CMDBuild.core.proxy.Constants.CARD_TABS_POSITION, decodedResult.data['card_tab_position']);
