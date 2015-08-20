@@ -1,5 +1,6 @@
 package org.cmdbuild.privileges;
 
+import static org.cmdbuild.common.Constants.ROLE_CLASS_NAME;
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
 import static org.cmdbuild.dao.query.clause.alias.Utils.as;
@@ -34,7 +35,6 @@ import com.google.common.collect.Lists;
 
 public class DBGroupFetcher implements GroupFetcher {
 
-	private static final String ROLE_CLASS_NAME = org.cmdbuild.common.Constants.ROLE_CLASS_NAME;
 	private static final String ID_ATTRIBUTE = "Id";
 
 	private final CMDataView view;

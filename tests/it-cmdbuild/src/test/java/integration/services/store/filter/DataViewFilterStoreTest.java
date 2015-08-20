@@ -2,6 +2,7 @@ package integration.services.store.filter;
 
 import static com.google.common.collect.Iterables.size;
 import static java.lang.Integer.MAX_VALUE;
+import static org.cmdbuild.common.Constants.ROLE_CLASS_NAME;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertEquals;
@@ -34,7 +35,7 @@ public class DataViewFilterStoreTest extends IntegrationTestBase {
 	@Before
 	public void createFilterStore() throws Exception {
 		filterStore = new DataViewFilterStore(dbDataView(), new FilterConverter(dbDataView()));
-		roleClass = dbDataView().findClass("Role");
+		roleClass = dbDataView().findClass(ROLE_CLASS_NAME);
 		userClass = dbDataView().findClass("User");
 	}
 

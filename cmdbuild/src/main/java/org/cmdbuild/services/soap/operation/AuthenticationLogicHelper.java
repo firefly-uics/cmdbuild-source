@@ -2,6 +2,7 @@ package org.cmdbuild.services.soap.operation;
 
 import static com.google.common.collect.FluentIterable.from;
 import static org.cmdbuild.common.Constants.CODE_ATTRIBUTE;
+import static org.cmdbuild.common.Constants.ROLE_CLASS_NAME;
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
 import static org.cmdbuild.dao.query.clause.where.InOperatorAndValue.in;
@@ -44,7 +45,7 @@ public class AuthenticationLogicHelper implements SoapLogicHelper {
 	}
 
 	private Set<UserGroup> groups(final Iterable<String> names) {
-		final CMClass roleClass = dataView.findClass("Role");
+		final CMClass roleClass = dataView.findClass(ROLE_CLASS_NAME);
 		final Iterable<CMQueryRow> userGroupsRows = dataView.select(anyAttribute(roleClass)) //
 				.from(roleClass) //
 				.where(condition(attribute(roleClass, CODE_ATTRIBUTE), //

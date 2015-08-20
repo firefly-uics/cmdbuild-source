@@ -1,5 +1,7 @@
 package org.cmdbuild.auth;
 
+import static org.cmdbuild.common.Constants.ROLE_CLASS_NAME;
+
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.view.CMDataView;
@@ -20,7 +22,7 @@ public class LegacyDBUserFetcher extends DBUserFetcher {
 
 	@Override
 	protected final CMClass roleClass() {
-		return view.findClass("Role");
+		return view.findClass(ROLE_CLASS_NAME);
 	}
 
 	@Override

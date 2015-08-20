@@ -12,6 +12,7 @@ import static org.cmdbuild.auth.privileges.constants.GrantConstants.PRIVILEGE_FI
 import static org.cmdbuild.auth.privileges.constants.GrantConstants.STATUS_ATTRIBUTE;
 import static org.cmdbuild.auth.privileges.constants.GrantConstants.TYPE_ATTRIBUTE;
 import static org.cmdbuild.auth.privileges.constants.GrantConstants.UI_CARD_EDIT_MODE_ATTRIBUTE;
+import static org.cmdbuild.common.Constants.ROLE_CLASS_NAME;
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
 import static org.cmdbuild.dao.query.clause.where.AndWhereClause.and;
@@ -409,7 +410,7 @@ public class DefaultSecurityLogic implements Logic, SecurityLogic {
 
 	@Override
 	public UIConfiguration fetchGroupUIConfiguration(final Long groupId) {
-		final CMClass roleClass = view.findClass("Role");
+		final CMClass roleClass = view.findClass(ROLE_CLASS_NAME);
 		final CMQueryRow row = view.select(anyAttribute(roleClass)) //
 				.from(roleClass) //
 				.where(condition(attribute(roleClass, "Id"), eq(groupId))) //
@@ -455,7 +456,7 @@ public class DefaultSecurityLogic implements Logic, SecurityLogic {
 
 	@Override
 	public void saveGroupUIConfiguration(final Long groupId, final UIConfiguration configuration) {
-		final CMClass roleClass = view.findClass("Role");
+		final CMClass roleClass = view.findClass(ROLE_CLASS_NAME);
 		final CMQueryRow row = view.select(anyAttribute(roleClass)) //
 				.from(roleClass) //
 				.where(condition(attribute(roleClass, "Id"), eq(groupId))) //
