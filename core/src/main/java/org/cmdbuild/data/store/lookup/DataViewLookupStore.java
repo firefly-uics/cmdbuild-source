@@ -10,6 +10,7 @@ import static org.cmdbuild.data.store.lookup.Predicates.lookupWithType;
 
 import java.util.Map;
 
+import org.apache.commons.lang3.ObjectUtils;
 import org.cmdbuild.data.store.ForwardingStore;
 import org.cmdbuild.data.store.Storable;
 import org.cmdbuild.data.store.Store;
@@ -88,7 +89,7 @@ public class DataViewLookupStore extends ForwardingStore<Lookup> implements Look
 
 			@Override
 			public boolean apply(final Lookup input) {
-				return input.getTranslationUuid().equals(uuid);
+				return ObjectUtils.equals(input.getTranslationUuid(), uuid);
 			}
 		});
 	}

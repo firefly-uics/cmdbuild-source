@@ -8,16 +8,6 @@
 			'CMDBuild.core.proxy.localizations.Localizations'
 		],
 
-		/**
-		 * @cfg {Array}
-		 */
-		languages: [],
-
-		/**
-		 * @property {Array}
-		 */
-		languageCheckboxes: [],
-
 		border: false,
 		frame: false,
 		layout: 'column',
@@ -44,8 +34,6 @@
 							labelStyle: 'background-repeat: no-repeat; background-position: left; padding-left: 22px;'
 						});
 
-						this.languageCheckboxes.push(item);
-
 						this.add(item);
 					}, this);
 				}
@@ -60,7 +48,7 @@
 		getValue: function() {
 			var languageArray = [];
 
-			Ext.Array.forEach(this.languageCheckboxes, function(languageCheckbox, i, allCheckboxes) {
+			Ext.Array.forEach(this.getItems(), function(languageCheckbox, i, allCheckboxes) {
 				if (languageCheckbox.getValue())
 					languageArray.push(languageCheckbox.getName());
 			}, this);
@@ -73,9 +61,18 @@
 		 */
 		setValue: function(activeLanguages) {
 			if (Ext.isArray(activeLanguages))
-				Ext.Array.forEach(this.languageCheckboxes, function(languageCheckbox, i, allCheckboxes) {
+				Ext.Array.forEach(this.getItems(), function(languageCheckbox, i, allCheckboxes) {
 					languageCheckbox.setValue(Ext.Array.contains(activeLanguages, languageCheckbox.getName()));
 				}, this);
+		},
+
+		/**
+		 * Service function to get all items
+		 *
+		 * @returns {Array}
+		 */
+		getItems: function() {
+			return this.items.items;
 		}
 	});
 

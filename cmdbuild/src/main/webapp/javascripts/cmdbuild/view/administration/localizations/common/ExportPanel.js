@@ -14,13 +14,15 @@
 		 */
 		delegate: undefined,
 
+//		activeOnlyCheckbox = Ext.create('Ext.form.field.Checkbox
+
 		bodyCls: 'cmgraypanel',
-		bodyPadding: '0 0 32 0', // Hack to fix panel height to be same as left one
 		border: false,
 		encoding: 'multipart/form-data',
 		fileUpload: true,
 		frame: false,
 		monitorValid: true,
+		standardSubmit: true,
 
 		layout: {
 			type: 'vbox',
@@ -46,7 +48,7 @@
 								scope: this,
 
 								handler: function(button, e) {
-									this.delegate.cmfg('onLocalizationsExportButtonClick');
+									this.delegate.cmfg('onLocalizationConfigurationExportButtonClick');
 								}
 							})
 						]
@@ -54,7 +56,7 @@
 				],
 				items: [
 					Ext.create('Ext.form.field.ComboBox', {
-						name: '@@ exportSection',
+						name: CMDBuild.core.proxy.Constants.SECTION,
 						fieldLabel: '@@ Export section',
 						labelWidth: CMDBuild.LABEL_WIDTH,
 						maxWidth: CMDBuild.MEDIUM_FIELD_WIDTH,
@@ -63,8 +65,17 @@
 						editable: false,
 						allowBlank: false,
 
+						value: CMDBuild.core.proxy.Constants.ALL, // Default value
+
 						store: CMDBuild.core.proxy.localizations.Localizations.getSectionsStore(),
-						queryMode: 'local'
+						queryMode: 'local',
+
+						listeners: {
+							scope: this,
+							change: function(combo, newValue, oldValue, eOpts) {
+								this.delegate.cmfg('onLocalizationConfigurationExportSectionChange', newValue);
+							}
+						}
 					}),
 					Ext.create('Ext.form.field.ComboBox', {
 						name: '@@ exportFormat',
@@ -82,7 +93,7 @@
 						queryMode: 'local'
 					}),
 					Ext.create('Ext.form.field.ComboBox', {
-						name: '@@ exportSeparator',
+						name: CMDBuild.core.proxy.Constants.SEPARATOR,
 						fieldLabel: CMDBuild.Translation.separator,
 						labelWidth: CMDBuild.LABEL_WIDTH,
 						maxWidth: 200,
@@ -95,6 +106,13 @@
 
 						store: CMDBuild.core.proxy.Csv.getSeparatorStore(),
 						queryMode: 'local'
+					}),
+					this.activeOnlyCheckbox = Ext.create('Ext.form.field.Checkbox', {
+						name: CMDBuild.core.proxy.Constants.ACTIVE_ONLY,
+						fieldLabel: '@@ Only active',
+						labelWidth: CMDBuild.LABEL_WIDTH,
+						inputValue: true,
+						uncheckedValue: false
 					})
 				]
 			});

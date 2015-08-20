@@ -167,7 +167,11 @@
 				remove: '',
 				update: 'services/json/schema/translation/update',
 
-				readStructure: 'services/json/schema/translation/readstructure',
+				readAll: 'services/json/schema/translation/readall'
+			},
+			importExport: {
+				exportCsv: 'services/json/schema/translation/exportcsv',
+				importCsv: 'services/json/schema/translation/importcsv'
 			}
 		},
 

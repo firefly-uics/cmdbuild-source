@@ -224,7 +224,7 @@
 			params[CMDBuild.core.proxy.Constants.ACTIVE] = this.view.activeOnlyCheckbox.getValue();
 			params[CMDBuild.core.proxy.Constants.TYPE] = this.getSectionId();
 
-			CMDBuild.core.proxy.localizations.Localizations.readStructure({
+			CMDBuild.core.proxy.localizations.Localizations.readAll({
 				params: params,
 				scope: this,
 				success: function(response, options, decodedResponse) {
