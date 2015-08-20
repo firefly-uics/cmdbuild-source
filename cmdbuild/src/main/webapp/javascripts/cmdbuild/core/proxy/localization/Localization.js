@@ -5,7 +5,6 @@
 		requires: [
 			'CMDBuild.core.proxy.Constants',
 			'CMDBuild.core.proxy.Index',
-			'CMDBuild.core.proxy.Configuration',
 			'CMDBuild.model.localization.Localization'
 		],
 

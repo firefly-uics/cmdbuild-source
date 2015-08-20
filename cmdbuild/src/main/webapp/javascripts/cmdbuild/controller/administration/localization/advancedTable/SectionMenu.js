@@ -73,7 +73,7 @@
 		 * @param {CMDBuild.model.localization.advancedTable.TreeStore} rootNode
 		 * @param {Array} arrayToDecode
 		 */
-		decodeStructure: function(rootNode, arrayToDecode) { // TODO localize variables names
+		decodeStructure: function(rootNode, arrayToDecode) {
 			if (
 				!Ext.isEmpty(rootNode)
 				&& !Ext.isEmpty(arrayToDecode)
