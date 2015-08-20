@@ -100,7 +100,7 @@
 					success: function(response, options, decoded) {
 						_CMUIConfiguration = new CMDBuild.model.CMUIConfigurationModel(decoded.response);
 
-						CMDBuild.ServiceProxy.configuration.readAll({
+						CMDBuild.core.proxy.Configuration.readAll({
 							success: function(response, options, decoded) {
 								/**
 								 * CMDBuild
@@ -108,9 +108,6 @@
 								 * @deprecated
 								 */
 								CMDBuild.Config.cmdbuild = decoded.cmdbuild;
-
-								// Localization
-								CMDBuild.configuration[CMDBuild.core.proxy.Constants.LOCALIZATION].setEnabledLanguages(decoded.cmdbuild.enabled_languages);
 
 								// DMS
 								CMDBuild.Config.dms = decoded.dms;
