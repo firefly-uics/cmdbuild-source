@@ -1,16 +1,14 @@
 (function() {
 
-	Ext.define('CMDBuild.view.administration.dataViews.filter.FormPanel', {
+	Ext.define('CMDBuild.view.administration.dataView.filter.FormPanel', {
 		extend: 'Ext.form.Panel',
 
 		requires: ['CMDBuild.core.proxy.Constants'],
 
-		mixins: {
-			panelFunctions: 'CMDBuild.view.common.PanelFunctions'
-		},
+		mixins: ['CMDBuild.view.common.PanelFunctions'],
 
 		/**
-		 * @cfg {CMDBuild.controller.administration.dataViews.Filter}
+		 * @cfg {CMDBuild.controller.administration.dataView.Filter}
 		 */
 		delegate: undefined,
 
@@ -42,7 +40,6 @@
 		},
 
 		initComponent: function() {
-
 			Ext.apply(this, {
 				dockedItems: [
 					Ext.create('Ext.toolbar.Toolbar', {
