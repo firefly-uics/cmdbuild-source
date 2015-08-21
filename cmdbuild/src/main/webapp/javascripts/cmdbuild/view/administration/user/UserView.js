@@ -1,12 +1,12 @@
 (function() {
 
-	Ext.define('CMDBuild.view.administration.users.UsersView', {
+	Ext.define('CMDBuild.view.administration.user.UserView', {
 		extend: 'Ext.panel.Panel',
 
 		requires: ['CMDBuild.core.proxy.Constants'],
 
 		/**
-		 * @cfg {CMDBuild.controller.administration.users.Users}
+		 * @cfg {CMDBuild.controller.administration.user.User}
 		 */
 		delegate: undefined,
 

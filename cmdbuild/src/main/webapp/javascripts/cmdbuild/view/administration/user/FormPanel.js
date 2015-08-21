@@ -1,19 +1,17 @@
 (function () {
 
-	Ext.define('CMDBuild.view.administration.users.FormPanel', {
+	Ext.define('CMDBuild.view.administration.user.FormPanel', {
 		extend: 'Ext.form.Panel',
 
 		requires: [
 			'CMDBuild.core.proxy.Constants',
-			'CMDBuild.core.proxy.Users'
+			'CMDBuild.core.proxy.User'
 		],
 
-		mixins: {
-			panelFunctions: 'CMDBuild.view.common.PanelFunctions'
-		},
+		mixins: ['CMDBuild.view.common.PanelFunctions'],
 
 		/**
-		 * @cfg {CMDBuild.controller.administration.users.Users}
+		 * @cfg {CMDBuild.controller.administration.user.User}
 		 */
 		delegate: undefined,
 
@@ -175,7 +173,7 @@
 										editable: false,
 										allowBlank: true,
 
-										store: CMDBuild.core.proxy.Users.getDefaultGroupStore(),
+										store: CMDBuild.core.proxy.User.getDefaultGroupStore(),
 										queryMode: 'local'
 									}),
 									Ext.create('Ext.form.field.Checkbox', {

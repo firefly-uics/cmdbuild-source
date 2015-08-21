@@ -1,12 +1,11 @@
 (function() {
 
-	Ext.define('CMDBuild.controller.administration.users.Users', {
+	Ext.define('CMDBuild.controller.administration.user.User', {
 		extend: 'CMDBuild.controller.common.AbstractBasePanelController',
 
 		requires: [
 			'CMDBuild.core.proxy.Constants',
-			'CMDBuild.core.proxy.Users',
-			'CMDBuild.model.Users'
+			'CMDBuild.core.proxy.User'
 		],
 
 		/**
@@ -30,34 +29,34 @@
 		selectedUser: undefined,
 
 		/**
-		 * @property {CMDBuild.view.administration.users.FormPanel}
+		 * @property {CMDBuild.view.administration.user.FormPanel}
 		 */
 		form: undefined,
 
 		/**
-		 * @property {CMDBuild.view.administration.users.GridPanel}
+		 * @property {CMDBuild.view.administration.user.GridPanel}
 		 */
 		grid: undefined,
 
 		/**
-		 * @property {CMDBuild.view.administration.users.UsersView}
+		 * @property {CMDBuild.view.administration.user.UserView}
 		 */
 		view: undefined,
 
 		/**
-		 * @param {CMDBuild.view.administration.users.UsersView} view
+		 * @param {CMDBuild.view.administration.user.UserView} view
 		 */
 		constructor: function(view) {
 			this.callParent(arguments);
 
-			this.grid = Ext.create('CMDBuild.view.administration.users.GridPanel', {
+			this.grid = Ext.create('CMDBuild.view.administration.user.GridPanel', {
 				delegate: this,
 				region: 'north',
 				split: true,
 				height: '30%'
 			});
 
-			this.form = Ext.create('CMDBuild.view.administration.users.FormPanel', {
+			this.form = Ext.create('CMDBuild.view.administration.user.FormPanel', {
 				delegate: this,
 				region: 'center'
 			});
@@ -105,7 +104,7 @@
 			this.form.reset();
 			this.form.setDisabledModify(false, true);
 			this.form.defaultGroup.setDisabled(true);
-			this.form.loadRecord(Ext.create('CMDBuild.model.Users.single'));
+			this.form.loadRecord(Ext.create('CMDBuild.model.user.User'));
 		},
 
 		onUserChangePasswordButtonClick: function() {
@@ -117,7 +116,7 @@
 			params['userid'] = this.selectedUser.get('userid');
 			params[CMDBuild.core.proxy.Constants.DISABLE] = this.selectedUser.get(CMDBuild.core.proxy.Constants.IS_ACTIVE);
 
-			CMDBuild.core.proxy.Users.disable({
+			CMDBuild.core.proxy.User.disable({
 				params: params,
 				scope: this,
 				success: this.success
@@ -185,7 +184,7 @@
 				var params = this.form.getData(true);
 				params['userid'] = Ext.isEmpty(this.selectedUser) ? -1 : this.selectedUser.get('userid');
 
-				CMDBuild.core.proxy.Users.save({
+				CMDBuild.core.proxy.User.save({
 					params: params,
 					scope: this,
 					success: this.success

@@ -1,15 +1,15 @@
 (function() {
 
-	Ext.define('CMDBuild.view.administration.users.GridPanel', {
+	Ext.define('CMDBuild.view.administration.user.GridPanel', {
 		extend: 'Ext.grid.Panel',
 
 		requires: [
 			'CMDBuild.core.proxy.Constants',
-			'CMDBuild.core.proxy.Users'
+			'CMDBuild.core.proxy.User'
 		],
 
 		/**
-		 * @cfg {CMDBuild.controller.administration.users.Users}
+		 * @cfg {CMDBuild.controller.administration.user.User}
 		 */
 		delegate: undefined,
 
@@ -30,7 +30,7 @@
 						flex: 1
 					}
 				],
-				store: CMDBuild.core.proxy.Users.getStore()
+				store: CMDBuild.core.proxy.User.getStore()
 			});
 
 			this.callParent(arguments);
