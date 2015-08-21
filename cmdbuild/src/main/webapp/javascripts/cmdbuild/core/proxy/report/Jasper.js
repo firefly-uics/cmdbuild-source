@@ -1,11 +1,11 @@
 (function() {
 
-	Ext.define('CMDBuild.core.proxy.reports.Jasper', {
+	Ext.define('CMDBuild.core.proxy.report.Jasper', {
 
 		requires: [
 			'CMDBuild.core.proxy.Constants',
 			'CMDBuild.core.proxy.Index',
-			'CMDBuild.model.reports.Grid'
+			'CMDBuild.model.report.Grid'
 		],
 
 		singleton: true,
@@ -20,8 +20,9 @@
 					url: CMDBuild.core.proxy.Index.reports.jasper.analyze,
 					params: parameters.params,
 					scope: parameters.scope || this,
-					failure: parameters.failure || Ext.emptyFn(),
-					success: parameters.success || Ext.emptyFn()
+					failure: parameters.failure || Ext.emptyFn,
+					success: parameters.success || Ext.emptyFn,
+					callback: parameters.callback || Ext.emptyFn
 				});
 			} else {
 				_error('analizeReport form parameter not defined', this);
@@ -35,11 +36,11 @@
 			CMDBuild.Ajax.request({
 				url: CMDBuild.core.proxy.Index.reports.jasper.create,
 				params: parameters.params,
-				scope: parameters.scope || this,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
-				failure: parameters.failure || Ext.emptyFn(),
-				success: parameters.success || Ext.emptyFn(),
-				callback: parameters.callback || Ext.emptyFn()
+				scope: parameters.scope || this,
+				failure: parameters.failure || Ext.emptyFn,
+				success: parameters.success || Ext.emptyFn,
+				callback: parameters.callback || Ext.emptyFn
 			});
 		},
 
@@ -49,7 +50,7 @@
 		getStore: function() {
 			return Ext.create('Ext.data.Store', {
 				autoLoad: false,
-				model: 'CMDBuild.model.reports.Grid',
+				model: 'CMDBuild.model.report.Grid',
 				proxy: {
 					type: 'ajax',
 					url: CMDBuild.core.proxy.Index.reports.jasper.getReportsByType,
@@ -78,8 +79,8 @@
 					url: CMDBuild.core.proxy.Index.reports.jasper.import,
 					params: parameters.params,
 					scope: parameters.scope || this,
-					failure: parameters.failure || Ext.emptyFn(),
-					success: parameters.success || Ext.emptyFn()
+					failure: parameters.failure || Ext.emptyFn,
+					success: parameters.success || Ext.emptyFn
 				});
 			} else {
 				_error('importReport form parameter not defined', this);
@@ -94,11 +95,11 @@
 				method: 'POST',
 				url: CMDBuild.core.proxy.Index.reports.jasper.remove,
 				params: parameters.params,
-				scope: parameters.scope || this,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
-				failure: parameters.failure || Ext.emptyFn(),
-				success: parameters.success || Ext.emptyFn(),
-				callback: parameters.callback || Ext.emptyFn()
+				scope: parameters.scope || this,
+				failure: parameters.failure || Ext.emptyFn,
+				success: parameters.success || Ext.emptyFn,
+				callback: parameters.callback || Ext.emptyFn
 			});
 		},
 
@@ -109,11 +110,11 @@
 			CMDBuild.Ajax.request({
 				method: 'POST',
 				url: CMDBuild.core.proxy.Index.reports.jasper.resetSession,
-				scope: parameters.scope || this,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
-				failure: parameters.failure || Ext.emptyFn(),
-				success: parameters.success || Ext.emptyFn(),
-				callback: parameters.callback || Ext.emptyFn()
+				scope: parameters.scope || this,
+				failure: parameters.failure || Ext.emptyFn,
+				success: parameters.success || Ext.emptyFn,
+				callback: parameters.callback || Ext.emptyFn
 			});
 		},
 
@@ -125,11 +126,11 @@
 				method: 'POST',
 				url: CMDBuild.core.proxy.Index.reports.jasper.save,
 				params: parameters.params,
-				scope: parameters.scope || this,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
-				failure: parameters.failure || Ext.emptyFn(),
-				success: parameters.success || Ext.emptyFn(),
-				callback: parameters.callback || Ext.emptyFn()
+				scope: parameters.scope || this,
+				failure: parameters.failure || Ext.emptyFn,
+				success: parameters.success || Ext.emptyFn,
+				callback: parameters.callback || Ext.emptyFn
 			});
 		}
 	});

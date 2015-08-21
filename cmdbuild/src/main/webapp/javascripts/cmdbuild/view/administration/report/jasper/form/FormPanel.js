@@ -1,26 +1,24 @@
 (function() {
 
-	Ext.define('CMDBuild.view.administration.reports.jasper.form.FormPanel', {
+	Ext.define('CMDBuild.view.administration.report.jasper.form.FormPanel', {
 		extend: 'Ext.form.Panel',
 
 		requires: ['CMDBuild.core.proxy.Constants'],
 
-		mixins: {
-			panelFunctions: 'CMDBuild.view.common.PanelFunctions'
-		},
+		mixins: ['CMDBuild.view.common.PanelFunctions'],
 
 		/**
-		 * @cfg {CMDBuild.controller.administration.reports.Jasper}
+		 * @cfg {CMDBuild.controller.administration.report.Jasper}
 		 */
 		delegate: undefined,
 
 		/**
-		 * @property {CMDBuild.view.administration.reports.jasper.form.Step1Panel}
+		 * @property {CMDBuild.view.administration.report.jasper.form.Step1Panel}
 		 */
 		step1Panel: undefined,
 
 		/**
-		 * @property {CMDBuild.view.administration.reports.jasper.form.Step2Panel}
+		 * @property {CMDBuild.view.administration.report.jasper.form.Step2Panel}
 		 */
 		step2Panel: undefined,
 
@@ -34,7 +32,6 @@
 		layout: 'card',
 
 		initComponent: function() {
-
 			Ext.apply(this, {
 				dockedItems: [
 					Ext.create('Ext.toolbar.Toolbar', {
@@ -90,8 +87,8 @@
 					})
 				],
 				items: [
-					this.step1Panel = Ext.create('CMDBuild.view.administration.reports.jasper.form.Step1Panel'),
-					this.step2Panel = Ext.create('CMDBuild.view.administration.reports.jasper.form.Step2Panel')
+					this.step1Panel = Ext.create('CMDBuild.view.administration.report.jasper.form.Step1Panel'),
+					this.step2Panel = Ext.create('CMDBuild.view.administration.report.jasper.form.Step2Panel')
 				]
 			});
 

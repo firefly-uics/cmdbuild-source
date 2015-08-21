@@ -1,16 +1,16 @@
 (function() {
 
-	Ext.define('CMDBuild.view.administration.reports.jasper.GridPanel', {
+	Ext.define('CMDBuild.view.administration.report.jasper.GridPanel', {
 		extend: 'Ext.grid.Panel',
 
 		requires: [
 			'CMDBuild.core.Message',
 			'CMDBuild.core.proxy.Constants',
-			'CMDBuild.core.proxy.reports.Jasper'
+			'CMDBuild.core.proxy.report.Jasper'
 		],
 
 		/**
-		 * @cfg {CMDBuild.controller.administration.reports.Jasper}
+		 * @cfg {CMDBuild.controller.administration.report.Jasper}
 		 */
 		delegate: undefined,
 
@@ -18,7 +18,7 @@
 		frame: false,
 
 		initComponent: function() {
-			var store = CMDBuild.core.proxy.reports.Jasper.getStore();
+			var store = CMDBuild.core.proxy.report.Jasper.getStore();
 
 			Ext.apply(this, {
 				dockedItems: [

@@ -1,22 +1,22 @@
 (function() {
 
-	Ext.define('CMDBuild.view.administration.reports.jasper.JasperView', {
+	Ext.define('CMDBuild.view.administration.report.jasper.JasperView', {
 		extend: 'Ext.panel.Panel',
 
 		requires: ['CMDBuild.core.proxy.Constants'],
 
 		/**
-		 * @cfg {CMDBuild.controller.administration.reports.Jasper}
+		 * @cfg {CMDBuild.controller.administration.report.Jasper}
 		 */
 		delegate: undefined,
 
 		/**
-		 * @property {CMDBuild.view.administration.reports.jasper.form.FormPanel}
+		 * @property {CMDBuild.view.administration.report.jasper.form.FormPanel}
 		 */
 		form: undefined,
 
 		/**
-		 * @property {CMDBuild.view.administration.reports.jasper.GridPanel}
+		 * @property {CMDBuild.view.administration.report.jasper.GridPanel}
 		 */
 		grid: undefined,
 
@@ -44,13 +44,13 @@
 					})
 				],
 				items: [
-					this.grid = Ext.create('CMDBuild.view.administration.reports.jasper.GridPanel', {
+					this.grid = Ext.create('CMDBuild.view.administration.report.jasper.GridPanel', {
 						delegate: this.delegate,
 						region: 'north',
 						split: true,
 						height: '30%'
 					}),
-					this.form = Ext.create('CMDBuild.view.administration.reports.jasper.form.FormPanel', {
+					this.form = Ext.create('CMDBuild.view.administration.report.jasper.form.FormPanel', {
 						delegate: this.delegate,
 						region: 'center'
 					})
