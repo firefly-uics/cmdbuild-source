@@ -1,14 +1,18 @@
 package org.cmdbuild.servlets.json;
 
+import static com.google.common.collect.FluentIterable.from;
 import static org.apache.commons.lang3.builder.ToStringBuilder.reflectionToString;
 import static org.apache.commons.lang3.builder.ToStringStyle.SHORT_PREFIX_STYLE;
+import static org.cmdbuild.services.json.dto.JsonResponse.success;
 import static org.cmdbuild.servlets.json.CommunicationConstants.CLASS_NAME;
 import static org.cmdbuild.servlets.json.CommunicationConstants.CONFIGURATION;
 import static org.cmdbuild.servlets.json.CommunicationConstants.COUNT;
 import static org.cmdbuild.servlets.json.CommunicationConstants.DESCRIPTION;
+import static org.cmdbuild.servlets.json.CommunicationConstants.ELEMENTS;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ENTRY_TYPE;
 import static org.cmdbuild.servlets.json.CommunicationConstants.FILTER;
 import static org.cmdbuild.servlets.json.CommunicationConstants.FILTERS;
+import static org.cmdbuild.servlets.json.CommunicationConstants.GROUP;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ID;
 import static org.cmdbuild.servlets.json.CommunicationConstants.LIMIT;
 import static org.cmdbuild.servlets.json.CommunicationConstants.NAME;
@@ -16,15 +20,24 @@ import static org.cmdbuild.servlets.json.CommunicationConstants.POSITION;
 import static org.cmdbuild.servlets.json.CommunicationConstants.START;
 import static org.cmdbuild.servlets.json.CommunicationConstants.TEMPLATE;
 
+import java.util.List;
+
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.cmdbuild.common.utils.PagedElements;
 import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.logic.filter.FilterLogic;
+import org.cmdbuild.services.json.dto.JsonResponse;
 import org.cmdbuild.servlets.utils.Parameter;
+import org.codehaus.jackson.annotate.JsonProperty;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import com.google.common.base.Function;
+import com.google.common.collect.Lists;
 
 public class Filter extends JSONBaseWithSpringContext {
 
@@ -170,6 +183,124 @@ public class Filter extends JSONBaseWithSpringContext {
 
 	}
 
+	private static class JsonFilter {
+
+		private static final Function<FilterLogic.Filter, JsonFilter> FUNCTION = new Function<FilterLogic.Filter, Filter.JsonFilter>() {
+
+			@Override
+			public JsonFilter apply(final FilterLogic.Filter input) {
+				return new JsonFilter(input);
+			}
+
+		};
+
+		public static Function<FilterLogic.Filter, JsonFilter> function() {
+			return FUNCTION;
+		}
+
+		private final FilterLogic.Filter delegate;
+
+		public JsonFilter(final FilterLogic.Filter delegate) {
+			this.delegate = delegate;
+		}
+
+		@JsonProperty(ID)
+		public Long getId() {
+			return delegate.getId();
+		}
+
+		@JsonProperty(NAME)
+		public String getName() {
+			return delegate.getName();
+		}
+
+		@JsonProperty(DESCRIPTION)
+		public String getDescription() {
+			return delegate.getDescription();
+		}
+
+		@JsonProperty(ENTRY_TYPE)
+		public String getClassName() {
+			return delegate.getClassName();
+		}
+
+		@JsonProperty(CONFIGURATION)
+		public String getConfiguration() {
+			return delegate.getConfiguration();
+		}
+
+		@JsonProperty(TEMPLATE)
+		public boolean isShared() {
+			return delegate.isShared();
+		}
+
+	}
+
+	private static class JsonFilters {
+
+		private static class Builder implements org.apache.commons.lang3.builder.Builder<JsonFilters> {
+
+			private List<? super JsonFilter> elements;
+
+			private Builder() {
+				// use factory method
+			}
+
+			@Override
+			public JsonFilters build() {
+				return new JsonFilters(this);
+			}
+
+			public Builder withElements(final Iterable<? extends JsonFilter> elements) {
+				this.elements = Lists.newArrayList(elements);
+				return this;
+			}
+
+		}
+
+		public static Builder newInstance() {
+			return new Builder();
+		}
+
+		private final List<? super JsonFilter> elements;
+
+		private JsonFilters(final Builder builder) {
+			this.elements = builder.elements;
+		}
+
+		@JsonProperty(ELEMENTS)
+		public List<? super JsonFilter> getElements() {
+			return elements;
+		}
+
+		@Override
+		public boolean equals(final Object obj) {
+			if (obj == this) {
+				return true;
+			}
+			if (!(obj instanceof JsonFilters)) {
+				return false;
+			}
+			final JsonFilters other = JsonFilters.class.cast(obj);
+			return new EqualsBuilder() //
+					.append(this.elements, other.elements) //
+					.isEquals();
+		}
+
+		@Override
+		public int hashCode() {
+			return new HashCodeBuilder() //
+					.append(elements) //
+					.toHashCode();
+		}
+
+		@Override
+		public String toString() {
+			return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
+		}
+
+	}
+
 	/**
 	 * Retrieves only users' filters (it does not fetches filters defined for
 	 * groups)
@@ -284,6 +415,27 @@ public class Filter extends JSONBaseWithSpringContext {
 		final JSONObject out = new JSONObject();
 		out.put(POSITION, position);
 		return out;
+	}
+
+	@JSONExported
+	public JsonResponse getDefault( //
+			@Parameter(value = CLASS_NAME) final String className, //
+			@Parameter(value = GROUP) final String groupName //
+	) {
+		final Iterable<FilterLogic.Filter> element = filterLogic().getDefaults(className, groupName);
+		return success(JsonFilters.newInstance() //
+				.withElements(from(element) //
+						.transform(JsonFilter.function())) //
+				.build());
+	}
+
+	@JSONExported
+	@Admin
+	public void setDefault( //
+			@Parameter(value = ID, required = true) final Long filter, //
+			@Parameter(value = GROUP, required = true) final String groupName //
+	) {
+		filterLogic().setDefault(filter, groupName);
 	}
 
 	/**

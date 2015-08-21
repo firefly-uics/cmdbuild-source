@@ -2,6 +2,7 @@ package org.cmdbuild.logic.filter;
 
 import static com.google.common.collect.FluentIterable.from;
 import static com.google.common.collect.Iterables.concat;
+import static com.google.common.collect.Lists.newArrayList;
 import static java.lang.Integer.MAX_VALUE;
 
 import org.apache.commons.lang3.Validate;
@@ -221,6 +222,22 @@ public class DefaultFilterLogic implements FilterLogic {
 		return new PagedElements<Filter>(from(response) //
 				.transform(toLogic()), //
 				response.totalSize());
+	}
+
+	@Override
+	public Iterable<Filter> getDefaults(final String className, final String groupName) {
+		logger.info(MARKER, "getting first default filter for class '{}' that it's related with group '{}'", className,
+				groupName);
+		// TODO default group
+		return from(store.getAllFilters(className, groupName)) //
+				.transform(toLogic());
+	}
+
+	@Override
+	public void setDefault(final Long filter, final String groupName) {
+		final FilterStore.Filter stored = store.fetchFilter(filter);
+		store.disjoin(groupName, store.getAllFilters(stored.getClassName(), groupName));
+		store.join(groupName, newArrayList(stored));
 	}
 
 	private Function<FilterStore.Filter, Filter> toLogic() {

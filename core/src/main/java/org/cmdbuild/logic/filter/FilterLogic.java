@@ -35,4 +35,8 @@ public interface FilterLogic extends Logic {
 
 	PagedElements<Filter> getAllUserFilters(String className, int start, int limit);
 
+	Iterable<Filter> getDefaults(String className, String groupName);
+
+	void setDefault(Long filter, String groupName);
+
 }
