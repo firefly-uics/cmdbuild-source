@@ -228,8 +228,13 @@ public class DefaultFilterLogic implements FilterLogic {
 	public Iterable<Filter> getDefaults(final String className, final String groupName) {
 		logger.info(MARKER, "getting first default filter for class '{}' that it's related with group '{}'", className,
 				groupName);
-		// TODO default group
-		return from(store.getAllFilters(className, groupName)) //
+		final String _groupName;
+		if (groupName == null) {
+			_groupName = userStore.getUser().getPreferredGroup().getName();
+		} else {
+			_groupName = groupName;
+		}
+		return from(store.getAllFilters(className, _groupName)) //
 				.transform(toLogic());
 	}
 
