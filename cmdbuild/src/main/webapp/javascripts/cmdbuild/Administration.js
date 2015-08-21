@@ -320,9 +320,9 @@
 							new CMDBuild.view.administration.group.CMModGroup({
 								cmControllerType: controllerNS.administration.group.CMModGroupsController
 							}),
-							Ext.create('CMDBuild.view.administration.users.UsersView', {
-								cmControllerType: 'CMDBuild.controller.administration.users.Users',
-								cmName: 'users'
+							Ext.create('CMDBuild.view.administration.user.UserView', {
+								cmControllerType: 'CMDBuild.controller.administration.user.User',
+								cmName: 'user'
 							})
 						]);
 					},

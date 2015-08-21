@@ -1,10 +1,12 @@
 (function() {
 
-	Ext.define('CMDBuild.core.proxy.Users', {
+	Ext.define('CMDBuild.core.proxy.User', {
 
 		requires: [
+			'CMDBuild.core.proxy.Constants',
 			'CMDBuild.core.proxy.Index',
-			'CMDBuild.model.Users'
+			'CMDBuild.model.user.DefaultGroup',
+			'CMDBuild.model.user.User'
 		],
 
 		singleton: true,
@@ -15,13 +17,13 @@
 		disable:function(parameters) {
 			CMDBuild.Ajax.request({
 				method: 'POST',
-				url: CMDBuild.core.proxy.Index.users.disable,
+				url: CMDBuild.core.proxy.Index.user.disable,
 				params: parameters.params,
-				scope: parameters.scope,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
-				failure: parameters.failure || Ext.emptyFn(),
-				success: parameters.success || Ext.emptyFn(),
-				callback: parameters.callback || Ext.emptyFn()
+				scope: parameters.scope || this,
+				failure: parameters.failure || Ext.emptyFn,
+				success: parameters.success || Ext.emptyFn,
+				callback: parameters.callback || Ext.emptyFn
 			});
 		},
 
@@ -30,11 +32,11 @@
 		 */
 		getStore: function() {
 			return Ext.create('Ext.data.Store', {
-				model: 'CMDBuild.model.Users.single',
+				model: 'CMDBuild.model.user.User',
 				autoLoad: true,
 				proxy: {
 					type: 'ajax',
-					url: CMDBuild.core.proxy.Index.users.getList,
+					url: CMDBuild.core.proxy.Index.user.getList,
 					reader: {
 						type: 'json',
 						root: 'rows'
@@ -53,10 +55,10 @@
 		getDefaultGroupStore: function() {
 			return Ext.create('Ext.data.JsonStore', {
 				autoLoad: false,
-				model: 'CMDBuild.model.Users.defaultGroup',
+				model: 'CMDBuild.model.user.DefaultGroup',
 				proxy: {
 					type: 'ajax',
-					url: CMDBuild.core.proxy.Index.users.getGroupList,
+					url: CMDBuild.core.proxy.Index.user.getGroupList,
 					reader: {
 						root: 'result',
 						type: 'json'
@@ -75,13 +77,13 @@
 		save:function(parameters) {
 			CMDBuild.Ajax.request({
 				method: 'POST',
-				url: CMDBuild.core.proxy.Index.users.save,
+				url: CMDBuild.core.proxy.Index.user.save,
 				params: parameters.params,
-				scope: parameters.scope,
+				scope: parameters.scope || this,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
-				failure: parameters.failure || Ext.emptyFn(),
-				success: parameters.success || Ext.emptyFn(),
-				callback: parameters.callback || Ext.emptyFn()
+				failure: parameters.failure || Ext.emptyFn,
+				success: parameters.success || Ext.emptyFn,
+				callback: parameters.callback || Ext.emptyFn
 			});
 		}
 	});

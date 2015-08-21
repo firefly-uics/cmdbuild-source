@@ -47,7 +47,7 @@
 				{
 					text: CMDBuild.Translation.administration.modsecurity.users,
 					iconCls: 'cmdbuild-tree-user-icon',
-					cmName: 'users',
+					cmName: 'user',
 					leaf: true
 				}
 			];

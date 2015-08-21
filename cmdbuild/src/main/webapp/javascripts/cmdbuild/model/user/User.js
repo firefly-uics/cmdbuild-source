@@ -1,19 +1,9 @@
 (function() {
 
-	Ext.require('CMDBuild.core.proxy.Constants');
-
-	Ext.define('CMDBuild.model.Users.defaultGroup', {
+	Ext.define('CMDBuild.model.user.User', {
 		extend: 'Ext.data.Model',
 
-		fields: [
-			{ name: CMDBuild.core.proxy.Constants.DESCRIPTION, type: 'string' },
-			{ name: CMDBuild.core.proxy.Constants.ID, type: 'int', useNull: true },
-			{ name: 'isdefault', type: 'boolean' }
-		]
-	});
-
-	Ext.define('CMDBuild.model.Users.single', {
-		extend: 'Ext.data.Model',
+		requires: ['CMDBuild.core.proxy.Constants'],
 
 		fields: [
 			{ name: 'defaultgroup', type: 'int', useNull: true },
