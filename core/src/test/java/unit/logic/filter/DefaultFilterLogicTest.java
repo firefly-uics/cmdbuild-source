@@ -391,7 +391,7 @@ public class DefaultFilterLogicTest {
 	}
 
 	@Test
-	public void allDefaultFiltersAreRequested() throws Exception {
+	public void allDefaultFiltersAreRequestedWithSpecificGroup() throws Exception {
 		// given
 		final FilterStore.Filter first = mock(FilterStore.Filter.class);
 		final FilterStore.Filter second = mock(FilterStore.Filter.class);
@@ -414,6 +414,43 @@ public class DefaultFilterLogicTest {
 		verify(store).getAllFilters(eq("a classname"), eq("a group"));
 		verify(converter, times(2)).storeToLogic(captor.capture());
 		verifyNoMoreInteractions(store, converter, userStore, authenticatedUser, privilegeContext);
+
+		assertThat(captor.getAllValues().get(0), equalTo(first));
+		assertThat(captor.getAllValues().get(1), equalTo(second));
+	}
+
+	@Test
+	public void allDefaultFiltersAreRequestedWithNoGroup() throws Exception {
+		// given
+		final CMGroup selectedGroup = mock(CMGroup.class);
+		doReturn("a group") //
+				.when(selectedGroup).getName();
+		final OperationUser operationUser = new OperationUser(authenticatedUser, privilegeContext, selectedGroup);
+		doReturn(operationUser) //
+				.when(userStore).getUser();
+		final FilterStore.Filter first = mock(FilterStore.Filter.class);
+		final FilterStore.Filter second = mock(FilterStore.Filter.class);
+		doReturn(asList(first, second)) //
+				.when(store).getAllFilters(anyString(), anyString());
+		final Filter _first = mock(Filter.class);
+		final Filter _second = mock(Filter.class);
+		doReturn(_first).doReturn(_second) //
+				.when(converter).storeToLogic(any(FilterStore.Filter.class));
+
+		// when
+		final Iterable<Filter> output = newArrayList(defaultFilterLogic.getDefaults("a classname", null));
+
+		// then
+		assertThat(size(output), equalTo(2));
+		assertThat(output, containsInAnyOrder(_first, _second));
+
+		final ArgumentCaptor<FilterStore.Filter> captor = ArgumentCaptor.forClass(FilterStore.Filter.class);
+
+		verify(userStore).getUser();
+		verify(selectedGroup).getName();
+		verify(store).getAllFilters(eq("a classname"), eq("a group"));
+		verify(converter, times(2)).storeToLogic(captor.capture());
+		verifyNoMoreInteractions(store, converter, userStore, authenticatedUser, privilegeContext, selectedGroup);
 
 		assertThat(captor.getAllValues().get(0), equalTo(first));
 		assertThat(captor.getAllValues().get(1), equalTo(second));
