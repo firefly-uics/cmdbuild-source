@@ -264,7 +264,7 @@
 						} else {
 							this.setFormDetails(action.result);
 
-							if (this.form.step2Panel.items.length == 0) {
+							if (this.form.step2Panel.items.items.length == 0) {
 								this.import();
 							} else {
 								this.form.getLayout().setActiveItem(1);

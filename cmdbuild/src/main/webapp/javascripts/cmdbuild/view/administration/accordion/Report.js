@@ -1,9 +1,14 @@
 (function() {
 
-	Ext.define('CMDBuild.view.administration.accordion.Reports', {
+	Ext.define('CMDBuild.view.administration.accordion.Report', {
 		extend: 'CMDBuild.view.common.CMBaseAccordion',
 
 		requires: ['CMDBuild.core.proxy.Constants'],
+
+		/**
+		 * @cfg {String}
+		 */
+		cmName: undefined,
 
 		title: CMDBuild.Translation.report,
 

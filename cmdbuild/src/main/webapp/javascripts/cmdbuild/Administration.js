@@ -22,7 +22,7 @@
 			'CMDBuild.core.proxy.Configuration',
 			'CMDBuild.core.proxy.Domain',
 			'CMDBuild.core.proxy.lookup.Type',
-			'CMDBuild.core.proxy.reports.Reports'
+			'CMDBuild.core.proxy.report.Report'
 		],
 
 		name: 'CMDBuild',
@@ -81,14 +81,14 @@
 									}),
 									Ext.create('CMDBuild.view.administration.filter.FilterView', {
 										cmControllerType: 'CMDBuild.controller.administration.filter.Filter',
-										cmName: 'filters'
+										cmName: 'filter'
 									}),
 									Ext.create('CMDBuild.view.administration.localization.LocalizationView', {
 										cmControllerType: 'CMDBuild.controller.administration.localization.Localization',
 										cmName: 'localizations'
 									}),
-									Ext.create('CMDBuild.view.administration.reports.ReportsView', {
-										cmControllerType: 'CMDBuild.controller.administration.reports.Reports',
+									Ext.create('CMDBuild.view.administration.report.ReportView', {
+										cmControllerType: 'CMDBuild.controller.administration.report.Report',
 										cmName: 'report'
 									}),
 									Ext.create('CMDBuild.view.administration.tasks.CMTasks', {
@@ -145,11 +145,11 @@
 							processAccordion,
 							domainAccordion,
 							dataViewAccordion,
-							Ext.create('CMDBuild.view.administration.accordion.Filters', { cmName: 'filters' }),
+							Ext.create('CMDBuild.view.administration.accordion.Filter', { cmName: 'filter' }),
 							navigationTreesAccordion,
 							lookupAccordion,
 							dashboardsAccordion,
-							Ext.create('CMDBuild.view.administration.accordion.Reports', { cmName: 'report' }),
+							Ext.create('CMDBuild.view.administration.accordion.Report', { cmName: 'report' }),
 							menuAccordion,
 							groupsAccordion,
 							Ext.create('CMDBuild.view.administration.accordion.Tasks', { cmName: 'tasks' }),

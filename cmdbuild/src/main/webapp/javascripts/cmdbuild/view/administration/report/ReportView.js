@@ -1,10 +1,10 @@
 (function() {
 
-	Ext.define('CMDBuild.view.administration.reports.ReportsView', {
+	Ext.define('CMDBuild.view.administration.report.ReportView', {
 		extend: 'Ext.form.Panel',
 
 		/**
-		 * @cfg {CMDBuild.controller.administration.filters.Reports}
+		 * @cfg {CMDBuild.controller.administration.report.Report}
 		 */
 		delegate: undefined,
 

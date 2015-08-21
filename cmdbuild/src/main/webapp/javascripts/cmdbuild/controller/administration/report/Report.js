@@ -1,6 +1,6 @@
 (function() {
 
-	Ext.define('CMDBuild.controller.administration.reports.Reports', {
+	Ext.define('CMDBuild.controller.administration.report.Report', {
 		extend: 'CMDBuild.controller.common.AbstractBasePanelController',
 
 		requires: ['CMDBuild.core.proxy.Constants'],
@@ -16,7 +16,7 @@
 		sectionController: undefined,
 
 		/**
-		 * @cfg {CMDBuild.view.administration.filters.ReportsView}
+		 * @cfg {CMDBuild.view.administration.report.ReportView}
 		 */
 		view: undefined,
 
@@ -34,7 +34,7 @@
 				switch(parameters.get(CMDBuild.core.proxy.Constants.ID)) {
 					case 'Jasper':
 					default: {
-						this.sectionController = Ext.create('CMDBuild.controller.administration.reports.Jasper', { parentDelegate: this });
+						this.sectionController = Ext.create('CMDBuild.controller.administration.report.Jasper', { parentDelegate: this });
 					}
 				}
 

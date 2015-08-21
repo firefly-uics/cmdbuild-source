@@ -172,7 +172,7 @@
 					params: params,
 					scope: this,
 					success: function(response, options, decodedResponse) { // Pop-up display mode
-						Ext.create('CMDBuild.controller.management.reports.Modal', {
+						Ext.create('CMDBuild.controller.management.report.Modal', {
 							parentDelegate: this,
 							extension: params[CMDBuild.core.proxy.Constants.EXTENSION]
 						});

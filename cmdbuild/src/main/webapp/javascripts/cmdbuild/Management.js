@@ -36,7 +36,7 @@
 			'CMDBuild.core.proxy.lookup.Type',
 			'CMDBuild.core.proxy.Menu',
 			'CMDBuild.core.proxy.dataView.DataView',
-			'CMDBuild.core.proxy.reports.Reports'
+			'CMDBuild.core.proxy.report.Report'
 		],
 
 		name: 'CMDBuild',
@@ -174,12 +174,12 @@
 					this.processPanel = new CMDBuild.view.management.workflow.CMModProcess({
 						cmControllerType: CMDBuild.controller.management.workflow.CMModWorkflowController
 					}),
-					Ext.create('CMDBuild.view.management.reports.ReportsView', {
-						cmControllerType: 'CMDBuild.controller.management.reports.Reports',
+					Ext.create('CMDBuild.view.management.report.ReportView', {
+						cmControllerType: 'CMDBuild.controller.management.report.Report',
 						cmName: 'report'
 					}),
-					Ext.create('CMDBuild.view.management.reports.SingleReportPanel', {
-						cmControllerType: 'CMDBuild.controller.management.reports.SingleReport',
+					Ext.create('CMDBuild.view.management.report.SingleReportPanel', {
+						cmControllerType: 'CMDBuild.controller.management.report.SingleReport',
 						cmName: 'singlereport'
 					}),
 					this.dashboardPanel = new CMDBuild.view.management.dashboard.CMModDashboard({
@@ -338,7 +338,7 @@
 				/**
 				 * Reports
 				 */
-				CMDBuild.core.proxy.reports.Reports.getTypesTree({
+				CMDBuild.core.proxy.report.Report.getTypesTree({
 					scope: this,
 					success: function(response, options, decodedResponse) {
 						_CMCache.addReports(decodedResponse);

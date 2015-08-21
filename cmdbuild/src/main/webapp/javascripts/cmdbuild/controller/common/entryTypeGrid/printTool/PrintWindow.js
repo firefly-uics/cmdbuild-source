@@ -6,7 +6,7 @@
 		requires: [
 			'CMDBuild.core.proxy.Constants',
 			'CMDBuild.core.proxy.Index',
-			'CMDBuild.core.proxy.reports.Print'
+			'CMDBuild.core.proxy.report.Print'
 		],
 
 		/**
@@ -81,19 +81,19 @@
 
 			switch (this.mode) {
 				case 'cardDetails': {
-					proxyCreateFunction = CMDBuild.core.proxy.reports.Print.createCardDetails;
+					proxyCreateFunction = CMDBuild.core.proxy.report.Print.createCardDetails;
 				} break;
 
 				case 'classSchema': {
-					proxyCreateFunction = CMDBuild.core.proxy.reports.Print.createClassSchema;
+					proxyCreateFunction = CMDBuild.core.proxy.report.Print.createClassSchema;
 				} break;
 
 				case 'schema': {
-					proxyCreateFunction = CMDBuild.core.proxy.reports.Print.createSchema;
+					proxyCreateFunction = CMDBuild.core.proxy.report.Print.createSchema;
 				} break;
 
 				case 'view': {
-					proxyCreateFunction = CMDBuild.core.proxy.reports.Print.createView;
+					proxyCreateFunction = CMDBuild.core.proxy.report.Print.createView;
 				} break;
 
 				default: {
