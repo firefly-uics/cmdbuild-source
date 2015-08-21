@@ -1,11 +1,36 @@
 (function() {
 
-	Ext.define('CMDBuild.view.administration.reports.jasper.form.Step1Panel', {
+	Ext.define('CMDBuild.view.administration.report.jasper.form.Step1Panel', {
 		extend: 'Ext.form.Panel',
 
-		mixins: {
-			panelFunctions: 'CMDBuild.view.common.PanelFunctions'
-		},
+		requires: ['CMDBuild.core.proxy.Constants'],
+
+		mixins: ['CMDBuild.view.common.PanelFunctions'],
+
+		/**
+		 * @property {CMDBuild.view.common.field.translatable.Text}
+		 */
+		description: undefined,
+
+		/**
+		 * @property {Ext.form.field.File}
+		 */
+		fileField: undefined,
+
+		/**
+		 * @property {CMDBuild.view.common.field.CMGroupSelectionList}
+		 */
+		groups: undefined,
+
+		/**
+		 * @property {Ext.form.field.Text}
+		 */
+		name: undefined,
+
+		/**
+		 * @property {Ext.form.field.Hidden}
+		 */
+		reportId: undefined,
 
 		border: false,
 		cls: 'x-panel-body-default-framed',
