@@ -93,4 +93,10 @@ public interface FilterStore {
 
 	Filter fetchFilter(Long filterId);
 
+	Iterable<Filter> getAllFilters(String className, String groupName);
+
+	void join(String groupName, Iterable<Filter> filters);
+
+	void disjoin(String groupName, Iterable<Filter> filters);
+
 }

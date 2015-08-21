@@ -3,6 +3,7 @@ package integration.services.store.filter;
 import static com.google.common.collect.Iterables.size;
 import static java.lang.Integer.MAX_VALUE;
 import static org.cmdbuild.common.Constants.ROLE_CLASS_NAME;
+import static org.cmdbuild.services.store.filter.DataViewFilterStore.CLASS_NAME;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertEquals;
@@ -41,7 +42,8 @@ public class DataViewFilterStoreTest extends IntegrationTestBase {
 
 	@After
 	public void clearSystemTables() throws Exception {
-		dbDataView().clear(filterStore.getFilterClass());
+		final CMClass clazz = dbDataView().findClass(CLASS_NAME);
+		dbDataView().clear(clazz);
 	}
 
 	@Test

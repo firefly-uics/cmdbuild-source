@@ -1,5 +1,7 @@
 package unit.logic.filter;
 
+import static com.google.common.collect.Iterables.size;
+import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.reflect.Reflection.newProxy;
 import static java.lang.Integer.MAX_VALUE;
 import static java.util.Arrays.asList;
@@ -386,6 +388,69 @@ public class DefaultFilterLogicTest {
 
 		assertThat(captor.getAllValues().get(0), equalTo(first));
 		assertThat(captor.getAllValues().get(1), equalTo(second));
+	}
+
+	@Test
+	public void allDefaultFiltersAreRequested() throws Exception {
+		// given
+		final FilterStore.Filter first = mock(FilterStore.Filter.class);
+		final FilterStore.Filter second = mock(FilterStore.Filter.class);
+		doReturn(asList(first, second)) //
+				.when(store).getAllFilters(anyString(), anyString());
+		final Filter _first = mock(Filter.class);
+		final Filter _second = mock(Filter.class);
+		doReturn(_first).doReturn(_second) //
+				.when(converter).storeToLogic(any(FilterStore.Filter.class));
+
+		// when
+		final Iterable<Filter> output = newArrayList(defaultFilterLogic.getDefaults("a classname", "a group"));
+
+		// then
+		assertThat(size(output), equalTo(2));
+		assertThat(output, containsInAnyOrder(_first, _second));
+
+		final ArgumentCaptor<FilterStore.Filter> captor = ArgumentCaptor.forClass(FilterStore.Filter.class);
+
+		verify(store).getAllFilters(eq("a classname"), eq("a group"));
+		verify(converter, times(2)).storeToLogic(captor.capture());
+		verifyNoMoreInteractions(store, converter, userStore, authenticatedUser, privilegeContext);
+
+		assertThat(captor.getAllValues().get(0), equalTo(first));
+		assertThat(captor.getAllValues().get(1), equalTo(second));
+	}
+
+	@Test
+	public void defaultFilterIsSetted() throws Exception {
+		// given
+		final FilterStore.Filter stored = mock(FilterStore.Filter.class);
+		doReturn("a classname") //
+				.when(stored).getClassName();
+		doReturn(stored) //
+				.when(store).fetchFilter(anyLong());
+		final FilterStore.Filter firstAlreadyJoined = mock(FilterStore.Filter.class);
+		final FilterStore.Filter secondAlreadyJoined = mock(FilterStore.Filter.class);
+		doReturn(asList(firstAlreadyJoined, secondAlreadyJoined)) //
+				.when(store).getAllFilters(anyString(), anyString());
+		final Filter _first = mock(Filter.class);
+		final Filter _second = mock(Filter.class);
+		doReturn(_first).doReturn(_second) //
+				.when(converter).storeToLogic(any(FilterStore.Filter.class));
+
+		// when
+		defaultFilterLogic.setDefault(42L, "a group");
+
+		// then
+		final ArgumentCaptor<Iterable> disjoinCaptor = ArgumentCaptor.forClass(Iterable.class);
+		final ArgumentCaptor<Iterable> joinCaptor = ArgumentCaptor.forClass(Iterable.class);
+
+		verify(store).fetchFilter(eq(42L));
+		verify(store).getAllFilters(eq("a classname"), eq("a group"));
+		verify(store).disjoin(eq("a group"), disjoinCaptor.capture());
+		verify(store).join(eq("a group"), joinCaptor.capture());
+
+		assertThat((Iterable<FilterStore.Filter>) disjoinCaptor.getValue(),
+				containsInAnyOrder(firstAlreadyJoined, secondAlreadyJoined));
+		assertThat((Iterable<FilterStore.Filter>) joinCaptor.getValue(), containsInAnyOrder(stored));
 	}
 
 }

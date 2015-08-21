@@ -1,9 +1,13 @@
 package org.cmdbuild.services.store.filter;
 
 import static com.google.common.collect.Maps.newHashMap;
-import static org.cmdbuild.common.Constants.CODE_ATTRIBUTE;
-import static org.cmdbuild.common.Constants.DESCRIPTION_ATTRIBUTE;
-import static org.cmdbuild.common.Constants.ID_ATTRIBUTE;
+import static org.cmdbuild.services.store.filter.DataViewFilterStore.CLASS_ID;
+import static org.cmdbuild.services.store.filter.DataViewFilterStore.CLASS_NAME;
+import static org.cmdbuild.services.store.filter.DataViewFilterStore.DESCRIPTION;
+import static org.cmdbuild.services.store.filter.DataViewFilterStore.FILTER;
+import static org.cmdbuild.services.store.filter.DataViewFilterStore.NAME;
+import static org.cmdbuild.services.store.filter.DataViewFilterStore.SHARED;
+import static org.cmdbuild.services.store.filter.DataViewFilterStore.USER_ID;
 
 import java.util.Map;
 
@@ -14,16 +18,6 @@ import org.cmdbuild.data.store.dao.BaseStorableConverter;
 import org.cmdbuild.services.store.filter.FilterStore.Filter;
 
 public class FilterConverter extends BaseStorableConverter<Filter> {
-
-	public static final String CLASS_NAME = "_Filter";
-
-	public static final String ID = ID_ATTRIBUTE;
-	public static final String NAME = CODE_ATTRIBUTE;
-	public static final String DESCRIPTION = DESCRIPTION_ATTRIBUTE;
-	public static final String ENTRYTYPE = "IdSourceClass";
-	public static final String FILTER = "Filter";
-	public static final String SHARED = "Template";
-	public static final String OWNER = "IdOwner";
 
 	private final CMDataView dataView;
 
@@ -38,7 +32,7 @@ public class FilterConverter extends BaseStorableConverter<Filter> {
 
 	@Override
 	public Filter convert(final CMCard card) {
-		final Long classId = card.get(ENTRYTYPE, Long.class);
+		final Long classId = card.get(CLASS_ID, Long.class);
 		final CMClass clazz = dataView.findClass(classId);
 		return FilterDTO.newFilter() //
 				.withId(card.getId()) //
@@ -47,7 +41,7 @@ public class FilterConverter extends BaseStorableConverter<Filter> {
 				.withClassName(clazz.getIdentifier().getLocalName()) //
 				.withConfiguration(card.get(FILTER, String.class)) //
 				.thatIsShared(card.get(SHARED, Boolean.class)) //
-				.withUserId(Number.class.cast(card.get(OWNER, Integer.class)).longValue()) //
+				.withUserId(Number.class.cast(card.get(USER_ID, Integer.class)).longValue()) //
 				.build();
 	}
 
@@ -56,10 +50,10 @@ public class FilterConverter extends BaseStorableConverter<Filter> {
 		final Map<String, Object> values = newHashMap();
 		values.put(NAME, storable.getName());
 		values.put(DESCRIPTION, storable.getDescription());
-		values.put(ENTRYTYPE, dataView.findClass(storable.getClassName()).getId());
+		values.put(CLASS_ID, dataView.findClass(storable.getClassName()).getId());
 		values.put(FILTER, storable.getConfiguration());
 		values.put(SHARED, storable.isShared());
-		values.put(OWNER, storable.getUserId());
+		values.put(USER_ID, storable.getUserId());
 		return values;
 	}
 
