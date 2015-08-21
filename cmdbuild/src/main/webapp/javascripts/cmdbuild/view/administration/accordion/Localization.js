@@ -1,7 +1,12 @@
 (function() {
 
-	Ext.define('CMDBuild.view.administration.accordion.Localizations', {
+	Ext.define('CMDBuild.view.administration.accordion.Localization', {
 		extend: 'CMDBuild.view.common.CMBaseAccordion',
+
+		/**
+		 * @cfg {String}
+		 */
+		cmName: undefined,
 
 		title: '@@ Localizations',
 
@@ -24,7 +29,7 @@
 					iconCls: 'cmdbuild-tree-localization-icon'
 				},
 				{
-					id: 'advancedTranslationsTable', // TODO rename
+					id: 'advancedTranslationsTable',
 					cmName: this.cmName,
 					leaf: true,
 					text: '@@ Advanced table',

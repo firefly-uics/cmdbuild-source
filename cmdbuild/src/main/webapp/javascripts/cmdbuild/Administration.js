@@ -156,7 +156,7 @@
 							Ext.create('CMDBuild.view.administration.accordion.Email', { cmName: 'email' }),
 							gisAccordion,
 							bimAccordion,
-							Ext.create('CMDBuild.view.administration.accordion.Localizations', { cmName: 'localizations' }),
+							Ext.create('CMDBuild.view.administration.accordion.Localization', { cmName: 'localizations' }),
 							Ext.create('CMDBuild.view.administration.accordion.Configuration', { cmName: 'setup' })
 						]);
 
