@@ -12,7 +12,7 @@
 		},
 
 		addReport: function(r) {
-			var report = Ext.create("CMDBuild.model.reports.Cache", r);
+			var report = Ext.create("CMDBuild.model.report.Cache", r);
 			reports[r.id] = report;
 
 			return report;

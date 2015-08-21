@@ -14,19 +14,15 @@
 		 * @param {Object} parameters
 		 */
 		analize: function(parameters) {
-			if (!Ext.isEmpty(parameters.form)) {
-				parameters.form.submit({
-					method: 'POST',
-					url: CMDBuild.core.proxy.Index.reports.jasper.analyze,
-					params: parameters.params,
-					scope: parameters.scope || this,
-					failure: parameters.failure || Ext.emptyFn,
-					success: parameters.success || Ext.emptyFn,
-					callback: parameters.callback || Ext.emptyFn
-				});
-			} else {
-				_error('analizeReport form parameter not defined', this);
-			}
+			parameters.form.submit({
+				method: 'POST',
+				url: CMDBuild.core.proxy.Index.reports.jasper.analyze,
+				params: parameters.params,
+				scope: parameters.scope || this,
+				failure: parameters.failure || Ext.emptyFn,
+				success: parameters.success || Ext.emptyFn,
+				callback: parameters.callback || Ext.emptyFn
+			});
 		},
 
 		/**
@@ -73,18 +69,14 @@
 		 * @param {Object} parameters
 		 */
 		import: function(parameters) {
-			if (!Ext.isEmpty(parameters.form)) {
-				parameters.form.submit({
-					method: 'POST',
-					url: CMDBuild.core.proxy.Index.reports.jasper.import,
-					params: parameters.params,
-					scope: parameters.scope || this,
-					failure: parameters.failure || Ext.emptyFn,
-					success: parameters.success || Ext.emptyFn
-				});
-			} else {
-				_error('importReport form parameter not defined', this);
-			}
+			parameters.form.submit({
+				method: 'POST',
+				url: CMDBuild.core.proxy.Index.reports.jasper.import,
+				params: parameters.params,
+				scope: parameters.scope || this,
+				failure: parameters.failure || Ext.emptyFn,
+				success: parameters.success || Ext.emptyFn
+			});
 		},
 
 		/**

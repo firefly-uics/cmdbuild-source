@@ -1,6 +1,6 @@
 (function() {
 
-	Ext.define('CMDBuild.model.reports.Cache', {
+	Ext.define('CMDBuild.model.report.Cache', {
 		extend: 'Ext.data.Model',
 
 		requires: ['CMDBuild.core.proxy.Constants'],

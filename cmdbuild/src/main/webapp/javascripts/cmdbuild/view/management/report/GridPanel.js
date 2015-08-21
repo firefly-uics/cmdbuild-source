@@ -1,15 +1,15 @@
 (function() {
 
-	Ext.define('CMDBuild.view.management.reports.GridPanel', {
+	Ext.define('CMDBuild.view.management.report.GridPanel', {
 		extend: 'Ext.grid.Panel',
 
 		requires: [
 			'CMDBuild.core.proxy.Constants',
-			'CMDBuild.core.proxy.reports.Reports'
+			'CMDBuild.core.proxy.report.Report'
 		],
 
 		/**
-		 * @cfg {CMDBuild.controller.management.reports.Reports}
+		 * @cfg {CMDBuild.controller.management.report.Report}
 		 */
 		delegate: undefined,
 
@@ -19,7 +19,7 @@
 		initComponent: function() {
 			// Apply first store to use it in paging bar
 			Ext.apply(this, {
-				store: CMDBuild.core.proxy.reports.Reports.getStore()
+				store: CMDBuild.core.proxy.report.Report.getStore()
 			});
 
 			Ext.apply(this, {

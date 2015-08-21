@@ -3,14 +3,14 @@
 	/**
 	 * This class uses only partially currentReportParameters methods, because update functionalities to keep parameters selection aren't required.
 	 */
-	Ext.define('CMDBuild.controller.management.reports.Reports', {
-		extend: 'CMDBuild.controller.management.reports.SingleReport',
+	Ext.define('CMDBuild.controller.management.report.Report', {
+		extend: 'CMDBuild.controller.management.report.SingleReport',
 
 		requires: [
 			'CMDBuild.core.Message',
 			'CMDBuild.core.proxy.Constants',
 			'CMDBuild.core.proxy.Index',
-			'CMDBuild.core.proxy.reports.Reports'
+			'CMDBuild.core.proxy.report.Report'
 		],
 
 		/**
@@ -26,7 +26,7 @@
 		],
 
 		/**
-		 * @property {CMDBuild.model.reports.Grid}
+		 * @property {CMDBuild.model.report.Grid}
 		 *
 		 * @private
 		 */
@@ -43,7 +43,7 @@
 		],
 
 		/**
-		 * @property {CMDBuild.view.management.reports.GridPanel}
+		 * @property {CMDBuild.view.management.report.GridPanel}
 		 */
 		grid: undefined,
 
@@ -58,19 +58,17 @@
 		],
 
 		/**
-		 * @cfg {CMDBuild.view.management.reports.ReportsView}
+		 * @cfg {CMDBuild.view.management.report.ReportView}
 		 */
 		view: undefined,
 
 		/**
-		 * @param {CMDBuild.view.management.reports.ReportsView} view
+		 * @param {CMDBuild.view.management.report.ReportView} view
 		 */
 		constructor: function(view) {
 			this.callParent(arguments);
 
-			this.grid = Ext.create('CMDBuild.view.management.reports.GridPanel', {
-				delegate: this
-			});
+			this.grid = Ext.create('CMDBuild.view.management.report.GridPanel', { delegate: this });
 
 			this.view.add(this.grid);
 		},
@@ -87,7 +85,7 @@
 					property: CMDBuild.core.proxy.Constants.ID
 				}))
 			) {
-				CMDBuild.core.proxy.reports.Reports.create({
+				CMDBuild.core.proxy.report.Report.create({
 					params: this.currentReportParametersGet({ callIdentifier: 'create' }),
 					scope: this,
 					failure: function(response, options, decodedResponse) {
@@ -101,7 +99,7 @@
 						if(decodedResponse.filled) { // Report with no parameters
 							this.showReport(forceDownload);
 						} else { // Show parameters window
-							Ext.create('CMDBuild.controller.management.reports.Parameters', {
+							Ext.create('CMDBuild.controller.management.report.Parameters', {
 								parentDelegate: this,
 								attributeList: decodedResponse.attribute,
 								forceDownload: forceDownload
@@ -118,7 +116,7 @@
 			 *
 			 * @param {String} parameterName
 			 *
-			 * @returns {CMDBuild.model.reports.Grid} or Mixed
+			 * @returns {CMDBuild.model.report.Grid} or Mixed
 			 */
 			currentReportRecordGet: function(parameterName) {
 				if (!Ext.isEmpty(parameterName))
@@ -128,7 +126,7 @@
 			},
 
 			/**
-			 * @param {CMDBuild.model.reports.Grid} record
+			 * @param {CMDBuild.model.report.Grid} record
 			 */
 			currentReportRecordSet: function(record) {
 				this.currentReportRecord = null;
@@ -225,7 +223,7 @@
 					form.close();
 				}, 100);
 			} else { // Pop-up display mode
-				Ext.create('CMDBuild.controller.management.reports.Modal', {
+				Ext.create('CMDBuild.controller.management.report.Modal', {
 					parentDelegate: this,
 					extension: this.currentReportParametersGet({
 						callIdentifier: 'create',
@@ -240,7 +238,7 @@
 		 */
 		updateReport: function(forceDownload) {
 			if (!this.currentReportParametersIsEmpty('update')) {
-				CMDBuild.core.proxy.reports.Reports.update({
+				CMDBuild.core.proxy.report.Report.update({
 					params: this.currentReportParametersGet({ callIdentifier: 'update' }),
 					scope: this,
 					success: function(response, options, decodedResponse) {

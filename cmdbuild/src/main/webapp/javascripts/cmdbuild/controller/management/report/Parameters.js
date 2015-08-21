@@ -1,13 +1,13 @@
 (function () {
 
-	Ext.define('CMDBuild.controller.management.reports.Parameters', {
+	Ext.define('CMDBuild.controller.management.report.Parameters', {
 		extend: 'CMDBuild.controller.common.AbstractController',
 
 		requires: [
 			'CMDBuild.core.Message',
 			'CMDBuild.core.proxy.Constants',
 			'CMDBuild.core.proxy.Index',
-			'CMDBuild.core.proxy.reports.Reports'
+			'CMDBuild.core.proxy.report.Report'
 		],
 
 		/**
@@ -34,7 +34,7 @@
 		forceDownload: false,
 
 		/**
-		 * @property {CMDBuild.view.management.reports.ParametersWindow} emailWindows
+		 * @property {CMDBuild.view.management.report.ParametersWindow} emailWindows
 		 */
 		view: undefined,
 
@@ -45,9 +45,7 @@
 		constructor: function(configurationObject) {
 			this.callParent(arguments);
 
-			this.view = Ext.create('CMDBuild.view.management.reports.ParametersWindow', {
-				delegate: this
-			});
+			this.view = Ext.create('CMDBuild.view.management.report.ParametersWindow', { delegate: this });
 
 			// Show window
 			if (!Ext.isEmpty(this.view)) {

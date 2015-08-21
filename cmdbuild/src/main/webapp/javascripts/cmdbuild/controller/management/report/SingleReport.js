@@ -1,13 +1,13 @@
 (function() {
 
-	Ext.define('CMDBuild.controller.management.reports.SingleReport', {
+	Ext.define('CMDBuild.controller.management.report.SingleReport', {
 		extend: 'CMDBuild.controller.common.AbstractBasePanelController',
 
 		requires: [
 			'CMDBuild.core.Message',
 			'CMDBuild.core.proxy.Constants',
 			'CMDBuild.core.proxy.Index',
-			'CMDBuild.core.proxy.reports.Reports'
+			'CMDBuild.core.proxy.report.Report'
 		],
 
 		/**
@@ -50,7 +50,7 @@
 		],
 
 		/**
-		 * @cfg {CMDBuild.view.management.reports.SingleReportPanel}
+		 * @cfg {CMDBuild.view.management.report.SingleReportPanel}
 		 */
 		view: undefined,
 
@@ -66,7 +66,7 @@
 					property: CMDBuild.core.proxy.Constants.ID
 				}))
 			) {
-				CMDBuild.core.proxy.reports.Reports.create({
+				CMDBuild.core.proxy.report.Report.create({
 					params: this.currentReportParametersGet({ callIdentifier: 'create' }),
 					scope: this,
 					failure: function(response, options, decodedResponse) {
@@ -86,7 +86,7 @@
 								this.view.removeAll();
 
 							if (this.currentReportParametersIsEmpty('update')) {
-								Ext.create('CMDBuild.controller.management.reports.Parameters', {
+								Ext.create('CMDBuild.controller.management.report.Parameters', {
 									parentDelegate: this,
 									attributeList: decodedResponse.attribute,
 									forceDownload: forceDownload
@@ -278,7 +278,7 @@
 		 */
 		updateReport: function(forceDownload) {
 			if (!this.currentReportParametersIsEmpty('update')) {
-				CMDBuild.core.proxy.reports.Reports.update({
+				CMDBuild.core.proxy.report.Report.update({
 					params: this.currentReportParametersGet({ callIdentifier: 'update' }),
 					scope: this,
 					success: function(response, options, decodedResponse) {
