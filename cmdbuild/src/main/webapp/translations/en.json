@@ -1474,6 +1474,7 @@
 	"reportParameters": "Report parameters",
 	"repository": "Repository",
 	"reset": "Reset",
+	"resetToDefault": "Reset to defaults",
 	"root": "Root",
 	"rotate": "Rotate",
 	"rowLimit": "Row limit",

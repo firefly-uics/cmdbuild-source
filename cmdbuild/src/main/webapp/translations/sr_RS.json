@@ -1474,6 +1474,7 @@
 	"reportParameters": "<em>Report parameters</em>",
 	"repository": "Архива",
 	"reset": "Поништи",
+	"resetToDefault": "<em>Reset to defaults</em>",
 	"root": "Корен",
 	"rotate": "Ротирај",
 	"rowLimit": "Број редова на једној страници",

@@ -1474,6 +1474,7 @@
 	"reportParameters": "<em>Report parameters</em>",
 	"repository": "Dépôt",
 	"reset": "Réinitialiser",
+	"resetToDefault": "<em>Reset to defaults</em>",
 	"root": "Racine",
 	"rotate": "Pivoter",
 	"rowLimit": "Limite du nombre de colonnes",
