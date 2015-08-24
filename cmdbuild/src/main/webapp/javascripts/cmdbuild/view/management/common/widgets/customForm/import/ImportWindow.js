@@ -18,7 +18,7 @@
 		autoHeight: true,
 		border: false,
 		defaultSizeW: 0.90,
-		title: CMDBuild.Translation.importFromCSV,
+		title: CMDBuild.Translation.import,
 
 		initComponent: function() {
 			Ext.apply(this, {
