@@ -5,7 +5,8 @@
 
 		requires: [
 			'CMDBuild.core.proxy.CMProxyConstants',
-			'CMDBuild.core.proxy.Csv'
+			'CMDBuild.core.proxy.Csv',
+			'CMDBuild.core.proxy.widgets.CustomForm'
 		],
 
 		mixins: {
@@ -34,9 +35,26 @@
 		initComponent: function() {
 			Ext.apply(this, {
 				items: [
+					Ext.create('Ext.form.field.ComboBox', { // Prepared for future implementations
+						name: CMDBuild.core.proxy.CMProxyConstants.FORMAT,
+						fieldLabel: CMDBuild.Translation.format,
+						labelWidth: CMDBuild.LABEL_WIDTH,
+						labelAlign: 'right',
+						maxWidth: CMDBuild.MEDIUM_FIELD_WIDTH,
+						displayField: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
+						valueField: CMDBuild.core.proxy.CMProxyConstants.NAME,
+						editable: false,
+						allowBlank: false,
+						disabled: true,
+
+						value: CMDBuild.core.proxy.CMProxyConstants.CSV, // Default value
+
+						store: CMDBuild.core.proxy.widgets.CustomForm.getImportFileFormatStore(),
+						queryMode: 'local'
+					}),
 					Ext.create('Ext.form.field.File', {
 						name: 'filecsv',
-						fieldLabel: CMDBuild.Translation.csvFile,
+						fieldLabel: CMDBuild.Translation.file,
 						labelWidth: CMDBuild.LABEL_WIDTH,
 						labelAlign: 'right',
 						allowBlank: false,

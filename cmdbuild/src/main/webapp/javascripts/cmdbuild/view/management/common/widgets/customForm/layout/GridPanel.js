@@ -53,7 +53,7 @@
 								}
 							}),
 							Ext.create('CMDBuild.core.buttons.Import', {
-								text: CMDBuild.Translation.importFromCSV,
+								text: CMDBuild.Translation.import,
 								scope: this,
 
 								disabled: (
