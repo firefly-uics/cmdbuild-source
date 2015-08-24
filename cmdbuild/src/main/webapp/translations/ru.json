@@ -1474,6 +1474,7 @@
 	"reportParameters": "<em>Report parameters</em>",
 	"repository": "Хранилище документов",
 	"reset": "Сброс",
+	"resetToDefault": "<em>Reset to defaults</em>",
 	"root": "Корень",
 	"rotate": "Повернуть",
 	"rowLimit": "Число строк на экране",

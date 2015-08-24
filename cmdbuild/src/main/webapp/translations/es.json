@@ -1474,6 +1474,7 @@
 	"reportParameters": "<em>Report parameters</em>",
 	"repository": "Archivo",
 	"reset": "Reset",
+	"resetToDefault": "<em>Reset to defaults</em>",
 	"root": "Raíz",
 	"rotate": "Rota",
 	"rowLimit": "Límite filas",

@@ -1474,6 +1474,7 @@
 	"reportParameters": "Jelentés paraméter",
 	"repository": "Gyűjtemény",
 	"reset": "Reset",
+	"resetToDefault": "<em>Reset to defaults</em>",
 	"root": "Root",
 	"rotate": "Forgatás",
 	"rowLimit": "Sor limit",

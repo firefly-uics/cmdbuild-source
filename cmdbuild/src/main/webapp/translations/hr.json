@@ -1474,6 +1474,7 @@
 	"reportParameters": "<em>Report parameters</em>",
 	"repository": "Arhiva",
 	"reset": "<em>Reset</em>",
+	"resetToDefault": "<em>Reset to defaults</em>",
 	"root": "<em>Root</em>",
 	"rotate": "<em>Rotate</em>",
 	"rowLimit": "Broj redova na jednoj stranici",
