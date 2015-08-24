@@ -13,7 +13,8 @@
 			'onCustomFormLayoutGridAddRowButtonClick',
 			'onCustomFormLayoutGridDeleteRowButtonClick' ,
 			'onCustomFormLayoutGridEditRowButtonClick',
-			'onCustomFormLayoutGridImportButtonClick'
+			'onCustomFormLayoutGridImportButtonClick',
+			'onCustomFormLayoutGridResetButtonClick'
 		],
 
 		/**
@@ -327,9 +328,11 @@
 		 * Opens import configuration pop-up window
 		 */
 		onCustomFormLayoutGridImportButtonClick: function() {
-			Ext.create('CMDBuild.controller.management.common.widgets.customForm.Import', {
-				parentDelegate: this
-			});
+			Ext.create('CMDBuild.controller.management.common.widgets.customForm.Import', { parentDelegate: this });
+		},
+
+		onCustomFormLayoutGridResetButtonClick: function() {
+			this.setDefaultContent();
 		},
 
 		/**
@@ -337,6 +340,18 @@
 		 */
 		setData: function(data) {
 			return this.view.getStore().loadRecords(data);
+		},
+
+		/**
+		 * Resets widget configuration model because of a referencing of store records
+		 */
+		setDefaultContent: function() {
+			this.cmfg('widgetConfigurationSet', {
+				configurationObject: this.cmfg('widgetControllerPropertyGet', 'widgetConfiguration')[CMDBuild.core.proxy.CMProxyConstants.DATA],
+				propertyName: CMDBuild.core.proxy.CMProxyConstants.DATA
+			});
+
+			this.setData(this.cmfg('widgetConfigurationGet', CMDBuild.core.proxy.CMProxyConstants.DATA));
 		}
 	});
 

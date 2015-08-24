@@ -25,6 +25,7 @@
 			'getTemplateResolverServerVars',
 			'widgetConfigurationGet',
 			'widgetConfigurationIsAttributeEmpty',
+			'widgetConfigurationSet',
 			'widgetControllerPropertyGet'
 		],
 
@@ -119,7 +120,7 @@
 				}
 			}
 
-			this.controllerLayout.setData(this.widgetConfigurationGet(CMDBuild.core.proxy.CMProxyConstants.DATA));
+			this.controllerLayout.setDefaultContent();
 
 			// Add related layout panel
 			if (!Ext.isEmpty(this.view)) {
@@ -201,7 +202,7 @@
 
 				// Full model setup management
 				if (!Ext.isEmpty(configurationObject) && Ext.isEmpty(propertyName))
-					this.widgetConfigurationModel = Ext.create('CMDBuild.model.widget.customForm.Configuration', configurationObject);
+					this.widgetConfigurationModel = Ext.create('CMDBuild.model.widget.customForm.Configuration', Ext.clone(configurationObject));
 			}
 	});
 

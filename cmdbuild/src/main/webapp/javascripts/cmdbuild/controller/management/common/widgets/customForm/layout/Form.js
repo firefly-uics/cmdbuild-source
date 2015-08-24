@@ -10,7 +10,8 @@
 		 */
 		cmfgCatchedFunctions: [
 			'importData',
-			'onCustomFormLayoutFormImportButtonClick'
+			'onCustomFormLayoutFormImportButtonClick',
+			'onCustomFormLayoutFormResetButtonClick'
 		],
 
 		/**
@@ -24,9 +25,7 @@
 		constructor: function(configurationObject) {
 			this.callParent(arguments);
 
-			this.view = Ext.create('CMDBuild.view.management.common.widgets.customForm.layout.FormPanel', {
-				delegate: this
-			});
+			this.view = Ext.create('CMDBuild.view.management.common.widgets.customForm.layout.FormPanel', { delegate: this });
 
 			this.view.add(this.buildFields());
 		},
@@ -128,11 +127,17 @@
 			});
 		},
 
+		onCustomFormLayoutFormResetButtonClick: function() {
+			this.setDefaultContent();
+		},
+
 		/**
 		 * @param {Array} data
 		 */
 		setData: function(data) {
 			data = (Ext.isArray(data) && !Ext.isEmpty(data[0])) ? data[0] : data;
+
+			this.view.reset(); // In form layout is managed only one row at time, so all actions are considered with replace mode
 
 			if (Ext.isObject(data))
 				if (Ext.isFunction(data.getData)) {
@@ -140,6 +145,18 @@
 				} else {
 					return this.view.getForm().setValues(data);
 				}
+		},
+
+		/**
+		 * Resets widget configuration model because of a referencing of store records
+		 */
+		setDefaultContent: function() {
+			this.cmfg('widgetConfigurationSet', {
+				configurationObject: this.cmfg('widgetControllerPropertyGet', 'widgetConfiguration')[CMDBuild.core.proxy.CMProxyConstants.DATA],
+				propertyName: CMDBuild.core.proxy.CMProxyConstants.DATA
+			});
+
+			this.setData(this.cmfg('widgetConfigurationGet', CMDBuild.core.proxy.CMProxyConstants.DATA));
 		}
 	});
 

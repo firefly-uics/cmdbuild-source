@@ -48,6 +48,14 @@
 								handler: function(button, e) {
 									this.delegate.cmfg('onCustomFormLayoutFormImportButtonClick');
 								}
+							}),
+							Ext.create('CMDBuild.core.buttons.Reload', {
+								text: CMDBuild.Translation.resetToDefault,
+								scope: this,
+
+								handler: function(button, e) {
+									this.delegate.cmfg('onCustomFormLayoutFormResetButtonClick');
+								}
 							})
 						]
 					})
