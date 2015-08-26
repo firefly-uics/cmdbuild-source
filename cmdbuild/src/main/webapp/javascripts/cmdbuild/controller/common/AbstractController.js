@@ -3,6 +3,12 @@
 	/**
 	 * Class to be extended in controllers witch implements new CMDBuild algorithms where controller creates view
 	 *
+	 * Usage and wild cards:
+	 * 	'=' - creates method alias
+	 * 		Ex. 'functionName = aliasFunctionName'
+	 * 	'->' - forwards method to sub-controller (sub-controller could be also multiple as list separated by commas)
+	 * 		Ex. 'functionName -> controllerOne, controllerTwo, controllerThree, ...'
+	 *
 	 * @abstract
 	 */
 	Ext.define('CMDBuild.controller.common.AbstractController', {
@@ -29,6 +35,11 @@
 		 * @private
 		 */
 		stringToFunctionNameMap: {},
+
+		/**
+		 * @cfg {String}
+		 */
+		titleSeparator: ' - ',
 
 		/**
 		 * @property {Object}
@@ -64,11 +75,18 @@
 				if (Ext.isString(this.stringToFunctionNameMap[name]) && Ext.isFunction(this[this.stringToFunctionNameMap[name]]))
 					return this[this.stringToFunctionNameMap[name]](param, callBack);
 
+				// Wildcard manage
 				if (Ext.isObject(this.stringToFunctionNameMap[name])) {
 					switch (this.stringToFunctionNameMap[name].action) {
-						// Forwarded function manage
-						case 'forward':
-							return this[this.stringToFunctionNameMap[name].target][name](param, callBack);
+						// Forwarded function manage with multiple controller forwarding management
+						case 'forward': {
+							if (Ext.isArray(this.stringToFunctionNameMap[name].target))
+								Ext.Array.forEach(this.stringToFunctionNameMap[name].target, function(controller, i, allControllers) {
+									this[controller].cmfg(name, param, callBack); // Use cmfg() access point to manage aliases
+								}, this);
+
+							return;
+						}
 					}
 				}
 			}
@@ -92,23 +110,33 @@
 					if (managedFnString.indexOf('->') >= 0) {
 						var splittedString = managedFnString.split('->');
 
-						if (splittedString.length == 2 && Ext.String.trim(splittedString[0]).indexOf(' ') < 0)
+						if (splittedString.length == 2 && Ext.String.trim(splittedString[0]).indexOf(' ') < 0) {
+							var targetsArray = Ext.String.trim(splittedString[1]).split(',');
+
+							Ext.Array.forEach(targetsArray, function(controller, i, allControllers) {
+								targetsArray[i] = Ext.String.trim(controller);
+							}, this);
+
 							this.stringToFunctionNameMap[Ext.String.trim(splittedString[0])] = {
 								action: 'forward',
-								target: Ext.String.trim(splittedString[1])
+								target: targetsArray
 							};
+						}
 					}
 
 					// Alias inline tag
 					if (managedFnString.indexOf('=') >= 0) {
 						var splittedString = managedFnString.split('=');
-						if (
-							splittedString.length == 2
-							&& Ext.String.trim(splittedString[0]).indexOf(' ') < 0
-							&& Ext.String.trim(splittedString[1]).indexOf(' ') < 0
-						) {
-							this.stringToFunctionNameMap[Ext.String.trim(splittedString[0])] = Ext.String.trim(splittedString[0]);
-							this.stringToFunctionNameMap[Ext.String.trim(splittedString[1])] = Ext.String.trim(splittedString[0]);
+
+						this.stringToFunctionNameMap[Ext.String.trim(splittedString[0])] = Ext.String.trim(splittedString[0]); // Main function
+
+						// Build aliases binds
+						if (splittedString.length == 2 && Ext.String.trim(splittedString[0]).indexOf(' ') < 0) {
+							var aliasesArray = Ext.String.trim(splittedString[1]).split(',');
+
+							Ext.Array.forEach(aliasesArray, function(alias, i, allAliases) {
+								this.stringToFunctionNameMap[Ext.String.trim(alias)] = Ext.String.trim(splittedString[0]);
+							}, this);
 						}
 					}
 
@@ -126,6 +154,24 @@
 		 */
 		getView: function() {
 			return this.view;
+		},
+
+		/**
+		 * Setup view panel title as a breadcrumbs component
+		 *
+		 * @param {String} titlePart
+		 */
+		setViewTitle: function(titlePart) {
+			if (
+				!Ext.isEmpty(this.view)
+				&& !Ext.isEmpty(this.view.baseTitle)
+			) {
+				if (Ext.isEmpty(titlePart)) {
+					this.view.setTitle(this.view.baseTitle);
+				} else {
+					this.view.setTitle(this.view.baseTitle + this.titleSeparator + titlePart);
+				}
+			}
 		},
 
 		/**

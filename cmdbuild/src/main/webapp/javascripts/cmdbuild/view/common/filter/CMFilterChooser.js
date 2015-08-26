@@ -225,7 +225,7 @@
 
 			this.clearFilterButton = Ext.create('Ext.button.Button', {
 				tooltip: CMDBuild.Translation.clearFilter,
-				iconCls: 'clear_privileges',
+				iconCls: 'privilegesClear',
 				cls: 'cmnoborder',
 				scope: me,
 				disabled: true,

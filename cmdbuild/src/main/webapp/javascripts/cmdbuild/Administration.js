@@ -312,8 +312,9 @@
 					success: function(response, options, decoded) {
 						_CMCache.addGroups(decoded.groups);
 
-						groupsAccordion = Ext.create('CMDBuild.view.administration.accordion.Groups', {
-							cmName: 'groups',
+						groupsAccordion = Ext.create('CMDBuild.view.administration.accordion.UserAndGroup', {
+							cmControllerType: 'CMDBuild.controller.administration.accordion.UserAndGroup',
+							cmName: 'group'
 						});
 						groupsAccordion.updateStore();
 
@@ -326,8 +327,12 @@
 							new CMDBuild.Administration.ModMenu({
 								cmControllerType: controllerNS.administration.menu.CMModMenuController
 							}),
-							new CMDBuild.view.administration.group.CMModGroup({
-								cmControllerType: controllerNS.administration.group.CMModGroupsController
+//							new CMDBuild.view.administration.group.CMModGroup({
+//								cmControllerType: controllerNS.administration.group.CMModGroupsController
+//							}),
+							Ext.create('CMDBuild.view.administration.groups.GroupsView', {
+								cmControllerType: 'CMDBuild.controller.administration.groups.Groups',
+								cmName: 'group',
 							}),
 							Ext.create('CMDBuild.view.administration.users.UsersView', {
 								cmControllerType: 'CMDBuild.controller.administration.users.Users',

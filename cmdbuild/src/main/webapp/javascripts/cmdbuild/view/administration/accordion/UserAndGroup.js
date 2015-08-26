@@ -1,6 +1,6 @@
 (function() {
 
-	Ext.define('CMDBuild.view.administration.accordion.Groups', {
+	Ext.define('CMDBuild.view.administration.accordion.UserAndGroup', {
 		extend: 'CMDBuild.view.common.CMBaseAccordion',
 
 		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
@@ -10,12 +10,18 @@
 		 */
 		delegate: undefined,
 
+		/**
+		 * @cfg {String}
+		 */
+		cmName: undefined,
+
 		title: CMDBuild.Translation.administration.modsecurity.title,
 
-		initComponent: function() {
-			this.callParent(arguments);
-
-			this.delegate = Ext.create('CMDBuild.controller.accordion.Groups', this);
+		listeners: {
+			// Set groups root node as unselectable
+			beforeselect: function(accordion, record, index, eOpts) {
+				return !record.hasChildNodes();
+			}
 		},
 
 		/**
@@ -26,12 +32,12 @@
 		buildTreeStructure: function() {
 			var nodes = [];
 
-			Ext.Object.each(_CMCache.getGroups(), function(id, group, myself) {
+			Ext.Object.each(_CMCache.getGroups(), function(id, group, myself) { // TODO: refactor to avoid cache usage
 				nodes.push({
 					text: group.get(CMDBuild.core.proxy.CMProxyConstants.TEXT),
 					id: group.get(CMDBuild.core.proxy.CMProxyConstants.ID),
 					iconCls: 'cmdbuild-tree-group-icon',
-					cmName: 'group',
+					cmName: this.cmName,
 					leaf: true
 				});
 			}, this);
@@ -40,7 +46,7 @@
 				{
 					text: CMDBuild.Translation.administration.modsecurity.groups,
 					iconCls: 'cmdbuild-tree-user-group-icon',
-					cmName: 'group',
+					cmName: this.cmName,
 					children: nodes,
 					leaf: false
 				},
@@ -52,6 +58,17 @@
 				}
 			];
 
+		},
+
+		/**
+		 * @param {CMDBuild.view.common.CMAccordionStoreModel} node
+		 *
+		 * @returns {Boolean}
+		 *
+		 * @override
+		 */
+		nodeIsSelectable: function(node) {
+			return this.callParent(arguments) && !node.hasChildNodes();;
 		}
 	});
 
