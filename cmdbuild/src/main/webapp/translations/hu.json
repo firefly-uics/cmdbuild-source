@@ -452,59 +452,6 @@
 			"remove": "Jelentés eltávolítása",
 			"title": "Jelentés"
 		},
-		"modsecurity": {
-			"defaultgroup": "* Alapértelmezett *",
-			"group": {
-				"add_group": "Csoport hozzáadása",
-				"administrator": "Adminisztrátor",
-				"availableUsers": "Rendelkezésre álló felhasználók",
-				"disableGroup": "Csoport tiltása",
-				"email": "E-mail",
-				"enableGroup": "Csoport engedélyezése",
-				"group_description": "Leírás",
-				"group_name": "Csoport neve",
-				"selectedUsers": "Hozzáadott felhasználók",
-				"is_active": "Aktív",
-				"is_administrator": "Adminisztrátor",
-				"limited_admin": "Limitált adminisztrátor",
-				"modifyGroup": "Csoport módosítása",
-				"normal": "Normál",
-				"startingPageAt": "Kezdőoldal",
-				"title": "Csoport kezelése",
-				"usermanagement": "Kapcsolódó felhasználók kezelése"
-			},
-			"groups": "Csoportok",
-			"privilege": {
-				"add_privilege": "Jog hozzáadása",
-				"classname": " Osztály neve",
-				"delete_privilege": "Jog eltávolítása",
-				"modify_privilege": "Jog módosítása",
-				"none_privilege": "Semmi ",
-				"privilege_mode": "Jogosultság",
-				"read_privilege": "Olvasás",
-				"write_privilege": "Írás"
-			},
-			"tabs": {
-				"permissions": "Engedélyek",
-				"properties": "Tulajdonságok"
-			},
-			"title": "Felhasználók és Csoportok",
-			"uiconfiguration": {
-				"disabledTabsInClassesModule": "Osztály modul tiltott lapjai",
-				"disabledFeatures": "Tiltott jellemzők",
-				"disabledTabsInProcessesModule": "Folyamat modul tiltott lapjai",
-				"generic_properties": {
-					"always_enabled_widgets": "Folyamat widgetek mindig engedélyezettek",
-					"card_simple_history": "Egyszerű kártya történet",
-					"full_screen_navigation": "Teljes képernyős navigáció",
-					"hide_side_panel": "Oldal panel elrejtése",
-					"process_simple_history": "Egyszerű folyamat történet",
-				},
-				"otherOptions": "Más opciók",
-				"title": "UI konfiguráció"
-			},
-			"users": "Felhasználók"
-		},
 		"tasks": {
 			"add": "Feladat hozzáadása",
 			"all": "Összes",

@@ -452,59 +452,6 @@
 			"remove": "レポート削除",
 			"title": "レポート"
 		},
-		"modsecurity": {
-			"defaultgroup": "* 既定 *",
-			"group": {
-				"add_group": "グループ追加",
-				"administrator": "アドミニストレータ",
-				"availableUsers": "利用可能なユーザー",
-				"disableGroup": "グループ無効化",
-				"email": "電子メール",
-				"enableGroup": "グループの有効化",
-				"group_description": "説明",
-				"group_name": "グループ名",
-				"selectedUsers": "ルックアップユーザー",
-				"is_active": "アクティブ",
-				"is_administrator": "はアドミニストレータ",
-				"limited_admin": "制限されたアドミニストレータ",
-				"modifyGroup": "グループ変更",
-				"normal": "通常",
-				"startingPageAt": "初期ページ",
-				"title": "グループ管理",
-				"usermanagement": "関連ユーザー管理"
-			},
-			"groups": "グループ",
-			"privilege": {
-				"add_privilege": "権限追加",
-				"classname": "クラス名",
-				"delete_privilege": "権限削除",
-				"modify_privilege": "権限変更",
-				"none_privilege": "権限なし",
-				"privilege_mode": "権限",
-				"read_privilege": "読取権限",
-				"write_privilege": "書込権限"
-			},
-			"tabs": {
-				"permissions": "許可",
-				"properties": "プロパティ"
-			},
-			"title": "ユーザーとグループ",
-			"uiconfiguration": {
-				"disabledTabsInClassesModule": "クラスモジュールでは無効なタブ",
-				"disabledFeatures": "無効なモジュール",
-				"disabledTabsInProcessesModule": "プロセスモジュールでは無効なタブ",
-				"generic_properties": {
-					"always_enabled_widgets": "プロセスのウィジェットは、常に有効",
-					"card_simple_history": "カードの単純な履歴",
-					"full_screen_navigation": "フルスクリーンナビゲーション",
-					"hide_side_panel": "サイドパネルを隠す",
-					"process_simple_history": "プロセスの単純な履歴",
-				},
-				"otherOptions": "他のオプション",
-				"title": "UIの構成"
-			},
-			"users": "ユーザー"
-		},
 		"tasks": {
 			"add": "タスクを追加",
 			"all": "全て",

@@ -452,59 +452,6 @@
 			"remove": "Rapport verwijderen",
 			"title": "Rapport"
 		},
-		"modsecurity": {
-			"defaultgroup": "* Standaard *",
-			"group": {
-				"add_group": "Groep toevoegen",
-				"administrator": "Beheerder",
-				"availableUsers": "Beschikbare gebruikers",
-				"disableGroup": "Blokkeer Groep",
-				"email": "Email",
-				"enableGroup": "Deblokkeer Groep",
-				"group_description": "Omschrijving",
-				"group_name": "Groep Naam",
-				"selectedUsers": "Geselecteerde gebruikers",
-				"is_active": "Aktief",
-				"is_administrator": "Is administrateur",
-				"limited_admin": "Beperkte beheerder",
-				"modifyGroup": "Groep aanpassen",
-				"normal": "Normaal",
-				"startingPageAt": "Start pagina bij",
-				"title": "Groep beheer",
-				"usermanagement": "Beheer geassocieerde gebruikers"
-			},
-			"groups": "Groepen",
-			"privilege": {
-				"add_privilege": "Privilege toevoegen",
-				"classname": "Klasnaam",
-				"delete_privilege": "Privilege verwijderen",
-				"modify_privilege": "Privilege aanpassen",
-				"none_privilege": "Geen ",
-				"privilege_mode": "Privilege",
-				"read_privilege": "Lees",
-				"write_privilege": "Schrijf"
-			},
-			"tabs": {
-				"permissions": "Permissies",
-				"properties": "Eigenschappen"
-			},
-			"title": "Gebruikers en Groepen",
-			"uiconfiguration": {
-				"disabledTabsInClassesModule": "Uitgeschakelde tabs in Klassen module",
-				"disabledFeatures": "Geblokkeerde opties",
-				"disabledTabsInProcessesModule": "Uitgeschakelde tabs in Processen module",
-				"generic_properties": {
-					"always_enabled_widgets": "Proces widgets altijd ingeschakeld",
-					"card_simple_history": "Eenvoudige geschiedenis voor kaarten",
-					"full_screen_navigation": "Volledig scherm navigatie",
-					"hide_side_panel": "Verberg zijpaneel",
-					"process_simple_history": "Eenvoudige geschiedenis voor processen",
-				},
-				"otherOptions": "Andere opties",
-				"title": "UI configuratie"
-			},
-			"users": "Gebruikers"
-		},
 		"tasks": {
 			"add": "Taak toevoegen",
 			"all": "Alles",

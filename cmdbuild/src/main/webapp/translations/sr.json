@@ -452,59 +452,6 @@
 			"remove": "Ukloni izveštaj",
 			"title": "Izveštaji"
 		},
-		"modsecurity": {
-			"defaultgroup": "* Podrazumevana grupa*",
-			"group": {
-				"add_group": "Dodaj grupu",
-				"administrator": "Administrator",
-				"availableUsers": "Dostupni korisnici",
-				"disableGroup": "Isključi grupu",
-				"email": "Email",
-				"enableGroup": "Uključi grupu",
-				"group_description": "Opis",
-				"group_name": "Naziv grupe",
-				"selectedUsers": "Korisnici u grupi",
-				"is_active": "Aktivna",
-				"is_administrator": "Administrator",
-				"limited_admin": "Administrator s ograničenim pravima",
-				"modifyGroup": "Izmeni grupu",
-				"normal": "Normalno",
-				"startingPageAt": "Početna stranica",
-				"title": "Upravljanje grupama",
-				"usermanagement": "Upravljanje pripadajućim korisnicima"
-			},
-			"groups": "Grupe",
-			"privilege": {
-				"add_privilege": "Dodaj prava",
-				"classname": " Klasa",
-				"delete_privilege": "Ukloni prava",
-				"modify_privilege": "Imeni prava",
-				"none_privilege": "Bez ikakvih prava",
-				"privilege_mode": "Privilegovan",
-				"read_privilege": "Čitanje",
-				"write_privilege": "Pisanje"
-			},
-			"tabs": {
-				"permissions": "Prava",
-				"properties": "Obeležja"
-			},
-			"title": "Korisnici i grupe",
-			"uiconfiguration": {
-				"disabledTabsInClassesModule": "Neaktivne kartice u modulu klasa",
-				"disabledFeatures": "Neaktivni moduli",
-				"disabledTabsInProcessesModule": "Neaktivne kartice u modulu procesa",
-				"generic_properties": {
-					"always_enabled_widgets": "Procesni dodaci uvek aktivni",
-					"card_simple_history": "Pojednostavljena istorija kartica",
-					"full_screen_navigation": "Navigacija preko celog ekrana",
-					"hide_side_panel": "Sakrij bočni panel",
-					"process_simple_history": "Pojednostavljena istorija procesa",
-				},
-				"otherOptions": "Ostale opcije",
-				"title": "Konfiguracija IO"
-			},
-			"users": "Korisnici"
-		},
 		"tasks": {
 			"add": "Dodaj zadatak",
 			"all": "Svi",

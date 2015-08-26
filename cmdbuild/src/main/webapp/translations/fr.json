@@ -452,59 +452,6 @@
 			"remove": "Supprimer le rapport",
 			"title": "Rapport"
 		},
-		"modsecurity": {
-			"defaultgroup": "* par défaut *",
-			"group": {
-				"add_group": "Ajouter un groupe",
-				"administrator": "Administrateur",
-				"availableUsers": "Utilisateurs disponibles",
-				"disableGroup": "Désactiver le groupe",
-				"email": "Email",
-				"enableGroup": "Activer le groupe",
-				"group_description": "Description",
-				"group_name": "Nom du groupe",
-				"selectedUsers": "Utilisateur sélectionné",
-				"is_active": "Est actif",
-				"is_administrator": "Est administrateur",
-				"limited_admin": "administrateur limité",
-				"modifyGroup": "Modifier le groupe",
-				"normal": "Normal",
-				"startingPageAt": "Classe de départ",
-				"title": "Gestion des groupes",
-				"usermanagement": "Gestion des utilisateurs associés"
-			},
-			"groups": "Groupes",
-			"privilege": {
-				"add_privilege": "Ajouter un privilège",
-				"classname": "Nom de classe",
-				"delete_privilege": "Supprimer le privilège",
-				"modify_privilege": "Modifier le privilège",
-				"none_privilege": "Aucun privilège",
-				"privilege_mode": "Privilège",
-				"read_privilege": "Lire",
-				"write_privilege": "Écrire"
-			},
-			"tabs": {
-				"permissions": "Permissions",
-				"properties": "Propriétés"
-			},
-			"title": "Utilisateurs et groupes",
-			"uiconfiguration": {
-				"disabledTabsInClassesModule": "Désactiver les onglets dans les classes",
-				"disabledFeatures": "Désactiver les caractéristiques",
-				"disabledTabsInProcessesModule": "Désactiver les onglets dans les processes",
-				"generic_properties": {
-					"always_enabled_widgets": "Widgets de processus toujours activés",
-					"card_simple_history": "Historique simple des fiches",
-					"full_screen_navigation": "Plein écran pour la navigation",
-					"hide_side_panel": "Masquer le panneau de côté",
-					"process_simple_history": "Historique simple des processus",
-				},
-				"otherOptions": "Autres options",
-				"title": "Configuration de l'IHM"
-			},
-			"users": "Utilisateurs"
-		},
 		"tasks": {
 			"add": "Ajouter une tâche",
 			"all": "Toutes",

@@ -452,59 +452,6 @@
 			"remove": "حذف گزارش",
 			"title": "گزارش"
 		},
-		"modsecurity": {
-			"defaultgroup": "* پیش فرض *",
-			"group": {
-				"add_group": "اضافه کردن گروه",
-				"administrator": "مدیریت",
-				"availableUsers": "کاربران موجود",
-				"disableGroup": "غیر فعال کردن گروه",
-				"email": "ایمیل",
-				"enableGroup": "فعال کردن گروه",
-				"group_description": "توضیحات",
-				"group_name": "نام گروه",
-				"selectedUsers": "کاربران انتخاب شده",
-				"is_active": "فعال",
-				"is_administrator": "آیا ادمین است",
-				"limited_admin": "ادمین با دسترسی محدود",
-				"modifyGroup": "ویرایش گروه",
-				"normal": "نرمال",
-				"startingPageAt": "شروع صفحات از",
-				"title": "مدیریت گروه",
-				"usermanagement": "مدیریت گروههای مرتبط"
-			},
-			"groups": "گروهها",
-			"privilege": {
-				"add_privilege": "اضافه کردن امتیاز",
-				"classname": " نام کلاس",
-				"delete_privilege": "حذف امتیاز",
-				"modify_privilege": "ویرایش امتیاز",
-				"none_privilege": "هیچ ",
-				"privilege_mode": "امتیاز",
-				"read_privilege": "خواندن",
-				"write_privilege": "نوشتن"
-			},
-			"tabs": {
-				"permissions": "اجازه",
-				"properties": "ویژگیها"
-			},
-			"title": "کاربران و گروهها",
-			"uiconfiguration": {
-				"disabledTabsInClassesModule": "زبانه های غیر فعال در ماژول کلاسها",
-				"disabledFeatures": "ویژگیهای غیر فعال",
-				"disabledTabsInProcessesModule": "زبانه های غیر فعال در ماژول پروسه ها",
-				"generic_properties": {
-					"always_enabled_widgets": "ویگت پروسه همیشه فعال است",
-					"card_simple_history": "تاریخچه ساده ی کارت",
-					"full_screen_navigation": "هدایت فول اسکرین",
-					"hide_side_panel": "عدم نمایش پنل کناری",
-					"process_simple_history": "تاریخچه ساده ی پروسه",
-				},
-				"otherOptions": "انتخابهای دیگر",
-				"title": "تنظیمات واسط کاربری"
-			},
-			"users": "کاربران"
-		},
 		"tasks": {
 			"add": "اضافه کردن کار",
 			"all": "همه",

@@ -452,59 +452,6 @@
 			"remove": "Remover relatório",
 			"title": "Relatório"
 		},
-		"modsecurity": {
-			"defaultgroup": "* Default *",
-			"group": {
-				"add_group": "Adicionar Grupo",
-				"administrator": "Administrador",
-				"availableUsers": "Usuários disponíveis",
-				"disableGroup": "Desabilitar Grupo",
-				"email": "Email",
-				"enableGroup": "Habilitar Grupo",
-				"group_description": "Descrição",
-				"group_name": "Nome do Grupo",
-				"selectedUsers": "Usuários selecionados",
-				"is_active": "Ativo",
-				"is_administrator": "É administrador",
-				"limited_admin": "Administrador Limitado",
-				"modifyGroup": "Modificar Grupo",
-				"normal": "Normal",
-				"startingPageAt": "Iniciando página em",
-				"title": "Gerenciamento de Grupo",
-				"usermanagement": "Gerenciar usuários associados"
-			},
-			"groups": "Grupos",
-			"privilege": {
-				"add_privilege": "Adicionar Privilégio",
-				"classname": " Nome da Classe",
-				"delete_privilege": "Remover Privilégio",
-				"modify_privilege": "Modificar Privilégio",
-				"none_privilege": "Nenhum ",
-				"privilege_mode": "Privilégio",
-				"read_privilege": "Leitura",
-				"write_privilege": "Escrita"
-			},
-			"tabs": {
-				"permissions": "Permissões",
-				"properties": "Propriedades"
-			},
-			"title": "Usuários e Grupos",
-			"uiconfiguration": {
-				"disabledTabsInClassesModule": "Abas desabilitadas no módulo Classe",
-				"disabledFeatures": "Funcionalidades desabilitadas",
-				"disabledTabsInProcessesModule": "Abas desabilitadas no módulo Processo",
-				"generic_properties": {
-					"always_enabled_widgets": "Widgets de Processo sempre habilitados",
-					"card_simple_history": "Histórico Simples para Cartões",
-					"full_screen_navigation": "Navegação Tela Cheia",
-					"hide_side_panel": "Esconder Painel Lateral",
-					"process_simple_history": "Histório Simples para processos",
-				},
-				"otherOptions": "Outras Opções",
-				"title": "Configuração UI"
-			},
-			"users": "Usuários"
-		},
 		"tasks": {
 			"add": "<em>Add task</em>",
 			"all": "<em>All</em>",

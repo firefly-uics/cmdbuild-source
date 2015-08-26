@@ -452,59 +452,6 @@
 			"remove": "Cancella report",
 			"title": "Report"
 		},
-		"modsecurity": {
-			"defaultgroup": "* Default *",
-			"group": {
-				"add_group": "Aggiungi Gruppo",
-				"administrator": "Amministratore",
-				"availableUsers": "Utenti disponibili",
-				"disableGroup": "Disabilita Gruppo",
-				"email": "E-mail",
-				"enableGroup": "Abilita Gruppo",
-				"group_description": "Descrizione",
-				"group_name": "Nome Gruppo",
-				"selectedUsers": "Utenti selezionati",
-				"is_active": "Attivo",
-				"is_administrator": "Amministratore",
-				"limited_admin": "Amministratore limitato",
-				"modifyGroup": "Modifica Gruppo",
-				"normal": "Normale",
-				"startingPageAt": "Pagina iniziale",
-				"title": "Gestione gruppi",
-				"usermanagement": "Gestione utenti associati"
-			},
-			"groups": "Gruppi",
-			"privilege": {
-				"add_privilege": "Aggiungi Permesso",
-				"classname": " Classe",
-				"delete_privilege": "Cancella Permesso",
-				"modify_privilege": "Modifica Permesso",
-				"none_privilege": "Nessuno",
-				"privilege_mode": "Permesso",
-				"read_privilege": "Lettura",
-				"write_privilege": "Scrittura"
-			},
-			"tabs": {
-				"permissions": "Permessi",
-				"properties": "Proprietà"
-			},
-			"title": "Utenti e Gruppi",
-			"uiconfiguration": {
-				"disabledTabsInClassesModule": "Schede del modulo Classi disabilitate",
-				"disabledFeatures": "Funzionalità disabilitate",
-				"disabledTabsInProcessesModule": "Schede del modulo Processi disabilitate",
-				"generic_properties": {
-					"always_enabled_widgets": "Widget dei processi sempre abilitati",
-					"card_simple_history": "Visualizzazione storia semplificata per le schede",
-					"full_screen_navigation": "Visualizzazione a tutto schermo",
-					"hide_side_panel": "Nascondi il pannello a sinistra",
-					"process_simple_history": "Visualizzazione storia semplificata per i processi"
-				},
-				"otherOptions": "Altre opzioni",
-				"title": "Configurazione UI"
-			},
-			"users": "Utenti"
-		},
 		"tasks": {
 			"add": "Aggiungi task",
 			"all": "Tutti",

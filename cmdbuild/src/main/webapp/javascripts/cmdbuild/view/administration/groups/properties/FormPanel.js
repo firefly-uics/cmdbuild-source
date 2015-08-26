@@ -124,7 +124,7 @@
 						editable: false,
 						forceSelection: true,
 
-						value: CMDBuild.cache.CMGroupModel.type.NORMAL,
+						value: CMDBuild.core.proxy.CMProxyConstants.NORMAL,
 
 						store: CMDBuild.core.proxy.groups.Groups.getTypeStore(),
 						queryMode: 'local'

@@ -15,7 +15,7 @@
 		 */
 		cmName: undefined,
 
-		title: CMDBuild.Translation.administration.modsecurity.title,
+		title: CMDBuild.Translation.usersAndGroups,
 
 		listeners: {
 			// Set groups root node as unselectable
@@ -51,7 +51,7 @@
 					leaf: false
 				},
 				{
-					text: CMDBuild.Translation.administration.modsecurity.users,
+					text: CMDBuild.Translation.users,
 					iconCls: 'cmdbuild-tree-user-icon',
 					cmName: 'users',
 					leaf: true
