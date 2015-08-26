@@ -207,7 +207,7 @@
 		// protected
 		// override
 		setWindowTitle: function() {
-			this.title = CMDBuild.Translation.row_and_column_privileges;
+			this.title = CMDBuild.Translation.rowAndColumnPrivileges;
 		},
 
 		// protected

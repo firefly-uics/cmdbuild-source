@@ -75,9 +75,9 @@
 			return Ext.create('Ext.data.ArrayStore', {
 				fields: [CMDBuild.core.proxy.CMProxyConstants.VALUE, CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION],
 				data: [
-					[ CMDBuild.core.proxy.CMProxyConstants.NORMAL, CMDBuild.Translation.administration.modsecurity.group.normal ],
-					[ CMDBuild.core.proxy.CMProxyConstants.RESTRICTED_ADMIN, CMDBuild.Translation.administration.modsecurity.group.limited_admin ],
-					[ CMDBuild.core.proxy.CMProxyConstants.ADMIN, CMDBuild.Translation.administration.modsecurity.group.administrator ]
+					[ CMDBuild.core.proxy.CMProxyConstants.NORMAL, CMDBuild.Translation.normal ],
+					[ CMDBuild.core.proxy.CMProxyConstants.RESTRICTED_ADMIN, CMDBuild.Translation.limitedAdministrator ],
+					[ CMDBuild.core.proxy.CMProxyConstants.ADMIN, CMDBuild.Translation.administrator ]
 				]
 			});
 		},

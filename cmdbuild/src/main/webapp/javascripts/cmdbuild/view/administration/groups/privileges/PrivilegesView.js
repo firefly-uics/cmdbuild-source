@@ -10,7 +10,7 @@
 
 		border: false,
 		frame: false,
-		title: CMDBuild.Translation.administration.modsecurity.tabs.permissions,
+		title: CMDBuild.Translation.permissions,
 
 		listeners: {
 			show: function(panel, eOpts) {

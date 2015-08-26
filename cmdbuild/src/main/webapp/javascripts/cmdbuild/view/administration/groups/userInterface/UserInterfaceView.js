@@ -16,7 +16,7 @@
 		border: false,
 		frame: false,
 		layout: 'fit',
-		title: CMDBuild.Translation.administration.modsecurity.uiconfiguration.title,
+		title: CMDBuild.Translation.uiConfiguration,
 
 		initComponent: function() {
 			Ext.apply(this, {

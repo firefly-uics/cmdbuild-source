@@ -13,7 +13,7 @@
 		/**
 		 * @cfg {String}
 		 */
-		baseTitle: CMDBuild.Translation.administration.modsecurity.group.title,
+		baseTitle: CMDBuild.Translation.usersAndGroups + ' - ' + CMDBuild.Translation.groups,
 
 		/**
 		 * @property {Ext.tab.Panel}
@@ -34,7 +34,7 @@
 
 						items: [
 							Ext.create('CMDBuild.core.buttons.Add', {
-								text: CMDBuild.Translation.administration.modsecurity.group.add_group,
+								text: CMDBuild.Translation.addGroup,
 								scope: this,
 
 								handler: function(button, e) {

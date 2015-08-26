@@ -39,7 +39,7 @@
 					}),
 					Ext.create('Ext.grid.column.CheckColumn', {
 						dataIndex: 'none_privilege',
-						text: CMDBuild.Translation.administration.modsecurity.privilege.none_privilege,
+						text: CMDBuild.Translation.none,
 						width: 60,
 						align: 'center',
 						sortable: false,
@@ -63,7 +63,7 @@
 					}),
 					Ext.create('Ext.grid.column.CheckColumn', {
 						dataIndex: 'read_privilege',
-						text: CMDBuild.Translation.administration.modsecurity.privilege.read_privilege,
+						text: CMDBuild.Translation.read,
 						width: 60,
 						align: 'center',
 						hidden: !this.enableCRUDRead,
@@ -88,7 +88,7 @@
 					}),
 					Ext.create('Ext.grid.column.CheckColumn', {
 						dataIndex: 'write_privilege',
-						text: CMDBuild.Translation.administration.modsecurity.privilege.write_privilege,
+						text: CMDBuild.Translation.write,
 						width: 60,
 						align: 'center',
 						hidden: !this.enableCRUDWrite,
@@ -123,7 +123,7 @@
 						items: [
 							Ext.create('CMDBuild.core.buttons.iconized.filter.Set', {
 								withSpacer: true,
-								tooltip: CMDBuild.Translation.row_and_column_privileges,
+								tooltip: CMDBuild.Translation.rowAndColumnPrivileges,
 								scope: this,
 
 								handler: function(grid, rowIndex, colIndex, node, e, record, rowNode) {
@@ -132,7 +132,7 @@
 							}),
 							Ext.create('CMDBuild.core.buttons.iconized.filter.Clear', {
 								withSpacer: true,
-								tooltip: CMDBuild.Translation.clear_row_and_colun_privilege,
+								tooltip: CMDBuild.Translation.clearRowAndColumnPrivilege,
 								scope: this,
 
 								handler: function(grid, rowIndex, colIndex, node, e, record, rowNode) {
@@ -141,7 +141,7 @@
 							}),
 							Ext.create('CMDBuild.core.buttons.iconized.UserInterface', {
 								withSpacer: true,
-								tooltip: CMDBuild.Translation.ui_configuration_for_groups,
+								tooltip: CMDBuild.Translation.uiConfigurationForGroups,
 								scope: this,
 
 								isDisabled: function(grid, rowIndex, colIndex, item, record) {

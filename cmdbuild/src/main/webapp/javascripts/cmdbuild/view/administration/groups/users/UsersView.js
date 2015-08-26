@@ -25,7 +25,7 @@
 		frame: false,
 		overflowY: 'auto',
 		split: true,
-		title: CMDBuild.Translation.administration.modsecurity.users,
+		title: CMDBuild.Translation.users,
 
 		layout: {
 			type: 'hbox',
@@ -60,7 +60,7 @@
 				items: [
 					this.availableGrid = Ext.create('CMDBuild.view.administration.groups.users.GridPanel', {
 						delegate: this.delegate,
-						title: CMDBuild.Translation.administration.modsecurity.group.availableusers,
+						title: CMDBuild.Translation.availableUsers,
 
 						viewConfig: {
 							plugins: {
@@ -73,7 +73,7 @@
 					{ xtype: 'splitter' },
 					this.selectedGrid = Ext.create('CMDBuild.view.administration.groups.users.GridPanel', {
 						delegate: this.delegate,
-						title: CMDBuild.Translation.administration.modsecurity.group.groupchoice,
+						title: CMDBuild.Translation.selectedUsers,
 
 						viewConfig: {
 							plugins: {

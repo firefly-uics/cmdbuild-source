@@ -1,5 +1,5 @@
 (function() {
-	var NO_PERMISSION_TO = CMDBuild.Translation.buttons_to_disable;
+	var NO_PERMISSION_TO = CMDBuild.Translation.buttonsToDisable;
 	Ext.define('CMDBuild.view.administration.group.CMGroupClassUIConfiguration', {
 		extend: 'Ext.window.Window',
 
