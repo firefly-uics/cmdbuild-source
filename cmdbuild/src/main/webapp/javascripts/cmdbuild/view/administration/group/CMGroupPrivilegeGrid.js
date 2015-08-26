@@ -63,7 +63,7 @@
 
 			var setPrivilegeTranslation = CMDBuild.Translation.row_and_column_privileges;
 			var removePrivilegeTranslation = CMDBuild.Translation.clear_row_and_colun_privilege;
-			
+
 			var me = this;
 
 			if (this.withFilterEditor) {
@@ -77,7 +77,7 @@
 				forceFit: true
 			};
 
-			this.plugins = [ // 
+			this.plugins = [ //
 				Ext.create('Ext.grid.plugin.CellEditing', { //
 					clicksToEdit: 1 //
 				}) //
@@ -182,7 +182,7 @@
 			}
 
 			var params = {};
-			params[parameter.PRIVILEGED_OBJ_ID] = filterWindow.group.getPrivilegedObjectId();
+			params['privilegedObjectId'] = filterWindow.group.getPrivilegedObjectId();
 			params[parameter.GROUP_ID] = filterWindow.group.getGroupId();
 			var attributesPrivileges = filterWindow.getAttributePrivileges();
 			params[parameter.ATTRIBUTES] = Ext.encode(attributesPrivileges);
@@ -230,7 +230,7 @@
 	function iconButton(me, icon, tooltip, header, callFunction, disabeldIfProcess) {
 		var button = {
 				icon: "images/icons/" + icon + ".png",
-			    tooltip: tooltip, 
+			    tooltip: tooltip,
 			    handler: function(grid, rowIndex, colIndex) {
 			    	var model = grid.getStore().getAt(rowIndex);
 			    	callFunction(me, model);
@@ -244,8 +244,8 @@
 		};
 		return {
 			header: header,
-			fixed: true, 
-			sortable: false, 
+			fixed: true,
+			sortable: false,
 			align: 'center',
 			tdCls: 'grid-button',
 			menuDisabled: true,
@@ -253,7 +253,7 @@
 			xtype:'actioncolumn',
 			width:30,
 			items: [button]
-		};	
+		};
 	}
 	// scope this
 	function onSetPrivilegeFilterClick(me, model) {
@@ -278,14 +278,14 @@
 			params: params,
 			success: function success(response, options, result) {
 				var attributes = result.attributes;
-	
+
 				var filterWindow = new CMDBuild.view.administration.group.CMPrivilegeWindow({
 					filter: filter,
 					attributes: attributes,
 					className: className,
 					group: model
 				});
-	
+
 				filterWindow.addDelegate(me);
 				filterWindow.show();
 			}
@@ -303,7 +303,7 @@
 				if (button == "yes") {
 					var params = {};
 
-					params[parameter.PRIVILEGED_OBJ_ID] = model.getPrivilegedObjectId();
+					params['privilegedObjectId'] = model.getPrivilegedObjectId();
 					params[parameter.GROUP_ID] = model.getGroupId();
 
 					_CMProxy.group.setRowAndColumnPrivileges({
@@ -341,7 +341,7 @@
 			params: param
 		});
 	}
-		 
+
 	function buildCheckColumn(me, dataIndex, condition) {
 		if (condition) {
 			var checkColumn = new Ext.ux.CheckColumn({

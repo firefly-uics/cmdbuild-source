@@ -148,6 +148,24 @@
 			getFunctions: 'services/json/schema/modclass/getfunctions'
 		},
 
+		group: {
+			create: 'services/json/schema/modsecurity/savegroup', // TODO: waiting for refactor (crud)
+			read: '',
+			update: 'services/json/schema/modsecurity/savegroup', // TODO: waiting for refactor (crud)
+			remove: '',
+
+			enableDisableGroup: 'services/json/schema/modsecurity/enabledisablegroup',
+
+			users: {
+				getGroupUserList: 'services/json/schema/modsecurity/getgroupuserlist',
+				saveGroupUserList: 'services/json/schema/modsecurity/savegroupuserlist'
+			},
+			userInterface: {
+				getGroupUiConfiguration: 'services/json/schema/modsecurity/getgroupuiconfiguration',
+				saveGroupUiConfiguration: 'services/json/schema/modsecurity/savegroupuiconfiguration'
+			},
+		},
+
 		history: {
 			classes: {
 				getCardHistory: 'services/json/management/modcard/getcardhistory',
@@ -196,8 +214,9 @@
 
 				clearRowAndColumnPrivileges: 'services/json/schema/modsecurity/clearrowandcolumnprivileges',
 				setRowAndColumnPrivileges: 'services/json/schema/modsecurity/setrowandcolumnprivileges',
+
+				loadClassUiConfiguration: 'services/json/schema/modsecurity/loadclassuiconfiguration',
 				saveClassUiConfiguration: 'services/json/schema/modsecurity/saveclassuiconfiguration',
-				loadClassUiConfiguration: 'services/json/schema/modsecurity/loadclassuiconfiguration'
 			},
 			dataView: {
 				read: 'services/json/schema/modsecurity/getviewprivilegelist',

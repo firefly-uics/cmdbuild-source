@@ -1,5 +1,8 @@
 (function() {
 
+	/**
+	 * @deprecated
+	 */
 	Ext.define('CMDBuild.controller.accordion.CMBaseAccordionController', {
 
 		constructor: function(accordion) {

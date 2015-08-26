@@ -1,18 +1,25 @@
 (function() {
 
-	Ext.define('CMDBuild.controller.accordion.Groups', {
+	Ext.define('CMDBuild.controller.administration.accordion.UserAndGroup', {
 		extend: 'CMDBuild.controller.accordion.CMBaseAccordionController',
 
 		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
 
 		/**
-		 * @param {CMDBuild.view.administration.accordion.Groups} accordion
+		 * @cfg {Array}
+		 */
+		cmfgCatchedFunctions: [
+			'onAccordionExpanded',
+			'onAccordionNodeSelect'
+		],
+
+		/**
+		 * @param {CMDBuild.view.administration.accordion.UserAndGroup} accordion
 		 */
 		constructor: function(accordion) {
-			this.store = accordion.store;
 			this.callParent(arguments);
 
-			_CMCache.on('cm_group_saved', this.updateStore, this);
+			_CMCache.on('cm_group_saved', this.updateStore, this); // TODO: refactor to avoid cache usage
 		},
 
 		/**

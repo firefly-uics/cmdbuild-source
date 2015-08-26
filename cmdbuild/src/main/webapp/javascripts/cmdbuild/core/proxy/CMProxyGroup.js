@@ -177,7 +177,7 @@
 				}
 			},
 			sorters : [ {
-				property : _CMProxy.parameter.PRIVILEGED_OBJ_DESCRIPTION,
+				property : 'privilegedObjectDescription',
 				direction : "ASC"
 			}]
 		});
