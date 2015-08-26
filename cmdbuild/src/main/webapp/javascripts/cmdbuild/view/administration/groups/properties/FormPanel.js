@@ -50,7 +50,7 @@
 
 						items: [
 							Ext.create('CMDBuild.core.buttons.Modify', {
-								text: CMDBuild.Translation.administration.modsecurity.group.modify_group,
+								text: CMDBuild.Translation.modifyGroup,
 								scope: this,
 
 								handler: function(button, e) {
@@ -58,8 +58,8 @@
 								}
 							}),
 							this.enableDisableButton = Ext.create('CMDBuild.core.buttons.iconized.state.Double', {
-								state1text :CMDBuild.Translation.administration.modsecurity.group.delete_group, // TODO: rename in disable
-								state2text :CMDBuild.Translation.administration.modsecurity.group.enable_group,
+								state1text: CMDBuild.Translation.disableGroup,
+								state2text: CMDBuild.Translation.enableGroup,
 								scope: this,
 
 								handler: function(button, e) {
@@ -109,14 +109,14 @@
 					}),
 					Ext.create('Ext.form.field.Text', {
 						name: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
-						fieldLabel: CMDBuild.Translation.administration.modsecurity.group.group_description,
+						fieldLabel: CMDBuild.Translation.descriptionLabel,
 						labelWidth: CMDBuild.LABEL_WIDTH,
 						maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
 						allowBlank: false
 					}),
 					Ext.create('Ext.form.field.ComboBox', {
 						name: CMDBuild.core.proxy.CMProxyConstants.TYPE,
-						fieldLabel: CMDBuild.Translation.administration.modClass.attributeProperties.type,
+						fieldLabel: CMDBuild.Translation.type,
 						labelWidth: CMDBuild.LABEL_WIDTH,
 						maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
 						valueField: CMDBuild.core.proxy.CMProxyConstants.VALUE,
@@ -131,7 +131,7 @@
 					}),
 					Ext.create('Ext.form.field.Text', {
 						name: CMDBuild.core.proxy.CMProxyConstants.EMAIL,
-						fieldLabel: CMDBuild.Translation.administration.modsecurity.group.email,
+						fieldLabel: CMDBuild.Translation.email,
 						labelWidth: CMDBuild.LABEL_WIDTH,
 						maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
 						allowBlank: true,
@@ -139,7 +139,7 @@
 					}),
 					Ext.create('CMDBuild.field.ErasableCombo', {
 						name: CMDBuild.core.proxy.CMProxyConstants.STARTING_CLASS,
-						fieldLabel: CMDBuild.Translation.administration.modsecurity.group.starting_class,
+						fieldLabel: CMDBuild.Translation.startingPageAt,
 						labelWidth: CMDBuild.LABEL_WIDTH,
 						maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
 						valueField: CMDBuild.core.proxy.CMProxyConstants.ID,
@@ -152,7 +152,7 @@
 					}),
 					this.activeCheckbox = Ext.create('Ext.form.field.Checkbox', {
 						name: CMDBuild.core.proxy.CMProxyConstants.IS_ACTIVE,
-						fieldLabel: CMDBuild.Translation.administration.modsecurity.group.is_active,
+						fieldLabel: CMDBuild.Translation.active,
 						labelWidth: CMDBuild.LABEL_WIDTH,
 						inputValue: true,
 						uncheckedValue: false,

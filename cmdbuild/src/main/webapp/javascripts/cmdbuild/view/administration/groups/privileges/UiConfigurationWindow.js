@@ -19,7 +19,7 @@
 		border: false,
 		frame: false,
 		layout: 'fit',
-		title: CMDBuild.Translation.buttons_to_disable,
+		title: CMDBuild.Translation.buttonsToDisable,
 
 		initComponent: function() {
 			Ext.apply(this, {

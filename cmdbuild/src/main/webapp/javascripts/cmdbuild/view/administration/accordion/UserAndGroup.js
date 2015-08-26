@@ -44,7 +44,7 @@
 
 			return [
 				{
-					text: CMDBuild.Translation.administration.modsecurity.groups,
+					text: CMDBuild.Translation.groups,
 					iconCls: 'cmdbuild-tree-user-group-icon',
 					cmName: this.cmName,
 					children: nodes,

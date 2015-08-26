@@ -63,64 +63,60 @@
 						border: false,
 						items: [
 							Ext.create('Ext.form.CheckboxGroup', {
-								fieldLabel: CMDBuild.Translation.administration.modsecurity.uiconfiguration.disabled_modules,
+								fieldLabel: CMDBuild.Translation.disabledFeatures,
 								labelWidth: CMDBuild.LABEL_WIDTH,
 								columns: 1,
 								items: [
 									{
-										boxLabel: CMDBuild.Translation.management.modcard.treetitle,
+										boxLabel: CMDBuild.Translation.cards,
 										name: CMDBuild.core.proxy.CMProxyConstants.CLASS,
 										inputValue: true,
 										uncheckedValue: false
 									},
 									{
-										boxLabel: CMDBuild.Translation.management.modworkflow.treetitle,
+										boxLabel: CMDBuild.Translation.processes,
 										name: CMDBuild.core.proxy.CMProxyConstants.PROCESS,
 										inputValue: true,
 										uncheckedValue: false
 									},
 									{
-										boxLabel: CMDBuild.Translation.management.modreport.treetitle,
+										boxLabel: CMDBuild.Translation.report,
 										name: CMDBuild.core.proxy.CMProxyConstants.REPORT,
 										inputValue: true,
 										uncheckedValue: false
 									},
 									{
-										boxLabel: CMDBuild.Translation.management.modview.title,
+										boxLabel: CMDBuild.Translation.views,
 										name: CMDBuild.core.proxy.CMProxyConstants.DATA_VIEW,
 										inputValue: true,
 										uncheckedValue: false
 									},
 									{
-										boxLabel: CMDBuild.Translation.administration.modDashboard.title,
+										boxLabel: CMDBuild.Translation.dashboard,
 										name: CMDBuild.core.proxy.CMProxyConstants.DASHBOARD,
 										inputValue: true,
 										uncheckedValue: false
 									},
 									{
-										boxLabel: CMDBuild.Translation.management.modutilities.title
-											+ ' - ' + CMDBuild.Translation.management.modutilities.changepassword.title, // TODO: short mode
+										boxLabel: CMDBuild.Translation.utilityChangePassword,
 										name: CMDBuild.core.proxy.CMProxyConstants.CHANGE_PASSWORD,
 										inputValue: true,
 										uncheckedValue: false
 									},
 									{
-										boxLabel: CMDBuild.Translation.management.modutilities.title
-											+ ' - ' + CMDBuild.Translation.management.modutilities.bulkupdate.title, // TODO: short mode
+										boxLabel: CMDBuild.Translation.utilityMultipleUpdate,
 										name: 'bulkupdate',
 										inputValue: true,
 										uncheckedValue: false
 									},
 									{
-										boxLabel: CMDBuild.Translation.management.modutilities.title
-											+ ' - ' + CMDBuild.Translation.management.modutilities.csv.title, // TODO: short mode
+										boxLabel: CMDBuild.Translation.utilityImportCsv,
 										name: 'importcsv',
 										inputValue: true,
 										uncheckedValue: false
 									},
 									{
-										boxLabel: CMDBuild.Translation.management.modutilities.title
-											+ ' - ' + CMDBuild.Translation.management.modutilities.csv.title_export, // TODO: short mode
+										boxLabel: CMDBuild.Translation.utilityExportCsv,
 										name: 'exportcsv',
 										inputValue: true,
 										uncheckedValue: false
@@ -136,36 +132,36 @@
 						border: false,
 						items: [
 							Ext.create('Ext.form.CheckboxGroup', {
-								fieldLabel: CMDBuild.Translation.administration.modsecurity.uiconfiguration.disabled_class_tabs, // TODO: rename translation
+								fieldLabel: CMDBuild.Translation.disabledTabsInClassesModule,
 								labelWidth: CMDBuild.LABEL_WIDTH,
 								columns: 1,
 								items: [
 									{
-										boxLabel: CMDBuild.Translation.management.modcard.tabs.detail,
+										boxLabel: CMDBuild.Translation.detail,
 										name: CMDBuild.core.proxy.CMProxyConstants.CLASS_DETAIL_TAB,
 										inputValue: true,
 										uncheckedValue: false
 									},
 									{
-										boxLabel: CMDBuild.Translation.management.modcard.tabs.notes,
+										boxLabel: CMDBuild.Translation.notes,
 										name: CMDBuild.core.proxy.CMProxyConstants.CLASS_NOTE_TAB,
 										inputValue: true,
 										uncheckedValue: false
 									},
 									{
-										boxLabel: CMDBuild.Translation.management.modcard.tabs.relations,
+										boxLabel: CMDBuild.Translation.relations,
 										name: CMDBuild.core.proxy.CMProxyConstants.CLASS_RELATION_TAB,
 										inputValue: true,
 										uncheckedValue: false
 									},
 									{
-										boxLabel: CMDBuild.Translation.management.modcard.tabs.history,
+										boxLabel: CMDBuild.Translation.history,
 										name: CMDBuild.core.proxy.CMProxyConstants.CLASS_HISTORY_TAB,
 										inputValue: true,
 										uncheckedValue: false
 									},
 									{
-										boxLabel: CMDBuild.Translation.management.modcard.tabs.attachments,
+										boxLabel: CMDBuild.Translation.attachments,
 										name: CMDBuild.core.proxy.CMProxyConstants.CLASS_ATTACHMENT_TAB,
 										inputValue: true,
 										uncheckedValue: false
@@ -181,30 +177,30 @@
 						border: false,
 						items: [
 							Ext.create('Ext.form.CheckboxGroup', {
-								fieldLabel: CMDBuild.Translation.administration.modsecurity.uiconfiguration.disabled_process_tabs,
+								fieldLabel: CMDBuild.Translation.disabledTabsInProcessesModule,
 								labelWidth: CMDBuild.LABEL_WIDTH,
 								columns: 1,
 								items: [
 									{
-										boxLabel: CMDBuild.Translation.management.modcard.tabs.notes,
+										boxLabel: CMDBuild.Translation.notes,
 										name: CMDBuild.core.proxy.CMProxyConstants.PROCESS_NOTE_TAB,
 										inputValue: true,
 										uncheckedValue: false
 									},
 									{
-										boxLabel: CMDBuild.Translation.management.modcard.tabs.relations,
+										boxLabel: CMDBuild.Translation.relations,
 										name: CMDBuild.core.proxy.CMProxyConstants.PROCESS_RELATION_TAB,
 										inputValue: true,
 										uncheckedValue: false
 									},
 									{
-										boxLabel: CMDBuild.Translation.management.modcard.tabs.history,
+										boxLabel: CMDBuild.Translation.history,
 										name: CMDBuild.core.proxy.CMProxyConstants.PROCESS_HISTORY_TAB,
 										inputValue: true,
 										uncheckedValue: false
 									},
 									{
-										boxLabel: CMDBuild.Translation.management.modcard.tabs.attachments,
+										boxLabel: CMDBuild.Translation.attachments,
 										name: CMDBuild.core.proxy.CMProxyConstants.PROCESS_ATTACHMENT_TAB,
 										inputValue: true,
 										uncheckedValue: false
@@ -220,36 +216,36 @@
 						border: false,
 						items: [
 							Ext.create('Ext.form.CheckboxGroup', {
-								fieldLabel: CMDBuild.Translation.administration.modsecurity.uiconfiguration.other,
+								fieldLabel: CMDBuild.Translation.otherOptions,
 								labelWidth: CMDBuild.LABEL_WIDTH,
 								columns: 1,
 								items: [
 									{
-										boxLabel: CMDBuild.Translation.administration.modsecurity.uiconfiguration.generic_properties.hide_side_panel,
+										boxLabel: CMDBuild.Translation.hideSidePanel,
 										name: CMDBuild.core.proxy.CMProxyConstants.HIDE_SIDE_PANEL,
 										inputValue: true,
 										uncheckedValue: false
 									},
 									{
-										boxLabel: CMDBuild.Translation.administration.modsecurity.uiconfiguration.generic_properties.full_screen_navigation,
+										boxLabel: CMDBuild.Translation.fullScreenNavigation,
 										name: CMDBuild.core.proxy.CMProxyConstants.FULL_SCREEN_MODE,
 										inputValue: true,
 										uncheckedValue: false
 									},
 									{
-										boxLabel: CMDBuild.Translation.administration.modsecurity.uiconfiguration.generic_properties.card_simple_history,
+										boxLabel: CMDBuild.Translation.simpleHistoryForCards,
 										name: CMDBuild.core.proxy.CMProxyConstants.SIMPLE_HISTORY_MODE_FOR_CARD,
 										inputValue: true,
 										uncheckedValue: false
 									},
 									{
-										boxLabel: CMDBuild.Translation.administration.modsecurity.uiconfiguration.generic_properties.process_simple_history,
+										boxLabel: CMDBuild.Translation.simpleHistoryForProcesses,
 										name: CMDBuild.core.proxy.CMProxyConstants.SIMPLE_HISTORY_MODE_FOR_PROCESS,
 										inputValue: true,
 										uncheckedValue: false
 									},
 									{
-										boxLabel: CMDBuild.Translation.administration.modsecurity.uiconfiguration.generic_properties.always_enabled_widgets,
+										boxLabel: CMDBuild.Translation.processWidgetsAlwaysEnabled,
 										name: CMDBuild.core.proxy.CMProxyConstants.PROCESS_WIDGET_ALWAYS_ENABLED,
 										inputValue: true,
 										uncheckedValue: false

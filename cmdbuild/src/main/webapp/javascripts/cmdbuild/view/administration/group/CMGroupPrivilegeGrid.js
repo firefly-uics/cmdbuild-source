@@ -61,8 +61,8 @@
 			buildCheckColumn(this, 'read_privilege', this.withPermissionRead);
 			buildCheckColumn(this, 'write_privilege', this.withPermissionWrite);
 
-			var setPrivilegeTranslation = CMDBuild.Translation.row_and_column_privileges;
-			var removePrivilegeTranslation = CMDBuild.Translation.clear_row_and_colun_privilege;
+			var setPrivilegeTranslation = CMDBuild.Translation.rowAndColumnPrivileges;
+			var removePrivilegeTranslation = CMDBuild.Translation.clearRowAndColumnPrivilege;
 
 			var me = this;
 
@@ -71,7 +71,7 @@
 				this.columns.push(iconButton(me, "privilege_filter_remove", removePrivilegeTranslation, "", onRemovePrivilegeFilterClick, false));
 			}
 			if (this.withCRUDPermission) {
-				this.columns.push(iconButton(me, "uiconfiguration", CMDBuild.Translation.ui_configuration_for_groups, "UI", onChangeClassUIConfiguration, true));
+				this.columns.push(iconButton(me, "uiconfiguration", CMDBuild.Translation.uiConfigurationForGroups, "UI", onChangeClassUIConfiguration, true));
 			}
 			this.viewConfig = {
 				forceFit: true
