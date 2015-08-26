@@ -452,59 +452,6 @@
 			"remove": "Bericht abbrechen",
 			"title": "Bericht"
 		},
-		"modsecurity": {
-			"defaultgroup": "* Default *",
-			"group": {
-				"add_group": "Gruppe hinzufügen",
-				"administrator": "Administrator",
-				"availableUsers": "Verfügbare Benutzer",
-				"disableGroup": "Gruppe sperren",
-				"email": "E-Mail",
-				"enableGroup": "Gruppe freigeben",
-				"group_description": "Beschreibung",
-				"group_name": "Gruppenname",
-				"selectedUsers": "Ausgewählte Benutzer",
-				"is_active": "Aktiv",
-				"is_administrator": "Administrator",
-				"limited_admin": "Begrenzter Administrator",
-				"modifyGroup": "Gruppe bearbeiten",
-				"normal": "Normal",
-				"startingPageAt": "Startseite",
-				"title": "Gruppenverwaltung",
-				"usermanagement": "Verwaltung assoziierter Benutzer"
-			},
-			"groups": "Gruppen",
-			"privilege": {
-				"add_privilege": "Erlaubnis hinzufügen",
-				"classname": "Klasse",
-				"delete_privilege": "Erlaubnis löschen",
-				"modify_privilege": "Erlaubnis bearbeiten",
-				"none_privilege": "Kein",
-				"privilege_mode": "Erlaubnis",
-				"read_privilege": "Lesen",
-				"write_privilege": "Schreiben"
-			},
-			"tabs": {
-				"permissions": "Erlaubnis",
-				"properties": "Eigenschaften"
-			},
-			"title": "Benutzer und Gruppen",
-			"uiconfiguration": {
-				"disabledTabsInClassesModule": "Gesperrte Tabs im Klassenmodul",
-				"disabledFeatures": "Gesperrte Funktionalitäten",
-				"disabledTabsInProcessesModule": "Gesperrte Tabs im Prozessmodul",
-				"generic_properties": {
-					"always_enabled_widgets": "Prozess-Widget immer freigegeben",
-					"card_simple_history": "Einfache Chronik für die Karte",
-					"full_screen_navigation": "Vollbildmodus beim Navigieren",
-					"hide_side_panel": "Seitentafel ausblenden",
-					"process_simple_history": "Einfache Chronik für die Prozesse"
-				},
-				"otherOptions": "Weitere Optionen",
-				"title": "UI Konfiguration"
-			},
-			"users": "Benutzer"
-		},
 		"tasks": {
 			"add": "Task hinzufügen",
 			"all": "Alle",

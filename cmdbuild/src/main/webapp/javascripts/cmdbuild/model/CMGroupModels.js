@@ -1,20 +1,5 @@
 (function() {
 
-	Ext.require('CMDBuild.core.proxy.CMProxyConstants');
-
-	Ext.define('CMDBuild.model.CMGroupModels.startingClass', {
-		extend: 'Ext.data.Model',
-
-		fields: [
-			{ name: CMDBuild.core.proxy.CMProxyConstants.ID,  type: 'int' },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.NAME, type: 'string' },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,  type: 'string', mapping: 'text' }, // FIX: "text" attribute alias (wrong property name)
-			{ name: CMDBuild.core.proxy.CMProxyConstants.TEXT,  type: 'string' }
-		]
-	});
-
-	// TODO: fix code style
-
 	Ext.define("CMDBuild.cache.CMGroupModel", {
 		statics: {
 			type: {
@@ -61,56 +46,6 @@
 
 			return type;
 		}
-	});
-
-	Ext.define("CMDBuild.cache.CMPrivilegeModel", {
-		extend: 'Ext.data.Model',
-		fields: [
-			{name: "groupId", type: "string"},
-			{name: "privilegedObjectId", type: "string"},
-			{name: "privilegedObjectName", type: "string"},
-			{name: "privilegedObjectDescription", type: "string"},
-			{name: "privilegeFilter", type: "auto"},
-			{name: "attributesPrivileges", type: "auto"},
-			{name: "none_privilege", type: "boolean"},
-			{name: "read_privilege", type: "boolean"},
-			{name: "write_privilege", type: "boolean"}
-		],
-
-		getGroupId: function() {
-			return this.get("groupId");
-		},
-
-		getPrivilegedObjectId: function() {
-			return this.get("privilegedObjectId");
-		},
-
-		getPrivilegeFilter: function() {
-			return this.get("privilegeFilter");
-		},
-
-		getAttributePrivileges: function() {
-			return this.get("attributesPrivileges") || {};
-		},
-
-		setPrivilegeFilter: function(privilegeFilter) {
-			try {
-				this.set("privilegeFilter", privilegeFilter);
-				this.commit();
-			} catch (error) {
-				// may be rendering issues
-			}
-		},
-
-		setAttributePrivileges: function(attributePrivileges) {
-			try {
-				this.set("attributesPrivileges", attributePrivileges);
-				this.commit();
-			} catch (error) {
-				// may be rendering issues
-			}
-		}
-
 	});
 
 	Ext.define("CMDBuild.cache.CMUserForGridModel", {
@@ -251,4 +186,5 @@
 			return Ext.encode(this.getData());
 		}
 	});
+
 })();

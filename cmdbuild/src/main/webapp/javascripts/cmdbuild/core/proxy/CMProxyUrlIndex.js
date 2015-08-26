@@ -155,15 +155,18 @@
 			remove: '',
 
 			enableDisableGroup: 'services/json/schema/modsecurity/enabledisablegroup',
+			getGroupList: 'services/json/schema/modsecurity/getgrouplist',
+			getUiConfiguration: 'services/json/schema/modsecurity/getuiconfiguration',
 
 			users: {
 				getGroupUserList: 'services/json/schema/modsecurity/getgroupuserlist',
 				saveGroupUserList: 'services/json/schema/modsecurity/savegroupuserlist'
 			},
+
 			userInterface: {
 				getGroupUiConfiguration: 'services/json/schema/modsecurity/getgroupuiconfiguration',
 				saveGroupUiConfiguration: 'services/json/schema/modsecurity/savegroupuiconfiguration'
-			},
+			}
 		},
 
 		history: {

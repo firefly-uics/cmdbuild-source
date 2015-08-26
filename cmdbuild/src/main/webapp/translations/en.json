@@ -452,59 +452,6 @@
 			"remove": "Remove report",
 			"title": "Report"
 		},
-		"modsecurity": {
-			"defaultgroup": "* Default *",
-			"group": {
-				"add_group": "Add Group",
-				"administrator": "Administrator",
-				"availableusers": "Available users",
-				"delete_group": "Disable Group",
-				"email": "E-mail",
-				"enable_group": "Enable Group",
-				"group_description": "Description",
-				"group_name": "Group Name",
-				"groupchoice": "Selected users",
-				"is_active": "Active",
-				"is_administrator": "Is administrator",
-				"limited_admin": "Limited administrator",
-				"modify_group": "Modify Group",
-				"normal": "Normal",
-				"starting_class": "Starting page at",
-				"title": "Group management",
-				"usermanagement": "Manage associated users"
-			},
-			"groups": "Groups",
-			"privilege": {
-				"add_privilege": "Add Privilege",
-				"classname": " Class name",
-				"delete_privilege": "Delete Privilege",
-				"modify_privilege": "Modify Privilege",
-				"none_privilege": "None ",
-				"privilege_mode": "Privilege",
-				"read_privilege": "Read",
-				"write_privilege": "Write"
-			},
-			"tabs": {
-				"permissions": "Permissions",
-				"properties": "Properties"
-			},
-			"title": "Users and Groups",
-			"uiconfiguration": {
-				"disabled_class_tabs": "Disabled tabs in Classes module",
-				"disabled_modules": "Disabled features",
-				"disabled_process_tabs": "Disabled tabs in Processes module",
-				"generic_properties": {
-					"always_enabled_widgets": "Process widgets always enabled",
-					"card_simple_history": "Simple history for cards",
-					"full_screen_navigation": "Full screen navigation",
-					"hide_side_panel": "Hide side panel",
-					"process_simple_history": "Simple history for processes"
-				},
-				"other": "Other options",
-				"title": "UI configuration"
-			},
-			"users": "Users"
-		},
 		"tasks": {
 			"add": "Add task",
 			"all": "All",

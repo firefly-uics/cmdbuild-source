@@ -452,59 +452,6 @@
 			"remove": "Xóa báo cáo",
 			"title": "Báo cáo"
 		},
-		"modsecurity": {
-			"defaultgroup": "* Mặc định *",
-			"group": {
-				"add_group": "Thêm nhóm",
-				"administrator": "Người quản trị",
-				"availableUsers": "Các người dùng đang có",
-				"disableGroup": "Vô hiệu hóa Nhóm",
-				"email": "Email",
-				"enableGroup": "Kích hoạt Nhóm",
-				"group_description": "Mô tả",
-				"group_name": "Tên nhóm",
-				"selectedUsers": "Những người dùng được chọn",
-				"is_active": "Đang sử dụng",
-				"is_administrator": "Là người quản trị",
-				"limited_admin": "Người quản trị cấp dưới",
-				"modifyGroup": "Sửa đổi Nhóm",
-				"normal": "Thông thường",
-				"starting_class": "Bắt đầu từ trang",
-				"title": "Quản lý Nhóm",
-				"usermanagement": "Quản lý người dùng liên quan"
-			},
-			"groups": "Các nhóm",
-			"privilege": {
-				"add_privilege": "Thêm đặc quyền",
-				"classname": "Tên lớp",
-				"delete_privilege": "Xóa đặc quyền",
-				"modify_privilege": "Sửa đổi đặc quyền",
-				"none_privilege": "Không có ",
-				"privilege_mode": "Đặc quyền",
-				"read_privilege": "Đọc",
-				"write_privilege": "Viết"
-			},
-			"tabs": {
-				"permissions": "Quyền truy cập",
-				"properties": "Đặc tính"
-			},
-			"title": "Người dùng và các nhóm",
-			"uiconfiguration": {
-				"disabledTabsInClassesModule": "Các bảng bị vô hiệu hóa trong mô-đun Lớp ",
-				"disabledFeatures": "Vô hiệu hóa các tính năng",
-				"disabledTabsInProcessesModule": " Các bảng bị vô hiệu hóa trong mô-đun Quy trình",
-				"generic_properties": {
-					"always_enabled_widgets": "Widgets tiến trình luôn được kích hoạt",
-					"card_simple_history": "Lịch sử bản ghi đơn giản",
-					"full_screen_navigation": "Chuyển hướng xem toàn màn hình",
-					"hide_side_panel": "Ẩn bảng điều khiển kế bên",
-					"process_simple_history": "Lịch sử quá trình đơn giản",
-				},
-				"otherOptions": "Những chọn lựa khác",
-				"title": "Cấu hình UI"
-			},
-			"users": "Người dùng"
-		},
 		"tasks": {
 			"add": "<em>Add task</em>",
 			"all": "<em>All</em>",

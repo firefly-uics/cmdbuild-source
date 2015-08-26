@@ -452,59 +452,6 @@
 			"remove": "Удалить отчет",
 			"title": "Отчеты"
 		},
-		"modsecurity": {
-			"defaultgroup": "* По умолчанию *",
-			"group": {
-				"add_group": "Создать группу",
-				"administrator": "Администратор",
-				"availableUsers": "Доступные пользователи",
-				"disableGroup": "Отключить группу",
-				"email": "Email",
-				"enableGroup": "Включить группу",
-				"group_description": "Описание",
-				"group_name": "Имя группы",
-				"selectedUsers": "Выбранные пользователи",
-				"is_active": "Активная группа",
-				"is_administrator": "Административные права",
-				"limited_admin": "Администратор с ограниченным доступом",
-				"modifyGroup": "Редактировать группу",
-				"normal": "Обычный",
-				"startingPageAt": "Стартовая страница",
-				"title": "Настройка групп",
-				"usermanagement": "Настройка пользователей"
-			},
-			"groups": "Группы",
-			"privilege": {
-				"add_privilege": "Добавить доступ",
-				"classname": "Имя класса",
-				"delete_privilege": "Удалить доступ",
-				"modify_privilege": "Редактировать доступ",
-				"none_privilege": "Нет",
-				"privilege_mode": "Доступ",
-				"read_privilege": "Чтение",
-				"write_privilege": "Запись"
-			},
-			"tabs": {
-				"permissions": "Разрешения",
-				"properties": "Свойства"
-			},
-			"title": "Пользователи и группы",
-			"uiconfiguration": {
-				"disabledTabsInClassesModule": "Отключенные закладки в модуле 'Классы'",
-				"disabledFeatures": "Отключенные модули",
-				"disabledTabsInProcessesModule": "Отключенные закладки в модуле 'Процессы'",
-				"generic_properties": {
-					"always_enabled_widgets": "Всегда включенные виджеты",
-					"card_simple_history": "Простой формат истории для карточек",
-					"full_screen_navigation": "Полноэкранный режим окна навигации",
-					"hide_side_panel": "Скрыть боковую панель",
-					"process_simple_history": "Простой формат истории для процессов",
-				},
-				"otherOptions": "Другие настройки",
-				"title": "Конфигурация интерфейса"
-			},
-			"users": "Пользователи"
-		},
 		"tasks": {
 			"add": "Создать задачу",
 			"all": "Задачи",

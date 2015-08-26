@@ -23,7 +23,8 @@
 			'CMDBuild.core.proxy.Classes',
 			'CMDBuild.core.proxy.Configuration',
 			'CMDBuild.core.proxy.Localizations',
-			'CMDBuild.core.proxy.Report'
+			'CMDBuild.core.proxy.Report',
+			'CMDBuild.core.proxy.groups.Groups'
 		],
 
 		name: 'CMDBuild',
@@ -57,10 +58,11 @@
 					}
 				});
 
-				// maybe a single request with all the configuration could be better
-				CMDBuild.ServiceProxy.group.getUIConfiguration({
-					success: function(response, options,decoded) {
-						_CMUIConfiguration = new CMDBuild.model.CMUIConfigurationModel(decoded.response);
+				// Maybe a single request with all the configuration could be better
+				CMDBuild.core.proxy.groups.Groups.getUIConfiguration({
+					scope: this,
+					success: function(result, options, decodedResult) {
+						_CMUIConfiguration = new CMDBuild.model.CMUIConfigurationModel(decodedResult.response);
 
 						CMDBuild.ServiceProxy.configuration.readMainConfiguration({
 							success: function(response, options, decoded) {
@@ -305,12 +307,13 @@
 					callback: reqBarrier.getCallback()
 				});
 
-				/*
+				/**
 				 * Groups
 				 */
-				CMDBuild.ServiceProxy.group.read({
-					success: function(response, options, decoded) {
-						_CMCache.addGroups(decoded.groups);
+				CMDBuild.core.proxy.groups.Groups.readAll({
+					scope: this,
+					success: function(result, options, decodedResult) {
+						_CMCache.addGroups(decodedResult.groups); // TODO: refactor to avoig cache usage
 
 						groupsAccordion = Ext.create('CMDBuild.view.administration.accordion.UserAndGroup', {
 							cmControllerType: 'CMDBuild.controller.administration.accordion.UserAndGroup',
@@ -327,9 +330,6 @@
 							new CMDBuild.Administration.ModMenu({
 								cmControllerType: controllerNS.administration.menu.CMModMenuController
 							}),
-//							new CMDBuild.view.administration.group.CMModGroup({
-//								cmControllerType: controllerNS.administration.group.CMModGroupsController
-//							}),
 							Ext.create('CMDBuild.view.administration.groups.GroupsView', {
 								cmControllerType: 'CMDBuild.controller.administration.groups.Groups',
 								cmName: 'group',

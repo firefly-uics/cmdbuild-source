@@ -452,59 +452,6 @@
 			"remove": "Eliminar reporte",
 			"title": "Informes"
 		},
-		"modsecurity": {
-			"defaultgroup": "* Por defecto *",
-			"group": {
-				"add_group": "Agregar Grupo",
-				"administrator": "Administrador",
-				"availableUsers": "Usuarios disponibles",
-				"disableGroup": "Remover Grupo",
-				"email": "Email",
-				"enableGroup": "Habilitar Grupo",
-				"group_description": "Descripción",
-				"group_name": "Nombre Grupo",
-				"selectedUsers": "Usuarios seleccionados",
-				"is_active": "Activo",
-				"is_administrator": "Administrador",
-				"limited_admin": "Administrador limitado",
-				"modifyGroup": "Modifica Grupo",
-				"normal": "Normal",
-				"startingPageAt": "Página inicial",
-				"title": "Gestión grupos",
-				"usermanagement": "Gestión usuarios asociados"
-			},
-			"groups": "Grupos",
-			"privilege": {
-				"add_privilege": "Agregar Permiso",
-				"classname": " Clase",
-				"delete_privilege": "Eliminar Permiso",
-				"modify_privilege": "Modificar Permiso",
-				"none_privilege": "Ninguno",
-				"privilege_mode": "Permiso",
-				"read_privilege": "Lectura",
-				"write_privilege": "Escritura"
-			},
-			"tabs": {
-				"permissions": "Permisos",
-				"properties": "Propiedad"
-			},
-			"title": "Usuarios y grupos",
-			"uiconfiguration": {
-				"disabledTabsInClassesModule": "Tabs deshabilitados en el módulo clases",
-				"disabledFeatures": "Funcionalidades deshabilitadas",
-				"disabledTabsInProcessesModule": "Tabs deshabilitados en el módulo procesos",
-				"generic_properties": {
-					"always_enabled_widgets": "Widgets procesos siempre habilitados",
-					"card_simple_history": "Simple historia para las tarjetas",
-					"full_screen_navigation": "Navegación en pantalla completa",
-					"hide_side_panel": "Esconder el panel lateral",
-					"process_simple_history": "Simple historia para los procesos"
-				},
-				"otherOptions": "Otras opciónes",
-				"title": "Configuración UI"
-			},
-			"users": "Usuarios"
-		},
 		"tasks": {
 			"add": "Agrega tarea",
 			"all": "Todos",
