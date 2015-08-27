@@ -457,7 +457,7 @@ public class DefaultFilterLogicTest {
 	}
 
 	@Test
-	public void defaultFilterIsSetted() throws Exception {
+	public void defaultFilterIsSettedForSingleFilterAndSingleGroup() throws Exception {
 		// given
 		final FilterStore.Filter stored = mock(FilterStore.Filter.class);
 		doReturn("a classname") //
@@ -474,7 +474,7 @@ public class DefaultFilterLogicTest {
 				.when(converter).storeToLogic(any(FilterStore.Filter.class));
 
 		// when
-		defaultFilterLogic.setDefault(42L, "a group");
+		defaultFilterLogic.setDefault(asList(42L), asList("a group"));
 
 		// then
 		final ArgumentCaptor<Iterable> disjoinCaptor = ArgumentCaptor.forClass(Iterable.class);
@@ -488,6 +488,76 @@ public class DefaultFilterLogicTest {
 		assertThat((Iterable<FilterStore.Filter>) disjoinCaptor.getValue(),
 				containsInAnyOrder(firstAlreadyJoined, secondAlreadyJoined));
 		assertThat((Iterable<FilterStore.Filter>) joinCaptor.getValue(), containsInAnyOrder(stored));
+	}
+
+	@Test
+	public void defaultFilterIsSettedForMultipleFiltersAndMultipleGroups() throws Exception {
+		// given
+		final FilterStore.Filter stored = mock(FilterStore.Filter.class);
+		doReturn("a classname") //
+				.when(stored).getClassName();
+		doReturn(stored) //
+				.when(store).fetchFilter(anyLong());
+		final FilterStore.Filter firstAlreadyJoined = mock(FilterStore.Filter.class);
+		final FilterStore.Filter secondAlreadyJoined = mock(FilterStore.Filter.class);
+		doReturn(asList(firstAlreadyJoined, secondAlreadyJoined)) //
+				.when(store).getAllFilters(anyString(), anyString());
+		final Filter _first = mock(Filter.class);
+		final Filter _second = mock(Filter.class);
+		doReturn(_first).doReturn(_second) //
+				.when(converter).storeToLogic(any(FilterStore.Filter.class));
+
+		// when
+		defaultFilterLogic.setDefault(asList(1L, 2L), asList("foo", "bar"));
+
+		// then
+		final ArgumentCaptor<Long> filterCaptor = ArgumentCaptor.forClass(Long.class);
+		final ArgumentCaptor<String> groupCaptor = ArgumentCaptor.forClass(String.class);
+		final ArgumentCaptor<String> groupCaptor2 = ArgumentCaptor.forClass(String.class);
+		final ArgumentCaptor<String> groupCaptor3 = ArgumentCaptor.forClass(String.class);
+		final ArgumentCaptor<Iterable> disjoinCaptor = ArgumentCaptor.forClass(Iterable.class);
+		final ArgumentCaptor<Iterable> joinCaptor = ArgumentCaptor.forClass(Iterable.class);
+
+		verify(store, times(2)).fetchFilter(filterCaptor.capture());
+		verify(store, times(4)).getAllFilters(eq("a classname"), groupCaptor.capture());
+		verify(store, times(4)).disjoin(groupCaptor2.capture(), disjoinCaptor.capture());
+		verify(store, times(4)).join(groupCaptor3.capture(), joinCaptor.capture());
+
+		assertThat(filterCaptor.getAllValues(), containsInAnyOrder(1L, 2L));
+		assertThat(groupCaptor.getAllValues().get(0), equalTo("foo"));
+		assertThat(groupCaptor.getAllValues().get(1), equalTo("bar"));
+		assertThat(groupCaptor.getAllValues().get(2), equalTo("foo"));
+		assertThat(groupCaptor.getAllValues().get(3), equalTo("bar"));
+
+		assertThat(groupCaptor2.getAllValues().get(0), equalTo("foo"));
+		assertThat(groupCaptor2.getAllValues().get(1), equalTo("bar"));
+		assertThat(groupCaptor2.getAllValues().get(2), equalTo("foo"));
+		assertThat(groupCaptor2.getAllValues().get(3), equalTo("bar"));
+
+		assertThat((Iterable<FilterStore.Filter>) disjoinCaptor.getValue(),
+				containsInAnyOrder(firstAlreadyJoined, secondAlreadyJoined));
+
+		assertThat(groupCaptor3.getAllValues().get(0), equalTo("foo"));
+		assertThat(groupCaptor3.getAllValues().get(1), equalTo("bar"));
+		assertThat(groupCaptor3.getAllValues().get(2), equalTo("foo"));
+		assertThat(groupCaptor3.getAllValues().get(3), equalTo("bar"));
+
+		assertThat((Iterable<FilterStore.Filter>) joinCaptor.getValue(), containsInAnyOrder(stored));
+	}
+
+	@Test
+	public void getGroupsWhichTheSpecifiedFilterIsDefault() throws Exception {
+		// given
+		doReturn(asList("foo", "bar", "baz")) //
+				.when(store).joined(anyLong());
+
+		// when
+		final Iterable<String> output = defaultFilterLogic.getGroups(42L);
+
+		// then
+		assertThat(output, containsInAnyOrder("foo", "bar", "baz"));
+
+		verify(store).joined(eq(42L));
 	}
 
 }

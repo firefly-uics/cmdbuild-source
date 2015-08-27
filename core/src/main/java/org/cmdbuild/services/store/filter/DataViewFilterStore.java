@@ -6,6 +6,7 @@ import static org.cmdbuild.common.Constants.CODE_ATTRIBUTE;
 import static org.cmdbuild.common.Constants.DESCRIPTION_ATTRIBUTE;
 import static org.cmdbuild.common.Constants.ID_ATTRIBUTE;
 import static org.cmdbuild.common.Constants.ROLE_CLASS_NAME;
+import static org.cmdbuild.dao.entry.Functions.toCode;
 import static org.cmdbuild.dao.guava.Functions.toCard;
 import static org.cmdbuild.dao.guava.Functions.toRelation;
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
@@ -53,6 +54,7 @@ public class DataViewFilterStore implements FilterStore {
 
 	private static final Alias F = name("f");
 	private static final Alias R = name("r");
+	private static final Alias D = name("d");
 
 	private static WhereClause filtersAssociatedTo(final Long id) {
 		final WhereClause clause;
@@ -68,12 +70,12 @@ public class DataViewFilterStore implements FilterStore {
 		return condition(attribute(F, SHARED), eq(false));
 	}
 
-	private static WhereClause relatedWithGroup(final String groupName) {
+	private static WhereClause roleName(final String groupName) {
 		final WhereClause clause;
 		if (isBlank(groupName)) {
 			clause = alwaysTrue();
 		} else {
-			clause = condition(attribute(R, USER_ID), eq(groupName));
+			clause = condition(attribute(R, CODE_ATTRIBUTE), eq(groupName));
 		}
 		return clause;
 	}
@@ -88,7 +90,7 @@ public class DataViewFilterStore implements FilterStore {
 		return clause;
 	}
 
-	private WhereClause ids(final Object[] ids) {
+	private WhereClause filterIds(final Long... ids) {
 		final WhereClause clause;
 		if (ids == null) {
 			clause = alwaysTrue();
@@ -185,8 +187,8 @@ public class DataViewFilterStore implements FilterStore {
 	public FluentIterable<Filter> getAllFilters(final String className, final String groupName) {
 		final CMQueryResult result = view.select(anyAttribute(F)) //
 				.from(filterClass(), as(F)) //
-				.join(roleClass(), as(R), over(filterRoleDomain())) //
-				.where(and(forClass(className), relatedWithGroup(groupName))) //
+				.join(roleClass(), as(R), over(filterRoleDomain(), as(D))) //
+				.where(and(forClass(className), roleName(groupName))) //
 				.orderBy(NAME, ASC) //
 				.run();
 		return from(result) //
@@ -218,13 +220,26 @@ public class DataViewFilterStore implements FilterStore {
 				.toArray(Long.class);
 		final CMQueryResult result = view.select(anyAttribute(F)) //
 				.from(filterClass(), as(F)) //
-				.join(roleClass(), as(R), over(filterRoleDomain())) //
-				.where(and(ids(ids), relatedWithGroup(groupName))) //
+				.join(roleClass(), as(R), over(filterRoleDomain(), as(D))) //
+				.where(and(filterIds(ids), roleName(groupName))) //
 				.orderBy(NAME, ASC) //
 				.run();
-		for (final CMRelation relation : from(result).transform(toRelation(R))) {
+		for (final CMRelation relation : from(result).transform(toRelation(D))) {
 			view.delete(relation);
 		}
+	}
+
+	@Override
+	public Iterable<String> joined(final Long filter) {
+		final CMQueryResult result = view.select(anyAttribute(F)) //
+				.from(filterClass(), as(F)) //
+				.join(roleClass(), as(R), over(filterRoleDomain(), as(D))) //
+				.where(filterIds(filter)) //
+				.orderBy(NAME, ASC) //
+				.run();
+		return from(result) //
+				.transform(toCard(R)) //
+				.transform(toCode());
 	}
 
 	/*
@@ -262,7 +277,7 @@ public class DataViewFilterStore implements FilterStore {
 		logger.debug("getting role card with name '{}'", name);
 		return view.select(anyAttribute(R)) //
 				.from(roleClass(), as(R)) //
-				.where(condition(attribute(R, CODE_ATTRIBUTE), eq(name))) //
+				.where(roleName(name)) //
 				.limit(1) //
 				.run() //
 				.getOnlyRow() //

@@ -1,6 +1,7 @@
 package org.cmdbuild.servlets.json;
 
 import static com.google.common.collect.FluentIterable.from;
+import static com.google.common.collect.Lists.newArrayList;
 import static org.apache.commons.lang3.builder.ToStringBuilder.reflectionToString;
 import static org.apache.commons.lang3.builder.ToStringStyle.SHORT_PREFIX_STYLE;
 import static org.cmdbuild.services.json.dto.JsonResponse.success;
@@ -19,6 +20,8 @@ import static org.cmdbuild.servlets.json.CommunicationConstants.NAME;
 import static org.cmdbuild.servlets.json.CommunicationConstants.POSITION;
 import static org.cmdbuild.servlets.json.CommunicationConstants.START;
 import static org.cmdbuild.servlets.json.CommunicationConstants.TEMPLATE;
+import static org.cmdbuild.servlets.json.schema.Utils.toIterable;
+import static org.cmdbuild.servlets.json.schema.Utils.JsonParser.AS_LONG;
 
 import java.util.List;
 
@@ -37,7 +40,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.google.common.base.Function;
-import com.google.common.collect.Lists;
 
 public class Filter extends JSONBaseWithSpringContext {
 
@@ -240,7 +242,7 @@ public class Filter extends JSONBaseWithSpringContext {
 
 		private static class Builder implements org.apache.commons.lang3.builder.Builder<JsonFilters> {
 
-			private List<? super JsonFilter> elements;
+			private List<JsonFilter> elements;
 
 			private Builder() {
 				// use factory method
@@ -252,7 +254,7 @@ public class Filter extends JSONBaseWithSpringContext {
 			}
 
 			public Builder withElements(final Iterable<? extends JsonFilter> elements) {
-				this.elements = Lists.newArrayList(elements);
+				this.elements = newArrayList(elements);
 				return this;
 			}
 
@@ -262,14 +264,79 @@ public class Filter extends JSONBaseWithSpringContext {
 			return new Builder();
 		}
 
-		private final List<? super JsonFilter> elements;
+		private final List<JsonFilter> elements;
 
 		private JsonFilters(final Builder builder) {
 			this.elements = builder.elements;
 		}
 
 		@JsonProperty(ELEMENTS)
-		public List<? super JsonFilter> getElements() {
+		public List<JsonFilter> getElements() {
+			return elements;
+		}
+
+		@Override
+		public boolean equals(final Object obj) {
+			if (obj == this) {
+				return true;
+			}
+			if (!(obj instanceof JsonFilters)) {
+				return false;
+			}
+			final JsonFilters other = JsonFilters.class.cast(obj);
+			return new EqualsBuilder() //
+					.append(this.elements, other.elements) //
+					.isEquals();
+		}
+
+		@Override
+		public int hashCode() {
+			return new HashCodeBuilder() //
+					.append(elements) //
+					.toHashCode();
+		}
+
+		@Override
+		public String toString() {
+			return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
+		}
+
+	}
+
+	private static class JsonGroups {
+
+		private static class Builder implements org.apache.commons.lang3.builder.Builder<JsonGroups> {
+
+			private List<String> elements;
+
+			private Builder() {
+				// use factory method
+			}
+
+			@Override
+			public JsonGroups build() {
+				return new JsonGroups(this);
+			}
+
+			public Builder withElements(final Iterable<? extends String> elements) {
+				this.elements = newArrayList(elements);
+				return this;
+			}
+
+		}
+
+		public static Builder newInstance() {
+			return new Builder();
+		}
+
+		private final List<String> elements;
+
+		private JsonGroups(final Builder builder) {
+			this.elements = builder.elements;
+		}
+
+		@JsonProperty(ELEMENTS)
+		public List<String> getElements() {
 			return elements;
 		}
 
@@ -432,10 +499,22 @@ public class Filter extends JSONBaseWithSpringContext {
 	@JSONExported
 	@Admin
 	public void setDefault( //
-			@Parameter(value = ID, required = true) final Long filter, //
-			@Parameter(value = GROUP, required = true) final String groupName //
+			@Parameter(value = ID, required = true) final JSONArray filters, //
+			@Parameter(value = GROUP, required = true) final JSONArray groups //
 	) {
-		filterLogic().setDefault(filter, groupName);
+		final Iterable<Long> _filters = toIterable(filters, AS_LONG);
+		final Iterable<String> _groups = toIterable(groups);
+		filterLogic().setDefault(_filters, _groups);
+	}
+
+	@JSONExported
+	public JsonResponse getGroups( //
+			@Parameter(value = ID, required = true) final Long filter //
+	) {
+		final Iterable<String> elements = filterLogic().getGroups(filter);
+		return success(JsonGroups.newInstance() //
+				.withElements(elements) //
+				.build());
 	}
 
 	/**
