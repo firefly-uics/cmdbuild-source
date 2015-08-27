@@ -27,8 +27,6 @@ public interface FilterLogic extends Logic {
 
 	void delete(Filter filter);
 
-	Long position(Filter filter);
-
 	PagedElements<Filter> getFiltersForCurrentUser(String className);
 
 	PagedElements<Filter> fetchAllGroupsFilters(int start, int limit);

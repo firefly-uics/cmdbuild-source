@@ -81,16 +81,6 @@ public interface FilterStore {
 	 */
 	void delete(Filter filter);
 
-	/**
-	 * Retrieve the position of this filter This could be useful to calculate
-	 * the page to have a given filter
-	 * 
-	 * @param filter
-	 *            the filter to looking for the position
-	 * @return the position of this filter in the stored order
-	 */
-	Long getPosition(Filter filter);
-
 	Filter fetchFilter(Long filterId);
 
 	Iterable<Filter> getAllFilters(String className, String groupName);

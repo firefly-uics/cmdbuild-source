@@ -139,7 +139,6 @@
 			update: 'services/json/filter/update',
 			remove: 'services/json/filter/delete',
 
-			position: 'services/json/filter/position',
 			userStore: 'services/json/filter/readforuser',
 			groupStore: 'services/json/filter/readallgroupfilters'
 		},

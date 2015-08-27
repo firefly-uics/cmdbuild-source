@@ -17,7 +17,6 @@ import static org.cmdbuild.servlets.json.CommunicationConstants.GROUP;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ID;
 import static org.cmdbuild.servlets.json.CommunicationConstants.LIMIT;
 import static org.cmdbuild.servlets.json.CommunicationConstants.NAME;
-import static org.cmdbuild.servlets.json.CommunicationConstants.POSITION;
 import static org.cmdbuild.servlets.json.CommunicationConstants.START;
 import static org.cmdbuild.servlets.json.CommunicationConstants.TEMPLATE;
 import static org.cmdbuild.servlets.json.schema.Utils.toIterable;
@@ -470,18 +469,6 @@ public class Filter extends JSONBaseWithSpringContext {
 		filterLogic().delete(FilterImpl.newInstance() //
 				.withId(id) //
 				.build());
-	}
-
-	@JSONExported
-	public JSONObject position( //
-			@Parameter(value = ID) final Long id //
-	) throws JSONException {
-		final Long position = filterLogic().position(FilterImpl.newInstance() //
-				.withId(id) //
-				.build());
-		final JSONObject out = new JSONObject();
-		out.put(POSITION, position);
-		return out;
 	}
 
 	@JSONExported

@@ -174,13 +174,6 @@ public class DefaultFilterLogic implements FilterLogic {
 	}
 
 	@Override
-	public Long position(final Filter filter) {
-		logger.info(MARKER, "getting position for filter '{}'", filter);
-		final FilterStore.Filter _filter = converter.logicToStore(filter);
-		return store.getPosition(_filter);
-	}
-
-	@Override
 	public PagedElements<Filter> getFiltersForCurrentUser(final String className) {
 		logger.info(MARKER, "getting all filters for class '{}' for the currently logged user", className);
 		final OperationUser operationUser = userStore.getUser();
@@ -240,6 +233,7 @@ public class DefaultFilterLogic implements FilterLogic {
 
 	@Override
 	public void setDefault(final Iterable<Long> filters, final Iterable<String> groups) {
+		logger.info(MARKER, "setting default filter '{}' for groups '{}'", filters, groups);
 		for (final Long filter : filters) {
 			final FilterStore.Filter stored = store.fetchFilter(filter);
 			for (final String groupName : groups) {
@@ -248,9 +242,10 @@ public class DefaultFilterLogic implements FilterLogic {
 			}
 		}
 	}
-	
+
 	@Override
-	public Iterable<String> getGroups(Long filter) {
+	public Iterable<String> getGroups(final Long filter) {
+		logger.info(MARKER, "getting groups which filter '{}' is default", filter);
 		return store.joined(filter);
 	}
 

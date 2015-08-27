@@ -192,23 +192,6 @@ public class DefaultFilterLogicTest {
 	}
 
 	@Test
-	public void positionRequested() throws Exception {
-		// given(Filter.class)
-		final Filter input = mock(Filter.class);
-		final FilterStore.Filter convertedForStore = mock(FilterStore.Filter.class);
-		doReturn(convertedForStore) //
-				.when(converter).logicToStore(any(Filter.class));
-
-		// when
-		defaultFilterLogic.position(input);
-
-		// then
-		verify(converter).logicToStore(eq(input));
-		verify(store).getPosition(eq(convertedForStore));
-		verifyNoMoreInteractions(store, converter, userStore, authenticatedUser, privilegeContext);
-	}
-
-	@Test
 	public void filtersForCurrentUserAreRequested_OnlyUserFiltersAreReturned() throws Exception {
 		// given
 		final FilterStore.Filter first = mock(FilterStore.Filter.class);

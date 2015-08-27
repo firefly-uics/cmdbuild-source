@@ -173,17 +173,6 @@ public class DataViewFilterStore implements FilterStore {
 	}
 
 	@Override
-	public Long getPosition(final Filter filter) {
-		return view.select(anyAttribute(F)) //
-				.from(filterClass(), as(F)) //
-				.numbered(condition(attribute(F, ID), eq(filter.getId()))) //
-				.orderBy(NAME, ASC) //
-				.run() //
-				.getOnlyRow() //
-				.getNumber();
-	}
-
-	@Override
 	public FluentIterable<Filter> getAllFilters(final String className, final String groupName) {
 		final CMQueryResult result = view.select(anyAttribute(F)) //
 				.from(filterClass(), as(F)) //

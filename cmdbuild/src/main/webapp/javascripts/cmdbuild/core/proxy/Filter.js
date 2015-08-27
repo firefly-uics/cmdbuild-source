@@ -22,10 +22,6 @@
 			doRequest(filter, config, CMDBuild.core.proxy.CMProxyUrlIndex.filter.remove, 'POST', false);
 		},
 
-		position: function(filter, config) {
-			doRequest(filter, config, CMDBuild.core.proxy.CMProxyUrlIndex.filter.position, 'GET', false);
-		},
-
 		/**
 		 * Returns a store with the filters for a given group
 		 *
