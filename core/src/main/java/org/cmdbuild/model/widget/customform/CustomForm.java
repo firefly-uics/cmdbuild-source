@@ -169,7 +169,7 @@ public class CustomForm extends Widget {
 			throws Exception {
 		if (outputName != null) {
 			final Optional<String> submission = decodeInput(input);
-			output.put(outputName, submission.or(of(EMPTY)));
+			output.put(outputName, submission.or(of(EMPTY)).get());
 		}
 	}
 
