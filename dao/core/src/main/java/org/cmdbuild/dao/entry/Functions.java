@@ -1,24 +1,28 @@
 package org.cmdbuild.dao.entry;
 
-import static org.cmdbuild.common.Constants.CODE_ATTRIBUTE;
-
 import com.google.common.base.Function;
 
 public class Functions {
 
-	private static class ToCode implements Function<CMCard, String> {
+	private static class ToAttributeValue<T> implements Function<CMCard, T> {
+
+		private final String name;
+		private final Class<T> type;
+
+		public ToAttributeValue(final String name, final Class<T> type) {
+			this.name = name;
+			this.type = type;
+		}
 
 		@Override
-		public String apply(final CMCard input) {
-			return input.get(CODE_ATTRIBUTE, String.class);
+		public T apply(final CMCard input) {
+			return input.get(name, type);
 		}
 
 	}
 
-	private static final ToCode TO_CODE = new ToCode();
-
-	public static Function<CMCard, String> toCode() {
-		return TO_CODE;
+	public static <T> Function<CMCard, T> toAttributeValue(final String name, final Class<T> type) {
+		return new ToAttributeValue<T>(name, type);
 	}
 
 	private Functions() {

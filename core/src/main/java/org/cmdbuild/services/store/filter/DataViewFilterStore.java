@@ -6,7 +6,7 @@ import static org.cmdbuild.common.Constants.CODE_ATTRIBUTE;
 import static org.cmdbuild.common.Constants.DESCRIPTION_ATTRIBUTE;
 import static org.cmdbuild.common.Constants.ID_ATTRIBUTE;
 import static org.cmdbuild.common.Constants.ROLE_CLASS_NAME;
-import static org.cmdbuild.dao.entry.Functions.toCode;
+import static org.cmdbuild.dao.entry.Functions.toAttributeValue;
 import static org.cmdbuild.dao.guava.Functions.toCard;
 import static org.cmdbuild.dao.guava.Functions.toRelation;
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
@@ -239,7 +239,7 @@ public class DataViewFilterStore implements FilterStore {
 				.run();
 		return from(result) //
 				.transform(toCard(R)) //
-				.transform(toCode());
+				.transform(toAttributeValue(CODE_ATTRIBUTE, String.class));
 	}
 
 	/*
