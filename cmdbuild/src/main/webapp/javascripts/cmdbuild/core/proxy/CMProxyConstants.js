@@ -214,6 +214,7 @@
 		NAME_CLASS_1: 'nameClass1',
 		NAME_CLASS_2: 'nameClass2',
 		NEW: 'new',
+		NONE: 'none',
 		NORMAL: 'normal',
 		NOTIFICATION_ACTIVE: 'notificationActive',
 		NOTIFICATION_EMAIL_ACCOUNT: 'notificationEmailAccount',
@@ -350,7 +351,8 @@
 		WORKFLOW_ACTIVE: 'workflowActive',
 		WORKFLOW_ATTRIBUTES: 'workflowAttributes',
 		WORKFLOW_CLASS_NAME: 'workflowClassName',
-		WORKFLOW_NAME: 'workflowName'
+		WORKFLOW_NAME: 'workflowName',
+		WRITE: 'write'
 	});
 
 })();

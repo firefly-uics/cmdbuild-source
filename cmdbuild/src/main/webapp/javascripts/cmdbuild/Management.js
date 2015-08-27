@@ -37,7 +37,7 @@
 			'CMDBuild.core.proxy.Classes',
 			'CMDBuild.core.proxy.Configuration',
 			'CMDBuild.core.proxy.Report',
-			'CMDBuild.core.proxy.groups.Groups'
+			'CMDBuild.core.proxy.group.Group'
 		],
 
 		name: 'CMDBuild',
@@ -107,7 +107,7 @@
 				});
 
 				// Maybe a single request with all the configuration could be better
-				CMDBuild.core.proxy.groups.Groups.getUIConfiguration({
+				CMDBuild.core.proxy.group.Group.getUIConfiguration({
 					scope: this,
 					success: function(result, options, decodedResult) {
 						_CMUIConfiguration = new CMDBuild.model.CMUIConfigurationModel(decodedResult.response);
