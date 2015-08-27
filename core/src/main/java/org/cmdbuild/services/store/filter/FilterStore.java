@@ -99,4 +99,6 @@ public interface FilterStore {
 
 	void disjoin(String groupName, Iterable<Filter> filters);
 
+	Iterable<String> joined(Long filter);
+
 }

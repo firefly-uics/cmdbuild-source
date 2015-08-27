@@ -239,10 +239,19 @@ public class DefaultFilterLogic implements FilterLogic {
 	}
 
 	@Override
-	public void setDefault(final Long filter, final String groupName) {
-		final FilterStore.Filter stored = store.fetchFilter(filter);
-		store.disjoin(groupName, store.getAllFilters(stored.getClassName(), groupName));
-		store.join(groupName, newArrayList(stored));
+	public void setDefault(final Iterable<Long> filters, final Iterable<String> groups) {
+		for (final Long filter : filters) {
+			final FilterStore.Filter stored = store.fetchFilter(filter);
+			for (final String groupName : groups) {
+				store.disjoin(groupName, store.getAllFilters(stored.getClassName(), groupName));
+				store.join(groupName, newArrayList(stored));
+			}
+		}
+	}
+	
+	@Override
+	public Iterable<String> getGroups(Long filter) {
+		return store.joined(filter);
 	}
 
 	private Function<FilterStore.Filter, Filter> toLogic() {

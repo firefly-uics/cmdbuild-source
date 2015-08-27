@@ -37,6 +37,8 @@ public interface FilterLogic extends Logic {
 
 	Iterable<Filter> getDefaults(String className, String groupName);
 
-	void setDefault(Long filter, String groupName);
+	void setDefault(Iterable<Long> filters, Iterable<String> groups);
+
+	Iterable<String> getGroups(Long filter);
 
 }
