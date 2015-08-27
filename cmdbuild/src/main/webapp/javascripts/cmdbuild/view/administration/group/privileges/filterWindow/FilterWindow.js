@@ -87,7 +87,7 @@
 
 						items: [
 							this.rowPrivilegePanel = Ext.create('Ext.panel.Panel', {
-								title: CMDBuild.Translation.privileges_on_rows, // TODO
+								title: CMDBuild.Translation.rowsPrivileges,
 								layout: 'border',
 								border: false,
 								frame: false,

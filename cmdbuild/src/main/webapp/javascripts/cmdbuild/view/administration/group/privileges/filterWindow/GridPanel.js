@@ -7,7 +7,7 @@
 
 		border: false,
 		frame: false,
-		title: CMDBuild.Translation.privileges_on_columns, // TODO
+		title: CMDBuild.Translation.columnsPrivileges,
 
 		initComponent: function() {
 			Ext.apply(this, {
@@ -19,7 +19,7 @@
 					},
 					{
 						dataIndex: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
-						text: CMDBuild.Translation.description_,
+						text: CMDBuild.Translation.descriptionLabel,
 						flex: 1
 					},
 					Ext.create('Ext.grid.column.CheckColumn', {
