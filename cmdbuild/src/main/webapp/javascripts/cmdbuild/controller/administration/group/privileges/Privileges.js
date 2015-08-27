@@ -58,7 +58,7 @@
 			this.controllerClassPrivileges = Ext.create('CMDBuild.controller.administration.group.privileges.Grid', {
 				parentDelegate: this,
 				proxy: CMDBuild.core.proxy.group.privileges.Classes,
-				title: CMDBuild.Translation.administration.modClass.tree_title, // TODO: change in Classes
+				title: CMDBuild.Translation.classes,
 				enableCRUDRead: true,
 				enableCRUDWrite: true,
 				enablePrivilegesAndUi: true
