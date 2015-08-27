@@ -24,7 +24,7 @@
 			'CMDBuild.core.proxy.Configuration',
 			'CMDBuild.core.proxy.Localizations',
 			'CMDBuild.core.proxy.Report',
-			'CMDBuild.core.proxy.groups.Groups'
+			'CMDBuild.core.proxy.group.Group'
 		],
 
 		name: 'CMDBuild',
@@ -59,7 +59,7 @@
 				});
 
 				// Maybe a single request with all the configuration could be better
-				CMDBuild.core.proxy.groups.Groups.getUIConfiguration({
+				CMDBuild.core.proxy.group.Group.getUIConfiguration({
 					scope: this,
 					success: function(result, options, decodedResult) {
 						_CMUIConfiguration = new CMDBuild.model.CMUIConfigurationModel(decodedResult.response);
@@ -310,7 +310,7 @@
 				/**
 				 * Groups
 				 */
-				CMDBuild.core.proxy.groups.Groups.readAll({
+				CMDBuild.core.proxy.group.Group.readAll({
 					scope: this,
 					success: function(result, options, decodedResult) {
 						_CMCache.addGroups(decodedResult.groups); // TODO: refactor to avoig cache usage
@@ -330,8 +330,8 @@
 							new CMDBuild.Administration.ModMenu({
 								cmControllerType: controllerNS.administration.menu.CMModMenuController
 							}),
-							Ext.create('CMDBuild.view.administration.groups.GroupsView', {
-								cmControllerType: 'CMDBuild.controller.administration.groups.Groups',
+							Ext.create('CMDBuild.view.administration.group.GroupView', {
+								cmControllerType: 'CMDBuild.controller.administration.group.Group',
 								cmName: 'group',
 							}),
 							Ext.create('CMDBuild.view.administration.users.UsersView', {
