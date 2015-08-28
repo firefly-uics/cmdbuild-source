@@ -36,6 +36,7 @@ import org.cmdbuild.dao.entrytype.attributetype.StringArrayAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.StringAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TextAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TimeAttributeType;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -103,7 +104,11 @@ public class EntryInsertCommand extends EntryCommand implements LoggingSupport {
 				return ps;
 			}
 		}, keyHolder);
-		return keyHolder.getKey().longValue();
+		final Number key = keyHolder.getKey();
+		if (key == null){
+			throw new DataIntegrityViolationException("insert was successfull but no card has been created");
+		}
+		return key.longValue();
 	}
 
 	private String buildInsertStatement() {
