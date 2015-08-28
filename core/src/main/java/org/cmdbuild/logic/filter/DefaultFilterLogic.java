@@ -126,7 +126,7 @@ public class DefaultFilterLogic implements FilterLogic {
 		Validate.notBlank(filter.getName(), "missing name");
 		final FilterStore.Filter _filter = converter.logicToStore(filter);
 		final Long createdId = store.create(_filter);
-		final FilterStore.Filter created = store.fetchFilter(createdId);
+		final FilterStore.Filter created = store.read(createdId);
 		return converter.storeToLogic(created);
 	}
 
@@ -134,7 +134,7 @@ public class DefaultFilterLogic implements FilterLogic {
 	public void update(final Filter filter) {
 		logger.info(MARKER, "updating filter '{}'", filter);
 		final FilterStore.Filter _filter = converter.logicToStore(filter);
-		final FilterStore.Filter stored = store.fetchFilter(_filter.getId());
+		final FilterStore.Filter stored = store.read(_filter.getId());
 		final FilterStore.Filter notAllAttributesCanBeUpdated = new ForwardingFilter() {
 
 			@Override
@@ -174,14 +174,14 @@ public class DefaultFilterLogic implements FilterLogic {
 	}
 
 	@Override
-	public PagedElements<Filter> getFiltersForCurrentUser(final String className) {
+	public PagedElements<Filter> readForCurrentUser(final String className) {
 		logger.info(MARKER, "getting all filters for class '{}' for the currently logged user", className);
 		final OperationUser operationUser = userStore.getUser();
 		final CMUser user = operationUser.getAuthenticatedUser();
-		final PagedElements<FilterStore.Filter> userFilters = store.getAllUserFilters(className, user.getId(), 0,
+		final PagedElements<FilterStore.Filter> userFilters = store.readNonSharedFilters(className, user.getId(), 0,
 				MAX_VALUE);
 		final PagedElements<org.cmdbuild.services.store.filter.FilterStore.Filter> fetchAllGroupsFilters = store
-				.fetchAllGroupsFilters(className, 0, MAX_VALUE);
+				.readSharedFilters(className, 0, MAX_VALUE);
 		final Iterable<FilterStore.Filter> groupFilters = from(fetchAllGroupsFilters) //
 				.filter(new Predicate<FilterStore.Filter>() {
 
@@ -199,19 +199,19 @@ public class DefaultFilterLogic implements FilterLogic {
 	}
 
 	@Override
-	public PagedElements<Filter> fetchAllGroupsFilters(final String className, final int start, final int limit) {
+	public PagedElements<Filter> readShared(final String className, final int start, final int limit) {
 		logger.info(MARKER, "getting all filters starting from '{}' and with a limit of '{}'", start, limit);
-		final PagedElements<FilterStore.Filter> response = store.fetchAllGroupsFilters(className, start, limit);
+		final PagedElements<FilterStore.Filter> response = store.readSharedFilters(className, start, limit);
 		return new PagedElements<Filter>(from(response) //
 				.transform(toLogic()), //
 				response.totalSize());
 	}
 
 	@Override
-	public PagedElements<Filter> getAllUserFilters(final String className, final int start, final int limit) {
+	public PagedElements<Filter> readNotShared(final String className, final int start, final int limit) {
 		logger.info(MARKER, "getting all filters for class '{}' starting from '{}' and with a limit of '{}'",
 				className, start, limit);
-		final PagedElements<FilterStore.Filter> response = store.getAllUserFilters(className, null, start, limit);
+		final PagedElements<FilterStore.Filter> response = store.readNonSharedFilters(className, null, start, limit);
 		return new PagedElements<Filter>(from(response) //
 				.transform(toLogic()), //
 				response.totalSize());
@@ -227,7 +227,7 @@ public class DefaultFilterLogic implements FilterLogic {
 		} else {
 			_groupName = groupName;
 		}
-		return from(store.getAllFilters(className, _groupName)) //
+		return from(store.read(className, _groupName)) //
 				.transform(toLogic());
 	}
 
@@ -235,9 +235,9 @@ public class DefaultFilterLogic implements FilterLogic {
 	public void setDefault(final Iterable<Long> filters, final Iterable<String> groups) {
 		logger.info(MARKER, "setting default filter '{}' for groups '{}'", filters, groups);
 		for (final Long filter : filters) {
-			final FilterStore.Filter stored = store.fetchFilter(filter);
+			final FilterStore.Filter stored = store.read(filter);
 			for (final String groupName : groups) {
-				store.disjoin(groupName, store.getAllFilters(stored.getClassName(), groupName));
+				store.disjoin(groupName, store.read(stored.getClassName(), groupName));
 				store.join(groupName, newArrayList(stored));
 			}
 		}

@@ -51,7 +51,7 @@ public class DataViewFilterStoreTest extends IntegrationTestBase {
 		// given
 
 		// when
-		final Iterable<FilterStore.Filter> filters = filterStore.getAllUserFilters(null, USER_ID, 0, MAX_VALUE);
+		final Iterable<FilterStore.Filter> filters = filterStore.readNonSharedFilters(null, USER_ID, 0, MAX_VALUE);
 
 		// then
 		assertThat(size(filters), equalTo(0));
@@ -60,47 +60,47 @@ public class DataViewFilterStoreTest extends IntegrationTestBase {
 	@Test
 	public void shouldFetchOnlyUserFilters() throws Exception {
 		// given
-		final Long id = filterStore.create(userFilter("foo", roleClass.getIdentifier().getLocalName(), "bar"));
-		filterStore.create(groupFilter("group_filter", "value", roleClass.getIdentifier().getLocalName(), EMPTY_ID));
+		final Long id = filterStore.create(userFilter("foo", ROLE_CLASS_NAME, "bar"));
+		filterStore.create(groupFilter("group_filter", "value", ROLE_CLASS_NAME, EMPTY_ID));
 
 		// when
-		final Iterable<FilterStore.Filter> filters = filterStore.getAllUserFilters(null, USER_ID, 0, MAX_VALUE);
+		final Iterable<FilterStore.Filter> filters = filterStore.readNonSharedFilters(null, USER_ID, 0, MAX_VALUE);
 
 		// then
 		assertThat(size(filters), equalTo(1));
-		assertThat(filters, contains(userFilter(id, "foo", roleClass.getIdentifier().getLocalName(), "bar")));
+		assertThat(filters, contains(userFilter(id, "foo", ROLE_CLASS_NAME, "bar")));
 	}
 
 	@Test
 	public void filterModified() throws Exception {
 		// given
-		final Long createdId = filterStore.create(userFilter("foo", roleClass.getIdentifier().getLocalName(), "bar"));
+		final Long createdId = filterStore.create(userFilter("foo", ROLE_CLASS_NAME, "bar"));
 
 		// when
-		Iterable<FilterStore.Filter> filters = filterStore.getAllUserFilters(null, USER_ID, 0, MAX_VALUE);
+		Iterable<FilterStore.Filter> filters = filterStore.readNonSharedFilters(ROLE_CLASS_NAME, USER_ID, 0, MAX_VALUE);
 
 		// then
 		assertThat(size(filters), equalTo(1));
-		assertThat(filters, contains(userFilter(createdId, "foo", roleClass.getIdentifier().getLocalName(), "bar")));
+		assertThat(filters, contains(userFilter(createdId, "foo", ROLE_CLASS_NAME, "bar")));
 
 		// but
-		filterStore.update(userFilter(createdId, "foo", roleClass.getIdentifier().getLocalName(), "baz"));
+		filterStore.update(userFilter(createdId, "foo", ROLE_CLASS_NAME, "baz"));
 
 		// when
-		filters = filterStore.getAllUserFilters(null, USER_ID, 0, MAX_VALUE);
+		filters = filterStore.readNonSharedFilters(null, USER_ID, 0, MAX_VALUE);
 
 		// then
 		assertThat(size(filters), equalTo(1));
-		assertThat(filters, contains(userFilter(createdId, "foo", roleClass.getIdentifier().getLocalName(), "baz")));
+		assertThat(filters, contains(userFilter(createdId, "foo", ROLE_CLASS_NAME, "baz")));
 	}
 
 	@Test
 	public void filterDataFullyRead() throws Exception {
 		// given
-		filterStore.create(filter("foo", "bar", "baz", roleClass.getIdentifier().getLocalName(), EMPTY_ID, false));
+		filterStore.create(filter("foo", "bar", "baz", ROLE_CLASS_NAME, EMPTY_ID, false));
 
 		// when
-		final Filter filter = filterStore.getAllUserFilters(null, USER_ID, 0, MAX_VALUE).iterator().next();
+		final Filter filter = filterStore.readNonSharedFilters(null, USER_ID, 0, MAX_VALUE).iterator().next();
 
 		// then
 		assertThat(filter.getName(), equalTo("foo"));
@@ -111,11 +111,11 @@ public class DataViewFilterStoreTest extends IntegrationTestBase {
 	@Test
 	public void userCanHaveMoreThanOneFilterWithSameNameButForDifferentEntryType() throws Exception {
 		// given
-		filterStore.create(userFilter("name", roleClass.getIdentifier().getLocalName(), "value"));
+		filterStore.create(userFilter("name", ROLE_CLASS_NAME, "value"));
 		filterStore.create(userFilter("name", userClass.getIdentifier().getLocalName(), "value2"));
 
 		// when
-		final Iterable<Filter> userFilters = filterStore.getAllUserFilters(null, USER_ID, 0, MAX_VALUE);
+		final Iterable<Filter> userFilters = filterStore.readNonSharedFilters(null, USER_ID, 0, MAX_VALUE);
 
 		// then
 		assertThat(Iterables.size(userFilters), equalTo(2));
@@ -124,20 +124,20 @@ public class DataViewFilterStoreTest extends IntegrationTestBase {
 	@Test(expected = Exception.class)
 	public void userCanHaveOnlyOneFilterWithSameNameAndEntryType() throws Exception {
 		// when
-		filterStore.create(userFilter("name", roleClass.getIdentifier().getLocalName(), "value"));
-		filterStore.create(userFilter("name", roleClass.getIdentifier().getLocalName(), "value2"));
+		filterStore.create(userFilter("name", ROLE_CLASS_NAME, "value"));
+		filterStore.create(userFilter("name", ROLE_CLASS_NAME, "value2"));
 	}
 
 	@Test
 	public void testPagination() throws Exception {
 		// given
-		filterStore.create(userFilter("foo1", roleClass.getIdentifier().getLocalName(), "value1"));
-		filterStore.create(userFilter("foo2", roleClass.getIdentifier().getLocalName(), "value2"));
-		filterStore.create(userFilter("foo3", roleClass.getIdentifier().getLocalName(), "value3"));
-		filterStore.create(userFilter("foo4", roleClass.getIdentifier().getLocalName(), "value4"));
+		filterStore.create(userFilter("foo1", ROLE_CLASS_NAME, "value1"));
+		filterStore.create(userFilter("foo2", ROLE_CLASS_NAME, "value2"));
+		filterStore.create(userFilter("foo3", ROLE_CLASS_NAME, "value3"));
+		filterStore.create(userFilter("foo4", ROLE_CLASS_NAME, "value4"));
 
 		// when
-		final PagedElements<Filter> userFilters = filterStore.getAllUserFilters(roleClass.getIdentifier()
+		final PagedElements<Filter> userFilters = filterStore.readNonSharedFilters(roleClass.getIdentifier()
 				.getLocalName(), USER_ID, 0, 2);
 
 		// then

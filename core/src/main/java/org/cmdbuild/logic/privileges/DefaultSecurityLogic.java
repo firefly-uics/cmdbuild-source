@@ -139,7 +139,7 @@ public class DefaultSecurityLogic implements Logic, SecurityLogic {
 	public List<PrivilegeInfo> fetchFilterPrivilegesForGroup(final Long groupId) {
 		final List<PrivilegeInfo> fetchedFilterPrivileges = fetchStoredPrivilegesForGroup(groupId,
 				PrivilegedObjectType.FILTER);
-		final Iterable<Filter> allGroupsFilters = filterStore.fetchAllGroupsFilters(null, 0, MAX_VALUE);
+		final Iterable<Filter> allGroupsFilters = filterStore.readSharedFilters(null, 0, MAX_VALUE);
 		for (final Filter filter : allGroupsFilters) {
 			final Long filterId = Long.valueOf(filter.getId());
 			if (!isPrivilegeAlreadyStored(filterId, fetchedFilterPrivileges)) {

@@ -56,7 +56,7 @@ public class DataViewFilterStore implements FilterStore {
 	private static final Alias R = name("r");
 	private static final Alias D = name("d");
 
-	private static WhereClause filtersAssociatedTo(final Long id) {
+	private static WhereClause forUser(final Long id) {
 		final WhereClause clause;
 		if (id == null) {
 			clause = alwaysTrue();
@@ -66,16 +66,16 @@ public class DataViewFilterStore implements FilterStore {
 		return clause;
 	}
 
-	private static WhereClause isUserFilter() {
-		return condition(attribute(F, SHARED), eq(false));
+	private static WhereClause isShared() {
+		return condition(attribute(F, SHARED), eq(true));
 	}
 
-	private static WhereClause roleName(final String groupName) {
+	private static WhereClause forRole(final String name) {
 		final WhereClause clause;
-		if (isBlank(groupName)) {
+		if (isBlank(name)) {
 			clause = alwaysTrue();
 		} else {
-			clause = condition(attribute(R, CODE_ATTRIBUTE), eq(groupName));
+			clause = condition(attribute(R, CODE_ATTRIBUTE), eq(name));
 		}
 		return clause;
 	}
@@ -113,18 +113,18 @@ public class DataViewFilterStore implements FilterStore {
 	}
 
 	@Override
-	public Filter fetchFilter(final Long filterId) {
+	public Filter read(final Long filterId) {
 		return cardToFilter().apply(filterCard(filterId));
 	}
 
 	@Override
-	public PagedElements<Filter> getAllUserFilters(final String className, final Long userId, final int offset,
+	public PagedElements<Filter> readNonSharedFilters(final String className, final Long userId, final int offset,
 			final int limit) {
 		logger.debug("getting user filters for class '{}' starting from '{}' with a limit of '{}'", className, offset,
 				limit);
 		final CMQueryResult result = view.select(anyAttribute(F)) //
 				.from(filterClass(), as(F)) //
-				.where(and(isUserFilter(), filtersAssociatedTo(userId), forClass(className))) //
+				.where(and(not(isShared()), forUser(userId), forClass(className))) //
 				.offset(offset) //
 				.limit(limit) //
 				.orderBy(attribute(F, NAME), ASC) //
@@ -137,11 +137,11 @@ public class DataViewFilterStore implements FilterStore {
 	}
 
 	@Override
-	public PagedElements<Filter> fetchAllGroupsFilters(final String className, final int start, final int limit) {
+	public PagedElements<Filter> readSharedFilters(final String className, final int start, final int limit) {
 		logger.debug("getting all filter cards");
 		final CMQueryResult result = view.select(anyAttribute(F)) //
 				.from(filterClass(), as(F)) //
-				.where(and(not(isUserFilter()), forClass(className))) //
+				.where(and(isShared(), forClass(className))) //
 				.offset(start) //
 				.limit(limit) //
 				.orderBy(attribute(F, NAME), ASC) //
@@ -173,12 +173,12 @@ public class DataViewFilterStore implements FilterStore {
 	}
 
 	@Override
-	public FluentIterable<Filter> getAllFilters(final String className, final String groupName) {
+	public FluentIterable<Filter> read(final String className, final String groupName) {
 		final CMQueryResult result = view.select(anyAttribute(F), anyAttribute(R)) //
 				.from(filterClass(), as(F)) //
 				.join(roleClass(), as(R), over(filterRoleDomain(), as(D))) //
-				.where(and(forClass(className), roleName(groupName))) //
-				.orderBy(attribute(F, NAME), ASC) //
+				.where(and(forClass(className), forRole(groupName))) //
+				.orderBy(NAME, ASC) //
 				.run();
 		return from(result) //
 				.transform(toCard(F)) //
@@ -210,7 +210,7 @@ public class DataViewFilterStore implements FilterStore {
 		final CMQueryResult result = view.select(anyAttribute(F), anyAttribute(R)) //
 				.from(filterClass(), as(F)) //
 				.join(roleClass(), as(R), over(filterRoleDomain(), as(D))) //
-				.where(and(filterIds(ids), roleName(groupName))) //
+				.where(and(filterIds(ids), forRole(groupName))) //
 				.orderBy(attribute(F, NAME), ASC) //
 				.run();
 		for (final CMRelation relation : from(result).transform(toRelation(D))) {
@@ -266,7 +266,7 @@ public class DataViewFilterStore implements FilterStore {
 		logger.debug("getting role card with name '{}'", name);
 		return view.select(anyAttribute(R)) //
 				.from(roleClass(), as(R)) //
-				.where(roleName(name)) //
+				.where(forRole(name)) //
 				.limit(1) //
 				.run() //
 				.getOnlyRow() //
