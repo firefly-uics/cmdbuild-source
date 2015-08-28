@@ -29,7 +29,7 @@ public interface FilterLogic extends Logic {
 
 	PagedElements<Filter> getFiltersForCurrentUser(String className);
 
-	PagedElements<Filter> fetchAllGroupsFilters(int start, int limit);
+	PagedElements<Filter> fetchAllGroupsFilters(String className, int start, int limit);
 
 	PagedElements<Filter> getAllUserFilters(String className, int start, int limit);
 

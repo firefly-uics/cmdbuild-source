@@ -199,9 +199,9 @@ public class DefaultFilterLogic implements FilterLogic {
 	}
 
 	@Override
-	public PagedElements<Filter> fetchAllGroupsFilters(final int start, final int limit) {
+	public PagedElements<Filter> fetchAllGroupsFilters(final String className, final int start, final int limit) {
 		logger.info(MARKER, "getting all filters starting from '{}' and with a limit of '{}'", start, limit);
-		final PagedElements<FilterStore.Filter> response = store.fetchAllGroupsFilters(null, start, limit);
+		final PagedElements<FilterStore.Filter> response = store.fetchAllGroupsFilters(className, start, limit);
 		return new PagedElements<Filter>(from(response) //
 				.transform(toLogic()), //
 				response.totalSize());
