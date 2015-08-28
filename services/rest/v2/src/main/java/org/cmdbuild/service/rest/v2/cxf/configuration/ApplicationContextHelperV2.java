@@ -24,7 +24,7 @@ import org.cmdbuild.logic.email.EmailTemplateLogic;
 import org.cmdbuild.logic.menu.MenuLogic;
 import org.cmdbuild.logic.privileges.SecurityLogic;
 import org.cmdbuild.logic.report.ReportLogic;
-import org.cmdbuild.logic.workflow.UserWorkflowLogicBuilder;
+import org.cmdbuild.logic.workflow.WebserviceWorkflowLogicBuilder;
 import org.cmdbuild.logic.workflow.WorkflowLogic;
 import org.cmdbuild.privileges.DBGroupFetcher;
 import org.cmdbuild.services.localization.RequestHandler;
@@ -131,7 +131,7 @@ public class ApplicationContextHelperV2 {
 	}
 
 	public WorkflowLogic userWorkflowLogic() {
-		return applicationContext.getBean(UserWorkflowLogicBuilder.class).build();
+		return applicationContext.getBean(WebserviceWorkflowLogicBuilder.class).build();
 	}
 
 }

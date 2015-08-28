@@ -21,7 +21,7 @@ import org.cmdbuild.logic.dms.DmsLogic;
 import org.cmdbuild.logic.dms.PrivilegedDmsLogic;
 import org.cmdbuild.logic.menu.MenuLogic;
 import org.cmdbuild.logic.privileges.SecurityLogic;
-import org.cmdbuild.logic.workflow.UserWorkflowLogicBuilder;
+import org.cmdbuild.logic.workflow.WebserviceWorkflowLogicBuilder;
 import org.cmdbuild.logic.workflow.WorkflowLogic;
 import org.cmdbuild.privileges.DBGroupFetcher;
 import org.cmdbuild.services.meta.MetadataStoreFactory;
@@ -111,7 +111,7 @@ public class ApplicationContextHelperV1 {
 	}
 
 	public WorkflowLogic userWorkflowLogic() {
-		return applicationContext.getBean(UserWorkflowLogicBuilder.class).build();
+		return applicationContext.getBean(WebserviceWorkflowLogicBuilder.class).build();
 	}
 
 }
