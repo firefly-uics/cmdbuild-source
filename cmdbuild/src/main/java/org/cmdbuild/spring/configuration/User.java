@@ -10,9 +10,10 @@ import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.dao.view.user.UserDataView;
 import org.cmdbuild.data.view.PermissiveDataView;
-import org.cmdbuild.logic.data.access.WebServiceDataAccessLogicBuilder;
 import org.cmdbuild.logic.data.access.UserDataAccessLogicBuilder;
+import org.cmdbuild.logic.data.access.WebServiceDataAccessLogicBuilder;
 import org.cmdbuild.logic.workflow.UserWorkflowLogicBuilder;
+import org.cmdbuild.logic.workflow.WebserviceWorkflowLogicBuilder;
 import org.cmdbuild.services.FilesStore;
 import org.cmdbuild.services.event.ObservableDataView;
 import org.cmdbuild.workflow.DataViewWorkflowPersistence;
@@ -146,6 +147,20 @@ public class User {
 				properties.workflowProperties(), //
 				filesStore, //
 				lock.configurationAwareLockLogic());
+	}
+
+	@Bean
+	@Scope(PROTOTYPE)
+	@Qualifier(SOAP)
+	public WebserviceWorkflowLogicBuilder webserviceWorkflowLogicBuilder() {
+		return new WebserviceWorkflowLogicBuilder( //
+				userStore.getUser(), //
+				userStore.getUser().getPrivilegeContext(), //
+				userWorkflowEngineBuilder(), //
+				userDataView(), //
+				properties.workflowProperties(), //
+				filesStore, //
+				lock.dummyLockLogic());
 	}
 
 }
