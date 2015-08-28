@@ -127,7 +127,7 @@ public class DataViewFilterStore implements FilterStore {
 				.where(and(isUserFilter(), filtersAssociatedTo(userId), forClass(className))) //
 				.offset(offset) //
 				.limit(limit) //
-				.orderBy(NAME, ASC) //
+				.orderBy(attribute(F, NAME), ASC) //
 				.count() //
 				.run();
 		final Iterable<Filter> filters = from(result) //
@@ -144,7 +144,7 @@ public class DataViewFilterStore implements FilterStore {
 				.where(and(not(isUserFilter()), forClass(className))) //
 				.offset(start) //
 				.limit(limit) //
-				.orderBy(NAME, ASC) //
+				.orderBy(attribute(F, NAME), ASC) //
 				.count() //
 				.run();
 		final Iterable<Filter> filters = from(result) //
@@ -174,11 +174,11 @@ public class DataViewFilterStore implements FilterStore {
 
 	@Override
 	public FluentIterable<Filter> getAllFilters(final String className, final String groupName) {
-		final CMQueryResult result = view.select(anyAttribute(F)) //
+		final CMQueryResult result = view.select(anyAttribute(F), anyAttribute(R)) //
 				.from(filterClass(), as(F)) //
 				.join(roleClass(), as(R), over(filterRoleDomain(), as(D))) //
 				.where(and(forClass(className), roleName(groupName))) //
-				.orderBy(NAME, ASC) //
+				.orderBy(attribute(F, NAME), ASC) //
 				.run();
 		return from(result) //
 				.transform(toCard(F)) //
@@ -207,11 +207,11 @@ public class DataViewFilterStore implements FilterStore {
 
 				}) //
 				.toArray(Long.class);
-		final CMQueryResult result = view.select(anyAttribute(F)) //
+		final CMQueryResult result = view.select(anyAttribute(F), anyAttribute(R)) //
 				.from(filterClass(), as(F)) //
 				.join(roleClass(), as(R), over(filterRoleDomain(), as(D))) //
 				.where(and(filterIds(ids), roleName(groupName))) //
-				.orderBy(NAME, ASC) //
+				.orderBy(attribute(F, NAME), ASC) //
 				.run();
 		for (final CMRelation relation : from(result).transform(toRelation(D))) {
 			view.delete(relation);
@@ -220,11 +220,11 @@ public class DataViewFilterStore implements FilterStore {
 
 	@Override
 	public Iterable<String> joined(final Long filter) {
-		final CMQueryResult result = view.select(anyAttribute(F)) //
+		final CMQueryResult result = view.select(anyAttribute(F), anyAttribute(R)) //
 				.from(filterClass(), as(F)) //
 				.join(roleClass(), as(R), over(filterRoleDomain(), as(D))) //
 				.where(filterIds(filter)) //
-				.orderBy(NAME, ASC) //
+				.orderBy(attribute(F, NAME), ASC) //
 				.run();
 		return from(result) //
 				.transform(toCard(R)) //

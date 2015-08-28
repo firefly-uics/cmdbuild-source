@@ -328,7 +328,7 @@ public class DefaultFilterLogicTest {
 				.when(converter).storeToLogic(any(FilterStore.Filter.class));
 
 		// when
-		final PagedElements<Filter> output = defaultFilterLogic.fetchAllGroupsFilters(123, 456);
+		final PagedElements<Filter> output = defaultFilterLogic.fetchAllGroupsFilters("foo", 123, 456);
 
 		// then
 		assertThat(output.elements(), containsInAnyOrder(_first, _second));
@@ -336,7 +336,7 @@ public class DefaultFilterLogicTest {
 
 		final ArgumentCaptor<FilterStore.Filter> captor = ArgumentCaptor.forClass(FilterStore.Filter.class);
 
-		verify(store).fetchAllGroupsFilters(isNull(String.class), eq(123), eq(456));
+		verify(store).fetchAllGroupsFilters(eq("foo"), eq(123), eq(456));
 		verify(converter, times(2)).storeToLogic(captor.capture());
 		verifyNoMoreInteractions(store, converter, userStore, authenticatedUser, privilegeContext);
 

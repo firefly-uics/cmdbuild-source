@@ -370,7 +370,7 @@ public class Filter extends JSONBaseWithSpringContext {
 	/**
 	 * Retrieves only users' filters (it does not fetches filters defined for
 	 * groups)
-	 * 
+	 *
 	 * @param start
 	 *            is the offset (used for pagination)
 	 * @param limit
@@ -382,9 +382,9 @@ public class Filter extends JSONBaseWithSpringContext {
 	@JSONExported
 	@Admin
 	public JSONObject read( //
-			final @Parameter(value = CLASS_NAME) String className, //
-			final @Parameter(value = START) int start, //
-			final @Parameter(value = LIMIT) int limit //
+			@Parameter(value = CLASS_NAME) final String className, //
+			@Parameter(value = START) final int start, //
+			@Parameter(value = LIMIT) final int limit //
 	) throws JSONException {
 		final PagedElements<FilterLogic.Filter> filters = filterLogic().getAllUserFilters(className, start, limit);
 		return serialize(filters);
@@ -392,7 +392,7 @@ public class Filter extends JSONBaseWithSpringContext {
 
 	/**
 	 * Retrieves only groups filters
-	 * 
+	 *
 	 * @param start
 	 *            is the offset (used for pagination)
 	 * @param limit
@@ -404,17 +404,18 @@ public class Filter extends JSONBaseWithSpringContext {
 	@JSONExported
 	@Admin
 	public JSONObject readAllGroupFilters( //
+			@Parameter(value = CLASS_NAME, required = false) String className, //
 			@Parameter(value = START) final int start, //
 			@Parameter(value = LIMIT) final int limit //
 	) throws JSONException {
-		final PagedElements<FilterLogic.Filter> filters = filterLogic().fetchAllGroupsFilters(start, limit);
+		final PagedElements<FilterLogic.Filter> filters = filterLogic().fetchAllGroupsFilters(className, start, limit);
 		return serialize(filters);
 	}
 
 	/**
 	 * Retrieves, for the currently logged user, all filters (group and user
 	 * filters) that are referred to the className
-	 * 
+	 *
 	 * @param className
 	 * @return
 	 * @throws JSONException
@@ -473,8 +474,8 @@ public class Filter extends JSONBaseWithSpringContext {
 
 	@JSONExported
 	public JsonResponse getDefault( //
-			@Parameter(value = CLASS_NAME) final String className, //
-			@Parameter(value = GROUP) final String groupName //
+			@Parameter(value = CLASS_NAME, required = false) final String className, //
+			@Parameter(value = GROUP, required = false) final String groupName //
 	) {
 		final Iterable<FilterLogic.Filter> element = filterLogic().getDefaults(className, groupName);
 		return success(JsonFilters.newInstance() //
@@ -486,8 +487,8 @@ public class Filter extends JSONBaseWithSpringContext {
 	@JSONExported
 	@Admin
 	public void setDefault( //
-			@Parameter(value = ID, required = true) final JSONArray filters, //
-			@Parameter(value = GROUP, required = true) final JSONArray groups //
+			@Parameter(value = ID) final JSONArray filters, //
+			@Parameter(value = GROUP) final JSONArray groups //
 	) {
 		final Iterable<Long> _filters = toIterable(filters, AS_LONG);
 		final Iterable<String> _groups = toIterable(groups);
@@ -496,7 +497,7 @@ public class Filter extends JSONBaseWithSpringContext {
 
 	@JSONExported
 	public JsonResponse getGroups( //
-			@Parameter(value = ID, required = true) final Long filter //
+			@Parameter(value = ID) final Long filter //
 	) {
 		final Iterable<String> elements = filterLogic().getGroups(filter);
 		return success(JsonGroups.newInstance() //
