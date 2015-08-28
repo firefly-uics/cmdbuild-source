@@ -21,14 +21,14 @@ import org.cmdbuild.data.store.lookup.LookupStore;
 import org.cmdbuild.dms.MetadataGroup;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
-import org.cmdbuild.logic.data.access.WebServiceDataAccessLogicBuilder;
 import org.cmdbuild.logic.data.access.UserDataAccessLogicBuilder;
+import org.cmdbuild.logic.data.access.WebServiceDataAccessLogicBuilder;
 import org.cmdbuild.logic.data.lookup.LookupLogic;
 import org.cmdbuild.logic.dms.DmsLogic;
 import org.cmdbuild.logic.dms.PrivilegedDmsLogic;
 import org.cmdbuild.logic.report.ReportLogic;
 import org.cmdbuild.logic.translation.TranslationFacade;
-import org.cmdbuild.logic.workflow.UserWorkflowLogicBuilder;
+import org.cmdbuild.logic.workflow.WebserviceWorkflowLogicBuilder;
 import org.cmdbuild.services.meta.MetadataStoreFactory;
 import org.cmdbuild.services.soap.operation.AuthenticationLogicHelper;
 import org.cmdbuild.services.soap.operation.CardAdapter;
@@ -98,7 +98,7 @@ abstract class AbstractWebservice implements ApplicationContextAware {
 
 	protected WorkflowLogicHelper workflowLogicHelper() {
 		return new WorkflowLogicHelper( //
-				applicationContext.getBean(UserWorkflowLogicBuilder.class).build(), //
+				applicationContext.getBean(WebserviceWorkflowLogicBuilder.class).build(), //
 				applicationContext.getBean(BEAN_USER_DATA_VIEW, CMDataView.class), //
 				metadataStoreFactory, //
 				cardAdapter());
@@ -108,7 +108,7 @@ abstract class AbstractWebservice implements ApplicationContextAware {
 		final DataAccessLogicHelper helper = new DataAccessLogicHelper( //
 				applicationContext.getBean(BEAN_USER_DATA_VIEW, CMDataView.class),//
 				applicationContext.getBean(WebServiceDataAccessLogicBuilder.class).build(), //
-				applicationContext.getBean(UserWorkflowLogicBuilder.class).build(), //
+				applicationContext.getBean(WebserviceWorkflowLogicBuilder.class).build(), //
 				applicationContext.getBean("operationUser", OperationUser.class), //
 				applicationContext.getBean(DataSource.class), //
 				authenticationStore, //

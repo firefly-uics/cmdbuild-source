@@ -20,6 +20,24 @@ CMDBuild.WidgetBuilders.BooleanAttribute.prototype.buildGridHeader = function(at
 		width : headerWidth,
 		cmReadOnly: true
 	});
+
+	if (
+		!Ext.isEmpty(attribute)
+		&& !Ext.isEmpty(attribute.fieldmode)
+		&& attribute.fieldmode == "read"
+	) { // ReadOnly mode for us CheckColumn with processEvent parameter override
+		h = new Ext.ux.CheckColumn({
+			header : attribute.description,
+			sortable : true,
+			dataIndex : attribute.name,
+			hidden : !attribute.isbasedsp,
+			width : headerWidth,
+			cmReadOnly: true,
+
+			processEvent: Ext.emptyFn
+		});
+	}
+
 	return h;
 };
 /**

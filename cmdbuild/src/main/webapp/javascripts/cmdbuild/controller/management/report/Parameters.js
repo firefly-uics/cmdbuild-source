@@ -25,7 +25,7 @@
 		 */
 		cmfgCatchedFunctions: [
 			'onParametersAbortButtonClick',
-			'onParametersSaveButtonClick'
+			'onParametersPrintButtonClick'
 		],
 
 		/**
@@ -77,7 +77,7 @@
 			this.view.destroy();
 		},
 
-		onParametersSaveButtonClick: function() {
+		onParametersPrintButtonClick: function() {
 			if (this.view.form.getForm().isValid()) {
 				this.cmfg('currentReportParametersSet', {
 					callIdentifier: 'update',
