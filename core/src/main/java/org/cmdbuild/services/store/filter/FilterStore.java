@@ -49,7 +49,7 @@ public interface FilterStore {
 	 * @param userId
 	 *            the id of the user, {@code null} means all users.
 	 */
-	PagedElements<Filter> getAllUserFilters(String className, Long userId, int start, int limit);
+	PagedElements<Filter> readNonSharedFilters(String className, Long userId, int start, int limit);
 
 	/**
 	 * Gets the all group filters.
@@ -57,7 +57,7 @@ public interface FilterStore {
 	 * @param className
 	 *            the name of the class, {@code null} means all classes.
 	 */
-	PagedElements<Filter> fetchAllGroupsFilters(String className, int start, int limit);
+	PagedElements<Filter> readSharedFilters(String className, int start, int limit);
 
 	/**
 	 * Saves a new filter in the database
@@ -81,9 +81,9 @@ public interface FilterStore {
 	 */
 	void delete(Filter filter);
 
-	Filter fetchFilter(Long filterId);
+	Filter read(Long filterId);
 
-	Iterable<Filter> getAllFilters(String className, String groupName);
+	Iterable<Filter> read(String className, String groupName);
 
 	void join(String groupName, Iterable<Filter> filters);
 

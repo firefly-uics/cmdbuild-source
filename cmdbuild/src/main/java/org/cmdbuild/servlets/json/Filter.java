@@ -370,7 +370,7 @@ public class Filter extends JSONBaseWithSpringContext {
 	/**
 	 * Retrieves only users' filters (it does not fetches filters defined for
 	 * groups)
-	 *
+	 * 
 	 * @param start
 	 *            is the offset (used for pagination)
 	 * @param limit
@@ -386,13 +386,13 @@ public class Filter extends JSONBaseWithSpringContext {
 			@Parameter(value = START) final int start, //
 			@Parameter(value = LIMIT) final int limit //
 	) throws JSONException {
-		final PagedElements<FilterLogic.Filter> filters = filterLogic().getAllUserFilters(className, start, limit);
+		final PagedElements<FilterLogic.Filter> filters = filterLogic().readNotShared(className, start, limit);
 		return serialize(filters);
 	}
 
 	/**
 	 * Retrieves only groups filters
-	 *
+	 * 
 	 * @param start
 	 *            is the offset (used for pagination)
 	 * @param limit
@@ -404,18 +404,18 @@ public class Filter extends JSONBaseWithSpringContext {
 	@JSONExported
 	@Admin
 	public JSONObject readAllGroupFilters( //
-			@Parameter(value = CLASS_NAME, required = false) String className, //
+			@Parameter(value = CLASS_NAME, required = false) final String className, //
 			@Parameter(value = START) final int start, //
 			@Parameter(value = LIMIT) final int limit //
 	) throws JSONException {
-		final PagedElements<FilterLogic.Filter> filters = filterLogic().fetchAllGroupsFilters(className, start, limit);
+		final PagedElements<FilterLogic.Filter> filters = filterLogic().readShared(className, start, limit);
 		return serialize(filters);
 	}
 
 	/**
 	 * Retrieves, for the currently logged user, all filters (group and user
 	 * filters) that are referred to the className
-	 *
+	 * 
 	 * @param className
 	 * @return
 	 * @throws JSONException
@@ -424,7 +424,7 @@ public class Filter extends JSONBaseWithSpringContext {
 	public JSONObject readForUser( //
 			@Parameter(value = CLASS_NAME) final String className //
 	) throws JSONException {
-		final PagedElements<FilterLogic.Filter> filters = filterLogic().getFiltersForCurrentUser(className);
+		final PagedElements<FilterLogic.Filter> filters = filterLogic().readForCurrentUser(className);
 		return serialize(filters);
 	}
 

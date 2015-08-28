@@ -27,11 +27,11 @@ public interface FilterLogic extends Logic {
 
 	void delete(Filter filter);
 
-	PagedElements<Filter> getFiltersForCurrentUser(String className);
+	PagedElements<Filter> readForCurrentUser(String className);
 
-	PagedElements<Filter> fetchAllGroupsFilters(String className, int start, int limit);
+	PagedElements<Filter> readShared(String className, int start, int limit);
 
-	PagedElements<Filter> getAllUserFilters(String className, int start, int limit);
+	PagedElements<Filter> readNotShared(String className, int start, int limit);
 
 	Iterable<Filter> getDefaults(String className, String groupName);
 

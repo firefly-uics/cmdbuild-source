@@ -108,7 +108,7 @@ public class DefaultFilterLogicTest {
 		doReturn(42L) //
 				.when(store).create(any(FilterStore.Filter.class));
 		doReturn(created) //
-				.when(store).fetchFilter(anyLong());
+				.when(store).read(anyLong());
 		doReturn(convertedForStore) //
 				.when(converter).logicToStore(any(Filter.class));
 		doReturn(convertedForOutput) //
@@ -122,7 +122,7 @@ public class DefaultFilterLogicTest {
 
 		verify(converter).logicToStore(eq(input));
 		verify(store).create(eq(convertedForStore));
-		verify(store).fetchFilter(eq(42L));
+		verify(store).read(eq(42L));
 		verify(converter).storeToLogic(eq(created));
 		verifyNoMoreInteractions(store, converter, userStore, authenticatedUser, privilegeContext);
 	}
@@ -152,7 +152,7 @@ public class DefaultFilterLogicTest {
 				.withUserId(78L) //
 				.build();
 		doReturn(alreadyStored) //
-				.when(store).fetchFilter(anyLong());
+				.when(store).read(anyLong());
 
 		// when
 		defaultFilterLogic.update(input);
@@ -160,7 +160,7 @@ public class DefaultFilterLogicTest {
 		// then
 		final ArgumentCaptor<FilterStore.Filter> captor = ArgumentCaptor.forClass(FilterStore.Filter.class);
 		verify(converter).logicToStore(eq(input));
-		verify(store).fetchFilter(eq(12L));
+		verify(store).read(eq(12L));
 		verify(store).update(captor.capture());
 		verifyNoMoreInteractions(store, converter, userStore, authenticatedUser, privilegeContext);
 
@@ -192,14 +192,14 @@ public class DefaultFilterLogicTest {
 	}
 
 	@Test
-	public void filtersForCurrentUserAreRequested_OnlyUserFiltersAreReturned() throws Exception {
+	public void filtersForCurrentUserAreReaded_SharedAndNonSharedAreReturned() throws Exception {
 		// given
 		final FilterStore.Filter first = mock(FilterStore.Filter.class);
 		final FilterStore.Filter second = mock(FilterStore.Filter.class);
 		doReturn(new PagedElements<FilterStore.Filter>(asList(first, second), 123)) //
-				.when(store).getAllUserFilters(anyString(), anyLong(), anyInt(), anyInt());
+				.when(store).readNonSharedFilters(anyString(), anyLong(), anyInt(), anyInt());
 		doReturn(empty()) //
-				.when(store).fetchAllGroupsFilters(anyString(), anyInt(), anyInt());
+				.when(store).readSharedFilters(anyString(), anyInt(), anyInt());
 		final Filter _first = mock(Filter.class);
 		final Filter _second = mock(Filter.class);
 		doReturn(_first).doReturn(_second) //
@@ -208,7 +208,7 @@ public class DefaultFilterLogicTest {
 				.when(authenticatedUser).getId();
 
 		// when
-		final PagedElements<Filter> output = defaultFilterLogic.getFiltersForCurrentUser("a classname");
+		final PagedElements<Filter> output = defaultFilterLogic.readForCurrentUser("a classname");
 
 		// then
 		assertThat(output.elements(), containsInAnyOrder(_first, _second));
@@ -218,8 +218,8 @@ public class DefaultFilterLogicTest {
 
 		verify(userStore).getUser();
 		verify(authenticatedUser).getId();
-		verify(store).getAllUserFilters(eq("a classname"), eq(42L), eq(0), eq(MAX_VALUE));
-		verify(store).fetchAllGroupsFilters(eq("a classname"), eq(0), eq(MAX_VALUE));
+		verify(store).readNonSharedFilters(eq("a classname"), eq(42L), eq(0), eq(MAX_VALUE));
+		verify(store).readSharedFilters(eq("a classname"), eq(0), eq(MAX_VALUE));
 		verify(converter, times(2)).storeToLogic(captor.capture());
 		verifyNoMoreInteractions(store, converter, userStore, authenticatedUser, privilegeContext);
 
@@ -228,15 +228,15 @@ public class DefaultFilterLogicTest {
 	}
 
 	@Test
-	public void filtersForCurrentUserAreRequested_OnlyGroupFiltersAreReturned_UserHasAdministratorPrivileges()
+	public void filtersForCurrentUserAreReaded_OnlySharedFiltersAreReturned_UserHasAdministratorPrivileges()
 			throws Exception {
 		// given
 		doReturn(empty()) //
-				.when(store).getAllUserFilters(anyString(), anyLong(), anyInt(), anyInt());
+				.when(store).readNonSharedFilters(anyString(), anyLong(), anyInt(), anyInt());
 		final FilterStore.Filter first = mock(FilterStore.Filter.class);
 		final FilterStore.Filter second = mock(FilterStore.Filter.class);
 		doReturn(new PagedElements<FilterStore.Filter>(asList(first, second), 123)) //
-				.when(store).fetchAllGroupsFilters(anyString(), anyInt(), anyInt());
+				.when(store).readSharedFilters(anyString(), anyInt(), anyInt());
 		final Filter _first = mock(Filter.class);
 		final Filter _second = mock(Filter.class);
 		doReturn(_first).doReturn(_second) //
@@ -247,7 +247,7 @@ public class DefaultFilterLogicTest {
 				.when(privilegeContext).hasAdministratorPrivileges();
 
 		// when
-		final PagedElements<Filter> output = defaultFilterLogic.getFiltersForCurrentUser("a classname");
+		final PagedElements<Filter> output = defaultFilterLogic.readForCurrentUser("a classname");
 
 		// then
 		assertThat(output.elements(), containsInAnyOrder(_first, _second));
@@ -257,8 +257,8 @@ public class DefaultFilterLogicTest {
 
 		verify(userStore).getUser();
 		verify(authenticatedUser).getId();
-		verify(store).getAllUserFilters(eq("a classname"), eq(42L), eq(0), eq(MAX_VALUE));
-		verify(store).fetchAllGroupsFilters(eq("a classname"), eq(0), eq(MAX_VALUE));
+		verify(store).readNonSharedFilters(eq("a classname"), eq(42L), eq(0), eq(MAX_VALUE));
+		verify(store).readSharedFilters(eq("a classname"), eq(0), eq(MAX_VALUE));
 		verify(privilegeContext, times(2)).hasAdministratorPrivileges();
 		verify(converter, times(2)).storeToLogic(captor.capture());
 		verifyNoMoreInteractions(store, converter, userStore, authenticatedUser, privilegeContext);
@@ -268,15 +268,15 @@ public class DefaultFilterLogicTest {
 	}
 
 	@Test
-	public void filtersForCurrentUserAreRequested_OnlyGroupFiltersAreReturned_UserHasNotAdministratorPrivilegesButReadAccess()
+	public void filtersForCurrentUserAreReaded_OnlySharedFiltersAreReturned_UserHasNotAdministratorPrivilegesButReadAccess()
 			throws Exception {
 		// given
 		doReturn(empty()) //
-				.when(store).getAllUserFilters(anyString(), anyLong(), anyInt(), anyInt());
+				.when(store).readNonSharedFilters(anyString(), anyLong(), anyInt(), anyInt());
 		final FilterStore.Filter first = mock(FilterStore.Filter.class);
 		final FilterStore.Filter second = mock(FilterStore.Filter.class);
 		doReturn(new PagedElements<FilterStore.Filter>(asList(first, second), 123)) //
-				.when(store).fetchAllGroupsFilters(anyString(), anyInt(), anyInt());
+				.when(store).readSharedFilters(anyString(), anyInt(), anyInt());
 		final Filter _first = mock(Filter.class);
 		final Filter _second = mock(Filter.class);
 		doReturn(_first).doReturn(_second) //
@@ -289,7 +289,7 @@ public class DefaultFilterLogicTest {
 				.when(privilegeContext).hasReadAccess(any(FilterStore.Filter.class));
 
 		// when
-		final PagedElements<Filter> output = defaultFilterLogic.getFiltersForCurrentUser("a classname");
+		final PagedElements<Filter> output = defaultFilterLogic.readForCurrentUser("a classname");
 
 		// then
 		assertThat(output.elements(), containsInAnyOrder(_first, _second));
@@ -301,8 +301,8 @@ public class DefaultFilterLogicTest {
 
 		verify(userStore).getUser();
 		verify(authenticatedUser).getId();
-		verify(store).getAllUserFilters(eq("a classname"), eq(42L), eq(0), eq(MAX_VALUE));
-		verify(store).fetchAllGroupsFilters(eq("a classname"), eq(0), eq(MAX_VALUE));
+		verify(store).readNonSharedFilters(eq("a classname"), eq(42L), eq(0), eq(MAX_VALUE));
+		verify(store).readSharedFilters(eq("a classname"), eq(0), eq(MAX_VALUE));
 		verify(privilegeContext, times(2)).hasAdministratorPrivileges();
 		verify(privilegeContext, times(2)).hasReadAccess(privilegeContextCaptor.capture());
 		verify(converter, times(2)).storeToLogic(converterCaptor.capture());
@@ -316,19 +316,19 @@ public class DefaultFilterLogicTest {
 	}
 
 	@Test
-	public void allFiltersAreRequested() throws Exception {
+	public void allSharedFiltersAreReaded() throws Exception {
 		// given
 		final FilterStore.Filter first = mock(FilterStore.Filter.class);
 		final FilterStore.Filter second = mock(FilterStore.Filter.class);
 		doReturn(new PagedElements<FilterStore.Filter>(asList(first, second), 42)) //
-				.when(store).fetchAllGroupsFilters(anyString(), anyInt(), anyInt());
+				.when(store).readSharedFilters(anyString(), anyInt(), anyInt());
 		final Filter _first = mock(Filter.class);
 		final Filter _second = mock(Filter.class);
 		doReturn(_first).doReturn(_second) //
 				.when(converter).storeToLogic(any(FilterStore.Filter.class));
 
 		// when
-		final PagedElements<Filter> output = defaultFilterLogic.fetchAllGroupsFilters("foo", 123, 456);
+		final PagedElements<Filter> output = defaultFilterLogic.readShared("foo", 123, 456);
 
 		// then
 		assertThat(output.elements(), containsInAnyOrder(_first, _second));
@@ -336,7 +336,7 @@ public class DefaultFilterLogicTest {
 
 		final ArgumentCaptor<FilterStore.Filter> captor = ArgumentCaptor.forClass(FilterStore.Filter.class);
 
-		verify(store).fetchAllGroupsFilters(eq("foo"), eq(123), eq(456));
+		verify(store).readSharedFilters(eq("foo"), eq(123), eq(456));
 		verify(converter, times(2)).storeToLogic(captor.capture());
 		verifyNoMoreInteractions(store, converter, userStore, authenticatedUser, privilegeContext);
 
@@ -345,19 +345,19 @@ public class DefaultFilterLogicTest {
 	}
 
 	@Test
-	public void allFiltersForSpecificClassAreRequested() throws Exception {
+	public void allNonSharedFiltersAreReaded() throws Exception {
 		// given
 		final FilterStore.Filter first = mock(FilterStore.Filter.class);
 		final FilterStore.Filter second = mock(FilterStore.Filter.class);
 		doReturn(new PagedElements<FilterStore.Filter>(asList(first, second), 42)) //
-				.when(store).getAllUserFilters(anyString(), anyLong(), anyInt(), anyInt());
+				.when(store).readNonSharedFilters(anyString(), anyLong(), anyInt(), anyInt());
 		final Filter _first = mock(Filter.class);
 		final Filter _second = mock(Filter.class);
 		doReturn(_first).doReturn(_second) //
 				.when(converter).storeToLogic(any(FilterStore.Filter.class));
 
 		// when
-		final PagedElements<Filter> output = defaultFilterLogic.getAllUserFilters("a classname", 123, 456);
+		final PagedElements<Filter> output = defaultFilterLogic.readNotShared("a classname", 123, 456);
 
 		// then
 		assertThat(output.elements(), containsInAnyOrder(_first, _second));
@@ -365,7 +365,7 @@ public class DefaultFilterLogicTest {
 
 		final ArgumentCaptor<FilterStore.Filter> captor = ArgumentCaptor.forClass(FilterStore.Filter.class);
 
-		verify(store).getAllUserFilters(eq("a classname"), isNull(Long.class), eq(123), eq(456));
+		verify(store).readNonSharedFilters(eq("a classname"), isNull(Long.class), eq(123), eq(456));
 		verify(converter, times(2)).storeToLogic(captor.capture());
 		verifyNoMoreInteractions(store, converter, userStore, authenticatedUser, privilegeContext);
 
@@ -374,12 +374,12 @@ public class DefaultFilterLogicTest {
 	}
 
 	@Test
-	public void allDefaultFiltersAreRequestedWithSpecificGroup() throws Exception {
+	public void allDefaultFiltersAreReadedWithSpecificGroup() throws Exception {
 		// given
 		final FilterStore.Filter first = mock(FilterStore.Filter.class);
 		final FilterStore.Filter second = mock(FilterStore.Filter.class);
 		doReturn(asList(first, second)) //
-				.when(store).getAllFilters(anyString(), anyString());
+				.when(store).read(anyString(), anyString());
 		final Filter _first = mock(Filter.class);
 		final Filter _second = mock(Filter.class);
 		doReturn(_first).doReturn(_second) //
@@ -394,7 +394,7 @@ public class DefaultFilterLogicTest {
 
 		final ArgumentCaptor<FilterStore.Filter> captor = ArgumentCaptor.forClass(FilterStore.Filter.class);
 
-		verify(store).getAllFilters(eq("a classname"), eq("a group"));
+		verify(store).read(eq("a classname"), eq("a group"));
 		verify(converter, times(2)).storeToLogic(captor.capture());
 		verifyNoMoreInteractions(store, converter, userStore, authenticatedUser, privilegeContext);
 
@@ -403,7 +403,7 @@ public class DefaultFilterLogicTest {
 	}
 
 	@Test
-	public void allDefaultFiltersAreRequestedWithNoGroup() throws Exception {
+	public void allDefaultFiltersAreReadedWithNoGroup() throws Exception {
 		// given
 		final CMGroup selectedGroup = mock(CMGroup.class);
 		doReturn("a group") //
@@ -414,7 +414,7 @@ public class DefaultFilterLogicTest {
 		final FilterStore.Filter first = mock(FilterStore.Filter.class);
 		final FilterStore.Filter second = mock(FilterStore.Filter.class);
 		doReturn(asList(first, second)) //
-				.when(store).getAllFilters(anyString(), anyString());
+				.when(store).read(anyString(), anyString());
 		final Filter _first = mock(Filter.class);
 		final Filter _second = mock(Filter.class);
 		doReturn(_first).doReturn(_second) //
@@ -431,7 +431,7 @@ public class DefaultFilterLogicTest {
 
 		verify(userStore).getUser();
 		verify(selectedGroup).getName();
-		verify(store).getAllFilters(eq("a classname"), eq("a group"));
+		verify(store).read(eq("a classname"), eq("a group"));
 		verify(converter, times(2)).storeToLogic(captor.capture());
 		verifyNoMoreInteractions(store, converter, userStore, authenticatedUser, privilegeContext, selectedGroup);
 
@@ -446,11 +446,11 @@ public class DefaultFilterLogicTest {
 		doReturn("a classname") //
 				.when(stored).getClassName();
 		doReturn(stored) //
-				.when(store).fetchFilter(anyLong());
+				.when(store).read(anyLong());
 		final FilterStore.Filter firstAlreadyJoined = mock(FilterStore.Filter.class);
 		final FilterStore.Filter secondAlreadyJoined = mock(FilterStore.Filter.class);
 		doReturn(asList(firstAlreadyJoined, secondAlreadyJoined)) //
-				.when(store).getAllFilters(anyString(), anyString());
+				.when(store).read(anyString(), anyString());
 		final Filter _first = mock(Filter.class);
 		final Filter _second = mock(Filter.class);
 		doReturn(_first).doReturn(_second) //
@@ -463,8 +463,8 @@ public class DefaultFilterLogicTest {
 		final ArgumentCaptor<Iterable> disjoinCaptor = ArgumentCaptor.forClass(Iterable.class);
 		final ArgumentCaptor<Iterable> joinCaptor = ArgumentCaptor.forClass(Iterable.class);
 
-		verify(store).fetchFilter(eq(42L));
-		verify(store).getAllFilters(eq("a classname"), eq("a group"));
+		verify(store).read(eq(42L));
+		verify(store).read(eq("a classname"), eq("a group"));
 		verify(store).disjoin(eq("a group"), disjoinCaptor.capture());
 		verify(store).join(eq("a group"), joinCaptor.capture());
 
@@ -480,11 +480,11 @@ public class DefaultFilterLogicTest {
 		doReturn("a classname") //
 				.when(stored).getClassName();
 		doReturn(stored) //
-				.when(store).fetchFilter(anyLong());
+				.when(store).read(anyLong());
 		final FilterStore.Filter firstAlreadyJoined = mock(FilterStore.Filter.class);
 		final FilterStore.Filter secondAlreadyJoined = mock(FilterStore.Filter.class);
 		doReturn(asList(firstAlreadyJoined, secondAlreadyJoined)) //
-				.when(store).getAllFilters(anyString(), anyString());
+				.when(store).read(anyString(), anyString());
 		final Filter _first = mock(Filter.class);
 		final Filter _second = mock(Filter.class);
 		doReturn(_first).doReturn(_second) //
@@ -501,8 +501,8 @@ public class DefaultFilterLogicTest {
 		final ArgumentCaptor<Iterable> disjoinCaptor = ArgumentCaptor.forClass(Iterable.class);
 		final ArgumentCaptor<Iterable> joinCaptor = ArgumentCaptor.forClass(Iterable.class);
 
-		verify(store, times(2)).fetchFilter(filterCaptor.capture());
-		verify(store, times(4)).getAllFilters(eq("a classname"), groupCaptor.capture());
+		verify(store, times(2)).read(filterCaptor.capture());
+		verify(store, times(4)).read(eq("a classname"), groupCaptor.capture());
 		verify(store, times(4)).disjoin(groupCaptor2.capture(), disjoinCaptor.capture());
 		verify(store, times(4)).join(groupCaptor3.capture(), joinCaptor.capture());
 

@@ -35,7 +35,7 @@ public class FilterPrivilegeFetcher extends AbstractPrivilegeFetcher {
 		final Integer filterId = (Integer) privilegeCard.get(PRIVILEGED_OBJECT_ID_ATTRIBUTE);
 		Filter privilegedFilter = null;
 		try {
-			privilegedFilter = filterStore.fetchFilter(filterId.longValue());
+			privilegedFilter = filterStore.read(filterId.longValue());
 		} catch (final NoSuchElementException ex) {
 			Log.CMDBUILD.warn("Cannot fetch filter with id " + filterId
 					+ ". Check all references to that filter in Grant table");
