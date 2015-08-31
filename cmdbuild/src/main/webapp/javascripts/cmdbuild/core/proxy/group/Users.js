@@ -36,7 +36,6 @@
 		 */
 		update: function(parameters) {
 			CMDBuild.Ajax.request({
-				method: 'POST',
 				url: CMDBuild.core.proxy.CMProxyUrlIndex.group.users.saveGroupUserList,
 				params: parameters.params,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,

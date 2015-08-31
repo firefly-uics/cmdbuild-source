@@ -15,7 +15,6 @@
 		 */
 		create: function(parameters) {
 			CMDBuild.Ajax.request({
-				method: 'POST',
 				url: CMDBuild.core.proxy.CMProxyUrlIndex.group.create,
 				params: parameters.params,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
@@ -31,7 +30,6 @@
 		 */
 		enableDisable: function(parameters) {
 			CMDBuild.Ajax.request({
-				method: 'POST',
 				url: CMDBuild.core.proxy.CMProxyUrlIndex.group.enableDisableGroup,
 				params: parameters.params,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
@@ -87,7 +85,6 @@
 		 */
 		getUIConfiguration: function(parameters) {
 			CMDBuild.Ajax.request({
-				method: 'POST',
 				url: CMDBuild.core.proxy.CMProxyUrlIndex.group.getUiConfiguration,
 				params: parameters.params,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : false,
@@ -103,7 +100,6 @@
 		 */
 		readAll: function(parameters) {
 			CMDBuild.Ajax.request({
-				method: 'POST',
 				url: CMDBuild.core.proxy.CMProxyUrlIndex.group.getGroupList,
 				params: parameters.params,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : false,
@@ -119,7 +115,6 @@
 		 */
 		update: function(parameters) {
 			CMDBuild.Ajax.request({
-				method: 'POST',
 				url: CMDBuild.core.proxy.CMProxyUrlIndex.group.update,
 				params: parameters.params,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,

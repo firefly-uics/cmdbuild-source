@@ -97,7 +97,7 @@ public class DataViewFilterStore implements FilterStore {
 		} else if (ids.length == 0) {
 			clause = alwaysFalse();
 		} else {
-			clause = condition(attribute(F, CLASS_ID), in(ids));
+			clause = condition(attribute(F, ID), in(ids));
 		}
 		return clause;
 	}
@@ -178,7 +178,7 @@ public class DataViewFilterStore implements FilterStore {
 				.from(filterClass(), as(F)) //
 				.join(roleClass(), as(R), over(filterRoleDomain(), as(D))) //
 				.where(and(forClass(className), forRole(groupName))) //
-				.orderBy(NAME, ASC) //
+				.orderBy(attribute(F, NAME), ASC) //
 				.run();
 		return from(result) //
 				.transform(toCard(F)) //

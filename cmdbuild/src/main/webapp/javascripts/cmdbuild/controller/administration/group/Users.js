@@ -17,6 +17,7 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
+			'onGroupAddButtonClick',
 			'onGroupUsersGroupSelected = onGroupGroupSelected',
 			'onGroupUsersSaveButtonClick',
 			'onGroupUsersTabShow',
@@ -43,6 +44,12 @@
 			this.selectedGrid = this.view.selectedGrid;
 		},
 
+		/**
+		 * Disable tab on add button click
+		 */
+		onGroupAddButtonClick: function() {
+			this.view.disable();
+		},
 
 		/**
 		 * Enable/Disable tab evaluating selected group

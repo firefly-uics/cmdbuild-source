@@ -9,6 +9,11 @@
 		],
 
 		/**
+		 * @property {CMDBuild.controller.administration.group.DefaultFilters}
+		 */
+		controllerDefaultFilters: undefined,
+
+		/**
 		 * @property {CMDBuild.controller.administration.group.privileges.Privileges}
 		 */
 		controllerPrivileges: undefined,
@@ -32,10 +37,11 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
-			'onGroupAddButtonClick',
-			'onGroupGroupSelected -> controllerProperties, controllerPrivileges, controllerUsers, controllerUserInterface',
+			'onGroupAddButtonClick -> controllerProperties, controllerPrivileges, controllerUsers, controllerUserInterface, controllerDefaultFilters',
+			'onGroupGroupSelected -> controllerProperties, controllerPrivileges, controllerUsers, controllerUserInterface, controllerDefaultFilters',
 			'onGroupSetActiveTab',
 			'selectedGroupGet',
+			'selectedGroupSet',
 			'selectedGroupIsEmpty'
 		],
 
@@ -60,6 +66,7 @@
 			this.view.tabPanel.removeAll();
 
 			// Controller build
+			this.controllerDefaultFilters = Ext.create('CMDBuild.controller.administration.group.DefaultFilters', { parentDelegate: this });
 			this.controllerPrivileges = Ext.create('CMDBuild.controller.administration.group.privileges.Privileges', { parentDelegate: this });
 			this.controllerProperties = Ext.create('CMDBuild.controller.administration.group.Properties', { parentDelegate: this });
 			this.controllerUserInterface = Ext.create('CMDBuild.controller.administration.group.UserInterface', { parentDelegate: this });
@@ -70,19 +77,9 @@
 			this.view.tabPanel.add(this.controllerPrivileges.getView());
 			this.view.tabPanel.add(this.controllerUsers.getView());
 			this.view.tabPanel.add(this.controllerUserInterface.getView());
+			this.view.tabPanel.add(this.controllerDefaultFilters.getView());
 
-			this.onGroupSetActiveTab(0);
-		},
-
-		onGroupAddButtonClick: function() {
-			this.selectedGroupSet();
-
-			this.onGroupSetActiveTab(0);
-
-			this.controllerPrivileges.getView().disable();
-			this.controllerProperties.cmfg('onGroupPropertiesAddButtonClick');
-			this.controllerUserInterface.getView().disable();
-			this.controllerUsers.getView().disable();
+			this.onGroupSetActiveTab();
 		},
 
 		/**
@@ -107,7 +104,7 @@
 					this.setViewTitle(parameters.get(CMDBuild.core.proxy.CMProxyConstants.TEXT));
 
 					if (Ext.isEmpty(this.view.tabPanel.getActiveTab()))
-						this.onGroupSetActiveTab(0);
+						this.onGroupSetActiveTab();
 
 					this.view.tabPanel.getActiveTab().fireEvent('show'); // Manual show event fire because was already selected
 				}

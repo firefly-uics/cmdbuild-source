@@ -14,7 +14,6 @@
 		 */
 		read: function(parameters) {
 			CMDBuild.Ajax.request({
-				method: 'POST',
 				url: CMDBuild.core.proxy.CMProxyUrlIndex.group.userInterface.getGroupUiConfiguration,
 				params: parameters.params,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
@@ -30,7 +29,6 @@
 		 */
 		update: function(parameters) {
 			CMDBuild.Ajax.request({
-				method: 'POST',
 				url: CMDBuild.core.proxy.CMProxyUrlIndex.group.userInterface.saveGroupUiConfiguration,
 				params: parameters.params,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,

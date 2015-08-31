@@ -157,6 +157,12 @@
 			getGroupList: 'services/json/schema/modsecurity/getgrouplist',
 			getUiConfiguration: 'services/json/schema/modsecurity/getuiconfiguration',
 
+			defaultFilters: {
+				getDefault: 'services/json/filter/getdefault',
+				readAllGroupFilters: 'services/json/filter/readallgroupfilters',
+				setDefault: 'services/json/filter/setdefault'
+			},
+
 			users: {
 				getGroupUserList: 'services/json/schema/modsecurity/getgroupuserlist',
 				saveGroupUserList: 'services/json/schema/modsecurity/savegroupuserlist'
