@@ -107,8 +107,8 @@
 						}, this);
 
 						params = {};
-						params[CMDBuild.core.proxy.CMProxyConstants.ID] = Ext.encode(defaultFiltersIds);
-						params[CMDBuild.core.proxy.CMProxyConstants.GROUP] = Ext.encode([this.cmfg('selectedGroupGet', CMDBuild.core.proxy.CMProxyConstants.NAME)]);
+						params[CMDBuild.core.proxy.CMProxyConstants.FILTERS] = Ext.encode(defaultFiltersIds);
+						params[CMDBuild.core.proxy.CMProxyConstants.GROUPS] = Ext.encode([this.cmfg('selectedGroupGet', CMDBuild.core.proxy.CMProxyConstants.NAME)]);
 
 						CMDBuild.core.proxy.group.DefaultFilters.update({ params: params });
 					}

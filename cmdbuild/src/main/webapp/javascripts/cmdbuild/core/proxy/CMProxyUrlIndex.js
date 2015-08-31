@@ -134,13 +134,18 @@
 		fkTargetClass: 'services/json/schema/modclass/getfktargetingclass',
 
 		filter: {
-			read: 'services/json/filter/read',
 			create: 'services/json/filter/create',
-			update: 'services/json/filter/update',
+			read: 'services/json/filter/read',
 			remove: 'services/json/filter/delete',
+			update: 'services/json/filter/update',
 
+			groupStore: 'services/json/filter/readallgroupfilters',
 			userStore: 'services/json/filter/readforuser',
-			groupStore: 'services/json/filter/readallgroupfilters'
+
+			defaultForGroups: {
+				read: 'services/json/filter/getgroups',
+				update: 'services/json/filter/setdefault'
+			}
 		},
 
 		functions: {
@@ -150,17 +155,18 @@
 		group: {
 			create: 'services/json/schema/modsecurity/savegroup', // TODO: waiting for refactor (crud)
 			read: '',
-			update: 'services/json/schema/modsecurity/savegroup', // TODO: waiting for refactor (crud)
 			remove: '',
+			update: 'services/json/schema/modsecurity/savegroup', // TODO: waiting for refactor (crud)
 
 			enableDisableGroup: 'services/json/schema/modsecurity/enabledisablegroup',
 			getGroupList: 'services/json/schema/modsecurity/getgrouplist',
 			getUiConfiguration: 'services/json/schema/modsecurity/getuiconfiguration',
 
 			defaultFilters: {
-				getDefault: 'services/json/filter/getdefault',
-				readAllGroupFilters: 'services/json/filter/readallgroupfilters',
-				setDefault: 'services/json/filter/setdefault'
+				read: 'services/json/filter/getdefault',
+				update: 'services/json/filter/setdefault',
+
+				readAllGroupFilters: 'services/json/filter/readallgroupfilters'
 			},
 
 			users: {

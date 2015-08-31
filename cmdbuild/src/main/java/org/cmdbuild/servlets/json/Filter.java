@@ -14,6 +14,7 @@ import static org.cmdbuild.servlets.json.CommunicationConstants.ENTRY_TYPE;
 import static org.cmdbuild.servlets.json.CommunicationConstants.FILTER;
 import static org.cmdbuild.servlets.json.CommunicationConstants.FILTERS;
 import static org.cmdbuild.servlets.json.CommunicationConstants.GROUP;
+import static org.cmdbuild.servlets.json.CommunicationConstants.GROUPS;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ID;
 import static org.cmdbuild.servlets.json.CommunicationConstants.LIMIT;
 import static org.cmdbuild.servlets.json.CommunicationConstants.NAME;
@@ -370,7 +371,7 @@ public class Filter extends JSONBaseWithSpringContext {
 	/**
 	 * Retrieves only users' filters (it does not fetches filters defined for
 	 * groups)
-	 * 
+	 *
 	 * @param start
 	 *            is the offset (used for pagination)
 	 * @param limit
@@ -392,7 +393,7 @@ public class Filter extends JSONBaseWithSpringContext {
 
 	/**
 	 * Retrieves only groups filters
-	 * 
+	 *
 	 * @param start
 	 *            is the offset (used for pagination)
 	 * @param limit
@@ -415,7 +416,7 @@ public class Filter extends JSONBaseWithSpringContext {
 	/**
 	 * Retrieves, for the currently logged user, all filters (group and user
 	 * filters) that are referred to the className
-	 * 
+	 *
 	 * @param className
 	 * @return
 	 * @throws JSONException
@@ -487,8 +488,8 @@ public class Filter extends JSONBaseWithSpringContext {
 	@JSONExported
 	@Admin
 	public void setDefault( //
-			@Parameter(value = ID) final JSONArray filters, //
-			@Parameter(value = GROUP) final JSONArray groups //
+			@Parameter(value = FILTERS) final JSONArray filters, //
+			@Parameter(value = GROUPS) final JSONArray groups //
 	) {
 		final Iterable<Long> _filters = toIterable(filters, AS_LONG);
 		final Iterable<String> _groups = toIterable(groups);

@@ -20,7 +20,7 @@
 	CMDBuild.CFG_BIG_FIELD_WIDTH = CMDBuild.CFG_LABEL_WIDTH + 450;
 	CMDBuild.CFG_MEDIUM_FIELD_WIDTH = CMDBuild.CFG_LABEL_WIDTH + 150;
 
-	// Server constants // TODO
+	// Server constants // TODO: implementations that should be inside a class with a proper initialization
 	CMDBuild.constants = {};
 	CMDBuild.constants.server = {};
 	CMDBuild.constants.server.MAX_INTEGER = 2147483647;
