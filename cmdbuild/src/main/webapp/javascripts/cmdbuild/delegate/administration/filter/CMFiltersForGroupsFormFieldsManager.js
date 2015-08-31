@@ -77,7 +77,7 @@
 
 			this.defaultForGroups = Ext.create('CMDBuild.view.common.field.CMGroupSelectionList', {
 				name: CMDBuild.core.proxy.CMProxyConstants.DEFAULT_FOR_GROUPS,
-				fieldLabel: '@@ Default for groups',
+				fieldLabel: CMDBuild.Translation.defaultForGroups,
 				height: 300,
 				valueField: CMDBuild.core.proxy.CMProxyConstants.NAME,
 				labelWidth: CMDBuild.LABEL_WIDTH,
