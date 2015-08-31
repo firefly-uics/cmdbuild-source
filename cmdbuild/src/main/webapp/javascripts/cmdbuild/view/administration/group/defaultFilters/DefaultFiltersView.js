@@ -16,7 +16,7 @@
 		border: false,
 		frame: false,
 		layout: 'fit',
-		title: '@@ Default filters',
+		title: CMDBuild.Translation.defaultFilters,
 
 		initComponent: function() {
 			Ext.apply(this, {
