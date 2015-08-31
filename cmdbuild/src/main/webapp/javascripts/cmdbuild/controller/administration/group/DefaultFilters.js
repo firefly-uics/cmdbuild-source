@@ -241,19 +241,19 @@
 
 								this.tree.getStore().getRootNode().appendChild([
 									{
-										description: CMDBuild.Translation.administration.modClass.classProperties.standard,
+										description: CMDBuild.Translation.standard,
 										leaf: false,
 										children: standardTree,
 										expanded: true
 									},
 									{
-										description: CMDBuild.Translation.administration.modClass.classProperties.simple,
+										description: CMDBuild.Translation.simple,
 										leaf: false,
 										children: simpleTree,
 										expanded: true
 									},
 									{
-										description: '@@ Processes',
+										description: CMDBuild.Translation.processes,
 										leaf: false,
 										children: processesTree,
 										expanded: true

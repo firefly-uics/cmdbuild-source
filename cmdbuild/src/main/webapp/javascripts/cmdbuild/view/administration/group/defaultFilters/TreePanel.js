@@ -43,7 +43,7 @@
 					},
 					Ext.create('Ext.grid.column.Column', {
 						dataIndex: CMDBuild.core.proxy.CMProxyConstants.DEFAULT_FILTER,
-						text: '@@ Filter',
+						text: CMDBuild.Translation.filter,
 						flex: 1,
 						align: 'left',
 						sortable: false,
