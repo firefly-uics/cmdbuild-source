@@ -4,9 +4,10 @@
 		extend: 'CMDBuild.controller.common.AbstractController',
 
 		requires: [
+			'CMDBuild.core.constants.Server',
+			'CMDBuild.core.proxy.Classes',
 			'CMDBuild.core.proxy.CMProxyConstants',
 			'CMDBuild.core.proxy.group.DefaultFilters',
-			'CMDBuild.core.proxy.Classes',
 			'CMDBuild.core.Utils'
 		],
 
@@ -85,7 +86,7 @@
 				var filterObjectsMap = {};
 
 				var params = {};
-				params[CMDBuild.core.proxy.CMProxyConstants.LIMIT] = CMDBuild.constants.server.MAX_INTEGER; // HACK to get all filters
+				params[CMDBuild.core.proxy.CMProxyConstants.LIMIT] = CMDBuild.core.constants.Server.getMaxInteger(); // HACK to get all filters
 				params[CMDBuild.core.proxy.CMProxyConstants.START] = 0; // HACK to get all filters
 
 				this.getAllDefaultFilters(this.tree.getStore().getRootNode(), defaultFiltersNames);
@@ -282,7 +283,7 @@
 			) {
 				var params = {};
 				params[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME] = record.get(CMDBuild.core.proxy.CMProxyConstants.NAME);
-				params[CMDBuild.core.proxy.CMProxyConstants.LIMIT] = CMDBuild.constants.server.MAX_INTEGER; // HACK to get all filters
+				params[CMDBuild.core.proxy.CMProxyConstants.LIMIT] = CMDBuild.core.constants.Server.getMaxInteger(); // HACK to get all filters
 				params[CMDBuild.core.proxy.CMProxyConstants.START] = 0; // HACK to get all filters
 
 				column.getEditor().getStore().load({ params: params });
