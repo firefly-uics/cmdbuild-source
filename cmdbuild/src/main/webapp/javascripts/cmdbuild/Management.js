@@ -284,8 +284,9 @@
 				params = {};
 				params[CMDBuild.core.proxy.CMProxyConstants.ACTIVE] = true;
 
-				CMDBuild.ServiceProxy.classes.read({
+				CMDBuild.core.proxy.Classes.read({
 					params: params,
+					loadMask: false,
 					scope: this,
 					success: function(response, options, decoded) {
 						_CMCache.addClasses(decoded.classes);

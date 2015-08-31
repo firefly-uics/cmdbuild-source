@@ -20,6 +20,11 @@
 	CMDBuild.CFG_BIG_FIELD_WIDTH = CMDBuild.CFG_LABEL_WIDTH + 450;
 	CMDBuild.CFG_MEDIUM_FIELD_WIDTH = CMDBuild.CFG_LABEL_WIDTH + 150;
 
+	// Server constants // TODO
+	CMDBuild.constants = {};
+	CMDBuild.constants.server = {};
+	CMDBuild.constants.server.MAX_INTEGER = 2147483647;
+
 	// Custom widths
 	CMDBuild.HTML_EDITOR_WIDTH = CMDBuild.LABEL_WIDTH + 600;
 

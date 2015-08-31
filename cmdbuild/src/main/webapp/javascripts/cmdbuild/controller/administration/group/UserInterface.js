@@ -18,6 +18,7 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
+			'onGroupAddButtonClick',
 			'onGroupUserInterfaceAbortButtonClick',
 			'onGroupUserInterfaceGroupSelected = onGroupGroupSelected',
 			'onGroupUserInterfaceSaveButtonClick',
@@ -97,6 +98,13 @@
 					}
 				}
 			},
+
+		/**
+		 * Disable tab on add button click
+		 */
+		onGroupAddButtonClick: function() {
+			this.view.disable();
+		},
 
 		onGroupUserInterfaceAbortButtonClick: function() {
 			if (this.cmfg('selectedLookupTypeIsEmpty')) {

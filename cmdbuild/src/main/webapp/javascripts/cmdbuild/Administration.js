@@ -198,10 +198,13 @@
 				/*
 				 * Classes and process
 				 */
-				CMDBuild.ServiceProxy.classes.read({
-					params: {
-						active: false
-					},
+				var params = {};
+				params[CMDBuild.core.proxy.CMProxyConstants.ACTIVE] = false;
+
+				CMDBuild.core.proxy.Classes.read({
+					params: params,
+					loadMask: false,
+					scope: this,
 					success: function(response, options, decoded) {
 						_CMCache.addClasses(decoded.classes);
 
@@ -313,7 +316,7 @@
 				CMDBuild.core.proxy.group.Group.readAll({
 					scope: this,
 					success: function(result, options, decodedResult) {
-						_CMCache.addGroups(decodedResult.groups); // TODO: refactor to avoig cache usage
+						_CMCache.addGroups(decodedResult.groups); // TODO: refactor to avoid cache usage
 
 						groupsAccordion = Ext.create('CMDBuild.view.administration.accordion.UserAndGroup', {
 							cmControllerType: 'CMDBuild.controller.administration.accordion.UserAndGroup',

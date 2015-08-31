@@ -19,7 +19,7 @@
 		 */
 		cmfgCatchedFunctions: [
 			'onGroupPropertiesAbortButtonClick',
-			'onGroupPropertiesAddButtonClick',
+			'onGroupPropertiesAddButtonClick = onGroupAddButtonClick',
 			'onGroupPropertiesEnableDisableButtonClick',
 			'onGroupPropertiesGroupSelected = onGroupGroupSelected',
 			'onGroupPropertiesModifyButtonClick',
@@ -62,6 +62,9 @@
 		},
 
 		onGroupPropertiesAddButtonClick: function() {
+			this.cmfg('selectedGroupSet'); // Reset selected group
+			this.cmfg('onGroupSetActiveTab');
+
 			this.form.reset();
 			this.form.setDisabledModify(false, true);
 			this.form.loadRecord(Ext.create('CMDBuild.model.group.Group'));

@@ -15,7 +15,6 @@
 		 */
 		readUIConfiguration: function(parameters) {
 			CMDBuild.Ajax.request({
-				method: 'POST',
 				url: CMDBuild.core.proxy.CMProxyUrlIndex.privileges.classes.loadClassUiConfiguration,
 				params: parameters.params,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
@@ -31,7 +30,6 @@
 		 */
 		clearRowAndColumn: function(parameters) {
 			CMDBuild.Ajax.request({
-				method: 'POST',
 				url: CMDBuild.core.proxy.CMProxyUrlIndex.privileges.classes.clearRowAndColumnPrivileges,
 				params: parameters.params,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
@@ -68,7 +66,6 @@
 		 */
 		updateUIConfiguration: function(parameters) {
 			CMDBuild.Ajax.request({
-				method: 'POST',
 				url: CMDBuild.core.proxy.CMProxyUrlIndex.privileges.classes.saveClassUiConfiguration,
 				params: parameters.params,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
@@ -84,7 +81,6 @@
 		 */
 		setRowAndColumn: function(parameters) {
 			CMDBuild.Ajax.request({
-				method: 'POST',
 				url: CMDBuild.core.proxy.CMProxyUrlIndex.privileges.classes.setRowAndColumnPrivileges,
 				params: parameters.params,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
@@ -100,7 +96,6 @@
 		 */
 		update: function(parameters) {
 			CMDBuild.Ajax.request({
-				method: 'POST',
 				url: CMDBuild.core.proxy.CMProxyUrlIndex.privileges.classes.update,
 				params: parameters.params,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,

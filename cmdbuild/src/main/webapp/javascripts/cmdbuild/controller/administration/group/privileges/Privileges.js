@@ -34,6 +34,7 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
+			'onGroupAddButtonClick',
 			'onGroupPrivilegesTabShow',
 			'onGroupPrivilegesGroupSelected = onGroupGroupSelected'
 		],
@@ -83,10 +84,17 @@
 		},
 
 		/**
+		 * Disable tab on add button click
+		 */
+		onGroupAddButtonClick: function() {
+			this.view.disable();
+		},
+
+		/**
 		 * Enable/Disable tab evaluating group privileges, administrator groups have full privileges so panel is disabled
 		 */
 		onGroupPrivilegesGroupSelected: function() {
-			this.view.setDisabled(!this.cmfg('selectedGroupIsEmpty') && this.cmfg('selectedGroupGet', CMDBuild.core.proxy.CMProxyConstants.IS_ADMINISTRATOR));
+			this.view.setDisabled(this.cmfg('selectedGroupIsEmpty') || this.cmfg('selectedGroupGet', CMDBuild.core.proxy.CMProxyConstants.IS_ADMINISTRATOR));
 		},
 
 		/**
