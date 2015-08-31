@@ -37,7 +37,7 @@
 		 */
 		read: function(parameters) {
 			CMDBuild.Ajax.request({
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.group.defaultFilters.getDefault,
+				url: CMDBuild.core.proxy.CMProxyUrlIndex.group.defaultFilters.read,
 				params: parameters.params,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
 				scope: parameters.scope || this,
@@ -67,7 +67,7 @@
 		 */
 		update: function(parameters) {
 			CMDBuild.Ajax.request({
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.group.defaultFilters.setDefault,
+				url: CMDBuild.core.proxy.CMProxyUrlIndex.group.defaultFilters.update,
 				params: parameters.params,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
 				scope: parameters.scope || this,
