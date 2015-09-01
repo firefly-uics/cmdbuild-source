@@ -26,14 +26,14 @@
 		extractInterestedValues: function(data) {
 			var out = {},
 				me = this;
-	
+
 			for (var i=0, l=me.interestedFields.length; i<l; ++i) {
 				out[me.interestedFields[i]] = data[me.interestedFields[i]];
 			}
-	
+
 			return out;
 		},
-	
+
 		showChartFields: function() {
 			this.form.showFieldsWithName(this.interestedFields);
 		},
@@ -184,7 +184,7 @@
 		onDataSourceInputFieldTypeChanged: function(value, fieldset) {
 			var callbacks = {
 				free: function(fieldset) {
-					fieldset.resetFieldset();	
+					fieldset.resetFieldset();
 					fieldset.addDefaultFieldFromFieldManager();
 				},
 				classes: function(fieldset) {
@@ -219,5 +219,5 @@
 			dataSourceParameters: data.dataSourceParameters
 		};
 	}
-	
+
 })();

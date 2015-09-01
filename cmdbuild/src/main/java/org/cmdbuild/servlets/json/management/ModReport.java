@@ -1,6 +1,10 @@
 package org.cmdbuild.servlets.json.management;
 
+import static com.google.common.collect.Lists.newArrayList;
+import static com.google.common.collect.Lists.newLinkedList;
+import static com.google.common.collect.Maps.newHashMap;
 import static org.cmdbuild.logic.report.Predicates.currentGroupAllowed;
+import static org.cmdbuild.report.CustomProperties.FILTER_PREFIX;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ATTRIBUTES;
 import static org.cmdbuild.servlets.json.CommunicationConstants.CARD_ID;
 import static org.cmdbuild.servlets.json.CommunicationConstants.CLASS_NAME;
@@ -15,13 +19,16 @@ import static org.cmdbuild.servlets.json.CommunicationConstants.START;
 import static org.cmdbuild.servlets.json.CommunicationConstants.STATE;
 import static org.cmdbuild.servlets.json.CommunicationConstants.TYPE;
 
+import java.io.IOException;
 import java.io.OutputStream;
-import java.util.LinkedList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
+
+import net.sf.jasperreports.engine.JRPropertiesMap;
 
 import org.cmdbuild.common.utils.TempDataSource;
 import org.cmdbuild.dao.entrytype.CMAttribute;
@@ -115,12 +122,8 @@ public class ModReport extends JSONBaseWithSpringContext {
 				factory.fillReport();
 				filled = true;
 			} else {
-				for (final ReportParameter reportParameter : factory.getReportParameters()) {
-					final CMAttribute attribute = ReportParameterConverter.of(reportParameter).toCMAttribute();
-					final AttributeSerializer attributeSerializer = AttributeSerializer.newInstance() //
-							.withDataView(systemDataView()) //
-							.build();
-					out.append("attribute", attributeSerializer.toClient(attribute));
+				for (final JSONObject element : serializeParameters(factory)) {
+					out.append("attribute", element);
 				}
 			}
 			out.put("filled", filled);
@@ -162,13 +165,8 @@ public class ModReport extends JSONBaseWithSpringContext {
 				// else, prepare required parameters
 				else {
 					out.put("filled", false);
-					for (final ReportParameter reportParameter : reportFactory.getReportParameters()) {
-						final CMAttribute attribute = ReportParameterConverter.of(reportParameter).toCMAttribute();
-						// FIXME should not be used in this way
-						final AttributeSerializer attributeSerializer = AttributeSerializer.newInstance() //
-								.withDataView(systemDataView()) //
-								.build();
-						out.append("attribute", attributeSerializer.toClient(attribute));
+					for (final JSONObject element : serializeParameters(reportFactory)) {
+						out.append("attribute", element);
 					}
 				}
 			}
@@ -176,6 +174,26 @@ public class ModReport extends JSONBaseWithSpringContext {
 
 		sessionVars().setReportFactory(reportFactory);
 		return out;
+	}
+
+	private Iterable<JSONObject> serializeParameters(final ReportFactoryDB reportFactory)
+			throws ClassNotFoundException, IOException, JSONException {
+		final Collection<JSONObject> output = newArrayList();
+		for (final ReportParameter reportParameter : reportFactory.getReportParameters()) {
+			final CMAttribute attribute = ReportParameterConverter.of(reportParameter).toCMAttribute();
+			final Map<String, String> metadata = newHashMap();
+			final JRPropertiesMap propertiesMap = reportParameter.getJrParameter().getPropertiesMap();
+			for (final String name : propertiesMap.getPropertyNames()) {
+				if (name.startsWith(FILTER_PREFIX)) {
+					metadata.put(name.substring(FILTER_PREFIX.length()), propertiesMap.getProperty(name));
+				}
+			}
+			output.add(AttributeSerializer.newInstance() //
+					.withDataView(systemDataView()) //
+					.build()//
+					.toClient(attribute, metadata));
+		}
+		return output;
 	}
 
 	/**
@@ -294,7 +312,7 @@ public class ModReport extends JSONBaseWithSpringContext {
 	}
 
 	private List<String> jsonArrayToStringList(final JSONArray columns) throws JSONException {
-		final List<String> attributeOrder = new LinkedList<String>();
+		final List<String> attributeOrder = newLinkedList();
 		for (int i = 0; i < columns.length(); ++i) {
 			attributeOrder.add(columns.getString(i));
 		}

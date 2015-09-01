@@ -72,20 +72,6 @@
 	/* ===========================================
 	 * Orphans
 	 =========================================== */
-	CMDBuild.ServiceProxy.getCardBasicInfoList = function(className, success, cb, scope) {
-		CMDBuild.ServiceProxy.core.doRequest({
-			method: 'GET',
-			url: CMDBuild.ServiceProxy.url.basicCardList,
-			params: {
-				ClassName: className,
-				NoFilter: true
-			},
-			success: success,
-			callback: cb,
-			scope: scope
-		});
-	};
-
 	/**
 	 * @param {object} p
 	 * @param {object} p.params

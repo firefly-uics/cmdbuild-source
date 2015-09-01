@@ -3,6 +3,8 @@
 	Ext.define("CMDBuild.view.management.dashboard.CMChartPortletForm", {
 		extend: "Ext.form.Panel",
 
+		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+
 		initComponent: function() {
 			this.callParent(arguments);
 			this.configureForChartParameters();
@@ -11,7 +13,7 @@
 		configureForChartParameters: function() {
 			var params = this.chartConfiguration.getDataSourceInputConfiguration();
 			for (var i=0, l=params.length, field; i<l; ++i) {
-				field = getFormFieldForParameter(params[i]);
+				field = getFormFieldForParameter(params[i], this);
 				this.add(field);
 			}
 		},
@@ -27,7 +29,7 @@
 			var someStore = false;
 
 			this.cascade(function(item) {
-				if (item 
+				if (item
 						&& item.store
 						&& item.store.proxy
 						&& item.store.proxy.url) {
@@ -46,7 +48,11 @@
 		}
 	});
 
-	function getFormFieldForParameter(parameterConfiguration) {
+	/**
+	 * @param {Object} parameterConfiguration
+	 * @param {CMDBuild.view.management.dashboard.CMChartPortletForm} form
+	 */
+	function getFormFieldForParameter(parameterConfiguration, form) {
 		var builders = {
 			STRING: function(parameterConfiguration) {
 				var types = {
@@ -151,16 +157,39 @@
 						});
 					},
 
+					/**
+					 * Creates reference field for card field type.
+					 * Adapted from new filter object structure to old one for old FieldManager implementation.
+					 *
+					 * @param {Object} parameterConfiguration
+					 *
+					 * @returns {CMDBuild.Management.ReferenceField.Field} field
+					 */
 					card: function(parameterConfiguration) {
-						var required = parameterConfiguration.required,
-							field = CMDBuild.Management.ReferenceField.build({
-								name: parameterConfiguration.name,
-								description: (required ? "* " : "" ) + parameterConfiguration.name,
-								referencedIdClass: parameterConfiguration.classToUseForReferenceWidget,
-								isnotnull: required
-							});
+						var required = parameterConfiguration[CMDBuild.core.proxy.CMProxyConstants.REQUIRED];
+						var filter = parameterConfiguration[CMDBuild.core.proxy.CMProxyConstants.FILTER];
+						var meta = {};
+
+						if (!Ext.isEmpty(filter))
+							Ext.Object.each(filter[CMDBuild.core.proxy.CMProxyConstants.CONTEXT], function(key, value, myself) {
+								meta['system.template.' + key] = value;
+							}, this);
+
+						var field = CMDBuild.Management.ReferenceField.build({
+							description: (required ? '* ' : '' ) + parameterConfiguration[CMDBuild.core.proxy.CMProxyConstants.NAME],
+							filter: !Ext.isEmpty(filter) ? filter[CMDBuild.core.proxy.CMProxyConstants.EXPRESSION] : null,
+							isnotnull: required,
+							meta: meta,
+							name: parameterConfiguration[CMDBuild.core.proxy.CMProxyConstants.NAME],
+							referencedIdClass: parameterConfiguration.classToUseForReferenceWidget
+						});
+
+						// Force execution of template resolver
+						if (!Ext.isEmpty(field) && Ext.isFunction(field.resolveTemplate))
+							field.resolveTemplate();
 
 						field.setValue(defaultValue);
+
 						return field;
 					}
 				};
@@ -180,7 +209,7 @@
 					isnotnull: parameterConfiguration.required
 				};
 
-				var field = CMDBuild.Management.FieldManager.getFieldForAttr(conf,
+				var field = CMDBuild.Management.FieldManager.getFieldForAttr(conf, // TODO: implementation of filter
 					readonly=false, skipSubField=true);
 
 				if (field) {
