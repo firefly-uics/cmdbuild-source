@@ -1,7 +1,6 @@
 package org.cmdbuild.servlets.json.management.dataimport.csv;
 
 import java.util.Map;
-import java.util.Map.Entry;
 
 import org.cmdbuild.dao.entry.CMCard;
 
@@ -18,24 +17,12 @@ public class CSVCard {
 		this.fakeId = fakeId;
 	}
 
-	public Object get(final String attributeName) {
-		return card.get(attributeName);
-	}
-
-	public Iterable<Entry<String, Object>> getValues() {
-		return card.getValues();
-	}
-
 	public CMCard getCMCard() {
 		return card;
 	}
 
 	public Long getFakeId() {
 		return fakeId;
-	}
-
-	public boolean isInvalid() {
-		return invalidAttributes.isEmpty();
 	}
 
 	public Map<String, Object> getInvalidAttributes() {
@@ -45,4 +32,5 @@ public class CSVCard {
 	public void addInvalidAttribute(final String name, final Object value) {
 		invalidAttributes.put(name, value);
 	}
+
 }

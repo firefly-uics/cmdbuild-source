@@ -10,9 +10,7 @@ public class CSVData {
 
 	public CSVData( //
 			final Iterable<String> headers, //
-			final Map<Long, CSVCard> tempIdToCsvCard,
-			final String className
-		) {
+			final Map<Long, CSVCard> tempIdToCsvCard, final String className) {
 
 		this.headers = headers;
 		this.tempIdToCsvCard = tempIdToCsvCard;

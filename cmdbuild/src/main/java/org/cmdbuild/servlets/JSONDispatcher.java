@@ -247,14 +247,7 @@ public class JSONDispatcher extends HttpServlet {
 
 	private void setContentType(final MethodInfo methodInfo, final Object methodResponse,
 			final HttpServletRequest httpRequest, final HttpServletResponse httpResponse) {
-		if (MethodParameterResolver.isMultipart(httpRequest)) {
-			/**
-			 * Ext fake the ajax call with an iframe, and we need to tell the
-			 * browser to not change the text (if not, the json response will be
-			 * surrounded by a "pre" tag).
-			 */
-			httpResponse.setContentType("text/html");
-		} else if (methodResponse instanceof DataHandler) {
+		if (methodResponse instanceof DataHandler) {
 			final String forceDownloadHeader = httpRequest.getHeader("force-download");
 			final String forceDownloadParameter = httpRequest.getParameter("force-download");
 			final DataHandler dh = DataHandler.class.cast(methodResponse);
@@ -268,6 +261,15 @@ public class JSONDispatcher extends HttpServlet {
 				httpResponse.setHeader("Expires", "0");
 				httpResponse.setContentType(dh.getContentType());
 			}
+		} else if (methodInfo.getMethodAnnotation().forceContentType()) {
+			httpResponse.setContentType(methodInfo.getMethodAnnotation().contentType());
+		} else if (MethodParameterResolver.isMultipart(httpRequest)) {
+			/**
+			 * Ext fake the ajax call with an iframe, and we need to tell the
+			 * browser to not change the text (if not, the json response will be
+			 * surrounded by a "pre" tag).
+			 */
+			httpResponse.setContentType("text/html");
 		} else if (methodResponse instanceof String) {
 			httpResponse.setContentType("text/plain");
 		} else {

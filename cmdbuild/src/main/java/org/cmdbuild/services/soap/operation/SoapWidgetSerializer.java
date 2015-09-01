@@ -11,17 +11,11 @@ import org.cmdbuild.common.annotations.Legacy;
 import org.cmdbuild.exception.ReportException.ReportExceptionType;
 import org.cmdbuild.model.widget.Calendar;
 import org.cmdbuild.model.widget.CreateModifyCard;
-import org.cmdbuild.model.widget.Grid;
+import org.cmdbuild.model.widget.ForwardingWidgetVisitor;
 import org.cmdbuild.model.widget.LinkCards;
-import org.cmdbuild.model.widget.ManageEmail;
-import org.cmdbuild.model.widget.ManageRelation;
 import org.cmdbuild.model.widget.NavigationTree;
-import org.cmdbuild.model.widget.OpenAttachment;
-import org.cmdbuild.model.widget.OpenNote;
+import org.cmdbuild.model.widget.NullWidgetVisitor;
 import org.cmdbuild.model.widget.OpenReport;
-import org.cmdbuild.model.widget.Ping;
-import org.cmdbuild.model.widget.PresetFromCard;
-import org.cmdbuild.model.widget.WebService;
 import org.cmdbuild.model.widget.Widget;
 import org.cmdbuild.model.widget.WidgetVisitor;
 import org.cmdbuild.model.widget.Workflow;
@@ -33,16 +27,15 @@ import org.cmdbuild.services.store.report.Report;
 import org.cmdbuild.services.store.report.ReportStore;
 import org.cmdbuild.workflow.widget.CalendarWidgetFactory;
 import org.cmdbuild.workflow.widget.CreateModifyCardWidgetFactory;
-import org.cmdbuild.workflow.widget.GridWidgetFactory;
 import org.cmdbuild.workflow.widget.LinkCardsWidgetFactory;
 import org.cmdbuild.workflow.widget.OpenReportWidgetFactory;
 import org.cmdbuild.workflow.widget.ValuePairWidgetFactory;
 
-class SoapWidgetSerializer implements WidgetVisitor {
+class SoapWidgetSerializer extends ForwardingWidgetVisitor {
 
 	/**
 	 * These constants are intended to be for legacy purpose only!
-	 *
+	 * 
 	 * Only the constants defined in the {@link OpenReportWidgetFactory}
 	 * implementations should be used.
 	 */
@@ -65,6 +58,8 @@ class SoapWidgetSerializer implements WidgetVisitor {
 
 	}
 
+	private static final WidgetVisitor NOTHING_TO_DO = NullWidgetVisitor.getInstance();
+
 	private final Widget widget;
 
 	private final WorkflowWidgetDefinition definition;
@@ -72,6 +67,11 @@ class SoapWidgetSerializer implements WidgetVisitor {
 	public SoapWidgetSerializer(final Widget widget) {
 		this.widget = widget;
 		this.definition = new WorkflowWidgetDefinition(widget.getType(), widget.getStringId());
+	}
+
+	@Override
+	protected WidgetVisitor delegate() {
+		return NOTHING_TO_DO;
 	}
 
 	public WorkflowWidgetDefinition serialize() {
@@ -124,26 +124,6 @@ class SoapWidgetSerializer implements WidgetVisitor {
 	}
 
 	@Override
-	public void visit(final ManageEmail manageEmail) {
-		// TODO when will be a need
-	}
-
-	@Override
-	public void visit(final ManageRelation manageRelation) {
-		// TODO when will be a need
-	}
-
-	@Override
-	public void visit(final OpenAttachment openAttachment) {
-		// nothing to do
-	}
-
-	@Override
-	public void visit(final OpenNote openNote) {
-		// nothing to do
-	}
-
-	@Override
 	public void visit(final OpenReport openReport) {
 		final List<WorkflowWidgetDefinitionParameter> parameters = new ArrayList<WorkflowWidgetDefinitionParameter>();
 		parameters.add(parameterFor(ValuePairWidgetFactory.BUTTON_LABEL, openReport.getLabel()));
@@ -169,23 +149,6 @@ class SoapWidgetSerializer implements WidgetVisitor {
 	}
 
 	@Override
-	public void visit(final Grid grid) {
-		final List<WorkflowWidgetDefinitionParameter> parameters = new ArrayList<WorkflowWidgetDefinitionParameter>();
-		parameters.add(parameterFor(ValuePairWidgetFactory.BUTTON_LABEL, grid.getLabel()));
-		parameters.add(parameterFor(GridWidgetFactory.CLASS_NAME, grid.getClassName()));
-		parameters.add(parameterFor(GridWidgetFactory.CARD_SEPARATOR, grid.getCardSeparator()));
-		parameters.add(parameterFor(GridWidgetFactory.ATTRIBUTE_SEPARATOR, grid.getAttributeSeparator()));
-		parameters.add(parameterFor(GridWidgetFactory.KEY_VALUE_SEPARATOR, grid.getKeyValueSeparator()));
-		parameters.add(parameterFor(GridWidgetFactory.SERIALIZATION_TYPE, grid.getSerializationType()));
-		parameters.add(parameterFor(GridWidgetFactory.WRITE_ON_ADVANCE, grid.isWriteOnAdvance()));
-		parameters.add(parameterFor(GridWidgetFactory.PRESETS, grid.getPresets()));
-		for (final Entry<String, Object> entry : grid.getVariables().entrySet()) {
-			parameters.add(parameterFor(entry.getKey(), entry.getValue()));
-		}
-		definition.setParameters(parameters);
-	}
-
-	@Override
 	public void visit(final Workflow workflow) {
 		final List<WorkflowWidgetDefinitionParameter> parameters = new ArrayList<WorkflowWidgetDefinitionParameter>();
 		parameters.add(parameterFor(ValuePairWidgetFactory.BUTTON_LABEL, workflow.getLabel()));
@@ -193,21 +156,6 @@ class SoapWidgetSerializer implements WidgetVisitor {
 			parameters.add(parameterFor(entry.getKey(), entry.getValue()));
 		}
 		definition.setParameters(parameters);
-	}
-
-	@Override
-	public void visit(final Ping ping) {
-		// TODO when will be a need
-	}
-
-	@Override
-	public void visit(final WebService webService) {
-		// TODO when will be a need
-	}
-
-	@Override
-	public void visit(final PresetFromCard presetFromCard) {
-		// TODO when will be a need
 	}
 
 	private int reportIdFor(final OpenReport openReport) {

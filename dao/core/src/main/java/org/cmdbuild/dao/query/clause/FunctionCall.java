@@ -1,10 +1,10 @@
 package org.cmdbuild.dao.query.clause;
 
 import static com.google.common.collect.Iterables.transform;
+import static com.google.common.collect.Lists.newArrayList;
+import static com.google.common.collect.Lists.newArrayListWithCapacity;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -134,7 +134,7 @@ public class FunctionCall implements CMFunctionCall {
 	}
 
 	private List<Object> normalizeFunctionParams(final CMFunction function, final List<Object> values) {
-		final List<Object> actualParamsNormalized = new ArrayList<Object>(values.size());
+		final List<Object> actualParamsNormalized = newArrayListWithCapacity(values.size());
 		final Iterator<CMFunctionParameter> formalParams = function.getInputParameters().iterator();
 		final Iterator<Object> actualParams = values.iterator();
 		while (formalParams.hasNext()) {
@@ -157,7 +157,11 @@ public class FunctionCall implements CMFunctionCall {
 	}
 
 	public static FunctionCall call(final CMFunction function, final Object... actualParameters) {
-		return new FunctionCall(function, Arrays.asList(actualParameters));
+		return new FunctionCall(function, newArrayList(actualParameters));
+	}
+
+	public static FunctionCall call(final CMFunction function, final Iterable<Object> actualParameters) {
+		return new FunctionCall(function, newArrayList(actualParameters));
 	}
 
 	public static FunctionCall call(final CMFunction function, final Map<String, Object> actualParametersMap) {
@@ -168,7 +172,7 @@ public class FunctionCall implements CMFunctionCall {
 
 	private static List<Object> buildActualParametersList(final List<CMFunctionParameter> formalParameters,
 			final Map<String, Object> actualParametersMap) {
-		final List<Object> actualParameters = new ArrayList<Object>(formalParameters.size());
+		final List<Object> actualParameters = newArrayListWithCapacity(formalParameters.size());
 		for (final CMFunctionParameter fp : formalParameters) {
 			final Object ap = actualParametersMap.get(fp.getName());
 			actualParameters.add(ap);

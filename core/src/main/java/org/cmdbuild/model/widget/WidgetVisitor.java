@@ -1,5 +1,6 @@
 package org.cmdbuild.model.widget;
 
+import org.cmdbuild.model.widget.customform.CustomForm;
 import org.cmdbuild.workflow.CMActivityWidget;
 
 /**
@@ -22,11 +23,17 @@ public interface WidgetVisitor {
 
 	void visit(CreateModifyCard widget);
 
+	void visit(CustomForm widget);
+
+	void visit(Grid widget);
+
 	void visit(LinkCards widget);
 
 	void visit(ManageEmail widget);
 
 	void visit(ManageRelation widget);
+
+	void visit(NavigationTree widget);
 
 	void visit(OpenAttachment widget);
 
@@ -36,14 +43,10 @@ public interface WidgetVisitor {
 
 	void visit(Ping widget);
 
-	void visit(WebService widget);
-
 	void visit(PresetFromCard widget);
 
+	void visit(WebService widget);
+
 	void visit(Workflow widget);
-
-	void visit(NavigationTree widget);
-
-	void visit(Grid widget);
 
 }

@@ -1,10 +1,15 @@
 package org.cmdbuild.workflow.widget;
 
-import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
+import static org.cmdbuild.model.widget.Grid.DEFAULT_DISABLE_ADD_ROW;
+import static org.cmdbuild.model.widget.Grid.DEFAULT_DISABLE_DELETE_ROW;
+import static org.cmdbuild.model.widget.Grid.DEFAULT_DISABLE_IMPORT_FROM_CSV;
 import static org.cmdbuild.model.widget.Grid.DEFAULT_ENTRY_SEPARATOR;
 import static org.cmdbuild.model.widget.Grid.DEFAULT_KEYVALUE_SEPARATOR;
-import static org.cmdbuild.model.widget.Grid.*;
+import static org.cmdbuild.model.widget.Grid.DEFAULT_MAP_SEPARATOR;
+import static org.cmdbuild.model.widget.Grid.DEFAULT_PRESETS_TYPE;
+import static org.cmdbuild.model.widget.Grid.DEFAULT_READONLY;
+import static org.cmdbuild.model.widget.Grid.DEFAULT_REQUIRED;
 import static org.cmdbuild.model.widget.Grid.DEFAULT_SERIALIZATION;
 import static org.cmdbuild.model.widget.Grid.DEFAULT_WRITE_ON_ADVANCE;
 
@@ -60,18 +65,15 @@ public class GridWidgetFactory extends ValuePairWidgetFactory {
 		widget.setKeyValueSeparator(defaultIfBlank(readString(valueMap.get(KEY_VALUE_SEPARATOR)),
 				DEFAULT_KEYVALUE_SEPARATOR));
 		widget.setSerializationType(defaultIfBlank(readString(valueMap.get(SERIALIZATION_TYPE)), DEFAULT_SERIALIZATION));
-		widget.setWriteOnAdvance(defaultIfNull(readBooleanTrueIfTrue(valueMap.get(WRITE_ON_ADVANCE)),
-				DEFAULT_WRITE_ON_ADVANCE));
+		widget.setWriteOnAdvance(readBoolean(valueMap.get(WRITE_ON_ADVANCE), DEFAULT_WRITE_ON_ADVANCE));
 		widget.setPresets(readString(valueMap.get(PRESETS)));
 		widget.setPresetsType(defaultIfBlank(readString(valueMap.get(PRESETS_TYPE)), DEFAULT_PRESETS_TYPE));
-		widget.setDisableAddRow(defaultIfNull(readBooleanTrueIfTrue(valueMap.get(DISABLE_ADD_ROW)),
-				DEFAULT_DISABLE_ADD_ROW));
-		widget.setDisableImportFromCsv(defaultIfNull(readBooleanTrueIfTrue(valueMap.get(DISABLE_IMPORT_FROM_CSV)),
+		widget.setDisableAddRow(readBoolean(valueMap.get(DISABLE_ADD_ROW), DEFAULT_DISABLE_ADD_ROW));
+		widget.setDisableImportFromCsv(readBoolean(valueMap.get(DISABLE_IMPORT_FROM_CSV),
 				DEFAULT_DISABLE_IMPORT_FROM_CSV));
-		widget.setDisableDeleteRow(defaultIfNull(readBooleanTrueIfTrue(valueMap.get(DISABLE_DELETE_ROW)),
-				DEFAULT_DISABLE_DELETE_ROW));
-		widget.setReadOnly(defaultIfNull(readBooleanTrueIfTrue(valueMap.get(READ_ONLY)), DEFAULT_READONLY));
-		widget.setRequired(defaultIfNull(readBooleanTrueIfTrue(valueMap.get(REQUIRED)), DEFAULT_REQUIRED));
+		widget.setDisableDeleteRow(readBoolean(valueMap.get(DISABLE_DELETE_ROW), DEFAULT_DISABLE_DELETE_ROW));
+		widget.setReadOnly(readBoolean(valueMap.get(READ_ONLY), DEFAULT_READONLY));
+		widget.setRequired(readBoolean(valueMap.get(REQUIRED), DEFAULT_REQUIRED));
 		widget.setVariables(extractUnmanagedParameters(valueMap, KNOWN_PARAMETERS));
 		return widget;
 	}

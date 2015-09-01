@@ -19,6 +19,7 @@ import org.cmdbuild.model.widget.ManageRelation;
 import org.cmdbuild.model.widget.NullWidgetVisitor;
 import org.cmdbuild.model.widget.OpenNote;
 import org.cmdbuild.model.widget.WidgetVisitor;
+import org.cmdbuild.model.widget.customform.CustomForm;
 import org.cmdbuild.service.rest.v1.model.ProcessActivityWithFullDetails;
 import org.cmdbuild.service.rest.v1.model.ProcessActivityWithFullDetails.AttributeStatus;
 import org.cmdbuild.service.rest.v1.model.Widget;
@@ -136,6 +137,11 @@ public class ToProcessActivityDefinition implements Function<CMActivity, Process
 											required = false;
 											widget.accept(this);
 											return required;
+										}
+
+										@Override
+										public void visit(final CustomForm widget) {
+											required = widget.isRequired();
 										}
 
 										@Override
