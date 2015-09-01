@@ -60,8 +60,6 @@
 			});
 
 			this.formPanel = Ext.create('Ext.form.Panel', {
-				timeout: CMDBuild.Config.defaultTimeout * 1000,
-				monitorValid: true,
 				autoScroll: true,
 				frame: false,
 				border: false,

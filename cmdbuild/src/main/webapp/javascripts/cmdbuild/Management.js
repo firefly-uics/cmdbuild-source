@@ -1,8 +1,6 @@
 (function() {
 
-	var reportAccordion = Ext.create('CMDBuild.view.management.accordion.Report', {
-		cmName: 'report'
-	});
+	var reportAccordion = Ext.create('CMDBuild.view.management.accordion.Report', { cmName: 'report' });
 
 	// TODO move in common
 	var menuAccordion = new CMDBuild.view.administration.accordion.CMMenuAccordion({
@@ -32,6 +30,7 @@
 			'CMDBuild.routes.management.Classes',
 			'CMDBuild.routes.management.Instances',
 			'CMDBuild.routes.management.Processes',
+			'CMDBuild.core.configurations.Timeout',
 			'CMDBuild.core.buttons.Buttons',
 			'CMDBuild.core.proxy.CMProxyConstants',
 			'CMDBuild.core.proxy.Classes',

@@ -1,7 +1,11 @@
 (function() {
 
 	Ext.define('CMDBuild.core.proxy.widgets.OpenReport', {
-		requires: ['CMDBuild.model.widget.CMModelOpenReport'],
+
+		requires: [
+			'CMDBuild.core.proxy.CMProxyUrlIndex',
+			'CMDBuild.model.widget.CMModelOpenReport'
+		],
 
 		singleton: true,
 
@@ -13,9 +17,12 @@
 				method: 'POST',
 				url: CMDBuild.core.proxy.CMProxyUrlIndex.reports.updateReportFactoryParams,
 				params: parameters.params,
-				scope: parameters.scope,
-				success: parameters.success,
-				failure: parameters.failure
+				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : false,
+				timeout: CMDBuild.core.configurations.Timeout.getReport(), // Get report timeout from configuration
+				scope: parameters.scope || this,
+				failure: parameters.failure || Ext.emptyFn,
+				success: parameters.success || Ext.emptyFn,
+				callback: parameters.callback || Ext.emptyFn
 			});
 		},
 
@@ -26,8 +33,12 @@
 			CMDBuild.Ajax.request({
 				url: CMDBuild.core.proxy.CMProxyUrlIndex.reports.createReportFactory,
 				params: parameters.params,
-				scope: parameters.scope,
-				success: parameters.success
+				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : false,
+				timeout: CMDBuild.core.configurations.Timeout.getReport(), // Get report timeout from configuration
+				scope: parameters.scope || this,
+				failure: parameters.failure || Ext.emptyFn,
+				success: parameters.success || Ext.emptyFn,
+				callback: parameters.callback || Ext.emptyFn
 			});
 		},
 
@@ -38,8 +49,12 @@
 			CMDBuild.Ajax.request({
 				url: CMDBuild.core.proxy.CMProxyUrlIndex.reports.createReportFactoryByTypeCode,
 				params: parameters.params,
-				scope: parameters.scope,
-				success: parameters.success
+				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : false,
+				timeout: CMDBuild.core.configurations.Timeout.getReport(), // Get report timeout from configuration
+				scope: parameters.scope || this,
+				failure: parameters.failure || Ext.emptyFn,
+				success: parameters.success || Ext.emptyFn,
+				callback: parameters.callback || Ext.emptyFn
 			});
 		},
 
