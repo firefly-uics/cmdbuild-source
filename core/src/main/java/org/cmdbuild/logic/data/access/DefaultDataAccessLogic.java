@@ -918,10 +918,13 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 			 * maybe not the best way to identify the SQL error..
 			 */
 			final String message = e.getMessage();
+			final RuntimeException _e;
 			if (message != null && message.contains("ERROR: CM_RESTRICT_VIOLATION")) {
-
-				throw ConsistencyExceptionType.ORM_CANT_DELETE_CARD_WITH_RELATION.createException();
+				_e = ConsistencyExceptionType.ORM_CANT_DELETE_CARD_WITH_RELATION.createException();
+			} else {
+				_e = new RuntimeException("error deleting card", e);
 			}
+			throw _e;
 
 		}
 	}
