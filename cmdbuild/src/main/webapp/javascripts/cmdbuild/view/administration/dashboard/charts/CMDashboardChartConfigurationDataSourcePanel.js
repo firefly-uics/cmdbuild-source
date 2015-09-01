@@ -1,4 +1,5 @@
 (function() {
+
 	var tr = CMDBuild.Translation.administration.modDashboard.charts,
 
 	_integerStore = new Ext.data.SimpleStore({
@@ -71,7 +72,7 @@
 				item = input[i];
 				if (item && item.type) {
 					builder = typeof builders[item.type] == "function" ? builders[item.type] : builders["DEFAULT"];
-	
+
 					this.inputFieldSets.push(
 						builder(item,
 							this.afterInputFieldTypeChanged,
@@ -127,8 +128,9 @@
 	var SUBFIELD_LABEL_WIDTH = CMDBuild.LABEL_WIDTH - 15;
 
 	Ext.define("CMDBuild.view.administration.dashboard._DataSourceInputFildSet", {
-
 		extend: "Ext.form.FieldSet",
+
+		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
 
 		statics: {
 			builders: {
@@ -140,7 +142,7 @@
 						fieldTypeStore: undefined
 					});
 				},
-		
+
 				INTEGER: function(input, afterInputFieldTypeChanged, typeComboIsdisabled) {
 					return new CMDBuild.view.administration.dashboard._DataSourceInputFildSet({
 						input: input,
@@ -149,7 +151,7 @@
 						afterInputFieldTypeChanged: afterInputFieldTypeChanged
 					});
 				},
-		
+
 				STRING: function(input, afterInputFieldTypeChanged, typeComboIsdisabled) {
 					return new CMDBuild.view.administration.dashboard._DataSourceInputFildSet({
 						input: input,
@@ -289,7 +291,6 @@
 		},
 
 		addClassesFieldForReferenceWidget: function() {
-
 			this.resetFieldset();
 
 			this.classToUseForReferenceWidget = new CMDBuild.field.ErasableCombo({
@@ -304,6 +305,20 @@
 			});
 
 			this.add(this.classToUseForReferenceWidget);
+
+			// Configure filter only on integer attributes type
+			if (this.input.type == 'INTEGER') {
+				this.fieldFilter = Ext.create('CMDBuild.view.common.field.filter.cql.Cql', {
+					fieldLabel: CMDBuild.Translation.filter,
+					fieldName: CMDBuild.core.proxy.CMProxyConstants.FILTER,
+					labelWidth: CMDBuild.LABEL_WIDTH - 15,
+					maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH
+				});
+
+				this.fieldFilter.setDisabled(this.typeComboIsdisabled());
+
+				this.add(this.fieldFilter);
+			}
 
 			var me = this;
 			this.classToUseForReferenceWidget.setValue = Ext.Function.createSequence(this.classToUseForReferenceWidget.setValue,
@@ -387,8 +402,16 @@
 			if (this.classToUseForReferenceWidget) {
 				this.remove(this.classToUseForReferenceWidget);
 			}
+
+			if (!Ext.isEmpty(this.fieldFilter))
+				this.remove(this.fieldFilter);
+
+				delete this.fieldFilter;
 		},
 
+		/**
+		 * @returns {Object} data
+		 */
 		getData: function() {
 			var data = {
 				name: this.input.name,
@@ -396,9 +419,8 @@
 				required: this.requiredCheck.getValue()
 			};
 
-			if (this.fieldType) {
+			if (this.fieldType)
 				data.fieldType = this.fieldType.getValue();
-			}
 
 			if (this.defaultField) {
 				if (Ext.getClassName(this.defaultField) == "Ext.form.field.Date") {
@@ -408,42 +430,42 @@
 				}
 			}
 
-			if (this.lookupTypeField) {
+			if (this.lookupTypeField)
 				data.lookupType = this.lookupTypeField.getValue();
-			}
 
-			if (this.classToUseForReferenceWidget) {
+			if (this.classToUseForReferenceWidget)
 				data.classToUseForReferenceWidget = this.classToUseForReferenceWidget.getValue();
+
+			// Build filter object
+			if (!Ext.isEmpty(this.fieldFilter)) {
+				data.filter = this.fieldFilter.getValue();
 			}
 
 			return data;
 		},
 
+		/**
+		 * @param {Object} data
+		 */
 		setData: function(data) {
-
 			this.requiredCheck.setValue(data.required);
 
-			if (data.fieldType 
-					&& this.fieldType) {
-
+			if (data.fieldType && this.fieldType) {
 				this.fieldType.setValue(data.fieldType);
 
-				if (data.lookupType 
-						&& this.lookupTypeField) {
-
+				if (data.lookupType && this.lookupTypeField)
 					this.lookupTypeField.setValue(data.lookupType);
-				}
 
-				if (data.classToUseForReferenceWidget 
-						&& this.classToUseForReferenceWidget) {
-
+				if (data.classToUseForReferenceWidget && this.classToUseForReferenceWidget)
 					this.classToUseForReferenceWidget.setValue(data.classToUseForReferenceWidget);
-				}
+
+				if (!Ext.isEmpty(data.filter) && !Ext.isEmpty(this.fieldFilter))
+					this.fieldFilter.setValue(data[CMDBuild.core.proxy.CMProxyConstants.FILTER]);
 			}
 
-			if (data.defaultValue && this.defaultField) {
+			if (data.defaultValue && this.defaultField)
 				this.defaultField.setValue(data.defaultValue);
-			}
 		}
 	});
+
 })();

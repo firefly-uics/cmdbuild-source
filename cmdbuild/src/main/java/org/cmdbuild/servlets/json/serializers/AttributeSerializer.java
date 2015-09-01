@@ -355,6 +355,7 @@ public class AttributeSerializer extends Serializer {
 		@Override
 		public void visit(final ForeignKeyAttributeType attributeType) {
 			serialization.put("fkDestination", attributeType.getForeignKeyDestinationClassName());
+			serialization.put("filter", attribute.getFilter());
 		}
 
 		@Override

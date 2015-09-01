@@ -5,6 +5,8 @@
 	Ext.define("CMDBuild.cache.CMCache", {
 		extend: "Ext.util.Observable",
 
+		requires: ['CMDBuild.core.proxy.CMProxyUrlIndex'],
+
 		mixins: {
 			lookup: "CMDBUild.cache.CMCacheLookupFunctions",
 			entryType: "CMDBUild.cache.CMCacheClassFunctions",
@@ -168,21 +170,28 @@
 			return baseParams;
 		},
 
-		getForeignKeyStore: function(foreignKye) {
-			var maxCards = parseInt(CMDBuild.Config.cmdbuild.referencecombolimit),
-				baseParams = {
-					className: foreignKye.fkDestination,
-					NoFilter: true
-				};
+		/**
+		 * @param {Object} foreignKey
+		 *
+		 * @returns {Ext.data.Store}
+		 */
+		getForeignKeyStore: function(foreignKey) {
+			var baseParams = { className: foreignKey.fkDestination };
 
-			var s = Ext.create('Ext.data.Store', {
-				model: 'CMDBuild.cache.CMReferenceStoreModel',
+			if (!Ext.isEmpty(foreignKey.filter)) {
+				baseParams.filter = Ext.encode({ CQL: foreignKey.filter });
+			} else {
+				baseParams.NoFilter = true;
+			}
+
+			return Ext.create('Ext.data.Store', {
 				autoLoad: true,
-				baseParams: baseParams, //retro-compatibility
-				pageSize: maxCards,
+				model: 'CMDBuild.cache.CMReferenceStoreModel',
+				baseParams: baseParams, // Retro-compatibility
+				pageSize: parseInt(CMDBuild.Config.cmdbuild.referencecombolimit),
 				proxy: {
 					type: 'ajax',
-					url: 'services/json/management/modcard/getcardlistshort',
+					url: CMDBuild.core.proxy.CMProxyUrlIndex.card.getListShort,
 					reader: {
 						type: 'json',
 						root: 'rows',
@@ -194,8 +203,6 @@
 					{ property: 'Description', direction: 'ASC' }
 				]
 			});
-
-			return s;
 		},
 
 		isDescendant: function(subclassId, superclassId) {
