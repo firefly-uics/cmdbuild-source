@@ -103,11 +103,19 @@
 					me.openCard(danglingCard, retryWithoutFilter = true);
 				};
 			} else {
-				afterStoreUpdated = function cbUpdateStoreForClassId() {
+				afterStoreUpdated = function() {
 					if (viewFilter) {
-						var filter = new CMDBuild.model.CMFilterModel({
-							configuration: Ext.decode(viewFilter)
-						});
+						var filter = {};
+
+						// If viewFilter is a CMFilterModel instance we have a default filter so force button enable
+						if (Ext.getClassName(viewFilter) == 'CMDBuild.model.CMFilterModel') {
+							filter = viewFilter;
+
+							me.view.enableFilterMenuButton();
+						} else {
+							filter = new CMDBuild.model.CMFilterModel({ configuration: Ext.decode(viewFilter) });
+						}
+
 						applyFilter(me, filter);
 					} else {
 						me.view.loadPage(1, {
