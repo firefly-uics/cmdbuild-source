@@ -3,8 +3,8 @@
 	Ext.define('CMDBuild.core.proxy.group.Users', {
 
 		requires: [
-			'CMDBuild.core.proxy.CMProxyConstants',
-			'CMDBuild.core.proxy.CMProxyUrlIndex',
+			'CMDBuild.core.proxy.Constants',
+			'CMDBuild.core.proxy.Index',
 			'CMDBuild.model.group.UsersGrid'
 		],
 
@@ -19,14 +19,14 @@
 				model: 'CMDBuild.model.group.UsersGrid',
 				proxy: {
 					type: 'ajax',
-					url: CMDBuild.core.proxy.CMProxyUrlIndex.group.users.getGroupUserList,
+					url: CMDBuild.core.proxy.Index.group.users.getGroupUserList,
 					reader: {
 						type: 'json',
 						root: 'users'
 					}
 				},
 				sorters: [
-					{ property: CMDBuild.core.proxy.CMProxyConstants.USERNAME, direction: 'ASC' }
+					{ property: CMDBuild.core.proxy.Constants.USERNAME, direction: 'ASC' }
 				]
 			});
 		},
@@ -36,7 +36,7 @@
 		 */
 		update: function(parameters) {
 			CMDBuild.Ajax.request({
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.group.users.saveGroupUserList,
+				url: CMDBuild.core.proxy.Index.group.users.saveGroupUserList,
 				params: parameters.params,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
 				scope: parameters.scope || this,

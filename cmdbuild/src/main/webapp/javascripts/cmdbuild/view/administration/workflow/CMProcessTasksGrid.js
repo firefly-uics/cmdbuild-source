@@ -13,19 +13,19 @@
 		initComponent: function() {
 			this.gridColumns = [
 				{
-					dataIndex: CMDBuild.core.proxy.CMProxyConstants.ID,
+					dataIndex: CMDBuild.core.proxy.Constants.ID,
 					hidden: true
 				},
 				{
 					text: CMDBuild.Translation.descriptionLabel,
-					dataIndex: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
+					dataIndex: CMDBuild.core.proxy.Constants.DESCRIPTION,
 					flex: 2
 				},
 				{
 					text: CMDBuild.Translation.active,
 					width: 60,
 					align: 'center',
-					dataIndex: CMDBuild.core.proxy.CMProxyConstants.ACTIVE,
+					dataIndex: CMDBuild.core.proxy.Constants.ACTIVE,
 					sortable: false,
 					hideable: false,
 					menuDisabled: true,
@@ -48,7 +48,7 @@
 		listeners: {
 			itemdblclick: function(grid, record, item, index, e, eOpts) {
 				this.delegate.cmOn('onItemDoubleClick', {
-					id: record.get(CMDBuild.core.proxy.CMProxyConstants.ID),
+					id: record.get(CMDBuild.core.proxy.Constants.ID),
 					type: 'workflow'
 				});
 			},

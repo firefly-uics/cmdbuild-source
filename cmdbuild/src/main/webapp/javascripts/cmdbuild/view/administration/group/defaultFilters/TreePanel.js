@@ -4,7 +4,7 @@
 		extend: 'Ext.tree.Panel',
 
 		requires: [
-			'CMDBuild.core.proxy.CMProxyConstants',
+			'CMDBuild.core.proxy.Constants',
 			'CMDBuild.core.proxy.group.DefaultFilters',
 			'CMDBuild.model.group.defaultFilters.TreeNode'
 		],
@@ -35,14 +35,14 @@
 				columns: [
 					{
 						xtype: 'treecolumn',
-						dataIndex: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
+						dataIndex: CMDBuild.core.proxy.Constants.DESCRIPTION,
 						text: CMDBuild.Translation.className,
 						flex: 3,
 						sortable: false,
 						draggable: false
 					},
 					Ext.create('Ext.grid.column.Column', {
-						dataIndex: CMDBuild.core.proxy.CMProxyConstants.DEFAULT_FILTER,
+						dataIndex: CMDBuild.core.proxy.Constants.DEFAULT_FILTER,
 						text: CMDBuild.Translation.filter,
 						flex: 1,
 						align: 'left',
@@ -53,8 +53,8 @@
 
 						editor: {
 							xtype: 'combo',
-							displayField: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
-							valueField: CMDBuild.core.proxy.CMProxyConstants.NAME,
+							displayField: CMDBuild.core.proxy.Constants.DESCRIPTION,
+							valueField: CMDBuild.core.proxy.Constants.NAME,
 							editable: false,
 							forceSelection: true,
 

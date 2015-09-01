@@ -3,18 +3,18 @@
 	Ext.define('CMDBuild.model.group.userInterface.DisabledModules', {
 		extend: 'Ext.data.Model',
 
-		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+		requires: ['CMDBuild.core.proxy.Constants'],
 
 		fields: [
 			{ name: 'bulkupdate', type: 'boolean' },
 			{ name: 'exportcsv', type: 'boolean' },
 			{ name: 'importcsv', type: 'boolean' },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.CHANGE_PASSWORD, type: 'boolean' },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.CLASS, type: 'boolean' },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.DASHBOARD, type: 'boolean' },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.DATA_VIEW, type: 'boolean' },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.PROCESS, type: 'boolean' },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.REPORT, type: 'boolean' }
+			{ name: CMDBuild.core.proxy.Constants.CHANGE_PASSWORD, type: 'boolean' },
+			{ name: CMDBuild.core.proxy.Constants.CLASS, type: 'boolean' },
+			{ name: CMDBuild.core.proxy.Constants.DASHBOARD, type: 'boolean' },
+			{ name: CMDBuild.core.proxy.Constants.DATA_VIEW, type: 'boolean' },
+			{ name: CMDBuild.core.proxy.Constants.PROCESS, type: 'boolean' },
+			{ name: CMDBuild.core.proxy.Constants.REPORT, type: 'boolean' }
 		]
 	});
 

@@ -5,8 +5,8 @@
 		extend: 'CMDBuild.view.common.field.CMIconCombo',
 
 		requires: [
-			'CMDBuild.core.proxy.CMProxyConstants',
-			'CMDBuild.core.proxy.Localizations'
+			'CMDBuild.core.proxy.Constants',
+			'CMDBuild.core.proxy.localization.Localization'
 		],
 
 		/**
@@ -14,19 +14,19 @@
 		 */
 		enableChangeLanguage: true,
 
-		displayField: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
-		iconClsField: CMDBuild.core.proxy.CMProxyConstants.TAG,
-		valueField: CMDBuild.core.proxy.CMProxyConstants.TAG,
+		displayField: CMDBuild.core.proxy.Constants.DESCRIPTION,
+		iconClsField: CMDBuild.core.proxy.Constants.TAG,
+		valueField: CMDBuild.core.proxy.Constants.TAG,
 
 		initComponent: function() {
 			Ext.apply(this, {
-				store: CMDBuild.core.proxy.Localizations.getLanguagesStore(),
+				store: CMDBuild.core.proxy.localization.Localization.getLanguagesStore(),
 				queryMode: 'local'
 			});
 
 			this.callParent(arguments);
 
-			this.store.on('load', function() {
+			this.getStore().on('load', function() {
 				this.setValue(this.getCurrentLanguage());
 			}, this);
 		},
@@ -34,7 +34,7 @@
 		listeners: {
 			select: function(field, records, eOpts) {
 				if (this.enableChangeLanguage)
-					this.changeLanguage(records[0].get(CMDBuild.core.proxy.CMProxyConstants.TAG));
+					this.changeLanguage(records[0].get(CMDBuild.core.proxy.Constants.TAG));
 			}
 		},
 
@@ -49,7 +49,7 @@
 		 * @return {String}
 		 */
 		getCurrentLanguage: function() {
-			return Ext.urlDecode(window.location.search.substring(1))[CMDBuild.core.proxy.CMProxyConstants.LANGUAGE] || CMDBuild.Config.cmdbuild.language;
+			return Ext.urlDecode(window.location.search.substring(1))[CMDBuild.core.proxy.Constants.LANGUAGE] || CMDBuild.Config.cmdbuild.language;
 		}
 	});
 

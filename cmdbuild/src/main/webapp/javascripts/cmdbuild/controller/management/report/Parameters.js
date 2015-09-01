@@ -6,9 +6,9 @@
 		requires: [
 			'CMDBuild.controller.common.AbstractBaseWidgetController',
 			'CMDBuild.core.Message',
-			'CMDBuild.core.proxy.CMProxyConstants',
-			'CMDBuild.core.proxy.CMProxyUrlIndex',
-			'CMDBuild.core.proxy.Report'
+			'CMDBuild.core.proxy.Constants',
+			'CMDBuild.core.proxy.Index',
+			'CMDBuild.core.proxy.report.Report'
 		],
 
 		/**
@@ -25,8 +25,8 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
-			'onParametersAbortButtonClick',
-			'onParametersPrintButtonClick'
+			'onReportParametersWindowAbortButtonClick',
+			'onReportParametersWindowPrintButtonClick'
 		],
 
 		/**
@@ -51,18 +51,16 @@
 		constructor: function(configurationObject) {
 			this.callParent(arguments);
 
-			this.view = Ext.create('CMDBuild.view.management.report.ParametersWindow', {
-				delegate: this
-			});
+			this.view = Ext.create('CMDBuild.view.management.report.ParametersWindow', { delegate: this });
 
 			// ShortHands
 			this.form = this.view.form;
 
 			// Show window
 			if (!Ext.isEmpty(this.view)) {
-				this.view.show();
-
 				this.buildFields();
+
+				this.view.show();
 			}
 		},
 
@@ -94,12 +92,12 @@
 			}
 		},
 
-		onParametersAbortButtonClick: function() {
+		onReportParametersWindowAbortButtonClick: function() {
 			this.view.destroy();
 		},
 
-		onParametersPrintButtonClick: function() {
-			if (this.form.getForm().isValid()) {
+		onReportParametersWindowPrintButtonClick: function() {
+			if (this.view.form.getForm().isValid()) {
 				this.cmfg('currentReportParametersSet', {
 					callIdentifier: 'update',
 					params: this.form.getValues()
@@ -107,7 +105,7 @@
 
 				this.cmfg('updateReport', this.forceDownload);
 
-				this.onParametersAbortButtonClick();
+				this.onReportParametersWindowAbortButtonClick();
 			}
 		}
 	});

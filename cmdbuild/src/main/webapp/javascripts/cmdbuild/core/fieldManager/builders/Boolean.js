@@ -3,7 +3,7 @@
 	Ext.define('CMDBuild.core.fieldManager.builders.Boolean', {
 		extend: 'CMDBuild.core.fieldManager.builders.Abstract',
 
-		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+		requires: ['CMDBuild.core.proxy.Constants'],
 
 		/**
 		 * @cfg {CMDBuild.core.fieldManager.FieldManager}
@@ -19,12 +19,12 @@
 			withEditor = Ext.isBoolean(withEditor) ? withEditor : false;
 
 			return Ext.create('Ext.grid.column.CheckColumn', {
-				dataIndex: this.cmfg('attributeModelGet', CMDBuild.core.proxy.CMProxyConstants.NAME),
-				disabled: !this.cmfg('attributeModelGet', CMDBuild.core.proxy.CMProxyConstants.WRITABLE),
+				dataIndex: this.cmfg('attributeModelGet', CMDBuild.core.proxy.Constants.NAME),
+				disabled: !this.cmfg('attributeModelGet', CMDBuild.core.proxy.Constants.WRITABLE),
 				flex: 1,
 				sortable: true,
-				text: this.applyMandatoryLabelFlag(this.cmfg('attributeModelGet', CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION)),
-				width: this.cmfg('attributeModelGet', CMDBuild.core.proxy.CMProxyConstants.NAME).length * 9
+				text: this.applyMandatoryLabelFlag(this.cmfg('attributeModelGet', CMDBuild.core.proxy.Constants.DESCRIPTION)),
+				width: this.cmfg('attributeModelGet', CMDBuild.core.proxy.Constants.NAME).length * 9
 			});
 		},
 
@@ -33,16 +33,16 @@
 		 */
 		buildField: function() {
 			return Ext.create('Ext.form.field.Checkbox', {
-				allowBlank: !this.cmfg('attributeModelGet', CMDBuild.core.proxy.CMProxyConstants.MANDATORY),
-				disabled: !this.cmfg('attributeModelGet', CMDBuild.core.proxy.CMProxyConstants.WRITABLE),
+				allowBlank: !this.cmfg('attributeModelGet', CMDBuild.core.proxy.Constants.MANDATORY),
+				disabled: !this.cmfg('attributeModelGet', CMDBuild.core.proxy.Constants.WRITABLE),
 				fieldLabel: this.applyMandatoryLabelFlag(
-					this.cmfg('attributeModelGet', CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION)
-					|| this.cmfg('attributeModelGet', CMDBuild.core.proxy.CMProxyConstants.NAME)
+					this.cmfg('attributeModelGet', CMDBuild.core.proxy.Constants.DESCRIPTION)
+					|| this.cmfg('attributeModelGet', CMDBuild.core.proxy.Constants.NAME)
 				),
 				labelAlign: 'right',
 				labelWidth: CMDBuild.LABEL_WIDTH,
-				name: this.cmfg('attributeModelGet', CMDBuild.core.proxy.CMProxyConstants.NAME),
-				readOnly: !this.cmfg('attributeModelGet', CMDBuild.core.proxy.CMProxyConstants.WRITABLE),
+				name: this.cmfg('attributeModelGet', CMDBuild.core.proxy.Constants.NAME),
+				readOnly: !this.cmfg('attributeModelGet', CMDBuild.core.proxy.Constants.WRITABLE),
 				submitValue: false
 			});
 		},
@@ -51,7 +51,7 @@
 		 * @returns {Object}
 		 */
 		buildStoreField: function() {
-			return { name: this.cmfg('attributeModelGet', CMDBuild.core.proxy.CMProxyConstants.NAME), type: 'boolean' };
+			return { name: this.cmfg('attributeModelGet', CMDBuild.core.proxy.Constants.NAME), type: 'boolean' };
 		}
 	});
 

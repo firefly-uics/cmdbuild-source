@@ -4,7 +4,7 @@
 		extend: 'CMDBuild.controller.common.AbstractBaseWidgetController',
 
 		requires: [
-			'CMDBuild.core.proxy.CMProxyConstants',
+			'CMDBuild.core.proxy.Constants',
 			'CMDBuild.core.proxy.widgets.Grid',
 			'CMDBuild.core.Message'
 		],
@@ -79,7 +79,7 @@
 		widgetConf: undefined,
 
 		/**
-		 * @param {CMDBuild.view.management.common.widgets.CMWidgetManager} configurationObject.view
+		 * @param {CMDBuild.view.management.common.widgets.grid.GridView} configurationObject.view
 		 * @param {CMDBuild.controller.management.common.CMWidgetManagerController} configurationObject.parentDelegate
 		 * @param {Object} configurationObject.widgetConfiguration
 		 * @param {Ext.form.Basic} configurationObject.clientForm
@@ -94,7 +94,7 @@
 
 			this.widgetConf = this.widgetConfiguration; // FIXME: Alias for compatibility mode with new AbstractBaseWidgetController
 
-			this.classType = _CMCache.getEntryTypeByName(this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME]);
+			this.classType = _CMCache.getEntryTypeByName(this.widgetConf[CMDBuild.core.proxy.Constants.CLASS_NAME]);
 
 			this.grid = Ext.create('CMDBuild.view.management.common.widgets.grid.GridPanel', {
 				delegate: this
@@ -128,7 +128,7 @@
 							value = me.formatDate(value);
 						}
 
-						if (Ext.isEmpty(Ext.String.trim(value)) && attribute[CMDBuild.core.proxy.CMProxyConstants.NOT_NULL])
+						if (Ext.isEmpty(Ext.String.trim(value)) && attribute[CMDBuild.core.proxy.Constants.NOT_NULL])
 							value = '<div style="width: 100%; height: 100%; border: 1px dotted red;">';
 
 						return value;
@@ -144,20 +144,20 @@
 		beforeActiveView: function() {
 			// Disable add button
 			this.view.addButton.setDisabled(
-				this.widgetConf.hasOwnProperty(CMDBuild.core.proxy.CMProxyConstants.DISABLE_ADD_ROW)
-				&& this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.DISABLE_ADD_ROW]
+				this.widgetConf.hasOwnProperty(CMDBuild.core.proxy.Constants.DISABLE_ADD_ROW)
+				&& this.widgetConf[CMDBuild.core.proxy.Constants.DISABLE_ADD_ROW]
 			);
 
 			// Disable import from CSV button
 			this.view.importFromCSVButton.setDisabled(
-				this.widgetConf.hasOwnProperty(CMDBuild.core.proxy.CMProxyConstants.DISABLE_IMPORT_FROM_CSV)
-				&& this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.DISABLE_IMPORT_FROM_CSV]
+				this.widgetConf.hasOwnProperty(CMDBuild.core.proxy.Constants.DISABLE_IMPORT_FROM_CSV)
+				&& this.widgetConf[CMDBuild.core.proxy.Constants.DISABLE_IMPORT_FROM_CSV]
 			);
 
 			// Disable buttons for readOnly mode
 			if (
-				this.widgetConf.hasOwnProperty(CMDBuild.core.proxy.CMProxyConstants.READ_ONLY)
-				&& this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.READ_ONLY]
+				this.widgetConf.hasOwnProperty(CMDBuild.core.proxy.Constants.READ_ONLY)
+				&& this.widgetConf[CMDBuild.core.proxy.Constants.READ_ONLY]
 			) {
 				this.view.addButton.setDisabled(true);
 				this.view.importFromCSVButton.setDisabled(true);
@@ -191,13 +191,13 @@
 					fixed: true,
 
 					items: [
-						Ext.create('CMDBuild.core.buttons.Modify', {
+						Ext.create('CMDBuild.core.buttons.iconized.Modify', {
 							withSpacer: true,
 							tooltip: CMDBuild.Translation.editRow,
 							scope: this,
 
 							isDisabled: function(grid, rowIndex, colIndex, item, record) {
-								return this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.READ_ONLY];
+								return this.widgetConf[CMDBuild.core.proxy.Constants.READ_ONLY];
 							},
 
 							handler: function(grid, rowIndex, colIndex) {
@@ -206,15 +206,15 @@
 								this.cmfg('onEditRowButtonClick', record);
 							}
 						}),
-						Ext.create('CMDBuild.core.buttons.Delete', {
+						Ext.create('CMDBuild.core.buttons.iconized.Delete', {
 							withSpacer: true,
 							tooltip: CMDBuild.Translation.deleteRow,
 							scope: this,
 
 							isDisabled: function(grid, rowIndex, colIndex, item, record) {
 								return (
-									this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.READ_ONLY]
-									|| this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.DISABLE_DELETE_ROW]
+									this.widgetConf[CMDBuild.core.proxy.Constants.READ_ONLY]
+									|| this.widgetConf[CMDBuild.core.proxy.Constants.DISABLE_DELETE_ROW]
 								);
 							},
 
@@ -235,13 +235,13 @@
 		 */
 		buildColumnsForAttributes: function() {
 			var columns = [];
-			var classId = this.classType.get(CMDBuild.core.proxy.CMProxyConstants.ID);
+			var classId = this.classType.get(CMDBuild.core.proxy.Constants.ID);
 
 			if (_CMUtils.isSuperclass(classId))
 				columns.push(this.buildClassColumn());
 
 			Ext.Array.forEach(this.getCardAttributes(), function(attribute, i, allAttributes) {
-				if (!Ext.Array.contains(this.filteredAttributes, attribute[CMDBuild.core.proxy.CMProxyConstants.NAME])) { // Attributes filter
+				if (!Ext.Array.contains(this.filteredAttributes, attribute[CMDBuild.core.proxy.Constants.NAME])) { // Attributes filter
 					var attributesMap = CMDBuild.Management.FieldManager.getAttributesMap();
 
 					// TODO: hack to bypass CMDBuild.Management.FieldManager.getFieldForAttr() control to check if return DisplayField
@@ -270,20 +270,20 @@
 					editor.hideLabel = true;
 
 					if (!Ext.isEmpty(header)) {
-						editor.disabled = attribute[CMDBuild.core.proxy.CMProxyConstants.FIELD_MODE] == CMDBuild.core.proxy.CMProxyConstants.READ;
+						editor.disabled = attribute[CMDBuild.core.proxy.Constants.FIELD_MODE] == CMDBuild.core.proxy.Constants.READ;
 
-						if (attribute[CMDBuild.core.proxy.CMProxyConstants.NOT_NULL]) {
+						if (attribute[CMDBuild.core.proxy.Constants.NOT_NULL]) {
 							header.header = '* ' + header.header; // TODO: header property is deprecated, should use "text" but FieldManager uses header so ...
 
-							header[CMDBuild.core.proxy.CMProxyConstants.REQUIRED] = true;
-							editor[CMDBuild.core.proxy.CMProxyConstants.REQUIRED] = true;
+							header[CMDBuild.core.proxy.Constants.REQUIRED] = true;
+							editor[CMDBuild.core.proxy.Constants.REQUIRED] = true;
 						} else {
-							header[CMDBuild.core.proxy.CMProxyConstants.REQUIRED] = false;
-							editor[CMDBuild.core.proxy.CMProxyConstants.REQUIRED] = false;
+							header[CMDBuild.core.proxy.Constants.REQUIRED] = false;
+							editor[CMDBuild.core.proxy.Constants.REQUIRED] = false;
 						}
 
 						// Do not override renderer, add editor on checkbox columns and make it editable
-						if (attribute[CMDBuild.core.proxy.CMProxyConstants.TYPE] != 'BOOLEAN') {
+						if (attribute[CMDBuild.core.proxy.Constants.TYPE] != 'BOOLEAN') {
 							header.editor = editor;
 
 							this.addRendererToHeader(header, attribute);
@@ -292,7 +292,7 @@
 						}
 
 						// Read only attributes header setup
-						header.disabled = attribute[CMDBuild.core.proxy.CMProxyConstants.FIELD_MODE] == CMDBuild.core.proxy.CMProxyConstants.READ;
+						header.disabled = attribute[CMDBuild.core.proxy.Constants.FIELD_MODE] == CMDBuild.core.proxy.Constants.READ;
 
 						columns.push(header);
 					}
@@ -319,7 +319,7 @@
 				this.grid.getStore().loadRecords(this.instancesDataStorage[this.getWidgetId()]);
 			} else if (!Ext.isEmpty(this.classType)) {
 				CMDBuild.Management.FieldManager.loadAttributes(
-					this.classType.get(CMDBuild.core.proxy.CMProxyConstants.ID),
+					this.classType.get(CMDBuild.core.proxy.Constants.ID),
 					function(attributes) {
 						me.cardAttributes = attributes;
 						me.setColumnsForClass();
@@ -327,7 +327,7 @@
 					}
 				);
 			} else {
-				_warning('classType error with className ' + this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME], this);
+				_warning('classType error with className ' + this.widgetConf[CMDBuild.core.proxy.Constants.CLASS_NAME], this);
 			}
 		},
 
@@ -344,14 +344,14 @@
 					var isPresetsStringValid = false;
 
 					Ext.Array.each(decodedResult.response, function(record) {
-						if (record[CMDBuild.core.proxy.CMProxyConstants.NAME] == presetsString)
+						if (record[CMDBuild.core.proxy.Constants.NAME] == presetsString)
 							isPresetsStringValid = true;
 					});
 
 					if (isPresetsStringValid) {
 						var functionParamsNames = [];
 						var params = {};
-						var widgetUnmanagedVariables = this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.VARIABLES];
+						var widgetUnmanagedVariables = this.widgetConf[CMDBuild.core.proxy.Constants.VARIABLES];
 
 						// Instantiate model to transform attributes in fields
 						Ext.create('CMDBuild.model.widget.Grid', this.cardAttributes);
@@ -372,7 +372,7 @@
 						for (var index in _CMCache.getDataSourceInput(presetsString)) {
 							var functionParamDefinitionObject = _CMCache.getDataSourceInput(presetsString)[index];
 
-							functionParamsNames.push(functionParamDefinitionObject[CMDBuild.core.proxy.CMProxyConstants.NAME]);
+							functionParamsNames.push(functionParamDefinitionObject[CMDBuild.core.proxy.Constants.NAME]);
 						}
 
 						var functionParams = Ext.Array.intersect(functionParamsNames, Object.keys(widgetUnmanagedVariables));
@@ -408,17 +408,17 @@
 		 * @return {Array} decodedArray
 		 */
 		decodeTextPresets: function(presetsString) {
-			var cardsArray = presetsString.split(this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.CARD_SEPARATOR]);
+			var cardsArray = presetsString.split(this.widgetConf[CMDBuild.core.proxy.Constants.CARD_SEPARATOR]);
 			var decodedArray = [];
 
 			// Decode cards
 			Ext.Array.forEach(cardsArray, function(card, i, allCards) {
 				if (!Ext.isEmpty(card)) {
 					var buffer = {};
-					var cardAttributes = card.split(this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.ATTRIBUTE_SEPARATOR]);
+					var cardAttributes = card.split(this.widgetConf[CMDBuild.core.proxy.Constants.ATTRIBUTE_SEPARATOR]);
 
 					Ext.Array.forEach(cardAttributes, function(attribute, i, allAttributes) {
-						var keyValueArray = attribute.split(this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.KEY_VALUE_SEPARATOR]);
+						var keyValueArray = attribute.split(this.widgetConf[CMDBuild.core.proxy.Constants.KEY_VALUE_SEPARATOR]);
 
 						if (!Ext.isEmpty(keyValueArray[0]))
 							buffer[keyValueArray[0]] = keyValueArray[1];
@@ -454,7 +454,7 @@
 		 * @return {Number}
 		 */
 		getWidgetId: function() {
-			return this.widgetConfiguration[CMDBuild.core.proxy.CMProxyConstants.ID];
+			return this.widgetConfiguration[CMDBuild.core.proxy.Constants.ID];
 		},
 
 		/**
@@ -494,7 +494,7 @@
 			}, this);
 
 			if (!this.readOnly)
-				out[CMDBuild.core.proxy.CMProxyConstants.OUTPUT] = data;
+				out[CMDBuild.core.proxy.Constants.OUTPUT] = data;
 
 			return out;
 		},
@@ -512,8 +512,8 @@
 
 			// If widget is flagged as required must return at least 1 row
 			if (
-				Ext.isBoolean(this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.REQUIRED])
-				&& this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.REQUIRED]
+				Ext.isBoolean(this.widgetConf[CMDBuild.core.proxy.Constants.REQUIRED])
+				&& this.widgetConf[CMDBuild.core.proxy.Constants.REQUIRED]
 				&& this.grid.getStore().getCount() == 0
 			) {
 				returnValue = false;
@@ -521,8 +521,8 @@
 
 			// Build columns required array
 			Ext.Array.forEach(this.columns, function(column, i, allColumns) {
-				if (column[CMDBuild.core.proxy.CMProxyConstants.REQUIRED])
-					requiredAttributes.push(column[CMDBuild.core.proxy.CMProxyConstants.DATA_INDEX]);
+				if (column[CMDBuild.core.proxy.Constants.REQUIRED])
+					requiredAttributes.push(column[CMDBuild.core.proxy.Constants.DATA_INDEX]);
 			}, this);
 
 			// Check grid store records empty required fields
@@ -544,24 +544,24 @@
 		 * Read presets and loads data to grid store
 		 */
 		loadPresets: function() {
-			if (!Ext.isEmpty(this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.PRESETS])) {
-				switch (this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.PRESETS_TYPE]) {
+			if (!Ext.isEmpty(this.widgetConf[CMDBuild.core.proxy.Constants.PRESETS])) {
+				switch (this.widgetConf[CMDBuild.core.proxy.Constants.PRESETS_TYPE]) {
 					case 'text':
 						return this.setGridDataFromTextPresets(
 							this.decodeTextPresets(
-								this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.PRESETS]
+								this.widgetConf[CMDBuild.core.proxy.Constants.PRESETS]
 							)
 						);
 
 					case 'function':
 						return this.decodeFunctionPresets(
-							this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.PRESETS]
+							this.widgetConf[CMDBuild.core.proxy.Constants.PRESETS]
 						);
 
 					default:
 						CMDBuild.core.Message.error(
 							CMDBuild.Translation.error,
-							'GridController: wrong serializationType (' + this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.SERIALIZATION_TYPE] + ') format or value',
+							'GridController: wrong serializationType (' + this.widgetConf[CMDBuild.core.proxy.Constants.SERIALIZATION_TYPE] + ') format or value',
 							true
 						);
 				}
@@ -581,7 +581,7 @@
 		onCSVImportButtonClick: function() {
 			Ext.create('CMDBuild.controller.management.common.widgets.grid.ImportCSV', {
 				parentDelegate: this,
-				classId: this.classType.get(CMDBuild.core.proxy.CMProxyConstants.ID)
+				classId: this.classType.get(CMDBuild.core.proxy.Constants.ID)
 			});
 		},
 
@@ -640,12 +640,12 @@
 					this.grid.getStore().removeAll();
 
 				Ext.Array.forEach(parameters.rawData, function(rowData, i, allRowsData) {
-					var cardData = rowData[CMDBuild.core.proxy.CMProxyConstants.CARD];
+					var cardData = rowData[CMDBuild.core.proxy.Constants.CARD];
 
 					// Resolve objects returned for reference fields, just rewrite with object's id
 					for (var item in cardData)
-						if (typeof cardData[item] == 'object' && !Ext.isEmpty(cardData[item][CMDBuild.core.proxy.CMProxyConstants.ID]))
-							cardData[item] = cardData[item][CMDBuild.core.proxy.CMProxyConstants.ID];
+						if (typeof cardData[item] == 'object' && !Ext.isEmpty(cardData[item][CMDBuild.core.proxy.Constants.ID]))
+							cardData[item] = cardData[item][CMDBuild.core.proxy.Constants.ID];
 
 					this.grid.getStore().add(Ext.create('CMDBuild.DummyModel', cardData));
 				}, this);

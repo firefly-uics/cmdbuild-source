@@ -7,7 +7,7 @@
 	Ext.define('CMDBuild.core.fieldManager.builders.String', {
 		extend: 'CMDBuild.core.fieldManager.builders.Abstract',
 
-		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+		requires: ['CMDBuild.core.proxy.Constants'],
 
 		/**
 		 * @cfg {CMDBuild.core.fieldManager.FieldManager}
@@ -23,12 +23,12 @@
 			withEditor = Ext.isBoolean(withEditor) ? withEditor : false;
 
 			return Ext.create('Ext.grid.column.Column', {
-				dataIndex: this.cmfg('attributeModelGet', CMDBuild.core.proxy.CMProxyConstants.NAME),
-				disabled: !this.cmfg('attributeModelGet', CMDBuild.core.proxy.CMProxyConstants.WRITABLE),
+				dataIndex: this.cmfg('attributeModelGet', CMDBuild.core.proxy.Constants.NAME),
+				disabled: !this.cmfg('attributeModelGet', CMDBuild.core.proxy.Constants.WRITABLE),
 				editor: withEditor ? this.buildEditor() : null,
 				flex: 1,
 				sortable: true,
-				text: this.applyMandatoryLabelFlag(this.cmfg('attributeModelGet', CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION))
+				text: this.applyMandatoryLabelFlag(this.cmfg('attributeModelGet', CMDBuild.core.proxy.Constants.DESCRIPTION))
 			});
 		},
 
@@ -38,12 +38,12 @@
 		buildEditor: function() {
 			return {
 				xtype: 'textfield',
-				allowBlank: !this.cmfg('attributeModelGet', CMDBuild.core.proxy.CMProxyConstants.MANDATORY),
-				disabled: !this.cmfg('attributeModelGet', CMDBuild.core.proxy.CMProxyConstants.WRITABLE),
+				allowBlank: !this.cmfg('attributeModelGet', CMDBuild.core.proxy.Constants.MANDATORY),
+				disabled: !this.cmfg('attributeModelGet', CMDBuild.core.proxy.Constants.WRITABLE),
 				enforceMaxLength: true,
-				maxLength: this.cmfg('attributeModelGet', CMDBuild.core.proxy.CMProxyConstants.LENGTH),
-				name: this.cmfg('attributeModelGet', CMDBuild.core.proxy.CMProxyConstants.NAME),
-				readOnly: !this.cmfg('attributeModelGet', CMDBuild.core.proxy.CMProxyConstants.WRITABLE)
+				maxLength: this.cmfg('attributeModelGet', CMDBuild.core.proxy.Constants.LENGTH),
+				name: this.cmfg('attributeModelGet', CMDBuild.core.proxy.Constants.NAME),
+				readOnly: !this.cmfg('attributeModelGet', CMDBuild.core.proxy.Constants.WRITABLE)
 			};
 		},
 
@@ -52,19 +52,19 @@
 		 */
 		buildField: function() {
 			return Ext.create('Ext.form.field.Text', {
-				allowBlank: !this.cmfg('attributeModelGet', CMDBuild.core.proxy.CMProxyConstants.MANDATORY),
-				disabled: !this.cmfg('attributeModelGet', CMDBuild.core.proxy.CMProxyConstants.WRITABLE),
+				allowBlank: !this.cmfg('attributeModelGet', CMDBuild.core.proxy.Constants.MANDATORY),
+				disabled: !this.cmfg('attributeModelGet', CMDBuild.core.proxy.Constants.WRITABLE),
 				enforceMaxLength: true,
 				fieldLabel: this.applyMandatoryLabelFlag(
-					this.cmfg('attributeModelGet', CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION)
-					|| this.cmfg('attributeModelGet', CMDBuild.core.proxy.CMProxyConstants.NAME)
+					this.cmfg('attributeModelGet', CMDBuild.core.proxy.Constants.DESCRIPTION)
+					|| this.cmfg('attributeModelGet', CMDBuild.core.proxy.Constants.NAME)
 				),
 				labelAlign: 'right',
 				labelWidth: CMDBuild.LABEL_WIDTH,
-				maxLength: this.cmfg('attributeModelGet', CMDBuild.core.proxy.CMProxyConstants.LENGTH),
+				maxLength: this.cmfg('attributeModelGet', CMDBuild.core.proxy.Constants.LENGTH),
 				maxWidth: CMDBuild.BIG_FIELD_WIDTH,
-				name: this.cmfg('attributeModelGet', CMDBuild.core.proxy.CMProxyConstants.NAME),
-				readOnly: !this.cmfg('attributeModelGet', CMDBuild.core.proxy.CMProxyConstants.WRITABLE)
+				name: this.cmfg('attributeModelGet', CMDBuild.core.proxy.Constants.NAME),
+				readOnly: !this.cmfg('attributeModelGet', CMDBuild.core.proxy.Constants.WRITABLE)
 			});
 		}
 	});

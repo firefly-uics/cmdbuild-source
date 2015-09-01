@@ -4,34 +4,7 @@ var domainGridStore = null;
 var GET = "GET", POST = "POST";
 
 CMDBuild.ServiceProxy.administration = {
-	printSchema: 'services/json/schema/modreport/printclassschema',
-	
 	domain: {
-
-		list: function(p) {
-			p.method = GET,
-			p.url = CMDBuild.ServiceProxy.url.domain.read;
-			CMDBuild.ServiceProxy.core.doRequest(p);
-		},
-
-		save: function(p) {
-			p.method = POST;
-			p.url = CMDBuild.ServiceProxy.url.domain.update;
-			CMDBuild.ServiceProxy.core.doRequest(p);
-		},
-
-		/**
-		 * 
-		 * @param {object} p
-		 * @param {object} p.params
-		 * @param {object} p.params.domainID
-		 */
-		remove: function(p) {
-			p.method = POST;
-			p.url =  CMDBuild.ServiceProxy.url.domain.remove;
-			CMDBuild.ServiceProxy.core.doRequest(p);
-		},
-
 		attribute: {
 			save: function(p) {
 				p.method = POST;

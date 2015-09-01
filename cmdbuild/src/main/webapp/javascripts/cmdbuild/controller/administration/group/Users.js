@@ -4,7 +4,7 @@
 		extend: 'CMDBuild.controller.common.AbstractController',
 
 		requires: [
-			'CMDBuild.core.proxy.CMProxyConstants',
+			'CMDBuild.core.proxy.Constants',
 			'CMDBuild.core.proxy.group.Users'
 		],
 
@@ -65,12 +65,12 @@
 			var usersIdArray = [];
 
 			Ext.Array.forEach(this.selectedGrid.getStore().getRange(), function(record, i, allRecords) {
-				usersIdArray.push(record.get(CMDBuild.core.proxy.CMProxyConstants.ID));
+				usersIdArray.push(record.get(CMDBuild.core.proxy.Constants.ID));
 			}, this);
 
 			var params = {};
-			params[CMDBuild.core.proxy.CMProxyConstants.GROUP_ID] = this.cmfg('selectedGroupGet', CMDBuild.core.proxy.CMProxyConstants.ID);
-			params[CMDBuild.core.proxy.CMProxyConstants.USERS] = usersIdArray.join();
+			params[CMDBuild.core.proxy.Constants.GROUP_ID] = this.cmfg('selectedGroupGet', CMDBuild.core.proxy.Constants.ID);
+			params[CMDBuild.core.proxy.Constants.USERS] = usersIdArray.join();
 
 			CMDBuild.core.proxy.group.Users.update({
 				params: params,
@@ -84,12 +84,12 @@
 		onGroupUsersTabShow: function() {
 			if (!this.cmfg('selectedGroupIsEmpty')) {
 				var params = {};
-				params[CMDBuild.core.proxy.CMProxyConstants.GROUP_ID] = this.cmfg('selectedGroupGet', CMDBuild.core.proxy.CMProxyConstants.ID);
-				params[CMDBuild.core.proxy.CMProxyConstants.ALREADY_ASSOCIATED] = false;
+				params[CMDBuild.core.proxy.Constants.GROUP_ID] = this.cmfg('selectedGroupGet', CMDBuild.core.proxy.Constants.ID);
+				params[CMDBuild.core.proxy.Constants.ALREADY_ASSOCIATED] = false;
 
 				this.availableGrid.getStore().load({ params: params });
 
-				params[CMDBuild.core.proxy.CMProxyConstants.ALREADY_ASSOCIATED] = true;
+				params[CMDBuild.core.proxy.Constants.ALREADY_ASSOCIATED] = true;
 
 				this.selectedGrid.getStore().load({ params: params });
 			}

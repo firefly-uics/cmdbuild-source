@@ -12,7 +12,7 @@
 	Ext.define('CMDBuild.controller.common.field.filter.cql.Cql', {
 		extend: 'CMDBuild.controller.common.AbstractController',
 
-		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+		requires: ['CMDBuild.core.proxy.Constants'],
 
 		/**
 		 * @cfg {Array}
@@ -129,7 +129,7 @@
 		onFieldFilterCqlGetValue: function() {
 			this.fieldFilterCqlFilterSet({
 				filterObject: this.view.textAreaField.getValue(),
-				propertyName: CMDBuild.core.proxy.CMProxyConstants.EXPRESSION
+				propertyName: CMDBuild.core.proxy.Constants.EXPRESSION
 			});
 
 			return this.fieldFilterCqlFilterGet().getData();
@@ -153,12 +153,12 @@
 		onFieldFilterCqlSetValue: function(filterObjectValue) {
 			if (
 				Ext.isObject(filterObjectValue)
-				&& filterObjectValue.hasOwnProperty(CMDBuild.core.proxy.CMProxyConstants.EXPRESSION)
-				&& filterObjectValue.hasOwnProperty(CMDBuild.core.proxy.CMProxyConstants.CONTEXT)
+				&& filterObjectValue.hasOwnProperty(CMDBuild.core.proxy.Constants.EXPRESSION)
+				&& filterObjectValue.hasOwnProperty(CMDBuild.core.proxy.Constants.CONTEXT)
 			) {
 				this.fieldFilterCqlFilterSet({ filterObject: filterObjectValue });
 
-				this.view.textAreaField.setValue(this.fieldFilterCqlFilterGet(CMDBuild.core.proxy.CMProxyConstants.EXPRESSION));
+				this.view.textAreaField.setValue(this.fieldFilterCqlFilterGet(CMDBuild.core.proxy.Constants.EXPRESSION));
 			}
 		}
 	});

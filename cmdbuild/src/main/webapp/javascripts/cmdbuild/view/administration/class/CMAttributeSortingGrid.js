@@ -10,10 +10,10 @@
 		initComponent: function() {
 			this.store = Ext.create('Ext.data.Store', {
 				fields: [
-					CMDBuild.core.proxy.CMProxyConstants.NAME,
-					CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
-					CMDBuild.core.proxy.CMProxyConstants.ABSOLUTE_CLASS_ORDER,
-					CMDBuild.core.proxy.CMProxyConstants.CLASS_ORDER_SIGN
+					CMDBuild.core.proxy.Constants.NAME,
+					CMDBuild.core.proxy.Constants.DESCRIPTION,
+					CMDBuild.core.proxy.Constants.ABSOLUTE_CLASS_ORDER,
+					CMDBuild.core.proxy.Constants.CLASS_ORDER_SIGN
 				],
 				autoLoad: false,
 				proxy: {
@@ -26,15 +26,15 @@
 				},
 				sorters: [
 					{
-						property: CMDBuild.core.proxy.CMProxyConstants.ABSOLUTE_CLASS_ORDER,
+						property: CMDBuild.core.proxy.Constants.ABSOLUTE_CLASS_ORDER,
 						direction: 'ASC'
 					}
 				]
 			});
 
 			var comboOrderSign = Ext.create('Ext.form.field.ComboBox', {
-				valueField: CMDBuild.core.proxy.CMProxyConstants.VALUE,
-				displayField: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
+				valueField: CMDBuild.core.proxy.Constants.VALUE,
+				displayField: CMDBuild.core.proxy.Constants.DESCRIPTION,
 				listClass: 'x-combo-list-small',
 				typeAhead: true,
 				triggerAction: 'all',
@@ -44,7 +44,7 @@
 
 				queryMode: 'local',
 				store: Ext.create('Ext.data.Store', {
-					fields: [CMDBuild.core.proxy.CMProxyConstants.VALUE, CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION],
+					fields: [CMDBuild.core.proxy.Constants.VALUE, CMDBuild.core.proxy.Constants.DESCRIPTION],
 					data: [
 						{
 							value: 1,
@@ -64,26 +64,26 @@
 
 			this.columns = [
 				{
-					id: CMDBuild.core.proxy.CMProxyConstants.ABSOLUTE_CLASS_ORDER,
+					id: CMDBuild.core.proxy.Constants.ABSOLUTE_CLASS_ORDER,
 					hideable: false,
 					hidden: true,
-					dataIndex: CMDBuild.core.proxy.CMProxyConstants.ABSOLUTE_CLASS_ORDER
+					dataIndex: CMDBuild.core.proxy.Constants.ABSOLUTE_CLASS_ORDER
 				},
 				{
-					id: CMDBuild.core.proxy.CMProxyConstants.NAME,
+					id: CMDBuild.core.proxy.Constants.NAME,
 					header: tr.name,
-					dataIndex: CMDBuild.core.proxy.CMProxyConstants.NAME,
+					dataIndex: CMDBuild.core.proxy.Constants.NAME,
 					flex: 1
 				},
 				{
-					id: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
+					id: CMDBuild.core.proxy.Constants.DESCRIPTION,
 					header: tr.description,
-					dataIndex: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
+					dataIndex: CMDBuild.core.proxy.Constants.DESCRIPTION,
 					flex: 1
 				},
 				{
 					header: tr.criterion,
-					dataIndex: CMDBuild.core.proxy.CMProxyConstants.CLASS_ORDER_SIGN,
+					dataIndex: CMDBuild.core.proxy.Constants.CLASS_ORDER_SIGN,
 					renderer: Ext.Function.bind(comboRender, this, [], true),
 					flex: 1,
 					editor: comboOrderSign
@@ -107,7 +107,7 @@
 			this.callParent(arguments);
 
 			var params = {};
-			params[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME] = _CMCache.getEntryTypeNameById(this.idClass);
+			params[CMDBuild.core.proxy.Constants.CLASS_NAME] = _CMCache.getEntryTypeNameById(this.idClass);
 
 			this.getStore().load({
 				params: params

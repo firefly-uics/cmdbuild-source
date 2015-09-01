@@ -2,6 +2,7 @@ package org.cmdbuild.logic.translation.converter;
 
 import java.util.Map;
 
+import org.apache.commons.lang3.Validate;
 import org.cmdbuild.logic.translation.TranslationObject;
 import org.cmdbuild.logic.translation.object.DomainDescription;
 import org.cmdbuild.logic.translation.object.DomainDirectDescription;
@@ -10,7 +11,7 @@ import org.cmdbuild.logic.translation.object.DomainMasterDetailLabel;
 
 import com.google.common.collect.Maps;
 
-public enum DomainConverter {
+public enum DomainConverter implements Converter {
 
 	DESCRIPTION(description()) {
 
@@ -20,20 +21,17 @@ public enum DomainConverter {
 		}
 
 		@Override
-		public TranslationObject create(final String domainName) {
-			org.cmdbuild.logic.translation.object.DomainDescription.Builder builder =  DomainDescription.newInstance() //
+		public TranslationObject create() {
+			validate();
+			final org.cmdbuild.logic.translation.object.DomainDescription.Builder builder = DomainDescription
+					.newInstance() //
 					.withDomainName(domainName);
-			if(!translations.isEmpty()){
+			if (!translations.isEmpty()) {
 				builder.withTranslations(translations);
 			}
 			return builder.build();
 		}
 
-		@Override
-		public DomainConverter withTranslations(Map<String, String> map) {
-			translations = map;
-			return this;
-		}
 	},
 
 	DIRECT_DESCRIPTION(directDescription()) {
@@ -44,20 +42,16 @@ public enum DomainConverter {
 		}
 
 		@Override
-		public TranslationObject create(final String domainName) {
-			org.cmdbuild.logic.translation.object.DomainDirectDescription.Builder builder =  DomainDirectDescription.newInstance() //
+		public TranslationObject create() {
+			final org.cmdbuild.logic.translation.object.DomainDirectDescription.Builder builder = DomainDirectDescription
+					.newInstance() //
 					.withDomainName(domainName);
-			if(!translations.isEmpty()){
+			if (!translations.isEmpty()) {
 				builder.withTranslations(translations);
 			}
 			return builder.build();
 		}
 
-		@Override
-		public DomainConverter withTranslations(Map<String, String> map) {
-			translations = map;
-			return this;
-		}
 	},
 
 	INVERSE_DESCRIPTION(inverseDescription()) {
@@ -68,20 +62,16 @@ public enum DomainConverter {
 		}
 
 		@Override
-		public TranslationObject create(final String domainName) {
-			org.cmdbuild.logic.translation.object.DomainInverseDescription.Builder builder =  DomainInverseDescription.newInstance() //
+		public TranslationObject create() {
+			final org.cmdbuild.logic.translation.object.DomainInverseDescription.Builder builder = DomainInverseDescription
+					.newInstance() //
 					.withDomainName(domainName);
-			if(!translations.isEmpty()){
+			if (!translations.isEmpty()) {
 				builder.withTranslations(translations);
 			}
 			return builder.build();
 		}
 
-		@Override
-		public DomainConverter withTranslations(Map<String, String> map) {
-			translations = map;
-			return this;
-		}
 	},
 
 	MASTERDETAIL_LABEL(masterDetail()) {
@@ -92,20 +82,16 @@ public enum DomainConverter {
 		}
 
 		@Override
-		public TranslationObject create(final String domainName) {
-			org.cmdbuild.logic.translation.object.DomainMasterDetailLabel.Builder builder =  DomainMasterDetailLabel.newInstance() //
+		public TranslationObject create() {
+			final org.cmdbuild.logic.translation.object.DomainMasterDetailLabel.Builder builder = DomainMasterDetailLabel
+					.newInstance() //
 					.withDomainName(domainName);
-			if(!translations.isEmpty()){
+			if (!translations.isEmpty()) {
 				builder.withTranslations(translations);
 			}
 			return builder.build();
 		}
 
-		@Override
-		public DomainConverter withTranslations(Map<String, String> map) {
-			translations = map;
-			return this;
-		}
 	},
 
 	UNDEFINED(undefined()) {
@@ -116,29 +102,43 @@ public enum DomainConverter {
 		}
 
 		@Override
-		public TranslationObject create(final String domainName) {
+		public TranslationObject create() {
 			throw new UnsupportedOperationException();
 		}
 
-		@Override
-		public DomainConverter withTranslations(Map<String, String> map) {
-			throw new UnsupportedOperationException();
-		}
 	};
 
 	private final String fieldName;
+
+	private static String domainName;
 	private static Map<String, String> translations = Maps.newHashMap();
+
 	private static final String DESCRIPTION_FIELD = "description";
 	private static final String DIRECTDESCRIPTION = "directDescription";
 	private static final String INVERSEDESCRIPTION = "inverseDescription";
 	private static final String MASTERDETAIL = "masterDetail";
 	private static final String UNDEFINED_FIELD = "undefined";
 
-	public abstract TranslationObject create(String domainName);
+	@Override
+	public Converter withIdentifier(final String identifier) {
+		domainName = identifier;
+		return this;
+	}
 
-	public abstract DomainConverter withTranslations(Map<String, String> map);
+	@Override
+	public Converter withOwner(final String parentIdentifier) {
+		return this;
+	}
 
-	public abstract boolean isValid();
+	@Override
+	public Converter withTranslations(final Map<String, String> map) {
+		translations = map;
+		return this;
+	}
+
+	private static void validate() {
+		Validate.notBlank(domainName);
+	}
 
 	public static String description() {
 		return DESCRIPTION_FIELD;

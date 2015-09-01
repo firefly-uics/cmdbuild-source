@@ -31,12 +31,14 @@
 			});
 
 			this.setValue = Ext.Function.createInterceptor(this.setValue, function(v) {
-				if (this.lastFlagCls) {
+				if (this.lastFlagCls && !Ext.isEmpty(this.inputEl)) {
 					this.inputEl.removeCls(this.lastFlagCls);
 				}
 
 				this.lastFlagCls = pre + v;
-				this.inputEl.addCls(this.lastFlagCls);
+
+				if (!Ext.isEmpty(this.inputEl))
+					this.inputEl.addCls(this.lastFlagCls);
 			}, this);
 		}
 	});

@@ -4,7 +4,7 @@
 		extend: 'Ext.form.Panel',
 
 		requires: [
-			'CMDBuild.core.proxy.CMProxyConstants',
+			'CMDBuild.core.proxy.Constants',
 			'CMDBuild.core.proxy.group.Group'
 		],
 
@@ -46,7 +46,7 @@
 				dockedItems: [
 					Ext.create('Ext.toolbar.Toolbar', {
 						dock: 'top',
-						itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_TOP,
+						itemId: CMDBuild.core.proxy.Constants.TOOLBAR_TOP,
 
 						items: [
 							Ext.create('CMDBuild.core.buttons.Modify', {
@@ -70,7 +70,7 @@
 					}),
 					Ext.create('Ext.toolbar.Toolbar', {
 						dock: 'bottom',
-						itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_BOTTOM,
+						itemId: CMDBuild.core.proxy.Constants.TOOLBAR_BOTTOM,
 						ui: 'footer',
 
 						layout: {
@@ -99,7 +99,7 @@
 				],
 				items: [
 					Ext.create('Ext.form.field.Text', {
-						name: CMDBuild.core.proxy.CMProxyConstants.NAME,
+						name: CMDBuild.core.proxy.Constants.NAME,
 						fieldLabel: CMDBuild.Translation.name,
 						labelWidth: CMDBuild.LABEL_WIDTH,
 						maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
@@ -108,29 +108,29 @@
 						vtype: 'alphanumextended'
 					}),
 					Ext.create('Ext.form.field.Text', {
-						name: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
+						name: CMDBuild.core.proxy.Constants.DESCRIPTION,
 						fieldLabel: CMDBuild.Translation.descriptionLabel,
 						labelWidth: CMDBuild.LABEL_WIDTH,
 						maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
 						allowBlank: false
 					}),
 					Ext.create('Ext.form.field.ComboBox', {
-						name: CMDBuild.core.proxy.CMProxyConstants.TYPE,
+						name: CMDBuild.core.proxy.Constants.TYPE,
 						fieldLabel: CMDBuild.Translation.type,
 						labelWidth: CMDBuild.LABEL_WIDTH,
 						maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
-						valueField: CMDBuild.core.proxy.CMProxyConstants.VALUE,
-						displayField: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
+						valueField: CMDBuild.core.proxy.Constants.VALUE,
+						displayField: CMDBuild.core.proxy.Constants.DESCRIPTION,
 						editable: false,
 						forceSelection: true,
 
-						value: CMDBuild.core.proxy.CMProxyConstants.NORMAL,
+						value: CMDBuild.core.proxy.Constants.NORMAL,
 
 						store: CMDBuild.core.proxy.group.Group.getTypeStore(),
 						queryMode: 'local'
 					}),
 					Ext.create('Ext.form.field.Text', {
-						name: CMDBuild.core.proxy.CMProxyConstants.EMAIL,
+						name: CMDBuild.core.proxy.Constants.EMAIL,
 						fieldLabel: CMDBuild.Translation.email,
 						labelWidth: CMDBuild.LABEL_WIDTH,
 						maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
@@ -138,12 +138,12 @@
 						vtype: 'emailOrBlank'
 					}),
 					Ext.create('CMDBuild.field.ErasableCombo', {
-						name: CMDBuild.core.proxy.CMProxyConstants.STARTING_CLASS,
+						name: CMDBuild.core.proxy.Constants.STARTING_CLASS,
 						fieldLabel: CMDBuild.Translation.startingPageAt,
 						labelWidth: CMDBuild.LABEL_WIDTH,
 						maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
-						valueField: CMDBuild.core.proxy.CMProxyConstants.ID,
-						displayField: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
+						valueField: CMDBuild.core.proxy.Constants.ID,
+						displayField: CMDBuild.core.proxy.Constants.DESCRIPTION,
 						editable: false,
 						forceSelection: true,
 
@@ -151,7 +151,7 @@
 						queryMode: 'local'
 					}),
 					this.activeCheckbox = Ext.create('Ext.form.field.Checkbox', {
-						name: CMDBuild.core.proxy.CMProxyConstants.IS_ACTIVE,
+						name: CMDBuild.core.proxy.Constants.IS_ACTIVE,
 						fieldLabel: CMDBuild.Translation.active,
 						labelWidth: CMDBuild.LABEL_WIDTH,
 						inputValue: true,
@@ -160,7 +160,7 @@
 					}),
 					{
 						xtype: 'hiddenfield',
-						name: CMDBuild.core.proxy.CMProxyConstants.ID
+						name: CMDBuild.core.proxy.Constants.ID
 					}
 				]
 			});

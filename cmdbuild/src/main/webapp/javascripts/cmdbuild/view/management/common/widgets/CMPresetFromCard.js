@@ -47,10 +47,6 @@
 			delegable: "CMDBuild.core.CMDelegable"
 		},
 
-		statics: {
-			WIDGET_NAME: ".PresetFromCard"
-		},
-
 		constructor: function() {
 			this.mixins.delegable.constructor.call( //
 				this, //

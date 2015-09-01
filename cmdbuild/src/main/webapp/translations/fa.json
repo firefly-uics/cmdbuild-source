@@ -1,6 +1,6 @@
 {
 	"description": "Persian",
-		"release": "2.3-dev",
+		"release": "2.4-dev",
 		"administration": {
 		"description": "ماژول ادمین",
 		"modClass": {
@@ -84,10 +84,8 @@
 				"md_label": "Master/Detail Label",
 				"modify_domain": "تغییر دامنه",
 				"name": "نام",
-				"title_add": "اضافه کردن دامنه",
-				"title_modify": "Modify domain \"{0}\""
+				"title_add": "اضافه کردن دامنه"
 			},
-			"domains_title": "Manage domain",
 			"errors": {
 				"table": {
 					"cast": "Error modifying \"superclass\" property, class either contains data or has child classes",
@@ -282,48 +280,9 @@
 			},
 			"title": "داشبورد"
 		},
-		"modLookup": {
-			"add_lookuptype": "اضافه کردن نوع جستجو",
-			"lookupForm": {
-				"active": "فعال",
-				"code": "کد",
-				"description": "توضیحات",
-				"disable_lookup": "غیر فعال کردن جستجو",
-				"enable_lookup": "فعال کردن جستجو",
-				"isdefault": "پیش فرض",
-				"notes": "یاداشتها",
-				"parentdescription": "توضیحات والدین",
-				"update_lookup": "تغییر جستجو"
-			},
-			"lookupGrid": {
-				"active": "فعال",
-				"add_lookup": "اضافه کردن جستجو",
-				"code": "کد",
-				"description": "توضیحات",
-				"isdefault": "پیش فرض",
-				"notes": "یاداشتها",
-				"parentdescription": "توضیحات والدین"
-			},
-			"lookupType": "نوع جستجو",
-			"lookupTypeForm": {
-				"active": "فعال",
-				"delete_lookuptype": "حذف نوع جستجو",
-				"description": "توضیحات",
-				"modify_lookuptype": "تغییر نوع جستجو",
-				"parent": "والدین",
-				"title": "مدیریت جستجو"
-			},
-			"lookupTypes": "انواع جستجو",
-			"tabs": {
-				"lookuplist": "لیست جستجوها",
-				"properties": "ویژگی"
-			},
-			"title": "مدیریت جستجو"
-		},
 		"modWorkflow": {
 			"add_process": "اضافه کردن پروسه",
 			"attributes_title": "مدیریت خواص",
-			"domains_title": "مدیریت دامنه ها",
 			"errors": {
 				"table": {
 					"cast": "It is not possible to change the \"superclass\" property, the class contains data or subclasses",
@@ -401,56 +360,6 @@
 		},
 		"modconnectors": {
 			"title": "اتصالات"
-		},
-		"modmenu": {
-			"add_menu": "اضافه کردن منو",
-			"available_elements": "المانهای در دسترس",
-			"availabletree": {
-				"class": "کلاسها",
-				"dashboard": "داشبورد",
-				"processclass": "فعالیتها",
-				"report": "گزارشها",
-				"view": "نمایش"
-			},
-			"custom_menu": "منوی سفارشی",
-			"custom_menus": "منوهای سفارشی",
-			"delete_menu": "حذف منو",
-			"menu_root": "منو",
-			"modify_menu": "تغییر منو",
-			"new_folder": "پوشه جدید",
-			"title": "مدیریت منوها"
-		},
-		"modreport": {
-			"add": "اضافه کردن گزارش",
-			"importJRFormStep1": {
-				"description": "توضیحات گزارش",
-				"enabled_groups": "گروههای فعال",
-				"fieldset": "Import jasper report",
-				"master_report_jrxml": "Master Report (.jrxml)",
-				"menuTitle": "Jasper-reports report",
-				"name": "نام گزارش"
-			},
-			"importJRFormStep2": {
-				"duplicate_images": "هشدار: تصویر گزارش با همین نام وجود دارد، نمیشود ادامه داد",
-				"fieldset_generic": "Import jasper report",
-				"fieldset_images": "تصاویر مورد نیاز",
-				"fieldset_subreports": "زیرگزارشهای مورد نیاز",
-				"menuTitle": "Report Jasper-reports",
-				"nothing_to_import": "هیچ تصویر یا زیرگزارشی یافت نشد. لطفا تایید کنید تا بوسیله وارد کردن پروسس شود.",
-				"success": {
-					"description": {
-						"add": "وارد کردن کامل شد",
-						"modify": "گزارش ویرایش شد"
-					},
-					"title": "موفقیت"
-				}
-			},
-			"importOpenofficeTemplateForm": {
-				"menuTitle": "Openoffice report"
-			},
-			"modify": "ویرایش گزارش",
-			"remove": "حذف گزارش",
-			"title": "گزارش"
 		},
 		"tasks": {
 			"add": "اضافه کردن کار",
@@ -584,6 +493,7 @@
 			"importLabel": "ورودی دادن",
 			"load": "لود",
 			"modify": "ویرایش",
+			"move": "<em>Move</em>",
 			"next": "بعدی",
 			"previous": "قبلی",
 			"print": "چاپ",
@@ -876,6 +786,8 @@
 			"WIDGET_SERVICE_MALFORMED_REQUEST": "Check if the namespace, the method name and the parameters of the web service are correct"
 		},
 		"reference_invalid": "مقدار با فیلتر همخوانی ندارد",
+		"reportsImportError": "<em>Error while importing report</em>",
+		"reportsAnalizeError": "<em>Error while analizing report</em>",
 		"requiredFieldMessage": "This field is required",
 		"routesInvalidCardIdentifier": "<em>Route error: invalid card identifier</em>",
 		"routesInvalidClassIdentifier": "<em>Route error: invalid class identifier</em>",
@@ -1075,22 +987,6 @@
 			"showgraph": "نمایش گراف",
 			"shownotes": "نمایش یاداشتها"
 		},
-		"modmenu": {
-			"menu": "هدایت"
-		},
-		"modreport": {
-			"add_report": "اضافه کردن گزارش",
-			"delete_report": "حذف گزارش",
-			"modify_report": "ویرایش گزارش",
-			"reportForm": {
-				"description": "توضیحات",
-				"name": "نام",
-				"report": "گزارش"
-			},
-			"report_parameters": "پارامترهای گزارش",
-			"title": "لیست - ",
-			"treetitle": "گزارش"
-		},
 		"modutilities": {
 			"bulkupdate": {
 				"title": "آپدیت چندگانه",
@@ -1142,9 +1038,6 @@
 				},
 				"calendar": {
 					"wrong_config": "تقویم به درستی تنظیم نشده است"
-				},
-				"createreport": {
-					"format_label": "Format"
 				},
 				"linkcards": {
 					"required": "لطفا چند کارت انتخاب کنید - "
@@ -1205,6 +1098,7 @@
 		"link_cards_changed_values": "<em>The selection of \"{0}\" has been updated.</em>",
 		"only_filtered": "تغییرات تنها در کارتهایی که با فیلتر کنونی سازگاری دارند اتفاق خواهد افتاد",
 		"popup_block": "<em>We have detected that you are using popup blocking software, please disable to run operation.</em>",
+		"reportsDuplicateImageFilename": "هشدار: تصویر گزارش با همین نام وجود دارد، نمیشود ادامه داد",
 		"saveMenuBeforeAccess": "<em>The menu has to been saved before access at the translations of this element.</em>",
 		"warning_message": "هشدار"
 	},
@@ -1216,14 +1110,19 @@
 	"add": "اضافه",
 	"addAccount": "اضافه کردن حساب",
 	"addAttachmentFromDms": "اضافه کردن ضمیمه از پایگاه داده",
+	"addDomain": "اضافه کردن دامنه",
 	"addFilter": "اضافه کردن فیلتر",
 	"addGroup": "اضافه کردن گروه",
+	"addLookup": "اضافه کردن جستجو",
+	"addLookupType": "اضافه کردن نوع جستجو",
 	"addProject": "اضافه کردن پروژه",
 	"addRelations": "اضافه کردن رابطه",
+	"addReport": "اضافه کردن گزارش",
 	"addRow": "اضافه کردن سطر",
 	"addTemplate": "اضافه کردن قالب",
 	"addUser": "اضافه کردن کاربر",
 	"addView": "اضافه کردن نمایش",
+	"add_attachment_from_db": "اضافه کردن ضمیمه از پایگاه داده",
 	"address": "آدرس",
 	"administrator": "مدیریت",
 	"alfresco": "Alfresco",
@@ -1235,6 +1134,7 @@
 	"attention": "توجه",
 	"attribute": "خاصیت",
 	"attributes": "خواص",
+	"availableElements": "المانهای در دسترس",
 	"availableFilters": "فیلترهای موجود",
 	"availableUsers": "کاربران موجود",
 	"baseProperties": "ویژگی های پایه",
@@ -1247,6 +1147,7 @@
 	"cacheManagement": "Cache management",
 	"camera": "Camera",
 	"cardPanelHeight": "ارتفاع پنل کارت بر حسب صدک",
+	"cardinality": "کاردینالیتی",
 	"cards": "کارتها",
 	"cc": "Cc",
 	"changePassword": "تغییر رمز عبور",
@@ -1261,6 +1162,7 @@
 	"clearFilter": "پاک کردن فیلتر",
 	"clearRowAndColumnPrivilege": "پاک کردن دسترسی های سطر و ستون",
 	"cmdbuildCategory": "<em>CMDBuild category</em>",
+	"code": "کد",
 	"columnsPrivileges": "دسترسی ستونها",
 	"composeEmail": "نوشتن ایمیل",
 	"composeFromTemplate": "<em>Compose from template</em>",
@@ -1277,7 +1179,9 @@
 	"credentials": "اعتبارات",
 	"csv": "CSV",
 	"csvFile": "<em>CSV file</em>",
+	"customMenu": "منوی سفارشی",
 	"dashboard": "داشبورد",
+	"dataSource": "منبع اطلاعات",
 	"defaultAccount": "<em>Default account</em>",
 	"defaultClass": "Default class",
 	"defaultFilters": "<em>Default filters</em>",
@@ -1287,6 +1191,7 @@
 	"defaultLanguage": "زبان پیش فرض",
 	"defaultLevel": "Default level",
 	"delay": "<em>Delay</em>",
+	"deleteDomain": "حذف دامنه",
 	"deleteLabel": "<em>Delete</em>",
 	"deleteRow": "حذف سطر",
 	"descriptionLabel": "توضیحات",
@@ -1294,9 +1199,11 @@
 	"destination": "مقصد",
 	"detail": "<em>Detail</em>",
 	"details": "جزئیات",
+	"directDescription": "توضیحات مستقیم",
 	"disable": "غیر فعال",
 	"disableGridFilter": "<em>Disable grid filter</em>",
 	"disableGroup": "غیر فعال کردن گروه",
+	"disableLookup": "غیر فعال کردن جستجو",
 	"disableUser": "غیر فعال کردن کاربر",
 	"disabledFeatures": "ویژگیهای غیر فعال",
 	"disabledTabsInClassesModule": "زبانه های غیر فعال در ماژول کلاسها",
@@ -1304,6 +1211,7 @@
 	"display_less_attributes": "خواص کمتری نشان بده",
 	"display_more_attributes": "خواص بیشتری نشان بده",
 	"domain": "دامنه",
+	"domains": "دامنه ها",
 	"download": "<em>Download</em>",
 	"download_ifc_file": "Download Ifc file",
 	"edit": "<em>Edit</em>",
@@ -1317,11 +1225,13 @@
 	"enable": "فعال",
 	"enableGridFilter": "<em>Enable grid filter</em>",
 	"enableGroup": "فعال کردن گروه",
+	"enableLookup": "فعال کردن جستجو",
 	"enableMoveRejectedNotMatching": "Enable move rejected not matching",
 	"enableSsl": "Enable SSL",
 	"enableUser": "کاربر فعال",
 	"enabled": "فعال شده",
 	"enabledClasses": "<em>Enabled classes</em>",
+	"enabledGroups": "گروههای فعال",
 	"enabledLanguages": "زبانهای فعال",
 	"endDate": "تاریخ اتمام",
 	"engineName": "Engine name",
@@ -1335,7 +1245,7 @@
 	"fileServerPath": "File server path",
 	"filter": "فیلتر",
 	"filterView": "از فیلتر",
-	"filters_for_groups": "فیلترها برای گروهها",
+	"filtersForGroups": "فیلترها برای گروهها",
 	"format": "Format",
 	"format_csv": "CSV",
 	"format_odt": "OpenOffice Odt",
@@ -1360,6 +1270,7 @@
 	"imapServer": "IMAP server",
 	"import": "<em>Import</em>",
 	"importFromCSV": "<em>Import from CSV</em>",
+	"importJasperReport": "Import jasper report",
 	"includeRelations": "<em>Include relations</em>",
 	"includeSystemActivities": "<em>Include system activities</em>",
 	"incoming": "ورودی",
@@ -1368,6 +1279,7 @@
 	"initialLongitude": "Initial longitude",
 	"initialZoomLevel": "Initial zoom level",
 	"instanceName": "نام مورد",
+	"inverseDescription": "توضیحات معکوس",
 	"ipType": "<em>IP type</em>",
 	"ipv4": "ipv4",
 	"ipv6": "ipv6",
@@ -1383,19 +1295,31 @@
 	"lockTimeout": "مهلت قفل(به ثانیه)",
 	"loggedGroup": "گروه لاگ شده",
 	"loggedUser": "کاربر لاگ شده",
+	"lookupList": "لیست جستجوها",
+	"lookupTypes": "انواع جستجو",
 	"main": "Main",
 	"manualRegeneration": "<em>Manual Regeneration</em>",
+	"masterDetail": "Master/Detail",
+	"masterDetailLabel": "Master/Detail Label",
+	"masterReportJrxml": "Master report (.jrxml)",
 	"maximumLevel": "Maximum level",
+	"menu": "منو",
 	"mode": "مد",
 	"modifyAccount": "تغییر حساب",
+	"modifyDomain": "تغییر دامنه",
 	"modifyFilter": "ویرایش فیلتر",
 	"modifyGroup": "ویرایش گروه",
+	"modifyLookup": "تغییر جستجو",
+	"modifyLookupType": "تغییر نوع جستجو",
 	"modifyProject": "ویرایش پروژه",
+	"modifyReport": "ویرایش گزارش",
 	"modifyTemplate": "ویرایش قالب",
 	"modifyUser": "ویرایش کاربر",
 	"modifyView": "ویرایش نمایش",
 	"multiGroup": "چند گروهی",
 	"name": "نام",
+	"navigation": "هدایت",
+	"newFolder": "پوشه جدید",
 	"noAvailableData": "<em>No available data</em>",
 	"no_bim_project_for_card": "There is no BIM project for this card",
 	"none": "هیچ",
@@ -1410,6 +1334,8 @@
 	"otherOptions": "انتخابهای دیگر",
 	"outgoing": "خروجی",
 	"pan": "Pan",
+	"parent": "والدین",
+	"parentDescription": "توضیحات والدین",
 	"password": "رمز عبور",
 	"pdf": "PDF",
 	"permissions": "اجازه",
@@ -1418,6 +1344,7 @@
 	"popupWindows": "Popup windows",
 	"port": "Port",
 	"preselectIfUnique": "<em>Preselect if unique</em>",
+	"printPreview": "<em>Print preview</em>",
 	"privileged": "<em>Privileged</em>",
 	"processWidgetsAlwaysEnabled": "ویگت پروسه همیشه فعال است",
 	"processedFolder": "فولدر پردازش شده",
@@ -1440,13 +1367,16 @@
 	"remove": "Remove",
 	"removeAccount": "حذف حساب",
 	"removeFilter": "حذف فیلتر",
+	"removeMenu": "حذف منو",
 	"removeProject": "حذف پروژه",
+	"removeReport": "حذف گزارش",
 	"removeTemplate": "حذف قالب",
 	"removeView": "حذف نمایش",
 	"remove_formatting": "<em>Remove formatting</em>",
 	"replace": "<em>Replace</em>",
 	"reply": "<em>Reply</em>",
-	"report": "<em>Report</em>",
+	"report": "گزارش",
+	"reportMenuJasper": "<em>Jasper-reports report</em>",
 	"reportParameters": "<em>Report parameters</em>",
 	"repository": "Repository",
 	"reset": "ریست",
@@ -1485,6 +1415,7 @@
 	"simpleHistoryForProcesses": "تاریخچه ساده ی پروسه",
 	"smtpPort": "SMTP port",
 	"smtpServer": "SMTP server",
+	"sql": "SQL",
 	"sqlView": "From SQL",
 	"standard": "استاندارد",
 	"start": "<em>Start</em>",
@@ -1544,5 +1475,6 @@
 	"workflow_query_tipology": "انتخاب",
 	"write": "نوشتن",
 	"you_have_not_set_a_filter": "فیلتری انتخاب نکردید",
+	"zip": "ZIP",
 	"zoom": "زوم"
 }

@@ -1,12 +1,9 @@
 (function() {
 
-	var reportAccordion = Ext.create('CMDBuild.view.management.accordion.Report', {
-		cmName: 'report'
-	});
-
-	// TODO move in common
-	var menuAccordion = new CMDBuild.view.administration.accordion.CMMenuAccordion({
-		cmControllerType: CMDBuild.controller.management.menu.CMMenuAccordionController
+	var reportAccordion = Ext.create('CMDBuild.view.management.accordion.Reports', { cmName: 'report' });
+	var menuAccordion = Ext.create('CMDBuild.view.management.accordion.Menu', {
+		cmControllerType: 'CMDBuild.controller.management.accordion.Menu',
+		cmName: 'menu',
 	});
 
 	// TODO move in common
@@ -32,12 +29,15 @@
 			'CMDBuild.routes.management.Classes',
 			'CMDBuild.routes.management.Instances',
 			'CMDBuild.routes.management.Processes',
-			'CMDBuild.core.buttons.Buttons',
-			'CMDBuild.core.proxy.CMProxyConstants',
 			'CMDBuild.core.proxy.Classes',
 			'CMDBuild.core.proxy.Configuration',
-			'CMDBuild.core.proxy.Report',
-			'CMDBuild.core.proxy.group.Group'
+			'CMDBuild.core.proxy.Constants',
+			'CMDBuild.core.proxy.dataView.DataView',
+			'CMDBuild.core.proxy.Domain',
+			'CMDBuild.core.proxy.group.Group',
+			'CMDBuild.core.proxy.lookup.Type',
+			'CMDBuild.core.proxy.Menu',
+			'CMDBuild.core.proxy.report.Report'
 		],
 
 		name: 'CMDBuild',
@@ -79,7 +79,10 @@
 
 		statics: {
 			init: function() {
+				Ext.create('CMDBuild.core.LoggerManager'); // Logger configuration
 				Ext.create('CMDBuild.core.Data'); // Data connections configuration
+				Ext.create('CMDBuild.core.configurationBuilders.Instance'); // CMDBuild instance configuration
+				Ext.create('CMDBuild.core.configurationBuilders.Localization'); // CMDBuild localization configuration
 
 				Ext.tip.QuickTipManager.init();
 				// Fix a problem of Ext 4.2 tooltips width
@@ -93,32 +96,23 @@
 
 				CMDBuild.view.CMMainViewport.showSplash();
 
-				// Setup config localization model
-				CMDBuild.Config[CMDBuild.core.proxy.CMProxyConstants.LOCALIZATION] = Ext.create('CMDBuild.model.configuration.Localization');
-
-				// Get server language
-				CMDBuild.core.proxy.Configuration.getLanguage({
-					success: function(result, options, decodedResult) {
-						CMDBuild.Config[CMDBuild.core.proxy.CMProxyConstants.LOCALIZATION].set(
-							CMDBuild.core.proxy.CMProxyConstants.LANGUAGE,
-							decodedResult[CMDBuild.core.proxy.CMProxyConstants.LANGUAGE]
-						);
-					}
-				});
-
 				// Maybe a single request with all the configuration could be better
 				CMDBuild.core.proxy.group.Group.getUIConfiguration({
 					scope: this,
 					success: function(result, options, decodedResult) {
 						_CMUIConfiguration = new CMDBuild.model.CMUIConfigurationModel(decodedResult.response);
 
-						CMDBuild.ServiceProxy.configuration.readAll({
+						CMDBuild.core.proxy.Configuration.readAll({
 							success: function(response, options, decoded) {
-								// Cmdbuild
+								/**
+								 * CMDBuild
+								 *
+								 * @deprecated
+								 */
 								CMDBuild.Config.cmdbuild = decoded.cmdbuild;
 
 								// Localization
-								CMDBuild.Config[CMDBuild.core.proxy.CMProxyConstants.LOCALIZATION].setLanguagesWithLocalizations(decoded.cmdbuild.enabled_languages);
+								CMDBuild.Config[CMDBuild.core.proxy.Constants.LOCALIZATION].setLanguagesWithLocalizations(decoded.cmdbuild.enabled_languages);
 
 								// DMS
 								CMDBuild.Config.dms = decoded.dms;
@@ -282,7 +276,7 @@
 				});
 
 				params = {};
-				params[CMDBuild.core.proxy.CMProxyConstants.ACTIVE] = true;
+				params[CMDBuild.core.proxy.Constants.ACTIVE] = true;
 
 				CMDBuild.core.proxy.Classes.read({
 					params: params,
@@ -304,19 +298,21 @@
 
 						// To fill the menu is needed that the classes are already loaded
 						params = {};
-						params[CMDBuild.core.proxy.CMProxyConstants.GROUP_NAME] = CMDBuild.Runtime.DefaultGroupName;
+						params[CMDBuild.core.proxy.Constants.GROUP_NAME] = CMDBuild.Runtime.DefaultGroupName;
+						params[CMDBuild.core.proxy.Constants.LOCALIZED] = true;
 
-						CMDBuild.ServiceProxy.menu.read({
+						CMDBuild.core.proxy.Menu.read({
 							params: params,
-							success: function(response, options, decoded) {
-								menuAccordion.updateStore(decoded.menu);
+							scope: this,
+							success: function(response, options, decodedResponse) {
+								menuAccordion.updateStore(decodedResponse.menu);
 							},
 							callback: reqBarrier.getCallback()
 						});
 
-						_CMProxy.dataView.read({
-							success: function(response, options, decoded) {
-								dataViewAccordion.updateStore(decoded.views);
+						CMDBuild.core.proxy.dataView.DataView.readAll({
+							success: function(response, options, decodedResponse) {
+								dataViewAccordion.updateStore(decodedResponse.views);
 							},
 							callback: reqBarrier.getCallback()
 						});
@@ -329,22 +325,30 @@
 					callback: reqBarrier.getCallback()
 				});
 
-				CMDBuild.core.proxy.Report.getTypesTree({
+				/**
+				 * Domains
+				 */
+				params = {};
+				params[CMDBuild.core.proxy.Constants.ACTIVE] = true;
+
+				CMDBuild.core.proxy.Domain.getAll({
+					params: params,
 					scope: this,
-					success: function(response, options, reports) {
-						_CMCache.addReports(reports);
-						reportAccordion.updateStore();
+					success: function(response, options, decodedResponse) {
+						_CMCache.addDomains(decodedResponse.domains);
 					},
 					callback: reqBarrier.getCallback()
 				});
 
-				params = {};
-				params[CMDBuild.core.proxy.CMProxyConstants.ACTIVE] = true;
+				/**
+				 * Reports
+				 */
+				CMDBuild.core.proxy.report.Report.getTypesTree({
+					scope: this,
+					success: function(response, options, decodedResponse) {
+						_CMCache.addReports(decodedResponse);
 
-				CMDBuild.ServiceProxy.administration.domain.list({ //TODO change 'administration'
-					params: params,
-					success: function(response, options, decoded) {
-						_CMCache.addDomains(decoded.domains);
+						reportAccordion.updateStore();
 					},
 					callback: reqBarrier.getCallback()
 				});
@@ -358,12 +362,16 @@
 					callback: reqBarrier.getCallback()
 				});
 
-				CMDBuild.ServiceProxy.lookup.readAllTypes({
-					success : function(response, options, decoded) {
-						_CMCache.addLookupTypes(decoded);
-					},
-					callback: reqBarrier.getCallback()
-				});
+				/**
+				 * Lookup
+				 */
+				CMDBuild.core.proxy.lookup.Type.readAll({
+					scope: this,
+					success: function(response, options, decodedResponse) {
+						_CMCache.addLookupTypes(decodedResponse);
+ 					},
+ 					callback: reqBarrier.getCallback()
+ 				});
 
 				reqBarrier.start();
 			}

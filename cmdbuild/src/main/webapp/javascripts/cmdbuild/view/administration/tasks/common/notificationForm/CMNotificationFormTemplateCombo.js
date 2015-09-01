@@ -1,7 +1,7 @@
 (function() {
 
 	// Here because requires property doesn't work
-	Ext.require('CMDBuild.core.proxy.CMProxyConstants');
+	Ext.require('CMDBuild.core.proxy.Constants');
 	Ext.require('CMDBuild.core.proxy.email.Templates');
 
 	Ext.define('CMDBuild.view.administration.tasks.common.notificationForm.CMNotificationFormTemplateCombo', {
@@ -13,10 +13,10 @@
 		delegate: undefined,
 
 		fieldLabel: CMDBuild.Translation.administration.tasks.notificationForm.template,
-		name: CMDBuild.core.proxy.CMProxyConstants.NOTIFICATION_EMAIL_TEMPLATE,
+		name: CMDBuild.core.proxy.Constants.NOTIFICATION_EMAIL_TEMPLATE,
 
-		valueField: CMDBuild.core.proxy.CMProxyConstants.NAME,
-		displayField: CMDBuild.core.proxy.CMProxyConstants.NAME,
+		valueField: CMDBuild.core.proxy.Constants.NAME,
+		displayField: CMDBuild.core.proxy.Constants.NAME,
 		labelWidth: CMDBuild.LABEL_WIDTH,
 		maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
 		forceSelection: true,

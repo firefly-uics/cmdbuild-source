@@ -7,6 +7,7 @@
 
 		constructor: function(accordion) {
 			this.accordion = accordion;
+			this.accordion.delegate = this;
 
 			this.accordion.on('expand', function() {
 				if (this.accordion.cmSilent !== true) {

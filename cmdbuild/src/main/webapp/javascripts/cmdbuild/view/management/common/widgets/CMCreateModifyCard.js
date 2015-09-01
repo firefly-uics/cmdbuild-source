@@ -1,12 +1,7 @@
 (function() {
 
 	Ext.define("CMDBuild.view.management.common.widgets.CMCreateModifyCard", {
-
 		extend: "CMDBuild.view.management.common.CMFormWithWidgetButtons",
-
-		statics: {
-			WIDGET_NAME: ".CreateModifyCard"
-		},
 
 		withButtons: false,
 
@@ -47,4 +42,5 @@
 			}
 		}
 	});
+
 })();

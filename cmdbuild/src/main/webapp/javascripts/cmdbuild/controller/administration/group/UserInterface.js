@@ -5,7 +5,7 @@
 
 		requires: [
 			'CMDBuild.core.Message',
-			'CMDBuild.core.proxy.CMProxyConstants',
+			'CMDBuild.core.proxy.Constants',
 			'CMDBuild.core.proxy.group.UserInterface'
 		],
 
@@ -79,9 +79,9 @@
 				this.form.reset();
 
 				this.form.getForm().loadRecord(this.configurationGet());
-				this.form.getForm().loadRecord(this.configurationGet(CMDBuild.core.proxy.CMProxyConstants.DISABLED_CARD_TABS));
-				this.form.getForm().loadRecord(this.configurationGet(CMDBuild.core.proxy.CMProxyConstants.DISABLED_MODULES));
-				this.form.getForm().loadRecord(this.configurationGet(CMDBuild.core.proxy.CMProxyConstants.DISABLED_PROCESS_TABS));
+				this.form.getForm().loadRecord(this.configurationGet(CMDBuild.core.proxy.Constants.DISABLED_CARD_TABS));
+				this.form.getForm().loadRecord(this.configurationGet(CMDBuild.core.proxy.Constants.DISABLED_MODULES));
+				this.form.getForm().loadRecord(this.configurationGet(CMDBuild.core.proxy.Constants.DISABLED_PROCESS_TABS));
 			},
 
 			/**
@@ -122,9 +122,9 @@
 
 			this.view.setDisabled(
 				this.cmfg('selectedGroupIsEmpty')
-				|| loggedUserCurrentGroup.get(CMDBuild.core.proxy.CMProxyConstants.IS_CLOUD_ADMINISTRATOR)
-				&& this.cmfg('selectedGroupGet', CMDBuild.core.proxy.CMProxyConstants.IS_ADMINISTRATOR)
-				&& !this.cmfg('selectedGroupGet', CMDBuild.core.proxy.CMProxyConstants.IS_CLOUD_ADMINISTRATOR)
+				|| loggedUserCurrentGroup.get(CMDBuild.core.proxy.Constants.IS_CLOUD_ADMINISTRATOR)
+				&& this.cmfg('selectedGroupGet', CMDBuild.core.proxy.Constants.IS_ADMINISTRATOR)
+				&& !this.cmfg('selectedGroupGet', CMDBuild.core.proxy.Constants.IS_CLOUD_ADMINISTRATOR)
 			);
 		},
 
@@ -132,8 +132,8 @@
 			this.configurationSet(this.form.getForm().getValues());
 
 			var params = {};
-			params[CMDBuild.core.proxy.CMProxyConstants.ID] = this.cmfg('selectedGroupGet', CMDBuild.core.proxy.CMProxyConstants.ID);
-			params[CMDBuild.core.proxy.CMProxyConstants.UI_CONFIGURATION] = Ext.encode(this.configurationGet().getData());
+			params[CMDBuild.core.proxy.Constants.ID] = this.cmfg('selectedGroupGet', CMDBuild.core.proxy.Constants.ID);
+			params[CMDBuild.core.proxy.Constants.UI_CONFIGURATION] = Ext.encode(this.configurationGet().getData());
 
 			CMDBuild.core.proxy.group.UserInterface.update({
 				params: params,
@@ -150,7 +150,7 @@
 		onGroupUserInterfaceTabShow: function() {
 			if (!this.cmfg('selectedGroupIsEmpty')) {
 				var params = {};
-				params[CMDBuild.core.proxy.CMProxyConstants.ID] = this.cmfg('selectedGroupGet', CMDBuild.core.proxy.CMProxyConstants.ID);
+				params[CMDBuild.core.proxy.Constants.ID] = this.cmfg('selectedGroupGet', CMDBuild.core.proxy.Constants.ID);
 
 				CMDBuild.core.proxy.group.UserInterface.read({
 					params: params,

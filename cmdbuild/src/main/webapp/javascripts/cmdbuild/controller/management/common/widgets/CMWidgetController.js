@@ -2,7 +2,7 @@
 
 	Ext.define('CMDBuild.controller.management.common.widgets.CMWidgetController', {
 
-		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+		requires: ['CMDBuild.core.proxy.Constants'],
 
 		statics: {
 			WIDGET_NAME: '',
@@ -95,14 +95,14 @@
 		getLabel: function() {
 			_deprecated('getLabel', this);
 
-			return this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.LABEL];
+			return this.widgetConf[CMDBuild.core.proxy.Constants.LABEL];
 		},
 
 		/**
 		 * @param {String}
 		 */
 		getWidgetLabel: function() {
-			return this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.LABEL];
+			return this.widgetConf[CMDBuild.core.proxy.Constants.LABEL];
 		},
 
 		/**
@@ -128,7 +128,7 @@
 		 * @return {Number}
 		 */
 		getWidgetId: function() {
-			return this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.ID];
+			return this.widgetConf[CMDBuild.core.proxy.Constants.ID];
 		},
 
 		/**

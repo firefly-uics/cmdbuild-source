@@ -46,8 +46,8 @@
 				];
 
 				this.cmButtons = [
-					this.saveButton = Ext.create('CMDBuild.buttons.SaveButton'),
-					this.abortButton = Ext.create('CMDBuild.buttons.AbortButton')
+					this.saveButton = Ext.create('CMDBuild.core.buttons.text.Save'),
+					this.abortButton = Ext.create('CMDBuild.core.buttons.text.Abort')
 				];
 			// END: Buttons configuration
 
@@ -55,7 +55,7 @@
 				fieldLabel: tr_attribute.name,
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
-				name: CMDBuild.core.proxy.CMProxyConstants.NAME,
+				name: CMDBuild.core.proxy.Constants.NAME,
 				allowBlank: false,
 				cmImmutable: true,
 				vtype: 'alphanum',
@@ -71,18 +71,18 @@
 			this.typesCombo = Ext.create('Ext.form.field.ComboBox', {
 				allowBlank: false,
 				autoScroll: true,
-				name: CMDBuild.core.proxy.CMProxyConstants.TYPE,
+				name: CMDBuild.core.proxy.Constants.TYPE,
 				fieldLabel: tr_attribute.type,
 				labelWidth: CMDBuild.LABEL_WIDTH,
-				valueField: CMDBuild.core.proxy.CMProxyConstants.VALUE,
-				displayField: CMDBuild.core.proxy.CMProxyConstants.NAME,
-				hiddenName: CMDBuild.core.proxy.CMProxyConstants.TYPE,
+				valueField: CMDBuild.core.proxy.Constants.VALUE,
+				displayField: CMDBuild.core.proxy.Constants.NAME,
+				hiddenName: CMDBuild.core.proxy.Constants.TYPE,
 				triggerAction: 'all',
 				cmImmutable: true,
 				disabled: true,
 
 				store: Ext.create('Ext.data.SimpleStore', {
-					fields: [CMDBuild.core.proxy.CMProxyConstants.VALUE, CMDBuild.core.proxy.CMProxyConstants.NAME],
+					fields: [CMDBuild.core.proxy.Constants.VALUE, CMDBuild.core.proxy.Constants.NAME],
 					data: [
 						['GEOTIFF', 'GeoTiff'],
 						['WORLDIMAGE', 'WorldImage'],
@@ -119,7 +119,7 @@
 				fieldLabel: tr_attribute.description,
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
-				name: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
+				name: CMDBuild.core.proxy.Constants.DESCRIPTION,
 				allowBlank: false,
 				disabled: true
 			});
@@ -157,7 +157,7 @@
 					{
 						xtype: 'toolbar',
 						dock: 'top',
-						itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_TOP,
+						itemId: CMDBuild.core.proxy.Constants.TOOLBAR_TOP,
 						items: this.cmTBar
 					}
 				],

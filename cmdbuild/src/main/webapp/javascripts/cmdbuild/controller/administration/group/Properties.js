@@ -4,7 +4,7 @@
 		extend: 'CMDBuild.controller.common.AbstractController',
 
 		requires: [
-			'CMDBuild.core.proxy.CMProxyConstants',
+			'CMDBuild.core.proxy.Constants',
 			'CMDBuild.core.proxy.group.Group',
 			'CMDBuild.model.group.Group'
 		],
@@ -72,8 +72,8 @@
 
 		onGroupPropertiesEnableDisableButtonClick: function() {
 			var params = {};
-			params[CMDBuild.core.proxy.CMProxyConstants.GROUP_ID] = this.cmfg('selectedGroupGet', CMDBuild.core.proxy.CMProxyConstants.ID);
-			params[CMDBuild.core.proxy.CMProxyConstants.IS_ACTIVE] = !this.cmfg('selectedGroupGet', CMDBuild.core.proxy.CMProxyConstants.IS_ACTIVE);
+			params[CMDBuild.core.proxy.Constants.GROUP_ID] = this.cmfg('selectedGroupGet', CMDBuild.core.proxy.Constants.ID);
+			params[CMDBuild.core.proxy.Constants.IS_ACTIVE] = !this.cmfg('selectedGroupGet', CMDBuild.core.proxy.Constants.IS_ACTIVE);
 
 			CMDBuild.core.proxy.group.Group.enableDisable({
 				params: params,
@@ -101,9 +101,9 @@
 		onGroupPropertiesSaveButtonClick: function() {
 			if (this.validate(this.form)) { // Validate before save
 				var params = this.form.getData(true);
-				params[CMDBuild.core.proxy.CMProxyConstants.ID] = params[CMDBuild.core.proxy.CMProxyConstants.ID] || -1;
+				params[CMDBuild.core.proxy.Constants.ID] = params[CMDBuild.core.proxy.Constants.ID] || -1;
 
-				if (Ext.isEmpty(params[CMDBuild.core.proxy.CMProxyConstants.ID])) {
+				if (Ext.isEmpty(params[CMDBuild.core.proxy.Constants.ID])) {
 					CMDBuild.core.proxy.group.Group.create({
 						params: params,
 						scope: this,
@@ -125,7 +125,7 @@
 		onGroupPropertiesTabShow: function() {
 			if (!this.cmfg('selectedGroupIsEmpty')) {
 				this.form.loadRecord(this.cmfg('selectedGroupGet'));
-				this.form.enableDisableButton.setActiveState(this.cmfg('selectedGroupGet', CMDBuild.core.proxy.CMProxyConstants.IS_ACTIVE));
+				this.form.enableDisableButton.setActiveState(this.cmfg('selectedGroupGet', CMDBuild.core.proxy.Constants.IS_ACTIVE));
 				this.form.setDisabledModify(true, true);
 			}
 		},
