@@ -46,7 +46,7 @@ public class Util {
 	}
 
 	public static Predicate<LookupType> typesWith(final String name) {
-		logger.debug("filtering lookup types with name '{}'");
+		logger.debug("filtering lookup types with name '{}'", name);
 		return new Predicate<LookupType>() {
 
 			@Override
