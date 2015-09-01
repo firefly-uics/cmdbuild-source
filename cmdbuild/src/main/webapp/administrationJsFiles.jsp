@@ -72,15 +72,6 @@
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/gis/ModIcons.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/gis/ModLayerOrder.js"></script>
 
-	<!-- GROUP -->
-	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/group/CMGroupUIConfigurationPanel.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/group/CMGroupForm.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/group/CMPrivilegeWindow.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/group/CMGroupPrivilegeGrid.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/group/CMGroupClassUIConfiguration.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/group/CMGroupUsers.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/group/CMModGroup.js"></script>
-
 	<!-- LOOKUP -->
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/accordion/CMLookupAccordion.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/lookup/CMLookupForm.js"></script>
@@ -143,11 +134,6 @@
 	<!-- GIS -->
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/gis/CMModGISNavigationConfigurationController.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/gis/CMModLayerOrderController.js"></script>
-
-	<!-- GROUP -->
-	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/group/CMGroupUIConfigurationController.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/group/CMGroupFormController.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/group/CMModGroupController.js"></script>
 
 	<!-- LOOKUP -->
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/accordion/CMLookupAccordionController.js"></script>

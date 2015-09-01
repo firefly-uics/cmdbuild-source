@@ -1,8 +1,8 @@
 package org.cmdbuild.logic.auth;
-
 import static com.google.common.collect.Iterables.getFirst;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.cmdbuild.auth.user.AuthenticatedUserImpl.ANONYMOUS_USER;
+import static org.cmdbuild.common.Constants.ROLE_CLASS_NAME;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
 import static org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue.eq;
 import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
@@ -267,7 +267,7 @@ public class DefaultAuthenticationLogic implements AuthenticationLogic {
 
 	@Override
 	public DefaultGroupInfo getGroupInfoForGroup(final String groupName) {
-		final CMClass roleClass = view.findClass("Role");
+		final CMClass roleClass = view.findClass(ROLE_CLASS_NAME);
 		final CMQueryRow row = view.select(attribute(roleClass, "Description")) //
 				.from(roleClass) //
 				.where(condition(attribute(roleClass, "Code"), eq(groupName))) //

@@ -13,14 +13,14 @@ import org.cmdbuild.auth.privileges.constants.PrivilegedObjectType;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.logger.Log;
-import org.cmdbuild.services.store.DataViewFilterStore;
-import org.cmdbuild.services.store.FilterStore.Filter;
+import org.cmdbuild.services.store.filter.FilterStore;
+import org.cmdbuild.services.store.filter.FilterStore.Filter;
 
 public class FilterPrivilegeFetcher extends AbstractPrivilegeFetcher {
 
-	private final DataViewFilterStore filterStore;
+	private final FilterStore filterStore;
 
-	public FilterPrivilegeFetcher(final CMDataView view, final Long groupId, final DataViewFilterStore filterStore) {
+	public FilterPrivilegeFetcher(final CMDataView view, final Long groupId, final FilterStore filterStore) {
 		super(view, groupId);
 		this.filterStore = filterStore;
 	}
@@ -35,7 +35,7 @@ public class FilterPrivilegeFetcher extends AbstractPrivilegeFetcher {
 		final Integer filterId = (Integer) privilegeCard.get(PRIVILEGED_OBJECT_ID_ATTRIBUTE);
 		Filter privilegedFilter = null;
 		try {
-			privilegedFilter = filterStore.fetchFilter(filterId.longValue());
+			privilegedFilter = filterStore.read(filterId.longValue());
 		} catch (final NoSuchElementException ex) {
 			Log.CMDBUILD.warn("Cannot fetch filter with id " + filterId
 					+ ". Check all references to that filter in Grant table");

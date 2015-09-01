@@ -17,15 +17,16 @@
 					hidden: true
 				},
 				{
-					text: CMDBuild.Translation.description_,
+					text: CMDBuild.Translation.descriptionLabel,
 					dataIndex: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
 					flex: 2
 				},
 				{
-					text: tr.active,
+					text: CMDBuild.Translation.active,
 					width: 60,
 					align: 'center',
 					dataIndex: CMDBuild.core.proxy.CMProxyConstants.ACTIVE,
+					sortable: false,
 					hideable: false,
 					menuDisabled: true,
 					fixed: true,

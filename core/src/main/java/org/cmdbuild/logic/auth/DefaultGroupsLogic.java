@@ -1,5 +1,6 @@
 package org.cmdbuild.logic.auth;
 
+import static org.cmdbuild.common.Constants.ROLE_CLASS_NAME;
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
 import static org.cmdbuild.dao.query.clause.join.Over.over;
@@ -153,7 +154,7 @@ public class DefaultGroupsLogic implements GroupsLogic {
 	}
 
 	private CMCard fetchRoleCardWithId(final Long groupId) {
-		final CMClass roleClass = dataView.findClass("Role");
+		final CMClass roleClass = dataView.findClass(ROLE_CLASS_NAME);
 		final CMQueryRow groupRow = dataView.select(anyAttribute(roleClass)) //
 				.from(roleClass) //
 				.where(condition(QueryAliasAttribute.attribute(roleClass, "Id"), eq(groupId))) //
@@ -170,7 +171,7 @@ public class DefaultGroupsLogic implements GroupsLogic {
 		checkRestrictedAdminOverFullAdmin(groupId);
 
 		final CMDomain userRoleDomain = dataView.findDomain("UserRole");
-		final CMClass roleClass = dataView.findClass("Role");
+		final CMClass roleClass = dataView.findClass(ROLE_CLASS_NAME);
 		final CMClass userClass = dataView.findClass("User");
 
 		final CMQueryRow row = dataView.select(attribute(userClass, "Username")) //
