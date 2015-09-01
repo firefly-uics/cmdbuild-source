@@ -38,7 +38,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 
-import org.apache.commons.fileupload.FileItem;
+import javax.activation.DataHandler;
+
 import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.common.Constants;
 import org.cmdbuild.common.utils.PagedElements;
@@ -82,6 +83,8 @@ import org.cmdbuild.model.data.Card;
 import org.cmdbuild.model.data.IdentifiedRelation;
 import org.cmdbuild.servlets.json.management.dataimport.csv.CSVData;
 import org.cmdbuild.servlets.json.management.dataimport.csv.CSVImporter;
+import org.cmdbuild.servlets.json.management.dataimport.csv.CsvReader;
+import org.cmdbuild.servlets.json.management.dataimport.csv.SuperCsvCsvReader;
 import org.cmdbuild.servlets.json.management.export.CMDataSource;
 import org.cmdbuild.servlets.json.management.export.DBDataSource;
 import org.cmdbuild.servlets.json.management.export.DataExporter;
@@ -1201,17 +1204,13 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 	}
 
 	@Override
-	public CSVData importCsvFileFor(final FileItem csvFile, final Long classId, final String separator)
+	public CSVData importCsvFileFor(final DataHandler csvFile, final Long classId, final String separator)
 			throws IOException, JSONException {
 		final CMClass destinationClassForImport = dataView.findClass(classId);
 		final int separatorInt = separator.charAt(0);
 		final CsvPreference importCsvPreferences = new CsvPreference('"', separatorInt, "\n");
-		final CSVImporter csvImporter = new CSVImporter( //
-				dataView, //
-				lookupStore, //
-				destinationClassForImport, //
-				importCsvPreferences //
-		);
+		final CsvReader csvReader = new SuperCsvCsvReader(importCsvPreferences);
+		final CSVImporter csvImporter = new CSVImporter(csvReader, dataView, lookupStore, destinationClassForImport);
 
 		final CSVData csvData = csvImporter.getCsvDataFrom(csvFile);
 		return csvData;

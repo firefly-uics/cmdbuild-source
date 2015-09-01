@@ -6,7 +6,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
-import org.apache.commons.fileupload.FileItem;
+import javax.activation.DataHandler;
+
 import org.cmdbuild.common.utils.PagedElements;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entry.CMRelation;
@@ -231,7 +232,7 @@ public interface DataAccessLogic extends Logic {
 
 	File exportClassAsCsvFile(String className, String separator);
 
-	CSVData importCsvFileFor(FileItem csvFile, Long classId, String separator) throws IOException, JSONException;
+	CSVData importCsvFileFor(DataHandler csvFile, Long classId, String separator) throws IOException, JSONException;
 
 	CMCard resolveCardReferences(CMClass entryType, CMCard card);
 

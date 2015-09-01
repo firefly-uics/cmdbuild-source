@@ -2,6 +2,7 @@ package org.cmdbuild.dao.guava;
 
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entry.CMRelation;
+import org.cmdbuild.dao.entry.CMValueSet;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.query.CMQueryRow;
@@ -50,6 +51,17 @@ public class Functions {
 			@Override
 			public CMRelation apply(final CMQueryRow input) {
 				return input.getRelation(alias).getRelation();
+			}
+
+		};
+	}
+
+	public static Function<CMQueryRow, CMValueSet> toValueSet(final Alias alias) {
+		return new Function<CMQueryRow, CMValueSet>() {
+
+			@Override
+			public CMValueSet apply(final CMQueryRow input) {
+				return input.getValueSet(alias);
 			}
 
 		};

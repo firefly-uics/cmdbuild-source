@@ -135,8 +135,8 @@
 		 */
 		setDisabledModify: function(state, allFields, tBarState, bBarState) {
 			this.setDisableFields(state, allFields);
-			this.setDisabledTopBar(tBarState || !state);
-			this.setDisabledBottomBar(bBarState || state);
+			this.setDisabledTopBar(Ext.isBoolean(tBarState) ? tBarState : !state);
+			this.setDisabledBottomBar(Ext.isBoolean(bBarState) ? bBarState : state);
 		},
 
 		/**

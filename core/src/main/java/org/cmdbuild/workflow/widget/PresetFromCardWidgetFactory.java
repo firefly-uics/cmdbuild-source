@@ -10,18 +10,14 @@ import org.cmdbuild.services.template.store.TemplateRepository;
 
 public class PresetFromCardWidgetFactory extends ValuePairWidgetFactory {
 
-	private static final String 	WIDGET_NAME = "presetFromCard",
-									FILTER = "Filter",
-									ATTRIBUTE_MAPPING = "AttributeMapping",
-									CLASS_NAME = "ClassName",
+	private static final String WIDGET_NAME = "presetFromCard", FILTER = "Filter",
+			ATTRIBUTE_MAPPING = "AttributeMapping", CLASS_NAME = "ClassName",
 
-									PRESET_SEPARATOR_CHAR = ",",
-									PRESET_MAPPING_CHAR = "=";
+			PRESET_SEPARATOR_CHAR = ",", PRESET_MAPPING_CHAR = "=";
 
-	public PresetFromCardWidgetFactory(
-			TemplateRepository templateRespository, //
-			Notifier notifier //
-		) {
+	public PresetFromCardWidgetFactory(final TemplateRepository templateRespository, //
+			final Notifier notifier //
+	) {
 
 		super(templateRespository, notifier);
 	}
@@ -32,17 +28,17 @@ public class PresetFromCardWidgetFactory extends ValuePairWidgetFactory {
 	}
 
 	@Override
-	protected Widget createWidget(Map<String, Object> valueMap) {
+	protected Widget createWidget(final Map<String, Object> valueMap) {
 		final PresetFromCard widget = new PresetFromCard();
 
 		setFilterAndClassName(valueMap, widget);
 		widget.setPresetMapping(readPresets(valueMap));
 		widget.setTemplates( //
-				extractUnmanagedStringParameters( //
-						valueMap, FILTER, CLASS_NAME, //
-						BUTTON_LABEL, ATTRIBUTE_MAPPING //
-					) //
-				);
+		extractUnmanagedStringParameters( //
+				valueMap, FILTER, CLASS_NAME, //
+				BUTTON_LABEL, ATTRIBUTE_MAPPING //
+		) //
+		);
 
 		return widget;
 	}
@@ -53,13 +49,13 @@ public class PresetFromCardWidgetFactory extends ValuePairWidgetFactory {
 	 */
 	private Map<String, String> readPresets( //
 			final Map<String, Object> valueMap //
-		) {
+	) {
 
 		final Map<String, String> out = new HashMap<String, String>();
 		final String mapping = readString(valueMap.get(ATTRIBUTE_MAPPING));
 		if (mapping != null) {
 			final String[] presets = mapping.split(PRESET_SEPARATOR_CHAR);
-			for (int i=0, l=presets.length; i<l; ++i) {
+			for (int i = 0, l = presets.length; i < l; ++i) {
 				final String preset = presets[i];
 				final String[] presetPart = preset.split(PRESET_MAPPING_CHAR);
 				if (presetPart.length == 2) {
@@ -77,7 +73,7 @@ public class PresetFromCardWidgetFactory extends ValuePairWidgetFactory {
 	private void setFilterAndClassName( //
 			final Map<String, Object> valueMap, //
 			final PresetFromCard widget //
-		) {
+	) {
 
 		final String filter = readString(valueMap.get(FILTER));
 		if (filter != null) {

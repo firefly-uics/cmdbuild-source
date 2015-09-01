@@ -4,7 +4,9 @@ import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.logic.email.EmailAttachmentsLogic;
 import org.cmdbuild.logic.email.EmailLogic;
 import org.cmdbuild.logic.email.EmailTemplateLogic;
+import org.cmdbuild.model.widget.customform.CustomFormWidgetFactory;
 import org.cmdbuild.notification.Notifier;
+import org.cmdbuild.services.meta.MetadataStoreFactory;
 import org.cmdbuild.services.template.store.TemplateRepository;
 import org.cmdbuild.workflow.widget.CalendarWidgetFactory;
 import org.cmdbuild.workflow.widget.CreateModifyCardWidgetFactory;
@@ -25,21 +27,23 @@ public class DefaultXpdlExtendedAttributeWidgetFactory extends ValuePairXpdlExte
 
 	public DefaultXpdlExtendedAttributeWidgetFactory(final TemplateRepository templateRepository,
 			final Notifier notifier, final CMDataView dataView, final EmailLogic emailLogic,
-			final EmailAttachmentsLogic emailAttachmentsLogic, final EmailTemplateLogic emailTemplateLogic) {
+			final EmailAttachmentsLogic emailAttachmentsLogic, final EmailTemplateLogic emailTemplateLogic,
+			final MetadataStoreFactory metadataStoreFactory) {
 		addWidgetFactory(new CalendarWidgetFactory(templateRepository, notifier));
 		addWidgetFactory(new CreateModifyCardWidgetFactory(templateRepository, notifier, dataView));
+		addWidgetFactory(new CustomFormWidgetFactory(templateRepository, notifier, dataView, metadataStoreFactory));
+		addWidgetFactory(new GridWidgetFactory(templateRepository, notifier));
 		addWidgetFactory(new LinkCardsWidgetFactory(templateRepository, notifier));
-		addWidgetFactory(new ManageRelationWidgetFactory(templateRepository, notifier, dataView));
 		addWidgetFactory(new ManageEmailWidgetFactory(templateRepository, notifier, emailLogic, emailAttachmentsLogic,
 				emailTemplateLogic));
+		addWidgetFactory(new ManageRelationWidgetFactory(templateRepository, notifier, dataView));
+		addWidgetFactory(new NavigationTreeWidgetFactory(templateRepository, notifier));
 		addWidgetFactory(new OpenAttachmentWidgetFactory(templateRepository, notifier));
 		addWidgetFactory(new OpenNoteWidgetFactory(templateRepository, notifier));
 		addWidgetFactory(new OpenReportWidgetFactory(templateRepository, notifier));
-		addWidgetFactory(new WebServiceWidgetFactory(templateRepository, notifier));
 		addWidgetFactory(new PresetFromCardWidgetFactory(templateRepository, notifier));
 		addWidgetFactory(new StartWorkflowWidgetFactory(templateRepository, notifier));
-		addWidgetFactory(new NavigationTreeWidgetFactory(templateRepository, notifier));
-		addWidgetFactory(new GridWidgetFactory(templateRepository, notifier));
+		addWidgetFactory(new WebServiceWidgetFactory(templateRepository, notifier));
 	}
 
 }

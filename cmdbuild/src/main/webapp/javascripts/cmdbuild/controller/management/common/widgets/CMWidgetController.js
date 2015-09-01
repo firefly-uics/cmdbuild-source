@@ -89,8 +89,19 @@
 
 		/**
 		 * @param {String}
+		 *
+		 * @deprecated
 		 */
 		getLabel: function() {
+			_deprecated('getLabel', this);
+
+			return this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.LABEL];
+		},
+
+		/**
+		 * @param {String}
+		 */
+		getWidgetLabel: function() {
 			return this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.LABEL];
 		},
 

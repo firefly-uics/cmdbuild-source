@@ -58,7 +58,7 @@ public class ManageRelationWidgetFactory extends ValuePairWidgetFactory {
 		} else {
 			className = configureWidgetFromClassName(widget, valueMap);
 		}
-		widget.setRequired(readBooleanTrueIfPresent(valueMap.get(REQUIRED)));
+		widget.setRequired(valueMap.containsKey(REQUIRED));
 		setSource(widget, valueMap.get(IS_DIRECT));
 		setEnabledFunctions(widget, readString(valueMap.get(FUNCTIONS)));
 
@@ -83,7 +83,7 @@ public class ManageRelationWidgetFactory extends ValuePairWidgetFactory {
 
 	private void setSource(final ManageRelation widget, final Object isDirect) {
 		if (isDirect != null) {
-			final String source = readBooleanTrueIfTrue(isDirect) ? "_1" : "_2";
+			final String source = readBooleanFalseIfMissing(isDirect) ? "_1" : "_2";
 			widget.setSource(source);
 		}
 	}

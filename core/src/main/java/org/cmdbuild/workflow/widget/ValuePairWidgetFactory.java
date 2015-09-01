@@ -30,7 +30,7 @@ import org.slf4j.Logger;
  */
 public abstract class ValuePairWidgetFactory implements SingleActivityWidgetFactory {
 
-	private static final Logger logger = WORKFLOW;
+	protected static final Logger logger = WORKFLOW;
 
 	public static final String BUTTON_LABEL = "ButtonLabel";
 
@@ -66,6 +66,7 @@ public abstract class ValuePairWidgetFactory implements SingleActivityWidgetFact
 			setWidgetId(widget, serialization);
 			setWidgetLabel(widget, valueMap);
 		} catch (final Exception e) {
+			logger.warn("error creating widget", e);
 			widget = null;
 			notifier.warn(new CMDBWorkflowException(WorkflowExceptionType.WF_CANNOT_CONFIGURE_CMDBEXTATTR,
 					getWidgetName()));
@@ -167,15 +168,11 @@ public abstract class ValuePairWidgetFactory implements SingleActivityWidgetFact
 		return out;
 	}
 
-	protected final boolean readBooleanTrueIfPresent(final Object value) {
-		return (value != null);
+	protected final boolean readBooleanFalseIfMissing(final Object value) {
+		return readBoolean(value, false);
 	}
 
-	protected final boolean readBooleanTrueIfTrue(final Object value) {
-		return readBooleanTrueIfTrue(value, false);
-	}
-
-	protected final boolean readBooleanTrueIfTrue(final Object value, final boolean defaultValue) {
+	protected final boolean readBoolean(final Object value, final boolean defaultValue) {
 		if (value instanceof String) {
 			return Boolean.parseBoolean((String) value);
 		} else if (value instanceof Boolean) {

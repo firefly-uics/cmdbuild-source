@@ -146,7 +146,7 @@
 			this.attributeUnique = new Ext.ux.form.XCheckbox({
 				fieldLabel : tr.isunique,
 				labelWidth: CMDBuild.LABEL_WIDTH,
-				name : _CMProxy.parameter.UNIQUE
+				name : 'isunique'
 			});
 
 			this.isBasedsp = new Ext.ux.form.XCheckbox({
@@ -202,7 +202,7 @@
 				width: CMDBuild.ADM_SMALL_FIELD_WIDTH,
 				minValue : 1,
 				maxValue : Math.pow(2, 31) - 1,
-				name : _CMProxy.parameter.LENGTH,
+				name : 'len',
 				allowBlank : false
 			});
 
