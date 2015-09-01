@@ -3,14 +3,14 @@
 	Ext.define('CMDBuild.model.widget.customForm.Capabilities', {
 		extend: 'Ext.data.Model',
 
-		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+		requires: ['CMDBuild.core.proxy.Constants'],
 
 		fields: [
-			{ name: CMDBuild.core.proxy.CMProxyConstants.ADD_DISABLED, type: 'boolean' },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.DELETE_DISABLED, type: 'boolean' },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.IMPORT_DISABLED, type: 'boolean' },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.MODIFY_DISABLED, type: 'boolean' },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.READ_ONLY, type: 'boolean' }
+			{ name: CMDBuild.core.proxy.Constants.ADD_DISABLED, type: 'boolean' },
+			{ name: CMDBuild.core.proxy.Constants.DELETE_DISABLED, type: 'boolean' },
+			{ name: CMDBuild.core.proxy.Constants.IMPORT_DISABLED, type: 'boolean' },
+			{ name: CMDBuild.core.proxy.Constants.MODIFY_DISABLED, type: 'boolean' },
+			{ name: CMDBuild.core.proxy.Constants.READ_ONLY, type: 'boolean' }
 		]
 	});
 

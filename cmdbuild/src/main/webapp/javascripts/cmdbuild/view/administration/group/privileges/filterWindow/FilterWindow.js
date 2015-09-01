@@ -9,7 +9,7 @@
 		extend: 'CMDBuild.view.common.field.CMFilterChooserWindow',
 
 		requires: [
-			'CMDBuild.core.proxy.CMProxyConstants',
+			'CMDBuild.core.proxy.Constants',
 			'CMDBuild.model.group.privileges.FilterWindowAttribute'
 		],
 
@@ -55,7 +55,7 @@
 			var data = [];
 			var attributePrivileges = {};
 
-			Ext.Array.forEach(this.group.get(CMDBuild.core.proxy.CMProxyConstants.ATTRIBUTES_PRIVILEGES), function(privilege, i, allPrivileges) { // String to object conversion
+			Ext.Array.forEach(this.group.get(CMDBuild.core.proxy.Constants.ATTRIBUTES_PRIVILEGES), function(privilege, i, allPrivileges) { // String to object conversion
 				var parts = privilege.split(':');
 
 				if (parts.length == 2)
@@ -65,13 +65,13 @@
 			Ext.Array.forEach(this.attributes, function(classAttribute, i, allClassAttributes) {
 				if (classAttribute.name != 'Notes') { // As usual, the notes attribute is managed in a special way
 					var attributeConf = {};
-					attributeConf[CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION] = classAttribute[CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION];
-					attributeConf[CMDBuild.core.proxy.CMProxyConstants.NAME] = classAttribute[CMDBuild.core.proxy.CMProxyConstants.NAME];
-					attributeConf[CMDBuild.core.proxy.CMProxyConstants.NONE] = false;
-					attributeConf[CMDBuild.core.proxy.CMProxyConstants.READ] = false;
-					attributeConf[CMDBuild.core.proxy.CMProxyConstants.WRITE] = false;
+					attributeConf[CMDBuild.core.proxy.Constants.DESCRIPTION] = classAttribute[CMDBuild.core.proxy.Constants.DESCRIPTION];
+					attributeConf[CMDBuild.core.proxy.Constants.NAME] = classAttribute[CMDBuild.core.proxy.Constants.NAME];
+					attributeConf[CMDBuild.core.proxy.Constants.NONE] = false;
+					attributeConf[CMDBuild.core.proxy.Constants.READ] = false;
+					attributeConf[CMDBuild.core.proxy.Constants.WRITE] = false;
 
-					var privilege = attributePrivileges[classAttribute[CMDBuild.core.proxy.CMProxyConstants.NAME]];
+					var privilege = attributePrivileges[classAttribute[CMDBuild.core.proxy.Constants.NAME]];
 					if (!Ext.isEmpty(privilege) && Ext.isString(privilege))
 						attributeConf[privilege] = true;
 

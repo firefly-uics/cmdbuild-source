@@ -3,7 +3,7 @@
 	Ext.define('CMDBuild.controller.management.common.widgets.grid.RowEdit', {
 		extend: 'CMDBuild.controller.common.AbstractController',
 
-		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+		requires: ['CMDBuild.core.proxy.Constants'],
 
 		/**
 		 * @cfg {CMDBuild.controller.management.common.widgets.grid.Grid}
@@ -67,7 +67,7 @@
 			Ext.Array.forEach(this.cmfg('getCardAttributes'), function(attribute, i, allAttributes) {
 				var item = CMDBuild.Management.FieldManager.getFieldForAttr(attribute, false, false);
 
-				if (attribute[CMDBuild.core.proxy.CMProxyConstants.FIELD_MODE] == 'read')
+				if (attribute[CMDBuild.core.proxy.Constants.FIELD_MODE] == 'read')
 					item.setDisabled(true);
 
 				itemsArray.push(item);

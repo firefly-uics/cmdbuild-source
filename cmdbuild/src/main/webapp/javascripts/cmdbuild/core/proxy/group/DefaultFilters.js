@@ -3,8 +3,8 @@
 	Ext.define('CMDBuild.core.proxy.group.DefaultFilters', {
 
 		requires: [
-			'CMDBuild.core.proxy.CMProxyConstants',
-			'CMDBuild.core.proxy.CMProxyUrlIndex',
+			'CMDBuild.core.proxy.Constants',
+			'CMDBuild.core.proxy.Index',
 			'CMDBuild.model.group.defaultFilters.Filter'
 		],
 
@@ -20,14 +20,14 @@
 				model: 'CMDBuild.model.group.defaultFilters.Filter',
 				proxy: {
 					type: 'ajax',
-					url: CMDBuild.core.proxy.CMProxyUrlIndex.group.defaultFilters.readAllGroupFilters,
+					url: CMDBuild.core.proxy.Index.group.defaultFilters.readAllGroupFilters,
 					reader: {
 						type: 'json',
 						root: 'filters'
 					}
 				},
 				sorters: [
-					{ property: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION, direction: 'ASC' }
+					{ property: CMDBuild.core.proxy.Constants.DESCRIPTION, direction: 'ASC' }
 				]
 			});
 		},
@@ -37,7 +37,7 @@
 		 */
 		read: function(parameters) {
 			CMDBuild.Ajax.request({
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.group.defaultFilters.read,
+				url: CMDBuild.core.proxy.Index.group.defaultFilters.read,
 				params: parameters.params,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
 				scope: parameters.scope || this,
@@ -52,7 +52,7 @@
 		 */
 		readAllGroupFilters: function(parameters) {
 			CMDBuild.Ajax.request({
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.group.defaultFilters.readAllGroupFilters,
+				url: CMDBuild.core.proxy.Index.group.defaultFilters.readAllGroupFilters,
 				params: parameters.params,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
 				scope: parameters.scope || this,
@@ -67,7 +67,7 @@
 		 */
 		update: function(parameters) {
 			CMDBuild.Ajax.request({
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.group.defaultFilters.update,
+				url: CMDBuild.core.proxy.Index.group.defaultFilters.update,
 				params: parameters.params,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
 				scope: parameters.scope || this,

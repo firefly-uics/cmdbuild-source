@@ -5,7 +5,7 @@
 
 		considerAsFieldToDisable: true,
 
-		fieldLabel: CMDBuild.Translation.administration.modreport.importJRFormStep1.enabled_groups,
+		fieldLabel: CMDBuild.Translation.enabledGroups,
 		name: CMDBuild.ServiceProxy.parameter.GROUPS,
 		dataFields: [
 			CMDBuild.ServiceProxy.parameter.NAME,

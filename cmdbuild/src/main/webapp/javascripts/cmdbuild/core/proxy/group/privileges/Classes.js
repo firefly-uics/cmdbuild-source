@@ -3,8 +3,8 @@
 	Ext.define('CMDBuild.core.proxy.group.privileges.Classes', {
 
 		requires: [
-			'CMDBuild.core.proxy.CMProxyConstants',
-			'CMDBuild.core.proxy.CMProxyUrlIndex',
+			'CMDBuild.core.proxy.Constants',
+			'CMDBuild.core.proxy.Index',
 			'CMDBuild.model.group.privileges.GridRecord'
 		],
 
@@ -15,7 +15,7 @@
 		 */
 		readUIConfiguration: function(parameters) {
 			CMDBuild.Ajax.request({
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.privileges.classes.loadClassUiConfiguration,
+				url: CMDBuild.core.proxy.Index.privileges.classes.loadClassUiConfiguration,
 				params: parameters.params,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
 				scope: parameters.scope || this,
@@ -30,7 +30,7 @@
 		 */
 		clearRowAndColumn: function(parameters) {
 			CMDBuild.Ajax.request({
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.privileges.classes.clearRowAndColumnPrivileges,
+				url: CMDBuild.core.proxy.Index.privileges.classes.clearRowAndColumnPrivileges,
 				params: parameters.params,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
 				scope: parameters.scope || this,
@@ -49,14 +49,14 @@
 				model: 'CMDBuild.model.group.privileges.GridRecord',
 				proxy: {
 					type: 'ajax',
-					url: CMDBuild.core.proxy.CMProxyUrlIndex.privileges.classes.read,
+					url: CMDBuild.core.proxy.Index.privileges.classes.read,
 					reader: {
 						type: 'json',
 						root: 'privileges'
 					}
 				},
 				sorters: [
-					{ property: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION, direction: 'ASC' }
+					{ property: CMDBuild.core.proxy.Constants.DESCRIPTION, direction: 'ASC' }
 				]
 			});
 		},
@@ -66,7 +66,7 @@
 		 */
 		updateUIConfiguration: function(parameters) {
 			CMDBuild.Ajax.request({
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.privileges.classes.saveClassUiConfiguration,
+				url: CMDBuild.core.proxy.Index.privileges.classes.saveClassUiConfiguration,
 				params: parameters.params,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
 				scope: parameters.scope || this,
@@ -81,7 +81,7 @@
 		 */
 		setRowAndColumn: function(parameters) {
 			CMDBuild.Ajax.request({
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.privileges.classes.setRowAndColumnPrivileges,
+				url: CMDBuild.core.proxy.Index.privileges.classes.setRowAndColumnPrivileges,
 				params: parameters.params,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
 				scope: parameters.scope || this,
@@ -96,7 +96,7 @@
 		 */
 		update: function(parameters) {
 			CMDBuild.Ajax.request({
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.privileges.classes.update,
+				url: CMDBuild.core.proxy.Index.privileges.classes.update,
 				params: parameters.params,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
 				scope: parameters.scope || this,

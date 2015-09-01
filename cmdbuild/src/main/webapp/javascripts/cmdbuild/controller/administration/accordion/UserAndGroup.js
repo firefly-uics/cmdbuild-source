@@ -3,7 +3,7 @@
 	Ext.define('CMDBuild.controller.administration.accordion.UserAndGroup', {
 		extend: 'CMDBuild.controller.accordion.CMBaseAccordionController',
 
-		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+		requires: ['CMDBuild.core.proxy.Constants'],
 
 		/**
 		 * @cfg {Array}
@@ -28,7 +28,7 @@
 		updateStore: function(group) {
 			this.accordion.updateStore();
 			this.accordion.deselect();
-			this.accordion.selectNodeById(group.get(CMDBuild.core.proxy.CMProxyConstants.ID));
+			this.accordion.selectNodeById(group.get(CMDBuild.core.proxy.Constants.ID));
 		}
 	});
 

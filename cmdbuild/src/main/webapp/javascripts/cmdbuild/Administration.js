@@ -12,20 +12,19 @@
 	var menuAccordion = null;
 	var navigationTreesAccordion = null;
 	var processAccordion = null;
-	var reportAccordion = null;
 
 	Ext.define('CMDBuild.app.Administration', {
 		extend: 'Ext.app.Application',
 
 		requires: [
-			'CMDBuild.core.buttons.Buttons',
-			'CMDBuild.core.constants.Server',
-			'CMDBuild.core.proxy.CMProxyConstants',
 			'CMDBuild.core.proxy.Classes',
 			'CMDBuild.core.proxy.Configuration',
+			'CMDBuild.core.proxy.Constants',
+			'CMDBuild.core.proxy.Domain',
+			'CMDBuild.core.proxy.group.Group',
 			'CMDBuild.core.proxy.Localizations',
-			'CMDBuild.core.proxy.Report',
-			'CMDBuild.core.proxy.group.Group'
+			'CMDBuild.core.proxy.lookup.Type',
+			'CMDBuild.core.proxy.report.Report'
 		],
 
 		name: 'CMDBuild',
@@ -37,7 +36,10 @@
 				var administration = true;
 				var forCredits = false;
 
+				Ext.create('CMDBuild.core.LoggerManager'); // Logger configuration
 				Ext.create('CMDBuild.core.Data'); // Data connections configuration
+				Ext.create('CMDBuild.core.configurationBuilders.Instance'); // CMDBuild instance configuration
+				Ext.create('CMDBuild.core.configurationBuilders.Localization'); // CMDBuild localization configuration
 
 				Ext.tip.QuickTipManager.init();
 				// fix a problem of Ext 4.2 tooltips width
@@ -46,34 +48,20 @@
 
 				CMDBuild.view.CMMainViewport.showSplash(forCredits, administration);
 
-				// Setup config localization model
-				CMDBuild.Config[CMDBuild.core.proxy.CMProxyConstants.LOCALIZATION] = Ext.create('CMDBuild.model.configuration.Localization');
-
-				// Get server language
-				CMDBuild.core.proxy.Configuration.getLanguage({
-					success: function(result, options, decodedResult) {
-						CMDBuild.Config[CMDBuild.core.proxy.CMProxyConstants.LOCALIZATION].set(
-							CMDBuild.core.proxy.CMProxyConstants.LANGUAGE,
-							decodedResult[CMDBuild.core.proxy.CMProxyConstants.LANGUAGE]
-						);
-					}
-				});
-
 				// Maybe a single request with all the configuration could be better
 				CMDBuild.core.proxy.group.Group.getUIConfiguration({
 					scope: this,
 					success: function(result, options, decodedResult) {
 						_CMUIConfiguration = new CMDBuild.model.CMUIConfigurationModel(decodedResult.response);
 
-						CMDBuild.ServiceProxy.configuration.readMainConfiguration({
+						CMDBuild.core.proxy.Configuration.readMainConfiguration({
 							success: function(response, options, decoded) {
-								// CMDBuild
+								/**
+								 * CMDBuild
+								 *
+								 * @deprecated
+								 */
 								CMDBuild.Config.cmdbuild = decoded.data;
-
-								// Localization
-								// TODO: refactor to avoid to use Cache
-								_CMCache.setActiveTranslations(decoded.data.enabled_languages);
-								CMDBuild.Config[CMDBuild.core.proxy.CMProxyConstants.LOCALIZATION].setLanguagesWithLocalizations(decoded.data.enabled_languages);
 
 								/* **********************************************
 								 * Suspend here the layouts, and resume after all
@@ -90,21 +78,25 @@
 										cmControllerType: 'CMDBuild.controller.administration.configuration.Configuration',
 										cmName: 'configuration'
 									}),
-									Ext.create('CMDBuild.view.administration.tasks.CMTasks', {
-										cmControllerType: 'CMDBuild.controller.administration.tasks.CMTasksController',
-										cmName: 'tasks'
-									}),
 									Ext.create('CMDBuild.view.administration.email.EmailView', {
 										cmControllerType: 'CMDBuild.controller.administration.email.Email',
 										cmName: 'email'
 									}),
-									Ext.create('CMDBuild.view.administration.localizations.MainPanel', {
-										cmControllerType: 'CMDBuild.controller.administration.localizations.Main',
+									Ext.create('CMDBuild.view.administration.filter.FilterView', {
+										cmControllerType: 'CMDBuild.controller.administration.filter.Filter',
+										cmName: 'filter'
+									}),
+									Ext.create('CMDBuild.view.administration.localization.LocalizationView', {
+										cmControllerType: 'CMDBuild.controller.administration.localization.Localization',
 										cmName: 'localizations'
 									}),
-									new CMDBuild.view.administration.filter.CMGroupFilterPanel({
-										cmControllerType: controllerNS.administration.filter.CMGroupFilterPanelController,
-										cmName: 'groupfilter'
+									Ext.create('CMDBuild.view.administration.report.ReportView', {
+										cmControllerType: 'CMDBuild.controller.administration.report.Report',
+										cmName: 'report'
+									}),
+									Ext.create('CMDBuild.view.administration.tasks.CMTasks', {
+										cmControllerType: 'CMDBuild.controller.administration.tasks.CMTasksController',
+										cmName: 'tasks'
 									}),
 									new CMDBuild.view.administration.bim.CMBIMPanel({
 										cmControllerType: CMDBuild.controller.administration.filter.CMBIMPanelController,
@@ -120,18 +112,17 @@
 									})
 								];
 
+								/**
+								 * DataViews
+								 */
 								if (!_CMUIConfiguration.isCloudAdmin()) {
-									dataViewAccordion = new CMDBuild.view.administration.accordion.CMDataViewAccordion();
+									dataViewAccordion = Ext.create('CMDBuild.view.administration.accordion.DataView', { cmName: 'dataview' });
 
 									panels = panels.concat([
-										new CMDBuild.view.administration.dataview.CMSqlDataView({
-											cmControllerType: controllerNS.administration.dataview.CMSqlDataViewController,
-											cmName: 'sqldataview'
+										Ext.create('CMDBuild.view.administration.dataView.DataViewView', {
+											cmControllerType: 'CMDBuild.controller.administration.dataView.DataView',
+											cmName: 'dataview'
 										}),
-										new CMDBuild.view.administration.dataview.CMFilterDataView({
-											cmControllerType: controllerNS.administration.dataview.CMFilerDataViewController,
-											cmName: 'filterdataview'
-										})
 									]);
 								}
 
@@ -157,19 +148,19 @@
 							processAccordion,
 							domainAccordion,
 							dataViewAccordion,
-							Ext.create('CMDBuild.view.administration.accordion.CMFilterAccordion'),
+							Ext.create('CMDBuild.view.administration.accordion.Filter', { cmName: 'filter' }),
 							navigationTreesAccordion,
 							lookupAccordion,
 							dashboardsAccordion,
-							reportAccordion,
+							Ext.create('CMDBuild.view.administration.accordion.Report', { cmName: 'report' }),
 							menuAccordion,
 							groupsAccordion,
-							Ext.create('CMDBuild.view.administration.accordion.Tasks'),
-							Ext.create('CMDBuild.view.administration.accordion.Email'),
+							Ext.create('CMDBuild.view.administration.accordion.Tasks', { cmName: 'tasks' }),
+							Ext.create('CMDBuild.view.administration.accordion.Email', { cmName: 'email' }),
 							gisAccordion,
 							bimAccordion,
-//							Ext.create('CMDBuild.view.administration.accordion.Localizations'), // TODO: will be implemented in future releases
-							Ext.create('CMDBuild.view.administration.accordion.Configuration')
+							Ext.create('CMDBuild.view.administration.accordion.Localization', { cmName: 'localizations' }),
+							Ext.create('CMDBuild.view.administration.accordion.Configuration', { cmName: 'setup' })
 						]);
 
 						// Resume here the layouts operations
@@ -184,10 +175,10 @@
 					}
 				);
 
-				/*
+				/**
 				 * BIM Configuration
 				 * */
-				CMDBuild.ServiceProxy.configuration.readBimConfiguration({
+				CMDBuild.core.proxy.Configuration.readBimConfiguration({
 					success: function(response, option, decoded) {
 						var disabled = decoded.data.enabled == 'false';
 						bimAccordion = new CMDBuild.view.administration.accordion.CMBIMAccordion({
@@ -196,11 +187,11 @@
 					}
 				});
 
-				/*
+				/**
 				 * Classes and process
 				 */
 				var params = {};
-				params[CMDBuild.core.proxy.CMProxyConstants.ACTIVE] = false;
+				params[CMDBuild.core.proxy.Constants.ACTIVE] = false;
 
 				CMDBuild.core.proxy.Classes.read({
 					params: params,
@@ -244,10 +235,10 @@
 					callback: reqBarrier.getCallback()
 				});
 
-				/*
+				/**
 				 * Workflow configuration
 				 */
-				CMDBuild.ServiceProxy.configuration.readWFConfiguration({
+				CMDBuild.core.proxy.Configuration.readWFConfiguration({
 					success: function(response, options, decoded) {
 						CMDBuild.Config.workflow = decoded.data;
 						CMDBuild.Config.workflow.enabled = ('true' == CMDBuild.Config.workflow.enabled);
@@ -255,10 +246,10 @@
 					callback: reqBarrier.getCallback()
 				});
 
-				/*
+				/**
 				 * GIS configuration
 				 */
-				CMDBuild.ServiceProxy.configuration.readGisConfiguration({
+				CMDBuild.core.proxy.Configuration.readGisConfiguration({
 					success: function(response, options, decoded) {
 						CMDBuild.Config.gis = decoded.data;
 						CMDBuild.Config.gis.enabled = ('true' == CMDBuild.Config.gis.enabled);
@@ -291,20 +282,24 @@
 					callback: reqBarrier.getCallback()
 				});
 
-				/*
-				 * Lookups
+				/**
+				 * Lookup
 				 */
-				CMDBuild.ServiceProxy.lookup.readAllTypes({
-					success: function(response, options, decoded) {
-						_CMCache.addLookupTypes(decoded);
-						lookupAccordion = new CMDBuild.view.administration.accordion.CMLookupAccordion({
-							cmControllerType: CMDBuild.controller.accordion.CMLookupAccordionController
+				CMDBuild.core.proxy.lookup.Type.readAll({
+					scope: this,
+					success: function(response, options, decodedResponse) {
+						_CMCache.addLookupTypes(decodedResponse);
+
+						lookupAccordion = Ext.create('CMDBuild.view.administration.accordion.Lookup', {
+							cmControllerType: 'CMDBuild.controller.administration.accordion.Lookup',
+							cmName: 'lookuptype',
 						});
 						lookupAccordion.updateStore();
 
 						_CMMainViewportController.addPanel(
-							new CMDBuild.Administration.ModLookup({
-								cmControllerType: controllerNS.administration.lookup.CMModLookupController
+							Ext.create('CMDBuild.view.administration.lookup.LookupView', {
+								cmControllerType: 'CMDBuild.controller.administration.lookup.Lookup',
+								cmName: 'lookuptype'
 							})
 						);
 					},
@@ -347,41 +342,25 @@
 					callback: reqBarrier.getCallback()
 				});
 
-				/*
-				 * Report
-				 */
-				CMDBuild.core.proxy.Report.getMenuTree({
-					success: function(response, options, reports) {
-						_CMCache.addReports(reports);
-
-						reportAccordion = Ext.create('CMDBuild.view.administration.accordion.Report');
-						reportAccordion.updateStore();
-
-						_CMMainViewportController.addPanel(
-							new CMDBuild.view.administration.report.CMModReport({
-								cmControllerType: controllerNS.administration.report.CMModReportController
-							})
-						);
-					},
-					callback: reqBarrier.getCallback()
-				});
-
-				/*
+				/**
 				 * Domains
 				 */
-				CMDBuild.ServiceProxy.administration.domain.list({
-					success: function(response, options, decoded) {
-						_CMCache.addDomains(decoded.domains);
+				CMDBuild.core.proxy.Domain.getAll({
+					scope: this,
+					success: function(response, options, decodedResponse) {
+						_CMCache.addDomains(decodedResponse.domains);
 
 						if (!_CMUIConfiguration.isCloudAdmin()) {
-							domainAccordion = new CMDBuild.view.administration.accordion.CMDomainAccordion({
-								cmControllerType: CMDBuild.controller.accordion.CMDomainAccordionController
+							domainAccordion = Ext.create('CMDBuild.view.administration.accordion.Domain', {
+								cmControllerType: 'CMDBuild.controller.accordion.Domain',
+								cmName: 'domain'
 							});
 							domainAccordion.updateStore();
 
 							_CMMainViewportController.addPanel(
-								new CMDBuild.view.administration.domain.CMModDomain({
-									cmControllerType: controllerNS.administration.domain.CMModDomainController
+								Ext.create('CMDBuild.view.administration.domain.DomainView', {
+									cmControllerType: 'CMDBuild.controller.administration.domain.Domain',
+									cmName:'domain'
 								})
 							);
 						}
@@ -389,7 +368,7 @@
 					callback: reqBarrier.getCallback()
 				});
 
-				/*
+				/**
 				 * Navigation trees
 				 */
 				_CMCache.listNavigationTrees({
@@ -411,7 +390,7 @@
 					callback: reqBarrier.getCallback()
 				});
 
-				/*
+				/**
 				 * Dashboards
 				 */
 				CMDBuild.ServiceProxy.Dashboard.fullList({

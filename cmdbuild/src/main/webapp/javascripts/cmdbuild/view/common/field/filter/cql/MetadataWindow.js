@@ -4,7 +4,7 @@
 		extend: 'CMDBuild.core.PopupWindow',
 
 		requires: [
-			'CMDBuild.core.proxy.CMProxyConstants',
+			'CMDBuild.core.proxy.Constants',
 			'CMDBuild.model.common.filter.cql.Metadata'
 		],
 
@@ -25,7 +25,7 @@
 				dockedItems: [
 					Ext.create('Ext.toolbar.Toolbar', {
 						dock: 'top',
-						itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_TOP,
+						itemId: CMDBuild.core.proxy.Constants.TOOLBAR_TOP,
 
 						items: [
 							Ext.create('CMDBuild.core.buttons.Add', {
@@ -39,7 +39,7 @@
 					}),
 					Ext.create('Ext.toolbar.Toolbar', {
 						dock: 'bottom',
-						itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_BOTTOM,
+						itemId: CMDBuild.core.proxy.Constants.TOOLBAR_BOTTOM,
 						ui: 'footer',
 
 						layout: {
@@ -74,14 +74,14 @@
 						columns: [
 							{
 								text: CMDBuild.Translation.key,
-								dataIndex: CMDBuild.core.proxy.CMProxyConstants.KEY,
+								dataIndex: CMDBuild.core.proxy.Constants.KEY,
 								flex: 1,
 
 								editor: { xtype: 'textfield' }
 							},
 							{
 								text: CMDBuild.Translation.value,
-								dataIndex: CMDBuild.core.proxy.CMProxyConstants.VALUE,
+								dataIndex: CMDBuild.core.proxy.Constants.VALUE,
 								flex: 1,
 
 								editor: { xtype: 'textfield' }

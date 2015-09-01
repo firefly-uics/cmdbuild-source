@@ -4,7 +4,7 @@
 		extend: 'CMDBuild.controller.common.AbstractBasePanelController',
 
 		requires: [
-			'CMDBuild.core.proxy.CMProxyConstants',
+			'CMDBuild.core.proxy.Constants',
 			'CMDBuild.model.group.Group'
 		],
 
@@ -94,14 +94,14 @@
 		 */
 		onViewOnFront: function(parameters) {
 			if (!Ext.isEmpty(parameters)) {
-				var selectedGroupModel = _CMCache.getGroupById(parameters.get(CMDBuild.core.proxy.CMProxyConstants.ID)); // TODO: avoid to use cache (server side implementation)
+				var selectedGroupModel = _CMCache.getGroupById(parameters.get(CMDBuild.core.proxy.Constants.ID)); // TODO: avoid to use cache (server side implementation)
 
 				if (!Ext.isEmpty(selectedGroupModel)) {
 					this.selectedGroupSet(selectedGroupModel.getData());
 
 					this.cmfg('onGroupGroupSelected');
 
-					this.setViewTitle(parameters.get(CMDBuild.core.proxy.CMProxyConstants.TEXT));
+					this.setViewTitle(parameters.get(CMDBuild.core.proxy.Constants.TEXT));
 
 					if (Ext.isEmpty(this.view.tabPanel.getActiveTab()))
 						this.onGroupSetActiveTab();

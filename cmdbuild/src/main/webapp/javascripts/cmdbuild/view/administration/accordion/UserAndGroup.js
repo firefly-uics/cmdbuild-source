@@ -3,7 +3,7 @@
 	Ext.define('CMDBuild.view.administration.accordion.UserAndGroup', {
 		extend: 'CMDBuild.view.common.CMBaseAccordion',
 
-		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+		requires: ['CMDBuild.core.proxy.Constants'],
 
 		/**
 		 * @cfg {CMDBuild.controller.accordion.CMGroupAccordionController}
@@ -34,8 +34,8 @@
 
 			Ext.Object.each(_CMCache.getGroups(), function(id, group, myself) { // TODO: refactor to avoid cache usage
 				nodes.push({
-					text: group.get(CMDBuild.core.proxy.CMProxyConstants.TEXT),
-					id: group.get(CMDBuild.core.proxy.CMProxyConstants.ID),
+					text: group.get(CMDBuild.core.proxy.Constants.TEXT),
+					id: group.get(CMDBuild.core.proxy.Constants.ID),
 					iconCls: 'cmdbuild-tree-group-icon',
 					cmName: this.cmName,
 					leaf: true

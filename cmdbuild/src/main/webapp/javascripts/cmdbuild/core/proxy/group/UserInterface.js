@@ -3,8 +3,8 @@
 	Ext.define('CMDBuild.core.proxy.group.UserInterface', {
 
 		requires: [
-			'CMDBuild.core.proxy.CMProxyConstants',
-			'CMDBuild.core.proxy.CMProxyUrlIndex'
+			'CMDBuild.core.proxy.Constants',
+			'CMDBuild.core.proxy.Index'
 		],
 
 		singleton: true,
@@ -14,7 +14,7 @@
 		 */
 		read: function(parameters) {
 			CMDBuild.Ajax.request({
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.group.userInterface.getGroupUiConfiguration,
+				url: CMDBuild.core.proxy.Index.group.userInterface.getGroupUiConfiguration,
 				params: parameters.params,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
 				scope: parameters.scope || this,
@@ -29,7 +29,7 @@
 		 */
 		update: function(parameters) {
 			CMDBuild.Ajax.request({
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.group.userInterface.saveGroupUiConfiguration,
+				url: CMDBuild.core.proxy.Index.group.userInterface.saveGroupUiConfiguration,
 				params: parameters.params,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
 				scope: parameters.scope || this,

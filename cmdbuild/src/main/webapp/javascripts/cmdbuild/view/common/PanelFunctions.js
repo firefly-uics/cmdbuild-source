@@ -5,7 +5,7 @@
 	 */
 	Ext.define('CMDBuild.view.common.PanelFunctions', {
 
-		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+		requires: ['CMDBuild.core.proxy.Constants'],
 
 		/**
 		 * @param {Boolean} disableTBar
@@ -35,6 +35,7 @@
 				this.cascade(function(item) {
 					if (
 						item
+						&& Ext.isFunction(item.getValue)
 						&& (
 							item instanceof Ext.form.Field
 							|| item instanceof Ext.form.field.Base
@@ -57,10 +58,15 @@
 
 			this.cascade(function(item) {
 				if (
-					item
-					&& (item instanceof Ext.form.Field)
+					!Ext.isEmpty(item)
+					&& (
+						item instanceof Ext.form.Field
+						|| item instanceof Ext.form.field.Base
+						|| item instanceof Ext.form.FieldContainer
+					)
 					&& !item.disabled
 					&& !item.isValid()
+					&& !item.disableCascade // Property to disable cascade on fields
 				) {
 					data.push(item);
 				}
@@ -78,7 +84,7 @@
 		 * @param {Boolean} state
 		 */
 		setDisabledBottomBar: function(state) {
-			var bottomToolbar = this.getDockedComponent(CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_BOTTOM);
+			var bottomToolbar = this.getDockedComponent(CMDBuild.core.proxy.Constants.TOOLBAR_BOTTOM);
 
 			if (!Ext.isEmpty(bottomToolbar))
 				Ext.Array.forEach(bottomToolbar.items.items, function(button, i, allButtons) {
@@ -143,7 +149,7 @@
 		 * @param {Boolean} state
 		 */
 		setDisabledTopBar: function(state) {
-			var topToolbar = this.getDockedComponent(CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_TOP);
+			var topToolbar = this.getDockedComponent(CMDBuild.core.proxy.Constants.TOOLBAR_TOP);
 
 			if (!Ext.isEmpty(topToolbar))
 				Ext.Array.forEach(topToolbar.items.items, function(button, i, allButtons) {

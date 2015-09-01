@@ -3,8 +3,8 @@
 	Ext.define('CMDBuild.core.proxy.widgets.Grid', {
 
 		requires: [
-			'CMDBuild.core.proxy.CMProxyConstants',
-			'CMDBuild.core.proxy.CMProxyUrlIndex',
+			'CMDBuild.core.proxy.Constants',
+			'CMDBuild.core.proxy.Index',
 			'CMDBuild.model.CMModelFunctions'
 		],
 
@@ -18,7 +18,7 @@
 		getFunctions: function(parameters) {
 			CMDBuild.Ajax.request({
 				method: 'POST',
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.functions.getFunctions,
+				url: CMDBuild.core.proxy.Index.functions.getFunctions,
 				scope: parameters.scope || this,
 				failure: parameters.failure || Ext.emptyFn(),
 				success: parameters.success || Ext.emptyFn(),
@@ -42,7 +42,7 @@
 				fields: parameters.fields,
 				proxy: {
 					type: 'ajax',
-					url: CMDBuild.core.proxy.CMProxyUrlIndex.widgets.grid.getSqlCardList,
+					url: CMDBuild.core.proxy.Index.widgets.grid.getSqlCardList,
 					reader: {
 						root: 'cards',
 						type: 'json',

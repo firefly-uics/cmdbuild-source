@@ -127,11 +127,11 @@
 				columns: [
 					{
 						header: CMDBuild.Translation.name,
-						dataIndex: CMDBuild.core.proxy.CMProxyConstants.NAME,
+						dataIndex: CMDBuild.core.proxy.Constants.NAME,
 						flex: 1
 					}, {
 						header: CMDBuild.Translation.description_,
-						dataIndex: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
+						dataIndex: CMDBuild.core.proxy.Constants.DESCRIPTION,
 						flex: 1
 					}
 				],
@@ -318,16 +318,36 @@
 			return this.filter;
 		},
 
+		/**
+		 * Alias getFilter()
+		 *
+		 * @return {Object}
+		 */
+		getValue: function() {
+			return this.getFilter();
+		},
+
+		/**
+		 * @return {Boolean}
+		 */
+		isValid: function() {
+			return !Ext.isEmpty(this.getFilter().getConfiguration());
+		},
+
 		disable: function() {
 			this.items.each(function(item) {
 				item.disable();
 			});
+
+			this.callParent(arguments);
 		},
 
 		enable: function() {
 			this.items.each(function(item) {
 				item.enable();
 			});
+
+			this.callParent(arguments);
 		},
 
 		// as filterChooserWindowDelegate

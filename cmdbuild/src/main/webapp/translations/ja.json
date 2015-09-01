@@ -1,6 +1,6 @@
 {
 	"description": "日本語",
-	"release": "2.3-dev",
+	"release": "2.4-dev",
 	"administration": {
 		"description": "アドミニストレーションモジュール",
 		"modClass": {
@@ -84,10 +84,8 @@
 				"md_label": "マスタ/ディテールラベル",
 				"modify_domain": "ドメイン変更",
 				"name": "名前",
-				"title_add": "ドメイン追加",
-				"title_modify": "ドメイン \"{0}\"の変更"
+				"title_add": "ドメイン追加"
 			},
-			"domains_title": "ドメイン管理",
 			"errors": {
 				"table": {
 					"cast": "エラー：データまたは子クラスを含む \"superclass\" のプロパティを変更しようとしています。",
@@ -282,48 +280,9 @@
 			},
 			"title": "ダッシュボード"
 		},
-		"modLookup": {
-			"add_lookuptype": "ルックアップタイプ追加",
-			"lookupForm": {
-				"active": "アクティブ",
-				"code": "コード",
-				"description": "説明",
-				"disable_lookup": "ルックアップ不可",
-				"enable_lookup": "ルックアップ可能",
-				"isdefault": "既定値",
-				"notes": "ノート",
-				"parentdescription": "親の説明",
-				"update_lookup": "ルックアップ更新"
-			},
-			"lookupGrid": {
-				"active": "アクティブ",
-				"add_lookup": "ルックアップ追加",
-				"code": "コード",
-				"description": "説明",
-				"isdefault": "既定値",
-				"notes": "ノート",
-				"parentdescription": "親の説明"
-			},
-			"lookupType": "ルックアップタイプ",
-			"lookupTypeForm": {
-				"active": "アクティブ",
-				"delete_lookuptype": "ルックアップタイプ削除",
-				"description": "説明",
-				"modify_lookuptype": "ルックアップタイプ変更",
-				"parent": "親",
-				"title": "ルックアップ管理"
-			},
-			"lookupTypes": "ルックアップタイプ",
-			"tabs": {
-				"lookuplist": "ルックアップリスト",
-				"properties": "プロパティ"
-			},
-			"title": "ルックアップ管理"
-		},
 		"modWorkflow": {
 			"add_process": "プロセス追加",
 			"attributes_title": "属性管理",
-			"domains_title": "ドメイン管理",
 			"errors": {
 				"table": {
 					"cast": "データまたはサブクラスを持つスパークラスの属性は変更できません",
@@ -401,56 +360,6 @@
 		},
 		"modconnectors": {
 			"title": "コネクタ"
-		},
-		"modmenu": {
-			"add_menu": "メニュー追加",
-			"available_elements": "利用可能なエレメント",
-			"availabletree": {
-				"class": "クラス",
-				"dashboard": "ダッシュボード",
-				"processclass": "アクティビティ",
-				"report": "レポート",
-				"view": "ビュー"
-			},
-			"custom_menu": "カスタムメニュー",
-			"custom_menus": "カスタムメニュー",
-			"delete_menu": "メニュー削除",
-			"menu_root": "メニュー",
-			"modify_menu": "メニュー変更",
-			"new_folder": "新しいフォルダ",
-			"title": "メニュー管理"
-		},
-		"modreport": {
-			"add": "レポート追加",
-			"importJRFormStep1": {
-				"description": "レポートの説明",
-				"enabled_groups": "可能なグループ",
-				"fieldset": "jasper レポートインポート",
-				"master_report_jrxml": "マスタレポート(.jrxml)",
-				"menuTitle": "Jasper-reports レポート",
-				"name": "レポート名"
-			},
-			"importJRFormStep2": {
-				"duplicate_images": "警告: 同名のレポートイメージがあります。処理を継続できません。",
-				"fieldset_generic": "jasperレポートをインポート",
-				"fieldset_images": "必要なイメージ",
-				"fieldset_subreports": "必要なサブレポート",
-				"menuTitle": "レポート Jasper-reports",
-				"nothing_to_import": "イメージまたはサブレポートが見つかりません。インポートを続けるにはご確認ください。",
-				"success": {
-					"description": {
-						"add": "インポート完了",
-						"modify": "レポート変更完了"
-					},
-					"title": "成功"
-				}
-			},
-			"importOpenofficeTemplateForm": {
-				"menuTitle": "オープンオフィス　レポート"
-			},
-			"modify": "レポート変更",
-			"remove": "レポート削除",
-			"title": "レポート"
 		},
 		"tasks": {
 			"add": "タスクを追加",
@@ -584,6 +493,7 @@
 			"importLabel": "インポート",
 			"load": "ロード",
 			"modify": "更新",
+			"move": "<em>Move</em>",
 			"next": "次",
 			"previous": "前",
 			"print": "印刷",
@@ -876,6 +786,8 @@
 			"WIDGET_SERVICE_MALFORMED_REQUEST": "名前空間、メソッド名とWebサービスのパラメータが正しいかどうかをチェックしてください>"
 		},
 		"reference_invalid": "値がフィルタと一致しません",
+		"reportsImportError": "<em>Error while importing report</em>",
+		"reportsAnalizeError": "<em>Error while analizing report</em>",
 		"requiredFieldMessage": "このフィールドは必須です",
 		"routesInvalidCardIdentifier": "ルートエラー: 不正なカード識別子",
 		"routesInvalidClassIdentifier": "ルートエラー: 不正なクラス識別子",
@@ -1075,22 +987,6 @@
 			"showgraph": "グラフ表示",
 			"shownotes": "ノート表示"
 		},
-		"modmenu": {
-			"menu": "ナビゲーション"
-		},
-		"modreport": {
-			"add_report": "レポート追加",
-			"delete_report": "レポート削除",
-			"modify_report": "レポート編集",
-			"reportForm": {
-				"description": "説明",
-				"name": "名前",
-				"report": "レポート"
-			},
-			"report_parameters": "レポートパラメータ",
-			"title": "リスト - ",
-			"treetitle": "レポート"
-		},
 		"modutilities": {
 			"bulkupdate": {
 				"title": "多重更新",
@@ -1142,9 +1038,6 @@
 				},
 				"calendar": {
 					"wrong_config": "カレンダは正しく設定されていません"
-				},
-				"createreport": {
-					"format_label": "フォーマット"
 				},
 				"linkcards": {
 					"required": "カードを選択ください - "
@@ -1205,6 +1098,7 @@
 		"link_cards_changed_values": "\"{0}\" の選択は更新されました",
 		"only_filtered": "現在のフィルターに一致しているカードにのみ変更は適用されます",
 		"popup_block": "ポップアップブロックが有効になっています。操作と行うためにはそれを無効にしてください。",
+		"reportsDuplicateImageFilename": "警告: 同名のレポートイメージがあります。処理を継続できません。",
 		"saveMenuBeforeAccess": "このエレメントの翻訳にアクセスする前にメニューは保存される必要があります。",
 		"warning_message": "警告"
 	},
@@ -1216,14 +1110,19 @@
 	"add": "追加",
 	"addAccount": "アカウントを追加",
 	"addAttachmentFromDms": "DMSから添付を追加",
+	"addDomain": "ドメイン追加",
 	"addFilter": "フィルタを追加",
 	"addGroup": "グループ追加",
+	"addLookup": "ルックアップ追加",
+	"addLookupType": "ルックアップタイプ追加",
 	"addProject": "プロジェクトを追加",
 	"addRelations": "リレーション追加",
+	"addReport": "レポート追加",
 	"addRow": "行を追加",
 	"addTemplate": "テンプレートを追加",
 	"addUser": "ユーザー追加",
 	"addView": "ビューを追加",
+	"add_attachment_from_dms": "DMSから添付を追加",
 	"address": "アドレス",
 	"administrator": "アドミニストレータ",
 	"alfresco": "Alfresco",
@@ -1235,6 +1134,7 @@
 	"attention": "注意",
 	"attribute": "属性",
 	"attributes": "アクティビティ",
+	"availableElements": "利用可能なエレメント",
 	"availableFilters": "使用可能なフィルタ",
 	"availableUsers": "利用可能なユーザー",
 	"baseProperties": "基本プロパティ",
@@ -1247,6 +1147,7 @@
 	"cacheManagement": "キャッシュ管理",
 	"camera": "カメラ",
 	"cardPanelHeight": "カードパネルの高さ(%)",
+	"cardinality": "関係性",
 	"cards": "カード",
 	"cc": "Cc",
 	"changePassword": "パスワード変更",
@@ -1261,6 +1162,7 @@
 	"clearFilter": "フィルタークリアー",
 	"clearRowAndColumnPrivilege": "行と列の特権をクリア",
 	"cmdbuildCategory": "CMDBuild カテゴリ",
+	"code": "コード",
 	"columnsPrivileges": "列の権限",
 	"composeEmail": "email作成",
 	"composeFromTemplate": "テンプレートから作成",
@@ -1277,7 +1179,9 @@
 	"credentials": "資格",
 	"csv": "CSV",
 	"csvFile": "CSV ファイル",
+	"customMenu": "カスタムメニュー",
 	"dashboard": "ダッシュボード",
+	"dataSource": "データソース",
 	"defaultAccount": "既定のアカウント",
 	"defaultClass": "既定のクラス",
 	"defaultFilters": "<em>Default filters</em>",
@@ -1287,6 +1191,7 @@
 	"defaultLanguage": "既定の言語",
 	"defaultLevel": "既定のレベル",
 	"delay": "<em>Delay</em>",
+	"deleteDomain": "ドメイン削除",
 	"deleteLabel": "を削除",
 	"deleteRow": "行を削除",
 	"descriptionLabel": "説明",
@@ -1294,9 +1199,11 @@
 	"destination": "終点",
 	"detail": "<em>Detail</em>",
 	"details": "詳細",
+	"directDescription": "順方向の説明",
 	"disable": "無効",
 	"disableGridFilter": "グリッドフィルターを無効に",
 	"disableGroup": "グループ無効化",
+	"disableLookup": "ルックアップ不可",
 	"disableUser": "無効なユーザー",
 	"disabledFeatures": "無効なモジュール",
 	"disabledTabsInClassesModule": "クラスモジュールでは無効なタブ",
@@ -1304,6 +1211,7 @@
 	"display_less_attributes": "より少ない属性を表示",
 	"display_more_attributes": "より多くの属性を表示",
 	"domain": "ドメイン",
+	"domains": "ドメイン",
 	"download": "<em>Download</em>",
 	"download_ifc_file": "Ifcファイルをダウンロード",
 	"edit": "を編集",
@@ -1317,11 +1225,13 @@
 	"enable": "有効にする",
 	"enableGridFilter": "グリッドフィルターを有効に",
 	"enableGroup": "グループの有効化",
+	"enableLookup": "ルックアップ可能",
 	"enableMoveRejectedNotMatching": "マッチせずにリジェクトされた移動を可能にする",
 	"enableSsl": "SSLを有効化",
 	"enableUser": "可能なユーザー",
 	"enabled": "有効",
 	"enabledClasses": "<em>Enabled classes</em>",
+	"enabledGroups": "可能なグループ",
 	"enabledLanguages": "利用可能な言語",
 	"endDate": "終了日",
 	"engineName": "エンジン名",
@@ -1335,7 +1245,7 @@
 	"fileServerPath": "ファイルサーバへのパス",
 	"filter": "フィルタ",
 	"filterView": "フィルタから",
-	"filters_for_groups": "グループへのフィルタ",
+	"filtersForGroups": "グループへのフィルタ",
 	"format": "フォーマット",
 	"format_csv": "CSV",
 	"format_odt": "OpenOffice Odt",
@@ -1360,6 +1270,7 @@
 	"imapServer": "IMAPサーバー",
 	"import": "<em>Import</em>",
 	"importFromCSV": "CSVからインポート",
+	"importJasperReport": "jasperレポートをインポート",
 	"includeRelations": "<em>Include relations</em>",
 	"includeSystemActivities": "<em>Include system activities</em>",
 	"incoming": "受信",
@@ -1368,6 +1279,7 @@
 	"initialLongitude": "初期経度",
 	"initialZoomLevel": "初期ズームレベル",
 	"instanceName": "インスタンス名",
+	"inverseDescription": "逆方向の説明",
 	"ipType": "IPタイプ",
 	"ipv4": "ipv4",
 	"ipv6": "ipv6",
@@ -1383,19 +1295,31 @@
 	"lockTimeout": "ロックタイムアウト",
 	"loggedGroup": "ロググループ",
 	"loggedUser": "ログユーザー",
+	"lookupList": "ルックアップリスト",
+	"lookupTypes": "ルックアップタイプ",
 	"main": "メイン",
 	"manualRegeneration": "<em>Manual Regeneration</em>",
+	"masterDetail": "マスタ/ディテール",
+	"masterDetailLabel": "マスタ/ディテールラベル",
+	"masterReportJrxml": "マスタレポート(.jrxml)",
 	"maximumLevel": "最大値",
+	"menu": "メニュー",
 	"mode": "モード",
 	"modifyAccount": "アカウントの変更",
+	"modifyDomain": "ドメイン変更",
 	"modifyFilter": "フィルターを変更",
 	"modifyGroup": "グループ変更",
+	"modifyLookup": "ルックアップ更新",
+	"modifyLookupType": "ルックアップタイプ変更",
 	"modifyProject": "プロジェクトを変更",
+	"modifyReport": "レポート変更",
 	"modifyTemplate": "テンプレートを変更",
 	"modifyUser": "ユーザー更新",
 	"modifyView": "ビューを変更",
 	"multiGroup": "マルチグループ",
 	"name": "名前",
+	"navigation": "ナビゲーション",
+	"newFolder": "新しいフォルダ",
 	"noAvailableData": "<em>No available data</em>",
 	"no_bim_project_for_card": "このカードにはBMIプロジェクトがありません",
 	"none": "権限なし",
@@ -1410,6 +1334,8 @@
 	"otherOptions": "他のオプション",
 	"outgoing": "送信",
 	"pan": "パン",
+	"parent": "親",
+	"parentDescription": "親の説明",
 	"password": "パスワード",
 	"pdf": "PDF",
 	"permissions": "許可",
@@ -1418,6 +1344,7 @@
 	"popupWindows": "ポップアップウインドウ",
 	"port": "ポート",
 	"preselectIfUnique": "<em>Preselect if unique</em>",
+	"printPreview": "<em>Print preview</em>",
 	"privileged": "<em>Privileged</em>",
 	"processWidgetsAlwaysEnabled": "プロセスのウィジェットは、常に有効",
 	"processedFolder": "処理済みフォルダー",
@@ -1440,13 +1367,16 @@
 	"remove": "削除",
 	"removeAccount": "アカウント削除",
 	"removeFilter": "ビューを削除",
+	"removeMenu": "メニュー削除",
 	"removeProject": "プロジェクトを削除",
+	"removeReport": "レポート削除",
 	"removeTemplate": "テンプレートを削除",
 	"removeView": "ビューを削除",
 	"remove_formatting": "フォーマットを削除",
 	"replace": "リプレース",
 	"reply": "<em>Reply</em>",
-	"report": "<em>Report</em>",
+	"report": "レポート",
+	"reportMenuJasper": "<em>Jasper-reports report</em>",
 	"reportParameters": "<em>Report parameters</em>",
 	"repository": "リポジトリ",
 	"reset": "リセット",
@@ -1485,6 +1415,7 @@
 	"simpleHistoryForProcesses": "プロセスの単純な履歴",
 	"smtpPort": "SMTPポート",
 	"smtpServer": "SMTPサーバー",
+	"sql": "SQL",
 	"sqlView": "SQL から",
 	"standard": "標準",
 	"start": "<em>Start</em>",
@@ -1544,5 +1475,6 @@
 	"workflow_query_tipology": "選択",
 	"write": "書込権限",
 	"you_have_not_set_a_filter": "フィルタを設定していません",
+	"zip": "ZIP",
 	"zoom": "ズーム"
 }

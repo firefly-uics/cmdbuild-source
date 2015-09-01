@@ -106,7 +106,7 @@
 	Ext.define('CMDBuild.view.administration.tasks.email.CMStep4', {
 		extend: 'Ext.panel.Panel',
 
-		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+		requires: ['CMDBuild.core.proxy.Constants'],
 
 		/**
 		 * @cfg {CMDBuild.view.administration.tasks.email.CMStep4Delegate}
@@ -132,13 +132,13 @@
 
 			this.workflowForm = Ext.create('CMDBuild.view.administration.tasks.common.workflowForm.CMWorkflowForm', {
 				combo: {
-					name: CMDBuild.core.proxy.CMProxyConstants.WORKFLOW_CLASS_NAME
+					name: CMDBuild.core.proxy.Constants.WORKFLOW_CLASS_NAME
 				}
 			});
 
 			this.workflowFieldset = Ext.create('Ext.form.FieldSet', {
 				title: tr.startWorkflow,
-				checkboxName: CMDBuild.core.proxy.CMProxyConstants.WORKFLOW_ACTIVE,
+				checkboxName: CMDBuild.core.proxy.Constants.WORKFLOW_ACTIVE,
 				checkboxToggle: true,
 				collapsed: true,
 				collapsible: true,

@@ -3,16 +3,16 @@
 	Ext.define('CMDBuild.model.widget.WidgetDefinition', {
 		extend: 'Ext.data.Model',
 
-		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+		requires: ['CMDBuild.core.proxy.Constants'],
 
 		fields: [
-			{ name: CMDBuild.core.proxy.CMProxyConstants.ACTIVE, type: 'boolean', defaultValue: true },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.ID, type: 'string' },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.LABEL, type: 'string' },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.TYPE, type: 'string' }
+			{ name: CMDBuild.core.proxy.Constants.ACTIVE, type: 'boolean', defaultValue: true },
+			{ name: CMDBuild.core.proxy.Constants.ID, type: 'int', useNull: true },
+			{ name: CMDBuild.core.proxy.Constants.LABEL, type: 'string' },
+			{ name: CMDBuild.core.proxy.Constants.TYPE, type: 'string' }
 		],
 
-		idProperty: CMDBuild.core.proxy.CMProxyConstants.ID,
+		idProperty: CMDBuild.core.proxy.Constants.ID,
 
 		/**
 		 * @property {Object} raw

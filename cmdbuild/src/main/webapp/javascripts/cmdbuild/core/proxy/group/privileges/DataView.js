@@ -3,8 +3,8 @@
 	Ext.define('CMDBuild.core.proxy.group.privileges.DataView', {
 
 		requires: [
-			'CMDBuild.core.proxy.CMProxyConstants',
-			'CMDBuild.core.proxy.CMProxyUrlIndex',
+			'CMDBuild.core.proxy.Constants',
+			'CMDBuild.core.proxy.Index',
 			'CMDBuild.model.group.privileges.GridRecord'
 		],
 
@@ -19,14 +19,14 @@
 				model: 'CMDBuild.model.group.privileges.GridRecord',
 				proxy: {
 					type: 'ajax',
-					url: CMDBuild.core.proxy.CMProxyUrlIndex.privileges.dataView.read,
+					url: CMDBuild.core.proxy.Index.privileges.dataView.read,
 					reader: {
 						type: 'json',
 						root: 'privileges'
 					}
 				},
 				sorters: [
-					{ property: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION, direction: 'ASC' }
+					{ property: CMDBuild.core.proxy.Constants.DESCRIPTION, direction: 'ASC' }
 				]
 			});
 		},
@@ -36,7 +36,7 @@
 		 */
 		update: function(parameters) {
 			CMDBuild.Ajax.request({
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.privileges.dataView.update,
+				url: CMDBuild.core.proxy.Index.privileges.dataView.update,
 				params: parameters.params,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
 				scope: parameters.scope || this,

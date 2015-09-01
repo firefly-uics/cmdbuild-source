@@ -7,7 +7,8 @@
 
 		requires: [
 			'CMDBuild.core.proxy.CMProxy',
-			'CMDBuild.core.proxy.CMProxyConstants'
+			'CMDBuild.core.proxy.Configuration',
+			'CMDBuild.core.proxy.Constants'
 		],
 
 		frame: false,
@@ -42,7 +43,7 @@
 
 		statics: {
 			buildAfterRequest: function() {
-				CMDBuild.ServiceProxy.configuration.readMainConfiguration({
+				CMDBuild.core.proxy.Configuration.readMainConfiguration({
 					scope: this,
 					success: function(result, options, decodedResult) {
 						CMDBuild.Config.cmdbuild = decodedResult.data;
@@ -76,7 +77,7 @@
 			this.user = Ext.create('Ext.form.field.Text', {
 				scope: this,
 				fieldLabel: tr.username,
-				name: CMDBuild.core.proxy.CMProxyConstants.USERNAME,
+				name: CMDBuild.core.proxy.Constants.USERNAME,
 				allowBlank: false,
 
 				listeners: enterKeyListener
@@ -85,7 +86,7 @@
 			this.password = Ext.create('Ext.form.field.Text', {
 				scope: this,
 				fieldLabel: tr.password,
-				name: CMDBuild.core.proxy.CMProxyConstants.PASSWORD,
+				name: CMDBuild.core.proxy.Constants.PASSWORD,
 				inputType: 'password',
 				allowBlank: false,
 
@@ -93,20 +94,20 @@
 			});
 
 			this.role = Ext.create('Ext.form.field.ComboBox', {
-				name: CMDBuild.core.proxy.CMProxyConstants.ROLE,
-				hiddenName: CMDBuild.core.proxy.CMProxyConstants.ROLE,
+				name: CMDBuild.core.proxy.Constants.ROLE,
+				hiddenName: CMDBuild.core.proxy.Constants.ROLE,
 				id: 'rolefield',
 				fieldLabel: tr.multi_group,
 				hideMode: 'offsets',
-				valueField: CMDBuild.core.proxy.CMProxyConstants.NAME,
-				displayField: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
+				valueField: CMDBuild.core.proxy.Constants.NAME,
+				displayField: CMDBuild.core.proxy.Constants.DESCRIPTION,
 				scope: this,
 				editable: false,
 
 				store: Ext.create('Ext.data.Store', {
-					fields: [CMDBuild.core.proxy.CMProxyConstants.NAME, CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION],
+					fields: [CMDBuild.core.proxy.Constants.NAME, CMDBuild.core.proxy.Constants.DESCRIPTION],
 					sorters: [{
-						property: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
+						property: CMDBuild.core.proxy.Constants.DESCRIPTION,
 						direction: 'ASC'
 					}]
 				}),

@@ -3,10 +3,9 @@
 	Ext.define('CMDBuild.view.administration.accordion.Email', {
 		extend: 'CMDBuild.view.common.CMBaseAccordion',
 
-		cmName: 'email',
 		title: CMDBuild.Translation.email,
 
-		constructor: function(){
+		constructor: function() {
 			this.callParent(arguments);
 
 			this.updateStore();
@@ -16,7 +15,8 @@
 		 * @override
 		 */
 		updateStore: function() {
-			this.store.getRootNode().appendChild([
+			this.getStore().getRootNode().removeAll();
+			this.getStore().getRootNode().appendChild([
 				{
 					id: 'accounts',
 					cmName: 'email',

@@ -38,8 +38,9 @@ public class LocalizedStorableConverter<T extends Storable> extends ForwardingSt
 
 			@Override
 			public Widget apply(final Widget input) {
-				final TranslationObject translationObject = WidgetConverter.of(WidgetConverter.label()).create(
-						input.getIdentifier());
+				final TranslationObject translationObject = WidgetConverter.of(WidgetConverter.label()) //
+						.withIdentifier(input.getIdentifier()) //
+						.create();
 				final String translatedDescription = facade.read(translationObject);
 				input.setLabel(defaultIfBlank(translatedDescription, input.getLabel()));
 				return input;

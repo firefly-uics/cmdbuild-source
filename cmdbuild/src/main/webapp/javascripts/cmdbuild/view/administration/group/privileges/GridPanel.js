@@ -3,7 +3,7 @@
 	Ext.define('CMDBuild.view.administration.group.privileges.GridPanel', {
 		extend: 'Ext.grid.Panel',
 
-		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+		requires: ['CMDBuild.core.proxy.Constants'],
 
 		/**
 		 * @cfg {CMDBuild.controller.administration.group.privileges.Grid}
@@ -33,7 +33,7 @@
 			Ext.apply(this, {
 				columns: [
 					Ext.create('Ext.grid.column.Column', {
-						dataIndex: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
+						dataIndex: CMDBuild.core.proxy.Constants.DESCRIPTION,
 						text: CMDBuild.Translation.descriptionLabel,
 						flex: 1,
 					}),
@@ -145,7 +145,7 @@
 								scope: this,
 
 								isDisabled: function(grid, rowIndex, colIndex, item, record) {
-									return !_CMCache.isClassById(record.get(CMDBuild.core.proxy.CMProxyConstants.ID));
+									return !_CMCache.isClassById(record.get(CMDBuild.core.proxy.Constants.ID));
 								},
 
 								handler: function(grid, rowIndex, colIndex, node, e, record, rowNode) {

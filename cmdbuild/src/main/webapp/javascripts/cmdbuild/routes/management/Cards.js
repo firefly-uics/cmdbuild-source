@@ -29,8 +29,8 @@
 		 * @cfg {Array}
 		 */
 		supportedPrintFormats: [
-			CMDBuild.core.proxy.CMProxyConstants.PDF,
-			CMDBuild.core.proxy.CMProxyConstants.ODT
+			CMDBuild.core.proxy.Constants.PDF,
+			CMDBuild.core.proxy.Constants.ODT
 		],
 
 		/**
@@ -52,7 +52,7 @@
 					Ext.Function.createDelayed(function() {
 						_CMMainViewportController.openCard({
 							Id: this.cardIdentifier,
-							IdClass: this.entryType.get(CMDBuild.core.proxy.CMProxyConstants.ID),
+							IdClass: this.entryType.get(CMDBuild.core.proxy.Constants.ID),
 							activateFirstTab: true
 						});
 					}, 500, this)();
@@ -79,10 +79,10 @@
 		 * @return  {Boolean}
 		 */
 		paramsValidation: function(params) {
-			this.cardIdentifier = params[CMDBuild.core.proxy.CMProxyConstants.CARD_IDENTIFIER];
-			this.classIdentifier = params[CMDBuild.core.proxy.CMProxyConstants.CLASS_IDENTIFIER];
-			this.clientFilterString = params[CMDBuild.core.proxy.CMProxyConstants.CLIENT_FILTER];
-			this.printFormat = params[CMDBuild.core.proxy.CMProxyConstants.FORMAT] || CMDBuild.core.proxy.CMProxyConstants.PDF;
+			this.cardIdentifier = params[CMDBuild.core.proxy.Constants.CARD_IDENTIFIER];
+			this.classIdentifier = params[CMDBuild.core.proxy.Constants.CLASS_IDENTIFIER];
+			this.clientFilterString = params[CMDBuild.core.proxy.Constants.CLIENT_FILTER];
+			this.printFormat = params[CMDBuild.core.proxy.Constants.FORMAT] || CMDBuild.core.proxy.Constants.PDF;
 
 			// Class identifier validation
 			if (
@@ -135,7 +135,7 @@
 			this.detail(params, path, router);
 
 			Ext.Function.createDelayed(function() {
-				_CMMainViewportController.panelControllers[CMDBuild.core.proxy.CMProxyConstants.CLASS].cardPanelController.onPrintCardMenuClick(this.printFormat);
+				_CMMainViewportController.panelControllers[CMDBuild.core.proxy.Constants.CLASS].cardPanelController.onPrintCardMenuClick(this.printFormat);
 			}, 1500, this)();
 		},
 

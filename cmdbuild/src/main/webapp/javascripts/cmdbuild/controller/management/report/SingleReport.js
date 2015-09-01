@@ -5,9 +5,9 @@
 
 		requires: [
 			'CMDBuild.core.Message',
-			'CMDBuild.core.proxy.CMProxyConstants',
-			'CMDBuild.core.proxy.CMProxyUrlIndex',
-			'CMDBuild.core.proxy.Report'
+			'CMDBuild.core.proxy.Constants',
+			'CMDBuild.core.proxy.Index',
+			'CMDBuild.core.proxy.report.Report'
 		],
 
 		/**
@@ -15,8 +15,8 @@
 		 */
 		cmfgCatchedFunctions: [
 			'currentReportParametersSet',
-			'onReportDownloadButtonClick',
-			'onReportTypeButtonClick',
+			'onSingleReportDownloadButtonClick',
+			'onSingleReportTypeButtonClick',
 			'updateReport'
 		],
 
@@ -43,10 +43,10 @@
 		 * @cfg {Array}
 		 */
 		managedReportTypes: [
-			CMDBuild.core.proxy.CMProxyConstants.CSV,
-			CMDBuild.core.proxy.CMProxyConstants.ODT,
-			CMDBuild.core.proxy.CMProxyConstants.PDF,
-			CMDBuild.core.proxy.CMProxyConstants.RTF
+			CMDBuild.core.proxy.Constants.CSV,
+			CMDBuild.core.proxy.Constants.ODT,
+			CMDBuild.core.proxy.Constants.PDF,
+			CMDBuild.core.proxy.Constants.RTF
 		],
 
 		/**
@@ -60,10 +60,15 @@
 		createReport: function(forceDownload) {
 			forceDownload = forceDownload || false;
 
-			if (!Ext.isEmpty(this.currentReportParametersGet('create', CMDBuild.core.proxy.CMProxyConstants.ID))) {
-				CMDBuild.core.proxy.Report.createReport({
+			if (
+				!Ext.isEmpty(this.currentReportParametersGet({
+					callIdentifier: 'create',
+					property: CMDBuild.core.proxy.Constants.ID
+				}))
+			) {
+				CMDBuild.core.proxy.report.Report.create({
+					params: this.currentReportParametersGet({ callIdentifier: 'create' }),
 					scope: this,
-					params: this.currentReportParametersGet('create'),
 					failure: function(response, options, decodedResponse) {
 						CMDBuild.core.Message.error(
 							CMDBuild.Translation.error,
@@ -97,12 +102,16 @@
 
 		// CurrentReportParameters methods
 			/**
-			 * @param {String} callIdentifier
-			 * @param {String} property
+			 * @param {Object} parameters
+			 * @param {String} parameters.callIdentifier
+			 * @param {String} parameters.property
 			 *
 			 * @returns {Object}
 			 */
-			currentReportParametersGet: function(callIdentifier, property) {
+			currentReportParametersGet: function(parameters) {
+				var callIdentifier = parameters.callIdentifier;
+				var property = parameters.property;
+
 				if (
 					!Ext.isEmpty(callIdentifier)
 					&& Ext.isString(callIdentifier)
@@ -128,7 +137,7 @@
 					&& Ext.isString(callIdentifier)
 					&& Ext.Array.contains(this.managedCurrentReportParametersCallIdentifiers, callIdentifier)
 				) {
-					return Ext.isEmpty(this.currentReportParametersGet(callIdentifier));
+					return Ext.isEmpty(this.currentReportParametersGet({ callIdentifier: callIdentifier }));
 				}
 
 				return Ext.isEmpty(this.currentReportParametersGet());
@@ -147,7 +156,7 @@
 					switch(callIdentifier) {
 						case 'create': {
 							this.currentReportParameters['create'] = Ext.applyIf(params, { // Apply default values
-								extension: CMDBuild.core.proxy.CMProxyConstants.PDF,
+								extension: CMDBuild.core.proxy.Constants.PDF,
 								type: 'CUSTOM'
 							});
 						} break;
@@ -168,20 +177,23 @@
 		/**
 		 * Show report with force download
 		 */
-		onReportDownloadButtonClick: function() {
+		onSingleReportDownloadButtonClick: function() {
 			this.showReport(true);
 		},
 
 		/**
 		 * @param {String} type
 		 */
-		onReportTypeButtonClick: function(type) {
+		onSingleReportTypeButtonClick: function(type) {
 			if (Ext.Array.contains(this.managedReportTypes, type)) {
 				this.currentReportParametersSet({
 					callIdentifier: 'create',
 					params: {
 						extension: type,
-						id: this.currentReportParametersGet('create', CMDBuild.core.proxy.CMProxyConstants.ID)
+						id: this.currentReportParametersGet({
+							callIdentifier: 'create',
+							property: CMDBuild.core.proxy.Constants.ID
+						})
 					}
 				});
 
@@ -203,16 +215,16 @@
 
 			if (
 				!Ext.Object.isEmpty(node)
-				&& !Ext.isEmpty(node.get(CMDBuild.core.proxy.CMProxyConstants.ID))
-				&& node.get(CMDBuild.core.proxy.CMProxyConstants.ID) != CMDBuild.core.proxy.CMProxyConstants.CUSTOM
+				&& !Ext.isEmpty(node.get(CMDBuild.core.proxy.Constants.ID))
+				&& node.get(CMDBuild.core.proxy.Constants.ID) != CMDBuild.core.proxy.Constants.CUSTOM
 			) {
-				this.view.setTitle(this.view.sectionTitle + ' - ' + node.get(CMDBuild.core.proxy.CMProxyConstants.TEXT));
+				this.setViewTitle(node.get(CMDBuild.core.proxy.Constants.TEXT));
 
 				this.currentReportParametersSet({
 					callIdentifier: 'create',
 					params: {
-						extension: node.get(CMDBuild.core.proxy.CMProxyConstants.TYPE).replace(/report/i, ''), // Removes 'report' string from type property in node object
-						id: node.get(CMDBuild.core.proxy.CMProxyConstants.ID)
+						extension: node.get(CMDBuild.core.proxy.Constants.TYPE).replace(/report/i, ''), // Removes 'report' string from type property in node object
+						id: node.get(CMDBuild.core.proxy.Constants.ID)
 					}
 				});
 
@@ -231,12 +243,12 @@
 			forceDownload = forceDownload || false;
 
 			var params = {};
-			params[CMDBuild.core.proxy.CMProxyConstants.FORCE_DOWNLOAD_PARAM_KEY] = true;
+			params[CMDBuild.core.proxy.Constants.FORCE_DOWNLOAD_PARAM_KEY] = true;
 
 			if (forceDownload) { // Force download mode
 				var form = Ext.create('Ext.form.Panel', {
 					standardSubmit: true,
-					url: CMDBuild.core.proxy.CMProxyUrlIndex.reports.printReportFactory + '?donotdelete=true' // Add parameter to avoid report delete
+					url: CMDBuild.core.proxy.Index.reports.printReportFactory + '?donotdelete=true' // Add parameter to avoid report delete
 				});
 
 				form.submit({
@@ -255,7 +267,7 @@
 
 					autoEl: {
 						tag: 'iframe',
-						src: CMDBuild.core.proxy.CMProxyUrlIndex.reports.printReportFactory + '?donotdelete=true' // Add parameter to avoid report delete
+						src: CMDBuild.core.proxy.Index.reports.printReportFactory + '?donotdelete=true' // Add parameter to avoid report delete
 					}
 				});
 			}
@@ -266,8 +278,8 @@
 		 */
 		updateReport: function(forceDownload) {
 			if (!this.currentReportParametersIsEmpty('update')) {
-				CMDBuild.core.proxy.Report.updateReport({
-					params: this.currentReportParametersGet('update'),
+				CMDBuild.core.proxy.report.Report.update({
+					params: this.currentReportParametersGet({ callIdentifier: 'update' }),
 					scope: this,
 					success: function(response, options, decodedResponse) {
 						this.showReport(forceDownload);

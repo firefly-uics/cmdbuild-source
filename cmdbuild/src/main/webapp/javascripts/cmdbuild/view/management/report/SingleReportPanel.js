@@ -3,7 +3,7 @@
 	Ext.define('CMDBuild.view.management.report.SingleReportPanel', {
 		extend: 'Ext.panel.Panel',
 
-		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+		requires: ['CMDBuild.core.proxy.Constants'],
 
 		/**
 		 * @cfg {CMDBuild.controller.management.report.SingleReport}
@@ -18,7 +18,7 @@
 		/**
 		 * @cfg {String}
 		 */
-		sectionTitle: CMDBuild.Translation.report,
+		baseTitle: CMDBuild.Translation.report,
 
 		border: true,
 		frame: false,
@@ -29,43 +29,43 @@
 				dockedItems: [
 					Ext.create('Ext.toolbar.Toolbar', {
 						dock: 'top',
-						itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_TOP,
+						itemId: CMDBuild.core.proxy.Constants.TOOLBAR_TOP,
 
 						items: [
-							Ext.create('CMDBuild.core.buttons.FileFormatsPdf', {
+							Ext.create('CMDBuild.core.buttons.fileTypes.Pdf', {
 								scope: this,
 
 								handler: function(button, e) {
-									this.delegate.cmfg('onReportTypeButtonClick', CMDBuild.core.proxy.CMProxyConstants.PDF);
+									this.delegate.cmfg('onSingleReportTypeButtonClick', CMDBuild.core.proxy.Constants.PDF);
 								}
 							}),
-							Ext.create('CMDBuild.core.buttons.FileFormatsOdt', {
+							Ext.create('CMDBuild.core.buttons.fileTypes.Odt', {
 								scope: this,
 
 								handler: function(button, e) {
-									this.delegate.cmfg('onReportTypeButtonClick', CMDBuild.core.proxy.CMProxyConstants.ODT);
+									this.delegate.cmfg('onSingleReportTypeButtonClick', CMDBuild.core.proxy.Constants.ODT);
 								}
 							}),
-							Ext.create('CMDBuild.core.buttons.FileFormatsRtf', {
+							Ext.create('CMDBuild.core.buttons.fileTypes.Rtf', {
 								scope: this,
 
 								handler: function(button, e) {
-									this.delegate.cmfg('onReportTypeButtonClick', CMDBuild.core.proxy.CMProxyConstants.RTF);
+									this.delegate.cmfg('onSingleReportTypeButtonClick', CMDBuild.core.proxy.Constants.RTF);
 								}
 							}),
-							Ext.create('CMDBuild.core.buttons.FileFormatsCsv', {
+							Ext.create('CMDBuild.core.buttons.fileTypes.Csv', {
 								scope: this,
 
 								handler: function(button, e) {
-									this.delegate.cmfg('onReportTypeButtonClick', CMDBuild.core.proxy.CMProxyConstants.CSV);
+									this.delegate.cmfg('onSingleReportTypeButtonClick', CMDBuild.core.proxy.Constants.CSV);
 								}
 							}),
 							'->',
-							Ext.create('CMDBuild.core.buttons.Download', {
+							Ext.create('CMDBuild.core.buttons.iconized.Download', {
 								scope: this,
 
 								handler: function(button, e) {
-									this.delegate.cmfg('onReportDownloadButtonClick');
+									this.delegate.cmfg('onSingleReportDownloadButtonClick');
 								}
 							})
 						]

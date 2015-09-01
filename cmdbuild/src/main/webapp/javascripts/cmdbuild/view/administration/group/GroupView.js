@@ -3,7 +3,7 @@
 	Ext.define('CMDBuild.view.administration.group.GroupView', {
 		extend: 'Ext.form.Panel',
 
-		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+		requires: ['CMDBuild.core.proxy.Constants'],
 
 		/**
 		 * @cfg {CMDBuild.controller.administration.group.Group}
@@ -30,7 +30,7 @@
 				dockedItems: [
 					Ext.create('Ext.toolbar.Toolbar', {
 						dock: 'top',
-						itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_TOP,
+						itemId: CMDBuild.core.proxy.Constants.TOOLBAR_TOP,
 
 						items: [
 							Ext.create('CMDBuild.core.buttons.Add', {

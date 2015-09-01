@@ -3,8 +3,8 @@
 	Ext.define('CMDBuild.core.proxy.group.Group', {
 
 		requires: [
-			'CMDBuild.core.proxy.CMProxyConstants',
-			'CMDBuild.core.proxy.CMProxyUrlIndex',
+			'CMDBuild.core.proxy.Constants',
+			'CMDBuild.core.proxy.Index',
 			'CMDBuild.model.group.StartingClass'
 		],
 
@@ -15,7 +15,7 @@
 		 */
 		create: function(parameters) {
 			CMDBuild.Ajax.request({
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.group.create,
+				url: CMDBuild.core.proxy.Index.group.create,
 				params: parameters.params,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
 				scope: parameters.scope || this,
@@ -30,7 +30,7 @@
 		 */
 		enableDisable: function(parameters) {
 			CMDBuild.Ajax.request({
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.group.enableDisableGroup,
+				url: CMDBuild.core.proxy.Index.group.enableDisableGroup,
 				params: parameters.params,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
 				scope: parameters.scope || this,
@@ -49,7 +49,7 @@
 				model: 'CMDBuild.model.group.StartingClass',
 				proxy: {
 					type: 'ajax',
-					url: CMDBuild.core.proxy.CMProxyUrlIndex.classes.read,
+					url: CMDBuild.core.proxy.Index.classes.read,
 					reader: {
 						type: 'json',
 						root: 'classes'
@@ -61,7 +61,7 @@
 					}
 				},
 				sorters: [
-					{ property: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION, direction: 'ASC' }
+					{ property: CMDBuild.core.proxy.Constants.DESCRIPTION, direction: 'ASC' }
 				]
 			});
 		},
@@ -71,11 +71,11 @@
 		 */
 		getTypeStore: function() {
 			return Ext.create('Ext.data.ArrayStore', {
-				fields: [CMDBuild.core.proxy.CMProxyConstants.VALUE, CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION],
+				fields: [CMDBuild.core.proxy.Constants.VALUE, CMDBuild.core.proxy.Constants.DESCRIPTION],
 				data: [
-					[ CMDBuild.core.proxy.CMProxyConstants.NORMAL, CMDBuild.Translation.normal ],
-					[ CMDBuild.core.proxy.CMProxyConstants.RESTRICTED_ADMIN, CMDBuild.Translation.limitedAdministrator ],
-					[ CMDBuild.core.proxy.CMProxyConstants.ADMIN, CMDBuild.Translation.administrator ]
+					[ CMDBuild.core.proxy.Constants.NORMAL, CMDBuild.Translation.normal ],
+					[ CMDBuild.core.proxy.Constants.RESTRICTED_ADMIN, CMDBuild.Translation.limitedAdministrator ],
+					[ CMDBuild.core.proxy.Constants.ADMIN, CMDBuild.Translation.administrator ]
 				]
 			});
 		},
@@ -85,7 +85,7 @@
 		 */
 		getUIConfiguration: function(parameters) {
 			CMDBuild.Ajax.request({
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.group.getUiConfiguration,
+				url: CMDBuild.core.proxy.Index.group.getUiConfiguration,
 				params: parameters.params,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : false,
 				scope: parameters.scope || this,
@@ -100,7 +100,7 @@
 		 */
 		readAll: function(parameters) {
 			CMDBuild.Ajax.request({
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.group.getGroupList,
+				url: CMDBuild.core.proxy.Index.group.getGroupList,
 				params: parameters.params,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : false,
 				scope: parameters.scope || this,
@@ -115,7 +115,7 @@
 		 */
 		update: function(parameters) {
 			CMDBuild.Ajax.request({
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.group.update,
+				url: CMDBuild.core.proxy.Index.group.update,
 				params: parameters.params,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
 				scope: parameters.scope || this,
