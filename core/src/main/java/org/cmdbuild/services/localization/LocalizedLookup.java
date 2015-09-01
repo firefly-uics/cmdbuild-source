@@ -19,11 +19,6 @@ public class LocalizedLookup extends ForwardingLookup {
 	}
 
 	@Override
-	public void accept(final LocalizableStorableVisitor visitor) {
-		visitor.visit(this);
-	}
-
-	@Override
 	protected Lookup delegate() {
 		return delegate;
 	}
