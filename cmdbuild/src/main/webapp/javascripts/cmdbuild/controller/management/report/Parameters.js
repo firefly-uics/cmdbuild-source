@@ -4,6 +4,7 @@
 		extend: 'CMDBuild.controller.common.AbstractController',
 
 		requires: [
+			'CMDBuild.controller.common.AbstractBaseWidgetController',
 			'CMDBuild.core.Message',
 			'CMDBuild.core.proxy.CMProxyConstants',
 			'CMDBuild.core.proxy.CMProxyUrlIndex',
@@ -34,6 +35,11 @@
 		forceDownload: false,
 
 		/**
+		 * @property {Ext.form.Panel}
+		 */
+		form: undefined,
+
+		/**
 		 * @property {CMDBuild.view.management.report.ParametersWindow} emailWindows
 		 */
 		view: undefined,
@@ -49,6 +55,9 @@
 				delegate: this
 			});
 
+			// ShortHands
+			this.form = this.view.form;
+
 			// Show window
 			if (!Ext.isEmpty(this.view)) {
 				this.view.show();
@@ -58,19 +67,31 @@
 		},
 
 		buildFields: function() {
-			if (this.attributeList.length > 0)
-				Ext.Array.forEach(this.attributeList, function(attribute, index, allAttributes) {
-					var field = CMDBuild.Management.FieldManager.getFieldForAttr(attribute, false, false);
+			var me = this;
 
-					if (!Ext.isEmpty(field)) {
-						field.maxWidth = field.width;
+			if (this.attributeList.length > 0) {
+				Ext.Array.forEach(this.attributeList, function(attribute, i, allAttributes) {
+					new CMDBuild.Management.TemplateResolver({
+						clientForm: this.form.getForm(),
+						xaVars: attribute,
+						serverVars: CMDBuild.controller.common.AbstractBaseWidgetController.getTemplateResolverServerVars(attribute)
+					}).resolveTemplates({
+						attributes: Ext.Object.getKeys(attribute),
+						callback: function(out, ctx) {
+							var field = CMDBuild.Management.FieldManager.getFieldForAttr(out, false, false);
 
-						if (attribute.defaultvalue)
-							field.setValue(attribute.defaultvalue);
+							if (!Ext.isEmpty(field)) {
+								field.maxWidth = field.width;
 
-						this.view.form.add(field);
-					}
+								if (attribute.defaultvalue)
+									field.setValue(attribute.defaultvalue);
+
+								me.form.add(field);
+							}
+						}
+					});
 				}, this);
+			}
 		},
 
 		onParametersAbortButtonClick: function() {
@@ -78,10 +99,10 @@
 		},
 
 		onParametersPrintButtonClick: function() {
-			if (this.view.form.getForm().isValid()) {
+			if (this.form.getForm().isValid()) {
 				this.cmfg('currentReportParametersSet', {
 					callIdentifier: 'update',
-					params: this.view.form.getValues()
+					params: this.form.getValues()
 				});
 
 				this.cmfg('updateReport', this.forceDownload);
