@@ -49,6 +49,7 @@
 		return {
 			id: node.get("id"),
 			text: node.get("text") != "Class" ? node.get("text") : CMDBuild.Translation.administration.modClass.classProperties.standard,
+			name: node.get("name"),
 			tableType: node.get("tableType"),
 			leaf: true,
 			cmName: node.get("text") != "Class" ? "class" : "",

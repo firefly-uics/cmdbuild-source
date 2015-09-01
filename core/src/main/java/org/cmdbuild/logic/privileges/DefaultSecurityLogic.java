@@ -1,5 +1,6 @@
 package org.cmdbuild.logic.privileges;
 
+import static java.lang.Integer.MAX_VALUE;
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 import static org.cmdbuild.auth.privileges.constants.GrantConstants.ATTRIBUTES_PRIVILEGES_ATTRIBUTE;
 import static org.cmdbuild.auth.privileges.constants.GrantConstants.GRANT_CLASS_NAME;
@@ -11,6 +12,7 @@ import static org.cmdbuild.auth.privileges.constants.GrantConstants.PRIVILEGE_FI
 import static org.cmdbuild.auth.privileges.constants.GrantConstants.STATUS_ATTRIBUTE;
 import static org.cmdbuild.auth.privileges.constants.GrantConstants.TYPE_ATTRIBUTE;
 import static org.cmdbuild.auth.privileges.constants.GrantConstants.UI_CARD_EDIT_MODE_ATTRIBUTE;
+import static org.cmdbuild.common.Constants.ROLE_CLASS_NAME;
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
 import static org.cmdbuild.dao.query.clause.where.AndWhereClause.and;
@@ -50,8 +52,8 @@ import org.cmdbuild.privileges.fetchers.factories.CMClassPrivilegeFetcherFactory
 import org.cmdbuild.privileges.fetchers.factories.FilterPrivilegeFetcherFactory;
 import org.cmdbuild.privileges.fetchers.factories.PrivilegeFetcherFactory;
 import org.cmdbuild.privileges.fetchers.factories.ViewPrivilegeFetcherFactory;
-import org.cmdbuild.services.store.DataViewFilterStore;
-import org.cmdbuild.services.store.FilterStore.Filter;
+import org.cmdbuild.services.store.filter.FilterStore;
+import org.cmdbuild.services.store.filter.FilterStore.Filter;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
@@ -61,12 +63,12 @@ public class DefaultSecurityLogic implements Logic, SecurityLogic {
 	private final CMDataView view;
 	private final CMClass grantClass;
 	private final StorableConverter<View> viewConverter;
-	private final DataViewFilterStore filterStore;
+	private final FilterStore filterStore;
 
 	public DefaultSecurityLogic( //
 			final CMDataView view, //
 			final StorableConverter<View> viewConverter, //
-			final DataViewFilterStore filterStore //
+			final FilterStore filterStore //
 	) {
 		this.view = view;
 		this.grantClass = view.findClass(GRANT_CLASS_NAME);
@@ -137,7 +139,7 @@ public class DefaultSecurityLogic implements Logic, SecurityLogic {
 	public List<PrivilegeInfo> fetchFilterPrivilegesForGroup(final Long groupId) {
 		final List<PrivilegeInfo> fetchedFilterPrivileges = fetchStoredPrivilegesForGroup(groupId,
 				PrivilegedObjectType.FILTER);
-		final Iterable<Filter> allGroupsFilters = fetchAllGroupsFilters();
+		final Iterable<Filter> allGroupsFilters = filterStore.readSharedFilters(null, 0, MAX_VALUE);
 		for (final Filter filter : allGroupsFilters) {
 			final Long filterId = Long.valueOf(filter.getId());
 			if (!isPrivilegeAlreadyStored(filterId, fetchedFilterPrivileges)) {
@@ -152,10 +154,6 @@ public class DefaultSecurityLogic implements Logic, SecurityLogic {
 		// TODO must be an external dependency
 		final DataViewStore<View> viewStore = DataViewStore.newInstance(view, viewConverter);
 		return viewStore.readAll();
-	}
-
-	private Iterable<Filter> fetchAllGroupsFilters() {
-		return filterStore.fetchAllGroupsFilters();
 	}
 
 	/**
@@ -412,7 +410,7 @@ public class DefaultSecurityLogic implements Logic, SecurityLogic {
 
 	@Override
 	public UIConfiguration fetchGroupUIConfiguration(final Long groupId) {
-		final CMClass roleClass = view.findClass("Role");
+		final CMClass roleClass = view.findClass(ROLE_CLASS_NAME);
 		final CMQueryRow row = view.select(anyAttribute(roleClass)) //
 				.from(roleClass) //
 				.where(condition(attribute(roleClass, "Id"), eq(groupId))) //
@@ -458,7 +456,7 @@ public class DefaultSecurityLogic implements Logic, SecurityLogic {
 
 	@Override
 	public void saveGroupUIConfiguration(final Long groupId, final UIConfiguration configuration) {
-		final CMClass roleClass = view.findClass("Role");
+		final CMClass roleClass = view.findClass(ROLE_CLASS_NAME);
 		final CMQueryRow row = view.select(anyAttribute(roleClass)) //
 				.from(roleClass) //
 				.where(condition(attribute(roleClass, "Id"), eq(groupId))) //

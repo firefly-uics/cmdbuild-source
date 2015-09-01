@@ -172,14 +172,16 @@ SELECT cm_create_class_attribute('_View', 'Type', 'character varying', NULL, TRU
 ---------------------------------------------
 
 SELECT cm_create_class('_Filter', NULL, 'MODE: reserved|TYPE: simpleclass|DESCR: Filter|SUPERCLASS: false|STATUS: active');
-SELECT cm_create_class_attribute('_Filter', 'Code', 'varchar', null, true, false, 'MODE: write|DESCR: Name|INDEX: 1|STATUS: active');
-SELECT cm_create_class_attribute('_Filter', 'Description', 'varchar', null, false, false, 'MODE: write|DESCR: Description|INDEX: 2|STATUS: active');
-SELECT cm_create_class_attribute('_Filter', 'IdOwner', 'int', null, false, false, 'MODE: write|DESCR: IdOwner|INDEX: 3|STATUS: active');
-SELECT cm_create_class_attribute('_Filter', 'Filter', 'text', null, false, false, 'MODE: write|DESCR: Filter|INDEX: 4|STATUS: active');
-SELECT cm_create_class_attribute('_Filter', 'IdSourceClass', 'regclass', null, true, false, 'MODE: write|DESCR: Class Reference|INDEX: 5|STATUS: active');
-SELECT cm_create_class_attribute('_Filter', 'Template', 'boolean', 'false', true, false, 'MODE: write|DESCR: User or group filter|INDEX: 6|STATUS: active');
+SELECT cm_create_class_attribute('_Filter', 'Code', 'varchar', null, true, false, 'MODE: write|STATUS: active');
+SELECT cm_create_class_attribute('_Filter', 'Description', 'varchar', null, false, false, 'MODE: write|STATUS: active');
+SELECT cm_create_class_attribute('_Filter', 'UserId', 'int', null, false, false, 'MODE: write|STATUS: active');
+SELECT cm_create_class_attribute('_Filter', 'Filter', 'text', null, false, false, 'MODE: write|STATUS: active');
+SELECT cm_create_class_attribute('_Filter', 'ClassId', 'regclass', null, true, false, 'MODE: write|STATUS: active');
+SELECT cm_create_class_attribute('_Filter', 'Shared', 'boolean', 'false', true, false, 'MODE: write|STATUS: active');
 
-ALTER TABLE "_Filter" ADD CONSTRAINT filter_name_table_unique UNIQUE ("Code", "IdOwner", "IdSourceClass");
+ALTER TABLE "_Filter" ADD CONSTRAINT filter_name_table_unique UNIQUE ("Code", "UserId", "ClassId");
+
+SELECT cm_create_domain('FilterRole', 'MODE: reserved|TYPE: domain|CLASS1: _Filter|CLASS2: Role|DESCRDIR: |DESCRINV: |CARDIN: N:N|STATUS: active');
 
 
 ---------------------------------------------

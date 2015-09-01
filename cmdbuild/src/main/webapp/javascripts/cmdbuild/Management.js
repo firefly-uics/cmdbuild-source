@@ -36,7 +36,8 @@
 			'CMDBuild.core.proxy.CMProxyConstants',
 			'CMDBuild.core.proxy.Classes',
 			'CMDBuild.core.proxy.Configuration',
-			'CMDBuild.core.proxy.Report'
+			'CMDBuild.core.proxy.Report',
+			'CMDBuild.core.proxy.group.Group'
 		],
 
 		name: 'CMDBuild',
@@ -106,9 +107,10 @@
 				});
 
 				// Maybe a single request with all the configuration could be better
-				CMDBuild.ServiceProxy.group.getUIConfiguration({
-					success: function(response, options, decoded) {
-						_CMUIConfiguration = new CMDBuild.model.CMUIConfigurationModel(decoded.response);
+				CMDBuild.core.proxy.group.Group.getUIConfiguration({
+					scope: this,
+					success: function(result, options, decodedResult) {
+						_CMUIConfiguration = new CMDBuild.model.CMUIConfigurationModel(decodedResult.response);
 
 						CMDBuild.ServiceProxy.configuration.readAll({
 							success: function(response, options, decoded) {
@@ -158,7 +160,6 @@
 
 							}
 						});
-
 					}
 				});
 			},
@@ -283,8 +284,9 @@
 				params = {};
 				params[CMDBuild.core.proxy.CMProxyConstants.ACTIVE] = true;
 
-				CMDBuild.ServiceProxy.classes.read({
+				CMDBuild.core.proxy.Classes.read({
 					params: params,
+					loadMask: false,
 					scope: this,
 					success: function(response, options, decoded) {
 						_CMCache.addClasses(decoded.classes);

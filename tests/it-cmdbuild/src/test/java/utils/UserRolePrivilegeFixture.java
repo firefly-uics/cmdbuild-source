@@ -1,5 +1,7 @@
 package utils;
 
+import static org.cmdbuild.common.Constants.ROLE_CLASS_NAME;
+
 import java.util.List;
 import java.util.Map;
 
@@ -21,7 +23,6 @@ import com.google.common.collect.Maps;
 public class UserRolePrivilegeFixture {
 
 	private static final String USER_CLASS = "User";
-	private static final String ROLE_CLASS = "Role";
 	private static final String USER_ROLE_DOMAIN = "UserRole";
 	private static final Digester digester = new Base64Digester();
 
@@ -108,7 +109,7 @@ public class UserRolePrivilegeFixture {
 	}
 
 	public DBClass getRoleClass() {
-		return driver.findClass(ROLE_CLASS);
+		return driver.findClass(ROLE_CLASS_NAME);
 	}
 
 	public DBDomain getUserRoleDomain() {

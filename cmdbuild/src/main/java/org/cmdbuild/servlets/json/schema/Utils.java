@@ -1,10 +1,13 @@
 package org.cmdbuild.servlets.json.schema;
 
+import static org.apache.commons.lang3.ObjectUtils.*;
+
 import java.util.List;
 import java.util.Map;
 
 import org.cmdbuild.logger.Log;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.Marker;
@@ -37,12 +40,49 @@ public class Utils {
 		}
 	}
 
+	public static enum JsonParser {
+
+		AS_STRING {
+
+			@Override
+			public Object serialize(JSONArray json, int index) throws JSONException {
+				return json.getString(index);
+			}
+
+		}, //
+		AS_LONG {
+
+			@Override
+			public Object serialize(JSONArray json, int index) throws JSONException {
+				return json.getLong(index);
+			}
+
+		}, //
+		DEFAULT {
+
+			@Override
+			public Object serialize(JSONArray json, int index) throws JSONException {
+				return AS_STRING.serialize(json, index);
+			}
+
+		}, //
+		;
+
+		abstract Object serialize(JSONArray json, int index) throws JSONException;
+
+	}
+
 	public static Iterable<String> toIterable(final JSONArray json) {
+		return toIterable(json, JsonParser.DEFAULT);
+	}
+
+	public static <T> Iterable<T> toIterable(final JSONArray json, final JsonParser parser) {
 		try {
-			final List<String> values = Lists.newArrayList();
+			final List<T> values = Lists.newArrayList();
 			if (json != null && json.length() > 0) {
 				for (int index = 0; index < json.length(); index++) {
-					values.add(json.getString(index));
+					final T value = (T) defaultIfNull(parser, JsonParser.DEFAULT).serialize(json, index);
+					values.add(value);
 				}
 			}
 			return values;

@@ -2,7 +2,7 @@
 
 	Ext.define("CMDBuild.view.administration.accordion.CMFilterAccordion", {
 		extend: "CMDBuild.view.common.CMBaseAccordion",
-		title: CMDBuild.Translation.search_filters,
+		title: CMDBuild.Translation.searchFilters,
 
 		hideMode: "offsets",
 
