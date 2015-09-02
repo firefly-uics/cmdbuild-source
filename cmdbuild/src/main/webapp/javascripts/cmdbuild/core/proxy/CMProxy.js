@@ -13,11 +13,10 @@
 		 */
 		doLogin: function(parameters) {
 			CMDBuild.Ajax.request({
-				method: 'POST',
-				scope: parameters.scope || this,
-				important: true,
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.login,
 				params: parameters.params,
+				url: CMDBuild.core.proxy.CMProxyUrlIndex.login,
+				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
+				scope: parameters.scope || this,
 				success: parameters.success || Ext.emptyFn,
 				failure: parameters.failure || Ext.emptyFn,
 				callback: parameters.callback || Ext.emptyFn
