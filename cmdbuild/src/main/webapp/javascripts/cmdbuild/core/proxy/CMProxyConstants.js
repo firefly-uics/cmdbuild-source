@@ -286,6 +286,7 @@
 		READ: 'read',
 		READ_ONLY: 'readOnly',
 		READ_ONLY_ATTRIBUTES: 'readOnlyAttributes',
+		REASON: 'reason',
 		RECEIVED: 'received',
 		RECIPIENT_ADDRESS: 'recipientAddress',
 		RECORD: 'record',
