@@ -1299,6 +1299,7 @@
 	"disableGroup": "Remover grupo",
 	"disableUser": "Deshabilitar usuario",
 	"disabledFeatures": "Funcionalidades deshabilitadas",
+	"disabledTabsInClassesModule": "<em>Disabled tabs in classes module</em>",
 	"disabledTabsInProcessesModule": "Tabs deshabilitados en el módulo procesos",
 	"display_less_attributes": "Visualiza menos atributos",
 	"display_more_attributes": "Visualiza más atributos",
