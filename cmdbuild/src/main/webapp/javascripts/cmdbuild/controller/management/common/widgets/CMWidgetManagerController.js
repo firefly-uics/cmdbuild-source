@@ -4,7 +4,6 @@
 	// TODO: rename of this class to use property "requires"
 	Ext.require([
 		'CMDBuild.controller.management.common.widgets.ManageEmail',
-		'CMDBuild.controller.management.common.widgets.grid.Grid',
 		'CMDBuild.controller.management.common.widgets.manageRelation.CMManageRelationController'
 	]);
 
@@ -79,7 +78,7 @@
 				wc = this.controllers[wc];
 				if (!wc.isValid()) {
 					valid = false;
-					out += "<li>" + wc.getLabel() + "</li>";
+					out += "<li>" + wc.getWidgetLabel() + "</li>";
 				}
 			}
 			out + "</ul>";
@@ -201,21 +200,38 @@
 			this.view.widgetsContainer.hide();
 		},
 
-		buildWidgetController: function buildWidgetController(ui, widgetDef, card) {
-			var me = this,
-				controllerClass = me.controllerClasses[widgetDef.type];
+		/**
+		 * @param {Object} view
+		 * @param {Object} widgetConfiguration
+		 * @param {Ext.data.Model or CMDBuild.model.CMActivityInstance} card
+		 *
+		 * @returns {Object or null} controller
+		 */
+		buildWidgetController: function(view, widgetConfiguration, card) {
+			var controller = null;
+			var controllerClass = this.controllerClasses[widgetConfiguration.type];
 
-			if (controllerClass && typeof controllerClass == "function") {
-				return new controllerClass(
-					ui,
-					superController = me,
-					widgetDef,
-					clientForm = me.view.getFormForTemplateResolver(),
-					card
-				);
-			} else {
-				return null;
+			if (!Ext.isEmpty(controllerClass)) {
+				if (Ext.isFunction(controllerClass)) { // @deprecated
+					controller = new controllerClass(
+						view,
+						superController = this,
+						widgetConfiguration,
+						clientForm = this.view.getFormForTemplateResolver(),
+						card
+					);
+				} else if (Ext.isString(controllerClass)) { // New widget controller declaration mode
+					controller = Ext.create(controllerClass, {
+						view: view,
+						parentDelegate: this,
+						widgetConfiguration: widgetConfiguration,
+						clientForm: this.view.getFormForTemplateResolver(),
+						card: card
+					});
+				}
 			}
+
+			return controller;
 		},
 
 		hideWidgetsContainer: function() {
@@ -250,12 +266,12 @@
 	});
 
 	function initBuilders(me) {
-		var commonControllers = CMDBuild.controller.management.common.widgets;
-
 		me.controllerClasses = {};
-		me.controllerClasses['.Grid'] = CMDBuild.controller.management.common.widgets.grid.Grid;
+		me.controllerClasses['.CustomForm'] = 'CMDBuild.controller.management.common.widgets.customForm.CustomForm';
+		me.controllerClasses['.Grid'] = 'CMDBuild.controller.management.common.widgets.grid.Grid';
 		me.controllerClasses['.ManageEmail'] = CMDBuild.controller.management.common.widgets.ManageEmail;
 
+		var commonControllers = CMDBuild.controller.management.common.widgets;
 
 		function addControllerClass(controller) {
 			me.controllerClasses[controller.WIDGET_NAME] = controller;

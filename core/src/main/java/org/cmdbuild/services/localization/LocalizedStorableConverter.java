@@ -14,7 +14,7 @@ import org.cmdbuild.logic.translation.TranslationObject;
 import org.cmdbuild.logic.translation.converter.WidgetConverter;
 import org.cmdbuild.model.view.View;
 import org.cmdbuild.model.widget.Widget;
-import org.cmdbuild.services.store.FilterStore.Filter;
+import org.cmdbuild.services.store.filter.FilterStore.Filter;
 import org.cmdbuild.services.store.menu.LocalizedMenuElement;
 import org.cmdbuild.services.store.menu.MenuElement;
 

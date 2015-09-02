@@ -54,9 +54,9 @@ public class WebServiceWidgetFactory extends ValuePairWidgetFactory {
 		webService.setNameSpaceURI(readString(valueMap.get(NS_URI)));
 		webService.setNodesToUseAsRows(readCommaSeparatedString(valueMap.get(NODES_TO_USE_AS_ROWS)));
 		webService.setNodesToUseAsColumns(readCommaSeparatedString(valueMap.get(NODES_TO_USE_AS_COLUMNS)));
-		webService.setMandatory(readBooleanTrueIfTrue(valueMap.get(MANDATORY)));
-		webService.setSingleSelect(readBooleanTrueIfTrue(valueMap.get(SINGLE_SELECT)));
-		webService.setReadOnly(readBooleanTrueIfTrue(valueMap.get(READ_ONLY)));
+		webService.setMandatory(readBooleanFalseIfMissing(valueMap.get(MANDATORY)));
+		webService.setSingleSelect(readBooleanFalseIfMissing(valueMap.get(SINGLE_SELECT)));
+		webService.setReadOnly(readBooleanFalseIfMissing(valueMap.get(READ_ONLY)));
 		webService.setOutputSeparator(readString(valueMap.get(OUTPUT_SEPARATOR)));
 
 		webService.setOutputName(readString(valueMap.get(OUTPUT_KEY)));

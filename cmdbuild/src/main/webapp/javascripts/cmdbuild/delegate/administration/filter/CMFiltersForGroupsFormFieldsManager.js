@@ -75,8 +75,19 @@
 				}
 			});
 
+			this.defaultForGroups = Ext.create('CMDBuild.view.common.field.CMGroupSelectionList', {
+				name: CMDBuild.core.proxy.CMProxyConstants.DEFAULT_FOR_GROUPS,
+				fieldLabel: CMDBuild.Translation.defaultForGroups,
+				height: 300,
+				valueField: CMDBuild.core.proxy.CMProxyConstants.NAME,
+				labelWidth: CMDBuild.LABEL_WIDTH,
+				maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
+				anchor: '100%'
+			});
+
 			fields.push(this.classes);
 			fields.push(this.filterChooser);
+			fields.push(this.defaultForGroups);
 
 			return fields;
 		},
@@ -99,6 +110,19 @@
 			this.filterChooser.setFilter(record);
 			this.classes.setValue(className);
 
+			var params = {};
+			params[CMDBuild.core.proxy.CMProxyConstants.ID] = record.get(CMDBuild.core.proxy.CMProxyConstants.ID);
+
+			_CMProxy.Filter.getDefaults({
+				params: params,
+				scope: this,
+				success: function(result, options, decodedResult) {
+					decodedResult = decodedResult.response.elements;
+
+					this.defaultForGroups.setValue(decodedResult);
+				}
+			});
+
 			// The set value programmatic does not fire the select event, so call the delegates manually
 			Ext.apply(this.description, {
 				translationsKeyName: record.get(CMDBuild.core.proxy.CMProxyConstants.NAME)
@@ -120,6 +144,8 @@
 
 			if (filter)
 				values[FILTER] = filter;
+
+			values[CMDBuild.core.proxy.CMProxyConstants.DEFAULT_FOR_GROUPS] = this.defaultForGroups.getValue();
 
 			return values;
 		},

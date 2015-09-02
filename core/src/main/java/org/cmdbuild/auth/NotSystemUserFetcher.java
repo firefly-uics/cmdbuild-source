@@ -1,6 +1,7 @@
 package org.cmdbuild.auth;
 
 import static org.cmdbuild.common.Constants.DESCRIPTION_ATTRIBUTE;
+import static org.cmdbuild.common.Constants.ROLE_CLASS_NAME;
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
 import static org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue.eq;
@@ -97,7 +98,7 @@ public class NotSystemUserFetcher extends DBUserFetcher implements Cacheable {
 	@Override
 	protected final CMClass roleClass() {
 		initialize();
-		return view.findClass("Role");
+		return view.findClass(ROLE_CLASS_NAME);
 	}
 
 	@Override

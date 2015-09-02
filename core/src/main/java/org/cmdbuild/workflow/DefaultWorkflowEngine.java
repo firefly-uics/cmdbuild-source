@@ -3,6 +3,7 @@ package org.cmdbuild.workflow;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyMap;
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
+import static org.cmdbuild.common.Constants.ROLE_CLASS_NAME;
 import static org.cmdbuild.model.widget.Widget.SUBMISSION_PARAM;
 
 import java.util.Map;
@@ -432,7 +433,7 @@ public class DefaultWorkflowEngine implements QueryableUserWorkflowEngine {
 
 				@Override
 				public String getClassName() {
-					return "Role";
+					return ROLE_CLASS_NAME;
 				}
 
 			};

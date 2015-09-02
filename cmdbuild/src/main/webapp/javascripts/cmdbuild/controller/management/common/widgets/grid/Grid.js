@@ -79,18 +79,20 @@
 		widgetConf: undefined,
 
 		/**
-		 * @param {CMDBuild.view.management.common.widgets.grid.GridView} view
-		 * @param {CMDBuild.controller.management.common.CMWidgetManagerController} ownerController
-		 * @param {Object} widgetConf
-		 * @param {Ext.form.Basic} clientForm
-		 * @param {CMDBuild.model.CMActivityInstance} card
+		 * @param {CMDBuild.view.management.common.widgets.CMWidgetManager} configurationObject.view
+		 * @param {CMDBuild.controller.management.common.CMWidgetManagerController} configurationObject.parentDelegate
+		 * @param {Object} configurationObject.widgetConfiguration
+		 * @param {Ext.form.Basic} configurationObject.clientForm
+		 * @param {CMDBuild.model.CMActivityInstance} configurationObject.card
 		 *
 		 * @override
 		 */
-		constructor: function(view, ownerController, widgetConf, clientForm, card) {
+		constructor: function(configurationObject) {
 			this.mixins.observable.constructor.call(this);
 
 			this.callParent(arguments);
+
+			this.widgetConf = this.widgetConfiguration; // FIXME: Alias for compatibility mode with new AbstractBaseWidgetController
 
 			this.classType = _CMCache.getEntryTypeByName(this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME]);
 
@@ -446,6 +448,13 @@
 		 */
 		getCardAttributes: function() {
 			return this.cardAttributes;
+		},
+
+		/**
+		 * @return {Number}
+		 */
+		getWidgetId: function() {
+			return this.widgetConfiguration[CMDBuild.core.proxy.CMProxyConstants.ID];
 		},
 
 		/**

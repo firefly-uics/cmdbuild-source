@@ -82,6 +82,12 @@
 				callback: function() {
 					_CMCache.flushTranslationsToSave(values['name']);
 
+					var params = {};
+					params[CMDBuild.core.proxy.CMProxyConstants.FILTERS] = Ext.encode([this.record.getId()]);
+					params[CMDBuild.core.proxy.CMProxyConstants.GROUPS] = Ext.encode(values[CMDBuild.core.proxy.CMProxyConstants.DEFAULT_FOR_GROUPS]);
+
+					_CMProxy.Filter.setDefaults({ params: params });
+
 					this.gridConfigurator.getStore().load({
 						scope: this,
 						callback: function() {

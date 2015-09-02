@@ -22,10 +22,6 @@
 			doRequest(filter, config, CMDBuild.core.proxy.CMProxyUrlIndex.filter.remove, 'POST', false);
 		},
 
-		position: function(filter, config) {
-			doRequest(filter, config, CMDBuild.core.proxy.CMProxyUrlIndex.filter.position, 'GET', false);
-		},
-
 		/**
 		 * Returns a store with the filters for a given group
 		 *
@@ -103,6 +99,36 @@
 					property: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
 					direction: 'ASC'
 				}]
+			});
+		},
+
+		/**
+		 * @param {Object} parameters
+		 */
+		getDefaults: function(parameters) {
+			CMDBuild.Ajax.request({
+				url: CMDBuild.core.proxy.CMProxyUrlIndex.filter.defaultForGroups.read,
+				params: parameters.params,
+				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
+				scope: parameters.scope || this,
+				failure: parameters.failure || Ext.emptyFn,
+				success: parameters.success || Ext.emptyFn,
+				callback: parameters.callback || Ext.emptyFn
+			});
+		},
+
+		/**
+		 * @param {Object} parameters
+		 */
+		setDefaults: function(parameters) {
+			CMDBuild.Ajax.request({
+				url: CMDBuild.core.proxy.CMProxyUrlIndex.filter.defaultForGroups.update,
+				params: parameters.params,
+				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
+				scope: parameters.scope || this,
+				failure: parameters.failure || Ext.emptyFn,
+				success: parameters.success || Ext.emptyFn,
+				callback: parameters.callback || Ext.emptyFn
 			});
 		}
 	});

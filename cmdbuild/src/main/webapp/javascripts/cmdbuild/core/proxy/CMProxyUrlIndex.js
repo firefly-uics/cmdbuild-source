@@ -22,8 +22,6 @@
 			updateSortConfiguration: 'services/json/schema/modclass/saveordercriteria'
 		},
 
-		basicCardList: 'services/json/management/modcard/getcardlistshort',
-
 		card: {
 			create: '',
 			read: 'services/json/management/modcard/getcard',
@@ -33,6 +31,7 @@
 			bulkUpdate: 'services/json/management/modcard/bulkupdate',
 			bulkUpdateFromFilter: 'services/json/management/modcard/bulkupdatefromfilter',
 			getList: 'services/json/management/modcard/getcardlist',
+			getListShort: 'services/json/management/modcard/getcardlistshort',
 			getPosition: 'services/json/management/modcard/getcardposition'
 		},
 
@@ -51,6 +50,7 @@
 		csv: {
 			clearSession: 'services/json/management/importcsv/clearsession',
 			getCsvRecords: 'services/json/management/importcsv/getcsvrecords',
+			readCsv: 'services/json/management/importcsv/readcsv',
 			uploadCsv: 'services/json/management/importcsv/uploadcsv'
 		},
 
@@ -134,18 +134,50 @@
 		fkTargetClass: 'services/json/schema/modclass/getfktargetingclass',
 
 		filter: {
-			read: 'services/json/filter/read',
 			create: 'services/json/filter/create',
-			update: 'services/json/filter/update',
+			read: 'services/json/filter/read',
 			remove: 'services/json/filter/delete',
+			update: 'services/json/filter/update',
 
-			position: 'services/json/filter/position',
+			groupStore: 'services/json/filter/readallgroupfilters',
 			userStore: 'services/json/filter/readforuser',
-			groupStore: 'services/json/filter/readallgroupfilters'
+
+			defaultForGroups: {
+				read: 'services/json/filter/getgroups',
+				update: 'services/json/filter/setdefault'
+			}
 		},
 
 		functions: {
 			getFunctions: 'services/json/schema/modclass/getfunctions'
+		},
+
+		group: {
+			create: 'services/json/schema/modsecurity/savegroup', // TODO: waiting for refactor (crud)
+			read: '',
+			remove: '',
+			update: 'services/json/schema/modsecurity/savegroup', // TODO: waiting for refactor (crud)
+
+			enableDisableGroup: 'services/json/schema/modsecurity/enabledisablegroup',
+			getGroupList: 'services/json/schema/modsecurity/getgrouplist',
+			getUiConfiguration: 'services/json/schema/modsecurity/getuiconfiguration',
+
+			defaultFilters: {
+				read: 'services/json/filter/getdefault',
+				update: 'services/json/filter/setdefault',
+
+				readAllGroupFilters: 'services/json/filter/readallgroupfilters'
+			},
+
+			users: {
+				getGroupUserList: 'services/json/schema/modsecurity/getgroupuserlist',
+				saveGroupUserList: 'services/json/schema/modsecurity/savegroupuserlist'
+			},
+
+			userInterface: {
+				getGroupUiConfiguration: 'services/json/schema/modsecurity/getgroupuiconfiguration',
+				saveGroupUiConfiguration: 'services/json/schema/modsecurity/savegroupuiconfiguration'
+			}
 		},
 
 		history: {
@@ -196,8 +228,9 @@
 
 				clearRowAndColumnPrivileges: 'services/json/schema/modsecurity/clearrowandcolumnprivileges',
 				setRowAndColumnPrivileges: 'services/json/schema/modsecurity/setrowandcolumnprivileges',
+
+				loadClassUiConfiguration: 'services/json/schema/modsecurity/loadclassuiconfiguration',
 				saveClassUiConfiguration: 'services/json/schema/modsecurity/saveclassuiconfiguration',
-				loadClassUiConfiguration: 'services/json/schema/modsecurity/loadclassuiconfiguration'
 			},
 			dataView: {
 				read: 'services/json/schema/modsecurity/getviewprivilegelist',

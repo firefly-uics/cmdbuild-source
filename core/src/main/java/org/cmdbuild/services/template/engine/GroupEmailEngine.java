@@ -1,5 +1,6 @@
 package org.cmdbuild.services.template.engine;
 
+import static org.cmdbuild.common.Constants.ROLE_CLASS_NAME;
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
 import static org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue.eq;
@@ -13,7 +14,6 @@ import org.cmdbuild.dao.view.CMDataView;
 
 public class GroupEmailEngine implements Engine {
 
-	private static final String ROLE_CLASSNAME = "Role";
 	private static final String CODE_ATTRIBUTE = "Code";
 	private static final String EMAIL_ATTRIBUTE = "Email";
 
@@ -54,7 +54,7 @@ public class GroupEmailEngine implements Engine {
 
 	@Override
 	public Object eval(final String expression) {
-		final CMClass roleClass = dataView.findClass(ROLE_CLASSNAME);
+		final CMClass roleClass = dataView.findClass(ROLE_CLASS_NAME);
 		Validate.notNull(roleClass, "role class not visible");
 		final CMCard card = dataView.select(anyAttribute(roleClass)) //
 				.from(roleClass) //

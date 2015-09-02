@@ -4,29 +4,21 @@ import static java.util.Arrays.asList;
 
 import java.util.List;
 
-import org.cmdbuild.model.widget.Calendar;
 import org.cmdbuild.model.widget.CreateModifyCard;
-import org.cmdbuild.model.widget.Grid;
+import org.cmdbuild.model.widget.ForwardingWidgetVisitor;
 import org.cmdbuild.model.widget.LinkCards;
-import org.cmdbuild.model.widget.ManageEmail;
-import org.cmdbuild.model.widget.ManageRelation;
-import org.cmdbuild.model.widget.NavigationTree;
-import org.cmdbuild.model.widget.OpenAttachment;
-import org.cmdbuild.model.widget.OpenNote;
-import org.cmdbuild.model.widget.OpenReport;
-import org.cmdbuild.model.widget.Ping;
-import org.cmdbuild.model.widget.PresetFromCard;
-import org.cmdbuild.model.widget.WebService;
+import org.cmdbuild.model.widget.NullWidgetVisitor;
 import org.cmdbuild.model.widget.Widget;
 import org.cmdbuild.model.widget.WidgetVisitor;
-import org.cmdbuild.model.widget.Workflow;
 import org.cmdbuild.services.soap.structure.WorkflowWidgetSubmission;
 import org.cmdbuild.services.soap.structure.WorkflowWidgetSubmissionParameter;
 
-class WidgetSubmissionConverter implements WidgetVisitor {
+class WidgetSubmissionConverter extends ForwardingWidgetVisitor {
 
 	private static final int ONE_PARAMETER_ONLY_EXPECTED = 0;
 	private static final int SINGLE_VALUE_EXPECTED = 0;
+
+	private static final WidgetVisitor NOTHING_TO_DO = NullWidgetVisitor.getInstance();
 
 	private final Widget widget;
 
@@ -37,15 +29,15 @@ class WidgetSubmissionConverter implements WidgetVisitor {
 		this.widget = widget;
 	}
 
+	@Override
+	protected WidgetVisitor delegate() {
+		return NOTHING_TO_DO;
+	}
+
 	public Object convertFrom(final WorkflowWidgetSubmission submission) {
 		parameters = asList(submission.getParameters());
 		widget.accept(this);
 		return submissionOutput;
-	}
-
-	@Override
-	public void visit(final Calendar calendar) {
-		// nothing to do
 	}
 
 	@Override
@@ -73,58 +65,4 @@ class WidgetSubmissionConverter implements WidgetVisitor {
 		return asList(values).toArray();
 	}
 
-	@Override
-	public void visit(final ManageEmail manageEmail) {
-		// not yet implemented
-	}
-
-	@Override
-	public void visit(final ManageRelation manageRelation) {
-		// nothing to do
-	}
-
-	@Override
-	public void visit(final OpenAttachment openAttachment) {
-		// nothing to do
-	}
-
-	@Override
-	public void visit(final OpenNote openNote) {
-		// nothing to do
-	}
-
-	@Override
-	public void visit(final OpenReport openReport) {
-		// nothing to do
-	}
-
-	@Override
-	public void visit(final NavigationTree navigationTree) {
-		// nothing to do
-	}
-
-	@Override
-	public void visit(final Grid grid) {
-		// nothing to do
-	}
-
-	@Override
-	public void visit(final Workflow workflow) {
-		// nothing to do
-	}
-
-	@Override
-	public void visit(final Ping ping) {
-		// nothing to do
-	}
-
-	@Override
-	public void visit(final WebService WebService) {
-		// nothing to do
-	}
-
-	@Override
-	public void visit(final PresetFromCard presetFromCard) {
-		// nothing to do
-	}
 }

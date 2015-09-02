@@ -68,7 +68,7 @@ public class User {
 				data.lookupStore(), //
 				permissiveDataView(), //
 				userDataView(), //
-				userStore.getUser(), //
+				operationUser(), //
 				lock.dummyLockLogic());
 	}
 
@@ -81,7 +81,7 @@ public class User {
 				data.lookupStore(), //
 				permissiveDataView(), //
 				userDataView(), //
-				userStore.getUser(), //
+				operationUser(), //
 				lock.configurationAwareLockLogic());
 	}
 
@@ -93,9 +93,9 @@ public class User {
 	public CMDataView userDataView() {
 		final CMDataView userDataView = new UserDataView( //
 				data.systemDataView(), //
-				userStore.getUser().getPrivilegeContext(), //
+				operationUser().getPrivilegeContext(), //
 				privilegeManagement.rowAndColumnPrivilegeFetcher(), //
-				userStore.getUser());
+				operationUser());
 		return new ObservableDataView( //
 				userDataView, //
 				taskManager.defaultObserverCollector().allInOneObserver());
@@ -123,7 +123,7 @@ public class User {
 	@Bean
 	@Scope(PROTOTYPE)
 	protected WorkflowPersistence userWorkflowPersistence() {
-		final OperationUser operationUser = userStore.getUser();
+		final OperationUser operationUser = operationUser();
 		return DataViewWorkflowPersistence.newInstance() //
 				.withPrivilegeContext(operationUser.getPrivilegeContext()) //
 				.withOperationUser(operationUser) //
@@ -140,13 +140,19 @@ public class User {
 	@Qualifier(USER)
 	public UserWorkflowLogicBuilder userWorkflowLogicBuilder() {
 		return new UserWorkflowLogicBuilder( //
-				userStore.getUser(), //
-				userStore.getUser().getPrivilegeContext(), //
+				operationUser(), //
+				operationUser().getPrivilegeContext(), //
 				userWorkflowEngineBuilder(), //
 				userDataView(), //
 				properties.workflowProperties(), //
 				filesStore, //
 				lock.configurationAwareLockLogic());
+	}
+	
+ 	@Bean
+	@Scope(PROTOTYPE)
+	public OperationUser operationUser() {
+		return userStore.getUser();
 	}
 
 	@Bean

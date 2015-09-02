@@ -100,27 +100,28 @@
 				hideMode: 'offsets',
 				valueField: CMDBuild.core.proxy.CMProxyConstants.NAME,
 				displayField: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
-				scope: this,
 				editable: false,
+				forceSelection: true,
+//				allowBlank: false,
 
 				store: Ext.create('Ext.data.Store', {
 					fields: [CMDBuild.core.proxy.CMProxyConstants.NAME, CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION],
-					sorters: [{
-						property: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
-						direction: 'ASC'
-					}]
+					sorters: [
+						{ property: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION, direction: 'ASC' }
+					]
 				}),
 				queryMode: 'local',
 
 				listeners: {
-					'specialkey': function(field, event) {
-						if (event.getKey() == event.ENTER) {
+					scope: this,
+					specialkey: function(field, e, eOpts) {
+						if (e.getKey() == e.ENTER) {
 							try {
-								this.listKeyNav.selectHighlighted(event);
+								this.listKeyNav.selectHighlighted(e);
 
 								me.doLogin();
 							} catch (e) {
-								_debug('Error setting the group');
+								_error('error setting the group', this);
 							}
 						}
 					}
@@ -210,13 +211,9 @@
 		 * @private
 		 */
 		doLogin: function(field, event) {
-			var form = this.form.getForm();
-			var values = form.getValues();
-
-			if (!Ext.isEmpty(values.role) || form.isValid()) {
-				CMDBuild.LoadMask.get().show();
+			if (!Ext.isEmpty(this.role.getValue()) || this.form.getForm().isValid()) {
 				CMDBuild.core.proxy.CMProxy.doLogin({
-					params: form.getValues(),
+					params: this.form.getForm().getValues(),
 					scope: this,
 					success: function() {
 						if (/administration.jsp$/.test(window.location)) {
@@ -226,12 +223,10 @@
 						}
 					},
 					failure: function(result, options, decodedResult) {
-						CMDBuild.LoadMask.get().hide();
-
-						if (decodedResult && decodedResult.reason == 'AUTH_MULTIPLE_GROUPS') {
+						if (!Ext.isEmpty(decodedResult) && decodedResult[CMDBuild.core.proxy.CMProxyConstants.REASON] == 'AUTH_MULTIPLE_GROUPS') {
 							// Multiple groups for this user
 							// TODO Disable user/pass on multiple groups
-							this.enableRoles(decodedResult.groups);
+							this.enableRoles(decodedResult[CMDBuild.core.proxy.CMProxyConstants.GROUPS]);
 
 							return false;
 						} else {

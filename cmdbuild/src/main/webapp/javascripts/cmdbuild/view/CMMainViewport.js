@@ -218,7 +218,7 @@
 					target: 'msg-inner-hidden',
 					html: Ext.String.format(
 						defaultGroupTooltip,
-						CMDBuild.Translation.administration.modsecurity.groups,
+						CMDBuild.Translation.groups,
 						CMDBuild.Runtime.GroupDescriptions,
 						CMDBuild.Translation.defaultGroup,
 						CMDBuild.Runtime.DefaultGroupDescription

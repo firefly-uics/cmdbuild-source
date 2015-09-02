@@ -1,5 +1,11 @@
 (function() {
 
+	// TODO: fix to use class property requires (unusable at the moment because of class wrong name)
+	Ext.require([
+		'CMDBuild.core.proxy.CMProxyConstants',
+		'CMDBuild.core.proxy.group.DefaultFilters'
+	]);
+
 	Ext.define('CMDBuild.controller.management.common.CMModController', {
 		extend: 'CMDBuild.controller.CMBasePanelController',
 
@@ -13,20 +19,39 @@
 			this.buildSubControllers();
 		},
 
+		/**
+		 * @param {CMDBuild.view.common.CMAccordionStoreModel} entryType
+		 */
 		onViewOnFront: function(entryType) {
 			if (entryType) {
-				var currentEntryType = _CMCardModuleState.entryType;
-				var newEntryId = entryType.get('id');
-				var filter = entryType.get(_CMProxy.parameter.FILTER);
 				var dc = _CMMainViewportController.getDanglingCard();
-				var entryIdChanged = currentEntryType ? (currentEntryType.get('id') != newEntryId) : true;
+				var filter = entryType.get(CMDBuild.core.proxy.CMProxyConstants.FILTER);
+				var newEntryId = entryType.get(CMDBuild.core.proxy.CMProxyConstants.ID);
 
-				// if there is a danglingCard do the same things that happen
-				// when select a new entryType, the cardGridController is able to
-				// manage the dc and open it.
-//				if (entryIdChanged || dc || filter) {
+				// If we haven't a filter try to get default one from server
+				if (Ext.isEmpty(filter)) {
+					var params = {};
+					params[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME] = entryType.get(CMDBuild.core.proxy.CMProxyConstants.NAME);
+					params[CMDBuild.core.proxy.CMProxyConstants.GROUP] = CMDBuild.Runtime.DefaultGroupName;
+
+					CMDBuild.core.proxy.group.DefaultFilters.read({
+						params: params,
+						scope: this,
+						success: function(response, options, decodedResponse) {
+							decodedResponse = decodedResponse.response.elements[0];
+
+							if (!Ext.isEmpty(decodedResponse)) {
+								decodedResponse[CMDBuild.core.proxy.CMProxyConstants.CONFIGURATION] = Ext.decode(decodedResponse[CMDBuild.core.proxy.CMProxyConstants.CONFIGURATION]);
+
+								filter = Ext.create('CMDBuild.model.CMFilterModel', decodedResponse);
+							}
+
+							this.setEntryType(newEntryId, dc, filter);
+						}
+					});
+				} else {
 					this.setEntryType(newEntryId, dc, filter);
-//				}
+				}
 			}
 		},
 

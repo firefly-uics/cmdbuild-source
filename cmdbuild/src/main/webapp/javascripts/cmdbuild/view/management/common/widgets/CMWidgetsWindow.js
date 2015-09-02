@@ -1,6 +1,6 @@
 (function() {
 	Ext.define("CMDBuild.view.management.common.widgets.CMWidgetsWindow", {
-		extend: "CMDBuild.PopupWindow",
+		extend: "CMDBuild.core.PopupWindow",
 
 		/**
 		 * @cfg {CMDBuild.controller.management.common.CMWidgetManagerController}

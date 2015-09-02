@@ -19,11 +19,14 @@
 
 		requires: [
 			'CMDBuild.core.buttons.Buttons',
+			'CMDBuild.core.configurations.Timeout',
+			'CMDBuild.core.constants.Server',
 			'CMDBuild.core.proxy.CMProxyConstants',
 			'CMDBuild.core.proxy.Classes',
 			'CMDBuild.core.proxy.Configuration',
 			'CMDBuild.core.proxy.Localizations',
-			'CMDBuild.core.proxy.Report'
+			'CMDBuild.core.proxy.Report',
+			'CMDBuild.core.proxy.group.Group'
 		],
 
 		name: 'CMDBuild',
@@ -57,10 +60,11 @@
 					}
 				});
 
-				// maybe a single request with all the configuration could be better
-				CMDBuild.ServiceProxy.group.getUIConfiguration({
-					success: function(response, options,decoded) {
-						_CMUIConfiguration = new CMDBuild.model.CMUIConfigurationModel(decoded.response);
+				// Maybe a single request with all the configuration could be better
+				CMDBuild.core.proxy.group.Group.getUIConfiguration({
+					scope: this,
+					success: function(result, options, decodedResult) {
+						_CMUIConfiguration = new CMDBuild.model.CMUIConfigurationModel(decodedResult.response);
 
 						CMDBuild.ServiceProxy.configuration.readMainConfiguration({
 							success: function(response, options, decoded) {
@@ -196,10 +200,13 @@
 				/*
 				 * Classes and process
 				 */
-				CMDBuild.ServiceProxy.classes.read({
-					params: {
-						active: false
-					},
+				var params = {};
+				params[CMDBuild.core.proxy.CMProxyConstants.ACTIVE] = false;
+
+				CMDBuild.core.proxy.Classes.read({
+					params: params,
+					loadMask: false,
+					scope: this,
 					success: function(response, options, decoded) {
 						_CMCache.addClasses(decoded.classes);
 
@@ -305,15 +312,17 @@
 					callback: reqBarrier.getCallback()
 				});
 
-				/*
+				/**
 				 * Groups
 				 */
-				CMDBuild.ServiceProxy.group.read({
-					success: function(response, options, decoded) {
-						_CMCache.addGroups(decoded.groups);
+				CMDBuild.core.proxy.group.Group.readAll({
+					scope: this,
+					success: function(result, options, decodedResult) {
+						_CMCache.addGroups(decodedResult.groups); // TODO: refactor to avoid cache usage
 
-						groupsAccordion = Ext.create('CMDBuild.view.administration.accordion.Groups', {
-							cmName: 'groups',
+						groupsAccordion = Ext.create('CMDBuild.view.administration.accordion.UserAndGroup', {
+							cmControllerType: 'CMDBuild.controller.administration.accordion.UserAndGroup',
+							cmName: 'group'
 						});
 						groupsAccordion.updateStore();
 
@@ -326,8 +335,9 @@
 							new CMDBuild.Administration.ModMenu({
 								cmControllerType: controllerNS.administration.menu.CMModMenuController
 							}),
-							new CMDBuild.view.administration.group.CMModGroup({
-								cmControllerType: controllerNS.administration.group.CMModGroupsController
+							Ext.create('CMDBuild.view.administration.group.GroupView', {
+								cmControllerType: 'CMDBuild.controller.administration.group.Group',
+								cmName: 'group',
 							}),
 							Ext.create('CMDBuild.view.administration.users.UsersView', {
 								cmControllerType: 'CMDBuild.controller.administration.users.Users',

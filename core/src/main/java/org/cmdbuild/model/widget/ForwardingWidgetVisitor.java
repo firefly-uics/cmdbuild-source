@@ -1,5 +1,7 @@
 package org.cmdbuild.model.widget;
 
+import org.cmdbuild.model.widget.customform.CustomForm;
+
 import com.google.common.collect.ForwardingObject;
 
 public abstract class ForwardingWidgetVisitor extends ForwardingObject implements WidgetVisitor {
@@ -24,12 +26,27 @@ public abstract class ForwardingWidgetVisitor extends ForwardingObject implement
 	}
 
 	@Override
+	public void visit(final CustomForm widget) {
+		delegate().visit(widget);
+	}
+
+	@Override
+	public void visit(final Grid widget) {
+		delegate().visit(widget);
+	}
+
+	@Override
 	public void visit(final LinkCards widget) {
 		delegate().visit(widget);
 	}
 
 	@Override
 	public void visit(final ManageEmail widget) {
+		delegate().visit(widget);
+	}
+
+	@Override
+	public void visit(final NavigationTree widget) {
 		delegate().visit(widget);
 	}
 
@@ -59,27 +76,17 @@ public abstract class ForwardingWidgetVisitor extends ForwardingObject implement
 	}
 
 	@Override
-	public void visit(final WebService widget) {
-		delegate().visit(widget);
-	}
-
-	@Override
 	public void visit(final PresetFromCard widget) {
 		delegate().visit(widget);
 	}
 
 	@Override
+	public void visit(final WebService widget) {
+		delegate().visit(widget);
+	}
+
+	@Override
 	public void visit(final Workflow widget) {
-		delegate().visit(widget);
-	}
-
-	@Override
-	public void visit(final NavigationTree widget) {
-		delegate().visit(widget);
-	}
-
-	@Override
-	public void visit(final Grid widget) {
 		delegate().visit(widget);
 	}
 

@@ -101,59 +101,83 @@
 
 	function initBuilders(me) {
 		me.builders = {
-			// Special guests in the Widgets show, they have to open a tab in the activityTabPanel, and not a separate window
-			'.OpenNote': function(widget, card) {
-				var widgetUI = null;
-				if (me.tabbedWidgetDelegate) {
-					widgetUI = me.tabbedWidgetDelegate.getNotesPanel() || null;
+			// OpenTabs widgets: they have to open a tab in the activityTabPanel, and not a separate window
+				'.OpenNote': function(widget, card) {
+					var widgetUI = null;
+					if (me.tabbedWidgetDelegate) {
+						widgetUI = me.tabbedWidgetDelegate.getNotesPanel() || null;
 
-					if (widgetUI != null) {
-						widgetUI.configure({
-							widget: widget,
-							activityInstance: card
-						});
+						if (widgetUI != null) {
+							widgetUI.configure({
+								widget: widget,
+								activityInstance: card
+							});
+						}
 					}
-				}
 
-				return widgetUI;
-			},
+					return widgetUI;
+				},
 
-			'.OpenAttachment': function(widget, card) {
-				var widgetUI = null;
-				if (me.tabbedWidgetDelegate) {
-					widgetUI = me.tabbedWidgetDelegate.getAttachmentsPanel() || null;
+				'.OpenAttachment': function(widget, card) {
+					var widgetUI = null;
+					if (me.tabbedWidgetDelegate) {
+						widgetUI = me.tabbedWidgetDelegate.getAttachmentsPanel() || null;
 
-					if (widgetUI != null) {
-						widgetUI.configure({
-							widget: widget,
-							activityInstance: card
-						});
+						if (widgetUI != null) {
+							widgetUI.configure({
+								widget: widget,
+								activityInstance: card
+							});
+						}
 					}
-				}
 
-				return widgetUI;
+					return widgetUI;
+				},
+
+				/**
+				 * @param {Object} widget
+				 * @param {Ext.data.Model or CMDBuild.model.CMActivityInstance} card or activity
+				 *
+				 * @returns {Null}
+				 */
+				'.ManageEmail': function(widget, card) {
+					if (!Ext.isEmpty(me.tabbedWidgetDelegate) && !Ext.isEmpty(me.tabbedWidgetDelegate.getEmailPanel()))
+						return me.tabbedWidgetDelegate.getEmailPanel();
+
+					return null;
+				},
+			// End OpenTabs widgets
+
+			/**
+			 * @param {Object} widget
+			 * @param {CMDBuild.model.CMActivityInstance} activity
+			 *
+			 * @returns {CMDBuild.view.management.common.widgets.customForm.CustomFormView}
+			 */
+			'.CustomForm': function(widget, card) {
+				var w = Ext.create('CMDBuild.view.management.common.widgets.customForm.CustomFormView');
+
+				me.widgetsContainer.addWidgt(w);
+
+				return w;
 			},
 
 			/**
 			 * @param {Object} widget
-			 * @param {Ext.data.Model or CMDBuild.model.CMActivityInstance} card or activity
+			 * @param {CMDBuild.model.CMActivityInstance} activity
+			 *
+			 * @returns {CMDBuild.view.management.common.widgets.grid.GridView}
 			 */
-			'.ManageEmail': function(widget, card) {
-				if (!Ext.isEmpty(me.tabbedWidgetDelegate) && !Ext.isEmpty(me.tabbedWidgetDelegate.getEmailPanel()))
-					return me.tabbedWidgetDelegate.getEmailPanel();
+			'.Grid': function(widget, card) {
+				var w = Ext.create('CMDBuild.view.management.common.widgets.grid.GridView');
 
-				return null;
+				me.widgetsContainer.addWidgt(w);
+
+				return w;
 			}
 		};
 
 		var pkg = CMDBuild.view.management.common.widgets;
-
-		me.builders['.Grid'] = function(widget, card) {
-			var w = Ext.create('CMDBuild.view.management.common.widgets.grid.GridView');
-			me.widgetsContainer.addWidgt(w);
-
-			return w;
-		};
 
 		// createModifyCard
 		me.builders[pkg.CMCreateModifyCard.WIDGET_NAME] = function createModifyCardBuilder(widget, card) {

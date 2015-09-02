@@ -1,5 +1,10 @@
 (function() {
 
+	/**
+	 * Use CMDBuild.controller.common.AbstractBasePanelController instead
+	 *
+	 * @deprecated
+	 */
 	Ext.define('CMDBuild.controller.common.CMBasePanelController', {
 		alternateClassName: 'CMDBuild.controller.CMBasePanelController', // Legacy class name
 

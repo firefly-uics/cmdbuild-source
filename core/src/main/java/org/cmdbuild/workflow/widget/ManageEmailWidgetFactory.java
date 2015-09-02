@@ -171,21 +171,21 @@ public class ManageEmailWidgetFactory extends ValuePairWidgetFactory {
 		final Map<String, String> noSubjectPrexifes = filterKeysStartingWith(valueMap, NO_SUBJECT_PREFIX);
 		for (final String key : noSubjectPrexifes.keySet()) {
 			final EmailTemplate template = getTemplateForKey(emailTemplatesByName, key, NO_SUBJECT_PREFIX);
-			template.setNoSubjectPrefix(readBooleanTrueIfTrue(valueMap.get(key)));
+			template.setNoSubjectPrefix(readBooleanFalseIfMissing(valueMap.get(key)));
 		}
 		managedParameters.addAll(noSubjectPrexifes.keySet());
 
 		final Map<String, String> keepSynchronizations = filterKeysStartingWith(valueMap, KEEP_SYNCHRONIZATION);
 		for (final String key : keepSynchronizations.keySet()) {
 			final EmailTemplate template = getTemplateForKey(emailTemplatesByName, key, KEEP_SYNCHRONIZATION);
-			template.setKeepSynchronization(readBooleanTrueIfTrue(valueMap.get(key), true));
+			template.setKeepSynchronization(readBoolean(valueMap.get(key), true));
 		}
 		managedParameters.addAll(keepSynchronizations.keySet());
 
 		final Map<String, String> promptSynchronizations = filterKeysStartingWith(valueMap, PROMPT_SYNCHRONIZATION);
 		for (final String key : promptSynchronizations.keySet()) {
 			final EmailTemplate template = getTemplateForKey(emailTemplatesByName, key, PROMPT_SYNCHRONIZATION);
-			template.setPromptSynchronization(readBooleanTrueIfTrue(valueMap.get(key)));
+			template.setPromptSynchronization(readBooleanFalseIfMissing(valueMap.get(key)));
 		}
 		managedParameters.addAll(promptSynchronizations.keySet());
 
@@ -215,8 +215,8 @@ public class ManageEmailWidgetFactory extends ValuePairWidgetFactory {
 					}
 
 				}).values());
-		widget.setReadOnly(readBooleanTrueIfPresent(valueMap.get(READ_ONLY)));
-		widget.setNoSubjectPrefix(readBooleanTrueIfTrue(valueMap.get(GLOBAL_NO_SUBJECT_PREFIX)));
+		widget.setReadOnly(valueMap.containsKey(READ_ONLY));
+		widget.setNoSubjectPrefix(readBooleanFalseIfMissing(valueMap.get(GLOBAL_NO_SUBJECT_PREFIX)));
 
 		return widget;
 	}

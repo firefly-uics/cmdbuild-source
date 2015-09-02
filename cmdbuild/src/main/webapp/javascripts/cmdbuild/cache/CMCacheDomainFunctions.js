@@ -94,7 +94,7 @@
 					DESCRIPTION: _p.DESCRIPTION,
 					TYPE: _p.TYPE,
 					IS_BASEDSP: _p.DISPLAY_IN_GRID,
-					IS_UNIQUE: _p.UNIQUE,
+					IS_UNIQUE: 'isunique',
 					IS_NOT_NULL: _p.NOT_NULL,
 					IS_INHERITED: "inherited",
 					IS_ACTIVE: _p.ACTIVE,
