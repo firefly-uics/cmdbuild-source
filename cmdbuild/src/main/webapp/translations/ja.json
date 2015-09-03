@@ -1362,6 +1362,7 @@
 	"importFromCSV": "CSVからインポート",
 	"includeRelations": "<em>Include relations</em>",
 	"includeSystemActivities": "<em>Include system activities</em>",
+	"includeSystemFilters": "<em>Include system filters</em>",
 	"incoming": "受信",
 	"incomingFolder": "受信フォルダー",
 	"initialLatitude": "初期緯度",

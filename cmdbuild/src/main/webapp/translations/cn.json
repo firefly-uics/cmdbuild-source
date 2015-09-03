@@ -1362,6 +1362,7 @@
 	"import": "<em>Import</em>",
 	"includeRelations": "包括关系",
 	"includeSystemActivities": "包括系统活动",
+	"includeSystemFilters": "<em>Include system filters</em>",
 	"incoming": "Incoming",
 	"incomingFolder": "Incoming folder",
 	"initialLatitude": "初始纬度",
