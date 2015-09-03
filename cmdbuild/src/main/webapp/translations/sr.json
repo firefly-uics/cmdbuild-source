@@ -1362,6 +1362,7 @@
 	"import": "<em>Import</em>",
 	"includeRelations": "<em>Include relations</em>",
 	"includeSystemActivities": "<em>Include system activities</em>",
+	"includeSystemFilters": "<em>Include system filters</em>",
 	"incoming": "Dolazne",
 	"incomingFolder": "Dolazni folder",
 	"initialLatitude": "Početna geografska širina",

@@ -1362,6 +1362,7 @@
 	"importFromCSV": "Importeer vanaf CSV",
 	"includeRelations": "<em>Include relations</em>",
 	"includeSystemActivities": "<em>Include system activities</em>",
+	"includeSystemFilters": "<em>Include system filters</em>",
 	"incoming": "Inkomende",
 	"incomingFolder": "Map inkomend",
 	"initialLatitude": "Initiele latitude",
