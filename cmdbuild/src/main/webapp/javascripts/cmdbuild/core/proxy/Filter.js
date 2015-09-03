@@ -14,6 +14,21 @@
 			doRequest(filter, config, CMDBuild.core.proxy.CMProxyUrlIndex.filter.create, 'POST', true);
 		},
 
+		/**
+		 * @param {Object} parameters
+		 */
+		read: function(parameters) {
+			CMDBuild.Ajax.request({
+				url: CMDBuild.core.proxy.CMProxyUrlIndex.filter.read,
+				params: parameters.params,
+				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
+				scope: parameters.scope || this,
+				failure: parameters.failure || Ext.emptyFn,
+				success: parameters.success || Ext.emptyFn,
+				callback: parameters.callback || Ext.emptyFn
+			});
+		},
+
 		update: function(filter, config) {
 			doRequest(filter, config, CMDBuild.core.proxy.CMProxyUrlIndex.filter.update, 'POST', true);
 		},
@@ -25,9 +40,11 @@
 		/**
 		 * Returns a store with the filters for a given group
 		 *
+		 * @param {String} className
+		 *
 		 * @return {Ext.data.Store}
 		 */
-		newGroupStore: function() {
+		newGroupStore: function(className) {
 			return Ext.create('Ext.data.Store', {
 				autoLoad: true,
 				model: 'CMDBuild.model.CMFilterModel',
@@ -39,12 +56,14 @@
 						root: 'filters',
 						type: 'json',
 						totalProperty: 'count'
+					},
+					extraParams: {
+						className: className
 					}
 				},
-				sorters: [{
-					property: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
-					direction: 'ASC'
-				}]
+				sorters: [
+					{ property: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION, direction: 'ASC' }
+				]
 			});
 		},
 
