@@ -31,6 +31,7 @@ import org.cmdbuild.logic.bim.ViewerLogic;
 import org.cmdbuild.logic.bim.project.DefaultProjectLogic;
 import org.cmdbuild.logic.bim.project.ProjectLogic;
 import org.cmdbuild.logic.cache.CachingLogic;
+import org.cmdbuild.logic.custompages.CustomPagesLogic;
 import org.cmdbuild.logic.data.DataDefinitionLogic;
 import org.cmdbuild.logic.data.LockLogic;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
@@ -160,6 +161,10 @@ public class JSONBaseWithSpringContext extends JSONBase {
 
 	protected CachingLogic cachingLogic() {
 		return applicationContext().getBean(CachingLogic.class);
+	}
+	
+	protected CustomPagesLogic customPagesLogic() {
+		return applicationContext().getBean(CustomPagesLogic.class);
 	}
 
 	protected DashboardLogic dashboardLogic() {
