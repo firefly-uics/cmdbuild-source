@@ -13,6 +13,11 @@
 		alternateClassName: 'CMDBuild.view.common.field.CMFilterChooserWindow', // Legacy class name
 		extend: 'CMDBuild.view.management.common.filter.CMFilterWindow',
 
+		requires: [
+			'CMDBuild.core.proxy.CMProxyConstants',
+			'CMDBuild.core.proxy.Filter'
+		],
+
 		mixins: {
 			delegable: 'CMDBuild.core.CMDelegable'
 		},
@@ -112,43 +117,92 @@
 		 */
 		buildGrid: function() {
 			var me = this;
-			var store = CMDBuild.core.proxy.Filter.newSystemStore(this.className);
+			var store = CMDBuild.core.proxy.Filter.newGroupStore(this.className);
 
-			this.grid = Ext.create('Ext.grid.Panel', {
-				autoScroll: true,
-				store: store,
-				border: false,
-				cls: 'cmborderbottom',
-				frame: false,
-				region: 'north',
-				height: '40%',
-				split: true,
-
-				columns: [
-					{
-						header: CMDBuild.Translation.name,
-						dataIndex: CMDBuild.core.proxy.CMProxyConstants.NAME,
-						flex: 1
-					}, {
-						header: CMDBuild.Translation.description_,
-						dataIndex: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
-						flex: 1
-					}
-				],
-
-				bbar: Ext.create('Ext.toolbar.Paging', {
+			Ext.apply(this, {
+				grid: Ext.create('Ext.grid.Panel', {
+					autoScroll: true,
+					border: false,
+					cls: 'cmborderbottom',
+					frame: false,
+					height: '40%',
+					region: 'north',
+					split: true,
 					store: store,
-					displayInfo: true,
-					displayMsg: ' {0} - {1} ' + CMDBuild.Translation.common.display_topic_of+' {2}',
-					emptyMsg: CMDBuild.Translation.common.display_topic_none
-				}),
 
-				listeners: {
-					itemclick: function(grid, record, item, index, e, eOpts) {
-						me.callDelegates('onCMFilterChooserWindowRecordSelect', [me, record]);
+					columns: [
+						{
+							text: CMDBuild.Translation.name,
+							dataIndex: CMDBuild.core.proxy.CMProxyConstants.NAME,
+							flex: 1
+						}, {
+							text: CMDBuild.Translation.description_,
+							dataIndex: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
+							flex: 1
+						}
+					],
+
+					dockedItems: [
+						Ext.create('Ext.toolbar.Toolbar', {
+							dock: 'top',
+							itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_TOP,
+							items: [
+								'->',
+								this.includeSystemFiltersCheckbox = Ext.create('Ext.form.field.Checkbox', {
+									boxLabel: CMDBuild.Translation.includeSystemFilters,
+									boxLabelCls: 'cmtoolbaritem',
+									inputValue: true,
+									uncheckedValue: false,
+									checked: false, // Default as false
+									scope: this,
+
+									handler: function(checkbox, checked) {
+										this.grid.getStore().reload();
+									}
+								})
+							]
+						}),
+						Ext.create('Ext.toolbar.Paging', {
+							dock: 'bottom',
+							itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_BOTTOM,
+							store: store,
+							displayInfo: true,
+							displayMsg: ' {0} - {1} ' + CMDBuild.Translation.common.display_topic_of+' {2}',
+							emptyMsg: CMDBuild.Translation.common.display_topic_none
+						})
+					],
+
+					listeners: {
+						itemclick: function(grid, record, item, index, e, eOpts) {
+							me.callDelegates('onCMFilterChooserWindowRecordSelect', [me, record]);
+						}
 					}
-				}
+				})
 			});
+
+			// Include in store also System filters to be consistent with checkbox state
+			this.grid.getStore().on('load', function() {
+				this.evaluateSystemFiltersCheckbox(this.includeSystemFiltersCheckbox.getValue());
+			}, this);
+		},
+
+		/**
+		 * @param {Boolean} checked
+		 */
+		evaluateSystemFiltersCheckbox: function(checked) {
+			var params = {};
+			params[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME] = this.className;
+
+			if (checked)
+				CMDBuild.core.proxy.Filter.read({
+					params: params,
+					scope: this,
+					success: function(response, options, decodedResponse) {
+						decodedResponse = decodedResponse[CMDBuild.core.proxy.CMProxyConstants.FILTERS];
+
+						this.grid.getStore().loadData(decodedResponse, true);
+					}
+				});
 		},
 
 		/**
