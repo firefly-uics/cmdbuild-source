@@ -305,6 +305,7 @@ public class ModReport extends JSONBaseWithSpringContext {
 				className, //
 				userDataAccessLogic(), //
 				userDataView(), //
+				rootFilesStore(), //
 				cmdbuildConfiguration());
 
 		rft.fillReport();
@@ -330,6 +331,7 @@ public class ModReport extends JSONBaseWithSpringContext {
 				cardId, //
 				ReportExtension.valueOf(format.toUpperCase()), //
 				userDataView(), //
+				rootFilesStore(), //
 				userDataAccessLogic(), //
 				localization(), //
 				cmdbuildConfiguration());

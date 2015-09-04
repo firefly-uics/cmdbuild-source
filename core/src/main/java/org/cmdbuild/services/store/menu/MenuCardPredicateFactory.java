@@ -15,6 +15,7 @@ import org.cmdbuild.data.store.dao.StorableConverter;
 import org.cmdbuild.model.view.View;
 import org.cmdbuild.privileges.predicates.IsAlwaysReadable;
 import org.cmdbuild.privileges.predicates.IsReadableClass;
+import org.cmdbuild.privileges.predicates.IsReadableCustomPage;
 import org.cmdbuild.privileges.predicates.IsReadableDashboard;
 import org.cmdbuild.privileges.predicates.IsReadableReport;
 import org.cmdbuild.privileges.predicates.IsReadableView;
@@ -65,6 +66,8 @@ public class MenuCardPredicateFactory {
 			return new IsReadableDashboard(dataView, group);
 		} else if (menuCard.get(TYPE_ATTRIBUTE).equals(MenuItemType.VIEW.getValue())) {
 			return new IsReadableView(dataView, privilegeContext.get(), viewConverter);
+		} else if (menuCard.get(TYPE_ATTRIBUTE).equals(MenuItemType.CUSTOM_PAGE.getValue())) {
+			return new IsReadableCustomPage();
 		}
 		throw new IllegalArgumentException();
 	}

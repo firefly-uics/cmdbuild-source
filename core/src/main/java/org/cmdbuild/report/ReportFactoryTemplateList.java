@@ -32,6 +32,7 @@ import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.data.QueryOptions;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.logic.data.access.QuerySpecsBuilderFiller;
+import org.cmdbuild.services.FilesStore;
 
 public class ReportFactoryTemplateList extends ReportFactoryTemplate {
 
@@ -50,9 +51,10 @@ public class ReportFactoryTemplateList extends ReportFactoryTemplate {
 			final String className, //
 			final DataAccessLogic dataAccessLogic, //
 			final CMDataView dataView, //
+			final FilesStore filesStore, //
 			final CmdbuildConfiguration configuration //
 	) throws JRException {
-		super(dataSource, configuration, dataView);
+		super(dataSource, configuration, dataView, filesStore);
 
 		this.reportExtension = reportExtension;
 		this.attributeNamesSorted = attributeOrder;

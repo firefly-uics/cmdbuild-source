@@ -45,6 +45,7 @@ import org.cmdbuild.dao.query.clause.where.WhereClause;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.model.data.Card;
+import org.cmdbuild.services.FilesStore;
 import org.cmdbuild.services.localization.Localization;
 import org.cmdbuild.utils.guava.Functions;
 
@@ -107,9 +108,9 @@ public class ReportFactoryTemplateDetailSubreport extends ReportFactoryTemplate 
 	}
 
 	public ReportFactoryTemplateDetailSubreport(final DataSource dataSource, final SubreportType subreportType,
-			final CMClass table, final Card card, final CMDataView dataView, final Localization localization,
-			final CmdbuildConfiguration configuration) throws JRException {
-		super(dataSource, configuration, dataView);
+			final CMClass table, final Card card, final CMDataView dataView, final FilesStore filesStore,
+			final Localization localization, final CmdbuildConfiguration configuration) throws JRException {
+		super(dataSource, configuration, dataView, filesStore);
 		// init vars
 		this.reportExtension = ReportExtension.PDF;
 		this.attributes = new LinkedList<SubreportAttribute>();

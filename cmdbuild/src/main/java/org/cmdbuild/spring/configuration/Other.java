@@ -1,19 +1,15 @@
 package org.cmdbuild.spring.configuration;
 
-import static org.cmdbuild.spring.util.Constants.ROOT;
-
 import javax.sql.DataSource;
 
 import org.cmdbuild.common.java.sql.DataSourceHelper;
 import org.cmdbuild.common.java.sql.DefaultDataSourceHelper;
 import org.cmdbuild.logic.data.access.SystemDataAccessLogicBuilder;
 import org.cmdbuild.services.DefaultPatchManager;
-import org.cmdbuild.services.FilesStore;
 import org.cmdbuild.services.PatchManager;
 import org.cmdbuild.services.meta.DefaultMetadataStoreFactory;
 import org.cmdbuild.services.meta.MetadataStoreFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -27,8 +23,7 @@ public class Other {
 	private DataSource dataSource;
 
 	@Autowired
-	@Qualifier(ROOT)
-	private FilesStore rootFilesStore;
+	private FileStore fileStore;
 
 	@Autowired
 	private SystemDataAccessLogicBuilder systemDataAccessLogicBuilder;
@@ -40,7 +35,7 @@ public class Other {
 				data.systemDataView(), //
 				systemDataAccessLogicBuilder, //
 				data.dataDefinitionLogic(), //
-				rootFilesStore);
+				fileStore.webInfFilesStore());
 	}
 
 	@Bean

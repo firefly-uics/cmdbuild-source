@@ -12,6 +12,7 @@ public enum MenuItemType {
 	REPORT_ODT("reportodt"), //
 	REPORT_XML("reportxml"), //
 	VIEW("view"), //
+	CUSTOM_PAGE("custompage"), //
 	ROOT("root"), //
 	;
 
@@ -51,6 +52,10 @@ public enum MenuItemType {
 
 	public static boolean isView(final MenuItemType type) {
 		return type.equals(VIEW);
+	}
+
+	public static boolean isCustomPage(final MenuItemType type) {
+		return type.equals(CUSTOM_PAGE);
 	}
 
 }
