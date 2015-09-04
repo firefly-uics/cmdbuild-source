@@ -13,7 +13,7 @@ import org.cmdbuild.data.store.dao.BaseStorableConverter;
 
 public class DBCustomPageConverter extends BaseStorableConverter<DBCustomPage> {
 
-	private static final String CLASSNAME = "_CustomPage";
+	public static final String CLASSNAME = "_CustomPage";
 
 	private static final String NAME = "Name";
 	private static final String DESCRIPTION = "Description";
