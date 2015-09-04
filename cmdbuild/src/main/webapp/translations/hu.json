@@ -1362,6 +1362,7 @@
 	"importFromCSV": "CSV importálása",
 	"includeRelations": "Relációk belefoglalása",
 	"includeSystemActivities": "Rendszer aktivitások belefoglalása",
+	"includeSystemFilters": "<em>Include system filters</em>",
 	"incoming": "Bejövő",
 	"incomingFolder": "Bejövő mappa",
 	"initialLatitude": "Kezdeti szélesség",

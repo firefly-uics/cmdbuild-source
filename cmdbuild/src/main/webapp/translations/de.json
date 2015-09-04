@@ -1362,6 +1362,7 @@
 	"importFromCSV": "<em>Import from CSV</em>",
 	"includeRelations": "<em>Include relations</em>",
 	"includeSystemActivities": "<em>Include system activities</em>",
+	"includeSystemFilters": "<em>Include system filters</em>",
 	"incoming": "Eingehend",
 	"incomingFolder": "Ordner für eingegangene E-Mails",
 	"initialLatitude": "Anfangsbreite",

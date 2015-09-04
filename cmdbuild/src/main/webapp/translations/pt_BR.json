@@ -1362,6 +1362,7 @@
 	"importFromCSV": "<em>Import from CSV</em>",
 	"includeRelations": "<em>Include relations</em>",
 	"includeSystemActivities": "<em>Include system activities</em>",
+	"includeSystemFilters": "<em>Include system filters</em>",
 	"incoming": "<em>Incoming</em>",
 	"incomingFolder": "<em>Incoming folder</em>",
 	"initialLatitude": "Latitude inicial",

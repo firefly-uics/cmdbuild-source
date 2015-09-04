@@ -5,7 +5,7 @@
 		singleton: true,
 
 		config: {
-			base:  90,
+			base:  90, // (seconds)
 			report: 7200000 // 2h (milliseconds)
 		},
 
