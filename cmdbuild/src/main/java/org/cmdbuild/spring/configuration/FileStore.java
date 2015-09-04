@@ -70,7 +70,9 @@ public class FileStore {
 		return new DefaultFilesStore(Settings.getInstance().getRootPath(), "upload");
 	}
 
-	@Bean
+	public static final String ROOT = "root";
+
+	@Bean(name = ROOT)
 	public FilesStore webInfFilesStore() {
 		return new FilesStoreWithLimitations(_webInfFilesStore());
 	}

@@ -1,8 +1,9 @@
 package org.cmdbuild.servlets.json;
 
-import static org.cmdbuild.spring.configuration.FileStore.*;
 import static org.cmdbuild.spring.SpringIntegrationUtils.applicationContext;
 import static org.cmdbuild.spring.configuration.Data.BEAN_SYSTEM_DATA_VIEW;
+import static org.cmdbuild.spring.configuration.FileStore.ROOT;
+import static org.cmdbuild.spring.configuration.FileStore.UPLOAD;
 import static org.cmdbuild.spring.configuration.Lock.USER_LOCK_LOGIC;
 import static org.cmdbuild.spring.configuration.User.BEAN_USER_DATA_VIEW;
 
@@ -121,9 +122,6 @@ public class JSONBaseWithSpringContext extends JSONBase {
 	 * Stores
 	 */
 
-	protected FilesStore uploadFilesStore() {
-		return applicationContext().getBean(UPLOAD,FilesStore.class);
-	}
 
 	protected LanguageStore languageStore() {
 		return applicationContext().getBean(LanguageStore.class);
@@ -135,6 +133,14 @@ public class JSONBaseWithSpringContext extends JSONBase {
 
 	protected ReportStore reportStore() {
 		return applicationContext().getBean(ReportStore.class);
+	}
+
+	protected FilesStore rootFilesStore() {
+		return applicationContext().getBean(ROOT,FilesStore.class);
+	}
+
+	protected FilesStore uploadFilesStore() {
+		return applicationContext().getBean(UPLOAD,FilesStore.class);
 	}
 
 	protected UserStore userStore() {
