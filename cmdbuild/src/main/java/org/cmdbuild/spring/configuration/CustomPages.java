@@ -16,6 +16,7 @@ import org.cmdbuild.logic.custompages.DefaultConverter;
 import org.cmdbuild.logic.custompages.DefaultCustomPagesLogic;
 import org.cmdbuild.logic.custompages.DefaultCustomPagesLogic.AccessControlHelper;
 import org.cmdbuild.logic.custompages.DefaultCustomPagesLogic.Converter;
+import org.cmdbuild.logic.custompages.PrivilegeContextAccessControlHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -73,14 +74,7 @@ public class CustomPages {
 
 	@Bean
 	protected AccessControlHelper alwaysAccessibleAccessControlHelper() {
-		return new AccessControlHelper() {
-
-			@Override
-			public boolean isAccessible(final CustomPage value) {
-				return true;
-			}
-
-		};
+		return new PrivilegeContextAccessControlHelper(userStore);
 	}
 
 }

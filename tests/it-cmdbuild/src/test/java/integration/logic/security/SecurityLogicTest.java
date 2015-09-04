@@ -46,7 +46,7 @@ public class SecurityLogicTest extends IntegrationTestBase {
 	public void setUp() {
 		fixture = new UserRolePrivilegeFixture(dbDriver());
 
-		securityLogic = new DefaultSecurityLogic(dbDataView(), null, null);
+		securityLogic = new DefaultSecurityLogic(dbDataView(), null, null, null);
 		populateDatabaseWithUsersGroupsAndPrivileges();
 	}
 
