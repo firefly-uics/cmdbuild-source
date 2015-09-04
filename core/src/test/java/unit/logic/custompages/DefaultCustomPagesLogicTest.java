@@ -7,12 +7,14 @@ import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
+import org.cmdbuild.data.store.Storable;
 import org.cmdbuild.data.store.Store;
 import org.cmdbuild.data.store.custompage.DBCustomPage;
 import org.cmdbuild.logic.custompages.CustomPage;
@@ -115,6 +117,32 @@ public class DefaultCustomPagesLogicTest {
 		assertThat(captor2.getAllValues().get(2), equalTo(_baz));
 	}
 
+	@Test
+	public void customPageRead() throws Exception {
+		// given
+		final DBCustomPage readed = storableCustomPage(1L);
+		doReturn(readed) //
+				.when(store).read(any(Storable.class));
+		final CustomPage converted = customPage(1L);
+		doReturn(converted) //
+				.when(converter).toLogic(any(DBCustomPage.class));
+
+		// when
+		final CustomPage output = underTest.read(42L);
+
+		// then
+		assertThat(output, equalTo(converted));
+
+		final ArgumentCaptor<DBCustomPage> captor = ArgumentCaptor.forClass(DBCustomPage.class);
+		verify(store).read(captor.capture());
+		verify(converter).toLogic(eq(readed));
+		verifyNoMoreInteractions(store, converter, accessControlHelper);
+
+		final DBCustomPage captured = captor.getValue();
+		assertThat(captured.getIdentifier(), equalTo("42"));
+		assertThat(captured.getId(), equalTo(42L));
+	}
+
 	/*
 	 * Utilities
 	 */
@@ -160,17 +188,17 @@ public class DefaultCustomPagesLogicTest {
 
 			@Override
 			public String getName() {
-				return getId().toString();
+				return getIdentifier();
 			}
 
 			@Override
 			public String getDescription() {
-				return getId().toString();
+				return getIdentifier();
 			}
 
 			@Override
 			public String toString() {
-				return getId().toString();
+				return getIdentifier();
 			}
 
 		};

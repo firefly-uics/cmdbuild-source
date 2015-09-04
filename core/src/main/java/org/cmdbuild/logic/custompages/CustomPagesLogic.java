@@ -8,4 +8,6 @@ public interface CustomPagesLogic extends Logic {
 
 	Iterable<CustomPage> readForCurrentUser();
 
+	CustomPage read(Long id);
+
 }

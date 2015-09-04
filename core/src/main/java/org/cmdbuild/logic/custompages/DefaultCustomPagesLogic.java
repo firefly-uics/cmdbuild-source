@@ -24,6 +24,36 @@ public class DefaultCustomPagesLogic implements CustomPagesLogic {
 
 	}
 
+	private static class LongAdapter implements DBCustomPage {
+
+		private final Long value;
+
+		public LongAdapter(final Long value) {
+			this.value = value;
+		}
+
+		@Override
+		public String getIdentifier() {
+			return getId().toString();
+		}
+
+		@Override
+		public Long getId() {
+			return value;
+		}
+
+		@Override
+		public String getName() {
+			return null;
+		}
+
+		@Override
+		public String getDescription() {
+			return null;
+		}
+
+	}
+
 	private final Store<DBCustomPage> store;
 	private final Converter converter;
 	private final AccessControlHelper accessControlHelper;
@@ -45,6 +75,11 @@ public class DefaultCustomPagesLogic implements CustomPagesLogic {
 	public Iterable<CustomPage> readForCurrentUser() {
 		return from(read()) //
 				.filter(hasAccess());
+	}
+
+	@Override
+	public CustomPage read(final Long id) {
+		return toLogic().apply(store.read(new LongAdapter(id)));
 	}
 
 	private Function<? super DBCustomPage, CustomPage> toLogic() {

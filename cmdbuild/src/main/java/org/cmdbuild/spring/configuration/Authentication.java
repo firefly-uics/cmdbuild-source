@@ -22,6 +22,7 @@ import org.cmdbuild.logic.auth.SoapAuthenticationLogicBuilder;
 import org.cmdbuild.logic.auth.TransactionalGroupsLogic;
 import org.cmdbuild.privileges.DBGroupFetcher;
 import org.cmdbuild.privileges.fetchers.factories.CMClassPrivilegeFetcherFactory;
+import org.cmdbuild.privileges.fetchers.factories.CustomPagePrivilegeFetcherFactory;
 import org.cmdbuild.privileges.fetchers.factories.FilterPrivilegeFetcherFactory;
 import org.cmdbuild.privileges.fetchers.factories.ViewPrivilegeFetcherFactory;
 import org.cmdbuild.services.soap.security.SoapConfiguration;
@@ -37,6 +38,9 @@ public class Authentication {
 
 	@Autowired
 	private AuthenticationStore authenticationStore;
+
+	@Autowired
+	private CustomPages customPages;
 
 	@Autowired
 	private Data data;
@@ -94,10 +98,11 @@ public class Authentication {
 	@Bean
 	@Scope(PROTOTYPE)
 	public DBGroupFetcher dbGroupFetcher() {
-		return new DBGroupFetcher(data.systemDataView(), Arrays.asList( //
-				new CMClassPrivilegeFetcherFactory(data.systemDataView()), //
-				new ViewPrivilegeFetcherFactory(data.systemDataView(), view.viewConverter()), //
-				new FilterPrivilegeFetcherFactory(data.systemDataView(), filter.dataViewFilterStore())));
+		return new DBGroupFetcher(data.systemDataView(), Arrays.asList(
+				new CMClassPrivilegeFetcherFactory(data.systemDataView()),
+				new ViewPrivilegeFetcherFactory(data.systemDataView(), view.viewConverter()),
+				new FilterPrivilegeFetcherFactory(data.systemDataView(), filter.dataViewFilterStore()),
+				new CustomPagePrivilegeFetcherFactory(data.systemDataView(), customPages.defaultCustomPagesLogic())));
 	}
 
 	@Bean
