@@ -8,6 +8,7 @@ import net.sf.jasperreports.engine.xml.JRXmlLoader;
 
 import org.cmdbuild.config.CmdbuildConfiguration;
 import org.cmdbuild.dao.view.CMDataView;
+import org.cmdbuild.services.FilesStore;
 
 public class ReportFactoryTemplateSchema extends ReportFactoryTemplate {
 
@@ -19,9 +20,10 @@ public class ReportFactoryTemplateSchema extends ReportFactoryTemplate {
 			final DataSource dataSource, //
 			final ReportExtension reportExtension, //
 			final CmdbuildConfiguration configuration, //
-			final CMDataView dataView //
+			final CMDataView dataView, //
+			final FilesStore filesStore //
 	) throws JRException {
-		this(dataSource, reportExtension, null, configuration, dataView);
+		this(dataSource, reportExtension, null, configuration, dataView, filesStore);
 	}
 
 	public ReportFactoryTemplateSchema( //
@@ -29,9 +31,10 @@ public class ReportFactoryTemplateSchema extends ReportFactoryTemplate {
 			final ReportExtension reportExtension, //
 			final String className, //
 			final CmdbuildConfiguration configuration, //
-			final CMDataView dataView
+			final CMDataView dataView, //
+			final FilesStore filesStore //
 	) throws JRException {
-		super(dataSource, configuration, dataView);
+		super(dataSource, configuration, dataView, filesStore);
 		this.reportExtension = reportExtension;
 		jasperDesign = JRXmlLoader.load(getReportDirectory() + REPORT);
 		if (className != null) {
