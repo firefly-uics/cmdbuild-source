@@ -1,5 +1,6 @@
 package org.cmdbuild.servlets.json;
 
+import static org.cmdbuild.spring.configuration.FileStore.*;
 import static org.cmdbuild.spring.SpringIntegrationUtils.applicationContext;
 import static org.cmdbuild.spring.configuration.Data.BEAN_SYSTEM_DATA_VIEW;
 import static org.cmdbuild.spring.configuration.Lock.USER_LOCK_LOGIC;
@@ -59,6 +60,7 @@ import org.cmdbuild.logic.workflow.SystemWorkflowLogicBuilder;
 import org.cmdbuild.logic.workflow.UserWorkflowLogicBuilder;
 import org.cmdbuild.logic.workflow.WorkflowLogic;
 import org.cmdbuild.notification.Notifier;
+import org.cmdbuild.services.FilesStore;
 import org.cmdbuild.services.PatchManager;
 import org.cmdbuild.services.SessionVars;
 import org.cmdbuild.services.TranslationService;
@@ -119,6 +121,10 @@ public class JSONBaseWithSpringContext extends JSONBase {
 	 * Stores
 	 */
 
+	protected FilesStore uploadFilesStore() {
+		return applicationContext().getBean(UPLOAD,FilesStore.class);
+	}
+
 	protected LanguageStore languageStore() {
 		return applicationContext().getBean(LanguageStore.class);
 	}
@@ -162,7 +168,7 @@ public class JSONBaseWithSpringContext extends JSONBase {
 	protected CachingLogic cachingLogic() {
 		return applicationContext().getBean(CachingLogic.class);
 	}
-	
+
 	protected CustomPagesLogic customPagesLogic() {
 		return applicationContext().getBean(CustomPagesLogic.class);
 	}

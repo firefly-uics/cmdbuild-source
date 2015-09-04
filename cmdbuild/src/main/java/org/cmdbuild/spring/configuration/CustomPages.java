@@ -2,8 +2,11 @@ package org.cmdbuild.spring.configuration;
 
 import org.cmdbuild.auth.UserStore;
 import org.cmdbuild.data.store.Store;
+import org.cmdbuild.data.store.custompage.CustomPagesStore;
+import org.cmdbuild.data.store.custompage.CustomPagesStore.Synchronizer;
 import org.cmdbuild.data.store.custompage.DBCustomPage;
 import org.cmdbuild.data.store.custompage.DBCustomPageConverter;
+import org.cmdbuild.data.store.custompage.FileSystemSynchronizer;
 import org.cmdbuild.data.store.dao.DataViewStore;
 import org.cmdbuild.data.store.dao.StorableConverter;
 import org.cmdbuild.logic.custompages.CustomPage;
@@ -24,12 +27,25 @@ public class CustomPages {
 	private Data data;
 
 	@Autowired
+	private FileStore fileStore;
+
+	@Autowired
 	private UserStore userStore;
 
 	@Bean
 	public CustomPagesLogic defaultCustomPagesLogic() {
-		return new DefaultCustomPagesLogic(dataViewStore(), defaultConverter(),
+		return new DefaultCustomPagesLogic(customPagesStore(), defaultConverter(),
 				alwaysAccessibleAccessControlHelper());
+	}
+
+	@Bean
+	protected Store<DBCustomPage> customPagesStore() {
+		return new CustomPagesStore(dataViewStore(), fileSystemSynchronizer());
+	}
+
+	@Bean
+	protected Synchronizer fileSystemSynchronizer() {
+		return new FileSystemSynchronizer(dataViewStore(), fileStore.uploadFilesStore());
 	}
 
 	@Bean
@@ -60,7 +76,7 @@ public class CustomPages {
 		return new AccessControlHelper() {
 
 			@Override
-			public boolean isAccessible(CustomPage value) {
+			public boolean isAccessible(final CustomPage value) {
 				return true;
 			}
 
