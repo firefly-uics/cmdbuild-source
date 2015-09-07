@@ -131,7 +131,7 @@
 		 * @param {Object} entityData
 		 * @param {Object} entityAttributeData
 		 *
-		 * @return {CMDBuild.model.common.tabs.history.classes.CardRecord} currentEntityModel
+		 * @returns {CMDBuild.model.common.tabs.history.classes.CardRecord} currentEntityModel
 		 */
 		buildCurrentEntityModel: function(entityData, entityAttributeData) {
 			var currentEntityModel = Ext.create('CMDBuild.model.common.tabs.history.classes.CardRecord', entityData);
@@ -181,12 +181,72 @@
 		},
 
 		/**
-		 * @return {CMDBuild.core.proxy.common.tabs.history.Classes}
+		 * @returns {CMDBuild.core.proxy.common.tabs.history.Classes}
 		 *
 		 * @override
 		 */
 		getProxy: function() {
 			return CMDBuild.core.proxy.common.tabs.history.Classes;
+		},
+
+		/**
+		 * @returns {Array} columns
+		 *
+		 * @override
+		 */
+		getTabHistoryGridColumns: function() {
+			var columns = this.callParent(arguments);
+
+			if (!CMDBuild.configuration.userInterface.get(CMDBuild.core.proxy.CMProxyConstants.SIMPLE_HISTORY_MODE_FOR_CARD)) {
+				Ext.Array.push(columns, [
+					{
+						dataIndex: CMDBuild.core.proxy.CMProxyConstants.IS_CARD,
+						text: CMDBuild.Translation.attributes,
+						width: 65,
+						align: 'center',
+						sortable: false,
+						hideable: false,
+						menuDisabled: true,
+						fixed: true,
+
+						renderer: function(value, metaData, record) {
+							return value ? '<img src="images/icons/tick.png" alt="' + CMDBuild.Translation.attributes + '" />' : null;
+						}
+					},
+					{
+						dataIndex: CMDBuild.core.proxy.CMProxyConstants.IS_RELATION,
+						text: CMDBuild.Translation.relation,
+						width: 65,
+						align: 'center',
+						sortable: false,
+						hideable: false,
+						menuDisabled: true,
+						fixed: true,
+
+						renderer: function(value, metaData, record) {
+							return value ? '<img src="images/icons/tick.png" alt="' + CMDBuild.Translation.relation + '" />' : null;
+						}
+					},
+					{
+						dataIndex: CMDBuild.core.proxy.CMProxyConstants.DOMAIN,
+						text: CMDBuild.Translation.domain,
+						sortable: false,
+						hideable: false,
+						menuDisabled: true,
+						flex: 1
+					},
+					{
+						dataIndex: CMDBuild.core.proxy.CMProxyConstants.DESTINATION_DESCRIPTION,
+						text: CMDBuild.Translation.descriptionLabel,
+						sortable: false,
+						hideable: false,
+						menuDisabled: true,
+						flex: 1
+					}
+				]);
+			}
+
+			return columns;
 		},
 
 		/**
