@@ -1,6 +1,6 @@
 (function() {
 
-	Ext.define('CMDBuild.model.group.userInterface.DisabledProcessTabs', {
+	Ext.define('CMDBuild.model.configuration.userInterface.DisabledProcessTabs', {
 		extend: 'Ext.data.Model',
 
 		requires: ['CMDBuild.core.proxy.CMProxyConstants'],

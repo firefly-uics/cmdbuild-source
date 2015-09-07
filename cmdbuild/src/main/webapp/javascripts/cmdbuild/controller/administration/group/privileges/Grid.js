@@ -140,8 +140,8 @@
 						params['privilegedObjectId'] = record.get(CMDBuild.core.proxy.CMProxyConstants.ID);
 						params[CMDBuild.core.proxy.CMProxyConstants.GROUP_ID] = this.cmfg('selectedGroupGet', CMDBuild.core.proxy.CMProxyConstants.ID);
 
-//						this.proxy.setRowAndColumn({
-						this.proxy.clearRowAndColumn({ // TODO: fix on server side
+						// Set empty filter to clear value
+						this.proxy.setRowAndColumn({
 							params: params,
 							scope: this,
 							success: function(response, options, decodedResponse) {

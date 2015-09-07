@@ -83,7 +83,6 @@ public class ModSecurity extends JSONBaseWithSpringContext {
 	/*
 	 * Group management
 	 */
-
 	@JSONExported
 	public JSONObject getGroupList() throws JSONException, AuthException, ORMException {
 		final Iterable<CMGroup> allGroups = authLogic().getAllGroups();
@@ -181,7 +180,7 @@ public class ModSecurity extends JSONBaseWithSpringContext {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param users
 	 *            a String of comma separated user identifiers. These are the id
 	 *            of the users that belong to the group with id = groupId
@@ -368,14 +367,6 @@ public class ModSecurity extends JSONBaseWithSpringContext {
 		securityLogic().saveClassPrivilege(privilegeInfoToSave, false);
 	}
 
-	@Admin(AdminAccess.DEMOSAFE)
-	@JSONExported
-	public void clearRowAndColumnPrivileges( //
-			@Parameter(GROUP_ID) final Long groupId, //
-			@Parameter(PRIVILEGE_OBJ_ID) final Long privilegedObjectId) throws JSONException, AuthException {
-
-	}
-
 	/*
 	 * User management
 	 */
@@ -440,7 +431,7 @@ public class ModSecurity extends JSONBaseWithSpringContext {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param serializer
 	 * @param userId
 	 * @return the groups to which the current user belongs
