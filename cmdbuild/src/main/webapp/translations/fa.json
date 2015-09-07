@@ -778,6 +778,7 @@
 			"ORM_CONTAINS_DATA": "Cannot drop classes or attributes of tables or domains containing records",
 			"ORM_CQL_COMPILATION_FAILED": "Invalid CQL query",
 			"ORM_CSV_INVALID_ATTRIBUTES": "کارت را نمیتوان ذخیره کرد: مقدار غیر مجاز",
+			"ORM_CUSTOM_EXCEPTION": "{0}",
 			"ORM_DATABASE_CONNECTION_ERROR": "ارتباط با پایگاه داده به مشکل خورد، ارتباط را ریست کنید",
 			"ORM_DBNOTCONFIGURED": "پایگاه داده تنظیم نشده",
 			"ORM_DOMAIN_HAS_REFERENCE": "دامینی که رفرنس به آن وجود دارد را نمیتوان حذف کرد",

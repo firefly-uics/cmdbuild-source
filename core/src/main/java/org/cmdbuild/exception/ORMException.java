@@ -55,6 +55,7 @@ public class ORMException extends CMDBException {
 		ORM_TABLE_HAS_DOMAIN, //
 		ORM_TABLE_HAS_CHILDREN, //
 		ORM_ACTIVE_ATTRIBUTE, //
+		ORM_CUSTOM_EXCEPTION, //
 		;
 
 		public ORMException createException(final String... parameters) {

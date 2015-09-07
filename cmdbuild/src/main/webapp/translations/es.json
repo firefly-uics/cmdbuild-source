@@ -778,6 +778,7 @@
 			"ORM_CONTAINS_DATA": "No es posible eliminar clases o atributos de tablas o dominios que contienen datos",
 			"ORM_CQL_COMPILATION_FAILED": "Consulta CQL no válida",
 			"ORM_CSV_INVALID_ATTRIBUTES": "Imposible guardar las tarjetas: se detectan valores no válidos",
+			"ORM_CUSTOM_EXCEPTION": "{0}",
 			"ORM_DATABASE_CONNECTION_ERROR": "Error en la conexión a la base de datos, pruebe controlar los parámetros de conexión",
 			"ORM_DBNOTCONFIGURED": "Base de datos no configurada",
 			"ORM_DOMAIN_HAS_REFERENCE": "Imposible eliminar un dominio que cuenta con atributos asociados",
