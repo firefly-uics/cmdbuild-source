@@ -778,6 +778,7 @@
 			"ORM_CONTAINS_DATA": "Không thể cắt các class hay các thuộc tính của bảng điều khiển hay tên miền có chứa hồ sơ",
 			"ORM_CQL_COMPILATION_FAILED": "Truy vấn CQL không hợp lệ",
 			"ORM_CSV_INVALID_ATTRIBUTES": "Các thẻ không thể lưu: các giá trị tìm thấy không hợp lệ",
+			"ORM_CUSTOM_EXCEPTION": "{0}",
 			"ORM_DATABASE_CONNECTION_ERROR": "Lỗi kết nối cơ sở dữ liệu, thử kết nối lại các thông số ",
 			"ORM_DBNOTCONFIGURED": "Cơ sở dữ liệu không được cấu hình",
 			"ORM_DOMAIN_HAS_REFERENCE": "Tên miền không thể xóa vì những tham chiếu được liên kết với nhau",

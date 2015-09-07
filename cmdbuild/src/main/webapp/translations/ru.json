@@ -778,6 +778,7 @@
 			"ORM_CONTAINS_DATA": "Невозможно удалить непустые классы, атрибуты или связи",
 			"ORM_CQL_COMPILATION_FAILED": "Ошибочный CQL запрос",
 			"ORM_CSV_INVALID_ATTRIBUTES": "Невозможно сохранить карточки: найдены неверные значения",
+			"ORM_CUSTOM_EXCEPTION": "{0}",
 			"ORM_DATABASE_CONNECTION_ERROR": "Ошибка подключения к БД, попробуйте переустановить параметры подключения",
 			"ORM_DBNOTCONFIGURED": "Не выполнена конфигурация БД",
 			"ORM_DOMAIN_HAS_REFERENCE": "Невозможно удалить связь, на которую ссылаются атрибуты REFERENCE",

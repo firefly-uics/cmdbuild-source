@@ -778,6 +778,7 @@
 			"ORM_CONTAINS_DATA": "Non è possibile cancellare classi o attributi di tabelle o domini contenenti dati",
 			"ORM_CQL_COMPILATION_FAILED": "Query CQL non valida",
 			"ORM_CSV_INVALID_ATTRIBUTES": "Impossibile salvare le schede: rilevati valori non validi",
+			"ORM_CUSTOM_EXCEPTION": "{0}",
 			"ORM_DATABASE_CONNECTION_ERROR": "Errore nella connessione al database, prova a controllare i parametri di connessione",
 			"ORM_DBNOTCONFIGURED": "Database non configurato",
 			"ORM_DOMAIN_HAS_REFERENCE": "Impossibile cancellare un dominio a cui sono associati attributi reference",

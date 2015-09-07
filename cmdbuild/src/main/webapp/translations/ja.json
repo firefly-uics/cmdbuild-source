@@ -778,6 +778,7 @@
 			"ORM_CONTAINS_DATA": "レコードを含むクラス、テーブルの属性、ドメインは削除できません",
 			"ORM_CQL_COMPILATION_FAILED": "無効なCQLクエリ",
 			"ORM_CSV_INVALID_ATTRIBUTES": "カードは保存できません: 無効なデータが見つかりました",
+			"ORM_CUSTOM_EXCEPTION": "{0}",
 			"ORM_DATABASE_CONNECTION_ERROR": "データベース接続エラー、接続情報を確認ください",
 			"ORM_DBNOTCONFIGURED": "データベースが設定されていません",
 			"ORM_DOMAIN_HAS_REFERENCE": "参照されているドメインが見つかりません",
