@@ -4,6 +4,7 @@ import java.util.ArrayDeque;
 import java.util.Deque;
 
 import org.cmdbuild.dao.driver.DBDriver;
+import org.cmdbuild.dao.entry.CMEntry;
 import org.cmdbuild.dao.entry.DBEntry;
 import org.cmdbuild.dao.entrytype.CMAttribute.Mode;
 import org.cmdbuild.dao.entrytype.CMIdentifier;
@@ -763,7 +764,7 @@ public class GenericRollbackDriver implements DBDriver {
 	}
 
 	@Override
-	public void delete(final DBEntry entry) {
+	public void delete(final CMEntry entry) {
 		innerDriver.delete(entry);
 	}
 
