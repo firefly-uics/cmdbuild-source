@@ -778,6 +778,7 @@
 			"ORM_CONTAINS_DATA": "Kan geen klassen of attributen van tabellen of domeinen verwijderen welke nog records bevatten",
 			"ORM_CQL_COMPILATION_FAILED": "Niet geldige CQL query",
 			"ORM_CSV_INVALID_ATTRIBUTES": "Kan de kaart niet opslaan: ongeldige waarde gevonden",
+			"ORM_CUSTOM_EXCEPTION": "{0}",
 			"ORM_DATABASE_CONNECTION_ERROR": "Database connectie fout, probeer een reset van de connectie parameters",
 			"ORM_DBNOTCONFIGURED": "Database niet geconfigureerd",
 			"ORM_DOMAIN_HAS_REFERENCE": "Kan geen domein met geassocieerde referenties verwijderen",

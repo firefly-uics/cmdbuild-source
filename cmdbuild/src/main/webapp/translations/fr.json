@@ -778,6 +778,7 @@
 			"ORM_CONTAINS_DATA": "Impossible de supprimer des classes ou des attributs de tables ou de liens contenant des données",
 			"ORM_CQL_COMPILATION_FAILED": "Requête CQL incorrecte",
 			"ORM_CSV_INVALID_ATTRIBUTES": "Impossible de sauvegarder les fiches : valeurs incorrectes",
+			"ORM_CUSTOM_EXCEPTION": "{0}",
 			"ORM_DATABASE_CONNECTION_ERROR": "Erreur lors de la connexion à la base de données, essayez de réinitialiser les paramètres de connexion",
 			"ORM_DBNOTCONFIGURED": "Base de donnée non configurée",
 			"ORM_DOMAIN_HAS_REFERENCE": "Impossible de supprimer un lien ayant des listes de valeurs associées",

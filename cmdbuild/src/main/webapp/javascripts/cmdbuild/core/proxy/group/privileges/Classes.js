@@ -26,21 +26,6 @@
 		},
 
 		/**
-		 * @param {Object} parameters
-		 */
-		clearRowAndColumn: function(parameters) {
-			CMDBuild.Ajax.request({
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.privileges.classes.clearRowAndColumnPrivileges,
-				params: parameters.params,
-				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
-				scope: parameters.scope || this,
-				failure: parameters.failure || Ext.emptyFn,
-				success: parameters.success || Ext.emptyFn,
-				callback: parameters.callback || Ext.emptyFn
-			});
-		},
-
-		/**
 		 * @returns {Ext.data.Store}
 		 */
 		getStore: function() {

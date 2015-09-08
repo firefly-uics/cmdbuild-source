@@ -378,14 +378,6 @@ public class ModSecurity extends JSONBaseWithSpringContext {
 		securityLogic().saveClassPrivilege(privilegeInfoToSave, false);
 	}
 
-	@Admin(AdminAccess.DEMOSAFE)
-	@JSONExported
-	public void clearRowAndColumnPrivileges( //
-			@Parameter(GROUP_ID) final Long groupId, //
-			@Parameter(PRIVILEGE_OBJ_ID) final Long privilegedObjectId) throws AuthException {
-
-	}
-
 	/*
 	 * User management
 	 */

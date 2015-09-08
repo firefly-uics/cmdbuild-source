@@ -1,6 +1,6 @@
 (function() {
 
-	Ext.define('CMDBuild.model.group.userInterface.DisabledCardTabs', {
+	Ext.define('CMDBuild.model.configuration.userInterface.DisabledCardTabs', {
 		extend: 'Ext.data.Model',
 
 		requires: ['CMDBuild.core.proxy.CMProxyConstants'],

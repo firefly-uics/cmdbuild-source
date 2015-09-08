@@ -74,64 +74,6 @@
 		currentCardRowExpand: Ext.emptyFn,
 
 		/**
-		 * @return {Array} columns
-		 */
-		getExtraColumns: function() {
-			var columns = [];
-
-			if (!_CMUIConfiguration.isSimpleHistoryModeForCard()) {
-				columns = [
-					{
-						dataIndex: CMDBuild.core.proxy.CMProxyConstants.IS_CARD,
-						text: CMDBuild.Translation.attributes,
-						width: 65,
-						align: 'center',
-						sortable: false,
-						hideable: false,
-						menuDisabled: true,
-						fixed: true,
-
-						renderer: function(value, metaData, record) {
-							return value ? '<img src="images/icons/tick.png" alt="' + CMDBuild.Translation.attributes + '" />' : null;
-						}
-					},
-					{
-						dataIndex: CMDBuild.core.proxy.CMProxyConstants.IS_RELATION,
-						text: CMDBuild.Translation.relation,
-						width: 65,
-						align: 'center',
-						sortable: false,
-						hideable: false,
-						menuDisabled: true,
-						fixed: true,
-
-						renderer: function(value, metaData, record) {
-							return value ? '<img src="images/icons/tick.png" alt="' + CMDBuild.Translation.relation + '" />' : null;
-						}
-					},
-					{
-						dataIndex: CMDBuild.core.proxy.CMProxyConstants.DOMAIN,
-						text: CMDBuild.Translation.domain,
-						sortable: false,
-						hideable: false,
-						menuDisabled: true,
-						flex: 1
-					},
-					{
-						dataIndex: CMDBuild.core.proxy.CMProxyConstants.DESTINATION_DESCRIPTION,
-						text: CMDBuild.Translation.descriptionLabel,
-						sortable: false,
-						hideable: false,
-						menuDisabled: true,
-						flex: 1
-					}
-				];
-			}
-
-			return columns;
-		},
-
-		/**
 		 * @abstract
 		 */
 		getProxy: Ext.emptyFn,
@@ -141,7 +83,7 @@
 		 *
 		 * @param {CMDBuild.model.common.tabs.history.classes.CardRecord or CMDBuild.model.common.tabs.history.classes.RelationRecord} record
 		 *
-		 * @return {CMDBuild.model.common.tabs.history.classes.CardRecord or CMDBuild.model.common.tabs.history.classes.RelationRecord} predecessor or null
+		 * @returns {CMDBuild.model.common.tabs.history.classes.CardRecord or CMDBuild.model.common.tabs.history.classes.RelationRecord} predecessor or null
 		 */
 		getRecordPredecessor: function(record) {
 			var i = this.grid.getStore().indexOf(record) + 1;
@@ -167,7 +109,7 @@
 		},
 
 		/**
-		 * @return {CMDBuild.view.management.common.tabs.history.RowExpander} or null
+		 * @returns {CMDBuild.view.management.common.tabs.history.RowExpander} or null
 		 */
 		getRowExpanderPlugin: function() {
 			var rowExpanderPlugin = null;
@@ -187,10 +129,10 @@
 		},
 
 		/**
-		 * @return {Array}
+		 * @returns {Array}
 		 */
 		getTabHistoryGridColumns: function() {
-			var defaultColumns = [
+			return [
 				Ext.create('Ext.grid.column.Date', {
 					dataIndex: CMDBuild.core.proxy.CMProxyConstants.BEGIN_DATE,
 					text: CMDBuild.Translation.beginDate,
@@ -220,12 +162,10 @@
 					flex: 1
 				}
 			];
-
-			return Ext.Array.push(defaultColumns, this.getExtraColumns());
 		},
 
 		/**
-		 * @return {Ext.data.Store}
+		 * @returns {Ext.data.Store}
 		 */
 		getTabHistoryGridStore: function() {
 			return this.getProxy().getStore();
@@ -378,7 +318,7 @@
 
 		// SelectedEntity property functions
 			/**
-			 * @return {Mixed}
+			 * @returns {Mixed}
 			 */
 			tabHistorySelectedEntityGet: function() {
 				return this.selectedEntity;
