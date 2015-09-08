@@ -29,6 +29,7 @@ import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.model.data.Card;
 import org.cmdbuild.report.ReportFactoryTemplateDetailSubreport.SubreportType;
 import org.cmdbuild.report.query.CardReportQuery;
+import org.cmdbuild.services.FilesStore;
 import org.cmdbuild.services.localization.Localization;
 
 public class ReportFactoryTemplateDetail extends ReportFactoryTemplate {
@@ -51,11 +52,12 @@ public class ReportFactoryTemplateDetail extends ReportFactoryTemplate {
 			final Long cardId, //
 			final ReportExtension reportExtension, //
 			final CMDataView dataView, //
+			final FilesStore filesStore, //
 			final DataAccessLogic dataAccessLogic, //
 			final Localization localization, //
 			final CmdbuildConfiguration configuration //
 	) throws JRException {
-		super(dataSource, configuration, dataView);
+		super(dataSource, configuration, dataView, filesStore);
 		this.reportExtension = reportExtension;
 		this.localization = localization;
 		this.configuration = configuration;
@@ -116,6 +118,7 @@ public class ReportFactoryTemplateDetail extends ReportFactoryTemplate {
 				card.getType(), //
 				card, //
 				dataView, //
+				filesStore, //
 				localization, //
 				configuration);
 		final JasperReport compiledSubreport = rftds.compileReport();

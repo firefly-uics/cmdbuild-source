@@ -83,6 +83,7 @@ public class ModSecurity extends JSONBaseWithSpringContext {
 	/*
 	 * Group management
 	 */
+
 	@JSONExported
 	public JSONObject getGroupList() throws JSONException, AuthException, ORMException {
 		final Iterable<CMGroup> allGroups = authLogic().getAllGroups();
@@ -107,8 +108,7 @@ public class ModSecurity extends JSONBaseWithSpringContext {
 			@Parameter(EMAIL) final String email, //
 			@Parameter(STARTING_CLASS) final Long startingClass, //
 			@Parameter(IS_ACTIVE) final boolean isActive, //
-			@Parameter(value = TYPE, required = false) final String groupType, //
-			@Parameter(value = USERS, required = false) final String users //
+			@Parameter(value = TYPE, required = false) final String groupType //
 	) throws JSONException, AuthException {
 		final boolean newGroup = groupId <= -1;
 		CMGroup createdOrUpdatedGroup = null;
@@ -180,7 +180,7 @@ public class ModSecurity extends JSONBaseWithSpringContext {
 	}
 
 	/**
-	 *
+	 * 
 	 * @param users
 	 *            a String of comma separated user identifiers. These are the id
 	 *            of the users that belong to the group with id = groupId
@@ -217,7 +217,7 @@ public class ModSecurity extends JSONBaseWithSpringContext {
 	 */
 
 	@JSONExported
-	public JsonResponse getUIConfiguration() throws JSONException, AuthException, ORMException {
+	public JsonResponse getUIConfiguration() throws AuthException, ORMException {
 		final Long groupId = operationUser().getPreferredGroup().getId();
 		final SecurityLogic securityLogic = securityLogic();
 		final UIConfiguration uiConfiguration = securityLogic.fetchGroupUIConfiguration(groupId);
@@ -226,8 +226,7 @@ public class ModSecurity extends JSONBaseWithSpringContext {
 
 	@Admin
 	@JSONExported
-	public JsonResponse getGroupUIConfiguration(@Parameter(ID) final Long groupId) throws JSONException, AuthException,
-			ORMException {
+	public JsonResponse getGroupUIConfiguration(@Parameter(ID) final Long groupId) throws AuthException, ORMException {
 		final SecurityLogic securityLogic = securityLogic();
 		final UIConfiguration uiConfiguration = securityLogic.fetchGroupUIConfiguration(groupId);
 		return JsonResponse.success(uiConfiguration);
@@ -238,7 +237,7 @@ public class ModSecurity extends JSONBaseWithSpringContext {
 	public void saveGroupUIConfiguration( //
 			@Parameter(ID) final Long groupId, //
 			@Parameter(UI_CONFIGURATION) final String jsonUIConfiguration //
-	) throws JSONException, AuthException, JsonParseException, JsonMappingException, IOException {
+	) throws AuthException, JsonParseException, JsonMappingException, IOException {
 
 		final SecurityLogic securityLogic = securityLogic();
 		final UIConfiguration uiConfiguration = mapper.readValue(jsonUIConfiguration, UIConfiguration.class);
@@ -278,7 +277,7 @@ public class ModSecurity extends JSONBaseWithSpringContext {
 	public void saveClassPrivilege( //
 			@Parameter(GROUP_ID) final Long groupId, //
 			@Parameter(PRIVILEGE_OBJ_ID) final Long privilegedObjectId, //
-			@Parameter(PRIVILEGE_MODE) final String privilegeMode) throws JSONException, AuthException { //
+			@Parameter(PRIVILEGE_MODE) final String privilegeMode) throws AuthException { //
 		final PrivilegeMode mode = extractPrivilegeMode(privilegeMode);
 		final PrivilegeInfo privilegeInfoToSave = new PrivilegeInfo(groupId, serializablePrivilege(privilegedObjectId),
 				mode, null);
@@ -307,7 +306,7 @@ public class ModSecurity extends JSONBaseWithSpringContext {
 	public void saveViewPrivilege( //
 			@Parameter(GROUP_ID) final Long groupId, //
 			@Parameter(PRIVILEGE_OBJ_ID) final Long privilegedObjectId, //
-			@Parameter(PRIVILEGE_MODE) final String privilegeMode) throws JSONException, AuthException {
+			@Parameter(PRIVILEGE_MODE) final String privilegeMode) throws AuthException {
 		final PrivilegeMode mode = extractPrivilegeMode(privilegeMode);
 		final PrivilegeInfo privilegeInfoToSave = new PrivilegeInfo(groupId, serializablePrivilege(privilegedObjectId),
 				mode, null);
@@ -319,11 +318,23 @@ public class ModSecurity extends JSONBaseWithSpringContext {
 	public void saveFilterPrivilege( //
 			@Parameter(GROUP_ID) final Long groupId, //
 			@Parameter(PRIVILEGE_OBJ_ID) final Long privilegedObjectId, //
-			@Parameter(PRIVILEGE_MODE) final String privilegeMode) throws JSONException, AuthException {
+			@Parameter(PRIVILEGE_MODE) final String privilegeMode) throws AuthException {
 		final PrivilegeMode mode = extractPrivilegeMode(privilegeMode);
 		final PrivilegeInfo privilegeInfoToSave = new PrivilegeInfo(groupId, serializablePrivilege(privilegedObjectId),
 				mode, null);
 		securityLogic().saveFilterPrivilege(privilegeInfoToSave);
+	}
+
+	@Admin(AdminAccess.DEMOSAFE)
+	@JSONExported
+	public void saveCustomPagePrivilege( //
+			@Parameter(GROUP_ID) final Long groupId, //
+			@Parameter(PRIVILEGE_OBJ_ID) final Long privilegedObjectId, //
+			@Parameter(PRIVILEGE_MODE) final String privilegeMode) throws AuthException {
+		final PrivilegeMode mode = extractPrivilegeMode(privilegeMode);
+		final PrivilegeInfo privilegeInfoToSave = new PrivilegeInfo(groupId, serializablePrivilege(privilegedObjectId),
+				mode, null);
+		securityLogic().saveCustomPagePrivilege(privilegeInfoToSave);
 	}
 
 	private PrivilegeMode extractPrivilegeMode(final String privilegeMode) {
@@ -431,7 +442,7 @@ public class ModSecurity extends JSONBaseWithSpringContext {
 	}
 
 	/**
-	 *
+	 * 
 	 * @param serializer
 	 * @param userId
 	 * @return the groups to which the current user belongs
@@ -477,7 +488,7 @@ public class ModSecurity extends JSONBaseWithSpringContext {
 	@JSONExported
 	public JsonResponse loadClassUiConfiguration( //
 			@Parameter(GROUP_ID) final Long groupId, //
-			@Parameter(CLASS_ID) final Long classId) throws JSONException, AuthException {
+			@Parameter(CLASS_ID) final Long classId) throws AuthException {
 
 		final CardEditMode cardEditMode = securityLogic().fetchCardEditModeForGroupAndClass(groupId, classId);
 		return JsonResponse.success(LOGIC_TO_JSON.apply(cardEditMode));
@@ -492,7 +503,7 @@ public class ModSecurity extends JSONBaseWithSpringContext {
 			@Parameter(CREATE) final boolean disableCreate, //
 			@Parameter(MODIFY) final boolean disableUpdate, //
 			@Parameter(CLONE) final boolean disableClone, //
-			@Parameter(REMOVE) final boolean disableDelete) throws JSONException, AuthException {
+			@Parameter(REMOVE) final boolean disableDelete) throws AuthException {
 
 		final CardEditMode cardEditMode = CardEditMode.newInstance() //
 				.isCreateAllowed(!disableCreate) //

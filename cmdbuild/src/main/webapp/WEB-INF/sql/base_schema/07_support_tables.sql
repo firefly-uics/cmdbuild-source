@@ -305,3 +305,10 @@ SELECT cm_create_class_attribute('Email', 'Template', 'text', null, false, false
 SELECT cm_create_class_attribute('Email', 'KeepSynchronization', 'boolean', null, false, false, 'MODE: user|FIELDMODE: write|DESCR: Keep synchronization|INDEX: 16|STATUS: active');
 SELECT cm_create_class_attribute('Email', 'PromptSynchronization', 'boolean', null, false, false, 'MODE: user|FIELDMODE: write|DESCR: Prompt synchronization|INDEX: 17|STATUS: active');
 SELECT cm_create_class_attribute('Email', 'Delay', 'int4', null, false, false, 'MODE: user|FIELDMODE: write|DESCR: Delay|INDEX: 18|STATUS: active');
+
+---------------------------------------------
+-- Custom Pages
+---------------------------------------------
+SELECT cm_create_class('_CustomPage', NULL, 'MODE: reserved|TYPE: simpleclass|DESCR: CustomPage|SUPERCLASS: false|STATUS: active');
+SELECT cm_create_class_attribute('_CustomPage', 'Name', 'varchar(100)', null, false, false, 'MODE: user|DESCR: Name|STATUS: active');
+SELECT cm_create_class_attribute('_CustomPage', 'Description', 'text', null, false, false, 'MODE: user|DESCR: Description|STATUS: active');

@@ -28,6 +28,8 @@ import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.data.store.Groupable;
 import org.cmdbuild.data.store.MenuElementStore;
 import org.cmdbuild.logic.DashboardLogic;
+import org.cmdbuild.logic.custompages.CustomPage;
+import org.cmdbuild.logic.custompages.CustomPagesLogic;
 import org.cmdbuild.logic.data.QueryOptions;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.logic.data.access.DataViewCardFetcher;
@@ -51,6 +53,7 @@ public class DataViewMenuStore implements MenuStore {
 	private final DashboardLogic dashboardLogic;
 	private final DataAccessLogic dataAccessLogic;
 	private final ViewLogic viewLogic;
+	private final CustomPagesLogic customPagesLogic;
 	private final MenuItemConverter converter;
 	private final OperationUser operationUser;
 	private final MenuElementStore menuElementStore;
@@ -61,6 +64,7 @@ public class DataViewMenuStore implements MenuStore {
 			final DashboardLogic dashboardLogic, //
 			final UserDataAccessLogicBuilder dataAccessLogicBuilder, //
 			final ViewLogic viewLogic, //
+			final CustomPagesLogic customPagesLogic, //
 			final MenuItemConverter converter, //
 			final OperationUser operationUser, //
 			final MenuElementStore menuElementStore) {
@@ -69,6 +73,7 @@ public class DataViewMenuStore implements MenuStore {
 		this.dashboardLogic = dashboardLogic;
 		this.dataAccessLogic = dataAccessLogicBuilder.build();
 		this.viewLogic = viewLogic;
+		this.customPagesLogic = customPagesLogic;
 		this.converter = converter;
 		this.operationUser = operationUser;
 		this.menuElementStore = menuElementStore;
@@ -119,6 +124,7 @@ public class DataViewMenuStore implements MenuStore {
 		root.addChild(getAvailableReports(menuCards));
 		root.addChild(getAvailableDashboards(menuCards));
 		root.addChild(getAvailableViews(menuCards));
+		root.addChild(getAvailableCustomPages(menuCards));
 		return root;
 	}
 
@@ -250,6 +256,22 @@ public class DataViewMenuStore implements MenuStore {
 			final Integer id = new Integer(view.getId().intValue());
 			if (!isInTheMenuList(id, menuCards)) {
 				viewsFolder.addChild(converter.fromView(view));
+			}
+		}
+
+		return viewsFolder;
+	}
+
+	private MenuItem getAvailableCustomPages(final Iterable<CMCard> menuCards) {
+		final MenuItem viewsFolder = new MenuItemDTO();
+		viewsFolder.setType(MenuItemType.FOLDER);
+		viewsFolder.setDescription("custompage");
+		viewsFolder.setIndex(5);
+
+		for (final CustomPage element : customPagesLogic.read()) {
+			final Integer id = element.getId().intValue();
+			if (!isInTheMenuList(id, menuCards)) {
+				viewsFolder.addChild(converter.fromCustomPage(element));
 			}
 		}
 

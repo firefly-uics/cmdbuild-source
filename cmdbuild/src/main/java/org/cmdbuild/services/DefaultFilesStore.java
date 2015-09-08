@@ -1,5 +1,7 @@
 package org.cmdbuild.services;
 
+import static java.io.File.separator;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -11,14 +13,18 @@ import org.apache.commons.fileupload.FileItem;
 import org.cmdbuild.exception.ORMException.ORMExceptionType;
 import org.cmdbuild.utils.PatternFilenameFilter;
 
-public class CustomFilesStore implements FilesStore {
+public class DefaultFilesStore implements FilesStore {
 
-	private static final String ps = File.separator;
-	private final String relativeRootDirectory = "upload" + ps;
-	private final String absoluteRootDirectory = Settings.getInstance().getRootPath() + relativeRootDirectory;
+	private final String relativeRootDirectory;
+	private final String absoluteRootDirectory;
 
 	private static final String[] ALLOWED_IMAGE_TYPES = { "image/png", "image/gif", "image/jpeg", "image/pjpeg",
 			"image/x-png" };
+
+	public DefaultFilesStore(final String root, final String pathFromRoot) {
+		relativeRootDirectory = pathFromRoot + separator;
+		absoluteRootDirectory = root + separator + relativeRootDirectory;
+	}
 
 	@Override
 	public String[] list(final String dir) {
