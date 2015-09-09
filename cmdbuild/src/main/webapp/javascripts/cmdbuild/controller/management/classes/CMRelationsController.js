@@ -52,7 +52,8 @@
 
 			this.card = null;
 
-			if (!this.entryType || this.entryType.get(CMDBuild.core.proxy.CMProxyConstants.TABLE_TYPE) == 'simpletable')
+			// Set empty entryType on simple classes
+			if (Ext.isEmpty(this.entryType) || this.entryType.get(CMDBuild.core.proxy.CMProxyConstants.TABLE_TYPE) == 'simpletable')
 				this.entryType = null;
 
 			this.view.disable();
@@ -70,11 +71,12 @@
 			this.view.clearStore();
 			this.view.disable();
 
-			if (card) {
+			if (!Ext.isEmpty(card) && !Ext.isEmpty(this.entryType)) { // Don't enable tab on simple classes
 				this.updateCurrentClass(card);
 
-				this.view.enable();
 				this.loadData();
+
+				this.view.enable();
 			}
 		},
 
