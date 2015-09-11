@@ -48,7 +48,6 @@
 				displayField: "name",
 				queryMode: "local",
 				editable: false,
-				allowBlank: false,
 				store: _CMCache.getAvailableDataSourcesStore(),
 				disabled: true
 			});
@@ -210,7 +209,6 @@
 					displayField: "description",
 					queryMode: "local",
 					editable: false,
-					allowBlank: false,
 					store: me.fieldTypeStore || _fakeStore,
 					disabled: me.typeComboIsdisabled()
 				});
