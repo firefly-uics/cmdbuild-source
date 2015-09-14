@@ -1,6 +1,6 @@
 (function() {
 	var tr = CMDBuild.Translation.administration.modClass.classProperties;
-	
+
 	Ext.define("CMDBuild.controller.administration.classes.CMClassFormController", {
 		constructor: function(view) {
 			this.view = view;
@@ -18,13 +18,13 @@
 				this.view.onClassSelected(this.selection);
 			}
 		},
-		
+
 		onAddClassButtonClick: function() {
 			this.selection = null;
 			this.view.onAddClassButtonClick();
 			_CMCache.initAddingTranslations();
 		},
-		
+
 		onSaveClick: function() {
 			CMDBuild.LoadMask.get().show();
 
@@ -61,10 +61,10 @@
 			params.isprocess = false;
 			params.description = params.text; // adapter: maybe one day everything will be better
 			params.inherits = params.parent; // adapter
-			
+
 			return params
 		},
-		
+
 		onDeleteClick: function() {
 			Ext.Msg.show({
 				title: tr.remove_class,
@@ -99,13 +99,13 @@
 			}
 
 		},
-		
+
 		deleteSuccessCB: function(r) {
 			var removedClassId = this.selection.get("id");
 			_CMCache.onClassDeleted(removedClassId);
 			this.selection = null;
 		},
-		
+
 		onAbortClick: function() {
 			this.view.disableModify();
 			this.view.reset();
@@ -114,38 +114,22 @@
 			}
 		},
 
+		/**
+		 * @params {String} format
+		 */
 		onPrintClass: function(format) {
-			if (typeof format != "string") {
-				return;
+			if (!Ext.isEmpty(format)) {
+				var params = {};
+				params[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME] = _CMCache.getEntryTypeNameById(this.selection.get(CMDBuild.core.proxy.CMProxyConstants.ID));
+				params[CMDBuild.core.proxy.CMProxyConstants.FORMAT] = format;
+
+				Ext.create('CMDBuild.controller.common.entryTypeGrid.printTool.PrintWindow', {
+					parentDelegate: this,
+					format: format,
+					mode: 'classSchema',
+					parameters: params
+				});
 			}
-
-			var params = {};
-			params[_CMProxy.parameter.CLASS_NAME] = _CMCache.getEntryTypeNameById(this.selection.get("id"));
-			params[_CMProxy.parameter.FORMAT] = format;
-
-			CMDBuild.LoadMask.get().show();
-			CMDBuild.Ajax.request({
-				url: CMDBuild.ServiceProxy.administration.printSchema,
-				method: 'POST',
-				params: params,
-				success: function(response) {
-					CMDBuild.LoadMask.get().hide();
-					var popup = window.open( //
-						"services/json/management/modreport/printreportfactory", //
-						"Report", //
-						"height=400,width=550,status=no,toolbar=no,scrollbars=yes,menubar=no,location=no,resizable" //
-					);
-					if (!popup) {
-						CMDBuild.Msg.warn(
-							CMDBuild.Translation.warnings.warning_message, //
-							CMDBuild.Translation.warnings.popup_block //
-						);
-					}
-				},
-				failure: function(response) {
-					CMDBuild.LoadMask.get().hide();
-				}
-			});
 		}
 	});
 

@@ -133,43 +133,23 @@
 			_CMUIState.onlyGridIfFullScreen();
 		},
 
+		/**
+		 * @params {String} format
+		 */
 		onPrintCardMenuClick: function(format) {
-			if (typeof format != "string") {
-				return;
+			if (!Ext.isEmpty(format)) {
+				var params = {};
+				params[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME] = this.entryType.get(CMDBuild.core.proxy.CMProxyConstants.NAME);
+				params[CMDBuild.core.proxy.CMProxyConstants.CARD_ID] = this.card.get(CMDBuild.core.proxy.CMProxyConstants.ID);
+				params[CMDBuild.core.proxy.CMProxyConstants.FORMAT] = format;
+
+				Ext.create('CMDBuild.controller.common.entryTypeGrid.printTool.PrintWindow', {
+					parentDelegate: this,
+					format: format,
+					mode: 'cardDetails',
+					parameters: params
+				});
 			}
-
-			var me = this;
-			var params = {};
-			params[_CMProxy.parameter.CLASS_NAME] = me.entryType
-					.getName();
-			params[_CMProxy.parameter.CARD_ID] = me.card
-					.get("Id");
-			params[_CMProxy.parameter.FORMAT] = format;
-
-			CMDBuild.LoadMask.get().show();
-			CMDBuild.Ajax.request({
-				url: 'services/json/management/modreport/printcarddetails',
-				params: params,
-				method: 'GET',
-				scope: this,
-				success: function(response) {
-					var popup = window.open(
-							"services/json/management/modreport/printreportfactory", //
-							"Report", //
-							"height=400,width=550,status=no,toolbar=no,scrollbars=yes,menubar=no,location=no,resizable"); //
-
-					if (!popup) {
-						CMDBuild.Msg.warn( //
-							CMDBuild.Translation.warnings.warning_message, //
-							CMDBuild.Translation.warnings.popup_block //
-						); //
-					}
-
-				},
-				callback: function() {
-					CMDBuild.LoadMask.get().hide();
-				}
-			});
 		}
 	});
 })();

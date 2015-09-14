@@ -71,6 +71,7 @@
 		CLOUD_ADMIN: 'cloudAdmin',
 		CLUSTERING_THRESHOLD: 'clusteringThreshold',
 		CODE: 'code',
+		COLUMNS: 'columns',
 		CONDITION: 'condition',
 		CONFIGURATION: 'configuration',
 		CONFIRMATION: 'confirmation',

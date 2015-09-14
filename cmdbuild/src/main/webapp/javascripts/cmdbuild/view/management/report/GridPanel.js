@@ -3,7 +3,10 @@
 	Ext.define('CMDBuild.view.management.report.GridPanel', {
 		extend: 'Ext.grid.Panel',
 
-		requires: ['CMDBuild.core.proxy.Report'],
+		requires: [
+			'CMDBuild.core.proxy.CMProxyConstants',
+			'CMDBuild.core.proxy.Report'
+		],
 
 		/**
 		 * @cfg {CMDBuild.controller.management.report.Report}
