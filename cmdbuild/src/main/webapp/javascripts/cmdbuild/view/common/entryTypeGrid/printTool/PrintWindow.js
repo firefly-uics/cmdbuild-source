@@ -14,7 +14,7 @@
 		border: true,
 		frame: false,
 		layout: 'fit',
-		title: '@@ CMDBuild.Translation.printPreview',
+		title: CMDBuild.Translation.printPreview,
 
 		initComponent: function() {
 			Ext.apply(this, {
