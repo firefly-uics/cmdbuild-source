@@ -4,11 +4,12 @@ import org.apache.commons.lang3.builder.Builder;
 import org.cmdbuild.data.store.lookup.LookupStore;
 import org.cmdbuild.logic.auth.AuthenticationLogic;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
+import org.cmdbuild.logic.filter.FilterLogic;
 import org.cmdbuild.logic.menu.MenuLogic;
 import org.cmdbuild.logic.translation.SetupFacade;
 import org.cmdbuild.logic.translation.TranslationLogic;
 import org.cmdbuild.logic.view.ViewLogic;
-import org.cmdbuild.services.store.FilterStore;
+import org.cmdbuild.services.store.filter.FilterStore;
 import org.cmdbuild.services.store.report.ReportStore;
 import org.cmdbuild.servlets.json.serializers.translations.commons.TranslationSectionSerializer;
 import org.json.JSONArray;
@@ -26,7 +27,7 @@ public class TranslationSerializerFactory {
 
 	private final boolean activeOnly;
 	private final DataAccessLogic dataLogic;
-	private final FilterStore filterStore;
+	private final FilterLogic filterLogic;
 	private final LookupStore lookupStore;
 	private final TranslationLogic translationLogic;
 	private final JSONArray sorters;
@@ -55,7 +56,7 @@ public class TranslationSerializerFactory {
 		this.activeOnly = builder.activeOnly;
 		this.authLogic = builder.authLogic;
 		this.dataLogic = builder.dataLogic;
-		this.filterStore = builder.filterStore;
+		this.filterLogic = builder.filterLogic;
 		this.lookupStore = builder.lookupStore;
 		this.menuLogic = builder.menuLogic;
 		this.output = builder.output;
@@ -87,10 +88,10 @@ public class TranslationSerializerFactory {
 			}
 		} else if (type.equalsIgnoreCase(FILTER)) {
 			if (output.equals(Output.TABLE)) {
-				return new FilterTranslationSerializer(filterStore, translationLogic, sorters, separator, setupFacade);
+				return new FilterTranslationSerializer(filterLogic, translationLogic, sorters, separator, setupFacade);
 			} else if (output.equals(Output.CSV)) {
 				return new org.cmdbuild.servlets.json.serializers.translations.csv.FilterSectionSerializer(
-						translationLogic, sorters, setupFacade, filterStore);
+						translationLogic, sorters, setupFacade, filterLogic);
 			}
 		} else if (type.equalsIgnoreCase(LOOKUP)) {
 			if (output.equals(Output.TABLE)) {
@@ -149,6 +150,7 @@ public class TranslationSerializerFactory {
 		private String type;
 		private ViewLogic viewLogic;
 		private SetupFacade setupFacade;
+		private FilterLogic filterLogic;
 
 		public SerializerBuilder withActiveOnly(final boolean activeOnly) {
 			this.activeOnly = activeOnly;
@@ -165,8 +167,8 @@ public class TranslationSerializerFactory {
 			return this;
 		}
 
-		public SerializerBuilder withFilterStore(final FilterStore filterStore) {
-			this.filterStore = filterStore;
+		public SerializerBuilder withFilterLogic(final FilterLogic filterLogic) {
+			this.filterLogic = filterLogic;
 			return this;
 		}
 

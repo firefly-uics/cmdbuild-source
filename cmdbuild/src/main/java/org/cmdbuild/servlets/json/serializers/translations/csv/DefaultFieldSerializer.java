@@ -27,6 +27,8 @@ import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.data.store.lookup.Lookup;
 import org.cmdbuild.data.store.lookup.LookupStore;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
+import org.cmdbuild.logic.filter.FilterLogic;
+import org.cmdbuild.logic.filter.FilterLogic.Filter;
 import org.cmdbuild.logic.menu.MenuLogic;
 import org.cmdbuild.logic.translation.TranslationLogic;
 import org.cmdbuild.logic.translation.TranslationObject;
@@ -43,8 +45,6 @@ import org.cmdbuild.logic.view.ViewLogic;
 import org.cmdbuild.model.view.View;
 import org.cmdbuild.model.view.View.ViewType;
 import org.cmdbuild.report.ReportFactory.ReportType;
-import org.cmdbuild.services.store.FilterStore;
-import org.cmdbuild.services.store.FilterStore.Filter;
 import org.cmdbuild.services.store.menu.MenuItem;
 import org.cmdbuild.services.store.report.Report;
 import org.cmdbuild.services.store.report.ReportStore;
@@ -65,10 +65,10 @@ public class DefaultFieldSerializer implements FieldSerializer {
 	private final TranslationLogic translationLogic;
 	private final Iterable<String> enabledLanguages;
 	private final DataAccessLogic dataLogic;
+	private final FilterLogic filterLogic;
 	private final LookupStore lookupStore;
 	private final MenuLogic menuLogic;
 	private final ViewLogic viewLogic;
-	private final FilterStore filterStore;
 	private final ReportStore reportStore;
 
 	public static Builder newInstance() {
@@ -84,10 +84,10 @@ public class DefaultFieldSerializer implements FieldSerializer {
 		private TranslationLogic translationLogic;
 		private Iterable<String> enabledLanguages;
 		private DataAccessLogic dataLogic;
+		private FilterLogic filterLogic;
 		private LookupStore lookupStore;
 		private MenuLogic menuLogic;
 		private ViewLogic viewLogic;
-		private FilterStore filterStore;
 		private ReportStore reportStore;
 
 		@Override
@@ -115,8 +115,8 @@ public class DefaultFieldSerializer implements FieldSerializer {
 			return this;
 		}
 
-		public Builder withFilterStore(final FilterStore filterStore) {
-			this.filterStore = filterStore;
+		public Builder withFilterLogic(final FilterLogic filterLogic) {
+			this.filterLogic = filterLogic;
 			return this;
 		}
 
@@ -165,10 +165,10 @@ public class DefaultFieldSerializer implements FieldSerializer {
 		this.owner = builder.owner;
 		this.translationLogic = builder.translationLogic;
 		this.dataLogic = builder.dataLogic;
+		this.filterLogic = builder.filterLogic;
 		this.menuLogic = builder.menuLogic;
 		this.lookupStore = builder.lookupStore;
 		this.viewLogic = builder.viewLogic;
-		this.filterStore = builder.filterStore;
 		this.reportStore = builder.reportStore;
 	}
 
@@ -206,7 +206,7 @@ public class DefaultFieldSerializer implements FieldSerializer {
 			}
 		} else if (element.equals(TranslatableElement.FILTER)) {
 			if (fieldName.equals(FilterConverter.description())) {
-				final Filter matchingFilter = getOnlyElement((readByName(identifier, filterStore)));
+				final Filter matchingFilter = getOnlyElement((readByName(identifier, filterLogic)));
 				defaultValue = matchingFilter.getDescription();
 			}
 		} else if (element.equals(TranslatableElement.LOOKUP_VALUE)) {
@@ -230,8 +230,8 @@ public class DefaultFieldSerializer implements FieldSerializer {
 		return defaultIfBlank(defaultValue, EMPTY);
 	}
 
-	private Iterable<Filter> readByName(final String identifier, final FilterStore filterStore) {
-		return filter(filterStore.fetchAllGroupsFilters(), matchFilterByName(identifier));
+	private Iterable<Filter> readByName(final String identifier, final FilterLogic filterLogic) {
+		return filter(filterLogic.readShared(null, 0, 0), matchFilterByName(identifier));
 	}
 
 	private String loadViewDescription(final String name) {
