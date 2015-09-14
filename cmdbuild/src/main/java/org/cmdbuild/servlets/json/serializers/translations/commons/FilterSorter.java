@@ -6,7 +6,7 @@ import static org.cmdbuild.servlets.json.serializers.translations.commons.Attrib
 import static org.cmdbuild.servlets.json.serializers.translations.commons.AttributeSorter.safeString;
 
 import org.apache.commons.lang3.StringUtils;
-import org.cmdbuild.services.store.FilterStore;
+import org.cmdbuild.services.store.filter.FilterStore;
 
 import com.google.common.collect.Ordering;
 

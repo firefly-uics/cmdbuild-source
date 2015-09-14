@@ -4,9 +4,9 @@ import static org.cmdbuild.servlets.json.serializers.translations.commons.Consta
 
 import java.util.Collection;
 
+import org.cmdbuild.logic.filter.FilterLogic;
+import org.cmdbuild.logic.filter.FilterLogic.Filter;
 import org.cmdbuild.logic.translation.TranslationLogic;
-import org.cmdbuild.services.store.FilterStore;
-import org.cmdbuild.services.store.FilterStore.Filter;
 import org.cmdbuild.servlets.json.schema.TranslatableElement;
 import org.cmdbuild.servlets.json.translationtable.objects.csv.CsvTranslationRecord;
 
@@ -30,7 +30,7 @@ public class FilterSerializer extends DefaultElementSerializer {
 		private Iterable<String> enabledLanguages;
 		private TranslationLogic translationLogic;
 		public Filter theFilter;
-		public FilterStore filterStore;
+		public FilterLogic filterLogic;
 
 		@Override
 		public FilterSerializer build() {
@@ -46,26 +46,21 @@ public class FilterSerializer extends DefaultElementSerializer {
 			this.enabledLanguages = enabledLanguages;
 			return this;
 		}
-		
-		public Builder withFilterStore(FilterStore filterStore) {
-			this.filterStore = filterStore;
-			return this;
-		}
-		
-		public Builder withTranslationLogic(final TranslationLogic translationLogic) {
-			this.translationLogic = translationLogic;
+
+		public Builder withFilterLogic(final FilterLogic filterLogic) {
+			this.filterLogic = filterLogic;
 			return this;
 		}
 
-		public Builder withViewLogic(FilterStore filterStore) {
-			this.filterStore = filterStore;
+		public Builder withTranslationLogic(final TranslationLogic translationLogic) {
+			this.translationLogic = translationLogic;
 			return this;
 		}
 
 	}
 
 	private FilterSerializer(final Builder builder) {
-		super.filterStore = builder.filterStore;
+		super.filterLogic = builder.filterLogic;
 		super.enabledLanguages = builder.enabledLanguages;
 		super.translationLogic = builder.translationLogic;
 		this.theFilter = builder.theFilter;

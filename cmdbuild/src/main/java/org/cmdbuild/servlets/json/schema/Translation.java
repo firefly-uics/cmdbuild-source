@@ -210,7 +210,7 @@ public class Translation extends JSONBaseWithSpringContext {
 				.withActiveOnly(activeOnly) //
 				.withAuthLogic(authLogic()) //
 				.withDataAccessLogic(userDataAccessLogic()) //
-				.withFilterStore(filterStore()) //
+				.withFilterLogic(filterLogic()) //
 				.withLookupStore(lookupStore()) //
 				.withMenuLogic(menuLogic()) //
 				.withReportStore(reportStore()) //
@@ -250,7 +250,7 @@ public class Translation extends JSONBaseWithSpringContext {
 				.withActiveOnly(activeOnly) //
 				.withAuthLogic(authLogic()) //
 				.withDataAccessLogic(userDataAccessLogic()) //
-				.withFilterStore(filterStore()) //
+				.withFilterLogic(filterLogic()) //
 				.withLookupStore(lookupStore()) //
 				.withMenuLogic(menuLogic()) //
 				.withOutput(Output.TABLE) //
