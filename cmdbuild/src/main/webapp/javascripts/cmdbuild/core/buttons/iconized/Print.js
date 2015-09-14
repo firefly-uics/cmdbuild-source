@@ -3,6 +3,8 @@
 	Ext.define('CMDBuild.core.buttons.iconized.Print', {
 		extend: 'Ext.button.Split',
 
+		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+
 		iconCls: 'print',
 		text: CMDBuild.Translation.common.buttons.print,
 
@@ -12,10 +14,10 @@
 		 * @cfg {Array}
 		 * */
 		formatList: [
-			CMDBuild.core.proxy.Constants.CSV,
-			CMDBuild.core.proxy.Constants.ODT,
-			CMDBuild.core.proxy.Constants.PDF,
-			CMDBuild.core.proxy.Constants.RTF
+			CMDBuild.core.proxy.CMProxyConstants.CSV,
+			CMDBuild.core.proxy.CMProxyConstants.ODT,
+			CMDBuild.core.proxy.CMProxyConstants.PDF,
+			CMDBuild.core.proxy.CMProxyConstants.RTF
 		],
 
 		initComponent: function() {
