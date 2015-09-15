@@ -36,14 +36,14 @@
 						},
 
 						items: [
-							Ext.create('CMDBuild.core.buttons.Confirm', {
+							Ext.create('CMDBuild.core.buttons.text.Confirm', {
 								scope: this,
 
 								handler: function(button, e) {
 									this.delegate.cmfg('onGroupPrivilegesGridUIConfigurationSaveButtonClick');
 								}
 							}),
-							Ext.create('CMDBuild.core.buttons.Abort', {
+							Ext.create('CMDBuild.core.buttons.text.Abort', {
 								scope: this,
 
 								handler: function(button, e) {

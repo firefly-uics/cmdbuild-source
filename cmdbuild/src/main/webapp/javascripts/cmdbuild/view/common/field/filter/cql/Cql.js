@@ -21,7 +21,7 @@
 		fieldName: CMDBuild.core.proxy.Constants.FILTER,
 
 		/**
-		 * @property {CMDBuild.core.buttons.Modify}
+		 * @property {CMDBuild.core.buttons.iconized.Modify}
 		 */
 		metadataButton: undefined,
 
@@ -46,7 +46,7 @@
 						name: this.fieldName,
 						vtype: 'cmdbcommentrelaxed'
 					}),
-					this.metadataButton = Ext.create('CMDBuild.core.buttons.Modify', {
+					this.metadataButton = Ext.create('CMDBuild.core.buttons.iconized.Modify', {
 						text: this.buttonLabel,
 						maxWidth: this.buttonLabel.length * 10,
 						scope: this,

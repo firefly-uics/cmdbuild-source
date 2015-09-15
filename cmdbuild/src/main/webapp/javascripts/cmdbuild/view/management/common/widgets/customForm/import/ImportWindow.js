@@ -47,7 +47,7 @@
 									this.delegate.cmfg('onCustomFormImportUploadButtonClick');
 								}
 							}),
-							Ext.create('CMDBuild.core.buttons.Abort', {
+							Ext.create('CMDBuild.core.buttons.text.Abort', {
 								scope: this,
 
 								handler: function(button, e) {

@@ -82,7 +82,7 @@
 				fixed: true,
 
 				items: [
-					Ext.create('CMDBuild.core.buttons.Modify', {
+					Ext.create('CMDBuild.core.buttons.iconized.Modify', {
 						withSpacer: true,
 						tooltip: CMDBuild.Translation.editRow,
 						scope: this,

@@ -10,6 +10,11 @@
 		 */
 		delegate: undefined,
 
+		/**
+		 * @cfg {String}
+		 */
+		cmName: undefined,
+
 		title: CMDBuild.Translation.domains,
 
 		/**
@@ -23,7 +28,7 @@
 					id: domain.get(CMDBuild.core.proxy.Constants.ID),
 					text: domain.get(CMDBuild.core.proxy.Constants.DESCRIPTION),
 					leaf: true,
-					cmName: 'domain',
+					cmName: this.cmName,
 					iconCls: 'domain'
 				});
 			}, this);

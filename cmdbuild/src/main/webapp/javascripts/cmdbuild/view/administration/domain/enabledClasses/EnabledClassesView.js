@@ -5,9 +5,7 @@
 
 		requires: ['CMDBuild.core.proxy.Constants'],
 
-		mixins: {
-			panelFunctions: 'CMDBuild.view.common.PanelFunctions'
-		},
+		mixins: ['CMDBuild.view.common.PanelFunctions'],
 
 		/**
 		 * @cfg {CMDBuild.controller.administration.domain.EnabledClasses}
@@ -23,11 +21,6 @@
 		 * @property {CMDBuild.view.administration.domain.enabledClasses.TreePanel}
 		 */
 		originTree: undefined,
-
-		/**
-		 * @property {Ext.panel.Panel}
-		 */
-		wrapper: undefined,
 
 		bodyCls: 'cmgraypanel',
 		border: false,
@@ -83,7 +76,7 @@
 					})
 				],
 				items: [
-					this.wrapper = Ext.create('Ext.panel.Panel', {
+					Ext.create('Ext.panel.Panel', {
 						bodyCls: 'cmgraypanel-nopadding',
 						border: false,
 						frame: false,
@@ -93,37 +86,38 @@
 							align:'stretch'
 						},
 
-						items: []
+						items: [
+							this.originTree = Ext.create('CMDBuild.view.administration.domain.enabledClasses.TreePanel', {
+								delegate: this.delegate,
+								title: CMDBuild.Translation.origin
+							}),
+							{ xtype: 'splitter' },
+							this.destinationTree = Ext.create('CMDBuild.view.administration.domain.enabledClasses.TreePanel', {
+								delegate: this.delegate,
+								title: CMDBuild.Translation.destination
+							})
+						]
 					})
 				]
 			});
 
 			this.callParent(arguments);
-
-			this.buildTrees();
 		},
 
-		buildTrees: function() {
-			var selectedDomain = this.delegate.cmfg('selectedDomainGet');
-
-			this.wrapper.removeAll();
-			this.wrapper.add([
-				this.originTree = Ext.create('CMDBuild.view.administration.domain.enabledClasses.TreePanel', {
-					delegate: this.delegate,
-
-					disabledClasses: !Ext.isEmpty(selectedDomain) ? selectedDomain.get('disabled1') : [],
-					title: CMDBuild.Translation.origin,
-					type: 'origin'
-				}),
-				{ xtype: 'splitter' },
-				this.destinationTree = Ext.create('CMDBuild.view.administration.domain.enabledClasses.TreePanel', {
-					delegate: this.delegate,
-
-					disabledClasses: !Ext.isEmpty(selectedDomain) ? selectedDomain.get('disabled2') : [],
-					title: CMDBuild.Translation.destination,
-					type: 'destination'
-				})
-			]);
+		/**
+		 * Disables isVisible check
+		 *
+		 * @param {Boolean} state
+		 * @param {Boolean} allFields
+		 * @param {Boolean} tBarState
+		 * @param {Boolean} bBarState
+		 *
+		 * @override
+		 */
+		setDisabledModify: function(state, allFields, tBarState, bBarState) {
+			this.setDisableFields(state, allFields, true);
+			this.setDisabledTopBar(Ext.isBoolean(tBarState) ? tBarState : !state);
+			this.setDisabledBottomBar(Ext.isBoolean(bBarState) ? bBarState : state);
 		}
 	});
 

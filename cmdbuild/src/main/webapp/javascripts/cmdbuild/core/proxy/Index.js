@@ -79,10 +79,12 @@
 		},
 
 		domain: {
-			create: 'services/json/schema/modclass/savedomain',
-			read: 'services/json/schema/modclass/getalldomains',
-			update: 'services/json/schema/modclass/savedomain',
+			create: 'services/json/schema/modclass/savedomain', // TODO: waiting for refactor (crud)
+			read: '',
+			update: 'services/json/schema/modclass/savedomain', // TODO: waiting for refactor (crud)
 			remove: 'services/json/schema/modclass/deletedomain',
+
+			readAll: 'services/json/schema/modclass/getalldomains',
 
 			getDomainList: 'services/json/schema/modclass/getdomainlist'
 		},

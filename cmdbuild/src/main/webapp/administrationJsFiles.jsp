@@ -86,11 +86,6 @@
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/gis/CMModGISNavigationConfigurationController.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/gis/CMModLayerOrderController.js"></script>
 
-	<!-- GROUP -->
-	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/group/CMGroupUIConfigurationController.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/group/CMGroupFormController.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/group/CMModGroupController.js"></script>
-
 	<!-- CLASS -->
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/accordion/CMClassAccordionController.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/classes/CMDomainTabController.js"></script>

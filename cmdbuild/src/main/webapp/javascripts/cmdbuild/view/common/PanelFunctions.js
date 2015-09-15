@@ -8,24 +8,6 @@
 		requires: ['CMDBuild.core.proxy.Constants'],
 
 		/**
-		 * @param {Boolean} disableTBar
-		 */
-		disableModify: function(disableTBar) {
-			this.setDisableFields(true);
-			this.setDisabledTopBar(disableTBar);
-			this.setDisabledBottomBar(true);
-		},
-
-		/**
-		 * @param {Boolean} allFields
-		 */
-		enableModify: function(allFields) {
-			this.setDisableFields(false, allFields);
-			this.setDisabledTopBar(true);
-			this.setDisabledBottomBar(false);
-		},
-
-		/**
 		 * @param {Boolean} withDisabled
 		 */
 		getData: function(withDisabled) {
@@ -96,11 +78,13 @@
 		/**
 		 * @param {Boolean} state
 		 * @param {Boolean} allFields
+		 * @param {Boolean} disableIsVisibleCheck
 		 *
 		 * @private
 		 */
-		setDisableFields: function(state, allFields) {
-			allFields = allFields || false;
+		setDisableFields: function(state, allFields, disableIsVisibleCheck) {
+			allFields = Ext.isBoolean(allFields) ? allFields : false;
+			disableIsVisibleCheck = Ext.isBoolean(disableIsVisibleCheck) ? disableIsVisibleCheck : false;
 
 			// For Ext.form.field.Field objects
 			this.getForm().getFields().each(function(item, i, length) {
@@ -126,8 +110,12 @@
 					if (state) {
 						item.setDisabled(state);
 					} else {
-						if ((allFields || !item.cmImmutable) && item.isVisible())
+						if (
+							(allFields || !item.cmImmutable)
+							&& (item.isVisible() || disableIsVisibleCheck)
+						) {
 							item.setDisabled(state);
+						}
 					}
 				}
 			});

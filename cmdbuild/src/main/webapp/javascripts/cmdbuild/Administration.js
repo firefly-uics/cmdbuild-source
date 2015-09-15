@@ -20,9 +20,9 @@
 			'CMDBuild.core.proxy.Classes',
 			'CMDBuild.core.proxy.Configuration',
 			'CMDBuild.core.proxy.Constants',
-			'CMDBuild.core.proxy.Domain',
+			'CMDBuild.core.proxy.domain.Domain',
 			'CMDBuild.core.proxy.group.Group',
-			'CMDBuild.core.proxy.Localizations',
+//			'CMDBuild.core.proxy.localizations.Localizations',
 			'CMDBuild.core.proxy.lookup.Type',
 			'CMDBuild.core.proxy.report.Report'
 		],
@@ -320,21 +320,26 @@
 						});
 						groupsAccordion.updateStore();
 
-						menuAccordion = new CMDBuild.view.administration.accordion.CMMenuAccordion({
-							cmControllerType: CMDBuild.controller.accordion.CMMenuAccordionController
-						});
-						menuAccordion.updateStore();
+						menuAccordion = Ext.create('CMDBuild.view.administration.accordion.Menu', { cmName: 'menu' });
+//						menuAccordion = new CMDBuild.view.administration.accordion.CMMenuAccordion({ // TODO
+//							cmControllerType: CMDBuild.controller.accordion.CMMenuAccordionController
+//						});
+//						menuAccordion.updateStore();
 
 						_CMMainViewportController.addPanel([
-							new CMDBuild.Administration.ModMenu({
-								cmControllerType: controllerNS.administration.menu.CMModMenuController
+//							new CMDBuild.Administration.ModMenu({ // TODO
+//								cmControllerType: controllerNS.administration.menu.CMModMenuController
+//							}),
+							Ext.create('CMDBuild.view.administration.menu.MenuView', {
+								cmControllerType: 'CMDBuild.controller.administration.menu.Menu',
+								cmName: 'menu'
 							}),
 							Ext.create('CMDBuild.view.administration.group.GroupView', {
 								cmControllerType: 'CMDBuild.controller.administration.group.Group',
 								cmName: 'group',
 							}),
-							Ext.create('CMDBuild.view.administration.users.UsersView', {
-								cmControllerType: 'CMDBuild.controller.administration.users.Users',
+							Ext.create('CMDBuild.view.administration.user.UserView', {
+								cmControllerType: 'CMDBuild.controller.administration.user.User',
 								cmName: 'users',
 							})
 						]);
@@ -345,14 +350,15 @@
 				/**
 				 * Domains
 				 */
-				CMDBuild.core.proxy.Domain.getAll({
+				CMDBuild.core.proxy.domain.Domain.readAll({
+					loadMask: false,
 					scope: this,
 					success: function(response, options, decodedResponse) {
 						_CMCache.addDomains(decodedResponse.domains);
 
 						if (!_CMUIConfiguration.isCloudAdmin()) {
 							domainAccordion = Ext.create('CMDBuild.view.administration.accordion.Domain', {
-								cmControllerType: 'CMDBuild.controller.accordion.Domain',
+								cmControllerType: 'CMDBuild.controller.administration.accordion.Domain',
 								cmName: 'domain'
 							});
 							domainAccordion.updateStore();
@@ -360,7 +366,7 @@
 							_CMMainViewportController.addPanel(
 								Ext.create('CMDBuild.view.administration.domain.DomainView', {
 									cmControllerType: 'CMDBuild.controller.administration.domain.Domain',
-									cmName:'domain'
+									cmName: 'domain'
 								})
 							);
 						}

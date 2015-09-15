@@ -113,13 +113,6 @@
 
 		// SelectedGroup property methods
 			/**
-			 * @returns {Boolean}
-			 */
-			selectedGroupIsEmpty: function() {
-				return Ext.isEmpty(this.selectedGroup);
-			},
-
-			/**
 			 * Returns full model object or just one property if required
 			 *
 			 * @param {String} parameterName
@@ -131,6 +124,13 @@
 					return this.selectedGroup.get(parameterName);
 
 				return this.selectedGroup;
+			},
+
+			/**
+			 * @returns {Boolean}
+			 */
+			selectedGroupIsEmpty: function() {
+				return Ext.isEmpty(this.selectedGroup);
 			},
 
 			/**

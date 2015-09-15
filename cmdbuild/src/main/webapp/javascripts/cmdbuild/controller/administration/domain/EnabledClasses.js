@@ -18,17 +18,26 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
-			'getDisabledTreeVisit',
 			'onDomainEnabledClassesAbortButtonClick',
 			'onDomainEnabledClassesAddButtonClick',
-			'onDomainEnabledClassesModifyButtonClick',
-			'onDomainSelected'
+			'onDomainEnabledClassesDomainSelected = onDomainSelected',
+			'onDomainEnabledClassesModifyButtonClick'
 		],
+
+		/**
+		 * @property {CMDBuild.view.administration.domain.enabledClasses.TreePanel}
+		 */
+		destinationTree: undefined,
 
 		/**
 		 * @cfg {Array}
 		 */
 		managedTreeTypes: ['destination', 'origin'],
+
+		/**
+		 * @property {CMDBuild.view.administration.domain.enabledClasses.TreePanel}
+		 */
+		originTree: undefined,
 
 		/**
 		 * @cfg {CMDBuild.view.administration.domain.enabledClasses.EnabledClassesView}
@@ -44,45 +53,53 @@
 		constructor: function(configurationObject) {
 			this.callParent(arguments);
 
-			this.view = Ext.create('CMDBuild.view.administration.domain.enabledClasses.EnabledClassesView', {
-				delegate: this
-			});
+			this.view = Ext.create('CMDBuild.view.administration.domain.enabledClasses.EnabledClassesView', { delegate: this });
+
+			// Shorthands
+			this.destinationTree = this.view.destinationTree;
+			this.originTree = this.view.originTree;
 		},
 
 		/**
-		 * @param {Array} disabledClasses
 		 * @param {String} type
-		 *
-		 * @return {Ext.data.TreeStore} treeStore
 		 */
-		buildClassesStore: function(disabledClasses, type) {
-			var treeStore =  Ext.create('Ext.data.TreeStore', {
-				model: 'CMDBuild.model.Classes.domainsTreePanel',
-				root: {
-					text: 'ROOT',
-					expanded: true,
-					children: []
-				},
-				sorters: [
-					{ property: CMDBuild.ServiceProxy.parameter.DESCRIPTION, direction: 'ASC' }
-				]
-			});
-
+		fillTreeStore: function(type) {
 			if (
 				Ext.Array.contains(this.managedTreeTypes, type)
-				&& !Ext.isEmpty(this.cmfg('selectedDomainGet'))
+				&& !this.cmfg('domainSelectedDomainIsEmpty')
 			) {
-				var root = treeStore.getRootNode();
-				var standard = [];
+				var disabledClasses = [];
+				var root = undefined;
 				var rootData = {};
+				var standard = [];
+
+				// Get tree configurations by type
+				switch(type) {
+					case CMDBuild.core.proxy.Constants.DESTINATION: {
+						root = this.destinationTree.getStore().getRootNode();
+						disabledClasses = this.cmfg('domainSelectedDomainGet', CMDBuild.core.proxy.Constants.DESTINATION_DISABLED_CLASSES);
+
+						rootData[CMDBuild.core.proxy.Constants.ID] = this.cmfg('domainSelectedDomainGet', CMDBuild.core.proxy.Constants.DESTINATION_CLASS_ID);
+						rootData[CMDBuild.core.proxy.Constants.NAME] = this.cmfg('domainSelectedDomainGet', CMDBuild.core.proxy.Constants.DESTINATION_CLASS_NAME);
+					} break;
+
+					case CMDBuild.core.proxy.Constants.ORIGIN: {
+						root = this.originTree.getStore().getRootNode();
+						disabledClasses = this.cmfg('domainSelectedDomainGet', CMDBuild.core.proxy.Constants.ORIGIN_DISABLED_CLASSES);
+
+						rootData[CMDBuild.core.proxy.Constants.ID] = this.cmfg('domainSelectedDomainGet', CMDBuild.core.proxy.Constants.ORIGIN_CLASS_ID);
+						rootData[CMDBuild.core.proxy.Constants.NAME] = this.cmfg('domainSelectedDomainGet', CMDBuild.core.proxy.Constants.ORIGIN_CLASS_NAME);
+					} break;
+				}
 
 				root.removeAll();
 
+				var params = {};
+				params[CMDBuild.core.proxy.Constants.ACTIVE] = true;
+
 				// GetAllClasses data to get default translations
 				CMDBuild.core.proxy.Classes.read({
-					params: {
-						active: true
-					},
+					params: params,
 					scope: this,
 					success: function(response, options, decodedResponse) {
 						var nodesMap = {};
@@ -91,7 +108,7 @@
 							if (
 								classObject[CMDBuild.core.proxy.Constants.TYPE] == 'class' // Discard processes from visualization
 								&& classObject[CMDBuild.core.proxy.Constants.NAME] != 'Class' // Discard root class of all classes
-								&& classObject[CMDBuild.core.proxy.Constants.TABLE_TYPE] == 'standard' // Discard simple classes
+								&& classObject[CMDBuild.core.proxy.Constants.TABLE_TYPE] != CMDBuild.Constants.cachedTableType.simpletable // Discard simple classes
 							) {
 								// Class node object
 								var classMainNodeObject = {};
@@ -103,7 +120,7 @@
 								classMainNodeObject[CMDBuild.core.proxy.Constants.NAME] = classObject[CMDBuild.core.proxy.Constants.NAME];
 								classMainNodeObject[CMDBuild.core.proxy.Constants.PARENT] = classObject[CMDBuild.core.proxy.Constants.PARENT];
 
-								nodesMap[classMainNodeObject.id] = classMainNodeObject;
+								nodesMap[classMainNodeObject[CMDBuild.core.proxy.Constants.ID]] = classMainNodeObject;
 							}
 						}, this);
 
@@ -124,21 +141,9 @@
 							}
 						}
 
-						// Get root node and build offspring tree
-						switch(type) {
-							case 'destination': {
-								rootData[CMDBuild.core.proxy.Constants.ID] = this.cmfg('selectedDomainGet').get('idClass2');
-								rootData[CMDBuild.core.proxy.Constants.NAME] = this.cmfg('selectedDomainGet').get('nameClass2');
-							} break;
-
-							case 'origin': {
-								rootData[CMDBuild.core.proxy.Constants.ID] = this.cmfg('selectedDomainGet').get('idClass1');
-								rootData[CMDBuild.core.proxy.Constants.NAME] = this.cmfg('selectedDomainGet').get('nameClass1');
-							} break;
-						}
-
-						if (!Ext.isEmpty(nodesMap[rootData.id])) { // Node is class
-							root.appendChild(nodesMap[rootData.id]);
+						// Build offspring tree
+						if (!Ext.isEmpty(nodesMap[rootData[CMDBuild.core.proxy.Constants.ID]])) { // Node is class
+							root.appendChild(nodesMap[rootData[CMDBuild.core.proxy.Constants.ID]]);
 						} else { // Node is process so build custom node
 							var customNodeObject = {};
 							customNodeObject['iconCls'] = 'cmdbuild-tree-processclass-icon';
@@ -152,13 +157,38 @@
 						}
 					},
 					callback: function(records, operation, success) {
-						this.view.originTree.expandAll();
-						this.view.destinationTree.expandAll();
+						this.originTree.expandAll();
+						this.destinationTree.expandAll();
 					}
 				});
 			}
+		},
 
-			return treeStore;
+		/**
+		 * @returns {Object} data
+		 *
+		 * @public
+		 */
+		getData: function() {
+			var data = {};
+			var destinationDisabledClasses = [];
+			var originDisabledClasses = [];
+
+			// Get origin disabled classes
+			this.getDisabledTreeVisit({
+				node: this.originTree.getStore().getRootNode(),
+				destinationArray: originDisabledClasses
+			});
+			data['disabled1'] = Ext.encode(originDisabledClasses);
+
+			// Get destination disabled classes
+			this.getDisabledTreeVisit({
+				node: this.destinationTree.getStore().getRootNode(),
+				destinationArray: destinationDisabledClasses
+			});
+			data['disabled2'] = Ext.encode(destinationDisabledClasses);
+
+			return data;
 		},
 
 		/**
@@ -191,11 +221,11 @@
 		},
 
 		onDomainEnabledClassesAbortButtonClick: function() {
-			if (Ext.isEmpty(this.cmfg('selectedDomainGet'))) {
+			if (this.cmfg('domainSelectedDomainIsEmpty')) {
 				this.view.reset();
 				this.view.setDisabledModify(true, true, true);
 			} else {
-				this.onDomainSelected(this.cmfg('selectedDomainGet'));
+				this.onDomainEnabledClassesDomainSelected();
 			}
 		},
 
@@ -203,14 +233,16 @@
 			this.view.disable();
 		},
 
-		onDomainEnabledClassesModifyButtonClick: function() {
-			this.view.setDisabledModify(false);
-		},
+		onDomainEnabledClassesDomainSelected: function() {
+			this.fillTreeStore(CMDBuild.core.proxy.Constants.DESTINATION);
+			this.fillTreeStore(CMDBuild.core.proxy.Constants.ORIGIN);
 
-		onDomainSelected: function() {
-			this.view.buildTrees();
 			this.view.enable();
 			this.view.setDisabledModify(true);
+		},
+
+		onDomainEnabledClassesModifyButtonClick: function() {
+			this.view.setDisabledModify(false);
 		}
 	});
 

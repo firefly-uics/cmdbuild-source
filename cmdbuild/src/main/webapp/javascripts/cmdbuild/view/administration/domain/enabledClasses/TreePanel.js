@@ -10,16 +10,6 @@
 		 */
 		delegate: undefined,
 
-		/**
-		 * @cfg {Array}
-		 */
-		disabledClasses: [],
-
-		/**
-		 * @cfg {String}
-		 */
-		type: undefined,
-
 		autoScroll: true,
 		border: true,
 		collapsible: false,
@@ -56,7 +46,7 @@
 						menuDisabled: true,
 						fixed: true,
 
-						renderer: function(value, meta, record, rowIndex, colIndex, store, view, returna) {
+						renderer: function(value, meta, record, rowIndex, colIndex, store, view) {
 							if (record.childNodes.length > 0) {
 								return '';
 							} else {// HACK: to recreate original renderer method behaviour, callParent doesn't work
@@ -74,7 +64,17 @@
 						}
 					})
 				],
-				store: this.delegate.buildClassesStore(this.disabledClasses, this.type)
+				store: Ext.create('Ext.data.TreeStore', {
+					model: 'CMDBuild.model.Classes.domainsTreePanel',
+					root: {
+						text: 'ROOT',
+						expanded: true,
+						children: []
+					},
+					sorters: [
+						{ property: CMDBuild.ServiceProxy.parameter.DESCRIPTION, direction: 'ASC' }
+					]
+				})
 			});
 
 			this.callParent(arguments);

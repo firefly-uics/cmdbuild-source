@@ -1,16 +1,14 @@
 (function() {
 
-	Ext.define('CMDBuild.view.administration.domain.PropertiesForm', {
+	Ext.define('CMDBuild.view.administration.domain.properties.FormPanel', {
 		extend: 'Ext.form.Panel',
 
 		requires: [
 			'CMDBuild.core.proxy.Constants',
-			'CMDBuild.core.proxy.Domain'
+			'CMDBuild.core.proxy.domain.Properties'
 		],
 
-		mixins: {
-			panelFunctions: 'CMDBuild.view.common.PanelFunctions'
-		},
+		mixins: ['CMDBuild.view.common.PanelFunctions'],
 
 		/**
 		 * @cfg {CMDBuild.controller.administration.domain.Properties}
@@ -55,11 +53,11 @@
 		bodyCls: 'cmgraypanel',
 		border: false,
 		frame: false,
-		title: CMDBuild.Translation.properties,
+		overflowY: 'auto',
 
 		layout: {
 			type: 'vbox',
-			align: 'stretch'
+			align:'stretch'
 		},
 
 		defaults: {
@@ -152,35 +150,35 @@
 						}
 					}),
 					Ext.create('Ext.form.field.ComboBox', {
-						name: 'idClass1',
+						name: CMDBuild.core.proxy.Constants.ORIGIN_CLASS_ID,
 						fieldLabel: CMDBuild.Translation.origin,
 						labelWidth: CMDBuild.LABEL_WIDTH,
 						valueField: CMDBuild.core.proxy.Constants.ID,
-						displayField: CMDBuild.core.proxy.Constants.DESCRIPTION,
+						displayField: CMDBuild.core.proxy.Constants.TEXT,
 						allowBlank: false,
 						cmImmutable: true,
 						forceSelection: true,
 						editable: false,
 
-						store: _CMCache.getClassesAndProcessesStore(),
+						store: CMDBuild.core.proxy.domain.Properties.getClassesStore(),
 						queryMode: 'local'
 					}),
 					Ext.create('Ext.form.field.ComboBox', {
-						name: 'idClass2',
+						name: CMDBuild.core.proxy.Constants.DESTINATION_CLASS_ID,
 						fieldLabel: CMDBuild.Translation.destination,
 						labelWidth: CMDBuild.LABEL_WIDTH,
 						valueField: CMDBuild.core.proxy.Constants.ID,
-						displayField: CMDBuild.core.proxy.Constants.DESCRIPTION,
+						displayField: CMDBuild.core.proxy.Constants.TEXT,
 						allowBlank: false,
 						cmImmutable: true,
 						forceSelection: true,
 						editable: false,
 
-						store: _CMCache.getClassesAndProcessesStore(),
+						store: CMDBuild.core.proxy.domain.Properties.getClassesStore(),
 						queryMode: 'local'
 					}),
 					this.directDescription = Ext.create('CMDBuild.view.common.field.translatable.Text', {
-						name: 'descr_1', // TODO, change the server side
+						name: CMDBuild.core.proxy.Constants.DIRECT_DESCRIPTION,
 						fieldLabel: CMDBuild.Translation.directDescription,
 						labelWidth: CMDBuild.LABEL_WIDTH,
 						allowBlank: false,
@@ -193,7 +191,7 @@
 						}
 					}),
 					this.inverseDescription = Ext.create('CMDBuild.view.common.field.translatable.Text', {
-						name: 'descr_2', // TODO, change the server side
+						name: CMDBuild.core.proxy.Constants.INVERSE_DESCRIPTION,
 						fieldLabel: CMDBuild.Translation.inverseDescription,
 						labelWidth: CMDBuild.LABEL_WIDTH,
 						allowBlank: false,
@@ -214,8 +212,10 @@
 						displayField: CMDBuild.core.proxy.Constants.VALUE,
 						allowBlank: false,
 						cmImmutable: true,
+						forceSelection: true,
+						editable: false,
 
-						store: CMDBuild.core.proxy.Domain.getCardinalityStore(),
+						store: CMDBuild.core.proxy.domain.Properties.getCardinalityStore(),
 						queryMode: 'local',
 
 						listeners: {
@@ -229,6 +229,8 @@
 						name: CMDBuild.core.proxy.Constants.IS_MASTER_DETAIL,
 						fieldLabel: CMDBuild.Translation.masterDetail,
 						labelWidth: CMDBuild.LABEL_WIDTH,
+						inputValue: true,
+						uncheckedValue: false,
 
 						listeners: {
 							scope: this,
@@ -238,7 +240,7 @@
 						}
 					}),
 					this.masterDetailLabel = Ext.create('CMDBuild.view.common.field.translatable.Text', {
-						name: 'md_label',
+						name: CMDBuild.core.proxy.Constants.MASTER_DETAIL_LABEL,
 						fieldLabel: CMDBuild.Translation.masterDetailLabel,
 						labelWidth: CMDBuild.LABEL_WIDTH,
 						hidden: true, // Hidden by default
@@ -252,14 +254,20 @@
 					this.activeCheckbox = Ext.create('Ext.form.field.Checkbox', {
 						name: CMDBuild.core.proxy.Constants.ACTIVE,
 						fieldLabel: CMDBuild.Translation.active,
-						labelWidth: CMDBuild.LABEL_WIDTH
-					})
+						labelWidth: CMDBuild.LABEL_WIDTH,
+						inputValue: true,
+						uncheckedValue: false
+					}),
+					{
+						xtype: 'hiddenfield',
+						name: CMDBuild.core.proxy.Constants.ID
+					}
 				]
 			});
 
 			this.callParent(arguments);
 
-			this.setDisabledModify(true);
+			this.setDisabledModify(true, true, true);
 		}
 	});
 
