@@ -16,9 +16,8 @@ import org.cmdbuild.logger.Log;
 
 public class RPSimple extends ReportParameter {
 
-	protected RPSimple(final JRParameter jrParameter) {
-		super();
-		setJrParameter(jrParameter);
+	protected RPSimple(final JRParameter jrParameter, final String name) {
+		super(jrParameter, name);
 		if (getJrParameter() == null || getFullName() == null || getFullName().equals("")) {
 			throw ReportExceptionType.REPORT_INVALID_PARAMETER_FORMAT.createException();
 		}
