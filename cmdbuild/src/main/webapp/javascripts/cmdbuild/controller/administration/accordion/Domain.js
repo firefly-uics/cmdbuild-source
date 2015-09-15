@@ -1,6 +1,6 @@
 (function() {
 
-	Ext.define('CMDBuild.controller.accordion.Domain', {
+	Ext.define('CMDBuild.controller.administration.accordion.Domain', {
 		extend: 'CMDBuild.controller.accordion.CMBaseAccordionController',
 
 		requires: ['CMDBuild.core.proxy.Constants'],

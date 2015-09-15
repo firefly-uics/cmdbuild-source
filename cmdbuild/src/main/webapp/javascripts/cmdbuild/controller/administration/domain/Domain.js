@@ -5,9 +5,29 @@
 
 		requires: [
 			'CMDBuild.core.proxy.Constants',
-			'CMDBuild.core.proxy.Domain',
+			'CMDBuild.core.proxy.domain.Domain',
 			'CMDBuild.view.common.field.translatable.Utils'
 		],
+
+		/**
+		 * @cfg {Array}
+		 */
+		cmfgCatchedFunctions: [
+			'domainSelectedDomainGet',
+			'domainSelectedDomainIsEmpty',
+			'domainSelectedDomainSet',
+			'onDomainAbortButtonClick',
+			'onDomainAddButtonClick',
+			'onDomainModifyButtonClick',
+			'onDomainRemoveButtonClick',
+			'onDomainSaveButtonClick',
+			'onDomainSelected -> controllerProperties, controllerEnabledClasses, controllerAttributes'
+		],
+
+		/**
+		 * @cfg {String}
+		 */
+		cmName: undefined,
 
 		/**
 		 * @property {CMDBuild.controller.administration.domain.Attributes}
@@ -25,22 +45,7 @@
 		controllerProperties: undefined,
 
 		/**
-		 * @cfg {Array}
-		 */
-		cmfgCatchedFunctions: [
-			'getDisabledTreeVisit -> controllerEnabledClasses',
-			'onDomainAbortButtonClick',
-			'onDomainAddButtonClick',
-			'onDomainModifyButtonClick',
-			'onDomainRemoveButtonClick',
-			'onDomainSaveButtonClick',
-			'onDomainSelected -> controllerAttributes, controllerEnabledClasses, controllerProperties',
-			'selectedDomainGet',
-			'selectedDomainSet'
-		],
-
-		/**
-		 * @property {CMDBuild.cache.CMDomainModel}
+		 * @property {CMDBuild.model.domain.Domain}
 		 */
 		selectedDomain: null,
 
@@ -66,13 +71,16 @@
 			this.view.tabPanel.add(this.controllerAttributes.getView());
 		},
 
+		/**
+		 * Method forwarder
+		 */
 		onDomainAbortButtonClick: function() {
 			this.controllerEnabledClasses.cmfg('onDomainEnabledClassesAbortButtonClick');
 			this.controllerProperties.cmfg('onDomainPropertiesAbortButtonClick');
 		},
 
 		onDomainAddButtonClick: function() {
-			_CMMainViewportController.deselectAccordionByName('domain');
+			_CMMainViewportController.deselectAccordionByName(this.cmName);
 
 			this.controllerAttributes.cmfg('onDomainAddButtonClick');
 			this.controllerEnabledClasses.cmfg('onDomainEnabledClassesAddButtonClick');
@@ -81,6 +89,9 @@
 			this.view.tabPanel.setActiveTab(0);
 		},
 
+		/**
+		 * Method forwarder
+		 */
 		onDomainModifyButtonClick: function() {
 			this.controllerEnabledClasses.cmfg('onDomainEnabledClassesModifyButtonClick');
 			this.controllerProperties.cmfg('onDomainPropertiesModifyButtonClick');
@@ -92,56 +103,33 @@
 				msg: CMDBuild.Translation.common.confirmpopup.areyousure,
 				scope: this,
 				buttons: Ext.Msg.YESNO,
-				fn: function(button) {
+				fn: function(button, e) {
 					if (button == 'yes')
 						this.removeItem();
 				}
 			});
 		},
 
-		/**
-		 * TODO: should be separated in two server calls (create, update) as usual. Needed server refactor.
-		 */
 		onDomainSaveButtonClick: function() {
-			if (this.validate(this.controllerProperties.getView())) {
-				var originDisabledClasses = [];
-				var destinationDisabledClasses = [];
-				var data = this.controllerProperties.getView().getData(true);
+			if (this.validate(this.controllerProperties.getView().form)) {
+				var params = {};
 
-				// Get origin disabled classes
-				this.cmfg('getDisabledTreeVisit', {
-					node: this.controllerEnabledClasses.getView().originTree.getStore().getRootNode(),
-					destinationArray: originDisabledClasses
-				});
+				params = Ext.Object.merge(params, this.controllerEnabledClasses.getData());
+				params = Ext.Object.merge(params, this.controllerProperties.getData());
 
-				// Get destination disabled classes
-				this.cmfg('getDisabledTreeVisit', {
-					node: this.controllerEnabledClasses.getView().destinationTree.getStore().getRootNode(),
-					destinationArray: destinationDisabledClasses
-				});
-
-				if (Ext.isEmpty(this.selectedDomain)) {
-					data[CMDBuild.core.proxy.Constants.ID] = -1;
+				if (Ext.isEmpty(params[CMDBuild.core.proxy.Constants.ID])) {
+					CMDBuild.core.proxy.domain.Domain.create({
+						params: params,
+						scope: this,
+						success: this.success
+					});
 				} else {
-					data[CMDBuild.core.proxy.Constants.ID] = this.selectedDomain.get(CMDBuild.core.proxy.Constants.ID);
-
-					data['disabled1'] = Ext.encode(originDisabledClasses);
-					data['disabled2'] = Ext.encode(destinationDisabledClasses);
+					CMDBuild.core.proxy.domain.Domain.update({
+						params: params,
+						scope: this,
+						success: this.success
+					});
 				}
-
-				CMDBuild.core.proxy.Domain.update({
-					params: data,
-					scope: this,
-					success: function(response, options, decodedResponse) {
-						this.view.tabPanel.getActiveTab().setDisabledModify(true);
-
-						_CMCache.onDomainSaved(decodedResponse.domain);
-
-						CMDBuild.view.common.field.translatable.Utils.commit(this.controllerProperties.getView());
-					}
-				});
-			} else {
-				CMDBuild.core.Message.error(CMDBuild.Translation.common.failure, CMDBuild.Translation.errors.invalid_fields, false);
 			}
 		},
 
@@ -150,54 +138,91 @@
 		 */
 		onViewOnFront: function(parameters) {
 			if (!Ext.isEmpty(parameters)) {
-				this.selectedDomain = _CMCache.getDomainById(parameters.get(CMDBuild.core.proxy.Constants.ID)); // TODO: use proxy to read domain
-
-				this.cmfg('onDomainSelected');
-
-				this.setViewTitle(parameters.get(CMDBuild.core.proxy.Constants.TEXT));
-
-				if (Ext.isEmpty(this.view.tabPanel.getActiveTab()))
-					this.view.tabPanel.setActiveTab(0);
-			}
-		},
-
-		removeItem: function() {
-			if (!Ext.isEmpty(this.selectedDomain)) {
-				var params = {};
-				params[CMDBuild.core.proxy.Constants.DOMAIN_NAME] = this.selectedDomain.get(CMDBuild.core.proxy.Constants.NAME);
-
-				CMDBuild.core.proxy.Domain.remove({
-					params: params,
+				CMDBuild.core.proxy.domain.Domain.readAll({
 					scope: this,
 					success: function(response, options, decodedResponse) {
-						this.controllerProperties.getView().reset();
+						decodedResponse = decodedResponse[CMDBuild.core.proxy.Constants.DOMAINS];
 
-						this.controllerProperties.getView().setDisabledModify(true);
+						this.domainSelectedDomainSet(
+							Ext.Array.findBy(decodedResponse, function(item, i) {
+								return parameters.get(CMDBuild.core.proxy.Constants.ID) == item[CMDBuild.core.proxy.Constants.ID_DOMAIN];
+							}, this)
+						);
 
-						// TODO: to delete when old cache system will be disabled
-						_CMCache.onDomainDeleted(this.selectedDomain.get(CMDBuild.core.proxy.Constants.ID));
+						this.cmfg('onDomainSelected');
+
+						this.setViewTitle(parameters.get(CMDBuild.core.proxy.Constants.TEXT));
+
+						if (Ext.isEmpty(this.view.tabPanel.getActiveTab()))
+							this.view.tabPanel.setActiveTab(0);
 					}
 				});
 			}
 		},
 
-		/**
-		 * @return {CMDBuild.cache.CMDomainModel}
-		 */
-		selectedDomainGet: function() {
-			return this.selectedDomain;
+		removeItem: function() {
+			if (!this.domainSelectedDomainIsEmpty()) {
+				var params = {};
+				params[CMDBuild.core.proxy.Constants.DOMAIN_NAME] = this.domainSelectedDomainGet(CMDBuild.core.proxy.Constants.NAME);
+
+				CMDBuild.core.proxy.domain.Domain.remove({
+					params: params,
+					scope: this,
+					success: function(response, options, decodedResponse) {
+						this.controllerProperties.getView().form.reset();
+						this.controllerProperties.getView().form.setDisabledModify(true);
+
+						_CMCache.onDomainDeleted(this.domainSelectedDomainGet(CMDBuild.core.proxy.Constants.ID));
+					}
+				});
+			}
 		},
 
-		/**
-		 * @param {CMDBuild.cache.CMDomainModel} selectedDomain
-		 */
-		selectedDomainSet: function(selectedDomain) {
-			if (Ext.isEmpty(selectedDomain)) {
+		success: function(response, options, decodedResponse) {
+			this.view.tabPanel.setActiveTab(0);
+			this.view.tabPanel.getActiveTab().form.setDisabledModify(true);
+
+			_CMCache.onDomainSaved(decodedResponse.domain);
+
+			CMDBuild.view.common.field.translatable.Utils.commit(this.controllerProperties.getView().form);
+		},
+
+		// SelectedDomain property methods
+			/**
+			 * Returns full model object or just one property if required
+			 *
+			 * @param {String} parameterName
+			 *
+			 * @returns {CMDBuild.model.domain.Domain} or Mixed
+			 */
+			domainSelectedDomainGet: function(parameterName) {
+				if (!Ext.isEmpty(parameterName))
+					return this.selectedDomain.get(parameterName);
+
+				return this.selectedDomain;
+			},
+
+			/**
+			 * @returns {Boolean}
+			 */
+			domainSelectedDomainIsEmpty: function() {
+				return Ext.isEmpty(this.selectedDomain);
+			},
+
+			/**
+			 * @param {Object} selectedDomainObject
+			 */
+			domainSelectedDomainSet: function(selectedDomainObject) {
 				this.selectedDomain = null;
-			} else {
-				this.selectedDomain = selectedDomain;
+
+				if (!Ext.isEmpty(selectedDomainObject) && Ext.isObject(selectedDomainObject)) {
+					if (Ext.getClassName(selectedDomainObject) == 'CMDBuild.model.domain.Domain') {
+						this.selectedDomain = selectedDomainObject;
+					} else {
+						this.selectedDomain = Ext.create('CMDBuild.model.domain.Domain', selectedDomainObject);
+					}
+				}
 			}
-		}
 	});
 
 })();

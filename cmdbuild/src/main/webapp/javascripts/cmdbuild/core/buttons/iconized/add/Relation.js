@@ -5,7 +5,7 @@
 
 		requires: [
 			'CMDBuild.core.proxy.Constants',
-			'CMDBuild.core.proxy.Domain',
+			'CMDBuild.core.proxy.domain.Domain',
 			'CMDBuild.core.Utils'
 		],
 
@@ -39,7 +39,7 @@
 				params[CMDBuild.core.proxy.Constants.CLASS_NAME] = entryType.get(CMDBuild.core.proxy.Constants.NAME);
 				params[CMDBuild.core.proxy.Constants.SKIP_DISABLED_CLASSES] = true;
 
-				CMDBuild.core.proxy.Domain.getList({
+				CMDBuild.core.proxy.domain.Domain.getList({
 					params: params,
 					scope: this,
 					success: function(result, options, decodedResult) {

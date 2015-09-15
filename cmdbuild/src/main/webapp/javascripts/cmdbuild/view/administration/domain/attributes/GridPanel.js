@@ -56,7 +56,7 @@
 			this.tbar = [this.addAttributeButton];
 		},
 
-		onDomainSelected: function(domain) {
+		onDomainSelected: function(domain) { // Probably not used
 			this.refreshStore(domain, indexAttributeToSelectAfter = null);
 		},
 

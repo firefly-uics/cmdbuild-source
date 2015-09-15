@@ -33,7 +33,7 @@
 			'CMDBuild.core.proxy.Configuration',
 			'CMDBuild.core.proxy.Constants',
 			'CMDBuild.core.proxy.dataView.DataView',
-			'CMDBuild.core.proxy.Domain',
+			'CMDBuild.core.proxy.domain.Domain',
 			'CMDBuild.core.proxy.group.Group',
 			'CMDBuild.core.proxy.lookup.Type',
 			'CMDBuild.core.proxy.Menu',
@@ -110,9 +110,6 @@
 								 * @deprecated
 								 */
 								CMDBuild.Config.cmdbuild = decoded.cmdbuild;
-
-								// Localization
-								CMDBuild.Config[CMDBuild.core.proxy.Constants.LOCALIZATION].setLanguagesWithLocalizations(decoded.cmdbuild.enabled_languages);
 
 								// DMS
 								CMDBuild.Config.dms = decoded.dms;
@@ -331,8 +328,9 @@
 				params = {};
 				params[CMDBuild.core.proxy.Constants.ACTIVE] = true;
 
-				CMDBuild.core.proxy.Domain.getAll({
+				CMDBuild.core.proxy.domain.Domain.readAll({
 					params: params,
+					loadMask: false,
 					scope: this,
 					success: function(response, options, decodedResponse) {
 						_CMCache.addDomains(decodedResponse.domains);

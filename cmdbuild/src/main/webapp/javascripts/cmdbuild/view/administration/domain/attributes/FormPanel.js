@@ -23,7 +23,7 @@
 
 		onClassSelected: Ext.emptyFn,
 
-		onDomainSelected: function(cmDomain) {
+		onDomainSelected: function(cmDomain) { // Probably not used
 			this.domainName = cmDomain.getName();
 			this.hideContextualFields();
 		},
