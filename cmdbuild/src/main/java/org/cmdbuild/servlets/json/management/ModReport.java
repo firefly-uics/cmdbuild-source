@@ -2,9 +2,7 @@ package org.cmdbuild.servlets.json.management;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Lists.newLinkedList;
-import static com.google.common.collect.Maps.newHashMap;
 import static org.cmdbuild.logic.report.Predicates.currentGroupAllowed;
-import static org.cmdbuild.report.CustomProperties.FILTER_PREFIX;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ATTRIBUTES;
 import static org.cmdbuild.servlets.json.CommunicationConstants.CARD_ID;
 import static org.cmdbuild.servlets.json.CommunicationConstants.CLASS_NAME;
@@ -28,8 +26,6 @@ import java.util.Map;
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
 
-import net.sf.jasperreports.engine.JRPropertiesMap;
-
 import org.cmdbuild.common.utils.TempDataSource;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.exception.ReportException.ReportExceptionType;
@@ -37,6 +33,7 @@ import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.data.QueryOptions;
 import org.cmdbuild.logic.data.QueryOptions.QueryOptionsBuilder;
 import org.cmdbuild.logic.mapping.json.JsonFilterHelper;
+import org.cmdbuild.report.CustomProperties;
 import org.cmdbuild.report.ReportFactory;
 import org.cmdbuild.report.ReportFactory.ReportExtension;
 import org.cmdbuild.report.ReportFactory.ReportType;
@@ -180,14 +177,8 @@ public class ModReport extends JSONBaseWithSpringContext {
 			throws ClassNotFoundException, IOException, JSONException {
 		final Collection<JSONObject> output = newArrayList();
 		for (final ReportParameter reportParameter : reportFactory.getReportParameters()) {
-			final CMAttribute attribute = ReportParameterConverter.of(reportParameter).toCMAttribute();
-			final Map<String, String> metadata = newHashMap();
-			final JRPropertiesMap propertiesMap = reportParameter.getJrParameter().getPropertiesMap();
-			for (final String name : propertiesMap.getPropertyNames()) {
-				if (name.startsWith(FILTER_PREFIX)) {
-					metadata.put(name.substring(FILTER_PREFIX.length()), propertiesMap.getProperty(name));
-				}
-			}
+			final CMAttribute attribute = ReportParameterConverter.of(reportParameter).toCMAttribute();			
+			final Map<String, String> metadata = new CustomProperties(reportParameter.getJrParameter().getPropertiesMap()).getFilterParameters();
 			output.add(AttributeSerializer.newInstance() //
 					.withDataView(systemDataView()) //
 					.build()//

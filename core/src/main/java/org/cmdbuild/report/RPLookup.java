@@ -7,15 +7,14 @@ import org.cmdbuild.exception.ReportException.ReportExceptionType;
 
 public class RPLookup extends ReportParameter {
 
-	protected RPLookup(final JRParameter jrParameter) {
-		super();
-		setJrParameter(jrParameter);
-		if (getJrParameter() == null || getFullName() == null || getFullName().equals("")
-				|| !getFullName().matches(regExpLR)) {
+	private final String lookupType;
 
+	protected RPLookup(final JRParameter jrParameter, final String name, final String lookupType) {
+		super(jrParameter, name);
+		this.lookupType = lookupType;
+		if (getJrParameter() == null || getFullName() == null || getFullName().equals("")) {
 			throw ReportExceptionType.REPORT_INVALID_PARAMETER_FORMAT.createException();
 		}
-
 		if (getJrParameter().getValueClass() != Integer.class) {
 			throw ReportExceptionType.REPORT_INVALID_PARAMETER_LOOKUP_CLASS.createException();
 		}
@@ -27,7 +26,7 @@ public class RPLookup extends ReportParameter {
 	}
 
 	public String getLookupName() {
-		return getFullNameSplit()[2];
+		return lookupType;
 	}
 
 	@Override
