@@ -5,8 +5,14 @@
 
 		requires: [
 			'CMDBuild.core.proxy.Constants',
-			'CMDBuild.model.common.AccordionStore'
+			'CMDBuild.core.proxy.group.Group',
+			'CMDBuild.core.Utils'
 		],
+
+		/**
+		 * @cfg {String}
+		 */
+		cmName: undefined,
 
 		title: CMDBuild.Translation.menu,
 
@@ -18,8 +24,7 @@
 		 * @override
 		 */
 		beforeExpand: function(panel, animate, eOpts) {
-			CMDBuild.ServiceProxy.group.read({
-				loadMask: true,
+			CMDBuild.core.proxy.group.Group.readAll({
 				scope: this,
 				success: function(response, options, decodedResponse) {
 					Ext.suspendLayouts();
@@ -27,16 +32,16 @@
 					CMDBuild.core.Utils.objectArraySort(decodedResponse.groups, CMDBuild.core.proxy.Constants.TEXT);
 
 					var out = [{
-						cmName: 'menu',
+						cmName: this.cmName,
 						iconCls: 'cmdbuild-tree-group-icon',
 						id: 0,
 						leaf: true,
-						text: '*Default*'
+						text: '* Default *'
 					}];
 
 					Ext.Object.each(decodedResponse.groups, function(key, group, myself) {
 						out.push({
-							cmName: 'menu',
+							cmName: this.cmName,
 							iconCls: 'cmdbuild-tree-group-icon',
 							id: group[CMDBuild.core.proxy.Constants.ID],
 							leaf: true,

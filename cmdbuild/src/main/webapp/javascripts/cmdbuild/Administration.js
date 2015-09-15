@@ -22,7 +22,6 @@
 			'CMDBuild.core.proxy.Constants',
 			'CMDBuild.core.proxy.domain.Domain',
 			'CMDBuild.core.proxy.group.Group',
-//			'CMDBuild.core.proxy.localizations.Localizations',
 			'CMDBuild.core.proxy.lookup.Type',
 			'CMDBuild.core.proxy.report.Report'
 		],
@@ -307,7 +306,7 @@
 				});
 
 				/**
-				 * Groups
+				 * Group
 				 */
 				CMDBuild.core.proxy.group.Group.readAll({
 					scope: this,
@@ -321,15 +320,8 @@
 						groupsAccordion.updateStore();
 
 						menuAccordion = Ext.create('CMDBuild.view.administration.accordion.Menu', { cmName: 'menu' });
-//						menuAccordion = new CMDBuild.view.administration.accordion.CMMenuAccordion({ // TODO
-//							cmControllerType: CMDBuild.controller.accordion.CMMenuAccordionController
-//						});
-//						menuAccordion.updateStore();
 
 						_CMMainViewportController.addPanel([
-//							new CMDBuild.Administration.ModMenu({ // TODO
-//								cmControllerType: controllerNS.administration.menu.CMModMenuController
-//							}),
 							Ext.create('CMDBuild.view.administration.menu.MenuView', {
 								cmControllerType: 'CMDBuild.controller.administration.menu.Menu',
 								cmName: 'menu'

@@ -19,6 +19,11 @@
 		delegate: undefined,
 
 		/**
+		 * @cfg {String}
+		 */
+		cmName: undefined,
+
+		/**
 		 * @cfg {Boolean}
 		 */
 		storeLoaded: false,
@@ -57,8 +62,12 @@
 		listeners: {
 			afteritemexpand: function(node, index, item, eOpts) {
 				this.storeLoaded = false; // Restore flag state
+
+				CMDBuild.LoadMask.get().hide();
 			},
 			beforeexpand: function(panel, animate, eOpts) {
+				CMDBuild.LoadMask.get().show();
+
 				return this.beforeExpand(panel, animate, eOpts);
 			}
 		},
