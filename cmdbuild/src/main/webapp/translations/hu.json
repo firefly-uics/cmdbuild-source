@@ -485,6 +485,7 @@
 			"add": "Hozzáadás",
 			"apply": "Alkalmaz",
 			"as": "mint",
+			"changeUser": "Felhasználóváltás",
 			"check": "Ellenőrzés",
 			"clone": "Másolás",
 			"close": "Bezárás",
@@ -817,20 +818,6 @@
 	"info": {
 		"card_not_found": "A kártya nem illeszkedik az aktuális szűrőre"
 	},
-	"login": {
-		"change_user": "Felhasználóváltás",
-		"failed": "A bejelentkezés nem sikerült",
-		"language": "Nyelv",
-		"login": "Bejelentkezés",
-		"multi_group": "Válasszon csoportot",
-		"password": "Jelszó",
-		"relogin_message": "A hitelesített session lejárt. Kérem adja meg újra a jelszavát.",
-		"relogin_title": "A Session lejárt",
-		"title": "Kérem jelentkezzen be",
-		"username": "Felhasználónév",
-		"waitMsg": "Adat küldése...",
-		"waitTitle": "Kapcsolódás"
-	},
 	"management": {
 		"description": "Adatkezelő modul",
 		"findfilter": {
@@ -1152,6 +1139,7 @@
 	"cc": "Másolat",
 	"changePassword": "Jelszó változtatás",
 	"checkFrequency": "Ellenőrzés gyakorisága (percek)",
+	"chooseAGroup": "Válasszon csoportot",
 	"chooseAttachmentFromDb": "Csatolmány választása adatbázisból",
 	"classAttribute": "Osztály attribútum",
 	"classLabel": "Osztály",
@@ -1295,6 +1283,7 @@
 	"lockTimeout": "Zárolási idő",
 	"loggedGroup": "Bejelentkezett csoport",
 	"loggedUser": "Bejelentkezett felhasználó",
+	"login": "Bejelentkezés",
 	"lookupList": "<em>Lookup list</em>",
 	"lookupTypes": "<em>Lookup types</em>",
 	"main": "Fő",
@@ -1399,6 +1388,8 @@
 	"serverUrl": "Szerver URL",
 	"service": "Szolgáltatás",
 	"serviceSynchronization": "Szolgáltatás szinkronizáció",
+	"sessionExpired": "A Session lejárt",
+	"sessionExpiredMessage": "A hitelesített session lejárt. Kérem adja meg újra a jelszavát.",
 	"sessionTimeout": "Session lejárat (másodpercek)",
 	"set": "Beállítás",
 	"setAsDefault": "Beállítás alapértelmezettként",

@@ -485,6 +485,7 @@
 			"add": "Добавить",
 			"apply": "Применить",
 			"as": "как",
+			"changeUser": "Смена пользователя",
 			"check": "<em>Check</em>",
 			"clone": "Дублировать",
 			"close": "Закрыть",
@@ -817,20 +818,6 @@
 	"info": {
 		"card_not_found": "Данные не совпадают с текущим фильтром"
 	},
-	"login": {
-		"change_user": "Смена пользователя",
-		"failed": "Ошибка входа",
-		"language": "Язык",
-		"login": "Вход в систему",
-		"multi_group": "Выберите группу",
-		"password": "Пароль",
-		"relogin_message": "Сессия истекла. Повторно введите пароль.",
-		"relogin_title": "Сессия истекла",
-		"title": "Вход в систему",
-		"username": "Имя пользователя",
-		"waitMsg": "Отправка данных...",
-		"waitTitle": "Подключение"
-	},
 	"management": {
 		"description": "Управление данными",
 		"findfilter": {
@@ -1152,6 +1139,7 @@
 	"cc": "Копия",
 	"changePassword": "Изменить пароль",
 	"checkFrequency": "Периодичность проверки (мин)",
+	"chooseAGroup": "Выберите группу",
 	"chooseAttachmentFromDb": "Выберите вложение из базы данных",
 	"classAttribute": "Атрибут класса",
 	"classLabel": "Класс",
@@ -1295,6 +1283,7 @@
 	"lockTimeout": "Таймаут блокировки (секунд)",
 	"loggedGroup": "Группа",
 	"loggedUser": "Пользователь",
+	"login": "Вход в систему",
 	"lookupList": "Перечень",
 	"lookupTypes": "Перечень",
 	"main": "Основной",
@@ -1399,6 +1388,8 @@
 	"serverUrl": "URL сервера",
 	"service": "<em>Service</em>",
 	"serviceSynchronization": "Синхронизация сервисов",
+	"sessionExpired": "Сессия истекла",
+	"sessionExpiredMessage": "Сессия истекла. Повторно введите пароль.",
 	"sessionTimeout": "Время бездействия сессии (сек)",
 	"set": "Установлен",
 	"setAsDefault": "Сделать основным",

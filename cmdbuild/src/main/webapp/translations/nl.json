@@ -485,6 +485,7 @@
 			"add": "Toevoegen",
 			"apply": "Toepassen",
 			"as": "als",
+			"changeUser": "Andere gebruiker",
 			"check": "<em>Check</em>",
 			"clone": "Dupliceer",
 			"close": "Sluiten",
@@ -817,20 +818,6 @@
 	"info": {
 		"card_not_found": "De kaart past niet bij het huidige filter"
 	},
-	"login": {
-		"change_user": "Andere gebruiker",
-		"failed": "Login Mislukt",
-		"language": "Taal",
-		"login": "Login",
-		"multi_group": "Kies een groep",
-		"password": "Wachtwoord",
-		"relogin_message": "De authentificatie sessie is verlopen. Alstublieft uw wachtwoord opnieuw invoeren.",
-		"relogin_title": "Sessie verlopen",
-		"title": "Login alstublieft",
-		"username": "Gebruikernaam",
-		"waitMsg": "Gegevens versturen ...",
-		"waitTitle": "Verbinden"
-	},
 	"management": {
 		"description": "Gegevens beheer module",
 		"findfilter": {
@@ -1152,6 +1139,7 @@
 	"cc": "Cc",
 	"changePassword": "Wachtwoord veranderen",
 	"checkFrequency": "Controleer frequentie (minuten)",
+	"chooseAGroup": "Kies een groep",
 	"chooseAttachmentFromDb": "Kies bijlages uit database",
 	"class": "Klassen",
 	"classAttribute": "Klas attribuut",
@@ -1295,6 +1283,7 @@
 	"lockTimeout": "Blokkeer afloop (seconden)",
 	"loggedGroup": "Gelogde Groep",
 	"loggedUser": "Gelogde gebruiker",
+	"login": "Login",
 	"lookupList": "Zoeklijst Lijst",
 	"lookupTypes": "Zoeklijst soort",
 	"main": "Hoofddeel",
@@ -1399,6 +1388,8 @@
 	"serverUrl": "Server URL",
 	"service": "<em>Service</em>",
 	"serviceSynchronization": "Service synchronisatie",
+	"sessionExpired": "Sessie verlopen",
+	"sessionExpiredMessage": "De authentificatie sessie is verlopen. Alstublieft uw wachtwoord opnieuw invoeren.",
 	"sessionTimeout": "Sessie timeout (seconds)",
 	"set": "Instellen",
 	"setAsDefault": "Instellen als standaard",

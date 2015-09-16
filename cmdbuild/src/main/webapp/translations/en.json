@@ -485,6 +485,7 @@
 			"add": "Add",
 			"apply": "Apply",
 			"as": "as",
+			"changeUser": "Change user",
 			"check": "Check",
 			"clone": "Clone",
 			"close": "Close",
@@ -817,20 +818,6 @@
 	"info": {
 		"card_not_found": "The card doesn't match the current filter"
 	},
-	"login": {
-		"change_user": "Change user",
-		"failed": "Login Failed",
-		"language": "Language",
-		"login": "Login",
-		"multi_group": "Choose a group",
-		"password": "Password",
-		"relogin_message": "The authenticated session has expired. Please, insert your password again.",
-		"relogin_title": "Session expired",
-		"title": "Please Login",
-		"username": "Username",
-		"waitMsg": "Sending data...",
-		"waitTitle": "Connecting"
-	},
 	"management": {
 		"description": "Data management module",
 		"findfilter": {
@@ -1152,6 +1139,7 @@
 	"cc": "Cc",
 	"changePassword": "Change password",
 	"checkFrequency": "Check frequency (minutes)",
+	"chooseAGroup": "Choose a group",
 	"chooseAttachmentFromDb": "Choose attachments from Database",
 	"classAttribute": "Class attribute",
 	"classLabel": "Class",
@@ -1299,6 +1287,7 @@
 	"lockTimeout": "Lock timeout (seconds)",
 	"loggedGroup": "Logged Group",
 	"loggedUser": "Logged User",
+	"login": "Login",
 	"lookupList": "Lookup list",
 	"lookupTypes": "Lookup types",
 	"main": "Main",
@@ -1403,6 +1392,8 @@
 	"serverUrl": "Server URL",
 	"service": "Service",
 	"serviceSynchronization": "Service synchronization",
+	"sessionExpired": "Session expired",
+	"sessionExpiredMessage": "The authenticated session has expired. Please, insert your password again.",
 	"sessionTimeout": "Session timeout (seconds)",
 	"set": "Set",
 	"setAsDefault": "Set as default",

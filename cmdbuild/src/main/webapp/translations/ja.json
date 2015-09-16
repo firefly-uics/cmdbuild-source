@@ -485,6 +485,7 @@
 			"add": "追加",
 			"apply": "適用",
 			"as": "as",
+			"changeUser": "ユーザー変更",
 			"check": "<em>Check</em>",
 			"clone": "クローン",
 			"close": "クローズ",
@@ -817,20 +818,6 @@
 	"info": {
 		"card_not_found": "カードは現在のフィルタと一致しません"
 	},
-	"login": {
-		"change_user": "ユーザー変更",
-		"failed": "ログイン失敗",
-		"language": "言語",
-		"login": "ログイン",
-		"multi_group": "グループを選択",
-		"password": "パスワード",
-		"relogin_message": "認証されたセッションの有効期限が過ぎました。パスワードを再入力ください。",
-		"relogin_title": "セッション時間切れ",
-		"title": "ログインください",
-		"username": "ユーザーネーム",
-		"waitMsg": "データ送信中...",
-		"waitTitle": "接続中"
-	},
 	"management": {
 		"description": "データ管理モジュール",
 		"findfilter": {
@@ -1152,6 +1139,7 @@
 	"cc": "Cc",
 	"changePassword": "パスワード変更",
 	"checkFrequency": "確認間隔(分）",
+	"chooseAGroup": "グループを選択",
 	"chooseAttachmentFromDb": "データベースから添付を選ぶ",
 	"classAttribute": "クラス属性",
 	"classLabel": "クラス",
@@ -1295,6 +1283,7 @@
 	"lockTimeout": "ロックタイムアウト",
 	"loggedGroup": "ロググループ",
 	"loggedUser": "ログユーザー",
+	"login": "ログイン",
 	"lookupList": "ルックアップリスト",
 	"lookupTypes": "ルックアップタイプ",
 	"main": "メイン",
@@ -1399,6 +1388,8 @@
 	"serverUrl": "サーバ URL",
 	"service": "<em>Service</em>",
 	"serviceSynchronization": "サービス同期化",
+	"sessionExpired": "セッション時間切れ",
+	"sessionExpiredMessage": "認証されたセッションの有効期限が過ぎました。パスワードを再入力ください。",
 	"sessionTimeout": "セッションタイムアウト（秒)",
 	"set": "設定",
 	"setAsDefault": "既定値に設定",

@@ -485,6 +485,7 @@
 			"add": "Thêm",
 			"apply": "Áp dụng",
 			"as": "như là",
+			"changeUser": "Thay đổi người dùng",
 			"check": "<em>Check</em>",
 			"clone": "Sao chép",
 			"close": "Đóng",
@@ -817,20 +818,6 @@
 	"info": {
 		"card_not_found": "Thẻ không phù hợp với bộ lọc hiện tại"
 	},
-	"login": {
-		"change_user": "Thay đổi người dùng",
-		"failed": "Đăng nhập thất bại",
-		"language": "Ngôn ngữ",
-		"login": "Đăng nhập",
-		"multi_group": "Chọn một nhóm",
-		"password": "Mật khẩu",
-		"relogin_message": "Chứng thực đã hết hạn. Xin vui lòng chèn mật khẩu lần nữa.",
-		"relogin_title": "Phiên làm việc đã hết hạn",
-		"title": "Vui lòng đăng nhập",
-		"username": "Tên người dùng",
-		"waitMsg": "Đang gửi dữ liệu...",
-		"waitTitle": "Đang kết nối"
-	},
 	"management": {
 		"description": "Danh muc quản lí dữ liệu",
 		"findfilter": {
@@ -1152,6 +1139,7 @@
 	"cc": "<em>Cc</em>",
 	"changePassword": "Đổi mật khẩu",
 	"checkFrequency": "<em>Check frequency (minutes)</em>",
+	"chooseAGroup": "Chọn một nhóm",
 	"chooseAttachmentFromDb": "<em>Choose attachments from Database</em>",
 	"classAttribute": "<em>Class attribute</em>",
 	"classLabel": "<em>Class</em>",
@@ -1295,6 +1283,7 @@
 	"lockTimeout": "Thời gian chờ khóat (vài giây)",
 	"loggedGroup": "Đăng nhập nhóm",
 	"loggedUser": "Đăng nhập người dùng",
+	"login": "Đăng nhập",
 	"lookupList": "Danh sách tra cứu",
 	"lookupTypes": "Loại tra cứu",
 	"main": "<em>Main</em>",
@@ -1399,6 +1388,8 @@
 	"serverUrl": "Máy chủ URL",
 	"service": "<em>Service</em>",
 	"serviceSynchronization": "Dịch vụ đồng bộ hóa",
+	"sessionExpired": "Phiên làm việc đã hết hạn",
+	"sessionExpiredMessage": "Chứng thực đã hết hạn. Xin vui lòng chèn mật khẩu lần nữa.",
 	"sessionTimeout": "Hết hạn thời gian (giây)",
 	"set": "Cài đặt",
 	"setAsDefault": "<em>Set as default</em>",

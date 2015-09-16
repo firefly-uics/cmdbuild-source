@@ -485,6 +485,7 @@
 			"add": "Ajouter",
 			"apply": "Appliquer",
 			"as": "Comme",
+			"changeUser": "Changer d'utilisateur",
 			"check": "<em>Check</em>",
 			"clone": "Copier",
 			"close": "Fermer",
@@ -817,20 +818,6 @@
 	"info": {
 		"card_not_found": "Aucune fiche ne correspond au filtre choisi"
 	},
-	"login": {
-		"change_user": "Changer d'utilisateur",
-		"failed": "Erreur de connexion",
-		"language": "Langue",
-		"login": "Se connecter",
-		"multi_group": "Choisir un groupe",
-		"password": "Mot de passe",
-		"relogin_message": "Votre session d'authentification a expiré, resaisissez votre mot de passe.",
-		"relogin_title": "Session expirée",
-		"title": "Connexion",
-		"username": "Utilisateur",
-		"waitMsg": "Transmission de données ...",
-		"waitTitle": "Connexion"
-	},
 	"management": {
 		"description": "Module de gestion des données",
 		"findfilter": {
@@ -1152,6 +1139,7 @@
 	"cc": "Cc",
 	"changePassword": "Changer le mot de passe",
 	"checkFrequency": "Fréquence de contrôle (minutes)",
+	"chooseAGroup": "Choisir un groupe",
 	"chooseAttachmentFromDb": "Choisir des pièces jointes depuis la base de données",
 	"classAttribute": "Attribut de classe",
 	"classLabel": "Classe",
@@ -1295,6 +1283,7 @@
 	"lockTimeout": "Temps de blocage (secondes)",
 	"loggedGroup": "Groupe connecté",
 	"loggedUser": "Utilisateur connecté",
+	"login": "Se connecter",
 	"lookupList": "Liste de valeurs",
 	"lookupTypes": "Liste de valeurs",
 	"main": "Principal",
@@ -1399,6 +1388,8 @@
 	"serverUrl": "URL du serveur",
 	"service": "<em>Service</em>",
 	"serviceSynchronization": "Service de synchronisation",
+	"sessionExpired": "Session expirée",
+	"sessionExpiredMessage": "Votre session d'authentification a expiré, resaisissez votre mot de passe.",
 	"sessionTimeout": "Durée de session (en secondes)",
 	"set": "Affecté",
 	"setAsDefault": "Choisir comme valeur par défaut",

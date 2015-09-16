@@ -485,6 +485,7 @@
 			"add": "Додај",
 			"apply": "Примени",
 			"as": "као",
+			"changeUser": "Промени корисника",
 			"check": "<em>Check</em>",
 			"clone": "Клонирај",
 			"close": "Затвори",
@@ -817,20 +818,6 @@
 	"info": {
 		"card_not_found": "Картица не одговара тренутним условима филтрирања"
 	},
-	"login": {
-		"change_user": "Промени корисника",
-		"failed": "Пријава није успела",
-		"language": "Језик",
-		"login": "Пријави се",
-		"multi_group": "Изаберите групу",
-		"password": "Лозинка",
-		"relogin_message": "Ваша сесија је истекла. Неопходно је поново унети лозинку.",
-		"relogin_title": "Сесија је истекла",
-		"title": "Унесите податке за приступ",
-		"username": "Корисник",
-		"waitMsg": "Шањем податке ...",
-		"waitTitle": "Повезивање на сервер"
-	},
 	"management": {
 		"description": "Модул за управљање подацима",
 		"findfilter": {
@@ -1152,6 +1139,7 @@
 	"cc": "Cc",
 	"changePassword": "Промени лозинку",
 	"checkFrequency": "Фреквенција провере (минуте)",
+	"chooseAGroup": "Изаберите групу",
 	"chooseAttachmentFromDb": "Изабери прилог из базе података",
 	"classAttribute": "Атрибут класе",
 	"classLabel": "Класа",
@@ -1295,6 +1283,7 @@
 	"lockTimeout": "Истек закључавања (секунди)",
 	"loggedGroup": "Пријављена група",
 	"loggedUser": "Пријављени корисник",
+	"login": "Пријави се",
 	"lookupList": "Листа ставки",
 	"lookupTypes": "Тип у шифарнику",
 	"main": "Главни",
@@ -1399,6 +1388,8 @@
 	"serverUrl": "Адреса (URL) сервиса",
 	"service": "<em>Service</em>",
 	"serviceSynchronization": "Синхорнизација сервиса",
+	"sessionExpired": "Сесија је истекла",
+	"sessionExpiredMessage": "Ваша сесија је истекла. Неопходно је поново унети лозинку.",
 	"sessionTimeout": "Сесија је истекла (seconds)",
 	"set": "Постави",
 	"setAsDefault": "Постави као подразумевани",
