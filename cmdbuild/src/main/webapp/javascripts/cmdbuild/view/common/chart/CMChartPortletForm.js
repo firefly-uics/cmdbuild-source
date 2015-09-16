@@ -3,7 +3,7 @@
 	Ext.define("CMDBuild.view.management.dashboard.CMChartPortletForm", {
 		extend: "Ext.form.Panel",
 
-		requires: ['CMDBuild.core.proxy.Constants'],
+		requires: ['CMDBuild.core.constants.Proxy'],
 
 		initComponent: function() {
 			this.callParent(arguments);
@@ -166,21 +166,21 @@
 					 * @returns {CMDBuild.Management.ReferenceField.Field} field
 					 */
 					card: function(parameterConfiguration) {
-						var required = parameterConfiguration[CMDBuild.core.proxy.Constants.REQUIRED];
-						var filter = parameterConfiguration[CMDBuild.core.proxy.Constants.FILTER];
+						var required = parameterConfiguration[CMDBuild.core.constants.Proxy.REQUIRED];
+						var filter = parameterConfiguration[CMDBuild.core.constants.Proxy.FILTER];
 						var meta = {};
 
 						if (!Ext.isEmpty(filter))
-							Ext.Object.each(filter[CMDBuild.core.proxy.Constants.CONTEXT], function(key, value, myself) {
+							Ext.Object.each(filter[CMDBuild.core.constants.Proxy.CONTEXT], function(key, value, myself) {
 								meta['system.template.' + key] = value;
 							}, this);
 
 						var field = CMDBuild.Management.ReferenceField.build({
-							description: (required ? '* ' : '' ) + parameterConfiguration[CMDBuild.core.proxy.Constants.NAME],
-							filter: !Ext.isEmpty(filter) ? filter[CMDBuild.core.proxy.Constants.EXPRESSION] : null,
+							description: (required ? '* ' : '' ) + parameterConfiguration[CMDBuild.core.constants.Proxy.NAME],
+							filter: !Ext.isEmpty(filter) ? filter[CMDBuild.core.constants.Proxy.EXPRESSION] : null,
 							isnotnull: required,
 							meta: meta,
-							name: parameterConfiguration[CMDBuild.core.proxy.Constants.NAME],
+							name: parameterConfiguration[CMDBuild.core.constants.Proxy.NAME],
 							referencedIdClass: parameterConfiguration.classToUseForReferenceWidget
 						});
 

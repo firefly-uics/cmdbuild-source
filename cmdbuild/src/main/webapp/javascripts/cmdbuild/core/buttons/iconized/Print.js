@@ -12,10 +12,10 @@
 		 * @cfg {Array}
 		 * */
 		formatList: [
-			CMDBuild.core.proxy.Constants.CSV,
-			CMDBuild.core.proxy.Constants.ODT,
-			CMDBuild.core.proxy.Constants.PDF,
-			CMDBuild.core.proxy.Constants.RTF
+			CMDBuild.core.constants.Proxy.CSV,
+			CMDBuild.core.constants.Proxy.ODT,
+			CMDBuild.core.constants.Proxy.PDF,
+			CMDBuild.core.constants.Proxy.RTF
 		],
 
 		initComponent: function() {

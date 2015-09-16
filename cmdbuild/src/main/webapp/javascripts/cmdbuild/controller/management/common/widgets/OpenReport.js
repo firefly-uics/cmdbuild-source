@@ -4,7 +4,7 @@
 		extend:'CMDBuild.controller.common.AbstractBaseWidgetController',
 
 		requires: [
-			'CMDBuild.core.proxy.Constants',
+			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.widgets.OpenReport'
 		],
 
@@ -65,8 +65,8 @@
 				&& Ext.isEmpty(this.templateResolver)
 			) {
 				var params = {};
-				params[CMDBuild.core.proxy.Constants.TYPE] = CMDBuild.core.proxy.Constants.CUSTOM;
-				params[CMDBuild.core.proxy.Constants.CODE] = this.widgetConf[CMDBuild.core.proxy.Constants.REPORT_CODE];
+				params[CMDBuild.core.constants.Proxy.TYPE] = CMDBuild.core.constants.Proxy.CUSTOM;
+				params[CMDBuild.core.constants.Proxy.CODE] = this.widgetConf[CMDBuild.core.constants.Proxy.REPORT_CODE];
 
 				CMDBuild.core.proxy.widgets.OpenReport.createFactory({
 					params: params,
@@ -79,13 +79,13 @@
 
 						this.templateResolver = new CMDBuild.Management.TemplateResolver({
 							clientForm: this.clientForm,
-							xaVars: this.widgetConf[CMDBuild.core.proxy.Constants.PRESET],
+							xaVars: this.widgetConf[CMDBuild.core.constants.Proxy.PRESET],
 							serverVars: this.getTemplateResolverServerVars()
 						}).resolveTemplates({
-							attributes: Ext.Object.getKeys(this.widgetConf[CMDBuild.core.proxy.Constants.PRESET]),
+							attributes: Ext.Object.getKeys(this.widgetConf[CMDBuild.core.constants.Proxy.PRESET]),
 							callback: function(out, ctx) {
 								me.fillFormValues(out);
-								me.forceExtension(me.widgetConf[CMDBuild.core.proxy.Constants.FORCE_FORMAT]);
+								me.forceExtension(me.widgetConf[CMDBuild.core.constants.Proxy.FORCE_FORMAT]);
 							}
 						});
 					}
@@ -107,7 +107,7 @@
 				if (!Ext.isEmpty(field)) {
 					// To disable if field name is contained in widgetConfiguration.readOnlyAttributes
 					field.setDisabled(
-						Ext.Array.contains(this.widgetConf[CMDBuild.core.proxy.Constants.READ_ONLY_ATTRIBUTES], attribute[CMDBuild.core.proxy.Constants.NAME])
+						Ext.Array.contains(this.widgetConf[CMDBuild.core.constants.Proxy.READ_ONLY_ATTRIBUTES], attribute[CMDBuild.core.constants.Proxy.NAME])
 					);
 
 					this.view.fieldContainer.add(field);
@@ -165,7 +165,7 @@
 				}
 			}, this);
 
-			params['reportExtension'] = params[CMDBuild.core.proxy.Constants.EXTENSION]; // TODO: fix this alias on server side
+			params['reportExtension'] = params[CMDBuild.core.constants.Proxy.EXTENSION]; // TODO: fix this alias on server side
 
 			if (this.view.getForm().isValid())
 				CMDBuild.core.proxy.widgets.OpenReport.update({
@@ -174,7 +174,7 @@
 					success: function(response, options, decodedResponse) { // Pop-up display mode
 						Ext.create('CMDBuild.controller.management.report.Modal', {
 							parentDelegate: this,
-							extension: params[CMDBuild.core.proxy.Constants.EXTENSION]
+							extension: params[CMDBuild.core.constants.Proxy.EXTENSION]
 						});
 					}
 				});
@@ -187,7 +187,7 @@
 		 */
 		showReport: function() {
 			var params = {};
-			params[CMDBuild.core.proxy.Constants.FORCE_DOWNLOAD_PARAM_KEY] = true;
+			params[CMDBuild.core.constants.Proxy.FORCE_DOWNLOAD_PARAM_KEY] = true;
 
 			var form = Ext.create('Ext.form.Panel', {
 				standardSubmit: true,

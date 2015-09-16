@@ -4,7 +4,7 @@
 		extend: 'Ext.form.Panel',
 
 		requires: [
-			'CMDBuild.core.proxy.Constants',
+			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.lookup.Lookup',
 			'CMDBuild.model.lookup.Lookup'
 		],
@@ -50,7 +50,7 @@
 				dockedItems: [
 					Ext.create('Ext.toolbar.Toolbar', {
 						dock: 'top',
-						itemId: CMDBuild.core.proxy.Constants.TOOLBAR_TOP,
+						itemId: CMDBuild.core.constants.Proxy.TOOLBAR_TOP,
 
 						items: [
 							Ext.create('CMDBuild.core.buttons.iconized.Modify', {
@@ -73,7 +73,7 @@
 					}),
 					Ext.create('Ext.toolbar.Toolbar', {
 						dock: 'bottom',
-						itemId: CMDBuild.core.proxy.Constants.TOOLBAR_BOTTOM,
+						itemId: CMDBuild.core.constants.Proxy.TOOLBAR_BOTTOM,
 						ui: 'footer',
 
 						layout: {
@@ -115,9 +115,9 @@
 						allowBlank: false,
 
 						translationFieldConfig: {
-							type: CMDBuild.core.proxy.Constants.LOOKUP_VALUE,
+							type: CMDBuild.core.constants.Proxy.LOOKUP_VALUE,
 							identifier: { sourceType: 'form', key: 'TranslationUuid', source: this },
-							field: CMDBuild.core.proxy.Constants.DESCRIPTION
+							field: CMDBuild.core.constants.Proxy.DESCRIPTION
 						}
 					}),
 					this.parentCombobox = Ext.create('Ext.form.field.ComboBox', {

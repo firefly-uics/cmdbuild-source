@@ -4,7 +4,7 @@
 		extend: 'CMDBuild.controller.common.AbstractBasePanelController',
 
 		requires: [
-			'CMDBuild.core.proxy.Constants',
+			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.domain.Domain',
 			'CMDBuild.view.common.field.translatable.Utils'
 		],
@@ -117,7 +117,7 @@
 				params = Ext.Object.merge(params, this.controllerEnabledClasses.getData());
 				params = Ext.Object.merge(params, this.controllerProperties.getData());
 
-				if (Ext.isEmpty(params[CMDBuild.core.proxy.Constants.ID])) {
+				if (Ext.isEmpty(params[CMDBuild.core.constants.Proxy.ID])) {
 					CMDBuild.core.proxy.domain.Domain.create({
 						params: params,
 						scope: this,
@@ -141,17 +141,17 @@
 				CMDBuild.core.proxy.domain.Domain.readAll({
 					scope: this,
 					success: function(response, options, decodedResponse) {
-						decodedResponse = decodedResponse[CMDBuild.core.proxy.Constants.DOMAINS];
+						decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.DOMAINS];
 
 						this.domainSelectedDomainSet(
 							Ext.Array.findBy(decodedResponse, function(item, i) {
-								return parameters.get(CMDBuild.core.proxy.Constants.ID) == item[CMDBuild.core.proxy.Constants.ID_DOMAIN];
+								return parameters.get(CMDBuild.core.constants.Proxy.ID) == item[CMDBuild.core.constants.Proxy.ID_DOMAIN];
 							}, this)
 						);
 
 						this.cmfg('onDomainSelected');
 
-						this.setViewTitle(parameters.get(CMDBuild.core.proxy.Constants.TEXT));
+						this.setViewTitle(parameters.get(CMDBuild.core.constants.Proxy.TEXT));
 
 						if (Ext.isEmpty(this.view.tabPanel.getActiveTab()))
 							this.view.tabPanel.setActiveTab(0);
@@ -163,7 +163,7 @@
 		removeItem: function() {
 			if (!this.domainSelectedDomainIsEmpty()) {
 				var params = {};
-				params[CMDBuild.core.proxy.Constants.DOMAIN_NAME] = this.domainSelectedDomainGet(CMDBuild.core.proxy.Constants.NAME);
+				params[CMDBuild.core.constants.Proxy.DOMAIN_NAME] = this.domainSelectedDomainGet(CMDBuild.core.constants.Proxy.NAME);
 
 				CMDBuild.core.proxy.domain.Domain.remove({
 					params: params,
@@ -172,7 +172,7 @@
 						this.controllerProperties.getView().form.reset();
 						this.controllerProperties.getView().form.setDisabledModify(true);
 
-						_CMCache.onDomainDeleted(this.domainSelectedDomainGet(CMDBuild.core.proxy.Constants.ID));
+						_CMCache.onDomainDeleted(this.domainSelectedDomainGet(CMDBuild.core.constants.Proxy.ID));
 					}
 				});
 			}

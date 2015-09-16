@@ -6,7 +6,7 @@
 		requires: [
 			'CMDBuild.core.Message',
 			'CMDBuild.core.proxy.Attributes',
-			'CMDBuild.core.proxy.Constants',
+			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.group.privileges.Classes',
 			'CMDBuild.core.proxy.group.privileges.DataView',
 			'CMDBuild.core.proxy.group.privileges.Filter'
@@ -92,7 +92,7 @@
 
 		onGroupPrivilegesGridTabShow: function() {
 			var params = {};
-			params[CMDBuild.core.proxy.Constants.GROUP_ID] = this.cmfg('selectedGroupGet', CMDBuild.core.proxy.Constants.ID);
+			params[CMDBuild.core.constants.Proxy.GROUP_ID] = this.cmfg('selectedGroupGet', CMDBuild.core.constants.Proxy.ID);
 
 			this.view.getStore().load({ params: params });
 		},
@@ -110,8 +110,8 @@
 			} else {
 				var params = {};
 				params['privilege_mode'] = parameters.privilege;
-				params['privilegedObjectId'] = this.view.store.getAt(parameters.rowIndex).get(CMDBuild.core.proxy.Constants.ID);
-				params[CMDBuild.core.proxy.Constants.GROUP_ID] = this.cmfg('selectedGroupGet', CMDBuild.core.proxy.Constants.ID);
+				params['privilegedObjectId'] = this.view.store.getAt(parameters.rowIndex).get(CMDBuild.core.constants.Proxy.ID);
+				params[CMDBuild.core.constants.Proxy.GROUP_ID] = this.cmfg('selectedGroupGet', CMDBuild.core.constants.Proxy.ID);
 
 				this.proxy.update({
 					params: params,
@@ -137,8 +137,8 @@
 				fn: function(button) {
 					if (button == 'yes') {
 						var params = {};
-						params['privilegedObjectId'] = record.get(CMDBuild.core.proxy.Constants.ID);
-						params[CMDBuild.core.proxy.Constants.GROUP_ID] = this.cmfg('selectedGroupGet', CMDBuild.core.proxy.Constants.ID);
+						params['privilegedObjectId'] = record.get(CMDBuild.core.constants.Proxy.ID);
+						params[CMDBuild.core.constants.Proxy.GROUP_ID] = this.cmfg('selectedGroupGet', CMDBuild.core.constants.Proxy.ID);
 
 //						this.proxy.setRowAndColumn({
 						this.proxy.clearRowAndColumn({ // TODO: fix on server side
@@ -168,18 +168,18 @@
 		 * TODO: waiting for refactor (attributes names)
 		 */
 		onGroupPrivilegesSetFilterClick: function(record) {
-			var entryType = _CMCache.getEntryTypeByName(record.get(CMDBuild.core.proxy.Constants.NAME));
+			var entryType = _CMCache.getEntryTypeByName(record.get(CMDBuild.core.constants.Proxy.NAME));
 
 			var filter = new CMDBuild.model.CMFilterModel({
-				configuration: Ext.decode(record.get(CMDBuild.core.proxy.Constants.FILTER) || '{}'),
-				entryType: record.get(CMDBuild.core.proxy.Constants.NAME),
+				configuration: Ext.decode(record.get(CMDBuild.core.constants.Proxy.FILTER) || '{}'),
+				entryType: record.get(CMDBuild.core.constants.Proxy.NAME),
 				local: true,
 				name: ''
 			});
 
 			var params = {};
-			params[CMDBuild.core.proxy.Constants.ACTIVE] = false;
-			params[CMDBuild.core.proxy.Constants.CLASS_NAME] = entryType.getName();
+			params[CMDBuild.core.constants.Proxy.ACTIVE] = false;
+			params[CMDBuild.core.constants.Proxy.CLASS_NAME] = entryType.getName();
 
 			CMDBuild.core.proxy.Attributes.read({
 				params: params,
@@ -187,7 +187,7 @@
 				success: function(response, options, decodedResponse) {
 					var filterWindow = Ext.create('CMDBuild.view.administration.group.privileges.filterWindow.FilterWindow', {
 						attributes: decodedResponse.attributes,
-						className: record.get(CMDBuild.core.proxy.Constants.NAME),
+						className: record.get(CMDBuild.core.constants.Proxy.NAME),
 						filter: filter,
 						group: record
 					});
@@ -229,17 +229,17 @@
 				}
 
 				var params = {};
-				params['privilegedObjectId'] = filterWindow.group.get(CMDBuild.core.proxy.Constants.ID);
-				params[CMDBuild.core.proxy.Constants.ATTRIBUTES] = Ext.encode(filterWindow.getAttributePrivileges());
-				params[CMDBuild.core.proxy.Constants.FILTER] = Ext.encode(filter.getConfiguration());
-				params[CMDBuild.core.proxy.Constants.GROUP_ID] = this.cmfg('selectedGroupGet', CMDBuild.core.proxy.Constants.ID);
+				params['privilegedObjectId'] = filterWindow.group.get(CMDBuild.core.constants.Proxy.ID);
+				params[CMDBuild.core.constants.Proxy.ATTRIBUTES] = Ext.encode(filterWindow.getAttributePrivileges());
+				params[CMDBuild.core.constants.Proxy.FILTER] = Ext.encode(filter.getConfiguration());
+				params[CMDBuild.core.constants.Proxy.GROUP_ID] = this.cmfg('selectedGroupGet', CMDBuild.core.constants.Proxy.ID);
 
 				this.proxy.setRowAndColumn({
 					params: params,
 					scope: this,
 					success: function(response, options, decodedResponse) {
-						filterWindow.group.set(CMDBuild.core.proxy.Constants.FILTER, params[CMDBuild.core.proxy.Constants.FILTER]);
-						filterWindow.group.set(CMDBuild.core.proxy.Constants.ATTRIBUTES_PRIVILEGES, filterWindow.getAttributePrivileges());
+						filterWindow.group.set(CMDBuild.core.constants.Proxy.FILTER, params[CMDBuild.core.constants.Proxy.FILTER]);
+						filterWindow.group.set(CMDBuild.core.constants.Proxy.ATTRIBUTES_PRIVILEGES, filterWindow.getAttributePrivileges());
 						filterWindow.destroy();
 					}
 				});

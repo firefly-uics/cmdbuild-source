@@ -3,7 +3,7 @@
 	Ext.define('CMDBuild.view.administration.group.privileges.UiConfigurationWindow', {
 		extend: 'CMDBuild.core.PopupWindow',
 
-		requires: ['CMDBuild.core.proxy.Constants'],
+		requires: ['CMDBuild.core.constants.Proxy'],
 
 		/**
 		 * @cfg {CMDBuild.controller.administration.group.privileges.UiConfiguration}
@@ -26,7 +26,7 @@
 				dockedItems: [
 					Ext.create('Ext.toolbar.Toolbar', {
 						dock: 'bottom',
-						itemId: CMDBuild.core.proxy.Constants.TOOLBAR_BOTTOM,
+						itemId: CMDBuild.core.constants.Proxy.TOOLBAR_BOTTOM,
 						ui: 'footer',
 
 						layout: {
@@ -60,28 +60,28 @@
 
 						items: [
 							Ext.create('Ext.form.field.Checkbox', {
-								name: CMDBuild.core.proxy.Constants.CREATE,
+								name: CMDBuild.core.constants.Proxy.CREATE,
 								fieldLabel: CMDBuild.Translation.common.buttons.add,
 								labelWidth: CMDBuild.LABEL_WIDTH,
 								inputValue: true,
 								uncheckedValue: false
 							}),
 							Ext.create('Ext.form.field.Checkbox', {
-								name: CMDBuild.core.proxy.Constants.REMOVE,
+								name: CMDBuild.core.constants.Proxy.REMOVE,
 								fieldLabel: CMDBuild.Translation.common.buttons.remove,
 								labelWidth: CMDBuild.LABEL_WIDTH,
 								inputValue: true,
 								uncheckedValue: false
 							}),
 							Ext.create('Ext.form.field.Checkbox', {
-								name: CMDBuild.core.proxy.Constants.MODIFY,
+								name: CMDBuild.core.constants.Proxy.MODIFY,
 								fieldLabel: CMDBuild.Translation.common.buttons.modify,
 								labelWidth: CMDBuild.LABEL_WIDTH,
 								inputValue: true,
 								uncheckedValue: false
 							}),
 							Ext.create('Ext.form.field.Checkbox', {
-								name: CMDBuild.core.proxy.Constants.CLONE,
+								name: CMDBuild.core.constants.Proxy.CLONE,
 								fieldLabel: CMDBuild.Translation.common.buttons.clone,
 								labelWidth: CMDBuild.LABEL_WIDTH,
 								inputValue: true,

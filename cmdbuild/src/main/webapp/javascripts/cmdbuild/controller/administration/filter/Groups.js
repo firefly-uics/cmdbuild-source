@@ -4,7 +4,7 @@
 		extend: 'CMDBuild.controller.common.AbstractController',
 
 		requires: [
-			'CMDBuild.core.proxy.Constants',
+			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.filter.Groups',
 			'CMDBuild.view.common.field.translatable.Utils'
 		],
@@ -122,11 +122,11 @@
 			this.form.loadRecord(this.selectedFilter);
 
 			// FilterChooser field setup
-			this.form.filterChooser.setClassName(this.selectedFilter.get(CMDBuild.core.proxy.Constants.ENTRY_TYPE));
+			this.form.filterChooser.setClassName(this.selectedFilter.get(CMDBuild.core.constants.Proxy.ENTRY_TYPE));
 			this.form.filterChooser.setFilter(
 				Ext.create('CMDBuild.model.CMFilterModel', {
-					configuration: this.selectedFilter.get(CMDBuild.core.proxy.Constants.CONFIGURATION),
-					entryType: this.selectedFilter.get(CMDBuild.core.proxy.Constants.ENTRY_TYPE)
+					configuration: this.selectedFilter.get(CMDBuild.core.constants.Proxy.CONFIGURATION),
+					entryType: this.selectedFilter.get(CMDBuild.core.constants.Proxy.ENTRY_TYPE)
 				})
 			);
 
@@ -139,15 +139,15 @@
 				var formData = this.form.getData(true);
 
 				if (!Ext.isEmpty(this.form.filterChooser.getFilter()))
-					formData[CMDBuild.core.proxy.Constants.CONFIGURATION] = Ext.encode(this.form.filterChooser.getFilter().getConfiguration());
+					formData[CMDBuild.core.constants.Proxy.CONFIGURATION] = Ext.encode(this.form.filterChooser.getFilter().getConfiguration());
 
 				formData = Ext.create('CMDBuild.model.filter.Groups', formData); // Filter unwanted data of filterChooser internal fields
 
 				// TODO: needed a refactor because i read a entryType parameter but i write as className
 				var params = formData.getData();
-				params[CMDBuild.core.proxy.Constants.CLASS_NAME] = params[CMDBuild.core.proxy.Constants.ENTRY_TYPE];
+				params[CMDBuild.core.constants.Proxy.CLASS_NAME] = params[CMDBuild.core.constants.Proxy.ENTRY_TYPE];
 
-				if (Ext.isEmpty(formData.get(CMDBuild.core.proxy.Constants.ID))) {
+				if (Ext.isEmpty(formData.get(CMDBuild.core.constants.Proxy.ID))) {
 					CMDBuild.core.proxy.filter.Groups.create({
 						params: params,
 						scope: this,
@@ -166,7 +166,7 @@
 		removeItem: function() {
 			if (!Ext.isEmpty(this.selectedFilter)) {
 				var params = {};
-				params[CMDBuild.core.proxy.Constants.ID] = this.selectedFilter.get(CMDBuild.core.proxy.Constants.ID);
+				params[CMDBuild.core.constants.Proxy.ID] = this.selectedFilter.get(CMDBuild.core.constants.Proxy.ID);
 
 				CMDBuild.core.proxy.filter.Groups.remove({
 					params: params,
@@ -202,8 +202,8 @@
 			this.grid.getStore().load({
 				callback: function(records, operation, success) {
 					var rowIndex = this.find(
-						CMDBuild.core.proxy.Constants.NAME,
-						me.form.getForm().findField(CMDBuild.core.proxy.Constants.NAME).getValue()
+						CMDBuild.core.constants.Proxy.NAME,
+						me.form.getForm().findField(CMDBuild.core.constants.Proxy.NAME).getValue()
 					);
 
 					me.grid.getSelectionModel().select(rowIndex, true);

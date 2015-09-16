@@ -5,7 +5,7 @@
 
 		requires: [
 			'CMDBuild.core.Message',
-			'CMDBuild.core.proxy.Constants',
+			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.Index',
 			'CMDBuild.core.proxy.report.Report'
 		],
@@ -43,10 +43,10 @@
 		 * @cfg {Array}
 		 */
 		managedReportTypes: [
-			CMDBuild.core.proxy.Constants.CSV,
-			CMDBuild.core.proxy.Constants.ODT,
-			CMDBuild.core.proxy.Constants.PDF,
-			CMDBuild.core.proxy.Constants.RTF
+			CMDBuild.core.constants.Proxy.CSV,
+			CMDBuild.core.constants.Proxy.ODT,
+			CMDBuild.core.constants.Proxy.PDF,
+			CMDBuild.core.constants.Proxy.RTF
 		],
 
 		/**
@@ -63,7 +63,7 @@
 			if (
 				!Ext.isEmpty(this.currentReportParametersGet({
 					callIdentifier: 'create',
-					property: CMDBuild.core.proxy.Constants.ID
+					property: CMDBuild.core.constants.Proxy.ID
 				}))
 			) {
 				CMDBuild.core.proxy.report.Report.create({
@@ -156,7 +156,7 @@
 					switch(callIdentifier) {
 						case 'create': {
 							this.currentReportParameters['create'] = Ext.applyIf(params, { // Apply default values
-								extension: CMDBuild.core.proxy.Constants.PDF,
+								extension: CMDBuild.core.constants.Proxy.PDF,
 								type: 'CUSTOM'
 							});
 						} break;
@@ -192,7 +192,7 @@
 						extension: type,
 						id: this.currentReportParametersGet({
 							callIdentifier: 'create',
-							property: CMDBuild.core.proxy.Constants.ID
+							property: CMDBuild.core.constants.Proxy.ID
 						})
 					}
 				});
@@ -215,16 +215,16 @@
 
 			if (
 				!Ext.Object.isEmpty(node)
-				&& !Ext.isEmpty(node.get(CMDBuild.core.proxy.Constants.ID))
-				&& node.get(CMDBuild.core.proxy.Constants.ID) != CMDBuild.core.proxy.Constants.CUSTOM
+				&& !Ext.isEmpty(node.get(CMDBuild.core.constants.Proxy.ID))
+				&& node.get(CMDBuild.core.constants.Proxy.ID) != CMDBuild.core.constants.Proxy.CUSTOM
 			) {
-				this.setViewTitle(node.get(CMDBuild.core.proxy.Constants.TEXT));
+				this.setViewTitle(node.get(CMDBuild.core.constants.Proxy.TEXT));
 
 				this.currentReportParametersSet({
 					callIdentifier: 'create',
 					params: {
-						extension: node.get(CMDBuild.core.proxy.Constants.TYPE).replace(/report/i, ''), // Removes 'report' string from type property in node object
-						id: node.get(CMDBuild.core.proxy.Constants.ID)
+						extension: node.get(CMDBuild.core.constants.Proxy.TYPE).replace(/report/i, ''), // Removes 'report' string from type property in node object
+						id: node.get(CMDBuild.core.constants.Proxy.ID)
 					}
 				});
 
@@ -243,7 +243,7 @@
 			forceDownload = forceDownload || false;
 
 			var params = {};
-			params[CMDBuild.core.proxy.Constants.FORCE_DOWNLOAD_PARAM_KEY] = true;
+			params[CMDBuild.core.constants.Proxy.FORCE_DOWNLOAD_PARAM_KEY] = true;
 
 			if (forceDownload) { // Force download mode
 				var form = Ext.create('Ext.form.Panel', {

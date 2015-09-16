@@ -9,7 +9,7 @@
 		extend: 'CMDBuild.view.common.field.CMFilterChooserWindow',
 
 		requires: [
-			'CMDBuild.core.proxy.Constants',
+			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.model.group.privileges.FilterWindowAttribute'
 		],
 
@@ -55,7 +55,7 @@
 			var data = [];
 			var attributePrivileges = {};
 
-			Ext.Array.forEach(this.group.get(CMDBuild.core.proxy.Constants.ATTRIBUTES_PRIVILEGES), function(privilege, i, allPrivileges) { // String to object conversion
+			Ext.Array.forEach(this.group.get(CMDBuild.core.constants.Proxy.ATTRIBUTES_PRIVILEGES), function(privilege, i, allPrivileges) { // String to object conversion
 				var parts = privilege.split(':');
 
 				if (parts.length == 2)
@@ -65,13 +65,13 @@
 			Ext.Array.forEach(this.attributes, function(classAttribute, i, allClassAttributes) {
 				if (classAttribute.name != 'Notes') { // As usual, the notes attribute is managed in a special way
 					var attributeConf = {};
-					attributeConf[CMDBuild.core.proxy.Constants.DESCRIPTION] = classAttribute[CMDBuild.core.proxy.Constants.DESCRIPTION];
-					attributeConf[CMDBuild.core.proxy.Constants.NAME] = classAttribute[CMDBuild.core.proxy.Constants.NAME];
-					attributeConf[CMDBuild.core.proxy.Constants.NONE] = false;
-					attributeConf[CMDBuild.core.proxy.Constants.READ] = false;
-					attributeConf[CMDBuild.core.proxy.Constants.WRITE] = false;
+					attributeConf[CMDBuild.core.constants.Proxy.DESCRIPTION] = classAttribute[CMDBuild.core.constants.Proxy.DESCRIPTION];
+					attributeConf[CMDBuild.core.constants.Proxy.NAME] = classAttribute[CMDBuild.core.constants.Proxy.NAME];
+					attributeConf[CMDBuild.core.constants.Proxy.NONE] = false;
+					attributeConf[CMDBuild.core.constants.Proxy.READ] = false;
+					attributeConf[CMDBuild.core.constants.Proxy.WRITE] = false;
 
-					var privilege = attributePrivileges[classAttribute[CMDBuild.core.proxy.Constants.NAME]];
+					var privilege = attributePrivileges[classAttribute[CMDBuild.core.constants.Proxy.NAME]];
 					if (!Ext.isEmpty(privilege) && Ext.isString(privilege))
 						attributeConf[privilege] = true;
 

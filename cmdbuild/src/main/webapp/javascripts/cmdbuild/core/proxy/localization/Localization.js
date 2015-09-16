@@ -3,7 +3,7 @@
 	Ext.define('CMDBuild.core.proxy.localization.Localization', {
 
 		requires: [
-			'CMDBuild.core.proxy.Constants',
+			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.Index',
 			'CMDBuild.model.localization.Localization'
 		],
@@ -29,12 +29,12 @@
 		 */
 		getFileFormatStore: function() {
 			return Ext.create('Ext.data.ArrayStore', {
-				fields: [CMDBuild.core.proxy.Constants.DESCRIPTION, CMDBuild.core.proxy.Constants.NAME],
+				fields: [CMDBuild.core.constants.Proxy.DESCRIPTION, CMDBuild.core.constants.Proxy.NAME],
 				data: [
-					['@@ CSV', CMDBuild.core.proxy.Constants.CSV]
+					['@@ CSV', CMDBuild.core.constants.Proxy.CSV]
 				],
 				sorters: [
-					{ property: CMDBuild.core.proxy.Constants.DESCRIPTION, direction: 'ASC' }
+					{ property: CMDBuild.core.constants.Proxy.DESCRIPTION, direction: 'ASC' }
 				]
 			});
 		},
@@ -69,7 +69,7 @@
 					}
 				},
 				sorters: [
-					{ property: CMDBuild.core.proxy.Constants.DESCRIPTION, direction: 'ASC' }
+					{ property: CMDBuild.core.constants.Proxy.DESCRIPTION, direction: 'ASC' }
 				]
 			});
 		},
@@ -79,17 +79,17 @@
 		 */
 		getSectionsStore: function(parameters) {
 			return Ext.create('Ext.data.ArrayStore', {
-				fields: [CMDBuild.core.proxy.Constants.DESCRIPTION, CMDBuild.core.proxy.Constants.NAME],
+				fields: [CMDBuild.core.constants.Proxy.DESCRIPTION, CMDBuild.core.constants.Proxy.NAME],
 				data: [
-					['@@ All', CMDBuild.core.proxy.Constants.ALL],
-					['@@ Class', CMDBuild.core.proxy.Constants.CLASS],
-					['@@ Processes', CMDBuild.core.proxy.Constants.PROCESS],
-					['@@ Domains', CMDBuild.core.proxy.Constants.DOMAIN],
-					['@@ Views', CMDBuild.core.proxy.Constants.VIEW],
-					['@@ Search filters', CMDBuild.core.proxy.Constants.FILTER],
-					['@@ Lookup', CMDBuild.core.proxy.Constants.LOOKUP],
-					['@@ Reports', CMDBuild.core.proxy.Constants.REPORT],
-					['@@ Menu', CMDBuild.core.proxy.Constants.MENU]
+					['@@ All', CMDBuild.core.constants.Proxy.ALL],
+					['@@ Class', CMDBuild.core.constants.Proxy.CLASS],
+					['@@ Processes', CMDBuild.core.constants.Proxy.PROCESS],
+					['@@ Domains', CMDBuild.core.constants.Proxy.DOMAIN],
+					['@@ Views', CMDBuild.core.constants.Proxy.VIEW],
+					['@@ Search filters', CMDBuild.core.constants.Proxy.FILTER],
+					['@@ Lookup', CMDBuild.core.constants.Proxy.LOOKUP],
+					['@@ Reports', CMDBuild.core.constants.Proxy.REPORT],
+					['@@ Menu', CMDBuild.core.constants.Proxy.MENU]
 				]
 			});
 		},

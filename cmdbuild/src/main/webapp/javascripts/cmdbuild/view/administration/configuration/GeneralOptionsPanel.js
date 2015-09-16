@@ -4,7 +4,7 @@
 		extend: 'Ext.form.Panel',
 
 		requires: [
-			'CMDBuild.core.proxy.Constants',
+			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.Configuration'
 		],
 
@@ -39,7 +39,7 @@
 				dockedItems: [
 					Ext.create('Ext.toolbar.Toolbar', {
 						dock: 'bottom',
-						itemId: CMDBuild.core.proxy.Constants.TOOLBAR_BOTTOM,
+						itemId: CMDBuild.core.constants.Proxy.TOOLBAR_BOTTOM,
 						ui: 'footer',
 
 						layout: {
@@ -85,16 +85,16 @@
 								allowBlank: true,
 
 								translationFieldConfig: {
-									type: CMDBuild.core.proxy.Constants.INSTANCE_NAME,
-									identifier: CMDBuild.core.proxy.Constants.INSTANCE_NAME, // Just for configuration validation
-									field: CMDBuild.core.proxy.Constants.INSTANCE_NAME
+									type: CMDBuild.core.constants.Proxy.INSTANCE_NAME,
+									identifier: CMDBuild.core.constants.Proxy.INSTANCE_NAME, // Just for configuration validation
+									field: CMDBuild.core.constants.Proxy.INSTANCE_NAME
 								}
 							}),
 							Ext.create('CMDBuild.field.ErasableCombo', {
 								name: 'startingclass',
 								fieldLabel: CMDBuild.Translation.defaultClass,
-								valueField: CMDBuild.core.proxy.Constants.ID,
-								displayField: CMDBuild.core.proxy.Constants.DESCRIPTION,
+								valueField: CMDBuild.core.constants.Proxy.ID,
+								displayField: CMDBuild.core.constants.Proxy.DESCRIPTION,
 								editable: false,
 
 								store: CMDBuild.core.proxy.Configuration.getStartingClassStore(),
@@ -131,11 +131,11 @@
 								name: 'card_tab_position',
 								fieldLabel: CMDBuild.Translation.tabPositioInCardPanel,
 								allowBlank: false,
-								displayField: CMDBuild.core.proxy.Constants.DESCRIPTION,
-								valueField: CMDBuild.core.proxy.Constants.VALUE,
+								displayField: CMDBuild.core.constants.Proxy.DESCRIPTION,
+								valueField: CMDBuild.core.constants.Proxy.VALUE,
 
 								store: Ext.create('Ext.data.Store', {
-									fields: [CMDBuild.core.proxy.Constants.VALUE, CMDBuild.core.proxy.Constants.DESCRIPTION],
+									fields: [CMDBuild.core.constants.Proxy.VALUE, CMDBuild.core.constants.Proxy.DESCRIPTION],
 									data: [
 										{
 											value: 'top',

@@ -3,7 +3,7 @@
 	Ext.define('CMDBuild.core.proxy.group.privileges.Filter', {
 
 		requires: [
-			'CMDBuild.core.proxy.Constants',
+			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.Index',
 			'CMDBuild.model.group.privileges.GridRecord'
 		],
@@ -26,7 +26,7 @@
 					}
 				},
 				sorters: [
-					{ property: CMDBuild.core.proxy.Constants.DESCRIPTION, direction: 'ASC' }
+					{ property: CMDBuild.core.constants.Proxy.DESCRIPTION, direction: 'ASC' }
 				]
 			});
 		},

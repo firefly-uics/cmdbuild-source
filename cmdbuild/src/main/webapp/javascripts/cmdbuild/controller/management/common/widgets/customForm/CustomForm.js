@@ -4,7 +4,7 @@
 		extend: 'CMDBuild.controller.common.AbstractBaseWidgetController',
 
 		requires: [
-			'CMDBuild.core.proxy.Constants',
+			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.Message'
 		],
 
@@ -80,11 +80,11 @@
 
 			// Execute template resolver on model property
 			this.widgetConfigurationSet({
-				configurationObject: this.applyTemplateResolver(this.widgetConfiguration[CMDBuild.core.proxy.Constants.MODEL]),
-				propertyName: CMDBuild.core.proxy.Constants.MODEL
+				configurationObject: this.applyTemplateResolver(this.widgetConfiguration[CMDBuild.core.constants.Proxy.MODEL]),
+				propertyName: CMDBuild.core.constants.Proxy.MODEL
 			});
 
-			if (!this.widgetConfigurationIsAttributeEmpty(CMDBuild.core.proxy.Constants.MODEL)) {
+			if (!this.widgetConfigurationIsAttributeEmpty(CMDBuild.core.constants.Proxy.MODEL)) {
 				this.buildLayout();
 
 				if (!this.instancesDataStorageIsEmpty())
@@ -109,7 +109,7 @@
 		 * Builds layout controller and inject view
 		 */
 		buildLayout: function() {
-			switch (this.widgetConfigurationGet(CMDBuild.core.proxy.Constants.LAYOUT)) {
+			switch (this.widgetConfigurationGet(CMDBuild.core.constants.Proxy.LAYOUT)) {
 				case 'form': {
 					this.controllerLayout = Ext.create('CMDBuild.controller.management.common.widgets.customForm.layout.Form', { parentDelegate: this });
 				} break;
@@ -136,9 +136,9 @@
 		 */
 		getData: function() {
 			var output = {};
-			output[CMDBuild.core.proxy.Constants.OUTPUT] = [];
+			output[CMDBuild.core.constants.Proxy.OUTPUT] = [];
 
-			if (!this.widgetConfigurationGet([CMDBuild.core.proxy.Constants.CAPABILITIES, CMDBuild.core.proxy.Constants.READ_ONLY])) {
+			if (!this.widgetConfigurationGet([CMDBuild.core.constants.Proxy.CAPABILITIES, CMDBuild.core.constants.Proxy.READ_ONLY])) {
 				// Uses direct data property access to avoid a get problem because of generic model
 				Ext.Array.forEach(this.controllerLayout.getData(), function(rowObject, i, allRowObjects) {
 					var dataObject = Ext.isEmpty(rowObject.data) ? rowObject : rowObject.data; // Model/Objects management
@@ -150,7 +150,7 @@
 					}).resolveTemplates({
 						attributes: Ext.Object.getKeys(dataObject),
 						callback: function(out, ctx) {
-							output[CMDBuild.core.proxy.Constants.OUTPUT].push(Ext.encode(out));
+							output[CMDBuild.core.constants.Proxy.OUTPUT].push(Ext.encode(out));
 						}
 					});
 				}, this);

@@ -4,7 +4,7 @@
 		extend: 'CMDBuild.controller.common.AbstractController',
 
 		requires: [
-			'CMDBuild.core.proxy.Constants',
+			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.Index',
 			'CMDBuild.core.proxy.report.Print'
 		],
@@ -26,14 +26,14 @@
 		 * @cfg {Array}
 		 */
 		browserManagedFormats: [
-			CMDBuild.core.proxy.Constants.PDF,
-			CMDBuild.core.proxy.Constants.CSV
+			CMDBuild.core.constants.Proxy.PDF,
+			CMDBuild.core.constants.Proxy.CSV
 		],
 
 		/**
 		 * @cfg {String}
 		 */
-		format: CMDBuild.core.proxy.Constants.PDF,
+		format: CMDBuild.core.constants.Proxy.PDF,
 
 		/**
 		 * @cfg {Boolean}
@@ -136,7 +136,7 @@
 		 */
 		showReport: function() {
 			var params = {};
-			params[CMDBuild.core.proxy.Constants.FORCE_DOWNLOAD_PARAM_KEY] = true;
+			params[CMDBuild.core.constants.Proxy.FORCE_DOWNLOAD_PARAM_KEY] = true;
 
 			if (this.forceDownload) { // Force download mode
 				var form = Ext.create('Ext.form.Panel', {

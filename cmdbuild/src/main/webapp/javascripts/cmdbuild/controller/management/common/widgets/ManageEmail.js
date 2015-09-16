@@ -3,7 +3,7 @@
 	Ext.define('CMDBuild.controller.management.common.widgets.ManageEmail', {
 		extend: 'CMDBuild.controller.management.common.widgets.CMWidgetController',
 
-		requires: ['CMDBuild.core.proxy.Constants'],
+		requires: ['CMDBuild.core.constants.Proxy'],
 
 		mixins: {
 			observable: 'Ext.util.Observable'
@@ -67,7 +67,7 @@
 			// Converts configuration templates to templates model objects
 			this.configurationTemplates = []; // Reset variable
 
-			Ext.Array.forEach(widgetConf[CMDBuild.core.proxy.Constants.TEMPLATES], function(item, index, allItems) {
+			Ext.Array.forEach(widgetConf[CMDBuild.core.constants.Proxy.TEMPLATES], function(item, index, allItems) {
 				this.configurationTemplates.push(this.configurationTemplatesToModel(item));
 			}, this);
 
@@ -82,7 +82,7 @@
 			this.tabController.getView().addDocked(
 				Ext.create('Ext.toolbar.Toolbar', {
 					dock: 'bottom',
-					itemId: CMDBuild.core.proxy.Constants.TOOLBAR_BOTTOM,
+					itemId: CMDBuild.core.constants.Proxy.TOOLBAR_BOTTOM,
 					ui: 'footer',
 
 					layout: {
@@ -114,11 +114,11 @@
 		configurationTemplatesToModel: function(template) {
 			if (Ext.isObject(template) && !Ext.Object.isEmpty(template)) {
 				var model = Ext.create('CMDBuild.model.common.tabs.email.Template', template);
-				model.set(CMDBuild.core.proxy.Constants.BCC, template[CMDBuild.core.proxy.Constants.BCC_ADDRESSES]);
-				model.set(CMDBuild.core.proxy.Constants.BODY, template[CMDBuild.core.proxy.Constants.CONTENT]);
-				model.set(CMDBuild.core.proxy.Constants.CC, template[CMDBuild.core.proxy.Constants.CC_ADDRESSES]);
-				model.set(CMDBuild.core.proxy.Constants.FROM, template[CMDBuild.core.proxy.Constants.FROM_ADDRESS]);
-				model.set(CMDBuild.core.proxy.Constants.TO, template[CMDBuild.core.proxy.Constants.TO_ADDRESSES]);
+				model.set(CMDBuild.core.constants.Proxy.BCC, template[CMDBuild.core.constants.Proxy.BCC_ADDRESSES]);
+				model.set(CMDBuild.core.constants.Proxy.BODY, template[CMDBuild.core.constants.Proxy.CONTENT]);
+				model.set(CMDBuild.core.constants.Proxy.CC, template[CMDBuild.core.constants.Proxy.CC_ADDRESSES]);
+				model.set(CMDBuild.core.constants.Proxy.FROM, template[CMDBuild.core.constants.Proxy.FROM_ADDRESS]);
+				model.set(CMDBuild.core.constants.Proxy.TO, template[CMDBuild.core.constants.Proxy.TO_ADDRESSES]);
 
 				return model;
 			}
@@ -133,7 +133,7 @@
 		 */
 		getData: function() {
 			var out = {};
-			out[CMDBuild.core.proxy.Constants.OUTPUT] = this.tabController.cmfg('selectedEntityIdGet');
+			out[CMDBuild.core.constants.Proxy.OUTPUT] = this.tabController.cmfg('selectedEntityIdGet');
 
 			return out;
 		},
@@ -155,7 +155,7 @@
 		 * @override
 		 */
 		isValid: function() {
-			if (Ext.isBoolean(this.widgetConf[CMDBuild.core.proxy.Constants.REQUIRED]) && this.widgetConf[CMDBuild.core.proxy.Constants.REQUIRED])
+			if (Ext.isBoolean(this.widgetConf[CMDBuild.core.constants.Proxy.REQUIRED]) && this.widgetConf[CMDBuild.core.constants.Proxy.REQUIRED])
 				return this.controllerGrid.getDraftEmails().length > 0;
 
 			return this.callParent(arguments);

@@ -4,7 +4,7 @@
 		extend: 'CMDBuild.controller.common.AbstractController',
 
 		requires: [
-			'CMDBuild.core.proxy.Constants',
+			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.domain.Domain'
 		],
 
@@ -59,12 +59,12 @@
 			var data = this.form.getData(true);
 
 			// TODO: waiting for refactor (server side variables rename)
-			data['descr_1'] = data[CMDBuild.core.proxy.Constants.DIRECT_DESCRIPTION];
-			data['descr_2'] = data[CMDBuild.core.proxy.Constants.INVERSE_DESCRIPTION];
-			data['idClass1'] = data[CMDBuild.core.proxy.Constants.ORIGIN_CLASS_ID];
-			data['idClass2'] = data[CMDBuild.core.proxy.Constants.DESTINATION_CLASS_ID];
-			data['md_label'] = data[CMDBuild.core.proxy.Constants.MASTER_DETAIL_LABEL];
-			data[CMDBuild.core.proxy.Constants.ID] = Ext.isEmpty(data[CMDBuild.core.proxy.Constants.ID]) ? -1 : data[CMDBuild.core.proxy.Constants.ID];
+			data['descr_1'] = data[CMDBuild.core.constants.Proxy.DIRECT_DESCRIPTION];
+			data['descr_2'] = data[CMDBuild.core.constants.Proxy.INVERSE_DESCRIPTION];
+			data['idClass1'] = data[CMDBuild.core.constants.Proxy.ORIGIN_CLASS_ID];
+			data['idClass2'] = data[CMDBuild.core.constants.Proxy.DESTINATION_CLASS_ID];
+			data['md_label'] = data[CMDBuild.core.constants.Proxy.MASTER_DETAIL_LABEL];
+			data[CMDBuild.core.constants.Proxy.ID] = Ext.isEmpty(data[CMDBuild.core.constants.Proxy.ID]) ? -1 : data[CMDBuild.core.constants.Proxy.ID];
 
 			return data;
 		},

@@ -4,7 +4,7 @@
 		extend: 'CMDBuild.controller.administration.localization.advancedTable.SectionAbstract',
 
 		requires: [
-			'CMDBuild.core.proxy.Constants',
+			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.localization.Localization'
 		],
 
@@ -21,7 +21,7 @@
 		/**
 		 * @cfg {String}
 		 */
-		sectionId: CMDBuild.core.proxy.Constants.PROCESS,
+		sectionId: CMDBuild.core.constants.Proxy.PROCESS,
 
 		/**
 		 * @property {CMDBuild.view.administration.localization.common.AdvancedTableGrid}
@@ -69,21 +69,21 @@
 			) {
 				Ext.Array.forEach(fieldsArray, function(fieldObject, i, allFields) {
 					var entityFieldNodeObject = {};
-					entityFieldNodeObject[CMDBuild.core.proxy.Constants.DEFAULT] = fieldObject[CMDBuild.core.proxy.Constants.VALUE];
-					entityFieldNodeObject[CMDBuild.core.proxy.Constants.FIELD] = fieldObject[CMDBuild.core.proxy.Constants.NAME];
-					entityFieldNodeObject[CMDBuild.core.proxy.Constants.IDENTIFIER] = this.getLevelNode(rootNode, 1).get(CMDBuild.core.proxy.Constants.IDENTIFIER);
-					entityFieldNodeObject[CMDBuild.core.proxy.Constants.LEAF] = true;
-					entityFieldNodeObject[CMDBuild.core.proxy.Constants.PARENT] = rootNode;
-					entityFieldNodeObject[CMDBuild.core.proxy.Constants.TEXT] = fieldObject[CMDBuild.core.proxy.Constants.NAME];
-					entityFieldNodeObject[CMDBuild.core.proxy.Constants.TYPE] = CMDBuild.core.proxy.Constants.CLASS;
+					entityFieldNodeObject[CMDBuild.core.constants.Proxy.DEFAULT] = fieldObject[CMDBuild.core.constants.Proxy.VALUE];
+					entityFieldNodeObject[CMDBuild.core.constants.Proxy.FIELD] = fieldObject[CMDBuild.core.constants.Proxy.NAME];
+					entityFieldNodeObject[CMDBuild.core.constants.Proxy.IDENTIFIER] = this.getLevelNode(rootNode, 1).get(CMDBuild.core.constants.Proxy.IDENTIFIER);
+					entityFieldNodeObject[CMDBuild.core.constants.Proxy.LEAF] = true;
+					entityFieldNodeObject[CMDBuild.core.constants.Proxy.PARENT] = rootNode;
+					entityFieldNodeObject[CMDBuild.core.constants.Proxy.TEXT] = fieldObject[CMDBuild.core.constants.Proxy.NAME];
+					entityFieldNodeObject[CMDBuild.core.constants.Proxy.TYPE] = CMDBuild.core.constants.Proxy.CLASS;
 
 					// Fields adapter for attributes nodes
 					if (rootNode.getDepth() != 1) {
-						entityFieldNodeObject[CMDBuild.core.proxy.Constants.OWNER] = this.getLevelNode(rootNode, 1).get(CMDBuild.core.proxy.Constants.IDENTIFIER);
-						entityFieldNodeObject[CMDBuild.core.proxy.Constants.TYPE] = CMDBuild.core.proxy.Constants.ATTRIBUTE + CMDBuild.core.Utils.toTitleCase(CMDBuild.core.proxy.Constants.CLASS);
+						entityFieldNodeObject[CMDBuild.core.constants.Proxy.OWNER] = this.getLevelNode(rootNode, 1).get(CMDBuild.core.constants.Proxy.IDENTIFIER);
+						entityFieldNodeObject[CMDBuild.core.constants.Proxy.TYPE] = CMDBuild.core.constants.Proxy.ATTRIBUTE + CMDBuild.core.Utils.toTitleCase(CMDBuild.core.constants.Proxy.CLASS);
 					}
 
-					this.fillWithTranslations(fieldObject[CMDBuild.core.proxy.Constants.TRANSLATIONS], entityFieldNodeObject);
+					this.fillWithTranslations(fieldObject[CMDBuild.core.constants.Proxy.TRANSLATIONS], entityFieldNodeObject);
 
 					rootNode.appendChild(entityFieldNodeObject);
 				}, this);

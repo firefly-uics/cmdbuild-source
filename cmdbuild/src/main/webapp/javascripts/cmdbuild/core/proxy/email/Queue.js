@@ -3,7 +3,7 @@
 	Ext.define('CMDBuild.core.proxy.email.Queue', {
 
 		requires: [
-			'CMDBuild.core.proxy.Constants',
+			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.Index'
 		],
 

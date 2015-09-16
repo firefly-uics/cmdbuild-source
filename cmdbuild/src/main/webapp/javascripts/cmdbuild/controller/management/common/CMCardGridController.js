@@ -164,9 +164,9 @@
 		onPrintGridMenuClick: function(format) {
 			if (!Ext.isEmpty(format)) {
 				var params = Ext.apply({}, this.view.getStore().proxy.extraParams);
-				params[CMDBuild.core.proxy.Constants.COLUMNS] = Ext.encode(this.view.getVisibleColumns());
-				params[CMDBuild.core.proxy.Constants.SORT] = Ext.encode(this.view.getStore().getSorters());
-				params[CMDBuild.core.proxy.Constants.TYPE] = format;
+				params[CMDBuild.core.constants.Proxy.COLUMNS] = Ext.encode(this.view.getVisibleColumns());
+				params[CMDBuild.core.constants.Proxy.SORT] = Ext.encode(this.view.getStore().getSorters());
+				params[CMDBuild.core.constants.Proxy.TYPE] = format;
 
 				Ext.create('CMDBuild.controller.common.entryTypeGrid.printTool.PrintWindow', {
 					parentDelegate: this,

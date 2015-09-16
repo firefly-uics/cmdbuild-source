@@ -31,7 +31,7 @@
 			'CMDBuild.routes.management.Processes',
 			'CMDBuild.core.proxy.Classes',
 			'CMDBuild.core.proxy.Configuration',
-			'CMDBuild.core.proxy.Constants',
+			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.dataView.DataView',
 			'CMDBuild.core.proxy.domain.Domain',
 			'CMDBuild.core.proxy.group.Group',
@@ -273,7 +273,7 @@
 				});
 
 				params = {};
-				params[CMDBuild.core.proxy.Constants.ACTIVE] = true;
+				params[CMDBuild.core.constants.Proxy.ACTIVE] = true;
 
 				CMDBuild.core.proxy.Classes.read({
 					params: params,
@@ -295,8 +295,8 @@
 
 						// To fill the menu is needed that the classes are already loaded
 						params = {};
-						params[CMDBuild.core.proxy.Constants.GROUP_NAME] = CMDBuild.Runtime.DefaultGroupName;
-						params[CMDBuild.core.proxy.Constants.LOCALIZED] = true;
+						params[CMDBuild.core.constants.Proxy.GROUP_NAME] = CMDBuild.Runtime.DefaultGroupName;
+						params[CMDBuild.core.constants.Proxy.LOCALIZED] = true;
 
 						CMDBuild.core.proxy.Menu.read({
 							params: params,
@@ -326,7 +326,7 @@
 				 * Domains
 				 */
 				params = {};
-				params[CMDBuild.core.proxy.Constants.ACTIVE] = true;
+				params[CMDBuild.core.constants.Proxy.ACTIVE] = true;
 
 				CMDBuild.core.proxy.domain.Domain.readAll({
 					params: params,

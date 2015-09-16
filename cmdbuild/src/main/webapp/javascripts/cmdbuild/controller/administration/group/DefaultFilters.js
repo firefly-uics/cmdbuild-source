@@ -4,9 +4,9 @@
 		extend: 'CMDBuild.controller.common.AbstractController',
 
 		requires: [
+			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.constants.Server',
 			'CMDBuild.core.proxy.Classes',
-			'CMDBuild.core.proxy.Constants',
 			'CMDBuild.core.proxy.group.DefaultFilters',
 			'CMDBuild.core.Utils'
 		],
@@ -86,8 +86,8 @@
 				var filterObjectsMap = {};
 
 				var params = {};
-				params[CMDBuild.core.proxy.Constants.LIMIT] = CMDBuild.core.constants.Server.getMaxInteger(); // HACK to get all filters
-				params[CMDBuild.core.proxy.Constants.START] = 0; // HACK to get all filters
+				params[CMDBuild.core.constants.Proxy.LIMIT] = CMDBuild.core.constants.Server.MAX_INTEGER; // HACK to get all filters
+				params[CMDBuild.core.constants.Proxy.START] = 0; // HACK to get all filters
 
 				this.getAllDefaultFilters(this.tree.getStore().getRootNode(), defaultFiltersNames);
 
@@ -100,16 +100,16 @@
 
 						// Build filter object map ([{ name: filterObject, ... }])
 						Ext.Array.forEach(decodedResponse, function(filterObject, i, allFilterObjects) {
-							filterObjectsMap[filterObject[CMDBuild.core.proxy.Constants.NAME]] = filterObject;
+							filterObjectsMap[filterObject[CMDBuild.core.constants.Proxy.NAME]] = filterObject;
 						}, this);
 
 						Ext.Array.forEach(defaultFiltersNames, function(defaultFilter, i, allDefaultFilters) {
-							defaultFiltersIds.push(filterObjectsMap[defaultFilter][CMDBuild.core.proxy.Constants.ID]);
+							defaultFiltersIds.push(filterObjectsMap[defaultFilter][CMDBuild.core.constants.Proxy.ID]);
 						}, this);
 
 						params = {};
-						params[CMDBuild.core.proxy.Constants.FILTERS] = Ext.encode(defaultFiltersIds);
-						params[CMDBuild.core.proxy.Constants.GROUPS] = Ext.encode([this.cmfg('selectedGroupGet', CMDBuild.core.proxy.Constants.NAME)]);
+						params[CMDBuild.core.constants.Proxy.FILTERS] = Ext.encode(defaultFiltersIds);
+						params[CMDBuild.core.constants.Proxy.GROUPS] = Ext.encode([this.cmfg('selectedGroupGet', CMDBuild.core.constants.Proxy.NAME)]);
 
 						CMDBuild.core.proxy.group.DefaultFilters.update({ params: params });
 					}
@@ -124,7 +124,7 @@
 		onGroupDefaultFiltersTabShow: function() {
 			if (!this.cmfg('selectedGroupIsEmpty')) {
 				var params = {};
-				params[CMDBuild.core.proxy.Constants.ACTIVE] = true;
+				params[CMDBuild.core.constants.Proxy.ACTIVE] = true;
 
 				this.tree.getStore().getRootNode().removeAll();
 
@@ -135,7 +135,7 @@
 						var readedClasses = decodedResponse.classes;
 
 						params = {};
-						params[CMDBuild.core.proxy.Constants.GROUP] = this.cmfg('selectedGroupGet', CMDBuild.core.proxy.Constants.NAME);
+						params[CMDBuild.core.constants.Proxy.GROUP] = this.cmfg('selectedGroupGet', CMDBuild.core.constants.Proxy.NAME);
 
 						CMDBuild.core.proxy.group.DefaultFilters.read({
 							params: params,
@@ -150,47 +150,47 @@
 								var standardTree = [];
 
 								Ext.Array.forEach(decodedResponse, function(filterObject, i, allFiltersObjects) {
-									if (Ext.isEmpty(defaultFilters[filterObject[CMDBuild.core.proxy.Constants.ENTRY_TYPE]]))
-										defaultFilters[filterObject[CMDBuild.core.proxy.Constants.ENTRY_TYPE]] = filterObject[CMDBuild.core.proxy.Constants.NAME];
+									if (Ext.isEmpty(defaultFilters[filterObject[CMDBuild.core.constants.Proxy.ENTRY_TYPE]]))
+										defaultFilters[filterObject[CMDBuild.core.constants.Proxy.ENTRY_TYPE]] = filterObject[CMDBuild.core.constants.Proxy.NAME];
 								}, this);
 
 								// Build all tree done objects
 								Ext.Array.forEach(readedClasses, function(entityObject, i, allEntitiesObjects) {
-									if (!Ext.Array.contains(this.filteredClasses, entityObject[CMDBuild.core.proxy.Constants.NAME])) { // Apply filter to classes
-										switch(entityObject[CMDBuild.core.proxy.Constants.TYPE]) {
+									if (!Ext.Array.contains(this.filteredClasses, entityObject[CMDBuild.core.constants.Proxy.NAME])) { // Apply filter to classes
+										switch(entityObject[CMDBuild.core.constants.Proxy.TYPE]) {
 											case 'processclass': { // Process node object
 												var processNodeObject = {};
 												processNodeObject['iconCls'] = 'cmdbuild-tree-processclass-icon';
-												processNodeObject[CMDBuild.core.proxy.Constants.DESCRIPTION] = entityObject[CMDBuild.core.proxy.Constants.TEXT];
-												processNodeObject[CMDBuild.core.proxy.Constants.ID] = entityObject[CMDBuild.core.proxy.Constants.ID];
-												processNodeObject[CMDBuild.core.proxy.Constants.LEAF] = true;
-												processNodeObject[CMDBuild.core.proxy.Constants.NAME] = entityObject[CMDBuild.core.proxy.Constants.NAME];
-												processNodeObject[CMDBuild.core.proxy.Constants.PARENT] = entityObject[CMDBuild.core.proxy.Constants.PARENT];
-												processNodeObject[CMDBuild.core.proxy.Constants.TABLE_TYPE] = entityObject[CMDBuild.core.proxy.Constants.TYPE];
+												processNodeObject[CMDBuild.core.constants.Proxy.DESCRIPTION] = entityObject[CMDBuild.core.constants.Proxy.TEXT];
+												processNodeObject[CMDBuild.core.constants.Proxy.ID] = entityObject[CMDBuild.core.constants.Proxy.ID];
+												processNodeObject[CMDBuild.core.constants.Proxy.LEAF] = true;
+												processNodeObject[CMDBuild.core.constants.Proxy.NAME] = entityObject[CMDBuild.core.constants.Proxy.NAME];
+												processNodeObject[CMDBuild.core.constants.Proxy.PARENT] = entityObject[CMDBuild.core.constants.Proxy.PARENT];
+												processNodeObject[CMDBuild.core.constants.Proxy.TABLE_TYPE] = entityObject[CMDBuild.core.constants.Proxy.TYPE];
 
 												// Preset node value
-												if (!Ext.isEmpty(defaultFilters[entityObject[CMDBuild.core.proxy.Constants.NAME]]))
-													processNodeObject[CMDBuild.core.proxy.Constants.DEFAULT_FILTER] = defaultFilters[entityObject[CMDBuild.core.proxy.Constants.NAME]];
+												if (!Ext.isEmpty(defaultFilters[entityObject[CMDBuild.core.constants.Proxy.NAME]]))
+													processNodeObject[CMDBuild.core.constants.Proxy.DEFAULT_FILTER] = defaultFilters[entityObject[CMDBuild.core.constants.Proxy.NAME]];
 
-												nodesMap[processNodeObject[CMDBuild.core.proxy.Constants.ID]] = processNodeObject;
+												nodesMap[processNodeObject[CMDBuild.core.constants.Proxy.ID]] = processNodeObject;
 											} break;
 
 											case 'class':
 											default: { // Class node object
 												var classNodeObject = {};
 												classNodeObject['iconCls'] = entityObject['superclass'] ? 'cmdbuild-tree-superclass-icon' : 'cmdbuild-tree-class-icon';
-												classNodeObject[CMDBuild.core.proxy.Constants.DESCRIPTION] = entityObject[CMDBuild.core.proxy.Constants.TEXT];
-												classNodeObject[CMDBuild.core.proxy.Constants.ID] = entityObject[CMDBuild.core.proxy.Constants.ID];
-												classNodeObject[CMDBuild.core.proxy.Constants.LEAF] = true;
-												classNodeObject[CMDBuild.core.proxy.Constants.NAME] = entityObject[CMDBuild.core.proxy.Constants.NAME];
-												classNodeObject[CMDBuild.core.proxy.Constants.PARENT] = entityObject[CMDBuild.core.proxy.Constants.PARENT];
-												classNodeObject[CMDBuild.core.proxy.Constants.TABLE_TYPE] = entityObject[CMDBuild.core.proxy.Constants.TABLE_TYPE];
+												classNodeObject[CMDBuild.core.constants.Proxy.DESCRIPTION] = entityObject[CMDBuild.core.constants.Proxy.TEXT];
+												classNodeObject[CMDBuild.core.constants.Proxy.ID] = entityObject[CMDBuild.core.constants.Proxy.ID];
+												classNodeObject[CMDBuild.core.constants.Proxy.LEAF] = true;
+												classNodeObject[CMDBuild.core.constants.Proxy.NAME] = entityObject[CMDBuild.core.constants.Proxy.NAME];
+												classNodeObject[CMDBuild.core.constants.Proxy.PARENT] = entityObject[CMDBuild.core.constants.Proxy.PARENT];
+												classNodeObject[CMDBuild.core.constants.Proxy.TABLE_TYPE] = entityObject[CMDBuild.core.constants.Proxy.TABLE_TYPE];
 
 												// Preset node value
-												if (!Ext.isEmpty(defaultFilters[entityObject[CMDBuild.core.proxy.Constants.NAME]]))
-													classNodeObject[CMDBuild.core.proxy.Constants.DEFAULT_FILTER] = defaultFilters[entityObject[CMDBuild.core.proxy.Constants.NAME]];
+												if (!Ext.isEmpty(defaultFilters[entityObject[CMDBuild.core.constants.Proxy.NAME]]))
+													classNodeObject[CMDBuild.core.constants.Proxy.DEFAULT_FILTER] = defaultFilters[entityObject[CMDBuild.core.constants.Proxy.NAME]];
 
-												nodesMap[classNodeObject[CMDBuild.core.proxy.Constants.ID]] = classNodeObject;
+												nodesMap[classNodeObject[CMDBuild.core.constants.Proxy.ID]] = classNodeObject;
 											}
 										}
 									}
@@ -198,16 +198,16 @@
 
 								// Builds full standard/simple/process classes trees
 								Ext.Object.each(nodesMap, function(id, node, myself) {
-									switch(node[CMDBuild.core.proxy.Constants.TABLE_TYPE]) {
-										case CMDBuild.core.proxy.Constants.STANDARD: {
+									switch(node[CMDBuild.core.constants.Proxy.TABLE_TYPE]) {
+										case CMDBuild.core.constants.Proxy.STANDARD: {
 											if (
-												!Ext.isEmpty(node[CMDBuild.core.proxy.Constants.PARENT])
-												&& !Ext.isEmpty(nodesMap[node[CMDBuild.core.proxy.Constants.PARENT]])
+												!Ext.isEmpty(node[CMDBuild.core.constants.Proxy.PARENT])
+												&& !Ext.isEmpty(nodesMap[node[CMDBuild.core.constants.Proxy.PARENT]])
 											) {
-												var parentNode = nodesMap[node[CMDBuild.core.proxy.Constants.PARENT]];
+												var parentNode = nodesMap[node[CMDBuild.core.constants.Proxy.PARENT]];
 
 												parentNode.children = (parentNode.children || []);
-												parentNode[CMDBuild.core.proxy.Constants.LEAF] = false;
+												parentNode[CMDBuild.core.constants.Proxy.LEAF] = false;
 												parentNode.children.push(node);
 											} else {
 												standardTree.push(node);
@@ -216,13 +216,13 @@
 
 										case 'processclass': {
 											if (
-												!Ext.isEmpty(node[CMDBuild.core.proxy.Constants.PARENT])
-												&& !Ext.isEmpty(nodesMap[node[CMDBuild.core.proxy.Constants.PARENT]])
+												!Ext.isEmpty(node[CMDBuild.core.constants.Proxy.PARENT])
+												&& !Ext.isEmpty(nodesMap[node[CMDBuild.core.constants.Proxy.PARENT]])
 											) {
-												var parentNode = nodesMap[node[CMDBuild.core.proxy.Constants.PARENT]];
+												var parentNode = nodesMap[node[CMDBuild.core.constants.Proxy.PARENT]];
 
 												parentNode.children = (parentNode.children || []);
-												parentNode[CMDBuild.core.proxy.Constants.LEAF] = false;
+												parentNode[CMDBuild.core.constants.Proxy.LEAF] = false;
 												parentNode.children.push(node);
 											} else {
 												processesTree.push(node);
@@ -282,9 +282,9 @@
 				&& record.getDepth() > 1// Avoid to go in edit of root classes (standard and simple)
 			) {
 				var params = {};
-				params[CMDBuild.core.proxy.Constants.CLASS_NAME] = record.get(CMDBuild.core.proxy.Constants.NAME);
-				params[CMDBuild.core.proxy.Constants.LIMIT] = CMDBuild.core.constants.Server.getMaxInteger(); // HACK to get all filters
-				params[CMDBuild.core.proxy.Constants.START] = 0; // HACK to get all filters
+				params[CMDBuild.core.constants.Proxy.CLASS_NAME] = record.get(CMDBuild.core.constants.Proxy.NAME);
+				params[CMDBuild.core.constants.Proxy.LIMIT] = CMDBuild.core.constants.Server.MAX_INTEGER; // HACK to get all filters
+				params[CMDBuild.core.constants.Proxy.START] = 0; // HACK to get all filters
 
 				column.getEditor().getStore().load({ params: params });
 
@@ -301,8 +301,8 @@
 		 */
 		getAllDefaultFilters: function(node, destinationArray) {
 			node.eachChild(function(childNode) {
-				if (!Ext.isEmpty(childNode.get(CMDBuild.core.proxy.Constants.DEFAULT_FILTER)))
-					destinationArray.push(childNode.get(CMDBuild.core.proxy.Constants.DEFAULT_FILTER));
+				if (!Ext.isEmpty(childNode.get(CMDBuild.core.constants.Proxy.DEFAULT_FILTER)))
+					destinationArray.push(childNode.get(CMDBuild.core.constants.Proxy.DEFAULT_FILTER));
 
 				if (!Ext.isEmpty(node.hasChildNodes()))
 					this.getAllDefaultFilters(childNode, destinationArray);

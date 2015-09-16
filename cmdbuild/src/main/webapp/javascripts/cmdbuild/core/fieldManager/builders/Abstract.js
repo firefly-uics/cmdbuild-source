@@ -6,7 +6,7 @@
 	Ext.define('CMDBuild.core.fieldManager.builders.Abstract', {
 		extend: 'CMDBuild.controller.common.AbstractController',
 
-		requires: ['CMDBuild.core.proxy.Constants'],
+		requires: ['CMDBuild.core.constants.Proxy'],
 
 		/**
 		 * @cfg {CMDBuild.core.fieldManager.FieldManager}
@@ -29,7 +29,7 @@
 		 * @returns {String or Mixed}
 		 */
 		applyMandatoryLabelFlag: function(string) {
-			if (Ext.isString(string) && this.cmfg('attributeModelGet', CMDBuild.core.proxy.Constants.MANDATORY))
+			if (Ext.isString(string) && this.cmfg('attributeModelGet', CMDBuild.core.constants.Proxy.MANDATORY))
 				return this.mandatoryLabelFlag + string;
 
 			return string;
@@ -56,7 +56,7 @@
 		 * @abstract
 		 */
 		buildStoreField: function() {
-			return { name: this.cmfg('attributeModelGet', CMDBuild.core.proxy.Constants.NAME), type: 'string' };
+			return { name: this.cmfg('attributeModelGet', CMDBuild.core.constants.Proxy.NAME), type: 'string' };
 		}
 	});
 

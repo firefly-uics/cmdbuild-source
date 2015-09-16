@@ -4,7 +4,7 @@
 		extend: 'CMDBuild.controller.common.AbstractBasePanelController',
 
 		requires: [
-			'CMDBuild.core.proxy.Constants',
+			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.model.lookup.Type'
 		],
 
@@ -75,14 +75,14 @@
 
 			if (!Ext.isEmpty(parameters)) {
 				this.selectedLookupTypeSet({ // TODO: use proxy to read domain (server side implementation)
-					description: parameters.get(CMDBuild.core.proxy.Constants.TEXT), // TODO: to fix translating on server
-					id: parameters.get(CMDBuild.core.proxy.Constants.ID),
-					parent: parameters.get(CMDBuild.core.proxy.Constants.PARENT)
+					description: parameters.get(CMDBuild.core.constants.Proxy.TEXT), // TODO: to fix translating on server
+					id: parameters.get(CMDBuild.core.constants.Proxy.ID),
+					parent: parameters.get(CMDBuild.core.constants.Proxy.PARENT)
 				});
 
 				this.cmfg('selectedLookupSet'); // Reset LookupList tab selection buffer
 
-				this.setViewTitle(parameters.get(CMDBuild.core.proxy.Constants.TEXT));
+				this.setViewTitle(parameters.get(CMDBuild.core.constants.Proxy.TEXT));
 
 				if (Ext.isEmpty(this.view.tabPanel.getActiveTab()))
 					this.view.tabPanel.setActiveTab(0);

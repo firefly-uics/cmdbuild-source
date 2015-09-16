@@ -4,7 +4,7 @@
 		extend: 'Ext.form.Panel',
 
 		requires: [
-			'CMDBuild.core.proxy.Constants',
+			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.email.Accounts'
 		],
 
@@ -46,8 +46,8 @@
 
 		initComponent: function() {
 			this.nameField = Ext.create('Ext.form.field.Text', {
-				name: CMDBuild.core.proxy.Constants.NAME,
-				itemId: CMDBuild.core.proxy.Constants.NAME,
+				name: CMDBuild.core.constants.Proxy.NAME,
+				itemId: CMDBuild.core.constants.Proxy.NAME,
 				fieldLabel: CMDBuild.Translation.name,
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				allowBlank: false,
@@ -55,11 +55,11 @@
 			});
 
 			this.defaultAccountCombo = Ext.create('CMDBuild.view.common.field.CMErasableCombo', {
-				name: CMDBuild.core.proxy.Constants.DEFAULT_ACCOUNT,
+				name: CMDBuild.core.constants.Proxy.DEFAULT_ACCOUNT,
 				fieldLabel: CMDBuild.Translation.defaultAccount,
 				labelWidth: CMDBuild.LABEL_WIDTH,
-				displayField: CMDBuild.core.proxy.Constants.NAME,
-				valueField: CMDBuild.core.proxy.Constants.NAME,
+				displayField: CMDBuild.core.constants.Proxy.NAME,
+				valueField: CMDBuild.core.constants.Proxy.NAME,
 				maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
 				forceSelection: true,
 				editable: false,
@@ -71,7 +71,7 @@
 			this.delayField = Ext.create('CMDBuild.view.common.field.delay.Delay', {
 				fieldLabel: CMDBuild.Translation.delay,
 				labelWidth: CMDBuild.LABEL_WIDTH,
-				name: CMDBuild.core.proxy.Constants.DELAY
+				name: CMDBuild.core.constants.Proxy.DELAY
 			});
 
 			// Splitted-view wrapper
@@ -111,7 +111,7 @@
 							this.nameField,
 							{
 								xtype: 'textareafield',
-								name: CMDBuild.core.proxy.Constants.DESCRIPTION,
+								name: CMDBuild.core.constants.Proxy.DESCRIPTION,
 								fieldLabel: CMDBuild.Translation.descriptionLabel
 							},
 							{
@@ -119,19 +119,19 @@
 								fieldLabel: CMDBuild.Translation.keepSync,
 								inputValue: true,
 								uncheckedValue: false,
-								name: CMDBuild.core.proxy.Constants.KEEP_SYNCHRONIZATION
+								name: CMDBuild.core.constants.Proxy.KEEP_SYNCHRONIZATION
 							},
 							{
 								xtype: 'checkbox',
 								fieldLabel: CMDBuild.Translation.promptSync,
 								inputValue: true,
 								uncheckedValue: false,
-								name: CMDBuild.core.proxy.Constants.PROMPT_SYNCHRONIZATION
+								name: CMDBuild.core.constants.Proxy.PROMPT_SYNCHRONIZATION
 							},
 							this.delayField,
 							{
 								xtype: 'hiddenfield',
-								name: CMDBuild.core.proxy.Constants.ID
+								name: CMDBuild.core.constants.Proxy.ID
 							}
 						]
 					},
@@ -156,28 +156,28 @@
 						items: [
 							this.defaultAccountCombo,
 							{
-								name: CMDBuild.core.proxy.Constants.FROM,
+								name: CMDBuild.core.constants.Proxy.FROM,
 								fieldLabel: CMDBuild.Translation.from,
 								vtype: 'email'
 							},
 							{
-								name: CMDBuild.core.proxy.Constants.TO,
+								name: CMDBuild.core.constants.Proxy.TO,
 								fieldLabel: CMDBuild.Translation.to
 							},
 							{
-								name: CMDBuild.core.proxy.Constants.CC,
+								name: CMDBuild.core.constants.Proxy.CC,
 								fieldLabel: CMDBuild.Translation.cc
 							},
 							{
-								name: CMDBuild.core.proxy.Constants.BCC,
+								name: CMDBuild.core.constants.Proxy.BCC,
 								fieldLabel: CMDBuild.Translation.bcc
 							},
 							{
-								name: CMDBuild.core.proxy.Constants.SUBJECT,
+								name: CMDBuild.core.constants.Proxy.SUBJECT,
 								fieldLabel: CMDBuild.Translation.subject
 							},
 							Ext.create('CMDBuild.view.common.field.CMHtmlEditorField', {
-								name: CMDBuild.core.proxy.Constants.BODY,
+								name: CMDBuild.core.constants.Proxy.BODY,
 								fieldLabel: CMDBuild.Translation.body,
 								labelWidth: CMDBuild.LABEL_WIDTH,
 								maxWidth: CMDBuild.CFG_BIG_FIELD_WIDTH
@@ -201,7 +201,7 @@
 				dockedItems: [
 					Ext.create('Ext.toolbar.Toolbar', {
 						dock: 'top',
-						itemId: CMDBuild.core.proxy.Constants.TOOLBAR_TOP,
+						itemId: CMDBuild.core.constants.Proxy.TOOLBAR_TOP,
 
 						items: [
 							Ext.create('CMDBuild.core.buttons.iconized.Modify', {
@@ -224,7 +224,7 @@
 					}),
 					Ext.create('Ext.toolbar.Toolbar', {
 						dock: 'bottom',
-						itemId: CMDBuild.core.proxy.Constants.TOOLBAR_BOTTOM,
+						itemId: CMDBuild.core.constants.Proxy.TOOLBAR_BOTTOM,
 						ui: 'footer',
 
 						layout: {

@@ -20,7 +20,7 @@
 		extend: 'Ext.data.Model',
 
 		fields: [
-			{ name: CMDBuild.core.proxy.Constants.TYPE, type: 'string' }
+			{ name: CMDBuild.core.constants.Proxy.TYPE, type: 'string' }
 		]
 	});
 

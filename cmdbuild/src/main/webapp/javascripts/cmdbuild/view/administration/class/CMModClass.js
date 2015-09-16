@@ -16,8 +16,8 @@
 
 			this.printSchema = Ext.create('CMDBuild.core.buttons.iconized.Print', {
 				formatList: [
-					CMDBuild.core.proxy.Constants.PDF,
-					CMDBuild.core.proxy.Constants.ODT
+					CMDBuild.core.constants.Proxy.PDF,
+					CMDBuild.core.constants.Proxy.ODT
 				],
 				text: tr.print_schema
 			});

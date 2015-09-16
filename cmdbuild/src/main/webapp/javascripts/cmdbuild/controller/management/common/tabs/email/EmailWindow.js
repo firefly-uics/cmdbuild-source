@@ -5,7 +5,7 @@
 
 		requires: [
 			'CMDBuild.controller.management.common.widgets.CMWidgetController',
-			'CMDBuild.core.proxy.Constants',
+			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.common.tabs.email.Attachment',
 			'CMDBuild.core.proxy.email.Templates',
 			'CMDBuild.core.Message'
@@ -114,15 +114,15 @@
 
 						if (templatesArray.length > 0) {
 							// Sort templatesArray by description ascending
-							CMDBuild.core.Utils.objectArraySort(templatesArray, CMDBuild.core.proxy.Constants.DESCRIPTION);
+							CMDBuild.core.Utils.objectArraySort(templatesArray, CMDBuild.core.constants.Proxy.DESCRIPTION);
 
 							Ext.Array.forEach(templatesArray, function(template, index, allItems) {
 								this.view.fillFromTemplateButton.menu.add({
-									text: template[CMDBuild.core.proxy.Constants.DESCRIPTION],
-									templateName: template[CMDBuild.core.proxy.Constants.NAME],
+									text: template[CMDBuild.core.constants.Proxy.DESCRIPTION],
+									templateName: template[CMDBuild.core.constants.Proxy.NAME],
 
 									handler: function(button, e) {
-										me.cmfg('onEmailWindowFillFromTemplateButtonClick', button[CMDBuild.core.proxy.Constants.TEMPLATE_NAME]);
+										me.cmfg('onEmailWindowFillFromTemplateButtonClick', button[CMDBuild.core.constants.Proxy.TEMPLATE_NAME]);
 									}
 								});
 							}, this);
@@ -142,8 +142,8 @@
 
 					// Get all email attachments
 					var params = {};
-					params[CMDBuild.core.proxy.Constants.EMAIL_ID] = this.record.get(CMDBuild.core.proxy.Constants.ID);
-					params[CMDBuild.core.proxy.Constants.TEMPORARY] = this.record.get(CMDBuild.core.proxy.Constants.TEMPORARY);
+					params[CMDBuild.core.constants.Proxy.EMAIL_ID] = this.record.get(CMDBuild.core.constants.Proxy.ID);
+					params[CMDBuild.core.constants.Proxy.TEMPORARY] = this.record.get(CMDBuild.core.constants.Proxy.TEMPORARY);
 
 					this.view.setLoading(true);
 					CMDBuild.core.proxy.common.tabs.email.Attachment.getAll({
@@ -152,7 +152,7 @@
 						success: function(response, options, decodedResponse) {
 							Ext.Array.forEach(decodedResponse.response, function(item, index, allItems) {
 								if(!Ext.Object.isEmpty(item))
-									this.attachmentsDelegate.attachmentAddPanel(item[CMDBuild.core.proxy.Constants.FILE_NAME]);
+									this.attachmentsDelegate.attachmentAddPanel(item[CMDBuild.core.constants.Proxy.FILE_NAME]);
 							}, this);
 						},
 						callback: function(records, operation, success) {
@@ -164,7 +164,7 @@
 				this.form.loadRecord(this.record); // Fill view form with record data
 
 				// If email has template enable keep-synch checkbox
-				if (!Ext.isEmpty(this.record.get(CMDBuild.core.proxy.Constants.TEMPLATE)) && this.windowMode != 'view')
+				if (!Ext.isEmpty(this.record.get(CMDBuild.core.constants.Proxy.TEMPLATE)) && this.windowMode != 'view')
 					this.form.keepSynchronizationCheckbox.setDisabled(false);
 
 				// Show window
@@ -184,7 +184,7 @@
 		 * @return {Boolean}
 		 */
 		isPromptSynchronizationChecked: function() {
-			return this.record.get(CMDBuild.core.proxy.Constants.PROMPT_SYNCHRONIZATION);
+			return this.record.get(CMDBuild.core.constants.Proxy.PROMPT_SYNCHRONIZATION);
 		},
 
 		/**
@@ -192,13 +192,13 @@
 		 */
 		loadFormValues: function(record) {
 			var me = this;
-			var xaVars = Ext.apply({}, record.getData(), record.get(CMDBuild.core.proxy.Constants.VARIABLES));
+			var xaVars = Ext.apply({}, record.getData(), record.get(CMDBuild.core.constants.Proxy.VARIABLES));
 
 			this.templateResolver = new CMDBuild.Management.TemplateResolver({
 				clientForm: this.cmfg('getMainController').parentDelegate.getFormForTemplateResolver(),
 				xaVars: xaVars,
 				serverVars: CMDBuild.controller.management.common.widgets.CMWidgetController.getTemplateResolverServerVars(
-					this.cmfg('getMainController').selectedEntity.get(CMDBuild.core.proxy.Constants.ENTITY)
+					this.cmfg('getMainController').selectedEntity.get(CMDBuild.core.constants.Proxy.ENTITY)
 				)
 			});
 
@@ -206,52 +206,52 @@
 				attributes: Ext.Object.getKeys(xaVars),
 				callback: function(values, ctx) {
 					var setValueArray = [];
-					var content = values[CMDBuild.core.proxy.Constants.BODY];
+					var content = values[CMDBuild.core.constants.Proxy.BODY];
 
 					if (me.windowMode == 'reply') {
 						setValueArray.push({
-							id: CMDBuild.core.proxy.Constants.BODY,
-							value: content + '<br /><br />' + me.record.get(CMDBuild.core.proxy.Constants.BODY)
+							id: CMDBuild.core.constants.Proxy.BODY,
+							value: content + '<br /><br />' + me.record.get(CMDBuild.core.constants.Proxy.BODY)
 						});
 					} else {
 						setValueArray.push(
 							{
-								id: CMDBuild.core.proxy.Constants.FROM,
-								value: values[CMDBuild.core.proxy.Constants.FROM]
+								id: CMDBuild.core.constants.Proxy.FROM,
+								value: values[CMDBuild.core.constants.Proxy.FROM]
 							},
 							{
-								id: CMDBuild.core.proxy.Constants.TO,
-								value: values[CMDBuild.core.proxy.Constants.TO]
+								id: CMDBuild.core.constants.Proxy.TO,
+								value: values[CMDBuild.core.constants.Proxy.TO]
 							},
 							{
-								id: CMDBuild.core.proxy.Constants.CC,
-								value: values[CMDBuild.core.proxy.Constants.CC]
+								id: CMDBuild.core.constants.Proxy.CC,
+								value: values[CMDBuild.core.constants.Proxy.CC]
 							},
 							{
-								id: CMDBuild.core.proxy.Constants.BCC,
-								value: values[CMDBuild.core.proxy.Constants.BCC]
+								id: CMDBuild.core.constants.Proxy.BCC,
+								value: values[CMDBuild.core.constants.Proxy.BCC]
 							},
 							{
-								id: CMDBuild.core.proxy.Constants.SUBJECT,
-								value: values[CMDBuild.core.proxy.Constants.SUBJECT]
+								id: CMDBuild.core.constants.Proxy.SUBJECT,
+								value: values[CMDBuild.core.constants.Proxy.SUBJECT]
 							},
 							{
-								id: CMDBuild.core.proxy.Constants.BODY,
+								id: CMDBuild.core.constants.Proxy.BODY,
 								value: content
 							},
 							{ // It's last one to avoid Notification pop-up display on setValues action
-								id: CMDBuild.core.proxy.Constants.KEEP_SYNCHRONIZATION,
-								value: values[CMDBuild.core.proxy.Constants.KEEP_SYNCHRONIZATION]
+								id: CMDBuild.core.constants.Proxy.KEEP_SYNCHRONIZATION,
+								value: values[CMDBuild.core.constants.Proxy.KEEP_SYNCHRONIZATION]
 							}
 						);
 					}
 
 					me.form.getForm().setValues(setValueArray);
 
-					me.form.delayField.setValue(values[CMDBuild.core.proxy.Constants.DELAY]);
+					me.form.delayField.setValue(values[CMDBuild.core.constants.Proxy.DELAY]);
 
 					// Updates record's prompt synchronizations flag
-					me.record.set(CMDBuild.core.proxy.Constants.PROMPT_SYNCHRONIZATION, values[CMDBuild.core.proxy.Constants.PROMPT_SYNCHRONIZATION]);
+					me.record.set(CMDBuild.core.constants.Proxy.PROMPT_SYNCHRONIZATION, values[CMDBuild.core.constants.Proxy.PROMPT_SYNCHRONIZATION]);
 				}
 			});
 		},
@@ -277,11 +277,11 @@
 
 				// Setup attachments only if DMS is enabled
 				if (CMDBuild.Config.dms.enabled)
-					this.record.set(CMDBuild.core.proxy.Constants.ATTACHMENTS, this.attachmentsDelegate.getAttachmentsNames());
+					this.record.set(CMDBuild.core.constants.Proxy.ATTACHMENTS, this.attachmentsDelegate.getAttachmentsNames());
 
-				this.record.set(CMDBuild.core.proxy.Constants.REFERENCE, this.cmfg('selectedEntityIdGet'));
+				this.record.set(CMDBuild.core.constants.Proxy.REFERENCE, this.cmfg('selectedEntityIdGet'));
 
-				if (Ext.isEmpty(this.record.get(CMDBuild.core.proxy.Constants.ID))) {
+				if (Ext.isEmpty(this.record.get(CMDBuild.core.constants.Proxy.ID))) {
 					this.parentDelegate.addRecord(this.record);
 				} else {
 					this.parentDelegate.editRecord(this.record);
@@ -330,8 +330,8 @@
 					this.loadFormValues(Ext.create('CMDBuild.model.common.tabs.email.Template', response));
 
 					// Bind extra form fields to email record
-					this.record.set(CMDBuild.core.proxy.Constants.TEMPLATE, response[CMDBuild.core.proxy.Constants.NAME]);
-					this.record.set(CMDBuild.core.proxy.Constants.ACCOUNT, response[CMDBuild.core.proxy.Constants.DEFAULT_ACCOUNT]);
+					this.record.set(CMDBuild.core.constants.Proxy.TEMPLATE, response[CMDBuild.core.constants.Proxy.NAME]);
+					this.record.set(CMDBuild.core.constants.Proxy.ACCOUNT, response[CMDBuild.core.constants.Proxy.DEFAULT_ACCOUNT]);
 
 					this.form.keepSynchronizationCheckbox.setDisabled(false);
 				}

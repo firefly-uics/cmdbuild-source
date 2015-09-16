@@ -2,7 +2,7 @@
 
 	// TODO: fix to use class property requires (unusable at the moment because of class wrong name)
 	Ext.require([
-		'CMDBuild.core.proxy.Constants',
+		'CMDBuild.core.constants.Proxy',
 		'CMDBuild.core.proxy.group.DefaultFilters'
 	]);
 
@@ -25,14 +25,14 @@
 		onViewOnFront: function(entryType) {
 			if (entryType) {
 				var dc = _CMMainViewportController.getDanglingCard();
-				var filter = entryType.get(CMDBuild.core.proxy.Constants.FILTER);
-				var newEntryId = entryType.get(CMDBuild.core.proxy.Constants.ID);
+				var filter = entryType.get(CMDBuild.core.constants.Proxy.FILTER);
+				var newEntryId = entryType.get(CMDBuild.core.constants.Proxy.ID);
 
 				// If we haven't a filter try to get default one from server
 				if (Ext.isEmpty(filter)) {
 					var params = {};
-					params[CMDBuild.core.proxy.Constants.CLASS_NAME] = entryType.get(CMDBuild.core.proxy.Constants.NAME);
-					params[CMDBuild.core.proxy.Constants.GROUP] = CMDBuild.Runtime.DefaultGroupName;
+					params[CMDBuild.core.constants.Proxy.CLASS_NAME] = entryType.get(CMDBuild.core.constants.Proxy.NAME);
+					params[CMDBuild.core.constants.Proxy.GROUP] = CMDBuild.Runtime.DefaultGroupName;
 
 					CMDBuild.core.proxy.group.DefaultFilters.read({
 						params: params,
@@ -41,7 +41,7 @@
 							decodedResponse = decodedResponse.response.elements[0];
 
 							if (!Ext.isEmpty(decodedResponse)) {
-								decodedResponse[CMDBuild.core.proxy.Constants.CONFIGURATION] = Ext.decode(decodedResponse[CMDBuild.core.proxy.Constants.CONFIGURATION]);
+								decodedResponse[CMDBuild.core.constants.Proxy.CONFIGURATION] = Ext.decode(decodedResponse[CMDBuild.core.constants.Proxy.CONFIGURATION]);
 
 								filter = Ext.create('CMDBuild.model.CMFilterModel', decodedResponse);
 							}

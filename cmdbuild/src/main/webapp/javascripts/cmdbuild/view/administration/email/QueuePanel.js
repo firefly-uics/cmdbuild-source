@@ -3,7 +3,7 @@
 	Ext.define('CMDBuild.view.administration.email.QueuePanel', {
 		extend: 'Ext.form.Panel',
 
-		requires: ['CMDBuild.core.proxy.Constants'],
+		requires: ['CMDBuild.core.constants.Proxy'],
 
 		mixins: {
 			panelFunctions: 'CMDBuild.view.common.PanelFunctions'
@@ -58,7 +58,7 @@
 			});
 
 			this.cycleIntervalField = Ext.create('CMDBuild.view.common.field.slider.SingleWithExtremeLabels', {
-				name: CMDBuild.core.proxy.Constants.TIME,
+				name: CMDBuild.core.constants.Proxy.TIME,
 				fieldLabel: CMDBuild.Translation.frequencyCheck,
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				maxWidth: CMDBuild.CFG_BIG_FIELD_WIDTH,
@@ -70,7 +70,7 @@
 				dockedItems: [
 					Ext.create('Ext.toolbar.Toolbar', {
 						dock: 'top',
-						itemId: CMDBuild.core.proxy.Constants.TOOLBAR_TOP,
+						itemId: CMDBuild.core.constants.Proxy.TOOLBAR_TOP,
 
 						items: [
 							'->',
@@ -80,7 +80,7 @@
 					}),
 					Ext.create('Ext.toolbar.Toolbar', {
 						dock: 'bottom',
-						itemId: CMDBuild.core.proxy.Constants.TOOLBAR_BOTTOM,
+						itemId: CMDBuild.core.constants.Proxy.TOOLBAR_BOTTOM,
 						ui: 'footer',
 
 						layout: {

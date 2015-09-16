@@ -5,7 +5,7 @@
 
 		requires: [
 			'CMDBuild.controller.management.common.tabs.email.Email',
-			'CMDBuild.core.proxy.Constants'
+			'CMDBuild.core.constants.Proxy'
 		],
 
 		/**
@@ -122,7 +122,7 @@
 					if (!Ext.Object.isEmpty(template)) {
 						CMDBuild.controller.management.common.tabs.email.Email.trafficLightSlotBuild(template, conditionEvalTrafficLightArray);
 
-						var xaVars = Ext.apply({}, template.getData(), template.get(CMDBuild.core.proxy.Constants.VARIABLES));
+						var xaVars = Ext.apply({}, template.getData(), template.get(CMDBuild.core.constants.Proxy.VARIABLES));
 
 						var templateResolver = new CMDBuild.Management.TemplateResolver({
 							clientForm: me.parentDelegate.clientForm,
@@ -134,8 +134,8 @@
 							attributes: Ext.Object.getKeys(xaVars),
 							callback: function(values, ctx) {
 								emailObject = Ext.create('CMDBuild.model.common.tabs.email.Email', values);
-								emailObject.set(CMDBuild.core.proxy.Constants.REFERENCE, me.cmfg('selectedEntityIdGet'));
-								emailObject.set(CMDBuild.core.proxy.Constants.TEMPLATE, template.get(CMDBuild.core.proxy.Constants.KEY));
+								emailObject.set(CMDBuild.core.constants.Proxy.REFERENCE, me.cmfg('selectedEntityIdGet'));
+								emailObject.set(CMDBuild.core.constants.Proxy.TEMPLATE, template.get(CMDBuild.core.constants.Proxy.KEY));
 
 								me.gridStore.add(emailObject);
 

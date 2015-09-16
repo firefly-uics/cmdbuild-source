@@ -56,7 +56,7 @@
 					}
 				},
 				sorters: [ // Setup sorters, also if server returns ordered collection
-					{ property: CMDBuild.core.proxy.Constants.BEGIN_DATE, direction: 'DESC' }
+					{ property: CMDBuild.core.constants.Proxy.BEGIN_DATE, direction: 'DESC' }
 				]
 			});
 		}

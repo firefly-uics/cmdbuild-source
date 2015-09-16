@@ -42,8 +42,8 @@
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
 				name: ENTRY_TYPE,
-				valueField: CMDBuild.core.proxy.Constants.NAME,
-				displayField: CMDBuild.core.proxy.Constants.DESCRIPTION,
+				valueField: CMDBuild.core.constants.Proxy.NAME,
+				displayField: CMDBuild.core.constants.Proxy.DESCRIPTION,
 				editable: false,
 
 				store: _CMCache.getClassesAndProcessesAndDahboardsStore(),
@@ -76,10 +76,10 @@
 			});
 
 			this.defaultForGroups = Ext.create('CMDBuild.view.common.field.CMGroupSelectionList', {
-				name: CMDBuild.core.proxy.Constants.DEFAULT_FOR_GROUPS,
+				name: CMDBuild.core.constants.Proxy.DEFAULT_FOR_GROUPS,
 				fieldLabel: CMDBuild.Translation.defaultForGroups,
 				height: 300,
-				valueField: CMDBuild.core.proxy.Constants.NAME,
+				valueField: CMDBuild.core.constants.Proxy.NAME,
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
 				anchor: '100%'
@@ -111,7 +111,7 @@
 			this.classes.setValue(className);
 
 			var params = {};
-			params[CMDBuild.core.proxy.Constants.ID] = record.get(CMDBuild.core.proxy.Constants.ID);
+			params[CMDBuild.core.constants.Proxy.ID] = record.get(CMDBuild.core.constants.Proxy.ID);
 
 			_CMProxy.Filter.getDefaults({
 				params: params,
@@ -125,7 +125,7 @@
 
 			// The set value programmatic does not fire the select event, so call the delegates manually
 			Ext.apply(this.description, {
-				translationsKeyName: record.get(CMDBuild.core.proxy.Constants.NAME)
+				translationsKeyName: record.get(CMDBuild.core.constants.Proxy.NAME)
 			});
 
 			this.callDelegates('onFilterDataViewFormBuilderClassSelected', [this, className]);
@@ -145,7 +145,7 @@
 			if (filter)
 				values[FILTER] = filter;
 
-			values[CMDBuild.core.proxy.Constants.DEFAULT_FOR_GROUPS] = this.defaultForGroups.getValue();
+			values[CMDBuild.core.constants.Proxy.DEFAULT_FOR_GROUPS] = this.defaultForGroups.getValue();
 
 			return values;
 		},

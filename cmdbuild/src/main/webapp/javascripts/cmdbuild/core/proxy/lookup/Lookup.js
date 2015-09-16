@@ -3,7 +3,7 @@
 	Ext.define('CMDBuild.core.proxy.lookup.Lookup', {
 
 		requires: [
-			'CMDBuild.core.proxy.Constants',
+			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.Index',
 			'CMDBuild.model.lookup.Lookup'
 		],

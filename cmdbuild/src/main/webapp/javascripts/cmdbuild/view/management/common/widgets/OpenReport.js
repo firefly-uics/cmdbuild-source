@@ -4,7 +4,7 @@
 		extend: 'Ext.form.Panel',
 
 		requires: [
-			'CMDBuild.core.proxy.Constants',
+			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.widgets.OpenReport'
 		],
 
@@ -40,14 +40,14 @@
 			Ext.apply(this, {
 				items: [
 					this.formatCombo = Ext.create('Ext.form.field.ComboBox', {
-						name: CMDBuild.core.proxy.Constants.EXTENSION,
+						name: CMDBuild.core.constants.Proxy.EXTENSION,
 						fieldLabel: CMDBuild.Translation.format,
 						labelAlign: 'right',
 						labelWidth: CMDBuild.LABEL_WIDTH,
 						maxWidth: CMDBuild.MEDIUM_FIELD_WIDTH,
-						valueField: CMDBuild.core.proxy.Constants.VALUE,
-						displayField: CMDBuild.core.proxy.Constants.DESCRIPTION,
-						value: CMDBuild.core.proxy.Constants.PDF,
+						valueField: CMDBuild.core.constants.Proxy.VALUE,
+						displayField: CMDBuild.core.constants.Proxy.DESCRIPTION,
+						value: CMDBuild.core.constants.Proxy.PDF,
 						editable: false,
 						forceSelection: true,
 

@@ -4,7 +4,7 @@
 		extend: 'CMDBuild.controller.common.AbstractController',
 
 		requires: [
-			'CMDBuild.core.proxy.Constants',
+			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.dataView.Filter',
 			'CMDBuild.view.common.field.translatable.Utils'
 		],
@@ -122,11 +122,11 @@
 			this.form.loadRecord(this.selectedView);
 
 			// FilterChooser field setup
-			this.form.filterChooser.setClassName(this.selectedView.get(CMDBuild.core.proxy.Constants.SOURCE_CLASS_NAME));
+			this.form.filterChooser.setClassName(this.selectedView.get(CMDBuild.core.constants.Proxy.SOURCE_CLASS_NAME));
 			this.form.filterChooser.setFilter(
 				Ext.create('CMDBuild.model.CMFilterModel', {
-					configuration: Ext.decode(this.selectedView.get(CMDBuild.core.proxy.Constants.FILTER)),
-					entryType: this.selectedView.get(CMDBuild.core.proxy.Constants.SOURCE_CLASS_NAME)
+					configuration: Ext.decode(this.selectedView.get(CMDBuild.core.constants.Proxy.FILTER)),
+					entryType: this.selectedView.get(CMDBuild.core.constants.Proxy.SOURCE_CLASS_NAME)
 				})
 			);
 
@@ -139,11 +139,11 @@
 				var formData = this.form.getData(true);
 
 				if (!Ext.isEmpty(this.form.filterChooser.getFilter()))
-					formData[CMDBuild.core.proxy.Constants.FILTER] = Ext.encode(this.form.filterChooser.getFilter().getConfiguration());
+					formData[CMDBuild.core.constants.Proxy.FILTER] = Ext.encode(this.form.filterChooser.getFilter().getConfiguration());
 
 				formData = Ext.create('CMDBuild.model.dataView.Filter', formData); // Filter unwanted data of filterChooser internal fields
 
-				if (Ext.isEmpty(formData.get(CMDBuild.core.proxy.Constants.ID))) {
+				if (Ext.isEmpty(formData.get(CMDBuild.core.constants.Proxy.ID))) {
 					CMDBuild.core.proxy.dataView.Filter.create({
 						params: formData.getData(),
 						scope: this,
@@ -162,7 +162,7 @@
 		removeItem: function() {
 			if (!Ext.isEmpty(this.selectedView)) {
 				var params = {};
-				params[CMDBuild.core.proxy.Constants.ID] = this.selectedView.get(CMDBuild.core.proxy.Constants.ID);
+				params[CMDBuild.core.constants.Proxy.ID] = this.selectedView.get(CMDBuild.core.constants.Proxy.ID);
 
 				CMDBuild.core.proxy.dataView.Filter.remove({
 					params: params,
@@ -198,8 +198,8 @@
 			this.grid.getStore().load({
 				callback: function(records, operation, success) {
 					var rowIndex = this.find(
-						CMDBuild.core.proxy.Constants.NAME,
-						me.form.getForm().findField(CMDBuild.core.proxy.Constants.NAME).getValue()
+						CMDBuild.core.constants.Proxy.NAME,
+						me.form.getForm().findField(CMDBuild.core.constants.Proxy.NAME).getValue()
 					);
 
 					me.grid.getSelectionModel().select(rowIndex, true);

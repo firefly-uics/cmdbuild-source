@@ -51,7 +51,7 @@
 				delegate: this
 			});
 
-			this.params[CMDBuild.core.proxy.Constants.VIEW] = this.view;
+			this.params[CMDBuild.core.constants.Proxy.VIEW] = this.view;
 
 			this.cmfg('onConfigurationRead', this.params);
 		},

@@ -4,7 +4,7 @@
 		extend: 'Ext.container.Container',
 
 		requires: [
-			'CMDBuild.core.proxy.Constants',
+			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.localization.Localization'
 		],
 
@@ -17,20 +17,20 @@
 				scope: this,
 				loadMask: true,
 				success: function(result, options, decodedResult) {
-					var translations = decodedResult[CMDBuild.core.proxy.Constants.TRANSLATIONS];
+					var translations = decodedResult[CMDBuild.core.constants.Proxy.TRANSLATIONS];
 
 					// Sort languages columns with alphabetical sort order
-					CMDBuild.core.Utils.objectArraySort(translations, CMDBuild.core.proxy.Constants.DESCRIPTION);
+					CMDBuild.core.Utils.objectArraySort(translations, CMDBuild.core.constants.Proxy.DESCRIPTION);
 
 					Ext.Array.forEach(translations, function(translation, i, allTranslations) {
 						var item = Ext.create('Ext.form.field.Checkbox', {
-							fieldLabel: translation[CMDBuild.core.proxy.Constants.DESCRIPTION],
+							fieldLabel: translation[CMDBuild.core.constants.Proxy.DESCRIPTION],
 							labelWidth: CMDBuild.LABEL_WIDTH,
-							name: translation[CMDBuild.core.proxy.Constants.TAG],
+							name: translation[CMDBuild.core.constants.Proxy.TAG],
 							padding: '3 5',
 							margin: '0 20 0 0',
 							submitValue: false,
-							labelClsExtra: 'ux-flag-' + translation[CMDBuild.core.proxy.Constants.TAG],
+							labelClsExtra: 'ux-flag-' + translation[CMDBuild.core.constants.Proxy.TAG],
 							labelStyle: 'background-repeat: no-repeat; background-position: left; padding-left: 22px;'
 						});
 

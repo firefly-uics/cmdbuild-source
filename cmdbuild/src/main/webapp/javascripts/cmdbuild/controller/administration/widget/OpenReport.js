@@ -4,7 +4,7 @@
 		extend: 'CMDBuild.controller.administration.widget.CMBaseWidgetDefinitionFormController',
 
 		requires: [
-			'CMDBuild.core.proxy.Constants',
+			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.widgets.OpenReport',
 			'CMDBuild.model.widget.openReport.ReportCombo'
 		],
@@ -103,7 +103,7 @@
 				reportCode = selectedReport[0];
 
 			if (reportCode.self && reportCode.self.$className == 'CMDBuild.model.widget.openReport.ReportCombo')
-				reportCode = reportCode.get(CMDBuild.core.proxy.Constants.ID);
+				reportCode = reportCode.get(CMDBuild.core.constants.Proxy.ID);
 
 			return reportCode;
 		},

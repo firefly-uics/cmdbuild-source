@@ -3,7 +3,7 @@
 	Ext.define('CMDBuild.view.management.common.tabs.email.attachments.picker.MainWindow', {
 		extend: 'CMDBuild.PopupWindow',
 
-		requires: ['CMDBuild.core.proxy.Constants'],
+		requires: ['CMDBuild.core.constants.Proxy'],
 
 		/**
 		 * @cfg {CMDBuild.controller.management.common.tabs.email.attachments.Picker}
@@ -34,8 +34,8 @@
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				fieldLabel: CMDBuild.Translation.selectAClass,
 				labelAlign: 'right',
-				valueField: CMDBuild.core.proxy.Constants.ID,
-				displayField: CMDBuild.core.proxy.Constants.DESCRIPTION,
+				valueField: CMDBuild.core.constants.Proxy.ID,
+				displayField: CMDBuild.core.constants.Proxy.DESCRIPTION,
 				editable: false,
 
 				store: _CMCache.getClassesAndProcessesStore(),
@@ -65,12 +65,12 @@
 				dockedItems: [
 					Ext.create('Ext.toolbar.Toolbar', {
 						dock: 'top',
-						itemId: CMDBuild.core.proxy.Constants.TOOLBAR_TOP,
+						itemId: CMDBuild.core.constants.Proxy.TOOLBAR_TOP,
 						items: [this.classComboBox]
 					}),
 					Ext.create('Ext.toolbar.Toolbar', {
 						dock: 'bottom',
-						itemId: CMDBuild.core.proxy.Constants.TOOLBAR_BOTTOM,
+						itemId: CMDBuild.core.constants.Proxy.TOOLBAR_BOTTOM,
 						ui: 'footer',
 
 						layout: {

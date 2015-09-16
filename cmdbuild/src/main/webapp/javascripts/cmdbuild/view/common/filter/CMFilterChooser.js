@@ -127,11 +127,11 @@
 				columns: [
 					{
 						header: CMDBuild.Translation.name,
-						dataIndex: CMDBuild.core.proxy.Constants.NAME,
+						dataIndex: CMDBuild.core.constants.Proxy.NAME,
 						flex: 1
 					}, {
 						header: CMDBuild.Translation.description_,
-						dataIndex: CMDBuild.core.proxy.Constants.DESCRIPTION,
+						dataIndex: CMDBuild.core.constants.Proxy.DESCRIPTION,
 						flex: 1
 					}
 				],

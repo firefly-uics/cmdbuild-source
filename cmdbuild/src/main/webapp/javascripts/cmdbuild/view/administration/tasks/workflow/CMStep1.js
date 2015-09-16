@@ -128,7 +128,7 @@
 	Ext.define('CMDBuild.view.administration.tasks.workflow.CMStep1', {
 		extend: 'Ext.panel.Panel',
 
-		requires: ['CMDBuild.core.proxy.Constants'],
+		requires: ['CMDBuild.core.constants.Proxy'],
 
 		/**
 		 * @cfg {CMDBuild.view.administration.tasks.workflow.CMStep1Delegate}
@@ -150,7 +150,7 @@
 			this.typeField = Ext.create('Ext.form.field.Text', {
 				fieldLabel: tr.type,
 				labelWidth: CMDBuild.LABEL_WIDTH,
-				name: CMDBuild.core.proxy.Constants.TYPE,
+				name: CMDBuild.core.constants.Proxy.TYPE,
 				value: tr.tasksTypes.workflow,
 				maxWidth: CMDBuild.CFG_BIG_FIELD_WIDTH,
 				anchor: '100%',
@@ -161,11 +161,11 @@
 			});
 
 			this.idField = Ext.create('Ext.form.field.Hidden', {
-				name: CMDBuild.core.proxy.Constants.ID
+				name: CMDBuild.core.constants.Proxy.ID
 			});
 
 			this.descriptionField = Ext.create('Ext.form.field.Text', {
-				name: CMDBuild.core.proxy.Constants.DESCRIPTION,
+				name: CMDBuild.core.constants.Proxy.DESCRIPTION,
 				fieldLabel: CMDBuild.Translation.description_,
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				maxWidth: CMDBuild.CFG_BIG_FIELD_WIDTH,
@@ -174,7 +174,7 @@
 			});
 
 			this.activeField = Ext.create('Ext.form.field.Checkbox', {
-				name: CMDBuild.core.proxy.Constants.ACTIVE,
+				name: CMDBuild.core.constants.Proxy.ACTIVE,
 				fieldLabel: tr.startOnSave,
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				maxWidth: CMDBuild.CFG_BIG_FIELD_WIDTH,
@@ -183,7 +183,7 @@
 
 			this.workflowForm = Ext.create('CMDBuild.view.administration.tasks.common.workflowForm.CMWorkflowForm', {
 				combo: {
-					name: CMDBuild.core.proxy.Constants.WORKFLOW_CLASS_NAME
+					name: CMDBuild.core.constants.Proxy.WORKFLOW_CLASS_NAME
 				},
 				widthFixDisable: false
 			});

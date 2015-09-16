@@ -11,22 +11,6 @@
 		/**
 		 * @param {Object} parameters
 		 */
-		doLogin: function(parameters) {
-			CMDBuild.Ajax.request({
-				method: 'POST',
-				scope: parameters.scope || this,
-				important: true,
-				url: CMDBuild.core.proxy.Index.login,
-				params: parameters.params,
-				success: parameters.success || Ext.emptyFn,
-				failure: parameters.failure || Ext.emptyFn,
-				callback: parameters.callback || Ext.emptyFn
-			});
-		},
-
-		/**
-		 * @param {Object} parameters
-		 */
 		doRequest: function(parameters) {
 			var successWithAdapter = Ext.Function.createInterceptor(parameters.success || Ext.emptyFn, function(response) {
 				if (parameters.adapter) {

@@ -17,9 +17,9 @@
 		extend: 'Ext.app.Application',
 
 		requires: [
+			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.Classes',
 			'CMDBuild.core.proxy.Configuration',
-			'CMDBuild.core.proxy.Constants',
 			'CMDBuild.core.proxy.domain.Domain',
 			'CMDBuild.core.proxy.group.Group',
 			'CMDBuild.core.proxy.lookup.Type',
@@ -190,7 +190,7 @@
 				 * Classes and process
 				 */
 				var params = {};
-				params[CMDBuild.core.proxy.Constants.ACTIVE] = false;
+				params[CMDBuild.core.constants.Proxy.ACTIVE] = false;
 
 				CMDBuild.core.proxy.Classes.read({
 					params: params,

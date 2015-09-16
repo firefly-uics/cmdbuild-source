@@ -7,7 +7,7 @@
 		extend: 'CMDBuild.controller.management.common.tabs.History',
 
 		requires: [
-			'CMDBuild.core.proxy.Constants',
+			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.common.tabs.history.Classes'
 		],
 
@@ -30,10 +30,10 @@
 			'Id',
 			'IdClass',
 			'IdClass_value',
-			CMDBuild.core.proxy.Constants.BEGIN_DATE,
-			CMDBuild.core.proxy.Constants.CLASS_NAME,
-			CMDBuild.core.proxy.Constants.ID,
-			CMDBuild.core.proxy.Constants.USER
+			CMDBuild.core.constants.Proxy.BEGIN_DATE,
+			CMDBuild.core.constants.Proxy.CLASS_NAME,
+			CMDBuild.core.constants.Proxy.ID,
+			CMDBuild.core.constants.Proxy.USER
 		],
 
 		/**
@@ -95,7 +95,7 @@
 					selectedEntityAttributes[key] = value;
 			}, this);
 
-			selectedEntityMergedData[CMDBuild.core.proxy.Constants.ID] = this.selectedEntity.get(CMDBuild.core.proxy.Constants.ID);
+			selectedEntityMergedData[CMDBuild.core.constants.Proxy.ID] = this.selectedEntity.get(CMDBuild.core.constants.Proxy.ID);
 
 			this.valuesFormattingAndCompare(selectedEntityAttributes); // Formats values only
 
@@ -135,7 +135,7 @@
 		 */
 		buildCurrentEntityModel: function(entityData, entityAttributeData) {
 			var currentEntityModel = Ext.create('CMDBuild.model.common.tabs.history.classes.CardRecord', entityData);
-			currentEntityModel.set(CMDBuild.core.proxy.Constants.VALUES, entityAttributeData);
+			currentEntityModel.set(CMDBuild.core.constants.Proxy.VALUES, entityAttributeData);
 			currentEntityModel.commit();
 
 			return currentEntityModel;
@@ -157,12 +157,12 @@
 					selectedEntityAttributes[key] = value;
 			}, this);
 
-			selectedEntityMergedData[CMDBuild.core.proxy.Constants.ID] = this.selectedEntity.get(CMDBuild.core.proxy.Constants.ID);
+			selectedEntityMergedData[CMDBuild.core.constants.Proxy.ID] = this.selectedEntity.get(CMDBuild.core.constants.Proxy.ID);
 
 			if (!Ext.isEmpty(predecessorRecord)) {
 				var predecessorParams = {};
-				predecessorParams[CMDBuild.core.proxy.Constants.CARD_ID] = predecessorRecord.get(CMDBuild.core.proxy.Constants.ID); // Historic card ID
-				predecessorParams[CMDBuild.core.proxy.Constants.CLASS_NAME] = selectedEntityMergedData[CMDBuild.core.proxy.Constants.CLASS_NAME];
+				predecessorParams[CMDBuild.core.constants.Proxy.CARD_ID] = predecessorRecord.get(CMDBuild.core.constants.Proxy.ID); // Historic card ID
+				predecessorParams[CMDBuild.core.constants.Proxy.CLASS_NAME] = selectedEntityMergedData[CMDBuild.core.constants.Proxy.CLASS_NAME];
 
 				this.getProxy().getHistoric({
 					params: predecessorParams,
@@ -171,10 +171,10 @@
 						_error('get historic predecessor card failure', this);
 					},
 					success: function(response, options, decodedResponse) {
-						this.valuesFormattingAndCompare(selectedEntityAttributes, decodedResponse.response[CMDBuild.core.proxy.Constants.VALUES]);
+						this.valuesFormattingAndCompare(selectedEntityAttributes, decodedResponse.response[CMDBuild.core.constants.Proxy.VALUES]);
 
 						// Setup record property with historic card details to use XTemplate functionalities to render
-						record.set(CMDBuild.core.proxy.Constants.VALUES, selectedEntityAttributes);
+						record.set(CMDBuild.core.constants.Proxy.VALUES, selectedEntityAttributes);
 					}
 				});
 			}
@@ -195,7 +195,7 @@
 		onCardSelected: function(card) {
 			this.tabHistorySelectedEntitySet(card);
 
-			if (!Ext.isEmpty(this.entryType) && this.entryType.get(CMDBuild.core.proxy.Constants.TABLE_TYPE) != 'simpletable') // SimpleTables hasn't history
+			if (!Ext.isEmpty(this.entryType) && this.entryType.get(CMDBuild.core.constants.Proxy.TABLE_TYPE) != 'simpletable') // SimpleTables hasn't history
 				this.view.setDisabled(Ext.isEmpty(this.tabHistorySelectedEntityGet()));
 
 			this.cmfg('onTabHistoryPanelShow');

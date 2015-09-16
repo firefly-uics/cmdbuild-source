@@ -3,7 +3,7 @@
 	Ext.define('CMDBuild.controller.administration.domain.Attributes', {
 		extend: 'CMDBuild.controller.administration.CMBaseAttributesController',
 
-		requires: ['CMDBuild.core.proxy.Constants'],
+		requires: ['CMDBuild.core.constants.Proxy'],
 
 		/**
 		 * @cfg {CMDBuild.controller.administration.domain.Domain}
@@ -92,7 +92,7 @@
 		 */
 		anAttributeWasMoved: function(savedAttributes) {
 			if (!this.cmfg('domainSelectedDomainIsEmpty') && !Ext.isEmpty(savedAttributes)) {
-				var oldAttributes = this.cmfg('domainSelectedDomainGet', CMDBuild.core.proxy.Constants.ATTRIBUTES);
+				var oldAttributes = this.cmfg('domainSelectedDomainGet', CMDBuild.core.constants.Proxy.ATTRIBUTES);
 
 				for (var i = 0; i < savedAttributes.length; ++i) {
 					var newAttr = savedAttributes[i];
@@ -100,8 +100,8 @@
 					for (var j = 0; j < oldAttributes.length; ++j) {
 						var oldAttr = oldAttributes[j];
 
-						if (oldAttr[CMDBuild.core.proxy.Constants.NAME] == newAttr[CMDBuild.core.proxy.Constants.NAME]) {
-							oldAttr[CMDBuild.core.proxy.Constants.INDEX] = newAttr[CMDBuild.core.proxy.Constants.INDEX];
+						if (oldAttr[CMDBuild.core.constants.Proxy.NAME] == newAttr[CMDBuild.core.constants.Proxy.NAME]) {
+							oldAttr[CMDBuild.core.constants.Proxy.INDEX] = newAttr[CMDBuild.core.constants.Proxy.INDEX];
 
 							break;
 						}
@@ -115,16 +115,16 @@
 				CMDBuild.LoadMask.get().show();
 				CMDBuild.ServiceProxy.administration.domain.attribute.remove({
 					params: {
-						className: this.cmfg('domainSelectedDomainGet', CMDBuild.core.proxy.Constants.NAME),
-						name: this.currentAttribute.get(CMDBuild.core.proxy.Constants.NAME)
+						className: this.cmfg('domainSelectedDomainGet', CMDBuild.core.constants.Proxy.NAME),
+						name: this.currentAttribute.get(CMDBuild.core.constants.Proxy.NAME)
 					},
 					scope: this,
 					success: function(result, options, decodedResult) {
 						this.form.reset();
 
 						_CMCache.onDomainAttributeDelete(
-							this.cmfg('domainSelectedDomainGet', CMDBuild.core.proxy.Constants.ID),
-							this.currentAttribute[CMDBuild.core.proxy.Constants.DATA]
+							this.cmfg('domainSelectedDomainGet', CMDBuild.core.constants.Proxy.ID),
+							this.currentAttribute[CMDBuild.core.constants.Proxy.DATA]
 						);
 
 						this.currentAttribute = null;
@@ -154,7 +154,7 @@
 		 * @override
 		 */
 		getCurrentEntryTypeId: function() {
-			return this.cmfg('domainSelectedDomainGet', CMDBuild.core.proxy.Constants.ID);
+			return this.cmfg('domainSelectedDomainGet', CMDBuild.core.constants.Proxy.ID);
 		},
 
 		onAbortButtonClick: function() {
@@ -183,15 +183,15 @@
 				var rec = store.getAt(i);
 
 				var attribute = {};
-				attribute[CMDBuild.core.proxy.Constants.NAME] = rec.get(CMDBuild.core.proxy.Constants.NAME);
-				attribute[CMDBuild.core.proxy.Constants.INDEX] = i + 1;
+				attribute[CMDBuild.core.constants.Proxy.NAME] = rec.get(CMDBuild.core.constants.Proxy.NAME);
+				attribute[CMDBuild.core.constants.Proxy.INDEX] = i + 1;
 
 				attributes.push(attribute);
 			}
 
 			var params = {};
-			params[CMDBuild.core.proxy.Constants.ATTRIBUTES] = Ext.JSON.encode(attributes);
-			params[CMDBuild.core.proxy.Constants.CLASS_NAME] = this.cmfg('domainSelectedDomainGet', CMDBuild.core.proxy.Constants.NAME);
+			params[CMDBuild.core.constants.Proxy.ATTRIBUTES] = Ext.JSON.encode(attributes);
+			params[CMDBuild.core.constants.Proxy.CLASS_NAME] = this.cmfg('domainSelectedDomainGet', CMDBuild.core.constants.Proxy.NAME);
 
 			CMDBuild.ServiceProxy.attributes.reorder({
 				params: params,
@@ -223,7 +223,7 @@
 			if (!this.cmfg('domainSelectedDomainIsEmpty')) {
 				this.view.enable();
 
-				this.form.domainName = this.cmfg('domainSelectedDomainGet', CMDBuild.core.proxy.Constants.NAME);
+				this.form.domainName = this.cmfg('domainSelectedDomainGet', CMDBuild.core.constants.Proxy.NAME);
 				this.form.hideContextualFields();
 
 				this.grid.refreshStore(this.cmfg('domainSelectedDomainGet'));
@@ -234,7 +234,7 @@
 			var nonValid = this.form.getNonValidFields();
 			var data = this.form.getData(true);
 
-			data[CMDBuild.core.proxy.Constants.CLASS_NAME] = this.cmfg('domainSelectedDomainGet', CMDBuild.core.proxy.Constants.NAME);
+			data[CMDBuild.core.constants.Proxy.CLASS_NAME] = this.cmfg('domainSelectedDomainGet', CMDBuild.core.constants.Proxy.NAME);
 
 			if (nonValid.length > 0) {
 				CMDBuild.Msg.error(CMDBuild.Translation.common.failure, CMDBuild.Translation.errors.invalid_fields, false);
@@ -252,9 +252,9 @@
 					this.currentAttribute = null;
 					this.form.disableModify();
 
-					_CMCache.onDomainAttributeSaved(this.cmfg('domainSelectedDomainGet', CMDBuild.core.proxy.Constants.ID), attribute);
+					_CMCache.onDomainAttributeSaved(this.cmfg('domainSelectedDomainGet', CMDBuild.core.constants.Proxy.ID), attribute);
 
-					this.grid.selectAttributeByName(attribute[CMDBuild.core.proxy.Constants.NAME]);
+					this.grid.selectAttributeByName(attribute[CMDBuild.core.constants.Proxy.NAME]);
 
 					CMDBuild.view.common.field.translatable.Utils.commit(this.form);
 				},

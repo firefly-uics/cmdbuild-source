@@ -3,7 +3,7 @@
 	Ext.define('CMDBuild.core.proxy.User', {
 
 		requires: [
-			'CMDBuild.core.proxy.Constants',
+			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.Index',
 			'CMDBuild.model.user.DefaultGroup',
 			'CMDBuild.model.user.User'
@@ -65,7 +65,7 @@
 					}
 				},
 				sorters: [{
-					property: CMDBuild.core.proxy.Constants.DESCRIPTION,
+					property: CMDBuild.core.constants.Proxy.DESCRIPTION,
 					direction: 'ASC'
 				}]
 			});

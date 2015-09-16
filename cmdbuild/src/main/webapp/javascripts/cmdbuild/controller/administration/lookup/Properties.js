@@ -4,7 +4,7 @@
 		extend: 'CMDBuild.controller.common.AbstractController',
 
 		requires: [
-			'CMDBuild.core.proxy.Constants',
+			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.lookup.Type',
 			'CMDBuild.model.lookup.Type'
 		],
@@ -73,7 +73,7 @@
 			// Validate before save
 			if (this.validate(this.form)) {
 				var formData = this.form.getData(true);
-				formData['orig_type'] = formData[CMDBuild.core.proxy.Constants.ID]; // TODO: wrong server implementation to fix
+				formData['orig_type'] = formData[CMDBuild.core.constants.Proxy.ID]; // TODO: wrong server implementation to fix
 
 				CMDBuild.core.proxy.lookup.Type.save({ // TODO: server side refactor needed to follow new CMDBuild standards (create/update)
 					params: formData,

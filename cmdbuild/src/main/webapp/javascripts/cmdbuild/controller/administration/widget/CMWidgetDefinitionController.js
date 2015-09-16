@@ -3,7 +3,7 @@
 	Ext.define('CMDBuild.controller.administration.widget.CMWidgetDefinitionController', {
 
 		requires: [
-			'CMDBuild.core.proxy.Constants',
+			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.model.widget.WidgetDefinition'
 		],
 
@@ -175,11 +175,11 @@
 				fn: function(button) {
 					if (button == 'yes') {
 						if (me.model && me.subController) {
-							var id = me.model.get(CMDBuild.core.proxy.Constants.ID);
+							var id = me.model.get(CMDBuild.core.constants.Proxy.ID);
 							var params = {};
 
-							params[CMDBuild.core.proxy.Constants.CLASS_NAME] = _CMCache.getEntryTypeNameById(me.classId);
-							params[CMDBuild.core.proxy.Constants.WIDGET_ID] = id;
+							params[CMDBuild.core.constants.Proxy.CLASS_NAME] = _CMCache.getEntryTypeNameById(me.classId);
+							params[CMDBuild.core.constants.Proxy.WIDGET_ID] = id;
 
 							CMDBuild.ServiceProxy.CMWidgetConfiguration.remove({
 								params: params,
@@ -207,12 +207,12 @@
 			// Check for invalid fields and subController
 			if (this.subController && invalidFieldsArray.length == 0) {
 				if (this.model) {
-					widgetDef[CMDBuild.core.proxy.Constants.ID] = this.model.get(CMDBuild.core.proxy.Constants.ID);
+					widgetDef[CMDBuild.core.constants.Proxy.ID] = this.model.get(CMDBuild.core.constants.Proxy.ID);
 				}
 
 				var params = {};
-				params[CMDBuild.core.proxy.Constants.CLASS_NAME] = _CMCache.getEntryTypeNameById(this.classId);
-				params[CMDBuild.core.proxy.Constants.WIDGET] = Ext.encode(widgetDef);
+				params[CMDBuild.core.constants.Proxy.CLASS_NAME] = _CMCache.getEntryTypeNameById(this.classId);
+				params[CMDBuild.core.constants.Proxy.WIDGET] = Ext.encode(widgetDef);
 
 				CMDBuild.ServiceProxy.CMWidgetConfiguration.save({
 					params: params,
@@ -253,7 +253,7 @@
 		onWidgetDefinitionSelect: function(grid, record, index, eOpts) {
 			this.model = record;
 
-			this.buildSubController(record.get(CMDBuild.core.proxy.Constants.TYPE), record, this.classId);
+			this.buildSubController(record.get(CMDBuild.core.constants.Proxy.TYPE), record, this.classId);
 		}
 	});
 

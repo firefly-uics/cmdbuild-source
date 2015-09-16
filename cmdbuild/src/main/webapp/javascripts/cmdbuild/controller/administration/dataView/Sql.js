@@ -4,7 +4,7 @@
 		extend: 'CMDBuild.controller.common.AbstractController',
 
 		requires: [
-			'CMDBuild.core.proxy.Constants',
+			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.dataView.Sql',
 			'CMDBuild.view.common.field.translatable.Utils'
 		],
@@ -116,7 +116,7 @@
 			if (this.validate(this.form)) {
 				var formData = Ext.create('CMDBuild.model.dataView.Sql',this.form.getData(true));
 
-				if (Ext.isEmpty(formData.get(CMDBuild.core.proxy.Constants.ID))) {
+				if (Ext.isEmpty(formData.get(CMDBuild.core.constants.Proxy.ID))) {
 					CMDBuild.core.proxy.dataView.Sql.create({
 						params: formData.getData(),
 						scope: this,
@@ -135,7 +135,7 @@
 		removeItem: function() {
 			if (!Ext.isEmpty(this.selectedView)) {
 				var params = {};
-				params[CMDBuild.core.proxy.Constants.ID] = this.selectedView.get(CMDBuild.core.proxy.Constants.ID);
+				params[CMDBuild.core.constants.Proxy.ID] = this.selectedView.get(CMDBuild.core.constants.Proxy.ID);
 
 				CMDBuild.core.proxy.dataView.Sql.remove({
 					params: params,
@@ -171,8 +171,8 @@
 			this.grid.getStore().load({
 				callback: function(records, operation, success) {
 					var rowIndex = this.find(
-						CMDBuild.core.proxy.Constants.NAME,
-						me.form.getForm().findField(CMDBuild.core.proxy.Constants.NAME).getValue()
+						CMDBuild.core.constants.Proxy.NAME,
+						me.form.getForm().findField(CMDBuild.core.constants.Proxy.NAME).getValue()
 					);
 
 					me.grid.getSelectionModel().select(rowIndex, true);

@@ -6,7 +6,7 @@
 		requires: [
 			'CMDBuild.controller.common.AbstractBaseWidgetController',
 			'CMDBuild.core.Message',
-			'CMDBuild.core.proxy.Constants',
+			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.Index',
 			'CMDBuild.core.proxy.report.Report'
 		],

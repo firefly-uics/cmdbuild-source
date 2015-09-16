@@ -4,7 +4,7 @@
 		extend: 'Ext.grid.Panel',
 
 		requires: [
-			'CMDBuild.core.proxy.Constants',
+			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.group.Users'
 		],
 
@@ -22,12 +22,12 @@
 				columns: [
 					{
 						text: CMDBuild.Translation.username,
-						dataIndex: CMDBuild.core.proxy.Constants.USERNAME,
+						dataIndex: CMDBuild.core.constants.Proxy.USERNAME,
 						flex: 1
 					},
 					{
 						text: CMDBuild.Translation.descriptionLabel,
-						dataIndex: CMDBuild.core.proxy.Constants.DESCRIPTION,
+						dataIndex: CMDBuild.core.constants.Proxy.DESCRIPTION,
 						flex: 1
 					}
 				],

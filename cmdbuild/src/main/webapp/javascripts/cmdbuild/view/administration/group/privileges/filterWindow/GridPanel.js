@@ -3,7 +3,7 @@
 	Ext.define('CMDBuild.view.administration.group.privileges.filterWindow.GridPanel', {
 		extend: 'Ext.grid.Panel',
 
-		requires: ['CMDBuild.core.proxy.Constants'],
+		requires: ['CMDBuild.core.constants.Proxy'],
 
 		border: false,
 		frame: false,
@@ -13,17 +13,17 @@
 			Ext.apply(this, {
 				columns: [
 					{
-						dataIndex: CMDBuild.core.proxy.Constants.NAME,
+						dataIndex: CMDBuild.core.constants.Proxy.NAME,
 						text: CMDBuild.Translation.name,
 						flex: 1
 					},
 					{
-						dataIndex: CMDBuild.core.proxy.Constants.DESCRIPTION,
+						dataIndex: CMDBuild.core.constants.Proxy.DESCRIPTION,
 						text: CMDBuild.Translation.descriptionLabel,
 						flex: 1
 					},
 					Ext.create('Ext.grid.column.CheckColumn', {
-						dataIndex: CMDBuild.core.proxy.Constants.NONE,
+						dataIndex: CMDBuild.core.constants.Proxy.NONE,
 						text: CMDBuild.Translation.none,
 						width: 60,
 						align: 'center',
@@ -48,7 +48,7 @@
 						}
 					}),
 					Ext.create('Ext.grid.column.CheckColumn', {
-						dataIndex: CMDBuild.core.proxy.Constants.READ,
+						dataIndex: CMDBuild.core.constants.Proxy.READ,
 						text: CMDBuild.Translation.read,
 						width: 60,
 						align: 'center',
@@ -73,7 +73,7 @@
 						}
 					}),
 					Ext.create('Ext.grid.column.CheckColumn', {
-						dataIndex: CMDBuild.core.proxy.Constants.WRITE,
+						dataIndex: CMDBuild.core.constants.Proxy.WRITE,
 						text: CMDBuild.Translation.write,
 						width: 60,
 						align: 'center',

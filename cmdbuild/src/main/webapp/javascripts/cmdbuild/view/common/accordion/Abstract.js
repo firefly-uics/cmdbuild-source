@@ -9,7 +9,7 @@
 		extend: 'Ext.tree.Panel',
 
 		requires: [
-			'CMDBuild.core.proxy.Constants',
+			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.model.common.AccordionStore'
 		],
 
@@ -51,7 +51,7 @@
 
 					sorters: [
 						{ property: 'cmIndex', direction: 'ASC' },
-						{ property: CMDBuild.core.proxy.Constants.TEXT, direction: 'ASC' }
+						{ property: CMDBuild.core.constants.Proxy.TEXT, direction: 'ASC' }
 					]
 				})
 			});

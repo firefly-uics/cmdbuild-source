@@ -5,7 +5,7 @@
 
 		requires: [
 			'CMDBuild.core.Message',
-			'CMDBuild.core.proxy.Constants',
+			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.email.Accounts'
 		],
 
@@ -22,7 +22,7 @@
 				columns: [
 					{
 						text: CMDBuild.Translation.defaultLabel,
-						dataIndex: CMDBuild.core.proxy.Constants.IS_DEFAULT,
+						dataIndex: CMDBuild.core.constants.Proxy.IS_DEFAULT,
 						align: 'center',
 						width: 50,
 						sortable: false,
@@ -35,12 +35,12 @@
 						}
 					},
 					{
-						dataIndex: CMDBuild.core.proxy.Constants.NAME,
+						dataIndex: CMDBuild.core.constants.Proxy.NAME,
 						text: CMDBuild.Translation.name,
 						flex: 1
 					},
 					{
-						dataIndex: CMDBuild.core.proxy.Constants.ADDRESS,
+						dataIndex: CMDBuild.core.constants.Proxy.ADDRESS,
 						text: CMDBuild.Translation.address,
 						flex: 1
 					}
