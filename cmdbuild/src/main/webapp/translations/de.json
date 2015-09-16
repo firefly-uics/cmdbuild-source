@@ -485,6 +485,7 @@
 			"add": "Hinzufügen",
 			"apply": "Anwenden",
 			"as": "als",
+			"changeUser": "Benutzer ändern",
 			"check": "<em>Check</em>",
 			"clone": "Klonen",
 			"close": "Schließen",
@@ -817,20 +818,6 @@
 	"info": {
 		"card_not_found": "Die Karte stimmt nicht mehr mit dem eingestellten Filter überein"
 	},
-	"login": {
-		"change_user": "Benutzer ändern",
-		"failed": "Anmeldung fehlgeschlagen",
-		"language": "Sprache",
-		"login": "Anmelden",
-		"multi_group": "Eine Gruppe auswählen",
-		"password": "Passwort",
-		"relogin_message": "Verbindung zur Sitzung ist abgebrochen. Bitte melden Sie sich erneut an.",
-		"relogin_title": "Die Sitzung ist ausgefallen",
-		"title": "Geben Sie Ihre Zugangsdaten ein",
-		"username": "Benutzer",
-		"waitMsg": "Dateien werden gesendet ...",
-		"waitTitle": "Server wird kontaktiert"
-	},
 	"management": {
 		"description": "Datenmanagement-Modul",
 		"findfilter": {
@@ -1152,6 +1139,7 @@
 	"cc": "Cc",
 	"changePassword": "Passwort ändern",
 	"checkFrequency": "Häufigkeit kontrollieren (Minuten)",
+	"chooseAGroup": "Eine Gruppe auswählen",
 	"chooseAttachmentFromDb": "Anhang aus Datenbank auswählen",
 	"classAttribute": "Klasse-Attribut",
 	"classLabel": "Klasse",
@@ -1295,6 +1283,7 @@
 	"lockTimeout": "Maximale Zeitüberschreitung beim Sperren (Sekunden)",
 	"loggedGroup": "Angemeldete Gruppe",
 	"loggedUser": "Angemeldeter Benutzer",
+	"login": "Anmelden",
 	"lookupList": "Liste der Punkte",
 	"lookupTypes": "Lookup Typ",
 	"main": "Hauptsächlich",
@@ -1399,6 +1388,8 @@
 	"serverUrl": "Dienst-URL",
 	"service": "<em>Service</em>",
 	"serviceSynchronization": "Synchronisierung der Dienste",
+	"sessionExpired": "Die Sitzung ist ausgefallen",
+	"sessionExpiredMessage": "Verbindung zur Sitzung ist abgebrochen. Bitte melden Sie sich erneut an.",
 	"sessionTimeout": "Sitzungsdauer (Sekunden)",
 	"set": "Eingestellt",
 	"setAsDefault": "Als default einstellen",

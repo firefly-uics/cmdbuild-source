@@ -485,6 +485,7 @@
 			"add": "اضافه",
 			"apply": "اعمال کردن",
 			"as": "به عنوان",
+			"changeUser": "تغییر کاربر",
 			"check": "<em>Check</em>",
 			"clone": "مشابه گیری",
 			"close": "بستن",
@@ -817,20 +818,6 @@
 	"info": {
 		"card_not_found": "کارت با فیلترهای کنونی همخوانی ندارد"
 	},
-	"login": {
-		"change_user": "تغییر کاربر",
-		"failed": "خطای ورود",
-		"language": "زبان",
-		"login": "ورود",
-		"multi_group": "انتخاب گروه",
-		"password": "رمز عبور",
-		"relogin_message": "نشست دارای احتمال منقضی شده،لطفا دوباره رمز عبور خود را وارد نمایید",
-		"relogin_title": "نشست منقضی شد",
-		"title": "لطفا وارد شوید",
-		"username": "نام کاربری",
-		"waitMsg": "ارسال اطلاعات",
-		"waitTitle": "در حال اتصال"
-	},
 	"management": {
 		"description": "ماژول مدیریت اطلاعات",
 		"findfilter": {
@@ -1152,6 +1139,7 @@
 	"cc": "Cc",
 	"changePassword": "تغییر رمز عبور",
 	"checkFrequency": "فرکانس چک کردن(به دقیقه)",
+	"chooseAGroup": "انتخاب گروه",
 	"chooseAttachmentFromDb": "انتخاب ضمیمه از پایگاه داده",
 	"classAttribute": "Class attribute",
 	"classLabel": "کلاس",
@@ -1295,6 +1283,7 @@
 	"lockTimeout": "مهلت قفل(به ثانیه)",
 	"loggedGroup": "گروه لاگ شده",
 	"loggedUser": "کاربر لاگ شده",
+	"login": "ورود",
 	"lookupList": "لیست جستجوها",
 	"lookupTypes": "انواع جستجو",
 	"main": "Main",
@@ -1399,6 +1388,8 @@
 	"serverUrl": "Server URL",
 	"service": "<em>Service</em>",
 	"serviceSynchronization": "Service synchronization",
+	"sessionExpired": "نشست منقضی شد",
+	"sessionExpiredMessage": "نشست دارای احتمال منقضی شده،لطفا دوباره رمز عبور خود را وارد نمایید",
 	"sessionTimeout": "Session timeout (seconds)",
 	"set": "Set",
 	"setAsDefault": "تعیین به عنوان پیش فرض",

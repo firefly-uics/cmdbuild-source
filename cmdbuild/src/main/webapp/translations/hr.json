@@ -485,6 +485,7 @@
 			"add": "Dodaj",
 			"apply": "Primjeni",
 			"as": "kao",
+			"changeUser": "Promijeni korisnika",
 			"check": "<em>Check</em>",
 			"clone": "Kloniraj",
 			"close": "Zatvori",
@@ -817,20 +818,6 @@
 	"info": {
 		"card_not_found": "Kartica ne odgovara trenutnim uvjetima filtriranja"
 	},
-	"login": {
-		"change_user": "Promijeni korisnika",
-		"failed": "Prijava nije uspjela",
-		"language": "Jezik",
-		"login": "Prijavi se",
-		"multi_group": "Izaberite grupu",
-		"password": "Lozinka",
-		"relogin_message": "Vaša sesija je istekla. Potrebno je ponovo unijeti lozinku.",
-		"relogin_title": "Sesija je istekla",
-		"title": "Unesite podatke za pristup",
-		"username": "Korisnik",
-		"waitMsg": "Šaljem podatke ...",
-		"waitTitle": "Povezivanje na server"
-	},
 	"management": {
 		"description": "Modul za upravljanje podacima",
 		"findfilter": {
@@ -1152,6 +1139,7 @@
 	"cc": "Cc",
 	"changePassword": "Promijeni lozinku",
 	"checkFrequency": "Učestalost provjere (u minutama)",
+	"chooseAGroup": "Izaberite grupu",
 	"chooseAttachmentFromDb": "<em>Choose attachments from Database</em>",
 	"classAttribute": "<em>Class attribute</em>",
 	"classLabel": "<em>Class</em>",
@@ -1295,6 +1283,7 @@
 	"lockTimeout": "Istek zaključavanja (sekundi)",
 	"loggedGroup": "Prijavljena Grupa",
 	"loggedUser": "Prijavljeni Korisnik",
+	"login": "Prijavi se",
 	"lookupList": "Lista stavki",
 	"lookupTypes": "Tip u šifarniku",
 	"main": "<em>Main</em>",
@@ -1399,6 +1388,8 @@
 	"serverUrl": "Adresa (URL) servisa",
 	"service": "<em>Service</em>",
 	"serviceSynchronization": "Sinkronizacija servisa",
+	"sessionExpired": "Sesija je istekla",
+	"sessionExpiredMessage": "Vaša sesija je istekla. Potrebno je ponovo unijeti lozinku.",
 	"sessionTimeout": "Sesija je istekla (seconds)",
 	"set": "Postavi",
 	"setAsDefault": "<em>Set as default</em>",

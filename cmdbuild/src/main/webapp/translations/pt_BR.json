@@ -485,6 +485,7 @@
 			"add": "Adicionar",
 			"apply": "Aplicar",
 			"as": "como",
+			"changeUser": "Alterar usuário",
 			"check": "<em>Check</em>",
 			"clone": "Clonar",
 			"close": "Fechar",
@@ -817,20 +818,6 @@
 	"info": {
 		"card_not_found": "The card doesn't match the current filter"
 	},
-	"login": {
-		"change_user": "Alterar usuário",
-		"failed": "Login falhou",
-		"language": "Idioma",
-		"login": "Login",
-		"multi_group": "Escolha um grupo",
-		"password": "Senha",
-		"relogin_message": "A sessão de autenticação expirou. Por favor, insira sua senha novamente.",
-		"relogin_title": "Sessão expirada",
-		"title": "Favor faça o Login",
-		"username": "Usuário",
-		"waitMsg": "Enviando dados...",
-		"waitTitle": "Conectando"
-	},
 	"management": {
 		"description": "Módulo de Gerenciamento de Dados",
 		"findfilter": {
@@ -1152,6 +1139,7 @@
 	"cc": "<em>Cc</em>",
 	"changePassword": "Alterar senha",
 	"checkFrequency": "<em>Check frequency (minutes)</em>",
+	"chooseAGroup": "Escolha um grupo",
 	"chooseAttachmentFromDb": "<em>Choose attachments from Database</em>",
 	"classAttribute": "<em>Class attribute</em>",
 	"classLabel": "<em>Class</em>",
@@ -1295,6 +1283,7 @@
 	"lockTimeout": "Tempo de Travamento seconds)",
 	"loggedGroup": "<em>Logged Group</em>",
 	"loggedUser": "<em>Logged User</em>",
+	"login": "Login",
 	"lookupList": "Lista de Pesquisa",
 	"lookupTypes": "Tipo Pesquisa",
 	"main": "<em>Main</em>",
@@ -1399,6 +1388,8 @@
 	"serverUrl": "URL do Servidor",
 	"service": "<em>Service</em>",
 	"serviceSynchronization": "Sincronização do Servidor",
+	"sessionExpired": "Sessão expirada",
+	"sessionExpiredMessage": "A sessão de autenticação expirou. Por favor, insira sua senha novamente.",
 	"sessionTimeout": "Tempo de Expiração da Sessão (segundos)",
 	"set": "Configurado",
 	"setAsDefault": "<em>Set as default</em>",

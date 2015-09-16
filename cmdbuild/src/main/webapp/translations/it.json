@@ -485,6 +485,7 @@
 			"add": "Aggiungi",
 			"apply": "Applica",
 			"as": "come",
+			"changeUser": "Cambia utente",
 			"check": "Spunta",
 			"clone": "Clona",
 			"close": "Chiudi",
@@ -817,20 +818,6 @@
 	"info": {
 		"card_not_found": "La scheda non rispetta più il filtro impostato"
 	},
-	"login": {
-		"change_user": "Cambia utente",
-		"failed": "Accesso Fallito",
-		"language": "Lingua",
-		"login": "Accedi",
-		"multi_group": "Scegli un gruppo",
-		"password": "Password",
-		"relogin_message": "La sessione autenticata è scaduta. È necessario reinserire la password.",
-		"relogin_title": "Sessione scaduta",
-		"title": "Inserisci le credenziali d'accesso",
-		"username": "Utente",
-		"waitMsg": "Invio dati ...",
-		"waitTitle": "Contatto il server"
-	},
 	"management": {
 		"description": "Modulo gestione dati",
 		"findfilter": {
@@ -1152,6 +1139,7 @@
 	"cc": "Cc",
 	"changePassword": "Cambia password",
 	"checkFrequency": "Frequenza controllo (minuti)",
+	"chooseAGroup": "Scegli un gruppo",
 	"chooseAttachmentFromDb": "Seleziona allegati da Database",
 	"classAttribute": "Attributo di classe",
 	"classLabel": "Classe",
@@ -1295,6 +1283,7 @@
 	"lockTimeout": "Tempo massimo di blocco (secondi)",
 	"loggedGroup": "Gruppo corrente",
 	"loggedUser": "Utente corrente",
+	"login": "Accedi",
 	"lookupList": "Lista voci",
 	"lookupTypes": "Tipo lookup",
 	"main": "Principale",
@@ -1399,6 +1388,8 @@
 	"serverUrl": "URL del servizio",
 	"service": "Servizio",
 	"serviceSynchronization": "Sincronizzazione servizi",
+	"sessionExpired": "Sessione scaduta",
+	"sessionExpiredMessage": "La sessione autenticata è scaduta. È necessario reinserire la password.",
 	"sessionTimeout": "Durata sessione (secondi)",
 	"set": "Impostato",
 	"setAsDefault": "Imposta come default",

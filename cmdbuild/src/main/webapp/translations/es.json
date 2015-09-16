@@ -485,6 +485,7 @@
 			"add": "Agrega",
 			"apply": "Aplica",
 			"as": "como",
+			"changeUser": "Cambiar usuario",
 			"check": "<em>Check</em>",
 			"clone": "Clonar",
 			"close": "Cierra",
@@ -817,20 +818,6 @@
 	"info": {
 		"card_not_found": "La tarjeta no respeta más el filtro establecido"
 	},
-	"login": {
-		"change_user": "Cambiar usuario",
-		"failed": "Acceso denegado",
-		"language": "Idioma",
-		"login": "Accede",
-		"multi_group": "Elija un grupo",
-		"password": "Clave",
-		"relogin_message": "La sesión iniciada ha expirado. Es necesario ingresar nuevamente la clave.",
-		"relogin_title": "La sesión ha expirado",
-		"title": "Ingrese las credenciales de acceso",
-		"username": "Usuario",
-		"waitMsg": "Los datos están siendo enviados...",
-		"waitTitle": "Conectando con el servidor"
-	},
 	"management": {
 		"description": "Módulo gestión de datos",
 		"findfilter": {
@@ -1152,6 +1139,7 @@
 	"cc": "Cc",
 	"changePassword": "Cambia clave",
 	"checkFrequency": "Frecuencia verificación (minutos)",
+	"chooseAGroup": "Elija un grupo",
 	"chooseAttachmentFromDb": "Elejir adjuntos desde la base de datos",
 	"classAttribute": "Atributo de clase",
 	"classLabel": "Clase",
@@ -1295,6 +1283,7 @@
 	"lockTimeout": "Tiempo máximo de bloqueo (segundos)",
 	"loggedGroup": "Grupo conectado",
 	"loggedUser": "Usuario conectado",
+	"login": "Accede",
 	"lookupList": "Lista botones",
 	"lookupTypes": "Tipo Lookup",
 	"main": "Principal",
@@ -1399,6 +1388,8 @@
 	"serverUrl": "URL del servicio",
 	"service": "<em>Service</em>",
 	"serviceSynchronization": "Sincronización servicios",
+	"sessionExpired": "La sesión ha expirado",
+	"sessionExpiredMessage": "La sesión iniciada ha expirado. Es necesario ingresar nuevamente la clave.",
 	"sessionTimeout": "Duración de la sesión (segundos)",
 	"set": "Establecido",
 	"setAsDefault": "Marca como default",
