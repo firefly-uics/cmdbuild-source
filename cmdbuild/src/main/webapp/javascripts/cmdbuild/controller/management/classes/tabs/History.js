@@ -197,10 +197,10 @@
 		getTabHistoryGridColumns: function() {
 			var columns = this.callParent(arguments);
 
-			if (!CMDBuild.configuration.userInterface.get(CMDBuild.core.proxy.CMProxyConstants.SIMPLE_HISTORY_MODE_FOR_CARD)) {
+			if (!CMDBuild.configuration.userInterface.get(CMDBuild.core.constants.Proxy.SIMPLE_HISTORY_MODE_FOR_CARD)) {
 				Ext.Array.push(columns, [
 					{
-						dataIndex: CMDBuild.core.proxy.CMProxyConstants.IS_CARD,
+						dataIndex: CMDBuild.core.constants.Proxy.IS_CARD,
 						text: CMDBuild.Translation.attributes,
 						width: 65,
 						align: 'center',
@@ -214,7 +214,7 @@
 						}
 					},
 					{
-						dataIndex: CMDBuild.core.proxy.CMProxyConstants.IS_RELATION,
+						dataIndex: CMDBuild.core.constants.Proxy.IS_RELATION,
 						text: CMDBuild.Translation.relation,
 						width: 65,
 						align: 'center',
@@ -228,7 +228,7 @@
 						}
 					},
 					{
-						dataIndex: CMDBuild.core.proxy.CMProxyConstants.DOMAIN,
+						dataIndex: CMDBuild.core.constants.Proxy.DOMAIN,
 						text: CMDBuild.Translation.domain,
 						sortable: false,
 						hideable: false,
@@ -236,7 +236,7 @@
 						flex: 1
 					},
 					{
-						dataIndex: CMDBuild.core.proxy.CMProxyConstants.DESTINATION_DESCRIPTION,
+						dataIndex: CMDBuild.core.constants.Proxy.DESTINATION_DESCRIPTION,
 						text: CMDBuild.Translation.descriptionLabel,
 						sortable: false,
 						hideable: false,

@@ -192,14 +192,14 @@
 		 */
 		evaluateSystemFiltersCheckbox: function(checked) {
 			var params = {};
-			params[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME] = this.className;
+			params[CMDBuild.core.constants.Proxy.CLASS_NAME] = this.className;
 
 			if (checked)
 				CMDBuild.core.proxy.Filter.read({
 					params: params,
 					scope: this,
 					success: function(response, options, decodedResponse) {
-						decodedResponse = decodedResponse[CMDBuild.core.proxy.CMProxyConstants.FILTERS];
+						decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.FILTERS];
 
 						this.grid.getStore().loadData(decodedResponse, true);
 					}

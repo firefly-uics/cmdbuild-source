@@ -2,10 +2,7 @@
 
 	Ext.define('CMDBuild.core.configurationBuilders.UserInterface', {
 
-		requires: [
-			'CMDBuild.core.proxy.CMProxyConstants',
-			'CMDBuild.core.proxy.group.Group'
-		],
+		requires: ['CMDBuild.core.proxy.group.Group'],
 
 		/**
 		 * Build user interface configuration model

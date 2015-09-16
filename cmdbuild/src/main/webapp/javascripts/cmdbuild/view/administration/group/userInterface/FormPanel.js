@@ -162,7 +162,7 @@
 									},
 									{
 										boxLabel: CMDBuild.Translation.email,
-										name: CMDBuild.core.proxy.CMProxyConstants.CLASS_EMAIL_TAB,
+										name: CMDBuild.core.constants.Proxy.CLASS_EMAIL_TAB,
 										inputValue: true,
 										uncheckedValue: false
 									},
@@ -207,7 +207,7 @@
 									},
 									{
 										boxLabel: CMDBuild.Translation.email,
-										name: CMDBuild.core.proxy.CMProxyConstants.PROCESS_EMAIL_TAB,
+										name: CMDBuild.core.constants.Proxy.PROCESS_EMAIL_TAB,
 										inputValue: true,
 										uncheckedValue: false
 									},

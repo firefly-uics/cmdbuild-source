@@ -2,7 +2,10 @@
 
 	Ext.define('CMDBuild.core.Data', {
 
-		requires: ['CMDBuild.core.constants.Proxy'],
+		requires: [
+			'CMDBuild.core.configurations.Timeout',
+			'CMDBuild.core.constants.Proxy'
+		],
 
 		/**
 		 * Setup with overrides of all data configurations (timeouts, defaultHeaders)
