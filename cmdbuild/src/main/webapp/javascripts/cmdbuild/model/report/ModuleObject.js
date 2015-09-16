@@ -8,14 +8,14 @@
 	Ext.define('CMDBuild.model.report.ModuleObject', {
 		extend: 'Ext.data.Model',
 
-		requires: ['CMDBuild.core.proxy.Constants'],
+		requires: ['CMDBuild.core.constants.Proxy'],
 
 		fields: [
-			{ name: CMDBuild.core.proxy.Constants.DESCRIPTION, type: 'string' },
-			{ name: CMDBuild.core.proxy.Constants.EXTENSION, type: 'string', defaultValue: CMDBuild.core.proxy.Constants.PDF },
-			{ name: CMDBuild.core.proxy.Constants.FORCE_DOWNLOAD, type: 'boolean', defaultValue: false },
-			{ name: CMDBuild.core.proxy.Constants.ID, type: 'int', useNull: true },
-			{ name: CMDBuild.core.proxy.Constants.TYPE, type: 'string', defaultValue: 'CUSTOM' }
+			{ name: CMDBuild.core.constants.Proxy.DESCRIPTION, type: 'string' },
+			{ name: CMDBuild.core.constants.Proxy.EXTENSION, type: 'string', defaultValue: CMDBuild.core.constants.Proxy.PDF },
+			{ name: CMDBuild.core.constants.Proxy.FORCE_DOWNLOAD, type: 'boolean', defaultValue: false },
+			{ name: CMDBuild.core.constants.Proxy.ID, type: 'int', useNull: true },
+			{ name: CMDBuild.core.constants.Proxy.TYPE, type: 'string', defaultValue: 'CUSTOM' }
 		]
 	});
 

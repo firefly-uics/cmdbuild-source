@@ -18,7 +18,7 @@
 			if (
 				!Ext.isEmpty(form)
 				&& form instanceof Ext.form.Panel
-				&& CMDBuild.configuration[CMDBuild.core.proxy.Constants.LOCALIZATION].hasEnabledLanguages()
+				&& CMDBuild.configuration[CMDBuild.core.constants.Proxy.LOCALIZATION].hasEnabledLanguages()
 			) {
 				form.cascade(function(item) {
 					if (

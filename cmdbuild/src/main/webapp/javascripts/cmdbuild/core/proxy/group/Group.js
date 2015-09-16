@@ -3,7 +3,7 @@
 	Ext.define('CMDBuild.core.proxy.group.Group', {
 
 		requires: [
-			'CMDBuild.core.proxy.Constants',
+			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.Index',
 			'CMDBuild.model.group.StartingClass'
 		],
@@ -61,7 +61,7 @@
 					}
 				},
 				sorters: [
-					{ property: CMDBuild.core.proxy.Constants.DESCRIPTION, direction: 'ASC' }
+					{ property: CMDBuild.core.constants.Proxy.DESCRIPTION, direction: 'ASC' }
 				]
 			});
 		},
@@ -71,11 +71,11 @@
 		 */
 		getTypeStore: function() {
 			return Ext.create('Ext.data.ArrayStore', {
-				fields: [CMDBuild.core.proxy.Constants.VALUE, CMDBuild.core.proxy.Constants.DESCRIPTION],
+				fields: [CMDBuild.core.constants.Proxy.VALUE, CMDBuild.core.constants.Proxy.DESCRIPTION],
 				data: [
-					[ CMDBuild.core.proxy.Constants.NORMAL, CMDBuild.Translation.normal ],
-					[ CMDBuild.core.proxy.Constants.RESTRICTED_ADMIN, CMDBuild.Translation.limitedAdministrator ],
-					[ CMDBuild.core.proxy.Constants.ADMIN, CMDBuild.Translation.administrator ]
+					[ CMDBuild.core.constants.Proxy.NORMAL, CMDBuild.Translation.normal ],
+					[ CMDBuild.core.constants.Proxy.RESTRICTED_ADMIN, CMDBuild.Translation.limitedAdministrator ],
+					[ CMDBuild.core.constants.Proxy.ADMIN, CMDBuild.Translation.administrator ]
 				]
 			});
 		},

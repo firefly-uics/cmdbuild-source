@@ -4,7 +4,7 @@
 		extend: 'CMDBuild.controller.common.AbstractController',
 
 		requires: [
-			'CMDBuild.core.proxy.Constants',
+			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.group.privileges.Classes',
 			'CMDBuild.core.proxy.group.privileges.DataView',
 			'CMDBuild.core.proxy.group.privileges.Filter',
@@ -94,14 +94,14 @@
 		 * Enable/Disable tab evaluating group privileges, administrator groups have full privileges so panel is disabled
 		 */
 		onGroupPrivilegesGroupSelected: function() {
-			this.view.setDisabled(this.cmfg('selectedGroupIsEmpty') || this.cmfg('selectedGroupGet', CMDBuild.core.proxy.Constants.IS_ADMINISTRATOR));
+			this.view.setDisabled(this.cmfg('selectedGroupIsEmpty') || this.cmfg('selectedGroupGet', CMDBuild.core.constants.Proxy.IS_ADMINISTRATOR));
 		},
 
 		/**
 		 * Evaluate group privileges to set active first tab
 		 */
 		onGroupPrivilegesTabShow: function() {
-			if (!this.cmfg('selectedGroupIsEmpty') && this.cmfg('selectedGroupGet', CMDBuild.core.proxy.Constants.IS_ADMINISTRATOR)) {
+			if (!this.cmfg('selectedGroupIsEmpty') && this.cmfg('selectedGroupGet', CMDBuild.core.constants.Proxy.IS_ADMINISTRATOR)) {
 				this.cmfg('onGroupSetActiveTab');
 			} else {
 				this.view.setActiveTab(0);

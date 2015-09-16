@@ -3,7 +3,7 @@
 	Ext.define('CMDBuild.view.administration.dataView.filter.FilterView', {
 		extend: 'Ext.panel.Panel',
 
-		requires: ['CMDBuild.core.proxy.Constants'],
+		requires: ['CMDBuild.core.constants.Proxy'],
 
 		/**
 		 * @cfg {CMDBuild.controller.administration.dataView.Filter}
@@ -29,7 +29,7 @@
 				dockedItems: [
 					Ext.create('Ext.toolbar.Toolbar', {
 						dock: 'top',
-						itemId: CMDBuild.core.proxy.Constants.TOOLBAR_TOP,
+						itemId: CMDBuild.core.constants.Proxy.TOOLBAR_TOP,
 
 						items: [
 							Ext.create('CMDBuild.core.buttons.iconized.add.Add', {

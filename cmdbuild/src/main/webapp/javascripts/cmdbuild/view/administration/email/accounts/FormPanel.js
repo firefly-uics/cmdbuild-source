@@ -3,7 +3,7 @@
 	Ext.define('CMDBuild.view.administration.email.accounts.FormPanel', {
 		extend: 'Ext.form.Panel',
 
-		requires: ['CMDBuild.core.proxy.Constants'],
+		requires: ['CMDBuild.core.constants.Proxy'],
 
 		mixins: {
 			panelFunctions: 'CMDBuild.view.common.PanelFunctions'
@@ -90,8 +90,8 @@
 			// Page FieldSets configuration
 				// Account
 				this.nameField = Ext.create('Ext.form.field.Text', {
-					name: CMDBuild.core.proxy.Constants.NAME,
-					itemId: CMDBuild.core.proxy.Constants.NAME,
+					name: CMDBuild.core.constants.Proxy.NAME,
+					itemId: CMDBuild.core.constants.Proxy.NAME,
 					fieldLabel: CMDBuild.Translation.name,
 					labelWidth: CMDBuild.LABEL_WIDTH,
 					maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
@@ -100,7 +100,7 @@
 				});
 
 				this.isDefaultField = Ext.create('Ext.form.field.Checkbox', {
-					name: CMDBuild.core.proxy.Constants.IS_DEFAULT,
+					name: CMDBuild.core.constants.Proxy.IS_DEFAULT,
 					hidden: true
 				});
 
@@ -124,7 +124,7 @@
 						this.isDefaultField,
 						{
 							xtype: 'hiddenfield',
-							name: CMDBuild.core.proxy.Constants.ID
+							name: CMDBuild.core.constants.Proxy.ID
 						}
 					]
 				});
@@ -148,13 +148,13 @@
 					items: [
 						{
 							xtype: 'textfield',
-							name: CMDBuild.core.proxy.Constants.USERNAME,
+							name: CMDBuild.core.constants.Proxy.USERNAME,
 							fieldLabel: CMDBuild.Translation.username
 						},
 						{
 							xtype: 'textfield',
 							inputType: 'password',
-							name: CMDBuild.core.proxy.Constants.PASSWORD,
+							name: CMDBuild.core.constants.Proxy.PASSWORD,
 							fieldLabel: CMDBuild.Translation.password
 						}
 					]
@@ -179,19 +179,19 @@
 					items: [
 						{
 							xtype: 'textfield',
-							name: CMDBuild.core.proxy.Constants.ADDRESS,
+							name: CMDBuild.core.constants.Proxy.ADDRESS,
 							fieldLabel: CMDBuild.Translation.address,
 							allowBlank: false,
 							vtype: 'email'
 						},
 						{
 							xtype: 'textfield',
-							name: CMDBuild.core.proxy.Constants.SMTP_SERVER,
+							name: CMDBuild.core.constants.Proxy.SMTP_SERVER,
 							fieldLabel: CMDBuild.Translation.smtpServer
 						},
 						{
 							xtype: 'numberfield',
-							name: CMDBuild.core.proxy.Constants.SMTP_PORT,
+							name: CMDBuild.core.constants.Proxy.SMTP_PORT,
 							fieldLabel: CMDBuild.Translation.smtpPort,
 							allowBlank: true,
 							width: CMDBuild.ADM_SMALL_FIELD_WIDTH,
@@ -201,12 +201,12 @@
 						},
 						{
 							xtype: 'checkbox',
-							name: CMDBuild.core.proxy.Constants.SMTP_SSL,
+							name: CMDBuild.core.constants.Proxy.SMTP_SSL,
 							fieldLabel: CMDBuild.Translation.enableSsl
 						},
 						{
 							xtype: 'textfield',
-							name: CMDBuild.core.proxy.Constants.OUTPUT_FOLDER,
+							name: CMDBuild.core.constants.Proxy.OUTPUT_FOLDER,
 							fieldLabel: CMDBuild.Translation.sentFolder
 						}
 					]
@@ -232,11 +232,11 @@
 						{
 							xtype: 'textfield',
 							fieldLabel: CMDBuild.Translation.imapServer,
-							name: CMDBuild.core.proxy.Constants.IMAP_SERVER
+							name: CMDBuild.core.constants.Proxy.IMAP_SERVER
 						},
 						{
 							xtype: 'numberfield',
-							name: CMDBuild.core.proxy.Constants.IMAP_PORT,
+							name: CMDBuild.core.constants.Proxy.IMAP_PORT,
 							fieldLabel: CMDBuild.Translation.imapPort,
 							allowBlank: true,
 							minValue: 1,
@@ -245,7 +245,7 @@
 						},
 						{
 							xtype: 'checkbox',
-							name: CMDBuild.core.proxy.Constants.IMAP_SSL,
+							name: CMDBuild.core.constants.Proxy.IMAP_SSL,
 							fieldLabel: CMDBuild.Translation.enableSsl
 						}
 					]
@@ -287,7 +287,7 @@
 				dockedItems: [
 					Ext.create('Ext.toolbar.Toolbar', {
 						dock: 'top',
-						itemId: CMDBuild.core.proxy.Constants.TOOLBAR_TOP,
+						itemId: CMDBuild.core.constants.Proxy.TOOLBAR_TOP,
 
 						items: [
 							Ext.create('CMDBuild.core.buttons.iconized.Modify', {
@@ -304,7 +304,7 @@
 					}),
 					Ext.create('Ext.toolbar.Toolbar', {
 						dock: 'bottom',
-						itemId: CMDBuild.core.proxy.Constants.TOOLBAR_BOTTOM,
+						itemId: CMDBuild.core.constants.Proxy.TOOLBAR_BOTTOM,
 						ui: 'footer',
 
 						layout: {

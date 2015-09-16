@@ -3,14 +3,14 @@
 	Ext.define('CMDBuild.model.group.userInterface.DisabledCardTabs', {
 		extend: 'Ext.data.Model',
 
-		requires: ['CMDBuild.core.proxy.Constants'],
+		requires: ['CMDBuild.core.constants.Proxy'],
 
 		fields: [
-			{ name: CMDBuild.core.proxy.Constants.CLASS_ATTACHMENT_TAB, type: 'boolean' },
-			{ name: CMDBuild.core.proxy.Constants.CLASS_DETAIL_TAB, type: 'boolean' },
-			{ name: CMDBuild.core.proxy.Constants.CLASS_HISTORY_TAB, type: 'boolean' },
-			{ name: CMDBuild.core.proxy.Constants.CLASS_NOTE_TAB, type: 'boolean' },
-			{ name: CMDBuild.core.proxy.Constants.CLASS_RELATION_TAB, type: 'boolean' }
+			{ name: CMDBuild.core.constants.Proxy.CLASS_ATTACHMENT_TAB, type: 'boolean' },
+			{ name: CMDBuild.core.constants.Proxy.CLASS_DETAIL_TAB, type: 'boolean' },
+			{ name: CMDBuild.core.constants.Proxy.CLASS_HISTORY_TAB, type: 'boolean' },
+			{ name: CMDBuild.core.constants.Proxy.CLASS_NOTE_TAB, type: 'boolean' },
+			{ name: CMDBuild.core.constants.Proxy.CLASS_RELATION_TAB, type: 'boolean' }
 		]
 	});
 

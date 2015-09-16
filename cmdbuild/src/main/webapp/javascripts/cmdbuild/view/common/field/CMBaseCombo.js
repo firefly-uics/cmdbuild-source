@@ -130,7 +130,7 @@
 				&& typeof value == 'object' // The new serialization of reference and lookup
 				&& !Ext.isArray(value) // Is an array when select a value from the UI
 			) {
-				value = value[CMDBuild.core.proxy.Constants.ID];
+				value = value[CMDBuild.core.constants.Proxy.ID];
 			}
 
 			// Fixes a bug where number was recognized as string and ComboBox where display valueField in place of displayField attributes (In JS language "92" != 92)

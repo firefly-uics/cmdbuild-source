@@ -3,7 +3,7 @@
 	Ext.define('CMDBuild.view.administration.lookup.properties.FormPanel', {
 		extend: 'Ext.form.Panel',
 
-		requires: ['CMDBuild.core.proxy.Constants'],
+		requires: ['CMDBuild.core.constants.Proxy'],
 
 		mixins: {
 			panelFunctions: 'CMDBuild.view.common.PanelFunctions'
@@ -35,7 +35,7 @@
 				dockedItems: [
 					Ext.create('Ext.toolbar.Toolbar', {
 						dock: 'top',
-						itemId: CMDBuild.core.proxy.Constants.TOOLBAR_TOP,
+						itemId: CMDBuild.core.constants.Proxy.TOOLBAR_TOP,
 
 						items: [
 							Ext.create('CMDBuild.core.buttons.iconized.Modify', {
@@ -50,7 +50,7 @@
 					}),
 					Ext.create('Ext.toolbar.Toolbar', {
 						dock: 'bottom',
-						itemId: CMDBuild.core.proxy.Constants.TOOLBAR_BOTTOM,
+						itemId: CMDBuild.core.constants.Proxy.TOOLBAR_BOTTOM,
 						ui: 'footer',
 
 						layout: {
@@ -79,19 +79,19 @@
 				],
 				items: [
 					Ext.create('Ext.form.TextField', {
-						name: CMDBuild.core.proxy.Constants.DESCRIPTION,
+						name: CMDBuild.core.constants.Proxy.DESCRIPTION,
 						fieldLabel: CMDBuild.Translation.descriptionLabel,
 						labelWidth: CMDBuild.LABEL_WIDTH,
 						maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
 						allowBlank: false
 					}),
 					this.parentCombobox = Ext.create('Ext.form.field.ComboBox', {
-						name: CMDBuild.core.proxy.Constants.PARENT,
+						name: CMDBuild.core.constants.Proxy.PARENT,
 						fieldLabel: CMDBuild.Translation.parent,
 						labelWidth: CMDBuild.LABEL_WIDTH,
 						maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
-						displayField: CMDBuild.core.proxy.Constants.TYPE,
-						valueField: CMDBuild.core.proxy.Constants.TYPE,
+						displayField: CMDBuild.core.constants.Proxy.TYPE,
+						valueField: CMDBuild.core.constants.Proxy.TYPE,
 						disabled: true,
 						cmImmutable: true,
 
@@ -100,7 +100,7 @@
 					}),
 					{
 						xtype: 'hiddenfield',
-						name: CMDBuild.core.proxy.Constants.ID
+						name: CMDBuild.core.constants.Proxy.ID
 					}
 				]
 			});

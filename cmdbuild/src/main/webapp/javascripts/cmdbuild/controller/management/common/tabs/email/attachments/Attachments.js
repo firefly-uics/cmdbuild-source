@@ -4,7 +4,7 @@
 		extend: 'CMDBuild.controller.common.AbstractController',
 
 		requires: [
-			'CMDBuild.core.proxy.Constants',
+			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.common.tabs.email.Attachment'
 		],
 
@@ -73,7 +73,7 @@
 			var attachmentsNames = [];
 
 			this.view.attachmentPanelsContainer.items.each(function(item, index, allItems) {
-				attachmentsNames.push(item[CMDBuild.core.proxy.Constants.FILE_NAME]);
+				attachmentsNames.push(item[CMDBuild.core.constants.Proxy.FILE_NAME]);
 			});
 
 			return attachmentsNames;
@@ -88,8 +88,8 @@
 
 		onAttachmentChangeFile: function() {
 			var params = {};
-			params[CMDBuild.core.proxy.Constants.EMAIL_ID] = this.record.get(CMDBuild.core.proxy.Constants.ID);
-			params[CMDBuild.core.proxy.Constants.TEMPORARY] = this.record.get(CMDBuild.core.proxy.Constants.TEMPORARY);
+			params[CMDBuild.core.constants.Proxy.EMAIL_ID] = this.record.get(CMDBuild.core.constants.Proxy.ID);
+			params[CMDBuild.core.constants.Proxy.TEMPORARY] = this.record.get(CMDBuild.core.constants.Proxy.TEMPORARY);
 
 			this.parentDelegate.view.setLoading(true);
 			CMDBuild.core.proxy.common.tabs.email.Attachment.upload({
@@ -109,9 +109,9 @@
 		 */
 		onAttachmentDownloadButtonClick: function(attachmentPanel) {
 			var params = {};
-			params[CMDBuild.core.proxy.Constants.EMAIL_ID] = this.record.get(CMDBuild.core.proxy.Constants.ID);
-			params[CMDBuild.core.proxy.Constants.FILE_NAME] = attachmentPanel[CMDBuild.core.proxy.Constants.FILE_NAME];
-			params[CMDBuild.core.proxy.Constants.TEMPORARY] = this.record.get(CMDBuild.core.proxy.Constants.TEMPORARY);
+			params[CMDBuild.core.constants.Proxy.EMAIL_ID] = this.record.get(CMDBuild.core.constants.Proxy.ID);
+			params[CMDBuild.core.constants.Proxy.FILE_NAME] = attachmentPanel[CMDBuild.core.constants.Proxy.FILE_NAME];
+			params[CMDBuild.core.constants.Proxy.TEMPORARY] = this.record.get(CMDBuild.core.constants.Proxy.TEMPORARY);
 
 			CMDBuild.core.proxy.common.tabs.email.Attachment.download({
 				params: params
@@ -123,9 +123,9 @@
 		 */
 		onAttachmentRemoveButtonClick: function(attachmentPanel) {
 			var params = {};
-			params[CMDBuild.core.proxy.Constants.EMAIL_ID] = this.record.get(CMDBuild.core.proxy.Constants.ID);
-			params[CMDBuild.core.proxy.Constants.FILE_NAME] = attachmentPanel[CMDBuild.core.proxy.Constants.FILE_NAME];
-			params[CMDBuild.core.proxy.Constants.TEMPORARY] = this.record.get(CMDBuild.core.proxy.Constants.TEMPORARY);
+			params[CMDBuild.core.constants.Proxy.EMAIL_ID] = this.record.get(CMDBuild.core.constants.Proxy.ID);
+			params[CMDBuild.core.constants.Proxy.FILE_NAME] = attachmentPanel[CMDBuild.core.constants.Proxy.FILE_NAME];
+			params[CMDBuild.core.constants.Proxy.TEMPORARY] = this.record.get(CMDBuild.core.constants.Proxy.TEMPORARY);
 
 			this.parentDelegate.view.setLoading(true);
 			CMDBuild.core.proxy.common.tabs.email.Attachment.remove({

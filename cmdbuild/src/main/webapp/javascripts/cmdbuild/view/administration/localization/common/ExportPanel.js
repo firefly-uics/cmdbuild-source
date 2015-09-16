@@ -4,7 +4,7 @@
 		extend: 'Ext.form.Panel',
 
 		requires: [
-			'CMDBuild.core.proxy.Constants',
+			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.Csv',
 			'CMDBuild.core.proxy.localization.Localization'
 		],
@@ -37,7 +37,7 @@
 				dockedItems: [
 					Ext.create('Ext.toolbar.Toolbar', {
 						dock: 'bottom',
-						itemId: CMDBuild.core.proxy.Constants.TOOLBAR_BOTTOM,
+						itemId: CMDBuild.core.constants.Proxy.TOOLBAR_BOTTOM,
 						ui: 'footer',
 
 						layout: {
@@ -59,16 +59,16 @@
 				],
 				items: [
 					Ext.create('Ext.form.field.ComboBox', {
-						name: CMDBuild.core.proxy.Constants.SECTION,
+						name: CMDBuild.core.constants.Proxy.SECTION,
 						fieldLabel: '@@ Export section',
 						labelWidth: CMDBuild.LABEL_WIDTH,
 						maxWidth: CMDBuild.MEDIUM_FIELD_WIDTH,
-						displayField: CMDBuild.core.proxy.Constants.DESCRIPTION,
-						valueField: CMDBuild.core.proxy.Constants.NAME,
+						displayField: CMDBuild.core.constants.Proxy.DESCRIPTION,
+						valueField: CMDBuild.core.constants.Proxy.NAME,
 						editable: false,
 						allowBlank: false,
 
-						value: CMDBuild.core.proxy.Constants.ALL, // Default value
+						value: CMDBuild.core.constants.Proxy.ALL, // Default value
 
 						store: CMDBuild.core.proxy.localization.Localization.getSectionsStore(),
 						queryMode: 'local',
@@ -85,23 +85,23 @@
 						fieldLabel: '@@ Format',
 						labelWidth: CMDBuild.LABEL_WIDTH,
 						maxWidth: CMDBuild.MEDIUM_FIELD_WIDTH,
-						displayField: CMDBuild.core.proxy.Constants.DESCRIPTION,
-						valueField: CMDBuild.core.proxy.Constants.NAME,
+						displayField: CMDBuild.core.constants.Proxy.DESCRIPTION,
+						valueField: CMDBuild.core.constants.Proxy.NAME,
 						editable: false,
 						allowBlank: false,
 
-						value: CMDBuild.core.proxy.Constants.CSV, // Default value
+						value: CMDBuild.core.constants.Proxy.CSV, // Default value
 
 						store: CMDBuild.core.proxy.localization.Localization.getFileFormatStore(),
 						queryMode: 'local'
 					}),
 					Ext.create('Ext.form.field.ComboBox', {
-						name: CMDBuild.core.proxy.Constants.SEPARATOR,
+						name: CMDBuild.core.constants.Proxy.SEPARATOR,
 						fieldLabel: CMDBuild.Translation.separator,
 						labelWidth: CMDBuild.LABEL_WIDTH,
 						maxWidth: 200,
-						valueField: CMDBuild.core.proxy.Constants.VALUE,
-						displayField: CMDBuild.core.proxy.Constants.VALUE,
+						valueField: CMDBuild.core.constants.Proxy.VALUE,
+						displayField: CMDBuild.core.constants.Proxy.VALUE,
 						editable: false,
 						allowBlank: false,
 
@@ -111,7 +111,7 @@
 						queryMode: 'local'
 					}),
 					this.activeOnlyCheckbox = Ext.create('Ext.form.field.Checkbox', {
-						name: CMDBuild.core.proxy.Constants.ACTIVE_ONLY,
+						name: CMDBuild.core.constants.Proxy.ACTIVE_ONLY,
 						fieldLabel: '@@ Only active',
 						labelWidth: CMDBuild.LABEL_WIDTH,
 						inputValue: true,

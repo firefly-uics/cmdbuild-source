@@ -3,7 +3,7 @@
 	Ext.define('CMDBuild.controller.administration.menu.Menu', {
 		extend: 'CMDBuild.controller.common.AbstractBasePanelController',
 
-		requires: ['CMDBuild.core.proxy.Constants'],
+		requires: ['CMDBuild.core.constants.Proxy'],
 
 		/**
 		 * @cfg {Object}
@@ -48,13 +48,13 @@
 		 */
 		onViewOnFront: function(parameters) {
 			if (!Ext.isEmpty(parameters)) {
-				this.selectedMenuName = parameters.get(CMDBuild.core.proxy.Constants.NAME);
+				this.selectedMenuName = parameters.get(CMDBuild.core.constants.Proxy.NAME);
 				this.sectionController = Ext.create('CMDBuild.controller.administration.menu.Group', { parentDelegate: this });
 
 				this.view.removeAll(true);
 				this.view.add(this.sectionController.getView());
 
-				this.setViewTitle(parameters.get(CMDBuild.core.proxy.Constants.TEXT));
+				this.setViewTitle(parameters.get(CMDBuild.core.constants.Proxy.TEXT));
 
 				if (!Ext.isEmpty(this.sectionController) && Ext.isFunction(this.sectionController.onViewOnFront))
 					this.sectionController.onViewOnFront();

@@ -4,7 +4,7 @@
 		extend: 'CMDBuild.controller.common.AbstractBasePanelController',
 
 		requires: [
-			'CMDBuild.core.proxy.Constants',
+			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.Configuration'
 		],
 
@@ -34,11 +34,11 @@
 		onConfigurationRead: function(parameters) {
 			if (
 				!Ext.isEmpty(parameters)
-				&& !Ext.isEmpty(parameters[CMDBuild.core.proxy.Constants.FILE_NAME])
-				&& !Ext.isEmpty(parameters[CMDBuild.core.proxy.Constants.VIEW])
+				&& !Ext.isEmpty(parameters[CMDBuild.core.constants.Proxy.FILE_NAME])
+				&& !Ext.isEmpty(parameters[CMDBuild.core.constants.Proxy.VIEW])
 			) {
-				var fileName = parameters[CMDBuild.core.proxy.Constants.FILE_NAME];
-				var view = parameters[CMDBuild.core.proxy.Constants.VIEW];
+				var fileName = parameters[CMDBuild.core.constants.Proxy.FILE_NAME];
+				var view = parameters[CMDBuild.core.constants.Proxy.VIEW];
 
 				CMDBuild.core.proxy.Configuration.read({
 					scope: this,
@@ -65,11 +65,11 @@
 		onConfigurationSave: function(parameters) {
 			if (
 				!Ext.isEmpty(parameters)
-				&& !Ext.isEmpty(parameters[CMDBuild.core.proxy.Constants.FILE_NAME])
-				&& !Ext.isEmpty(parameters[CMDBuild.core.proxy.Constants.VIEW])
+				&& !Ext.isEmpty(parameters[CMDBuild.core.constants.Proxy.FILE_NAME])
+				&& !Ext.isEmpty(parameters[CMDBuild.core.constants.Proxy.VIEW])
 			) {
-				var fileName = parameters[CMDBuild.core.proxy.Constants.FILE_NAME];
-				var view = parameters[CMDBuild.core.proxy.Constants.VIEW];
+				var fileName = parameters[CMDBuild.core.constants.Proxy.FILE_NAME];
+				var view = parameters[CMDBuild.core.constants.Proxy.VIEW];
 
 				CMDBuild.core.proxy.Configuration.read({
 					scope: this,
@@ -107,7 +107,7 @@
 			if (!Ext.Object.isEmpty(parameters)) {
 				this.view.removeAll(true);
 
-				switch(parameters.get(CMDBuild.core.proxy.Constants.ID)) {
+				switch(parameters.get(CMDBuild.core.constants.Proxy.ID)) {
 					case 'alfresco': {
 						this.sectionController = Ext.create('CMDBuild.controller.administration.configuration.Alfresco', { parentDelegate: this });
 					} break;
@@ -140,7 +140,7 @@
 
 				this.view.add(this.sectionController.getView());
 
-				this.setViewTitle(parameters.get(CMDBuild.core.proxy.Constants.TEXT));
+				this.setViewTitle(parameters.get(CMDBuild.core.constants.Proxy.TEXT));
 
 				this.callParent(arguments);
 			}

@@ -7,7 +7,7 @@
 		alternateClassName: 'CMDBuild.ServiceProxy.Filter', // Legacy class name
 
 		requires: [
-			'CMDBuild.core.proxy.Constants',
+			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.Index'
 		],
 
@@ -45,7 +45,7 @@
 					}
 				},
 				sorters: [{
-					property: CMDBuild.core.proxy.Constants.DESCRIPTION,
+					property: CMDBuild.core.constants.Proxy.DESCRIPTION,
 					direction: 'ASC'
 				}]
 			});
@@ -70,7 +70,7 @@
 					}
 				},
 				sorters: [{
-					property: CMDBuild.core.proxy.Constants.DESCRIPTION,
+					property: CMDBuild.core.constants.Proxy.DESCRIPTION,
 					direction: 'ASC'
 				}]
 			 });
@@ -99,7 +99,7 @@
 					}
 				},
 				sorters: [{
-					property: CMDBuild.core.proxy.Constants.DESCRIPTION,
+					property: CMDBuild.core.constants.Proxy.DESCRIPTION,
 					direction: 'ASC'
 				}]
 			});

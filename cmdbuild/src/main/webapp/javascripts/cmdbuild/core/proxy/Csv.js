@@ -3,7 +3,7 @@
 	Ext.define('CMDBuild.core.proxy.Csv', {
 
 		requires: [
-			'CMDBuild.core.proxy.Constants',
+			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.Index'
 		],
 
@@ -14,7 +14,7 @@
 		 */
 		getImportModeStore: function() {
 			return Ext.create('Ext.data.ArrayStore', {
-				fields: [CMDBuild.core.proxy.Constants.DESCRIPTION, CMDBuild.core.proxy.Constants.VALUE],
+				fields: [CMDBuild.core.constants.Proxy.DESCRIPTION, CMDBuild.core.constants.Proxy.VALUE],
 				data: [
 					[CMDBuild.Translation.add, 'add'],
 					[CMDBuild.Translation.replace , 'replace']
@@ -48,7 +48,7 @@
 		 */
 		getSeparatorStore: function() {
 			return Ext.create('Ext.data.ArrayStore', {
-				fields: [CMDBuild.core.proxy.Constants.VALUE],
+				fields: [CMDBuild.core.constants.Proxy.VALUE],
 				data: [
 					[';'],
 					[','],

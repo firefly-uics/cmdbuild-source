@@ -6,7 +6,7 @@
 		extend: 'CMDBuild.view.administration.widget.form.CMBaseWidgetDefinitionForm',
 
 		requires: [
-			'CMDBuild.core.proxy.Constants',
+			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.widgets.OpenReport',
 			'CMDBuild.model.widget.openReport.PresetGrid'
 		],
@@ -66,12 +66,12 @@
 			this.callParent(arguments);
 
 			this.reportCode = Ext.create('Ext.form.field.ComboBox', {
-				name: CMDBuild.core.proxy.Constants.CODE,
+				name: CMDBuild.core.constants.Proxy.CODE,
 				fieldLabel: tr[me.self.WIDGET_NAME].fields.report,
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
-				valueField: CMDBuild.core.proxy.Constants.TITLE,
-				displayField: CMDBuild.core.proxy.Constants.DESCRIPTION,
+				valueField: CMDBuild.core.constants.Proxy.TITLE,
+				displayField: CMDBuild.core.constants.Proxy.DESCRIPTION,
 				forceSelection: true,
 				editable: false,
 
@@ -84,15 +84,15 @@
 			});
 
 			this.forceFormatOptions = Ext.create('Ext.form.field.ComboBox', {
-				displayField: CMDBuild.core.proxy.Constants.TEXT,
-				valueField: CMDBuild.core.proxy.Constants.VALUE,
+				displayField: CMDBuild.core.constants.Proxy.TEXT,
+				valueField: CMDBuild.core.constants.Proxy.VALUE,
 				flex: 4,
 				forceSelection: true,
 				editable: false,
 
 				store: Ext.create('Ext.data.ArrayStore', {
 					autoDestroy: true,
-					fields: [CMDBuild.core.proxy.Constants.VALUE, CMDBuild.core.proxy.Constants.TEXT],
+					fields: [CMDBuild.core.constants.Proxy.VALUE, CMDBuild.core.constants.Proxy.TEXT],
 					data: [
 						['pdf', 'PDF'],
 						['csv', 'CSV']
@@ -129,20 +129,20 @@
 					columns: [
 						{
 							header: tr[me.self.WIDGET_NAME].presetGrid.attribute,
-							dataIndex: CMDBuild.core.proxy.Constants.NAME,
+							dataIndex: CMDBuild.core.constants.Proxy.NAME,
 							editor: { xtype: 'textfield' },
 							flex: 1
 						},
 						{
 							header: tr[me.self.WIDGET_NAME].presetGrid.value,
-							dataIndex: CMDBuild.core.proxy.Constants.VALUE,
+							dataIndex: CMDBuild.core.constants.Proxy.VALUE,
 							editor: { xtype: 'textfield' },
 							flex: 1
 						},
 						{
 							xtype: 'checkcolumn',
 							header: CMDBuild.Translation.readOnly,
-							dataIndex: CMDBuild.core.proxy.Constants.READ_ONLY,
+							dataIndex: CMDBuild.core.constants.Proxy.READ_ONLY,
 							width: 60,
 							align: 'center',
 							sortable: false,
@@ -179,14 +179,14 @@
 			if (!Ext.Object.isEmpty(data)) {
 				for (var key in data) {
 					var storeReportIndex = this.presetGrid.getStore().find(
-						CMDBuild.core.proxy.Constants.NAME,
+						CMDBuild.core.constants.Proxy.NAME,
 						key
 					);
 
 					// If present in presetGrid and is empty, remove and set as not present so will be added as data value or empty
 					if (
 						storeReportIndex >= 0
-						&& Ext.isEmpty(this.presetGrid.getStore().getAt(storeReportIndex).get(CMDBuild.core.proxy.Constants.VALUE))
+						&& Ext.isEmpty(this.presetGrid.getStore().getAt(storeReportIndex).get(CMDBuild.core.constants.Proxy.VALUE))
 					) {
 						this.presetGrid.getStore().removeAt(storeReportIndex);
 
@@ -197,13 +197,13 @@
 					if (storeReportIndex < 0) {
 						var recordConf = {};
 
-						recordConf[CMDBuild.core.proxy.Constants.NAME] = key;
-						recordConf[CMDBuild.core.proxy.Constants.VALUE] = data[key] || '';
+						recordConf[CMDBuild.core.constants.Proxy.NAME] = key;
+						recordConf[CMDBuild.core.constants.Proxy.VALUE] = data[key] || '';
 
 						if (Ext.Array.contains(readOnlyAttributes, key)) {
-							recordConf[CMDBuild.core.proxy.Constants.READ_ONLY] = true;
+							recordConf[CMDBuild.core.constants.Proxy.READ_ONLY] = true;
 						} else {
-							recordConf[CMDBuild.core.proxy.Constants.READ_ONLY] = false;
+							recordConf[CMDBuild.core.constants.Proxy.READ_ONLY] = false;
 						}
 
 						this.presetGrid.getStore().add(recordConf);
@@ -223,11 +223,11 @@
 			for (var i = 0, l = records.length; i < l; ++i) {
 				var recData = records[i].data;
 
-				if (!Ext.isEmpty(recData[CMDBuild.core.proxy.Constants.NAME]) && !Ext.isEmpty(recData[CMDBuild.core.proxy.Constants.VALUE])) {
-					data[recData[CMDBuild.core.proxy.Constants.NAME]] = recData[CMDBuild.core.proxy.Constants.VALUE];
+				if (!Ext.isEmpty(recData[CMDBuild.core.constants.Proxy.NAME]) && !Ext.isEmpty(recData[CMDBuild.core.constants.Proxy.VALUE])) {
+					data[recData[CMDBuild.core.constants.Proxy.NAME]] = recData[CMDBuild.core.constants.Proxy.VALUE];
 
-					if (recData[CMDBuild.core.proxy.Constants.READ_ONLY])
-						readOnly.push(recData[CMDBuild.core.proxy.Constants.NAME]);
+					if (recData[CMDBuild.core.constants.Proxy.READ_ONLY])
+						readOnly.push(recData[CMDBuild.core.constants.Proxy.NAME]);
 				}
 			}
 
@@ -247,9 +247,9 @@
 		fillWithModel: function(model) {
 			this.callParent(arguments);
 
-			this.reportCode.setValue(model.get(CMDBuild.core.proxy.Constants.REPORT_CODE));
+			this.reportCode.setValue(model.get(CMDBuild.core.constants.Proxy.REPORT_CODE));
 
-			var forceFormat = model.get(CMDBuild.core.proxy.Constants.FORCE_FORMAT);
+			var forceFormat = model.get(CMDBuild.core.constants.Proxy.FORCE_FORMAT);
 			if (forceFormat) {
 				this.forceFormatCheck.setValue(true);
 				this.forceFormatOptions.setValue(forceFormat);
@@ -258,19 +258,19 @@
 			// Find selected report ID and manually calls onReportSelected to fill presetGrid
 			this.reportCode.getStore().on('load', function() {
 				var storeReportIndex = this.reportCode.getStore().find(
-					CMDBuild.core.proxy.Constants.DESCRIPTION,
-					model.get(CMDBuild.core.proxy.Constants.REPORT_CODE)
+					CMDBuild.core.constants.Proxy.DESCRIPTION,
+					model.get(CMDBuild.core.constants.Proxy.REPORT_CODE)
 				);
 
 				if(storeReportIndex >= 0)
 					this.delegate.onReportSelected(
-						this.reportCode.getStore().getAt(storeReportIndex).get(CMDBuild.core.proxy.Constants.ID),
-						model.get(CMDBuild.core.proxy.Constants.PRESET),
-						model.get(CMDBuild.core.proxy.Constants.READ_ONLY_ATTRIBUTES)
+						this.reportCode.getStore().getAt(storeReportIndex).get(CMDBuild.core.constants.Proxy.ID),
+						model.get(CMDBuild.core.constants.Proxy.PRESET),
+						model.get(CMDBuild.core.constants.Proxy.READ_ONLY_ATTRIBUTES)
 					);
 			}, this);
 
-			this.fillPresetWithData(model.get(CMDBuild.core.proxy.Constants.PRESET), model.get(CMDBuild.core.proxy.Constants.READ_ONLY_ATTRIBUTES));
+			this.fillPresetWithData(model.get(CMDBuild.core.constants.Proxy.PRESET), model.get(CMDBuild.core.constants.Proxy.READ_ONLY_ATTRIBUTES));
 		},
 
 		/**
@@ -300,10 +300,10 @@
 			var presetData = this.getPresetData();
 			var returnObject = {};
 
-			returnObject[CMDBuild.core.proxy.Constants.REPORT_CODE] = this.reportCode.getValue();
-			returnObject[CMDBuild.core.proxy.Constants.FORCE_FORMAT] = this.forceFormatOptions.getValue();
-			returnObject[CMDBuild.core.proxy.Constants.PRESET] = presetData.data;
-			returnObject[CMDBuild.core.proxy.Constants.READ_ONLY_ATTRIBUTES] = presetData.readOnly;
+			returnObject[CMDBuild.core.constants.Proxy.REPORT_CODE] = this.reportCode.getValue();
+			returnObject[CMDBuild.core.constants.Proxy.FORCE_FORMAT] = this.forceFormatOptions.getValue();
+			returnObject[CMDBuild.core.constants.Proxy.PRESET] = presetData.data;
+			returnObject[CMDBuild.core.constants.Proxy.READ_ONLY_ATTRIBUTES] = presetData.readOnly;
 
 			return Ext.apply(this.callParent(arguments), returnObject);
 		}

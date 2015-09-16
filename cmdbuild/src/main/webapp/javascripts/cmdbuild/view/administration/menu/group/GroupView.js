@@ -4,7 +4,7 @@
 		extend: 'Ext.panel.Panel',
 
 		requires: [
-			'CMDBuild.core.proxy.Constants',
+			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.Message'
 		],
 
@@ -49,7 +49,7 @@
 				dockedItems: [
 					Ext.create('Ext.toolbar.Toolbar', {
 						dock: 'top',
-						itemId: CMDBuild.core.proxy.Constants.TOOLBAR_TOP,
+						itemId: CMDBuild.core.constants.Proxy.TOOLBAR_TOP,
 
 						items: [
 							this.addFolderField = Ext.create('Ext.form.field.Trigger', {
@@ -74,7 +74,7 @@
 					}),
 					Ext.create('Ext.toolbar.Toolbar', {
 						dock: 'bottom',
-						itemId: CMDBuild.core.proxy.Constants.TOOLBAR_BOTTOM,
+						itemId: CMDBuild.core.constants.Proxy.TOOLBAR_BOTTOM,
 						ui: 'footer',
 
 						layout: {
@@ -118,7 +118,7 @@
 						columns: [
 							{
 								xtype: 'treecolumn',
-								dataIndex: CMDBuild.core.proxy.Constants.TEXT,
+								dataIndex: CMDBuild.core.constants.Proxy.TEXT,
 								flex: 1,
 
 								editor: {
@@ -139,7 +139,7 @@
 										scope: this,
 
 										getClass: function(value, metadata, record, rowIndex, colIndex, store) { // Hides icon in root node or if no translations enabled
-											return (record.isRoot() || !CMDBuild.configuration[CMDBuild.core.proxy.Constants.LOCALIZATION].hasEnabledLanguages()) ? '' : 'translate';
+											return (record.isRoot() || !CMDBuild.configuration[CMDBuild.core.constants.Proxy.LOCALIZATION].hasEnabledLanguages()) ? '' : 'translate';
 										},
 
 										handler: function(grid, rowIndex, colIndex, node, e, record, rowNode) {
@@ -149,16 +149,16 @@
 												Ext.create('CMDBuild.controller.common.field.translatable.NoFieldWindow', {
 													buffer: this.translatableAttributesConfigurationsBuffer,
 													translationFieldConfig: {
-														type: CMDBuild.core.proxy.Constants.MENU_ITEM,
+														type: CMDBuild.core.constants.Proxy.MENU_ITEM,
 														identifier: record.get('uuid'),
-														field: CMDBuild.core.proxy.Constants.DESCRIPTION
+														field: CMDBuild.core.constants.Proxy.DESCRIPTION
 													}
 												});
 											}
 										},
 
 										isDisabled: function(grid, rowIndex, colIndex, item, record) { // Disable icons in root node or if no translations enabled to avoid click action
-											return record.isRoot() || !CMDBuild.configuration[CMDBuild.core.proxy.Constants.LOCALIZATION].hasEnabledLanguages();
+											return record.isRoot() || !CMDBuild.configuration[CMDBuild.core.constants.Proxy.LOCALIZATION].hasEnabledLanguages();
 										}
 									})
 								]

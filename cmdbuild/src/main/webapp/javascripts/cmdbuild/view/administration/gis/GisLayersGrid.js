@@ -20,7 +20,7 @@
 					hideable: true,
 					hidden: false,
 					sortable: false,
-					dataIndex: CMDBuild.core.proxy.Constants.NAME,
+					dataIndex: CMDBuild.core.constants.Proxy.NAME,
 					flex: 1
 				},
 				{
@@ -28,7 +28,7 @@
 					hideable: true,
 					hidden: false,
 					sortable: false,
-					dataIndex: CMDBuild.core.proxy.Constants.DESCRIPTION,
+					dataIndex: CMDBuild.core.constants.Proxy.DESCRIPTION,
 					flex: 1
 				},
 				{
@@ -36,7 +36,7 @@
 					hideable: true,
 					hidden: false,
 					sortable: false,
-					dataIndex: CMDBuild.core.proxy.Constants.TYPE,
+					dataIndex: CMDBuild.core.constants.Proxy.TYPE,
 					flex: 1
 				},
 				{
@@ -116,7 +116,7 @@
 
 			this.store.load({
 				callback: function(records, operation, success) {
-					var toSelect = me.store.find(CMDBuild.core.proxy.Constants.NAME, name);
+					var toSelect = me.store.find(CMDBuild.core.constants.Proxy.NAME, name);
 
 					if (toSelect >= 0) {
 						me.getSelectionModel().select(toSelect);

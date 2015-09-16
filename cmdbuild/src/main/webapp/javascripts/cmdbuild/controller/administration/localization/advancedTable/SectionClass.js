@@ -4,7 +4,7 @@
 		extend: 'CMDBuild.controller.administration.localization.advancedTable.SectionAbstract',
 
 		requires: [
-			'CMDBuild.core.proxy.Constants',
+			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.localization.Localization'
 		],
 
@@ -26,7 +26,7 @@
 		/**
 		 * @cfg {String}
 		 */
-		sectionId: CMDBuild.core.proxy.Constants.CLASS,
+		sectionId: CMDBuild.core.constants.Proxy.CLASS,
 
 		/**
 		 * @property {CMDBuild.view.administration.localization.common.AdvancedTableGrid}

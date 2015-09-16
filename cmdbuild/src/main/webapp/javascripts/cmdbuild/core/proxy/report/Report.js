@@ -3,7 +3,7 @@
 	Ext.define('CMDBuild.core.proxy.report.Report', {
 
 		requires: [
-			'CMDBuild.core.proxy.Constants',
+			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.Index',
 			'CMDBuild.model.report.Grid'
 		],
@@ -41,11 +41,11 @@
 						totalProperty: 'results'
 					},
 					extraParams: {
-						type: CMDBuild.core.proxy.Constants.CUSTOM
+						type: CMDBuild.core.constants.Proxy.CUSTOM
 					}
 				},
 				sorters: [
-					{ property: CMDBuild.core.proxy.Constants.DESCRIPTION, direction: 'ASC' }
+					{ property: CMDBuild.core.constants.Proxy.DESCRIPTION, direction: 'ASC' }
 				]
 			});
 		},

@@ -3,7 +3,7 @@
 	Ext.define('CMDBuild.core.buttons.iconized.state.Double', {
 		extend: 'Ext.button.Cycle',
 
-		requires: ['CMDBuild.core.proxy.Constants'],
+		requires: ['CMDBuild.core.constants.Proxy'],
 
 		/**
 		 * @cfg {String}
@@ -27,12 +27,12 @@
 						{
 							text: me.state1text,
 							iconCls: 'delete',
-							clickedStateIdentifier: CMDBuild.core.proxy.Constants.ENABLE // Identifier of clicked state
+							clickedStateIdentifier: CMDBuild.core.constants.Proxy.ENABLE // Identifier of clicked state
 						},
 						{
 							text: me.state2text,
 							iconCls: 'ok',
-							clickedStateIdentifier: CMDBuild.core.proxy.Constants.DISABLE // Identifier of clicked state
+							clickedStateIdentifier: CMDBuild.core.constants.Proxy.DISABLE // Identifier of clicked state
 						}
 					]
 				}

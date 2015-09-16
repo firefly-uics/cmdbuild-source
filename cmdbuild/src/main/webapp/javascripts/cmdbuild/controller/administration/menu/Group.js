@@ -4,7 +4,7 @@
 		extend: 'CMDBuild.controller.common.AbstractController',
 
 		requires: [
-			'CMDBuild.core.proxy.Constants',
+			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.localization.Localization',
 			'CMDBuild.core.proxy.Menu',
 			'CMDBuild.model.menu.TreeStore'
@@ -54,8 +54,8 @@
 		buildNodeStructure: function(nodeObject) {
 			var out = {};
 			var superclass = false;
-			var type = nodeObject[CMDBuild.core.proxy.Constants.TYPE];
-			var folderType = nodeObject[CMDBuild.core.proxy.Constants.DESCRIPTION];
+			var type = nodeObject[CMDBuild.core.constants.Proxy.TYPE];
+			var folderType = nodeObject[CMDBuild.core.constants.Proxy.DESCRIPTION];
 
 			if (
 				(
@@ -75,7 +75,7 @@
 			out.index = nodeObject.index;
 			out.referencedClassName = nodeObject.referencedClassName;
 			out.referencedElementId = nodeObject.referencedElementId;
-			out.text = nodeObject[CMDBuild.core.proxy.Constants.DESCRIPTION];
+			out.text = nodeObject[CMDBuild.core.constants.Proxy.DESCRIPTION];
 			out.type = type;
 			out.uuid = nodeObject.uuid;
 
@@ -93,12 +93,12 @@
 		buildTreeStructure: function(menuObject) {
 			var out = this.buildNodeStructure(menuObject);
 
-			if (menuObject[CMDBuild.core.proxy.Constants.CHILDREN] || out[CMDBuild.core.proxy.Constants.TYPE] == 'folder') {
+			if (menuObject[CMDBuild.core.constants.Proxy.CHILDREN] || out[CMDBuild.core.constants.Proxy.TYPE] == 'folder') {
 				out.leaf = false;
 				out.children = [];
 				out.expanded = false;
 
-				var children = menuObject[CMDBuild.core.proxy.Constants.CHILDREN] || [];
+				var children = menuObject[CMDBuild.core.constants.Proxy.CHILDREN] || [];
 
 				Ext.Array.forEach(children, function(childObject, i, allChildrenObjects) {
 					out.children.push(this.buildTreeStructure(childObject));
@@ -120,9 +120,9 @@
 			menuConfiguration['referencedClassName'] = node.get('referencedClassName');
 			menuConfiguration['referencedElementId'] = node.get('referencedElementId');
 			menuConfiguration['uuid'] = node.get('uuid');
-			menuConfiguration[CMDBuild.core.proxy.Constants.DESCRIPTION] = node.get(CMDBuild.core.proxy.Constants.TEXT);
-			menuConfiguration[CMDBuild.core.proxy.Constants.INDEX] = 0;
-			menuConfiguration[CMDBuild.core.proxy.Constants.TYPE] = node.get(CMDBuild.core.proxy.Constants.TYPE);
+			menuConfiguration[CMDBuild.core.constants.Proxy.DESCRIPTION] = node.get(CMDBuild.core.constants.Proxy.TEXT);
+			menuConfiguration[CMDBuild.core.constants.Proxy.INDEX] = 0;
+			menuConfiguration[CMDBuild.core.constants.Proxy.TYPE] = node.get(CMDBuild.core.constants.Proxy.TYPE);
 
 			if (node.childNodes.length > 0) {
 				menuConfiguration.children = [];
@@ -179,7 +179,7 @@
 		onMenuGroupRemoveItemButtonClick: function() {
 			var selectedNode = this.view.menuTreePanel.getSelectionModel().getSelection()[0];
 
-			if (!Ext.isEmpty(selectedNode) && !Ext.isEmpty(selectedNode.get(CMDBuild.core.proxy.Constants.TYPE)))
+			if (!Ext.isEmpty(selectedNode) && !Ext.isEmpty(selectedNode.get(CMDBuild.core.constants.Proxy.TYPE)))
 				this.removeTreeBranch(selectedNode);
 		},
 
@@ -198,11 +198,11 @@
 
 		onMenuGroupSaveButtonClick: function() {
 			var menuTree = this.getMenuConfiguration(this.view.menuTreePanel.getRootNode());
-			menuTree[CMDBuild.core.proxy.Constants.TYPE] = 'root';
+			menuTree[CMDBuild.core.constants.Proxy.TYPE] = 'root';
 
 			var params = {};
-			params[CMDBuild.core.proxy.Constants.GROUP_NAME] = this.cmfg('selectedMenuNameGet');
-			params[CMDBuild.core.proxy.Constants.MENU] = Ext.encode(menuTree);
+			params[CMDBuild.core.constants.Proxy.GROUP_NAME] = this.cmfg('selectedMenuNameGet');
+			params[CMDBuild.core.constants.Proxy.MENU] = Ext.encode(menuTree);
 
 			CMDBuild.core.proxy.Menu.save({
 				params: params,
@@ -214,9 +214,9 @@
 					Ext.Object.each(this.view.translatableAttributesConfigurationsBuffer, function(key, value, myself) {
 						if (
 							!Ext.isEmpty(value)
-							&& !Ext.isEmpty(value[CMDBuild.core.proxy.Constants.TRANSLATIONS])
+							&& !Ext.isEmpty(value[CMDBuild.core.constants.Proxy.TRANSLATIONS])
 						) {
-							value[CMDBuild.core.proxy.Constants.TRANSLATIONS] = Ext.encode(value[CMDBuild.core.proxy.Constants.TRANSLATIONS]);
+							value[CMDBuild.core.constants.Proxy.TRANSLATIONS] = Ext.encode(value[CMDBuild.core.constants.Proxy.TRANSLATIONS]);
 
 							CMDBuild.core.proxy.localization.Localization.update({
 								params: value,
@@ -235,7 +235,7 @@
 		 */
 		onViewOnFront: function() {
 			var params = {};
-			params[CMDBuild.core.proxy.Constants.GROUP_NAME] = this.cmfg('selectedMenuNameGet');
+			params[CMDBuild.core.constants.Proxy.GROUP_NAME] = this.cmfg('selectedMenuNameGet');
 
 			CMDBuild.core.proxy.Menu.readConfiguration({
 				params: params,
@@ -246,8 +246,8 @@
 
 					root.removeAll();
 
-					if (!Ext.isEmpty(menu[CMDBuild.core.proxy.Constants.CHILDREN])) // If empty has no children field
-						root.appendChild(menu[CMDBuild.core.proxy.Constants.CHILDREN]);
+					if (!Ext.isEmpty(menu[CMDBuild.core.constants.Proxy.CHILDREN])) // If empty has no children field
+						root.appendChild(menu[CMDBuild.core.constants.Proxy.CHILDREN]);
 				}
 			});
 
@@ -259,11 +259,11 @@
 					var root = this.view.availableItemsTreePanel.getRootNode();
 
 					root.removeAll();
-					root.appendChild(menu[CMDBuild.core.proxy.Constants.CHILDREN]);
+					root.appendChild(menu[CMDBuild.core.constants.Proxy.CHILDREN]);
 
 					this.view.menuTreePanel.getStore().sort([
-						{ property: CMDBuild.core.proxy.Constants.INDEX, direction: 'ASC' },
-						{ property: CMDBuild.core.proxy.Constants.TEXT, direction: 'ASC' }
+						{ property: CMDBuild.core.constants.Proxy.INDEX, direction: 'ASC' },
+						{ property: CMDBuild.core.constants.Proxy.TEXT, direction: 'ASC' }
 					]);
 				}
 			});
@@ -271,7 +271,7 @@
 
 		removeItem: function() {
 			var params = {};
-			params[CMDBuild.core.proxy.Constants.GROUP_NAME] = this.cmfg('selectedMenuNameGet');
+			params[CMDBuild.core.constants.Proxy.GROUP_NAME] = this.cmfg('selectedMenuNameGet');
 
 			CMDBuild.core.proxy.Menu.remove({
 				params: params,
@@ -287,12 +287,12 @@
 				this.removeTreeBranch(node.childNodes[0]);
 			}
 
-			var nodeType = node.get(CMDBuild.core.proxy.Constants.TYPE);
+			var nodeType = node.get(CMDBuild.core.constants.Proxy.TYPE);
 
-			if (nodeType.indexOf(CMDBuild.core.proxy.Constants.REPORT) >= 0)
+			if (nodeType.indexOf(CMDBuild.core.constants.Proxy.REPORT) >= 0)
 				nodeType = 'report';
 
-			var originalFolderOfTheLeaf = this.view.availableItemsTreePanel.getRootNode().findChild(CMDBuild.core.proxy.Constants.FOLDER_TYPE, nodeType);
+			var originalFolderOfTheLeaf = this.view.availableItemsTreePanel.getRootNode().findChild(CMDBuild.core.constants.Proxy.FOLDER_TYPE, nodeType);
 
 			// Remove the node before adding it to the original tree
 			node.remove();

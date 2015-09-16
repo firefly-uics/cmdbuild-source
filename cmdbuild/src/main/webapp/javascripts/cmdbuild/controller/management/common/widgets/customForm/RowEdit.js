@@ -3,7 +3,7 @@
 	Ext.define('CMDBuild.controller.management.common.widgets.customForm.RowEdit', {
 		extend: 'CMDBuild.controller.common.AbstractController',
 
-		requires: ['CMDBuild.core.proxy.Constants'],
+		requires: ['CMDBuild.core.constants.Proxy'],
 
 		/**
 		 * @cfg {CMDBuild.controller.management.common.widgets.customForm.layout.Grid}
@@ -64,11 +64,11 @@
 		buildFields: function() {
 			var itemsArray = [];
 
-			if (!this.cmfg('widgetConfigurationIsAttributeEmpty',  CMDBuild.core.proxy.Constants.MODEL)) {
+			if (!this.cmfg('widgetConfigurationIsAttributeEmpty',  CMDBuild.core.constants.Proxy.MODEL)) {
 				var fieldManager = Ext.create('CMDBuild.core.fieldManager.FieldManager', { parentDelegate: this });
 
-				Ext.Array.forEach(this.cmfg('widgetConfigurationGet', CMDBuild.core.proxy.Constants.MODEL), function(attribute, i, allAttributes) {
-					if (fieldManager.isAttributeManaged(attribute.get(CMDBuild.core.proxy.Constants.TYPE))) {
+				Ext.Array.forEach(this.cmfg('widgetConfigurationGet', CMDBuild.core.constants.Proxy.MODEL), function(attribute, i, allAttributes) {
+					if (fieldManager.isAttributeManaged(attribute.get(CMDBuild.core.constants.Proxy.TYPE))) {
 						fieldManager.attributeModelSet(Ext.create('CMDBuild.model.common.attributes.Attribute', attribute.getData()));
 
 						itemsArray.push(fieldManager.buildField());
@@ -95,7 +95,7 @@
 							item = CMDBuild.Management.FieldManager.getFieldForAttr(attribute, false, false);
 						}
 
-						if (attribute[CMDBuild.core.proxy.Constants.FIELD_MODE] == 'read')
+						if (attribute[CMDBuild.core.constants.Proxy.FIELD_MODE] == 'read')
 							item.setDisabled(true);
 
 						// Force execution of template resolver

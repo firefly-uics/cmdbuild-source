@@ -55,7 +55,7 @@
 				fieldLabel: tr_attribute.name,
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
-				name: CMDBuild.core.proxy.Constants.NAME,
+				name: CMDBuild.core.constants.Proxy.NAME,
 				allowBlank: false,
 				cmImmutable: true,
 				vtype: 'alphanum',
@@ -71,18 +71,18 @@
 			this.typesCombo = Ext.create('Ext.form.field.ComboBox', {
 				allowBlank: false,
 				autoScroll: true,
-				name: CMDBuild.core.proxy.Constants.TYPE,
+				name: CMDBuild.core.constants.Proxy.TYPE,
 				fieldLabel: tr_attribute.type,
 				labelWidth: CMDBuild.LABEL_WIDTH,
-				valueField: CMDBuild.core.proxy.Constants.VALUE,
-				displayField: CMDBuild.core.proxy.Constants.NAME,
-				hiddenName: CMDBuild.core.proxy.Constants.TYPE,
+				valueField: CMDBuild.core.constants.Proxy.VALUE,
+				displayField: CMDBuild.core.constants.Proxy.NAME,
+				hiddenName: CMDBuild.core.constants.Proxy.TYPE,
 				triggerAction: 'all',
 				cmImmutable: true,
 				disabled: true,
 
 				store: Ext.create('Ext.data.SimpleStore', {
-					fields: [CMDBuild.core.proxy.Constants.VALUE, CMDBuild.core.proxy.Constants.NAME],
+					fields: [CMDBuild.core.constants.Proxy.VALUE, CMDBuild.core.constants.Proxy.NAME],
 					data: [
 						['GEOTIFF', 'GeoTiff'],
 						['WORLDIMAGE', 'WorldImage'],
@@ -119,7 +119,7 @@
 				fieldLabel: tr_attribute.description,
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
-				name: CMDBuild.core.proxy.Constants.DESCRIPTION,
+				name: CMDBuild.core.constants.Proxy.DESCRIPTION,
 				allowBlank: false,
 				disabled: true
 			});
@@ -157,7 +157,7 @@
 					{
 						xtype: 'toolbar',
 						dock: 'top',
-						itemId: CMDBuild.core.proxy.Constants.TOOLBAR_TOP,
+						itemId: CMDBuild.core.constants.Proxy.TOOLBAR_TOP,
 						items: this.cmTBar
 					}
 				],

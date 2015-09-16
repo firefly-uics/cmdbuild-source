@@ -164,8 +164,8 @@
 				&& _CMWFState.getProcessInstance()
 			) {
 				var params = {};
-				params[CMDBuild.core.proxy.Constants.ACTIVITY_INSTANCE_ID] = _CMWFState.getActivityInstance().data[CMDBuild.core.proxy.Constants.ID];
-				params[CMDBuild.core.proxy.Constants.PROCESS_INSTANCE_ID] = _CMWFState.getProcessInstance().data[CMDBuild.core.proxy.Constants.ID];
+				params[CMDBuild.core.constants.Proxy.ACTIVITY_INSTANCE_ID] = _CMWFState.getActivityInstance().data[CMDBuild.core.constants.Proxy.ID];
+				params[CMDBuild.core.constants.Proxy.PROCESS_INSTANCE_ID] = _CMWFState.getProcessInstance().data[CMDBuild.core.constants.Proxy.ID];
 
 				CMDBuild.core.proxy.processes.Activity.lock({
 					params: params,
@@ -184,8 +184,8 @@
 				&& this.view.isInEditing()
 			) {
 				var params = {};
-				params[CMDBuild.core.proxy.Constants.ACTIVITY_INSTANCE_ID] = this.lastSelectedActivityInstance.data[CMDBuild.core.proxy.Constants.ID];
-				params[CMDBuild.core.proxy.Constants.PROCESS_INSTANCE_ID] = this.lastSelectedProcessInstance.data[CMDBuild.core.proxy.Constants.ID];
+				params[CMDBuild.core.constants.Proxy.ACTIVITY_INSTANCE_ID] = this.lastSelectedActivityInstance.data[CMDBuild.core.constants.Proxy.ID];
+				params[CMDBuild.core.constants.Proxy.PROCESS_INSTANCE_ID] = this.lastSelectedProcessInstance.data[CMDBuild.core.constants.Proxy.ID];
 
 				CMDBuild.core.proxy.processes.Activity.unlock({
 					params: params

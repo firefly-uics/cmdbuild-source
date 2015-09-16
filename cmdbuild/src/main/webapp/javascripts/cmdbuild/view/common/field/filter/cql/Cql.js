@@ -3,7 +3,7 @@
 	Ext.define('CMDBuild.view.common.field.filter.cql.Cql', {
 		extend: 'Ext.form.FieldContainer',
 
-		requires: ['CMDBuild.core.proxy.Constants'],
+		requires: ['CMDBuild.core.constants.Proxy'],
 
 		/**
 		 * @property {CMDBuild.controller.common.field.filter.cql.Cql}
@@ -18,7 +18,7 @@
 		/**
 		 * @cfg {String}
 		 */
-		fieldName: CMDBuild.core.proxy.Constants.FILTER,
+		fieldName: CMDBuild.core.constants.Proxy.FILTER,
 
 		/**
 		 * @property {CMDBuild.core.buttons.iconized.Modify}

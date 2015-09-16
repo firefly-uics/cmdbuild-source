@@ -2,7 +2,7 @@
 
 	Ext.define('CMDBuild.core.Data', {
 
-		requires: ['CMDBuild.core.proxy.Constants'],
+		requires: ['CMDBuild.core.constants.Proxy'],
 
 		/**
 		 * Setup with overrides of all data configurations (timeouts, defaultHeaders)
@@ -15,12 +15,12 @@
 				var toLocalize = Ext.isEmpty(CMDBuild.app.Administration); // I'm on Management so i must localize
 
 				var defaultHeaders = {};
-				defaultHeaders[CMDBuild.core.proxy.Constants.LOCALIZED_HEADER_KEY] = toLocalize;
+				defaultHeaders[CMDBuild.core.constants.Proxy.LOCALIZED_HEADER_KEY] = toLocalize;
 
 				CMDBuild.Config.defaultTimeout = 90; // TODO: Read from real configuration
 
 				Ext.Ajax.timeout = CMDBuild.Config.defaultTimeout * 1000;
-				Ext.Ajax[CMDBuild.core.proxy.Constants.LOCALIZED_HEADER_KEY] = toLocalize;
+				Ext.Ajax[CMDBuild.core.constants.Proxy.LOCALIZED_HEADER_KEY] = toLocalize;
 
 				Ext.define('CMDBuild.data.Connection', {
 					override: 'Ext.data.Connection',

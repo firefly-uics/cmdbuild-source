@@ -3,40 +3,37 @@
 	Ext.define('CMDBuild.core.configurationBuilders.Localization', {
 
 		requires: [
+			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.Configuration',
-			'CMDBuild.core.proxy.Constants',
 			'CMDBuild.core.proxy.localization.Localization'
 		],
 
-		constructor: function() {
-			if (!Ext.isEmpty(CMDBuild) && !Ext.isEmpty(CMDBuild.configuration)) {
-				// Localization configuration object
-				CMDBuild.configuration[CMDBuild.core.proxy.Constants.LOCALIZATION] = Ext.create('CMDBuild.model.configuration.Localization');
+		/**
+		 * @param {Object} parameters
+		 * @param {Function} parameters.callback
+		 */
+		constructor: function(parameters) {
+			callback = Ext.isEmpty(parameters) ? Ext.emptyFn : parameters.callback;
 
-				var configurationObject = CMDBuild.configuration[CMDBuild.core.proxy.Constants.LOCALIZATION]; // Shorthand
+			if (!Ext.isEmpty(CMDBuild) && !Ext.isEmpty(CMDBuild.configuration)) {
+				CMDBuild.configuration.localization = Ext.create('CMDBuild.model.configuration.Localization'); // Localization configuration object
 
 				CMDBuild.core.proxy.localization.Localization.getLanguages({
 					scope: this,
 					success: function(result, options, decodedResult) {
 						// Build all languages array
-						configurationObject.setLanguages(decodedResult.translations);
+						CMDBuild.configuration.localization.setLanguages(decodedResult.translations);
 
 						// Get server language
-						CMDBuild.core.proxy.localization.Localization.getCurrentLanguage({
-							success: function(result, options, decodedResult) {
-								configurationObject.setCurrentLanguage(decodedResult[CMDBuild.core.proxy.Constants.LANGUAGE]);
-							}
-						});
-
-						/**
-						 * Get enabled languages
-						 *
-						 * TODO: waiting for server configuration refactoring
-						 */
-						CMDBuild.core.proxy.Configuration.readMainConfiguration({
+						CMDBuild.core.proxy.Configuration.readMainConfiguration({ // TODO: waiting for server configuration refactoring
 							success: function(response, options, decodedResult) {
-								configurationObject.setEnabledLanguages(decodedResult.data.enabled_languages);
-							}
+								decodedResult = decodedResult[CMDBuild.core.constants.Proxy.DATA];
+
+								CMDBuild.configuration.localization.set(CMDBuild.core.constants.Proxy.LANGUAGE_PROMPT, decodedResult['languageprompt']);
+								CMDBuild.configuration.localization.setEnabledLanguages(decodedResult['enabled_languages']);
+								CMDBuild.configuration.localization.setCurrentLanguage(decodedResult[CMDBuild.core.constants.Proxy.LANGUAGE]);
+							},
+							callback: callback
 						});
 					}
 				});

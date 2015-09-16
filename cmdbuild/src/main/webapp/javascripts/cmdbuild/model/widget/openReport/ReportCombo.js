@@ -4,9 +4,9 @@
 		extend: 'Ext.data.Model',
 
 		fields: [
-			{ name: CMDBuild.core.proxy.Constants.DESCRIPTION, type: 'string' },
-			{ name: CMDBuild.core.proxy.Constants.ID, type: 'int' },
-			{ name: CMDBuild.core.proxy.Constants.TITLE, type: 'string' }
+			{ name: CMDBuild.core.constants.Proxy.DESCRIPTION, type: 'string' },
+			{ name: CMDBuild.core.constants.Proxy.ID, type: 'int' },
+			{ name: CMDBuild.core.constants.Proxy.TITLE, type: 'string' }
 		]
 	});
 

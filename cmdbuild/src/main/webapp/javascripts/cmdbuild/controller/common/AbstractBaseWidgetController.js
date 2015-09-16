@@ -8,7 +8,7 @@
 	Ext.define('CMDBuild.controller.common.AbstractBaseWidgetController', {
 		extend: 'CMDBuild.controller.common.AbstractController',
 
-		requires: ['CMDBuild.core.proxy.Constants'],
+		requires: ['CMDBuild.core.constants.Proxy'],
 
 		statics: {
 			/**
@@ -165,14 +165,14 @@
 		 * @return {Number}
 		 */
 		getWidgetId: function() {
-			return this.widgetConfigurationGet(CMDBuild.core.proxy.Constants.ID);
+			return this.widgetConfigurationGet(CMDBuild.core.constants.Proxy.ID);
 		},
 
 		/**
 		 * @param {String}
 		 */
 		getWidgetLabel: function() {
-			return this.widgetConfigurationGet(CMDBuild.core.proxy.Constants.LABEL);
+			return this.widgetConfigurationGet(CMDBuild.core.constants.Proxy.LABEL);
 		},
 
 		// InstancesDataStorage methods (multiple widget instances support)

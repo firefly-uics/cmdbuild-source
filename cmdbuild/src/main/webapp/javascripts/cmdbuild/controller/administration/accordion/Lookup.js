@@ -3,7 +3,7 @@
 	Ext.define('CMDBuild.controller.administration.accordion.Lookup', {
 		extend: 'CMDBuild.controller.accordion.CMBaseAccordionController',
 
-		requires: ['CMDBuild.core.proxy.Constants'],
+		requires: ['CMDBuild.core.constants.Proxy'],
 
 		/**
 		 * @cfg {CMDBuild.view.administration.accordion.Lookup}
@@ -32,7 +32,7 @@
 		 */
 		updateStore: function(lookupType) {
 			this.accordion.updateStore();
-			this.accordion.selectNodeById(lookupType[CMDBuild.core.proxy.Constants.ID]);
+			this.accordion.selectNodeById(lookupType[CMDBuild.core.constants.Proxy.ID]);
 		}
 	});
 

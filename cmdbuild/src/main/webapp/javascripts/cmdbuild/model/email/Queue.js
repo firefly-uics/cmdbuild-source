@@ -3,10 +3,10 @@
 	Ext.define('CMDBuild.model.email.Queue', {
 		extend: 'Ext.data.Model',
 
-		requires: ['CMDBuild.core.proxy.Constants'],
+		requires: ['CMDBuild.core.constants.Proxy'],
 
 		fields: [
-			{ name: CMDBuild.core.proxy.Constants.TIME, type: 'int' }
+			{ name: CMDBuild.core.constants.Proxy.TIME, type: 'int' }
 		]
 
 	});

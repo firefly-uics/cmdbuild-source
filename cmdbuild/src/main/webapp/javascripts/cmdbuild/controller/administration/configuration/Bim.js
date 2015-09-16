@@ -3,7 +3,7 @@
 	Ext.define('CMDBuild.controller.administration.configuration.Bim', {
 		extend: 'CMDBuild.controller.common.AbstractController',
 
-		requires: ['CMDBuild.core.proxy.Constants'],
+		requires: ['CMDBuild.core.constants.Proxy'],
 
 		/**
 		 * @cfg {CMDBuild.controller.administration.configuration.Configuration}
@@ -46,7 +46,7 @@
 				delegate: this
 			});
 
-			this.params[CMDBuild.core.proxy.Constants.VIEW] = this.view;
+			this.params[CMDBuild.core.constants.Proxy.VIEW] = this.view;
 
 			this.cmfg('onConfigurationRead', this.params);
 		},

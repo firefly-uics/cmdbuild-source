@@ -3,7 +3,7 @@
 	Ext.define('CMDBuild.view.management.common.widgets.grid.RowEditWindow', {
 		extend: 'CMDBuild.core.PopupWindow',
 
-		requires: ['CMDBuild.core.proxy.Constants'],
+		requires: ['CMDBuild.core.constants.Proxy'],
 
 		/**
 		 * @cfg {CMDBuild.controller.management.common.widgets.grid.RowEdit}
@@ -32,7 +32,7 @@
 				dockedItems: [
 					Ext.create('Ext.toolbar.Toolbar', {
 						dock: 'bottom',
-						itemId: CMDBuild.core.proxy.Constants.TOOLBAR_BOTTOM,
+						itemId: CMDBuild.core.constants.Proxy.TOOLBAR_BOTTOM,
 						ui: 'footer',
 
 						layout: {

@@ -4,7 +4,7 @@
 		extend: 'CMDBuild.controller.common.AbstractController',
 
 		requires: [
-			'CMDBuild.core.proxy.Constants',
+			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.model.localization.advancedTable.TreeStore'
 		],
 
@@ -105,11 +105,11 @@
 		buildColumn: function(languageObject) {
 			if (!Ext.isEmpty(languageObject)) {
 				return Ext.create('Ext.grid.column.Column', {
-					dataIndex: languageObject.get(CMDBuild.core.proxy.Constants.TAG),
-					languageDescription: languageObject.get(CMDBuild.core.proxy.Constants.DESCRIPTION),
+					dataIndex: languageObject.get(CMDBuild.core.constants.Proxy.TAG),
+					languageDescription: languageObject.get(CMDBuild.core.constants.Proxy.DESCRIPTION),
 					text: '<img style="margin: 0px 5px 0px 0px;" src="images/icons/flags/'
-						+ languageObject.get(CMDBuild.core.proxy.Constants.TAG) + '.png" /> '
-						+ languageObject.get(CMDBuild.core.proxy.Constants.DESCRIPTION),
+						+ languageObject.get(CMDBuild.core.constants.Proxy.TAG) + '.png" /> '
+						+ languageObject.get(CMDBuild.core.constants.Proxy.DESCRIPTION),
 					width: 300,
 					sortable: false,
 					draggable: false,
@@ -127,11 +127,11 @@
 		 * @return {Array} columnsArray
 		 */
 		onLocalizationAdvancedTableBuildColumns: function() {
-			var enabledLanguages = CMDBuild.configuration[CMDBuild.core.proxy.Constants.LOCALIZATION].getEnabledLanguages();
+			var enabledLanguages = CMDBuild.configuration[CMDBuild.core.constants.Proxy.LOCALIZATION].getEnabledLanguages();
 			var columnsArray = [
 				{
 					xtype: 'treecolumn',
-					dataIndex: CMDBuild.core.proxy.Constants.TEXT,
+					dataIndex: CMDBuild.core.constants.Proxy.TEXT,
 					text: '@@ Translation object',
 					width: 300,
 					// locked: true, // There is a performance issue in ExtJs 4.2.0 without locked columns all is fine
@@ -139,7 +139,7 @@
 					draggable: false
 				},
 				{
-					dataIndex: CMDBuild.core.proxy.Constants.DEFAULT,
+					dataIndex: CMDBuild.core.constants.Proxy.DEFAULT,
 					text: '@@ Default translation',
 					width: 300,
 					sortable: false,

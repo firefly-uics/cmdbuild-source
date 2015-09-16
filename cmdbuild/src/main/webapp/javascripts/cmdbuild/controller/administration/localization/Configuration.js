@@ -6,7 +6,7 @@
 		requires: [
 			'CMDBuild.core.Message',
 			'CMDBuild.core.proxy.Configuration',
-			'CMDBuild.core.proxy.Constants',
+			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.localization.importExport.Csv',
 		],
 
@@ -32,10 +32,10 @@
 		 * @cfg {Array}
 		 */
 		activeOnlySections: [
-			CMDBuild.core.proxy.Constants.CLASS,
-			CMDBuild.core.proxy.Constants.DOMAIN,
-			CMDBuild.core.proxy.Constants.LOOKUP,
-			CMDBuild.core.proxy.Constants.PROCESS
+			CMDBuild.core.constants.Proxy.CLASS,
+			CMDBuild.core.constants.Proxy.DOMAIN,
+			CMDBuild.core.constants.Proxy.LOOKUP,
+			CMDBuild.core.constants.Proxy.PROCESS
 		],
 
 		/**
@@ -83,10 +83,10 @@
 		onLocalizationConfigurationExportButtonClick: function() {
 			var formValues = this.view.exportPanel.getForm().getValues();
 			var params = {};
-			params[CMDBuild.core.proxy.Constants.TYPE] = formValues[CMDBuild.core.proxy.Constants.SECTION];
-			params[CMDBuild.core.proxy.Constants.SEPARATOR] = formValues[CMDBuild.core.proxy.Constants.SEPARATOR];
-			params[CMDBuild.core.proxy.Constants.ACTIVE] = formValues[CMDBuild.core.proxy.Constants.ACTIVE_ONLY];
-			params[CMDBuild.core.proxy.Constants.FORCE_DOWNLOAD_PARAM_KEY] = true;
+			params[CMDBuild.core.constants.Proxy.TYPE] = formValues[CMDBuild.core.constants.Proxy.SECTION];
+			params[CMDBuild.core.constants.Proxy.SEPARATOR] = formValues[CMDBuild.core.constants.Proxy.SEPARATOR];
+			params[CMDBuild.core.constants.Proxy.ACTIVE] = formValues[CMDBuild.core.constants.Proxy.ACTIVE_ONLY];
+			params[CMDBuild.core.constants.Proxy.FORCE_DOWNLOAD_PARAM_KEY] = true;
 
 			CMDBuild.core.proxy.localization.importExport.Csv.exports({
 				form: this.view.exportPanel.getForm(),

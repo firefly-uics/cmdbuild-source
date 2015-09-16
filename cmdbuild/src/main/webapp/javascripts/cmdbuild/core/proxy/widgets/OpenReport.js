@@ -3,7 +3,7 @@
 	Ext.define('CMDBuild.core.proxy.widgets.OpenReport', {
 
 		requires: [
-			'CMDBuild.core.proxy.Constants',
+			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.Index',
 			'CMDBuild.model.widget.openReport.ReportCombo'
 		],
@@ -47,15 +47,15 @@
 		 */
 		getFormatsStore: function() {
 			return Ext.create('Ext.data.ArrayStore', {
-				fields: [CMDBuild.core.proxy.Constants.VALUE, CMDBuild.core.proxy.Constants.DESCRIPTION],
+				fields: [CMDBuild.core.constants.Proxy.VALUE, CMDBuild.core.constants.Proxy.DESCRIPTION],
 				data: [
-					[CMDBuild.core.proxy.Constants.PDF, CMDBuild.Translation.pdf],
-					[CMDBuild.core.proxy.Constants.CSV, CMDBuild.Translation.csv],
-					[CMDBuild.core.proxy.Constants.ODT, CMDBuild.Translation.odt],
-					[CMDBuild.core.proxy.Constants.RTF, CMDBuild.Translation.rtf]
+					[CMDBuild.core.constants.Proxy.PDF, CMDBuild.Translation.pdf],
+					[CMDBuild.core.constants.Proxy.CSV, CMDBuild.Translation.csv],
+					[CMDBuild.core.constants.Proxy.ODT, CMDBuild.Translation.odt],
+					[CMDBuild.core.constants.Proxy.RTF, CMDBuild.Translation.rtf]
 				],
 				sorters: [
-					{ property: CMDBuild.core.proxy.Constants.DESCRIPTION, direction: 'ASC' }
+					{ property: CMDBuild.core.constants.Proxy.DESCRIPTION, direction: 'ASC' }
 				]
 			});
 		},
@@ -80,7 +80,7 @@
 					}
 				},
 				sorters: [
-					{ property: CMDBuild.core.proxy.Constants.DESCRIPTION, direction: 'ASC' }
+					{ property: CMDBuild.core.constants.Proxy.DESCRIPTION, direction: 'ASC' }
 				]
 			});
 		},

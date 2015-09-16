@@ -3,7 +3,7 @@
 	Ext.define('CMDBuild.view.administration.group.userInterface.FormPanel', {
 		extend: 'Ext.form.Panel',
 
-		requires: ['CMDBuild.core.proxy.Constants'],
+		requires: ['CMDBuild.core.constants.Proxy'],
 
 		mixins: ['CMDBuild.view.common.PanelFunctions'],
 
@@ -28,7 +28,7 @@
 				dockedItems: [
 					Ext.create('Ext.toolbar.Toolbar', {
 						dock: 'bottom',
-						itemId: CMDBuild.core.proxy.Constants.TOOLBAR_BOTTOM,
+						itemId: CMDBuild.core.constants.Proxy.TOOLBAR_BOTTOM,
 						ui: 'footer',
 
 						layout: {
@@ -69,37 +69,37 @@
 								items: [
 									{
 										boxLabel: CMDBuild.Translation.cards,
-										name: CMDBuild.core.proxy.Constants.CLASS,
+										name: CMDBuild.core.constants.Proxy.CLASS,
 										inputValue: true,
 										uncheckedValue: false
 									},
 									{
 										boxLabel: CMDBuild.Translation.processes,
-										name: CMDBuild.core.proxy.Constants.PROCESS,
+										name: CMDBuild.core.constants.Proxy.PROCESS,
 										inputValue: true,
 										uncheckedValue: false
 									},
 									{
 										boxLabel: CMDBuild.Translation.report,
-										name: CMDBuild.core.proxy.Constants.REPORT,
+										name: CMDBuild.core.constants.Proxy.REPORT,
 										inputValue: true,
 										uncheckedValue: false
 									},
 									{
 										boxLabel: CMDBuild.Translation.views,
-										name: CMDBuild.core.proxy.Constants.DATA_VIEW,
+										name: CMDBuild.core.constants.Proxy.DATA_VIEW,
 										inputValue: true,
 										uncheckedValue: false
 									},
 									{
 										boxLabel: CMDBuild.Translation.dashboard,
-										name: CMDBuild.core.proxy.Constants.DASHBOARD,
+										name: CMDBuild.core.constants.Proxy.DASHBOARD,
 										inputValue: true,
 										uncheckedValue: false
 									},
 									{
 										boxLabel: CMDBuild.Translation.utilityChangePassword,
-										name: CMDBuild.core.proxy.Constants.CHANGE_PASSWORD,
+										name: CMDBuild.core.constants.Proxy.CHANGE_PASSWORD,
 										inputValue: true,
 										uncheckedValue: false
 									},
@@ -138,31 +138,31 @@
 								items: [
 									{
 										boxLabel: CMDBuild.Translation.detail,
-										name: CMDBuild.core.proxy.Constants.CLASS_DETAIL_TAB,
+										name: CMDBuild.core.constants.Proxy.CLASS_DETAIL_TAB,
 										inputValue: true,
 										uncheckedValue: false
 									},
 									{
 										boxLabel: CMDBuild.Translation.notes,
-										name: CMDBuild.core.proxy.Constants.CLASS_NOTE_TAB,
+										name: CMDBuild.core.constants.Proxy.CLASS_NOTE_TAB,
 										inputValue: true,
 										uncheckedValue: false
 									},
 									{
 										boxLabel: CMDBuild.Translation.relations,
-										name: CMDBuild.core.proxy.Constants.CLASS_RELATION_TAB,
+										name: CMDBuild.core.constants.Proxy.CLASS_RELATION_TAB,
 										inputValue: true,
 										uncheckedValue: false
 									},
 									{
 										boxLabel: CMDBuild.Translation.history,
-										name: CMDBuild.core.proxy.Constants.CLASS_HISTORY_TAB,
+										name: CMDBuild.core.constants.Proxy.CLASS_HISTORY_TAB,
 										inputValue: true,
 										uncheckedValue: false
 									},
 									{
 										boxLabel: CMDBuild.Translation.attachments,
-										name: CMDBuild.core.proxy.Constants.CLASS_ATTACHMENT_TAB,
+										name: CMDBuild.core.constants.Proxy.CLASS_ATTACHMENT_TAB,
 										inputValue: true,
 										uncheckedValue: false
 									}
@@ -183,25 +183,25 @@
 								items: [
 									{
 										boxLabel: CMDBuild.Translation.notes,
-										name: CMDBuild.core.proxy.Constants.PROCESS_NOTE_TAB,
+										name: CMDBuild.core.constants.Proxy.PROCESS_NOTE_TAB,
 										inputValue: true,
 										uncheckedValue: false
 									},
 									{
 										boxLabel: CMDBuild.Translation.relations,
-										name: CMDBuild.core.proxy.Constants.PROCESS_RELATION_TAB,
+										name: CMDBuild.core.constants.Proxy.PROCESS_RELATION_TAB,
 										inputValue: true,
 										uncheckedValue: false
 									},
 									{
 										boxLabel: CMDBuild.Translation.history,
-										name: CMDBuild.core.proxy.Constants.PROCESS_HISTORY_TAB,
+										name: CMDBuild.core.constants.Proxy.PROCESS_HISTORY_TAB,
 										inputValue: true,
 										uncheckedValue: false
 									},
 									{
 										boxLabel: CMDBuild.Translation.attachments,
-										name: CMDBuild.core.proxy.Constants.PROCESS_ATTACHMENT_TAB,
+										name: CMDBuild.core.constants.Proxy.PROCESS_ATTACHMENT_TAB,
 										inputValue: true,
 										uncheckedValue: false
 									}
@@ -222,31 +222,31 @@
 								items: [
 									{
 										boxLabel: CMDBuild.Translation.hideSidePanel,
-										name: CMDBuild.core.proxy.Constants.HIDE_SIDE_PANEL,
+										name: CMDBuild.core.constants.Proxy.HIDE_SIDE_PANEL,
 										inputValue: true,
 										uncheckedValue: false
 									},
 									{
 										boxLabel: CMDBuild.Translation.fullScreenNavigation,
-										name: CMDBuild.core.proxy.Constants.FULL_SCREEN_MODE,
+										name: CMDBuild.core.constants.Proxy.FULL_SCREEN_MODE,
 										inputValue: true,
 										uncheckedValue: false
 									},
 									{
 										boxLabel: CMDBuild.Translation.simpleHistoryForCards,
-										name: CMDBuild.core.proxy.Constants.SIMPLE_HISTORY_MODE_FOR_CARD,
+										name: CMDBuild.core.constants.Proxy.SIMPLE_HISTORY_MODE_FOR_CARD,
 										inputValue: true,
 										uncheckedValue: false
 									},
 									{
 										boxLabel: CMDBuild.Translation.simpleHistoryForProcesses,
-										name: CMDBuild.core.proxy.Constants.SIMPLE_HISTORY_MODE_FOR_PROCESS,
+										name: CMDBuild.core.constants.Proxy.SIMPLE_HISTORY_MODE_FOR_PROCESS,
 										inputValue: true,
 										uncheckedValue: false
 									},
 									{
 										boxLabel: CMDBuild.Translation.processWidgetsAlwaysEnabled,
-										name: CMDBuild.core.proxy.Constants.PROCESS_WIDGET_ALWAYS_ENABLED,
+										name: CMDBuild.core.constants.Proxy.PROCESS_WIDGET_ALWAYS_ENABLED,
 										inputValue: true,
 										uncheckedValue: false
 									}

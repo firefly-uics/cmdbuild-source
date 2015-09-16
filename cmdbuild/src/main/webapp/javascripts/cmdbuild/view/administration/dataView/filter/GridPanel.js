@@ -4,7 +4,7 @@
 		extend: 'Ext.grid.Panel',
 
 		requires: [
-			'CMDBuild.core.proxy.Constants',
+			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.dataView.Filter'
 		],
 
@@ -20,17 +20,17 @@
 			Ext.apply(this, {
 				columns: [
 					{
-						dataIndex: CMDBuild.core.proxy.Constants.NAME,
+						dataIndex: CMDBuild.core.constants.Proxy.NAME,
 						text: CMDBuild.Translation.name,
 						flex: 1
 					},
 					{
-						dataIndex: CMDBuild.core.proxy.Constants.DESCRIPTION,
+						dataIndex: CMDBuild.core.constants.Proxy.DESCRIPTION,
 						text: CMDBuild.Translation.descriptionLabel,
 						flex: 1
 					},
 					{
-						dataIndex: CMDBuild.core.proxy.Constants.SOURCE_CLASS_NAME,
+						dataIndex: CMDBuild.core.constants.Proxy.SOURCE_CLASS_NAME,
 						text: CMDBuild.Translation.targetClass,
 						flex: 1
 					}

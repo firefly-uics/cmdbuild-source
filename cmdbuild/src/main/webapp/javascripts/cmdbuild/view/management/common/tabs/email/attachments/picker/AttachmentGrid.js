@@ -5,7 +5,7 @@
 
 		requires: [
 			'CMDBuild.core.proxy.Attachment',
-			'CMDBuild.core.proxy.Constants'
+			'CMDBuild.core.constants.Proxy'
 		],
 
 		/**

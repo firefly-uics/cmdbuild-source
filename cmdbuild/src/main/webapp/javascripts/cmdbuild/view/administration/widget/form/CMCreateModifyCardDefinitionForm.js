@@ -5,7 +5,7 @@
 	Ext.define('CMDBuild.view.administration.widget.form.CMCreateModifyCardDefinitionForm', {
 		extend: 'CMDBuild.view.administration.widget.form.CMBaseWidgetDefinitionForm',
 
-		requires: ['CMDBuild.core.proxy.Constants'],
+		requires: ['CMDBuild.core.constants.Proxy'],
 
 		mixins: {
 			panelFunctions: 'CMDBuild.view.common.PanelFunctions'
@@ -33,12 +33,12 @@
 			this.callParent(arguments);
 
 			this.targetClass = Ext.create('CMDBuild.field.ErasableCombo', {
-				name: CMDBuild.core.proxy.Constants.TARGET_CLASS,
+				name: CMDBuild.core.constants.Proxy.TARGET_CLASS,
 				fieldLabel: tr[this.self.WIDGET_NAME].fields.target,
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
-				valueField: CMDBuild.core.proxy.Constants.NAME,
-				displayField: CMDBuild.core.proxy.Constants.DESCRIPTION,
+				valueField: CMDBuild.core.constants.Proxy.NAME,
+				displayField: CMDBuild.core.constants.Proxy.DESCRIPTION,
 				editable: false,
 
 				validator: function(value) {
@@ -83,7 +83,7 @@
 		fillWithModel: function(model) {
 			this.callParent(arguments);
 
-			this.targetClass.setValue(model.get(CMDBuild.core.proxy.Constants.TARGET_CLASS));
+			this.targetClass.setValue(model.get(CMDBuild.core.constants.Proxy.TARGET_CLASS));
 			this.cqlText.setValue(model.get('idcardcqlselector'));
 			this.readOnlyCheck.setValue(model.get('readonly'));
 		},

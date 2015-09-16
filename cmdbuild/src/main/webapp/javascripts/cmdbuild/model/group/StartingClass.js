@@ -3,13 +3,13 @@
 	Ext.define('CMDBuild.model.group.StartingClass', {
 		extend: 'Ext.data.Model',
 
-		requires: ['CMDBuild.core.proxy.Constants'],
+		requires: ['CMDBuild.core.constants.Proxy'],
 
 		fields: [
-			{ name: CMDBuild.core.proxy.Constants.DESCRIPTION,  type: 'string', mapping: 'text' }, // TODO: waiting for refactor
-			{ name: CMDBuild.core.proxy.Constants.ID,  type: 'int', useNull: true },
-			{ name: CMDBuild.core.proxy.Constants.NAME, type: 'string' },
-			{ name: CMDBuild.core.proxy.Constants.TEXT,  type: 'string' }
+			{ name: CMDBuild.core.constants.Proxy.DESCRIPTION,  type: 'string', mapping: 'text' }, // TODO: waiting for refactor
+			{ name: CMDBuild.core.constants.Proxy.ID,  type: 'int', useNull: true },
+			{ name: CMDBuild.core.constants.Proxy.NAME, type: 'string' },
+			{ name: CMDBuild.core.constants.Proxy.TEXT,  type: 'string' }
 		]
 	});
 

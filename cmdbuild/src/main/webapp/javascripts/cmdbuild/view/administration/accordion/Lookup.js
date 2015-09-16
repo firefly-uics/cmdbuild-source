@@ -3,7 +3,7 @@
 	Ext.define('CMDBuild.view.administration.accordion.Lookup', {
 		extend: 'CMDBuild.view.common.CMBaseAccordion',
 
-		requires: ['CMDBuild.core.proxy.Constants'],
+		requires: ['CMDBuild.core.constants.Proxy'],
 
 		/**
 		 * @cfg {CMDBuild.controller.administration.accordion.Lookup}
@@ -20,18 +20,18 @@
 			var out = [];
 
 			Ext.Object.each(_CMCache.getLookupTypes(), function(key, value, myself) {
-				nodesMap[value.get(CMDBuild.core.proxy.Constants.ID)] = {
-					id: value.get(CMDBuild.core.proxy.Constants.ID),
-					text: value.get(CMDBuild.core.proxy.Constants.TEXT),
+				nodesMap[value.get(CMDBuild.core.constants.Proxy.ID)] = {
+					id: value.get(CMDBuild.core.constants.Proxy.ID),
+					text: value.get(CMDBuild.core.constants.Proxy.TEXT),
 					leaf: true,
 					cmName: 'lookuptype',
-					parent: value.get(CMDBuild.core.proxy.Constants.PARENT)
+					parent: value.get(CMDBuild.core.constants.Proxy.PARENT)
 				};
 			}, this);
 
 			Ext.Object.each(nodesMap, function(id, node, myself) {
-				if (node[CMDBuild.core.proxy.Constants.PARENT]) {
-					var parentNode = nodesMap[node[CMDBuild.core.proxy.Constants.PARENT]];
+				if (node[CMDBuild.core.constants.Proxy.PARENT]) {
+					var parentNode = nodesMap[node[CMDBuild.core.constants.Proxy.PARENT]];
 
 					if (!Ext.isEmpty(parentNode)) {
 						parentNode.children = parentNode.children || [];

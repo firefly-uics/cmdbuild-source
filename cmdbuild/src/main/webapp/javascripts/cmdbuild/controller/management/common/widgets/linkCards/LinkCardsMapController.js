@@ -165,8 +165,8 @@
 			var selectedCoordinates = this.map.getLonLatFromPixel(e.object.handlers.feature.evt.xy);
 
 			var selectedCoordinatesObject = {}
-			selectedCoordinatesObject[CMDBuild.core.proxy.Constants.LATITUDE] = selectedCoordinates[CMDBuild.core.proxy.Constants.LATITUDE];
-			selectedCoordinatesObject[CMDBuild.core.proxy.Constants.LONGITUDE] = selectedCoordinates[CMDBuild.core.proxy.Constants.LONGITUDE];
+			selectedCoordinatesObject[CMDBuild.core.constants.Proxy.LATITUDE] = selectedCoordinates[CMDBuild.core.constants.Proxy.LATITUDE];
+			selectedCoordinatesObject[CMDBuild.core.constants.Proxy.LONGITUDE] = selectedCoordinates[CMDBuild.core.constants.Proxy.LONGITUDE];
 
 			this.model.reset();
 			this.model.select(attributes.master_card, selectedCoordinatesObject);

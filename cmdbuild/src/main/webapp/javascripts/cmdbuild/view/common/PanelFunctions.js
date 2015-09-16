@@ -5,7 +5,7 @@
 	 */
 	Ext.define('CMDBuild.view.common.PanelFunctions', {
 
-		requires: ['CMDBuild.core.proxy.Constants'],
+		requires: ['CMDBuild.core.constants.Proxy'],
 
 		/**
 		 * @param {Boolean} withDisabled
@@ -66,7 +66,7 @@
 		 * @param {Boolean} state
 		 */
 		setDisabledBottomBar: function(state) {
-			var bottomToolbar = this.getDockedComponent(CMDBuild.core.proxy.Constants.TOOLBAR_BOTTOM);
+			var bottomToolbar = this.getDockedComponent(CMDBuild.core.constants.Proxy.TOOLBAR_BOTTOM);
 
 			if (!Ext.isEmpty(bottomToolbar))
 				Ext.Array.forEach(bottomToolbar.items.items, function(button, i, allButtons) {
@@ -137,7 +137,7 @@
 		 * @param {Boolean} state
 		 */
 		setDisabledTopBar: function(state) {
-			var topToolbar = this.getDockedComponent(CMDBuild.core.proxy.Constants.TOOLBAR_TOP);
+			var topToolbar = this.getDockedComponent(CMDBuild.core.constants.Proxy.TOOLBAR_TOP);
 
 			if (!Ext.isEmpty(topToolbar))
 				Ext.Array.forEach(topToolbar.items.items, function(button, i, allButtons) {

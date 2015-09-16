@@ -3,7 +3,7 @@
 	Ext.define('CMDBuild.controller.management.common.widgets.customForm.layout.Grid', {
 		extend: 'CMDBuild.controller.common.AbstractController',
 
-		requires: ['CMDBuild.core.proxy.Constants'],
+		requires: ['CMDBuild.core.constants.Proxy'],
 
 		/**
 		 * @cfg {Array}
@@ -59,7 +59,7 @@
 							value = me.formatDate(value);
 						}
 
-						if (Ext.isEmpty(Ext.String.trim(value)) && attribute[CMDBuild.core.proxy.Constants.NOT_NULL])
+						if (Ext.isEmpty(Ext.String.trim(value)) && attribute[CMDBuild.core.constants.Proxy.NOT_NULL])
 							value = '<div style="width: 100%; height: 100%; border: 1px dotted red;">';
 
 						return value;
@@ -90,12 +90,12 @@
 						isDisabled: function(grid, rowIndex, colIndex, item, record) {
 							return (
 								this.cmfg('widgetConfigurationGet', [
-									CMDBuild.core.proxy.Constants.CAPABILITIES,
-									CMDBuild.core.proxy.Constants.READ_ONLY
+									CMDBuild.core.constants.Proxy.CAPABILITIES,
+									CMDBuild.core.constants.Proxy.READ_ONLY
 								])
 								|| this.cmfg('widgetConfigurationGet', [
-									CMDBuild.core.proxy.Constants.CAPABILITIES,
-									CMDBuild.core.proxy.Constants.MODIFY_DISABLED
+									CMDBuild.core.constants.Proxy.CAPABILITIES,
+									CMDBuild.core.constants.Proxy.MODIFY_DISABLED
 								])
 							);
 						},
@@ -114,12 +114,12 @@
 						isDisabled: function(grid, rowIndex, colIndex, item, record) {
 							return (
 								this.cmfg('widgetConfigurationGet', [
-									CMDBuild.core.proxy.Constants.CAPABILITIES,
-									CMDBuild.core.proxy.Constants.READ_ONLY
+									CMDBuild.core.constants.Proxy.CAPABILITIES,
+									CMDBuild.core.constants.Proxy.READ_ONLY
 								])
 								|| this.cmfg('widgetConfigurationGet', [
-									CMDBuild.core.proxy.Constants.CAPABILITIES,
-									CMDBuild.core.proxy.Constants.DELETE_DISABLED
+									CMDBuild.core.constants.Proxy.CAPABILITIES,
+									CMDBuild.core.constants.Proxy.DELETE_DISABLED
 								])
 							);
 						},
@@ -140,11 +140,11 @@
 		buildColumns: function() {
 			var columns = [];
 
-			if (!this.cmfg('widgetConfigurationIsAttributeEmpty',  CMDBuild.core.proxy.Constants.MODEL)) {
+			if (!this.cmfg('widgetConfigurationIsAttributeEmpty',  CMDBuild.core.constants.Proxy.MODEL)) {
 				var fieldManager = Ext.create('CMDBuild.core.fieldManager.FieldManager', { parentDelegate: this });
 
-				Ext.Array.forEach(this.cmfg('widgetConfigurationGet', CMDBuild.core.proxy.Constants.MODEL), function(attribute, i, allAttributes) {
-					if (fieldManager.isAttributeManaged(attribute.get(CMDBuild.core.proxy.Constants.TYPE))) {
+				Ext.Array.forEach(this.cmfg('widgetConfigurationGet', CMDBuild.core.constants.Proxy.MODEL), function(attribute, i, allAttributes) {
+					if (fieldManager.isAttributeManaged(attribute.get(CMDBuild.core.constants.Proxy.TYPE))) {
 						fieldManager.attributeModelSet(Ext.create('CMDBuild.model.common.attributes.Attribute', attribute.getData()));
 
 						columns.push(fieldManager.buildColumn(true));
@@ -181,20 +181,20 @@
 							editor.hideLabel = true;
 
 							// Read only attributes header/editor setup
-							header[CMDBuild.core.proxy.Constants.DISABLED] = !attribute[CMDBuild.core.proxy.Constants.WRITABLE];
-							header[CMDBuild.core.proxy.Constants.REQUIRED] = false;
-							editor[CMDBuild.core.proxy.Constants.DISABLED] = !attribute[CMDBuild.core.proxy.Constants.WRITABLE];
-							editor[CMDBuild.core.proxy.Constants.REQUIRED] = false;
+							header[CMDBuild.core.constants.Proxy.DISABLED] = !attribute[CMDBuild.core.constants.Proxy.WRITABLE];
+							header[CMDBuild.core.constants.Proxy.REQUIRED] = false;
+							editor[CMDBuild.core.constants.Proxy.DISABLED] = !attribute[CMDBuild.core.constants.Proxy.WRITABLE];
+							editor[CMDBuild.core.constants.Proxy.REQUIRED] = false;
 
-							if (attribute[CMDBuild.core.proxy.Constants.MANDATORY]) {
+							if (attribute[CMDBuild.core.constants.Proxy.MANDATORY]) {
 								header.header = '* ' + header.header; // TODO: header property is deprecated, should use "text" but FieldManager uses header so ...
 
-								header[CMDBuild.core.proxy.Constants.REQUIRED] = true;
-								editor[CMDBuild.core.proxy.Constants.REQUIRED] = true;
+								header[CMDBuild.core.constants.Proxy.REQUIRED] = true;
+								editor[CMDBuild.core.constants.Proxy.REQUIRED] = true;
 							}
 
 							// Do not override renderer, add editor on checkbox columns and make it editable
-							if (attribute[CMDBuild.core.proxy.Constants.TYPE] != 'BOOLEAN') {
+							if (attribute[CMDBuild.core.constants.Proxy.TYPE] != 'BOOLEAN') {
 								header.editor = editor;
 
 								this.addRendererToHeader(header, attribute);
@@ -221,16 +221,16 @@
 		buildDataStore: function() {
 			var storeFields = [];
 
-			if (!this.cmfg('widgetConfigurationIsAttributeEmpty',  CMDBuild.core.proxy.Constants.MODEL)) {
+			if (!this.cmfg('widgetConfigurationIsAttributeEmpty',  CMDBuild.core.constants.Proxy.MODEL)) {
 				var fieldManager = Ext.create('CMDBuild.core.fieldManager.FieldManager', { parentDelegate: this });
 
-				Ext.Array.forEach(this.cmfg('widgetConfigurationGet', CMDBuild.core.proxy.Constants.MODEL), function(attribute, i, allAttributes) {
-					if (fieldManager.isAttributeManaged(attribute.get(CMDBuild.core.proxy.Constants.TYPE))) {
+				Ext.Array.forEach(this.cmfg('widgetConfigurationGet', CMDBuild.core.constants.Proxy.MODEL), function(attribute, i, allAttributes) {
+					if (fieldManager.isAttributeManaged(attribute.get(CMDBuild.core.constants.Proxy.TYPE))) {
 						fieldManager.attributeModelSet(Ext.create('CMDBuild.model.common.attributes.Attribute', attribute.getData()));
 
 						storeFields.push(fieldManager.buildStoreField());
 					} else {
-						storeFields.push({ name: attribute.get(CMDBuild.core.proxy.Constants.NAME), type: 'string' });
+						storeFields.push({ name: attribute.get(CMDBuild.core.constants.Proxy.NAME), type: 'string' });
 					}
 				}, this);
 			}
@@ -274,7 +274,7 @@
 
 			// If widget is flagged as required must return at least 1 row
 			if (
-				this.cmfg('widgetConfigurationGet',CMDBuild.core.proxy.Constants.REQUIRED)
+				this.cmfg('widgetConfigurationGet',CMDBuild.core.constants.Proxy.REQUIRED)
 				&& this.view.getStore().getCount() == 0
 			) {
 				returnValue = false;
@@ -282,8 +282,8 @@
 
 			// Build columns required array
 			Ext.Array.forEach(this.view.columns, function(column, i, allColumns) {
-				if (column[CMDBuild.core.proxy.Constants.REQUIRED])
-					requiredAttributes.push(column[CMDBuild.core.proxy.Constants.DATA_INDEX]);
+				if (column[CMDBuild.core.constants.Proxy.REQUIRED])
+					requiredAttributes.push(column[CMDBuild.core.constants.Proxy.DATA_INDEX]);
 			}, this);
 
 			// Check grid store records empty required fields
@@ -347,11 +347,11 @@
 		 */
 		setDefaultContent: function() {
 			this.cmfg('widgetConfigurationSet', {
-				configurationObject: this.cmfg('widgetControllerPropertyGet', 'widgetConfiguration')[CMDBuild.core.proxy.Constants.DATA],
-				propertyName: CMDBuild.core.proxy.Constants.DATA
+				configurationObject: this.cmfg('widgetControllerPropertyGet', 'widgetConfiguration')[CMDBuild.core.constants.Proxy.DATA],
+				propertyName: CMDBuild.core.constants.Proxy.DATA
 			});
 
-			this.setData(this.cmfg('widgetConfigurationGet', CMDBuild.core.proxy.Constants.DATA));
+			this.setData(this.cmfg('widgetConfigurationGet', CMDBuild.core.constants.Proxy.DATA));
 		}
 	});
 

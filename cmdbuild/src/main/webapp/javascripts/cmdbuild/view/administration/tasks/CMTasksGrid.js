@@ -5,7 +5,7 @@
 	Ext.define('CMDBuild.view.administration.tasks.CMTasksGrid', {
 		extend: 'Ext.grid.Panel',
 
-		requires: ['CMDBuild.core.proxy.Constants'],
+		requires: ['CMDBuild.core.constants.Proxy'],
 
 		/**
 		 * @cfg {Mixed} Task specific controller
@@ -19,12 +19,12 @@
 		initComponent: function() {
 			this.gridColumns = [
 				{
-					dataIndex: CMDBuild.core.proxy.Constants.ID,
+					dataIndex: CMDBuild.core.constants.Proxy.ID,
 					hidden: true
 				},
 				{
 					text: tr.type,
-					dataIndex: CMDBuild.core.proxy.Constants.TYPE,
+					dataIndex: CMDBuild.core.constants.Proxy.TYPE,
 					flex: 1,
 					scope: this,
 
@@ -34,14 +34,14 @@
 				},
 				{
 					text: CMDBuild.Translation.description_,
-					dataIndex: CMDBuild.core.proxy.Constants.DESCRIPTION,
+					dataIndex: CMDBuild.core.constants.Proxy.DESCRIPTION,
 					flex: 4
 				},
 				{
 					text: CMDBuild.Translation.active,
 					width: 60,
 					align: 'center',
-					dataIndex: CMDBuild.core.proxy.Constants.ACTIVE,
+					dataIndex: CMDBuild.core.constants.Proxy.ACTIVE,
 					hideable: false,
 					menuDisabled: true,
 					fixed: true,
@@ -66,7 +66,7 @@
 							scope: this,
 
 							isDisabled: function(grid, rowIndex, colIndex, item, record) {
-								return record.get(CMDBuild.core.proxy.Constants.ACTIVE);
+								return record.get(CMDBuild.core.constants.Proxy.ACTIVE);
 							},
 
 							handler: function(grid, rowIndex, colIndex, node, e, record, rowNode) {
@@ -90,7 +90,7 @@
 							scope: this,
 
 							isDisabled: function(grid, rowIndex, colIndex, item, record) {
-								return !record.get(CMDBuild.core.proxy.Constants.ACTIVE);
+								return !record.get(CMDBuild.core.constants.Proxy.ACTIVE);
 							},
 
 							handler: function(grid, rowIndex, colIndex, node, e, record, rowNode) {

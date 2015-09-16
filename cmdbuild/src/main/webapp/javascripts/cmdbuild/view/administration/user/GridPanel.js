@@ -4,7 +4,7 @@
 		extend: 'Ext.grid.Panel',
 
 		requires: [
-			'CMDBuild.core.proxy.Constants',
+			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.User'
 		],
 
@@ -20,12 +20,12 @@
 			Ext.apply(this, {
 				columns: [
 					{
-						dataIndex: CMDBuild.core.proxy.Constants.USERNAME,
+						dataIndex: CMDBuild.core.constants.Proxy.USERNAME,
 						text: CMDBuild.Translation.username,
 						flex: 1
 					},
 					{
-						dataIndex: CMDBuild.core.proxy.Constants.DESCRIPTION,
+						dataIndex: CMDBuild.core.constants.Proxy.DESCRIPTION,
 						text: CMDBuild.Translation.descriptionLabel,
 						flex: 1
 					}

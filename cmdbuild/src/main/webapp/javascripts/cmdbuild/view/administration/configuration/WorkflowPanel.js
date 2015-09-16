@@ -3,7 +3,7 @@
 	Ext.define('CMDBuild.view.administration.configuration.WorkflowPanel', {
 		extend: 'Ext.form.Panel',
 
-		requires: ['CMDBuild.core.proxy.Constants'],
+		requires: ['CMDBuild.core.constants.Proxy'],
 
 		/**
 		 * @cfg {CMDBuild.controller.administration.configuration.Workflow}
@@ -33,7 +33,7 @@
 
 		initComponent: function() {
 			this.enabledCheckBox = Ext.create('Ext.ux.form.XCheckbox', {
-				name: CMDBuild.core.proxy.Constants.ENABLED,
+				name: CMDBuild.core.constants.Proxy.ENABLED,
 				fieldLabel: CMDBuild.Translation.enabled
 			});
 
@@ -41,7 +41,7 @@
 				dockedItems: [
 					Ext.create('Ext.toolbar.Toolbar', {
 						dock: 'bottom',
-						itemId: CMDBuild.core.proxy.Constants.TOOLBAR_BOTTOM,
+						itemId: CMDBuild.core.constants.Proxy.TOOLBAR_BOTTOM,
 						ui: 'footer',
 
 						layout: {
@@ -102,24 +102,24 @@
 						items: [
 							{
 								fieldLabel: CMDBuild.Translation.username,
-								name: CMDBuild.core.proxy.Constants.USER,
+								name: CMDBuild.core.constants.Proxy.USER,
 								allowBlank: false
 							},
 							{
 								fieldLabel: CMDBuild.Translation.password,
-								name: CMDBuild.core.proxy.Constants.PASSWORD,
+								name: CMDBuild.core.constants.Proxy.PASSWORD,
 								allowBlank: false,
 								inputType: 'password'
 							},
 							{
 								fieldLabel: CMDBuild.Translation.engineName,
-								name: CMDBuild.core.proxy.Constants.ENGINE,
+								name: CMDBuild.core.constants.Proxy.ENGINE,
 								allowBlank: false,
 								disabled: true
 							},
 							{
 								fieldLabel: CMDBuild.Translation.scope,
-								name: CMDBuild.core.proxy.Constants.SCOPE,
+								name: CMDBuild.core.constants.Proxy.SCOPE,
 								allowBlank: true,
 								disabled: true
 							}

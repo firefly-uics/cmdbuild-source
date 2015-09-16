@@ -3,11 +3,11 @@
 	Ext.define('CMDBuild.model.common.filter.cql.Cql', {
 		extend: 'Ext.data.Model',
 
-		requires: ['CMDBuild.core.proxy.Constants'],
+		requires: ['CMDBuild.core.constants.Proxy'],
 
 		fields: [
-			{ name: CMDBuild.core.proxy.Constants.CONTEXT, type: 'auto', defaultValue: {} },
-			{ name: CMDBuild.core.proxy.Constants.EXPRESSION, type: 'string' }
+			{ name: CMDBuild.core.constants.Proxy.CONTEXT, type: 'auto', defaultValue: {} },
+			{ name: CMDBuild.core.constants.Proxy.EXPRESSION, type: 'string' }
 		]
 	});
 

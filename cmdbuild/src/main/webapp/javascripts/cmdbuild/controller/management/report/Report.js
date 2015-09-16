@@ -8,7 +8,7 @@
 
 		requires: [
 			'CMDBuild.core.Message',
-			'CMDBuild.core.proxy.Constants',
+			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.Index',
 			'CMDBuild.core.proxy.report.Report'
 		],
@@ -38,8 +38,8 @@
 		 * @cfg {Array}
 		 */
 		forceDownloadTypes: [
-			CMDBuild.core.proxy.Constants.ODT,
-			CMDBuild.core.proxy.Constants.RTF
+			CMDBuild.core.constants.Proxy.ODT,
+			CMDBuild.core.constants.Proxy.RTF
 		],
 
 		/**
@@ -51,10 +51,10 @@
 		 * @cfg {Array}
 		 */
 		managedReportTypes: [
-			CMDBuild.core.proxy.Constants.CSV,
-			CMDBuild.core.proxy.Constants.ODT,
-			CMDBuild.core.proxy.Constants.PDF,
-			CMDBuild.core.proxy.Constants.RTF
+			CMDBuild.core.constants.Proxy.CSV,
+			CMDBuild.core.constants.Proxy.ODT,
+			CMDBuild.core.constants.Proxy.PDF,
+			CMDBuild.core.constants.Proxy.RTF
 		],
 
 		/**
@@ -82,7 +82,7 @@
 			if (
 				!Ext.isEmpty(this.currentReportParametersGet({
 					callIdentifier: 'create',
-					property: CMDBuild.core.proxy.Constants.ID
+					property: CMDBuild.core.constants.Proxy.ID
 				}))
 			) {
 				CMDBuild.core.proxy.report.Report.create({
@@ -139,19 +139,19 @@
 		 * @param {Object} reportInfo
 		 */
 		onReportGenerateButtonClick: function(reportInfo) {
-			if (Ext.Array.contains(this.managedReportTypes, reportInfo[CMDBuild.core.proxy.Constants.TYPE])) {
+			if (Ext.Array.contains(this.managedReportTypes, reportInfo[CMDBuild.core.constants.Proxy.TYPE])) {
 				this.currentReportParametersSet({
 					callIdentifier: 'create',
 					params: {
-						extension: reportInfo[CMDBuild.core.proxy.Constants.TYPE],
-						id: reportInfo[CMDBuild.core.proxy.Constants.RECORD].get(CMDBuild.core.proxy.Constants.ID)
+						extension: reportInfo[CMDBuild.core.constants.Proxy.TYPE],
+						id: reportInfo[CMDBuild.core.constants.Proxy.RECORD].get(CMDBuild.core.constants.Proxy.ID)
 					}
 				});
 
-				this.currentReportRecordSet(reportInfo[CMDBuild.core.proxy.Constants.RECORD]);
+				this.currentReportRecordSet(reportInfo[CMDBuild.core.constants.Proxy.RECORD]);
 
 				// Force download true for PDF and CSV
-				this.createReport(Ext.Array.contains(this.forceDownloadTypes, reportInfo[CMDBuild.core.proxy.Constants.TYPE]));
+				this.createReport(Ext.Array.contains(this.forceDownloadTypes, reportInfo[CMDBuild.core.constants.Proxy.TYPE]));
 			} else {
 				CMDBuild.core.Message.error(
 					CMDBuild.Translation.error,
@@ -179,14 +179,14 @@
 				});
 
 				if (
-					!Ext.isEmpty(node.get(CMDBuild.core.proxy.Constants.ID))
-					&& node.get(CMDBuild.core.proxy.Constants.ID) != CMDBuild.core.proxy.Constants.CUSTOM
+					!Ext.isEmpty(node.get(CMDBuild.core.constants.Proxy.ID))
+					&& node.get(CMDBuild.core.constants.Proxy.ID) != CMDBuild.core.constants.Proxy.CUSTOM
 				) {
 					this.currentReportParametersSet({
 						callIdentifier: 'create',
 						params: {
-							extension: node.get(CMDBuild.core.proxy.Constants.TYPE).replace(/report/i, ''), // Removes 'report' string from type property in node object
-							id: node.get(CMDBuild.core.proxy.Constants.ID),
+							extension: node.get(CMDBuild.core.constants.Proxy.TYPE).replace(/report/i, ''), // Removes 'report' string from type property in node object
+							id: node.get(CMDBuild.core.constants.Proxy.ID),
 						}
 					});
 
@@ -207,7 +207,7 @@
 
 			if (forceDownload) { // Force download mode
 				var params = {};
-				params[CMDBuild.core.proxy.Constants.FORCE_DOWNLOAD_PARAM_KEY] = true;
+				params[CMDBuild.core.constants.Proxy.FORCE_DOWNLOAD_PARAM_KEY] = true;
 
 				var form = Ext.create('Ext.form.Panel', {
 					standardSubmit: true,
@@ -227,7 +227,7 @@
 					parentDelegate: this,
 					extension: this.currentReportParametersGet({
 						callIdentifier: 'create',
-						property: CMDBuild.core.proxy.Constants.EXTENSION
+						property: CMDBuild.core.constants.Proxy.EXTENSION
 					})
 				});
 			}

@@ -4,7 +4,7 @@
 		extend: 'CMDBuild.controller.common.AbstractController',
 
 		requires: [
-			'CMDBuild.core.proxy.Constants',
+			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.group.privileges.Classes'
 		],
 
@@ -58,8 +58,8 @@
 
 		onGroupPrivilegesGridUIConfigurationSaveButtonClick: function() {
 			var params = this.form.getForm().getValues();
-			params[CMDBuild.core.proxy.Constants.CLASS_ID] = this.record.get(CMDBuild.core.proxy.Constants.ID);;
-			params[CMDBuild.core.proxy.Constants.GROUP_ID] = this.cmfg('selectedGroupGet', CMDBuild.core.proxy.Constants.ID);
+			params[CMDBuild.core.constants.Proxy.CLASS_ID] = this.record.get(CMDBuild.core.constants.Proxy.ID);;
+			params[CMDBuild.core.constants.Proxy.GROUP_ID] = this.cmfg('selectedGroupGet', CMDBuild.core.constants.Proxy.ID);
 
 			CMDBuild.core.proxy.group.privileges.Classes.updateUIConfiguration({
 				params: params,
@@ -74,8 +74,8 @@
 
 		onGroupPrivilegesGridUIConfigurationShow: function() {
 			var params = {};
-			params[CMDBuild.core.proxy.Constants.CLASS_ID] = this.record.get(CMDBuild.core.proxy.Constants.ID);;
-			params[CMDBuild.core.proxy.Constants.GROUP_ID] = this.cmfg('selectedGroupGet', CMDBuild.core.proxy.Constants.ID);
+			params[CMDBuild.core.constants.Proxy.CLASS_ID] = this.record.get(CMDBuild.core.constants.Proxy.ID);;
+			params[CMDBuild.core.constants.Proxy.GROUP_ID] = this.cmfg('selectedGroupGet', CMDBuild.core.constants.Proxy.ID);
 
 			CMDBuild.core.proxy.group.privileges.Classes.readUIConfiguration({
 				params: params,

@@ -4,7 +4,7 @@
 		extend: 'CMDBuild.controller.common.AbstractController',
 
 		requires: [
-			'CMDBuild.core.proxy.Constants',
+			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.lookup.Lookup',
 			'CMDBuild.model.lookup.Lookup'
 		],
@@ -90,15 +90,15 @@
 
 			Ext.Array.forEach(this.grid.getStore().getRange(), function(row, i, allRows) {
 				var rowObject = {};
-				rowObject[CMDBuild.core.proxy.Constants.DESCRIPTION] = row.get('Description');
-				rowObject[CMDBuild.core.proxy.Constants.ID] = row.get('Id');
-				rowObject[CMDBuild.core.proxy.Constants.INDEX] = i + 1;
+				rowObject[CMDBuild.core.constants.Proxy.DESCRIPTION] = row.get('Description');
+				rowObject[CMDBuild.core.constants.Proxy.ID] = row.get('Id');
+				rowObject[CMDBuild.core.constants.Proxy.INDEX] = i + 1;
 
 				gridRowsObjects.push(rowObject);
 			}, this);
 
 			var params = {};
-			params[CMDBuild.core.proxy.Constants.TYPE] = this.cmfg('selectedLookupTypeGet', CMDBuild.core.proxy.Constants.ID);
+			params[CMDBuild.core.constants.Proxy.TYPE] = this.cmfg('selectedLookupTypeGet', CMDBuild.core.constants.Proxy.ID);
 			params['lookuplist'] = Ext.encode(gridRowsObjects); // TODO: should be renamed (camelcase)
 
 			CMDBuild.core.proxy.lookup.Lookup.setOrder({
@@ -116,7 +116,7 @@
 
 		onLookupListRowSelected: function() {
 			var params = {};
-			params[CMDBuild.core.proxy.Constants.TYPE] = this.cmfg('selectedLookupTypeGet', CMDBuild.core.proxy.Constants.ID);
+			params[CMDBuild.core.constants.Proxy.TYPE] = this.cmfg('selectedLookupTypeGet', CMDBuild.core.constants.Proxy.ID);
 
 			this.selectedLookupSet(this.grid.getSelectionModel().getSelection()[0]); // TODO: need refactor to get all lookup details (server service)
 
@@ -141,7 +141,7 @@
 			// Validate before save
 			if (this.validate(this.form)) {
 				var formData = this.form.getData(true);
-				formData['Type'] = this.cmfg('selectedLookupTypeGet', CMDBuild.core.proxy.Constants.ID);
+				formData['Type'] = this.cmfg('selectedLookupTypeGet', CMDBuild.core.constants.Proxy.ID);
 
 				CMDBuild.core.proxy.lookup.Lookup.save({ // TODO: server side refactor needed to follow new CMDBuild standards (create/update)
 					params: formData,
@@ -156,7 +156,7 @@
 				var me = this;
 
 				var params = {};
-				params[CMDBuild.core.proxy.Constants.TYPE] = this.cmfg('selectedLookupTypeGet', CMDBuild.core.proxy.Constants.ID);
+				params[CMDBuild.core.constants.Proxy.TYPE] = this.cmfg('selectedLookupTypeGet', CMDBuild.core.constants.Proxy.ID);
 
 				this.grid.getStore().load({
 					params: params,
@@ -175,7 +175,7 @@
 
 		onLookupListToggleActiveStateButtonClick: function() {
 			var params = {};
-			params[CMDBuild.core.proxy.Constants.ID] = this.selectedLookupGet('Id');
+			params[CMDBuild.core.constants.Proxy.ID] = this.selectedLookupGet('Id');
 
 			if (this.form.activeCheckbox.getValue()) {
 				CMDBuild.core.proxy.lookup.Lookup.disable({

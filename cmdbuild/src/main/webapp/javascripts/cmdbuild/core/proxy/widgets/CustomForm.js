@@ -2,7 +2,7 @@
 
 	Ext.define('CMDBuild.core.proxy.widgets.CustomForm', {
 
-		requires: ['CMDBuild.core.proxy.Constants'],
+		requires: ['CMDBuild.core.constants.Proxy'],
 
 		singleton: true,
 
@@ -11,12 +11,12 @@
 		 */
 		getImportFileFormatStore: function() {
 			return Ext.create('Ext.data.ArrayStore', {
-				fields: [CMDBuild.core.proxy.Constants.DESCRIPTION, CMDBuild.core.proxy.Constants.NAME],
+				fields: [CMDBuild.core.constants.Proxy.DESCRIPTION, CMDBuild.core.constants.Proxy.NAME],
 				data: [
-					[CMDBuild.Translation.csv, CMDBuild.core.proxy.Constants.CSV]
+					[CMDBuild.Translation.csv, CMDBuild.core.constants.Proxy.CSV]
 				],
 				sorters: [
-					{ property: CMDBuild.core.proxy.Constants.DESCRIPTION, direction: 'ASC' }
+					{ property: CMDBuild.core.constants.Proxy.DESCRIPTION, direction: 'ASC' }
 				]
 			});
 		}

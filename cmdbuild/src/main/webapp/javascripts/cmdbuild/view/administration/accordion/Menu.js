@@ -4,7 +4,7 @@
 		extend: 'CMDBuild.view.common.accordion.Abstract',
 
 		requires: [
-			'CMDBuild.core.proxy.Constants',
+			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.group.Group',
 			'CMDBuild.core.Utils'
 		],
@@ -29,7 +29,7 @@
 				success: function(response, options, decodedResponse) {
 					Ext.suspendLayouts();
 
-					CMDBuild.core.Utils.objectArraySort(decodedResponse.groups, CMDBuild.core.proxy.Constants.TEXT);
+					CMDBuild.core.Utils.objectArraySort(decodedResponse.groups, CMDBuild.core.constants.Proxy.TEXT);
 
 					var out = [{
 						cmName: this.cmName,
@@ -43,10 +43,10 @@
 						out.push({
 							cmName: this.cmName,
 							iconCls: 'cmdbuild-tree-group-icon',
-							id: group[CMDBuild.core.proxy.Constants.ID],
+							id: group[CMDBuild.core.constants.Proxy.ID],
 							leaf: true,
-							name: group[CMDBuild.core.proxy.Constants.NAME],
-							text: group[CMDBuild.core.proxy.Constants.TEXT]
+							name: group[CMDBuild.core.constants.Proxy.NAME],
+							text: group[CMDBuild.core.constants.Proxy.TEXT]
 						});
 					}, this);
 

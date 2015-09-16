@@ -247,8 +247,8 @@
 			},
 			Ext.create('CMDBuild.core.buttons.iconized.Print', {
 				formatList: [
-					CMDBuild.core.proxy.Constants.PDF,
-					CMDBuild.core.proxy.Constants.ODT
+					CMDBuild.core.constants.Proxy.PDF,
+					CMDBuild.core.constants.Proxy.ODT
 				],
 				text: CMDBuild.Translation.common.buttons.print + ' ' + CMDBuild.Translation.management.modcard.tabs.card.toLowerCase(),
 				disabled: true

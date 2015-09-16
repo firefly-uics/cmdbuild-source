@@ -6,7 +6,7 @@
 	Ext.define('CMDBuild.core.fieldManager.FieldManager', {
 		extend: 'CMDBuild.controller.common.AbstractController',
 
-		requires: ['CMDBuild.core.proxy.Constants'],
+		requires: ['CMDBuild.core.constants.Proxy'],
 
 		/**
 		 * @cfg {Object}
@@ -87,7 +87,7 @@
 		 * @private
 		 */
 		buildAttributeController: function(attributeModel) {
-			switch (this.attributeModelGet(CMDBuild.core.proxy.Constants.TYPE)) {
+			switch (this.attributeModelGet(CMDBuild.core.constants.Proxy.TYPE)) {
 				case 'BOOLEAN': return Ext.create('CMDBuild.core.fieldManager.builders.Boolean', { parentDelegate: this });
 				case 'CHAR': return Ext.create('CMDBuild.core.fieldManager.builders.Char', { parentDelegate: this });
 				case 'DATE': return Ext.create('CMDBuild.core.fieldManager.builders.Date', { parentDelegate: this });

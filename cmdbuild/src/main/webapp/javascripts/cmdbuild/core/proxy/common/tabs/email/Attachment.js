@@ -3,7 +3,7 @@
 	Ext.define('CMDBuild.core.proxy.common.tabs.email.Attachment', {
 
 		requires: [
-			'CMDBuild.core.proxy.Constants',
+			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.Index'
 		],
 
@@ -29,7 +29,7 @@
 		 * @param {Object} parameters
 		 */
 		download: function(parameters) {
-			parameters.params[CMDBuild.core.proxy.Constants.FORCE_DOWNLOAD_PARAM_KEY] = true;
+			parameters.params[CMDBuild.core.constants.Proxy.FORCE_DOWNLOAD_PARAM_KEY] = true;
 
 			var form = Ext.create('Ext.form.Panel', {
 				standardSubmit: true,

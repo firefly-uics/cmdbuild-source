@@ -3,13 +3,13 @@
 	Ext.define('CMDBuild.model.group.userInterface.DisabledProcessTabs', {
 		extend: 'Ext.data.Model',
 
-		requires: ['CMDBuild.core.proxy.Constants'],
+		requires: ['CMDBuild.core.constants.Proxy'],
 
 		fields: [
-			{ name: CMDBuild.core.proxy.Constants.PROCESS_ATTACHMENT_TAB, type: 'boolean' },
-			{ name: CMDBuild.core.proxy.Constants.PROCESS_HISTORY_TAB, type: 'boolean' },
-			{ name: CMDBuild.core.proxy.Constants.PROCESS_NOTE_TAB, type: 'boolean' },
-			{ name: CMDBuild.core.proxy.Constants.PROCESS_RELATION_TAB, type: 'boolean' }
+			{ name: CMDBuild.core.constants.Proxy.PROCESS_ATTACHMENT_TAB, type: 'boolean' },
+			{ name: CMDBuild.core.constants.Proxy.PROCESS_HISTORY_TAB, type: 'boolean' },
+			{ name: CMDBuild.core.constants.Proxy.PROCESS_NOTE_TAB, type: 'boolean' },
+			{ name: CMDBuild.core.constants.Proxy.PROCESS_RELATION_TAB, type: 'boolean' }
 		]
 	});
 
