@@ -124,7 +124,7 @@
 		/**
 		 * @param {Object} entityAttributeData
 		 *
-		 * @return {CMDBuild.model.common.tabs.history.processes.CardRecord} currentEntityModel
+		 * @returns {CMDBuild.model.common.tabs.history.processes.CardRecord} currentEntityModel
 		 */
 		buildCurrentEntityModel: function(entityAttributeData) {
 			var performers = [];
@@ -200,48 +200,52 @@
 		},
 
 		/**
-		 * @return {Array}
-		 *
-		 * @override
-		 */
-		getTabHistoryGridColumns: function() {
-			var processesCustoColumns = [
-				{
-					dataIndex: CMDBuild.core.constants.Proxy.ACTIVITY_NAME,
-					text: CMDBuild.Translation.activityName,
-					sortable: false,
-					hideable: false,
-					menuDisabled: true,
-					flex: 1
-				},
-				{
-					dataIndex: CMDBuild.core.constants.Proxy.PERFORMERS,
-					text: CMDBuild.Translation.activityPerformer,
-					sortable: false,
-					hideable: false,
-					menuDisabled: true,
-					flex: 1
-				},
-				{
-					dataIndex: CMDBuild.core.constants.Proxy.STATUS,
-					text: CMDBuild.Translation.status,
-					sortable: false,
-					hideable: false,
-					menuDisabled: true,
-					flex: 1
-				}
-			];
-
-			return Ext.Array.push(this.callParent(arguments), processesCustoColumns);
-		},
-
-		/**
-		 * @return {CMDBuild.core.proxy.common.tabs.history.Classes}
+		 * @returns {CMDBuild.core.proxy.common.tabs.history.Classes}
 		 *
 		 * @override
 		 */
 		getProxy: function() {
 			return CMDBuild.core.proxy.common.tabs.history.Processes;
+		},
+
+		/**
+		 * @returns {Array} columns
+		 *
+		 * @override
+		 */
+		getTabHistoryGridColumns: function() {
+			var columns = this.callParent(arguments);
+
+			if (!CMDBuild.configuration.userInterface.get(CMDBuild.core.constants.Proxy.SIMPLE_HISTORY_MODE_FOR_PROCESS)) {
+				Ext.Array.push(columns, [
+					{
+						dataIndex: CMDBuild.core.constants.Proxy.ACTIVITY_NAME,
+						text: CMDBuild.Translation.activityName,
+						sortable: false,
+						hideable: false,
+						menuDisabled: true,
+						flex: 1
+					},
+					{
+						dataIndex: CMDBuild.core.constants.Proxy.PERFORMERS,
+						text: CMDBuild.Translation.activityPerformer,
+						sortable: false,
+						hideable: false,
+						menuDisabled: true,
+						flex: 1
+					},
+					{
+						dataIndex: CMDBuild.core.constants.Proxy.STATUS,
+						text: CMDBuild.Translation.status,
+						sortable: false,
+						hideable: false,
+						menuDisabled: true,
+						flex: 1
+					}
+				]);
+			}
+
+			return columns;
 		},
 
 		/**
@@ -330,7 +334,7 @@
 			/**
 			 * @param {String} status
 			 *
-			 * @return {String or null}
+			 * @returns {String or null}
 			 */
 			statusTranslationGet: function(status) {
 				if (Ext.Array.contains(this.managedStatuses, status))

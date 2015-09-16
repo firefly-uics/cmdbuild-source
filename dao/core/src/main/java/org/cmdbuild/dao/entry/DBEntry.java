@@ -15,7 +15,7 @@ import org.joda.time.DateTime;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Maps;
 
-public abstract class DBEntry implements CMEntryDefinition, CMValueSet {
+public abstract class DBEntry implements CMEntry, CMEntryDefinition {
 
 	private final DBDriver driver;
 

@@ -52,7 +52,8 @@
 
 			this.card = null;
 
-			if (!this.entryType || this.entryType.get(CMDBuild.core.constants.Proxy.TABLE_TYPE) == 'simpletable')
+			// Set empty entryType on simple classes
+			if (!this.entryType || this.entryType.get(CMDBuild.core.constants.Proxy.TABLE_TYPE) == CMDBuild.Constants.cachedTableType.simpletable)
 				this.entryType = null;
 
 			this.view.disable();
@@ -70,11 +71,12 @@
 			this.view.clearStore();
 			this.view.disable();
 
-			if (card) {
+			if (!Ext.isEmpty(card) && !Ext.isEmpty(this.entryType)) { // Don't enable tab on simple classes
 				this.updateCurrentClass(card);
 
-				this.view.enable();
 				this.loadData();
+
+				this.view.enable();
 			}
 		},
 
@@ -86,7 +88,7 @@
 			var currentClass = _CMCache.getEntryTypeById(classId);
 
 			if (this.currentClass != currentClass) {
-				if (!currentClass || currentClass.get(CMDBuild.core.constants.Proxy.TABLE_TYPE) == 'simpletable')
+				if (!currentClass || currentClass.get(CMDBuild.core.constants.Proxy.TABLE_TYPE) == CMDBuild.Constants.cachedTableType.simpletable)
 					currentClass = null;
 
 				this.currentClass = currentClass;

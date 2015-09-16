@@ -39,6 +39,7 @@
 				Ext.create('CMDBuild.core.Data'); // Data connections configuration
 				Ext.create('CMDBuild.core.configurationBuilders.Instance'); // CMDBuild instance configuration
 				Ext.create('CMDBuild.core.configurationBuilders.Localization'); // CMDBuild localization configuration
+				Ext.create('CMDBuild.core.configurationBuilders.UserInterface'); // CMDBuild UserInterface configuration
 
 				Ext.tip.QuickTipManager.init();
 				// fix a problem of Ext 4.2 tooltips width
@@ -47,7 +48,11 @@
 
 				CMDBuild.view.CMMainViewport.showSplash(forCredits, administration);
 
-				// Maybe a single request with all the configuration could be better
+				/**
+				 * Maybe a single request with all the configuration could be better
+				 *
+				 * TODO: use new implementation of CMDBuild.configuration.userInterface
+				 */
 				CMDBuild.core.proxy.group.Group.getUIConfiguration({
 					scope: this,
 					success: function(result, options, decodedResult) {

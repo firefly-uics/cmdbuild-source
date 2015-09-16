@@ -14,13 +14,14 @@
 		 * @param {Object} parameters
 		 */
 		read: function(parameters) {
-			CMDBuild.ServiceProxy.core.doRequest({
+			CMDBuild.Ajax.request({
 				method: 'GET',
 				url: CMDBuild.core.proxy.Index.attribute.read,
 				params: parameters.params,
+				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : false,
 				scope: parameters.scope || this,
-				success: parameters.success || Ext.emptyFn,
 				failure: parameters.failure || Ext.emptyFn,
+				success: parameters.success || Ext.emptyFn,
 				callback: parameters.callback || Ext.emptyFn
 			});
 		},

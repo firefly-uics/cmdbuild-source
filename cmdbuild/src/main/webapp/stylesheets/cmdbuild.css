@@ -1,3 +1,4 @@
+@import url("./flags.css");
 @import url("./icons.css");
 @import url("./trees.css");
 
@@ -472,39 +473,6 @@ em { font-style: oblique !important; }
 	.x-grid-checkheader-checked { background-image: url("../images/checkcolumn/checked.gif"); }
 
 	.x-grid-checkheader-editor .x-form-cb-wrap { text-align: center; }
-
-/*
- * Login flags
- */
-	.ux-flag-de { background-image: url("../images/icons/flags/de.png") !important; }
-
-	.ux-flag-en { background-image: url("../images/icons/flags/en.png") !important; }
-
-	.ux-flag-es { background-image: url("../images/icons/flags/es.png") !important; }
-
-	.ux-flag-fa { background-image:url("../images/icons/flags/fa.png") !important; }
-
-	.ux-flag-fr { background-image:url("../images/icons/flags/fr.png") !important; }
-
-	.ux-flag-hr { background-image:url("../images/icons/flags/hr.png") !important; }
-
-	.ux-flag-hu { background-image:url("../images/icons/flags/hu.png") !important; }
-
-	.ux-flag-it { background-image:url("../images/icons/flags/it.png") !important; }
-
-	.ux-flag-ja { background-image:url("../images/icons/flags/ja.png") !important; }
-
-	.ux-flag-pt_BR { background-image:url("../images/icons/flags/br.png") !important; }
-
-	.ux-flag-ru { background-image: url("../images/icons/flags/ru.png") !important; }
-
-	.ux-flag-sr_RS { background-image: url("../images/icons/flags/sr.png") !important; }
-
-	.ux-flag-sr { background-image: url("../images/icons/flags/sr.png") !important; }
-
-	.ux-flag-nl { background-image: url("../images/icons/flags/nl.png") !important; }
-
-	.ux-flag-vn { background-image: url("../images/icons/flags/vn.png") !important; }
 
 /*
  * For Ext.ux.plugins.IconCombo

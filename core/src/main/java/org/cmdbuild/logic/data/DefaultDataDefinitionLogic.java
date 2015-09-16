@@ -12,7 +12,7 @@ import static org.cmdbuild.dao.constants.Cardinality.CARDINALITY_1N;
 import static org.cmdbuild.dao.constants.Cardinality.CARDINALITY_N1;
 import static org.cmdbuild.dao.entrytype.Predicates.attributeTypeInstanceOf;
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
-import static org.cmdbuild.dao.query.clause.FunctionCall.call;
+import static org.cmdbuild.dao.query.clause.Clauses.call;
 import static org.cmdbuild.logic.data.Utils.definitionForClassOrdering;
 import static org.cmdbuild.logic.data.Utils.definitionForExisting;
 import static org.cmdbuild.logic.data.Utils.definitionForNew;

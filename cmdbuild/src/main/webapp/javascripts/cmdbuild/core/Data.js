@@ -17,28 +17,26 @@
 				var defaultHeaders = {};
 				defaultHeaders[CMDBuild.core.constants.Proxy.LOCALIZED_HEADER_KEY] = toLocalize;
 
-				CMDBuild.Config.defaultTimeout = 90; // TODO: Read from real configuration
-
-				Ext.Ajax.timeout = CMDBuild.Config.defaultTimeout * 1000;
+				Ext.Ajax.timeout = CMDBuild.core.configurations.Timeout.getBase() * 1000;
 				Ext.Ajax[CMDBuild.core.constants.Proxy.LOCALIZED_HEADER_KEY] = toLocalize;
 
 				Ext.define('CMDBuild.data.Connection', {
 					override: 'Ext.data.Connection',
 
-					timeout: CMDBuild.Config.defaultTimeout * 1000,
+					timeout: CMDBuild.core.configurations.Timeout.getBase() * 1000,
 					defaultHeaders: defaultHeaders
 				});
 
 				Ext.define('CMDBuild.data.proxy.Ajax', {
 					override: 'Ext.data.proxy.Ajax',
 
-					timeout: CMDBuild.Config.defaultTimeout * 1000
+					timeout: CMDBuild.core.configurations.Timeout.getBase() * 1000
 				});
 
 				Ext.define('CMDBuild.form.Basic', {
 					override: 'Ext.form.Basic',
 
-					timeout: CMDBuild.Config.defaultTimeout
+					timeout: CMDBuild.core.configurations.Timeout.getBase()
 				});
 			} else {
 				_error('CMDBuild object is empty', this);

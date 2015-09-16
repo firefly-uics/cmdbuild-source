@@ -5,6 +5,7 @@ import javax.sql.DataSource;
 import org.cmdbuild.dao.TypeObjectCache;
 import org.cmdbuild.dao.driver.AbstractDBDriver;
 import org.cmdbuild.dao.driver.postgres.quote.EntryTypeQuoter;
+import org.cmdbuild.dao.entry.CMEntry;
 import org.cmdbuild.dao.entry.DBEntry;
 import org.cmdbuild.dao.entrytype.DBAttribute;
 import org.cmdbuild.dao.entrytype.DBClass;
@@ -171,7 +172,7 @@ public class PostgresDriver extends AbstractDBDriver {
 	}
 
 	@Override
-	public void delete(final DBEntry entry) {
+	public void delete(final CMEntry entry) {
 		logger.info(marker, "deleting entry with id '{}' for type '{}' within namespace '{}'", //
 				entry.getId(), entry.getType().getIdentifier());
 		new EntryDeleteCommand(jdbcTemplate, entry).execute();

@@ -63,10 +63,19 @@ public class DataViewLookupStore extends ForwardingStore<Lookup> implements Look
 				final Lookup output;
 				final Lookup parent = lookupsById.get(input.parentId());
 				if (parent != null) {
-					output = LookupImpl.newInstance() //
-							.clone(input) //
-							.withParent(apply(parent)) //
-							.build();
+					output = new ForwardingLookup() {
+
+						@Override
+						protected Lookup delegate() {
+							return input;
+						}
+
+						@Override
+						public Lookup parent() {
+							return apply(parent);
+						}
+
+					};
 				} else {
 					output = input;
 				}

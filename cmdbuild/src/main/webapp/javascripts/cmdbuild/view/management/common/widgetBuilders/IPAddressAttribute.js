@@ -11,6 +11,7 @@
 		var operator = CMDBuild.WidgetBuilders.BaseAttribute.FilterOperator;
 		return [
 			[operator.EQUAL, translation.equals],
+			[operator.NOT_NULL, translation.notnull],
 			[operator.NET_CONTAINS, CMDBuild.Translation.contains],
 			[operator.NET_CONTAINED, CMDBuild.Translation.contained],
 			[operator.NET_CONTAINSOREQUAL, CMDBuild.Translation.containsorequal],

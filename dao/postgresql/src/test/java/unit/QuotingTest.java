@@ -1,6 +1,6 @@
 package unit;
 
-import static org.cmdbuild.dao.query.clause.FunctionCall.call;
+import static org.cmdbuild.dao.query.clause.Clauses.call;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
