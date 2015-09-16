@@ -7,7 +7,7 @@
 	Ext.define('CMDBuild.view.administration.workflow.CMProcess', {
 		extend: 'Ext.panel.Panel',
 
-		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+		requires: ['CMDBuild.core.constants.Proxy'],
 
 		cmName: 'process',
 

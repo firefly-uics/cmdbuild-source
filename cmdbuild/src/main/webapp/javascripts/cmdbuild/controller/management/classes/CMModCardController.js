@@ -276,7 +276,7 @@
 		},
 
 		buildTabControllerEmail: function() {
-			if (!CMDBuild.configuration.userInterface.isDisabledCardTab(CMDBuild.core.proxy.CMProxyConstants.CLASS_EMAIL_TAB)) {
+			if (!CMDBuild.configuration.userInterface.isDisabledCardTab(CMDBuild.core.constants.Proxy.CLASS_EMAIL_TAB)) {
 				this.controllerTabEmail = Ext.create('CMDBuild.controller.management.classes.tabs.Email', { parentDelegate: this });
 
 				this.subControllers.push(this.controllerTabEmail);
@@ -288,7 +288,7 @@
 		},
 
 		buildTabControllerHistory: function() {
-			if (!CMDBuild.configuration.userInterface.isDisabledCardTab(CMDBuild.core.proxy.CMProxyConstants.CLASS_HISTORY_TAB)) {
+			if (!CMDBuild.configuration.userInterface.isDisabledCardTab(CMDBuild.core.constants.Proxy.CLASS_HISTORY_TAB)) {
 				this.controllerTabHistory = Ext.create('CMDBuild.controller.management.classes.tabs.History', { parentDelegate: this });
 
 				this.subControllers.push(this.controllerTabHistory);
