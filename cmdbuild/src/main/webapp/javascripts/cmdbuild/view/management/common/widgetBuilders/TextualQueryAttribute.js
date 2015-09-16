@@ -12,14 +12,15 @@ CMDBuild.extend(CMDBuild.WidgetBuilders.TextualQueryAttribute, CMDBuild.WidgetBu
 CMDBuild.WidgetBuilders.TextualQueryAttribute.prototype.getQueryOptions = function() {
 	var operator = CMDBuild.WidgetBuilders.BaseAttribute.FilterOperator;
 	return [
-		[operator.EQUAL, translation.equals],
-		[operator.NOT_EQUAL, translation.different],
-		[operator.CONTAIN, translation.like],
-		[operator.NOT_CONTAIN, translation.dontlike],
 		[operator.BEGIN, translation.begin],
-		[operator.NOT_BEGIN, translation.dontbegin],
+		[operator.CONTAIN, translation.like],
 		[operator.END, translation.end],
+		[operator.EQUAL, translation.equals],
+		[operator.NOT_BEGIN, translation.dontbegin],
+		[operator.NOT_CONTAIN, translation.dontlike],
 		[operator.NOT_END, translation.dontend],
+		[operator.NOT_EQUAL, translation.different],
+		[operator.NOT_NULL, translation.notnull],
 		[operator.NULL, translation.nullo]
 	];
 };

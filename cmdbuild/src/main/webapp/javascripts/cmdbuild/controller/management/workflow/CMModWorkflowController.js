@@ -114,25 +114,20 @@
 		},
 
 		buildTabControllerEmail: function() {
-			this.controllerTabEmail = Ext.create('CMDBuild.controller.management.workflow.tabs.Email', {
-				parentDelegate: this
-			});
+			if (!CMDBuild.configuration.userInterface.isDisabledProcessTab(CMDBuild.core.proxy.CMProxyConstants.PROCESS_EMAIL_TAB)) {
+				this.controllerTabEmail = Ext.create('CMDBuild.controller.management.workflow.tabs.Email', { parentDelegate: this });
 
-			this.subControllers.push(this.controllerTabEmail);
+				this.subControllers.push(this.controllerTabEmail);
 
-			this.view.cardTabPanel.emailPanel = this.controllerTabEmail.getView(); // Creates tabPanel object
+				this.view.cardTabPanel.emailPanel = this.controllerTabEmail.getView(); // Creates tabPanel object
 
-			this.view.cardTabPanel.acutalPanel.add(this.controllerTabEmail.getView());
+				this.view.cardTabPanel.acutalPanel.add(this.controllerTabEmail.getView());
+			}
 		},
 
 		buildTabControllerHistory: function() {
-			if (!Ext.Array.contains(
-				_CMUIConfiguration.getDisabledProcessTabs(),
-				CMDBuild.model.CMUIConfigurationModel.processTabs.history
-			)) {
-				this.controllerTabHistory = Ext.create('CMDBuild.controller.management.workflow.tabs.History', {
-					parentDelegate: this
-				});
+			if (!CMDBuild.configuration.userInterface.isDisabledProcessTab(CMDBuild.core.proxy.CMProxyConstants.PROCESS_HISTORY_TAB)) {
+				this.controllerTabHistory = Ext.create('CMDBuild.controller.management.workflow.tabs.History', { parentDelegate: this });
 
 				this.subControllers.push(this.controllerTabHistory);
 

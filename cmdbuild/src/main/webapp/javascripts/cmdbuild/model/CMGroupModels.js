@@ -1,5 +1,10 @@
 (function() {
 
+	/**
+	 * Used from cache
+	 *
+	 * @deprecated
+	 */
 	Ext.define("CMDBuild.cache.CMGroupModel", {
 		statics: {
 			type: {
@@ -48,18 +53,11 @@
 		}
 	});
 
-	Ext.define("CMDBuild.cache.CMUserForGridModel", {
-		extend: 'Ext.data.Model',
-		fields: [
-			{name: "description", type: "string"},
-			{name: "username", type: "string"},
-			{name: "isActive", type: "boolean"},
-			{name: "userid", type: "string"},
-			{name: "email", type: "string"},
-			{name: "defaultgroup", type: "int"}
-		]
-	});
-
+	/**
+	 * Used as _CMUIConfiguration to delete on complete CMDBuild.configuration.userInterface implementation
+	 *
+	 * @deprecated
+	 */
 	Ext.define("CMDBuild.model.CMUIConfigurationModel", {
 		extend: 'Ext.data.Model',
 

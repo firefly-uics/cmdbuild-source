@@ -3,7 +3,6 @@ package org.cmdbuild.report;
 import static java.util.Arrays.asList;
 import static org.apache.commons.lang3.RandomStringUtils.randomNumeric;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
-import static org.cmdbuild.report.CustomProperties.FILTER;
 import static org.cmdbuild.services.store.report.JDBCReportStore.REPORT_CLASS_NAME;
 
 import java.math.BigDecimal;
@@ -12,7 +11,6 @@ import java.sql.Timestamp;
 import java.util.Date;
 
 import net.sf.jasperreports.engine.JRParameter;
-import net.sf.jasperreports.engine.JRPropertiesMap;
 
 import org.cmdbuild.common.utils.UnsupportedProxyFactory;
 import org.cmdbuild.dao.entrytype.CMAttribute;
@@ -25,12 +23,12 @@ import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.DateAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.DateTimeAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.DoubleAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.ForeignKeyAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.IntegerAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.LookupAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.StringAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TimeAttributeType;
 import org.cmdbuild.exception.ReportException.ReportExceptionType;
-import org.cmdbuild.report.RPReference.ReportReferenceAttributeType;
 
 public class ReportParameterConverter {
 
@@ -183,8 +181,7 @@ public class ReportParameterConverter {
 
 		@Override
 		public String getFilter() {
-			final JRPropertiesMap properties = rp.getJrParameter().getPropertiesMap();
-			return properties.getProperty(FILTER);
+			return new CustomProperties(rp.getJrParameter().getPropertiesMap()).getFilter();
 		}
 
 		@Override
@@ -226,7 +223,7 @@ public class ReportParameterConverter {
 
 			@Override
 			public void accept(final RPReference reference) {
-				attributeType = new ReportReferenceAttributeType(reference.getClassName());
+				attributeType = new ForeignKeyAttributeType(reference.getClassName());
 			}
 
 			@Override

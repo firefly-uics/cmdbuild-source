@@ -408,10 +408,7 @@ public class DBDataView extends AbstractDataView {
 
 	@Override
 	public void delete(final CMCard card) {
-		final CMIdentifier identifier = card.getType().getIdentifier();
-		final DBClass dbType = findClass(identifier);
-		final DBCard dbCard = DBCard.newInstance(driver, dbType, card.getId());
-		driver.delete(dbCard);
+		driver.delete(card);
 	}
 
 	@Override
@@ -446,10 +443,7 @@ public class DBDataView extends AbstractDataView {
 
 	@Override
 	public void delete(final CMRelation relation) {
-		final DBDomain dbDomain = findDomain(relation.getType().getId());
-		final DBRelation dbRelation = DBRelation.newInstance(driver, dbDomain, relation.getId());
-
-		driver.delete(dbRelation);
+		driver.delete(relation);
 	}
 
 	@Override

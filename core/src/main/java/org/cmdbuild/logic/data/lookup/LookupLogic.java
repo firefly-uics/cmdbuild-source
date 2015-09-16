@@ -35,6 +35,7 @@ import org.cmdbuild.dao.entrytype.attributetype.NullAttributeTypeVisitor;
 import org.cmdbuild.dao.view.CMAttributeDefinition;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.data.store.Storable;
+import org.cmdbuild.data.store.lookup.ForwardingLookup;
 import org.cmdbuild.data.store.lookup.Lookup;
 import org.cmdbuild.data.store.lookup.LookupImpl;
 import org.cmdbuild.data.store.lookup.LookupStore;
@@ -423,10 +424,19 @@ public class LookupLogic implements Logic {
 		}
 
 		logger.trace(marker, "updating lookup active to '{}'", status);
-		final Lookup lookup = LookupImpl.newInstance() //
-				.clone(shouldBeOneOnly.next()) //
-				.withActiveStatus(status) //
-				.build();
+		final Lookup lookup = new ForwardingLookup() {
+
+			@Override
+			protected Lookup delegate() {
+				return shouldBeOneOnly.next();
+			}
+
+			@Override
+			public boolean active() {
+				return status;
+			}
+
+		};
 
 		store.update(lookup);
 	}
@@ -463,10 +473,19 @@ public class LookupLogic implements Logic {
 
 		assure(operationUser.hasAdministratorPrivileges());
 
-		final LookupImpl lookupWithRealType = LookupImpl.newInstance() //
-				.clone(lookup) //
-				.withType(typeFor(typesWith(lookup.type().name)).orNull()) //
-				.build();
+		final Lookup lookupWithRealType = new ForwardingLookup() {
+
+			@Override
+			protected Lookup delegate() {
+				return lookup;
+			}
+
+			@Override
+			public LookupType type() {
+				return typeFor(typesWith(lookup.type().name)).orNull();
+			}
+
+		};
 
 		final Long id;
 		if (isNotExistent(lookupWithRealType)) {
@@ -477,10 +496,19 @@ public class LookupLogic implements Logic {
 			final Lookup toBeCreated;
 			if (hasNoValidNumber(lookupWithRealType)) {
 				final int count = size(store.readAll(lookupWithRealType.type()));
-				toBeCreated = LookupImpl.newInstance() //
-						.clone(lookupWithRealType) //
-						.withNumber(count + 1) //
-						.build();
+				toBeCreated = new ForwardingLookup() {
+
+					@Override
+					protected Lookup delegate() {
+						return lookupWithRealType;
+					}
+
+					@Override
+					public Integer number() {
+						return count + 1;
+					}
+
+				};
 			} else {
 				toBeCreated = lookupWithRealType;
 			}
@@ -495,10 +523,19 @@ public class LookupLogic implements Logic {
 			final Lookup toBeUpdated;
 			if (hasNoValidNumber(lookupWithRealType)) {
 				final Lookup actual = store.read(lookupWithRealType);
-				toBeUpdated = LookupImpl.newInstance() //
-						.clone(lookupWithRealType) //
-						.withNumber(actual.number()) //
-						.build();
+				toBeUpdated = new ForwardingLookup() {
+
+					@Override
+					protected Lookup delegate() {
+						return lookupWithRealType;
+					}
+
+					@Override
+					public Integer number() {
+						return actual.number();
+					}
+
+				};
 			} else {
 				toBeUpdated = lookupWithRealType;
 			}
@@ -536,10 +573,19 @@ public class LookupLogic implements Logic {
 		for (final Lookup lookup : lookups) {
 			if (positions.containsKey(lookup.getId())) {
 				final int index = positions.get(lookup.getId());
-				final Lookup updated = LookupImpl.newInstance() //
-						.clone(lookup) //
-						.withNumber(index) //
-						.build();
+				final Lookup updated = new ForwardingLookup() {
+
+					@Override
+					protected Lookup delegate() {
+						return lookup;
+					}
+
+					@Override
+					public Integer number() {
+						return index;
+					}
+
+				};
 				store.update(updated);
 			}
 		}
