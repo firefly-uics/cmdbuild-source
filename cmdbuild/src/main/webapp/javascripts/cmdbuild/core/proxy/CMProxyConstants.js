@@ -171,6 +171,7 @@
 		GROUPS: 'groups',
 		GROUP_ID: 'groupId',
 		GROUP_NAME: 'groupName',
+		HIDDEN: 'hidden',
 		HIDE_SIDE_PANEL: 'hideSidePanel',
 		HOUR: 'hour',
 		ID: 'id',
