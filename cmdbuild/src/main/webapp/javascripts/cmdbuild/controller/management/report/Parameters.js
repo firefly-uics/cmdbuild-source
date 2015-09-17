@@ -65,29 +65,33 @@
 		},
 
 		buildFields: function() {
-			var me = this;
-
 			if (this.attributeList.length > 0) {
+				var attributeCustom = undefined;
+				var fieldManager = Ext.create('CMDBuild.core.fieldManager.FieldManager', {
+					parentDelegate: this,
+					targetForm: this.form
+				});
+
 				Ext.Array.forEach(this.attributeList, function(attribute, i, allAttributes) {
-					new CMDBuild.Management.TemplateResolver({
-						clientForm: this.form.getForm(),
-						xaVars: attribute,
-						serverVars: CMDBuild.controller.common.AbstractBaseWidgetController.getTemplateResolverServerVars(attribute)
-					}).resolveTemplates({
-						attributes: Ext.Object.getKeys(attribute),
-						callback: function(out, ctx) {
-							var field = CMDBuild.Management.FieldManager.getFieldForAttr(out, false, false);
+					if (fieldManager.isAttributeManaged(attribute[CMDBuild.core.proxy.CMProxyConstants.TYPE])) {
+						attributeCustom = Ext.create('CMDBuild.model.common.attributes.Attribute', attribute);
+						attributeCustom.setAdaptedData(attribute);
 
-							if (!Ext.isEmpty(field)) {
-								field.maxWidth = field.width;
+						fieldManager.attributeModelSet(attributeCustom);
 
-								if (attribute.defaultvalue)
-									field.setValue(attribute.defaultvalue);
+						this.form.add(fieldManager.buildField());
+					} else { // @deprecated - Old field manager
+						var field = CMDBuild.Management.FieldManager.getFieldForAttr(attribute, false, false);
 
-								me.form.add(field);
-							}
+						if (!Ext.isEmpty(field)) {
+							field.maxWidth = field.width;
+
+							if (attribute.defaultvalue)
+								field.setValue(attribute.defaultvalue);
+
+							this.form.add(field);
 						}
-					});
+					}
 				}, this);
 			}
 		},

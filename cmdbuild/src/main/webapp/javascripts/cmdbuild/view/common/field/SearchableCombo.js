@@ -1,7 +1,8 @@
 (function() {
 
-Ext.define("CMDBuild.Management.SearchableCombo", {
+Ext.define("CMDBuild.view.common.field.SearchableCombo", {
 	extend: "CMDBuild.field.CMBaseCombo",
+	alternateClassName: 'CMDBuild.Management.SearchableCombo', // Legacy class name
 
 	trigger1Cls: Ext.baseCSSPrefix + 'form-arrow-trigger',
 	trigger2Cls: Ext.baseCSSPrefix + 'form-clear-trigger',
