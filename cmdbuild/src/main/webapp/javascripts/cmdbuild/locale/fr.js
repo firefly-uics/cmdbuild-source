@@ -3,7 +3,7 @@ Ext.define("CMDBuild.locale", {
 		cmdbuildIsASofwareDevelopedByTecnoteca: 'CMDBuild est développé et maintenu par ' +
 		'<a href="http://www.tecnoteca.com/it/" target="_blank">Tecnoteca srl</a>' +
 		' et provient à l\'origine d'une commande de '+
-		' <a href="http://www.comune.udine.it/" target="_blank">la municipalité d&apos;Udine</a>; le logiciel est sous licence ' +
+		' <a href="http://www.comune.udine.it/" target="_blank">la municipalité d\'Udine</a>; le logiciel est sous licence ' +
 		' <a href="http://www.gnu.org/licenses/agpl-3.0.html" target="_blank" >AGPL</a>.',
 
 		cmdbuildIsAtradeMarkRegisterd: 'CMDBuild &reg; est une marque déposée de <a href="http://www.tecnoteca.com/it/" target="_blank">Tecnoteca srl</a>',
