@@ -3,9 +3,7 @@
 DROP FUNCTION IF EXISTS apply_patch();
 CREATE OR REPLACE FUNCTION apply_patch() RETURNS void AS $$
 BEGIN
-	PERFORM cm_create_class('_CustomPage', NULL, 'MODE: reserved|TYPE: simpleclass|DESCR: CustomPage|SUPERCLASS: false|STATUS: active');
-	PERFORM cm_create_class_attribute('_CustomPage', 'Name', 'varchar(100)', null, false, false, 'MODE: user|DESCR: Name|STATUS: active');
-	PERFORM cm_create_class_attribute('_CustomPage', 'Description', 'text', null, false, false, 'MODE: user|DESCR: Description|STATUS: active');
+	PERFORM cm_create_class('_CustomPage', 'Class', 'MODE: reserved|TYPE: class|DESCR: CustomPage|SUPERCLASS: false|STATUS: active');
 END
 $$ LANGUAGE PLPGSQL;
 
