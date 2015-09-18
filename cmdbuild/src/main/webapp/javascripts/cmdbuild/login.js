@@ -211,16 +211,23 @@
 		 * @private
 		 */
 		doLogin: function(field, event) {
+			var me = this;
 			if (!Ext.isEmpty(this.role.getValue()) || this.form.getForm().isValid()) {
+				var values = this.form.getForm().getValues();
 				CMDBuild.core.proxy.CMProxy.doLogin({
-					params: this.form.getForm().getValues(),
+					params: values,
 					scope: this,
 					success: function() {
-						if (/administration.jsp$/.test(window.location)) {
-							window.location = 'administration.jsp' + window.location.hash;
-						} else {
-							window.location = 'management.jsp' + window.location.hash;
-						}
+						me.doRestAuthentication({
+							password: values.password,
+							username: values.username
+						}, function() {
+							if (/administration.jsp$/.test(window.location)) {
+								window.location = 'administration.jsp' + window.location.hash;
+							} else {
+								window.location = 'management.jsp' + window.location.hash;
+							}						
+						});
 					},
 					failure: function(result, options, decodedResult) {
 						if (!Ext.isEmpty(decodedResult) && decodedResult[CMDBuild.core.proxy.CMProxyConstants.REASON] == 'AUTH_MULTIPLE_GROUPS') {
@@ -236,6 +243,30 @@
 				});
 			}
 		},
+		doRestAuthentication: function(credentials, callback, callbackScope) {
+			var me = this;
+			var login_params = JSON.stringify(credentials);
+			// show authentication form
+			Ext.Ajax.request({
+				method: "POST",
+				url: 'http://localhost:8080/cmdbuild/services/rest/v2/sessions',
+				jsonData: login_params,
+				success: function (response) {
+					if (response) {
+						var data = JSON.parse(response.responseText);
+						var token = data.data._id;
+						me.onAuthenticationSuccess(token, callback, callbackScope);
+					}
+				},
+				failure: function (XMLHttpRequest, textStatus, errorThrown) {
+					console.log("REST: AuthenticationError");
+				}
+			});
+		},
+		onAuthenticationSuccess : function(token, callback, callbackScope) {
+			document.cookie = "RestSessionToken=" + token;
+			callback.apply(callbackScope, []);
+		},		
 
 		/**
 		 * @param {Array} roles
