@@ -99,7 +99,7 @@ public class Menu {
 
 	private MenuElementStore menuElementStore() {
 		return new MenuElementStore(baseMenuElementStore(), data.systemDataView(), userStore, view.viewConverter(),
-				menuElementStorableConverter());
+				menuElementStorableConverter(), customPages.defaultCustomPagesLogic());
 	}
 
 }
