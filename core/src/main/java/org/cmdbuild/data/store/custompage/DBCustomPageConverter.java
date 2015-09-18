@@ -3,6 +3,8 @@ package org.cmdbuild.data.store.custompage;
 import static com.google.common.collect.Maps.newHashMap;
 import static org.apache.commons.lang3.builder.ToStringBuilder.reflectionToString;
 import static org.apache.commons.lang3.builder.ToStringStyle.SHORT_PREFIX_STYLE;
+import static org.cmdbuild.common.Constants.CODE_ATTRIBUTE;
+import static org.cmdbuild.common.Constants.DESCRIPTION_ATTRIBUTE;
 
 import java.util.Map;
 
@@ -15,8 +17,8 @@ public class DBCustomPageConverter extends BaseStorableConverter<DBCustomPage> {
 
 	public static final String CLASSNAME = "_CustomPage";
 
-	private static final String NAME = "Name";
-	private static final String DESCRIPTION = "Description";
+	private static final String NAME = CODE_ATTRIBUTE;
+	private static final String DESCRIPTION = DESCRIPTION_ATTRIBUTE;
 
 	private static class CMCardAdapter implements DBCustomPage {
 
