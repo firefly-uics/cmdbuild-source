@@ -51,5 +51,8 @@ CMDBuild.Constants = {
 		bottom_border_gray: "cmdbuild_border_bottom_gray",
 		padding5: "cmdbuild_body_padding",
 		tree_folder: "cmdbuild-tree-folder-icon"
+	},
+	customPages: {
+		path: "upload/custompages/"
 	}
 };

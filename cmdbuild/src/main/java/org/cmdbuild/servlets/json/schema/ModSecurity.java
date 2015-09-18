@@ -271,6 +271,14 @@ public class ModSecurity extends JSONBaseWithSpringContext {
 		final List<PrivilegeInfo> filterPrivilegesForGroup = securityLogic().fetchFilterPrivilegesForGroup(groupId);
 		return PrivilegeSerializer.serializePrivilegeList(filterPrivilegesForGroup);
 	}
+	
+	@JSONExported
+	public JSONObject getCustomPagePrivilegeList( //
+			@Parameter(GROUP_ID) final Long groupId //
+	) throws JSONException, AuthException {
+		final List<PrivilegeInfo> elements = securityLogic().fetchCustomViewPrivilegesForGroup(groupId);
+		return PrivilegeSerializer.serializePrivilegeList(elements);
+	}
 
 	@Admin(AdminAccess.DEMOSAFE)
 	@JSONExported
