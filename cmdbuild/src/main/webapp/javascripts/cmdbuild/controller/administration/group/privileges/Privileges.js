@@ -8,6 +8,7 @@
 			'CMDBuild.core.proxy.group.privileges.Classes',
 			'CMDBuild.core.proxy.group.privileges.DataView',
 			'CMDBuild.core.proxy.group.privileges.Filter',
+			'CMDBuild.core.proxy.group.privileges.CustomPages',
 		],
 
 		/**
@@ -77,10 +78,18 @@
 				enableCRUDRead: true
 			});
 
+			this.controllerCustomPagesProperties = Ext.create('CMDBuild.controller.administration.group.privileges.Grid', {
+				parentDelegate: this,
+				proxy: CMDBuild.core.proxy.group.privileges.CustomPages,
+				title: "@@ Custom Pages",
+				enableCRUDRead: true
+			});
+
 			// Inject tabs (sorted)
 			this.view.add(this.controllerClassPrivileges.getView());
 			this.view.add(this.controllerViewProperties.getView());
 			this.view.add(this.controllerFilterProperties.getView());
+			this.view.add(this.controllerCustomPagesProperties.getView());
 		},
 
 		/**

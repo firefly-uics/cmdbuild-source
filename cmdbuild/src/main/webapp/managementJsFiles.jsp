@@ -69,6 +69,11 @@
 	<script type="text/javascript" src="javascripts/cmdbuild/view/management/classes/CMCardTabPanel.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/common/classes/CMClassAccordion.js"></script>
 
+		<!-- GUIFRAMEWORK -->
+		<script type="text/javascript" src="javascripts/cmdbuild/view/administration/accordion/CMGuiFrameworkAccordion.js"></script>
+		<script type="text/javascript" src="javascripts/cmdbuild/view/management/guiFramework/OnePanelFrame.js"></script>
+		<script type="text/javascript" src="javascripts/cmdbuild/controller/management/guiFramework/OnePanelFrame.js"></script>
+
 		<!-- DATAVIEW -->
 		<script type="text/javascript" src="javascripts/cmdbuild/view/management/dataView/CMDataViewAccordion.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/view/management/dataView/CMModSqlDataView.js"></script>

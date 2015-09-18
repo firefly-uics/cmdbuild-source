@@ -180,6 +180,11 @@
 			}
 		},
 
+		customPages: {
+			readForCurrentUser: 'services/json/custompages/readforcurrentuser',
+			readAll: 'services/json/custompages/readall'			
+		},
+		
 		history: {
 			classes: {
 				getCardHistory: 'services/json/management/modcard/getcardhistory',
@@ -239,6 +244,10 @@
 			filter: {
 				read: 'services/json/schema/modsecurity/getfilterprivilegelist',
 				update: 'services/json/schema/modsecurity/savefilterprivilege'
+			},
+			customPages: {
+				read: 'services/json/schema/modsecurity/getcustompageprivilegelist',
+				update: 'services/json/schema/modsecurity/savecustompageprivilege'
 			}
 		},
 
