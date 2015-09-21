@@ -1236,7 +1236,7 @@
 	"fileServerPath": "Fájl szerver elérési út",
 	"filter": "Szűrő",
 	"filterView": "Szűrőkből",
-	"filters_for_groups": "Szűrők csoportoknak",
+	"filtersForGroups": "Szűrők csoportoknak",
 	"format": "Formátum",
 	"format_csv": "CSV",
 	"format_odt": "OpenOffice Odt",

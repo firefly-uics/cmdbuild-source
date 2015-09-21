@@ -1338,7 +1338,7 @@
 	"fileServerPath": "文件服务器路径",
 	"filter": "过滤器",
 	"filterView": "从过滤器",
-	"filters_for_groups": "组的过滤器",
+	"filtersForGroups": "组的过滤器",
 	"format": "<em>Format</em>",
 	"format_csv": "CSV",
 	"format_odt": "OpenOffice Odt",
