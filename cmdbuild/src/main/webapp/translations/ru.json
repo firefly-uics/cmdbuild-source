@@ -1381,6 +1381,7 @@
 	"last_checkin": "<em>Last checkin</em>",
 	"layers": "Слои",
 	"limitedAdministrator": "Администратор с ограниченным доступом",
+	"list": "Список",
 	"lockCardsAndProcessesInEdit": "<em>Lock cards and processes in edit</em>",
 	"lockTimeout": "Таймаут блокировки (секунд)",
 	"loggedGroup": "Группа",
