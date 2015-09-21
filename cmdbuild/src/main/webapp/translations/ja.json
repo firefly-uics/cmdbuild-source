@@ -1088,6 +1088,7 @@
 		"popup_block": "ポップアップブロックが有効になっています。操作と行うためにはそれを無効にしてください。",
 		"reportsDuplicateImageFilename": "警告: 同名のレポートイメージがあります。処理を継続できません。",
 		"saveMenuBeforeAccess": "このエレメントの翻訳にアクセスする前にメニューは保存される必要があります。",
+		"toSetAFilterYouMustBeforeSelectAClass": "<em>To set a filter you must before select a class</em>",
 		"warning_message": "警告"
 	},
 	"account": "アカウント",
@@ -1130,6 +1131,7 @@
 	"beginDate": "開始日",
 	"bim": "BIM",
 	"body": "本文",
+	"buildFilter": "<em>Build filter</em>",
 	"bottom": "ボトム",
 	"buttonsToDisable": "無効にするボタン",
 	"cacheManagement": "キャッシュ管理",

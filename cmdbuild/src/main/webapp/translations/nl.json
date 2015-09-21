@@ -1088,6 +1088,7 @@
 		"popup_block": "We hebben ontdekt dat u popup blokkeer software gebruikt, schakel deze uit om dit programma te draaien",
 		"reportsDuplicateImageFilename": "Waarschuwing: rapport samenstelling gevonden met gelijke bestandsnaam - kan niet doorgaan.",
 		"saveMenuBeforeAccess": "Het menu moet worden opgeslagen voor toegang tot de vertalingen van dit element.",
+		"toSetAFilterYouMustBeforeSelectAClass": "<em>To set a filter you must before select a class</em>",
 		"warning_message": "Waarschuwing"
 	},
 	"account": "Gebruiker",
@@ -1130,6 +1131,7 @@
 	"beginDate": "Begin datum",
 	"bim": "BIM",
 	"body": "Sjabloon tekst",
+	"buildFilter": "<em>Build filter</em>",
 	"bottom": "Bodem",
 	"buttonsToDisable": "Te blokkeren drukknoppen",
 	"cacheManagement": "Cache beheer",

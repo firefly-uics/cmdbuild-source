@@ -21,7 +21,7 @@
 		/**
 		 * @cfg {String}
 		 */
-		baseTitle: '@@ Build filter',
+		baseTitle: CMDBuild.Translation.buildFilter,
 
 		/**
 		 * @property {CMDBuild.view.management.common.filter.CMFunctions}

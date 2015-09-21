@@ -96,7 +96,7 @@
 		 */
 		onFieldFilterAdvancedWindowBeforeShow: function() {
 			if (this.cmfg('fieldFilterAdvancedFilterIsEmpty'))
-				CMDBuild.core.Message.warning(null, '@@ To set a filter you must before select a class', false);
+				CMDBuild.core.Message.warning(null, CMDBuild.Translation.warnings.toSetAFilterYouMustBeforeSelectAClass, false);
 
 			return !this.cmfg('fieldFilterAdvancedFilterIsEmpty');
 		},

@@ -1088,6 +1088,7 @@
 		"popup_block": "We have detected that you are using popup blocking software, please disable to run operation",
 		"reportsDuplicateImageFilename": "Warning: found report images with same filename - cannot proceed.",
 		"saveMenuBeforeAccess": "The menu has to been saved before access at the translations of this element.",
+		"toSetAFilterYouMustBeforeSelectAClass": "To set a filter you must before select a class",
 		"warning_message": "Warning"
 	},
 	"account": "Account",
@@ -1131,6 +1132,7 @@
 	"bim": "BIM",
 	"body": "Body",
 	"bottom": "Bottom",
+	"buildFilter": "Build filter",
 	"buttonsToDisable": "Buttons to disable",
 	"cacheManagement": "Cache management",
 	"camera": "Camera",

@@ -1088,6 +1088,7 @@
 		"popup_block": "Kérem kapcsolja ki a popup blokkolást ezen az oldalon.",
 		"reportsDuplicateImageFilename": "<em>Warning: found report images with same filename - cannot proceed.</em>",
 		"saveMenuBeforeAccess": "A menüt el kell menteni mielőtt az elem fordításához kezd.",
+		"toSetAFilterYouMustBeforeSelectAClass": "<em>To set a filter you must before select a class</em>",
 		"warning_message": "Figyelem"
 	},
 	"account": "Fiók",
@@ -1130,6 +1131,7 @@
 	"beginDate": "Kezdő dátum",
 	"bim": "BIM",
 	"body": "Törzs",
+	"buildFilter": "<em>Build filter</em>",
 	"bottom": "Alul",
 	"buttonsToDisable": "Tiltandó gombok",
 	"cacheManagement": "Cache kezelés",

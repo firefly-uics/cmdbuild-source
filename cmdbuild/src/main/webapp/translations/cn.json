@@ -1207,6 +1207,7 @@
 		"only_filtered": "变更只能应用于满足当前过滤器的卡片",
 		"popup_block": "我们检测到你的计算机安装了防止弹出窗口的软件, 禁止此软件，以便正常弹出窗口",
 		"saveMenuBeforeAccess": "此下拉菜单在被翻译前已被保存。",
+		"toSetAFilterYouMustBeforeSelectAClass": "<em>To set a filter you must before select a class</em>",
 		"warning_message": "警告"
 	},
 	"account": "帐户",
@@ -1243,6 +1244,7 @@
 	"beginDate": "开始日期",
 	"bim": "BIM",
 	"body": "Body",
+	"buildFilter": "<em>Build filter</em>",
 	"bottom": "底部",
 	"buttonsToDisable": "Buttons to disable",
 	"cacheManagement": "缓存管理",

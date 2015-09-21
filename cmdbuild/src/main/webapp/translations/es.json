@@ -1088,6 +1088,7 @@
 		"popup_block": "Hemos detectado que ud. está usando un software para el bloqueo de popup, desactívelo para continuar con esta operación",
 		"reportsDuplicateImageFilename": "Imposible continuar: el reporte contiene archivos de imágenes con el mismo nombre.",
 		"saveMenuBeforeAccess": "<em>The menu has to been saved before access at the translations of this element.</em>",
+		"toSetAFilterYouMustBeforeSelectAClass": "<em>To set a filter you must before select a class</em>",
 		"warning_message": "Atención"
 	},
 	"account": "Cuenta",
@@ -1131,6 +1132,7 @@
 	"bim": "BIM",
 	"body": "Cuerpo",
 	"bottom": "Abajo",
+	"buildFilter": "<em>Build filter</em>",
 	"buttonsToDisable": "Botón para inhabilitar",
 	"cacheManagement": "Gestión caché",
 	"camera": "Cámara",
