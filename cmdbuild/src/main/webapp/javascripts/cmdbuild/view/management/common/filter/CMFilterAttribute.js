@@ -1,5 +1,9 @@
 (function() {
 
+	/**
+	 * @deprecated new class (CMDBuild.view.common.field.filter.advanced.Advanced)
+	 */
+
 	var tr = CMDBuild.Translation.management.findfilter;
 
 	Ext.define('CMDBuild.view.management.common.filter.CMFilterAttributes.AttributeFieldsetDelegate', {

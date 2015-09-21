@@ -1,5 +1,9 @@
 (function() {
 
+	/**
+	 * @deprecated new class (CMDBuild.view.common.field.filter.advanced.Advanced)
+	 */
+
 	Ext.define('CMDBuild.delegate.common.filter.CMFilterChooserWindowDelegate', {
 		alternateClassName: 'CMDBuild.delegate.common.field.CMFilterChooserWindowDelegate', // Legacy class name
 		/**

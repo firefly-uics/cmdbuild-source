@@ -4,8 +4,7 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.Index',
-			'CMDBuild.model.CMModelFunctions'
+			'CMDBuild.core.proxy.Index'
 		],
 
 		singleton: true,

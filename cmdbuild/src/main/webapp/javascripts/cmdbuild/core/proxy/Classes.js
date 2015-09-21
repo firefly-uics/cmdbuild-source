@@ -14,9 +14,16 @@
 		 * @param {Object} parameters
 		 */
 		read: function(parameters) {
+			// TODO: waiting for refactor (crud)
+		},
+
+		/**
+		 * @param {Object} parameters
+		 */
+		readAll: function(parameters) {
 			CMDBuild.Ajax.request({
 				method: 'GET',
-				url: CMDBuild.core.proxy.Index.classes.read,
+				url: CMDBuild.core.proxy.Index.classes.readAll,
 				params: parameters.params,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
 				scope: parameters.scope || this,

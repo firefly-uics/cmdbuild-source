@@ -16,7 +16,7 @@
 
 				this.cascade(function(item) {
 					if (
-						item
+						!Ext.isEmpty(item)
 						&& Ext.isFunction(item.getValue)
 						&& (
 							item instanceof Ext.form.Field
@@ -27,7 +27,7 @@
 					) {
 						data[item.name] = item.getValue();
 					}
-				});
+				}, this);
 
 				return data;
 			} else {
@@ -52,14 +52,46 @@
 				) {
 					data.push(item);
 				}
-			});
+			}, this);
 
 			return data;
 		},
 
+		/**
+		 * Custom implementation of setValues and reset (to catch also non Ext.form.Fields items)
+		 */
 		reset: function() {
-			this.getForm().setValues();
-			this.getForm().reset();
+			// SetValues
+			this.cascade(function(item) {
+				if (
+					!Ext.isEmpty(item)
+					&& Ext.isFunction(item.setValue)
+					&& (
+						item instanceof Ext.form.Field
+						|| item instanceof Ext.form.field.Base
+						|| item instanceof Ext.form.field.HtmlEditor
+						|| item instanceof Ext.form.FieldContainer
+					)
+				) {
+					item.setValue();
+				}
+			}, this);
+
+			// Reset
+			this.cascade(function(item) {
+				if (
+					!Ext.isEmpty(item)
+					&& Ext.isFunction(item.reset)
+					&& (
+						item instanceof Ext.form.Field
+						|| item instanceof Ext.form.field.Base
+						|| item instanceof Ext.form.field.HtmlEditor
+						|| item instanceof Ext.form.FieldContainer
+					)
+				) {
+					item.reset();
+				}
+			}, this);
 		},
 
 		/**
@@ -118,7 +150,7 @@
 						}
 					}
 				}
-			});
+			}, this);
 		},
 
 		/**

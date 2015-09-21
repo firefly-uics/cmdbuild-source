@@ -167,7 +167,7 @@
 
 												this.doLogin();
 											} catch (e) {
-												_debug('error setting the group', this);
+												_error('error setting the group', this);
 											}
 										}
 									}

@@ -1,6 +1,6 @@
 (function() {
 
-	Ext.define('CMDBuild.model.common.filter.cql.Metadata', {
+	Ext.define('CMDBuild.model.common.field.filter.cql.Metadata', {
 		extend: 'Ext.data.Model',
 
 		requires: ['CMDBuild.core.constants.Proxy'],

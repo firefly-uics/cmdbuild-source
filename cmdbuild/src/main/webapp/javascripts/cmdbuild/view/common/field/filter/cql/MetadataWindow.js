@@ -5,7 +5,7 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.model.common.filter.cql.Metadata'
+			'CMDBuild.model.common.field.filter.cql.Metadata'
 		],
 
 		/**
@@ -32,7 +32,7 @@
 								scope: this,
 
 								handler: function(button, e) {
-									this.grid.getStore().insert(0, Ext.create('CMDBuild.model.common.filter.cql.Metadata'));
+									this.grid.getStore().insert(0, Ext.create('CMDBuild.model.common.field.filter.cql.Metadata'));
 								}
 							})
 						]
@@ -108,7 +108,7 @@
 						],
 
 						store: Ext.create('Ext.data.Store', {
-							model: 'CMDBuild.model.common.filter.cql.Metadata',
+							model: 'CMDBuild.model.common.field.filter.cql.Metadata',
 							data: []
 						}),
 

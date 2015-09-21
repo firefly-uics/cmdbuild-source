@@ -35,7 +35,7 @@
 		controllerMetadata: undefined,
 
 		/**
-		 * @property {CMDBuild.model.common.filter.cql.Cql}
+		 * @property {CMDBuild.model.common.field.filter.cql.Cql}
 		 *
 		 * @private
 		 */
@@ -96,19 +96,19 @@
 			 */
 			fieldFilterCqlFilterSet: function(parameters) {
 				if (Ext.isEmpty(parameters)) {
-					this.filterModel = Ext.create('CMDBuild.model.common.filter.cql.Cql');
+					this.filterModel = Ext.create('CMDBuild.model.common.field.filter.cql.Cql');
 				} else {
 					var filterObject = parameters.filterObject;
 					var propertyName = parameters.propertyName;
 
 					if (Ext.isEmpty(this.filterModel))
-						this.filterModel = Ext.create('CMDBuild.model.common.filter.cql.Cql');
+						this.filterModel = Ext.create('CMDBuild.model.common.field.filter.cql.Cql');
 
 					if (!Ext.isEmpty(filterObject))
 						if (!Ext.isEmpty(propertyName) && Ext.isString(propertyName)) { // Property model setup
 							this.filterModel.set(propertyName, filterObject);
 						} else { // Full model setup
-							this.filterModel = Ext.create('CMDBuild.model.common.filter.cql.Cql', filterObject);
+							this.filterModel = Ext.create('CMDBuild.model.common.field.filter.cql.Cql', filterObject);
 						}
 				}
 			},
