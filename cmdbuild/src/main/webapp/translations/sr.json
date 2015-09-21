@@ -1088,6 +1088,7 @@
 		"popup_block": "Detektovan je program za blokiranje popup prozora, isključite ga kako biste mogli nastaviti operaciju",
 		"reportsDuplicateImageFilename": "Pažnja! Nemoguće je obaviti operaciju - Izveštaj sadrži duplirane slike sa istim imenom.",
 		"saveMenuBeforeAccess": "Meni mora biti snimljen pre pristupa prevodu elementa.",
+		"toSetAFilterYouMustBeforeSelectAClass": "<em>To set a filter you must before select a class</em>",
 		"warning_message": "Pažnja"
 	},
 	"account": "Korisnički nalog",
@@ -1130,6 +1131,7 @@
 	"beginDate": "Datum početka",
 	"bim": "BIM",
 	"body": "Telo poruke",
+	"buildFilter": "<em>Build filter</em>",
 	"bottom": "Pri dnu",
 	"buttonsToDisable": "Onemogućiti tastere",
 	"cacheManagement": "Podešavanje keš memorije",

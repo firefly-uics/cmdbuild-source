@@ -1088,6 +1088,7 @@
 		"popup_block": "Chúng tôi phát hiện bạn đang sử dụng phần mềm chan cac cua so tu dong xuat hien, vui lòng tắt phan mem do để chạy hoạt động",
 		"reportsDuplicateImageFilename": "Cảnh báo: báo cáo hình ảnh được tìm thấy trùng tên với một tập tin khác- không thể tiến hành.",
 		"saveMenuBeforeAccess": "<em>The menu has to been saved before access at the translations of this element.</em>",
+		"toSetAFilterYouMustBeforeSelectAClass": "<em>To set a filter you must before select a class</em>",
 		"warning_message": "Cảnh báo"
 	},
 	"account": "<em>Account</em>",
@@ -1130,6 +1131,7 @@
 	"beginDate": "Ngày bắt đầu",
 	"bim": "<em>BIM</em>",
 	"body": "<em>Body</em>",
+	"buildFilter": "<em>Build filter</em>",
 	"bottom": "Bên dưới",
 	"buttonsToDisable": "<em>Buttons to disable</em>",
 	"cacheManagement": "Quản lý bộ nhớ cache",

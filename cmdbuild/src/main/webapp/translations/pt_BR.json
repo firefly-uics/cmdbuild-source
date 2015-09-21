@@ -1088,6 +1088,7 @@
 		"popup_block": "Detectamos que você está usando software de bloqueio de pop-up, desative para executar a operação",
 		"reportsDuplicateImageFilename": "Aviso: encontrado images de relatório com o mesmo nomde de arquivo - não se pode prosseguir.",
 		"saveMenuBeforeAccess": "<em>The menu has to been saved before access at the translations of this element.</em>",
+		"toSetAFilterYouMustBeforeSelectAClass": "<em>To set a filter you must before select a class</em>",
 		"warning_message": "Aviso"
 	},
 	"account": "<em>Account</em>",
@@ -1130,6 +1131,7 @@
 	"beginDate": "Data de Início",
 	"bim": "<em>BIM</em>",
 	"body": "<em>Body</em>",
+	"buildFilter": "<em>Build filter</em>",
 	"bottom": "Inferior",
 	"buttonsToDisable": "<em>Buttons to disable</em>",
 	"cacheManagement": "Gerenciamento do Cache",

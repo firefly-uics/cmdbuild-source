@@ -1088,6 +1088,7 @@
 		"popup_block": "Nous avons détecté que vous utilisez un programme pour bloquer les popups, merci de le désactiver",
 		"reportsDuplicateImageFilename": "Attention : des images du rapport possèdent le même nom - impossible de continuer.",
 		"saveMenuBeforeAccess": "Le menu doit être enregistré avant de pouvoir accéder aux traductions de cet élément.",
+		"toSetAFilterYouMustBeforeSelectAClass": "<em>To set a filter you must before select a class</em>",
 		"warning_message": "Attention"
 	},
 	"account": "Compte",
@@ -1130,6 +1131,7 @@
 	"beginDate": "Date de début",
 	"bim": "BIM",
 	"body": "Corps",
+	"buildFilter": "<em>Build filter</em>",
 	"bottom": "En dessous",
 	"buttonsToDisable": "Boutons à désactiver",
 	"cacheManagement": "Gestion du cache",

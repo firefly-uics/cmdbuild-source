@@ -1088,6 +1088,7 @@
 		"popup_block": "Es wurde ein Pop-up-Blocker erkannt. Bitte den Blocker ausschalten, um diese Operation auszuführen",
 		"reportsDuplicateImageFilename": "Fortsetzen ist unmöglich: Der Bericht enthält Bilddateien mit demselben Name.",
 		"saveMenuBeforeAccess": "<em>The menu has to been saved before access at the translations of this element.</em>",
+		"toSetAFilterYouMustBeforeSelectAClass": "<em>To set a filter you must before select a class</em>",
 		"warning_message": "Achtung"
 	},
 	"account": "Benutzerkonto",
@@ -1131,6 +1132,7 @@
 	"bim": "BIM",
 	"body": "Body",
 	"bottom": "Unten",
+	"buildFilter": "<em>Build filter</em>",
 	"buttonsToDisable": "Schaltfläche zum Ausschalten",
 	"cacheManagement": "Cache Verwaltung",
 	"camera": "Kamera",

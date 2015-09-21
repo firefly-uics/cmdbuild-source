@@ -1088,6 +1088,7 @@
 		"popup_block": "Abbiamo rilevato un blocco popup, disabilitato per eseguire questa operazione",
 		"reportsDuplicateImageFilename": "Impossibile continuare: il report contiene file immagini con lo stesso nome.",
 		"saveMenuBeforeAccess": "Il menu deve essere salvato prima di accedere alla traduzione di questo elemento.",
+		"toSetAFilterYouMustBeforeSelectAClass": "Per impostare un filtro è necessario prima selezionare una classe.",
 		"warning_message": "Attenzione"
 	},
 	"account": "Account",
@@ -1130,6 +1131,7 @@
 	"beginDate": "Data inizio",
 	"bim": "BIM",
 	"body": "Corpo",
+	"buildFilter": "Costruisci filtro",
 	"bottom": "Sotto",
 	"buttonsToDisable": "Bottoni da disabilitare",
 	"cacheManagement": "Gestione cache",

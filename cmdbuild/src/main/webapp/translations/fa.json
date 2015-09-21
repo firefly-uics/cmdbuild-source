@@ -1088,6 +1088,7 @@
 		"popup_block": "<em>We have detected that you are using popup blocking software, please disable to run operation.</em>",
 		"reportsDuplicateImageFilename": "هشدار: تصویر گزارش با همین نام وجود دارد، نمیشود ادامه داد",
 		"saveMenuBeforeAccess": "<em>The menu has to been saved before access at the translations of this element.</em>",
+		"toSetAFilterYouMustBeforeSelectAClass": "<em>To set a filter you must before select a class</em>",
 		"warning_message": "هشدار"
 	},
 	"account": "حساب",
@@ -1130,6 +1131,7 @@
 	"beginDate": "تاریخ شروع",
 	"bim": "BIM",
 	"body": "بدنه",
+	"buildFilter": "<em>Build filter</em>",
 	"bottom": "Bottom",
 	"buttonsToDisable": "Buttons to disable",
 	"cacheManagement": "Cache management",
