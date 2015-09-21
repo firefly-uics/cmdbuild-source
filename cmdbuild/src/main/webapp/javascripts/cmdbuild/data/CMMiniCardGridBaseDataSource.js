@@ -28,6 +28,9 @@
 	});
 
 	Ext.define("CMDBuild.data.CMMiniCardGridBaseDataSource", {
+
+		requires: ['CMDBuild.core.proxy.CMProxyUrlIndex'],
+
 		constructor: function() {
 			this.store = new Ext.data.Store ({
 				pageSize: _CMUtils.grid.getPageSize(),
@@ -36,7 +39,7 @@
 				remoteSort: true,
 				proxy: {
 					type: "ajax",
-					url: 'services/json/management/modcard/getcardlistshort',
+					url: CMDBuild.core.proxy.CMProxyUrlIndex.card.getList,
 					reader: {
 						root: "rows",
 						type: "json",
