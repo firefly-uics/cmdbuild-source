@@ -108,11 +108,8 @@
 			var extraParams = {};
 			extraParams[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME] = this.cmfg('attributeModelGet', CMDBuild.core.proxy.CMProxyConstants.TARGET_CLASS);
 
-			if (!this.cmfg('attributeModelIsEmpty', CMDBuild.core.proxy.CMProxyConstants.FILTER)) {
+			if (!this.cmfg('attributeModelIsEmpty', CMDBuild.core.proxy.CMProxyConstants.FILTER))
 				extraParams[CMDBuild.core.proxy.CMProxyConstants.FILTER] = Ext.encode({ CQL: this.cmfg('attributeModelGet', CMDBuild.core.proxy.CMProxyConstants.FILTER) });
-			} else {
-//				extraParams['NoFilter'] = true; // TODO
-			}
 
 			return CMDBuild.core.proxy.common.field.ForeignKey.getStore({ extraParams: extraParams });
 		}
