@@ -1240,7 +1240,7 @@
 	"fileServerPath": "File server path",
 	"filter": "Filter",
 	"filterView": "From Filter",
-	"filters_for_groups": "Filters for groups",
+	"filtersForGroups": "Filters for groups",
 	"format": "Format",
 	"format_csv": "CSV",
 	"format_odt": "OpenOffice Odt",
