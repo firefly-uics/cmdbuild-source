@@ -6,8 +6,8 @@
 		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
 
 		fields: [
-			{ name: 'Id', type: 'string' },
-			{ name: 'Description', type: 'string' }
+			{ name: 'Description', type: 'string' },
+			{ name: 'Id', type: 'int', useNull: true }
 		]
 	});
 

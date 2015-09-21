@@ -252,7 +252,7 @@
 			 * @param {Function}
 			 */
 			templateResolverGetResolveFunction: function() {
-				return function() {
+				return function() { // This is field object
 					if (!Ext.isEmpty(this.templateResolver) && !this.isDisabled()) {
 						this.templateResolver.resolveTemplates({
 							attributes: [CMDBuild.core.proxy.CMProxyConstants.FILTER],
@@ -260,10 +260,13 @@
 							callback: function(out, ctx) {
 								// Filter attribute manage
 								var params = {};
+								params[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME] = this.attributeModel.get(CMDBuild.core.proxy.CMProxyConstants.TARGET_CLASS);
 								params[CMDBuild.core.proxy.CMProxyConstants.FILTER] = Ext.encode({ CQL: out[CMDBuild.core.proxy.CMProxyConstants.FILTER] });
 
-								if (!this.getStore().isLoading())
-									this.getStore().load({ params: params });
+								if (!this.getStore().isLoading()) {
+									this.getStore().getProxy().extraParams = params; // Set last load params
+									this.getStore().load();
+								}
 
 								// Add listeners to  fields which depends
 								Ext.Object.each(this.templateResolver.getLocalDepsAsField(), function(dependsName, dependsField, myself) {
