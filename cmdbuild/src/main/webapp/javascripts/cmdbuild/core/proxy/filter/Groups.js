@@ -16,7 +16,7 @@
 		create: function(parameters) {
 			CMDBuild.Ajax.request({
 				method: 'POST',
-				url: CMDBuild.core.proxy.Index.filters.create,
+				url: CMDBuild.core.proxy.Index.filter.create,
 				params: parameters.params,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
 				scope: parameters.scope || this,
@@ -44,7 +44,7 @@
 				model: 'CMDBuild.model.filter.Groups',
 				pageSize: _CMUtils.grid.getPageSize(),
 				proxy: {
-					url: CMDBuild.core.proxy.Index.filters.groupStore,
+					url: CMDBuild.core.proxy.Index.filter.groupStore,
 					type: 'ajax',
 					reader: {
 						root: 'filters',
@@ -64,7 +64,7 @@
 		remove: function(parameters) {
 			CMDBuild.Ajax.request({
 				method: 'POST',
-				url: CMDBuild.core.proxy.Index.filters.remove,
+				url: CMDBuild.core.proxy.Index.filter.remove,
 				params: parameters.params,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
 				scope: parameters.scope || this,
@@ -80,7 +80,7 @@
 		update: function(parameters) {
 			CMDBuild.Ajax.request({
 				method: 'POST',
-				url: CMDBuild.core.proxy.Index.filters.update,
+				url: CMDBuild.core.proxy.Index.filter.update,
 				params: parameters.params,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
 				scope: parameters.scope || this,

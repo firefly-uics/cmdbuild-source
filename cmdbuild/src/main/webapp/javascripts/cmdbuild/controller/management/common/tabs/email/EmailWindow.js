@@ -301,7 +301,7 @@
 			if (!this.isAdvicePrompted && this.isKeepSynchronizationChecked()) {
 				this.isAdvicePrompted = true;
 
-				CMDBuild.core.Message.warn(null, CMDBuild.Translation.errors.emailChangedWithAutoSynch);
+				CMDBuild.core.Message.warning(null, CMDBuild.Translation.errors.emailChangedWithAutoSynch);
 			}
 		},
 

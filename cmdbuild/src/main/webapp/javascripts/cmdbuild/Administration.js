@@ -197,7 +197,7 @@
 				var params = {};
 				params[CMDBuild.core.constants.Proxy.ACTIVE] = false;
 
-				CMDBuild.core.proxy.Classes.read({
+				CMDBuild.core.proxy.Classes.readAll({
 					params: params,
 					loadMask: false,
 					scope: this,

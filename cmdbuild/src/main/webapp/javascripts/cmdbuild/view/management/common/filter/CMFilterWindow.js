@@ -1,5 +1,9 @@
 (function() {
 
+	/**
+	 * @deprecated new class (CMDBuild.view.common.field.filter.advanced.Advanced)
+	 */
+
 	var titleTemplate = '{0} - {1} - {2}';
 
 	Ext.define('CMDBuild.view.management.common.filter.CMFilterWindowDelegate', {

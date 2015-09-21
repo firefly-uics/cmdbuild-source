@@ -13,16 +13,6 @@
 		delegate: undefined,
 
 		/**
-		 * @property {Ext.form.field.ComboBox}
-		 */
-		classesCombobox: undefined,
-
-		/**
-		 * @property {CMDBuild.view.common.field.translatable.Text}
-		 */
-		descriptionTextField: undefined,
-
-		/**
 		 * @property {CMDBuild.view.common.field.CMFilterChooser}
 		 */
 		filterChooser: undefined,
@@ -40,6 +30,21 @@
 		},
 
 		initComponent: function() {
+			var classesCombobox = Ext.create('Ext.form.field.ComboBox', {
+				name: CMDBuild.core.constants.Proxy.ENTRY_TYPE,
+				fieldLabel: CMDBuild.Translation.targetClass,
+				labelWidth: CMDBuild.LABEL_WIDTH,
+				maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
+				valueField: CMDBuild.core.constants.Proxy.NAME,
+				displayField: CMDBuild.core.constants.Proxy.DESCRIPTION,
+				forceSelection: true,
+				editable: false,
+				allowBlank: false,
+
+				store: _CMCache.getClassesAndProcessesAndDahboardsStore(),
+				queryMode: 'local'
+			});
+
 			Ext.apply(this, {
 				dockedItems: [
 					Ext.create('Ext.toolbar.Toolbar', {
@@ -104,7 +109,7 @@
 						allowBlank: false,
 						cmImmutable: true
 					}),
-					this.descriptionTextField = Ext.create('CMDBuild.view.common.field.translatable.Text', {
+					Ext.create('CMDBuild.view.common.field.translatable.Text', {
 						name: _CMProxy.parameter.DESCRIPTION,
 						fieldLabel: CMDBuild.Translation.descriptionLabel,
 						labelWidth: CMDBuild.LABEL_WIDTH,
@@ -118,36 +123,15 @@
 							field: CMDBuild.core.constants.Proxy.DESCRIPTION
 						}
 					}),
-					this.classesCombobox = Ext.create('Ext.form.field.ComboBox', {
-						name: CMDBuild.core.constants.Proxy.ENTRY_TYPE,
-						fieldLabel: CMDBuild.Translation.targetClass,
-						labelWidth: CMDBuild.LABEL_WIDTH,
-						maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
-						valueField: CMDBuild.core.constants.Proxy.NAME,
-						displayField: CMDBuild.core.constants.Proxy.DESCRIPTION,
-						forceSelection: true,
-						editable: false,
-						allowBlank: false,
-
-						store: _CMCache.getClassesAndProcessesAndDahboardsStore(),
-						queryMode: 'local',
-
-						listeners: {
-							scope: this,
-							select: function(combo, records, eOpts) {
-								this.delegate.cmfg('onFilterGroupsClassesComboSelect', combo.getValue());
-							}
-						}
-					}),
-					this.filterChooser = Ext.create('CMDBuild.view.common.field.CMFilterChooser', {
-						name: CMDBuild.core.constants.Proxy.FILTER,
+					classesCombobox,
+					this.filterChooser = Ext.create('CMDBuild.view.common.field.filter.advanced.Advanced', {
+						name: CMDBuild.core.constants.Proxy.CONFIGURATION,
 						fieldLabel: CMDBuild.Translation.filter,
 						labelWidth: CMDBuild.LABEL_WIDTH,
-						filterTabToEnable: {
-							attributeTab: true,
-							relationTab: true,
-							functionTab: false
-						}
+						fieldConfiguration: {
+							targetClassField: classesCombobox,
+							enabledPanels: ['attribute', 'relation']
+						},
 					}),
 					{
 						xtype: 'hiddenfield',
@@ -159,6 +143,19 @@
 			this.callParent(arguments);
 
 			this.setDisabledModify(true, true, true);
+		},
+
+		/**
+		 * LoadRecord override to implement setValue of custom fields (witch don't extends Ext.form.field.Base)
+		 *
+		 * @param {Ext.data.Model} record
+		 *
+		 * @override
+		 */
+		loadRecord: function(record) {
+			this.callParent(arguments);
+
+			this.filterChooser.setValue(record.get(CMDBuild.core.constants.Proxy.CONFIGURATION));
 		}
 	});
 

@@ -145,7 +145,7 @@
 				model: 'CMDBuild.model.CMGroupModels.startingClass',
 				proxy: {
 					type: 'ajax',
-					url: CMDBuild.core.proxy.Index.classes.read,
+					url: CMDBuild.core.proxy.Index.classes.readAll,
 					reader: {
 						type: 'json',
 						root: 'classes'

@@ -13,6 +13,8 @@
 
 		/**
 		 * @param {Object} parameters
+		 *
+		 * @returns {Ext.data.Store}
 		 */
 		getClassFiltersStore: function(parameters) {
 			return Ext.create('Ext.data.Store', {

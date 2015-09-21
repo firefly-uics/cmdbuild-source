@@ -36,15 +36,18 @@
 		},
 
 		classes: {
+			create: 'services/json/schema/modclass/savetable', // TODO: waiting for refactor (crud)
+			read: '', // TODO: waiting for refactor (crud)
+			update: 'services/json/schema/modclass/savetable', // TODO: waiting for refactor (crud)
+			remove: 'services/json/schema/modclass/deletetable',
+
+			readAll: 'services/json/schema/modclass/getallclasses',
+
 			cards: {
 				lock: 'services/json/lock/lockcard',
 				unlock: 'services/json/lock/unlockcard',
 				unlockAll: 'services/json/lock/unlockall'
-			},
-			create: 'services/json/schema/modclass/savetable',
-			read: 'services/json/schema/modclass/getallclasses',
-			update: 'services/json/schema/modclass/savetable',
-			remove: 'services/json/schema/modclass/deletetable'
+			}
 		},
 
 		csv: {
@@ -137,7 +140,7 @@
 
 		fkTargetClass: 'services/json/schema/modclass/getfktargetingclass',
 
-		filters: {
+		filter: {
 			create: 'services/json/filter/create',
 			read: 'services/json/filter/read',
 			remove: 'services/json/filter/delete',

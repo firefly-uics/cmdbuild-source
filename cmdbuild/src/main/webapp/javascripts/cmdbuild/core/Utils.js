@@ -121,6 +121,41 @@
 		},
 
 		/**
+		 * @param {Array} attributes
+		 * @param {Array} attributesNamesToFilter
+		 *
+		 * @returns {Object} groups
+		 */
+		groupAttributesObjects: function(attributes, attributesNamesToFilter) {
+			attributesNamesToFilter = Ext.isArray(attributesNamesToFilter) ? attributesNamesToFilter : [];
+			attributesNamesToFilter.push('Notes');
+
+			var groups = {};
+			var withoutGroup = [];
+
+			Ext.Array.forEach(attributes, function(attribute, i, allAttributes) {
+				if (
+					!Ext.isEmpty(attribute)
+					&& !Ext.Array.contains(attributesNamesToFilter, attribute[CMDBuild.core.constants.Proxy.NAME])
+				) {
+					if (Ext.isEmpty(attribute[CMDBuild.core.constants.Proxy.GROUP])) {
+						withoutGroup.push(attribute);
+					} else {
+						if (Ext.isEmpty(groups[attribute[CMDBuild.core.constants.Proxy.GROUP]]))
+							groups[attribute[CMDBuild.core.constants.Proxy.GROUP]] = [];
+
+						groups[attribute[CMDBuild.core.constants.Proxy.GROUP]].push(attribute);
+					}
+				}
+			}, this);
+
+			if (!Ext.isEmpty(withoutGroup))
+				groups[CMDBuild.Translation.management.modcard.other_fields] = withoutGroup;
+
+			return groups;
+		},
+
+		/**
 		 * Returns if string contains HTML tags
 		 *
 		 * @param {String} inputString

@@ -407,6 +407,7 @@
 		TABLE_TYPE: 'tableType',
 		TAG: 'tag',
 		TARGET_CLASS: 'targetClass',
+		TARGET_CLASS_FIELD: 'targetClassField',
 		TEMPLATE: 'template',
 		TEMPLATES: 'templates',
 		TEMPLATE_ID: 'templateId',

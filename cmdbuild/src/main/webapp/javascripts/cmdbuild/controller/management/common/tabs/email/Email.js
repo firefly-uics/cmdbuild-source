@@ -284,7 +284,7 @@
 					scope.relatedAttributeChanged = true;
 
 					if (!record.get(CMDBuild.core.constants.Proxy.KEEP_SYNCHRONIZATION) && !record.get(CMDBuild.core.constants.Proxy.PROMPT_SYNCHRONIZATION))
-						CMDBuild.core.Message.warn(null, CMDBuild.Translation.warnings.emailTemplateRelatedAttributeEdited);
+						CMDBuild.core.Message.warning(null, CMDBuild.Translation.warnings.emailTemplateRelatedAttributeEdited);
 				}
 			});
 		},

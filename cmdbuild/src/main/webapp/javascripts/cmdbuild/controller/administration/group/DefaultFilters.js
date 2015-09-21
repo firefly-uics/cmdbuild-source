@@ -128,7 +128,7 @@
 
 				this.tree.getStore().getRootNode().removeAll();
 
-				CMDBuild.core.proxy.Classes.read({
+				CMDBuild.core.proxy.Classes.readAll({
 					params: params,
 					scope: this,
 					success: function(response, options, decodedResponse) {

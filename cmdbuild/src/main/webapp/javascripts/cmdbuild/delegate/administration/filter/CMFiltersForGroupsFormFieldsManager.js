@@ -28,8 +28,6 @@
 		 * @return {array} an array of Ext.component to use as form items
 		 */
 		build: function() {
-			var me = this;
-
 			var fields = this.callParent(arguments);
 
 			Ext.apply(this.description, {
@@ -37,7 +35,7 @@
 				translationsKeyField: 'Description'
 			});
 
-			this.classes = Ext.create('CMDBuild.field.ErasableCombo', {
+			this.classes = Ext.create('CMDBuild.view.common.field.CMErasableCombo', {
 				fieldLabel: CMDBuild.Translation.targetClass,
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
@@ -50,28 +48,21 @@
 				queryMode: 'local',
 
 				listeners: {
-					select: function(combo, records, options) {
-						var className = null;
+					scope: this,
+					change: function(field, newValue, oldValue, eOpts) {
+						this.callDelegates('onFilterDataViewFormBuilderClassSelected', [this, newValue]);
 
-						if (Ext.isArray(records) && records.length > 0) {
-							var record = records[0];
-
-							className = record.get(me.classes.valueField);
-						}
-
-						me.callDelegates('onFilterDataViewFormBuilderClassSelected', [me, className]);
+						this.filterChooser.setSelectedClass(newValue);
 					}
 				}
 			});
 
-			this.filterChooser = Ext.create('CMDBuild.view.common.field.CMFilterChooser', {
+			this.filterChooser = Ext.create('CMDBuild.view.common.field.filter.advanced.Advanced', {
+				name: CMDBuild.core.constants.Proxy.FILTER,
 				fieldLabel: CMDBuild.Translation.filter,
 				labelWidth: CMDBuild.LABEL_WIDTH,
-				name: FILTER,
-				filterTabToEnable: {
-					attributeTab: true,
-					relationTab: true,
-					functionTab: false
+				fieldConfiguration: {
+					enabledPanels: ['attribute', 'relation']
 				}
 			});
 
@@ -93,7 +84,7 @@
 		},
 
 		setFilterChooserClassName: function(className) {
-			this.filterChooser.setClassName(className);
+			this.filterChooser.setSelectedClass(className);
 		},
 
 		/**
@@ -107,8 +98,14 @@
 
 			var className = record.get(ENTRY_TYPE);
 
-			this.filterChooser.setFilter(record);
+			// The set value programmatic does not fire the select event, so call the delegates manually
+			Ext.apply(this.description, {
+				translationsKeyName: record.get(CMDBuild.core.constants.Proxy.NAME)
+			});
+
 			this.classes.setValue(className);
+			this.callDelegates('onFilterDataViewFormBuilderClassSelected', [this, className]);
+			this.filterChooser.setValue(record.get(CMDBuild.core.constants.Proxy.CONFIGURATION));
 
 			var params = {};
 			params[CMDBuild.core.constants.Proxy.ID] = record.get(CMDBuild.core.constants.Proxy.ID);
@@ -140,7 +137,7 @@
 			var values = this.callParent(arguments);
 
 			values[ENTRY_TYPE] = this.classes.getValue();
-			var filter = this.filterChooser.getFilter();
+			var filter = this.filterChooser.getValue();
 
 			if (filter)
 				values[FILTER] = filter;

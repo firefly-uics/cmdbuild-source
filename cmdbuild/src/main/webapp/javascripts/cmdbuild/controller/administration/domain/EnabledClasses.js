@@ -98,7 +98,7 @@
 				params[CMDBuild.core.constants.Proxy.ACTIVE] = true;
 
 				// GetAllClasses data to get default translations
-				CMDBuild.core.proxy.Classes.read({
+				CMDBuild.core.proxy.Classes.readAll({
 					params: params,
 					scope: this,
 					success: function(response, options, decodedResponse) {

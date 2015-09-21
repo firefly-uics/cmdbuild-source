@@ -6,7 +6,7 @@
 	 * Usage and wild cards:
 	 * 	'=' - creates method alias
 	 * 		Ex. 'functionName = aliasFunctionName'
-	 * 	'->' - forwards method to sub-controller (sub-controller could be also multiple as list separated by commas)
+	 * 	'->' - forwards method to sub-controller without a value return (sub-controller could be also multiple as list separated by commas)
 	 * 		Ex. 'functionName -> controllerOne, controllerTwo, controllerThree, ...'
 	 *
 	 * @abstract
@@ -78,11 +78,15 @@
 				// Wildcard manage
 				if (Ext.isObject(this.stringToFunctionNameMap[name])) {
 					switch (this.stringToFunctionNameMap[name].action) {
-						// Forwarded function manage with multiple controller forwarding management
+						// Forwarded function manage with multiple controller forwarding management (doesn't return values)
 						case 'forward': {
 							if (Ext.isArray(this.stringToFunctionNameMap[name].target))
 								Ext.Array.forEach(this.stringToFunctionNameMap[name].target, function(controller, i, allControllers) {
-									this[controller].cmfg(name, param, callBack); // Use cmfg() access point to manage aliases
+									if (Ext.isEmpty(this[controller])) {
+										_warning('undefined class property "this.' + controller + '"', this);
+									} else {
+										this[controller].cmfg(name, param, callBack); // Use cmfg() access point to manage aliases
+									}
 								}, this);
 
 							return;

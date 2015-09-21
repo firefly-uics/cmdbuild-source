@@ -20,7 +20,6 @@
 		cmfgCatchedFunctions: [
 			'onFilterGroupsAbortButtonClick',
 			'onFilterGroupsAddButtonClick',
-			'onFilterGroupsClassesComboSelect',
 			'onFilterGroupsModifyButtonClick = onFilterGroupsItemDoubleClick',
 			'onFilterGroupsRemoveButtonClick',
 			'onFilterGroupsRowSelected',
@@ -80,20 +79,8 @@
 			this.selectedFilter = null;
 
 			this.form.reset();
-			this.form.filterChooser.reset(); // Manual filter reset
 			this.form.setDisabledModify(false, true);
 			this.form.loadRecord(Ext.create('CMDBuild.model.filter.Groups'));
-		},
-
-		/**
-		 * @param {String} selectedClassName
-		 */
-		onFilterGroupsClassesComboSelect: function(selectedClassName) {
-			if (!Ext.isEmpty(selectedClassName)) {
-				this.form.filterChooser.setClassName(selectedClassName);
-			} else {
-				_error('empty selectedClassName in onFilterGroupsClassesComboSelect', this);
-			}
 		},
 
 		onFilterGroupsModifyButtonClick: function() {
@@ -114,40 +101,25 @@
 		},
 
 		/**
-		 * TODO: server implementation to get a single view data
+		 * TODO: waiting for refactor (server endpoint to get single filter data)
 		 */
 		onFilterGroupsRowSelected: function() {
 			this.selectedFilter = this.grid.getSelectionModel().getSelection()[0];
 
 			this.form.loadRecord(this.selectedFilter);
 
-			// FilterChooser field setup
-			this.form.filterChooser.setClassName(this.selectedFilter.get(CMDBuild.core.constants.Proxy.ENTRY_TYPE));
-			this.form.filterChooser.setFilter(
-				Ext.create('CMDBuild.model.CMFilterModel', {
-					configuration: this.selectedFilter.get(CMDBuild.core.constants.Proxy.CONFIGURATION),
-					entryType: this.selectedFilter.get(CMDBuild.core.constants.Proxy.ENTRY_TYPE)
-				})
-			);
-
 			this.form.setDisabledModify(true, true);
 		},
 
 		onFilterGroupsSaveButtonClick: function() {
-			// Validate before save
 			if (this.validate(this.form)) {
-				var formData = this.form.getData(true);
+				var formDataModel = Ext.create('CMDBuild.model.filter.Groups', this.form.getData(true)); // Filter unwanted data of filterChooser internal fields
 
-				if (!Ext.isEmpty(this.form.filterChooser.getFilter()))
-					formData[CMDBuild.core.constants.Proxy.CONFIGURATION] = Ext.encode(this.form.filterChooser.getFilter().getConfiguration());
+				var params = formDataModel.getData();
+				params[CMDBuild.core.constants.Proxy.CONFIGURATION] = Ext.encode(params[CMDBuild.core.constants.Proxy.CONFIGURATION]);
+				params[CMDBuild.core.constants.Proxy.CLASS_NAME] = params[CMDBuild.core.constants.Proxy.ENTRY_TYPE]; // TODO: waiting for refactor (reads a entryType parameter but i write as className)
 
-				formData = Ext.create('CMDBuild.model.filter.Groups', formData); // Filter unwanted data of filterChooser internal fields
-
-				// TODO: needed a refactor because i read a entryType parameter but i write as className
-				var params = formData.getData();
-				params[CMDBuild.core.constants.Proxy.CLASS_NAME] = params[CMDBuild.core.constants.Proxy.ENTRY_TYPE];
-
-				if (Ext.isEmpty(formData.get(CMDBuild.core.constants.Proxy.ID))) {
+				if (Ext.isEmpty(formDataModel.get(CMDBuild.core.constants.Proxy.ID))) {
 					CMDBuild.core.proxy.filter.Groups.create({
 						params: params,
 						scope: this,
