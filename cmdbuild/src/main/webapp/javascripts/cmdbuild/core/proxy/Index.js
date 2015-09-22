@@ -63,21 +63,25 @@
 			saveConfiguration: 'services/json/schema/setup/saveconfiguration'
 		},
 
-		dataViews: {
-			read: 'services/json/viewmanagement/read',
+		dataView: {
+			readAll: 'services/json/viewmanagement/read', // TODO: waiting for refactor (rename on server)
 
 			filter: {
 				create: 'services/json/viewmanagement/createfilterview',
-				read: 'services/json/viewmanagement/readfilterview',
+				read: '', // TODO: waiting for refactor (crud)
 				update: 'services/json/viewmanagement/updatefilterview',
-				remove: 'services/json/viewmanagement/deletefilterview'
+				remove: 'services/json/viewmanagement/deletefilterview',
+
+				readAll: 'services/json/viewmanagement/readfilterview' // TODO: waiting for refactor (crud)
 			},
 
 			sql: {
 				create: 'services/json/viewmanagement/createsqlview',
-				read: 'services/json/viewmanagement/readsqlview',
+				read: '', // TODO: waiting for refactor (crud)
 				update: 'services/json/viewmanagement/updatesqlview',
-				remove: 'services/json/viewmanagement/deletesqlview'
+				remove: 'services/json/viewmanagement/deletesqlview',
+
+				readAll: 'services/json/viewmanagement/readsqlview' // TODO: waiting for refactor (crud)
 			}
 		},
 

@@ -14,7 +14,7 @@
 		readAll: function(parameters) {
 			CMDBuild.Ajax.request({
 				method: 'GET',
-				url: CMDBuild.core.proxy.Index.dataViews.read,
+				url: CMDBuild.core.proxy.Index.dataView.readAll,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : false,
 				scope: parameters.scope || this,
 				failure: parameters.failure || Ext.emptyFn,

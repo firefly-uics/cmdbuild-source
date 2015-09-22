@@ -5,6 +5,7 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
+			'CMDBuild.core.Message',
 			'CMDBuild.core.proxy.dataView.Filter',
 			'CMDBuild.view.common.field.translatable.Utils'
 		],
@@ -20,7 +21,6 @@
 		cmfgCatchedFunctions: [
 			'onDataViewFilterAbortButtonClick',
 			'onDataViewFilterAddButtonClick',
-			'onDataViewFilterClassesComboSelect',
 			'onDataViewFilterModifyButtonClick = onDataViewFilterItemDoubleClick',
 			'onDataViewFilterRemoveButtonClick',
 			'onDataViewFilterRowSelected',
@@ -56,9 +56,7 @@
 		constructor: function(configurationObject) {
 			this.callParent(arguments);
 
-			this.view = Ext.create('CMDBuild.view.administration.dataView.filter.FilterView', {
-				delegate: this
-			});
+			this.view = Ext.create('CMDBuild.view.administration.dataView.filter.FilterView', { delegate: this });
 
 			// Shorthands
 			this.form = this.view.form;
@@ -80,20 +78,8 @@
 			this.selectedView = null;
 
 			this.form.reset();
-			this.form.filterChooser.reset(); // Manual filter reset
 			this.form.setDisabledModify(false, true);
 			this.form.loadRecord(Ext.create('CMDBuild.model.dataView.Filter'));
-		},
-
-		/**
-		 * @param {String} selectedClassName
-		 */
-		onDataViewFilterClassesComboSelect: function(selectedClassName) {
-			if (!Ext.isEmpty(selectedClassName)) {
-				this.form.filterChooser.setClassName(selectedClassName);
-			} else {
-				_error('empty selectedClassName in onDataViewFilterClassesComboSelect', this);
-			}
 		},
 
 		onDataViewFilterModifyButtonClick: function() {
@@ -114,44 +100,32 @@
 		},
 
 		/**
-		 * TODO: server implementation to get a single view data
+		 * TODO: waiting for refactor (server endpoint to get single view data)
 		 */
 		onDataViewFilterRowSelected: function() {
 			this.selectedView = this.grid.getSelectionModel().getSelection()[0];
+			this.selectedView.set(CMDBuild.core.constants.Proxy.FILTER, Ext.decode(this.selectedView.get(CMDBuild.core.constants.Proxy.FILTER))); // TODO: waiting for refacotr
 
 			this.form.loadRecord(this.selectedView);
-
-			// FilterChooser field setup
-			this.form.filterChooser.setClassName(this.selectedView.get(CMDBuild.core.constants.Proxy.SOURCE_CLASS_NAME));
-			this.form.filterChooser.setFilter(
-				Ext.create('CMDBuild.model.CMFilterModel', {
-					configuration: Ext.decode(this.selectedView.get(CMDBuild.core.constants.Proxy.FILTER)),
-					entryType: this.selectedView.get(CMDBuild.core.constants.Proxy.SOURCE_CLASS_NAME)
-				})
-			);
-
 			this.form.setDisabledModify(true, true);
 		},
 
 		onDataViewFilterSaveButtonClick: function() {
-			// Validate before save
 			if (this.validate(this.form)) {
-				var formData = this.form.getData(true);
+				var formDataModel = Ext.create('CMDBuild.model.dataView.Filter', this.form.getData(true));
 
-				if (!Ext.isEmpty(this.form.filterChooser.getFilter()))
-					formData[CMDBuild.core.constants.Proxy.FILTER] = Ext.encode(this.form.filterChooser.getFilter().getConfiguration());
+				var params = formDataModel.getData();
+				params[CMDBuild.core.constants.Proxy.FILTER] = Ext.encode(params[CMDBuild.core.constants.Proxy.FILTER]);
 
-				formData = Ext.create('CMDBuild.model.dataView.Filter', formData); // Filter unwanted data of filterChooser internal fields
-
-				if (Ext.isEmpty(formData.get(CMDBuild.core.constants.Proxy.ID))) {
+				if (Ext.isEmpty(formDataModel.get(CMDBuild.core.constants.Proxy.ID))) {
 					CMDBuild.core.proxy.dataView.Filter.create({
-						params: formData.getData(),
+						params: params,
 						scope: this,
 						success: this.success
 					});
 				} else {
 					CMDBuild.core.proxy.dataView.Filter.update({
-						params: formData.getData(),
+						params: params,
 						scope: this,
 						success: this.success
 					});
@@ -173,6 +147,14 @@
 						this.grid.getStore().load({
 							scope: this,
 							callback: function(records, operation, success) {
+								// Store load errors manage
+								if (!success) {
+									CMDBuild.core.Message.error(null, {
+										text: CMDBuild.Translation.errors.unknown_error,
+										detail: operation.error
+									});
+								}
+
 								this.grid.getSelectionModel().select(0, true);
 
 								// If no selections disable all UI
@@ -197,6 +179,14 @@
 
 			this.grid.getStore().load({
 				callback: function(records, operation, success) {
+					// Store load errors manage
+					if (!success) {
+						CMDBuild.core.Message.error(null, {
+							text: CMDBuild.Translation.errors.unknown_error,
+							detail: operation.error
+						});
+					}
+
 					var rowIndex = this.find(
 						CMDBuild.core.constants.Proxy.NAME,
 						me.form.getForm().findField(CMDBuild.core.constants.Proxy.NAME).getValue()

@@ -117,7 +117,7 @@
 								];
 
 								/**
-								 * DataViews
+								 * DataView
 								 */
 								if (!_CMUIConfiguration.isCloudAdmin()) {
 									dataViewAccordion = Ext.create('CMDBuild.view.administration.accordion.DataView', { cmName: 'dataview' });

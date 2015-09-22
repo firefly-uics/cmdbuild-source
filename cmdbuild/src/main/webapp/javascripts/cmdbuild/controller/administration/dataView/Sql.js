@@ -5,6 +5,7 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
+			'CMDBuild.core.Message',
 			'CMDBuild.core.proxy.dataView.Sql',
 			'CMDBuild.view.common.field.translatable.Utils'
 		],
@@ -146,6 +147,14 @@
 						this.grid.getStore().load({
 							scope: this,
 							callback: function(records, operation, success) {
+								// Store load errors manage
+								if (!success) {
+									CMDBuild.core.Message.error(null, {
+										text: CMDBuild.Translation.errors.unknown_error,
+										detail: operation.error
+									});
+								}
+
 								this.grid.getSelectionModel().select(0, true);
 
 								// If no selections disable all UI
@@ -170,6 +179,14 @@
 
 			this.grid.getStore().load({
 				callback: function(records, operation, success) {
+					// Store load errors manage
+					if (!success) {
+						CMDBuild.core.Message.error(null, {
+							text: CMDBuild.Translation.errors.unknown_error,
+							detail: operation.error
+						});
+					}
+
 					var rowIndex = this.find(
 						CMDBuild.core.constants.Proxy.NAME,
 						me.form.getForm().findField(CMDBuild.core.constants.Proxy.NAME).getValue()
