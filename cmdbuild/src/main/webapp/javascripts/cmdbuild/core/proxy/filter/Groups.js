@@ -15,7 +15,6 @@
 		 */
 		create: function(parameters) {
 			CMDBuild.Ajax.request({
-				method: 'POST',
 				url: CMDBuild.core.proxy.Index.filter.create,
 				params: parameters.params,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
@@ -25,13 +24,6 @@
 				callback: parameters.callback || Ext.emptyFn
 			});
 		},
-
-		/**
-		 * @param {Object} parameters
-		 *
-		 * TODO: waiting for refactor
-		 */
-		get: function(parameters) {},
 
 		/**
 		 * @param {Object} parameters
@@ -75,10 +67,31 @@
 
 		/**
 		 * @param {Object} parameters
+		 *
+		 * TODO: waiting for refactor
+		 */
+		read: function(parameters) {},
+
+		/**
+		 * @param {Object} parameters
+		 */
+		readAll: function(parameters) {
+			CMDBuild.Ajax.request({
+				url: CMDBuild.core.proxy.Index.filter.read,
+				params: parameters.params,
+				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
+				scope: parameters.scope || this,
+				failure: parameters.failure || Ext.emptyFn,
+				success: parameters.success || Ext.emptyFn,
+				callback: parameters.callback || Ext.emptyFn
+			});
+		},
+
+		/**
+		 * @param {Object} parameters
 		 */
 		remove: function(parameters) {
 			CMDBuild.Ajax.request({
-				method: 'POST',
 				url: CMDBuild.core.proxy.Index.filter.remove,
 				params: parameters.params,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
@@ -109,7 +122,6 @@
 		 */
 		update: function(parameters) {
 			CMDBuild.Ajax.request({
-				method: 'POST',
 				url: CMDBuild.core.proxy.Index.filter.update,
 				params: parameters.params,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,

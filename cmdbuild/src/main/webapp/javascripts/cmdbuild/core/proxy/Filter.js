@@ -1,7 +1,12 @@
 (function() {
 
 	/**
-	 * FilterChooser proxy
+	 * Used from:
+	 * 		- CMDBuild.view.common.filter.CMFilterChooser
+	 * 		- CMDBuild.view.management.common.filter.CMFilterMenuButton
+	 * 		- CMDBuild.controller.management.common.CMCardGridController
+	 *
+	 * @deprecated
 	 */
 	Ext.define('CMDBuild.core.proxy.Filter', {
 		alternateClassName: 'CMDBuild.ServiceProxy.Filter', // Legacy class name
