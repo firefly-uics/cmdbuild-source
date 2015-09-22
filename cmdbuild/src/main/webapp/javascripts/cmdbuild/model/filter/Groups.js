@@ -7,6 +7,7 @@
 
 		fields: [
 			{ name: CMDBuild.core.constants.Proxy.CONFIGURATION, type: 'auto' },
+			{ name: CMDBuild.core.constants.Proxy.DEFAULT_FOR_GROUPS, type: 'auto', defaultValue: [] },
 			{ name: CMDBuild.core.constants.Proxy.DESCRIPTION, type: 'string' },
 			{ name: CMDBuild.core.constants.Proxy.ENTRY_TYPE, type: 'string' },
 			{ name: CMDBuild.core.constants.Proxy.ID, type: 'int', useNull: true },

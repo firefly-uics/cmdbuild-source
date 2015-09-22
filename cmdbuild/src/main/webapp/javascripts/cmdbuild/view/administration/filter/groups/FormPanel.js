@@ -13,9 +13,14 @@
 		delegate: undefined,
 
 		/**
-		 * @property {CMDBuild.view.common.field.CMFilterChooser}
+		 * @property {CMDBuild.view.common.field.filter.advanced.Advanced}
 		 */
-		filterChooser: undefined,
+		advancedFilterField: undefined,
+
+		/**
+		 * @property {CMDBuild.view.common.field.multiselect.Group}
+		 */
+		defaultForGroupsField: undefined,
 
 		bodyCls: 'cmgraypanel',
 		border: false,
@@ -124,7 +129,7 @@
 						}
 					}),
 					classesCombobox,
-					this.filterChooser = Ext.create('CMDBuild.view.common.field.filter.advanced.Advanced', {
+					this.advancedFilterField = Ext.create('CMDBuild.view.common.field.filter.advanced.Advanced', {
 						name: CMDBuild.core.constants.Proxy.CONFIGURATION,
 						fieldLabel: CMDBuild.Translation.filter,
 						labelWidth: CMDBuild.LABEL_WIDTH,
@@ -132,6 +137,14 @@
 							targetClassField: classesCombobox,
 							enabledPanels: ['attribute', 'relation']
 						},
+					}),
+					this.defaultForGroupsField = Ext.create('CMDBuild.view.common.field.multiselect.Group', {
+						name: CMDBuild.core.constants.Proxy.DEFAULT_FOR_GROUPS,
+						fieldLabel: CMDBuild.Translation.defaultForGroups,
+						height: 300,
+						labelWidth: CMDBuild.LABEL_WIDTH,
+						maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
+						valueField: CMDBuild.core.constants.Proxy.NAME
 					}),
 					{
 						xtype: 'hiddenfield',
@@ -155,7 +168,8 @@
 		loadRecord: function(record) {
 			this.callParent(arguments);
 
-			this.filterChooser.setValue(record.get(CMDBuild.core.constants.Proxy.CONFIGURATION));
+			this.advancedFilterField.setValue(record.get(CMDBuild.core.constants.Proxy.CONFIGURATION));
+			this.defaultForGroupsField.setValue(record.get(CMDBuild.core.constants.Proxy.DEFAULT_FOR_GROUPS));
 		}
 	});
 

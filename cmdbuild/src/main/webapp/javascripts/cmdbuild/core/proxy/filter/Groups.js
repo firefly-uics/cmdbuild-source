@@ -34,6 +34,21 @@
 		get: function(parameters) {},
 
 		/**
+		 * @param {Object} parameters
+		 */
+		getDefaults: function(parameters) {
+			CMDBuild.Ajax.request({
+				url: CMDBuild.core.proxy.Index.filter.defaultForGroups.read,
+				params: parameters.params,
+				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
+				scope: parameters.scope || this,
+				failure: parameters.failure || Ext.emptyFn,
+				success: parameters.success || Ext.emptyFn,
+				callback: parameters.callback || Ext.emptyFn
+			});
+		},
+
+		/**
 		 * Returns a store with the filters for a given group
 		 *
 		 * @return {Ext.data.Store}
@@ -65,6 +80,21 @@
 			CMDBuild.Ajax.request({
 				method: 'POST',
 				url: CMDBuild.core.proxy.Index.filter.remove,
+				params: parameters.params,
+				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
+				scope: parameters.scope || this,
+				failure: parameters.failure || Ext.emptyFn,
+				success: parameters.success || Ext.emptyFn,
+				callback: parameters.callback || Ext.emptyFn
+			});
+		},
+
+		/**
+		 * @param {Object} parameters
+		 */
+		setDefaults: function(parameters) {
+			CMDBuild.Ajax.request({
+				url: CMDBuild.core.proxy.Index.filter.defaultForGroups.update,
 				params: parameters.params,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
 				scope: parameters.scope || this,
