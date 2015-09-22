@@ -55,9 +55,7 @@
 		constructor: function(configurationObject) {
 			this.callParent(arguments);
 
-			this.view = Ext.create('CMDBuild.view.administration.filter.groups.GroupsView', {
-				delegate: this
-			});
+			this.view = Ext.create('CMDBuild.view.administration.filter.groups.GroupsView', { delegate: this });
 
 			// Shorthands
 			this.form = this.view.form;
@@ -106,14 +104,26 @@
 		onFilterGroupsRowSelected: function() {
 			this.selectedFilter = this.grid.getSelectionModel().getSelection()[0];
 
-			this.form.loadRecord(this.selectedFilter);
+			var params = {};
+			params[CMDBuild.core.constants.Proxy.ID] = this.selectedFilter.get(CMDBuild.core.constants.Proxy.ID);
 
-			this.form.setDisabledModify(true, true);
+			CMDBuild.core.proxy.filter.Groups.getDefaults({
+				params: params,
+				scope: this,
+				success: function(result, options, decodedResult) {
+					decodedResult = decodedResult.response.elements;
+
+					this.selectedFilter.set(CMDBuild.core.constants.Proxy.DEFAULT_FOR_GROUPS, decodedResult);
+
+					this.form.loadRecord(this.selectedFilter);
+					this.form.setDisabledModify(true, true);
+				}
+			});
 		},
 
 		onFilterGroupsSaveButtonClick: function() {
 			if (this.validate(this.form)) {
-				var formDataModel = Ext.create('CMDBuild.model.filter.Groups', this.form.getData(true)); // Filter unwanted data of filterChooser internal fields
+				var formDataModel = Ext.create('CMDBuild.model.filter.Groups', this.form.getData(true));
 
 				var params = formDataModel.getData();
 				params[CMDBuild.core.constants.Proxy.CONFIGURATION] = Ext.encode(params[CMDBuild.core.constants.Proxy.CONFIGURATION]);
@@ -168,8 +178,15 @@
 		 */
 		success: function(result, options, decodedResult) {
 			var me = this;
+			var savedFilterObject = decodedResult[CMDBuild.core.constants.Proxy.FILTER];
 
 			CMDBuild.view.common.field.translatable.Utils.commit(this.view.form);
+
+			var params = {};
+			params[CMDBuild.core.constants.Proxy.FILTERS] = Ext.encode([savedFilterObject[CMDBuild.core.constants.Proxy.ID]]);
+			params[CMDBuild.core.constants.Proxy.GROUPS] = Ext.encode(this.form.defaultForGroupsField.getValue());
+
+			CMDBuild.core.proxy.filter.Groups.setDefaults({ params: params });
 
 			this.grid.getStore().load({
 				callback: function(records, operation, success) {
