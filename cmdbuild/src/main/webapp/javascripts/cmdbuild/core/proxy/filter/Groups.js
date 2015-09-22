@@ -51,11 +51,11 @@
 				model: 'CMDBuild.model.filter.Groups',
 				pageSize: _CMUtils.grid.getPageSize(),
 				proxy: {
-					url: CMDBuild.core.proxy.Index.filter.groupStore,
 					type: 'ajax',
+					url: CMDBuild.core.proxy.Index.filter.groupStore,
 					reader: {
-						root: 'filters',
 						type: 'json',
+						root: 'filters',
 						totalProperty: 'count'
 					}
 				},

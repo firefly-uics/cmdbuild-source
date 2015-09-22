@@ -63,9 +63,7 @@
 				this.delegate.cmfg('onFilterGroupsRowSelected');
 			},
 
-			/**
-			 * Event to load store on view display and first row selection as CMDBuild standard
-			 */
+			// Event to load store on view display and first row selection as CMDBuild standard
 			viewready: function() {
 				this.getStore().load({
 					scope: this,

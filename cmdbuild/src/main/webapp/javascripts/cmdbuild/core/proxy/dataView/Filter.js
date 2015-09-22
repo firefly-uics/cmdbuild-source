@@ -15,8 +15,7 @@
 		 */
 		create: function(parameters) {
 			CMDBuild.Ajax.request({
-				method: 'POST',
-				url: CMDBuild.core.proxy.Index.dataViews.filter.create,
+				url: CMDBuild.core.proxy.Index.dataView.filter.create,
 				params: parameters.params,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
 				scope: parameters.scope || this,
@@ -27,11 +26,6 @@
 		},
 
 		/**
-		 * @param {Object} parameters
-		 */
-		get: function(parameters) {},
-
-		/**
 		 * @return {Ext.data.Store}
 		 */
 		getStore: function() {
@@ -40,7 +34,7 @@
 				model: 'CMDBuild.model.dataView.Filter',
 				proxy: {
 					type: 'ajax',
-					url: CMDBuild.core.proxy.Index.dataViews.filter.read,
+					url: CMDBuild.core.proxy.Index.dataView.filter.readAll,
 					reader: {
 						type: 'json',
 						root: 'views'
@@ -59,11 +53,17 @@
 
 		/**
 		 * @param {Object} parameters
+		 *
+		 * TODO: waiting for refactor (crud)
+		 */
+		read: function(parameters) {},
+
+		/**
+		 * @param {Object} parameters
 		 */
 		remove: function(parameters) {
 			CMDBuild.Ajax.request({
-				method: 'POST',
-				url: CMDBuild.core.proxy.Index.dataViews.filter.remove,
+				url: CMDBuild.core.proxy.Index.dataView.filter.remove,
 				params: parameters.params,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
 				scope: parameters.scope || this,
@@ -78,8 +78,7 @@
 		 */
 		update: function(parameters) {
 			CMDBuild.Ajax.request({
-				method: 'POST',
-				url: CMDBuild.core.proxy.Index.dataViews.filter.update,
+				url: CMDBuild.core.proxy.Index.dataView.filter.update,
 				params: parameters.params,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
 				scope: parameters.scope || this,
