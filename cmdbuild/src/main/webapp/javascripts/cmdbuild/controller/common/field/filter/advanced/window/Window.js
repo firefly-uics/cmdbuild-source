@@ -6,7 +6,7 @@
 		requires: [
 			'CMDBuild.core.Message',
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.Filter'
+			'CMDBuild.core.proxy.filter.Groups'
 		],
 
 		/**
@@ -143,7 +143,7 @@
 			params[CMDBuild.core.constants.Proxy.CLASS_NAME] = this.cmfg('fieldFilterAdvancedSelectedClassGet', CMDBuild.core.constants.Proxy.NAME);
 
 			if (this.grid.includeSystemFiltersCheckbox.getValue())
-				CMDBuild.core.proxy.Filter.read({
+				CMDBuild.core.proxy.filter.Groups.readAll({
 					params: params,
 					scope: this,
 					success: function(response, options, decodedResponse) {

@@ -292,13 +292,20 @@
 		 * @param {Object} value
 		 */
 		onFieldFilterAdvancedSetValue: function(value) {
-			if (!Ext.isEmpty(value) && Ext.isObject(value))
+			if (
+				!Ext.isEmpty(value)
+				&& Ext.isObject(value)
+				&& !this.fieldFilterAdvancedConfigurationIsEmpty(CMDBuild.core.constants.Proxy.TARGET_CLASS_FIELD)
+			) {
+				this.fieldFilterAdvancedSelectedClassSet(this.fieldFilterAdvancedConfigurationGet(CMDBuild.core.constants.Proxy.TARGET_CLASS_FIELD).getValue());
+
 				this.fieldFilterAdvancedFilterSet({
 					filterObject: Ext.create('CMDBuild.model.common.field.filter.advanced.Filter', {
 						configuration: value,
 						entryType: this.fieldFilterAdvancedSelectedClassGet(CMDBuild.core.constants.Proxy.NAME)
 					})
 				});
+			}
 
 			this.setButtonState();
 		},
