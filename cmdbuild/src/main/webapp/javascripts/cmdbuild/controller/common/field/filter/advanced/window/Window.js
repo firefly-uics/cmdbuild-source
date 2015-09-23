@@ -1,5 +1,8 @@
 (function() {
 
+	/**
+	 * To get the result of filter window you need to implement "onFieldFilterAdvancedWindowgetEndpoint" in cmfg structure
+	 */
 	Ext.define('CMDBuild.controller.common.field.filter.advanced.window.Window', {
 		extend: 'CMDBuild.controller.common.AbstractController',
 
@@ -19,6 +22,8 @@
 		 */
 		cmfgCatchedFunctions: [
 			'fieldFilterAdvancedWindowAddTab',
+			'fieldFilterAdvancedWindowSelectedRecordGet',
+			'fieldFilterAdvancedWindowSelectedRecordIsEmpty',
 			'onFieldFilterAdvancedWindowAbortButtonClick',
 			'onFieldFilterAdvancedWindowBeforeShow',
 			'onFieldFilterAdvancedWindowConfirmButtonClick',
@@ -29,9 +34,21 @@
 		],
 
 		/**
+		 * @property {CMDBuild.model.common.field.filter.advanced.window.Configuration}
+		 *
+		 * @private
+		 */
+		configuration: {},
+
+		/**
 		 * @property {CMDBuild.controller.common.field.filter.advanced.window.panels.Attributes}
 		 */
 		controllerTabAttributes: undefined,
+
+		/**
+		 * @property {CMDBuild.controller.common.field.filter.advanced.window.panels.ColumnPrivileges}
+		 */
+		controllerTabColumnPrivileges: undefined,
 
 		/**
 		 * @property {CMDBuild.controller.common.field.filter.advanced.window.panels.Functions}
@@ -47,6 +64,13 @@
 		 * @property {CMDBuild.view.common.field.filter.advanced.window.GridPanel}
 		 */
 		grid: undefined,
+
+		/**
+		 * @property {Object}
+		 *
+		 * @private
+		 */
+		selectedRecord: undefined,
 
 		/**
 		 * @property {Ext.tab.Panel}
@@ -67,6 +91,8 @@
 		constructor: function(configurationObject) {
 			this.callParent(arguments);
 
+			this.fieldFilterAdvancedWindowConfigurationSet(this.configuration);
+
 			this.view = Ext.create('CMDBuild.view.common.field.filter.advanced.window.Window', { delegate: this });
 
 			// Shorthands
@@ -74,7 +100,18 @@
 			this.tabPanel = this.view.tabPanel;
 
 			// Build sub controllers
-			this.controllerTabAttributes = Ext.create('CMDBuild.controller.common.field.filter.advanced.window.panels.Attributes', { parentDelegate: this });
+			this.controllerTabAttributes = Ext.create('CMDBuild.controller.common.field.filter.advanced.window.panels.Attributes', {
+				parentDelegate: this,
+				selectAtRuntimeCheckDisabled: this.fieldFilterAdvancedWindowConfigurationGet([
+					CMDBuild.core.constants.Proxy.TABS,
+					CMDBuild.core.constants.Proxy.ATTRIBUTES,
+					'selectAtRuntimeCheckDisabled'
+				])
+			});
+			this.controllerTabColumnPrivileges = Ext.create('CMDBuild.controller.common.field.filter.advanced.window.panels.ColumnPrivileges', {
+				parentDelegate: this,
+				view: this.view.columnPrivileges || {}
+			});
 			this.controllerTabFunctions = Ext.create('CMDBuild.controller.common.field.filter.advanced.window.panels.Functions', { parentDelegate: this });
 			this.controllerTabRelations = Ext.create('CMDBuild.controller.common.field.filter.advanced.window.panels.relations.Relations', { parentDelegate: this });
 		},
@@ -87,38 +124,205 @@
 				this.tabPanel.add(panel);
 		},
 
+		// Configuration property methods
+			/**
+			 * Attribute could be a single string (attribute name) or an array of strings that declares path to required attribute through model object's properties
+			 *
+			 * @param {Array or String} attributePath
+			 *
+			 * @returns {Mixed}
+			 */
+			fieldFilterAdvancedWindowConfigurationGet: function(attributePath) {
+				attributePath = Ext.isArray(attributePath) ? attributePath : [attributePath];
+
+				var requiredAttribute = this.configuration;
+
+				if (!Ext.isEmpty(attributePath))
+					Ext.Array.forEach(attributePath, function(attributeName, i, allAttributeNames) {
+						if (!Ext.isEmpty(attributeName) && Ext.isString(attributeName))
+							if (
+								!Ext.isEmpty(requiredAttribute)
+								&& Ext.isObject(requiredAttribute)
+								&& Ext.isFunction(requiredAttribute.get)
+							) { // Model management
+								requiredAttribute = requiredAttribute.get(attributeName);
+							} else if (
+								!Ext.isEmpty(requiredAttribute)
+								&& Ext.isObject(requiredAttribute)
+							) { // Simple object management
+								requiredAttribute = requiredAttribute[attributeName];
+							}
+					}, this);
+
+				return requiredAttribute;
+			},
+
+			/**
+			 * @param {Array or String} attributePath
+			 *
+			 * @returns {Boolean}
+			 */
+			fieldFilterAdvancedWindowConfigurationIsEmpty: function(attributePath) {
+				if (!Ext.isEmpty(attributePath))
+					if (Ext.isObject(this.fieldFilterAdvancedWindowConfigurationGet(attributePath))) {
+						return Ext.Object.isEmpty(this.fieldFilterAdvancedWindowConfigurationGet(attributePath));
+					} else {
+						return Ext.isEmpty(this.fieldFilterAdvancedWindowConfigurationGet(attributePath));
+					}
+
+				return Ext.isEmpty(this.configuration);
+			},
+
+			/**
+			 * @param {Object} configurationObject
+			 */
+			fieldFilterAdvancedWindowConfigurationSet: function(configurationObject) {
+				if (
+					Ext.isObject(configurationObject)
+					&& Ext.getClassName(configurationObject) == 'CMDBuild.model.common.field.filter.advanced.window.Configuration'
+				) {
+					this.configuration = configurationObject;
+				} else {
+					this.configuration = Ext.create('CMDBuild.model.common.field.filter.advanced.window.Configuration', configurationObject);
+				}
+			},
+
+		// Filter property methods
+			/**
+			 * Attribute could be a single string (attribute name) or an array of strings that declares path to required attribute through model object's properties
+			 *
+			 * @param {Array or String} attributePath
+			 *
+			 * @returns {Mixed}
+			 */
+			fieldFilterAdvancedWindowSelectedRecordGet: function(attributePath) {
+				attributePath = Ext.isArray(attributePath) ? attributePath : [attributePath];
+
+				var requiredAttribute = this.selectedRecord;
+
+				if (!Ext.isEmpty(attributePath))
+					Ext.Array.forEach(attributePath, function(attributeName, i, allAttributeNames) {
+						if (!Ext.isEmpty(attributeName) && Ext.isString(attributeName))
+							if (
+								!Ext.isEmpty(requiredAttribute)
+								&& Ext.isObject(requiredAttribute)
+								&& Ext.isFunction(requiredAttribute.get)
+							) { // Model management
+								requiredAttribute = requiredAttribute.get(attributeName);
+							} else if (
+								!Ext.isEmpty(requiredAttribute)
+								&& Ext.isObject(requiredAttribute)
+							) { // Simple object management
+								requiredAttribute = requiredAttribute[attributeName];
+							}
+					}, this);
+
+				return requiredAttribute;
+			},
+
+			/**
+			 * @param {Array or String} attributePath
+			 *
+			 * @returns {Boolean}
+			 */
+			fieldFilterAdvancedWindowSelectedRecordIsEmpty: function(attributePath) {
+				if (!Ext.isEmpty(attributePath))
+					if (Ext.isObject(this.fieldFilterAdvancedWindowSelectedRecordGet(attributePath))) {
+						return Ext.Object.isEmpty(this.fieldFilterAdvancedWindowSelectedRecordGet(attributePath));
+					} else {
+						return Ext.isEmpty(this.fieldFilterAdvancedWindowSelectedRecordGet(attributePath));
+					}
+
+				return Ext.isEmpty(this.selectedRecord);
+			},
+
+			/**
+			 * Setup full record or only one model property
+			 *
+			 * @param {Object} parameters
+			 * @param {Object} parameters.value
+			 * @param {String} parameters.name
+			 *
+			 * @returns {Mixed}
+			 */
+			fieldFilterAdvancedWindowSelectedRecordSet: function(parameters) {
+				if (Ext.isEmpty(parameters)) { // Reset filter property
+					this.selectedRecord = undefined;
+				} else {
+					var value = parameters.value;
+					var name = parameters.name;
+
+					// Single property management
+					if (!Ext.isEmpty(name) && Ext.isString(name)) {
+						if (
+							!Ext.isEmpty(this.selectedRecord)
+							&& Ext.isObject(this.selectedRecord)
+							&& Ext.isFunction(this.selectedRecord.set)
+						) { // Model management
+							this.selectedRecord.set(name, value);
+						} else if (
+							!Ext.isEmpty(this.selectedRecord)
+							&& Ext.isObject(this.selectedRecord)
+						) { // Simple object management
+							this.selectedRecord[name] = value;
+						}
+					} else if (!Ext.isEmpty(value)) { // Full model setup management
+						this.selectedRecord = value;
+					}
+				}
+			},
+
 		onFieldFilterAdvancedWindowAbortButtonClick: function() {
 			this.view.hide();
 		},
 
 		/**
-		 * @returns {Boolean}
+		 * @returns {Boolean} returnValue
 		 */
 		onFieldFilterAdvancedWindowBeforeShow: function() {
-			if (this.cmfg('fieldFilterAdvancedFilterIsEmpty'))
-				CMDBuild.core.Message.warning(null, CMDBuild.Translation.warnings.toSetAFilterYouMustBeforeSelectAClass, false);
+			var returnValue = false;
 
-			return !this.cmfg('fieldFilterAdvancedFilterIsEmpty');
+			switch (this.fieldFilterAdvancedWindowConfigurationGet(CMDBuild.core.constants.Proxy.MODE)) {
+				case 'grid': {
+					if (this.fieldFilterAdvancedWindowSelectedRecordIsEmpty())
+						CMDBuild.core.Message.warning(null, CMDBuild.Translation.warnings.toSetAFilterYouMustBeforeSelectAClass, false);
+
+					returnValue = returnValue && !this.fieldFilterAdvancedWindowSelectedRecordIsEmpty();
+				}
+
+				case 'field': {
+					if (this.cmfg('fieldFilterAdvancedFilterIsEmpty'))
+						CMDBuild.core.Message.warning(null, CMDBuild.Translation.warnings.toSetAFilterYouMustBeforeSelectAClass, false);
+
+					returnValue = !this.cmfg('fieldFilterAdvancedFilterIsEmpty');
+				}
+			}
+
+			return returnValue;
 		},
 
 		/**
 		 * Fill filter model with tab's data
 		 */
 		onFieldFilterAdvancedWindowConfirmButtonClick: function() {
-			var filterConfigurationObject = {};
+			var columnPrivilegesArray = [];
+			var filterObject = {};
 
 			if (this.cmfg('fieldFilterAdvancedConfigurationIsPanelEnabled', 'attribute'))
-				Ext.apply(filterConfigurationObject, this.controllerTabAttributes.cmfg('onFieldFilterAdvancedWindowAttributesGetData'));
+				Ext.apply(filterObject, this.controllerTabAttributes.cmfg('onFieldFilterAdvancedWindowAttributesGetData'));
+
+			if (this.cmfg('fieldFilterAdvancedConfigurationIsPanelEnabled', 'columnPrivileges'))
+				columnPrivilegesArray = this.controllerTabColumnPrivileges.cmfg('onFieldFilterAdvancedWindowColumnPrivilegesGetData');
 
 			if (this.cmfg('fieldFilterAdvancedConfigurationIsPanelEnabled', 'function'))
-				Ext.apply(filterConfigurationObject, this.controllerTabFunctions.cmfg('onFieldFilterAdvancedWindowFunctionsGetData'));
+				Ext.apply(filterObject, this.controllerTabFunctions.cmfg('onFieldFilterAdvancedWindowFunctionsGetData'));
 
 			if (this.cmfg('fieldFilterAdvancedConfigurationIsPanelEnabled', 'relation'))
-				Ext.apply(filterConfigurationObject, this.controllerTabRelations.cmfg('onFieldFilterAdvancedWindowRelationsGetData'));
+				Ext.apply(filterObject, this.controllerTabRelations.cmfg('onFieldFilterAdvancedWindowRelationsGetData'));
 
-			this.cmfg('fieldFilterAdvancedFilterSet', {
-				filterObject: filterConfigurationObject,
-				propertyName: CMDBuild.core.constants.Proxy.CONFIGURATION
+			this.cmfg('onFieldFilterAdvancedWindowgetEndpoint', {
+				columnPrivileges: columnPrivilegesArray,
+				filter: filterObject
 			});
 
 			this.onFieldFilterAdvancedWindowAbortButtonClick();
@@ -169,6 +373,7 @@
 			this.tabPanel.removeAll(true);
 
 			this.controllerTabAttributes.cmfg('onFieldFilterAdvancedWindowAttributesTabBuild');
+			this.controllerTabColumnPrivileges.cmfg('onFieldFilterAdvancedWindowColumnPrivilegesTabBuild');
 			this.controllerTabRelations.cmfg('onFieldFilterAdvancedWindowRelationsTabBuild');
 			this.controllerTabFunctions.cmfg('onFieldFilterAdvancedWindowFunctionsTabBuild');
 

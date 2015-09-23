@@ -18,8 +18,8 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
-			'onGroupAddButtonClick',
 			'onGroupUserInterfaceAbortButtonClick',
+			'onGroupUserInterfaceAddButtonClick = onGroupAddButtonClick',
 			'onGroupUserInterfaceGroupSelected = onGroupGroupSelected',
 			'onGroupUserInterfaceSaveButtonClick',
 			'onGroupUserInterfaceTabShow'
@@ -99,13 +99,6 @@
 				}
 			},
 
-		/**
-		 * Disable tab on add button click
-		 */
-		onGroupAddButtonClick: function() {
-			this.view.disable();
-		},
-
 		onGroupUserInterfaceAbortButtonClick: function() {
 			if (this.cmfg('selectedLookupTypeIsEmpty')) {
 				this.form.reset();
@@ -115,16 +108,23 @@
 		},
 
 		/**
+		 * Disable tab on add button click
+		 */
+		onGroupUserInterfaceAddButtonClick: function() {
+			this.view.disable();
+		},
+
+		/**
 		 * Enable/Disable tab evaluating group privileges, CloudAdministrators couldn't change UIConfiguration of full administrator groups
 		 */
 		onGroupUserInterfaceGroupSelected: function() {
 			var loggedUserCurrentGroup = _CMCache.getGroupById(CMDBuild.Runtime.DefaultGroupId);
 
 			this.view.setDisabled(
-				this.cmfg('selectedGroupIsEmpty')
+				this.cmfg('groupSelectedGroupIsEmpty')
 				|| loggedUserCurrentGroup.get(CMDBuild.core.constants.Proxy.IS_CLOUD_ADMINISTRATOR)
-				&& this.cmfg('selectedGroupGet', CMDBuild.core.constants.Proxy.IS_ADMINISTRATOR)
-				&& !this.cmfg('selectedGroupGet', CMDBuild.core.constants.Proxy.IS_CLOUD_ADMINISTRATOR)
+				&& this.cmfg('groupSelectedGroupGet', CMDBuild.core.constants.Proxy.IS_ADMINISTRATOR)
+				&& !this.cmfg('groupSelectedGroupGet', CMDBuild.core.constants.Proxy.IS_CLOUD_ADMINISTRATOR)
 			);
 		},
 
@@ -132,7 +132,7 @@
 			this.configurationSet(this.form.getForm().getValues());
 
 			var params = {};
-			params[CMDBuild.core.constants.Proxy.ID] = this.cmfg('selectedGroupGet', CMDBuild.core.constants.Proxy.ID);
+			params[CMDBuild.core.constants.Proxy.ID] = this.cmfg('groupSelectedGroupGet', CMDBuild.core.constants.Proxy.ID);
 			params[CMDBuild.core.constants.Proxy.UI_CONFIGURATION] = Ext.encode(this.configurationGet().getData());
 
 			CMDBuild.core.proxy.group.UserInterface.update({
@@ -148,9 +148,9 @@
 		 * Loads tab data
 		 */
 		onGroupUserInterfaceTabShow: function() {
-			if (!this.cmfg('selectedGroupIsEmpty')) {
+			if (!this.cmfg('groupSelectedGroupIsEmpty')) {
 				var params = {};
-				params[CMDBuild.core.constants.Proxy.ID] = this.cmfg('selectedGroupGet', CMDBuild.core.constants.Proxy.ID);
+				params[CMDBuild.core.constants.Proxy.ID] = this.cmfg('groupSelectedGroupGet', CMDBuild.core.constants.Proxy.ID);
 
 				CMDBuild.core.proxy.group.UserInterface.read({
 					params: params,

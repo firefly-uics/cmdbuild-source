@@ -53,7 +53,7 @@
 		},
 
 		onGroupPropertiesAbortButtonClick: function() {
-			if (this.cmfg('selectedGroupIsEmpty')) {
+			if (this.cmfg('groupSelectedGroupIsEmpty')) {
 				this.form.reset();
 				this.form.setDisabledModify(true, true, true);
 			} else {
@@ -62,7 +62,7 @@
 		},
 
 		onGroupPropertiesAddButtonClick: function() {
-			this.cmfg('selectedGroupSet'); // Reset selected group
+			this.cmfg('groupSelectedGroupSet'); // Reset selected group
 			this.cmfg('onGroupSetActiveTab');
 
 			this.form.reset();
@@ -72,8 +72,8 @@
 
 		onGroupPropertiesEnableDisableButtonClick: function() {
 			var params = {};
-			params[CMDBuild.core.constants.Proxy.GROUP_ID] = this.cmfg('selectedGroupGet', CMDBuild.core.constants.Proxy.ID);
-			params[CMDBuild.core.constants.Proxy.IS_ACTIVE] = !this.cmfg('selectedGroupGet', CMDBuild.core.constants.Proxy.IS_ACTIVE);
+			params[CMDBuild.core.constants.Proxy.GROUP_ID] = this.cmfg('groupSelectedGroupGet', CMDBuild.core.constants.Proxy.ID);
+			params[CMDBuild.core.constants.Proxy.IS_ACTIVE] = !this.cmfg('groupSelectedGroupGet', CMDBuild.core.constants.Proxy.IS_ACTIVE);
 
 			CMDBuild.core.proxy.group.Group.enableDisable({
 				params: params,
@@ -88,7 +88,7 @@
 		 * Enable/Disable tab evaluating selected group
 		 */
 		onGroupPropertiesGroupSelected: function() {
-			this.view.setDisabled(this.cmfg('selectedGroupIsEmpty'));
+			this.view.setDisabled(this.cmfg('groupSelectedGroupIsEmpty'));
 		},
 
 		onGroupPropertiesModifyButtonClick: function() {
@@ -123,9 +123,9 @@
 		 * TODO: should be refactored to require group details only on tab show
 		 */
 		onGroupPropertiesTabShow: function() {
-			if (!this.cmfg('selectedGroupIsEmpty')) {
-				this.form.loadRecord(this.cmfg('selectedGroupGet'));
-				this.form.enableDisableButton.setActiveState(this.cmfg('selectedGroupGet', CMDBuild.core.constants.Proxy.IS_ACTIVE));
+			if (!this.cmfg('groupSelectedGroupIsEmpty')) {
+				this.form.loadRecord(this.cmfg('groupSelectedGroupGet'));
+				this.form.enableDisableButton.setActiveState(this.cmfg('groupSelectedGroupGet', CMDBuild.core.constants.Proxy.IS_ACTIVE));
 				this.form.setDisabledModify(true, true);
 			}
 		},

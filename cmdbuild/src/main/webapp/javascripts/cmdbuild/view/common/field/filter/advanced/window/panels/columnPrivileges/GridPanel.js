@@ -1,13 +1,20 @@
 (function() {
 
-	Ext.define('CMDBuild.view.administration.group.privileges.filterWindow.GridPanel', {
+	Ext.define('CMDBuild.view.common.field.filter.advanced.window.panels.columnPrivileges.GridPanel', {
 		extend: 'Ext.grid.Panel',
 
-		requires: ['CMDBuild.core.constants.Proxy'],
+		requires: [
+			'CMDBuild.core.constants.Proxy',
+			'CMDBuild.model.common.field.filter.advanced.window.ColumnPrivilegesGridRecord'
+		],
+
+		/**
+		 * @cfg {CMDBuild.controller.common.field.filter.advanced.window.panels.ColumnPrivileges}
+		 */
+		delegate: undefined,
 
 		border: false,
 		frame: false,
-		title: CMDBuild.Translation.columnsPrivileges,
 
 		initComponent: function() {
 			Ext.apply(this, {
@@ -35,15 +42,14 @@
 
 						listeners: {
 							scope: this,
-							checkchange: function(column, rowIndex, checked, eOpts) {
-								if (!checked) {
-									return;
-								}
+							beforecheckchange: function(column, rowIndex, checked, eOpts) {
+								if (checked)
+									this.delegate.cmfg('onFieldFilterAdvancedWindowColumnPrivilegesSet', {
+										dataIndex: column.dataIndex,
+										rowIndex: rowIndex
+									});
 
-								var model = this.store.getAt(rowIndex);
-								if (model) {
-									model.setPrivilege(column.dataIndex);
-								}
+								return checked;
 							}
 						}
 					}),
@@ -60,15 +66,14 @@
 
 						listeners: {
 							scope: this,
-							checkchange: function(column, rowIndex, checked, eOpts) {
-								if (!checked) {
-									return;
-								}
+							beforecheckchange: function(column, rowIndex, checked, eOpts) {
+								if (checked)
+									this.delegate.cmfg('onFieldFilterAdvancedWindowColumnPrivilegesSet', {
+										dataIndex: column.dataIndex,
+										rowIndex: rowIndex
+									});
 
-								var model = this.store.getAt(rowIndex);
-								if (model) {
-									model.setPrivilege(column.dataIndex);
-								}
+								return checked;
 							}
 						}
 					}),
@@ -85,19 +90,22 @@
 
 						listeners: {
 							scope: this,
-							checkchange: function(column, rowIndex, checked, eOpts) {
-								if (!checked) {
-									return;
-								}
+							beforecheckchange: function(column, rowIndex, checked, eOpts) {
+								if (checked)
+									this.delegate.cmfg('onFieldFilterAdvancedWindowColumnPrivilegesSet', {
+										dataIndex: column.dataIndex,
+										rowIndex: rowIndex
+									});
 
-								var model = this.store.getAt(rowIndex);
-								if (model) {
-									model.setPrivilege(column.dataIndex);
-								}
+								return checked;
 							}
 						}
 					})
-				]
+				],
+				store: Ext.create('Ext.data.Store', {
+					model: 'CMDBuild.model.common.field.filter.advanced.window.ColumnPrivilegesGridRecord',
+					data: []
+				})
 			});
 
 			this.callParent(arguments);

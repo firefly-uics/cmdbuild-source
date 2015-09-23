@@ -6,7 +6,7 @@
 		requires: ['CMDBuild.core.constants.Proxy'],
 
 		fields: [
-			{ name: CMDBuild.core.constants.Proxy.ENABLED_PANELS, type: 'auto', defaultValue: ['attribute', 'relation', 'function'] },
+			{ name: CMDBuild.core.constants.Proxy.ENABLED_PANELS, type: 'auto', defaultValue: ['attribute', 'relation', 'function'] }, // ['attribute', 'relation', 'function', 'columnPrivileges']
 			{ name: CMDBuild.core.constants.Proxy.TARGET_CLASS_FIELD, type: 'auto' } // Target class field pointer
 		]
 	});

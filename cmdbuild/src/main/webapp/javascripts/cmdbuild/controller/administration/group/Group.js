@@ -37,12 +37,12 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
+			'groupSelectedGroupGet',
+			'groupSelectedGroupIsEmpty',
+			'groupSelectedGroupSet',
 			'onGroupAddButtonClick -> controllerProperties, controllerPrivileges, controllerUsers, controllerUserInterface, controllerDefaultFilters',
 			'onGroupGroupSelected -> controllerProperties, controllerPrivileges, controllerUsers, controllerUserInterface, controllerDefaultFilters',
-			'onGroupSetActiveTab',
-			'selectedGroupGet',
-			'selectedGroupSet',
-			'selectedGroupIsEmpty'
+			'onGroupSetActiveTab'
 		],
 
 		/**
@@ -82,6 +82,43 @@
 			this.onGroupSetActiveTab();
 		},
 
+		// SelectedGroup property methods
+			/**
+			 * Returns full model object or just one property if required
+			 *
+			 * @param {String} parameterName
+			 *
+			 * @returns {CMDBuild.model.group.Group} or Mixed
+			 */
+			groupSelectedGroupGet: function(parameterName) {
+				if (!Ext.isEmpty(parameterName))
+					return this.selectedGroup.get(parameterName);
+
+				return this.selectedGroup;
+			},
+
+			/**
+			 * @returns {Boolean}
+			 */
+			groupSelectedGroupIsEmpty: function() {
+				return Ext.isEmpty(this.selectedGroup);
+			},
+
+			/**
+			 * @property {Object} selectedGroupObject
+			 */
+			groupSelectedGroupSet: function(selectedGroupObject) {
+				this.selectedGroup = null;
+
+				if (!Ext.isEmpty(selectedGroupObject) && Ext.isObject(selectedGroupObject)) {
+					if (Ext.getClassName(selectedGroupObject) == 'CMDBuild.model.group.Group') {
+						this.selectedGroup = selectedGroupObject;
+					} else {
+						this.selectedGroup = Ext.create('CMDBuild.model.group.Group', selectedGroupObject);
+					}
+				}
+			},
+
 		/**
 		 * @param {Number} index
 		 */
@@ -94,59 +131,31 @@
 		 */
 		onViewOnFront: function(parameters) {
 			if (!Ext.isEmpty(parameters)) {
-				var selectedGroupModel = _CMCache.getGroupById(parameters.get(CMDBuild.core.constants.Proxy.ID)); // TODO: avoid to use cache (server side implementation)
+				CMDBuild.core.proxy.group.Group.readAll({ // TODO: waiting for refactor (crud)
+					scope: this,
+					success: function(result, options, decodedResult) {
+						decodedResult = decodedResult[CMDBuild.core.constants.Proxy.GROUPS];
 
-				if (!Ext.isEmpty(selectedGroupModel)) {
-					this.selectedGroupSet(selectedGroupModel.getData());
+						var selectedGroupModel = Ext.Array.findBy(decodedResult, function(groupObject, i) {
+							return parameters.get(CMDBuild.core.constants.Proxy.ID) == groupObject[CMDBuild.core.constants.Proxy.ID];
+						}, this);
 
-					this.cmfg('onGroupGroupSelected');
+						if (!Ext.isEmpty(selectedGroupModel)) {
+							this.groupSelectedGroupSet(selectedGroupModel);
 
-					this.setViewTitle(parameters.get(CMDBuild.core.constants.Proxy.TEXT));
+							this.cmfg('onGroupGroupSelected');
 
-					if (Ext.isEmpty(this.view.tabPanel.getActiveTab()))
-						this.onGroupSetActiveTab();
+							this.setViewTitle(parameters.get(CMDBuild.core.constants.Proxy.TEXT));
 
-					this.view.tabPanel.getActiveTab().fireEvent('show'); // Manual show event fire because was already selected
-				}
-			}
-		},
+							if (Ext.isEmpty(this.view.tabPanel.getActiveTab()))
+								this.onGroupSetActiveTab();
 
-		// SelectedGroup property methods
-			/**
-			 * Returns full model object or just one property if required
-			 *
-			 * @param {String} parameterName
-			 *
-			 * @returns {CMDBuild.model.group.Group} or Mixed
-			 */
-			selectedGroupGet: function(parameterName) {
-				if (!Ext.isEmpty(parameterName))
-					return this.selectedGroup.get(parameterName);
-
-				return this.selectedGroup;
-			},
-
-			/**
-			 * @returns {Boolean}
-			 */
-			selectedGroupIsEmpty: function() {
-				return Ext.isEmpty(this.selectedGroup);
-			},
-
-			/**
-			 * @property {Object} selectedGroupObject
-			 */
-			selectedGroupSet: function(selectedGroupObject) {
-				this.selectedGroup = null;
-
-				if (!Ext.isEmpty(selectedGroupObject) && Ext.isObject(selectedGroupObject)) {
-					if (Ext.getClassName(selectedGroupObject) == 'CMDBuild.model.group.Group') {
-						this.selectedGroup = selectedGroupObject;
-					} else {
-						this.selectedGroup = Ext.create('CMDBuild.model.group.Group', selectedGroupObject);
+							this.view.tabPanel.getActiveTab().fireEvent('show'); // Manual show event fire because was already selected
+						}
 					}
-				}
+				});
 			}
+		}
 	});
 
 })();

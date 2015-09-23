@@ -17,7 +17,7 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
-			'onGroupAddButtonClick',
+			'onGroupUsersAddButtonClick = onGroupAddButtonClick',
 			'onGroupUsersGroupSelected = onGroupGroupSelected',
 			'onGroupUsersSaveButtonClick',
 			'onGroupUsersTabShow',
@@ -47,7 +47,7 @@
 		/**
 		 * Disable tab on add button click
 		 */
-		onGroupAddButtonClick: function() {
+		onGroupUsersAddButtonClick: function() {
 			this.view.disable();
 		},
 
@@ -55,7 +55,7 @@
 		 * Enable/Disable tab evaluating selected group
 		 */
 		onGroupUsersGroupSelected: function() {
-			this.view.setDisabled(this.cmfg('selectedGroupIsEmpty'));
+			this.view.setDisabled(this.cmfg('groupSelectedGroupIsEmpty'));
 		},
 
 		/**
@@ -69,7 +69,7 @@
 			}, this);
 
 			var params = {};
-			params[CMDBuild.core.constants.Proxy.GROUP_ID] = this.cmfg('selectedGroupGet', CMDBuild.core.constants.Proxy.ID);
+			params[CMDBuild.core.constants.Proxy.GROUP_ID] = this.cmfg('groupSelectedGroupGet', CMDBuild.core.constants.Proxy.ID);
 			params[CMDBuild.core.constants.Proxy.USERS] = usersIdArray.join();
 
 			CMDBuild.core.proxy.group.Users.update({
@@ -82,16 +82,40 @@
 		},
 
 		onGroupUsersTabShow: function() {
-			if (!this.cmfg('selectedGroupIsEmpty')) {
+			if (!this.cmfg('groupSelectedGroupIsEmpty')) {
 				var params = {};
-				params[CMDBuild.core.constants.Proxy.GROUP_ID] = this.cmfg('selectedGroupGet', CMDBuild.core.constants.Proxy.ID);
+				params[CMDBuild.core.constants.Proxy.GROUP_ID] = this.cmfg('groupSelectedGroupGet', CMDBuild.core.constants.Proxy.ID);
 				params[CMDBuild.core.constants.Proxy.ALREADY_ASSOCIATED] = false;
 
-				this.availableGrid.getStore().load({ params: params });
+				this.availableGrid.getStore().load({
+					params: params,
+					scope: this,
+					callback: function(records, operation, success) {
+						// Store load errors manage
+						if (!success) {
+							CMDBuild.core.Message.error(null, {
+								text: CMDBuild.Translation.errors.unknown_error,
+								detail: operation.error
+							});
+						}
+					}
+				});
 
 				params[CMDBuild.core.constants.Proxy.ALREADY_ASSOCIATED] = true;
 
-				this.selectedGrid.getStore().load({ params: params });
+				this.selectedGrid.getStore().load({
+					params: params,
+					scope: this,
+					callback: function(records, operation, success) {
+						// Store load errors manage
+						if (!success) {
+							CMDBuild.core.Message.error(null, {
+								text: CMDBuild.Translation.errors.unknown_error,
+								detail: operation.error
+							});
+						}
+					}
+				});
 			}
 		}
 	});

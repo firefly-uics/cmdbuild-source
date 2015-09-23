@@ -24,6 +24,11 @@
 		baseTitle: CMDBuild.Translation.buildFilter,
 
 		/**
+		 * @property {CMDBuild.view.common.field.filter.advanced.window.panels.columnPrivileges.ColumnPrivilegesView}
+		 */
+		columnPrivileges: undefined,
+
+		/**
 		 * @property {CMDBuild.view.management.common.filter.CMFunctions}
 		 */
 		functionPanel: undefined,
@@ -42,8 +47,6 @@
 		 * @property {Ext.tab.Panel}
 		 */
 		tabPanel: undefined,
-
-		layout: 'border',
 
 		initComponent: function() {
 			Ext.apply(this, {
@@ -76,24 +79,68 @@
 							})
 						]
 					})
-				],
-				items: [
-					this.grid = Ext.create('CMDBuild.view.common.field.filter.advanced.window.GridPanel', {
-						delegate: this.delegate,
-						region: 'north',
-						height: '30%',
-						split: true
-					}),
-					this.tabPanel = Ext.create('Ext.tab.Panel', {
-						region: 'center',
-						bodyCls: 'cmgraypanel-nopadding',
-						border: false,
-						cls: 'x-panel-body-default-framed cmbordertop',
-
-						items: []
-					})
 				]
 			});
+
+			// Items property evaluation
+			if (this.delegate.cmfg('fieldFilterAdvancedConfigurationIsPanelEnabled', 'columnPrivileges')) {
+				Ext.apply(this, {
+					layout: 'fit',
+					items: [
+						Ext.create('Ext.tab.Panel', {
+							border: false,
+							frame: false,
+
+							items: [
+								Ext.create('Ext.panel.Panel', {
+									title: CMDBuild.Translation.rowsPrivileges,
+									layout: 'border',
+									border: false,
+									frame: false,
+
+									items: [
+										this.grid = Ext.create('CMDBuild.view.common.field.filter.advanced.window.GridPanel', {
+											delegate: this.delegate,
+											region: 'north',
+											height: '30%',
+											split: true
+										}),
+										this.tabPanel = Ext.create('Ext.tab.Panel', {
+											region: 'center',
+											bodyCls: 'cmgraypanel-nopadding',
+											border: false,
+											cls: 'x-panel-body-default-framed cmbordertop',
+
+											items: []
+										})
+									]
+								}),
+								this.columnPrivileges = Ext.create('CMDBuild.view.common.field.filter.advanced.window.panels.columnPrivileges.ColumnPrivilegesView')
+							]
+						})
+					]
+				});
+			} else {
+				Ext.apply(this, {
+					layout: 'border',
+					items: [
+						this.grid = Ext.create('CMDBuild.view.common.field.filter.advanced.window.GridPanel', {
+							delegate: this.delegate,
+							region: 'north',
+							height: '30%',
+							split: true
+						}),
+						this.tabPanel = Ext.create('Ext.tab.Panel', {
+							region: 'center',
+							bodyCls: 'cmgraypanel-nopadding',
+							border: false,
+							cls: 'x-panel-body-default-framed cmbordertop',
+
+							items: []
+						})
+					]
+				});
+			}
 
 			this.callParent(arguments);
 		},

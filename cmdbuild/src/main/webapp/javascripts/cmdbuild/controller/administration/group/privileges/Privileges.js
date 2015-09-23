@@ -34,9 +34,9 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
-			'onGroupAddButtonClick',
-			'onGroupPrivilegesTabShow',
-			'onGroupPrivilegesGroupSelected = onGroupGroupSelected'
+			'onGroupPrivilegesAddButtonClick = onGroupAddButtonClick',
+			'onGroupPrivilegesGroupSelected = onGroupGroupSelected',
+			'onGroupPrivilegesTabShow'
 		],
 
 		/**
@@ -86,7 +86,7 @@
 		/**
 		 * Disable tab on add button click
 		 */
-		onGroupAddButtonClick: function() {
+		onGroupPrivilegesAddButtonClick: function() {
 			this.view.disable();
 		},
 
@@ -94,14 +94,14 @@
 		 * Enable/Disable tab evaluating group privileges, administrator groups have full privileges so panel is disabled
 		 */
 		onGroupPrivilegesGroupSelected: function() {
-			this.view.setDisabled(this.cmfg('selectedGroupIsEmpty') || this.cmfg('selectedGroupGet', CMDBuild.core.constants.Proxy.IS_ADMINISTRATOR));
+			this.view.setDisabled(this.cmfg('groupSelectedGroupIsEmpty') || this.cmfg('groupSelectedGroupGet', CMDBuild.core.constants.Proxy.IS_ADMINISTRATOR));
 		},
 
 		/**
 		 * Evaluate group privileges to set active first tab
 		 */
 		onGroupPrivilegesTabShow: function() {
-			if (!this.cmfg('selectedGroupIsEmpty') && this.cmfg('selectedGroupGet', CMDBuild.core.constants.Proxy.IS_ADMINISTRATOR)) {
+			if (!this.cmfg('groupSelectedGroupIsEmpty') && this.cmfg('groupSelectedGroupGet', CMDBuild.core.constants.Proxy.IS_ADMINISTRATOR)) {
 				this.cmfg('onGroupSetActiveTab');
 			} else {
 				this.view.setActiveTab(0);

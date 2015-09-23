@@ -11,19 +11,19 @@
 		delegate: undefined,
 
 		/**
-		 * @property {CMDBuild.core.buttons.iconized.filter.Set}
+		 * @cfg {Object}
 		 */
-		chooseFilterButton: undefined,
+		fieldConfiguration: undefined,
 
 		/**
 		 * @property {CMDBuild.core.buttons.iconized.filter.Clear}
 		 */
-		clearFilterButton: undefined,
+		filterClearButton: undefined,
 
 		/**
-		 * @cfg {Object}
+		 * @property {CMDBuild.core.buttons.iconized.filter.Set}
 		 */
-		fieldConfiguration: undefined,
+		filterSetButton: undefined,
 
 		/**
 		 * @property {Ext.form.field.Display}
@@ -41,23 +41,23 @@
 			Ext.apply(this, {
 				items: [
 					this.label = Ext.create('Ext.form.field.Display', { value: CMDBuild.Translation.not_set }),
-					this.chooseFilterButton = Ext.create('CMDBuild.core.buttons.iconized.filter.Set', {
+					this.filterSetButton = Ext.create('CMDBuild.core.buttons.iconized.filter.Set', {
 						border: false,
 						tooltip: CMDBuild.Translation.setFilter,
 						margin: '0 5',
 						scope: this,
 
 						handler: function(button, e) {
-							this.delegate.cmfg('onFieldFilterAdvancedChooseButtonClick');
+							this.delegate.cmfg('onFieldFilterAdvancedFilterSetButtonClick');
 						}
 					}),
-					this.clearFilterButton = Ext.create('CMDBuild.core.buttons.iconized.filter.Clear', {
+					this.filterClearButton = Ext.create('CMDBuild.core.buttons.iconized.filter.Clear', {
 						border: false,
 						tooltip: CMDBuild.Translation.clearFilter,
 						scope: this,
 
 						handler: function(button, e) {
-							this.delegate.cmfg('onFieldFilterAdvancedClearButtonClick');
+							this.delegate.cmfg('onFieldFilterAdvancedFilterClearButtonClick');
 						}
 					})
 				]
