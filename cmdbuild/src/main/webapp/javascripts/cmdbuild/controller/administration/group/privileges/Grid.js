@@ -4,24 +4,25 @@
 		extend: 'CMDBuild.controller.common.AbstractController',
 
 		requires: [
+			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.Message',
 			'CMDBuild.core.proxy.Attributes',
-			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.group.privileges.Classes',
 			'CMDBuild.core.proxy.group.privileges.DataView',
 			'CMDBuild.core.proxy.group.privileges.Filter'
 		],
 
-		// Here to avoid a complete refactor of FilterChooser structure
-		mixins: {
-			filterChooserWindowDelegate: 'CMDBuild.delegate.common.field.CMFilterChooserWindowDelegate',
-			filterWindow: 'CMDBuild.view.management.common.filter.CMFilterWindowDelegate'
-		},
+		mixins: ['CMDBuild.controller.common.field.filter.advanced.Advanced'], // Import fieldConfiguration, filter, selectedClass property methods
 
 		/**
 		 * @cfg {CMDBuild.controller.administration.group.privileges.Privileges}
 		 */
 		parentDelegate: undefined,
+
+		/**
+		 * @property {CMDBuild.controller.common.field.filter.advanced.window.Window}
+		 */
+		controllerFilterWindow: undefined,
 
 		/**
 		 * @property {CMDBuild.controller.administration.group.privileges.UiConfiguration}
@@ -32,6 +33,11 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
+			'fieldFilterAdvancedConfigurationIsPanelEnabled',
+			'fieldFilterAdvancedFilterGet',
+			'fieldFilterAdvancedFilterIsEmpty',
+			'fieldFilterAdvancedSelectedClassGet',
+			'onFieldFilterAdvancedWindowgetEndpoint',
 			'onGroupPrivilegesGridSetPrivilege',
 			'onGroupPrivilegesGridTabShow',
 			'onGroupPrivilegesRemoveFilterClick',
@@ -53,6 +59,20 @@
 		 * @cfg {Boolean}
 		 */
 		enablePrivilegesAndUi: false,
+
+		/**
+		 * @property {CMDBuild.model.common.field.filter.advanced.FieldConfiguration}
+		 *
+		 * @private
+		 */
+		fieldConfiguration: undefined,
+
+		/**
+		 * @property {CMDBuild.model.common.field.filter.advanced.Filter}
+		 *
+		 * @private
+		 */
+		filter: undefined,
 
 		/**
 		 * @cfg {Mixed}
@@ -78,8 +98,6 @@
 		constructor: function(configurationObject) {
 			this.callParent(arguments);
 
-			this.controllerUiConfiguration = Ext.create('CMDBuild.controller.administration.group.privileges.UiConfiguration', { parentDelegate: this });
-
 			this.view = Ext.create('CMDBuild.view.administration.group.privileges.GridPanel', {
 				delegate: this,
 				title: this.title,
@@ -88,13 +106,73 @@
 				enableCRUDWrite: this.enableCRUDWrite,
 				enablePrivilegesAndUi: this.enablePrivilegesAndUi
 			});
+
+			// Filter advanced window configuration
+			this.fieldFilterAdvancedConfigurationSet({ enabledPanels: ['attribute', 'relation', 'function', 'columnPrivileges'] });
+
+			// Build sub controller
+			this.controllerFilterWindow = Ext.create('CMDBuild.controller.common.field.filter.advanced.window.Window', {
+				parentDelegate: this,
+				configuration: {
+					mode: 'grid',
+					tabs: {
+						attributes: {
+							selectAtRuntimeCheckDisabled: true // BUSINNESS RULE: user couldn't create privilege's filter with runtime parameters
+						}
+					}
+				},
+			});
+			this.controllerUiConfiguration = Ext.create('CMDBuild.controller.administration.group.privileges.UiConfiguration', { parentDelegate: this });
+		},
+
+		/**
+		 * @param {Object} resultObject
+		 * @param {Object} resultObject.columnPrivileges
+		 * @param {Object} resultObject.filter
+		 *
+		 * @override
+		 */
+		onFieldFilterAdvancedWindowgetEndpoint: function(resultObject) {
+			if (Ext.encode(resultObject.filter).indexOf('"parameterType":"calculated"') < 0) {
+				var params = {};
+				params['privilegedObjectId'] = this.fieldFilterAdvancedSelectedClassGet(CMDBuild.core.constants.Proxy.ID);
+				params[CMDBuild.core.constants.Proxy.ATTRIBUTES] = Ext.encode(resultObject.columnPrivileges);
+				params[CMDBuild.core.constants.Proxy.FILTER] = Ext.encode(resultObject.filter);
+				params[CMDBuild.core.constants.Proxy.GROUP_ID] = this.cmfg('groupSelectedGroupGet', CMDBuild.core.constants.Proxy.ID);
+
+				this.proxy.setRowAndColumn({
+					params: params,
+					scope: this,
+					success: function(response, options, decodedResponse) {
+						this.onGroupPrivilegesGridTabShow();
+					}
+				});
+			} else {
+				CMDBuild.core.Message.error(
+					CMDBuild.Translation.error,
+					CMDBuild.Translation.warnings.itIsNotAllowedFilterWithCalculatedParams,
+					false
+				);
+			}
 		},
 
 		onGroupPrivilegesGridTabShow: function() {
 			var params = {};
-			params[CMDBuild.core.constants.Proxy.GROUP_ID] = this.cmfg('selectedGroupGet', CMDBuild.core.constants.Proxy.ID);
+			params[CMDBuild.core.constants.Proxy.GROUP_ID] = this.cmfg('groupSelectedGroupGet', CMDBuild.core.constants.Proxy.ID);
 
-			this.view.getStore().load({ params: params });
+			this.view.getStore().load({
+				params: params,
+				scope: this,
+				callback: function(records, operation, success) {
+					// Store load errors manage
+					if (!success) {
+						CMDBuild.core.Message.error(null, {
+							text: CMDBuild.Translation.errors.unknown_error,
+							detail: operation.error
+						});
+					}
+				}
+			});
 		},
 
 		/**
@@ -111,7 +189,7 @@
 				var params = {};
 				params['privilege_mode'] = parameters.privilege;
 				params['privilegedObjectId'] = this.view.store.getAt(parameters.rowIndex).get(CMDBuild.core.constants.Proxy.ID);
-				params[CMDBuild.core.constants.Proxy.GROUP_ID] = this.cmfg('selectedGroupGet', CMDBuild.core.constants.Proxy.ID);
+				params[CMDBuild.core.constants.Proxy.GROUP_ID] = this.cmfg('groupSelectedGroupGet', CMDBuild.core.constants.Proxy.ID);
 
 				this.proxy.update({
 					params: params,
@@ -138,7 +216,7 @@
 					if (button == 'yes') {
 						var params = {};
 						params['privilegedObjectId'] = record.get(CMDBuild.core.constants.Proxy.ID);
-						params[CMDBuild.core.constants.Proxy.GROUP_ID] = this.cmfg('selectedGroupGet', CMDBuild.core.constants.Proxy.ID);
+						params[CMDBuild.core.constants.Proxy.GROUP_ID] = this.cmfg('groupSelectedGroupGet', CMDBuild.core.constants.Proxy.ID);
 
 						// Set empty filter to clear value
 						this.proxy.setRowAndColumn({
@@ -158,108 +236,23 @@
 		 */
 		onGroupPrivilegesUIConfigurationButtonClick: function(record) {
 			this.controllerUiConfiguration.setRecord(record);
-
 			this.controllerUiConfiguration.getView().show();
 		},
 
 		/**
 		 * @param {CMDBuild.model.group.privileges.GridRecord} record
-		 *
-		 * TODO: waiting for refactor (attributes names)
 		 */
 		onGroupPrivilegesSetFilterClick: function(record) {
-			var entryType = _CMCache.getEntryTypeByName(record.get(CMDBuild.core.constants.Proxy.NAME));
-
-			var filter = new CMDBuild.model.CMFilterModel({
+			// Filter advanced window configuration
+			this.filter = Ext.create('CMDBuild.model.common.field.filter.advanced.Filter', { // Manual set to avoid label setup
 				configuration: Ext.decode(record.get(CMDBuild.core.constants.Proxy.FILTER) || '{}'),
-				entryType: record.get(CMDBuild.core.constants.Proxy.NAME),
-				local: true,
-				name: ''
+				entryType: record.get(CMDBuild.core.constants.Proxy.NAME)
 			});
+			this.selectedClass = _CMCache.getEntryTypeByName(record.get(CMDBuild.core.constants.Proxy.NAME)); // Manual setup to avoid filter setup
 
-			var params = {};
-			params[CMDBuild.core.constants.Proxy.ACTIVE] = false;
-			params[CMDBuild.core.constants.Proxy.CLASS_NAME] = entryType.getName();
-
-			CMDBuild.core.proxy.Attributes.read({
-				params: params,
-				scope: this,
-				success: function(response, options, decodedResponse) {
-					var filterWindow = Ext.create('CMDBuild.view.administration.group.privileges.filterWindow.FilterWindow', {
-						attributes: decodedResponse.attributes,
-						className: record.get(CMDBuild.core.constants.Proxy.NAME),
-						filter: filter,
-						group: record
-					});
-
-					filterWindow.addDelegate(this);
-
-					filterWindow.show();
-				}
-			});
-		},
-
-		// As cmFilterWindowDelegate
-			/**
-			 * @param {CMDBuild.view.management.common.filter.CMFilterWindow} filterWindow
-			 *
-			 * BUSINNESS RULE: The user could not save the privileges if the filter has some runtime parameter
-			 */
-			onCMFilterWindowSaveButtonClick: function(filterWindow) {
-				var filter = filterWindow.getFilter();
-				var runtimeParameters = filter.getRuntimeParameters();
-				var calculatedParameters = filter.getCalculatedParameters();
-
-				if (runtimeParameters && runtimeParameters.length > 0) {
-					CMDBuild.core.Message.error(
-						CMDBuild.Translation.error,
-						CMDBuild.Translation.itIsNotAllowedFilterWithRuntimeParams,
-						false
-					);
-
-					return;
-				} else if (calculatedParameters && calculatedParameters.length > 0) {
-					CMDBuild.core.Message.error(
-						CMDBuild.Translation.error,
-						CMDBuild.Translation.itIsNotAllowedFilterWithCalculatedParams,
-						false
-					);
-
-					return;
-				}
-
-				var params = {};
-				params['privilegedObjectId'] = filterWindow.group.get(CMDBuild.core.constants.Proxy.ID);
-				params[CMDBuild.core.constants.Proxy.ATTRIBUTES] = Ext.encode(filterWindow.getAttributePrivileges());
-				params[CMDBuild.core.constants.Proxy.FILTER] = Ext.encode(filter.getConfiguration());
-				params[CMDBuild.core.constants.Proxy.GROUP_ID] = this.cmfg('selectedGroupGet', CMDBuild.core.constants.Proxy.ID);
-
-				this.proxy.setRowAndColumn({
-					params: params,
-					scope: this,
-					success: function(response, options, decodedResponse) {
-						filterWindow.group.set(CMDBuild.core.constants.Proxy.FILTER, params[CMDBuild.core.constants.Proxy.FILTER]);
-						filterWindow.group.set(CMDBuild.core.constants.Proxy.ATTRIBUTES_PRIVILEGES, filterWindow.getAttributePrivileges());
-						filterWindow.destroy();
-					}
-				});
-			},
-
-			/**
-			 * @param {CMDBuild.view.management.common.filter.CMFilterWindow} filterWindow
-			 */
-			onCMFilterWindowAbortButtonClick: function(filterWindow) {
-				filterWindow.destroy();
-			},
-
-		// As filterChooserWindowDelegate
-			/**
-			 * @param {CMDBuild.view.common.field.CMFilterChooserWindow} filterWindow
-			 * @params {Ext.data.Model} filter
-			 */
-			onCMFilterChooserWindowRecordSelect: function(filterWindow, filter) {
-				filterWindow.setFilter(filter);
-			}
+			this.controllerFilterWindow.fieldFilterAdvancedWindowSelectedRecordSet({ value: record });
+			this.controllerFilterWindow.show();
+		}
 	});
 
 })();

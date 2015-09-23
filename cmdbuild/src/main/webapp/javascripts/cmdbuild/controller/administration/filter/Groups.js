@@ -184,10 +184,12 @@
 		 * @param {Object} result
 		 * @param {Object} options
 		 * @param {Object} decodedResult
+		 *
+		 * TODO: waiting for refactor (save all group attributes in one call)
 		 */
 		success: function(result, options, decodedResult) {
 			var me = this;
-			var savedFilterObject = decodedResult[CMDBuild.core.constants.Proxy.FILTER];
+			var savedFilterObject = decodedResult[CMDBuild.core.constants.Proxy.FILTER] || options.params;
 
 			CMDBuild.view.common.field.translatable.Utils.commit(this.view.form);
 

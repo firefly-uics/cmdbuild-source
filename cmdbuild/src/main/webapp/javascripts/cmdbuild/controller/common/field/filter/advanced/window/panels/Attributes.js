@@ -25,13 +25,6 @@
 		],
 
 		/**
-		 * @cfg {Array}
-		 *
-		 * @private
-		 */
-		selectedEntityAttributes: [],
-
-		/**
 		 * Filter conditions buffer grouped by attribute name
 		 *
 		 * @property {Object}
@@ -44,6 +37,20 @@
 		 * @property {CMDBuild.view.common.field.filter.advanced.window.panels.attributes.FormPanel}
 		 */
 		form: undefined,
+
+		/**
+		 * Flag to override selectAtRuntime attribute parameter
+		 *
+		 * @cfg {Boolean}
+		 */
+		selectAtRuntimeCheckDisabled: false,
+
+		/**
+		 * @cfg {Array}
+		 *
+		 * @private
+		 */
+		selectedEntityAttributes: [],
 
 		/**
 		 * @property {CMDBuild.view.common.field.filter.advanced.window.panels.attributes.AttributesView}
@@ -235,7 +242,7 @@
 		 * @param {Object} attribute
 		 */
 		onFieldFilterAdvancedWindowAttributesAddButtonSelect: function(attribute) {
-			attribute.selectAtRuntimeCheckDisabled = false;
+			attribute.selectAtRuntimeCheckDisabled = Ext.isBoolean(this.selectAtRuntimeCheckDisabled) ? this.selectAtRuntimeCheckDisabled : false;
 
 			this.filterConditionsConditionAdd(attribute);
 

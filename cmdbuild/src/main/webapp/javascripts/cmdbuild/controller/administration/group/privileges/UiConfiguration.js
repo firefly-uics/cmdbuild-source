@@ -59,7 +59,7 @@
 		onGroupPrivilegesGridUIConfigurationSaveButtonClick: function() {
 			var params = this.form.getForm().getValues();
 			params[CMDBuild.core.constants.Proxy.CLASS_ID] = this.record.get(CMDBuild.core.constants.Proxy.ID);;
-			params[CMDBuild.core.constants.Proxy.GROUP_ID] = this.cmfg('selectedGroupGet', CMDBuild.core.constants.Proxy.ID);
+			params[CMDBuild.core.constants.Proxy.GROUP_ID] = this.cmfg('groupSelectedGroupGet', CMDBuild.core.constants.Proxy.ID);
 
 			CMDBuild.core.proxy.group.privileges.Classes.updateUIConfiguration({
 				params: params,
@@ -75,7 +75,7 @@
 		onGroupPrivilegesGridUIConfigurationShow: function() {
 			var params = {};
 			params[CMDBuild.core.constants.Proxy.CLASS_ID] = this.record.get(CMDBuild.core.constants.Proxy.ID);;
-			params[CMDBuild.core.constants.Proxy.GROUP_ID] = this.cmfg('selectedGroupGet', CMDBuild.core.constants.Proxy.ID);
+			params[CMDBuild.core.constants.Proxy.GROUP_ID] = this.cmfg('groupSelectedGroupGet', CMDBuild.core.constants.Proxy.ID);
 
 			CMDBuild.core.proxy.group.privileges.Classes.readUIConfiguration({
 				params: params,

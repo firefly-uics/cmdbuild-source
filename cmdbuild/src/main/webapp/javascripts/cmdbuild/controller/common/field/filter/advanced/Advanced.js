@@ -30,11 +30,11 @@
 			'fieldFilterAdvancedFilterSet',
 			'fieldFilterAdvancedSelectedClassGet',
 			'fieldFilterAdvancedSelectedClassIsEmpty',
-			'onFieldFilterAdvancedChooseButtonClick',
-			'onFieldFilterAdvancedClearButtonClick',
-			'onFieldFilterAdvancedDisable',
+			'onFieldFilterAdvancedFilterClearButtonClick',
+			'onFieldFilterAdvancedFilterSetButtonClick',
 			'onFieldFilterAdvancedReset',
-			'onFieldFilterAdvancedSetValue'
+			'onFieldFilterAdvancedSetValue',
+			'onFieldFilterAdvancedWindowgetEndpoint'
 		],
 
 		/**
@@ -269,17 +269,17 @@
 				this.fieldFilterAdvancedFilterSet();
 			},
 
-		onFieldFilterAdvancedClearButtonClick: function() {
+		onFieldFilterAdvancedFilterClearButtonClick: function() {
 			this.fieldFilterAdvancedFilterSet({
 				filterObject: Ext.create('CMDBuild.model.common.field.filter.advanced.Filter', {
 					entryType: this.fieldFilterAdvancedSelectedClassGet(CMDBuild.core.constants.Proxy.NAME)
 				})
 			});
 
-			this.view.clearFilterButton.setDisabled(true);
+			this.view.filterClearButton.setDisabled(true);
 		},
 
-		onFieldFilterAdvancedChooseButtonClick: function() {
+		onFieldFilterAdvancedFilterSetButtonClick: function() {
 			this.controllerFilterWindow.show();
 		},
 
@@ -311,12 +311,24 @@
 		},
 
 		/**
+		 * @param {Object} resultObject
+		 * @param {Object} resultObject.columnPrivileges
+		 * @param {Object} resultObject.filter
+		 */
+		onFieldFilterAdvancedWindowgetEndpoint: function(resultObject) {
+			this.fieldFilterAdvancedFilterSet({
+				filterObject: resultObject.filter,
+				propertyName: CMDBuild.core.constants.Proxy.CONFIGURATION
+			});
+		},
+
+		/**
 		 * Setup buttons enabled state besed on context
 		 */
 		setButtonState: function() {
 			if (!this.view.isDisabled()) {
-				this.view.chooseFilterButton.setDisabled(this.fieldFilterAdvancedSelectedClassIsEmpty());
-				this.view.clearFilterButton.setDisabled(this.fieldFilterAdvancedFilterIsEmpty([CMDBuild.core.constants.Proxy.CONFIGURATION]));
+				this.view.filterSetButton.setDisabled(this.fieldFilterAdvancedSelectedClassIsEmpty());
+				this.view.filterClearButton.setDisabled(this.fieldFilterAdvancedFilterIsEmpty([CMDBuild.core.constants.Proxy.CONFIGURATION]));
 			}
 		},
 

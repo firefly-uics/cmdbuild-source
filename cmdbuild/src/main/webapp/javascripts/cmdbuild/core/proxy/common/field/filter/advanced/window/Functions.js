@@ -5,7 +5,7 @@
 		requires: [
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.Index',
-			'CMDBuild.model.common.field.filter.advanced.window.functions.Function'
+			'CMDBuild.model.common.field.filter.advanced.window.Function'
 		],
 
 		singleton: true,
@@ -16,7 +16,7 @@
 		getStore: function() {
 			return Ext.create('Ext.data.Store', {
 				autoLoad: true,
-				model: 'CMDBuild.model.common.field.filter.advanced.window.functions.Function',
+				model: 'CMDBuild.model.common.field.filter.advanced.window.Function',
 				proxy: {
 					type: 'ajax',
 					url: CMDBuild.core.proxy.Index.functions.getFunctions,

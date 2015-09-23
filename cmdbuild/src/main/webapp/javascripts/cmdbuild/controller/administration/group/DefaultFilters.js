@@ -20,8 +20,8 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
-			'onGroupAddButtonClick',
 			'onGroupDefaultFiltersAbortButtonClick',
+			'onGroupDefaultFiltersAddButtonClick = onGroupAddButtonClick',
 			'onGroupDefaultFiltersGroupSelected = onGroupGroupSelected',
 			'onGroupDefaultFiltersSaveButtonClick',
 			'onGroupDefaultFiltersTabShow',
@@ -60,27 +60,27 @@
 			this.tree = this.view.tree;
 		},
 
+		onGroupDefaultFiltersAbortButtonClick: function() {
+			if (!this.cmfg('groupSelectedGroupIsEmpty'))
+				this.onGroupDefaultFiltersTabShow();
+		},
+
 		/**
 		 * Disable tab on add button click
 		 */
-		onGroupAddButtonClick: function() {
+		onGroupDefaultFiltersAddButtonClick: function() {
 			this.view.disable();
-		},
-
-		onGroupDefaultFiltersAbortButtonClick: function() {
-			if (!this.cmfg('selectedGroupIsEmpty'))
-				this.onGroupDefaultFiltersTabShow();
 		},
 
 		/**
 		 * Enable/Disable tab evaluating selected group
 		 */
 		onGroupDefaultFiltersGroupSelected: function() {
-			this.view.setDisabled(this.cmfg('selectedGroupIsEmpty'));
+			this.view.setDisabled(this.cmfg('groupSelectedGroupIsEmpty'));
 		},
 
 		onGroupDefaultFiltersSaveButtonClick: function() {
-			if (!this.cmfg('selectedGroupIsEmpty')) {
+			if (!this.cmfg('groupSelectedGroupIsEmpty')) {
 				var defaultFiltersNames = [];
 				var defaultFiltersIds = [];
 				var filterObjectsMap = {};
@@ -109,7 +109,7 @@
 
 						params = {};
 						params[CMDBuild.core.constants.Proxy.FILTERS] = Ext.encode(defaultFiltersIds);
-						params[CMDBuild.core.constants.Proxy.GROUPS] = Ext.encode([this.cmfg('selectedGroupGet', CMDBuild.core.constants.Proxy.NAME)]);
+						params[CMDBuild.core.constants.Proxy.GROUPS] = Ext.encode([this.cmfg('groupSelectedGroupGet', CMDBuild.core.constants.Proxy.NAME)]);
 
 						CMDBuild.core.proxy.group.DefaultFilters.update({ params: params });
 					}
@@ -122,7 +122,7 @@
 		 * Wrongly tableType attribute use to recognize three types of classes (standard, simple, processes).
 		 */
 		onGroupDefaultFiltersTabShow: function() {
-			if (!this.cmfg('selectedGroupIsEmpty')) {
+			if (!this.cmfg('groupSelectedGroupIsEmpty')) {
 				var params = {};
 				params[CMDBuild.core.constants.Proxy.ACTIVE] = true;
 
@@ -135,7 +135,7 @@
 						var readedClasses = decodedResponse.classes;
 
 						params = {};
-						params[CMDBuild.core.constants.Proxy.GROUP] = this.cmfg('selectedGroupGet', CMDBuild.core.constants.Proxy.NAME);
+						params[CMDBuild.core.constants.Proxy.GROUP] = this.cmfg('groupSelectedGroupGet', CMDBuild.core.constants.Proxy.NAME);
 
 						CMDBuild.core.proxy.group.DefaultFilters.read({
 							params: params,
@@ -286,7 +286,19 @@
 				params[CMDBuild.core.constants.Proxy.LIMIT] = CMDBuild.core.constants.Server.MAX_INTEGER; // HACK to get all filters
 				params[CMDBuild.core.constants.Proxy.START] = 0; // HACK to get all filters
 
-				column.getEditor().getStore().load({ params: params });
+				column.getEditor().getStore().load({
+					params: params,
+					scope: this,
+					callback: function(records, operation, success) {
+						// Store load errors manage
+						if (!success) {
+							CMDBuild.core.Message.error(null, {
+								text: CMDBuild.Translation.errors.unknown_error,
+								detail: operation.error
+							});
+						}
+					}
+				});
 
 				return true;
 			}
