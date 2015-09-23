@@ -1083,6 +1083,7 @@
 	},
 	"warnings": {
 		"emailTemplateRelatedAttributeEdited": "Email sablonnal összefüggő attribútumok megváltoztak, néhány levelet újra kell generálni.",
+		"itIsNotAllowedFilterWithCalculatedParams": "Nem engedélyezett a szűrők kalkulált paraméterrel történő használata",
 		"link_cards_changed_values": "A \"{0}\" kiválasztott értékei frissítve lettek",
 		"only_filtered": "A változtatások csak a szűrőre illeszkedő kártyákon lesznek végrehajtva",
 		"popup_block": "Kérem kapcsolja ki a popup blokkolást ezen az oldalon.",
@@ -1275,8 +1276,6 @@
 	"ipType": "IP típus",
 	"ipv4": "ipv4",
 	"ipv6": "ipv6",
-	"itIsNotAllowedFilterWithCalculatedParams": "Nem engedélyezett a szűrők kalkulált paraméterrel történő használata",
-	"itIsNotAllowedFilterWithRuntimeParams": "Nem engedélyezett a szűrők felhasználó által választott paraméterrel történő használata",
 	"keepSync": "Folyamatos sync",
 	"key": "Kulcs",
 	"language": "Nyelv",

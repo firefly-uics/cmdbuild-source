@@ -1083,6 +1083,7 @@
 	},
 	"warnings": {
 		"emailTemplateRelatedAttributeEdited": "<em>Attribute related with email templates changed, some e-mail could be regenerated.</em>",
+		"itIsNotAllowedFilterWithCalculatedParams": " Không được phép sử dụng  bộ lọc voi các thông số được tính toán ",
 		"link_cards_changed_values": "Sự lựa chọn của\"{0}\" đã được cập nhật",
 		"only_filtered": "Những thay đổi chỉ sẽ được áp dụng cho các thẻ đáp ứng được bộ lọc hiện tại",
 		"popup_block": "Chúng tôi phát hiện bạn đang sử dụng phần mềm chan cac cua so tu dong xuat hien, vui lòng tắt phan mem do để chạy hoạt động",
@@ -1275,8 +1276,6 @@
 	"ipType": "<em>IP type</em>",
 	"ipv4": "ipv4",
 	"ipv6": "ipv6",
-	"itIsNotAllowedFilterWithCalculatedParams": " Không được phép sử dụng  bộ lọc voi các thông số được tính toán ",
-	"itIsNotAllowedFilterWithRuntimeParams": " không được phép sử dụng bộ lọc với các thông số được chọn lựa boi Người dùng ",
 	"keepSync": "<em>Keep sync</em>",
 	"key": "Từ khóa",
 	"language": "<em>Language</em>",

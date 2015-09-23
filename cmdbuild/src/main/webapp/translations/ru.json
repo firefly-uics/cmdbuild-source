@@ -1083,6 +1083,7 @@
 	},
 	"warnings": {
 		"emailTemplateRelatedAttributeEdited": "<em>Attribute related with email templates changed, some e-mail could be regenerated.</em>",
+		"itIsNotAllowedFilterWithCalculatedParams": "Не допускается использовать фильтр с вычисляемыми параметрами",
 		"link_cards_changed_values": "<em>The selection of \"{0}\" has been updated.</em>",
 		"only_filtered": "Изменения будут применены только к карточкам, совпадающим с текущим фильтром",
 		"popup_block": "Пожалуйста, отключите блокировку всплывающих окон в браузере для нормальной работы",
@@ -1275,8 +1276,6 @@
 	"ipType": "<em>IP type</em>",
 	"ipv4": "ipv4",
 	"ipv6": "ipv6",
-	"itIsNotAllowedFilterWithCalculatedParams": "Не допускается использовать фильтр с вычисляемыми параметрами",
-	"itIsNotAllowedFilterWithRuntimeParams": "Не допускается использовать фильтр с переменными параметрами",
 	"keepSync": "<em>Keep sync</em>",
 	"key": "<em>Key</em>",
 	"language": "<em>Language</em>",

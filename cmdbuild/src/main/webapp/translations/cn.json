@@ -1203,6 +1203,7 @@
 	},
 	"warnings": {
 		"emailTemplateRelatedAttributeEdited": "与email模板相关联的属性变化, email不能生成.",
+		"itIsNotAllowedFilterWithCalculatedParams": "不允许使用已被计算过的参数来过滤",
 		"link_cards_changed_values": "选择\"{0}\" 已更新",
 		"only_filtered": "变更只能应用于满足当前过滤器的卡片",
 		"popup_block": "我们检测到你的计算机安装了防止弹出窗口的软件, 禁止此软件，以便正常弹出窗口",
@@ -1375,8 +1376,6 @@
 	"ipType": "IP类型",
 	"ipv4": "ipv4",
 	"ipv6": "ipv6",
-	"itIsNotAllowedFilterWithCalculatedParams": "不允许使用已被计算过的参数来过滤",
-	"itIsNotAllowedFilterWithRuntimeParams": "不允许使用用户可选择的参数来过滤",
 	"keepSync": "保持同步",
 	"key": "键",
 	"language": "语言",

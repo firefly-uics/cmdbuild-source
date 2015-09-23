@@ -1083,6 +1083,7 @@
 	},
 	"warnings": {
 		"emailTemplateRelatedAttributeEdited": "<em>Attribute related with email templates changed, some e-mail could be regenerated.</em>",
+		"itIsNotAllowedFilterWithCalculatedParams": "Није дозвољена употреба филтера са параметрима који се калкулишу",
 		"link_cards_changed_values": "Изабрани(а) \"{0}\" је ажуриран(а)",
 		"only_filtered": "Измене ће бити примењене само на картице података које задовољавају постављени филтер.",
 		"popup_block": "Детектован је програм за блокирање popup прозора, искључите га како бисте могли наставити операцију",
@@ -1275,8 +1276,6 @@
 	"ipType": "IP тип",
 	"ipv4": "ipv4",
 	"ipv6": "ipv6",
-	"itIsNotAllowedFilterWithCalculatedParams": "Није дозвољена употреба филтера са параметрима који се калкулишу",
-	"itIsNotAllowedFilterWithRuntimeParams": "Није дозвољена употреба филтера са кориснички изабраним параметрима",
 	"keepSync": "<em>Keep sync</em>",
 	"key": "Кључ",
 	"language": "<em>Language</em>",

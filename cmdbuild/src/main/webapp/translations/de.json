@@ -1083,6 +1083,7 @@
 	},
 	"warnings": {
 		"emailTemplateRelatedAttributeEdited": "<em>Attribute related with email templates changed, some e-mail could be regenerated.</em>",
+		"itIsNotAllowedFilterWithCalculatedParams": "Es ist nicht erlaubt, ein Filter mit gerechneten Parametern zu benutzen",
 		"link_cards_changed_values": "Die Auswahl von \"{0}\" wurde aktualisiert",
 		"only_filtered": "Die Abänderungen können nur in die das laufende Filter respektierenden Karten Wirkungen zeigen",
 		"popup_block": "Es wurde ein Pop-up-Blocker erkannt. Bitte den Blocker ausschalten, um diese Operation auszuführen",
@@ -1275,8 +1276,6 @@
 	"ipType": "<em>IP type</em>",
 	"ipv4": "ipv4",
 	"ipv6": "ipv6",
-	"itIsNotAllowedFilterWithCalculatedParams": "Es ist nicht erlaubt, ein Filter mit gerechneten Parametern zu benutzen",
-	"itIsNotAllowedFilterWithRuntimeParams": "Es ist nicht erlaubt, ein Filter mit vom Benutzer selektierbaren Parametern zu benutzen",
 	"keepSync": "<em>Keep sync</em>",
 	"key": "Schlüssel",
 	"language": "Sprache",
