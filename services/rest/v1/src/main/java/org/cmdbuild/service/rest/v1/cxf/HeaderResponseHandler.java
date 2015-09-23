@@ -1,4 +1,4 @@
-package org.cmdbuild.service.rest.v2.cxf;
+package org.cmdbuild.service.rest.v1.cxf;
 
 import static java.lang.String.format;
 import static java.net.URLEncoder.encode;
