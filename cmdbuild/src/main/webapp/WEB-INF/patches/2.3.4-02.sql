@@ -1,6 +1,6 @@
 -- Updates cm_delete_card function
 
-DROP FUNCTION cm_delete_card(integer, oid);
+DROP FUNCTION IF EXISTS cm_delete_card(integer, oid);
 
 CREATE OR REPLACE FUNCTION cm_delete_card(CardId integer, TableId oid, UserName text) RETURNS void AS $$
 DECLARE
@@ -12,7 +12,7 @@ BEGIN
 		EXECUTE 'DELETE FROM ' || TableId::regclass || ' WHERE "Id" = ' || CardId;
 	ELSE
 		RAISE DEBUG 'deleting a card from a standard class';
-		EXECUTE 'UPDATE ' || TableId::regclass || ' SET "User" = ''' || UserName || ''', "Status" = ''N'' WHERE "Id" = ' || CardId;
+		EXECUTE 'UPDATE ' || TableId::regclass || ' SET "User" = ''' || coalesce(UserName,'') || ''', "Status" = ''N'' WHERE "Id" = ' || CardId;
 	END IF;
 END;
 $$ LANGUAGE plpgsql VOLATILE;
