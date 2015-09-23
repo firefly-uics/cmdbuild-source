@@ -1083,6 +1083,7 @@
 	},
 	"warnings": {
 		"emailTemplateRelatedAttributeEdited": "Attribute related with email templates changed, some e-mail could be regenerated.",
+		"itIsNotAllowedFilterWithCalculatedParams": "It's not allowed to use a filter with calculated parameters",
 		"link_cards_changed_values": "The selection of \"{0}\" has been updated",
 		"only_filtered": "The changes will be applied only to the cards that meet the current filter",
 		"popup_block": "We have detected that you are using popup blocking software, please disable to run operation",
@@ -1279,8 +1280,6 @@
 	"ipType": "IP type",
 	"ipv4": "ipv4",
 	"ipv6": "ipv6",
-	"itIsNotAllowedFilterWithCalculatedParams": "It's not allowed to use a filter with calculated parameters",
-	"itIsNotAllowedFilterWithRuntimeParams": "It's not allowed to use a filter with user selectable parameters",
 	"keepSync": "Keep sync",
 	"key": "Key",
 	"language": "Language",

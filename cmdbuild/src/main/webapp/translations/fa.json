@@ -1083,6 +1083,7 @@
 	},
 	"warnings": {
 		"emailTemplateRelatedAttributeEdited": "<em>Attribute related with email templates changed, some e-mail could be regenerated.</em>",
+		"itIsNotAllowedFilterWithCalculatedParams": "اجازه ندارید که از فیلتر با پارامترهای محاسبه شده استفاده کنید",
 		"link_cards_changed_values": "<em>The selection of \"{0}\" has been updated.</em>",
 		"only_filtered": "تغییرات تنها در کارتهایی که با فیلتر کنونی سازگاری دارند اتفاق خواهد افتاد",
 		"popup_block": "<em>We have detected that you are using popup blocking software, please disable to run operation.</em>",
@@ -1275,8 +1276,6 @@
 	"ipType": "<em>IP type</em>",
 	"ipv4": "ipv4",
 	"ipv6": "ipv6",
-	"itIsNotAllowedFilterWithCalculatedParams": "اجازه ندارید که از فیلتر با پارامترهای محاسبه شده استفاده کنید",
-	"itIsNotAllowedFilterWithRuntimeParams": "اجازه ندارید که از فیلتری استفاده که کنید که کاربر بتواند انتخاب کند.",
 	"keepSync": "<em>Keep sync</em>",
 	"key": "کلید",
 	"language": "<em>Language</em>",

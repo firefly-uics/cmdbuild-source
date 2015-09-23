@@ -1083,6 +1083,7 @@
 	},
 	"warnings": {
 		"emailTemplateRelatedAttributeEdited": "<em>Attribute related with email templates changed, some e-mail could be regenerated.</em>",
+		"itIsNotAllowedFilterWithCalculatedParams": "Il est interdit d'utiliser un filtre avec des paramètres calculés",
 		"link_cards_changed_values": "La sélection de \"{0}\" a été mise à jour",
 		"only_filtered": "Les changements seront appliqués sur les fiches avec le filtre en cours.",
 		"popup_block": "Nous avons détecté que vous utilisez un programme pour bloquer les popups, merci de le désactiver",
@@ -1275,8 +1276,6 @@
 	"ipType": "Type IP",
 	"ipv4": "ipv4",
 	"ipv6": "ipv6",
-	"itIsNotAllowedFilterWithCalculatedParams": "Il est interdit d'utiliser un filtre avec des paramètres calculés",
-	"itIsNotAllowedFilterWithRuntimeParams": "Il est interdit d'utiliser un filtre avec des paramètres modifiables par l'utilisateur",
 	"keepSync": "<em>Keep sync</em>",
 	"key": "Clef",
 	"language": "Langue",

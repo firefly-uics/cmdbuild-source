@@ -1083,6 +1083,7 @@
 	},
 	"warnings": {
 		"emailTemplateRelatedAttributeEdited": "<em>Attribute related with email templates changed, some e-mail could be regenerated.</em>",
+		"itIsNotAllowedFilterWithCalculatedParams": "Het is niet toegestaan een filter te gebruiken met berekende parameters",
 		"link_cards_changed_values": "De selectie van \"{0}\" is bijgewerkt",
 		"only_filtered": "De wijzigingen worden alleen toegepast bij kaarten welke bij het huidige filter passen",
 		"popup_block": "We hebben ontdekt dat u popup blokkeer software gebruikt, schakel deze uit om dit programma te draaien",
@@ -1275,8 +1276,6 @@
 	"ipType": "<em>IP type</em>",
 	"ipv4": "ipv4",
 	"ipv6": "ipv6",
-	"itIsNotAllowedFilterWithCalculatedParams": "Het is niet toegestaan een filter te gebruiken met berekende parameters",
-	"itIsNotAllowedFilterWithRuntimeParams": "Het is niet toegestaan een filter te gebruiken met selecteerbare parameters",
 	"keepSync": "<em>Keep sync</em>",
 	"key": "Sleutel",
 	"language": "<em>Language</em>",
