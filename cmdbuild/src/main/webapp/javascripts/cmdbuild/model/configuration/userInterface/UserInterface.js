@@ -7,9 +7,9 @@
 
 		fields: [
 			{ name: CMDBuild.core.constants.Proxy.CLOUD_ADMIN, type: 'boolean' },
-			{ name: CMDBuild.core.constants.Proxy.DISABLED_CARD_TABS, type: 'auto', defaultValue: [] },
-			{ name: CMDBuild.core.constants.Proxy.DISABLED_MODULES, type: 'auto', defaultValue: [] },
-			{ name: CMDBuild.core.constants.Proxy.DISABLED_PROCESS_TABS, type: 'auto', defaultValue: [] },
+			{ name: CMDBuild.core.constants.Proxy.DISABLED_CARD_TABS, type: 'auto', defaultValue: [] }, // {CMDBuild.model.configuration.userInterface.DisabledCardTabs}
+			{ name: CMDBuild.core.constants.Proxy.DISABLED_MODULES, type: 'auto', defaultValue: [] }, // {CMDBuild.model.configuration.userInterface.DisabledModules}
+			{ name: CMDBuild.core.constants.Proxy.DISABLED_PROCESS_TABS, type: 'auto', defaultValue: [] }, // {CMDBuild.model.configuration.userInterface.DisabledProcessTabs}
 			{ name: CMDBuild.core.constants.Proxy.FULL_SCREEN_MODE, type: 'boolean' },
 			{ name: CMDBuild.core.constants.Proxy.HIDE_SIDE_PANEL, type: 'boolean' },
 			{ name: CMDBuild.core.constants.Proxy.PROCESS_WIDGET_ALWAYS_ENABLED, type: 'boolean' },
@@ -19,8 +19,6 @@
 
 		/**
 		 * @param {Object} data
-		 *
-		 * TODO: waiting for server refactor (properties rename)
 		 */
 		constructor: function(data) {
 			this.callParent(arguments);

@@ -25,9 +25,9 @@
 
 		constructor: function(){
 			this.callParent(arguments);
-			this.updateStore();			
+			this.updateStore();
 		},
-		
+
 		updateStore: function() {
 			var structure = [];
 			for (var moduleName in this.submodules) {
@@ -52,8 +52,8 @@
 			if (moduleName == 'changePassword' && !CMDBuild.Runtime.CanChangePassword) {
 				return false;
 			} else {
-				if (typeof _CMUIConfiguration != "undefined") {
-					return !_CMUIConfiguration.isModuleDisabled(moduleName);
+				if (!Ext.isEmpty(CMDBuild.configuration.userInterface)) {
+					return !CMDBuild.configuration.userInterface.isDisabledModule(moduleName);
 				} else {
 					return false;
 				}

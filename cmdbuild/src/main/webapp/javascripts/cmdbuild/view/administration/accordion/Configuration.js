@@ -22,7 +22,7 @@
 				cmName: 'configuration'
 			}]);
 
-			if (!_CMUIConfiguration.isCloudAdmin())
+			if (!CMDBuild.configuration.userInterface.get(CMDBuild.core.constants.Proxy.CLOUD_ADMIN))
 				this.store.getRootNode().appendChild([
 					{
 						id: 'workflow',

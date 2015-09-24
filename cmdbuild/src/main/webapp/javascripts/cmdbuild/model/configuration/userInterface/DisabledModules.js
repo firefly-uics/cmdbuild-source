@@ -1,5 +1,8 @@
 (function() {
 
+	/**
+	 * TODO: waiting for server refactor (properties rename)
+	 */
 	Ext.define('CMDBuild.model.configuration.userInterface.DisabledModules', {
 		extend: 'Ext.data.Model',
 

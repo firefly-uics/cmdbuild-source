@@ -98,63 +98,50 @@
 
 				CMDBuild.view.CMMainViewport.showSplash();
 
-				/**
-				 * Maybe a single request with all the configuration could be better
-				 *
-				 * TODO: use new implementation of CMDBuild.configuration.userInterface
-				 */
-				CMDBuild.core.proxy.group.Group.getUIConfiguration({
-					scope: this,
-					success: function(result, options, decodedResult) {
-						_CMUIConfiguration = new CMDBuild.model.CMUIConfigurationModel(decodedResult.response);
+				CMDBuild.core.proxy.Configuration.readAll({
+					success: function(response, options, decoded) {
+						/**
+						 * CMDBuild
+						 *
+						 * @deprecated
+						 */
+						CMDBuild.Config.cmdbuild = decoded.cmdbuild;
 
-						CMDBuild.core.proxy.Configuration.readAll({
-							success: function(response, options, decoded) {
-								/**
-								 * CMDBuild
-								 *
-								 * @deprecated
-								 */
-								CMDBuild.Config.cmdbuild = decoded.cmdbuild;
+						// DMS
+						CMDBuild.Config.dms = decoded.dms;
+						CMDBuild.Config.dms.enabled = ('true' == CMDBuild.Config.dms.enabled);
 
-								// DMS
-								CMDBuild.Config.dms = decoded.dms;
-								CMDBuild.Config.dms.enabled = ('true' == CMDBuild.Config.dms.enabled);
+						// Bim
+						CMDBuild.Config.bim = decoded.bim;
+						CMDBuild.Config.bim.enabled = ('true' == CMDBuild.Config.bim.enabled);
 
-								// Bim
-								CMDBuild.Config.bim = decoded.bim;
-								CMDBuild.Config.bim.enabled = ('true' == CMDBuild.Config.bim.enabled);
+						// Graph
+						CMDBuild.Config.graph = decoded.graph;
 
-								// Graph
-								CMDBuild.Config.graph = decoded.graph;
+						// Workflow
+						CMDBuild.Config.workflow = decoded.workflow;
 
-								// Workflow
-								CMDBuild.Config.workflow = decoded.workflow;
+						// Gis
+						CMDBuild.Config.gis = decoded.gis;
+						CMDBuild.Config.gis.enabled = ('true' == CMDBuild.Config.gis.enabled);
 
-								// Gis
-								CMDBuild.Config.gis = decoded.gis;
-								CMDBuild.Config.gis.enabled = ('true' == CMDBuild.Config.gis.enabled);
+						// Gis and bim extra configuration
+						CMDBuild.Config.cmdbuild.cardBrowserByDomainConfiguration = {};
+						CMDBuild.ServiceProxy.gis.getGisTreeNavigation({
+							success: function(operation, config, response) {
+								CMDBuild.Config.cmdbuild.cardBrowserByDomainConfiguration.root = response.root;
+								CMDBuild.Config.cmdbuild.cardBrowserByDomainConfiguration.geoServerLayersMapping = response.geoServerLayersMapping;
 
-								// Gis and bim extra configuration
-								CMDBuild.Config.cmdbuild.cardBrowserByDomainConfiguration = {};
-								CMDBuild.ServiceProxy.gis.getGisTreeNavigation({
-									success: function(operation, config, response) {
-										CMDBuild.Config.cmdbuild.cardBrowserByDomainConfiguration.root = response.root;
-										CMDBuild.Config.cmdbuild.cardBrowserByDomainConfiguration.geoServerLayersMapping = response.geoServerLayersMapping;
-
-										if (CMDBuild.Config.bim.enabled) {
-											CMDBuild.bim.proxy.rootClassName({
-												success: function(operation, config, response) {
-													CMDBuild.Config.bim.rootClass = response.root;
-												},
-												callback: cb
-											});
-										} else {
-											cb();
-										}
-									}
-								});
-
+								if (CMDBuild.Config.bim.enabled) {
+									CMDBuild.bim.proxy.rootClassName({
+										success: function(operation, config, response) {
+											CMDBuild.Config.bim.rootClass = response.root;
+										},
+										callback: cb
+									});
+								} else {
+									cb();
+								}
 							}
 						});
 					}
@@ -197,26 +184,26 @@
 					})
 				];
 
-				if (!_CMUIConfiguration.isModuleDisabled(classesAccordion.cmName)) {
+				if (!CMDBuild.configuration.userInterface.isDisabledModule(classesAccordion.cmName)) {
 					this.classesAccordion = classesAccordion;
 					this.cmAccordions.push(this.classesAccordion);
 				}
 
-				if (!_CMUIConfiguration.isModuleDisabled(processAccordion.cmName) && CMDBuild.Config.workflow.enabled == 'true') {
+				if (!CMDBuild.configuration.userInterface.isDisabledModule(processAccordion.cmName) && CMDBuild.Config.workflow.enabled == 'true') {
 					this.processAccordion = processAccordion;
 					this.cmAccordions.push(this.processAccordion);
 				}
-				if (!_CMUIConfiguration.isModuleDisabled(dataViewAccordion.cmName)) {
+				if (!CMDBuild.configuration.userInterface.isDisabledModule(dataViewAccordion.cmName)) {
 					this.dataViewAccordion = dataViewAccordion;
 					this.cmAccordions.push(this.dataViewAccordion);
 				}
 
-				if (!_CMUIConfiguration.isModuleDisabled(dashboardsAccordion.cmName)) {
+				if (!CMDBuild.configuration.userInterface.isDisabledModule(dashboardsAccordion.cmName)) {
 					this.dashboardsAccordion = dashboardsAccordion;
 					this.cmAccordions.push(this.dashboardsAccordion);
 				}
 
-				if (!_CMUIConfiguration.isModuleDisabled(reportAccordion.cmName)) {
+				if (!CMDBuild.configuration.userInterface.isDisabledModule(reportAccordion.cmName)) {
 					this.reportAccordion = reportAccordion;
 					this.cmAccordions.push(this.reportAccordion);
 				}
@@ -231,13 +218,13 @@
 				for (var moduleName in this.utilitiesTree.submodules) {
 					var cmName = this.utilitiesTree.getSubmoduleCMName(moduleName);
 
-					if (!_CMUIConfiguration.isModuleDisabled(cmName))
+					if (!CMDBuild.configuration.userInterface.isDisabledModule(cmName))
 						addUtilitySubpanel(cmName, this.cmPanels);
 				}
 
 				this.loadResources();
 
-				if (_CMUIConfiguration.isFullScreenMode())
+				if (CMDBuild.configuration.userInterface.get(CMDBuild.core.constants.Proxy.FULL_SCREEN_MODE))
 					_CMUIState.onlyGrid();
 			},
 
@@ -256,7 +243,7 @@
 						new CMDBuild.view.CMMainViewport({
 							cmAccordions: me.cmAccordions,
 							cmPanels: me.cmPanels,
-							hideAccordions: _CMUIConfiguration.isHideSidePanel()
+							hideAccordions: CMDBuild.configuration.userInterface.get(CMDBuild.core.constants.Proxy.HIDE_SIDE_PANEL)
 						})
 					);
 
