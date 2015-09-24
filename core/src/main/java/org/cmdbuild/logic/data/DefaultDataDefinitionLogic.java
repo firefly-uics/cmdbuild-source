@@ -12,11 +12,11 @@ import static org.cmdbuild.dao.constants.Cardinality.CARDINALITY_1N;
 import static org.cmdbuild.dao.constants.Cardinality.CARDINALITY_N1;
 import static org.cmdbuild.dao.entrytype.Predicates.attributeTypeInstanceOf;
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
-import static org.cmdbuild.dao.query.clause.FunctionCall.call;
-import static org.cmdbuild.logic.data.Utils.definitionForClassOrdering;
+import static org.cmdbuild.dao.query.clause.Clauses.call;
+import static org.cmdbuild.logic.data.Utils.withClassOrder;
 import static org.cmdbuild.logic.data.Utils.definitionForExisting;
 import static org.cmdbuild.logic.data.Utils.definitionForNew;
-import static org.cmdbuild.logic.data.Utils.definitionForReordering;
+import static org.cmdbuild.logic.data.Utils.withIndex;
 
 import java.util.List;
 import java.util.Map;
@@ -264,7 +264,7 @@ public class DefaultDataDefinitionLogic implements DataDefinitionLogic {
 			createdOrUpdatedAttribute = view.createAttribute(definition);
 		} else {
 			logger.info("attribute already created, updating existing one");
-			definition = definitionForExisting(attribute, existingAttribute);
+			definition = definitionForExisting(existingAttribute, attribute);
 			createdOrUpdatedAttribute = view.updateAttribute(definition);
 		}
 
@@ -325,7 +325,7 @@ public class DefaultDataDefinitionLogic implements DataDefinitionLogic {
 							}
 
 							@Override
-							public boolean isActive() {
+							public Boolean isActive() {
 								return !from(disabled) //
 										.contains(target.getName());
 							}
@@ -446,9 +446,11 @@ public class DefaultDataDefinitionLogic implements DataDefinitionLogic {
 		final CMAttribute existingAttribute = owner.getAttribute(attribute.getName());
 		if (existingAttribute == null) {
 			logger.warn("attribute '{}' not found", attribute.getName());
-			return;
+		} else if (existingAttribute.getIndex() == attribute.getIndex()) {
+			logger.debug("index for attribute '{}' not changed", attribute.getName());
+		} else {
+			view.updateAttribute(withIndex(existingAttribute, attribute.getIndex()));
 		}
-		view.updateAttribute(definitionForReordering(attribute, existingAttribute));
 	}
 
 	@Override
@@ -459,12 +461,8 @@ public class DefaultDataDefinitionLogic implements DataDefinitionLogic {
 
 		final CMClass owner = view.findClass(className);
 		for (final CMAttribute attribute : owner.getAttributes()) {
-			view.updateAttribute(definitionForClassOrdering(Attribute.newAttribute() //
-					.withOwnerName(owner.getName()) //
-					.withName(attribute.getName()) //
-					.withClassOrder(valueOrDefaultIfNull(mappedClassOrders.get(attribute.getName()))) //
-					.build(), //
-					attribute));
+			view.updateAttribute(withClassOrder(attribute, //
+					valueOrDefaultIfNull(mappedClassOrders.get(attribute.getName()))));
 		}
 
 		final CMFunction function = view.findFunctionByName(UPDATE_CLASS_INDEXES_FUNCTION_NAME);

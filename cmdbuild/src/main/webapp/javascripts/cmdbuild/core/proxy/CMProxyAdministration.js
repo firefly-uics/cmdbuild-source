@@ -4,8 +4,6 @@ var domainGridStore = null;
 var GET = "GET", POST = "POST";
 
 CMDBuild.ServiceProxy.administration = {
-	printSchema: 'services/json/schema/modreport/printclassschema',
-	
 	domain: {
 
 		list: function(p) {
@@ -21,7 +19,7 @@ CMDBuild.ServiceProxy.administration = {
 		},
 
 		/**
-		 * 
+		 *
 		 * @param {object} p
 		 * @param {object} p.params
 		 * @param {object} p.params.domainID

@@ -8,11 +8,6 @@
 		 */
 		delegate: undefined,
 
-		/**
-		 * @property {CMDBuild.view.management.report.GridPanel}
-		 */
-		grid: undefined,
-
 		border: true,
 		frame: false,
 		layout: 'fit',

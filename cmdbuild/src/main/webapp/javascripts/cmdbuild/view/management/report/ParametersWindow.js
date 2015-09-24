@@ -11,17 +11,22 @@
 		delegate: undefined,
 
 		/**
+		 * @cfg {Number}
+		 */
+		defaultSizeW: 0.60,
+
+		/**
 		 * @property {Ext.form.Panel}
 		 */
 		form: undefined,
 
+		autoScroll: true,
 		autoHeight: true,
-		autoWidth: true,
 		border: false,
 		frame: false,
 		layout: 'fit',
-		width: 660,
-		title: CMDBuild.Translation.management.modreport.report_parameters,
+
+		title: CMDBuild.Translation.reportParameters,
 
 		initComponent: function() {
 			Ext.apply(this, {
@@ -42,14 +47,14 @@
 								scope: this,
 
 								handler: function(button, e) {
-									this.delegate.cmfg('onParametersPrintButtonClick');
+									this.delegate.cmfg('onReportParametersWindowPrintButtonClick');
 								}
 							}),
-							Ext.create('CMDBuild.core.buttons.Abort', {
+							Ext.create('CMDBuild.core.buttons.text.Abort', {
 								scope: this,
 
 								handler: function(button, e) {
-									this.delegate.cmfg('onParametersAbortButtonClick');
+									this.delegate.cmfg('onReportParametersWindowAbortButtonClick');
 								}
 							})
 						]
@@ -70,6 +75,9 @@
 			});
 
 			this.callParent(arguments);
+
+			// Resize window, smaller than default size
+			this.width = this.width * this.defaultSizeW;
 		}
 	});
 

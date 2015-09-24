@@ -11,6 +11,7 @@
 <%
 	}
 %>
+
 <!-- LOADER CONFIG -->
 <script type="text/javascript" src="javascripts/cmdbuild/core/Utils.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/LoaderConfig.js"></script>
@@ -74,6 +75,7 @@
 <script type="text/javascript" src="javascripts/cmdbuild/cache/CMCache.js"></script>
 
 <!-- THE OTHERS -->
+<script type="text/javascript" src="javascripts/cmdbuild/controller/common/TemplateResolver.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/Message.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/PopupWindow.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/LoginWindow.js"></script>
@@ -84,7 +86,6 @@
 <script type="text/javascript" src="javascripts/cmdbuild/core/buttons/CMClassesMenuButton.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/buttons/AddCardMenuButton.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/buttons/AddRelationMenuButton.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/core/buttons/PrintMenuButton.js"></script>
 
 <!-- FORM STUFF -->
 <script type="text/javascript" src="javascripts/cmdbuild/form/CallbackPlugin.js"></script>

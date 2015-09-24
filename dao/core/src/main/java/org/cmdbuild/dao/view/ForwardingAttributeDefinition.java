@@ -37,7 +37,7 @@ public abstract class ForwardingAttributeDefinition extends ForwardingObject imp
 	}
 
 	@Override
-	public boolean isDisplayableInList() {
+	public Boolean isDisplayableInList() {
 		return delegate().isDisplayableInList();
 	}
 
@@ -52,7 +52,7 @@ public abstract class ForwardingAttributeDefinition extends ForwardingObject imp
 	}
 
 	@Override
-	public boolean isActive() {
+	public Boolean isActive() {
 		return delegate().isActive();
 	}
 
@@ -62,7 +62,7 @@ public abstract class ForwardingAttributeDefinition extends ForwardingObject imp
 	}
 
 	@Override
-	public int getIndex() {
+	public Integer getIndex() {
 		return delegate().getIndex();
 	}
 
@@ -72,7 +72,7 @@ public abstract class ForwardingAttributeDefinition extends ForwardingObject imp
 	}
 
 	@Override
-	public int getClassOrder() {
+	public Integer getClassOrder() {
 		return delegate().getClassOrder();
 	}
 

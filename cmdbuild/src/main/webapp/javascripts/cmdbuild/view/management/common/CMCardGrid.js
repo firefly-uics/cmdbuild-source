@@ -529,11 +529,14 @@
 		}
 
 		if (me.cmAddPrintButton) {
-			me.printGridMenu = new CMDBuild.PrintMenuButton({
-				callback : function() { me.fireEvent("click"); },
-				formatList: ["pdf", "csv"],
+			me.printGridMenu = Ext.create('CMDBuild.core.buttons.iconized.Print', {
+				formatList: [
+					CMDBuild.core.proxy.CMProxyConstants.PDF,
+					CMDBuild.core.proxy.CMProxyConstants.CSV
+				],
 				disabled: true
 			});
+
 			items.push(me.printGridMenu);
 		}
 

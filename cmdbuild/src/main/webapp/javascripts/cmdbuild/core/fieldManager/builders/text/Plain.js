@@ -16,6 +16,8 @@
 		 * @returns {Ext.grid.column.Column}
 		 */
 		buildColumn: function(withEditor) {
+			withEditor = Ext.isBoolean(withEditor) ? withEditor : false;
+
 			return Ext.create('Ext.grid.column.Column', {
 				dataIndex: this.cmfg('attributeModelGet', CMDBuild.core.proxy.CMProxyConstants.NAME),
 				disabled: !this.cmfg('attributeModelGet', CMDBuild.core.proxy.CMProxyConstants.WRITABLE),
