@@ -64,12 +64,4 @@ public abstract class BaseStorableConverter<T extends Storable> implements Stora
 		return Utils.readString(card, attributeName);
 	}
 
-	/**
-	 * @deprecated use static methods directly instead
-	 */
-	@Deprecated
-	protected Long readLongAttribute(final CMCard card, final String attributeName) {
-		return Utils.readLong(card, attributeName);
-	}
-
 }
