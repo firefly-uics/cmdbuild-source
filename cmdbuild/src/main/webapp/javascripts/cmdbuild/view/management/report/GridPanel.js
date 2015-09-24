@@ -3,7 +3,10 @@
 	Ext.define('CMDBuild.view.management.report.GridPanel', {
 		extend: 'Ext.grid.Panel',
 
-		requires: ['CMDBuild.core.proxy.Report'],
+		requires: [
+			'CMDBuild.core.proxy.CMProxyConstants',
+			'CMDBuild.core.proxy.report.Report'
+		],
 
 		/**
 		 * @cfg {CMDBuild.controller.management.report.Report}
@@ -16,7 +19,7 @@
 		initComponent: function() {
 			// Apply first store to use it in paging bar
 			Ext.apply(this, {
-				store: CMDBuild.core.proxy.Report.getStore()
+				store: CMDBuild.core.proxy.report.Report.getStore()
 			});
 
 			Ext.apply(this, {
@@ -53,7 +56,7 @@
 						fixed: true,
 
 						items: [
-							Ext.create('CMDBuild.core.buttons.FileFormatsPdf', {
+							Ext.create('CMDBuild.core.buttons.fileTypes.Pdf', {
 								withSpacer: true,
 								tooltip: CMDBuild.Translation.pdf,
 								scope: this,
@@ -65,7 +68,7 @@
 									});
 								}
 							}),
-							Ext.create('CMDBuild.core.buttons.FileFormatsOdt', {
+							Ext.create('CMDBuild.core.buttons.fileTypes.Odt', {
 								withSpacer: true,
 								tooltip: CMDBuild.Translation.odt,
 								scope: this,
@@ -77,7 +80,7 @@
 									});
 								}
 							}),
-							Ext.create('CMDBuild.core.buttons.FileFormatsRtf', {
+							Ext.create('CMDBuild.core.buttons.fileTypes.Rtf', {
 								withSpacer: true,
 								tooltip: CMDBuild.Translation.rtf,
 								scope: this,
@@ -89,7 +92,7 @@
 									});
 								}
 							}),
-							Ext.create('CMDBuild.core.buttons.FileFormatsCsv', {
+							Ext.create('CMDBuild.core.buttons.fileTypes.Csv', {
 								withSpacer: true,
 								tooltip: CMDBuild.Translation.csv,
 								scope: this,

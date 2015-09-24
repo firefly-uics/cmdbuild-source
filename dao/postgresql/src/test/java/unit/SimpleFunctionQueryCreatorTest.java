@@ -1,6 +1,6 @@
 package unit;
 
-import static org.cmdbuild.dao.query.clause.FunctionCall.call;
+import static org.cmdbuild.dao.query.clause.Clauses.call;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;

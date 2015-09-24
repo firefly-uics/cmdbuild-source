@@ -3,7 +3,7 @@ package org.cmdbuild.logic;
 import static com.google.common.collect.FluentIterable.from;
 import static com.google.common.collect.Iterables.contains;
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
-import static org.cmdbuild.dao.query.clause.FunctionCall.call;
+import static org.cmdbuild.dao.query.clause.Clauses.call;
 
 import java.util.ArrayList;
 import java.util.HashMap;

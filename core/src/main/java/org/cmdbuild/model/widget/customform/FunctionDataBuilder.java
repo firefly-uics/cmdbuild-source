@@ -9,7 +9,7 @@ import static org.cmdbuild.common.Constants.TIME_PRINTING_PATTERN;
 import static org.cmdbuild.common.utils.Reflection.defaultValues;
 import static org.cmdbuild.dao.guava.Functions.toValueSet;
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
-import static org.cmdbuild.dao.query.clause.FunctionCall.call;
+import static org.cmdbuild.dao.query.clause.Clauses.call;
 import static org.cmdbuild.dao.query.clause.alias.Aliases.name;
 import static org.joda.time.format.DateTimeFormat.forPattern;
 

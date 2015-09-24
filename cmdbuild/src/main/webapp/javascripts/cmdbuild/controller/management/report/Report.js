@@ -10,17 +10,27 @@
 			'CMDBuild.core.Message',
 			'CMDBuild.core.proxy.CMProxyConstants',
 			'CMDBuild.core.proxy.CMProxyUrlIndex',
-			'CMDBuild.core.proxy.Report'
+			'CMDBuild.core.proxy.report.Report'
 		],
 
 		/**
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
+			'currentReportParametersGet',
 			'currentReportParametersSet',
+			'currentReportRecordGet',
 			'onReportGenerateButtonClick',
+			'showReport',
 			'updateReport'
 		],
+
+		/**
+		 * @property {CMDBuild.model.report.Grid}
+		 *
+		 * @private
+		 */
+		currentReportRecord: undefined,
 
 		/**
 		 * Witch report types will be viewed inside modal pop-up
@@ -53,29 +63,31 @@
 		view: undefined,
 
 		/**
-		 * @param {Object} view
+		 * @param {CMDBuild.view.management.report.ReportView} view
 		 */
 		constructor: function(view) {
 			this.callParent(arguments);
 
-			this.grid = Ext.create('CMDBuild.view.management.report.GridPanel', {
-				delegate: this
-			});
+			this.grid = Ext.create('CMDBuild.view.management.report.GridPanel', { delegate: this });
 
 			this.view.add(this.grid);
 		},
 
 		/**
-		 * @param {Object} reportParams
 		 * @param {Boolean} forceDownload
 		 */
 		createReport: function(forceDownload) {
 			forceDownload = forceDownload || false;
 
-			if (!Ext.isEmpty(this.currentReportParametersGet('create', CMDBuild.core.proxy.CMProxyConstants.ID))) {
-				CMDBuild.core.proxy.Report.createReport({
+			if (
+				!Ext.isEmpty(this.currentReportParametersGet({
+					callIdentifier: 'create',
+					property: CMDBuild.core.proxy.CMProxyConstants.ID
+				}))
+			) {
+				CMDBuild.core.proxy.report.Report.create({
+					params: this.currentReportParametersGet({ callIdentifier: 'create' }),
 					scope: this,
-					params: this.currentReportParametersGet('create'),
 					failure: function(response, options, decodedResponse) {
 						CMDBuild.core.Message.error(
 							CMDBuild.Translation.error,
@@ -98,6 +110,31 @@
 			}
 		},
 
+		// CurrentReportRecord methods
+			/**
+			 * Returns full model object or just one property if required
+			 *
+			 * @param {String} parameterName
+			 *
+			 * @returns {CMDBuild.model.report.Grid} or Mixed
+			 */
+			currentReportRecordGet: function(parameterName) {
+				if (!Ext.isEmpty(parameterName))
+					return this.currentReportRecord.get(parameterName);
+
+				return this.currentReportRecord;
+			},
+
+			/**
+			 * @param {CMDBuild.model.report.Grid} record
+			 */
+			currentReportRecordSet: function(record) {
+				this.currentReportRecord = null;
+
+				if (!Ext.isEmpty(record))
+					this.currentReportRecord = record;
+			},
+
 		/**
 		 * @param {Object} reportInfo
 		 */
@@ -110,6 +147,8 @@
 						id: reportInfo[CMDBuild.core.proxy.CMProxyConstants.RECORD].get(CMDBuild.core.proxy.CMProxyConstants.ID)
 					}
 				});
+
+				this.currentReportRecordSet(reportInfo[CMDBuild.core.proxy.CMProxyConstants.RECORD]);
 
 				// Force download true for PDF and CSV
 				this.createReport(Ext.Array.contains(this.forceDownloadTypes, reportInfo[CMDBuild.core.proxy.CMProxyConstants.TYPE]));
@@ -127,7 +166,17 @@
 		 */
 		onViewOnFront: function(node) {
 			if (!Ext.Object.isEmpty(node)) {
-				this.grid.getStore().load();
+				this.grid.getStore().load({
+					scope: this,
+					callback: function(records, operation, success) {
+						if (!success) {
+							CMDBuild.core.Message.error(null, {
+								text: CMDBuild.Translation.errors.unknown_error,
+								detail: operation.error
+							});
+						}
+					}
+				});
 
 				if (
 					!Ext.isEmpty(node.get(CMDBuild.core.proxy.CMProxyConstants.ID))
@@ -156,13 +205,13 @@
 		showReport: function(forceDownload) {
 			forceDownload = forceDownload || false;
 
-			var params = {};
-			params[CMDBuild.core.proxy.CMProxyConstants.FORCE_DOWNLOAD_PARAM_KEY] = true;
-
 			if (forceDownload) { // Force download mode
+				var params = {};
+				params[CMDBuild.core.proxy.CMProxyConstants.FORCE_DOWNLOAD_PARAM_KEY] = true;
+
 				var form = Ext.create('Ext.form.Panel', {
 					standardSubmit: true,
-					url: CMDBuild.core.proxy.CMProxyUrlIndex.reports.printReportFactory
+					url: CMDBuild.core.proxy.CMProxyUrlIndex.reports.printReportFactory + '?donotdelete=true' // Add parameter to avoid report delete
 				});
 
 				form.submit({
@@ -174,17 +223,13 @@
 					form.close();
 				}, 100);
 			} else { // Pop-up display mode
-				var popup = window.open(
-					CMDBuild.core.proxy.CMProxyUrlIndex.reports.printReportFactory,
-					'Report',
-					'height=400,width=550,status=no,toolbar=no,scrollbars=yes,menubar=no,location=no,resizable'
-				);
-
-				if (!popup)
-					CMDBuild.core.Message.warn(
-						CMDBuild.Translation.warnings.warning_message,
-						CMDBuild.Translation.warnings.popup_block
-					);
+				Ext.create('CMDBuild.controller.management.report.Modal', {
+					parentDelegate: this,
+					extension: this.currentReportParametersGet({
+						callIdentifier: 'create',
+						property: CMDBuild.core.proxy.CMProxyConstants.EXTENSION
+					})
+				});
 			}
 		},
 
@@ -193,8 +238,8 @@
 		 */
 		updateReport: function(forceDownload) {
 			if (!this.currentReportParametersIsEmpty('update')) {
-				CMDBuild.core.proxy.Report.updateReport({
-					params: this.currentReportParametersGet('update'),
+				CMDBuild.core.proxy.report.Report.update({
+					params: this.currentReportParametersGet({ callIdentifier: 'update' }),
 					scope: this,
 					success: function(response, options, decodedResponse) {
 						this.showReport(forceDownload);

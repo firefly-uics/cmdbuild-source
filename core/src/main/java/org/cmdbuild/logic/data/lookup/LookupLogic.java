@@ -45,6 +45,7 @@ import org.cmdbuild.exception.NotFoundException.NotFoundExceptionType;
 import org.cmdbuild.exception.ORMException;
 import org.cmdbuild.exception.ORMException.ORMExceptionType;
 import org.cmdbuild.logic.Logic;
+import org.cmdbuild.logic.data.Utils.CMAttributeWrapper;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
@@ -237,86 +238,11 @@ public class LookupLogic implements Logic {
 						}
 
 						private CMAttributeDefinition attribute(final CMAttribute attribute, final LookupType type) {
-							return new CMAttributeDefinition() {
-
-								@Override
-								public String getName() {
-									return attribute.getName();
-								}
-
-								@Override
-								public CMEntryType getOwner() {
-									return attribute.getOwner();
-								}
+							return new CMAttributeWrapper(attribute) {
 
 								@Override
 								public CMAttributeType<?> getType() {
 									return new LookupAttributeType(type.name);
-								}
-
-								@Override
-								public String getDescription() {
-									return attribute.getDescription();
-								}
-
-								@Override
-								public String getDefaultValue() {
-									return attribute.getDefaultValue();
-								}
-
-								@Override
-								public boolean isDisplayableInList() {
-									return attribute.isDisplayableInList();
-								}
-
-								@Override
-								public boolean isMandatory() {
-									return attribute.isMandatory();
-								}
-
-								@Override
-								public boolean isUnique() {
-									return attribute.isUnique();
-								}
-
-								@Override
-								public boolean isActive() {
-									return attribute.isActive();
-								}
-
-								@Override
-								public Mode getMode() {
-									return attribute.getMode();
-								}
-
-								@Override
-								public int getIndex() {
-									return attribute.getIndex();
-								}
-
-								@Override
-								public String getGroup() {
-									return attribute.getGroup();
-								}
-
-								@Override
-								public int getClassOrder() {
-									return attribute.getClassOrder();
-								}
-
-								@Override
-								public String getEditorType() {
-									return attribute.getEditorType();
-								}
-
-								@Override
-								public String getForeignKeyDestinationClassName() {
-									return attribute.getForeignKeyDestinationClassName();
-								}
-
-								@Override
-								public String getFilter() {
-									return attribute.getFilter();
 								}
 
 							};

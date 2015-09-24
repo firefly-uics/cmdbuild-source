@@ -3,7 +3,7 @@ package org.cmdbuild.services.soap;
 import static java.lang.String.format;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
-import static org.cmdbuild.dao.query.clause.FunctionCall.call;
+import static org.cmdbuild.dao.query.clause.Clauses.call;
 
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;

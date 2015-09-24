@@ -18,7 +18,7 @@
 		/**
 		 * @cfg {String}
 		 */
-		sectionTitle: CMDBuild.Translation.report,
+		baseTitle: CMDBuild.Translation.report,
 
 		border: true,
 		frame: false,
@@ -32,40 +32,40 @@
 						itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_TOP,
 
 						items: [
-							Ext.create('CMDBuild.core.buttons.FileFormatsPdf', {
+							Ext.create('CMDBuild.core.buttons.fileTypes.Pdf', {
 								scope: this,
 
 								handler: function(button, e) {
-									this.delegate.cmfg('onReportTypeButtonClick', CMDBuild.core.proxy.CMProxyConstants.PDF);
+									this.delegate.cmfg('onSingleReportTypeButtonClick', CMDBuild.core.proxy.CMProxyConstants.PDF);
 								}
 							}),
-							Ext.create('CMDBuild.core.buttons.FileFormatsOdt', {
+							Ext.create('CMDBuild.core.buttons.fileTypes.Odt', {
 								scope: this,
 
 								handler: function(button, e) {
-									this.delegate.cmfg('onReportTypeButtonClick', CMDBuild.core.proxy.CMProxyConstants.ODT);
+									this.delegate.cmfg('onSingleReportTypeButtonClick', CMDBuild.core.proxy.CMProxyConstants.ODT);
 								}
 							}),
-							Ext.create('CMDBuild.core.buttons.FileFormatsRtf', {
+							Ext.create('CMDBuild.core.buttons.fileTypes.Rtf', {
 								scope: this,
 
 								handler: function(button, e) {
-									this.delegate.cmfg('onReportTypeButtonClick', CMDBuild.core.proxy.CMProxyConstants.RTF);
+									this.delegate.cmfg('onSingleReportTypeButtonClick', CMDBuild.core.proxy.CMProxyConstants.RTF);
 								}
 							}),
-							Ext.create('CMDBuild.core.buttons.FileFormatsCsv', {
+							Ext.create('CMDBuild.core.buttons.fileTypes.Csv', {
 								scope: this,
 
 								handler: function(button, e) {
-									this.delegate.cmfg('onReportTypeButtonClick', CMDBuild.core.proxy.CMProxyConstants.CSV);
+									this.delegate.cmfg('onSingleReportTypeButtonClick', CMDBuild.core.proxy.CMProxyConstants.CSV);
 								}
 							}),
 							'->',
-							Ext.create('CMDBuild.core.buttons.Download', {
+							Ext.create('CMDBuild.core.buttons.iconized.Download', {
 								scope: this,
 
 								handler: function(button, e) {
-									this.delegate.cmfg('onReportDownloadButtonClick');
+									this.delegate.cmfg('onSingleReportDownloadButtonClick');
 								}
 							})
 						]

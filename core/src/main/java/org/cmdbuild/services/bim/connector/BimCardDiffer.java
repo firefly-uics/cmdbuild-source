@@ -6,7 +6,7 @@ import static org.cmdbuild.bim.utils.BimConstants.GLOBALID_ATTRIBUTE;
 import static org.cmdbuild.bim.utils.BimConstants.SPACEGEOMETRY;
 import static org.cmdbuild.bim.utils.BimConstants.SPACEHEIGHT;
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
-import static org.cmdbuild.dao.query.clause.FunctionCall.call;
+import static org.cmdbuild.dao.query.clause.Clauses.call;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
 import static org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue.eq;
 import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
@@ -37,7 +37,7 @@ public class BimCardDiffer implements CardDiffer {
 	}
 
 	public static BimCardDiffer buildBimCardDiffer(final CMDataView dataView, final LookupLogic lookupLogic,
-			BimDataView bimDataView) {
+			final BimDataView bimDataView) {
 		return new BimCardDiffer(dataView, lookupLogic, bimDataView);
 	}
 
