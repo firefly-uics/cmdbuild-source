@@ -16,7 +16,7 @@
 		border: false,
 		frame: false,
 		layout: 'fit',
-		title: CMDBuild.Translation.management.findfilter.functions,
+		title: CMDBuild.Translation.functionLabel,
 
 		initComponent: function() {
 			Ext.apply(this, {

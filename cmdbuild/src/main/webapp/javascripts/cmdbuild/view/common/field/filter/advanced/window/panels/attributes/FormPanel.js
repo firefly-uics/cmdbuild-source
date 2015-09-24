@@ -34,7 +34,7 @@
 
 						items: [
 							this.addAttributeButton = Ext.create('CMDBuild.core.buttons.iconized.split.Add', {
-								text: CMDBuild.Translation.management.findfilter.title,
+								text: CMDBuild.Translation.chooseAnAttribute,
 							})
 						]
 					})

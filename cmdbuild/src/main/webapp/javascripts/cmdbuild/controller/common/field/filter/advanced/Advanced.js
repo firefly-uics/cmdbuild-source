@@ -225,7 +225,7 @@
 					}
 
 					// Field label setup
-					this.view.label.setValue(this.fieldFilterAdvancedFilterIsEmpty() ? CMDBuild.Translation.not_set : CMDBuild.Translation.set);
+					this.view.label.setValue(this.fieldFilterAdvancedFilterIsEmpty() ? CMDBuild.Translation.notSet : CMDBuild.Translation.set);
 				}
 
 				// Field buttons setup

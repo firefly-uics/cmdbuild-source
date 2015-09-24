@@ -219,7 +219,7 @@
 	});
 
 	var SET = CMDBuild.Translation.set;
-	var UNSET = CMDBuild.Translation.not_set;
+	var UNSET = CMDBuild.Translation.notSet;
 
 	Ext.define('CMDBuild.view.common.filter.CMFilterChooser', {
 		alternateClassName: 'CMDBuild.view.common.field.CMFilterChooser', // Legacy class name

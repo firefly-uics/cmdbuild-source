@@ -16,7 +16,7 @@
 		border: false,
 		frame: false,
 		layout: 'fit',
-		title: CMDBuild.Translation.management.findfilter.attributes,
+		title: CMDBuild.Translation.attributes,
 
 		initComponent: function() {
 			Ext.apply(this, {
