@@ -40,7 +40,7 @@
 		initComponent: function() {
 			Ext.apply(this, {
 				items: [
-					this.label = Ext.create('Ext.form.field.Display', { value: CMDBuild.Translation.not_set }),
+					this.label = Ext.create('Ext.form.field.Display', { value: CMDBuild.Translation.notSet }),
 					this.filterSetButton = Ext.create('CMDBuild.core.buttons.iconized.filter.Set', {
 						border: false,
 						tooltip: CMDBuild.Translation.setFilter,

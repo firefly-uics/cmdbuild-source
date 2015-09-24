@@ -20,7 +20,7 @@
 			Ext.apply(this, {
 				columns: [
 					Ext.create('Ext.grid.column.Column', {
-						text: CMDBuild.Translation.administration.modClass.domainProperties.domain,
+						text: CMDBuild.Translation.domain,
 						flex: 1,
 
 						renderer: function(value, metaData, record, rowIndex, colIndex, store, view) {
@@ -29,11 +29,11 @@
 					}),
 					Ext.create('Ext.grid.column.Column', {
 						dataIndex: CMDBuild.core.constants.Proxy.ORIENTED_DESCRIPTION,
-						text: CMDBuild.Translation.management.findfilter.direction,
+						text: CMDBuild.Translation.direction,
 						flex: 1
 					}),
 					Ext.create('Ext.grid.column.Column', {
-						text: CMDBuild.Translation.administration.modClass.domainProperties.class_destination,
+						text: CMDBuild.Translation.destination,
 						flex: 1,
 
 						editor: {
@@ -52,7 +52,7 @@
 						}
 					}),
 					Ext.create('Ext.grid.column.Column', {
-						text: CMDBuild.Translation.management.findfilter.relations,
+						text: CMDBuild.Translation.relations,
 						sortable: false,
 						hideable: false,
 						menuDisabled: true,
@@ -61,7 +61,7 @@
 						columns: [
 							Ext.create('Ext.grid.column.CheckColumn', {
 								dataIndex: 'noone',
-								text: CMDBuild.Translation.management.findfilter.notinrel,
+								text: CMDBuild.Translation.noOne,
 								width: 90,
 								align: 'center',
 								sortable: false,
@@ -83,7 +83,7 @@
 							}),
 							Ext.create('Ext.grid.column.CheckColumn', {
 								dataIndex: 'any',
-								text: CMDBuild.Translation.management.findfilter.all,
+								text: CMDBuild.Translation.any,
 								width: 90,
 								align: 'center',
 								sortable: false,
@@ -105,7 +105,7 @@
 							}),
 							Ext.create('Ext.grid.column.CheckColumn', {
 								dataIndex: 'oneof',
-								text: CMDBuild.Translation.management.findfilter.fromSelection,
+								text: CMDBuild.Translation.fromSelection,
 								width: 90,
 								align: 'center',
 								sortable: false,

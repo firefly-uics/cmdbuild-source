@@ -21,7 +21,7 @@
 		border: false,
 		frame: false,
 		layout: 'border',
-		title: CMDBuild.Translation.management.findfilter.relations,
+		title: CMDBuild.Translation.relations,
 
 		initComponent: function() {
 			Ext.apply(this, {

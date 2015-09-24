@@ -111,13 +111,13 @@
 
 		fillDomainGridStore: function() {
 			var domains = [];
-
+_debug('fillDomainGridStore 1');
 			this.gridDomain.getStore().removeAll();
 
 			if (!this.cmfg('fieldFilterAdvancedSelectedClassIsEmpty')) {
 				if (_CMCache.isEntryTypeByName(this.cmfg('fieldFilterAdvancedSelectedClassGet', CMDBuild.core.constants.Proxy.NAME)))
 					domains = _CMCache.getDirectedDomainsByEntryType(_CMCache.getEntryTypeByName(this.cmfg('fieldFilterAdvancedSelectedClassGet', CMDBuild.core.constants.Proxy.NAME)));
-
+_debug('fillDomainGridStore 2');
 				Ext.Array.forEach(domains, function(domainObject, i, allDomainObjects) {
 					var domain = _CMCache.getDomainById(domainObject['dom_id']);
 
@@ -301,12 +301,12 @@
 				var filterConfigurationObject = filter.get(CMDBuild.core.constants.Proxy.CONFIGURATION);
 
 				this.viewReset();
+				this.fillDomainGridStore();
 
 				if (
 					!Ext.isEmpty(filterConfigurationObject)
 					&& !Ext.Object.isEmpty(filterConfigurationObject[CMDBuild.core.constants.Proxy.RELATION])
 				) {
-					this.fillDomainGridStore();
 					this.decodeFilterConfigurationObject(filterConfigurationObject[CMDBuild.core.constants.Proxy.RELATION]);
 				}
 			}
