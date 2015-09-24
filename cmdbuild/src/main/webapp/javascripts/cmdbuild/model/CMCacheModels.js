@@ -165,6 +165,59 @@
 	});
 
 	/**
+	 * Used from cache
+	 *
+	 * @deprecated
+	 */
+	Ext.define("CMDBuild.cache.CMGroupModel", {
+		statics: {
+			type: {
+				NORMAL: "normal",
+				ADMIN: "admin",
+				CLOUD_ADMIN: "restrictedAdmin"
+			}
+		},
+		extend: 'Ext.data.Model',
+		fields: [
+			{name: "description", type: "string"},
+			{name: "id", type: "string"},
+			{name: "isActive", type: "boolean"},
+			{name: "isAdministrator", type: "boolean"},
+			{name: "isCloudAdministrator", type: "boolean"},
+			{name: "disabledModules", type: "auto"},
+			{name: "name", type: "string"},
+			{name: "email", type: "string"},
+			{name: "text", type: "string"},
+			{name: "startingClass", type: "string"}
+		],
+
+		isActive: function() {
+			return this.get("isActive");
+		},
+
+		isAdmin: function() {
+			return this.get("isAdministrator");
+		},
+
+		isCloudAdmin: function() {
+			return this.get("isCloudAdministrator");
+		},
+
+		getType: function() {
+			var type = CMDBuild.cache.CMGroupModel.type.NORMAL;
+			if (this.isAdmin()) {
+				if (this.isCloudAdmin()) {
+					type = CMDBuild.cache.CMGroupModel.type.CLOUD_ADMIN;
+				} else {
+					type = CMDBuild.cache.CMGroupModel.type.ADMIN;
+				}
+			}
+
+			return type;
+		}
+	});
+
+	/**
 	 * Use "CMDBuild.model.domain.Domain" and complete functionalities
 	 *
 	 * @deprecated
