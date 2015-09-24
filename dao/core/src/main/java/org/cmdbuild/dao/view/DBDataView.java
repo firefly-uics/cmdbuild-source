@@ -191,7 +191,7 @@ public class DBDataView extends AbstractDataView {
 			}
 
 			@Override
-			public boolean isDisplayableInList() {
+			public Boolean isDisplayableInList() {
 				return definition.isDisplayableInList();
 			}
 
@@ -206,7 +206,7 @@ public class DBDataView extends AbstractDataView {
 			}
 
 			@Override
-			public boolean isActive() {
+			public Boolean isActive() {
 				return definition.isActive();
 			}
 
@@ -216,7 +216,7 @@ public class DBDataView extends AbstractDataView {
 			}
 
 			@Override
-			public int getIndex() {
+			public Integer getIndex() {
 				return definition.getIndex();
 			}
 
@@ -226,7 +226,7 @@ public class DBDataView extends AbstractDataView {
 			}
 
 			@Override
-			public int getClassOrder() {
+			public Integer getClassOrder() {
 				return definition.getClassOrder();
 			}
 
