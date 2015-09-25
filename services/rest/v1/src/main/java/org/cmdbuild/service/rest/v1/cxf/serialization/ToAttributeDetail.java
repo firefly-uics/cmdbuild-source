@@ -185,6 +185,7 @@ public class ToAttributeDetail implements Function<CMAttribute, Attribute> {
 				}
 
 				builder.withTargetClass(target.getName()) //
+						.withDomainName(domain.getName())
 						.withFilter(newFilter() //
 								.withText(attribute.getFilter()) //
 								.withParams(toMap(metadataStoreFactory.storeForAttribute(attribute).readAll())) //

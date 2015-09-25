@@ -158,6 +158,8 @@ class SerializationStuff {
 				final CMDomain domain = dataView.findDomain(attributeType.getDomainName());
 				if (domain == null) {
 					logger.error("cannot find domain '{}'", attributeType.getDomainName());
+				} else {
+					schema.setDomainName(domain.getName());
 				}
 				if (domain.getClass1().getName().equals(attribute.getOwner().getName())) {
 					schema.setReferencedClassName(domain.getClass2().getName());

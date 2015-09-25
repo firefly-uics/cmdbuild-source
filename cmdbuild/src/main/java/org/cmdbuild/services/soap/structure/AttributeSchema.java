@@ -21,11 +21,12 @@ public class AttributeSchema {
 	private String defaultValue;
 	private String lookupType;
 	private String referencedClassName;
+	private String domainName;
 	private Integer referencedIdClass;
 	private Integer idDomain;
 	private String visibility;
 	private Metadata[] metadata;
-	
+
 	public AttributeSchema(){}
 
 	public int getIdClass() {
@@ -162,6 +163,14 @@ public class AttributeSchema {
 
 	public void setReferencedIdClass(Integer referencedIdClass) {
 		this.referencedIdClass = referencedIdClass;
+	}
+
+	public String getDomainName() {
+		return domainName;
+	}
+
+	public void setDomainName(String domainName) {
+		this.domainName = domainName;
 	}
 
 	public Integer getIdDomain() {
