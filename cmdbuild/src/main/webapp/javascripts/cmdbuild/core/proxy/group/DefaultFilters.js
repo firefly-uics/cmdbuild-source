@@ -3,6 +3,7 @@
 	Ext.define('CMDBuild.core.proxy.group.DefaultFilters', {
 
 		requires: [
+			'CMDBuild.core.Cache',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.Index',
 			'CMDBuild.model.group.defaultFilters.Filter'
@@ -38,45 +39,33 @@
 		 * @param {Object} parameters
 		 */
 		read: function(parameters) {
-			CMDBuild.Ajax.request({
-				url: CMDBuild.core.proxy.Index.group.defaultFilters.read,
-				params: parameters.params,
-				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
-				scope: parameters.scope || this,
-				failure: parameters.failure || Ext.emptyFn,
-				success: parameters.success || Ext.emptyFn,
-				callback: parameters.callback || Ext.emptyFn
+			Ext.apply(parameters, {
+				url: CMDBuild.core.proxy.Index.group.defaultFilters.read
 			});
+
+			CMDBuild.core.Cache.request(CMDBuild.core.constants.Proxy.GROUP, parameters);
 		},
 
 		/**
 		 * @param {Object} parameters
 		 */
 		readAllGroupFilters: function(parameters) {
-			CMDBuild.Ajax.request({
-				url: CMDBuild.core.proxy.Index.group.defaultFilters.readAllGroupFilters,
-				params: parameters.params,
-				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
-				scope: parameters.scope || this,
-				failure: parameters.failure || Ext.emptyFn,
-				success: parameters.success || Ext.emptyFn,
-				callback: parameters.callback || Ext.emptyFn
+			Ext.apply(parameters, {
+				url: CMDBuild.core.proxy.Index.group.defaultFilters.readAllGroupFilters
 			});
+
+			CMDBuild.core.Cache.request(CMDBuild.core.constants.Proxy.GROUP, parameters);
 		},
 
 		/**
 		 * @param {Object} parameters
 		 */
 		update: function(parameters) {
-			CMDBuild.Ajax.request({
-				url: CMDBuild.core.proxy.Index.group.defaultFilters.update,
-				params: parameters.params,
-				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
-				scope: parameters.scope || this,
-				failure: parameters.failure || Ext.emptyFn,
-				success: parameters.success || Ext.emptyFn,
-				callback: parameters.callback || Ext.emptyFn
+			Ext.apply(parameters, {
+				url: CMDBuild.core.proxy.Index.group.defaultFilters.update
 			});
+
+			CMDBuild.core.Cache.request(CMDBuild.core.constants.Proxy.GROUP, parameters, true);
 		}
 	});
 

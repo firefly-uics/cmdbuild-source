@@ -3,6 +3,7 @@
 	Ext.define('CMDBuild.core.proxy.User', {
 
 		requires: [
+			'CMDBuild.core.Cache',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.Index',
 			'CMDBuild.model.user.DefaultGroup',
@@ -14,17 +15,23 @@
 		/**
 		 * @param {Object} parameters
 		 */
-		disable:function(parameters) {
-			CMDBuild.Ajax.request({
-				method: 'POST',
-				url: CMDBuild.core.proxy.Index.user.disable,
-				params: parameters.params,
-				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
-				scope: parameters.scope || this,
-				failure: parameters.failure || Ext.emptyFn,
-				success: parameters.success || Ext.emptyFn,
-				callback: parameters.callback || Ext.emptyFn
+		create: function(parameters) {
+			Ext.apply(parameters, {
+				url: CMDBuild.core.proxy.Index.user.create
 			});
+
+			CMDBuild.core.Cache.request(CMDBuild.core.constants.Proxy.USER, parameters, true);
+		},
+
+		/**
+		 * @param {Object} parameters
+		 */
+		disable:function(parameters) {
+			Ext.apply(parameters, {
+				url: CMDBuild.core.proxy.Index.user.disable
+			});
+
+			CMDBuild.core.Cache.request(CMDBuild.core.constants.Proxy.USER, parameters, true);
 		},
 
 		/**
@@ -32,28 +39,27 @@
 		 */
 		getStore: function() {
 			return Ext.create('Ext.data.Store', {
-				model: 'CMDBuild.model.user.User',
 				autoLoad: true,
+				model: 'CMDBuild.model.user.User',
 				proxy: {
 					type: 'ajax',
-					url: CMDBuild.core.proxy.Index.user.getList,
+					url: CMDBuild.core.proxy.Index.user.readAll,
 					reader: {
 						type: 'json',
 						root: 'rows'
 					}
 				},
-				sorters: [{
-					property: 'username',
-					direction: 'ASC'
-				}]
+				sorters: [
+					{ property: 'username', direction: 'ASC' }
+				]
 			});
 		},
 
 		/**
-		 * @return {Ext.data.JsonStore}
+		 * @return {Ext.data.Store}
 		 */
 		getDefaultGroupStore: function() {
-			return Ext.create('Ext.data.JsonStore', {
+			return Ext.create('Ext.data.Store', {
 				autoLoad: false,
 				model: 'CMDBuild.model.user.DefaultGroup',
 				proxy: {
@@ -64,27 +70,32 @@
 						type: 'json'
 					}
 				},
-				sorters: [{
-					property: CMDBuild.core.constants.Proxy.DESCRIPTION,
-					direction: 'ASC'
-				}]
+				sorters: [
+					{ property: CMDBuild.core.constants.Proxy.DESCRIPTION, direction: 'ASC' }
+				]
 			});
 		},
 
 		/**
 		 * @param {Object} parameters
 		 */
-		save:function(parameters) {
-			CMDBuild.Ajax.request({
-				method: 'POST',
-				url: CMDBuild.core.proxy.Index.user.save,
-				params: parameters.params,
-				scope: parameters.scope || this,
-				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
-				failure: parameters.failure || Ext.emptyFn,
-				success: parameters.success || Ext.emptyFn,
-				callback: parameters.callback || Ext.emptyFn
+		read: function(parameters) {
+			Ext.apply(parameters, {
+				url: CMDBuild.core.proxy.Index.user.read
 			});
+
+			CMDBuild.core.Cache.request(CMDBuild.core.constants.Proxy.USER, parameters);
+		},
+
+		/**
+		 * @param {Object} parameters
+		 */
+		update: function(parameters) {
+			Ext.apply(parameters, {
+				url: CMDBuild.core.proxy.Index.user.update
+			});
+
+			CMDBuild.core.Cache.request(CMDBuild.core.constants.Proxy.USER, parameters, true);
 		}
 	});
 
