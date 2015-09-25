@@ -265,7 +265,7 @@ public class GenericRollbackDriver implements DBDriver {
 				}
 
 				@Override
-				public boolean isDisplayableInList() {
+				public Boolean isDisplayableInList() {
 					return existingAttribute.isDisplayableInList();
 				}
 
@@ -280,7 +280,7 @@ public class GenericRollbackDriver implements DBDriver {
 				}
 
 				@Override
-				public boolean isActive() {
+				public Boolean isActive() {
 					return existingAttribute.isActive();
 				}
 
@@ -290,7 +290,7 @@ public class GenericRollbackDriver implements DBDriver {
 				}
 
 				@Override
-				public int getIndex() {
+				public Integer getIndex() {
 					return existingAttribute.getIndex();
 				}
 
@@ -300,7 +300,7 @@ public class GenericRollbackDriver implements DBDriver {
 				}
 
 				@Override
-				public int getClassOrder() {
+				public Integer getClassOrder() {
 					return existingAttribute.getClassOrder();
 				}
 
@@ -373,7 +373,7 @@ public class GenericRollbackDriver implements DBDriver {
 				}
 
 				@Override
-				public boolean isDisplayableInList() {
+				public Boolean isDisplayableInList() {
 					return dbAttribute.isDisplayableInList();
 				}
 
@@ -388,7 +388,7 @@ public class GenericRollbackDriver implements DBDriver {
 				}
 
 				@Override
-				public boolean isActive() {
+				public Boolean isActive() {
 					return dbAttribute.isActive();
 				}
 
@@ -398,7 +398,7 @@ public class GenericRollbackDriver implements DBDriver {
 				}
 
 				@Override
-				public int getIndex() {
+				public Integer getIndex() {
 					return dbAttribute.getIndex();
 				}
 
@@ -408,7 +408,7 @@ public class GenericRollbackDriver implements DBDriver {
 				}
 
 				@Override
-				public int getClassOrder() {
+				public Integer getClassOrder() {
 					return dbAttribute.getClassOrder();
 				}
 

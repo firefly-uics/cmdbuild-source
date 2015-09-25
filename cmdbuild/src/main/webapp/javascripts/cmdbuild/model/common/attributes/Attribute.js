@@ -9,6 +9,7 @@
 			{ name: CMDBuild.core.constants.Proxy.DESCRIPTION, type: 'string' },
 			{ name: CMDBuild.core.constants.Proxy.EDITOR_TYPE, type: 'string' },
 			{ name: CMDBuild.core.constants.Proxy.FILTER, type: 'auto' },
+			{ name: CMDBuild.core.constants.Proxy.HIDDEN, type: 'boolean' },
 			{ name: CMDBuild.core.constants.Proxy.LENGTH, type: 'int', defaultValue: 0 },
 			{ name: CMDBuild.core.constants.Proxy.LOOKUP_TYPE, type: 'string' },
 			{ name: CMDBuild.core.constants.Proxy.MANDATORY, type: 'boolean' },
@@ -22,6 +23,31 @@
 		],
 
 		/**
+		 * Function to translate old CMDBuild attributes configuration objects to new one used from new FieldManager
+		 *
+		 * @param {Object} data
+		 */
+		setAdaptedData: function(data) {
+			if (!Ext.isEmpty(data) && Ext.isObject(data)) {
+				this.set(CMDBuild.core.constants.Proxy.LENGTH, data['len']);
+				this.set(CMDBuild.core.constants.Proxy.LOOKUP_TYPE, data[CMDBuild.core.constants.Proxy.LOOKUP]);
+				this.set(CMDBuild.core.constants.Proxy.MANDATORY, data['isnotnull']);
+				this.set(CMDBuild.core.constants.Proxy.UNIQUE, data['isunique']);
+
+				if (!Ext.isEmpty(data['fieldmode']))
+					if (data['fieldmode'] == CMDBuild.core.constants.Proxy.WRITE) {
+						this.set(CMDBuild.core.constants.Proxy.WRITABLE, true);
+					} else if (data['fieldmode'] == CMDBuild.core.constants.Proxy.HIDDEN) {
+						this.set(CMDBuild.core.constants.Proxy.HIDDEN, true);
+					}
+
+				// ForeignKey's specific
+				if (!Ext.isEmpty(data['fkDestination']))
+					this.set(CMDBuild.core.constants.Proxy.TARGET_CLASS, data['fkDestination']);
+			}
+		},
+
+		/**
 		 * @returns {Boolean}
 		 */
 		isValid: function() {
@@ -33,6 +59,12 @@
 						!Ext.isEmpty(this.get(CMDBuild.core.constants.Proxy.SCALE))
 						&& !Ext.isEmpty(this.get(CMDBuild.core.constants.Proxy.PRECISION))
 						&& this.get(CMDBuild.core.constants.Proxy.SCALE) < this.get(CMDBuild.core.constants.Proxy.PRECISION)
+					);
+				} break;
+
+				case 'FOREIGNKEY': {
+					customValidationValue = (
+						!Ext.isEmpty(this.get(CMDBuild.core.constants.Proxy.TARGET_CLASS))
 					);
 				} break;
 

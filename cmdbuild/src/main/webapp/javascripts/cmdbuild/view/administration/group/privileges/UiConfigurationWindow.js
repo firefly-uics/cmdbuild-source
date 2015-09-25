@@ -105,7 +105,7 @@
 		},
 
 		/**
-		 * Override close action to avoid destroy action. Close is called by Esc button press and using top-right close toolButton.
+		 * Override close action to avoid window destroy. Close is called by Esc button press and using top-right close toolButton.
 		 *
 		 * @override
 		 */

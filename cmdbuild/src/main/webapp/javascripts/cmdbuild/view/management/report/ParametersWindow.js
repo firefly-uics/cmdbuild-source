@@ -11,13 +11,17 @@
 		delegate: undefined,
 
 		/**
+		 * @cfg {Number}
+		 */
+		defaultSizeW: 0.60,
+
+		/**
 		 * @property {Ext.form.Panel}
 		 */
 		form: undefined,
 
 		autoScroll: true,
 		autoHeight: true,
-		autoWidth: true,
 		border: false,
 		frame: false,
 		layout: 'fit',
@@ -71,6 +75,9 @@
 			});
 
 			this.callParent(arguments);
+
+			// Resize window, smaller than default size
+			this.width = this.width * this.defaultSizeW;
 		}
 	});
 

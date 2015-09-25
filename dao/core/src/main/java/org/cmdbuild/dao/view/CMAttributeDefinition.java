@@ -19,21 +19,21 @@ public interface CMAttributeDefinition {
 
 	String getDefaultValue();
 
-	boolean isDisplayableInList();
+	Boolean isDisplayableInList();
 
 	boolean isMandatory();
 
 	boolean isUnique();
 
-	boolean isActive();
+	Boolean isActive();
 
 	Mode getMode();
 
-	int getIndex();
+	Integer getIndex();
 
 	String getGroup();
 
-	int getClassOrder();
+	Integer getClassOrder();
 
 	String getEditorType();
 
