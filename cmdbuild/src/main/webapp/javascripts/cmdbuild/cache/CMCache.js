@@ -10,7 +10,6 @@
 		mixins: {
 			lookup: "CMDBUild.cache.CMCacheLookupFunctions",
 			entryType: "CMDBUild.cache.CMCacheClassFunctions",
-			groups: "CMDBUild.cache.CMCacheGroupsFunctions",
 			domains: "CMDBUild.cache.CMCacheDomainFunctions",
 			reports: "CMDBUild.cache.CMCacheReportFunctions",
 			dashboards: "CMDBuild.cache.CMCacheDashboardFunctions",

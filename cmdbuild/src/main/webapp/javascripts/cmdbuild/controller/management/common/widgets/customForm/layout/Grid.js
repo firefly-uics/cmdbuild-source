@@ -165,7 +165,7 @@
 							xaVars['_SystemFieldFilter'] = attribute.filter;
 
 							var templateResolver = new CMDBuild.Management.TemplateResolver({ // TODO: implementation of serverside template resolver
-								clientForm: this.cmfg('widgetControllerPropertyGet', 'getClientForm'),
+								clientForm: this.cmfg('controllerPropertyGet', 'getClientForm'),
 								xaVars: xaVars,
 								serverVars: this.cmfg('getTemplateResolverServerVars')
 							});
@@ -347,7 +347,7 @@
 		 */
 		setDefaultContent: function() {
 			this.cmfg('widgetConfigurationSet', {
-				configurationObject: this.cmfg('widgetControllerPropertyGet', 'widgetConfiguration')[CMDBuild.core.constants.Proxy.DATA],
+				configurationObject: this.cmfg('controllerPropertyGet', 'widgetConfiguration')[CMDBuild.core.constants.Proxy.DATA],
 				propertyName: CMDBuild.core.constants.Proxy.DATA
 			});
 

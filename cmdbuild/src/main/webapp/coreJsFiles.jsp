@@ -62,7 +62,6 @@
 <script type="text/javascript" src="javascripts/cmdbuild/cache/CMCacheClassFunctions.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/cache/CMCacheReportFunctions.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/cache/CMCacheLookupFunctions.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/cache/CMCacheGroupsFunctions.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/cache/CMCacheDomainFunctions.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/cache/CMCacheDashboardFunctions.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/cache/CMCacheAttachmentCategoryFunctions.js"></script>

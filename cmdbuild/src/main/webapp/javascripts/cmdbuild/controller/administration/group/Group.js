@@ -37,6 +37,7 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
+			'controllerPropertyGet',
 			'groupSelectedGroupGet',
 			'groupSelectedGroupIsEmpty',
 			'groupSelectedGroupSet',
@@ -130,8 +131,8 @@
 		 * @param {CMDBuild.view.common.CMAccordionStoreModel} parameters
 		 */
 		onViewOnFront: function(parameters) {
-			if (!Ext.isEmpty(parameters)) {
-				CMDBuild.core.proxy.group.Group.readAll({ // TODO: waiting for refactor (crud)
+			if (!Ext.isEmpty(parameters))
+				CMDBuild.core.proxy.group.Group.read({ // TODO: waiting for refactor (crud)
 					scope: this,
 					success: function(result, options, decodedResult) {
 						decodedResult = decodedResult[CMDBuild.core.constants.Proxy.GROUPS];
@@ -154,7 +155,6 @@
 						}
 					}
 				});
-			}
 		}
 	});
 

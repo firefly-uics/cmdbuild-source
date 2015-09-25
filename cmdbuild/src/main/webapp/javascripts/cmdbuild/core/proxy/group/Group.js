@@ -3,9 +3,10 @@
 	Ext.define('CMDBuild.core.proxy.group.Group', {
 
 		requires: [
+			'CMDBuild.core.Cache',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.Index',
-			'CMDBuild.model.group.StartingClass'
+			'CMDBuild.model.group.StartingClass',
 		],
 
 		singleton: true,
@@ -14,30 +15,22 @@
 		 * @param {Object} parameters
 		 */
 		create: function(parameters) {
-			CMDBuild.Ajax.request({
-				url: CMDBuild.core.proxy.Index.group.create,
-				params: parameters.params,
-				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
-				scope: parameters.scope || this,
-				failure: parameters.failure || Ext.emptyFn,
-				success: parameters.success || Ext.emptyFn,
-				callback: parameters.callback || Ext.emptyFn
+			Ext.apply(parameters, {
+				url: CMDBuild.core.proxy.Index.group.create
 			});
+
+			CMDBuild.core.Cache.request(CMDBuild.core.constants.Proxy.GROUP, parameters, true);
 		},
 
 		/**
 		 * @param {Object} parameters
 		 */
 		enableDisable: function(parameters) {
-			CMDBuild.Ajax.request({
+			Ext.apply(parameters, {
 				url: CMDBuild.core.proxy.Index.group.enableDisableGroup,
-				params: parameters.params,
-				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
-				scope: parameters.scope || this,
-				failure: parameters.failure || Ext.emptyFn,
-				success: parameters.success || Ext.emptyFn,
-				callback: parameters.callback || Ext.emptyFn
 			});
+
+			CMDBuild.core.Cache.request(CMDBuild.core.constants.Proxy.GROUP, parameters, true);
 		},
 
 		/**
@@ -84,45 +77,46 @@
 		 * @param {Object} parameters
 		 */
 		getUIConfiguration: function(parameters) {
-			CMDBuild.Ajax.request({
+			Ext.apply(parameters, {
 				url: CMDBuild.core.proxy.Index.group.getUiConfiguration,
-				params: parameters.params,
-				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : false,
-				scope: parameters.scope || this,
-				failure: parameters.failure || Ext.emptyFn,
-				success: parameters.success || Ext.emptyFn,
-				callback: parameters.callback || Ext.emptyFn
+				loadMask : false
 			});
+
+			CMDBuild.core.Cache.request(CMDBuild.core.constants.Proxy.GROUP, parameters);
+		},
+
+		/**
+		 * @param {Object} parameters
+		 */
+		read: function(parameters) {
+			Ext.apply(parameters, {
+				url: CMDBuild.core.proxy.Index.group.read
+			});
+
+			CMDBuild.core.Cache.request(CMDBuild.core.constants.Proxy.GROUP, parameters);
 		},
 
 		/**
 		 * @param {Object} parameters
 		 */
 		readAll: function(parameters) {
-			CMDBuild.Ajax.request({
-				url: CMDBuild.core.proxy.Index.group.getGroupList,
-				params: parameters.params,
-				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : false,
-				scope: parameters.scope || this,
-				failure: parameters.failure || Ext.emptyFn,
-				success: parameters.success || Ext.emptyFn,
-				callback: parameters.callback || Ext.emptyFn
+			Ext.apply(parameters, {
+				url: CMDBuild.core.proxy.Index.group.readAll,
+				loadMask: false
 			});
+
+			CMDBuild.core.Cache.request(CMDBuild.core.constants.Proxy.GROUP, parameters);
 		},
 
 		/**
 		 * @param {Object} parameters
 		 */
 		update: function(parameters) {
-			CMDBuild.Ajax.request({
+			Ext.apply(parameters, {
 				url: CMDBuild.core.proxy.Index.group.update,
-				params: parameters.params,
-				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
-				scope: parameters.scope || this,
-				failure: parameters.failure || Ext.emptyFn,
-				success: parameters.success || Ext.emptyFn,
-				callback: parameters.callback || Ext.emptyFn
 			});
+
+			CMDBuild.core.Cache.request(CMDBuild.core.constants.Proxy.GROUP, parameters, true);
 		}
 	});
 

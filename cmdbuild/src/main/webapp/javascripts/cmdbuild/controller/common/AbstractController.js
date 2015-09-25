@@ -102,6 +102,19 @@
 			_warning('unmanaged function with name "' + name + '"', this);
 		},
 
+		// Controller methods
+			/**
+			 * @param {String} propertyName
+			 *
+			 * @returns {Mixed}
+			 */
+			controllerPropertyGet: function(propertyName) {
+				if (!Ext.isEmpty(this[propertyName]))
+					return this[propertyName];
+
+				return null;
+			},
+
 		/**
 		 * Decodes array string inline tags (forward: '->', alias: '=')
 		 *

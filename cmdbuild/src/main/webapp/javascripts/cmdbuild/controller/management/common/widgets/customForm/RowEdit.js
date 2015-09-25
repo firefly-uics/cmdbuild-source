@@ -81,7 +81,7 @@
 							xaVars['_SystemFieldFilter'] = attribute.filter;
 
 							var templateResolver = new CMDBuild.Management.TemplateResolver({ // TODO: implementation of serverside template resolver
-								clientForm: this.cmfg('widgetControllerPropertyGet', 'getClientForm'),
+								clientForm: this.cmfg('controllerPropertyGet', 'getClientForm'),
 								xaVars: xaVars,
 								serverVars: this.cmfg('getTemplateResolverServerVars')
 							});

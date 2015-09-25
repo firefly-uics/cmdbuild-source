@@ -118,14 +118,25 @@
 		 * Enable/Disable tab evaluating group privileges, CloudAdministrators couldn't change UIConfiguration of full administrator groups
 		 */
 		onGroupUserInterfaceGroupSelected: function() {
-			var loggedUserCurrentGroup = _CMCache.getGroupById(CMDBuild.Runtime.DefaultGroupId);
+			CMDBuild.core.proxy.group.Group.read({ // TODO: waiting for refactor (crud)
+				scope: this,
+				success: function(result, options, decodedResult) {
+					decodedResult = decodedResult[CMDBuild.core.constants.Proxy.GROUPS];
 
-			this.view.setDisabled(
-				this.cmfg('groupSelectedGroupIsEmpty')
-				|| loggedUserCurrentGroup.get(CMDBuild.core.constants.Proxy.IS_CLOUD_ADMINISTRATOR)
-				&& this.cmfg('groupSelectedGroupGet', CMDBuild.core.constants.Proxy.IS_ADMINISTRATOR)
-				&& !this.cmfg('groupSelectedGroupGet', CMDBuild.core.constants.Proxy.IS_CLOUD_ADMINISTRATOR)
-			);
+					var loggedUserCurrentGroup = Ext.Array.findBy(decodedResult, function(groupObject, i) {
+						return CMDBuild.Runtime.DefaultGroupId == groupObject[CMDBuild.core.constants.Proxy.ID];
+					}, this);
+
+					if (!Ext.isEmpty(loggedUserCurrentGroup)) {
+						this.view.setDisabled(
+							this.cmfg('groupSelectedGroupIsEmpty')
+							|| loggedUserCurrentGroup[CMDBuild.core.constants.Proxy.IS_CLOUD_ADMINISTRATOR]
+							&& this.cmfg('groupSelectedGroupGet', CMDBuild.core.constants.Proxy.IS_ADMINISTRATOR)
+							&& !this.cmfg('groupSelectedGroupGet', CMDBuild.core.constants.Proxy.IS_CLOUD_ADMINISTRATOR)
+						);
+					}
+				}
+			});
 		},
 
 		onGroupUserInterfaceSaveButtonClick: function() {

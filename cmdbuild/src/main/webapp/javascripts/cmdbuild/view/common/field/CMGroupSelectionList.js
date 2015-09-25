@@ -1,7 +1,12 @@
 (function() {
 
+	/**
+	 * @deprecated (CMDBuild.view.common.field.multiselect.Group)
+	 */
 	Ext.define('CMDBuild.view.common.field.CMGroupSelectionList', {
 		extend: 'Ext.ux.form.MultiSelect',
+
+		requires: ['CMDBuild.core.proxy.common.field.multiselect.Group'],
 
 		considerAsFieldToDisable: true,
 
@@ -17,19 +22,9 @@
 		allowBlank: true,
 
 		initComponent: function() {
-			if (!this.store) {
-				if (
-					_CMCache
-					&& typeof _CMCache.getActiveGroupsStore == 'function'
-				) {
-					this.store = _CMCache.getActiveGroupsStore();
-				} else {
-					this.store = Ext.create('Ext.data.Store', {
-						fields: ['fake'],
-						data: []
-					});
-				}
-			}
+			Ext.apply(this, {
+				store: CMDBuild.core.proxy.common.field.multiselect.Group.getStore()
+			});
 
 			this.callParent(arguments);
 		},

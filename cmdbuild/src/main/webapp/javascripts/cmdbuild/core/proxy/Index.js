@@ -165,13 +165,13 @@
 
 		group: {
 			create: 'services/json/schema/modsecurity/savegroup', // TODO: waiting for refactor (crud)
-			read: '',
+			read: 'services/json/schema/modsecurity/getgrouplist', // TODO: waiting for refactor (crud)
 			remove: '',
 			update: 'services/json/schema/modsecurity/savegroup', // TODO: waiting for refactor (crud)
 
 			enableDisableGroup: 'services/json/schema/modsecurity/enabledisablegroup',
-			getGroupList: 'services/json/schema/modsecurity/getgrouplist',
 			getUiConfiguration: 'services/json/schema/modsecurity/getuiconfiguration',
+			readAll: 'services/json/schema/modsecurity/getgrouplist',
 
 			defaultFilters: {
 				read: 'services/json/filter/getdefault',

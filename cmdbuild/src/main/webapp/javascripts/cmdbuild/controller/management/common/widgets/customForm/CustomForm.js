@@ -22,11 +22,11 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
+			'controllerPropertyGet',
 			'getTemplateResolverServerVars',
 			'widgetConfigurationGet',
 			'widgetConfigurationIsAttributeEmpty',
-			'widgetConfigurationSet',
-			'widgetControllerPropertyGet'
+			'widgetConfigurationSet'
 		],
 
 		/**

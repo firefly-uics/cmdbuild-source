@@ -78,9 +78,7 @@
 			CMDBuild.core.proxy.group.Group.enableDisable({
 				params: params,
 				scope: this,
-				success: function(response, options, decodedResponse) {
-					_CMCache.onGroupSaved(decodedResponse.group); // TODO: try to avoid to use cache
-				}
+				success: this.success
 			});
 		},
 
@@ -101,9 +99,10 @@
 		onGroupPropertiesSaveButtonClick: function() {
 			if (this.validate(this.form)) { // Validate before save
 				var params = this.form.getData(true);
-				params[CMDBuild.core.constants.Proxy.ID] = params[CMDBuild.core.constants.Proxy.ID] || -1;
 
 				if (Ext.isEmpty(params[CMDBuild.core.constants.Proxy.ID])) {
+					params[CMDBuild.core.constants.Proxy.ID] = params[CMDBuild.core.constants.Proxy.ID] || -1;
+
 					CMDBuild.core.proxy.group.Group.create({
 						params: params,
 						scope: this,
@@ -120,25 +119,38 @@
 		},
 
 		/**
-		 * TODO: should be refactored to require group details only on tab show
+		 * TODO: waiting for refactor (crud)
 		 */
 		onGroupPropertiesTabShow: function() {
-			if (!this.cmfg('groupSelectedGroupIsEmpty')) {
-				this.form.loadRecord(this.cmfg('groupSelectedGroupGet'));
-				this.form.enableDisableButton.setActiveState(this.cmfg('groupSelectedGroupGet', CMDBuild.core.constants.Proxy.IS_ACTIVE));
-				this.form.setDisabledModify(true, true);
-			}
+			if (!this.cmfg('groupSelectedGroupIsEmpty'))
+				CMDBuild.core.proxy.group.Group.read({
+					scope: this,
+					success: function(result, options, decodedResult) {
+						decodedResult = decodedResult[CMDBuild.core.constants.Proxy.GROUPS];
+
+						var selectedGroupModel = Ext.Array.findBy(decodedResult, function(groupObject, i) {
+							return this.cmfg('groupSelectedGroupGet', CMDBuild.core.constants.Proxy.ID) == groupObject[CMDBuild.core.constants.Proxy.ID];
+						}, this);
+
+						if (!Ext.isEmpty(selectedGroupModel)) {
+							this.cmfg('groupSelectedGroupSet',selectedGroupModel); // Update selectedGroup data (to delete on refactor)
+
+							this.form.loadRecord(this.cmfg('groupSelectedGroupGet'));
+							this.form.enableDisableButton.setActiveState(this.cmfg('groupSelectedGroupGet', CMDBuild.core.constants.Proxy.IS_ACTIVE));
+							this.form.setDisabledModify(true, true);
+						}
+					}
+				});
 		},
 
 		/**
 		 * @param {Object} result
 		 * @param {Object} options
 		 * @param {Object} decodedResult
-		 *
-		 * TODO: server side refactor needed to follow new CMDBuild standards
 		 */
 		success: function(result, options, decodedResult) {
-			_CMCache.onGroupSaved(decodedResult.group);
+			_CMMainViewportController.findAccordionByCMName('group').deselect();
+			_CMMainViewportController.findAccordionByCMName('group').updateStore(decodedResult[CMDBuild.core.constants.Proxy.GROUP][CMDBuild.core.constants.Proxy.ID]);
 
 			this.form.setDisabledModify(true);
 		}

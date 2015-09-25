@@ -13,6 +13,11 @@
 		/**
 		 * @cfg {String}
 		 */
+		cmName: undefined,
+
+		/**
+		 * @cfg {String}
+		 */
 		baseTitle: CMDBuild.Translation.usersAndGroups + ' - ' + CMDBuild.Translation.groups,
 
 		/**

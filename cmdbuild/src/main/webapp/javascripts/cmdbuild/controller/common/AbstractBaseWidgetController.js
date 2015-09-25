@@ -327,19 +327,6 @@
 				}
 
 				// Extends to implement full model setup
-			},
-
-		// WidgetCntroller methods
-			/**
-			 * @param {String} propertyName
-			 *
-			 * @returns {Mixed}
-			 */
-			widgetControllerPropertyGet: function(propertyName) {
-				if (!Ext.isEmpty(this[propertyName]))
-					return this[propertyName];
-
-				return null;
 			}
 	});
 

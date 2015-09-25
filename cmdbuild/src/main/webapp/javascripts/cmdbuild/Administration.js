@@ -7,7 +7,6 @@
 	var dataViewAccordion = null;
 	var domainAccordion = null;
 	var gisAccordion = null;
-	var groupsAccordion = null;
 	var lookupAccordion = null;
 	var menuAccordion = null;
 	var navigationTreesAccordion = null;
@@ -17,6 +16,7 @@
 		extend: 'Ext.app.Application',
 
 		requires: [
+			'CMDBuild.core.configurations.Timeout',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.Classes',
 			'CMDBuild.core.proxy.Configuration',
@@ -146,7 +146,7 @@
 							dashboardsAccordion,
 							Ext.create('CMDBuild.view.administration.accordion.Report', { cmName: 'report' }),
 							menuAccordion,
-							groupsAccordion,
+							Ext.create('CMDBuild.view.administration.accordion.UserAndGroup', { cmName: 'group' }),
 							Ext.create('CMDBuild.view.administration.accordion.Tasks', { cmName: 'tasks' }),
 							Ext.create('CMDBuild.view.administration.accordion.Email', { cmName: 'email' }),
 							gisAccordion,
@@ -304,14 +304,6 @@
 				CMDBuild.core.proxy.group.Group.readAll({
 					scope: this,
 					success: function(result, options, decodedResult) {
-						_CMCache.addGroups(decodedResult.groups); // TODO: refactor to avoid cache usage
-
-						groupsAccordion = Ext.create('CMDBuild.view.administration.accordion.UserAndGroup', {
-							cmControllerType: 'CMDBuild.controller.administration.accordion.UserAndGroup',
-							cmName: 'group'
-						});
-						groupsAccordion.updateStore();
-
 						menuAccordion = Ext.create('CMDBuild.view.administration.accordion.Menu', { cmName: 'menu' });
 
 						_CMMainViewportController.addPanel([

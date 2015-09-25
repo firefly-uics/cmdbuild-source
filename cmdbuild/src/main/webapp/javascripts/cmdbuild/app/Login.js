@@ -45,7 +45,7 @@
 				Ext.create('CMDBuild.core.Data'); // Data connections configuration
 
 				Ext.create('CMDBuild.core.configurationBuilders.Localization', { // CMDBuild localization configuration
-					callback: function(records, operation, success) {
+					callback: function(options, success, response) {
 						Ext.create('CMDBuild.app.Login', { id: 'login' });
 					}
 				});
