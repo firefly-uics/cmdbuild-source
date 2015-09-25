@@ -8,7 +8,6 @@
 	var domainAccordion = null;
 	var gisAccordion = null;
 	var lookupAccordion = null;
-	var menuAccordion = null;
 	var navigationTreesAccordion = null;
 	var processAccordion = null;
 
@@ -145,7 +144,7 @@
 							lookupAccordion,
 							dashboardsAccordion,
 							Ext.create('CMDBuild.view.administration.accordion.Report', { cmName: 'report' }),
-							menuAccordion,
+							Ext.create('CMDBuild.view.administration.accordion.Menu', { cmName: 'menu' }),
 							Ext.create('CMDBuild.view.administration.accordion.UserAndGroup', { cmName: 'group' }),
 							Ext.create('CMDBuild.view.administration.accordion.Tasks', { cmName: 'tasks' }),
 							Ext.create('CMDBuild.view.administration.accordion.Email', { cmName: 'email' }),
@@ -304,8 +303,6 @@
 				CMDBuild.core.proxy.group.Group.readAll({
 					scope: this,
 					success: function(result, options, decodedResult) {
-						menuAccordion = Ext.create('CMDBuild.view.administration.accordion.Menu', { cmName: 'menu' });
-
 						_CMMainViewportController.addPanel([
 							Ext.create('CMDBuild.view.administration.menu.MenuView', {
 								cmControllerType: 'CMDBuild.controller.administration.menu.Menu',

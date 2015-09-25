@@ -152,7 +152,6 @@
 			if (
 				!Ext.Object.isEmpty(parameters)
 				&& !Ext.isEmpty(parameters.url)
-				&& Ext.Array.contains(CMDBuild.core.Cache.managedCacheGroupsArray, cacheGroupIdentifier)
 			) {
 				// Set default values
 				Ext.applyIf(parameters, {
@@ -164,40 +163,44 @@
 					callback: Ext.emptyFn
 				});
 
-				if (
-					!CMDBuild.core.Cache.enabled
-					|| CMDBuild.core.Cache.isExpired(cacheGroupIdentifier, parameters.url, parameters.params)
-					|| invalidateOnSuccess
-				) {
-					parameters.success = Ext.Function.createSequence(function(result, options, decodedResult) {
-						if (CMDBuild.core.Cache.enabled && !invalidateOnSuccess) // Don't cache if want to invalidate
-							CMDBuild.core.Cache.set(cacheGroupIdentifier, parameters.url, parameters.params, {
-								result: result,
-								options: options,
-								decodedResult: decodedResult
-							});
+				if (Ext.Array.contains(CMDBuild.core.Cache.managedCacheGroupsArray, cacheGroupIdentifier)) { // Cacheable endpoints manage
+					if (
+						!CMDBuild.core.Cache.enabled
+						|| CMDBuild.core.Cache.isExpired(cacheGroupIdentifier, parameters.url, parameters.params)
+						|| invalidateOnSuccess
+					) {
+						parameters.success = Ext.Function.createSequence(function(result, options, decodedResult) {
+							if (CMDBuild.core.Cache.enabled && !invalidateOnSuccess) // Don't cache if want to invalidate
+								CMDBuild.core.Cache.set(cacheGroupIdentifier, parameters.url, parameters.params, {
+									result: result,
+									options: options,
+									decodedResult: decodedResult
+								});
 
-						if (invalidateOnSuccess)
-							CMDBuild.core.Cache.invalidate(cacheGroupIdentifier);
-					}, parameters.success);
+							if (invalidateOnSuccess)
+								CMDBuild.core.Cache.invalidate(cacheGroupIdentifier);
+						}, parameters.success);
 
+						CMDBuild.Ajax.request(parameters);
+					} else { // Emulation of success and callback execution
+						var cachedValues = CMDBuild.core.Cache.get(cacheGroupIdentifier, parameters.url, parameters.params);
+
+						Ext.Function.createSequence(
+							Ext.bind(parameters.success, parameters.scope, [
+								cachedValues.result,
+								cachedValues.options,
+								cachedValues.decodedResult
+							]),
+							Ext.bind(parameters.callback, parameters.scope, [
+								cachedValues.options,
+								true,
+								cachedValues.result,
+							]),
+							parameters.scope
+						)();
+					}
+				} else { // Uncachable endpoints manage
 					CMDBuild.Ajax.request(parameters);
-				} else { // Emulation of success and callback execution
-					var cachedValues = CMDBuild.core.Cache.get(cacheGroupIdentifier, parameters.url, parameters.params);
-
-					Ext.Function.createSequence(
-						Ext.bind(parameters.success, parameters.scope, [
-							cachedValues.result,
-							cachedValues.options,
-							cachedValues.decodedResult
-						]),
-						Ext.bind(parameters.callback, parameters.scope, [
-							cachedValues.options,
-							true,
-							cachedValues.result,
-						]),
-						parameters.scope
-					)();
 				}
 			} else {
 				_error('invalid request parameters', 'CMDBuild.core.Cache');

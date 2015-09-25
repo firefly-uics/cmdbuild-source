@@ -3,6 +3,7 @@
 	Ext.define('CMDBuild.core.proxy.Menu', {
 
 		requires: [
+			'CMDBuild.core.Cache',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.Index'
 		],
@@ -16,16 +17,11 @@
 		 * @param {Object} parameters
 		 */
 		read: function(parameters) {
-			CMDBuild.Ajax.request({
-				method: 'GET',
-				url: CMDBuild.core.proxy.Index.menu.read,
-				params: parameters.params,
-				scope: parameters.scope || this,
-				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : false,
-				failure: parameters.failure || Ext.emptyFn(),
-				success: parameters.success || Ext.emptyFn(),
-				callback: parameters.callback || Ext.emptyFn()
+			Ext.apply(parameters, {
+				url: CMDBuild.core.proxy.Index.menu.read
 			});
+
+			CMDBuild.core.Cache.request(CMDBuild.core.constants.Proxy.MENU, parameters, true);
 		},
 
 		/**
@@ -34,16 +30,11 @@
 		 * @param {Object} parameters
 		 */
 		readAvailableItems: function(parameters) {
-			CMDBuild.Ajax.request({
-				method: 'GET',
-				url: CMDBuild.core.proxy.Index.menu.readAvailableItems,
-				params: parameters.params,
-				scope: parameters.scope || this,
-				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
-				failure: parameters.failure || Ext.emptyFn(),
-				success: parameters.success || Ext.emptyFn(),
-				callback: parameters.callback || Ext.emptyFn()
+			Ext.apply(parameters, {
+				url: CMDBuild.core.proxy.Index.menu.readAvailableItems
 			});
+
+			CMDBuild.core.Cache.request(CMDBuild.core.constants.Proxy.MENU, parameters);
 		},
 
 		/**
@@ -52,48 +43,33 @@
 		 * @param {Object} parameters
 		 */
 		readConfiguration: function(parameters) {
-			CMDBuild.Ajax.request({
-				method: 'GET',
-				url: CMDBuild.core.proxy.Index.menu.readConfiguration,
-				params: parameters.params,
-				scope: parameters.scope || this,
-				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
-				failure: parameters.failure || Ext.emptyFn(),
-				success: parameters.success || Ext.emptyFn(),
-				callback: parameters.callback || Ext.emptyFn()
+			Ext.apply(parameters, {
+				url: CMDBuild.core.proxy.Index.menu.readConfiguration
 			});
+
+			CMDBuild.core.Cache.request(CMDBuild.core.constants.Proxy.MENU, parameters);
 		},
 
 		/**
 		 * @param {Object} parameters
 		 */
 		remove: function(parameters) {
-			CMDBuild.Ajax.request({
-				method: 'POST',
-				url: CMDBuild.core.proxy.Index.menu.remove,
-				params: parameters.params,
-				scope: parameters.scope || this,
-				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
-				failure: parameters.failure || Ext.emptyFn(),
-				success: parameters.success || Ext.emptyFn(),
-				callback: parameters.callback || Ext.emptyFn()
+			Ext.apply(parameters, {
+				url: CMDBuild.core.proxy.Index.menu.remove
 			});
+
+			CMDBuild.core.Cache.request(CMDBuild.core.constants.Proxy.MENU, parameters, true);
 		},
 
 		/**
 		 * @param {Object} parameters
 		 */
 		save: function(parameters) {
-			CMDBuild.Ajax.request({
-				method: 'POST',
-				url: CMDBuild.core.proxy.Index.menu.update,
-				params: parameters.params,
-				scope: parameters.scope || this,
-				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
-				failure: parameters.failure || Ext.emptyFn(),
-				success: parameters.success || Ext.emptyFn(),
-				callback: parameters.callback || Ext.emptyFn()
+			Ext.apply(parameters, {
+				url: CMDBuild.core.proxy.Index.menu.update
 			});
+
+			CMDBuild.core.Cache.request(CMDBuild.core.constants.Proxy.MENU, parameters, true);
 		}
 	});
 

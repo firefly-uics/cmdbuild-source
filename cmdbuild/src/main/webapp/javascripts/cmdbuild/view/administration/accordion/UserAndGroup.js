@@ -6,11 +6,6 @@
 		requires: ['CMDBuild.core.constants.Proxy'],
 
 		/**
-		 * @cfg {CMDBuild.controller.accordion.CMGroupAccordionController}
-		 */
-		delegate: undefined,
-
-		/**
 		 * @cfg {String}
 		 */
 		cmName: undefined,

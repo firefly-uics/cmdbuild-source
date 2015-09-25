@@ -6,8 +6,7 @@
 		requires: [
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.localization.Localization',
-			'CMDBuild.core.proxy.Menu',
-			'CMDBuild.model.menu.TreeStore'
+			'CMDBuild.core.proxy.Menu'
 		],
 
 		/**
@@ -16,16 +15,26 @@
 		parentDelegate: undefined,
 
 		/**
+		 * @property {Ext.tree.Panel}
+		 */
+		availableItemsTreePanel: undefined,
+
+		/**
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
 			'onMenuGroupAbortButtonClick',
 			'onMenuGroupAddFolderButtonClick',
-			'onMenuGroupBuildTreeStore',
+			'onMenuGroupMenuSelected',
 			'onMenuGroupRemoveItemButtonClick',
 			'onMenuGroupRemoveMenuButtonClick',
 			'onMenuGroupSaveButtonClick'
 		],
+
+		/**
+		 * @property {Ext.tree.Panel}
+		 */
+		menuTreePanel: undefined,
 
 		/**
 		 * @cfg {CMDBuild.view.administration.menu.group.GroupView}
@@ -41,9 +50,11 @@
 		constructor: function(configurationObject) {
 			this.callParent(arguments);
 
-			this.view = Ext.create('CMDBuild.view.administration.menu.group.GroupView', {
-				delegate: this
-			});
+			this.view = Ext.create('CMDBuild.view.administration.menu.group.GroupView', { delegate: this });
+
+			// Shorthands
+			this.availableItemsTreePanel = this.view.availableItemsTreePanel;
+			this.menuTreePanel = this.view.menuTreePanel;
 		},
 
 		/**
@@ -128,7 +139,7 @@
 				menuConfiguration.children = [];
 
 				Ext.Array.forEach(node.childNodes, function(childNode, i, allChildrenNodes) {
-					childNode.set('parent', node.id);
+					childNode.set('parent', node[CMDBuild.core.constants.Proxy.ID]);
 
 					var childConf = this.getMenuConfiguration(childNode);
 					childConf.index = i;
@@ -149,7 +160,7 @@
 		 */
 		onMenuGroupAddFolderButtonClick: function(folderName) {
 			if (!Ext.isEmpty(folderName)) {
-				this.view.menuTreePanel.getRootNode().appendChild({
+				this.menuTreePanel.getRootNode().appendChild({
 					text: folderName,
 					type: 'folder',
 					subtype: 'folder',
@@ -161,23 +172,42 @@
 			}
 		},
 
-		/**
-		 * @returns {Ext.data.TreeStore}
-		 */
-		onMenuGroupBuildTreeStore: function() {
-			return Ext.create('Ext.data.TreeStore', {
-				model: 'CMDBuild.model.menu.TreeStore',
+		onMenuGroupMenuSelected: function() {
+			var params = {};
+			params[CMDBuild.core.constants.Proxy.GROUP_NAME] = this.cmfg('selectedMenuNameGet');
 
-				root: {
-					text: '',
-					expanded: true,
-					children: []
+			CMDBuild.core.proxy.Menu.readConfiguration({
+				params: params,
+				scope: this,
+				success: function(response, options, decodedResponse) {
+					var menu = this.buildTreeStructure(decodedResponse.menu);
+
+					this.menuTreePanel.getRootNode().removeAll();
+
+					if (!Ext.isEmpty(menu[CMDBuild.core.constants.Proxy.CHILDREN])) // If empty has no children field
+						this.menuTreePanel.getRootNode().appendChild(menu[CMDBuild.core.constants.Proxy.CHILDREN]);
+				}
+			});
+
+			CMDBuild.core.proxy.Menu.readAvailableItems({
+				params: params,
+				scope: this,
+				success: function(response, options, decodedResponse) {
+					var menu = this.buildTreeStructure(decodedResponse.menu);
+
+					this.availableItemsTreePanel.getRootNode().removeAll();
+					this.availableItemsTreePanel.getRootNode().appendChild(menu[CMDBuild.core.constants.Proxy.CHILDREN]);
+
+					this.menuTreePanel.getStore().sort([
+						{ property: CMDBuild.core.constants.Proxy.INDEX, direction: 'ASC' },
+						{ property: CMDBuild.core.constants.Proxy.TEXT, direction: 'ASC' }
+					]);
 				}
 			});
 		},
 
 		onMenuGroupRemoveItemButtonClick: function() {
-			var selectedNode = this.view.menuTreePanel.getSelectionModel().getSelection()[0];
+			var selectedNode = this.menuTreePanel.getSelectionModel().getSelection()[0];
 
 			if (!Ext.isEmpty(selectedNode) && !Ext.isEmpty(selectedNode.get(CMDBuild.core.constants.Proxy.TYPE)))
 				this.removeTreeBranch(selectedNode);
@@ -197,7 +227,7 @@
 		},
 
 		onMenuGroupSaveButtonClick: function() {
-			var menuTree = this.getMenuConfiguration(this.view.menuTreePanel.getRootNode());
+			var menuTree = this.getMenuConfiguration(this.menuTreePanel.getRootNode());
 			menuTree[CMDBuild.core.constants.Proxy.TYPE] = 'root';
 
 			var params = {};
@@ -230,45 +260,6 @@
 			});
 		},
 
-		/**
-		 * @override
-		 */
-		onViewOnFront: function() {
-			var params = {};
-			params[CMDBuild.core.constants.Proxy.GROUP_NAME] = this.cmfg('selectedMenuNameGet');
-
-			CMDBuild.core.proxy.Menu.readConfiguration({
-				params: params,
-				scope: this,
-				success: function(response, options, decodedResponse) {
-					var menu = this.buildTreeStructure(decodedResponse.menu);
-					var root = this.view.menuTreePanel.getRootNode();
-
-					root.removeAll();
-
-					if (!Ext.isEmpty(menu[CMDBuild.core.constants.Proxy.CHILDREN])) // If empty has no children field
-						root.appendChild(menu[CMDBuild.core.constants.Proxy.CHILDREN]);
-				}
-			});
-
-			CMDBuild.core.proxy.Menu.readAvailableItems({
-				params: params,
-				scope: this,
-				success: function(response, options, decodedResponse) {
-					var menu = this.buildTreeStructure(decodedResponse.menu);
-					var root = this.view.availableItemsTreePanel.getRootNode();
-
-					root.removeAll();
-					root.appendChild(menu[CMDBuild.core.constants.Proxy.CHILDREN]);
-
-					this.view.menuTreePanel.getStore().sort([
-						{ property: CMDBuild.core.constants.Proxy.INDEX, direction: 'ASC' },
-						{ property: CMDBuild.core.constants.Proxy.TEXT, direction: 'ASC' }
-					]);
-				}
-			});
-		},
-
 		removeItem: function() {
 			var params = {};
 			params[CMDBuild.core.constants.Proxy.GROUP_NAME] = this.cmfg('selectedMenuNameGet');
@@ -283,16 +274,15 @@
 		},
 
 		removeTreeBranch: function(node) {
-			while (node.hasChildNodes()) {
+			while (node.hasChildNodes())
 				this.removeTreeBranch(node.childNodes[0]);
-			}
 
 			var nodeType = node.get(CMDBuild.core.constants.Proxy.TYPE);
 
 			if (nodeType.indexOf(CMDBuild.core.constants.Proxy.REPORT) >= 0)
 				nodeType = 'report';
 
-			var originalFolderOfTheLeaf = this.view.availableItemsTreePanel.getRootNode().findChild(CMDBuild.core.constants.Proxy.FOLDER_TYPE, nodeType);
+			var originalFolderOfTheLeaf = this.availableItemsTreePanel.getRootNode().findChild(CMDBuild.core.constants.Proxy.TYPE, nodeType);
 
 			// Remove the node before adding it to the original tree
 			node.remove();

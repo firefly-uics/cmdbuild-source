@@ -13,7 +13,9 @@
 		/**
 		 * @cfg {Array}
 		 */
-		cmfgCatchedFunctions: ['selectedMenuNameGet'],
+		cmfgCatchedFunctions: [
+			'selectedMenuNameGet'
+		],
 
 		/**
 		 * @property {CMDBuild.controller.administration.menu.Groups}
@@ -43,8 +45,6 @@
 
 		/**
 		 * @param {CMDBuild.model.common.AccordionStore} parameters
-		 *
-		 * @override
 		 */
 		onViewOnFront: function(parameters) {
 			if (!Ext.isEmpty(parameters)) {
@@ -56,10 +56,7 @@
 
 				this.setViewTitle(parameters.get(CMDBuild.core.constants.Proxy.TEXT));
 
-				if (!Ext.isEmpty(this.sectionController) && Ext.isFunction(this.sectionController.onViewOnFront))
-					this.sectionController.onViewOnFront();
-
-				this.callParent(arguments);
+				this.sectionController.cmfg('onMenuGroupMenuSelected');
 			}
 		},
 

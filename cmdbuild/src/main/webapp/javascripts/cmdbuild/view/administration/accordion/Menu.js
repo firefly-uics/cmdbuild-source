@@ -1,7 +1,7 @@
 (function() {
 
 	Ext.define('CMDBuild.view.administration.accordion.Menu', {
-		extend: 'CMDBuild.view.common.accordion.Abstract',
+		extend: 'CMDBuild.view.common.CMBaseAccordion',
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
@@ -16,22 +16,28 @@
 
 		title: CMDBuild.Translation.menu,
 
+		constructor: function() {
+			this.callParent(arguments);
+
+			this.updateStore();
+		},
+
 		/**
-		 * @param {Ext.panel.Panel} panel
-		 * @param {Boolean} animate
-		 * @param {Object} eOpts
+		 * @param {Number} nodeIdToSelect
 		 *
 		 * @override
 		 */
-		beforeExpand: function(panel, animate, eOpts) {
+		updateStore: function(nodeIdToSelect) {
+			nodeIdToSelect = Ext.isNumber(nodeIdToSelect) ? nodeIdToSelect : null;
+
 			CMDBuild.core.proxy.group.Group.readAll({
 				scope: this,
-				success: function(response, options, decodedResponse) {
-					Ext.suspendLayouts();
+				success: function(result, options, decodedResult) {
+					decodedResult = decodedResult[CMDBuild.core.constants.Proxy.GROUPS];
 
-					CMDBuild.core.Utils.objectArraySort(decodedResponse.groups, CMDBuild.core.constants.Proxy.TEXT);
+					CMDBuild.core.Utils.objectArraySort(decodedResult, CMDBuild.core.constants.Proxy.TEXT);
 
-					var out = [{
+					var nodes = [{
 						cmName: this.cmName,
 						iconCls: 'cmdbuild-tree-group-icon',
 						id: 0,
@@ -39,27 +45,24 @@
 						text: '* Default *'
 					}];
 
-					Ext.Object.each(decodedResponse.groups, function(key, group, myself) {
-						out.push({
+					Ext.Array.forEach(decodedResult, function(groupObject, i, allGroupObjects) {
+						nodes.push({
 							cmName: this.cmName,
 							iconCls: 'cmdbuild-tree-group-icon',
-							id: group[CMDBuild.core.constants.Proxy.ID],
+							id: groupObject[CMDBuild.core.constants.Proxy.ID],
 							leaf: true,
-							name: group[CMDBuild.core.constants.Proxy.NAME],
-							text: group[CMDBuild.core.constants.Proxy.TEXT]
+							name: groupObject[CMDBuild.core.constants.Proxy.NAME],
+							text: groupObject[CMDBuild.core.constants.Proxy.TEXT]
 						});
 					}, this);
 
 					this.getStore().getRootNode().removeAll();
-					this.getStore().getRootNode().appendChild(out);
+					this.getStore().getRootNode().appendChild(nodes);
 
-					Ext.resumeLayouts(true);
-
-					this.deferExpand();
+					if (!Ext.isEmpty(nodeIdToSelect))
+						this.selectNodeById(nodeIdToSelect);
 				}
 			});
-
-			return this.callParent(arguments);
 		}
 	});
 
