@@ -98,8 +98,8 @@
 
 						items: [
 							(
-								!Ext.isEmpty(CMDBuild.configuration[CMDBuild.core.constants.Proxy.LOCALIZATION])
-								&& CMDBuild.configuration[CMDBuild.core.constants.Proxy.LOCALIZATION].get(CMDBuild.core.constants.Proxy.LANGUAGE_PROMPT)
+								!Ext.isEmpty(CMDBuild.configuration.localization)
+								&& CMDBuild.configuration.localization.get(CMDBuild.core.constants.Proxy.LANGUAGE_PROMPT)
 							) ? this.language = Ext.create('CMDBuild.view.common.field.LanguageCombo', {
 								fieldLabel: CMDBuild.Translation.language,
 								labelWidth: CMDBuild.LABEL_WIDTH_LOGIN,

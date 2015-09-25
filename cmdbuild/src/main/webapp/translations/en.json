@@ -366,17 +366,17 @@
 			"all": "All",
 			"clone": "Clone task",
 			"cronForm" : {
-				"dayOfMounth": "Day of month",
+				"dayOfMonth": "Day of month",
 				"advanced": "Advanced",
 				"basic": "Basic",
 				"dayOfWeek": "Day of week",
 				"everyDay": "Every day",
 				"everyHour": "Every hour",
-				"everyMounth": "Every month",
+				"everyMonth": "Every month",
 				"everyYear": "Every year",
 				"hour": "Hour",
 				"minute": "Minute",
-				"mounth": "Month"
+				"month": "Month"
 			},
 			"errorMessages": {
 				"taskConnector": {
@@ -857,8 +857,8 @@
 			},
 			"notinrel": "No one",
 			"notnull": "Is not null",
-			"nullo": "Is null",
 			"newfilter": "New search filter",
+			"nullo": "Is null",
 			"relations": "Relations",
 			"remove": "Remove",
 			"save_filter": "Save filter",

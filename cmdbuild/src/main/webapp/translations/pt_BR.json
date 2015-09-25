@@ -160,14 +160,6 @@
 					},
 					"title": "Calendário"
 				},
-				".CreateModifyCard": {
-					"fields": {
-						"target": "Classe Alvo",
-						"cql": "Seletor CQL de Cartão",
-						"readOnly": "Somente Leitura"
-					},
-					"title": "Criar ou Modificar Cartão"
-				},
 				".Ping": {
 					"fields": {
 						"address": "Endereço para pingar",
@@ -181,6 +173,14 @@
 				},
 				".NavigationTree": {
 					"title": "<em>Navigation tree</em>"
+				},
+				".CreateModifyCard": {
+					"fields": {
+						"target": "Classe Alvo",
+						"cql": "Seletor CQL de Cartão",
+						"readOnly": "Somente Leitura"
+					},
+					"title": "Criar ou Modificar Cartão"
 				},
 				"commonFields": {
 					"active": "Ativo",
@@ -351,7 +351,7 @@
 				"title": "Gerenciar ícones"
 			},
 			"layermanager": {
-				"título": "Ordem das camadas"
+				"title": "Ordem das camadas"
 			},
 			"navigationTree": {
 				"title": "Navegação GIS"
@@ -359,24 +359,24 @@
 			"title": "GIS"
 		},
 		"modconnectors": {
-			"título": "Conectores"
+			"title": "Conectores"
 		},
 		"tasks": {
 			"add": "<em>Add task</em>",
 			"all": "<em>All</em>",
 			"clone": "<em>Clone task</em>",
 			"cronForm" : {
-				"dayOfMounth": "<em>Day of month</em>",
+				"dayOfMonth": "<em>Day of month</em>",
 				"advanced": "<em>Advanced</em>",
 				"basic": "<em>Basic</em>",
 				"dayOfWeek": "<em>Day of week</em>",
 				"everyDay": "<em>Every day</em>",
 				"everyHour": "<em>Every hour</em>",
-				"everyMounth": "<em>Every month</em>",
+				"everyMonth": "<em>Every month</em>",
 				"everyYear": "<em>Every year</em>",
 				"hour": "<em>Hour</em>",
 				"minute": "<em>Minute</em>",
-				"mounth": "<em>Month</em>"
+				"month": "<em>Month</em>"
 			},
 			"errorMessages": {
 				"taskConnector": {
@@ -857,13 +857,13 @@
 			},
 			"notinrel": "Nenhum",
 			"notnull": "Não é nulo",
-			"nullo": "É nulo",
 			"newfilter": "Novo Filtro de Pesquisa",
+			"nullo": "É nulo",
 			"relations": "relacionamentos",
 			"remove": "Remover",
 			"save_filter": "Salvar filtro",
-			"selectedAttr": "Atributos selecionados",
 			"saveandapply": "Salvar e Aplicar",
+			"selectedAttr": "Atributos selecionados",
 			"set_filter": "Filtro de Pesquisa",
 			"setted": "Filtro atribuido",
 			"show_all": "Mostrar todos",
@@ -1157,6 +1157,8 @@
 	"clearRowAndColumnPrivilege": "Remover privilégios de linhas e colunas",
 	"cmdbuildCategory": "Categoria do CMDBuild",
 	"code": "Código",
+	"collapse": "<em>Collapse</em>",
+	"collapseAll": "<em>Collapse all<em>",
 	"columnsPrivileges": "Privilégios de Colunas",
 	"composeEmail": "Compor e-mail",
 	"composeFromTemplate": "<em>Compose from template</em>",
@@ -1232,6 +1234,8 @@
 	"engineName": "Nome da Engine",
 	"error": "Erro",
 	"error_bimserver_connection": "<em>I'm not able to connect to Bimserver</em>",
+	"expand": "<em>Expand</em>",
+	"expandAll": "<em>Expand all</em>",
 	"export": "<em>Export</em>",
 	"expose": "<em>Expose</em>",
 	"file": "Arquivo",

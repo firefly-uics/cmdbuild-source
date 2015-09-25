@@ -12,7 +12,7 @@
 		 */
 		constructor: function() {
 			var modelFields = [];
-			var languages = CMDBuild.configuration[CMDBuild.core.constants.Proxy.LOCALIZATION].getEnabledLanguages();
+			var languages = CMDBuild.configuration.localization.getEnabledLanguages();
 
 			Ext.Object.each(languages, function(key, value, myself) {
 				modelFields.push({ name: value.get(CMDBuild.core.constants.Proxy.TAG), type: 'string' });
