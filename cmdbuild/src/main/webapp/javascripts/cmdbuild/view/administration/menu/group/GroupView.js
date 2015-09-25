@@ -5,7 +5,8 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.Message'
+			'CMDBuild.core.Message',
+			'CMDBuild.model.menu.TreeStore'
 		],
 
 		/**
@@ -180,7 +181,15 @@
 							})
 						],
 
-						store: this.delegate.cmfg('onMenuGroupBuildTreeStore')
+						store: Ext.create('Ext.data.TreeStore', {
+							model: 'CMDBuild.model.menu.TreeStore',
+
+							root: {
+								text: '',
+								expanded: true,
+								children: []
+							}
+						})
 					}),
 					{
 						xtype: 'panel',
@@ -218,7 +227,15 @@
 							]
 						},
 
-						store: this.delegate.cmfg('onMenuGroupBuildTreeStore')
+						store: Ext.create('Ext.data.TreeStore', {
+							model: 'CMDBuild.model.menu.TreeStore',
+
+							root: {
+								text: '',
+								expanded: true,
+								children: []
+							}
+						})
 					})
 				]
 			});

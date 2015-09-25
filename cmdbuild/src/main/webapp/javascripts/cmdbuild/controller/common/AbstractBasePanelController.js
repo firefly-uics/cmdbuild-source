@@ -38,9 +38,7 @@
 		/**
 		 * @abstract
 		 */
-		onViewOnFront: function(parameters) {
-			_msg('onPanelActivate ' + this.view.title, this, parameters);
-		}
+		onViewOnFront: Ext.emptyFn
 	});
 
 })();
