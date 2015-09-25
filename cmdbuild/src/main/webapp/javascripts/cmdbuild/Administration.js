@@ -314,7 +314,7 @@
 							}),
 							Ext.create('CMDBuild.view.administration.user.UserView', {
 								cmControllerType: 'CMDBuild.controller.administration.user.User',
-								cmName: 'users',
+								cmName: 'user',
 							})
 						]);
 					},

@@ -3,6 +3,7 @@
 	Ext.define('CMDBuild.core.proxy.group.privileges.Classes', {
 
 		requires: [
+			'CMDBuild.core.Cache',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.Index',
 			'CMDBuild.model.group.privileges.GridRecord'
@@ -14,15 +15,11 @@
 		 * @param {Object} parameters
 		 */
 		readUIConfiguration: function(parameters) {
-			CMDBuild.Ajax.request({
-				url: CMDBuild.core.proxy.Index.privileges.classes.loadClassUiConfiguration,
-				params: parameters.params,
-				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
-				scope: parameters.scope || this,
-				failure: parameters.failure || Ext.emptyFn,
-				success: parameters.success || Ext.emptyFn,
-				callback: parameters.callback || Ext.emptyFn
+			Ext.apply(parameters, {
+				url: CMDBuild.core.proxy.Index.privileges.classes.loadClassUiConfiguration
 			});
+
+			CMDBuild.core.Cache.request(CMDBuild.core.constants.Proxy.GROUP, parameters);
 		},
 
 		/**
@@ -50,45 +47,33 @@
 		 * @param {Object} parameters
 		 */
 		updateUIConfiguration: function(parameters) {
-			CMDBuild.Ajax.request({
-				url: CMDBuild.core.proxy.Index.privileges.classes.saveClassUiConfiguration,
-				params: parameters.params,
-				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
-				scope: parameters.scope || this,
-				failure: parameters.failure || Ext.emptyFn,
-				success: parameters.success || Ext.emptyFn,
-				callback: parameters.callback || Ext.emptyFn
+			Ext.apply(parameters, {
+				url: CMDBuild.core.proxy.Index.privileges.classes.saveClassUiConfiguration
 			});
+
+			CMDBuild.core.Cache.request(CMDBuild.core.constants.Proxy.GROUP, parameters, true);
 		},
 
 		/**
 		 * @param {Object} parameters
 		 */
 		setRowAndColumn: function(parameters) {
-			CMDBuild.Ajax.request({
-				url: CMDBuild.core.proxy.Index.privileges.classes.setRowAndColumnPrivileges,
-				params: parameters.params,
-				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
-				scope: parameters.scope || this,
-				failure: parameters.failure || Ext.emptyFn,
-				success: parameters.success || Ext.emptyFn,
-				callback: parameters.callback || Ext.emptyFn
+			Ext.apply(parameters, {
+				url: CMDBuild.core.proxy.Index.privileges.classes.setRowAndColumnPrivileges
 			});
+
+			CMDBuild.core.Cache.request(CMDBuild.core.constants.Proxy.GROUP, parameters, true);
 		},
 
 		/**
 		 * @param {Object} parameters
 		 */
 		update: function(parameters) {
-			CMDBuild.Ajax.request({
-				url: CMDBuild.core.proxy.Index.privileges.classes.update,
-				params: parameters.params,
-				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
-				scope: parameters.scope || this,
-				failure: parameters.failure || Ext.emptyFn,
-				success: parameters.success || Ext.emptyFn,
-				callback: parameters.callback || Ext.emptyFn
+			Ext.apply(parameters, {
+				url: CMDBuild.core.proxy.Index.privileges.classes.update
 			});
+
+			CMDBuild.core.Cache.request(CMDBuild.core.constants.Proxy.GROUP, parameters, true);
 		}
 	});
 

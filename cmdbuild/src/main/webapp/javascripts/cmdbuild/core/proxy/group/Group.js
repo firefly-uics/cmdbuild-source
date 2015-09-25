@@ -27,7 +27,7 @@
 		 */
 		enableDisable: function(parameters) {
 			Ext.apply(parameters, {
-				url: CMDBuild.core.proxy.Index.group.enableDisableGroup,
+				url: CMDBuild.core.proxy.Index.group.enableDisableGroup
 			});
 
 			CMDBuild.core.Cache.request(CMDBuild.core.constants.Proxy.GROUP, parameters, true);
@@ -113,7 +113,7 @@
 		 */
 		update: function(parameters) {
 			Ext.apply(parameters, {
-				url: CMDBuild.core.proxy.Index.group.update,
+				url: CMDBuild.core.proxy.Index.group.update
 			});
 
 			CMDBuild.core.Cache.request(CMDBuild.core.constants.Proxy.GROUP, parameters, true);

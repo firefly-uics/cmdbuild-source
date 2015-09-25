@@ -101,7 +101,7 @@
 				var params = this.form.getData(true);
 
 				if (Ext.isEmpty(params[CMDBuild.core.constants.Proxy.ID])) {
-					params[CMDBuild.core.constants.Proxy.ID] = params[CMDBuild.core.constants.Proxy.ID] || -1;
+					params[CMDBuild.core.constants.Proxy.ID] = -1;
 
 					CMDBuild.core.proxy.group.Group.create({
 						params: params,

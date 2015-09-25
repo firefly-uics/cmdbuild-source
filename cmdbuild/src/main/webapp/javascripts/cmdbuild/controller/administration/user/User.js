@@ -49,19 +49,13 @@
 		constructor: function(view) {
 			this.callParent(arguments);
 
-			this.grid = Ext.create('CMDBuild.view.administration.user.GridPanel', {
-				delegate: this,
-				region: 'north',
-				split: true,
-				height: '30%'
-			});
+			// Shorthands
+			this.form = this.view.form;
+			this.grid = this.view.grid;
 
-			this.form = Ext.create('CMDBuild.view.administration.user.FormPanel', {
-				delegate: this,
-				region: 'center'
-			});
-
-			this.view.add(this.grid, this.form);
+			// Handlers exchange
+			this.form.delegate = this;
+			this.grid.delegate = this;
 		},
 
 		/**
@@ -178,17 +172,28 @@
 			}
 		},
 
+		/**
+		 * TODO: waiting for a refactor (new CRUD standards)
+		 */
 		onUserSaveButtonClick: function() {
-			// Validate before save
-			if (this.validate(this.form)) {
+			if (this.validate(this.form)) { // Validate before save
 				var params = this.form.getData(true);
-				params['userid'] = Ext.isEmpty(this.selectedUser) ? -1 : this.selectedUser.get('userid');
 
-				CMDBuild.core.proxy.User.save({
-					params: params,
-					scope: this,
-					success: this.success
-				});
+				if (Ext.isEmpty(params['userid'])) { // TODO: rename + translation
+					params['userid'] = -1; // TODO: rename + translation
+
+					CMDBuild.core.proxy.User.create({
+						params: params,
+						scope: this,
+						success: this.success
+					});
+				} else {
+					CMDBuild.core.proxy.User.update({
+						params: params,
+						scope: this,
+						success: this.success
+					});
+				}
 			}
 		},
 

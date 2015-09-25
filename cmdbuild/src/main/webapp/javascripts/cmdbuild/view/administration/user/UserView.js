@@ -10,6 +10,11 @@
 		 */
 		delegate: undefined,
 
+		/**
+		 * @cfg {String}
+		 */
+		cmName: undefined,
+
 		border: true,
 		frame: false,
 		layout: 'border',
@@ -31,6 +36,16 @@
 								}
 							})
 						]
+					})
+				],
+				items: [
+					this.grid = Ext.create('CMDBuild.view.administration.user.GridPanel', {
+						region: 'north',
+						split: true,
+						height: '30%'
+					}),
+					this.form = Ext.create('CMDBuild.view.administration.user.FormPanel', {
+						region: 'center'
 					})
 				]
 			});
