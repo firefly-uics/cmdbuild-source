@@ -19,7 +19,7 @@
 			return Ext.create('Ext.data.Store', {
 				autoLoad: true,
 				model: 'CMDBuild.model.common.attributes.ForeignKeyStore',
-				pageSize: parseInt(CMDBuild.Config.cmdbuild.referencecombolimit),
+				pageSize: CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.REFERENCE_COMBO_STORE_LIMIT),
 				proxy: {
 					type: 'ajax',
 					url: CMDBuild.core.proxy.Index.card.getListShort,

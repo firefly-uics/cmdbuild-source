@@ -366,17 +366,17 @@
 			"all": "Tutti",
 			"clone": "Clona task",
 			"cronForm" : {
-				"dayOfMounth": "Giorno del mese",
+				"dayOfMonth": "Giorno del mese",
 				"advanced": "Avanzata",
 				"basic": "Base",
 				"dayOfWeek": "Giorno della settimana",
 				"everyDay": "Ogni giorno",
 				"everyHour": "Ogni ora",
-				"everyMounth": "Ogni mese",
+				"everyMonth": "Ogni mese",
 				"everyYear": "Ogni anno",
 				"hour": "Ora",
 				"minute": "Minuto",
-				"mounth": "Mese"
+				"month": "Mese"
 			},
 			"errorMessages": {
 				"taskConnector": {
@@ -857,8 +857,8 @@
 			},
 			"notinrel": "Nessuna",
 			"notnull": "Non è nullo",
-			"nullo": "È nullo",
 			"newfilter": "Nuovo filtro ricerca",
+			"nullo": "È nullo",
 			"relations": "Relazioni",
 			"remove": "Rimuovi",
 			"save_filter": "Salva filtro",
@@ -1157,6 +1157,8 @@
 	"clearRowAndColumnPrivilege": "Rimuovi privilegi su righe e colonne",
 	"cmdbuildCategory": "Categoria di CMDBuild",
 	"code": "Codice",
+	"collapse": "<em>Collapse</em>",
+	"collapseAll": "<em>Collapse all<em>",
 	"columnsPrivileges": "Privilegi su colonne",
 	"composeEmail": "Componi e-mail",
 	"composeFromTemplate": "Componi dal template",
@@ -1232,6 +1234,8 @@
 	"engineName": "Nome Motore",
 	"error": "Errore",
 	"error_bimserver_connection": "Non sono riuscito a connettermi a Bimserver",
+	"expand": "<em>Expand</em>",
+	"expandAll": "<em>Expand all</em>",
 	"export": "Export",
 	"expose": "Esponi",
 	"file": "File",

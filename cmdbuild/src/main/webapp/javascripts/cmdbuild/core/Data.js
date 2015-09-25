@@ -11,10 +11,7 @@
 		 * Setup with overrides of all data configurations (timeouts, defaultHeaders)
 		 */
 		constructor: function() {
-			if (
-				!Ext.isEmpty(CMDBuild)
-				&& !Ext.isEmpty(CMDBuild.Config)
-			) {
+			if (!Ext.isEmpty(CMDBuild)) {
 				var toLocalize = Ext.isEmpty(CMDBuild.app.Administration); // I'm on Management so i must localize
 
 				var defaultHeaders = {};

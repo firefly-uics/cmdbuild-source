@@ -61,7 +61,7 @@
 		},
 
 		buildTranslationsFields: function() {
-			var enabledLanguagesObjects = Ext.Object.getValues(CMDBuild.configuration[CMDBuild.core.constants.Proxy.LOCALIZATION].getEnabledLanguages());
+			var enabledLanguagesObjects = Ext.Object.getValues(CMDBuild.configuration.localization.getEnabledLanguages());
 
 			// Sort languages with description alphabetical order
 			CMDBuild.core.Utils.objectArraySort(enabledLanguagesObjects);

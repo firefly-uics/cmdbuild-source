@@ -140,7 +140,7 @@
 										scope: this,
 
 										getClass: function(value, metadata, record, rowIndex, colIndex, store) { // Hides icon in root node or if no translations enabled
-											return (record.isRoot() || !CMDBuild.configuration[CMDBuild.core.constants.Proxy.LOCALIZATION].hasEnabledLanguages()) ? '' : 'translate';
+											return (record.isRoot() || !CMDBuild.configuration.localization.hasEnabledLanguages()) ? '' : 'translate';
 										},
 
 										handler: function(grid, rowIndex, colIndex, node, e, record, rowNode) {
@@ -159,7 +159,7 @@
 										},
 
 										isDisabled: function(grid, rowIndex, colIndex, item, record) { // Disable icons in root node or if no translations enabled to avoid click action
-											return record.isRoot() || !CMDBuild.configuration[CMDBuild.core.constants.Proxy.LOCALIZATION].hasEnabledLanguages();
+											return record.isRoot() || !CMDBuild.configuration.localization.hasEnabledLanguages();
 										}
 									})
 								]

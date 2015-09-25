@@ -351,7 +351,7 @@
 				"title": "Quản lý biểu tượng"
 			},
 			"layermanager": {
-				"Tiêu đề": "Thứ tự Lớp "
+				"title": "Thứ tự Lớp "
 			},
 			"navigationTree": {
 				"title": "Định vị GIS"
@@ -359,24 +359,24 @@
 			"title": "GIS"
 		},
 		"modconnectors": {
-			"Tiêu đề": "Kết nối"
+			"title": "Kết nối"
 		},
 		"tasks": {
 			"add": "<em>Add task</em>",
 			"all": "<em>All</em>",
 			"clone": "<em>Clone task</em>",
 			"cronForm" : {
-				"dayOfMounth": "<em>Day of month</em>",
+				"dayOfMonth": "<em>Day of month</em>",
 				"advanced": "<em>Advanced</em>",
 				"basic": "<em>Basic</em>",
 				"dayOfWeek": "<em>Day of week</em>",
 				"everyDay": "<em>Every day</em>",
 				"everyHour": "<em>Every hour</em>",
-				"everyMounth": "<em>Every month</em>",
+				"everyMonth": "<em>Every month</em>",
 				"everyYear": "<em>Every year</em>",
 				"hour": "<em>Hour</em>",
 				"minute": "<em>Minute</em>",
-				"mounth": "<em>Month</em>"
+				"month": "<em>Month</em>"
 			},
 			"errorMessages": {
 				"taskConnector": {
@@ -857,8 +857,8 @@
 			},
 			"notinrel": "Không có",
 			"notnull": "Co phai no vo hieu luc",
-			"nullo": "No vo hieu luc",
 			"newfilter": "Tìm bộ lọc mới",
+			"nullo": "No vo hieu luc",
 			"relations": "Các mối quan hệ",
 			"remove": "Hủy bỏ",
 			"save_filter": "Lưu bộ lọc",
@@ -1157,6 +1157,8 @@
 	"clearRowAndColumnPrivilege": "Xoa các hàng và đặc quyền của các cột",
 	"cmdbuildCategory": "Chỉ mục",
 	"code": "Mã",
+	"collapse": "<em>Collapse</em>",
+	"collapseAll": "<em>Collapse all<em>",
 	"columnsPrivileges": "Các đặc quyền của các cột",
 	"composeEmail": "Soạn email",
 	"composeFromTemplate": "<em>Compose from template</em>",
@@ -1232,6 +1234,8 @@
 	"engineName": "Tên phương tiện",
 	"error": "Lỗi",
 	"error_bimserver_connection": "<em>I'm not able to connect to Bimserver</em>",
+	"expand": "<em>Expand</em>",
+	"expandAll": "<em>Expand all</em>",
 	"export": "<em>Export</em>",
 	"expose": "<em>Expose</em>",
 	"file": "Tập tin",
@@ -1422,7 +1426,7 @@
 	"sqlView": "Từ SQL",
 	"standard": "Tiêu chuẩn",
 	"start": "<em>Start</em>",
-	"starting_class": "Bắt đầu từ trang",
+	"startingPageAt": "Bắt đầu từ trang",
 	"status": "<em>Status</em>",
 	"stop": "<em>Stop</em>",
 	"subject": "<em>Subject</em>",

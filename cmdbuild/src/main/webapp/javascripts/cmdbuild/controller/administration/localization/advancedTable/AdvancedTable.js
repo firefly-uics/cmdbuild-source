@@ -127,7 +127,7 @@
 		 * @return {Array} columnsArray
 		 */
 		onLocalizationAdvancedTableBuildColumns: function() {
-			var enabledLanguages = CMDBuild.configuration[CMDBuild.core.constants.Proxy.LOCALIZATION].getEnabledLanguages();
+			var enabledLanguages = CMDBuild.configuration.localization.getEnabledLanguages();
 			var columnsArray = [
 				{
 					xtype: 'treecolumn',

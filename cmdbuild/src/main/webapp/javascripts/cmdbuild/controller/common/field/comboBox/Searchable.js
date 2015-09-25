@@ -124,7 +124,7 @@
 		 */
 		fieldComboBoxSearchableStoreExceedsLimit: function() {
 			if (!Ext.isEmpty(this.view.getStore()))
-				return this.view.getStore().getTotalCount() > parseInt(CMDBuild.Config.cmdbuild.referencecombolimit);
+				return this.view.getStore().getTotalCount() > CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.REFERENCE_COMBO_STORE_LIMIT);
 
 			return false;
 		},

@@ -366,17 +366,17 @@
 			"all": "همه",
 			"clone": "مشابه گیری از کار",
 			"cronForm": {
-				"dayOfMounth": "روز ماه",
+				"dayOfMonth": "روز ماه",
 				"advanced": "جلو",
 				"basic": "پایه",
 				"dayOfWeek": "روز هفته",
 				"everyDay": "هر روز",
 				"everyHour": "هر ساعت",
-				"everyMounth": "هر ماه",
+				"everyMonth": "هر ماه",
 				"everyYear": "هر سال",
 				"hour": "ساعت",
 				"minute": "دقیقه",
-				"mounth": "ماه"
+				"month": "ماه"
 			},
 			"errorMessages": {
 				"taskConnector": {
@@ -857,8 +857,8 @@
 			},
 			"notinrel": "هیچ کدام",
 			"notnull": "تهی نیست",
-			"nullo": "تهی است",
 			"newfilter": "فیلتر جستجوی جدید",
+			"nullo": "تهی است",
 			"relations": "روابط",
 			"remove": "حذف",
 			"save_filter": "ذخیره ی فیلتر",
@@ -1157,6 +1157,8 @@
 	"clearRowAndColumnPrivilege": "پاک کردن دسترسی های سطر و ستون",
 	"cmdbuildCategory": "<em>CMDBuild category</em>",
 	"code": "کد",
+	"collapse": "<em>Collapse</em>",
+	"collapseAll": "<em>Collapse all<em>",
 	"columnsPrivileges": "دسترسی ستونها",
 	"composeEmail": "نوشتن ایمیل",
 	"composeFromTemplate": "<em>Compose from template</em>",
@@ -1232,6 +1234,8 @@
 	"engineName": "Engine name",
 	"error": "خطا",
 	"error_bimserver_connection": "I'm not able to connect to Bimserver",
+	"expand": "<em>Expand</em>",
+	"expandAll": "<em>Expand all</em>",
 	"export": "خروجی گرفتن",
 	"expose": "در معرض",
 	"file": "فایل",

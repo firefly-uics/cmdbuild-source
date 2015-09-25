@@ -366,17 +366,17 @@
 			"all": "Összes",
 			"clone": "Feladat másolása",
 			"cronForm" : {
-				"dayOfMounth": "DA hónap adott napja",
+				"dayOfMonth": "DA hónap adott napja",
 				"advanced": "Bővített",
 				"basic": "Alapvető",
 				"dayOfWeek": "A hét adott napja",
 				"everyDay": "Minden nap",
 				"everyHour": "Minden óra",
-				"everyMounth": "Minden hónap",
+				"everyMonth": "Minden hónap",
 				"everyYear": "Minden év",
 				"hour": "Óra",
 				"minute": "Perc",
-				"mounth": "Hónap"
+				"month": "Hónap"
 			},
 			"errorMessages": {
 				"taskConnector": {
@@ -857,8 +857,8 @@
 			},
 			"notinrel": "Semmi",
 			"notnull": "Nem nulla",
-			"nullo": "Nulla",
 			"newfilter": "Új keresési szűrő",
+			"nullo": "Nulla",
 			"relations": "Relációk",
 			"remove": "Eltávolítás",
 			"save_filter": "Szűrő mentése",
@@ -1157,6 +1157,8 @@
 	"clearRowAndColumnPrivilege": "Sor és oszlop privilégiumok törlése",
 	"cmdbuildCategory": "CMDBuild kategória",
 	"code": "<em>Code</em>",
+	"collapse": "<em>Collapse</em>",
+	"collapseAll": "<em>Collapse all<em>",
 	"columnsPrivileges": "Oszlop kiváltságok",
 	"composeEmail": "E-mail írása",
 	"composeFromTemplate": "E-mail írása sablonból",
@@ -1232,6 +1234,8 @@
 	"engineName": "Engine neve",
 	"error": "Hiba",
 	"error_bimserver_connection": "Nem lehet csatlakozni a Bimserver-hez",
+	"expand": "<em>Expand</em>",
+	"expandAll": "<em>Expand all</em>",
 	"exportLabel": "Exportálás",
 	"expose": "Tegye",
 	"file": "Fájl",

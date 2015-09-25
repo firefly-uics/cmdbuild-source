@@ -112,7 +112,7 @@
 			var pageSize;
 
 			try {
-				pageSize = parseInt(CMDBuild.Config.cmdbuild.rowlimit);
+				pageSize = CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.ROW_LIMIT);
 			} catch (e) {
 				pageSize = 20;
 			}
