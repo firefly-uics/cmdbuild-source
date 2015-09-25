@@ -294,6 +294,7 @@
 						CMDBuild.core.proxy.Menu.read({
 							params: params,
 							scope: this,
+							loadMask: false,
 							success: function(response, options, decodedResponse) {
 								menuAccordion.updateStore(decodedResponse.menu);
 							},

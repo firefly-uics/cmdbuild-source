@@ -1,5 +1,7 @@
 package org.cmdbuild.servlets;
 
+import static java.lang.String.format;
+import static java.net.URLEncoder.encode;
 import static org.apache.commons.lang3.BooleanUtils.toBoolean;
 import static org.cmdbuild.logic.auth.AuthenticationLogicUtils.assureAdmin;
 import static org.cmdbuild.logic.auth.AuthenticationLogicUtils.isLoggedIn;
@@ -8,6 +10,7 @@ import static org.cmdbuild.spring.SpringIntegrationUtils.applicationContext;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
@@ -68,7 +71,7 @@ public class JSONDispatcher extends HttpServlet {
 	}
 
 	public void dispatch(final HttpServletRequest httpRequest, final HttpServletResponse httpResponse)
-			throws IOException, ServletException {
+			throws IOException {
 		httpResponse.setCharacterEncoding("UTF-8");
 		final String url = getMethodUrl(httpRequest);
 		final MethodInfo methodInfo = JSONDispatcherService.getInstance().getMethodInfoFromURL(url);
@@ -177,7 +180,7 @@ public class JSONDispatcher extends HttpServlet {
 			} else {
 				printableParameterValue = parameterValueToString(parameterValues);
 			}
-			Log.JSONRPC.debug(String.format("    parameter \"%s\": %s", parameterName, printableParameterValue));
+			Log.JSONRPC.debug(format("    parameter \"%s\": %s", parameterName, printableParameterValue));
 		}
 	}
 
@@ -246,7 +249,8 @@ public class JSONDispatcher extends HttpServlet {
 	}
 
 	private void setContentType(final MethodInfo methodInfo, final Object methodResponse,
-			final HttpServletRequest httpRequest, final HttpServletResponse httpResponse) {
+			final HttpServletRequest httpRequest, final HttpServletResponse httpResponse)
+			throws UnsupportedEncodingException {
 		if (methodResponse instanceof DataHandler) {
 			final String forceDownloadHeader = httpRequest.getHeader("force-download");
 			final String forceDownloadParameter = httpRequest.getParameter("force-download");
@@ -255,9 +259,10 @@ public class JSONDispatcher extends HttpServlet {
 				httpResponse.setContentType("application/force-download");
 				httpResponse.setHeader("Content-Transfer-Encoding", "binary");
 				httpResponse.setHeader("Content-Disposition",
-						String.format("attachment; filename=\"%s\";", dh.getName()));
+						format("attachment; filename=\"%s\";", encode(dh.getName(), "UTF-8")));
 			} else {
-				httpResponse.setHeader("Content-Disposition", String.format("inline; filename=\"%s\";", dh.getName()));
+				httpResponse.setHeader("Content-Disposition",
+						format("inline; filename=\"%s\";", encode(dh.getName(), "UTF-8")));
 				httpResponse.setHeader("Expires", "0");
 				httpResponse.setContentType(dh.getContentType());
 			}

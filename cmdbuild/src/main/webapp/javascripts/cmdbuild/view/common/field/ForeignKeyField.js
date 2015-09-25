@@ -1,8 +1,11 @@
+/**
+ * @deprecated (use new field manager)
+ */
 CMDBuild.Management.ForeignKeyField = (function() {
 	return {
-		build: function(attribute) {	
+		build: function(attribute) {
 			var store = CMDBuild.Cache.getForeignKeyStore(attribute);
-			
+
 			var field = new CMDBuild.Management.SearchableCombo({
 				plugins: new CMDBuild.SetValueOnLoadPlugin(),
 				fieldLabel: attribute.description,
@@ -18,8 +21,8 @@ CMDBuild.Management.ForeignKeyField = (function() {
 				minChars: 1,
 				filtered: false,
 				CMAttribute: attribute
-			});		
-			
+			});
+
 			return field;
 		}
 	};

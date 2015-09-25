@@ -1387,6 +1387,7 @@
 	"last_checkin": "最后一次登记",
 	"layers": "层",
 	"limitedAdministrator": "<em>Limited administrator</em>",
+	"list": "清单",
 	"lockCardsInEdit": "编辑时锁定卡片",
 	"lockTimeout": "锁定超时(seconds)",
 	"loggedGroup": "记录的组",

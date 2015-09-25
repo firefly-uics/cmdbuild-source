@@ -11,7 +11,6 @@
 
 <!-- THE OTHERS -->
 <script type="text/javascript" src="javascripts/cmdbuild/view/administration/common/CMDomainGrid.js"></script> <!-- TODO move to common files -->
-<script type="text/javascript" src="javascripts/cmdbuild/controller/common/TemplateResolver.js"></script><!-- must be here -->
 <script type="text/javascript" src="javascripts/cmdbuild/view/management/common/graph/GraphWindow.js"></script>
 
 <!-- MODELS -->

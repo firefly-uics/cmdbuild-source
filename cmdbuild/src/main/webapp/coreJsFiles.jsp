@@ -69,6 +69,7 @@
 <script type="text/javascript" src="javascripts/cmdbuild/cache/CMCache.js"></script>
 
 <!-- THE OTHERS -->
+<script type="text/javascript" src="javascripts/cmdbuild/controller/common/TemplateResolver.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/Message.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/PopupWindow.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/LoginWindow.js"></script>
