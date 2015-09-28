@@ -10,6 +10,7 @@ import static org.cmdbuild.servlets.json.CommunicationConstants.CODE;
 import static org.cmdbuild.servlets.json.CommunicationConstants.EXTENSION;
 import static org.cmdbuild.servlets.json.CommunicationConstants.FILTER;
 import static org.cmdbuild.servlets.json.CommunicationConstants.FORMAT;
+import static org.cmdbuild.servlets.json.CommunicationConstants.FUNCTION;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ID;
 import static org.cmdbuild.servlets.json.CommunicationConstants.LIMIT;
 import static org.cmdbuild.servlets.json.CommunicationConstants.SORT;
@@ -308,6 +309,19 @@ public class ModReport extends JSONBaseWithSpringContext {
 			attributeOrder.add(columns.getString(i));
 		}
 		return attributeOrder;
+	}
+
+	@JSONExported
+	public void printSqlView( //
+			@Parameter(TYPE) final String type, //
+			@Parameter(value = FUNCTION) final String function, //
+			@Parameter(LIMIT) final int limit, //
+			@Parameter(START) final int offset, //
+			@Parameter(value = FILTER, required = false) final JSONObject filter, //
+			@Parameter(value = SORT, required = false) final JSONArray sorters, //
+			@Parameter(value = ATTRIBUTES, required = false) final JSONArray attributes //
+	) throws Exception {
+		// TODO
 	}
 
 	@JSONExported
