@@ -201,10 +201,10 @@ public class DataViewCardFetcher {
 				.count() //
 				.run();
 		final List<CMCard> filteredCards = newArrayList();
-		final CMClass sourceClass = querySpecsBuilderFiller.getSourceClass();
+		final Alias alias = querySpecsBuilderFiller.getAlias();
 		for (final CMQueryRow row : result) {
-			if (row.hasCard(sourceClass)) {
-				filteredCards.add(row.getCard(sourceClass));
+			if (row.hasCard(alias)) {
+				filteredCards.add(row.getCard(alias));
 			}
 		}
 		return new PagedElements<CMCard>(filteredCards, result.totalSize());

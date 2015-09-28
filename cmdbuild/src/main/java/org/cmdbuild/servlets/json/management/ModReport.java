@@ -1,7 +1,7 @@
 package org.cmdbuild.servlets.json.management;
 
 import static com.google.common.collect.Lists.newArrayList;
-import static com.google.common.collect.Lists.newLinkedList;
+import static org.cmdbuild.dao.query.clause.Clauses.call;
 import static org.cmdbuild.logic.report.Predicates.currentGroupAllowed;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ATTRIBUTES;
 import static org.cmdbuild.servlets.json.CommunicationConstants.CARD_ID;
@@ -17,11 +17,11 @@ import static org.cmdbuild.servlets.json.CommunicationConstants.SORT;
 import static org.cmdbuild.servlets.json.CommunicationConstants.START;
 import static org.cmdbuild.servlets.json.CommunicationConstants.STATE;
 import static org.cmdbuild.servlets.json.CommunicationConstants.TYPE;
+import static org.cmdbuild.servlets.json.schema.Utils.toIterable;
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 
 import javax.activation.DataHandler;
@@ -178,8 +178,9 @@ public class ModReport extends JSONBaseWithSpringContext {
 			throws ClassNotFoundException, IOException, JSONException {
 		final Collection<JSONObject> output = newArrayList();
 		for (final ReportParameter reportParameter : reportFactory.getReportParameters()) {
-			final CMAttribute attribute = ReportParameterConverter.of(reportParameter).toCMAttribute();			
-			final Map<String, String> metadata = new CustomProperties(reportParameter.getJrParameter().getPropertiesMap()).getFilterParameters();
+			final CMAttribute attribute = ReportParameterConverter.of(reportParameter).toCMAttribute();
+			final Map<String, String> metadata = new CustomProperties(reportParameter.getJrParameter()
+					.getPropertiesMap()).getFilterParameters();
 			output.add(AttributeSerializer.newInstance() //
 					.withDataView(systemDataView()) //
 					.build()//
@@ -270,11 +271,9 @@ public class ModReport extends JSONBaseWithSpringContext {
 			@Parameter(value = FILTER, required = false) final JSONObject filter, //
 			@Parameter(value = SORT, required = false) final JSONArray sorters, //
 			@Parameter(value = ATTRIBUTES, required = false) final JSONArray attributes, //
-			@Parameter(value = STATE, required = false) final String flowStatus) // for
-																					// processes
-																					// only
-			throws Exception {
-
+			// for processes only
+			@Parameter(value = STATE, required = false) final String flowStatus //
+	) throws Exception {
 		sessionVars().removeReportFactory();
 		final QueryOptionsBuilder queryOptionsBuilder = QueryOptions.newQueryOption() //
 				.limit(limit) //
@@ -286,42 +285,45 @@ public class ModReport extends JSONBaseWithSpringContext {
 		} else {
 			queryOptionsBuilder.filter(filter);
 		}
-
 		final QueryOptions queryOptions = queryOptionsBuilder.build();
-
-		final List<String> attributeOrder = jsonArrayToStringList(columns);
 		final ReportFactoryTemplateList rft = new ReportFactoryTemplateList( //
-				dataSource(), ReportExtension.valueOf(type.toUpperCase()), //
+				dataSource(), //
+				ReportExtension.valueOf(type.toUpperCase()), //
 				queryOptions, //
-				attributeOrder, //
-				className, //
-				userDataAccessLogic(), //
+				toIterable(columns), //
+				userDataView().findClass(className), //
 				userDataView(), //
 				cmdbuildConfiguration());
-
 		rft.fillReport();
 		sessionVars().setReportFactory(rft);
-	}
-
-	private List<String> jsonArrayToStringList(final JSONArray columns) throws JSONException {
-		final List<String> attributeOrder = newLinkedList();
-		for (int i = 0; i < columns.length(); ++i) {
-			attributeOrder.add(columns.getString(i));
-		}
-		return attributeOrder;
 	}
 
 	@JSONExported
 	public void printSqlView( //
 			@Parameter(TYPE) final String type, //
-			@Parameter(value = FUNCTION) final String function, //
+			@Parameter(FUNCTION) final String function, //
+			@Parameter(ATTRIBUTES) final JSONArray attributes, //
 			@Parameter(LIMIT) final int limit, //
 			@Parameter(START) final int offset, //
 			@Parameter(value = FILTER, required = false) final JSONObject filter, //
-			@Parameter(value = SORT, required = false) final JSONArray sorters, //
-			@Parameter(value = ATTRIBUTES, required = false) final JSONArray attributes //
+			@Parameter(value = SORT, required = false) final JSONArray sorters //
 	) throws Exception {
-		// TODO
+		sessionVars().removeReportFactory();
+		final QueryOptions queryOptions = QueryOptions.newQueryOption() //
+				.limit(limit) //
+				.offset(offset) //
+				.orderBy(sorters) //
+				.filter(filter) //
+				.build();
+		final ReportFactoryTemplateList rft = new ReportFactoryTemplateList( //
+				dataSource(), ReportExtension.valueOf(type.toUpperCase()), //
+				queryOptions, //
+				toIterable(attributes), //
+				call(userDataView().findFunctionByName(function)), //
+				userDataView(), //
+				cmdbuildConfiguration());
+		rft.fillReport();
+		sessionVars().setReportFactory(rft);
 	}
 
 	@JSONExported
