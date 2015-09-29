@@ -39,7 +39,7 @@
 						nodes.push({
 							text: groupObject[CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION],
 							id: groupObject[CMDBuild.core.proxy.CMProxyConstants.ID],
-							iconCls: 'cmdbuild-tree-group-icon', // TODO: edit icon
+							iconCls: 'cmdbuild-tree-custompage-icon',
 							cmName: this.cmName,
 							leaf: true
 						});
