@@ -191,7 +191,7 @@ public class ModReport extends JSONBaseWithSpringContext {
 
 	/**
 	 * Set user-defined parameters and fill report
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	@JSONExported
@@ -217,7 +217,7 @@ public class ModReport extends JSONBaseWithSpringContext {
 
 	/**
 	 * Print report to output stream
-	 * 
+	 *
 	 * @param noDelete
 	 *            this may be requested for wf server side processing
 	 */
@@ -263,14 +263,13 @@ public class ModReport extends JSONBaseWithSpringContext {
 	 */
 	@JSONExported
 	public void printCurrentView( //
-			@Parameter("columns") final JSONArray columns, //
 			@Parameter(TYPE) final String type, //
 			@Parameter(value = CLASS_NAME) final String className, //
 			@Parameter(LIMIT) final int limit, //
 			@Parameter(START) final int offset, //
 			@Parameter(value = FILTER, required = false) final JSONObject filter, //
 			@Parameter(value = SORT, required = false) final JSONArray sorters, //
-			@Parameter(value = ATTRIBUTES, required = false) final JSONArray attributes, //
+			@Parameter(ATTRIBUTES) final JSONArray attributes, //
 			// for processes only
 			@Parameter(value = STATE, required = false) final String flowStatus //
 	) throws Exception {
@@ -290,7 +289,7 @@ public class ModReport extends JSONBaseWithSpringContext {
 				dataSource(), //
 				ReportExtension.valueOf(type.toUpperCase()), //
 				queryOptions, //
-				toIterable(columns), //
+				toIterable(attributes), //
 				userDataView().findClass(className), //
 				userDataView(), //
 				cmdbuildConfiguration());

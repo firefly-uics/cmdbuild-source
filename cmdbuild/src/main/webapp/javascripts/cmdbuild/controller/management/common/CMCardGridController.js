@@ -164,7 +164,7 @@
 		onPrintGridMenuClick: function(format) {
 			if (!Ext.isEmpty(format)) {
 				var params = Ext.apply({}, this.view.getStore().proxy.extraParams);
-				params[CMDBuild.core.proxy.CMProxyConstants.COLUMNS] = Ext.encode(this.view.getVisibleColumns());
+				params[CMDBuild.core.proxy.CMProxyConstants.ATTRIBUTES] = Ext.encode(this.view.getVisibleColumns());
 				params[CMDBuild.core.proxy.CMProxyConstants.SORT] = Ext.encode(this.view.getStore().getSorters());
 				params[CMDBuild.core.proxy.CMProxyConstants.TYPE] = format;
 
