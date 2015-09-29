@@ -11,7 +11,7 @@
 		/**
 		 * @cfg {String}
 		 */
-		baseTitle: '@@ Custom pages',
+		baseTitle: CMDBuild.Translation.customPages,
 
 		border: true,
 		frame: false,

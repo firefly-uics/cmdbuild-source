@@ -13,7 +13,7 @@
 		 */
 		cmName: undefined,
 
-		title: '@@ Custom pages',
+		title: CMDBuild.Translation.customPages,
 
 		constructor: function(){
 			this.callParent(arguments);

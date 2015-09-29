@@ -81,7 +81,7 @@
 			this.controllerCustomPagesProperties = Ext.create('CMDBuild.controller.administration.group.privileges.Grid', {
 				parentDelegate: this,
 				proxy: CMDBuild.core.proxy.group.privileges.CustomPages,
-				title: '@@ Custom pages',
+				title: CMDBuild.Translation.customPages,
 				enableCRUDRead: true
 			});
 
