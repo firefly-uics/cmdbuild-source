@@ -60,6 +60,16 @@
 			saveConfiguration: 'services/json/schema/setup/saveconfiguration'
 		},
 
+		customPage: {
+			create: '',
+			read: '',
+			update: '',
+			remove: '',
+
+			readAll: 'services/json/custompages/readall', // TODO: unused
+			readForCurrentUser: 'services/json/custompages/readforcurrentuser'
+		},
+
 		domain: {
 			create: 'services/json/schema/modclass/savedomain',
 			read: 'services/json/schema/modclass/getalldomains',
@@ -180,11 +190,6 @@
 			}
 		},
 
-		customPages: {
-			readForCurrentUser: 'services/json/custompages/readforcurrentuser',
-			readAll: 'services/json/custompages/readall'			
-		},
-		
 		history: {
 			classes: {
 				getCardHistory: 'services/json/management/modcard/getcardhistory',
@@ -206,7 +211,10 @@
 			classUpdate: 'services/json/schema/translation/updateforclass',
 		},
 
-		login: 'services/json/login/login',
+		login: {
+			normal: 'services/json/login/login',
+			rest: 'services/rest/v2/sessions'
+		},
 
 		menu: {
 			create: '',

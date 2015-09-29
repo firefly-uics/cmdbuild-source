@@ -19,7 +19,7 @@
 				model: 'CMDBuild.model.group.privileges.GridRecord',
 				proxy: {
 					type: 'ajax',
-					url: CMDBuild.core.proxy.CMProxyUrlIndex.privileges.customPages.read,
+					url: CMDBuild.core.proxy.CMProxyUrlIndex.privileges.customPages.readAll, // TODO: implementation
 					reader: {
 						type: 'json',
 						root: 'privileges'
@@ -37,7 +37,7 @@
 		 */
 		update: function(parameters) {
 			CMDBuild.Ajax.request({
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.privileges.customPages.update,
+				url: CMDBuild.core.proxy.CMProxyUrlIndex.privileges.customPages.update, // TODO: implementation
 				params: parameters.params,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
 				scope: parameters.scope || this,
