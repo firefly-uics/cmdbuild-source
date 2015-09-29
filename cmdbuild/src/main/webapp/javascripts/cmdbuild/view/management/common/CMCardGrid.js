@@ -534,6 +534,7 @@
 					CMDBuild.core.proxy.CMProxyConstants.PDF,
 					CMDBuild.core.proxy.CMProxyConstants.CSV
 				],
+				mode: 'legacy',
 				disabled: true
 			});
 
