@@ -46,7 +46,7 @@
 				columns: [],
 				tbar: [
 					Ext.create('CMDBuild.core.buttons.Add', {
-						text: CMDBuild.Translation.management.modcard.add_card,
+						text: CMDBuild.Translation.addCard,
 						disabled: true
 					})
 				]

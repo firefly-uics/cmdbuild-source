@@ -24,27 +24,27 @@
 				items: [
 					this.cardPanel = Ext.create('CMDBuild.view.management.dataView.sql.tabs.CardPanel', { delegate: this.delegate }),
 					Ext.create('Ext.panel.Panel', {
-						title: CMDBuild.Translation.management.modcard.tabs.detail,
+						title: CMDBuild.Translation.detail,
 						border: false,
 						disabled: true
 					}),
 					Ext.create('Ext.panel.Panel', {
-						title: CMDBuild.Translation.management.modcard.tabs.notes,
+						title: CMDBuild.Translation.notes,
 						border: false,
 						disabled: true
 					}),
 					Ext.create('Ext.panel.Panel', {
-						title: CMDBuild.Translation.management.modcard.tabs.relations,
+						title: CMDBuild.Translation.relations,
 						border: false,
 						disabled: true
 					}),
 					Ext.create('Ext.panel.Panel', {
-						title: CMDBuild.Translation.management.modcard.tabs.history,
+						title: CMDBuild.Translation.history,
 						border: false,
 						disabled: true
 					}),
 					Ext.create('Ext.panel.Panel', {
-						title: CMDBuild.Translation.management.modcard.tabs.attachments,
+						title: CMDBuild.Translation.attachments,
 						border: false,
 						disabled: true
 					})
