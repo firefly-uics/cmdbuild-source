@@ -83,10 +83,6 @@ public class QuerySpecsBuilderFiller {
 	private final QueryOptions queryOptions;
 	private CMEntryType entryType;
 
-	public QuerySpecsBuilderFiller(final CMDataView dataView, final QueryOptions queryOptions, final String className) {
-		this(dataView, queryOptions, dataView.findClass(className));
-	}
-
 	public QuerySpecsBuilderFiller(final CMDataView dataView, final QueryOptions queryOptions,
 			final CMEntryType entryType) {
 		this.dataView = dataView;

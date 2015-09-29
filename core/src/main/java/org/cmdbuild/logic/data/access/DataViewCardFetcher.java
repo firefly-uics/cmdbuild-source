@@ -193,7 +193,7 @@ public class DataViewCardFetcher {
 		this.dataView = builder.dataView;
 		this.className = builder.className;
 		this.queryOptions = builder.queryOptions;
-		querySpecsBuilderFiller = new QuerySpecsBuilderFiller(dataView, queryOptions, className);
+		querySpecsBuilderFiller = new QuerySpecsBuilderFiller(dataView, queryOptions, dataView.findClass(className));
 	}
 
 	public PagedElements<CMCard> fetch() {

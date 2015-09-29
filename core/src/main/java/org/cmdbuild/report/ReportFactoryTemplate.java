@@ -44,7 +44,6 @@ import org.cmdbuild.dao.query.clause.alias.AliasVisitor;
 import org.cmdbuild.dao.query.clause.alias.EntryTypeAlias;
 import org.cmdbuild.dao.query.clause.alias.NameAlias;
 import org.cmdbuild.dao.view.CMDataView;
-import org.cmdbuild.logger.Log;
 import org.cmdbuild.services.FilesStore;
 
 import com.google.common.collect.Maps;
