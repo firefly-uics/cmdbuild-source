@@ -32,7 +32,8 @@
 			bulkUpdateFromFilter: 'services/json/management/modcard/bulkupdatefromfilter',
 			getList: 'services/json/management/modcard/getcardlist',
 			getListShort: 'services/json/management/modcard/getcardlistshort',
-			getPosition: 'services/json/management/modcard/getcardposition'
+			getPosition: 'services/json/management/modcard/getcardposition',
+			getSqlCardList: 'services/json/management/modcard/getsqlcardlist'
 		},
 
 		classes: {
@@ -270,7 +271,8 @@
 				cardDetails: 'services/json/management/modreport/printcarddetails',
 				classSchema: 'services/json/schema/modreport/printclassschema',
 				currentView: 'services/json/management/modreport/printcurrentview',
-				schema: 'services/json/schema/modreport/printschema'
+				schema: 'services/json/schema/modreport/printschema',
+				sqlView: 'services/json/management/modreport/printsqlview'
 			},
 
 			printReportFactory: 'services/json/management/modreport/printreportfactory',

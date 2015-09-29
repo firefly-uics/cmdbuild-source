@@ -1,5 +1,7 @@
 package org.cmdbuild.report;
 
+import static org.cmdbuild.dao.query.clause.alias.Aliases.canonical;
+
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedList;
@@ -68,7 +70,7 @@ public class ReportFactoryTemplateDetail extends ReportFactoryTemplate {
 
 		// initialize design with the query
 		final String query = new CardReportQuery(card, dataView).toString();
-		Log.REPORT.debug(String.format("Card Report Query: %s", query));
+		logger.debug(String.format("Card Report Query: %s", query));
 
 		initDesign(query);
 	}
@@ -88,7 +90,7 @@ public class ReportFactoryTemplateDetail extends ReportFactoryTemplate {
 		final String tableName = table.getIdentifier().getLocalName();
 		jasperDesign.setName(tableName);
 		setQuery(query);
-		setFields(table.getActiveAttributes());
+		setFields(table.getActiveAttributes(), canonical(table));
 
 		// set detail band
 		setDetail();

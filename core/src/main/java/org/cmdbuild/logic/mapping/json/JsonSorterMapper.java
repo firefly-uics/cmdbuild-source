@@ -27,12 +27,7 @@ public class JsonSorterMapper implements SorterMapper {
 	private final Validator validator;
 	private final Alias entryTypeAlias;
 
-	public JsonSorterMapper( //
-			final CMEntryType entryType, //
-			final JSONArray sorters, //
-			final Alias alias //
-	) {
-
+	public JsonSorterMapper(final CMEntryType entryType, final JSONArray sorters, final Alias alias) {
 		this.entryType = entryType;
 		this.sorters = sorters;
 		this.validator = new JsonSorterValidator(sorters);
@@ -66,7 +61,6 @@ public class JsonSorterMapper implements SorterMapper {
 
 	private QueryAliasAttribute buildQueryAliasAttribute(final String attribute) {
 		final QueryAliasAttribute queryAliasAttribute;
-
 		if (entryTypeAlias == null) {
 			queryAliasAttribute = attribute(entryType, attribute);
 		} else {

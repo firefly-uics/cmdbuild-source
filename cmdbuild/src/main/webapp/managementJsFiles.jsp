@@ -70,7 +70,6 @@
 
 		<!-- DATAVIEW -->
 		<script type="text/javascript" src="javascripts/cmdbuild/view/management/dataView/CMDataViewAccordion.js"></script>
-		<script type="text/javascript" src="javascripts/cmdbuild/view/management/dataView/CMModSqlDataView.js"></script>
 
 		<!-- RELATIONS -->
 		<script type="text/javascript" src="javascripts/cmdbuild/view/management/classes/relations/CMEditRelationWindow.js"> </script>
@@ -157,9 +156,6 @@
 		<script type="text/javascript" src="javascripts/cmdbuild/controller/management/common/CMCardWindowController.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/controller/management/common/CMDetailWindowController.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/controller/management/common/CMAddDetailWindowController.js"></script>
-
-	<!-- DATA VIEW -->
-	<script type="text/javascript" src="javascripts/cmdbuild/controller/management/dataView/CMModSqlDataViewController.js"></script>
 
 	<!-- WORKFLOW -->
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/management/workflow/CMModWorkflowController.js"></script>
