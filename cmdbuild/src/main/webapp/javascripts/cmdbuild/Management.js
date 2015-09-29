@@ -17,7 +17,7 @@
 	});
 	// TODO move in common
 	var dashboardsAccordion = new CMDBuild.view.administration.accordion.CMDashboardAccordion();
-	var guiFrameworkAccordion = new CMDBuild.view.administration.accordion.CMGuiFrameworkAccordion();
+
 	var dataViewAccordion = new CMDBuild.view.management.dataView.CMDataViewAccordion({
 		cmControllerType: CMDBuild.controller.management.common.CMFakeIdAccordionController
 	});
@@ -197,8 +197,8 @@
 						cmControllerType: 'CMDBuild.controller.management.report.SingleReport',
 						cmName: 'singlereport'
 					}),
-					Ext.create('CMDBuild.view.management.guiFramework.OnePanelFrame', {
-						cmControllerType: 'CMDBuild.controller.management.guiFramework.OnePanelFrame',
+					Ext.create('CMDBuild.view.management.customPage.SinglePagePanel', {
+						cmControllerType: 'CMDBuild.controller.management.customPage.SinglePage',
 						cmName: 'custompage'
 					}),
 					this.dashboardPanel = new CMDBuild.view.management.dashboard.CMModDashboard({
@@ -228,8 +228,9 @@
 					this.cmAccordions.push(this.dashboardsAccordion);
 				}
 
-				this.guiFrameworkAccordion = guiFrameworkAccordion;
-				this.cmAccordions.push(this.guiFrameworkAccordion);
+				if (!_CMUIConfiguration.isModuleDisabled('custompage') || true) { // TODO: implementation
+					this.cmAccordions.push(Ext.create('CMDBuild.view.management.accordion.CustomPage', { cmName: 'custompage' }));
+				}
 
 				if (!_CMUIConfiguration.isModuleDisabled(reportAccordion.cmName)) {
 					this.reportAccordion = reportAccordion;
