@@ -15,7 +15,7 @@
 		border: false,
 		frame: false,
 		overflowY: 'auto',
-		title: CMDBuild.Translation.management.modcard.tabs.card,
+		title: CMDBuild.Translation.card,
 
 		layout: {
 			type: 'vbox',
@@ -31,20 +31,20 @@
 
 						items: [
 							Ext.create('CMDBuild.core.buttons.Modify', {
-								text: CMDBuild.Translation.management.modcard.modify_card,
+								text: CMDBuild.Translation.modifyCard,
 								disabled: true
 							}),
 							Ext.create('CMDBuild.core.buttons.Delete', {
-								text: CMDBuild.Translation.management.modcard.delete_card,
+								text: CMDBuild.Translation.deleteCard,
 								disabled: true
 							}),
 							Ext.create('CMDBuild.core.buttons.Clone', {
-								text: CMDBuild.Translation.management.modcard.clone_card,
+								text: CMDBuild.Translation.cloneCard,
 								disabled: true
 							}),
 							Ext.create('CMDBuild.core.buttons.iconized.RelationGraph', { disabled: true }),
 							Ext.create('CMDBuild.core.buttons.iconized.Print', {
-								text: CMDBuild.Translation.common.buttons.print + ' ' + CMDBuild.Translation.management.modcard.tabs.card.toLowerCase(),
+								text: CMDBuild.Translation.common.buttons.print + ' ' + CMDBuild.Translation.card.toLowerCase(),
 								disabled: true
 							})
 						]
