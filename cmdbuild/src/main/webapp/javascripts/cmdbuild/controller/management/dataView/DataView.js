@@ -49,7 +49,7 @@
 				switch(this.dataViewSelectedGet(CMDBuild.core.proxy.CMProxyConstants.ID)) { // FIXME: implement node identifier
 					case 'dataViewSql':
 					default: {
-						this.sectionController = Ext.create('CMDBuild.controller.management.dataView.CMModCardController', { parentDelegate: this });
+						this.sectionController = Ext.create('CMDBuild.controller.management.dataView.Sql', { parentDelegate: this });
 					}
 				}
 
