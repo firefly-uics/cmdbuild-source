@@ -102,7 +102,6 @@
 				displayField: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
 				editable: false,
 				forceSelection: true,
-//				allowBlank: false,
 
 				store: Ext.create('Ext.data.Store', {
 					fields: [CMDBuild.core.proxy.CMProxyConstants.NAME, CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION],
@@ -211,22 +210,35 @@
 		 * @private
 		 */
 		doLogin: function(field, event) {
-			var me = this;
 			if (!Ext.isEmpty(this.role.getValue()) || this.form.getForm().isValid()) {
-				var values = this.form.getForm().getValues();
+				var params = {};
+				params[CMDBuild.core.proxy.CMProxyConstants.PASSWORD] = this.password.getValue();
+				params[CMDBuild.core.proxy.CMProxyConstants.USERNAME] = this.user.getValue();
+
 				CMDBuild.core.proxy.CMProxy.doLogin({
-					params: values,
+					params: params,
 					scope: this,
-					success: function() {
-						me.doRestAuthentication({
-							password: values.password,
-							username: values.username
-						}, function() {
-							if (/administration.jsp$/.test(window.location)) {
-								window.location = 'administration.jsp' + window.location.hash;
-							} else {
-								window.location = 'management.jsp' + window.location.hash;
-							}						
+					success: function(response, options, decodedResponse) {
+						// Rest authentication
+						CMDBuild.core.proxy.CMProxy.doRestLogin({
+							params: Ext.encode(params),
+							scope: this,
+							success: function(response, options, decodedResponse) {
+								decodedResponse = decodedResponse[CMDBuild.core.proxy.CMProxyConstants.DATA];
+
+								document.cookie = 'RestSessionToken=' + decodedResponse['_id'];
+							},
+							failure: function(response, options, decodedResponse) {
+								_error('REST authentication error');
+							},
+							callback: function(records, operation, success) {
+								// CMDBuild redirect
+								if (/administration.jsp$/.test(window.location)) {
+									window.location = 'administration.jsp' + window.location.hash;
+								} else {
+									window.location = 'management.jsp' + window.location.hash;
+								}
+							}
 						});
 					},
 					failure: function(result, options, decodedResult) {
@@ -243,30 +255,6 @@
 				});
 			}
 		},
-		doRestAuthentication: function(credentials, callback, callbackScope) {
-			var me = this;
-			var login_params = JSON.stringify(credentials);
-			// show authentication form
-			Ext.Ajax.request({
-				method: "POST",
-				url: 'http://localhost:8080/cmdbuild/services/rest/v2/sessions',
-				jsonData: login_params,
-				success: function (response) {
-					if (response) {
-						var data = JSON.parse(response.responseText);
-						var token = data.data._id;
-						me.onAuthenticationSuccess(token, callback, callbackScope);
-					}
-				},
-				failure: function (XMLHttpRequest, textStatus, errorThrown) {
-					console.log("REST: AuthenticationError");
-				}
-			});
-		},
-		onAuthenticationSuccess : function(token, callback, callbackScope) {
-			document.cookie = "RestSessionToken=" + token;
-			callback.apply(callbackScope, []);
-		},		
 
 		/**
 		 * @param {Array} roles
