@@ -1,6 +1,6 @@
 (function() {
 
-	Ext.define('CMDBuild.controller.management.dataView.CMModCardController', {
+	Ext.define('CMDBuild.controller.management.dataView.Sql', {
 		extend: 'CMDBuild.controller.common.AbstractController',
 
 		requires: [
