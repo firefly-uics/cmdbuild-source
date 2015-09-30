@@ -20,7 +20,7 @@
 			'CMDBuild.core.proxy.Classes',
 			'CMDBuild.core.proxy.Configuration',
 			'CMDBuild.core.proxy.domain.Domain',
-			'CMDBuild.core.proxy.group.Group',
+			'CMDBuild.core.proxy.userAndGroup.group.Group',
 			'CMDBuild.core.proxy.lookup.Type',
 			'CMDBuild.core.proxy.report.Report'
 		],
@@ -145,7 +145,10 @@
 							dashboardsAccordion,
 							Ext.create('CMDBuild.view.administration.accordion.Report', { cmName: 'report' }),
 							Ext.create('CMDBuild.view.administration.accordion.Menu', { cmName: 'menu' }),
-							Ext.create('CMDBuild.view.administration.accordion.UserAndGroup', { cmName: 'group' }),
+							Ext.create('CMDBuild.view.administration.accordion.UserAndGroup', {
+								cmControllerType: 'CMDBuild.controller.common.AbstractAccordionController',
+								cmName: 'userandgroup'
+							}),
 							Ext.create('CMDBuild.view.administration.accordion.Tasks', { cmName: 'tasks' }),
 							Ext.create('CMDBuild.view.administration.accordion.Email', { cmName: 'email' }),
 							gisAccordion,
@@ -300,7 +303,7 @@
 				/**
 				 * Group
 				 */
-				CMDBuild.core.proxy.group.Group.readAll({
+				CMDBuild.core.proxy.userAndGroup.group.Group.readAll({
 					scope: this,
 					success: function(result, options, decodedResult) {
 						_CMMainViewportController.addPanel([
@@ -308,14 +311,10 @@
 								cmControllerType: 'CMDBuild.controller.administration.menu.Menu',
 								cmName: 'menu'
 							}),
-							Ext.create('CMDBuild.view.administration.group.GroupView', {
-								cmControllerType: 'CMDBuild.controller.administration.group.Group',
-								cmName: 'group',
+							Ext.create('CMDBuild.view.administration.userAndGroup.UserAndGroupView', {
+								cmControllerType: 'CMDBuild.controller.administration.userAndGroup.UserAndGroup',
+								cmName: 'userandgroup',
 							}),
-							Ext.create('CMDBuild.view.administration.user.UserView', {
-								cmControllerType: 'CMDBuild.controller.administration.user.User',
-								cmName: 'user',
-							})
 						]);
 					},
 					callback: reqBarrier.getCallback()

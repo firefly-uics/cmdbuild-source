@@ -1,5 +1,9 @@
 (function() {
 
+	/**
+	 * @deprecated (CMDBuild.common.AbstractAccordion)
+	 */
+
 	var CM_INDEX = 'cmIndex',
 		TREE_NODE_NAME_ATTRIBUTE = 'cmName',
 		TREE_FOLDER_NODE_NAME = 'folder';
