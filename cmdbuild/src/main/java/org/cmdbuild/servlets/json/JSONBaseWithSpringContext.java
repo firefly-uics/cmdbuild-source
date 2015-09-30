@@ -18,6 +18,7 @@ import org.cmdbuild.config.GraphProperties;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.data.store.lookup.LookupStore;
 import org.cmdbuild.dms.DmsConfiguration;
+import org.cmdbuild.listeners.ContextStore;
 import org.cmdbuild.logic.DashboardLogic;
 import org.cmdbuild.logic.GISLogic;
 import org.cmdbuild.logic.NavigationTreeLogic;
@@ -334,6 +335,11 @@ public class JSONBaseWithSpringContext extends JSONBase {
 	/*
 	 * Web
 	 */
+	
+	@Deprecated
+	protected ContextStore contextStore() {
+		return applicationContext().getBean(ContextStore.class);
+	}
 
 	@Deprecated
 	protected SessionVars sessionVars() {

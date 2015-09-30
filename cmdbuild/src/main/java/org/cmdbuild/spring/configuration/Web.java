@@ -51,7 +51,7 @@ public class Web {
 	}
 
 	@Bean
-	protected ContextStore contextStore() {
+	public ContextStore contextStore() {
 		return new ThreadLocalContextStore();
 	}
 
