@@ -35,7 +35,7 @@
 			'CMDBuild.core.proxy.Configuration',
 			'CMDBuild.core.proxy.dataView.DataView',
 			'CMDBuild.core.proxy.domain.Domain',
-			'CMDBuild.core.proxy.group.Group',
+			'CMDBuild.core.proxy.userAndGroup.group.Group',
 			'CMDBuild.core.proxy.lookup.Type',
 			'CMDBuild.core.proxy.Menu',
 			'CMDBuild.core.proxy.report.Report'

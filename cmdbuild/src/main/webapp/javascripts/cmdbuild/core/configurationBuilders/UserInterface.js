@@ -2,14 +2,14 @@
 
 	Ext.define('CMDBuild.core.configurationBuilders.UserInterface', {
 
-		requires: ['CMDBuild.core.proxy.group.Group'],
+		requires: ['CMDBuild.core.proxy.userAndGroup.group.Group'],
 
 		/**
 		 * Build user interface configuration model
 		 */
 		constructor: function() {
 			if (!Ext.isEmpty(CMDBuild) && !Ext.isEmpty(CMDBuild.configuration)) {
-				CMDBuild.core.proxy.group.Group.getUIConfiguration({
+				CMDBuild.core.proxy.userAndGroup.group.Group.getUIConfiguration({
 					scope: this,
 					success: function(result, options, decodedResult) {
 						decodedResult = decodedResult.response;

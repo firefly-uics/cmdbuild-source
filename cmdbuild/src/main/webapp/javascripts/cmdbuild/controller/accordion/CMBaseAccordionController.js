@@ -1,7 +1,7 @@
 (function() {
 
 	/**
-	 * @deprecated
+	 * @deprecated (CMDBuild.controller.common.AbstractAccordionController)
 	 */
 	Ext.define('CMDBuild.controller.accordion.CMBaseAccordionController', {
 

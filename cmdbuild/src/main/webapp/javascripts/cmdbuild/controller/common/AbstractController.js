@@ -167,26 +167,158 @@
 		},
 
 		/**
+		 * @returns {String}
+		 */
+		getBaseTitle: function() {
+			if (!Ext.isEmpty(this.view) && !Ext.isEmpty(this.view.baseTitle))
+				return this.view.baseTitle;
+
+			return '';
+		},
+
+		/**
 		 * @return {Object}
 		 */
 		getView: function() {
 			return this.view;
 		},
 
+		// Property manage methods
+		//
+		// Parameters in a single object to be compatible with cmfg functions.
+		// These methods operates only with local variables (this...) hasn't able to manage other classe's variables. A good implementation with cmfg
+		// functionalities is to use these method's alieas.
+			/**
+			 * @param {Object} parameters
+			 * @param {String} parameters.targetVariableName
+			 * @param {Array} parameters.attributePath
+			 *
+			 * @returns {Mixed} full model object or single property
+			 */
+			propertyManageGet: function(parameters) {
+_debug('propertyManageGet 1', parameters);
+				if (
+					!Ext.Object.isEmpty(parameters)
+					&& !Ext.isEmpty(parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME]) && Ext.isString(parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME])
+				) {
+					var attributePath = undefined;
+					var requiredAttribute = this[parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME]];
+
+					// AttributePath variable setup (only Array or String are managed)
+					if (!Ext.isEmpty(parameters[CMDBuild.core.constants.Proxy.ATTRIBUTE_PATH]) && Ext.isArray(parameters[CMDBuild.core.constants.Proxy.ATTRIBUTE_PATH])) {
+						attributePath = parameters[CMDBuild.core.constants.Proxy.ATTRIBUTE_PATH];
+					} else if (!Ext.isEmpty(parameters[CMDBuild.core.constants.Proxy.ATTRIBUTE_PATH]) && Ext.isString(parameters[CMDBuild.core.constants.Proxy.ATTRIBUTE_PATH])) {
+						attributePath = [parameters[CMDBuild.core.constants.Proxy.ATTRIBUTE_PATH]];
+					}
+
+					if (!Ext.isEmpty(attributePath) && Ext.isArray(attributePath))
+						Ext.Array.forEach(attributePath, function(attributeName, i, allAttributeNames) {
+							if (
+								!Ext.isEmpty(attributeName) && Ext.isString(attributeName)
+								&& !Ext.isEmpty(requiredAttribute) && Ext.isObject(requiredAttribute) && Ext.isFunction(requiredAttribute.get)
+							) {
+								requiredAttribute = requiredAttribute.get(attributeName);
+							}
+						}, this);
+_debug('propertyManageGet 2', requiredAttribute);
+					return requiredAttribute;
+				}
+
+				_error('malformed propertyManageGet parameters', this);
+			},
+
+			/**
+			 * @param {Object} parameters
+			 * @param {String} parameters.targetVariableName
+			 * @param {Array} parameters.attributePath
+			 *
+			 * @returns {Boolean}
+			 */
+			propertyManageIsEmpty: function(parameters) {
+				var requiredValue = this.propertyManageGet(parameters);
+
+				if (Ext.isObject(requiredValue) && Ext.isFunction(requiredValue.getData)) { // Model manage
+					var result = true;
+
+					Ext.Object.each(requiredValue.getData(), function(key, value, myself) {
+						result = Ext.isEmpty(value);
+
+						return result;
+					}, this);
+
+					return result;
+				} else if (Ext.isObject(requiredValue)) { // Simple object manage
+					return Ext.Object.isEmpty(requiredValue);
+				}
+
+				// Other variable types manage
+				return Ext.isEmpty(requiredValue);
+			},
+
+			/**
+			 * @param {String} targetVariableName
+			 */
+			propertyManageReset: function(targetVariableName) {
+				if (!Ext.isEmpty(targetVariableName) && Ext.isString(targetVariableName))
+					this[parameters.targetVariableName] = null;
+			},
+
+			/**
+			 * @param {Object} parameters
+			 * @param {String} parameters.targetVariableName
+			 * @param {String} parameters.modelName
+			 * @param {Object} parameters.value
+			 * @param {String} parameters.propertyName
+			 *
+			 * @returns {Mixed}
+			 */
+			propertyManageSet: function(parameters) {
+_debug('propertyManageSet 1', parameters);
+				if (
+					!Ext.Object.isEmpty(parameters)
+					&& !Ext.isEmpty(parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME]) && Ext.isString(parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME])
+					&& !Ext.isEmpty(parameters[CMDBuild.core.constants.Proxy.MODEL_NAME])
+					&& !Ext.isEmpty(parameters[CMDBuild.core.constants.Proxy.VALUE])
+				) {
+					var modelName = parameters[CMDBuild.core.constants.Proxy.MODEL_NAME];
+					var value = parameters[CMDBuild.core.constants.Proxy.VALUE];
+
+					// Create empty model if not existing (or is not a model class)
+					if (
+						Ext.isEmpty(this[parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME]])
+						|| !Ext.isFunction(this[parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME]].set)
+						|| !Ext.isFunction(this[parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME]].get)
+					) {
+						this[parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME]] = Ext.create(modelName);
+					}
+
+					// Single property management
+					if (!Ext.isEmpty(parameters[CMDBuild.core.constants.Proxy.PROPERTY_NAME]) && Ext.isString(parameters[CMDBuild.core.constants.Proxy.PROPERTY_NAME])) {
+						return this[parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME]].set(parameters[CMDBuild.core.constants.Proxy.PROPERTY_NAME], value);
+					} else if (!Ext.isEmpty(value) && Ext.isObject(value)) { // Full object management
+						if (Ext.getClassName(value) == modelName) {
+							this[parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME]] = value;
+						} else {
+							this[parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME]] = Ext.create(modelName, value);
+						}
+					}
+_debug('propertyManageSet 2', this[parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME]]);
+				}
+			},
+
 		/**
-		 * Setup view panel title as a breadcrumbs component
+		 * Setup view panel title as a breadcrumbs component joining array items with titleSeparator.
 		 *
 		 * @param {String} titlePart
 		 */
 		setViewTitle: function(titlePart) {
-			if (
-				!Ext.isEmpty(this.view)
-				&& !Ext.isEmpty(this.view.baseTitle)
-			) {
+			titlePart = Ext.isArray(titlePart) ? titlePart : [titlePart];
+
+			if (!Ext.isEmpty(this.view)) {
 				if (Ext.isEmpty(titlePart)) {
-					this.view.setTitle(this.view.baseTitle);
+					this.view.setTitle(this.getBaseTitle());
 				} else {
-					this.view.setTitle(this.view.baseTitle + this.titleSeparator + titlePart);
+					this.view.setTitle(this.getBaseTitle() + this.titleSeparator + titlePart.join(this.titleSeparator));
 				}
 			}
 		},
