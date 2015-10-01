@@ -1,13 +1,13 @@
 (function() {
 
-	Ext.define('CMDBuild.core.proxy.User', {
+	Ext.define('CMDBuild.core.proxy.userAndGroup.user.User', {
 
 		requires: [
 			'CMDBuild.core.Cache',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.Index',
-			'CMDBuild.model.user.DefaultGroup',
-			'CMDBuild.model.user.User'
+			'CMDBuild.model.userAndGroup.user.DefaultGroup',
+			'CMDBuild.model.userAndGroup.user.User'
 		],
 
 		singleton: true,
@@ -40,7 +40,7 @@
 		getStore: function() {
 			return Ext.create('Ext.data.Store', {
 				autoLoad: true,
-				model: 'CMDBuild.model.user.User',
+				model: 'CMDBuild.model.userAndGroup.user.User',
 				proxy: {
 					type: 'ajax',
 					url: CMDBuild.core.proxy.Index.user.readAll,
@@ -61,7 +61,7 @@
 		getDefaultGroupStore: function() {
 			return Ext.create('Ext.data.Store', {
 				autoLoad: false,
-				model: 'CMDBuild.model.user.DefaultGroup',
+				model: 'CMDBuild.model.userAndGroup.user.DefaultGroup',
 				proxy: {
 					type: 'ajax',
 					url: CMDBuild.core.proxy.Index.user.getGroupList,

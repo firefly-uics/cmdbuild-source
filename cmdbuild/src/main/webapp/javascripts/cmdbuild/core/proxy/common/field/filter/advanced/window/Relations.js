@@ -15,7 +15,7 @@
 		 */
 		getDestinationStore: function() {
 			return Ext.create('Ext.data.Store', {
-				autoLoad: true,
+				autoLoad: false,
 				model: 'CMDBuild.model.common.field.filter.advanced.window.relations.DestinationEditorStore',
 				proxy: {
 					type: 'ajax',

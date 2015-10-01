@@ -133,11 +133,24 @@
 						}, this);
 
 						if (!Ext.isEmpty(selectedGroupModel)) {
-							this.cmfg('userAndGroupGroupSelectedGroupSet',selectedGroupModel); // Update selectedGroup data (to delete on refactor)
+							this.cmfg('userAndGroupGroupSelectedGroupSet', selectedGroupModel); // Update selectedGroup data (to delete on refactor)
 
-							this.form.loadRecord(this.cmfg('userAndGroupGroupSelectedGroupGet'));
-							this.form.enableDisableButton.setActiveState(this.cmfg('userAndGroupGroupSelectedGroupGet', CMDBuild.core.constants.Proxy.IS_ACTIVE));
-							this.form.setDisabledModify(true, true);
+							this.form.startingClassCombo.getStore().load({
+								scope: this,
+								callback: function(records, operation, success) {
+									// Store load errors manage
+									if (!success) {
+										CMDBuild.core.Message.error(null, {
+											text: CMDBuild.Translation.errors.unknown_error,
+											detail: operation.error
+										});
+									}
+
+									this.form.loadRecord(this.cmfg('userAndGroupGroupSelectedGroupGet'));
+									this.form.enableDisableButton.setActiveState(this.cmfg('userAndGroupGroupSelectedGroupGet', CMDBuild.core.constants.Proxy.IS_ACTIVE));
+									this.form.setDisabledModify(true, true);
+								}
+							});
 						}
 					}
 				});
@@ -149,7 +162,6 @@
 		 * @param {Object} decodedResult
 		 */
 		success: function(result, options, decodedResult) {
-			_CMMainViewportController.findAccordionByCMName('userandgroup').deselect();
 			_CMMainViewportController.findAccordionByCMName('userandgroup').updateStore(decodedResult[CMDBuild.core.constants.Proxy.GROUP][CMDBuild.core.constants.Proxy.ID]);
 
 			this.form.setDisabledModify(true);

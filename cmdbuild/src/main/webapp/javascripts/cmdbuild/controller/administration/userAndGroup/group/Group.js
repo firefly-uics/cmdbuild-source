@@ -9,7 +9,7 @@
 		],
 
 		/**
-		 * @cfg {CMDBuild.controller.administration.userAndGroup.UserAndGroup}
+		 * @cfg {CMDBuild.controller.administration.userAndGroup.user.UserAndGroup}
 		 */
 		parentDelegate: undefined,
 
@@ -43,13 +43,13 @@
 		 */
 		cmfgCatchedFunctions: [
 			'controllerPropertyGet',
-			'userAndGroupGroupSelectedGroupGet',
-			'userAndGroupGroupSelectedGroupIsEmpty',
-			'userAndGroupGroupSelectedGroupSet',
+			'onUserAndGroupGroupAccordionSelect = onUserAndGroupAccordionSelect',
 			'onUserAndGroupGroupAddButtonClick -> controllerProperties, controllerPrivileges, controllerUsers, controllerUserInterface, controllerDefaultFilters',
 			'onUserAndGroupGroupSelected -> controllerProperties, controllerPrivileges, controllerUsers, controllerUserInterface, controllerDefaultFilters',
 			'onUserAndGroupGroupSetActiveTab',
-			'onUserAndGroupGroupAccordionSelect = onUserAndGroupAccordionSelect',
+			'userAndGroupGroupSelectedGroupGet',
+			'userAndGroupGroupSelectedGroupIsEmpty',
+			'userAndGroupGroupSelectedGroupSet',
 		],
 
 		/**
@@ -66,7 +66,7 @@
 
 		/**
 		 * @param {Object} configurationObject
-		 * @param {CMDBuild.controller.administration.userAndGroup.UserAndGroup} configurationObject.parentDelegate
+		 * @param {CMDBuild.controller.administration.userAndGroup.user.UserAndGroup} configurationObject.parentDelegate
 		 *
 		 * @override
 		 */
@@ -92,6 +92,38 @@
 			this.view.tabPanel.add(this.controllerDefaultFilters.getView());
 
 			this.onUserAndGroupGroupSetActiveTab();
+		},
+
+		onUserAndGroupGroupAccordionSelect: function() {
+			if (!this.cmfg('userAndGroupSelectedAccordionIsEmpty'))
+				CMDBuild.core.proxy.userAndGroup.group.Group.read({ // TODO: waiting for refactor (crud)
+					scope: this,
+					success: function(result, options, decodedResult) {
+						decodedResult = decodedResult[CMDBuild.core.constants.Proxy.GROUPS];
+
+						var selectedGroupModel = Ext.Array.findBy(decodedResult, function(groupObject, i) {
+							return this.cmfg('userAndGroupSelectedAccordionGet', CMDBuild.core.constants.Proxy.ID) == groupObject[CMDBuild.core.constants.Proxy.ID];
+						}, this);
+
+						if (!Ext.isEmpty(selectedGroupModel)) {
+							this.userAndGroupGroupSelectedGroupSet(selectedGroupModel);
+
+							this.cmfg('onUserAndGroupGroupSelected');
+
+							if (Ext.isEmpty(this.view.tabPanel.getActiveTab()))
+								this.onUserAndGroupGroupSetActiveTab();
+
+							this.view.tabPanel.getActiveTab().fireEvent('show'); // Manual show event fire because was already selected
+						}
+					}
+				});
+		},
+
+		/**
+		 * @param {Number} index
+		 */
+		onUserAndGroupGroupSetActiveTab: function(index) {
+			this.view.tabPanel.setActiveTab(index || 0);
 		},
 
 		// SelectedGroup property methods
@@ -129,39 +161,7 @@
 						this.selectedGroup = Ext.create('CMDBuild.model.userAndGroup.group.Group', selectedGroupObject);
 					}
 				}
-			},
-
-		onUserAndGroupGroupAccordionSelect: function() {
-			if (!this.cmfg('userAndGroupSelectedAccordionIsEmpty'))
-				CMDBuild.core.proxy.userAndGroup.group.Group.read({ // TODO: waiting for refactor (crud)
-					scope: this,
-					success: function(result, options, decodedResult) {
-						decodedResult = decodedResult[CMDBuild.core.constants.Proxy.GROUPS];
-
-						var selectedGroupModel = Ext.Array.findBy(decodedResult, function(groupObject, i) {
-							return this.cmfg('userAndGroupSelectedAccordionGet', CMDBuild.core.constants.Proxy.ID) == groupObject[CMDBuild.core.constants.Proxy.ID];
-						}, this);
-
-						if (!Ext.isEmpty(selectedGroupModel)) {
-							this.userAndGroupGroupSelectedGroupSet(selectedGroupModel);
-
-							this.cmfg('onUserAndGroupGroupSelected');
-
-							if (Ext.isEmpty(this.view.tabPanel.getActiveTab()))
-								this.onUserAndGroupGroupSetActiveTab();
-
-							this.view.tabPanel.getActiveTab().fireEvent('show'); // Manual show event fire because was already selected
-						}
-					}
-				});
-		},
-
-		/**
-		 * @param {Number} index
-		 */
-		onUserAndGroupGroupSetActiveTab: function(index) {
-			this.view.tabPanel.setActiveTab(index || 0);
-		}
+			}
 	});
 
 })();

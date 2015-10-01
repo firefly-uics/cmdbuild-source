@@ -12,22 +12,11 @@
 		singleton: true,
 
 		/**
-		 * @param {Object} parameters
-		 */
-		readUIConfiguration: function(parameters) {
-			Ext.apply(parameters, {
-				url: CMDBuild.core.proxy.Index.privileges.classes.loadClassUiConfiguration
-			});
-
-			CMDBuild.core.Cache.request(CMDBuild.core.constants.Proxy.GROUP, parameters);
-		},
-
-		/**
 		 * @returns {Ext.data.Store}
 		 */
 		getStore: function() {
 			return Ext.create('Ext.data.Store', {
-				autoLoad: true,
+				autoLoad: false,
 				model: 'CMDBuild.model.userAndGroup.group.privileges.GridRecord',
 				proxy: {
 					type: 'ajax',
@@ -46,12 +35,12 @@
 		/**
 		 * @param {Object} parameters
 		 */
-		updateUIConfiguration: function(parameters) {
+		readUIConfiguration: function(parameters) {
 			Ext.apply(parameters, {
-				url: CMDBuild.core.proxy.Index.privileges.classes.saveClassUiConfiguration
+				url: CMDBuild.core.proxy.Index.privileges.classes.loadClassUiConfiguration
 			});
 
-			CMDBuild.core.Cache.request(CMDBuild.core.constants.Proxy.GROUP, parameters, true);
+			CMDBuild.core.Cache.request(CMDBuild.core.constants.Proxy.GROUP, parameters);
 		},
 
 		/**
@@ -71,6 +60,17 @@
 		update: function(parameters) {
 			Ext.apply(parameters, {
 				url: CMDBuild.core.proxy.Index.privileges.classes.update
+			});
+
+			CMDBuild.core.Cache.request(CMDBuild.core.constants.Proxy.GROUP, parameters, true);
+		},
+
+		/**
+		 * @param {Object} parameters
+		 */
+		updateUIConfiguration: function(parameters) {
+			Ext.apply(parameters, {
+				url: CMDBuild.core.proxy.Index.privileges.classes.saveClassUiConfiguration
 			});
 
 			CMDBuild.core.Cache.request(CMDBuild.core.constants.Proxy.GROUP, parameters, true);

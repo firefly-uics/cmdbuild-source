@@ -20,6 +20,10 @@
 
 		initComponent: function() {
 			Ext.apply(this, {
+				store: CMDBuild.core.proxy.common.field.filter.advanced.window.Window.getGroupStore()
+			});
+
+			Ext.apply(this, {
 				dockedItems: [
 					Ext.create('Ext.toolbar.Toolbar', {
 						dock: 'top',
@@ -60,8 +64,7 @@
 						dataIndex: CMDBuild.core.constants.Proxy.DESCRIPTION,
 						flex: 1
 					}
-				],
-				store: CMDBuild.core.proxy.common.field.filter.advanced.window.Window.getGroupStore()
+				]
 			});
 
 			this.callParent(arguments);

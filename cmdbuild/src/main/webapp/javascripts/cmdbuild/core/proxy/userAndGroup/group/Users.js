@@ -16,7 +16,7 @@
 		 */
 		getGroupsUserStore: function(parameters) {
 			return Ext.create('Ext.data.Store', {
-				autoLoad: true,
+				autoLoad: false,
 				model: 'CMDBuild.model.userAndGroup.group.UsersGrid',
 				proxy: {
 					type: 'ajax',

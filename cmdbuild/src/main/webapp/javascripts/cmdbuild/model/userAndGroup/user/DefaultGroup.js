@@ -1,6 +1,6 @@
 (function() {
 
-	Ext.define('CMDBuild.model.user.DefaultGroup', {
+	Ext.define('CMDBuild.model.userAndGroup.user.DefaultGroup', {
 		extend: 'Ext.data.Model',
 
 		requires: ['CMDBuild.core.constants.Proxy'],

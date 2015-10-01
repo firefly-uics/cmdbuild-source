@@ -196,7 +196,6 @@
 			 * @returns {Mixed} full model object or single property
 			 */
 			propertyManageGet: function(parameters) {
-_debug('propertyManageGet 1', parameters);
 				if (
 					!Ext.Object.isEmpty(parameters)
 					&& !Ext.isEmpty(parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME]) && Ext.isString(parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME])
@@ -220,7 +219,7 @@ _debug('propertyManageGet 1', parameters);
 								requiredAttribute = requiredAttribute.get(attributeName);
 							}
 						}, this);
-_debug('propertyManageGet 2', requiredAttribute);
+
 					return requiredAttribute;
 				}
 
@@ -273,7 +272,6 @@ _debug('propertyManageGet 2', requiredAttribute);
 			 * @returns {Mixed}
 			 */
 			propertyManageSet: function(parameters) {
-_debug('propertyManageSet 1', parameters);
 				if (
 					!Ext.Object.isEmpty(parameters)
 					&& !Ext.isEmpty(parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME]) && Ext.isString(parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME])
@@ -302,7 +300,6 @@ _debug('propertyManageSet 1', parameters);
 							this[parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME]] = Ext.create(modelName, value);
 						}
 					}
-_debug('propertyManageSet 2', this[parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME]]);
 				}
 			},
 

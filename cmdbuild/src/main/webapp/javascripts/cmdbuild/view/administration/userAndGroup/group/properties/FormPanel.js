@@ -30,6 +30,11 @@
 		 */
 		enableDisableButton: undefined,
 
+		/**
+		 * @property {CMDBuild.field.ErasableCombo}
+		 */
+		startingClassCombo: undefined,
+
 		bodyCls: 'cmgraypanel',
 		border: false,
 		frame: false,
@@ -137,7 +142,7 @@
 						allowBlank: true,
 						vtype: 'emailOrBlank'
 					}),
-					Ext.create('CMDBuild.field.ErasableCombo', {
+					this.startingClassCombo = Ext.create('CMDBuild.field.ErasableCombo', {
 						name: CMDBuild.core.constants.Proxy.STARTING_CLASS,
 						fieldLabel: CMDBuild.Translation.startingPageAt,
 						labelWidth: CMDBuild.LABEL_WIDTH,
