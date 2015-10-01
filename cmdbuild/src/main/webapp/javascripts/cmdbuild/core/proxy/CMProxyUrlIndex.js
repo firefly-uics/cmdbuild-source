@@ -211,11 +211,6 @@
 			classUpdate: 'services/json/schema/translation/updateforclass',
 		},
 
-		login: {
-			normal: 'services/json/login/login',
-			rest: 'services/rest/v2/sessions'
-		},
-
 		menu: {
 			create: '',
 			read: 'services/json/schema/modmenu/getassignedmenu',
@@ -292,6 +287,17 @@
 
 			printReportFactory: 'services/json/management/modreport/printreportfactory',
 			updateReportFactoryParams: 'services/json/management/modreport/updatereportfactoryparams'
+		},
+
+		session: {
+			jsonRpc: {
+				login: 'services/json/login/login',
+				logout: 'services/json/login/logout'
+			},
+			rest: {
+				login: 'services/rest/v2/sessions',
+				logout: 'services/rest/v2/sessions'
+			}
 		},
 
 		tasks: {

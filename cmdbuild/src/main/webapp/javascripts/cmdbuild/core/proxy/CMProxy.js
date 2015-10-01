@@ -11,36 +11,6 @@
 		/**
 		 * @param {Object} parameters
 		 */
-		doLogin: function(parameters) {
-			CMDBuild.Ajax.request({
-				params: parameters.params,
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.login.normal,
-				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
-				scope: parameters.scope || this,
-				success: parameters.success || Ext.emptyFn,
-				failure: parameters.failure || Ext.emptyFn,
-				callback: parameters.callback || Ext.emptyFn
-			});
-		},
-
-		/**
-		 * @param {Object} parameters
-		 */
-		doRestLogin: function(parameters) {
-			CMDBuild.Ajax.request({
-				jsonData: parameters.params,
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.login.rest,
-				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
-				scope: parameters.scope || this,
-				success: parameters.success || Ext.emptyFn,
-				failure: parameters.failure || Ext.emptyFn,
-				callback: parameters.callback || Ext.emptyFn
-			});
-		},
-
-		/**
-		 * @param {Object} parameters
-		 */
 		doRequest: function(parameters) {
 			var successWithAdapter = Ext.Function.createInterceptor(parameters.success || Ext.emptyFn, function(response) {
 				if (parameters.adapter) {

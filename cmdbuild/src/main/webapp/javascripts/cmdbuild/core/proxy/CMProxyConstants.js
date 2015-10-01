@@ -356,6 +356,7 @@
 		TIME: 'time',
 		TITLE: 'title',
 		TO: 'to',
+		TOKEN: 'token',
 		TOOLBAR_BOTTOM: 'bottomToolbar',
 		TOOLBAR_TOP: 'topToolbar',
 		TO_ADDRESSES: 'toAddresses',
