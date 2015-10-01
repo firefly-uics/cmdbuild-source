@@ -61,6 +61,7 @@
 
 					this.getStore().sort();
 
+					// Replace this.callParent(arguments), inside proxy function doesn't work
 					if (!Ext.isEmpty(nodeIdToSelect))
 						this.selectNodeById(nodeIdToSelect);
 				}
