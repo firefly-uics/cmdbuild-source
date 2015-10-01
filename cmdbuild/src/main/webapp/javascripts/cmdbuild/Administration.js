@@ -152,7 +152,10 @@
 								cmName: 'userandgroup'
 							}),
 							Ext.create('CMDBuild.view.administration.accordion.Tasks', { cmName: 'tasks' }),
-							Ext.create('CMDBuild.view.administration.accordion.Email', { cmName: 'email' }),
+							Ext.create('CMDBuild.view.administration.accordion.Email', {
+								cmControllerType: 'CMDBuild.controller.common.AbstractAccordionController',
+								cmName: 'email'
+							}),
 							gisAccordion,
 							bimAccordion,
 							Ext.create('CMDBuild.view.administration.accordion.Localization', { cmName: 'localizations' }),

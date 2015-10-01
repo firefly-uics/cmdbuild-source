@@ -31,7 +31,7 @@
 			if (!Ext.Object.isEmpty(node)) {
 				this.view.removeAll(true);
 
-				switch(node.get(CMDBuild.core.constants.Proxy.SECTION_HIERARCHY)[0]) {
+				switch (node.get(CMDBuild.core.constants.Proxy.SECTION_HIERARCHY)[0]) {
 					case 'sql': {
 						this.sectionController = Ext.create('CMDBuild.controller.administration.dataView.Sql', { parentDelegate: this });
 					} break;
