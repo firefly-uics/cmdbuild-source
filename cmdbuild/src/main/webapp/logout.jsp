@@ -1,66 +1,49 @@
-<%@ page language="java" %>
-<%@ page session="true" %>
-<%@ page import="org.cmdbuild.filters.AuthFilter" %>
-<!-- Closing Rest session -->
-	<script type="text/javascript">
-	var token = readCookie("RestSessionToken");
-	closeRestSession('http://localhost:8080/cmdbuild/services/rest/v2/sessions/' + token,
-			function (response) {
-				console.log("REST: Authentication success");
-		});
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 
-	function closeRestSession(url, callbackFunction)
-	{
-		this.bindFunction = function (caller, object) {
-			return function() {
-				return caller.apply(object, [object]);
-			};
-		};
+<%@ page language = "java" contentType = "text/html; charset=UTF-8" pageEncoding = "UTF-8" %>
+<%@ page session = "true" %>
+<%@ page import = "org.cmdbuild.services.SessionVars" %>
+<%@ page import = "org.cmdbuild.spring.SpringIntegrationUtils" %>
+<%@ page import = "org.cmdbuild.filters.AuthFilter" %>
+<%@ taglib uri = "/WEB-INF/tags/translations.tld" prefix = "tr" %>
 
-		this.stateChange = function (object) {
-			if (this.request.readyState==4)
-				this.callbackFunction(this.request.responseText);
-		};
-
-		this.getRequest = function() {
-			if (window.ActiveXObject)
-				return new ActiveXObject('Microsoft.XMLHTTP');
-			else if (window.XMLHttpRequest)
-				return new XMLHttpRequest();
-			return false;
-		};
-
-		this.postBody = (arguments[2] || "");
-
-		this.callbackFunction=callbackFunction;
-		this.url=url;
-		this.request = this.getRequest();
-		
-		if(this.request) {
-			var req = this.request;
-			req.onreadystatechange = this.bindFunction(this.stateChange, this);
-
-			req.open("DELETE", url, true);
-			req.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-			req.send(this.postBody);
-		}
-	}
-	function readCookie(name) {
-        var nameEQ = name + "=";
-        var ca = document.cookie.split(';');
-        for (var i = 0; i < ca.length; i++) {
-            var c = ca[i];
-            while (c.charAt(0) == ' ') c = c.substring(1, c.length);
-            if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
-        }
-        return null;
-    }
-	</script>
-<!-- End closing Rest session -->
-	
 <%
-	if (session != null) {
-		session.invalidate();
-	}
-	response.sendRedirect(AuthFilter.LOGIN_URL);
+	final String lang = SpringIntegrationUtils.applicationContext().getBean(SessionVars.class).getLanguage();
+	final String extVersion = "4.2.0";
 %>
+
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<link rel="icon" href="images/favicon.ico" />
+
+		<!-- 0. ExtJS -->
+		<script type="text/javascript" src="javascripts/ext-<%= extVersion %>/ext-all.js"></script>
+		<script type="text/javascript" src="javascripts/ext-<%= extVersion %>-ux/Notification.js"></script>
+
+		<!-- 1. Main script -->
+		<script type="text/javascript" src="javascripts/cmdbuild/core/Utils.js"></script>
+		<script type="text/javascript" src="javascripts/cmdbuild/core/LoaderConfig.js"></script>
+		<script type="text/javascript" src="javascripts/log/log4javascript.js"></script>
+		<script type="text/javascript" src="javascripts/cmdbuild/application.js"></script>
+		<script type="text/javascript" src="javascripts/cmdbuild/core/Ajax.js"></script>
+
+		<!-- 2. Translations -->
+		<script type="text/javascript" src="javascripts/ext-<%= extVersion %>/locale/ext-lang-<%= lang %>.js"></script>
+		<script type="text/javascript" src="services/json/utils/gettranslationobject"></script>
+
+		<!-- 3. Logout script -->
+		<script type="text/javascript" src="javascripts/cmdbuild/app/Logout.js"></script>
+
+		<script type="text/javascript">
+			Ext.onReady(function() {
+				CMDBuild.app.Logout.doLogout();
+			});
+		</script>
+
+		<title>CMDBuild</title>
+	</head>
+	<body></body>
+</html>

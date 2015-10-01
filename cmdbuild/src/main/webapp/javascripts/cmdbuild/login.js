@@ -6,8 +6,9 @@
 		extend: 'Ext.panel.Panel',
 
 		requires: [
-			'CMDBuild.core.proxy.CMProxy',
-			'CMDBuild.core.proxy.CMProxyConstants'
+			'CMDBuild.core.proxy.CMProxyConstants',
+			'CMDBuild.core.proxy.session.JsonRpc',
+			'CMDBuild.core.proxy.session.Rest'
 		],
 
 		frame: false,
@@ -215,21 +216,17 @@
 				params[CMDBuild.core.proxy.CMProxyConstants.PASSWORD] = this.password.getValue();
 				params[CMDBuild.core.proxy.CMProxyConstants.USERNAME] = this.user.getValue();
 
-				CMDBuild.core.proxy.CMProxy.doLogin({
+				CMDBuild.core.proxy.session.JsonRpc.login({
 					params: params,
 					scope: this,
 					success: function(response, options, decodedResponse) {
-						// Rest authentication
-						CMDBuild.core.proxy.CMProxy.doRestLogin({
+						CMDBuild.core.proxy.session.Rest.login({
 							params: Ext.encode(params),
 							scope: this,
 							success: function(response, options, decodedResponse) {
 								decodedResponse = decodedResponse[CMDBuild.core.proxy.CMProxyConstants.DATA];
 
-								document.cookie = 'RestSessionToken=' + decodedResponse['_id'];
-							},
-							failure: function(response, options, decodedResponse) {
-								_error('REST authentication error');
+								Ext.util.Cookies.set('RestSessionToken', decodedResponse['_id']);
 							},
 							callback: function(records, operation, success) {
 								// CMDBuild redirect
