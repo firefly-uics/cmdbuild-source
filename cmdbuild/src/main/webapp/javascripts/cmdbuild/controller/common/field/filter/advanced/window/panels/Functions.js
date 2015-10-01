@@ -16,6 +16,7 @@
 		cmfgCatchedFunctions: [
 			'onFieldFilterAdvancedWindowFunctionsGetData',
 			'onFieldFilterAdvancedWindowFunctionsSetData = onFieldFilterAdvancedWindowSetData',
+			'onFieldFilterAdvancedWindowFunctionsShow',
 			'onFieldFilterAdvancedWindowFunctionsTabBuild'
 		],
 
@@ -90,16 +91,31 @@
 			}
 		},
 
+		onFieldFilterAdvancedWindowFunctionsShow: function() {
+			if (!this.cmfg('fieldFilterAdvancedFilterIsEmpty')) {
+				this.form.functionComboBox.getStore().load({
+					scope: this,
+					callback: function(records, operation, success) {
+						// Store load errors manage
+						if (!success) {
+							CMDBuild.core.Message.error(null, {
+								text: CMDBuild.Translation.errors.unknown_error,
+								detail: operation.error
+							});
+						}
+
+						this.onFieldFilterAdvancedWindowFunctionsSetData(this.cmfg('fieldFilterAdvancedFilterGet'));
+					}
+				});
+			}
+		},
+
 		/**
 		 * Builds tab from filter value (preset values and add)
 		 */
 		onFieldFilterAdvancedWindowFunctionsTabBuild: function() {
-			if (this.cmfg('fieldFilterAdvancedConfigurationIsPanelEnabled', 'function')) {
+			if (this.cmfg('fieldFilterAdvancedConfigurationIsPanelEnabled', 'function'))
 				this.cmfg('fieldFilterAdvancedWindowAddTab', this.buildView());
-
-				if (!this.cmfg('fieldFilterAdvancedFilterIsEmpty'))
-					this.onFieldFilterAdvancedWindowFunctionsSetData(this.cmfg('fieldFilterAdvancedFilterGet'));
-			}
 		},
 
 		viewReset: function() {

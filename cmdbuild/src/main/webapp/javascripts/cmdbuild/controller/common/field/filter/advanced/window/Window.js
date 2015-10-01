@@ -365,11 +365,23 @@
 			var params = {};
 			params[CMDBuild.core.constants.Proxy.CLASS_NAME] = this.cmfg('fieldFilterAdvancedSelectedClassGet', CMDBuild.core.constants.Proxy.NAME);
 
-			this.grid.getStore().load({ params: params });
+			this.grid.getStore().load({
+				params: params,
+				scope: this,
+				callback: function(records, operation, success) {
+					// Store load errors manage
+					if (!success) {
+						CMDBuild.core.Message.error(null, {
+							text: CMDBuild.Translation.errors.unknown_error,
+							detail: operation.error
+						});
+					}
+				}
+			});
 
 			this.setViewTitle(this.cmfg('fieldFilterAdvancedSelectedClassGet', CMDBuild.core.constants.Proxy.TEXT)); // TODO: waiting for refactor (description)
 
-			// Refresh tab configuration (sorted)
+			// On window show rebuild all tab configuration (sorted)
 			this.tabPanel.removeAll(true);
 
 			this.controllerTabAttributes.cmfg('onFieldFilterAdvancedWindowAttributesTabBuild');
@@ -377,7 +389,10 @@
 			this.controllerTabRelations.cmfg('onFieldFilterAdvancedWindowRelationsTabBuild');
 			this.controllerTabFunctions.cmfg('onFieldFilterAdvancedWindowFunctionsTabBuild');
 
-			this.tabPanel.setActiveTab(0); // Configuration parameter doesn't work because panels are added
+			if (Ext.isEmpty(this.view.tabPanel.getActiveTab()))
+				this.tabPanel.setActiveTab(0); // Configuration parameter doesn't work because panels are added
+
+			this.view.tabPanel.getActiveTab().fireEvent('show'); // Manual show event fire because was already selected
 		},
 
 		/**

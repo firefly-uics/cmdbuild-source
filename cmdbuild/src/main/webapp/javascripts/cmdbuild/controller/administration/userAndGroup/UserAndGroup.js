@@ -51,7 +51,7 @@
 
 				switch (this.userAndGroupSelectedAccordionGet(CMDBuild.core.constants.Proxy.SECTION_HIERARCHY)) {
 					case 'user': {
-						this.sectionController = Ext.create('CMDBuild.controller.administration.user.User', { parentDelegate: this });
+						this.sectionController = Ext.create('CMDBuild.controller.administration.userAndGroup.user.User', { parentDelegate: this });
 					} break;
 
 					case 'group':
@@ -60,9 +60,14 @@
 					}
 				}
 
-				this.view.add(this.sectionController.getView());
+				var titleParts = [this.sectionController.getBaseTitle()];
 
-				this.setViewTitle([this.sectionController.getBaseTitle(), this.userAndGroupSelectedAccordionGet(CMDBuild.core.constants.Proxy.DESCRIPTION)]);
+				if (!this.userAndGroupSelectedAccordionIsEmpty(CMDBuild.core.constants.Proxy.DESCRIPTION))
+					titleParts.push(this.userAndGroupSelectedAccordionGet(CMDBuild.core.constants.Proxy.DESCRIPTION));
+
+				this.setViewTitle(titleParts);
+
+				this.view.add(this.sectionController.getView());
 
 				this.sectionController.cmfg('onUserAndGroupAccordionSelect');
 
@@ -105,8 +110,7 @@
 
 				if (
 					!Ext.Object.isEmpty(parameters)
-					&& !Ext.isEmpty(sectionHierarchyValue)
-					&& Ext.isString(sectionHierarchyValue)
+					&& !Ext.isEmpty(sectionHierarchyValue) && Ext.isString(sectionHierarchyValue)
 				) {
 					parameters[CMDBuild.core.constants.Proxy.MODEL_NAME] = 'CMDBuild.model.userAndGroup.SelectedAccordion';
 					parameters[CMDBuild.core.constants.Proxy.SECTION_HIERARCHY] = sectionHierarchyValue;

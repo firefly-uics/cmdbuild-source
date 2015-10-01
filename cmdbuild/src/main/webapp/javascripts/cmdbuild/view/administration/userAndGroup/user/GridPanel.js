@@ -1,15 +1,15 @@
 (function() {
 
-	Ext.define('CMDBuild.view.administration.user.GridPanel', {
+	Ext.define('CMDBuild.view.administration.userAndGroup.user.GridPanel', {
 		extend: 'Ext.grid.Panel',
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.User'
+			'CMDBuild.core.proxy.userAndGroup.user.User'
 		],
 
 		/**
-		 * @cfg {CMDBuild.controller.administration.user.User}
+		 * @cfg {CMDBuild.controller.administration.userAndGroup.user.User}
 		 */
 		delegate: undefined,
 
@@ -30,7 +30,7 @@
 						flex: 1
 					}
 				],
-				store: CMDBuild.core.proxy.User.getStore()
+				store: CMDBuild.core.proxy.userAndGroup.user.User.getStore()
 			});
 
 			this.callParent(arguments);
@@ -42,7 +42,7 @@
 			},
 
 			select: function(row, record, index) {
-				this.delegate.cmfg('onUserRowSelected');
+				this.delegate.cmfg('onUserAndGroupUserRowSelected');
 			},
 
 			// Event to load store on view display and first row selection as CMDbuild standard

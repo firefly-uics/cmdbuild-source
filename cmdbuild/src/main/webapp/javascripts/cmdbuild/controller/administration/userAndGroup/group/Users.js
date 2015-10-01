@@ -18,7 +18,7 @@
 		 */
 		cmfgCatchedFunctions: [
 			'onUserAndGroupGroupUsersAddButtonClick = onUserAndGroupGroupAddButtonClick',
-			'onUserAndGroupGroupSelected = onUserAndGroupGroupSelected',
+			'onUserAndGroupGroupUsersGroupSelected = onUserAndGroupGroupSelected',
 			'onUserAndGroupGroupUsersSaveButtonClick',
 			'onUserAndGroupGroupUsersTabShow',
 		],
@@ -54,7 +54,7 @@
 		/**
 		 * Enable/Disable tab evaluating selected group
 		 */
-		onUserAndGroupGroupSelected: function() {
+		onUserAndGroupGroupUsersGroupSelected: function() {
 			this.view.setDisabled(this.cmfg('userAndGroupGroupSelectedGroupIsEmpty'));
 		},
 

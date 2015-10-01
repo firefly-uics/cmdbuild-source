@@ -38,7 +38,7 @@
 		 */
 		getStartingClassStore: function() {
 			return Ext.create('Ext.data.Store', {
-				autoLoad: true,
+				autoLoad: false,
 				model: 'CMDBuild.model.userAndGroup.group.StartingClass',
 				proxy: {
 					type: 'ajax',

@@ -26,6 +26,12 @@
 			});
 
 			this.callParent(arguments);
+		},
+
+		listeners: {
+			show: function(panel, eOpts) {
+				this.delegate.cmfg('onFieldFilterAdvancedWindowAttributesShow');
+			}
 		}
 	});
 

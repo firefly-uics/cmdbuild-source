@@ -1,12 +1,12 @@
 (function() {
 
-	Ext.define('CMDBuild.view.administration.user.UserView', {
+	Ext.define('CMDBuild.view.administration.userAndGroup.user.UserView', {
 		extend: 'Ext.panel.Panel',
 
 		requires: ['CMDBuild.core.constants.Proxy'],
 
 		/**
-		 * @cfg {CMDBuild.controller.administration.user.User}
+		 * @cfg {CMDBuild.controller.administration.userAndGroup.user.User}
 		 */
 		delegate: undefined,
 
@@ -15,10 +15,10 @@
 		 */
 		cmName: undefined,
 
+		baseTitle: CMDBuild.Translation.users,
 		border: true,
 		frame: false,
 		layout: 'border',
-		title: CMDBuild.Translation.usersAndGroups + ' - ' + CMDBuild.Translation.users,
 
 		initComponent: function() {
 			Ext.apply(this, {
@@ -32,19 +32,21 @@
 								scope: this,
 
 								handler: function(button, e) {
-									this.delegate.cmfg('onUserAddButtonClick');
+									this.delegate.cmfg('onUserAndGroupUserAddButtonClick');
 								}
 							})
 						]
 					})
 				],
 				items: [
-					this.grid = Ext.create('CMDBuild.view.administration.user.GridPanel', {
+					this.grid = Ext.create('CMDBuild.view.administration.userAndGroup.user.GridPanel', {
+						delegate: this.delegate,
 						region: 'north',
 						split: true,
 						height: '30%'
 					}),
-					this.form = Ext.create('CMDBuild.view.administration.user.FormPanel', {
+					this.form = Ext.create('CMDBuild.view.administration.userAndGroup.user.FormPanel', {
+						delegate: this.delegate,
 						region: 'center'
 					})
 				]
