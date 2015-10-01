@@ -100,11 +100,14 @@
 		},
 
 		/**
-		 * TODO: waiting for refactor (server endpoint to get single view data)
+		 * TODO: waiting for refactor (crud)
 		 */
 		onDataViewFilterRowSelected: function() {
 			this.selectedView = this.grid.getSelectionModel().getSelection()[0];
-			this.selectedView.set(CMDBuild.core.constants.Proxy.FILTER, Ext.decode(this.selectedView.get(CMDBuild.core.constants.Proxy.FILTER))); // TODO: waiting for refacotr
+
+			// TODO: waiting for refacotr
+			if (Ext.isString(this.selectedView.get(CMDBuild.core.constants.Proxy.FILTER)))
+				this.selectedView.set(CMDBuild.core.constants.Proxy.FILTER, Ext.decode(this.selectedView.get(CMDBuild.core.constants.Proxy.FILTER)));
 
 			this.form.loadRecord(this.selectedView);
 			this.form.setDisabledModify(true, true);

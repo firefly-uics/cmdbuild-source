@@ -4,7 +4,6 @@
 	var classesAccordion = null;
 	var controllerNS = CMDBuild.controller;
 	var dashboardsAccordion = null;
-	var dataViewAccordion = null;
 	var domainAccordion = null;
 	var gisAccordion = null;
 	var lookupAccordion = null;
@@ -71,6 +70,10 @@
 								cmControllerType: 'CMDBuild.controller.administration.configuration.Configuration',
 								cmName: 'configuration'
 							}),
+							Ext.create('CMDBuild.view.administration.dataView.DataViewView', {
+								cmControllerType: 'CMDBuild.controller.administration.dataView.DataView',
+								cmName: 'dataview'
+							}),
 							Ext.create('CMDBuild.view.administration.email.EmailView', {
 								cmControllerType: 'CMDBuild.controller.administration.email.Email',
 								cmName: 'email'
@@ -83,6 +86,10 @@
 								cmControllerType: 'CMDBuild.controller.administration.localization.Localization',
 								cmName: 'localizations'
 							}),
+							Ext.create('CMDBuild.view.administration.menu.MenuView', {
+								cmControllerType: 'CMDBuild.controller.administration.menu.Menu',
+								cmName: 'menu'
+							}),
 							Ext.create('CMDBuild.view.administration.report.ReportView', {
 								cmControllerType: 'CMDBuild.controller.administration.report.Report',
 								cmName: 'report'
@@ -90,6 +97,10 @@
 							Ext.create('CMDBuild.view.administration.tasks.CMTasks', {
 								cmControllerType: 'CMDBuild.controller.administration.tasks.CMTasksController',
 								cmName: 'tasks'
+							}),
+							Ext.create('CMDBuild.view.administration.userAndGroup.UserAndGroupView', {
+								cmControllerType: 'CMDBuild.controller.administration.userAndGroup.UserAndGroup',
+								cmName: 'userandgroup'
 							}),
 							new CMDBuild.view.administration.bim.CMBIMPanel({
 								cmControllerType: CMDBuild.controller.administration.filter.CMBIMPanelController,
@@ -104,20 +115,6 @@
 								cmName: 'notconfiguredpanel'
 							})
 						];
-
-						/**
-						 * DataView
-						 */
-						if (!CMDBuild.configuration.userInterface.get(CMDBuild.core.constants.Proxy.CLOUD_ADMIN)) {
-							dataViewAccordion = Ext.create('CMDBuild.view.administration.accordion.DataView', { cmName: 'dataview' });
-
-							panels = panels.concat([
-								Ext.create('CMDBuild.view.administration.dataView.DataViewView', {
-									cmControllerType: 'CMDBuild.controller.administration.dataView.DataView',
-									cmName: 'dataview'
-								}),
-							]);
-						}
 
 						_CMMainViewportController = new CMDBuild.controller.CMMainViewportController(
 							new CMDBuild.view.CMMainViewport({
@@ -138,7 +135,12 @@
 							classesAccordion,
 							processAccordion,
 							domainAccordion,
-							dataViewAccordion,
+							CMDBuild.configuration.userInterface.get(CMDBuild.core.constants.Proxy.CLOUD_ADMIN) ? null :
+								Ext.create('CMDBuild.view.administration.accordion.DataView', {
+									cmControllerType: 'CMDBuild.controller.common.AbstractAccordionController',
+									cmName: 'dataview'
+								})
+							,
 							Ext.create('CMDBuild.view.administration.accordion.Filter', { cmName: 'filter' }),
 							navigationTreesAccordion,
 							lookupAccordion,
@@ -296,26 +298,6 @@
 								cmName: 'lookuptype'
 							})
 						);
-					},
-					callback: reqBarrier.getCallback()
-				});
-
-				/**
-				 * Group
-				 */
-				CMDBuild.core.proxy.userAndGroup.group.Group.readAll({
-					scope: this,
-					success: function(result, options, decodedResult) {
-						_CMMainViewportController.addPanel([
-							Ext.create('CMDBuild.view.administration.menu.MenuView', {
-								cmControllerType: 'CMDBuild.controller.administration.menu.Menu',
-								cmName: 'menu'
-							}),
-							Ext.create('CMDBuild.view.administration.userAndGroup.UserAndGroupView', {
-								cmControllerType: 'CMDBuild.controller.administration.userAndGroup.UserAndGroup',
-								cmName: 'userandgroup',
-							}),
-						]);
 					},
 					callback: reqBarrier.getCallback()
 				});

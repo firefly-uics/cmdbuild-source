@@ -259,7 +259,7 @@
 			 */
 			propertyManageReset: function(targetVariableName) {
 				if (!Ext.isEmpty(targetVariableName) && Ext.isString(targetVariableName))
-					this[parameters.targetVariableName] = null;
+					this[targetVariableName] = null;
 			},
 
 			/**

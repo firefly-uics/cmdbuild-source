@@ -115,9 +115,14 @@
 		},
 
 		/**
+		 * This is a controller function but must stay here because of not compatibility with CMDBuild view/controller automatic instantiation
+		 *
 		 * @param {Number} nodeIdToSelect
 		 */
-		updateStore: Ext.emptyFn
+		updateStore: function(nodeIdToSelect) {
+			if (!Ext.isEmpty(nodeIdToSelect))
+				this.selectNodeById(nodeIdToSelect);
+		}
 	});
 
 })();
