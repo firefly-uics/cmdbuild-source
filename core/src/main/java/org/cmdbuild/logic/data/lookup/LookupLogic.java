@@ -24,9 +24,7 @@ import java.util.Map;
 import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.common.utils.PagedElements;
 import org.cmdbuild.dao.entrytype.CMAttribute;
-import org.cmdbuild.dao.entrytype.CMAttribute.Mode;
 import org.cmdbuild.dao.entrytype.CMClass;
-import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeTypeVisitor;
 import org.cmdbuild.dao.entrytype.attributetype.ForwardingAttributeTypeVisitor;
@@ -399,6 +397,11 @@ public class LookupLogic implements Logic {
 
 		assure(operationUser.hasAdministratorPrivileges());
 
+		/*
+		 * should be done outside the forwarding object due to unwanted
+		 * recursion
+		 */
+		final LookupType realType = typeFor(typesWith(lookup.type().name)).orNull();
 		final Lookup lookupWithRealType = new ForwardingLookup() {
 
 			@Override
@@ -408,7 +411,7 @@ public class LookupLogic implements Logic {
 
 			@Override
 			public LookupType type() {
-				return typeFor(typesWith(lookup.type().name)).orNull();
+				return realType;
 			}
 
 		};
