@@ -225,11 +225,6 @@
 								this.getSelectionModel().select(0);
 							}
 						}
-					} else {
-						CMDBuild.core.Message.error(null, {
-							text: CMDBuild.Translation.errors.unknown_error,
-							detail: operation.error
-						});
 					}
 				}
 			});
