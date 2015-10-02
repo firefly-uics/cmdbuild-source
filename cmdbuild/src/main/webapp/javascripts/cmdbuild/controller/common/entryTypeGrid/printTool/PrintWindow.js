@@ -10,17 +10,17 @@
 		],
 
 		/**
+		 * @cfg {Mixed}
+		 */
+		parentDelegate: undefined,
+
+		/**
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
 			'onPrintWindowDownloadButtonClick',
 			'onPrintWindowShow',
 		],
-
-		/**
-		 * @cfg {Mixed}
-		 */
-		parentDelegate: undefined,
 
 		/**
 		 * @cfg {Array}
@@ -86,6 +86,10 @@
 
 				case 'classSchema': {
 					proxyCreateFunction = CMDBuild.core.proxy.report.Print.createClassSchema;
+				} break;
+
+				case 'dataViewSql': {
+					proxyCreateFunction = CMDBuild.core.proxy.report.Print.createDataViewSqlSchema;
 				} break;
 
 				case 'schema': {

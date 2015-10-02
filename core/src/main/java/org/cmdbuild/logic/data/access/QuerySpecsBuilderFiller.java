@@ -2,12 +2,21 @@ package org.cmdbuild.logic.data.access;
 
 import static com.google.common.collect.Iterables.isEmpty;
 import static com.google.common.collect.Iterables.toArray;
+import static com.google.common.collect.Lists.newArrayList;
+import static java.lang.String.format;
 import static org.apache.commons.lang3.RandomStringUtils.randomNumeric;
+import static org.cmdbuild.common.Constants.DESCRIPTION_ATTRIBUTE;
 import static org.cmdbuild.dao.constants.Cardinality.CARDINALITY_1N;
 import static org.cmdbuild.dao.constants.Cardinality.CARDINALITY_N1;
 import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.Id;
+import static org.cmdbuild.dao.entrytype.Functions.attribute;
+import static org.cmdbuild.dao.query.ExternalReferenceAliasHandler.EXTERNAL_ATTRIBUTE;
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
+import static org.cmdbuild.dao.query.clause.Functions.queryAliasAttribute;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
+import static org.cmdbuild.dao.query.clause.alias.Aliases.as;
+import static org.cmdbuild.dao.query.clause.alias.Aliases.canonical;
+import static org.cmdbuild.dao.query.clause.alias.Aliases.name;
 import static org.cmdbuild.dao.query.clause.join.Over.over;
 import static org.cmdbuild.dao.query.clause.where.AndWhereClause.and;
 import static org.cmdbuild.dao.query.clause.where.InOperatorAndValue.in;
@@ -31,7 +40,6 @@ import static org.cmdbuild.logic.mapping.json.Constants.Filters.RELATION_TYPE_ON
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang3.Validate;
 import org.cmdbuild.cql.facade.CQLAnalyzer.NullCallback;
 import org.cmdbuild.cql.facade.CQLFacade;
 import org.cmdbuild.dao.entrytype.CMAttribute;
@@ -49,7 +57,6 @@ import org.cmdbuild.dao.query.clause.OrderByClause.Direction;
 import org.cmdbuild.dao.query.clause.QueryAliasAttribute;
 import org.cmdbuild.dao.query.clause.QueryDomain.Source;
 import org.cmdbuild.dao.query.clause.alias.Alias;
-import org.cmdbuild.dao.query.clause.alias.NameAlias;
 import org.cmdbuild.dao.query.clause.join.Over;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
 import org.cmdbuild.dao.view.CMDataView;
@@ -64,39 +71,42 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.google.common.base.Function;
-import com.google.common.collect.Lists;
+import com.google.common.collect.FluentIterable;
 
 public class QuerySpecsBuilderFiller {
 
-	private static final String DEFAULT_SORTING_ATTRIBUTE_NAME = "Description";
+	private static <E> FluentIterable<E> _from(final Iterable<E> iterable) {
+		return FluentIterable.from(iterable);
+	}
 
 	private final CMDataView dataView;
 	private final QueryOptions queryOptions;
+	private CMEntryType entryType;
 
-	private CMClass sourceClass;
-
-	public QuerySpecsBuilderFiller(final CMDataView dataView, final QueryOptions queryOptions, final String className) {
-		this(dataView, queryOptions, dataView.findClass(className));
-	}
-
-	public QuerySpecsBuilderFiller(final CMDataView dataView, final QueryOptions queryOptions, final CMClass sourceClass) {
+	public QuerySpecsBuilderFiller(final CMDataView dataView, final QueryOptions queryOptions,
+			final CMEntryType entryType) {
 		this.dataView = dataView;
 		this.queryOptions = queryOptions;
-		this.sourceClass = sourceClass;
+		this.entryType = entryType;
 	}
 
-	public CMClass getSourceClass() {
-		return sourceClass;
+	public Alias getAlias() {
+		return canonical(entryType);
 	}
 
 	public QuerySpecsBuilder create() {
-		final Function<Iterable<? extends String>, Iterable<QueryAliasAttribute>> attributeSubsetMapper = new AttributeSubsetMapper(
-				sourceClass);
-		final Iterable<QueryAliasAttribute> attributeSubsetForSelect = attributeSubsetMapper.apply(queryOptions
-				.getAttributes());
-		final QuerySpecsBuilder querySpecsBuilder = newQuerySpecsBuilder(attributeSubsetForSelect, sourceClass) //
-				.from(sourceClass);
+		final Iterable<QueryAliasAttribute> attributeSubsetForSelect = _from(queryOptions.getAttributes()) //
+				.transform(attribute(entryType)) //
+				.filter(CMAttribute.class) //
+				.transform(queryAliasAttribute(entryType));
+		final Object[] attributesArray;
+		if (isEmpty(attributeSubsetForSelect)) {
+			attributesArray = new Object[] { anyAttribute(entryType) };
+		} else {
+			attributesArray = toArray(attributeSubsetForSelect, Object.class);
+		}
+		final QuerySpecsBuilder querySpecsBuilder = dataView.select(attributesArray) //
+				.from(entryType, as(getAlias()));
 		try {
 			fillQuerySpecsBuilderWithFilterOptions(querySpecsBuilder);
 		} catch (final JSONException ex) {
@@ -105,35 +115,20 @@ public class QuerySpecsBuilderFiller {
 		querySpecsBuilder //
 				.limit(queryOptions.getLimit()) //
 				.offset(queryOptions.getOffset());
-		addSortingOptions(querySpecsBuilder, sourceClass);
+		addSortingOptions(querySpecsBuilder);
 		return querySpecsBuilder;
 	}
 
-	private QuerySpecsBuilder newQuerySpecsBuilder(final Iterable<QueryAliasAttribute> attributeSubsetForSelect,
-			final CMEntryType entryType) {
-		final Object[] attributesArray;
-		if (isEmpty(attributeSubsetForSelect)) {
-			attributesArray = new Object[] { anyAttribute(entryType) };
-		} else {
-			attributesArray = toArray(attributeSubsetForSelect, Object.class);
-		}
-		return dataView.select(attributesArray);
-	}
-
-	private void addSortingOptions(final QuerySpecsBuilder querySpecsBuilder, final CMClass sourceClass) {
-		final SorterMapper sorterMapper = new JsonSorterMapper(sourceClass, queryOptions.getSorters());
+	private void addSortingOptions(final QuerySpecsBuilder querySpecsBuilder) {
+		final SorterMapper sorterMapper = new JsonSorterMapper(entryType, queryOptions.getSorters(), getAlias());
 		final List<OrderByClause> clauses = sorterMapper.deserialize();
-		Validate.notNull(sourceClass, "null source class");
 		if (clauses.isEmpty()) {
-			if (sourceClass.getAttribute(DEFAULT_SORTING_ATTRIBUTE_NAME) != null) {
-				querySpecsBuilder.orderBy(attribute(sourceClass, DEFAULT_SORTING_ATTRIBUTE_NAME), Direction.ASC);
+			if (entryType.getAttribute(DESCRIPTION_ATTRIBUTE) != null) {
+				querySpecsBuilder.orderBy(attribute(getAlias(), DESCRIPTION_ATTRIBUTE), Direction.ASC);
 			}
 		} else {
 			for (final OrderByClause clause : clauses) {
-				final Object attributeAlias = getAttributeAliasFromOrderClause( //
-						sourceClass, //
-						clause //
-				);
+				final Object attributeAlias = getAttributeAliasFromOrderClause(clause);
 				querySpecsBuilder.orderBy(attributeAlias, clause.getDirection());
 			}
 		}
@@ -143,21 +138,16 @@ public class QuerySpecsBuilderFiller {
 	 * Sorting by lookup, reference and foreign key attributes must add column
 	 * the description of the relative card/lookup
 	 * 
-	 * @param sourceClass
+	 * @param entryType
 	 * @param clause
 	 * @return the alias to use to sort
 	 */
-	private Object getAttributeAliasFromOrderClause( //
-			final CMClass sourceClass, //
-			final OrderByClause clause //
-	) {
-
+	private Object getAttributeAliasFromOrderClause(final OrderByClause clause) {
 		final QueryAliasAttribute queryAttribute = clause.getAttribute();
 		final String attributeName = queryAttribute.getName();
 		final String entryTypeAlias = queryAttribute.getEntryTypeAlias().toString();
-		final CMAttribute cmAttribute = sourceClass.getAttribute(attributeName);
+		final CMAttribute cmAttribute = entryType.getAttribute(attributeName);
 		final CMAttributeType<?> cmAttributeType = cmAttribute.getType();
-
 		Object attributeAlias = clause.getAttribute();
 		String pattern = null;
 		if (cmAttributeType instanceof LookupAttributeType) {
@@ -174,13 +164,9 @@ public class QuerySpecsBuilderFiller {
 		} else if (cmAttributeType instanceof ForeignKeyAttributeType) {
 			pattern = new ExternalReferenceAliasHandler(entryTypeAlias, cmAttribute).forQuery();
 		}
-
 		if (pattern != null) {
-			attributeAlias = QueryAliasAttribute.attribute( //
-					NameAlias.as(pattern), //
-					ExternalReferenceAliasHandler.EXTERNAL_ATTRIBUTE);
+			attributeAlias = QueryAliasAttribute.attribute(name(pattern), EXTERNAL_ATTRIBUTE);
 		}
-
 		return attributeAlias;
 	}
 
@@ -201,7 +187,7 @@ public class QuerySpecsBuilderFiller {
 	 * TODO: split into different private methods
 	 */
 	private void fillQuerySpecsBuilderWithFilterOptions(final QuerySpecsBuilder querySpecsBuilder) throws JSONException {
-		final List<WhereClause> whereClauses = Lists.newArrayList();
+		final List<WhereClause> whereClauses = newArrayList();
 		final JSONObject filterObject = queryOptions.getFilter();
 		new JsonFilterValidator(queryOptions.getFilter()).validate();
 
@@ -214,7 +200,7 @@ public class QuerySpecsBuilderFiller {
 
 				@Override
 				public void from(final CMClass source) {
-					sourceClass = source;
+					entryType = source;
 					querySpecsBuilder.select(anyAttribute(source)) //
 							.from(source);
 				}
@@ -247,7 +233,7 @@ public class QuerySpecsBuilderFiller {
 		if (filterObject.has(FULL_TEXT_QUERY_KEY)) {
 			whereClauses.add(JsonFullTextQueryBuilder.newInstance() //
 					.withFullTextQuery(filterObject.getString(FULL_TEXT_QUERY_KEY)) //
-					.withEntryType(sourceClass) //
+					.withEntryType(entryType) //
 					.build());
 		}
 
@@ -260,7 +246,7 @@ public class QuerySpecsBuilderFiller {
 		if (filterObject.has(ATTRIBUTE_KEY)) {
 			whereClauses.add(JsonAttributeFilterBuilder.newInstance() //
 					.withFilterObject(filterObject.getJSONObject(ATTRIBUTE_KEY)) //
-					.withEntryType(sourceClass) //
+					.withEntryType(entryType) //
 					.withDataView(dataView) //
 					.build());
 		}
@@ -278,9 +264,8 @@ public class QuerySpecsBuilderFiller {
 				final String destinationName = condition.getString(RELATION_DESTINATION_KEY);
 				final CMClass destinationClass = dataView.findClass(destinationName);
 				final boolean left = condition.getString(RELATION_TYPE_KEY).equals(RELATION_TYPE_NOONE);
-				final Alias destinationAlias = NameAlias.as(String.format("DST-%s-%s", destinationName,
-						randomNumeric(10)));
-				final Alias domainAlias = NameAlias.as(String.format("DOM-%s-%s", domainName, randomNumeric(10)));
+				final Alias destinationAlias = name(format("DST-%s-%s", destinationName, randomNumeric(10)));
+				final Alias domainAlias = name(format("DOM-%s-%s", domainName, randomNumeric(10)));
 
 				if (left) {
 					querySpecsBuilder.leftJoin(destinationClass, destinationAlias, over(domain, domainAlias),
@@ -294,7 +279,7 @@ public class QuerySpecsBuilderFiller {
 
 				if (conditionType.equals(RELATION_TYPE_ONEOF)) {
 					final JSONArray cards = condition.getJSONArray(RELATION_CARDS_KEY);
-					final List<Long> oneOfIds = Lists.newArrayList();
+					final List<Long> oneOfIds = newArrayList();
 
 					for (int j = 0; j < cards.length(); j++) {
 						final JSONObject card = cards.getJSONObject(j);
