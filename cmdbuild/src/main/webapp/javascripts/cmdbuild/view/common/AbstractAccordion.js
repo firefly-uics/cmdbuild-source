@@ -8,7 +8,7 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.model.common.AccordionStore'
+			'CMDBuild.model.common.accordion.Generic'
 		],
 
 		/**
@@ -20,6 +20,11 @@
 		 * @cfg {String}
 		 */
 		cmName: undefined,
+
+		/**
+		 * @cfg {String}
+		 */
+		storeModelName: 'CMDBuild.model.common.accordion.Generic',
 
 		autoRender: true,
 		border: true,
@@ -35,7 +40,7 @@
 			Ext.apply(this, {
 				store: Ext.create('Ext.data.TreeStore', {
 					autoLoad: true,
-					model: 'CMDBuild.model.common.AccordionStore',
+					model: this.storeModelName,
 					root: {
 						expanded: true,
 						children: []
@@ -72,7 +77,7 @@
 		},
 
 		/**
-		 * @returns {CMDBuild.model.common.AccordionStore} node or null
+		 * @returns {CMDBuild.model.common.accordion.Generic} node or null
 		 */
 		getFirtsSelectableNode: function() {
 			return this.delegate.cmfg('onAccordionGetFirtsSelectableNode');;
@@ -81,7 +86,7 @@
 		/**
 		 * @param {Number} id
 		 *
-		 * @returns {CMDBuild.model.common.AccordionStore}
+		 * @returns {CMDBuild.model.common.accordion.Generic}
 		 */
 		getNodeById: function(id) {
 			return this.delegate.cmfg('onAccordionGetNodeById', id);
@@ -95,7 +100,7 @@
 		},
 
 		/**
-		 * @param {CMDBuild.model.common.AccordionStore} node
+		 * @param {CMDBuild.model.common.accordion.Generic} node
 		 *
 		 * @returns {Boolean}
 		 */

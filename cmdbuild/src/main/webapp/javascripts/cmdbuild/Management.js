@@ -16,9 +16,6 @@
 	});
 	// TODO move in common
 	var dashboardsAccordion = new CMDBuild.view.administration.accordion.CMDashboardAccordion();
-	var dataViewAccordion = new CMDBuild.view.management.dataView.CMDataViewAccordion({
-		cmControllerType: CMDBuild.controller.management.common.CMFakeIdAccordionController
-	});
 
 	Ext.define('CMDBuild.app.Management', {
 		extend: 'Ext.app.Application',
@@ -181,7 +178,7 @@
 					}),
 					this.dataViewPanel = Ext.create('CMDBuild.view.management.dataView.DataViewView', {
 						cmControllerType: 'CMDBuild.controller.management.dataView.DataView',
-						cmName: 'dataView'
+						cmName: 'dataview'
 					})
 				];
 
@@ -194,9 +191,14 @@
 					this.processAccordion = processAccordion;
 					this.cmAccordions.push(this.processAccordion);
 				}
-				if (!CMDBuild.configuration.userInterface.isDisabledModule(dataViewAccordion.cmName)) {
-					this.dataViewAccordion = dataViewAccordion;
-					this.cmAccordions.push(this.dataViewAccordion);
+
+				if (!CMDBuild.configuration.userInterface.isDisabledModule('dataview')) {
+					this.cmAccordions.push(
+						Ext.create('CMDBuild.view.management.accordion.DataView', {
+							cmControllerType: 'CMDBuild.controller.management.accordion.DataView',
+							cmName: 'dataview'
+						})
+					);
 				}
 
 				if (!CMDBuild.configuration.userInterface.isDisabledModule(dashboardsAccordion.cmName)) {
@@ -298,13 +300,6 @@
 							loadMask: false,
 							success: function(response, options, decodedResponse) {
 								menuAccordion.updateStore(decodedResponse.menu);
-							},
-							callback: reqBarrier.getCallback()
-						});
-
-						CMDBuild.core.proxy.dataView.DataView.readAll({
-							success: function(response, options, decodedResponse) {
-								dataViewAccordion.updateStore(decodedResponse.views);
 							},
 							callback: reqBarrier.getCallback()
 						});

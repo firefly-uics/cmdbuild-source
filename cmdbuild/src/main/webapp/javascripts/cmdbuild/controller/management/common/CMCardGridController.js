@@ -617,7 +617,7 @@
 		view.updateStoreForClassId(idClass, {
 			cb: function cbOfUpdateStoreForClassId() {
 				var	pageNumber = _CMUtils.grid.getPageNumber(position),
-					pageSize = _CMUtils.grid.getPageSize(),
+					pageSize = CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.ROW_LIMIT),
 					relativeIndex = position % pageSize;
 
 				view.loadPage(pageNumber, {

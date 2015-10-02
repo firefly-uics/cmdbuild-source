@@ -33,7 +33,7 @@
 
 		constructor: function() {
 			this.store = new Ext.data.Store ({
-				pageSize: _CMUtils.grid.getPageSize(),
+				pageSize: CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.ROW_LIMIT),
 				model: 'CMDBuild.view.management.CMMiniCardGridModel',
 				autoLoad: false,
 				remoteSort: true,

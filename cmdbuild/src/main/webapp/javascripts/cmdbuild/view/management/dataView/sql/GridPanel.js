@@ -16,6 +16,7 @@
 		printButton: undefined,
 
 		border: false,
+		cls: 'cmborderbottom',
 		frame: false,
 
 		initComponent: function() {
@@ -23,33 +24,39 @@
 				store: CMDBuild.core.proxy.dataView.Sql.getStoreFromSql()
 			});
 
-			this.pagingBar = Ext.create('Ext.toolbar.Paging', {
-				store: this.store,
-				displayInfo: true,
-				displayMsg: ' {0} - {1} ' + CMDBuild.Translation.common.display_topic_of + ' {2}',
-				emptyMsg: CMDBuild.Translation.common.display_topic_none,
-				items: [
-					new CMDBuild.field.GridSearchField({ grid: this }),
-					new CMDBuild.view.management.common.filter.CMFilterMenuButton({ disabled: true }),
-					this.printButton = Ext.create('CMDBuild.core.buttons.iconized.Print', {
-						delegate: this.delegate,
-						formatList: [
-							CMDBuild.core.constants.Proxy.PDF,
-							CMDBuild.core.constants.Proxy.CSV
+			Ext.apply(this, {
+				dockedItems: [
+					Ext.create('Ext.toolbar.Toolbar', {
+						dock: 'top',
+						itemId: CMDBuild.core.constants.Proxy.TOOLBAR_TOP,
+
+						items: [
+							Ext.create('CMDBuild.core.buttons.iconized.add.Add', {
+								text: CMDBuild.Translation.addCard,
+								disabled: true
+							})
+						]
+					}),
+					Ext.create('Ext.toolbar.Paging', {
+						dock: 'bottom',
+						store: this.getStore(),
+						displayInfo: true,
+						displayMsg: ' {0} - {1} ' + CMDBuild.Translation.common.display_topic_of + ' {2}',
+						emptyMsg: CMDBuild.Translation.common.display_topic_none,
+						items: [
+							new CMDBuild.field.GridSearchField({ grid: this }),
+							new CMDBuild.view.management.common.filter.CMFilterMenuButton({ disabled: true }),
+							this.printButton = Ext.create('CMDBuild.core.buttons.iconized.Print', {
+								delegate: this.delegate,
+								formatList: [
+									CMDBuild.core.constants.Proxy.PDF,
+									CMDBuild.core.constants.Proxy.CSV
+								]
+							})
 						]
 					})
-				]
-			});
-
-			Ext.apply(this, {
-				bbar: this.pagingBar,
-				columns: [],
-				tbar: [
-					Ext.create('CMDBuild.core.buttons.iconized.add.Add', {
-						text: CMDBuild.Translation.addCard,
-						disabled: true
-					})
-				]
+				],
+				columns: []
 			});
 
 			this.callParent(arguments);

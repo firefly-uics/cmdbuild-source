@@ -20,7 +20,7 @@
 					scope: this,
 					success: function(result, options, decodedResult) {
 						// TODO: waiting for refactor (server attributes translation)
-						configurationObject.set(CMDBuild.core.constants.Proxy.CARD_GRID_RATIO, decodedResult.data['grid_card_ratio']);
+						configurationObject.set(CMDBuild.core.constants.Proxy.CARD_FORM_RATIO, decodedResult.data['grid_card_ratio']);
 						configurationObject.set(CMDBuild.core.constants.Proxy.CARD_LOCK_TIMEOUT, decodedResult.data['lockcardtimeout']);
 						configurationObject.set(CMDBuild.core.constants.Proxy.CARD_TABS_POSITION, decodedResult.data['card_tab_position']);
 						configurationObject.set(CMDBuild.core.constants.Proxy.DISPLAY_CARD_LOCKER_NAME, decodedResult.data['lockcarduservisible']);

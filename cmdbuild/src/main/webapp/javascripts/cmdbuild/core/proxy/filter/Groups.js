@@ -49,7 +49,7 @@
 			return Ext.create('Ext.data.Store', {
 				autoLoad: false,
 				model: 'CMDBuild.model.filter.Groups',
-				pageSize: _CMUtils.grid.getPageSize(),
+				pageSize: CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.ROW_LIMIT),
 				proxy: {
 					type: 'ajax',
 					url: CMDBuild.core.proxy.Index.filter.groupStore,

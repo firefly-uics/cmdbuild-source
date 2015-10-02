@@ -104,23 +104,6 @@
 		},
 
 		/**
-		 * Default pageSize value is set as 20
-		 *
-		 * @return {Int} pageSize
-		 */
-		getPageSize: function() {
-			var pageSize;
-
-			try {
-				pageSize = CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.ROW_LIMIT);
-			} catch (e) {
-				pageSize = 20;
-			}
-
-			return pageSize;
-		},
-
-		/**
 		 * @param {Array} attributes
 		 * @param {Array} attributesNamesToFilter
 		 *
@@ -520,18 +503,6 @@
 			},
 
 			grid: {
-				getPageSize: function getPageSize() {
-					var pageSize;
-
-					try {
-						pageSize = parseInt(CMDBuild.Config.cmdbuild.rowlimit);
-					} catch (e) {
-						pageSize = 20;
-					}
-
-					return pageSize;
-				},
-
 				getPageNumber: function getPageNumber(cardPosition) {
 					var pageSize = parseInt(CMDBuild.Config.cmdbuild.rowlimit);
 					var pageNumber = 1;

@@ -30,7 +30,7 @@
 		],
 
 		/**
-		 * @property {CMDBuild.model.common.AccordionStore}
+		 * @property {CMDBuild.model.common.accordion.Generic}
 		 */
 		lastSelection: undefined,
 
@@ -50,7 +50,7 @@
 		},
 
 		/**
-		 * @param {CMDBuild.model.common.AccordionStore} node
+		 * @param {CMDBuild.model.common.accordion.Generic} node
 		 *
 		 * @returns {Boolean}
 		 */
@@ -75,7 +75,7 @@
 		},
 
 		/**
-		 * @returns {CMDBuild.model.common.AccordionStore} node or null
+		 * @returns {CMDBuild.model.common.accordion.Generic} node or null
 		 */
 		onAccordionGetFirtsSelectableNode: function() {
 			var node = null;
@@ -100,7 +100,7 @@
 		/**
 		 * @param {Number} id
 		 *
-		 * @returns {CMDBuild.model.common.AccordionStore}
+		 * @returns {CMDBuild.model.common.accordion.Generic}
 		 */
 		onAccordionGetNodeById: function(id) {
 			return this.view.getStore().getRootNode().findChild(CMDBuild.core.constants.Proxy.ID, id, true);
@@ -114,7 +114,7 @@
 		},
 
 		/**
-		 * @param {CMDBuild.model.common.AccordionStore} node
+		 * @param {CMDBuild.model.common.accordion.Generic} node
 		 *
 		 * @returns {Boolean}
 		 */
