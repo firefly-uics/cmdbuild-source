@@ -29,6 +29,7 @@
 		<script type="text/javascript" src="javascripts/ext-<%= extVersion %>-ux/Notification.js"></script>
 
 		<!-- 1. Main script -->
+		<script type="text/javascript" src="javascripts/cmdbuild/core/constants/Proxy.js"></script>
 		<script type="text/javascript">
 			Ext.BLANK_IMAGE_URL = 'javascripts/ext-<%= extVersion %>/resources/images/default/s.gif';
 		</script>
@@ -53,8 +54,6 @@
 		</script>
 
 		<!-- 4. Modules -->
-		<script type="text/javascript" src="javascripts/cmdbuild/core/buttons/Base.js"></script>
-		<script type="text/javascript" src="javascripts/cmdbuild/core/buttons/Buttons.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/model/CMPatchModel.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/patchmanager.js"></script>
 

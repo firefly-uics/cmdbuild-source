@@ -19,7 +19,7 @@
 		baseTitle: CMDBuild.Translation.list,
 
 		/**
-		 * @property {CMDBuild.core.buttons.Save}
+		 * @property {CMDBuild.core.buttons.text.Save}
 		 */
 		saveButton: undefined,
 
@@ -28,7 +28,7 @@
 				dockedItems: [
 					Ext.create('Ext.toolbar.Toolbar', {
 						dock: 'top',
-						itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_TOP,
+						itemId: CMDBuild.core.constants.Proxy.TOOLBAR_TOP,
 
 						items: [
 							this.addCardButton = Ext.create('CMDBuild.core.buttons.AddCardMenuButton')
@@ -36,7 +36,7 @@
 					}),
 					Ext.create('Ext.toolbar.Toolbar', {
 						dock: 'bottom',
-						itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_BOTTOM,
+						itemId: CMDBuild.core.constants.Proxy.TOOLBAR_BOTTOM,
 						ui: 'footer',
 
 						layout: {
@@ -46,7 +46,7 @@
 						},
 
 						items: [
-							this.saveButton = Ext.create('CMDBuild.core.buttons.Save', {
+							this.saveButton = Ext.create('CMDBuild.core.buttons.text.Save', {
 								scope: this,
 
 								handler: function(button, e) {

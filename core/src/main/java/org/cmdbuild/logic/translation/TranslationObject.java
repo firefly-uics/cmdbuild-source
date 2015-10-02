@@ -8,4 +8,6 @@ public interface TranslationObject {
 
 	Map<String, String> getTranslations();
 
+	boolean isValid();
+
 }

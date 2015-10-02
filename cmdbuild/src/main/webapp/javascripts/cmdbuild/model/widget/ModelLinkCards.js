@@ -40,7 +40,7 @@
 		constructor: function(configuration) {
 			configuration = configuration || {};
 
-			this.singleSelect = configuration[CMDBuild.core.proxy.CMProxyConstants.SINGLE_SELECT];
+			this.singleSelect = configuration[CMDBuild.core.constants.Proxy.SINGLE_SELECT];
 
 			this.addEvents({
 				'select': true,

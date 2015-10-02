@@ -1,12 +1,13 @@
 (function() {
 
 	/**
-	 * @deprecated
+	 * @deprecated (CMDBuild.controller.common.AbstractAccordionController)
 	 */
 	Ext.define('CMDBuild.controller.accordion.CMBaseAccordionController', {
 
 		constructor: function(accordion) {
 			this.accordion = accordion;
+			this.accordion.delegate = this;
 
 			this.accordion.on('expand', function() {
 				if (this.accordion.cmSilent !== true) {

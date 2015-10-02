@@ -3,7 +3,7 @@
 	Ext.define('CMDBuild.controller.administration.widget.CMWidgetDefinitionController', {
 
 		requires: [
-			'CMDBuild.core.proxy.CMProxyConstants',
+			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.model.widget.WidgetDefinition'
 		],
 
@@ -63,10 +63,17 @@
 			if (subControllerClass) {
 				var subView = this.view.buildWidgetForm(widgetName);
 
-				this.subController = subControllerClass.create({
-					view: subView,
-					classId: classId
-				});
+				if (Ext.isString(subControllerClass)) {
+					this.subController = Ext.create(subControllerClass, {
+						view: subView,
+						classId: classId
+					});
+				} else {
+					this.subController = subControllerClass.create({
+						view: subView,
+						classId: classId
+					});
+				}
 
 				if (!Ext.Object.isEmpty(record))
 					this.subController.fillFormWithModel(record);
@@ -79,12 +86,20 @@
 			function findController(widgetName) {
 				var controller = null;
 
-				for (var key in CMDBuild.controller.administration.widget)
-					if (CMDBuild.controller.administration.widget[key].WIDGET_NAME == widgetName) {
-						controller = CMDBuild.controller.administration.widget[key];
+				switch (widgetName) {
+					case '.OpenReport': {
+						controller = 'CMDBuild.controller.administration.widget.OpenReport';
+					} break;
 
-						break;
+					default: {
+						for (var key in CMDBuild.controller.administration.widget)
+							if (CMDBuild.controller.administration.widget[key].WIDGET_NAME == widgetName) {
+								controller = CMDBuild.controller.administration.widget[key];
+
+								break;
+							}
 					}
+				}
 
 				return controller;
 			}
@@ -116,11 +131,6 @@
 				this.view.enableModify();
 				this.subController.setDefaultValues();
 			}
-
-			_CMCache.initAddingTranslations();
-
-			var buttonLabel = this.view.query('#ButtonLabel')[0];
-			buttonLabel.translationsKeyName = '';
 		},
 
 		/**
@@ -153,11 +163,6 @@
 
 		onModifyClick: function() {
 			this.view.enableModify();
-
-			_CMCache.initModifyingTranslations();
-
-			var buttonLabel = this.view.query('#ButtonLabel')[0];
-			buttonLabel.translationsKeyName = this.model.get(CMDBuild.core.proxy.CMProxyConstants.ID);
 		},
 
 		onRemoveClick: function() {
@@ -170,11 +175,11 @@
 				fn: function(button) {
 					if (button == 'yes') {
 						if (me.model && me.subController) {
-							var id = me.model.get(CMDBuild.core.proxy.CMProxyConstants.ID);
+							var id = me.model.get(CMDBuild.core.constants.Proxy.ID);
 							var params = {};
 
-							params[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME] = _CMCache.getEntryTypeNameById(me.classId);
-							params[CMDBuild.core.proxy.CMProxyConstants.WIDGET_ID] = id;
+							params[CMDBuild.core.constants.Proxy.CLASS_NAME] = _CMCache.getEntryTypeNameById(me.classId);
+							params[CMDBuild.core.constants.Proxy.WIDGET_ID] = id;
 
 							CMDBuild.ServiceProxy.CMWidgetConfiguration.remove({
 								params: params,
@@ -202,12 +207,12 @@
 			// Check for invalid fields and subController
 			if (this.subController && invalidFieldsArray.length == 0) {
 				if (this.model) {
-					widgetDef[CMDBuild.core.proxy.CMProxyConstants.ID] = this.model.get(CMDBuild.core.proxy.CMProxyConstants.ID);
+					widgetDef[CMDBuild.core.constants.Proxy.ID] = this.model.get(CMDBuild.core.constants.Proxy.ID);
 				}
 
 				var params = {};
-				params[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME] = _CMCache.getEntryTypeNameById(this.classId);
-				params[CMDBuild.core.proxy.CMProxyConstants.WIDGET] = Ext.encode(widgetDef);
+				params[CMDBuild.core.constants.Proxy.CLASS_NAME] = _CMCache.getEntryTypeNameById(this.classId);
+				params[CMDBuild.core.constants.Proxy.WIDGET] = Ext.encode(widgetDef);
 
 				CMDBuild.ServiceProxy.CMWidgetConfiguration.save({
 					params: params,
@@ -221,7 +226,7 @@
 						me.view.addRecordToGrid(widgetModel, true);
 						me.view.disableModify(true);
 
-						_CMCache.flushTranslationsToSave(widgetModel.get(CMDBuild.core.proxy.CMProxyConstants.ID));
+						CMDBuild.view.common.field.translatable.Utils.commit(me.view.form);
 					}
 				});
 			}
@@ -248,7 +253,7 @@
 		onWidgetDefinitionSelect: function(grid, record, index, eOpts) {
 			this.model = record;
 
-			this.buildSubController(record.get(CMDBuild.core.proxy.CMProxyConstants.TYPE), record, this.classId);
+			this.buildSubController(record.get(CMDBuild.core.constants.Proxy.TYPE), record, this.classId);
 		}
 	});
 

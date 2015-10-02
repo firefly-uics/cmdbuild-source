@@ -9,10 +9,6 @@
 			cmPresetFromCardDelegate: "CMDBuild.view.management.common.widgets.CMPresetFromCardDelegate"
 		},
 
-		statics: {
-			WIDGET_NAME: ".PresetFromCard"
-		},
-
 		constructor: function(view, supercontroller, widget, clientForm, card) {
 
 			this.mixins.observable.constructor.call(this);
@@ -60,12 +56,12 @@
 			var fields = this.clientForm.getFields();
 			var mapping = this.widgetConf.presetMapping;
 
-			if (selectedCard 
+			if (selectedCard
 				&& fields
 				&& mapping) {
 
 				fields.each(function(field) {
-					if (field._belongToEditableSubpanel 
+					if (field._belongToEditableSubpanel
 						&& mapping[field.name]) {
 							field.setValue(selectedCard.get(mapping[field.name]));
 						}
@@ -82,7 +78,7 @@
 
 	// called with scope this
 	function cellclickHandler(grid, model, htmlelement, rowIndex, event, opt) {
-		var className = event.target.className; 
+		var className = event.target.className;
 
 		if (this.callBacks[className]) {
 			this.callBacks[className](model);

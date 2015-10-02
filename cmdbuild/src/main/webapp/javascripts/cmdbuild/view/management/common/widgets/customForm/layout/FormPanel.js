@@ -3,7 +3,7 @@
 	Ext.define('CMDBuild.view.management.common.widgets.customForm.layout.FormPanel', {
 		extend: 'Ext.form.Panel',
 
-		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+		requires: ['CMDBuild.core.constants.Proxy'],
 
 		mixins: ['CMDBuild.view.common.PanelFunctions'],
 
@@ -27,7 +27,7 @@
 				dockedItems: [
 					Ext.create('Ext.toolbar.Toolbar', {
 						dock: 'top',
-						itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_TOP,
+						itemId: CMDBuild.core.constants.Proxy.TOOLBAR_TOP,
 
 						items: [
 							Ext.create('CMDBuild.core.buttons.Import', {
@@ -36,12 +36,12 @@
 
 								disabled: (
 									this.delegate.cmfg('widgetConfigurationGet', [
-										CMDBuild.core.proxy.CMProxyConstants.CAPABILITIES,
-										CMDBuild.core.proxy.CMProxyConstants.READ_ONLY
+										CMDBuild.core.constants.Proxy.CAPABILITIES,
+										CMDBuild.core.constants.Proxy.READ_ONLY
 									])
 									|| this.delegate.cmfg('widgetConfigurationGet', [
-										CMDBuild.core.proxy.CMProxyConstants.CAPABILITIES,
-										CMDBuild.core.proxy.CMProxyConstants.IMPORT_DISABLED
+										CMDBuild.core.constants.Proxy.CAPABILITIES,
+										CMDBuild.core.constants.Proxy.IMPORT_DISABLED
 									])
 								),
 

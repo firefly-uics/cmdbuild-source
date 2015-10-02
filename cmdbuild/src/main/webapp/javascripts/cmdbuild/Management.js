@@ -1,10 +1,9 @@
 (function() {
 
-	var reportAccordion = Ext.create('CMDBuild.view.management.accordion.Report', { cmName: 'report' });
-
-	// TODO move in common
-	var menuAccordion = new CMDBuild.view.administration.accordion.CMMenuAccordion({
-		cmControllerType: CMDBuild.controller.management.menu.CMMenuAccordionController
+	var reportAccordion = Ext.create('CMDBuild.view.management.accordion.Reports', { cmName: 'report' });
+	var menuAccordion = Ext.create('CMDBuild.view.management.accordion.Menu', {
+		cmControllerType: 'CMDBuild.controller.management.accordion.Menu',
+		cmName: 'menu',
 	});
 
 	// TODO move in common
@@ -31,12 +30,15 @@
 			'CMDBuild.routes.management.Instances',
 			'CMDBuild.routes.management.Processes',
 			'CMDBuild.core.configurations.Timeout',
-			'CMDBuild.core.buttons.Buttons',
-			'CMDBuild.core.proxy.CMProxyConstants',
+			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.Classes',
 			'CMDBuild.core.proxy.Configuration',
-			'CMDBuild.core.proxy.Report',
-			'CMDBuild.core.proxy.group.Group'
+			'CMDBuild.core.proxy.dataView.DataView',
+			'CMDBuild.core.proxy.domain.Domain',
+			'CMDBuild.core.proxy.userAndGroup.group.Group',
+			'CMDBuild.core.proxy.lookup.Type',
+			'CMDBuild.core.proxy.Menu',
+			'CMDBuild.core.proxy.report.Report'
 		],
 
 		name: 'CMDBuild',
@@ -78,7 +80,10 @@
 
 		statics: {
 			init: function() {
+				Ext.create('CMDBuild.core.LoggerManager'); // Logger configuration
 				Ext.create('CMDBuild.core.Data'); // Data connections configuration
+				Ext.create('CMDBuild.core.configurationBuilders.Instance'); // CMDBuild instance configuration
+				Ext.create('CMDBuild.core.configurationBuilders.Localization'); // CMDBuild localization configuration
 				Ext.create('CMDBuild.core.configurationBuilders.UserInterface'); // CMDBuild UserInterface configuration
 
 				Ext.tip.QuickTipManager.init();
@@ -93,75 +98,50 @@
 
 				CMDBuild.view.CMMainViewport.showSplash();
 
-				// Setup config localization model
-				CMDBuild.Config[CMDBuild.core.proxy.CMProxyConstants.LOCALIZATION] = Ext.create('CMDBuild.model.configuration.Localization');
+				CMDBuild.core.proxy.Configuration.readAll({
+					success: function(response, options, decoded) {
+						/**
+						 * CMDBuild
+						 *
+						 * @deprecated
+						 */
+						CMDBuild.Config.cmdbuild = decoded.cmdbuild;
 
-				// Get server language
-				CMDBuild.core.proxy.Configuration.getLanguage({
-					success: function(result, options, decodedResult) {
-						CMDBuild.Config[CMDBuild.core.proxy.CMProxyConstants.LOCALIZATION].set(
-							CMDBuild.core.proxy.CMProxyConstants.LANGUAGE,
-							decodedResult[CMDBuild.core.proxy.CMProxyConstants.LANGUAGE]
-						);
-					}
-				});
+						// DMS
+						CMDBuild.Config.dms = decoded.dms;
+						CMDBuild.Config.dms.enabled = ('true' == CMDBuild.Config.dms.enabled);
 
-				/**
-				 * Maybe a single request with all the configuration could be better
-				 *
-				 * TODO: use new implementation of CMDBuild.configuration.userInterface
-				 */
-				CMDBuild.core.proxy.group.Group.getUIConfiguration({
-					scope: this,
-					success: function(result, options, decodedResult) {
-						_CMUIConfiguration = new CMDBuild.model.CMUIConfigurationModel(decodedResult.response);
+						// Bim
+						CMDBuild.Config.bim = decoded.bim;
+						CMDBuild.Config.bim.enabled = ('true' == CMDBuild.Config.bim.enabled);
 
-						CMDBuild.ServiceProxy.configuration.readAll({
-							success: function(response, options, decoded) {
-								// Cmdbuild
-								CMDBuild.Config.cmdbuild = decoded.cmdbuild;
+						// Graph
+						CMDBuild.Config.graph = decoded.graph;
 
-								// Localization
-								CMDBuild.Config[CMDBuild.core.proxy.CMProxyConstants.LOCALIZATION].setLanguagesWithLocalizations(decoded.cmdbuild.enabled_languages);
+						// Workflow
+						CMDBuild.Config.workflow = decoded.workflow;
 
-								// DMS
-								CMDBuild.Config.dms = decoded.dms;
-								CMDBuild.Config.dms.enabled = ('true' == CMDBuild.Config.dms.enabled);
+						// Gis
+						CMDBuild.Config.gis = decoded.gis;
+						CMDBuild.Config.gis.enabled = ('true' == CMDBuild.Config.gis.enabled);
 
-								// Bim
-								CMDBuild.Config.bim = decoded.bim;
-								CMDBuild.Config.bim.enabled = ('true' == CMDBuild.Config.bim.enabled);
+						// Gis and bim extra configuration
+						CMDBuild.Config.cmdbuild.cardBrowserByDomainConfiguration = {};
+						CMDBuild.ServiceProxy.gis.getGisTreeNavigation({
+							success: function(operation, config, response) {
+								CMDBuild.Config.cmdbuild.cardBrowserByDomainConfiguration.root = response.root;
+								CMDBuild.Config.cmdbuild.cardBrowserByDomainConfiguration.geoServerLayersMapping = response.geoServerLayersMapping;
 
-								// Graph
-								CMDBuild.Config.graph = decoded.graph;
-
-								// Workflow
-								CMDBuild.Config.workflow = decoded.workflow;
-
-								// Gis
-								CMDBuild.Config.gis = decoded.gis;
-								CMDBuild.Config.gis.enabled = ('true' == CMDBuild.Config.gis.enabled);
-
-								// Gis and bim extra configuration
-								CMDBuild.Config.cmdbuild.cardBrowserByDomainConfiguration = {};
-								CMDBuild.ServiceProxy.gis.getGisTreeNavigation({
-									success: function(operation, config, response) {
-										CMDBuild.Config.cmdbuild.cardBrowserByDomainConfiguration.root = response.root;
-										CMDBuild.Config.cmdbuild.cardBrowserByDomainConfiguration.geoServerLayersMapping = response.geoServerLayersMapping;
-
-										if (CMDBuild.Config.bim.enabled) {
-											CMDBuild.bim.proxy.rootClassName({
-												success: function(operation, config, response) {
-													CMDBuild.Config.bim.rootClass = response.root;
-												},
-												callback: cb
-											});
-										} else {
-											cb();
-										}
-									}
-								});
-
+								if (CMDBuild.Config.bim.enabled) {
+									CMDBuild.bim.proxy.rootClassName({
+										success: function(operation, config, response) {
+											CMDBuild.Config.bim.rootClass = response.root;
+										},
+										callback: cb
+									});
+								} else {
+									cb();
+								}
 							}
 						});
 					}
@@ -205,26 +185,26 @@
 					})
 				];
 
-				if (!_CMUIConfiguration.isModuleDisabled(classesAccordion.cmName)) {
+				if (!CMDBuild.configuration.userInterface.isDisabledModule(classesAccordion.cmName)) {
 					this.classesAccordion = classesAccordion;
 					this.cmAccordions.push(this.classesAccordion);
 				}
 
-				if (!_CMUIConfiguration.isModuleDisabled(processAccordion.cmName) && CMDBuild.Config.workflow.enabled == 'true') {
+				if (!CMDBuild.configuration.userInterface.isDisabledModule(processAccordion.cmName) && CMDBuild.Config.workflow.enabled == 'true') {
 					this.processAccordion = processAccordion;
 					this.cmAccordions.push(this.processAccordion);
 				}
-				if (!_CMUIConfiguration.isModuleDisabled(dataViewAccordion.cmName)) {
+				if (!CMDBuild.configuration.userInterface.isDisabledModule(dataViewAccordion.cmName)) {
 					this.dataViewAccordion = dataViewAccordion;
 					this.cmAccordions.push(this.dataViewAccordion);
 				}
 
-				if (!_CMUIConfiguration.isModuleDisabled(dashboardsAccordion.cmName)) {
+				if (!CMDBuild.configuration.userInterface.isDisabledModule(dashboardsAccordion.cmName)) {
 					this.dashboardsAccordion = dashboardsAccordion;
 					this.cmAccordions.push(this.dashboardsAccordion);
 				}
 
-				if (!_CMUIConfiguration.isModuleDisabled(reportAccordion.cmName)) {
+				if (!CMDBuild.configuration.userInterface.isDisabledModule(reportAccordion.cmName)) {
 					this.reportAccordion = reportAccordion;
 					this.cmAccordions.push(this.reportAccordion);
 				}
@@ -239,13 +219,13 @@
 				for (var moduleName in this.utilitiesTree.submodules) {
 					var cmName = this.utilitiesTree.getSubmoduleCMName(moduleName);
 
-					if (!_CMUIConfiguration.isModuleDisabled(cmName))
+					if (!CMDBuild.configuration.userInterface.isDisabledModule(cmName))
 						addUtilitySubpanel(cmName, this.cmPanels);
 				}
 
 				this.loadResources();
 
-				if (_CMUIConfiguration.isFullScreenMode())
+				if (CMDBuild.configuration.userInterface.get(CMDBuild.core.constants.Proxy.FULL_SCREEN_MODE))
 					_CMUIState.onlyGrid();
 			},
 
@@ -264,7 +244,7 @@
 						new CMDBuild.view.CMMainViewport({
 							cmAccordions: me.cmAccordions,
 							cmPanels: me.cmPanels,
-							hideAccordions: _CMUIConfiguration.isHideSidePanel()
+							hideAccordions: CMDBuild.configuration.userInterface.get(CMDBuild.core.constants.Proxy.HIDE_SIDE_PANEL)
 						})
 					);
 
@@ -287,9 +267,9 @@
 				});
 
 				params = {};
-				params[CMDBuild.core.proxy.CMProxyConstants.ACTIVE] = true;
+				params[CMDBuild.core.constants.Proxy.ACTIVE] = true;
 
-				CMDBuild.core.proxy.Classes.read({
+				CMDBuild.core.proxy.Classes.readAll({
 					params: params,
 					loadMask: false,
 					scope: this,
@@ -309,19 +289,22 @@
 
 						// To fill the menu is needed that the classes are already loaded
 						params = {};
-						params[CMDBuild.core.proxy.CMProxyConstants.GROUP_NAME] = CMDBuild.Runtime.DefaultGroupName;
+						params[CMDBuild.core.constants.Proxy.GROUP_NAME] = CMDBuild.Runtime.DefaultGroupName;
+						params[CMDBuild.core.constants.Proxy.LOCALIZED] = true;
 
-						CMDBuild.ServiceProxy.menu.read({
+						CMDBuild.core.proxy.Menu.read({
 							params: params,
-							success: function(response, options, decoded) {
-								menuAccordion.updateStore(decoded.menu);
+							scope: this,
+							loadMask: false,
+							success: function(response, options, decodedResponse) {
+								menuAccordion.updateStore(decodedResponse.menu);
 							},
 							callback: reqBarrier.getCallback()
 						});
 
-						_CMProxy.dataView.read({
-							success: function(response, options, decoded) {
-								dataViewAccordion.updateStore(decoded.views);
+						CMDBuild.core.proxy.dataView.DataView.readAll({
+							success: function(response, options, decodedResponse) {
+								dataViewAccordion.updateStore(decodedResponse.views);
 							},
 							callback: reqBarrier.getCallback()
 						});
@@ -334,22 +317,31 @@
 					callback: reqBarrier.getCallback()
 				});
 
-				CMDBuild.core.proxy.Report.getTypesTree({
+				/**
+				 * Domains
+				 */
+				params = {};
+				params[CMDBuild.core.constants.Proxy.ACTIVE] = true;
+
+				CMDBuild.core.proxy.domain.Domain.readAll({
+					params: params,
+					loadMask: false,
 					scope: this,
-					success: function(response, options, reports) {
-						_CMCache.addReports(reports);
-						reportAccordion.updateStore();
+					success: function(response, options, decodedResponse) {
+						_CMCache.addDomains(decodedResponse.domains);
 					},
 					callback: reqBarrier.getCallback()
 				});
 
-				params = {};
-				params[CMDBuild.core.proxy.CMProxyConstants.ACTIVE] = true;
+				/**
+				 * Reports
+				 */
+				CMDBuild.core.proxy.report.Report.getTypesTree({
+					scope: this,
+					success: function(response, options, decodedResponse) {
+						_CMCache.addReports(decodedResponse);
 
-				CMDBuild.ServiceProxy.administration.domain.list({ //TODO change 'administration'
-					params: params,
-					success: function(response, options, decoded) {
-						_CMCache.addDomains(decoded.domains);
+						reportAccordion.updateStore();
 					},
 					callback: reqBarrier.getCallback()
 				});
@@ -363,12 +355,16 @@
 					callback: reqBarrier.getCallback()
 				});
 
-				CMDBuild.ServiceProxy.lookup.readAllTypes({
-					success : function(response, options, decoded) {
-						_CMCache.addLookupTypes(decoded);
-					},
-					callback: reqBarrier.getCallback()
-				});
+				/**
+				 * Lookup
+				 */
+				CMDBuild.core.proxy.lookup.Type.readAll({
+					scope: this,
+					success: function(response, options, decodedResponse) {
+						_CMCache.addLookupTypes(decodedResponse);
+ 					},
+ 					callback: reqBarrier.getCallback()
+ 				});
 
 				reqBarrier.start();
 			}

@@ -81,7 +81,7 @@
 			}
 
 			// Language setup
-			this.tinyMCEConfig.language = CMDBuild.Config.localization.get(CMDBuild.core.proxy.CMProxyConstants.LANGUAGE);
+			this.tinyMCEConfig.language = CMDBuild.configuration.localization.get(CMDBuild.core.constants.Proxy.LANGUAGE);
 
 			// Silver editor color setup for Administration
 			if (Ext.isEmpty(CMDBuild.app.Management)) {

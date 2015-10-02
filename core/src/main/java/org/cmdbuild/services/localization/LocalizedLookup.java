@@ -25,7 +25,9 @@ public class LocalizedLookup extends ForwardingLookup {
 
 	@Override
 	public String getDescription() {
-		final TranslationObject translationObject = LookupConverter.of(LookupConverter.description()).create(uuid());
+		final TranslationObject translationObject = LookupConverter.of(LookupConverter.description()) //
+				.withIdentifier(uuid()) //
+				.create();
 		final String translatedDescription = facade.read(translationObject);
 		return defaultIfBlank(translatedDescription, super.getDescription());
 	}

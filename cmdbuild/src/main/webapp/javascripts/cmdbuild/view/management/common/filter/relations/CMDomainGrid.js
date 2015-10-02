@@ -1,4 +1,9 @@
 (function() {
+
+	/**
+	 * @deprecated new class (CMDBuild.view.common.field.filter.advanced.Advanced)
+	 */
+
 	var tr = CMDBuild.Translation.administration.modClass.domainProperties;
 
 	Ext.define("CMDBuild.model.CMDomainGridModel", {
@@ -141,14 +146,12 @@
 
 	Ext.define("CMDBuild.view.management.common.filter.CMDomainGridDelegate", {
 		/**
-		 * 
 		 * @param {CMDBuild.view.management.common.filter.CMDomainGrid} grid
 		 * @param {CMDBuild.model.CMDomainGridModel} record
 		 */
 		onCMDomainGridSelect: function(grid, record) {},
 
 		/**
-		 * 
 		 * @param {CMDBuild.view.management.common.filter.CMDomainGrid} grid
 		 * @param {Ext.ux.CheckColumn} column
 		 * @param {boolean} checked
@@ -157,7 +160,6 @@
 		onCMDomainGridCheckedColumn: function(grid, column, checked, record) {},
 
 		/**
-		 * 
 		 * @param {CMDBuild.view.management.common.filter.CMDomainGrid} grid
 		 * @param {string/int} entryTypeId the id of the destination subclass
 		 */

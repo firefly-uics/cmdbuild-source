@@ -3,14 +3,14 @@
 	Ext.define('CMDBuild.model.common.tabs.history.Attribute', {
 		extend: 'Ext.data.Model',
 
-		require: ['CMDBuild.core.proxy.CMProxyConstants'],
+		require: ['CMDBuild.core.constants.Proxy'],
 
 		fields: [
-			{ name: CMDBuild.core.proxy.CMProxyConstants.ATTRIBUTE_DESCRIPTION, type: 'string' },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.CHANGED, type: 'boolean', defaultValue: false },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION, type: 'string' },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.ID, type: 'int', useNull: true },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.INDEX, type: 'int', useNull: true }
+			{ name: CMDBuild.core.constants.Proxy.ATTRIBUTE_DESCRIPTION, type: 'string' },
+			{ name: CMDBuild.core.constants.Proxy.CHANGED, type: 'boolean', defaultValue: false },
+			{ name: CMDBuild.core.constants.Proxy.DESCRIPTION, type: 'string' },
+			{ name: CMDBuild.core.constants.Proxy.ID, type: 'int', useNull: true },
+			{ name: CMDBuild.core.constants.Proxy.INDEX, type: 'int', useNull: true }
 		]
 	});
 

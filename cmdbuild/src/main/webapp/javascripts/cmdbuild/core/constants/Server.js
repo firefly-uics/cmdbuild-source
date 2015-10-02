@@ -4,13 +4,7 @@
 
 		singleton: true,
 
-		config: {
-			maxInteger: 2147483647
-		},
-
-		constructor: function(config) {
-			this.initConfig(config);
-		}
+		MAX_INTEGER: 2147483647
 	});
 
 })();

@@ -3,8 +3,8 @@
 	Ext.define('CMDBuild.core.proxy.common.tabs.history.Classes', {
 
 		requires: [
-			'CMDBuild.core.proxy.CMProxyConstants',
-			'CMDBuild.core.proxy.CMProxyUrlIndex',
+			'CMDBuild.core.constants.Proxy',
+			'CMDBuild.core.proxy.Index',
 			'CMDBuild.model.common.tabs.history.classes.CardRecord'
 		],
 
@@ -16,11 +16,11 @@
 		get: function(parameters) {
 			CMDBuild.Ajax.request({
 				method: 'POST',
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.history.classes.getCardHistory,
+				url: CMDBuild.core.proxy.Index.history.classes.getCardHistory,
 				headers: parameters.headers,
 				params: parameters.params,
 				scope: parameters.scope || this,
-				loadMask: parameters.loadMask || false,
+				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : false,
 				failure: parameters.failure || Ext.emptyFn(),
 				success: parameters.success || Ext.emptyFn(),
 				callback: parameters.callback || Ext.emptyFn()
@@ -33,11 +33,11 @@
 		getHistoric: function(parameters) {
 			CMDBuild.Ajax.request({
 				method: 'POST',
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.history.classes.getHistoricCard,
+				url: CMDBuild.core.proxy.Index.history.classes.getHistoricCard,
 				headers: parameters.headers,
 				params: parameters.params,
 				scope: parameters.scope || this,
-				loadMask: parameters.loadMask || true,
+				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
 				failure: parameters.failure || Ext.emptyFn(),
 				success: parameters.success || Ext.emptyFn(),
 				callback: parameters.callback || Ext.emptyFn()
@@ -50,11 +50,11 @@
 		getRelations: function(parameters) {
 			CMDBuild.Ajax.request({
 				method: 'POST',
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.history.classes.getRelationsHistory,
+				url: CMDBuild.core.proxy.Index.history.classes.getRelationsHistory,
 				headers: parameters.headers,
 				params: parameters.params,
 				scope: parameters.scope || this,
-				loadMask: parameters.loadMask || false,
+				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : false,
 				failure: parameters.failure || Ext.emptyFn(),
 				success: parameters.success || Ext.emptyFn(),
 				callback: parameters.callback || Ext.emptyFn()
@@ -67,11 +67,11 @@
 		getRelationHistoric: function(parameters) {
 			CMDBuild.Ajax.request({
 				method: 'POST',
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.history.classes.getHistoricRelation,
+				url: CMDBuild.core.proxy.Index.history.classes.getHistoricRelation,
 				headers: parameters.headers,
 				params: parameters.params,
 				scope: parameters.scope || this,
-				loadMask: parameters.loadMask || true,
+				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
 				failure: parameters.failure || Ext.emptyFn(),
 				success: parameters.success || Ext.emptyFn(),
 				callback: parameters.callback || Ext.emptyFn()
@@ -87,14 +87,14 @@
 				model: 'CMDBuild.model.common.tabs.history.classes.CardRecord',
 				proxy: {
 					type: 'ajax',
-					url: CMDBuild.core.proxy.CMProxyUrlIndex.history.classes.getCardHistory,
+					url: CMDBuild.core.proxy.Index.history.classes.getCardHistory,
 					reader: {
 						type: 'json',
 						root: 'response.elements'
 					}
 				},
 				sorters: [ // Setup sorters, also if server returns ordered collection
-					{ property: CMDBuild.core.proxy.CMProxyConstants.BEGIN_DATE, direction: 'DESC' }
+					{ property: CMDBuild.core.constants.Proxy.BEGIN_DATE, direction: 'DESC' }
 				]
 			});
 		}

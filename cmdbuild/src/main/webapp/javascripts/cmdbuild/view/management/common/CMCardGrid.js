@@ -225,11 +225,6 @@
 								this.getSelectionModel().select(0);
 							}
 						}
-					} else {
-						CMDBuild.core.Message.error(null, {
-							text: CMDBuild.Translation.errors.unknown_error,
-							detail: operation.error
-						});
 					}
 				}
 			});
@@ -531,8 +526,8 @@
 		if (me.cmAddPrintButton) {
 			me.printGridMenu = Ext.create('CMDBuild.core.buttons.iconized.Print', {
 				formatList: [
-					CMDBuild.core.proxy.CMProxyConstants.PDF,
-					CMDBuild.core.proxy.CMProxyConstants.CSV
+					CMDBuild.core.constants.Proxy.PDF,
+					CMDBuild.core.constants.Proxy.CSV
 				],
 				mode: 'legacy',
 				disabled: true
@@ -554,9 +549,9 @@
 	}
 
 	function buildGraphIconColumn(headers) {
-		 var c = _CMCache.getClassById(this.currentClassId);
+		var c = _CMCache.getClassById(this.currentClassId);
 
-		 if (c && c.get("tableType") != "simpletable") {
+		if (c && c.get("tableType") != "simpletable") {
 			var graphHeader = {
 					noWrap: true,
 				header: '&nbsp',
@@ -588,4 +583,5 @@
 
 		this.callDelegates("onCMCardGridIconRowClick", [grid, action, model]);
 	}
+
 })();

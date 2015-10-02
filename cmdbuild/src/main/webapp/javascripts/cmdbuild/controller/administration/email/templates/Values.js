@@ -3,7 +3,7 @@
 	Ext.define('CMDBuild.controller.administration.email.templates.Values', {
 		extend: 'CMDBuild.controller.common.AbstractController',
 
-		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+		requires: ['CMDBuild.core.constants.Proxy'],
 
 		/**
 		 * @cfg {CMDBuild.controller.administration.email.templates.Templates}
@@ -78,10 +78,10 @@
 			// To validate and filter grid rows
 			this.grid.getStore().each(function(record) {
 				if (
-					!Ext.isEmpty(record.get(CMDBuild.core.proxy.CMProxyConstants.KEY))
-					&& !Ext.isEmpty(record.get(CMDBuild.core.proxy.CMProxyConstants.VALUE))
+					!Ext.isEmpty(record.get(CMDBuild.core.constants.Proxy.KEY))
+					&& !Ext.isEmpty(record.get(CMDBuild.core.constants.Proxy.VALUE))
 				) {
-					data[record.get(CMDBuild.core.proxy.CMProxyConstants.KEY)] = record.get(CMDBuild.core.proxy.CMProxyConstants.VALUE);
+					data[record.get(CMDBuild.core.constants.Proxy.KEY)] = record.get(CMDBuild.core.constants.Proxy.VALUE);
 				}
 			});
 
@@ -99,8 +99,8 @@
 			if (!Ext.isEmpty(data))
 				Ext.Object.each(data, function(key, value, myself) {
 					var recordConf = {};
-					recordConf[CMDBuild.core.proxy.CMProxyConstants.KEY] = key;
-					recordConf[CMDBuild.core.proxy.CMProxyConstants.VALUE] = value || '';
+					recordConf[CMDBuild.core.constants.Proxy.KEY] = key;
+					recordConf[CMDBuild.core.constants.Proxy.VALUE] = value || '';
 
 					store.add(recordConf);
 				}, this);

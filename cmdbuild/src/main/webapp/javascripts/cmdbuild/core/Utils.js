@@ -40,12 +40,12 @@
 			var out = [];
 
 			if (!Ext.Object.isEmpty(entryType)) {
-				out.push(parseInt(entryType.get(CMDBuild.core.proxy.CMProxyConstants.ID)));
+				out.push(parseInt(entryType.get(CMDBuild.core.constants.Proxy.ID)));
 
-				while (!Ext.isEmpty(entryType.get(CMDBuild.core.proxy.CMProxyConstants.PARENT))) {
-					entryType = _CMCache.getEntryTypeById(entryType.get(CMDBuild.core.proxy.CMProxyConstants.PARENT));
+				while (!Ext.isEmpty(entryType.get(CMDBuild.core.constants.Proxy.PARENT))) {
+					entryType = _CMCache.getEntryTypeById(entryType.get(CMDBuild.core.constants.Proxy.PARENT));
 
-					out.push(parseInt(entryType.get(CMDBuild.core.proxy.CMProxyConstants.ID)));
+					out.push(parseInt(entryType.get(CMDBuild.core.constants.Proxy.ID)));
 				}
 			}
 
@@ -112,12 +112,47 @@
 			var pageSize;
 
 			try {
-				pageSize = parseInt(CMDBuild.Config.cmdbuild.rowlimit);
+				pageSize = CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.ROW_LIMIT);
 			} catch (e) {
 				pageSize = 20;
 			}
 
 			return pageSize;
+		},
+
+		/**
+		 * @param {Array} attributes
+		 * @param {Array} attributesNamesToFilter
+		 *
+		 * @returns {Object} groups
+		 */
+		groupAttributesObjects: function(attributes, attributesNamesToFilter) {
+			attributesNamesToFilter = Ext.isArray(attributesNamesToFilter) ? attributesNamesToFilter : [];
+			attributesNamesToFilter.push('Notes');
+
+			var groups = {};
+			var withoutGroup = [];
+
+			Ext.Array.forEach(attributes, function(attribute, i, allAttributes) {
+				if (
+					!Ext.isEmpty(attribute)
+					&& !Ext.Array.contains(attributesNamesToFilter, attribute[CMDBuild.core.constants.Proxy.NAME])
+				) {
+					if (Ext.isEmpty(attribute[CMDBuild.core.constants.Proxy.GROUP])) {
+						withoutGroup.push(attribute);
+					} else {
+						if (Ext.isEmpty(groups[attribute[CMDBuild.core.constants.Proxy.GROUP]]))
+							groups[attribute[CMDBuild.core.constants.Proxy.GROUP]] = [];
+
+						groups[attribute[CMDBuild.core.constants.Proxy.GROUP]].push(attribute);
+					}
+				}
+			}, this);
+
+			if (!Ext.isEmpty(withoutGroup))
+				groups[CMDBuild.Translation.management.modcard.other_fields] = withoutGroup;
+
+			return groups;
 		},
 
 		/**
@@ -143,7 +178,7 @@
 		 * @param {Boolean} caseSensitive - (Default) true
 		 */
 		objectArraySort: function(array, attributeToSort, direction, caseSensitive) {
-			attributeToSort = Ext.isString(attributeToSort) ? attributeToSort : CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION;
+			attributeToSort = Ext.isString(attributeToSort) ? attributeToSort : CMDBuild.core.constants.Proxy.DESCRIPTION;
 			direction = Ext.isString(direction) ? direction : 'ASC'; // ASC or DESC
 			caseSensitive = Ext.isBoolean(caseSensitive) ? caseSensitive : false;
 

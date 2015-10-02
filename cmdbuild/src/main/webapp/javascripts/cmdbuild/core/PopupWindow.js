@@ -31,7 +31,7 @@
 		initComponent: function() {
 			if (!this.autoHeight) {
 				var percentualHeight;
-				var configHeight = CMDBuild.Config.cmdbuild.popuppercentageheight;
+				var configHeight = CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.POPUP_HEIGHT_PERCENTAGE);
 
 				if (configHeight) {
 					percentualHeight = configHeight/100;
@@ -44,7 +44,7 @@
 
 			if (!this.autoWidth) {
 				var percentualWidth;
-				var configWidth = CMDBuild.Config.cmdbuild.popuppercentagewidth;
+				var configWidth = CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.POPUP_WIDTH_PERCENTAGE);
 
 				if (configWidth) {
 					percentualWidth = configWidth/100;
@@ -53,6 +53,8 @@
 				}
 
 				this.width = Ext.getBody().getWidth() * percentualWidth;
+			} else {
+				this.width = 660; // Default width setup based on text field default width inside window
 			}
 
 			this.callParent(arguments);

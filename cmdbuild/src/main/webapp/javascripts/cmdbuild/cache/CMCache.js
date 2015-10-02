@@ -5,19 +5,17 @@
 	Ext.define("CMDBuild.cache.CMCache", {
 		extend: "Ext.util.Observable",
 
-		requires: ['CMDBuild.core.proxy.CMProxyUrlIndex'],
+		requires: ['CMDBuild.core.proxy.Index'],
 
 		mixins: {
 			lookup: "CMDBUild.cache.CMCacheLookupFunctions",
 			entryType: "CMDBUild.cache.CMCacheClassFunctions",
-			groups: "CMDBUild.cache.CMCacheGroupsFunctions",
 			domains: "CMDBUild.cache.CMCacheDomainFunctions",
 			reports: "CMDBUild.cache.CMCacheReportFunctions",
 			dashboards: "CMDBuild.cache.CMCacheDashboardFunctions",
 			attachmentCategories: "CMDBUild.cache.CMCacheAttachmentCategoryFunctions",
 			gis: "CMDBUild.cache.CMCacheGisFunctions",
 			filters: "CMDBuild.cache.CMCacheFilterFunctions",
-			translations: "CMDBUild.cache.CMCacheTranslationsFunctions",
 			navigationTrees: "CMDBUild.cache.CMCacheNavigationTreesFunctions"
 		},
 
@@ -191,7 +189,7 @@
 				pageSize: parseInt(CMDBuild.Config.cmdbuild.referencecombolimit),
 				proxy: {
 					type: 'ajax',
-					url: CMDBuild.core.proxy.CMProxyUrlIndex.card.getListShort,
+					url: CMDBuild.core.proxy.Index.card.getListShort,
 					reader: {
 						type: 'json',
 						root: 'rows',

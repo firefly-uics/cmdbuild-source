@@ -3,7 +3,7 @@
 	Ext.define('CMDBuild.model.common.attributes.ForeignKeyStore', {
 		extend: 'Ext.data.Model',
 
-		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+		requires: ['CMDBuild.core.constants.Proxy'],
 
 		fields: [
 			{ name: 'Description', type: 'string' },
