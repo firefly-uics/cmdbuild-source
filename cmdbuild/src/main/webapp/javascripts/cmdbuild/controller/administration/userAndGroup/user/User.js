@@ -160,14 +160,6 @@
 					params: params,
 					scope: this,
 					callback: function(records, operation, success) {
-						// Store load errors manage
-						if (!success) {
-							CMDBuild.core.Message.error(null, {
-								text: CMDBuild.Translation.errors.unknown_error,
-								detail: operation.error
-							});
-						}
-
 						var defaultGroup = this.form.defaultGroupCombo.getStore().findRecord('isdefault', true);
 
 						if (!Ext.isEmpty(defaultGroup))
@@ -268,14 +260,6 @@
 
 			this.grid.getStore().load({
 				callback: function(records, operation, success) {
-					// Store load errors manage
-					if (!success) {
-						CMDBuild.core.Message.error(null, {
-							text: CMDBuild.Translation.errors.unknown_error,
-							detail: operation.error
-						});
-					}
-
 					var rowIndex = this.find('userid', decodedResult.rows.userid);
 
 					me.grid.getSelectionModel().select(rowIndex, true);

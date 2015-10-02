@@ -308,11 +308,6 @@
 										this.form.setDisabledModify(true, true, true, true);
 
 									_CMCache.reloadReportStores();
-								} else {
-									CMDBuild.core.Message.error(null, {
-										text: CMDBuild.Translation.errors.unknown_error,
-										detail: operation.error
-									});
 								}
 							}
 						});
@@ -355,11 +350,6 @@
 						_CMCache.reloadReportStores();
 
 						CMDBuild.view.common.field.translatable.Utils.commit(me.form.step1Panel);
-					} else {
-						CMDBuild.core.Message.error(null, {
-							text: CMDBuild.Translation.errors.unknown_error,
-							detail: operation.error
-						});
 					}
 				}
 			});

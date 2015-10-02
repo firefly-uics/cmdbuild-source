@@ -185,7 +185,6 @@ CMDBuild.Ajax =  new Ext.data.Connection({
 });
 
 CMDBuild.Ajax.on('beforerequest', CMDBuild.Ajax.showMaskAndTrapCallbacks);
-//Ext.Ajax = CMDBuild.Ajax; // Ugly override
 
 /**
  * @class CMDBuild.ChainedAjax

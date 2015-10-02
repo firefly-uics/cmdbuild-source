@@ -87,35 +87,11 @@
 				params[CMDBuild.core.constants.Proxy.GROUP_ID] = this.cmfg('userAndGroupGroupSelectedGroupGet', CMDBuild.core.constants.Proxy.ID);
 				params[CMDBuild.core.constants.Proxy.ALREADY_ASSOCIATED] = false;
 
-				this.availableGrid.getStore().load({
-					params: params,
-					scope: this,
-					callback: function(records, operation, success) {
-						// Store load errors manage
-						if (!success) {
-							CMDBuild.core.Message.error(null, {
-								text: CMDBuild.Translation.errors.unknown_error,
-								detail: operation.error
-							});
-						}
-					}
-				});
+				this.availableGrid.getStore().load({ params: params });
 
 				params[CMDBuild.core.constants.Proxy.ALREADY_ASSOCIATED] = true;
 
-				this.selectedGrid.getStore().load({
-					params: params,
-					scope: this,
-					callback: function(records, operation, success) {
-						// Store load errors manage
-						if (!success) {
-							CMDBuild.core.Message.error(null, {
-								text: CMDBuild.Translation.errors.unknown_error,
-								detail: operation.error
-							});
-						}
-					}
-				});
+				this.selectedGrid.getStore().load({ params: params });
 			}
 		}
 	});

@@ -286,19 +286,7 @@
 				params[CMDBuild.core.constants.Proxy.LIMIT] = CMDBuild.core.constants.Server.MAX_INTEGER; // HACK to get all filters
 				params[CMDBuild.core.constants.Proxy.START] = 0; // HACK to get all filters
 
-				column.getEditor().getStore().load({
-					params: params,
-					scope: this,
-					callback: function(records, operation, success) {
-						// Store load errors manage
-						if (!success) {
-							CMDBuild.core.Message.error(null, {
-								text: CMDBuild.Translation.errors.unknown_error,
-								detail: operation.error
-							});
-						}
-					}
-				});
+				column.getEditor().getStore().load({ params: params });
 
 				return true;
 			}

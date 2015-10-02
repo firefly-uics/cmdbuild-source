@@ -365,19 +365,7 @@
 			var params = {};
 			params[CMDBuild.core.constants.Proxy.CLASS_NAME] = this.cmfg('fieldFilterAdvancedSelectedClassGet', CMDBuild.core.constants.Proxy.NAME);
 
-			this.grid.getStore().load({
-				params: params,
-				scope: this,
-				callback: function(records, operation, success) {
-					// Store load errors manage
-					if (!success) {
-						CMDBuild.core.Message.error(null, {
-							text: CMDBuild.Translation.errors.unknown_error,
-							detail: operation.error
-						});
-					}
-				}
-			});
+			this.grid.getStore().load({ params: params });
 
 			this.setViewTitle(this.cmfg('fieldFilterAdvancedSelectedClassGet', CMDBuild.core.constants.Proxy.TEXT)); // TODO: waiting for refactor (description)
 

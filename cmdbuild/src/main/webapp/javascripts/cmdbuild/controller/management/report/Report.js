@@ -166,17 +166,7 @@
 		 */
 		onViewOnFront: function(node) {
 			if (!Ext.Object.isEmpty(node)) {
-				this.grid.getStore().load({
-					scope: this,
-					callback: function(records, operation, success) {
-						if (!success) {
-							CMDBuild.core.Message.error(null, {
-								text: CMDBuild.Translation.errors.unknown_error,
-								detail: operation.error
-							});
-						}
-					}
-				});
+				this.grid.getStore().load();
 
 				if (
 					!Ext.isEmpty(node.get(CMDBuild.core.constants.Proxy.ID))

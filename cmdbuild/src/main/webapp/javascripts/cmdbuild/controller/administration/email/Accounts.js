@@ -174,14 +174,6 @@
 						this.grid.getStore().load({
 							scope: this,
 							callback: function(records, operation, success) {
-								// Store load errors manage
-								if (!success) {
-									CMDBuild.core.Message.error(null, {
-										text: CMDBuild.Translation.errors.unknown_error,
-										detail: operation.error
-									});
-								}
-
 								this.grid.getSelectionModel().select(0, true);
 
 								if (!this.grid.getSelectionModel().hasSelection())
@@ -215,14 +207,6 @@
 
 			this.grid.getStore().load({
 				callback: function(records, operation, success) {
-					// Store load errors manage
-					if (!success) {
-						CMDBuild.core.Message.error(null, {
-							text: CMDBuild.Translation.errors.unknown_error,
-							detail: operation.error
-						});
-					}
-
 					var rowIndex = this.find(
 						CMDBuild.core.constants.Proxy.NAME,
 						me.form.getForm().findField(CMDBuild.core.constants.Proxy.NAME).getValue()

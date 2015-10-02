@@ -138,14 +138,6 @@
 							this.form.startingClassCombo.getStore().load({
 								scope: this,
 								callback: function(records, operation, success) {
-									// Store load errors manage
-									if (!success) {
-										CMDBuild.core.Message.error(null, {
-											text: CMDBuild.Translation.errors.unknown_error,
-											detail: operation.error
-										});
-									}
-
 									this.form.loadRecord(this.cmfg('userAndGroupGroupSelectedGroupGet'));
 									this.form.enableDisableButton.setActiveState(this.cmfg('userAndGroupGroupSelectedGroupGet', CMDBuild.core.constants.Proxy.IS_ACTIVE));
 									this.form.setDisabledModify(true, true);
