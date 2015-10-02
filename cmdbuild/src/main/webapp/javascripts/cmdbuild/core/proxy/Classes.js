@@ -5,7 +5,7 @@
 
 		requires: [
 			'CMDBuild.core.proxy.CMProxy',
-			'CMDBuild.core.proxy.CMProxyUrlIndex'
+			'CMDBuild.core.proxy.Index'
 		],
 
 		singleton: true,
@@ -14,27 +14,18 @@
 		 * @param {Object} parameters
 		 */
 		read: function(parameters) {
-			CMDBuild.Ajax.request({
-				method: 'GET',
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.classes.read,
-				params: parameters.params,
-				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
-				scope: parameters.scope || this,
-				success: parameters.success || Ext.emptyFn,
-				failure: parameters.failure || Ext.emptyFn,
-				callback: parameters.callback || Ext.emptyFn
-			});
+			// TODO: waiting for refactor (crud)
 		},
 
 		/**
 		 * @param {Object} parameters
 		 */
-		save: function(parameters) {
+		readAll: function(parameters) {
 			CMDBuild.Ajax.request({
-				method: 'POST',
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.classes.update,
+				method: 'GET',
+				url: CMDBuild.core.proxy.Index.classes.readAll,
 				params: parameters.params,
-				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : false,
+				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
 				scope: parameters.scope || this,
 				success: parameters.success || Ext.emptyFn,
 				failure: parameters.failure || Ext.emptyFn,
@@ -48,7 +39,23 @@
 		remove: function(parameters) {
 			CMDBuild.Ajax.request({
 				method: 'POST',
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.classes.remove,
+				url: CMDBuild.core.proxy.Index.classes.remove,
+				params: parameters.params,
+				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : false,
+				scope: parameters.scope || this,
+				success: parameters.success || Ext.emptyFn,
+				failure: parameters.failure || Ext.emptyFn,
+				callback: parameters.callback || Ext.emptyFn
+			});
+		},
+
+		/**
+		 * @param {Object} parameters
+		 */
+		save: function(parameters) {
+			CMDBuild.Ajax.request({
+				method: 'POST',
+				url: CMDBuild.core.proxy.Index.classes.update,
 				params: parameters.params,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : false,
 				scope: parameters.scope || this,

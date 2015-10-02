@@ -425,11 +425,6 @@ em { font-style: oblique !important; }
 		text-decoration: underline;
 	}
 
-/*trigger fields*/
-	.trigger-edit { background-image: url("../images/form/trigger-edit.png") !important; }
-
-	.trigger-add { background-image: url("../images/form/trigger-add.png") !important; }
-
 /* GRID ELEMENT*/
 	.x-grid3-dirty-cell { background-image: none !important; }
 

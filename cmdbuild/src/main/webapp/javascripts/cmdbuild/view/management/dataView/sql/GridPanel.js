@@ -3,7 +3,7 @@
 	Ext.define('CMDBuild.view.management.dataView.sql.GridPanel', {
 		extend: 'Ext.grid.Panel',
 
-		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+		requires: ['CMDBuild.core.constants.Proxy'],
 
 		/**
 		 * @cfg {CMDBuild.controller.management.dataView.Sql}
@@ -20,7 +20,7 @@
 
 		initComponent: function() {
 			Ext.apply(this, {
-				store: CMDBuild.core.proxy.dataView.Sql.getStore()
+				store: CMDBuild.core.proxy.dataView.Sql.getStoreFromSql()
 			});
 
 			this.pagingBar = Ext.create('Ext.toolbar.Paging', {
@@ -34,8 +34,8 @@
 					this.printButton = Ext.create('CMDBuild.core.buttons.iconized.Print', {
 						delegate: this.delegate,
 						formatList: [
-							CMDBuild.core.proxy.CMProxyConstants.PDF,
-							CMDBuild.core.proxy.CMProxyConstants.CSV
+							CMDBuild.core.constants.Proxy.PDF,
+							CMDBuild.core.constants.Proxy.CSV
 						]
 					})
 				]
@@ -45,7 +45,7 @@
 				bbar: this.pagingBar,
 				columns: [],
 				tbar: [
-					Ext.create('CMDBuild.core.buttons.Add', {
+					Ext.create('CMDBuild.core.buttons.iconized.add.Add', {
 						text: CMDBuild.Translation.addCard,
 						disabled: true
 					})

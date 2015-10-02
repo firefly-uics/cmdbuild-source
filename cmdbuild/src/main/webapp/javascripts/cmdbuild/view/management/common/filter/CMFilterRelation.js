@@ -1,5 +1,9 @@
 (function() {
 
+	/**
+	 * @deprecated new class (CMDBuild.view.common.field.filter.advanced.Advanced)
+	 */
+
 	Ext.define('CMDBuild.controller.management.common.filter.CMRelationsController', {
 		extend: 'CMDBuild.controller.management.common.CMCardGridController',
 

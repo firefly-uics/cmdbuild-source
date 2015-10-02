@@ -3,7 +3,7 @@
 	Ext.define('CMDBuild.view.administration.tasks.event.asynchronous.CMStep2Delegate', {
 		extend: 'CMDBuild.controller.CMBasePanelController',
 
-		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+		requires: ['CMDBuild.core.constants.Proxy'],
 
 		/**
 		 * @cfg {CMDBuild.controller.administration.tasks.CMTasksFormEventController}
@@ -66,11 +66,11 @@
 
 						// To setup filters values
 						if (!Ext.isEmpty(me.filterValues)) {
-							if (!Ext.isEmpty(me.view.filterAttributeTab) && !Ext.isEmpty(me.filterValues[CMDBuild.core.proxy.CMProxyConstants.ATTRIBUTE]))
-								me.view.filterAttributeTab.setData(me.filterValues[CMDBuild.core.proxy.CMProxyConstants.ATTRIBUTE]);
+							if (!Ext.isEmpty(me.view.filterAttributeTab) && !Ext.isEmpty(me.filterValues[CMDBuild.core.constants.Proxy.ATTRIBUTE]))
+								me.view.filterAttributeTab.setData(me.filterValues[CMDBuild.core.constants.Proxy.ATTRIBUTE]);
 
-							if (!Ext.isEmpty(me.view.filterRelationTab) && !Ext.isEmpty(me.filterValues[CMDBuild.core.proxy.CMProxyConstants.RELATION]))
-								me.view.filterRelationTab.setData(me.filterValues[CMDBuild.core.proxy.CMProxyConstants.RELATION]);
+							if (!Ext.isEmpty(me.view.filterRelationTab) && !Ext.isEmpty(me.filterValues[CMDBuild.core.constants.Proxy.RELATION]))
+								me.view.filterRelationTab.setData(me.filterValues[CMDBuild.core.constants.Proxy.RELATION]);
 						}
 
 						me.view.filterTabPanel.add([me.view.filterAttributeTab, me.view.filterRelationTab]);
@@ -92,8 +92,8 @@
 			) {
 				var returnArray = {};
 
-				returnArray[CMDBuild.core.proxy.CMProxyConstants.ATTRIBUTE] = this.view.filterAttributeTab.getData();
-				returnArray[CMDBuild.core.proxy.CMProxyConstants.RELATION] = this.view.filterRelationTab.getData();
+				returnArray[CMDBuild.core.constants.Proxy.ATTRIBUTE] = this.view.filterAttributeTab.getData();
+				returnArray[CMDBuild.core.constants.Proxy.RELATION] = this.view.filterRelationTab.getData();
 
 				return returnArray;
 			}

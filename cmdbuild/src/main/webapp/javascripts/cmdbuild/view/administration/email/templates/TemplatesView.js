@@ -3,7 +3,7 @@
 	Ext.define('CMDBuild.view.administration.email.templates.TemplatesView', {
 		extend: 'Ext.panel.Panel',
 
-		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+		requires: ['CMDBuild.core.constants.Proxy'],
 
 		/**
 		 * @cfg {CMDBuild.controller.administration.email.templates.Templates}
@@ -46,10 +46,10 @@
 				dockedItems: [
 					Ext.create('Ext.toolbar.Toolbar', {
 						dock: 'top',
-						itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_TOP,
+						itemId: CMDBuild.core.constants.Proxy.TOOLBAR_TOP,
 
 						items: [
-							Ext.create('CMDBuild.core.buttons.Add', {
+							Ext.create('CMDBuild.core.buttons.iconized.add.Add', {
 								text: CMDBuild.Translation.addTemplate,
 								scope: this,
 

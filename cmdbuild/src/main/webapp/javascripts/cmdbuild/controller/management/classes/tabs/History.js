@@ -7,7 +7,7 @@
 		extend: 'CMDBuild.controller.management.common.tabs.History',
 
 		requires: [
-			'CMDBuild.core.proxy.CMProxyConstants',
+			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.common.tabs.history.Classes'
 		],
 
@@ -30,10 +30,10 @@
 			'Id',
 			'IdClass',
 			'IdClass_value',
-			CMDBuild.core.proxy.CMProxyConstants.BEGIN_DATE,
-			CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME,
-			CMDBuild.core.proxy.CMProxyConstants.ID,
-			CMDBuild.core.proxy.CMProxyConstants.USER
+			CMDBuild.core.constants.Proxy.BEGIN_DATE,
+			CMDBuild.core.constants.Proxy.CLASS_NAME,
+			CMDBuild.core.constants.Proxy.ID,
+			CMDBuild.core.constants.Proxy.USER
 		],
 
 		/**
@@ -95,7 +95,7 @@
 					selectedEntityAttributes[key] = value;
 			}, this);
 
-			selectedEntityMergedData[CMDBuild.core.proxy.CMProxyConstants.ID] = this.selectedEntity.get(CMDBuild.core.proxy.CMProxyConstants.ID);
+			selectedEntityMergedData[CMDBuild.core.constants.Proxy.ID] = this.selectedEntity.get(CMDBuild.core.constants.Proxy.ID);
 
 			this.valuesFormattingAndCompare(selectedEntityAttributes); // Formats values only
 
@@ -135,7 +135,7 @@
 		 */
 		buildCurrentEntityModel: function(entityData, entityAttributeData) {
 			var currentEntityModel = Ext.create('CMDBuild.model.common.tabs.history.classes.CardRecord', entityData);
-			currentEntityModel.set(CMDBuild.core.proxy.CMProxyConstants.VALUES, entityAttributeData);
+			currentEntityModel.set(CMDBuild.core.constants.Proxy.VALUES, entityAttributeData);
 			currentEntityModel.commit();
 
 			return currentEntityModel;
@@ -157,12 +157,12 @@
 					selectedEntityAttributes[key] = value;
 			}, this);
 
-			selectedEntityMergedData[CMDBuild.core.proxy.CMProxyConstants.ID] = this.selectedEntity.get(CMDBuild.core.proxy.CMProxyConstants.ID);
+			selectedEntityMergedData[CMDBuild.core.constants.Proxy.ID] = this.selectedEntity.get(CMDBuild.core.constants.Proxy.ID);
 
 			if (!Ext.isEmpty(predecessorRecord)) {
 				var predecessorParams = {};
-				predecessorParams[CMDBuild.core.proxy.CMProxyConstants.CARD_ID] = predecessorRecord.get(CMDBuild.core.proxy.CMProxyConstants.ID); // Historic card ID
-				predecessorParams[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME] = selectedEntityMergedData[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME];
+				predecessorParams[CMDBuild.core.constants.Proxy.CARD_ID] = predecessorRecord.get(CMDBuild.core.constants.Proxy.ID); // Historic card ID
+				predecessorParams[CMDBuild.core.constants.Proxy.CLASS_NAME] = selectedEntityMergedData[CMDBuild.core.constants.Proxy.CLASS_NAME];
 
 				this.getProxy().getHistoric({
 					params: predecessorParams,
@@ -171,10 +171,10 @@
 						_error('get historic predecessor card failure', this);
 					},
 					success: function(response, options, decodedResponse) {
-						this.valuesFormattingAndCompare(selectedEntityAttributes, decodedResponse.response[CMDBuild.core.proxy.CMProxyConstants.VALUES]);
+						this.valuesFormattingAndCompare(selectedEntityAttributes, decodedResponse.response[CMDBuild.core.constants.Proxy.VALUES]);
 
 						// Setup record property with historic card details to use XTemplate functionalities to render
-						record.set(CMDBuild.core.proxy.CMProxyConstants.VALUES, selectedEntityAttributes);
+						record.set(CMDBuild.core.constants.Proxy.VALUES, selectedEntityAttributes);
 					}
 				});
 			}
@@ -197,10 +197,10 @@
 		getTabHistoryGridColumns: function() {
 			var columns = this.callParent(arguments);
 
-			if (!CMDBuild.configuration.userInterface.get(CMDBuild.core.proxy.CMProxyConstants.SIMPLE_HISTORY_MODE_FOR_CARD)) {
+			if (!CMDBuild.configuration.userInterface.get(CMDBuild.core.constants.Proxy.SIMPLE_HISTORY_MODE_FOR_CARD)) {
 				Ext.Array.push(columns, [
 					{
-						dataIndex: CMDBuild.core.proxy.CMProxyConstants.IS_CARD,
+						dataIndex: CMDBuild.core.constants.Proxy.IS_CARD,
 						text: CMDBuild.Translation.attributes,
 						width: 65,
 						align: 'center',
@@ -214,7 +214,7 @@
 						}
 					},
 					{
-						dataIndex: CMDBuild.core.proxy.CMProxyConstants.IS_RELATION,
+						dataIndex: CMDBuild.core.constants.Proxy.IS_RELATION,
 						text: CMDBuild.Translation.relation,
 						width: 65,
 						align: 'center',
@@ -228,7 +228,7 @@
 						}
 					},
 					{
-						dataIndex: CMDBuild.core.proxy.CMProxyConstants.DOMAIN,
+						dataIndex: CMDBuild.core.constants.Proxy.DOMAIN,
 						text: CMDBuild.Translation.domain,
 						sortable: false,
 						hideable: false,
@@ -236,7 +236,7 @@
 						flex: 1
 					},
 					{
-						dataIndex: CMDBuild.core.proxy.CMProxyConstants.DESTINATION_DESCRIPTION,
+						dataIndex: CMDBuild.core.constants.Proxy.DESTINATION_DESCRIPTION,
 						text: CMDBuild.Translation.descriptionLabel,
 						sortable: false,
 						hideable: false,
@@ -255,7 +255,7 @@
 		onCardSelected: function(card) {
 			this.tabHistorySelectedEntitySet(card);
 
-			if (!Ext.isEmpty(this.entryType) && this.entryType.get(CMDBuild.core.proxy.CMProxyConstants.TABLE_TYPE) != 'simpletable') // SimpleTables hasn't history
+			if (!Ext.isEmpty(this.entryType) && this.entryType.get(CMDBuild.core.constants.Proxy.TABLE_TYPE) != 'simpletable') // SimpleTables hasn't history
 				this.view.setDisabled(Ext.isEmpty(this.tabHistorySelectedEntityGet()));
 
 			this.cmfg('onTabHistoryPanelShow');
