@@ -389,7 +389,7 @@
 
 		// protected
 		getStoreForFields: function(fields) {
-			var pageSize = _CMUtils.grid.getPageSize();
+			var pageSize = CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.ROW_LIMIT);
 			var s = this.buildStore(fields, pageSize);
 
 			this.mon(s, "beforeload", function() {

@@ -44,7 +44,7 @@
 		},
 
 		/**
-		 * @param {CMDBuild.model.common.AccordionStore} parameters
+		 * @param {CMDBuild.model.common.accordion.Generic} parameters
 		 */
 		onViewOnFront: function(parameters) {
 			if (!Ext.isEmpty(parameters)) {

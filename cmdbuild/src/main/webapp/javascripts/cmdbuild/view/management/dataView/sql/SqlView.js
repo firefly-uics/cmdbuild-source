@@ -39,7 +39,7 @@
 					}),
 					this.form = Ext.create('CMDBuild.view.management.dataView.sql.FormPanel', {
 						delegate: this.delegate,
-						height: (CMDBuild.Config.cmdbuild.grid_card_ratio || 50) + '%',
+						height: CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.CARD_FORM_RATIO) + '%',
 						region: 'south',
 						split: true
 					})

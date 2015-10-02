@@ -67,7 +67,7 @@
 			return Ext.create('Ext.data.Store', {
 				autoLoad: false,
 				fields: parameters.fields || [],
-				pageSize: CMDBuild.core.Utils.getPageSize(),
+				pageSize: CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.ROW_LIMIT),
 				proxy: {
 					type: 'ajax',
 					url: CMDBuild.core.proxy.Index.card.getSqlCardList,

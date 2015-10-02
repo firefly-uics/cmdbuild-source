@@ -57,17 +57,4 @@
 		}
 	});
 
-	/**
-	 * @deprecated
-	 */
-	function getPageSize() {
-		var pageSize;
-		try {
-			pageSize = parseInt(CMDBuild.Config.cmdbuild.rowlimit);
-		} catch (e) {
-			pageSize = 20;
-		}
-
-		return pageSize;
-	}
 })();

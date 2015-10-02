@@ -56,7 +56,7 @@
 			return Ext.create('Ext.data.Store', {
 				autoLoad: true,
 				model: 'CMDBuild.model.CMFilterModel',
-				pageSize: _CMUtils.grid.getPageSize(),
+				pageSize: CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.ROW_LIMIT),
 				proxy: {
 					url: CMDBuild.core.proxy.Index.filter.groupStore,
 					type: 'ajax',
@@ -109,7 +109,7 @@
 			return Ext.create('Ext.data.Store', {
 				autoLoad: true,
 				model: 'CMDBuild.model.CMFilterModel',
-				pageSize: _CMUtils.grid.getPageSize(),
+				pageSize: CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.ROW_LIMIT),
 				proxy: {
 					url: CMDBuild.core.proxy.Index.filter.read,
 					type: 'ajax',

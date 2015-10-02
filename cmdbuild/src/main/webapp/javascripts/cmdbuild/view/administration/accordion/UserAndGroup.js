@@ -3,7 +3,10 @@
 	Ext.define('CMDBuild.view.administration.accordion.UserAndGroup', {
 		extend: 'CMDBuild.view.common.AbstractAccordion',
 
-		requires: ['CMDBuild.core.constants.Proxy'],
+		requires: [
+			'CMDBuild.core.constants.Proxy',
+			'CMDBuild.core.proxy.userAndGroup.group.Group'
+		],
 
 		/**
 		 * @cfg {String}

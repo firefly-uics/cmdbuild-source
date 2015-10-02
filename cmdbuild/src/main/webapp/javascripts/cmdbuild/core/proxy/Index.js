@@ -65,8 +65,6 @@
 		},
 
 		dataView: {
-			readAll: 'services/json/viewmanagement/read', // TODO: waiting for refactor (rename on server)
-
 			filter: {
 				create: 'services/json/viewmanagement/createfilterview',
 				read: '', // TODO: waiting for refactor (crud)
@@ -83,7 +81,9 @@
 				remove: 'services/json/viewmanagement/deletesqlview',
 
 				readAll: 'services/json/viewmanagement/readsqlview' // TODO: waiting for refactor (crud)
-			}
+			},
+
+			readAll: 'services/json/viewmanagement/read' // TODO: waiting for refactor (rename on server)
 		},
 
 		domain: {
