@@ -22,6 +22,7 @@
 					CMDBuild.core.proxy.CMProxyConstants.PDF,
 					CMDBuild.core.proxy.CMProxyConstants.ODT
 				],
+				mode: 'legacy',
 				text: CMDBuild.Translation.printSchema
 			});
 

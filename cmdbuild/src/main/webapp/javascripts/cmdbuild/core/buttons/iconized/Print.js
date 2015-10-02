@@ -5,8 +5,15 @@
 
 		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
 
-		iconCls: 'print',
-		text: CMDBuild.Translation.common.buttons.print,
+		/**
+		 * @cfg {Object}
+		 */
+		delegate: undefined,
+
+		/**
+		 * @cfg {String}
+		 */
+		mode: undefined,
 
 		/**
 		 * Supported formats
@@ -20,22 +27,31 @@
 			CMDBuild.core.proxy.CMProxyConstants.RTF
 		],
 
+		iconCls: 'print',
+		text: CMDBuild.Translation.common.buttons.print,
+
 		initComponent: function() {
 			Ext.apply(this, {
 				menu: Ext.create('Ext.menu.Menu'),
 
 				handler: function(button, e) {
-					if (!this.isDisabled())
-						this.showMenu();
+					if (!button.isDisabled())
+						button.showMenu();
 				},
 			});
 
 			this.callParent(arguments);
 
-			this.buildMenu();
+			switch (this.mode) {
+				case 'legacy':
+					return this.buildLegacyMenu();
+
+				default:
+					return this.buildMenu();
+			}
 		},
 
-		buildMenu: function() {
+		buildLegacyMenu: function() {
 			var me = this;
 
 			Ext.Array.forEach(this.formatList, function(format, i, allFormats) {
@@ -46,6 +62,21 @@
 
 					handler: function(button, e) {
 						me.fireEvent('click', this.format);
+					}
+				});
+			}, this);
+		},
+
+		buildMenu: function() {
+			Ext.Array.forEach(this.formatList, function(format, i, allFormats) {
+				this.menu.add({
+					text: CMDBuild.Translation.common.buttons.as + ' ' + format.toUpperCase(),
+					iconCls: format,
+					format: format,
+					scope: this,
+
+					handler: function(button, e) {
+						this.delegate.cmfg('onButtonPrintClick', button.format);
 					}
 				});
 			}, this);

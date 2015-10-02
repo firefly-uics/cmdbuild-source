@@ -86,8 +86,7 @@ public class ListReportFactoryBuilder implements ReportFactoryBuilder<ReportFact
 					ReportExtension.valueOf(extension.toUpperCase()), //
 					queryOptions(), //
 					attributes(), //
-					className(), //
-					dataAccessLogic, //
+					targetClass(), //
 					dataView, //
 					filesStore, //
 					configuration);
@@ -100,7 +99,7 @@ public class ListReportFactoryBuilder implements ReportFactoryBuilder<ReportFact
 		final GuestFilter guestFilter = new GuestFilter(authenticationStore, dataView);
 		final QueryOptions unfilteredCardQuery = QueryOptions.newQueryOption().build();
 		final QueryOptions filteredCardQuery;
-		final CMClass targetClass = dataView.findClass(className());
+		final CMClass targetClass = targetClass();
 		if (dataView.getActivityClass().isAncestorOf(targetClass)) {
 			filteredCardQuery = guestFilter.apply(targetClass, unfilteredCardQuery);
 		} else {
@@ -117,8 +116,8 @@ public class ListReportFactoryBuilder implements ReportFactoryBuilder<ReportFact
 		return Lists.newArrayList(attributes.split(ATTRIBUTES_SEPARATOR));
 	}
 
-	private String className() {
-		return properties.get(CLASSNAME_PROPERTY);
+	private CMClass targetClass() {
+		return dataView.findClass(properties.get(CLASSNAME_PROPERTY));
 	}
 
 }
