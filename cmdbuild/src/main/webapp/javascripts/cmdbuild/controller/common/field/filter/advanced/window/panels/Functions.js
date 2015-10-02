@@ -96,14 +96,6 @@
 				this.form.functionComboBox.getStore().load({
 					scope: this,
 					callback: function(records, operation, success) {
-						// Store load errors manage
-						if (!success) {
-							CMDBuild.core.Message.error(null, {
-								text: CMDBuild.Translation.errors.unknown_error,
-								detail: operation.error
-							});
-						}
-
 						this.onFieldFilterAdvancedWindowFunctionsSetData(this.cmfg('fieldFilterAdvancedFilterGet'));
 					}
 				});

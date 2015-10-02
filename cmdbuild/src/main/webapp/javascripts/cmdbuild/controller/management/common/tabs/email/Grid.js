@@ -378,14 +378,8 @@
 				params: params,
 				scope: this,
 				callback: function(records, operation, success) {
-					if (success) {
+					if (success)
 						this.cmfg('getAllTemplatesData');
-					} else {
-						CMDBuild.core.Message.error(null, {
-							text: CMDBuild.Translation.errors.unknown_error,
-							detail: operation.error
-						});
-					}
 				}
 			});
 		}
