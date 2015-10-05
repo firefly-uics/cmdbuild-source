@@ -1,5 +1,7 @@
 package org.cmdbuild.service.rest.v2.cxf.configuration;
 
+import org.cmdbuild.auth.TokenGenerator;
+import org.cmdbuild.auth.TokenManager;
 import org.cmdbuild.auth.UserStore;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.logic.auth.AuthenticationLogic;
@@ -80,6 +82,14 @@ public class ApplicationContextHelperV2 {
 
 	public CMDataView systemDataView() {
 		return applicationContext.getBean("systemDataView", CMDataView.class);
+	}
+
+	public TokenGenerator tokenGenerator() {
+		return applicationContext.getBean(TokenGenerator.class);
+	}
+
+	public TokenManager tokenManager() {
+		return applicationContext.getBean(TokenManager.class);
 	}
 
 	public DataAccessLogic userDataAccessLogic() {

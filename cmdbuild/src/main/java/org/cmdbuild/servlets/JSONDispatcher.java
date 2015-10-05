@@ -22,6 +22,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.cmdbuild.auth.DefaultTokenManager;
+import org.cmdbuild.auth.UserStore;
+import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.config.DatabaseProperties;
 import org.cmdbuild.exception.AuthException;
 import org.cmdbuild.exception.AuthException.AuthExceptionType;
@@ -152,6 +155,7 @@ public class JSONDispatcher extends HttpServlet {
 
 	private String getMethodUrl(final HttpServletRequest httpRequest) {
 		String url = httpRequest.getPathInfo();
+
 		// Legacy method call
 		final String legacyMethod = httpRequest.getParameter("method");
 		if (legacyMethod != null) {
@@ -208,6 +212,7 @@ public class JSONDispatcher extends HttpServlet {
 			IOException {
 		methodResponse = addSuccessAndWarningsIfJSON(methodInfo, methodResponse);
 		setContentType(methodInfo, methodResponse, httpRequest, httpResponse);
+		addCustomHeaders(methodInfo, methodResponse, httpRequest, httpResponse);
 		writeResponseData(methodInfo, methodResponse, httpResponse);
 	}
 
@@ -279,6 +284,16 @@ public class JSONDispatcher extends HttpServlet {
 			httpResponse.setContentType("text/plain");
 		} else {
 			httpResponse.setContentType(methodInfo.getMethodAnnotation().contentType());
+		}
+	}
+
+	private void addCustomHeaders(final MethodInfo methodInfo, final Object methodResponse,
+			final HttpServletRequest httpRequest, final HttpServletResponse httpResponse) {
+		final UserStore userStore = applicationContext().getBean(UserStore.class);
+		final OperationUser operationUser = userStore.getUser();
+		if (!operationUser.getAuthenticatedUser().isAnonymous()) {
+			final DefaultTokenManager tokenManager = applicationContext().getBean(DefaultTokenManager.class);
+			httpResponse.setHeader("CMDBuild-Authorization", tokenManager.getToken(operationUser));
 		}
 	}
 
