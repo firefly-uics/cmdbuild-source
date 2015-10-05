@@ -147,8 +147,8 @@ public class User {
 				fileStore.uploadFilesStore(), //
 				lock.configurationAwareLockLogic());
 	}
-	
- 	@Bean
+
+	@Bean
 	@Scope(PROTOTYPE)
 	public OperationUser operationUser() {
 		return userStore.getUser();

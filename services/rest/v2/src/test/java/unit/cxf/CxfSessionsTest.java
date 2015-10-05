@@ -17,6 +17,8 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 import javax.ws.rs.WebApplicationException;
 
+import org.cmdbuild.auth.TokenGenerator;
+import org.cmdbuild.auth.TokenManager;
 import org.cmdbuild.auth.acl.CMGroup;
 import org.cmdbuild.auth.acl.NullGroup;
 import org.cmdbuild.auth.acl.PrivilegeContext;
@@ -32,7 +34,6 @@ import org.cmdbuild.service.rest.v2.cxf.ErrorHandler;
 import org.cmdbuild.service.rest.v2.cxf.service.OperationUserStore;
 import org.cmdbuild.service.rest.v2.cxf.service.OperationUserStore.BySession;
 import org.cmdbuild.service.rest.v2.cxf.service.SessionStore;
-import org.cmdbuild.service.rest.v2.cxf.service.TokenGenerator;
 import org.cmdbuild.service.rest.v2.model.ResponseSingle;
 import org.cmdbuild.service.rest.v2.model.Session;
 import org.junit.Before;
@@ -47,6 +48,7 @@ public class CxfSessionsTest {
 	private SessionStore sessionStore;
 	private LoginHandler loginHandler;
 	private OperationUserStore operationUserStore;
+	private TokenManager tokenManager;
 	private BySession bySession;
 
 	private CxfSessions cxfSessions;
@@ -58,10 +60,12 @@ public class CxfSessionsTest {
 		sessionStore = mock(SessionStore.class);
 		loginHandler = mock(LoginHandler.class);
 		operationUserStore = mock(OperationUserStore.class);
+		tokenManager = mock(TokenManager.class);
 		bySession = mock(BySession.class);
 		doReturn(bySession) //
 				.when(operationUserStore).of(any(Session.class));
-		cxfSessions = new CxfSessions(errorHandler, tokenGenerator, sessionStore, loginHandler, operationUserStore);
+		cxfSessions = new CxfSessions(errorHandler, tokenGenerator, sessionStore, loginHandler, operationUserStore,
+				tokenManager);
 	}
 
 	@Test(expected = WebApplicationException.class)
@@ -234,6 +238,8 @@ public class CxfSessionsTest {
 				.withId("token") //
 				// no group
 				.build();
+		doReturn(true) //
+				.when(sessionStore).has(eq("token"));
 		doReturn(Optional.of(session)) //
 				.when(sessionStore).get(eq("token"));
 		doReturn(Optional.absent()) //
@@ -252,6 +258,8 @@ public class CxfSessionsTest {
 				.withId("token") //
 				// no group
 				.build();
+		doReturn(true) //
+				.when(sessionStore).has(eq("token"));
 		doReturn(Optional.of(session)) //
 				.when(sessionStore).get(eq("token"));
 		final OperationUser operationUser = new OperationUser(mock(AuthenticatedUser.class),
@@ -279,6 +287,8 @@ public class CxfSessionsTest {
 				.withId("new token") //
 				.withRole("new group") //
 				.build();
+		doReturn(true) //
+				.when(sessionStore).has(anyString());
 		doReturn(Optional.of(oldSession)) //
 				.when(sessionStore).get(anyString());
 		final CMGroup group = mock(CMGroup.class);
@@ -298,6 +308,7 @@ public class CxfSessionsTest {
 		final Session expectedSession = newSession(oldSession) //
 				.withRole("guessed group") //
 				.build();
+		verify(sessionStore).has(eq("token"));
 		verify(sessionStore).get(eq("token"));
 		verify(operationUserStore).of(eq(oldSession));
 		verify(bySession).get();

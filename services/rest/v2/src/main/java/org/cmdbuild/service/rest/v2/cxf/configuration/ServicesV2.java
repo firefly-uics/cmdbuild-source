@@ -81,8 +81,6 @@ import org.cmdbuild.service.rest.v2.cxf.service.InMemoryOperationUserStore;
 import org.cmdbuild.service.rest.v2.cxf.service.InMemorySessionStore;
 import org.cmdbuild.service.rest.v2.cxf.service.OperationUserStore;
 import org.cmdbuild.service.rest.v2.cxf.service.SessionStore;
-import org.cmdbuild.service.rest.v2.cxf.service.SimpleTokenGenerator;
-import org.cmdbuild.service.rest.v2.cxf.service.TokenGenerator;
 import org.cmdbuild.service.rest.v2.logging.LoggingSupport;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -312,19 +310,14 @@ public class ServicesV2 implements LoggingSupport {
 
 	@Bean
 	public Sessions v2_sessions() {
-		final CxfSessions service = new CxfSessions(v2_errorHandler(), v2_tokenGenerator(), v2_sessionStore(),
-				v2_loginHandler(), v2_operationUserStore());
+		final CxfSessions service = new CxfSessions(v2_errorHandler(), helper.tokenGenerator(), v2_sessionStore(),
+				v2_loginHandler(), v2_operationUserStore(), helper.tokenManager());
 		return proxy(Sessions.class, service);
 	}
 
 	@Bean
 	protected LoginHandler v2_loginHandler() {
 		return new AuthenticationLogicAdapter(helper.authenticationLogic());
-	}
-
-	@Bean
-	protected TokenGenerator v2_tokenGenerator() {
-		return new SimpleTokenGenerator();
 	}
 
 	@Bean

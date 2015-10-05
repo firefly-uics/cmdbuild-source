@@ -1,4 +1,4 @@
-package org.cmdbuild.service.rest.v2.cxf.service;
+package org.cmdbuild.auth;
 
 public interface TokenGenerator {
 
