@@ -31,13 +31,13 @@
 			'CMDBuild.routes.management.Classes',
 			'CMDBuild.routes.management.Instances',
 			'CMDBuild.routes.management.Processes',
-			'CMDBuild.core.configurations.Timeout',
 			'CMDBuild.core.buttons.Buttons',
-			'CMDBuild.core.proxy.CMProxyConstants',
+			'CMDBuild.core.configurations.Timeout',
 			'CMDBuild.core.proxy.Classes',
+			'CMDBuild.core.proxy.CMProxyConstants',
 			'CMDBuild.core.proxy.Configuration',
-			'CMDBuild.core.proxy.Report',
-			'CMDBuild.core.proxy.group.Group'
+			'CMDBuild.core.proxy.group.Group',
+			'CMDBuild.core.proxy.Report'
 		],
 
 		name: 'CMDBuild',
@@ -80,6 +80,7 @@
 		statics: {
 			init: function() {
 				Ext.create('CMDBuild.core.Data'); // Data connections configuration
+				Ext.create('CMDBuild.core.Rest'); // Setup REST connection
 				Ext.create('CMDBuild.core.configurationBuilders.UserInterface'); // CMDBuild UserInterface configuration
 
 				Ext.tip.QuickTipManager.init();

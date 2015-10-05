@@ -220,13 +220,15 @@
 					params: params,
 					scope: this,
 					success: function(response, options, decodedResponse) {
+						var urlParams = {};
+						urlParams[CMDBuild.core.proxy.CMProxyConstants.TOKEN] = response.getResponseHeader(CMDBuild.core.proxy.CMProxyConstants.AUTHORIZATION_HEADER_KEY);
+
 						CMDBuild.core.proxy.session.Rest.login({
-							params: Ext.encode(params),
+							params: params,
+							urlParams: urlParams,
 							scope: this,
 							success: function(response, options, decodedResponse) {
-								decodedResponse = decodedResponse[CMDBuild.core.proxy.CMProxyConstants.DATA];
-
-								Ext.util.Cookies.set('RestSessionToken', decodedResponse['_id']);
+								Ext.util.Cookies.set(CMDBuild.core.proxy.CMProxyConstants.REST_SESSION_TOKEN, urlParams[CMDBuild.core.proxy.CMProxyConstants.TOKEN]);
 							},
 							callback: function(records, operation, success) {
 								// CMDBuild redirect
