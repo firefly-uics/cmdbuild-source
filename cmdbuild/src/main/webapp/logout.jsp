@@ -17,6 +17,8 @@
 	<head>
 		<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<link rel="stylesheet" type="text/css" href="stylesheets/cmdbuild.css" />
+		<link rel="stylesheet" type="text/css" href="javascripts/ext-<%= extVersion %>/resources/css/ext-all.css" />
 		<link rel="icon" href="images/favicon.ico" />
 
 		<!-- 0. ExtJS -->
@@ -28,6 +30,7 @@
 		<script type="text/javascript" src="javascripts/cmdbuild/core/LoaderConfig.js"></script>
 		<script type="text/javascript" src="javascripts/log/log4javascript.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/application.js"></script>
+		<script type="text/javascript" src="javascripts/cmdbuild/core/Message.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/core/Ajax.js"></script>
 
 		<!-- 2. Translations -->

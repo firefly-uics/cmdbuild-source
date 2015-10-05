@@ -19,7 +19,7 @@
 				model: 'CMDBuild.model.group.privileges.GridRecord',
 				proxy: {
 					type: 'ajax',
-					url: CMDBuild.core.proxy.CMProxyUrlIndex.privileges.customPages.readAll, // TODO: implementation
+					url: CMDBuild.core.proxy.CMProxyUrlIndex.privileges.customPages.read, // TODO: implementation
 					reader: {
 						type: 'json',
 						root: 'privileges'

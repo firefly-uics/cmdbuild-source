@@ -296,10 +296,7 @@
 				login: 'services/json/login/login',
 				logout: 'services/json/login/logout'
 			},
-			rest: {
-				login: 'services/rest/v2/sessions',
-				logout: 'services/rest/v2/sessions'
-			}
+			rest: 'services/rest/v2/sessions',
 		},
 
 		tasks: {
