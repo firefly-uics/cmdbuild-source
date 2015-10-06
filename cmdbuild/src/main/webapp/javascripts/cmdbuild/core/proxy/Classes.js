@@ -4,6 +4,7 @@
 		alternateClassName: 'CMDBuild.ServiceProxy.classes', // Legacy class name
 
 		requires: [
+			'CMDBuild.core.cache.Cache',
 			'CMDBuild.core.proxy.CMProxy',
 			'CMDBuild.core.proxy.Index'
 		],
@@ -21,16 +22,13 @@
 		 * @param {Object} parameters
 		 */
 		readAll: function(parameters) {
-			CMDBuild.Ajax.request({
-				method: 'GET',
-				url: CMDBuild.core.proxy.Index.classes.readAll,
-				params: parameters.params,
-				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
-				scope: parameters.scope || this,
-				success: parameters.success || Ext.emptyFn,
-				failure: parameters.failure || Ext.emptyFn,
-				callback: parameters.callback || Ext.emptyFn
+			parameters = Ext.isEmpty(parameters) ? {} : parameters;
+
+			Ext.apply(parameters, {
+				url: CMDBuild.core.proxy.Index.classes.readAll
 			});
+
+			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.CLASSES, parameters);
 		},
 
 		/**
@@ -38,7 +36,6 @@
 		 */
 		remove: function(parameters) {
 			CMDBuild.Ajax.request({
-				method: 'POST',
 				url: CMDBuild.core.proxy.Index.classes.remove,
 				params: parameters.params,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : false,
@@ -54,7 +51,6 @@
 		 */
 		save: function(parameters) {
 			CMDBuild.Ajax.request({
-				method: 'POST',
 				url: CMDBuild.core.proxy.Index.classes.update,
 				params: parameters.params,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : false,

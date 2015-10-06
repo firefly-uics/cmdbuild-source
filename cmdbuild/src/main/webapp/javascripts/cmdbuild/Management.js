@@ -236,36 +236,38 @@
 
 				var me = this;
 				var params = {};
-				var reqBarrier = new CMDBuild.Utils.CMRequestBarrier(function callback() {
-					hideIfEmpty(processAccordion);
-					hideIfEmpty(reportAccordion);
-					hideIfEmpty(menuAccordion);
-					hideIfEmpty(classesAccordion);
+				var reqBarrier = Ext.create('CMDBuild.core.RequestBarrier', {
+					callback: function() {
+						hideIfEmpty(processAccordion);
+						hideIfEmpty(reportAccordion);
+						hideIfEmpty(menuAccordion);
+						hideIfEmpty(classesAccordion);
 
-					_CMMainViewportController = new CMDBuild.controller.CMMainViewportController(
-						new CMDBuild.view.CMMainViewport({
-							cmAccordions: me.cmAccordions,
-							cmPanels: me.cmPanels,
-							hideAccordions: CMDBuild.configuration.userInterface.get(CMDBuild.core.constants.Proxy.HIDE_SIDE_PANEL)
-						})
-					);
+						_CMMainViewportController = new CMDBuild.controller.CMMainViewportController(
+							new CMDBuild.view.CMMainViewport({
+								cmAccordions: me.cmAccordions,
+								cmPanels: me.cmPanels,
+								hideAccordions: CMDBuild.configuration.userInterface.get(CMDBuild.core.constants.Proxy.HIDE_SIDE_PANEL)
+							})
+						);
 
-					/* *********************************
-					 * Resume here the layouts operations
-					 */
-					Ext.resumeLayouts(true);
-					/* *********************************/
+						/* *********************************
+						 * Resume here the layouts operations
+						 */
+						Ext.resumeLayouts(true);
+						/* *********************************/
 
-					_CMMainViewportController.viewport.doLayout();
+						_CMMainViewportController.viewport.doLayout();
 
-					CMDBuild.view.CMMainViewport.hideSplash(function() {
-						_CMMainViewportController.setInstanceName(CMDBuild.Config.cmdbuild.instance_name);
+						CMDBuild.view.CMMainViewport.hideSplash(function() {
+							_CMMainViewportController.setInstanceName(CMDBuild.Config.cmdbuild.instance_name);
 
-						// Execute routes
-						CMDBuild.routes.Routes.exec();
+							// Execute routes
+							CMDBuild.routes.Routes.exec();
 
-						_CMMainViewportController.selectStartingClass();
-					});
+							_CMMainViewportController.selectStartingClass();
+						});
+					}
 				});
 
 				params = {};

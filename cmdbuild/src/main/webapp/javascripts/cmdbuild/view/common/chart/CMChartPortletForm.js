@@ -25,7 +25,8 @@
 		 * are the ones with a url setted on the proxy
 		 * */
 		checkStoreLoad: function(cb) {
-			var requestBarrier = new CMDBuild.Utils.CMRequestBarrier(cb);
+			var requestBarrier = Ext.create('CMDBuild.core.RequestBarrier', { callback: cb });
+
 			var someStore = false;
 
 			this.cascade(function(item) {
