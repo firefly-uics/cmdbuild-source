@@ -14,6 +14,11 @@ public abstract class ForwardingFilesStore extends ForwardingObject implements F
 	protected abstract FilesStore delegate();
 
 	@Override
+	public FilesStore sub(final String dir) {
+		return delegate().sub(dir);
+	}
+
+	@Override
 	public String[] list(final String dir) {
 		return delegate().list(dir);
 	}
@@ -24,8 +29,8 @@ public abstract class ForwardingFilesStore extends ForwardingObject implements F
 	}
 
 	@Override
-	public File[] listFiles(final String dir, final String pattern) {
-		return delegate().listFiles(dir, pattern);
+	public Iterable<File> files(final String dir, final String pattern) {
+		return delegate().files(dir, pattern);
 	}
 
 	@Override
@@ -56,11 +61,6 @@ public abstract class ForwardingFilesStore extends ForwardingObject implements F
 	@Override
 	public String getAbsoluteRootDirectory() {
 		return delegate().getAbsoluteRootDirectory();
-	}
-
-	@Override
-	public File getFile(final String path) {
-		return delegate().getFile(path);
 	}
 
 	@Override

@@ -32,6 +32,11 @@ public class FileStore {
 		}
 
 		@Override
+		public FilesStore sub(final String dir) {
+			return delegate.sub(dir);
+		}
+
+		@Override
 		public String[] list(final String dir) {
 			return delegate.list(dir);
 		}
@@ -42,8 +47,8 @@ public class FileStore {
 		}
 
 		@Override
-		public File[] listFiles(final String dir, final String pattern) {
-			return delegate.listFiles(dir, pattern);
+		public Iterable<File> files(final String dir, final String pattern) {
+			return delegate.files(dir, pattern);
 		}
 
 		@Override

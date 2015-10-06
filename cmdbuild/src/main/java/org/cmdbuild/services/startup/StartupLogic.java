@@ -14,6 +14,6 @@ public interface StartupLogic extends Logic {
 
 	boolean migrationRequired();
 
-	void migrate() throws Exception;
+	void migrate();
 
 }
