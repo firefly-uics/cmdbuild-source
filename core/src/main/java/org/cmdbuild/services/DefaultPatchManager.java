@@ -1,16 +1,22 @@
 package org.cmdbuild.services;
 
+import static com.google.common.base.Optional.absent;
 import static com.google.common.base.Optional.fromNullable;
+import static com.google.common.base.Optional.of;
+import static com.google.common.base.Predicates.alwaysTrue;
+import static com.google.common.collect.FluentIterable.from;
 import static com.google.common.collect.Lists.newLinkedList;
 import static com.google.common.collect.Ordering.from;
 import static java.lang.String.format;
 import static java.util.regex.Pattern.compile;
 import static org.apache.commons.io.FileUtils.lineIterator;
 import static org.apache.commons.io.FileUtils.readFileToString;
-import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.apache.commons.lang3.builder.ToStringBuilder.reflectionToString;
+import static org.apache.commons.lang3.builder.ToStringStyle.SHORT_PREFIX_STYLE;
 import static org.cmdbuild.common.Constants.BASE_CLASS_NAME;
 import static org.cmdbuild.common.Constants.CODE_ATTRIBUTE;
 import static org.cmdbuild.common.Constants.DESCRIPTION_ATTRIBUTE;
+import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
 import static org.cmdbuild.dao.query.clause.OrderByClause.Direction.DESC;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
 import static org.cmdbuild.dao.query.clause.alias.Aliases.as;
@@ -27,8 +33,6 @@ import java.util.regex.Matcher;
 import javax.sql.DataSource;
 
 import org.apache.commons.io.LineIterator;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.query.clause.alias.Alias;
 import org.cmdbuild.dao.view.CMDataView;
@@ -46,41 +50,110 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import com.google.common.base.Optional;
+import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
 
 public class DefaultPatchManager implements PatchManager {
 
+	private static final Logger logger = CMDBUILD;
+
 	private static class DefaultPatch implements Patch {
 
-		private final String version;
-		private String description;
-		private String filePath;
+		public static class Builder implements org.apache.commons.lang3.builder.Builder<DefaultPatch> {
 
-		public DefaultPatch(final File file) throws ORMException, IOException {
-			this(file, false);
-		}
+			private File file;
+			private boolean fake;
+			private String version;
+			private String description;
 
-		public DefaultPatch(final File file, final boolean fake) throws ORMException, IOException {
-			version = extractVersion(file);
-			if (fake) {
-				description = "Create database";
-				filePath = EMPTY;
-			} else {
+			/**
+			 * Use factory method.
+			 */
+			private Builder() {
+			}
+
+			@Override
+			public DefaultPatch build() {
+				validate();
+				return new DefaultPatch(this);
+			}
+
+			private void validate() {
+				extractVersion();
+				extractDescription();
+			}
+
+			private void extractVersion() {
+				logger.debug("extracting version from file name '{}'", file);
+				final Matcher matcher = compile(FILENAME_PATTERN).matcher(file.getName());
+				if (!matcher.lookingAt()) {
+					logger.error("file name does not match expected pattern");
+					throw ORMExceptionType.ORM_MALFORMED_PATCH.createException();
+				}
+				version = matcher.group(1);
+			}
+
+			private void extractDescription() {
+				if (fake) {
+					description = "Create database";
+				} else {
+					logger.debug("extracting description from first line of file '{}'", file);
+					final Matcher matcher = compile(FIRST_LINE_PATTERN).matcher(firstLineOfFile());
+					if (!matcher.lookingAt()) {
+						logger.error("first line does not match expected pattern");
+						throw ORMExceptionType.ORM_MALFORMED_PATCH.createException();
+					}
+					description = matcher.group(1);
+				}
+			}
+
+			private String firstLineOfFile() {
 				LineIterator lines = null;
 				try {
 					lines = lineIterator(file);
 					if (!lines.hasNext()) {
+						logger.error("file '{}' seems empty", file);
 						throw ORMExceptionType.ORM_MALFORMED_PATCH.createException();
 					}
-					final String firstLine = lines.next();
-					description = extractDescription(firstLine);
-					filePath = file.getAbsolutePath();
+					return lines.next();
+				} catch (final IOException e) {
+					logger.error("error getting lines iterator", e);
+					throw ORMExceptionType.ORM_MALFORMED_PATCH.createException();
 				} finally {
 					if (lines != null) {
 						lines.close();
 					}
 				}
 			}
+
+			public Builder file(final File file) {
+				this.file = file;
+				return this;
+			}
+
+			public Builder fake(final boolean fake) {
+				this.fake = fake;
+				return this;
+			}
+
+		}
+
+		public static Builder newInstance() {
+			return new Builder();
+		}
+
+		private static final String FILENAME_PATTERN = "(\\d\\.\\d\\.\\d-\\d{2})\\.sql";
+		private static final String FIRST_LINE_PATTERN = "--\\W*(.+)";
+
+		private final String version;
+		private final String description;
+		private final File file;
+
+		private DefaultPatch(final Builder builder) {
+			this.version = builder.version;
+			this.description = builder.description;
+			this.file = builder.file;
 		}
 
 		@Override
@@ -93,48 +166,22 @@ public class DefaultPatchManager implements PatchManager {
 			return description;
 		}
 
-		@Override
-		public String getFilePath() {
-			return filePath;
-		}
-
-		private String extractDescription(final String description) throws ORMException {
-			final Matcher descriptionParts = compile("--\\W*(.+)").matcher(description);
-			if (!descriptionParts.lookingAt()) {
-				throw ORMExceptionType.ORM_MALFORMED_PATCH.createException();
-			}
-			return descriptionParts.group(1);
-		}
-
-		private String extractVersion(final File file) throws ORMException {
-			final Matcher fileNameParts = compile("(\\d\\.\\d\\.\\d-\\d{2})\\.sql").matcher(file.getName());
-			if (!fileNameParts.lookingAt()) {
-				throw ORMExceptionType.ORM_MALFORMED_PATCH.createException();
-			}
-			return fileNameParts.group(1);
+		File getFile() {
+			return file;
 		}
 
 		@Override
 		public String toString() {
-			return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE) //
-					.append(version) //
-					.append(description) //
-					.append(filePath) //
-					.toString();
+			return reflectionToString(this, SHORT_PREFIX_STYLE);
 		}
 
 	}
 
-	private static final Logger logger = CMDBUILD;
-
 	private static final String PATCHES_TABLE = "Patch";
-	private static final String PATCHES_FOLDER = ".";
 	private static final String PATCH_PATTERN = "[\\d\\.]+-[\\d]+\\.sql";
 
 	private static final String VERSION = CODE_ATTRIBUTE;
 	private static final String DESCRIPTION = DESCRIPTION_ATTRIBUTE;
-
-	private static final Alias P = name("P");
 
 	private static final Comparator<File> BY_ABSOLUTE_PATH = new Comparator<File>() {
 
@@ -145,12 +192,14 @@ public class DefaultPatchManager implements PatchManager {
 
 	};
 
+	private static final Predicate<Patch> ALWAYS_TRUE = alwaysTrue();
+
 	private final DataSource dataSource;
 	private final CMDataView dataView;
 	private final DataDefinitionLogic dataDefinitionLogic;
 	private final FilesStore filesStore;
-	private Patch lastAvaiablePatch;
-	private final List<Patch> availablePatch;
+	private Optional<? extends Patch> lastAvaiablePatch;
+	private final List<DefaultPatch> availablePatch;
 
 	public DefaultPatchManager( //
 			final DataSource dataSource, //
@@ -162,6 +211,7 @@ public class DefaultPatchManager implements PatchManager {
 		this.dataView = dataView;
 		this.dataDefinitionLogic = dataDefinitionLogic;
 		this.filesStore = filesStore;
+		this.lastAvaiablePatch = absent();
 		this.availablePatch = newLinkedList();
 		reset();
 	}
@@ -169,63 +219,76 @@ public class DefaultPatchManager implements PatchManager {
 	@Override
 	public void reset() {
 		synchronized (this) {
+			Predicate<Patch> predicate = ALWAYS_TRUE;
 			try {
-				setAvaiblePatches(dataView.select(attribute(P, VERSION)) //
-						.from(getOrCreateClass(), as(P)) //
-						.limit(1) //
-						.orderBy(attribute(P, VERSION), DESC) //
-						.run() //
-						.getOnlyRow() //
-						.getCard(P) //
-						.get(VERSION, String.class));
-			} catch (final Exception e) {
-				setAvaiblePatches(EMPTY);
-			}
-		}
-	}
+				predicate = new Predicate<Patch>() {
 
-	private void setAvaiblePatches(final String lastAppliedPatch) {
-		availablePatch.clear();
-		final List<File> patchFiles = from(BY_ABSOLUTE_PATH).immutableSortedCopy(
-				filesStore.files(PATCHES_FOLDER, PATCH_PATTERN));
-		logger.info("number of fetched patches: {}", patchFiles.size());
-		logger.info("last patch: {}", patchFiles.get(patchFiles.size() - 1));
-		if (!patchFiles.isEmpty()) {
-			final File file = patchFiles.get(patchFiles.size() - 1);
-			try {
-				lastAvaiablePatch = new DefaultPatch(file, true);
-				logger.info("last available patch is '{}'", lastAvaiablePatch.getVersion());
-			} catch (final ORMException e) {
-				lastAvaiablePatch = null;
-			} catch (final IOException e) {
-				lastAvaiablePatch = null;
-			}
-		}
-		for (final File file : patchFiles) {
-			try {
-				final DefaultPatch patch = new DefaultPatch(file);
-				if (lastAppliedPatch.compareTo(patch.getVersion()) < 0) {
-					availablePatch.add(patch);
+					final Alias P = name("P");
+					final String version = dataView.select(anyAttribute(P)) //
+							.from(getOrCreateClass(), as(P)) //
+							.limit(1) //
+							.orderBy(attribute(P, VERSION), DESC) //
+							.run() //
+							.getOnlyRow() //
+							.getCard(P) //
+							.get(VERSION, String.class);
+
+					@Override
+					public boolean apply(final Patch input) {
+						return version.compareTo(input.getVersion()) < 0;
+					}
+
+				};
+			} catch (final Exception e) {
+				logger.error("error getting last applied patch version", e);
+			} finally {
+				final List<File> patchFiles = from(BY_ABSOLUTE_PATH) //
+						.immutableSortedCopy(filesStore.files(PATCH_PATTERN));
+				logger.info("fetched patches ({}): {}", patchFiles.size(), patchFiles);
+				if (!patchFiles.isEmpty()) {
+					final File file = from(patchFiles).last().get();
+					try {
+						logger.debug("creating last available patch from '{}'", file);
+						lastAvaiablePatch = of(DefaultPatch.newInstance() //
+								.file(file) //
+								.fake(true) //
+								.build());
+						logger.info("last available patch is '{}'", lastAvaiablePatch);
+					} catch (final Exception e) {
+						logger.error("error creating last available patch", e);
+						lastAvaiablePatch = absent();
+					}
 				}
-			} catch (final ORMException e) {
 				availablePatch.clear();
-			} catch (final IOException e) {
-				availablePatch.clear();
+				for (final File file : patchFiles) {
+					try {
+						logger.debug("creating patch from '{}'", file);
+						final DefaultPatch patch = DefaultPatch.newInstance() //
+								.file(file) //
+								.build();
+						if (predicate.apply(patch)) {
+							availablePatch.add(patch);
+						}
+					} catch (final Exception e) {
+						logger.error("error creating patch", e);
+						availablePatch.clear();
+					}
+				}
 			}
 		}
 	}
 
 	@Override
 	public void applyPatchList() {
-		for (final Patch patch : newLinkedList(availablePatch)) {
+		for (final DefaultPatch patch : newLinkedList(availablePatch)) {
 			applyPatch(patch);
 			createPatchCard(patch);
 			availablePatch.remove(patch);
 		}
 	}
 
-	private void applyPatch(final Patch patch) throws ORMException {
-		logger.info("applying patch '{}'", patch.getVersion());
+	private void applyPatch(final DefaultPatch patch) throws ORMException {
+		logger.info("applying patch '{}'", patch);
 		final AtomicBoolean error = new AtomicBoolean(false);
 		final PlatformTransactionManager transactionManager = new DataSourceTransactionManager(dataSource);
 		final TransactionTemplate transactionTemplate = new TransactionTemplate(transactionManager);
@@ -234,7 +297,7 @@ public class DefaultPatchManager implements PatchManager {
 			@Override
 			protected void doInTransactionWithoutResult(final TransactionStatus status) {
 				try {
-					final String sql = readFileToString(new File(patch.getFilePath()));
+					final String sql = readFileToString(patch.getFile());
 					new JdbcTemplate(dataSource).execute(sql);
 				} catch (final IOException e) {
 					logger.error("error reading content of file", e);
@@ -254,7 +317,8 @@ public class DefaultPatchManager implements PatchManager {
 
 	@Override
 	public Iterable<Patch> getAvaiblePatch() {
-		return availablePatch;
+		return from(availablePatch) //
+				.filter(Patch.class);
 	}
 
 	@Override
@@ -264,9 +328,9 @@ public class DefaultPatchManager implements PatchManager {
 
 	@Override
 	public void createLastPatch() {
-		if (lastAvaiablePatch != null) {
-			logger.info("creating card for last available patch '{}'", lastAvaiablePatch.getVersion());
-			createPatchCard(lastAvaiablePatch);
+		if (lastAvaiablePatch.isPresent()) {
+			logger.info("creating card for last available patch '{}'", lastAvaiablePatch);
+			createPatchCard(lastAvaiablePatch.get());
 			availablePatch.clear();
 		}
 	}

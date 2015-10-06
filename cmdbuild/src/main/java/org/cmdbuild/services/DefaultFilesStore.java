@@ -58,7 +58,12 @@ public class DefaultFilesStore implements FilesStore {
 
 	@Override
 	public Iterable<File> files(final String dir, final String pattern) {
-		final File directory = new File(absoluteRootDirectory, dir);
+		return sub(dir).files(pattern);
+	}
+
+	@Override
+	public Iterable<File> files(String pattern) {
+		final File directory = new File(absoluteRootDirectory);
 		final Iterable<File> output;
 		if (directory.exists()) {
 			output = asList(directory.listFiles(pattern(pattern)));

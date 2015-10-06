@@ -16,6 +16,8 @@ public interface FilesStore {
 
 	Iterable<File> files(String dir, String pattern);
 
+	Iterable<File> files(String pattern);
+
 	void remove(String filePath);
 
 	void rename(String filePath, String newFilePath);
