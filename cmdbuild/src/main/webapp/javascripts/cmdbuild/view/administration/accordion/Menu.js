@@ -31,6 +31,7 @@
 			nodeIdToSelect = Ext.isNumber(nodeIdToSelect) ? nodeIdToSelect : null;
 
 			CMDBuild.core.proxy.userAndGroup.group.Group.readAll({
+				loadMask: false,
 				scope: this,
 				success: function(result, options, decodedResult) {
 					decodedResult = decodedResult[CMDBuild.core.constants.Proxy.GROUPS];

@@ -3,7 +3,7 @@
 	Ext.define('CMDBuild.core.proxy.userAndGroup.group.DefaultFilters', {
 
 		requires: [
-			'CMDBuild.core.Cache',
+			'CMDBuild.core.cache.Cache',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.Index',
 			'CMDBuild.model.userAndGroup.group.defaultFilters.Filter'
@@ -39,33 +39,39 @@
 		 * @param {Object} parameters
 		 */
 		read: function(parameters) {
+			parameters = Ext.isEmpty(parameters) ? {} : parameters;
+
 			Ext.apply(parameters, {
 				url: CMDBuild.core.proxy.Index.group.defaultFilters.read
 			});
 
-			CMDBuild.core.Cache.request(CMDBuild.core.constants.Proxy.GROUP, parameters);
+			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.GROUP, parameters);
 		},
 
 		/**
 		 * @param {Object} parameters
 		 */
 		readAllGroupFilters: function(parameters) {
+			parameters = Ext.isEmpty(parameters) ? {} : parameters;
+
 			Ext.apply(parameters, {
 				url: CMDBuild.core.proxy.Index.group.defaultFilters.readAllGroupFilters
 			});
 
-			CMDBuild.core.Cache.request(CMDBuild.core.constants.Proxy.GROUP, parameters);
+			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.GROUP, parameters);
 		},
 
 		/**
 		 * @param {Object} parameters
 		 */
 		update: function(parameters) {
+			parameters = Ext.isEmpty(parameters) ? {} : parameters;
+
 			Ext.apply(parameters, {
 				url: CMDBuild.core.proxy.Index.group.defaultFilters.update
 			});
 
-			CMDBuild.core.Cache.request(CMDBuild.core.constants.Proxy.GROUP, parameters, true);
+			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.GROUP, parameters, true);
 		}
 	});
 

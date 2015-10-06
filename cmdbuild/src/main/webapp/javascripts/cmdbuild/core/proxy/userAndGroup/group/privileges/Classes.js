@@ -3,7 +3,7 @@
 	Ext.define('CMDBuild.core.proxy.userAndGroup.group.privileges.Classes', {
 
 		requires: [
-			'CMDBuild.core.Cache',
+			'CMDBuild.core.cache.Cache',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.Index',
 			'CMDBuild.model.userAndGroup.group.privileges.GridRecord'
@@ -36,44 +36,52 @@
 		 * @param {Object} parameters
 		 */
 		readUIConfiguration: function(parameters) {
+			parameters = Ext.isEmpty(parameters) ? {} : parameters;
+
 			Ext.apply(parameters, {
 				url: CMDBuild.core.proxy.Index.privileges.classes.loadClassUiConfiguration
 			});
 
-			CMDBuild.core.Cache.request(CMDBuild.core.constants.Proxy.GROUP, parameters);
+			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.GROUP, parameters);
 		},
 
 		/**
 		 * @param {Object} parameters
 		 */
 		setRowAndColumn: function(parameters) {
+			parameters = Ext.isEmpty(parameters) ? {} : parameters;
+
 			Ext.apply(parameters, {
 				url: CMDBuild.core.proxy.Index.privileges.classes.setRowAndColumnPrivileges
 			});
 
-			CMDBuild.core.Cache.request(CMDBuild.core.constants.Proxy.GROUP, parameters, true);
+			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.GROUP, parameters, true);
 		},
 
 		/**
 		 * @param {Object} parameters
 		 */
 		update: function(parameters) {
+			parameters = Ext.isEmpty(parameters) ? {} : parameters;
+
 			Ext.apply(parameters, {
 				url: CMDBuild.core.proxy.Index.privileges.classes.update
 			});
 
-			CMDBuild.core.Cache.request(CMDBuild.core.constants.Proxy.GROUP, parameters, true);
+			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.GROUP, parameters, true);
 		},
 
 		/**
 		 * @param {Object} parameters
 		 */
 		updateUIConfiguration: function(parameters) {
+			parameters = Ext.isEmpty(parameters) ? {} : parameters;
+
 			Ext.apply(parameters, {
 				url: CMDBuild.core.proxy.Index.privileges.classes.saveClassUiConfiguration
 			});
 
-			CMDBuild.core.Cache.request(CMDBuild.core.constants.Proxy.GROUP, parameters, true);
+			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.GROUP, parameters, true);
 		}
 	});
 

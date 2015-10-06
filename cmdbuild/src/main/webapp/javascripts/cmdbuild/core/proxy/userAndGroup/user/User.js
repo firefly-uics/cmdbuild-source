@@ -3,7 +3,7 @@
 	Ext.define('CMDBuild.core.proxy.userAndGroup.user.User', {
 
 		requires: [
-			'CMDBuild.core.Cache',
+			'CMDBuild.core.cache.Cache',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.Index',
 			'CMDBuild.model.userAndGroup.user.DefaultGroup',
@@ -16,22 +16,26 @@
 		 * @param {Object} parameters
 		 */
 		create: function(parameters) {
+			parameters = Ext.isEmpty(parameters) ? {} : parameters;
+
 			Ext.apply(parameters, {
 				url: CMDBuild.core.proxy.Index.user.create
 			});
 
-			CMDBuild.core.Cache.request(CMDBuild.core.constants.Proxy.USER, parameters, true);
+			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.USER, parameters, true);
 		},
 
 		/**
 		 * @param {Object} parameters
 		 */
 		disable:function(parameters) {
+			parameters = Ext.isEmpty(parameters) ? {} : parameters;
+
 			Ext.apply(parameters, {
 				url: CMDBuild.core.proxy.Index.user.disable
 			});
 
-			CMDBuild.core.Cache.request(CMDBuild.core.constants.Proxy.USER, parameters, true);
+			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.USER, parameters, true);
 		},
 
 		/**
@@ -80,22 +84,26 @@
 		 * @param {Object} parameters
 		 */
 		read: function(parameters) {
+			parameters = Ext.isEmpty(parameters) ? {} : parameters;
+
 			Ext.apply(parameters, {
 				url: CMDBuild.core.proxy.Index.user.read
 			});
 
-			CMDBuild.core.Cache.request(CMDBuild.core.constants.Proxy.USER, parameters);
+			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.USER, parameters);
 		},
 
 		/**
 		 * @param {Object} parameters
 		 */
 		update: function(parameters) {
+			parameters = Ext.isEmpty(parameters) ? {} : parameters;
+
 			Ext.apply(parameters, {
 				url: CMDBuild.core.proxy.Index.user.update
 			});
 
-			CMDBuild.core.Cache.request(CMDBuild.core.constants.Proxy.USER, parameters, true);
+			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.USER, parameters, true);
 		}
 	});
 

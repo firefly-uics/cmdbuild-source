@@ -12,7 +12,7 @@
 		 *
 		 * @param {Ext.data.Store} sourceStore
 		 *
-		 * @return {Ext.data.Store} clonedStore
+		 * @returns {Ext.data.Store} clonedStore
 		 */
 		deepCloneStore: function(sourceStore) {
 			var clonedStore = Ext.create('Ext.data.Store', {
@@ -32,7 +32,7 @@
 		/**
 		 * @param {CMDBuild.cache.CMEntryTypeModel} entryTypeId
 		 *
-		 * @return {Array} out
+		 * @returns {Array} out
 		 *
 		 * TODO: parseInt will be useless when model will be refactored
 		 */
@@ -75,7 +75,7 @@
 		 * 			{Boolean} release
 		 * 		}
 		 *
-		 * @return {String}
+		 * @returns {String}
 		 */
 		getExtJsVersion: function(format) {
 			format = format || {};
@@ -143,7 +143,7 @@
 		 *
 		 * @param {String} inputString
 		 *
-		 * @return {Boolean}
+		 * @returns {Boolean}
 		 */
 		hasHtmlTags: function(inputString) {
 			if (typeof inputString == 'string')
@@ -159,6 +159,8 @@
 		 * @param {String} attributeToSort - (Default) description
 		 * @param {String} direction - (Default) ASC
 		 * @param {Boolean} caseSensitive - (Default) true
+		 *
+		 * @returns {Array}
 		 */
 		objectArraySort: function(array, attributeToSort, direction, caseSensitive) {
 			attributeToSort = Ext.isString(attributeToSort) ? attributeToSort : CMDBuild.core.constants.Proxy.DESCRIPTION;
@@ -166,7 +168,7 @@
 			caseSensitive = Ext.isBoolean(caseSensitive) ? caseSensitive : false;
 
 			if (Ext.isArray(array)) {
-				Ext.Array.sort(array, function(item1, item2) {
+				return Ext.Array.sort(array, function(item1, item2) {
 					var attribute1 = undefined;
 					var attribute2 = undefined;
 
@@ -202,6 +204,8 @@
 					}
 				});
 			}
+
+			return array;
 		},
 
 		/**
@@ -209,7 +213,7 @@
 		 *
 		 * @param {String} string
 		 *
-		 * @return {String} string
+		 * @returns {String} string
 		 */
 		toTitleCase: function(string) {
 			if (typeof string == 'string')
@@ -553,30 +557,6 @@
 	})();
 
 	_CMUtils = CMDBuild.Utils;
-
-	Ext.define("CMDBuild.Utils.CMRequestBarrier", {
-		constructor: function(cb) {
-			var me = this;
-
-			this.dangling = 1;
-
-			this.cb = function () {
-				me.dangling--;
-
-				if (me.dangling == 0)
-					cb();
-			};
-		},
-
-		getCallback: function() {
-			this.dangling++;
-			return this.cb;
-		},
-
-		start: function() {
-			this.cb();
-		}
-	});
 
 	CMDBuild.extend = function(subClass, superClass) {
 		var ob = function() {};

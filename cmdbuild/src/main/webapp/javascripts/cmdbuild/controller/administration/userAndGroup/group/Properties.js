@@ -135,15 +135,16 @@
 						if (!Ext.isEmpty(selectedGroupModel)) {
 							this.cmfg('userAndGroupGroupSelectedGroupSet', selectedGroupModel); // Update selectedGroup data (to delete on refactor)
 
-							CMDBuild.LoadMask.get().show();
+							var params = {};
+							params[CMDBuild.core.constants.Proxy.ACTIVE] = false;
+
 							this.form.startingClassCombo.getStore().load({
+								params: params,
 								scope: this,
 								callback: function(records, operation, success) {
 									this.form.loadRecord(this.cmfg('userAndGroupGroupSelectedGroupGet'));
 									this.form.enableDisableButton.setActiveState(this.cmfg('userAndGroupGroupSelectedGroupGet', CMDBuild.core.constants.Proxy.IS_ACTIVE));
 									this.form.setDisabledModify(true, true);
-
-									CMDBuild.LoadMask.get().hide();
 								}
 							});
 						}

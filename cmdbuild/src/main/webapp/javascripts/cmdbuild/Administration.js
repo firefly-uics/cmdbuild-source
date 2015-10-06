@@ -129,8 +129,8 @@
 			},
 
 			loadResources: function() {
-				var reqBarrier = new CMDBuild.Utils.CMRequestBarrier(
-					function callback() {
+				var reqBarrier = Ext.create('CMDBuild.core.RequestBarrier', {
+					callback: function() {
 						_CMMainViewportController.addAccordion([
 							classesAccordion,
 							processAccordion,
@@ -172,7 +172,7 @@
 							_CMMainViewportController.selectFirstSelectableLeafOfOpenedAccordion();
 						});
 					}
-				);
+				});
 
 				/**
 				 * BIM Configuration
@@ -231,6 +231,16 @@
 							}
 						});
 					},
+					callback: reqBarrier.getCallback()
+				});
+
+				/**
+				 * Groups
+				 *
+				 * Build cache call
+				 */
+				CMDBuild.core.proxy.userAndGroup.group.Group.readAll({
+					loadMask: false,
 					callback: reqBarrier.getCallback()
 				});
 

@@ -148,7 +148,7 @@
 						labelWidth: CMDBuild.LABEL_WIDTH,
 						maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
 						valueField: CMDBuild.core.constants.Proxy.ID,
-						displayField: CMDBuild.core.constants.Proxy.DESCRIPTION,
+						displayField: CMDBuild.core.constants.Proxy.TEXT, // TODO: waiting for refactor (rename description)
 						editable: false,
 						forceSelection: true,
 
