@@ -13,7 +13,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-import java.io.File;
 import java.util.Collection;
 import java.util.List;
 
@@ -50,15 +49,15 @@ public class FileSystemSynchronizerTest {
 		// given
 		doReturn(NO_ELEMENTS) //
 				.when(store).readAll();
-		doReturn(new File[] { temporaryFolder.newFolder("foo") }) //
-				.when(filesStore).listFiles(anyString(), anyString());
+		doReturn(asList(temporaryFolder.newFolder("foo"))) //
+				.when(filesStore).files(anyString(), anyString());
 
 		// when
 		underTest.synchronize();
 
 		// then
 		verify(store).readAll();
-		verify(filesStore).listFiles(eq("custompages"), isNull(String.class));
+		verify(filesStore).files(eq("custompages"), isNull(String.class));
 		final ArgumentCaptor<DBCustomPage> captor = ArgumentCaptor.forClass(DBCustomPage.class);
 		verify(store).create(captor.capture());
 
@@ -73,16 +72,15 @@ public class FileSystemSynchronizerTest {
 		doReturn(NO_ELEMENTS) //
 				.when(store).readAll();
 		doReturn(
-				new File[] { temporaryFolder.newFile("foo"), temporaryFolder.newFolder("bar"),
-						temporaryFolder.newFile("baz") }) //
-				.when(filesStore).listFiles(anyString(), anyString());
+				asList(temporaryFolder.newFile("foo"), temporaryFolder.newFolder("bar"), temporaryFolder.newFile("baz"))) //
+				.when(filesStore).files(anyString(), anyString());
 
 		// when
 		underTest.synchronize();
 
 		// then
 		verify(store).readAll();
-		verify(filesStore).listFiles(eq("custompages"), isNull(String.class));
+		verify(filesStore).files(eq("custompages"), isNull(String.class));
 		final ArgumentCaptor<DBCustomPage> captor = ArgumentCaptor.forClass(DBCustomPage.class);
 		verify(store).create(captor.capture());
 
@@ -97,15 +95,15 @@ public class FileSystemSynchronizerTest {
 		final DBCustomPage bar = customPage("bar");
 		doReturn(asList(foo, bar)) //
 				.when(store).readAll();
-		doReturn(new File[0]) //
-				.when(filesStore).listFiles(anyString(), anyString());
+		doReturn(emptyList()) //
+				.when(filesStore).files(anyString(), anyString());
 
 		// when
 		underTest.synchronize();
 
 		// then
 		verify(store).readAll();
-		verify(filesStore).listFiles(eq("custompages"), isNull(String.class));
+		verify(filesStore).files(eq("custompages"), isNull(String.class));
 		final ArgumentCaptor<DBCustomPage> captor = ArgumentCaptor.forClass(DBCustomPage.class);
 		verify(store, times(2)).delete(captor.capture());
 
@@ -123,15 +121,15 @@ public class FileSystemSynchronizerTest {
 		final DBCustomPage bar = customPage("bar");
 		doReturn(asList(foo, bar)) //
 				.when(store).readAll();
-		doReturn(new File[] { temporaryFolder.newFolder("bar"), temporaryFolder.newFolder("baz") }) //
-				.when(filesStore).listFiles(anyString(), anyString());
+		doReturn(asList(temporaryFolder.newFolder("bar"), temporaryFolder.newFolder("baz"))) //
+				.when(filesStore).files(anyString(), anyString());
 
 		// when
 		underTest.synchronize();
 
 		// then
 		verify(store).readAll();
-		verify(filesStore).listFiles(eq("custompages"), isNull(String.class));
+		verify(filesStore).files(eq("custompages"), isNull(String.class));
 		final ArgumentCaptor<DBCustomPage> createCaptor = ArgumentCaptor.forClass(DBCustomPage.class);
 		verify(store).create(createCaptor.capture());
 		final ArgumentCaptor<DBCustomPage> deleteCaptor = ArgumentCaptor.forClass(DBCustomPage.class);

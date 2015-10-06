@@ -1,19 +1,32 @@
 package org.cmdbuild.services;
 
+import static com.google.common.collect.FluentIterable.from;
 import static java.io.File.separator;
+import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
+import static org.cmdbuild.utils.FilenameFilters.pattern;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 
 import org.apache.commons.fileupload.FileItem;
 import org.cmdbuild.exception.ORMException.ORMExceptionType;
-import org.cmdbuild.utils.PatternFilenameFilter;
+
+import com.google.common.base.Function;
 
 public class DefaultFilesStore implements FilesStore {
+
+	private static Function<File, String> FILE_NAME = new Function<File, String>() {
+
+		@Override
+		public String apply(final File input) {
+			return input.getName();
+		}
+
+	};
 
 	private final String relativeRootDirectory;
 	private final String absoluteRootDirectory;
@@ -27,36 +40,37 @@ public class DefaultFilesStore implements FilesStore {
 	}
 
 	@Override
+	public FilesStore sub(final String dir) {
+		return new DefaultFilesStore(absoluteRootDirectory, dir);
+	}
+
+	@Override
 	public String[] list(final String dir) {
 		return list(dir, null);
 	}
 
 	@Override
 	public String[] list(final String dir, final String pattern) {
-		final File directory = new File(absoluteRootDirectory + dir);
-		if (directory.exists()) {
-			final FilenameFilter filenameFilter = PatternFilenameFilter.build(pattern);
-			return directory.list(filenameFilter);
-		} else {
-			return new String[0];
-		}
+		return from(files(dir, pattern)) //
+				.transform(FILE_NAME) //
+				.toArray(String.class);
 	}
 
 	@Override
-	// TODO remove duplication
-	public File[] listFiles(final String dir, final String pattern) {
-		final File directory = new File(absoluteRootDirectory + dir);
+	public Iterable<File> files(final String dir, final String pattern) {
+		final File directory = new File(absoluteRootDirectory, dir);
+		final Iterable<File> output;
 		if (directory.exists()) {
-			final FilenameFilter filenameFilter = PatternFilenameFilter.build(pattern);
-			return directory.listFiles(filenameFilter);
+			output = asList(directory.listFiles(pattern(pattern)));
 		} else {
-			return new File[0];
+			output = emptyList();
 		}
+		return output;
 	}
 
 	@Override
 	public void remove(final String filePath) {
-		final File theFile = new File(absoluteRootDirectory + filePath);
+		final File theFile = new File(absoluteRootDirectory, filePath);
 		if (theFile.exists()) {
 			theFile.delete();
 		} else {
@@ -66,14 +80,14 @@ public class DefaultFilesStore implements FilesStore {
 
 	@Override
 	public void rename(final String filePath, String newFilePath) {
-		final File theFile = new File(absoluteRootDirectory + filePath);
+		final File theFile = new File(absoluteRootDirectory, filePath);
 		if (theFile.exists()) {
 			final String extension = getExtension(theFile.getName());
 			if (!"".equals(extension)) {
 				newFilePath = newFilePath + extension;
 			}
 
-			final File newFile = newFile(absoluteRootDirectory + newFilePath);
+			final File newFile = newFile(absoluteRootDirectory, newFilePath);
 			theFile.renameTo(newFile);
 		} else {
 			throw ORMExceptionType.ORM_ICONS_FILE_NOT_FOUND.createException();
@@ -87,10 +101,9 @@ public class DefaultFilesStore implements FilesStore {
 
 	@Override
 	public void save(final InputStream inputStream, final String filePath) throws IOException {
-		final String destinationPath = absoluteRootDirectory + filePath;
 		FileOutputStream outputStream = null;
 		try {
-			final File destinationFile = newFile(destinationPath);
+			final File destinationFile = newFile(absoluteRootDirectory, filePath);
 			final File dir = destinationFile.getParentFile();
 			dir.mkdirs();
 
@@ -114,9 +127,8 @@ public class DefaultFilesStore implements FilesStore {
 		}
 	}
 
-	private File newFile(final String destinationPath) {
-		final File destinationFile = new File(destinationPath);
-
+	private File newFile(final String parent, final String child) {
+		final File destinationFile = new File(parent, child);
 		if (destinationFile.exists()) {
 			throw ORMExceptionType.ORM_ICONS_FILE_ALREADY_EXISTS.createException(destinationFile.getName());
 		}
@@ -136,11 +148,10 @@ public class DefaultFilesStore implements FilesStore {
 	@Override
 	public File getFile(final String path) {
 		final File file = new File(path);
-		if (file.exists()) {
-			return file;
-		} else {
+		if (!file.exists()) {
 			throw ORMExceptionType.ORM_ICONS_FILE_NOT_FOUND.createException();
 		}
+		return file;
 	}
 
 	@Override

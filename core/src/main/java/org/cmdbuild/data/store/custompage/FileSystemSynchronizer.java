@@ -3,7 +3,6 @@ package org.cmdbuild.data.store.custompage;
 import static com.google.common.collect.FluentIterable.from;
 import static com.google.common.collect.Maps.difference;
 import static com.google.common.collect.Maps.uniqueIndex;
-import static java.util.Arrays.asList;
 import static org.apache.commons.lang3.builder.ToStringBuilder.reflectionToString;
 import static org.apache.commons.lang3.builder.ToStringStyle.SHORT_PREFIX_STYLE;
 import static org.cmdbuild.data.store.custompage.Functions.name;
@@ -123,7 +122,7 @@ public class FileSystemSynchronizer implements Synchronizer {
 		logger.debug(MARKER, "checking cache");
 		logger.debug(MARKER, "reading custom pages on file system");
 		final Map<String, DBCustomPage> customPagesOnFileSystem = uniqueIndex(
-				from(asList(filesStore.listFiles("custompages", null))) //
+				from(filesStore.files("custompages", null)) //
 						.filter(DIRECTORY) //
 						.transform(FILE_TO_CUSTOM_PAGE), //
 				name());
