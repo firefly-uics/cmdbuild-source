@@ -52,6 +52,11 @@ public class FileStore {
 		}
 
 		@Override
+		public Iterable<File> files(final String pattern) {
+			return delegate.files(pattern);
+		}
+
+		@Override
 		public String getRelativeRootDirectory() {
 			return delegate.getRelativeRootDirectory();
 		}

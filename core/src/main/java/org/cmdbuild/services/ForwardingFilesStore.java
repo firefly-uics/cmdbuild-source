@@ -34,6 +34,11 @@ public abstract class ForwardingFilesStore extends ForwardingObject implements F
 	}
 
 	@Override
+	public Iterable<File> files(final String pattern) {
+		return delegate().files(pattern);
+	}
+
+	@Override
 	public void remove(final String filePath) {
 		delegate().remove(filePath);
 	}

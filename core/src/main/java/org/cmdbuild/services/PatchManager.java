@@ -8,11 +8,6 @@ public interface PatchManager {
 
 		String getDescription();
 
-		String getFilePath();
-
-		@Override
-		String toString();
-
 	}
 
 	void reset();
