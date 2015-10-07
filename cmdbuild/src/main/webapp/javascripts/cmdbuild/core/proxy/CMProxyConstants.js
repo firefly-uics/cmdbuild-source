@@ -48,6 +48,7 @@
 		CARD_SEPARATOR: 'cardSeparator',
 		CARDINALITY: 'cardinality',
 		CARDS: 'cards',
+		CATEGORY: 'category',
 		CC: 'cc',
 		CC_ADDRESSES: 'ccAddresses',
 		CHANGE_PASSWORD: 'changePassword',

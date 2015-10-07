@@ -6,6 +6,7 @@
 
 		config: {
 			base:  90, // (seconds)
+			patchManager: 600000, // 10m (milliseconds)
 			report: 7200000 // 2h (milliseconds)
 		},
 

@@ -31,7 +31,7 @@
 		initComponent: function() {
 			if (!this.autoHeight) {
 				var percentualHeight;
-				var configHeight = CMDBuild.Config.cmdbuild.popuppercentageheight;
+				var configHeight = (!Ext.isEmpty(CMDBuild.Config) && !Ext.isEmpty(CMDBuild.Config.cmdbuild)) ? CMDBuild.Config.cmdbuild.popuppercentageheight : 80;
 
 				if (configHeight) {
 					percentualHeight = configHeight/100;
@@ -44,7 +44,7 @@
 
 			if (!this.autoWidth) {
 				var percentualWidth;
-				var configWidth = CMDBuild.Config.cmdbuild.popuppercentagewidth;
+				var configWidth = (!Ext.isEmpty(CMDBuild.Config) && !Ext.isEmpty(CMDBuild.Config.cmdbuild)) ? CMDBuild.Config.cmdbuild.popuppercentagewidth : 80;
 
 				if (configWidth) {
 					percentualWidth = configWidth/100;
