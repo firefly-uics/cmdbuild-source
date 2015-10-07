@@ -8,6 +8,8 @@ public interface PatchManager {
 
 		String getDescription();
 
+		String getCategory();
+
 	}
 
 	void reset();
