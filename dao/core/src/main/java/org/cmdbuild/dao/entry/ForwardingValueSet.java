@@ -26,6 +26,11 @@ public abstract class ForwardingValueSet extends ForwardingObject implements CMV
 	}
 
 	@Override
+	public <T> T get(final String key, final Class<? extends T> requiredType, final T defaultValue) {
+		return delegate().get(key, requiredType, defaultValue);
+	}
+
+	@Override
 	public Iterable<Entry<String, Object>> getValues() {
 		return delegate().getValues();
 	}

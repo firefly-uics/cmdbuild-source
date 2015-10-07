@@ -1,35 +1,28 @@
 package org.cmdbuild.workflow.xpdl;
 
+import static com.google.common.reflect.Reflection.newProxy;
+import static org.cmdbuild.common.utils.Reflection.unsupported;
+
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map.Entry;
 
 import org.apache.commons.lang3.Validate;
 import org.cmdbuild.common.annotations.Legacy;
 import org.cmdbuild.dao.entry.CMValueSet;
+import org.cmdbuild.dao.entry.ForwardingValueSet;
 import org.cmdbuild.workflow.ActivityPerformer;
 import org.cmdbuild.workflow.CMActivity;
 import org.cmdbuild.workflow.CMActivityWidget;
 
 public class XpdlActivityWrapper implements CMActivity {
 
-	private static CMValueSet UNAVAILABLE_PROCESS_INSTANCE = new CMValueSet() {
+	private static CMValueSet UNAVAILABLE_PROCESS_INSTANCE = new ForwardingValueSet() {
 
-		final String EXCEPTION = "Process instance not available";
-
-		@Override
-		public Object get(final String key) {
-			throw new UnsupportedOperationException(EXCEPTION);
-		}
+		private final CMValueSet UNSUPPORTED = newProxy(CMValueSet.class, unsupported("Process instance not available"));
 
 		@Override
-		public <T> T get(final String key, final Class<? extends T> requiredType) {
-			throw new UnsupportedOperationException(EXCEPTION);
-		}
-
-		@Override
-		public Iterable<Entry<String, Object>> getValues() {
-			throw new UnsupportedOperationException(EXCEPTION);
+		protected CMValueSet delegate() {
+			return UNSUPPORTED;
 		}
 
 	};

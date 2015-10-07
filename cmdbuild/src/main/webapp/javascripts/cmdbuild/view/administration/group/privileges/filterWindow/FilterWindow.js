@@ -39,6 +39,12 @@
 		 */
 		className: undefined,
 
+		filterTabToEnable: {
+			attributeTab: true,
+			relationTab: false,
+			functionTab: true
+		},
+
 		/**
 		 * @cfg {String}
 		 */
