@@ -1189,9 +1189,6 @@
 			"title": "خوش آمدید"
 		}
 	},
-	"patch": {
-		"patch_list": "List of available patches"
-	},
 	"vtype_text": {
 		"cmdbcomment": "Pipe or apostrophe not allowed",
 		"cmdbcommentrelaxed": "Pipe not allowed",
@@ -1238,6 +1235,7 @@
 	"attribute": "خاصیت",
 	"attributes": "خواص",
 	"availableFilters": "فیلترهای موجود",
+	"availablePatchesList": "List of available patches",
 	"availableUsers": "کاربران موجود",
 	"baseProperties": "ویژگی های پایه",
 	"bcc": "Bcc",
@@ -1251,6 +1249,7 @@
 	"card": "کارت",
 	"cardPanelHeight": "ارتفاع پنل کارت بر حسب صدک",
 	"cards": "کارتها",
+	"category": "<em>Category</em>",
 	"cc": "Cc",
 	"changePassword": "تغییر رمز عبور",
 	"checkFrequency": "فرکانس چک کردن(به دقیقه)",

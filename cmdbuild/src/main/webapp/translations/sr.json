@@ -1189,9 +1189,6 @@
 			"title": "Dobro došli"
 		}
 	},
-	"patch": {
-		"patch_list": "Lista dostupnih ispravki (patch)"
-	},
 	"vtype_text": {
 		"cmdbcomment": "Apostrof i/ili vertikalna crtica su nedozvoljeni",
 		"cmdbcommentrelaxed": "Vertikalna crtica je nedozvoljen karakter",
@@ -1238,6 +1235,7 @@
 	"attribute": "Atribut",
 	"attributes": "Atributi",
 	"availableFilters": "Dostupni filteri",
+	"availablePatchesList": "Lista dostupnih ispravki (patch)",
 	"availableUsers": "Dostupni korisnici",
 	"baseProperties": "Osnovna obeležja",
 	"bcc": "Bcc",
@@ -1251,6 +1249,7 @@
 	"card": "Kartica",
 	"cardPanelHeight": "Visina (u procentima) panela za kartice ",
 	"cards": "Kartice podataka",
+	"category": "<em>Category</em>",
 	"cc": "Cc",
 	"changePassword": "Promeni lozinku",
 	"checkFrequency": "Frekvencija provere (minute)",

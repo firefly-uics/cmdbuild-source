@@ -1189,9 +1189,6 @@
 			"title": "ようこそ"
 		}
 	},
-	"patch": {
-		"patch_list": "利用可能なパッチのリスト"
-	},
 	"vtype_text": {
 		"cmdbcomment": "パイプまたはアポストロフィは使用できません",
 		"cmdbcommentrelaxed": "パイプは使用できません",
@@ -1238,6 +1235,7 @@
 	"attribute": "属性",
 	"attributes": "アクティビティ",
 	"availableFilters": "使用可能なフィルタ",
+	"availablePatchesList": "利用可能なパッチのリスト",
 	"availableUsers": "利用可能なユーザー",
 	"baseProperties": "基本プロパティ",
 	"bcc": "Bcc",
@@ -1251,6 +1249,7 @@
 	"card": "カード",
 	"cardPanelHeight": "カードパネルの高さ(%)",
 	"cards": "カード",
+	"category": "<em>Category</em>",
 	"cc": "Cc",
 	"changePassword": "パスワード変更",
 	"checkFrequency": "確認間隔(分）",
