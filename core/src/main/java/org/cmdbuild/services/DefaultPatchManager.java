@@ -1,11 +1,11 @@
 package org.cmdbuild.services;
 
-import static com.google.common.base.Optional.absent;
 import static com.google.common.base.Optional.fromNullable;
-import static com.google.common.base.Optional.of;
 import static com.google.common.base.Predicates.alwaysTrue;
 import static com.google.common.collect.FluentIterable.from;
-import static com.google.common.collect.Lists.newLinkedList;
+import static com.google.common.collect.Iterables.concat;
+import static com.google.common.collect.Lists.newArrayList;
+import static com.google.common.collect.Maps.newLinkedHashMap;
 import static com.google.common.collect.Ordering.from;
 import static java.lang.String.format;
 import static java.util.regex.Pattern.compile;
@@ -21,24 +21,32 @@ import static org.cmdbuild.dao.query.clause.OrderByClause.Direction.DESC;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
 import static org.cmdbuild.dao.query.clause.alias.Aliases.as;
 import static org.cmdbuild.dao.query.clause.alias.Aliases.name;
+import static org.cmdbuild.dao.query.clause.where.OperatorAndValues.eq;
+import static org.cmdbuild.dao.query.clause.where.OperatorAndValues.isNull;
+import static org.cmdbuild.dao.query.clause.where.WhereClauses.condition;
 import static org.cmdbuild.logger.Log.CMDBUILD;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Matcher;
 
 import javax.sql.DataSource;
 
 import org.apache.commons.io.LineIterator;
+import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.query.clause.alias.Alias;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.exception.ORMException;
 import org.cmdbuild.exception.ORMException.ORMExceptionType;
 import org.cmdbuild.logic.data.DataDefinitionLogic;
+import org.cmdbuild.model.data.Attribute;
+import org.cmdbuild.model.data.Attribute.AttributeTypeBuilder;
 import org.cmdbuild.model.data.EntryType;
 import org.cmdbuild.model.data.EntryType.TableType;
 import org.slf4j.Logger;
@@ -56,6 +64,14 @@ import com.google.common.base.Supplier;
 
 public class DefaultPatchManager implements PatchManager {
 
+	public static interface Repository {
+
+		Iterable<File> getFiles(String pattern);
+
+		String getCategory();
+
+	}
+
 	private static final Logger logger = CMDBUILD;
 
 	private static class DefaultPatch implements Patch {
@@ -64,6 +80,7 @@ public class DefaultPatchManager implements PatchManager {
 
 			private File file;
 			private boolean fake;
+			private String category;
 			private String version;
 			private String description;
 
@@ -137,6 +154,11 @@ public class DefaultPatchManager implements PatchManager {
 				return this;
 			}
 
+			public Builder category(final String category) {
+				this.category = category;
+				return this;
+			}
+
 		}
 
 		public static Builder newInstance() {
@@ -148,11 +170,13 @@ public class DefaultPatchManager implements PatchManager {
 
 		private final String version;
 		private final String description;
+		private final String category;
 		private final File file;
 
 		private DefaultPatch(final Builder builder) {
 			this.version = builder.version;
 			this.description = builder.description;
+			this.category = builder.category;
 			this.file = builder.file;
 		}
 
@@ -164,6 +188,11 @@ public class DefaultPatchManager implements PatchManager {
 		@Override
 		public String getDescription() {
 			return description;
+		}
+
+		@Override
+		public String getCategory() {
+			return category;
 		}
 
 		File getFile() {
@@ -182,6 +211,7 @@ public class DefaultPatchManager implements PatchManager {
 
 	private static final String VERSION = CODE_ATTRIBUTE;
 	private static final String DESCRIPTION = DESCRIPTION_ATTRIBUTE;
+	private static final String CATEGORY = "Category";
 
 	private static final Comparator<File> BY_ABSOLUTE_PATH = new Comparator<File>() {
 
@@ -197,82 +227,98 @@ public class DefaultPatchManager implements PatchManager {
 	private final DataSource dataSource;
 	private final CMDataView dataView;
 	private final DataDefinitionLogic dataDefinitionLogic;
-	private final FilesStore filesStore;
-	private Optional<? extends Patch> lastAvaiablePatch;
-	private final List<DefaultPatch> availablePatch;
+	private final Iterable<Repository> repositories;
+	private final Map<Optional<? extends String>, Patch> lastAvaiablePatches;
+	private final Map<Optional<? extends String>, Collection<DefaultPatch>> availablePatches;
 
 	public DefaultPatchManager( //
 			final DataSource dataSource, //
 			final CMDataView dataView, //
 			final DataDefinitionLogic dataDefinitionLogic, //
-			final FilesStore filesStore //
+			final Iterable<Repository> repositories //
 	) {
 		this.dataSource = dataSource;
 		this.dataView = dataView;
 		this.dataDefinitionLogic = dataDefinitionLogic;
-		this.filesStore = filesStore;
-		this.lastAvaiablePatch = absent();
-		this.availablePatch = newLinkedList();
+		this.repositories = repositories;
+		this.lastAvaiablePatches = newLinkedHashMap();
+		this.availablePatches = newLinkedHashMap();
 		reset();
 	}
 
 	@Override
 	public void reset() {
 		synchronized (this) {
-			Predicate<Patch> predicate = ALWAYS_TRUE;
-			try {
-				predicate = new Predicate<Patch>() {
+			for (final Repository repository : repositories) {
+				reset(repository.getCategory(), repository.getFiles(PATCH_PATTERN));
+			}
+		}
+	}
 
-					final Alias P = name("P");
-					final String version = dataView.select(anyAttribute(P)) //
-							.from(getOrCreateClass(), as(P)) //
-							.limit(1) //
-							.orderBy(attribute(P, VERSION), DESC) //
-							.run() //
-							.getOnlyRow() //
-							.getCard(P) //
-							.get(VERSION, String.class);
+	private void reset(final String category, final Iterable<File> files) {
+		logger.info("resetting category '{}' ('null' means default)", category);
+		final Optional<String> key = fromNullable(category);
+		Predicate<Patch> predicate = ALWAYS_TRUE;
+		try {
+			predicate = new Predicate<Patch>() {
 
-					@Override
-					public boolean apply(final Patch input) {
-						return version.compareTo(input.getVersion()) < 0;
-					}
+				final Alias P = name("P");
+				final String version = dataView.select(anyAttribute(P)) //
+						.from(getOrCreateClass(), as(P)) //
+						.where(condition(attribute(P, CATEGORY), (category == null) ? isNull() : eq(category))) //
+						.limit(1) //
+						.orderBy(attribute(P, VERSION), DESC) //
+						.run() //
+						.getOnlyRow() //
+						.getCard(P) //
+						.get(VERSION, String.class);
 
-				};
-			} catch (final Exception e) {
-				logger.error("error getting last applied patch version", e);
-			} finally {
-				final List<File> patchFiles = from(BY_ABSOLUTE_PATH) //
-						.immutableSortedCopy(filesStore.files(PATCH_PATTERN));
-				logger.info("fetched patches ({}): {}", patchFiles.size(), patchFiles);
-				if (!patchFiles.isEmpty()) {
-					final File file = from(patchFiles).last().get();
-					try {
-						logger.debug("creating last available patch from '{}'", file);
-						lastAvaiablePatch = of(DefaultPatch.newInstance() //
-								.file(file) //
-								.fake(true) //
-								.build());
-						logger.info("last available patch is '{}'", lastAvaiablePatch);
-					} catch (final Exception e) {
-						logger.error("error creating last available patch", e);
-						lastAvaiablePatch = absent();
-					}
+				@Override
+				public boolean apply(final Patch input) {
+					return version.compareTo(input.getVersion()) < 0;
 				}
-				availablePatch.clear();
-				for (final File file : patchFiles) {
-					try {
-						logger.debug("creating patch from '{}'", file);
-						final DefaultPatch patch = DefaultPatch.newInstance() //
-								.file(file) //
-								.build();
-						if (predicate.apply(patch)) {
-							availablePatch.add(patch);
-						}
-					} catch (final Exception e) {
-						logger.error("error creating patch", e);
-						availablePatch.clear();
+
+			};
+		} catch (final Exception e) {
+			logger.error("error getting last applied patch version", e);
+		} finally {
+			final List<File> patchFiles = from(BY_ABSOLUTE_PATH).immutableSortedCopy(files);
+			logger.info("fetched patches ({}): {}", patchFiles.size(), patchFiles);
+			if (!patchFiles.isEmpty()) {
+				final File file = from(patchFiles).last().get();
+				try {
+					logger.debug("creating last available patch from '{}'", file);
+					lastAvaiablePatches.put(key, DefaultPatch.newInstance() //
+							.file(file) //
+							.fake(true) //
+							.category(category) //
+							.build());
+					logger.info("last available patch is '{}'", lastAvaiablePatches);
+				} catch (final Exception e) {
+					logger.error("error creating last available patch", e);
+					lastAvaiablePatches.remove(key);
+				}
+			}
+			final Collection<DefaultPatch> elements;
+			if (availablePatches.containsKey(key)) {
+				elements = availablePatches.get(key);
+			} else {
+				elements = newArrayList();
+				availablePatches.put(key, elements);
+			}
+			for (final File file : patchFiles) {
+				try {
+					logger.debug("creating patch from '{}'", file);
+					final DefaultPatch patch = DefaultPatch.newInstance() //
+							.file(file) //
+							.category(category) //
+							.build();
+					if (predicate.apply(patch)) {
+						elements.add(patch);
 					}
+				} catch (final Exception e) {
+					logger.error("error creating patch", e);
+					availablePatches.clear();
 				}
 			}
 		}
@@ -280,10 +326,13 @@ public class DefaultPatchManager implements PatchManager {
 
 	@Override
 	public void applyPatchList() {
-		for (final DefaultPatch patch : newLinkedList(availablePatch)) {
-			applyPatch(patch);
-			createPatchCard(patch);
-			availablePatch.remove(patch);
+		for (final Optional<? extends String> key : availablePatches.keySet()) {
+			final Collection<DefaultPatch> elements = availablePatches.get(key);
+			for (final DefaultPatch element : newArrayList(elements)) {
+				applyPatch(element);
+				createPatchCard(element);
+				elements.remove(element);
+			}
 		}
 	}
 
@@ -317,26 +366,26 @@ public class DefaultPatchManager implements PatchManager {
 
 	@Override
 	public Iterable<Patch> getAvaiblePatch() {
-		return from(availablePatch) //
+		return from(concat(availablePatches.values())) //
 				.filter(Patch.class);
 	}
 
 	@Override
 	public boolean isUpdated() {
-		return availablePatch.isEmpty();
+		return from(getAvaiblePatch()).isEmpty();
 	}
 
 	@Override
 	public void createLastPatch() {
-		if (lastAvaiablePatch.isPresent()) {
-			logger.info("creating card for last available patch '{}'", lastAvaiablePatch);
-			createPatchCard(lastAvaiablePatch.get());
-			availablePatch.clear();
+		for (final Optional<? extends String> category : lastAvaiablePatches.keySet()) {
+			logger.info("creating card for last available patch '{}'", lastAvaiablePatches);
+			createPatchCard(lastAvaiablePatches.get(category.get()));
+			availablePatches.clear();
 		}
 	}
 
 	private CMClass getOrCreateClass() {
-		return fromNullable(dataView.findClass(PATCHES_TABLE)) //
+		final CMClass output = fromNullable(dataView.findClass(PATCHES_TABLE)) //
 				.or(new Supplier<CMClass>() {
 
 					@Override
@@ -352,6 +401,21 @@ public class DefaultPatchManager implements PatchManager {
 					}
 
 				});
+		fromNullable(output.getAttribute(CATEGORY)) //
+				.or(new Supplier<CMAttribute>() {
+
+					@Override
+					public CMAttribute get() {
+						return dataDefinitionLogic.createOrUpdate(Attribute.newAttribute() //
+								.withName(CATEGORY) //
+								.withOwnerName(PATCHES_TABLE) //
+								.withType(AttributeTypeBuilder.TEXT) //
+								.thatIsActive(true) //
+								.build());
+					}
+
+				});
+		return output;
 	}
 
 	private void createPatchCard(final Patch patch) {

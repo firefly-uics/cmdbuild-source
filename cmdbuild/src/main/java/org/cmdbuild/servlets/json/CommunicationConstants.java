@@ -35,6 +35,7 @@ public class CommunicationConstants {
 			CARD = "card", //
 			CARD_ID = "cardId", //
 			CARDS = "cards", //
+			CATEGORY = "category", //
 			CC = "cc", //
 			CHARTNAME = "chartName", //
 			CLASS_ATTRIBUTE = "classAttribute", //
