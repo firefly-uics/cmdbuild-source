@@ -14,7 +14,6 @@ import org.cmdbuild.logic.data.access.UserDataAccessLogicBuilder;
 import org.cmdbuild.logic.data.access.WebServiceDataAccessLogicBuilder;
 import org.cmdbuild.logic.workflow.UserWorkflowLogicBuilder;
 import org.cmdbuild.logic.workflow.WebserviceWorkflowLogicBuilder;
-import org.cmdbuild.services.FilesStore;
 import org.cmdbuild.services.event.ObservableDataView;
 import org.cmdbuild.workflow.DataViewWorkflowPersistence;
 import org.cmdbuild.workflow.DefaultWorkflowEngine;
@@ -36,7 +35,7 @@ public class User {
 	private Data data;
 
 	@Autowired
-	private FilesStore filesStore;
+	private FileStore fileStore;
 
 	@Autowired
 	private Lock lock;
@@ -145,11 +144,11 @@ public class User {
 				userWorkflowEngineBuilder(), //
 				userDataView(), //
 				properties.workflowProperties(), //
-				filesStore, //
+				fileStore.uploadFilesStore(), //
 				lock.configurationAwareLockLogic());
 	}
-	
- 	@Bean
+
+	@Bean
 	@Scope(PROTOTYPE)
 	public OperationUser operationUser() {
 		return userStore.getUser();
@@ -165,7 +164,7 @@ public class User {
 				userWorkflowEngineBuilder(), //
 				userDataView(), //
 				properties.workflowProperties(), //
-				filesStore, //
+				fileStore.uploadFilesStore(), //
 				lock.dummyLockLogic());
 	}
 

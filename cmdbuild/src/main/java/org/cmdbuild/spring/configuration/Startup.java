@@ -41,7 +41,7 @@ public class Startup {
 	private Email email;
 
 	@Autowired
-	private Other other;
+	private Migration migration;
 
 	@Autowired
 	private Properties properties;
@@ -56,7 +56,7 @@ public class Startup {
 	public StartupLogic startupLogic() {
 		return new DefaultStartupLogic( //
 				startupManager(), //
-				other.patchManager(), //
+				migration.patchManager(), //
 				cache.defaultCachingLogic() //
 		);
 	}
@@ -149,7 +149,7 @@ public class Startup {
 
 			@Override
 			public boolean apply(final Void input) {
-				return properties.databaseProperties().isConfigured() && other.patchManager().isUpdated();
+				return properties.databaseProperties().isConfigured() && migration.patchManager().isUpdated();
 			}
 
 		};

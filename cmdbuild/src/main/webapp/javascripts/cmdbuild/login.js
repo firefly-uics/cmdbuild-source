@@ -6,8 +6,9 @@
 		extend: 'Ext.panel.Panel',
 
 		requires: [
-			'CMDBuild.core.proxy.CMProxy',
-			'CMDBuild.core.proxy.CMProxyConstants'
+			'CMDBuild.core.proxy.CMProxyConstants',
+			'CMDBuild.core.proxy.session.JsonRpc',
+			'CMDBuild.core.proxy.session.Rest'
 		],
 
 		frame: false,
@@ -102,7 +103,6 @@
 				displayField: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
 				editable: false,
 				forceSelection: true,
-//				allowBlank: false,
 
 				store: Ext.create('Ext.data.Store', {
 					fields: [CMDBuild.core.proxy.CMProxyConstants.NAME, CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION],
@@ -212,15 +212,33 @@
 		 */
 		doLogin: function(field, event) {
 			if (!Ext.isEmpty(this.role.getValue()) || this.form.getForm().isValid()) {
-				CMDBuild.core.proxy.CMProxy.doLogin({
-					params: this.form.getForm().getValues(),
+				var params = {};
+				params[CMDBuild.core.proxy.CMProxyConstants.PASSWORD] = this.password.getValue();
+				params[CMDBuild.core.proxy.CMProxyConstants.USERNAME] = this.user.getValue();
+
+				CMDBuild.core.proxy.session.JsonRpc.login({
+					params: params,
 					scope: this,
-					success: function() {
-						if (/administration.jsp$/.test(window.location)) {
-							window.location = 'administration.jsp' + window.location.hash;
-						} else {
-							window.location = 'management.jsp' + window.location.hash;
-						}
+					success: function(response, options, decodedResponse) {
+						var urlParams = {};
+						urlParams[CMDBuild.core.proxy.CMProxyConstants.TOKEN] = response.getResponseHeader(CMDBuild.core.proxy.CMProxyConstants.AUTHORIZATION_HEADER_KEY);
+
+						CMDBuild.core.proxy.session.Rest.login({
+							params: params,
+							urlParams: urlParams,
+							scope: this,
+							success: function(response, options, decodedResponse) {
+								Ext.util.Cookies.set(CMDBuild.core.proxy.CMProxyConstants.REST_SESSION_TOKEN, urlParams[CMDBuild.core.proxy.CMProxyConstants.TOKEN]);
+							},
+							callback: function(records, operation, success) {
+								// CMDBuild redirect
+								if (/administration.jsp$/.test(window.location)) {
+									window.location = 'administration.jsp' + window.location.hash;
+								} else {
+									window.location = 'management.jsp' + window.location.hash;
+								}
+							}
+						});
 					},
 					failure: function(result, options, decodedResult) {
 						if (!Ext.isEmpty(decodedResult) && decodedResult[CMDBuild.core.proxy.CMProxyConstants.REASON] == 'AUTH_MULTIPLE_GROUPS') {

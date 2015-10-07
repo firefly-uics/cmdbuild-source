@@ -61,6 +61,16 @@
 			saveConfiguration: 'services/json/schema/setup/saveconfiguration'
 		},
 
+		customPage: {
+			create: '',
+			read: '',
+			update: '',
+			remove: '',
+
+			readAll: 'services/json/custompages/readall', // TODO: unused
+			readForCurrentUser: 'services/json/custompages/readforcurrentuser'
+		},
+
 		domain: {
 			create: 'services/json/schema/modclass/savedomain',
 			read: 'services/json/schema/modclass/getalldomains',
@@ -202,8 +212,6 @@
 			classUpdate: 'services/json/schema/translation/updateforclass',
 		},
 
-		login: 'services/json/login/login',
-
 		menu: {
 			create: '',
 			read: 'services/json/schema/modmenu/getassignedmenu',
@@ -220,6 +228,12 @@
 			create: 'services/json/navigationtree/create',
 			save: 'services/json/navigationtree/save',
 			remove: 'services/json/navigationtree/remove'
+		},
+
+		patchManager: {
+			update: 'services/json/configure/applypatches',
+
+			readAll: 'services/json/configure/getpatches'
 		},
 
 		privileges: {
@@ -240,6 +254,10 @@
 			filter: {
 				read: 'services/json/schema/modsecurity/getfilterprivilegelist',
 				update: 'services/json/schema/modsecurity/savefilterprivilege'
+			},
+			customPages: {
+				read: 'services/json/schema/modsecurity/getcustompageprivilegelist',
+				update: 'services/json/schema/modsecurity/savecustompageprivilege'
 			}
 		},
 
@@ -277,6 +295,14 @@
 
 			printReportFactory: 'services/json/management/modreport/printreportfactory',
 			updateReportFactoryParams: 'services/json/management/modreport/updatereportfactoryparams'
+		},
+
+		session: {
+			jsonRpc: {
+				login: 'services/json/login/login',
+				logout: 'services/json/login/logout'
+			},
+			rest: 'services/rest/v2/sessions',
 		},
 
 		tasks: {

@@ -12,9 +12,11 @@ import org.cmdbuild.auth.acl.PrivilegeContext;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.data.store.dao.StorableConverter;
+import org.cmdbuild.logic.custompages.CustomPagesLogic;
 import org.cmdbuild.model.view.View;
 import org.cmdbuild.privileges.predicates.IsAlwaysReadable;
 import org.cmdbuild.privileges.predicates.IsReadableClass;
+import org.cmdbuild.privileges.predicates.IsReadableCustomPage;
 import org.cmdbuild.privileges.predicates.IsReadableDashboard;
 import org.cmdbuild.privileges.predicates.IsReadableReport;
 import org.cmdbuild.privileges.predicates.IsReadableView;
@@ -30,19 +32,22 @@ public class MenuCardPredicateFactory {
 	private final Supplier<PrivilegeContext> privilegeContext;
 	private final StorableConverter<View> viewConverter;
 	private final UserStore userStore;
+	private final CustomPagesLogic customPagesLogic;
 
 	public MenuCardPredicateFactory( //
 			final CMDataView view, //
 			final CMGroup group, //
 			final Supplier<PrivilegeContext> privilegeContext, //
 			final StorableConverter<View> viewConverter, //
-			final UserStore userStore //
+			final UserStore userStore, //
+			final CustomPagesLogic customPagesLogic //
 	) {
 		this.group = group;
 		this.dataView = view;
 		this.privilegeContext = privilegeContext;
 		this.viewConverter = viewConverter;
 		this.userStore = userStore;
+		this.customPagesLogic = customPagesLogic;
 	}
 
 	// TODO: change it (privileges on processes and reports)
@@ -65,6 +70,8 @@ public class MenuCardPredicateFactory {
 			return new IsReadableDashboard(dataView, group);
 		} else if (menuCard.get(TYPE_ATTRIBUTE).equals(MenuItemType.VIEW.getValue())) {
 			return new IsReadableView(dataView, privilegeContext.get(), viewConverter);
+		} else if (menuCard.get(TYPE_ATTRIBUTE).equals(MenuItemType.CUSTOM_PAGE.getValue())) {
+			return new IsReadableCustomPage(privilegeContext.get(), customPagesLogic);
 		}
 		throw new IllegalArgumentException();
 	}

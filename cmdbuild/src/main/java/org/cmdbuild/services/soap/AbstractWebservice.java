@@ -1,6 +1,7 @@
 package org.cmdbuild.services.soap;
 
 import static org.cmdbuild.spring.SpringIntegrationUtils.applicationContext;
+import static org.cmdbuild.spring.configuration.FileStore.ROOT;
 import static org.cmdbuild.spring.configuration.User.BEAN_USER_DATA_VIEW;
 
 import java.util.Collections;
@@ -29,6 +30,7 @@ import org.cmdbuild.logic.dms.PrivilegedDmsLogic;
 import org.cmdbuild.logic.report.ReportLogic;
 import org.cmdbuild.logic.translation.TranslationFacade;
 import org.cmdbuild.logic.workflow.WebserviceWorkflowLogicBuilder;
+import org.cmdbuild.services.FilesStore;
 import org.cmdbuild.services.meta.MetadataStoreFactory;
 import org.cmdbuild.services.soap.operation.AuthenticationLogicHelper;
 import org.cmdbuild.services.soap.operation.CardAdapter;
@@ -107,6 +109,7 @@ abstract class AbstractWebservice implements ApplicationContextAware {
 	protected DataAccessLogicHelper dataAccessLogicHelper() {
 		final DataAccessLogicHelper helper = new DataAccessLogicHelper( //
 				applicationContext.getBean(BEAN_USER_DATA_VIEW, CMDataView.class),//
+				applicationContext.getBean(ROOT, FilesStore.class),//
 				applicationContext.getBean(WebServiceDataAccessLogicBuilder.class).build(), //
 				applicationContext.getBean(WebserviceWorkflowLogicBuilder.class).build(), //
 				applicationContext.getBean("operationUser", OperationUser.class), //

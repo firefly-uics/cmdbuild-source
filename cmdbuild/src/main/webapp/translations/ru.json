@@ -1189,9 +1189,6 @@
 			"title": "Добро пожаловать!"
 		}
 	},
-	"patch": {
-		"patch_list": "Список доступных обновлений"
-	},
 	"vtype_text": {
 		"cmdbcomment": "Использование вертикальной черты | или апострофа не разрешено",
 		"cmdbcommentrelaxed": "Использование вертикальной черты | не разрешено",
@@ -1238,6 +1235,7 @@
 	"attribute": "Атрибут",
 	"attributes": "Атрибуты",
 	"availableFilters": "Доступные фильтры",
+	"availablePatchesList": "Список доступных обновлений",
 	"availableUsers": "Доступные пользователи",
 	"baseProperties": "Основные свойства",
 	"bcc": "Скрытая копия",
@@ -1251,6 +1249,7 @@
 	"card": "Данные",
 	"cardPanelHeight": "Высота панели карточек в процентах",
 	"cards": "Конфигурационные единицы",
+	"category": "<em>Category</em>",
 	"cc": "Копия",
 	"changePassword": "Изменить пароль",
 	"checkFrequency": "Периодичность проверки (мин)",
@@ -1281,6 +1280,7 @@
 	"credentials": "Учетные данные",
 	"csv": "CSV",
 	"csvFile": "Файл CSV",
+	"customPages": "<em>Custom pages</em>",
 	"dashboard": "Панель",
 	"defaultAccount": "<em>Default account</em>",
 	"defaultClass": "Класс по умолчанию",

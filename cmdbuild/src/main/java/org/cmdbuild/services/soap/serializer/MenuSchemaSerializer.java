@@ -92,7 +92,7 @@ public class MenuSchemaSerializer {
 	private MenuSchema serializeMenuTree(final MenuItem rootMenuItem) {
 		final MenuSchema menuSchema = new MenuSchema();
 		menuSchema.setDescription(rootMenuItem.getDescription());
-		if (isReport(rootMenuItem) || isView(rootMenuItem) || isDashboard(rootMenuItem)) {
+		if (isReport(rootMenuItem) || isView(rootMenuItem) || isDashboard(rootMenuItem) || isCustomPage(rootMenuItem)) {
 			menuSchema.setId(rootMenuItem.getReferencedElementId().intValue());
 		} else if (rootMenuItem.getId() != null) {
 			menuSchema.setId(rootMenuItem.getId().intValue());
@@ -137,6 +137,10 @@ public class MenuSchemaSerializer {
 
 	private boolean isView(final MenuItem menuItem) {
 		return menuItem.getType().getValue().equals(MenuItemType.VIEW.getValue());
+	}
+	
+	private boolean isCustomPage(final MenuItem menuItem) {
+		return MenuItemType.isCustomPage(menuItem.getType());
 	}
 
 	private boolean isFolder(final MenuItem menuItem) {

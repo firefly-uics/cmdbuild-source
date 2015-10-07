@@ -1189,9 +1189,6 @@
 			"title": "Chào mừng"
 		}
 	},
-	"patch": {
-		"patch_list": "Danh sách các bản chỉnh sữa lỗi có sẵn"
-	},
 	"vtype_text": {
 		"cmdbcomment": "Duong dan or apostrophe khong duoc phep",
 		"cmdbcommentrelaxed": "duong dan khong duoc phep",
@@ -1238,6 +1235,7 @@
 	"attribute": "<em>Attribute</em>",
 	"attributes": "Các thuộc tính",
 	"availableFilters": "Các bộ lọc sử dụng được",
+	"availablePatchesList": "Danh sách các bản chỉnh sữa lỗi có sẵn",
 	"availableUsers": "Các người dùng đang có",
 	"baseProperties": "Ðặc tính cơ bản",
 	"bcc": "<em>Bcc</em>",
@@ -1251,6 +1249,7 @@
 	"card": "Thẻ",
 	"cardPanelHeight": "Độ cao bảng điều khiển theo phần trăm",
 	"cards": "Các thẻ",
+	"category": "<em>Category</em>",
 	"cc": "<em>Cc</em>",
 	"changePassword": "Đổi mật khẩu",
 	"checkFrequency": "<em>Check frequency (minutes)</em>",
@@ -1281,6 +1280,7 @@
 	"credentials": "Thông tin mật",
 	"csv": "CSV",
 	"csvFile": "Tập tin CSV",
+	"customPages": "<em>Custom pages</em>",
 	"dashboard": "Bảng điều khiển",
 	"defaultAccount": "<em>Default account</em>",
 	"defaultClass": "Lớp mặc định",

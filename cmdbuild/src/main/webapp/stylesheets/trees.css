@@ -4,6 +4,9 @@
 	.cmdbuild-tree-superclass-icon { background-image: url("../images/icons/tree/superclass_collapsed.png") !important; }
 	.cmdbuild-tree-class-icon { background-image: url("../images/icons/tree/class.png") !important; }
 
+/* Custom page */
+	.cmdbuild-tree-custompage-icon { background-image: url("../images/icons/tree/customPage.png") !important; }
+
 /* Process */
 	.cmdbuild-tree-superprocessclass-icon { background-image: url("../images/icons/tree/superclassprocess_collapsed.png") !important; }
 	.cmdbuild-tree-processclass-icon { background-image: url("../images/icons/tree/process.png") !important; }
