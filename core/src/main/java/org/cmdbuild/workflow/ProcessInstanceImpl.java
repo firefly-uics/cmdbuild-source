@@ -143,6 +143,11 @@ public class ProcessInstanceImpl implements UserProcessInstance {
 	}
 
 	@Override
+	public <T> T get(final String key, final Class<? extends T> requiredType, final T defaultValue) {
+		return card.get(key, requiredType, defaultValue);
+	}
+
+	@Override
 	public Iterable<Entry<String, Object>> getValues() {
 		return card.getValues();
 	}

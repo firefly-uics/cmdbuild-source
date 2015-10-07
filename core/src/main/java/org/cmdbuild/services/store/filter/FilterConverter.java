@@ -41,7 +41,7 @@ public class FilterConverter extends BaseStorableConverter<Filter> {
 				.withClassName(clazz.getIdentifier().getLocalName()) //
 				.withConfiguration(card.get(FILTER, String.class)) //
 				.thatIsShared(card.get(SHARED, Boolean.class)) //
-				.withUserId(Number.class.cast(card.get(USER_ID, Integer.class)).longValue()) //
+				.withUserId(card.get(USER_ID, Integer.class, 0).longValue()) //
 				.build();
 	}
 
