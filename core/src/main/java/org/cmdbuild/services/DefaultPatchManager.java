@@ -6,6 +6,7 @@ import static com.google.common.collect.FluentIterable.from;
 import static com.google.common.collect.Iterables.concat;
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Maps.newLinkedHashMap;
+import static com.google.common.collect.Maps.newTreeMap;
 import static com.google.common.collect.Ordering.from;
 import static java.lang.String.format;
 import static java.util.regex.Pattern.compile;
@@ -222,14 +223,33 @@ public class DefaultPatchManager implements PatchManager {
 
 	};
 
+	private static final Comparator<Optional<String>> BY_NAME_BUT_ABSENT_FIRST = new Comparator<Optional<String>>() {
+
+		@Override
+		public int compare(final Optional<String> o1, final Optional<String> o2) {
+			final int output;
+			if (o1.isPresent() && o2.isPresent()) {
+				output = o1.get().compareTo(o2.get());
+			} else if (o1.isPresent()) {
+				output = +1;
+			} else if (o2.isPresent()) {
+				output = -1;
+			} else {
+				output = 0;
+			}
+			return output;
+		}
+
+	};
+
 	private static final Predicate<Patch> ALWAYS_TRUE = alwaysTrue();
 
 	private final DataSource dataSource;
 	private final CMDataView dataView;
 	private final DataDefinitionLogic dataDefinitionLogic;
 	private final Iterable<Repository> repositories;
-	private final Map<Optional<? extends String>, Patch> lastAvaiablePatches;
-	private final Map<Optional<? extends String>, Collection<DefaultPatch>> availablePatches;
+	private final Map<Optional<String>, Patch> lastAvaiablePatches;
+	private final Map<Optional<String>, Collection<DefaultPatch>> availablePatches;
 
 	public DefaultPatchManager( //
 			final DataSource dataSource, //
@@ -242,7 +262,7 @@ public class DefaultPatchManager implements PatchManager {
 		this.dataDefinitionLogic = dataDefinitionLogic;
 		this.repositories = repositories;
 		this.lastAvaiablePatches = newLinkedHashMap();
-		this.availablePatches = newLinkedHashMap();
+		this.availablePatches = newTreeMap(BY_NAME_BUT_ABSENT_FIRST);
 		reset();
 	}
 
