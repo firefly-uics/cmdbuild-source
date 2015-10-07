@@ -65,6 +65,10 @@ import org.cmdbuild.dao.view.DBDataView.DBDomainDefinition;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.util.StringUtils;
+
+import com.google.common.base.Function;
+import com.google.common.collect.Iterables;
 
 public class EntryTypeCommands implements LoggingSupport {
 
@@ -286,7 +290,7 @@ public class EntryTypeCommands implements LoggingSupport {
 		final boolean isDefaultValueChanged = isDefaultValueChanged(updatedDefaultValue, existingDefaultValue);
 		final String domainPrefixForLog = owner instanceof DBDomain ? "Map_" : EMPTY;
 		final String logString = definition.getDefaultValue() != null ? "SELECT * FROM cm_modify_attribute('\"%s%s\"'::regclass,'%s','%s','%s',%b,%b,'%s');" //
-				: "SELECT * FROM cm_modify_attribute('\"%s%s\"'::regclass,'%s','%s',%s,%b,%b,'ARRAY%s::text[]','ARRAY%s::text[]');";
+				: "SELECT * FROM cm_modify_attribute('\"%s%s\"'::regclass,'%s','%s',%s,%b,%b,ARRAY%s::text[],ARRAY%s::text[]);";
 		final Iterable<String> classes = emptyList();
 		dataDefinitionSqlLogger.info(String.format(logString, //
 				domainPrefixForLog, //
@@ -296,8 +300,8 @@ public class EntryTypeCommands implements LoggingSupport {
 				definition.getDefaultValue(), //
 				definition.isMandatory(), //
 				definition.isUnique(), //
-				commentParts, //
-				classes));
+				quote(commentParts), //
+				quote(classes)));
 		jdbcTemplate.queryForObject( //
 				"SELECT * FROM cm_modify_attribute(?,?,?,?,?,?,?,?)", //
 				Object.class, //
@@ -324,6 +328,17 @@ public class EntryTypeCommands implements LoggingSupport {
 		sqlLogger.trace("assigning updated attribute to owner '{}'", nameFrom(owner.getIdentifier()));
 		owner.addAttribute(newAttribute);
 		return newAttribute;
+	}
+
+	private static Iterable<String> quote(final Iterable<String> arrayElements) {
+
+		return Iterables.transform(arrayElements, new Function<String, String>() {
+
+			@Override
+			public String apply(final String input) {
+				return String.format("'%s'", StringUtils.replace(input, "'", "''"));
+			}
+		});
 	}
 
 	private static boolean isDefaultValueChanged(final String newValue, final String existingValue) {
