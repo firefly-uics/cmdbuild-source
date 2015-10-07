@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 
-<%@ page language = "java" contentType = "text/html; charset=UTF-8" pageEncoding = "UTF-8" %>
-<%@ page session = "true" %>
-<%@ page import = "org.cmdbuild.services.SessionVars" %>
-<%@ page import = "org.cmdbuild.spring.SpringIntegrationUtils" %>
-<%@ page import = "org.cmdbuild.filters.AuthFilter" %>
-<%@ taglib uri = "/WEB-INF/tags/translations.tld" prefix = "tr" %>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ page session="true" %>
+<%@ page import="org.cmdbuild.services.SessionVars" %>
+<%@ page import="org.cmdbuild.spring.SpringIntegrationUtils" %>
+<%@ page import="org.cmdbuild.filters.AuthFilter" %>
+<%@ taglib uri="/WEB-INF/tags/translations.tld" prefix="tr" %>
 
 <%
 	final String lang = SpringIntegrationUtils.applicationContext().getBean(SessionVars.class).getLanguage();

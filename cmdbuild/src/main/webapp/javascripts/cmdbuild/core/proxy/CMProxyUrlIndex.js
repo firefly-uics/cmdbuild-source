@@ -230,6 +230,12 @@
 			remove: 'services/json/navigationtree/remove'
 		},
 
+		patchManager: {
+			update: 'services/json/configure/applypatches',
+
+			readAll: 'services/json/configure/getpatches'
+		},
+
 		privileges: {
 			classes: {
 				read: 'services/json/schema/modsecurity/getclassprivilegelist',
