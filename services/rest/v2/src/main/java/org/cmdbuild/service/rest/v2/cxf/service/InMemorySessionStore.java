@@ -1,5 +1,6 @@
 package org.cmdbuild.service.rest.v2.cxf.service;
 
+import static com.google.common.base.Optional.fromNullable;
 import static com.google.common.collect.Maps.newHashMap;
 import static org.apache.commons.lang3.builder.ToStringStyle.SHORT_PREFIX_STYLE;
 
@@ -15,8 +16,6 @@ import com.google.common.base.Optional;
 
 public class InMemorySessionStore implements SessionStore {
 
-	private static final Optional<Session> ABSENT = Optional.absent();
-
 	private final Map<String, Session> map;
 
 	public InMemorySessionStore() {
@@ -24,17 +23,22 @@ public class InMemorySessionStore implements SessionStore {
 	}
 
 	@Override
-	public void put(final Session value) {
-		Validate.notNull(value, "invalid value");
-		Validate.notBlank(value.getId(), "invalid id");
-		map.put(value.getId(), value);
+	public boolean has(final String id) {
+		return map.containsKey(id);
 	}
 
 	@Override
 	public Optional<Session> get(final String id) {
 		Validate.notNull(id, "invalid id");
 		final Session value = map.get(id);
-		return (value == null) ? ABSENT : Optional.of(value);
+		return fromNullable(value);
+	}
+
+	@Override
+	public void put(final Session value) {
+		Validate.notNull(value, "invalid value");
+		Validate.notBlank(value.getId(), "invalid id");
+		map.put(value.getId(), value);
 	}
 
 	@Override

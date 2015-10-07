@@ -12,12 +12,12 @@
 		clearCache: function(parameters) {
 			CMDBuild.Ajax.request( {
 				url: CMDBuild.core.proxy.CMProxyUrlIndex.utils.clearCache,
-				loadMask: true,
 				params: parameters.params,
+				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
 				scope: parameters.scope,
-				failure: parameters.failure || Ext.emptyFn(),
-				success: parameters.success || Ext.emptyFn(),
-				callback: parameters.callback || Ext.emptyFn()
+				failure: parameters.failure || Ext.emptyFn,
+				success: parameters.success || Ext.emptyFn,
+				callback: parameters.callback || Ext.emptyFn
 			});
 		},
 
@@ -28,11 +28,11 @@
 			CMDBuild.Ajax.request({
 				url: CMDBuild.core.proxy.CMProxyUrlIndex.utils.generateId,
 				params: parameters.params,
+				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : false,
 				scope: parameters.scope,
-				loadMask: parameters.loadMask || false,
-				failure: parameters.failure || Ext.emptyFn(),
-				success: parameters.success || Ext.emptyFn(),
-				callback: parameters.callback || Ext.emptyFn()
+				failure: parameters.failure || Ext.emptyFn,
+				success: parameters.success || Ext.emptyFn,
+				callback: parameters.callback || Ext.emptyFn
 			});
 		}
 	});

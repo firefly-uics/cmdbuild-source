@@ -17,11 +17,7 @@ Ext.onReady(function() {
 			}
 		},
 		autoLoad: true,
-		remoteSort: false,
-		sorters: {
-			property: 'name',
-			direction: 'ASC'
-		}
+		remoteSort: false
 	});
 
 	this.patchesGrid = new Ext.grid.Panel ({
@@ -30,8 +26,9 @@ Ext.onReady(function() {
 		layout: 'fit',
 		stripeRows: true,
 		columns: [
-			{ header: tr.name, dataIndex: 'name', width: 100, fixed: true },
-			{ header: tr.description, dataIndex: 'description', flex: 1 }
+			{ header: '@@ Category', dataIndex: 'category', sortable: false },
+			{ header: tr.name, dataIndex: 'name', width: 100, sortable: false, fixed: true },
+			{ header: tr.description, dataIndex: 'description', flex: 1, sortable: false }
 		]
 	});
 

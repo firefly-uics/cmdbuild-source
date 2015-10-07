@@ -366,7 +366,8 @@ public class ModReport extends JSONBaseWithSpringContext {
 				dataSource(), //
 				ReportExtension.valueOf(format.toUpperCase()), //
 				cmdbuildConfiguration(), //
-				userDataView() //
+				userDataView(), //
+				rootFilesStore() //
 		);
 		rfts.fillReport();
 		sessionVars().setReportFactory(rfts);
@@ -387,7 +388,8 @@ public class ModReport extends JSONBaseWithSpringContext {
 				ReportExtension.valueOf(format.toUpperCase()), //
 				className,//
 				cmdbuildConfiguration(), //
-				userDataView() //
+				userDataView(), //
+				rootFilesStore() //
 		);
 
 		rfts.fillReport();
@@ -423,7 +425,7 @@ public class ModReport extends JSONBaseWithSpringContext {
 		}
 
 		sessionVars().setNewReport(newReport);
-		Report test= sessionVars().getNewReport();
+		Report test = sessionVars().getNewReport();
 		return out;
 	}
 

@@ -44,11 +44,15 @@ import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.data.store.dao.DataViewStore;
 import org.cmdbuild.data.store.dao.StorableConverter;
 import org.cmdbuild.logic.Logic;
+import org.cmdbuild.logic.custompages.CustomPage;
+import org.cmdbuild.logic.custompages.CustomPagesLogic;
 import org.cmdbuild.logic.privileges.PrivilegeInfo.Builder;
 import org.cmdbuild.model.profile.UIConfiguration;
 import org.cmdbuild.model.view.View;
+import org.cmdbuild.privileges.CustomPageAdapter;
 import org.cmdbuild.privileges.fetchers.PrivilegeFetcher;
 import org.cmdbuild.privileges.fetchers.factories.CMClassPrivilegeFetcherFactory;
+import org.cmdbuild.privileges.fetchers.factories.CustomPagePrivilegeFetcherFactory;
 import org.cmdbuild.privileges.fetchers.factories.FilterPrivilegeFetcherFactory;
 import org.cmdbuild.privileges.fetchers.factories.PrivilegeFetcherFactory;
 import org.cmdbuild.privileges.fetchers.factories.ViewPrivilegeFetcherFactory;
@@ -64,16 +68,19 @@ public class DefaultSecurityLogic implements Logic, SecurityLogic {
 	private final CMClass grantClass;
 	private final StorableConverter<View> viewConverter;
 	private final FilterStore filterStore;
+	private final CustomPagesLogic customPagesLogic;
 
 	public DefaultSecurityLogic( //
 			final CMDataView view, //
 			final StorableConverter<View> viewConverter, //
-			final FilterStore filterStore //
+			final FilterStore filterStore, //
+			final CustomPagesLogic customPagesLogic //
 	) {
 		this.view = view;
 		this.grantClass = view.findClass(GRANT_CLASS_NAME);
 		this.viewConverter = viewConverter;
 		this.filterStore = filterStore;
+		this.customPagesLogic = customPagesLogic;
 	}
 
 	@Override
@@ -150,6 +157,20 @@ public class DefaultSecurityLogic implements Logic, SecurityLogic {
 		return fetchedFilterPrivileges;
 	}
 
+	@Override
+	public List<PrivilegeInfo> fetchCustomViewPrivilegesForGroup(final Long groupId) {
+		final List<PrivilegeInfo> alreadyStoredPrivileges = fetchStoredPrivilegesForGroup(groupId,
+				PrivilegedObjectType.CUSTOMPAGE);
+		for (final CustomPage element : customPagesLogic.read()) {
+			if (!isPrivilegeAlreadyStored(element.getId(), alreadyStoredPrivileges)) {
+				final PrivilegeInfo pi = new PrivilegeInfo(groupId, new CustomPageAdapter(element), PrivilegeMode.NONE,
+						null);
+				alreadyStoredPrivileges.add(pi);
+			}
+		}
+		return alreadyStoredPrivileges;
+	}
+
 	private Iterable<View> fetchAllViews() {
 		// TODO must be an external dependency
 		final DataViewStore<View> viewStore = DataViewStore.newInstance(view, viewConverter);
@@ -181,6 +202,8 @@ public class DefaultSecurityLogic implements Logic, SecurityLogic {
 			return new CMClassPrivilegeFetcherFactory(view);
 		case FILTER:
 			return new FilterPrivilegeFetcherFactory(view, filterStore);
+		case CUSTOMPAGE:
+			return new CustomPagePrivilegeFetcherFactory(view, customPagesLogic);
 		default:
 			return null;
 		}
@@ -350,6 +373,29 @@ public class DefaultSecurityLogic implements Logic, SecurityLogic {
 		createFilterGrantCard(privilegeInfo);
 	}
 
+	@Override
+	public void saveCustomPagePrivilege(final PrivilegeInfo privilegeInfo) {
+		final CMQueryResult result = view
+				.select(anyAttribute(grantClass))
+				.from(grantClass)
+				.where(and(
+						condition(attribute(grantClass, GROUP_ID_ATTRIBUTE), eq(privilegeInfo.getGroupId())),
+						condition(attribute(grantClass, TYPE_ATTRIBUTE), eq(PrivilegedObjectType.CUSTOMPAGE.getValue())))) //
+				.run();
+
+		for (final CMQueryRow row : result) {
+			final CMCard grantCard = row.getCard(grantClass);
+			final Long storedViewId = grantCard.get(PRIVILEGED_OBJECT_ID_ATTRIBUTE, Integer.class).longValue();
+			if (storedViewId.equals(privilegeInfo.getPrivilegedObjectId())) {
+				updateGrantCard(grantCard, privilegeInfo);
+				return;
+			}
+		}
+
+		createCustomPageGrantCard(privilegeInfo);
+
+	}
+
 	private void updateGrantCard(final CMCard grantCard, final PrivilegeInfo privilegeInfo) {
 		final CMCardDefinition mutableGrantCard = view.update(grantCard);
 		if (privilegeInfo.getMode() != null) {
@@ -404,6 +450,16 @@ public class DefaultSecurityLogic implements Logic, SecurityLogic {
 				.set(PRIVILEGED_OBJECT_ID_ATTRIBUTE, privilegeInfo.getPrivilegedObjectId()) //
 				.set(MODE_ATTRIBUTE, privilegeInfo.getMode().getValue()) //
 				.set(TYPE_ATTRIBUTE, PrivilegedObjectType.FILTER.getValue()) //
+				.set(STATUS_ATTRIBUTE, CardStatus.ACTIVE.value()) //
+				.save();
+	}
+
+	private void createCustomPageGrantCard(final PrivilegeInfo privilegeInfo) {
+		view.createCardFor(grantClass) //
+				.set(GROUP_ID_ATTRIBUTE, privilegeInfo.getGroupId()) //
+				.set(PRIVILEGED_OBJECT_ID_ATTRIBUTE, privilegeInfo.getPrivilegedObjectId()) //
+				.set(MODE_ATTRIBUTE, privilegeInfo.getMode().getValue()) //
+				.set(TYPE_ATTRIBUTE, PrivilegedObjectType.CUSTOMPAGE.getValue()) //
 				.set(STATUS_ATTRIBUTE, CardStatus.ACTIVE.value()) //
 				.save();
 	}

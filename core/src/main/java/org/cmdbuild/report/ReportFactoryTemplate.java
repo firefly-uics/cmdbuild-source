@@ -1,7 +1,6 @@
 package org.cmdbuild.report;
 
 import static java.lang.String.format;
-import static org.cmdbuild.spring.SpringIntegrationUtils.applicationContext;
 
 import java.awt.Color;
 import java.io.File;
@@ -55,6 +54,7 @@ public abstract class ReportFactoryTemplate extends ReportFactory {
 	private static Pattern PARAM_PATTERN = Pattern.compile("([^\\?]+)?(\\?)?");
 
 	protected final CMDataView dataView;
+	protected final FilesStore filesStore;
 	private final Map<String, Object> jasperFillManagerParameters;
 
 	public abstract JasperDesign getJasperDesign();
@@ -62,10 +62,12 @@ public abstract class ReportFactoryTemplate extends ReportFactory {
 	public ReportFactoryTemplate( //
 			final DataSource dataSource, //
 			final CmdbuildConfiguration configuration, //
-			final CMDataView dataView //
+			final CMDataView dataView, //
+			final FilesStore filesStore //
 	) {
 		super(dataSource, configuration);
 		this.dataView = dataView;
+		this.filesStore = filesStore;
 		this.jasperFillManagerParameters = Maps.newLinkedHashMap();
 	}
 
@@ -77,8 +79,6 @@ public abstract class ReportFactoryTemplate extends ReportFactory {
 	}
 
 	public String getReportDirectory() {
-		// FIXME
-		final FilesStore filesStore = applicationContext().getBean("rootFilesStore", FilesStore.class);
 		return filesStore.getAbsoluteRootDirectory() + File.separator + REPORT_DIR_NAME + File.separator;
 	}
 

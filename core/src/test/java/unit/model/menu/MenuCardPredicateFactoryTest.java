@@ -14,6 +14,7 @@ import org.cmdbuild.auth.acl.PrivilegeContext;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.view.CMDataView;
+import org.cmdbuild.logic.custompages.CustomPagesLogic;
 import org.cmdbuild.model.view.ViewConverter;
 import org.cmdbuild.privileges.predicates.IsAlwaysReadable;
 import org.cmdbuild.privileges.predicates.IsReadableClass;
@@ -33,16 +34,19 @@ public class MenuCardPredicateFactoryTest {
 	private CMDataView view;
 	private Supplier<PrivilegeContext> privilegeContext;
 	private UserStore userStore;
+	private CustomPagesLogic customPagesLogic;
 
 	@Before
 	public void setUp() {
 		this.view = getDataView();
 		this.privilegeContext = mock(Supplier.class);
 		this.userStore = mock(UserStore.class);
+		this.customPagesLogic = mock(CustomPagesLogic.class);
 	}
 
 	private MenuCardPredicateFactory menuCardPredicateFactory(final CMGroup mockGroup) {
-		return new MenuCardPredicateFactory(view, mockGroup, privilegeContext, new ViewConverter(view), userStore);
+		return new MenuCardPredicateFactory(view, mockGroup, privilegeContext, new ViewConverter(view), userStore,
+				customPagesLogic);
 	}
 
 	@Test
