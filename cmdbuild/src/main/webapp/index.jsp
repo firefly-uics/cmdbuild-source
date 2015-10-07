@@ -36,8 +36,8 @@
 		<script type="text/javascript" src="javascripts/cmdbuild/core/LoaderConfig.js"></script>
 		<script type="text/javascript" src="javascripts/log/log4javascript.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/application.js"></script>
-		<script type="text/javascript" src="javascripts/cmdbuild/core/Ajax.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/core/Message.js"></script>
+		<script type="text/javascript" src="javascripts/cmdbuild/core/Ajax.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/core/PopupWindow.js"></script>
 
 		<script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxyConstants.js"></script>
@@ -55,6 +55,11 @@
 		<script type="text/javascript" src="javascripts/ext-<%= extVersion %>/locale/ext-lang-<%= lang %>.js"></script>
 		<script type="text/javascript" src="services/json/utils/gettranslationobject"></script>
 
+		<!-- 3. Login script -->
+		<script type="text/javascript" src="javascripts/cmdbuild/core/buttons/Base.js"></script>
+		<script type="text/javascript" src="javascripts/cmdbuild/core/buttons/Buttons.js"></script>
+		<script type="text/javascript" src="javascripts/cmdbuild/login.js"></script>
+
 		<script type="text/javascript">
 			Ext.ns('CMDBuild.Runtime'); // runtime configurations
 			<%if (!operationUser.isValid() && !operationUser.getAuthenticatedUser().isAnonymous()) {%>
@@ -66,10 +71,6 @@
 			});
 		</script>
 
-		<!-- 3. Login script -->
-		<script type="text/javascript" src="javascripts/cmdbuild/core/buttons/Base.js"></script>
-		<script type="text/javascript" src="javascripts/cmdbuild/core/buttons/Buttons.js"></script>
-		<script type="text/javascript" src="javascripts/cmdbuild/login.js"></script>
 		<title>CMDBuild</title>
 	</head>
 	<body>

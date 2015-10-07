@@ -1189,9 +1189,6 @@
 			"title": "Benvenuto"
 		}
 	},
-	"patch": {
-		"patch_list": "Lista delle patch disponibili"
-	},
 	"vtype_text": {
 		"cmdbcomment": "La barra verticale e l'apostrofo non sono permessi",
 		"cmdbcommentrelaxed": "La barra verticale non è permessa",
@@ -1238,6 +1235,7 @@
 	"attribute": "Attributo",
 	"attributes": "Attributi",
 	"availableFilters": "Filtri disponibili",
+	"availablePatchesList": "Lista delle patch disponibili",
 	"availableUsers": "Utenti disponibili",
 	"baseProperties": "Proprietà generiche",
 	"bcc": "Ccn",
@@ -1251,6 +1249,7 @@
 	"card": "Scheda",
 	"cardPanelHeight": "Altezza in percentuale del pannello scheda",
 	"cards": "Schede dati",
+	"category": "<em>Category</em>",
 	"cc": "Cc",
 	"changePassword": "Cambia password",
 	"checkFrequency": "Frequenza controllo (minuti)",
@@ -1281,6 +1280,7 @@
 	"credentials": "Credenziali",
 	"csv": "CSV",
 	"csvFile": "File CSV",
+	"customPages": "<em>Custom pages</em>",
 	"dashboard": "Dashboard",
 	"defaultAccount": "Account di default",
 	"defaultClass": "Classe di default",

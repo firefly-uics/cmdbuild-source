@@ -21,12 +21,12 @@
 			'CMDBuild.core.buttons.Buttons',
 			'CMDBuild.core.configurations.Timeout',
 			'CMDBuild.core.constants.Server',
-			'CMDBuild.core.proxy.CMProxyConstants',
 			'CMDBuild.core.proxy.Classes',
+			'CMDBuild.core.proxy.CMProxyConstants',
 			'CMDBuild.core.proxy.Configuration',
+			'CMDBuild.core.proxy.group.Group',
 			'CMDBuild.core.proxy.Localizations',
-			'CMDBuild.core.proxy.Report',
-			'CMDBuild.core.proxy.group.Group'
+			'CMDBuild.core.proxy.Report'
 		],
 
 		name: 'CMDBuild',
@@ -39,6 +39,7 @@
 				var forCredits = false;
 
 				Ext.create('CMDBuild.core.Data'); // Data connections configuration
+				Ext.create('CMDBuild.core.Rest'); // Setup REST connection
 				Ext.create('CMDBuild.core.configurationBuilders.UserInterface'); // CMDBuild UserInterface configuration
 
 				Ext.tip.QuickTipManager.init();

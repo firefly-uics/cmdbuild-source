@@ -69,12 +69,25 @@ CMDBuild.Ajax =  new Ext.data.Connection({
 		}
 	},
 
+	/**
+	 * @param {String} jsonResponse
+	 *
+	 * @returns {Object}
+	 */
 	decodeJSONwhenMultipartAlso: function(jsonResponse) {
-		var fixedResponseForMultipartExtBug = jsonResponse;
-		if (jsonResponse) {
-			fixedResponseForMultipartExtBug = jsonResponse.replace(/<\/\w+>$/,"");
+		jsonResponse = Ext.isEmpty(jsonResponse) ? '{"success":true,"response":null}' : jsonResponse; // Empty response manage
+
+		if (!Ext.isEmpty(jsonResponse))
+			jsonResponse = jsonResponse.replace(/<\/\w+>$/, '');
+
+		// If throws an error so that wasn't a valid json string
+		try {
+			return Ext.decode(jsonResponse);
+		} catch (e) {
+			_error(e, 'CMDBuild.Ajax');
 		}
-		return Ext.JSON.decode(fixedResponseForMultipartExtBug);
+
+		return '';
 	},
 
 	displayWarnings: function(decoded) {
@@ -136,10 +149,13 @@ CMDBuild.Ajax =  new Ext.data.Connection({
 			errorBody.detail = detail + "Error: " + error.stacktrace;
 			var reason = error.reason;
 			if (reason) {
-				if (reason == 'AUTH_NOT_LOGGED_IN' || reason == 'AUTH_MULTIPLE_GROUPS') {
+				if ((reason == 'AUTH_NOT_LOGGED_IN' || reason == 'AUTH_MULTIPLE_GROUPS') && !Ext.isEmpty(CMDBuild.LoginWindow)) {
 					CMDBuild.LoginWindow.addAjaxOptions(options);
 					CMDBuild.LoginWindow.setAuthFieldsEnabled(reason == 'AUTH_NOT_LOGGED_IN');
 					CMDBuild.LoginWindow.show();
+
+					_error('CMDBuild.LoginWindow not defined', 'CMDBuild.Ajax');
+
 					return;
 				}
 				var translatedErrorString = CMDBuild.Ajax.formatError(reason, error.reasonParameters);

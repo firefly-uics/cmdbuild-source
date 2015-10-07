@@ -1,4 +1,4 @@
-package org.cmdbuild.service.rest.v2.cxf.service;
+package org.cmdbuild.auth;
 
 import static org.apache.commons.lang3.StringUtils.defaultString;
 import static org.joda.time.DateTime.now;

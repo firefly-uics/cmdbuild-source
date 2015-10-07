@@ -15,6 +15,7 @@ import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.report.ReportFactory;
 import org.cmdbuild.report.ReportFactory.ReportExtension;
 import org.cmdbuild.report.ReportFactoryTemplateList;
+import org.cmdbuild.services.FilesStore;
 
 import com.google.common.collect.Lists;
 
@@ -25,6 +26,7 @@ public class ListReportFactoryBuilder implements ReportFactoryBuilder<ReportFact
 	private static final String ATTRIBUTES_SEPARATOR = ",";
 
 	private final CMDataView dataView;
+	private final FilesStore filesStore;
 	private final AuthenticationStore authenticationStore;
 	private final CmdbuildConfiguration configuration;
 
@@ -36,10 +38,12 @@ public class ListReportFactoryBuilder implements ReportFactoryBuilder<ReportFact
 
 	public ListReportFactoryBuilder( //
 			final CMDataView dataView, //
+			final FilesStore filesStore, //
 			final AuthenticationStore authenticationStore, //
 			final CmdbuildConfiguration configuration //
 	) {
 		this.dataView = dataView;
+		this.filesStore = filesStore;
 		this.configuration = configuration;
 		this.authenticationStore = authenticationStore;
 	}
@@ -84,6 +88,7 @@ public class ListReportFactoryBuilder implements ReportFactoryBuilder<ReportFact
 					attributes(), //
 					targetClass(), //
 					dataView, //
+					filesStore, //
 					configuration);
 		} catch (final Throwable e) {
 			throw new Error(e);
