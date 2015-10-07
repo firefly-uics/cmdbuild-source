@@ -39,11 +39,12 @@
 					this.cmfg('attributeModelGet', CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION)
 					|| this.cmfg('attributeModelGet', CMDBuild.core.proxy.CMProxyConstants.NAME)
 				),
+				inputValue: true,
 				labelAlign: 'right',
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				name: this.cmfg('attributeModelGet', CMDBuild.core.proxy.CMProxyConstants.NAME),
 				readOnly: !this.cmfg('attributeModelGet', CMDBuild.core.proxy.CMProxyConstants.WRITABLE),
-				submitValue: false
+				uncheckedValue: false
 			});
 		},
 
