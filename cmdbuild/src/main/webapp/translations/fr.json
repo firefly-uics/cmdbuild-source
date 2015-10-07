@@ -1189,9 +1189,6 @@
 			"title": "Bienvenue"
 		}
 	},
-	"patch": {
-		"patch_list": "Liste des correctifs disponibles"
-	},
 	"vtype_text": {
 		"cmdbcomment": "symbole interdit",
 		"cmdbcommentrelaxed": "symbole interdit",
@@ -1238,6 +1235,7 @@
 	"attribute": "Attribut",
 	"attributes": "Attributs",
 	"availableFilters": "Filtres disponibles",
+	"availablePatchesList": "Liste des correctifs disponibles",
 	"availableUsers": "Utilisateurs disponibles",
 	"baseProperties": "Propriétés de base",
 	"bcc": "Bcc",
@@ -1251,6 +1249,7 @@
 	"card": "Fiche",
 	"cardPanelHeight": "Hauteur de la fenêtre en pourcentage",
 	"cards": "Fiches",
+	"category": "<em>Category</em>",
 	"cc": "Cc",
 	"changePassword": "Changer le mot de passe",
 	"checkFrequency": "Fréquence des contrôles (minutes)",

@@ -1189,9 +1189,6 @@
 			"title": "Добро дошли"
 		}
 	},
-	"patch": {
-		"patch_list": "Листа доступних исправки (patch)"
-	},
 	"vtype_text": {
 		"cmdbcomment": "Апостроф и/или вертикална цртица су недозвољени",
 		"cmdbcommentrelaxed": "Вертикална цртица је недозвољен карактер",
@@ -1238,6 +1235,7 @@
 	"attribute": "Атрибут",
 	"attributes": "Атрибути",
 	"availableFilters": "Доступни филтери",
+	"availablePatchesList": "Листа доступних исправки (patch)",
 	"availableUsers": "Доступни корисници",
 	"baseProperties": "Основна обележја",
 	"bcc": "Bcc",
@@ -1251,6 +1249,7 @@
 	"card": "Картица",
 	"cardPanelHeight": "Висина (у процентима) панела за картице ",
 	"cards": "Картице података",
+	"category": "<em>Category</em>",
 	"cc": "Cc",
 	"changePassword": "Промени лозинку",
 	"checkFrequency": "Фреквенција провере (минуте)",
