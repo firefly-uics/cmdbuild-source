@@ -32,6 +32,7 @@
 			return Ext.create('Ext.data.Store', {
 				autoLoad: false,
 				model: 'CMDBuild.model.report.Grid',
+				pageSize: _CMUtils.grid.getPageSize(),
 				proxy: {
 					type: 'ajax',
 					url: CMDBuild.core.proxy.CMProxyUrlIndex.reports.getReportsByType,
