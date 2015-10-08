@@ -1,6 +1,7 @@
 package org.cmdbuild.dao.view.user;
 
 import static com.google.common.collect.FluentIterable.from;
+import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 
 import java.util.Map;
 import java.util.Map.Entry;
@@ -84,6 +85,11 @@ public class UserCard implements CMCard {
 	@Override
 	public <T> T get(final String key, final Class<? extends T> requiredType) {
 		return requiredType.cast(get(key));
+	}
+
+	@Override
+	public <T> T get(final String key, final Class<? extends T> requiredType, final T defaultValue) {
+		return defaultIfNull(get(key, requiredType), defaultValue);
 	}
 
 	@Override

@@ -1069,9 +1069,6 @@
 			"title": "Boas-Vindas"
 		}
 	},
-	"patch": {
-		"patch_list": "Lista de patches disponíveis"
-	},
 	"vtype_text": {
 		"cmdbcomment": "Pipe ou apóstrofo não permitidos",
 		"cmdbcommentrelaxed": "Pipe não permitido",
@@ -1128,6 +1125,7 @@
 	"attributes": "Atributos",
 	"availableElements": "Elementos disponíveis",
 	"availableFilters": "Filtros Disponíveis",
+	"availablePatchesList": "Lista de patches disponíveis",
 	"availableUsers": "Usuários disponíveis",
 	"baseProperties": "Propriedades base",
 	"bcc": "<em>Bcc</em>",
@@ -1143,6 +1141,7 @@
 	"cardinality": "Cardinalidade",
 	"cardPanelHeight": "Altura do painel do cartão em porcentagem",
 	"cards": "Cartões",
+	"category": "<em>Category</em>",
 	"cc": "<em>Cc</em>",
 	"changePassword": "Alterar senha",
 	"checkFrequency": "<em>Check frequency (minutes)</em>",
@@ -1178,6 +1177,7 @@
 	"credentials": "Credenciais",
 	"csv": "CSV",
 	"csvFile": "Arquivo CSV",
+	"customPages": "<em>Custom pages</em>",
 	"customMenu": "Menu customizado",
 	"dashboard": "Dashboard",
 	"dataSource": "Origem dos Dados",

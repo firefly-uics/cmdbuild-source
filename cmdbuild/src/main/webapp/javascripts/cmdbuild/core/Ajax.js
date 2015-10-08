@@ -71,12 +71,25 @@ CMDBuild.Ajax =  new Ext.data.Connection({
 		}
 	},
 
+	/**
+	 * @param {String} jsonResponse
+	 *
+	 * @returns {Object}
+	 */
 	decodeJSONwhenMultipartAlso: function(jsonResponse) {
-		var fixedResponseForMultipartExtBug = jsonResponse;
-		if (jsonResponse) {
-			fixedResponseForMultipartExtBug = jsonResponse.replace(/<\/\w+>$/,"");
+		jsonResponse = Ext.isEmpty(jsonResponse) ? '{"success":true,"response":null}' : jsonResponse; // Empty response manage
+
+		if (!Ext.isEmpty(jsonResponse))
+			jsonResponse = jsonResponse.replace(/<\/\w+>$/, '');
+
+		// If throws an error so that wasn't a valid json string
+		try {
+			return Ext.decode(jsonResponse);
+		} catch (e) {
+			_error(e, 'CMDBuild.Ajax');
 		}
-		return Ext.JSON.decode(fixedResponseForMultipartExtBug);
+
+		return '';
 	},
 
 	displayWarnings: function(decoded) {

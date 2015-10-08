@@ -1069,9 +1069,6 @@
 			"title": "Welkom"
 		}
 	},
-	"patch": {
-		"patch_list": "Lijst met beschikbare correcties"
-	},
 	"vtype_text": {
 		"cmdbcomment": "Pijp of apostrophe niet toegestaan",
 		"cmdbcommentrelaxed": "Pijp niet toegestaan",
@@ -1128,6 +1125,7 @@
 	"attributes": "Attributen",
 	"availableElements": "Beschikbare elementen",
 	"availableFilters": "Beschikbare Filters",
+	"availablePatchesList": "Lijst met beschikbare correcties",
 	"availableUsers": "Beschikbare gebruikers",
 	"baseProperties": "Basis Eigenschappen",
 	"bcc": "Bcc",
@@ -1143,6 +1141,7 @@
 	"cardinality": "Cardinaliteit",
 	"cardPanelHeight": "Hoogte van het kaart paneel in procenten",
 	"cards": "Kaarten",
+	"category": "<em>Category</em>",
 	"cc": "Cc",
 	"changePassword": "Wachtwoord veranderen",
 	"checkFrequency": "Controleer frequentie (minuten)",
@@ -1178,6 +1177,7 @@
 	"credentials": "Rechten",
 	"csv": "CSV",
 	"csvFile": "CSV bestand",
+	"customPages": "<em>Custom pages</em>",
 	"customMenu": "Aangepast menu",
 	"dashboard": "Dashboard",
 	"dataSource": "Gegevens bron",

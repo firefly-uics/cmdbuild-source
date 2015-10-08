@@ -8,30 +8,34 @@ import org.apache.commons.fileupload.FileItem;
 
 public interface FilesStore {
 
-	String[] list(final String dir);
+	FilesStore sub(String dir);
 
-	String[] list(final String dir, final String pattern);
+	String[] list(String dir);
 
-	File[] listFiles(final String dir, final String pattern);
+	String[] list(String dir, String pattern);
 
-	void remove(final String filePath);
+	Iterable<File> files(String dir, String pattern);
 
-	void rename(final String filePath, String newFilePath);
+	Iterable<File> files(String pattern);
 
-	void save(final FileItem file, final String filePath) throws IOException;
+	void remove(String filePath);
 
-	void save(final InputStream inputStream, final String filePath) throws IOException;
+	void rename(String filePath, String newFilePath);
+
+	void save(FileItem file, String filePath) throws IOException;
+
+	void save(InputStream inputStream, String filePath) throws IOException;
 
 	String getRelativeRootDirectory();
 
 	String getAbsoluteRootDirectory();
 
-	File getFile(final String path);
+	File getFile(String path);
 
-	boolean isImage(final FileItem file);
+	boolean isImage(FileItem file);
 
-	String getExtension(final String fileName);
+	String getExtension(String fileName);
 
-	String removeExtension(final String fileName);
+	String removeExtension(String fileName);
 
 }

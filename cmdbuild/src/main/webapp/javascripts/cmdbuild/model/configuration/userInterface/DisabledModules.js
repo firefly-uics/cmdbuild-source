@@ -1,12 +1,12 @@
 (function() {
 
+	Ext.require('CMDBuild.core.constants.Proxy');
+
 	/**
 	 * TODO: waiting for server refactor (properties rename)
 	 */
 	Ext.define('CMDBuild.model.configuration.userInterface.DisabledModules', {
 		extend: 'Ext.data.Model',
-
-		requires: ['CMDBuild.core.constants.Proxy'],
 
 		fields: [
 			{ name: 'bulkupdate', type: 'boolean' },

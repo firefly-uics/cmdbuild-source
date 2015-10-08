@@ -1,12 +1,12 @@
 (function() {
 
+	Ext.require('CMDBuild.core.constants.Proxy');
+
 	/**
 	 * Subset of all attribute's properties
 	 */
 	Ext.define('CMDBuild.model.widget.customForm.Attribute', {
 		extend: 'Ext.data.Model',
-
-		requires: ['CMDBuild.core.constants.Proxy'],
 
 		fields: [
 			{ name: CMDBuild.core.constants.Proxy.DESCRIPTION, type: 'string' },

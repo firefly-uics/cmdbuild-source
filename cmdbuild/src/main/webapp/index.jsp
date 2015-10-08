@@ -52,6 +52,9 @@
 		<script type="text/javascript" src="javascripts/ext-<%= extVersion %>/locale/ext-lang-<%= lang %>.js"></script>
 		<script type="text/javascript" src="services/json/utils/gettranslationobject"></script>
 
+		<!-- 3. Login script -->
+		<script type="text/javascript" src="javascripts/cmdbuild/app/Login.js"></script>
+
 		<script type="text/javascript">
 			Ext.ns('CMDBuild.Runtime'); // runtime configurations
 			<% if (!operationUser.isValid() && !operationUser.getAuthenticatedUser().isAnonymous()) { %>
@@ -62,9 +65,6 @@
 				CMDBuild.app.Login.build();
 			});
 		</script>
-
-		<!-- 3. Login script -->
-		<script type="text/javascript" src="javascripts/cmdbuild/app/Login.js"></script>
 
 		<title>CMDBuild</title>
 	</head>

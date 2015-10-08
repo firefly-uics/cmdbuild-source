@@ -17,7 +17,9 @@ import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entry.CMCard.CMCardDefinition;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.view.CMDataView;
+import org.cmdbuild.data.store.custompage.DBCustomPageConverter;
 import org.cmdbuild.logger.Log;
+import org.cmdbuild.logic.custompages.CustomPage;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.logic.data.access.SystemDataAccessLogicBuilder;
 import org.cmdbuild.model.dashboard.DashboardDefinition;
@@ -66,6 +68,8 @@ public class MenuItemConverter {
 			converterStrategy = new DashboardConverterStrategy(this);
 		} else if (MenuItemType.VIEW.equals(type)) {
 			converterStrategy = new ViewConverterStrategy(this);
+		} else if (MenuItemType.CUSTOM_PAGE.equals(type)) {
+			converterStrategy = new CustomPageConverterStrategy(this);
 		} else {
 			converterStrategy = new EntryTypeConverterStrategy(this);
 		}
@@ -162,6 +166,19 @@ public class MenuItemConverter {
 		menuItem.setReferedClassName(VIEW_CLASS_NAME);
 		menuItem.setReferencedElementId(view.getId());
 		menuItem.setDescription(view.getDescription());
+		menuItem.setGroupName(NO_GROUP_NAME);
+		menuItem.setIndex(NO_INDEX);
+
+		return menuItem;
+	}
+
+	public MenuItem fromCustomPage(final CustomPage customPage) {
+		final MenuItem menuItem = new MenuItemDTO();
+
+		menuItem.setType(MenuItemType.CUSTOM_PAGE);
+		menuItem.setReferedClassName(DBCustomPageConverter.CLASSNAME);
+		menuItem.setReferencedElementId(customPage.getId());
+		menuItem.setDescription(customPage.getDescription());
 		menuItem.setGroupName(NO_GROUP_NAME);
 		menuItem.setIndex(NO_INDEX);
 
@@ -299,6 +316,23 @@ public class MenuItemConverter {
 
 	}
 
+	private static class CustomPageConverterStrategy extends MenuItemConverter {
+
+		public CustomPageConverterStrategy(final MenuItemConverter main) {
+			super(main.dataView, main.dataAccessLogic);
+		}
+
+		@Override
+		public CMCardDefinition fromMenuItemToMenuCard(final String groupName, final MenuItem menuItem) {
+			final CMCardDefinition menuCard = super.fromMenuItemToMenuCard(groupName, menuItem);
+			menuCard.set(ELEMENT_OBJECT_ID_ATTRIBUTE, menuItem.getReferencedElementId());
+			final Long classId = dataView.findClass(DBCustomPageConverter.CLASSNAME).getId();
+			menuCard.set(ELEMENT_CLASS_ATTRIBUTE, classId);
+			return menuCard;
+		}
+
+	}
+
 	private static class ConvertingItem {
 		public final MenuElement menuElement;
 		public final MenuItem menuItem;
@@ -308,4 +342,5 @@ public class MenuItemConverter {
 			this.menuItem = menuItem;
 		}
 	}
+
 }

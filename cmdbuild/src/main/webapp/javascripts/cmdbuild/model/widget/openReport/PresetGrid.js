@@ -1,5 +1,7 @@
 (function() {
 
+	Ext.require('CMDBuild.core.constants.Proxy');
+
 	Ext.define('CMDBuild.model.widget.openReport.PresetGrid', {
 		extend: 'Ext.data.Model',
 

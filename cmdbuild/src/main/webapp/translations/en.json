@@ -1069,9 +1069,6 @@
 			"title": "Welcome"
 		}
 	},
-	"patch": {
-		"patch_list": "List of available patches"
-	},
 	"vtype_text": {
 		"cmdbcomment": "Pipe or apostrophe not allowed",
 		"cmdbcommentrelaxed": "Pipe not allowed",
@@ -1128,6 +1125,7 @@
 	"attributes": "Attributes",
 	"availableElements": "Available elements",
 	"availableFilters": "Available Filters",
+	"availablePatchesList": "Available patches list",
 	"availableUsers": "Available users",
 	"baseProperties": "Base properties",
 	"bcc": "Bcc",
@@ -1143,6 +1141,7 @@
 	"cardinality": "Cardinality",
 	"cardPanelHeight": "Height of card panel in percentiles",
 	"cards": "Cards",
+	"category": "Category",
 	"cc": "Cc",
 	"changePassword": "Change password",
 	"checkFrequency": "Check frequency (minutes)",
@@ -1178,6 +1177,7 @@
 	"credentials": "Credentials",
 	"csv": "CSV",
 	"csvFile": "CSV file",
+	"customPages": "Custom pages",
 	"customMenu": "Custom menu",
 	"dashboard": "Dashboard",
 	"dataSource": "Data source",
