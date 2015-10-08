@@ -11,7 +11,7 @@
 			{ name: CMDBuild.core.proxy.CMProxyConstants.LANGUAGES, type: 'auto' }, // All CMDBuild languages
 			{ name: CMDBuild.core.proxy.CMProxyConstants.LANGUAGES_TAGS, type: 'auto' },
 			{ name: CMDBuild.core.proxy.CMProxyConstants.LANGUAGES_WITH_LOCALIZATIONS, type: 'auto' }, // CMDBuild languages with localizations
-			{ name: CMDBuild.core.proxy.CMProxyConstants.LANGUAGES_WITH_LOCALIZATIONS_TAGS, type: 'auto' },
+			{ name: CMDBuild.core.proxy.CMProxyConstants.LANGUAGES_WITH_LOCALIZATIONS_TAGS, type: 'auto' }
 		],
 
 		/**

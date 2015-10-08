@@ -73,7 +73,7 @@
 
 		fields: [
 			{ name: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,  type: 'string' },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.TAG, type: 'string' },
+			{ name: CMDBuild.core.proxy.CMProxyConstants.TAG, type: 'string' }
 		]
 	});
 
