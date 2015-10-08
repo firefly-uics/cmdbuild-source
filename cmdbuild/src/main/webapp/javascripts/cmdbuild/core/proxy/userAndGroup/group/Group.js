@@ -4,9 +4,10 @@
 
 		requires: [
 			'CMDBuild.core.cache.Cache',
+			'CMDBuild.core.constants.Global',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.Index',
-			'CMDBuild.model.userAndGroup.group.StartingClass',
+			'CMDBuild.model.userAndGroup.group.StartingClass'
 		],
 
 		singleton: true,
@@ -59,7 +60,7 @@
 				},
 				filters: [
 					function(record) { // Filters root of all classes
-						return record.get(CMDBuild.core.constants.Proxy.NAME).toLowerCase() != 'class';
+						return record.get(CMDBuild.core.constants.Proxy.NAME) != 'Class';
 					}
 				],
 				sorters: [

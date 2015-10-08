@@ -7,6 +7,7 @@
 		extend: 'CMDBuild.controller.management.common.tabs.History',
 
 		requires: [
+			'CMDBuild.core.constants.Global',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.common.tabs.history.Classes'
 		],
@@ -255,7 +256,7 @@
 		onCardSelected: function(card) {
 			this.tabHistorySelectedEntitySet(card);
 
-			if (!Ext.isEmpty(this.entryType) && this.entryType.get(CMDBuild.core.constants.Proxy.TABLE_TYPE) != 'simpletable') // SimpleTables hasn't history
+			if (!Ext.isEmpty(this.entryType) && this.entryType.get(CMDBuild.core.constants.Proxy.TABLE_TYPE) != CMDBuild.core.constants.Global.getTableTypeSimpleTable()) // SimpleTables hasn't history
 				this.view.setDisabled(Ext.isEmpty(this.tabHistorySelectedEntityGet()));
 
 			this.cmfg('onTabHistoryPanelShow');

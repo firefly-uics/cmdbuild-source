@@ -1,6 +1,11 @@
 (function () {
 
 	/**
+	 * External requires to avoid overrides from classes that extends
+	 */
+	Ext.require('CMDBuild.core.constants.Global');
+
+	/**
 	 * Class to be extended in controllers witch implements new CMDBuild algorithms where controller creates view
 	 *
 	 * Usage and wild cards:
@@ -35,11 +40,6 @@
 		 * @private
 		 */
 		stringToFunctionNameMap: {},
-
-		/**
-		 * @cfg {String}
-		 */
-		titleSeparator: ' - ',
 
 		/**
 		 * @property {Object}
@@ -315,7 +315,9 @@
 				if (Ext.isEmpty(titlePart)) {
 					this.view.setTitle(this.getBaseTitle());
 				} else {
-					this.view.setTitle(this.getBaseTitle() + this.titleSeparator + titlePart.join(this.titleSeparator));
+					this.view.setTitle(
+						this.getBaseTitle() + CMDBuild.core.constants.Global.getTitleSeparator() + titlePart.join(CMDBuild.core.constants.Global.getTitleSeparator())
+					);
 				}
 			}
 		},

@@ -4,6 +4,7 @@
 		extend: 'CMDBuild.controller.common.CMBasePanelController',
 
 		requires: [
+			'CMDBuild.core.constants.Global',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.CMProxyTasks',
 			'CMDBuild.core.Utils'
@@ -28,11 +29,6 @@
 		 * @property {Ext.selection.Model}
 		 */
 		selectionModel: undefined,
-
-		/**
-		 * @cfg {String}
-		 */
-		titleSeparator: ' - ',
 
 		/**
 		 * Used to validate tasks
@@ -320,7 +316,7 @@
 		 */
 		setViewTitle: function(titlePart) {
 			if (!Ext.isEmpty(titlePart))
-				this.view.setTitle(this.view.baseTitle + this.titleSeparator + titlePart);
+				this.view.setTitle(this.view.baseTitle + CMDBuild.core.constants.Global.getTitleSeparator() + titlePart);
 		},
 
 		/**

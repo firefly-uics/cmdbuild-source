@@ -4,6 +4,7 @@
 		extend: 'CMDBuild.controller.common.AbstractController',
 
 		requires: [
+			'CMDBuild.core.constants.Global',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.localization.Localization',
 			'CMDBuild.core.proxy.Menu'
@@ -70,8 +71,8 @@
 
 			if (
 				(
-					folderType == 'class'
-					|| folderType == 'processclass'
+					folderType == CMDBuild.core.constants.Global.getTableTypeClass()
+					|| folderType == CMDBuild.core.constants.Global.getTableTypeProcessClass()
 				)
 				&& _CMCache.isEntryTypeByName(nodeObject.referencedClassName)
 			) {

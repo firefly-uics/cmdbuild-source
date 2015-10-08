@@ -53,7 +53,7 @@
 			this.card = null;
 
 			// Set empty entryType on simple classes
-			if (!this.entryType || this.entryType.get(CMDBuild.core.constants.Proxy.TABLE_TYPE) == CMDBuild.Constants.cachedTableType.simpletable)
+			if (!this.entryType || this.entryType.get(CMDBuild.core.constants.Proxy.TABLE_TYPE) == 'simpletable')
 				this.entryType = null;
 
 			this.view.disable();
@@ -88,7 +88,7 @@
 			var currentClass = _CMCache.getEntryTypeById(classId);
 
 			if (this.currentClass != currentClass) {
-				if (!currentClass || currentClass.get(CMDBuild.core.constants.Proxy.TABLE_TYPE) == CMDBuild.Constants.cachedTableType.simpletable)
+				if (!currentClass || currentClass.get(CMDBuild.core.constants.Proxy.TABLE_TYPE) == 'simpletable')
 					currentClass = null;
 
 				this.currentClass = currentClass;
