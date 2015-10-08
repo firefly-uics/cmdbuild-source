@@ -27,6 +27,7 @@ import org.cmdbuild.service.rest.v1.cxf.security.TokenHandler;
 import org.cmdbuild.service.rest.v1.cxf.security.TokenHandler.TokenExtractor;
 import org.cmdbuild.service.rest.v1.cxf.service.InMemoryOperationUserStore;
 import org.cmdbuild.service.rest.v1.cxf.service.InMemorySessionStore;
+import org.cmdbuild.service.rest.v1.cxf.service.InMemorySessionStore.Configuration;
 import org.cmdbuild.service.rest.v1.cxf.service.OperationUserStore;
 import org.cmdbuild.service.rest.v1.cxf.service.SessionStore;
 import org.cmdbuild.service.rest.v1.model.Session;
@@ -53,7 +54,14 @@ public class TokenHandlerTest {
 
 	@Before
 	public void setUp() throws Exception {
-		sessionStore = new InMemorySessionStore();
+		sessionStore = new InMemorySessionStore(new Configuration() {
+
+			@Override
+			public int timeout() {
+				return 0;
+			}
+
+		});
 		operationUserStore = new InMemoryOperationUserStore();
 		userStore = inMemory();
 		tokenExtractor = mock(TokenExtractor.class);
