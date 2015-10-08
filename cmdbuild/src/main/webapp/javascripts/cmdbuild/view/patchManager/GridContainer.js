@@ -45,7 +45,7 @@
 				],
 				items: [
 					this.grid = Ext.create('CMDBuild.view.patchManager.GridPanel', { delegate: this.delegate })
-				],
+				]
 			});
 
 			this.callParent(arguments);

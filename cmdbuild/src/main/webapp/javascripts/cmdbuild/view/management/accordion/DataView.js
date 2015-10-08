@@ -35,66 +35,68 @@
 				success: function(response, options, decodedResponse) {
 					var dataViews = decodedResponse[CMDBuild.core.constants.Proxy.VIEWS];
 
-					var params = {};
-					params[CMDBuild.core.constants.Proxy.ACTIVE] = true;
+					if (!Ext.isEmpty(dataViews)) {
+						var params = {};
+						params[CMDBuild.core.constants.Proxy.ACTIVE] = true;
 
-					CMDBuild.core.proxy.Classes.readAll({
-						params: params,
-						loadMask: false,
-						scope: this,
-						success: function(response, options, decodedResponse) {
-							decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.CLASSES];
+						CMDBuild.core.proxy.Classes.readAll({
+							params: params,
+							loadMask: false,
+							scope: this,
+							success: function(response, options, decodedResponse) {
+								decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.CLASSES];
 
-							var classesSearchableObject = {};
+								var classesSearchableObject = {};
 
-							Ext.Array.forEach(decodedResponse, function(classObject, i, allClassObjects) {
-								classesSearchableObject[classObject[CMDBuild.core.constants.Proxy.NAME]] = classObject;
-							}, this);
+								Ext.Array.forEach(decodedResponse, function(classObject, i, allClassObjects) {
+									classesSearchableObject[classObject[CMDBuild.core.constants.Proxy.NAME]] = classObject;
+								}, this);
 
-							var nodes = [];
+								var nodes = [];
 
-							Ext.Array.forEach(dataViews, function(viewObject, i, allViewObjects) {
-								var node = {
-									text: viewObject[CMDBuild.core.constants.Proxy.DESCRIPTION],
-									description: viewObject[CMDBuild.core.constants.Proxy.DESCRIPTION],
-									name: viewObject[CMDBuild.core.constants.Proxy.NAME],
-									leaf: true
-								};
+								Ext.Array.forEach(dataViews, function(viewObject, i, allViewObjects) {
+									var node = {
+										text: viewObject[CMDBuild.core.constants.Proxy.DESCRIPTION],
+										description: viewObject[CMDBuild.core.constants.Proxy.DESCRIPTION],
+										name: viewObject[CMDBuild.core.constants.Proxy.NAME],
+										leaf: true
+									};
 
-								switch (viewObject[CMDBuild.core.constants.Proxy.TYPE]) {
-									case 'FILTER': {
-										var viewSourceClassObject = classesSearchableObject[viewObject[CMDBuild.core.constants.Proxy.SOURCE_CLASS_NAME]];
+									switch (viewObject[CMDBuild.core.constants.Proxy.TYPE]) {
+										case 'FILTER': {
+											var viewSourceClassObject = classesSearchableObject[viewObject[CMDBuild.core.constants.Proxy.SOURCE_CLASS_NAME]];
 
-										if (!Ext.isEmpty(viewSourceClassObject)) {
-											node['cmName'] = 'class'; // To act as a regular class node
-											node[CMDBuild.core.constants.Proxy.CLASS_ID] = viewSourceClassObject[CMDBuild.core.constants.Proxy.ID];
-											node[CMDBuild.core.constants.Proxy.FILTER] = viewObject[CMDBuild.core.constants.Proxy.FILTER];
+											if (!Ext.isEmpty(viewSourceClassObject)) {
+												node['cmName'] = 'class'; // To act as a regular class node
+												node[CMDBuild.core.constants.Proxy.CLASS_ID] = viewSourceClassObject[CMDBuild.core.constants.Proxy.ID];
+												node[CMDBuild.core.constants.Proxy.FILTER] = viewObject[CMDBuild.core.constants.Proxy.FILTER];
+												node[CMDBuild.core.constants.Proxy.ID] = viewObject[CMDBuild.core.constants.Proxy.ID];
+												node[CMDBuild.core.constants.Proxy.SECTION_HIERARCHY] = ['filter'];
+											}
+										} break;
+
+										case 'SQL':
+										default: {
+											node['cmName'] = this.cmName;
 											node[CMDBuild.core.constants.Proxy.ID] = viewObject[CMDBuild.core.constants.Proxy.ID];
-											node[CMDBuild.core.constants.Proxy.SECTION_HIERARCHY] = ['filter'];
+											node[CMDBuild.core.constants.Proxy.SECTION_HIERARCHY] = ['sql'];
+											node[CMDBuild.core.constants.Proxy.SOURCE_FUNCTION] = viewObject[CMDBuild.core.constants.Proxy.SOURCE_FUNCTION];
 										}
-									} break;
-
-									case 'SQL':
-									default: {
-										node['cmName'] = this.cmName;
-										node[CMDBuild.core.constants.Proxy.ID] = viewObject[CMDBuild.core.constants.Proxy.ID];
-										node[CMDBuild.core.constants.Proxy.SECTION_HIERARCHY] = ['sql'];
-										node[CMDBuild.core.constants.Proxy.SOURCE_FUNCTION] = viewObject[CMDBuild.core.constants.Proxy.SOURCE_FUNCTION];
 									}
-								}
-								nodes.push(node);
-							}, this);
+									nodes.push(node);
+								}, this);
 
-							this.getStore().getRootNode().removeAll();
-							this.getStore().getRootNode().appendChild(nodes);
+								this.getStore().getRootNode().removeAll();
+								this.getStore().getRootNode().appendChild(nodes);
 
-							this.getStore().sort();
+								this.getStore().sort();
 
-							// Replace this.callParent(arguments), inside proxy function doesn't work
-							if (!Ext.isEmpty(nodeIdToSelect))
-								this.selectNodeById(nodeIdToSelect);
-						}
-					});
+								// Replace this.callParent(arguments), inside proxy function doesn't work
+								if (!Ext.isEmpty(nodeIdToSelect))
+									this.selectNodeById(nodeIdToSelect);
+							}
+						});
+					}
 				}
 			});
 		}

@@ -1,18 +1,20 @@
 (function() {
 
-	Ext.define('CMDBuild.view.patchManager.PatchManagerViewport', {
+	Ext.define('CMDBuild.view.login.LoginViewport', {
 		extend: 'Ext.container.Viewport',
 
 		/**
-		 * @cfg {CMDBuild.controller.patchManager.PatchManager}
+		 * @cfg {CMDBuild.controller.login.Login}
 		 */
 		delegate: undefined,
 
 		/**
-		 * @property {CMDBuild.view.patchManager.GridContainer}
+		 * @property {CMDBuild.view.login.FormContainer}
 		 */
-		gridContainer: undefined,
+		formContainer: undefined,
 
+		border: false,
+		frame: true,
 		layout: 'border',
 
 		initComponent: function() {
@@ -25,17 +27,17 @@
 						region: 'north',
 						contentEl: 'header'
 					}),
-					this.gridContainer = Ext.create('CMDBuild.view.patchManager.GridContainer', {
-						delegate: this.delegate,
-						region: 'center'
-					}),
 					Ext.create('Ext.panel.Panel', {
 						border: false,
 						frame: false,
-						height: 16,
-						region: 'south',
-						contentEl: 'footer'
-					})
+						region: 'center',
+
+						id: 'login_box_wrap',
+
+						items: [
+							this.formContainer = Ext.create('CMDBuild.view.login.FormContainer', { delegate: this.delegate })
+						]
+					}),
 				]
 			});
 
