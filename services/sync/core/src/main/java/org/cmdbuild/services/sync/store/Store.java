@@ -2,12 +2,12 @@ package org.cmdbuild.services.sync.store;
 
 public interface Store {
 
-	void create(Entry<? extends Type> entry);
+	void create(Entry entry);
 
-	Iterable<Entry<?>> readAll();
+	Iterable<Entry> readAll();
 
-	void update(Entry<? extends Type> entry);
+	void update(Entry entry);
 
-	void delete(Entry<? extends Type> entry);
+	void delete(Entry entry);
 
 }

@@ -4,7 +4,6 @@ import org.cmdbuild.services.sync.logging.LoggingSupport;
 import org.cmdbuild.services.sync.store.Entry;
 import org.cmdbuild.services.sync.store.ForwardingStore;
 import org.cmdbuild.services.sync.store.Store;
-import org.cmdbuild.services.sync.store.Type;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
@@ -14,11 +13,11 @@ class PermissionBasedStore extends ForwardingStore implements LoggingSupport {
 
 	public static interface Permission {
 
-		boolean allowsCreate(Entry<? extends Type> entry);
+		boolean allowsCreate(Entry entry);
 
-		boolean allowsUpdate(Entry<? extends Type> entry);
+		boolean allowsUpdate(Entry entry);
 
-		boolean allowsDelete(Entry<? extends Type> entry);
+		boolean allowsDelete(Entry entry);
 
 	}
 
@@ -36,7 +35,7 @@ class PermissionBasedStore extends ForwardingStore implements LoggingSupport {
 	}
 
 	@Override
-	public void create(final Entry<? extends Type> entry) {
+	public void create(final Entry entry) {
 		if (permission.allowsCreate(entry)) {
 			super.create(entry);
 		} else {
@@ -45,7 +44,7 @@ class PermissionBasedStore extends ForwardingStore implements LoggingSupport {
 	}
 
 	@Override
-	public void update(final Entry<? extends Type> entry) {
+	public void update(final Entry entry) {
 		if (permission.allowsUpdate(entry)) {
 			super.update(entry);
 		} else {
@@ -54,7 +53,7 @@ class PermissionBasedStore extends ForwardingStore implements LoggingSupport {
 	}
 
 	@Override
-	public void delete(final Entry<? extends Type> entry) {
+	public void delete(final Entry entry) {
 		if (permission.allowsDelete(entry)) {
 			super.delete(entry);
 		} else {
