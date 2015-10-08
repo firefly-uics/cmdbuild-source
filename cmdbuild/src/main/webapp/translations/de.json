@@ -1069,9 +1069,6 @@
 			"title": "Willkommen"
 		}
 	},
-	"patch": {
-		"patch_list": "Liste der verfügbaren Patches"
-	},
 	"vtype_text": {
 		"cmdbcomment": "Der senkrechte Strich und der Apostroph sind nicht erlaubt",
 		"cmdbcommentrelaxed": "Der senkrechte Strich ist nicht erlaubt",
@@ -1128,6 +1125,7 @@
 	"attributes": "Attribute",
 	"availableElements": "Verfügbare daten",
 	"availableFilters": "Verfügbare Filters",
+	"availablePatchesList": "Liste der verfügbaren Patches",
 	"availableUsers": "Verfügbare Benutzer",
 	"baseProperties": "Allgemeine Eigenschaften",
 	"bcc": "Bcc",
@@ -1143,6 +1141,7 @@
 	"cardinality": "Kardinalität",
 	"cardPanelHeight": "Prozenthöhe der Karte",
 	"cards": "Datenkarten",
+	"category": "<em>Category</em>",
 	"cc": "Cc",
 	"changePassword": "Passwort ändern",
 	"checkFrequency": "Häufigkeit kontrollieren (Minuten)",
@@ -1178,6 +1177,7 @@
 	"credentials": "Berechtigungsnachweis",
 	"csv": "CSV",
 	"csvFile": "CSV Datei",
+	"customPages": "<em>Custom pages</em>",
 	"customMenu": "Kundenspezifisches Menü",
 	"dashboard": "Dashboard",
 	"dataSource": "Datasource",

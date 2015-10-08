@@ -79,6 +79,7 @@
 			init: function() {
 				Ext.create('CMDBuild.core.LoggerManager'); // Logger configuration
 				Ext.create('CMDBuild.core.Data'); // Data connections configuration
+				Ext.create('CMDBuild.core.Rest'); // Setup REST connection
 				Ext.create('CMDBuild.core.configurationBuilders.Instance'); // CMDBuild instance configuration
 				Ext.create('CMDBuild.core.configurationBuilders.Localization'); // CMDBuild localization configuration
 				Ext.create('CMDBuild.core.configurationBuilders.UserInterface'); // CMDBuild UserInterface configuration
@@ -173,6 +174,10 @@
 						cmControllerType: 'CMDBuild.controller.management.report.SingleReport',
 						cmName: 'singlereport'
 					}),
+					Ext.create('CMDBuild.view.management.customPage.SinglePagePanel', {
+						cmControllerType: 'CMDBuild.controller.management.customPage.SinglePage',
+						cmName: 'custompage'
+					}),
 					this.dashboardPanel = new CMDBuild.view.management.dashboard.CMModDashboard({
 						cmControllerType: CMDBuild.controller.management.dashboard.CMModDashboardController
 					}),
@@ -204,6 +209,10 @@
 				if (!CMDBuild.configuration.userInterface.isDisabledModule(dashboardsAccordion.cmName)) {
 					this.dashboardsAccordion = dashboardsAccordion;
 					this.cmAccordions.push(this.dashboardsAccordion);
+				}
+
+				if (!CMDBuild.configuration.userInterface.isDisabledModule('custompage') || true) { // TODO: implementation
+					this.cmAccordions.push(Ext.create('CMDBuild.view.management.accordion.CustomPage', { cmName: 'custompage' }));
 				}
 
 				if (!CMDBuild.configuration.userInterface.isDisabledModule(reportAccordion.cmName)) {

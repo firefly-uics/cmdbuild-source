@@ -64,6 +64,16 @@
 			saveConfiguration: 'services/json/schema/setup/saveconfiguration'
 		},
 
+		customPage: {
+			create: '',
+			read: '',
+			update: '',
+			remove: '',
+
+			readAll: 'services/json/custompages/readall', // TODO: unused
+			readForCurrentUser: 'services/json/custompages/readforcurrentuser'
+		},
+
 		dataView: {
 			filter: {
 				create: 'services/json/viewmanagement/createfilterview',
@@ -250,6 +260,12 @@
 			remove: 'services/json/navigationtree/remove'
 		},
 
+		patchManager: {
+			update: 'services/json/configure/applypatches',
+
+			readAll: 'services/json/configure/getpatches'
+		},
+
 		privileges: {
 			classes: {
 				read: 'services/json/schema/modsecurity/getclassprivilegelist',
@@ -259,6 +275,10 @@
 				setRowAndColumnPrivileges: 'services/json/schema/modsecurity/setrowandcolumnprivileges',
 				loadClassUiConfiguration: 'services/json/schema/modsecurity/loadclassuiconfiguration',
 				saveClassUiConfiguration: 'services/json/schema/modsecurity/saveclassuiconfiguration'
+			},
+			customPages: {
+				read: 'services/json/schema/modsecurity/getcustompageprivilegelist',
+				update: 'services/json/schema/modsecurity/savecustompageprivilege'
 			},
 			dataView: {
 				read: 'services/json/schema/modsecurity/getviewprivilegelist',
@@ -322,6 +342,14 @@
 
 			printReportFactory: 'services/json/management/modreport/printreportfactory',
 			updateReportFactoryParams: 'services/json/management/modreport/updatereportfactoryparams'
+		},
+
+		session: {
+			jsonRpc: {
+				login: 'services/json/login/login',
+				logout: 'services/json/login/logout'
+			},
+			rest: 'services/rest/v2/sessions',
 		},
 
 		tasks: {

@@ -1,9 +1,9 @@
 (function() {
 
+	Ext.require('CMDBuild.core.constants.Proxy');
+
 	Ext.define('CMDBuild.model.common.field.filter.advanced.window.relations.DomainGrid', {
 		extend: 'Ext.data.Model',
-
-		requires: ['CMDBuild.core.constants.Proxy'],
 
 		fields: [
 			{ name: 'noone', type: 'boolean', defaultValue: false },

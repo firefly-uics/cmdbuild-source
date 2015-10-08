@@ -1,8 +1,5 @@
 package org.cmdbuild.services;
 
-import java.sql.SQLException;
-import java.util.List;
-
 public interface PatchManager {
 
 	public interface Patch {
@@ -11,21 +8,21 @@ public interface PatchManager {
 
 		String getDescription();
 
-		String getFilePath();
-
-		@Override
-		String toString();
+		String getCategory();
 
 	}
 
 	void reset();
 
-	void applyPatchList() throws SQLException;
+	void applyPatchList();
 
-	List<Patch> getAvaiblePatch();
+	Iterable<Patch> getAvaiblePatch();
 
 	boolean isUpdated();
 
+	/**
+	 * Used within DatabaseConfigurator to set updated a new Database.
+	 */
 	void createLastPatch();
 
 }

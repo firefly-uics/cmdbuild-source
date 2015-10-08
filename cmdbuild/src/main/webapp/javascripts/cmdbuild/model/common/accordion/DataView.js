@@ -1,9 +1,9 @@
 (function() {
 
+	Ext.require('CMDBuild.core.constants.Proxy');
+
 	Ext.define('CMDBuild.model.common.accordion.DataView', {
 		extend: 'Ext.data.TreeModel',
-
-		requires: ['CMDBuild.core.constants.Proxy'],
 
 		fields: [
 			{ name: 'cmIndex', type: 'int' },

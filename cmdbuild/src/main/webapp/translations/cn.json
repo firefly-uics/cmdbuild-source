@@ -1069,9 +1069,6 @@
 			"title": "欢迎"
 		}
 	},
-	"patch": {
-		"patch_list": "有效的补丁清单"
-	},
 	"vtype_text": {
 		"cmdbcomment": "Pipe or apostrophe not allowed",
 		"cmdbcommentrelaxed": "Pipe not allowed",
@@ -1128,6 +1125,7 @@
 	"attributes": "属性",
 	"availableElements": "<em>Available elements</em>",
 	"availableFilters": "有效的过滤器",
+	"availablePatchesList": "有效的补丁清单",
 	"availableUsers": "<em>Available users</em>",
 	"baseProperties": "基础特性",
 	"bcc": "Bcc",
@@ -1143,6 +1141,7 @@
 	"cardinality": "<em>Cardinality</em>",
 	"cardPanelHeight": "卡片显示区间用百分比表示",
 	"cards": "<em>Cards</em>",
+	"category": "<em>Category</em>",
 	"cc": "Cc",
 	"changePassword": "更改密码",
 	"checkFrequency": "检查频率 (min)",
@@ -1178,6 +1177,7 @@
 	"credentials": "证书",
 	"csv": "CSV",
 	"csvFile": "CSV文件　",
+	"customPages": "<em>Custom pages</em>",
 	"customMenu": "<em>Custom menu</em>",
 	"dashboard": "<em>Dashboard</em>",
 	"dataSource": "<em>Data source</em>",

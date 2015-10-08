@@ -1,9 +1,9 @@
 (function() {
 
+	Ext.require('CMDBuild.core.constants.Proxy');
+
 	Ext.define('CMDBuild.model.common.field.filter.advanced.window.relations.DestinationEditorStore', {
 		extend: 'Ext.data.Model',
-
-		requires: ['CMDBuild.core.constants.Proxy'],
 
 		fields: [
 			{ name: CMDBuild.core.constants.Proxy.ID, type: 'int' },

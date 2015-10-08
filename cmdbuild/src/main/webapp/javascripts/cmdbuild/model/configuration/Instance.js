@@ -1,9 +1,9 @@
 (function() {
 
+	Ext.require('CMDBuild.core.constants.Proxy');
+
 	Ext.define('CMDBuild.model.configuration.Instance', {
 		extend: 'Ext.data.Model',
-
-		requires: ['CMDBuild.core.constants.Proxy'],
 
 		fields: [
 			{ name: CMDBuild.core.constants.Proxy.CARD_FORM_RATIO, type: 'int', defaultValue: 50 },

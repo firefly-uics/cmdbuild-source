@@ -1069,9 +1069,6 @@
 			"title": "Bienvenido"
 		}
 	},
-	"patch": {
-		"patch_list": "Lista de parches disponibles"
-	},
 	"vtype_text": {
 		"cmdbcomment": "La barra vertical y el apóstrofe no están permitidos",
 		"cmdbcommentrelaxed": "No está permitida la barra vertical",
@@ -1128,6 +1125,7 @@
 	"attributes": "Atributos",
 	"availableElements": "Elementos disponibles",
 	"availableFilters": "Filtros disponibles",
+	"availablePatchesList": "Lista de parches disponibles",
 	"availableUsers": "Usuarios disponibles",
 	"baseProperties": "Propiedad genérica",
 	"bcc": "Bcc",
@@ -1143,6 +1141,7 @@
 	"cardinality": "Cardinalidad",
 	"cardPanelHeight": "Altura porcentual del panel de la tarjeta",
 	"cards": "Tarjetas de datos",
+	"category": "<em>Category</em>",
 	"cc": "Cc",
 	"changePassword": "Cambia clave",
 	"checkFrequency": "Frecuencia verificación (minutos)",
@@ -1178,6 +1177,7 @@
 	"credentials": "Credenciales",
 	"csv": "CSV",
 	"csvFile": "Archivo CSV",
+	"customPages": "<em>Custom pages</em>",
 	"customMenu": "Menú personalizado",
 	"dashboard": "Cuadro de mando",
 	"dataSource": "Fuente de datos",

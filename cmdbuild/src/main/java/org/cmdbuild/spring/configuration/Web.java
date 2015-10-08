@@ -2,6 +2,11 @@ package org.cmdbuild.spring.configuration;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.cmdbuild.auth.DefaultTokenManager;
+import org.cmdbuild.auth.ObservableUserStore;
+import org.cmdbuild.auth.SimpleTokenGenerator;
+import org.cmdbuild.auth.TokenGenerator;
+import org.cmdbuild.auth.TokenManager;
 import org.cmdbuild.auth.UserStore;
 import org.cmdbuild.listeners.ContextStore;
 import org.cmdbuild.listeners.ContextStoreNotifier;
@@ -27,32 +32,49 @@ public class Web {
 
 	@Bean
 	public SessionVars sessionVars() {
-		return new SessionVars(valuesStore(), properties.cmdbuildProperties());
+		return new SessionVars(httpSessionBasedValuesStore(), properties.cmdbuildProperties());
 	}
 
 	@Bean
-	public UserStore userStore() {
-		return new ValuesStoreBasedUserStore(valuesStore());
+	public UserStore observableUserStore() {
+		final ObservableUserStore bean = new ObservableUserStore(valuesStoreBasedUserStore());
+		bean.add(defaultTokenManager());
+		return bean;
+	}
+
+	// TODO should be a bean
+	private UserStore valuesStoreBasedUserStore() {
+		return new ValuesStoreBasedUserStore(httpSessionBasedValuesStore());
 	}
 
 	@Bean
-	protected ValuesStore valuesStore() {
+	protected ValuesStore httpSessionBasedValuesStore() {
 		return new HttpSessionBasedValuesStore(optionalRequestSupplier(), properties.cmdbuildProperties());
 	}
 
 	@Bean
 	protected Supplier<Optional<HttpServletRequest>> optionalRequestSupplier() {
-		return new OptionalRequestSupplier(contextStore());
+		return new OptionalRequestSupplier(threadLocalContextStore());
 	}
 
 	@Bean
-	public Notifier notifier() {
-		return new ContextStoreNotifier(contextStore());
+	public Notifier contextStoreNotifier() {
+		return new ContextStoreNotifier(threadLocalContextStore());
 	}
 
 	@Bean
-	protected ContextStore contextStore() {
+	public ContextStore threadLocalContextStore() {
 		return new ThreadLocalContextStore();
+	}
+
+	@Bean
+	public TokenManager defaultTokenManager() {
+		return new DefaultTokenManager(simpleTokenGenerator());
+	}
+
+	@Bean
+	public TokenGenerator simpleTokenGenerator() {
+		return new SimpleTokenGenerator();
 	}
 
 }

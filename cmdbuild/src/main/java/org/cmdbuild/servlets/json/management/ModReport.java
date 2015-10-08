@@ -292,6 +292,7 @@ public class ModReport extends JSONBaseWithSpringContext {
 				toIterable(attributes), //
 				userDataView().findClass(className), //
 				userDataView(), //
+				rootFilesStore(), //
 				cmdbuildConfiguration());
 		rft.fillReport();
 		sessionVars().setReportFactory(rft);
@@ -320,6 +321,7 @@ public class ModReport extends JSONBaseWithSpringContext {
 				toIterable(attributes), //
 				call(userDataView().findFunctionByName(function)), //
 				userDataView(), //
+				rootFilesStore(), //
 				cmdbuildConfiguration());
 		rft.fillReport();
 		sessionVars().setReportFactory(rft);
@@ -336,6 +338,7 @@ public class ModReport extends JSONBaseWithSpringContext {
 				cardId, //
 				ReportExtension.valueOf(format.toUpperCase()), //
 				userDataView(), //
+				rootFilesStore(), //
 				userDataAccessLogic(), //
 				localization(), //
 				cmdbuildConfiguration());

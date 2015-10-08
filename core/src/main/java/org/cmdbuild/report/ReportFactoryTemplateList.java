@@ -32,6 +32,7 @@ import org.cmdbuild.dao.query.clause.alias.Alias;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.logic.data.QueryOptions;
 import org.cmdbuild.logic.data.access.QuerySpecsBuilderFiller;
+import org.cmdbuild.services.FilesStore;
 
 public class ReportFactoryTemplateList extends ReportFactoryTemplate {
 
@@ -49,9 +50,10 @@ public class ReportFactoryTemplateList extends ReportFactoryTemplate {
 			final Iterable<String> attributeOrder, //
 			final CMEntryType entryType, //
 			final CMDataView dataView, //
+			final FilesStore filesStore, //
 			final CmdbuildConfiguration configuration //
 	) throws JRException {
-		super(dataSource, configuration, dataView);
+		super(dataSource, configuration, dataView, filesStore);
 
 		this.reportExtension = reportExtension;
 		this.attributeNamesSorted = attributeOrder;

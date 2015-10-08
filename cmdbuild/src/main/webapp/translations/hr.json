@@ -1069,9 +1069,6 @@
 			"title": "Dobro došli"
 		}
 	},
-	"patch": {
-		"patch_list": "Lista dostupnih ispravki (patch)"
-	},
 	"vtype_text": {
 		"cmdbcomment": "Apostrof i/ili vertikalna crtica su nedozvoljeni",
 		"cmdbcommentrelaxed": "Vertikalna crtica je nedozvoljen znak",
@@ -1128,6 +1125,7 @@
 	"attributes": "Atributi",
 	"availableElements": "Dostupni elementi",
 	"availableFilters": "Dostupni filteri",
+	"availablePatchesList": "Lista dostupnih ispravki (patch)",
 	"availableUsers": "Dostupni korisnici",
 	"baseProperties": "Osnovna obilježja",
 	"bcc": "Bcc",
@@ -1143,6 +1141,7 @@
 	"cardinality": "Kardinalnost",
 	"cardPanelHeight": "Visina (u postocima) panela za kartice ",
 	"cards": "Kartice podataka",
+	"category": "<em>Category</em>",
 	"cc": "Cc",
 	"changePassword": "Promijeni lozinku",
 	"checkFrequency": "Učestalost provjere (u minutama)",
@@ -1178,6 +1177,7 @@
 	"credentials": "Podaci za pristup",
 	"csv": "CSV",
 	"csvFile": "CSV datoteka",
+	"customPages": "<em>Custom pages</em>",
 	"customMenu": "Osobni meni",
 	"dashboard": "Kontrolna ploča",
 	"dataSource": "Izvor podataka",

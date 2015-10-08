@@ -5,7 +5,8 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.Login',
+			'CMDBuild.core.proxy.session.JsonRpc',
+			'CMDBuild.core.proxy.session.Rest',
 			'CMDBuild.core.proxy.Configuration'
 		],
 
@@ -199,26 +200,45 @@
 
 		/**
 		 * @param {Mixed} field
-		 * @param {Ext.EventObjectImpl} e
+		 * @param {Ext.EventObjectImpl} event
+		 *
+		 * @private
 		 */
-		doLogin: function(field, e) {
-			var form = this.form.getForm();
-			var values = form.getValues();
+		doLogin: function(field, event) {
+			if (!Ext.isEmpty(this.role.getValue()) || this.form.getForm().isValid()) {
+				var params = {};
+				params[CMDBuild.core.constants.Proxy.PASSWORD] = this.password.getValue();
+				params[CMDBuild.core.constants.Proxy.USERNAME] = this.user.getValue();
 
-			if (!Ext.isEmpty(values.role) || form.isValid()) {
-				CMDBuild.core.proxy.Login.doLogin({
-					params: form.getValues(),
+				CMDBuild.core.proxy.session.JsonRpc.login({
+					params: params,
 					scope: this,
-					success: function() {
-						if (/administration.jsp$/.test(window.location)) {
-							window.location = 'administration.jsp' + window.location.hash;
-						} else {
-							window.location = 'management.jsp' + window.location.hash;
-						}
+					success: function(response, options, decodedResponse) {
+						var urlParams = {};
+						urlParams[CMDBuild.core.constants.Proxy.TOKEN] = response.getResponseHeader(CMDBuild.core.constants.Proxy.AUTHORIZATION_HEADER_KEY);
+
+						CMDBuild.core.proxy.session.Rest.login({
+							params: params,
+							urlParams: urlParams,
+							scope: this,
+							success: function(response, options, decodedResponse) {
+								Ext.util.Cookies.set(CMDBuild.core.constants.Proxy.REST_SESSION_TOKEN, urlParams[CMDBuild.core.constants.Proxy.TOKEN]);
+							},
+							callback: function(records, operation, success) {
+								// CMDBuild redirect
+								if (/administration.jsp$/.test(window.location)) {
+									window.location = 'administration.jsp' + window.location.hash;
+								} else {
+									window.location = 'management.jsp' + window.location.hash;
+								}
+							}
+						});
 					},
 					failure: function(result, options, decodedResult) {
-						if (!Ext.isEmpty(decodedResult) && decodedResult.reason == 'AUTH_MULTIPLE_GROUPS') {
-							this.enableRoles(decodedResult.groups); // Multiple groups for this user
+						if (!Ext.isEmpty(decodedResult) && decodedResult[CMDBuild.core.constants.Proxy.REASON] == 'AUTH_MULTIPLE_GROUPS') {
+							// Multiple groups for this user
+							// TODO Disable user/pass on multiple groups
+							this.enableRoles(decodedResult[CMDBuild.core.constants.Proxy.GROUPS]);
 
 							return false;
 						} else {

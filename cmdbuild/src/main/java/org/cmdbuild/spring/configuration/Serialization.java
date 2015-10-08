@@ -58,7 +58,7 @@ public class Serialization {
 				privilegeManagement.userPrivilegeContext(), //
 				data.securityLogic(), //
 				userStore, //
-				web.notifier() //
+				web.contextStoreNotifier() //
 		);
 	}
 

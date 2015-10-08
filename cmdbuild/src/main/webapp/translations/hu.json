@@ -1069,9 +1069,6 @@
 			"title": "Üdvözlöm"
 		}
 	},
-	"patch": {
-		"patch_list": "Rendelkezésre álló	patchek listája"
-	},
 	"vtype_text": {
 		"cmdbcomment": "A függőleges vonal és aposztróf nem engedélyezett",
 		"cmdbcommentrelaxed": "A függőleges vonal nem engedélyezett",
@@ -1128,6 +1125,7 @@
 	"attributes": "Attribútumok",
 	"availableElements": "<em>Available elements</em>",
 	"availableFilters": "Rendelkezésre álló szűrők",
+	"availablePatchesList": "Rendelkezésre álló patchek listája",
 	"availableUsers": "Rendelkezésre álló felhasználók",
 	"baseProperties": "Alapvető beállítások",
 	"bcc": "Rejtett másolat",
@@ -1143,6 +1141,7 @@
 	"cardinality": "<em>Cardinality</em>",
 	"cardPanelHeight": "Kártyapanel magassága százalékban",
 	"cards": "Kártyák",
+	"category": "<em>Category</em>",
 	"cc": "Másolat",
 	"changePassword": "Jelszó változtatás",
 	"checkFrequency": "Ellenőrzés gyakorisága (percek)",
@@ -1178,6 +1177,7 @@
 	"credentials": "Ajánlók",
 	"csv": "CSV",
 	"csvFile": "CSV fájl",
+	"customPages": "<em>Custom pages</em>",
 	"customMenu": "<em>Custom menu</em>",
 	"dashboard": "Dashboard",
 	"dataSource": "<em>Data source</em>",

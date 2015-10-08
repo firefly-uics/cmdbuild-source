@@ -2,6 +2,8 @@ package org.cmdbuild.servlets.json;
 
 import static org.cmdbuild.spring.SpringIntegrationUtils.applicationContext;
 import static org.cmdbuild.spring.configuration.Data.BEAN_SYSTEM_DATA_VIEW;
+import static org.cmdbuild.spring.configuration.FileStore.ROOT;
+import static org.cmdbuild.spring.configuration.FileStore.UPLOAD;
 import static org.cmdbuild.spring.configuration.Lock.USER_LOCK_LOGIC;
 import static org.cmdbuild.spring.configuration.Translation.REQUEST_HANDLER_SETUP_FACADE;
 import static org.cmdbuild.spring.configuration.User.BEAN_USER_DATA_VIEW;
@@ -17,6 +19,7 @@ import org.cmdbuild.config.GraphProperties;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.data.store.lookup.LookupStore;
 import org.cmdbuild.dms.DmsConfiguration;
+import org.cmdbuild.listeners.ContextStore;
 import org.cmdbuild.logic.DashboardLogic;
 import org.cmdbuild.logic.GISLogic;
 import org.cmdbuild.logic.NavigationTreeLogic;
@@ -32,6 +35,7 @@ import org.cmdbuild.logic.bim.ViewerLogic;
 import org.cmdbuild.logic.bim.project.DefaultProjectLogic;
 import org.cmdbuild.logic.bim.project.ProjectLogic;
 import org.cmdbuild.logic.cache.CachingLogic;
+import org.cmdbuild.logic.custompages.CustomPagesLogic;
 import org.cmdbuild.logic.data.DataDefinitionLogic;
 import org.cmdbuild.logic.data.LockLogic;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
@@ -60,6 +64,7 @@ import org.cmdbuild.logic.workflow.SystemWorkflowLogicBuilder;
 import org.cmdbuild.logic.workflow.UserWorkflowLogicBuilder;
 import org.cmdbuild.logic.workflow.WorkflowLogic;
 import org.cmdbuild.notification.Notifier;
+import org.cmdbuild.services.FilesStore;
 import org.cmdbuild.services.PatchManager;
 import org.cmdbuild.services.SessionVars;
 import org.cmdbuild.services.TranslationService;
@@ -120,6 +125,7 @@ public class JSONBaseWithSpringContext extends JSONBase {
 	 * Stores
 	 */
 
+
 	protected LanguageStore languageStore() {
 		return applicationContext().getBean(LanguageStore.class);
 	}
@@ -130,6 +136,14 @@ public class JSONBaseWithSpringContext extends JSONBase {
 
 	protected ReportStore reportStore() {
 		return applicationContext().getBean(ReportStore.class);
+	}
+
+	protected FilesStore rootFilesStore() {
+		return applicationContext().getBean(ROOT,FilesStore.class);
+	}
+
+	protected FilesStore uploadFilesStore() {
+		return applicationContext().getBean(UPLOAD,FilesStore.class);
 	}
 
 	protected UserStore userStore() {
@@ -162,6 +176,10 @@ public class JSONBaseWithSpringContext extends JSONBase {
 
 	protected CachingLogic cachingLogic() {
 		return applicationContext().getBean(CachingLogic.class);
+	}
+
+	protected CustomPagesLogic customPagesLogic() {
+		return applicationContext().getBean(CustomPagesLogic.class);
 	}
 
 	protected DashboardLogic dashboardLogic() {
@@ -323,6 +341,11 @@ public class JSONBaseWithSpringContext extends JSONBase {
 	/*
 	 * Web
 	 */
+	
+	@Deprecated
+	protected ContextStore contextStore() {
+		return applicationContext().getBean(ContextStore.class);
+	}
 
 	@Deprecated
 	protected SessionVars sessionVars() {

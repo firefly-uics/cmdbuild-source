@@ -1,9 +1,9 @@
 (function() {
 
+	Ext.require('CMDBuild.core.constants.Proxy');
+
 	Ext.define('CMDBuild.model.localization.advancedTable.TreeStore', {
 		extend: 'Ext.data.TreeModel',
-
-		requires: ['CMDBuild.core.constants.Proxy'],
 
 		fields: [
 			{ name: CMDBuild.core.constants.Proxy.DEFAULT, type: 'string'}, // Default translation

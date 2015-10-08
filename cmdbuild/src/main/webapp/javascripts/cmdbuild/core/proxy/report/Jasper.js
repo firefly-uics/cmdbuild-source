@@ -47,6 +47,7 @@
 			return Ext.create('Ext.data.Store', {
 				autoLoad: false,
 				model: 'CMDBuild.model.report.Grid',
+				pageSize: CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.ROW_LIMIT),
 				proxy: {
 					type: 'ajax',
 					url: CMDBuild.core.proxy.Index.reports.jasper.getReportsByType,
