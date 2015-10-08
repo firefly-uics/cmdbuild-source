@@ -1,5 +1,7 @@
 (function() {
 
+	Ext.require('CMDBuild.core.constants.Global');
+
 	Ext.define('CMDBuild.controller.management.common.CMCardWindowController', {
 		extend: 'CMDBuild.controller.management.classes.CMBaseCardPanelController',
 
@@ -77,7 +79,7 @@
 					null,
 					Ext.String.format(
 						'<p class="{0}">{1}</p>',
-						CMDBuild.Constants.css.error_msg, CMDBuild.Translation.errors.invalid_attributes
+						CMDBuild.core.constants.Global.getErrorMsgCss(), CMDBuild.Translation.errors.invalid_attributes
 					) + CMDBuild.controller.common.CardStaticsController.getInvalidAttributeAsHTML(form),
 					false
 				);

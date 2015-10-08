@@ -5,7 +5,7 @@
 		requires: [
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.Index',
-			'CMDBuild.model.group.privileges.GridRecord'
+			'CMDBuild.model.userAndGroup.group.privileges.GridRecord'
 		],
 
 		singleton: true,
@@ -16,7 +16,7 @@
 		getStore: function() {
 			var store =  Ext.create('Ext.data.Store', {
 				autoLoad: true,
-				model: 'CMDBuild.model.group.privileges.GridRecord',
+				model: 'CMDBuild.model.userAndGroup.group.privileges.GridRecord',
 				proxy: {
 					type: 'ajax',
 					url: CMDBuild.core.proxy.Index.privileges.customPages.read, // TODO: implementation

@@ -349,7 +349,7 @@
 				var table = _CMCache.getEntryTypeById(id);
 
 				if (table) {
-					return table.data.tableType == CMDBuild.Constants.cachedTableType.simpletable;
+					return table.data.tableType == 'simpletable';
 				} else {
 					return false;
 				}

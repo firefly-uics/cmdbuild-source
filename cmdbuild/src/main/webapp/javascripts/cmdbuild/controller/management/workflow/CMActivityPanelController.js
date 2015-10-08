@@ -1,5 +1,7 @@
 (function() {
 
+	Ext.require('CMDBuild.core.constants.Global');
+
 	var ERROR_TEMPLATE = "<p class=\"{0}\">{1}</p>";
 
 	Ext.define("CMDBuild.controller.management.workflow.CMActivityPanelControllerDelegate", {
@@ -447,7 +449,7 @@
 		var invalidAttributes = CMDBuild.controller.common.CardStaticsController.getInvalidAttributeAsHTML(form);
 
 		if (invalidAttributes != null) {
-			var msg = Ext.String.format("<p class=\"{0}\">{1}</p>", CMDBuild.Constants.css.error_msg, CMDBuild.Translation.errors.invalid_attributes);
+			var msg = Ext.String.format("<p class=\"{0}\">{1}</p>", CMDBuild.core.constants.Global.getErrorMsgCss(), CMDBuild.Translation.errors.invalid_attributes);
 			CMDBuild.Msg.error(null, msg + invalidAttributes, false);
 
 			return false;
@@ -463,7 +465,7 @@
 		if (wrongWidgets != null) {
 			valid = false;
 			var msg = Ext.String.format(ERROR_TEMPLATE
-					, CMDBuild.Constants.css.error_msg
+					, CMDBuild.core.constants.Global.getErrorMsgCss()
 					, CMDBuild.Translation.errors.invalid_extended_attributes);
 			CMDBuild.Msg.error(null, msg + wrongWidgets, popup = false);
 		}

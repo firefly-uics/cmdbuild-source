@@ -3,7 +3,10 @@
 	Ext.define('CMDBuild.controller.common.field.filter.advanced.window.panels.relations.Relations', {
 		extend: 'CMDBuild.controller.common.AbstractController',
 
-		requires: ['CMDBuild.core.constants.Proxy'],
+		requires: [
+			'CMDBuild.core.constants.Global',
+			'CMDBuild.core.constants.Proxy'
+		],
 
 		/**
 		 * @cfg {CMDBuild.controller.common.field.filter.advanced.window.Window}
@@ -151,7 +154,7 @@
 				column.getEditor().getStore().clearFilter();
 				column.getEditor().getStore().filterBy(function(storeRecord, id) {
 					return (
-						storeRecord.get(CMDBuild.core.constants.Proxy.TABLE_TYPE) != CMDBuild.Constants.cachedTableType.simpletable
+						storeRecord.get(CMDBuild.core.constants.Proxy.TABLE_TYPE) != CMDBuild.core.constants.Global.getTableTypeSimpleTable()
 						&& (
 							storeRecord.get(CMDBuild.core.constants.Proxy.PARENT) == record.get(CMDBuild.core.constants.Proxy.DESTINATION).getId()
 							|| storeRecord.get(CMDBuild.core.constants.Proxy.ID) == record.get(CMDBuild.core.constants.Proxy.DESTINATION).getId()

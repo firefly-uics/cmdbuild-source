@@ -1,7 +1,8 @@
 (function() {
-	var point = CMDBuild.Constants.geoTypes.point,
-		line = CMDBuild.Constants.geoTypes.line,
-		polygon = CMDBuild.Constants.geoTypes.polygon,
+
+	var point = 'POINT',
+		line = 'LINESTRING',
+		polygon = 'POLYGON',
 		tr_attribute = CMDBuild.Translation.administration.modClass.attributeProperties,
 		tr = CMDBuild.Translation.administration.modClass.geo_attributes;
 
@@ -34,7 +35,7 @@
 
 			this.callParent(arguments);
 			this.disableModify(enableCMTbar = false);
-			
+
 			this.name.on("change", function(fieldname, newValue, oldValue) {
 				this.autoComplete(this.description, newValue, oldValue);
 			}, this);
@@ -51,13 +52,13 @@
 			}
 			return out;
 		},
-		
+
 		onClassSelected: function() {
 			this.reset();
 			this.hideStyleFields();
 			this.disableModify(enableCMTbar = false);
 		},
-		
+
 		onAttributeSelected: function(attribute) {
 			this.reset();
 
@@ -68,13 +69,13 @@
 				this.disableModify(enableCMTbar = true);
 			}
 		},
-		
+
 		iterateOverStyleFields: function(fn) {
 			for (var key in this.styleFieldsMap) {
 				fn(this.styleFieldsMap[key]);
 			}
 		},
-		
+
 		hideStyleFields: function() {
 			this.iterateOverStyleFields(function(f) {
 				f.hide();
@@ -98,7 +99,7 @@
 			this.styleProperties.setDefaults();
 		}
 	});
-	
+
 	function fillStyleFields(style) {
 		if (style) {
 			for ( var propName in style) {
@@ -198,7 +199,7 @@
 			queryMode: "local",
 			cmImmutable: true
 		});
-		
+
 		this.types.setValue = Ext.Function.createSequence(this.types.setValue, function(v) {
 			if (v) {
 				if (typeof v == "string") {
@@ -211,7 +212,7 @@
 				}
 			}
 		}, this);
-		
+
 		this.styleFieldsMap = {
 			externalGraphic: new CMDBuild.IconsCombo({
 				store: CMDBuild.ServiceProxy.Icons.getIconStore(),
@@ -313,7 +314,7 @@
 				store: new Ext.data.SimpleStore( {
 					fields: ["value", "name"],
 					data: [
-						["dot", tr.strokeStyles.dot], 
+						["dot", tr.strokeStyles.dot],
 						["dash", tr.strokeStyles.dash],
 						["dashdot", tr.strokeStyles.dashdot],
 						["longdash", tr.strokeStyles.longdash],

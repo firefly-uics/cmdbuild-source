@@ -177,7 +177,7 @@
 				fields: ['value', 'name'],
 				data : [
 					{"value":"standard", "name":tr.standard},
-					{"value":CMDBuild.Constants.cachedTableType.simpletable, "name":tr.simple}
+					{"value":'simpletable', "name":tr.simple}
 				]
 			});
 

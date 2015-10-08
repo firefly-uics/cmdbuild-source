@@ -1,5 +1,5 @@
 (function() {
-	var constants = CMDBuild.Constants;
+
 	var dashboardClassesProcessStore = null;
 
 	Ext.define("CMDBuild.cache.CMCache", {
@@ -216,8 +216,8 @@
 				return superClass && subClass && subClass.isAncestor(superClass);
 			};
 			return superclassId == subclassId
-				|| isDescendant(this.getTree(CMDBuild.Constants.treeNames.classTree), superclassId, subclassId)
-				|| isDescendant(this.getTree(CMDBuild.Constants.treeNames.processTree), superclassId, subclassId);
+				|| isDescendant(this.getTree('class_tree'), superclassId, subclassId)
+				|| isDescendant(this.getTree('process_tree'), superclassId, subclassId);
 		},
 
 		onClassContentChanged: function(idClass) {
@@ -282,13 +282,22 @@
 	function getTableGroup (table) {
 		//the simple table are discriminate by the tableType
 		var type;
+		var cachedTableType = {
+			"class": "class",
+			processclass: "processclass",
+			simpletable: "simpletable",
+			report: "report",
+			lookuptype: "lookuptype",
+			group: "group"
+		};
+
 		if (table.tableType && table.tableType != "standard") {
 			type = table.tableType;
 		} else {
 			type = table.type;
 		}
 
-		if (constants.cachedTableType[type]) {
+		if (cachedTableType[type]) {
 			return type;
 		} else {
 			throw new Error("Unsupported node type: "+type);

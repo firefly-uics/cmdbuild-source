@@ -4,6 +4,7 @@
 		extend: 'CMDBuild.controller.common.AbstractController',
 
 		requires: [
+			'CMDBuild.core.constants.Global',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.constants.Server',
 			'CMDBuild.core.proxy.Classes',
@@ -158,7 +159,7 @@
 								Ext.Array.forEach(readedClasses, function(entityObject, i, allEntitiesObjects) {
 									if (!Ext.Array.contains(this.filteredClasses, entityObject[CMDBuild.core.constants.Proxy.NAME])) { // Apply filter to classes
 										switch(entityObject[CMDBuild.core.constants.Proxy.TYPE]) {
-											case 'processclass': { // Process node object
+											case CMDBuild.core.constants.Global.getTableTypeProcessClass(): { // Process node object
 												var processNodeObject = {};
 												processNodeObject['iconCls'] = 'cmdbuild-tree-processclass-icon';
 												processNodeObject[CMDBuild.core.constants.Proxy.DESCRIPTION] = entityObject[CMDBuild.core.constants.Proxy.TEXT];
@@ -175,7 +176,7 @@
 												nodesMap[processNodeObject[CMDBuild.core.constants.Proxy.ID]] = processNodeObject;
 											} break;
 
-											case 'class':
+											case CMDBuild.core.constants.Global.getTableTypeClass():
 											default: { // Class node object
 												var classNodeObject = {};
 												classNodeObject['iconCls'] = entityObject['superclass'] ? 'cmdbuild-tree-superclass-icon' : 'cmdbuild-tree-class-icon';
@@ -214,7 +215,7 @@
 											}
 										} break;
 
-										case 'processclass': {
+										case CMDBuild.core.constants.Global.getTableTypeProcessClass(): {
 											if (
 												!Ext.isEmpty(node[CMDBuild.core.constants.Proxy.PARENT])
 												&& !Ext.isEmpty(nodesMap[node[CMDBuild.core.constants.Proxy.PARENT]])
@@ -229,7 +230,7 @@
 											}
 										} break;
 
-										case 'simpletable':
+										case CMDBuild.core.constants.Global.getTableTypeClass():
 										default: {
 											simpleTree.push(node);
 										}

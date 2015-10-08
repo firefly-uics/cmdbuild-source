@@ -2,6 +2,8 @@
 
 	var tr = CMDBuild.Translation.management.modcard;
 
+	Ext.require('CMDBuild.core.constants.Global');
+
 	Ext.define("CMDBuild.controller.management.classes.attachments.CMCardAttachmentsController", {
 		extend: "CMDBuild.controller.management.classes.CMModCardSubController",
 
@@ -82,7 +84,7 @@
 		},
 
 		disableTheTabBeforeCardSelection: function(entryType) {
-			return (entryType && entryType.get("tableType") == CMDBuild.Constants.cachedTableType.simpletable);
+			return (entryType && entryType.get("tableType") == CMDBuild.core.constants.Global.getTableTypeSimpleTable());
 		},
 
 		onAddCardButtonClick: function(classIdOfNewCard) {
