@@ -12,7 +12,7 @@
 		 */
 		constructor: function() {
 			if (!Ext.isEmpty(CMDBuild)) {
-				var toLocalize = Ext.isEmpty(CMDBuild.app.Administration); // I'm on Management so i must localize
+				var toLocalize = Ext.isEmpty(CMDBuild) || Ext.isEmpty(CMDBuild.app) || Ext.isEmpty(CMDBuild.app.Administration); // I'm on Management so i must localize
 
 				var defaultHeaders = {};
 				defaultHeaders[CMDBuild.core.constants.Proxy.LOCALIZED_HEADER_KEY] = toLocalize;
