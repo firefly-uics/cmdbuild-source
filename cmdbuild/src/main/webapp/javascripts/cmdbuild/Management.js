@@ -197,7 +197,7 @@
 					this.cmAccordions.push(this.processAccordion);
 				}
 
-				if (!CMDBuild.configuration.userInterface.isDisabledModule('dataview')) {
+				if (!CMDBuild.configuration.userInterface.isDisabledModule(CMDBuild.core.constants.Proxy.DATA_VIEW)) {
 					this.cmAccordions.push(
 						Ext.create('CMDBuild.view.management.accordion.DataView', {
 							cmControllerType: 'CMDBuild.controller.management.accordion.DataView',
