@@ -37,7 +37,7 @@ public class InMemorySessionStore implements SessionStore {
 
 	@Override
 	public boolean has(final String id) {
-		return store.getIfPresent(id) == null;
+		return store.getIfPresent(id) != null;
 	}
 
 	@Override
