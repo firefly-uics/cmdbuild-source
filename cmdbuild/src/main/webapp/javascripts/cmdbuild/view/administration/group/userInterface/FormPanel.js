@@ -80,12 +80,6 @@
 										uncheckedValue: false
 									},
 									{
-										boxLabel: CMDBuild.Translation.report,
-										name: CMDBuild.core.proxy.CMProxyConstants.REPORT,
-										inputValue: true,
-										uncheckedValue: false
-									},
-									{
 										boxLabel: CMDBuild.Translation.views,
 										name: CMDBuild.core.proxy.CMProxyConstants.DATA_VIEW,
 										inputValue: true,
@@ -94,6 +88,18 @@
 									{
 										boxLabel: CMDBuild.Translation.dashboard,
 										name: CMDBuild.core.proxy.CMProxyConstants.DASHBOARD,
+										inputValue: true,
+										uncheckedValue: false
+									},
+									{
+										boxLabel: CMDBuild.Translation.customPages,
+										name: CMDBuild.core.proxy.CMProxyConstants.CUSTOM_PAGES,
+										inputValue: true,
+										uncheckedValue: false
+									},
+									{
+										boxLabel: CMDBuild.Translation.report,
+										name: CMDBuild.core.proxy.CMProxyConstants.REPORT,
 										inputValue: true,
 										uncheckedValue: false
 									},

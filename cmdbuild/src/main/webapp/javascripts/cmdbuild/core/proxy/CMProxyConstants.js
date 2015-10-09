@@ -86,6 +86,7 @@
 		CRON_INPUT_TYPE: 'cronInputType',
 		CSV: 'csv',
 		CUSTOM: 'custom',
+		CUSTOM_PAGES: 'customPages',
 		DASHBOARD: 'dashboard',
 		DATA: 'data',
 		DATA_INDEX: 'dataIndex',

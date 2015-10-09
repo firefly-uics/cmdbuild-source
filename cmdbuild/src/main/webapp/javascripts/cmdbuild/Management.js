@@ -230,7 +230,7 @@
 					this.cmAccordions.push(this.dashboardsAccordion);
 				}
 
-				if (!_CMUIConfiguration.isModuleDisabled('custompage') || true) { // TODO: implementation
+				if (!_CMUIConfiguration.isModuleDisabled(CMDBuild.core.proxy.CMProxyConstants.CUSTOM_PAGES)) {
 					this.cmAccordions.push(Ext.create('CMDBuild.view.management.accordion.CustomPage', { cmName: 'custompage' }));
 				}
 

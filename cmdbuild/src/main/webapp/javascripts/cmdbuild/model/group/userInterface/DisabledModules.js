@@ -11,6 +11,7 @@
 			{ name: 'importcsv', type: 'boolean' },
 			{ name: CMDBuild.core.proxy.CMProxyConstants.CHANGE_PASSWORD, type: 'boolean' },
 			{ name: CMDBuild.core.proxy.CMProxyConstants.CLASS, type: 'boolean' },
+			{ name: CMDBuild.core.proxy.CMProxyConstants.CUSTOM_PAGES, type: 'boolean' },
 			{ name: CMDBuild.core.proxy.CMProxyConstants.DASHBOARD, type: 'boolean' },
 			{ name: CMDBuild.core.proxy.CMProxyConstants.DATA_VIEW, type: 'boolean' },
 			{ name: CMDBuild.core.proxy.CMProxyConstants.PROCESS, type: 'boolean' },
