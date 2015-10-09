@@ -211,7 +211,7 @@
 					this.cmAccordions.push(this.dashboardsAccordion);
 				}
 
-				if (!CMDBuild.configuration.userInterface.isDisabledModule(CMDBuild.core.proxy.CMProxyConstants.CUSTOM_PAGES)) {
+				if (!CMDBuild.configuration.userInterface.isDisabledModule(CMDBuild.core.constants.Proxy.CUSTOM_PAGES)) {
 					this.cmAccordions.push(Ext.create('CMDBuild.view.management.accordion.CustomPage', { cmName: 'custompage' }));
 				}
 
