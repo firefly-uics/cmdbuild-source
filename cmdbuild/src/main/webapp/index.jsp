@@ -6,7 +6,6 @@
 <%@ page import="org.cmdbuild.auth.UserStore" %>
 <%@ page import="org.cmdbuild.auth.user.OperationUser" %>
 <%@ page import="org.cmdbuild.services.SessionVars" %>
-<%@ page import="org.cmdbuild.services.auth.User" %>
 <%@ page import="org.cmdbuild.servlets.json.Login" %>
 <%@ page import="org.cmdbuild.spring.SpringIntegrationUtils" %>
 <%@ page import="org.apache.commons.lang3.StringEscapeUtils" %>
@@ -17,6 +16,7 @@
 	final OperationUser operationUser = SpringIntegrationUtils.applicationContext().getBean(UserStore.class).getUser();
 	final String extVersion = "4.2.0";
 %>
+
 <html>
 	<head>
 		<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
@@ -34,7 +34,6 @@
 		<script type="text/javascript" src="javascripts/cmdbuild/core/LoaderConfig.js"></script>
 		<script type="text/javascript" src="javascripts/log/log4javascript.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/application.js"></script>
-		<script type="text/javascript" src="javascripts/cmdbuild/core/constants/Proxy.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/core/Ajax.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/core/Message.js"></script>
 
@@ -42,15 +41,28 @@
 		<script type="text/javascript" src="javascripts/ext-<%= extVersion %>/locale/ext-lang-<%= lang %>.js"></script>
 		<script type="text/javascript" src="services/json/utils/gettranslationobject"></script>
 
+		<!-- 3. Runtime configuration -->
 		<script type="text/javascript">
-			var CMDBuild = Ext.isEmpty(CMDBuild) ? {} : CMDBuild;
-			CMDBuild.configuration = Ext.isEmpty(CMDBuild.configuration) ? {} : CMDBuild.configuration;
-			CMDBuild.configuration.runtime = {};
-			CMDBuild.configuration.runtime[CMDBuild.core.constants.Proxy.USERNAME] = '<%= StringEscapeUtils.escapeEcmaScript(operationUser.getAuthenticatedUser().getUsername()) %>';
-			CMDBuild.configuration.runtime[CMDBuild.core.constants.Proxy.GROUPS] = <%= Login.serializeGroupForLogin(operationUser.getAuthenticatedUser().getGroupNames()) %>;
+			Ext.ns('CMDBuild.configuration.runtime'); // Runtime configurations
+
+			CMDBuild.configuration.runtime = Ext.create('CMDBuild.model.configuration.Runtime');
+
+			<% if (!operationUser.isValid() && !operationUser.getAuthenticatedUser().isAnonymous()) { %>
+				CMDBuild.configuration.runtime.set(CMDBuild.core.constants.Proxy.USERNAME, '<%= StringEscapeUtils.escapeEcmaScript(operationUser.getAuthenticatedUser().getUsername()) %>');
+				CMDBuild.configuration.runtime.set(CMDBuild.core.constants.Proxy.GROUPS, <%= Login.serializeGroupForLogin(operationUser.getAuthenticatedUser().getGroupNames()) %>);
+
+				/**
+				 * Compatibility mode
+				 *
+				 * @deprecated (CMDBuild.configuration.runtime)
+				 */
+				Ext.ns('CMDBuild.Runtime');
+				CMDBuild.Runtime.Username = '<%= StringEscapeUtils.escapeEcmaScript(operationUser.getAuthenticatedUser().getUsername()) %>';
+				CMDBuild.Runtime.Groups = <%= Login.serializeGroupForLogin(operationUser.getAuthenticatedUser().getGroupNames()) %>;
+			<% } %>
 		</script>
 
-		<!-- 3. Modules -->
+		<!-- 4. Modules -->
 		<script type="text/javascript" src="javascripts/cmdbuild/app/Login.js"></script>
 
 		<title>CMDBuild</title>
