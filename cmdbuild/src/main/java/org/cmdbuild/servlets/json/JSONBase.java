@@ -132,11 +132,6 @@ public class JSONBase {
 	public void init(final HttpServletRequest request, final HttpServletResponse response) {
 	}
 
-	protected String getTraslation(final String key) {
-		final String lang = applicationContext().getBean(LanguageStore.class).getLanguage();
-		return TranslationService.getInstance().getTranslation(lang, key);
-	}
-
 	public void setSpringApplicationContext(final ApplicationContext applicationContext) {
 		this.applicationContext = applicationContext;
 	}

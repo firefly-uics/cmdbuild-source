@@ -31,7 +31,7 @@
 				bodyCls: "x-panel-body-default-framed cmborder"
 			});
 
-			this.addButton = new CMDBuild.view.administration.widget.CMAddWidgetDefinitionButton();
+			this.addButton = Ext.create('CMDBuild.core.buttons.iconized.add.WidgetDefinition');
 
 			this.grid = new CMDBuild.view.administration.widget.CMWidgetDefinitionGrid({
 				region: "north",
@@ -73,14 +73,25 @@
 		},
 
 		buildWidgetForm: function(widgetName) {
+			var widget = undefined;
 			var widgetClass = findWidgetClass(widgetName);
+
 			if (widgetClass) {
-				var widget = widgetClass.create({
-					border: false,
-					frame: false,
-					padding: 5,
-					bodyCls: "x-panel-body-default-framed"
-				});
+				if (Ext.isString(widgetClass)) {
+					widget = Ext.create(widgetClass, {
+						border: false,
+						frame: false,
+						padding: 5,
+						bodyCls: "x-panel-body-default-framed"
+					});
+				} else {
+					widget = widgetClass.create({
+						border: false,
+						frame: false,
+						padding: 5,
+						bodyCls: "x-panel-body-default-framed"
+					});
+				}
 			} else {
 				delete this.widgetForm;
 				throw this.EXCEPTIONS.notAWidget(widgetName);
@@ -140,11 +151,20 @@
 
 	function findWidgetClass(widgetName) {
 		var widgetClass = null;
-		var _package = CMDBuild.view.administration.widget.form;
-		for (var key in _package) {
-			if (_package[key].WIDGET_NAME == widgetName) {
-				widgetClass = _package[key];
-				break;
+
+		switch (widgetName) {
+			case '.OpenReport': {
+				widgetClass = 'CMDBuild.view.administration.widget.form.OpenReport';
+			} break;
+
+			default: {
+				var _package = CMDBuild.view.administration.widget.form;
+				for (var key in _package) {
+					if (_package[key].WIDGET_NAME == widgetName) {
+						widgetClass = _package[key];
+						break;
+					}
+				}
 			}
 		}
 

@@ -5,7 +5,7 @@
 	Ext.define('CMDBuild.view.administration.widget.form.CMBaseWidgetDefinitionForm', {
 		extend: 'Ext.panel.Panel',
 
-		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+		requires: ['CMDBuild.core.constants.Proxy'],
 
 		statics: {
 			WIDGET_NAME: undefined
@@ -55,18 +55,25 @@
 		 */
 		buildForm: function() {
 			this.buttonLabel = Ext.create('CMDBuild.view.common.field.translatable.Text', {
-				name: CMDBuild.core.proxy.CMProxyConstants.LABEL,
-				allowBlank: false,
+				name: CMDBuild.core.constants.Proxy.LABEL,
 				fieldLabel: tr.commonFields.buttonLabel,
-				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
+				maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
 				labelWidth: CMDBuild.LABEL_WIDTH,
-				translationsKeyType: 'Widget',
-				translationsKeyField: 'ButtonLabel',
-				itemId: 'ButtonLabel'
+				allowBlank: false,
+//				translationsKeyType: 'Widget',
+//				translationsKeyField: 'ButtonLabel',
+//				itemId: 'ButtonLabel',
+
+				translationFieldConfig: {
+					type: CMDBuild.core.constants.Proxy.CLASS_WIDGET,
+					owner: { sourceType: 'form', key: CMDBuild.core.constants.Proxy.NAME, source: this },
+					identifier: { sourceType: 'form', key: CMDBuild.core.constants.Proxy.NAME, source: this },
+					field: CMDBuild.core.constants.Proxy.DESCRIPTION
+				}
 			});
 
 			this.active = Ext.create('Ext.form.field.Checkbox', {
-				name: CMDBuild.core.proxy.CMProxyConstants.ACTIVE,
+				name: CMDBuild.core.constants.Proxy.ACTIVE,
 				fieldLabel: tr.commonFields.active,
 				labelWidth: CMDBuild.LABEL_WIDTH
 			});
@@ -81,6 +88,15 @@
 				frame: true,
 				border: true,
 				flex: 1,
+
+				layout: {
+					type: 'vbox',
+					align: 'stretch'
+				},
+
+				defaults: {
+					maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH
+				},
 
 				items: [
 					this.buttonLabel,
@@ -114,8 +130,8 @@
 		 * @param {CMDBuild.model.widget.WidgetDefinition} model
 		 */
 		fillWithModel: function(model) {
-			this.buttonLabel.setValue(model.get(CMDBuild.core.proxy.CMProxyConstants.LABEL));
-			this.active.setValue(model.get(CMDBuild.core.proxy.CMProxyConstants.ACTIVE));
+			this.buttonLabel.setValue(model.get(CMDBuild.core.constants.Proxy.LABEL));
+			this.active.setValue(model.get(CMDBuild.core.constants.Proxy.ACTIVE));
 			this.alwaysenabled.setValue(model.get('alwaysenabled'));
 		}
 	});

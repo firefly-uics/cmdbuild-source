@@ -3,11 +3,12 @@
 	Ext.define('CMDBuild.view.management.CMEditAttachmentWindow', {
 		extend: 'CMDBuild.core.PopupWindow',
 
-		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+		requires: ['CMDBuild.core.constants.Proxy'],
 
 		delegate: undefined, // set on creation
 		attachmentRecord: undefined, // could be set on creation
 
+		autoScroll: true,
 		title: CMDBuild.Translation.management.modcard.add_attachment_window.window_title,
 
 		initComponent: function() {
@@ -31,8 +32,8 @@
 						fieldLabel: CMDBuild.Translation.management.modcard.add_attachment_window.category,
 						labelWidth: CMDBuild.LABEL_WIDTH,
 						emptyText: CMDBuild.Translation.management.modcard.add_attachment_window.select_category,
-						valueField: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
-						displayField: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
+						valueField: CMDBuild.core.constants.Proxy.DESCRIPTION,
+						displayField: CMDBuild.core.constants.Proxy.DESCRIPTION,
 						triggerAction: 'all',
 						allowBlank: false,
 						forceSelection: true,
@@ -70,7 +71,7 @@
 				dockedItems: [
 					Ext.create('Ext.toolbar.Toolbar', {
 						dock: 'bottom',
-						itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_BOTTOM,
+						itemId: CMDBuild.core.constants.Proxy.TOOLBAR_BOTTOM,
 						ui: 'footer',
 
 						layout: {
@@ -80,14 +81,14 @@
 						},
 
 						items: [
-							Ext.create('CMDBuild.core.buttons.Confirm', {
+							Ext.create('CMDBuild.core.buttons.text.Confirm', {
 								scope: this,
 
 								handler: function(button, e) {
 									this.delegate.onConfirmButtonClick(me);
 								}
 							}),
-							Ext.create('CMDBuild.core.buttons.Abort', {
+							Ext.create('CMDBuild.core.buttons.text.Abort', {
 								scope: this,
 
 								handler: function(button, e) {

@@ -3,10 +3,6 @@
 	Ext.define("CMDBuild.view.management.common.widgets.manageRelation.CMManageRelation", {
 		extend: "CMDBuild.view.management.common.widgets.manageRelation.CMCardRelationsPanel",
 
-		statics: {
-			WIDGET_NAME: ".ManageRelation"
-		},
-
 		// used by the controller to identify the
 		// selected rows
 		CHECK_NAME: "manage_relation_check",

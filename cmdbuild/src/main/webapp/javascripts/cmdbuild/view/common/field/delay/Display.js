@@ -3,7 +3,7 @@
 	Ext.define('CMDBuild.view.common.field.delay.Display', {
 		extend: 'Ext.form.field.Display',
 
-		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+		requires: ['CMDBuild.core.constants.Proxy'],
 
 		/**
 		 * @property {CMDBuild.controller.common.field.delay.Display}

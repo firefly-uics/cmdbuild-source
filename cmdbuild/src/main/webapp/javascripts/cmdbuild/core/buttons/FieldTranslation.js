@@ -30,7 +30,7 @@
 		 * @abstract
 		 */
 		handler: function(button, e) {
-			_msg('CMDBuild.core.buttons.FieldTranslation handler() must be implemented.');
+			_warning('unimplemented handler method', this);
 		}
 	});
 

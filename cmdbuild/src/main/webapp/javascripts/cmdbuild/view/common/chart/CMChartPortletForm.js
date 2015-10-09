@@ -3,7 +3,7 @@
 	Ext.define("CMDBuild.view.management.dashboard.CMChartPortletForm", {
 		extend: "Ext.form.Panel",
 
-		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+		requires: ['CMDBuild.core.constants.Proxy'],
 
 		initComponent: function() {
 			this.callParent(arguments);
@@ -25,7 +25,8 @@
 		 * are the ones with a url setted on the proxy
 		 * */
 		checkStoreLoad: function(cb) {
-			var requestBarrier = new CMDBuild.Utils.CMRequestBarrier(cb);
+			var requestBarrier = Ext.create('CMDBuild.core.RequestBarrier', { callback: cb });
+
 			var someStore = false;
 
 			this.cascade(function(item) {
@@ -166,21 +167,21 @@
 					 * @returns {CMDBuild.Management.ReferenceField.Field} field
 					 */
 					card: function(parameterConfiguration) {
-						var required = parameterConfiguration[CMDBuild.core.proxy.CMProxyConstants.REQUIRED];
-						var filter = parameterConfiguration[CMDBuild.core.proxy.CMProxyConstants.FILTER];
+						var required = parameterConfiguration[CMDBuild.core.constants.Proxy.REQUIRED];
+						var filter = parameterConfiguration[CMDBuild.core.constants.Proxy.FILTER];
 						var meta = {};
 
 						if (!Ext.isEmpty(filter))
-							Ext.Object.each(filter[CMDBuild.core.proxy.CMProxyConstants.CONTEXT], function(key, value, myself) {
+							Ext.Object.each(filter[CMDBuild.core.constants.Proxy.CONTEXT], function(key, value, myself) {
 								meta['system.template.' + key] = value;
 							}, this);
 
 						var field = CMDBuild.Management.ReferenceField.build({
-							description: (required ? '* ' : '' ) + parameterConfiguration[CMDBuild.core.proxy.CMProxyConstants.NAME],
-							filter: !Ext.isEmpty(filter) ? filter[CMDBuild.core.proxy.CMProxyConstants.EXPRESSION] : null,
+							description: (required ? '* ' : '' ) + parameterConfiguration[CMDBuild.core.constants.Proxy.NAME],
+							filter: !Ext.isEmpty(filter) ? filter[CMDBuild.core.constants.Proxy.EXPRESSION] : null,
 							isnotnull: required,
 							meta: meta,
-							name: parameterConfiguration[CMDBuild.core.proxy.CMProxyConstants.NAME],
+							name: parameterConfiguration[CMDBuild.core.constants.Proxy.NAME],
 							referencedIdClass: parameterConfiguration.classToUseForReferenceWidget
 						});
 

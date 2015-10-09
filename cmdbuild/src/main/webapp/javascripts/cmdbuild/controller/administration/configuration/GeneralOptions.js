@@ -3,6 +3,8 @@
 	Ext.define('CMDBuild.controller.administration.configuration.GeneralOptions', {
 		extend: 'CMDBuild.controller.common.AbstractController',
 
+		requires: ['CMDBuild.core.constants.Proxy'],
+
 		/**
 		 * @cfg {CMDBuild.controller.administration.configuration.Configuration}
 		 */
@@ -12,14 +14,19 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
-			'onGeneralOptionsAbortButtonClick',
-			'onGeneralOptionsSaveButtonClick'
+			'onConfigurationGeneralOptionsAbortButtonClick',
+			'onConfigurationGeneralOptionsSaveButtonClick'
 		],
 
 		/**
-		 * @cfg {String}
+		 * Proxy parameters
+		 *
+		 * @cfg {Object}
 		 */
-		configFileName: 'cmdbuild',
+		params: {
+			fileName: 'cmdbuild',
+			view: undefined
+		},
 
 		/**
 		 * @property {CMDBuild.view.administration.configuration.GeneralOptionsPanel}
@@ -39,25 +46,18 @@
 				delegate: this
 			});
 
-			this.cmfg('onConfigurationRead', {
-				configFileName: this.configFileName,
-				view: this.view
-			});
+			this.params[CMDBuild.core.constants.Proxy.VIEW] = this.view;
+
+			this.cmfg('onConfigurationRead', this.params);
 		},
 
-		onGeneralOptionsAbortButtonClick: function() {
-			this.cmfg('onConfigurationRead', {
-				configFileName: this.configFileName,
-				view: this.view
-			});
+		onConfigurationGeneralOptionsAbortButtonClick: function() {
+			this.cmfg('onConfigurationRead', this.params);
 		},
 
-		onGeneralOptionsSaveButtonClick: function() {
-			this.cmfg('onConfigurationSave', {
-				configFileName: this.configFileName,
-				view: this.view
-			});
-		},
+		onConfigurationGeneralOptionsSaveButtonClick: function() {
+			this.cmfg('onConfigurationSave', this.params);
+		}
 	});
 
 })();

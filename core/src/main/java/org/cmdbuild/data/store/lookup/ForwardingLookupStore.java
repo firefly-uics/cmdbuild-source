@@ -23,4 +23,9 @@ public abstract class ForwardingLookupStore extends ForwardingStore<Lookup> impl
 		return delegate().readAllTypes();
 	}
 
+	@Override
+	public Iterable<Lookup> readFromUuid(final String uuid) {
+		return delegate().readFromUuid(uuid);
+	}
+
 }

@@ -3,7 +3,7 @@
 	Ext.define('CMDBuild.view.common.field.searchWindow.GridPanel', {
 		extend: 'CMDBuild.view.management.common.CMCardGrid',
 
-		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+		requires: ['CMDBuild.core.constants.Proxy'],
 
 		/**
 		 * @cfg {CMDBuild.controller.common.field.searchWindow.SearchWindow}
