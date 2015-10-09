@@ -18,7 +18,9 @@ public class DefaultTokenManager implements TokenManager {
 
 	@Override
 	public void settingUser(final OperationUser value) {
-		map.put(value, tokenGenerator.generate(value.getAuthenticatedUser().getUsername()));
+		if (value != null) {
+			map.put(value, tokenGenerator.generate(value.getAuthenticatedUser().getUsername()));
+		}
 	}
 
 	@Override
