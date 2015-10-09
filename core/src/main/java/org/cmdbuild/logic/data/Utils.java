@@ -471,6 +471,64 @@ public class Utils {
 		return new CMAttributeWrapper(delegate) {
 
 			@Override
+			public String getDescription() {
+				// not changed
+				return null;
+			}
+
+			@Override
+			public Boolean isDisplayableInList() {
+				// not changed
+				return null;
+			}
+
+			@Override
+			public boolean isMandatory() {
+				return delegate.isMandatory();
+			}
+
+			@Override
+			public boolean isUnique() {
+				return delegate.isUnique();
+			}
+
+			@Override
+			public Boolean isActive() {
+				// not changed
+				return null;
+			}
+
+			@Override
+			public Mode getMode() {
+				// not changed
+				return null;
+			}
+
+			@Override
+			public String getGroup() {
+				// not changed
+				return null;
+			}
+
+			@Override
+			public Integer getClassOrder() {
+				// not changed
+				return null;
+			}
+
+			@Override
+			public String getEditorType() {
+				// not changed
+				return null;
+			}
+
+			@Override
+			public String getFilter() {
+				// not changed
+				return null;
+			}
+
+			@Override
 			public Integer getIndex() {
 				return index;
 			}
@@ -480,6 +538,64 @@ public class Utils {
 
 	public static CMAttributeDefinition withClassOrder(final CMAttribute delegate, final int classOrder) {
 		return new CMAttributeWrapper(delegate) {
+
+			@Override
+			public String getDescription() {
+				// not changed
+				return null;
+			}
+
+			@Override
+			public Boolean isDisplayableInList() {
+				// not changed
+				return null;
+			}
+
+			@Override
+			public boolean isMandatory() {
+				return delegate.isMandatory();
+			}
+
+			@Override
+			public boolean isUnique() {
+				return delegate.isUnique();
+			}
+
+			@Override
+			public Boolean isActive() {
+				// not changed
+				return null;
+			}
+
+			@Override
+			public Mode getMode() {
+				// not changed
+				return null;
+			}
+
+			@Override
+			public String getGroup() {
+				// not changed
+				return null;
+			}
+
+			@Override
+			public String getEditorType() {
+				// not changed
+				return null;
+			}
+
+			@Override
+			public String getFilter() {
+				// not changed
+				return null;
+			}
+
+			@Override
+			public Integer getIndex() {
+				// not changed
+				return null;
+			}
 
 			@Override
 			public Integer getClassOrder() {
