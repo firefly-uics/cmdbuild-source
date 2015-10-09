@@ -84,7 +84,8 @@ public class TaskManager {
 				defaultLogicAndStoreConverter(), //
 				taskStore(), //
 				defaultSchedulerTaskFacade(), //
-				defaultSynchronousEventFacade() //
+				defaultSynchronousEventFacade(), //
+				email.emailLogic() //
 				));
 	}
 
