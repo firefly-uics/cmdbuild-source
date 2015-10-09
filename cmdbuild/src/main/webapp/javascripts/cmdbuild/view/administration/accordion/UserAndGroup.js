@@ -29,45 +29,47 @@
 				success: function(result, options, decodedResult) {
 					decodedResult = decodedResult[CMDBuild.core.constants.Proxy.GROUPS];
 
-					var nodes = [];
+					if (!Ext.isEmpty(decodedResult)) {
+						var nodes = [];
 
-					Ext.Array.forEach(decodedResult, function(groupObject, i, allGroupObjects) {
-						nodes.push({
-							text: groupObject[CMDBuild.core.constants.Proxy.DESCRIPTION],
-							description: groupObject[CMDBuild.core.constants.Proxy.DESCRIPTION],
-							id: groupObject[CMDBuild.core.constants.Proxy.ID],
-							name: groupObject[CMDBuild.core.constants.Proxy.NAME],
-							iconCls: 'cmdbuild-tree-group-icon',
-							cmName: this.cmName,
-							sectionHierarchy: ['group'],
-							leaf: true
-						});
-					}, this);
+						Ext.Array.forEach(decodedResult, function(groupObject, i, allGroupObjects) {
+							nodes.push({
+								text: groupObject[CMDBuild.core.constants.Proxy.DESCRIPTION],
+								description: groupObject[CMDBuild.core.constants.Proxy.DESCRIPTION],
+								id: groupObject[CMDBuild.core.constants.Proxy.ID],
+								name: groupObject[CMDBuild.core.constants.Proxy.NAME],
+								iconCls: 'cmdbuild-tree-group-icon',
+								cmName: this.cmName,
+								sectionHierarchy: ['group'],
+								leaf: true
+							});
+						}, this);
 
-					this.getStore().getRootNode().removeAll();
-					this.getStore().getRootNode().appendChild([
-						{
-							text: CMDBuild.Translation.groups,
-							iconCls: 'cmdbuild-tree-user-group-icon',
-							cmName: this.cmName,
-							children: nodes,
-							sectionHierarchy: ['group'],
-							leaf: false
-						},
-						{
-							text: CMDBuild.Translation.users,
-							iconCls: 'cmdbuild-tree-user-icon',
-							cmName: this.cmName,
-							sectionHierarchy: ['user'],
-							leaf: true
-						}
-					]);
+						this.getStore().getRootNode().removeAll();
+						this.getStore().getRootNode().appendChild([
+							{
+								text: CMDBuild.Translation.groups,
+								iconCls: 'cmdbuild-tree-user-group-icon',
+								cmName: this.cmName,
+								children: nodes,
+								sectionHierarchy: ['group'],
+								leaf: false
+							},
+							{
+								text: CMDBuild.Translation.users,
+								iconCls: 'cmdbuild-tree-user-icon',
+								cmName: this.cmName,
+								sectionHierarchy: ['user'],
+								leaf: true
+							}
+						]);
 
-					this.getStore().sort();
+						this.getStore().sort();
 
-					// Replace this.callParent(arguments), inside proxy function doesn't work
-					if (!Ext.isEmpty(nodeIdToSelect))
-						this.selectNodeById(nodeIdToSelect);
+						// Replace this.callParent(arguments), inside proxy function doesn't work
+						if (!Ext.isEmpty(nodeIdToSelect))
+							this.selectNodeById(nodeIdToSelect);
+					}
 				}
 			});
 		}

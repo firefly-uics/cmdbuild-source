@@ -1,7 +1,7 @@
 (function() {
 
 	Ext.define('CMDBuild.view.administration.accordion.Menu', {
-		extend: 'CMDBuild.view.common.CMBaseAccordion',
+		extend: 'CMDBuild.view.common.AbstractAccordion',
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
@@ -15,12 +15,6 @@
 		cmName: undefined,
 
 		title: CMDBuild.Translation.menu,
-
-		constructor: function() {
-			this.callParent(arguments);
-
-			this.updateStore();
-		},
 
 		/**
 		 * @param {Number} nodeIdToSelect
@@ -36,32 +30,35 @@
 				success: function(result, options, decodedResult) {
 					decodedResult = decodedResult[CMDBuild.core.constants.Proxy.GROUPS];
 
-					CMDBuild.core.Utils.objectArraySort(decodedResult, CMDBuild.core.constants.Proxy.TEXT);
+					if (!Ext.isEmpty(decodedResult)) {
+						CMDBuild.core.Utils.objectArraySort(decodedResult, CMDBuild.core.constants.Proxy.TEXT);
 
-					var nodes = [{
-						cmName: this.cmName,
-						iconCls: 'cmdbuild-tree-group-icon',
-						id: 0,
-						leaf: true,
-						text: '* Default *'
-					}];
-
-					Ext.Array.forEach(decodedResult, function(groupObject, i, allGroupObjects) {
-						nodes.push({
+						var nodes = [{
 							cmName: this.cmName,
 							iconCls: 'cmdbuild-tree-group-icon',
-							id: groupObject[CMDBuild.core.constants.Proxy.ID],
+							id: 0,
 							leaf: true,
-							name: groupObject[CMDBuild.core.constants.Proxy.NAME],
-							text: groupObject[CMDBuild.core.constants.Proxy.TEXT]
-						});
-					}, this);
+							text: '* Default *'
+						}];
 
-					this.getStore().getRootNode().removeAll();
-					this.getStore().getRootNode().appendChild(nodes);
+						Ext.Array.forEach(decodedResult, function(groupObject, i, allGroupObjects) {
+							nodes.push({
+								cmName: this.cmName,
+								iconCls: 'cmdbuild-tree-group-icon',
+								id: groupObject[CMDBuild.core.constants.Proxy.ID],
+								leaf: true,
+								name: groupObject[CMDBuild.core.constants.Proxy.NAME],
+								text: groupObject[CMDBuild.core.constants.Proxy.TEXT]
+							});
+						}, this);
 
-					if (!Ext.isEmpty(nodeIdToSelect))
-						this.selectNodeById(nodeIdToSelect);
+						this.getStore().getRootNode().removeAll();
+						this.getStore().getRootNode().appendChild(nodes);
+
+						// Replace this.callParent(arguments), inside proxy function doesn't work
+						if (!Ext.isEmpty(nodeIdToSelect))
+							this.selectNodeById(nodeIdToSelect);
+					}
 				}
 			});
 		}
