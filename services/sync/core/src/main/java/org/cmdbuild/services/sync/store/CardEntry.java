@@ -15,7 +15,7 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import com.google.common.base.Objects;
 import com.google.common.collect.Maps;
 
-public class CardEntry extends AbstractEntry<ClassType> {
+public class CardEntry extends AbstractEntry {
 
 	public static class Builder implements org.apache.commons.lang3.builder.Builder<CardEntry> {
 

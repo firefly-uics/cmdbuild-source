@@ -6,6 +6,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
 import org.cmdbuild.service.rest.v1.cxf.service.InMemorySessionStore;
+import org.cmdbuild.service.rest.v1.cxf.service.InMemorySessionStore.Configuration;
 import org.cmdbuild.service.rest.v1.model.Session;
 import org.junit.Before;
 import org.junit.Test;
@@ -18,7 +19,14 @@ public class InMemorySessionStoreTest {
 
 	@Before
 	public void setUp() throws Exception {
-		store = new InMemorySessionStore();
+		store = new InMemorySessionStore(new Configuration() {
+
+			@Override
+			public int timeout() {
+				return 0;
+			}
+
+		});
 	}
 
 	@Test(expected = NullPointerException.class)
@@ -132,6 +140,40 @@ public class InMemorySessionStoreTest {
 
 		// then
 		assertThat(stored.isPresent(), equalTo(false));
+	}
+	
+	
+	@Test
+	public void expirationTest() throws Exception {
+		// given
+		store = new InMemorySessionStore(new Configuration() {
+
+			@Override
+			public int timeout() {				
+				return 1;
+			}
+
+		});
+		final Session session = newSession() //
+				.withId("id") //
+				.withUsername("username") //
+				.withPassword("password") //
+				.withRole("password") //
+				.build();
+		
+		// when
+		store.put(session);
+		
+		// then
+		final Optional<Session> stored = store.get("id");
+		assertThat(stored.isPresent(), equalTo(true));
+		
+		// when
+		Thread.sleep(1000);
+
+		// then
+		final Optional<Session> noMoreStored = store.get("id");
+		assertThat(noMoreStored.isPresent(), equalTo(false));
 	}
 
 }

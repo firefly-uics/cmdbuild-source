@@ -93,6 +93,7 @@ public class Login extends JSONBaseWithSpringContext {
 	}
 
 	@JSONExported
+	@Unauthorized
 	public JsonResponse logout() {
 		final Optional<CMDBContext> element = contextStore().get();
 		if (element.isPresent()) {

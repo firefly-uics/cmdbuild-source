@@ -2,22 +2,22 @@ package org.cmdbuild.servlets.json.management.dataimport.csv;
 
 import java.util.Map;
 
-import org.cmdbuild.dao.entry.CMCard;
+import org.cmdbuild.servlets.json.management.dataimport.csv.CSVImporter.CsvCard;
 
 import com.google.common.collect.Maps;
 
 public class CSVCard {
 
 	private final Map<String, Object> invalidAttributes = Maps.newHashMap();
-	private final CMCard card;
+	private final CsvCard card;
 	private final Long fakeId;
 
-	public CSVCard(final CMCard card, final Long fakeId) {
+	public CSVCard(final CsvCard card, final Long fakeId) {
 		this.card = card;
 		this.fakeId = fakeId;
 	}
 
-	public CMCard getCMCard() {
+	public CsvCard getCMCard() {
 		return card;
 	}
 
