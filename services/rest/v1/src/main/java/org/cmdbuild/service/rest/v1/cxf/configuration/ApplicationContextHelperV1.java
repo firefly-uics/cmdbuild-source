@@ -3,6 +3,7 @@ package org.cmdbuild.service.rest.v1.cxf.configuration;
 import org.cmdbuild.auth.TokenGenerator;
 import org.cmdbuild.auth.TokenManager;
 import org.cmdbuild.auth.UserStore;
+import org.cmdbuild.config.CmdbuildConfiguration;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.logic.auth.AuthenticationLogic;
 import org.cmdbuild.logic.auth.RestAuthenticationLogicBuilder;
@@ -30,6 +31,10 @@ public class ApplicationContextHelperV1 {
 
 	public AuthenticationLogic authenticationLogic() {
 		return applicationContext.getBean(RestAuthenticationLogicBuilder.class).build();
+	}
+
+	public CmdbuildConfiguration cmdbuildConfiguration() {
+		return applicationContext.getBean(CmdbuildConfiguration.class);
 	}
 
 	public DmsLogic dmsLogic() {

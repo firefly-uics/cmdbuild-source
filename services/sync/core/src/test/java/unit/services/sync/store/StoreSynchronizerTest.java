@@ -18,7 +18,7 @@ import org.mockito.InOrder;
 
 public class StoreSynchronizerTest {
 
-	private static final Iterable<Entry<?>> NO_ENTRIES = Collections.emptyList();
+	private static final Iterable<Entry> NO_ENTRIES = Collections.emptyList();
 
 	@Test(expected = NullPointerException.class)
 	public void leftStoreIsRequired() throws Exception {
@@ -78,7 +78,7 @@ public class StoreSynchronizerTest {
 	public void leftOnlyEntriesAreCreated() throws Exception {
 		// given
 		final Key key = mock(Key.class);
-		final Entry<Type> leftOnlyEntry = mock(Entry.class);
+		final Entry leftOnlyEntry = mock(Entry.class);
 		when(leftOnlyEntry.getKey()) //
 				.thenReturn(key);
 		final Store left = mock(Store.class);
@@ -109,13 +109,13 @@ public class StoreSynchronizerTest {
 	public void entriesOnBothLeftAndRightAreUpdated() throws Exception {
 		// given
 		final Key key = mock(Key.class);
-		final Entry<? extends Type> leftEntry = mock(Entry.class);
+		final Entry leftEntry = mock(Entry.class);
 		when(leftEntry.getKey()) //
 				.thenReturn(key);
 		final Store left = mock(Store.class);
 		when(left.readAll()) //
 				.thenReturn(listOf(leftEntry));
-		final Entry<? extends Type> rightEntry = mock(Entry.class);
+		final Entry rightEntry = mock(Entry.class);
 		when(rightEntry.getKey()) //
 				.thenReturn(key);
 		final Store right = mock(Store.class);
@@ -146,7 +146,7 @@ public class StoreSynchronizerTest {
 		when(left.readAll()) //
 				.thenReturn(NO_ENTRIES);
 		final Key key = mock(Key.class);
-		final Entry<? extends Type> rightOnlyEntry = mock(Entry.class);
+		final Entry rightOnlyEntry = mock(Entry.class);
 		when(rightOnlyEntry.getKey()) //
 				.thenReturn(key);
 		final Store right = mock(Store.class);
@@ -170,8 +170,8 @@ public class StoreSynchronizerTest {
 		inOrder.verifyNoMoreInteractions();
 	}
 
-	private Iterable<Entry<?>> listOf(final Entry<?> entry) {
-		return Arrays.<Entry<?>> asList(entry);
+	private Iterable<Entry> listOf(final Entry entry) {
+		return Arrays.<Entry> asList(entry);
 	}
 
 }

@@ -276,12 +276,24 @@ public class ServicesV1 implements LoggingSupport {
 
 	@Bean
 	public SessionStore v1_sessionStore() {
-		return new InMemorySessionStore();
+		return new InMemorySessionStore(v1_configuration());
 	}
 
 	@Bean
 	protected SessionStore v1_impersonateSessionStore() {
-		return new InMemorySessionStore();
+		return new InMemorySessionStore(v1_configuration());
+	}
+
+	@Bean
+	protected InMemorySessionStore.Configuration v1_configuration() {
+		return new InMemorySessionStore.Configuration() {
+
+			@Override
+			public int timeout() {
+				return helper.cmdbuildConfiguration().getSessionTimoutOrZero();
+			}
+
+		};
 	}
 
 	@Bean
