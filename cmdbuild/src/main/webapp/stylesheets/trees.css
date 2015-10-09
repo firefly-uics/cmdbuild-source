@@ -12,10 +12,10 @@
 	.cmdbuild-tree-processclass-icon { background-image: url("../images/icons/tree/process.png") !important; }
 
 /* Report */
-	.cmdbuild-tree-reportpdf-icon { background-image: url("../images/icons/ico_pdf.png") !important; }
-	.cmdbuild-tree-reportcsv-icon { background-image: url("../images/icons/ico_csv.png") !important; }
-	.cmdbuild-tree-reportodt-icon { background-image: url("../images/icons/ico_odt_enabled.png") !important; }
-	.cmdbuild-tree-reportxml-icon { background-image: url("../images/icons/ico_xml.png") !important; }
+	.cmdbuild-tree-reportpdf-icon { background-image: url("../images/icons/fileFormats/pdf.png") !important; }
+	.cmdbuild-tree-reportcsv-icon { background-image: url("../images/icons/fileFormats/csv.png") !important; }
+	.cmdbuild-tree-reportodt-icon { background-image: url("../images/icons/fileFormats/odt.png") !important; }
+	.cmdbuild-tree-reportxml-icon { background-image: url("../images/icons/fileFormats/xml.png") !important; }
 
 /* User */
 	.cmdbuild-tree-user-icon { background-image: url("../images/icons/tree/user.png") !important; }

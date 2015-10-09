@@ -53,7 +53,7 @@
 			this.card = null;
 
 			// Set empty entryType on simple classes
-			if (Ext.isEmpty(this.entryType) || this.entryType.get(CMDBuild.core.proxy.CMProxyConstants.TABLE_TYPE) == 'simpletable')
+			if (!this.entryType || this.entryType.get(CMDBuild.core.constants.Proxy.TABLE_TYPE) == 'simpletable')
 				this.entryType = null;
 
 			this.view.disable();
@@ -88,7 +88,7 @@
 			var currentClass = _CMCache.getEntryTypeById(classId);
 
 			if (this.currentClass != currentClass) {
-				if (!currentClass || currentClass.get(CMDBuild.core.proxy.CMProxyConstants.TABLE_TYPE) == 'simpletable')
+				if (!currentClass || currentClass.get(CMDBuild.core.constants.Proxy.TABLE_TYPE) == 'simpletable')
 					currentClass = null;
 
 				this.currentClass = currentClass;
@@ -108,9 +108,9 @@
 					el.mask();
 
 				var parameters = {};
-				parameters[CMDBuild.core.proxy.CMProxyConstants.CARD_ID] = this.getCardId();
-				parameters[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME] = _CMCache.getEntryTypeNameById(this.getClassId());
-				parameters[CMDBuild.core.proxy.CMProxyConstants.DOMAIN_LIMIT] = CMDBuild.Config.cmdbuild.relationlimit;
+				parameters[CMDBuild.core.constants.Proxy.CARD_ID] = this.getCardId();
+				parameters[CMDBuild.core.constants.Proxy.CLASS_NAME] = _CMCache.getEntryTypeNameById(this.getClassId());
+				parameters[CMDBuild.core.constants.Proxy.DOMAIN_LIMIT] = CMDBuild.Config.cmdbuild.relationlimit;
 
 				CMDBuild.core.proxy.CMProxyRelations.getList({
 					params: parameters,
@@ -125,23 +125,23 @@
 
 							// Domains relation cardinality check
 							Ext.Array.forEach(decodedResult.domains, function(item, index, allItems) {
-								var domainObjext = _CMCache.getDomainById(item[CMDBuild.core.proxy.CMProxyConstants.ID]);
+								var domainObjext = _CMCache.getDomainById(item[CMDBuild.core.constants.Proxy.ID]);
 
 								if ( // Checks when disable add buttons ...
-									item[CMDBuild.core.proxy.CMProxyConstants.RELATIONS_SIZE] == 1 // ... relation size equals 1 ...
+									item[CMDBuild.core.constants.Proxy.RELATIONS_SIZE] == 1 // ... relation size equals 1 ...
 									&& ( // ... and i'm on N side of domain (so i have only one target) ...
 										(
-											domainObjext.get(CMDBuild.core.proxy.CMProxyConstants.CARDINALITY) == 'N:1'
-											&& item[CMDBuild.core.proxy.CMProxyConstants.DOMAIN_SOURCE] == '_1'
+											domainObjext.get(CMDBuild.core.constants.Proxy.CARDINALITY) == 'N:1'
+											&& item[CMDBuild.core.constants.Proxy.DOMAIN_SOURCE] == '_1'
 										)
 										|| (
-											domainObjext.get(CMDBuild.core.proxy.CMProxyConstants.CARDINALITY) == '1:N'
-											&& item[CMDBuild.core.proxy.CMProxyConstants.DOMAIN_SOURCE] == '_2'
+											domainObjext.get(CMDBuild.core.constants.Proxy.CARDINALITY) == '1:N'
+											&& item[CMDBuild.core.constants.Proxy.DOMAIN_SOURCE] == '_2'
 										)
-										|| domainObjext.get(CMDBuild.core.proxy.CMProxyConstants.CARDINALITY) == '1:1' // ... or i'm on 1:1 relation
+										|| domainObjext.get(CMDBuild.core.constants.Proxy.CARDINALITY) == '1:1' // ... or i'm on 1:1 relation
 									)
 								) {
-									toDisableButtons.push(domainObjext.get(CMDBuild.core.proxy.CMProxyConstants.ID));
+									toDisableButtons.push(domainObjext.get(CMDBuild.core.constants.Proxy.ID));
 								}
 							}, this);
 
@@ -203,7 +203,7 @@
 			var domain = _CMCache.getDomainById(model.dom_id);
 			var classData = _CMCache.getClassById(model.dst_cid);
 			var isMany = false;
-			var destination = model[CMDBuild.core.proxy.CMProxyConstants.DOMAIN_SOURCE] == '_1' ? '_2' : '_1'; // Probably tells in witch direction of relation you are looking at
+			var destination = model[CMDBuild.core.constants.Proxy.DOMAIN_SOURCE] == '_1' ? '_2' : '_1'; // Probably tells in witch direction of relation you are looking at
 
 			if (domain)
 				isMany = domain.isMany(destination);
@@ -243,13 +243,13 @@
 						var cardsIdArray = [];
 
 						editRelationWindow.grid.getStore().each(function(record) {
-							cardsIdArray.push(record.get(CMDBuild.core.proxy.CMProxyConstants.ID));
+							cardsIdArray.push(record.get(CMDBuild.core.constants.Proxy.ID));
 						});
 
-						parameters[CMDBuild.core.proxy.CMProxyConstants.DOMAIN_NAME] = domain.get(CMDBuild.core.proxy.CMProxyConstants.NAME);
-						parameters[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME] = classData.get(CMDBuild.core.proxy.CMProxyConstants.NAME);
-						parameters[CMDBuild.core.proxy.CMProxyConstants.CARDS] = Ext.encode(cardsIdArray);
-						parameters[CMDBuild.core.proxy.CMProxyConstants.DOMAIN_DIRECTION] = destination;
+						parameters[CMDBuild.core.constants.Proxy.DOMAIN_NAME] = domain.get(CMDBuild.core.constants.Proxy.NAME);
+						parameters[CMDBuild.core.constants.Proxy.CLASS_NAME] = classData.get(CMDBuild.core.constants.Proxy.NAME);
+						parameters[CMDBuild.core.constants.Proxy.CARDS] = Ext.encode(cardsIdArray);
+						parameters[CMDBuild.core.constants.Proxy.DOMAIN_DIRECTION] = destination;
 
 						CMDBuild.core.proxy.CMProxyRelations.getAlreadyRelatedCards({
 							params: parameters,
@@ -259,11 +259,11 @@
 
 								// Create ids array to use as filter
 								Ext.Array.forEach(decodedResult.response, function(alreadyRelatedItem, index, allItems) {
-									if (alreadyRelatedItem[CMDBuild.core.proxy.CMProxyConstants.ID]) {
+									if (alreadyRelatedItem[CMDBuild.core.constants.Proxy.ID]) {
 										var parameters = {};
-										parameters[CMDBuild.core.proxy.CMProxyConstants.CARD_ID] = alreadyRelatedItem[CMDBuild.core.proxy.CMProxyConstants.ID];
-										parameters[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME] = alreadyRelatedItem[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME];
-										parameters[CMDBuild.core.proxy.CMProxyConstants.DOMAIN_LIMIT] = CMDBuild.Config.cmdbuild.relationlimit;
+										parameters[CMDBuild.core.constants.Proxy.CARD_ID] = alreadyRelatedItem[CMDBuild.core.constants.Proxy.ID];
+										parameters[CMDBuild.core.constants.Proxy.CLASS_NAME] = alreadyRelatedItem[CMDBuild.core.constants.Proxy.CLASS_NAME];
+										parameters[CMDBuild.core.constants.Proxy.DOMAIN_LIMIT] = CMDBuild.Config.cmdbuild.relationlimit;
 
 										// Get all domains of grid-card to check if it have relation with current-card
 										CMDBuild.core.proxy.CMProxyRelations.getList({
@@ -271,40 +271,40 @@
 											scope: this,
 											success: function(result, options, decodedResult) {
 												// Loop through domains array
-												Ext.Array.forEach(decodedResult[CMDBuild.core.proxy.CMProxyConstants.DOMAINS], function(domainItem, index, allItems) {
-													if (domainItem[CMDBuild.core.proxy.CMProxyConstants.ID] == domain.get(CMDBuild.core.proxy.CMProxyConstants.ID)) {
+												Ext.Array.forEach(decodedResult[CMDBuild.core.constants.Proxy.DOMAINS], function(domainItem, index, allItems) {
+													if (domainItem[CMDBuild.core.constants.Proxy.ID] == domain.get(CMDBuild.core.constants.Proxy.ID)) {
 														// Loop through domain (witch i'm creating a relation) relations array
-														Ext.Array.forEach(domainItem[CMDBuild.core.proxy.CMProxyConstants.RELATIONS], function(domainRelationItem, index, allItems) {
+														Ext.Array.forEach(domainItem[CMDBuild.core.constants.Proxy.RELATIONS], function(domainRelationItem, index, allItems) {
 															if (!Ext.Object.isEmpty(classData)) {
-																if (domain.get(CMDBuild.core.proxy.CMProxyConstants.CARDINALITY) == '1:1') {
-																	alreadyRelatedCardsIds.push(options.params[CMDBuild.core.proxy.CMProxyConstants.CARD_ID]);
+																if (domain.get(CMDBuild.core.constants.Proxy.CARDINALITY) == '1:1') {
+																	alreadyRelatedCardsIds.push(options.params[CMDBuild.core.constants.Proxy.CARD_ID]);
 																} else if (
 																	(
-																		domain.get(CMDBuild.core.proxy.CMProxyConstants.CARDINALITY) == '1:N'
-																		&& model[CMDBuild.core.proxy.CMProxyConstants.DOMAIN_SOURCE] == '_1' // Direct
+																		domain.get(CMDBuild.core.constants.Proxy.CARDINALITY) == '1:N'
+																		&& model[CMDBuild.core.constants.Proxy.DOMAIN_SOURCE] == '_1' // Direct
 																	)
 																	|| (
-																		domain.get(CMDBuild.core.proxy.CMProxyConstants.CARDINALITY) == 'N:1'
-																		&& model[CMDBuild.core.proxy.CMProxyConstants.DOMAIN_SOURCE] == '_2' // Inverse
+																		domain.get(CMDBuild.core.constants.Proxy.CARDINALITY) == 'N:1'
+																		&& model[CMDBuild.core.constants.Proxy.DOMAIN_SOURCE] == '_2' // Inverse
 																	)
 																) {
-																	alreadyRelatedCardsIds.push(options.params[CMDBuild.core.proxy.CMProxyConstants.CARD_ID]);
+																	alreadyRelatedCardsIds.push(options.params[CMDBuild.core.constants.Proxy.CARD_ID]);
 																} else if (
 																	(
-																		domain.get(CMDBuild.core.proxy.CMProxyConstants.CARDINALITY) == 'N:1'
-																		&& model[CMDBuild.core.proxy.CMProxyConstants.DOMAIN_SOURCE] == '_1' // Direct
+																		domain.get(CMDBuild.core.constants.Proxy.CARDINALITY) == 'N:1'
+																		&& model[CMDBuild.core.constants.Proxy.DOMAIN_SOURCE] == '_1' // Direct
 																	)
 																	|| (
-																		domain.get(CMDBuild.core.proxy.CMProxyConstants.CARDINALITY) == '1:N'
-																		&& model[CMDBuild.core.proxy.CMProxyConstants.DOMAIN_SOURCE] == '_2' // Inverse
+																		domain.get(CMDBuild.core.constants.Proxy.CARDINALITY) == '1:N'
+																		&& model[CMDBuild.core.constants.Proxy.DOMAIN_SOURCE] == '_2' // Inverse
 																	)
 																) {
 																	// Here should never enter because you'll be blocked from button pop-up
 																} else if (
-																	domain.get(CMDBuild.core.proxy.CMProxyConstants.CARDINALITY) == 'N:N'
-																	&& domainRelationItem['dst_id'] == me.card.get(CMDBuild.core.proxy.CMProxyConstants.ID)
+																	domain.get(CMDBuild.core.constants.Proxy.CARDINALITY) == 'N:N'
+																	&& domainRelationItem['dst_id'] == me.card.get(CMDBuild.core.constants.Proxy.ID)
 																) {
-																	alreadyRelatedCardsIds.push(options.params[CMDBuild.core.proxy.CMProxyConstants.CARD_ID]);
+																	alreadyRelatedCardsIds.push(options.params[CMDBuild.core.constants.Proxy.CARD_ID]);
 																} else {
 																	_warning('onAddRelationButtonClick, domain valutation not catch');
 																}
@@ -348,7 +348,7 @@
 			var data = model.raw || model.getData();
 			var classData = _CMCache.getClassById(model.get('dst_cid'));
 			var domain = _CMCache.getDomainById(model.get('dom_id'));
-			var masterAndSlave = getMasterAndSlave(model.get(CMDBuild.core.proxy.CMProxyConstants.SOURCE));
+			var masterAndSlave = getMasterAndSlave(model.get(CMDBuild.core.constants.Proxy.SOURCE));
 
 			var editRelationWindow = Ext.create('CMDBuild.view.management.classes.relations.CMEditRelationWindow', {
 				domain: domain,
@@ -409,7 +409,7 @@
 		onDeleteRelationClick: function(model) {
 			var me = this;
 			var parameterNames = CMDBuild.ServiceProxy.parameter;
-			var masterAndSlave = getMasterAndSlave(model.get(CMDBuild.core.proxy.CMProxyConstants.SOURCE));
+			var masterAndSlave = getMasterAndSlave(model.get(CMDBuild.core.constants.Proxy.SOURCE));
 
 			Ext.Msg.confirm(
 				CMDBuild.Translation.management.findfilter.msg.attention,
@@ -519,7 +519,7 @@
 				var entryType = _CMCache.getEntryTypeById(classId);
 
 				if (this.lastEntryType != entryType) {
-					if (!entryType || entryType.get(CMDBuild.core.proxy.CMProxyConstants.TABLE_TYPE) == 'simpletable')
+					if (!entryType || entryType.get(CMDBuild.core.constants.Proxy.TABLE_TYPE) == 'simpletable')
 						entryType = null;
 
 					this.lastEntryType = entryType;
@@ -604,7 +604,7 @@
 		var w = Ext.create('CMDBuild.view.management.common.CMCardWindow', {
 			cmEditMode: editable,
 			withButtons: editable,
-			title: model.get(CMDBuild.core.proxy.CMProxyConstants.LABEL) + ' - ' + model.get('dst_desc')
+			title: model.get(CMDBuild.core.constants.Proxy.LABEL) + ' - ' + model.get('dst_desc')
 		});
 
 		if (editable) {
@@ -667,7 +667,7 @@
 			parameters[parameterNames.CARD_ID] = this.getCardId();
 			parameters[parameterNames.CLASS_NAME] = _CMCache.getEntryTypeNameById(this.getClassId());
 			parameters[parameterNames.DOMAIN_ID] = node.get('dom_id');
-			parameters[parameterNames.DOMAIN_SOURCE] = node.get(CMDBuild.core.proxy.CMProxyConstants.SOURCE);
+			parameters[parameterNames.DOMAIN_SOURCE] = node.get(CMDBuild.core.constants.Proxy.SOURCE);
 
 			CMDBuild.core.proxy.CMProxyRelations.getList({
 				params: parameters,

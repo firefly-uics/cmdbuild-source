@@ -7,13 +7,14 @@ import java.util.Map;
 
 import org.cmdbuild.logic.translation.TranslationObject;
 import org.cmdbuild.logic.translation.converter.AttributeConverter;
+import org.cmdbuild.logic.translation.converter.Converter;
 import org.cmdbuild.logic.translation.object.ClassAttributeDescription;
 import org.junit.Test;
 
 import com.google.common.collect.ImmutableMap;
 
 public class ClassAttributeDescriptionObjectCreationTest {
-	
+
 	private static final String entryType = "class";
 	private static final String classname = "Building";
 	private static final String attributename = "Name";
@@ -25,12 +26,12 @@ public class ClassAttributeDescriptionObjectCreationTest {
 	@Test
 	public void forDescriptionFieldReturnsValidObject() {
 		// given
-		final AttributeConverter converter = AttributeConverter //
+		final Converter converter = AttributeConverter //
 				.of(entryType, field)//
-				.withTranslations(map);
+				.withTranslations(map).withIdentifier(attributename).withOwner(classname);
 
 		// when
-		final TranslationObject translationObject = converter.create(classname, attributename);
+		final TranslationObject translationObject = converter.create();
 
 		// then
 		assertTrue(converter.isValid());
@@ -43,12 +44,14 @@ public class ClassAttributeDescriptionObjectCreationTest {
 	@Test
 	public void converterIsCaseInsensitiveForTheField() {
 		// given
-		final AttributeConverter converter = AttributeConverter//
+		final Converter converter = AttributeConverter//
 				.of(entryType, "dEscRiptION") //
+				.withIdentifier(attributename) //
+				.withOwner(classname) //
 				.withTranslations(map);
 
 		// when
-		final TranslationObject translationObject = converter.create(classname, attributename);
+		final TranslationObject translationObject = converter.create();
 
 		// then
 		assertTrue(converter.isValid());
@@ -81,7 +84,8 @@ public class ClassAttributeDescriptionObjectCreationTest {
 
 		// when
 		try {
-			converter.create(classname, attributename);
+			converter.withIdentifier(attributename) //
+					.withOwner(classname).create();
 		} catch (final Exception e) {
 			thrown = e;
 		}
@@ -98,12 +102,14 @@ public class ClassAttributeDescriptionObjectCreationTest {
 				.of(entryType, field);
 
 		// when
-		final TranslationObject translationObject = converter.create(classname, attributename);
+		final TranslationObject translationObject = converter //
+				.withIdentifier(attributename) //
+				.withOwner(classname) //
+				.create();
 
 		// then
 		assertTrue(converter.isValid());
 		assertNotNull(translationObject);
 		assertTrue(ClassAttributeDescription.class.cast(translationObject).getClassName().equals(classname));
 	}
-
 }

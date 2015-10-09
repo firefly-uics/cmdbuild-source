@@ -8,10 +8,6 @@
 	Ext.define("CMDBuild.controller.management.common.widgets.manageRelation.CMManageRelationController", {
 		extend: "CMDBuild.controller.management.common.widgets.manageRelation.CMCardRelationsController",
 
-		statics: {
-			WIDGET_NAME: ".ManageRelation"
-		},
-
 		mixins: {
 			observable: "Ext.util.Observable",
 			widgetcontroller: "CMDBuild.controller.management.common.widgets.CMWidgetController"

@@ -9,9 +9,13 @@
 	        {"name":"cql", "description": CMDBuild.Translation.workflow_by_cql}
 	    ]
 	});
-	
+
 	Ext.define("CMDBuild.view.administration.widget.form.CMWorkflowDefinitionForm", {
 		extend: "CMDBuild.view.administration.widget.form.CMBaseWidgetDefinitionForm",
+
+		mixins: {
+			panelFunctions: 'CMDBuild.view.common.PanelFunctions'
+		},
 
 		statics: {
 			WIDGET_NAME: ".Workflow"
@@ -37,7 +41,7 @@
 			var me = this;
 			var workflowsStore = buildWorkflowsStore();
 			this.callParent(arguments);
-			
+
 			this.queryTypology = Ext.create('Ext.form.ComboBox', {
 			    fieldLabel: CMDBuild.Translation.workflow_query_tipology,
 				labelWidth: CMDBuild.LABEL_WIDTH,
@@ -116,7 +120,7 @@
 				if ( card && card.data) {
 					this.workflowId.setValue(parseInt(card.data.id));
 				}
-	
+
 				this.fillPresetWithData(model.get("preset"));
 			}
 			else if (filter) {
@@ -139,7 +143,7 @@
 		// override
 		getWidgetDefinition: function() {
 			var me = this;
-			var queryType = this.queryTypology.getValue();	
+			var queryType = this.queryTypology.getValue();
 			switch (queryType) {
 				case "cql":
 					return Ext.apply(me.callParent(arguments), {

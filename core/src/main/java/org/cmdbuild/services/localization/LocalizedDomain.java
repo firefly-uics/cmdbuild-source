@@ -32,7 +32,8 @@ class LocalizedDomain extends ForwardingDomain {
 
 		return defaultIfBlank( //
 				facade.read(DomainConverter.of(DESCRIPTION) //
-						.create(getName())), //
+						.withIdentifier(getName())
+						.create()), //
 				super.getDescription());
 	}
 
@@ -40,7 +41,8 @@ class LocalizedDomain extends ForwardingDomain {
 	public String getDescription1() {
 		return defaultIfBlank( //
 				facade.read(DomainConverter.of(DIRECT_DESCRIPTION) //
-						.create(getName())), //
+						.withIdentifier(getName())
+						.create()), //
 				super.getDescription1());
 	}
 
@@ -48,7 +50,8 @@ class LocalizedDomain extends ForwardingDomain {
 	public String getDescription2() {
 		return defaultIfBlank( //
 				facade.read(DomainConverter.of(INVERSE_DESCRIPTION) //
-						.create(getName())), //
+						.withIdentifier(getName())
+						.create()), //
 				super.getDescription2());
 	}
 
@@ -56,7 +59,8 @@ class LocalizedDomain extends ForwardingDomain {
 	public String getMasterDetailDescription() {
 		return defaultIfBlank( //
 				facade.read(DomainConverter.of(MASTERDETAIL_LABEL) //
-						.create(getName())), //
+						.withIdentifier(getName())
+						.create()), //
 				super.getMasterDetailDescription());
 	}
 

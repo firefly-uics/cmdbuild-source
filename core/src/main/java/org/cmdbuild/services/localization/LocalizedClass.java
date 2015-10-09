@@ -26,7 +26,7 @@ class LocalizedClass extends ForwardingClass {
 	public String getDescription() {
 		return defaultIfBlank( //
 				facade.read(ClassConverter.of(ClassConverter.description()) //
-						.create(getName())), //
+						.withIdentifier(getName()).create()), //
 				super.getDescription());
 	}
 

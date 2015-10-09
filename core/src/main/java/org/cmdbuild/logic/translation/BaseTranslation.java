@@ -10,10 +10,7 @@ public abstract class BaseTranslation implements TranslationObject {
 	private static final Map<String, String> NO_TRANSLATIONS = Collections.emptyMap();
 
 	private String name;
-
-	@Deprecated
-	private String field;
-
+	
 	private Map<String, String> translations;
 
 	@Override
@@ -27,18 +24,14 @@ public abstract class BaseTranslation implements TranslationObject {
 		this.name = name;
 	}
 
-	@Deprecated
-	public String getField() {
-		return field;
-	}
-
-	public void setField(final String field) {
-		this.field = field;
-	}
-
 	@Override
 	public Map<String, String> getTranslations() {
 		return defaultIfNull(translations, NO_TRANSLATIONS);
+	}
+	
+	@Override
+	public boolean isValid() {
+		return true;
 	}
 
 	public void setTranslations(final Map<String, String> translations) {

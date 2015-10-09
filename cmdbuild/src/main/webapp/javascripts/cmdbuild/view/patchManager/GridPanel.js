@@ -4,7 +4,7 @@
 		extend: 'Ext.grid.Panel',
 
 		requires: [
-			'CMDBuild.core.proxy.CMProxyConstants',
+			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.PatchManager'
 		],
 
@@ -21,7 +21,7 @@
 				columns: [
 					Ext.create('Ext.grid.column.Column', {
 						header: CMDBuild.Translation.category,
-						dataIndex: CMDBuild.core.proxy.CMProxyConstants.CATEGORY,
+						dataIndex: CMDBuild.core.constants.Proxy.CATEGORY,
 						sortable: false,
 						hideable: false,
 						menuDisabled: true,
@@ -36,7 +36,7 @@
 					}),
 					Ext.create('Ext.grid.column.Column', {
 						header: CMDBuild.Translation.name,
-						dataIndex: CMDBuild.core.proxy.CMProxyConstants.NAME,
+						dataIndex: CMDBuild.core.constants.Proxy.NAME,
 						sortable: false,
 						hideable: false,
 						menuDisabled: true,
@@ -44,7 +44,7 @@
 					}),
 					Ext.create('Ext.grid.column.Column', {
 						header: CMDBuild.Translation.descriptionLabel,
-						dataIndex: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
+						dataIndex: CMDBuild.core.constants.Proxy.DESCRIPTION,
 						sortable: false,
 						hideable: false,
 						menuDisabled: true,

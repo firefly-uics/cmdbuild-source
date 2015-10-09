@@ -3,7 +3,7 @@
 	Ext.define('CMDBuild.controller.management.common.widgets.customForm.layout.Form', {
 		extend: 'CMDBuild.controller.common.AbstractController',
 
-		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+		requires: ['CMDBuild.core.constants.Proxy'],
 
 		/**
 		 * @cfg {Array}
@@ -36,15 +36,15 @@
 		 */
 		beforeActiveView: function() {
 			var isWidgetReadOnly = this.cmfg('widgetConfigurationGet', [
-				CMDBuild.core.proxy.CMProxyConstants.CAPABILITIES,
-				CMDBuild.core.proxy.CMProxyConstants.READ_ONLY
+				CMDBuild.core.constants.Proxy.CAPABILITIES,
+				CMDBuild.core.constants.Proxy.READ_ONLY
 			]);
 
 			if (
 				isWidgetReadOnly
  				|| this.cmfg('widgetConfigurationGet', [
-					CMDBuild.core.proxy.CMProxyConstants.CAPABILITIES,
-					CMDBuild.core.proxy.CMProxyConstants.MODIFY_DISABLED
+					CMDBuild.core.constants.Proxy.CAPABILITIES,
+					CMDBuild.core.constants.Proxy.MODIFY_DISABLED
 				])
 			) {
 				this.view.setDisabledModify(true, true, isWidgetReadOnly);
@@ -57,11 +57,11 @@
 		buildFields: function() {
 			var itemsArray = [];
 
-			if (!this.cmfg('widgetConfigurationIsAttributeEmpty',  CMDBuild.core.proxy.CMProxyConstants.MODEL)) {
+			if (!this.cmfg('widgetConfigurationIsAttributeEmpty',  CMDBuild.core.constants.Proxy.MODEL)) {
 				var fieldManager = Ext.create('CMDBuild.core.fieldManager.FieldManager', { parentDelegate: this });
 
-				Ext.Array.forEach(this.cmfg('widgetConfigurationGet', CMDBuild.core.proxy.CMProxyConstants.MODEL), function(attribute, i, allAttributes) {
-					if (fieldManager.isAttributeManaged(attribute.get(CMDBuild.core.proxy.CMProxyConstants.TYPE))) {
+				Ext.Array.forEach(this.cmfg('widgetConfigurationGet', CMDBuild.core.constants.Proxy.MODEL), function(attribute, i, allAttributes) {
+					if (fieldManager.isAttributeManaged(attribute.get(CMDBuild.core.constants.Proxy.TYPE))) {
 						fieldManager.attributeModelSet(Ext.create('CMDBuild.model.common.attributes.Attribute', attribute.getData()));
 
 						itemsArray.push(fieldManager.buildField());
@@ -74,7 +74,7 @@
 							xaVars['_SystemFieldFilter'] = attribute.filter;
 
 							var templateResolver = new CMDBuild.Management.TemplateResolver({ // TODO: implementation of serverside template resolver
-								clientForm: this.cmfg('widgetControllerPropertyGet', 'getClientForm'),
+								clientForm: this.cmfg('controllerPropertyGet', 'getClientForm'),
 								xaVars: xaVars,
 								serverVars: this.cmfg('getTemplateResolverServerVars')
 							});
@@ -88,7 +88,7 @@
 							item = CMDBuild.Management.FieldManager.getFieldForAttr(attribute, false, false);
 						}
 
-						if (attribute[CMDBuild.core.proxy.CMProxyConstants.FIELD_MODE] == 'read')
+						if (attribute[CMDBuild.core.constants.Proxy.FIELD_MODE] == 'read')
 							item.setDisabled(true);
 
 						itemsArray.push(item);
@@ -152,11 +152,11 @@
 		 */
 		setDefaultContent: function() {
 			this.cmfg('widgetConfigurationSet', {
-				configurationObject: this.cmfg('widgetControllerPropertyGet', 'widgetConfiguration')[CMDBuild.core.proxy.CMProxyConstants.DATA],
-				propertyName: CMDBuild.core.proxy.CMProxyConstants.DATA
+				configurationObject: this.cmfg('controllerPropertyGet', 'widgetConfiguration')[CMDBuild.core.constants.Proxy.DATA],
+				propertyName: CMDBuild.core.constants.Proxy.DATA
 			});
 
-			this.setData(this.cmfg('widgetConfigurationGet', CMDBuild.core.proxy.CMProxyConstants.DATA));
+			this.setData(this.cmfg('widgetConfigurationGet', CMDBuild.core.constants.Proxy.DATA));
 		}
 	});
 

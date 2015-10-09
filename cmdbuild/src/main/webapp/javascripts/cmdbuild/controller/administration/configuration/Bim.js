@@ -3,6 +3,8 @@
 	Ext.define('CMDBuild.controller.administration.configuration.Bim', {
 		extend: 'CMDBuild.controller.common.AbstractController',
 
+		requires: ['CMDBuild.core.constants.Proxy'],
+
 		/**
 		 * @cfg {CMDBuild.controller.administration.configuration.Configuration}
 		 */
@@ -12,14 +14,19 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
-			'onBimAbortButtonClick',
-			'onBimSaveButtonClick'
+			'onConfigurationBimAbortButtonClick',
+			'onConfigurationBimSaveButtonClick'
 		],
 
 		/**
-		 * @cfg {String}
+		 * Proxy parameters
+		 *
+		 * @cfg {Object}
 		 */
-		configFileName: 'bim',
+		params: {
+			fileName: 'bim',
+			view: undefined
+		},
 
 		/**
 		 * @property {CMDBuild.view.administration.configuration.BimPanel}
@@ -39,24 +46,17 @@
 				delegate: this
 			});
 
-			this.cmfg('onConfigurationRead', {
-				configFileName: this.configFileName,
-				view: this.view
-			});
+			this.params[CMDBuild.core.constants.Proxy.VIEW] = this.view;
+
+			this.cmfg('onConfigurationRead', this.params);
 		},
 
-		onBimAbortButtonClick: function() {
-			this.cmfg('onConfigurationRead', {
-				configFileName: this.configFileName,
-				view: this.view
-			});
+		onConfigurationBimAbortButtonClick: function() {
+			this.cmfg('onConfigurationRead', this.params);
 		},
 
-		onBimSaveButtonClick: function() {
-			this.cmfg('onConfigurationSave', {
-				configFileName: this.configFileName,
-				view: this.view
-			});
+		onConfigurationBimSaveButtonClick: function() {
+			this.cmfg('onConfigurationSave', this.params);
 		}
 	});
 
