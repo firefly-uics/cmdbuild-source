@@ -6,8 +6,7 @@
 		requires: [
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.session.JsonRpc',
-			'CMDBuild.core.proxy.session.Rest',
-			'CMDBuild.core.proxy.Configuration'
+			'CMDBuild.core.proxy.session.Rest'
 		],
 
 		/**
@@ -42,21 +41,6 @@
 			this.setupFields();
 		},
 
-		disableRoles: function() {
-			this.form.role.disable();
-			this.form.role.hide();
-		},
-
-		/**
-		 * @param {Array} roles
-		 */
-		enableRoles: function(roles) {
-			this.form.role.getStore().loadData(roles);
-			this.form.role.enable();
-			this.form.role.show();
-			this.form.role.focus();
-		},
-
 		onLoginDoLogin: function() {
 			if (!Ext.isEmpty(this.form.role.getValue()) || this.form.getForm().isValid()) {
 				var params = {};
@@ -66,8 +50,11 @@
 				if (!this.form.role.isHidden())
 					params[CMDBuild.core.constants.Proxy.ROLE] = this.form.role.getValue();
 
+				// LoadMask manual manage to avoid to hide on success
+				CMDBuild.LoadMask.get().show();
 				CMDBuild.core.proxy.session.JsonRpc.login({
 					params: params,
+					loadMask: false,
 					scope: this,
 					success: function(response, options, decodedResponse) {
 						var urlParams = {};
@@ -91,10 +78,13 @@
 						});
 					},
 					failure: function(result, options, decodedResult) {
+						CMDBuild.LoadMask.get().hide();
+
 						if (!Ext.isEmpty(decodedResult) && decodedResult[CMDBuild.core.constants.Proxy.REASON] == 'AUTH_MULTIPLE_GROUPS') {
-							// Multiple groups for this user
-							// TODO Disable user/pass on multiple groups
-							this.enableRoles(decodedResult[CMDBuild.core.constants.Proxy.GROUPS]);
+							CMDBuild.configuration.runtime.set(CMDBuild.core.constants.Proxy.USERNAME, this.form.user.getValue());
+							CMDBuild.configuration.runtime.set(CMDBuild.core.constants.Proxy.GROUPS, decodedResult[CMDBuild.core.constants.Proxy.GROUPS]);
+
+							this.setupFields();
 
 							return false;
 						} else {
@@ -106,30 +96,37 @@
 		},
 
 		onLoginUserChange: function() {
-			this.disableRoles();
+			this.setupFieldsRole(false);
 		},
 
 		setupFields: function() {
-			if (
-				!Ext.isEmpty(CMDBuild.Runtime)
-				&& !Ext.isEmpty(CMDBuild.Runtime.Username)
-			) {
-				this.form.user.setValue(CMDBuild.Runtime.Username);
-				this.form.user.disable();
+			if (!Ext.isEmpty(CMDBuild.configuration.runtime)) {
+				if (Ext.isEmpty(CMDBuild.configuration.runtime.get(CMDBuild.core.constants.Proxy.USERNAME))) {
+					this.form.user.focus();
+				} else {
+					this.form.user.setValue(CMDBuild.configuration.runtime.get(CMDBuild.core.constants.Proxy.USERNAME));
+					this.form.user.disable();
 
-				this.form.password.hide();
-				this.form.password.disable();
-			} else {
-				this.form.user.focus();
+					this.form.password.hide();
+					this.form.password.disable();
+				}
+
+				this.setupFieldsRole(!Ext.isEmpty(CMDBuild.configuration.runtime.get(CMDBuild.core.constants.Proxy.GROUPS)));
 			}
+		},
 
-			if (
-				!Ext.isEmpty(CMDBuild.Runtime)
-				&& !Ext.isEmpty(CMDBuild.Runtime.Groups)
-			) {
-				this.enableRoles(CMDBuild.Runtime.Groups);
+		/**
+		 * @param {Boolean} state
+		 */
+		setupFieldsRole: function(state) {
+			state = Ext.isBoolean(state) ? state : false;
+
+			if (state && !Ext.isEmpty(CMDBuild.configuration.runtime.get(CMDBuild.core.constants.Proxy.GROUPS))) {
+				this.form.role.getStore().loadData(CMDBuild.configuration.runtime.get(CMDBuild.core.constants.Proxy.GROUPS));
+				this.form.role.show();
+				this.form.role.focus();
 			} else {
-				this.disableRoles();
+				this.form.role.hide();
 			}
 		}
 	});

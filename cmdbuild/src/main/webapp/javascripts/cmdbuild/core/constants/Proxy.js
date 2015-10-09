@@ -23,6 +23,7 @@
 		ADVANCED: 'advanced',
 		ALL: 'all',
 		ALLOW_CARD_EDITING: 'allowCardEditing',
+		ALLOW_PASSWORD_CHANGE: 'allowPasswordChange',
 		ALREADY_ASSOCIATED: 'alreadyAssociated',
 		AND: 'and',
 		ANY: 'any',

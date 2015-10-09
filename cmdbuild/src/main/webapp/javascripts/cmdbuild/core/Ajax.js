@@ -1,8 +1,7 @@
 // Ext.require('CMDBuild.core.LoginWindow'); // TODO: should be required on class refactor
 
-if (typeof CMDBuild == "undefined") {
-	CMDBuild = {};
-}
+if (Ext.isEmpty(CMDBuild))
+	Ext.ns('CMDBuild');
 
 CMDBuild.LoadMask = {
 	get: function(text) {
