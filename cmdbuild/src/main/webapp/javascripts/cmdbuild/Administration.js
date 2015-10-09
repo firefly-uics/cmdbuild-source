@@ -147,7 +147,10 @@
 							lookupAccordion,
 							dashboardsAccordion,
 							Ext.create('CMDBuild.view.administration.accordion.Report', { cmName: 'report' }),
-							Ext.create('CMDBuild.view.administration.accordion.Menu', { cmName: 'menu' }),
+							Ext.create('CMDBuild.view.administration.accordion.Menu', {
+								cmControllerType: 'CMDBuild.controller.common.AbstractAccordionController',
+								cmName: 'menu'
+							}),
 							Ext.create('CMDBuild.view.administration.accordion.UserAndGroup', {
 								cmControllerType: 'CMDBuild.controller.common.AbstractAccordionController',
 								cmName: 'userandgroup'

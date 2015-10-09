@@ -25,14 +25,19 @@
 		availableItemsTreePanel: undefined,
 
 		/**
-		 * @property {Object}
-		 */
-		translatableAttributesConfigurationsBuffer: {},
-
-		/**
 		 * @property {Ext.tree.Panel}
 		 */
 		menuTreePanel: undefined,
+
+		/**
+		 * @property {CMDBuild.core.buttons.iconized.MoveRight}
+		 */
+		removeItemButton: undefined,
+
+		/**
+		 * @property {Object}
+		 */
+		translatableAttributesConfigurationsBuffer: {},
 
 		bodyCls: 'cmgraypanel',
 		border: false,
@@ -189,7 +194,17 @@
 								expanded: true,
 								children: []
 							}
-						})
+						}),
+
+						listeners: {
+							scope: this,
+							beforeselect: function(treePanel, record, index, eOpts) {
+								return this.delegate.cmfg('onMenuGroupMenuTreeBeforeselect', record);
+							},
+							selectionchange: function(treePanel, selected, eOpts) {
+								this.delegate.cmfg('onMenuGroupMenuTreeSelectionchange');
+							}
+						}
 					}),
 					{
 						xtype: 'panel',
@@ -205,9 +220,10 @@
 						},
 
 						items: [
-							Ext.create('CMDBuild.core.buttons.iconized.MoveRight', {
+							this.removeItemButton = Ext.create('CMDBuild.core.buttons.iconized.MoveRight', {
 								tooltip: CMDBuild.Translation.remove,
 								scope: this,
+								disabled: true,
 
 								handler: function(button, e) {
 									this.delegate.cmfg('onMenuGroupRemoveItemButtonClick');
