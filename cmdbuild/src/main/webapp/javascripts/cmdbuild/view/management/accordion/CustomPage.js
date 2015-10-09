@@ -33,21 +33,23 @@
 				success: function(response, options, decodedResponse) {
 					decodedResponse = decodedResponse.response;
 
-					var nodes = [];
+					if (!Ext.isEmpty(decodedResponse)) {
+						var nodes = [];
 
-					Ext.Array.forEach(decodedResponse, function(groupObject, i, allGroupObjects) {
-						nodes.push({
-							text: groupObject[CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION],
-							id: groupObject[CMDBuild.core.proxy.CMProxyConstants.ID],
-							iconCls: 'cmdbuild-tree-custompage-icon',
-							cmName: this.cmName,
-							leaf: true
-						});
-					}, this);
+						Ext.Array.forEach(decodedResponse, function(groupObject, i, allGroupObjects) {
+							nodes.push({
+								text: groupObject[CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION],
+								id: groupObject[CMDBuild.core.proxy.CMProxyConstants.ID],
+								iconCls: 'cmdbuild-tree-custompage-icon',
+								cmName: this.cmName,
+								leaf: true
+							});
+						}, this);
 
-					this.getStore().getRootNode().removeAll();
-					this.getStore().getRootNode().appendChild(nodes);
-					this.getStore().sort();
+						this.getStore().getRootNode().removeAll();
+						this.getStore().getRootNode().appendChild(nodes);
+						this.getStore().sort();
+					}
 				}
 			});
 		}
