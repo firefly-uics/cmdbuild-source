@@ -27,6 +27,8 @@
 			'onMenuGroupAbortButtonClick',
 			'onMenuGroupAddFolderButtonClick',
 			'onMenuGroupMenuSelected',
+			'onMenuGroupMenuTreeBeforeselect',
+			'onMenuGroupMenuTreeSelectionchange',
 			'onMenuGroupRemoveItemButtonClick',
 			'onMenuGroupRemoveMenuButtonClick',
 			'onMenuGroupSaveButtonClick'
@@ -36,6 +38,11 @@
 		 * @property {Ext.tree.Panel}
 		 */
 		menuTreePanel: undefined,
+
+		/**
+		 * @property {CMDBuild.core.buttons.iconized.MoveRight}
+		 */
+		removeItemButton: undefined,
 
 		/**
 		 * @cfg {CMDBuild.view.administration.menu.group.GroupView}
@@ -56,6 +63,7 @@
 			// Shorthands
 			this.availableItemsTreePanel = this.view.availableItemsTreePanel;
 			this.menuTreePanel = this.view.menuTreePanel;
+			this.removeItemButton = this.view.removeItemButton;
 		},
 
 		/**
@@ -87,12 +95,40 @@
 			out.index = nodeObject.index;
 			out.referencedClassName = nodeObject.referencedClassName;
 			out.referencedElementId = nodeObject.referencedElementId;
-			out.text = nodeObject[CMDBuild.core.constants.Proxy.DESCRIPTION];
 			out.type = type;
+			out.folderType = nodeObject[CMDBuild.core.constants.Proxy.DESCRIPTION];
 			out.uuid = nodeObject.uuid;
 
-			if (type == 'view')
-				out.iconCls = 'cmdbuild-tree-class-icon';
+			// Label translation
+			switch (nodeObject[CMDBuild.core.constants.Proxy.DESCRIPTION]) {
+				case 'class': {
+					out.text = CMDBuild.Translation.classes;
+				} break;
+
+				case 'custompage': {
+					out.text = CMDBuild.Translation.customPages;
+				} break;
+
+				case 'dashboard': {
+					out.text = CMDBuild.Translation.dashboard;
+				} break;
+
+				case 'processclass': {
+					out.text = CMDBuild.Translation.processes;
+				} break;
+
+				case 'report': {
+					out.text = CMDBuild.Translation.report;
+				} break;
+
+				case 'view': {
+					out.text = CMDBuild.Translation.view;
+				} break;
+
+				default: {
+					out.text = nodeObject[CMDBuild.core.constants.Proxy.DESCRIPTION];
+				}
+			}
 
 			return out;
 		},
@@ -153,7 +189,7 @@
 		},
 
 		onMenuGroupAbortButtonClick: function() {
-			this.onViewOnFront();
+			this.onMenuGroupMenuSelected();
 		},
 
 		/**
@@ -164,7 +200,7 @@
 				this.menuTreePanel.getRootNode().appendChild({
 					text: folderName,
 					type: 'folder',
-					subtype: 'folder',
+					folderType: 'folder',
 					iconCls: 'cmdbuild-tree-folder-icon',
 					leaf: false
 				});
@@ -207,6 +243,24 @@
 			});
 		},
 
+		/**
+		 * Disable selection of root node
+		 *
+		 * @param {CMDBuild.model.menu.TreeStore} record
+		 *
+		 * @returns {Boolean}
+		 */
+		onMenuGroupMenuTreeBeforeselect: function(record) {
+			if (!Ext.isEmpty(record))
+				return !record.isRoot();
+
+			return true;
+		},
+
+		onMenuGroupMenuTreeSelectionchange: function() {
+			this.removeItemButton.setDisabled(!this.menuTreePanel.getSelectionModel().hasSelection());
+		},
+
 		onMenuGroupRemoveItemButtonClick: function() {
 			var selectedNode = this.menuTreePanel.getSelectionModel().getSelection()[0];
 
@@ -239,7 +293,7 @@
 				params: params,
 				scope: this,
 				callback: function(response, options, decodedResponse) {
-					this.onViewOnFront();
+					this.onMenuGroupMenuSelected();
 
 					// Customization of CMDBuild.view.common.field.translatable.Utils.commit
 					Ext.Object.each(this.view.translatableAttributesConfigurationsBuffer, function(key, value, myself) {
@@ -269,7 +323,7 @@
 				params: params,
 				scope: this,
 				callback: function(response, options, decodedResponse) {
-					this.onViewOnFront();
+					this.onMenuGroupMenuSelected();
 				}
 			});
 		},
@@ -283,15 +337,15 @@
 			if (nodeType.indexOf(CMDBuild.core.constants.Proxy.REPORT) >= 0)
 				nodeType = 'report';
 
-			var originalFolderOfTheLeaf = this.availableItemsTreePanel.getRootNode().findChild(CMDBuild.core.constants.Proxy.TYPE, nodeType);
+			var originalFolderOfTheLeaf = this.availableItemsTreePanel.getRootNode().findChild(CMDBuild.core.constants.Proxy.FOLDER_TYPE, nodeType);
+
+			if (!Ext.isEmpty(originalFolderOfTheLeaf)) {
+				originalFolderOfTheLeaf.expand();
+				originalFolderOfTheLeaf.appendChild(node.getData());
+			}
 
 			// Remove the node before adding it to the original tree
 			node.remove();
-
-			if (originalFolderOfTheLeaf) {
-				originalFolderOfTheLeaf.expand();
-				originalFolderOfTheLeaf.appendChild(node);
-			}
 		}
 	});
 
