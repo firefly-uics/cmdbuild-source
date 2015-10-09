@@ -215,8 +215,8 @@
 				var params = {};
 				params[CMDBuild.core.proxy.CMProxyConstants.PASSWORD] = this.password.getValue();
 				params[CMDBuild.core.proxy.CMProxyConstants.USERNAME] = this.user.getValue();
-				
-				if (!this.form.role.isHidden())
+
+				if (!this.role.isHidden())
 					params[CMDBuild.core.constants.Proxy.ROLE] = this.form.role.getValue();
 
 				CMDBuild.core.proxy.session.JsonRpc.login({
