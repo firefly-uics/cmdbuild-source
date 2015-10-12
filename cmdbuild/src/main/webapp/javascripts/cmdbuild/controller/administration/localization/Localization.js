@@ -33,7 +33,7 @@ _debug('CMDBuild', CMDBuild);
 _debug('parameters', parameters);
 				this.view.removeAll(true);
 
-				switch(parameters.get(CMDBuild.core.constants.Proxy.ID)) {
+				switch(parameters.get(CMDBuild.core.constants.Proxy.SECTION_HIERARCHY)[0]) {
 					case 'advancedTranslationsTable': {
 						this.sectionController = Ext.create('CMDBuild.controller.administration.localization.advancedTable.AdvancedTable', { parentDelegate: this });
 					} break;

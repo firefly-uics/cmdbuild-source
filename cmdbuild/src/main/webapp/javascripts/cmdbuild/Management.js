@@ -154,7 +154,7 @@
 				Ext.suspendLayouts();
 				/* ***********************************************/
 
-				this.cmAccordions = [
+				this.cmAccordions = [ // Sorted
 					this.menuAccordion = menuAccordion
 				];
 

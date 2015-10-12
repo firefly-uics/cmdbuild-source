@@ -1,66 +1,77 @@
 (function() {
 
 	Ext.define('CMDBuild.view.administration.accordion.Configuration', {
-		extend: 'CMDBuild.view.common.CMBaseAccordion',
+		extend: 'CMDBuild.view.common.AbstractAccordion',
+
+		/**
+		 * @cfg {CMDBuild.controller.common.AbstractAccordionController}
+		 */
+		delegate: undefined,
+
+		/**
+		 * @cfg {String}
+		 */
+		cmName: undefined,
 
 		title: CMDBuild.Translation.setup,
 
-		constructor: function() {
-			this.callParent(arguments);
-
-			this.updateStore();
-		},
-
 		/**
+		 * @param {Number} nodeIdToSelect
+		 *
 		 * @override
 		 */
-		updateStore: function() {
-			this.store.getRootNode().appendChild([{
-				id: 'generalOptions',
+		updateStore: function(nodeIdToSelect) {
+			var nodes = [{
 				text: CMDBuild.Translation.generalOptions,
-				leaf: true,
-				cmName: 'configuration'
-			}]);
+				cmName: this.cmName,
+				sectionHierarchy: ['generalOptions'],
+				leaf: true
+			}];
 
 			if (!CMDBuild.configuration.userInterface.get(CMDBuild.core.constants.Proxy.CLOUD_ADMIN))
-				this.store.getRootNode().appendChild([
+				nodes = Ext.Array.push(nodes, [
 					{
-						id: 'workflow',
 						text: CMDBuild.Translation.workflowEngine,
-						leaf: true,
-						cmName: 'configuration'
+						cmName: this.cmName,
+						sectionHierarchy: ['workflow'],
+						leaf: true
 					},
 					{
-						id: 'relationGraph',
 						text: CMDBuild.Translation.relationGraph,
-						leaf: true,
-						cmName: 'configuration'
+						cmName: this.cmName,
+						sectionHierarchy: ['relationGraph'],
+						leaf: true
 					},
 					{
-						id: 'alfresco',
 						text: CMDBuild.Translation.alfresco,
-						leaf: true,
-						cmName: 'configuration'
+						cmName: this.cmName,
+						sectionHierarchy: ['alfresco'],
+						leaf: true
 					},
 					{
-						id: 'gis',
 						text: CMDBuild.Translation.gis,
-						leaf: true,
-						cmName: 'configuration'
+						cmName: this.cmName,
+						sectionHierarchy: ['gis'],
+						leaf: true
 					},
 					{
-						id: 'bim',
 						text: CMDBuild.Translation.bim,
-						leaf: true,
-						cmName: 'configuration'
+						cmName: this.cmName,
+						sectionHierarchy: ['bim'],
+						leaf: true
 					},
 					{
-						id: 'server',
 						text: CMDBuild.Translation.serverManagement,
-						leaf: true,
-						cmName: 'configuration'
+						cmName: this.cmName,
+						sectionHierarchy: ['server'],
+						leaf: true
 					}
 				]);
+
+			this.getStore().getRootNode().removeAll();
+			this.getStore().getRootNode().appendChild(nodes);
+
+			this.callParent(arguments);
 		}
 	});
 
