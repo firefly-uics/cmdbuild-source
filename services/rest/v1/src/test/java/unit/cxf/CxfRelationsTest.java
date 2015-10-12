@@ -122,7 +122,7 @@ public class CxfRelationsTest {
 				.when(errorHandler).domainNotFound(eq("dummy"));
 
 		// when
-		cxfRelations.read("dummy", null, null, null);
+		cxfRelations.read("dummy", null, null, null, false);
 	}
 
 	@Test(expected = WebApplicationException.class)
@@ -138,7 +138,7 @@ public class CxfRelationsTest {
 				.when(errorHandler).propagate(any(Exception.class));
 
 		// when
-		cxfRelations.read("12", null, null, null);
+		cxfRelations.read("12", null, null, null, false);
 	}
 
 	@Ignore

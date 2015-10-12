@@ -3,8 +3,8 @@
 	Ext.define('CMDBuild.core.proxy.session.JsonRpc', {
 
 		requires: [
-			'CMDBuild.core.proxy.CMProxyConstants',
-			'CMDBuild.core.proxy.CMProxyUrlIndex',
+			'CMDBuild.core.constants.Proxy',
+			'CMDBuild.core.proxy.Index',
 			'CMDBuild.core.Utils'
 		],
 
@@ -16,7 +16,7 @@
 		login: function(parameters) {
 			CMDBuild.Ajax.request({
 				params: parameters.params,
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.session.jsonRpc.login,
+				url: CMDBuild.core.proxy.Index.session.jsonRpc.login,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
 				scope: parameters.scope || this,
 				success: parameters.success || Ext.emptyFn,
@@ -31,7 +31,7 @@
 		logout: function(parameters) {
 			CMDBuild.Ajax.request({
 				params: parameters.params,
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.session.jsonRpc.logout,
+				url: CMDBuild.core.proxy.Index.session.jsonRpc.logout,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
 				scope: parameters.scope || this,
 				success: parameters.success || Ext.emptyFn,

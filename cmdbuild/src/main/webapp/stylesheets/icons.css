@@ -1,8 +1,5 @@
 .add { background-image: url("../images/icons/add.png") !important; }
 .add_filter { background-image: url("../images/icons/add_filter.png") !important; }
-.arrow_left { background-image: url("../images/icons/arrow_left.png") !important; }
-.arrow_refresh { background-image: url("../images/icons/arrow_refresh.png") !important; }
-.arrow_right { background-image: url("../images/icons/arrow_right.png") !important; }
 .attach { background-image: url("../images/icons/attach.png") !important; }
 .clear_filter { background-image: url("../images/icons/clear_find.png") !important; }
 .clone { background-image: url("../images/icons/clone.png") !important; }
@@ -33,8 +30,15 @@
 .up-hover { background-image: url("../images/icons/up-hover.gif") !important; }
 .userInterface { background-image: url("../images/icons/userInterface.png") !important; }
 
+.arrow_left, /* @deprecated */
+.arrowLeft{ background-image: url("../images/icons/arrow_left.png") !important; }
+.arrow_refresh, /* @deprecated */
+.arrowRefresh { background-image: url("../images/icons/arrow_refresh.png") !important; }
+.arrow_right, /* @deprecated */
+.arrowRight { background-image: url("../images/icons/arrow_right.png") !important; }
 .detail,
 .domain { background-image: url("../images/icons/table_link.png") !important; }
+.collapse { background-image: url("../images/icons/collapse.png") !important; }
 .expand,
 .cmdisplayfield-expandbutton { background-image: url("../images/icons/expand.png") !important; }
 
@@ -58,3 +62,8 @@
 	.sql { background-image: url("../images/icons/fileFormats/sql.png") !important; }
 	.xml { background-image: url("../images/icons/fileFormats/xml.png") !important; }
 	.zip { background-image: url("../images/icons/fileFormats/zip.png") !important; }
+
+
+/* Trigger fields */
+	.trigger-add { background-image: url("../images/form/trigger-add.png") !important; }
+	.trigger-edit { background-image: url("../images/form/trigger-edit.png") !important; }

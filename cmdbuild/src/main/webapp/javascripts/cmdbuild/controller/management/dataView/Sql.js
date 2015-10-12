@@ -5,7 +5,7 @@
 
 		requires: [
 			'CMDBuild.core.Message',
-			'CMDBuild.core.proxy.CMProxyConstants',
+			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.dataView.Sql'
 		],
 
@@ -77,10 +77,10 @@
 		onButtonPrintClick: function(format) {
 			if (!Ext.isEmpty(format)) {
 				var params = {};
-				params[CMDBuild.core.proxy.CMProxyConstants.ATTRIBUTES] = Ext.encode(this.getVisibleColumns());
-				params[CMDBuild.core.proxy.CMProxyConstants.FUNCTION] = this.cmfg('dataViewSelectedGet', CMDBuild.core.proxy.CMProxyConstants.SOURCE_FUNCTION);
-				params[CMDBuild.core.proxy.CMProxyConstants.SORT] = Ext.encode(this.grid.getStore().getSorters());
-				params[CMDBuild.core.proxy.CMProxyConstants.TYPE] = format;
+				params[CMDBuild.core.constants.Proxy.ATTRIBUTES] = Ext.encode(this.getVisibleColumns());
+				params[CMDBuild.core.constants.Proxy.FUNCTION] = this.cmfg('dataViewSelectedGet', CMDBuild.core.constants.Proxy.SOURCE_FUNCTION);
+				params[CMDBuild.core.constants.Proxy.SORT] = Ext.encode(this.grid.getStore().getSorters());
+				params[CMDBuild.core.constants.Proxy.TYPE] = format;
 
 				Ext.create('CMDBuild.controller.common.entryTypeGrid.printTool.PrintWindow', {
 					format: format,
@@ -98,7 +98,7 @@
 			record.fields.each(function(field) {
 				var name = field.name;
 
-				if (!Ext.Array.contains([CMDBuild.core.proxy.CMProxyConstants.ID], name)) { // Filters id attribute
+				if (!Ext.Array.contains([CMDBuild.core.constants.Proxy.ID], name)) { // Filters id attribute
 					var value = record.get(name);
 
 					if (
@@ -134,24 +134,24 @@
 		onDataViewSqlViewSelected: function() {
 			if (!this.cmfg('dataViewSelectedIsEmpty')) {
 				this.cmfg('dataViewSelectedSet', {
-					propertyName: CMDBuild.core.proxy.CMProxyConstants.INPUT,
-					value: _CMCache.getDataSourceInput(this.cmfg('dataViewSelectedGet', CMDBuild.core.proxy.CMProxyConstants.SOURCE_FUNCTION))
+					propertyName: CMDBuild.core.constants.Proxy.INPUT,
+					value: _CMCache.getDataSourceInput(this.cmfg('dataViewSelectedGet', CMDBuild.core.constants.Proxy.SOURCE_FUNCTION))
 				});
 
 				this.cmfg('dataViewSelectedSet', {
-					propertyName: CMDBuild.core.proxy.CMProxyConstants.OUTPUT,
-					value: _CMCache.getDataSourceOutput(this.cmfg('dataViewSelectedGet', CMDBuild.core.proxy.CMProxyConstants.SOURCE_FUNCTION))
+					propertyName: CMDBuild.core.constants.Proxy.OUTPUT,
+					value: _CMCache.getDataSourceOutput(this.cmfg('dataViewSelectedGet', CMDBuild.core.constants.Proxy.SOURCE_FUNCTION))
 				});
 
 				var columns = [];
-				var store = CMDBuild.core.proxy.dataView.Sql.getStore({
-					fields: this.cmfg('dataViewSelectedGet', CMDBuild.core.proxy.CMProxyConstants.OUTPUT)
+				var store = CMDBuild.core.proxy.dataView.Sql.getStoreFromSql({
+					fields: this.cmfg('dataViewSelectedGet', CMDBuild.core.constants.Proxy.OUTPUT)
 				});
 
-				Ext.Array.forEach(this.cmfg('dataViewSelectedGet', CMDBuild.core.proxy.CMProxyConstants.OUTPUT), function(columnObject, i, allColumnObjects) {
+				Ext.Array.forEach(this.cmfg('dataViewSelectedGet', CMDBuild.core.constants.Proxy.OUTPUT), function(columnObject, i, allColumnObjects) {
 					columns.push({
-						text: columnObject[CMDBuild.core.proxy.CMProxyConstants.NAME],
-						dataIndex: columnObject[CMDBuild.core.proxy.CMProxyConstants.NAME],
+						text: columnObject[CMDBuild.core.constants.Proxy.NAME],
+						dataIndex: columnObject[CMDBuild.core.constants.Proxy.NAME],
 						flex: 1
 					});
 				}, this);
@@ -159,7 +159,7 @@
 				this.grid.reconfigure(store, columns);
 
 				var params = {};
-				params[CMDBuild.core.proxy.CMProxyConstants.FUNCTION] = this.cmfg('dataViewSelectedGet', CMDBuild.core.proxy.CMProxyConstants.SOURCE_FUNCTION);
+				params[CMDBuild.core.constants.Proxy.FUNCTION] = this.cmfg('dataViewSelectedGet', CMDBuild.core.constants.Proxy.SOURCE_FUNCTION);
 
 				this.grid.getStore().load({
 					params: params,

@@ -4,7 +4,8 @@
 		extend: 'Ext.grid.Panel',
 
 		requires: [
-			'CMDBuild.core.proxy.CMProxyConstants',
+			'CMDBuild.core.Message',
+			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.email.Templates'
 		],
 
@@ -20,17 +21,17 @@
 			Ext.apply(this, {
 				columns: [
 					{
-						dataIndex: CMDBuild.core.proxy.CMProxyConstants.NAME,
+						dataIndex: CMDBuild.core.constants.Proxy.NAME,
 						text: CMDBuild.Translation.name,
 						flex: 1
 					},
 					{
-						dataIndex: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
+						dataIndex: CMDBuild.core.constants.Proxy.DESCRIPTION,
 						text: CMDBuild.Translation.descriptionLabel,
 						flex: 3
 					},
 					{
-						dataIndex: CMDBuild.core.proxy.CMProxyConstants.SUBJECT,
+						dataIndex: CMDBuild.core.constants.Proxy.SUBJECT,
 						text: CMDBuild.Translation.subject,
 						flex: 2
 					}
@@ -54,7 +55,7 @@
 			viewready: function() {
 				this.getStore().load({
 					scope: this,
-					callback: function() {
+					callback: function(records, operation, success) {
 						if (!this.getSelectionModel().hasSelection())
 							this.getSelectionModel().select(0, true);
 					}
