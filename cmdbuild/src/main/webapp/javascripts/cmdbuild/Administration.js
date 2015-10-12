@@ -95,7 +95,7 @@
 							}),
 							Ext.create('CMDBuild.view.administration.tasks.CMTasks', {
 								cmControllerType: 'CMDBuild.controller.administration.tasks.CMTasksController',
-								cmName: 'tasks'
+								cmName: 'task'
 							}),
 							Ext.create('CMDBuild.view.administration.userAndGroup.UserAndGroupView', {
 								cmControllerType: 'CMDBuild.controller.administration.userAndGroup.UserAndGroup',
@@ -161,7 +161,7 @@
 							}),
 							Ext.create('CMDBuild.view.administration.accordion.Task', {
 								cmControllerType: 'CMDBuild.controller.administration.accordion.Task',
-								cmName: 'tasks'
+								cmName: 'task'
 							}),
 							Ext.create('CMDBuild.view.administration.accordion.Email', {
 								cmControllerType: 'CMDBuild.controller.common.AbstractAccordionController',
