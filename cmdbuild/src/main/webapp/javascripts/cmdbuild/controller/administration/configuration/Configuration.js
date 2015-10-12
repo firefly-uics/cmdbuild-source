@@ -1,30 +1,25 @@
 (function() {
 
 	Ext.define('CMDBuild.controller.administration.configuration.Configuration', {
-		extend: 'CMDBuild.controller.common.CMBasePanelController',
+		extend: 'CMDBuild.controller.common.AbstractBasePanelController',
 
 		requires: [
-			'CMDBuild.core.proxy.CMProxyConstants',
+			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.Configuration'
 		],
 
 		/**
-		 * @cfg {Array}
+		 * @cfg {Object}
 		 */
-		subSections: [
-			'generalOptions', // Default
-			'alfresco',
-			'bim',
-			'gis',
-			'relationGraph',
-			'server',
-			'workflow'
-		],
+		delegate: undefined,
 
 		/**
-		 * @cfg {String}
+		 * @cfg {Array}
 		 */
-		titleSeparator: ' - ',
+		cmfgCatchedFunctions: [
+			'onConfigurationRead',
+			'onConfigurationSave'
+		],
 
 		/**
 		 * @property {CMDBuild.view.administration.configuration.ConfigurationView}
@@ -32,88 +27,72 @@
 		view: undefined,
 
 		/**
-		 * @param {CMDBuild.view.administration.configuration.ConfigurationView} view
+		 * @param {Object} parameters
+		 * @param {String} parameters.fileName
+		 * @param {Mixed} parameters.view
 		 */
-		constructor: function(view) {
-			this.callParent(arguments);
+		onConfigurationRead: function(parameters) {
+			if (
+				!Ext.isEmpty(parameters)
+				&& !Ext.isEmpty(parameters[CMDBuild.core.constants.Proxy.FILE_NAME])
+				&& !Ext.isEmpty(parameters[CMDBuild.core.constants.Proxy.VIEW])
+			) {
+				var fileName = parameters[CMDBuild.core.constants.Proxy.FILE_NAME];
+				var view = parameters[CMDBuild.core.constants.Proxy.VIEW];
 
-			// Handlers exchange
-			this.view.delegate = this;
-		},
-
-		/**
-		 * Gatherer function to catch events
-		 *
-		 * @param {String} name
-		 * @param {Object} param
-		 * @param {Function} callback
-		 */
-		cmfg: function(name, param, callBack) {
-			switch (name) {
-				case 'onConfigurationRead':
-					return this.onConfigurationRead(param.configFileName, param.view);
-
-				case 'onConfigurationSave':
-					return this.onConfigurationSave(param.configFileName, param.view);
-
-				default: {
-					if (!Ext.isEmpty(this.parentDelegate) && Ext.isFunction(this.parentDelegate.cmfg))
-						return this.parentDelegate.cmfg(name, param, callBack);
-				}
-			}
-		},
-
-		/**
-		 * @param {String} configFileName
-		 * @param {Mixed} view
-		 */
-		onConfigurationRead: function(configFileName, view) {
-			if (!Ext.isEmpty(configFileName) && !Ext.isEmpty(view)) {
 				CMDBuild.core.proxy.Configuration.read({
 					scope: this,
 					loadMask: true,
 					success: function(result, options, decodedResult){
 						var decodedResult = decodedResult.data;
 
-						_CMCache.setActiveTranslations(decodedResult.enabled_languages);
-
 						// FIX bug with Firefox that breaks UI on fast configuration page switch
 						if (view.isVisible())
 							view.getForm().setValues(decodedResult);
 
-						// TODO: to delete when localization module will be released
-						if (configFileName == 'cmdbuild')
-							view.languageGrid.setValue(decodedResult.enabled_languages.split(', '));
-
-						if (typeof view.afterSubmit == 'function')
+						if (Ext.isFunction(view.afterSubmit))
 							view.afterSubmit(decodedResult);
 					}
-				}, configFileName);
+				}, fileName);
 			}
 		},
 
 		/**
-		 * @param {String} configFileName
-		 * @param {Mixed} view
+		 * @param {Object} parameters
+		 * @param {String} parameters.fileName
+		 * @param {Mixed} parameters.view
 		 */
-		onConfigurationSave: function(configFileName, view) {
-			if (!Ext.isEmpty(configFileName) && !Ext.isEmpty(view)) {
-				var params = view.getValues();
+		onConfigurationSave: function(parameters) {
+			if (
+				!Ext.isEmpty(parameters)
+				&& !Ext.isEmpty(parameters[CMDBuild.core.constants.Proxy.FILE_NAME])
+				&& !Ext.isEmpty(parameters[CMDBuild.core.constants.Proxy.VIEW])
+			) {
+				var fileName = parameters[CMDBuild.core.constants.Proxy.FILE_NAME];
+				var view = parameters[CMDBuild.core.constants.Proxy.VIEW];
 
-				// TODO: to delete when localization module will be released
-				if (configFileName == 'cmdbuild')
-					params['enabled_languages'] = view.languageGrid.getValue().join(', ');
-
-				CMDBuild.core.proxy.Configuration.save({
+				CMDBuild.core.proxy.Configuration.read({
 					scope: this,
-					params: params,
 					loadMask: true,
-					success: function(result, options, decodedResult) {
-						this.onConfigurationRead(configFileName, view);
+					success: function(result, options, decodedResult){
+						var decodedResult = decodedResult.data;
 
-						CMDBuild.Msg.success();
+						Ext.apply(decodedResult, view.getValues());
+
+						CMDBuild.core.proxy.Configuration.save({
+							scope: this,
+							params: decodedResult,
+							loadMask: true,
+							success: function(result, options, decodedResult) {
+								this.onConfigurationRead(fileName, view);
+
+								CMDBuild.view.common.field.translatable.Utils.commit(view);
+
+								CMDBuild.core.Message.success();
+							}
+						}, fileName);
 					}
-				}, configFileName);
+				}, fileName);
 			}
 		},
 
@@ -128,7 +107,7 @@
 			if (!Ext.Object.isEmpty(parameters)) {
 				this.view.removeAll(true);
 
-				switch(parameters.get(CMDBuild.core.proxy.CMProxyConstants.ID)) {
+				switch(parameters.get(CMDBuild.core.constants.Proxy.SECTION_HIERARCHY)[0]) {
 					case 'alfresco': {
 						this.sectionController = Ext.create('CMDBuild.controller.administration.configuration.Alfresco', { parentDelegate: this });
 					} break;
@@ -161,22 +140,10 @@
 
 				this.view.add(this.sectionController.getView());
 
-				this.setViewTitle(parameters.get(CMDBuild.core.proxy.CMProxyConstants.TEXT));
-
-				_CMCache.initModifyingTranslations();
+				this.setViewTitle(parameters.get(CMDBuild.core.constants.Proxy.TEXT));
 
 				this.callParent(arguments);
 			}
-		},
-
-		/**
-		 * Setup view panel title as a breadcrumbs component
-		 *
-		 * @param {String} titlePart
-		 */
-		setViewTitle: function(titlePart) {
-			if (!Ext.isEmpty(titlePart))
-				this.view.setTitle(this.view.baseTitle + this.titleSeparator + titlePart);
 		}
 	});
 

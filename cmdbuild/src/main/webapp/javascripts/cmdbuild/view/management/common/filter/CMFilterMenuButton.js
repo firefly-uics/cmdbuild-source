@@ -1,5 +1,9 @@
 (function() {
 
+	/**
+	 * @deprecated new class (CMDBuild.view.common.field.filter.advanced.Advanced)
+	 */
+
 	// Constants to identify the icons that the user
 	// could click, and call the right callback
 	var ACTION_CSS_CLASS = {

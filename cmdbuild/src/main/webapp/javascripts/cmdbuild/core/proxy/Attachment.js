@@ -5,8 +5,8 @@
 
 		requires: [
 			'CMDBuild.core.proxy.CMProxy',
-			'CMDBuild.core.proxy.CMProxyConstants',
-			'CMDBuild.core.proxy.CMProxyUrlIndex'
+			'CMDBuild.core.constants.Proxy',
+			'CMDBuild.core.proxy.Index'
 		],
 
 		singleton: true,
@@ -20,7 +20,7 @@
 				model: 'CMDBuild.model.CMAttachment', // TODO: refactor
 				proxy: {
 					type: 'ajax',
-					url: CMDBuild.core.proxy.CMProxyUrlIndex.attachments.getAttachmentList,
+					url: CMDBuild.core.proxy.Index.attachments.getAttachmentList,
 					reader: {
 						type: 'json',
 						root: 'rows'

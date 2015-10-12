@@ -5,6 +5,7 @@ import static org.cmdbuild.spring.configuration.Data.BEAN_SYSTEM_DATA_VIEW;
 import static org.cmdbuild.spring.configuration.FileStore.ROOT;
 import static org.cmdbuild.spring.configuration.FileStore.UPLOAD;
 import static org.cmdbuild.spring.configuration.Lock.USER_LOCK_LOGIC;
+import static org.cmdbuild.spring.configuration.Translation.REQUEST_HANDLER_SETUP_FACADE;
 import static org.cmdbuild.spring.configuration.User.BEAN_USER_DATA_VIEW;
 
 import javax.sql.DataSource;
@@ -54,6 +55,7 @@ import org.cmdbuild.logic.privileges.SecurityLogic;
 import org.cmdbuild.logic.scheduler.SchedulerLogic;
 import org.cmdbuild.logic.setup.SetupLogic;
 import org.cmdbuild.logic.taskmanager.TaskManagerLogic;
+import org.cmdbuild.logic.translation.SetupFacade;
 import org.cmdbuild.logic.translation.TranslationFacade;
 import org.cmdbuild.logic.translation.TranslationLogic;
 import org.cmdbuild.logic.view.ViewLogic;
@@ -305,6 +307,10 @@ public class JSONBaseWithSpringContext extends JSONBase {
 
 	protected TranslationFacade translationFacade() {
 		return applicationContext().getBean(TranslationFacade.class);
+	}
+	
+	protected SetupFacade setupFacade() {
+		return applicationContext().getBean(REQUEST_HANDLER_SETUP_FACADE,SetupFacade.class);
 	}
 
 	/*

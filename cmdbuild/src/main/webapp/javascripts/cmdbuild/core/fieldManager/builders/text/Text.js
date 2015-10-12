@@ -7,7 +7,7 @@
 	Ext.define('CMDBuild.core.fieldManager.builders.text.Text', {
 		extend: 'CMDBuild.core.fieldManager.builders.Abstract',
 
-		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+		requires: ['CMDBuild.core.constants.Proxy'],
 
 		/**
 		 * @cfg {CMDBuild.core.fieldManager.FieldManager}
@@ -43,7 +43,7 @@
 		 * @returns {Mixed}
 		 */
 		buildSubFieldClass: function() {
-			switch (this.cmfg('attributeModelGet', CMDBuild.core.proxy.CMProxyConstants.EDITOR_TYPE)) {
+			switch (this.cmfg('attributeModelGet', CMDBuild.core.constants.Proxy.EDITOR_TYPE)) {
 				case 'HTML':
 					return Ext.create('CMDBuild.core.fieldManager.builders.text.HtmlEditor', { parentDelegate: this });
 

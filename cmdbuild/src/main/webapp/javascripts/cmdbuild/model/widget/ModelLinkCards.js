@@ -1,5 +1,7 @@
 (function() {
 
+	Ext.require('CMDBuild.core.constants.Proxy');
+
 	Ext.define('CMDBuild.model.widget.ModelLinkCards', {
 		extend: 'Ext.util.Observable',
 
@@ -7,7 +9,6 @@
 		 * @property {Boolean}
 		 */
 		_freezed: {},
-
 
 		/**
 		 * @property {Int}
@@ -40,7 +41,7 @@
 		constructor: function(configuration) {
 			configuration = configuration || {};
 
-			this.singleSelect = configuration[CMDBuild.core.proxy.CMProxyConstants.SINGLE_SELECT];
+			this.singleSelect = configuration[CMDBuild.core.constants.Proxy.SINGLE_SELECT];
 
 			this.addEvents({
 				'select': true,

@@ -4,7 +4,7 @@
 		extend: 'CMDBuild.controller.administration.tasks.CMTasksFormBaseController',
 
 		requires: [
-			'CMDBuild.core.proxy.CMProxyConstants',
+			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.CMProxyTasks'
 		],
 
@@ -110,8 +110,8 @@
 		 */
 		onRowSelected: function() {
 			if (this.selectionModel.hasSelection()) {
-				this.selectedId = this.selectionModel.getSelection()[0].get(CMDBuild.core.proxy.CMProxyConstants.ID);
-				this.selectedType = this.selectionModel.getSelection()[0].get(CMDBuild.core.proxy.CMProxyConstants.TYPE);
+				this.selectedId = this.selectionModel.getSelection()[0].get(CMDBuild.core.constants.Proxy.ID);
+				this.selectedType = this.selectionModel.getSelection()[0].get(CMDBuild.core.constants.Proxy.TYPE);
 
 				// Selected task asynchronous store query
 				this.selectedDataStore = CMDBuild.core.proxy.CMProxyTasks.get(this.selectedType);
@@ -131,51 +131,51 @@
 							switch (this.selectedType) {
 								case 'event_asynchronous': { // TODO
 									// Set step1 [0] datas
-									this.delegateStep[0].setValueActive(record.get(CMDBuild.core.proxy.CMProxyConstants.ACTIVE));
-									this.delegateStep[0].setValueClassName(record.get(CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME));
-									this.delegateStep[0].setValueDescription(record.get(CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION));
-									this.delegateStep[0].setValueId(record.get(CMDBuild.core.proxy.CMProxyConstants.ID));
+									this.delegateStep[0].setValueActive(record.get(CMDBuild.core.constants.Proxy.ACTIVE));
+									this.delegateStep[0].setValueClassName(record.get(CMDBuild.core.constants.Proxy.CLASS_NAME));
+									this.delegateStep[0].setValueDescription(record.get(CMDBuild.core.constants.Proxy.DESCRIPTION));
+									this.delegateStep[0].setValueId(record.get(CMDBuild.core.constants.Proxy.ID));
 
 									// Set step2 [1] datas
 									this.delegateStep[1].setValueFilters(
-										Ext.decode(record.get(CMDBuild.core.proxy.CMProxyConstants.FILTER))
+										Ext.decode(record.get(CMDBuild.core.constants.Proxy.FILTER))
 									);
 
 									// Set step3 [2] datas
-									this.delegateStep[2].setValueAdvancedFields(record.get(CMDBuild.core.proxy.CMProxyConstants.CRON_EXPRESSION));
-									this.delegateStep[2].setValueBase(record.get(CMDBuild.core.proxy.CMProxyConstants.CRON_EXPRESSION));
+									this.delegateStep[2].setValueAdvancedFields(record.get(CMDBuild.core.constants.Proxy.CRON_EXPRESSION));
+									this.delegateStep[2].setValueBase(record.get(CMDBuild.core.constants.Proxy.CRON_EXPRESSION));
 
 									// Set step4 [3] datas
-									this.delegateStep[3].setValueNotificationFieldsetCheckbox(record.get(CMDBuild.core.proxy.CMProxyConstants.NOTIFICATION_ACTIVE));
-									this.delegateStep[3].setValueNotificationAccount(record.get(CMDBuild.core.proxy.CMProxyConstants.NOTIFICATION_EMAIL_ACCOUNT));
-									this.delegateStep[3].setValueNotificationTemplate(record.get(CMDBuild.core.proxy.CMProxyConstants.NOTIFICATION_EMAIL_TEMPLATE));
+									this.delegateStep[3].setValueNotificationFieldsetCheckbox(record.get(CMDBuild.core.constants.Proxy.NOTIFICATION_ACTIVE));
+									this.delegateStep[3].setValueNotificationAccount(record.get(CMDBuild.core.constants.Proxy.NOTIFICATION_EMAIL_ACCOUNT));
+									this.delegateStep[3].setValueNotificationTemplate(record.get(CMDBuild.core.constants.Proxy.NOTIFICATION_EMAIL_TEMPLATE));
 // TODO: future implementation
-//									this.delegateStep[3].setValueWorkflowAttributesGrid(record.get(CMDBuild.core.proxy.CMProxyConstants.WORKFLOW_ATTRIBUTES));
-//									this.delegateStep[3].setValueWorkflowCombo(record.get(CMDBuild.core.proxy.CMProxyConstants.WORKFLOW_CLASS_NAME));
-//									this.delegateStep[3].setValueWorkflowFieldsetCheckbox(record.get(CMDBuild.core.proxy.CMProxyConstants.WORKFLOW_ACTIVE));
+//									this.delegateStep[3].setValueWorkflowAttributesGrid(record.get(CMDBuild.core.constants.Proxy.WORKFLOW_ATTRIBUTES));
+//									this.delegateStep[3].setValueWorkflowCombo(record.get(CMDBuild.core.constants.Proxy.WORKFLOW_CLASS_NAME));
+//									this.delegateStep[3].setValueWorkflowFieldsetCheckbox(record.get(CMDBuild.core.constants.Proxy.WORKFLOW_ACTIVE));
 								} break;
 
 								case 'event_synchronous': {
 									// Set step1 [0] datas
-									this.delegateStep[0].selectGroups(record.get(CMDBuild.core.proxy.CMProxyConstants.GROUPS));
-									this.delegateStep[0].setValueActive(record.get(CMDBuild.core.proxy.CMProxyConstants.ACTIVE));
-									this.delegateStep[0].setValueClassName(record.get(CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME));
-									this.delegateStep[0].setValueDescription(record.get(CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION));
-									this.delegateStep[0].setValueId(record.get(CMDBuild.core.proxy.CMProxyConstants.ID));
-									this.delegateStep[0].setValuePhase(record.get(CMDBuild.core.proxy.CMProxyConstants.PHASE));
+									this.delegateStep[0].selectGroups(record.get(CMDBuild.core.constants.Proxy.GROUPS));
+									this.delegateStep[0].setValueActive(record.get(CMDBuild.core.constants.Proxy.ACTIVE));
+									this.delegateStep[0].setValueClassName(record.get(CMDBuild.core.constants.Proxy.CLASS_NAME));
+									this.delegateStep[0].setValueDescription(record.get(CMDBuild.core.constants.Proxy.DESCRIPTION));
+									this.delegateStep[0].setValueId(record.get(CMDBuild.core.constants.Proxy.ID));
+									this.delegateStep[0].setValuePhase(record.get(CMDBuild.core.constants.Proxy.PHASE));
 
 									// Set step2 [1] datas
 									this.delegateStep[1].setValueFilters(
-										Ext.decode(record.get(CMDBuild.core.proxy.CMProxyConstants.FILTER))
+										Ext.decode(record.get(CMDBuild.core.constants.Proxy.FILTER))
 									);
 
 									// Set step3 [2] datas
-									this.delegateStep[2].setValueNotificationFieldsetCheckbox(record.get(CMDBuild.core.proxy.CMProxyConstants.NOTIFICATION_ACTIVE));
-									this.delegateStep[2].setValueNotificationAccount(record.get(CMDBuild.core.proxy.CMProxyConstants.NOTIFICATION_EMAIL_ACCOUNT));
-									this.delegateStep[2].setValueNotificationTemplate(record.get(CMDBuild.core.proxy.CMProxyConstants.NOTIFICATION_EMAIL_TEMPLATE));
-									this.delegateStep[2].setValueWorkflowAttributesGrid(record.get(CMDBuild.core.proxy.CMProxyConstants.WORKFLOW_ATTRIBUTES));
-									this.delegateStep[2].setValueWorkflowCombo(record.get(CMDBuild.core.proxy.CMProxyConstants.WORKFLOW_CLASS_NAME));
-									this.delegateStep[2].setValueWorkflowFieldsetCheckbox(record.get(CMDBuild.core.proxy.CMProxyConstants.WORKFLOW_ACTIVE));
+									this.delegateStep[2].setValueNotificationFieldsetCheckbox(record.get(CMDBuild.core.constants.Proxy.NOTIFICATION_ACTIVE));
+									this.delegateStep[2].setValueNotificationAccount(record.get(CMDBuild.core.constants.Proxy.NOTIFICATION_EMAIL_ACCOUNT));
+									this.delegateStep[2].setValueNotificationTemplate(record.get(CMDBuild.core.constants.Proxy.NOTIFICATION_EMAIL_TEMPLATE));
+									this.delegateStep[2].setValueWorkflowAttributesGrid(record.get(CMDBuild.core.constants.Proxy.WORKFLOW_ATTRIBUTES));
+									this.delegateStep[2].setValueWorkflowCombo(record.get(CMDBuild.core.constants.Proxy.WORKFLOW_CLASS_NAME));
+									this.delegateStep[2].setValueWorkflowFieldsetCheckbox(record.get(CMDBuild.core.constants.Proxy.WORKFLOW_ACTIVE));
 								} break;
 
 								default:
@@ -201,20 +201,20 @@
 			var taskType = this.delegateStep[0].taskType;
 
 			// Validate before save
-			if (this.validate(formData[CMDBuild.core.proxy.CMProxyConstants.ACTIVE], taskType)) {
+			if (this.validate(formData[CMDBuild.core.constants.Proxy.ACTIVE], taskType)) {
 				CMDBuild.LoadMask.get().show();
 
 				// Form actions by type
 					switch (taskType) {
 						case 'event_asynchronous': {
-							submitDatas[CMDBuild.core.proxy.CMProxyConstants.CRON_EXPRESSION] = this.delegateStep[2].getCronDelegate().getValue();
+							submitDatas[CMDBuild.core.constants.Proxy.CRON_EXPRESSION] = this.delegateStep[2].getCronDelegate().getValue();
 
 							// Fieldset submitting filter to avoid to send datas if fieldset are collapsed
 								var notificationFieldsetCheckboxValue = this.delegateStep[3].getValueNotificationFieldsetCheckbox();
 								if (notificationFieldsetCheckboxValue) {
-									submitDatas[CMDBuild.core.proxy.CMProxyConstants.NOTIFICATION_ACTIVE] = notificationFieldsetCheckboxValue;
-									submitDatas[CMDBuild.core.proxy.CMProxyConstants.NOTIFICATION_EMAIL_ACCOUNT] = formData[CMDBuild.core.proxy.CMProxyConstants.NOTIFICATION_EMAIL_ACCOUNT];
-									submitDatas[CMDBuild.core.proxy.CMProxyConstants.NOTIFICATION_EMAIL_TEMPLATE] = formData[CMDBuild.core.proxy.CMProxyConstants.NOTIFICATION_EMAIL_TEMPLATE];
+									submitDatas[CMDBuild.core.constants.Proxy.NOTIFICATION_ACTIVE] = notificationFieldsetCheckboxValue;
+									submitDatas[CMDBuild.core.constants.Proxy.NOTIFICATION_EMAIL_ACCOUNT] = formData[CMDBuild.core.constants.Proxy.NOTIFICATION_EMAIL_ACCOUNT];
+									submitDatas[CMDBuild.core.constants.Proxy.NOTIFICATION_EMAIL_TEMPLATE] = formData[CMDBuild.core.constants.Proxy.NOTIFICATION_EMAIL_TEMPLATE];
 								}
 // TODO: future implementation
 //								var workflowFieldsetCheckboxValue = this.delegateStep[3].getValueWorkflowFieldsetCheckbox();
@@ -222,23 +222,23 @@
 //									var attributesGridValues = this.delegateStep[3].getValueWorkflowAttributeGrid();
 //
 //									if (!Ext.Object.isEmpty(attributesGridValues))
-//										submitDatas[CMDBuild.core.proxy.CMProxyConstants.WORKFLOW_ATTRIBUTES] = Ext.encode(attributesGridValues);
+//										submitDatas[CMDBuild.core.constants.Proxy.WORKFLOW_ATTRIBUTES] = Ext.encode(attributesGridValues);
 //
-//									submitDatas[CMDBuild.core.proxy.CMProxyConstants.WORKFLOW_ACTIVE] = workflowFieldsetCheckboxValue;
-//									submitDatas[CMDBuild.core.proxy.CMProxyConstants.WORKFLOW_CLASS_NAME] = formData[CMDBuild.core.proxy.CMProxyConstants.WORKFLOW_CLASS_NAME];
+//									submitDatas[CMDBuild.core.constants.Proxy.WORKFLOW_ACTIVE] = workflowFieldsetCheckboxValue;
+//									submitDatas[CMDBuild.core.constants.Proxy.WORKFLOW_CLASS_NAME] = formData[CMDBuild.core.constants.Proxy.WORKFLOW_CLASS_NAME];
 //								}
 						} break;
 
 						case 'event_synchronous': {
-							submitDatas[CMDBuild.core.proxy.CMProxyConstants.PHASE] = formData[CMDBuild.core.proxy.CMProxyConstants.PHASE];
-							submitDatas[CMDBuild.core.proxy.CMProxyConstants.GROUPS] = Ext.encode(this.delegateStep[0].getValueGroups());
+							submitDatas[CMDBuild.core.constants.Proxy.PHASE] = formData[CMDBuild.core.constants.Proxy.PHASE];
+							submitDatas[CMDBuild.core.constants.Proxy.GROUPS] = Ext.encode(this.delegateStep[0].getValueGroups());
 
 							// Fieldset submitting filter to avoid to send datas if fieldset are collapsed
 								var notificationFieldsetCheckboxValue = this.delegateStep[2].getValueNotificationFieldsetCheckbox();
 								if (notificationFieldsetCheckboxValue) {
-									submitDatas[CMDBuild.core.proxy.CMProxyConstants.NOTIFICATION_ACTIVE] = notificationFieldsetCheckboxValue;
-									submitDatas[CMDBuild.core.proxy.CMProxyConstants.NOTIFICATION_EMAIL_ACCOUNT] = formData[CMDBuild.core.proxy.CMProxyConstants.NOTIFICATION_EMAIL_ACCOUNT];
-									submitDatas[CMDBuild.core.proxy.CMProxyConstants.NOTIFICATION_EMAIL_TEMPLATE] = formData[CMDBuild.core.proxy.CMProxyConstants.NOTIFICATION_EMAIL_TEMPLATE];
+									submitDatas[CMDBuild.core.constants.Proxy.NOTIFICATION_ACTIVE] = notificationFieldsetCheckboxValue;
+									submitDatas[CMDBuild.core.constants.Proxy.NOTIFICATION_EMAIL_ACCOUNT] = formData[CMDBuild.core.constants.Proxy.NOTIFICATION_EMAIL_ACCOUNT];
+									submitDatas[CMDBuild.core.constants.Proxy.NOTIFICATION_EMAIL_TEMPLATE] = formData[CMDBuild.core.constants.Proxy.NOTIFICATION_EMAIL_TEMPLATE];
 								}
 
 								var workflowFieldsetCheckboxValue = this.delegateStep[2].getValueWorkflowFieldsetCheckbox();
@@ -246,10 +246,10 @@
 									var attributesGridValues = this.delegateStep[2].getValueWorkflowAttributeGrid();
 
 									if (!Ext.Object.isEmpty(attributesGridValues))
-										submitDatas[CMDBuild.core.proxy.CMProxyConstants.WORKFLOW_ATTRIBUTES] = Ext.encode(attributesGridValues);
+										submitDatas[CMDBuild.core.constants.Proxy.WORKFLOW_ATTRIBUTES] = Ext.encode(attributesGridValues);
 
-									submitDatas[CMDBuild.core.proxy.CMProxyConstants.WORKFLOW_ACTIVE] = workflowFieldsetCheckboxValue;
-									submitDatas[CMDBuild.core.proxy.CMProxyConstants.WORKFLOW_CLASS_NAME] = formData[CMDBuild.core.proxy.CMProxyConstants.WORKFLOW_CLASS_NAME];
+									submitDatas[CMDBuild.core.constants.Proxy.WORKFLOW_ACTIVE] = workflowFieldsetCheckboxValue;
+									submitDatas[CMDBuild.core.constants.Proxy.WORKFLOW_CLASS_NAME] = formData[CMDBuild.core.constants.Proxy.WORKFLOW_CLASS_NAME];
 								}
 						} break;
 
@@ -259,15 +259,15 @@
 
 				// Form submit values formatting
 				if (!Ext.isEmpty(filterData))
-					submitDatas[CMDBuild.core.proxy.CMProxyConstants.FILTER] = Ext.encode(filterData);
+					submitDatas[CMDBuild.core.constants.Proxy.FILTER] = Ext.encode(filterData);
 
 				// Data filtering to submit only right values
-				submitDatas[CMDBuild.core.proxy.CMProxyConstants.ACTIVE] = formData[CMDBuild.core.proxy.CMProxyConstants.ACTIVE];
-				submitDatas[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME] = formData[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME];
-				submitDatas[CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION] = formData[CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION];
-				submitDatas[CMDBuild.core.proxy.CMProxyConstants.ID] = formData[CMDBuild.core.proxy.CMProxyConstants.ID];
+				submitDatas[CMDBuild.core.constants.Proxy.ACTIVE] = formData[CMDBuild.core.constants.Proxy.ACTIVE];
+				submitDatas[CMDBuild.core.constants.Proxy.CLASS_NAME] = formData[CMDBuild.core.constants.Proxy.CLASS_NAME];
+				submitDatas[CMDBuild.core.constants.Proxy.DESCRIPTION] = formData[CMDBuild.core.constants.Proxy.DESCRIPTION];
+				submitDatas[CMDBuild.core.constants.Proxy.ID] = formData[CMDBuild.core.constants.Proxy.ID];
 
-				if (Ext.isEmpty(formData[CMDBuild.core.proxy.CMProxyConstants.ID])) {
+				if (Ext.isEmpty(formData[CMDBuild.core.constants.Proxy.ID])) {
 					CMDBuild.core.proxy.CMProxyTasks.create({
 						type: taskType,
 						params: submitDatas,

@@ -1,15 +1,15 @@
 (function() {
 
-	Ext.require('CMDBuild.core.proxy.CMProxyConstants');
+	Ext.require('CMDBuild.core.constants.Proxy');
 
 	Ext.define('CMDBuild.model.email.Templates.grid', {
 		extend: 'Ext.data.Model',
 
 		fields: [
-			{ name: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION, type: 'string' },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.ID, type: 'int' },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.NAME, type: 'string' },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.SUBJECT, type: 'string' }
+			{ name: CMDBuild.core.constants.Proxy.DESCRIPTION, type: 'string' },
+			{ name: CMDBuild.core.constants.Proxy.ID, type: 'int' },
+			{ name: CMDBuild.core.constants.Proxy.NAME, type: 'string' },
+			{ name: CMDBuild.core.constants.Proxy.SUBJECT, type: 'string' }
 		]
 
 	});
@@ -18,20 +18,20 @@
 		extend: 'Ext.data.Model',
 
 		fields: [
-			{ name: CMDBuild.core.proxy.CMProxyConstants.BCC, type: 'string' },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.BODY, type: 'string' },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.CC, type: 'string' },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.DEFAULT_ACCOUNT, type: 'string' },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.DELAY, type: 'int', useNull: true },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION, type: 'string' },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.FROM, type: 'string' },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.ID, type: 'int', useNull: true },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.KEEP_SYNCHRONIZATION, type: 'boolean', defaultValue: false },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.NAME, type: 'string' },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.PROMPT_SYNCHRONIZATION, type: 'boolean', defaultValue: false },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.SUBJECT, type: 'string' },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.TO, type: 'string' },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.VARIABLES, type: 'auto' }
+			{ name: CMDBuild.core.constants.Proxy.BCC, type: 'string' },
+			{ name: CMDBuild.core.constants.Proxy.BODY, type: 'string' },
+			{ name: CMDBuild.core.constants.Proxy.CC, type: 'string' },
+			{ name: CMDBuild.core.constants.Proxy.DEFAULT_ACCOUNT, type: 'string' },
+			{ name: CMDBuild.core.constants.Proxy.DELAY, type: 'int', useNull: true },
+			{ name: CMDBuild.core.constants.Proxy.DESCRIPTION, type: 'string' },
+			{ name: CMDBuild.core.constants.Proxy.FROM, type: 'string' },
+			{ name: CMDBuild.core.constants.Proxy.ID, type: 'int', useNull: true },
+			{ name: CMDBuild.core.constants.Proxy.KEEP_SYNCHRONIZATION, type: 'boolean', defaultValue: false },
+			{ name: CMDBuild.core.constants.Proxy.NAME, type: 'string' },
+			{ name: CMDBuild.core.constants.Proxy.PROMPT_SYNCHRONIZATION, type: 'boolean', defaultValue: false },
+			{ name: CMDBuild.core.constants.Proxy.SUBJECT, type: 'string' },
+			{ name: CMDBuild.core.constants.Proxy.TO, type: 'string' },
+			{ name: CMDBuild.core.constants.Proxy.VARIABLES, type: 'auto' }
 		]
 	});
 
@@ -39,8 +39,8 @@
 		extend: 'Ext.data.Model',
 
 		fields: [
-			{ name: CMDBuild.core.proxy.CMProxyConstants.KEY, type: 'string' },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.VALUE, type: 'string' }
+			{ name: CMDBuild.core.constants.Proxy.KEY, type: 'string' },
+			{ name: CMDBuild.core.constants.Proxy.VALUE, type: 'string' }
 		]
 	});
 

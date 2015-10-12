@@ -3,7 +3,7 @@
 	Ext.define('CMDBuild.view.management.common.widgets.customForm.layout.GridPanel', {
 		extend: 'Ext.grid.Panel',
 
-		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+		requires: ['CMDBuild.core.constants.Proxy'],
 
 		/**
 		 * @cfg {CMDBuild.controller.management.common.widgets.customForm.layout.Grid}
@@ -25,26 +25,26 @@
 
 		initComponent: function() {
 			var isWidgetReadOnly = this.delegate.cmfg('widgetConfigurationGet', [
-				CMDBuild.core.proxy.CMProxyConstants.CAPABILITIES,
-				CMDBuild.core.proxy.CMProxyConstants.READ_ONLY
+				CMDBuild.core.constants.Proxy.CAPABILITIES,
+				CMDBuild.core.constants.Proxy.READ_ONLY
 			]);
 
 			Ext.apply(this, {
 				dockedItems: [
 					Ext.create('Ext.toolbar.Toolbar', {
 						dock: 'top',
-						itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_TOP,
+						itemId: CMDBuild.core.constants.Proxy.TOOLBAR_TOP,
 
 						items: [
-							Ext.create('CMDBuild.core.buttons.Add', {
+							Ext.create('CMDBuild.core.buttons.iconized.add.Add', {
 								text: CMDBuild.Translation.addRow,
 								scope: this,
 
 								disabled: (
 									isWidgetReadOnly
 									|| this.delegate.cmfg('widgetConfigurationGet', [
-										CMDBuild.core.proxy.CMProxyConstants.CAPABILITIES,
-										CMDBuild.core.proxy.CMProxyConstants.ADD_DISABLED
+										CMDBuild.core.constants.Proxy.CAPABILITIES,
+										CMDBuild.core.constants.Proxy.ADD_DISABLED
 									])
 								),
 
@@ -59,8 +59,8 @@
 								disabled: (
 									isWidgetReadOnly
 									|| this.delegate.cmfg('widgetConfigurationGet', [
-										CMDBuild.core.proxy.CMProxyConstants.CAPABILITIES,
-										CMDBuild.core.proxy.CMProxyConstants.IMPORT_DISABLED
+										CMDBuild.core.constants.Proxy.CAPABILITIES,
+										CMDBuild.core.constants.Proxy.IMPORT_DISABLED
 									])
 								),
 
@@ -82,8 +82,8 @@
 				plugins: (
 					isWidgetReadOnly
 					|| this.delegate.cmfg('widgetConfigurationGet', [
-						CMDBuild.core.proxy.CMProxyConstants.CAPABILITIES,
-						CMDBuild.core.proxy.CMProxyConstants.MODIFY_DISABLED
+						CMDBuild.core.constants.Proxy.CAPABILITIES,
+						CMDBuild.core.constants.Proxy.MODIFY_DISABLED
 					])
 				) ? [] : [this.gridEditorPlugin = Ext.create('Ext.grid.plugin.CellEditing', { clicksToEdit: 1 })]
 			});
