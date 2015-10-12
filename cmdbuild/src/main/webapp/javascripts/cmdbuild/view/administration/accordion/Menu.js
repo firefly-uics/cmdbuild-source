@@ -10,6 +10,11 @@
 		],
 
 		/**
+		 * @cfg {CMDBuild.controller.common.AbstractAccordionController}
+		 */
+		delegate: undefined,
+
+		/**
 		 * @cfg {String}
 		 */
 		cmName: undefined,
@@ -55,7 +60,7 @@
 						this.getStore().getRootNode().removeAll();
 						this.getStore().getRootNode().appendChild(nodes);
 
-						// Replace this.callParent(arguments), inside proxy function doesn't work
+						// Alias of this.callParent(arguments), inside proxy function doesn't work
 						if (!Ext.isEmpty(nodeIdToSelect))
 							this.selectNodeById(nodeIdToSelect);
 					}

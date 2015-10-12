@@ -30,8 +30,6 @@
 		statics: {
 			init: function() {
 				var me = this;
-				var administration = true;
-				var forCredits = false;
 
 				Ext.create('CMDBuild.core.LoggerManager'); // Logger configuration
 				Ext.create('CMDBuild.core.Data'); // Data connections configuration
@@ -45,7 +43,7 @@
 				// see http://www.sencha.com/forum/showthread.php?260106-Tooltips-on-forms-and-grid-are-not-resizing-to-the-size-of-the-text/page3#24
 				delete Ext.tip.Tip.prototype.minWidth;
 
-				CMDBuild.view.CMMainViewport.showSplash(forCredits, administration);
+				CMDBuild.view.CMMainViewport.showSplash(false, true);
 
 				CMDBuild.core.proxy.Configuration.readMainConfiguration({
 					success: function(response, options, decoded) {
@@ -132,7 +130,7 @@
 			loadResources: function() {
 				var reqBarrier = Ext.create('CMDBuild.core.RequestBarrier', {
 					callback: function() {
-						_CMMainViewportController.addAccordion([
+						_CMMainViewportController.addAccordion([ // Sorted
 							classesAccordion,
 							processAccordion,
 							domainAccordion,
@@ -142,11 +140,17 @@
 									cmName: 'dataview'
 								})
 							,
-							Ext.create('CMDBuild.view.administration.accordion.Filter', { cmName: 'filter' }),
+							Ext.create('CMDBuild.view.administration.accordion.Filter', {
+								cmControllerType: 'CMDBuild.controller.common.AbstractAccordionController',
+								cmName: 'filter'
+							}),
 							navigationTreesAccordion,
 							lookupAccordion,
 							dashboardsAccordion,
-							Ext.create('CMDBuild.view.administration.accordion.Report', { cmName: 'report' }),
+							Ext.create('CMDBuild.view.administration.accordion.Report', {
+								cmControllerType: 'CMDBuild.controller.common.AbstractAccordionController',
+								cmName: 'report'
+							}),
 							Ext.create('CMDBuild.view.administration.accordion.Menu', {
 								cmControllerType: 'CMDBuild.controller.common.AbstractAccordionController',
 								cmName: 'menu'
@@ -155,15 +159,24 @@
 								cmControllerType: 'CMDBuild.controller.common.AbstractAccordionController',
 								cmName: 'userandgroup'
 							}),
-							Ext.create('CMDBuild.view.administration.accordion.Tasks', { cmName: 'tasks' }),
+							Ext.create('CMDBuild.view.administration.accordion.Task', {
+								cmControllerType: 'CMDBuild.controller.administration.accordion.Task',
+								cmName: 'tasks'
+							}),
 							Ext.create('CMDBuild.view.administration.accordion.Email', {
 								cmControllerType: 'CMDBuild.controller.common.AbstractAccordionController',
 								cmName: 'email'
 							}),
 							gisAccordion,
 							bimAccordion,
-							Ext.create('CMDBuild.view.administration.accordion.Localization', { cmName: 'localizations' }),
-							Ext.create('CMDBuild.view.administration.accordion.Configuration', { cmName: 'setup' })
+							Ext.create('CMDBuild.view.administration.accordion.Localization', {
+								cmControllerType: 'CMDBuild.controller.common.AbstractAccordionController',
+								cmName: 'localizations'
+							}),
+							Ext.create('CMDBuild.view.administration.accordion.Configuration', {
+								cmControllerType: 'CMDBuild.controller.common.AbstractAccordionController',
+								cmName: 'configuration'
+							})
 						]);
 
 						// Resume here the layouts operations

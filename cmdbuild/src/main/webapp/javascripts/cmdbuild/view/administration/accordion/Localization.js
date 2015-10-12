@@ -1,7 +1,12 @@
 (function() {
 
 	Ext.define('CMDBuild.view.administration.accordion.Localization', {
-		extend: 'CMDBuild.view.common.CMBaseAccordion',
+		extend: 'CMDBuild.view.common.AbstractAccordion',
+
+		/**
+		 * @cfg {CMDBuild.controller.common.AbstractAccordionController}
+		 */
+		delegate: undefined,
 
 		/**
 		 * @cfg {String}
@@ -10,32 +15,31 @@
 
 		title: '@@ Localizations',
 
-		constructor: function(){
-			this.callParent(arguments);
-
-			this.updateStore();
-		},
-
 		/**
+		 * @param {Number} nodeIdToSelect
+		 *
 		 * @override
 		 */
-		updateStore: function() {
-			this.store.getRootNode().appendChild([
+		updateStore: function(nodeIdToSelect) {
+			this.getStore().getRootNode().removeAll();
+			this.getStore().getRootNode().appendChild([
 				{
-					id: 'configuration',
-					cmName: this.cmName,
-					leaf: true,
 					text: '@@ Configuration',
-					iconCls: 'cmdbuild-tree-localization-icon'
+					iconCls: 'cmdbuild-tree-localization-icon',
+					sectionHierarchy: ['configuration'],
+					cmName: this.cmName,
+					leaf: true
 				},
 				{
-					id: 'advancedTranslationsTable',
-					cmName: this.cmName,
-					leaf: true,
 					text: '@@ Advanced table',
-					iconCls: 'cmdbuild-tree-localization-icon'
+					iconCls: 'cmdbuild-tree-localization-icon',
+					sectionHierarchy: ['advancedTranslationsTable'],
+					cmName: this.cmName,
+					leaf: true
 				}
 			]);
+
+			this.callParent(arguments);
 		}
 	});
 

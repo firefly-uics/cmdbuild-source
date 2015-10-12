@@ -75,7 +75,8 @@
 		 */
 		onViewOnFront: function(parameters) {
 			if (!Ext.isEmpty(parameters)) {
-				this.taskType = (this.correctTaskTypeCheck(parameters.internalId)) ? parameters.internalId : this.tasksDatas[0];
+				this.taskType = (this.correctTaskTypeCheck(parameters.get(CMDBuild.core.constants.Proxy.SECTION_HIERARCHY)[0]))
+					? parameters.get(CMDBuild.core.constants.Proxy.SECTION_HIERARCHY)[0] : this.tasksDatas[0];
 
 				this.grid.reconfigure(CMDBuild.core.proxy.CMProxyTasks.getStore(this.taskType));
 				this.grid.getStore().load({

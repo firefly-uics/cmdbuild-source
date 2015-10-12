@@ -1,29 +1,37 @@
 (function() {
 
 	Ext.define('CMDBuild.view.administration.accordion.Filter', {
-		extend: 'CMDBuild.view.common.CMBaseAccordion',
+		extend: 'CMDBuild.view.common.AbstractAccordion',
+
+		/**
+		 * @cfg {CMDBuild.controller.common.AbstractAccordionController}
+		 */
+		delegate: undefined,
+
+		/**
+		 * @cfg {String}
+		 */
+		cmName: undefined,
 
 		title: CMDBuild.Translation.searchFilters,
 
-		constructor: function() {
-			this.callParent(arguments);
-
-			this.updateStore();
-		},
-
 		/**
+		 * @param {Number} nodeIdToSelect
+		 *
 		 * @override
 		 */
-		updateStore: function() {
+		updateStore: function(nodeIdToSelect) {
 			this.getStore().getRootNode().removeAll();
 			this.getStore().getRootNode().appendChild([
 				{
-					id: 'groups',
-					cmName: 'filter',
 					text: CMDBuild.Translation.filtersForGroups,
+					cmName: this.cmName,
+					sectionHierarchy: ['groups'],
 					leaf: true
 				}
 			]);
+
+			this.callParent(arguments);
 		}
 	});
 

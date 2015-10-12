@@ -4,6 +4,11 @@
 		extend: 'CMDBuild.view.common.AbstractAccordion',
 
 		/**
+		 * @cfg {CMDBuild.controller.common.AbstractAccordionController}
+		 */
+		delegate: undefined,
+
+		/**
 		 * @cfg {String}
 		 */
 		cmName: undefined,
