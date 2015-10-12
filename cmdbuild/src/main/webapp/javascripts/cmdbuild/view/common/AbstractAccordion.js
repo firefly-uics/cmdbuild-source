@@ -22,6 +22,11 @@
 		cmName: undefined,
 
 		/**
+		 * @cfg {Boolean}
+		 */
+		hideIfEmpty: false,
+
+		/**
 		 * @cfg {String}
 		 */
 		storeModelName: 'CMDBuild.model.common.accordion.Generic',
@@ -123,10 +128,18 @@
 		 * This is a controller function but must stay here because of not compatibility with CMDBuild view/controller automatic instantiation
 		 *
 		 * @param {Number} nodeIdToSelect
+		 *
+		 * TODO: use delegate cmfg when will be possible to instantiate controller manually in Management.js
 		 */
 		updateStore: function(nodeIdToSelect) {
+//			this.delegate.cmfg('onAccordionUpdateStore', nodeIdToSelect);
+
 			if (!Ext.isEmpty(nodeIdToSelect))
 				this.selectNodeById(nodeIdToSelect);
+
+			// Hide if accordion is empty
+			if (this.hideIfEmpty && !this.getStore().getRootNode().hasChildNodes()) // TODO: should be used controller function (onAccordionIsEmpty)
+				this.hide();
 		}
 	});
 

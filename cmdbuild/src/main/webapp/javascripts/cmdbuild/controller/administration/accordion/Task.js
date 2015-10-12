@@ -6,6 +6,11 @@
 		requires: ['CMDBuild.core.constants.Proxy'],
 
 		/**
+		 * @cfg {Object}
+		 */
+		parentDelegate: undefined,
+
+		/**
 		 * @cfg {CMDBuild.view.administration.accordion.Domain}
 		 */
 		accordion: undefined,
