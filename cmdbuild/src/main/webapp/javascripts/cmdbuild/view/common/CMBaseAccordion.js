@@ -21,7 +21,8 @@
 			{ name: CMDBuild.ServiceProxy.parameter.TYPE, type: 'string' },
 			{ name: CMDBuild.ServiceProxy.parameter.FILTER, type: 'auto' },
 			{ name: 'sourceFunction', type: 'auto' },
-			{ name: 'viewType', type: 'string' }
+			{ name: 'viewType', type: 'string' },
+			{ name: CMDBuild.ServiceProxy.parameter.SECTION_HIERARCHY, type: 'auto' }
 		]
 	});
 

@@ -49,7 +49,7 @@
 
 				this.view.removeAll(true);
 
-				switch (this.userAndGroupSelectedAccordionGet(CMDBuild.core.constants.Proxy.SECTION_HIERARCHY)) {
+				switch (this.userAndGroupSelectedAccordionGet(CMDBuild.core.constants.Proxy.SECTION_HIERARCHY)[0]) {
 					case 'user': {
 						this.sectionController = Ext.create('CMDBuild.controller.administration.userAndGroup.user.User', { parentDelegate: this });
 					} break;
