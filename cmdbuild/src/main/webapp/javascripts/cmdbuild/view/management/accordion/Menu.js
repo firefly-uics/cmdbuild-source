@@ -5,6 +5,8 @@
 	Ext.define('CMDBuild.view.management.accordion.Menu', {
 		extend: 'CMDBuild.view.common.CMBaseAccordion',
 
+		requires: ['CMDBuild.core.constants.Proxy'],
+
 		title: CMDBuild.Translation.navigation,
 
 		buildTreeStructure: function(menu) {
@@ -138,7 +140,8 @@
 			} else {
 				out.viewType = 'SQL';
 				out.sourceFunction = node.specificTypeValues.sourceFunction;
-				out.cmName = 'dataView';
+				out.cmName = 'dataview';
+				out[CMDBuild.core.constants.Proxy.SECTION_HIERARCHY] = ['sql'];
 			}
 		}
 

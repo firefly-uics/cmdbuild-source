@@ -181,7 +181,7 @@
 					this.dashboardPanel = new CMDBuild.view.management.dashboard.CMModDashboard({
 						cmControllerType: CMDBuild.controller.management.dashboard.CMModDashboardController
 					}),
-					this.dataViewPanel = Ext.create('CMDBuild.view.management.dataView.DataViewView', {
+					Ext.create('CMDBuild.view.management.dataView.DataViewView', {
 						cmControllerType: 'CMDBuild.controller.management.dataView.DataView',
 						cmName: 'dataview'
 					})

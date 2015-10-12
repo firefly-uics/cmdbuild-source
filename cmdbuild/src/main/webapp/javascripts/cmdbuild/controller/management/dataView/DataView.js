@@ -46,8 +46,8 @@
 
 				this.view.removeAll(true);
 
-				switch(this.dataViewSelectedGet(CMDBuild.core.constants.Proxy.ID)) { // FIXME: implement node identifier
-					case 'dataViewSql':
+				switch(this.dataViewSelectedGet(CMDBuild.core.constants.Proxy.SECTION_HIERARCHY)[0]) {
+					case 'sql':
 					default: {
 						this.sectionController = Ext.create('CMDBuild.controller.management.dataView.Sql', { parentDelegate: this });
 					}
