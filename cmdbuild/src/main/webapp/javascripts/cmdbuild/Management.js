@@ -230,13 +230,13 @@
 					this.cmAccordions.push(this.dashboardsAccordion);
 				}
 
-				if (!_CMUIConfiguration.isModuleDisabled(CMDBuild.core.proxy.CMProxyConstants.CUSTOM_PAGES)) {
-					this.cmAccordions.push(Ext.create('CMDBuild.view.management.accordion.CustomPage', { cmName: 'custompage' }));
-				}
-
 				if (!_CMUIConfiguration.isModuleDisabled(reportAccordion.cmName)) {
 					this.reportAccordion = reportAccordion;
 					this.cmAccordions.push(this.reportAccordion);
+				}
+
+				if (!_CMUIConfiguration.isModuleDisabled(CMDBuild.core.proxy.CMProxyConstants.CUSTOM_PAGES)) {
+					this.cmAccordions.push(Ext.create('CMDBuild.view.management.accordion.CustomPage', { cmName: 'custompage' }));
 				}
 
 				this.utilitiesTree = new CMDBuild.administration.utilities.UtilitiesAccordion({ // TODO move in common

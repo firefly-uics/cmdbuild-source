@@ -21,6 +21,8 @@ body {
 	width: 100%;
 }
 
+iframe { border: none; }
+
 em { font-style: oblique !important; }
 
 .cmdb-tab p {
