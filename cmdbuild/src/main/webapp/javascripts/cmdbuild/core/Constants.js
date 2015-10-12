@@ -53,7 +53,6 @@ CMDBuild.Constants = {
 		tree_folder: "cmdbuild-tree-folder-icon"
 	},
 	customPages: {
-		corePath: "javascripts/guiFramework-1.0/",
 		customizationsPath: "upload/custompages/"
 	}
 };

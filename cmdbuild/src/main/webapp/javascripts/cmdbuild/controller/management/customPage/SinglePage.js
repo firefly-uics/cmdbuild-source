@@ -20,8 +20,8 @@
 		 */
 		onViewOnFront: function(node) {
 			if (!Ext.isEmpty(node)) {
-				var guiFrameworkPath = window.location.toString().split('/');
-				guiFrameworkPath = Ext.Array.slice(guiFrameworkPath, 0, guiFrameworkPath.length - 1).join('/');
+				var basePath = window.location.toString().split('/');
+				basePath = Ext.Array.slice(basePath, 0, basePath.length - 1).join('/');
 
 				this.setViewTitle(node.get(CMDBuild.core.proxy.CMProxyConstants.TEXT));
 
@@ -31,9 +31,7 @@
 
 					autoEl: {
 						tag: 'iframe',
-						src: CMDBuild.Constants.customPages.customizationsPath
-							+ node.get(CMDBuild.core.proxy.CMProxyConstants.TEXT)
-							+ '/?guiFrameworkCorePath=' + guiFrameworkPath + '/' + CMDBuild.Constants.customPages.corePath
+						src: CMDBuild.Constants.customPages.customizationsPath + node.get(CMDBuild.core.proxy.CMProxyConstants.TEXT) + '/?basePath=' + basePath
 					}
 				});
 			}
