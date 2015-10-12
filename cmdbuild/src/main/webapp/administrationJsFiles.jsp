@@ -130,8 +130,6 @@
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/widget/CMPingController.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/widget/CMCreateModifyCardController.js"></script>
 
-<script type="text/javascript" src="javascripts/cmdbuild/Administration.js"></script>
-
 <!-- BIM - ADMINISTRATION -->
 <script type="text/javascript" src="javascripts/cmdbuild/bim/administration/view/CMBIMAccordion.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/bim/administration/view/CMBIMPanel.js"></script>
@@ -141,3 +139,5 @@
 <script type="text/javascript" src="javascripts/cmdbuild/bim/administration/view/CMBIMGridConfigurator.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/bim/administration/controller/CMBIMPanelController.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/bim/administration/controller/CMBimLayerController.js"></script>
+
+<script type="text/javascript" src="javascripts/cmdbuild/Administration.js"></script>

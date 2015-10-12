@@ -79,7 +79,6 @@
 	<script type="text/javascript" src="javascripts/cmdbuild/view/management/dashboard/CMModDashbaord.js"></script>
 
 	<!-- UTILITIES -->
-	<script type="text/javascript" src="javascripts/cmdbuild/view/management/utilities/CMUtilitiesAccordion.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/management/utilities/CMModChangePassword.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/management/utilities/CMBulkCardForm.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/management/utilities/CMModBulkCardUpdate.js"></script>

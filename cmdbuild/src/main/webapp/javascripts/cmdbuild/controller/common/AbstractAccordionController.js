@@ -26,7 +26,8 @@
 			'onAccordionIsNodeSelectable',
 			'onAccordionSelectFirstSelectableNode',
 			'onAccordionSelectionChange',
-			'onAccordionSelectNodeById'
+			'onAccordionSelectNodeById',
+			'onAccordionUpdateStore'
 		],
 
 		/**
@@ -169,6 +170,19 @@
 			} else {
 				_warning('cannot find node with id "' + id + '"', this);
 			}
+		},
+
+		/**
+		 * @param {Number} nodeIdToSelect
+		 *
+		 * TODO: waiting for implementation (see view comment)
+		 */
+		onAccordionUpdateStore: function(nodeIdToSelect) {
+			if (!Ext.isEmpty(nodeIdToSelect))
+				this.onAccordionSelectNodeById(nodeIdToSelect);
+
+			// Hide if accordion is empty
+			this.view.setVisible(this.view.hideIfEmpty && this.onAccordionIsEmpty());
 		}
 	});
 

@@ -89,11 +89,6 @@
 				// See http://www.sencha.com/forum/showthread.php?260106-Tooltips-on-forms-and-grid-are-not-resizing-to-the-size-of-the-text/page3#24
 				delete Ext.tip.Tip.prototype.minWidth;
 
-				var me = this;
-				var cb = function() {
-					me.buildComponents();
-				}
-
 				CMDBuild.view.CMMainViewport.showSplash();
 
 				CMDBuild.core.proxy.Configuration.readAll({
@@ -135,10 +130,10 @@
 										success: function(operation, config, response) {
 											CMDBuild.Config.bim.rootClass = response.root;
 										},
-										callback: cb
+										callback: CMDBuild.app.Management.buildComponents
 									});
 								} else {
-									cb();
+									CMDBuild.app.Management.buildComponents();
 								}
 							}
 						});
@@ -147,103 +142,10 @@
 			},
 
 			buildComponents: function() {
-				/* **********************************************
-				 * Suspend here the layouts, and resume after all
-				 * the load are end
-				 * **********************************************/
-				Ext.suspendLayouts();
-				/* ***********************************************/
+				Ext.suspendLayouts(); // Suspend here the layouts, and resume after all the load are end
 
-				this.cmAccordions = [ // Sorted
-					this.menuAccordion = menuAccordion
-				];
-
-				this.cmPanels = [
-					Ext.create('Ext.panel.Panel'),
-					this.cardPanel = new CMDBuild.view.management.classes.CMModCard({
-						cmControllerType: CMDBuild.controller.management.classes.CMModCardController
-					}),
-					this.processPanel = new CMDBuild.view.management.workflow.CMModProcess({
-						cmControllerType: CMDBuild.controller.management.workflow.CMModWorkflowController
-					}),
-					Ext.create('CMDBuild.view.management.report.ReportView', {
-						cmControllerType: 'CMDBuild.controller.management.report.Report',
-						cmName: 'report'
-					}),
-					Ext.create('CMDBuild.view.management.report.SingleReportPanel', {
-						cmControllerType: 'CMDBuild.controller.management.report.SingleReport',
-						cmName: 'singlereport'
-					}),
-					Ext.create('CMDBuild.view.management.customPage.SinglePagePanel', {
-						cmControllerType: 'CMDBuild.controller.management.customPage.SinglePage',
-						cmName: 'custompage'
-					}),
-					this.dashboardPanel = new CMDBuild.view.management.dashboard.CMModDashboard({
-						cmControllerType: CMDBuild.controller.management.dashboard.CMModDashboardController
-					}),
-					Ext.create('CMDBuild.view.management.dataView.DataViewView', {
-						cmControllerType: 'CMDBuild.controller.management.dataView.DataView',
-						cmName: 'dataview'
-					})
-				];
-
-				if (!CMDBuild.configuration.userInterface.isDisabledModule(classesAccordion.cmName)) {
-					this.classesAccordion = classesAccordion;
-					this.cmAccordions.push(this.classesAccordion);
-				}
-
-				if (!CMDBuild.configuration.userInterface.isDisabledModule(processAccordion.cmName) && CMDBuild.Config.workflow.enabled == 'true') {
-					this.processAccordion = processAccordion;
-					this.cmAccordions.push(this.processAccordion);
-				}
-
-				if (!CMDBuild.configuration.userInterface.isDisabledModule(CMDBuild.core.constants.Proxy.DATA_VIEW)) {
-					this.cmAccordions.push(
-						Ext.create('CMDBuild.view.management.accordion.DataView', {
-							cmControllerType: 'CMDBuild.controller.management.accordion.DataView',
-							cmName: 'dataview'
-						})
-					);
-				}
-
-				if (!CMDBuild.configuration.userInterface.isDisabledModule(dashboardsAccordion.cmName)) {
-					this.dashboardsAccordion = dashboardsAccordion;
-					this.cmAccordions.push(this.dashboardsAccordion);
-				}
-
-				if (!CMDBuild.configuration.userInterface.isDisabledModule(reportAccordion.cmName)) {
-					this.reportAccordion = reportAccordion;
-					this.cmAccordions.push(this.reportAccordion);
-				}
-
-				if (!CMDBuild.configuration.userInterface.isDisabledModule(CMDBuild.core.constants.Proxy.CUSTOM_PAGES)) {
-					this.cmAccordions.push(Ext.create('CMDBuild.view.management.accordion.CustomPage', { cmName: 'custompage' }));
-				}
-
-				this.utilitiesTree = new CMDBuild.administration.utilities.UtilitiesAccordion({ // TODO move in common
-					title: CMDBuild.Translation.management.modutilities.title
-				});
-
-				if (this.utilitiesTree.getRootNode().childNodes.length > 0)
-					this.cmAccordions.push(this.utilitiesTree);
-
-				for (var moduleName in this.utilitiesTree.submodules) {
-					var cmName = this.utilitiesTree.getSubmoduleCMName(moduleName);
-
-					if (!CMDBuild.configuration.userInterface.isDisabledModule(cmName))
-						addUtilitySubpanel(cmName, this.cmPanels);
-				}
-
-				this.loadResources();
-
-				if (CMDBuild.configuration.userInterface.get(CMDBuild.core.constants.Proxy.FULL_SCREEN_MODE))
-					_CMUIState.onlyGrid();
-			},
-
-			loadResources: function() {
 				_CMCache.syncAttachmentCategories();
 
-				var me = this;
 				var params = {};
 				var reqBarrier = Ext.create('CMDBuild.core.RequestBarrier', {
 					callback: function() {
@@ -254,17 +156,70 @@
 
 						_CMMainViewportController = new CMDBuild.controller.CMMainViewportController(
 							new CMDBuild.view.CMMainViewport({
-								cmAccordions: me.cmAccordions,
-								cmPanels: me.cmPanels,
+								cmAccordions: [ // Sorted
+									menuAccordion,
+									CMDBuild.configuration.userInterface.isDisabledModule('class') ? null : classesAccordion,
+									CMDBuild.configuration.userInterface.isDisabledModule('process') || !(CMDBuild.Config.workflow.enabled == 'true') ? null : processAccordion,
+									CMDBuild.configuration.userInterface.isDisabledModule(CMDBuild.core.constants.Proxy.DATA_VIEW) ? null :
+										Ext.create('CMDBuild.view.management.accordion.DataView', {
+											cmControllerType: 'CMDBuild.controller.management.accordion.DataView',
+											cmName: 'dataview'
+										})
+									,
+									CMDBuild.configuration.userInterface.isDisabledModule('dashboard') ? null : dashboardsAccordion,
+									CMDBuild.configuration.userInterface.isDisabledModule('report') ? null : reportAccordion,
+									CMDBuild.configuration.userInterface.isDisabledModule(CMDBuild.core.constants.Proxy.CUSTOM_PAGES) ? null :
+										Ext.create('CMDBuild.view.management.accordion.CustomPage', {
+											cmControllerType: 'CMDBuild.controller.common.AbstractAccordionController',
+											cmName: 'custompage'
+										})
+									,
+									Ext.create('CMDBuild.view.management.accordion.Utility', {
+										cmControllerType: 'CMDBuild.controller.common.AbstractAccordionController',
+										cmName: 'utility'
+									})
+								],
+								cmPanels: [
+									Ext.create('Ext.panel.Panel'),
+									Ext.create('CMDBuild.view.management.customPage.SinglePagePanel', {
+										cmControllerType: 'CMDBuild.controller.management.customPage.SinglePage',
+										cmName: 'custompage'
+									}),
+									Ext.create('CMDBuild.view.management.dataView.DataViewView', {
+										cmControllerType: 'CMDBuild.controller.management.dataView.DataView',
+										cmName: 'dataview'
+									}),
+									Ext.create('CMDBuild.view.management.report.ReportView', {
+										cmControllerType: 'CMDBuild.controller.management.report.Report',
+										cmName: 'report'
+									}),
+									Ext.create('CMDBuild.view.management.report.SingleReportPanel', {
+										cmControllerType: 'CMDBuild.controller.management.report.SingleReport',
+										cmName: 'singlereport'
+									}),
+									this.cardPanel = new CMDBuild.view.management.classes.CMModCard({
+										cmControllerType: CMDBuild.controller.management.classes.CMModCardController
+									}),
+									this.processPanel = new CMDBuild.view.management.workflow.CMModProcess({
+										cmControllerType: CMDBuild.controller.management.workflow.CMModWorkflowController
+									}),
+									this.dashboardPanel = new CMDBuild.view.management.dashboard.CMModDashboard({
+										cmControllerType: CMDBuild.controller.management.dashboard.CMModDashboardController
+									}),
+									new CMDBuild.view.management.utilities.CMModChangePassword(),
+									new CMDBuild.view.management.utilites.CMModBulkCardUpdate({
+										cmControllerType: CMDBuild.controller.management.utilities.CMModBulkUpdateController
+									}),
+									new CMDBuild.view.management.utilities.CMModImportCSV({
+										cmControllerType: CMDBuild.controller.management.utilities.CMModImportCSVController
+									}),
+									new CMDBuild.view.management.utilities.CMModExportCSV()
+								],
 								hideAccordions: CMDBuild.configuration.userInterface.get(CMDBuild.core.constants.Proxy.HIDE_SIDE_PANEL)
 							})
 						);
 
-						/* *********************************
-						 * Resume here the layouts operations
-						 */
-						Ext.resumeLayouts(true);
-						/* *********************************/
+						Ext.resumeLayouts(true); // Resume here the layouts operations
 
 						_CMMainViewportController.viewport.doLayout();
 
@@ -373,6 +328,9 @@
  				});
 
 				reqBarrier.start();
+
+				if (CMDBuild.configuration.userInterface.get(CMDBuild.core.constants.Proxy.FULL_SCREEN_MODE))
+					_CMUIState.onlyGrid();
 			}
 		}
 	});
@@ -384,30 +342,6 @@
 			a.disable();
 			a.hide();
 		}
-	}
-
-	function addUtilitySubpanel(cmName, panels) {
-		var builders = {
-			changepassword : function() {
-				return new CMDBuild.view.management.utilities.CMModChangePassword();
-			},
-			bulkcardupdate : function() {
-				return new CMDBuild.view.management.utilites.CMModBulkCardUpdate({
-					cmControllerType: CMDBuild.controller.management.utilities.CMModBulkUpdateController
-				});
-			},
-			importcsv : function() {
-				return new CMDBuild.view.management.utilities.CMModImportCSV({
-					cmControllerType: CMDBuild.controller.management.utilities.CMModImportCSVController
-				});
-			},
-			exportcsv : function() {
-				return new CMDBuild.view.management.utilities.CMModExportCSV();
-			}
-		};
-
-		if (typeof builders[cmName] == 'function')
-			panels.push(builders[cmName]());
 	}
 
 })();

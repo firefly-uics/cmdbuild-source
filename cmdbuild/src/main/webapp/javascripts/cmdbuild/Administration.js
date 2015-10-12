@@ -1,14 +1,28 @@
 (function() {
 
-	var bimAccordion = null;
-	var classesAccordion = null;
+	var bimAccordion = new CMDBuild.view.administration.accordion.CMBIMAccordion();
+	var classesAccordion = new CMDBuild.view.administration.accordion.CMClassAccordion({
+		cmControllerType: CMDBuild.controller.accordion.CMClassAccordionController
+	});;
 	var controllerNS = CMDBuild.controller;
-	var dashboardsAccordion = null;
-	var domainAccordion = null;
-	var gisAccordion = null;
-	var lookupAccordion = null;
-	var navigationTreesAccordion = null;
-	var processAccordion = null;
+	var dashboardsAccordion = new CMDBuild.view.administration.accordion.CMDashboardAccordion({
+		cmControllerType: CMDBuild.controller.accordion.CMDashboardAccordionController
+	});
+	var domainAccordion = Ext.create('CMDBuild.view.administration.accordion.Domain', {
+		cmControllerType: 'CMDBuild.controller.administration.accordion.Domain',
+		cmName: 'domain'
+	});
+	var gisAccordion = new CMDBuild.view.administration.accordion.CMGISAccordion();
+	var lookupAccordion = Ext.create('CMDBuild.view.administration.accordion.Lookup', {
+		cmControllerType: 'CMDBuild.controller.administration.accordion.Lookup',
+		cmName: 'lookuptype',
+	});
+	var navigationTreesAccordion = new CMDBuild.view.administration.accordion.CMNavigationTreesAccordion({
+		cmControllerType: CMDBuild.controller.accordion.CMNavigationTreesAccordionController
+	});
+	var processAccordion = new CMDBuild.view.administration.accordion.CMProcessAccordion({
+		cmControllerType: CMDBuild.controller.accordion.CMProcessAccordionController
+	});
 
 	Ext.define('CMDBuild.app.Administration', {
 		extend: 'Ext.app.Application',
@@ -24,13 +38,11 @@
 			'CMDBuild.core.proxy.report.Report'
 		],
 
-		name: 'CMDBuild',
 		appFolder: './javascripts/cmdbuild',
+		name: 'CMDBuild',
 
 		statics: {
 			init: function() {
-				var me = this;
-
 				Ext.create('CMDBuild.core.LoggerManager'); // Logger configuration
 				Ext.create('CMDBuild.core.Data'); // Data connections configuration
 				Ext.create('CMDBuild.core.Rest'); // Setup REST connection
@@ -54,83 +66,17 @@
 						 */
 						CMDBuild.Config.cmdbuild = decoded.data;
 
-						/* **********************************************
-						 * Suspend here the layouts, and resume after all
-						 * the load are end
-						 * **********************************************/
-						Ext.suspendLayouts();
-						/* ***********************************************/
-
-						var panels = [
-							Ext.create('Ext.panel.Panel', {
-								cls: 'empty_panel x-panel-body'
-							}),
-							Ext.create('CMDBuild.view.administration.configuration.ConfigurationView', {
-								cmControllerType: 'CMDBuild.controller.administration.configuration.Configuration',
-								cmName: 'configuration'
-							}),
-							Ext.create('CMDBuild.view.administration.dataView.DataViewView', {
-								cmControllerType: 'CMDBuild.controller.administration.dataView.DataView',
-								cmName: 'dataview'
-							}),
-							Ext.create('CMDBuild.view.administration.email.EmailView', {
-								cmControllerType: 'CMDBuild.controller.administration.email.Email',
-								cmName: 'email'
-							}),
-							Ext.create('CMDBuild.view.administration.filter.FilterView', {
-								cmControllerType: 'CMDBuild.controller.administration.filter.Filter',
-								cmName: 'filter'
-							}),
-							Ext.create('CMDBuild.view.administration.localization.LocalizationView', {
-								cmControllerType: 'CMDBuild.controller.administration.localization.Localization',
-								cmName: 'localizations'
-							}),
-							Ext.create('CMDBuild.view.administration.menu.MenuView', {
-								cmControllerType: 'CMDBuild.controller.administration.menu.Menu',
-								cmName: 'menu'
-							}),
-							Ext.create('CMDBuild.view.administration.report.ReportView', {
-								cmControllerType: 'CMDBuild.controller.administration.report.Report',
-								cmName: 'report'
-							}),
-							Ext.create('CMDBuild.view.administration.tasks.CMTasks', {
-								cmControllerType: 'CMDBuild.controller.administration.tasks.CMTasksController',
-								cmName: 'task'
-							}),
-							Ext.create('CMDBuild.view.administration.userAndGroup.UserAndGroupView', {
-								cmControllerType: 'CMDBuild.controller.administration.userAndGroup.UserAndGroup',
-								cmName: 'userandgroup'
-							}),
-							new CMDBuild.view.administration.bim.CMBIMPanel({
-								cmControllerType: CMDBuild.controller.administration.filter.CMBIMPanelController,
-								cmName: 'bim-project'
-							}),
-							new CMDBuild.bim.administration.view.CMBimLayers({
-								cmControllerType: CMDBuild.controller.administration.filter.CMBimLayerController,
-								cmName: 'bim-layers'
-							}),
-							new CMDBuild.view.common.CMUnconfiguredModPanel({
-								cmControllerType: controllerNS.common.CMUnconfiguredModPanelController,
-								cmName: 'notconfiguredpanel'
-							})
-						];
-
-						_CMMainViewportController = new CMDBuild.controller.CMMainViewportController(
-							new CMDBuild.view.CMMainViewport({
-								cmAccordions: [],
-								cmPanels: panels
-							})
-						);
-
-						me.loadResources();
+						CMDBuild.app.Administration.buildComponents();
 					}
 				});
 			},
 
-			loadResources: function() {
-				var reqBarrier = Ext.create('CMDBuild.core.RequestBarrier', {
-					callback: function() {
-						_CMMainViewportController.addAccordion([ // Sorted
+			buildComponents: function() {
+				Ext.suspendLayouts(); // Suspend here the layouts, and resume after all the load are end
+
+				_CMMainViewportController = new CMDBuild.controller.CMMainViewportController(
+					new CMDBuild.view.CMMainViewport({
+						cmAccordions: [ // Sorted
 							classesAccordion,
 							processAccordion,
 							domainAccordion,
@@ -177,10 +123,101 @@
 								cmControllerType: 'CMDBuild.controller.common.AbstractAccordionController',
 								cmName: 'configuration'
 							})
-						]);
+						],
+						cmPanels: [
+							Ext.create('Ext.panel.Panel', {
+								cls: 'empty_panel x-panel-body'
+							}),
+							Ext.create('CMDBuild.view.administration.configuration.ConfigurationView', {
+								cmControllerType: 'CMDBuild.controller.administration.configuration.Configuration',
+								cmName: 'configuration'
+							}),
+							Ext.create('CMDBuild.view.administration.dataView.DataViewView', {
+								cmControllerType: 'CMDBuild.controller.administration.dataView.DataView',
+								cmName: 'dataview'
+							}),
+							Ext.create('CMDBuild.view.administration.domain.DomainView', {
+								cmControllerType: 'CMDBuild.controller.administration.domain.Domain',
+								cmName: 'domain'
+							}),
+							Ext.create('CMDBuild.view.administration.email.EmailView', {
+								cmControllerType: 'CMDBuild.controller.administration.email.Email',
+								cmName: 'email'
+							}),
+							Ext.create('CMDBuild.view.administration.filter.FilterView', {
+								cmControllerType: 'CMDBuild.controller.administration.filter.Filter',
+								cmName: 'filter'
+							}),
+							Ext.create('CMDBuild.view.administration.gis.CMModGeoServer', {
+								cmControllerType: 'CMDBuild.controller.administration.gis.CMModGeoServerController',
+								cmName: 'gis-geoserver'
+							}),
+							Ext.create('CMDBuild.view.administration.gis.ExternalServices', {
+								cmControllerType: 'CMDBuild.controller.administration.gis.ExternalServicesController',
+								cmName: 'gis-external-services'
+							}),
+							Ext.create('CMDBuild.view.administration.localization.LocalizationView', {
+								cmControllerType: 'CMDBuild.controller.administration.localization.Localization',
+								cmName: 'localizations'
+							}),
+							Ext.create('CMDBuild.view.administration.lookup.LookupView', {
+								cmControllerType: 'CMDBuild.controller.administration.lookup.Lookup',
+								cmName: 'lookuptype'
+							}),
+							Ext.create('CMDBuild.view.administration.menu.MenuView', {
+								cmControllerType: 'CMDBuild.controller.administration.menu.Menu',
+								cmName: 'menu'
+							}),
+							Ext.create('CMDBuild.view.administration.report.ReportView', {
+								cmControllerType: 'CMDBuild.controller.administration.report.Report',
+								cmName: 'report'
+							}),
+							Ext.create('CMDBuild.view.administration.tasks.CMTasks', {
+								cmControllerType: 'CMDBuild.controller.administration.tasks.CMTasksController',
+								cmName: 'task'
+							}),
+							Ext.create('CMDBuild.view.administration.userAndGroup.UserAndGroupView', {
+								cmControllerType: 'CMDBuild.controller.administration.userAndGroup.UserAndGroup',
+								cmName: 'userandgroup'
+							}),
+							new CMDBuild.view.administration.bim.CMBIMPanel({
+								cmControllerType: CMDBuild.controller.administration.filter.CMBIMPanelController,
+								cmName: 'bim-project'
+							}),
+							new CMDBuild.bim.administration.view.CMBimLayers({
+								cmControllerType: CMDBuild.controller.administration.filter.CMBimLayerController,
+								cmName: 'bim-layers'
+							}),
+							new CMDBuild.view.common.CMUnconfiguredModPanel({
+								cmControllerType: controllerNS.common.CMUnconfiguredModPanelController,
+								cmName: 'notconfiguredpanel'
+							}),
+							new CMDBuild.view.administration.classes.CMModClass({
+								cmControllerType: controllerNS.administration.classes.CMModClassController
+							}),
+							new CMDBuild.view.administration.workflow.CMProcess({
+								cmControllerType: controllerNS.administration.workflow.CMProcessController
+							}),
+							new CMDBuild.Administration.ModIcons(),
+							new CMDBuild.view.administration.gis.CMModGISNavigationConfiguration({
+								cmControllerType: controllerNS.administration.gis.CMModGISNavigationConfigurationController
+							}),
+							new CMDBuild.Administration.ModLayerOrder({
+								cmControllerType: controllerNS.administration.gis.CMModLayerOrderController
+							}),
+							new CMDBuild.view.administration.navigationTrees.CMModNavigationTrees({
+								cmControllerType: controllerNS.administration.navigationTrees.CMModNavigationTreesController
+							}),
+							new CMDBuild.view.administration.dashboard.CMModDashboard({
+								cmControllerType: controllerNS.administration.dashboard.CMModDashboardController
+							})
+						]
+					})
+				);
 
-						// Resume here the layouts operations
-						Ext.resumeLayouts(true);
+				var reqBarrier = Ext.create('CMDBuild.core.RequestBarrier', {
+					callback: function() {
+						Ext.resumeLayouts(true); // Resume here the layouts operations
 
 						_CMMainViewportController.viewport.doLayout();
 
@@ -196,10 +233,7 @@
 				 * */
 				CMDBuild.core.proxy.Configuration.readBimConfiguration({
 					success: function(response, option, decoded) {
-						var disabled = decoded.data.enabled == 'false';
-						bimAccordion = new CMDBuild.view.administration.accordion.CMBIMAccordion({
-							disabled: disabled
-						});
+						bimAccordion.setDisabled(decoded.data.enabled == 'false');
 					}
 				});
 
@@ -217,25 +251,10 @@
 						_CMCache.addClasses(decoded.classes);
 
 						if (!CMDBuild.configuration.userInterface.get(CMDBuild.core.constants.Proxy.CLOUD_ADMIN)) {
-							classesAccordion = new CMDBuild.view.administration.accordion.CMClassAccordion({
-								cmControllerType: CMDBuild.controller.accordion.CMClassAccordionController
-							});
 							classesAccordion.updateStore();
 
-							processAccordion = new CMDBuild.view.administration.accordion.CMProcessAccordion({
-								cmControllerType: CMDBuild.controller.accordion.CMProcessAccordionController,
-								disabled: (CMDBuild.Config.workflow) ? !CMDBuild.Config.workflow.enabled : true // FIX: to avoid InternetExplorer error on startup
-							});
+							processAccordion.setDisabled((CMDBuild.Config.workflow) ? !CMDBuild.Config.workflow.enabled : true); // FIX: to avoid InternetExplorer error on startup
 							processAccordion.updateStore();
-
-							_CMMainViewportController.addPanel([
-								new CMDBuild.view.administration.classes.CMModClass({
-									cmControllerType: controllerNS.administration.classes.CMModClassController
-								}),
-								new CMDBuild.view.administration.workflow.CMProcess({
-									cmControllerType: controllerNS.administration.workflow.CMProcessController
-								})
-							]);
 						}
 
 						// Do a separate request for the widgets because, at this time
@@ -281,27 +300,7 @@
 						CMDBuild.Config.gis.enabled = ('true' == CMDBuild.Config.gis.enabled);
 
 						if (!CMDBuild.configuration.userInterface.get(CMDBuild.core.constants.Proxy.CLOUD_ADMIN)) {
-							gisAccordion = new CMDBuild.view.administration.accordion.CMGISAccordion({
-								disabled: !CMDBuild.Config.gis.enabled
-							});
-
-							_CMMainViewportController.addPanel([
-								new CMDBuild.Administration.ModIcons(),
-								new CMDBuild.view.administration.gis.CMModGISNavigationConfiguration({
-									cmControllerType: controllerNS.administration.gis.CMModGISNavigationConfigurationController
-								}),
-								Ext.create('CMDBuild.view.administration.gis.ExternalServices', {
-									cmControllerType: 'CMDBuild.controller.administration.gis.ExternalServicesController',
-									cmName: 'gis-external-services'
-								}),
-								Ext.create('CMDBuild.view.administration.gis.CMModGeoServer', {
-									cmControllerType: 'CMDBuild.controller.administration.gis.CMModGeoServerController',
-									cmName: 'gis-geoserver'
-								}),
-								new CMDBuild.Administration.ModLayerOrder({
-									cmControllerType: controllerNS.administration.gis.CMModLayerOrderController
-								})
-							]);
+							gisAccordion.setDisabled(!CMDBuild.Config.gis.enabled);
 						}
 					},
 
@@ -316,18 +315,7 @@
 					success: function(response, options, decodedResponse) {
 						_CMCache.addLookupTypes(decodedResponse);
 
-						lookupAccordion = Ext.create('CMDBuild.view.administration.accordion.Lookup', {
-							cmControllerType: 'CMDBuild.controller.administration.accordion.Lookup',
-							cmName: 'lookuptype',
-						});
 						lookupAccordion.updateStore();
-
-						_CMMainViewportController.addPanel(
-							Ext.create('CMDBuild.view.administration.lookup.LookupView', {
-								cmControllerType: 'CMDBuild.controller.administration.lookup.Lookup',
-								cmName: 'lookuptype'
-							})
-						);
 					},
 					callback: reqBarrier.getCallback()
 				});
@@ -342,18 +330,7 @@
 						_CMCache.addDomains(decodedResponse.domains);
 
 						if (!CMDBuild.configuration.userInterface.get(CMDBuild.core.constants.Proxy.CLOUD_ADMIN)) {
-							domainAccordion = Ext.create('CMDBuild.view.administration.accordion.Domain', {
-								cmControllerType: 'CMDBuild.controller.administration.accordion.Domain',
-								cmName: 'domain'
-							});
 							domainAccordion.updateStore();
-
-							_CMMainViewportController.addPanel(
-								Ext.create('CMDBuild.view.administration.domain.DomainView', {
-									cmControllerType: 'CMDBuild.controller.administration.domain.Domain',
-									cmName: 'domain'
-								})
-							);
 						}
 					},
 					callback: reqBarrier.getCallback()
@@ -366,16 +343,7 @@
 					success: function(response, options, decoded) {
 
 						if (!CMDBuild.configuration.userInterface.get(CMDBuild.core.constants.Proxy.CLOUD_ADMIN)) {
-							navigationTreesAccordion = new CMDBuild.view.administration.accordion.CMNavigationTreesAccordion({
-								cmControllerType: CMDBuild.controller.accordion.CMNavigationTreesAccordionController
-							});
 							navigationTreesAccordion.updateStore();
-
-							_CMMainViewportController.addPanel(
-								new CMDBuild.view.administration.navigationTrees.CMModNavigationTrees({
-									cmControllerType: controllerNS.administration.navigationTrees.CMModNavigationTreesController
-								})
-							);
 						}
 					},
 					callback: reqBarrier.getCallback()
@@ -390,16 +358,7 @@
 						_CMCache.setAvailableDataSources(decoded.response.dataSources);
 
 						if (!CMDBuild.configuration.userInterface.get(CMDBuild.core.constants.Proxy.CLOUD_ADMIN)) {
-							dashboardsAccordion = new CMDBuild.view.administration.accordion.CMDashboardAccordion({
-								cmControllerType: CMDBuild.controller.accordion.CMDashboardAccordionController
-							});
 							dashboardsAccordion.updateStore();
-
-							_CMMainViewportController.addPanel(
-								new CMDBuild.view.administration.dashboard.CMModDashboard({
-									cmControllerType: controllerNS.administration.dashboard.CMModDashboardController
-								})
-							);
 						}
 					},
 					callback: reqBarrier.getCallback()
