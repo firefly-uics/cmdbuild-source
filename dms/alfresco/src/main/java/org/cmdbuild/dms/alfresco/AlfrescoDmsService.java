@@ -76,7 +76,6 @@ public class AlfrescoDmsService extends BaseDmsService implements LoggingSupport
 
 	@Override
 	public List<StoredDocument> search(final DocumentSearch document) throws DmsError {
-		create(document);
 		return wsService.search(document);
 	}
 
