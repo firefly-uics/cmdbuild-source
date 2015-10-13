@@ -186,7 +186,7 @@
 							editor[CMDBuild.core.proxy.CMProxyConstants.DISABLED] = !attribute[CMDBuild.core.proxy.CMProxyConstants.WRITABLE];
 							editor[CMDBuild.core.proxy.CMProxyConstants.REQUIRED] = false;
 
-							if (attribute[CMDBuild.core.proxy.CMProxyConstants.MANDATORY]) {
+							if (attribute[CMDBuild.core.proxy.CMProxyConstants.MANDATORY] || attribute['isnotnull']) {
 								header.header = '* ' + header.header; // TODO: header property is deprecated, should use "text" but FieldManager uses header so ...
 
 								header[CMDBuild.core.proxy.CMProxyConstants.REQUIRED] = true;
