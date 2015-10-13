@@ -1,25 +1,25 @@
 (function() {
 
+	Ext.require('CMDBuild.core.constants.Proxy');
+
 	Ext.define('CMDBuild.model.common.attributes.Attribute', {
 		extend: 'Ext.data.Model',
 
-		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
-
 		fields: [
-			{ name: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION, type: 'string' },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.EDITOR_TYPE, type: 'string' },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.FILTER, type: 'auto' },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.HIDDEN, type: 'boolean' },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.LENGTH, type: 'int', defaultValue: 0 },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.LOOKUP_TYPE, type: 'string' },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.MANDATORY, type: 'boolean' },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.NAME, type: 'string' },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.PRECISION, type: 'int', useNull: true },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.SCALE, type: 'int', defaultValue: 0 },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.TARGET_CLASS, type: 'string' },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.TYPE, type: 'string' },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.UNIQUE, type: 'boolean' },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.WRITABLE, type: 'boolean' }
+			{ name: CMDBuild.core.constants.Proxy.DESCRIPTION, type: 'string' },
+			{ name: CMDBuild.core.constants.Proxy.EDITOR_TYPE, type: 'string' },
+			{ name: CMDBuild.core.constants.Proxy.FILTER, type: 'auto' },
+			{ name: CMDBuild.core.constants.Proxy.HIDDEN, type: 'boolean' },
+			{ name: CMDBuild.core.constants.Proxy.LENGTH, type: 'int', defaultValue: 0 },
+			{ name: CMDBuild.core.constants.Proxy.LOOKUP_TYPE, type: 'string' },
+			{ name: CMDBuild.core.constants.Proxy.MANDATORY, type: 'boolean' },
+			{ name: CMDBuild.core.constants.Proxy.NAME, type: 'string' },
+			{ name: CMDBuild.core.constants.Proxy.PRECISION, type: 'int', useNull: true },
+			{ name: CMDBuild.core.constants.Proxy.SCALE, type: 'int', defaultValue: 0 },
+			{ name: CMDBuild.core.constants.Proxy.TARGET_CLASS, type: 'string' },
+			{ name: CMDBuild.core.constants.Proxy.TYPE, type: 'string' },
+			{ name: CMDBuild.core.constants.Proxy.UNIQUE, type: 'boolean' },
+			{ name: CMDBuild.core.constants.Proxy.WRITABLE, type: 'boolean' }
 		],
 
 		/**
@@ -29,21 +29,21 @@
 		 */
 		setAdaptedData: function(data) {
 			if (!Ext.isEmpty(data) && Ext.isObject(data)) {
-				this.set(CMDBuild.core.proxy.CMProxyConstants.LENGTH, data['len']);
-				this.set(CMDBuild.core.proxy.CMProxyConstants.LOOKUP_TYPE, data[CMDBuild.core.proxy.CMProxyConstants.LOOKUP]);
-				this.set(CMDBuild.core.proxy.CMProxyConstants.MANDATORY, data['isnotnull']);
-				this.set(CMDBuild.core.proxy.CMProxyConstants.UNIQUE, data['isunique']);
+				this.set(CMDBuild.core.constants.Proxy.LENGTH, data['len']);
+				this.set(CMDBuild.core.constants.Proxy.LOOKUP_TYPE, data[CMDBuild.core.constants.Proxy.LOOKUP]);
+				this.set(CMDBuild.core.constants.Proxy.MANDATORY, data['isnotnull']);
+				this.set(CMDBuild.core.constants.Proxy.UNIQUE, data['isunique']);
 
 				if (!Ext.isEmpty(data['fieldmode']))
-					if (data['fieldmode'] == CMDBuild.core.proxy.CMProxyConstants.WRITE) {
-						this.set(CMDBuild.core.proxy.CMProxyConstants.WRITABLE, true);
-					} else if (data['fieldmode'] == CMDBuild.core.proxy.CMProxyConstants.HIDDEN) {
-						this.set(CMDBuild.core.proxy.CMProxyConstants.HIDDEN, true);
+					if (data['fieldmode'] == CMDBuild.core.constants.Proxy.WRITE) {
+						this.set(CMDBuild.core.constants.Proxy.WRITABLE, true);
+					} else if (data['fieldmode'] == CMDBuild.core.constants.Proxy.HIDDEN) {
+						this.set(CMDBuild.core.constants.Proxy.HIDDEN, true);
 					}
 
 				// ForeignKey's specific
 				if (!Ext.isEmpty(data['fkDestination']))
-					this.set(CMDBuild.core.proxy.CMProxyConstants.TARGET_CLASS, data['fkDestination']);
+					this.set(CMDBuild.core.constants.Proxy.TARGET_CLASS, data['fkDestination']);
 			}
 		},
 
@@ -53,25 +53,25 @@
 		isValid: function() {
 			var customValidationValue = true;
 
-			switch (this.get(CMDBuild.core.proxy.CMProxyConstants.TYPE)) {
+			switch (this.get(CMDBuild.core.constants.Proxy.TYPE)) {
 				case 'DECIMAL': {
 					customValidationValue = (
-						!Ext.isEmpty(this.get(CMDBuild.core.proxy.CMProxyConstants.SCALE))
-						&& !Ext.isEmpty(this.get(CMDBuild.core.proxy.CMProxyConstants.PRECISION))
-						&& this.get(CMDBuild.core.proxy.CMProxyConstants.SCALE) < this.get(CMDBuild.core.proxy.CMProxyConstants.PRECISION)
+						!Ext.isEmpty(this.get(CMDBuild.core.constants.Proxy.SCALE))
+						&& !Ext.isEmpty(this.get(CMDBuild.core.constants.Proxy.PRECISION))
+						&& this.get(CMDBuild.core.constants.Proxy.SCALE) < this.get(CMDBuild.core.constants.Proxy.PRECISION)
 					);
 				} break;
 
 				case 'FOREIGNKEY': {
 					customValidationValue = (
-						!Ext.isEmpty(this.get(CMDBuild.core.proxy.CMProxyConstants.TARGET_CLASS))
+						!Ext.isEmpty(this.get(CMDBuild.core.constants.Proxy.TARGET_CLASS))
 					);
 				} break;
 
 				case 'STRING': {
 					customValidationValue = (
-						!Ext.isEmpty(this.get(CMDBuild.core.proxy.CMProxyConstants.LENGTH))
-						&& this.get(CMDBuild.core.proxy.CMProxyConstants.LENGTH) > 0
+						!Ext.isEmpty(this.get(CMDBuild.core.constants.Proxy.LENGTH))
+						&& this.get(CMDBuild.core.constants.Proxy.LENGTH) > 0
 					);
 				} break;
 			}

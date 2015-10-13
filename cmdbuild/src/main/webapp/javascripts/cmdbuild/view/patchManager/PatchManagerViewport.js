@@ -22,7 +22,7 @@
 						border: false,
 						frame: false,
 						height: 45,
-						region:'north',
+						region: 'north',
 						contentEl: 'header'
 					}),
 					this.gridContainer = Ext.create('CMDBuild.view.patchManager.GridContainer', {
@@ -33,7 +33,7 @@
 						border: false,
 						frame: false,
 						height: 16,
-						region:'south',
+						region: 'south',
 						contentEl: 'footer'
 					})
 				]

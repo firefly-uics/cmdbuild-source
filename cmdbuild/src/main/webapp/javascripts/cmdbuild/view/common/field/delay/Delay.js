@@ -3,7 +3,7 @@
 	Ext.define('CMDBuild.view.common.field.delay.Delay', {
 		extend: 'Ext.form.FieldContainer',
 
-		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+		requires: ['CMDBuild.core.constants.Proxy'],
 
 		/**
 		 * @property {CMDBuild.controller.common.field.delay.Delay}
@@ -27,8 +27,8 @@
 			this.delaySelectionCombo = Ext.create('Ext.form.field.ComboBox', {
 				name: this.name, // Property forward
 				value: this.valueFilter(this.value), // Property forward
-				displayField: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
-				valueField: CMDBuild.core.proxy.CMProxyConstants.VALUE,
+				displayField: CMDBuild.core.constants.Proxy.DESCRIPTION,
+				valueField: CMDBuild.core.constants.Proxy.VALUE,
 				editable: false,
 				allowBlank: true,
 				flex: 2,

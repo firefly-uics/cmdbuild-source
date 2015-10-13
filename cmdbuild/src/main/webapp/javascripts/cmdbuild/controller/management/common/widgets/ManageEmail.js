@@ -1,13 +1,11 @@
 (function () {
 
 	Ext.define('CMDBuild.controller.management.common.widgets.ManageEmail', {
-		extend: 'CMDBuild.controller.management.common.widgets.CMWidgetController',
+		extend: 'CMDBuild.controller.common.AbstractController',
 
-		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+		requires: ['CMDBuild.core.constants.Proxy'],
 
-		mixins: {
-			observable: 'Ext.util.Observable'
-		},
+		mixins: ['CMDBuild.controller.common.AbstractBaseWidgetController'],
 
 		/**
 		 * Widget before save callback loop object
@@ -44,31 +42,36 @@
 		/**
 		 * @cfg {Object}
 		 */
-		widgetConf: undefined,
+		widgetConfiguration: undefined,
 
 		/**
-		 * @param {CMDBuild.view.management.common.tabs.email.EmailView} view
-		 * @param {CMDBuild.controller.management.common.CMWidgetManagerController} ownerController
-		 * @param {Object} widgetConf
-		 * @param {Ext.form.Basic} clientForm
-		 * @param {CMDBuild.model.CMActivityInstance or Ext.data.Model} card
+		 * @param {CMDBuild.view.management.common.widgets.CMWidgetManager} configurationObject.view
+		 * @param {CMDBuild.controller.management.common.CMWidgetManagerController} configurationObject.parentDelegate
+		 * @param {Object} configurationObject.widgetConfiguration
+		 * @param {Ext.form.Basic} configurationObject.clientForm
+		 * @param {CMDBuild.model.CMActivityInstance} configurationObject.card
 		 *
 		 * @override
 		 */
-		constructor: function(view, ownerController, widgetConf, clientForm, card) {
-			this.mixins.observable.constructor.call(this);
+		constructor: function(configurationObject) {
+			// Manual inclusion of AbstractBaseWidgetController constructor because of custom widget functionalities (avoid view delegate apply)
+			if (!Ext.isEmpty(configurationObject) && !Ext.Object.isEmpty(configurationObject.widgetConfiguration)) {
+				this.callParent(arguments);
 
-			this.callParent(arguments);
+				this.widgetConfigurationSet({ configurationObject: this.widgetConfiguration }); // Setup widget configuration model
+			} else {
+				_error('wrong or empty widget view or configuration object', this);
+			}
 
+			// Shorthands
 			this.tabController = this.view.delegate;
-
-			this.tabController.cmfg('configurationSet', widgetConf);
+			this.tabController.cmfg('configurationSet', this.widgetConfiguration);
 
 			// Converts configuration templates to templates model objects
 			this.configurationTemplates = []; // Reset variable
 
-			Ext.Array.forEach(widgetConf[CMDBuild.core.proxy.CMProxyConstants.TEMPLATES], function(item, index, allItems) {
-				this.configurationTemplates.push(this.configurationTemplatesToModel(item));
+			Ext.Array.forEach(this.widgetConfigurationGet(CMDBuild.core.constants.Proxy.TEMPLATES), function(templateObject, i, allTemplateObjects) {
+				this.configurationTemplates.push(this.configurationTemplatesToModel(templateObject));
 			}, this);
 
 			this.tabController.cmfg('configurationTemplatesSet', this.configurationTemplates);
@@ -82,7 +85,7 @@
 			this.tabController.getView().addDocked(
 				Ext.create('Ext.toolbar.Toolbar', {
 					dock: 'bottom',
-					itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_BOTTOM,
+					itemId: CMDBuild.core.constants.Proxy.TOOLBAR_BOTTOM,
 					ui: 'footer',
 
 					layout: {
@@ -92,11 +95,11 @@
 					},
 
 					items: [
-						Ext.create('CMDBuild.core.buttons.Back', {
+						Ext.create('CMDBuild.core.buttons.text.Back', {
 							scope: this,
 
 							handler: function(button, e) {
-								this.ownerController.activateFirstTab();
+								this.parentDelegate.activateFirstTab(); // TODO: needs refactor of CMWidgetManagerController to use cmfg()
 							}
 						})
 					]
@@ -114,11 +117,11 @@
 		configurationTemplatesToModel: function(template) {
 			if (Ext.isObject(template) && !Ext.Object.isEmpty(template)) {
 				var model = Ext.create('CMDBuild.model.common.tabs.email.Template', template);
-				model.set(CMDBuild.core.proxy.CMProxyConstants.BCC, template[CMDBuild.core.proxy.CMProxyConstants.BCC_ADDRESSES]);
-				model.set(CMDBuild.core.proxy.CMProxyConstants.BODY, template[CMDBuild.core.proxy.CMProxyConstants.CONTENT]);
-				model.set(CMDBuild.core.proxy.CMProxyConstants.CC, template[CMDBuild.core.proxy.CMProxyConstants.CC_ADDRESSES]);
-				model.set(CMDBuild.core.proxy.CMProxyConstants.FROM, template[CMDBuild.core.proxy.CMProxyConstants.FROM_ADDRESS]);
-				model.set(CMDBuild.core.proxy.CMProxyConstants.TO, template[CMDBuild.core.proxy.CMProxyConstants.TO_ADDRESSES]);
+				model.set(CMDBuild.core.constants.Proxy.BCC, template[CMDBuild.core.constants.Proxy.BCC_ADDRESSES]);
+				model.set(CMDBuild.core.constants.Proxy.BODY, template[CMDBuild.core.constants.Proxy.CONTENT]);
+				model.set(CMDBuild.core.constants.Proxy.CC, template[CMDBuild.core.constants.Proxy.CC_ADDRESSES]);
+				model.set(CMDBuild.core.constants.Proxy.FROM, template[CMDBuild.core.constants.Proxy.FROM_ADDRESS]);
+				model.set(CMDBuild.core.constants.Proxy.TO, template[CMDBuild.core.constants.Proxy.TO_ADDRESSES]);
 
 				return model;
 			}
@@ -133,7 +136,7 @@
 		 */
 		getData: function() {
 			var out = {};
-			out[CMDBuild.core.proxy.CMProxyConstants.OUTPUT] = this.tabController.cmfg('selectedEntityIdGet');
+			out[CMDBuild.core.constants.Proxy.OUTPUT] = this.tabController.cmfg('selectedEntityIdGet');
 
 			return out;
 		},
@@ -155,8 +158,8 @@
 		 * @override
 		 */
 		isValid: function() {
-			if (Ext.isBoolean(this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.REQUIRED]) && this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.REQUIRED])
-				return this.controllerGrid.getDraftEmails().length > 0;
+			if (this.widgetConfigurationGet(CMDBuild.core.constants.Proxy.REQUIRED))
+				return this.tabController.controllerGrid.getDraftEmails().length > 0;
 
 			return this.callParent(arguments);
 		},
@@ -198,7 +201,41 @@
 				this.tabController.cmfg('regenerateAllEmailsSet', true);
 				this.tabController.cmfg('storeLoad');
 			}
-		}
+		},
+
+		// WidgetConfiguration methods
+			/**
+			 * @param {Object} parameters
+			 * @param {Object} parameters.configurationObject
+			 * @param {String} parameters.propertyName
+			 *
+			 * @returns {Mixed}
+			 */
+			widgetConfigurationSet: function(parameters) {
+				if (!Ext.isEmpty(parameters)) {
+					var configurationObject = parameters.configurationObject;
+					var propertyName = parameters.propertyName;
+
+					// Single property management
+					if (!Ext.isEmpty(propertyName) && Ext.isString(propertyName))
+						if (
+							!Ext.isEmpty(this.widgetConfigurationModel)
+							&& Ext.isObject(this.widgetConfigurationModel)
+							&& Ext.isFunction(this.widgetConfigurationModel.set)
+						) { // Model management
+							return this.widgetConfigurationModel.set(propertyName, configurationObject);
+						} else if (
+							!Ext.isEmpty(this.widgetConfigurationModel)
+							&& Ext.isObject(this.widgetConfigurationModel)
+						) { // Simple object management
+							return this.widgetConfigurationModel[propertyName] = configurationObject;
+						}
+
+					// Full model setup management
+					if (!Ext.isEmpty(configurationObject) && Ext.isEmpty(propertyName))
+						this.widgetConfigurationModel = Ext.create('CMDBuild.model.widget.manageEmail.Configuration', Ext.clone(configurationObject));
+				}
+			}
 	});
 
 })();

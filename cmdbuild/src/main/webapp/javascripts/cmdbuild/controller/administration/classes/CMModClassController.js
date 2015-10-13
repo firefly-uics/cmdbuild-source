@@ -48,7 +48,7 @@
 		onPrintSchema: function(format) {
 			if (!Ext.isEmpty(format)) {
 				var params = {};
-				params[CMDBuild.core.proxy.CMProxyConstants.FORMAT] = format;
+				params[CMDBuild.core.constants.Proxy.FORMAT] = format;
 
 				Ext.create('CMDBuild.controller.common.entryTypeGrid.printTool.PrintWindow', {
 					parentDelegate: this,
@@ -69,4 +69,5 @@
 
 		}
 	});
+
 })();

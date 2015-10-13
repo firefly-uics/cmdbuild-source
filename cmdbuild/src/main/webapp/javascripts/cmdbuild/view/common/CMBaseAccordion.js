@@ -1,5 +1,9 @@
 (function() {
 
+	/**
+	 * @deprecated (CMDBuild.common.AbstractAccordion)
+	 */
+
 	var CM_INDEX = 'cmIndex',
 		TREE_NODE_NAME_ATTRIBUTE = 'cmName',
 		TREE_FOLDER_NODE_NAME = 'folder';
@@ -17,7 +21,8 @@
 			{ name: CMDBuild.ServiceProxy.parameter.TYPE, type: 'string' },
 			{ name: CMDBuild.ServiceProxy.parameter.FILTER, type: 'auto' },
 			{ name: 'sourceFunction', type: 'auto' },
-			{ name: 'viewType', type: 'string' }
+			{ name: 'viewType', type: 'string' },
+			{ name: CMDBuild.ServiceProxy.parameter.SECTION_HIERARCHY, type: 'auto' }
 		]
 	});
 

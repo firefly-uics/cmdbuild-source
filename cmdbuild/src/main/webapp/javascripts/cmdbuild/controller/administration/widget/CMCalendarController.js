@@ -4,7 +4,7 @@
 		extend: "CMDBuild.controller.administration.widget.CMBaseWidgetDefinitionFormController",
 
 		statics: {
-			WIDGET_NAME: CMDBuild.view.administration.widget.form.CMCalendarDefinitionForm.WIDGET_NAME
+			WIDGET_NAME: ".Calendar"
 		},
 
 		constructor: function() {

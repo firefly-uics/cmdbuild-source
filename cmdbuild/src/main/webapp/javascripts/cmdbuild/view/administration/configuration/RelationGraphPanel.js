@@ -3,7 +3,7 @@
 	Ext.define('CMDBuild.view.administration.configuration.RelationGraphPanel', {
 		extend: 'Ext.form.Panel',
 
-		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+		requires: ['CMDBuild.core.constants.Proxy'],
 
 		/**
 		 * @cfg {CMDBuild.controller.administration.configuration.RelationGraph}
@@ -31,7 +31,7 @@
 				dockedItems: [
 					Ext.create('Ext.toolbar.Toolbar', {
 						dock: 'bottom',
-						itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_BOTTOM,
+						itemId: CMDBuild.core.constants.Proxy.TOOLBAR_BOTTOM,
 						ui: 'footer',
 
 						layout: {
@@ -41,18 +41,18 @@
 						},
 
 						items: [
-							Ext.create('CMDBuild.core.buttons.Save', {
+							Ext.create('CMDBuild.core.buttons.text.Save', {
 								scope: this,
 
 								handler: function(button, e) {
-									this.delegate.cmfg('onRelationGraphSaveButtonClick');
+									this.delegate.cmfg('onConfigurationRelationGraphSaveButtonClick');
 								}
 							}),
-							Ext.create('CMDBuild.core.buttons.Abort', {
+							Ext.create('CMDBuild.core.buttons.text.Abort', {
 								scope: this,
 
 								handler: function(button, e) {
-									this.delegate.cmfg('onRelationGraphAbortButtonClick');
+									this.delegate.cmfg('onConfigurationRelationGraphAbortButtonClick');
 								}
 							})
 						]
@@ -61,12 +61,12 @@
 				items: [
 					{
 						xtype: 'xcheckbox',
-						name: CMDBuild.core.proxy.CMProxyConstants.ENABLED,
+						name: CMDBuild.core.constants.Proxy.ENABLED,
 						fieldLabel: CMDBuild.Translation.enabled
 					},
 					{
 						xtype: 'numberfield',
-						name: CMDBuild.core.proxy.CMProxyConstants.BASE_LEVEL,
+						name: CMDBuild.core.constants.Proxy.BASE_LEVEL,
 						fieldLabel: CMDBuild.Translation.defaultLevel,
 						allowBlank: false,
 						minValue: 1,
@@ -74,7 +74,7 @@
 					},
 					{
 						xtype: 'numberfield',
-						name: CMDBuild.core.proxy.CMProxyConstants.EXTENSION_MAXIMUM_LEVEL,
+						name: CMDBuild.core.constants.Proxy.EXTENSION_MAXIMUM_LEVEL,
 						fieldLabel: CMDBuild.Translation.maximumLevel,
 						allowBlank: false,
 						minValue: 1,
@@ -82,7 +82,7 @@
 					},
 					{
 						xtype: 'numberfield',
-						name: CMDBuild.core.proxy.CMProxyConstants.CLUSTERING_THRESHOLD,
+						name: CMDBuild.core.constants.Proxy.CLUSTERING_THRESHOLD,
 						fieldLabel: CMDBuild.Translation.thresholdForClusteringNodes,
 						allowBlank: false,
 						minValue: 2,

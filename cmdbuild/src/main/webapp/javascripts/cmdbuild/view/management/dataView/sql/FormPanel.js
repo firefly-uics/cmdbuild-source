@@ -3,7 +3,7 @@
 	Ext.define('CMDBuild.view.management.dataView.sql.FormPanel', {
 		extend: 'Ext.tab.Panel',
 
-		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+		requires: ['CMDBuild.core.constants.Proxy'],
 
 		/**
 		 * @cfg {CMDBuild.controller.management.dataView.Sql}
@@ -15,7 +15,7 @@
 		 */
 		cardPanel: undefined,
 
-		bodyCls: 'x-panel-body-default-framed cmbordertop',
+		cls: 'x-panel-body-default-framed cmbordertop',
 		border: false,
 		frame: false,
 

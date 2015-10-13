@@ -5,6 +5,8 @@
 	Ext.define('CMDBuild.app.Setup', {
 		statics: {
 			init: function() {
+//				Ext.create('CMDBuild.core.LoggerManager'); // Logger configuration
+
 				Ext.QuickTips.init();//for the error tips
 
 				this.step1 = new CMDBuild.setup.Step1();

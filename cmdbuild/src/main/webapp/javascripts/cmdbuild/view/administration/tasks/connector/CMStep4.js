@@ -5,7 +5,7 @@
 	Ext.define('CMDBuild.view.administration.tasks.connector.CMStep4Delegate', {
 		extend: 'CMDBuild.controller.CMBasePanelController',
 
-		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+		requires: ['CMDBuild.core.constants.Proxy'],
 
 		/**
 		 * @cfg {CMDBuild.controller.administration.tasks.CMTasksFormConnectorController}
@@ -49,8 +49,8 @@
 
 			this.view.classLevelMappingGrid.columns[5].setEditor({
 				xtype: 'combo',
-				displayField: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
-				valueField: CMDBuild.core.proxy.CMProxyConstants.VALUE,
+				displayField: CMDBuild.core.constants.Proxy.DESCRIPTION,
+				valueField: CMDBuild.core.constants.Proxy.VALUE,
 				forceSelection: true,
 				editable: false,
 				allowBlank: true,
@@ -76,20 +76,20 @@
 				// To validate and filter grid rows
 				this.view.classLevelMappingGrid.getStore().each(function(record) {
 					if (
-						!Ext.isEmpty(record.get(CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME))
-						&& !Ext.isEmpty(record.get(CMDBuild.core.proxy.CMProxyConstants.SOURCE_NAME))
+						!Ext.isEmpty(record.get(CMDBuild.core.constants.Proxy.CLASS_NAME))
+						&& !Ext.isEmpty(record.get(CMDBuild.core.constants.Proxy.SOURCE_NAME))
 					) {
 						var buffer = {};
 
-						buffer[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME] = record.get(CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME);
-						buffer[CMDBuild.core.proxy.CMProxyConstants.SOURCE_NAME] = record.get(CMDBuild.core.proxy.CMProxyConstants.SOURCE_NAME);
-						buffer[CMDBuild.core.proxy.CMProxyConstants.CREATE] = record.get(CMDBuild.core.proxy.CMProxyConstants.CREATE);
-						buffer[CMDBuild.core.proxy.CMProxyConstants.UPDATE] = record.get(CMDBuild.core.proxy.CMProxyConstants.UPDATE);
-						buffer[CMDBuild.core.proxy.CMProxyConstants.DELETE] = record.get(CMDBuild.core.proxy.CMProxyConstants.DELETE);
+						buffer[CMDBuild.core.constants.Proxy.CLASS_NAME] = record.get(CMDBuild.core.constants.Proxy.CLASS_NAME);
+						buffer[CMDBuild.core.constants.Proxy.SOURCE_NAME] = record.get(CMDBuild.core.constants.Proxy.SOURCE_NAME);
+						buffer[CMDBuild.core.constants.Proxy.CREATE] = record.get(CMDBuild.core.constants.Proxy.CREATE);
+						buffer[CMDBuild.core.constants.Proxy.UPDATE] = record.get(CMDBuild.core.constants.Proxy.UPDATE);
+						buffer[CMDBuild.core.constants.Proxy.DELETE] = record.get(CMDBuild.core.constants.Proxy.DELETE);
 
 //						// TODO: future implementation
-//						if (buffer[CMDBuild.core.proxy.CMProxyConstants.DELETE])
-//							buffer[CMDBuild.core.proxy.CMProxyConstants.DELETE_TYPE] = record.get(CMDBuild.core.proxy.CMProxyConstants.DELETE_TYPE);
+//						if (buffer[CMDBuild.core.constants.Proxy.DELETE])
+//							buffer[CMDBuild.core.constants.Proxy.DELETE_TYPE] = record.get(CMDBuild.core.constants.Proxy.DELETE_TYPE);
 
 						data.push(buffer);
 					}
@@ -108,8 +108,8 @@
 				var gridData = this.getData();
 
 				for (key in gridData)
-					if (!Ext.Array.contains(selectedClassArray, gridData[key][CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME]))
-						selectedClassArray.push(gridData[key][CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME]);
+					if (!Ext.Array.contains(selectedClassArray, gridData[key][CMDBuild.core.constants.Proxy.CLASS_NAME]))
+						selectedClassArray.push(gridData[key][CMDBuild.core.constants.Proxy.CLASS_NAME]);
 
 				return selectedClassArray;
 			},
@@ -124,8 +124,8 @@
 				var gridData = this.getData();
 
 				for (var key in gridData)
-					if (!Ext.Array.contains(selectedSourceArray, gridData[key][CMDBuild.core.proxy.CMProxyConstants.SOURCE_NAME]))
-						selectedSourceArray.push(gridData[key][CMDBuild.core.proxy.CMProxyConstants.SOURCE_NAME]);
+					if (!Ext.Array.contains(selectedSourceArray, gridData[key][CMDBuild.core.constants.Proxy.SOURCE_NAME]))
+						selectedSourceArray.push(gridData[key][CMDBuild.core.constants.Proxy.SOURCE_NAME]);
 
 				return selectedSourceArray;
 			},
@@ -159,7 +159,7 @@
 		 */
 		onCheckDelete: function(checked, rowIndex) {
 			if (!checked)
-				this.view.classLevelMappingGrid.getStore().getAt(rowIndex).set(CMDBuild.core.proxy.CMProxyConstants.DELETE_TYPE, '');
+				this.view.classLevelMappingGrid.getStore().getAt(rowIndex).set(CMDBuild.core.constants.Proxy.DELETE_TYPE, '');
 		},
 
 		/**
@@ -170,8 +170,8 @@
 		 */
 		onBeforeEdit: function(fieldName, rowData) {
 			switch (fieldName) {
-				case CMDBuild.core.proxy.CMProxyConstants.DELETE_TYPE: {
-					if (rowData[CMDBuild.core.proxy.CMProxyConstants.DELETE]) {
+				case CMDBuild.core.constants.Proxy.DELETE_TYPE: {
+					if (rowData[CMDBuild.core.constants.Proxy.DELETE]) {
 						this.buildDeletionTypeCombo();
 					} else {
 						var columnModel = this.view.classLevelMappingGrid.columns[5];
@@ -219,7 +219,7 @@
 	Ext.define('CMDBuild.view.administration.tasks.connector.CMStep4', {
 		extend: 'Ext.panel.Panel',
 
-		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+		requires: ['CMDBuild.core.constants.Proxy'],
 
 		/**
 		 * @cfg {CMDBuild.view.administration.tasks.connector.CMStep4Delegate}
@@ -269,11 +269,11 @@
 				columns: [
 					{
 						header: tr.sourceName,
-						dataIndex: CMDBuild.core.proxy.CMProxyConstants.SOURCE_NAME,
+						dataIndex: CMDBuild.core.constants.Proxy.SOURCE_NAME,
 						editor: {
 							xtype: 'combo',
-							displayField: CMDBuild.core.proxy.CMProxyConstants.NAME,
-							valueField: CMDBuild.core.proxy.CMProxyConstants.NAME,
+							displayField: CMDBuild.core.constants.Proxy.NAME,
+							valueField: CMDBuild.core.constants.Proxy.NAME,
 
 							store: CMDBuild.core.proxy.CMProxyTasks.getSourceStore(),
 
@@ -287,11 +287,11 @@
 					},
 					{
 						header: tr.className,
-						dataIndex: CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME,
+						dataIndex: CMDBuild.core.constants.Proxy.CLASS_NAME,
 						editor: {
 							xtype: 'combo',
-							displayField: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
-							valueField: CMDBuild.core.proxy.CMProxyConstants.NAME,
+							displayField: CMDBuild.core.constants.Proxy.DESCRIPTION,
+							valueField: CMDBuild.core.constants.Proxy.NAME,
 							forceSelection: true,
 							editable: false,
 							allowBlank: false,
@@ -310,7 +310,7 @@
 					{
 						xtype: 'checkcolumn',
 						header: tr.cudActions.createLabel,
-						dataIndex: CMDBuild.core.proxy.CMProxyConstants.CREATE,
+						dataIndex: CMDBuild.core.constants.Proxy.CREATE,
 						width: 60,
 						align: 'center',
 						sortable: false,
@@ -321,7 +321,7 @@
 					{
 						xtype: 'checkcolumn',
 						header: tr.cudActions.updateLabel,
-						dataIndex: CMDBuild.core.proxy.CMProxyConstants.UPDATE,
+						dataIndex: CMDBuild.core.constants.Proxy.UPDATE,
 						width: 60,
 						align: 'center',
 						sortable: false,
@@ -332,7 +332,7 @@
 					{
 						xtype: 'checkcolumn',
 						header: tr.cudActions.deleteLabel,
-						dataIndex: CMDBuild.core.proxy.CMProxyConstants.DELETE,
+						dataIndex: CMDBuild.core.constants.Proxy.DELETE,
 						width: 60,
 						align: 'center',
 						sortable: false,
@@ -352,7 +352,7 @@
 // TODO: future implementation
 //					{
 //						header: tr.deletionType,
-//						dataIndex: CMDBuild.core.proxy.CMProxyConstants.DELETE_TYPE,
+//						dataIndex: CMDBuild.core.constants.Proxy.DELETE_TYPE,
 //						editor: {
 //							xtype: 'combo',
 //							disabled: true
@@ -389,7 +389,7 @@
 					{
 						xtype: 'toolbar',
 						dock: 'top',
-						itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_TOP,
+						itemId: CMDBuild.core.constants.Proxy.TOOLBAR_TOP,
 						items: [
 							{
 								text: CMDBuild.Translation.common.buttons.add,
