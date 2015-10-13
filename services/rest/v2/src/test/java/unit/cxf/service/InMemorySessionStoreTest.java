@@ -141,16 +141,16 @@ public class InMemorySessionStoreTest {
 		// then
 		assertThat(stored.isPresent(), equalTo(false));
 	}
-	
-	
+
 	@Test
 	public void expirationTest() throws Exception {
 		// given
+		final int timeout_milliseconds = 100;
 		store = new InMemorySessionStore(new Configuration() {
 
 			@Override
-			public int timeout() {				
-				return 1;
+			public int timeout() {
+				return timeout_milliseconds;
 			}
 
 		});
@@ -160,16 +160,16 @@ public class InMemorySessionStoreTest {
 				.withPassword("password") //
 				.withRole("password") //
 				.build();
-		
+
 		// when
 		store.put(session);
-		
+
 		// then
 		final Optional<Session> stored = store.get("id");
 		assertThat(stored.isPresent(), equalTo(true));
-		
+
 		// when
-		Thread.sleep(1000);
+		Thread.sleep(timeout_milliseconds * 2);
 
 		// then
 		final Optional<Session> noMoreStored = store.get("id");
