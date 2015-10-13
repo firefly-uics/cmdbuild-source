@@ -35,7 +35,7 @@
 
 			objectModel['fieldmode'] = this.get(CMDBuild.core.proxy.CMProxyConstants.WRITABLE) ? 'write' : 'read';
 			objectModel['isbasedsp'] = true;
-			objectModel['isnotnull'] = this.set(CMDBuild.core.proxy.CMProxyConstants.MANDATORY);
+			objectModel['isnotnull'] = this.get(CMDBuild.core.proxy.CMProxyConstants.MANDATORY);
 
 			switch (objectModel[CMDBuild.core.proxy.CMProxyConstants.TYPE]) {
 				case 'LOOKUP': {

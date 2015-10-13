@@ -265,8 +265,6 @@
 		 * Check required field value of grid store records
 		 *
 		 * @returns {Boolean}
-		 *
-		 * @override
 		 */
 		isValid: function() {
 			var returnValue = true;
@@ -274,22 +272,22 @@
 
 			// If widget is flagged as required must return at least 1 row
 			if (
-				this.cmfg('widgetConfigurationGet',CMDBuild.core.proxy.CMProxyConstants.REQUIRED)
+				this.cmfg('widgetConfigurationGet', CMDBuild.core.proxy.CMProxyConstants.REQUIRED)
 				&& this.view.getStore().getCount() == 0
 			) {
 				returnValue = false;
 			}
 
-			// Build columns required array
-			Ext.Array.forEach(this.view.columns, function(column, i, allColumns) {
-				if (column[CMDBuild.core.proxy.CMProxyConstants.REQUIRED])
-					requiredAttributes.push(column[CMDBuild.core.proxy.CMProxyConstants.DATA_INDEX]);
+			// Build required attributes names array
+			Ext.Array.forEach(this.cmfg('widgetConfigurationGet', CMDBuild.core.proxy.CMProxyConstants.MODEL), function(attributeModel, i, allAttributeModels) {
+				if (attributeModel.get(CMDBuild.core.proxy.CMProxyConstants.MANDATORY))
+					requiredAttributes.push(attributeModel.get(CMDBuild.core.proxy.CMProxyConstants.NAME));
 			}, this);
 
 			// Check grid store records empty required fields
 			this.view.getStore().each(function(record) {
-				Ext.Array.forEach(requiredAttributes, function(attribute, i, allAttributes) {
-					if (Ext.isEmpty(record.get(attribute))) {
+				Ext.Array.forEach(requiredAttributes, function(attributeName, i, allAttributeNames) {
+					if (Ext.isEmpty(record.get(attributeName))) {
 						returnValue = false;
 
 						return false;

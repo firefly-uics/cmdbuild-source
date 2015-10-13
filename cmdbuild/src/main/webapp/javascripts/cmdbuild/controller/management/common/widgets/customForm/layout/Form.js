@@ -124,6 +124,15 @@
 		},
 
 		/**
+		 * Validate form
+		 *
+		 * @returns {Boolean}
+		 */
+		isValid: function() {
+			return this.validate(this.view);
+		},
+
+		/**
 		 * Opens import configuration pop-up window
 		 */
 		onCustomFormLayoutFormImportButtonClick: function() {
