@@ -7,10 +7,6 @@
 		layout: 'border',
 
 		constructor: function(config) {
-
-			var tabs = CMDBuild.model.CMUIConfigurationModel.processTabs;
-			var disabledTabs = _CMUIConfiguration.getDisabledProcessTabs();
-
 			this.activityTab = new CMDBuild.view.management.workflow.CMActivityPanel({
 				title: CMDBuild.Translation.management.modworkflow.tabs.card,
 				border: false,
@@ -18,22 +14,28 @@
 				withButtons: true
 			});
 
-			this.openNotePanel = isEnabled(disabledTabs, tabs.notes) ? new CMDBuild.view.management.common.widgets.CMOpenNotes({
-				title: CMDBuild.Translation.management.modworkflow.tabs.notes,
-				border: false
-			}) : null;
+			this.openNotePanel = CMDBuild.configuration.userInterface.isDisabledProcessTab(CMDBuild.core.constants.Proxy.PROCESS_NOTE_TAB) ? null
+				: new CMDBuild.view.management.common.widgets.CMOpenNotes({
+					title: CMDBuild.Translation.management.modworkflow.tabs.notes,
+					border: false
+				})
+			;
 
-			this.relationsPanel = isEnabled(disabledTabs, tabs.relations) ? new CMDBuild.view.management.classes.CMCardRelationsPanel({
-				title: CMDBuild.Translation.management.modworkflow.tabs.relations,
-				border: false,
-				cmWithAddButton: false,
-				cmWithEditRelationIcons: false
-			}) : null;
+			this.relationsPanel = CMDBuild.configuration.userInterface.isDisabledProcessTab(CMDBuild.core.constants.Proxy.PROCESS_RELATION_TAB) ? null
+				: new CMDBuild.view.management.classes.CMCardRelationsPanel({
+					title: CMDBuild.Translation.management.modworkflow.tabs.relations,
+					border: false,
+					cmWithAddButton: false,
+					cmWithEditRelationIcons: false
+				})
+			;
 
-			this.openAttachmentPanel = isEnabled(disabledTabs, tabs.attachments) ? new CMDBuild.view.management.common.widgets.CMOpenAttachment({
-				title: CMDBuild.Translation.management.modworkflow.tabs.attachments,
-				border: false
-			}) : null;
+			this.openAttachmentPanel = CMDBuild.configuration.userInterface.isDisabledProcessTab(CMDBuild.core.constants.Proxy.PROCESS_ATTACHMENT_TAB) ? null
+				: new CMDBuild.view.management.common.widgets.CMOpenAttachment({
+					title: CMDBuild.Translation.management.modworkflow.tabs.attachments,
+					border: false
+				})
+			;
 
 			this.acutalPanel = new Ext.tab.Panel({
 				region: "center",
@@ -198,9 +200,5 @@
 			}
 		}
 	});
-
-	function isEnabled(disabledTabs, name) {
-		return !Ext.Array.contains(disabledTabs, name);
-	}
 
 })();

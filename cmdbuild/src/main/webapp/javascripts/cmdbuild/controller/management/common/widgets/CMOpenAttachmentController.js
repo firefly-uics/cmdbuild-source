@@ -26,7 +26,7 @@
 			var pi = _CMWFState.getProcessInstance();
 
 			if (CMDBuild.Config.workflow.add_attachment_on_closed_activities == TRUE
-					&& pi 
+					&& pi
 					&& pi.isStateCompleted()) {
 
 				priv = true;
@@ -82,7 +82,7 @@
 		// wfStateDelegate
 		onProcessInstanceChange: function(processInstance) {
 			this._loaded = false;
-			if (processInstance.isNew() || 
+			if (processInstance.isNew() ||
 					this.theModuleIsDisabled()) {
 
 				this.view.disable();
@@ -102,10 +102,6 @@
 		mixins: {
 			observable: "Ext.util.Observable",
 			widgetcontroller: "CMDBuild.controller.management.common.widgets.CMWidgetController"
-		},
-
-		statics: {
-			WIDGET_NAME: ".OpenAttachment"
 		},
 
 		constructor: function(view, ownerController, widgetDef, clientForm, card) {

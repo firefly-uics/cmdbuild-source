@@ -1,31 +1,14 @@
 (function() {
 
 	Ext.define('CMDBuild.core.proxy.Configuration', {
-		alternateClassName: 'CMDBuild.ServiceProxy.configuration', // Legacy class name
 
 		requires: [
 			'CMDBuild.core.proxy.CMProxy',
-			'CMDBuild.core.proxy.CMProxyConstants',
-			'CMDBuild.core.proxy.CMProxyUrlIndex'
+			'CMDBuild.core.constants.Proxy',
+			'CMDBuild.core.proxy.Index'
 		],
 
 		singleton: true,
-
-		/**
-		 * @param {Object} parameters
-		 *
-		 * TODO: to move in CMDBuild.core.proxy.Utils
-		 */
-		getLanguage: function(parameters) {
-			CMDBuild.Ajax.request({
-				method: 'POST',
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.utils.getLanguage,
-				scope: parameters.scope || this,
-				success: parameters.success || Ext.emptyFn,
-				failure: parameters.failure || Ext.emptyFn,
-				callback: parameters.callback || Ext.emptyFn
-			});
-		},
 
 		/**
 		 * @return {Ext.data.Store} classes and processes store
@@ -36,7 +19,7 @@
 				model: 'CMDBuild.model.CMSetupModels.startingClass',
 				proxy: {
 					type: 'ajax',
-					url: CMDBuild.core.proxy.CMProxyUrlIndex.classes.read,
+					url: CMDBuild.core.proxy.Index.classes.readAll,
 					reader: {
 						type: 'json',
 						root: 'classes'
@@ -48,7 +31,7 @@
 					}
 				},
 				sorters: [{
-					property: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
+					property: CMDBuild.core.constants.Proxy.DESCRIPTION,
 					direction: 'ASC'
 				}]
 			});
@@ -67,7 +50,7 @@
 		 */
 		readAll: function(parameters) {
 			parameters.method = 'GET';
-			parameters.url = CMDBuild.core.proxy.CMProxyUrlIndex.configuration.getConfigurations;
+			parameters.url = CMDBuild.core.proxy.Index.configuration.getConfigurations;
 			parameters.params = { names: Ext.JSON.encode(['bim', 'cmdbuild', 'dms', 'gis', 'graph', 'workflow']) };
 
 			CMDBuild.ServiceProxy.core.doRequest(parameters);
@@ -88,9 +71,9 @@
 		 */
 		readConf: function(parameters, name) {
 			parameters.method = 'GET';
-			parameters.url = CMDBuild.core.proxy.CMProxyUrlIndex.configuration.getConfiguration;
+			parameters.url = CMDBuild.core.proxy.Index.configuration.getConfiguration;
 			parameters.params = { name: name };
-			parameters.loadMask = parameters.loadMask || false;
+			parameters.loadMask = Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : false;
 
 			CMDBuild.core.proxy.CMProxy.doRequest(parameters);
 		},
@@ -122,9 +105,9 @@
 		 */
 		save: function(parameters, name) {
 			parameters.method = 'POST';
-			parameters.url = CMDBuild.core.proxy.CMProxyUrlIndex.configuration.saveConfiguration;
+			parameters.url = CMDBuild.core.proxy.Index.configuration.saveConfiguration;
 			parameters.params.name = name;
-			parameters.loadMask = parameters.loadMask || false;
+			parameters.loadMask = Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : false;
 
 			CMDBuild.ServiceProxy.core.doRequest(parameters);
 		}

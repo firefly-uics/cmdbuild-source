@@ -2,12 +2,11 @@ package org.cmdbuild.logic.translation.converter;
 
 import java.util.Map;
 
-import org.cmdbuild.logic.translation.TranslationObject;
 import org.cmdbuild.logic.translation.object.LookupDescription;
 
 import com.google.common.collect.Maps;
 
-public enum LookupConverter {
+public enum LookupConverter implements Converter {
 
 	DESCRIPTION(description()) {
 
@@ -17,13 +16,7 @@ public enum LookupConverter {
 		}
 
 		@Override
-		public LookupConverter withTranslations(final Map<String, String> map) {
-			translations = map;
-			return this;
-		}
-
-		@Override
-		public LookupDescription create(final String uuid) {
+		public LookupDescription create() {
 			final org.cmdbuild.logic.translation.object.LookupDescription.Builder builder = LookupDescription
 					.newInstance() //
 					.withUuid(uuid);
@@ -43,29 +36,37 @@ public enum LookupConverter {
 		}
 
 		@Override
-		public LookupConverter withTranslations(final Map<String, String> map) {
-			throw new UnsupportedOperationException();
-		}
-
-		@Override
-		public LookupDescription create(final String name) {
+		public LookupDescription create() {
 			throw new UnsupportedOperationException();
 		}
 	};
 
 	private final String fieldName;
+
+	private static String uuid;
 	private static Map<String, String> translations = Maps.newHashMap();
 	private static final String DESCRIPTION_FIELD = "description";
 
-	public abstract TranslationObject create(String name);
+	@Override
+	public Converter withIdentifier(final String identifier) {
+		uuid = identifier;
+		return this;
+	}
+
+	@Override
+	public Converter withOwner(final String parentIdentifier) {
+		return this;
+	}
+
+	@Override
+	public Converter withTranslations(final Map<String, String> map) {
+		translations = map;
+		return this;
+	}
 
 	public static String description() {
 		return DESCRIPTION_FIELD;
 	}
-
-	public abstract LookupConverter withTranslations(Map<String, String> map);
-
-	public abstract boolean isValid();
 
 	private LookupConverter(final String fieldName) {
 		this.fieldName = fieldName;

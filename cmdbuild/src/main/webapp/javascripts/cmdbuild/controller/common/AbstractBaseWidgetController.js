@@ -8,47 +8,17 @@
 	Ext.define('CMDBuild.controller.common.AbstractBaseWidgetController', {
 		extend: 'CMDBuild.controller.common.AbstractController',
 
-		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
-
-		statics: {
-			/**
-			 * Old implementation to be used in new widgets
-			 *
-			 * @param {Object} model
-			 *
-			 * @return {Object} out
-			 */
-			getTemplateResolverServerVars: function(model) {
-				var out = {};
-				var pi = null;
-
-				if (!Ext.isEmpty(model)) {
-					if (Ext.getClassName(model) == 'CMDBuild.model.CMActivityInstance') {
-						// Retrieve the process instance because it stores the data. this.card has only the varibles to show in this step (is the activity instance)
-						pi = _CMWFState.getProcessInstance();
-					} else if (Ext.getClassName(model) == 'CMDBuild.model.CMProcessInstance') {
-						pi = model;
-					}
-
-					if (!Ext.isEmpty(pi) && Ext.isFunction(pi.getValues)) { // The processes use a new serialization. Add backward compatibility attributes to the card values
-						out = Ext.apply({
-							'Id': pi.get('Id'),
-							'IdClass': pi.get('IdClass'),
-							'IdClass_value': pi.get('IdClass_value')
-						}, pi.getValues());
-					} else {
-						out = model.raw || model.data;
-					}
-				}
-
-				return out;
-			}
-		},
+		requires: ['CMDBuild.core.constants.Proxy'],
 
 		/**
 		 * @cfg {CMDBuild.controller.management.common.CMWidgetManagerController}
 		 */
 		parentDelegate: undefined,
+
+		/**
+		 * @cfg {Boolean}
+		 */
+		applyViewDelegate: true,
 
 		/**
 		 * @property {Ext.data.Model or CMDBuild.model.CMActivityInstance}
@@ -95,6 +65,41 @@
 		 */
 		widgetConfigurationModel: undefined,
 
+		statics: {
+			/**
+			 * Old implementation to be used in new widgets
+			 *
+			 * @param {Object} model
+			 *
+			 * @return {Object} out
+			 */
+			getTemplateResolverServerVars: function(model) {
+				var out = {};
+				var pi = null;
+
+				if (!Ext.isEmpty(model)) {
+					if (Ext.getClassName(model) == 'CMDBuild.model.CMActivityInstance') {
+						// Retrieve the process instance because it stores the data. this.card has only the varibles to show in this step (is the activity instance)
+						pi = _CMWFState.getProcessInstance();
+					} else if (Ext.getClassName(model) == 'CMDBuild.model.CMProcessInstance') {
+						pi = model;
+					}
+
+					if (!Ext.isEmpty(pi) && Ext.isFunction(pi.getValues)) { // The processes use a new serialization. Add backward compatibility attributes to the card values
+						out = Ext.apply({
+							'Id': pi.get('Id'),
+							'IdClass': pi.get('IdClass'),
+							'IdClass_value': pi.get('IdClass_value')
+						}, pi.getValues());
+					} else {
+						out = model.raw || model.data;
+					}
+				}
+
+				return out;
+			}
+		},
+
 		/**
 		 * @param {CMDBuild.view.management.common.widgets.CMWidgetManager} configurationObject.view
 		 * @param {CMDBuild.controller.management.common.CMWidgetManagerController} configurationObject.parentDelegate
@@ -108,7 +113,9 @@
 
 				this.widgetConfigurationSet({ configurationObject: this.widgetConfiguration }); // Setup widget configuration model
 
-				this.view.delegate = this; // Apply delegate to view
+				// Apply delegate to view
+				if (this.applyViewDelegate)
+					this.view.delegate = this;
 			} else {
 				_error('wrong or empty widget view or configuration object', this);
 			}
@@ -165,14 +172,14 @@
 		 * @return {Number}
 		 */
 		getWidgetId: function() {
-			return this.widgetConfigurationGet(CMDBuild.core.proxy.CMProxyConstants.ID);
+			return this.widgetConfigurationGet(CMDBuild.core.constants.Proxy.ID);
 		},
 
 		/**
 		 * @param {String}
 		 */
 		getWidgetLabel: function() {
-			return this.widgetConfigurationGet(CMDBuild.core.proxy.CMProxyConstants.LABEL);
+			return this.widgetConfigurationGet(CMDBuild.core.constants.Proxy.LABEL);
 		},
 
 		// InstancesDataStorage methods (multiple widget instances support)
@@ -327,19 +334,6 @@
 				}
 
 				// Extends to implement full model setup
-			},
-
-		// WidgetCntroller methods
-			/**
-			 * @param {String} propertyName
-			 *
-			 * @returns {Mixed}
-			 */
-			widgetControllerPropertyGet: function(propertyName) {
-				if (!Ext.isEmpty(this[propertyName]))
-					return this[propertyName];
-
-				return null;
 			}
 	});
 

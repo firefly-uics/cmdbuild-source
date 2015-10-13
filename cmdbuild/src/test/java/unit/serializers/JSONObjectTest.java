@@ -17,8 +17,8 @@ public class JSONObjectTest {
 		try {
 			final Long value = obj.getLong(key);
 			fail("The field " + key + " is not a long");
-		} catch (JSONException e) {
-			assertEquals("", (String)obj.get(key));
+		} catch (final JSONException e) {
+			assertEquals("", obj.get(key));
 		}
 	}
 

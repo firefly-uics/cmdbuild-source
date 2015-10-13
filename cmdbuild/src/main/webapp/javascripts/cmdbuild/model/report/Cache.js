@@ -1,16 +1,16 @@
 (function() {
 
+	Ext.require('CMDBuild.core.constants.Proxy');
+
 	Ext.define('CMDBuild.model.report.Cache', {
 		extend: 'Ext.data.Model',
 
-		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
-
 		fields: [
-			{ name: CMDBuild.core.proxy.CMProxyConstants.ACTIVE, type: 'boolean' },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.GROUP, type: 'string' },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.ID, type: 'string' },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.TEXT, type: 'string' },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.TYPE, type: 'string' }
+			{ name: CMDBuild.core.constants.Proxy.ACTIVE, type: 'boolean' },
+			{ name: CMDBuild.core.constants.Proxy.GROUP, type: 'string' },
+			{ name: CMDBuild.core.constants.Proxy.ID, type: 'string' },
+			{ name: CMDBuild.core.constants.Proxy.TEXT, type: 'string' },
+			{ name: CMDBuild.core.constants.Proxy.TYPE, type: 'string' }
 		]
 	});
 

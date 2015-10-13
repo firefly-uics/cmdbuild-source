@@ -51,9 +51,20 @@
 
 	Ext.define("CMDBuild.view.administration.classes.CMAttributeForm", {
 		extend: "Ext.form.Panel",
+
 		mixins: {
 			cmFormFunctions: "CMDBUild.view.common.CMFormFunctions"
 		},
+
+		/**
+		 * @property {CMDBuild.cache.CMEntryTypeModel}
+		 */
+		classObj: undefined,
+
+		/**
+		 * @property {Ext.data.Model}
+		 */
+		selectedAttribute: undefined,
 
 		constructor:function() {
 
@@ -63,7 +74,6 @@
 				scope : this,
 				handler: function() {
 					this.enableModify();
-					_CMCache.initModifyingTranslations();
 				}
 			});
 
@@ -72,8 +82,8 @@
 				text : tr.delete_attribute
 			});
 
-			this.saveButton = new CMDBuild.buttons.SaveButton();
-			this.abortButton = new CMDBuild.buttons.AbortButton();
+			this.saveButton = Ext.create('CMDBuild.core.buttons.text.Save');
+			this.abortButton = Ext.create('CMDBuild.core.buttons.text.Abort');
 
 			this.cmTBar = [this.modifyButton, this.deleteButton];
 			this.cmButtons = [this.saveButton, this.abortButton];
@@ -127,14 +137,26 @@
 			});
 
 			this.attributeDescription = Ext.create('CMDBuild.view.common.field.translatable.Text', {
-				fieldLabel: tr.description,
+				name: CMDBuild.core.constants.Proxy.DESCRIPTION,
+				fieldLabel: CMDBuild.Translation.descriptionLabel,
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
-				name: _CMProxy.parameter.DESCRIPTION,
 				allowBlank: false,
-				translationsKeyType: "ClassAttribute",
-				translationsKeyField: "Description",
-				vtype: 'cmdbcomment'
+				vtype: 'cmdbcomment',
+
+				listeners: {
+					scope: this,
+					enable: function(field, eOpts) { // TODO: on creation, classObj should be already known (refactor)
+						field.translationFieldConfig = {
+							type: CMDBuild.core.constants.Proxy.ATTRIBUTE_CLASS,
+							owner: { sourceType: 'model', key: CMDBuild.core.constants.Proxy.NAME, source: this.classObj },
+							identifier: { sourceType: 'form', key: CMDBuild.core.constants.Proxy.NAME, source: this },
+							field: CMDBuild.core.constants.Proxy.DESCRIPTION
+						};
+
+						field.translationsRead();
+					}
+				}
 			});
 
 			this.attributeNotNull = new Ext.ux.form.XCheckbox({
@@ -229,7 +251,7 @@
 
 			this.referenceFilterMetadata = {};
 
-			this.addMetadataBtn = Ext.create('CMDBuild.core.buttons.Modify', {
+			this.addMetadataBtn = Ext.create('CMDBuild.core.buttons.iconized.Modify', {
 				text: CMDBuild.Translation.editMetadata,
 				margin: '0 0 0 ' + (CMDBuild.LABEL_WIDTH + 5),
 				scope: this,
@@ -244,7 +266,7 @@
 			});
 
 			this.preselectIfUniqueCheckbox = Ext.create('Ext.form.field.Checkbox', {
-				name: CMDBuild.core.proxy.CMProxyConstants.PRESELECT_IF_UNIQUE,
+				name: CMDBuild.core.constants.Proxy.PRESELECT_IF_UNIQUE,
 				fieldLabel: CMDBuild.Translation.preselectIfUnique,
 				labelWidth: CMDBuild.LABEL_WIDTH
 			});
@@ -455,10 +477,15 @@
 			return _CMCache.getClassById(idClass);
 		},
 
-		onAttributeSelected : function(attribute) {
+		/**
+		 * @param {Ext.data.Model} attribute
+		 */
+		onAttributeSelected: function(attribute) {
 			this.reset();
 
 			if (attribute) {
+				this.selectedAttribute = attribute;
+
 				this.getForm().setValues(attribute.raw);
 				this.disableModify(enableCMTbar = true);
 				this.deleteButton.setDisabled(attribute.get("inherited"));
@@ -466,12 +493,7 @@
 				this.showContextualFieldsByType(attribute.get("type"));
 
 				this.referenceFilterMetadata = attribute.raw.meta || {};
-				this.preselectIfUniqueCheckbox.setValue(attribute.raw.meta['system.type.reference.' + CMDBuild.core.proxy.CMProxyConstants.PRESELECT_IF_UNIQUE]);
-
-				Ext.apply(this.attributeDescription, {
-					translationsKeyName: this.classObj.get("name"),
-					translationsKeySubName: attribute.get("name")
-				});
+				this.preselectIfUniqueCheckbox.setValue(attribute.raw.meta['system.type.reference.' + CMDBuild.core.constants.Proxy.PRESELECT_IF_UNIQUE]);
 			}
 		},
 

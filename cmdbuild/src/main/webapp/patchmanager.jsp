@@ -17,7 +17,7 @@
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 		<link rel="stylesheet" type="text/css" href="stylesheets/cmdbuild.css" />
 		<link rel="stylesheet" type="text/css" href="javascripts/ext-<%= extVersion %>/resources/css/ext-all.css" />
-		<link rel="icon" href="images/favicon.ico" />
+		<link rel="icon" type="image/x-icon" href="images/favicon.ico" />
 
 		<!-- 0. ExtJS -->
 		<script type="text/javascript" src="javascripts/ext-<%= extVersion %>/ext-all.js"></script>
@@ -35,7 +35,7 @@
 		<script type="text/javascript" src="javascripts/ext-<%= extVersion %>/locale/ext-lang-<%= lang %>.js"></script>
 		<script type="text/javascript" src="services/json/utils/gettranslationobject"></script>
 
-		<!-- 4. Modules -->
+		<!-- 3. Modules -->
 		<script type="text/javascript" src="javascripts/cmdbuild/app/PatchManager.js"></script>
 
 		<title>CMDBuild - Patch manager</title>
@@ -45,8 +45,6 @@
 			<img alt="CMDBuild logo" src="images/logo.jpg" />
 			<div id="header_po">Open Source Configuration and Management Database</div>
 		</div>
-
-		<div id="grid"></div>
 
 		<div id="footer">
 			<div class="fl"><a href="http://www.cmdbuild.org" target="_blank">www.cmdbuild.org</a></div>
