@@ -4,7 +4,7 @@
 		extend: 'CMDBuild.core.PopupWindow',
 
 		requires: [
-			'CMDBuild.core.proxy.CMProxyConstants',
+			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.model.common.tabs.email.Email'
 		],
 
@@ -28,10 +28,11 @@
 		 */
 		grid: undefined,
 
-		buttonAlign: 'center',
+		autoScroll: true,
 		closeAction: 'hide',
-		layout: 'border',
 		title: CMDBuild.Translation.confirmRegeneration,
+
+		layout: 'border',
 
 		initComponent: function() {
 			this.grid = Ext.create('Ext.grid.Panel', {
@@ -49,7 +50,7 @@
 					{
 						text: CMDBuild.Translation.archivingDate,
 						sortable: true,
-						dataIndex: CMDBuild.core.proxy.CMProxyConstants.DATE,
+						dataIndex: CMDBuild.core.constants.Proxy.DATE,
 						flex: 1
 					},
 					{
@@ -62,13 +63,13 @@
 					{
 						text: CMDBuild.Translation.subject,
 						sortable: false,
-						dataIndex: CMDBuild.core.proxy.CMProxyConstants.SUBJECT,
+						dataIndex: CMDBuild.core.constants.Proxy.SUBJECT,
 						flex: 1
 					},
 					{
 						sortable: false,
 						scope: this,
-						dataIndex: CMDBuild.core.proxy.CMProxyConstants.BODY,
+						dataIndex: CMDBuild.core.constants.Proxy.BODY,
 						menuDisabled: true,
 						hideable: false,
 						renderer: 'stripTags',
@@ -96,7 +97,7 @@
 				dockedItems: [
 					Ext.create('Ext.toolbar.Toolbar', {
 						dock: 'bottom',
-						itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_BOTTOM,
+						itemId: CMDBuild.core.constants.Proxy.TOOLBAR_BOTTOM,
 						ui: 'footer',
 
 						layout: {
@@ -106,7 +107,7 @@
 						},
 
 						items: [
-							Ext.create('CMDBuild.core.buttons.Confirm', {
+							Ext.create('CMDBuild.core.buttons.text.Confirm', {
 								scope: this,
 
 								handler: function(button, e) {
@@ -153,9 +154,9 @@
 			 */
 			addressRenderer: function(value, metadata, record) {
 				if (this.delegate.gridDelegate.recordIsReceived(record)) {
-					return record.get(CMDBuild.core.proxy.CMProxyConstants.FROM);
+					return record.get(CMDBuild.core.constants.Proxy.FROM);
 				} else {
-					return record.get(CMDBuild.core.proxy.CMProxyConstants.TO);
+					return record.get(CMDBuild.core.constants.Proxy.TO);
 				}
 			}
 	});

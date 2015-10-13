@@ -3,7 +3,7 @@
 	Ext.define('CMDBuild.view.administration.configuration.GisPanel', {
 		extend: 'Ext.form.Panel',
 
-		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+		requires: ['CMDBuild.core.constants.Proxy'],
 
 		/**
 		 * @cfg {CMDBuild.controller.administration.configuration.Gis}
@@ -31,7 +31,7 @@
 				dockedItems: [
 					Ext.create('Ext.toolbar.Toolbar', {
 						dock: 'bottom',
-						itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_BOTTOM,
+						itemId: CMDBuild.core.constants.Proxy.TOOLBAR_BOTTOM,
 						ui: 'footer',
 
 						layout: {
@@ -41,18 +41,18 @@
 						},
 
 						items: [
-							Ext.create('CMDBuild.core.buttons.Save', {
+							Ext.create('CMDBuild.core.buttons.text.Save', {
 								scope: this,
 
 								handler: function(button, e) {
-									this.delegate.cmfg('onGisSaveButtonClick');
+									this.delegate.cmfg('onConfigurationGisSaveButtonClick');
 								}
 							}),
-							Ext.create('CMDBuild.core.buttons.Abort', {
+							Ext.create('CMDBuild.core.buttons.text.Abort', {
 								scope: this,
 
 								handler: function(button, e) {
-									this.delegate.cmfg('onGisAbortButtonClick');
+									this.delegate.cmfg('onConfigurationGisAbortButtonClick');
 								}
 							})
 						]
@@ -61,7 +61,7 @@
 				items: [
 					{
 						xtype: 'xcheckbox',
-						name: CMDBuild.core.proxy.CMProxyConstants.ENABLED,
+						name: CMDBuild.core.constants.Proxy.ENABLED,
 						fieldLabel: CMDBuild.Translation.enable
 					},
 					{
@@ -78,7 +78,7 @@
 					},
 					{
 						xtype: 'numberfield',
-						name: CMDBuild.core.proxy.CMProxyConstants.INITIAL_ZOOM_LEVEL,
+						name: CMDBuild.core.constants.Proxy.INITIAL_ZOOM_LEVEL,
 						fieldLabel: CMDBuild.Translation.initialZoomLevel,
 						minValue: 0,
 						maxValue: 25

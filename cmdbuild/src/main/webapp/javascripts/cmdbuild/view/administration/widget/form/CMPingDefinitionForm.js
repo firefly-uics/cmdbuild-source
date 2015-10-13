@@ -3,6 +3,10 @@
 	Ext.define("CMDBuild.view.administration.widget.form.CMPingDefinitionForm", {
 		extend: "CMDBuild.view.administration.widget.form.CMBaseWidgetDefinitionForm",
 
+		mixins: {
+			panelFunctions: 'CMDBuild.view.common.PanelFunctions'
+		},
+
 		statics: {
 			WIDGET_NAME: ".Ping",
 			DEFAULT_COUNT_VALUE: 3,

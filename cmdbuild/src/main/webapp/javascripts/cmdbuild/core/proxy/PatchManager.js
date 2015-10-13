@@ -4,7 +4,7 @@
 
 		requires: [
 			'CMDBuild.core.configurations.Timeout',
-			'CMDBuild.core.proxy.CMProxyUrlIndex',
+			'CMDBuild.core.proxy.Index',
 			'CMDBuild.model.patchManager.Patch'
 		],
 
@@ -20,7 +20,7 @@
 				remoteSort: false,
 				proxy: {
 					type: 'ajax',
-					url: CMDBuild.core.proxy.CMProxyUrlIndex.patchManager.readAll,
+					url: CMDBuild.core.proxy.Index.patchManager.readAll,
 					reader: {
 						type: 'json',
 						root: 'patches'
@@ -41,7 +41,7 @@
 		 */
 		update: function(parameters) {
 			CMDBuild.Ajax.request({
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.patchManager.update,
+				url: CMDBuild.core.proxy.Index.patchManager.update,
 				params: parameters.params,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
 				timeout: CMDBuild.core.configurations.Timeout.getPatchManager(), // Get report timeout from configuration

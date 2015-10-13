@@ -5,7 +5,11 @@
 	Ext.define('CMDBuild.view.administration.widget.form.CMCreateModifyCardDefinitionForm', {
 		extend: 'CMDBuild.view.administration.widget.form.CMBaseWidgetDefinitionForm',
 
-		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+		requires: ['CMDBuild.core.constants.Proxy'],
+
+		mixins: {
+			panelFunctions: 'CMDBuild.view.common.PanelFunctions'
+		},
 
 		statics: {
 			WIDGET_NAME: '.CreateModifyCard'
@@ -29,11 +33,12 @@
 			this.callParent(arguments);
 
 			this.targetClass = Ext.create('CMDBuild.field.ErasableCombo', {
+				name: CMDBuild.core.constants.Proxy.TARGET_CLASS,
 				fieldLabel: tr[this.self.WIDGET_NAME].fields.target,
 				labelWidth: CMDBuild.LABEL_WIDTH,
-				name: CMDBuild.core.proxy.CMProxyConstants.TARGET_CLASS,
-				valueField: CMDBuild.core.proxy.CMProxyConstants.NAME,
-				displayField: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
+				maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
+				valueField: CMDBuild.core.constants.Proxy.NAME,
+				displayField: CMDBuild.core.constants.Proxy.DESCRIPTION,
 				editable: false,
 
 				validator: function(value) {
@@ -50,7 +55,7 @@
 			this.cqlText = Ext.create('Ext.form.field.Text', {
 				fieldLabel: tr[this.self.WIDGET_NAME].fields.cql,
 				labelWidth: CMDBuild.LABEL_WIDTH,
-				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
+				maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
 				name: 'idcardcqlselector',
 
 				validator: function(value) {
@@ -78,7 +83,7 @@
 		fillWithModel: function(model) {
 			this.callParent(arguments);
 
-			this.targetClass.setValue(model.get(CMDBuild.core.proxy.CMProxyConstants.TARGET_CLASS));
+			this.targetClass.setValue(model.get(CMDBuild.core.constants.Proxy.TARGET_CLASS));
 			this.cqlText.setValue(model.get('idcardcqlselector'));
 			this.readOnlyCheck.setValue(model.get('readonly'));
 		},

@@ -13,7 +13,7 @@
 
 		// override to deny to add a note to a new process
 		disableTheTabBeforeCardSelection: function(processInstance) {
-			if (!processInstance 
+			if (!processInstance
 					|| processInstance.isNew()) {
 				return true;
 			} else {
@@ -143,10 +143,6 @@
 		mixins: {
 			observable: "Ext.util.Observable",
 			widgetcontroller: "CMDBuild.controller.management.common.widgets.CMWidgetController"
-		},
-
-		statics: {
-			WIDGET_NAME: ".OpenNote"
 		},
 
 		constructor: function(view, supercontroller, widget, templateResolver, card) {

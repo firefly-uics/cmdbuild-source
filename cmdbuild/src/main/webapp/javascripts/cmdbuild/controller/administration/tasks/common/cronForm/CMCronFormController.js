@@ -2,7 +2,7 @@
 
 	Ext.define('CMDBuild.controller.administration.tasks.common.cronForm.CMCronFormController', {
 
-		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+		requires: ['CMDBuild.core.constants.Proxy'],
 
 		/**
 		 * @property {CMDBuild.view.administration.tasks.common.cronForm.CMCronFormAdvanced}
@@ -210,7 +210,7 @@
 			 * @param {String} value
 			 */
 			setValueBase: function(value) {
-				var index = this.baseField.baseCombo.store.find(CMDBuild.core.proxy.CMProxyConstants.VALUE, value);
+				var index = this.baseField.baseCombo.store.find(CMDBuild.core.constants.Proxy.VALUE, value);
 
 				if (index > -1) {
 					this.baseField.baseCombo.setValue(value);
