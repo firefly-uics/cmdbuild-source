@@ -26,7 +26,7 @@
 								scope: this,
 
 								handler: function(button, e) {
-									this.delegate.cmfg('onServerClearCacheButtonClick');
+									this.delegate.cmfg('onConfigurationServerClearCacheButtonClick');
 								}
 							})
 						]
@@ -41,7 +41,7 @@
 								scope: this,
 
 								handler: function(button, e) {
-									this.delegate.cmfg('onServerServiceSynchButtonClick');
+									this.delegate.cmfg('onConfigurationServerServiceSynchButtonClick');
 								}
 							})
 						]
@@ -56,7 +56,7 @@
 								scope: this,
 
 								handler: function(button, e) {
-									this.delegate.cmfg('onServerUnlockCardsButtonClick');
+									this.delegate.cmfg('onConfigurationServerUnlockCardsButtonClick');
 								}
 							})
 						]

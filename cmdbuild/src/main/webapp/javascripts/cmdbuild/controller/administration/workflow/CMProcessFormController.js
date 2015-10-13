@@ -3,7 +3,10 @@
 	Ext.define('CMDBuild.controller.administration.workflow.CMProcessFormController', {
 		extend: 'CMDBuild.controller.administration.classes.CMClassFormController',
 
-		requires: ['CMDBuild.core.proxy.CMProxyWorkflow'],
+		requires: [
+			'CMDBuild.core.proxy.CMProxyWorkflow',
+			'CMDBuild.view.common.field.translatable.Utils'
+		],
 
 		/**
 		 * @param {CMDBuild.view.administration.workflow.CMProcessForm} view
@@ -38,7 +41,7 @@
 		 * @override
 		 */
 		deleteSuccessCB: function(result, options, decodedResult) {
-			var removedClassId = this.selection.get(CMDBuild.core.proxy.CMProxyConstants.ID);
+			var removedClassId = this.selection.get(CMDBuild.core.constants.Proxy.ID);
 
 			_CMCache.onProcessDeleted(removedClassId);
 
@@ -106,13 +109,13 @@
 						}
 
 						store.add({
-							id: CMDBuild.core.proxy.CMProxyConstants.TEMPLATE,
+							id: CMDBuild.core.constants.Proxy.TEMPLATE,
 							index: 0
 						});
 
 						store.sort([
 							{
-								property : CMDBuild.core.proxy.CMProxyConstants.INDEX,
+								property : CMDBuild.core.constants.Proxy.INDEX,
 								direction: 'DESC'
 							}
 						]);
@@ -164,12 +167,14 @@
 		 * @override
 		 */
 		saveSuccessCB: function(result, options, decodedResult) {
-			var savedProcessData = decodedResult[CMDBuild.core.proxy.CMProxyConstants.TABLE];
+			var savedProcessData = decodedResult[CMDBuild.core.constants.Proxy.TABLE];
 			this.selection = _CMCache.onProcessSaved(savedProcessData);
+
+			CMDBuild.view.common.field.translatable.Utils.commit(this.view.form);
 
 			// Accordion synchronization
 			_CMMainViewportController.findAccordionByCMName('process').updateStore();
-			_CMMainViewportController.findAccordionByCMName('process').selectNodeById(savedProcessData[CMDBuild.core.proxy.CMProxyConstants.ID]);
+			_CMMainViewportController.findAccordionByCMName('process').selectNodeById(savedProcessData[CMDBuild.core.constants.Proxy.ID]);
 		}
 	});
 

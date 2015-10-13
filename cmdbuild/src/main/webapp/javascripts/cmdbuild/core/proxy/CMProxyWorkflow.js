@@ -3,7 +3,7 @@
 	Ext.define('CMDBuild.core.proxy.CMProxyWorkflow', {
 		alternateClassName: 'CMDBuild.ServiceProxy.workflow', // Legacy class name
 
-		requires: ['CMDBuild.core.proxy.CMProxyUrlIndex'],
+		requires: ['CMDBuild.core.proxy.Index'],
 
 		singleton: true,
 
@@ -13,10 +13,10 @@
 		 * @param {Object} parameters
 		 */
 		downloadSubmit: function(form, version, parameters) {
-			var url = CMDBuild.core.proxy.CMProxyUrlIndex.workflow.xpdlDownload;
+			var url = CMDBuild.core.proxy.Index.workflow.xpdlDownload;
 
-			if (version == CMDBuild.core.proxy.CMProxyConstants.TEMPLATE || Ext.isEmpty(version))
-				url = CMDBuild.core.proxy.CMProxyUrlIndex.workflow.xpdlDownloadTemplate;
+			if (version == CMDBuild.core.constants.Proxy.TEMPLATE || Ext.isEmpty(version))
+				url = CMDBuild.core.proxy.Index.workflow.xpdlDownloadTemplate;
 
 			form.submit({
 				method: 'GET',
@@ -57,7 +57,7 @@
 		getXpdlVersions: function(parameters) {
 			CMDBuild.Ajax.request({
 				method: 'POST',
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.workflow.xpdlVersions,
+				url: CMDBuild.core.proxy.Index.workflow.xpdlVersions,
 				params: parameters.params,
 				scope: parameters.scope,
 				success: parameters.success,
@@ -85,7 +85,7 @@
 		 */
 		synchronize: function(parameters) {
 			CMDBuild.Ajax.request( {
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.workflow.synchronize,
+				url: CMDBuild.core.proxy.Index.workflow.synchronize,
 				loadMask: true,
 				params: parameters.params,
 				scope: parameters.scope,
@@ -107,7 +107,7 @@
 		 */
 		xpdlUpload: function(parameters) {
 			parameters.form.submit({
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.workflow.xpdlUpload,
+				url: CMDBuild.core.proxy.Index.workflow.xpdlUpload,
 				params: parameters.params,
 				scope: parameters.scope,
 				success: parameters.success,

@@ -5,7 +5,7 @@
 	Ext.define('CMDBuild.view.administration.tasks.CMTasks', {
 		extend: 'Ext.panel.Panel',
 
-		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+		requires: ['CMDBuild.core.constants.Proxy'],
 
 		/**
 		 * @cfg {CMDBuild.controller.administration.tasks.CMTasksController}
@@ -46,7 +46,7 @@
 				dockedItems: [
 					Ext.create('Ext.toolbar.Toolbar', {
 						dock: 'top',
-						itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_TOP,
+						itemId: CMDBuild.core.constants.Proxy.TOOLBAR_TOP,
 						items: []
 					})
 				],
@@ -64,11 +64,11 @@
 			 * @param {Object} eOpts
 			 */
 			show: function(panel, eOpts) {
-				this.getDockedComponent(CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_TOP).removeAll();
+				this.getDockedComponent(CMDBuild.core.constants.Proxy.TOOLBAR_TOP).removeAll();
 
 				switch (this.delegate.taskType) {
 					case 'all': {
-						this.getDockedComponent(CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_TOP).add(
+						this.getDockedComponent(CMDBuild.core.constants.Proxy.TOOLBAR_TOP).add(
 							Ext.create('Ext.button.Split', {
 								iconCls: 'add',
 								text: tr.add,
@@ -131,7 +131,7 @@
 					} break;
 
 					case 'event': {
-						this.getDockedComponent(CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_TOP).add(
+						this.getDockedComponent(CMDBuild.core.constants.Proxy.TOOLBAR_TOP).add(
 							Ext.create('Ext.button.Split', {
 								iconCls: 'add',
 								text: tr.add,
@@ -168,8 +168,8 @@
 					} break;
 
 					default: {
-						this.getDockedComponent(CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_TOP).add(
-							Ext.create('CMDBuild.core.buttons.Add', {
+						this.getDockedComponent(CMDBuild.core.constants.Proxy.TOOLBAR_TOP).add(
+							Ext.create('CMDBuild.core.buttons.iconized.add.Add', {
 								text: tr.add,
 								scope: this,
 

@@ -7,13 +7,14 @@ import java.util.Map;
 
 import org.cmdbuild.logic.translation.TranslationObject;
 import org.cmdbuild.logic.translation.converter.AttributeConverter;
+import org.cmdbuild.logic.translation.converter.Converter;
 import org.cmdbuild.logic.translation.object.ClassAttributeGroup;
 import org.junit.Test;
 
 import com.google.common.collect.ImmutableMap;
 
 public class ClassAttributeGroupObjectCreationTest {
-	
+
 	private static final String entryType = "class";
 	private static final String classname = "Building";
 	private static final String attributename = "Name";
@@ -26,12 +27,12 @@ public class ClassAttributeGroupObjectCreationTest {
 	@Test
 	public void forGroupFieldReturnsValidObject() {
 		// given
-		final AttributeConverter converter = AttributeConverter //
-				.of(entryType,field) //
-				.withTranslations(map);
+		final Converter converter = AttributeConverter //
+				.of(entryType, field) //
+				.withIdentifier(attributename).withOwner(classname).withTranslations(map);
 
 		// when
-		final TranslationObject translationObject = converter.create(classname, attributename);
+		final TranslationObject translationObject = converter.create();
 
 		// then
 		assertTrue(converter.isValid());
@@ -43,12 +44,12 @@ public class ClassAttributeGroupObjectCreationTest {
 	@Test
 	public void converterIsCaseInsensitiveForTheField() {
 		// given
-		final AttributeConverter converter = AttributeConverter //
+		final Converter converter = AttributeConverter //
 				.of(entryType, "gROup") //
-				.withTranslations(map);
+				.withIdentifier(attributename).withOwner(classname).withTranslations(map);
 
 		// when
-		final TranslationObject translationObject = converter.create(classname, attributename);
+		final TranslationObject translationObject = converter.create();
 
 		// then
 		assertTrue(converter.isValid());
@@ -78,7 +79,7 @@ public class ClassAttributeGroupObjectCreationTest {
 
 		// when
 		try {
-			converter.create(classname, attributename);
+			converter.create();
 		} catch (final Exception e) {
 			thrown = e;
 		}
@@ -95,7 +96,10 @@ public class ClassAttributeGroupObjectCreationTest {
 				.of(entryType, field);
 
 		// when
-		final TranslationObject translationObject = converter.create(classname, attributename);
+		final TranslationObject translationObject = converter //
+				.withIdentifier(attributename) //
+				.withOwner(classname) //
+				.create();
 
 		// then
 		assertTrue(converter.isValid());

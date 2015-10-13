@@ -1,7 +1,7 @@
 (function() {
 
 	Ext.define('CMDBuild.view.administration.email.EmailView', {
-		extend: 'Ext.form.Panel',
+		extend: 'Ext.panel.Panel',
 
 		/**
 		 * @cfg {CMDBuild.controller.administration.email.Email}

@@ -3,7 +3,7 @@
 	Ext.define('CMDBuild.controller.common.field.filter.cql.Metadata', {
 		extend: 'CMDBuild.controller.common.AbstractController',
 
-		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+		requires: ['CMDBuild.core.constants.Proxy'],
 
 		/**
 		 * @cfg {CMDBuild.controller.common.field.filter.cql.Cql}
@@ -54,12 +54,12 @@
 			var gridData = {};
 
 			this.grid.getStore().each(function(record) {
-				gridData[record.get(CMDBuild.core.proxy.CMProxyConstants.KEY)] = record.get(CMDBuild.core.proxy.CMProxyConstants.VALUE);
+				gridData[record.get(CMDBuild.core.constants.Proxy.KEY)] = record.get(CMDBuild.core.constants.Proxy.VALUE);
 			}, this);
 
 			this.cmfg('fieldFilterCqlFilterSet', {
 				filterObject: gridData,
-				propertyName: CMDBuild.core.proxy.CMProxyConstants.CONTEXT
+				propertyName: CMDBuild.core.constants.Proxy.CONTEXT
 			});
 
 			this.onMetadataWindowAbortButtonClick();
@@ -69,13 +69,13 @@
 		 * Loads data object in store
 		 */
 		onMetadataWindowShow: function() {
-			if (!this.cmfg('fieldFilterCqlFilterIsAttributeEmpty', CMDBuild.core.proxy.CMProxyConstants.CONTEXT)) {
+			if (!this.cmfg('fieldFilterCqlFilterIsAttributeEmpty', CMDBuild.core.constants.Proxy.CONTEXT)) {
 				this.grid.getStore().removeAll();
 
-				Ext.Object.each(this.cmfg('fieldFilterCqlFilterGet', CMDBuild.core.proxy.CMProxyConstants.CONTEXT), function(key, value, myself) {
+				Ext.Object.each(this.cmfg('fieldFilterCqlFilterGet', CMDBuild.core.constants.Proxy.CONTEXT), function(key, value, myself) {
 					var recordConf = {};
-					recordConf[CMDBuild.core.proxy.CMProxyConstants.KEY] = key;
-					recordConf[CMDBuild.core.proxy.CMProxyConstants.VALUE] = value;
+					recordConf[CMDBuild.core.constants.Proxy.KEY] = key;
+					recordConf[CMDBuild.core.constants.Proxy.VALUE] = value;
 
 					this.grid.getStore().add(recordConf);
 				}, this);

@@ -1,3 +1,7 @@
+/**
+ * @deprecated new class (CMDBuild.view.common.field.filter.advanced.Advanced)
+ */
+
 Ext.define("CMDBuild.view.common.filter.CMFilterConfigurationWindow", {
 	extend: "CMDBuild.view.management.common.filter.CMFilterWindow",
 

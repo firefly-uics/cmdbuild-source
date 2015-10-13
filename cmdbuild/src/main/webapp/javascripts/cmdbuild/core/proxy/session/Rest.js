@@ -6,8 +6,8 @@
 	Ext.define('CMDBuild.core.proxy.session.Rest', {
 
 		requires: [
-			'CMDBuild.core.proxy.CMProxyConstants',
-			'CMDBuild.core.proxy.CMProxyUrlIndex',
+			'CMDBuild.core.constants.Proxy',
+			'CMDBuild.core.proxy.Index',
 			'CMDBuild.core.Utils'
 		],
 
@@ -20,7 +20,7 @@
 			Ext.Ajax.request({
 				method: 'PUT',
 				jsonData: parameters.params,
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.session.rest + '/' + parameters.urlParams[CMDBuild.core.proxy.CMProxyConstants.TOKEN],
+				url: CMDBuild.core.proxy.Index.session.rest + '/' + parameters.urlParams[CMDBuild.core.constants.Proxy.TOKEN],
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
 				scope: parameters.scope || this,
 				success: parameters.success || Ext.emptyFn,
@@ -35,7 +35,7 @@
 		logout: function(parameters) {
 			Ext.Ajax.request({
 				method: 'DELETE',
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.session.rest + '/' + parameters.urlParams[CMDBuild.core.proxy.CMProxyConstants.TOKEN],
+				url: CMDBuild.core.proxy.Index.session.rest + '/' + parameters.urlParams[CMDBuild.core.constants.Proxy.TOKEN],
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
 				scope: parameters.scope || this,
 				success: parameters.success || Ext.emptyFn,
@@ -51,7 +51,7 @@
 			Ext.Ajax.request({
 				method: 'GET',
 				jsonData: parameters.params,
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.session.rest + '/' + parameters.urlParams[CMDBuild.core.proxy.CMProxyConstants.TOKEN],
+				url: CMDBuild.core.proxy.Index.session.rest + '/' + parameters.urlParams[CMDBuild.core.constants.Proxy.TOKEN],
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
 				scope: parameters.scope || this,
 				success: parameters.success || Ext.emptyFn,

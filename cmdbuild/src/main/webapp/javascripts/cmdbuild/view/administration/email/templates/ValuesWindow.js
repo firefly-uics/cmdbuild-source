@@ -4,7 +4,7 @@
 		extend: 'CMDBuild.core.PopupWindow',
 
 		requires: [
-			'CMDBuild.core.proxy.CMProxyConstants',
+			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.model.email.Templates'
 		],
 
@@ -18,6 +18,7 @@
 		 */
 		grid: undefined,
 
+		autoScroll: true,
 		title: CMDBuild.Translation.editValues,
 
 		initComponent: function() {
@@ -27,14 +28,14 @@
 
 				columns: [
 					{
-						dataIndex: CMDBuild.core.proxy.CMProxyConstants.KEY,
+						dataIndex: CMDBuild.core.constants.Proxy.KEY,
 						text: CMDBuild.Translation.key,
 						flex: 1,
 
 						editor: { xtype: 'textfield' }
 					},
 					{
-						dataIndex: CMDBuild.core.proxy.CMProxyConstants.VALUE,
+						dataIndex: CMDBuild.core.constants.Proxy.VALUE,
 						text: CMDBuild.Translation.value,
 						flex: 1,
 
@@ -78,10 +79,10 @@
 				dockedItems: [
 					Ext.create('Ext.toolbar.Toolbar', {
 						dock: 'top',
-						itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_TOP,
+						itemId: CMDBuild.core.constants.Proxy.TOOLBAR_TOP,
 
 						items: [
-							Ext.create('CMDBuild.core.buttons.Add', {
+							Ext.create('CMDBuild.core.buttons.iconized.add.Add', {
 								scope: this,
 
 								handler: function(buttons, e) {
@@ -92,7 +93,7 @@
 					}),
 					Ext.create('Ext.toolbar.Toolbar', {
 						dock: 'bottom',
-						itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_BOTTOM,
+						itemId: CMDBuild.core.constants.Proxy.TOOLBAR_BOTTOM,
 						ui: 'footer',
 
 						layout: {
@@ -102,14 +103,14 @@
 						},
 
 						items: [
-							Ext.create('CMDBuild.core.buttons.Confirm', {
+							Ext.create('CMDBuild.core.buttons.text.Confirm', {
 								scope: this,
 
 								handler: function(button, e) {
 									this.delegate.cmfg('onValuesWindowSaveButtonClick');
 								}
 							}),
-							Ext.create('CMDBuild.core.buttons.Abort', {
+							Ext.create('CMDBuild.core.buttons.text.Abort', {
 								scope: this,
 
 								handler: function(button, e) {
