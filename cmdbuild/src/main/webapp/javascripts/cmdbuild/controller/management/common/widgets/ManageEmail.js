@@ -60,7 +60,7 @@
 		 */
 		constructor: function(configurationObject) {
 			this.callParent(arguments);
-_debug('configurationObject', configurationObject);
+
 			// Shorthands
 			this.tabController = this.view.delegate;
 
@@ -72,7 +72,7 @@ _debug('configurationObject', configurationObject);
 			Ext.Array.forEach(this.widgetConfigurationGet(CMDBuild.core.constants.Proxy.TEMPLATES), function(templateObject, i, allTemplateObjects) {
 				this.configurationTemplates.push(this.configurationTemplatesToModel(templateObject));
 			}, this);
-_debug('this.tabController', this.tabController);
+
 			this.tabController.cmfg('configurationTemplatesSet', this.configurationTemplates);
 
 			this.buildBottomToolbar();
