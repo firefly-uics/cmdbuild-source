@@ -35,6 +35,7 @@
 
 			objectModel['fieldmode'] = this.get(CMDBuild.core.proxy.CMProxyConstants.WRITABLE) ? 'write' : 'read';
 			objectModel['isbasedsp'] = true;
+			objectModel['isnotnull'] = this.set(CMDBuild.core.proxy.CMProxyConstants.MANDATORY);
 
 			switch (objectModel[CMDBuild.core.proxy.CMProxyConstants.TYPE]) {
 				case 'LOOKUP': {
@@ -48,13 +49,10 @@
 					// New filter object structure adapter
 					objectModel[CMDBuild.core.proxy.CMProxyConstants.FILTER] = this.get(CMDBuild.core.proxy.CMProxyConstants.FILTER)[CMDBuild.core.proxy.CMProxyConstants.EXPRESSION];
 					objectModel[CMDBuild.core.proxy.CMProxyConstants.META] = {};
-					Ext.Object.each(
-						this.get(CMDBuild.core.proxy.CMProxyConstants.FILTER)[CMDBuild.core.proxy.CMProxyConstants.CONTEXT],
-						function(key, value, myself) {
-							objectModel[CMDBuild.core.proxy.CMProxyConstants.META]['system.template.' + key] = value;
-						},
-						this
-					);
+
+					Ext.Object.each(this.get(CMDBuild.core.proxy.CMProxyConstants.FILTER)[CMDBuild.core.proxy.CMProxyConstants.CONTEXT], function(key, value, myself) {
+						objectModel[CMDBuild.core.proxy.CMProxyConstants.META]['system.template.' + key] = value;
+					}, this);
 				} break;
 			}
 
