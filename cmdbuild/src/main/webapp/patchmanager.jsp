@@ -20,7 +20,7 @@
 		<link rel="icon" href="images/favicon.ico" />
 
 		<!-- 0. ExtJS -->
-		<script type="text/javascript" src="javascripts/ext-<%= extVersion %>/ext-all-debug.js"></script>
+		<script type="text/javascript" src="javascripts/ext-<%= extVersion %>/ext-all.js"></script>
 		<script type="text/javascript" src="javascripts/ext-<%= extVersion %>-ux/Notification.js"></script>
 
 		<!-- 1. Main script -->
