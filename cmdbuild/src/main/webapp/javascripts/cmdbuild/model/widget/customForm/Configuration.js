@@ -17,7 +17,6 @@
 			{ name: CMDBuild.core.constants.Proxy.REQUIRED, type: 'boolean' },
 			{ name: CMDBuild.core.constants.Proxy.TYPE, type: 'string' },
 			{ name: CMDBuild.core.constants.Proxy.VARIABLES, type: 'auto' } // Unmanaged variables
-
 		],
 
 		/**

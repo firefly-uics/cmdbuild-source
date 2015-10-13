@@ -1,11 +1,16 @@
 (function () {
 
 	Ext.define('CMDBuild.controller.management.common.widgets.ManageEmail', {
-		extend: 'CMDBuild.controller.common.AbstractController',
+		extend: 'CMDBuild.controller.common.AbstractBaseWidgetController',
 
 		requires: ['CMDBuild.core.constants.Proxy'],
 
-		mixins: ['CMDBuild.controller.common.AbstractBaseWidgetController'],
+		/**
+		 * @cfg {Boolean}
+		 *
+		 * @override
+		 */
+		applyViewDelegate: false,
 
 		/**
 		 * Widget before save callback loop object
@@ -54,17 +59,11 @@
 		 * @override
 		 */
 		constructor: function(configurationObject) {
-			// Manual inclusion of AbstractBaseWidgetController constructor because of custom widget functionalities (avoid view delegate apply)
-			if (!Ext.isEmpty(configurationObject) && !Ext.Object.isEmpty(configurationObject.widgetConfiguration)) {
-				this.callParent(arguments);
-
-				this.widgetConfigurationSet({ configurationObject: this.widgetConfiguration }); // Setup widget configuration model
-			} else {
-				_error('wrong or empty widget view or configuration object', this);
-			}
-
+			this.callParent(arguments);
+_debug('configurationObject', configurationObject);
 			// Shorthands
 			this.tabController = this.view.delegate;
+
 			this.tabController.cmfg('configurationSet', this.widgetConfiguration);
 
 			// Converts configuration templates to templates model objects
@@ -73,7 +72,7 @@
 			Ext.Array.forEach(this.widgetConfigurationGet(CMDBuild.core.constants.Proxy.TEMPLATES), function(templateObject, i, allTemplateObjects) {
 				this.configurationTemplates.push(this.configurationTemplatesToModel(templateObject));
 			}, this);
-
+_debug('this.tabController', this.tabController);
 			this.tabController.cmfg('configurationTemplatesSet', this.configurationTemplates);
 
 			this.buildBottomToolbar();
@@ -210,31 +209,18 @@
 			 * @param {String} parameters.propertyName
 			 *
 			 * @returns {Mixed}
+			 *
+			 * @override
 			 */
 			widgetConfigurationSet: function(parameters) {
-				if (!Ext.isEmpty(parameters)) {
-					var configurationObject = parameters.configurationObject;
-					var propertyName = parameters.propertyName;
+				var configurationObject = parameters.configurationObject;
+				var propertyName = parameters.propertyName;
 
-					// Single property management
-					if (!Ext.isEmpty(propertyName) && Ext.isString(propertyName))
-						if (
-							!Ext.isEmpty(this.widgetConfigurationModel)
-							&& Ext.isObject(this.widgetConfigurationModel)
-							&& Ext.isFunction(this.widgetConfigurationModel.set)
-						) { // Model management
-							return this.widgetConfigurationModel.set(propertyName, configurationObject);
-						} else if (
-							!Ext.isEmpty(this.widgetConfigurationModel)
-							&& Ext.isObject(this.widgetConfigurationModel)
-						) { // Simple object management
-							return this.widgetConfigurationModel[propertyName] = configurationObject;
-						}
+				this.callParent(arguments);
 
-					// Full model setup management
-					if (!Ext.isEmpty(configurationObject) && Ext.isEmpty(propertyName))
-						this.widgetConfigurationModel = Ext.create('CMDBuild.model.widget.manageEmail.Configuration', Ext.clone(configurationObject));
-				}
+				// Full model setup management
+				if (!Ext.isEmpty(configurationObject) && Ext.isEmpty(propertyName))
+					this.widgetConfigurationModel = Ext.create('CMDBuild.model.widget.manageEmail.Configuration', Ext.clone(configurationObject));
 			}
 	});
 
