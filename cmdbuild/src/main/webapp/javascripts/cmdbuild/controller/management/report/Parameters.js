@@ -4,7 +4,6 @@
 		extend: 'CMDBuild.controller.common.AbstractController',
 
 		requires: [
-			'CMDBuild.controller.common.AbstractBaseWidgetController',
 			'CMDBuild.core.Message',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.Index',

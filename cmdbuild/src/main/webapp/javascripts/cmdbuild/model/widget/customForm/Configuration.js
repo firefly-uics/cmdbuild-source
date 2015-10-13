@@ -23,16 +23,21 @@
 		 * @param {Object} data
 		 */
 		constructor: function(data) {
+			data = data || {};
+
 			this.callParent(arguments);
 
 			// Apply form model attributes model
-			this.set(CMDBuild.core.constants.Proxy.MODEL, data[CMDBuild.core.constants.Proxy.MODEL]);
+			if (!Ext.isEmpty(data[CMDBuild.core.constants.Proxy.MODEL]))
+				this.set(CMDBuild.core.constants.Proxy.MODEL, data[CMDBuild.core.constants.Proxy.MODEL]);
 
 			// Decode data string
-			this.set(CMDBuild.core.constants.Proxy.DATA, data[CMDBuild.core.constants.Proxy.DATA]);
+			if (!Ext.isEmpty(data[CMDBuild.core.constants.Proxy.DATA]))
+				this.set(CMDBuild.core.constants.Proxy.DATA, data[CMDBuild.core.constants.Proxy.DATA]);
 
 			// Apply capabilities model
-			this.set(CMDBuild.core.constants.Proxy.CAPABILITIES, data[CMDBuild.core.constants.Proxy.CAPABILITIES]);
+			if (!Ext.isEmpty(data[CMDBuild.core.constants.Proxy.CAPABILITIES]))
+				this.set(CMDBuild.core.constants.Proxy.CAPABILITIES, data[CMDBuild.core.constants.Proxy.CAPABILITIES]);
 		},
 
 		/**

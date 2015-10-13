@@ -1,6 +1,11 @@
 (function () {
 
 	/**
+	 * External requires to avoid overrides from classes that extends
+	 */
+	Ext.require(['CMDBuild.core.constants.Global']);
+
+	/**
 	 * Class to be extended in widget controllers to adapt AbstractController functionalities
 	 *
 	 * @abstract
@@ -16,11 +21,6 @@
 		parentDelegate: undefined,
 
 		/**
-		 * @cfg {Boolean}
-		 */
-		applyViewDelegate: true,
-
-		/**
 		 * @property {Ext.data.Model or CMDBuild.model.CMActivityInstance}
 		 */
 		card: undefined,
@@ -29,6 +29,16 @@
 		 * @property {Ext.form.Basic}
 		 */
 		clientForm: undefined,
+
+		/**
+		 * @cfg {Boolean}
+		 */
+		enableViewDelegateInject: true,
+
+		/**
+		 * @cfg {Boolean}
+		 */
+		enableWidgetConfigurationSetup: true,
 
 		/**
 		 * Multiple widget instances data storage buffer
@@ -64,6 +74,11 @@
 		 * @private
 		 */
 		widgetConfigurationModel: undefined,
+
+		/**
+		 * @cfg {String}
+		 */
+		widgetConfigurationModelClassName: undefined,
 
 		statics: {
 			/**
@@ -111,10 +126,12 @@
 			if (!Ext.isEmpty(configurationObject) && !Ext.Object.isEmpty(configurationObject.widgetConfiguration)) {
 				this.callParent(arguments);
 
-				this.widgetConfigurationSet({ configurationObject: this.widgetConfiguration }); // Setup widget configuration model
+				// Setup widget configuration
+				if (this.enableWidgetConfigurationSetup)
+					this.widgetConfigurationSet({ value: this.widgetConfiguration }); // Setup widget configuration model
 
-				// Apply delegate to view
-				if (this.applyViewDelegate)
+				// Inject delegate to view
+				if (this.enableViewDelegateInject)
 					this.view.delegate = this;
 			} else {
 				_error('wrong or empty widget view or configuration object', this);
@@ -127,7 +144,7 @@
 		beforeActiveView: function() {
 			// Setup widgetConfiguration on widget view activation to switch configuration on multiple instances
 			if (!Ext.isEmpty(this.widgetConfiguration))
-				this.widgetConfigurationSet({ configurationObject: this.widgetConfiguration });
+				this.widgetConfigurationSet({ value: this.widgetConfiguration });
 		},
 
 		/**
@@ -153,7 +170,7 @@
 			if (!Ext.isEmpty(this.templateResolver) && Ext.isFunction(this.templateResolver.getVariable))
 				return this.templateResolver.getVariable(variableName);
 
-			_warning('No configured templateResolver instance', this);
+			_warning('templateResolver not instantiated', this);
 
 			return undefined;
 		},
@@ -247,65 +264,35 @@
 
 		// WidgetConfiguration methods
 			/**
-			 * Attribute could be a single string (attribute name) or an array of strings that declares path to required attribute through model object's properties
-			 *
 			 * @param {Array or String} attributePath
 			 *
 			 * @returns {Mixed}
 			 */
 			widgetConfigurationGet: function(attributePath) {
-				attributePath = Ext.isArray(attributePath) ? attributePath : [attributePath];
+				var parameters = {};
+				parameters[CMDBuild.core.constants.Proxy.ATTRIBUTE_PATH] = attributePath;
+				parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME] = 'widgetConfigurationModel';
 
-				var requiredAttribute = this.widgetConfigurationModel;
-
-				if (!Ext.isEmpty(attributePath))
-					Ext.Array.forEach(attributePath, function(attributeName, i, allAttributeNames) {
-						if (!Ext.isEmpty(attributeName) && Ext.isString(attributeName))
-							if (
-								!Ext.isEmpty(requiredAttribute)
-								&& Ext.isObject(requiredAttribute)
-								&& Ext.isFunction(requiredAttribute.get)
-							) { // Model management
-								requiredAttribute = requiredAttribute.get(attributeName);
-							} else if (
-								!Ext.isEmpty(requiredAttribute)
-								&& Ext.isObject(requiredAttribute)
-							) { // Simple object management
-								requiredAttribute = requiredAttribute[attributeName];
-							}
-					}, this);
-
-				return requiredAttribute;
+				return this.propertyManageGet(parameters);
 			},
 
 			/**
-			 * @param {String} attributeName
+			 * @param {Array or String} attributePath
 			 *
-			 * @returns {Mixed}
+			 * @returns {Boolean}
 			 */
-			widgetConfigurationIsAttributeEmpty: function(attributeName) {
-				if (!Ext.isEmpty(attributeName) && Ext.isString(attributeName))
-					if (
-						!Ext.isEmpty(this.widgetConfigurationModel)
-						&& Ext.isObject(this.widgetConfigurationModel)
-						&& Ext.isFunction(this.widgetConfigurationModel.get)
-					) { // Model management
-						return Ext.isEmpty(this.widgetConfigurationModel.get(attributeName));
-					} else if (
-						!Ext.isEmpty(this.widgetConfigurationModel)
-						&& Ext.isObject(this.widgetConfigurationModel)
-					) { // Simple object management
-						return Ext.isEmpty(this.widgetConfigurationModel[attributeName]);
-					}
+			widgetConfigurationIsEmpty: function(attributePath) {
+				var parameters = {};
+				parameters[CMDBuild.core.constants.Proxy.ATTRIBUTE_PATH] = attributePath;
+				parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME] = 'widgetConfigurationModel';
 
-				return true;
+				return this.propertyManageIsEmpty(parameters);
 			},
 
 			/**
-			 * Setup all widgetConfigurationModel or only one model property. Needs to be extended from widget controller to set value of widgetConfigurationModel.
-			 *
 			 * @param {Object} parameters
-			 * @param {Object} parameters.configurationObject
+			 * @param {String} parameters.modelName
+			 * @param {Object} parameters.value
 			 * @param {String} parameters.propertyName
 			 *
 			 * @returns {Mixed}
@@ -313,27 +300,13 @@
 			 * @abstract
 			 */
 			widgetConfigurationSet: function(parameters) {
-				if (!Ext.isEmpty(parameters)) {
-					var configurationObject = parameters.configurationObject;
-					var propertyName = parameters.propertyName;
+				if (Ext.isEmpty(this.widgetConfigurationModelClassName) || !Ext.isString(this.widgetConfigurationModelClassName))
+					return _error('widgetConfigurationModelClassName parameter not configured', this);
 
-					// Single property management
-					if (!Ext.isEmpty(propertyName) && Ext.isString(propertyName))
-						if (
-							!Ext.isEmpty(this.widgetConfigurationModel)
-							&& Ext.isObject(this.widgetConfigurationModel)
-							&& Ext.isFunction(this.widgetConfigurationModel.set)
-						) { // Model management
-							return this.widgetConfigurationModel.set(propertyName, configurationObject);
-						} else if (
-							!Ext.isEmpty(this.widgetConfigurationModel)
-							&& Ext.isObject(this.widgetConfigurationModel)
-						) { // Simple object management
-							return this.widgetConfigurationModel[propertyName] = configurationObject;
-						}
-				}
+				parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME] = 'widgetConfigurationModel';
+				parameters[CMDBuild.core.constants.Proxy.MODEL_NAME] = this.widgetConfigurationModelClassName;
 
-				// Extends to implement full model setup
+				return this.propertyManageSet(parameters);
 			}
 	});
 

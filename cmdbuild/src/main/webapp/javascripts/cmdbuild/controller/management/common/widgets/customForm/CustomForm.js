@@ -25,7 +25,7 @@
 			'controllerPropertyGet',
 			'getTemplateResolverServerVars',
 			'widgetConfigurationGet',
-			'widgetConfigurationIsAttributeEmpty',
+			'widgetConfigurationIsEmpty',
 			'widgetConfigurationSet'
 		],
 
@@ -33,6 +33,11 @@
 		 * @property {CMDBuild.view.management.common.widgets.customForm.CustomFormView}
 		 */
 		view: undefined,
+
+		/**
+		 * @cfg {String}
+		 */
+		widgetConfigurationModelClassName: 'CMDBuild.model.widget.customForm.Configuration',
 
 		/**
 		 * @param {CMDBuild.view.management.common.widgets.CMWidgetManager} configurationObject.view
@@ -79,14 +84,14 @@
 		 */
 		beforeActiveView: function() {
 			this.callParent(arguments);
-_debug('beforeActiveView');
+
 			// Execute template resolver on model property
 			this.widgetConfigurationSet({
-				configurationObject: this.applyTemplateResolver(this.widgetConfiguration[CMDBuild.core.constants.Proxy.MODEL]),
-				propertyName: CMDBuild.core.constants.Proxy.MODEL
+				propertyName: CMDBuild.core.constants.Proxy.MODEL,
+				value: this.applyTemplateResolver(this.widgetConfiguration[CMDBuild.core.constants.Proxy.MODEL])
 			});
 
-			if (!this.widgetConfigurationIsAttributeEmpty(CMDBuild.core.constants.Proxy.MODEL)) {
+			if (!this.widgetConfigurationIsEmpty(CMDBuild.core.constants.Proxy.MODEL)) {
 				this.buildLayout();
 
 				if (!this.instancesDataStorageIsEmpty())
@@ -184,28 +189,7 @@ _debug('beforeActiveView');
 		 */
 		onEditMode: function() {
 			this.instancesDataStorageReset();
-		},
-
-		// WidgetConfiguration methods
-			/**
-			 * @param {Object} parameters
-			 * @param {Object} parameters.configurationObject
-			 * @param {String} parameters.propertyName
-			 *
-			 * @returns {Mixed}
-			 *
-			 * @override
-			 */
-			widgetConfigurationSet: function(parameters) {
-				var configurationObject = parameters.configurationObject;
-				var propertyName = parameters.propertyName;
-
-				this.callParent(arguments);
-
-				// Full model setup management
-				if (!Ext.isEmpty(configurationObject) && Ext.isEmpty(propertyName))
-					this.widgetConfigurationModel = Ext.create('CMDBuild.model.widget.customForm.Configuration', Ext.clone(configurationObject));
-			}
+		}
 	});
 
 })();
