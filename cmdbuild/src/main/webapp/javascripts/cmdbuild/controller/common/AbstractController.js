@@ -186,15 +186,17 @@
 			return this.view;
 		},
 
-		// Property manage methods
-		//
-		// Parameters in a single object to be compatible with cmfg functions.
-		// These methods operates only with local variables (this...) hasn't able to manage other classe's variables. A good implementation with cmfg
-		// functionalities is to use these method's alieas.
+		/**
+		 * Property manage methods
+		 *
+		 * Parameters in a single object to be compatible with cmfg functions.
+		 * These methods operates only with local variables (this...) hasn't able to manage other classe's variables. A good implementation with cmfg functionalities
+		 * is to use these method's alieas.
+		 */
 			/**
 			 * @param {Object} parameters
+			 * @param {Array or String} parameters.attributePath
 			 * @param {String} parameters.targetVariableName
-			 * @param {Array} parameters.attributePath
 			 *
 			 * @returns {Mixed} full model object or single property
 			 */
@@ -231,8 +233,8 @@
 
 			/**
 			 * @param {Object} parameters
+			 * @param {Array or String} parameters.attributePath
 			 * @param {String} parameters.targetVariableName
-			 * @param {Array} parameters.attributePath
 			 *
 			 * @returns {Boolean}
 			 */
@@ -267,10 +269,10 @@
 
 			/**
 			 * @param {Object} parameters
-			 * @param {String} parameters.targetVariableName
 			 * @param {String} parameters.modelName
-			 * @param {Object} parameters.value
 			 * @param {String} parameters.propertyName
+			 * @param {String} parameters.targetVariableName
+			 * @param {Object} parameters.value
 			 *
 			 * @returns {Mixed}
 			 */

@@ -9,10 +9,6 @@
 			'CMDBuild.core.Message'
 		],
 
-		mixins: {
-			observable: 'Ext.util.Observable'
-		},
-
 		/**
 		 * @property {Array}
 		 */
@@ -46,6 +42,13 @@
 		 * @proeprty {Array}
 		 */
 		columns: [],
+
+		/**
+		 * @cfg {Boolean}
+		 *
+		 * @override
+		 */
+		enableWidgetConfigurationSetup: false,
 
 		/**
 		 * Array of attributes names to hide from grid visualization
@@ -88,8 +91,6 @@
 		 * @override
 		 */
 		constructor: function(configurationObject) {
-			this.mixins.observable.constructor.call(this);
-
 			this.callParent(arguments);
 
 			this.widgetConf = this.widgetConfiguration; // FIXME: Alias for compatibility mode with new AbstractBaseWidgetController

@@ -57,7 +57,7 @@
 		buildFields: function() {
 			var itemsArray = [];
 
-			if (!this.cmfg('widgetConfigurationIsAttributeEmpty',  CMDBuild.core.constants.Proxy.MODEL)) {
+			if (!this.cmfg('widgetConfigurationIsEmpty',  CMDBuild.core.constants.Proxy.MODEL)) {
 				var fieldManager = Ext.create('CMDBuild.core.fieldManager.FieldManager', { parentDelegate: this });
 
 				Ext.Array.forEach(this.cmfg('widgetConfigurationGet', CMDBuild.core.constants.Proxy.MODEL), function(attribute, i, allAttributes) {
@@ -167,8 +167,8 @@
 		 */
 		setDefaultContent: function() {
 			this.cmfg('widgetConfigurationSet', {
-				configurationObject: this.cmfg('controllerPropertyGet', 'widgetConfiguration')[CMDBuild.core.constants.Proxy.DATA],
-				propertyName: CMDBuild.core.constants.Proxy.DATA
+				propertyName: CMDBuild.core.constants.Proxy.DATA,
+				value: this.cmfg('controllerPropertyGet', 'widgetConfiguration')[CMDBuild.core.constants.Proxy.DATA]
 			});
 
 			this.setData(this.cmfg('widgetConfigurationGet', CMDBuild.core.constants.Proxy.DATA));

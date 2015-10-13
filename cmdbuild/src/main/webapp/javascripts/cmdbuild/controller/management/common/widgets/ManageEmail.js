@@ -6,13 +6,6 @@
 		requires: ['CMDBuild.core.constants.Proxy'],
 
 		/**
-		 * @cfg {Boolean}
-		 *
-		 * @override
-		 */
-		applyViewDelegate: false,
-
-		/**
 		 * Widget before save callback loop object
 		 *
 		 * @property {Object}
@@ -28,6 +21,13 @@
 		 * @property {Ext.form.Basic}
 		 */
 		clientForm: undefined,
+
+		/**
+		 * @cfg {Boolean}
+		 *
+		 * @override
+		 */
+		enableViewDelegateInject: false,
 
 		/**
 		 * @cfg {CMDBuild.controller.management.common.CMWidgetManagerController}
@@ -48,6 +48,11 @@
 		 * @cfg {Object}
 		 */
 		widgetConfiguration: undefined,
+
+		/**
+		 * @cfg {String}
+		 */
+		widgetConfigurationModelClassName: 'CMDBuild.model.widget.manageEmail.Configuration',
 
 		/**
 		 * @param {CMDBuild.view.management.common.widgets.CMWidgetManager} configurationObject.view
@@ -200,28 +205,7 @@
 				this.tabController.cmfg('regenerateAllEmailsSet', true);
 				this.tabController.cmfg('storeLoad');
 			}
-		},
-
-		// WidgetConfiguration methods
-			/**
-			 * @param {Object} parameters
-			 * @param {Object} parameters.configurationObject
-			 * @param {String} parameters.propertyName
-			 *
-			 * @returns {Mixed}
-			 *
-			 * @override
-			 */
-			widgetConfigurationSet: function(parameters) {
-				var configurationObject = parameters.configurationObject;
-				var propertyName = parameters.propertyName;
-
-				this.callParent(arguments);
-
-				// Full model setup management
-				if (!Ext.isEmpty(configurationObject) && Ext.isEmpty(propertyName))
-					this.widgetConfigurationModel = Ext.create('CMDBuild.model.widget.manageEmail.Configuration', Ext.clone(configurationObject));
-			}
+		}
 	});
 
 })();

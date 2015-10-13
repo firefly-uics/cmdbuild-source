@@ -8,10 +8,6 @@
 			'CMDBuild.core.proxy.widgets.OpenReport'
 		],
 
-		mixins: {
-			observable: 'Ext.util.Observable'
-		},
-
 		/**
 		 * @property {Ext.form.Basic}
 		 */
@@ -27,6 +23,11 @@
 		],
 
 		/**
+		 * @cfg {Boolean}
+		 */
+		enableWidgetConfigurationSetup: false,
+
+		/**
 		 * @property {CMDBuild.Management.TemplateResolver}
 		 */
 		templateResolver: undefined,
@@ -40,21 +41,6 @@
 		 * @property {Object}
 		 */
 		widgetConf: undefined,
-
-		/**
-		 * @param {CMDBuild.view.management.common.widgets.OpenReport} view
-		 * @param {CMDBuild.controller.management.common.CMWidgetManagerController} ownerController
-		 * @param {Object} widgetConf
-		 * @param {Ext.form.Basic} clientForm
-		 * @param {CMDBuild.model.CMActivityInstance} card
-		 *
-		 * @override
-		 */
-		constructor: function(view, ownerController, widgetConf, clientForm, card) {
-			this.mixins.observable.constructor.call(this);
-
-			this.callParent(arguments);
-		},
 
 		/**
 		 * @override
