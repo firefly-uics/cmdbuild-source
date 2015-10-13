@@ -86,6 +86,12 @@
 								serverVars: this.cmfg('getTemplateResolverServerVars')
 							});
 
+							// Required label fix
+							if (attribute[CMDBuild.core.constants.Proxy.MANDATORY] || attribute['isnotnull']) {
+								attribute[CMDBuild.core.constants.Proxy.DESCRIPTION] = (!Ext.isEmpty(attribute['isnotnull']) && attribute['isnotnull'] ? '* ' : '')
+								+ attribute.description || attribute.name;
+							}
+
 							item = CMDBuild.Management.ReferenceField.buildEditor(attribute, templateResolver);
 
 							// Force execution of template resolver
