@@ -8,7 +8,8 @@
 		fields: [
 			{ name: CMDBuild.core.constants.Proxy.ID, type: 'string' },
 			{ name: CMDBuild.core.constants.Proxy.DESCRIPTION, type: 'string' },
-			{ name: CMDBuild.core.constants.Proxy.PARENT, type: 'string' }
+			{ name: CMDBuild.core.constants.Proxy.PARENT, type: 'string' },
+			{ name: CMDBuild.core.constants.Proxy.TEXT, type: 'string' } // TODO: waiting for refactor (rename)
 		]
 	});
 

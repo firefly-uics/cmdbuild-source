@@ -232,14 +232,25 @@
 		login: 'services/json/login/login',
 
 		lookup: {
+			create: 'services/json/schema/modlookup/savelookup', // TODO: waiting for refactor (crud)
+			read: 'services/json/schema/modlookup/getlookuplist', // TODO: waiting for refactor (crud)
+			remove: '',
+			update: 'services/json/schema/modlookup/savelookup', // TODO: waiting for refactor (crud)
+
 			disable: 'services/json/schema/modlookup/disablelookup',
 			enable: 'services/json/schema/modlookup/enablelookup',
-			getList: 'services/json/schema/modlookup/getlookuplist',
 			getParentList: 'services/json/schema/modlookup/getparentlist',
-			save: 'services/json/schema/modlookup/savelookup',
-			saveType: 'services/json/schema/modlookup/savelookuptype',
+			readAll: 'services/json/schema/modlookup/getlookuplist',
 			setOrder: 'services/json/schema/modlookup/reorderlookup',
-			tree: 'services/json/schema/modlookup/tree'
+
+			type: {
+				create: 'services/json/schema/modlookup/savelookuptype', // TODO: waiting for refactor (crud)
+				read: 'services/json/schema/modlookup/tree', // TODO: waiting for refactor (crud)
+				remove: '',
+				update: 'services/json/schema/modlookup/savelookuptype', // TODO: waiting for refactor (crud)
+
+				readAll: 'services/json/schema/modlookup/tree'
+			}
 		},
 
 		menu: {

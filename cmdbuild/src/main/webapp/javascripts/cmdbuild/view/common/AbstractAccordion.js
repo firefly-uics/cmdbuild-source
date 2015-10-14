@@ -135,7 +135,7 @@
 		},
 
 		/**
-		 * @param {Number} nodeIdToSelect
+		 * @param {Number or String} nodeIdToSelect
 		 */
 		updateStore: function(nodeIdToSelect) {
 			if (!Ext.isEmpty(this.delegate))

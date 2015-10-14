@@ -6,6 +6,7 @@
 		extend: 'CMDBuild.controller.CMBasePanelController',
 
 		requires: [
+			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.Configuration',
 			'CMDBuild.core.proxy.lookup.Lookup'
 		],
@@ -80,10 +81,12 @@
 				CMDBuild.core.proxy.Configuration.read({
 					success: function(response) {
 						var decodedJson = Ext.JSON.decode(response.responseText);
+						var params = {};
+						params[CMDBuild.core.constants.Proxy.TYPE] = decodedJson.data['category.lookup'];
+						params[CMDBuild.core.constants.Proxy.ACTIVE] = true;
+						params[CMDBuild.core.constants.Proxy.SHORT] = true;
 
-						me.view.attachmentsCombo.bindStore(
-							CMDBuild.core.proxy.lookup.Lookup.getFieldStore(decodedJson.data['category.lookup'])
-						);
+						me.view.attachmentsCombo.getStore().load({ params: params });
 					}
 				}, 'dms');
 		},
@@ -178,7 +181,10 @@
 	Ext.define('CMDBuild.view.administration.tasks.email.CMStep3', {
 		extend: 'Ext.panel.Panel',
 
-		requires: ['CMDBuild.core.constants.Proxy'],
+		requires: [
+			'CMDBuild.core.constants.Proxy',
+			'CMDBuild.core.proxy.lookup.Lookup'
+		],
 
 		/**
 		 * @cfg {CMDBuild.view.administration.tasks.email.CMStep3Delegate}
@@ -349,7 +355,10 @@
 					displayField: 'Description',
 					valueField: 'Id',
 					forceSelection: true,
-					editable: false
+					editable: false,
+
+					store: CMDBuild.core.proxy.lookup.Lookup.getStore(),
+					queryMode: 'local'
 				});
 
 				this.attachmentsFieldset = Ext.create('Ext.form.FieldSet', {

@@ -286,17 +286,16 @@
 					var modelName = parameters[CMDBuild.core.constants.Proxy.MODEL_NAME];
 					var value = parameters[CMDBuild.core.constants.Proxy.VALUE];
 
-					// Create empty model if not existing (or is not a model class)
-					if (
-						Ext.isEmpty(this[parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME]])
-						|| !Ext.isFunction(this[parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME]].set)
-						|| !Ext.isFunction(this[parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME]].get)
-					) {
-						this[parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME]] = Ext.create(modelName);
-					}
-
 					// Single property management
 					if (!Ext.isEmpty(parameters[CMDBuild.core.constants.Proxy.PROPERTY_NAME]) && Ext.isString(parameters[CMDBuild.core.constants.Proxy.PROPERTY_NAME])) {
+						// Create empty model if not existing (or is not a model class)
+						if (
+							Ext.isEmpty(this[parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME]])
+							|| Ext.getClassName(value) != modelName
+						) {
+							this[parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME]] = Ext.create(modelName);
+						}
+
 						return this[parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME]].set(parameters[CMDBuild.core.constants.Proxy.PROPERTY_NAME], value);
 					} else if (!Ext.isEmpty(value) && Ext.isObject(value)) { // Full object management
 						if (Ext.getClassName(value) == modelName) {

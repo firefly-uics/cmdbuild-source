@@ -9,10 +9,6 @@
 		cmControllerType: CMDBuild.controller.accordion.CMDashboardAccordionController
 	});
 	var gisAccordion = new CMDBuild.view.administration.accordion.CMGISAccordion();
-	var lookupAccordion = Ext.create('CMDBuild.view.administration.accordion.Lookup', {
-		cmControllerType: 'CMDBuild.controller.administration.accordion.Lookup',
-		cmName: 'lookuptype',
-	});
 	var navigationTreesAccordion = new CMDBuild.view.administration.accordion.CMNavigationTreesAccordion({
 		cmControllerType: CMDBuild.controller.accordion.CMNavigationTreesAccordionController
 	});
@@ -92,7 +88,10 @@
 								cmName: 'filter'
 							}),
 							navigationTreesAccordion,
-							lookupAccordion,
+							Ext.create('CMDBuild.view.administration.accordion.Lookup', {
+								cmControllerType: 'CMDBuild.controller.administration.accordion.Lookup',
+								cmName: 'lookuptype',
+							}),
 							dashboardsAccordion,
 							Ext.create('CMDBuild.view.administration.accordion.Report', {
 								cmControllerType: 'CMDBuild.controller.common.AbstractAccordionController',
@@ -296,6 +295,20 @@
 					callback: reqBarrier.getCallback()
 				});
 
+
+				/**
+				 * Lookup
+				 *
+				 * Cache build call
+				 */
+				CMDBuild.core.proxy.lookup.Type.readAll({
+					loadMask: false,
+					success: function(response, options, decodedResponse) {
+						_CMCache.addLookupTypes(decodedResponse);
+					},
+					callback: reqBarrier.getCallback()
+				});
+
 				/**
 				 * Workflow configuration
 				 */
@@ -320,19 +333,6 @@
 						}
 					},
 
-					callback: reqBarrier.getCallback()
-				});
-
-				/**
-				 * Lookup
-				 */
-				CMDBuild.core.proxy.lookup.Type.readAll({
-					scope: this,
-					success: function(response, options, decodedResponse) {
-						_CMCache.addLookupTypes(decodedResponse);
-
-						lookupAccordion.updateStore();
-					},
 					callback: reqBarrier.getCallback()
 				});
 

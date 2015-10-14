@@ -234,6 +234,9 @@
 					}
 				});
 
+				/**
+				 * Classes
+				 */
 				params = {};
 				params[CMDBuild.core.constants.Proxy.ACTIVE] = true;
 
@@ -295,6 +298,17 @@
 				});
 
 				/**
+				 * Lookup
+				 */
+				CMDBuild.core.proxy.lookup.Type.readAll({
+					loadMask: false,
+					success: function(response, options, decodedResponse) {
+						_CMCache.addLookupTypes(decodedResponse);
+ 					},
+ 					callback: reqBarrier.getCallback()
+ 				});
+
+				/**
 				 * Reports
 				 */
 				CMDBuild.core.proxy.report.Report.getTypesTree({
@@ -315,17 +329,6 @@
 					},
 					callback: reqBarrier.getCallback()
 				});
-
-				/**
-				 * Lookup
-				 */
-				CMDBuild.core.proxy.lookup.Type.readAll({
-					scope: this,
-					success: function(response, options, decodedResponse) {
-						_CMCache.addLookupTypes(decodedResponse);
- 					},
- 					callback: reqBarrier.getCallback()
- 				});
 
 				reqBarrier.start();
 
