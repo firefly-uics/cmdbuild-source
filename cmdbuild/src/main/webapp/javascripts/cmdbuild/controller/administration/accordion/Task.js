@@ -11,7 +11,7 @@
 		parentDelegate: undefined,
 
 		/**
-		 * @cfg {CMDBuild.view.administration.accordion.Domain}
+		 * @cfg {CMDBuild.view.administration.accordion.Task}
 		 */
 		accordion: undefined,
 
@@ -33,7 +33,8 @@
 			'onAccordionIsNodeSelectable',
 			'onAccordionSelectFirstSelectableNode',
 			'onAccordionSelectionChange',
-			'onAccordionSelectNodeById'
+			'onAccordionSelectNodeById',
+			'onAccordionUpdateStore'
 		],
 
 		/**

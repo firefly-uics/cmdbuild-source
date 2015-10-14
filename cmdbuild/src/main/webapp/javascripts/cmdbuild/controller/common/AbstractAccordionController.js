@@ -99,7 +99,7 @@
 		},
 
 		/**
-		 * @param {Number} id
+		 * @param {Number or String} id
 		 *
 		 * @returns {CMDBuild.model.common.accordion.Generic}
 		 */
@@ -154,7 +154,7 @@
 		},
 
 		/**
-		 * @param {Number} id
+		 * @param {Number or String} id
 		 */
 		onAccordionSelectNodeById: function(id) {
 			var node = this.onAccordionGetNodeById(id);
@@ -173,7 +173,7 @@
 		},
 
 		/**
-		 * @param {Number} nodeIdToSelect
+		 * @param {Number or String} nodeIdToSelect
 		 */
 		onAccordionUpdateStore: function(nodeIdToSelect) {
 			if (!Ext.isEmpty(nodeIdToSelect))

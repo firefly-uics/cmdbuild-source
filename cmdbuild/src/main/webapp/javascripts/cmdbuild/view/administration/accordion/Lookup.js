@@ -1,48 +1,83 @@
 (function() {
 
 	Ext.define('CMDBuild.view.administration.accordion.Lookup', {
-		extend: 'CMDBuild.view.common.CMBaseAccordion',
+		extend: 'CMDBuild.view.common.AbstractAccordion',
 
-		requires: ['CMDBuild.core.constants.Proxy'],
+		requires: [
+			'CMDBuild.core.constants.Proxy',
+			'CMDBuild.core.proxy.lookup.Type',
+			'CMDBuild.model.common.accordion.Lookup'
+		],
 
 		/**
 		 * @cfg {CMDBuild.controller.administration.accordion.Lookup}
 		 */
 		delegate: undefined,
 
+		/**
+		 * @cfg {String}
+		 */
+		cmName: undefined,
+
+		/**
+		 * @cfg {String}
+		 */
+		storeModelName: 'CMDBuild.model.common.accordion.Lookup',
+
 		title: CMDBuild.Translation.lookupTypes,
 
 		/**
-		 * @return {Array} out
+		 * @param {String} nodeIdToSelect
+		 *
+		 * @override
 		 */
-		buildTreeStructure: function() {
-			var nodesMap = {};
-			var out = [];
+		updateStore: function(nodeIdToSelect) {
+			nodeIdToSelect = Ext.isString(nodeIdToSelect) ? nodeIdToSelect : null;
 
-			Ext.Object.each(_CMCache.getLookupTypes(), function(key, value, myself) {
-				nodesMap[value.get(CMDBuild.core.constants.Proxy.ID)] = {
-					id: value.get(CMDBuild.core.constants.Proxy.ID),
-					text: value.get(CMDBuild.core.constants.Proxy.TEXT),
-					leaf: true,
-					cmName: 'lookuptype',
-					parent: value.get(CMDBuild.core.constants.Proxy.PARENT)
-				};
-			}, this);
+			CMDBuild.core.proxy.lookup.Type.readAll({
+				loadMask: false,
+				scope: this,
+				success: function(response, options, decodedResponse) {
+					if (!Ext.isEmpty(decodedResponse)) {
+						var nodes = [];
+						var nodesMap = {};
 
-			Ext.Object.each(nodesMap, function(id, node, myself) {
-				if (node[CMDBuild.core.constants.Proxy.PARENT]) {
-					var parentNode = nodesMap[node[CMDBuild.core.constants.Proxy.PARENT]];
+						// Build nodes map
+						Ext.Array.forEach(decodedResponse, function(lookupTypeObject, i, allLookupTypeObjects) {
+							nodesMap[lookupTypeObject[CMDBuild.core.constants.Proxy.ID]] = {
+								text: lookupTypeObject[CMDBuild.core.constants.Proxy.TEXT],
+								description: lookupTypeObject[CMDBuild.core.constants.Proxy.TEXT],
+								id: lookupTypeObject[CMDBuild.core.constants.Proxy.ID],
+								parent: lookupTypeObject[CMDBuild.core.constants.Proxy.PARENT],
+								cmName: this.cmName,
+								leaf: true
+							};
+						}, this);
 
-					if (!Ext.isEmpty(parentNode)) {
-						parentNode.children = parentNode.children || [];
-						parentNode.children.push(node);
-						parentNode.leaf = false;
+						// Build tree nodes hierarchy
+						Ext.Object.each(nodesMap, function(id, node, myself) {
+							if (Ext.isEmpty(node[CMDBuild.core.constants.Proxy.PARENT])) {
+								nodes.push(node);
+							} else {
+								var parentNode = nodesMap[node[CMDBuild.core.constants.Proxy.PARENT]];
+
+								if (!Ext.isEmpty(parentNode)) {
+									parentNode.children = parentNode.children || [];
+									parentNode.children.push(node);
+									parentNode.leaf = false;
+								}
+							}
+						}, this);
+
+						this.getStore().getRootNode().removeAll();
+						this.getStore().getRootNode().appendChild(nodes);
+						this.getStore().sort();
+
+						// Alias of this.callParent(arguments), inside proxy function doesn't work
+						this.delegate.cmfg('onAccordionUpdateStore', nodeIdToSelect);
 					}
-				} else {
-					out.push(node);
 				}
-			}, this);
-			return out;
+			});
 		}
 	});
 

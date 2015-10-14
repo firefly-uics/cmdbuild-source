@@ -3,11 +3,12 @@
 	Ext.define('CMDBuild.view.administration.lookup.properties.FormPanel', {
 		extend: 'Ext.form.Panel',
 
-		requires: ['CMDBuild.core.constants.Proxy'],
+		requires: [
+			'CMDBuild.core.constants.Proxy',
+			'CMDBuild.core.proxy.lookup.Type'
+		],
 
-		mixins: {
-			panelFunctions: 'CMDBuild.view.common.PanelFunctions'
-		},
+		mixins: ['CMDBuild.view.common.PanelFunctions'],
 
 		/**
 		 * @cfg {CMDBuild.controller.administration.lookup.Properties}
@@ -90,12 +91,12 @@
 						fieldLabel: CMDBuild.Translation.parent,
 						labelWidth: CMDBuild.LABEL_WIDTH,
 						maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
-						displayField: CMDBuild.core.constants.Proxy.TYPE,
-						valueField: CMDBuild.core.constants.Proxy.TYPE,
+						displayField: CMDBuild.core.constants.Proxy.ID,
+						valueField: CMDBuild.core.constants.Proxy.TEXT, // TODO: waiting for refactor (rename)
 						disabled: true,
 						cmImmutable: true,
 
-						store: _CMCache.getLookupTypeAsStore(), // TODO: remove cache dependency (server refactor needed)
+						store: CMDBuild.core.proxy.lookup.Type.getStore(),
 						queryMode: 'local'
 					}),
 					{

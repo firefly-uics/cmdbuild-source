@@ -8,7 +8,7 @@
 
 		requires: [
 			'CMDBuild.core.proxy.common.tabs.history.Processes',
-			'CMDBuild.core.proxy.lookup.Type'
+			'CMDBuild.core.proxy.lookup.Lookup'
 		],
 
 		mixins: {
@@ -297,8 +297,9 @@
 				params[CMDBuild.core.constants.Proxy.ACTIVE] = true;
 				params[CMDBuild.core.constants.Proxy.SHORT] = false;
 
-				CMDBuild.core.proxy.lookup.Type.get({
+				CMDBuild.core.proxy.lookup.Lookup.readAll({
 					params: params,
+					loadMask: false,
 					scope: this,
 					failure: function(response, options, decodedResponse) {
 						_error('get lookup failure', this);
