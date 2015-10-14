@@ -61,31 +61,36 @@
 
 			// Add listener for accordion expand
 			this.on('expand', function(accordion, eOpts) {
-				this.delegate.cmfg('onAccordionExpand');
+				if (!Ext.isEmpty(this.delegate))
+					this.delegate.cmfg('onAccordionExpand');
 			}, this);
 
 			// Add listener to avoid selection of unselectable nodes
 			this.on('beforeselect', function(accordion, record, index, eOpts) {
-				return this.delegate.cmfg('onAccordionBeforeSelect', record);
+				if (!Ext.isEmpty(this.delegate))
+					return this.delegate.cmfg('onAccordionBeforeSelect', record);
 			}, this);
 
 			// Add listener for selectionchange
 			this.getSelectionModel().on('selectionchange', function(selectionModel, selected, eOpts) {
-				this.delegate.cmfg('onAccordionSelectionChange');
+				if (!Ext.isEmpty(this.delegate))
+					this.delegate.cmfg('onAccordionSelectionChange');
 			}, this);
 
 			this.updateStore();
 		},
 
 		deselect: function() {
-			this.delegate.cmfg('onAccordionDeselect');
+			if (!Ext.isEmpty(this.delegate))
+				this.delegate.cmfg('onAccordionDeselect');
 		},
 
 		/**
 		 * @returns {CMDBuild.model.common.accordion.Generic} node or null
 		 */
 		getFirtsSelectableNode: function() {
-			return this.delegate.cmfg('onAccordionGetFirtsSelectableNode');;
+			if (!Ext.isEmpty(this.delegate))
+				return this.delegate.cmfg('onAccordionGetFirtsSelectableNode');;
 		},
 
 		/**
@@ -94,14 +99,16 @@
 		 * @returns {CMDBuild.model.common.accordion.Generic}
 		 */
 		getNodeById: function(id) {
-			return this.delegate.cmfg('onAccordionGetNodeById', id);
+			if (!Ext.isEmpty(this.delegate))
+				return this.delegate.cmfg('onAccordionGetNodeById', id);
 		},
 
 		/**
 		 * @returns {Boolean}
 		 */
 		isEmpty: function() {
-			return this.delegate.cmfg('onAccordionIsEmpty', id);
+			if (!Ext.isEmpty(this.delegate))
+				return this.delegate.cmfg('onAccordionIsEmpty', id);
 		},
 
 		/**
@@ -110,36 +117,29 @@
 		 * @returns {Boolean}
 		 */
 		isNodeSelectable: function(node) {
-			return this.delegate.cmfg('onAccordionIsNodeSelectable', node);
+			if (!Ext.isEmpty(this.delegate))
+				return this.delegate.cmfg('onAccordionIsNodeSelectable', node);
 		},
 
 		selectFirstSelectableNode: function() {
-			this.delegate.cmfg('onAccordionSelectFirstSelectableNode');
+			if (!Ext.isEmpty(this.delegate))
+				this.delegate.cmfg('onAccordionSelectFirstSelectableNode');
 		},
 
 		/**
 		 * @param {Number} id
 		 */
 		selectNodeById: function(id) {
-			this.delegate.cmfg('onAccordionSelectNodeById', id);
+			if (!Ext.isEmpty(this.delegate))
+				this.delegate.cmfg('onAccordionSelectNodeById', id);
 		},
 
 		/**
-		 * This is a controller function but must stay here because of not compatibility with CMDBuild view/controller automatic instantiation
-		 *
 		 * @param {Number} nodeIdToSelect
-		 *
-		 * TODO: use delegate cmfg when will be possible to instantiate controller manually in Management.js
 		 */
 		updateStore: function(nodeIdToSelect) {
-//			this.delegate.cmfg('onAccordionUpdateStore', nodeIdToSelect);
-
-			if (!Ext.isEmpty(nodeIdToSelect))
-				this.selectNodeById(nodeIdToSelect);
-
-			// Hide if accordion is empty
-			if (this.hideIfEmpty && !this.getStore().getRootNode().hasChildNodes()) // TODO: should be used controller function (onAccordionIsEmpty)
-				this.hide();
+			if (!Ext.isEmpty(this.delegate))
+				this.delegate.cmfg('onAccordionUpdateStore', nodeIdToSelect);
 		}
 	});
 

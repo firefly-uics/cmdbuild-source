@@ -8,10 +8,6 @@
 	var dashboardsAccordion = new CMDBuild.view.administration.accordion.CMDashboardAccordion({
 		cmControllerType: CMDBuild.controller.accordion.CMDashboardAccordionController
 	});
-	var domainAccordion = Ext.create('CMDBuild.view.administration.accordion.Domain', {
-		cmControllerType: 'CMDBuild.controller.administration.accordion.Domain',
-		cmName: 'domain'
-	});
 	var gisAccordion = new CMDBuild.view.administration.accordion.CMGISAccordion();
 	var lookupAccordion = Ext.create('CMDBuild.view.administration.accordion.Lookup', {
 		cmControllerType: 'CMDBuild.controller.administration.accordion.Lookup',
@@ -79,7 +75,12 @@
 						cmAccordions: [ // Sorted
 							classesAccordion,
 							processAccordion,
-							domainAccordion,
+							CMDBuild.configuration.userInterface.get(CMDBuild.core.constants.Proxy.CLOUD_ADMIN) ? null :
+								Ext.create('CMDBuild.view.administration.accordion.Domain', {
+									cmControllerType: 'CMDBuild.controller.common.AbstractAccordionController',
+									cmName: 'domain'
+								})
+							,
 							CMDBuild.configuration.userInterface.get(CMDBuild.core.constants.Proxy.CLOUD_ADMIN) ? null :
 								Ext.create('CMDBuild.view.administration.accordion.DataView', {
 									cmControllerType: 'CMDBuild.controller.common.AbstractAccordionController',
@@ -271,9 +272,24 @@
 				});
 
 				/**
+				 * Domains
+				 *
+				 * Cache build call
+				 */
+				if (!CMDBuild.configuration.userInterface.get(CMDBuild.core.constants.Proxy.CLOUD_ADMIN))
+					CMDBuild.core.proxy.domain.Domain.readAll({
+						loadMask: false,
+						scope: this,
+						success: function(response, options, decodedResponse) {
+							_CMCache.addDomains(decodedResponse.domains);
+						},
+						callback: reqBarrier.getCallback()
+					});
+
+				/**
 				 * Groups
 				 *
-				 * Build cache call
+				 * Cache build call
 				 */
 				CMDBuild.core.proxy.userAndGroup.group.Group.readAll({
 					loadMask: false,
@@ -316,22 +332,6 @@
 						_CMCache.addLookupTypes(decodedResponse);
 
 						lookupAccordion.updateStore();
-					},
-					callback: reqBarrier.getCallback()
-				});
-
-				/**
-				 * Domains
-				 */
-				CMDBuild.core.proxy.domain.Domain.readAll({
-					loadMask: false,
-					scope: this,
-					success: function(response, options, decodedResponse) {
-						_CMCache.addDomains(decodedResponse.domains);
-
-						if (!CMDBuild.configuration.userInterface.get(CMDBuild.core.constants.Proxy.CLOUD_ADMIN)) {
-							domainAccordion.updateStore();
-						}
 					},
 					callback: reqBarrier.getCallback()
 				});

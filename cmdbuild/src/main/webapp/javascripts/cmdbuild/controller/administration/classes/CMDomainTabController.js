@@ -110,7 +110,7 @@
 	}
 
 	function onAddDomainButton() {
-		var domainAccordion = _CMMainViewportController.accordionControllers["domain"];
+		var domainAccordion = _CMMainViewportController.findAccordionByCMName("domain");
 		if (domainAccordion) {
 			domainAccordion.expandForAdd();
 		}

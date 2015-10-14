@@ -61,8 +61,7 @@
 						this.getStore().getRootNode().appendChild(nodes);
 
 						// Alias of this.callParent(arguments), inside proxy function doesn't work
-						if (!Ext.isEmpty(nodeIdToSelect))
-							this.selectNodeById(nodeIdToSelect);
+						this.delegate.cmfg('onAccordionUpdateStore', nodeIdToSelect);
 					}
 				}
 			});

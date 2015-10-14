@@ -135,10 +135,15 @@
 
 		/**
 		 * @param {CMDBuild.view.common.CMAccordionStoreModel} parameters
+		 *
+		 * TODO: waiting for refactor (crud)
 		 */
 		onViewOnFront: function(parameters) {
 			if (!Ext.isEmpty(parameters)) {
-				CMDBuild.core.proxy.domain.Domain.readAll({
+				var params = {};
+
+				CMDBuild.core.proxy.domain.Domain.read({
+					params: params,
 					scope: this,
 					success: function(response, options, decodedResponse) {
 						decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.DOMAINS];
@@ -173,6 +178,7 @@
 						this.controllerProperties.getView().form.setDisabledModify(true);
 
 						_CMCache.onDomainDeleted(this.domainSelectedDomainGet(CMDBuild.core.constants.Proxy.ID));
+						_CMMainViewportController.findAccordionByCMName(this.cmName).updateStore();
 					}
 				});
 			}
@@ -183,6 +189,7 @@
 			this.view.tabPanel.getActiveTab().form.setDisabledModify(true);
 
 			_CMCache.onDomainSaved(decodedResponse.domain);
+			_CMMainViewportController.findAccordionByCMName(this.cmName).updateStore(decodedResponse[CMDBuild.core.constants.Proxy.DOMAIN][CMDBuild.core.constants.Proxy.ID_DOMAIN]);
 
 			CMDBuild.view.common.field.translatable.Utils.commit(this.controllerProperties.getView().form);
 		},
