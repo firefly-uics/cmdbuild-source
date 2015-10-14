@@ -23,7 +23,7 @@
 				url: CMDBuild.core.proxy.Index.menu.read
 			});
 
-			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.MENU, parameters, true);
+			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.MENU, parameters);
 		},
 
 		/**

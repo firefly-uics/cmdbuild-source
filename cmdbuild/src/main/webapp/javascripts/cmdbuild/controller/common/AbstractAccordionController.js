@@ -174,15 +174,18 @@
 
 		/**
 		 * @param {Number} nodeIdToSelect
-		 *
-		 * TODO: waiting for implementation (see view comment)
 		 */
 		onAccordionUpdateStore: function(nodeIdToSelect) {
 			if (!Ext.isEmpty(nodeIdToSelect))
 				this.onAccordionSelectNodeById(nodeIdToSelect);
 
+			// Select first selectable item if no selection and expanded
+			if (!this.view.getSelectionModel().hasSelection() && this.view.getCollapsed() === false)
+				this.onAccordionSelectFirstSelectableNode();
+
 			// Hide if accordion is empty
-			this.view.setVisible(this.view.hideIfEmpty && this.onAccordionIsEmpty());
+			if (this.hideIfEmpty && this.onAccordionIsEmpty())
+				this.hide();
 		}
 	});
 
