@@ -33,7 +33,8 @@
 			'onAccordionIsNodeSelectable',
 			'onAccordionSelectFirstSelectableNode',
 			'onAccordionSelectionChange',
-			'onAccordionSelectNodeById'
+			'onAccordionSelectNodeById',
+			'onAccordionUpdateStore'
 		],
 
 		/**

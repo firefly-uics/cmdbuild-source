@@ -56,7 +56,7 @@
 					url: CMDBuild.core.proxy.Index.lookup.getParentList,
 					reader: {
 						type: 'json',
-						root: 'rows'
+						root: CMDBuild.core.constants.Proxy.ROWS
 					}
 				},
 				sorters: [

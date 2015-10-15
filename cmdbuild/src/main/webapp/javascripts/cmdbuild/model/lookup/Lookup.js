@@ -67,9 +67,9 @@
 		 * @override
 		 */
 		constructor: function(data) {
-			if (!Ext.isEmpty(data['Id'])) // Legacy mode
+			if (!Ext.isEmpty(data) && !Ext.isEmpty(data['Id'])) // Legacy mode
 				data = CMDBuild.model.lookup.Lookup.convertFromLegacy(data);
-_debug('constructor');
+
 			this.callParent(arguments);
 		}
 	});
