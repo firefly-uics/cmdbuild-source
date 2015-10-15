@@ -8,7 +8,6 @@
 	var dashboardsAccordion = new CMDBuild.view.administration.accordion.CMDashboardAccordion({
 		cmControllerType: CMDBuild.controller.accordion.CMDashboardAccordionController
 	});
-	var gisAccordion = new CMDBuild.view.administration.accordion.CMGISAccordion();
 	var navigationTreesAccordion = new CMDBuild.view.administration.accordion.CMNavigationTreesAccordion({
 		cmControllerType: CMDBuild.controller.accordion.CMNavigationTreesAccordionController
 	});
@@ -113,7 +112,10 @@
 								cmControllerType: 'CMDBuild.controller.common.AbstractAccordionController',
 								cmName: 'email'
 							}),
-							gisAccordion,
+							Ext.create('CMDBuild.view.administration.accordion.Gis', {
+								cmControllerType: 'CMDBuild.controller.common.AbstractAccordionController',
+								cmName: 'gis'
+							}),
 							bimAccordion,
 							Ext.create('CMDBuild.view.administration.accordion.Localization', {
 								cmControllerType: 'CMDBuild.controller.common.AbstractAccordionController',
@@ -286,6 +288,22 @@
 					});
 
 				/**
+				 * GIS
+				 */
+				CMDBuild.core.proxy.Configuration.readGisConfiguration({
+					success: function(response, options, decoded) {
+						CMDBuild.Config.gis = decoded.data;
+						CMDBuild.Config.gis.enabled = ('true' == CMDBuild.Config.gis.enabled);
+
+						if (!CMDBuild.configuration.userInterface.get(CMDBuild.core.constants.Proxy.CLOUD_ADMIN)) {
+							_CMMainViewportController.findAccordionByCMName('gis').setDisabled(!CMDBuild.Config.gis.enabled);
+						}
+					},
+
+					callback: reqBarrier.getCallback()
+				});
+
+				/**
 				 * Groups
 				 *
 				 * Cache build call
@@ -294,7 +312,6 @@
 					loadMask: false,
 					callback: reqBarrier.getCallback()
 				});
-
 
 				/**
 				 * Lookup
@@ -317,22 +334,6 @@
 						CMDBuild.Config.workflow = decoded.data;
 						CMDBuild.Config.workflow.enabled = ('true' == CMDBuild.Config.workflow.enabled);
 					},
-					callback: reqBarrier.getCallback()
-				});
-
-				/**
-				 * GIS configuration
-				 */
-				CMDBuild.core.proxy.Configuration.readGisConfiguration({
-					success: function(response, options, decoded) {
-						CMDBuild.Config.gis = decoded.data;
-						CMDBuild.Config.gis.enabled = ('true' == CMDBuild.Config.gis.enabled);
-
-						if (!CMDBuild.configuration.userInterface.get(CMDBuild.core.constants.Proxy.CLOUD_ADMIN)) {
-							gisAccordion.setDisabled(!CMDBuild.Config.gis.enabled);
-						}
-					},
-
 					callback: reqBarrier.getCallback()
 				});
 

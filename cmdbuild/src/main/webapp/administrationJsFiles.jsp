@@ -55,7 +55,6 @@
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/dashboard/CMModDashboard.js"></script>
 
 	<!-- GIS -->
-	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/accordion/CMGISAccordion.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/gis/ModGISNavigationConfiguration.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/gis/ModIcons.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/gis/ModLayerOrder.js"></script>
@@ -73,8 +72,6 @@
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/widget/CMWidgetDefinitionGrid.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/widget/form/CMBaseWidgetDefinitionForm.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/widget/form/CMCalendarDefinitionForm.js"></script>
-<!-- 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/widget/form/CMNavigationTreeDefinitionForm.js"></script>
- -->
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/widget/form/CMWorkflowDefinitionForm.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/widget/form/CMPingDefinitionForm.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/widget/form/CMCreateModifyCardDefinitionForm.js"></script>
