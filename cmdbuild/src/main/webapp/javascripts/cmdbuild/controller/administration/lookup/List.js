@@ -180,21 +180,20 @@
 			this.lookupListSelectedLookupReset();
 
 			if (!this.cmfg('lookupSelectedLookupTypeIsEmpty')) {
-				var me = this;
-
 				var params = {};
 				params[CMDBuild.core.constants.Proxy.TYPE] = this.cmfg('lookupSelectedLookupTypeGet', CMDBuild.core.constants.Proxy.ID);
 
 				this.grid.getStore().load({
 					params: params,
+					scope: this,
 					callback: function(records, operation, success) {
 						var rowIndex = 0;
 
-						if (!me.lookupListSelectedLookupIsEmpty())
-							rowIndex = this.find('Id', me.lookupListSelectedLookupGet(CMDBuild.core.constants.Proxy.ID));
+						if (!this.lookupListSelectedLookupIsEmpty())
+							rowIndex = this.grid.getStore().find('Id', this.lookupListSelectedLookupGet(CMDBuild.core.constants.Proxy.ID));
 
-						me.grid.getSelectionModel().select(rowIndex, true);
-						me.form.setDisabledModify(true);
+						this.grid.getSelectionModel().select(rowIndex, true);
+						this.form.setDisabledModify(true);
 					}
 				});
 			}
