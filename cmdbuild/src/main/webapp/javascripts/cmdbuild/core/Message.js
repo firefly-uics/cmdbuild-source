@@ -100,13 +100,26 @@
 		 * @param {Mixed} body
 		 * @param {Boolean} popup
 		 */
-		warn: function(title, text, popup) {
+		warning: function(title, text, popup) {
 			CMDBuild.core.Message.alert(
 				title || CMDBuild.Translation.warning,
 				text,
 				Ext.isBoolean(popup) ? popup : false,
 				Ext.MessageBox.WARNING
 			);
+		},
+
+		/**
+		 * @param {String} title
+		 * @param {Mixed} body
+		 * @param {Boolean} popup
+		 *
+		 * @deprecated
+		 */
+		warn: function(title, text, popup) {
+			_deprecated('warn', this);
+
+			this.warning(title, text, popup);
 		}
 	});
 
@@ -122,7 +135,7 @@ function buildDetaiWindow(detailBufferIndex) {
 		dockedItems: [
 			Ext.create('Ext.toolbar.Toolbar', {
 				dock: 'bottom',
-				itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_BOTTOM,
+				itemId: CMDBuild.core.constants.Proxy.TOOLBAR_BOTTOM,
 				ui: 'footer',
 
 				layout: {
@@ -132,7 +145,7 @@ function buildDetaiWindow(detailBufferIndex) {
 				},
 
 				items: [
-					Ext.create('CMDBuild.core.buttons.Close', {
+					Ext.create('CMDBuild.core.buttons.text.Close', {
 						scope: this,
 
 						handler: function(button, e) {

@@ -4,7 +4,7 @@
 		extend: 'Ext.form.Panel',
 
 		requires: [
-			'CMDBuild.core.proxy.CMProxyConstants',
+			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.Configuration'
 		],
 
@@ -27,65 +27,19 @@
 			type: 'vbox',
 			align:'stretch'
 		},
-// TODO: use when localization module will be released
-//		fieldDefaults: {
-//			labelAlign: 'left',
-//			labelWidth: CMDBuild.CFG_LABEL_WIDTH,
-//			maxWidth: CMDBuild.CFG_MEDIUM_FIELD_WIDTH
-//		},
+
+		fieldDefaults: {
+			labelAlign: 'left',
+			labelWidth: CMDBuild.CFG_LABEL_WIDTH,
+			maxWidth: CMDBuild.CFG_MEDIUM_FIELD_WIDTH
+		},
 
 		initComponent: function() {
-			this.instanceNameField = Ext.create('CMDBuild.view.common.field.translatable.Text', {
-				fieldLabel: CMDBuild.Translation.instanceName,
-				name: 'instance_name',
-				allowBlank: true,
-				labelAlign: 'left',
-				labelWidth: CMDBuild.CFG_LABEL_WIDTH,
-				maxWidth: CMDBuild.CFG_BIG_FIELD_WIDTH,
-				translationsKeyType: 'InstanceName'
-			});
-
-			// TODO: to delete when localization module will be released
-			this.languageFieldset = Ext.create('Ext.form.FieldSet', {
-				title: CMDBuild.Translation.language,
-				overflowY: 'auto',
-
-				layout: {
-					type: 'vbox',
-					align:'stretch'
-				},
-
-				items: [
-					Ext.create('CMDBuild.view.common.field.LanguageCombo', {
-						fieldLabel: CMDBuild.Translation.defaultLanguage,
-						labelWidth: CMDBuild.CFG_LABEL_WIDTH,
-						maxWidth: CMDBuild.CFG_MEDIUM_FIELD_WIDTH,
-						name: 'language',
-						enableChangeLanguage: false
-					}),
-					Ext.create('Ext.ux.form.XCheckbox', {
-						fieldLabel: CMDBuild.Translation.showLanguageChoice,
-						labelWidth: CMDBuild.CFG_LABEL_WIDTH,
-						name: 'languageprompt'
-					})
-				]
-			});
-
-			this.languageGrid = Ext.create('CMDBuild.view.administration.localizations.panels.LanguagesGrid');
-			this.enabledLanguagesFieldset = Ext.create('Ext.form.FieldSet', {
-				title: CMDBuild.Translation.enabledLanguages,
-				overflowY: 'auto',
-				name: 'enabled_languages',
-
-				items: [this.languageGrid]
-			});
-			// END TODO: to delete when localization module will be released
-
 			Ext.apply(this, {
 				dockedItems: [
 					Ext.create('Ext.toolbar.Toolbar', {
 						dock: 'bottom',
-						itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_BOTTOM,
+						itemId: CMDBuild.core.constants.Proxy.TOOLBAR_BOTTOM,
 						ui: 'footer',
 
 						layout: {
@@ -95,18 +49,18 @@
 						},
 
 						items: [
-							Ext.create('CMDBuild.core.buttons.Save', {
+							Ext.create('CMDBuild.core.buttons.text.Save', {
 								scope: this,
 
 								handler: function(button, e) {
-									this.delegate.cmfg('onGeneralOptionsSaveButtonClick');
+									this.delegate.cmfg('onConfigurationGeneralOptionsSaveButtonClick');
 								}
 							}),
-							Ext.create('CMDBuild.core.buttons.Abort', {
+							Ext.create('CMDBuild.core.buttons.text.Abort', {
 								scope: this,
 
 								handler: function(button, e) {
-									this.delegate.cmfg('onGeneralOptionsAbortButtonClick');
+									this.delegate.cmfg('onConfigurationGeneralOptionsAbortButtonClick');
 								}
 							})
 						]
@@ -121,20 +75,26 @@
 							align:'stretch'
 						},
 
-						// TODO: to delete when localization module will be released
-						fieldDefaults: {
-							labelAlign: 'left',
-							labelWidth: CMDBuild.CFG_LABEL_WIDTH,
-							maxWidth: CMDBuild.CFG_MEDIUM_FIELD_WIDTH
-						},
-
 						items: [
-							this.instanceNameField,
+							this.instanceNameField = Ext.create('CMDBuild.view.common.field.translatable.Text', {
+								name: 'instance_name',
+								fieldLabel: CMDBuild.Translation.instanceName,
+								labelAlign: 'left',
+								labelWidth: CMDBuild.CFG_LABEL_WIDTH,
+								maxWidth: CMDBuild.CFG_BIG_FIELD_WIDTH,
+								allowBlank: true,
+
+								translationFieldConfig: {
+									type: CMDBuild.core.constants.Proxy.INSTANCE_NAME,
+									identifier: CMDBuild.core.constants.Proxy.INSTANCE_NAME, // Just for configuration validation
+									field: CMDBuild.core.constants.Proxy.INSTANCE_NAME
+								}
+							}),
 							Ext.create('CMDBuild.field.ErasableCombo', {
 								name: 'startingclass',
 								fieldLabel: CMDBuild.Translation.defaultClass,
-								valueField: CMDBuild.core.proxy.CMProxyConstants.ID,
-								displayField: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
+								valueField: CMDBuild.core.constants.Proxy.ID,
+								displayField: CMDBuild.core.constants.Proxy.DESCRIPTION,
 								editable: false,
 
 								store: CMDBuild.core.proxy.Configuration.getStartingClassStore(),
@@ -171,11 +131,11 @@
 								name: 'card_tab_position',
 								fieldLabel: CMDBuild.Translation.tabPositioInCardPanel,
 								allowBlank: false,
-								displayField: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
-								valueField: CMDBuild.core.proxy.CMProxyConstants.VALUE,
+								displayField: CMDBuild.core.constants.Proxy.DESCRIPTION,
+								valueField: CMDBuild.core.constants.Proxy.VALUE,
 
 								store: Ext.create('Ext.data.Store', {
-									fields: [CMDBuild.core.proxy.CMProxyConstants.VALUE, CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION],
+									fields: [CMDBuild.core.constants.Proxy.VALUE, CMDBuild.core.constants.Proxy.DESCRIPTION],
 									data: [
 										{
 											value: 'top',
@@ -206,13 +166,6 @@
 							align:'stretch'
 						},
 
-						// TODO: to delete when localization module will be released
-						fieldDefaults: {
-							labelAlign: 'left',
-							labelWidth: CMDBuild.CFG_LABEL_WIDTH,
-							maxWidth: CMDBuild.CFG_MEDIUM_FIELD_WIDTH
-						},
-
 						items: [
 							{
 								xtype: 'numberfield',
@@ -230,21 +183,12 @@
 							}
 						]
 					}),
-					this.languageFieldset, // TODO: to delete when localization module will be released
-					this.enabledLanguagesFieldset, // TODO: to delete when localization module will be released
 					Ext.create('Ext.form.FieldSet', {
 						title: CMDBuild.Translation.lockCardsAndProcessesInEdit,
 
 						layout: {
 							type: 'vbox',
 							align:'stretch'
-						},
-
-						// TODO: to delete when localization module will be released
-						fieldDefaults: {
-							labelAlign: 'left',
-							labelWidth: CMDBuild.CFG_LABEL_WIDTH,
-							maxWidth: CMDBuild.CFG_MEDIUM_FIELD_WIDTH
 						},
 
 						items: [
@@ -269,6 +213,12 @@
 			});
 
 			this.callParent(arguments);
+		},
+
+		listeners: {
+			add: function(panel, component, index, eOpts) {
+				panel.instanceNameField.translationsRead(); // Custom function call to read translations data
+			}
 		},
 
 		/**

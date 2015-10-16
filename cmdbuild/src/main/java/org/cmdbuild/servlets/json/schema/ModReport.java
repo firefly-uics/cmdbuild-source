@@ -335,26 +335,9 @@ public class ModReport extends JSONBaseWithSpringContext {
 
 	}
 
-	@JSONExported
-	public JSONArray menuTree() throws JSONException, AuthException {
-		final JSONArray serializer = new JSONArray();
-		JSONObject item;
-
-		item = new JSONObject();
-		item.put("id", "Jasper");
-		item.put("text", getTraslation("administration.modreport.importJRFormStep1.menuTitle"));
-		item.put("leaf", true);
-		item.put("cls", "file");
-		item.put("type", "report");
-		item.put("selectable", true);
-		serializer.put(item);
-
-		return serializer;
-	}
-
 	/**
 	 * Print a report that lists all the classes
-	 * 
+	 *
 	 * @param format
 	 * @throws Exception
 	 */
@@ -375,7 +358,7 @@ public class ModReport extends JSONBaseWithSpringContext {
 
 	/**
 	 * Print a report with the detail of a class
-	 * 
+	 *
 	 * @param format
 	 * @throws Exception
 	 */
@@ -397,7 +380,7 @@ public class ModReport extends JSONBaseWithSpringContext {
 	}
 
 	/**
-	 * 
+	 *
 	 * Is the first step of the report upload Analyzes the JRXML and eventually
 	 * return the configuration of the second step
 	 */
@@ -541,7 +524,7 @@ public class ModReport extends JSONBaseWithSpringContext {
 	 * Is the second step of the report
 	 * import. Manage the sub reports and
 	 * the images
-	 * 
+	 *
 	 * @param files
 	 * @throws JSONException
 	 * @throws AuthException
@@ -734,7 +717,7 @@ public class ModReport extends JSONBaseWithSpringContext {
 
 	/**
 	 * Reset session, last "import report" operation
-	 * 
+	 *
 	 * @param serializer
 	 * @return
 	 * @throws JSONException

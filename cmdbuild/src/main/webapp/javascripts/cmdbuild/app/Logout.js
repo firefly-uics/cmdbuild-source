@@ -1,35 +1,16 @@
 (function() {
 
-	Ext.define('CMDBuild.app.Logout', {
-		extend: 'Ext.panel.Panel',
+	Ext.onReady(function() {
+		Ext.tip.QuickTipManager.init();
 
-		requires: [
-			'CMDBuild.core.proxy.CMProxyConstants',
-			'CMDBuild.core.proxy.session.JsonRpc',
-			'CMDBuild.core.proxy.session.Rest'
-		],
+		// Fix a problem of Ext 4.2 tooltips width
+		// see http://www.sencha.com/forum/showthread.php?260106-Tooltips-on-forms-and-grid-are-not-resizing-to-the-size-of-the-text/page3#24
+		delete Ext.tip.Tip.prototype.minWidth;
 
-		singleton: true,
+		Ext.create('CMDBuild.core.LoggerManager'); // Logger configuration
+		Ext.create('CMDBuild.core.Data'); // Data connections configuration
 
-		frame: false,
-		border: false,
-
-		doLogout: function() {
-			CMDBuild.core.proxy.session.JsonRpc.logout({
-				scope: this,
-				success: function(response, options, decodedResponse) {
-					if (!Ext.isEmpty(Ext.util.Cookies.get(CMDBuild.core.proxy.CMProxyConstants.REST_SESSION_TOKEN))) {
-						var urlParams = {};
-						urlParams[CMDBuild.core.proxy.CMProxyConstants.TOKEN] = Ext.util.Cookies.get(CMDBuild.core.proxy.CMProxyConstants.REST_SESSION_TOKEN);
-
-						CMDBuild.core.proxy.session.Rest.logout({ urlParams: urlParams });
-					}
-				},
-				callback: function(records, operation, success) {
-					window.location = 'index.jsp';
-				}
-			});
-		}
+		Ext.create('CMDBuild.controller.logout.Logout');
 	});
 
 })();

@@ -3,6 +3,8 @@
 	Ext.define('CMDBuild.controller.administration.configuration.Alfresco', {
 		extend: 'CMDBuild.controller.common.AbstractController',
 
+		requires: ['CMDBuild.core.constants.Proxy'],
+
 		/**
 		 * @cfg {CMDBuild.controller.administration.configuration.Configuration}
 		 */
@@ -12,14 +14,19 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
-			'onAlfrescoAbortButtonClick',
-			'onAlfrescoSaveButtonClick'
+			'onConfigurationAlfrescoSaveButtonClick',
+			'onConfigurationAlfrescoAbortButtonClick'
 		],
 
 		/**
-		 * @cfg {String}
+		 * Proxy parameters
+		 *
+		 * @cfg {Object}
 		 */
-		configFileName: 'dms',
+		params: {
+			fileName: 'dms',
+			view: undefined
+		},
 
 		/**
 		 * @property {CMDBuild.view.administration.configuration.AlfrescoPanel}
@@ -39,24 +46,17 @@
 				delegate: this
 			});
 
-			this.cmfg('onConfigurationRead', {
-				configFileName: this.configFileName,
-				view: this.view
-			});
+			this.params[CMDBuild.core.constants.Proxy.VIEW] = this.view;
+
+			this.cmfg('onConfigurationRead', this.params);
 		},
 
-		onAlfrescoAbortButtonClick: function() {
-			this.cmfg('onConfigurationRead', {
-				configFileName: this.configFileName,
-				view: this.view
-			});
+		onConfigurationAlfrescoAbortButtonClick: function() {
+			this.cmfg('onConfigurationRead', this.params);
 		},
 
-		onAlfrescoSaveButtonClick: function() {
-			this.cmfg('onConfigurationSave', {
-				configFileName: this.configFileName,
-				view: this.view
-			});
+		onConfigurationAlfrescoSaveButtonClick: function() {
+			this.cmfg('onConfigurationSave', this.params);
 		}
 	});
 

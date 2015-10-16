@@ -5,25 +5,7 @@
 	 */
 	Ext.define('CMDBuild.view.common.PanelFunctions', {
 
-		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
-
-		/**
-		 * @param {Boolean} disableTBar
-		 */
-		disableModify: function(disableTBar) {
-			this.setDisableFields(true);
-			this.setDisabledTopBar(disableTBar);
-			this.setDisabledBottomBar(true);
-		},
-
-		/**
-		 * @param {Boolean} allFields
-		 */
-		enableModify: function(allFields) {
-			this.setDisableFields(false, allFields);
-			this.setDisabledTopBar(true);
-			this.setDisabledBottomBar(false);
-		},
+		requires: ['CMDBuild.core.constants.Proxy'],
 
 		/**
 		 * @param {Boolean} withDisabled
@@ -34,7 +16,8 @@
 
 				this.cascade(function(item) {
 					if (
-						item
+						!Ext.isEmpty(item)
+						&& Ext.isFunction(item.getValue)
 						&& (
 							item instanceof Ext.form.Field
 							|| item instanceof Ext.form.field.Base
@@ -44,7 +27,7 @@
 					) {
 						data[item.name] = item.getValue();
 					}
-				});
+				}, this);
 
 				return data;
 			} else {
@@ -57,28 +40,65 @@
 
 			this.cascade(function(item) {
 				if (
-					item
-					&& (item instanceof Ext.form.Field)
+					!Ext.isEmpty(item)
+					&& (
+						item instanceof Ext.form.Field
+						|| item instanceof Ext.form.field.Base
+						|| item instanceof Ext.form.FieldContainer
+					)
 					&& !item.disabled
 					&& !item.isValid()
+					&& !item.disableCascade // Property to disable cascade on fields
 				) {
 					data.push(item);
 				}
-			});
+			}, this);
 
 			return data;
 		},
 
+		/**
+		 * Custom implementation of setValues and reset (to catch also non Ext.form.Fields items)
+		 */
 		reset: function() {
-			this.getForm().setValues();
-			this.getForm().reset();
+			// SetValues
+			this.cascade(function(item) {
+				if (
+					!Ext.isEmpty(item)
+					&& Ext.isFunction(item.setValue)
+					&& (
+						item instanceof Ext.form.Field
+						|| item instanceof Ext.form.field.Base
+						|| item instanceof Ext.form.field.HtmlEditor
+						|| item instanceof Ext.form.FieldContainer
+					)
+				) {
+					item.setValue();
+				}
+			}, this);
+
+			// Reset
+			this.cascade(function(item) {
+				if (
+					!Ext.isEmpty(item)
+					&& Ext.isFunction(item.reset)
+					&& (
+						item instanceof Ext.form.Field
+						|| item instanceof Ext.form.field.Base
+						|| item instanceof Ext.form.field.HtmlEditor
+						|| item instanceof Ext.form.FieldContainer
+					)
+				) {
+					item.reset();
+				}
+			}, this);
 		},
 
 		/**
 		 * @param {Boolean} state
 		 */
 		setDisabledBottomBar: function(state) {
-			var bottomToolbar = this.getDockedComponent(CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_BOTTOM);
+			var bottomToolbar = this.getDockedComponent(CMDBuild.core.constants.Proxy.TOOLBAR_BOTTOM);
 
 			if (!Ext.isEmpty(bottomToolbar))
 				Ext.Array.forEach(bottomToolbar.items.items, function(button, i, allButtons) {
@@ -90,11 +110,13 @@
 		/**
 		 * @param {Boolean} state
 		 * @param {Boolean} allFields
+		 * @param {Boolean} disableIsVisibleCheck
 		 *
 		 * @private
 		 */
-		setDisableFields: function(state, allFields) {
-			allFields = allFields || false;
+		setDisableFields: function(state, allFields, disableIsVisibleCheck) {
+			allFields = Ext.isBoolean(allFields) ? allFields : false;
+			disableIsVisibleCheck = Ext.isBoolean(disableIsVisibleCheck) ? disableIsVisibleCheck : false;
 
 			// For Ext.form.field.Field objects
 			this.getForm().getFields().each(function(item, i, length) {
@@ -120,11 +142,15 @@
 					if (state) {
 						item.setDisabled(state);
 					} else {
-						if ((allFields || !item.cmImmutable) && item.isVisible())
+						if (
+							(allFields || !item.cmImmutable)
+							&& (item.isVisible() || disableIsVisibleCheck)
+						) {
 							item.setDisabled(state);
+						}
 					}
 				}
-			});
+			}, this);
 		},
 
 		/**
@@ -143,7 +169,7 @@
 		 * @param {Boolean} state
 		 */
 		setDisabledTopBar: function(state) {
-			var topToolbar = this.getDockedComponent(CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_TOP);
+			var topToolbar = this.getDockedComponent(CMDBuild.core.constants.Proxy.TOOLBAR_TOP);
 
 			if (!Ext.isEmpty(topToolbar))
 				Ext.Array.forEach(topToolbar.items.items, function(button, i, allButtons) {

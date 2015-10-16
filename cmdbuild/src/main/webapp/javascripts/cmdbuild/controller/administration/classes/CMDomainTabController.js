@@ -1,9 +1,12 @@
 (function() {
 	Ext.define("CMDBuild.controller.administration.classes.CMDomainTabController", {
+
+		requires: ['CMDBuild.core.proxy.domain.Domain'],
+
 		constructor: function(view) {
 			this.view = view;
 			this.selection = null;
-			
+
 			this.view.on("itemdblclick", onItemDoubleClick, this);
 			this.view.getSelectionModel().on("selectionchange", onSelectionChange, this);
 			this.view.addDomainButton.on("click", onAddDomainButton, this);
@@ -43,7 +46,7 @@
 		}
 
 	});
-	
+
 	function onSelectionChange(sm, selection) {
 		if (selection.length > 0) {
 			this.currentDomain = selection[0];
@@ -58,7 +61,7 @@
 		Ext.Function.createDelayed(function() {
 			domainAccordion.selectNodeById(record.get("idDomain"));
 		}, 100)();
-		
+
 	}
 
 	function onModifyDomainButton() {
@@ -69,7 +72,7 @@
 			}, 500)();
 		}
 	}
-	
+
 	function onDeleteDomainButton() {
 		Ext.Msg.show({
 			title: CMDBuild.Translation.administration.modClass.domainProperties.delete_domain,
@@ -90,26 +93,24 @@
 			return;
 		}
 
-		var me = this;
 		var params = {};
 		params[_CMProxy.parameter.DOMAIN_NAME] = this.currentDomain.get("name");
 
-		CMDBuild.LoadMask.get().show();
-		CMDBuild.ServiceProxy.administration.domain.remove({
+		CMDBuild.core.proxy.domain.Domain.remove({
 			params: params,
-			success : function(form, action) {
-				me.onClassSelected(me.selection);
-				_CMCache.onDomainDeleted(me.currentDomain.get("idDomain"));
-				me.currentDomain = null;
-			},
-			callback : function() {
-				CMDBuild.LoadMask.get().hide();
+			scope: this,
+			success: function(response, options, decodedResponse) {
+				this.onClassSelected(this.selection);
+
+				_CMCache.onDomainDeleted(this.currentDomain.get("idDomain"));
+
+				this.currentDomain = null;
 			}
 		});
 	}
-	
+
 	function onAddDomainButton() {
-		var domainAccordion = _CMMainViewportController.accordionControllers["domain"];
+		var domainAccordion = _CMMainViewportController.findAccordionByCMName("domain");
 		if (domainAccordion) {
 			domainAccordion.expandForAdd();
 		}

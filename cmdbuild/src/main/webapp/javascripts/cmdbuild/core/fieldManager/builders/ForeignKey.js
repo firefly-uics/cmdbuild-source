@@ -9,7 +9,7 @@
 		extend: 'CMDBuild.core.fieldManager.builders.Abstract',
 
 		requires: [
-			'CMDBuild.core.proxy.CMProxyConstants',
+			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.common.field.ForeignKey'
 		],
 
@@ -27,12 +27,12 @@
 			withEditor = Ext.isBoolean(withEditor) ? withEditor : false;
 
 			return Ext.create('Ext.grid.column.Column', {
-				dataIndex: this.cmfg('attributeModelGet', CMDBuild.core.proxy.CMProxyConstants.NAME),
-				disabled: !this.cmfg('attributeModelGet', CMDBuild.core.proxy.CMProxyConstants.WRITABLE),
+				dataIndex: this.cmfg('attributeModelGet', CMDBuild.core.constants.Proxy.NAME),
+				disabled: !this.cmfg('attributeModelGet', CMDBuild.core.constants.Proxy.WRITABLE),
 				editor: withEditor ? this.buildEditor() : null,
 				flex: 1,
 				sortable: true,
-				text: this.applyMandatoryLabelFlag(this.cmfg('attributeModelGet', CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION))
+				text: this.applyMandatoryLabelFlag(this.cmfg('attributeModelGet', CMDBuild.core.constants.Proxy.DESCRIPTION))
 			});
 		},
 
@@ -41,19 +41,19 @@
 		 */
 		buildEditor: function() {
 			return Ext.create('CMDBuild.view.common.field.comboBox.Searchable', {
-				allowBlank: !this.cmfg('attributeModelGet', CMDBuild.core.proxy.CMProxyConstants.MANDATORY),
+				allowBlank: !this.cmfg('attributeModelGet', CMDBuild.core.constants.Proxy.MANDATORY),
 				attributeModel: this.cmfg('attributeModelGet'),
-				disabled: !this.cmfg('attributeModelGet', CMDBuild.core.proxy.CMProxyConstants.WRITABLE),
+				disabled: !this.cmfg('attributeModelGet', CMDBuild.core.constants.Proxy.WRITABLE),
 				displayField: 'Description',
-				name: this.cmfg('attributeModelGet', CMDBuild.core.proxy.CMProxyConstants.NAME),
+				name: this.cmfg('attributeModelGet', CMDBuild.core.constants.Proxy.NAME),
 				plugins: new CMDBuild.SetValueOnLoadPlugin(),
-				readOnly: !this.cmfg('attributeModelGet', CMDBuild.core.proxy.CMProxyConstants.WRITABLE),
+				readOnly: !this.cmfg('attributeModelGet', CMDBuild.core.constants.Proxy.WRITABLE),
 				valueField: 'Id',
 
 				store: this.buildFieldStore(),
 				queryMode: 'local',
 
-				templateResolver: this.cmfg('templateResolverBuild', [CMDBuild.core.proxy.CMProxyConstants.FILTER]),
+				templateResolver: this.cmfg('templateResolverBuild', [CMDBuild.core.constants.Proxy.FILTER]),
 				resolveTemplates: this.cmfg('templateResolverGetResolveFunction'),
 
 				listeners: {
@@ -70,26 +70,26 @@
 		 */
 		buildField: function() {
 			return Ext.create('CMDBuild.view.common.field.comboBox.Searchable', {
-				allowBlank: !this.cmfg('attributeModelGet', CMDBuild.core.proxy.CMProxyConstants.MANDATORY),
+				allowBlank: !this.cmfg('attributeModelGet', CMDBuild.core.constants.Proxy.MANDATORY),
 				attributeModel: this.cmfg('attributeModelGet'),
-				disabled: !this.cmfg('attributeModelGet', CMDBuild.core.proxy.CMProxyConstants.WRITABLE),
+				disabled: !this.cmfg('attributeModelGet', CMDBuild.core.constants.Proxy.WRITABLE),
 				displayField: 'Description',
 				fieldLabel: this.applyMandatoryLabelFlag(
-					this.cmfg('attributeModelGet', CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION)
-					|| this.cmfg('attributeModelGet', CMDBuild.core.proxy.CMProxyConstants.NAME)
+					this.cmfg('attributeModelGet', CMDBuild.core.constants.Proxy.DESCRIPTION)
+					|| this.cmfg('attributeModelGet', CMDBuild.core.constants.Proxy.NAME)
 				),
 				labelAlign: 'right',
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				maxWidth: CMDBuild.BIG_FIELD_WIDTH,
-				name: this.cmfg('attributeModelGet', CMDBuild.core.proxy.CMProxyConstants.NAME),
+				name: this.cmfg('attributeModelGet', CMDBuild.core.constants.Proxy.NAME),
 				plugins: new CMDBuild.SetValueOnLoadPlugin(),
-				readOnly: !this.cmfg('attributeModelGet', CMDBuild.core.proxy.CMProxyConstants.WRITABLE),
+				readOnly: !this.cmfg('attributeModelGet', CMDBuild.core.constants.Proxy.WRITABLE),
 				valueField: 'Id',
 
 				store: this.buildFieldStore(),
 				queryMode: 'local',
 
-				templateResolver: this.cmfg('templateResolverBuild', [CMDBuild.core.proxy.CMProxyConstants.FILTER]),
+				templateResolver: this.cmfg('templateResolverBuild', [CMDBuild.core.constants.Proxy.FILTER]),
 				resolveTemplates: this.cmfg('templateResolverGetResolveFunction'),
 
 				listeners: {
@@ -106,10 +106,10 @@
 		 */
 		buildFieldStore: function() {
 			var extraParams = {};
-			extraParams[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME] = this.cmfg('attributeModelGet', CMDBuild.core.proxy.CMProxyConstants.TARGET_CLASS);
+			extraParams[CMDBuild.core.constants.Proxy.CLASS_NAME] = this.cmfg('attributeModelGet', CMDBuild.core.constants.Proxy.TARGET_CLASS);
 
-			if (!this.cmfg('attributeModelIsEmpty', CMDBuild.core.proxy.CMProxyConstants.FILTER))
-				extraParams[CMDBuild.core.proxy.CMProxyConstants.FILTER] = Ext.encode({ CQL: this.cmfg('attributeModelGet', CMDBuild.core.proxy.CMProxyConstants.FILTER) });
+			if (!this.cmfg('attributeModelIsEmpty', CMDBuild.core.constants.Proxy.FILTER))
+				extraParams[CMDBuild.core.constants.Proxy.FILTER] = Ext.encode({ CQL: this.cmfg('attributeModelGet', CMDBuild.core.constants.Proxy.FILTER) });
 
 			return CMDBuild.core.proxy.common.field.ForeignKey.getStore({ extraParams: extraParams });
 		}

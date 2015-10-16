@@ -1,5 +1,7 @@
 (function() {
 
+	Ext.require('CMDBuild.core.constants.Global');
+
 	Ext.define('CMDBuild.controller.management.common.CMCardWindowController', {
 		extend: 'CMDBuild.controller.management.classes.CMBaseCardPanelController',
 
@@ -35,8 +37,8 @@
 					this.loadFields(this.configuration.entryType, function() {
 						if (me.configuration.card) {
 							var params = {};
-							params[CMDBuild.core.proxy.CMProxyConstants.CARD_ID] = me.configuration.card;
-							params[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME] = _CMCache.getEntryTypeNameById(me.configuration.entryType);
+							params[CMDBuild.core.constants.Proxy.CARD_ID] = me.configuration.card;
+							params[CMDBuild.core.constants.Proxy.CLASS_NAME] = _CMCache.getEntryTypeNameById(me.configuration.entryType);
 
 							me.loadCard(true, params, function(card) {
 								me.onCardLoaded(me, card);
@@ -77,7 +79,7 @@
 					null,
 					Ext.String.format(
 						'<p class="{0}">{1}</p>',
-						CMDBuild.Constants.css.error_msg, CMDBuild.Translation.errors.invalid_attributes
+						CMDBuild.core.constants.Global.getErrorMsgCss(), CMDBuild.Translation.errors.invalid_attributes
 					) + CMDBuild.controller.common.CardStaticsController.getInvalidAttributeAsHTML(form),
 					false
 				);
@@ -99,7 +101,7 @@
 		onEntryTypeSelected: function(entryType) {
 			this.callParent(arguments);
 
-			this.view.setTitle(this.entryType.get(CMDBuild.core.proxy.CMProxyConstants.TEXT));
+			this.view.setTitle(this.entryType.get(CMDBuild.core.constants.Proxy.TEXT));
 		},
 
 		/**
@@ -109,8 +111,8 @@
 		 */
 		buildSaveParams: function() {
 			var params = {};
-			params[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME] = this.entryType.getName();
-			params[CMDBuild.core.proxy.CMProxyConstants.CARD_ID] = this.card ? this.card.get('Id') : -1;
+			params[CMDBuild.core.constants.Proxy.CLASS_NAME] = this.entryType.getName();
+			params[CMDBuild.core.constants.Proxy.CARD_ID] = this.card ? this.card.get('Id') : -1;
 
 			return params;
 		},
@@ -125,7 +127,7 @@
 		onSaveSuccess: function(form, action) {
 			CMDBuild.LoadMask.get().hide();
 
-			_CMCache.onClassContentChanged(this.entryType.get(CMDBuild.core.proxy.CMProxyConstants.ID));
+			_CMCache.onClassContentChanged(this.entryType.get(CMDBuild.core.constants.Proxy.ID));
 
 			this.view.destroy();
 		},

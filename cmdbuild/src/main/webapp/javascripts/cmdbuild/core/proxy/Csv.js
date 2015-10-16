@@ -3,8 +3,8 @@
 	Ext.define('CMDBuild.core.proxy.Csv', {
 
 		requires: [
-			'CMDBuild.core.proxy.CMProxyConstants',
-			'CMDBuild.core.proxy.CMProxyUrlIndex'
+			'CMDBuild.core.constants.Proxy',
+			'CMDBuild.core.proxy.Index'
 		],
 
 		singleton: true,
@@ -14,7 +14,7 @@
 		 */
 		getImportModeStore: function() {
 			return Ext.create('Ext.data.ArrayStore', {
-				fields: [CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION, CMDBuild.core.proxy.CMProxyConstants.VALUE],
+				fields: [CMDBuild.core.constants.Proxy.DESCRIPTION, CMDBuild.core.constants.Proxy.VALUE],
 				data: [
 					[CMDBuild.Translation.add, 'add'],
 					[CMDBuild.Translation.replace , 'replace']
@@ -28,14 +28,14 @@
 		getRecords: function(parameters) {
 			CMDBuild.Ajax.request({
 				method: 'GET',
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.csv.getCsvRecords,
+				url: CMDBuild.core.proxy.Index.csv.getCsvRecords,
 				scope: parameters.scope || this,
 				failure: parameters.failure || Ext.emptyFn,
 				success: parameters.success || Ext.emptyFn,
 				callback: function(records, operation, success) { // Clears server session data
 					CMDBuild.Ajax.request({
 						method: 'GET',
-						url: CMDBuild.core.proxy.CMProxyUrlIndex.csv.clearSession
+						url: CMDBuild.core.proxy.Index.csv.clearSession
 					});
 
 					CMDBuild.LoadMask.get().hide();
@@ -48,7 +48,7 @@
 		 */
 		getSeparatorStore: function() {
 			return Ext.create('Ext.data.ArrayStore', {
-				fields: [CMDBuild.core.proxy.CMProxyConstants.VALUE],
+				fields: [CMDBuild.core.constants.Proxy.VALUE],
 				data: [
 					[';'],
 					[','],
@@ -65,7 +65,7 @@
 				form: parameters.form,
 				isUpload: true,
 				method: 'POST',
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.csv.readCsv,
+				url: CMDBuild.core.proxy.Index.csv.readCsv,
 				scope: parameters.scope || this,
 				failure: parameters.failure || Ext.emptyFn,
 				success: parameters.success || Ext.emptyFn,
@@ -79,7 +79,7 @@
 		upload: function(parameters) {
 			parameters.form.submit({
 				method: 'POST',
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.csv.uploadCsv,
+				url: CMDBuild.core.proxy.Index.csv.uploadCsv,
 				scope: parameters.scope || this,
 				failure: parameters.failure || Ext.emptyFn,
 				success: parameters.success || Ext.emptyFn,

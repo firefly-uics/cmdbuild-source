@@ -75,11 +75,6 @@ public class TranslationService {
 		return map.get(lang);
 	}
 
-	public String getTranslation(String key) {
-		final LanguageStore languageStore = applicationContext().getBean(LanguageStore.class);
-		return getTranslation(languageStore.getLanguage(), key);
-	}
-
 	public String getTranslation(String lang, String key) {
 		try {
 			JSONObject json = getTranslationObject(lang);

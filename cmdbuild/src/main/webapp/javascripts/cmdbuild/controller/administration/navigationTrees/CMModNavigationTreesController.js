@@ -22,14 +22,12 @@
 					_CMMainViewportController.deselectAccordionByName("navigationTrees");
 					this.view.selectPropertiesTab();
 					this.view.navigationTreesTree.disable();
-					_CMCache.initModifyingTranslations();
 					this.view.navigationTreesForm.enableModify(true);
 					this.view.navigationTreesTree.enableModify();
 					this.formController.cmOn("onNew");
 					this.isNew = true;
 					break;
 				case 'onModifyButtonClick':
-					_CMCache.initModifyingTranslations();
 					this.view.navigationTreesForm.enableModify();
 					this.view.navigationTreesTree.enableModify();
 					this.isNew = false;

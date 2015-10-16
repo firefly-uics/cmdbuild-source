@@ -6,7 +6,7 @@ import org.cmdbuild.logic.translation.BaseTranslation;
 import org.cmdbuild.logic.translation.TranslationObjectVisitor;
 
 public class LookupDescription extends BaseTranslation {
-	
+
 	private LookupDescription(final Builder builder) {
 		this.setName(builder.uuid);
 		this.setTranslations(builder.translations);

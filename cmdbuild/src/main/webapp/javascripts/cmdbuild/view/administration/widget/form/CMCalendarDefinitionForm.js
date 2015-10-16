@@ -2,6 +2,10 @@
 	Ext.define("CMDBuild.view.administration.widget.form.CMCalendarDefinitionForm", {
 		extend: "CMDBuild.view.administration.widget.form.CMBaseWidgetDefinitionForm",
 
+		mixins: {
+			panelFunctions: 'CMDBuild.view.common.PanelFunctions'
+		},
+
 		statics: {
 			WIDGET_NAME: ".Calendar"
 		},

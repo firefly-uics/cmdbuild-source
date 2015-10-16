@@ -1,5 +1,7 @@
 (function() {
 
+	Ext.require('CMDBuild.view.common.field.translatable.Utils');
+
 	Ext.define("CMDBuild.controller.administration.CMBaseAttributesController", {
 		constructor: function(view) {
 			this.view = view;
@@ -48,7 +50,7 @@
 	Ext.define("CMDBuild.controller.administration.classes.CMClassAttributeController", {
 		extend: "CMDBuild.controller.administration.CMBaseAttributesController",
 
-		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+		requires: ['CMDBuild.core.constants.Proxy'],
 
 		constructor: function(view) {
 			this.callParent(arguments);
@@ -111,11 +113,11 @@
 		}
 
 		// External metadata injection
-		this.view.formPanel.referenceFilterMetadata['system.type.reference.' + CMDBuild.core.proxy.CMProxyConstants.PRESELECT_IF_UNIQUE] = this.view.formPanel.preselectIfUniqueCheckbox.getValue();
+		this.view.formPanel.referenceFilterMetadata['system.type.reference.' + CMDBuild.core.constants.Proxy.PRESELECT_IF_UNIQUE] = this.view.formPanel.preselectIfUniqueCheckbox.getValue();
 
 		var data = this.view.formPanel.getData(withDisabled = true);
-		data[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME] = _CMCache.getEntryTypeNameById(this.currentClassId);
-		data[CMDBuild.core.proxy.CMProxyConstants.META] = Ext.JSON.encode(this.view.formPanel.referenceFilterMetadata);
+		data[CMDBuild.core.constants.Proxy.CLASS_NAME] = _CMCache.getEntryTypeNameById(this.currentClassId);
+		data[CMDBuild.core.constants.Proxy.META] = Ext.JSON.encode(this.view.formPanel.referenceFilterMetadata);
 
 		var me = this;
 		CMDBuild.LoadMask.get().show();
@@ -123,7 +125,8 @@
 			params : data,
 			success : function(form, action, decoded) {
 				me.view.gridPanel.refreshStore(me.currentClassId, decoded.attribute.index);
-				_CMCache.flushTranslationsToSave(_CMCache.getEntryTypeNameById(me.currentClassId), decoded.attribute.name);
+
+				CMDBuild.view.common.field.translatable.Utils.commit(me.view.formPanel);
 			},
 			callback: function() {
 				CMDBuild.LoadMask.get().hide();
@@ -188,7 +191,6 @@
 		this.currentAttribute = null;
 		this.view.formPanel.onAddAttributeClick();
 		this.view.gridPanel.onAddAttributeClick();
-		_CMCache.initAddingTranslations();
 	}
 
 	function buildOrderingWindow() {

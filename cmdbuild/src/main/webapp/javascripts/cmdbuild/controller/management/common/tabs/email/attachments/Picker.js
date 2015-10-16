@@ -5,7 +5,7 @@
 
 		requires: [
 			'CMDBuild.core.proxy.Attachment',
-			'CMDBuild.core.proxy.CMProxyConstants',
+			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.common.tabs.email.Attachment',
 			'CMDBuild.core.Message'
 		],
@@ -77,8 +77,8 @@
 			this.selectedCard = record;
 
 			var params = {};
-			params[CMDBuild.core.proxy.CMProxyConstants.CARD_ID] = this.selectedCard.get(CMDBuild.core.proxy.CMProxyConstants.ID);
-			params[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME] = _CMCache.getEntryTypeNameById(this.selectedCard.get('IdClass'));
+			params[CMDBuild.core.constants.Proxy.CARD_ID] = this.selectedCard.get(CMDBuild.core.constants.Proxy.ID);
+			params[CMDBuild.core.constants.Proxy.CLASS_NAME] = _CMCache.getEntryTypeNameById(this.selectedCard.get('IdClass'));
 
 			this.view.attachmentGrid.getStore().load({
 				params: params
@@ -88,7 +88,7 @@
 		onPickerWindowClassSelected: function() {
 			this.selectedClass = _CMCache.getEntryTypeById(this.view.classComboBox.getValue());
 
-			this.view.cardGrid.updateStoreForClassId(this.selectedClass.get(CMDBuild.core.proxy.CMProxyConstants.ID));
+			this.view.cardGrid.updateStoreForClassId(this.selectedClass.get(CMDBuild.core.constants.Proxy.ID));
 		},
 
 		onPickerWindowAbortButtonClick: function() {
@@ -100,11 +100,11 @@
 				this.parentDelegate.parentDelegate.view.setLoading(true);
 				Ext.Array.forEach(this.attachmentGridSelectionModel.getSelection(), function(attachment, i, allAttachments) {
 					var params = {};
-					params[CMDBuild.core.proxy.CMProxyConstants.EMAIL_ID] = this.record.get(CMDBuild.core.proxy.CMProxyConstants.ID);
-					params[CMDBuild.core.proxy.CMProxyConstants.TEMPORARY] = this.record.get(CMDBuild.core.proxy.CMProxyConstants.TEMPORARY);
-					params[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME] = this.selectedClass.get(CMDBuild.core.proxy.CMProxyConstants.NAME);
-					params[CMDBuild.core.proxy.CMProxyConstants.CARD_ID] = this.selectedCard.get(CMDBuild.core.proxy.CMProxyConstants.ID);
-					params[CMDBuild.core.proxy.CMProxyConstants.FILE_NAME] = attachment.get('Filename');
+					params[CMDBuild.core.constants.Proxy.EMAIL_ID] = this.record.get(CMDBuild.core.constants.Proxy.ID);
+					params[CMDBuild.core.constants.Proxy.TEMPORARY] = this.record.get(CMDBuild.core.constants.Proxy.TEMPORARY);
+					params[CMDBuild.core.constants.Proxy.CLASS_NAME] = this.selectedClass.get(CMDBuild.core.constants.Proxy.NAME);
+					params[CMDBuild.core.constants.Proxy.CARD_ID] = this.selectedCard.get(CMDBuild.core.constants.Proxy.ID);
+					params[CMDBuild.core.constants.Proxy.FILE_NAME] = attachment.get('Filename');
 
 					CMDBuild.core.proxy.common.tabs.email.Attachment.copy({
 						scope: this,

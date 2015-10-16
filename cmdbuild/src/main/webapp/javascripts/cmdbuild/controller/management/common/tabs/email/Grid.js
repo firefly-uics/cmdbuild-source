@@ -5,7 +5,7 @@
 
 		requires: [
 			'CMDBuild.controller.management.common.tabs.email.Email',
-			'CMDBuild.core.proxy.CMProxyConstants',
+			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.common.tabs.email.Email',
 			'CMDBuild.core.Message'
 		],
@@ -94,10 +94,10 @@
 		 */
 		createRecord: function(recordValues) {
 			recordValues = recordValues || {};
-			recordValues[CMDBuild.core.proxy.CMProxyConstants.KEEP_SYNCHRONIZATION] = false;
-			recordValues[CMDBuild.core.proxy.CMProxyConstants.NO_SUBJECT_PREFIX] = recordValues.hasOwnProperty(CMDBuild.core.proxy.CMProxyConstants.NO_SUBJECT_PREFIX) ? recordValues[CMDBuild.core.proxy.CMProxyConstants.NO_SUBJECT_PREFIX] : this.cmfg('configurationGet')[CMDBuild.core.proxy.CMProxyConstants.NO_SUBJECT_PREFIX];
-			recordValues[CMDBuild.core.proxy.CMProxyConstants.REFERENCE] = this.cmfg('selectedEntityIdGet');
-			recordValues[CMDBuild.core.proxy.CMProxyConstants.TEMPORARY] = this.cmfg('selectedEntityIdGet') < 0; // Setup temporary parameter
+			recordValues[CMDBuild.core.constants.Proxy.KEEP_SYNCHRONIZATION] = false;
+			recordValues[CMDBuild.core.constants.Proxy.NO_SUBJECT_PREFIX] = recordValues.hasOwnProperty(CMDBuild.core.constants.Proxy.NO_SUBJECT_PREFIX) ? recordValues[CMDBuild.core.constants.Proxy.NO_SUBJECT_PREFIX] : this.cmfg('configurationGet')[CMDBuild.core.constants.Proxy.NO_SUBJECT_PREFIX];
+			recordValues[CMDBuild.core.constants.Proxy.REFERENCE] = this.cmfg('selectedEntityIdGet');
+			recordValues[CMDBuild.core.constants.Proxy.TEMPORARY] = this.cmfg('selectedEntityIdGet') < 0; // Setup temporary parameter
 
 			return Ext.create('CMDBuild.model.common.tabs.email.Email', recordValues);
 		},
@@ -131,7 +131,7 @@
 		 * @return {Array}
 		 */
 		getDraftEmails: function() {
-			return this.getEmailsByGroup(CMDBuild.core.proxy.CMProxyConstants.DRAFT);
+			return this.getEmailsByGroup(CMDBuild.core.constants.Proxy.DRAFT);
 		},
 
 		/**
@@ -154,7 +154,7 @@
 		 * @return {Boolean}
 		 */
 		isRegenerable: function(record) {
-			return !Ext.isEmpty(record.get(CMDBuild.core.proxy.CMProxyConstants.TEMPLATE));
+			return !Ext.isEmpty(record.get(CMDBuild.core.constants.Proxy.TEMPLATE));
 		},
 
 		onGridAddEmailButtonClick: function() {
@@ -165,7 +165,7 @@
 				record,
 				null,
 				function(response, options, decodedResponse) { // Success function override
-					record.set(CMDBuild.core.proxy.CMProxyConstants.ID, decodedResponse.response);
+					record.set(CMDBuild.core.constants.Proxy.ID, decodedResponse.response);
 
 					Ext.create('CMDBuild.controller.management.common.tabs.email.EmailWindow', {
 						parentDelegate: me,
@@ -209,7 +209,7 @@
 		 */
 		onGridItemDoubleClick: function(record) {
 			if (
-				!this.cmfg('configurationGet')[CMDBuild.core.proxy.CMProxyConstants.READ_ONLY]
+				!this.cmfg('configurationGet')[CMDBuild.core.constants.Proxy.READ_ONLY]
 				&& this.cmfg('editModeGet')
 				&& this.recordIsEditable(record)
 			) {
@@ -223,7 +223,7 @@
 		 * @param {Mixed} record
 		 */
 		onGridRegenerationEmailButtonClick: function(record) {
-			if (!Ext.isEmpty(record.get(CMDBuild.core.proxy.CMProxyConstants.TEMPLATE)))
+			if (!Ext.isEmpty(record.get(CMDBuild.core.constants.Proxy.TEMPLATE)))
 				this.cmfg('regenerateSelectedEmails', [record]);
 		},
 
@@ -232,22 +232,22 @@
 		 */
 		onGridReplyEmailButtonClick: function(record) {
 			var content = '<p>'
-					+ CMDBuild.Translation.onDay + ' ' + record.get(CMDBuild.core.proxy.CMProxyConstants.DATE)
-					+ ', <' + record.get(CMDBuild.core.proxy.CMProxyConstants.FROM) + '> ' + CMDBuild.Translation.hasWrote
+					+ CMDBuild.Translation.onDay + ' ' + record.get(CMDBuild.core.constants.Proxy.DATE)
+					+ ', <' + record.get(CMDBuild.core.constants.Proxy.FROM) + '> ' + CMDBuild.Translation.hasWrote
 				+ ':</p>'
-				+ '<blockquote>' + record.get(CMDBuild.core.proxy.CMProxyConstants.BODY) + '</blockquote>';
+				+ '<blockquote>' + record.get(CMDBuild.core.constants.Proxy.BODY) + '</blockquote>';
 
 			var replyRecordData = {};
-			replyRecordData[CMDBuild.core.proxy.CMProxyConstants.ACCOUNT] = record.get(CMDBuild.core.proxy.CMProxyConstants.ACCOUNT);
-			replyRecordData[CMDBuild.core.proxy.CMProxyConstants.BCC] = record.get(CMDBuild.core.proxy.CMProxyConstants.BCC);
-			replyRecordData[CMDBuild.core.proxy.CMProxyConstants.BODY] = content;
-			replyRecordData[CMDBuild.core.proxy.CMProxyConstants.CC] = record.get(CMDBuild.core.proxy.CMProxyConstants.CC);
-			replyRecordData[CMDBuild.core.proxy.CMProxyConstants.KEEP_SYNCHRONIZATION] = false;
-			replyRecordData[CMDBuild.core.proxy.CMProxyConstants.NOTIFY_WITH] = record.get(CMDBuild.core.proxy.CMProxyConstants.NOTIFY_WITH);
-			replyRecordData[CMDBuild.core.proxy.CMProxyConstants.NO_SUBJECT_PREFIX] = record.get(CMDBuild.core.proxy.CMProxyConstants.NO_SUBJECT_PREFIX);
-			replyRecordData[CMDBuild.core.proxy.CMProxyConstants.REFERENCE] = this.cmfg('selectedEntityIdGet');
-			replyRecordData[CMDBuild.core.proxy.CMProxyConstants.SUBJECT] = 'RE: ' + record.get(CMDBuild.core.proxy.CMProxyConstants.SUBJECT);
-			replyRecordData[CMDBuild.core.proxy.CMProxyConstants.TO] = record.get(CMDBuild.core.proxy.CMProxyConstants.FROM) || record.get(CMDBuild.core.proxy.CMProxyConstants.TO);
+			replyRecordData[CMDBuild.core.constants.Proxy.ACCOUNT] = record.get(CMDBuild.core.constants.Proxy.ACCOUNT);
+			replyRecordData[CMDBuild.core.constants.Proxy.BCC] = record.get(CMDBuild.core.constants.Proxy.BCC);
+			replyRecordData[CMDBuild.core.constants.Proxy.BODY] = content;
+			replyRecordData[CMDBuild.core.constants.Proxy.CC] = record.get(CMDBuild.core.constants.Proxy.CC);
+			replyRecordData[CMDBuild.core.constants.Proxy.KEEP_SYNCHRONIZATION] = false;
+			replyRecordData[CMDBuild.core.constants.Proxy.NOTIFY_WITH] = record.get(CMDBuild.core.constants.Proxy.NOTIFY_WITH);
+			replyRecordData[CMDBuild.core.constants.Proxy.NO_SUBJECT_PREFIX] = record.get(CMDBuild.core.constants.Proxy.NO_SUBJECT_PREFIX);
+			replyRecordData[CMDBuild.core.constants.Proxy.REFERENCE] = this.cmfg('selectedEntityIdGet');
+			replyRecordData[CMDBuild.core.constants.Proxy.SUBJECT] = 'RE: ' + record.get(CMDBuild.core.constants.Proxy.SUBJECT);
+			replyRecordData[CMDBuild.core.constants.Proxy.TO] = record.get(CMDBuild.core.constants.Proxy.FROM) || record.get(CMDBuild.core.constants.Proxy.TO);
 
 			Ext.create('CMDBuild.controller.management.common.tabs.email.EmailWindow', {
 				parentDelegate: this,
@@ -280,7 +280,7 @@
 		 * @return {Boolean}
 		 */
 		recordIsEditable: function(record) {
-			return record.get(CMDBuild.core.proxy.CMProxyConstants.STATUS) == CMDBuild.core.proxy.CMProxyConstants.DRAFT;
+			return record.get(CMDBuild.core.constants.Proxy.STATUS) == CMDBuild.core.constants.Proxy.DRAFT;
 		},
 
 		/**
@@ -290,10 +290,10 @@
 		 */
 		recordIsSendable: function(record) {
 			return (
-				!Ext.isEmpty(record.get(CMDBuild.core.proxy.CMProxyConstants.TO))
-				&& !Ext.isEmpty(record.get(CMDBuild.core.proxy.CMProxyConstants.SUBJECT))
-				&& record.get(CMDBuild.core.proxy.CMProxyConstants.STATUS) != CMDBuild.core.proxy.CMProxyConstants.OUTGOING
-				&& record.get(CMDBuild.core.proxy.CMProxyConstants.STATUS) != CMDBuild.core.proxy.CMProxyConstants.SENT
+				!Ext.isEmpty(record.get(CMDBuild.core.constants.Proxy.TO))
+				&& !Ext.isEmpty(record.get(CMDBuild.core.constants.Proxy.SUBJECT))
+				&& record.get(CMDBuild.core.constants.Proxy.STATUS) != CMDBuild.core.constants.Proxy.OUTGOING
+				&& record.get(CMDBuild.core.constants.Proxy.STATUS) != CMDBuild.core.constants.Proxy.SENT
 			);
 		},
 
@@ -304,7 +304,7 @@
 		removeRecord: function(record, regenerationTrafficLightArray) {
 			if (!Ext.Object.isEmpty(record)) {
 				CMDBuild.core.proxy.common.tabs.email.Email.remove({
-					params: record.getAsParams([CMDBuild.core.proxy.CMProxyConstants.ID, CMDBuild.core.proxy.CMProxyConstants.TEMPORARY]),
+					params: record.getAsParams([CMDBuild.core.constants.Proxy.ID, CMDBuild.core.constants.Proxy.TEMPORARY]),
 					scope: this,
 					loadMask: this.cmfg('getGlobalLoadMask'),
 					failure: function(response, options, decodedResponse) {
@@ -328,7 +328,7 @@
 		setUiState: function() {
 			this.view.setDisabledTopBar(
 				!(
-					!this.cmfg('configurationGet')[CMDBuild.core.proxy.CMProxyConstants.READ_ONLY]
+					!this.cmfg('configurationGet')[CMDBuild.core.constants.Proxy.READ_ONLY]
 					&& this.cmfg('editModeGet')
 				)
 			);
@@ -357,7 +357,7 @@
 			trafficLightArray = trafficLightArray || [];
 
 			if (!Ext.isEmpty(record)) {
-				record.set(CMDBuild.core.proxy.CMProxyConstants.STATUS, CMDBuild.core.proxy.CMProxyConstants.OUTGOING);
+				record.set(CMDBuild.core.constants.Proxy.STATUS, CMDBuild.core.constants.Proxy.OUTGOING);
 
 				this.editRecord(record, trafficLightArray);
 			}
@@ -372,20 +372,14 @@
 			this.view.getStore().removeAll(); // Clear store before load new one
 
 			var params = {};
-			params[CMDBuild.core.proxy.CMProxyConstants.REFERENCE] = this.cmfg('selectedEntityIdGet');
+			params[CMDBuild.core.constants.Proxy.REFERENCE] = this.cmfg('selectedEntityIdGet');
 
 			this.view.getStore().load({
 				params: params,
 				scope: this,
 				callback: function(records, operation, success) {
-					if (success) {
+					if (success)
 						this.cmfg('getAllTemplatesData');
-					} else {
-						CMDBuild.core.Message.error(null, {
-							text: CMDBuild.Translation.errors.unknown_error,
-							detail: operation.error
-						});
-					}
 				}
 			});
 		}
