@@ -111,19 +111,19 @@
 									},
 									{
 										boxLabel: CMDBuild.Translation.utilityMultipleUpdate,
-										name: 'bulkupdate',
+										name: CMDBuild.core.constants.Proxy.BULK_UPDATE,
 										inputValue: true,
 										uncheckedValue: false
 									},
 									{
 										boxLabel: CMDBuild.Translation.utilityImportCsv,
-										name: 'importcsv',
+										name: CMDBuild.core.constants.Proxy.IMPORT_CSV,
 										inputValue: true,
 										uncheckedValue: false
 									},
 									{
 										boxLabel: CMDBuild.Translation.utilityExportCsv,
-										name: 'exportcsv',
+										name: CMDBuild.core.constants.Proxy.EXPORT_CSV,
 										inputValue: true,
 										uncheckedValue: false
 									}

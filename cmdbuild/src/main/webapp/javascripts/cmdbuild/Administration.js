@@ -4,7 +4,6 @@
 	var classesAccordion = new CMDBuild.view.administration.accordion.CMClassAccordion({
 		cmControllerType: CMDBuild.controller.accordion.CMClassAccordionController
 	});;
-	var controllerNS = CMDBuild.controller;
 	var dashboardsAccordion = new CMDBuild.view.administration.accordion.CMDashboardAccordion({
 		cmControllerType: CMDBuild.controller.accordion.CMDashboardAccordionController
 	});
@@ -37,6 +36,7 @@
 				Ext.create('CMDBuild.core.LoggerManager'); // Logger configuration
 				Ext.create('CMDBuild.core.Data'); // Data connections configuration
 				Ext.create('CMDBuild.core.Rest'); // Setup REST connection
+				Ext.create('CMDBuild.core.configurationBuilders.Gis'); // CMDBuild GIS configuration
 				Ext.create('CMDBuild.core.configurationBuilders.Instance'); // CMDBuild instance configuration
 				Ext.create('CMDBuild.core.configurationBuilders.Localization'); // CMDBuild localization configuration
 				Ext.create('CMDBuild.core.configurationBuilders.UserInterface'); // CMDBuild UserInterface configuration
@@ -191,27 +191,27 @@
 								cmName: 'bim-layers'
 							}),
 							new CMDBuild.view.common.CMUnconfiguredModPanel({
-								cmControllerType: controllerNS.common.CMUnconfiguredModPanelController,
+								cmControllerType: CMDBuild.controller.common.CMUnconfiguredModPanelController,
 								cmName: 'notconfiguredpanel'
 							}),
 							new CMDBuild.view.administration.classes.CMModClass({
-								cmControllerType: controllerNS.administration.classes.CMModClassController
+								cmControllerType: CMDBuild.controller.administration.classes.CMModClassController
 							}),
 							new CMDBuild.view.administration.workflow.CMProcess({
-								cmControllerType: controllerNS.administration.workflow.CMProcessController
+								cmControllerType: CMDBuild.controller.administration.workflow.CMProcessController
 							}),
 							new CMDBuild.Administration.ModIcons(),
 							new CMDBuild.view.administration.gis.CMModGISNavigationConfiguration({
-								cmControllerType: controllerNS.administration.gis.CMModGISNavigationConfigurationController
+								cmControllerType: CMDBuild.controller.administration.gis.CMModGISNavigationConfigurationController
 							}),
 							new CMDBuild.Administration.ModLayerOrder({
-								cmControllerType: controllerNS.administration.gis.CMModLayerOrderController
+								cmControllerType: CMDBuild.controller.administration.gis.CMModLayerOrderController
 							}),
 							new CMDBuild.view.administration.navigationTrees.CMModNavigationTrees({
-								cmControllerType: controllerNS.administration.navigationTrees.CMModNavigationTreesController
+								cmControllerType: CMDBuild.controller.administration.navigationTrees.CMModNavigationTreesController
 							}),
 							new CMDBuild.view.administration.dashboard.CMModDashboard({
-								cmControllerType: controllerNS.administration.dashboard.CMModDashboardController
+								cmControllerType: CMDBuild.controller.administration.dashboard.CMModDashboardController
 							})
 						]
 					})
@@ -291,13 +291,16 @@
 				 * GIS
 				 */
 				CMDBuild.core.proxy.Configuration.readGisConfiguration({
-					success: function(response, options, decoded) {
-						CMDBuild.Config.gis = decoded.data;
+					success: function(response, options, decodedResponse) {
+						/**
+						 * @deprecated
+						 */
+						CMDBuild.Config.gis = decodedResponse.data;
 						CMDBuild.Config.gis.enabled = ('true' == CMDBuild.Config.gis.enabled);
 
-						if (!CMDBuild.configuration.userInterface.get(CMDBuild.core.constants.Proxy.CLOUD_ADMIN)) {
-							_CMMainViewportController.findAccordionByCMName('gis').setDisabled(!CMDBuild.Config.gis.enabled);
-						}
+						_CMMainViewportController.findAccordionByCMName('gis').setDisabled(
+							CMDBuild.configuration.userInterface.get(CMDBuild.core.constants.Proxy.CLOUD_ADMIN)
+						);
 					},
 
 					callback: reqBarrier.getCallback()

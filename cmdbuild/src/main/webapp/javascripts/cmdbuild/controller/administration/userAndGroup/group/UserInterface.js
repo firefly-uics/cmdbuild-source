@@ -163,7 +163,9 @@
 					params: params,
 					scope: this,
 					success: function(response, options, decodedResponse) {
-						this.configurationSet(decodedResponse.response);
+						decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.RESPONSE];
+
+						this.configurationSet(decodedResponse);
 
 						this.configurationLoad();
 					}

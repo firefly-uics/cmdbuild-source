@@ -2,24 +2,22 @@
 
 	Ext.define('CMDBuild.core.configurationBuilders.UserInterface', {
 
-		requires: ['CMDBuild.core.proxy.userAndGroup.group.Group'],
+		requires: [
+			'CMDBuild.core.constants.Proxy',
+			'CMDBuild.core.proxy.userAndGroup.group.Group'
+		],
 
-		/**
-		 * Build user interface configuration model
-		 */
 		constructor: function() {
-			if (!Ext.isEmpty(CMDBuild) && !Ext.isEmpty(CMDBuild.configuration)) {
-				CMDBuild.core.proxy.userAndGroup.group.Group.getUIConfiguration({
-					scope: this,
-					success: function(result, options, decodedResult) {
-						decodedResult = decodedResult.response;
+			Ext.ns('CMDBuild.configuration');
 
-						CMDBuild.configuration.userInterface = Ext.create('CMDBuild.model.configuration.userInterface.UserInterface', decodedResult);
-					}
-				});
-			} else {
-				_error('CMDBuild or CMDBuild.configuration objects is empty', this);
-			}
+			CMDBuild.core.proxy.userAndGroup.group.Group.getUIConfiguration({
+				scope: this,
+				success: function(response, options, decodedResponse) {
+					decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.RESPONSE];
+
+					CMDBuild.configuration.userInterface = Ext.create('CMDBuild.model.configuration.userInterface.UserInterface', decodedResponse);
+				}
+			});
 		}
 	});
 
