@@ -1,6 +1,5 @@
 (function() {
 
-	var bimAccordion = new CMDBuild.view.administration.accordion.CMBIMAccordion();
 	var classesAccordion = new CMDBuild.view.administration.accordion.CMClassAccordion({
 		cmControllerType: CMDBuild.controller.accordion.CMClassAccordionController
 	});;
@@ -36,6 +35,7 @@
 				Ext.create('CMDBuild.core.LoggerManager'); // Logger configuration
 				Ext.create('CMDBuild.core.Data'); // Data connections configuration
 				Ext.create('CMDBuild.core.Rest'); // Setup REST connection
+				Ext.create('CMDBuild.core.configurationBuilders.Bim'); // CMDBuild BIM configuration
 				Ext.create('CMDBuild.core.configurationBuilders.Gis'); // CMDBuild GIS configuration
 				Ext.create('CMDBuild.core.configurationBuilders.Instance'); // CMDBuild instance configuration
 				Ext.create('CMDBuild.core.configurationBuilders.Localization'); // CMDBuild localization configuration
@@ -116,7 +116,10 @@
 								cmControllerType: 'CMDBuild.controller.common.AbstractAccordionController',
 								cmName: 'gis'
 							}),
-							bimAccordion,
+							Ext.create('CMDBuild.view.administration.accordion.Bim', {
+								cmControllerType: 'CMDBuild.controller.common.AbstractAccordionController',
+								cmName: 'bim'
+							}),
 							Ext.create('CMDBuild.view.administration.accordion.Localization', {
 								cmControllerType: 'CMDBuild.controller.common.AbstractAccordionController',
 								cmName: 'localizations'
@@ -231,15 +234,6 @@
 				});
 
 				/**
-				 * BIM Configuration
-				 * */
-				CMDBuild.core.proxy.Configuration.readBimConfiguration({
-					success: function(response, option, decoded) {
-						bimAccordion.setDisabled(decoded.data.enabled == 'false');
-					}
-				});
-
-				/**
 				 * Classes and process
 				 */
 				var params = {};
@@ -289,18 +283,13 @@
 
 				/**
 				 * GIS
+				 *
+				 * @deprecated
 				 */
 				CMDBuild.core.proxy.Configuration.readGisConfiguration({
 					success: function(response, options, decodedResponse) {
-						/**
-						 * @deprecated
-						 */
 						CMDBuild.Config.gis = decodedResponse.data;
 						CMDBuild.Config.gis.enabled = ('true' == CMDBuild.Config.gis.enabled);
-
-						_CMMainViewportController.findAccordionByCMName('gis').setDisabled(
-							CMDBuild.configuration.userInterface.get(CMDBuild.core.constants.Proxy.CLOUD_ADMIN)
-						);
 					},
 
 					callback: reqBarrier.getCallback()
