@@ -28,13 +28,13 @@
 					text: CMDBuild.Translation.projects,
 					description: CMDBuild.Translation.projects,
 					leaf: true,
-					cmName: "bim-project"
+					cmName: 'bim-project'
 				},
 				{
 					text: CMDBuild.Translation.layers,
 					description: CMDBuild.Translation.layers,
 					leaf: true,
-					cmName: "bim-layers"
+					cmName: 'bim-layers'
 				}
 			]);
 

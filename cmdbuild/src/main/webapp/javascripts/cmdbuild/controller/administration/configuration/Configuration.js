@@ -44,7 +44,7 @@
 					scope: this,
 					loadMask: true,
 					success: function(result, options, decodedResult){
-						var decodedResult = decodedResult.data;
+						var decodedResult = decodedResult[CMDBuild.core.constants.Proxy.DATA];
 
 						// FIX bug with Firefox that breaks UI on fast configuration page switch
 						if (view.isVisible())
@@ -99,15 +99,15 @@
 		/**
 		 * Setup view items on accordion click
 		 *
-		 * @param {CMDBuild.view.common.CMAccordionStoreModel} parameters
+		 * @param {CMDBuild.view.common.CMAccordionStoreModel} node
 		 *
 		 * @override
 		 */
-		onViewOnFront: function(parameters) {
-			if (!Ext.Object.isEmpty(parameters)) {
+		onViewOnFront: function(node) {
+			if (!Ext.Object.isEmpty(node)) {
 				this.view.removeAll(true);
 
-				switch(parameters.get(CMDBuild.core.constants.Proxy.SECTION_HIERARCHY)[0]) {
+				switch(node.get(CMDBuild.core.constants.Proxy.SECTION_HIERARCHY)[0]) {
 					case 'alfresco': {
 						this.sectionController = Ext.create('CMDBuild.controller.administration.configuration.Alfresco', { parentDelegate: this });
 					} break;
@@ -140,7 +140,9 @@
 
 				this.view.add(this.sectionController.getView());
 
-				this.setViewTitle(parameters.get(CMDBuild.core.constants.Proxy.TEXT));
+				this.setViewTitle(node.get(CMDBuild.core.constants.Proxy.TEXT));
+
+				this.sectionController.getView().fireEvent('show'); // Manual show event fire
 
 				this.callParent(arguments);
 			}

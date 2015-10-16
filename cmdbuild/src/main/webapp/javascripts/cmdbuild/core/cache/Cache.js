@@ -216,9 +216,7 @@
 		 * @returns {CMDBuild.core.cache.Store}
 		 */
 		requestAsStore: function(cacheGroupIdentifier, parameters) {
-			Ext.apply(parameters, {
-				cacheGroupIdentifier: cacheGroupIdentifier
-			});
+			Ext.apply(parameters, { cacheGroupIdentifier: cacheGroupIdentifier });
 
 			return Ext.create('CMDBuild.core.cache.Store', parameters);
 		},

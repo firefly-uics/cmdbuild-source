@@ -5,6 +5,8 @@
 
 		requires: ['CMDBuild.core.constants.Proxy'],
 
+		mixins: ['CMDBuild.view.common.PanelFunctions'],
+
 		/**
 		 * @cfg {CMDBuild.controller.administration.configuration.Gis}
 		 */
@@ -66,19 +68,19 @@
 					},
 					{
 						xtype: 'numberfield',
-						name: 'center.lat',
+						name: CMDBuild.core.constants.Proxy.CENTER_LATITUDE,
 						decimalPrecision: 6,
 						fieldLabel: CMDBuild.Translation.initialLatitude
 					},
 					{
 						xtype: 'numberfield',
-						name: 'center.lon',
+						name: CMDBuild.core.constants.Proxy.CENTER_LONGITUDE,
 						decimalPrecision: 6,
 						fieldLabel: CMDBuild.Translation.initialLongitude
 					},
 					{
 						xtype: 'numberfield',
-						name: CMDBuild.core.constants.Proxy.INITIAL_ZOOM_LEVEL,
+						name: CMDBuild.core.constants.Proxy.ZOOM_INITIAL_LEVEL,
 						fieldLabel: CMDBuild.Translation.initialZoomLevel,
 						minValue: 0,
 						maxValue: 25
@@ -89,20 +91,9 @@
 			this.callParent(arguments);
 		},
 
-		/**
-		 * @param {Object} saveDataObject
-		 *
-		 * @override
-		 */
-		afterSubmit: function(saveDataObject) {
-			// TODO: refactor in better way when possible
-			CMDBuild.Config.gis = Ext.apply(CMDBuild.Config.gis, saveDataObject);
-			CMDBuild.Config.gis.enabled = ('true' == CMDBuild.Config.gis.enabled);
-
-			if (CMDBuild.Config.gis.enabled) {
-				_CMMainViewportController.enableAccordionByName(this.delegate.configFileName);
-			} else {
-				_CMMainViewportController.disableAccordionByName(this.delegate.configFileName);
+		listeners: {
+			show: function(panel, eOpts) {
+				this.delegate.cmfg('onConfigurationGisTabShow');
 			}
 		}
 	});
