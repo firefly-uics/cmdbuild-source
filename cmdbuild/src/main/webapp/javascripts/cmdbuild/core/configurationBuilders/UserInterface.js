@@ -7,7 +7,18 @@
 			'CMDBuild.core.proxy.userAndGroup.group.Group'
 		],
 
-		constructor: function() {
+		/**
+		 * @cfg {Function}
+		 */
+		callback: Ext.emptyFn,
+
+		/**
+		 * @param {Object} configuration
+		 * @param {Function} configuration.callback
+		 */
+		constructor: function(configuration) {
+			Ext.apply(this, configuration); // Apply configuration
+
 			Ext.ns('CMDBuild.configuration');
 
 			CMDBuild.core.proxy.userAndGroup.group.Group.getUIConfiguration({
@@ -16,7 +27,8 @@
 					decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.RESPONSE];
 
 					CMDBuild.configuration.userInterface = Ext.create('CMDBuild.model.configuration.userInterface.UserInterface', decodedResponse);
-				}
+				},
+				callback: this.callback
 			});
 		}
 	});

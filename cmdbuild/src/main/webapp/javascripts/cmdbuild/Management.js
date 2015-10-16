@@ -80,9 +80,6 @@
 				Ext.create('CMDBuild.core.LoggerManager'); // Logger configuration
 				Ext.create('CMDBuild.core.Data'); // Data connections configuration
 				Ext.create('CMDBuild.core.Rest'); // Setup REST connection
-				Ext.create('CMDBuild.core.configurationBuilders.Instance'); // CMDBuild instance configuration
-				Ext.create('CMDBuild.core.configurationBuilders.Localization'); // CMDBuild localization configuration
-				Ext.create('CMDBuild.core.configurationBuilders.UserInterface'); // CMDBuild UserInterface configuration
 
 				Ext.tip.QuickTipManager.init();
 				// Fix a problem of Ext 4.2 tooltips width
@@ -91,54 +88,64 @@
 
 				CMDBuild.view.CMMainViewport.showSplash();
 
-				CMDBuild.core.proxy.Configuration.readAll({
-					success: function(response, options, decoded) {
-						/**
-						 * CMDBuild
-						 *
-						 * @deprecated
-						 */
-						CMDBuild.Config.cmdbuild = decoded.cmdbuild;
+				var configurationsRequestBarrier = Ext.create('CMDBuild.core.RequestBarrier', {
+					callback: function() {
+						CMDBuild.core.proxy.Configuration.readAll({
+							success: function(response, options, decoded) {
+								/**
+								 * @deprecated
+								 */
+								CMDBuild.Config.cmdbuild = decoded.cmdbuild;
 
-						// DMS
-						CMDBuild.Config.dms = decoded.dms;
-						CMDBuild.Config.dms.enabled = ('true' == CMDBuild.Config.dms.enabled);
+								// DMS
+								CMDBuild.Config.dms = decoded.dms;
+								CMDBuild.Config.dms.enabled = ('true' == CMDBuild.Config.dms.enabled);
 
-						// Bim
-						CMDBuild.Config.bim = decoded.bim;
-						CMDBuild.Config.bim.enabled = ('true' == CMDBuild.Config.bim.enabled);
+								// Bim
+								CMDBuild.Config.bim = decoded.bim;
+								CMDBuild.Config.bim.enabled = ('true' == CMDBuild.Config.bim.enabled);
 
-						// Graph
-						CMDBuild.Config.graph = decoded.graph;
+								// Graph
+								CMDBuild.Config.graph = decoded.graph;
 
-						// Workflow
-						CMDBuild.Config.workflow = decoded.workflow;
+								// Workflow
+								CMDBuild.Config.workflow = decoded.workflow;
 
-						// Gis
-						CMDBuild.Config.gis = decoded.gis;
-						CMDBuild.Config.gis.enabled = ('true' == CMDBuild.Config.gis.enabled);
+								// Gis
+								CMDBuild.Config.gis = decoded.gis;
+								CMDBuild.Config.gis.enabled = ('true' == CMDBuild.Config.gis.enabled);
 
-						// Gis and bim extra configuration
-						CMDBuild.Config.cmdbuild.cardBrowserByDomainConfiguration = {};
-						CMDBuild.ServiceProxy.gis.getGisTreeNavigation({
-							success: function(operation, config, response) {
-								CMDBuild.Config.cmdbuild.cardBrowserByDomainConfiguration.root = response.root;
-								CMDBuild.Config.cmdbuild.cardBrowserByDomainConfiguration.geoServerLayersMapping = response.geoServerLayersMapping;
+								// Gis and bim extra configuration
+								CMDBuild.Config.cmdbuild.cardBrowserByDomainConfiguration = {};
+								CMDBuild.ServiceProxy.gis.getGisTreeNavigation({
+									success: function(operation, config, response) {
+										CMDBuild.Config.cmdbuild.cardBrowserByDomainConfiguration.root = response.root;
+										CMDBuild.Config.cmdbuild.cardBrowserByDomainConfiguration.geoServerLayersMapping = response.geoServerLayersMapping;
 
-								if (CMDBuild.Config.bim.enabled) {
-									CMDBuild.bim.proxy.rootClassName({
-										success: function(operation, config, response) {
-											CMDBuild.Config.bim.rootClass = response.root;
-										},
-										callback: CMDBuild.app.Management.buildComponents
-									});
-								} else {
-									CMDBuild.app.Management.buildComponents();
-								}
+										if (CMDBuild.Config.bim.enabled) {
+											CMDBuild.bim.proxy.rootClassName({
+												success: function(operation, config, response) {
+													CMDBuild.Config.bim.rootClass = response.root;
+												},
+												callback: CMDBuild.app.Management.buildComponents
+											});
+										} else {
+											CMDBuild.app.Management.buildComponents();
+										}
+									}
+								});
 							}
 						});
 					}
 				});
+
+				Ext.create('CMDBuild.core.configurationBuilders.Bim', { callback: configurationsRequestBarrier.getCallback() }); // CMDBuild BIM configuration
+				Ext.create('CMDBuild.core.configurationBuilders.Gis', { callback: configurationsRequestBarrier.getCallback() }); // CMDBuild GIS configuration
+				Ext.create('CMDBuild.core.configurationBuilders.Instance', { callback: configurationsRequestBarrier.getCallback() }); // CMDBuild instance configuration
+				Ext.create('CMDBuild.core.configurationBuilders.Localization', { callback: configurationsRequestBarrier.getCallback() }); // CMDBuild localization configuration
+				Ext.create('CMDBuild.core.configurationBuilders.UserInterface', { callback: configurationsRequestBarrier.getCallback() }); // CMDBuild UserInterface configuration
+
+				configurationsRequestBarrier.start();
 			},
 
 			buildComponents: function() {

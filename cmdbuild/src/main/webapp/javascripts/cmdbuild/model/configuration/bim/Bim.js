@@ -2,7 +2,7 @@
 
 	Ext.require('CMDBuild.core.constants.Proxy');
 
-	Ext.define('CMDBuild.model.configuration.Bim', {
+	Ext.define('CMDBuild.model.configuration.bim.Bim', {
 		extend: 'Ext.data.Model',
 
 		fields: [

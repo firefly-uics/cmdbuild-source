@@ -14,11 +14,11 @@
 		callback: Ext.emptyFn,
 
 		/**
-		 * @param {Object} configurationObject
-		 * @param {Function} configurationObject.callback
+		 * @param {Object} configuration
+		 * @param {Function} configuration.callback
 		 */
-		constructor: function(configurationObject) {
-			Ext.apply(this, configurationObject); // Apply configurations
+		constructor: function(configuration) {
+			Ext.apply(this, configuration); // Apply configurations
 
 			Ext.ns('CMDBuild.configuration');
 

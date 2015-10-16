@@ -59,6 +59,14 @@
 		},
 
 		configuration: {
+			create: '',
+			read: 'services/json/schema/setup/getconfiguration',
+			update: 'services/json/schema/setup/saveconfiguration',
+			remove: '',
+
+			readAll: 'services/json/schema/setup/getconfigurations',
+
+			// TODO: delete
 			getConfiguration: 'services/json/schema/setup/getconfiguration',
 			getConfigurations: 'services/json/schema/setup/getconfigurations',
 			saveConfiguration: 'services/json/schema/setup/saveconfiguration'

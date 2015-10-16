@@ -35,11 +35,6 @@
 				Ext.create('CMDBuild.core.LoggerManager'); // Logger configuration
 				Ext.create('CMDBuild.core.Data'); // Data connections configuration
 				Ext.create('CMDBuild.core.Rest'); // Setup REST connection
-				Ext.create('CMDBuild.core.configurationBuilders.Bim'); // CMDBuild BIM configuration
-				Ext.create('CMDBuild.core.configurationBuilders.Gis'); // CMDBuild GIS configuration
-				Ext.create('CMDBuild.core.configurationBuilders.Instance'); // CMDBuild instance configuration
-				Ext.create('CMDBuild.core.configurationBuilders.Localization'); // CMDBuild localization configuration
-				Ext.create('CMDBuild.core.configurationBuilders.UserInterface'); // CMDBuild UserInterface configuration
 
 				Ext.tip.QuickTipManager.init();
 				// fix a problem of Ext 4.2 tooltips width
@@ -48,18 +43,28 @@
 
 				CMDBuild.view.CMMainViewport.showSplash(false, true);
 
-				CMDBuild.core.proxy.Configuration.readMainConfiguration({
-					success: function(response, options, decoded) {
-						/**
-						 * CMDBuild
-						 *
-						 * @deprecated
-						 */
-						CMDBuild.Config.cmdbuild = decoded.data;
+				var configurationsRequestBarrier = Ext.create('CMDBuild.core.RequestBarrier', {
+					callback: function() {
+						CMDBuild.core.proxy.Configuration.readMainConfiguration({
+							success: function(response, options, decoded) {
+								/**
+								 * @deprecated
+								 */
+								CMDBuild.Config.cmdbuild = decoded.data;
 
-						CMDBuild.app.Administration.buildComponents();
+								CMDBuild.app.Administration.buildComponents();
+							}
+						});
 					}
 				});
+
+				Ext.create('CMDBuild.core.configurationBuilders.Bim', { callback: configurationsRequestBarrier.getCallback() }); // CMDBuild BIM configuration
+				Ext.create('CMDBuild.core.configurationBuilders.Gis', { callback: configurationsRequestBarrier.getCallback() }); // CMDBuild GIS configuration
+				Ext.create('CMDBuild.core.configurationBuilders.Instance', { callback: configurationsRequestBarrier.getCallback() }); // CMDBuild instance configuration
+				Ext.create('CMDBuild.core.configurationBuilders.Localization', { callback: configurationsRequestBarrier.getCallback() }); // CMDBuild localization configuration
+				Ext.create('CMDBuild.core.configurationBuilders.UserInterface', { callback: configurationsRequestBarrier.getCallback() }); // CMDBuild UserInterface configuration
+
+				configurationsRequestBarrier.start();
 			},
 
 			buildComponents: function() {

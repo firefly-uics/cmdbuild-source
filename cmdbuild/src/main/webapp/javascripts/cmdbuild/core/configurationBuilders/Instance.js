@@ -8,6 +8,11 @@
 		],
 
 		/**
+		 * @cfg {Function}
+		 */
+		callback: Ext.emptyFn,
+
+		/**
 		 * Enable or disable server calls (set as false within contexts where server calls aren't enabled)
 		 *
 		 * @cfg {Boolean}
@@ -15,11 +20,12 @@
 		fullInit: true,
 
 		/**
-		 * @param {Object} configurationObject
-		 * @param {Boolean} configurationObject.fullInit
+		 * @param {Object} configuration
+		 * @param {Function} configuration.callback
+		 * @param {Boolean} configuration.fullInit
 		 */
-		constructor: function(configurationObject) {
-			Ext.apply(this, configurationObject); // Apply configurations
+		constructor: function(configuration) {
+			Ext.apply(this, configuration); // Apply configurations
 
 			Ext.ns('CMDBuild.configuration');
 
@@ -32,7 +38,8 @@
 						decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.DATA];
 
 						CMDBuild.configuration[CMDBuild.core.constants.Proxy.INSTANCE] = Ext.create('CMDBuild.model.configuration.Instance', decodedResponse);
-					}
+					},
+					callback: this.callback
 				});
 		}
 	});
