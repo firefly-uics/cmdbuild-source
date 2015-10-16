@@ -121,14 +121,11 @@
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/widget/CMBaseWidgetDefinitionFormController.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/widget/CMWidgetDefinitionController.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/widget/CMCalendarController.js"></script>
-<!-- 	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/widget/CMNavigationTreeController.js"></script>
- -->
  	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/widget/CMWorkflowController.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/widget/CMPingController.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/widget/CMCreateModifyCardController.js"></script>
 
 <!-- BIM - ADMINISTRATION -->
-<script type="text/javascript" src="javascripts/cmdbuild/bim/administration/view/CMBIMAccordion.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/bim/administration/view/CMBIMPanel.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/bim/administration/view/CMBimGrid.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/bim/administration/view/CMBimLayers.js"></script>
