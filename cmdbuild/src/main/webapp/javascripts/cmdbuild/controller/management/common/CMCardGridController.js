@@ -164,9 +164,9 @@
 		onPrintGridMenuClick: function(format) {
 			if (!Ext.isEmpty(format)) {
 				var params = Ext.apply({}, this.view.getStore().proxy.extraParams);
-				params[CMDBuild.core.proxy.CMProxyConstants.ATTRIBUTES] = Ext.encode(this.view.getVisibleColumns());
-				params[CMDBuild.core.proxy.CMProxyConstants.SORT] = Ext.encode(this.view.getStore().getSorters());
-				params[CMDBuild.core.proxy.CMProxyConstants.TYPE] = format;
+				params[CMDBuild.core.constants.Proxy.COLUMNS] = Ext.encode(this.view.getVisibleColumns());
+				params[CMDBuild.core.constants.Proxy.SORT] = Ext.encode(this.view.getStore().getSorters());
+				params[CMDBuild.core.constants.Proxy.TYPE] = format;
 
 				Ext.create('CMDBuild.controller.common.entryTypeGrid.printTool.PrintWindow', {
 					parentDelegate: this,
@@ -617,7 +617,7 @@
 		view.updateStoreForClassId(idClass, {
 			cb: function cbOfUpdateStoreForClassId() {
 				var	pageNumber = _CMUtils.grid.getPageNumber(position),
-					pageSize = _CMUtils.grid.getPageSize(),
+					pageSize = CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.ROW_LIMIT),
 					relativeIndex = position % pageSize;
 
 				view.loadPage(pageNumber, {

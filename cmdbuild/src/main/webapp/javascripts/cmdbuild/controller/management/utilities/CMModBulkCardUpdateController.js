@@ -1,4 +1,7 @@
 (function() {
+
+	Ext.require('CMDBuild.core.constants.Global');
+
 	Ext.define("CMDBuild.controller.management.common.CMStandAloneCardGridController", {
 		extend: "CMDBuild.controller.management.common.CMCardGridController",
 
@@ -109,7 +112,7 @@
 		var selections = me.gridSM.hasSelection();
 		if (!reverse && !selections) {
 			var msg = Ext.String.format("<p class=\"{0}\">{1}</p>",
-					CMDBuild.Constants.css.error_msg,
+					CMDBuild.core.constants.Global.getErrorMsgCss(),
 					CMDBuild.Translation.errors.no_selections);
 
 			CMDBuild.Msg.error(CMDBuild.Translation.common.failure, msg, false);

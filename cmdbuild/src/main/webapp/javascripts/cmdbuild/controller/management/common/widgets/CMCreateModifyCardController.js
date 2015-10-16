@@ -8,11 +8,6 @@
 			widgetcontroller: "CMDBuild.controller.management.common.widgets.CMWidgetController"
 		},
 
-		statics: {
-			WIDGET_NAME: CMDBuild.view.management.common.widgets.CMCreateModifyCard.WIDGET_NAME
-		},
-
-
 		constructor: function(view, supercontroller, widget, clientForm, card) {
 			var widgetControllerManager = new CMDBuild.controller.management.common.CMWidgetManagerController(view.getWidgetManager());
 			this.callParent([view, supercontroller, widgetControllerManager]);

@@ -3,6 +3,8 @@
 	Ext.define('CMDBuild.controller.administration.configuration.RelationGraph', {
 		extend: 'CMDBuild.controller.common.AbstractController',
 
+		requires: ['CMDBuild.core.constants.Proxy'],
+
 		/**
 		 * @cfg {CMDBuild.controller.administration.configuration.Configuration}
 		 */
@@ -12,14 +14,19 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
-			'onRelationGraphAbortButtonClick',
-			'onRelationGraphSaveButtonClick'
+			'onConfigurationRelationGraphAbortButtonClick',
+			'onConfigurationRelationGraphSaveButtonClick'
 		],
 
 		/**
-		 * @cfg {String}
+		 * Proxy parameters
+		 *
+		 * @cfg {Object}
 		 */
-		configFileName: 'graph',
+		params: {
+			fileName: 'graph',
+			view: undefined
+		},
 
 		/**
 		 * @property {CMDBuild.view.administration.configuration.RelationGraphPanel}
@@ -39,24 +46,17 @@
 				delegate: this
 			});
 
-			this.cmfg('onConfigurationRead', {
-				configFileName: this.configFileName,
-				view: this.view
-			});
+			this.params[CMDBuild.core.constants.Proxy.VIEW] = this.view;
+
+			this.cmfg('onConfigurationRead', this.params);
 		},
 
-		onRelationGraphAbortButtonClick: function() {
-			this.cmfg('onConfigurationRead', {
-				configFileName: this.configFileName,
-				view: this.view
-			});
+		onConfigurationRelationGraphAbortButtonClick: function() {
+			this.cmfg('onConfigurationRead', this.params);
 		},
 
-		onRelationGraphSaveButtonClick: function() {
-			this.cmfg('onConfigurationSave', {
-				configFileName: this.configFileName,
-				view: this.view
-			});
+		onConfigurationRelationGraphSaveButtonClick: function() {
+			this.cmfg('onConfigurationSave', this.params);
 		}
 	});
 

@@ -157,7 +157,9 @@ public class LocalizedQueryRow extends ForwardingQueryRow {
 						break;
 					}
 				}
-				final TranslationObject translationObject = converter.create(uuid);
+				final TranslationObject translationObject = converter //
+						.withIdentifier(uuid) //
+						.create();
 				final String translatedDescription = facade.read(translationObject);
 				final String description = defaultIfBlank(translatedDescription, input.getDescription());
 				return new LookupValue(input.getId(), description, input.getLooupType(), input.getTranslationUuid());
@@ -169,8 +171,10 @@ public class LocalizedQueryRow extends ForwardingQueryRow {
 			public Entry<String, Object> apply(final Entry<String, Object> input) {
 				if (input.getValue() instanceof LookupValue) {
 					LookupValue lookupValue = LookupValue.class.cast(input.getValue());
-					lookupValue = TRANSLATE.apply(lookupValue);
-					input.setValue(lookupValue);
+					if (lookupValue.getId() != null) {
+						lookupValue = TRANSLATE.apply(lookupValue);
+						input.setValue(lookupValue);
+					}
 				}
 				return input;
 			}

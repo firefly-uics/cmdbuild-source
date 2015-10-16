@@ -1,12 +1,20 @@
 (function () {
 
 	/**
+	 * External requires to avoid overrides from classes that extends
+	 */
+	Ext.require([
+		'CMDBuild.core.constants.Global',
+		'CMDBuild.core.Message'
+	]);
+
+	/**
 	 * Class to be extended in controllers witch implements new CMDBuild algorithms where controller creates view
 	 *
 	 * Usage and wild cards:
 	 * 	'=' - creates method alias
 	 * 		Ex. 'functionName = aliasFunctionName'
-	 * 	'->' - forwards method to sub-controller (sub-controller could be also multiple as list separated by commas)
+	 * 	'->' - forwards method to sub-controller without a value return (sub-controller could be also multiple as list separated by commas)
 	 * 		Ex. 'functionName -> controllerOne, controllerTwo, controllerThree, ...'
 	 *
 	 * @abstract
@@ -35,11 +43,6 @@
 		 * @private
 		 */
 		stringToFunctionNameMap: {},
-
-		/**
-		 * @cfg {String}
-		 */
-		titleSeparator: ' - ',
 
 		/**
 		 * @property {Object}
@@ -78,11 +81,15 @@
 				// Wildcard manage
 				if (Ext.isObject(this.stringToFunctionNameMap[name])) {
 					switch (this.stringToFunctionNameMap[name].action) {
-						// Forwarded function manage with multiple controller forwarding management
+						// Forwarded function manage with multiple controller forwarding management (doesn't return values)
 						case 'forward': {
 							if (Ext.isArray(this.stringToFunctionNameMap[name].target))
 								Ext.Array.forEach(this.stringToFunctionNameMap[name].target, function(controller, i, allControllers) {
-									this[controller].cmfg(name, param, callBack); // Use cmfg() access point to manage aliases
+									if (Ext.isEmpty(this[controller])) {
+										_warning('undefined class property "this.' + controller + '"', this);
+									} else {
+										this[controller].cmfg(name, param, callBack); // Use cmfg() access point to manage aliases
+									}
 								}, this);
 
 							return;
@@ -97,6 +104,19 @@
 
 			_warning('unmanaged function with name "' + name + '"', this);
 		},
+
+		// Controller methods
+			/**
+			 * @param {String} propertyName
+			 *
+			 * @returns {Mixed}
+			 */
+			controllerPropertyGet: function(propertyName) {
+				if (!Ext.isEmpty(this[propertyName]))
+					return this[propertyName];
+
+				return null;
+			},
 
 		/**
 		 * Decodes array string inline tags (forward: '->', alias: '=')
@@ -150,6 +170,16 @@
 		},
 
 		/**
+		 * @returns {String}
+		 */
+		getBaseTitle: function() {
+			if (!Ext.isEmpty(this.view) && !Ext.isEmpty(this.view.baseTitle))
+				return this.view.baseTitle;
+
+			return '';
+		},
+
+		/**
 		 * @return {Object}
 		 */
 		getView: function() {
@@ -157,19 +187,141 @@
 		},
 
 		/**
-		 * Setup view panel title as a breadcrumbs component
+		 * Property manage methods
+		 *
+		 * Parameters in a single object to be compatible with cmfg functions.
+		 * These methods operates only with local variables (this...) hasn't able to manage other classe's variables. A good implementation with cmfg functionalities
+		 * is to use these method's alieas.
+		 */
+			/**
+			 * @param {Object} parameters
+			 * @param {Array or String} parameters.attributePath
+			 * @param {String} parameters.targetVariableName
+			 *
+			 * @returns {Mixed} full model object or single property
+			 */
+			propertyManageGet: function(parameters) {
+				if (
+					!Ext.Object.isEmpty(parameters)
+					&& !Ext.isEmpty(parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME]) && Ext.isString(parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME])
+				) {
+					var attributePath = undefined;
+					var requiredAttribute = this[parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME]];
+
+					// AttributePath variable setup (only Array or String are managed)
+					if (!Ext.isEmpty(parameters[CMDBuild.core.constants.Proxy.ATTRIBUTE_PATH]) && Ext.isArray(parameters[CMDBuild.core.constants.Proxy.ATTRIBUTE_PATH])) {
+						attributePath = parameters[CMDBuild.core.constants.Proxy.ATTRIBUTE_PATH];
+					} else if (!Ext.isEmpty(parameters[CMDBuild.core.constants.Proxy.ATTRIBUTE_PATH]) && Ext.isString(parameters[CMDBuild.core.constants.Proxy.ATTRIBUTE_PATH])) {
+						attributePath = [parameters[CMDBuild.core.constants.Proxy.ATTRIBUTE_PATH]];
+					}
+
+					if (!Ext.isEmpty(attributePath) && Ext.isArray(attributePath))
+						Ext.Array.forEach(attributePath, function(attributeName, i, allAttributeNames) {
+							if (
+								!Ext.isEmpty(attributeName) && Ext.isString(attributeName)
+								&& !Ext.isEmpty(requiredAttribute) && Ext.isObject(requiredAttribute) && Ext.isFunction(requiredAttribute.get)
+							) {
+								requiredAttribute = requiredAttribute.get(attributeName);
+							}
+						}, this);
+
+					return requiredAttribute;
+				}
+
+				_error('malformed propertyManageGet parameters', this);
+			},
+
+			/**
+			 * @param {Object} parameters
+			 * @param {Array or String} parameters.attributePath
+			 * @param {String} parameters.targetVariableName
+			 *
+			 * @returns {Boolean}
+			 */
+			propertyManageIsEmpty: function(parameters) {
+				var requiredValue = this.propertyManageGet(parameters);
+
+				if (Ext.isObject(requiredValue) && Ext.isFunction(requiredValue.getData)) { // Model manage
+					var result = true;
+
+					Ext.Object.each(requiredValue.getData(), function(key, value, myself) {
+						result = Ext.isEmpty(value);
+
+						return result;
+					}, this);
+
+					return result;
+				} else if (Ext.isObject(requiredValue)) { // Simple object manage
+					return Ext.Object.isEmpty(requiredValue);
+				}
+
+				// Other variable types manage
+				return Ext.isEmpty(requiredValue);
+			},
+
+			/**
+			 * @param {String} targetVariableName
+			 */
+			propertyManageReset: function(targetVariableName) {
+				if (!Ext.isEmpty(targetVariableName) && Ext.isString(targetVariableName))
+					this[targetVariableName] = null;
+			},
+
+			/**
+			 * @param {Object} parameters
+			 * @param {String} parameters.modelName
+			 * @param {String} parameters.propertyName
+			 * @param {String} parameters.targetVariableName
+			 * @param {Object} parameters.value
+			 *
+			 * @returns {Mixed}
+			 */
+			propertyManageSet: function(parameters) {
+				if (
+					!Ext.Object.isEmpty(parameters)
+					&& !Ext.isEmpty(parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME]) && Ext.isString(parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME])
+					&& !Ext.isEmpty(parameters[CMDBuild.core.constants.Proxy.MODEL_NAME])
+					&& !Ext.isEmpty(parameters[CMDBuild.core.constants.Proxy.VALUE])
+				) {
+					var modelName = parameters[CMDBuild.core.constants.Proxy.MODEL_NAME];
+					var value = parameters[CMDBuild.core.constants.Proxy.VALUE];
+
+					// Single property management
+					if (!Ext.isEmpty(parameters[CMDBuild.core.constants.Proxy.PROPERTY_NAME]) && Ext.isString(parameters[CMDBuild.core.constants.Proxy.PROPERTY_NAME])) {
+						// Create empty model if not existing (or is not a model class)
+						if (
+							Ext.isEmpty(this[parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME]])
+							|| Ext.getClassName(value) != modelName
+						) {
+							this[parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME]] = Ext.create(modelName);
+						}
+
+						return this[parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME]].set(parameters[CMDBuild.core.constants.Proxy.PROPERTY_NAME], value);
+					} else if (!Ext.isEmpty(value) && Ext.isObject(value)) { // Full object management
+						if (Ext.getClassName(value) == modelName) {
+							this[parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME]] = value;
+						} else {
+							this[parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME]] = Ext.create(modelName, value);
+						}
+					}
+				}
+			},
+
+		/**
+		 * Setup view panel title as a breadcrumbs component joining array items with titleSeparator.
 		 *
 		 * @param {String} titlePart
 		 */
 		setViewTitle: function(titlePart) {
-			if (
-				!Ext.isEmpty(this.view)
-				&& !Ext.isEmpty(this.view.baseTitle)
-			) {
+			titlePart = Ext.isArray(titlePart) ? titlePart : [titlePart];
+
+			if (!Ext.isEmpty(this.view)) {
 				if (Ext.isEmpty(titlePart)) {
-					this.view.setTitle(this.view.baseTitle);
+					this.view.setTitle(this.getBaseTitle());
 				} else {
-					this.view.setTitle(this.view.baseTitle + this.titleSeparator + titlePart);
+					this.view.setTitle(
+						this.getBaseTitle() + CMDBuild.core.constants.Global.getTitleSeparator() + titlePart.join(CMDBuild.core.constants.Global.getTitleSeparator())
+					);
 				}
 			}
 		},
@@ -193,7 +345,7 @@
 
 				errorMessage += '<ul>';
 
-				CMDBuild.Msg.error(CMDBuild.Translation.common.failure, errorMessage, false);
+				CMDBuild.core.Message.error(CMDBuild.Translation.common.failure, errorMessage, false);
 
 				return false;
 			}

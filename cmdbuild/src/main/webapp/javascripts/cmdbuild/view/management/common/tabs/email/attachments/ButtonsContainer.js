@@ -3,7 +3,7 @@
 	Ext.define('CMDBuild.view.management.common.tabs.email.attachments.ButtonsContainer', {
 		extend: 'Ext.container.Container',
 
-		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+		requires: ['CMDBuild.core.constants.Proxy'],
 
 		/**
 		 * @cfg {CMDBuild.controller.management.common.tabs.email.attachments.Attachments}
@@ -48,7 +48,7 @@
 			});
 
 			this.attachmentFileField = Ext.create('Ext.form.field.File', {
-				name: CMDBuild.core.proxy.CMProxyConstants.FILE,
+				name: CMDBuild.core.constants.Proxy.FILE,
 				buttonText: CMDBuild.Translation.attachFile,
 				buttonOnly: true,
 				disabled: this.readOnly,

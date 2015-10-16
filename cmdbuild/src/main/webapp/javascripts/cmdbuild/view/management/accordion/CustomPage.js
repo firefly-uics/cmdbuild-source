@@ -1,12 +1,17 @@
 (function() {
 
 	Ext.define('CMDBuild.view.management.accordion.CustomPage', {
-		extend: 'CMDBuild.view.common.CMBaseAccordion',
+		extend: 'CMDBuild.view.common.AbstractAccordion',
 
 		requires: [
-			'CMDBuild.core.proxy.CMProxyConstants',
+			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.CustomPage'
 		],
+
+		/**
+		 * @cfg {CMDBuild.controller.common.AbstractAccordionController}
+		 */
+		delegate: undefined,
 
 		/**
 		 * @cfg {String}
@@ -14,12 +19,6 @@
 		cmName: undefined,
 
 		title: CMDBuild.Translation.customPages,
-
-		constructor: function(){
-			this.callParent(arguments);
-
-			this.updateStore();
-		},
 
 		/**
 		 * @param {Number} nodeIdToSelect
@@ -38,8 +37,7 @@
 
 						Ext.Array.forEach(decodedResponse, function(groupObject, i, allGroupObjects) {
 							nodes.push({
-								text: groupObject[CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION],
-								id: groupObject[CMDBuild.core.proxy.CMProxyConstants.ID],
+								text: groupObject[CMDBuild.core.constants.Proxy.DESCRIPTION],
 								iconCls: 'cmdbuild-tree-custompage-icon',
 								cmName: this.cmName,
 								leaf: true
@@ -48,7 +46,6 @@
 
 						this.getStore().getRootNode().removeAll();
 						this.getStore().getRootNode().appendChild(nodes);
-						this.getStore().sort();
 					}
 				}
 			});

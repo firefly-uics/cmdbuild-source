@@ -3,7 +3,7 @@
 	Ext.define('CMDBuild.view.administration.configuration.AlfrescoPanel', {
 		extend: 'Ext.form.Panel',
 
-		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+		requires: ['CMDBuild.core.constants.Proxy'],
 
 		/**
 		 * @cfg {CMDBuild.controller.administration.configuration.Alfresco}
@@ -31,7 +31,7 @@
 				dockedItems: [
 					Ext.create('Ext.toolbar.Toolbar', {
 						dock: 'bottom',
-						itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_BOTTOM,
+						itemId: CMDBuild.core.constants.Proxy.TOOLBAR_BOTTOM,
 						ui: 'footer',
 
 						layout: {
@@ -41,18 +41,18 @@
 						},
 
 						items: [
-							Ext.create('CMDBuild.core.buttons.Save', {
+							Ext.create('CMDBuild.core.buttons.text.Save', {
 								scope: this,
 
 								handler: function(button, e) {
-									this.delegate.cmfg('onAlfrescoSaveButtonClick');
+									this.delegate.cmfg('onConfigurationAlfrescoSaveButtonClick');
 								}
 							}),
-							Ext.create('CMDBuild.core.buttons.Abort', {
+							Ext.create('CMDBuild.core.buttons.text.Abort', {
 								scope: this,
 
 								handler: function(button, e) {
-									this.delegate.cmfg('onAlfrescoAbortButtonClick');
+									this.delegate.cmfg('onConfigurationAlfrescoAbortButtonClick');
 								}
 							})
 						]
@@ -71,7 +71,7 @@
 						items: [
 							{
 								xtype: 'xcheckbox',
-								name: CMDBuild.core.proxy.CMProxyConstants.ENABLED,
+								name: CMDBuild.core.constants.Proxy.ENABLED,
 								fieldLabel: CMDBuild.Translation.enabled
 							},
 							{
@@ -82,7 +82,7 @@
 							},
 							{
 								xtype: 'numberfield',
-								name: CMDBuild.core.proxy.CMProxyConstants.DELAY,
+								name: CMDBuild.core.constants.Proxy.DELAY,
 								fieldLabel: CMDBuild.Translation.operationsDelay,
 								allowBlank: false
 							}
@@ -171,8 +171,8 @@
 							Ext.create('Ext.form.field.ComboBox', {
 								name: 'category.lookup',
 								fieldLabel: CMDBuild.Translation.cmdbuildCategory,
-								valueField: CMDBuild.core.proxy.CMProxyConstants.TYPE,
-								displayField: CMDBuild.core.proxy.CMProxyConstants.TYPE,
+								valueField: CMDBuild.core.constants.Proxy.TYPE,
+								displayField: CMDBuild.core.constants.Proxy.TYPE,
 								allowBlank: false,
 
 								store: CMDBuild.Cache.getLookupTypeLeavesAsStore(),

@@ -2,7 +2,7 @@
 
 	Ext.define('CMDBuild.core.proxy.report.Print', {
 
-		requires: ['CMDBuild.core.proxy.CMProxyUrlIndex'],
+		requires: ['CMDBuild.core.proxy.Index'],
 
 		singleton: true,
 
@@ -11,7 +11,7 @@
 		 */
 		createCardDetails: function(parameters) {
 			CMDBuild.Ajax.request({
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.reports.print.cardDetails,
+				url: CMDBuild.core.proxy.Index.reports.print.cardDetails,
 				params: parameters.params,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
 				scope: parameters.scope || this,
@@ -26,7 +26,7 @@
 		 */
 		createClassSchema: function(parameters) {
 			CMDBuild.Ajax.request({
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.reports.print.classSchema,
+				url: CMDBuild.core.proxy.Index.reports.print.classSchema,
 				params: parameters.params,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
 				scope: parameters.scope || this,
@@ -41,7 +41,7 @@
 		 */
 		createDataViewSqlSchema: function(parameters) {
 			CMDBuild.Ajax.request({
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.reports.print.sqlView,
+				url: CMDBuild.core.proxy.Index.reports.print.sqlView,
 				params: parameters.params,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
 				scope: parameters.scope || this,
@@ -56,7 +56,7 @@
 		 */
 		createSchema: function(parameters) {
 			CMDBuild.Ajax.request({
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.reports.print.schema,
+				url: CMDBuild.core.proxy.Index.reports.print.schema,
 				params: parameters.params,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
 				scope: parameters.scope || this,
@@ -71,7 +71,7 @@
 		 */
 		createView: function(parameters) {
 			CMDBuild.Ajax.request({
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.reports.print.currentView,
+				url: CMDBuild.core.proxy.Index.reports.print.currentView,
 				params: parameters.params,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
 				scope: parameters.scope || this,

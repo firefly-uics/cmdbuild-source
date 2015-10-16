@@ -1,6 +1,7 @@
-if (typeof CMDBuild == "undefined") {
-	CMDBuild = {};
-}
+// Ext.require('CMDBuild.core.LoginWindow'); // TODO: should be required on class refactor
+
+if (Ext.isEmpty(CMDBuild))
+	Ext.ns('CMDBuild');
 
 CMDBuild.LoadMask = {
 	get: function(text) {
@@ -149,12 +150,10 @@ CMDBuild.Ajax =  new Ext.data.Connection({
 			errorBody.detail = detail + "Error: " + error.stacktrace;
 			var reason = error.reason;
 			if (reason) {
-				if ((reason == 'AUTH_NOT_LOGGED_IN' || reason == 'AUTH_MULTIPLE_GROUPS') && !Ext.isEmpty(CMDBuild.LoginWindow)) {
-					CMDBuild.LoginWindow.addAjaxOptions(options);
-					CMDBuild.LoginWindow.setAuthFieldsEnabled(reason == 'AUTH_NOT_LOGGED_IN');
-					CMDBuild.LoginWindow.show();
-
-					_error('CMDBuild.LoginWindow not defined', 'CMDBuild.Ajax');
+				if (reason == 'AUTH_NOT_LOGGED_IN' || reason == 'AUTH_MULTIPLE_GROUPS') {
+					var loginWindow = Ext.create('CMDBuild.core.LoginWindow', { ajaxOptions: options });
+					loginWindow.setAuthFieldsEnabled(reason == 'AUTH_NOT_LOGGED_IN');
+					loginWindow.show();
 
 					return;
 				}
@@ -198,7 +197,6 @@ CMDBuild.Ajax =  new Ext.data.Connection({
 });
 
 CMDBuild.Ajax.on('beforerequest', CMDBuild.Ajax.showMaskAndTrapCallbacks);
-//Ext.Ajax = CMDBuild.Ajax; // Ugly override
 
 /**
  * @class CMDBuild.ChainedAjax

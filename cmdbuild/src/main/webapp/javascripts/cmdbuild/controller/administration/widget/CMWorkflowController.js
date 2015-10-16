@@ -3,7 +3,7 @@
 		extend: "CMDBuild.controller.administration.widget.CMBaseWidgetDefinitionFormController",
 
 		statics: {
-			WIDGET_NAME: CMDBuild.view.administration.widget.form.CMWorkflowDefinitionForm.WIDGET_NAME
+			WIDGET_NAME: ".Workflow"
 		},
 
 		// override

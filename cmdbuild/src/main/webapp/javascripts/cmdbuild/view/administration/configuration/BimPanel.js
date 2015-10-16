@@ -3,7 +3,7 @@
 	Ext.define('CMDBuild.view.administration.configuration.BimPanel', {
 		extend: 'Ext.form.Panel',
 
-		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+		requires: ['CMDBuild.core.constants.Proxy'],
 
 		/**
 		 * @cfg {CMDBuild.controller.administration.configuration.Bim}
@@ -28,7 +28,7 @@
 
 		initComponent: function() {
 			this.enabledCheckBox = Ext.create('Ext.ux.form.XCheckbox', {
-				name: CMDBuild.core.proxy.CMProxyConstants.ENABLED,
+				name: CMDBuild.core.constants.Proxy.ENABLED,
 				fieldLabel: CMDBuild.Translation.enabled
 			});
 
@@ -36,7 +36,7 @@
 				dockedItems: [
 					Ext.create('Ext.toolbar.Toolbar', {
 						dock: 'bottom',
-						itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_BOTTOM,
+						itemId: CMDBuild.core.constants.Proxy.TOOLBAR_BOTTOM,
 						ui: 'footer',
 
 						layout: {
@@ -46,18 +46,18 @@
 						},
 
 						items: [
-							Ext.create('CMDBuild.core.buttons.Save', {
+							Ext.create('CMDBuild.core.buttons.text.Save', {
 								scope: this,
 
 								handler: function(button, e) {
-									this.delegate.cmfg('onBimSaveButtonClick');
+									this.delegate.cmfg('onConfigurationBimSaveButtonClick');
 								}
 							}),
-							Ext.create('CMDBuild.core.buttons.Abort', {
+							Ext.create('CMDBuild.core.buttons.text.Abort', {
 								scope: this,
 
 								handler: function(button, e) {
-									this.delegate.cmfg('onBimAbortButtonClick');
+									this.delegate.cmfg('onConfigurationBimAbortButtonClick');
 								}
 							})
 						]
@@ -67,7 +67,7 @@
 					this.enabledCheckBox,
 					{
 						xtype: 'textfield',
-						name: CMDBuild.core.proxy.CMProxyConstants.URL,
+						name: CMDBuild.core.constants.Proxy.URL,
 						fieldLabel: CMDBuild.Translation.url,
 						maxWidth: CMDBuild.CFG_BIG_FIELD_WIDTH,
 					},
@@ -78,7 +78,7 @@
 					},
 					{
 						xtype: 'textfield',
-						name: CMDBuild.core.proxy.CMProxyConstants.PASSWORD,
+						name: CMDBuild.core.constants.Proxy.PASSWORD,
 						fieldLabel: CMDBuild.Translation.password,
 						inputType: 'password'
 					}

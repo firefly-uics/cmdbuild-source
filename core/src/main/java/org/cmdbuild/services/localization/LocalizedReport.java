@@ -25,7 +25,9 @@ public class LocalizedReport extends ForwardingReport implements Report {
 
 	@Override
 	public String getDescription() {
-		final TranslationObject translationObject = ReportConverter.of(ReportConverter.description()).create(getCode());
+		final TranslationObject translationObject = ReportConverter.of(ReportConverter.description()) //
+				.withIdentifier(getCode()) //
+				.create();
 		final String translatedDescription = facade.read(translationObject);
 		return defaultIfBlank(translatedDescription, super.getDescription());
 	}

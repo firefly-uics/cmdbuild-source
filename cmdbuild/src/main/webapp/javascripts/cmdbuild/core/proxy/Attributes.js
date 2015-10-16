@@ -5,7 +5,7 @@
 
 		requires: [
 			'CMDBuild.core.proxy.CMProxy',
-			'CMDBuild.core.proxy.CMProxyUrlIndex'
+			'CMDBuild.core.proxy.Index'
 		],
 
 		singleton: true,
@@ -16,7 +16,7 @@
 		read: function(parameters) {
 			CMDBuild.Ajax.request({
 				method: 'GET',
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.attribute.read,
+				url: CMDBuild.core.proxy.Index.attribute.read,
 				params: parameters.params,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : false,
 				scope: parameters.scope || this,
@@ -32,7 +32,7 @@
 		remove: function(parameters) {
 			CMDBuild.ServiceProxy.core.doRequest({
 				method: 'POST',
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.attribute.remove,
+				url: CMDBuild.core.proxy.Index.attribute.remove,
 				params: parameters.params,
 				scope: parameters.scope || this,
 				success: parameters.success || Ext.emptyFn,
@@ -47,7 +47,7 @@
 		reorder: function(parameters) {
 			CMDBuild.ServiceProxy.core.doRequest({
 				method: 'POST',
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.attribute.reorder,
+				url: CMDBuild.core.proxy.Index.attribute.reorder,
 				params: parameters.params,
 				scope: parameters.scope || this,
 				success: parameters.success || Ext.emptyFn,
@@ -62,7 +62,7 @@
 		update: function(parameters) {
 			CMDBuild.ServiceProxy.core.doRequest({
 				method: 'POST',
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.attribute.update,
+				url: CMDBuild.core.proxy.Index.attribute.update,
 				params: parameters.params,
 				scope: parameters.scope || this,
 				success: parameters.success || Ext.emptyFn,
@@ -77,7 +77,7 @@
 		updateSortConfiguration: function(parameters) {
 			CMDBuild.ServiceProxy.core.doRequest({
 				method: 'POST',
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.attribute.updateSortConfiguration,
+				url: CMDBuild.core.proxy.Index.attribute.updateSortConfiguration,
 				params: parameters.params,
 				scope: parameters.scope || this,
 				success: parameters.success || Ext.emptyFn,

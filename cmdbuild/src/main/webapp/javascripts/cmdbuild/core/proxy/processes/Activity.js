@@ -2,7 +2,7 @@
 
 	Ext.define('CMDBuild.core.proxy.processes.Activity', {
 
-		requires: ['CMDBuild.core.proxy.CMProxyUrlIndex'],
+		requires: ['CMDBuild.core.proxy.Index'],
 
 		singleton: true,
 
@@ -12,7 +12,7 @@
 		lock: function(parameters) {
 			CMDBuild.Ajax.request({
 				method: 'POST',
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.processes.instances.lock,
+				url: CMDBuild.core.proxy.Index.processes.instances.lock,
 				headers: parameters.headers,
 				params: parameters.params,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : false,
@@ -29,7 +29,7 @@
 		unlock: function(parameters) {
 			CMDBuild.Ajax.request({
 				method: 'POST',
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.processes.instances.unlock,
+				url: CMDBuild.core.proxy.Index.processes.instances.unlock,
 				headers: parameters.headers,
 				params: parameters.params,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : false,
@@ -46,7 +46,7 @@
 		unlockAll: function(parameters) {
 			CMDBuild.Ajax.request({
 				method: 'POST',
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.processes.instances.unlockAll,
+				url: CMDBuild.core.proxy.Index.processes.instances.unlockAll,
 				headers: parameters.headers,
 				params: parameters.params,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
