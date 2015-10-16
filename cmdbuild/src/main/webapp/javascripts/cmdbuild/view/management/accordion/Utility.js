@@ -35,14 +35,14 @@
 					leaf: true
 				});
 
-			if (!this.isSectionDisabled('bulkupdate'))
+			if (!this.isSectionDisabled(CMDBuild.core.constants.Proxy.BULK_UPDATE))
 				this.getStore().getRootNode().appendChild({
 					text: CMDBuild.Translation.management.modutilities.bulkupdate.title,
 					cmName: 'bulkcardupdate',
 					leaf: true
 				});
 
-			if (!this.isSectionDisabled('importcsv'))
+			if (!this.isSectionDisabled(CMDBuild.core.constants.Proxy.IMPORT_CSV))
 				this.getStore().getRootNode().appendChild([
 					{
 						text: CMDBuild.Translation.management.modutilities.csv.title,
@@ -51,7 +51,7 @@
 					}
 				]);
 
-			if (!this.isSectionDisabled('exportcsv'))
+			if (!this.isSectionDisabled(CMDBuild.core.constants.Proxy.EXPORT_CSV))
 				this.getStore().getRootNode().appendChild({
 					text: CMDBuild.Translation.management.modutilities.csv.title_export,
 					cmName: 'exportcsv',
@@ -68,7 +68,7 @@
 		 */
 		isSectionDisabled: function(moduleName) {
 			switch (moduleName) {
-				case 'changePassword':
+				case CMDBuild.core.constants.Proxy.CHANGE_PASSWORD:
 					return !CMDBuild.Runtime.CanChangePassword;
 
 				default:

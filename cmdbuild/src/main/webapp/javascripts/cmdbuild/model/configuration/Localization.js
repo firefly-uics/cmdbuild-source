@@ -2,14 +2,17 @@
 
 	Ext.require('CMDBuild.core.constants.Proxy');
 
+	/**
+	 * TODO: waiting for refactor (configurations)
+	 */
 	Ext.define('CMDBuild.model.configuration.Localization', {
 		extend: 'Ext.data.Model',
 
 		fields: [
 			{ name: CMDBuild.core.constants.Proxy.ENABLED_LANGUAGES, type: 'auto' }, // CMDBuild enabled languages
-			{ name: CMDBuild.core.constants.Proxy.LANGUAGE, type: 'string' },
+			{ name: CMDBuild.core.constants.Proxy.LANGUAGE, type: 'string', defaultValue: 'en' },
 			{ name: CMDBuild.core.constants.Proxy.LANGUAGES, type: 'auto' }, // All CMDBuild languages
-			{ name: CMDBuild.core.constants.Proxy.LANGUAGE_PROMPT, type: 'boolean' } // Login prompt for language
+			{ name: CMDBuild.core.constants.Proxy.LANGUAGE_PROMPT, type: 'boolean', defaultValue: true } // Login prompt for language
 		],
 
 		/**

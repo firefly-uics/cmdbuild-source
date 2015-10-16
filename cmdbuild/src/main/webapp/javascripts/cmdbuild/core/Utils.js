@@ -8,6 +8,30 @@
 		singleton: true,
 
 		/**
+		 * Decode variable as boolean ("true", "on", "false", "off") case unsensitive
+		 *
+		 * @param {Mixed} variable
+		 *
+		 * @returns {Boolean}
+		 */
+		decodeAsBoolean: function(variable) {
+			if (!Ext.isEmpty(variable)) {
+				switch (Ext.typeOf(variable)) {
+					case 'boolean':
+						return variable;
+
+					case 'number':
+						return variable != 0;
+
+					case 'string':
+						return variable.toLowerCase() == 'true' || variable.toLowerCase() == 'on';
+				}
+			}
+
+			return false;
+		},
+
+		/**
 		 * Clones a ExtJs store
 		 *
 		 * @param {Ext.data.Store} sourceStore

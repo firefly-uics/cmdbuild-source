@@ -8,25 +8,36 @@
 	Ext.define('CMDBuild.model.lookup.Lookup', {
 		extend: 'Ext.data.Model',
 
+		fields: [
+			{ name: CMDBuild.core.constants.Proxy.ACTIVE, type: 'boolean', defaultValue: true },
+			{ name: CMDBuild.core.constants.Proxy.CODE, type: 'string' },
+			{ name: CMDBuild.core.constants.Proxy.DESCRIPTION, type: 'string' },
+			{ name: CMDBuild.core.constants.Proxy.ID, type: 'int', useNull: true },
+			{ name: CMDBuild.core.constants.Proxy.NOTES, type: 'string' },
+			{ name: CMDBuild.core.constants.Proxy.NUMBER, type: 'int' },
+			{ name: CMDBuild.core.constants.Proxy.PARENT_DESCRIPTION, type: 'string' },
+			{ name: CMDBuild.core.constants.Proxy.PARENT_ID, type: 'int', useNull: true },
+			{ name: CMDBuild.core.constants.Proxy.TRANSLATION_UUID, type: 'string' }
+		],
+
 		statics: {
 			/**
-			 * Static function to convert from legacy object to model's one
+			 * Static function to create translated properties
 			 *
 			 * @returns {Object}
 			 */
 			convertFromLegacy: function(data) {
-				var modelObject = {};
-				modelObject[CMDBuild.core.constants.Proxy.ACTIVE] = data['Active'];
-				modelObject[CMDBuild.core.constants.Proxy.CODE] = data['Code'];
-				modelObject[CMDBuild.core.constants.Proxy.DESCRIPTION] = data['Description'];
-				modelObject[CMDBuild.core.constants.Proxy.ID] = data['Id'];
-				modelObject[CMDBuild.core.constants.Proxy.NOTES] = data['Notes'];
-				modelObject[CMDBuild.core.constants.Proxy.NUMBER] = data['Number'];
-				modelObject[CMDBuild.core.constants.Proxy.PARENT_DESCRIPTION] = data['ParentDescription'];
-				modelObject[CMDBuild.core.constants.Proxy.PARENT_ID] = data['ParentId'];
-				modelObject[CMDBuild.core.constants.Proxy.TRANSLATION_UUID] = data['TranslationUuid'];
+				data[CMDBuild.core.constants.Proxy.ACTIVE] = data['Active'];
+				data[CMDBuild.core.constants.Proxy.CODE] = data['Code'];
+				data[CMDBuild.core.constants.Proxy.DESCRIPTION] = data['Description'];
+				data[CMDBuild.core.constants.Proxy.ID] = data['Id'];
+				data[CMDBuild.core.constants.Proxy.NOTES] = data['Notes'];
+				data[CMDBuild.core.constants.Proxy.NUMBER] = data['Number'];
+				data[CMDBuild.core.constants.Proxy.PARENT_DESCRIPTION] = data['ParentDescription'];
+				data[CMDBuild.core.constants.Proxy.PARENT_ID] = data['ParentId'];
+				data[CMDBuild.core.constants.Proxy.TRANSLATION_UUID] = data['TranslationUuid'];
 
-				return modelObject;
+				return data;
 			},
 
 			/**
@@ -48,18 +59,6 @@
 				};
 			}
 		},
-
-		fields: [
-			{ name: CMDBuild.core.constants.Proxy.ACTIVE, type: 'boolean', defaultValue: true },
-			{ name: CMDBuild.core.constants.Proxy.CODE, type: 'string' },
-			{ name: CMDBuild.core.constants.Proxy.DESCRIPTION, type: 'string' },
-			{ name: CMDBuild.core.constants.Proxy.ID, type: 'int', useNull: true },
-			{ name: CMDBuild.core.constants.Proxy.NOTES, type: 'string' },
-			{ name: CMDBuild.core.constants.Proxy.NUMBER, type: 'int' },
-			{ name: CMDBuild.core.constants.Proxy.PARENT_DESCRIPTION, type: 'string' },
-			{ name: CMDBuild.core.constants.Proxy.PARENT_ID, type: 'int', useNull: true },
-			{ name: CMDBuild.core.constants.Proxy.TRANSLATION_UUID, type: 'string' }
-		],
 
 		/**
 		 * @param {Array} data

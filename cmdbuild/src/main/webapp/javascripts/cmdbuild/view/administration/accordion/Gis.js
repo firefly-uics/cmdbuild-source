@@ -13,6 +13,7 @@
 		 */
 		cmName: undefined,
 
+		disabled: !CMDBuild.configuration.gis.get(CMDBuild.core.constants.Proxy.ENABLED),
 		title: CMDBuild.Translation.gis,
 
 		/**
