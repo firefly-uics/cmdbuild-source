@@ -9,6 +9,7 @@
 	});
 
 	var functionsStore = Ext.create('Ext.data.Store', {
+		autoLoad: true,
 		model: 'Functions',
 		proxy: {
 			type: 'ajax',
@@ -18,7 +19,9 @@
 					root: 'response'
 			}
 		},
-		autoLoad: true
+		sorters: [
+			{ property: 'name', direction: 'ASC' }
+		]
 	});
 
 	Ext.define('CMDBuild.view.management.common.filter.CMFunctions', {
