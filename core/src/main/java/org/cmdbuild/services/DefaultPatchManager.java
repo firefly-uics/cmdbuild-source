@@ -1,7 +1,7 @@
 package org.cmdbuild.services;
 
 import static com.google.common.base.Optional.fromNullable;
-import static com.google.common.base.Predicates.alwaysTrue;
+import static com.google.common.base.Predicates.alwaysFalse;
 import static com.google.common.collect.FluentIterable.from;
 import static com.google.common.collect.Iterables.concat;
 import static com.google.common.collect.Lists.newArrayList;
@@ -242,8 +242,6 @@ public class DefaultPatchManager implements PatchManager {
 
 	};
 
-	private static final Predicate<Patch> ALWAYS_TRUE = alwaysTrue();
-
 	private final DataSource dataSource;
 	private final CMDataView dataView;
 	private final DataDefinitionLogic dataDefinitionLogic;
@@ -278,7 +276,7 @@ public class DefaultPatchManager implements PatchManager {
 	private void reset(final String category, final Iterable<File> files) {
 		logger.info("resetting category '{}' ('null' means default)", category);
 		final Optional<String> key = fromNullable(category);
-		Predicate<Patch> predicate = ALWAYS_TRUE;
+		Predicate<Patch> predicate = alwaysFalse();
 		try {
 			predicate = new Predicate<Patch>() {
 
@@ -399,7 +397,7 @@ public class DefaultPatchManager implements PatchManager {
 	public void createLastPatch() {
 		for (final Optional<? extends String> category : lastAvaiablePatches.keySet()) {
 			logger.info("creating card for last available patch '{}'", lastAvaiablePatches);
-			createPatchCard(lastAvaiablePatches.get(category.get()));
+			createPatchCard(lastAvaiablePatches.get(category));
 			availablePatches.clear();
 		}
 	}
