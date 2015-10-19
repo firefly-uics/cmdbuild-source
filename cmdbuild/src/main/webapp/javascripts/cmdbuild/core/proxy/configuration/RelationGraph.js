@@ -18,6 +18,11 @@
 			parameters.params = Ext.isEmpty(parameters.params) ? {} : parameters.params;
 			parameters.params[CMDBuild.core.constants.Proxy.NAME] = 'graph';
 
+			parameters.success = Ext.Function.createInterceptor(parameters.success, function(response, options, decodedResponse) {
+				if (!CMDBuild.core.configurationBuilders.RelationGraph.isValid())
+					CMDBuild.core.configurationBuilders.RelationGraph.build(decodedResponse); // Refresh configuration object
+			}, this);
+
 			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.configuration.read });
 
 			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.CONFIGURATION, parameters);
@@ -30,6 +35,8 @@
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 			parameters.params = Ext.isEmpty(parameters.params) ? {} : parameters.params;
 			parameters.params[CMDBuild.core.constants.Proxy.NAME] = 'graph';
+
+			CMDBuild.core.configurationBuilders.RelationGraph.invalid(); // Invalidate configuration object
 
 			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.configuration.update });
 

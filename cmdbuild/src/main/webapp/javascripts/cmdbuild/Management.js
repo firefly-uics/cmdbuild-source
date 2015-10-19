@@ -93,14 +93,20 @@
 						CMDBuild.core.proxy.configuration.Configuration.readAll({
 							loadMask: false,
 							scope: this,
-							success: function(response, options, decoded) {
+							success: function(response, options, decodedResponse) {
 								/**
-								 * @deprecated
+								 * CMDBuild (aka Instance) configuration
+								 *
+								 * @deprecated (CMDBuild.configuration.instance)
 								 */
-								CMDBuild.Config.cmdbuild = decoded.cmdbuild;
+								CMDBuild.Config.cmdbuild = decodedResponse.cmdbuild;
 
-								// DMS
-								CMDBuild.Config.dms = decoded.dms;
+								/**
+								 * DMS configuration
+								 *
+								 * @deprecated (CMDBuild.configuration.dms)
+								 */
+								CMDBuild.Config.dms = decodedResponse.dms;
 								CMDBuild.Config.dms.enabled = ('true' == CMDBuild.Config.dms.enabled);
 
 								/**
@@ -108,21 +114,29 @@
 								 *
 								 * @deprecated (CMDBuild.configuration.bim)
 								 */
-								CMDBuild.Config.bim = decoded.bim;
+								CMDBuild.Config.bim = decodedResponse.bim;
 								CMDBuild.Config.bim.enabled = ('true' == CMDBuild.Config.bim.enabled);
 
-								// Graph
-								CMDBuild.Config.graph = decoded.graph;
+								/**
+								 * Graph (aka RelationGraph) configuration
+								 *
+								 * @deprecated (CMDBuild.configuration.graph)
+								 */
+								CMDBuild.Config.graph = decodedResponse.graph;
 
-								// Workflow
-								CMDBuild.Config.workflow = decoded.workflow;
+								/**
+								 * Workflow configuration
+								 *
+								 * @deprecated (CMDBuild.configuration.workflow)
+								 */
+								CMDBuild.Config.workflow = decodedResponse.workflow;
 
 								/**
 								 * GIS configuration
 								 *
 								 * @deprecated (CMDBuild.configuration.gis)
 								 */
-								CMDBuild.Config.gis = decoded.gis;
+								CMDBuild.Config.gis = decodedResponse.gis;
 								CMDBuild.Config.gis.enabled = ('true' == CMDBuild.Config.gis.enabled);
 
 								/**
@@ -155,9 +169,12 @@
 
 				Ext.create('CMDBuild.core.configurationBuilders.Instance', { callback: configurationsRequestBarrier.getCallback() }); // CMDBuild instance configuration
 				Ext.create('CMDBuild.core.configurationBuilders.Bim', { callback: configurationsRequestBarrier.getCallback() }); // CMDBuild BIM configuration
+				Ext.create('CMDBuild.core.configurationBuilders.Dms', { callback: configurationsRequestBarrier.getCallback() }); // CMDBuild DMS configuration
 				Ext.create('CMDBuild.core.configurationBuilders.Gis', { callback: configurationsRequestBarrier.getCallback() }); // CMDBuild GIS configuration
 				Ext.create('CMDBuild.core.configurationBuilders.Localization', { callback: configurationsRequestBarrier.getCallback() }); // CMDBuild localization configuration
+				Ext.create('CMDBuild.core.configurationBuilders.RelationGraph', { callback: configurationsRequestBarrier.getCallback() }); // CMDBuild RelationGraph configuration
 				Ext.create('CMDBuild.core.configurationBuilders.UserInterface', { callback: configurationsRequestBarrier.getCallback() }); // CMDBuild UserInterface configuration
+				Ext.create('CMDBuild.core.configurationBuilders.Workflow', { callback: configurationsRequestBarrier.getCallback() }); // CMDBuild Workflow configuration
 
 				configurationsRequestBarrier.start();
 			},
@@ -167,6 +184,71 @@
 
 				_CMCache.syncAttachmentCategories();
 
+				_CMMainViewportController = new CMDBuild.controller.CMMainViewportController(
+					new CMDBuild.view.CMMainViewport({
+						cmAccordions: [ // Sorted
+							menuAccordion,
+							CMDBuild.configuration.userInterface.isDisabledModule('class') ? null : classesAccordion,
+							CMDBuild.configuration.userInterface.isDisabledModule('process') || !(CMDBuild.Config.workflow.enabled == 'true') ? null : processAccordion,
+							CMDBuild.configuration.userInterface.isDisabledModule(CMDBuild.core.constants.Proxy.DATA_VIEW) ? null :
+								Ext.create('CMDBuild.view.management.accordion.DataView', {
+									cmControllerType: 'CMDBuild.controller.management.accordion.DataView',
+									cmName: 'dataview'
+								})
+							,
+							CMDBuild.configuration.userInterface.isDisabledModule('dashboard') ? null : dashboardsAccordion,
+							CMDBuild.configuration.userInterface.isDisabledModule('report') ? null : reportAccordion,
+							CMDBuild.configuration.userInterface.isDisabledModule(CMDBuild.core.constants.Proxy.CUSTOM_PAGES) ? null :
+								Ext.create('CMDBuild.view.management.accordion.CustomPage', {
+									cmControllerType: 'CMDBuild.controller.common.AbstractAccordionController',
+									cmName: 'custompage'
+								})
+							,
+							Ext.create('CMDBuild.view.management.accordion.Utility', {
+								cmControllerType: 'CMDBuild.controller.common.AbstractAccordionController',
+								cmName: 'utility'
+							})
+						],
+						cmPanels: [
+							Ext.create('Ext.panel.Panel', { cls: 'empty_panel x-panel-body' }),
+							Ext.create('CMDBuild.view.management.customPage.SinglePagePanel', {
+								cmControllerType: 'CMDBuild.controller.management.customPage.SinglePage',
+								cmName: 'custompage'
+							}),
+							Ext.create('CMDBuild.view.management.dataView.DataViewView', {
+								cmControllerType: 'CMDBuild.controller.management.dataView.DataView',
+								cmName: 'dataview'
+							}),
+							Ext.create('CMDBuild.view.management.report.ReportView', {
+								cmControllerType: 'CMDBuild.controller.management.report.Report',
+								cmName: 'report'
+							}),
+							Ext.create('CMDBuild.view.management.report.SingleReportPanel', {
+								cmControllerType: 'CMDBuild.controller.management.report.SingleReport',
+								cmName: 'singlereport'
+							}),
+							this.cardPanel = new CMDBuild.view.management.classes.CMModCard({
+								cmControllerType: CMDBuild.controller.management.classes.CMModCardController
+							}),
+							this.processPanel = new CMDBuild.view.management.workflow.CMModProcess({
+								cmControllerType: CMDBuild.controller.management.workflow.CMModWorkflowController
+							}),
+							this.dashboardPanel = new CMDBuild.view.management.dashboard.CMModDashboard({
+								cmControllerType: CMDBuild.controller.management.dashboard.CMModDashboardController
+							}),
+							new CMDBuild.view.management.utilities.CMModChangePassword(),
+							new CMDBuild.view.management.utilites.CMModBulkCardUpdate({
+								cmControllerType: CMDBuild.controller.management.utilities.CMModBulkUpdateController
+							}),
+							new CMDBuild.view.management.utilities.CMModImportCSV({
+								cmControllerType: CMDBuild.controller.management.utilities.CMModImportCSVController
+							}),
+							new CMDBuild.view.management.utilities.CMModExportCSV()
+						],
+						hideAccordions: CMDBuild.configuration.userInterface.get(CMDBuild.core.constants.Proxy.HIDE_SIDE_PANEL)
+					})
+				);
+
 				var params = {};
 				var reqBarrier = Ext.create('CMDBuild.core.RequestBarrier', {
 					callback: function() {
@@ -174,71 +256,6 @@
 						hideIfEmpty(reportAccordion);
 						hideIfEmpty(menuAccordion);
 						hideIfEmpty(classesAccordion);
-
-						_CMMainViewportController = new CMDBuild.controller.CMMainViewportController(
-							new CMDBuild.view.CMMainViewport({
-								cmAccordions: [ // Sorted
-									menuAccordion,
-									CMDBuild.configuration.userInterface.isDisabledModule('class') ? null : classesAccordion,
-									CMDBuild.configuration.userInterface.isDisabledModule('process') || !(CMDBuild.Config.workflow.enabled == 'true') ? null : processAccordion,
-									CMDBuild.configuration.userInterface.isDisabledModule(CMDBuild.core.constants.Proxy.DATA_VIEW) ? null :
-										Ext.create('CMDBuild.view.management.accordion.DataView', {
-											cmControllerType: 'CMDBuild.controller.management.accordion.DataView',
-											cmName: 'dataview'
-										})
-									,
-									CMDBuild.configuration.userInterface.isDisabledModule('dashboard') ? null : dashboardsAccordion,
-									CMDBuild.configuration.userInterface.isDisabledModule('report') ? null : reportAccordion,
-									CMDBuild.configuration.userInterface.isDisabledModule(CMDBuild.core.constants.Proxy.CUSTOM_PAGES) ? null :
-										Ext.create('CMDBuild.view.management.accordion.CustomPage', {
-											cmControllerType: 'CMDBuild.controller.common.AbstractAccordionController',
-											cmName: 'custompage'
-										})
-									,
-									Ext.create('CMDBuild.view.management.accordion.Utility', {
-										cmControllerType: 'CMDBuild.controller.common.AbstractAccordionController',
-										cmName: 'utility'
-									})
-								],
-								cmPanels: [
-									Ext.create('Ext.panel.Panel'),
-									Ext.create('CMDBuild.view.management.customPage.SinglePagePanel', {
-										cmControllerType: 'CMDBuild.controller.management.customPage.SinglePage',
-										cmName: 'custompage'
-									}),
-									Ext.create('CMDBuild.view.management.dataView.DataViewView', {
-										cmControllerType: 'CMDBuild.controller.management.dataView.DataView',
-										cmName: 'dataview'
-									}),
-									Ext.create('CMDBuild.view.management.report.ReportView', {
-										cmControllerType: 'CMDBuild.controller.management.report.Report',
-										cmName: 'report'
-									}),
-									Ext.create('CMDBuild.view.management.report.SingleReportPanel', {
-										cmControllerType: 'CMDBuild.controller.management.report.SingleReport',
-										cmName: 'singlereport'
-									}),
-									this.cardPanel = new CMDBuild.view.management.classes.CMModCard({
-										cmControllerType: CMDBuild.controller.management.classes.CMModCardController
-									}),
-									this.processPanel = new CMDBuild.view.management.workflow.CMModProcess({
-										cmControllerType: CMDBuild.controller.management.workflow.CMModWorkflowController
-									}),
-									this.dashboardPanel = new CMDBuild.view.management.dashboard.CMModDashboard({
-										cmControllerType: CMDBuild.controller.management.dashboard.CMModDashboardController
-									}),
-									new CMDBuild.view.management.utilities.CMModChangePassword(),
-									new CMDBuild.view.management.utilites.CMModBulkCardUpdate({
-										cmControllerType: CMDBuild.controller.management.utilities.CMModBulkUpdateController
-									}),
-									new CMDBuild.view.management.utilities.CMModImportCSV({
-										cmControllerType: CMDBuild.controller.management.utilities.CMModImportCSVController
-									}),
-									new CMDBuild.view.management.utilities.CMModExportCSV()
-								],
-								hideAccordions: CMDBuild.configuration.userInterface.get(CMDBuild.core.constants.Proxy.HIDE_SIDE_PANEL)
-							})
-						);
 
 						Ext.resumeLayouts(true); // Resume here the layouts operations
 

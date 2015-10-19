@@ -53,6 +53,8 @@
 							scope: this,
 							success: function(response, options, decodedResponse) {
 								/**
+								 * CMDBuild (aka Instance) configuration
+								 *
 								 * @deprecated (CMDBuild.configuration.instance)
 								 */
 								CMDBuild.Config.cmdbuild = decodedResponse.cmdbuild;
@@ -83,6 +85,7 @@
 				Ext.create('CMDBuild.core.configurationBuilders.Gis', { callback: configurationsRequestBarrier.getCallback() }); // CMDBuild GIS configuration
 				Ext.create('CMDBuild.core.configurationBuilders.Localization', { callback: configurationsRequestBarrier.getCallback() }); // CMDBuild localization configuration
 				Ext.create('CMDBuild.core.configurationBuilders.UserInterface', { callback: configurationsRequestBarrier.getCallback() }); // CMDBuild UserInterface configuration
+				Ext.create('CMDBuild.core.configurationBuilders.Workflow', { callback: configurationsRequestBarrier.getCallback() }); // CMDBuild Workflow configuration
 
 				configurationsRequestBarrier.start();
 			},
@@ -155,9 +158,7 @@
 							})
 						],
 						cmPanels: [
-							Ext.create('Ext.panel.Panel', {
-								cls: 'empty_panel x-panel-body'
-							}),
+							Ext.create('Ext.panel.Panel', { cls: 'empty_panel x-panel-body' }),
 							Ext.create('CMDBuild.view.administration.configuration.ConfigurationView', {
 								cmControllerType: 'CMDBuild.controller.administration.configuration.Configuration',
 								cmName: 'configuration'

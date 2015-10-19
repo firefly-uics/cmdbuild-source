@@ -1,6 +1,6 @@
 (function() {
 
-	Ext.define('CMDBuild.view.administration.configuration.AlfrescoPanel', {
+	Ext.define('CMDBuild.view.administration.configuration.DmsPanel', {
 		extend: 'Ext.form.Panel',
 
 		requires: ['CMDBuild.core.constants.Proxy'],
@@ -8,7 +8,7 @@
 		mixins: ['CMDBuild.view.common.PanelFunctions'],
 
 		/**
-		 * @cfg {CMDBuild.controller.administration.configuration.Alfresco}
+		 * @cfg {CMDBuild.controller.administration.configuration.Dms}
 		 */
 		delegate: undefined,
 

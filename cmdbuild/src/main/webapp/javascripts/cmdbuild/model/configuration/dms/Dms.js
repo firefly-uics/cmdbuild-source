@@ -5,7 +5,7 @@
 	/**
 	 * TODO: waiting for refactor (rename)
 	 */
-	Ext.define('CMDBuild.model.configuration.alfresco.Form', {
+	Ext.define('CMDBuild.model.configuration.dms.Dms', {
 		extend: 'Ext.data.Model',
 
 		fields: [
@@ -45,29 +45,18 @@
 				data[CMDBuild.core.constants.Proxy.USER] = data['credential.user'];
 
 				return data;
-			},
-
-			/**
-			 * Static function to convert from model's object to legacy one
-			 *
-			 * @returns {Object}
-			 */
-			convertToLegacy: function(data) {
-				return {
-					'category.lookup': data[CMDBuild.core.constants.Proxy.LOOKUP_CATEGORY],
-					'credential.password': data[CMDBuild.core.constants.Proxy.PASSWORD],
-					'credential.user': data[CMDBuild.core.constants.Proxy.USER],
-					'fileserver.port': data[CMDBuild.core.constants.Proxy.FILE_SERVER_PORT],
-					'fileserver.type': data[CMDBuild.core.constants.Proxy.FILE_SERVER_TYPE],
-					'fileserver.url': data[CMDBuild.core.constants.Proxy.FILE_SERVER_URL],
-					'repository.app': data[CMDBuild.core.constants.Proxy.REPOSITORY_APPLICATION],
-					'repository.fspath': data[CMDBuild.core.constants.Proxy.REPOSITORY_FILE_SERVER_PATH],
-					'repository.wspath': data[CMDBuild.core.constants.Proxy.REPOSITORY_WEB_SERVICE_PATH],
-					'server.url': data[CMDBuild.core.constants.Proxy.SERVER_URL],
-					delay: data[CMDBuild.core.constants.Proxy.DELAY],
-					enabled: data[CMDBuild.core.constants.Proxy.ENABLED]
-				};
 			}
+		},
+
+		/**
+		 * @param {Object} data
+		 *
+		 * @override
+		 */
+		constructor: function(data) {
+			data = CMDBuild.model.configuration.dms.Dms.convertFromLegacy(data);
+
+			this.callParent(arguments);
 		}
 	});
 

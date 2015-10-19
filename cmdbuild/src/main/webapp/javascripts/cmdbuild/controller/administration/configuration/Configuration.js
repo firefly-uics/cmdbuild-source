@@ -28,7 +28,7 @@
 
 				switch(node.get(CMDBuild.core.constants.Proxy.SECTION_HIERARCHY)[0]) {
 					case 'alfresco': {
-						this.sectionController = Ext.create('CMDBuild.controller.administration.configuration.Alfresco', { parentDelegate: this });
+						this.sectionController = Ext.create('CMDBuild.controller.administration.configuration.Dms', { parentDelegate: this });
 					} break;
 
 					case 'bim': {
