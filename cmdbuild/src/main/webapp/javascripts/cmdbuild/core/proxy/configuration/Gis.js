@@ -4,7 +4,6 @@
 
 		requires: [
 			'CMDBuild.core.cache.Cache',
-			'CMDBuild.core.configurationBuilders.Gis',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.Index'
 		],
@@ -21,7 +20,7 @@
 
 			parameters.success = Ext.Function.createInterceptor(parameters.success, function(response, options, decodedResponse) {
 				if (!CMDBuild.core.configurationBuilders.Gis.isValid())
-					CMDBuild.core.configurationBuilders.Gis.build(decodedResponse); // Refresh CMDBuild configuration object
+					CMDBuild.core.configurationBuilders.Gis.build(decodedResponse); // Refresh configuration object
 			}, this);
 
 			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.configuration.read });
@@ -37,7 +36,7 @@
 			parameters.params = Ext.isEmpty(parameters.params) ? {} : parameters.params;
 			parameters.params[CMDBuild.core.constants.Proxy.NAME] = 'gis';
 
-			CMDBuild.core.configurationBuilders.Gis.invalid(); // Invalidate CMDBuild configuration object
+			CMDBuild.core.configurationBuilders.Gis.invalid(); // Invalidate configuration object
 
 			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.configuration.update });
 

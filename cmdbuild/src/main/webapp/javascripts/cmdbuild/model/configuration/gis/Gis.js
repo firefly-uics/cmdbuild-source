@@ -9,6 +9,7 @@
 		extend: 'Ext.data.Model',
 
 		fields: [
+			{ name: CMDBuild.core.constants.Proxy.CARD_BROWSER_BY_DOMAIN_CONFIGURATION, type: 'auto', defaultValue: {} },
 			{ name: CMDBuild.core.constants.Proxy.CENTER_LATITUDE, type: 'int', defaultValue: 0 },
 			{ name: CMDBuild.core.constants.Proxy.CENTER_LONGITUDE, type: 'int', defaultValue: 0 },
 			{ name: CMDBuild.core.constants.Proxy.ENABLED, type: 'boolean', defaultValue: false },
@@ -16,7 +17,7 @@
 			{ name: CMDBuild.core.constants.Proxy.GOOGLE, type: 'auto' }, // {CMDBuild.model.configuration.gis.Google}
 			{ name: CMDBuild.core.constants.Proxy.OSM, type: 'auto' }, // {CMDBuild.model.configuration.gis.Osm}
 			{ name: CMDBuild.core.constants.Proxy.YAHOO, type: 'auto' }, // {CMDBuild.model.configuration.gis.Yahoo}
-			{ name: CMDBuild.core.constants.Proxy.ZOOM_INITIAL_LEVEL, type: 'int', defaultValue: 3 }
+			{ name: CMDBuild.core.constants.Proxy.ZOOM_INITIAL_LEVEL, type: 'int', defaultValue: 3 },
 		],
 
 		statics: {

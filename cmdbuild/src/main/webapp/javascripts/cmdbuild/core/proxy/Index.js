@@ -22,6 +22,10 @@
 			updateSortConfiguration: 'services/json/schema/modclass/saveordercriteria'
 		},
 
+		bim: {
+			readRootLayer: 'services/json/bim/rootclassname'
+		},
+
 		card: {
 			create: '',
 			read: 'services/json/management/modcard/getcard',
@@ -64,12 +68,7 @@
 			update: 'services/json/schema/setup/saveconfiguration',
 			remove: '',
 
-			readAll: 'services/json/schema/setup/getconfigurations',
-
-			// TODO: delete
-			getConfiguration: 'services/json/schema/setup/getconfiguration',
-			getConfigurations: 'services/json/schema/setup/getconfigurations',
-			saveConfiguration: 'services/json/schema/setup/saveconfiguration'
+			readAll: 'services/json/schema/setup/getconfigurations'
 		},
 
 		customPage: {
@@ -78,7 +77,7 @@
 			update: '',
 			remove: '',
 
-			readAll: 'services/json/custompages/readall', // TODO: unused
+			readAll: '',
 			readForCurrentUser: 'services/json/custompages/readforcurrentuser'
 		},
 
@@ -180,6 +179,10 @@
 
 		functions: {
 			getFunctions: 'services/json/schema/modclass/getfunctions'
+		},
+
+		gis: {
+			readTreeNavigation: 'services/json/gis/getgistreenavigation'
 		},
 
 		group: {

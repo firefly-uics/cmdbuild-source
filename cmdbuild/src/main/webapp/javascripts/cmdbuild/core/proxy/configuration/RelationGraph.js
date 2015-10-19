@@ -1,6 +1,6 @@
 (function() {
 
-	Ext.define('CMDBuild.core.proxy.configuration.Bim', {
+	Ext.define('CMDBuild.core.proxy.configuration.RelationGraph', {
 
 		requires: [
 			'CMDBuild.core.cache.Cache',
@@ -16,12 +16,7 @@
 		read: function(parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 			parameters.params = Ext.isEmpty(parameters.params) ? {} : parameters.params;
-			parameters.params[CMDBuild.core.constants.Proxy.NAME] = 'bim';
-
-			parameters.success = Ext.Function.createInterceptor(parameters.success, function(response, options, decodedResponse) {
-				if (!CMDBuild.core.configurationBuilders.Bim.isValid())
-					CMDBuild.core.configurationBuilders.Bim.build(decodedResponse); // Refresh configuration object
-			}, this);
+			parameters.params[CMDBuild.core.constants.Proxy.NAME] = 'graph';
 
 			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.configuration.read });
 
@@ -34,9 +29,7 @@
 		update: function(parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 			parameters.params = Ext.isEmpty(parameters.params) ? {} : parameters.params;
-			parameters.params[CMDBuild.core.constants.Proxy.NAME] = 'bim';
-
-			CMDBuild.core.configurationBuilders.Bim.invalid(); // Invalidate configuration object
+			parameters.params[CMDBuild.core.constants.Proxy.NAME] = 'graph';
 
 			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.configuration.update });
 

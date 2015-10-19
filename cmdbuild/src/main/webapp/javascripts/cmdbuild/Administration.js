@@ -20,11 +20,14 @@
 			'CMDBuild.core.configurations.Timeout',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.Classes',
-			'CMDBuild.core.proxy.Configuration',
+			'CMDBuild.core.proxy.configuration.Configuration',
+//			'CMDBuild.core.proxy.configuration.GeneralOptions',
+//			'CMDBuild.core.proxy.configuration.Gis',
+//			'CMDBuild.core.proxy.configuration.Workflow',
 			'CMDBuild.core.proxy.domain.Domain',
-			'CMDBuild.core.proxy.userAndGroup.group.Group',
 			'CMDBuild.core.proxy.lookup.Type',
-			'CMDBuild.core.proxy.report.Report'
+			'CMDBuild.core.proxy.report.Report',
+			'CMDBuild.core.proxy.userAndGroup.group.Group'
 		],
 
 		appFolder: './javascripts/cmdbuild',
@@ -45,22 +48,39 @@
 
 				var configurationsRequestBarrier = Ext.create('CMDBuild.core.RequestBarrier', {
 					callback: function() {
-						CMDBuild.core.proxy.Configuration.readMainConfiguration({
-							success: function(response, options, decoded) {
+						CMDBuild.core.proxy.configuration.Configuration.readAll({
+							loadMask: false,
+							scope: this,
+							success: function(response, options, decodedResponse) {
 								/**
-								 * @deprecated
+								 * @deprecated (CMDBuild.configuration.instance)
 								 */
-								CMDBuild.Config.cmdbuild = decoded.data;
+								CMDBuild.Config.cmdbuild = decodedResponse.cmdbuild;
 
-								CMDBuild.app.Administration.buildComponents();
-							}
+								/**
+								 * GIS configuration
+								 *
+								 * @deprecated (CMDBuild.configuration.gis)
+								 */
+								CMDBuild.Config.gis = decodedResponse.gis;
+								CMDBuild.Config.gis.enabled = ('true' == CMDBuild.Config.gis.enabled);
+
+								/**
+								 * Workflow configuration
+								 *
+								 * @deprecated (CMDBuild.configuration.workflow)
+								 */
+								CMDBuild.Config.workflow = decodedResponse.workflow;
+								CMDBuild.Config.workflow.enabled = ('true' == CMDBuild.Config.workflow.enabled);
+							},
+							callback: CMDBuild.app.Administration.buildComponents
 						});
 					}
 				});
 
+				Ext.create('CMDBuild.core.configurationBuilders.Instance', { callback: configurationsRequestBarrier.getCallback() }); // CMDBuild instance configuration
 				Ext.create('CMDBuild.core.configurationBuilders.Bim', { callback: configurationsRequestBarrier.getCallback() }); // CMDBuild BIM configuration
 				Ext.create('CMDBuild.core.configurationBuilders.Gis', { callback: configurationsRequestBarrier.getCallback() }); // CMDBuild GIS configuration
-				Ext.create('CMDBuild.core.configurationBuilders.Instance', { callback: configurationsRequestBarrier.getCallback() }); // CMDBuild instance configuration
 				Ext.create('CMDBuild.core.configurationBuilders.Localization', { callback: configurationsRequestBarrier.getCallback() }); // CMDBuild localization configuration
 				Ext.create('CMDBuild.core.configurationBuilders.UserInterface', { callback: configurationsRequestBarrier.getCallback() }); // CMDBuild UserInterface configuration
 
@@ -287,20 +307,6 @@
 					});
 
 				/**
-				 * GIS
-				 *
-				 * @deprecated
-				 */
-				CMDBuild.core.proxy.Configuration.readGisConfiguration({
-					success: function(response, options, decodedResponse) {
-						CMDBuild.Config.gis = decodedResponse.data;
-						CMDBuild.Config.gis.enabled = ('true' == CMDBuild.Config.gis.enabled);
-					},
-
-					callback: reqBarrier.getCallback()
-				});
-
-				/**
 				 * Groups
 				 *
 				 * Cache build call
@@ -324,22 +330,12 @@
 				});
 
 				/**
-				 * Workflow configuration
-				 */
-				CMDBuild.core.proxy.Configuration.readWFConfiguration({
-					success: function(response, options, decoded) {
-						CMDBuild.Config.workflow = decoded.data;
-						CMDBuild.Config.workflow.enabled = ('true' == CMDBuild.Config.workflow.enabled);
-					},
-					callback: reqBarrier.getCallback()
-				});
-
-				/**
 				 * Navigation trees
 				 */
 				_CMCache.listNavigationTrees({
+					loadMask: false,
+					scope: this,
 					success: function(response, options, decoded) {
-
 						if (!CMDBuild.configuration.userInterface.get(CMDBuild.core.constants.Proxy.CLOUD_ADMIN)) {
 							navigationTreesAccordion.updateStore();
 						}
@@ -351,6 +347,8 @@
 				 * Dashboards
 				 */
 				CMDBuild.ServiceProxy.Dashboard.fullList({
+					loadMask: false,
+					scope: this,
 					success: function(response, options, decoded) {
 						_CMCache.addDashboards(decoded.response.dashboards);
 						_CMCache.setAvailableDataSources(decoded.response.dataSources);

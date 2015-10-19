@@ -18,9 +18,8 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
-			'onConfigurationGisAbortButtonClick',
 			'onConfigurationGisSaveButtonClick',
-			'onConfigurationGisTabShow'
+			'onConfigurationGisTabShow = onConfigurationGisAbortButtonClick'
 		],
 
 		/**
@@ -38,10 +37,6 @@
 			this.callParent(arguments);
 
 			this.view = Ext.create('CMDBuild.view.administration.configuration.GisPanel', { delegate: this });
-		},
-
-		onConfigurationGisAbortButtonClick: function() {
-			this.onConfigurationGisTabShow();
 		},
 
 		onConfigurationGisSaveButtonClick: function() {
