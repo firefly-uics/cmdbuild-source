@@ -18,9 +18,8 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
-			'onConfigurationBimAbortButtonClick',
 			'onConfigurationBimSaveButtonClick',
-			'onConfigurationBimTabShow'
+			'onConfigurationBimTabShow = onConfigurationBimAbortButtonClick'
 		],
 
 		/**
@@ -38,10 +37,6 @@
 			this.callParent(arguments);
 
 			this.view = Ext.create('CMDBuild.view.administration.configuration.BimPanel', { delegate: this });
-		},
-
-		onConfigurationBimAbortButtonClick: function() {
-			this.onConfigurationBimTabShow();
 		},
 
 		onConfigurationBimSaveButtonClick: function() {

@@ -4,7 +4,8 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.Configuration'
+			'CMDBuild.core.proxy.Bim',
+			'CMDBuild.core.proxy.configuration.Bim'
 		],
 
 		/**
@@ -17,12 +18,23 @@
 			 * Rebuild configuration object
 			 *
 			 * @param {Object} dataObject
+			 * @param {Function} callback
 			 */
-			build: function(dataObject) {
+			build: function(dataObject, callback) {
+				callback = callback || Ext.emptyFn;
+
 				if (!Ext.isEmpty(dataObject[CMDBuild.core.constants.Proxy.DATA]))
 					dataObject = dataObject[CMDBuild.core.constants.Proxy.DATA];
 
-				CMDBuild.configuration[CMDBuild.core.constants.Proxy.BIM] = Ext.create('CMDBuild.model.configuration.bim.Bim', dataObject);
+				CMDBuild.core.proxy.Bim.readRootLayer({
+					loadMask: false,
+					success: function(response, options, decodedResponse) {
+						dataObject[CMDBuild.core.constants.Proxy.ROOT_CLASS] = decodedResponse[CMDBuild.core.constants.Proxy.ROOT];
+
+						CMDBuild.configuration[CMDBuild.core.constants.Proxy.BIM] = Ext.create('CMDBuild.model.configuration.bim.Bim', dataObject);
+					},
+					callback: callback
+				});
 			},
 
 			/**
@@ -52,14 +64,14 @@
 
 			CMDBuild.configuration[CMDBuild.core.constants.Proxy.BIM] = Ext.create('CMDBuild.model.configuration.bim.Bim'); // BIM configuration object
 
-			CMDBuild.core.proxy.Configuration.readBimConfiguration({
+			CMDBuild.core.proxy.configuration.Bim.read({
+				loadMask: false,
 				scope: this,
 				success: function(response, options, decodedResponse) {
 					decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.DATA];
 
-					CMDBuild.core.configurationBuilders.Bim.build(decodedResponse);
-				},
-				callback: this.callback
+					CMDBuild.core.configurationBuilders.Bim.build(decodedResponse, this.callback);
+				}
 			});
 		}
 	});

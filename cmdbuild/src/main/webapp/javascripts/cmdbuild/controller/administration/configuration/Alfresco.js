@@ -3,7 +3,11 @@
 	Ext.define('CMDBuild.controller.administration.configuration.Alfresco', {
 		extend: 'CMDBuild.controller.common.AbstractController',
 
-		requires: ['CMDBuild.core.constants.Proxy'],
+		requires: [
+			'CMDBuild.core.constants.Proxy',
+			'CMDBuild.core.proxy.configuration.Alfresco',
+			'CMDBuild.model.configuration.alfresco.Form'
+		],
 
 		/**
 		 * @cfg {CMDBuild.controller.administration.configuration.Configuration}
@@ -15,18 +19,8 @@
 		 */
 		cmfgCatchedFunctions: [
 			'onConfigurationAlfrescoSaveButtonClick',
-			'onConfigurationAlfrescoAbortButtonClick'
+			'onConfigurationAlfrescoTabShow = onConfigurationAlfrescoAbortButtonClick'
 		],
-
-		/**
-		 * Proxy parameters
-		 *
-		 * @cfg {Object}
-		 */
-		params: {
-			fileName: 'dms',
-			view: undefined
-		},
 
 		/**
 		 * @property {CMDBuild.view.administration.configuration.AlfrescoPanel}
@@ -42,21 +36,30 @@
 		constructor: function(configObject) {
 			this.callParent(arguments);
 
-			this.view = Ext.create('CMDBuild.view.administration.configuration.AlfrescoPanel', {
-				delegate: this
-			});
-
-			this.params[CMDBuild.core.constants.Proxy.VIEW] = this.view;
-
-			this.cmfg('onConfigurationRead', this.params);
-		},
-
-		onConfigurationAlfrescoAbortButtonClick: function() {
-			this.cmfg('onConfigurationRead', this.params);
+			this.view = Ext.create('CMDBuild.view.administration.configuration.AlfrescoPanel', { delegate: this });
 		},
 
 		onConfigurationAlfrescoSaveButtonClick: function() {
-			this.cmfg('onConfigurationSave', this.params);
+			CMDBuild.core.proxy.configuration.Alfresco.update({
+				params: CMDBuild.model.configuration.alfresco.Form.convertToLegacy(this.view.getData(true)),
+				scope: this,
+				success: function(response, options, decodedResponse) {
+					this.onConfigurationAlfrescoTabShow();
+
+					CMDBuild.core.Message.success();
+				}
+			});
+		},
+
+		onConfigurationAlfrescoTabShow: function() {
+			CMDBuild.core.proxy.configuration.Alfresco.read({
+				scope: this,
+				success: function(response, options, decodedResponse) {
+					decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.DATA];
+
+					this.view.loadRecord(Ext.create('CMDBuild.model.configuration.alfresco.Form', CMDBuild.model.configuration.alfresco.Form.convertFromLegacy(decodedResponse)));
+				}
+			});
 		}
 	});
 

@@ -5,8 +5,10 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.Configuration'
+			'CMDBuild.core.proxy.configuration.GeneralOptions'
 		],
+
+		mixins: ['CMDBuild.view.common.PanelFunctions'],
 
 		/**
 		 * @cfg {CMDBuild.controller.administration.configuration.GeneralOptions}
@@ -77,7 +79,7 @@
 
 						items: [
 							this.instanceNameField = Ext.create('CMDBuild.view.common.field.translatable.Text', {
-								name: 'instance_name',
+								name: CMDBuild.core.constants.Proxy.INSTANCE_NAME,
 								fieldLabel: CMDBuild.Translation.instanceName,
 								labelAlign: 'left',
 								labelWidth: CMDBuild.CFG_LABEL_WIDTH,
@@ -90,37 +92,38 @@
 									field: CMDBuild.core.constants.Proxy.INSTANCE_NAME
 								}
 							}),
-							Ext.create('CMDBuild.field.ErasableCombo', {
-								name: 'startingclass',
+							Ext.create('CMDBuild.view.common.field.comboBox.Erasable', {
+								name: CMDBuild.core.constants.Proxy.STARTING_CLASS,
 								fieldLabel: CMDBuild.Translation.defaultClass,
 								valueField: CMDBuild.core.constants.Proxy.ID,
-								displayField: CMDBuild.core.constants.Proxy.DESCRIPTION,
+								displayField: CMDBuild.core.constants.Proxy.TEXT,
 								editable: false,
+								forceSelection: true,
 
-								store: CMDBuild.core.proxy.Configuration.getStartingClassStore(),
+								store: CMDBuild.core.proxy.configuration.GeneralOptions.getStartingClassStore(),
 								queryMode: 'local'
 							}),
 							{
 								xtype: 'numberfield',
-								name: 'rowlimit',
+								name: CMDBuild.core.constants.Proxy.ROW_LIMIT,
 								fieldLabel: CMDBuild.Translation.rowLimit,
 								allowBlank: false
 							},
 							{
 								xtype: 'numberfield',
-								name: 'referencecombolimit',
+								name: CMDBuild.core.constants.Proxy.REFERENCE_COMBO_STORE_LIMIT,
 								fieldLabel: CMDBuild.Translation.referenceComboLimit,
 								allowBlank: false
 							},
 							{
 								xtype: 'numberfield',
-								name: 'relationlimit',
+								name: CMDBuild.core.constants.Proxy.RELATION_LIMIT,
 								fieldLabel: CMDBuild.Translation.relationLimit,
 								allowBlank: false
 							},
 							{
 								xtype: 'numberfield',
-								name: 'grid_card_ratio',
+								name: CMDBuild.core.constants.Proxy.CARD_FORM_RATIO,
 								fieldLabel: CMDBuild.Translation.cardPanelHeight,
 								allowBlank: false,
 								maxValue: 100,
@@ -128,7 +131,7 @@
 							},
 							{
 								xtype: 'combobox',
-								name: 'card_tab_position',
+								name: CMDBuild.core.constants.Proxy.CARD_TABS_POSITION,
 								fieldLabel: CMDBuild.Translation.tabPositioInCardPanel,
 								allowBlank: false,
 								displayField: CMDBuild.core.constants.Proxy.DESCRIPTION,
@@ -137,21 +140,15 @@
 								store: Ext.create('Ext.data.Store', {
 									fields: [CMDBuild.core.constants.Proxy.VALUE, CMDBuild.core.constants.Proxy.DESCRIPTION],
 									data: [
-										{
-											value: 'top',
-											description: CMDBuild.Translation.top
-										},
-										{
-											value: 'bottom',
-											description: CMDBuild.Translation.bottom
-										}
+										{ value: 'top', description: CMDBuild.Translation.top },
+										{ value: 'bottom', description: CMDBuild.Translation.bottom }
 									]
 								}),
 								queryMode: 'local'
 							},
 							{
 								xtype: 'numberfield',
-								name: 'session.timeout',
+								name: CMDBuild.core.constants.Proxy.SESSION_TIMEOUT,
 								fieldLabel: CMDBuild.Translation.sessionTimeout,
 								allowBlank: true,
 								minValue: 0
@@ -169,14 +166,14 @@
 						items: [
 							{
 								xtype: 'numberfield',
-								name: 'popuppercentageheight',
+								name: CMDBuild.core.constants.Proxy.POPUP_HEIGHT_PERCENTAGE,
 								fieldLabel: CMDBuild.Translation.popupPercentageHeight,
 								maxValue: 100,
 								allowBlank: false
 							},
 							{
 								xtype: 'numberfield',
-								name: 'popuppercentagewidth',
+								name: CMDBuild.core.constants.Proxy.POPUP_WIDTH_PERCENTAGE,
 								fieldLabel: CMDBuild.Translation.popupPercentageWidth,
 								maxValue: 100,
 								allowBlank: false
@@ -193,18 +190,22 @@
 
 						items: [
 							{
-								xtype: 'xcheckbox',
-								name: 'lockcardenabled',
-								fieldLabel: CMDBuild.Translation.enabled
+								xtype: 'checkbox',
+								name: CMDBuild.core.constants.Proxy.ENABLE_CARD_LOCK,
+								fieldLabel: CMDBuild.Translation.enabled,
+								inputValue: true,
+								uncheckedValue: false
 							},
 							{
-								xtype: 'xcheckbox',
-								name: 'lockcarduservisible',
-								fieldLabel: CMDBuild.Translation.showLockerUserName
+								xtype: 'checkbox',
+								name: CMDBuild.core.constants.Proxy.DISPLAY_CARD_LOCKER_NAME,
+								fieldLabel: CMDBuild.Translation.showLockerUserName,
+								inputValue: true,
+								uncheckedValue: false
 							},
 							{
 								xtype: 'numberfield',
-								name: 'lockcardtimeout',
+								name: CMDBuild.core.constants.Proxy.CARD_LOCK_TIMEOUT,
 								fieldLabel: CMDBuild.Translation.lockTimeout
 							}
 						]
@@ -216,16 +217,9 @@
 		},
 
 		listeners: {
-			add: function(panel, component, index, eOpts) {
-				panel.instanceNameField.translationsRead(); // Custom function call to read translations data
+			show: function(panel, eOpts) {
+				this.delegate.cmfg('onConfigurationGeneralOptionsTabShow');
 			}
-		},
-
-		/**
-		 * @param {Object} saveDataObject
-		 */
-		afterSubmit: function(saveDataObject) {
-			Ext.get('instance_name').dom.innerHTML = saveDataObject['instance_name'];
 		}
 	});
 

@@ -63,7 +63,6 @@
 
 		<script type="text/javascript" src="javascripts/cmdbuild/form/CustomVTypes.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/view/common/CMFormFuncions.js"></script>
-		<script type="text/javascript" src="javascripts/cmdbuild/model/CMSetupModels.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/setup/Step1.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/setup/Step2.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/setup/Step3.js"></script>

@@ -14,7 +14,6 @@
 <script type="text/javascript" src="javascripts/cmdbuild/view/management/common/graph/GraphWindow.js"></script>
 
 <!-- MODELS -->
-<script type="text/javascript" src="javascripts/cmdbuild/model/CMSetupModels.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/model/CMDomainModels.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/model/widget/CMWidgetReaders.js"></script>
 

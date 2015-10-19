@@ -29,7 +29,7 @@
 			'CMDBuild.core.configurations.Timeout',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.Classes',
-			'CMDBuild.core.proxy.Configuration',
+			'CMDBuild.core.proxy.configuration.Configuration',
 			'CMDBuild.core.proxy.dataView.DataView',
 			'CMDBuild.core.proxy.domain.Domain',
 			'CMDBuild.core.proxy.userAndGroup.group.Group',
@@ -90,7 +90,9 @@
 
 				var configurationsRequestBarrier = Ext.create('CMDBuild.core.RequestBarrier', {
 					callback: function() {
-						CMDBuild.core.proxy.Configuration.readAll({
+						CMDBuild.core.proxy.configuration.Configuration.readAll({
+							loadMask: false,
+							scope: this,
 							success: function(response, options, decoded) {
 								/**
 								 * @deprecated
@@ -101,7 +103,11 @@
 								CMDBuild.Config.dms = decoded.dms;
 								CMDBuild.Config.dms.enabled = ('true' == CMDBuild.Config.dms.enabled);
 
-								// Bim
+								/**
+								 * BIM configuration
+								 *
+								 * @deprecated (CMDBuild.configuration.bim)
+								 */
 								CMDBuild.Config.bim = decoded.bim;
 								CMDBuild.Config.bim.enabled = ('true' == CMDBuild.Config.bim.enabled);
 
@@ -111,11 +117,19 @@
 								// Workflow
 								CMDBuild.Config.workflow = decoded.workflow;
 
-								// Gis
+								/**
+								 * GIS configuration
+								 *
+								 * @deprecated (CMDBuild.configuration.gis)
+								 */
 								CMDBuild.Config.gis = decoded.gis;
 								CMDBuild.Config.gis.enabled = ('true' == CMDBuild.Config.gis.enabled);
 
-								// Gis and bim extra configuration
+								/**
+								 * GIS and BIM extra configuration. Now this configurations are inside relative configuration objects
+								 *
+								 * @deprecated (CMDBuild.configuration.gis and CMDBuild.configuration.bim)
+								 */
 								CMDBuild.Config.cmdbuild.cardBrowserByDomainConfiguration = {};
 								CMDBuild.ServiceProxy.gis.getGisTreeNavigation({
 									success: function(operation, config, response) {
@@ -139,9 +153,9 @@
 					}
 				});
 
+				Ext.create('CMDBuild.core.configurationBuilders.Instance', { callback: configurationsRequestBarrier.getCallback() }); // CMDBuild instance configuration
 				Ext.create('CMDBuild.core.configurationBuilders.Bim', { callback: configurationsRequestBarrier.getCallback() }); // CMDBuild BIM configuration
 				Ext.create('CMDBuild.core.configurationBuilders.Gis', { callback: configurationsRequestBarrier.getCallback() }); // CMDBuild GIS configuration
-				Ext.create('CMDBuild.core.configurationBuilders.Instance', { callback: configurationsRequestBarrier.getCallback() }); // CMDBuild instance configuration
 				Ext.create('CMDBuild.core.configurationBuilders.Localization', { callback: configurationsRequestBarrier.getCallback() }); // CMDBuild localization configuration
 				Ext.create('CMDBuild.core.configurationBuilders.UserInterface', { callback: configurationsRequestBarrier.getCallback() }); // CMDBuild UserInterface configuration
 
@@ -319,6 +333,7 @@
 				 * Reports
 				 */
 				CMDBuild.core.proxy.report.Report.getTypesTree({
+					loadMask: false,
 					scope: this,
 					success: function(response, options, decodedResponse) {
 						_CMCache.addReports(decodedResponse);
@@ -329,6 +344,7 @@
 				});
 
 				CMDBuild.ServiceProxy.Dashboard.fullList({
+					loadMask: false,
 					success : function(response, options, decoded) {
 						_CMCache.addDashboards(decoded.response.dashboards);
 						_CMCache.setAvailableDataSources(decoded.response.dataSources);

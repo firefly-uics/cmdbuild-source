@@ -5,6 +5,8 @@
 
 		requires: ['CMDBuild.core.constants.Proxy'],
 
+		mixins: ['CMDBuild.view.common.PanelFunctions'],
+
 		/**
 		 * @cfg {CMDBuild.controller.administration.configuration.RelationGraph}
 		 */
@@ -60,9 +62,11 @@
 				],
 				items: [
 					{
-						xtype: 'xcheckbox',
+						xtype: 'checkbox',
 						name: CMDBuild.core.constants.Proxy.ENABLED,
-						fieldLabel: CMDBuild.Translation.enabled
+						fieldLabel: CMDBuild.Translation.enabled,
+						inputValue: true,
+						uncheckedValue: false
 					},
 					{
 						xtype: 'numberfield',
@@ -92,6 +96,12 @@
 			});
 
 			this.callParent(arguments);
+		},
+
+		listeners: {
+			show: function(panel, eOpts) {
+				this.delegate.cmfg('onConfigurationRelationGraphTabShow');
+			}
 		}
 	});
 

@@ -5,6 +5,8 @@
 
 		requires: ['CMDBuild.core.constants.Proxy'],
 
+		mixins: ['CMDBuild.view.common.PanelFunctions'],
+
 		/**
 		 * @cfg {CMDBuild.controller.administration.configuration.Alfresco}
 		 */
@@ -70,12 +72,14 @@
 
 						items: [
 							{
-								xtype: 'xcheckbox',
+								xtype: 'checkbox',
 								name: CMDBuild.core.constants.Proxy.ENABLED,
-								fieldLabel: CMDBuild.Translation.enabled
+								fieldLabel: CMDBuild.Translation.enabled,
+								inputValue: true,
+								uncheckedValue: false
 							},
 							{
-								name: 'server.url',
+								name: CMDBuild.core.constants.Proxy.SERVER_URL,
 								fieldLabel: CMDBuild.Translation.host,
 								maxWidth: CMDBuild.CFG_BIG_FIELD_WIDTH,
 								allowBlank: false
@@ -99,20 +103,20 @@
 
 						items: [
 							{
-								name: 'fileserver.type',
+								name: CMDBuild.core.constants.Proxy.FILE_SERVER_TYPE,
 								fieldLabel: CMDBuild.Translation.type,
 								allowBlank: false,
 								disabled: true
 							},
 							{
-								name: 'fileserver.url',
+								name: CMDBuild.core.constants.Proxy.FILE_SERVER_URL,
 								fieldLabel: CMDBuild.Translation.host,
 								maxWidth: CMDBuild.CFG_BIG_FIELD_WIDTH,
 								allowBlank: false
 							},
 							{
 								xtype: 'numberfield',
-								name: 'fileserver.port',
+								name: CMDBuild.core.constants.Proxy.FILE_SERVER_PORT,
 								fieldLabel: CMDBuild.Translation.port,
 								allowBlank: false
 							}
@@ -129,19 +133,19 @@
 
 						items: [
 							{
-								name: 'repository.fspath',
+								name: CMDBuild.core.constants.Proxy.REPOSITORY_FILE_SERVER_PATH,
 								fieldLabel: CMDBuild.Translation.fileServerPath,
 								maxWidth: CMDBuild.CFG_BIG_FIELD_WIDTH,
 								allowBlank: false
 							},
 							{
-								name: 'repository.wspath',
+								name: CMDBuild.core.constants.Proxy.REPOSITORY_WEB_SERVICE_PATH,
 								fieldLabel: CMDBuild.Translation.webServicePath,
 								maxWidth: CMDBuild.CFG_BIG_FIELD_WIDTH,
 								allowBlank: false
 							},
 							{
-								name: 'repository.app',
+								name: CMDBuild.core.constants.Proxy.REPOSITORY_APPLICATION,
 								fieldLabel: CMDBuild.Translation.application,
 								allowBlank: false
 							}
@@ -158,18 +162,18 @@
 
 						items: [
 							{
-								name: 'credential.user',
+								name: CMDBuild.core.constants.Proxy.USER,
 								fieldLabel: CMDBuild.Translation.username,
 								allowBlank: false
 							},
 							{
-								name: 'credential.password',
+								name: CMDBuild.core.constants.Proxy.PASSWORD,
 								fieldLabel: CMDBuild.Translation.password,
-								inputType: 'password',
-								allowBlank: false
+								allowBlank: false,
+								inputType: 'password'
 							},
 							Ext.create('Ext.form.field.ComboBox', {
-								name: 'category.lookup',
+								name: CMDBuild.core.constants.Proxy.LOOKUP_CATEGORY,
 								fieldLabel: CMDBuild.Translation.cmdbuildCategory,
 								valueField: CMDBuild.core.constants.Proxy.TYPE,
 								displayField: CMDBuild.core.constants.Proxy.TYPE,
@@ -184,6 +188,12 @@
 			});
 
 			this.callParent(arguments);
+		},
+
+		listeners: {
+			show: function(panel, eOpts) {
+				this.delegate.cmfg('onConfigurationAlfrescoTabShow');
+			}
 		}
 	});
 

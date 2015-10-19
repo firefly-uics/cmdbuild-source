@@ -7,7 +7,7 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.Configuration',
+			'CMDBuild.core.proxy.configuration.Alfresco',
 			'CMDBuild.core.proxy.lookup.Lookup'
 		],
 
@@ -78,7 +78,7 @@
 			var me = this;
 
 			if (this.view.attachmentsCombo.store.getCount() == 0)
-				CMDBuild.core.proxy.Configuration.read({
+				CMDBuild.core.proxy.configuration.Alfresco.read({
 					success: function(response) {
 						var decodedJson = Ext.JSON.decode(response.responseText);
 						var params = {};
@@ -88,7 +88,7 @@
 
 						me.view.attachmentsCombo.getStore().load({ params: params });
 					}
-				}, 'dms');
+				});
 		},
 
 		// SETters functions

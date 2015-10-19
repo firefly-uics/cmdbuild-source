@@ -5,7 +5,7 @@
 	/**
 	 * TODO: waiting for refactor (rename)
 	 */
-	Ext.define('CMDBuild.model.configuration.Instance', {
+	Ext.define('CMDBuild.model.configuration.instance.Instance', {
 		extend: 'Ext.data.Model',
 
 		fields: [
@@ -21,7 +21,7 @@
 			{ name: CMDBuild.core.constants.Proxy.RELATION_LIMIT, type: 'int', defaultValue: 20 },
 			{ name: CMDBuild.core.constants.Proxy.ROW_LIMIT, type: 'int', defaultValue: 20 }, // Rows per page to display in card's grid
 			{ name: CMDBuild.core.constants.Proxy.SESSION_TIMEOUT, type: 'int', useNull: true },
-			{ name: CMDBuild.core.constants.Proxy.STARTING_CLASS, type: 'string' } // Default selected class on UI display
+			{ name: CMDBuild.core.constants.Proxy.STARTING_CLASS, type: 'int', useNull: true } // Default selected class on UI display
 		],
 
 		statics: {
@@ -58,7 +58,7 @@
 		 * @override
 		 */
 		constructor: function(data) {
-			data = CMDBuild.model.configuration.Instance.convertFromLegacy({});
+			data = CMDBuild.model.configuration.instance.Instance.convertFromLegacy(data);
 
 			this.callParent(arguments);
 		}

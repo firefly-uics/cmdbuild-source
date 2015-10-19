@@ -5,7 +5,6 @@
 
 		requires: [
 			'CMDBuild.core.cache.Cache',
-			'CMDBuild.core.proxy.CMProxy',
 			'CMDBuild.core.proxy.Index'
 		],
 

@@ -3,10 +3,7 @@
 	Ext.define('CMDBuild.controller.administration.configuration.Configuration', {
 		extend: 'CMDBuild.controller.common.AbstractBasePanelController',
 
-		requires: [
-			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.Configuration'
-		],
+		requires: ['CMDBuild.core.constants.Proxy'],
 
 		/**
 		 * @cfg {Object}
@@ -14,87 +11,9 @@
 		delegate: undefined,
 
 		/**
-		 * @cfg {Array}
-		 */
-		cmfgCatchedFunctions: [
-			'onConfigurationRead',
-			'onConfigurationSave'
-		],
-
-		/**
 		 * @property {CMDBuild.view.administration.configuration.ConfigurationView}
 		 */
 		view: undefined,
-
-		/**
-		 * @param {Object} parameters
-		 * @param {String} parameters.fileName
-		 * @param {Mixed} parameters.view
-		 */
-		onConfigurationRead: function(parameters) {
-			if (
-				!Ext.isEmpty(parameters)
-				&& !Ext.isEmpty(parameters[CMDBuild.core.constants.Proxy.FILE_NAME])
-				&& !Ext.isEmpty(parameters[CMDBuild.core.constants.Proxy.VIEW])
-			) {
-				var fileName = parameters[CMDBuild.core.constants.Proxy.FILE_NAME];
-				var view = parameters[CMDBuild.core.constants.Proxy.VIEW];
-
-				CMDBuild.core.proxy.Configuration.read({
-					scope: this,
-					loadMask: true,
-					success: function(result, options, decodedResult){
-						var decodedResult = decodedResult[CMDBuild.core.constants.Proxy.DATA];
-
-						// FIX bug with Firefox that breaks UI on fast configuration page switch
-						if (view.isVisible())
-							view.getForm().setValues(decodedResult);
-
-						if (Ext.isFunction(view.afterSubmit))
-							view.afterSubmit(decodedResult);
-					}
-				}, fileName);
-			}
-		},
-
-		/**
-		 * @param {Object} parameters
-		 * @param {String} parameters.fileName
-		 * @param {Mixed} parameters.view
-		 */
-		onConfigurationSave: function(parameters) {
-			if (
-				!Ext.isEmpty(parameters)
-				&& !Ext.isEmpty(parameters[CMDBuild.core.constants.Proxy.FILE_NAME])
-				&& !Ext.isEmpty(parameters[CMDBuild.core.constants.Proxy.VIEW])
-			) {
-				var fileName = parameters[CMDBuild.core.constants.Proxy.FILE_NAME];
-				var view = parameters[CMDBuild.core.constants.Proxy.VIEW];
-
-				CMDBuild.core.proxy.Configuration.read({
-					scope: this,
-					loadMask: true,
-					success: function(result, options, decodedResult){
-						var decodedResult = decodedResult.data;
-
-						Ext.apply(decodedResult, view.getValues());
-
-						CMDBuild.core.proxy.Configuration.save({
-							scope: this,
-							params: decodedResult,
-							loadMask: true,
-							success: function(result, options, decodedResult) {
-								this.onConfigurationRead(fileName, view);
-
-								CMDBuild.view.common.field.translatable.Utils.commit(view);
-
-								CMDBuild.core.Message.success();
-							}
-						}, fileName);
-					}
-				}, fileName);
-			}
-		},
 
 		/**
 		 * Setup view items on accordion click

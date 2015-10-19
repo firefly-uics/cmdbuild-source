@@ -22,6 +22,7 @@
 			Ext.ns('CMDBuild.configuration');
 
 			CMDBuild.core.proxy.userAndGroup.group.Group.getUIConfiguration({
+				loadMask: false,
 				scope: this,
 				success: function(response, options, decodedResponse) {
 					decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.RESPONSE];

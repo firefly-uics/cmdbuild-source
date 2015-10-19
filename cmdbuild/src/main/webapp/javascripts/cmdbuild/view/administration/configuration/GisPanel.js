@@ -62,9 +62,11 @@
 				],
 				items: [
 					{
-						xtype: 'xcheckbox',
+						xtype: 'checkbox',
 						name: CMDBuild.core.constants.Proxy.ENABLED,
-						fieldLabel: CMDBuild.Translation.enable
+						fieldLabel: CMDBuild.Translation.enable,
+						inputValue: true,
+						uncheckedValue: false
 					},
 					{
 						xtype: 'numberfield',
