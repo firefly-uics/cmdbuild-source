@@ -1,6 +1,6 @@
 (function() {
 
-	Ext.define('CMDBuild.view.management.report.GridPanel', {
+	Ext.define('CMDBuild.view.management.report.custom.GridPanel', {
 		extend: 'Ext.grid.Panel',
 
 		requires: [
@@ -9,7 +9,7 @@
 		],
 
 		/**
-		 * @cfg {CMDBuild.controller.management.report.Report}
+		 * @cfg {CMDBuild.controller.management.report.Custom}
 		 */
 		delegate: undefined,
 
@@ -36,13 +36,11 @@
 				columns: [
 					{
 						text: CMDBuild.Translation.name,
-						sortable: true,
 						dataIndex: CMDBuild.core.constants.Proxy.TITLE,
 						flex: 1
 					},
 					{
 						text: CMDBuild.Translation.descriptionLabel,
-						sortable: true,
 						dataIndex: CMDBuild.core.constants.Proxy.DESCRIPTION,
 						flex: 1
 					},
@@ -62,7 +60,7 @@
 								scope: this,
 
 								handler: function(grid, rowIndex, colIndex, node, e, record, rowNode) {
-									this.delegate.cmfg('onReportGenerateButtonClick', {
+									this.delegate.cmfg('onReportCustomGenerateButtonClick', {
 										record: record,
 										type: CMDBuild.core.constants.Proxy.PDF
 									});
@@ -74,7 +72,7 @@
 								scope: this,
 
 								handler: function(grid, rowIndex, colIndex, node, e, record, rowNode) {
-									this.delegate.cmfg('onReportGenerateButtonClick', {
+									this.delegate.cmfg('onReportCustomGenerateButtonClick', {
 										record: record,
 										type: CMDBuild.core.constants.Proxy.ODT
 									});
@@ -86,7 +84,7 @@
 								scope: this,
 
 								handler: function(grid, rowIndex, colIndex, node, e, record, rowNode) {
-									this.delegate.cmfg('onReportGenerateButtonClick', {
+									this.delegate.cmfg('onReportCustomGenerateButtonClick', {
 										record: record,
 										type: CMDBuild.core.constants.Proxy.RTF
 									});
@@ -98,7 +96,7 @@
 								scope: this,
 
 								handler: function(grid, rowIndex, colIndex, node, e, record, rowNode) {
-									this.delegate.cmfg('onReportGenerateButtonClick', {
+									this.delegate.cmfg('onReportCustomGenerateButtonClick', {
 										record: record,
 										type: CMDBuild.core.constants.Proxy.CSV
 									});
@@ -110,6 +108,12 @@
 			});
 
 			this.callParent(arguments);
+		},
+
+		listeners: {
+			beforeselect: function(grid, record, index, eOpts) {
+				return false; // Disable row selection
+			}
 		}
 	});
 

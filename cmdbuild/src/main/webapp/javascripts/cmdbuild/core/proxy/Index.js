@@ -329,7 +329,15 @@
 			getAlreadyRelatedCards: 'services/json/management/modcard/getalreadyrelatedcards'
 		},
 
-		reports: {
+		report: {
+			createReportFactory: 'services/json/management/modreport/createreportfactory',
+			createReportFactoryByTypeCode: 'services/json/management/modreport/createreportfactorybytypecode',
+			getReportsByType: 'services/json/management/modreport/getreportsbytype',
+			getReportTypesTree: 'services/json/management/modreport/getreporttypestree',
+			menuTree: 'services/json/schema/modreport/menutree',
+			printReportFactory: 'services/json/management/modreport/printreportfactory',
+			updateReportFactoryParams: 'services/json/management/modreport/updatereportfactoryparams',
+
 			jasper: {
 				create: 'services/json/management/modreport/createreportfactory',
 				read: '',
@@ -342,17 +350,6 @@
 				import: 'services/json/schema/modreport/importjasperreport',
 				resetSession: 'services/json/schema/modreport/resetsession'
 			},
-			print: {
-				cardDetails: 'services/json/management/modreport/printcarddetails',
-				classSchema: 'services/json/schema/modreport/printclassschema',
-				currentView: 'services/json/management/modreport/printcurrentview',
-				schema: 'services/json/schema/modreport/printschema'
-			},
-			createReportFactory: 'services/json/management/modreport/createreportfactory',
-			createReportFactoryByTypeCode: 'services/json/management/modreport/createreportfactorybytypecode',
-			getReportTypesTree: 'services/json/management/modreport/getreporttypestree',
-			getReportsByType: 'services/json/management/modreport/getreportsbytype',
-			menuTree: 'services/json/schema/modreport/menutree',
 
 			print: {
 				cardDetails: 'services/json/management/modreport/printcarddetails',
@@ -360,10 +357,7 @@
 				currentView: 'services/json/management/modreport/printcurrentview',
 				schema: 'services/json/schema/modreport/printschema',
 				sqlView: 'services/json/management/modreport/printsqlview'
-			},
-
-			printReportFactory: 'services/json/management/modreport/printreportfactory',
-			updateReportFactoryParams: 'services/json/management/modreport/updatereportfactoryparams'
+			}
 		},
 
 		session: {

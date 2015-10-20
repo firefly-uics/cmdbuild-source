@@ -177,7 +177,7 @@
 
 			var form = Ext.create('Ext.form.Panel', {
 				standardSubmit: true,
-				url: CMDBuild.core.proxy.Index.reports.printReportFactory + '?donotdelete=true' // Add parameter to avoid report delete
+				url: CMDBuild.core.proxy.Index.report.printReportFactory + '?donotdelete=true' // Add parameter to avoid report delete
 			});
 
 			form.submit({

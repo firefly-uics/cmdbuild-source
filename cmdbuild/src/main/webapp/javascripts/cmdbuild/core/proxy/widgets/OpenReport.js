@@ -16,7 +16,7 @@
 		create: function(parameters) {
 			CMDBuild.Ajax.request({
 				method: 'POST',
-				url: CMDBuild.core.proxy.Index.reports.createReportFactory,
+				url: CMDBuild.core.proxy.Index.report.createReportFactory,
 				params: parameters.params,
 				scope: parameters.scope || this,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
@@ -32,7 +32,7 @@
 		createFactory: function(parameters) {
 			CMDBuild.Ajax.request({
 				method: 'POST',
-				url: CMDBuild.core.proxy.Index.reports.createReportFactoryByTypeCode,
+				url: CMDBuild.core.proxy.Index.report.createReportFactoryByTypeCode,
 				params: parameters.params,
 				scope: parameters.scope || this,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
@@ -69,7 +69,7 @@
 				model: 'CMDBuild.model.widget.openReport.ReportCombo',
 				proxy: {
 					type: 'ajax',
-					url: CMDBuild.core.proxy.Index.reports.getReportsByType,
+					url: CMDBuild.core.proxy.Index.report.getReportsByType,
 					reader: {
 						type: 'json',
 						root: 'rows',
@@ -91,7 +91,7 @@
 		update: function(parameters) {
 			CMDBuild.Ajax.request({
 				method: 'POST',
-				url: CMDBuild.core.proxy.Index.reports.updateReportFactoryParams,
+				url: CMDBuild.core.proxy.Index.report.updateReportFactoryParams,
 				params: parameters.params,
 				scope: parameters.scope || this,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,

@@ -1,22 +1,27 @@
 (function() {
 
-	Ext.define('CMDBuild.controller.management.report.SingleReport', {
-		extend: 'CMDBuild.controller.common.AbstractBasePanelController',
+	Ext.define('CMDBuild.controller.management.report.Custom', {
+		extend: 'CMDBuild.controller.common.AbstractController',
 
 		requires: [
-			'CMDBuild.core.Message',
 			'CMDBuild.core.constants.Proxy',
+			'CMDBuild.core.Message',
 			'CMDBuild.core.proxy.Index',
 			'CMDBuild.core.proxy.report.Report'
 		],
+
+		mixins: ['CMDBuild.controller.management.report.SingleReport'], // Import functions to avoid to duplicate
 
 		/**
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
 			'currentReportParametersSet',
-			'onSingleReportDownloadButtonClick',
-			'onSingleReportTypeButtonClick',
+			'currentReportRecordGet',
+			'currentReportRecordSet',
+			'onReportCustomAccordionSelect = onReportAccordionSelect',
+			'onReportCustomGenerateButtonClick',
+			'showReport',
 			'updateReport'
 		],
 
@@ -24,15 +29,36 @@
 		 * All server calls parameters
 		 *
 		 * @property {Object}
-		 *
-		 * Ex. {
+		 *  Ex. {
 		 * 		{Object} create, create call parameters
 		 * 		{Object} update update call parameters
-		 * }
+		 *  }
 		 *
 		 * @private
 		 */
 		currentReportParameters: {},
+
+		/**
+		 * @property {CMDBuild.model.report.Grid}
+		 *
+		 * @private
+		 */
+		currentReportRecord: undefined,
+
+		/**
+		 * Witch report types will be viewed inside modal pop-up
+		 *
+		 * @cfg {Array}
+		 */
+		forceDownloadTypes: [
+			CMDBuild.core.constants.Proxy.ODT,
+			CMDBuild.core.constants.Proxy.RTF
+		],
+
+		/**
+		 * @property {CMDBuild.view.management.report.custom.GridPanel}
+		 */
+		grid: undefined,
 
 		/**
 		 * @cfg {Array}
@@ -50,9 +76,31 @@
 		],
 
 		/**
-		 * @cfg {CMDBuild.view.management.report.SingleReportPanel}
+		 * @cfg {CMDBuild.view.management.report.custom.CustomView}
 		 */
 		view: undefined,
+
+		/**
+		 * @param {Object} configurationObject
+		 * @param {Mixed} configurationObject.parentDelegate
+		 */
+		constructor: function(configurationObject) {
+			this.callParent(arguments);
+
+			this.view = Ext.create('CMDBuild.view.management.report.custom.CustomView', { delegate: this });
+
+			// Shorthands
+			this.grid = this.view.grid;
+		},
+
+		onReportCustomAccordionSelect: function() {
+			if (!this.cmfg('reportSelectedAccordionIsEmpty')) {
+				var params = {};
+				params[CMDBuild.core.constants.Proxy.TYPE] = this.cmfg('reportSelectedAccordionGet', CMDBuild.core.constants.Proxy.TYPE);
+
+				this.grid.getStore().load({ params: params });
+			}
+		},
 
 		/**
 		 * @param {Boolean} forceDownload
@@ -80,23 +128,68 @@
 						if(decodedResponse.filled) { // Report with no parameters
 							this.showReport(forceDownload);
 						} else { // Show parameters window
-							// FIX: in IE PDF is painted on top of the regular page content so remove it before display parameter window
-							// Workaround to detect IE 11 witch is not supported from Ext 4.2
-							if (Ext.isIE || !!navigator.userAgent.match(/Trident.*rv[ :]*11\./))
-								this.view.removeAll();
-
-							if (this.currentReportParametersIsEmpty('update')) {
-								Ext.create('CMDBuild.controller.management.report.Parameters', {
-									parentDelegate: this,
-									attributeList: decodedResponse.attribute,
-									forceDownload: forceDownload
-								});
-							} else {
-								this.updateReport(forceDownload);
-							}
+							Ext.create('CMDBuild.controller.management.report.Parameters', {
+								parentDelegate: this,
+								attributeList: decodedResponse.attribute,
+								forceDownload: forceDownload
+							});
 						}
 					}
 				});
+			}
+		},
+
+		// CurrentReportRecord methods
+			/**
+			 * @param {Array or String} attributePath
+			 *
+			 * @return {Mixed or undefined}
+			 */
+			currentReportRecordGet: function(attributePath) {
+				var parameters = {};
+				parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME] = 'currentReportRecord';
+				parameters[CMDBuild.core.constants.Proxy.ATTRIBUTE_PATH] = attributePath;
+
+				return this.propertyManageGet(parameters);
+			},
+
+			/**
+			 * @param {CMDBuild.model.report.Grid} record
+			 */
+			currentReportRecordSet: function(record) {
+				if (!Ext.Object.isEmpty(record)) {
+					var parameters = {};
+					parameters[CMDBuild.core.constants.Proxy.MODEL_NAME] = 'CMDBuild.model.report.Grid';
+					parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME] = 'currentReportRecord';
+					parameters[CMDBuild.core.constants.Proxy.VALUE] = record;
+
+					this.propertyManageSet(parameters);
+				}
+			},
+
+		/**
+		 * @param {Object} reportInfo
+		 */
+		onReportCustomGenerateButtonClick: function(reportInfo) {
+			if (Ext.Array.contains(this.managedReportTypes, reportInfo[CMDBuild.core.constants.Proxy.TYPE])) {
+				this.currentReportParametersSet({
+					callIdentifier: 'create',
+					params: {
+						extension: reportInfo[CMDBuild.core.constants.Proxy.TYPE],
+						id: reportInfo[CMDBuild.core.constants.Proxy.RECORD].get(CMDBuild.core.constants.Proxy.ID)
+					}
+				});
+
+				this.currentReportRecordSet(reportInfo[CMDBuild.core.constants.Proxy.RECORD]);
+
+				// Force download true for PDF and CSV
+				this.createReport(Ext.Array.contains(this.forceDownloadTypes, reportInfo[CMDBuild.core.constants.Proxy.TYPE]));
+			} else {
+				CMDBuild.core.Message.error(
+					CMDBuild.Translation.error,
+					CMDBuild.Translation.errors.unmanagedReportType,
+					false
+				);
 			}
 		},
 
@@ -175,77 +268,17 @@
 			},
 
 		/**
-		 * Show report with force download
-		 */
-		onSingleReportDownloadButtonClick: function() {
-			this.showReport(true);
-		},
-
-		/**
-		 * @param {String} type
-		 */
-		onSingleReportTypeButtonClick: function(type) {
-			if (Ext.Array.contains(this.managedReportTypes, type)) {
-				this.currentReportParametersSet({
-					callIdentifier: 'create',
-					params: {
-						extension: type,
-						id: this.currentReportParametersGet({
-							callIdentifier: 'create',
-							property: CMDBuild.core.constants.Proxy.ID
-						})
-					}
-				});
-
-				this.createReport();
-			} else {
-				CMDBuild.core.Message.error(
-					CMDBuild.Translation.error,
-					CMDBuild.Translation.errors.unmanagedReportType,
-					false
-				);
-			}
-		},
-
-		/**
-		 * @param {CMDBuild.view.common.CMAccordionStoreModel} node
-		 */
-		onViewOnFront: function(node) {
-			this.currentReportParametersSet(); // Reset class property
-
-			if (
-				!Ext.Object.isEmpty(node)
-				&& !Ext.isEmpty(node.get(CMDBuild.core.constants.Proxy.ID))
-				&& node.get(CMDBuild.core.constants.Proxy.ID) != CMDBuild.core.constants.Proxy.CUSTOM
-			) {
-				this.setViewTitle(node.get(CMDBuild.core.constants.Proxy.TEXT));
-
-				this.currentReportParametersSet({
-					callIdentifier: 'create',
-					params: {
-						extension: node.get(CMDBuild.core.constants.Proxy.TYPE).replace(/report/i, ''), // Removes 'report' string from type property in node object
-						id: node.get(CMDBuild.core.constants.Proxy.ID)
-					}
-				});
-
-				this.createReport();
-
-				this.callParent(arguments);
-			}
-		},
-
-		/**
-		 * Get created report from server and display it in iframe
+		 * Get created report from server and display it in popup window
 		 *
 		 * @param {Boolean} forceDownload
 		 */
 		showReport: function(forceDownload) {
 			forceDownload = forceDownload || false;
 
-			var params = {};
-			params[CMDBuild.core.constants.Proxy.FORCE_DOWNLOAD_PARAM_KEY] = true;
-
 			if (forceDownload) { // Force download mode
+				var params = {};
+				params[CMDBuild.core.constants.Proxy.FORCE_DOWNLOAD_PARAM_KEY] = true;
+
 				var form = Ext.create('Ext.form.Panel', {
 					standardSubmit: true,
 					url: CMDBuild.core.proxy.Index.report.printReportFactory + '?donotdelete=true' // Add parameter to avoid report delete
@@ -259,16 +292,13 @@
 				Ext.defer(function() { // Form cleanup
 					form.close();
 				}, 100);
-			} else { // Add to view display mode
-				this.view.removeAll();
-
-				this.view.add({
-					xtype: 'component',
-
-					autoEl: {
-						tag: 'iframe',
-						src: CMDBuild.core.proxy.Index.report.printReportFactory + '?donotdelete=true' // Add parameter to avoid report delete
-					}
+			} else { // Pop-up display mode
+				Ext.create('CMDBuild.controller.management.report.Modal', {
+					parentDelegate: this,
+					extension: this.currentReportParametersGet({
+						callIdentifier: 'create',
+						property: CMDBuild.core.constants.Proxy.EXTENSION
+					})
 				});
 			}
 		},
