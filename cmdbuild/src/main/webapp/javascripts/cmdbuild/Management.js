@@ -32,7 +32,6 @@
 			'CMDBuild.routes.management.Instances',
 			'CMDBuild.routes.management.Processes',
 			'CMDBuild.core.buttons.Buttons',
-			'CMDBuild.core.configurations.Timeout',
 			'CMDBuild.core.proxy.Classes',
 			'CMDBuild.core.proxy.CMProxyConstants',
 			'CMDBuild.core.proxy.Configuration',

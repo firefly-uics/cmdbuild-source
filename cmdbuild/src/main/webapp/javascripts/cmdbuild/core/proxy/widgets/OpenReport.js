@@ -3,6 +3,7 @@
 	Ext.define('CMDBuild.core.proxy.widgets.OpenReport', {
 
 		requires: [
+			'CMDBuild.core.configurations.Timeout',
 			'CMDBuild.core.proxy.CMProxyUrlIndex',
 			'CMDBuild.model.widget.CMModelOpenReport'
 		],
