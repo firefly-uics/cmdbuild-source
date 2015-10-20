@@ -26,7 +26,8 @@
 			'onUserAndGroupUserPrivilegedChange',
 			'onUserAndGroupUserRowSelected',
 			'onUserAndGroupUserSaveButtonClick',
-			'onUserAndGroupUserServiceChange'
+			'onUserAndGroupUserServiceChange',
+			'onUserAndGroupUserTabShow'
 		],
 
 		/**
@@ -205,6 +206,16 @@
 		onUserAndGroupUserServiceChange: function() {
 			if (!this.form.serviceCheckbox.getValue())
 				this.form.privilegedCheckbox.setValue(false);
+		},
+
+		onUserAndGroupUserTabShow: function() {
+			this.grid.getStore().load({
+				scope: this,
+				callback: function(records, operation, success) {
+					if (!this.grid.getSelectionModel().hasSelection())
+						this.grid.getSelectionModel().select(0, true);
+				}
+			});
 		},
 
 		// SelectedUser property methods

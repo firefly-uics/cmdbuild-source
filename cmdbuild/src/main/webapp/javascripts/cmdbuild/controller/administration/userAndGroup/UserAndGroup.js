@@ -71,6 +71,8 @@
 
 				this.sectionController.cmfg('onUserAndGroupAccordionSelect');
 
+				this.sectionController.getView().fireEvent('show'); // Manual show event fire
+
 				this.callParent(arguments);
 			}
 		},
@@ -106,14 +108,8 @@
 			 * @param {Object} parameters
 			 */
 			userAndGroupSelectedAccordionSet: function(parameters) {
-				var sectionHierarchyValue = parameters[CMDBuild.core.constants.Proxy.VALUE][CMDBuild.core.constants.Proxy.SECTION_HIERARCHY][0];
-
-				if (
-					!Ext.Object.isEmpty(parameters)
-					&& !Ext.isEmpty(sectionHierarchyValue) && Ext.isString(sectionHierarchyValue)
-				) {
+				if (!Ext.Object.isEmpty(parameters)) {
 					parameters[CMDBuild.core.constants.Proxy.MODEL_NAME] = 'CMDBuild.model.userAndGroup.SelectedAccordion';
-					parameters[CMDBuild.core.constants.Proxy.SECTION_HIERARCHY] = sectionHierarchyValue;
 					parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME] = 'selectedAccordion';
 
 					this.propertyManageSet(parameters);

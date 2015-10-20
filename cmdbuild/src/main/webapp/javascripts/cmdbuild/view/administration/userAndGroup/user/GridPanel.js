@@ -43,17 +43,6 @@
 
 			select: function(row, record, index) {
 				this.delegate.cmfg('onUserAndGroupUserRowSelected');
-			},
-
-			// Event to load store on view display and first row selection as CMDbuild standard
-			viewready: function(panel, e0pts) {
-				this.getStore().load({
-					scope: this,
-					callback: function(records, operation, success) {
-						if (!this.getSelectionModel().hasSelection())
-							this.getSelectionModel().select(0, true);
-					}
-				});
 			}
 		}
 	});
