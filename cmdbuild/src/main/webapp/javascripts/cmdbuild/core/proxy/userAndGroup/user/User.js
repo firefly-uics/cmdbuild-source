@@ -43,14 +43,14 @@
 		 */
 		getStore: function() {
 			return Ext.create('Ext.data.Store', {
-				autoLoad: true,
+				autoLoad: false,
 				model: 'CMDBuild.model.userAndGroup.user.User',
 				proxy: {
 					type: 'ajax',
 					url: CMDBuild.core.proxy.Index.user.readAll,
 					reader: {
 						type: 'json',
-						root: 'rows'
+						root: CMDBuild.core.constants.Proxy.ROWS
 					}
 				},
 				sorters: [

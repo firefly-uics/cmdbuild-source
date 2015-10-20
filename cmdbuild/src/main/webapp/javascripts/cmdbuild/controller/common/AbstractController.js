@@ -291,7 +291,7 @@
 						// Create empty model if not existing (or is not a model class)
 						if (
 							Ext.isEmpty(this[parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME]])
-							|| Ext.getClassName(value) != modelName
+							|| Ext.getClassName(this[parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME]]) != modelName
 						) {
 							this[parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME]] = Ext.create(modelName);
 						}

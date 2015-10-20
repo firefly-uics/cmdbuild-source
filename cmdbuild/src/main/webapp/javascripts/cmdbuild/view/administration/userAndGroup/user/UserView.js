@@ -11,9 +11,14 @@
 		delegate: undefined,
 
 		/**
-		 * @cfg {String}
+		 * @property {CMDBuild.view.administration.userAndGroup.user.FormPanel}
 		 */
-		cmName: undefined,
+		form: undefined,
+
+		/**
+		 * @property {CMDBuild.view.administration.userAndGroup.user.GridPanel}
+		 */
+		grid: undefined,
 
 		baseTitle: CMDBuild.Translation.users,
 		border: true,
@@ -53,6 +58,12 @@
 			});
 
 			this.callParent(arguments);
+		},
+
+		listeners: {
+			show: function(panel, eOpts) {
+				this.delegate.cmfg('onUserAndGroupUserTabShow');
+			}
 		}
 	});
 
