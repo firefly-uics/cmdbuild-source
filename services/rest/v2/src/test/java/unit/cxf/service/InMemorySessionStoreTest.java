@@ -22,8 +22,8 @@ public class InMemorySessionStoreTest {
 		store = new InMemorySessionStore(new Configuration() {
 
 			@Override
-			public int timeout() {
-				return 0;
+			public long timeout() {
+				return 0L;
 			}
 
 		});
@@ -149,7 +149,7 @@ public class InMemorySessionStoreTest {
 		store = new InMemorySessionStore(new Configuration() {
 
 			@Override
-			public int timeout() {
+			public long timeout() {
 				return timeout_milliseconds;
 			}
 

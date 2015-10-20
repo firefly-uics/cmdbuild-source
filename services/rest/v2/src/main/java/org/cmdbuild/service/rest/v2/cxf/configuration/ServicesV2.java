@@ -335,8 +335,8 @@ public class ServicesV2 implements LoggingSupport {
 		return new InMemorySessionStore.Configuration() {
 
 			@Override
-			public int timeout() {
-				return helper.cmdbuildConfiguration().getSessionTimoutOrZero();
+			public long timeout() {
+				return helper.cmdbuildConfiguration().getSessionTimoutOrZero() * 1000;
 			}
 
 		};

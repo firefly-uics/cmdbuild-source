@@ -56,8 +56,8 @@ public class TokenHandlerTest {
 		sessionStore = new InMemorySessionStore(new Configuration() {
 
 			@Override
-			public int timeout() {
-				return 0;
+			public long timeout() {
+				return 0L;
 			}
 
 		});

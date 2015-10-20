@@ -18,7 +18,7 @@ public class InMemorySessionStore implements SessionStore {
 
 	public static interface Configuration {
 
-		int timeout();
+		long timeout();
 
 	}
 
