@@ -48,7 +48,7 @@
 			Ext.apply(this, {
 				items: [
 					this.name = Ext.create('Ext.form.field.Text',{
-						name: CMDBuild.core.constants.Proxy.TITLE, // TODO: should be renamed in "name"
+						name: CMDBuild.core.constants.Proxy.TITLE, // TODO: waiting for refactor (rename "name")
 						fieldLabel: CMDBuild.Translation.name,
 						allowBlank: false,
 						labelWidth: CMDBuild.LABEL_WIDTH,
@@ -64,7 +64,7 @@
 
 						translationFieldConfig: {
 							type: CMDBuild.core.constants.Proxy.REPORT,
-							identifier: { sourceType: 'form', key: CMDBuild.core.constants.Proxy.TITLE, source: this }, // TODO: should be renamed in "name"
+							identifier: { sourceType: 'form', key: CMDBuild.core.constants.Proxy.TITLE, source: this }, // TODO: waiting for refactor (rename "name")
 							field: CMDBuild.core.constants.Proxy.DESCRIPTION
 						}
 					}),

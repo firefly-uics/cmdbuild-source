@@ -185,7 +185,7 @@
 
 					var form = Ext.create('Ext.form.Panel', {
 						standardSubmit: true,
-						url: CMDBuild.core.proxy.Index.reports.printReportFactory
+						url: CMDBuild.core.proxy.Index.report.printReportFactory
 					});
 
 					form.submit({
@@ -218,7 +218,7 @@
 		},
 
 		/**
-		 * TODO: server implementation to get a single view data
+		 * TODO: waiting for refactor (crud)
 		 */
 		onReportsJasperRowSelected: function() {
 			this.selectedReport = this.grid.getSelectionModel().getSelection()[0];
@@ -240,8 +240,8 @@
 		onReportsJasperSaveButtonClick: function() {
 			if (this.form.getLayout().getActiveItem() == this.form.step1Panel) { // We are on step1
 				var params = {};
-				params[CMDBuild.core.constants.Proxy.NAME] = this.form.step1Panel.name.getValue(); // TODO: needed a refactor because i read a title parameter but i write as name
-				params[CMDBuild.core.constants.Proxy.REPORT_ID] = this.form.step1Panel.reportId.getValue(); // TODO: needed a refactor because i read a id parameter but i write as reportId
+				params[CMDBuild.core.constants.Proxy.NAME] = this.form.step1Panel.name.getValue(); // TODO: waiting for refactor (read title parameter, write as name)
+				params[CMDBuild.core.constants.Proxy.REPORT_ID] = this.form.step1Panel.reportId.getValue() || -1; // TODO: waiting for refactor (read id parameter, write as reportId)
 
 				CMDBuild.LoadMask.get().show();
 				CMDBuild.core.proxy.report.Jasper.analize({
@@ -264,7 +264,7 @@
 						} else {
 							this.setFormDetails(action.result);
 
-							if (this.form.step2Panel.items.items.length == 0) {
+							if (Ext.isEmpty(action.result.images) && Ext.isEmpty(action.result.subreports)) {
 								this.import();
 							} else {
 								this.form.getLayout().setActiveItem(1);
@@ -379,10 +379,7 @@
 							autoHeight: true,
 
 							items: [
-								{
-									xtype: 'label',
-									text: CMDBuild.Translation.warnings.reportsDuplicateImageFilename
-								}
+								{ xtype: 'label', text: CMDBuild.Translation.warnings.reportsDuplicateImageFilename }
 							]
 						})
 					);
