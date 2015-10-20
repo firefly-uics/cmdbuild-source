@@ -3,9 +3,10 @@
 	Ext.define('CMDBuild.core.proxy.Report', {
 
 		requires: [
-			'CMDBuild.core.Utils',
+			'CMDBuild.core.configurations.Timeout',
 			'CMDBuild.core.proxy.CMProxyConstants',
 			'CMDBuild.core.proxy.CMProxyUrlIndex',
+			'CMDBuild.core.Utils',
 			'CMDBuild.model.Report'
 		],
 

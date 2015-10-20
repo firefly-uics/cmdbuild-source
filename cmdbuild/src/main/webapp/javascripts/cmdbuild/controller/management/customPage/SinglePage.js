@@ -3,7 +3,10 @@
 	Ext.define('CMDBuild.controller.management.customPage.SinglePage', {
 		extend: 'CMDBuild.controller.common.AbstractBasePanelController',
 
-		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+		requires: [
+			'CMDBuild.core.configurations.CustomPages',
+			'CMDBuild.core.proxy.CMProxyConstants'
+		],
 
 		/**
 		 * @cfg {String}
@@ -31,7 +34,10 @@
 
 					autoEl: {
 						tag: 'iframe',
-						src: CMDBuild.Constants.customPages.customizationsPath + node.get(CMDBuild.core.proxy.CMProxyConstants.TEXT) + '/?basePath=' + basePath
+						src: CMDBuild.Constants.customPages.customizationsPath
+							+ node.get(CMDBuild.core.proxy.CMProxyConstants.TEXT)
+							+ '/?basePath=' + basePath
+							+ '&frameworkVersion=' + CMDBuild.core.configurations.CustomPages.getVersion()
 					}
 				});
 			}

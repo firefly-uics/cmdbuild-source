@@ -19,7 +19,6 @@
 
 		requires: [
 			'CMDBuild.core.buttons.Buttons',
-			'CMDBuild.core.configurations.Timeout',
 			'CMDBuild.core.constants.Server',
 			'CMDBuild.core.proxy.Classes',
 			'CMDBuild.core.proxy.CMProxyConstants',
