@@ -145,7 +145,7 @@
 			if (this.forceDownload) { // Force download mode
 				var form = Ext.create('Ext.form.Panel', {
 					standardSubmit: true,
-					url: CMDBuild.core.proxy.Index.reports.printReportFactory
+					url: CMDBuild.core.proxy.Index.report.printReportFactory
 				});
 
 				form.submit({
@@ -164,7 +164,7 @@
 
 					autoEl: {
 						tag: 'iframe',
-						src: CMDBuild.core.proxy.Index.reports.printReportFactory
+						src: CMDBuild.core.proxy.Index.report.printReportFactory
 					}
 				});
 			}

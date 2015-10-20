@@ -1,6 +1,5 @@
 (function() {
 
-	var reportAccordion = Ext.create('CMDBuild.view.management.accordion.Reports', { cmName: 'report' });
 	var menuAccordion = Ext.create('CMDBuild.view.management.accordion.Menu', {
 		cmControllerType: 'CMDBuild.controller.management.accordion.Menu',
 		cmName: 'menu',
@@ -197,7 +196,12 @@
 								})
 							,
 							CMDBuild.configuration.userInterface.isDisabledModule('dashboard') ? null : dashboardsAccordion,
-							CMDBuild.configuration.userInterface.isDisabledModule('report') ? null : reportAccordion,
+							CMDBuild.configuration.userInterface.isDisabledModule('report') ? null :
+								Ext.create('CMDBuild.view.management.accordion.Report', {
+									cmControllerType: 'CMDBuild.controller.common.AbstractAccordionController',
+									cmName: 'report'
+								})
+							,
 							CMDBuild.configuration.userInterface.isDisabledModule(CMDBuild.core.constants.Proxy.CUSTOM_PAGES) ? null :
 								Ext.create('CMDBuild.view.management.accordion.CustomPage', {
 									cmControllerType: 'CMDBuild.controller.common.AbstractAccordionController',
@@ -253,7 +257,6 @@
 				var reqBarrier = Ext.create('CMDBuild.core.RequestBarrier', {
 					callback: function() {
 						hideIfEmpty(processAccordion);
-						hideIfEmpty(reportAccordion);
 						hideIfEmpty(menuAccordion);
 						hideIfEmpty(classesAccordion);
 
@@ -354,8 +357,6 @@
 					scope: this,
 					success: function(response, options, decodedResponse) {
 						_CMCache.addReports(decodedResponse);
-
-						reportAccordion.updateStore();
 					},
 					callback: reqBarrier.getCallback()
 				});

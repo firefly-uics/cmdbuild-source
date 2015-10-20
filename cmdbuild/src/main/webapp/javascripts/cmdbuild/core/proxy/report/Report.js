@@ -1,8 +1,12 @@
 (function() {
 
+	/**
+	 * @management
+	 */
 	Ext.define('CMDBuild.core.proxy.report.Report', {
 
 		requires: [
+			'CMDBuild.core.cache.Cache',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.Index',
 			'CMDBuild.model.report.Grid'
@@ -14,15 +18,11 @@
 		 * @param {Object} parameters
 		 */
 		create: function(parameters) {
-			CMDBuild.Ajax.request({
-				url: CMDBuild.core.proxy.Index.reports.createReportFactory,
-				params: parameters.params,
-				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
-				scope: parameters.scope || this,
-				failure: parameters.failure || Ext.emptyFn,
-				success: parameters.success || Ext.emptyFn,
-				callback: parameters.callback || Ext.emptyFn
-			});
+			parameters = Ext.isEmpty(parameters) ? {} : parameters;
+
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.report.createReportFactory });
+
+			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.REPORT, parameters, true);
 		},
 
 		/**
@@ -35,14 +35,11 @@
 				pageSize: CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.ROW_LIMIT),
 				proxy: {
 					type: 'ajax',
-					url: CMDBuild.core.proxy.Index.reports.getReportsByType,
+					url: CMDBuild.core.proxy.Index.report.getReportsByType,
 					reader: {
 						type: 'json',
-						root: 'rows',
+						root: CMDBuild.core.constants.Proxy.ROWS,
 						totalProperty: 'results'
-					},
-					extraParams: {
-						type: CMDBuild.core.constants.Proxy.CUSTOM
 					}
 				},
 				sorters: [
@@ -57,32 +54,22 @@
 		 * @management
 		 */
 		getTypesTree: function(parameters) {
-			CMDBuild.Ajax.request({
-				method: 'GET',
-				url: CMDBuild.core.proxy.Index.reports.getReportTypesTree,
-				params: parameters.params,
-				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : false,
-				scope: parameters.scope || this,
-				failure: parameters.failure || Ext.emptyFn,
-				success: parameters.success || Ext.emptyFn,
-				callback: parameters.callback || Ext.emptyFn
-			});
+			parameters = Ext.isEmpty(parameters) ? {} : parameters;
+
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.report.getReportTypesTree });
+
+			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.REPORT, parameters);
 		},
 
 		/**
 		 * @param {Object} parameters
 		 */
 		update: function(parameters) {
-			CMDBuild.Ajax.request({
-				method: 'POST',
-				url: CMDBuild.core.proxy.Index.reports.updateReportFactoryParams,
-				params: parameters.params,
-				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
-				scope: parameters.scope || this,
-				failure: parameters.failure || Ext.emptyFn,
-				success: parameters.success || Ext.emptyFn,
-				callback: parameters.callback || Ext.emptyFn
-			});
+			parameters = Ext.isEmpty(parameters) ? {} : parameters;
+
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.report.updateReportFactoryParams });
+
+			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.REPORT, parameters, true);
 		}
 	});
 
