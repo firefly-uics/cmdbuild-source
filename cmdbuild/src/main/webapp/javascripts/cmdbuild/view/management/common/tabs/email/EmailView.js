@@ -3,7 +3,7 @@
 	Ext.define('CMDBuild.view.management.common.tabs.email.EmailView', {
 		extend: 'Ext.panel.Panel',
 
-		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+		requires: ['CMDBuild.core.constants.Proxy'],
 
 		/**
 		 * @cfg {CMDBuild.controller.management.common.tabs.email.Email}
@@ -26,7 +26,7 @@
 		 * Service function executed from module controller
 		 */
 		reset: function() {
-			this.setDisabled(Ext.isEmpty(this.delegate.cmfg('selectedEntityGet').get(CMDBuild.core.proxy.CMProxyConstants.ENTITY)));
+			this.setDisabled(Ext.isEmpty(this.delegate.cmfg('selectedEntityGet').get(CMDBuild.core.constants.Proxy.ENTITY)));
 		}
 	});
 

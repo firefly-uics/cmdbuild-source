@@ -3,9 +3,9 @@
 	Ext.define('CMDBuild.core.proxy.widgets.OpenReport', {
 
 		requires: [
-			'CMDBuild.core.configurations.Timeout',
-			'CMDBuild.core.proxy.CMProxyUrlIndex',
-			'CMDBuild.model.widget.CMModelOpenReport'
+			'CMDBuild.core.constants.Proxy',
+			'CMDBuild.core.proxy.Index',
+			'CMDBuild.model.widget.openReport.ReportCombo'
 		],
 
 		singleton: true,
@@ -13,14 +13,13 @@
 		/**
 		 * @param {Object} parameters
 		 */
-		generateReport: function(parameters) {
+		create: function(parameters) {
 			CMDBuild.Ajax.request({
 				method: 'POST',
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.reports.updateReportFactoryParams,
+				url: CMDBuild.core.proxy.Index.report.createReportFactory,
 				params: parameters.params,
-				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : false,
-				timeout: CMDBuild.core.configurations.Timeout.getReport(), // Get report timeout from configuration
 				scope: parameters.scope || this,
+				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
 				failure: parameters.failure || Ext.emptyFn,
 				success: parameters.success || Ext.emptyFn,
 				callback: parameters.callback || Ext.emptyFn
@@ -30,13 +29,13 @@
 		/**
 		 * @param {Object} parameters
 		 */
-		getReportAttributes: function(parameters) {
+		createFactory: function(parameters) {
 			CMDBuild.Ajax.request({
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.reports.createReportFactory,
+				method: 'POST',
+				url: CMDBuild.core.proxy.Index.report.createReportFactoryByTypeCode,
 				params: parameters.params,
-				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : false,
-				timeout: CMDBuild.core.configurations.Timeout.getReport(), // Get report timeout from configuration
 				scope: parameters.scope || this,
+				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
 				failure: parameters.failure || Ext.emptyFn,
 				success: parameters.success || Ext.emptyFn,
 				callback: parameters.callback || Ext.emptyFn
@@ -44,18 +43,20 @@
 		},
 
 		/**
-		 * @param {Object} parameters
+		 * @returns {Ext.data.ArrayStore}
 		 */
-		getReportParameters: function(parameters) {
-			CMDBuild.Ajax.request({
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.reports.createReportFactoryByTypeCode,
-				params: parameters.params,
-				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : false,
-				timeout: CMDBuild.core.configurations.Timeout.getReport(), // Get report timeout from configuration
-				scope: parameters.scope || this,
-				failure: parameters.failure || Ext.emptyFn,
-				success: parameters.success || Ext.emptyFn,
-				callback: parameters.callback || Ext.emptyFn
+		getFormatsStore: function() {
+			return Ext.create('Ext.data.ArrayStore', {
+				fields: [CMDBuild.core.constants.Proxy.VALUE, CMDBuild.core.constants.Proxy.DESCRIPTION],
+				data: [
+					[CMDBuild.core.constants.Proxy.PDF, CMDBuild.Translation.pdf],
+					[CMDBuild.core.constants.Proxy.CSV, CMDBuild.Translation.csv],
+					[CMDBuild.core.constants.Proxy.ODT, CMDBuild.Translation.odt],
+					[CMDBuild.core.constants.Proxy.RTF, CMDBuild.Translation.rtf]
+				],
+				sorters: [
+					{ property: CMDBuild.core.constants.Proxy.DESCRIPTION, direction: 'ASC' }
+				]
 			});
 		},
 
@@ -65,20 +66,38 @@
 		getReportsStore: function() {
 			return Ext.create('Ext.data.Store', {
 				autoLoad: true,
-				model: 'CMDBuild.model.widget.CMModelOpenReport.reportCombo',
+				model: 'CMDBuild.model.widget.openReport.ReportCombo',
 				proxy: {
 					type: 'ajax',
-					url: CMDBuild.core.proxy.CMProxyUrlIndex.reports.getReportsByType,
+					url: CMDBuild.core.proxy.Index.report.getReportsByType,
 					reader: {
 						type: 'json',
 						root: 'rows',
 						totalProperty: 'results'
 					},
 					extraParams: {
-						type: 'custom',
-						limit: 1000
+						type: 'custom'
 					}
-				}
+				},
+				sorters: [
+					{ property: CMDBuild.core.constants.Proxy.DESCRIPTION, direction: 'ASC' }
+				]
+			});
+		},
+
+		/**
+		 * @param {Object} parameters
+		 */
+		update: function(parameters) {
+			CMDBuild.Ajax.request({
+				method: 'POST',
+				url: CMDBuild.core.proxy.Index.report.updateReportFactoryParams,
+				params: parameters.params,
+				scope: parameters.scope || this,
+				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
+				failure: parameters.failure || Ext.emptyFn,
+				success: parameters.success || Ext.emptyFn,
+				callback: parameters.callback || Ext.emptyFn
 			});
 		}
 	});

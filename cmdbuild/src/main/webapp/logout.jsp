@@ -19,7 +19,7 @@
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 		<link rel="stylesheet" type="text/css" href="stylesheets/cmdbuild.css" />
 		<link rel="stylesheet" type="text/css" href="javascripts/ext-<%= extVersion %>/resources/css/ext-all.css" />
-		<link rel="icon" href="images/favicon.ico" />
+		<link rel="icon" type="image/x-icon" href="images/favicon.ico" />
 
 		<!-- 0. ExtJS -->
 		<script type="text/javascript" src="javascripts/ext-<%= extVersion %>/ext-all.js"></script>
@@ -39,12 +39,6 @@
 
 		<!-- 3. Logout script -->
 		<script type="text/javascript" src="javascripts/cmdbuild/app/Logout.js"></script>
-
-		<script type="text/javascript">
-			Ext.onReady(function() {
-				CMDBuild.app.Logout.doLogout();
-			});
-		</script>
 
 		<title>CMDBuild</title>
 	</head>

@@ -3,6 +3,10 @@
 	Ext.define("CMDBuild.view.administration.widget.form.CMNavigationTreeDefinitionForm", {
 		extend: "CMDBuild.view.administration.widget.form.CMBaseWidgetDefinitionForm",
 
+		mixins: {
+			panelFunctions: 'CMDBuild.view.common.PanelFunctions'
+		},
+
 		statics: {
 			WIDGET_NAME: ".NavigationTree"
 		},
@@ -14,7 +18,7 @@
 
 			this.navigationTreeName = new Ext.form.field.ComboBox({
 				name: "navigationTreeName",
-				fieldLabel: CMDBuild.Translation.tree_navigation, 
+				fieldLabel: CMDBuild.Translation.tree_navigation,
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
 				valueField: 'name',

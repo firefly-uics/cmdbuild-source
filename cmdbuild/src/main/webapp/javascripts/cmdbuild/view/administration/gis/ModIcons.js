@@ -166,9 +166,6 @@ Ext.define("CMDBuild.Administration.ModIcons", {
   		this.removeButton.enable();
   		this.uploadForm.getForm().reset();
   		this.uploadForm.getForm().loadRecord(record);
-		Ext.apply(this.description, {
-			translationsKeyName: record.get("name")
-		});
   	},
 
   	//private
@@ -177,7 +174,6 @@ Ext.define("CMDBuild.Administration.ModIcons", {
 		this.uploadForm.getForm().reset();
 		this.enableModify();
 		this.uploadForm.saveStatus = "add";
-		_CMCache.initAddingTranslations();
 	},
 
   	//private
@@ -195,7 +191,6 @@ Ext.define("CMDBuild.Administration.ModIcons", {
   			descriptionField[0].disable();
   		}
   		this.uploadForm.saveStatus = "modify";
-		_CMCache.initModifyingTranslations();
  	},
 
   	//private
@@ -238,7 +233,6 @@ Ext.define("CMDBuild.Administration.ModIcons", {
 					        // contains all of the details of the load operation
 					        console.log(records);
 					        var r = this.iconsGrid.store.findRecord("description", description);
-					        _CMCache.flushTranslationsToSave(r.get("name"));
 					    }
 					});
 				},

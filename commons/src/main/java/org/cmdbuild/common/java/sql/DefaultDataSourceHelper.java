@@ -11,7 +11,9 @@ import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.sql.SQLFeatureNotSupportedException;
 import java.util.Collection;
+import java.util.logging.Logger;
 
 import javax.sql.DataSource;
 

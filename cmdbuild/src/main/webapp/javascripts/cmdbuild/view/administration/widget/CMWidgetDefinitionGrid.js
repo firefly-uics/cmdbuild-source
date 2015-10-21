@@ -6,7 +6,7 @@
 		extend: 'Ext.grid.Panel',
 
 		requires: [
-			'CMDBuild.core.proxy.CMProxyConstants',
+			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.model.widget.WidgetDefinition'
 		],
 
@@ -15,7 +15,7 @@
 				columns: [
 					{
 						header: tr.commonFields.type,
-						dataIndex: CMDBuild.core.proxy.CMProxyConstants.TYPE,
+						dataIndex: CMDBuild.core.constants.Proxy.TYPE,
 						flex: 1,
 
 						renderer: function(value) {
@@ -24,13 +24,13 @@
 					},
 					{
 						header: tr.commonFields.buttonLabel,
-						dataIndex: CMDBuild.core.proxy.CMProxyConstants.LABEL,
+						dataIndex: CMDBuild.core.constants.Proxy.LABEL,
 						flex: 2
 					},
 					{
 						xtype: 'checkcolumn',
 						header: tr.commonFields.active,
-						dataIndex: CMDBuild.core.proxy.CMProxyConstants.ACTIVE,
+						dataIndex: CMDBuild.core.constants.Proxy.ACTIVE,
 						width: 60,
 						cmReadOnly: true
 					}
@@ -49,7 +49,7 @@
 		 * @param {Boolean} selectAfter
 		 */
 		addRecord: function(record, selectAfter) {
-			this.removeRecordWithId(record.get(CMDBuild.core.proxy.CMProxyConstants.ID));
+			this.removeRecordWithId(record.get(CMDBuild.core.constants.Proxy.ID));
 
 			var addedRec = this.getStore().add(record);
 

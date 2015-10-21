@@ -16,35 +16,35 @@
 			getList: function(p) {
 				adaptGetListRequestParameter(p);
 				p.method = 'GET';
-				p.url = CMDBuild.core.proxy.CMProxyUrlIndex.relations.read;
+				p.url = CMDBuild.core.proxy.Index.relations.read;
 
 				CMDBuild.ServiceProxy.core.doRequest(p);
 			},
 
 			modify: function(p) {
 				p.method = 'POST';
-				p.url = CMDBuild.core.proxy.CMProxyUrlIndex.relations.update;
+				p.url = CMDBuild.core.proxy.Index.relations.update;
 
 				CMDBuild.ServiceProxy.core.doRequest(p);
 			},
 
 			add: function(p) {
 				p.method = 'POST';
-				p.url = CMDBuild.core.proxy.CMProxyUrlIndex.relations.create;
+				p.url = CMDBuild.core.proxy.Index.relations.create;
 
 				CMDBuild.ServiceProxy.core.doRequest(p);
 			},
 
 			remove: function(p) {
 				p.method = 'POST';
-				p.url = CMDBuild.core.proxy.CMProxyUrlIndex.relations.remove;
+				p.url = CMDBuild.core.proxy.Index.relations.remove;
 
 				CMDBuild.ServiceProxy.core.doRequest(p);
 			},
 
 			removeDetail: function(p) {
 				p.method = 'POST';
-				p.url = CMDBuild.core.proxy.CMProxyUrlIndex.relations.removeDetail;
+				p.url = CMDBuild.core.proxy.Index.relations.removeDetail;
 
 				CMDBuild.ServiceProxy.core.doRequest(p);
 			},
@@ -55,7 +55,7 @@
 			getAlreadyRelatedCards: function(parameters) {
 				CMDBuild.Ajax.request({
 					method: 'POST',
-					url: CMDBuild.core.proxy.CMProxyUrlIndex.relations.getAlreadyRelatedCards,
+					url: CMDBuild.core.proxy.Index.relations.getAlreadyRelatedCards,
 					params: parameters.params,
 					scope: parameters.scope,
 					success: parameters.success,

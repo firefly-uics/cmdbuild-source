@@ -2,6 +2,8 @@
 
 	var tr = CMDBuild.Translation.management.modcard;
 
+	Ext.require('CMDBuild.core.constants.Global');
+
 	Ext.define("CMDBuild.controller.management.classes.attachments.CMCardAttachmentsController", {
 		extend: "CMDBuild.controller.management.classes.CMModCardSubController",
 
@@ -82,7 +84,7 @@
 		},
 
 		disableTheTabBeforeCardSelection: function(entryType) {
-			return (entryType && entryType.get("tableType") == CMDBuild.Constants.cachedTableType.simpletable);
+			return (entryType && entryType.get("tableType") == CMDBuild.core.constants.Global.getTableTypeSimpleTable());
 		},
 
 		onAddCardButtonClick: function(classIdOfNewCard) {
@@ -339,9 +341,9 @@
 				var reason = error.reason;
 				if (reason) {
 					if (reason == 'AUTH_NOT_LOGGED_IN' || reason == 'AUTH_MULTIPLE_GROUPS') {
-						CMDBuild.LoginWindow.addAjaxOptions(options);
-						CMDBuild.LoginWindow.setAuthFieldsEnabled(reason == 'AUTH_NOT_LOGGED_IN');
-						CMDBuild.LoginWindow.show();
+						CMDBuild.app.Login.addAjaxOptions(options);
+						CMDBuild.app.Login.setAuthFieldsEnabled(reason == 'AUTH_NOT_LOGGED_IN');
+						CMDBuild.app.Login.show();
 						return;
 					}
 					var translatedErrorString = CMDBuild.Ajax.formatError(reason, error.reasonParameters);

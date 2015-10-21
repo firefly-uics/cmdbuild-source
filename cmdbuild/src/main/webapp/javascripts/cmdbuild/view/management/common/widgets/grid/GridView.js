@@ -3,7 +3,7 @@
 	Ext.define('CMDBuild.view.management.common.widgets.grid.GridView', {
 		extend: 'Ext.panel.Panel',
 
-		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+		requires: ['CMDBuild.core.constants.Proxy'],
 
 		/**
 		 * @cfg {CMDBuild.controller.management.common.widgets.grid.Grid}
@@ -30,9 +30,9 @@
 				dockedItems: [
 					Ext.create('Ext.toolbar.Toolbar', {
 						dock: 'top',
-						itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_TOP,
+						itemId: CMDBuild.core.constants.Proxy.TOOLBAR_TOP,
 						items: [
-							this.addButton = Ext.create('CMDBuild.core.buttons.Add', {
+							this.addButton = Ext.create('CMDBuild.core.buttons.iconized.add.Add', {
 								text: CMDBuild.Translation.addRow,
 								scope: this,
 
@@ -40,7 +40,7 @@
 									this.delegate.cmfg('onAddRowButtonClick');
 								}
 							}),
-							this.importFromCSVButton = Ext.create('CMDBuild.core.buttons.Import', {
+							this.importFromCSVButton = Ext.create('CMDBuild.core.buttons.text.Import', {
 								text: CMDBuild.Translation.importFromCSV,
 								scope: this,
 

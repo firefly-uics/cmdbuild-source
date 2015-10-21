@@ -1,37 +1,71 @@
 (function() {
 
 	Ext.define('CMDBuild.view.management.accordion.Report', {
-		extend: 'CMDBuild.view.common.CMBaseAccordion',
+		extend: 'CMDBuild.view.common.AbstractAccordion',
 
-		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
-
-		title: CMDBuild.Translation.administration.modreport.title,
+		requires: [
+			'CMDBuild.core.constants.Proxy',
+			'CMDBuild.core.proxy.report.Report',
+			'CMDBuild.model.common.accordion.Report'
+		],
 
 		/**
-		 * @param {CMDBuild.model.Report} report
+		 * @cfg {CMDBuild.controller.common.AbstractAccordionController}
+		 */
+		delegate: undefined,
+
+		/**
+		 * @cfg {String}
+		 */
+		cmName: undefined,
+
+		/**
+		 * @cfg {Boolean}
+		 */
+		hideIfEmpty: true,
+
+		/**
+		 * @cfg {String}
+		 */
+		storeModelName: 'CMDBuild.model.common.accordion.Report',
+
+		title: CMDBuild.Translation.report,
+
+		/**
+		 * @param {Number} nodeIdToSelect
 		 *
-		 * @return {Object} nodeConf
+		 * @override
 		 */
-		buildNodeConf: function(report) {
-			var nodeConf = report.getData();
-			nodeConf['cmName'] = this.cmName;
-			nodeConf['leaf'] = true;
+		updateStore: function(nodeIdToSelect) {
+			nodeIdToSelect = Ext.isNumber(nodeIdToSelect) ? nodeIdToSelect : null;
 
-			return nodeConf;
-		},
+			CMDBuild.core.proxy.report.Report.getTypesTree({
+				loadMask: false,
+				scope: this,
+				success: function(result, options, decodedResult) {
+					if (!Ext.isEmpty(decodedResult) && Ext.isArray(decodedResult)) {
+						var nodes = [];
 
-		/**
-		 * @return {Array} nodes
-		 */
-		buildTreeStructure: function() {
-			var nodes = [];
-			var reports = _CMCache.getReports();
+						Ext.Array.forEach(decodedResult, function(groupObject, i, allGroupObjects) {
+							nodes.push({
+								text: groupObject[CMDBuild.core.constants.Proxy.TEXT],
+								description: groupObject[CMDBuild.core.constants.Proxy.TEXT],
+								name: groupObject[CMDBuild.core.constants.Proxy.NAME],
+								cmName: this.cmName,
+								sectionHierarchy: ['custom'],
+								type: 'custom',
+								leaf: groupObject[CMDBuild.core.constants.Proxy.LEAF]
+							});
+						}, this);
 
-			for (var key in reports)
-				nodes.push(this.buildNodeConf(reports[key]));
+						this.getStore().getRootNode().removeAll();
+						this.getStore().getRootNode().appendChild(nodes);
 
-			return nodes;
-
+						// Alias of this.callParent(arguments), inside proxy function doesn't work
+						this.delegate.cmfg('onAccordionUpdateStore', nodeIdToSelect);
+					}
+				}
+			});
 		}
 	});
 

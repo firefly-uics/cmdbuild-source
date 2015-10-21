@@ -3,7 +3,7 @@
 	Ext.define('CMDBuild.view.management.common.tabs.email.attachments.MainContainer', {
 		extend: 'Ext.container.Container',
 
-		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+		requires: ['CMDBuild.core.constants.Proxy'],
 
 		/**
 		 * @cfg {CMDBuild.controller.management.common.tabs.email.attachments.Attachments}
