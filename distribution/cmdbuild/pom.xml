@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>org.cmdbuild</groupId>
 		<artifactId>cmdbuild-distribution</artifactId>
-		<version>2.3.4</version>
+		<version>2.3.5-SNAPSHOT</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>cmdbuild-distribution-cmdbuild</artifactId>
