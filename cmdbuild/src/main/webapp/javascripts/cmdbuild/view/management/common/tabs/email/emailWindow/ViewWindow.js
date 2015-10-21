@@ -3,7 +3,7 @@
 	Ext.define('CMDBuild.view.management.common.tabs.email.emailWindow.ViewWindow', {
 		extend: 'CMDBuild.core.PopupWindow',
 
-		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+		requires: ['CMDBuild.core.constants.Proxy'],
 
 		/**
 		 * @cfg {CMDBuild.controller.management.common.tabs.email.EmailWindow}
@@ -59,10 +59,10 @@
 						xtype: 'checkbox',
 						fieldLabel: CMDBuild.Translation.keepSync,
 						readOnly: true,
-						name: CMDBuild.core.proxy.CMProxyConstants.KEEP_SYNCHRONIZATION
+						name: CMDBuild.core.constants.Proxy.KEEP_SYNCHRONIZATION
 					},
 					Ext.create('CMDBuild.view.common.field.delay.Display', {
-						name: CMDBuild.core.proxy.CMProxyConstants.DELAY,
+						name: CMDBuild.core.constants.Proxy.DELAY,
 						fieldLabel: CMDBuild.Translation.delay,
 						labelAlign: 'right',
 						labelWidth: CMDBuild.LABEL_WIDTH,
@@ -70,27 +70,27 @@
 					}),
 					{
 						xtype: 'displayfield',
-						name: CMDBuild.core.proxy.CMProxyConstants.FROM,
+						name: CMDBuild.core.constants.Proxy.FROM,
 						fieldLabel: CMDBuild.Translation.from
 					},
 					{
 						xtype: 'displayfield',
-						name: CMDBuild.core.proxy.CMProxyConstants.TO,
+						name: CMDBuild.core.constants.Proxy.TO,
 						fieldLabel: CMDBuild.Translation.to
 					},
 					{
 						xtype: 'displayfield',
-						name: CMDBuild.core.proxy.CMProxyConstants.CC,
+						name: CMDBuild.core.constants.Proxy.CC,
 						fieldLabel: CMDBuild.Translation.cc
 					},
 					{
 						xtype: 'displayfield',
-						name: CMDBuild.core.proxy.CMProxyConstants.BCC,
+						name: CMDBuild.core.constants.Proxy.BCC,
 						fieldLabel: CMDBuild.Translation.bcc
 					},
 					{
 						xtype: 'displayfield',
-						name: CMDBuild.core.proxy.CMProxyConstants.SUBJECT,
+						name: CMDBuild.core.constants.Proxy.SUBJECT,
 						fieldLabel: CMDBuild.Translation.subject
 					},
 					{ // Thisn't a good way to display email content, but i don't know better one
@@ -100,7 +100,7 @@
 						border: true,
 						margin: '1 0', // Fixes a bug that hides bottom border
 						flex: 1,
-						html: this.delegate.record.get(CMDBuild.core.proxy.CMProxyConstants.BODY)
+						html: this.delegate.record.get(CMDBuild.core.constants.Proxy.BODY)
 					}
 				]
 			});
@@ -109,7 +109,7 @@
 				dockedItems: [
 					Ext.create('Ext.toolbar.Toolbar', {
 						dock: 'top',
-						itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_TOP,
+						itemId: CMDBuild.core.constants.Proxy.TOOLBAR_TOP,
 						items: [
 							this.fillFromTemplateButton = Ext.create('Ext.button.Split', {
 								iconCls: 'clone',
@@ -124,7 +124,7 @@
 					}),
 					Ext.create('Ext.toolbar.Toolbar', {
 						dock: 'bottom',
-						itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_BOTTOM,
+						itemId: CMDBuild.core.constants.Proxy.TOOLBAR_BOTTOM,
 						ui: 'footer',
 
 						layout: {
@@ -134,7 +134,7 @@
 						},
 
 						items: [
-							Ext.create('CMDBuild.core.buttons.Close', {
+							Ext.create('CMDBuild.core.buttons.text.Close', {
 								scope: this,
 
 								handler: function(button, e) {

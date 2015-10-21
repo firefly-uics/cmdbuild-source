@@ -3,7 +3,7 @@
 	Ext.define('CMDBuild.controller.administration.common.attributes.Metadata', {
 		extend: 'CMDBuild.controller.common.AbstractController',
 
-		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+		requires: ['CMDBuild.core.constants.Proxy'],
 
 		/**
 		 * @cfg {Mixed}
@@ -78,10 +78,10 @@
 			// To validate and filter grid rows
 			this.grid.getStore().each(function(record) {
 				if (
-					!Ext.isEmpty(record.get(CMDBuild.core.proxy.CMProxyConstants.KEY))
-					&& !Ext.isEmpty(record.get(CMDBuild.core.proxy.CMProxyConstants.VALUE))
+					!Ext.isEmpty(record.get(CMDBuild.core.constants.Proxy.KEY))
+					&& !Ext.isEmpty(record.get(CMDBuild.core.constants.Proxy.VALUE))
 				) {
-					data[this.nameSpaceAdd(record.get(CMDBuild.core.proxy.CMProxyConstants.KEY))] = record.get(CMDBuild.core.proxy.CMProxyConstants.VALUE);
+					data[this.nameSpaceAdd(record.get(CMDBuild.core.constants.Proxy.KEY))] = record.get(CMDBuild.core.constants.Proxy.VALUE);
 				}
 			}, this);
 
@@ -98,8 +98,8 @@
 				Ext.Object.each(this.data, function(key, value, myself) {
 					if (key.indexOf(this.nameSpace) >= 0) { // Filters objects by nameSpace
 						var recordConf = {};
-						recordConf[CMDBuild.core.proxy.CMProxyConstants.KEY] = this.nameSpaceStrip(key);
-						recordConf[CMDBuild.core.proxy.CMProxyConstants.VALUE] = value || '';
+						recordConf[CMDBuild.core.constants.Proxy.KEY] = this.nameSpaceStrip(key);
+						recordConf[CMDBuild.core.constants.Proxy.VALUE] = value || '';
 
 						this.grid.getStore().add(recordConf);
 					}

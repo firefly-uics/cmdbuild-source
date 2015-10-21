@@ -7,7 +7,7 @@
 		extend: 'CMDBuild.controller.management.common.tabs.email.Email',
 
 		requires: [
-			'CMDBuild.core.proxy.CMProxyConstants',
+			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.common.tabs.email.Email'
 		],
 
@@ -140,15 +140,15 @@
 		 */
 		onModifyCardClick: function() {
 			var params = {};
-			params[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME] = _CMCache.getEntryTypeNameById(this.card.get('IdClass'));
-			params[CMDBuild.core.proxy.CMProxyConstants.CARD_ID] = this.card.get(CMDBuild.core.proxy.CMProxyConstants.ID);
+			params[CMDBuild.core.constants.Proxy.CLASS_NAME] = _CMCache.getEntryTypeNameById(this.card.get('IdClass'));
+			params[CMDBuild.core.constants.Proxy.CARD_ID] = this.card.get(CMDBuild.core.constants.Proxy.ID);
 
 			CMDBuild.core.proxy.common.tabs.email.Email.isEmailEnabledForCard({
 				params: params,
 				scope: this,
 				loadMask: true,
 				failure: function(response, options, decodedResponse) {
-					_warning('Emails enabled for card (' + this.card.get(CMDBuild.core.proxy.CMProxyConstants.ID) + ') unknown', this);
+					_warning('Emails enabled for card (' + this.card.get(CMDBuild.core.constants.Proxy.ID) + ') unknown', this);
 				},
 				success: function(response, options, decodedResponse) {
 					this.cmfg('configurationSet', {

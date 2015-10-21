@@ -3,6 +3,12 @@
 	Ext.define('CMDBuild.controller.administration.configuration.Gis', {
 		extend: 'CMDBuild.controller.common.AbstractController',
 
+		requires: [
+			'CMDBuild.core.constants.Proxy',
+			'CMDBuild.core.proxy.configuration.Gis',
+			'CMDBuild.model.configuration.gis.Form'
+		],
+
 		/**
 		 * @cfg {CMDBuild.controller.administration.configuration.Configuration}
 		 */
@@ -12,14 +18,9 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
-			'onGisAbortButtonClick',
-			'onGisSaveButtonClick'
+			'onConfigurationGisSaveButtonClick',
+			'onConfigurationGisTabShow = onConfigurationGisAbortButtonClick'
 		],
-
-		/**
-		 * @cfg {String}
-		 */
-		configFileName: 'gis',
 
 		/**
 		 * @property {CMDBuild.view.administration.configuration.GisPanel}
@@ -35,27 +36,39 @@
 		constructor: function(configObject) {
 			this.callParent(arguments);
 
-			this.view = Ext.create('CMDBuild.view.administration.configuration.GisPanel', {
-				delegate: this
-			});
+			this.view = Ext.create('CMDBuild.view.administration.configuration.GisPanel', { delegate: this });
+		},
 
-			this.cmfg('onConfigurationRead', {
-				configFileName: this.configFileName,
-				view: this.view
+		onConfigurationGisSaveButtonClick: function() {
+			CMDBuild.core.proxy.configuration.Gis.update({
+				params: CMDBuild.model.configuration.gis.Form.convertToLegacy(this.view.getData(true)),
+				scope: this,
+				success: function(response, options, decodedResponse) {
+					this.onConfigurationGisTabShow();
+
+					CMDBuild.core.Message.success();
+				}
 			});
 		},
 
-		onGisAbortButtonClick: function() {
-			this.cmfg('onConfigurationRead', {
-				configFileName: this.configFileName,
-				view: this.view
-			});
-		},
+		onConfigurationGisTabShow: function() {
+			CMDBuild.core.proxy.configuration.Gis.read({
+				scope: this,
+				success: function(response, options, decodedResponse) {
+					decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.DATA];
 
-		onGisSaveButtonClick: function() {
-			this.cmfg('onConfigurationSave', {
-				configFileName: this.configFileName,
-				view: this.view
+					this.view.loadRecord(Ext.create('CMDBuild.model.configuration.gis.Form', CMDBuild.model.configuration.gis.Form.convertFromLegacy(decodedResponse)));
+
+					_CMMainViewportController.findAccordionByCMName('gis').setDisabled(
+						!CMDBuild.core.Utils.decodeAsBoolean(decodedResponse[CMDBuild.core.constants.Proxy.ENABLED])
+					);
+
+					/**
+					 * @deprecated (CMDBuild.configuration.gis)
+					 */
+					CMDBuild.Config.gis = Ext.apply(CMDBuild.Config.gis, decodedResponse);
+					CMDBuild.Config.gis.enabled = ('true' == CMDBuild.Config.gis.enabled);
+				}
 			});
 		}
 	});

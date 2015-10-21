@@ -11,7 +11,8 @@
 		paths: {
 			'CMDBuild.app': './javascripts/cmdbuild',
 			'CMDBuild': './javascripts/cmdbuild',
-			'Ext.ux': './javascripts/ext-' + extVersion + '-ux'
+			'Ext.ux': './javascripts/ext-' + extVersion + '-ux',
+			'Logger': './javascripts/log'
 		}
 	});
 

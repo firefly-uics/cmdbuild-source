@@ -1,20 +1,40 @@
 (function() {
 
-	// Requires all widget controllers to avoid to include manually
-	// TODO: rename of this class to use property "requires"
-	Ext.require([
-		'CMDBuild.controller.management.common.widgets.ManageEmail',
-		'CMDBuild.controller.management.common.widgets.manageRelation.CMManageRelationController'
-	]);
-
 	Ext.define("CMDBuild.controller.management.common.CMWidgetManagerController", {
 
-		constructor: function(view) {
-			this.view = view;
-			this.view.delegate = this;
-			this.controllers = {};
+		/**
+		 * @property {Object}
+		 */
+		controllerClasses: {},
 
-			initBuilders(this);
+		/**
+		 * @property {Object}
+		 */
+		controllers: {},
+
+		constructor: function(view) {
+			Ext.apply(this, {
+				controllerClasses: {
+					'.Calendar': CMDBuild.controller.management.common.widgets.CMCalendarController,
+					'.CreateModifyCard': CMDBuild.controller.management.common.widgets.CMCreateModifyCardController,
+					'.CustomForm': 'CMDBuild.controller.management.common.widgets.customForm.CustomForm',
+					'.Grid': 'CMDBuild.controller.management.common.widgets.grid.Grid',
+					'.LinkCards': CMDBuild.controller.management.common.widgets.linkCards.LinkCardsController,
+					'.ManageEmail': 'CMDBuild.controller.management.common.widgets.ManageEmail',
+					'.ManageRelation': 'CMDBuild.controller.management.common.widgets.manageRelation.CMManageRelationController',
+					'.NavigationTree': CMDBuild.controller.management.common.widgets.CMNavigationTreeController,
+					'.OpenAttachment': CMDBuild.controller.management.common.widgets.CMOpenAttachmentController,
+					'.OpenNote': CMDBuild.controller.management.common.widgets.CMOpenNoteController,
+					'.OpenReport': 'CMDBuild.controller.management.common.widgets.OpenReport',
+					'.Ping': CMDBuild.controller.management.common.widgets.CMPingController,
+					'.PresetFromCard': CMDBuild.controller.management.common.widgets.CMPresetFromCardController,
+					'.WebService': CMDBuild.controller.management.common.widgets.CMWebServiceController,
+					'.Workflow': CMDBuild.controller.management.common.widgets.CMWorkflowController
+				},
+				view: view
+			});
+
+			this.view.delegate = this;
 		},
 
 		setDelegate: function(delegate) {
@@ -50,10 +70,12 @@
 		},
 
 		onWidgetButtonClick: function(w) {
+_debug('onWidgetButtonClick');
 			this.delegate.ensureEditPanel();
 			var me = this;
 			Ext.defer(function() {
 				var wc = me.controllers[me.getWidgetId(w)];
+_debug('onWidgetButtonClick defer', wc, me.controllers, me.getWidgetId(w));
 				if (wc) {
 					me.view.showWidget(wc.view, me.getWidgetLable(w));
 					wc.beforeActiveView();
@@ -264,55 +286,6 @@
 			this.view.activateFirstTab();
 		}
 	});
-
-	function initBuilders(me) {
-		me.controllerClasses = {};
-		me.controllerClasses['.CustomForm'] = 'CMDBuild.controller.management.common.widgets.customForm.CustomForm';
-		me.controllerClasses['.Grid'] = 'CMDBuild.controller.management.common.widgets.grid.Grid';
-		me.controllerClasses['.ManageEmail'] = CMDBuild.controller.management.common.widgets.ManageEmail;
-
-		var commonControllers = CMDBuild.controller.management.common.widgets;
-
-		function addControllerClass(controller) {
-			me.controllerClasses[controller.WIDGET_NAME] = controller;
-		}
-
-		// openNote
-		addControllerClass(commonControllers.CMOpenNoteController);
-
-		// openAttachment
-		addControllerClass(commonControllers.CMOpenAttachmentController);
-
-		// createModifyCard
-		addControllerClass(commonControllers.CMCreateModifyCardController);
-
-		// calendar
-		addControllerClass(commonControllers.CMCalendarController);
-
-		// workflow
-		addControllerClass(commonControllers.CMWorkflowController);
-
-		// navigationTree
-		addControllerClass(commonControllers.CMNavigationTreeController);
-
-		// openReport
-		addControllerClass(commonControllers.CMOpenReportController);
-
-		// LinkCards
-		addControllerClass(CMDBuild.controller.management.common.widgets.linkCards.LinkCardsController);
-
-		// ManageRelation
-		addControllerClass(CMDBuild.controller.management.common.widgets.manageRelation.CMManageRelationController);
-
-		// ping
-		addControllerClass(commonControllers.CMPingController);
-
-		// webService
-		addControllerClass(commonControllers.CMWebServiceController);
-
-		// presetFromCard
-		addControllerClass(commonControllers.CMPresetFromCardController);
-	}
 
 	Ext.define("CMDBuild.controller.management.common.CMWidgetManagerControllerPopup", {
 		extend: "CMDBuild.controller.management.common.CMWidgetManagerController",

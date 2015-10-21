@@ -9,10 +9,6 @@
 			this.callParent(arguments);
 		},
 
-		statics : {
-			WIDGET_NAME: ".Ping"
-		},
-
 		showPingResult: function(r) {
 			this.removeAll();
 			this.add({

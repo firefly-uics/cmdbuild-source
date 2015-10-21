@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.cmdbuild.logic.translation.TranslationObject;
 import org.cmdbuild.logic.translation.converter.ClassConverter;
+import org.cmdbuild.logic.translation.converter.Converter;
 import org.cmdbuild.logic.translation.object.ClassDescription;
 import org.junit.Test;
 
@@ -24,11 +25,11 @@ public class ClassDescriptionObjectCreationTest {
 	@Test
 	public void forDescriptionFieldReturnsValidObject() {
 		// given
-		final ClassConverter converter = ClassConverter //
+		final Converter converter = ClassConverter //
 				.of(field).withTranslations(map);
 
 		// when
-		final TranslationObject translationObject = converter.create(classname);
+		final TranslationObject translationObject = converter.withIdentifier(classname).create();
 
 		// then
 		assertTrue(converter.isValid());
@@ -40,11 +41,11 @@ public class ClassDescriptionObjectCreationTest {
 	@Test
 	public void converterIsCaseInsensitiveForTheField() {
 		// given
-		final ClassConverter converter = ClassConverter //
+		final Converter converter = ClassConverter //
 				.of(field).withTranslations(map);
 
 		// when
-		final TranslationObject translationObject = converter.create(classname);
+		final TranslationObject translationObject = converter.withIdentifier(classname).create();
 
 		// then
 		assertTrue(converter.isValid());
@@ -58,7 +59,7 @@ public class ClassDescriptionObjectCreationTest {
 		// given
 
 		// when
-		final ClassConverter converter = ClassConverter //
+		final Converter converter = ClassConverter //
 				.of(invalidfield);
 
 		// then
@@ -68,12 +69,12 @@ public class ClassDescriptionObjectCreationTest {
 	@Test
 	public void invalidConverterThrowsException() {
 		// given
-		final ClassConverter converter = ClassConverter.of(invalidfield);
+		final Converter converter = ClassConverter.of(invalidfield);
 		Exception thrown = null;
 
 		// when
 		try {
-			converter.create(classname);
+			converter.withIdentifier(classname).create();
 		} catch (final Exception e) {
 			thrown = e;
 		}
@@ -86,11 +87,10 @@ public class ClassDescriptionObjectCreationTest {
 	@Test
 	public void createConverterForReading() {
 		// given
-		final ClassConverter converter = ClassConverter.of(field);
+		final Converter converter = ClassConverter.of(field);
 
 		// when
-		final TranslationObject translationObject = converter.create(classname);
-
+		final TranslationObject translationObject = converter.withIdentifier(classname).create();
 		// then
 		assertTrue(converter.isValid());
 		assertNotNull(translationObject);

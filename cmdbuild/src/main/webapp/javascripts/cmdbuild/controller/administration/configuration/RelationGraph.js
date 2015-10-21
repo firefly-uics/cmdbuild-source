@@ -3,6 +3,11 @@
 	Ext.define('CMDBuild.controller.administration.configuration.RelationGraph', {
 		extend: 'CMDBuild.controller.common.AbstractController',
 
+		requires: [
+			'CMDBuild.core.constants.Proxy',
+			'CMDBuild.core.proxy.configuration.RelationGraph'
+		],
+
 		/**
 		 * @cfg {CMDBuild.controller.administration.configuration.Configuration}
 		 */
@@ -12,14 +17,9 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
-			'onRelationGraphAbortButtonClick',
-			'onRelationGraphSaveButtonClick'
+			'onConfigurationRelationGraphSaveButtonClick',
+			'onConfigurationRelationGraphTabShow = onConfigurationRelationGraphAbortButtonClick'
 		],
-
-		/**
-		 * @cfg {String}
-		 */
-		configFileName: 'graph',
 
 		/**
 		 * @property {CMDBuild.view.administration.configuration.RelationGraphPanel}
@@ -35,27 +35,29 @@
 		constructor: function(configObject) {
 			this.callParent(arguments);
 
-			this.view = Ext.create('CMDBuild.view.administration.configuration.RelationGraphPanel', {
-				delegate: this
-			});
+			this.view = Ext.create('CMDBuild.view.administration.configuration.RelationGraphPanel', { delegate: this });
+		},
 
-			this.cmfg('onConfigurationRead', {
-				configFileName: this.configFileName,
-				view: this.view
+		onConfigurationRelationGraphSaveButtonClick: function() {
+			CMDBuild.core.proxy.configuration.RelationGraph.update({
+				params: this.view.getData(true),
+				scope: this,
+				success: function(response, options, decodedResponse) {
+					this.onConfigurationRelationGraphTabShow();
+
+					CMDBuild.core.Message.success();
+				}
 			});
 		},
 
-		onRelationGraphAbortButtonClick: function() {
-			this.cmfg('onConfigurationRead', {
-				configFileName: this.configFileName,
-				view: this.view
-			});
-		},
+		onConfigurationRelationGraphTabShow: function() {
+			CMDBuild.core.proxy.configuration.RelationGraph.read({
+				scope: this,
+				success: function(response, options, decodedResponse) {
+					decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.DATA];
 
-		onRelationGraphSaveButtonClick: function() {
-			this.cmfg('onConfigurationSave', {
-				configFileName: this.configFileName,
-				view: this.view
+					this.view.loadRecord(Ext.create('CMDBuild.model.configuration.relationGraph.Form', decodedResponse));
+				}
 			});
 		}
 	});

@@ -16,11 +16,11 @@
 
 			this.printSchema = Ext.create('CMDBuild.core.buttons.iconized.Print', {
 				formatList: [
-					CMDBuild.core.proxy.CMProxyConstants.PDF,
-					CMDBuild.core.proxy.CMProxyConstants.ODT
+					CMDBuild.core.constants.Proxy.PDF,
+					CMDBuild.core.constants.Proxy.ODT
 				],
 				mode: 'legacy',
-				text: CMDBuild.Translation.printSchema
+				text: tr.print_schema
 			});
 
 			this.classForm = new CMDBuild.view.administration.classes.CMClassForm({

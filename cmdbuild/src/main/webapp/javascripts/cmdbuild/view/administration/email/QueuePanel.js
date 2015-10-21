@@ -3,7 +3,7 @@
 	Ext.define('CMDBuild.view.administration.email.QueuePanel', {
 		extend: 'Ext.form.Panel',
 
-		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+		requires: ['CMDBuild.core.constants.Proxy'],
 
 		mixins: {
 			panelFunctions: 'CMDBuild.view.common.PanelFunctions'
@@ -39,7 +39,7 @@
 		},
 
 		initComponent: function() {
-			this.queueStartButton = Ext.create('CMDBuild.core.buttons.Start', {
+			this.queueStartButton = Ext.create('CMDBuild.core.buttons.iconized.Start', {
 				text: CMDBuild.Translation.start,
 				scope: this,
 
@@ -48,7 +48,7 @@
 				}
 			});
 
-			this.queueStopButton = Ext.create('CMDBuild.core.buttons.Stop', {
+			this.queueStopButton = Ext.create('CMDBuild.core.buttons.iconized.Stop', {
 				text: CMDBuild.Translation.stop,
 				scope: this,
 
@@ -58,7 +58,7 @@
 			});
 
 			this.cycleIntervalField = Ext.create('CMDBuild.view.common.field.slider.SingleWithExtremeLabels', {
-				name: CMDBuild.core.proxy.CMProxyConstants.TIME,
+				name: CMDBuild.core.constants.Proxy.TIME,
 				fieldLabel: CMDBuild.Translation.frequencyCheck,
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				maxWidth: CMDBuild.CFG_BIG_FIELD_WIDTH,
@@ -70,7 +70,7 @@
 				dockedItems: [
 					Ext.create('Ext.toolbar.Toolbar', {
 						dock: 'top',
-						itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_TOP,
+						itemId: CMDBuild.core.constants.Proxy.TOOLBAR_TOP,
 
 						items: [
 							'->',
@@ -80,7 +80,7 @@
 					}),
 					Ext.create('Ext.toolbar.Toolbar', {
 						dock: 'bottom',
-						itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_BOTTOM,
+						itemId: CMDBuild.core.constants.Proxy.TOOLBAR_BOTTOM,
 						ui: 'footer',
 
 						layout: {
@@ -90,14 +90,14 @@
 						},
 
 						items: [
-							Ext.create('CMDBuild.core.buttons.Save', {
+							Ext.create('CMDBuild.core.buttons.text.Save', {
 								scope: this,
 
 								handler: function(button, e) {
 									this.delegate.cmfg('onEmailQueueSaveButtonClick');
 								}
 							}),
-							Ext.create('CMDBuild.core.buttons.Abort', {
+							Ext.create('CMDBuild.core.buttons.text.Abort', {
 								scope: this,
 
 								handler: function(button, e) {

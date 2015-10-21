@@ -3,7 +3,7 @@
 	Ext.define('CMDBuild.view.management.dataView.sql.tabs.CardPanel', {
 		extend: 'Ext.panel.Panel',
 
-		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+		requires: ['CMDBuild.core.constants.Proxy'],
 
 		/**
 		 * @cfg {CMDBuild.controller.management.dataView.Sql}
@@ -27,18 +27,18 @@
 				dockedItems: [
 					Ext.create('Ext.toolbar.Toolbar', {
 						dock: 'top',
-						itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_TOP,
+						itemId: CMDBuild.core.constants.Proxy.TOOLBAR_TOP,
 
 						items: [
-							Ext.create('CMDBuild.core.buttons.Modify', {
+							Ext.create('CMDBuild.core.buttons.iconized.Modify', {
 								text: CMDBuild.Translation.modifyCard,
 								disabled: true
 							}),
-							Ext.create('CMDBuild.core.buttons.Delete', {
+							Ext.create('CMDBuild.core.buttons.iconized.Delete', {
 								text: CMDBuild.Translation.deleteCard,
 								disabled: true
 							}),
-							Ext.create('CMDBuild.core.buttons.Clone', {
+							Ext.create('CMDBuild.core.buttons.iconized.Clone', {
 								text: CMDBuild.Translation.cloneCard,
 								disabled: true
 							}),
@@ -51,7 +51,7 @@
 					}),
 					Ext.create('Ext.toolbar.Toolbar', {
 						dock: 'bottom',
-						itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_BOTTOM,
+						itemId: CMDBuild.core.constants.Proxy.TOOLBAR_BOTTOM,
 						ui: 'footer',
 						cls: 'x-panel-body-default-framed',
 
@@ -62,8 +62,8 @@
 						},
 
 						items: [
-							Ext.create('CMDBuild.core.buttons.Save', { disabled: true }),
-							Ext.create('CMDBuild.core.buttons.Abort', { disabled: true })
+							Ext.create('CMDBuild.core.buttons.text.Save', { disabled: true }),
+							Ext.create('CMDBuild.core.buttons.text.Abort', { disabled: true })
 						]
 					})
 				]

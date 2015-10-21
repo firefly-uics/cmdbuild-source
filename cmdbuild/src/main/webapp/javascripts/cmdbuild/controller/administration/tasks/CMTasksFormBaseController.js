@@ -9,7 +9,7 @@
 		extend: 'CMDBuild.controller.common.CMBasePanelController',
 
 		requires: [
-			'CMDBuild.core.proxy.CMProxyConstants',
+			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.CMProxyTasks'
 		],
 
@@ -166,7 +166,7 @@
 					me.view.removeAll();
 
 					var rowIndex = this.find(
-						CMDBuild.core.proxy.CMProxyConstants.ID,
+						CMDBuild.core.constants.Proxy.ID,
 						(decodedResult.response) ? decodedResult.response : taskId
 					);
 

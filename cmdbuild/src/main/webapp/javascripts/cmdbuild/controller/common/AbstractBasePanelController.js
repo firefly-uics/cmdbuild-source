@@ -14,6 +14,11 @@
 		parentDelegate: undefined,
 
 		/**
+		 * @cfg {String}
+		 */
+		cmName: undefined,
+
+		/**
 		 * @property {Object}
 		 */
 		view: undefined,
@@ -24,6 +29,7 @@
 		constructor: function(view) {
 			this.callParent([{ view: view }]);
 
+			this.cmName = this.view.cmName;
 			this.view.delegate = this; // Apply delegate to view
 
 			this.view.on('CM_iamtofront', this.onViewOnFront, this);
@@ -32,9 +38,7 @@
 		/**
 		 * @abstract
 		 */
-		onViewOnFront: function(parameters) {
-			_msg('onPanelActivate ' + this.view.title, this, parameters);
-		}
+		onViewOnFront: Ext.emptyFn
 	});
 
 })();

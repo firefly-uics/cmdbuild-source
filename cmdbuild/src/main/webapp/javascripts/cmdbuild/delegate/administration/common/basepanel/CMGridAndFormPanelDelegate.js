@@ -45,7 +45,6 @@ Ext.define("CMDBuild.delegate.administration.common.basepanel.CMGridAndFormPanel
 		this.fieldManager.reset();
 		panel.enableModify(all);
 		panel.clearSelection();
-		_CMCache.initAddingTranslations();
 	},
 
 	/**
@@ -75,7 +74,6 @@ Ext.define("CMDBuild.delegate.administration.common.basepanel.CMGridAndFormPanel
 
 	onFormModifyButtonClick: function(form) {
 		this.view.enableModify();
-		_CMCache.initModifyingTranslations();
 	},
 
 	onFormRemoveButtonClick: function(form) {
