@@ -190,6 +190,7 @@ public class Models {
 		private Long precision;
 		private Long scale;
 		private String targetClass;
+		private String targetType;
 		private Long length;
 		private String editorType;
 		private String lookupType;
@@ -220,6 +221,7 @@ public class Models {
 			output.setPrecision(precision);
 			output.setScale(scale);
 			output.setTargetClass(targetClass);
+			output.setTargetType(targetType);
 			output.setLength(length);
 			output.setEditorType(editorType);
 			output.setLookupType(lookupType);
@@ -302,6 +304,11 @@ public class Models {
 
 		public AttributeBuilder withTargetClass(final String targetClass) {
 			this.targetClass = targetClass;
+			return this;
+		}
+
+		public AttributeBuilder withTargetType(final String targetType) {
+			this.targetType = targetType;
 			return this;
 		}
 
