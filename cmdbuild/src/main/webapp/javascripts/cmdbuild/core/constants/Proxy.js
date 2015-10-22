@@ -9,6 +9,7 @@
 		singleton: true,
 
 		ABSOLUTE_CLASS_ORDER: 'absoluteClassOrder',
+		ACCORDION: 'accordion',
 		ACCOUNT: 'account',
 		ACTIVE: 'active',
 		ACTIVE_ONLY: 'activeOnly',

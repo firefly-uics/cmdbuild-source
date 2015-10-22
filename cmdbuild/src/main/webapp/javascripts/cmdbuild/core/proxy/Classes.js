@@ -12,10 +12,17 @@
 
 		/**
 		 * @param {Object} parameters
+		 *
+		 * TODO: waiting for refactor (crud)
 		 */
-		read: function(parameters) {
-			// TODO: waiting for refactor (crud)
-		},
+		create: function(parameters) {},
+
+		/**
+		 * @param {Object} parameters
+		 *
+		 * TODO: waiting for refactor (crud)
+		 */
+		read: function(parameters) {},
 
 		/**
 		 * @param {Object} parameters
@@ -32,30 +39,24 @@
 		 * @param {Object} parameters
 		 */
 		remove: function(parameters) {
-			CMDBuild.Ajax.request({
-				url: CMDBuild.core.proxy.Index.classes.remove,
-				params: parameters.params,
-				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : false,
-				scope: parameters.scope || this,
-				success: parameters.success || Ext.emptyFn,
-				failure: parameters.failure || Ext.emptyFn,
-				callback: parameters.callback || Ext.emptyFn
-			});
+			parameters = Ext.isEmpty(parameters) ? {} : parameters;
+
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.classes.remove });
+
+			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.CLASSES, parameters, true);
 		},
 
 		/**
 		 * @param {Object} parameters
+		 *
+		 * TODO: waiting for refactor (crud), rename as update
 		 */
 		save: function(parameters) {
-			CMDBuild.Ajax.request({
-				url: CMDBuild.core.proxy.Index.classes.update,
-				params: parameters.params,
-				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : false,
-				scope: parameters.scope || this,
-				success: parameters.success || Ext.emptyFn,
-				failure: parameters.failure || Ext.emptyFn,
-				callback: parameters.callback || Ext.emptyFn
-			});
+			parameters = Ext.isEmpty(parameters) ? {} : parameters;
+
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.classes.update });
+
+			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.CLASSES, parameters, true);
 		}
 	});
 

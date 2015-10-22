@@ -4,7 +4,10 @@
 
 	Ext.define("CMDBuild.controller.administration.classes.CMClassFormController", {
 
-		requires: ['CMDBuild.view.common.field.translatable.Utils'],
+		requires: [
+			'CMDBuild.core.constants.Proxy',
+			'CMDBuild.view.common.field.translatable.Utils'
+		],
 
 		constructor: function(view) {
 			this.view = view;
@@ -43,10 +46,22 @@
 			}
 		},
 
-		saveSuccessCB: function(r) {
-			this.view.disableModify(enableCMTBar = true);
-			var result = Ext.JSON.decode(r.responseText);
-			this.selection = _CMCache.onClassSaved(result.table);
+		/**
+		 * @param {Object} response
+		 * @param {Object} options
+		 * @param {Object} decodedResponse
+		 */
+		saveSuccessCB: function(response, options, decodedResponse) {
+			decodedResponse = decodedResponse['table'];
+
+			this.view.disableModify(true);
+
+			_CMMainViewportController.findAccordionByCMName('class').updateStore(decodedResponse[CMDBuild.core.constants.Proxy.ID]);
+
+			/**
+			 * @deprecated
+			 */
+			this.selection = _CMCache.onClassSaved(decodedResponse);
 
 			CMDBuild.view.common.field.translatable.Utils.commit(this.view.form);
 		},
@@ -104,8 +119,20 @@
 
 		},
 
-		deleteSuccessCB: function(r) {
-			var removedClassId = this.selection.get("id");
+		/**
+		 * @param {Object} response
+		 * @param {Object} options
+		 * @param {Object} decodedResponse
+		 */
+		deleteSuccessCB: function(response, options, decodedResponse) {
+			var removedClassId = this.selection.get(CMDBuild.core.constants.Proxy.ID);
+
+			_CMMainViewportController.findAccordionByCMName('class').deselect();
+			_CMMainViewportController.findAccordionByCMName('class').updateStore();
+
+			/**
+			 * @deprecated
+			 */
 			_CMCache.onClassDeleted(removedClassId);
 			this.selection = null;
 		},

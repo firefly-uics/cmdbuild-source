@@ -1,8 +1,8 @@
 (function() {
 
-	var classesAccordion = new CMDBuild.view.administration.accordion.CMClassAccordion({
-		cmControllerType: CMDBuild.controller.accordion.CMClassAccordionController
-	});;
+//	var classesAccordion = new CMDBuild.view.administration.accordion.CMClassAccordion({
+//		cmControllerType: CMDBuild.controller.accordion.CMClassAccordionController
+//	});;
 	var dashboardsAccordion = new CMDBuild.view.administration.accordion.CMDashboardAccordion({
 		cmControllerType: CMDBuild.controller.accordion.CMDashboardAccordionController
 	});
@@ -203,7 +203,13 @@
 			_CMMainViewportController = new CMDBuild.controller.CMMainViewportController(
 				new CMDBuild.view.CMMainViewport({
 					cmAccordions: [ // Sorted
-						classesAccordion,
+//						classesAccordion,
+						CMDBuild.configuration.userInterface.get(CMDBuild.core.constants.Proxy.CLOUD_ADMIN) ? null :
+							Ext.create('CMDBuild.view.administration.accordion.Classes', {
+								cmControllerType: 'CMDBuild.controller.administration.accordion.Classes',
+								cmName: 'class'
+							})
+						,
 						processAccordion,
 						CMDBuild.configuration.userInterface.get(CMDBuild.core.constants.Proxy.CLOUD_ADMIN) ? null :
 							Ext.create('CMDBuild.view.administration.accordion.Domain', {
@@ -356,7 +362,7 @@
 			Ext.resumeLayouts();
 
 			if (!CMDBuild.configuration.userInterface.get(CMDBuild.core.constants.Proxy.CLOUD_ADMIN)) {
-				classesAccordion.updateStore();
+//				classesAccordion.updateStore();
 
 				processAccordion.setDisabled((CMDBuild.Config.workflow) ? !CMDBuild.Config.workflow.enabled : true); // FIX: to avoid InternetExplorer error on startup
 				processAccordion.updateStore();
