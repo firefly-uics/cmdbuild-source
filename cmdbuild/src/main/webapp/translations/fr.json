@@ -1151,6 +1151,7 @@
 	"classAttribute": "Attribut de classe",
 	"classes": "Classe",
 	"classLabel": "Classe",
+	"classList": "Arbre des classes",
 	"className": "Nom de classe",
 	"clean_word_pasted_text": "Nettoyer le texte collé à partir de Word ou d'autres applications de texte enrichi",
 	"clearCache": "Vider le cache",

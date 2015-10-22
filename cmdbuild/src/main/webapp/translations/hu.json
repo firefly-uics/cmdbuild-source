@@ -1151,6 +1151,7 @@
 	"classAttribute": "Osztály attribútum",
 	"classes": "Osztályok",
 	"classLabel": "Osztály",
+	"classList": "Osztály lista",
 	"className": "Osztály neve",
 	"clean_word_pasted_text": "Wordből vagy más Rich Text alkalmazásból másolt szöveg tisztítása",
 	"clearCache": "Cache törlése",
