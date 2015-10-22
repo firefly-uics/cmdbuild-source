@@ -30,6 +30,7 @@ import org.cmdbuild.service.rest.v2.ProcessAttributes;
 import org.cmdbuild.service.rest.v2.ProcessInstanceActivities;
 import org.cmdbuild.service.rest.v2.ProcessInstanceAttachments;
 import org.cmdbuild.service.rest.v2.ProcessInstanceEmails;
+import org.cmdbuild.service.rest.v2.ProcessInstancePrivileges;
 import org.cmdbuild.service.rest.v2.ProcessInstances;
 import org.cmdbuild.service.rest.v2.ProcessStartActivities;
 import org.cmdbuild.service.rest.v2.Processes;
@@ -58,6 +59,7 @@ import org.cmdbuild.service.rest.v2.cxf.CxfProcessAttributes;
 import org.cmdbuild.service.rest.v2.cxf.CxfProcessInstanceActivities;
 import org.cmdbuild.service.rest.v2.cxf.CxfProcessInstanceAttachments;
 import org.cmdbuild.service.rest.v2.cxf.CxfProcessInstanceEmails;
+import org.cmdbuild.service.rest.v2.cxf.CxfProcessInstancePrivileges;
 import org.cmdbuild.service.rest.v2.cxf.CxfProcessInstances;
 import org.cmdbuild.service.rest.v2.cxf.CxfProcessStartActivities;
 import org.cmdbuild.service.rest.v2.cxf.CxfProcesses;
@@ -290,6 +292,14 @@ public class ServicesV2 implements LoggingSupport {
 		final CxfProcessInstanceEmails service = new CxfProcessInstanceEmails(v2_errorHandler(),
 				helper.userWorkflowLogic(), helper.emailLogic(), v2_idGenerator());
 		return proxy(ProcessInstanceEmails.class, service);
+	}
+
+	@Bean
+	@Scope(value = SCOPE_REQUEST, proxyMode = TARGET_CLASS)
+	public ProcessInstancePrivileges v2_processInstancePrivileges() {
+		final CxfProcessInstancePrivileges service = new CxfProcessInstancePrivileges(v2_errorHandler(),
+				helper.userWorkflowLogic());
+		return proxy(ProcessInstancePrivileges.class, service);
 	}
 
 	@Bean

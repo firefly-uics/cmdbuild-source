@@ -1424,6 +1424,27 @@ public class Models {
 
 	}
 
+	public static class ProcessInstancePrivilegesBuilder extends ModelBuilder<ProcessInstancePrivileges> {
+
+		private boolean stoppable;
+
+		private ProcessInstancePrivilegesBuilder() {
+			// use factory method
+		}
+
+		@Override
+		protected ProcessInstancePrivileges doBuild() {
+			final ProcessInstancePrivileges output = new ProcessInstancePrivileges();
+			output.setStoppable(stoppable);
+			return output;
+		}
+
+		public ProcessInstancePrivilegesBuilder stoppable(final boolean stoppable) {
+			this.stoppable = stoppable;
+			return this;
+		}
+	}
+
 	public static class ProcessInstanceAdvanceBuilder extends ModelBuilder<ProcessInstanceAdvanceable> {
 
 		private static final Function<Entry<? extends String, ? extends Object>, String> KEY = toKey();
@@ -2091,6 +2112,10 @@ public class Models {
 
 	public static ProcessInstanceAdvanceBuilder newProcessInstanceAdvance() {
 		return new ProcessInstanceAdvanceBuilder();
+	}
+
+	public static ProcessInstancePrivilegesBuilder newProcessInstancePrivileges() {
+		return new ProcessInstancePrivilegesBuilder();
 	}
 
 	public static ProcessStatusBuilder newProcessStatus() {
