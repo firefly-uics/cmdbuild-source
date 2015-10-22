@@ -34,22 +34,23 @@
 		},
 
 		/**
-		 * @param {Object} result
+		 * @param {Object} response
 		 * @param {Object} options
-		 * @param {Object} decodedResult
+		 * @param {Object} decodedResponse
 		 *
 		 * @override
 		 */
-		deleteSuccessCB: function(result, options, decodedResult) {
+		deleteSuccessCB: function(response, options, decodedResponse) {
 			var removedClassId = this.selection.get(CMDBuild.core.constants.Proxy.ID);
 
-			_CMCache.onProcessDeleted(removedClassId);
-
-			this.selection = null;
-
-			// Accordion synchronization
+			_CMMainViewportController.findAccordionByCMName('process').deselect();
 			_CMMainViewportController.findAccordionByCMName('process').updateStore();
-			_CMMainViewportController.findAccordionByCMName('process').selectFirstSelectableNode();
+
+			/**
+			 * @deprecated
+			 */
+			_CMCache.onProcessDeleted(removedClassId);
+			this.selection = null;
 		},
 
 		onAddClassButtonClick: function() {
@@ -160,21 +161,23 @@
 		},
 
 		/**
-		 * @param {Object} result
+		 * @param {Object} response
 		 * @param {Object} options
-		 * @param {Object} decodedResult
+		 * @param {Object} decodedResponse
 		 *
 		 * @override
 		 */
-		saveSuccessCB: function(result, options, decodedResult) {
-			var savedProcessData = decodedResult[CMDBuild.core.constants.Proxy.TABLE];
-			this.selection = _CMCache.onProcessSaved(savedProcessData);
+		saveSuccessCB: function(response, options, decodedResponse) {
+			decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.TABLE];
+
+			_CMMainViewportController.findAccordionByCMName('process').updateStore(decodedResponse[CMDBuild.core.constants.Proxy.ID]);
+
+			/**
+			 * @deprecated
+			 */
+			this.selection = _CMCache.onProcessSaved(decodedResponse);
 
 			CMDBuild.view.common.field.translatable.Utils.commit(this.view.form);
-
-			// Accordion synchronization
-			_CMMainViewportController.findAccordionByCMName('process').updateStore();
-			_CMMainViewportController.findAccordionByCMName('process').selectNodeById(savedProcessData[CMDBuild.core.constants.Proxy.ID]);
 		}
 	});
 
