@@ -1151,6 +1151,7 @@
 	"classAttribute": "<em>Class attribute</em>",
 	"classes": "Các lớp",
 	"classLabel": "<em>Class</em>",
+	"classList": "Danh sách Lớp",
 	"className": "<em>Class name</em>",
 	"clean_word_pasted_text": "<em>Clean the text pasted from Word or other Rich Text applications</em>",
 	"clearCache": "Xóa bộ nhớ cache",

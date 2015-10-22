@@ -1151,6 +1151,7 @@
 	"classAttribute": "<em>Class attribute</em>",
 	"classes": "<em>Classes</em>",
 	"classLabel": "<em>Class</em>",
+	"classList": "Lista de classe",
 	"className": "<em>Class name</em>",
 	"clean_word_pasted_text": "<em>Clean the text pasted from Word or other Rich Text applications</em>",
 	"clearCache": "Limpar cache",
