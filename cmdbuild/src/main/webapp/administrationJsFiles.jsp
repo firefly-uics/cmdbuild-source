@@ -29,7 +29,6 @@
 		<script type="text/javascript" src="javascripts/cmdbuild/view/administration/common/basepanel/CMGridAndFormPanel.js"></script>
 
 	<!-- CLASSES -->
-	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/accordion/CMClassAccordion.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/class/CMAttributeForm.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/class/CMAttributeGrid.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/class/CMSetOrderWindow.js"></script>
@@ -83,7 +82,6 @@
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/gis/CMModLayerOrderController.js"></script>
 
 	<!-- CLASS -->
-	<script type="text/javascript" src="javascripts/cmdbuild/controller/accordion/CMClassAccordionController.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/classes/CMDomainTabController.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/classes/CMGeoAttributePanelController.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/classes/CMClassAttributeController.js"></script>

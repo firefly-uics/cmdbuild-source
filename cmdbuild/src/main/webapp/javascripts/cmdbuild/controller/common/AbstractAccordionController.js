@@ -3,6 +3,8 @@
 	Ext.define('CMDBuild.controller.common.AbstractAccordionController', {
 		extend: 'CMDBuild.controller.common.AbstractController',
 
+		requires: ['CMDBuild.core.constants.Proxy'],
+
 		/**
 		 * @cfg {Object}
 		 */
@@ -17,6 +19,7 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
+			'accordionBuildId',
 			'onAccordionBeforeSelect',
 			'onAccordionDeselect',
 			'onAccordionExpand',
@@ -48,6 +51,29 @@
 
 			this.cmName = this.view.cmName;
 			this.view.delegate = this; // Apply delegate to view
+		},
+
+		/**
+		 * Generates an unique id for the menu accordion, prepend to components array "accordion" string and cmName.
+		 *
+		 * @param {Array} components
+		 *
+		 * @return {String}
+		 */
+		accordionBuildId: function(components) {
+			components = Ext.isArray(components) ? Ext.Array.clean(components) : [components];
+
+			if (!Ext.isEmpty(components)) {
+				components.unshift(CMDBuild.core.constants.Proxy.ACCORDION, this.cmName);
+
+				Ext.Array.forEach(components, function(component, i, allComponents) {
+					components[i] = Ext.String.trim(String(component));
+				}, this);
+
+				return components.join('-');
+			}
+
+			return CMDBuild.core.constants.Proxy.ACCORDION + '-' + this.cmName + '-' + Date.now();
 		},
 
 		/**
@@ -177,7 +203,7 @@
 		 */
 		onAccordionUpdateStore: function(nodeIdToSelect) {
 			if (!Ext.isEmpty(nodeIdToSelect))
-				this.onAccordionSelectNodeById(nodeIdToSelect);
+				this.onAccordionSelectNodeById(this.accordionBuildId(nodeIdToSelect));
 
 			// Select first selectable item if no selection and expanded
 			if (!this.view.getSelectionModel().hasSelection() && this.view.getCollapsed() === false)

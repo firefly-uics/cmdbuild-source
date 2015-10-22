@@ -2,6 +2,9 @@
 
 	Ext.define("CMDBuild.controller.administration.classes.CMModClassController", {
 		extend: "CMDBuild.controller.CMBasePanelController",
+
+		requires: ['CMDBuild.core.constants.Proxy'],
+
 		constructor: function() {
 			this.callParent(arguments);
 			this.buildSubcontrollers();
@@ -35,6 +38,8 @@
 		//private and overridden in subclasses
 		onViewOnFront: function(selection) {
 			if (selection) {
+				selection.data['id'] = selection.data[CMDBuild.core.constants.Proxy.ENTITY_ID]; // New accordion manage
+
 				this.view.onClassSelected(selection.data);
 				this.subControllers.relay(function(subcontroller, index, subcontrollers) {
 					subcontroller.onClassSelected(selection.data.id);
