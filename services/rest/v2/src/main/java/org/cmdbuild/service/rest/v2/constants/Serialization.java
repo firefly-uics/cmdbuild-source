@@ -114,6 +114,7 @@ public class Serialization {
 			STOPPABLE = "stoppable", //
 			SUBJECT = "subject", //
 			TARGET_CLASS = "targetClass", //
+			TARGET_TYPE = "targetType", //
 			TEMPLATE = "template", //
 			TEXT = "text", //
 			TITLE = "title", //
