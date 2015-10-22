@@ -68,7 +68,6 @@
 								leaf: true
 							}
 						]);
-
 						this.getStore().sort();
 
 						// Alias of this.callParent(arguments), inside proxy function doesn't work

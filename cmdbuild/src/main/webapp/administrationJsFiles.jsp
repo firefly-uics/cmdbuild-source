@@ -111,7 +111,6 @@
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/navigationTrees/CMNavigationTreesFormController.js"></script>
 
 	<!-- PROCESS -->
-	<script type="text/javascript" src="javascripts/cmdbuild/controller/accordion/CMAccordionProcessController.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/workflow/CMProcessController.js"></script>
 
 	<!-- WIDGET -->

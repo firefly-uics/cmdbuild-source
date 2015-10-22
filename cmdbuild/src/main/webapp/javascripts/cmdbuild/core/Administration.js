@@ -1,16 +1,10 @@
 (function() {
 
-//	var classesAccordion = new CMDBuild.view.administration.accordion.CMClassAccordion({
-//		cmControllerType: CMDBuild.controller.accordion.CMClassAccordionController
-//	});;
 	var dashboardsAccordion = new CMDBuild.view.administration.accordion.CMDashboardAccordion({
 		cmControllerType: CMDBuild.controller.accordion.CMDashboardAccordionController
 	});
 	var navigationTreesAccordion = new CMDBuild.view.administration.accordion.CMNavigationTreesAccordion({
 		cmControllerType: CMDBuild.controller.accordion.CMNavigationTreesAccordionController
-	});
-	var processAccordion = new CMDBuild.view.administration.accordion.CMProcessAccordion({
-		cmControllerType: CMDBuild.controller.accordion.CMProcessAccordionController
 	});
 
 	Ext.define('CMDBuild.core.Administration', {
@@ -203,14 +197,18 @@
 			_CMMainViewportController = new CMDBuild.controller.CMMainViewportController(
 				new CMDBuild.view.CMMainViewport({
 					cmAccordions: [ // Sorted
-//						classesAccordion,
 						CMDBuild.configuration.userInterface.get(CMDBuild.core.constants.Proxy.CLOUD_ADMIN) ? null :
 							Ext.create('CMDBuild.view.administration.accordion.Classes', {
 								cmControllerType: 'CMDBuild.controller.administration.accordion.Classes',
 								cmName: 'class'
 							})
 						,
-						processAccordion,
+						CMDBuild.configuration.userInterface.get(CMDBuild.core.constants.Proxy.CLOUD_ADMIN) ? null :
+							Ext.create('CMDBuild.view.administration.accordion.Workflow', {
+								cmControllerType: 'CMDBuild.controller.administration.accordion.Workflow',
+								cmName: 'process'
+							})
+						,
 						CMDBuild.configuration.userInterface.get(CMDBuild.core.constants.Proxy.CLOUD_ADMIN) ? null :
 							Ext.create('CMDBuild.view.administration.accordion.Domain', {
 								cmControllerType: 'CMDBuild.controller.common.AbstractAccordionController',
@@ -362,17 +360,10 @@
 			Ext.resumeLayouts();
 
 			if (!CMDBuild.configuration.userInterface.get(CMDBuild.core.constants.Proxy.CLOUD_ADMIN)) {
-//				classesAccordion.updateStore();
+				// TODO: implement in accordion
+//				processAccordion.setDisabled((CMDBuild.Config.workflow) ? !CMDBuild.Config.workflow.enabled : true); // FIX: to avoid InternetExplorer error on startup
 
-				processAccordion.setDisabled((CMDBuild.Config.workflow) ? !CMDBuild.Config.workflow.enabled : true); // FIX: to avoid InternetExplorer error on startup
-				processAccordion.updateStore();
-			}
-
-			if (!CMDBuild.configuration.userInterface.get(CMDBuild.core.constants.Proxy.CLOUD_ADMIN)) {
 				navigationTreesAccordion.updateStore();
-			}
-
-			if (!CMDBuild.configuration.userInterface.get(CMDBuild.core.constants.Proxy.CLOUD_ADMIN)) {
 				dashboardsAccordion.updateStore();
 			}
 

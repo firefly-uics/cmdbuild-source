@@ -52,7 +52,7 @@
 		 * @param {Object} decodedResponse
 		 */
 		saveSuccessCB: function(response, options, decodedResponse) {
-			decodedResponse = decodedResponse['table'];
+			decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.TABLE];
 
 			this.view.disableModify(true);
 
