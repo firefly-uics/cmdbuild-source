@@ -111,6 +111,7 @@ public class Serialization {
 			START = "start", //
 			STATUSES = "statuses", //
 			STATUS = "status", //
+			STOPPABLE = "stoppable", //
 			SUBJECT = "subject", //
 			TARGET_CLASS = "targetClass", //
 			TEMPLATE = "template", //
