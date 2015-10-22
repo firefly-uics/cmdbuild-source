@@ -8,7 +8,7 @@
 		fields: [
 			{ name: 'cmIndex', type: 'int' },
 			{ name: 'cmName', type: 'string' },
-			{ name: CMDBuild.core.constants.Proxy.CLASS_ID, type: 'int', useNull: true },
+			{ name: CMDBuild.core.constants.Proxy.ENTITY_ID, type: 'int', useNull: true },
 			{ name: CMDBuild.core.constants.Proxy.DESCRIPTION, type: 'string' },
 			{ name: CMDBuild.core.constants.Proxy.ID, type: 'int', useNull: true },
 			{ name: CMDBuild.core.constants.Proxy.NAME, type: 'string' },

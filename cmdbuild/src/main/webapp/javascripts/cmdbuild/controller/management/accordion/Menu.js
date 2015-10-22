@@ -1,41 +1,63 @@
 (function() {
 
 	Ext.define('CMDBuild.controller.management.accordion.Menu', {
-		extend: 'CMDBuild.controller.accordion.CMBaseAccordionController',
+		extend: 'CMDBuild.controller.common.AbstractAccordionController',
 
-		onAccordionExpanded: function() {
+		requires: ['CMDBuild.core.constants.Proxy'],
+
+		/**
+		 * @cfg {Object}
+		 */
+		parentDelegate: undefined,
+
+		/**
+		 * @cfg {String}
+		 */
+		cmName: undefined,
+
+		/**
+		 * @cfg {Array}
+		 */
+		cmfgCatchedFunctions: [
+			'onAccordionBeforeSelect',
+			'onAccordionDeselect',
+			'onAccordionExpand',
+			'onAccordionGetFirtsSelectableNode',
+			'onAccordionGetNodeById',
+			'onAccordionIsEmpty',
+			'onAccordionIsNodeSelectable',
+			'onAccordionSelectFirstSelectableNode',
+			'onAccordionSelectionChange',
+			'onAccordionSelectNodeById',
+			'onAccordionUpdateStore'
+		],
+
+		/**
+		 * @property {CMDBuild.view.management.accordion.DataView}
+		 */
+		view: undefined,
+
+		/**
+		 * @override
+		 */
+		onAccordionExpand: function() {
 			_CMMainViewportController.bringTofrontPanelByCmName('class');
-			this.reselectCurrentNodeIfExistsOtherwiseSelectTheFisrtLeaf.call(this);
+
+			this.callParent(arguments);
 		},
 
-		onAccordionNodeSelect: function(selectionModel, selection) {
-			// is allowed only single select
-			if (selection.length != 1) {
-				return;
-			}
-
-			var selectedNode = selection[0];
-			var data = Ext.apply({}, selectedNode.data);
-			var id = data.id;
-
-			// a node without id is not manageable
-			if (typeof id == 'undefined') {
-				return;
-			}
-
-			// split the real id to the menu sequential
-			// id number
-			var idParts = id.split('#');
-			if (idParts.length != 2) {
-				// the id generation in menu accordion
-				// went wrong. There is no way to manage this case
-				return;
-			} else {
-				data.id = idParts[1];
-			}
-
-			var normalizedNode = new CMDBuild.view.common.CMAccordionStoreModel(data);
-			this.callParent([selectionModel, [normalizedNode]]);
+		/**
+		 * @param {CMDBuild.model.common.accordion.Generic} node
+		 *
+		 * @returns {Boolean}
+		 *
+		 * @override
+		 */
+		onAccordionIsNodeSelectable: function(node) {
+			return (
+				!(node.getDepth() == 1 && node.hasChildNodes())
+				&& !node.isRoot() // Root is hidden by default
+			);
 		}
 	});
 

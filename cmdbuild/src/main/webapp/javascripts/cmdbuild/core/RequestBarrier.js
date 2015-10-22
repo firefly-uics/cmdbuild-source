@@ -1,55 +1,61 @@
 (function() {
 
 	/**
-	 * A traffic light to
+	 * Traffic light class with multiple instances support (id parameter)
 	 */
 	Ext.define('CMDBuild.core.RequestBarrier', {
 
-		/**
-		 * @property {Function}
-		 */
-		callback: undefined,
+		singleton: true,
 
-		statics: {
-			/**
-			 * @property {Number}
-			 */
-			pendingCalls: 1
+		/**
+		 * @property {Object}
+		 */
+		barrierConfigurations: {},
+
+		/**
+		 * @param {String} id
+		 */
+		callback: function(id) {
+			CMDBuild.core.RequestBarrier.barrierConfigurations[id].index--;
+
+			if (CMDBuild.core.RequestBarrier.barrierConfigurations[id].index == 0)
+				Ext.callback(
+					CMDBuild.core.RequestBarrier.barrierConfigurations[id].callback,
+					CMDBuild.core.RequestBarrier.barrierConfigurations[id].scope
+				);
 		},
 
 		/**
-		 * @param {Object} configurationObject
-		 * @param {Function} configurationObject.callback
-		 */
-		constructor: function(configurationObject) {
-			if (
-				!Ext.Object.isEmpty(configurationObject)
-				&& !Ext.isEmpty(configurationObject.callback)
-			) {
-				Ext.apply(this, {
-					callback: function () {
-						CMDBuild.core.RequestBarrier.pendingCalls--;
-
-						if (CMDBuild.core.RequestBarrier.pendingCalls == 0)
-							configurationObject.callback();
-					}
-				});
-			} else {
-				_error('Malformed configuration object', this);
-			}
-		},
-
-		/**
+		 * @param {String} id
+		 *
 		 * @returns {Function}
 		 */
-		getCallback: function() {
-			CMDBuild.core.RequestBarrier.pendingCalls++;
+		getCallback: function(id) {
+			CMDBuild.core.RequestBarrier.barrierConfigurations[id].index++;
 
-			return this.callback;
+			return function(response, options, decodedResponse) {
+				CMDBuild.core.RequestBarrier.callback(id);
+			};
 		},
 
-		start: function() {
-			this.callback();
+		/**
+		 * @param {Function} callback
+		 * @param {String} id
+		 * @param {object} scope
+		 */
+		init: function(id, callback, scope) {
+			if (
+				!Ext.isEmpty(id) && Ext.isString(id)
+				&& !Ext.isEmpty(callback) && Ext.isFunction(callback)
+			) {
+				CMDBuild.core.RequestBarrier.barrierConfigurations[id] = {
+					callback: callback,
+					index: 0,
+					scope: scope || this
+				};
+			} else {
+				_error('barrier identifier or callback not defined', this);
+			}
 		}
 	});
 

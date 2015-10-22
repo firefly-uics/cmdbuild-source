@@ -38,7 +38,7 @@
 		<script type="text/javascript" src="services/json/utils/gettranslationobject"></script>
 
 		<!-- 3. Logout script -->
-		<script type="text/javascript" src="javascripts/cmdbuild/app/Logout.js"></script>
+		<script type="text/javascript" src="javascripts/cmdbuild/Logout.js"></script>
 
 		<title>CMDBuild</title>
 	</head>

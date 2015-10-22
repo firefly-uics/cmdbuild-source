@@ -1,175 +1,289 @@
 (function() {
 
-	var _idCount = 0;
-
 	Ext.define('CMDBuild.view.management.accordion.Menu', {
-		extend: 'CMDBuild.view.common.CMBaseAccordion',
+		extend: 'CMDBuild.view.common.AbstractAccordion',
 
-		requires: ['CMDBuild.core.constants.Proxy'],
+		requires: [
+			'CMDBuild.core.constants.Proxy',
+			'CMDBuild.core.proxy.Menu',
+			'CMDBuild.model.common.accordion.Menu'
+		],
+
+		/**
+		 * @cfg {CMDBuild.controller.management.accordion.Menu}
+		 */
+		delegate: undefined,
+
+		/**
+		 * @cfg {String}
+		 */
+		cmName: undefined,
+
+		/**
+		 * @cfg {Boolean}
+		 */
+		hideIfEmpty: true,
+
+		/**
+		 * @cfg {String}
+		 */
+		storeModelName: 'CMDBuild.model.common.accordion.Menu',
 
 		title: CMDBuild.Translation.navigation,
 
-		buildTreeStructure: function(menu) {
-			var out = [];
-			if (menu) {
-				var tree = adapt(menu);
-				if (tree.children) {
-					out = tree.children;
-				}
+		/**
+		 * Generates an unique id for the menu accordion
+		 *
+		 * @param {Array} components
+		 *
+		 * @return {String}
+		 */
+		buildCustomId: function(components) {
+			components = Ext.isArray(components) ? Ext.Array.clean(components) : [components];
+
+			if (!Ext.isEmpty(components)) {
+				Ext.Array.forEach(components, function(component, i, allComponents) {
+					components[i] = Ext.String.trim(String(component));
+				}, this);
+
+				return this.cmName + '-' + components.join('-');
 			}
 
-			// override to look for the
-			// real children nodes
-			this.isEmpty = function() {
-				return out.length == 0;
-			};
-
-			return out;
+			return this.cmName + '-' + Date.now();
 		},
 
-		// used only to retrieve classes or processes
-		getNodeById: function(id) {
-			if (! _CMCache.isEntryTypeById(id)) {
-				return null;
+		/**
+		 * @param {Number} nodeIdToSelect
+		 *
+		 * @override
+		 */
+		updateStore: function(nodeIdToSelect) {
+			nodeIdToSelect = Ext.isNumber(nodeIdToSelect) ? nodeIdToSelect : null;
+
+			var params = {};
+			params[CMDBuild.core.constants.Proxy.GROUP_NAME] = CMDBuild.configuration.runtime.get(CMDBuild.core.constants.Proxy.DEFAULT_GROUP_NAME);
+			params[CMDBuild.core.constants.Proxy.LOCALIZED] = true;
+
+			CMDBuild.core.proxy.Menu.read({
+				params: params,
+				loadMask: false,
+				scope: this,
+				success: function(response, options, decodedResponse) {
+					decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.MENU];
+
+					if (
+						!Ext.isEmpty(decodedResponse)
+						&& !Ext.isEmpty(decodedResponse[CMDBuild.core.constants.Proxy.CHILDREN])
+						&& Ext.isArray(decodedResponse[CMDBuild.core.constants.Proxy.CHILDREN])
+						&& decodedResponse[CMDBuild.core.constants.Proxy.TYPE] == 'root'
+					) {
+						this.getStore().getRootNode().removeAll();
+
+						this.getStore().getRootNode().appendChild(this.menuStructureChildrenBuilder(decodedResponse));
+
+						this.getStore().sort();
+
+						// Alias of this.callParent(arguments), inside proxy function doesn't work
+						if (!Ext.isEmpty(this.delegate))
+							this.delegate.cmfg('onAccordionUpdateStore', nodeIdToSelect);
+					}
+				}
+			});
+		},
+
+		/**
+		 * @param {Object} menuObject - menu root node object
+		 *
+		 * @returns {Array} nodeStructure
+		 */
+		menuStructureChildrenBuilder: function(menuObject) {
+			var nodeStructure = [];
+
+			if (
+				!Ext.isEmpty(menuObject[CMDBuild.core.constants.Proxy.CHILDREN])
+				&& Ext.isArray(menuObject[CMDBuild.core.constants.Proxy.CHILDREN])
+			) {
+				Ext.Array.forEach(menuObject[CMDBuild.core.constants.Proxy.CHILDREN], function(childObject, i, allChildNodes) {
+					nodeStructure.push(this.menuStructureNodeBuilder(childObject));
+				}, this);
 			}
-			var entryType = _CMCache.getEntryTypeById(id);
-			if (!entryType) {
-				return null;
-			}
 
-			var name = entryType.getName();
-			var scope = this;
-			var deep = true;
-			return this.store.getRootNode().findChildBy( //
-				function(node) { //
-					return node.get('name') == name;
-				}, //
-				scope, //
-				deep //
-			);
-		}
-	});
+			return nodeStructure;
+		},
 
-	function adapt(menu) {
-		var out = adaptSingleNode(menu);
-		if (menu.children || out.type == 'folder') {
-			out.leaf = false;
-			out.children = [];
-			out.expanded = false;
+		/**
+		 * @param {Object} menuNodeObject
+		 * 	Ex. {
+		 * 		{String} description
+		 * 		{Number} index
+		 * 		{String} referencedClassName
+		 * 		{Number} referencedElementId
+		 * 		{String} type - [class | processclass | dashboard | reportcsv | reportpdf | view]
+		 * 	}
+		 *
+		 * @returns {Object} nodeStructure
+		 */
+		menuStructureNodeBuilder: function(menuNodeObject) {
+			var nodeStructure = {};
 
-			var children = menu.children || [];
-			for (var i=0, l=children.length; i<l; ++i) {
-				var child = children[i];
-				out.children.push(adapt(child));
-			}
-		} else {
-			out.leaf = true;
-		}
+			if (!Ext.Object.isEmpty(menuNodeObject)) {
+				// Common attributes
+				nodeStructure['cmIndex'] = menuNodeObject[CMDBuild.core.constants.Proxy.INDEX];
+				nodeStructure[CMDBuild.core.constants.Proxy.DESCRIPTION] = menuNodeObject[CMDBuild.core.constants.Proxy.DESCRIPTION];
+				nodeStructure[CMDBuild.core.constants.Proxy.TEXT] = menuNodeObject[CMDBuild.core.constants.Proxy.DESCRIPTION];
+				nodeStructure[CMDBuild.core.constants.Proxy.LEAF] = true;
 
-		return out;
-	}
+				switch (menuNodeObject[CMDBuild.core.constants.Proxy.TYPE]) {
+					case 'class': {
+						var entryType = _CMCache.getEntryTypeByName(menuNodeObject[CMDBuild.core.constants.Proxy.REFERENCED_CLASS_NAME]);
 
-	/*
-	 * a node from the server has this shape:
-	 *
-	 * {
-	 * 	description: a description
-		index: for the sort
-		referencedClassName: the class to opent
-		referencedElementId: eventually the id
-		type: 'class | processclass | dashboard | reportcsv | reportpdf | view'
-		}
-	 */
-	function adaptSingleNode(node) {
-		var type = node.type;
-		var entryType = null;
-		var superClass = false;
-		var tableType = '';
-		var classIdentifier = node.referencedClassName;
+						if (!Ext.isEmpty(entryType)) {
+							nodeStructure['cmName'] = menuNodeObject[CMDBuild.core.constants.Proxy.TYPE];
+							nodeStructure['iconCls'] = 'cmdbuild-tree-' + (entryType.isSuperClass() ? 'super' : '') + menuNodeObject[CMDBuild.core.constants.Proxy.TYPE] +'-icon';
+							nodeStructure[CMDBuild.core.constants.Proxy.ENTITY_ID] = entryType.getId();
+							nodeStructure[CMDBuild.core.constants.Proxy.FILTER] = menuNodeObject[CMDBuild.core.constants.Proxy.FILTER];
+							nodeStructure[CMDBuild.core.constants.Proxy.ID] = this.buildCustomId([
+								menuNodeObject[CMDBuild.core.constants.Proxy.TYPE],
+								entryType.getId(),
+								menuNodeObject[CMDBuild.core.constants.Proxy.INDEX]
+							]);
+							nodeStructure[CMDBuild.core.constants.Proxy.NAME] = menuNodeObject[CMDBuild.core.constants.Proxy.REFERENCED_CLASS_NAME];
+						}
+					} break;
 
-		if (type == 'class'
-			|| type == 'processclass') {
+					case 'custompage': {
+						nodeStructure['cmName'] = menuNodeObject[CMDBuild.core.constants.Proxy.TYPE];
+						nodeStructure['iconCls'] = 'cmdbuild-tree-custompage-icon';
+						nodeStructure[CMDBuild.core.constants.Proxy.ID] = this.buildCustomId([
+							menuNodeObject[CMDBuild.core.constants.Proxy.TYPE],
+							menuNodeObject[CMDBuild.core.constants.Proxy.INDEX]
+						]);
+					} break;
 
-			entryType = _CMCache.getEntryTypeByName(node.referencedClassName);
-			if (entryType) {
-				superClass = entryType.isSuperClass();
-				classIdentifier = entryType.getId();
-				tableType = entryType.getTableType();
-			}
-		}
+					case 'dashboard': {
+						nodeStructure['cmName'] = 'dashboard';
+						nodeStructure['iconCls'] = 'cmdbuild-tree-dashboard-icon';
+						nodeStructure[CMDBuild.core.constants.Proxy.ENTITY_ID] = menuNodeObject[CMDBuild.core.constants.Proxy.REFERENCED_ELEMENT_ID];
+						nodeStructure[CMDBuild.core.constants.Proxy.ID] = this.buildCustomId([
+							'dashboard',
+							menuNodeObject[CMDBuild.core.constants.Proxy.REFERENCED_ELEMENT_ID],
+							menuNodeObject[CMDBuild.core.constants.Proxy.INDEX]
+						]);
+					} break;
 
-		var out = {
-			id: classIdentifier,
-			idClass: classIdentifier,
+					case 'folder': {
+						nodeStructure['cmName'] = 'folder';
+						nodeStructure[CMDBuild.core.constants.Proxy.ENTITY_ID] = menuNodeObject[CMDBuild.core.constants.Proxy.REFERENCED_CLASS_NAME];
+						nodeStructure[CMDBuild.core.constants.Proxy.ID] = this.buildCustomId([
+							'folder',
+							menuNodeObject[CMDBuild.core.constants.Proxy.REFERENCED_CLASS_NAME],
+							menuNodeObject[CMDBuild.core.constants.Proxy.INDEX]
+						]);
+						nodeStructure[CMDBuild.core.constants.Proxy.NAME] = menuNodeObject[CMDBuild.core.constants.Proxy.REFERENCED_CLASS_NAME];
+					} break;
 
-			name: node.referencedClassName,
-			text: node.description,
-			tableType: tableType,
-			leaf: type != 'folder',
-			cmName: node.type == 'processclass' ? 'process' : node.type, //ugly compatibility hack
-			iconCls: 'cmdbuild-tree-' + (superClass ? 'super' : '') + type +'-icon',
-			cmIndex: node.index,
-			type: node.type
-		};
+					case 'processclass': {
+						var entryType = _CMCache.getEntryTypeByName(menuNodeObject[CMDBuild.core.constants.Proxy.REFERENCED_CLASS_NAME]);
 
-		if (isAReport(node)) {
-			addReportStuff(out, node);
-		}
+						if (!Ext.isEmpty(entryType)) {
+							nodeStructure['cmName'] = 'process'; // TODO: waiting for refactor (compatibility hack)
+							nodeStructure['iconCls'] = 'cmdbuild-tree-' + (entryType.isSuperClass() ? 'super' : '') + menuNodeObject[CMDBuild.core.constants.Proxy.TYPE] +'-icon';
+							nodeStructure[CMDBuild.core.constants.Proxy.ENTITY_ID] = entryType.getId();
+							nodeStructure[CMDBuild.core.constants.Proxy.FILTER] = menuNodeObject[CMDBuild.core.constants.Proxy.FILTER];
+							nodeStructure[CMDBuild.core.constants.Proxy.ID] = this.buildCustomId([
+								'process',
+								entryType.getId(),
+								menuNodeObject[CMDBuild.core.constants.Proxy.INDEX]
+							]);
+							nodeStructure[CMDBuild.core.constants.Proxy.NAME] = menuNodeObject[CMDBuild.core.constants.Proxy.REFERENCED_CLASS_NAME];
+						}
+					} break;
 
-		if (isADashboard(node)) {
-			out.id = node.referencedElementId;
-		}
+					case 'reportcsv': {
+						nodeStructure['cmName'] = 'singlereport';
+						nodeStructure['iconCls'] = 'cmdbuild-tree-reportcsv-icon';
+						nodeStructure[CMDBuild.core.constants.Proxy.ENTITY_ID] = menuNodeObject[CMDBuild.core.constants.Proxy.REFERENCED_ELEMENT_ID];
+						nodeStructure[CMDBuild.core.constants.Proxy.ID] = this.buildCustomId([
+							'singlereport',
+							menuNodeObject[CMDBuild.core.constants.Proxy.REFERENCED_ELEMENT_ID],
+							menuNodeObject[CMDBuild.core.constants.Proxy.INDEX]
+						]);
+						nodeStructure[CMDBuild.core.constants.Proxy.SECTION_HIERARCHY] = [CMDBuild.core.constants.Proxy.CSV];
+					} break;
 
-		if (isView(node)) {
-			out.tableType = 'standard';
-			out.leaf = true;
-			out.iconCls = 'cmdbuild-tree-class-icon';
+					case 'reportpdf': {
+						nodeStructure['cmName'] = 'singlereport';
+						nodeStructure['iconCls'] = 'cmdbuild-tree-reportpdf-icon';
+						nodeStructure[CMDBuild.core.constants.Proxy.ENTITY_ID] = menuNodeObject[CMDBuild.core.constants.Proxy.REFERENCED_ELEMENT_ID];
+						nodeStructure[CMDBuild.core.constants.Proxy.ID] = this.buildCustomId([
+							'singlereport',
+							menuNodeObject[CMDBuild.core.constants.Proxy.REFERENCED_ELEMENT_ID],
+							menuNodeObject[CMDBuild.core.constants.Proxy.INDEX]
+						]);
+						nodeStructure[CMDBuild.core.constants.Proxy.SECTION_HIERARCHY] = [CMDBuild.core.constants.Proxy.PDF];
+					} break;
 
-			if (node.specificTypeValues.type == 'FILTER') {
-				node.viewType = 'FILTER';
+					case 'view': {
+						switch (menuNodeObject[CMDBuild.core.constants.Proxy.SPECIFIC_TYPE_VALUES][CMDBuild.core.constants.Proxy.TYPE]) {
+							case 'FILTER': {
+								var entryTypeName = menuNodeObject[CMDBuild.core.constants.Proxy.SPECIFIC_TYPE_VALUES][CMDBuild.core.constants.Proxy.SOURCE_CLASS_NAME];
+								var entryType = _CMCache.getEntryTypeByName(entryTypeName);
 
-				var entryTypeName = node.specificTypeValues.sourceClassName;
-				var entryType = _CMCache.getEntryTypeByName(entryTypeName);
+								nodeStructure[CMDBuild.core.constants.Proxy.SECTION_HIERARCHY] = ['filter'];
 
-				if (entryType != null) {
-					out.id = entryType.getId();
-					out.filter = node.specificTypeValues.filter;
-					out.cmName = 'class'; // To act as a regular class node
+								if (!Ext.isEmpty(entryType)) {
+									nodeStructure['cmName'] = 'class';
+									nodeStructure[CMDBuild.core.constants.Proxy.ENTITY_ID] = entryType.getId();
+									nodeStructure[CMDBuild.core.constants.Proxy.FILTER] = menuNodeObject[CMDBuild.core.constants.Proxy.SPECIFIC_TYPE_VALUES][CMDBuild.core.constants.Proxy.FILTER];
+									nodeStructure[CMDBuild.core.constants.Proxy.ID] = this.buildCustomId([
+										'dataview',
+										'filter',
+										entryType.getId(),
+										menuNodeObject[CMDBuild.core.constants.Proxy.INDEX]
+									]);
+								}
+							} break;
+
+							case 'SQL': { // TODO: check if fill with SQL or do something else
+								nodeStructure['cmName'] = 'dataview';
+								nodeStructure[CMDBuild.core.constants.Proxy.ID] = this.buildCustomId([
+									'dataview',
+									'sql',
+									menuNodeObject[CMDBuild.core.constants.Proxy.INDEX]
+								]);
+								nodeStructure[CMDBuild.core.constants.Proxy.SECTION_HIERARCHY] = ['sql'];
+								nodeStructure[CMDBuild.core.constants.Proxy.SOURCE_FUNCTION] = menuNodeObject[CMDBuild.core.constants.Proxy.SPECIFIC_TYPE_VALUES][CMDBuild.core.constants.Proxy.SOURCE_FUNCTION];
+							} break;
+
+							default: {
+								_error(
+									'specificTypeValues.type "'
+									+ menuNodeObject[CMDBuild.core.constants.Proxy.SPECIFIC_TYPE_VALUES][CMDBuild.core.constants.Proxy.TYPE]
+									+ '" not managed',
+									this
+								);
+
+								nodeStructure = {};
+							}
+						}
+					} break;
+
+					default: {
+						_error('menu item type "' + menuNodeObject[CMDBuild.core.constants.Proxy.TYPE] + '" not managed', this);
+
+						nodeStructure = {};
+					}
 				}
 
-			} else {
-				out.viewType = 'SQL';
-				out.sourceFunction = node.specificTypeValues.sourceFunction;
-				out.cmName = 'dataview';
-				out[CMDBuild.core.constants.Proxy.SECTION_HIERARCHY] = ['sql'];
+				// Build children nodes
+				if (!Ext.isEmpty(menuNodeObject[CMDBuild.core.constants.Proxy.CHILDREN]) && Ext.isArray(menuNodeObject[CMDBuild.core.constants.Proxy.CHILDREN])) {
+					nodeStructure[CMDBuild.core.constants.Proxy.CHILDREN] = this.menuStructureChildrenBuilder(menuNodeObject);
+					nodeStructure[CMDBuild.core.constants.Proxy.LEAF] = false;
+				}
 			}
+
+			return nodeStructure;
 		}
-
-		out.id = addProgressiveNumberToId(out.id);
-
-		return out;
-	}
-
-	function addProgressiveNumberToId(cmdbuildId) {
-		return _idCount++ + '#' + cmdbuildId;
-	}
-
-	function isADashboard(node) {
-		return node.type == 'dashboard';
-	}
-
-	function isAReport(node) {
-		return node.type.indexOf('report') > -1;
-	}
-
-	function isView(node) {
-		return node.type == 'view';
-	}
-
-	function addReportStuff(n, node) {
-		n.cmName = 'singlereport';
-		n.id = node.referencedElementId;
-		n.subtype = 'custom';
-	}
+	});
 
 })();
