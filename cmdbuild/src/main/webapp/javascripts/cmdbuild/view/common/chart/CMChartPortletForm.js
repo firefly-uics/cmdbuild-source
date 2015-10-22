@@ -25,27 +25,26 @@
 		 * are the ones with a url setted on the proxy
 		 * */
 		checkStoreLoad: function(cb) {
-			var requestBarrier = Ext.create('CMDBuild.core.RequestBarrier', { callback: cb });
-
+			var barrierId = 'chart';
 			var someStore = false;
 
-			this.cascade(function(item) {
-				if (item
-						&& item.store
-						&& item.store.proxy
-						&& item.store.proxy.url) {
+			CMDBuild.core.RequestBarrier.init(barrierId, cb);
 
+			this.cascade(function(item) {
+				if (
+					item
+					&& item.store
+					&& item.store.proxy
+					&& item.store.proxy.url
+				) {
 					someStore = true;
-					item.store.load({callback: requestBarrier.getCallback()});
+					item.store.load({ callback: CMDBuild.core.RequestBarrier.getCallback(barrierId) });
 				}
 			});
 
-			// call the callback directly if there is no store to load
-			if (!someStore) {
+			// Call the callback directly if there is no store to load
+			if (!someStore)
 				cb();
-			} else {
-				requestBarrier.start();
-			}
 		}
 	});
 

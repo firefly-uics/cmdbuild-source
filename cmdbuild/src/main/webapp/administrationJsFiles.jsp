@@ -132,5 +132,3 @@
 <script type="text/javascript" src="javascripts/cmdbuild/bim/administration/view/CMBIMGridConfigurator.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/bim/administration/controller/CMBIMPanelController.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/bim/administration/controller/CMBimLayerController.js"></script>
-
-<script type="text/javascript" src="javascripts/cmdbuild/Administration.js"></script>

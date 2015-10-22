@@ -68,7 +68,7 @@
 
 											if (!Ext.isEmpty(viewSourceClassObject)) {
 												node['cmName'] = 'class'; // To act as a regular class node
-												node[CMDBuild.core.constants.Proxy.CLASS_ID] = viewSourceClassObject[CMDBuild.core.constants.Proxy.ID];
+												node[CMDBuild.core.constants.Proxy.ENTITY_ID] = viewSourceClassObject[CMDBuild.core.constants.Proxy.ID];
 												node[CMDBuild.core.constants.Proxy.FILTER] = viewObject[CMDBuild.core.constants.Proxy.FILTER];
 												node[CMDBuild.core.constants.Proxy.ID] = viewObject[CMDBuild.core.constants.Proxy.ID];
 												node[CMDBuild.core.constants.Proxy.SECTION_HIERARCHY] = ['filter'];
@@ -92,7 +92,8 @@
 								this.getStore().sort();
 
 								// Alias of this.callParent(arguments), inside proxy function doesn't work
-								this.delegate.cmfg('onAccordionUpdateStore', nodeIdToSelect);
+								if (!Ext.isEmpty(this.delegate))
+									this.delegate.cmfg('onAccordionUpdateStore', nodeIdToSelect);
 							}
 						});
 					}

@@ -23,9 +23,7 @@
 		readAll: function(parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, {
-				url: CMDBuild.core.proxy.Index.classes.readAll
-			});
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.classes.readAll });
 
 			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.CLASSES, parameters);
 		},

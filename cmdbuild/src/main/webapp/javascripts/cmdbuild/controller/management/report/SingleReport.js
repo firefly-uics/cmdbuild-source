@@ -223,8 +223,8 @@
 				this.currentReportParametersSet({
 					callIdentifier: 'create',
 					params: {
-						extension: node.get(CMDBuild.core.constants.Proxy.TYPE).replace(/report/i, ''), // Removes 'report' string from type property in node object
-						id: node.get(CMDBuild.core.constants.Proxy.ID)
+						extension: node.get(CMDBuild.core.constants.Proxy.SECTION_HIERARCHY)[0],
+						id: node.get(CMDBuild.core.constants.Proxy.ENTITY_ID)
 					}
 				});
 

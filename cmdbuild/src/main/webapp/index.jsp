@@ -63,7 +63,7 @@
 		</script>
 
 		<!-- 4. Modules -->
-		<script type="text/javascript" src="javascripts/cmdbuild/app/Login.js"></script>
+		<script type="text/javascript" src="javascripts/cmdbuild/Login.js"></script>
 
 		<title>CMDBuild</title>
 	</head>

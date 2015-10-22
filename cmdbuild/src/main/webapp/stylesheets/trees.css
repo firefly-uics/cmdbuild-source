@@ -7,6 +7,15 @@
 /* Custom page */
 	.cmdbuild-tree-custompage-icon { background-image: url("../images/icons/tree/customPage.png") !important; }
 
+/* Dashboard */
+	.cmdbuild-tree-dashboard-icon { background-image: url("../images/icons/tree/dashboard.png") !important; }
+
+/* Group */
+	.cmdbuild-tree-group-icon { background-image: url("../images/icons/tree/group.png") !important; }
+
+/* Localization */
+	.cmdbuild-tree-localization-icon { background-image: url("../images/icons/tree/world.png") !important; }
+
 /* Process */
 	.cmdbuild-tree-superprocessclass-icon { background-image: url("../images/icons/tree/superclassprocess_collapsed.png") !important; }
 	.cmdbuild-tree-processclass-icon { background-image: url("../images/icons/tree/process.png") !important; }
@@ -17,19 +26,10 @@
 	.cmdbuild-tree-reportodt-icon { background-image: url("../images/icons/fileFormats/odt.png") !important; }
 	.cmdbuild-tree-reportxml-icon { background-image: url("../images/icons/fileFormats/xml.png") !important; }
 
-/* User */
-	.cmdbuild-tree-user-icon { background-image: url("../images/icons/tree/user.png") !important; }
-	.cmdbuild-tree-user-group-icon { background-image: url("../images/icons/tree/folder_user.png") !important; }
-
-/* Group */
-	.cmdbuild-tree-group-icon { background-image: url("../images/icons/tree/group.png") !important; }
-
-/* Dashboard */
-	.cmdbuild-tree-dashboard-icon { background-image: url("../images/icons/tree/dashboard.png") !important; }
-
-/* Localization */
-	.cmdbuild-tree-localization-icon { background-image: url("../images/icons/tree/world.png") !important; }
-
 /* Task */
 	.cmdbuild-tree-tasks-icon { background-image: url("../images/icons/tree/wrench.png") !important; }
 	.cmdbuild-tree-tasks-group-icon { background-image: url("../images/icons/tree/superclassprocess_collapsed.png") !important; }
+
+/* User */
+	.cmdbuild-tree-user-icon { background-image: url("../images/icons/tree/user.png") !important; }
+	.cmdbuild-tree-user-group-icon { background-image: url("../images/icons/tree/folder_user.png") !important; }

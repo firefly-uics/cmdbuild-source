@@ -40,68 +40,78 @@
 
 		<%@ include file="libsJsFiles.jsp"%>
 
+		<!-- 1. Main script -->
+		<script type="text/javascript" src="javascripts/cmdbuild/core/Utils.js"></script>
+		<script type="text/javascript" src="javascripts/cmdbuild/core/LoaderConfig.js"></script>
+		<script type="text/javascript" src="javascripts/log/log4javascript.js"></script>
+		<script type="text/javascript" src="javascripts/cmdbuild/application.js"></script>
+		<script type="text/javascript" src="javascripts/cmdbuild/core/Ajax.js"></script>
+		<script type="text/javascript" src="javascripts/cmdbuild/core/Message.js"></script>
+
+		<!-- 2. Translations -->
+		<script type="text/javascript" src="javascripts/ext-<%= extVersion %>/locale/ext-lang-<%= lang %>.js"></script>
+		<script type="text/javascript" src="services/json/utils/gettranslationobject"></script>
+
+		<!-- 3. Runtime configuration -->
 		<script type="text/javascript">
-			Ext.ns('CMDBuild.Runtime'); // runtime configurations
+			Ext.ns('CMDBuild.configuration.runtime');
+
+			CMDBuild.configuration.runtime = Ext.create('CMDBuild.model.configuration.Runtime');
+			CMDBuild.configuration.runtime.set(CMDBuild.core.constants.Proxy.ALLOW_PASSWORD_CHANGE, <%= operationUser.getAuthenticatedUser().canChangePassword() %>);
+			CMDBuild.configuration.runtime.set(CMDBuild.core.constants.Proxy.DEFAULT_GROUP_DESCRIPTION, '<%= StringEscapeUtils.escapeEcmaScript(group.getDescription()) %>');
+			CMDBuild.configuration.runtime.set(CMDBuild.core.constants.Proxy.DEFAULT_GROUP_ID, <%= group.getId() %>);
+			CMDBuild.configuration.runtime.set(CMDBuild.core.constants.Proxy.DEFAULT_GROUP_NAME, '<%= StringEscapeUtils.escapeEcmaScript(group.getName()) %>');
+			CMDBuild.configuration.runtime.set(CMDBuild.core.constants.Proxy.IS_ADMINISTRATOR, <%= operationUser.hasAdministratorPrivileges() %>);
+			CMDBuild.configuration.runtime.set(CMDBuild.core.constants.Proxy.STARTING_CLASS_ID, <%= group.getStartingClassId() %>);
+			CMDBuild.configuration.runtime.set(CMDBuild.core.constants.Proxy.USER_ID, <%= operationUser.getAuthenticatedUser().getId() %>);
+			CMDBuild.configuration.runtime.set(CMDBuild.core.constants.Proxy.USERNAME, '<%= StringEscapeUtils.escapeEcmaScript(operationUser.getAuthenticatedUser().getUsername()) %>');
+
+			/**
+			 * Compatibility mode
+			 *
+			 * @deprecated (CMDBuild.configuration.runtime)
+			 */
+			Ext.ns('CMDBuild.Runtime');
 			CMDBuild.Runtime.UserId = <%= operationUser.getAuthenticatedUser().getId() %>;
 			CMDBuild.Runtime.Username = '<%= StringEscapeUtils.escapeEcmaScript(operationUser.getAuthenticatedUser().getUsername()) %>';
-
 			CMDBuild.Runtime.DefaultGroupId = <%= group.getId() %>;
 			CMDBuild.Runtime.DefaultGroupName = '<%= StringEscapeUtils.escapeEcmaScript(group.getName()) %>';
 			CMDBuild.Runtime.DefaultGroupDescription = '<%= StringEscapeUtils.escapeEcmaScript(group.getDescription()) %>';
 			CMDBuild.Runtime.IsAdministrator = <%= operationUser.hasAdministratorPrivileges() %>;
-			<%
-				// FIXME: The field LoginGroupId is currently never used, remove it from here?
-				if (operationUser.getAuthenticatedUser().getGroupNames().size() == 1) {
-			%>
-					CMDBuild.Runtime.LoginGroupId = <%= group.getId() %>;
-			<%	} %>
-					CMDBuild.Runtime.AllowsPasswordLogin = <%= operationUser.getAuthenticatedUser().canChangePassword() %>;
-					CMDBuild.Runtime.CanChangePassword = <%= operationUser.getAuthenticatedUser().canChangePassword() %>;
-			<%
-				if (group.getStartingClassId() != null) {
-			%>
-					CMDBuild.Runtime.StartingClassId = <%= group.getStartingClassId() %>;
-			<%
-				}
-			%>
-		</script>
-		<script type="text/javascript" src="javascripts/cmdbuild/application.js"></script>
-		<script type="text/javascript" src="services/json/utils/gettranslationobject"></script>
+			CMDBuild.Runtime.AllowsPasswordLogin = <%= operationUser.getAuthenticatedUser().canChangePassword() %>;
+			CMDBuild.Runtime.CanChangePassword = <%= operationUser.getAuthenticatedUser().canChangePassword() %>;
 
-		<%@ include file="coreJsFiles.jsp"%>
-		<%@ include file="managementJsFiles.jsp"%>
-		<%@ include file="bimJsFiles.jsp"%>
+			<% if (group.getStartingClassId() != null) { %>
+				CMDBuild.Runtime.StartingClassId = <%= group.getStartingClassId() %>;
+			<% } %>
+		</script>
+
+		<%@ include file="coreJsFiles.jsp" %>
+		<%@ include file="managementJsFiles.jsp" %>
+		<%@ include file="bimJsFiles.jsp" %>
 <!--
 		<script type="text/javascript" src="javascripts/cmdbuild/cmdbuild-core.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/cmdbuild-management.js"></script>
 -->
 
 		<!-- GIS -->
-			<%
-				GisProperties g =  GisProperties.getInstance();
-				if (g.isEnabled()) {
-					if (g.isServiceOn(GisProperties.GOOGLE)) {
-			%>
-						<script src="http://maps.google.com/maps/api/js?v=3&amp;sensor=false"></script>
-			<%
-					}
+		<%
+			GisProperties g =  GisProperties.getInstance();
 
-					if (g.isServiceOn(GisProperties.YAHOO)) {
-			%>
+			if (g.isEnabled()) {
+				if (g.isServiceOn(GisProperties.GOOGLE)) {
+		%>
+					<script src="http://maps.google.com/maps/api/js?v=3&amp;sensor=false"></script>
+			<% } %>
+
+			<% if (g.isServiceOn(GisProperties.YAHOO)) { %>
 						<script src="http://api.maps.yahoo.com/ajaxymap?v=3.0&appid=<%=g.getYahooKey()%>"></script>
-			<%
-					}
-			%>
-					<%@ include file="gisJsFiles.jsp" %>
-			<%
-				}
-			%>
+			<% } %>
+			<%@ include file="gisJsFiles.jsp" %>
+		<% } %>
 
-		<script type="text/javascript">
-			Ext.onReady(function() {
-				CMDBuild.app.Management.init();
-			});
-		</script>
+		<!-- 4. Modules -->
+		<script type="text/javascript" src="javascripts/cmdbuild/Management.js"></script>
 
 		<title>CMDBuild</title>
 	</head>
@@ -110,8 +120,10 @@
 			<a href="http://www.cmdbuild.org" target="_blank"><img alt="CMDBuild logo" src="images/logo.jpg" /></a>
 			<div id="instance_name"></div>
 			<div id="header_po">Open Source Configuration and Management Database</div>
-			<!-- required to display the map-->
+
+			<!-- Required to display the map-->
 			<div id="map"> </div>
+
 			<div id="msg-ct" class="msg-blue">
 				<div id="msg">
 					<div id="msg-inner">
