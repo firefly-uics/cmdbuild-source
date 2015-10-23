@@ -1,6 +1,8 @@
 package org.cmdbuild.data.view;
 
+import static com.google.common.base.Predicates.equalTo;
 import static com.google.common.collect.FluentIterable.from;
+import static org.cmdbuild.dao.entrytype.Predicates.name;
 
 import java.util.Collections;
 
@@ -15,7 +17,6 @@ import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.dao.view.ForwardingDataView;
 
 import com.google.common.base.Function;
-import com.google.common.base.Predicate;
 
 /**
  * Grants additional permissions for those classes/domains whose are requested
@@ -26,15 +27,6 @@ import com.google.common.base.Predicate;
 public class PermissiveDataView extends ForwardingDataView {
 
 	private static class PermissiveClass extends ForwardingClass {
-
-		private final Predicate<CMAttribute> DESCRIPTION_ATTRIBUTE_ONLY = new Predicate<CMAttribute>() {
-
-			@Override
-			public boolean apply(final CMAttribute input) {
-				return input.getName().equals(getDescriptionAttributeName());
-			}
-
-		};
 
 		private final CMClass delegate;
 
@@ -50,7 +42,7 @@ public class PermissiveDataView extends ForwardingDataView {
 		@Override
 		public Iterable<? extends CMAttribute> getAllAttributes() {
 			return from(super.getAllAttributes()) //
-					.filter(DESCRIPTION_ATTRIBUTE_ONLY) //
+					.filter(name(equalTo(getDescriptionAttributeName()))) //
 					.transform(TO_PERMISSIVE_ATTRIBUTE);
 		}
 
@@ -59,11 +51,11 @@ public class PermissiveDataView extends ForwardingDataView {
 	private static class PermissiveDomain extends ForwardingDomain {
 
 		private final CMDomain delegate;
-		
+
 		public PermissiveDomain(final CMDomain delegate) {
 			this.delegate = delegate;
 		}
-		
+
 		@Override
 		protected CMDomain delegate() {
 			return delegate;
