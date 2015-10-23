@@ -1,6 +1,6 @@
 (function() {
 
-	Ext.define('CMDBuild.controller.administration.accordion.Classes', {
+	Ext.define('CMDBuild.controller.administration.accordion.Class', {
 		extend: 'CMDBuild.controller.common.AbstractAccordionController',
 
 		requires: ['CMDBuild.core.constants.Proxy'],
@@ -11,7 +11,7 @@
 		parentDelegate: undefined,
 
 		/**
-		 * @cfg {CMDBuild.view.administration.accordion.Classes}
+		 * @cfg {CMDBuild.view.administration.accordion.Class}
 		 */
 		accordion: undefined,
 
@@ -39,7 +39,7 @@
 		],
 
 		/**
-		 * @param {CMDBuild.model.common.accordion.Classes} node
+		 * @param {CMDBuild.model.common.accordion.Class} node
 		 *
 		 * @returns {Boolean}
 		 */

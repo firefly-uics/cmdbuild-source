@@ -189,10 +189,10 @@
 
 			_CMMainViewportController = new CMDBuild.controller.CMMainViewportController(
 				new CMDBuild.view.CMMainViewport({
-					cmAccordions: [ // Sorted
+					cmAccordions: [ // Display order
 						CMDBuild.configuration.userInterface.get(CMDBuild.core.constants.Proxy.CLOUD_ADMIN) ? null :
-							Ext.create('CMDBuild.view.administration.accordion.Classes', {
-								cmControllerType: 'CMDBuild.controller.administration.accordion.Classes',
+							Ext.create('CMDBuild.view.administration.accordion.Class', {
+								cmControllerType: 'CMDBuild.controller.administration.accordion.Class',
 								cmName: 'class'
 							})
 						,

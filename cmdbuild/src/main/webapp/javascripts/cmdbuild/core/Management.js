@@ -252,7 +252,7 @@
 
 			_CMMainViewportController = new CMDBuild.controller.CMMainViewportController(
 				new CMDBuild.view.CMMainViewport({
-					cmAccordions: [ // Sorted
+					cmAccordions: [ // Display order
 						Ext.create('CMDBuild.view.management.accordion.Menu', {
 							cmControllerType: 'CMDBuild.controller.management.accordion.Menu',
 							cmName: 'menu',
