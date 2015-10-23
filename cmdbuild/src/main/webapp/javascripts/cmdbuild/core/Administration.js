@@ -1,5 +1,8 @@
 (function() {
 
+	/**
+	 * Call sequence: init() -> buildConfiguration() -> buildCache() -> buildUserInterface()
+	 */
 	Ext.define('CMDBuild.core.Administration', {
 
 		requires: [
