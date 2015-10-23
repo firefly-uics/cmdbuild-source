@@ -1,10 +1,6 @@
 (function() {
 
 	// TODO move in common
-	var classesAccordion = new CMDBuild.view.common.classes.CMClassAccordion({
-		title: CMDBuild.Translation.administration.modClass.tree_title
-	});
-	// TODO move in common
 	var processAccordion = new CMDBuild.view.administration.accordion.CMProcessAccordion({
 		rootVisible: true
 	});
@@ -257,7 +253,12 @@
 							cmControllerType: 'CMDBuild.controller.management.accordion.Menu',
 							cmName: 'menu',
 						}),
-						CMDBuild.configuration.userInterface.isDisabledModule('class') ? null : classesAccordion,
+						CMDBuild.configuration.userInterface.isDisabledModule('class') ? null :
+							Ext.create('CMDBuild.view.management.accordion.Classes', {
+								cmControllerType: 'CMDBuild.controller.management.accordion.Classes',
+								cmName: 'class'
+							})
+						,
 						CMDBuild.configuration.userInterface.isDisabledModule('process') || !(CMDBuild.Config.workflow.enabled == 'true') ? null : processAccordion,
 						CMDBuild.configuration.userInterface.isDisabledModule(CMDBuild.core.constants.Proxy.DATA_VIEW) ? null :
 							Ext.create('CMDBuild.view.management.accordion.DataView', {
@@ -326,11 +327,9 @@
 // FIXME: implement new accordion functionalities to avoid hidden also if not empty
 //			hideIfEmpty(processAccordion);
 //			hideIfEmpty(menuAccordion);
-//			hideIfEmpty(classesAccordion);
 
 			Ext.resumeLayouts();
 
-			classesAccordion.updateStore();
 			processAccordion.updateStore();
 			dashboardsAccordion.updateStore();
 
