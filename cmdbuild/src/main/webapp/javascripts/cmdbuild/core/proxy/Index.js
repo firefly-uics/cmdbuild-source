@@ -275,11 +275,12 @@
 		},
 
 		navigationTrees: {
-			get: 'services/json/navigationtree/get',
-			read: 'services/json/navigationtree/read',
 			create: 'services/json/navigationtree/create',
-			save: 'services/json/navigationtree/save',
-			remove: 'services/json/navigationtree/remove'
+			read: 'services/json/navigationtree/read',
+			update: 'services/json/navigationtree/save',
+			remove: 'services/json/navigationtree/remove',
+
+			readAll: 'services/json/navigationtree/get'
 		},
 
 		patchManager: {

@@ -309,6 +309,7 @@
 		NAME: 'name',
 		NAME_CLASS_1: 'nameClass1',
 		NAME_CLASS_2: 'nameClass2',
+		NAVIGATION_TREE: 'navigationTree',
 		NEW: 'new',
 		NO_SUBJECT_PREFIX: 'noSubjectPrefix',
 		NONE: 'none',
