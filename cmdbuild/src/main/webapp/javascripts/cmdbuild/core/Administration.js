@@ -1,8 +1,5 @@
 (function() {
 
-	var dashboardsAccordion = new CMDBuild.view.administration.accordion.CMDashboardAccordion({
-		cmControllerType: CMDBuild.controller.accordion.CMDashboardAccordionController
-	});
 	var navigationTreesAccordion = new CMDBuild.view.administration.accordion.CMNavigationTreesAccordion({
 		cmControllerType: CMDBuild.controller.accordion.CMNavigationTreesAccordionController
 	});
@@ -230,7 +227,10 @@
 							cmControllerType: 'CMDBuild.controller.administration.accordion.Lookup',
 							cmName: 'lookuptype',
 						}),
-						dashboardsAccordion,
+						Ext.create('CMDBuild.view.administration.accordion.Dashboard', {
+							cmControllerType: 'CMDBuild.controller.administration.accordion.Dashboard',
+							cmName: 'dashboard'
+						}),
 						Ext.create('CMDBuild.view.administration.accordion.Report', {
 							cmControllerType: 'CMDBuild.controller.common.AbstractAccordionController',
 							cmName: 'report'
@@ -362,7 +362,6 @@
 
 			if (!CMDBuild.configuration.userInterface.get(CMDBuild.core.constants.Proxy.CLOUD_ADMIN)) {
 				navigationTreesAccordion.updateStore();
-				dashboardsAccordion.updateStore();
 			}
 
 			CMDBuild.view.CMMainViewport.hideSplash(function() {
