@@ -45,38 +45,40 @@
 		 * @override
 		 */
 		set: function(fieldName, newValue) {
-			switch (fieldName) {
-				case CMDBuild.core.proxy.CMProxyConstants.CAPABILITIES: {
-					newValue = Ext.create('CMDBuild.model.widget.customForm.Capabilities', newValue);
-				} break;
+			if (!Ext.isEmpty(newValue)) {
+				switch (fieldName) {
+					case CMDBuild.core.proxy.CMProxyConstants.CAPABILITIES: {
+						newValue = Ext.create('CMDBuild.model.widget.customForm.Capabilities', newValue);
+					} break;
 
-				case CMDBuild.core.proxy.CMProxyConstants.DATA: {
-					newValue = Ext.isString(newValue) ? Ext.decode(newValue) : newValue;
+					case CMDBuild.core.proxy.CMProxyConstants.DATA: {
+						newValue = Ext.isString(newValue) ? Ext.decode(newValue) : newValue;
 
-					var attributesArray = [];
+						var attributesArray = [];
 
-					Ext.Array.forEach(newValue, function(attributeObject, i, AllAttributesObjects) {
-						attributesArray.push(Ext.create('CMDBuild.model.common.Generic', attributeObject));
-					}, this);
+						Ext.Array.forEach(newValue, function(attributeObject, i, allAttributeObjects) {
+							attributesArray.push(Ext.create('CMDBuild.model.common.Generic', attributeObject));
+						}, this);
 
-					newValue = attributesArray;
-				} break;
+						newValue = attributesArray;
+					} break;
 
-				case CMDBuild.core.proxy.CMProxyConstants.MODEL: {
-					newValue = Ext.isString(newValue) ? Ext.decode(newValue) : newValue;
+					case CMDBuild.core.proxy.CMProxyConstants.MODEL: {
+						newValue = Ext.isString(newValue) ? Ext.decode(newValue) : newValue;
 
-					var attributesArray = [];
+						var attributesArray = [];
 
-					Ext.Array.forEach(newValue, function(attributeObject, i, AllAttributesObjects) {
-						attributesArray.push(Ext.create('CMDBuild.model.widget.customForm.Attribute', attributeObject));
-					}, this);
+						Ext.Array.forEach(newValue, function(attributeObject, i, allAttributeObjects) {
+							attributesArray.push(Ext.create('CMDBuild.model.widget.customForm.Attribute', attributeObject));
+						}, this);
 
-					newValue = attributesArray;
-				} break;
+						newValue = attributesArray;
+					} break;
 
-				default: {
-					if (Ext.isString(newValue))
-						newValue = Ext.decode(newValue);
+					default: {
+						if (Ext.isString(newValue))
+							newValue = Ext.decode(newValue);
+					}
 				}
 			}
 
