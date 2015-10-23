@@ -108,6 +108,7 @@
 		CUSTOM: 'custom',
 		CUSTOM_PAGES: 'customPages',
 		DASHBOARD: 'dashboard',
+		DASHBOARDS: 'dashboards',
 		DATA: 'data',
 		DATA_INDEX: 'dataIndex',
 		DATA_VIEW:'dataView',

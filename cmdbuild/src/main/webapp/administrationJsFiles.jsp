@@ -89,7 +89,6 @@
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/classes/CMModClassController.js"></script>
 
 	<!-- DASHBOARD -->
-	<script type="text/javascript" src="javascripts/cmdbuild/controller/accordion/CMDashboardAccordionController.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/dashboard/CMDashboardLayoutPanelController.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/dashboard/CMDashboardChartConfigurationFormController.js"></script>
 
