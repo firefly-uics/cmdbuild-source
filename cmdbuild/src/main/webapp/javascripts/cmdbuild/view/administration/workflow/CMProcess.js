@@ -9,8 +9,6 @@
 
 		requires: ['CMDBuild.core.constants.Proxy'],
 
-		cmName: 'process',
-
 		constructor: function() {
 
 			this.addClassButton = Ext.create('Ext.button.Button', {
