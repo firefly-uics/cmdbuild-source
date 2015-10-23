@@ -1,9 +1,5 @@
 (function() {
 
-	var navigationTreesAccordion = new CMDBuild.view.administration.accordion.CMNavigationTreesAccordion({
-		cmControllerType: CMDBuild.controller.accordion.CMNavigationTreesAccordionController
-	});
-
 	Ext.define('CMDBuild.core.Administration', {
 
 		requires: [
@@ -222,15 +218,22 @@
 							cmControllerType: 'CMDBuild.controller.common.AbstractAccordionController',
 							cmName: 'filter'
 						}),
-						navigationTreesAccordion,
+						CMDBuild.configuration.userInterface.get(CMDBuild.core.constants.Proxy.CLOUD_ADMIN) ? null :
+							Ext.create('CMDBuild.view.administration.accordion.NavigationTree', {
+								cmControllerType: 'CMDBuild.controller.administration.accordion.NavigationTree',
+								cmName: 'navigationtree'
+							})
+						,
 						Ext.create('CMDBuild.view.administration.accordion.Lookup', {
 							cmControllerType: 'CMDBuild.controller.administration.accordion.Lookup',
 							cmName: 'lookuptype',
 						}),
-						Ext.create('CMDBuild.view.administration.accordion.Dashboard', {
-							cmControllerType: 'CMDBuild.controller.administration.accordion.Dashboard',
-							cmName: 'dashboard'
-						}),
+						CMDBuild.configuration.userInterface.get(CMDBuild.core.constants.Proxy.CLOUD_ADMIN) ? null :
+							Ext.create('CMDBuild.view.administration.accordion.Dashboard', {
+								cmControllerType: 'CMDBuild.controller.administration.accordion.Dashboard',
+								cmName: 'dashboard'
+							})
+						,
 						Ext.create('CMDBuild.view.administration.accordion.Report', {
 							cmControllerType: 'CMDBuild.controller.common.AbstractAccordionController',
 							cmName: 'report'
@@ -349,7 +352,8 @@
 							cmControllerType: CMDBuild.controller.administration.gis.CMModLayerOrderController
 						}),
 						new CMDBuild.view.administration.navigationTrees.CMModNavigationTrees({
-							cmControllerType: CMDBuild.controller.administration.navigationTrees.CMModNavigationTreesController
+							cmControllerType: CMDBuild.controller.administration.navigationTrees.CMModNavigationTreesController,
+							cmName: 'navigationtree'
 						}),
 						new CMDBuild.view.administration.dashboard.CMModDashboard({
 							cmControllerType: CMDBuild.controller.administration.dashboard.CMModDashboardController
@@ -359,10 +363,6 @@
 			);
 
 			Ext.resumeLayouts();
-
-			if (!CMDBuild.configuration.userInterface.get(CMDBuild.core.constants.Proxy.CLOUD_ADMIN)) {
-				navigationTreesAccordion.updateStore();
-			}
 
 			CMDBuild.view.CMMainViewport.hideSplash(function() {
 				_CMMainViewportController.setInstanceName(CMDBuild.Config.cmdbuild.instance_name);

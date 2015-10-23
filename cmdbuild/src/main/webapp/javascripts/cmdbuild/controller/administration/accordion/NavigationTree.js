@@ -1,6 +1,6 @@
 (function() {
 
-	Ext.define('CMDBuild.controller.administration.accordion.Dashboard', {
+	Ext.define('CMDBuild.controller.administration.accordion.NavigationTree', {
 		extend: 'CMDBuild.controller.common.AbstractAccordionController',
 
 		requires: ['CMDBuild.core.constants.Proxy'],
@@ -11,7 +11,7 @@
 		parentDelegate: undefined,
 
 		/**
-		 * @cfg {CMDBuild.view.administration.accordion.Dashboard}
+		 * @cfg {CMDBuild.view.administration.accordion.NavigationTree}
 		 */
 		accordion: undefined,
 
@@ -39,7 +39,7 @@
 		],
 
 		/**
-		 * @param {CMDBuild.model.common.accordion.Dashboard} node
+		 * @param {CMDBuild.model.common.accordion.NavigationTree} node
 		 *
 		 * @returns {Boolean}
 		 */

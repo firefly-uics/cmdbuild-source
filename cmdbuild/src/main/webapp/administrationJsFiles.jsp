@@ -58,7 +58,6 @@
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/gis/ModLayerOrder.js"></script>
 
 	<!-- NAVIGATION TREES -->
-	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/accordion/CMNavigationTreesAccordion.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/navigationTrees/CMNavigationTreesForm.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/navigationTrees/CMModNavigationTrees.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/navigationTrees/CMNavigationTreesTree.js"></script>
@@ -104,7 +103,6 @@
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/dashboard/CMModDashboardController.js"></script>
 
 	<!-- NAVIGATION TREES -->
-	<script type="text/javascript" src="javascripts/cmdbuild/controller/accordion/CMNavigationTreesAccordionController.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/navigationTrees/CMModNavigationTreesController.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/navigationTrees/CMNavigationTreesTreeController.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/navigationTrees/CMNavigationTreesFormController.js"></script>
