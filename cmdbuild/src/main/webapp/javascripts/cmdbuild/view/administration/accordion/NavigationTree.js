@@ -18,6 +18,11 @@
 		/**
 		 * @cfg {String}
 		 */
+		delegateClassName: 'CMDBuild.controller.administration.accordion.NavigationTree',
+
+		/**
+		 * @cfg {String}
+		 */
 		cmName: undefined,
 
 		/**

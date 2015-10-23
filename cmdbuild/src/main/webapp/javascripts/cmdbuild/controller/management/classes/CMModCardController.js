@@ -20,7 +20,7 @@
 		},
 
 		/**
-		 * @param {CMDBuild.view.common.CMAccordionStoreModel} entryType
+		 * @param {CMDBuild.model.common.accordion.Generic} entryType
 		 */
 		onViewOnFront: function(entryType) {
 			if (entryType) {

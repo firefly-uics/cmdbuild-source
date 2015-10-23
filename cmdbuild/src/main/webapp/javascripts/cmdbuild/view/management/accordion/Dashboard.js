@@ -17,6 +17,11 @@
 		/**
 		 * @cfg {String}
 		 */
+		delegateClassName: 'CMDBuild.controller.management.accordion.Dashboard',
+
+		/**
+		 * @cfg {String}
+		 */
 		cmName: undefined,
 
 		/**

@@ -18,6 +18,11 @@
 		/**
 		 * @cfg {String}
 		 */
+		delegateClassName: 'CMDBuild.controller.administration.accordion.Workflow',
+
+		/**
+		 * @cfg {String}
+		 */
 		cmName: undefined,
 
 		/**

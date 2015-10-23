@@ -228,11 +228,11 @@
 
 		},
 
-		addAccordion: function(a) {
-			Ext.suspendLayouts();
-			this.cmAccordions.add(a);
-			Ext.resumeLayouts();
-		},
+//		addAccordion: function(a) {
+//			Ext.suspendLayouts();
+//			this.cmAccordions.add(a);
+//			Ext.resumeLayouts();
+//		},
 
 		addPanel: function(p) {
 			Ext.suspendLayouts();

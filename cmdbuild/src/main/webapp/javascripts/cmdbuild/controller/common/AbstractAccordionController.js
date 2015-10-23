@@ -44,13 +44,14 @@
 		view: undefined,
 
 		/**
-		 * @param {Object} view
+		 * @param {Object} configurationObject
+		 * @param {Object} configurationObject.view
 		 */
-		constructor: function(view) {
-			this.callParent([{ view: view }]);
+		constructor: function(configurationObject) {
+			this.callParent(arguments);
 
+			// Shorthands
 			this.cmName = this.view.cmName;
-			this.view.delegate = this; // Apply delegate to view
 		},
 
 		/**

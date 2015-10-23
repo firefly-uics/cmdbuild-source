@@ -19,6 +19,11 @@
 		/**
 		 * @cfg {String}
 		 */
+		delegateClassName: 'CMDBuild.controller.common.AbstractAccordionController',
+
+		/**
+		 * @cfg {String}
+		 */
 		cmName: undefined,
 
 		/**
@@ -43,6 +48,7 @@
 
 		initComponent: function() {
 			Ext.apply(this, {
+				delegate: Ext.create(this.delegateClassName, { view: this }),
 				store: Ext.create('Ext.data.TreeStore', {
 					autoLoad: true,
 					model: this.storeModelName,

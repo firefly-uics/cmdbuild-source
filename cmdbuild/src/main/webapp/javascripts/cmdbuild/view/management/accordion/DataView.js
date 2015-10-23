@@ -11,6 +11,16 @@
 		],
 
 		/**
+		 * @cfg {CMDBuild.controller.management.accordion.DataView}
+		 */
+		delegate: undefined,
+
+		/**
+		 * @cfg {String}
+		 */
+		delegateClassName: 'CMDBuild.controller.management.accordion.DataView',
+
+		/**
 		 * @cfg {String}
 		 */
 		cmName: undefined,

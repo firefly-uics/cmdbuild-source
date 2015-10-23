@@ -242,50 +242,26 @@
 			_CMMainViewportController = new CMDBuild.controller.CMMainViewportController(
 				new CMDBuild.view.CMMainViewport({
 					cmAccordions: [ // Display order
-						Ext.create('CMDBuild.view.management.accordion.Menu', {
-							cmControllerType: 'CMDBuild.controller.management.accordion.Menu',
-							cmName: 'menu',
-						}),
+						Ext.create('CMDBuild.view.management.accordion.Menu', { cmName: 'menu' }),
 						CMDBuild.configuration.userInterface.isDisabledModule('class') ? null :
-							Ext.create('CMDBuild.view.management.accordion.Classes', {
-								cmControllerType: 'CMDBuild.controller.management.accordion.Classes',
-								cmName: 'class'
-							})
+							Ext.create('CMDBuild.view.management.accordion.Classes', { cmName: 'class' })
 						,
 						CMDBuild.configuration.userInterface.isDisabledModule('process') || !(CMDBuild.Config.workflow.enabled == 'true') ? null :
-							Ext.create('CMDBuild.view.management.accordion.Workflow', {
-								cmControllerType: 'CMDBuild.controller.management.accordion.Workflow',
-								cmName: 'workflow'
-							})
+							Ext.create('CMDBuild.view.management.accordion.Workflow', { cmName: 'workflow' })
 						,
 						CMDBuild.configuration.userInterface.isDisabledModule(CMDBuild.core.constants.Proxy.DATA_VIEW) ? null :
-							Ext.create('CMDBuild.view.management.accordion.DataView', {
-								cmControllerType: 'CMDBuild.controller.management.accordion.DataView',
-								cmName: 'dataview'
-							})
+							Ext.create('CMDBuild.view.management.accordion.DataView', { cmName: 'dataview' })
 						,
 						CMDBuild.configuration.userInterface.isDisabledModule('dashboard') ? null :
-							Ext.create('CMDBuild.view.management.accordion.Dashboard', {
-								cmControllerType: 'CMDBuild.controller.management.accordion.Dashboard',
-								cmName: 'dashboard'
-							})
+							Ext.create('CMDBuild.view.management.accordion.Dashboard', { cmName: 'dashboard' })
 						,
 						CMDBuild.configuration.userInterface.isDisabledModule('report') ? null :
-							Ext.create('CMDBuild.view.management.accordion.Report', {
-								cmControllerType: 'CMDBuild.controller.common.AbstractAccordionController',
-								cmName: 'report'
-							})
+							Ext.create('CMDBuild.view.management.accordion.Report', { cmName: 'report' })
 						,
 						CMDBuild.configuration.userInterface.isDisabledModule(CMDBuild.core.constants.Proxy.CUSTOM_PAGES) ? null :
-							Ext.create('CMDBuild.view.management.accordion.CustomPage', {
-								cmControllerType: 'CMDBuild.controller.common.AbstractAccordionController',
-								cmName: 'custompage'
-							})
+							Ext.create('CMDBuild.view.management.accordion.CustomPage', { cmName: 'custompage' })
 						,
-						Ext.create('CMDBuild.view.management.accordion.Utility', {
-							cmControllerType: 'CMDBuild.controller.common.AbstractAccordionController',
-							cmName: 'utility'
-						})
+						Ext.create('CMDBuild.view.management.accordion.Utility', { cmName: 'utility' })
 					],
 					cmPanels: [
 						Ext.create('Ext.panel.Panel', { cls: 'empty_panel x-panel-body' }),
