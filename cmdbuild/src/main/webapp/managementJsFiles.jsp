@@ -73,7 +73,6 @@
 		<script type="text/javascript" src="javascripts/cmdbuild/view/management/classes/attachments/CMEditAttachmentWindow.js"></script>
 
 	<!-- DASHBOARD -->
-	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/accordion/CMDashboardAccordion.js"></script> <!-- TODO: mone in commons file -->
 	<script type="text/javascript" src="javascripts/cmdbuild/view/management/dashboard/CMModDashbaord.js"></script>
 
 	<!-- UTILITIES -->

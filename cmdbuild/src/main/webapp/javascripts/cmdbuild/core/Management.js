@@ -1,8 +1,5 @@
 (function() {
 
-	// TODO move in common
-	var dashboardsAccordion = new CMDBuild.view.administration.accordion.CMDashboardAccordion();
-
 	/**
 	 * Call sequence: init() -> buildConfiguration() -> buildCache() -> buildUserInterface()
 	 */
@@ -267,7 +264,12 @@
 								cmName: 'dataview'
 							})
 						,
-						CMDBuild.configuration.userInterface.isDisabledModule('dashboard') ? null : dashboardsAccordion,
+						CMDBuild.configuration.userInterface.isDisabledModule('dashboard') ? null :
+							Ext.create('CMDBuild.view.management.accordion.Dashboard', {
+								cmControllerType: 'CMDBuild.controller.management.accordion.Dashboard',
+								cmName: 'dashboard'
+							})
+						,
 						CMDBuild.configuration.userInterface.isDisabledModule('report') ? null :
 							Ext.create('CMDBuild.view.management.accordion.Report', {
 								cmControllerType: 'CMDBuild.controller.common.AbstractAccordionController',
@@ -312,7 +314,8 @@
 							cmName: 'workflow'
 						}),
 						this.dashboardPanel = new CMDBuild.view.management.dashboard.CMModDashboard({
-							cmControllerType: CMDBuild.controller.management.dashboard.CMModDashboardController
+							cmControllerType: CMDBuild.controller.management.dashboard.CMModDashboardController,
+							cmName: 'dashboard'
 						}),
 						new CMDBuild.view.management.utilities.CMModChangePassword(),
 						new CMDBuild.view.management.utilites.CMModBulkCardUpdate({
@@ -327,12 +330,7 @@
 				})
 			);
 
-// FIXME: implement new accordion functionalities to avoid hidden also if not empty
-//			hideIfEmpty(menuAccordion);
-
 			Ext.resumeLayouts();
-
-			dashboardsAccordion.updateStore();
 
 			CMDBuild.view.CMMainViewport.hideSplash(function() {
 				_CMMainViewportController.setInstanceName(CMDBuild.Config.cmdbuild.instance_name);
