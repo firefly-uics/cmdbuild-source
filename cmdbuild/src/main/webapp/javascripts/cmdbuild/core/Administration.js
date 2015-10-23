@@ -206,7 +206,7 @@
 						CMDBuild.configuration.userInterface.get(CMDBuild.core.constants.Proxy.CLOUD_ADMIN) ? null :
 							Ext.create('CMDBuild.view.administration.accordion.Workflow', {
 								cmControllerType: 'CMDBuild.controller.administration.accordion.Workflow',
-								cmName: 'process'
+								cmName: 'workflow'
 							})
 						,
 						CMDBuild.configuration.userInterface.get(CMDBuild.core.constants.Proxy.CLOUD_ADMIN) ? null :
@@ -338,7 +338,8 @@
 							cmControllerType: CMDBuild.controller.administration.classes.CMModClassController
 						}),
 						new CMDBuild.view.administration.workflow.CMProcess({
-							cmControllerType: CMDBuild.controller.administration.workflow.CMProcessController
+							cmControllerType: CMDBuild.controller.administration.workflow.CMProcessController,
+							cmName: 'workflow'
 						}),
 						new CMDBuild.Administration.ModIcons(),
 						new CMDBuild.view.administration.gis.CMModGISNavigationConfiguration({
@@ -360,9 +361,6 @@
 			Ext.resumeLayouts();
 
 			if (!CMDBuild.configuration.userInterface.get(CMDBuild.core.constants.Proxy.CLOUD_ADMIN)) {
-				// TODO: implement in accordion
-//				processAccordion.setDisabled((CMDBuild.Config.workflow) ? !CMDBuild.Config.workflow.enabled : true); // FIX: to avoid InternetExplorer error on startup
-
 				navigationTreesAccordion.updateStore();
 				dashboardsAccordion.updateStore();
 			}

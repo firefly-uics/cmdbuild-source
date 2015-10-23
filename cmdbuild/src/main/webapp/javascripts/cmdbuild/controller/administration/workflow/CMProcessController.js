@@ -46,7 +46,7 @@
 			this.view.taskManagerPanel.setDisabled(true);
 			this.view.onAddClassButtonClick();
 
-			_CMMainViewportController.deselectAccordionByName('process');
+			_CMMainViewportController.deselectAccordionByName('workflow');
 		}
 	});
 

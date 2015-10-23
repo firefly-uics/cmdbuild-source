@@ -43,8 +43,8 @@
 		deleteSuccessCB: function(response, options, decodedResponse) {
 			var removedClassId = this.selection.get(CMDBuild.core.constants.Proxy.ID);
 
-			_CMMainViewportController.findAccordionByCMName('process').deselect();
-			_CMMainViewportController.findAccordionByCMName('process').updateStore();
+			_CMMainViewportController.findAccordionByCMName('workflow').deselect();
+			_CMMainViewportController.findAccordionByCMName('workflow').updateStore();
 
 			/**
 			 * @deprecated
@@ -170,7 +170,7 @@
 		saveSuccessCB: function(response, options, decodedResponse) {
 			decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.TABLE];
 
-			_CMMainViewportController.findAccordionByCMName('process').updateStore(decodedResponse[CMDBuild.core.constants.Proxy.ID]);
+			_CMMainViewportController.findAccordionByCMName('workflow').updateStore(decodedResponse[CMDBuild.core.constants.Proxy.ID]);
 
 			/**
 			 * @deprecated

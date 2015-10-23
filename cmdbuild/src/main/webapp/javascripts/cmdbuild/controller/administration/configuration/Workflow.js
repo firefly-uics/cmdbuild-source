@@ -59,7 +59,7 @@
 
 					this.view.loadRecord(Ext.create('CMDBuild.model.configuration.workflow.Form', CMDBuild.model.configuration.workflow.Form.convertFromLegacy(decodedResponse)));
 
-					_CMMainViewportController.findAccordionByCMName('process').setDisabled(
+					_CMMainViewportController.findAccordionByCMName('workflow').setDisabled(
 						!CMDBuild.core.Utils.decodeAsBoolean(decodedResponse[CMDBuild.core.constants.Proxy.ENABLED])
 					);
 
