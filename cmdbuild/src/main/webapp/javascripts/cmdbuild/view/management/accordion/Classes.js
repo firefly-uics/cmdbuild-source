@@ -30,7 +30,7 @@
 		 */
 		storeModelName: 'CMDBuild.model.common.accordion.Classes',
 
-		title: CMDBuild.Translation.administration.modClass.tree_title,
+		title: CMDBuild.Translation.classList,
 
 		/**
 		 * @param {Number} nodeIdToSelect
