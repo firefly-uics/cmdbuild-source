@@ -39,7 +39,7 @@
 		/**
 		 * Setup view items and controllers on accordion click
 		 *
-		 * @param {CMDBuild.view.common.CMAccordionStoreModel} node
+		 * @param {CMDBuild.model.common.accordion.Generic} node
 		 *
 		 * @override
 		 */

@@ -93,9 +93,6 @@
 	<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/widgets/CMWorkflow.js"></script>
 
 <!-- CONTROLLER -->
-	<!-- ACCORDION -->
-	<script type="text/javascript" src="javascripts/cmdbuild/controller/management/common/CMFakeIdAccordionController.js"></script>
-
 	<!-- COMMON -->
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/management/classes/CMModCardSubController.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/management/common/CMModClassAndWFCommons.js"></script>

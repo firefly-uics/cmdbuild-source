@@ -135,7 +135,7 @@
 			this.detail(params, path, router);
 
 			Ext.Function.createDelayed(function() {
-				_CMMainViewportController.panelControllers[CMDBuild.core.constants.Proxy.CLASS].cardPanelController.onPrintCardMenuClick(this.printFormat);
+				_CMMainViewportController.panelControllers['class'].cardPanelController.onPrintCardMenuClick(this.printFormat);
 			}, 1500, this)();
 		},
 

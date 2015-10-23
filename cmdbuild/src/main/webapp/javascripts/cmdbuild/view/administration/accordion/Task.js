@@ -11,6 +11,11 @@
 		/**
 		 * @cfg {String}
 		 */
+		delegateClassName: 'CMDBuild.controller.administration.accordion.Task',
+
+		/**
+		 * @cfg {String}
+		 */
 		cmName: undefined,
 
 		title: CMDBuild.Translation.administration.tasks.title,

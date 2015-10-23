@@ -18,6 +18,11 @@
 		/**
 		 * @cfg {String}
 		 */
+		delegateClassName: 'CMDBuild.controller.management.accordion.Classes',
+
+		/**
+		 * @cfg {String}
+		 */
 		cmName: undefined,
 
 		/**

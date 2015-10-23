@@ -19,7 +19,7 @@
 		view: undefined,
 
 		/**
-		 * @param {CMDBuild.view.common.CMAccordionStoreModel} node
+		 * @param {CMDBuild.model.common.accordion.Generic} node
 		 */
 		onViewOnFront: function(node) {
 			if (!Ext.isEmpty(node)) {

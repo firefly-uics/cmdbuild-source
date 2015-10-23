@@ -17,6 +17,11 @@
 		/**
 		 * @cfg {String}
 		 */
+		delegateClassName: 'CMDBuild.controller.administration.accordion.Lookup',
+
+		/**
+		 * @cfg {String}
+		 */
 		cmName: undefined,
 
 		/**

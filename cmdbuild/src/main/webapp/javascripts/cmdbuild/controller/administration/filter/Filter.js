@@ -23,7 +23,7 @@
 		/**
 		 * Setup view items and controllers on accordion click
 		 *
-		 * @param {CMDBuild.view.common.CMAccordionStoreModel} parameters
+		 * @param {CMDBuild.model.common.accordion.Generic} parameters
 		 *
 		 * @override
 		 */

@@ -134,7 +134,7 @@
 		},
 
 		/**
-		 * @param {CMDBuild.view.common.CMAccordionStoreModel} parameters
+		 * @param {CMDBuild.model.common.accordion.Generic} parameters
 		 *
 		 * TODO: waiting for refactor (crud)
 		 */

@@ -194,85 +194,34 @@
 				new CMDBuild.view.CMMainViewport({
 					cmAccordions: [ // Display order
 						CMDBuild.configuration.userInterface.get(CMDBuild.core.constants.Proxy.CLOUD_ADMIN) ? null :
-							Ext.create('CMDBuild.view.administration.accordion.Classes', {
-								cmControllerType: 'CMDBuild.controller.administration.accordion.Classes',
-								cmName: 'class'
-							})
+							Ext.create('CMDBuild.view.administration.accordion.Classes', { cmName: 'class' })
 						,
 						CMDBuild.configuration.userInterface.get(CMDBuild.core.constants.Proxy.CLOUD_ADMIN) ? null :
-							Ext.create('CMDBuild.view.administration.accordion.Workflow', {
-								cmControllerType: 'CMDBuild.controller.administration.accordion.Workflow',
-								cmName: 'workflow'
-							})
+							Ext.create('CMDBuild.view.administration.accordion.Workflow', { cmName: 'workflow' })
 						,
 						CMDBuild.configuration.userInterface.get(CMDBuild.core.constants.Proxy.CLOUD_ADMIN) ? null :
-							Ext.create('CMDBuild.view.administration.accordion.Domain', {
-								cmControllerType: 'CMDBuild.controller.common.AbstractAccordionController',
-								cmName: 'domain'
-							})
+							Ext.create('CMDBuild.view.administration.accordion.Domain', { cmName: 'domain' })
 						,
 						CMDBuild.configuration.userInterface.get(CMDBuild.core.constants.Proxy.CLOUD_ADMIN) ? null :
-							Ext.create('CMDBuild.view.administration.accordion.DataView', {
-								cmControllerType: 'CMDBuild.controller.common.AbstractAccordionController',
-								cmName: 'dataview'
-							})
+							Ext.create('CMDBuild.view.administration.accordion.DataView', { cmName: 'dataview' })
 						,
-						Ext.create('CMDBuild.view.administration.accordion.Filter', {
-							cmControllerType: 'CMDBuild.controller.common.AbstractAccordionController',
-							cmName: 'filter'
-						}),
+						Ext.create('CMDBuild.view.administration.accordion.Filter', { cmName: 'filter' }),
 						CMDBuild.configuration.userInterface.get(CMDBuild.core.constants.Proxy.CLOUD_ADMIN) ? null :
-							Ext.create('CMDBuild.view.administration.accordion.NavigationTree', {
-								cmControllerType: 'CMDBuild.controller.administration.accordion.NavigationTree',
-								cmName: 'navigationtree'
-							})
+							Ext.create('CMDBuild.view.administration.accordion.NavigationTree', { cmName: 'navigationtree' })
 						,
-						Ext.create('CMDBuild.view.administration.accordion.Lookup', {
-							cmControllerType: 'CMDBuild.controller.administration.accordion.Lookup',
-							cmName: 'lookuptype',
-						}),
+						Ext.create('CMDBuild.view.administration.accordion.Lookup', { cmName: 'lookuptype' }),
 						CMDBuild.configuration.userInterface.get(CMDBuild.core.constants.Proxy.CLOUD_ADMIN) ? null :
-							Ext.create('CMDBuild.view.administration.accordion.Dashboard', {
-								cmControllerType: 'CMDBuild.controller.administration.accordion.Dashboard',
-								cmName: 'dashboard'
-							})
+							Ext.create('CMDBuild.view.administration.accordion.Dashboard', { cmName: 'dashboard' })
 						,
-						Ext.create('CMDBuild.view.administration.accordion.Report', {
-							cmControllerType: 'CMDBuild.controller.common.AbstractAccordionController',
-							cmName: 'report'
-						}),
-						Ext.create('CMDBuild.view.administration.accordion.Menu', {
-							cmControllerType: 'CMDBuild.controller.common.AbstractAccordionController',
-							cmName: 'menu'
-						}),
-						Ext.create('CMDBuild.view.administration.accordion.UserAndGroup', {
-							cmControllerType: 'CMDBuild.controller.common.AbstractAccordionController',
-							cmName: 'userandgroup'
-						}),
-						Ext.create('CMDBuild.view.administration.accordion.Task', {
-							cmControllerType: 'CMDBuild.controller.administration.accordion.Task',
-							cmName: 'task'
-						}),
-						Ext.create('CMDBuild.view.administration.accordion.Email', {
-							cmControllerType: 'CMDBuild.controller.common.AbstractAccordionController',
-							cmName: 'email'
-						}),
-						Ext.create('CMDBuild.view.administration.accordion.Gis', {
-							cmControllerType: 'CMDBuild.controller.common.AbstractAccordionController',
-							cmName: 'gis'
-						}),
-						Ext.create('CMDBuild.view.administration.accordion.Bim', {
-							cmControllerType: 'CMDBuild.controller.common.AbstractAccordionController',
-							cmName: 'bim'
-						}),
-						Ext.create('CMDBuild.view.administration.accordion.Localization', {
-							cmControllerType: 'CMDBuild.controller.common.AbstractAccordionController',
-							cmName: 'localizations'
-						}),
-						Ext.create('CMDBuild.view.administration.accordion.Configuration', {
-							cmControllerType: 'CMDBuild.controller.common.AbstractAccordionController',
-							cmName: 'configuration'
-						})
+						Ext.create('CMDBuild.view.administration.accordion.Report', { cmName: 'report' }),
+						Ext.create('CMDBuild.view.administration.accordion.Menu', { cmName: 'menu' }),
+						Ext.create('CMDBuild.view.administration.accordion.UserAndGroup', { cmName: 'userandgroup' }),
+						Ext.create('CMDBuild.view.administration.accordion.Task', { cmName: 'task' }),
+						Ext.create('CMDBuild.view.administration.accordion.Email', { cmName: 'email' }),
+						Ext.create('CMDBuild.view.administration.accordion.Gis', { cmName: 'gis' }),
+						Ext.create('CMDBuild.view.administration.accordion.Bim', { cmName: 'bim' }),
+						Ext.create('CMDBuild.view.administration.accordion.Localization', { cmName: 'localizations' }),
+						Ext.create('CMDBuild.view.administration.accordion.Configuration', { cmName: 'configuration' })
 					],
 					cmPanels: [
 						Ext.create('Ext.panel.Panel', { cls: 'empty_panel x-panel-body' }),
