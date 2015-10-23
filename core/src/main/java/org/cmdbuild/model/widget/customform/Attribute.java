@@ -92,7 +92,7 @@ public class Attribute {
 	private String description;
 	private boolean unique;
 	private boolean mandatory;
-	private boolean writable;
+	private boolean writable = true;
 	private Long precision;
 	private Long scale;
 	private Long length;
