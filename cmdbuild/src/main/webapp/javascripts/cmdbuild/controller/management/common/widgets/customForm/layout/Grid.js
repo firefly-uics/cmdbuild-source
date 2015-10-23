@@ -337,7 +337,10 @@
 		 * @param {Array} data
 		 */
 		setData: function(data) {
-			return this.view.getStore().loadRecords(data);
+			if (!Ext.isEmpty(data))
+				return this.view.getStore().loadRecords(data);
+			
+			return [];
 		},
 
 		/**
