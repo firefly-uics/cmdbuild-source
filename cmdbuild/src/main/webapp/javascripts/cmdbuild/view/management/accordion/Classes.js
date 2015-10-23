@@ -40,7 +40,11 @@
 		updateStore: function(nodeIdToSelect) {
 			nodeIdToSelect = Ext.isNumber(nodeIdToSelect) ? nodeIdToSelect : null;
 
+			var params = {};
+			params[CMDBuild.core.constants.Proxy.ACTIVE] = true;
+
 			CMDBuild.core.proxy.Classes.readAll({
+				params: params,
 				loadMask: false,
 				scope: this,
 				success: function(response, options, decodedResponse) {
