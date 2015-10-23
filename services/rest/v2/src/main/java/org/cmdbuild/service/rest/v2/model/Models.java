@@ -22,11 +22,14 @@ import java.util.Map.Entry;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.cmdbuild.service.rest.v2.model.Attribute.Filter;
+import org.cmdbuild.service.rest.v2.model.ClassWithFullDetails.AttributeOrder;
 import org.cmdbuild.service.rest.v2.model.ProcessActivityWithFullDetails.AttributeStatus;
 
 import com.google.common.base.Function;
 
 public class Models {
+
+	private static final Collection<AttributeOrder> NO_ORDER = emptyList();
 
 	private static abstract class ModelBuilder<T extends Model> implements org.apache.commons.lang3.builder.Builder<T> {
 
@@ -349,6 +352,35 @@ public class Models {
 
 	}
 
+	public static class AttributeOrderBuilder extends ModelBuilder<AttributeOrder> {
+
+		private String attribute;
+		private String direction;
+
+		private AttributeOrderBuilder() {
+			// use factory method
+		}
+
+		@Override
+		protected AttributeOrder doBuild() {
+			final AttributeOrder output = new AttributeOrder();
+			output.setAttribute(attribute);
+			output.setDirection(direction);
+			return output;
+		}
+
+		public AttributeOrderBuilder withAttribute(final String attribute) {
+			this.attribute = attribute;
+			return this;
+		}
+
+		public AttributeOrderBuilder withDirection(final String direction) {
+			this.direction = direction;
+			return this;
+		}
+
+	}
+
 	public static class AttributeStatusBuilder extends ModelBuilder<AttributeStatus> {
 
 		private String id;
@@ -556,6 +588,7 @@ public class Models {
 		private String description;
 		private Boolean prototype;
 		private String descriptionAttributeName;
+		private Collection<AttributeOrder> defaultOrder;
 		private String parent;
 
 		private ClassWithFullDetailsBuilder() {
@@ -565,6 +598,7 @@ public class Models {
 		@Override
 		protected void doValidate() {
 			prototype = defaultIfNull(prototype, FALSE);
+			defaultOrder = defaultIfNull(defaultOrder, NO_ORDER);
 		}
 
 		@Override
@@ -575,6 +609,7 @@ public class Models {
 			output.setDescription(description);
 			output.setPrototype(prototype);
 			output.setDescriptionAttributeName(descriptionAttributeName);
+			output.setDefaultOrder(defaultOrder);
 			output.setParent(parent);
 			return output;
 
@@ -602,6 +637,11 @@ public class Models {
 
 		public ClassWithFullDetailsBuilder withDescriptionAttributeName(final String descriptionAttributeName) {
 			this.descriptionAttributeName = descriptionAttributeName;
+			return this;
+		}
+
+		public ClassWithFullDetailsBuilder withDefaultOrder(final Collection<AttributeOrder> defaultOrder) {
+			this.defaultOrder = defaultOrder;
 			return this;
 		}
 
@@ -1645,6 +1685,7 @@ public class Models {
 		private String descriptionAttributeName;
 		private Collection<Long> statuses;
 		private Long defaultStatus;
+		private Collection<AttributeOrder> defaultOrder;
 		private String parent;
 
 		private ProcessWithFullDetailsBuilder() {
@@ -1655,6 +1696,7 @@ public class Models {
 		protected void doValidate() {
 			prototype = defaultIfNull(prototype, FALSE);
 			statuses = defaultIfNull(statuses, NO_STATUSES);
+			defaultOrder = defaultIfNull(defaultOrder, NO_ORDER);
 		}
 
 		@Override
@@ -1667,6 +1709,7 @@ public class Models {
 			output.setDescriptionAttributeName(descriptionAttributeName);
 			output.setStatuses(statuses);
 			output.setDefaultStatus(defaultStatus);
+			output.setDefaultOrder(defaultOrder);
 			output.setParent(parent);
 			return output;
 		}
@@ -1703,6 +1746,11 @@ public class Models {
 
 		public ProcessWithFullDetailsBuilder withDefaultStatus(final Long defaultStatus) {
 			this.defaultStatus = defaultStatus;
+			return this;
+		}
+
+		public ProcessWithFullDetailsBuilder withDefaultOrder(final Collection<AttributeOrder> defaultOrder) {
+			this.defaultOrder = defaultOrder;
 			return this;
 		}
 
@@ -2039,6 +2087,10 @@ public class Models {
 
 	public static AttributeBuilder newAttribute() {
 		return new AttributeBuilder();
+	}
+
+	public static AttributeOrderBuilder newAttributeOrder() {
+		return new AttributeOrderBuilder();
 	}
 
 	public static AttributeStatusBuilder newAttributeStatus() {
