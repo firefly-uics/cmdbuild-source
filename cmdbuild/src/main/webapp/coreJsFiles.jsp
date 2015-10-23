@@ -137,8 +137,6 @@
 <script type="text/javascript" src="javascripts/cmdbuild/view/common/CMBaseAccordion.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/view/common/CMUnconfiguredModPanel.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/view/common/CMFormFuncions.js"></script>
-
-<script type="text/javascript" src="javascripts/cmdbuild/view/common/workflow/CMProcessAccordion.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/view/CMMainViewport.js"></script>
 
 <!-- TODO: remove from management -->

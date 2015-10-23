@@ -1,10 +1,6 @@
 (function() {
 
 	// TODO move in common
-	var processAccordion = new CMDBuild.view.administration.accordion.CMProcessAccordion({
-		rootVisible: true
-	});
-	// TODO move in common
 	var dashboardsAccordion = new CMDBuild.view.administration.accordion.CMDashboardAccordion();
 
 	/**
@@ -259,7 +255,12 @@
 								cmName: 'class'
 							})
 						,
-						CMDBuild.configuration.userInterface.isDisabledModule('process') || !(CMDBuild.Config.workflow.enabled == 'true') ? null : processAccordion,
+						CMDBuild.configuration.userInterface.isDisabledModule('process') || !(CMDBuild.Config.workflow.enabled == 'true') ? null :
+							Ext.create('CMDBuild.view.management.accordion.Workflow', {
+								cmControllerType: 'CMDBuild.controller.management.accordion.Workflow',
+								cmName: 'workflow'
+							})
+						,
 						CMDBuild.configuration.userInterface.isDisabledModule(CMDBuild.core.constants.Proxy.DATA_VIEW) ? null :
 							Ext.create('CMDBuild.view.management.accordion.DataView', {
 								cmControllerType: 'CMDBuild.controller.management.accordion.DataView',
@@ -303,10 +304,12 @@
 							cmName: 'singlereport'
 						}),
 						this.cardPanel = new CMDBuild.view.management.classes.CMModCard({
-							cmControllerType: CMDBuild.controller.management.classes.CMModCardController
+							cmControllerType: CMDBuild.controller.management.classes.CMModCardController,
+							cmName: 'class'
 						}),
 						this.processPanel = new CMDBuild.view.management.workflow.CMModProcess({
-							cmControllerType: CMDBuild.controller.management.workflow.CMModWorkflowController
+							cmControllerType: CMDBuild.controller.management.workflow.CMModWorkflowController,
+							cmName: 'workflow'
 						}),
 						this.dashboardPanel = new CMDBuild.view.management.dashboard.CMModDashboard({
 							cmControllerType: CMDBuild.controller.management.dashboard.CMModDashboardController
@@ -325,12 +328,10 @@
 			);
 
 // FIXME: implement new accordion functionalities to avoid hidden also if not empty
-//			hideIfEmpty(processAccordion);
 //			hideIfEmpty(menuAccordion);
 
 			Ext.resumeLayouts();
 
-			processAccordion.updateStore();
 			dashboardsAccordion.updateStore();
 
 			CMDBuild.view.CMMainViewport.hideSplash(function() {
