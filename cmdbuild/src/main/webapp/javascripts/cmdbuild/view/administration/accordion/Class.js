@@ -1,17 +1,17 @@
 (function() {
 
-	Ext.define('CMDBuild.view.administration.accordion.Classes', {
+	Ext.define('CMDBuild.view.administration.accordion.Class', {
 		extend: 'CMDBuild.view.common.AbstractAccordion',
 
 		requires: [
 			'CMDBuild.core.constants.Global',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.Classes',
-			'CMDBuild.model.common.accordion.Classes'
+			'CMDBuild.model.common.accordion.Class'
 		],
 
 		/**
-		 * @cfg {CMDBuild.controller.administration.accordion.Classes}
+		 * @cfg {CMDBuild.controller.administration.accordion.Class}
 		 */
 		delegate: undefined,
 
@@ -23,7 +23,7 @@
 		/**
 		 * @cfg {String}
 		 */
-		storeModelName: 'CMDBuild.model.common.accordion.Classes',
+		storeModelName: 'CMDBuild.model.common.accordion.Class',
 
 		title: CMDBuild.Translation.classList,
 

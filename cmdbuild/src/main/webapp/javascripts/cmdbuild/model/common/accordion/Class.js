@@ -2,7 +2,7 @@
 
 	Ext.require('CMDBuild.core.constants.Proxy');
 
-	Ext.define('CMDBuild.model.common.accordion.Classes', {
+	Ext.define('CMDBuild.model.common.accordion.Class', {
 		extend: 'Ext.data.TreeModel',
 
 		fields: [
