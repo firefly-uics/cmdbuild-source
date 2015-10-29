@@ -47,11 +47,14 @@
 					objectModel['referencedClassName'] = this.get(CMDBuild.core.constants.Proxy.TARGET_CLASS);
 
 					// New filter object structure adapter
-					objectModel[CMDBuild.core.constants.Proxy.FILTER] = this.get(CMDBuild.core.constants.Proxy.FILTER)[CMDBuild.core.constants.Proxy.EXPRESSION];
-					objectModel[CMDBuild.core.constants.Proxy.META] = {};
-					Ext.Object.each(this.get(CMDBuild.core.constants.Proxy.FILTER)[CMDBuild.core.constants.Proxy.CONTEXT], function(key, value, myself) {
-						objectModel[CMDBuild.core.constants.Proxy.META]['system.template.' + key] = value;
-					}, this);
+					if (!Ext.isEmpty(this.get(CMDBuild.core.proxy.CMProxyConstants.FILTER))) {
+						objectModel[CMDBuild.core.constants.Proxy.FILTER] = this.get(CMDBuild.core.constants.Proxy.FILTER)[CMDBuild.core.constants.Proxy.EXPRESSION];
+						objectModel[CMDBuild.core.constants.Proxy.META] = {};
+
+						Ext.Object.each(this.get(CMDBuild.core.constants.Proxy.FILTER)[CMDBuild.core.constants.Proxy.CONTEXT], function(key, value, myself) {
+							objectModel[CMDBuild.core.constants.Proxy.META]['system.template.' + key] = value;
+						}, this);
+					}
 				} break;
 			}
 

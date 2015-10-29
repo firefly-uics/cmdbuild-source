@@ -10,19 +10,12 @@
 		 */
 		delegate: undefined,
 
-		/**
-		 * @property {CMDBuild.core.buttons.iconized.Print}
-		 */
-		printButton: undefined,
-
 		border: false,
 		cls: 'cmborderbottom',
 		frame: false,
 
 		initComponent: function() {
-			Ext.apply(this, {
-				store: CMDBuild.core.proxy.dataView.Sql.getStoreFromSql()
-			});
+			Ext.apply(this, { store: this.delegate.cmfg('dataViewSqlBuildStore') });
 
 			Ext.apply(this, {
 				dockedItems: [
@@ -46,7 +39,7 @@
 						items: [
 							new CMDBuild.field.GridSearchField({ grid: this }),
 							new CMDBuild.view.management.common.filter.CMFilterMenuButton({ disabled: true }),
-							this.printButton = Ext.create('CMDBuild.core.buttons.iconized.Print', {
+							Ext.create('CMDBuild.core.buttons.iconized.Print', {
 								delegate: this.delegate,
 								formatList: [
 									CMDBuild.core.constants.Proxy.PDF,
@@ -56,7 +49,7 @@
 						]
 					})
 				],
-				columns: []
+				columns: this.delegate.cmfg('dataViewSqlBuildColumns')
 			});
 
 			this.callParent(arguments);

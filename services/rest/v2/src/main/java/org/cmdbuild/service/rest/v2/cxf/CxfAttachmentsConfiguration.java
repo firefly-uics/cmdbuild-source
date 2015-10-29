@@ -58,7 +58,7 @@ public class CxfAttachmentsConfiguration implements AttachmentsConfiguration {
 						/*
 						 * custom attributes are never first
 						 */
-						.withIndex(Long.valueOf(elements.size() + 1));
+						.withIndex(Long.valueOf(elements.size()));
 				switch (metadataDefinition.getType()) {
 				case TEXT:
 					attribute.withType(AttributeType.TEXT.asString());
@@ -89,22 +89,6 @@ public class CxfAttachmentsConfiguration implements AttachmentsConfiguration {
 				elements.put(metadataDefinition.getName(), attribute.build());
 			}
 		}
-		/*
-		 * added at last because it should override any custom attribute with
-		 * the same (reserved) name
-		 */
-		elements.put("Description", newAttribute() //
-				.withId("Description") //
-				.withName("Description") //
-				.withDescription("Description") //
-				.withType(AttributeType.TEXT.asString()) //
-				.thatIsMandatory(true) //
-				.thatIsActive(true) //
-				/*
-				 * always first
-				 */
-				.withIndex(Long.valueOf(0L)) //
-				.build());
 		return newResponseMultiple(Attribute.class) //
 				.withElements(elements.values()) //
 				.withMetadata(newMetadata() //

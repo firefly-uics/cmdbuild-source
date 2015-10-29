@@ -42,7 +42,10 @@
 		 */
 		onViewOnFront: function(node) {
 			if (!Ext.isEmpty(node)) {
-				this.dataViewSelectedSet({ value: node.getData() });
+				var selectedDataView = node.getData();
+				selectedDataView[CMDBuild.core.constants.Proxy.OUTPUT] = _CMCache.getDataSourceOutput(node.get(CMDBuild.core.constants.Proxy.SOURCE_FUNCTION));
+
+				this.dataViewSelectedSet({ value: selectedDataView });
 
 				this.view.removeAll(true);
 
@@ -56,8 +59,6 @@
 				this.view.add(this.sectionController.getView());
 
 				this.setViewTitle(this.dataViewSelectedGet(CMDBuild.core.constants.Proxy.TEXT));
-
-				this.cmfg('onDataViewViewSelected');
 
 				this.callParent(arguments);
 			}

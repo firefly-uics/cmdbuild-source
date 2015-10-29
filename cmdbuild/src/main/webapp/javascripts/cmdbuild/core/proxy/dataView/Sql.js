@@ -55,6 +55,7 @@
 
 		/**
 		 * @param {Object} parameters
+		 * @param {Object} parameters.extraParams
 		 * @param {Array} parameters.fields
 		 *
 		 * @return {Ext.data.Store}
@@ -65,7 +66,7 @@
 			parameters = parameters || {};
 
 			return Ext.create('Ext.data.Store', {
-				autoLoad: false,
+				autoLoad: true,
 				fields: parameters.fields || [],
 				pageSize: CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.ROW_LIMIT),
 				proxy: {
@@ -75,10 +76,11 @@
 						type: 'json',
 						root: 'cards',
 						totalProperty: 'results'
-					}
+					},
+					extraParams: parameters.extraParams || {}
 				}
 			});
-		},
+		}
 
 		/**
 		 * @param {Object} parameters
