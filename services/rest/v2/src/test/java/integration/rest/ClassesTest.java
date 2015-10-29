@@ -7,6 +7,7 @@ import static org.cmdbuild.service.rest.test.ServerResource.randomPort;
 import static org.cmdbuild.service.rest.v2.constants.Serialization.ACTIVE;
 import static org.cmdbuild.service.rest.v2.constants.Serialization.LIMIT;
 import static org.cmdbuild.service.rest.v2.constants.Serialization.START;
+import static org.cmdbuild.service.rest.v2.model.Models.newAttributeOrder;
 import static org.cmdbuild.service.rest.v2.model.Models.newClassWithBasicDetails;
 import static org.cmdbuild.service.rest.v2.model.Models.newClassWithFullDetails;
 import static org.cmdbuild.service.rest.v2.model.Models.newMetadata;
@@ -100,6 +101,16 @@ public class ClassesTest {
 		final ResponseSingle<ClassWithFullDetails> expectedResponse = newResponseSingle(ClassWithFullDetails.class) //
 				.withElement(newClassWithFullDetails() //
 						.withName("foo") //
+						.withDefaultOrder(asList( //
+								newAttributeOrder() //
+										.withAttribute("bar") //
+										.withDirection("ascending") //
+										.build(), //
+								newAttributeOrder() //
+										.withAttribute("baz") //
+										.withDirection("descending") //
+										.build() //
+								)) //
 						.build()) //
 				.build();
 		when(service.read(anyString())) //
@@ -115,5 +126,4 @@ public class ClassesTest {
 
 		verify(service).read("123");
 	}
-
 }

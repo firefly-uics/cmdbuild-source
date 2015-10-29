@@ -18,6 +18,7 @@ import static org.cmdbuild.service.rest.v2.constants.Serialization.PARAMS;
 import static org.cmdbuild.service.rest.v2.constants.Serialization.PRECISION;
 import static org.cmdbuild.service.rest.v2.constants.Serialization.SCALE;
 import static org.cmdbuild.service.rest.v2.constants.Serialization.TARGET_CLASS;
+import static org.cmdbuild.service.rest.v2.constants.Serialization.TARGET_TYPE;
 import static org.cmdbuild.service.rest.v2.constants.Serialization.TEXT;
 import static org.cmdbuild.service.rest.v2.constants.Serialization.TYPE;
 import static org.cmdbuild.service.rest.v2.constants.Serialization.UNIQUE;
@@ -105,6 +106,7 @@ public class Attribute extends ModelWithStringId {
 	private Long precision;
 	private Long scale;
 	private String targetClass;
+	private String targetType;
 	private Long length;
 	private String editorType;
 	private String lookupTypeName;
@@ -243,6 +245,15 @@ public class Attribute extends ModelWithStringId {
 		this.targetClass = targetClass;
 	}
 
+	@XmlAttribute(name = TARGET_TYPE)
+	public String getTargetType() {
+		return targetType;
+	}
+
+	void setTargetType(final String targetType) {
+		this.targetType = targetType;
+	}
+
 	@XmlAttribute(name = LENGTH)
 	public Long getLength() {
 		return length;
@@ -333,6 +344,7 @@ public class Attribute extends ModelWithStringId {
 				.append(this.precision, other.precision) //
 				.append(this.scale, other.scale) //
 				.append(this.targetClass, other.targetClass) //
+				.append(this.targetType, other.targetType) //
 				.append(this.length, other.length) //
 				.append(this.editorType, other.editorType) //
 				.append(this.lookupTypeName, other.lookupTypeName) //
@@ -360,6 +372,7 @@ public class Attribute extends ModelWithStringId {
 				.append(precision) //
 				.append(scale) //
 				.append(targetClass) //
+				.append(targetType) //
 				.append(length) //
 				.append(editorType) //
 				.append(lookupTypeName) //

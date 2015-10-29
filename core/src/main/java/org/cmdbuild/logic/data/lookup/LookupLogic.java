@@ -339,20 +339,22 @@ public class LookupLogic implements Logic {
 		}
 
 		logger.trace(marker, "getting lookup with id '{}'", id);
-		final Iterator<Lookup> shouldBeOneOnly = from(store.readAll()) //
+		final Optional<Lookup> element = from(store.readAll()) //
 				.filter(withId(id)) //
-				.iterator();
+				.first();
 
-		if (!shouldBeOneOnly.hasNext()) {
+		if (!element.isPresent()) {
 			throw Exceptions.lookupNotFound(id);
 		}
 
 		logger.trace(marker, "updating lookup active to '{}'", status);
 		final Lookup lookup = new ForwardingLookup() {
 
+			private final Lookup delegate = element.get();
+
 			@Override
 			protected Lookup delegate() {
-				return shouldBeOneOnly.next();
+				return delegate;
 			}
 
 			@Override

@@ -14,6 +14,7 @@ public class Serialization {
 			ACTIVE = "active", //
 			ACTIVITY = "activity", //
 			ADVANCE = "advance", //
+			ASCENDING = "ascending", //
 			ATTACHMENT = "attachment", //
 			ATTACHMENT_ID = ATTACHMENT + ID_CAPITALIZED, //
 			ATTACHMENT_METADATA = ATTACHMENT + "Metadata", //
@@ -38,9 +39,11 @@ public class Serialization {
 			DATA = "data", //
 			DATE = "date", //
 			DEFAULT = "default", //
+			DEFAULT_ORDER = DEFAULT + "Order", //
 			DEFAULT_STATUS = DEFAULT + "Status", //
 			DEFAULT_VALUE = DEFAULT + "Value", //
 			DELAY = "delay", //
+			DESCENDING = "descending", //
 			DESCRIPTION = "description", //
 			DESCRIPTION_ATTRIBUTE_NAME = DESCRIPTION + "_attribute_name", //
 			DESCRIPTION_CAPITALIZED = "Description", //
@@ -50,6 +53,7 @@ public class Serialization {
 			DESTINATION = "destination", //
 			DESTINATION_PROCESS = DESTINATION + PROCESS_CAPITAL, //
 			DETAILED = "detailed", //
+			DIRECTION = "direction", //
 			DISPLAYABLE_IN_LIST = "displayableInList", //
 			DOMAIN = "domain", //
 			DOMAIN_ID = DOMAIN + ID_CAPITALIZED, //
@@ -112,8 +116,10 @@ public class Serialization {
 			START = "start", //
 			STATUSES = "statuses", //
 			STATUS = "status", //
+			STOPPABLE = "stoppable", //
 			SUBJECT = "subject", //
 			TARGET_CLASS = "targetClass", //
+			TARGET_TYPE = "targetType", //
 			TEMPLATE = "template", //
 			TEXT = "text", //
 			TITLE = "title", //
