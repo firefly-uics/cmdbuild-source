@@ -61,15 +61,18 @@
 				CMDBuild.Runtime.Username = '<%= StringEscapeUtils.escapeEcmaScript(operationUser.getAuthenticatedUser().getUsername()) %>';
 				CMDBuild.Runtime.Groups = <%= Login.serializeGroupForLogin(operationUser.getAuthenticatedUser().getGroupNames()) %>;
 			<%}%>
-			Ext.onReady(function() {
-				CMDBuild.LoginPanel.buildAfterRequest();
-			});
 		</script>
 
 		<!-- 3. Login script -->
 		<script type="text/javascript" src="javascripts/cmdbuild/core/buttons/Base.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/core/buttons/Buttons.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/login.js"></script>
+		
+		<script type="text/javascript">
+			Ext.onReady(function() {
+				CMDBuild.LoginPanel.buildAfterRequest();
+			});
+		</script>
 
 		<title>CMDBuild</title>
 	</head>
