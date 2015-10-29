@@ -15,7 +15,7 @@
 		 */
 		cardPanel: undefined,
 
-		bodyCls: 'x-panel-body-default-framed cmbordertop',
+		cls: 'x-panel-body-default-framed cmbordertop',
 		border: false,
 		frame: false,
 

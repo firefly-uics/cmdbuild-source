@@ -12,15 +12,18 @@
 
 		/**
 		 * @param {Object} parameters
+		 * @param {Object} parameters.extraParams
 		 * @param {Array} parameters.fields
 		 *
 		 * @return {Ext.data.Store}
+		 *
+		 * @management
 		 */
-		getStore: function(parameters) {
+		getStoreFromSql: function(parameters) {
 			parameters = parameters || {};
 
 			return Ext.create('Ext.data.Store', {
-				autoLoad: false,
+				autoLoad: true,
 				fields: parameters.fields || [],
 				pageSize: CMDBuild.core.Utils.getPageSize(),
 				proxy: {
@@ -30,7 +33,8 @@
 						type: 'json',
 						root: 'cards',
 						totalProperty: 'results'
-					}
+					},
+					extraParams: parameters.extraParams || {}
 				}
 			});
 		}

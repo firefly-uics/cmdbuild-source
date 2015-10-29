@@ -18,9 +18,11 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
+			'dataViewSqlBuildColumns',
+			'dataViewSqlBuildStore',
 			'onButtonPrintClick',
 			'onDataViewSqlGridSelect',
-			'onDataViewSqlViewSelected = onDataViewViewSelected'
+			'onDataViewSqlViewSelected = onDataViewViewSelected',
 		],
 
 		/**
@@ -55,6 +57,36 @@
 
 			if (!Ext.isEmpty(_CMUIState))
 				_CMUIState.addDelegate(this);
+		},
+
+		/**
+		 * @returns {Array} columns
+		 */
+		dataViewSqlBuildColumns: function() {
+			var columns = [];
+
+			Ext.Array.forEach(this.cmfg('dataViewSelectedGet', CMDBuild.core.proxy.CMProxyConstants.OUTPUT), function(columnObject, i, allColumnObjects) {
+				columns.push({
+					text: columnObject[CMDBuild.core.proxy.CMProxyConstants.NAME],
+					dataIndex: columnObject[CMDBuild.core.proxy.CMProxyConstants.NAME],
+					flex: 1
+				});
+			}, this);
+
+			return columns;
+		},
+
+		/**
+		 * @returns {Ext.data.Store}
+		 */
+		dataViewSqlBuildStore: function() {
+			var extraParams = {};
+			extraParams[CMDBuild.core.proxy.CMProxyConstants.FUNCTION] = this.cmfg('dataViewSelectedGet', CMDBuild.core.proxy.CMProxyConstants.SOURCE_FUNCTION);
+
+			return CMDBuild.core.proxy.dataView.Sql.getStoreFromSql({
+				fields: this.cmfg('dataViewSelectedGet', CMDBuild.core.proxy.CMProxyConstants.OUTPUT),
+				extraParams: extraParams
+			});
 		},
 
 		/**
@@ -126,58 +158,6 @@
 					);
 				}
 			}, this);
-		},
-
-		/**
-		 * TODO: waiting for refactor (avoid cache)
-		 */
-		onDataViewSqlViewSelected: function() {
-			if (!this.cmfg('dataViewSelectedIsEmpty')) {
-				this.cmfg('dataViewSelectedSet', {
-					propertyName: CMDBuild.core.proxy.CMProxyConstants.INPUT,
-					value: _CMCache.getDataSourceInput(this.cmfg('dataViewSelectedGet', CMDBuild.core.proxy.CMProxyConstants.SOURCE_FUNCTION))
-				});
-
-				this.cmfg('dataViewSelectedSet', {
-					propertyName: CMDBuild.core.proxy.CMProxyConstants.OUTPUT,
-					value: _CMCache.getDataSourceOutput(this.cmfg('dataViewSelectedGet', CMDBuild.core.proxy.CMProxyConstants.SOURCE_FUNCTION))
-				});
-
-				var columns = [];
-				var store = CMDBuild.core.proxy.dataView.Sql.getStore({
-					fields: this.cmfg('dataViewSelectedGet', CMDBuild.core.proxy.CMProxyConstants.OUTPUT)
-				});
-
-				Ext.Array.forEach(this.cmfg('dataViewSelectedGet', CMDBuild.core.proxy.CMProxyConstants.OUTPUT), function(columnObject, i, allColumnObjects) {
-					columns.push({
-						text: columnObject[CMDBuild.core.proxy.CMProxyConstants.NAME],
-						dataIndex: columnObject[CMDBuild.core.proxy.CMProxyConstants.NAME],
-						flex: 1
-					});
-				}, this);
-
-				this.grid.reconfigure(store, columns);
-
-				var params = {};
-				params[CMDBuild.core.proxy.CMProxyConstants.FUNCTION] = this.cmfg('dataViewSelectedGet', CMDBuild.core.proxy.CMProxyConstants.SOURCE_FUNCTION);
-
-				this.grid.getStore().load({
-					params: params,
-					scope: this,
-					callback: function(records, operation, success) {
-						// Store load errors manage
-						if (!success) {
-							CMDBuild.core.Message.error(null, {
-								text: CMDBuild.Translation.errors.unknown_error,
-								detail: operation.error
-							});
-						}
-
-						if (!this.grid.getSelectionModel().hasSelection())
-							this.grid.getSelectionModel().select(0, true);
-					}
-				});
-			}
 		},
 
 		onFullScreenChangeToFormOnly: function() {
