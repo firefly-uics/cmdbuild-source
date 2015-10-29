@@ -11,14 +11,9 @@
 		],
 
 		/**
-		 * @cfg {CMDBuild.controller.administration.accordion.NavigationTree}
+		 * @cfg {CMDBuild.controller.common.AbstractAccordionController}
 		 */
 		delegate: undefined,
-
-		/**
-		 * @cfg {String}
-		 */
-		delegateClassName: 'CMDBuild.controller.administration.accordion.NavigationTree',
 
 		/**
 		 * @cfg {String}
@@ -55,7 +50,7 @@
 							nodeObject[CMDBuild.core.constants.Proxy.TEXT] = treeObject[CMDBuild.core.constants.Proxy.DESCRIPTION];
 							nodeObject[CMDBuild.core.constants.Proxy.DESCRIPTION] = treeObject[CMDBuild.core.constants.Proxy.DESCRIPTION];
 							nodeObject[CMDBuild.core.constants.Proxy.ENTITY_ID] = treeObject[CMDBuild.core.constants.Proxy.NAME];
-							nodeObject[CMDBuild.core.constants.Proxy.ID] = this.delegate.cmfg('accordionBuildId', treeObject[CMDBuild.core.constants.Proxy.NAME]);
+							nodeObject[CMDBuild.core.constants.Proxy.ID] = this.delegate.cmfg('accordionBuildId', { components: treeObject[CMDBuild.core.constants.Proxy.NAME] });
 							nodeObject[CMDBuild.core.constants.Proxy.NAME] = treeObject[CMDBuild.core.constants.Proxy.NAME];
 							nodeObject[CMDBuild.core.constants.Proxy.LEAF] = true;
 

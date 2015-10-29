@@ -5,29 +5,18 @@
 
 		requires: [
 			'CMDBuild.core.constants.Global',
-			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.model.common.accordion.Dashboard'
+			'CMDBuild.core.constants.Proxy'
 		],
 
 		/**
-		 * @cfg {CMDBuild.controller.administration.accordion.Dashboard}
+		 * @cfg {CMDBuild.controller.common.AbstractAccordionController}
 		 */
 		delegate: undefined,
 
 		/**
 		 * @cfg {String}
 		 */
-		delegateClassName: 'CMDBuild.controller.administration.accordion.Dashboard',
-
-		/**
-		 * @cfg {String}
-		 */
 		cmName: undefined,
-
-		/**
-		 * @cfg {String}
-		 */
-		storeModelName: 'CMDBuild.model.common.accordion.Dashboard',
 
 		title: CMDBuild.Translation.dashboard,
 
@@ -55,7 +44,7 @@
 							nodeObject[CMDBuild.core.constants.Proxy.TEXT] = dashboardObject[CMDBuild.core.constants.Proxy.DESCRIPTION];
 							nodeObject[CMDBuild.core.constants.Proxy.DESCRIPTION] = dashboardObject[CMDBuild.core.constants.Proxy.DESCRIPTION];
 							nodeObject[CMDBuild.core.constants.Proxy.ENTITY_ID] = id;
-							nodeObject[CMDBuild.core.constants.Proxy.ID] = this.delegate.cmfg('accordionBuildId', id);
+							nodeObject[CMDBuild.core.constants.Proxy.ID] = this.delegate.cmfg('accordionBuildId', { components: id });
 							nodeObject[CMDBuild.core.constants.Proxy.NAME] = dashboardObject[CMDBuild.core.constants.Proxy.NAME];
 							nodeObject[CMDBuild.core.constants.Proxy.LEAF] = true;
 

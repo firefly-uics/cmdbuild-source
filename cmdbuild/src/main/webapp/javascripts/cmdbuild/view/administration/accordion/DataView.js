@@ -24,18 +24,20 @@
 			this.getStore().getRootNode().removeAll();
 			this.getStore().getRootNode().appendChild([
 				{
+					cmName: this.cmName,
 					text: CMDBuild.Translation.filterView,
 					description: CMDBuild.Translation.filterView,
-					cmName: this.cmName,
+					id: this.delegate.cmfg('accordionBuildId', { components: 'filter' }),
 					sectionHierarchy: ['filter'],
-					leaf: true,
+					leaf: true
 				},
 				{
+					cmName: this.cmName,
 					text: CMDBuild.Translation.sqlView,
 					description: CMDBuild.Translation.sqlView,
-					cmName: this.cmName,
+					id: this.delegate.cmfg('accordionBuildId', { components: 'sql' }),
 					sectionHierarchy: ['sql'],
-					leaf: true,
+					leaf: true
 				}
 			]);
 

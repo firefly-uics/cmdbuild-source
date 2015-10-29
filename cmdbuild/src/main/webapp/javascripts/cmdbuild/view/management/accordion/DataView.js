@@ -11,14 +11,9 @@
 		],
 
 		/**
-		 * @cfg {CMDBuild.controller.management.accordion.DataView}
+		 * @cfg {CMDBuild.controller.common.AbstractAccordionController}
 		 */
 		delegate: undefined,
-
-		/**
-		 * @cfg {String}
-		 */
-		delegateClassName: 'CMDBuild.controller.management.accordion.DataView',
 
 		/**
 		 * @cfg {String}
@@ -65,40 +60,44 @@
 								var nodes = [];
 
 								Ext.Array.forEach(dataViews, function(viewObject, i, allViewObjects) {
-									var node = {
-										text: viewObject[CMDBuild.core.constants.Proxy.DESCRIPTION],
-										description: viewObject[CMDBuild.core.constants.Proxy.DESCRIPTION],
-										name: viewObject[CMDBuild.core.constants.Proxy.NAME],
-										leaf: true
-									};
+									var nodeObject = {};
+									nodeObject[CMDBuild.core.constants.Proxy.TEXT] = viewObject[CMDBuild.core.constants.Proxy.DESCRIPTION];
+									nodeObject[CMDBuild.core.constants.Proxy.DESCRIPTION] = viewObject[CMDBuild.core.constants.Proxy.DESCRIPTION];
+									nodeObject[CMDBuild.core.constants.Proxy.NAME] = viewObject[CMDBuild.core.constants.Proxy.NAME];
+									nodeObject[CMDBuild.core.constants.Proxy.LEAF] = true;
 
 									switch (viewObject[CMDBuild.core.constants.Proxy.TYPE]) {
 										case 'FILTER': {
 											var viewSourceClassObject = classesSearchableObject[viewObject[CMDBuild.core.constants.Proxy.SOURCE_CLASS_NAME]];
 
 											if (!Ext.isEmpty(viewSourceClassObject)) {
-												node['cmName'] = 'class'; // To act as a regular class node
-												node[CMDBuild.core.constants.Proxy.ENTITY_ID] = viewSourceClassObject[CMDBuild.core.constants.Proxy.ID];
-												node[CMDBuild.core.constants.Proxy.FILTER] = viewObject[CMDBuild.core.constants.Proxy.FILTER];
-												node[CMDBuild.core.constants.Proxy.ID] = viewObject[CMDBuild.core.constants.Proxy.ID];
-												node[CMDBuild.core.constants.Proxy.SECTION_HIERARCHY] = ['filter'];
+												nodeObject['cmName'] = 'class'; // To act as a regular class node
+												nodeObject[CMDBuild.core.constants.Proxy.ENTITY_ID] = viewSourceClassObject[CMDBuild.core.constants.Proxy.ID];
+												nodeObject[CMDBuild.core.constants.Proxy.FILTER] = viewObject[CMDBuild.core.constants.Proxy.FILTER];
+												nodeObject[CMDBuild.core.constants.Proxy.ID] = this.delegate.cmfg('accordionBuildId', {
+													components: viewObject[CMDBuild.core.constants.Proxy.ID]
+												});
+												nodeObject[CMDBuild.core.constants.Proxy.SECTION_HIERARCHY] = ['filter'];
 											}
 										} break;
 
 										case 'SQL':
 										default: {
-											node['cmName'] = this.cmName;
-											node[CMDBuild.core.constants.Proxy.ID] = viewObject[CMDBuild.core.constants.Proxy.ID];
-											node[CMDBuild.core.constants.Proxy.SECTION_HIERARCHY] = ['sql'];
-											node[CMDBuild.core.constants.Proxy.SOURCE_FUNCTION] = viewObject[CMDBuild.core.constants.Proxy.SOURCE_FUNCTION];
+											nodeObject['cmName'] = this.cmName;
+											nodeObject[CMDBuild.core.constants.Proxy.ENTITY_ID] = viewObject[CMDBuild.core.constants.Proxy.ID];
+											nodeObject[CMDBuild.core.constants.Proxy.ID] = this.delegate.cmfg('accordionBuildId', {
+												components: viewObject[CMDBuild.core.constants.Proxy.ID]
+											});
+											nodeObject[CMDBuild.core.constants.Proxy.SECTION_HIERARCHY] = ['sql'];
+											nodeObject[CMDBuild.core.constants.Proxy.SOURCE_FUNCTION] = viewObject[CMDBuild.core.constants.Proxy.SOURCE_FUNCTION];
 										}
 									}
-									nodes.push(node);
+
+									nodes.push(nodeObject);
 								}, this);
 
 								this.getStore().getRootNode().removeAll();
 								this.getStore().getRootNode().appendChild(nodes);
-
 								this.getStore().sort();
 
 								// Alias of this.callParent(arguments), inside proxy function doesn't work

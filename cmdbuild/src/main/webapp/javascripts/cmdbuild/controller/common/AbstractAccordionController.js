@@ -57,15 +57,29 @@
 		/**
 		 * Generates an unique id for the menu accordion, prepend to components array "accordion" string and cmName.
 		 *
-		 * @param {Array} components
+		 * @param {Object} parameters
+		 * @param {Array} parameters.components
+		 * @param {String} parameters.name
 		 *
 		 * @return {String}
 		 */
-		accordionBuildId: function(components) {
-			components = Ext.isArray(components) ? Ext.Array.clean(components) : [components];
+		accordionBuildId: function(parameters) {
+			if (
+				Ext.isObject(parameters)
+				&& !Ext.isEmpty(parameters[CMDBuild.core.constants.Proxy.COMPONENTS])
+			) {
+				var components = parameters[CMDBuild.core.constants.Proxy.COMPONENTS];
+				components = Ext.isArray(components) ? Ext.Array.clean(components) : [components];
 
-			if (!Ext.isEmpty(components)) {
-				components.unshift(CMDBuild.core.constants.Proxy.ACCORDION, this.cmName);
+				// Custom cmName management
+				if (
+					!Ext.isEmpty(parameters[CMDBuild.core.constants.Proxy.NAME])
+					&& Ext.isString(parameters[CMDBuild.core.constants.Proxy.NAME])
+				) {
+					components.unshift(CMDBuild.core.constants.Proxy.ACCORDION, parameters[CMDBuild.core.constants.Proxy.NAME]);
+				} else {
+					components.unshift(CMDBuild.core.constants.Proxy.ACCORDION, this.cmName);
+				}
 
 				Ext.Array.forEach(components, function(component, i, allComponents) {
 					components[i] = Ext.String.trim(String(component));
@@ -148,8 +162,8 @@
 		 */
 		onAccordionIsNodeSelectable: function(node) {
 			return (
-				!node.hasChildNodes()
-				&& !node.isRoot() // Root is hidden by default
+				!node.isRoot() // Root is hidden by default
+				&& !Ext.isEmpty(node.get(CMDBuild.core.constants.Proxy.ID)) // Node without id property are not selectable
 			);
 		},
 

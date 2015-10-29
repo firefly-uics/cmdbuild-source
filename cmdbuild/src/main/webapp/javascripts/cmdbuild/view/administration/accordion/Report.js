@@ -24,10 +24,12 @@
 			this.getStore().getRootNode().removeAll();
 			this.getStore().getRootNode().appendChild([
 				{
-					text: CMDBuild.Translation.reportMenuJasper,
 					cmName: this.cmName,
+					text: CMDBuild.Translation.reportMenuJasper,
+					description: CMDBuild.Translation.reportMenuJasper,
+					id: this.delegate.cmfg('accordionBuildId', { components: 'jasper' }),
 					sectionHierarchy: ['jasper'],
-					leaf: true,
+					leaf: true
 				}
 			]);
 

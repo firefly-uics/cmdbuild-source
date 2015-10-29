@@ -28,33 +28,43 @@
 			this.getStore().getRootNode().removeAll();
 			this.getStore().getRootNode().appendChild([
 				{
+					cmName: 'gis-icons',
 					text: CMDBuild.Translation.manageIcons,
 					description: CMDBuild.Translation.manageIcons,
-					cmName: 'gis-icons',
+					id: this.delegate.cmfg('accordionBuildId', { components: 'gis-icons' }),
+					sectionHierarchy: ['gis-icons'],
 					leaf: true
 				},
 				{
+					cmName: 'gis-external-services',
 					text: CMDBuild.Translation.externalServices,
 					description: CMDBuild.Translation.externalServices,
-					cmName: 'gis-external-services',
+					id: this.delegate.cmfg('accordionBuildId', { components: 'gis-external-services' }),
+					sectionHierarchy: ['gis-external-services'],
 					leaf: true
 				},
 				{
+					cmName: 'gis-layers-order',
 					text: CMDBuild.Translation.layersOrder,
 					description: CMDBuild.Translation.layersOrder,
-					cmName: 'gis-layers-order',
+					id: this.delegate.cmfg('accordionBuildId', { components: 'gis-layers-order' }),
+					sectionHierarchy: ['gis-layers-order'],
 					leaf: true
 				},
 				{
+					cmName: 'gis-geoserver',
 					text: CMDBuild.Translation.geoserverLayers,
 					description: CMDBuild.Translation.geoserverLayers,
-					cmName: 'gis-geoserver',
+					id: this.delegate.cmfg('accordionBuildId', { components: 'gis-geoserver' }),
+					sectionHierarchy: ['gis-geoserver'],
 					leaf: true
 				},
 				{
+					cmName: 'gis-filter-configuration',
 					text: CMDBuild.Translation.gisNavigation,
 					description: CMDBuild.Translation.gisNavigation,
-					cmName: 'gis-filter-configuration',
+					id: this.delegate.cmfg('accordionBuildId', { components: 'gis-filter-configuration' }),
+					sectionHierarchy: ['gis-filter-configuration'],
 					leaf: true
 				}
 			]);

@@ -45,7 +45,10 @@
 		 */
 		onViewOnFront: function(node) {
 			if (!Ext.Object.isEmpty(node)) {
-				this.userAndGroupSelectedAccordionSet({ value: node.getData() });
+				var selectedAccordionData = node.getData();
+				selectedAccordionData[CMDBuild.core.constants.Proxy.ID] = selectedAccordionData[CMDBuild.core.constants.Proxy.ENTITY_ID];
+
+				this.userAndGroupSelectedAccordionSet({ value: selectedAccordionData });
 
 				this.view.removeAll(true);
 

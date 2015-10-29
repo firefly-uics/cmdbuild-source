@@ -38,32 +38,37 @@
 						var nodes = [];
 
 						Ext.Array.forEach(decodedResult, function(groupObject, i, allGroupObjects) {
-							nodes.push({
-								text: groupObject[CMDBuild.core.constants.Proxy.DESCRIPTION],
-								description: groupObject[CMDBuild.core.constants.Proxy.DESCRIPTION],
-								id: groupObject[CMDBuild.core.constants.Proxy.ID],
-								name: groupObject[CMDBuild.core.constants.Proxy.NAME],
-								iconCls: 'cmdbuild-tree-group-icon',
-								cmName: this.cmName,
-								sectionHierarchy: ['group'],
-								leaf: true
-							});
+							var nodeObject = {};
+							nodeObject['cmName'] = this.cmName;
+							nodeObject['iconCls'] = 'cmdbuild-tree-group-icon';
+							nodeObject[CMDBuild.core.constants.Proxy.TEXT] = groupObject[CMDBuild.core.constants.Proxy.DESCRIPTION];
+							nodeObject[CMDBuild.core.constants.Proxy.DESCRIPTION] = groupObject[CMDBuild.core.constants.Proxy.DESCRIPTION];
+							nodeObject[CMDBuild.core.constants.Proxy.ENTITY_ID] = groupObject[CMDBuild.core.constants.Proxy.ID];
+							nodeObject[CMDBuild.core.constants.Proxy.ID] = this.delegate.cmfg('accordionBuildId', { components: groupObject[CMDBuild.core.constants.Proxy.ID] });
+							nodeObject[CMDBuild.core.constants.Proxy.SECTION_HIERARCHY] = ['group'];
+							nodeObject[CMDBuild.core.constants.Proxy.LEAF] = true;
+
+							nodes.push(nodeObject);
 						}, this);
 
 						this.getStore().getRootNode().removeAll();
 						this.getStore().getRootNode().appendChild([
 							{
-								text: CMDBuild.Translation.groups,
-								iconCls: 'cmdbuild-tree-user-group-icon',
 								cmName: this.cmName,
-								children: nodes,
-								sectionHierarchy: ['group'],
-								leaf: false
+								iconCls: 'cmdbuild-tree-user-group-icon',
+								text: CMDBuild.Translation.groups,
+								description: CMDBuild.Translation.groups,
+								id: undefined, // Disable node selection
+								leaf: false,
+
+								children: nodes
 							},
 							{
-								text: CMDBuild.Translation.users,
-								iconCls: 'cmdbuild-tree-user-icon',
 								cmName: this.cmName,
+								iconCls: 'cmdbuild-tree-user-icon',
+								text: CMDBuild.Translation.users,
+								description: CMDBuild.Translation.users,
+								id: this.delegate.cmfg('accordionBuildId', { components: 'user' }),
 								sectionHierarchy: ['user'],
 								leaf: true
 							}

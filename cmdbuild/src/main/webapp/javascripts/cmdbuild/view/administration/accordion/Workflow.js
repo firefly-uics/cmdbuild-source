@@ -6,29 +6,18 @@
 		requires: [
 			'CMDBuild.core.constants.Global',
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.Classes',
-			'CMDBuild.model.common.accordion.Workflow'
+			'CMDBuild.core.proxy.Classes'
 		],
 
 		/**
-		 * @cfg {CMDBuild.controller.administration.accordion.Workflow}
+		 * @cfg {CMDBuild.controller.common.AbstractAccordionController}
 		 */
 		delegate: undefined,
 
 		/**
 		 * @cfg {String}
 		 */
-		delegateClassName: 'CMDBuild.controller.administration.accordion.Workflow',
-
-		/**
-		 * @cfg {String}
-		 */
 		cmName: undefined,
-
-		/**
-		 * @cfg {String}
-		 */
-		storeModelName: 'CMDBuild.model.common.accordion.Workflow',
 
 		disabled: !CMDBuild.configuration.workflow.get(CMDBuild.core.constants.Proxy.ENABLED),
 		title: CMDBuild.Translation.processes,
@@ -66,7 +55,7 @@
 							nodeObject[CMDBuild.core.constants.Proxy.TEXT] = classObject[CMDBuild.core.constants.Proxy.TEXT];
 							nodeObject[CMDBuild.core.constants.Proxy.DESCRIPTION] = classObject[CMDBuild.core.constants.Proxy.TEXT];
 							nodeObject[CMDBuild.core.constants.Proxy.ENTITY_ID] = classObject[CMDBuild.core.constants.Proxy.ID];
-							nodeObject[CMDBuild.core.constants.Proxy.ID] = this.delegate.cmfg('accordionBuildId', classObject[CMDBuild.core.constants.Proxy.ID]);
+							nodeObject[CMDBuild.core.constants.Proxy.ID] = this.delegate.cmfg('accordionBuildId', { components: classObject[CMDBuild.core.constants.Proxy.ID] });
 							nodeObject[CMDBuild.core.constants.Proxy.PARENT] = classObject[CMDBuild.core.constants.Proxy.PARENT];
 							nodeObject[CMDBuild.core.constants.Proxy.NAME] = classObject[CMDBuild.core.constants.Proxy.NAME];
 							nodeObject[CMDBuild.core.constants.Proxy.LEAF] = true;

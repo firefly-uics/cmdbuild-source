@@ -24,17 +24,21 @@
 			this.getStore().getRootNode().removeAll();
 			this.getStore().getRootNode().appendChild([
 				{
-					text: '@@ Configuration',
-					iconCls: 'cmdbuild-tree-localization-icon',
-					sectionHierarchy: ['configuration'],
 					cmName: this.cmName,
+					iconCls: 'cmdbuild-tree-localization-icon',
+					text: '@@ Configuration',
+					description: '@@ Configuration',
+					id: this.delegate.cmfg('accordionBuildId', { components: 'configuration' }),
+					sectionHierarchy: ['configuration'],
 					leaf: true
 				},
 				{
-					text: '@@ Advanced table',
-					iconCls: 'cmdbuild-tree-localization-icon',
-					sectionHierarchy: ['advancedTranslationsTable'],
 					cmName: this.cmName,
+					iconCls: 'cmdbuild-tree-localization-icon',
+					text: '@@ Advanced table',
+					description: '@@ Advanced table',
+					id: this.delegate.cmfg('accordionBuildId', { components: 'advancedTranslationsTable' }),
+					sectionHierarchy: ['advancedTranslationsTable'],
 					leaf: true
 				}
 			]);

@@ -46,20 +46,23 @@
 					if (!Ext.isEmpty(decodedResult) && Ext.isArray(decodedResult)) {
 						var nodes = [];
 
-						Ext.Array.forEach(decodedResult, function(groupObject, i, allGroupObjects) {
-							nodes.push({
-								text: groupObject[CMDBuild.core.constants.Proxy.TEXT],
-								description: groupObject[CMDBuild.core.constants.Proxy.TEXT],
-								name: groupObject[CMDBuild.core.constants.Proxy.NAME],
-								cmName: this.cmName,
-								sectionHierarchy: ['custom'],
-								type: 'custom',
-								leaf: groupObject[CMDBuild.core.constants.Proxy.LEAF]
-							});
+						Ext.Array.forEach(decodedResult, function(reportObject, i, allReportObjects) {
+							var nodeObject = {};
+							nodeObject['cmName'] = this.cmName;
+							nodeObject[CMDBuild.core.constants.Proxy.TEXT] = reportObject[CMDBuild.core.constants.Proxy.TEXT];
+							nodeObject[CMDBuild.core.constants.Proxy.DESCRIPTION] = reportObject[CMDBuild.core.constants.Proxy.TEXT];
+							nodeObject[CMDBuild.core.constants.Proxy.ENTITY_ID] = reportObject[CMDBuild.core.constants.Proxy.ID];
+							nodeObject[CMDBuild.core.constants.Proxy.ID] = this.delegate.cmfg('accordionBuildId', { components: reportObject[CMDBuild.core.constants.Proxy.ID] });
+							nodeObject[CMDBuild.core.constants.Proxy.SECTION_HIERARCHY] = ['custom'];
+							nodeObject[CMDBuild.core.constants.Proxy.NAME] = reportObject[CMDBuild.core.constants.Proxy.NAME];
+							nodeObject[CMDBuild.core.constants.Proxy.LEAF] = true;
+
+							nodes.push(nodeObject);
 						}, this);
 
 						this.getStore().getRootNode().removeAll();
 						this.getStore().getRootNode().appendChild(nodes);
+						this.getStore().sort();
 
 						// Alias of this.callParent(arguments), inside proxy function doesn't work
 						if (!Ext.isEmpty(this.delegate))

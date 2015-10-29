@@ -36,8 +36,6 @@
 .arrowRefresh { background-image: url("../images/icons/arrow_refresh.png") !important; }
 .arrow_right, /* @deprecated */
 .arrowRight { background-image: url("../images/icons/arrow_right.png") !important; }
-.detail,
-.domain { background-image: url("../images/icons/table_link.png") !important; }
 .collapse { background-image: url("../images/icons/collapse.png") !important; }
 .expand,
 .cmdisplayfield-expandbutton { background-image: url("../images/icons/expand.png") !important; }

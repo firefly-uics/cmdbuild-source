@@ -44,17 +44,17 @@
 		},
 
 		/**
-		 * @param {CMDBuild.model.common.accordion.Generic} parameters
+		 * @param {CMDBuild.model.menu.accordion.Administration} node
 		 */
-		onViewOnFront: function(parameters) {
-			if (!Ext.isEmpty(parameters)) {
-				this.selectedMenuName = parameters.get(CMDBuild.core.constants.Proxy.NAME);
+		onViewOnFront: function(node) {
+			if (!Ext.isEmpty(node)) {
+				this.selectedMenuName = node.get(CMDBuild.core.constants.Proxy.ENTITY_ID);
 				this.sectionController = Ext.create('CMDBuild.controller.administration.menu.Group', { parentDelegate: this });
 
 				this.view.removeAll(true);
 				this.view.add(this.sectionController.getView());
 
-				this.setViewTitle(parameters.get(CMDBuild.core.constants.Proxy.TEXT));
+				this.setViewTitle(node.get(CMDBuild.core.constants.Proxy.TEXT));
 
 				this.sectionController.cmfg('onMenuGroupMenuSelected');
 			}

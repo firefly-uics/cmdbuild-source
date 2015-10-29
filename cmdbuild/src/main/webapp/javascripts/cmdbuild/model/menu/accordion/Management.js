@@ -2,16 +2,13 @@
 
 	Ext.require('CMDBuild.core.constants.Proxy');
 
-	/**
-	 * @management
-	 */
-	Ext.define('CMDBuild.model.common.accordion.Menu', {
+	Ext.define('CMDBuild.model.menu.accordion.Management', {
 		extend: 'Ext.data.TreeModel',
 
 		fields: [
 			{ name: 'cmIndex', type: 'int' },
 			{ name: 'cmName', type: 'string' },
-			{ name: CMDBuild.core.constants.Proxy.DESCRIPTION, type: 'string' },
+			{ name: CMDBuild.core.constants.Proxy.DESCRIPTION, type: 'string' }, // Text alias
 			{ name: CMDBuild.core.constants.Proxy.ENTITY_ID, type: 'int', useNull: true }, // Menu item target entity id
 			{ name: CMDBuild.core.constants.Proxy.FILTER, type: 'auto' }, // Compatibility parameter with Class/Filter accordion
 			{ name: CMDBuild.core.constants.Proxy.ID, type: 'string' },

@@ -10,14 +10,9 @@
 		],
 
 		/**
-		 * @cfg {CMDBuild.controller.administration.accordion.Lookup}
+		 * @cfg {CMDBuild.controller.common.AbstractAccordionController}
 		 */
 		delegate: undefined,
-
-		/**
-		 * @cfg {String}
-		 */
-		delegateClassName: 'CMDBuild.controller.administration.accordion.Lookup',
 
 		/**
 		 * @cfg {String}
@@ -49,14 +44,16 @@
 
 						// Build nodes map
 						Ext.Array.forEach(decodedResponse, function(lookupTypeObject, i, allLookupTypeObjects) {
-							nodesMap[lookupTypeObject[CMDBuild.core.constants.Proxy.ID]] = {
-								text: lookupTypeObject[CMDBuild.core.constants.Proxy.TEXT],
-								description: lookupTypeObject[CMDBuild.core.constants.Proxy.TEXT],
-								id: lookupTypeObject[CMDBuild.core.constants.Proxy.ID],
-								parent: lookupTypeObject[CMDBuild.core.constants.Proxy.PARENT],
-								cmName: this.cmName,
-								leaf: true
-							};
+							var nodeObject = {};
+							nodeObject['cmName'] = this.cmName;
+							nodeObject[CMDBuild.core.constants.Proxy.TEXT] = lookupTypeObject[CMDBuild.core.constants.Proxy.TEXT];
+							nodeObject[CMDBuild.core.constants.Proxy.DESCRIPTION] = lookupTypeObject[CMDBuild.core.constants.Proxy.TEXT];
+							nodeObject[CMDBuild.core.constants.Proxy.ENTITY_ID] = lookupTypeObject[CMDBuild.core.constants.Proxy.ID];
+							nodeObject[CMDBuild.core.constants.Proxy.ID] = this.delegate.cmfg('accordionBuildId', { components: lookupTypeObject[CMDBuild.core.constants.Proxy.ID] });
+							nodeObject[CMDBuild.core.constants.Proxy.PARENT] = lookupTypeObject[CMDBuild.core.constants.Proxy.PARENT];
+							nodeObject[CMDBuild.core.constants.Proxy.LEAF] = true;
+
+							nodesMap[lookupTypeObject[CMDBuild.core.constants.Proxy.ID]] = nodeObject;
 						}, this);
 
 						// Build tree nodes hierarchy

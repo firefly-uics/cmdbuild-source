@@ -22,8 +22,10 @@
 		 */
 		updateStore: function(nodeIdToSelect) {
 			var nodes = [{
-				text: CMDBuild.Translation.generalOptions,
 				cmName: this.cmName,
+				text: CMDBuild.Translation.generalOptions,
+				description: CMDBuild.Translation.generalOptions,
+				id: this.delegate.cmfg('accordionBuildId', { components: 'generalOptions' }),
 				sectionHierarchy: ['generalOptions'],
 				leaf: true
 			}];
@@ -31,38 +33,50 @@
 			if (!CMDBuild.configuration.userInterface.get(CMDBuild.core.constants.Proxy.CLOUD_ADMIN))
 				nodes = Ext.Array.push(nodes, [
 					{
-						text: CMDBuild.Translation.workflowEngine,
 						cmName: this.cmName,
+						text: CMDBuild.Translation.workflowEngine,
+						description: CMDBuild.Translation.workflowEngine,
+						id: this.delegate.cmfg('accordionBuildId', { components: 'workflow' }),
 						sectionHierarchy: ['workflow'],
 						leaf: true
 					},
 					{
-						text: CMDBuild.Translation.relationGraph,
 						cmName: this.cmName,
+						text: CMDBuild.Translation.relationGraph,
+						description: CMDBuild.Translation.relationGraph,
+						id: this.delegate.cmfg('accordionBuildId', { components: 'relationGraph' }),
 						sectionHierarchy: ['relationGraph'],
 						leaf: true
 					},
 					{
-						text: CMDBuild.Translation.alfresco,
 						cmName: this.cmName,
+						text: CMDBuild.Translation.alfresco,
+						description: CMDBuild.Translation.alfresco,
+						id: this.delegate.cmfg('accordionBuildId', { components: 'alfresco' }),
 						sectionHierarchy: ['alfresco'],
 						leaf: true
 					},
 					{
-						text: CMDBuild.Translation.gis,
 						cmName: this.cmName,
+						text: CMDBuild.Translation.gis,
+						description: CMDBuild.Translation.gis,
+						id: this.delegate.cmfg('accordionBuildId', { components: 'gis' }),
 						sectionHierarchy: ['gis'],
 						leaf: true
 					},
 					{
-						text: CMDBuild.Translation.bim,
 						cmName: this.cmName,
+						text: CMDBuild.Translation.bim,
+						description: CMDBuild.Translation.bim,
+						id: this.delegate.cmfg('accordionBuildId', { components: 'bim' }),
 						sectionHierarchy: ['bim'],
 						leaf: true
 					},
 					{
-						text: CMDBuild.Translation.serverManagement,
 						cmName: this.cmName,
+						text: CMDBuild.Translation.serverManagement,
+						description: CMDBuild.Translation.serverManagement,
+						id: this.delegate.cmfg('accordionBuildId', { components: 'server' }),
 						sectionHierarchy: ['server'],
 						leaf: true
 					}
