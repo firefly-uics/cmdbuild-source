@@ -38,16 +38,19 @@
 		view: undefined,
 
 		/**
-		 * @param {CMDBuild.view.common.CMAccordionStoreModel} node
+		 * @param {CMDBuild.model.common.accordion.Generic} node
 		 */
 		onViewOnFront: function(node) {
 			if (!Ext.isEmpty(node)) {
-				this.dataViewSelectedSet({ value: node.getData() });
+				var selectedDataView = node.getData();
+				selectedDataView[CMDBuild.core.proxy.CMProxyConstants.OUTPUT] = _CMCache.getDataSourceOutput(node.get(CMDBuild.core.proxy.CMProxyConstants.SOURCE_FUNCTION));
+
+				this.dataViewSelectedSet({ value: selectedDataView });
 
 				this.view.removeAll(true);
 
-				switch(this.dataViewSelectedGet(CMDBuild.core.proxy.CMProxyConstants.ID)) { // FIXME: implement node identifier
-					case 'dataViewSql':
+				switch(this.dataViewSelectedGet(CMDBuild.core.proxy.CMProxyConstants.SECTION_HIERARCHY)[0]) {
+					case 'sql':
 					default: {
 						this.sectionController = Ext.create('CMDBuild.controller.management.dataView.Sql', { parentDelegate: this });
 					}
@@ -56,8 +59,6 @@
 				this.view.add(this.sectionController.getView());
 
 				this.setViewTitle(this.dataViewSelectedGet(CMDBuild.core.proxy.CMProxyConstants.TEXT));
-
-				this.cmfg('onDataViewViewSelected');
 
 				this.callParent(arguments);
 			}
