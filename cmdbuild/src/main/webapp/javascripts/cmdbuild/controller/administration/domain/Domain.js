@@ -150,7 +150,7 @@
 
 						this.domainSelectedDomainSet(
 							Ext.Array.findBy(decodedResponse, function(item, i) {
-								return parameters.get(CMDBuild.core.constants.Proxy.ID) == item[CMDBuild.core.constants.Proxy.ID_DOMAIN];
+								return parameters.get(CMDBuild.core.constants.Proxy.ENTITY_ID) == item[CMDBuild.core.constants.Proxy.ID_DOMAIN];
 							}, this)
 						);
 

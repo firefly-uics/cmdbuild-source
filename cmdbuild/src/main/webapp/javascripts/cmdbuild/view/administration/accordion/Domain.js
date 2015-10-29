@@ -45,14 +45,16 @@
 						var nodes = [];
 
 						Ext.Array.forEach(decodedResult, function(domainObject, i, allDomainObjects) {
-							nodes.push({
-								text: domainObject[CMDBuild.core.constants.Proxy.DESCRIPTION],
-								description: domainObject[CMDBuild.core.constants.Proxy.DESCRIPTION],
-								iconCls: 'domain',
-								id: domainObject['idDomain'],
-								cmName: this.cmName,
-								leaf: true,
-							});
+							var nodeObject = {};
+							nodeObject['cmName'] = this.cmName;
+							nodeObject['iconCls'] = 'cmdbuild-tree-domain-icon';
+							nodeObject[CMDBuild.core.constants.Proxy.TEXT] = domainObject[CMDBuild.core.constants.Proxy.DESCRIPTION];
+							nodeObject[CMDBuild.core.constants.Proxy.DESCRIPTION] = domainObject[CMDBuild.core.constants.Proxy.DESCRIPTION];
+							nodeObject[CMDBuild.core.constants.Proxy.ENTITY_ID] = domainObject[CMDBuild.core.constants.Proxy.ID_DOMAIN];
+							nodeObject[CMDBuild.core.constants.Proxy.ID] = this.delegate.cmfg('accordionBuildId', { components: domainObject[CMDBuild.core.constants.Proxy.ID_DOMAIN] });
+							nodeObject[CMDBuild.core.constants.Proxy.LEAF] = true;
+
+							nodes.push(nodeObject);
 						}, this);
 
 						this.getStore().getRootNode().removeAll();

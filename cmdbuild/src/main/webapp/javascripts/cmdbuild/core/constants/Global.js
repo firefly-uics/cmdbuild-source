@@ -5,7 +5,6 @@
 		singleton: true,
 
 		config: {
-			customPagesPath: 'upload/custompages/',
 			errorMsgCss: 'cmdb-error-msg',
 			mandatoryLabelFlag: '* ',
 			tableTypeClass: 'class',

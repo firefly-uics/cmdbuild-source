@@ -95,6 +95,7 @@
 		CLUSTERING_THRESHOLD: 'clusteringThreshold',
 		CODE: 'code',
 		COLUMNS: 'columns',
+		COMPONENTS: 'components',
 		CONDITION: 'condition',
 		CONFIGURATION: 'configuration',
 		CONFIRMATION: 'confirmation',

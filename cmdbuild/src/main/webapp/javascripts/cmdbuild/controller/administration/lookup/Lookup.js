@@ -116,14 +116,11 @@
 		 */
 		onViewOnFront: function(node) {
 			if (!Ext.isEmpty(node)) {
-				var params = {};
-
 				CMDBuild.core.proxy.lookup.Type.read({
-					params: params,
 					scope: this,
 					success: function(response, options, decodedResponse) {
 						var lookupObject = Ext.Array.findBy(decodedResponse, function(item, i) {
-							return node.get(CMDBuild.core.constants.Proxy.ID) == item[CMDBuild.core.constants.Proxy.ID];
+							return node.get(CMDBuild.core.constants.Proxy.ENTITY_ID) == item[CMDBuild.core.constants.Proxy.ID];
 						}, this);
 						lookupObject[CMDBuild.core.constants.Proxy.DESCRIPTION] = lookupObject[CMDBuild.core.constants.Proxy.TEXT];
 

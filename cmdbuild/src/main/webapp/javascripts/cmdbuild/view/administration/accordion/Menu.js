@@ -6,7 +6,8 @@
 		requires: [
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.userAndGroup.group.Group',
-			'CMDBuild.core.Utils'
+			'CMDBuild.core.Utils',
+			'CMDBuild.model.menu.accordion.Administration'
 		],
 
 		/**
@@ -19,10 +20,15 @@
 		 */
 		cmName: undefined,
 
+		/**
+		 * @cfg {String}
+		 */
+		storeModelName: 'CMDBuild.model.menu.accordion.Administration',
+
 		title: CMDBuild.Translation.menu,
 
 		/**
-		 * @param {Number} nodeIdToSelect
+		 * @param {String} nodeIdToSelect
 		 *
 		 * @override
 		 */
@@ -40,20 +46,25 @@
 
 						var nodes = [{
 							cmName: this.cmName,
+							text: '* Default *',
+							description: '* Default *',
 							iconCls: 'cmdbuild-tree-group-icon',
-							leaf: true,
-							text: '* Default *'
+							id: this.delegate.cmfg('accordionBuildId', { components: 'default-group' }),
+							leaf: true
 						}];
 
 						Ext.Array.forEach(decodedResult, function(groupObject, i, allGroupObjects) {
-							nodes.push({
-								cmName: this.cmName,
-								iconCls: 'cmdbuild-tree-group-icon',
-								id: groupObject[CMDBuild.core.constants.Proxy.ID],
-								leaf: true,
-								name: groupObject[CMDBuild.core.constants.Proxy.NAME],
-								text: groupObject[CMDBuild.core.constants.Proxy.TEXT]
-							});
+							var nodeObject = {};
+							nodeObject['cmName'] = this.cmName;
+							nodeObject['iconCls'] = 'cmdbuild-tree-group-icon';
+							nodeObject[CMDBuild.core.constants.Proxy.TEXT] = groupObject[CMDBuild.core.constants.Proxy.TEXT];
+							nodeObject[CMDBuild.core.constants.Proxy.DESCRIPTION] = groupObject[CMDBuild.core.constants.Proxy.TEXT];
+							nodeObject[CMDBuild.core.constants.Proxy.ENTITY_ID] = groupObject[CMDBuild.core.constants.Proxy.NAME];
+							nodeObject[CMDBuild.core.constants.Proxy.ID] = this.delegate.cmfg('accordionBuildId', { components: groupObject[CMDBuild.core.constants.Proxy.ID] });
+							nodeObject[CMDBuild.core.constants.Proxy.NAME] = groupObject[CMDBuild.core.constants.Proxy.NAME];
+							nodeObject[CMDBuild.core.constants.Proxy.LEAF] = true;
+
+							nodes.push(nodeObject);
 						}, this);
 
 						this.getStore().getRootNode().removeAll();

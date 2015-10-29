@@ -25,16 +25,20 @@
 			this.getStore().getRootNode().removeAll();
 			this.getStore().getRootNode().appendChild([
 				{
+					cmName: 'bim-project',
 					text: CMDBuild.Translation.projects,
 					description: CMDBuild.Translation.projects,
-					leaf: true,
-					cmName: 'bim-project'
+					id: this.delegate.cmfg('accordionBuildId', { components: 'bim-project' }),
+					sectionHierarchy: ['bim-project'],
+					leaf: true
 				},
 				{
+					cmName: 'bim-layers',
 					text: CMDBuild.Translation.layers,
 					description: CMDBuild.Translation.layers,
-					leaf: true,
-					cmName: 'bim-layers'
+					id: this.delegate.cmfg('accordionBuildId', { components: 'bim-layers' }),
+					sectionHierarchy: ['bim-layers'],
+					leaf: true
 				}
 			]);
 

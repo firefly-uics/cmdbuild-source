@@ -24,8 +24,10 @@
 			this.getStore().getRootNode().removeAll();
 			this.getStore().getRootNode().appendChild([
 				{
-					text: CMDBuild.Translation.filtersForGroups,
 					cmName: this.cmName,
+					text: CMDBuild.Translation.filtersForGroups,
+					description: CMDBuild.Translation.filtersForGroups,
+					id: this.delegate.cmfg('accordionBuildId', { components: 'groups' }),
 					sectionHierarchy: ['groups'],
 					leaf: true
 				}

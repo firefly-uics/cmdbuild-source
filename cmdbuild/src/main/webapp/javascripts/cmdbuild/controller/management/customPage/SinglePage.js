@@ -5,7 +5,7 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.constants.Global'
+			'CMDBuild.core.configurations.CustomPages'
 		],
 
 		/**
@@ -34,8 +34,8 @@
 
 					autoEl: {
 						tag: 'iframe',
-						src: CMDBuild.Constants.customPages.customizationsPath
-							+ node.get(CMDBuild.core.constants.Proxy.TEXT)
+						src: CMDBuild.core.configurations.CustomPages.getCustomizationsPath()
+							+ node.get(CMDBuild.core.constants.Proxy.NAME)
 							+ '/?basePath=' + basePath
 							+ '&frameworkVersion=' + CMDBuild.core.configurations.CustomPages.getVersion()
 					}

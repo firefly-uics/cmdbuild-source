@@ -4,14 +4,9 @@
 		extend: 'CMDBuild.view.common.AbstractAccordion',
 
 		/**
-		 * @cfg {CMDBuild.controller.administration.accordion.Task}
+		 * @cfg {CMDBuild.controller.common.AbstractAccordionController}
 		 */
 		delegate: undefined,
-
-		/**
-		 * @cfg {String}
-		 */
-		delegateClassName: 'CMDBuild.controller.administration.accordion.Task',
 
 		/**
 		 * @cfg {String}
@@ -29,56 +24,72 @@
 			this.getStore().getRootNode().removeAll();
 			this.getStore().getRootNode().appendChild([
 				{
-					text: CMDBuild.Translation.administration.tasks.all,
-					iconCls: 'cmdbuild-tree-tasks-group-icon',
 					cmName: this.cmName,
+					iconCls: 'cmdbuild-tree-tasks-group-icon',
+					text: CMDBuild.Translation.administration.tasks.all,
+					description: CMDBuild.Translation.administration.tasks.all,
+					id: this.delegate.cmfg('accordionBuildId', { components: 'all' }),
 					sectionHierarchy: ['all'],
 					leaf: false,
+
 					children: [
 						{
+							cmName: this.cmName,
+							iconCls: 'cmdbuild-tree-tasks-icon',
 							text: CMDBuild.Translation.administration.tasks.tasksTypes.connector,
-							iconCls: 'cmdbuild-tree-tasks-icon',
-							cmName: this.cmName,
+							description: CMDBuild.Translation.administration.tasks.tasksTypes.connector,
+							id: this.delegate.cmfg('accordionBuildId', { components: 'connector' }),
 							sectionHierarchy: ['connector'],
-							leaf: true,
+							leaf: true
 						},
 						{
-							text: CMDBuild.Translation.administration.tasks.tasksTypes.email,
+							cmName: this.cmName,
 							iconCls: 'cmdbuild-tree-tasks-icon',
-							cmName: this.cmName,
+							text: CMDBuild.Translation.administration.tasks.tasksTypes.email,
+							description: CMDBuild.Translation.administration.tasks.tasksTypes.email,
+							id: this.delegate.cmfg('accordionBuildId', { components: 'email' }),
 							sectionHierarchy: ['email'],
-							leaf: true,
+							leaf: true
 						},
 						{
-							text: CMDBuild.Translation.administration.tasks.tasksTypes.event,
-							iconCls: 'cmdbuild-tree-tasks-group-icon',
 							cmName: this.cmName,
-							sectionHierarchy: ['event'],
+							iconCls: 'cmdbuild-tree-tasks-group-icon',
+							text: CMDBuild.Translation.administration.tasks.tasksTypes.event,
+							description: CMDBuild.Translation.administration.tasks.tasksTypes.event,
 							expanded: true,
+							id: this.delegate.cmfg('accordionBuildId', { components: 'event' }),
+							sectionHierarchy: ['event'],
 							leaf: false,
+
 							children: [
 								{
-									text: CMDBuild.Translation.administration.tasks.tasksTypes.eventTypes.asynchronous,
-									iconCls: 'cmdbuild-tree-tasks-icon',
 									cmName: this.cmName,
+									iconCls: 'cmdbuild-tree-tasks-icon',
+									text: CMDBuild.Translation.administration.tasks.tasksTypes.eventTypes.asynchronous,
+									description: CMDBuild.Translation.administration.tasks.tasksTypes.eventTypes.asynchronous,
+									id: this.delegate.cmfg('accordionBuildId', { components: 'event_asynchronous' }),
 									sectionHierarchy: ['event_asynchronous'], // TODO: use double level (event, asynchronous)
-									leaf: true,
+									leaf: true
 								},
 								{
-									text: CMDBuild.Translation.administration.tasks.tasksTypes.eventTypes.synchronous,
-									iconCls: 'cmdbuild-tree-tasks-icon',
 									cmName: this.cmName,
+									iconCls: 'cmdbuild-tree-tasks-icon',
+									text: CMDBuild.Translation.administration.tasks.tasksTypes.eventTypes.synchronous,
+									description: CMDBuild.Translation.administration.tasks.tasksTypes.eventTypes.synchronous,
+									id: this.delegate.cmfg('accordionBuildId', { components: 'event_synchronous' }),
 									sectionHierarchy: ['event_synchronous'], // TODO: use double level (event, synchronous)
-									leaf: true,
+									leaf: true
 								}
 							]
 						},
 						{
-							text: CMDBuild.Translation.administration.tasks.tasksTypes.workflow,
-							iconCls: 'cmdbuild-tree-tasks-icon',
 							cmName: this.cmName,
+							iconCls: 'cmdbuild-tree-tasks-icon',
+							text: CMDBuild.Translation.administration.tasks.tasksTypes.workflow,
+							description: CMDBuild.Translation.administration.tasks.tasksTypes.workflow,
+							id: this.delegate.cmfg('accordionBuildId', { components: 'workflow' }),
 							sectionHierarchy: ['workflow'],
-							leaf: true,
+							leaf: true
 						}
 					]
 				}

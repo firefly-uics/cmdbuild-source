@@ -6,19 +6,13 @@
 		requires: [
 			'CMDBuild.core.constants.Global',
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.Classes',
-			'CMDBuild.model.common.accordion.Classes'
+			'CMDBuild.core.proxy.Classes'
 		],
 
 		/**
-		 * @cfg {CMDBuild.controller.management.accordion.Classes}
+		 * @cfg {CMDBuild.controller.common.AbstractAccordionController}
 		 */
 		delegate: undefined,
-
-		/**
-		 * @cfg {String}
-		 */
-		delegateClassName: 'CMDBuild.controller.management.accordion.Classes',
 
 		/**
 		 * @cfg {String}
@@ -29,11 +23,6 @@
 		 * @cfg {Boolean}
 		 */
 		hideIfEmpty: true,
-
-		/**
-		 * @cfg {String}
-		 */
-		storeModelName: 'CMDBuild.model.common.accordion.Classes',
 
 		title: CMDBuild.Translation.classList,
 
@@ -75,7 +64,7 @@
 							nodeObject[CMDBuild.core.constants.Proxy.TEXT] = classObject[CMDBuild.core.constants.Proxy.TEXT];
 							nodeObject[CMDBuild.core.constants.Proxy.DESCRIPTION] = classObject[CMDBuild.core.constants.Proxy.TEXT];
 							nodeObject[CMDBuild.core.constants.Proxy.ENTITY_ID] = classObject[CMDBuild.core.constants.Proxy.ID];
-							nodeObject[CMDBuild.core.constants.Proxy.ID] = this.delegate.cmfg('accordionBuildId', classObject[CMDBuild.core.constants.Proxy.ID]);
+							nodeObject[CMDBuild.core.constants.Proxy.ID] = this.delegate.cmfg('accordionBuildId', { components: classObject[CMDBuild.core.constants.Proxy.ID] });
 							nodeObject[CMDBuild.core.constants.Proxy.NAME] = classObject[CMDBuild.core.constants.Proxy.NAME];
 							nodeObject[CMDBuild.core.constants.Proxy.LEAF] = true;
 

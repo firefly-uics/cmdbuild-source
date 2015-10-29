@@ -10,6 +10,9 @@
 /* Dashboard */
 	.cmdbuild-tree-dashboard-icon { background-image: url("../images/icons/tree/dashboard.png") !important; }
 
+/* Domain */
+	.cmdbuild-tree-domain-icon { background-image: url("../images/icons/tree/domain.png") !important; }
+
 /* Group */
 	.cmdbuild-tree-group-icon { background-image: url("../images/icons/tree/group.png") !important; }
 

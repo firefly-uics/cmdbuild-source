@@ -26,37 +26,50 @@
 		 * @override
 		 */
 		updateStore: function(nodeIdToSelect) {
-			this.getStore().getRootNode().removeAll();
+			var nodes = [];
 
 			if (!this.isSectionDisabled(CMDBuild.core.constants.Proxy.CHANGE_PASSWORD))
-				this.getStore().getRootNode().appendChild({
-					text: CMDBuild.Translation.management.modutilities.changepassword.title,
+				nodes.push({
 					cmName: 'changepassword',
+					text: CMDBuild.Translation.management.modutilities.changepassword.title,
+					description: CMDBuild.Translation.management.modutilities.changepassword.title,
+					id: this.delegate.cmfg('accordionBuildId', { components: 'changepassword' }),
+					sectionHierarchy: ['changepassword'],
 					leaf: true
 				});
 
 			if (!this.isSectionDisabled(CMDBuild.core.constants.Proxy.BULK_UPDATE))
-				this.getStore().getRootNode().appendChild({
-					text: CMDBuild.Translation.management.modutilities.bulkupdate.title,
+				nodes.push({
 					cmName: 'bulkcardupdate',
+					text: CMDBuild.Translation.management.modutilities.bulkupdate.title,
+					description: CMDBuild.Translation.management.modutilities.bulkupdate.title,
+					id: this.delegate.cmfg('accordionBuildId', { components: 'bulkcardupdate' }),
+					sectionHierarchy: ['bulkcardupdate'],
 					leaf: true
 				});
 
 			if (!this.isSectionDisabled(CMDBuild.core.constants.Proxy.IMPORT_CSV))
-				this.getStore().getRootNode().appendChild([
-					{
-						text: CMDBuild.Translation.management.modutilities.csv.title,
-						cmName: 'importcsv',
-						leaf: true
-					}
-				]);
-
-			if (!this.isSectionDisabled(CMDBuild.core.constants.Proxy.EXPORT_CSV))
-				this.getStore().getRootNode().appendChild({
-					text: CMDBuild.Translation.management.modutilities.csv.title_export,
-					cmName: 'exportcsv',
+				nodes.push({
+					cmName: 'importcsv',
+					text: CMDBuild.Translation.management.modutilities.csv.title,
+					description: CMDBuild.Translation.management.modutilities.csv.title,
+					id: this.delegate.cmfg('accordionBuildId', { components: 'importcsv' }),
+					sectionHierarchy: ['importcsv'],
 					leaf: true
 				});
+
+			if (!this.isSectionDisabled(CMDBuild.core.constants.Proxy.EXPORT_CSV))
+				nodes.push({
+					cmName: 'exportcsv',
+					text: CMDBuild.Translation.management.modutilities.csv.title_export,
+					description: CMDBuild.Translation.management.modutilities.csv.title_export,
+					id: this.delegate.cmfg('accordionBuildId', { components: 'exportcsv' }),
+					sectionHierarchy: ['exportcsv'],
+					leaf: true
+				});
+
+			this.getStore().getRootNode().removeAll();
+			this.getStore().getRootNode().appendChild(nodes);
 
 			this.callParent(arguments);
 		},
