@@ -572,6 +572,24 @@ public class CustomFormWidgetFactoryTest {
 		assertThat(created.getData(), equalTo("foo bar baz"));
 		verifyNoMoreInteractions(templateRespository, notifier, dataView, metadataStoreFactory);
 	}
+	
+	@Test
+	public void dataFromJsonRawSourceReturnsExpressionAsIs() throws Exception {
+		// given
+		final String serialization = "" //
+				+ MODEL_TYPE + "=\"form\"\n" //
+				+ FORM_MODEL + "=\"foo\"\n" //
+				+ DATA_TYPE + "=\"raw_json\"\n" //
+				+ RAW_DATA + "=\"foo bar baz\"\n" //
+		;
+
+		// when
+		final CustomForm created = (CustomForm) widgetFactory.createWidget(serialization, mock(CMValueSet.class));
+
+		// then
+		assertThat(created.getData(), equalTo("foo bar baz"));
+		verifyNoMoreInteractions(templateRespository, notifier, dataView, metadataStoreFactory);
+	}
 
 	@Test
 	public void dataFromFunctionAndMissingFunctionNameProducesNoWidget() throws Exception {
