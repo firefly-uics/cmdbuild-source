@@ -79,6 +79,7 @@ public class Attribute {
 	private static final String UNIQUE = "unique";
 	private static final String MANDATORY = "mandatory";
 	private static final String WRITABLE = "writable";
+	private static final String SHOW_COLUMN = "showColumn";
 	private static final String PRECISION = "precision";
 	private static final String SCALE = "scale";
 	private static final String LENGTH = "length";
@@ -93,6 +94,7 @@ public class Attribute {
 	private boolean unique;
 	private boolean mandatory;
 	private boolean writable = true;
+	private boolean showColumn = true;
 	private Long precision;
 	private Long scale;
 	private Long length;
@@ -153,6 +155,15 @@ public class Attribute {
 
 	public void setWritable(final boolean writable) {
 		this.writable = writable;
+	}
+
+	@XmlAttribute(name = SHOW_COLUMN)
+	public boolean isShowColumn() {
+		return showColumn;
+	}
+
+	public void setShowColumn(final boolean showColumn) {
+		this.showColumn = showColumn;
 	}
 
 	@XmlAttribute(name = PRECISION)
