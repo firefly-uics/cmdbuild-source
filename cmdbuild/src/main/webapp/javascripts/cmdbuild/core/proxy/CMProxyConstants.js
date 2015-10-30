@@ -316,6 +316,7 @@
 		RESTRICTED_ADMIN: 'restrictedAdmin',
 		RETRY_WITHOUT_FILTER: 'retryWithoutFilter',
 		ROLE: 'role',
+		ROWS: 'rows',
 		RTF: 'rtf',
 		SCALE: 'scale',
 		SCOPE: 'scope',
