@@ -55,7 +55,9 @@ public class CustomFormWidgetFactory extends ValuePairWidgetFactory {
 			TYPE_FORM = "form", //
 			TYPE_CLASS = "class", //
 			TYPE_FUNCTION = "function", //
-			TYPE_RAW = "raw";
+			TYPE_RAW = "raw", //
+			TYPE_RAW_JSON = "raw_json", //
+			TYPE_RAW_TEXT = "raw_text";
 
 	private static final String //
 			JSON_SERIALIZATION = "json", //
@@ -120,9 +122,12 @@ public class CustomFormWidgetFactory extends ValuePairWidgetFactory {
 	private DataBuilder dataOf(final Map<String, Object> valueMap) {
 		final DataBuilder output;
 		final String value = String.class.cast(valueMap.get(DATA_TYPE));
-		if (TYPE_RAW.equalsIgnoreCase(value)) {
+		if (TYPE_RAW.equalsIgnoreCase(value) || TYPE_RAW_JSON.equalsIgnoreCase(value)) {
 			final String expression = defaultString(String.class.cast(valueMap.get(RAW_DATA)));
 			output = new IdentityDataBuilder(expression);
+		} else if (TYPE_RAW_TEXT.equalsIgnoreCase(value)) {
+			final String expression = defaultString(String.class.cast(valueMap.get(RAW_DATA)));
+			output = new TextDataBuilder(expression, textConfigurationOf(valueMap));
 		} else if (TYPE_FUNCTION.equalsIgnoreCase(value)) {
 			final String functionName = defaultString(String.class.cast(valueMap.get(FUNCTION_DATA)));
 			Validate.isTrue(isNotBlank(functionName), "invalid value for '%s'", FUNCTION_DATA);
@@ -150,13 +155,7 @@ public class CustomFormWidgetFactory extends ValuePairWidgetFactory {
 		if (JSON_SERIALIZATION.equals(type)) {
 			configuration = null;
 		} else if (TEXT_SERIALIZATION.equals(type)) {
-			final TextConfiguration textConfiguration = new TextConfiguration();
-			textConfiguration.setKeyValueSeparator(defaultIfBlank(String.class.cast(valueMap.get(KEY_VALUE_SEPARATOR)),
-					DEFAULT_KEY_VALUE_SEPARATOR));
-			textConfiguration.setAttributesSeparator(defaultIfBlank(
-					String.class.cast(valueMap.get(ATTRIBUTES_SEPARATOR)), DEFAULT_ATTRIBUTES_SEPARATOR));
-			textConfiguration.setRowsSeparator(defaultIfBlank(String.class.cast(valueMap.get(ROWS_SEPARATOR)),
-					DEFAULT_ROWS_SEPARATOR));
+			final TextConfiguration textConfiguration = textConfigurationOf(valueMap);
 			configuration = textConfiguration;
 		} else {
 			configuration = null;
@@ -164,6 +163,17 @@ public class CustomFormWidgetFactory extends ValuePairWidgetFactory {
 		output.setType(type);
 		output.setConfiguration(configuration);
 		return output;
+	}
+
+	private TextConfiguration textConfigurationOf(final Map<String, Object> valueMap) {
+		final TextConfiguration textConfiguration = new TextConfiguration();
+		textConfiguration.setKeyValueSeparator(defaultIfBlank(String.class.cast(valueMap.get(KEY_VALUE_SEPARATOR)),
+				DEFAULT_KEY_VALUE_SEPARATOR));
+		textConfiguration.setAttributesSeparator(defaultIfBlank(String.class.cast(valueMap.get(ATTRIBUTES_SEPARATOR)),
+				DEFAULT_ATTRIBUTES_SEPARATOR));
+		textConfiguration.setRowsSeparator(defaultIfBlank(String.class.cast(valueMap.get(ROWS_SEPARATOR)),
+				DEFAULT_ROWS_SEPARATOR));
+		return textConfiguration;
 	}
 
 }
