@@ -59,7 +59,7 @@
 							value = me.formatDate(value);
 						}
 
-						if (Ext.isEmpty(Ext.String.trim(value)) && attribute[CMDBuild.core.proxy.CMProxyConstants.NOT_NULL])
+						if (Ext.isEmpty(Ext.String.trim(String(value))) && attribute[CMDBuild.core.proxy.CMProxyConstants.NOT_NULL])
 							value = '<div style="width: 100%; height: 100%; border: 1px dotted red;">';
 
 						return value;
@@ -337,9 +337,11 @@
 		 * @param {Array} data
 		 */
 		setData: function(data) {
+			this.view.getStore().removeAll();
+
 			if (!Ext.isEmpty(data))
 				return this.view.getStore().loadRecords(data);
-			
+
 			return [];
 		},
 

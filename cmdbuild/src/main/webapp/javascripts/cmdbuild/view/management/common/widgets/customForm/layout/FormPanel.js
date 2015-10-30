@@ -19,7 +19,7 @@
 
 		layout: {
 			type: 'vbox',
-//			align: 'stretch' // TODO: uncomment on new fieldManager full implementation
+			align: 'stretch'
 		},
 
 		initComponent: function() {

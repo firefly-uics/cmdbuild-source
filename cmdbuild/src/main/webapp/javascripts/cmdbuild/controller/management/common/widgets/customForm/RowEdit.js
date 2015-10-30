@@ -3,7 +3,10 @@
 	Ext.define('CMDBuild.controller.management.common.widgets.customForm.RowEdit', {
 		extend: 'CMDBuild.controller.common.AbstractController',
 
-		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+		requires: [
+			'CMDBuild.core.proxy.CMProxyConstants',
+			'CMDBuild.core.RequestBarrier'
+		],
 
 		/**
 		 * @cfg {CMDBuild.controller.management.common.widgets.customForm.layout.Grid}
@@ -49,13 +52,14 @@
 			this.form = this.view.form;
 
 			this.form.add(this.buildFields());
-			this.form.loadRecord(this.record);
 
 			this.fieldsInitialization();
 
 			// Show window
-			if (!Ext.isEmpty(this.view))
+			if (!Ext.isEmpty(this.view)) {
 				this.view.show();
+				this.view.setLoading(true);
+			}
 		},
 
 		/**
@@ -111,16 +115,28 @@
 		},
 
 		/**
-		 * Calls field template resolver and store load
+		 * Calls field template resolver, store load and loads record only at the end of all store loads
 		 */
 		fieldsInitialization: function() {
+			var barrierId = 'rowEditFieldsInitializationBarrier';
+
+			CMDBuild.core.RequestBarrier.init(barrierId, function() {
+				this.form.loadRecord(this.record);
+
+				this.view.setLoading(false);
+			}, this);
+
 			Ext.Array.forEach(this.form.getForm().getFields().getRange(), function(field, i, allFields) {
 				if (!Ext.Object.isEmpty(field) && !Ext.isEmpty(field.resolveTemplate))
 					field.resolveTemplate();
 
 				// Force editor fields store load (must be done because FieldManager field don't works properly)
+				// TODO: waiting for full FiledManager v2 implementation
 				if (!Ext.Object.isEmpty(field) && !Ext.Object.isEmpty(field.store) && field.store.count() == 0)
-					field.store.load();
+					field.store.load({
+						scope: this,
+						callback: CMDBuild.core.RequestBarrier.getCallback(barrierId)
+					});
 			}, this);
 		},
 
