@@ -128,9 +128,6 @@ class FunctionModelBuilder extends AttributesBasedModelBuilder {
 						});
 						output.setName(input.getName());
 						output.setDescription(input.getName());
-						output.setUnique(false);
-						output.setMandatory(false);
-						output.setWritable(true);
 						return output;
 					}
 

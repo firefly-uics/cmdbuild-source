@@ -147,6 +147,7 @@ class ClassModelBuilder extends AttributesBasedModelBuilder {
 						output.setUnique(input.isUnique());
 						output.setMandatory(input.isMandatory());
 						output.setWritable(WRITE.equals(input.getMode()));
+						output.setShowColumn(input.isDisplayableInList());
 						input.getType().accept(new ForwardingAttributeTypeVisitor() {
 
 							private final CMAttributeTypeVisitor DELEGATE = NullAttributeTypeVisitor.getInstance();
