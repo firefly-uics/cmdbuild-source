@@ -119,11 +119,11 @@
 
 				Ext.Array.forEach(this.cmfg('widgetConfigurationGet', CMDBuild.core.proxy.CMProxyConstants.MODEL), function(attribute, i, allAttributes) {
 					switch (attribute.get(CMDBuild.core.proxy.CMProxyConstants.TYPE)) {
-						case 'LOOKUP': {
+						case 'lookup': {
 							this.dataManageLookup(data, attribute, barrierId);
 						} break;
 
-						case 'REFERENCE': {
+						case 'reference': {
 							this.dataManageReference(data, attribute, barrierId);
 						} break;
 					}

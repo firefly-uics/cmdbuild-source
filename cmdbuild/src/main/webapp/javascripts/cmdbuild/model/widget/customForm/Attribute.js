@@ -19,7 +19,7 @@
 			{ name: CMDBuild.core.proxy.CMProxyConstants.PRECISION, type: 'int', useNull: true },
 			{ name: CMDBuild.core.proxy.CMProxyConstants.SCALE, type: 'int', defaultValue: 0 },
 			{ name: CMDBuild.core.proxy.CMProxyConstants.TARGET_CLASS, type: 'string' },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.TYPE, type: 'string' },
+			{ name: CMDBuild.core.proxy.CMProxyConstants.TYPE, type: 'string', convert: toLowerCase }, // Case insensitive types
 			{ name: CMDBuild.core.proxy.CMProxyConstants.UNIQUE, type: 'boolean' },
 			{ name: CMDBuild.core.proxy.CMProxyConstants.WRITABLE, type: 'boolean', defaultValue: true }
 		],
@@ -38,25 +38,27 @@
 			objectModel['isnotnull'] = this.get(CMDBuild.core.proxy.CMProxyConstants.MANDATORY);
 
 			switch (objectModel[CMDBuild.core.proxy.CMProxyConstants.TYPE]) {
-				case 'LOOKUP': {
+				case 'lookup': {
 					objectModel['lookup'] = this.get(CMDBuild.core.proxy.CMProxyConstants.LOOKUP_TYPE);
 					objectModel['lookupchain'] = [];
 				} break;
 
-				case 'REFERENCE': {
+				case 'reference': {
 					objectModel['referencedClassName'] = this.get(CMDBuild.core.proxy.CMProxyConstants.TARGET_CLASS);
 
 					// New filter object structure adapter
 					if (!Ext.isEmpty(this.get(CMDBuild.core.proxy.CMProxyConstants.FILTER))) {
 						objectModel[CMDBuild.core.proxy.CMProxyConstants.FILTER] = this.get(CMDBuild.core.proxy.CMProxyConstants.FILTER)[CMDBuild.core.proxy.CMProxyConstants.EXPRESSION];
 						objectModel[CMDBuild.core.proxy.CMProxyConstants.META] = {};
-	
+
 						Ext.Object.each(this.get(CMDBuild.core.proxy.CMProxyConstants.FILTER)[CMDBuild.core.proxy.CMProxyConstants.CONTEXT], function(key, value, myself) {
 							objectModel[CMDBuild.core.proxy.CMProxyConstants.META]['system.template.' + key] = value;
 						}, this);
 					}
 				} break;
 			}
+
+			objectModel[CMDBuild.core.proxy.CMProxyConstants.TYPE] = this.get(CMDBuild.core.proxy.CMProxyConstants.TYPE).toUpperCase();
 
 			return objectModel;
 		},
@@ -68,7 +70,7 @@
 			var customValidationValue = false;
 
 			switch (this.get(CMDBuild.core.proxy.CMProxyConstants.TYPE)) {
-				case 'DECIMAL': {
+				case 'decimal': {
 					customValidationValue = (
 						!Ext.isEmpty(this.get(CMDBuild.core.proxy.CMProxyConstants.SCALE))
 						&& !Ext.isEmpty(this.get(CMDBuild.core.proxy.CMProxyConstants.PRECISION))
@@ -76,7 +78,7 @@
 					);
 				} break;
 
-				case 'STRING': {
+				case 'string': {
 					customValidationValue = (
 						!Ext.isEmpty(this.get(CMDBuild.core.proxy.CMProxyConstants.LENGTH))
 						&& this.get(CMDBuild.core.proxy.CMProxyConstants.LENGTH) > 0
@@ -87,5 +89,17 @@
 			return this.callParent(arguments) && customValidationValue;
 		}
 	});
+
+	/**
+	 * @param {String} value
+	 * @param {Object} record
+	 *
+	 * @returns {String}
+	 *
+	 * @private
+	 */
+	function toLowerCase(value, record) {
+		return value.toLowerCase();
+	}
 
 })();
