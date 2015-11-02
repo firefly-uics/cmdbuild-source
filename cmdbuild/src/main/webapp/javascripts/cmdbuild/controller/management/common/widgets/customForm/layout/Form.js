@@ -11,7 +11,8 @@
 		cmfgCatchedFunctions: [
 			'importData',
 			'onCustomFormLayoutFormImportButtonClick',
-			'onCustomFormLayoutFormResetButtonClick'
+			'onCustomFormLayoutFormResetButtonClick',
+			'onCustomFormLayoutFormShow = onCustomFormShow'
 		],
 
 		/**
@@ -25,30 +26,19 @@
 		constructor: function(configurationObject) {
 			this.callParent(arguments);
 
+			// Barrier to load data after reference field store's load end
+			CMDBuild.core.RequestBarrier.init('referenceStoreLoadBarrier', function() {
+				if (!this.cmfg('widgetCustomFormInstancesDataStorageIsEmpty'))
+					this.setData(this.cmfg('widgetCustomFormInstancesDataStorageGet'));
+
+				this.cmfg('widgetCustomFormViewSetLoading', false);
+			}, this);
+
 			this.view = Ext.create('CMDBuild.view.management.common.widgets.customForm.layout.FormPanel', { delegate: this });
 
 			this.view.add(this.buildFields());
-		},
 
-		/**
-		 * Setup form items disabled state.
-		 * Disable topToolBar only if is readOnly.
-		 */
-		beforeActiveView: function() {
-			var isWidgetReadOnly = this.cmfg('widgetConfigurationGet', [
-				CMDBuild.core.proxy.CMProxyConstants.CAPABILITIES,
-				CMDBuild.core.proxy.CMProxyConstants.READ_ONLY
-			]);
-
-			if (
-				isWidgetReadOnly
- 				|| this.cmfg('widgetConfigurationGet', [
-					CMDBuild.core.proxy.CMProxyConstants.CAPABILITIES,
-					CMDBuild.core.proxy.CMProxyConstants.MODIFY_DISABLED
-				])
-			) {
-				this.view.setDisabledModify(true, true, isWidgetReadOnly);
-			}
+			this.cmfg('widgetCustomFormViewSetLoading', true);
 		},
 
 		/**
@@ -90,6 +80,10 @@
 							// Force execution of template resolver
 							if (!Ext.isEmpty(item) && Ext.isFunction(item.resolveTemplate))
 								item.resolveTemplate();
+
+							// Apply event for store load barrier
+							if (!Ext.isEmpty(item) && Ext.isFunction(item.getStore) && item.getStore().count() == 0)
+								item.getStore().on('load', CMDBuild.core.RequestBarrier.getCallback('referenceStoreLoadBarrier'), this);
 						} else {
 							item = CMDBuild.Management.FieldManager.getFieldForAttr(attribute, false, false);
 						}
@@ -147,6 +141,27 @@
 		},
 
 		/**
+		 * Setup form items disabled state.
+		 * Disable topToolBar only if is readOnly.
+		 */
+		onCustomFormLayoutFormShow: function() {
+			var isWidgetReadOnly = this.cmfg('widgetConfigurationGet', [
+				CMDBuild.core.proxy.CMProxyConstants.CAPABILITIES,
+				CMDBuild.core.proxy.CMProxyConstants.READ_ONLY
+			]);
+
+			if (
+				isWidgetReadOnly
+ 				|| this.cmfg('widgetConfigurationGet', [
+					CMDBuild.core.proxy.CMProxyConstants.CAPABILITIES,
+					CMDBuild.core.proxy.CMProxyConstants.MODIFY_DISABLED
+				])
+			) {
+				this.view.setDisabledModify(true, true, isWidgetReadOnly);
+			}
+		},
+
+		/**
 		 * @param {Array} data
 		 */
 		setData: function(data) {
@@ -154,12 +169,10 @@
 
 			this.view.reset(); // In form layout is managed only one row at time, so all actions are considered with replace mode
 
-			if (Ext.isObject(data))
-				if (Ext.isFunction(data.getData)) {
-					return this.view.getForm().setValues(data.getData());
-				} else {
-					return this.view.getForm().setValues(data);
-				}
+			if (Ext.isObject(data)) // Model or simple object manage
+				this.view.getForm().setValues(
+					Ext.isFunction(data.getData) ? data.getData() : data
+				);
 		},
 
 		/**

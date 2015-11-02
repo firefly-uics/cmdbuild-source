@@ -26,7 +26,10 @@
 			'widgetConfigurationGet',
 			'widgetConfigurationIsAttributeEmpty',
 			'widgetConfigurationSet',
-			'widgetControllerPropertyGet'
+			'widgetControllerPropertyGet',
+			'instancesDataStorageGet = widgetCustomFormInstancesDataStorageGet',
+			'instancesDataStorageIsEmpty = widgetCustomFormInstancesDataStorageIsEmpty',
+			'widgetCustomFormViewSetLoading'
 		],
 
 		/**
@@ -35,7 +38,7 @@
 		view: undefined,
 
 		/**
-		 * @param {CMDBuild.view.management.common.widgets.CMWidgetManager} configurationObject.view
+		 * @param {CMDBuild.view.management.common.widgets.customForm.CustomFormView} configurationObject.view
 		 * @param {CMDBuild.controller.management.common.CMWidgetManagerController} configurationObject.parentDelegate
 		 * @param {Object} configurationObject.widgetConfiguration
 		 * @param {Ext.form.Basic} configurationObject.clientForm
@@ -87,12 +90,7 @@
 			if (!this.widgetConfigurationIsAttributeEmpty(CMDBuild.core.proxy.CMProxyConstants.MODEL)) {
 				this.buildLayout();
 
-				if (!this.instancesDataStorageIsEmpty())
-					this.controllerLayout.setData(this.instancesDataStorageGet());
-
-				// Function forward
-				if (Ext.isFunction(this.controllerLayout.beforeActiveView))
-					this.controllerLayout.beforeActiveView();
+				this.controllerLayout.cmfg('onCustomFormShow');
 			}
 		},
 
@@ -203,7 +201,16 @@
 				// Full model setup management
 				if (!Ext.isEmpty(configurationObject) && Ext.isEmpty(propertyName))
 					this.widgetConfigurationModel = Ext.create('CMDBuild.model.widget.customForm.Configuration', Ext.clone(configurationObject));
-			}
+			},
+
+		/**
+		 * @param {Boolean} state
+		 */
+		widgetCustomFormViewSetLoading: function(state) {
+			state = Ext.isBoolean(state) ? state : false;
+
+			this.view.setLoading(state);
+		}
 	});
 
 })();

@@ -152,6 +152,8 @@
 				this.record.set(key, value);
 			}, this);
 
+			this.record.commit();
+
 			this.onRowEditWindowAbortButtonClick();
 		}
 	});

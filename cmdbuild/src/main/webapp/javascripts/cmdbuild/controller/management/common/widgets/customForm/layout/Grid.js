@@ -3,7 +3,10 @@
 	Ext.define('CMDBuild.controller.management.common.widgets.customForm.layout.Grid', {
 		extend: 'CMDBuild.controller.common.AbstractController',
 
-		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+		requires: [
+			'CMDBuild.core.proxy.CMProxyConstants',
+			'CMDBuild.core.RequestBarrier'
+		],
 
 		/**
 		 * @cfg {Array}
@@ -14,7 +17,8 @@
 			'onCustomFormLayoutGridDeleteRowButtonClick' ,
 			'onCustomFormLayoutGridEditRowButtonClick',
 			'onCustomFormLayoutGridImportButtonClick',
-			'onCustomFormLayoutGridResetButtonClick'
+			'onCustomFormLayoutGridResetButtonClick',
+			'onCustomFormLayoutGridShow = onCustomFormShow'
 		],
 
 		/**
@@ -28,11 +32,21 @@
 		constructor: function(configurationObject) {
 			this.callParent(arguments);
 
+			// Barrier to load data after reference field store's load end
+			CMDBuild.core.RequestBarrier.init('referenceStoreLoadBarrier', function() {
+				if (!this.cmfg('widgetCustomFormInstancesDataStorageIsEmpty'))
+					this.setData(this.cmfg('widgetCustomFormInstancesDataStorageGet'));
+
+				this.cmfg('widgetCustomFormViewSetLoading', false);
+			}, this);
+
 			this.view = Ext.create('CMDBuild.view.management.common.widgets.customForm.layout.GridPanel', {
 				delegate: this,
 				columns: this.buildColumns(),
 				store: this.buildDataStore()
 			});
+
+			this.cmfg('widgetCustomFormViewSetLoading', true);
 		},
 
 		/**
@@ -205,7 +219,7 @@
 
 						// Force editor fields store load (must be done because FieldManager field don't works properly)
 						if (!Ext.isEmpty(editor) && !Ext.isEmpty(editor.store) && editor.store.count() == 0)
-							editor.store.load();
+							editor.store.load({ callback: CMDBuild.core.RequestBarrier.getCallback('referenceStoreLoadBarrier') });
 					}
 				}, this);
 			}
@@ -216,7 +230,7 @@
 		},
 
 		/**
-		 * @returns {Ext.data.Store}
+		 * @returns {Ext.data.ArrayStore}
 		 */
 		buildDataStore: function() {
 			var storeFields = [];
@@ -235,8 +249,7 @@
 				}, this);
 			}
 
-			return Ext.create('Ext.data.Store', {
-				autoLoad: true,
+			return Ext.create('Ext.data.ArrayStore', {
 				fields: storeFields,
 				data: []
 			});
@@ -333,16 +346,17 @@
 			this.setDefaultContent();
 		},
 
+		onCustomFormLayoutGridShow: Ext.emptyFn,
+
 		/**
 		 * @param {Array} data
 		 */
 		setData: function(data) {
-			this.view.getStore().removeAll();
+			if (!Ext.isEmpty(data)) {
+				this.view.getStore().removeAll();
 
-			if (!Ext.isEmpty(data))
 				return this.view.getStore().loadRecords(data);
-
-			return [];
+			}
 		},
 
 		/**
