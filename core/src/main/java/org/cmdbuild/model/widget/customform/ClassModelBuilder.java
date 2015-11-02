@@ -1,8 +1,12 @@
 package org.cmdbuild.model.widget.customform;
 
+import static com.google.common.base.Predicates.equalTo;
+import static com.google.common.base.Predicates.not;
 import static com.google.common.collect.FluentIterable.from;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.cmdbuild.dao.entrytype.CMAttribute.Mode.HIDDEN;
 import static org.cmdbuild.dao.entrytype.CMAttribute.Mode.WRITE;
+import static org.cmdbuild.dao.entrytype.Predicates.mode;
 
 import java.util.Collection;
 import java.util.Map;
@@ -53,7 +57,7 @@ class ClassModelBuilder extends AttributesBasedModelBuilder {
 	@Override
 	public Iterable<Attribute> attributes() {
 		return from(dataView.findClass(className).getAttributes()) //
-				// TODO filter?
+				.filter(mode(not(equalTo(HIDDEN)))) //
 				.transform(new Function<CMAttribute, Attribute>() {
 
 					@Override
