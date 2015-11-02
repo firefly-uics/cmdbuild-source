@@ -309,6 +309,30 @@ public class Predicates {
 		return new ClassOrder(delegate);
 	}
 
+	private static class Mode extends AttributePredicate<org.cmdbuild.dao.entrytype.CMAttribute.Mode> {
+
+		private final Predicate<org.cmdbuild.dao.entrytype.CMAttribute.Mode> delegate;
+
+		public Mode(final Predicate<org.cmdbuild.dao.entrytype.CMAttribute.Mode> delegate) {
+			this.delegate = delegate;
+		}
+
+		@Override
+		protected Predicate<org.cmdbuild.dao.entrytype.CMAttribute.Mode> delegate() {
+			return delegate;
+		}
+
+		@Override
+		protected org.cmdbuild.dao.entrytype.CMAttribute.Mode value(final CMAttribute input) {
+			return input.getMode();
+		}
+
+	}
+
+	public static Predicate<CMAttribute> mode(final Predicate<org.cmdbuild.dao.entrytype.CMAttribute.Mode> delegate) {
+		return new Mode(delegate);
+	}
+
 	private Predicates() {
 		// prevents instantiation
 	}
