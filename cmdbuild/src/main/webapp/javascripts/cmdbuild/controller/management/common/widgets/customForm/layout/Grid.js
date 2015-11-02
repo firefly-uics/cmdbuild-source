@@ -189,6 +189,14 @@
 							// Force execution of template resolver
 							if (!Ext.isEmpty(editor) && Ext.isFunction(editor.resolveTemplate))
 								editor.resolveTemplate();
+
+							// Manage reference selection from window
+							editor.on('cmdbuild-reference-selected', function(selectedRecord, field) {
+								selectedRecord = Ext.isArray(selectedRecord) ? selectedValue[0] : selectedRecord;
+
+								var record = this.view.getSelectionModel().getSelection()[0];
+								record.set(field.getName(), selectedRecord.get('Id'));
+							}, this);
 						}
 
 						if (!Ext.isEmpty(header)) {
