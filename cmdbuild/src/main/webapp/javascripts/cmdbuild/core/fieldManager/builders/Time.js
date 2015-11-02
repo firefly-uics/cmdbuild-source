@@ -34,6 +34,7 @@
 				editor: withEditor ? this.buildEditor() : null,
 				flex: 1,
 				format: this.format,
+				hidden: !this.cmfg('attributeModelGet', CMDBuild.core.proxy.CMProxyConstants.SHOW_COLUMN),
 				hideTrigger: true, // Hides date picker
 				sortable: true,
 				text: this.applyMandatoryLabelFlag(this.cmfg('attributeModelGet', CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION)),

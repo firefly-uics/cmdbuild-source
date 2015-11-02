@@ -1,9 +1,5 @@
 (function() {
 
-	/**
-	 * Adapter model class to old FieldManager implementation
-	 * TODO: delete on full FieldManager implementation
-	 */
 	Ext.define('CMDBuild.model.common.attributes.Attribute', {
 		extend: 'Ext.data.Model',
 
@@ -20,6 +16,7 @@
 			{ name: CMDBuild.core.proxy.CMProxyConstants.NAME, type: 'string' },
 			{ name: CMDBuild.core.proxy.CMProxyConstants.PRECISION, type: 'int', useNull: true },
 			{ name: CMDBuild.core.proxy.CMProxyConstants.SCALE, type: 'int', defaultValue: 0 },
+			{ name: CMDBuild.core.proxy.CMProxyConstants.SHOW_COLUMN, type: 'boolean', defaultValue: true },
 			{ name: CMDBuild.core.proxy.CMProxyConstants.TARGET_CLASS, type: 'string' },
 			{ name: CMDBuild.core.proxy.CMProxyConstants.TYPE, type: 'string', convert: toLowerCase },
 			{ name: CMDBuild.core.proxy.CMProxyConstants.UNIQUE, type: 'boolean' },
@@ -36,6 +33,7 @@
 				this.set(CMDBuild.core.proxy.CMProxyConstants.LENGTH, data['len']);
 				this.set(CMDBuild.core.proxy.CMProxyConstants.LOOKUP_TYPE, data[CMDBuild.core.proxy.CMProxyConstants.LOOKUP]);
 				this.set(CMDBuild.core.proxy.CMProxyConstants.MANDATORY, data['isnotnull']);
+				this.set(CMDBuild.core.proxy.CMProxyConstants.SHOW_COLUMN, data['isbasedsp']);
 				this.set(CMDBuild.core.proxy.CMProxyConstants.UNIQUE, data['isunique']);
 
 				if (!Ext.isEmpty(data['fieldmode']))
