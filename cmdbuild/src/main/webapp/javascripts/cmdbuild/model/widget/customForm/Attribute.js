@@ -1,7 +1,8 @@
 (function() {
 
 	/**
-	 * Subset of all attribute's properties
+	 * Adapter model class to old FieldManager implementation
+	 * TODO: delete on full FieldManager implementation
 	 */
 	Ext.define('CMDBuild.model.widget.customForm.Attribute', {
 		extend: 'Ext.data.Model',
@@ -18,6 +19,7 @@
 			{ name: CMDBuild.core.proxy.CMProxyConstants.NAME, type: 'string' },
 			{ name: CMDBuild.core.proxy.CMProxyConstants.PRECISION, type: 'int', useNull: true },
 			{ name: CMDBuild.core.proxy.CMProxyConstants.SCALE, type: 'int', defaultValue: 0 },
+			{ name: CMDBuild.core.proxy.CMProxyConstants.SHOW_COLUMN, type: 'boolean', defaultValue: true },
 			{ name: CMDBuild.core.proxy.CMProxyConstants.TARGET_CLASS, type: 'string' },
 			{ name: CMDBuild.core.proxy.CMProxyConstants.TYPE, type: 'string', convert: toLowerCase }, // Case insensitive types
 			{ name: CMDBuild.core.proxy.CMProxyConstants.UNIQUE, type: 'boolean' },
@@ -34,7 +36,7 @@
 			var objectModel = this.getData();
 
 			objectModel['fieldmode'] = this.get(CMDBuild.core.proxy.CMProxyConstants.WRITABLE) ? 'write' : 'read';
-			objectModel['isbasedsp'] = true;
+			objectModel['isbasedsp'] = this.get(CMDBuild.core.proxy.CMProxyConstants.SHOW_COLUMN);
 			objectModel['isnotnull'] = this.get(CMDBuild.core.proxy.CMProxyConstants.MANDATORY);
 
 			switch (objectModel[CMDBuild.core.proxy.CMProxyConstants.TYPE]) {
