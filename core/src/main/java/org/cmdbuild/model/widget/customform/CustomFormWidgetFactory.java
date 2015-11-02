@@ -1,5 +1,6 @@
 package org.cmdbuild.model.widget.customform;
 
+import static com.google.common.base.Splitter.on;
 import static java.lang.String.format;
 import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
 import static org.apache.commons.lang3.StringUtils.defaultString;
@@ -28,7 +29,9 @@ public class CustomFormWidgetFactory extends ValuePairWidgetFactory {
 			MODEL_TYPE = "ModelType", //
 			FORM_MODEL = "FormModel", //
 			CLASS_MODEL = "ClassModel", //
+			CLASS_ATTRIBUTES = "ClassAttributes", //
 			FUNCTION_MODEL = "FunctionModel", //
+			FUNCTION_ATTRIBUTES = "FunctionAttributes", //
 			DATA_TYPE = "DataType", //
 			RAW_DATA = "RawData", //
 			FUNCTION_DATA = "FunctionData", //
@@ -44,7 +47,7 @@ public class CustomFormWidgetFactory extends ValuePairWidgetFactory {
 			ROWS_SEPARATOR = "RowsSeparator";
 
 	private static final String[] KNOWN_PARAMETERS = { BUTTON_LABEL, REQUIRED, //
-			MODEL_TYPE, FORM_MODEL, CLASS_MODEL, FUNCTION_MODEL, //
+			MODEL_TYPE, FORM_MODEL, CLASS_MODEL, CLASS_ATTRIBUTES, FUNCTION_MODEL, FUNCTION_ATTRIBUTES, //
 			DATA_TYPE, RAW_DATA, FUNCTION_DATA, //
 			LAYOUT, //
 			READ_ONLY, ADD_DISABLED, DELETE_DISABLED, IMPORT_DISABLED, MODIFY_DISABLED, //
@@ -64,8 +67,8 @@ public class CustomFormWidgetFactory extends ValuePairWidgetFactory {
 			TEXT_SERIALIZATION = "text";
 
 	public static final String //
-			DEFAULT_KEY_VALUE_SEPARATOR = "=", //
 			DEFAULT_ATTRIBUTES_SEPARATOR = ",", //
+			DEFAULT_KEY_VALUE_SEPARATOR = "=", //
 			DEFAULT_ROWS_SEPARATOR = "\n";
 
 	private final CMDataView dataView;
@@ -108,11 +111,19 @@ public class CustomFormWidgetFactory extends ValuePairWidgetFactory {
 		} else if (TYPE_CLASS.equalsIgnoreCase(value)) {
 			final String className = String.class.cast(valueMap.get(CLASS_MODEL));
 			Validate.isTrue(isNotBlank(className), "invalid value for '%s'", CLASS_MODEL);
-			output = new ClassModelBuilder(dataView, metadataStoreFactory, className);
+			final Iterable<String> attributes = on(DEFAULT_ATTRIBUTES_SEPARATOR) //
+					.trimResults() //
+					.omitEmptyStrings() //
+					.split(defaultString(String.class.cast(valueMap.get(CLASS_ATTRIBUTES))));
+			output = new ClassModelBuilder(dataView, metadataStoreFactory, className, attributes);
 		} else if (TYPE_FUNCTION.equalsIgnoreCase(value)) {
 			final String functionName = String.class.cast(valueMap.get(FUNCTION_MODEL));
 			Validate.isTrue(isNotBlank(functionName), "invalid value for '%s'", FUNCTION_MODEL);
-			output = new FunctionModelBuilder(dataView, functionName);
+			final Iterable<String> attributes = on(DEFAULT_ATTRIBUTES_SEPARATOR) //
+					.trimResults() //
+					.omitEmptyStrings() //
+					.split(defaultString(String.class.cast(valueMap.get(FUNCTION_ATTRIBUTES))));
+			output = new FunctionModelBuilder(dataView, functionName, attributes);
 		} else {
 			output = new InvalidModelBuilder(format("'%s' is not a valid value for '%s'", value, MODEL_TYPE));
 		}

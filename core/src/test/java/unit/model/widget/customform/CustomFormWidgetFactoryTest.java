@@ -3,6 +3,7 @@ package unit.model.widget.customform;
 import static java.util.Arrays.asList;
 import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.ADD_DISABLED;
 import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.ATTRIBUTES_SEPARATOR;
+import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.CLASS_ATTRIBUTES;
 import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.CLASS_MODEL;
 import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.DATA_TYPE;
 import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.DEFAULT_ATTRIBUTES_SEPARATOR;
@@ -10,6 +11,7 @@ import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.DEFAU
 import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.DEFAULT_ROWS_SEPARATOR;
 import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.DELETE_DISABLED;
 import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.FORM_MODEL;
+import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.FUNCTION_ATTRIBUTES;
 import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.FUNCTION_DATA;
 import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.FUNCTION_MODEL;
 import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.IMPORT_DISABLED;
@@ -316,6 +318,37 @@ public class CustomFormWidgetFactoryTest {
 	}
 
 	@Test
+	public void attributesForClassSuccessfullyFiltered() throws Exception {
+		// given
+		final String serialization = "" //
+				+ MODEL_TYPE + "=\"class\"\n" //
+				+ CLASS_MODEL + "=\"foo\"\n" //
+				+ CLASS_ATTRIBUTES + "=\" bar , baz\"\n" //
+		;
+		final CMClass target = mock(CMClass.class);
+		doReturn(target) //
+				.when(dataView).findClass(any(String.class));
+		final CMAttribute first = attribute(new TextAttributeType(), "bar");
+		final CMAttribute second = attribute(new TextAttributeType(), "lol");
+		final CMAttribute third = attribute(new TextAttributeType(), "baz");
+		doReturn(asList(first, second, third)) //
+				.when(target).getAttributes();
+
+		// when
+		final CustomForm created = (CustomForm) widgetFactory.createWidget(serialization, mock(CMValueSet.class));
+
+		// then
+		final List<Attribute> form = readJsonString(created.getModel());
+		assertThat(form, not(empty()));
+		assertThat(form, hasSize(2));
+		assertThat(form.get(0).getName(), equalTo("bar"));
+		// TODO test all attribute conversion
+		assertThat(form.get(1).getName(), equalTo("baz"));
+		verify(dataView).findClass(eq("foo"));
+		verifyNoMoreInteractions(templateRespository, notifier, dataView, metadataStoreFactory);
+	}
+
+	@Test
 	public void functionModelAndMissingFunctionProducesNoWidgetAndNotification() throws Exception {
 		// given
 		final String serialization = "" //
@@ -350,6 +383,37 @@ public class CustomFormWidgetFactoryTest {
 		final CMFunctionParameter first = parameter(new TextAttributeType(), "bar");
 		final CMFunctionParameter second = parameter(new TextAttributeType(), "baz");
 		doReturn(asList(first, second)) //
+				.when(target).getInputParameters();
+
+		// when
+		final CustomForm created = (CustomForm) widgetFactory.createWidget(serialization, mock(CMValueSet.class));
+
+		// then
+		final List<Attribute> form = readJsonString(created.getModel());
+		assertThat(form, not(empty()));
+		assertThat(form, hasSize(2));
+		assertThat(form.get(0).getName(), equalTo("bar"));
+		// TODO test all attribute conversion
+		assertThat(form.get(1).getName(), equalTo("baz"));
+		verify(dataView).findFunctionByName(eq("foo"));
+		verifyNoMoreInteractions(templateRespository, notifier, dataView, metadataStoreFactory);
+	}
+
+	@Test
+	public void attributesForFunctionSuccessfullyFiltered() throws Exception {
+		// given
+		final String serialization = "" //
+				+ MODEL_TYPE + "=\"function\"\n" //
+				+ FUNCTION_MODEL + "=\"foo\"\n" //
+				+ FUNCTION_ATTRIBUTES + "=\" bar , baz\"\n" //
+		;
+		final CMFunction target = mock(CMFunction.class);
+		doReturn(target) //
+				.when(dataView).findFunctionByName(any(String.class));
+		final CMFunctionParameter first = parameter(new TextAttributeType(), "bar");
+		final CMFunctionParameter second = parameter(new TextAttributeType(), "lol");
+		final CMFunctionParameter third = parameter(new TextAttributeType(), "baz");
+		doReturn(asList(first, second, third)) //
 				.when(target).getInputParameters();
 
 		// when
@@ -572,7 +636,7 @@ public class CustomFormWidgetFactoryTest {
 		assertThat(created.getData(), equalTo("foo bar baz"));
 		verifyNoMoreInteractions(templateRespository, notifier, dataView, metadataStoreFactory);
 	}
-	
+
 	@Test
 	public void dataFromJsonRawSourceReturnsExpressionAsIs() throws Exception {
 		// given

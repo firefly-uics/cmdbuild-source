@@ -1,6 +1,15 @@
 package org.cmdbuild.model.widget.customform;
 
+import static com.google.common.base.Predicates.alwaysTrue;
+import static com.google.common.base.Predicates.in;
 import static com.google.common.collect.FluentIterable.from;
+import static com.google.common.collect.Iterables.isEmpty;
+import static com.google.common.collect.Lists.newArrayList;
+import static java.util.Collections.emptyList;
+import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
+import static org.cmdbuild.dao.entrytype.Predicates.parameterName;
+
+import java.util.Collection;
 
 import org.cmdbuild.dao.entrytype.attributetype.BooleanAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeTypeVisitor;
@@ -23,21 +32,27 @@ import org.cmdbuild.dao.function.CMFunction.CMFunctionParameter;
 import org.cmdbuild.dao.view.CMDataView;
 
 import com.google.common.base.Function;
+import com.google.common.base.Predicate;
 
 class FunctionModelBuilder extends AttributesBasedModelBuilder {
 
+	private static final Iterable<String> NO_ATTRIBUTES = emptyList();
+	private static final Predicate<String> ANY = alwaysTrue();
+
 	private final CMDataView dataView;
 	private final String functionName;
+	private final Collection<String> attributes;
 
-	public FunctionModelBuilder(final CMDataView dataView, final String functionName) {
+	public FunctionModelBuilder(final CMDataView dataView, final String functionName, final Iterable<String> attributes) {
 		this.dataView = dataView;
 		this.functionName = functionName;
+		this.attributes = newArrayList(defaultIfNull(attributes, NO_ATTRIBUTES));
 	}
 
 	@Override
 	public Iterable<Attribute> attributes() {
 		return from(dataView.findFunctionByName(functionName).getInputParameters()) //
-				// TODO filter?
+				.filter(parameterName(isEmpty(attributes) ? ANY : in(attributes))) //
 				.transform(new Function<CMFunctionParameter, Attribute>() {
 
 					@Override
