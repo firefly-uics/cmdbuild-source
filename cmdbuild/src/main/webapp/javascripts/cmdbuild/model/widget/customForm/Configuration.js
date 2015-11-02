@@ -63,6 +63,10 @@
 						newValue = attributesArray;
 					} break;
 
+					/**
+					 * Uses custom Attribute model to adapt to old FieldManager implementation
+					 * TODO: delete on full FieldManager implementation
+					 */
 					case CMDBuild.core.proxy.CMProxyConstants.MODEL: {
 						newValue = Ext.isString(newValue) ? Ext.decode(newValue) : newValue;
 

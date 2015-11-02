@@ -1,5 +1,9 @@
 (function() {
 
+	/**
+	 * Adapter model class to old FieldManager implementation
+	 * TODO: delete on full FieldManager implementation
+	 */
 	Ext.define('CMDBuild.model.common.attributes.Attribute', {
 		extend: 'Ext.data.Model',
 
@@ -17,7 +21,7 @@
 			{ name: CMDBuild.core.proxy.CMProxyConstants.PRECISION, type: 'int', useNull: true },
 			{ name: CMDBuild.core.proxy.CMProxyConstants.SCALE, type: 'int', defaultValue: 0 },
 			{ name: CMDBuild.core.proxy.CMProxyConstants.TARGET_CLASS, type: 'string' },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.TYPE, type: 'string' },
+			{ name: CMDBuild.core.proxy.CMProxyConstants.TYPE, type: 'string', convert: toLowerCase },
 			{ name: CMDBuild.core.proxy.CMProxyConstants.UNIQUE, type: 'boolean' },
 			{ name: CMDBuild.core.proxy.CMProxyConstants.WRITABLE, type: 'boolean' }
 		],
@@ -54,7 +58,7 @@
 			var customValidationValue = true;
 
 			switch (this.get(CMDBuild.core.proxy.CMProxyConstants.TYPE)) {
-				case 'DECIMAL': {
+				case 'decimal': {
 					customValidationValue = (
 						!Ext.isEmpty(this.get(CMDBuild.core.proxy.CMProxyConstants.SCALE))
 						&& !Ext.isEmpty(this.get(CMDBuild.core.proxy.CMProxyConstants.PRECISION))
@@ -62,13 +66,13 @@
 					);
 				} break;
 
-				case 'FOREIGNKEY': {
+				case 'foreignkey': {
 					customValidationValue = (
 						!Ext.isEmpty(this.get(CMDBuild.core.proxy.CMProxyConstants.TARGET_CLASS))
 					);
 				} break;
 
-				case 'STRING': {
+				case 'string': {
 					customValidationValue = (
 						!Ext.isEmpty(this.get(CMDBuild.core.proxy.CMProxyConstants.LENGTH))
 						&& this.get(CMDBuild.core.proxy.CMProxyConstants.LENGTH) > 0
@@ -79,5 +83,17 @@
 			return this.callParent(arguments) && customValidationValue;
 		}
 	});
+
+	/**
+	 * @param {String} value
+	 * @param {Object} record
+	 *
+	 * @returns {String}
+	 *
+	 * @private
+	 */
+	function toLowerCase(value, record) {
+		return value.toLowerCase();
+	}
 
 })();
