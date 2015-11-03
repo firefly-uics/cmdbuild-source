@@ -19,8 +19,9 @@ public class Attribute {
 	@XmlRootElement
 	public static class Filter {
 
-		private static final String EXPRESSION = "expression";
-		private static final String CONTEXT = "context";
+		private static final String //
+				CONTEXT = "context", //
+				EXPRESSION = "expression";
 
 		private String expression;
 		private Map<String, String> context;
@@ -73,20 +74,22 @@ public class Attribute {
 
 	}
 
-	private static final String TYPE = "type";
-	private static final String NAME = "name";
-	private static final String DESCRIPTION = "description";
-	private static final String UNIQUE = "unique";
-	private static final String MANDATORY = "mandatory";
-	private static final String WRITABLE = "writable";
-	private static final String SHOW_COLUMN = "showColumn";
-	private static final String PRECISION = "precision";
-	private static final String SCALE = "scale";
-	private static final String LENGTH = "length";
-	private static final String EDITOR_TYPE = "editorType";
-	private static final String TARGET_CLASS = "targetClass";
-	private static final String LOOKUP_TYPE = "lookupType";
-	private static final String FILTER = "filter";
+	private static final String //
+			DESCRIPTION = "description", //
+			EDITOR_TYPE = "editorType", //
+			FILTER = "filter", //
+			HIDDEN = "hidden", //
+			LENGTH = "length", //
+			LOOKUP_TYPE = "lookupType", //
+			MANDATORY = "mandatory", //
+			NAME = "name", //
+			PRECISION = "precision", //
+			SCALE = "scale", //
+			SHOW_COLUMN = "showColumn", //
+			TARGET_CLASS = "targetClass", //
+			TYPE = "type", //
+			UNIQUE = "unique", //
+			WRITABLE = "writable";
 
 	private String type;
 	private String name;
@@ -95,6 +98,7 @@ public class Attribute {
 	private boolean mandatory;
 	private boolean writable = true;
 	private boolean showColumn = true;
+	private boolean hidden;
 	private Long precision;
 	private Long scale;
 	private Long length;
@@ -164,6 +168,15 @@ public class Attribute {
 
 	public void setShowColumn(final boolean showColumn) {
 		this.showColumn = showColumn;
+	}
+
+	@XmlAttribute(name = HIDDEN)
+	public boolean isHidden() {
+		return hidden;
+	}
+
+	public void setHidden(final boolean hidden) {
+		this.hidden = hidden;
 	}
 
 	@XmlAttribute(name = PRECISION)
