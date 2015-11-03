@@ -360,11 +360,10 @@
 		 * @param {Array} data
 		 */
 		setData: function(data) {
-			if (!Ext.isEmpty(data)) {
-				this.view.getStore().removeAll();
+			this.view.getStore().removeAll();
 
+			if (!Ext.isEmpty(data))
 				return this.view.getStore().loadRecords(data);
-			}
 		},
 
 		/**
