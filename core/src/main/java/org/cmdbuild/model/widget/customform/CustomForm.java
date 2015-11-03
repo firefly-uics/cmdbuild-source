@@ -154,6 +154,7 @@ public class CustomForm extends Widget {
 	private boolean required;
 	private String model;
 	private String data;
+	private String functionData;
 	private String layout;
 	private Capabilities capabilities;
 	private Serialization serialization;
@@ -246,6 +247,14 @@ public class CustomForm extends Widget {
 
 	public void setData(final String data) {
 		this.data = data;
+	}
+
+	public String getFunctionData() {
+		return functionData;
+	}
+
+	public void setFunctionData(final String functionData) {
+		this.functionData = functionData;
 	}
 
 	public String getLayout() {
