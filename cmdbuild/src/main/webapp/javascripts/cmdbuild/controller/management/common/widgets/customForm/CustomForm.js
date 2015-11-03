@@ -4,8 +4,10 @@
 		extend: 'CMDBuild.controller.common.AbstractBaseWidgetController',
 
 		requires: [
+			'CMDBuild.core.Message',
 			'CMDBuild.core.proxy.CMProxyConstants',
-			'CMDBuild.core.Message'
+			'CMDBuild.core.proxy.widgets.CustomForm',
+			'CMDBuild.core.Utils'
 		],
 
 		/**
@@ -51,13 +53,15 @@
 		},
 
 		/**
-		 * @param {Array} target
+		 * @param {Array or String} target
+		 *
+		 * @returns {Array} decodedOutput
 		 */
-		applyTemplateResolver: function(target) {
-			var decodedOutput = [];
-
-			target = Ext.isString(target) ? Ext.decode(target) : target;
+		applyTemplateResolverToArray: function(target) {
+			target = CMDBuild.core.Utils.isJsonString(target) ? Ext.decode(target) : target;
 			target = Ext.isArray(target) ? target : [target];
+
+			var decodedOutput = [];
 
 			Ext.Array.forEach(target, function(object, i, allObjects) {
 				new CMDBuild.Management.TemplateResolver({
@@ -66,11 +70,45 @@
 					serverVars: this.getTemplateResolverServerVars()
 				}).resolveTemplates({
 					attributes: Ext.Object.getKeys(object),
+					scope: this,
 					callback: function(out, ctx) {
 						decodedOutput.push(out);
 					}
 				});
 			}, this);
+
+			return decodedOutput;
+		},
+
+		/**
+		 * @param {Object or String} target
+		 *
+		 * @returns {Object} decodedOutput
+		 */
+		applyTemplateResolverToObject: function(target) {
+			target = CMDBuild.core.Utils.isJsonString(target) ? Ext.decode(target) : target;
+
+			var decodedOutput = {};
+
+			if (Ext.isObject(target))
+				var templateResolver = new CMDBuild.Management.TemplateResolver({
+					clientForm: this.clientForm,
+					xaVars: target,
+					serverVars: this.getTemplateResolverServerVars()
+				});
+
+				templateResolver.resolveTemplates({
+					attributes: Ext.Object.getKeys(target),
+					scope: this,
+					callback: function(out, ctx) {
+						decodedOutput = out;
+
+						// Reset data property in widgetConfiguration to avoid server call to get function response
+						templateResolver.bindLocalDepsChange(function() {
+							this.widgetConfiguration[CMDBuild.core.proxy.CMProxyConstants.DATA] = null;
+						}, this);
+					}
+				});
 
 			return decodedOutput;
 		},
@@ -82,15 +120,26 @@
 			this.callParent(arguments);
 
 			// Execute template resolver on model property
-			this.widgetConfigurationSet({
-				configurationObject: this.applyTemplateResolver(this.widgetConfiguration[CMDBuild.core.proxy.CMProxyConstants.MODEL]),
-				propertyName: CMDBuild.core.proxy.CMProxyConstants.MODEL
-			});
+			if (!Ext.isEmpty(this.widgetConfigurationGet(CMDBuild.core.proxy.CMProxyConstants.MODEL)))
+				this.widgetConfigurationSet({
+					configurationObject: this.applyTemplateResolverToArray(this.widgetConfiguration[CMDBuild.core.proxy.CMProxyConstants.MODEL]),
+					propertyName: CMDBuild.core.proxy.CMProxyConstants.MODEL
+				});
 
-			if (!this.widgetConfigurationIsAttributeEmpty(CMDBuild.core.proxy.CMProxyConstants.MODEL)) {
-				this.buildLayout();
+			// Execute template resolver on variables property
+			if (
+				Ext.isEmpty(this.widgetConfigurationGet(CMDBuild.core.proxy.CMProxyConstants.DATA))
+				&& !Ext.isEmpty(this.widgetConfigurationGet(CMDBuild.core.proxy.CMProxyConstants.FUNCTION_DATA))
+			) {
+				this.widgetConfigurationSet({
+					configurationObject: this.applyTemplateResolverToObject(this.widgetConfiguration[CMDBuild.core.proxy.CMProxyConstants.VARIABLES]),
+					propertyName: CMDBuild.core.proxy.CMProxyConstants.VARIABLES
+				});
 
-				this.controllerLayout.cmfg('onCustomFormShow');
+				// Build data configurations from function definition
+				this.buildDataConfigurationFromFunction();
+			} else {
+				this.runBuildLayout();
 			}
 		},
 
@@ -101,6 +150,34 @@
 		 */
 		beforeHideView: function() {
 			this.instancesDataStorageSet(this.controllerLayout.getData());
+		},
+
+		/**
+		 * @param {Function} callback
+		 */
+		buildDataConfigurationFromFunction: function(callback) {
+			callback = Ext.isFunction(callback) ? callback : Ext.emptyFn;
+
+			var params = {};
+			params[CMDBuild.core.proxy.CMProxyConstants.FUNCTION] = this.widgetConfigurationGet(CMDBuild.core.proxy.CMProxyConstants.FUNCTION_DATA);
+			params[CMDBuild.core.proxy.CMProxyConstants.PARAMS] = Ext.encode(this.widgetConfigurationGet(CMDBuild.core.proxy.CMProxyConstants.VARIABLES));
+
+			CMDBuild.core.proxy.widgets.CustomForm.readFromFunctions({
+				params: params,
+				scope: this,
+				success: function(response, options, decodedResponse) {
+					decodedResponse = decodedResponse[CMDBuild.core.proxy.CMProxyConstants.CARDS];
+
+					// Save function response to configuration's data property
+					this.widgetConfiguration[CMDBuild.core.proxy.CMProxyConstants.DATA] = decodedResponse;
+
+					// Save function response to instance data storage
+					this.instancesDataStorageSet(decodedResponse);
+				},
+				callback: function(response, options, decodedResponse) {
+					this.runBuildLayout();
+				}
+			});
 		},
 
 		/**
@@ -202,6 +279,15 @@
 				if (!Ext.isEmpty(configurationObject) && Ext.isEmpty(propertyName))
 					this.widgetConfigurationModel = Ext.create('CMDBuild.model.widget.customForm.Configuration', Ext.clone(configurationObject));
 			},
+
+
+		runBuildLayout: function() {
+			if (!this.widgetConfigurationIsAttributeEmpty(CMDBuild.core.proxy.CMProxyConstants.MODEL)) {
+				this.buildLayout();
+
+				this.controllerLayout.cmfg('onCustomFormShow');
+			}
+		},
 
 		/**
 		 * @param {Boolean} state

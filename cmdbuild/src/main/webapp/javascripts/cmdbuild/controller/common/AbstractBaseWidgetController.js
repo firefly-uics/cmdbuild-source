@@ -10,41 +10,6 @@
 
 		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
 
-		statics: {
-			/**
-			 * Old implementation to be used in new widgets
-			 *
-			 * @param {Object} model
-			 *
-			 * @return {Object} out
-			 */
-			getTemplateResolverServerVars: function(model) {
-				var out = {};
-				var pi = null;
-
-				if (!Ext.isEmpty(model)) {
-					if (Ext.getClassName(model) == 'CMDBuild.model.CMActivityInstance') {
-						// Retrieve the process instance because it stores the data. this.card has only the varibles to show in this step (is the activity instance)
-						pi = _CMWFState.getProcessInstance();
-					} else if (Ext.getClassName(model) == 'CMDBuild.model.CMProcessInstance') {
-						pi = model;
-					}
-
-					if (!Ext.isEmpty(pi) && Ext.isFunction(pi.getValues)) { // The processes use a new serialization. Add backward compatibility attributes to the card values
-						out = Ext.apply({
-							'Id': pi.get('Id'),
-							'IdClass': pi.get('IdClass'),
-							'IdClass_value': pi.get('IdClass_value')
-						}, pi.getValues());
-					} else {
-						out = model.raw || model.data;
-					}
-				}
-
-				return out;
-			}
-		},
-
 		/**
 		 * @cfg {CMDBuild.controller.management.common.CMWidgetManagerController}
 		 */
@@ -95,8 +60,43 @@
 		 */
 		widgetConfigurationModel: undefined,
 
+		statics: {
+			/**
+			 * Old implementation to be used in new widgets
+			 *
+			 * @param {Object} model
+			 *
+			 * @return {Object} out
+			 */
+			getTemplateResolverServerVars: function(model) {
+				var out = {};
+				var pi = null;
+
+				if (!Ext.isEmpty(model)) {
+					if (Ext.getClassName(model) == 'CMDBuild.model.CMActivityInstance') {
+						// Retrieve the process instance because it stores the data. this.card has only the varibles to show in this step (is the activity instance)
+						pi = _CMWFState.getProcessInstance();
+					} else if (Ext.getClassName(model) == 'CMDBuild.model.CMProcessInstance') {
+						pi = model;
+					}
+
+					if (!Ext.isEmpty(pi) && Ext.isFunction(pi.getValues)) { // The processes use a new serialization. Add backward compatibility attributes to the card values
+						out = Ext.apply({
+							'Id': pi.get('Id'),
+							'IdClass': pi.get('IdClass'),
+							'IdClass_value': pi.get('IdClass_value')
+						}, pi.getValues());
+					} else {
+						out = model.raw || model.data;
+					}
+				}
+
+				return out;
+			}
+		},
+
 		/**
-		 * @param {CMDBuild.view.management.common.widgets.CMWidgetManager} configurationObject.view
+		 * @param {Mixed} configurationObject.view
 		 * @param {CMDBuild.controller.management.common.CMWidgetManagerController} configurationObject.parentDelegate
 		 * @param {Object} configurationObject.widgetConfiguration
 		 * @param {Ext.form.Basic} configurationObject.clientForm

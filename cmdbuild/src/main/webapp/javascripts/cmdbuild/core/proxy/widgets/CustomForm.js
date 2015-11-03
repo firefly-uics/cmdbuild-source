@@ -19,6 +19,21 @@
 					{ property: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION, direction: 'ASC' }
 				]
 			});
+		},
+
+		/**
+		 * @param {Object} parameters
+		 */
+		readFromFunctions: function(parameters) {
+			CMDBuild.Ajax.request({
+				url: CMDBuild.core.proxy.CMProxyUrlIndex.functions.readCards,
+				params: parameters.params,
+				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
+				scope: parameters.scope || this,
+				failure: parameters.failure || Ext.emptyFn,
+				success: parameters.success || Ext.emptyFn,
+				callback: parameters.callback || Ext.emptyFn
+			});
 		}
 	});
 
