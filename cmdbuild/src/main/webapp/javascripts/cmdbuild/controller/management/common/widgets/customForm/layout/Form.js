@@ -29,7 +29,7 @@
 			// Barrier to load data after reference field store's load end
 			CMDBuild.core.RequestBarrier.init('referenceStoreLoadBarrier', function() {
 				if (!this.cmfg('widgetCustomFormInstancesDataStorageIsEmpty'))
-					this.setData(this.cmfg('widgetCustomFormInstancesDataStorageGet'));
+					this.setData(this.cmfg('widgetCustomFormInstancesDataStorageGet', CMDBuild.core.proxy.CMProxyConstants.DATA));
 
 				this.cmfg('widgetCustomFormViewSetLoading', false);
 			}, this);

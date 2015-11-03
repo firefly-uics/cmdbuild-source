@@ -1,15 +1,16 @@
 (function() {
 
+	Ext.require(['CMDBuild.core.proxy.CMProxyConstants']);
+
 	Ext.define('CMDBuild.model.widget.customForm.Configuration', {
 		extend: 'Ext.data.Model',
-
-		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
 
 		fields: [
 			{ name: 'alwaysenabled', type: 'boolean' },
 			{ name: CMDBuild.core.proxy.CMProxyConstants.ACTIVE, type: 'boolean' },
 			{ name: CMDBuild.core.proxy.CMProxyConstants.CAPABILITIES, type: 'auto' }, // Object to gather all UI disable flags
 			{ name: CMDBuild.core.proxy.CMProxyConstants.DATA, type: 'auto' }, // Encoded array of CMDBuild.model.common.Generic models strings
+			{ name: CMDBuild.core.proxy.CMProxyConstants.FUNCTION_DATA, type: 'auto' }, // Function data to be resolved with TemplateResolver (data attribute alias)
 			{ name: CMDBuild.core.proxy.CMProxyConstants.ID, type: 'string' },
 			{ name: CMDBuild.core.proxy.CMProxyConstants.LABEL, type: 'string' },
 			{ name: CMDBuild.core.proxy.CMProxyConstants.LAYOUT, type: 'string', defaultValue: 'grid' }, // Widget view mode [grid|form]

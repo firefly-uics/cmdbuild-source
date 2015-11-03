@@ -1,13 +1,13 @@
 (function() {
 
+	Ext.require(['CMDBuild.core.proxy.CMProxyConstants']);
+
 	/**
 	 * Adapter model class to old FieldManager implementation
 	 * TODO: delete on full FieldManager implementation
 	 */
 	Ext.define('CMDBuild.model.widget.customForm.Attribute', {
 		extend: 'Ext.data.Model',
-
-		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
 
 		fields: [
 			{ name: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION, type: 'string' },

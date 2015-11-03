@@ -1,9 +1,9 @@
 (function() {
 
+	Ext.require(['CMDBuild.core.proxy.CMProxyConstants']);
+
 	Ext.define('CMDBuild.model.widget.customForm.Capabilities', {
 		extend: 'Ext.data.Model',
-
-		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
 
 		fields: [
 			{ name: CMDBuild.core.proxy.CMProxyConstants.ADD_DISABLED, type: 'boolean' },

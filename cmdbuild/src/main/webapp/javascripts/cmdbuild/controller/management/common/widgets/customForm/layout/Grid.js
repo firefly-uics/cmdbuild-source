@@ -35,7 +35,7 @@
 			// Barrier to load data after reference field store's load end
 			CMDBuild.core.RequestBarrier.init('referenceStoreLoadBarrier', function() {
 				if (!this.cmfg('widgetCustomFormInstancesDataStorageIsEmpty'))
-					this.setData(this.cmfg('widgetCustomFormInstancesDataStorageGet'));
+					this.setData(this.cmfg('widgetCustomFormInstancesDataStorageGet', CMDBuild.core.proxy.CMProxyConstants.DATA));
 
 				this.cmfg('widgetCustomFormViewSetLoading', false);
 			}, this);
@@ -264,10 +264,17 @@
 		},
 
 		/**
-		 * @returns {Array}
+		 * @returns {Array} storeRecordsData
 		 */
 		getData: function() {
-			return this.view.getStore().getRange();
+			var storeRecordsData = [];
+
+			Ext.Array.forEach(this.view.getStore().getRange(), function(record, i, allRecords) {
+				if (!Ext.isEmpty(record) && Ext.isFunction(record.getData))
+					storeRecordsData.push(record.getData());
+			}, this);
+
+			return storeRecordsData;
 		},
 
 		/**
@@ -363,7 +370,7 @@
 			this.view.getStore().removeAll();
 
 			if (!Ext.isEmpty(data))
-				return this.view.getStore().loadRecords(data);
+				return this.view.getStore().loadData(data);
 		},
 
 		/**
