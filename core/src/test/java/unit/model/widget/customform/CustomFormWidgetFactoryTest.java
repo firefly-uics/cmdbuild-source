@@ -22,6 +22,7 @@ import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.RAW_D
 import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.READ_ONLY;
 import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.ROWS_SEPARATOR;
 import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.SERIALIZATION_TYPE;
+import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.TEMPLATE_RESOLVER;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
@@ -656,12 +657,13 @@ public class CustomFormWidgetFactoryTest {
 	}
 
 	@Test
-	public void dataFromFunctionAndMissingFunctionNameProducesNoWidget() throws Exception {
+	public void dataFromFunctionWithNoTemplateResolverAndMissingFunctionNameProducesNoWidget() throws Exception {
 		// given
 		final String serialization = "" //
 				+ MODEL_TYPE + "=\"form\"\n" //
 				+ FORM_MODEL + "=\"foo\"\n" //
 				+ DATA_TYPE + "=\"function\"\n" //
+				+ TEMPLATE_RESOLVER + "=\"false\"\n" //
 		;
 
 		// when
@@ -676,13 +678,14 @@ public class CustomFormWidgetFactoryTest {
 	}
 
 	@Test
-	public void dataFromFunctionAndMissingFunctionProducesNoWidget() throws Exception {
+	public void dataFromFunctionWithNoTemplateResolverAndMissingFunctionProducesNoWidget() throws Exception {
 		// given
 		final String serialization = "" //
 				+ MODEL_TYPE + "=\"form\"\n" //
 				+ FORM_MODEL + "=\"foo\"\n" //
 				+ DATA_TYPE + "=\"function\"\n" //
 				+ FUNCTION_DATA + "=\"missing\"\n" //
+				+ TEMPLATE_RESOLVER + "=\"false\"\n" //
 		;
 		doReturn(null) //
 				.when(dataView).findFunctionByName(any(String.class));
@@ -698,6 +701,76 @@ public class CustomFormWidgetFactoryTest {
 						.getWidgetName())));
 		verifyNoMoreInteractions(templateRespository, notifier, dataView, metadataStoreFactory);
 	}
+
+	@Test
+	public void dataFromFunctionWithTemplateResolverAndMissingFunctionNameProducesNoWidget() throws Exception {
+		// given
+		final String serialization = "" //
+				+ MODEL_TYPE + "=\"form\"\n" //
+				+ FORM_MODEL + "=\"foo\"\n" //
+				+ DATA_TYPE + "=\"function\"\n" //
+		;
+		doReturn(null) //
+				.when(dataView).findFunctionByName(any(String.class));
+
+		// when
+		final CustomForm created = (CustomForm) widgetFactory.createWidget(serialization, mock(CMValueSet.class));
+
+		// then
+		assertThat(created, nullValue());
+		verify(notifier).warn(
+				eq(new CMDBWorkflowException(WorkflowExceptionType.WF_CANNOT_CONFIGURE_CMDBEXTATTR, widgetFactory
+						.getWidgetName())));
+		verifyNoMoreInteractions(templateRespository, notifier, dataView, metadataStoreFactory);
+	}
+
+	@Test
+	public void dataFromFunctionWithTemplateResolverAndEmptyFunctionNameProducesNoWidget() throws Exception {
+		// given
+		final String serialization = "" //
+				+ MODEL_TYPE + "=\"form\"\n" //
+				+ FORM_MODEL + "=\"foo\"\n" //
+				+ DATA_TYPE + "=\"function\"\n" //
+				+ FUNCTION_DATA + "=\"\"\n" //
+		;
+		doReturn(null) //
+				.when(dataView).findFunctionByName(any(String.class));
+
+		// when
+		final CustomForm created = (CustomForm) widgetFactory.createWidget(serialization, mock(CMValueSet.class));
+
+		// then
+		assertThat(created, nullValue());
+		verify(notifier).warn(
+				eq(new CMDBWorkflowException(WorkflowExceptionType.WF_CANNOT_CONFIGURE_CMDBEXTATTR, widgetFactory
+						.getWidgetName())));
+		verifyNoMoreInteractions(templateRespository, notifier, dataView, metadataStoreFactory);
+	}
+
+	@Test
+	public void dataFromFunctionWithTemplateResolver() throws Exception {
+		// given
+		final String serialization = "" //
+				+ MODEL_TYPE + "=\"form\"\n" //
+				+ FORM_MODEL + "=\"foo\"\n" //
+				+ DATA_TYPE + "=\"function\"\n" //
+				+ FUNCTION_DATA + "=\"some function\"\n" //
+		;
+		doReturn(null) //
+				.when(dataView).findFunctionByName(any(String.class));
+
+		// when
+		final CustomForm created = (CustomForm) widgetFactory.createWidget(serialization, mock(CMValueSet.class));
+
+		// then
+		assertThat(created.getData(), nullValue());
+		assertThat(created.getFunctionData(), equalTo("some function"));
+		verifyNoMoreInteractions(templateRespository, notifier, dataView, metadataStoreFactory);
+	}
+
+	/*
+	 * utilities
+	 */
 
 	private static CMAttribute attribute(final CMAttributeType<?> type, final String name) {
 		final CMAttribute output = mock(CMAttribute.class);

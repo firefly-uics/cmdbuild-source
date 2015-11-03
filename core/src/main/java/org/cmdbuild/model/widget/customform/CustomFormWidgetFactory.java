@@ -9,6 +9,7 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import java.util.Map;
 
 import org.apache.commons.lang3.Validate;
+import org.apache.commons.lang3.builder.Builder;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.model.widget.Widget;
 import org.cmdbuild.model.widget.customform.CustomForm.Capabilities;
@@ -35,6 +36,7 @@ public class CustomFormWidgetFactory extends ValuePairWidgetFactory {
 			DATA_TYPE = "DataType", //
 			RAW_DATA = "RawData", //
 			FUNCTION_DATA = "FunctionData", //
+			TEMPLATE_RESOLVER = "TemplateResolver", // TODO use meaningful name
 			LAYOUT = "Layout", //
 			READ_ONLY = "ReadOnly", //
 			ADD_DISABLED = "AddDisabled", //
@@ -93,6 +95,7 @@ public class CustomFormWidgetFactory extends ValuePairWidgetFactory {
 		widget.setRequired(readBooleanFalseIfMissing(valueMap.get(REQUIRED)));
 		widget.setModel(modelOf(valueMap).build());
 		widget.setData(dataOf(valueMap).build());
+		widget.setFunctionData(functionDataOf(valueMap).build());
 		widget.setLayout(String.class.cast(valueMap.get(LAYOUT)));
 		widget.setCapabilities(capabilitiesOf(valueMap));
 		widget.setSerialization(serializationOf(valueMap));
@@ -139,10 +142,23 @@ public class CustomFormWidgetFactory extends ValuePairWidgetFactory {
 		} else if (TYPE_RAW_TEXT.equalsIgnoreCase(value)) {
 			final String expression = defaultString(String.class.cast(valueMap.get(RAW_DATA)));
 			output = new TextDataBuilder(expression, textConfigurationOf(valueMap));
-		} else if (TYPE_FUNCTION.equalsIgnoreCase(value)) {
+		} else if (TYPE_FUNCTION.equalsIgnoreCase(value) && !readBoolean(valueMap.get(TEMPLATE_RESOLVER), true)) {
 			final String functionName = defaultString(String.class.cast(valueMap.get(FUNCTION_DATA)));
 			Validate.isTrue(isNotBlank(functionName), "invalid value for '%s'", FUNCTION_DATA);
 			output = new FunctionDataBuilder(dataView, functionName, valueMap);
+		} else {
+			output = new IdentityDataBuilder(null);
+		}
+		return output;
+	}
+
+	private Builder<String> functionDataOf(final Map<String, Object> valueMap) {
+		final DataBuilder output;
+		final String value = String.class.cast(valueMap.get(DATA_TYPE));
+		if (TYPE_FUNCTION.equalsIgnoreCase(value) && readBoolean(valueMap.get(TEMPLATE_RESOLVER), true)) {
+			final String functionName = defaultString(String.class.cast(valueMap.get(FUNCTION_DATA)));
+			Validate.isTrue(isNotBlank(functionName), "invalid value for '%s'", FUNCTION_DATA);
+			output = new IdentityDataBuilder(functionName);
 		} else {
 			output = new IdentityDataBuilder(null);
 		}
