@@ -29,7 +29,7 @@
 			// Barrier to load data after reference field store's load end
 			CMDBuild.core.RequestBarrier.init('referenceStoreLoadBarrier', function() {
 				if (!this.cmfg('widgetCustomFormInstancesDataStorageIsEmpty'))
-					this.setData(this.cmfg('widgetCustomFormInstancesDataStorageGet', CMDBuild.core.proxy.CMProxyConstants.DATA));
+					this.setData(this.cmfg('widgetCustomFormInstancesDataStorageGet'));
 
 				this.cmfg('widgetCustomFormViewSetLoading', false);
 			}, this);
@@ -137,12 +137,17 @@
 		},
 
 		onCustomFormLayoutFormResetButtonClick: function() {
-			this.setDefaultContent();
+			this.cmfg('widgetConfigurationSet', {
+				configurationObject: this.cmfg('widgetControllerPropertyGet', 'widgetConfiguration')[CMDBuild.core.proxy.CMProxyConstants.DATA],
+				propertyName: CMDBuild.core.proxy.CMProxyConstants.DATA
+			});
+
+			this.setData(this.cmfg('widgetConfigurationGet', CMDBuild.core.proxy.CMProxyConstants.DATA));
 		},
 
 		/**
-		 * Setup form items disabled state.
-		 * Disable topToolBar only if is readOnly.
+		 * Setup form items disabled state, disable topToolBar only if is readOnly
+		 * Load grid data
 		 */
 		onCustomFormLayoutFormShow: function() {
 			var isWidgetReadOnly = this.cmfg('widgetConfigurationGet', [
@@ -159,6 +164,8 @@
 			) {
 				this.view.setDisabledModify(true, true, isWidgetReadOnly);
 			}
+
+			this.setData(this.cmfg('widgetCustomFormInstancesDataStorageGet'));
 		},
 
 		/**
@@ -173,18 +180,6 @@
 				this.view.getForm().setValues(
 					Ext.isFunction(data.getData) ? data.getData() : data
 				);
-		},
-
-		/**
-		 * Resets widget configuration model because of a referencing of store records
-		 */
-		setDefaultContent: function() {
-			this.cmfg('widgetConfigurationSet', {
-				configurationObject: this.cmfg('widgetControllerPropertyGet', 'widgetConfiguration')[CMDBuild.core.proxy.CMProxyConstants.DATA],
-				propertyName: CMDBuild.core.proxy.CMProxyConstants.DATA
-			});
-
-			this.setData(this.cmfg('widgetConfigurationGet', CMDBuild.core.proxy.CMProxyConstants.DATA));
 		}
 	});
 
