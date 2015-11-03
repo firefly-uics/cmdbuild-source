@@ -103,7 +103,7 @@
 					callback: function(out, ctx) {
 						decodedOutput = out;
 
-						// Reset data property in widgetConfiguration to avoid server call to get function response
+						// Apply change event to reset data property in widgetConfiguration to avoid sql function server call
 						templateResolver.bindLocalDepsChange(function() {
 							this.widgetConfiguration[CMDBuild.core.proxy.CMProxyConstants.DATA] = null;
 						}, this);
@@ -139,7 +139,7 @@
 				// Build data configurations from function definition
 				this.buildDataConfigurationFromFunction();
 			} else {
-				this.runBuildLayout();
+				this.buildLayout();
 			}
 		},
 
@@ -175,7 +175,7 @@
 					this.instancesDataStorageSet(decodedResponse);
 				},
 				callback: function(response, options, decodedResponse) {
-					this.runBuildLayout();
+					this.buildLayout();
 				}
 			});
 		},
@@ -184,23 +184,25 @@
 		 * Builds layout controller and inject view
 		 */
 		buildLayout: function() {
-			switch (this.widgetConfigurationGet(CMDBuild.core.proxy.CMProxyConstants.LAYOUT)) {
-				case 'form': {
-					this.controllerLayout = Ext.create('CMDBuild.controller.management.common.widgets.customForm.layout.Form', { parentDelegate: this });
-				} break;
+			if (!this.widgetConfigurationIsAttributeEmpty(CMDBuild.core.proxy.CMProxyConstants.MODEL)) {
+				switch (this.widgetConfigurationGet(CMDBuild.core.proxy.CMProxyConstants.LAYOUT)) {
+					case 'form': {
+						this.controllerLayout = Ext.create('CMDBuild.controller.management.common.widgets.customForm.layout.Form', { parentDelegate: this });
+					} break;
 
-				case 'grid':
-				default: {
-					this.controllerLayout = Ext.create('CMDBuild.controller.management.common.widgets.customForm.layout.Grid', { parentDelegate: this });
+					case 'grid':
+					default: {
+						this.controllerLayout = Ext.create('CMDBuild.controller.management.common.widgets.customForm.layout.Grid', { parentDelegate: this });
+					}
 				}
-			}
 
-			this.controllerLayout.setDefaultContent();
+				// Add related layout panel
+				if (!Ext.isEmpty(this.view)) {
+					this.view.removeAll();
+					this.view.add(this.controllerLayout.getView());
+				}
 
-			// Add related layout panel
-			if (!Ext.isEmpty(this.view)) {
-				this.view.removeAll();
-				this.view.add(this.controllerLayout.getView());
+				this.controllerLayout.cmfg('onCustomFormShow');
 			}
 		},
 
@@ -251,12 +253,12 @@
 		},
 
 		/**
-		 * Reset instance storage property
+		 * Preset data in instanceDataStorage variable
 		 *
 		 * @override
 		 */
 		onEditMode: function() {
-			this.instancesDataStorageReset();
+			this.instancesDataStorageSet(this.widgetConfigurationGet(CMDBuild.core.proxy.CMProxyConstants.DATA));
 		},
 
 		// WidgetConfiguration methods
@@ -279,15 +281,6 @@
 				if (!Ext.isEmpty(configurationObject) && Ext.isEmpty(propertyName))
 					this.widgetConfigurationModel = Ext.create('CMDBuild.model.widget.customForm.Configuration', Ext.clone(configurationObject));
 			},
-
-
-		runBuildLayout: function() {
-			if (!this.widgetConfigurationIsAttributeEmpty(CMDBuild.core.proxy.CMProxyConstants.MODEL)) {
-				this.buildLayout();
-
-				this.controllerLayout.cmfg('onCustomFormShow');
-			}
-		},
 
 		/**
 		 * @param {Boolean} state

@@ -35,7 +35,7 @@
 			// Barrier to load data after reference field store's load end
 			CMDBuild.core.RequestBarrier.init('referenceStoreLoadBarrier', function() {
 				if (!this.cmfg('widgetCustomFormInstancesDataStorageIsEmpty'))
-					this.setData(this.cmfg('widgetCustomFormInstancesDataStorageGet', CMDBuild.core.proxy.CMProxyConstants.DATA));
+					this.setData(this.cmfg('widgetCustomFormInstancesDataStorageGet'));
 
 				this.cmfg('widgetCustomFormViewSetLoading', false);
 			}, this);
@@ -358,10 +358,21 @@
 		},
 
 		onCustomFormLayoutGridResetButtonClick: function() {
-			this.setDefaultContent();
+			this.cmfg('widgetConfigurationSet', {
+				configurationObject: this.cmfg('widgetControllerPropertyGet', 'widgetConfiguration')[CMDBuild.core.proxy.CMProxyConstants.DATA],
+				propertyName: CMDBuild.core.proxy.CMProxyConstants.DATA
+			});
+
+			this.setData(this.cmfg('widgetCustomFormInstancesDataStorageGet'));
 		},
 
-		onCustomFormLayoutGridShow: Ext.emptyFn,
+		/**
+		 * Load grid data
+		 */
+		onCustomFormLayoutGridShow: function() {
+			if (!this.cmfg('widgetCustomFormInstancesDataStorageIsEmpty'))
+				this.setData(this.cmfg('widgetCustomFormInstancesDataStorageGet'));
+		},
 
 		/**
 		 * @param {Array} data
@@ -371,18 +382,6 @@
 
 			if (!Ext.isEmpty(data))
 				return this.view.getStore().loadData(data);
-		},
-
-		/**
-		 * Resets widget configuration model because of a referencing of store records
-		 */
-		setDefaultContent: function() {
-			this.cmfg('widgetConfigurationSet', {
-				configurationObject: this.cmfg('widgetControllerPropertyGet', 'widgetConfiguration')[CMDBuild.core.proxy.CMProxyConstants.DATA],
-				propertyName: CMDBuild.core.proxy.CMProxyConstants.DATA
-			});
-
-			this.setData(this.cmfg('widgetConfigurationGet', CMDBuild.core.proxy.CMProxyConstants.DATA));
 		}
 	});
 
