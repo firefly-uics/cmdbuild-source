@@ -1,5 +1,7 @@
 (function () {
 
+	Ext.require(['CMDBuild.core.Message']);
+
 	/**
 	 * Class to be extended in controllers witch implements new CMDBuild algorithms where controller creates view
 	 *
@@ -178,22 +180,26 @@
 		 * Validation input form
 		 *
 		 * @param {Ext.form.Panel} form
+		 * @param {Boolean} showPopup - enable popup error message
 		 *
 		 * @return {Boolean}
 		 */
-		validate: function(form) {
-			var invalidFieldsArray = form.getNonValidFields();
+		validate: function(form, showPopup) {
+			showPopup = Ext.isBoolean(showPopup) ? showPopup : true;
 
+			var invalidFieldsArray = form.getNonValidFields();
+_debug('validate');
 			// Check for invalid fields and builds errorMessage
-			if (!Ext.isEmpty(form) && (invalidFieldsArray.length > 0)) {
+			if (!Ext.isEmpty(form) && !Ext.isEmpty(invalidFieldsArray)) {
 				var errorMessage = CMDBuild.Translation.errors.invalid_fields + '<ul style="text-align: left;">';
 
 				for (index in invalidFieldsArray)
-					errorMessage += '<li>' + invalidFieldsArray[index].fieldLabel + '</li>';
+					errorMessage += '<li>' + invalidFieldsArray[index].getFieldLabel() + '</li>';
 
 				errorMessage += '<ul>';
 
-				CMDBuild.Msg.error(CMDBuild.Translation.common.failure, errorMessage, false);
+				if (showPopup)
+					CMDBuild.core.Message.error(CMDBuild.Translation.common.failure, errorMessage, false);
 
 				return false;
 			}

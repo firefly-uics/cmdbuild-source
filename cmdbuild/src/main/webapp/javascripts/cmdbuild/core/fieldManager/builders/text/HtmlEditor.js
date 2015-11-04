@@ -24,7 +24,8 @@
 				editor: withEditor ? this.buildEditor() : null,
 				flex: 1,
 				hidden: !this.cmfg('attributeModelGet', CMDBuild.core.proxy.CMProxyConstants.SHOW_COLUMN),
-				renderer: 'stripTags',
+				renderer: this.rendererColumn,
+				scope: this,
 				sortable: true,
 				text: this.applyMandatoryLabelFlag(this.cmfg('attributeModelGet', CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION))
 			});
@@ -60,6 +61,21 @@
 				name: this.cmfg('attributeModelGet', CMDBuild.core.proxy.CMProxyConstants.NAME),
 				readOnly: !this.cmfg('attributeModelGet', CMDBuild.core.proxy.CMProxyConstants.WRITABLE)
 			});
+		},
+
+		/**
+		 * @param {Object} value
+		 * @param {Object} metadata
+		 * @param {Ext.data.Model} record
+		 * @param {Number} rowIndex
+		 * @param {Number} colIndex
+		 * @param {Ext.data.Store} store
+		 * @param {Ext.view.View} view
+		 *
+		 * @override
+		 */
+		rendererColumn: function(value, metadata, record, rowIndex, colIndex, store, view) {
+			return Ext.util.Format.stripTags(this.callParent(arguments));
 		}
 	});
 

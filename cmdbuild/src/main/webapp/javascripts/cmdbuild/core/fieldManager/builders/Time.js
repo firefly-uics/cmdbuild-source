@@ -36,6 +36,8 @@
 				format: this.format,
 				hidden: !this.cmfg('attributeModelGet', CMDBuild.core.proxy.CMProxyConstants.SHOW_COLUMN),
 				hideTrigger: true, // Hides date picker
+				renderer: this.rendererColumn,
+				scope: this,
 				sortable: true,
 				text: this.applyMandatoryLabelFlag(this.cmfg('attributeModelGet', CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION)),
 				width: this.headerWidth

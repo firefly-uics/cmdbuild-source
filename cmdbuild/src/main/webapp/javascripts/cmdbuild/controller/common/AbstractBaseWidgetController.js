@@ -204,7 +204,7 @@
 			 * @param {Mixed} instanceData
 			 */
 			instancesDataStorageSet: function(instanceData) {
-				if (!Ext.isEmpty(this.getWidgetId()) && !Ext.isEmpty(instanceData))
+				if (!Ext.isEmpty(this.getWidgetId()))
 					this.instancesDataStorage[this.getWidgetId()] = instanceData;
 			},
 
@@ -216,6 +216,8 @@
 		},
 
 		/**
+		 * FIXME: this function should be called with cmfg functionalities but that's requires a refactor of widgets base classes
+		 *
 		 * @return {Boolean}
 		 */
 		isValid: function() {

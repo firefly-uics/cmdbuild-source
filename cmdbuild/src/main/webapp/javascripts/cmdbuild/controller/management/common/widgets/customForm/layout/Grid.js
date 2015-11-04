@@ -73,11 +73,11 @@
 							value = me.formatDate(value);
 						}
 
-						if (Ext.isEmpty(Ext.String.trim(String(value))) && attribute[CMDBuild.core.proxy.CMProxyConstants.NOT_NULL])
-							value = '<div style="width: 100%; height: 100%; border: 1px dotted red;">';
-
 						return value;
 					}
+
+					if (Ext.isEmpty(Ext.String.trim(String(value))) && attribute[CMDBuild.core.proxy.CMProxyConstants.NOT_NULL])
+						metadata.tdCls += ' x-grid-invalid-cell-error';
 
 					return null;
 				}
@@ -297,12 +297,10 @@
 			var requiredAttributes = [];
 
 			// If widget is flagged as required must return at least 1 row
-			if (
+			returnValue = !(
 				this.cmfg('widgetConfigurationGet', CMDBuild.core.proxy.CMProxyConstants.REQUIRED)
 				&& this.view.getStore().getCount() == 0
-			) {
-				returnValue = false;
-			}
+			);
 
 			// Build required attributes names array
 			Ext.Array.forEach(this.cmfg('widgetConfigurationGet', CMDBuild.core.proxy.CMProxyConstants.MODEL), function(attributeModel, i, allAttributeModels) {
@@ -379,7 +377,9 @@
 			this.view.getStore().removeAll();
 
 			if (!Ext.isEmpty(data))
-				return this.view.getStore().loadData(data);
+				this.view.getStore().loadData(data);
+
+			this.isValid();
 		}
 	});
 
