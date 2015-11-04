@@ -23,6 +23,8 @@
 				disabled: !this.cmfg('attributeModelGet', CMDBuild.core.proxy.CMProxyConstants.WRITABLE),
 				flex: 1,
 				hidden: !this.cmfg('attributeModelGet', CMDBuild.core.proxy.CMProxyConstants.SHOW_COLUMN),
+				renderer: this.rendererColumn,
+				scope: this,
 				sortable: true,
 				text: this.applyMandatoryLabelFlag(this.cmfg('attributeModelGet', CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION)),
 				width: this.cmfg('attributeModelGet', CMDBuild.core.proxy.CMProxyConstants.NAME).length * 9

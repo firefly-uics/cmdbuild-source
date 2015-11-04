@@ -102,7 +102,7 @@
 		 * @returns {Array}
 		 */
 		getData: function() {
-			return [this.view.getValues()];
+			return this.view.getData(true);
 		},
 
 		/**
@@ -119,10 +119,12 @@
 		/**
 		 * Validate form
 		 *
+		 * @param {Boolean} showPopup
+		 *
 		 * @returns {Boolean}
 		 */
-		isValid: function() {
-			return this.validate(this.view);
+		isValid: function(showPopup) {
+			return this.validate(this.view, showPopup);
 		},
 
 		/**
@@ -164,7 +166,8 @@
 				this.view.setDisabledModify(true, true, isWidgetReadOnly);
 			}
 
-			this.setData(this.cmfg('widgetCustomFormInstancesDataStorageGet'));
+			if (!this.cmfg('widgetCustomFormInstancesDataStorageIsEmpty'))
+				this.setData(this.cmfg('widgetCustomFormInstancesDataStorageGet'));
 		},
 
 		/**
@@ -173,12 +176,20 @@
 		setData: function(data) {
 			data = (Ext.isArray(data) && !Ext.isEmpty(data[0])) ? data[0] : data;
 
-			this.view.reset(); // In form layout is managed only one row at time, so all actions are considered with replace mode
+			this.view.reset();
 
-			if (Ext.isObject(data)) // Model or simple object manage
-				this.view.getForm().setValues(
-					Ext.isFunction(data.getData) ? data.getData() : data
-				);
+			if (Ext.isObject(data)) {
+				// Clean data object to avoid set of empty values
+				Ext.Object.each(data, function(key, value, myself) {
+					if (Ext.isEmpty(value))
+						delete data[key];
+				}, this);
+
+				if (!Ext.Object.isEmpty(data))
+					this.view.getForm().setValues(data);
+			}
+
+			this.isValid(false);
 		}
 	});
 

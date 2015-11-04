@@ -129,6 +129,7 @@
 			// Execute template resolver on variables property
 			if (
 				Ext.isEmpty(this.widgetConfigurationGet(CMDBuild.core.proxy.CMProxyConstants.DATA))
+				&& this.cmfg('widgetCustomFormInstancesDataStorageIsEmpty')
 				&& !Ext.isEmpty(this.widgetConfigurationGet(CMDBuild.core.proxy.CMProxyConstants.FUNCTION_DATA))
 			) {
 				this.widgetConfigurationSet({
@@ -239,8 +240,6 @@
 		/**
 		 * Check required field value of grid store records
 		 *
-		 * FIXME: this function should be called with cmfg functionalities but that's requires a refactor of widgets base classes
-		 *
 		 * @returns {Boolean}
 		 *
 		 * @override
@@ -249,7 +248,7 @@
 			if (!Ext.isEmpty(this.controllerLayout) && Ext.isFunction(this.controllerLayout.isValid))
 				return this.controllerLayout.isValid();
 
-			return true;
+			return this.callParent(arguments);
 		},
 
 		/**

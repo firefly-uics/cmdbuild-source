@@ -13,6 +13,7 @@
 		delegate: undefined,
 
 		bodyCls: 'x-panel-body-default-framed',
+		bodyPadding: 5,
 		border: false,
 		frame: false,
 		overflowY: 'auto',

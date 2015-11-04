@@ -27,6 +27,8 @@
 
 		/**
 		 * @param {Boolean} withDisabled
+		 *
+		 * @returns {Array}
 		 */
 		getData: function(withDisabled) {
 			if (withDisabled) {
@@ -34,39 +36,55 @@
 
 				this.cascade(function(item) {
 					if (
-						item
-						&& (
-							item instanceof Ext.form.Field
-							|| item instanceof Ext.form.field.Base
-							|| item instanceof Ext.form.field.HtmlEditor
-							|| item instanceof Ext.form.FieldContainer
-						)
+						!Ext.isEmpty(item)
+						&& this.isManagedField(item)
 					) {
 						data[item.name] = item.getValue();
 					}
-				});
+				}, this);
 
 				return data;
-			} else {
-				return this.getForm().getValues();
 			}
+
+			return this.getForm().getValues();
 		},
 
+		/**
+		 * @returns {Array} nonValidFields
+		 */
 		getNonValidFields: function() {
-			var data = [];
+			var nonValidFields = [];
 
 			this.cascade(function(item) {
+_debug(item.name, item.isValid(), item);
 				if (
-					item
-					&& (item instanceof Ext.form.Field)
-					&& !item.disabled
+					!Ext.isEmpty(item)
+					&& item instanceof Ext.form.Field
+					&& !item.isDisabled()
+					&& !item.isHidden()
 					&& !item.isValid()
 				) {
-					data.push(item);
+					nonValidFields.push(item);
 				}
-			});
+			}, this);
 
-			return data;
+			return nonValidFields;
+		},
+
+		/**
+		 * @param {Object} field
+		 *
+		 * @returns {Boolean}
+		 *
+		 * @private
+		 */
+		isManagedField: function(field) {
+			return (
+				field instanceof Ext.form.Field
+				|| field instanceof Ext.form.field.Base
+				|| field instanceof Ext.form.field.HtmlEditor
+				|| field instanceof Ext.form.FieldContainer
+			);
 		},
 
 		reset: function() {
