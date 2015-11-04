@@ -13,12 +13,12 @@
 		/**
 		 * @param {Boolean} withEditor
 		 *
-		 * @returns {Ext.grid.column.CheckColumn}
+		 * @returns {Ext.grid.column.CheckColumn or Object}
 		 */
 		buildColumn: function(withEditor) {
 			withEditor = Ext.isBoolean(withEditor) ? withEditor : false;
 
-			return Ext.create('Ext.grid.column.CheckColumn', {
+			return this.cmfg('attributeModelGet', CMDBuild.core.proxy.CMProxyConstants.HIDDEN) ? {} : Ext.create('Ext.grid.column.CheckColumn', {
 				dataIndex: this.cmfg('attributeModelGet', CMDBuild.core.proxy.CMProxyConstants.NAME),
 				disabled: !this.cmfg('attributeModelGet', CMDBuild.core.proxy.CMProxyConstants.WRITABLE),
 				flex: 1,
@@ -40,6 +40,7 @@
 					this.cmfg('attributeModelGet', CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION)
 					|| this.cmfg('attributeModelGet', CMDBuild.core.proxy.CMProxyConstants.NAME)
 				),
+				hidden: this.cmfg('attributeModelGet', CMDBuild.core.proxy.CMProxyConstants.HIDDEN),
 				inputValue: true,
 				labelAlign: 'right',
 				labelWidth: CMDBuild.LABEL_WIDTH,

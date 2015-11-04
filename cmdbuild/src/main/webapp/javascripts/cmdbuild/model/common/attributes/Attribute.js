@@ -1,9 +1,9 @@
 (function() {
 
+	Ext.require(['CMDBuild.core.proxy.CMProxyConstants']);
+
 	Ext.define('CMDBuild.model.common.attributes.Attribute', {
 		extend: 'Ext.data.Model',
-
-		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
 
 		fields: [
 			{ name: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION, type: 'string' },
@@ -18,9 +18,9 @@
 			{ name: CMDBuild.core.proxy.CMProxyConstants.SCALE, type: 'int', defaultValue: 0 },
 			{ name: CMDBuild.core.proxy.CMProxyConstants.SHOW_COLUMN, type: 'boolean', defaultValue: true },
 			{ name: CMDBuild.core.proxy.CMProxyConstants.TARGET_CLASS, type: 'string' },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.TYPE, type: 'string', convert: toLowerCase },
+			{ name: CMDBuild.core.proxy.CMProxyConstants.TYPE, type: 'string', convert: toLowerCase }, // Case insensitive types
 			{ name: CMDBuild.core.proxy.CMProxyConstants.UNIQUE, type: 'boolean' },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.WRITABLE, type: 'boolean' }
+			{ name: CMDBuild.core.proxy.CMProxyConstants.WRITABLE, type: 'boolean', defaultValue: true }
 		],
 
 		/**

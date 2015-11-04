@@ -13,12 +13,12 @@
 		/**
 		 * @param {Boolean} withEditor
 		 *
-		 * @returns {Ext.grid.column.Column}
+		 * @returns {Ext.grid.column.Column or Object}
 		 */
 		buildColumn: function(withEditor) {
 			withEditor = Ext.isBoolean(withEditor) ? withEditor : false;
 
-			return Ext.create('Ext.grid.column.Column', {
+			return this.cmfg('attributeModelGet', CMDBuild.core.proxy.CMProxyConstants.HIDDEN) ? {} : Ext.create('Ext.grid.column.Column', {
 				dataIndex: this.cmfg('attributeModelGet', CMDBuild.core.proxy.CMProxyConstants.NAME),
 				disabled: !this.cmfg('attributeModelGet', CMDBuild.core.proxy.CMProxyConstants.WRITABLE),
 				editor: withEditor ? this.buildEditor() : null,
@@ -31,10 +31,10 @@
 		},
 
 		/**
-		 * @returns {CMDBuild.view.common.field.CMHtmlEditorField} editorObject
+		 * @returns {CMDBuild.view.common.field.CMHtmlEditorField}
 		 */
 		buildEditor: function() {
-			return Ext.create('CMDBuild.view.common.field.CMHtmlEditorField', {
+			return this.cmfg('attributeModelGet', CMDBuild.core.proxy.CMProxyConstants.HIDDEN) ? {} : Ext.create('CMDBuild.view.common.field.CMHtmlEditorField', {
 				allowBlank: !this.cmfg('attributeModelGet', CMDBuild.core.proxy.CMProxyConstants.MANDATORY),
 				disabled: !this.cmfg('attributeModelGet', CMDBuild.core.proxy.CMProxyConstants.WRITABLE),
 				name: this.cmfg('attributeModelGet', CMDBuild.core.proxy.CMProxyConstants.NAME),
@@ -43,7 +43,7 @@
 		},
 
 		/**
-		 * @returns {CMDBuild.view.common.field.CMHtmlEditorField} field
+		 * @returns {CMDBuild.view.common.field.CMHtmlEditorField}
 		 */
 		buildField: function() {
 			return Ext.create('CMDBuild.view.common.field.CMHtmlEditorField', {
@@ -53,6 +53,7 @@
 					this.cmfg('attributeModelGet', CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION)
 					|| this.cmfg('attributeModelGet', CMDBuild.core.proxy.CMProxyConstants.NAME)
 				),
+				hidden: this.cmfg('attributeModelGet', CMDBuild.core.proxy.CMProxyConstants.HIDDEN),
 				labelAlign: 'right',
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				maxWidth: CMDBuild.HTML_EDITOR_WIDTH,

@@ -13,12 +13,12 @@
 		/**
 		 * @param {Boolean} withEditor
 		 *
-		 * @returns {Ext.grid.column.Column}
+		 * @returns {Ext.grid.column.Column or Object}
 		 */
 		buildColumn: function(withEditor) {
 			withEditor = Ext.isBoolean(withEditor) ? withEditor : false;
 
-			return Ext.create('Ext.grid.column.Column', {
+			return this.cmfg('attributeModelGet', CMDBuild.core.proxy.CMProxyConstants.HIDDEN) ? {} : Ext.create('Ext.grid.column.Column', {
 				dataIndex: this.cmfg('attributeModelGet', CMDBuild.core.proxy.CMProxyConstants.NAME),
 				disabled: !this.cmfg('attributeModelGet', CMDBuild.core.proxy.CMProxyConstants.WRITABLE),
 				editor: withEditor ? this.buildEditor() : null,
@@ -30,10 +30,10 @@
 		},
 
 		/**
-		 * @returns {Object} editorObject
+		 * @returns {Object}
 		 */
 		buildEditor: function() {
-			return {
+			return this.cmfg('attributeModelGet', CMDBuild.core.proxy.CMProxyConstants.HIDDEN) ? {} : {
 				xtype: 'textfield',
 				allowBlank: !this.cmfg('attributeModelGet', CMDBuild.core.proxy.CMProxyConstants.MANDATORY),
 				disabled: !this.cmfg('attributeModelGet', CMDBuild.core.proxy.CMProxyConstants.WRITABLE),
@@ -43,7 +43,7 @@
 		},
 
 		/**
-		 * @returns {Ext.form.field.TextArea} field
+		 * @returns {Ext.form.field.TextArea}
 		 */
 		buildField: function() {
 			return Ext.create('Ext.form.field.TextArea', {
@@ -53,6 +53,7 @@
 					this.cmfg('attributeModelGet', CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION)
 					|| this.cmfg('attributeModelGet', CMDBuild.core.proxy.CMProxyConstants.NAME)
 				),
+				hidden: this.cmfg('attributeModelGet', CMDBuild.core.proxy.CMProxyConstants.HIDDEN),
 				labelAlign: 'right',
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				maxWidth: CMDBuild.BIG_FIELD_WIDTH,

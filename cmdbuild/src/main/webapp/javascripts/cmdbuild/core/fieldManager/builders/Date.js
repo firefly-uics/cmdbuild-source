@@ -23,12 +23,12 @@
 		/**
 		 * @param {Boolean} withEditor
 		 *
-		 * @returns {Ext.grid.column.Date}
+		 * @returns {Ext.grid.column.Date or Object}
 		 */
 		buildColumn: function(withEditor) {
 			withEditor = Ext.isBoolean(withEditor) ? withEditor : false;
 
-			return Ext.create('Ext.grid.column.Date', {
+			return this.cmfg('attributeModelGet', CMDBuild.core.proxy.CMProxyConstants.HIDDEN) ? {} : Ext.create('Ext.grid.column.Date', {
 				dataIndex: this.cmfg('attributeModelGet', CMDBuild.core.proxy.CMProxyConstants.NAME),
 				disabled: !this.cmfg('attributeModelGet', CMDBuild.core.proxy.CMProxyConstants.WRITABLE),
 				editor: withEditor ? this.buildEditor() : null,
@@ -45,7 +45,7 @@
 		 * @returns {Object}
 		 */
 		buildEditor: function() {
-			return {
+			return this.cmfg('attributeModelGet', CMDBuild.core.proxy.CMProxyConstants.HIDDEN) ? {} : {
 				xtype: 'datefield',
 				allowBlank: !this.cmfg('attributeModelGet', CMDBuild.core.proxy.CMProxyConstants.MANDATORY),
 				disabled: !this.cmfg('attributeModelGet', CMDBuild.core.proxy.CMProxyConstants.WRITABLE),
@@ -67,6 +67,7 @@
 					|| this.cmfg('attributeModelGet', CMDBuild.core.proxy.CMProxyConstants.NAME)
 				),
 				format: this.format,
+				hidden: this.cmfg('attributeModelGet', CMDBuild.core.proxy.CMProxyConstants.HIDDEN),
 				labelAlign: 'right',
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				maxWidth: CMDBuild.SMALL_FIELD_WIDTH,

@@ -116,13 +116,11 @@
 			},
 
 		/**
-		 *
-		 *
 		 * @returns {Mixed}
 		 *
 		 * @private
 		 */
-		buildAttributeController: function(attributeModel) {
+		buildAttributeController: function() {
 			var attributeType = this.attributeModelGet(CMDBuild.core.proxy.CMProxyConstants.TYPE).toLowerCase();
 
 			switch (attributeType) {
@@ -187,6 +185,52 @@
 
 			return Ext.Array.contains(this.managedAttributesTypes, attributeType);
 		},
+
+		// Service functions to add generated fields to targets
+			/**
+			 * Filters empty components
+			 *
+			 * @param {Object} target
+			 * @param {Mixed or Array} components
+			 */
+			add: function(target, components) {
+				components = Ext.isArray(components) ? components : [components];
+
+				if (
+					Ext.isObject(target)
+					&& Ext.isFunction(target.add)
+				) {
+					components = Ext.Array.filter(components, function(item, i, array) {
+						return !Ext.isEmpty(item) && !Ext.Object.isEmpty(item);
+					}, this);
+
+					if (!Ext.isEmpty(components))
+						target.add(components);
+				} else {
+					_error('target not supported object', this);
+				}
+			},
+
+			/**
+			 * Filters empty elements
+			 *
+			 * @param {Array} target
+			 * @param {Mixed or Array} elements
+			 */
+			push: function(target, elements) {
+				elements = Ext.isArray(elements) ? elements : [elements];
+
+				if (Ext.isArray(target)) {
+					elements = Ext.Array.filter(elements, function(item, i, array) {
+						return !Ext.isEmpty(item) && !Ext.Object.isEmpty(item);
+					}, this);
+
+					if (!Ext.isEmpty(elements))
+						target = Ext.Array.push(target, elements);
+				} else {
+					_error('target in not array', this);
+				}
+			},
 
 		// TemplateResolver property methods
 			/**

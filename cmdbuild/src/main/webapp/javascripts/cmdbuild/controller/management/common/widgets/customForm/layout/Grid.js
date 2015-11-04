@@ -160,8 +160,7 @@
 				Ext.Array.forEach(this.cmfg('widgetConfigurationGet', CMDBuild.core.proxy.CMProxyConstants.MODEL), function(attribute, i, allAttributes) {
 					if (fieldManager.isAttributeManaged(attribute.get(CMDBuild.core.proxy.CMProxyConstants.TYPE))) {
 						fieldManager.attributeModelSet(Ext.create('CMDBuild.model.common.attributes.Attribute', attribute.getData()));
-
-						columns.push(fieldManager.buildColumn(true));
+						fieldManager.push(columns, fieldManager.buildColumn(true));
 					} else { // @deprecated - Old field manager
 						var attribute = attribute.getAdaptedData();
 						var attributesMap = CMDBuild.Management.FieldManager.getAttributesMap();
@@ -249,8 +248,7 @@
 				Ext.Array.forEach(this.cmfg('widgetConfigurationGet', CMDBuild.core.proxy.CMProxyConstants.MODEL), function(attribute, i, allAttributes) {
 					if (fieldManager.isAttributeManaged(attribute.get(CMDBuild.core.proxy.CMProxyConstants.TYPE))) {
 						fieldManager.attributeModelSet(Ext.create('CMDBuild.model.common.attributes.Attribute', attribute.getData()));
-
-						storeFields.push(fieldManager.buildStoreField());
+						fieldManager.push(storeFields, fieldManager.buildStoreField());
 					} else {
 						storeFields.push({ name: attribute.get(CMDBuild.core.proxy.CMProxyConstants.NAME), type: 'string' });
 					}
