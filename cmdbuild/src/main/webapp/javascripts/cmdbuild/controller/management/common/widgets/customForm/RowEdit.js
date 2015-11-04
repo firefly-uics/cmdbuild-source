@@ -74,8 +74,7 @@
 				Ext.Array.forEach(this.cmfg('widgetConfigurationGet', CMDBuild.core.proxy.CMProxyConstants.MODEL), function(attribute, i, allAttributes) {
 					if (fieldManager.isAttributeManaged(attribute.get(CMDBuild.core.proxy.CMProxyConstants.TYPE))) {
 						fieldManager.attributeModelSet(Ext.create('CMDBuild.model.common.attributes.Attribute', attribute.getData()));
-
-						itemsArray.push(fieldManager.buildField());
+						fieldManager.push(itemsArray, fieldManager.buildField());
 					} else { // @deprecated - Old field manager
 						var attribute = attribute.getAdaptedData();
 						var item = undefined;

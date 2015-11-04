@@ -13,6 +13,7 @@
 			{ name: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION, type: 'string' },
 			{ name: CMDBuild.core.proxy.CMProxyConstants.EDITOR_TYPE, type: 'string' },
 			{ name: CMDBuild.core.proxy.CMProxyConstants.FILTER, type: 'auto' },
+			{ name: CMDBuild.core.proxy.CMProxyConstants.HIDDEN, type: 'boolean' },
 			{ name: CMDBuild.core.proxy.CMProxyConstants.LENGTH, type: 'int', defaultValue: 0 },
 			{ name: CMDBuild.core.proxy.CMProxyConstants.LOOKUP_TYPE, type: 'string' },
 			{ name: CMDBuild.core.proxy.CMProxyConstants.MANDATORY, type: 'boolean' },
@@ -36,6 +37,7 @@
 			var objectModel = this.getData();
 
 			objectModel['fieldmode'] = this.get(CMDBuild.core.proxy.CMProxyConstants.WRITABLE) ? 'write' : 'read';
+			objectModel['fieldmode'] = this.get(CMDBuild.core.proxy.CMProxyConstants.HIDDEN) ? CMDBuild.core.proxy.CMProxyConstants.HIDDEN : objectModel['fieldmode'];
 			objectModel['isbasedsp'] = this.get(CMDBuild.core.proxy.CMProxyConstants.SHOW_COLUMN);
 			objectModel['isnotnull'] = this.get(CMDBuild.core.proxy.CMProxyConstants.MANDATORY);
 

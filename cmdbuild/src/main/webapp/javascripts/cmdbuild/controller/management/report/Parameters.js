@@ -76,8 +76,7 @@
 						attributeCustom.setAdaptedData(attribute);
 
 						fieldManager.attributeModelSet(attributeCustom);
-
-						this.form.add(fieldManager.buildField());
+						fieldManager.add(this.form, fieldManager.buildField());
 					} else { // @deprecated - Old field manager
 						var field = CMDBuild.Management.FieldManager.getFieldForAttr(attribute, false, false);
 
