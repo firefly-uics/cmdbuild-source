@@ -43,7 +43,7 @@ public class CmdbuildProperties extends DefaultProperties implements CmdbuildCon
 		setProperty(SESSION_TIMEOUT, "");
 		setProperty(INSTANCE_NAME, "");
 		setProperty(TABS_POSITION, "bottom");
-		setProperty(LOCK_CARD, String.valueOf(true));
+		setProperty(LOCK_CARD, String.valueOf(false));
 		setProperty(LOCKER_CARD_USER_VISIBLE, String.valueOf(true));
 		setProperty(LOCK_CARD_TIME_OUT, "300");
 		setProperty(ENABLED_LANGUAGES, "");
