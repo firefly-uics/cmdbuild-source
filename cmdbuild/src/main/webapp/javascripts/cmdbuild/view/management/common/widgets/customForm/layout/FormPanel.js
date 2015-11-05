@@ -36,18 +36,18 @@
 								scope: this,
 
 								disabled: (
-									this.delegate.cmfg('widgetConfigurationGet', [
+									this.delegate.cmfg('widgetCustomFormConfigurationGet', [
 										CMDBuild.core.proxy.CMProxyConstants.CAPABILITIES,
 										CMDBuild.core.proxy.CMProxyConstants.READ_ONLY
 									])
-									|| this.delegate.cmfg('widgetConfigurationGet', [
+									|| this.delegate.cmfg('widgetCustomFormConfigurationGet', [
 										CMDBuild.core.proxy.CMProxyConstants.CAPABILITIES,
 										CMDBuild.core.proxy.CMProxyConstants.IMPORT_DISABLED
 									])
 								),
 
 								handler: function(button, e) {
-									this.delegate.cmfg('onCustomFormLayoutFormImportButtonClick');
+									this.delegate.cmfg('onWidgetCustomFormLayoutFormImportButtonClick');
 								}
 							}),
 							Ext.create('CMDBuild.core.buttons.Reload', {
@@ -55,7 +55,7 @@
 								scope: this,
 
 								handler: function(button, e) {
-									this.delegate.cmfg('onCustomFormLayoutFormResetButtonClick');
+									this.delegate.cmfg('onWidgetCustomFormLayoutFormResetButtonClick');
 								}
 							})
 						]

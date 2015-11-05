@@ -58,3 +58,6 @@
 	.sql { background-image: url("../images/icons/fileFormats/sql.png") !important; }
 	.xml { background-image: url("../images/icons/fileFormats/xml.png") !important; }
 	.zip { background-image: url("../images/icons/fileFormats/zip.png") !important; }
+
+/* Rows */
+	.row-clone { background-image: url("../images/grid/row-clone.png") !important; }

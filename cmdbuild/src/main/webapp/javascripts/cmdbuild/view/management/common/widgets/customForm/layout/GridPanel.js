@@ -24,7 +24,7 @@
 		frame: false,
 
 		initComponent: function() {
-			var isWidgetReadOnly = this.delegate.cmfg('widgetConfigurationGet', [
+			var isWidgetReadOnly = this.delegate.cmfg('widgetCustomFormConfigurationGet', [
 				CMDBuild.core.proxy.CMProxyConstants.CAPABILITIES,
 				CMDBuild.core.proxy.CMProxyConstants.READ_ONLY
 			]);
@@ -42,14 +42,14 @@
 
 								disabled: (
 									isWidgetReadOnly
-									|| this.delegate.cmfg('widgetConfigurationGet', [
+									|| this.delegate.cmfg('widgetCustomFormConfigurationGet', [
 										CMDBuild.core.proxy.CMProxyConstants.CAPABILITIES,
 										CMDBuild.core.proxy.CMProxyConstants.ADD_DISABLED
 									])
 								),
 
 								handler: function(button, e) {
-									this.delegate.cmfg('onCustomFormLayoutGridAddRowButtonClick');
+									this.delegate.cmfg('onWidgetCustomFormLayoutGridAddRowButtonClick');
 								}
 							}),
 							Ext.create('CMDBuild.core.buttons.Import', {
@@ -58,14 +58,14 @@
 
 								disabled: (
 									isWidgetReadOnly
-									|| this.delegate.cmfg('widgetConfigurationGet', [
+									|| this.delegate.cmfg('widgetCustomFormConfigurationGet', [
 										CMDBuild.core.proxy.CMProxyConstants.CAPABILITIES,
 										CMDBuild.core.proxy.CMProxyConstants.IMPORT_DISABLED
 									])
 								),
 
 								handler: function(button, e) {
-									this.delegate.cmfg('onCustomFormLayoutGridImportButtonClick');
+									this.delegate.cmfg('onWidgetCustomFormLayoutGridImportButtonClick');
 								}
 							}),
 							Ext.create('CMDBuild.core.buttons.Reload', {
@@ -73,7 +73,7 @@
 								scope: this,
 
 								handler: function(button, e) {
-									this.delegate.cmfg('onCustomFormLayoutGridResetButtonClick');
+									this.delegate.cmfg('onWidgetCustomFormLayoutGridResetButtonClick');
 								}
 							})
 						]
@@ -81,7 +81,7 @@
 				],
 				plugins: (
 					isWidgetReadOnly
-					|| this.delegate.cmfg('widgetConfigurationGet', [
+					|| this.delegate.cmfg('widgetCustomFormConfigurationGet', [
 						CMDBuild.core.proxy.CMProxyConstants.CAPABILITIES,
 						CMDBuild.core.proxy.CMProxyConstants.MODIFY_DISABLED
 					])

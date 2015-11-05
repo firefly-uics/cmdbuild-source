@@ -12,13 +12,14 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
-			'importData',
-			'onCustomFormLayoutGridAddRowButtonClick',
-			'onCustomFormLayoutGridDeleteRowButtonClick' ,
-			'onCustomFormLayoutGridEditRowButtonClick',
-			'onCustomFormLayoutGridImportButtonClick',
-			'onCustomFormLayoutGridResetButtonClick',
-			'onCustomFormLayoutGridShow = onCustomFormShow'
+			'onWidgetCustomFormLayoutGridAddRowButtonClick',
+			'onWidgetCustomFormLayoutGridCloneRowButtonClick',
+			'onWidgetCustomFormLayoutGridDeleteRowButtonClick' ,
+			'onWidgetCustomFormLayoutGridEditRowButtonClick',
+			'onWidgetCustomFormLayoutGridImportButtonClick',
+			'onWidgetCustomFormLayoutGridResetButtonClick',
+			'onWidgetCustomFormLayoutGridShow = onWidgetCustomFormShow',
+			'widgetCustomFormLayoutGridImportData = widgetCustomFormImportData'
 		],
 
 		/**
@@ -89,13 +90,38 @@
 		buildActionColumns: function() {
 			return Ext.create('Ext.grid.column.Action', {
 				align: 'center',
-				width: 50,
+				width: 75,
 				sortable: false,
 				hideable: false,
 				menuDisabled: true,
 				fixed: true,
 
 				items: [
+					Ext.create('CMDBuild.core.buttons.iconized.row.Clone', {
+						withSpacer: true,
+						tooltip: CMDBuild.Translation.cloneRow,
+						scope: this,
+
+						isDisabled: function(grid, rowIndex, colIndex, item, record) {
+							return (
+								this.cmfg('widgetCustomFormConfigurationGet', [
+									CMDBuild.core.proxy.CMProxyConstants.CAPABILITIES,
+									CMDBuild.core.proxy.CMProxyConstants.READ_ONLY
+								])
+								|| this.cmfg('widgetCustomFormConfigurationGet', [
+									CMDBuild.core.proxy.CMProxyConstants.CAPABILITIES,
+									CMDBuild.core.proxy.CMProxyConstants.CLONE_ROW_DISABLED
+								])
+							);
+						},
+
+						handler: function(view, rowIndex, colIndex, item, e, record) {
+							this.cmfg('onWidgetCustomFormLayoutGridCloneRowButtonClick', {
+								record: record,
+								index: rowIndex
+							});
+						}
+					}),
 					Ext.create('CMDBuild.core.buttons.Modify', {
 						withSpacer: true,
 						tooltip: CMDBuild.Translation.editRow,
@@ -103,21 +129,19 @@
 
 						isDisabled: function(grid, rowIndex, colIndex, item, record) {
 							return (
-								this.cmfg('widgetConfigurationGet', [
+								this.cmfg('widgetCustomFormConfigurationGet', [
 									CMDBuild.core.proxy.CMProxyConstants.CAPABILITIES,
 									CMDBuild.core.proxy.CMProxyConstants.READ_ONLY
 								])
-								|| this.cmfg('widgetConfigurationGet', [
+								|| this.cmfg('widgetCustomFormConfigurationGet', [
 									CMDBuild.core.proxy.CMProxyConstants.CAPABILITIES,
 									CMDBuild.core.proxy.CMProxyConstants.MODIFY_DISABLED
 								])
 							);
 						},
 
-						handler: function(grid, rowIndex, colIndex) {
-							var record = grid.getStore().getAt(rowIndex);
-
-							this.cmfg('onCustomFormLayoutGridEditRowButtonClick', record);
+						handler: function(view, rowIndex, colIndex, item, e, record) {
+							this.cmfg('onWidgetCustomFormLayoutGridEditRowButtonClick', record);
 						}
 					}),
 					Ext.create('CMDBuild.core.buttons.Delete', {
@@ -127,19 +151,19 @@
 
 						isDisabled: function(grid, rowIndex, colIndex, item, record) {
 							return (
-								this.cmfg('widgetConfigurationGet', [
+								this.cmfg('widgetCustomFormConfigurationGet', [
 									CMDBuild.core.proxy.CMProxyConstants.CAPABILITIES,
 									CMDBuild.core.proxy.CMProxyConstants.READ_ONLY
 								])
-								|| this.cmfg('widgetConfigurationGet', [
+								|| this.cmfg('widgetCustomFormConfigurationGet', [
 									CMDBuild.core.proxy.CMProxyConstants.CAPABILITIES,
 									CMDBuild.core.proxy.CMProxyConstants.DELETE_DISABLED
 								])
 							);
 						},
 
-						handler: function(grid, rowIndex, colIndex) {
-							this.cmfg('onCustomFormLayoutGridDeleteRowButtonClick', rowIndex);
+						handler: function(view, rowIndex, colIndex, item, e, record) {
+							this.cmfg('onWidgetCustomFormLayoutGridDeleteRowButtonClick', rowIndex);
 						}
 					})
 				]
@@ -154,10 +178,10 @@
 		buildColumns: function() {
 			var columns = [];
 
-			if (!this.cmfg('widgetConfigurationIsAttributeEmpty',  CMDBuild.core.proxy.CMProxyConstants.MODEL)) {
+			if (!this.cmfg('widgetCustomFormConfigurationIsAttributeEmpty',  CMDBuild.core.proxy.CMProxyConstants.MODEL)) {
 				var fieldManager = Ext.create('CMDBuild.core.fieldManager.FieldManager', { parentDelegate: this });
 
-				Ext.Array.forEach(this.cmfg('widgetConfigurationGet', CMDBuild.core.proxy.CMProxyConstants.MODEL), function(attribute, i, allAttributes) {
+				Ext.Array.forEach(this.cmfg('widgetCustomFormConfigurationGet', CMDBuild.core.proxy.CMProxyConstants.MODEL), function(attribute, i, allAttributes) {
 					if (fieldManager.isAttributeManaged(attribute.get(CMDBuild.core.proxy.CMProxyConstants.TYPE))) {
 						fieldManager.attributeModelSet(Ext.create('CMDBuild.model.common.attributes.Attribute', attribute.getData()));
 						fieldManager.push(columns, fieldManager.buildColumn(true));
@@ -178,9 +202,9 @@
 							xaVars['_SystemFieldFilter'] = attribute.filter;
 
 							var templateResolver = new CMDBuild.Management.TemplateResolver({ // TODO: implementation of serverside template resolver
-								clientForm: this.cmfg('widgetControllerPropertyGet', 'getClientForm'),
+								clientForm: this.cmfg('widgetCustomFormControllerPropertyGet', 'getClientForm'),
 								xaVars: xaVars,
-								serverVars: this.cmfg('getTemplateResolverServerVars')
+								serverVars: this.cmfg('widgetCustomFormGetTemplateResolverServerVars')
 							});
 
 							editor = CMDBuild.Management.ReferenceField.buildEditor(attribute, templateResolver);
@@ -242,10 +266,10 @@
 		buildDataStore: function() {
 			var storeFields = [];
 
-			if (!this.cmfg('widgetConfigurationIsAttributeEmpty',  CMDBuild.core.proxy.CMProxyConstants.MODEL)) {
+			if (!this.cmfg('widgetCustomFormConfigurationIsAttributeEmpty',  CMDBuild.core.proxy.CMProxyConstants.MODEL)) {
 				var fieldManager = Ext.create('CMDBuild.core.fieldManager.FieldManager', { parentDelegate: this });
 
-				Ext.Array.forEach(this.cmfg('widgetConfigurationGet', CMDBuild.core.proxy.CMProxyConstants.MODEL), function(attribute, i, allAttributes) {
+				Ext.Array.forEach(this.cmfg('widgetCustomFormConfigurationGet', CMDBuild.core.proxy.CMProxyConstants.MODEL), function(attribute, i, allAttributes) {
 					if (fieldManager.isAttributeManaged(attribute.get(CMDBuild.core.proxy.CMProxyConstants.TYPE))) {
 						fieldManager.attributeModelSet(Ext.create('CMDBuild.model.common.attributes.Attribute', attribute.getData()));
 						fieldManager.push(storeFields, fieldManager.buildStoreField());
@@ -276,18 +300,6 @@
 		},
 
 		/**
-		 * @param {Object} parameters
-		 * @param {String} parameters.append
-		 * @param {Array} parameters.rowsObjects
-		 */
-		importData: function(parameters) {
-			var append = Ext.isBoolean(parameters.append) ? parameters.append : false;
-			var rowsObjects = Ext.isArray(parameters.rowsObjects) ? parameters.rowsObjects : [];
-
-			this.view.getStore().loadData(rowsObjects, append);
-		},
-
-		/**
 		 * Check required field value of grid store records
 		 *
 		 * @returns {Boolean}
@@ -298,12 +310,12 @@
 
 			// If widget is flagged as required must return at least 1 row
 			returnValue = !(
-				this.cmfg('widgetConfigurationGet', CMDBuild.core.proxy.CMProxyConstants.REQUIRED)
+				this.cmfg('widgetCustomFormConfigurationGet', CMDBuild.core.proxy.CMProxyConstants.REQUIRED)
 				&& this.view.getStore().getCount() == 0
 			);
 
 			// Build required attributes names array
-			Ext.Array.forEach(this.cmfg('widgetConfigurationGet', CMDBuild.core.proxy.CMProxyConstants.MODEL), function(attributeModel, i, allAttributeModels) {
+			Ext.Array.forEach(this.cmfg('widgetCustomFormConfigurationGet', CMDBuild.core.proxy.CMProxyConstants.MODEL), function(attributeModel, i, allAttributeModels) {
 				if (attributeModel.get(CMDBuild.core.proxy.CMProxyConstants.MANDATORY))
 					requiredAttributes.push(attributeModel.get(CMDBuild.core.proxy.CMProxyConstants.NAME));
 			}, this);
@@ -325,21 +337,36 @@
 		/**
 		 * Add empty row to grid store
 		 */
-		onCustomFormLayoutGridAddRowButtonClick: function() {
+		onWidgetCustomFormLayoutGridAddRowButtonClick: function() {
 			this.view.getStore().insert(0, {});
+		},
+
+		/**
+		 * @param {Object} parameters
+		 * @param {Ext.data.Model} parameters.record
+		 * @param {Number} parameters.index
+		 */
+		onWidgetCustomFormLayoutGridCloneRowButtonClick: function(parameters) {
+			if (
+				!Ext.isEmpty(parameters) && Ext.isObject(parameters)
+				&& !Ext.isEmpty(parameters.index) && Ext.isNumber(parameters.index)
+				&& !Ext.isEmpty(parameters.record) && Ext.isFunction(parameters.record.getData)
+			) {
+				this.view.getStore().insert(parameters.index, parameters.record.getData());
+			}
 		},
 
 		/**
 		 * @param {Number} rowIndex
 		 */
-		onCustomFormLayoutGridDeleteRowButtonClick: function(rowIndex) {
+		onWidgetCustomFormLayoutGridDeleteRowButtonClick: function(rowIndex) {
 			this.view.getStore().removeAt(rowIndex);
 		},
 
 		/**
 		 * @param {Ext.data.Model} record
 		 */
-		onCustomFormLayoutGridEditRowButtonClick: function(record) {
+		onWidgetCustomFormLayoutGridEditRowButtonClick: function(record) {
 			Ext.create('CMDBuild.controller.management.common.widgets.customForm.RowEdit', {
 				parentDelegate: this,
 				record: record
@@ -349,13 +376,13 @@
 		/**
 		 * Opens import configuration pop-up window
 		 */
-		onCustomFormLayoutGridImportButtonClick: function() {
+		onWidgetCustomFormLayoutGridImportButtonClick: function() {
 			Ext.create('CMDBuild.controller.management.common.widgets.customForm.Import', { parentDelegate: this });
 		},
 
-		onCustomFormLayoutGridResetButtonClick: function() {
-			this.cmfg('widgetConfigurationSet', {
-				configurationObject: this.cmfg('widgetControllerPropertyGet', 'widgetConfiguration')[CMDBuild.core.proxy.CMProxyConstants.DATA],
+		onWidgetCustomFormLayoutGridResetButtonClick: function() {
+			this.cmfg('widgetCustomFormConfigurationSet', {
+				configurationObject: this.cmfg('widgetCustomFormControllerPropertyGet', 'widgetConfiguration')[CMDBuild.core.proxy.CMProxyConstants.DATA],
 				propertyName: CMDBuild.core.proxy.CMProxyConstants.DATA
 			});
 
@@ -365,7 +392,7 @@
 		/**
 		 * Load grid data
 		 */
-		onCustomFormLayoutGridShow: function() {
+		onWidgetCustomFormLayoutGridShow: function() {
 			if (!this.cmfg('widgetCustomFormInstancesDataStorageIsEmpty'))
 				this.setData(this.cmfg('widgetCustomFormInstancesDataStorageGet'));
 		},
@@ -380,6 +407,18 @@
 				this.view.getStore().loadData(data);
 
 			this.isValid();
+		},
+
+		/**
+		 * @param {Object} parameters
+		 * @param {String} parameters.append
+		 * @param {Array} parameters.rowsObjects
+		 */
+		widgetCustomFormLayoutGridImportData: function(parameters) {
+			var append = Ext.isBoolean(parameters.append) ? parameters.append : false;
+			var rowsObjects = Ext.isArray(parameters.rowsObjects) ? parameters.rowsObjects : [];
+
+			this.view.getStore().loadData(rowsObjects, append);
 		}
 	});
 
