@@ -81,15 +81,6 @@
 			readForCurrentUser: 'services/json/custompages/readforcurrentuser'
 		},
 
-		dashboard: {
-			create: '',
-			read: '',
-			update: '',
-			remove: '',
-
-			readAll: 'services/json/dashboard/fulllist'
-		},
-
 		dataView: {
 			filter: {
 				create: 'services/json/viewmanagement/createfilterview',
