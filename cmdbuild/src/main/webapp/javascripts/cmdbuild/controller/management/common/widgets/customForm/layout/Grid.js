@@ -110,7 +110,7 @@
 								])
 								|| this.cmfg('widgetCustomFormConfigurationGet', [
 									CMDBuild.core.proxy.CMProxyConstants.CAPABILITIES,
-									CMDBuild.core.proxy.CMProxyConstants.CLONE_ROW_DISABLED
+									CMDBuild.core.proxy.CMProxyConstants.CLONE_DISABLED
 								])
 							);
 						},
