@@ -60,6 +60,8 @@
 		},
 
 		/**
+		 * Classes, processes and dashboards
+		 *
 		 * @returns {Ext.data.Store or CMDBuild.core.cache.Store}
 		 */
 		getStoreTargetClass: function() {
@@ -86,7 +88,38 @@
 				],
 				sorters: [
 					{ property: CMDBuild.core.constants.Proxy.TEXT, direction: 'ASC' }
-				]
+				],
+
+				// Add dashboards to store before load of all classes
+				listeners: {
+					load: function(store, records, successful, eOpts) {
+						if (successful) {
+							CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.DASHBOARD, {
+								url: CMDBuild.core.proxy.Index.dashboard.fullList,
+								scope: this,
+								success: function(response, options, decodedResponse) {
+									decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.RESPONSE][CMDBuild.core.constants.Proxy.DASHBOARDS];
+
+									// Adapt data to store model
+									var adaptedDashboardsObjects = [];
+
+									Ext.Object.each(decodedResponse, function(id, dashboardObject, myself) {
+										if (!Ext.Object.isEmpty(dashboardObject) && Ext.isObject(dashboardObject)) {
+											var adaptedDashboardObject = {};
+											adaptedDashboardObject[CMDBuild.core.constants.Proxy.ID] = id;
+											adaptedDashboardObject[CMDBuild.core.constants.Proxy.NAME] = dashboardObject[CMDBuild.core.constants.Proxy.NAME];
+											adaptedDashboardObject[CMDBuild.core.constants.Proxy.TEXT] = dashboardObject[CMDBuild.core.constants.Proxy.DESCRIPTION];
+
+											adaptedDashboardsObjects.push(adaptedDashboardObject);
+										}
+									}, this);
+
+									this.loadData(adaptedDashboardsObjects, true);
+								}
+							});
+						}
+					}
+				}
 			});
 		},
 
