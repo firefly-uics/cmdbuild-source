@@ -1368,7 +1368,7 @@
 	"importFromCSV": "Увоз из CSV",
 	"includeRelations": "<em>Include relations</em>",
 	"includeSystemActivities": "<em>Include system activities</em>",
-	"includeSystemFilters": "<em>Include system filters</em>",
+	"includeUsersFilters": "<em>Include users filters</em>",
 	"incoming": "Долазне",
 	"incomingFolder": "Долазни фолдер",
 	"initialLatitude": "Почетна географска ширина",

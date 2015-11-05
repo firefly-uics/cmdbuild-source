@@ -1368,7 +1368,7 @@
 	"importFromCSV": "Importa da CSV",
 	"includeRelations": "Includi relazioni",
 	"includeSystemActivities": "Includi attività di sistema",
-	"includeSystemFilters": "Includi filtri di sistema",
+	"includeUsersFilters": "<em>Include users filters</em>",
 	"incoming": "In arrivo",
 	"incomingFolder": "Cartella in arrivo",
 	"initialLatitude": "Latitudine iniziale",
