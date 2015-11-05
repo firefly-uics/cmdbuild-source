@@ -32,6 +32,7 @@ public class CustomForm extends Widget {
 		private boolean deleteDisabled;
 		private boolean importCsvDisabled;
 		private boolean modifyDisabled;
+		private boolean cloneDisabled;
 
 		public boolean isReadOnly() {
 			return readOnly;
@@ -71,6 +72,14 @@ public class CustomForm extends Widget {
 
 		public void setModifyDisabled(final boolean modifyDisabled) {
 			this.modifyDisabled = modifyDisabled;
+		}
+
+		public boolean isCloneDisabled() {
+			return cloneDisabled;
+		}
+
+		public void setCloneDisabled(final boolean cloneDisabled) {
+			this.cloneDisabled = cloneDisabled;
 		}
 
 		@Override

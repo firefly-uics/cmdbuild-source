@@ -5,6 +5,7 @@ import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.ADD_D
 import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.ATTRIBUTES_SEPARATOR;
 import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.CLASS_ATTRIBUTES;
 import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.CLASS_MODEL;
+import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.CLONE_DISABLED;
 import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.DATA_TYPE;
 import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.DEFAULT_ATTRIBUTES_SEPARATOR;
 import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.DEFAULT_KEY_VALUE_SEPARATOR;
@@ -449,6 +450,7 @@ public class CustomFormWidgetFactoryTest {
 		assertThat(capabilities.isDeleteDisabled(), equalTo(false));
 		assertThat(capabilities.isImportDisabled(), equalTo(false));
 		assertThat(capabilities.isModifyDisabled(), equalTo(false));
+		assertThat(capabilities.isCloneDisabled(), equalTo(false));
 		verifyNoMoreInteractions(templateRespository, notifier, dataView, metadataStoreFactory);
 	}
 
@@ -489,6 +491,7 @@ public class CustomFormWidgetFactoryTest {
 				+ DELETE_DISABLED + "=true\n" //
 				+ IMPORT_DISABLED + "=true\n" //
 				+ MODIFY_DISABLED + "=true\n" //
+				+ CLONE_DISABLED + "=true\n" //
 		;
 
 		// when
@@ -501,6 +504,7 @@ public class CustomFormWidgetFactoryTest {
 		assertThat(capabilities.isDeleteDisabled(), equalTo(false));
 		assertThat(capabilities.isImportDisabled(), equalTo(false));
 		assertThat(capabilities.isModifyDisabled(), equalTo(false));
+		assertThat(capabilities.isCloneDisabled(), equalTo(false));
 		verifyNoMoreInteractions(templateRespository, notifier, dataView, metadataStoreFactory);
 	}
 
@@ -515,6 +519,7 @@ public class CustomFormWidgetFactoryTest {
 				+ DELETE_DISABLED + "=\"true\"\n" //
 				+ IMPORT_DISABLED + "=\"true\"\n" //
 				+ MODIFY_DISABLED + "=\"true\"\n" //
+				+ CLONE_DISABLED + "=\"true\"\n" //
 		;
 
 		// when
@@ -527,6 +532,7 @@ public class CustomFormWidgetFactoryTest {
 		assertThat(capabilities.isDeleteDisabled(), equalTo(true));
 		assertThat(capabilities.isImportDisabled(), equalTo(true));
 		assertThat(capabilities.isModifyDisabled(), equalTo(true));
+		assertThat(capabilities.isCloneDisabled(), equalTo(true));
 		verifyNoMoreInteractions(templateRespository, notifier, dataView, metadataStoreFactory);
 	}
 
