@@ -1263,6 +1263,7 @@
 	"clearFilter": "Supprimer les filtres",
 	"clearRowAndColumnPrivilege": "Effacer les privilèges des lignes et des colonnes",
 	"cloneCard": "Dupliquer la fiche",
+	"cloneRow": "<em>Clone row</em>",
 	"cmdbuildCategory": "Catégories de CMDBuild",
 	"columnsPrivileges": "Droits sur les colonnes",
 	"composeEmail": "Nouveau message",

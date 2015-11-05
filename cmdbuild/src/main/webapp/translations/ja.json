@@ -1263,6 +1263,7 @@
 	"clearFilter": "フィルタークリアー",
 	"clearRowAndColumnPrivilege": "行と列の特権をクリア",
 	"cloneCard": "カードをクローン",
+	"cloneRow": "<em>Clone row</em>",
 	"cmdbuildCategory": "CMDBuild カテゴリ",
 	"columnsPrivileges": "列の権限",
 	"composeEmail": "email作成",
