@@ -71,7 +71,7 @@
 		CLASSES: 'classes',
 		CLIENT_FILTER: 'clientFilter',
 		CLONE: 'clone',
-		CLONE_ROW_DISABLED: 'cloneRowDisabled',
+		CLONE_DISABLED: 'cloneDisabled',
 		CLOUD_ADMIN: 'cloudAdmin',
 		CLUSTERING_THRESHOLD: 'clusteringThreshold',
 		CODE: 'code',
