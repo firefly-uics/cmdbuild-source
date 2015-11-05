@@ -1263,6 +1263,7 @@
 	"clearFilter": "Сбросить фильтр",
 	"clearRowAndColumnPrivilege": "Сбросить права для строк и колонок",
 	"cloneCard": "Дублировать запись",
+	"cloneRow": "<em>Clone row</em>",
 	"cmdbuildCategory": "Категория CMDBuild",
 	"columnsPrivileges": "Права доступа к колонкам",
 	"composeEmail": "Составление сообщения",
