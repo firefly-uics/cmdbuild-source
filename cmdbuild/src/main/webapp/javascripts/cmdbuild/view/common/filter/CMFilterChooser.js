@@ -148,8 +148,8 @@
 							itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_TOP,
 							items: [
 								'->',
-								this.includeSystemFiltersCheckbox = Ext.create('Ext.form.field.Checkbox', {
-									boxLabel: CMDBuild.Translation.includeSystemFilters,
+								this.includeUsersFiltersCheckbox = Ext.create('Ext.form.field.Checkbox', {
+									boxLabel: CMDBuild.Translation.includeUsersFilters,
 									boxLabelCls: 'cmtoolbaritem',
 									inputValue: true,
 									uncheckedValue: false,
@@ -182,7 +182,7 @@
 
 			// Include in store also System filters to be consistent with checkbox state
 			this.grid.getStore().on('load', function() {
-				this.evaluateSystemFiltersCheckbox(this.includeSystemFiltersCheckbox.getValue());
+				this.evaluateSystemFiltersCheckbox(this.includeUsersFiltersCheckbox.getValue());
 			}, this);
 		},
 

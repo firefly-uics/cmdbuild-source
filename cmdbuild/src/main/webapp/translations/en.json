@@ -1368,7 +1368,7 @@
 	"importFromCSV": "Import from CSV",
 	"includeRelations": "Include relations",
 	"includeSystemActivities": "Include system activities",
-	"includeSystemFilters": "Include system filters",
+	"includeUsersFilters": "Include users filters",
 	"incoming": "Incoming",
 	"incomingFolder": "Incoming folder",
 	"initialLatitude": "Initial latitude",
