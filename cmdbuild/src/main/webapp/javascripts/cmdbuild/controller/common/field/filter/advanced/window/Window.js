@@ -9,7 +9,7 @@
 		requires: [
 			'CMDBuild.core.Message',
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.filter.Groups'
+			'CMDBuild.core.proxy.filter.User'
 		],
 
 		/**
@@ -340,14 +340,14 @@
 		},
 
 		/**
-		 * Include in store also System filters to be consistent with checkbox state
+		 * Include in store also Users filters to be consistent with checkbox state
 		 */
 		onFieldFilterAdvancedWindowPresetGridStoreLoad: function() {
 			var params = {};
 			params[CMDBuild.core.constants.Proxy.CLASS_NAME] = this.cmfg('fieldFilterAdvancedSelectedClassGet', CMDBuild.core.constants.Proxy.NAME);
 
-			if (this.grid.includeSystemFiltersCheckbox.getValue())
-				CMDBuild.core.proxy.filter.Groups.readAll({
+			if (this.grid.includeUsersFiltersCheckbox.getValue())
+				CMDBuild.core.proxy.filter.User.read({
 					params: params,
 					scope: this,
 					success: function(response, options, decodedResponse) {

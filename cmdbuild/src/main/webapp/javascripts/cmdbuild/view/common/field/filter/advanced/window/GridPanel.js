@@ -13,7 +13,7 @@
 		/**
 		 * @property {Ext.form.field.Checkbox}
 		 */
-		includeSystemFiltersCheckbox: undefined,
+		includeUsersFiltersCheckbox: undefined,
 
 		border: false,
 		frame: false,
@@ -30,8 +30,8 @@
 						itemId: CMDBuild.core.constants.Proxy.TOOLBAR_TOP,
 						items: [
 							'->',
-							this.includeSystemFiltersCheckbox = Ext.create('Ext.form.field.Checkbox', {
-								boxLabel: CMDBuild.Translation.includeSystemFilters,
+							this.includeUsersFiltersCheckbox = Ext.create('Ext.form.field.Checkbox', {
+								boxLabel: CMDBuild.Translation.includeUsersFilters,
 								boxLabelCls: 'cmtoolbaritem',
 								inputValue: true,
 								uncheckedValue: false,

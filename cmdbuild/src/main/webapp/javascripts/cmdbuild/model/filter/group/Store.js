@@ -2,7 +2,7 @@
 
 	Ext.require('CMDBuild.core.constants.Proxy');
 
-	Ext.define('CMDBuild.model.filter.Groups', {
+	Ext.define('CMDBuild.model.filter.group.Store', {
 		extend: 'Ext.data.Model',
 
 		fields: [

@@ -23,15 +23,15 @@
 		/**
 		 * Setup view items and controllers on accordion click
 		 *
-		 * @param {CMDBuild.model.common.accordion.Generic} parameters
+		 * @param {CMDBuild.model.common.accordion.Generic} node
 		 *
 		 * @override
 		 */
-		onViewOnFront: function(parameters) {
-			if (!Ext.Object.isEmpty(parameters)) {
+		onViewOnFront: function(node) {
+			if (!Ext.Object.isEmpty(node)) {
 				this.view.removeAll(true);
 
-				switch(parameters.get(CMDBuild.core.constants.Proxy.SECTION_HIERARCHY)[0]) {
+				switch(node.get(CMDBuild.core.constants.Proxy.SECTION_HIERARCHY)[0]) {
 					case 'groups':
 					default: {
 						this.sectionController = Ext.create('CMDBuild.controller.administration.filter.Groups', { parentDelegate: this });
@@ -40,7 +40,7 @@
 
 				this.view.add(this.sectionController.getView());
 
-				this.setViewTitle(parameters.get(CMDBuild.core.constants.Proxy.TEXT));
+				this.setViewTitle(node.get(CMDBuild.core.constants.Proxy.TEXT));
 
 				this.callParent(arguments);
 			}

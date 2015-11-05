@@ -35,21 +35,6 @@
 		},
 
 		initComponent: function() {
-			var classesCombobox = Ext.create('Ext.form.field.ComboBox', {
-				name: CMDBuild.core.constants.Proxy.ENTRY_TYPE,
-				fieldLabel: CMDBuild.Translation.targetClass,
-				labelWidth: CMDBuild.LABEL_WIDTH,
-				maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
-				valueField: CMDBuild.core.constants.Proxy.NAME,
-				displayField: CMDBuild.core.constants.Proxy.DESCRIPTION,
-				forceSelection: true,
-				editable: false,
-				allowBlank: false,
-
-				store: _CMCache.getClassesAndProcessesAndDahboardsStore(),
-				queryMode: 'local'
-			});
-
 			Ext.apply(this, {
 				dockedItems: [
 					Ext.create('Ext.toolbar.Toolbar', {
@@ -128,13 +113,26 @@
 							field: CMDBuild.core.constants.Proxy.DESCRIPTION
 						}
 					}),
-					classesCombobox,
+					this.targetClassCombobox = Ext.create('Ext.form.field.ComboBox', {
+						name: CMDBuild.core.constants.Proxy.ENTRY_TYPE,
+						fieldLabel: CMDBuild.Translation.targetClass,
+						labelWidth: CMDBuild.LABEL_WIDTH,
+						maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
+						valueField: CMDBuild.core.constants.Proxy.NAME,
+						displayField: CMDBuild.core.constants.Proxy.TEXT, // TODO: waiting for refactor (rename description)
+						forceSelection: true,
+						editable: false,
+						allowBlank: false,
+
+						store: CMDBuild.core.proxy.filter.Group.getStoreTargetClass(),
+						queryMode: 'local'
+					}),
 					this.advancedFilterField = Ext.create('CMDBuild.view.common.field.filter.advanced.Advanced', {
 						name: CMDBuild.core.constants.Proxy.CONFIGURATION,
 						fieldLabel: CMDBuild.Translation.filter,
 						labelWidth: CMDBuild.LABEL_WIDTH,
 						fieldConfiguration: {
-							targetClassField: classesCombobox,
+							targetClassField: this.targetClassCombobox,
 							enabledPanels: ['attribute', 'relation']
 						},
 					}),
