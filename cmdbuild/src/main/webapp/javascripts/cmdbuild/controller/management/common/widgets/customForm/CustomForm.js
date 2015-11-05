@@ -24,11 +24,11 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
-			'getTemplateResolverServerVars',
-			'widgetConfigurationGet',
-			'widgetConfigurationIsAttributeEmpty',
-			'widgetConfigurationSet',
-			'widgetControllerPropertyGet',
+			'getTemplateResolverServerVars = widgetCustomFormGetTemplateResolverServerVars',
+			'widgetConfigurationGet = widgetCustomFormConfigurationGet',
+			'widgetConfigurationIsAttributeEmpty = widgetCustomFormConfigurationIsAttributeEmpty',
+			'widgetConfigurationSet = widgetCustomFormConfigurationSet',
+			'widgetControllerPropertyGet = widgetCustomFormControllerPropertyGet',
 			'instancesDataStorageGet = widgetCustomFormInstancesDataStorageGet',
 			'instancesDataStorageIsEmpty = widgetCustomFormInstancesDataStorageIsEmpty',
 			'widgetCustomFormViewSetLoading'
@@ -67,7 +67,7 @@
 				new CMDBuild.Management.TemplateResolver({
 					clientForm: this.clientForm,
 					xaVars: object,
-					serverVars: this.getTemplateResolverServerVars()
+					serverVars: this.cmfg('widgetCustomFormGetTemplateResolverServerVars')
 				}).resolveTemplates({
 					attributes: Ext.Object.getKeys(object),
 					scope: this,
@@ -94,7 +94,7 @@
 				var templateResolver = new CMDBuild.Management.TemplateResolver({
 					clientForm: this.clientForm,
 					xaVars: target,
-					serverVars: this.getTemplateResolverServerVars()
+					serverVars: this.cmfg('widgetCustomFormGetTemplateResolverServerVars')
 				});
 
 				templateResolver.resolveTemplates({
@@ -120,19 +120,19 @@
 			this.callParent(arguments);
 
 			// Execute template resolver on model property
-			if (!Ext.isEmpty(this.widgetConfigurationGet(CMDBuild.core.proxy.CMProxyConstants.MODEL)))
-				this.widgetConfigurationSet({
+			if (!Ext.isEmpty(this.cmfg('widgetCustomFormConfigurationGet', CMDBuild.core.proxy.CMProxyConstants.MODEL)))
+				this.cmfg('widgetCustomFormConfigurationSet', {
 					configurationObject: this.applyTemplateResolverToArray(this.widgetConfiguration[CMDBuild.core.proxy.CMProxyConstants.MODEL]),
 					propertyName: CMDBuild.core.proxy.CMProxyConstants.MODEL
 				});
 
 			// Execute template resolver on variables property
 			if (
-				Ext.isEmpty(this.widgetConfigurationGet(CMDBuild.core.proxy.CMProxyConstants.DATA))
+				Ext.isEmpty(this.cmfg('widgetCustomFormConfigurationGet', CMDBuild.core.proxy.CMProxyConstants.DATA))
 				&& this.cmfg('widgetCustomFormInstancesDataStorageIsEmpty')
-				&& !Ext.isEmpty(this.widgetConfigurationGet(CMDBuild.core.proxy.CMProxyConstants.FUNCTION_DATA))
+				&& !Ext.isEmpty(this.cmfg('widgetCustomFormConfigurationGet', CMDBuild.core.proxy.CMProxyConstants.FUNCTION_DATA))
 			) {
-				this.widgetConfigurationSet({
+				this.cmfg('widgetCustomFormConfigurationSet', {
 					configurationObject: this.applyTemplateResolverToObject(this.widgetConfiguration[CMDBuild.core.proxy.CMProxyConstants.VARIABLES]),
 					propertyName: CMDBuild.core.proxy.CMProxyConstants.VARIABLES
 				});
@@ -160,8 +160,8 @@
 			callback = Ext.isFunction(callback) ? callback : Ext.emptyFn;
 
 			var params = {};
-			params[CMDBuild.core.proxy.CMProxyConstants.FUNCTION] = this.widgetConfigurationGet(CMDBuild.core.proxy.CMProxyConstants.FUNCTION_DATA);
-			params[CMDBuild.core.proxy.CMProxyConstants.PARAMS] = Ext.encode(this.widgetConfigurationGet(CMDBuild.core.proxy.CMProxyConstants.VARIABLES));
+			params[CMDBuild.core.proxy.CMProxyConstants.FUNCTION] = this.cmfg('widgetCustomFormConfigurationGet', CMDBuild.core.proxy.CMProxyConstants.FUNCTION_DATA);
+			params[CMDBuild.core.proxy.CMProxyConstants.PARAMS] = Ext.encode(this.cmfg('widgetCustomFormConfigurationGet', CMDBuild.core.proxy.CMProxyConstants.VARIABLES));
 
 			CMDBuild.core.proxy.widgets.CustomForm.readFromFunctions({
 				params: params,
@@ -185,8 +185,8 @@
 		 * Builds layout controller and inject view
 		 */
 		buildLayout: function() {
-			if (!this.widgetConfigurationIsAttributeEmpty(CMDBuild.core.proxy.CMProxyConstants.MODEL)) {
-				switch (this.widgetConfigurationGet(CMDBuild.core.proxy.CMProxyConstants.LAYOUT)) {
+			if (!this.cmfg('widgetCustomFormConfigurationIsAttributeEmpty', CMDBuild.core.proxy.CMProxyConstants.MODEL)) {
+				switch (this.cmfg('widgetCustomFormConfigurationGet', CMDBuild.core.proxy.CMProxyConstants.LAYOUT)) {
 					case 'form': {
 						this.controllerLayout = Ext.create('CMDBuild.controller.management.common.widgets.customForm.layout.Form', { parentDelegate: this });
 					} break;
@@ -203,7 +203,7 @@
 					this.view.add(this.controllerLayout.getView());
 				}
 
-				this.controllerLayout.cmfg('onCustomFormShow');
+				this.controllerLayout.cmfg('onWidgetCustomFormShow');
 			}
 		},
 
@@ -216,7 +216,12 @@
 			var output = {};
 			output[CMDBuild.core.proxy.CMProxyConstants.OUTPUT] = [];
 
-			if (!this.widgetConfigurationGet([CMDBuild.core.proxy.CMProxyConstants.CAPABILITIES, CMDBuild.core.proxy.CMProxyConstants.READ_ONLY])) {
+			if (
+				!this.cmfg('widgetCustomFormConfigurationGet', [
+					CMDBuild.core.proxy.CMProxyConstants.CAPABILITIES,
+					CMDBuild.core.proxy.CMProxyConstants.READ_ONLY
+				])
+			) {
 				// Uses direct data property access to avoid a get problem because of generic model
 				Ext.Array.forEach(this.controllerLayout.getData(), function(rowObject, i, allRowObjects) {
 					var dataObject = Ext.isEmpty(rowObject.data) ? rowObject : rowObject.data; // Model/Objects management
@@ -224,7 +229,7 @@
 					new CMDBuild.Management.TemplateResolver({
 						clientForm: this.clientForm,
 						xaVars: dataObject,
-						serverVars: this.getTemplateResolverServerVars()
+						serverVars: this.cmfg('widgetCustomFormGetTemplateResolverServerVars')
 					}).resolveTemplates({
 						attributes: Ext.Object.getKeys(dataObject),
 						callback: function(out, ctx) {
@@ -257,7 +262,7 @@
 		 * @override
 		 */
 		onEditMode: function() {
-			this.instancesDataStorageSet(this.widgetConfigurationGet(CMDBuild.core.proxy.CMProxyConstants.DATA));
+			this.instancesDataStorageSet(this.cmfg('widgetCustomFormConfigurationGet', CMDBuild.core.proxy.CMProxyConstants.DATA));
 		},
 
 		// WidgetConfiguration methods

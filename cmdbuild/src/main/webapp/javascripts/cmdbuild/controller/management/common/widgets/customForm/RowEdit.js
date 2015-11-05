@@ -17,8 +17,8 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
-			'onRowEditWindowAbortButtonClick',
-			'onRowEditWindowSaveButtonClick'
+			'onWidgetCustomFormRowEditWindowAbortButtonClick',
+			'onWidgetCustomFormRowEditWindowSaveButtonClick'
 		],
 
 		/**
@@ -68,10 +68,10 @@
 		buildFields: function() {
 			var itemsArray = [];
 
-			if (!this.cmfg('widgetConfigurationIsAttributeEmpty',  CMDBuild.core.proxy.CMProxyConstants.MODEL)) {
+			if (!this.cmfg('widgetCustomFormConfigurationIsAttributeEmpty',  CMDBuild.core.proxy.CMProxyConstants.MODEL)) {
 				var fieldManager = Ext.create('CMDBuild.core.fieldManager.FieldManager', { parentDelegate: this });
 
-				Ext.Array.forEach(this.cmfg('widgetConfigurationGet', CMDBuild.core.proxy.CMProxyConstants.MODEL), function(attribute, i, allAttributes) {
+				Ext.Array.forEach(this.cmfg('widgetCustomFormConfigurationGet', CMDBuild.core.proxy.CMProxyConstants.MODEL), function(attribute, i, allAttributes) {
 					if (fieldManager.isAttributeManaged(attribute.get(CMDBuild.core.proxy.CMProxyConstants.TYPE))) {
 						fieldManager.attributeModelSet(Ext.create('CMDBuild.model.common.attributes.Attribute', attribute.getData()));
 						fieldManager.push(itemsArray, fieldManager.buildField());
@@ -84,9 +84,9 @@
 							xaVars['_SystemFieldFilter'] = attribute.filter;
 
 							var templateResolver = new CMDBuild.Management.TemplateResolver({ // TODO: implementation of serverside template resolver
-								clientForm: this.cmfg('widgetControllerPropertyGet', 'getClientForm'),
+								clientForm: this.cmfg('widgetCustomFormControllerPropertyGet', 'getClientForm'),
 								xaVars: xaVars,
-								serverVars: this.cmfg('getTemplateResolverServerVars')
+								serverVars: this.cmfg('widgetCustomFormGetTemplateResolverServerVars')
 							});
 
 							item = CMDBuild.Management.ReferenceField.buildEditor(attribute, templateResolver);
@@ -139,21 +139,21 @@
 			}, this);
 		},
 
-		onRowEditWindowAbortButtonClick: function() {
+		onWidgetCustomFormRowEditWindowAbortButtonClick: function() {
 			this.view.destroy();
 		},
 
 		/**
 		 * Saves data to widget's grid
 		 */
-		onRowEditWindowSaveButtonClick: function() {
+		onWidgetCustomFormRowEditWindowSaveButtonClick: function() {
 			Ext.Object.each(this.form.getValues(), function(key, value, myself) {
 				this.record.set(key, value);
 			}, this);
 
 			this.record.commit();
 
-			this.onRowEditWindowAbortButtonClick();
+			this.onWidgetCustomFormRowEditWindowAbortButtonClick();
 		}
 	});
 

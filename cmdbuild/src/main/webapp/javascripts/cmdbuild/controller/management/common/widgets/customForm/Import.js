@@ -19,8 +19,8 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
-			'onCustomFormImportAbortButtonClick',
-			'onCustomFormImportUploadButtonClick'
+			'onWidgetCustomFormImportAbortButtonClick',
+			'onWidgetCustomFormImportUploadButtonClick'
 		],
 
 		/**
@@ -58,14 +58,14 @@
 				this.view.show();
 		},
 
-		onCustomFormImportAbortButtonClick: function() {
+		onWidgetCustomFormImportAbortButtonClick: function() {
 			this.view.destroy();
 		},
 
 		/**
 		 * Uses importCSV calls to store and get CSV data from server and check if CSV has right fields
 		 */
-		onCustomFormImportUploadButtonClick: function() {
+		onWidgetCustomFormImportUploadButtonClick: function() {
 			if (this.validate(this.form)) {
 				CMDBuild.LoadMask.get().show();
 				CMDBuild.core.proxy.Csv.decode({
@@ -102,22 +102,22 @@
 		 * @param {Array} data
 		 */
 		dataManageAndForward: function(data) {
-			if (!this.cmfg('widgetConfigurationIsAttributeEmpty',  CMDBuild.core.proxy.CMProxyConstants.MODEL)) {
+			if (!this.cmfg('widgetCustomFormConfigurationIsAttributeEmpty',  CMDBuild.core.proxy.CMProxyConstants.MODEL)) {
 				var barrierId = 'dataManageBarrier';
 
 				CMDBuild.core.RequestBarrier.init(barrierId, function() {
 					// Forwards to parent delegate
-					this.cmfg('importData', {
+					this.cmfg('widgetCustomFormImportData', {
 						append: this.form.importModeCombo.getValue() == 'add',
 						rowsObjects: data
 					});
 
-					this.onCustomFormImportAbortButtonClick();
+					this.onWidgetCustomFormImportAbortButtonClick();
 
 					CMDBuild.LoadMask.get().hide();
 				}, this);
 
-				Ext.Array.forEach(this.cmfg('widgetConfigurationGet', CMDBuild.core.proxy.CMProxyConstants.MODEL), function(attribute, i, allAttributes) {
+				Ext.Array.forEach(this.cmfg('widgetCustomFormConfigurationGet', CMDBuild.core.proxy.CMProxyConstants.MODEL), function(attribute, i, allAttributes) {
 					switch (attribute.get(CMDBuild.core.proxy.CMProxyConstants.TYPE)) {
 						case 'lookup': {
 							this.dataManageLookup(data, attribute, barrierId);

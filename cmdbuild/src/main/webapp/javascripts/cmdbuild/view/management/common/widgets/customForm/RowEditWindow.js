@@ -39,14 +39,14 @@
 								scope: this,
 
 								handler: function(button, e) {
-									this.delegate.cmfg('onRowEditWindowSaveButtonClick');
+									this.delegate.cmfg('onWidgetCustomFormRowEditWindowSaveButtonClick');
 								}
 							}),
 							Ext.create('CMDBuild.core.buttons.Abort', {
 								scope: this,
 
 								handler: function(button, e) {
-									this.delegate.cmfg('onRowEditWindowAbortButtonClick');
+									this.delegate.cmfg('onWidgetCustomFormRowEditWindowAbortButtonClick');
 								}
 							})
 						]

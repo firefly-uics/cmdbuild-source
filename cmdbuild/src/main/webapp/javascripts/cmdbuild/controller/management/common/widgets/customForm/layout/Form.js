@@ -9,10 +9,10 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
-			'importData',
-			'onCustomFormLayoutFormImportButtonClick',
-			'onCustomFormLayoutFormResetButtonClick',
-			'onCustomFormLayoutFormShow = onCustomFormShow'
+			'onWidgetCustomFormLayoutFormImportButtonClick',
+			'onWidgetCustomFormLayoutFormResetButtonClick',
+			'onWidgetCustomFormLayoutFormShow = onWidgetCustomFormShow',
+			'widgetCustomFormLayoutFormImportData = widgetCustomFormImportData'
 		],
 
 		/**
@@ -47,10 +47,10 @@
 		buildFields: function() {
 			var itemsArray = [];
 
-			if (!this.cmfg('widgetConfigurationIsAttributeEmpty',  CMDBuild.core.proxy.CMProxyConstants.MODEL)) {
+			if (!this.cmfg('widgetCustomFormConfigurationIsAttributeEmpty',  CMDBuild.core.proxy.CMProxyConstants.MODEL)) {
 				var fieldManager = Ext.create('CMDBuild.core.fieldManager.FieldManager', { parentDelegate: this });
 
-				Ext.Array.forEach(this.cmfg('widgetConfigurationGet', CMDBuild.core.proxy.CMProxyConstants.MODEL), function(attribute, i, allAttributes) {
+				Ext.Array.forEach(this.cmfg('widgetCustomFormConfigurationGet', CMDBuild.core.proxy.CMProxyConstants.MODEL), function(attribute, i, allAttributes) {
 					if (fieldManager.isAttributeManaged(attribute.get(CMDBuild.core.proxy.CMProxyConstants.TYPE))) {
 						fieldManager.attributeModelSet(Ext.create('CMDBuild.model.common.attributes.Attribute', attribute.getData()));
 						fieldManager.push(itemsArray, fieldManager.buildField());
@@ -63,9 +63,9 @@
 							xaVars['_SystemFieldFilter'] = attribute.filter;
 
 							var templateResolver = new CMDBuild.Management.TemplateResolver({ // TODO: implementation of serverside template resolver
-								clientForm: this.cmfg('widgetControllerPropertyGet', 'getClientForm'),
+								clientForm: this.cmfg('widgetCustomFormControllerPropertyGet', 'getClientForm'),
 								xaVars: xaVars,
-								serverVars: this.cmfg('getTemplateResolverServerVars')
+								serverVars: this.cmfg('widgetCustomFormGetTemplateResolverServerVars')
 							});
 
 							// Required label fix
@@ -106,17 +106,6 @@
 		},
 
 		/**
-		 * @param {Object} parameters
-		 * @param {String} parameters.append
-		 * @param {Array} parameters.rowsObjects
-		 */
-		importData: function(parameters) {
-			var rowsObjects = Ext.isArray(parameters.rowsObjects) ? parameters.rowsObjects : [];
-
-			this.setData(rowsObjects);
-		},
-
-		/**
 		 * Validate form
 		 *
 		 * @param {Boolean} showPopup
@@ -130,35 +119,35 @@
 		/**
 		 * Opens import configuration pop-up window
 		 */
-		onCustomFormLayoutFormImportButtonClick: function() {
+		onWidgetCustomFormLayoutFormImportButtonClick: function() {
 			Ext.create('CMDBuild.controller.management.common.widgets.customForm.Import', {
 				parentDelegate: this,
 				modeDisabled: true
 			});
 		},
 
-		onCustomFormLayoutFormResetButtonClick: function() {
-			this.cmfg('widgetConfigurationSet', {
-				configurationObject: this.cmfg('widgetControllerPropertyGet', 'widgetConfiguration')[CMDBuild.core.proxy.CMProxyConstants.DATA],
+		onWidgetCustomFormLayoutFormResetButtonClick: function() {
+			this.cmfg('widgetCustomFormConfigurationSet', {
+				configurationObject: this.cmfg('widgetCustomFormControllerPropertyGet', 'widgetConfiguration')[CMDBuild.core.proxy.CMProxyConstants.DATA],
 				propertyName: CMDBuild.core.proxy.CMProxyConstants.DATA
 			});
 
-			this.setData(this.cmfg('widgetConfigurationGet', CMDBuild.core.proxy.CMProxyConstants.DATA));
+			this.setData(this.cmfg('widgetCustomFormConfigurationGet', CMDBuild.core.proxy.CMProxyConstants.DATA));
 		},
 
 		/**
 		 * Setup form items disabled state, disable topToolBar only if is readOnly
 		 * Load grid data
 		 */
-		onCustomFormLayoutFormShow: function() {
-			var isWidgetReadOnly = this.cmfg('widgetConfigurationGet', [
+		onWidgetCustomFormLayoutFormShow: function() {
+			var isWidgetReadOnly = this.cmfg('widgetCustomFormConfigurationGet', [
 				CMDBuild.core.proxy.CMProxyConstants.CAPABILITIES,
 				CMDBuild.core.proxy.CMProxyConstants.READ_ONLY
 			]);
 
 			if (
 				isWidgetReadOnly
- 				|| this.cmfg('widgetConfigurationGet', [
+ 				|| this.cmfg('widgetCustomFormConfigurationGet', [
 					CMDBuild.core.proxy.CMProxyConstants.CAPABILITIES,
 					CMDBuild.core.proxy.CMProxyConstants.MODIFY_DISABLED
 				])
@@ -190,6 +179,17 @@
 			}
 
 			this.isValid(false);
+		},
+
+		/**
+		 * @param {Object} parameters
+		 * @param {String} parameters.append
+		 * @param {Array} parameters.rowsObjects
+		 */
+		widgetCustomFormLayoutFormImportData: function(parameters) {
+			var rowsObjects = Ext.isArray(parameters.rowsObjects) ? parameters.rowsObjects : [];
+
+			this.setData(rowsObjects);
 		}
 	});
 
