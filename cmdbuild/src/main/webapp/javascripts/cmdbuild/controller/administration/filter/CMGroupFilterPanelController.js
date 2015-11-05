@@ -53,6 +53,7 @@
 		// override
 		onGridAndFormPanelSaveButtonClick: function(form) {
 			var values = this.fieldManager.getValues();
+			var me = this;
 
 			if (!values.filter) {
 				CMDBuild.Msg.error(
@@ -79,19 +80,23 @@
 
 			_CMProxy.Filter[action](filterToSend, {
 				scope: this,
-				callback: function() {
+				callback: function(options, success, response) {
+					var decodedResponse = Ext.decode(response.responseText);
+					var filterId = !Ext.isEmpty(this.record) ? this.record.get(CMDBuild.core.proxy.CMProxyConstants.ID) : decodedResponse.filter[CMDBuild.core.proxy.CMProxyConstants.ID];
+
 					_CMCache.flushTranslationsToSave(values['name']);
 
 					var params = {};
-					params[CMDBuild.core.proxy.CMProxyConstants.FILTERS] = Ext.encode([this.record.getId()]);
+					params[CMDBuild.core.proxy.CMProxyConstants.FILTERS] = Ext.encode([filterId]);
 					params[CMDBuild.core.proxy.CMProxyConstants.GROUPS] = Ext.encode(values[CMDBuild.core.proxy.CMProxyConstants.DEFAULT_FOR_GROUPS]);
 
 					_CMProxy.Filter.setDefaults({ params: params });
 
 					this.gridConfigurator.getStore().load({
-						scope: this,
 						callback: function() {
-							this.selectFirstRow();
+							var rowIndex = this.find(CMDBuild.core.proxy.CMProxyConstants.ID, filterId);
+
+							me.view.grid.getSelectionModel().select(rowIndex, true);
 						}
 					});
 
