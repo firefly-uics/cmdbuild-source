@@ -271,8 +271,6 @@
 
 				new _CMUtils.PollingFunction({
 					success: function() {
-						me.alertIfChangeDefaultSelection = true;
-
 						// CQL filter and regular filter cannot be merged now.
 						// The filter button should be enabled only if no other filter is present.
 						if (cqlQuery) {
