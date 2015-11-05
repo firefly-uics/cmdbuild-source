@@ -16,7 +16,7 @@
 			} else {
 				// Verify if session with cookie token exists
 				var params = {};
-				params[CMDBuild.core.constants.Proxy.USERNAME] = CMDBuild.Runtime.Username;
+				params[CMDBuild.core.constants.Proxy.USERNAME] = CMDBuild.configuration.runtime.get(CMDBuild.core.constants.Proxy.USERNAME);
 
 				var urlParams = {};
 				urlParams[CMDBuild.core.constants.Proxy.TOKEN] = Ext.util.Cookies.get(CMDBuild.core.constants.Proxy.REST_SESSION_TOKEN);
@@ -39,7 +39,7 @@
 		 */
 		fakeCallToGetAuthorizationToken: function(urlParams, authorizationKey) {
 			var params = {};
-			params[CMDBuild.core.constants.Proxy.USERNAME] = CMDBuild.Runtime.Username;
+			params[CMDBuild.core.constants.Proxy.USERNAME] = CMDBuild.configuration.runtime.get(CMDBuild.core.constants.Proxy.USERNAME);
 
 			CMDBuild.core.proxy.Utils.generateId({
 				scope: this,

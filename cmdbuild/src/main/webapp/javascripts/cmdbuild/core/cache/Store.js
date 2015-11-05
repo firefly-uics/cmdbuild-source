@@ -22,6 +22,12 @@
 		 * @param {Function or Object} options
 		 */
 		load: function(options) {
+			options = Ext.isEmpty(options) ? {
+				callback: Ext.emptyFn,
+				params: {},
+				scope: this
+			} : options;
+
 			if (
 				Ext.Array.contains(CMDBuild.core.cache.Cache.managedCacheGroupsArray, this.cacheGroupIdentifier)
 				&& CMDBuild.core.cache.Cache.enabled

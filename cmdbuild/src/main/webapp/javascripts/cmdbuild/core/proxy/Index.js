@@ -163,17 +163,27 @@
 		fkTargetClass: 'services/json/schema/modclass/getfktargetingclass',
 
 		filter: {
-			create: 'services/json/filter/create',
-			read: 'services/json/filter/read',
-			remove: 'services/json/filter/delete',
-			update: 'services/json/filter/update',
+			group: {
+				create: 'services/json/filter/create',
+				read: 'services/json/filter/readallgroupfilters', // TODO: waiting for refactor (CRUD)
+				remove: 'services/json/filter/delete',
+				update: 'services/json/filter/update',
 
-			groupStore: 'services/json/filter/readallgroupfilters',
-			userStore: 'services/json/filter/readforuser',
+				readAll: 'services/json/filter/readallgroupfilters',
 
-			defaultForGroups: {
-				read: 'services/json/filter/getgroups',
-				update: 'services/json/filter/setdefault'
+				defaults: {
+					read: 'services/json/filter/getgroups',
+					update: 'services/json/filter/setdefault'
+				}
+			},
+
+			user: {
+				create: '',
+				read: 'services/json/filter/read',
+				remove: '',
+				update: '',
+
+				readAll: 'services/json/filter/readforuser'
 			}
 		},
 
