@@ -55,13 +55,6 @@
 			}
 		},
 
-		csv: {
-			clearSession: 'services/json/management/importcsv/clearsession',
-			getCsvRecords: 'services/json/management/importcsv/getcsvrecords',
-			readCsv: 'services/json/management/importcsv/readcsv',
-			uploadCsv: 'services/json/management/importcsv/uploadcsv'
-		},
-
 		configuration: {
 			create: '',
 			read: 'services/json/schema/setup/getconfiguration',
@@ -69,6 +62,13 @@
 			remove: '',
 
 			readAll: 'services/json/schema/setup/getconfigurations'
+		},
+
+		csv: {
+			clearSession: 'services/json/management/importcsv/clearsession',
+			getCsvRecords: 'services/json/management/importcsv/getcsvrecords',
+			readCsv: 'services/json/management/importcsv/readcsv',
+			uploadCsv: 'services/json/management/importcsv/uploadcsv'
 		},
 
 		customPage: {
@@ -79,6 +79,15 @@
 
 			readAll: '',
 			readForCurrentUser: 'services/json/custompages/readforcurrentuser'
+		},
+
+		dashboard: {
+			create: '',
+			read: '',
+			update: '',
+			remove: '',
+
+			readAll: 'services/json/dashboard/fulllist'
 		},
 
 		dataView: {
