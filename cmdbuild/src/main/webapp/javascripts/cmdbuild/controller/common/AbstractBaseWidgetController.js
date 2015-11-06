@@ -26,6 +26,11 @@
 		clientForm: undefined,
 
 		/**
+		 * @cfg {Boolean}
+		 */
+		enableDelegateApply: true,
+
+		/**
 		 * Multiple widget instances data storage buffer
 		 *
 		 * @property {Object}
@@ -100,7 +105,7 @@
 		 * @param {CMDBuild.controller.management.common.CMWidgetManagerController} configurationObject.parentDelegate
 		 * @param {Object} configurationObject.widgetConfiguration
 		 * @param {Ext.form.Basic} configurationObject.clientForm
-		 * @param {CMDBuild.model.CMActivityInstance} configurationObject.card
+		 * @param {CMDBuild.model.CMActivityInstance or Ext.data.Model} configurationObject.card
 		 */
 		constructor: function(configurationObject) {
 			if (!Ext.isEmpty(configurationObject) && !Ext.Object.isEmpty(configurationObject.widgetConfiguration)) {
@@ -108,7 +113,8 @@
 
 				this.widgetConfigurationSet({ configurationObject: this.widgetConfiguration }); // Setup widget configuration model
 
-				this.view.delegate = this; // Apply delegate to view
+				if (this.enableDelegateApply)
+					this.view.delegate = this; // Apply delegate to view
 			} else {
 				_error('wrong or empty widget view or configuration object', this);
 			}

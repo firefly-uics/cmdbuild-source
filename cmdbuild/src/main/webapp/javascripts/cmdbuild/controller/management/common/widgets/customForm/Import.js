@@ -41,6 +41,8 @@
 		/**
 		 * @param {Object} configurationObject
 		 * @param {Mixed} configurationObject.parentDelegate
+		 *
+		 * @override
 		 */
 		constructor: function(configurationObject) {
 			this.callParent(arguments);

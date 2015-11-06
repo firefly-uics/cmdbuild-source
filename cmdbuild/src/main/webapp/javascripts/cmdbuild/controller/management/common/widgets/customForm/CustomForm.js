@@ -11,6 +11,16 @@
 		],
 
 		/**
+		 * @cfg {CMDBuild.controller.management.common.CMWidgetManagerController}
+		 */
+		parentDelegate: undefined,
+
+		/**
+		 * @property {CMDBuild.model.CMActivityInstance or Ext.data.Model}
+		 */
+		card: undefined,
+
+		/**
 		 * @property {Ext.form.Basic}
 		 */
 		clientForm: undefined,
@@ -44,7 +54,9 @@
 		 * @param {CMDBuild.controller.management.common.CMWidgetManagerController} configurationObject.parentDelegate
 		 * @param {Object} configurationObject.widgetConfiguration
 		 * @param {Ext.form.Basic} configurationObject.clientForm
-		 * @param {CMDBuild.model.CMActivityInstance} configurationObject.card
+		 * @param {CMDBuild.model.CMActivityInstance or Ext.data.Model} configurationObject.card
+		 *
+		 * @override
 		 */
 		constructor: function(configurationObject) {
 			this.callParent(arguments);

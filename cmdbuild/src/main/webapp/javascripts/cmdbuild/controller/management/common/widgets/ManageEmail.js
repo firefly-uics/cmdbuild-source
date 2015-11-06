@@ -1,9 +1,14 @@
 (function () {
 
 	Ext.define('CMDBuild.controller.management.common.widgets.ManageEmail', {
-		extend: 'CMDBuild.controller.management.common.widgets.CMWidgetController',
+		extend: 'CMDBuild.controller.common.AbstractBaseWidgetController',
 
 		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+
+		/**
+		 * @cfg {CMDBuild.controller.management.common.CMWidgetManagerController}
+		 */
+		parentDelegate: undefined,
 
 		/**
 		 * Widget before save callback loop object
@@ -23,14 +28,25 @@
 		clientForm: undefined,
 
 		/**
-		 * @cfg {CMDBuild.controller.management.common.CMWidgetManagerController}
+		 * @cfg {Array}
 		 */
-		ownerController: undefined,
+		cmfgCatchedFunctions: [
+			'widgetConfigurationGet = widgetManageEmailConfigurationGet'
+		],
+
+		/**
+		 * Disable delegate apply to avoid to set this class as delegate of email tab
+		 *
+		 * @cfg {Boolean}
+		 *
+		 * @override
+		 */
+		enableDelegateApply: false,
 
 		/**
 		 * @property {CMDBuild.controller.management.common.tabs.email.Email}
 		 */
-		tabController: undefined,
+		tabDelegate: undefined,
 
 		/**
 		 * @property {CMDBuild.view.management.common.tabs.email.EmailView}
@@ -38,34 +54,22 @@
 		view: undefined,
 
 		/**
-		 * @cfg {Object}
-		 */
-		widgetConf: undefined,
-
-		/**
-		 * @param {CMDBuild.view.management.common.tabs.email.EmailView} view
-		 * @param {CMDBuild.controller.management.common.CMWidgetManagerController} ownerController
-		 * @param {Object} widgetConf
-		 * @param {Ext.form.Basic} clientForm
-		 * @param {CMDBuild.model.CMActivityInstance or Ext.data.Model} card
+		 * @param {CMDBuild.view.management.common.widgets.customForm.CustomFormView} configurationObject.view
+		 * @param {CMDBuild.controller.management.common.CMWidgetManagerController} configurationObject.parentDelegate
+		 * @param {Object} configurationObject.widgetConfiguration
+		 * @param {Ext.form.Basic} configurationObject.clientForm
+		 * @param {CMDBuild.model.CMActivityInstance or Ext.data.Model} configurationObject.card
 		 *
 		 * @override
 		 */
-		constructor: function(view, ownerController, widgetConf, clientForm, card) {
+		constructor: function(configurationObject) {
 			this.callParent(arguments);
 
-			this.tabController = this.view.delegate;
+			// Shorthands
+			this.tabDelegate = this.view.delegate;
 
-			this.tabController.cmfg('configurationSet', widgetConf);
-
-			// Converts configuration templates to templates model objects
-			this.configurationTemplates = []; // Reset variable
-
-			Ext.Array.forEach(widgetConf[CMDBuild.core.proxy.CMProxyConstants.TEMPLATES], function(item, index, allItems) {
-				this.configurationTemplates.push(this.configurationTemplatesToModel(item));
-			}, this);
-
-			this.tabController.cmfg('configurationTemplatesSet', this.configurationTemplates);
+			this.tabDelegate.cmfg('configurationSet', this.widgetConfiguration);
+			this.tabDelegate.cmfg('configurationTemplatesSet', this.cmfg('widgetManageEmailConfigurationGet', CMDBuild.core.proxy.CMProxyConstants.TEMPLATES));
 
 			// Build bottom toolbar
 			this.buildBottomToolbar();
@@ -75,80 +79,45 @@
 		 * Create event manager and show toolbar
 		 */
 		buildBottomToolbar: function() {
-			this.tabController.getView().on('show', this.widgetEmailShowEventManager, this);
+			this.tabDelegate.getView().on('show', this.widgetEmailShowEventManager, this);
 
 			// Border manage
-			if (!this.tabController.grid.hasCls('cmborderbottom'))
-				this.tabController.grid.addCls('cmborderbottom');
+			if (!this.tabDelegate.grid.hasCls('cmborderbottom'))
+				this.tabDelegate.grid.addCls('cmborderbottom');
 
-			this.tabController.getView().getDockedComponent(CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_BOTTOM).removeAll();
-			this.tabController.getView().getDockedComponent(CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_BOTTOM).add(
+			this.tabDelegate.getView().getDockedComponent(CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_BOTTOM).removeAll();
+			this.tabDelegate.getView().getDockedComponent(CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_BOTTOM).add(
 				Ext.create('CMDBuild.core.buttons.Back', {
 					scope: this,
 
 					handler: function(button, e) {
-						this.ownerController.activateFirstTab();
+						this.parentDelegate.activateFirstTab();
 					}
 				})
 			);
-			this.tabController.getView().getDockedComponent(CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_BOTTOM).show();
-		},
-
-		widgetEmailShowEventManager: function() {
-			var cardWidgetTypes = [];
-
-			if (Ext.isArray(this.ownerController.takeWidgetFromCard(this.card)))
-				Ext.Array.forEach(this.ownerController.takeWidgetFromCard(this.card), function(widgetObject, i, allWidgetObjects) {
-					if (!Ext.isEmpty(widgetObject))
-						cardWidgetTypes.push(widgetObject[CMDBuild.core.proxy.CMProxyConstants.TYPE]);
-				}, this);
-
-			if (Ext.Array.contains(cardWidgetTypes, this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.TYPE]))
-				this.tabController.getView().getDockedComponent(CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_BOTTOM).show();
-		},
-
-		/**
-		 * Translates some properties to fix some server side names problems
-		 *
-		 * @param {Object} template
-		 *
-		 * @return {CMDBuild.model.common.tabs.email.Template} or null
-		 */
-		configurationTemplatesToModel: function(template) {
-			if (Ext.isObject(template) && !Ext.Object.isEmpty(template)) {
-				var model = Ext.create('CMDBuild.model.common.tabs.email.Template', template);
-				model.set(CMDBuild.core.proxy.CMProxyConstants.BCC, template[CMDBuild.core.proxy.CMProxyConstants.BCC_ADDRESSES]);
-				model.set(CMDBuild.core.proxy.CMProxyConstants.BODY, template[CMDBuild.core.proxy.CMProxyConstants.CONTENT]);
-				model.set(CMDBuild.core.proxy.CMProxyConstants.CC, template[CMDBuild.core.proxy.CMProxyConstants.CC_ADDRESSES]);
-				model.set(CMDBuild.core.proxy.CMProxyConstants.FROM, template[CMDBuild.core.proxy.CMProxyConstants.FROM_ADDRESS]);
-				model.set(CMDBuild.core.proxy.CMProxyConstants.TO, template[CMDBuild.core.proxy.CMProxyConstants.TO_ADDRESSES]);
-
-				return model;
-			}
-
-			return null;
+			this.tabDelegate.getView().getDockedComponent(CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_BOTTOM).show();
 		},
 
 		/**
 		 * Delete event and hide toolbar on widget destroy
 		 */
 		destroy: function() {
-			this.tabController.getView().un('show', this.widgetEmailShowEventManager, this);
-			this.tabController.getView().getDockedComponent(CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_BOTTOM).hide();
+			this.tabDelegate.getView().un('show', this.widgetEmailShowEventManager, this);
+			this.tabDelegate.getView().getDockedComponent(CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_BOTTOM).hide();
 
 			// Border manage
-			if (this.tabController.grid.hasCls('cmborderbottom'))
-				this.tabController.grid.removeCls('cmborderbottom');
+			if (this.tabDelegate.grid.hasCls('cmborderbottom'))
+				this.tabDelegate.grid.removeCls('cmborderbottom');
 		},
 
 		/**
-		 * @return {Object}
+		 * @returns {Object}
 		 *
 		 * @override
 		 */
 		getData: function() {
 			var out = {};
-			out[CMDBuild.core.proxy.CMProxyConstants.OUTPUT] = this.tabController.cmfg('selectedEntityIdGet');
+			out[CMDBuild.core.proxy.CMProxyConstants.OUTPUT] = this.tabDelegate.cmfg('selectedEntityIdGet');
 
 			return out;
 		},
@@ -156,22 +125,26 @@
 		/**
 		 * Used to mark widget as busy during regenerations, especially useful for getData() regeneration
 		 *
-		 * @return {Boolean}
+		 * @returns {Boolean}
 		 *
 		 * @override
 		 */
 		isBusy: function() {
-			return this.tabController.cmfg('busyStateGet');
+			return this.tabDelegate.cmfg('busyStateGet');
 		},
 
 		/**
-		 * @return {Boolean}
+		 * @returns {Boolean}
 		 *
 		 * @override
 		 */
 		isValid: function() {
-			if (Ext.isBoolean(this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.REQUIRED]) && this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.REQUIRED])
-				return this.controllerGrid.getDraftEmails().length > 0;
+			if (
+				Ext.isBoolean(this.cmfg('widgetManageEmailConfigurationGet', CMDBuild.core.proxy.CMProxyConstants.REQUIRED))
+				&& this.cmfg('widgetManageEmailConfigurationGet', CMDBuild.core.proxy.CMProxyConstants.REQUIRED)
+			) {
+				return this.tabDelegate.controllerGrid.getDraftEmails().length > 0;
+			}
 
 			return this.callParent(arguments);
 		},
@@ -185,7 +158,7 @@
 			if (!Ext.isEmpty(callbackChainArray[i])) {
 				var me = this;
 
-				this.tabController.globalLoadMask = false;
+				this.tabDelegate.globalLoadMask = false;
 
 				this.beforeSaveCallbackObject = {
 					array: callbackChainArray,
@@ -193,7 +166,7 @@
 				};
 
 				// Setup end-point callback to close widget save callback loop
-				this.tabController.cmfg('regenerationEndPointCallbackSet', function() {
+				this.tabDelegate.cmfg('regenerationEndPointCallbackSet', function() {
 					if (!Ext.Object.isEmpty(me.beforeSaveCallbackObject)) {
 						var index = me.beforeSaveCallbackObject.index;
 
@@ -207,13 +180,51 @@
 						);
 					}
 
-					me.tabController.cmfg('regenerationEndPointCallbackSet'); // Reset callback function
+					me.tabDelegate.cmfg('regenerationEndPointCallbackSet'); // Reset callback function
 				});
 
-				this.tabController.cmfg('regenerateAllEmailsSet', true);
-				this.tabController.cmfg('storeLoad');
+				this.tabDelegate.cmfg('regenerateAllEmailsSet', true);
+				this.tabDelegate.cmfg('storeLoad');
 			}
-		}
+		},
+
+		/**
+		 * @param {CMDBuild.view.management.common.tabs.email.EmailView} panel
+		 * @param {Object} eOpts
+		 */
+		widgetEmailShowEventManager: function(panel, eOpts) {
+			var cardWidgetTypes = [];
+
+			if (Ext.isArray(this.parentDelegate.takeWidgetFromCard(this.card)))
+				Ext.Array.forEach(this.parentDelegate.takeWidgetFromCard(this.card), function(widgetObject, i, allWidgetObjects) {
+					if (!Ext.isEmpty(widgetObject))
+						cardWidgetTypes.push(widgetObject[CMDBuild.core.proxy.CMProxyConstants.TYPE]);
+				}, this);
+
+			if (Ext.Array.contains(cardWidgetTypes, this.cmfg('widgetManageEmailConfigurationGet', CMDBuild.core.proxy.CMProxyConstants.TYPE)))
+				this.tabDelegate.getView().getDockedComponent(CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_BOTTOM).show();
+		},
+
+		// WidgetConfiguration methods
+			/**
+			 * @param {Object} parameters
+			 * @param {Object} parameters.configurationObject
+			 * @param {String} parameters.propertyName
+			 *
+			 * @returns {Mixed}
+			 *
+			 * @override
+			 */
+			widgetConfigurationSet: function(parameters) {
+				var configurationObject = parameters.configurationObject;
+				var propertyName = parameters.propertyName;
+
+				this.callParent(arguments);
+
+				// Full model setup management
+				if (!Ext.isEmpty(configurationObject) && Ext.isEmpty(propertyName))
+					this.widgetConfigurationModel = Ext.create('CMDBuild.model.widget.manageEmail.Configuration', Ext.clone(configurationObject));
+			}
 	});
 
 })();
