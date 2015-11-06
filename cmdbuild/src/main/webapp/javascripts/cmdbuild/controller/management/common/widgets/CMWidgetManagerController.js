@@ -269,7 +269,7 @@
 		me.controllerClasses = {};
 		me.controllerClasses['.CustomForm'] = 'CMDBuild.controller.management.common.widgets.customForm.CustomForm';
 		me.controllerClasses['.Grid'] = 'CMDBuild.controller.management.common.widgets.grid.Grid';
-		me.controllerClasses['.ManageEmail'] = CMDBuild.controller.management.common.widgets.ManageEmail;
+		me.controllerClasses['.ManageEmail'] = 'CMDBuild.controller.management.common.widgets.ManageEmail';
 
 		var commonControllers = CMDBuild.controller.management.common.widgets;
 

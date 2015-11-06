@@ -40,6 +40,8 @@
 		 * @param {Object} configurationObject
 		 * @param {CMDBuild.controller.management.common.widgets.customForm.layout.Grid} configurationObject.parentDelegate
 		 * @param {Object} configurationObject.record
+		 *
+		 * @override
 		 */
 		constructor: function(configurationObject) {
 			this.callParent(arguments);
