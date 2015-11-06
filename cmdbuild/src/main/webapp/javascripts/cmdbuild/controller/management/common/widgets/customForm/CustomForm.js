@@ -213,6 +213,7 @@
 		 * @override
 		 */
 		getData: function() {
+			var layoutData = this.controllerLayout.getData();
 			var output = {};
 			output[CMDBuild.core.proxy.CMProxyConstants.OUTPUT] = [];
 
@@ -221,9 +222,10 @@
 					CMDBuild.core.proxy.CMProxyConstants.CAPABILITIES,
 					CMDBuild.core.proxy.CMProxyConstants.READ_ONLY
 				])
+				&& Ext.isArray(layoutData)
 			) {
 				// Uses direct data property access to avoid a get problem because of generic model
-				Ext.Array.forEach(this.controllerLayout.getData(), function(rowObject, i, allRowObjects) {
+				Ext.Array.forEach(layoutData, function(rowObject, i, allRowObjects) {
 					var dataObject = Ext.isEmpty(rowObject.data) ? rowObject : rowObject.data; // Model/Objects management
 
 					new CMDBuild.Management.TemplateResolver({

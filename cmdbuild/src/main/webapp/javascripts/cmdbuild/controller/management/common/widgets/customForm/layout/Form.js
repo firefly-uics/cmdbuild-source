@@ -102,7 +102,7 @@
 		 * @returns {Array}
 		 */
 		getData: function() {
-			return this.view.getData(true);
+			return [this.view.getData(true)];
 		},
 
 		/**

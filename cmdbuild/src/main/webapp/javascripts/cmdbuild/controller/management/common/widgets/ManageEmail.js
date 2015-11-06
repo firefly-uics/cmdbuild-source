@@ -5,10 +5,6 @@
 
 		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
 
-		mixins: {
-			observable: 'Ext.util.Observable'
-		},
-
 		/**
 		 * Widget before save callback loop object
 		 *
@@ -56,8 +52,6 @@
 		 * @override
 		 */
 		constructor: function(view, ownerController, widgetConf, clientForm, card) {
-			this.mixins.observable.constructor.call(this);
-
 			this.callParent(arguments);
 
 			this.tabController = this.view.delegate;
@@ -73,35 +67,44 @@
 
 			this.tabController.cmfg('configurationTemplatesSet', this.configurationTemplates);
 
+			// Build bottom toolbar
 			this.buildBottomToolbar();
 		},
 
+		/**
+		 * Create event manager and show toolbar
+		 */
 		buildBottomToolbar: function() {
-			this.tabController.grid.addCls('cmborderbottom');
-			this.tabController.getView().removeDocked(this.tabController.getView().getDockedComponent('bottom'));
-			this.tabController.getView().addDocked(
-				Ext.create('Ext.toolbar.Toolbar', {
-					dock: 'bottom',
-					itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_BOTTOM,
-					ui: 'footer',
+			this.tabController.getView().on('show', this.widgetEmailShowEventManager, this);
 
-					layout: {
-						type: 'hbox',
-						align: 'middle',
-						pack: 'center'
-					},
+			// Border manage
+			if (!this.tabController.grid.hasCls('cmborderbottom'))
+				this.tabController.grid.addCls('cmborderbottom');
 
-					items: [
-						Ext.create('CMDBuild.core.buttons.Back', {
-							scope: this,
+			this.tabController.getView().getDockedComponent(CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_BOTTOM).removeAll();
+			this.tabController.getView().getDockedComponent(CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_BOTTOM).add(
+				Ext.create('CMDBuild.core.buttons.Back', {
+					scope: this,
 
-							handler: function(button, e) {
-								this.ownerController.activateFirstTab();
-							}
-						})
-					]
+					handler: function(button, e) {
+						this.ownerController.activateFirstTab();
+					}
 				})
 			);
+			this.tabController.getView().getDockedComponent(CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_BOTTOM).show();
+		},
+
+		widgetEmailShowEventManager: function() {
+			var cardWidgetTypes = [];
+
+			if (Ext.isArray(this.ownerController.takeWidgetFromCard(this.card)))
+				Ext.Array.forEach(this.ownerController.takeWidgetFromCard(this.card), function(widgetObject, i, allWidgetObjects) {
+					if (!Ext.isEmpty(widgetObject))
+						cardWidgetTypes.push(widgetObject[CMDBuild.core.proxy.CMProxyConstants.TYPE]);
+				}, this);
+
+			if (Ext.Array.contains(cardWidgetTypes, this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.TYPE]))
+				this.tabController.getView().getDockedComponent(CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_BOTTOM).show();
 		},
 
 		/**
@@ -124,6 +127,18 @@
 			}
 
 			return null;
+		},
+
+		/**
+		 * Delete event and hide toolbar on widget destroy
+		 */
+		destroy: function() {
+			this.tabController.getView().un('show', this.widgetEmailShowEventManager, this);
+			this.tabController.getView().getDockedComponent(CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_BOTTOM).hide();
+
+			// Border manage
+			if (this.tabController.grid.hasCls('cmborderbottom'))
+				this.tabController.grid.removeCls('cmborderbottom');
 		},
 
 		/**
