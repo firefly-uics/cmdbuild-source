@@ -235,105 +235,102 @@
 
 			editRelationWindow.show();
 
-			editRelationWindow.grid.getStore().load({
-				scope: this,
-				callback: function(records, operation, success) {
-					Ext.Function.createDelayed(function() { // HACK to wait store to be correctly loaded
-						var parameters = {};
-						var cardsIdArray = [];
+			this.mon(editRelationWindow.grid, 'load', function(store, records) {
+				Ext.Function.createDelayed(function() { // HACK to wait store to be correctly loaded
+					var parameters = {};
+					var cardsIdArray = [];
 
-						editRelationWindow.grid.getStore().each(function(record) {
-							cardsIdArray.push(record.get(CMDBuild.core.proxy.CMProxyConstants.ID));
-						});
+					editRelationWindow.grid.getStore().each(function(record) {
+						cardsIdArray.push(record.get(CMDBuild.core.proxy.CMProxyConstants.ID));
+					});
 
-						parameters[CMDBuild.core.proxy.CMProxyConstants.DOMAIN_NAME] = domain.get(CMDBuild.core.proxy.CMProxyConstants.NAME);
-						parameters[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME] = classData.get(CMDBuild.core.proxy.CMProxyConstants.NAME);
-						parameters[CMDBuild.core.proxy.CMProxyConstants.CARDS] = Ext.encode(cardsIdArray);
-						parameters[CMDBuild.core.proxy.CMProxyConstants.DOMAIN_DIRECTION] = destination;
+					parameters[CMDBuild.core.proxy.CMProxyConstants.DOMAIN_NAME] = domain.get(CMDBuild.core.proxy.CMProxyConstants.NAME);
+					parameters[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME] = classData.get(CMDBuild.core.proxy.CMProxyConstants.NAME);
+					parameters[CMDBuild.core.proxy.CMProxyConstants.CARDS] = Ext.encode(cardsIdArray);
+					parameters[CMDBuild.core.proxy.CMProxyConstants.DOMAIN_DIRECTION] = destination;
 
-						CMDBuild.core.proxy.CMProxyRelations.getAlreadyRelatedCards({
-							params: parameters,
-							scope: this,
-							success: function(result, options, decodedResult) {
-								var alreadyRelatedCardsIds = [];
+					CMDBuild.core.proxy.CMProxyRelations.getAlreadyRelatedCards({
+						params: parameters,
+						scope: this,
+						success: function(result, options, decodedResult) {
+							var alreadyRelatedCardsIds = [];
 
-								// Create ids array to use as filter
-								Ext.Array.forEach(decodedResult.response, function(alreadyRelatedItem, index, allItems) {
-									if (alreadyRelatedItem[CMDBuild.core.proxy.CMProxyConstants.ID]) {
-										var parameters = {};
-										parameters[CMDBuild.core.proxy.CMProxyConstants.CARD_ID] = alreadyRelatedItem[CMDBuild.core.proxy.CMProxyConstants.ID];
-										parameters[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME] = alreadyRelatedItem[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME];
-										parameters[CMDBuild.core.proxy.CMProxyConstants.DOMAIN_LIMIT] = CMDBuild.Config.cmdbuild.relationlimit;
+							// Create ids array to use as filter
+							Ext.Array.forEach(decodedResult.response, function(alreadyRelatedItem, index, allItems) {
+								if (alreadyRelatedItem[CMDBuild.core.proxy.CMProxyConstants.ID]) {
+									var parameters = {};
+									parameters[CMDBuild.core.proxy.CMProxyConstants.CARD_ID] = alreadyRelatedItem[CMDBuild.core.proxy.CMProxyConstants.ID];
+									parameters[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME] = alreadyRelatedItem[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME];
+									parameters[CMDBuild.core.proxy.CMProxyConstants.DOMAIN_LIMIT] = CMDBuild.Config.cmdbuild.relationlimit;
 
-										// Get all domains of grid-card to check if it have relation with current-card
-										CMDBuild.core.proxy.CMProxyRelations.getList({
-											params: parameters,
-											scope: this,
-											success: function(result, options, decodedResult) {
-												// Loop through domains array
-												Ext.Array.forEach(decodedResult[CMDBuild.core.proxy.CMProxyConstants.DOMAINS], function(domainItem, index, allItems) {
-													if (domainItem[CMDBuild.core.proxy.CMProxyConstants.ID] == domain.get(CMDBuild.core.proxy.CMProxyConstants.ID)) {
-														// Loop through domain (witch i'm creating a relation) relations array
-														Ext.Array.forEach(domainItem[CMDBuild.core.proxy.CMProxyConstants.RELATIONS], function(domainRelationItem, index, allItems) {
-															if (!Ext.Object.isEmpty(classData)) {
-																if (domain.get(CMDBuild.core.proxy.CMProxyConstants.CARDINALITY) == '1:1') {
-																	alreadyRelatedCardsIds.push(options.params[CMDBuild.core.proxy.CMProxyConstants.CARD_ID]);
-																} else if (
-																	(
-																		domain.get(CMDBuild.core.proxy.CMProxyConstants.CARDINALITY) == '1:N'
-																		&& model[CMDBuild.core.proxy.CMProxyConstants.DOMAIN_SOURCE] == '_1' // Direct
-																	)
-																	|| (
-																		domain.get(CMDBuild.core.proxy.CMProxyConstants.CARDINALITY) == 'N:1'
-																		&& model[CMDBuild.core.proxy.CMProxyConstants.DOMAIN_SOURCE] == '_2' // Inverse
-																	)
-																) {
-																	alreadyRelatedCardsIds.push(options.params[CMDBuild.core.proxy.CMProxyConstants.CARD_ID]);
-																} else if (
-																	(
-																		domain.get(CMDBuild.core.proxy.CMProxyConstants.CARDINALITY) == 'N:1'
-																		&& model[CMDBuild.core.proxy.CMProxyConstants.DOMAIN_SOURCE] == '_1' // Direct
-																	)
-																	|| (
-																		domain.get(CMDBuild.core.proxy.CMProxyConstants.CARDINALITY) == '1:N'
-																		&& model[CMDBuild.core.proxy.CMProxyConstants.DOMAIN_SOURCE] == '_2' // Inverse
-																	)
-																) {
-																	// Here should never enter because you'll be blocked from button pop-up
-																} else if (
-																	domain.get(CMDBuild.core.proxy.CMProxyConstants.CARDINALITY) == 'N:N'
-																	&& domainRelationItem['dst_id'] == me.card.get(CMDBuild.core.proxy.CMProxyConstants.ID)
-																) {
-																	alreadyRelatedCardsIds.push(options.params[CMDBuild.core.proxy.CMProxyConstants.CARD_ID]);
-																} else {
-																	_warning('onAddRelationButtonClick, domain valutation not catch');
-																}
+									// Get all domains of grid-card to check if it have relation with current-card
+									CMDBuild.core.proxy.CMProxyRelations.getList({
+										params: parameters,
+										scope: this,
+										success: function(result, options, decodedResult) {
+											// Loop through domains array
+											Ext.Array.forEach(decodedResult[CMDBuild.core.proxy.CMProxyConstants.DOMAINS], function(domainItem, index, allItems) {
+												if (domainItem[CMDBuild.core.proxy.CMProxyConstants.ID] == domain.get(CMDBuild.core.proxy.CMProxyConstants.ID)) {
+													// Loop through domain (witch i'm creating a relation) relations array
+													Ext.Array.forEach(domainItem[CMDBuild.core.proxy.CMProxyConstants.RELATIONS], function(domainRelationItem, index, allItems) {
+														if (!Ext.Object.isEmpty(classData)) {
+															if (domain.get(CMDBuild.core.proxy.CMProxyConstants.CARDINALITY) == '1:1') {
+																alreadyRelatedCardsIds.push(options.params[CMDBuild.core.proxy.CMProxyConstants.CARD_ID]);
+															} else if (
+																(
+																	domain.get(CMDBuild.core.proxy.CMProxyConstants.CARDINALITY) == '1:N'
+																	&& model[CMDBuild.core.proxy.CMProxyConstants.DOMAIN_SOURCE] == '_1' // Direct
+																)
+																|| (
+																	domain.get(CMDBuild.core.proxy.CMProxyConstants.CARDINALITY) == 'N:1'
+																	&& model[CMDBuild.core.proxy.CMProxyConstants.DOMAIN_SOURCE] == '_2' // Inverse
+																)
+															) {
+																alreadyRelatedCardsIds.push(options.params[CMDBuild.core.proxy.CMProxyConstants.CARD_ID]);
+															} else if (
+																(
+																	domain.get(CMDBuild.core.proxy.CMProxyConstants.CARDINALITY) == 'N:1'
+																	&& model[CMDBuild.core.proxy.CMProxyConstants.DOMAIN_SOURCE] == '_1' // Direct
+																)
+																|| (
+																	domain.get(CMDBuild.core.proxy.CMProxyConstants.CARDINALITY) == '1:N'
+																	&& model[CMDBuild.core.proxy.CMProxyConstants.DOMAIN_SOURCE] == '_2' // Inverse
+																)
+															) {
+																// Here should never enter because you'll be blocked from button pop-up
+															} else if (
+																domain.get(CMDBuild.core.proxy.CMProxyConstants.CARDINALITY) == 'N:N'
+																&& domainRelationItem['dst_id'] == me.card.get(CMDBuild.core.proxy.CMProxyConstants.ID)
+															) {
+																alreadyRelatedCardsIds.push(options.params[CMDBuild.core.proxy.CMProxyConstants.CARD_ID]);
 															} else {
-																_warning('onAddRelationButtonClick, empty class data object');
+																_warning('onAddRelationButtonClick, domain valutation not catch');
 															}
-														});
-													}
-												});
+														} else {
+															_warning('onAddRelationButtonClick, empty class data object');
+														}
+													});
+												}
+											});
 
-												// Add class to disable rows as user feedback
-												editRelationWindow.grid.getView().getRowClass = function(record, rowIndex, rowParams, store) {
-													return Ext.Array.contains(alreadyRelatedCardsIds, record.get('Id')) ? 'grid-row-disabled' : null;
-												};
-												editRelationWindow.grid.getView().refresh();
+											// Add class to disable rows as user feedback
+											editRelationWindow.grid.getView().getRowClass = function(record, rowIndex, rowParams, store) {
+												return Ext.Array.contains(alreadyRelatedCardsIds, record.get('Id')) ? 'grid-row-disabled' : null;
+											};
+											editRelationWindow.grid.getView().refresh();
 
-												// Disable row selection
-												editRelationWindow.grid.getSelectionModel().addListener('beforeselect', function(selectionModel, record, index, eOpts) {
-													return Ext.Array.contains(alreadyRelatedCardsIds, record.get('Id')) ? false : true;
-												});
-											}
-										});
-									}
-								});
-							}
-						});
-					}, 100)();
-				}
-			});
+											// Disable row selection
+											editRelationWindow.grid.getSelectionModel().addListener('beforeselect', function(selectionModel, record, index, eOpts) {
+												return Ext.Array.contains(alreadyRelatedCardsIds, record.get('Id')) ? false : true;
+											});
+										}
+									});
+								}
+							});
+						}
+					});
+				}, 100)();
+			}, this);
 		},
 
 		onAddRelationSuccess: function() {
