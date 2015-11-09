@@ -56,7 +56,6 @@
 			var nonValidFields = [];
 
 			this.cascade(function(item) {
-_debug(item.name, item.isValid(), item);
 				if (
 					!Ext.isEmpty(item)
 					&& item instanceof Ext.form.Field
