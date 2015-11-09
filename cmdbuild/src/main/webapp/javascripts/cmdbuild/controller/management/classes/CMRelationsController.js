@@ -26,7 +26,7 @@
 			};
 
 			this.view.store.getRootNode().on('append', function(root, newNode) {
-				// The nodes with depth == 1 are the folders
+				// The nodes with depth == 1 are folders
 				if (newNode.get('depth') == 1)
 					newNode.on('expand', onDomainNodeExpand, this, {single: true});
 			}, this);
