@@ -50,21 +50,6 @@
 		view: undefined,
 
 		/**
-		 * @param {CMDBuild.view.management.common.widgets.customForm.CustomFormView} configurationObject.view
-		 * @param {CMDBuild.controller.management.common.CMWidgetManagerController} configurationObject.parentDelegate
-		 * @param {Object} configurationObject.widgetConfiguration
-		 * @param {Ext.form.Basic} configurationObject.clientForm
-		 * @param {CMDBuild.model.CMActivityInstance or Ext.data.Model} configurationObject.card
-		 *
-		 * @override
-		 */
-		constructor: function(configurationObject) {
-			this.callParent(arguments);
-
-			this.beforeActiveView();
-		},
-
-		/**
 		 * @param {Array or String} target
 		 *
 		 * @returns {Array} decodedOutput
@@ -277,6 +262,8 @@
 		 */
 		onEditMode: function() {
 			this.instancesDataStorageSet(this.cmfg('widgetCustomFormConfigurationGet', CMDBuild.core.proxy.CMProxyConstants.DATA));
+
+			this.beforeActiveView();
 		},
 
 		// WidgetConfiguration methods
