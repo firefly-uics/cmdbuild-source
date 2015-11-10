@@ -124,8 +124,8 @@
 			// Execute template resolver on model property
 			if (!Ext.isEmpty(this.cmfg('widgetCustomFormConfigurationGet', CMDBuild.core.constants.Proxy.MODEL)))
 				this.cmfg('widgetCustomFormConfigurationSet', {
-					configurationObject: this.applyTemplateResolverToArray(this.widgetConfiguration[CMDBuild.core.constants.Proxy.MODEL]),
-					propertyName: CMDBuild.core.constants.Proxy.MODEL
+					propertyName: CMDBuild.core.constants.Proxy.MODEL,
+					value: this.applyTemplateResolverToArray(this.widgetConfiguration[CMDBuild.core.constants.Proxy.MODEL])
 				});
 
 			// Execute template resolver on variables property
@@ -135,8 +135,8 @@
 				&& !Ext.isEmpty(this.cmfg('widgetCustomFormConfigurationGet', CMDBuild.core.constants.Proxy.FUNCTION_DATA))
 			) {
 				this.cmfg('widgetCustomFormConfigurationSet', {
-					configurationObject: this.applyTemplateResolverToObject(this.widgetConfiguration[CMDBuild.core.constants.Proxy.VARIABLES]),
-					propertyName: CMDBuild.core.constants.Proxy.VARIABLES
+					propertyName: CMDBuild.core.constants.Proxy.VARIABLES,
+					value: this.applyTemplateResolverToObject(this.widgetConfiguration[CMDBuild.core.constants.Proxy.VARIABLES])
 				});
 
 				// Build data configurations from function definition
@@ -271,27 +271,6 @@
 
 			this.beforeActiveView();
 		},
-
-		// WidgetConfiguration methods
-			/**
-			 * @param {Object} parameters
-			 * @param {Object} parameters.configurationObject
-			 * @param {String} parameters.propertyName
-			 *
-			 * @returns {Mixed}
-			 *
-			 * @override
-			 */
-			widgetConfigurationSet: function(parameters) {
-				var configurationObject = parameters.configurationObject;
-				var propertyName = parameters.propertyName;
-
-				this.callParent(arguments);
-
-				// Full model setup management
-				if (!Ext.isEmpty(configurationObject) && Ext.isEmpty(propertyName))
-					this.widgetConfigurationModel = Ext.create('CMDBuild.model.widget.customForm.Configuration', Ext.clone(configurationObject));
-			},
 
 		/**
 		 * @param {Boolean} state

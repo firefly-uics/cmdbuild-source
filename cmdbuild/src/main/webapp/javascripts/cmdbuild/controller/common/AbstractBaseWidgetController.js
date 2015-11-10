@@ -305,6 +305,7 @@
 
 				parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME] = 'widgetConfigurationModel';
 				parameters[CMDBuild.core.constants.Proxy.MODEL_NAME] = this.widgetConfigurationModelClassName;
+				parameters[CMDBuild.core.constants.Proxy.VALUE] = Ext.clone(parameters[CMDBuild.core.constants.Proxy.VALUE]);
 
 				return this.propertyManageSet(parameters);
 			},

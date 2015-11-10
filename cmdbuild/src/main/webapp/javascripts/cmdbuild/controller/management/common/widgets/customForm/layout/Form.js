@@ -133,8 +133,8 @@
 
 		onWidgetCustomFormLayoutFormResetButtonClick: function() {
 			this.cmfg('widgetCustomFormConfigurationSet', {
-				configurationObject: this.cmfg('widgetCustomFormControllerPropertyGet', 'widgetConfiguration')[CMDBuild.core.constants.Proxy.DATA],
-				propertyName: CMDBuild.core.constants.Proxy.DATA
+				propertyName: CMDBuild.core.constants.Proxy.DATA,
+				value: this.cmfg('widgetCustomFormControllerPropertyGet', 'widgetConfiguration')[CMDBuild.core.constants.Proxy.DATA]
 			});
 
 			this.setData(this.cmfg('widgetCustomFormConfigurationGet', CMDBuild.core.constants.Proxy.DATA));

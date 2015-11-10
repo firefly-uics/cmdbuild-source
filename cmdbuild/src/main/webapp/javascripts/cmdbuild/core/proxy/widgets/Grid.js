@@ -17,7 +17,7 @@
 		getFunctions: function(parameters) {
 			CMDBuild.Ajax.request({
 				method: 'POST',
-				url: CMDBuild.core.proxy.Index.functions.getFunctions,
+				url: CMDBuild.core.proxy.Index.functions.readAll,
 				scope: parameters.scope || this,
 				failure: parameters.failure || Ext.emptyFn(),
 				success: parameters.success || Ext.emptyFn(),
