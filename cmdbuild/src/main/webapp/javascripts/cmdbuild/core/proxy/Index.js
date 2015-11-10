@@ -188,7 +188,14 @@
 		},
 
 		functions: {
-			getFunctions: 'services/json/schema/modclass/getfunctions'
+			create: '',
+			read: '',
+			remove: '',
+			update: '',
+
+			getFunctions: 'services/json/schema/modclass/getfunctions', // TODO: delete
+			readAll: 'services/json/schema/modclass/getfunctions',
+			readCards: 'services/json/management/modcard/getsqlcardlist'
 		},
 
 		gis: {

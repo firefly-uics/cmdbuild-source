@@ -70,12 +70,10 @@
 		},
 
 		onWidgetButtonClick: function(w) {
-_debug('onWidgetButtonClick');
 			this.delegate.ensureEditPanel();
 			var me = this;
 			Ext.defer(function() {
 				var wc = me.controllers[me.getWidgetId(w)];
-_debug('onWidgetButtonClick defer', wc, me.controllers, me.getWidgetId(w));
 				if (wc) {
 					me.view.showWidget(wc.view, me.getWidgetLable(w));
 					wc.beforeActiveView();

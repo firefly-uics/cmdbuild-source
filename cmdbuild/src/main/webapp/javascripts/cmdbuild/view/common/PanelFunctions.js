@@ -9,6 +9,8 @@
 
 		/**
 		 * @param {Boolean} withDisabled
+		 *
+		 * @returns {Array}
 		 */
 		getData: function(withDisabled) {
 			if (withDisabled) {
@@ -17,49 +19,56 @@
 				this.cascade(function(item) {
 					if (
 						!Ext.isEmpty(item)
-						&& Ext.isFunction(item.getValue)
-						&& (
-							item instanceof Ext.form.Field
-							|| item instanceof Ext.form.field.Base
-							|| item instanceof Ext.form.field.HtmlEditor
-							|| item instanceof Ext.form.FieldContainer
-						)
+						&& this.isManagedField(item)
 					) {
 						data[item.name] = item.getValue();
 					}
 				}, this);
 
 				return data;
-			} else {
-				return this.getForm().getValues();
 			}
+
+			return this.getForm().getValues();
 		},
 
+		/**
+		 * @returns {Array} nonValidFields
+		 */
 		getNonValidFields: function() {
-			var data = [];
+			var nonValidFields = [];
 
 			this.cascade(function(item) {
 				if (
 					!Ext.isEmpty(item)
-					&& (
-						item instanceof Ext.form.Field
-						|| item instanceof Ext.form.field.Base
-						|| item instanceof Ext.form.FieldContainer
-					)
-					&& !item.disabled
+					&& this.isManagedField()
+					&& !item.isDisabled()
+					&& !item.isHidden()
 					&& !item.isValid()
 					&& !item.disableCascade // Property to disable cascade on fields
 				) {
-					data.push(item);
+					nonValidFields.push(item);
 				}
 			}, this);
 
-			return data;
+			return nonValidFields;
 		},
 
 		/**
-		 * Custom implementation of setValues and reset (to catch also non Ext.form.Fields items)
+		 * @param {Object} field
+		 *
+		 * @returns {Boolean}
+		 *
+		 * @private
 		 */
+		isManagedField: function(field) {
+			return (
+				field instanceof Ext.form.Field
+				|| field instanceof Ext.form.field.Base
+				|| field instanceof Ext.form.field.HtmlEditor
+				|| field instanceof Ext.form.FieldContainer
+			);
+		},
+
 		reset: function() {
 			// SetValues
 			this.cascade(function(item) {

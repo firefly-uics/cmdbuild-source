@@ -177,6 +177,20 @@
 		},
 
 		/**
+		 * Evaluates is a string is JSON formatted or not.
+		 *
+		 * @param {String} string
+		 *
+		 * @returns {Boolean}
+		 */
+		isJsonString: function(string) {
+			if (Ext.isString(string))
+				return !(/[^,:{}\[\]0-9.\-+Eaeflnr-u \n\r\t]/.test(string.replace(/"(\\.|[^"\\])*"/g, ''))) && eval('(' + string + ')')
+
+			return false;
+		},
+
+		/**
 		 * Custom function to order an array of objects or models
 		 *
 		 * @param {Array} array

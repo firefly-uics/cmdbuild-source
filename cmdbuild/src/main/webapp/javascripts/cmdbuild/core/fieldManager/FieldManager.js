@@ -54,7 +54,7 @@
 		 *
 		 * @private
 		 */
-		managedAttributesTypes: ['BOOLEAN', 'CHAR', 'DATE', 'DECIMAL', 'DOUBLE', 'FOREIGNKEY', 'INTEGER', 'TEXT', 'TIME', 'TIMESTAMP', 'STRING'],
+		managedAttributesTypes: ['boolean', 'char', 'date', 'decimal', 'double', 'foreignkey', 'integer', 'text', 'time', 'timestamp', 'string'],
 
 		// AttributeModel methods
 			/**
@@ -120,19 +120,21 @@
 		 *
 		 * @private
 		 */
-		buildAttributeController: function(attributeModel) {
-			switch (this.attributeModelGet(CMDBuild.core.constants.Proxy.TYPE)) {
-				case 'BOOLEAN': return Ext.create('CMDBuild.core.fieldManager.builders.Boolean', { parentDelegate: this });
-				case 'CHAR': return Ext.create('CMDBuild.core.fieldManager.builders.Char', { parentDelegate: this });
-				case 'DATE': return Ext.create('CMDBuild.core.fieldManager.builders.Date', { parentDelegate: this });
-				case 'DECIMAL': return Ext.create('CMDBuild.core.fieldManager.builders.Decimal', { parentDelegate: this });
-				case 'DOUBLE': return Ext.create('CMDBuild.core.fieldManager.builders.Double', { parentDelegate: this });
-				case 'FOREIGNKEY': return Ext.create('CMDBuild.core.fieldManager.builders.ForeignKey', { parentDelegate: this });
-				case 'INTEGER': return Ext.create('CMDBuild.core.fieldManager.builders.Integer', { parentDelegate: this });
-				case 'STRING': return Ext.create('CMDBuild.core.fieldManager.builders.String', { parentDelegate: this });
-				case 'TEXT': return Ext.create('CMDBuild.core.fieldManager.builders.text.Text', { parentDelegate: this });
-				case 'TIME': return Ext.create('CMDBuild.core.fieldManager.builders.Time', { parentDelegate: this });
-				case 'TIMESTAMP': return Ext.create('CMDBuild.core.fieldManager.builders.TimeStamp', { parentDelegate: this });
+		buildAttributeController: function() {
+			var attributeType = this.attributeModelGet(CMDBuild.core.constants.Proxy.TYPE).toLowerCase();
+
+			switch (attributeType) {
+				case 'boolean': return Ext.create('CMDBuild.core.fieldManager.builders.Boolean', { parentDelegate: this });
+				case 'char': return Ext.create('CMDBuild.core.fieldManager.builders.Char', { parentDelegate: this });
+				case 'date': return Ext.create('CMDBuild.core.fieldManager.builders.Date', { parentDelegate: this });
+				case 'decimal': return Ext.create('CMDBuild.core.fieldManager.builders.Decimal', { parentDelegate: this });
+				case 'double': return Ext.create('CMDBuild.core.fieldManager.builders.Double', { parentDelegate: this });
+				case 'foreignkey': return Ext.create('CMDBuild.core.fieldManager.builders.ForeignKey', { parentDelegate: this });
+				case 'integer': return Ext.create('CMDBuild.core.fieldManager.builders.Integer', { parentDelegate: this });
+				case 'string': return Ext.create('CMDBuild.core.fieldManager.builders.String', { parentDelegate: this });
+				case 'text': return Ext.create('CMDBuild.core.fieldManager.builders.text.Text', { parentDelegate: this });
+				case 'time': return Ext.create('CMDBuild.core.fieldManager.builders.Time', { parentDelegate: this });
+				case 'timestamp': return Ext.create('CMDBuild.core.fieldManager.builders.TimeStamp', { parentDelegate: this });
 			}
 		},
 
@@ -172,13 +174,63 @@
 		},
 
 		/**
+		 * Manage attributeType as case insensitive
+		 *
 		 * @param {String} attributeType
 		 *
 		 * @returns {Boolean}
 		 */
 		isAttributeManaged: function(attributeType) {
+			attributeType = attributeType.toLowerCase();
+
 			return Ext.Array.contains(this.managedAttributesTypes, attributeType);
 		},
+
+		// Service functions to add generated fields to targets
+			/**
+			 * Filters empty components
+			 *
+			 * @param {Object} target
+			 * @param {Mixed or Array} components
+			 */
+			add: function(target, components) {
+				components = Ext.isArray(components) ? components : [components];
+
+				if (
+					Ext.isObject(target)
+					&& Ext.isFunction(target.add)
+				) {
+					components = Ext.Array.filter(components, function(item, i, array) {
+						return !Ext.isEmpty(item) && !Ext.Object.isEmpty(item);
+					}, this);
+
+					if (!Ext.isEmpty(components))
+						target.add(components);
+				} else {
+					_error('target not supported object', this);
+				}
+			},
+
+			/**
+			 * Filters empty elements
+			 *
+			 * @param {Array} target
+			 * @param {Mixed or Array} elements
+			 */
+			push: function(target, elements) {
+				elements = Ext.isArray(elements) ? elements : [elements];
+
+				if (Ext.isArray(target)) {
+					elements = Ext.Array.filter(elements, function(item, i, array) {
+						return !Ext.isEmpty(item) && !Ext.Object.isEmpty(item);
+					}, this);
+
+					if (!Ext.isEmpty(elements))
+						target = Ext.Array.push(target, elements);
+				} else {
+					_error('target in not array', this);
+				}
+			},
 
 		// TemplateResolver property methods
 			/**

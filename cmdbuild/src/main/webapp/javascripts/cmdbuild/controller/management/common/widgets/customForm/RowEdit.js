@@ -3,7 +3,10 @@
 	Ext.define('CMDBuild.controller.management.common.widgets.customForm.RowEdit', {
 		extend: 'CMDBuild.controller.common.AbstractController',
 
-		requires: ['CMDBuild.core.constants.Proxy'],
+		requires: [
+			'CMDBuild.core.constants.Proxy',
+			'CMDBuild.core.RequestBarrier'
+		],
 
 		/**
 		 * @cfg {CMDBuild.controller.management.common.widgets.customForm.layout.Grid}
@@ -14,8 +17,8 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
-			'onRowEditWindowAbortButtonClick',
-			'onRowEditWindowSaveButtonClick'
+			'onWidgetCustomFormRowEditWindowAbortButtonClick',
+			'onWidgetCustomFormRowEditWindowSaveButtonClick'
 		],
 
 		/**
@@ -37,6 +40,8 @@
 		 * @param {Object} configurationObject
 		 * @param {CMDBuild.controller.management.common.widgets.customForm.layout.Grid} configurationObject.parentDelegate
 		 * @param {Object} configurationObject.record
+		 *
+		 * @override
 		 */
 		constructor: function(configurationObject) {
 			this.callParent(arguments);
@@ -49,13 +54,14 @@
 			this.form = this.view.form;
 
 			this.form.add(this.buildFields());
-			this.form.loadRecord(this.record);
 
 			this.fieldsInitialization();
 
 			// Show window
-			if (!Ext.isEmpty(this.view))
+			if (!Ext.isEmpty(this.view)) {
 				this.view.show();
+				this.view.setLoading(true);
+			}
 		},
 
 		/**
@@ -64,14 +70,13 @@
 		buildFields: function() {
 			var itemsArray = [];
 
-			if (!this.cmfg('widgetConfigurationIsEmpty',  CMDBuild.core.constants.Proxy.MODEL)) {
+			if (!this.cmfg('widgetCustomFormConfigurationIsAttributeEmpty',  CMDBuild.core.constants.Proxy.MODEL)) {
 				var fieldManager = Ext.create('CMDBuild.core.fieldManager.FieldManager', { parentDelegate: this });
 
-				Ext.Array.forEach(this.cmfg('widgetConfigurationGet', CMDBuild.core.constants.Proxy.MODEL), function(attribute, i, allAttributes) {
+				Ext.Array.forEach(this.cmfg('widgetCustomFormConfigurationGet', CMDBuild.core.constants.Proxy.MODEL), function(attribute, i, allAttributes) {
 					if (fieldManager.isAttributeManaged(attribute.get(CMDBuild.core.constants.Proxy.TYPE))) {
 						fieldManager.attributeModelSet(Ext.create('CMDBuild.model.common.attributes.Attribute', attribute.getData()));
-
-						itemsArray.push(fieldManager.buildField());
+						fieldManager.push(itemsArray, fieldManager.buildField());
 					} else { // @deprecated - Old field manager
 						var attribute = attribute.getAdaptedData();
 						var item = undefined;
@@ -81,9 +86,9 @@
 							xaVars['_SystemFieldFilter'] = attribute.filter;
 
 							var templateResolver = new CMDBuild.Management.TemplateResolver({ // TODO: implementation of serverside template resolver
-								clientForm: this.cmfg('controllerPropertyGet', 'getClientForm'),
+								clientForm: this.cmfg('widgetCustomFormControllerPropertyGet', 'getClientForm'),
 								xaVars: xaVars,
-								serverVars: this.cmfg('getTemplateResolverServerVars')
+								serverVars: this.cmfg('widgetCustomFormGetTemplateResolverServerVars')
 							});
 
 							// Required label fix
@@ -117,32 +122,46 @@
 		},
 
 		/**
-		 * Calls field template resolver and store load
+		 * Calls field template resolver, store load and loads record only at the end of all store loads
 		 */
 		fieldsInitialization: function() {
+			var barrierId = 'rowEditFieldsInitializationBarrier';
+
+			CMDBuild.core.RequestBarrier.init(barrierId, function() {
+				this.form.loadRecord(this.record);
+
+				this.view.setLoading(false);
+			}, this);
+
 			Ext.Array.forEach(this.form.getForm().getFields().getRange(), function(field, i, allFields) {
 				if (!Ext.Object.isEmpty(field) && !Ext.isEmpty(field.resolveTemplate))
 					field.resolveTemplate();
 
 				// Force editor fields store load (must be done because FieldManager field don't works properly)
+				// TODO: waiting for full FiledManager v2 implementation
 				if (!Ext.Object.isEmpty(field) && !Ext.Object.isEmpty(field.store) && field.store.count() == 0)
-					field.store.load();
+					field.store.load({
+						scope: this,
+						callback: CMDBuild.core.RequestBarrier.getCallback(barrierId)
+					});
 			}, this);
 		},
 
-		onRowEditWindowAbortButtonClick: function() {
+		onWidgetCustomFormRowEditWindowAbortButtonClick: function() {
 			this.view.destroy();
 		},
 
 		/**
 		 * Saves data to widget's grid
 		 */
-		onRowEditWindowSaveButtonClick: function() {
+		onWidgetCustomFormRowEditWindowSaveButtonClick: function() {
 			Ext.Object.each(this.form.getValues(), function(key, value, myself) {
 				this.record.set(key, value);
 			}, this);
 
-			this.onRowEditWindowAbortButtonClick();
+			this.record.commit();
+
+			this.onWidgetCustomFormRowEditWindowAbortButtonClick();
 		}
 	});
 

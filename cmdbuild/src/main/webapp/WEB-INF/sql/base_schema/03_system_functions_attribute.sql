@@ -614,7 +614,7 @@ DECLARE
 	-- creates full new comment string for consistency checks
 	NewComment text := _cm_comment_add_parts(_cm_comment_set_parts(OldComment, commentparts), commentparts, true);
 	subClassId oid;
-	_classes text[] := COALESCE(classes, ARRAY['"Ciccio"']::text[]);
+	_classes text[] := COALESCE(classes, ARRAY[]::text[]);
 BEGIN
 	IF COALESCE(_cm_read_reference_domain_comment(OldComment), '') IS DISTINCT FROM COALESCE(_cm_read_reference_domain_comment(NewComment), '')
 		OR  _cm_read_reference_type_comment(OldComment) IS DISTINCT FROM _cm_read_reference_type_comment(NewComment)
@@ -639,7 +639,7 @@ BEGIN
 	PERFORM _cm_set_attribute_default(TableId, AttributeName, AttributeDefault, FALSE);
 	-- updates comment according to specified tables (empty means all)
 	FOR subClassId IN SELECT _cm_subtables_and_itself(tableid) LOOP
-		IF (COALESCE(array_length(_classes, 1),0) = 0) OR (_classes @> ARRAY[subClassId::regclass::text]) THEN
+		IF (COALESCE(array_length(_classes, 1),0) = 0) OR (_classes @> ARRAY[replace(subClassId::regclass::text, '"', '')]) THEN
 			OldComment = _cm_comment_for_attribute(subClassId, AttributeName);
 			NewComment = _cm_comment_add_parts(_cm_comment_set_parts(OldComment, commentparts), commentparts, true);
 			EXECUTE 'COMMENT ON COLUMN '|| subClassId::regclass ||'.'|| quote_ident(AttributeName) ||' IS '|| quote_literal(NewComment);

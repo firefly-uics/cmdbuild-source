@@ -44,14 +44,14 @@
 								scope: this,
 
 								handler: function(button, e) {
-									this.delegate.cmfg('onCustomFormImportUploadButtonClick');
+									this.delegate.cmfg('onWidgetCustomFormImportUploadButtonClick');
 								}
 							}),
 							Ext.create('CMDBuild.core.buttons.text.Abort', {
 								scope: this,
 
 								handler: function(button, e) {
-									this.delegate.cmfg('onCustomFormImportAbortButtonClick');
+									this.delegate.cmfg('onWidgetCustomFormImportAbortButtonClick');
 								}
 							})
 						]

@@ -4,8 +4,10 @@
 		extend: 'CMDBuild.controller.common.AbstractController',
 
 		requires: [
+			'CMDBuild.core.proxy.Card',
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.Csv'
+			'CMDBuild.core.proxy.Csv',
+			'CMDBuild.core.RequestBarrier'
 		],
 
 		/**
@@ -17,8 +19,8 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
-			'onCustomFormImportAbortButtonClick',
-			'onCustomFormImportUploadButtonClick'
+			'onWidgetCustomFormImportAbortButtonClick',
+			'onWidgetCustomFormImportUploadButtonClick'
 		],
 
 		/**
@@ -39,6 +41,8 @@
 		/**
 		 * @param {Object} configurationObject
 		 * @param {Mixed} configurationObject.parentDelegate
+		 *
+		 * @override
 		 */
 		constructor: function(configurationObject) {
 			this.callParent(arguments);
@@ -56,14 +60,14 @@
 				this.view.show();
 		},
 
-		onCustomFormImportAbortButtonClick: function() {
+		onWidgetCustomFormImportAbortButtonClick: function() {
 			this.view.destroy();
 		},
 
 		/**
 		 * Uses importCSV calls to store and get CSV data from server and check if CSV has right fields
 		 */
-		onCustomFormImportUploadButtonClick: function() {
+		onWidgetCustomFormImportUploadButtonClick: function() {
 			if (this.validate(this.form)) {
 				CMDBuild.LoadMask.get().show();
 				CMDBuild.core.proxy.Csv.decode({
@@ -86,16 +90,149 @@
 								decodedRows.push(rowDataObject.entries);
 						}, this);
 
-						this.cmfg('importData', {
-							append: this.form.importModeCombo.getValue() == 'add',
-							rowsObjects: decodedRows
-						});
-
-						this.onCustomFormImportAbortButtonClick();
-
-						CMDBuild.LoadMask.get().hide();
+						this.dataManageAndForward(decodedRows);
 					}
 				});
+			}
+		},
+
+		/**
+		 * Complete CSV translation data and forward call to parent delegate:
+		 * 	- Lookup: from description to id
+		 * 	- Reference: from code to id
+		 *
+		 * @param {Array} data
+		 */
+		dataManageAndForward: function(data) {
+			if (!this.cmfg('widgetCustomFormConfigurationIsAttributeEmpty',  CMDBuild.core.constants.Proxy.MODEL)) {
+				var barrierId = 'dataManageBarrier';
+
+				CMDBuild.core.RequestBarrier.init(barrierId, function() {
+					// Forwards to parent delegate
+					this.cmfg('widgetCustomFormImportData', {
+						append: this.form.importModeCombo.getValue() == 'add',
+						rowsObjects: data
+					});
+
+					this.onWidgetCustomFormImportAbortButtonClick();
+
+					CMDBuild.LoadMask.get().hide();
+				}, this);
+
+				Ext.Array.forEach(this.cmfg('widgetCustomFormConfigurationGet', CMDBuild.core.constants.Proxy.MODEL), function(attribute, i, allAttributes) {
+					switch (attribute.get(CMDBuild.core.constants.Proxy.TYPE)) {
+						case 'lookup': {
+							this.dataManageLookup(data, attribute, barrierId);
+						} break;
+
+						case 'reference': {
+							this.dataManageReference(data, attribute, barrierId);
+						} break;
+					}
+				}, this);
+			}
+		},
+
+		/**
+		 * @param {Array} data
+		 * @param {CMDBuild.model.widget.customForm.Attribute} attribute
+		 * @param {String} barrierId
+		 */
+		dataManageLookup: function(data, attribute, barrierId) {
+			if (
+				!Ext.isEmpty(data) && Ext.isArray(data)
+				&& !Ext.isEmpty(attribute)
+				&& !Ext.isEmpty(barrierId) && Ext.isString(barrierId)
+			) {
+				var attributeName = attribute.get(CMDBuild.core.constants.Proxy.NAME);
+
+				var params = {};
+				params[CMDBuild.core.constants.Proxy.TYPE] = attribute.get(CMDBuild.core.constants.Proxy.LOOKUP_TYPE);
+				params[CMDBuild.core.constants.Proxy.ACTIVE] = true;
+
+				CMDBuild.ServiceProxy.lookup.get({
+					params: params,
+					scope: this,
+					success: function(response, options, decodedResponse) {
+						decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.ROWS];
+
+						Ext.Array.forEach(data, function(recordObject, i, allRecordObjects) {
+							if (!Ext.isEmpty(recordObject[attributeName])) {
+								var selectedLookup = Ext.Array.findBy(decodedResponse, function(lookupObject, i) {
+									return lookupObject['Description'] == recordObject[attributeName];
+								}, this);
+
+								if (!Ext.isEmpty(selectedLookup))
+									data[i][attributeName] = selectedLookup['Id'];
+							}
+						}, this);
+					},
+					callback: CMDBuild.core.RequestBarrier.getCallback(barrierId)
+				});
+			} else {
+				_error('Malformed parameters in Lookup data manage', this);
+			}
+		},
+
+		/**
+		 * @param {Array} data
+		 * @param {CMDBuild.model.widget.customForm.Attribute} attribute
+		 * @param {String} barrierId
+		 */
+		dataManageReference: function(data, attribute, barrierId) {
+			if (
+				!Ext.isEmpty(data) && Ext.isArray(data)
+				&& !Ext.isEmpty(attribute)
+				&& !Ext.isEmpty(barrierId) && Ext.isString(barrierId)
+			) {
+				var attributeName = attribute.get(CMDBuild.core.constants.Proxy.NAME);
+				var requiredCardAdvancedFilterArray = [];
+
+				Ext.Array.forEach(data, function(recordObject, i, allRecordObjects) {
+					if (!Ext.isEmpty(recordObject[attributeName]))
+						requiredCardAdvancedFilterArray.push({
+							simple: {
+								attribute: 'Code',
+								operator: 'equal',
+								value: [recordObject[attributeName]],
+								parameterType: 'fixed'
+							}
+						});
+				}, this);
+
+				var params = {};
+				params[CMDBuild.core.constants.Proxy.CLASS_NAME] = attribute.get(CMDBuild.core.constants.Proxy.TARGET_CLASS);
+				params[CMDBuild.core.constants.Proxy.FILTER] = Ext.encode({ // Filters request to get only required cards
+					attribute: { or: requiredCardAdvancedFilterArray }
+				});
+
+				CMDBuild.core.proxy.Card.getList({
+					params: params,
+					loadMask: false,
+					scope: this,
+					success: function(response, options, decodedResponse) {
+						decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.ROWS];
+
+						var referencedCardsMap = {};
+
+						// Build referencedCardsMap
+						Ext.Array.forEach(decodedResponse, function(cardObject, i, allCardObjects) {
+							referencedCardsMap[cardObject['Code']] = cardObject;
+						}, this);
+
+						Ext.Array.forEach(data, function(recordObject, i, allRecordObjects) {
+							if (!Ext.isEmpty(recordObject[attributeName])) {
+								var selectedCard = referencedCardsMap[recordObject[attributeName]];
+
+								if (!Ext.isEmpty(selectedCard))
+									data[i][attributeName] = selectedCard['Id'];
+							}
+						}, this);
+					},
+					callback: CMDBuild.core.RequestBarrier.getCallback(barrierId)
+				});
+			} else {
+				_error('Malformed parameters in Reference data manage', this);
 			}
 		}
 	});

@@ -21,18 +21,21 @@
 		/**
 		 * @param {Boolean} withEditor
 		 *
-		 * @returns {Ext.grid.column.Column}
+		 * @returns {Ext.grid.column.Column or Object}
 		 *
 		 * NOTE: cannot implement Ext.grid.column.Number because don't recognize not anglosaxon number formats
 		 */
 		buildColumn: function(withEditor) {
 			withEditor = Ext.isBoolean(withEditor) ? withEditor : false;
 
-			return Ext.create('Ext.grid.column.Column', {
+			return this.cmfg('attributeModelGet', CMDBuild.core.constants.Proxy.HIDDEN) ? {} : Ext.create('Ext.grid.column.Column', {
 				dataIndex: this.cmfg('attributeModelGet', CMDBuild.core.constants.Proxy.NAME),
 				disabled: !this.cmfg('attributeModelGet', CMDBuild.core.constants.Proxy.WRITABLE),
 				editor: withEditor ? this.buildEditor() : null,
 				flex: 1,
+				hidden: !this.cmfg('attributeModelGet', CMDBuild.core.constants.Proxy.SHOW_COLUMN),
+				renderer: this.rendererColumn,
+				scope: this,
 				sortable: true,
 				text: this.applyMandatoryLabelFlag(this.cmfg('attributeModelGet', CMDBuild.core.constants.Proxy.DESCRIPTION)),
 				width: this.cmfg('attributeModelGet', CMDBuild.core.constants.Proxy.NAME).length * 9
@@ -43,7 +46,7 @@
 		 * @returns {Object}
 		 */
 		buildEditor: function() {
-			return {
+			return this.cmfg('attributeModelGet', CMDBuild.core.constants.Proxy.HIDDEN) ? {} : {
 				xtype: 'numberfield',
 				allowBlank: !this.cmfg('attributeModelGet', CMDBuild.core.constants.Proxy.MANDATORY),
 				disabled: !this.cmfg('attributeModelGet', CMDBuild.core.constants.Proxy.WRITABLE),
@@ -67,6 +70,7 @@
 					this.cmfg('attributeModelGet', CMDBuild.core.constants.Proxy.DESCRIPTION)
 					|| this.cmfg('attributeModelGet', CMDBuild.core.constants.Proxy.NAME)
 				),
+				hidden: this.cmfg('attributeModelGet', CMDBuild.core.constants.Proxy.HIDDEN),
 				hideTrigger: true, // Hides selecting arrows
 				labelAlign: 'right',
 				labelWidth: CMDBuild.LABEL_WIDTH,
