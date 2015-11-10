@@ -343,8 +343,7 @@
 		 * Add empty row to grid store
 		 */
 		onWidgetCustomFormLayoutGridAddRowButtonClick: function() {
-//			this.view.getStore().insert(0, {});
-			CMDBuild.core.LoadMask.show();
+			this.view.getStore().insert(0, {});
 		},
 
 		/**
