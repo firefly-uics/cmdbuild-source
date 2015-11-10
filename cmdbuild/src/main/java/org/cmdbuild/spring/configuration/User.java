@@ -9,7 +9,6 @@ import org.cmdbuild.auth.UserStore;
 import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.dao.view.user.UserDataView;
-import org.cmdbuild.data.view.PermissiveDataView;
 import org.cmdbuild.logic.data.access.UserDataAccessLogicBuilder;
 import org.cmdbuild.logic.data.access.WebServiceDataAccessLogicBuilder;
 import org.cmdbuild.logic.workflow.UserWorkflowLogicBuilder;
@@ -65,7 +64,6 @@ public class User {
 		return new WebServiceDataAccessLogicBuilder( //
 				data.systemDataView(), //
 				data.lookupStore(), //
-				permissiveDataView(), //
 				userDataView(), //
 				operationUser(), //
 				lock.dummyLockLogic());
@@ -78,7 +76,6 @@ public class User {
 		return new UserDataAccessLogicBuilder( //
 				data.systemDataView(), //
 				data.lookupStore(), //
-				permissiveDataView(), //
 				userDataView(), //
 				operationUser(), //
 				lock.configurationAwareLockLogic());
@@ -98,12 +95,6 @@ public class User {
 		return new ObservableDataView( //
 				userDataView, //
 				taskManager.defaultObserverCollector().allInOneObserver());
-	}
-
-	@Bean
-	@Scope(PROTOTYPE)
-	protected PermissiveDataView permissiveDataView() {
-		return new PermissiveDataView(userDataView(), data.systemDataView());
 	}
 
 	@Bean

@@ -62,7 +62,6 @@ public class DataAccessLogicTest extends IntegrationTestBase {
 				new DataViewLookupStore( //
 						DataViewStore.newInstance(dbDataView(), new LookupStorableConverter())), //
 				dbDataView(), //
-				dbDataView(), //
 				operationUser(), //
 				new DummyLockLogic()) //
 				.build();
