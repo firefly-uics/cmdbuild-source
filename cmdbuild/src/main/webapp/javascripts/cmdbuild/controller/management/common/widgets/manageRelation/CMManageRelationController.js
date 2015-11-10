@@ -202,7 +202,7 @@
 	function removeCard() {
 		if (this.cardToDelete) {
 			var me = this;
-			CMDBuild.LoadMask.get().show();
+			CMDBuild.core.LoadMask.show();
 			CMDBuild.ServiceProxy.card.remove({
 				important: true,
 				params : {
@@ -210,7 +210,7 @@
 					"Id": me.cardToDelete.get("dst_id")
 				},
 				callback : function() {
-					CMDBuild.LoadMask.get().hide();
+					CMDBuild.core.LoadMask.hide();
 					delete me.cardToDelete;
 					me.loadData();
 				}

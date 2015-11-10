@@ -24,14 +24,14 @@
 	}
 
 	function onUploadButtonClick() {
-		CMDBuild.LoadMask.get().show();
+		CMDBuild.core.LoadMask.show();
 		this.view.form.getForm().submit({
 			method: 'POST',
 			url : 'services/json/management/importcsv/uploadcsv',
 			scope: this,
 			success: updateGridRecords,
 			failure: function() {
-				CMDBuild.LoadMask.get().hide();
+				CMDBuild.core.LoadMask.hide();
 			}
 		});
 	}
@@ -41,7 +41,7 @@
 		if (records.length == 0) {
 			CMDBuild.Msg.warn(tr.warning, tr.noupdate);
 		} else {
-			CMDBuild.LoadMask.get().show();
+			CMDBuild.core.LoadMask.show();
 			CMDBuild.Ajax.request({
 				method : 'POST',
 				url : 'services/json/management/importcsv/updatecsvrecords',
@@ -51,28 +51,28 @@
 				scope : this,
 				success : updateGridRecords,
 				failure: function() {
-					CMDBuild.LoadMask.get().hide();
+					CMDBuild.core.LoadMask.hide();
 				}
 			});
 		}
 	}
 
 	function onConfirmButtonClick() {
-		CMDBuild.LoadMask.get().show();
+		CMDBuild.core.LoadMask.show();
 		CMDBuild.Ajax.request({
 			method: 'POST',
 			url : 'services/json/management/importcsv/storecsvrecords',
-			waitTitle : CMDBuild.Translation.common.wait_title,
+			waitTitle : CMDBuild.Translation.pleaseWait,
 			waitMsg : CMDBuild.Translation.common.wait_msg,
 			timeout: 600000,
 			scope: this,
 			success: function(a,b,c) {
-				CMDBuild.LoadMask.get().hide();
+				CMDBuild.core.LoadMask.hide();
 				CMDBuild.Msg.info(tr.info, tr.importsuccess);
 				updateGridRecords.call(this);
 			},
 			failure: function(a,b,c) {
-				CMDBuild.LoadMask.get().hide();
+				CMDBuild.core.LoadMask.hide();
 				CMDBuild.Msg.error(tr.error, tr.importfailure, true);
 			}
 		});
@@ -95,7 +95,7 @@
 				this.view.grid.loadData(c.rows);
 			},
 			callback: function() {
-				CMDBuild.LoadMask.get().hide();
+				CMDBuild.core.LoadMask.hide();
 			}
 		});
 	}

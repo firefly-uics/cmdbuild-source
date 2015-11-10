@@ -241,13 +241,13 @@
 
 				params[parameterNames.ATTRIBUTES] = Ext.encode(attributes);
 
-				CMDBuild.LoadMask.get().show();
+				CMDBuild.core.LoadMask.show();
 				CMDBuild.ServiceProxy.relations.remove({
 					params: params,
 					scope: this,
 					success: this.onDeleteRelationSuccess,
 					callback: function() {
-						CMDBuild.LoadMask.get().hide();
+						CMDBuild.core.LoadMask.hide();
 						this.loadData();
 					}
 				});

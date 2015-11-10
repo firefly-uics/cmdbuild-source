@@ -51,7 +51,7 @@
 					params[CMDBuild.core.constants.Proxy.ROLE] = this.form.role.getValue();
 
 				// LoadMask manual manage to avoid to hide on success
-				CMDBuild.LoadMask.get().show();
+				CMDBuild.core.LoadMask.show();
 				CMDBuild.core.proxy.session.JsonRpc.login({
 					params: params,
 					loadMask: false,
@@ -78,7 +78,7 @@
 						});
 					},
 					failure: function(result, options, decodedResult) {
-						CMDBuild.LoadMask.get().hide();
+						CMDBuild.core.LoadMask.hide();
 
 						if (!Ext.isEmpty(decodedResult) && decodedResult[CMDBuild.core.constants.Proxy.REASON] == 'AUTH_MULTIPLE_GROUPS') {
 							CMDBuild.configuration.runtime.set(CMDBuild.core.constants.Proxy.USERNAME, this.form.user.getValue());

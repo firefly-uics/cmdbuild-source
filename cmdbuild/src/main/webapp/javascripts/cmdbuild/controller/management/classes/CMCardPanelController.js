@@ -54,7 +54,7 @@
 					return;
 				}
 
-				CMDBuild.LoadMask.get().show();
+				CMDBuild.core.LoadMask.show();
 				CMDBuild.ServiceProxy.card.remove({
 					params : {
 						IdClass: idClass,
@@ -64,7 +64,7 @@
 						me.fireEvent(me.CMEVENTS.cardRemoved, idCard, idClass);
 					},
 					callback : function() {
-						CMDBuild.LoadMask.get().hide();
+						CMDBuild.core.LoadMask.hide();
 					}
 				});
 			};

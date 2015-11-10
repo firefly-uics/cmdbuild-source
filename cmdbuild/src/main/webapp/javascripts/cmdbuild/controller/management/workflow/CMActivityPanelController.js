@@ -327,19 +327,19 @@
 
 		this.clearView();
 
-		CMDBuild.LoadMask.get().show();
+		CMDBuild.core.LoadMask.show();
 		CMDBuild.ServiceProxy.workflow.terminateActivity({
 			params: {
 				classId: processInstance.getClassId(),
 				cardId: processInstance.getId()
 			},
 			success: function(response) {
-				CMDBuild.LoadMask.get().hide();
+				CMDBuild.core.LoadMask.hide();
 
 				me.fireEvent(me.CMEVENTS.cardRemoved);
 			},
 			failure: function() {
-				CMDBuild.LoadMask.get().hide();
+				CMDBuild.core.LoadMask.hide();
 			}
 		});
 	}
@@ -412,13 +412,13 @@
 				requestParams["ww"] = Ext.JSON.encode(this.widgetControllerManager.getData(me.advance));
 				_debug("save the process with params", requestParams);
 
-				CMDBuild.LoadMask.get().show();
+				CMDBuild.core.LoadMask.show();
 				CMDBuild.ServiceProxy.workflow.saveActivity({
 					params: requestParams,
 					scope : this,
 					clientValidation: this.isAdvance, //to force the save request
 					callback: function(operation, success, response) {
-						CMDBuild.LoadMask.get().hide();
+						CMDBuild.core.LoadMask.hide();
 					},
 					failure: function(response, options, decodedResponse) {
 						this.delegate.reload(); // Reload store also on failure

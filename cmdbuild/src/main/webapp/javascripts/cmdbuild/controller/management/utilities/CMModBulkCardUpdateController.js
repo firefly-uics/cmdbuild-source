@@ -64,7 +64,7 @@
 		var cardToModifyMSG = "<p>" + CMDBuild.Translation.management.modutilities.bulkupdate.countMessage + ".</p>",
 			me = this;
 
-		CMDBuild.LoadMask.get().show();
+		CMDBuild.core.LoadMask.show();
 		getProxyCall(me)({
 			params: builSaveParams(me),
 			success: function(response, request, decordedResp) {
@@ -78,7 +78,7 @@
 				showWarningMsg(me, msg);
 			},
 			callback: function() {
-				CMDBuild.LoadMask.get().hide();
+				CMDBuild.core.LoadMask.hide();
 			}
 		});
 	}
@@ -122,7 +122,7 @@
 		var params = builSaveParams(me);
 		params[_CMProxy.parameter.CONFIRMED] = true;
 
-		CMDBuild.LoadMask.get().show();
+		CMDBuild.core.LoadMask.show();
 		getProxyCall(me)({
 			params: params,
 			success: function(response, request, decordedResp) {
@@ -130,7 +130,7 @@
 				onAbortButtonClick.call(me);
 			},
 			callback: function() {
-				CMDBuild.LoadMask.get().hide();
+				CMDBuild.core.LoadMask.hide();
 			}
 		});
 	}

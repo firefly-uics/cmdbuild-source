@@ -282,7 +282,7 @@
 		 * @param {Object} record
 		 */
 		onStartButtonClick: function(record) {
-			CMDBuild.LoadMask.get().show();
+			CMDBuild.core.LoadMask.show();
 
 			CMDBuild.core.proxy.CMProxyTasks.start({
 				scope: this,
@@ -298,7 +298,7 @@
 		 * @param {Object} record
 		 */
 		onStopButtonClick: function(record) {
-			CMDBuild.LoadMask.get().show();
+			CMDBuild.core.LoadMask.show();
 
 			CMDBuild.core.proxy.CMProxyTasks.stop({
 				scope: this,

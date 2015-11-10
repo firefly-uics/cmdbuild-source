@@ -32,7 +32,7 @@
 		},
 
 		onSaveClick: function() {
-			CMDBuild.LoadMask.get().show();
+			CMDBuild.core.LoadMask.show();
 
 			CMDBuild.ServiceProxy.classes.save({
 				params: this.buildSaveParams(),
@@ -42,7 +42,7 @@
 			});
 
 			function callback() {
-				CMDBuild.LoadMask.get().hide();
+				CMDBuild.core.LoadMask.hide();
 			}
 		},
 
@@ -99,7 +99,7 @@
 		},
 
 		deleteCurrentClass: function() {
-			CMDBuild.LoadMask.get().hide();
+			CMDBuild.core.LoadMask.hide();
 
 			var params = {};
 			params[_CMProxy.parameter.CLASS_NAME] = this.selection.get("name");
@@ -112,7 +112,7 @@
 			});
 
 			function callback() {
-				CMDBuild.LoadMask.get().hide();
+				CMDBuild.core.LoadMask.hide();
 				this.view.disableModify();
 				this.view.reset();
 			}

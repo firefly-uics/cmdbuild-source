@@ -188,7 +188,7 @@
 			}
 
 			if (this.confirmStrategy) {
-				CMDBuild.LoadMask.get().show();
+				CMDBuild.core.LoadMask.show();
 				attachmentWindow.mask();
 				this.confirmStrategy.doRequest(attachmentWindow);
 			}
@@ -239,19 +239,19 @@
 		params[CMDBuild.ServiceProxy.parameter.CLASS_NAME] = _CMCache.getEntryTypeNameById(me.getClassId());
 		params[CMDBuild.ServiceProxy.parameter.CARD_ID] = me.getCardId();
 
-		CMDBuild.LoadMask.get().show();
+		CMDBuild.core.LoadMask.show();
 		CMDBuild.ServiceProxy.attachment.remove({
 			params: params,
 			success: function() {
 				// Defer the call because Alfresco is not responsive
 				Ext.Function.createDelayed(function deferredCall() {
-					CMDBuild.LoadMask.get().hide();
+					CMDBuild.core.LoadMask.hide();
 					me.view.reloadCard();
 				}, CMDBuild.Config.dms.delay, me)();
 			},
 
 			failure: function() {
-				CMDBuild.LoadMask.get().hide();
+				CMDBuild.core.LoadMask.hide();
 			}
 		});
 	}
@@ -291,12 +291,12 @@
 						me.ownerController.view.reloadCard();
 						attachmentWindow.unmask();
 						attachmentWindow.close();
-						CMDBuild.LoadMask.get().hide();
+						CMDBuild.core.LoadMask.hide();
 					}, CMDBuild.Config.dms.delay, this)();
 				},
 				failure: function(form, action) {
 					attachmentWindow.unmask();
-					CMDBuild.LoadMask.get().hide();
+					CMDBuild.core.LoadMask.hide();
 
 					// Workaround to show form submit error
 					if (action && action.result && action.result.errors && action.result.errors.length) {

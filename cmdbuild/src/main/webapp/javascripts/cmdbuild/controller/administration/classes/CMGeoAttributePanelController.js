@@ -57,7 +57,7 @@
 		}
 
 		this.form.enableModify(all = true);
-		CMDBuild.LoadMask.get().show();
+		CMDBuild.core.LoadMask.show();
 
 		var attributeConfig = this.form.getData();
 		attributeConfig.style = Ext.encode(this.form.getStyle());
@@ -112,7 +112,7 @@
 			"name": me.currentAttribute.get("name")
 		};
 
-		CMDBuild.LoadMask.get().show();
+		CMDBuild.core.LoadMask.show();
 		CMDBuild.ServiceProxy.geoAttribute.remove({
 			params: params, 
 			success: function onDeleteGeoAttributeSuccess(response, request, decoded) {
@@ -138,7 +138,7 @@
 	}
 
 	function callback() {
-		CMDBuild.LoadMask.get().hide();
+		CMDBuild.core.LoadMask.hide();
 	}
 
 	function isItMineOrOfMyParents(attr, classId) {

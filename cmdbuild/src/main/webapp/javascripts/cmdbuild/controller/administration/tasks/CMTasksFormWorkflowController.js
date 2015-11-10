@@ -152,7 +152,7 @@
 
 			// Validate before save
 			if (this.validate(formData[CMDBuild.core.constants.Proxy.ACTIVE])) {
-				CMDBuild.LoadMask.get().show();
+				CMDBuild.core.LoadMask.show();
 
 				submitDatas[CMDBuild.core.constants.Proxy.CRON_EXPRESSION] = this.delegateStep[1].getCronDelegate().getValue();
 

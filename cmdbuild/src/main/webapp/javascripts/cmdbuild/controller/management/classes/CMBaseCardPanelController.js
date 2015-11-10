@@ -222,11 +222,11 @@
 					params[CMDBuild.core.constants.Proxy.CLASS_NAME] = _CMCache.getEntryTypeNameById(me.card.get('IdClass'));
 				}
 
-				CMDBuild.LoadMask.get().show();
+				CMDBuild.core.LoadMask.show();
 				CMDBuild.ServiceProxy.card.get({
 					params: params,
 					success: function(result, options, decodedResult) {
-						CMDBuild.LoadMask.get().hide();
+						CMDBuild.core.LoadMask.hide();
 
 						var data = decodedResult.card;
 

@@ -573,12 +573,12 @@
 
 				this.run = function() {
 					if (this.maxTimes == DEFAULT_MAX_TIMES)
-						CMDBuild.LoadMask.get().show();
+						CMDBuild.core.LoadMask.show();
 
 					if (this.maxTimes > 0) {
 						if (this.checkFn.call(this.checkFnScope)) {
 							_debug("End polling with success");
-							CMDBuild.LoadMask.get().hide();
+							CMDBuild.core.LoadMask.hide();
 							this.success.call(this.cbScope);
 						} else {
 							this.maxTimes--;
@@ -586,7 +586,7 @@
 						}
 					} else {
 						_debug("End polling with failure");
-						CMDBuild.LoadMask.get().hide();
+						CMDBuild.core.LoadMask.hide();
 						this.failure.call();
 					}
 				};

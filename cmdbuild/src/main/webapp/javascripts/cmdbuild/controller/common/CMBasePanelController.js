@@ -17,7 +17,7 @@
 		},
 
 		callback: function() {
-			CMDBuild.LoadMask.get().hide();
+			CMDBuild.core.LoadMask.hide();
 		},
 
 		/**

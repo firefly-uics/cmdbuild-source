@@ -194,7 +194,7 @@
 		var form = me.view.formPanel.getForm();
 		var valid = advance ? validate(me) : true;
 		if (valid) {
-			CMDBuild.LoadMask.get().show();
+			CMDBuild.core.LoadMask.show();
 			var requestParams = {};
 			var name = me.widgetReader.getCode(me.typedWidgetConf);
 			var card = _CMCache.getEntryTypeByName(name);
@@ -208,7 +208,7 @@
 				scope : me,
 				clientValidation: true, //to force the save request
 				callback: function(operation, success, response) {
-					CMDBuild.LoadMask.get().hide();
+					CMDBuild.core.LoadMask.hide();
 				},
 				success: function(operation, requestConfiguration, decodedResponse) {
 					me.processId = decodedResponse.response.Id;
