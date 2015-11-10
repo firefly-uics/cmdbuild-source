@@ -1,6 +1,6 @@
 (function() {
 
-	Ext.require('CMDBuild.core.constants.Proxy');
+	Ext.require(['CMDBuild.core.constants.Proxy']);
 
 	Ext.define('CMDBuild.model.common.attributes.Attribute', {
 		extend: 'Ext.data.Model',
@@ -16,10 +16,11 @@
 			{ name: CMDBuild.core.constants.Proxy.NAME, type: 'string' },
 			{ name: CMDBuild.core.constants.Proxy.PRECISION, type: 'int', useNull: true },
 			{ name: CMDBuild.core.constants.Proxy.SCALE, type: 'int', defaultValue: 0 },
+			{ name: CMDBuild.core.constants.Proxy.SHOW_COLUMN, type: 'boolean', defaultValue: true },
 			{ name: CMDBuild.core.constants.Proxy.TARGET_CLASS, type: 'string' },
-			{ name: CMDBuild.core.constants.Proxy.TYPE, type: 'string' },
+			{ name: CMDBuild.core.constants.Proxy.TYPE, type: 'string', convert: toLowerCase }, // Case insensitive types
 			{ name: CMDBuild.core.constants.Proxy.UNIQUE, type: 'boolean' },
-			{ name: CMDBuild.core.constants.Proxy.WRITABLE, type: 'boolean' }
+			{ name: CMDBuild.core.constants.Proxy.WRITABLE, type: 'boolean', defaultValue: true }
 		],
 
 		/**
@@ -32,6 +33,7 @@
 				this.set(CMDBuild.core.constants.Proxy.LENGTH, data['len']);
 				this.set(CMDBuild.core.constants.Proxy.LOOKUP_TYPE, data[CMDBuild.core.constants.Proxy.LOOKUP]);
 				this.set(CMDBuild.core.constants.Proxy.MANDATORY, data['isnotnull']);
+				this.set(CMDBuild.core.constants.Proxy.SHOW_COLUMN, data['isbasedsp']);
 				this.set(CMDBuild.core.constants.Proxy.UNIQUE, data['isunique']);
 
 				if (!Ext.isEmpty(data['fieldmode']))
@@ -54,7 +56,7 @@
 			var customValidationValue = true;
 
 			switch (this.get(CMDBuild.core.constants.Proxy.TYPE)) {
-				case 'DECIMAL': {
+				case 'decimal': {
 					customValidationValue = (
 						!Ext.isEmpty(this.get(CMDBuild.core.constants.Proxy.SCALE))
 						&& !Ext.isEmpty(this.get(CMDBuild.core.constants.Proxy.PRECISION))
@@ -62,13 +64,13 @@
 					);
 				} break;
 
-				case 'FOREIGNKEY': {
+				case 'foreignkey': {
 					customValidationValue = (
 						!Ext.isEmpty(this.get(CMDBuild.core.constants.Proxy.TARGET_CLASS))
 					);
 				} break;
 
-				case 'STRING': {
+				case 'string': {
 					customValidationValue = (
 						!Ext.isEmpty(this.get(CMDBuild.core.constants.Proxy.LENGTH))
 						&& this.get(CMDBuild.core.constants.Proxy.LENGTH) > 0
@@ -79,5 +81,17 @@
 			return this.callParent(arguments) && customValidationValue;
 		}
 	});
+
+	/**
+	 * @param {String} value
+	 * @param {Object} record
+	 *
+	 * @returns {String}
+	 *
+	 * @private
+	 */
+	function toLowerCase(value, record) {
+		return value.toLowerCase();
+	}
 
 })();

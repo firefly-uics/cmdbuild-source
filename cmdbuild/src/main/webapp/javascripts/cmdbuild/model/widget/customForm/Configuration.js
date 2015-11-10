@@ -1,6 +1,6 @@
 (function() {
 
-	Ext.require('CMDBuild.core.constants.Proxy');
+	Ext.require(['CMDBuild.core.constants.Proxy']);
 
 	Ext.define('CMDBuild.model.widget.customForm.Configuration', {
 		extend: 'Ext.data.Model',
@@ -10,6 +10,7 @@
 			{ name: CMDBuild.core.constants.Proxy.ACTIVE, type: 'boolean' },
 			{ name: CMDBuild.core.constants.Proxy.CAPABILITIES, type: 'auto' }, // Object to gather all UI disable flags
 			{ name: CMDBuild.core.constants.Proxy.DATA, type: 'auto' }, // Encoded array of CMDBuild.model.common.Generic models strings
+			{ name: CMDBuild.core.constants.Proxy.FUNCTION_DATA, type: 'auto' }, // Function data to be resolved with TemplateResolver (data attribute alias)
 			{ name: CMDBuild.core.constants.Proxy.ID, type: 'string' },
 			{ name: CMDBuild.core.constants.Proxy.LABEL, type: 'string' },
 			{ name: CMDBuild.core.constants.Proxy.LAYOUT, type: 'string', defaultValue: 'grid' }, // Widget view mode [grid|form]
@@ -23,21 +24,16 @@
 		 * @param {Object} data
 		 */
 		constructor: function(data) {
-			data = data || {};
-
 			this.callParent(arguments);
 
 			// Apply form model attributes model
-			if (!Ext.isEmpty(data[CMDBuild.core.constants.Proxy.MODEL]))
-				this.set(CMDBuild.core.constants.Proxy.MODEL, data[CMDBuild.core.constants.Proxy.MODEL]);
+			this.set(CMDBuild.core.constants.Proxy.MODEL, data[CMDBuild.core.constants.Proxy.MODEL]);
 
 			// Decode data string
-			if (!Ext.isEmpty(data[CMDBuild.core.constants.Proxy.DATA]))
-				this.set(CMDBuild.core.constants.Proxy.DATA, data[CMDBuild.core.constants.Proxy.DATA]);
+			this.set(CMDBuild.core.constants.Proxy.DATA, data[CMDBuild.core.constants.Proxy.DATA]);
 
 			// Apply capabilities model
-			if (!Ext.isEmpty(data[CMDBuild.core.constants.Proxy.CAPABILITIES]))
-				this.set(CMDBuild.core.constants.Proxy.CAPABILITIES, data[CMDBuild.core.constants.Proxy.CAPABILITIES]);
+			this.set(CMDBuild.core.constants.Proxy.CAPABILITIES, data[CMDBuild.core.constants.Proxy.CAPABILITIES]);
 		},
 
 		/**
@@ -60,19 +56,23 @@
 
 						var attributesArray = [];
 
-						Ext.Array.forEach(newValue, function(attributeObject, i, AllAttributesObjects) {
+						Ext.Array.forEach(newValue, function(attributeObject, i, allAttributeObjects) {
 							attributesArray.push(Ext.create('CMDBuild.model.common.Generic', attributeObject));
 						}, this);
 
 						newValue = attributesArray;
 					} break;
 
+					/**
+					 * Uses custom Attribute model to adapt to old FieldManager implementation
+					 * TODO: delete on full FieldManager implementation
+					 */
 					case CMDBuild.core.constants.Proxy.MODEL: {
 						newValue = Ext.isString(newValue) ? Ext.decode(newValue) : newValue;
 
 						var attributesArray = [];
 
-						Ext.Array.forEach(newValue, function(attributeObject, i, AllAttributesObjects) {
+						Ext.Array.forEach(newValue, function(attributeObject, i, allAttributeObjects) {
 							attributesArray.push(Ext.create('CMDBuild.model.widget.customForm.Attribute', attributeObject));
 						}, this);
 

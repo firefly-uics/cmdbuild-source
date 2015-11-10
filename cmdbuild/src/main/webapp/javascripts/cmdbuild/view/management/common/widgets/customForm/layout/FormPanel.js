@@ -13,13 +13,14 @@
 		delegate: undefined,
 
 		bodyCls: 'x-panel-body-default-framed',
+		bodyPadding: 5,
 		border: false,
 		frame: false,
 		overflowY: 'auto',
 
 		layout: {
 			type: 'vbox',
-//			align: 'stretch' // TODO: uncomment on new fieldManager full implementation
+			align: 'stretch'
 		},
 
 		initComponent: function() {
@@ -35,18 +36,18 @@
 								scope: this,
 
 								disabled: (
-									this.delegate.cmfg('widgetConfigurationGet', [
+									this.delegate.cmfg('widgetCustomFormConfigurationGet', [
 										CMDBuild.core.constants.Proxy.CAPABILITIES,
 										CMDBuild.core.constants.Proxy.READ_ONLY
 									])
-									|| this.delegate.cmfg('widgetConfigurationGet', [
+									|| this.delegate.cmfg('widgetCustomFormConfigurationGet', [
 										CMDBuild.core.constants.Proxy.CAPABILITIES,
 										CMDBuild.core.constants.Proxy.IMPORT_DISABLED
 									])
 								),
 
 								handler: function(button, e) {
-									this.delegate.cmfg('onCustomFormLayoutFormImportButtonClick');
+									this.delegate.cmfg('onWidgetCustomFormLayoutFormImportButtonClick');
 								}
 							}),
 							Ext.create('CMDBuild.core.buttons.iconized.Reload', {
@@ -54,7 +55,7 @@
 								scope: this,
 
 								handler: function(button, e) {
-									this.delegate.cmfg('onCustomFormLayoutFormResetButtonClick');
+									this.delegate.cmfg('onWidgetCustomFormLayoutFormResetButtonClick');
 								}
 							})
 						]

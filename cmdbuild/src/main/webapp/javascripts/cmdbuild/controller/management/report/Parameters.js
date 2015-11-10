@@ -65,7 +65,6 @@
 
 		buildFields: function() {
 			if (this.attributeList.length > 0) {
-				var attributeCustom = undefined;
 				var fieldManager = Ext.create('CMDBuild.core.fieldManager.FieldManager', {
 					parentDelegate: this,
 					targetForm: this.form
@@ -73,12 +72,11 @@
 
 				Ext.Array.forEach(this.attributeList, function(attribute, i, allAttributes) {
 					if (fieldManager.isAttributeManaged(attribute[CMDBuild.core.constants.Proxy.TYPE])) {
-						attributeCustom = Ext.create('CMDBuild.model.common.attributes.Attribute', attribute);
+						var attributeCustom = Ext.create('CMDBuild.model.common.attributes.Attribute', attribute);
 						attributeCustom.setAdaptedData(attribute);
 
 						fieldManager.attributeModelSet(attributeCustom);
-
-						this.form.add(fieldManager.buildField());
+						fieldManager.add(this.form, fieldManager.buildField());
 					} else { // @deprecated - Old field manager
 						var field = CMDBuild.Management.FieldManager.getFieldForAttr(attribute, false, false);
 

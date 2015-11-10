@@ -95,3 +95,9 @@
 
 /* FIX: empty ending row in grids */
 	.x-grid-row-summary { display: none; }
+
+/* Validated cell elements */
+	.x-grid-invalid-cell-error {
+		background: #ffffff url("../images/grid/invalid_line.gif") repeat-x bottom !important;
+		border: 1px solid #cc3300 !important;
+	}

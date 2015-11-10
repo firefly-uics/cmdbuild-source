@@ -39,14 +39,14 @@
 								scope: this,
 
 								handler: function(button, e) {
-									this.delegate.cmfg('onRowEditWindowSaveButtonClick');
+									this.delegate.cmfg('onWidgetCustomFormRowEditWindowSaveButtonClick');
 								}
 							}),
 							Ext.create('CMDBuild.core.buttons.text.Abort', {
 								scope: this,
 
 								handler: function(button, e) {
-									this.delegate.cmfg('onRowEditWindowAbortButtonClick');
+									this.delegate.cmfg('onWidgetCustomFormRowEditWindowAbortButtonClick');
 								}
 							})
 						]
@@ -60,7 +60,7 @@
 
 						layout: {
 							type: 'vbox',
-//							align: 'stretch' // TODO: uncomment on new fieldManager full implementation
+							align: 'stretch'
 						}
 					})
 				]

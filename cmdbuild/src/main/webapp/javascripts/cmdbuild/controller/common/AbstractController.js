@@ -330,18 +330,21 @@
 		 * Validation input form
 		 *
 		 * @param {Ext.form.Panel} form
+		 * @param {Boolean} showPopup - enable popup error message
 		 *
 		 * @return {Boolean}
 		 */
-		validate: function(form) {
+		validate: function(form, showPopup) {
+			showPopup = Ext.isBoolean(showPopup) ? showPopup : true;
+
 			var invalidFieldsArray = form.getNonValidFields();
 
 			// Check for invalid fields and builds errorMessage
-			if (!Ext.isEmpty(form) && (invalidFieldsArray.length > 0)) {
+			if (!Ext.isEmpty(form) && !Ext.isEmpty(invalidFieldsArray)) {
 				var errorMessage = CMDBuild.Translation.errors.invalid_fields + '<ul style="text-align: left;">';
 
 				for (index in invalidFieldsArray)
-					errorMessage += '<li>' + invalidFieldsArray[index].fieldLabel + '</li>';
+					errorMessage += '<li>' + invalidFieldsArray[index].getFieldLabel() + '</li>';
 
 				errorMessage += '<ul>';
 

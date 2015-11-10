@@ -33,7 +33,7 @@
 		/**
 		 * @cfg {Boolean}
 		 */
-		enableViewDelegateInject: true,
+		enableDelegateApply: true,
 
 		/**
 		 * @cfg {Boolean}
@@ -131,7 +131,7 @@
 					this.widgetConfigurationSet({ value: this.widgetConfiguration }); // Setup widget configuration model
 
 				// Inject delegate to view
-				if (this.enableViewDelegateInject)
+				if (this.enableDelegateApply)
 					this.view.delegate = this;
 			} else {
 				_error('wrong or empty widget view or configuration object', this);
@@ -307,6 +307,19 @@
 				parameters[CMDBuild.core.constants.Proxy.MODEL_NAME] = this.widgetConfigurationModelClassName;
 
 				return this.propertyManageSet(parameters);
+			},
+
+		// WidgetCntroller methods
+			/**
+			 * @param {String} propertyName
+			 *
+			 * @returns {Mixed}
+			 */
+			widgetControllerPropertyGet: function(propertyName) {
+				if (!Ext.isEmpty(this[propertyName]))
+					return this[propertyName];
+
+				return null;
 			}
 	});
 

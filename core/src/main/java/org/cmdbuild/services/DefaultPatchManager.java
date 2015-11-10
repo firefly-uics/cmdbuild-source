@@ -17,6 +17,7 @@ import static org.apache.commons.lang3.builder.ToStringStyle.SHORT_PREFIX_STYLE;
 import static org.cmdbuild.common.Constants.BASE_CLASS_NAME;
 import static org.cmdbuild.common.Constants.CODE_ATTRIBUTE;
 import static org.cmdbuild.common.Constants.DESCRIPTION_ATTRIBUTE;
+import static org.cmdbuild.dao.guava.Functions.toCard;
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
 import static org.cmdbuild.dao.query.clause.OrderByClause.Direction.DESC;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
@@ -39,6 +40,7 @@ import java.util.regex.Matcher;
 import javax.sql.DataSource;
 
 import org.apache.commons.io.LineIterator;
+import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.query.clause.alias.Alias;
@@ -280,20 +282,25 @@ public class DefaultPatchManager implements PatchManager {
 		try {
 			predicate = new Predicate<Patch>() {
 
-				final Alias P = name("P");
-				final String version = dataView.select(anyAttribute(P)) //
+				private final Alias P = name("P");
+				private final Optional<CMCard> first = from(dataView.select(anyAttribute(P)) //
 						.from(getOrCreateClass(), as(P)) //
 						.where(condition(attribute(P, CATEGORY), (category == null) ? isNull() : eq(category))) //
 						.limit(1) //
 						.orderBy(attribute(P, VERSION), DESC) //
-						.run() //
-						.getOnlyRow() //
-						.getCard(P) //
-						.get(VERSION, String.class);
+						.run()) //
+						.transform(toCard(P)) //
+						.first();
 
 				@Override
 				public boolean apply(final Patch input) {
-					return version.compareTo(input.getVersion()) < 0;
+					final boolean output;
+					if (first.isPresent()) {
+						output = first.get().get(VERSION, String.class).compareTo(input.getVersion()) < 0;
+					} else {
+						output = true;
+					}
+					return output;
 				}
 
 			};
@@ -348,7 +355,7 @@ public class DefaultPatchManager implements PatchManager {
 			final Collection<DefaultPatch> elements = availablePatches.get(key);
 			for (final DefaultPatch element : newArrayList(elements)) {
 				applyPatch(element);
-				createPatchCard(element);
+				createPatchCard(element, key.orNull());
 				elements.remove(element);
 			}
 		}
@@ -397,7 +404,7 @@ public class DefaultPatchManager implements PatchManager {
 	public void createLastPatch() {
 		for (final Optional<? extends String> category : lastAvaiablePatches.keySet()) {
 			logger.info("creating card for last available patch '{}'", lastAvaiablePatches);
-			createPatchCard(lastAvaiablePatches.get(category));
+			createPatchCard(lastAvaiablePatches.get(category), category.orNull());
 			availablePatches.clear();
 		}
 	}
@@ -436,11 +443,12 @@ public class DefaultPatchManager implements PatchManager {
 		return output;
 	}
 
-	private void createPatchCard(final Patch patch) {
+	private void createPatchCard(final Patch patch, final String category) {
 		dataView.createCardFor(getOrCreateClass()) //
 				.set(VERSION, patch.getVersion()) //
 				.set(DESCRIPTION, patch.getDescription()) //
 				.setUser("system") //
+				.set(CATEGORY, category) //
 				.save();
 	}
 

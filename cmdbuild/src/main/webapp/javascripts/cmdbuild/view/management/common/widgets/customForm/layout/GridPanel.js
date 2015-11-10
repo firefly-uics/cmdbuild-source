@@ -24,7 +24,7 @@
 		frame: false,
 
 		initComponent: function() {
-			var isWidgetReadOnly = this.delegate.cmfg('widgetConfigurationGet', [
+			var isWidgetReadOnly = this.delegate.cmfg('widgetCustomFormConfigurationGet', [
 				CMDBuild.core.constants.Proxy.CAPABILITIES,
 				CMDBuild.core.constants.Proxy.READ_ONLY
 			]);
@@ -42,14 +42,14 @@
 
 								disabled: (
 									isWidgetReadOnly
-									|| this.delegate.cmfg('widgetConfigurationGet', [
+									|| this.delegate.cmfg('widgetCustomFormConfigurationGet', [
 										CMDBuild.core.constants.Proxy.CAPABILITIES,
 										CMDBuild.core.constants.Proxy.ADD_DISABLED
 									])
 								),
 
 								handler: function(button, e) {
-									this.delegate.cmfg('onCustomFormLayoutGridAddRowButtonClick');
+									this.delegate.cmfg('onWidgetCustomFormLayoutGridAddRowButtonClick');
 								}
 							}),
 							Ext.create('CMDBuild.core.buttons.iconized.Import', {
@@ -58,14 +58,14 @@
 
 								disabled: (
 									isWidgetReadOnly
-									|| this.delegate.cmfg('widgetConfigurationGet', [
+									|| this.delegate.cmfg('widgetCustomFormConfigurationGet', [
 										CMDBuild.core.constants.Proxy.CAPABILITIES,
 										CMDBuild.core.constants.Proxy.IMPORT_DISABLED
 									])
 								),
 
 								handler: function(button, e) {
-									this.delegate.cmfg('onCustomFormLayoutGridImportButtonClick');
+									this.delegate.cmfg('onWidgetCustomFormLayoutGridImportButtonClick');
 								}
 							}),
 							Ext.create('CMDBuild.core.buttons.iconized.Reload', {
@@ -73,7 +73,7 @@
 								scope: this,
 
 								handler: function(button, e) {
-									this.delegate.cmfg('onCustomFormLayoutGridResetButtonClick');
+									this.delegate.cmfg('onWidgetCustomFormLayoutGridResetButtonClick');
 								}
 							})
 						]
@@ -81,7 +81,7 @@
 				],
 				plugins: (
 					isWidgetReadOnly
-					|| this.delegate.cmfg('widgetConfigurationGet', [
+					|| this.delegate.cmfg('widgetCustomFormConfigurationGet', [
 						CMDBuild.core.constants.Proxy.CAPABILITIES,
 						CMDBuild.core.constants.Proxy.MODIFY_DISABLED
 					])
