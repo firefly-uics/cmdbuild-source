@@ -40,7 +40,7 @@
 									this.delegate.cmfg('onAddRowButtonClick');
 								}
 							}),
-							this.importFromCSVButton = Ext.create('CMDBuild.core.buttons.text.Import', {
+							this.importFromCSVButton = Ext.create('CMDBuild.core.buttons.iconized.Import', {
 								text: CMDBuild.Translation.importFromCSV,
 								scope: this,
 

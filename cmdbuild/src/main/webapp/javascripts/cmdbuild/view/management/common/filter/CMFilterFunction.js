@@ -15,7 +15,7 @@
 		model: 'Functions',
 		proxy: {
 			type: 'ajax',
-			url: CMDBuild.ServiceProxy.url.functions.getFunctions,
+			url: CMDBuild.ServiceProxy.url.functions.readAll,
 			reader: {
 					type: 'json',
 					root: 'response'
