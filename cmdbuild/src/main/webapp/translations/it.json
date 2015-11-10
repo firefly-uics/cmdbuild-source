@@ -555,8 +555,7 @@
 		},
 		"unknown_error": "errore sconosciuto",
 		"user": "Utente",
-		"wait_msg": "Invio dati in corso...",
-		"wait_title": "Attendere..."
+		"wait_msg": "Invio dati in corso..."
 	},
 	"configure": {
 		"failure": {
@@ -1355,6 +1354,7 @@
 	"password": "Password",
 	"pdf": "PDF",
 	"permissions": "Permessi",
+	"pleaseWait": "Attendere ...",
 	"popupPercentageHeight": "Altezza percentuale finestra popup",
 	"popupPercentageWidth": "Larghezza percentuale finestra popup",
 	"popupWindows": "Finestre popup",

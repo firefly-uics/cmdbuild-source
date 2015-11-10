@@ -555,8 +555,7 @@
 		},
 		"unknown_error": "unknown error",
 		"user": "User",
-		"wait_msg": "Sending data...",
-		"wait_title": "Please wait..."
+		"wait_msg": "Sending data..."
 	},
 	"configure": {
 		"failure": {
@@ -1355,6 +1354,7 @@
 	"password": "Password",
 	"pdf": "PDF",
 	"permissions": "Permissions",
+	"pleaseWait": "Please wait ...",
 	"popupPercentageHeight": "Popup percentage height",
 	"popupPercentageWidth": "Popup percentage width",
 	"popupWindows": "Popup windows",

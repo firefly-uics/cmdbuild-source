@@ -555,8 +555,7 @@
 		},
 		"unknown_error": "Lỗi không rõ",
 		"user": "Người dùng",
-		"wait_msg": "Đang gửi dữ liệu...",
-		"wait_title": "Xin vui lòng chờt..."
+		"wait_msg": "Đang gửi dữ liệu..."
 	},
 	"configure": {
 		"failure": {
@@ -1355,6 +1354,7 @@
 	"password": "<em>Password</em>",
 	"pdf": "PDF",
 	"permissions": "Quyền truy cập",
+	"pleaseWait": "Xin vui lòng chờt ...",
 	"popupPercentageHeight": "Chiều cao bản hiển thị theo phần trăm",
 	"popupPercentageWidth": "Bề rộng bản hiển thị theo phần trăm",
 	"popupWindows": "Cửa sổ mới",

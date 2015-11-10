@@ -555,8 +555,7 @@
 		},
 		"unknown_error": "ismeretlen hiba",
 		"user": "Felhasználó",
-		"wait_msg": "Adat küldése...",
-		"wait_title": "Kérem várjon..."
+		"wait_msg": "Adat küldése..."
 	},
 	"configure": {
 		"failure": {
@@ -1355,6 +1354,7 @@
 	"password": "Jelszó",
 	"pdf": "PDF",
 	"permissions": "Engedélyek",
+	"pleaseWait": "Kérem várjon ...",
 	"popupPercentageHeight": "Popup százalékos magasság",
 	"popupPercentageWidth": "Popup százalékos szélesség",
 	"popupWindows": "Popup ablak",

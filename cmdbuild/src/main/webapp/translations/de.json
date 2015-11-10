@@ -60,8 +60,7 @@
 				"standard": "Standard",
 				"superclass": "Superklasse",
 				"type": "Typ",
-				"wait_msg": "Eingabe der Daten ...",
-				"wait_title": "Der Server wird kontaktiert"
+				"wait_msg": "Eingabe der Daten ..."
 			},
 			"class_property": "Eigenschaften",
 			"classtype": {
@@ -1355,6 +1354,7 @@
 	"password": "Passwort",
 	"pdf": "PDF",
 	"permissions": "Erlaubnis",
+	"pleaseWait": "Der Server wird kontaktiert ...",
 	"popupPercentageHeight": "Prozenthöhe des PopUp Fensters",
 	"popupPercentageWidth": "Prozentbreite des PopUp Fensters",
 	"popupWindows": "PopUp Fenster",

@@ -555,8 +555,7 @@
 		},
 		"unknown_error": "不明なエラー",
 		"user": "ユーザー",
-		"wait_msg": "データ送信中...",
-		"wait_title": "お待ちください..."
+		"wait_msg": "データ送信中..."
 	},
 	"configure": {
 		"failure": {
@@ -1355,6 +1354,7 @@
 	"password": "パスワード",
 	"pdf": "PDF",
 	"permissions": "許可",
+	"pleaseWait": "お待ちください ...",
 	"popupPercentageHeight": "ポップアップのパーセント高さ",
 	"popupPercentageWidth": "ポップアップのパーセント幅",
 	"popupWindows": "ポップアップウインドウ",

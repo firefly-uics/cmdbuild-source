@@ -555,8 +555,7 @@
 		},
 		"unknown_error": "Неизвестная ошибка",
 		"user": "Пользователь",
-		"wait_msg": "Отправка данных...",
-		"wait_title": "Пожалуйста, подождите..."
+		"wait_msg": "Отправка данных..."
 	},
 	"configure": {
 		"failure": {
@@ -1355,6 +1354,7 @@
 	"password": "Пароль",
 	"pdf": "PDF",
 	"permissions": "Разрешения",
+	"pleaseWait": "Пожалуйста, подождите ...",
 	"popupPercentageHeight": "Высота всплывающего окна в процентах",
 	"popupPercentageWidth": "Ширина всплывающего окна в процентах",
 	"popupWindows": "Всплывающие окна",

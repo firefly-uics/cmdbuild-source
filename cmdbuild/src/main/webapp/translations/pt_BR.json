@@ -555,8 +555,7 @@
 		},
 		"unknown_error": "Erro Desconhecido",
 		"user": "Usuário",
-		"wait_msg": "Enviando dados...",
-		"wait_title": "Favor aguardar..."
+		"wait_msg": "Enviando dados..."
 	},
 	"configure": {
 		"failure": {
@@ -1355,6 +1354,7 @@
 	"password": "<em>Password</em>",
 	"pdf": "PDF",
 	"permissions": "Permissões",
+	"pleaseWait": "Favor aguardar ...",
 	"popupPercentageHeight": "Porcentagem Altura Janela Popup",
 	"popupPercentageWidth": "Porcentagem Comprimento Janela Popup",
 	"popupWindows": "Janelas Popup",
