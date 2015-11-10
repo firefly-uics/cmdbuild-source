@@ -11,11 +11,10 @@ public class WebServiceDataAccessLogicBuilder extends DataAccessLogicBuilder {
 			final CMDataView systemDataView, //
 			final LookupStore lookupStore, //
 			final CMDataView dataView, //
-			final CMDataView strictDataView, //
 			final OperationUser operationUser, //
 			final LockLogic lockLogic //
 	) {
-		super(systemDataView, lookupStore, dataView, strictDataView, operationUser, lockLogic);
+		super(systemDataView, lookupStore, dataView, operationUser, lockLogic);
 	}
 
 }

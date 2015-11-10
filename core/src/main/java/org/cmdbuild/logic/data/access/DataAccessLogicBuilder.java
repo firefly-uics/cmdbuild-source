@@ -11,7 +11,6 @@ public abstract class DataAccessLogicBuilder implements Builder<DataAccessLogic>
 	private final CMDataView systemDataView;
 	private final LookupStore lookupStore;
 	private final CMDataView dataView;
-	private final CMDataView strictDataView;
 	private final OperationUser operationUser;
 	private final LockLogic lockLogic;
 
@@ -19,14 +18,12 @@ public abstract class DataAccessLogicBuilder implements Builder<DataAccessLogic>
 			final CMDataView systemDataView, //
 			final LookupStore lookupStore, //
 			final CMDataView dataView, //
-			final CMDataView strictDataView, //
 			final OperationUser operationUser, //
 			final LockLogic lockLogic //
 	) {
 		this.systemDataView = systemDataView;
 		this.lookupStore = lookupStore;
 		this.dataView = dataView;
-		this.strictDataView = strictDataView;
 		this.operationUser = operationUser;
 		this.lockLogic = lockLogic;
 	}
@@ -37,7 +34,6 @@ public abstract class DataAccessLogicBuilder implements Builder<DataAccessLogic>
 				systemDataView, //
 				lookupStore, //
 				dataView, //
-				strictDataView, //
 				operationUser, //
 				lockLogic);
 	}

@@ -106,7 +106,6 @@ public class Data {
 				systemDataView(), //
 				lookupStore(), //
 				systemDataView(), //
-				systemDataView(), //
 				userStore.getUser(), //
 				lock.dummyLockLogic());
 	}
