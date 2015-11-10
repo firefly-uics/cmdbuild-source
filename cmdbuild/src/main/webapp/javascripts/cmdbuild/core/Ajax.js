@@ -1,19 +1,8 @@
 // Ext.require('CMDBuild.core.LoginWindow'); // TODO: should be required on class refactor
 Ext.require(['CMDBuild.core.LoadMask']);
+
 if (Ext.isEmpty(CMDBuild))
 	Ext.ns('CMDBuild');
-
-//CMDBuild.core.LoadMask = {
-//	get: function(text) {
-//		if (!CMDBuild.core.LoadMask.instance) {
-//			CMDBuild.core.LoadMask.instance = new Ext.LoadMask({
-//				target: Ext.getBody()
-//			});
-//		}
-//		CMDBuild.core.LoadMask.instance.msg = text || CMDBuild.Translation.pleaseWait;
-//		return CMDBuild.core.LoadMask.instance;
-//	}
-//};
 
 /**
  * @class CMDBuild.Ajax
