@@ -116,7 +116,7 @@
 			var conditionEvalTrafficLightArray = [];
 
 			if (Ext.isArray(templatesToAdd) && !Ext.isEmpty(templatesToAdd)) {
-				CMDBuild.LoadMask.get().show();
+				CMDBuild.core.LoadMask.show();
 				Ext.Array.forEach(templatesToAdd, function(template, i, allTemplates) {
 
 					if (!Ext.Object.isEmpty(template)) {
@@ -143,7 +143,7 @@
 									CMDBuild.controller.management.common.tabs.email.Email.trafficLightArrayCheck(template, conditionEvalTrafficLightArray)
 									|| Ext.isEmpty(conditionEvalTrafficLightArray)
 								) {
-									CMDBuild.LoadMask.get().hide();
+									CMDBuild.core.LoadMask.hide();
 									me.show();
 								}
 							}

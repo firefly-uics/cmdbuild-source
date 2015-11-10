@@ -177,10 +177,10 @@
 		 * @param {CMDBuild.view.administration.localization.common.AdvancedTableGrid}
 		 */
 		onLocalizationAdvancedTableCollapseAll: function(gridPanel) {
-			CMDBuild.LoadMask.get().show();
+			CMDBuild.core.LoadMask.show();
 			Ext.Function.defer(function() { // HACK: to fix expandAll bug that don't displays loeadMask
 				gridPanel.collapseAll(function() {
-					CMDBuild.LoadMask.get().hide();
+					CMDBuild.core.LoadMask.hide();
 				});
 			}, 100, this);
 		},
@@ -189,10 +189,10 @@
 		 * @param {CMDBuild.view.administration.localization.common.AdvancedTableGrid}
 		 */
 		onLocalizationAdvancedTableExpandAll: function(gridPanel) {
-			CMDBuild.LoadMask.get().show();
+			CMDBuild.core.LoadMask.show();
 			Ext.Function.defer(function() { // HACK: to fix expandAll bug that don't displays loeadMask
 				gridPanel.expandAll(function() {
-					CMDBuild.LoadMask.get().hide();
+					CMDBuild.core.LoadMask.hide();
 				});
 			}, 100, this);
 		},

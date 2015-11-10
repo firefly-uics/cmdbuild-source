@@ -127,7 +127,7 @@
 
 		removeItem: function() {
 			if (!Ext.isEmpty(this.selectedId)) {
-				CMDBuild.LoadMask.get().show();
+				CMDBuild.core.LoadMask.show();
 
 				CMDBuild.core.proxy.CMProxyTasks.remove({
 					type: this.taskType,

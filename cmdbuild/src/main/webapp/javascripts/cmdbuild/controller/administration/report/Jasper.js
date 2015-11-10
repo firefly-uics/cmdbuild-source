@@ -87,12 +87,12 @@
 		},
 
 		import: function() {
-			CMDBuild.LoadMask.get().show();
+			CMDBuild.core.LoadMask.show();
 			CMDBuild.core.proxy.report.Jasper.import({
 				form: this.form.step2Panel,
 				scope: this,
 				failure: function(form, action) {
-					CMDBuild.LoadMask.get().hide();
+					CMDBuild.core.LoadMask.hide();
 
 					CMDBuild.core.Message.error(CMDBuild.Translation.errors.error_message, CMDBuild.Translation.errors.reportsImportError, false);
 				},
@@ -243,18 +243,18 @@
 				params[CMDBuild.core.constants.Proxy.NAME] = this.form.step1Panel.name.getValue(); // TODO: waiting for refactor (read title parameter, write as name)
 				params[CMDBuild.core.constants.Proxy.REPORT_ID] = this.form.step1Panel.reportId.getValue() || -1; // TODO: waiting for refactor (read id parameter, write as reportId)
 
-				CMDBuild.LoadMask.get().show();
+				CMDBuild.core.LoadMask.show();
 				CMDBuild.core.proxy.report.Jasper.analize({
 					form: this.form.step1Panel,
 					params: params,
 					scope: this,
 					failure: function(form, action) {
-						CMDBuild.LoadMask.get().hide();
+						CMDBuild.core.LoadMask.hide();
 
 						CMDBuild.core.Message.error(CMDBuild.Translation.errors.error_message, CMDBuild.Translation.errors.reportsAnalizeError, false);
 					},
 					success: function(form, action) {
-						CMDBuild.LoadMask.get().hide();
+						CMDBuild.core.LoadMask.hide();
 
 						if (Ext.isBoolean(action.result.skipSecondStep) && action.result.skipSecondStep) {
 							CMDBuild.core.proxy.report.Jasper.save({
@@ -326,7 +326,7 @@
 
 			this.grid.getStore().load({
 				callback: function(records, operation, success) {
-					CMDBuild.LoadMask.get().hide();
+					CMDBuild.core.LoadMask.hide();
 
 					if (success) {
 						me.form.step2Panel.removeAll();

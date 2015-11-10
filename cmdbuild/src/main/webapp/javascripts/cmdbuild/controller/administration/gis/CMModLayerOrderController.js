@@ -24,12 +24,12 @@
 		var newIndex = getNewIndex(p.dropRec);
 		var me = this;
 
-		CMDBuild.LoadMask.get().show();
+		CMDBuild.core.LoadMask.show();
 		CMDBuild.ServiceProxy.saveLayerOrder({
 			oldIndex: oldIndex,
 			newIndex: newIndex,
 			callback: function() {
-				CMDBuild.LoadMask.get().hide();
+				CMDBuild.core.LoadMask.hide();
 				_CMCache.onGeoAttributeSaved(); // load always to sync the index
 			}
 		});

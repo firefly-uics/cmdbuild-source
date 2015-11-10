@@ -17,7 +17,7 @@ Ext.define("CMDBuild.controller.administration.filter.CMBimLayerController", {
 		var me = this;
 		var className = record.get("className");
 
-		CMDBuild.LoadMask.instance.show();
+		CMDBuild.core.LoadMask.show();
 		CMDBuild.bim.proxy.saveLayer({
 			params: {
 				className: className,
@@ -34,7 +34,7 @@ Ext.define("CMDBuild.controller.administration.filter.CMBimLayerController", {
 			},
 
 			callback: function() {
-				CMDBuild.LoadMask.instance.hide();
+				CMDBuild.core.LoadMask.hide();
 			}
 
 		});

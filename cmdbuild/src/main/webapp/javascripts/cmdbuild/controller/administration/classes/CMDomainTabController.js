@@ -26,11 +26,11 @@
 			var params = {};
 			params[_CMProxy.parameter.CLASS_NAME] = _CMCache.getEntryTypeNameById(classId);
 
-			CMDBuild.LoadMask.get().show();
+			CMDBuild.core.LoadMask.show();
 			view.store.load({
 				params: params,
 				callback: function() {
-					CMDBuild.LoadMask.get().hide();
+					CMDBuild.core.LoadMask.hide();
 					view.filterInherited(view.filtering);
 				}
 			});

@@ -19,7 +19,7 @@
 
 				me.view.classesMenu.readClasses();
 
-				CMDBuild.LoadMask.get().show();
+				CMDBuild.core.LoadMask.show();
 				CMDBuild.ServiceProxy.gis.getGisTreeNavigation({
 					success: function(operation, config, response) {
 						me.loaded = true;
@@ -42,7 +42,7 @@
 						}
 					},
 					callback: function() {
-						CMDBuild.LoadMask.get().hide();
+						CMDBuild.core.LoadMask.hide();
 					}
 				});
 			}
@@ -52,13 +52,13 @@
 
 		onGISNavigationSaveButtonClick: function(panel) {
 			var structure = panel.getTreeStructure();
-			CMDBuild.LoadMask.get().show();
+			CMDBuild.core.LoadMask.show();
 			CMDBuild.ServiceProxy.gis.saveGisTreeNavigation({
 				params: {
 					structure: Ext.encode(structure)
 				},
 				callback: function() {
-					CMDBuild.LoadMask.get().hide();
+					CMDBuild.core.LoadMask.hide();
 				}
 			});
 		},
@@ -71,13 +71,13 @@
 				buttons: Ext.Msg.YESNO,
 				fn: function(button) {
 					if (button == "yes") {
-						CMDBuild.LoadMask.get().show();
+						CMDBuild.core.LoadMask.show();
 						CMDBuild.ServiceProxy.gis.removeGisTreeNavigation({
 							success: function() {
 								me.view.resetView();;
 							},
 							callback: function() {
-								CMDBuild.LoadMask.get().hide();
+								CMDBuild.core.LoadMask.hide();
 							}
 						});
 					}

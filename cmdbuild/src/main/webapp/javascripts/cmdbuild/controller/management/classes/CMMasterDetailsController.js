@@ -178,11 +178,11 @@
 				params.detailClassName = _CMCache.getEntryTypeNameById(detailCard.get("IdClass"));
 				params.detailCardId = detailCard.get("Id");
 
-				CMDBuild.LoadMask.get().show();
+				CMDBuild.core.LoadMask.show();
 				CMDBuild.ServiceProxy.relations.removeDetail({
 					params : params,
 					callback: function() {
-						CMDBuild.LoadMask.get().hide();
+						CMDBuild.core.LoadMask.hide();
 						me.view.reload();
 					}
 				});
@@ -250,7 +250,7 @@
 	}
 
 	function removeCard(model) {
-		CMDBuild.LoadMask.get().show();
+		CMDBuild.core.LoadMask.show();
 		CMDBuild.ServiceProxy.card.remove({
 			scope : this,
 			important: true,
@@ -260,7 +260,7 @@
 			},
 			success : updateDetailGrid,
 			callback : function() {
-				CMDBuild.LoadMask.get().hide();
+				CMDBuild.core.LoadMask.hide();
 			}
 		});
 	}

@@ -71,7 +71,7 @@
 		 */
 		onCMCardGridIconRowClick: function(grid, action, model) {
 			if (action == ICON_ACTION) {
-				CMDBuild.LoadMask.get().show();
+				CMDBuild.core.LoadMask.show();
 				var me = this;
 				var entryType = _CMCardModuleState.entryType;
 				CMDBuild.bim.proxy.roidForCardId({
@@ -89,10 +89,10 @@
 									CMDBuild.Translation.no_bim_project_for_card
 							);
 						}
-						CMDBuild.LoadMask.get().hide();
+						CMDBuild.core.LoadMask.hide();
 					},
 					failure: function() {
-						CMDBuild.LoadMask.get().hide();
+						CMDBuild.core.LoadMask.hide();
 					}
 				});
 			}

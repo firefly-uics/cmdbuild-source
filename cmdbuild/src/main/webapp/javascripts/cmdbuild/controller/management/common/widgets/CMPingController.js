@@ -51,7 +51,7 @@
 
 				var el = me.view.getEl();
 				if (el) {
-					el.mask(CMDBuild.Translation.common.wait_title);
+					el.mask(CMDBuild.Translation.pleaseWait);
 				}
 
 				CMDBuild.Ajax.request({

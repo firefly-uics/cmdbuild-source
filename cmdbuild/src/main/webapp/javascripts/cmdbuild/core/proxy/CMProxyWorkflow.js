@@ -34,7 +34,7 @@
 
 			if (typeof conf.callback == "undefined") {
 				conf.callback = function() {
-					CMDBuild.LoadMask.get().hide();
+					CMDBuild.core.LoadMask.hide();
 				};
 			}
 

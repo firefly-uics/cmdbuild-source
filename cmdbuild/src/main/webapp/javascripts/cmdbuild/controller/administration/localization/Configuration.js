@@ -94,10 +94,10 @@
 				success: function(form, action) {
 					CMDBuild.core.Message.success();
 
-					CMDBuild.LoadMask.get().hide();
+					CMDBuild.core.LoadMask.hide();
 				},
 				failure: function(form, action) {
-					CMDBuild.LoadMask.get().hide();
+					CMDBuild.core.LoadMask.hide();
 
 					CMDBuild.core.Message.error(
 						CMDBuild.Translation.common.failure,
@@ -120,7 +120,7 @@
 
 		onLocalizationConfigurationImportButtonClick: function() {
 			if (this.validate(this.view.importPanel)) {
-				CMDBuild.LoadMask.get().show();
+				CMDBuild.core.LoadMask.show();
 				CMDBuild.core.proxy.localization.importExport.Csv.imports({
 					form: this.view.importPanel.getForm(),
 					scope: this,
@@ -138,10 +138,10 @@
 							);
 						}
 
-						CMDBuild.LoadMask.get().hide();
+						CMDBuild.core.LoadMask.hide();
 					},
 					failure: function(form, action) {
-						CMDBuild.LoadMask.get().hide();
+						CMDBuild.core.LoadMask.hide();
 
 						CMDBuild.core.Message.error(
 							CMDBuild.Translation.common.failure,
@@ -159,7 +159,7 @@
 		 * TODO: refactor to save directly only language configuration on another endpoint
 		 */
 		onLocalizationConfigurationSaveButtonClick: function() {
-			CMDBuild.LoadMask.get().show();
+			CMDBuild.core.LoadMask.show();
 			CMDBuild.core.proxy.configuration.GeneralOptions.read({
 				scope: this,
 				success: function(result, options, decodedResult){
@@ -172,7 +172,7 @@
 						scope: this,
 						params: params,
 						success: function(result, options, decodedResult) {
-							CMDBuild.LoadMask.get().hide();
+							CMDBuild.core.LoadMask.hide();
 
 							CMDBuild.core.Message.success();
 						}

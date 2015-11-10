@@ -69,12 +69,12 @@
 		 */
 		onWidgetCustomFormImportUploadButtonClick: function() {
 			if (this.validate(this.form)) {
-				CMDBuild.LoadMask.get().show();
+				CMDBuild.core.LoadMask.show();
 				CMDBuild.core.proxy.Csv.decode({
 					form: this.form.getForm(),
 					scope: this,
 					failure: function(form, action) {
-						CMDBuild.LoadMask.get().hide();
+						CMDBuild.core.LoadMask.hide();
 
 						CMDBuild.Msg.error(
 							CMDBuild.Translation.common.failure,
@@ -116,7 +116,7 @@
 
 					this.onWidgetCustomFormImportAbortButtonClick();
 
-					CMDBuild.LoadMask.get().hide();
+					CMDBuild.core.LoadMask.hide();
 				}, this);
 
 				Ext.Array.forEach(this.cmfg('widgetCustomFormConfigurationGet', CMDBuild.core.constants.Proxy.MODEL), function(attribute, i, allAttributes) {

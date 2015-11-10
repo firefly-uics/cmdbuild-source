@@ -181,7 +181,7 @@
 		waitForBusyWidgets: function(cb, cbScope) {
 			var me = this;
 
-			CMDBuild.LoadMask.get().show();
+			CMDBuild.core.LoadMask.show();
 			this.onBeforeSaveTrigger(
 				function() {
 					new _CMUtils.PollingFunction({

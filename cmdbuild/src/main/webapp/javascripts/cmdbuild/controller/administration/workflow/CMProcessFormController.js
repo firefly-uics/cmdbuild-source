@@ -131,7 +131,7 @@
 			var basicForm = this.view.xpdlForm.getForm();
 			basicForm.standardSubmit = false;
 
-			CMDBuild.LoadMask.get().show();
+			CMDBuild.core.LoadMask.show();
 
 			CMDBuild.core.proxy.CMProxyWorkflow.xpdlUpload({
 				form: basicForm,
@@ -140,7 +140,7 @@
 				},
 				scope: this,
 				success: function(form, action) {
-					CMDBuild.LoadMask.get().hide();
+					CMDBuild.core.LoadMask.hide();
 
 					var messages = (Ext.decode(action.response.responseText) || {}).response;
 					if (messages && messages.length > 0) {
@@ -153,7 +153,7 @@
 					}
 				},
 				failure: function() {
-					CMDBuild.LoadMask.get().hide();
+					CMDBuild.core.LoadMask.hide();
 
 					CMDBuild.Msg.error(CMDBuild.Translation.common.failure, CMDBuild.Translation.administration.modWorkflow.xpdlUpload.error, true);
 				}

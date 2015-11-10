@@ -125,7 +125,7 @@
 		 * @override
 		 */
 		onSaveSuccess: function(form, action) {
-			CMDBuild.LoadMask.get().hide();
+			CMDBuild.core.LoadMask.hide();
 
 			_CMCache.onClassContentChanged(this.entryType.get(CMDBuild.core.constants.Proxy.ID));
 

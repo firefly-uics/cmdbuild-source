@@ -196,7 +196,7 @@
 
 			// Validate before save
 			if (this.validate(formData[CMDBuild.core.constants.Proxy.ACTIVE])) {
-				CMDBuild.LoadMask.get().show();
+				CMDBuild.core.LoadMask.show();
 
 				// Fieldset submitting filter to avoid to send datas if fieldset are collapsed
 					var notificationFieldsetCheckboxValue = this.delegateStep[0].getValueNotificationFieldsetCheckbox();

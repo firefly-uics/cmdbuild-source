@@ -1,19 +1,19 @@
 // Ext.require('CMDBuild.core.LoginWindow'); // TODO: should be required on class refactor
-
+Ext.require(['CMDBuild.core.LoadMask']);
 if (Ext.isEmpty(CMDBuild))
 	Ext.ns('CMDBuild');
 
-CMDBuild.LoadMask = {
-	get: function(text) {
-		if (!CMDBuild.LoadMask.instance) {
-			CMDBuild.LoadMask.instance = new Ext.LoadMask({
-				target: Ext.getBody()
-			});
-		}
-		CMDBuild.LoadMask.instance.msg = text || CMDBuild.Translation.common.wait_title;
-		return CMDBuild.LoadMask.instance;
-	}
-};
+//CMDBuild.core.LoadMask = {
+//	get: function(text) {
+//		if (!CMDBuild.core.LoadMask.instance) {
+//			CMDBuild.core.LoadMask.instance = new Ext.LoadMask({
+//				target: Ext.getBody()
+//			});
+//		}
+//		CMDBuild.core.LoadMask.instance.msg = text || CMDBuild.Translation.pleaseWait;
+//		return CMDBuild.core.LoadMask.instance;
+//	}
+//};
 
 /**
  * @class CMDBuild.Ajax
@@ -36,7 +36,7 @@ CMDBuild.Ajax.request({
 CMDBuild.Ajax =  new Ext.data.Connection({
 	showMaskAndTrapCallbacks: function(object, options) {
 		if (options.loadMask) {
-			CMDBuild.LoadMask.get().show();
+			CMDBuild.core.LoadMask.show();
 		}
 		this.trapCallbacks(object, options);
 	},
@@ -59,7 +59,7 @@ CMDBuild.Ajax =  new Ext.data.Connection({
 
 	unmaskAndCheckSuccess: function(response, options, successfn) {
 		if (options.loadMask) {
-			CMDBuild.LoadMask.get().hide();
+			CMDBuild.core.LoadMask.hide();
 		}
 		var decoded = CMDBuild.Ajax.decodeJSONwhenMultipartAlso(response.responseText);
 		CMDBuild.Ajax.displayWarnings(decoded);
@@ -243,7 +243,7 @@ CMDBuild.ChainedAjax = {
 	    	CMDBuild.Ajax.request(requestObject);
     	} else {
     		if (o.loadMask) {
-    			CMDBuild.LoadMask.get().hide();
+    			CMDBuild.core.LoadMask.hide();
     		}
     		Ext.callback(o.fn, o.scope || this);
     	}
@@ -253,7 +253,7 @@ CMDBuild.ChainedAjax = {
     showMask: function(o, index) {
     	if (o.loadMask) {
 			if (o.requests[index].maskMsg) {
-				var m = CMDBuild.LoadMask.get(o.requests[index].maskMsg);
+				var m = CMDBuild.core.LoadMask.get(o.requests[index].maskMsg);
 				m.show();
 			}
 		}
@@ -268,7 +268,7 @@ CMDBuild.ConcurrentAjax = {
 			this.showMask(o, i);
 			requestConfig.callback = function() {
 				if (--counter == 0) {
-					CMDBuild.LoadMask.get().hide();
+					CMDBuild.core.LoadMask.hide();
 					o.fn.call(o.scope || this);
 				}
 			}
@@ -279,7 +279,7 @@ CMDBuild.ConcurrentAjax = {
 	showMask: function(o, index) {
 		if (o.loadMask) {
 			if (o.requests[index].maskMsg) {
-				var m = CMDBuild.LoadMask.get(o.requests[index].maskMsg);
+				var m = CMDBuild.core.LoadMask.get(o.requests[index].maskMsg);
 				m.show();
 			}
 		}

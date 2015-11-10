@@ -38,7 +38,7 @@
 						url: CMDBuild.core.proxy.Index.csv.clearSession
 					});
 
-					CMDBuild.LoadMask.get().hide();
+					CMDBuild.core.LoadMask.hide();
 				}
 			});
 		},

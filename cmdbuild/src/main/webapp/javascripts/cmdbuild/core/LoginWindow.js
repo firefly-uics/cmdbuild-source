@@ -138,7 +138,7 @@
 		},
 
 		doLogin: function() {
-			CMDBuild.LoadMask.get().show();
+			CMDBuild.core.LoadMask.show();
 
 			this.hide();
 
@@ -151,7 +151,7 @@
 					if (this.refreshOnLogin) {
 						window.location.reload();
 					} else {
-						CMDBuild.LoadMask.get().hide();
+						CMDBuild.core.LoadMask.hide();
 
 						for (var requestOption; requestOption=this.ajaxOptions.pop();) {
 							CMDBuild.Ajax.request(requestOption);
@@ -161,7 +161,7 @@
 				failure: function(form, action) {
 					this.showWithoutBringingToFront();
 
-					CMDBuild.LoadMask.get().hide();
+					CMDBuild.core.LoadMask.hide();
 				}
 			});
 		},

@@ -221,7 +221,7 @@ Ext.define("CMDBuild.Administration.ModIcons", {
   		//the save request
 
 		if (form.isValid()) {
-			CMDBuild.LoadMask.get().show();
+			CMDBuild.core.LoadMask.show();
 			var config = {
 				scope: this,
 				success: function(form, action) {
@@ -259,7 +259,7 @@ Ext.define("CMDBuild.Administration.ModIcons", {
 	  		var selectedRow = this.iconsGrid.getSelectionModel().getSelection();
 	  		if (selectedRow && selectedRow.length > 0) {
 	  			var selectedData = selectedRow[0];
-	  			CMDBuild.LoadMask.get().show();
+	  			CMDBuild.core.LoadMask.show();
 	  			CMDBuild.ServiceProxy.Icons.remove({
 					scope : this,
 					important: true,
@@ -283,7 +283,7 @@ Ext.define("CMDBuild.Administration.ModIcons", {
 
   	//private
   	requestCallback: function() {
-  		CMDBuild.LoadMask.get().hide();
+  		CMDBuild.core.LoadMask.hide();
 		this.disableModify();
   	}
 });
