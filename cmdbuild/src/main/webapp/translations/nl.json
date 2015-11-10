@@ -555,8 +555,7 @@
 		},
 		"unknown_error": "Onbekende fout",
 		"user": "Gebruiker",
-		"wait_msg": "Versturen van gegevens ...",
-		"wait_title": "Even geduld aub ..."
+		"wait_msg": "Versturen van gegevens ..."
 	},
 	"configure": {
 		"failure": {
@@ -1355,6 +1354,7 @@
 	"password": "Wachtwoord",
 	"pdf": "PDF",
 	"permissions": "Permissies",
+	"pleaseWait": "Even geduld aub ...",
 	"popupPercentageHeight": "Popup percentage hoogte",
 	"popupPercentageWidth": "Popup percentage breedte",
 	"popupWindows": "Popup vensters",

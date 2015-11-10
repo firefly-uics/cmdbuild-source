@@ -555,8 +555,7 @@
 		},
 		"unknown_error": "Erreur inconnue",
 		"user": "Utilisateur",
-		"wait_msg": "Chargement des données ...",
-		"wait_title": "Patientez ..."
+		"wait_msg": "Chargement des données ..."
 	},
 	"configure": {
 		"failure": {
@@ -1355,6 +1354,7 @@
 	"password": "Mot de passe",
 	"pdf": "PDF",
 	"permissions": "Permissions",
+	"pleaseWait": "Patientez ...",
 	"popupPercentageHeight": "Hauteur de la boîte de dialogue en pourcentage",
 	"popupPercentageWidth": "Largeur de la boîte de dialogue en pourcentage",
 	"popupWindows": "Boîte de dialogue",

@@ -555,8 +555,7 @@
 		},
 		"unknown_error": "Nepoznata greška",
 		"user": "Korisničko ime",
-		"wait_msg": "Šaljem podatke...",
-		"wait_title": "Pričekajte..."
+		"wait_msg": "Šaljem podatke..."
 	},
 	"configure": {
 		"failure": {
@@ -1355,6 +1354,7 @@
 	"password": "<em>Password</em>",
 	"pdf": "PDF",
 	"permissions": "Prava",
+	"pleaseWait": "Pričekajte...",
 	"popupPercentageHeight": "Visina (u postocima) popup prozora",
 	"popupPercentageWidth": "Širina (u postocima) popup prozora",
 	"popupWindows": "popup prozor",

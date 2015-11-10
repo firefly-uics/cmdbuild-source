@@ -555,8 +555,7 @@
 		},
 		"unknown_error": "خطای ناشناخته",
 		"user": "کاربر",
-		"wait_msg": "ارسال اطلاعات",
-		"wait_title": "لطفا منتظر بمانید"
+		"wait_msg": "ارسال اطلاعات"
 	},
 	"configure": {
 		"failure": {
@@ -1355,6 +1354,7 @@
 	"password": "رمز عبور",
 	"pdf": "PDF",
 	"permissions": "اجازه",
+	"pleaseWait": "لطفا منتظر بمانید",
 	"popupPercentageHeight": "Popup percentage height",
 	"popupPercentageWidth": "Popup percentage width",
 	"popupWindows": "Popup windows",

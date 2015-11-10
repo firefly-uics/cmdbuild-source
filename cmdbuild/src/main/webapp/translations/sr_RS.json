@@ -555,8 +555,7 @@
 		},
 		"unknown_error": "Непозната грешка",
 		"user": "Корисничко име",
-		"wait_msg": "Шаљем податке...",
-		"wait_title": "Причекајте..."
+		"wait_msg": "Шаљем податке..."
 	},
 	"configure": {
 		"failure": {
@@ -1355,6 +1354,7 @@
 	"password": "Лозинка",
 	"pdf": "PDF",
 	"permissions": "Права",
+	"pleaseWait": "Причекајте ...",
 	"popupPercentageHeight": "Висина (у процентима) popup прозора",
 	"popupPercentageWidth": "Ширина (у процентима) popup прозора",
 	"popupWindows": "popup прозор",

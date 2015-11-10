@@ -555,8 +555,7 @@
 		},
 		"unknown_error": "未知错误",
 		"user": "用户",
-		"wait_msg": "发送数据...",
-		"wait_title": "请等待..."
+		"wait_msg": "发送数据..."
 	},
 	"configure": {
 		"failure": {
@@ -1355,6 +1354,7 @@
 	"password": "密码",
 	"pdf": "PDF",
 	"permissions": "<em>Permissions</em>",
+	"pleaseWait": "请等待...",
 	"popupPercentageHeight": "弹出百分比高度",
 	"popupPercentageWidth": "弹出百分比宽度",
 	"popupWindows": "弹出窗口",
