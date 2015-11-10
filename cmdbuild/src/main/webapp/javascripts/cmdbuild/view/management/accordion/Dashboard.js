@@ -41,7 +41,7 @@
 
 					var nodes = [];
 
-					if (!Ext.isEmpty(decodedResponse)) {
+					if (!Ext.Object.isEmpty(decodedResponse)) {
 						Ext.Object.each(decodedResponse, function(id, dashboardObject, myself) {
 							var nodeObject = {};
 							nodeObject['cmName'] = this.cmName;
