@@ -52,7 +52,7 @@ public class UserProcessDefinitionManager extends ForwardingProcessDefinitionMan
 	}
 
 	private CMActivity wrap(final CMProcessClass type, final CMActivity delegate) {
-		return new ForwardingActivity() {
+		return (delegate == null) ? null : new ForwardingActivity() {
 
 			@Override
 			protected CMActivity delegate() {
