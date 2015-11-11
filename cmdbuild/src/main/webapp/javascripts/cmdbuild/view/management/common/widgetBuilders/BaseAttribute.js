@@ -92,6 +92,7 @@
 		 * service function to add an asterisk before the label of a required attribute
 		 */
 		markAsRequired: function(field, attribute) {
+_debug('markAsRequired', attribute);
 			if (attribute.isnotnull || attribute.fieldmode == "required") {
 				field.allowBlank = false;
 				if (field.fieldLabel) {
@@ -114,7 +115,7 @@
 				name: attribute.name,
 				disabled: false
 			});
-			return field;
+			return this.markAsRequired(field, attribute);
 		},
 		/**
 		 * The implementation must return a configuration object for the header of a Ext.GridPanel

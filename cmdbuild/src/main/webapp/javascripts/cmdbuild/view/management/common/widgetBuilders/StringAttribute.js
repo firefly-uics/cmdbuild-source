@@ -48,7 +48,7 @@ CMDBuild.WidgetBuilders.StringAttribute.prototype.buildReadOnlyField = function(
 		}
 	});
 
-	return field;
+	return this.markAsRequired(field, attribute);
 };
 
 /**
