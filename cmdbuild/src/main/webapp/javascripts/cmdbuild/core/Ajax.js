@@ -1,48 +1,52 @@
 (function() {
 
-	/**
-	 * @alias Ext.ajax
-	 */
-	Ext.define('CMDBuild.core.Ajax', {
-		extend: 'Ext.data.Connection',
+	Ext.require([
+		'CMDBuild.core.constants.Proxy',
+		'CMDBuild.core.LoadMask',
+		'CMDBuild.core.Message'
+	]);
 
-		requires: [
-			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.LoadMask',
-			'CMDBuild.core.Message'
-		],
-
-		singleton: true,
-
-		/**
-		 * @cfg {Boolean}
-		 */
-		autoAbort: false,
-
-		listeners: {
-			beforerequest: function(conn, options, eOpts) {
-				if (!Ext.isEmpty(options.loadMask) && options.loadMask)
-					CMDBuild.core.LoadMask.show();
-
-				CMDBuild.core.Ajax.trapCallbacks(conn, options);
+	CMDBuild.core.Ajax =  new Ext.data.Connection({
+		showMaskAndTrapCallbacks: function(object, options) {
+			if (options.loadMask) {
+				CMDBuild.core.LoadMask.show();
 			}
+			this.trapCallbacks(object, options);
 		},
 
-		/**
-		 * @param {Object} response
-		 * @param {Object} options
-		 * @param {Function} failure
-		 */
-		decodeFailure: function(response, options, failure) {
-			var decodedResponse = CMDBuild.core.Ajax.decodeJSONwhenMultipartAlso(response.responseText);
+		trapCallbacks: function(object, options) {
+			var failurefn;
+			var callbackScope = options.scope || this;
+			options.success = Ext.bind(this.unmaskAndCheckSuccess, callbackScope, [options.success], true);
+			/**
+			 * the error message is not shown if options.failure
+			 * is present and returns false
+			 */
+			if (options.failure) {
+				failurefn = Ext.Function.createInterceptor(this.defaultFailure, options.failure, callbackScope);
+			} else {
+				failurefn = Ext.bind(this.defaultFailure, this);
+			}
+			options.failure = Ext.bind(this.decodeFailure, this, [failurefn], true);
+		},
 
-			Ext.callback(failure, this, [response, options, decodedResponse]);
+		unmaskAndCheckSuccess: function(response, options, successfn) {
+			if (options.loadMask) {
+				CMDBuild.core.LoadMask.hide();
+			}
+			var decoded = CMDBuild.core.Ajax.decodeJSONwhenMultipartAlso(response.responseText);
+			CMDBuild.core.Ajax.displayWarnings(decoded);
+			if (!decoded || decoded.success !== false) {
+				Ext.callback(successfn, this, [response, options, decoded]);
+			} else {
+				Ext.callback(options.failure, this, [response, options]);
+			}
 		},
 
 		/**
 		 * @param {String} jsonResponse
 		 *
-		 * @returns {Object or String}
+		 * @returns {Object}
 		 */
 		decodeJSONwhenMultipartAlso: function(jsonResponse) {
 			jsonResponse = Ext.isEmpty(jsonResponse) ? '{"success":true,"response":null}' : jsonResponse; // Empty response manage
@@ -60,91 +64,65 @@
 			return '';
 		},
 
-		/**
-		 * @param {Object} response
-		 * @param {Object} options
-		 * @param {Object} decodedResponse
-		 */
-		displayErrors: function(response, options, decodedResponse) {
-			if (
-				!Ext.isEmpty(decodedResponse)
-				&& !Ext.isEmpty(decodedResponse[CMDBuild.core.constants.Proxy.ERRORS]) && Ext.isArray(decodedResponse[CMDBuild.core.constants.Proxy.ERRORS])
-			) {
-				Ext.Array.forEach(decodedResponse[CMDBuild.core.constants.Proxy.ERRORS], function(errorObject, i, allErrorObjects) {
-					if (!Ext.Object.isEmpty(errorObject))
-						CMDBuild.core.Ajax.showError(response, errorObject, options);
-				}, this);
+		displayWarnings: function(decoded) {
+			if (decoded && decoded.warnings && decoded.warnings.length) {
+				for (var i=0; i<decoded.warnings.length; ++i) {
+					var w = decoded.warnings[i];
+					var errorString = CMDBuild.core.Ajax.formatError(w.reason, w.reasonParameters);
+					if (errorString) {
+						CMDBuild.Msg.warn(null, errorString);
+					} else {
+						CMDBuild.log.warn("Cannot print warning message", w);
+					}
+				}
 			}
 		},
 
-		/**
-		 * @param {Object} decodedResponse
-		 */
-		displayWarnings: function(decodedResponse) {
-			if (
-				!Ext.isEmpty(decodedResponse)
-				&& !Ext.isEmpty(decodedResponse[CMDBuild.core.constants.Proxy.WARNINGS]) && Ext.isArray(decodedResponse[CMDBuild.core.constants.Proxy.WARNINGS])
-			) {
-				Ext.Array.forEach(decodedResponse[CMDBuild.core.constants.Proxy.WARNINGS], function(warningObject, i, allWrarningObjects) {
-					if (!Ext.Object.isEmpty(warningObject))
-						CMDBuild.core.Ajax.showWarning(warningObject);
-				}, this);
+		decodeFailure: function(response, options, failurefn) {
+			var decoded = CMDBuild.core.Ajax.decodeJSONwhenMultipartAlso(response.responseText);
+			Ext.callback(failurefn, this, [response, options, decoded]);
+		},
+
+		defaultFailure: function(response, options, decoded) {
+			if (decoded && decoded.errors && decoded.errors.length) {
+				for (var i=0; i<decoded.errors.length; ++i) {
+					this.showError(response, decoded.errors[i], options);
+				}
+			} else {
+				this.showError(response, null, options);
 			}
 		},
 
-		/**
-		 * @param {String} reasonName
-		 * @param {Object} reasonParameters
-		 *
-		 * @returns {String}
-		 */
-		formatMessage: function(reasonName, reasonParameters) {
-			if (
-				!Ext.isEmpty(CMDBuild.Translation.errors.reasons)
-				&& !Ext.isEmpty(CMDBuild.Translation.errors.reasons[reasonName])
-			) {
-				return Ext.String.format.apply(null, [].concat(CMDBuild.Translation.errors.reasons[reasonName]).concat(reasonParameters));
-			}
-
-			return '';
-		},
-
-		/**
-		 * @param {Object} response
-		 * @param {Object} error
-		 * @param {Object} options
-		 */
-		showError: function(response, errorObject, options) {
+		showError: function(response, error, options) {
+			var tr = CMDBuild.Translation.errors || {
+				error_message : "Error",
+				unknown_error : "Unknown error",
+				server_error_code : "Server error: ",
+				server_error : "Server error"
+			};
 			var errorTitle = null;
 			var errorBody = {
-				text: CMDBuild.Translation.errors.unknown_error,
-				detail: undefined
+					text: tr.unknown_error,
+					detail: undefined
 			};
 
-			if (!Ext.Object.isEmpty(errorObject)) {
-				var detail = '';
-				var reason = errorObject.reason;
+			if (error) {
+				// if present, add the url that generate the error
+				var detail = "";
+				if (options && options.url) {
+					detail = "Call: " + options.url + "\n";
+					var line = "";
+					for (var i=0; i<detail.length; ++i) {
+						line += "-";
+					}
 
-				// Add URL that generate the error
-				if (
-					!Ext.Object.isEmpty(options)
-					&& !Ext.isEmpty(options.url)
-				) {
-					detail = 'Call: ' + options.url + '\n';
-
-					var line = '';
-
-					for (var i = 0; i < detail.length; ++i)
-						line += '-';
-
-					detail += line + '\n';
+					detail += line + "\n";
 				}
 
-				detail += 'Error: ' + errorObject.stacktrace; // Add to the details the server stacktrace
-
-				errorBody.detail = detail;
-
-				if (!Ext.isEmpty(reason)) {
+				// then add to the details the server stacktrace
+				errorBody.detail = detail + "Error: " + error.stacktrace;
+				var reason = error.reason;
+				if (reason) {
 					if (reason == 'AUTH_NOT_LOGGED_IN' || reason == 'AUTH_MULTIPLE_GROUPS') {
 						var loginWindow = Ext.create('CMDBuild.core.LoginWindow', { ajaxOptions: options });
 						loginWindow.setAuthFieldsEnabled(reason == 'AUTH_NOT_LOGGED_IN');
@@ -152,92 +130,45 @@
 
 						return;
 					}
-
-					var errorString = CMDBuild.core.Ajax.formatMessage(reason, errorObject.reasonParameters);
-
-					if (Ext.isEmpty(errorString)) {
-						_error('cannot format error message from "' + errorObject + '"', 'CMDBuild.core.Ajax');
-					} else {
-						errorBody.text = errorString;
+					var translatedErrorString = CMDBuild.core.Ajax.formatError(reason, error.reasonParameters);
+					if (translatedErrorString) {
+						errorBody.text = translatedErrorString;
 					}
 				}
 			} else {
-				if (
-					Ext.isEmpty(response)
-					|| response.status == 200
-					|| response.status == 0
-				) {
-					errorTitle = CMDBuild.Translation.errors.error_message;
-					errorBody.text = CMDBuild.Translation.errors.unknown_error;
+				if (!response || response.status == 200 || response.status == 0) {
+					errorTitle = tr.error_message;
+					errorBody.text = tr.unknown_error;
 				} else if (response.status) {
-					errorTitle = CMDBuild.Translation.errors.error_message;
-					errorBody.text = CMDBuild.Translation.errors.server_error_code+response.status;
+					errorTitle = tr.error_message;
+					errorBody.text = tr.server_error_code+response.status;
 				}
 			}
 
-			CMDBuild.core.Message.error(
-				errorTitle,
-				errorBody,
-				options.form
-			);
+			var popup = options.form || options.important;
+
+			CMDBuild.Msg.error(errorTitle, errorBody, popup);
 		},
 
-		/**
-		 * @param {Object} warningObject
-		 */
-		showWarning: function(warningObject) {
-			if (!Ext.Object.isEmpty(warningObject)) {
-				var warningString = CMDBuild.core.Ajax.formatMessage(warningObject.reason, warningObject.reasonParameters);
+		formatError: function(reasonName, reasonParameters) {
+			var tr = CMDBuild.Translation.errors.reasons;
 
-				if (Ext.isEmpty(warningString)) {
-					_error('cannot format warning message from "' + warningObject + '"', 'CMDBuild.core.Ajax');
-				} else {
-					CMDBuild.core.Message.warning(null, warningString);
-				}
-			}
-		},
-
-		/**
-		 * @param {Ext.data.Connection} conn
-		 * @param {Object} options - the options config object passed to the request method
-		 */
-		trapCallbacks: function(conn, options) {
-			var callbackScope = options.scope || this;
-			var failure = Ext.emptyFn;
-
-			options.success = Ext.bind(CMDBuild.core.Ajax.unmaskAndCheckSuccess, callbackScope, [options.success], true);
-
-			// The error message is not shown if options.failure is present and returns false
-			if (!Ext.isEmpty(options.failure) && Ext.isFunction(options.failure)) {
-
-				failure = Ext.Function.createInterceptor(CMDBuild.core.Ajax.displayErrors, options.failure, callbackScope);
+			if (tr && tr[reasonName]) {
+				return Ext.String.format.apply(null, [].concat(tr[reasonName]).concat(reasonParameters));
 			} else {
-
-				failure = Ext.bind(CMDBuild.core.Ajax.displayErrors, this);
+				return "";
 			}
-
-			options.failure = Ext.bind(CMDBuild.core.Ajax.decodeFailure, this, [failure], true);
 		},
 
-		/**
-		 * @param {Object} response
-		 * @param {Object} options
-		 * @param {Function} success
+		/*
+		 * From Ext.Ajax
 		 */
-		unmaskAndCheckSuccess: function(response, options, success) {
-			var decodedResponse = CMDBuild.core.Ajax.decodeJSONwhenMultipartAlso(response.responseText);
-
-			if (!Ext.isEmpty(options.loadMask) && options.loadMask)
-				CMDBuild.core.LoadMask.hide();
-
-			CMDBuild.core.Ajax.displayWarnings(decodedResponse);
-
-			if (!Ext.isEmpty(decodedResponse) && decodedResponse.success) {
-				Ext.callback(success, this, [response, options, decodedResponse]);
-			} else {
-				Ext.callback(options.failure, this, [response, options]);
-			}
+		autoAbort: false,
+		serializeForm: function(form) {
+			return Ext.lib.Ajax.serializeForm(form);
 		}
 	});
+
+	CMDBuild.core.Ajax.on('beforerequest', CMDBuild.core.Ajax.showMaskAndTrapCallbacks);
 
 })();
