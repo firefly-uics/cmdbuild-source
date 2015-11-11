@@ -93,9 +93,9 @@ public class CxfProcessStartActivitiesTest {
 		doReturn("instructions") //
 				.when(activity).getInstructions();
 		doReturn(asList( //
-				new CMActivityVariableToProcess("foo", "dummy", false, false), //
-				new CMActivityVariableToProcess("bar", "dummy", true, false), //
-				new CMActivityVariableToProcess("baz", "dummy", true, true) //
+				new CMActivityVariableToProcess("foo", false, false), //
+				new CMActivityVariableToProcess("bar", true, false), //
+				new CMActivityVariableToProcess("baz", true, true) //
 				)) //
 				.when(activity).getVariables();
 		doReturn(activity) //
@@ -171,9 +171,9 @@ public class CxfProcessStartActivitiesTest {
 		doReturn("instructions") //
 				.when(activity).getInstructions();
 		doReturn(asList( //
-				new CMActivityVariableToProcess("first", "dummy", false, false), //
-				new CMActivityVariableToProcess("second", "dummy", true, false), //
-				new CMActivityVariableToProcess("third", "dummy", true, true) //
+				new CMActivityVariableToProcess("first", false, false), //
+				new CMActivityVariableToProcess("second", true, false), //
+				new CMActivityVariableToProcess("third", true, true) //
 				)) //
 				.when(activity).getVariables();
 		doReturn(activity) //

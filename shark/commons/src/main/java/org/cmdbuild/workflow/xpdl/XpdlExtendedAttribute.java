@@ -20,7 +20,7 @@ public class XpdlExtendedAttribute {
 		return value;
 	}
 
-	public static XpdlExtendedAttribute newInstance(ExtendedAttribute xa) {
+	public static XpdlExtendedAttribute newInstance(final ExtendedAttribute xa) {
 		if (xa == null) {
 			return null;
 		} else {

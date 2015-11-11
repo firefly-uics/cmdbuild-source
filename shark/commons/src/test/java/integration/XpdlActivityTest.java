@@ -69,7 +69,7 @@ public class XpdlActivityTest extends AbstractXpdlTest {
 
 		xpdlProcess.createTransition(xpdlActivity, xpdlProcess.createActivity("A"));
 		assertThat(xpdlActivity.getOutgoingTransitions().size(), is(1));
-		XpdlTransition t = xpdlActivity.getOutgoingTransitions().get(0);
+		final XpdlTransition t = xpdlActivity.getOutgoingTransitions().get(0);
 		assertThat(t.getSource().getId(), is(xpdlActivity.getId()));
 		assertThat(t.getDestination().getId(), is("A"));
 

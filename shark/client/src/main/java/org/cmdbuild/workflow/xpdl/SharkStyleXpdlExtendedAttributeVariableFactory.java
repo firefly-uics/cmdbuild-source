@@ -45,7 +45,7 @@ public class SharkStyleXpdlExtendedAttributeVariableFactory implements XpdlExten
 		final CMActivityVariableToProcess output;
 		if (isVariableKey(key)) {
 			final VariableSuffix type = extractType(key);
-			output = new CMActivityVariableToProcess(name, type.getLegacy(), type.isWritable(), type.isMandatory());
+			output = new CMActivityVariableToProcess(name, type.isWritable(), type.isMandatory());
 		} else {
 			output = null;
 		}

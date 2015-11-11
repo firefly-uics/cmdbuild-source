@@ -54,7 +54,7 @@ public abstract class ForwardingActivity extends ForwardingObject implements CMA
 	}
 
 	@Override
-	public List<CMActivityWidget> getWidgets(CMValueSet processInstanceVariables) {
+	public List<CMActivityWidget> getWidgets(final CMValueSet processInstanceVariables) {
 		return delegate().getWidgets(processInstanceVariables);
 	}
 

@@ -87,7 +87,7 @@ public class XpdlActivityWrapperTest {
 	 */
 
 	private CMActivityVariableToProcess notNullVariableToProcess() {
-		return new CMActivityVariableToProcess("FakeName", "dummy", false, false);
+		return new CMActivityVariableToProcess("FakeName", false, false);
 	}
 
 	private CMActivityWidget notNullWidget() {
