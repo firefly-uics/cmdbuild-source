@@ -29,7 +29,8 @@
 			'onGridViewEmailButtonClick',
 			'sendAll',
 			'setUiState',
-			'storeLoad'
+			'storeLoad',
+			'tabEmailGridRecordIsSendable'
 		],
 
 		/**
@@ -285,20 +286,6 @@
 
 		/**
 		 * @param {Mixed} record
-		 *
-		 * @return {Boolean}
-		 */
-		recordIsSendable: function(record) {
-			return (
-				!Ext.isEmpty(record.get(CMDBuild.core.constants.Proxy.TO))
-				&& !Ext.isEmpty(record.get(CMDBuild.core.constants.Proxy.SUBJECT))
-				&& record.get(CMDBuild.core.constants.Proxy.STATUS) != CMDBuild.core.constants.Proxy.OUTGOING
-				&& record.get(CMDBuild.core.constants.Proxy.STATUS) != CMDBuild.core.constants.Proxy.SENT
-			);
-		},
-
-		/**
-		 * @param {Mixed} record
 		 * @param {Array} regenerationTrafficLightArray
 		 */
 		removeRecord: function(record, regenerationTrafficLightArray) {
@@ -382,6 +369,22 @@
 						this.cmfg('getAllTemplatesData');
 				}
 			});
+		},
+
+
+		/**
+		 * @param {Mixed} record
+		 *
+		 * @return {Boolean}
+		 */
+		tabEmailGridRecordIsSendable: function(record) {
+			return (
+				!Ext.isEmpty(record.get(CMDBuild.core.constants.Proxy.TO))
+				&& !Ext.isEmpty(record.get(CMDBuild.core.constants.Proxy.SUBJECT))
+				&& record.get(CMDBuild.core.constants.Proxy.STATUS) != CMDBuild.core.constants.Proxy.OUTGOING
+				&& record.get(CMDBuild.core.constants.Proxy.STATUS) != CMDBuild.core.constants.Proxy.RECEIVED
+				&& record.get(CMDBuild.core.constants.Proxy.STATUS) != CMDBuild.core.constants.Proxy.SENT
+			);
 		}
 	});
 
