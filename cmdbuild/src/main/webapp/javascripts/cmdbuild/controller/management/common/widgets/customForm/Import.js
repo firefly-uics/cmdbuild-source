@@ -4,8 +4,9 @@
 		extend: 'CMDBuild.controller.common.AbstractController',
 
 		requires: [
-			'CMDBuild.core.proxy.Card',
 			'CMDBuild.core.constants.Proxy',
+			'CMDBuild.core.LoadMask',
+			'CMDBuild.core.proxy.Card',
 			'CMDBuild.core.proxy.Csv',
 			'CMDBuild.core.RequestBarrier'
 		],

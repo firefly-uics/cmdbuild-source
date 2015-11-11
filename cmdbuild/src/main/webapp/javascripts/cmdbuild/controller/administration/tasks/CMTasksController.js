@@ -6,6 +6,7 @@
 		requires: [
 			'CMDBuild.core.constants.Global',
 			'CMDBuild.core.constants.Proxy',
+			'CMDBuild.core.LoadMask',
 			'CMDBuild.core.proxy.CMProxyTasks',
 			'CMDBuild.core.Utils'
 		],
