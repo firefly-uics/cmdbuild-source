@@ -19,7 +19,7 @@ import org.cmdbuild.workflow.ForwardingActivity;
 import org.cmdbuild.workflow.ForwardingProcessDefinitionManager;
 import org.cmdbuild.workflow.ProcessDefinitionManager;
 import org.cmdbuild.workflow.xpdl.CMActivityVariableToProcess;
-import org.cmdbuild.workflow.xpdl.CMActivityVariableToProcess.Type;
+import org.cmdbuild.workflow.xpdl.SharkStyleXpdlExtendedAttributeVariableFactory.VariableSuffix;
 
 import com.google.common.base.Function;
 
@@ -67,10 +67,7 @@ public class UserProcessDefinitionManager extends ForwardingProcessDefinitionMan
 							@Override
 							public CMActivityVariableToProcess apply(final CMActivityVariableToProcess input) {
 								final CMActivityVariableToProcess output;
-								switch (input.getType()) {
-
-								case READ_WRITE:
-								case READ_WRITE_REQUIRED:
+								if (input.isWritable()) {
 									output = new ForwardingAttributeTypeVisitor() {
 
 										private final CMAttributeTypeVisitor delegate = NullAttributeTypeVisitor
@@ -98,17 +95,13 @@ public class UserProcessDefinitionManager extends ForwardingProcessDefinitionMan
 											final CMDomain domain = dataView.findDomain(domainName);
 											if (domain == null) {
 												output = new CMActivityVariableToProcess(input.getName(),
-														Type.READ_ONLY);
+														VariableSuffix.VIEW.getLegacy(), false, input.isMandatory());
 											}
 										};
 
 									}.output();
-									break;
-
-								default:
+								} else {
 									output = input;
-									break;
-
 								}
 								return output;
 							}

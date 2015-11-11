@@ -4,27 +4,36 @@ import org.apache.commons.lang3.Validate;
 
 public class CMActivityVariableToProcess {
 
-	public enum Type {
-		READ_ONLY,
-		READ_WRITE,
-		READ_WRITE_REQUIRED
-	}
-
 	private final String name;
-	private final Type type;
+	private final String type;
+	private final boolean writable;
+	private final boolean mandatory;
 
-	public CMActivityVariableToProcess(final String name, final Type type) {
+	public CMActivityVariableToProcess(final String name, final String type, final boolean writable,
+			final boolean mandatory) {
 		Validate.notEmpty(name, "Variable names must be non-empty");
 		Validate.notNull(type, "Variable type must be specified");
 		this.name = name;
 		this.type = type;
+		this.writable = writable;
+		this.mandatory = mandatory;
 	}
 
 	public String getName() {
 		return name;
 	}
 
-	public Type getType() {
+	@Deprecated
+	public String getType() {
 		return type;
 	}
+
+	public boolean isWritable() {
+		return writable;
+	}
+
+	public boolean isMandatory() {
+		return mandatory;
+	}
+
 }

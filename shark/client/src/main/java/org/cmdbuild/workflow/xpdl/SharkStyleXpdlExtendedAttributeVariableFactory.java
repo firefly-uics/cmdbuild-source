@@ -1,30 +1,36 @@
 package org.cmdbuild.workflow.xpdl;
 
-import org.cmdbuild.workflow.xpdl.CMActivityVariableToProcess.Type;
-
 public class SharkStyleXpdlExtendedAttributeVariableFactory implements XpdlExtendedAttributeVariableFactory {
 
 	public enum VariableSuffix {
-		VIEW {
-			@Override
-			public Type toGlobalType() {
-				return CMActivityVariableToProcess.Type.READ_ONLY;
-			}
-		},
-		UPDATE {
-			@Override
-			public Type toGlobalType() {
-				return CMActivityVariableToProcess.Type.READ_WRITE;
-			}
-		},
-		UPDATEREQUIRED {
-			@Override
-			public Type toGlobalType() {
-				return CMActivityVariableToProcess.Type.READ_WRITE_REQUIRED;
-			}
-		};
+		VIEW(false, false, "READ_ONLY"), //
+		UPDATE(true, false, "READ_WRITE"), //
+		UPDATEREQUIRED(true, true, "READ_WRITE_REQUIRED"), //
+		;
 
-		public abstract Type toGlobalType();
+		private final boolean writable;
+		private final boolean mandatory;
+		private final String legacy;
+
+		private VariableSuffix(final boolean writable, final boolean mandatory, final String legacy) {
+			this.writable = writable;
+			this.mandatory = mandatory;
+			this.legacy = legacy;
+		}
+
+		public boolean isWritable() {
+			return writable;
+		}
+
+		public boolean isMandatory() {
+			return mandatory;
+		}
+
+		@Deprecated
+		public String getLegacy() {
+			return legacy;
+		}
+
 	}
 
 	public static final String VARIABLE_PREFIX = "VariableToProcess_";
@@ -36,22 +42,23 @@ public class SharkStyleXpdlExtendedAttributeVariableFactory implements XpdlExten
 		if (key == null || name == null) {
 			return null;
 		}
+		final CMActivityVariableToProcess output;
 		if (isVariableKey(key)) {
-			final Type type = extractType(key);
-			return new CMActivityVariableToProcess(name, type);
+			final VariableSuffix type = extractType(key);
+			output = new CMActivityVariableToProcess(name, type.getLegacy(), type.isWritable(), type.isMandatory());
 		} else {
-			return null;
+			output = null;
 		}
+		return output;
 	}
 
 	private final boolean isVariableKey(final String key) {
 		return key.startsWith(VARIABLE_PREFIX);
 	}
 
-	private final Type extractType(final String key) {
+	private final VariableSuffix extractType(final String key) {
 		final String suffix = key.substring(VARIABLE_PREFIX.length());
-		final VariableSuffix xpdlType = VariableSuffix.valueOf(suffix);
-		return xpdlType.toGlobalType();
+		return VariableSuffix.valueOf(suffix);
 	}
 
 }

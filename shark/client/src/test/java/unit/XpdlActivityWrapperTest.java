@@ -12,7 +12,6 @@ import static org.mockito.Mockito.when;
 import org.cmdbuild.dao.entry.CMValueSet;
 import org.cmdbuild.workflow.CMActivityWidget;
 import org.cmdbuild.workflow.xpdl.CMActivityVariableToProcess;
-import org.cmdbuild.workflow.xpdl.CMActivityVariableToProcess.Type;
 import org.cmdbuild.workflow.xpdl.XpdlActivity;
 import org.cmdbuild.workflow.xpdl.XpdlActivityWrapper;
 import org.cmdbuild.workflow.xpdl.XpdlDocument;
@@ -88,7 +87,7 @@ public class XpdlActivityWrapperTest {
 	 */
 
 	private CMActivityVariableToProcess notNullVariableToProcess() {
-		return new CMActivityVariableToProcess("FakeName", Type.READ_ONLY);
+		return new CMActivityVariableToProcess("FakeName", "dummy", false, false);
 	}
 
 	private CMActivityWidget notNullWidget() {
