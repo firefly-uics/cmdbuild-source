@@ -188,7 +188,7 @@
 			showPopup = Ext.isBoolean(showPopup) ? showPopup : true;
 
 			var invalidFieldsArray = form.getNonValidFields();
-_debug('validate');
+
 			// Check for invalid fields and builds errorMessage
 			if (!Ext.isEmpty(form) && !Ext.isEmpty(invalidFieldsArray)) {
 				var errorMessage = CMDBuild.Translation.errors.invalid_fields + '<ul style="text-align: left;">';
