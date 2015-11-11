@@ -3,6 +3,7 @@
 	Ext.define('CMDBuild.core.proxy.common.tabs.history.Classes', {
 
 		requires: [
+			'CMDBuild.core.Ajax',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.Index',
 			'CMDBuild.model.common.tabs.history.classes.CardRecord'

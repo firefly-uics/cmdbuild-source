@@ -12,6 +12,7 @@
 		alternateClassName: 'CMDBuild.ServiceProxy.Filter', // Legacy class name
 
 		requires: [
+			'CMDBuild.core.Ajax',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.Index'
 		],

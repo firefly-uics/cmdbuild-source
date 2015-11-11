@@ -2,7 +2,10 @@
 
 	Ext.define('CMDBuild.core.proxy.CMProxyTasks', {
 
-		requires: ['CMDBuild.model.CMModelTasks'],
+		requires: [
+			'CMDBuild.core.Ajax',
+			'CMDBuild.model.CMModelTasks'
+		],
 
 		singleton: true,
 

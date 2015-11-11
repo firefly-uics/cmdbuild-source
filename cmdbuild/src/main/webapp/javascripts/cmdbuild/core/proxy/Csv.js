@@ -3,6 +3,7 @@
 	Ext.define('CMDBuild.core.proxy.Csv', {
 
 		requires: [
+			'CMDBuild.core.Ajax',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.Index'
 		],

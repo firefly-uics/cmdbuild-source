@@ -2,7 +2,10 @@
 
 	Ext.define('CMDBuild.core.proxy.Utils', {
 
-		requires: ['CMDBuild.core.proxy.Index'],
+		requires: [
+			'CMDBuild.core.Ajax',
+			'CMDBuild.core.proxy.Index'
+		],
 
 		singleton: true,
 

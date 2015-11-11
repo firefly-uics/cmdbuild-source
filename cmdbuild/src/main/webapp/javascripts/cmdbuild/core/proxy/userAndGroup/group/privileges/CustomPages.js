@@ -3,6 +3,7 @@
 	Ext.define('CMDBuild.core.proxy.userAndGroup.group.privileges.CustomPages', {
 
 		requires: [
+			'CMDBuild.core.Ajax',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.Index',
 			'CMDBuild.model.userAndGroup.group.privileges.GridRecord'

@@ -3,6 +3,7 @@
 	Ext.define('CMDBuild.core.proxy.widgets.OpenReport', {
 
 		requires: [
+			'CMDBuild.core.Ajax',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.Index',
 			'CMDBuild.model.widget.openReport.ReportCombo'

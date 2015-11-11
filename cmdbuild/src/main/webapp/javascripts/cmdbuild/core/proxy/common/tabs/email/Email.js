@@ -3,6 +3,7 @@
 	Ext.define('CMDBuild.core.proxy.common.tabs.email.Email', {
 
 		requires: [
+			'CMDBuild.core.Ajax',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.Index',
 			'CMDBuild.model.common.tabs.email.Email'

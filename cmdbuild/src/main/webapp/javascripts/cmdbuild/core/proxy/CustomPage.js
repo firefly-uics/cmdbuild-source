@@ -2,7 +2,10 @@
 
 	Ext.define('CMDBuild.core.proxy.CustomPage', {
 
-		requires: ['CMDBuild.core.proxy.Index'],
+		requires: [
+			'CMDBuild.core.Ajax',
+			'CMDBuild.core.proxy.Index'
+		],
 
 		singleton: true,
 

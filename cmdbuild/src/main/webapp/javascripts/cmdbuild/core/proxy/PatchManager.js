@@ -3,6 +3,7 @@
 	Ext.define('CMDBuild.core.proxy.PatchManager', {
 
 		requires: [
+			'CMDBuild.core.Ajax',
 			'CMDBuild.core.configurations.Timeout',
 			'CMDBuild.core.proxy.Index',
 			'CMDBuild.model.patchManager.Patch'
