@@ -5,6 +5,7 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
+			'CMDBuild.core.LoadMask',
 			'CMDBuild.core.proxy.session.JsonRpc',
 			'CMDBuild.core.proxy.session.Rest'
 		],

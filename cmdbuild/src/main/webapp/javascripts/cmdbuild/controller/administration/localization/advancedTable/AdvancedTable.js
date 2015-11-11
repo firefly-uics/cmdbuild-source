@@ -5,7 +5,8 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.model.localization.advancedTable.TreeStore'
+			'CMDBuild.core.LoadMask',
+			'CMDBuild.model.localization.advancedTable.TreeStore',
 		],
 
 		/**

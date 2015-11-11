@@ -5,6 +5,7 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
+			'CMDBuild.core.LoadMask',
 			'CMDBuild.core.Message',
 			'CMDBuild.core.proxy.configuration.GeneralOptions',
 			'CMDBuild.core.proxy.localization.importExport.Csv',

@@ -4,8 +4,9 @@
 		extend: 'CMDBuild.controller.common.AbstractController',
 
 		requires: [
-			'CMDBuild.core.Message',
 			'CMDBuild.core.constants.Proxy',
+			'CMDBuild.core.LoadMask',
+			'CMDBuild.core.Message',
 			'CMDBuild.core.proxy.Index',
 			'CMDBuild.core.proxy.report.Jasper',
 			'CMDBuild.model.report.Grid',

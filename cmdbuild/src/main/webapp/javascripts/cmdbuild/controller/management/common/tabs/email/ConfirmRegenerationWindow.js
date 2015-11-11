@@ -5,6 +5,7 @@
 
 		requires: [
 			'CMDBuild.controller.management.common.tabs.email.Email',
+			'CMDBuild.core.LoadMask',
 			'CMDBuild.core.constants.Proxy'
 		],
 

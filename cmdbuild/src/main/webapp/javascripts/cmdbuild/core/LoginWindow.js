@@ -5,6 +5,7 @@
 
 		requires: [
 			'CMDBuild.core.Ajax',
+			'CMDBuild.core.LoadMask',
 			'CMDBuild.core.constants.Proxy'
 		],
 
