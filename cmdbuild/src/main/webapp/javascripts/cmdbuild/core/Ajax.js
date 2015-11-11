@@ -70,7 +70,7 @@
 					var w = decoded.warnings[i];
 					var errorString = CMDBuild.core.Ajax.formatError(w.reason, w.reasonParameters);
 					if (errorString) {
-						CMDBuild.Msg.warn(null, errorString);
+						CMDBuild.core.Message.warning(null, errorString);
 					} else {
 						CMDBuild.log.warn("Cannot print warning message", w);
 					}
