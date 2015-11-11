@@ -3,7 +3,10 @@
 	Ext.define('CMDBuild.core.proxy.CMProxyWorkflow', {
 		alternateClassName: 'CMDBuild.ServiceProxy.workflow', // Legacy class name
 
-		requires: ['CMDBuild.core.proxy.Index'],
+		requires: [
+			'CMDBuild.core.Ajax',
+			'CMDBuild.core.proxy.Index'
+		],
 
 		singleton: true,
 

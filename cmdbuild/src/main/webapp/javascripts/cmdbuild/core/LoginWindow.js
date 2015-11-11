@@ -3,7 +3,10 @@
 	Ext.define('CMDBuild.core.LoginWindow', {
 		extend: 'Ext.window.Window',
 
-		requires: ['CMDBuild.core.constants.Proxy'],
+		requires: [
+			'CMDBuild.core.Ajax',
+			'CMDBuild.core.constants.Proxy'
+		],
 
 		/**
 		 * @cfg {Array}

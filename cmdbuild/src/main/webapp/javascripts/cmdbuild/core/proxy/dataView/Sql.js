@@ -3,6 +3,7 @@
 	Ext.define('CMDBuild.core.proxy.dataView.Sql', {
 
 		requires: [
+			'CMDBuild.core.Ajax',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.Index',
 			'CMDBuild.core.Utils',
@@ -80,7 +81,7 @@
 					extraParams: parameters.extraParams || {}
 				}
 			});
-		}
+		},
 
 		/**
 		 * @param {Object} parameters

@@ -3,6 +3,7 @@
 	Ext.define('CMDBuild.core.proxy.widgets.CustomForm', {
 
 		requires: [
+			'CMDBuild.core.Ajax',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.Index'
 		],

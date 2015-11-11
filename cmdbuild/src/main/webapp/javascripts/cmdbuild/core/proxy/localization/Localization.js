@@ -3,6 +3,7 @@
 	Ext.define('CMDBuild.core.proxy.localization.Localization', {
 
 		requires: [
+			'CMDBuild.core.Ajax',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.Index',
 			'CMDBuild.model.localization.Localization'

@@ -6,6 +6,8 @@
 	Ext.define('CMDBuild.core.proxy.CMProxy', {
 		alternateClassName: 'CMDBuild.ServiceProxy.core', // Legacy class name
 
+		requires: ['CMDBuild.core.Ajax'],
+
 		singleton: true,
 
 		/**

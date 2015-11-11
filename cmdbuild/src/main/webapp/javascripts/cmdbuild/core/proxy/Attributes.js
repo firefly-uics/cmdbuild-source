@@ -4,6 +4,7 @@
 		alternateClassName: 'CMDBuild.ServiceProxy.attributes', // Legacy class name
 
 		requires: [
+			'CMDBuild.core.Ajax',
 			'CMDBuild.core.proxy.CMProxy',
 			'CMDBuild.core.proxy.Index'
 		],

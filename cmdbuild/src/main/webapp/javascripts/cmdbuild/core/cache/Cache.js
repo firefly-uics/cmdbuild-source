@@ -6,6 +6,7 @@
 	Ext.define('CMDBuild.core.cache.Cache', {
 
 		requires: [
+			'CMDBuild.core.Ajax',
 			'CMDBuild.core.configurations.Timeout',
 			'CMDBuild.core.constants.Proxy'
 		],

@@ -3,6 +3,7 @@
 	Ext.define('CMDBuild.core.proxy.widgets.Grid', {
 
 		requires: [
+			'CMDBuild.core.Ajax',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.Index'
 		],

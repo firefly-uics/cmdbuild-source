@@ -3,6 +3,7 @@
 	Ext.define('CMDBuild.core.proxy.session.JsonRpc', {
 
 		requires: [
+			'CMDBuild.core.Ajax',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.Index',
 			'CMDBuild.core.Utils'

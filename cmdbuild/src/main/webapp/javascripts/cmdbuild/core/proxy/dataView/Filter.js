@@ -3,6 +3,7 @@
 	Ext.define('CMDBuild.core.proxy.dataView.Filter', {
 
 		requires: [
+			'CMDBuild.core.Ajax',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.Index',
 			'CMDBuild.model.dataView.Filter'
