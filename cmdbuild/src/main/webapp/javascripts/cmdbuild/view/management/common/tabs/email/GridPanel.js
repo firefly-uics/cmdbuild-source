@@ -173,7 +173,7 @@
 									return (
 										this.delegate.cmfg('configurationGet')[CMDBuild.core.constants.Proxy.READ_ONLY]
 										|| !this.delegate.cmfg('editModeGet')
-										|| !this.delegate.recordIsSendable(record)
+										|| !this.delegate.cmfg('tabEmailGridRecordIsSendable', record)
 									);
 								}
 							}),
