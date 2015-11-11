@@ -348,7 +348,8 @@
 
 				errorMessage += '<ul>';
 
-				CMDBuild.core.Message.error(CMDBuild.Translation.common.failure, errorMessage, false);
+				if (showPopup)
+					CMDBuild.core.Message.error(CMDBuild.Translation.common.failure, errorMessage, false);
 
 				return false;
 			}

@@ -3,7 +3,7 @@
 	Ext.define('CMDBuild.core.buttons.iconized.row.Clone', {
 		extend: 'CMDBuild.core.buttons.Base',
 
-		iconCls: 'row-clone',
+		iconCls: 'clone',
 		textDefault: CMDBuild.Translation.common.buttons.clone
 	});
 
