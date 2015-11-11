@@ -14,7 +14,7 @@
 		 * @param {Object} parameters
 		 */
 		create: function(parameters) {
-			CMDBuild.Ajax.request({
+			CMDBuild.core.Ajax.request({
 				method: 'POST',
 				url: CMDBuild.core.proxy.Index.email.accounts.post,
 				params: parameters.params,
@@ -30,7 +30,7 @@
 		 * @param {Object} parameters
 		 */
 		get: function(parameters) {
-			CMDBuild.Ajax.request({
+			CMDBuild.core.Ajax.request({
 				method: 'POST',
 				url: CMDBuild.core.proxy.Index.email.accounts.get,
 				params: parameters.params,
@@ -74,7 +74,7 @@
 		 * @param {Object} parameters
 		 */
 		remove: function(parameters) {
-			CMDBuild.Ajax.request({
+			CMDBuild.core.Ajax.request({
 				method: 'POST',
 				url: CMDBuild.core.proxy.Index.email.accounts.remove,
 				params: parameters.params,
@@ -90,7 +90,7 @@
 		 * @param {Object} parameters
 		 */
 		setDefault: function(parameters) {
-			CMDBuild.Ajax.request({
+			CMDBuild.core.Ajax.request({
 				method: 'POST',
 				url: CMDBuild.core.proxy.Index.email.accounts.setDefault,
 				params: parameters.params,
@@ -106,7 +106,7 @@
 		 * @param {Object} parameters
 		 */
 		update: function(parameters) {
-			CMDBuild.Ajax.request({
+			CMDBuild.core.Ajax.request({
 				method: 'POST',
 				url: CMDBuild.core.proxy.Index.email.accounts.put,
 				params: parameters.params,

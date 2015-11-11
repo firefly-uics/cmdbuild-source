@@ -26,7 +26,7 @@
 		 * @param {Object} parameters
 		 */
 		read: function(parameters) {
-			CMDBuild.Ajax.request({
+			CMDBuild.core.Ajax.request({
 				url: CMDBuild.core.proxy.Index.filter.group.read,
 				params: parameters.params,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
@@ -133,7 +133,7 @@
 		 * @param {Object} parameters
 		 */
 		getDefaults: function(parameters) {
-			CMDBuild.Ajax.request({
+			CMDBuild.core.Ajax.request({
 				url: CMDBuild.core.proxy.Index.filter.group.defaults.read,
 				params: parameters.params,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
@@ -148,7 +148,7 @@
 		 * @param {Object} parameters
 		 */
 		setDefaults: function(parameters) {
-			CMDBuild.Ajax.request({
+			CMDBuild.core.Ajax.request({
 				url: CMDBuild.core.proxy.Index.filter.group.defaults.update,
 				params: parameters.params,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
@@ -168,7 +168,7 @@
 			request.method = method;
 			request.params = getParams(filter, fullParams);
 
-			CMDBuild.Ajax.request(config);
+			CMDBuild.core.Ajax.request(config);
 		}
 	}
 

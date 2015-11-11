@@ -183,7 +183,7 @@
 								CMDBuild.core.cache.Cache.invalidate(cacheGroupIdentifier);
 						}, parameters.success);
 
-						CMDBuild.Ajax.request(parameters);
+						CMDBuild.core.Ajax.request(parameters);
 					} else { // Emulation of success and callback execution
 						var cachedValues = CMDBuild.core.cache.Cache.get(cacheGroupIdentifier, parameters.url, parameters.params);
 
@@ -202,7 +202,7 @@
 						)();
 					}
 				} else { // Uncachable endpoints manage
-					CMDBuild.Ajax.request(parameters);
+					CMDBuild.core.Ajax.request(parameters);
 				}
 			} else {
 				_error('invalid request parameters', 'CMDBuild.core.cache.Cache');

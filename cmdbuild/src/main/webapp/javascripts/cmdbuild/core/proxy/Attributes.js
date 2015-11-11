@@ -14,7 +14,7 @@
 		 * @param {Object} parameters
 		 */
 		read: function(parameters) {
-			CMDBuild.Ajax.request({
+			CMDBuild.core.Ajax.request({
 				method: 'GET',
 				url: CMDBuild.core.proxy.Index.attribute.read,
 				params: parameters.params,

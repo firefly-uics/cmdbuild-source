@@ -154,7 +154,7 @@
 						CMDBuild.core.LoadMask.hide();
 
 						for (var requestOption; requestOption=this.ajaxOptions.pop();) {
-							CMDBuild.Ajax.request(requestOption);
+							CMDBuild.core.Ajax.request(requestOption);
 						}
 					}
 				},

@@ -33,7 +33,7 @@
 		 * ******************************************************* */
 
 		/**
-		 * 
+		 *
 		 * @param {CMDBuild.view.management.common.CMCardGrid} grid
 		 */
 		onCMCardGridColumnsReconfigured: function(grid) {
@@ -56,7 +56,7 @@
 							sortable: false,
 							width: 30
 						});
-						
+
 						grid.headerCt.insert(grid.columns.length - 1, column);
 						grid.getView().refresh();
 					}
@@ -66,7 +66,7 @@
 		},
 
 		/**
-		 * 
+		 *
 		 * @param {CMDBuild.view.management.common.CMCardGrid} grid
 		 */
 		onCMCardGridIconRowClick: function(grid, action, model) {
@@ -84,7 +84,7 @@
 						if (response.ROID) {
 							startBIMPlayer(me, response.ROID, response.DESCRIPTION, response.BASE_POID);
 						} else {
-							CMDBuild.Msg.warn(
+							CMDBuild.core.Message.warning(
 									CMDBuild.Translation.warnings.warning_message, //
 									CMDBuild.Translation.no_bim_project_for_card
 							);
@@ -107,7 +107,7 @@
 				var sceneData = scene.data();
 				var ifcTypes = sceneData.ifcTypes;
 				var data = [];
-	
+
 				for (var i=0, l=ifcTypes.length; i<l; ++i) {
 					var ifcType = ifcTypes[i];
 
@@ -372,7 +372,7 @@
 			if (me.bimWindow == null) {
 				me.bimWindow = new CMDBuild.bim.management.view.CMBimWindow({
 					delegate: me
-					
+
 				});
 			}
 			me.bimWindow.show();
@@ -418,8 +418,8 @@
 
 	function renderBimIcon() {
 		return '<img style="cursor:pointer"' +
-			'" class="' + ICON_ACTION + 
-			'" title="' + CMDBuild.Translation.open_3d_viewer + 
+			'" class="' + ICON_ACTION +
+			'" title="' + CMDBuild.Translation.open_3d_viewer +
 			'" src="images/icons/application_home.png"/>';
 	}
 })();

@@ -75,7 +75,7 @@
 			params['FilterCategory'] = this.filterType;
 			params['FilterSubcategory'] = this.id;
 
-			CMDBuild.Ajax.request({
+			CMDBuild.core.Ajax.request({
 				url: 'services/json/management/modcard/setcardfilter',
 				params: params,
 				method: 'POST',

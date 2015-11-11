@@ -10,7 +10,7 @@
 		 * @param {Object} parameters
 		 */
 		clearCache: function(parameters) {
-			CMDBuild.Ajax.request( {
+			CMDBuild.core.Ajax.request( {
 				url: CMDBuild.core.proxy.Index.utils.clearCache,
 				params: parameters.params,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
@@ -25,7 +25,7 @@
 		 * @param {Object} parameters
 		 */
 		generateId: function(parameters) {
-			CMDBuild.Ajax.request({
+			CMDBuild.core.Ajax.request({
 				url: CMDBuild.core.proxy.Index.utils.generateId,
 				params: parameters.params,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : false,

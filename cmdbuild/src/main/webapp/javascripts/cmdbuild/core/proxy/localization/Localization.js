@@ -14,7 +14,7 @@
 		 * @param {Object} parameters
 		 */
 		getCurrentLanguage: function(parameters) {
-			CMDBuild.Ajax.request({
+			CMDBuild.core.Ajax.request({
 				method: 'POST',
 				url: CMDBuild.core.proxy.Index.utils.getLanguage,
 				scope: parameters.scope || this,
@@ -43,7 +43,7 @@
 		 * @param {Object} parameters
 		 */
 		getLanguages: function(parameters) {
-			CMDBuild.Ajax.request({
+			CMDBuild.core.Ajax.request({
 				url: CMDBuild.core.proxy.Index.utils.listAvailableTranslations,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : false,
 				scope: parameters.scope || this,
@@ -98,7 +98,7 @@
 		 * @param {Object} parameters
 		 */
 		read: function(parameters) {
-			CMDBuild.Ajax.request({
+			CMDBuild.core.Ajax.request({
 				method: 'POST',
 				url: CMDBuild.core.proxy.Index.localizations.translation.read,
 				params: parameters.params,
@@ -114,7 +114,7 @@
 		 * @param {Object} parameters
 		 */
 		readAll: function(parameters) {
-			CMDBuild.Ajax.request({
+			CMDBuild.core.Ajax.request({
 				method: 'POST',
 				url: CMDBuild.core.proxy.Index.localizations.translation.readAll,
 				params: parameters.params,
@@ -130,7 +130,7 @@
 		 * @param {Object} parameters
 		 */
 		update: function(parameters) {
-			CMDBuild.Ajax.request({
+			CMDBuild.core.Ajax.request({
 				method: 'POST',
 				url: CMDBuild.core.proxy.Index.localizations.translation.update,
 				params: parameters.params,

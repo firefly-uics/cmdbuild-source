@@ -53,7 +53,7 @@
 			 * @param (Object) parameters
 			 */
 			getAlreadyRelatedCards: function(parameters) {
-				CMDBuild.Ajax.request({
+				CMDBuild.core.Ajax.request({
 					method: 'POST',
 					url: CMDBuild.core.proxy.Index.relations.getAlreadyRelatedCards,
 					params: parameters.params,

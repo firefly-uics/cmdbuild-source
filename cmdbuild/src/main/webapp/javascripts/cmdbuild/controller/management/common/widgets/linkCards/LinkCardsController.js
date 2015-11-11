@@ -228,7 +228,7 @@
 
 		alertIfNeeded: function() {
 			if (this.alertIfChangeDefaultSelection) {
-				CMDBuild.Msg.warn(
+				CMDBuild.core.Message.warning(
 					null,
 					Ext.String.format(
 						CMDBuild.Translation.warnings.link_cards_changed_values,

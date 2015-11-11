@@ -12,7 +12,7 @@
 		 * @param {Object} parameters
 		 */
 		readAll: function(parameters) {
-			CMDBuild.Ajax.request({
+			CMDBuild.core.Ajax.request({
 				method: 'GET',
 				url: CMDBuild.core.proxy.Index.dataView.readAll,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : false,
