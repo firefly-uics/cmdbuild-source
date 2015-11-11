@@ -160,6 +160,19 @@
 			}
 		},
 
+		/**
+		 * @alias
+		 */
+		formatMessage: function(reasonName, reasonParameters) {
+			var tr = CMDBuild.Translation.errors.reasons;
+
+			if (tr && tr[reasonName]) {
+				return Ext.String.format.apply(null, [].concat(tr[reasonName]).concat(reasonParameters));
+			} else {
+				return "";
+			}
+		},
+
 		/*
 		 * From Ext.Ajax
 		 */
