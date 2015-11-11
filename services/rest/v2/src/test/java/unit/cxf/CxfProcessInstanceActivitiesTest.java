@@ -33,7 +33,6 @@ import org.cmdbuild.workflow.user.UserActivityInstance;
 import org.cmdbuild.workflow.user.UserProcessClass;
 import org.cmdbuild.workflow.user.UserProcessInstance;
 import org.cmdbuild.workflow.xpdl.CMActivityVariableToProcess;
-import org.cmdbuild.workflow.xpdl.CMActivityVariableToProcess.Type;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -241,9 +240,9 @@ public class CxfProcessInstanceActivitiesTest {
 		doReturn("instructions") //
 				.when(activity).getInstructions();
 		doReturn(asList( //
-				new CMActivityVariableToProcess("foo", Type.READ_ONLY), //
-				new CMActivityVariableToProcess("bar", Type.READ_WRITE), //
-				new CMActivityVariableToProcess("baz", Type.READ_WRITE_REQUIRED) //
+				new CMActivityVariableToProcess("foo", "dummy", false, false), //
+				new CMActivityVariableToProcess("bar", "dummy", true, false), //
+				new CMActivityVariableToProcess("baz", "dummy", true, true) //
 				)) //
 				.when(activity).getVariables();
 		doReturn(activity) //

@@ -27,7 +27,6 @@ import org.cmdbuild.service.rest.v2.model.ResponseSingle;
 import org.cmdbuild.workflow.CMActivity;
 import org.cmdbuild.workflow.user.UserProcessClass;
 import org.cmdbuild.workflow.xpdl.CMActivityVariableToProcess;
-import org.cmdbuild.workflow.xpdl.CMActivityVariableToProcess.Type;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InOrder;
@@ -94,9 +93,9 @@ public class CxfProcessStartActivitiesTest {
 		doReturn("instructions") //
 				.when(activity).getInstructions();
 		doReturn(asList( //
-				new CMActivityVariableToProcess("foo", Type.READ_ONLY), //
-				new CMActivityVariableToProcess("bar", Type.READ_WRITE), //
-				new CMActivityVariableToProcess("baz", Type.READ_WRITE_REQUIRED) //
+				new CMActivityVariableToProcess("foo", "dummy", false, false), //
+				new CMActivityVariableToProcess("bar", "dummy", true, false), //
+				new CMActivityVariableToProcess("baz", "dummy", true, true) //
 				)) //
 				.when(activity).getVariables();
 		doReturn(activity) //
@@ -172,9 +171,9 @@ public class CxfProcessStartActivitiesTest {
 		doReturn("instructions") //
 				.when(activity).getInstructions();
 		doReturn(asList( //
-				new CMActivityVariableToProcess("first", Type.READ_ONLY), //
-				new CMActivityVariableToProcess("second", Type.READ_WRITE), //
-				new CMActivityVariableToProcess("third", Type.READ_WRITE_REQUIRED) //
+				new CMActivityVariableToProcess("first", "dummy", false, false), //
+				new CMActivityVariableToProcess("second", "dummy", true, false), //
+				new CMActivityVariableToProcess("third", "dummy", true, true) //
 				)) //
 				.when(activity).getVariables();
 		doReturn(activity) //
