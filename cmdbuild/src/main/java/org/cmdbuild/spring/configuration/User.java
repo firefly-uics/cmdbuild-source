@@ -17,7 +17,9 @@ import org.cmdbuild.services.event.ObservableDataView;
 import org.cmdbuild.workflow.DataViewWorkflowPersistence;
 import org.cmdbuild.workflow.DefaultWorkflowEngine;
 import org.cmdbuild.workflow.DefaultWorkflowEngine.DefaultWorkflowEngineBuilder;
+import org.cmdbuild.workflow.ProcessDefinitionManager;
 import org.cmdbuild.workflow.WorkflowPersistence;
+import org.cmdbuild.workflow.user.UserProcessDefinitionManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
@@ -118,11 +120,17 @@ public class User {
 				.withPrivilegeContext(operationUser.getPrivilegeContext()) //
 				.withOperationUser(operationUser) //
 				.withDataView(userDataView()) //
-				.withProcessDefinitionManager(workflow.processDefinitionManager()) //
+				.withProcessDefinitionManager(userProcessDefinitionManager()) //
 				.withLookupHelper(workflow.lookupHelper()) //
 				.withWorkflowService(workflow.workflowService()) //
 				.withActivityPerformerTemplateResolverFactory(workflow.activityPerformerTemplateResolverFactory()) //
 				.build();
+	}
+
+	@Bean
+	@Scope(PROTOTYPE)
+	protected ProcessDefinitionManager userProcessDefinitionManager() {
+		return new UserProcessDefinitionManager(workflow.processDefinitionManager(), userDataView());
 	}
 
 	@Bean

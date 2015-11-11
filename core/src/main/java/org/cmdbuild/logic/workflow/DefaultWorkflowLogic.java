@@ -5,7 +5,6 @@ import static com.google.common.collect.Iterables.filter;
 import static java.lang.String.format;
 import static java.util.Arrays.asList;
 import static org.cmdbuild.logic.PrivilegeUtils.assure;
-import static org.cmdbuild.logic.data.access.lock.Lockables.instanceActivity;
 
 import java.io.File;
 import java.io.IOException;
@@ -284,20 +283,6 @@ class DefaultWorkflowLogic implements WorkflowLogic {
 		}
 
 		return theActivity;
-	}
-
-	/**
-	 * Returns the process start activity for the current user.
-	 * 
-	 * @param process
-	 *            class id
-	 * @return the start activity definition
-	 * @throws CMWorkflowException
-	 */
-	@Override
-	public CMActivity getStartActivity(final Long processClassId) throws CMWorkflowException {
-		logger.debug("getting starting activity for process with class id '{}'", processClassId);
-		return workflowEngine.findProcessClassById(processClassId).getStartActivity();
 	}
 
 	@Override
