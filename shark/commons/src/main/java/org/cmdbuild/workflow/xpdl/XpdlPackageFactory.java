@@ -29,9 +29,9 @@ public class XpdlPackageFactory {
 
 	public static Package readXpdl(final InputStream is) throws XpdlException {
 		try {
-			byte[] pkgContent = IOUtils.toByteArray(is);
+			final byte[] pkgContent = IOUtils.toByteArray(is);
 			return readXpdl(pkgContent);
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			throw new XpdlException(e);
 		}
 	}
@@ -39,7 +39,7 @@ public class XpdlPackageFactory {
 	public static Package readXpdl(final byte[] pkgContent) throws XpdlException {
 		try {
 			return xmlInterface().openPackageFromStream(pkgContent, IS_XML_REPRESENTATION);
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			throw new XpdlException(e);
 		}
 	}
@@ -49,7 +49,7 @@ public class XpdlPackageFactory {
 	}
 
 	public static byte[] xpdlByteArray(final Package pkg) throws XpdlException {
-		ByteArrayOutputStream os = new ByteArrayOutputStream();
+		final ByteArrayOutputStream os = new ByteArrayOutputStream();
 		XpdlPackageFactory.writeXpdl(pkg, os);
 		return os.toByteArray();
 	}
@@ -58,7 +58,7 @@ public class XpdlPackageFactory {
 		try {
 			final Document document = writeDocument(pkg);
 			writeDocumentToOutputStream(document, os);
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			throw new XpdlException(e);
 		}
 	}
@@ -68,7 +68,7 @@ public class XpdlPackageFactory {
 			IOException {
 		final DOMSource source = new DOMSource(document);
 		final StreamResult result = new StreamResult(os);
-		final Transformer transformer =  TransformerFactory.newInstance().newTransformer();
+		final Transformer transformer = TransformerFactory.newInstance().newTransformer();
 		transformer.setOutputProperty("encoding", "UTF8");
 		transformer.setOutputProperty("indent", "yes");
 		transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");

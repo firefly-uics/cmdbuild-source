@@ -11,6 +11,7 @@ public class XpdlActivityExtendedAttributes extends XpdlExtendedAttributes {
 		this.activity = activity;
 	}
 
+	@Override
 	protected ExtendedAttributes extendedAttributes() {
 		return activity.inner.getExtendedAttributes();
 	}

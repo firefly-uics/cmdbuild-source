@@ -240,9 +240,9 @@ public class CxfProcessInstanceActivitiesTest {
 		doReturn("instructions") //
 				.when(activity).getInstructions();
 		doReturn(asList( //
-				new CMActivityVariableToProcess("foo", "dummy", false, false), //
-				new CMActivityVariableToProcess("bar", "dummy", true, false), //
-				new CMActivityVariableToProcess("baz", "dummy", true, true) //
+				new CMActivityVariableToProcess("foo", false, false), //
+				new CMActivityVariableToProcess("bar", true, false), //
+				new CMActivityVariableToProcess("baz", true, true) //
 				)) //
 				.when(activity).getVariables();
 		doReturn(activity) //
