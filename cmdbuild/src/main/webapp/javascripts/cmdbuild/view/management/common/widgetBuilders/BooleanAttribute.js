@@ -45,13 +45,15 @@ CMDBuild.WidgetBuilders.BooleanAttribute.prototype.buildGridHeader = function(at
  * @return Ext.form.BooleanDisplayField
  */
 CMDBuild.WidgetBuilders.BooleanAttribute.prototype.buildReadOnlyField = function(attribute) {
-	return new Ext.form.BooleanDisplayField ({
+	var field = new Ext.form.BooleanDisplayField ({
 		labelAlign: "right",
 		labelWidth: CMDBuild.LABEL_WIDTH,
 		fieldLabel: attribute.description,
 		name: attribute.name,
 		disabled: false
 	});
+
+	return this.markAsRequired(field, attribute);
 };
 /**
  * @override

@@ -188,7 +188,7 @@ CMDBuild.WidgetBuilders.ReferenceAttribute.prototype.buildReadOnlyField = functi
 		});
 
 	} else {
-		return field;
+		return this.markAsRequired(field, attribute);
 	}
 };
 
