@@ -205,7 +205,7 @@
 			) {
 				var params = Ext.apply({ cardId: value }, this.getStore().baseParams);
 
-				CMDBuild.Ajax.request({
+				CMDBuild.core.Ajax.request({
 					method: 'GET',
 					url: 'services/json/management/modcard/getcard',
 					params: params,

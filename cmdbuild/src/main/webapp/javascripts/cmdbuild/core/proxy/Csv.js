@@ -26,14 +26,14 @@
 		 * @param {Object} parameters
 		 */
 		getRecords: function(parameters) {
-			CMDBuild.Ajax.request({
+			CMDBuild.core.Ajax.request({
 				method: 'GET',
 				url: CMDBuild.core.proxy.Index.csv.getCsvRecords,
 				scope: parameters.scope || this,
 				failure: parameters.failure || Ext.emptyFn,
 				success: parameters.success || Ext.emptyFn,
 				callback: function(records, operation, success) { // Clears server session data
-					CMDBuild.Ajax.request({
+					CMDBuild.core.Ajax.request({
 						method: 'GET',
 						url: CMDBuild.core.proxy.Index.csv.clearSession
 					});

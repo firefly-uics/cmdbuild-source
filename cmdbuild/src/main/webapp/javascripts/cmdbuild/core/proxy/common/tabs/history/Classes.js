@@ -14,7 +14,7 @@
 		 * @property {Object} parameters
 		 */
 		get: function(parameters) {
-			CMDBuild.Ajax.request({
+			CMDBuild.core.Ajax.request({
 				method: 'POST',
 				url: CMDBuild.core.proxy.Index.history.classes.getCardHistory,
 				headers: parameters.headers,
@@ -31,7 +31,7 @@
 		 * @property {Object} parameters
 		 */
 		getHistoric: function(parameters) {
-			CMDBuild.Ajax.request({
+			CMDBuild.core.Ajax.request({
 				method: 'POST',
 				url: CMDBuild.core.proxy.Index.history.classes.getHistoricCard,
 				headers: parameters.headers,
@@ -48,7 +48,7 @@
 		 * @property {Object} parameters
 		 */
 		getRelations: function(parameters) {
-			CMDBuild.Ajax.request({
+			CMDBuild.core.Ajax.request({
 				method: 'POST',
 				url: CMDBuild.core.proxy.Index.history.classes.getRelationsHistory,
 				headers: parameters.headers,
@@ -65,7 +65,7 @@
 		 * @property {Object} parameters
 		 */
 		getRelationHistoric: function(parameters) {
-			CMDBuild.Ajax.request({
+			CMDBuild.core.Ajax.request({
 				method: 'POST',
 				url: CMDBuild.core.proxy.Index.history.classes.getHistoricRelation,
 				headers: parameters.headers,

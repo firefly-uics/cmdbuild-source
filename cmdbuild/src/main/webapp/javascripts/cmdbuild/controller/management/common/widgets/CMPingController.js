@@ -54,7 +54,7 @@
 					el.mask(CMDBuild.Translation.pleaseWait);
 				}
 
-				CMDBuild.Ajax.request({
+				CMDBuild.core.Ajax.request({
 					url: "services/json/modwidget/callwidget",
 					method: "GET",
 					params: pingParams,

@@ -14,7 +14,7 @@
 		 * @param {Object} parameters
 		 */
 		create: function(parameters) {
-			CMDBuild.Ajax.request({
+			CMDBuild.core.Ajax.request({
 				method: 'POST',
 				url: CMDBuild.core.proxy.Index.report.createReportFactory,
 				params: parameters.params,
@@ -30,7 +30,7 @@
 		 * @param {Object} parameters
 		 */
 		createFactory: function(parameters) {
-			CMDBuild.Ajax.request({
+			CMDBuild.core.Ajax.request({
 				method: 'POST',
 				url: CMDBuild.core.proxy.Index.report.createReportFactoryByTypeCode,
 				params: parameters.params,
@@ -89,7 +89,7 @@
 		 * @param {Object} parameters
 		 */
 		update: function(parameters) {
-			CMDBuild.Ajax.request({
+			CMDBuild.core.Ajax.request({
 				method: 'POST',
 				url: CMDBuild.core.proxy.Index.report.updateReportFactoryParams,
 				params: parameters.params,

@@ -10,7 +10,7 @@
 		 * @param {Object} parameters
 		 */
 		readForCurrentUser: function(parameters) {
-			CMDBuild.Ajax.request({
+			CMDBuild.core.Ajax.request({
 				url: CMDBuild.core.proxy.Index.customPage.readForCurrentUser,
 				params: parameters.params,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,

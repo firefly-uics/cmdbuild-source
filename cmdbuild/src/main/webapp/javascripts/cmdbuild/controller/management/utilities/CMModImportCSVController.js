@@ -2,7 +2,7 @@
 	var tr = CMDBuild.Translation.management.modutilities.csv;
 	Ext.define("CMDBuild.controller.management.utilities.CMModImportCSVController", {
 		extend: "CMDBuild.controller.CMBasePanelController",
-		
+
 		constructor: function() {
 			this.callParent(arguments);
 
@@ -39,10 +39,10 @@
 	function onUpdateButtonClick() {
 		var records = this.view.grid.getRecordToUpload();
 		if (records.length == 0) {
-			CMDBuild.Msg.warn(tr.warning, tr.noupdate);
+			CMDBuild.core.Message.warning(tr.warning, tr.noupdate);
 		} else {
 			CMDBuild.core.LoadMask.show();
-			CMDBuild.Ajax.request({
+			CMDBuild.core.Ajax.request({
 				method : 'POST',
 				url : 'services/json/management/importcsv/updatecsvrecords',
 				params : {
@@ -59,7 +59,7 @@
 
 	function onConfirmButtonClick() {
 		CMDBuild.core.LoadMask.show();
-		CMDBuild.Ajax.request({
+		CMDBuild.core.Ajax.request({
 			method: 'POST',
 			url : 'services/json/management/importcsv/storecsvrecords',
 			waitTitle : CMDBuild.Translation.pleaseWait,
@@ -86,7 +86,7 @@
 	// callback called after the upload of the csv file
 	// and after the update of the grid records
 	function updateGridRecords() {
-		CMDBuild.Ajax.request({
+		CMDBuild.core.Ajax.request({
 			method: 'GET',
 			url : 'services/json/management/importcsv/getcsvrecords',
 			scope: this,

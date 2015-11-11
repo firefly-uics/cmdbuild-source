@@ -15,7 +15,7 @@
 		 * @param {Object} parameters
 		 */
 		getFunctions: function(parameters) {
-			CMDBuild.Ajax.request({
+			CMDBuild.core.Ajax.request({
 				method: 'POST',
 				url: CMDBuild.core.proxy.Index.functions.readAll,
 				scope: parameters.scope || this,

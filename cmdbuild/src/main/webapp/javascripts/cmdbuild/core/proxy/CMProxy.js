@@ -21,7 +21,7 @@
 				}
 			});
 
-			CMDBuild.Ajax.request({
+			CMDBuild.core.Ajax.request({
 				timeout: parameters.timeout,
 				url: parameters.url,
 				method: parameters.method,
@@ -64,7 +64,7 @@
 	CMDBuild.ServiceProxy.getFKTargetingClass = function(p) {
 		p.url = CMDBuild.ServiceProxy.url.fkTargetClass;
 		p.method = 'GET';
-		CMDBuild.Ajax.request(p);
+		CMDBuild.core.Ajax.request(p);
 	};
 
 	// Alias

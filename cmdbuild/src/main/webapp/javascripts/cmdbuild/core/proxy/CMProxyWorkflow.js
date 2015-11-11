@@ -55,7 +55,7 @@
 		 * @param {} parameters
 		 */
 		getXpdlVersions: function(parameters) {
-			CMDBuild.Ajax.request({
+			CMDBuild.core.Ajax.request({
 				method: 'POST',
 				url: CMDBuild.core.proxy.Index.workflow.xpdlVersions,
 				params: parameters.params,
@@ -84,7 +84,7 @@
 		 * @param {Object} parameters
 		 */
 		synchronize: function(parameters) {
-			CMDBuild.Ajax.request( {
+			CMDBuild.core.Ajax.request( {
 				url: CMDBuild.core.proxy.Index.workflow.synchronize,
 				loadMask: true,
 				params: parameters.params,

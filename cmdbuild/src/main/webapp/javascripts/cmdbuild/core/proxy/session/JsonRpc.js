@@ -14,7 +14,7 @@
 		 * @param {Object} parameters
 		 */
 		login: function(parameters) {
-			CMDBuild.Ajax.request({
+			CMDBuild.core.Ajax.request({
 				params: parameters.params,
 				url: CMDBuild.core.proxy.Index.session.jsonRpc.login,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
@@ -29,7 +29,7 @@
 		 * @param {Object} parameters
 		 */
 		logout: function(parameters) {
-			CMDBuild.Ajax.request({
+			CMDBuild.core.Ajax.request({
 				params: parameters.params,
 				url: CMDBuild.core.proxy.Index.session.jsonRpc.logout,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,

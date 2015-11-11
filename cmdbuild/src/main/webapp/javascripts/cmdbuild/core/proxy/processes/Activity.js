@@ -10,7 +10,7 @@
 		 * @param {Object} parameters
 		 */
 		lock: function(parameters) {
-			CMDBuild.Ajax.request({
+			CMDBuild.core.Ajax.request({
 				method: 'POST',
 				url: CMDBuild.core.proxy.Index.processes.instances.lock,
 				headers: parameters.headers,
@@ -27,7 +27,7 @@
 		 * @param {Object} parameters
 		 */
 		unlock: function(parameters) {
-			CMDBuild.Ajax.request({
+			CMDBuild.core.Ajax.request({
 				method: 'POST',
 				url: CMDBuild.core.proxy.Index.processes.instances.unlock,
 				headers: parameters.headers,
@@ -44,7 +44,7 @@
 		 * @param {Object} parameters
 		 */
 		unlockAll: function(parameters) {
-			CMDBuild.Ajax.request({
+			CMDBuild.core.Ajax.request({
 				method: 'POST',
 				url: CMDBuild.core.proxy.Index.processes.instances.unlockAll,
 				headers: parameters.headers,

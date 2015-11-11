@@ -13,7 +13,7 @@
 		 * @param {Object} parameters
 		 */
 		copy: function(parameters) {
-			CMDBuild.Ajax.request({
+			CMDBuild.core.Ajax.request({
 				method: 'POST',
 				url: CMDBuild.core.proxy.Index.email.attachment.copy,
 				params: parameters.params,
@@ -50,7 +50,7 @@
 		 * @param {Object} parameters
 		 */
 		getAll: function(parameters) {
-			CMDBuild.Ajax.request({
+			CMDBuild.core.Ajax.request({
 				method: 'POST',
 				url: CMDBuild.core.proxy.Index.email.attachment.readAll,
 				params: parameters.params,
@@ -66,7 +66,7 @@
 		 * @param {Object} parameters
 		 */
 		remove: function(parameters) {
-			CMDBuild.Ajax.request({
+			CMDBuild.core.Ajax.request({
 				method: 'POST',
 				url: CMDBuild.core.proxy.Index.email.attachment.remove,
 				params: parameters.params,

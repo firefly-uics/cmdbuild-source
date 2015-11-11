@@ -10,7 +10,7 @@
 		 * @param {Object} parameters
 		 */
 		create: function(parameters) {
-			CMDBuild.Ajax.request({
+			CMDBuild.core.Ajax.request({
 				method: 'POST',
 				url: this.getUrl(parameters.type).post,
 				params: parameters.params,
@@ -64,7 +64,7 @@
 		 * @param {Object} parameters
 		 */
 		remove: function(parameters) {
-			CMDBuild.Ajax.request({
+			CMDBuild.core.Ajax.request({
 				method: 'POST',
 				url: this.getUrl(parameters.type).remove,
 				params: parameters.params,
@@ -78,7 +78,7 @@
 		 * @param {Object} parameters
 		 */
 		start: function(parameters) {
-			CMDBuild.Ajax.request({
+			CMDBuild.core.Ajax.request({
 				method: 'POST',
 				url: this.getUrl('all').start,
 				params: parameters.params,
@@ -92,7 +92,7 @@
 		 * @param {Object} parameters
 		 */
 		stop: function(parameters) {
-			CMDBuild.Ajax.request({
+			CMDBuild.core.Ajax.request({
 				method: 'POST',
 				url: this.getUrl('all').stop,
 				params: parameters.params,
@@ -106,7 +106,7 @@
 		 * @param {Object} parameters
 		 */
 		update: function(parameters) {
-			CMDBuild.Ajax.request({
+			CMDBuild.core.Ajax.request({
 				method: 'POST',
 				url: this.getUrl(parameters.type).put,
 				params: parameters.params,
@@ -311,7 +311,7 @@
 			 * @param {Object} parameters
 			 */
 			getWorkflowAttributes: function(parameters) {
-				CMDBuild.Ajax.request({
+				CMDBuild.core.Ajax.request({
 					method: 'POST',
 					url: CMDBuild.core.proxy.Index.attribute.read,
 					params: parameters.params,
