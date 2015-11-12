@@ -72,6 +72,8 @@
 		},
 
 		/**
+		 * Validates all fields (display panel fields and edit panel fields). To be globally valid is required just one of them
+		 *
 		 * @param {Ext.form.Basic} form
 		 *
 		 * @returns {Object} invalidFieldsMap
@@ -83,7 +85,7 @@
 			var invalidFieldsMap = {};
 
 			if (!Ext.isEmpty(fieldsArray) && Ext.isArray(fieldsArray))
-				Ext.Array.each(fieldsArray, function(field, i, allFields) { // Validates all fields (display panel fields and edit panel fields)
+				Ext.Array.each(fieldsArray, function(field, i, allFields) {
 					if (!field.isValid()) {
 						invalidFieldsMap[field.name] = field;
 					} else if (!Ext.isEmpty(invalidFieldsMap[field.name])) {
