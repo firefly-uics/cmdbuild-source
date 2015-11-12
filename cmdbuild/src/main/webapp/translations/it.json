@@ -807,6 +807,7 @@
 			"ORM_ILLEGAL_NAME_ERROR": "Nome illegale: {0}",
 			"ORM_LOOKUPTYPE_ALREADY_EXISTS": "Esiste già un'altro tipo lookup con la stessa descrizione",
 			"ORM_MALFORMED_PATCH": "Patch illeggibile",
+			"ORM_MISSING_MADATORY_VALUES": "Valori obbligatori mancanti: {0}", 
 			"ORM_NOT_NULL_VIOLATION": "Vincolo di non nullità violato",
 			"ORM_POSTGIS_NOT_FOUND": "PostGIS non installato",
 			"ORM_READ_ONLY_RELATION": "Relazione in sola lettura",

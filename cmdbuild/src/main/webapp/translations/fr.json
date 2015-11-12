@@ -807,6 +807,7 @@
 			"ORM_ILLEGAL_NAME_ERROR": "Nom illégal: {0}",
 			"ORM_LOOKUPTYPE_ALREADY_EXISTS": "Il y a déjà une liste de valeurs ayant la même description",
 			"ORM_MALFORMED_PATCH": "Correctif indisponible",
+			"ORM_MISSING_MADATORY_VALUES": "<em>Missing mandatory values: {0}</em>", 
 			"ORM_NOT_NULL_VIOLATION": "Violation de la contrainte : Non nul",
 			"ORM_POSTGIS_NOT_FOUND": "PostGIS n'est pas installé",
 			"ORM_READ_ONLY_RELATION": "Relation en lecture seule",
