@@ -39,8 +39,6 @@
 		cmfgCatchedFunctions: [
 			'busyStateGet',
 			'busyStateSet',
-			'configurationGet',
-			'configurationSet',
 			'configurationTemplatesSet',
 			'editModeGet',
 			'getAllTemplatesData',
@@ -59,11 +57,15 @@
 			'sendAllOnSaveGet',
 			'sendAllOnSaveSet',
 			'setUiState -> controllerGrid',
-			'storeLoad -> controllerGrid'
+			'storeLoad -> controllerGrid',
+			'tabEmailConfigurationGet',
+			'tabEmailConfigurationSet'
 		],
 
 		/**
-		 * @cfg {Object}
+		 * @property {CMDBuild.model.common.tabs.email.Configuration}
+		 *
+		 * @private
 		 */
 		configuration: {},
 
@@ -78,16 +80,6 @@
 		 * @cfg {CMDBuild.controller.management.common.tabs.email.Grid}
 		 */
 		controllerGrid: undefined,
-
-		/**
-		 * @cfg {Object}
-		 */
-		defaultConfiguration: {
-			noSubjectPrefix: false,
-			readOnly: true,
-			required: false,
-			templates: []
-		},
 
 		/**
 		 * All templates I have in configuration and grid
@@ -250,7 +242,7 @@
 		 * @abstract
 		 */
 		constructor: function(configurationObject) {
-			this.configurationSet();
+			this.cmfg('tabEmailConfigurationSet');
 
 			this.callParent(arguments);
 
@@ -369,23 +361,31 @@
 
 		// Configuration property functions
 			/**
-			 * @return {Object}
+			 * @param {Array or String} attributePath
+			 *
+			 * @returns {Mixed or undefined}
 			 */
-			configurationGet: function() {
-				return this.configuration;
+			tabEmailConfigurationGet: function(attributePath) {
+				var parameters = {};
+				parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME] = 'configuration';
+				parameters[CMDBuild.core.constants.Proxy.ATTRIBUTE_PATH] = attributePath;
+
+				return this.propertyManageGet(parameters);
+			},
+
+			tabEmailConfigurationReset: function() {
+				this.propertyManageReset('configuration');
 			},
 
 			/**
-			 * Set configure object and enable UI and all contained components
-			 *
-			 * @param {Object} configuration
+			 * @param {Object} parameters
 			 */
-			configurationSet: function(configuration) {
-				if (Ext.Object.isEmpty(configuration)) {
-					this.configuration = this.defaultConfiguration;
-				} else {
-					// Setup class configuration applying configuration attributes to defaultConfiguration
-					this.configuration = Ext.apply({}, configuration, this.defaultConfiguration);
+			tabEmailConfigurationSet: function(parameters) {
+				if (!Ext.Object.isEmpty(parameters)) {
+					parameters[CMDBuild.core.constants.Proxy.MODEL_NAME] = 'CMDBuild.model.common.tabs.email.Configuration';
+					parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME] = 'configuration';
+
+					this.propertyManageSet(parameters);
 				}
 			},
 
@@ -714,7 +714,7 @@
 
 								me.controllerGrid.editRecord(record, regenerationTrafficLightArray);
 							} else {
-								me.controllerGrid.removeRecord(record);
+								me.controllerGrid.cmfg('tabEmailGridRecordRemove', record);
 							}
 
 							me.bindLocalDepsChangeEvent(record, templateResolver, me);
@@ -805,7 +805,7 @@
 								me.controllerGrid.editRecord(emailObject, regenerationTrafficLightArray);
 							}
 						} else {
-							me.controllerGrid.removeRecord(record);
+							me.controllerGrid.cmfg('tabEmailGridRecordRemove', record);
 						}
 
 						me.bindLocalDepsChangeEvent(emailObject, templateResolver, me);
@@ -833,7 +833,7 @@
 		 * Reset configuration attributes
 		 */
 		reset: function() {
-			this.configurationSet();
+			this.tabEmailConfigurationReset();
 			this.configurationTemplatesSet();
 		},
 

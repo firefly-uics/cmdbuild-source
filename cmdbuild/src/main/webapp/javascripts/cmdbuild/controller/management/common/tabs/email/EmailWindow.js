@@ -8,7 +8,8 @@
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.common.tabs.email.Attachment',
 			'CMDBuild.core.proxy.email.Templates',
-			'CMDBuild.core.Message'
+			'CMDBuild.core.Message',
+			'CMDBuild.core.Utils'
 		],
 
 		/**
@@ -25,7 +26,7 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
-			'onEmailWindowAbortButtonClick = onEmailWindowCloseButtonClick',
+			'onEmailWindowAbortButtonClick',
 			'onEmailWindowConfirmButtonClick',
 			'onEmailWindowFieldChange',
 			'onEmailWindowFillFromTemplateButtonClick'
@@ -91,16 +92,7 @@
 					}
 				}
 
-				this.view = Ext.create(windowClassName, {
-					delegate: this,
-
-					listeners: {
-						scope: this,
-						close: function(window, eOpts) {
-							this.cmfg('onEmailWindowCloseButtonClick');
-						}
-					}
-				});
+				this.view = Ext.create(windowClassName, { delegate: this });
 
 				// Shorthands
 				this.form = this.view.form;
@@ -132,7 +124,7 @@
 					}
 				});
 
-				if (CMDBuild.Config.dms.enabled) {
+				if (CMDBuild.configuration.dms.get(CMDBuild.core.constants.Proxy.ENABLED)) {
 					// Build attachments controller
 					this.attachmentsDelegate = Ext.create('CMDBuild.controller.management.common.tabs.email.attachments.Attachments', {
 						parentDelegate: this,
@@ -260,6 +252,9 @@
 		 * Destroy email window object
 		 */
 		onEmailWindowAbortButtonClick: function() {
+			if (CMDBuild.core.Utils.isObjectEmpty(this.form.getData()))
+				this.cmfg('tabEmailGridRecordRemove', this.record);
+
 			this.view.destroy();
 		},
 
@@ -276,7 +271,7 @@
 					this.record.set(key, formValues[key]);
 
 				// Setup attachments only if DMS is enabled
-				if (CMDBuild.Config.dms.enabled)
+				if (CMDBuild.configuration.dms.get(CMDBuild.core.constants.Proxy.ENABLED))
 					this.record.set(CMDBuild.core.constants.Proxy.ATTACHMENTS, this.attachmentsDelegate.getAttachmentsNames());
 
 				this.record.set(CMDBuild.core.constants.Proxy.REFERENCE, this.cmfg('selectedEntityIdGet'));

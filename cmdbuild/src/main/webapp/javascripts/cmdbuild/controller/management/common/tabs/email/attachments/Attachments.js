@@ -41,7 +41,7 @@
 		 * @param {CMDBuild.view.management.common.tabs.email.attachments.MainContainer} configurationObject.view
 		 */
 		constructor: function(configurationObject) {
-			if (CMDBuild.Config.dms.enabled) {
+			if (CMDBuild.configuration.dms.get(CMDBuild.core.constants.Proxy.ENABLED)) {
 				this.callParent(arguments);
 
 				this.view.delegate = this;

@@ -30,7 +30,8 @@
 			'sendAll',
 			'setUiState',
 			'storeLoad',
-			'tabEmailGridRecordIsSendable'
+			'tabEmailGridRecordIsSendable',
+			'tabEmailGridRecordRemove'
 		],
 
 		/**
@@ -96,7 +97,7 @@
 		createRecord: function(recordValues) {
 			recordValues = recordValues || {};
 			recordValues[CMDBuild.core.constants.Proxy.KEEP_SYNCHRONIZATION] = false;
-			recordValues[CMDBuild.core.constants.Proxy.NO_SUBJECT_PREFIX] = recordValues.hasOwnProperty(CMDBuild.core.constants.Proxy.NO_SUBJECT_PREFIX) ? recordValues[CMDBuild.core.constants.Proxy.NO_SUBJECT_PREFIX] : this.cmfg('configurationGet')[CMDBuild.core.constants.Proxy.NO_SUBJECT_PREFIX];
+			recordValues[CMDBuild.core.constants.Proxy.NO_SUBJECT_PREFIX] = recordValues.hasOwnProperty(CMDBuild.core.constants.Proxy.NO_SUBJECT_PREFIX) ? recordValues[CMDBuild.core.constants.Proxy.NO_SUBJECT_PREFIX] : this.cmfg('tabEmailConfigurationGet', CMDBuild.core.constants.Proxy.NO_SUBJECT_PREFIX);
 			recordValues[CMDBuild.core.constants.Proxy.REFERENCE] = this.cmfg('selectedEntityIdGet');
 			recordValues[CMDBuild.core.constants.Proxy.TEMPORARY] = this.cmfg('selectedEntityIdGet') < 0; // Setup temporary parameter
 
@@ -185,10 +186,9 @@
 			Ext.Msg.confirm(
 				CMDBuild.Translation.common.confirmpopup.title,
 				CMDBuild.Translation.common.confirmpopup.areyousure,
-
 				function(btn) {
 					if (btn == 'yes')
-						this.removeRecord(record);
+						this.cmfg('tabEmailGridRecordRemove', record);
 				},
 				this
 			);
@@ -210,7 +210,7 @@
 		 */
 		onGridItemDoubleClick: function(record) {
 			if (
-				!this.cmfg('configurationGet')[CMDBuild.core.constants.Proxy.READ_ONLY]
+				!this.cmfg('tabEmailConfigurationGet', CMDBuild.core.constants.Proxy.READ_ONLY)
 				&& this.cmfg('editModeGet')
 				&& this.recordIsEditable(record)
 			) {
@@ -285,37 +285,12 @@
 		},
 
 		/**
-		 * @param {Mixed} record
-		 * @param {Array} regenerationTrafficLightArray
-		 */
-		removeRecord: function(record, regenerationTrafficLightArray) {
-			if (!Ext.Object.isEmpty(record)) {
-				CMDBuild.core.proxy.common.tabs.email.Email.remove({
-					params: record.getAsParams([CMDBuild.core.constants.Proxy.ID, CMDBuild.core.constants.Proxy.TEMPORARY]),
-					scope: this,
-					loadMask: this.cmfg('getGlobalLoadMask'),
-					failure: function(response, options, decodedResponse) {
-						CMDBuild.core.Message.error(CMDBuild.Translation.common.failure, CMDBuild.Translation.errors.emailRemove, false);
-					},
-					success: function(response, options, decodedResponse) {
-						if (CMDBuild.controller.management.common.tabs.email.Email.trafficLightArrayCheck(record, regenerationTrafficLightArray))
-							this.storeLoad();
-					}
-				});
-			} else {
-				_warning('tried to remove empty record', this);
-
-				this.storeLoad();
-			}
-		},
-
-		/**
 		 * Disable topToolbar evaluating readOnly and edit mode (disable only when readOnly = false and editMode = true)
 		 */
 		setUiState: function() {
 			this.view.setDisabledTopBar(
 				!(
-					!this.cmfg('configurationGet')[CMDBuild.core.constants.Proxy.READ_ONLY]
+					!this.cmfg('tabEmailConfigurationGet', CMDBuild.core.constants.Proxy.READ_ONLY)
 					&& this.cmfg('editModeGet')
 				)
 			);
@@ -371,7 +346,6 @@
 			});
 		},
 
-
 		/**
 		 * @param {Mixed} record
 		 *
@@ -385,6 +359,31 @@
 				&& record.get(CMDBuild.core.constants.Proxy.STATUS) != CMDBuild.core.constants.Proxy.RECEIVED
 				&& record.get(CMDBuild.core.constants.Proxy.STATUS) != CMDBuild.core.constants.Proxy.SENT
 			);
+		},
+
+		/**
+		 * @param {Mixed} record
+		 * @param {Array} regenerationTrafficLightArray
+		 */
+		tabEmailGridRecordRemove: function(record, regenerationTrafficLightArray) {
+			if (!Ext.Object.isEmpty(record)) {
+				CMDBuild.core.proxy.common.tabs.email.Email.remove({
+					params: record.getAsParams([CMDBuild.core.constants.Proxy.ID, CMDBuild.core.constants.Proxy.TEMPORARY]),
+					scope: this,
+					loadMask: this.cmfg('getGlobalLoadMask'),
+					failure: function(response, options, decodedResponse) {
+						CMDBuild.core.Message.error(CMDBuild.Translation.common.failure, CMDBuild.Translation.errors.emailRemove, false);
+					},
+					success: function(response, options, decodedResponse) {
+						if (CMDBuild.controller.management.common.tabs.email.Email.trafficLightArrayCheck(record, regenerationTrafficLightArray))
+							this.storeLoad();
+					}
+				});
+			} else {
+				_warning('tried to remove empty record', this);
+
+				this.storeLoad();
+			}
 		}
 	});
 
