@@ -807,6 +807,7 @@
 			"ORM_ILLEGAL_NAME_ERROR": "Nome Ilegal: {0}",
 			"ORM_LOOKUPTYPE_ALREADY_EXISTS": "Já existe outro tipo de pesquisa com a mesma descrição",
 			"ORM_MALFORMED_PATCH": "Patch não pode ser lido",
+			"ORM_MISSING_MADATORY_VALUES": "<em>Missing mandatory values: {0}</em>", 
 			"ORM_NOT_NULL_VIOLATION": "Restrição Violada não nula",
 			"ORM_POSTGIS_NOT_FOUND": "PostGIS não está instalado",
 			"ORM_READ_ONLY_RELATION": "Relacionamento Somente de Leitura",

@@ -1,13 +1,16 @@
 package org.cmdbuild.logic.workflow;
 
+import static com.google.common.base.Joiner.on;
 import static com.google.common.collect.FluentIterable.from;
 import static com.google.common.collect.Iterables.filter;
+import static com.google.common.collect.Lists.newArrayList;
 import static java.lang.String.format;
 import static java.util.Arrays.asList;
 import static org.cmdbuild.logic.PrivilegeUtils.assure;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -38,6 +41,7 @@ import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.exception.CMDBWorkflowException;
 import org.cmdbuild.exception.CMDBWorkflowException.WorkflowExceptionType;
 import org.cmdbuild.exception.ConsistencyException.ConsistencyExceptionType;
+import org.cmdbuild.exception.ORMException.ORMExceptionType;
 import org.cmdbuild.logic.data.LockLogic;
 import org.cmdbuild.logic.data.QueryOptions;
 import org.cmdbuild.logic.data.access.ProcessEntryFiller;
@@ -54,6 +58,7 @@ import org.cmdbuild.workflow.user.UserActivityInstance;
 import org.cmdbuild.workflow.user.UserProcessClass;
 import org.cmdbuild.workflow.user.UserProcessInstance;
 import org.cmdbuild.workflow.user.UserProcessInstanceWithPosition;
+import org.cmdbuild.workflow.xpdl.CMActivityVariableToProcess;
 import org.joda.time.DateTime;
 
 import com.google.common.base.Function;
@@ -409,6 +414,14 @@ class DefaultWorkflowLogic implements WorkflowLogic {
 				from(procInst.getValues()) //
 						.filter(new ValuesFilter(process)), //
 				vars);
+		if (advance) {
+			try {
+				validateMandatoryVariables(firstActInst, vars);
+			} catch (final RuntimeException e) {
+				abortProcess(process.getName(), procInst.getId());
+				throw e;
+			}
+		}
 		workflowEngine.updateActivity(firstActInst, mergedVars, widgetSubmission);
 		final UserProcessInstance output;
 		if (advance) {
@@ -574,6 +587,9 @@ class DefaultWorkflowLogic implements WorkflowLogic {
 			final String activityInstanceId, final Map<String, ?> vars, final Map<String, Object> widgetSubmission,
 			final boolean advance) throws CMWorkflowException {
 		final UserActivityInstance activityInstance = processInstance.getActivityInstance(activityInstanceId);
+		if (advance) {
+			validateMandatoryVariables(activityInstance, vars);
+		}
 		workflowEngine.updateActivity(activityInstance, vars, widgetSubmission);
 		final UserProcessInstance output;
 		if (advance) {
@@ -582,6 +598,23 @@ class DefaultWorkflowLogic implements WorkflowLogic {
 			output = activityInstance.getProcessInstance();
 		}
 		return output;
+	}
+
+	private void validateMandatoryVariables(final UserActivityInstance activity, final Map<String, ?> variables)
+			throws CMWorkflowException {
+		final Collection<String> missing = newArrayList();
+		for (final CMActivityVariableToProcess element : activity.getDefinition().getVariables()) {
+			if (element.isMandatory()) {
+				if (variables.get(element.getName()) == null) {
+					missing.add(element.getName());
+				}
+			}
+		}
+		if (!missing.isEmpty()) {
+			throw ORMExceptionType.ORM_MISSING_MADATORY_VALUES.createException(on(",") //
+					.skipNulls() //
+					.join(missing));
+		}
 	}
 
 	@Override
