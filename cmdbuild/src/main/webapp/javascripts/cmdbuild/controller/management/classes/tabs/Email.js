@@ -49,11 +49,7 @@
 
 			this.callParent(arguments);
 
-			// View build
-			this.view = Ext.create('CMDBuild.view.management.common.tabs.email.EmailView', {
-				delegate: this
-			});
-
+			this.view = Ext.create('CMDBuild.view.management.common.tabs.email.EmailView', { delegate: this });
 			this.view.add(this.grid);
 
 			this.buildCardModuleStateDelegate();
@@ -96,7 +92,11 @@
 
 			this.card = card;
 
-			this.configuration.readOnly = false; // TODO: fix evaluating functionalities
+			this.cmfg('tabEmailConfigurationSet', {
+				propertyName: CMDBuild.core.constants.Proxy.READ_ONLY,
+				value: false
+			});
+
 			this.editModeSet(true);
 
 			this.selectedEntitySet(this.card, function() {
@@ -111,7 +111,11 @@
 
 			this.card = null;
 
-			this.configuration.readOnly = false; // TODO: fix evaluating functionalities
+			this.cmfg('tabEmailConfigurationSet', {
+				propertyName: CMDBuild.core.constants.Proxy.READ_ONLY,
+				value: false
+			});
+
 			this.editModeSet(true);
 
 			this.selectedEntitySet(this.card, function() {
@@ -129,7 +133,11 @@
 		onEntryTypeSelected: function(entryType, dc, filter) {
 			this.entryType = entryType;
 
-			this.configuration.readOnly = false; // TODO: fix evaluating functionalities
+			this.cmfg('tabEmailConfigurationSet', {
+				propertyName: CMDBuild.core.constants.Proxy.READ_ONLY,
+				value: false
+			});
+
 			this.editModeSet(true);
 		},
 
@@ -147,12 +155,10 @@
 				params: params,
 				scope: this,
 				loadMask: true,
-				failure: function(response, options, decodedResponse) {
-					_warning('Emails enabled for card (' + this.card.get(CMDBuild.core.constants.Proxy.ID) + ') unknown', this);
-				},
 				success: function(response, options, decodedResponse) {
-					this.cmfg('configurationSet', {
-						readOnly: !decodedResponse.response
+					this.cmfg('tabEmailConfigurationSet', {
+						propertyName: CMDBuild.core.constants.Proxy.READ_ONLY,
+						value: !decodedResponse.response
 					});
 				}
 			});

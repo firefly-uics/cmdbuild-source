@@ -37,7 +37,7 @@
 								scope: this,
 
 								disabled: (
-									this.delegate.cmfg('configurationGet')[CMDBuild.core.constants.Proxy.READ_ONLY]
+									this.delegate.cmfg('tabEmailConfigurationGet', CMDBuild.core.constants.Proxy.READ_ONLY)
 									|| !this.delegate.cmfg('editModeGet')
 								),
 
@@ -50,7 +50,7 @@
 								scope: this,
 
 								disabled: (
-									this.delegate.cmfg('configurationGet')[CMDBuild.core.constants.Proxy.READ_ONLY]
+									this.delegate.cmfg('tabEmailConfigurationGet', CMDBuild.core.constants.Proxy.READ_ONLY)
 									|| !this.delegate.cmfg('editModeGet')
 								),
 
@@ -135,7 +135,7 @@
 
 								isDisabled: function(grid, rowIndex, colIndex, item, record) {
 									return (
-										this.delegate.cmfg('configurationGet')[CMDBuild.core.constants.Proxy.READ_ONLY]
+										this.delegate.cmfg('tabEmailConfigurationGet', CMDBuild.core.constants.Proxy.READ_ONLY)
 										|| !this.delegate.cmfg('editModeGet')
 										|| !this.delegate.recordIsEditable(record)
 										|| !this.delegate.isRegenerable(record)
@@ -154,7 +154,7 @@
 
 								isDisabled: function(grid, rowIndex, colIndex, item, record) {
 									return (
-										this.delegate.cmfg('configurationGet')[CMDBuild.core.constants.Proxy.READ_ONLY]
+										this.delegate.cmfg('tabEmailConfigurationGet', CMDBuild.core.constants.Proxy.READ_ONLY)
 										|| !this.delegate.cmfg('editModeGet')
 										|| this.delegate.recordIsEditable(record)
 									);
@@ -171,7 +171,7 @@
 
 								isDisabled: function(grid, rowIndex, colIndex, item, record) {
 									return (
-										this.delegate.cmfg('configurationGet')[CMDBuild.core.constants.Proxy.READ_ONLY]
+										this.delegate.cmfg('tabEmailConfigurationGet', CMDBuild.core.constants.Proxy.READ_ONLY)
 										|| !this.delegate.cmfg('editModeGet')
 										|| !this.delegate.cmfg('tabEmailGridRecordIsSendable', record)
 									);
@@ -188,7 +188,7 @@
 
 								isDisabled: function(grid, rowIndex, colIndex, item, record) {
 									return (
-										this.delegate.cmfg('configurationGet')[CMDBuild.core.constants.Proxy.READ_ONLY]
+										this.delegate.cmfg('tabEmailConfigurationGet', CMDBuild.core.constants.Proxy.READ_ONLY)
 										|| !this.delegate.cmfg('editModeGet')
 										|| !this.delegate.recordIsEditable(record)
 									);
@@ -214,7 +214,7 @@
 
 								isDisabled: function(grid, rowIndex, colIndex, item, record) {
 									return (
-										this.delegate.cmfg('configurationGet')[CMDBuild.core.constants.Proxy.READ_ONLY]
+										this.delegate.cmfg('tabEmailConfigurationGet', CMDBuild.core.constants.Proxy.READ_ONLY)
 										|| !this.delegate.cmfg('editModeGet')
 										|| !this.delegate.recordIsEditable(record)
 									);

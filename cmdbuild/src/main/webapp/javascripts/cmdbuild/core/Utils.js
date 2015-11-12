@@ -191,6 +191,37 @@
 		},
 
 		/**
+		 * @param {Object} object
+		 *
+		 * @returns {Boolean}
+		 */
+		isObjectEmpty: function(object) {
+			if (Ext.isObject(object)) {
+				var isEmpty = true;
+
+				Ext.Object.each(object, function(key, value, myself) {
+					if (Ext.isObject(value)) {
+						if (!Ext.Object.isEmpty(value)) {
+							isEmpty = false;
+
+							return false;
+						}
+					} else {
+						if (!Ext.isEmpty(value)) {
+							isEmpty = false;
+
+							return false;
+						}
+					}
+				}, this);
+
+				return isEmpty;
+			}
+
+			return false;
+		},
+
+		/**
 		 * Custom function to order an array of objects or models
 		 *
 		 * @param {Array} array

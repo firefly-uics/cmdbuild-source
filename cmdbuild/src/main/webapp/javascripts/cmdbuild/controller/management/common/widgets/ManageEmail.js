@@ -78,7 +78,7 @@
 			// Shorthands
 			this.tabDelegate = this.view.delegate;
 
-			this.tabDelegate.cmfg('configurationSet', this.widgetConfiguration);
+			this.tabDelegate.cmfg('tabEmailConfigurationSet', { value: this.widgetConfiguration });
 			this.tabDelegate.cmfg('configurationTemplatesSet', this.cmfg('widgetManageEmailConfigurationGet', CMDBuild.core.constants.Proxy.TEMPLATES));
 
 			// Build bottom toolbar

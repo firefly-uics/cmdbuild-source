@@ -175,10 +175,6 @@
 		 * Forward onAbortCardClick event to email tab controller
 		 */
 		onAbortCardClick: function() {
-			_error('---------------> Process ABORTED ' + _CMWFState.getProcessInstance().get('className'));
-			_debug('aborted log: ', _CMWFState.getProcessInstance(), _CMWFState.getActivityInstance());
-			CMDBuild.core.Message.warning('WARNING', 'Modifica processo cancellata', true);
-
 			this.controllerTabEmail.onAbortCardClick();
 		},
 

@@ -31,7 +31,7 @@
 		},
 
 		initComponent: function() {
-			if (CMDBuild.Config.dms.enabled) {
+			if (CMDBuild.configuration.dms.get(CMDBuild.core.constants.Proxy.ENABLED)) {
 				this.attachmentButtonsContainer = Ext.create('CMDBuild.view.management.common.tabs.email.attachments.ButtonsContainer', {
 					delegate: this.delegate,
 					readOnly: this.readOnly
