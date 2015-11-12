@@ -242,7 +242,7 @@
 		 * @abstract
 		 */
 		constructor: function(configurationObject) {
-			this.cmfg('tabEmailConfigurationSet');
+			this.tabEmailConfigurationReset();
 
 			this.callParent(arguments);
 
