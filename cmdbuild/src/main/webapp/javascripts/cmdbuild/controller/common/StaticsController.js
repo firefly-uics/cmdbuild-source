@@ -1,47 +1,5 @@
 (function() {
 
-	Ext.define('CMDBuild.controller.common.WorkflowStaticsController', {
-
-		singleton: true,
-
-		/**
-		 * Iterates all process attributes and take only ones defined as variables for this step
-		 *
-		 * @param {Array} attributes
-		 * @param {Array} variables
-		 * 		Structure: {
-		 * 			{String} name
-		 * 			{Boolean} mandatory
-		 * 			{Boolean} writable
-		 * 		}
-		 *
-		 * @returns {Array} out
-		 */
-		filterAttributesInStep: function(attributes, variables) {
-			var out = [];
-
-			if (
-				!Ext.isEmpty(attributes) && Ext.isArray(attributes)
-				&& !Ext.isEmpty(variables) && Ext.isArray(variables)
-			) {
-				Ext.Array.each(variables, function(variableObject, i, allVariableObjects) {
-					Ext.Array.each(attributes, function(attributeObject, i, allAttributeObjects) {
-						if (attributeObject['name'] == variableObject['name']) {
-							attributeObject['isnotnull'] = variableObject['mandatory'];
-							attributeObject['fieldmode'] = variableObject['writable'] ? 'write' : 'read';
-
-							out.push(attributeObject);
-
-							return false;
-						}
-					}, this);
-				}, this);
-			}
-
-			return out;
-		}
-	});
-
 	Ext.define('CMDBuild.controller.common.CardStaticsController', {
 		statics: {
 			getInvalidField: function(cmForm) {
