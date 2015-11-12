@@ -92,7 +92,6 @@
 		 * service function to add an asterisk before the label of a required attribute
 		 */
 		markAsRequired: function(field, attribute) {
-_debug('markAsRequired', attribute);
 			if (attribute.isnotnull || attribute.fieldmode == "required") {
 				field.allowBlank = false;
 				if (field.fieldLabel) {
@@ -113,7 +112,19 @@ _debug('markAsRequired', attribute);
 				width: CMDBuild.BIG_FIELD_WIDTH,
 				submitValue: false,
 				name: attribute.name,
-				disabled: false
+				disabled: false,
+
+				/**
+				 * Validate also display field
+				 *
+				 * @override
+				 */
+				isValid: function() {
+					if (this.allowBlank)
+						return true;
+
+					return !Ext.isEmpty(this.getValue());
+				}
 			});
 			return this.markAsRequired(field, attribute);
 		},

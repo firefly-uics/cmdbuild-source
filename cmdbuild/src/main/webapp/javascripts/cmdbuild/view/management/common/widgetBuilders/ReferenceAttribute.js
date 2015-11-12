@@ -128,7 +128,19 @@ CMDBuild.WidgetBuilders.ReferenceAttribute.prototype.buildReadOnlyField = functi
 		fieldLabel: attribute.description || attribute.name,
 		submitValue: false,
 		name: attribute.name,
-		disabled: false
+		disabled: false,
+
+		/**
+		 * Validate also display field
+		 *
+		 * @override
+		 */
+		isValid: function() {
+			if (this.allowBlank)
+				return true;
+
+			return !Ext.isEmpty(this.getValue());
+		}
 	});
 
 	var subFields = getSubFields(attribute, display = true);

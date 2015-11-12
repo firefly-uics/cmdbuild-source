@@ -45,6 +45,18 @@ CMDBuild.WidgetBuilders.StringAttribute.prototype.buildReadOnlyField = function(
 		disabled: false,
 		style: {
 			overflow: "hidden"
+		},
+
+		/**
+		 * Validate also display field
+		 *
+		 * @override
+		 */
+		isValid: function() {
+			if (this.allowBlank)
+				return true;
+
+			return !Ext.isEmpty(this.getValue());
 		}
 	});
 

@@ -153,7 +153,7 @@
 			},
 			success : function(response) {
 				var ret = Ext.JSON.decode(response.responseText);
-				me.attributes = CMDBuild.controller.common.WorkflowStaticsController.filterAttributesInStep(me.cardAttributes, ret.response.variables);
+				me.attributes = CMDBuild.controller.management.workflow.StaticsController.filterAttributesInStep(me.cardAttributes, ret.response.variables);
 				me.view.configureForm(me.attributes);
 				me.templateResolver = new CMDBuild.Management.TemplateResolver({
 					clientForm: me.clientForm,
