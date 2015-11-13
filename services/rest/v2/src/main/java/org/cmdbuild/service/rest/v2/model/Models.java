@@ -23,6 +23,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.cmdbuild.service.rest.v2.model.Attribute.Filter;
 import org.cmdbuild.service.rest.v2.model.ClassWithFullDetails.AttributeOrder;
+import org.cmdbuild.service.rest.v2.model.DetailResponseMetadata.Reference;
 import org.cmdbuild.service.rest.v2.model.ProcessActivityWithFullDetails.AttributeStatus;
 
 import com.google.common.base.Function;
@@ -1275,11 +1276,11 @@ public class Models {
 	public static class MetadataBuilder extends ModelBuilder<DetailResponseMetadata> {
 
 		private static final Map<Long, Long> NO_POSITIONS = emptyMap();
-		private static final Map<Long, String> NO_REFERENCES = emptyMap();
+		private static final Map<Long, Reference> NO_REFERENCES = emptyMap();
 
 		private Long total;
 		private Map<Long, Long> positions;
-		private Map<Long, String> references;
+		private Map<Long, Reference> references;
 
 		private MetadataBuilder() {
 			// use factory method
@@ -1316,7 +1317,7 @@ public class Models {
 			return this;
 		}
 
-		public MetadataBuilder withReferences(final Map<Long, String> references) {
+		public MetadataBuilder withReferences(final Map<Long, Reference> references) {
 			this.references = references;
 			return this;
 		}
@@ -1770,6 +1771,31 @@ public class Models {
 
 	}
 
+	public static class ReferenceBuilder extends ModelBuilder<Reference> {
+
+		private String description;
+		private Long parent;
+
+		@Override
+		protected Reference doBuild() {
+			final Reference output = new Reference();
+			output.setDescription(description);
+			output.setParent(parent);
+			return output;
+		}
+
+		public ReferenceBuilder withDescription(final String description) {
+			this.description = description;
+			return this;
+		}
+
+		public ReferenceBuilder withParent(final Long parent) {
+			this.parent = parent;
+			return this;
+		}
+
+	}
+
 	public static class RelationBuilder extends ModelBuilder<Relation> {
 
 		private String type;
@@ -2196,6 +2222,10 @@ public class Models {
 
 	public static ProcessWithFullDetailsBuilder newProcessWithFullDetails() {
 		return new ProcessWithFullDetailsBuilder();
+	}
+
+	public static ReferenceBuilder newReference() {
+		return new ReferenceBuilder();
 	}
 
 	public static RelationBuilder newRelation() {
