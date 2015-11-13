@@ -1275,9 +1275,11 @@ public class Models {
 	public static class MetadataBuilder extends ModelBuilder<DetailResponseMetadata> {
 
 		private static final Map<Long, Long> NO_POSITIONS = emptyMap();
+		private static final Map<Long, String> NO_REFERENCES = emptyMap();
 
 		private Long total;
 		private Map<Long, Long> positions;
+		private Map<Long, String> references;
 
 		private MetadataBuilder() {
 			// use factory method
@@ -1287,6 +1289,7 @@ public class Models {
 		protected void doValidate() {
 			super.doValidate();
 			positions = defaultIfNull(positions, NO_POSITIONS);
+			references = defaultIfNull(references, NO_REFERENCES);
 		}
 
 		@Override
@@ -1294,6 +1297,7 @@ public class Models {
 			final DetailResponseMetadata output = new DetailResponseMetadata();
 			output.setTotal(total);
 			output.setPositions(positions);
+			output.setReferences(references);
 			return output;
 		}
 
@@ -1309,6 +1313,11 @@ public class Models {
 
 		public MetadataBuilder withPositions(final Map<Long, Long> positions) {
 			this.positions = positions;
+			return this;
+		}
+
+		public MetadataBuilder withReferences(final Map<Long, String> references) {
+			this.references = references;
 			return this;
 		}
 

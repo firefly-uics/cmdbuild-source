@@ -13,6 +13,7 @@ import static java.util.Collections.emptyMap;
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 import static org.apache.commons.lang3.StringUtils.defaultString;
 import static org.cmdbuild.dao.entrytype.Functions.attributeName;
+import static org.cmdbuild.dao.entrytype.Predicates.attributeTypeInstanceOf;
 import static org.cmdbuild.model.widget.Widget.SUBMISSION_PARAM;
 import static org.cmdbuild.service.rest.v2.constants.Serialization.UNDERSCORED_STATUS;
 import static org.cmdbuild.service.rest.v2.cxf.util.Json.safeJsonArray;
@@ -27,8 +28,10 @@ import java.util.Map;
 import java.util.Set;
 
 import org.cmdbuild.common.utils.PagedElements;
+import org.cmdbuild.dao.entry.IdAndDescription;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.ReferenceAttributeType;
 import org.cmdbuild.logic.data.QueryOptions;
 import org.cmdbuild.logic.mapping.json.FilterElementGetters;
 import org.cmdbuild.logic.mapping.json.JsonFilterHelper;
@@ -196,6 +199,19 @@ public class CxfProcessInstances implements ProcessInstances {
 
 					});
 		}
+		final Map<Long, String> references = newHashMap();
+		for (final UserProcessInstance element : elements) {
+			for (final CMAttribute _element : from(element.getType().getAllAttributes()) //
+					.filter(attributeTypeInstanceOf(ReferenceAttributeType.class))) {
+				final Object value = element.get(_element.getName());
+				if (value instanceof IdAndDescription) {
+					final IdAndDescription _value = IdAndDescription.class.cast(value);
+					if (_value.getId() != null) {
+						references.put(_value.getId(), _value.getDescription());
+					}
+				}
+			}
+		}
 		final Function<UserProcessInstance, ProcessInstance> toProcessInstance = ToProcessInstance.newInstance() //
 				.withType(found) //
 				.withLookupHelper(lookupHelper) //
@@ -207,6 +223,7 @@ public class CxfProcessInstances implements ProcessInstances {
 				.withMetadata(newMetadata() //
 						.withTotal(Long.valueOf(elements.totalSize())) //
 						.withPositions(positions) //
+						.withReferences(references) //
 						.build()) //
 				.build();
 	}
