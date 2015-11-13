@@ -142,10 +142,11 @@
 		 * @param {String} parameters.method
 		 * @param {String} parameters.url
 		 * @param {Object} parameters.params
+		 * @param {Object} parameters.headers
 		 * @param {Object} parameters.scope
+		 * @param {Function} parameters.callback
 		 * @param {Function} parameters.failure
 		 * @param {Function} parameters.success
-		 * @param {Function} parameters.callback
 		 * @param {Boolean} invalidateOnSuccess
 		 */
 		request: function(cacheGroupIdentifier, parameters, invalidateOnSuccess) {
@@ -161,9 +162,9 @@
 					method: 'POST',
 					loadMask: true,
 					scope: this,
+					callback: Ext.emptyFn,
 					failure: Ext.emptyFn,
-					success: Ext.emptyFn,
-					callback: Ext.emptyFn
+					success: Ext.emptyFn
 				});
 
 				if (Ext.Array.contains(CMDBuild.core.cache.Cache.managedCacheGroupsArray, cacheGroupIdentifier)) { // Cacheable endpoints manage
