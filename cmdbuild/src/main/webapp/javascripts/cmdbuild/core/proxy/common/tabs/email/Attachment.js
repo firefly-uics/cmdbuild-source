@@ -5,6 +5,7 @@
 		requires: [
 			'CMDBuild.core.Ajax',
 			'CMDBuild.core.constants.Proxy',
+			'CMDBuild.core.interfaces.FormSubmit',
 			'CMDBuild.core.proxy.Index'
 		],
 
@@ -20,9 +21,9 @@
 				params: parameters.params,
 				scope: parameters.scope || this,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : false,
-				failure: parameters.failure || Ext.emptyFn(),
-				success: parameters.success || Ext.emptyFn(),
-				callback: parameters.callback || Ext.emptyFn()
+				failure: parameters.failure || Ext.emptyFn,
+				success: parameters.success || Ext.emptyFn,
+				callback: parameters.callback || Ext.emptyFn
 			});
 		},
 
@@ -57,9 +58,9 @@
 				params: parameters.params,
 				scope: parameters.scope || this,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : false,
-				failure: parameters.failure || Ext.emptyFn(),
-				success: parameters.success || Ext.emptyFn(),
-				callback: parameters.callback || Ext.emptyFn()
+				failure: parameters.failure || Ext.emptyFn,
+				success: parameters.success || Ext.emptyFn,
+				callback: parameters.callback || Ext.emptyFn
 			});
 		},
 
@@ -73,9 +74,9 @@
 				params: parameters.params,
 				scope: parameters.scope || this,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : false,
-				failure: parameters.failure || Ext.emptyFn(),
-				success: parameters.success || Ext.emptyFn(),
-				callback: parameters.callback || Ext.emptyFn()
+				failure: parameters.failure || Ext.emptyFn,
+				success: parameters.success || Ext.emptyFn,
+				callback: parameters.callback || Ext.emptyFn
 			});
 		},
 
@@ -83,16 +84,11 @@
 		 * @param {Object} parameters
 		 */
 		upload: function(parameters) {
-			parameters.form.submit({
-				method: 'POST',
-				url: CMDBuild.core.proxy.Index.email.attachment.upload,
-				params: parameters.params,
-				scope: parameters.scope || this,
-				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : false,
-				failure: parameters.failure || Ext.emptyFn(),
-				success: parameters.success || Ext.emptyFn(),
-				callback: parameters.callback || Ext.emptyFn()
-			});
+			parameters = Ext.isEmpty(parameters) ? {} : parameters;
+
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.email.attachment.upload });
+
+			CMDBuild.core.interfaces.FormSubmit.submit(parameters);
 		}
 	});
 

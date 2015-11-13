@@ -26,6 +26,7 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
+			'getView = tabEmailEmailWindowGetView',
 			'onEmailWindowAbortButtonClick',
 			'onEmailWindowConfirmButtonClick',
 			'onEmailWindowFieldChange',

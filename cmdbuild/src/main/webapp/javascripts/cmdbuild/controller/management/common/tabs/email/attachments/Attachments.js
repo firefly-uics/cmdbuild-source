@@ -63,7 +63,7 @@
 				})
 			);
 
-			this.parentDelegate.view.setLoading(false);
+//			this.parentDelegate.view.setLoading(false); // TODO: build function and use cmfg
 		},
 
 		/**
@@ -91,15 +91,13 @@
 			params[CMDBuild.core.constants.Proxy.EMAIL_ID] = this.record.get(CMDBuild.core.constants.Proxy.ID);
 			params[CMDBuild.core.constants.Proxy.TEMPORARY] = this.record.get(CMDBuild.core.constants.Proxy.TEMPORARY);
 
-			this.parentDelegate.view.setLoading(true);
 			CMDBuild.core.proxy.common.tabs.email.Attachment.upload({
-				scope: this,
 				form: this.view.attachmentButtonsContainer.attachmentUploadForm.getForm(),
 				params: params,
-				success: function(form, options) {
-					this.parentDelegate.view.setLoading(false);
-
-					this.cmfg('attachmentAddPanel', options.result.response);
+				loadMask: this.cmfg('tabEmailEmailWindowGetView'),
+				scope: this,
+				success: function(response, options, decodedResponse) {
+					this.cmfg('attachmentAddPanel', decodedResponse.response);
 				}
 			});
 		},
