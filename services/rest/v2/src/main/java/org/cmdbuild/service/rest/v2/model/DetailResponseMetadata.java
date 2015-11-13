@@ -1,6 +1,7 @@
 package org.cmdbuild.service.rest.v2.model;
 
 import static org.cmdbuild.service.rest.v2.constants.Serialization.POSITIONS;
+import static org.cmdbuild.service.rest.v2.constants.Serialization.REFERENCES;
 import static org.cmdbuild.service.rest.v2.constants.Serialization.TOTAL;
 
 import java.util.Map;
@@ -17,6 +18,7 @@ public class DetailResponseMetadata extends AbstractModel {
 
 	private Long total;
 	private Map<Long, Long> positions;
+	private Map<Long, String> references;
 
 	DetailResponseMetadata() {
 		// package visibility
@@ -40,6 +42,15 @@ public class DetailResponseMetadata extends AbstractModel {
 		this.positions = positions;
 	}
 
+	@XmlElement(name = REFERENCES)
+	public Map<Long, String> getReferences() {
+		return references;
+	}
+
+	void setReferences(final Map<Long, String> references) {
+		this.references = references;
+	}
+
 	@Override
 	protected boolean doEquals(final Object obj) {
 		if (obj == this) {
@@ -52,6 +63,7 @@ public class DetailResponseMetadata extends AbstractModel {
 		return new EqualsBuilder() //
 				.append(this.total, other.total) //
 				.append(this.positions, other.positions) //
+				.append(this.references, other.references) //
 				.isEquals();
 	}
 
@@ -60,6 +72,7 @@ public class DetailResponseMetadata extends AbstractModel {
 		return new HashCodeBuilder() //
 				.append(this.total) //
 				.append(this.positions) //
+				.append(this.references) //
 				.toHashCode();
 	}
 

@@ -10,6 +10,7 @@ import static com.google.common.collect.Maps.uniqueIndex;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
+import static org.cmdbuild.dao.entrytype.Predicates.attributeTypeInstanceOf;
 import static org.cmdbuild.service.rest.v2.cxf.util.Json.safeJsonArray;
 import static org.cmdbuild.service.rest.v2.cxf.util.Json.safeJsonObject;
 import static org.cmdbuild.service.rest.v2.model.Models.newCard;
@@ -23,9 +24,11 @@ import java.util.Set;
 
 import org.cmdbuild.common.utils.PagedElements;
 import org.cmdbuild.dao.entry.CMCard;
+import org.cmdbuild.dao.entry.IdAndDescription;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.ReferenceAttributeType;
 import org.cmdbuild.exception.NotFoundException;
 import org.cmdbuild.logic.data.QueryOptions;
 import org.cmdbuild.logic.data.access.CMCardWithPosition;
@@ -123,6 +126,19 @@ public class CxfCards implements Cards, LoggingSupport {
 
 					});
 		}
+		final Map<Long, String> references = newHashMap();
+		for (final org.cmdbuild.model.data.Card element : response) {
+			for (final CMAttribute _element : from(element.getType().getAllAttributes()) //
+					.filter(attributeTypeInstanceOf(ReferenceAttributeType.class))) {
+				final Object value = element.getAttribute(_element.getName());
+				if (value instanceof IdAndDescription) {
+					final IdAndDescription _value = IdAndDescription.class.cast(value);
+					if (_value.getId() != null) {
+						references.put(_value.getId(), _value.getDescription());
+					}
+				}
+			}
+		}
 		final Iterable<Card> elements = from(response.elements()) //
 				.transform(new Function<org.cmdbuild.model.data.Card, Card>() {
 
@@ -141,6 +157,7 @@ public class CxfCards implements Cards, LoggingSupport {
 				.withMetadata(newMetadata() //
 						.withTotal(Long.valueOf(response.totalSize())) //
 						.withPositions(positions) //
+						.withReferences(references) //
 						.build()) //
 				.build();
 	}
