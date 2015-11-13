@@ -5,9 +5,7 @@
 
 		requires: ['CMDBuild.core.constants.Proxy'],
 
-		mixins: {
-			panelFunctions: 'CMDBuild.view.common.PanelFunctions'
-		},
+		mixins: ['CMDBuild.view.common.PanelFunctions'],
 
 		/**
 		 * @cfg {CMDBuild.controller.management.common.tabs.email.EmailWindow}
@@ -41,58 +39,39 @@
 		},
 
 		initComponent: function() {
-			this.emailContentField = Ext.create('CMDBuild.view.common.field.CMHtmlEditorField', {
-				name: CMDBuild.core.constants.Proxy.BODY,
-				hideLabel: true,
-				flex: 1,
-
-				listeners: {
-					scope: this,
-					change: function(field, newValue, oldValue, eOpts) {
-						this.delegate.cmfg('onEmailWindowFieldChange');
-					}
-				}
-			});
-
-			this.keepSynchronizationCheckbox = Ext.create('Ext.form.field.Checkbox', {
-				name: CMDBuild.core.constants.Proxy.KEEP_SYNCHRONIZATION,
-				fieldLabel: CMDBuild.Translation.keepSync,
-				labelAlign: 'right',
-				labelWidth: CMDBuild.LABEL_WIDTH,
-				disabled: true,
-				inputValue: true,
-				uncheckedValue: false
-			});
-
-			this.delayField = Ext.create('CMDBuild.view.common.field.delay.Delay', {
-				name: CMDBuild.core.constants.Proxy.DELAY,
-				fieldLabel: CMDBuild.Translation.delay,
-				labelWidth: CMDBuild.LABEL_WIDTH,
-				labelAlign: 'right',
-				maxWidth: CMDBuild.MEDIUM_FIELD_WIDTH
-			});
-
-			this.fromField = Ext.create('Ext.form.field.Display', {
-				name: CMDBuild.core.constants.Proxy.FROM,
-				fieldLabel: CMDBuild.Translation.from,
-				labelWidth: CMDBuild.LABEL_WIDTH,
-				labelAlign: 'right',
-				vtype: 'multiemail',
-				submitValue: true,
-
-				listeners: {
-					scope: this,
-					change: function(field, newValue, oldValue, eOpts) {
-						this.delegate.cmfg('onEmailWindowFieldChange');
-					}
-				}
-			});
-
 			Ext.apply(this, {
 				items: [
-					this.keepSynchronizationCheckbox,
-					this.delayField,
-					this.fromField,
+					this.keepSynchronizationCheckbox = Ext.create('Ext.form.field.Checkbox', {
+						name: CMDBuild.core.constants.Proxy.KEEP_SYNCHRONIZATION,
+						fieldLabel: CMDBuild.Translation.keepSync,
+						labelAlign: 'right',
+						labelWidth: CMDBuild.LABEL_WIDTH,
+						disabled: true,
+						inputValue: true,
+						uncheckedValue: false
+					}),
+					this.delayField = Ext.create('CMDBuild.view.common.field.delay.Delay', {
+						name: CMDBuild.core.constants.Proxy.DELAY,
+						fieldLabel: CMDBuild.Translation.delay,
+						labelWidth: CMDBuild.LABEL_WIDTH,
+						labelAlign: 'right',
+						maxWidth: CMDBuild.MEDIUM_FIELD_WIDTH
+					}),
+					this.fromField = Ext.create('Ext.form.field.Display', {
+						name: CMDBuild.core.constants.Proxy.FROM,
+						fieldLabel: CMDBuild.Translation.from,
+						labelWidth: CMDBuild.LABEL_WIDTH,
+						labelAlign: 'right',
+						vtype: 'multiemail',
+						submitValue: true,
+
+						listeners: {
+							scope: this,
+							change: function(field, newValue, oldValue, eOpts) {
+								this.delegate.cmfg('onEmailWindowFieldChange');
+							}
+						}
+					}),
 					{
 						xtype: 'textfield',
 						name: CMDBuild.core.constants.Proxy.TO,
@@ -146,7 +125,18 @@
 							}
 						}
 					},
-					this.emailContentField
+					this.emailContentField = Ext.create('CMDBuild.view.common.field.CMHtmlEditorField', {
+						name: CMDBuild.core.constants.Proxy.BODY,
+						hideLabel: true,
+						flex: 1,
+
+						listeners: {
+							scope: this,
+							change: function(field, newValue, oldValue, eOpts) {
+								this.delegate.cmfg('onEmailWindowFieldChange');
+							}
+						}
+					})
 				]
 			});
 
