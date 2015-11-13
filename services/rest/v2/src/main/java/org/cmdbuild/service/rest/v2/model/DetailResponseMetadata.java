@@ -1,5 +1,7 @@
 package org.cmdbuild.service.rest.v2.model;
 
+import static org.cmdbuild.service.rest.v2.constants.Serialization.DESCRIPTION;
+import static org.cmdbuild.service.rest.v2.constants.Serialization.PARENT;
 import static org.cmdbuild.service.rest.v2.constants.Serialization.POSITIONS;
 import static org.cmdbuild.service.rest.v2.constants.Serialization.REFERENCES;
 import static org.cmdbuild.service.rest.v2.constants.Serialization.TOTAL;
@@ -16,9 +18,62 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 @XmlRootElement
 public class DetailResponseMetadata extends AbstractModel {
 
+	@XmlRootElement
+	public static class Reference extends AbstractModel {
+
+		private String description;
+		private Long parent;
+
+		Reference() {
+			// package visibility
+		}
+
+		@XmlElement(name = DESCRIPTION)
+		public String getDescription() {
+			return description;
+		}
+
+		void setDescription(final String description) {
+			this.description = description;
+		}
+
+		@XmlElement(name = PARENT)
+		public Long getParent() {
+			return parent;
+		}
+
+		void setParent(final Long parent) {
+			this.parent = parent;
+		}
+
+		@Override
+		protected boolean doEquals(final Object obj) {
+			if (obj == this) {
+				return true;
+			}
+			if (!(obj instanceof Reference)) {
+				return false;
+			}
+			final Reference other = Reference.class.cast(obj);
+			return new EqualsBuilder() //
+					.append(this.description, other.description) //
+					.append(this.parent, other.parent) //
+					.isEquals();
+		}
+
+		@Override
+		protected int doHashCode() {
+			return new HashCodeBuilder() //
+					.append(this.description) //
+					.append(this.parent) //
+					.toHashCode();
+		}
+
+	}
+
 	private Long total;
 	private Map<Long, Long> positions;
-	private Map<Long, String> references;
+	private Map<Long, Reference> references;
 
 	DetailResponseMetadata() {
 		// package visibility
@@ -43,11 +98,11 @@ public class DetailResponseMetadata extends AbstractModel {
 	}
 
 	@XmlElement(name = REFERENCES)
-	public Map<Long, String> getReferences() {
+	public Map<Long, Reference> getReferences() {
 		return references;
 	}
 
-	void setReferences(final Map<Long, String> references) {
+	void setReferences(final Map<Long, Reference> references) {
 		this.references = references;
 	}
 

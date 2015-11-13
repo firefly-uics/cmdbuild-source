@@ -19,6 +19,7 @@ import static org.cmdbuild.service.rest.v2.constants.Serialization.UNDERSCORED_S
 import static org.cmdbuild.service.rest.v2.cxf.util.Json.safeJsonArray;
 import static org.cmdbuild.service.rest.v2.cxf.util.Json.safeJsonObject;
 import static org.cmdbuild.service.rest.v2.model.Models.newMetadata;
+import static org.cmdbuild.service.rest.v2.model.Models.newReference;
 import static org.cmdbuild.service.rest.v2.model.Models.newResponseMultiple;
 import static org.cmdbuild.service.rest.v2.model.Models.newResponseSingle;
 import static org.cmdbuild.workflow.ProcessAttributes.FlowStatus;
@@ -39,6 +40,7 @@ import org.cmdbuild.logic.workflow.WorkflowLogic;
 import org.cmdbuild.service.rest.v2.ProcessInstances;
 import org.cmdbuild.service.rest.v2.cxf.serialization.DefaultConverter;
 import org.cmdbuild.service.rest.v2.cxf.serialization.ToProcessInstance;
+import org.cmdbuild.service.rest.v2.model.DetailResponseMetadata.Reference;
 import org.cmdbuild.service.rest.v2.model.ProcessInstance;
 import org.cmdbuild.service.rest.v2.model.ProcessInstanceAdvanceable;
 import org.cmdbuild.service.rest.v2.model.ResponseMultiple;
@@ -199,7 +201,7 @@ public class CxfProcessInstances implements ProcessInstances {
 
 					});
 		}
-		final Map<Long, String> references = newHashMap();
+		final Map<Long, Reference> references = newHashMap();
 		for (final UserProcessInstance element : elements) {
 			for (final CMAttribute _element : from(element.getType().getAllAttributes()) //
 					.filter(attributeTypeInstanceOf(ReferenceAttributeType.class))) {
@@ -207,7 +209,9 @@ public class CxfProcessInstances implements ProcessInstances {
 				if (value instanceof IdAndDescription) {
 					final IdAndDescription _value = IdAndDescription.class.cast(value);
 					if (_value.getId() != null) {
-						references.put(_value.getId(), _value.getDescription());
+						references.put(_value.getId(), newReference() //
+								.withDescription(_value.getDescription()) //
+								.build());
 					}
 				}
 			}

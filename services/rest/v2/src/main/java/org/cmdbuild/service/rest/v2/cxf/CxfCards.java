@@ -15,6 +15,7 @@ import static org.cmdbuild.service.rest.v2.cxf.util.Json.safeJsonArray;
 import static org.cmdbuild.service.rest.v2.cxf.util.Json.safeJsonObject;
 import static org.cmdbuild.service.rest.v2.model.Models.newCard;
 import static org.cmdbuild.service.rest.v2.model.Models.newMetadata;
+import static org.cmdbuild.service.rest.v2.model.Models.newReference;
 import static org.cmdbuild.service.rest.v2.model.Models.newResponseMultiple;
 import static org.cmdbuild.service.rest.v2.model.Models.newResponseSingle;
 
@@ -37,6 +38,7 @@ import org.cmdbuild.service.rest.v2.Cards;
 import org.cmdbuild.service.rest.v2.cxf.serialization.DefaultConverter;
 import org.cmdbuild.service.rest.v2.logging.LoggingSupport;
 import org.cmdbuild.service.rest.v2.model.Card;
+import org.cmdbuild.service.rest.v2.model.DetailResponseMetadata.Reference;
 import org.cmdbuild.service.rest.v2.model.ResponseMultiple;
 import org.cmdbuild.service.rest.v2.model.ResponseSingle;
 
@@ -126,7 +128,7 @@ public class CxfCards implements Cards, LoggingSupport {
 
 					});
 		}
-		final Map<Long, String> references = newHashMap();
+		final Map<Long, Reference> references = newHashMap();
 		for (final org.cmdbuild.model.data.Card element : response) {
 			for (final CMAttribute _element : from(element.getType().getAllAttributes()) //
 					.filter(attributeTypeInstanceOf(ReferenceAttributeType.class))) {
@@ -134,7 +136,9 @@ public class CxfCards implements Cards, LoggingSupport {
 				if (value instanceof IdAndDescription) {
 					final IdAndDescription _value = IdAndDescription.class.cast(value);
 					if (_value.getId() != null) {
-						references.put(_value.getId(), _value.getDescription());
+						references.put(_value.getId(), newReference() //
+								.withDescription(_value.getDescription()) //
+								.build());
 					}
 				}
 			}
