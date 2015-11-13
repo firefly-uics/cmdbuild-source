@@ -30,16 +30,6 @@
 		layout: 'border',
 
 		initComponent: function() {
-			this.form = Ext.create('CMDBuild.view.management.common.tabs.email.emailWindow.EditForm', {
-				delegate: this.delegate,
-				region: 'center'
-			});
-
-			this.attachmentContainer = Ext.create('CMDBuild.view.management.common.tabs.email.attachments.MainContainer', {
-				height: '30%',
-				region: 'south'
-			});
-
 			Ext.apply(this, {
 				dockedItems: [
 					Ext.create('Ext.toolbar.Toolbar', {
@@ -89,7 +79,16 @@
 						]
 					})
 				],
-				items: [this.form, this.attachmentContainer]
+				items: [
+					this.form = Ext.create('CMDBuild.view.management.common.tabs.email.emailWindow.EditForm', {
+						delegate: this.delegate,
+						region: 'center'
+					}),
+					this.attachmentContainer = Ext.create('CMDBuild.view.management.common.tabs.email.attachments.MainContainer', {
+						height: '20%',
+						region: 'south'
+					})
+				]
 			});
 
 			this.callParent(arguments);

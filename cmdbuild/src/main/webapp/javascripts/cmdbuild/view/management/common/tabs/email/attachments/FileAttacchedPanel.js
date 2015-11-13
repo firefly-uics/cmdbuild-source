@@ -18,6 +18,7 @@
 		 */
 		readOnly: false,
 
+		bodyPadding: '0 15 0 0',
 		frame: true,
 		margin: 5,
 
