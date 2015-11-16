@@ -4,11 +4,11 @@
 		extend: 'CMDBuild.controller.common.AbstractController',
 
 		requires: [
-			'CMDBuild.controller.management.common.widgets.CMWidgetController',
+			'CMDBuild.controller.common.AbstractBaseWidgetController',
 			'CMDBuild.core.constants.Proxy',
+			'CMDBuild.core.Message',
 			'CMDBuild.core.proxy.common.tabs.email.Attachment',
 			'CMDBuild.core.proxy.email.Templates',
-			'CMDBuild.core.Message',
 			'CMDBuild.core.Utils'
 		],
 
@@ -188,10 +188,10 @@
 			var xaVars = Ext.apply({}, record.getData(), record.get(CMDBuild.core.constants.Proxy.VARIABLES));
 
 			this.templateResolver = new CMDBuild.Management.TemplateResolver({
-				clientForm: this.cmfg('getMainController').parentDelegate.getFormForTemplateResolver(),
+				clientForm: this.cmfg('tabEmailMainControllerGet').parentDelegate.getFormForTemplateResolver(),
 				xaVars: xaVars,
-				serverVars: CMDBuild.controller.management.common.widgets.CMWidgetController.getTemplateResolverServerVars(
-					this.cmfg('getMainController').selectedEntity.get(CMDBuild.core.constants.Proxy.ENTITY)
+				serverVars: CMDBuild.controller.common.AbstractBaseWidgetController.getTemplateResolverServerVars(
+					this.cmfg('tabEmailSelectedEntityGet', CMDBuild.core.constants.Proxy.ENTITY)
 				)
 			});
 
@@ -275,7 +275,7 @@
 				if (CMDBuild.configuration.dms.get(CMDBuild.core.constants.Proxy.ENABLED))
 					this.record.set(CMDBuild.core.constants.Proxy.ATTACHMENTS, this.attachmentsDelegate.getAttachmentsNames());
 
-				this.record.set(CMDBuild.core.constants.Proxy.REFERENCE, this.cmfg('selectedEntityIdGet'));
+				this.record.set(CMDBuild.core.constants.Proxy.REFERENCE, this.cmfg('tabEmailSelectedEntityGet', CMDBuild.core.constants.Proxy.ID));
 
 				if (Ext.isEmpty(this.record.get(CMDBuild.core.constants.Proxy.ID))) {
 					this.parentDelegate.addRecord(this.record);
@@ -284,7 +284,10 @@
 				}
 
 				if (!Ext.Object.isEmpty(this.templateResolver))
-					this.cmfg('getMainController').bindLocalDepsChangeEvent(this.record, this.templateResolver, this.cmfg('getMainController'));
+					this.cmfg('tabEmailBindLocalDepsChangeEvent',{
+						record: this.record,
+						templateResolver: this.templateResolver
+					});
 
 				this.onEmailWindowAbortButtonClick();
 			}

@@ -394,7 +394,7 @@
 		 * Forward onModifyCardClick event to email tab controller
 		 */
 		onModifyCardClick: function() {
-			this.controllerTabEmail.onModifyCardClick();
+			this.controllerTabEmail.cmfg('onTabEmailModifyCardClick');
 		},
 
 		/**

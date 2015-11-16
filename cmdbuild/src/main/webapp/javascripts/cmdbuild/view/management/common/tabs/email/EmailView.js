@@ -39,7 +39,7 @@
 
 		listeners: {
 			show: function(panel, eOpts) {
-				this.delegate.cmfg('onEmailPanelShow');
+				this.delegate.cmfg('onTabEmailPanelShow');
 			}
 		},
 
@@ -47,7 +47,7 @@
 		 * Service function executed from module controller
 		 */
 		reset: function() {
-			this.setDisabled(Ext.isEmpty(this.delegate.cmfg('selectedEntityGet').get(CMDBuild.core.constants.Proxy.ENTITY)));
+			this.setDisabled(this.delegate.cmfg('tabEmailSelectedEntityIsEmpty', CMDBuild.core.constants.Proxy.ENTITY));
 		}
 	});
 

@@ -81,15 +81,13 @@
 		},
 
 		onAbortCardClick: function() {
-			this.editModeSet(true);
+			this.cmfg('tabEmailEditModeSet', true);
 		},
 
 		/**
 		 * @param {Ext.data.Model} card
 		 */
 		onCardSelected: function(card) {
-			var me = this;
-
 			this.card = card;
 
 			this.cmfg('tabEmailConfigurationSet', {
@@ -97,18 +95,20 @@
 				value: false
 			});
 
-			this.editModeSet(true);
+			this.cmfg('tabEmailEditModeSet', true);
 
-			this.selectedEntitySet(this.card, function() {
-				me.regenerateAllEmailsSet(Ext.isEmpty(this.card));
-				me.forceRegenerationSet(Ext.isEmpty(this.card));
-				me.cmfg('onEmailPanelShow');
+			this.cmfg('tabEmailSelectedEntitySet', {
+				selectedEntity: this.card,
+				scope: this,
+				callbackFunction: function(options, success, response) {
+					this.cmfg('tabEmailRegenerateAllEmailsSet', Ext.isEmpty(this.card));
+					this.forceRegenerationSet(Ext.isEmpty(this.card));
+					this.cmfg('onTabEmailPanelShow');
+				}
 			});
 		},
 
 		onCloneCard: function() {
-			var me = this;
-
 			this.card = null;
 
 			this.cmfg('tabEmailConfigurationSet', {
@@ -116,12 +116,16 @@
 				value: false
 			});
 
-			this.editModeSet(true);
+			this.cmfg('tabEmailEditModeSet', true);
 
-			this.selectedEntitySet(this.card, function() {
-				me.regenerateAllEmailsSet(Ext.isEmpty(this.card));
-				me.forceRegenerationSet(Ext.isEmpty(this.card));
-				me.cmfg('onEmailPanelShow');
+			this.cmfg('tabEmailSelectedEntitySet', {
+				selectedEntity: this.card,
+				scope: this,
+				callbackFunction: function(options, success, response) {
+					this.cmfg('tabEmailRegenerateAllEmailsSet', Ext.isEmpty(this.card));
+					this.forceRegenerationSet(Ext.isEmpty(this.card));
+					this.cmfg('onTabEmailPanelShow');
+				}
 			});
 		},
 
@@ -138,7 +142,7 @@
 				value: false
 			});
 
-			this.editModeSet(true);
+			this.cmfg('tabEmailEditModeSet', true);
 		},
 
 		/**
@@ -146,7 +150,7 @@
 		 *
 		 * @override
 		 */
-		onModifyCardClick: function() {
+		onTabEmailModifyCardClick: function() {
 			var params = {};
 			params[CMDBuild.core.constants.Proxy.CLASS_NAME] = _CMCache.getEntryTypeNameById(this.card.get('IdClass'));
 			params[CMDBuild.core.constants.Proxy.CARD_ID] = this.card.get(CMDBuild.core.constants.Proxy.ID);
@@ -170,11 +174,11 @@
 		 * Launch regeneration on save button click and send all draft emails
 		 */
 		onSaveCardClick: function() {
-			this.cmfg('sendAllOnSaveSet', true);
+			this.cmfg('tabEmailSendAllOnSaveSet', true);
 
 			if (!this.grid.getStore().isLoading()) {
-				this.regenerateAllEmailsSet(true);
-				this.cmfg('onEmailPanelShow');
+				this.cmfg('tabEmailRegenerateAllEmailsSet', true);
+				this.cmfg('onTabEmailPanelShow');
 			}
 		}
 	});

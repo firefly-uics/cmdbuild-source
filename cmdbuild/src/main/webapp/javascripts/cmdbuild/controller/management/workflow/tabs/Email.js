@@ -44,7 +44,7 @@
 		onActivityInstanceChange: Ext.emptyFn,
 
 		onAbortCardClick: function() {
-			this.editModeSet(false);
+			this.cmfg('tabEmailEditModeSet', false);
 		},
 
 		/**
@@ -53,15 +53,16 @@
 		 * @override
 		 */
 		onAddCardButtonClick: function() {
-			var me = this;
-
 			this.callParent(arguments);
 
 			 // Reset selected entity, regenerate email and load store
-			this.selectedEntitySet(null, function() {
-				me.regenerateAllEmailsSet(true);
-				me.forceRegenerationSet(true);
-				me.cmfg('onEmailPanelShow');
+			this.cmfg('tabEmailSelectedEntityInit', {
+				scope: this,
+				callbackFunction: function(options, success, response) {
+					this.cmfg('tabEmailRegenerateAllEmailsSet', true);
+					this.forceRegenerationSet(true);
+					this.cmfg('onTabEmailPanelShow');
+				}
 			});
 		},
 
@@ -71,7 +72,7 @@
 		 * @param {CMDBuild.cache.CMEntryTypeModel} entryType
 		 */
 		onProcessClassRefChange: function(entryType) {
-			this.editModeSet(false);
+			this.cmfg('tabEmailEditModeSet', false);
 		},
 
 		/**
@@ -81,23 +82,29 @@
 		 * @param {CMDBuild.model.CMProcessInstance} processInstance
 		 */
 		onProcessInstanceChange: function(processInstance) {
-			var me = this;
-
 			if (!Ext.isEmpty(processInstance) && processInstance.isStateOpen()) {
 				if (!processInstance.isNew())
 					this.parentDelegate.activityPanelController.ensureEditPanel(); // Creates editPanel with relative form fields
 
-				this.selectedEntitySet(processInstance, function() {
-					me.regenerateAllEmailsSet(processInstance.isNew());
-					me.forceRegenerationSet(processInstance.isNew());
-					me.cmfg('onEmailPanelShow');
+				this.cmfg('tabEmailSelectedEntitySet', {
+					selectedEntity: processInstance,
+					scope: this,
+					callbackFunction: function(options, success, response) {
+						this.cmfg('tabEmailRegenerateAllEmailsSet', processInstance.isNew());
+						this.forceRegenerationSet(processInstance.isNew());
+						this.cmfg('onTabEmailPanelShow');
+					}
 				});
 
-				this.editModeSet(processInstance.isNew()); // Enable/Disable tab based on model new state to separate create/view mode
-				this.cmfg('setUiState');
+				this.cmfg('tabEmailEditModeSet', processInstance.isNew()); // Enable/Disable tab based on model new state to separate create/view mode
+				this.controllerGrid.cmfg('tabEmailGridUiStateSet');
 			} else { // We have a closed process instance
-				this.selectedEntitySet(processInstance, function() {
-					me.cmfg('onEmailPanelShow');
+				this.cmfg('tabEmailSelectedEntitySet', {
+					selectedEntity: processInstance,
+					scope: this,
+					callbackFunction: function(options, success, response) {
+						this.cmfg('onTabEmailPanelShow');
+					}
 				});
 			}
 		},
@@ -107,8 +114,8 @@
 		 */
 		onSaveCardClick: function() {
 			if (!this.grid.getStore().isLoading()) {
-				this.regenerateAllEmailsSet(true);
-				this.cmfg('onEmailPanelShow');
+				this.cmfg('tabEmailRegenerateAllEmailsSet', true);
+				this.cmfg('onTabEmailPanelShow');
 			}
 		}
 	});
