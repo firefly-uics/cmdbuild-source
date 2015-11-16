@@ -28,7 +28,7 @@
 		],
 
 		/**
-		 * @property {Mixed}
+		 * @cfg {Mixed}
 		 */
 		record: undefined,
 
@@ -38,11 +38,6 @@
 		 * @private
 		 */
 		selectedCard: undefined,
-
-		/**
-		 * @property {CMDBuild.cache.CMEntryTypeModel}
-		 */
-		selectedClass: undefined,
 
 		/**
 		 * @property {CMDBuild.view.management.common.tabs.email.attachments.picker.MainWindow}
