@@ -4,6 +4,7 @@
 
 		requires: [
 			'CMDBuild.core.Ajax',
+			'CMDBuild.core.cache.Cache',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.interfaces.FormSubmit',
 			'CMDBuild.core.proxy.Index'
@@ -15,16 +16,14 @@
 		 * @param {Object} parameters
 		 */
 		copy: function(parameters) {
-			CMDBuild.core.Ajax.request({
-				method: 'POST',
-				url: CMDBuild.core.proxy.Index.email.attachment.copy,
-				params: parameters.params,
-				scope: parameters.scope || this,
-				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : false,
-				failure: parameters.failure || Ext.emptyFn,
-				success: parameters.success || Ext.emptyFn,
-				callback: parameters.callback || Ext.emptyFn
+			parameters = Ext.isEmpty(parameters) ? {} : parameters;
+
+			Ext.apply(parameters, {
+				loadMask: false,
+				url: CMDBuild.core.proxy.Index.email.attachment.copy
 			});
+
+			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.ATTACHMENT, parameters, true);
 		},
 
 		/**
@@ -52,32 +51,28 @@
 		 * @param {Object} parameters
 		 */
 		getAll: function(parameters) {
-			CMDBuild.core.Ajax.request({
-				method: 'POST',
-				url: CMDBuild.core.proxy.Index.email.attachment.readAll,
-				params: parameters.params,
-				scope: parameters.scope || this,
-				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : false,
-				failure: parameters.failure || Ext.emptyFn,
-				success: parameters.success || Ext.emptyFn,
-				callback: parameters.callback || Ext.emptyFn
+			parameters = Ext.isEmpty(parameters) ? {} : parameters;
+
+			Ext.apply(parameters, {
+				loadMask: false,
+				url: CMDBuild.core.proxy.Index.email.attachment.readAll
 			});
+
+			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.ATTACHMENT, parameters, true);
 		},
 
 		/**
 		 * @param {Object} parameters
 		 */
 		remove: function(parameters) {
-			CMDBuild.core.Ajax.request({
-				method: 'POST',
-				url: CMDBuild.core.proxy.Index.email.attachment.remove,
-				params: parameters.params,
-				scope: parameters.scope || this,
-				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : false,
-				failure: parameters.failure || Ext.emptyFn,
-				success: parameters.success || Ext.emptyFn,
-				callback: parameters.callback || Ext.emptyFn
+			parameters = Ext.isEmpty(parameters) ? {} : parameters;
+
+			Ext.apply(parameters, {
+				loadMask: false,
+				url: CMDBuild.core.proxy.Index.email.attachment.remove
 			});
+
+			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.ATTACHMENT, parameters, true);
 		},
 
 		/**

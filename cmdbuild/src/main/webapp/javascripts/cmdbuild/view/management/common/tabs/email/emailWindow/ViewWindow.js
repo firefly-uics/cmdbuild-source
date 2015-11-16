@@ -63,7 +63,7 @@
 								scope: this,
 
 								handler: function(button, e) {
-									this.delegate.cmfg('onEmailWindowAbortButtonClick');
+									this.delegate.cmfg('onTabEmailEmailWindowAbortButtonClick');
 								}
 							})
 						]

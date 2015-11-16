@@ -57,7 +57,7 @@
 								listeners: {
 									scope: this,
 									change: function(field, value, eOpts) {
-										this.delegate.cmfg('onAttachmentChangeFile');
+										this.delegate.cmfg('onTabEmailAttachmentChangeFile');
 									}
 								}
 							})
@@ -70,7 +70,7 @@
 						scope: this,
 
 						handler: function(button, e) {
-							this.delegate.cmfg('onAttachmentAddFromDmsButtonClick');
+							this.delegate.cmfg('onTabEmailAttachmentAddFromDmsButtonClick');
 						}
 					})
 				]

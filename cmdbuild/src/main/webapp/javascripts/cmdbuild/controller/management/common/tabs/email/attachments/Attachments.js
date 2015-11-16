@@ -17,15 +17,16 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
-			'attachmentAddPanel',
-			'onAttachmentAddFromDmsButtonClick',
-			'onAttachmentChangeFile',
-			'onAttachmentDownloadButtonClick',
-			'onAttachmentRemoveButtonClick'
+			'onTabEmailAttachmentAddFromDmsButtonClick',
+			'onTabEmailAttachmentChangeFile',
+			'onTabEmailAttachmentDownloadButtonClick',
+			'onTabEmailAttachmentRemoveButtonClick',
+			'tabEmailAttachmentAddPanel',
+			'tabEmailAttachmentNamesGet'
 		],
 
 		/**
-		 * @property {Mixed}
+		 * @cfg {Mixed}
 		 */
 		record: undefined,
 
@@ -47,46 +48,18 @@
 				this.view.delegate = this;
 				this.view.attachmentButtonsContainer.delegate = this;
 			} else {
-				_error('Alfresco DMS not enabled', this);
+				_warning('Alfresco DMS not enabled', this);
 			}
 		},
 
-		/**
-		 * @param {String} fileName
-		 */
-		attachmentAddPanel: function(fileName) {
-			this.view.addPanel(
-				Ext.create('CMDBuild.view.management.common.tabs.email.attachments.FileAttacchedPanel', {
-					delegate: this,
-					fileName: fileName,
-					readOnly: this.view.readOnly
-				})
-			);
-
-//			this.parentDelegate.view.setLoading(false); // TODO: build function and use cmfg
-		},
-
-		/**
-		 * @return {Array} attachmentsNames
-		 */
-		getAttachmentsNames: function() {
-			var attachmentsNames = [];
-
-			this.view.attachmentPanelsContainer.items.each(function(item, index, allItems) {
-				attachmentsNames.push(item[CMDBuild.core.constants.Proxy.FILE_NAME]);
-			});
-
-			return attachmentsNames;
-		},
-
-		onAttachmentAddFromDmsButtonClick: function() {
+		onTabEmailAttachmentAddFromDmsButtonClick: function() {
 			Ext.create('CMDBuild.controller.management.common.tabs.email.attachments.Picker', {
 				parentDelegate: this,
 				record: this.record
 			});
 		},
 
-		onAttachmentChangeFile: function() {
+		onTabEmailAttachmentChangeFile: function() {
 			var params = {};
 			params[CMDBuild.core.constants.Proxy.EMAIL_ID] = this.record.get(CMDBuild.core.constants.Proxy.ID);
 			params[CMDBuild.core.constants.Proxy.TEMPORARY] = this.record.get(CMDBuild.core.constants.Proxy.TEMPORARY);
@@ -97,7 +70,9 @@
 				loadMask: this.cmfg('tabEmailEmailWindowGetView'),
 				scope: this,
 				success: function(response, options, decodedResponse) {
-					this.cmfg('attachmentAddPanel', decodedResponse.response);
+					decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.RESPONSE];
+
+					this.cmfg('tabEmailAttachmentAddPanel', decodedResponse);
 				}
 			});
 		},
@@ -105,21 +80,19 @@
 		/**
 		 * @param {CMDBuild.view.management.common.tabs.email.attachments.FileAttacchedPanel} attachmentPanel
 		 */
-		onAttachmentDownloadButtonClick: function(attachmentPanel) {
+		onTabEmailAttachmentDownloadButtonClick: function(attachmentPanel) {
 			var params = {};
 			params[CMDBuild.core.constants.Proxy.EMAIL_ID] = this.record.get(CMDBuild.core.constants.Proxy.ID);
 			params[CMDBuild.core.constants.Proxy.FILE_NAME] = attachmentPanel[CMDBuild.core.constants.Proxy.FILE_NAME];
 			params[CMDBuild.core.constants.Proxy.TEMPORARY] = this.record.get(CMDBuild.core.constants.Proxy.TEMPORARY);
 
-			CMDBuild.core.proxy.common.tabs.email.Attachment.download({
-				params: params
-			});
+			CMDBuild.core.proxy.common.tabs.email.Attachment.download({ params: params });
 		},
 
 		/**
 		 * @param {CMDBuild.view.management.common.tabs.email.attachments.FileAttacchedPanel} attachmentPanel
 		 */
-		onAttachmentRemoveButtonClick: function(attachmentPanel) {
+		onTabEmailAttachmentRemoveButtonClick: function(attachmentPanel) {
 			var params = {};
 			params[CMDBuild.core.constants.Proxy.EMAIL_ID] = this.record.get(CMDBuild.core.constants.Proxy.ID);
 			params[CMDBuild.core.constants.Proxy.FILE_NAME] = attachmentPanel[CMDBuild.core.constants.Proxy.FILE_NAME];
@@ -135,6 +108,32 @@
 					this.view.attachmentPanelsContainer.remove(attachmentPanel);
 				}
 			});
+		},
+
+		/**
+		 * @param {String} fileName
+		 */
+		tabEmailAttachmentAddPanel: function(fileName) {
+			this.view.addPanel(
+				Ext.create('CMDBuild.view.management.common.tabs.email.attachments.FileAttacchedPanel', {
+					delegate: this,
+					fileName: fileName,
+					readOnly: this.view.readOnly
+				})
+			);
+		},
+
+		/**
+		 * @returns {Array} attachmentsNames
+		 */
+		tabEmailAttachmentNamesGet: function() {
+			var attachmentsNames = [];
+
+			this.view.attachmentPanelsContainer.items.each(function(attachmentObject, i, allAttachmentObjects) {
+				attachmentsNames.push(attachmentObject[CMDBuild.core.constants.Proxy.FILE_NAME]);
+			});
+
+			return attachmentsNames;
 		}
 	});
 

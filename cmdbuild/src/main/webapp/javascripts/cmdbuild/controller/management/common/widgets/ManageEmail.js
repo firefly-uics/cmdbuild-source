@@ -90,6 +90,8 @@
 
 		/**
 		 * Create event manager and show toolbar
+		 *
+		 * @private
 		 */
 		buildBottomToolbar: function() {
 			this.tabDelegate.getView().on('show', this.widgetEmailShowEventManager, this);
@@ -156,7 +158,7 @@
 				Ext.isBoolean(this.cmfg('widgetManageEmailConfigurationGet', CMDBuild.core.constants.Proxy.REQUIRED))
 				&& this.cmfg('widgetManageEmailConfigurationGet', CMDBuild.core.constants.Proxy.REQUIRED)
 			) {
-				return this.tabDelegate.controllerGrid.getDraftEmails().length > 0;
+				return this.tabDelegate.controllerGrid.cmfg('tabEmailGridDraftEmailsIsEmpty');
 			}
 
 			return this.callParent(arguments);
@@ -206,6 +208,8 @@
 		/**
 		 * @param {CMDBuild.view.management.common.tabs.email.EmailView} panel
 		 * @param {Object} eOpts
+		 *
+		 * @private
 		 */
 		widgetEmailShowEventManager: function(panel, eOpts) {
 			var cardWidgetTypes = [];
