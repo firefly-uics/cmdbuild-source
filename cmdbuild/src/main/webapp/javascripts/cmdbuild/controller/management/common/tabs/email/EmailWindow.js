@@ -28,6 +28,7 @@
 		cmfgCatchedFunctions: [
 			'getView = tabEmailEmailWindowGetView',
 			'onTabEmailEmailWindowAbortButtonClick',
+			'onTabEmailEmailWindowBeforeDestroy',
 			'onTabEmailEmailWindowConfirmButtonClick',
 			'onTabEmailEmailWindowFieldChange',
 			'onTabEmailEmailWindowFillFromTemplateButtonClick'
@@ -258,10 +259,18 @@
 		 * Destroy email window object
 		 */
 		onTabEmailEmailWindowAbortButtonClick: function() {
+			this.cmfg('onTabEmailEmailWindowBeforeDestroy');
+
+			if (!Ext.isEmpty(this.view))
+				this.view.destroy();
+		},
+
+		/**
+		 * Implements empty email deletion on window destroy
+		 */
+		onTabEmailEmailWindowBeforeDestroy: function() {
 			if (CMDBuild.core.Utils.isObjectEmpty(this.form.getData()))
 				this.cmfg('tabEmailGridRecordRemove', this.record);
-
-			this.view.destroy();
 		},
 
 		/**
