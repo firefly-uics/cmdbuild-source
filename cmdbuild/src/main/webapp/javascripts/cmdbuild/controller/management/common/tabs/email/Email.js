@@ -385,7 +385,7 @@
 			this.cmfg('tabEmailEditModeSet', true);
 
 			if (!this.grid.getStore().isLoading())
-				this.onTabEmailGlobalRegenerationButtonClick();
+				this.cmfg('onTabEmailGlobalRegenerationButtonClick');
 		},
 
 		/**
@@ -403,6 +403,10 @@
 				// Regenerate all widgets only if editMode otherwise simple store load
 				this.cmfg('tabEmailRegenerateAllEmailsSet', this.cmfg('tabEmailEditModeGet'));
 				this.controllerGrid.cmfg('tabEmailGridStoreLoad');
+
+				// Fire show event to manage buttons setup
+				this.grid.buttonAdd.fireEvent('show');
+				this.grid.buttonRegenerate.fireEvent('show');
 			}
 		},
 

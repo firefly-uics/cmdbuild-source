@@ -32,27 +32,24 @@
 						itemId: CMDBuild.core.constants.Proxy.TOOLBAR_TOP,
 
 						items: [
-							Ext.create('CMDBuild.core.buttons.iconized.add.Add', {
+							this.buttonAdd = Ext.create('CMDBuild.core.buttons.iconized.add.Add', {
 								text: CMDBuild.Translation.composeEmail,
 								scope: this,
 
-								disabled: (
-									this.delegate.cmfg('tabEmailConfigurationGet', CMDBuild.core.constants.Proxy.READ_ONLY)
-									|| !this.delegate.cmfg('tabEmailEditModeGet')
-								),
-
 								handler: function(button, e) {
 									this.delegate.cmfg('onTabEmailGridAddEmailButtonClick');
+								},
+
+								isDisabled: function() {
+									return (
+										this.delegate.cmfg('tabEmailConfigurationGet', CMDBuild.core.constants.Proxy.READ_ONLY)
+										|| !this.delegate.cmfg('tabEmailEditModeGet')
+									);
 								}
 							}),
-							Ext.create('CMDBuild.core.buttons.email.Regenerate', {
+							this.buttonRegenerate = Ext.create('CMDBuild.core.buttons.email.Regenerate', {
 								text: CMDBuild.Translation.regenerateAllEmails,
 								scope: this,
-
-								disabled: (
-									this.delegate.cmfg('tabEmailConfigurationGet', CMDBuild.core.constants.Proxy.READ_ONLY)
-									|| !this.delegate.cmfg('tabEmailEditModeGet')
-								),
 
 								handler: function(button, e) {
 									Ext.Msg.show({ // Ask to the user if is sure to delete all the unsent e-mails before
@@ -60,12 +57,20 @@
 										msg: CMDBuild.Translation.emailRegenerationConfirmPopupText,
 										buttons: Ext.Msg.OKCANCEL,
 										icon: Ext.Msg.WARNING,
+										scope: this,
 
-										fn: function(btn) {
-											if (btn == 'ok')
-												me.delegate.cmfg('onTabEmailGlobalRegenerationButtonClick');
+										fn: function(buttonId, text, opt) {
+											if (buttonId == 'ok')
+												this.delegate.cmfg('onTabEmailGlobalRegenerationButtonClick');
 										}
 									});
+								},
+
+								isDisabled: function() {
+									return (
+										this.delegate.cmfg('tabEmailConfigurationGet', CMDBuild.core.constants.Proxy.READ_ONLY)
+										|| !this.delegate.cmfg('tabEmailEditModeGet')
+									);
 								}
 							}),
 							Ext.create('CMDBuild.core.buttons.iconized.Reload', {
@@ -138,7 +143,7 @@
 										this.delegate.cmfg('tabEmailConfigurationGet', CMDBuild.core.constants.Proxy.READ_ONLY)
 										|| !this.delegate.cmfg('tabEmailEditModeGet')
 										|| !this.delegate.cmfg('tabEmailGridRecordIsRegenerable', record)
-										|| !this.delegate.recordIsEditable(record)
+										|| !this.delegate.cmfg('tabEmailGridRecordIsEditable', record)
 										|| !record.get(CMDBuild.core.constants.Proxy.KEEP_SYNCHRONIZATION)
 									);
 								}
@@ -156,7 +161,7 @@
 									return (
 										this.delegate.cmfg('tabEmailConfigurationGet', CMDBuild.core.constants.Proxy.READ_ONLY)
 										|| !this.delegate.cmfg('tabEmailEditModeGet')
-										|| this.delegate.recordIsEditable(record)
+										|| this.delegate.cmfg('tabEmailGridRecordIsEditable', record)
 									);
 								}
 							}),
@@ -190,7 +195,7 @@
 									return (
 										this.delegate.cmfg('tabEmailConfigurationGet', CMDBuild.core.constants.Proxy.READ_ONLY)
 										|| !this.delegate.cmfg('tabEmailEditModeGet')
-										|| !this.delegate.recordIsEditable(record)
+										|| !this.delegate.cmfg('tabEmailGridRecordIsEditable', record)
 									);
 								}
 							}),
@@ -216,7 +221,7 @@
 									return (
 										this.delegate.cmfg('tabEmailConfigurationGet', CMDBuild.core.constants.Proxy.READ_ONLY)
 										|| !this.delegate.cmfg('tabEmailEditModeGet')
-										|| !this.delegate.recordIsEditable(record)
+										|| !this.delegate.cmfg('tabEmailGridRecordIsEditable', record)
 									);
 								}
 							})
