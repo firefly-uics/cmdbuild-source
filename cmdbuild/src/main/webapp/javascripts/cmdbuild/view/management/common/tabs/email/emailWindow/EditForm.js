@@ -68,7 +68,7 @@
 						listeners: {
 							scope: this,
 							change: function(field, newValue, oldValue, eOpts) {
-								this.delegate.cmfg('onEmailWindowFieldChange');
+								this.delegate.cmfg('onTabEmailEmailWindowFieldChange');
 							}
 						}
 					}),
@@ -82,7 +82,7 @@
 						listeners: {
 							scope: this,
 							change: function(field, newValue, oldValue, eOpts) {
-								this.delegate.cmfg('onEmailWindowFieldChange');
+								this.delegate.cmfg('onTabEmailEmailWindowFieldChange');
 							}
 						}
 					},
@@ -95,7 +95,7 @@
 						listeners: {
 							scope: this,
 							change: function(field, newValue, oldValue, eOpts) {
-								this.delegate.cmfg('onEmailWindowFieldChange');
+								this.delegate.cmfg('onTabEmailEmailWindowFieldChange');
 							}
 						}
 					},
@@ -108,7 +108,7 @@
 						listeners: {
 							scope: this,
 							change: function(field, newValue, oldValue, eOpts) {
-								this.delegate.cmfg('onEmailWindowFieldChange');
+								this.delegate.cmfg('onTabEmailEmailWindowFieldChange');
 							}
 						}
 					},
@@ -121,7 +121,7 @@
 						listeners: {
 							scope: this,
 							change: function(field, newValue, oldValue, eOpts) {
-								this.delegate.cmfg('onEmailWindowFieldChange');
+								this.delegate.cmfg('onTabEmailEmailWindowFieldChange');
 							}
 						}
 					},
@@ -133,7 +133,7 @@
 						listeners: {
 							scope: this,
 							change: function(field, newValue, oldValue, eOpts) {
-								this.delegate.cmfg('onEmailWindowFieldChange');
+								this.delegate.cmfg('onTabEmailEmailWindowFieldChange');
 							}
 						}
 					})

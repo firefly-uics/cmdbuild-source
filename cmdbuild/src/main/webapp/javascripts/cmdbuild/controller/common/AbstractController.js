@@ -9,7 +9,7 @@
 	]);
 
 	/**
-	 * Class to be extended in controllers witch implements new CMDBuild algorithms where controller creates view
+	 * Class to be extended in controllers witch implements new CMDBuild pattern where controller creates view
 	 *
 	 * Usage and wild cards:
 	 * 	'=' - creates method alias
@@ -61,7 +61,7 @@
 		},
 
 		/**
-		 * Default implementation of controller managed functions gatherer (CMFG), should be the only access point to class functions
+		 * Default implementation of Controller Managed Functions Gatherer (CMFG), should be the only access point to class functions
 		 *
 		 * @param {String} name
 		 * @param {Object} param

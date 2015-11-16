@@ -66,14 +66,14 @@
 								scope: this,
 
 								handler: function(button, e) {
-									this.delegate.cmfg('onEmailWindowConfirmButtonClick');
+									this.delegate.cmfg('onTabEmailEmailWindowConfirmButtonClick');
 								}
 							}),
 							Ext.create('CMDBuild.core.buttons.text.Abort', {
 								scope: this,
 
 								handler: function(button, e) {
-									this.delegate.cmfg('onEmailWindowAbortButtonClick');
+									this.delegate.cmfg('onTabEmailEmailWindowAbortButtonClick');
 								}
 							})
 						]

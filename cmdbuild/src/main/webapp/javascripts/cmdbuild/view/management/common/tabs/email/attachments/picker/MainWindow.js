@@ -51,7 +51,7 @@
 									scope: this,
 
 									change: function(field, newValue, oldValue) {
-										this.delegate.cmfg('onPickerWindowClassSelected');
+										this.delegate.cmfg('onTabEmailAttachmentPickerWindowClassSelected');
 									}
 								}
 							})
@@ -73,14 +73,14 @@
 								scope: this,
 
 								handler: function(button, e) {
-									this.delegate.cmfg('onPickerWindowConfirmButtonClick');
+									this.delegate.cmfg('onTabEmailAttachmentPickerWindowConfirmButtonClick');
 								}
 							}),
 							Ext.create('CMDBuild.core.buttons.text.Abort', {
 								scope: this,
 
 								handler: function(button, e) {
-									this.delegate.cmfg('onPickerWindowAbortButtonClick');
+									this.delegate.cmfg('onTabEmailAttachmentPickerWindowAbortButtonClick');
 								}
 							})
 						]

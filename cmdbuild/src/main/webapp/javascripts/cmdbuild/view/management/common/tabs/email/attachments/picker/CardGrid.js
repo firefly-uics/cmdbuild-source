@@ -27,11 +27,11 @@
 
 		listeners: {
 			load: function(store, records, successful, eOpts) {
-				this.delegate.cmfg('onPickerWindowCardGridStoreLoad', records);
+				this.delegate.cmfg('onTabEmailAttachmentPickerWindowCardGridStoreLoad', records);
 			},
 
 			select: function(selectionModel, record, index, eOpts) {
-				this.delegate.cmfg('onPickerWindowCardSelected', record);
+				this.delegate.cmfg('onTabEmailAttachmentPickerWindowCardSelected', record);
 			}
 		}
 	});

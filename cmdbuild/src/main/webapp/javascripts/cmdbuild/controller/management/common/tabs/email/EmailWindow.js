@@ -27,10 +27,10 @@
 		 */
 		cmfgCatchedFunctions: [
 			'getView = tabEmailEmailWindowGetView',
-			'onEmailWindowAbortButtonClick',
-			'onEmailWindowConfirmButtonClick',
-			'onEmailWindowFieldChange',
-			'onEmailWindowFillFromTemplateButtonClick'
+			'onTabEmailEmailWindowAbortButtonClick',
+			'onTabEmailEmailWindowConfirmButtonClick',
+			'onTabEmailEmailWindowFieldChange',
+			'onTabEmailEmailWindowFillFromTemplateButtonClick'
 		],
 
 		/**
@@ -46,7 +46,7 @@
 		isAdvicePrompted: false,
 
 		/**
-		 * @property {CMDBuild.model.common.tabs.email.Email}
+		 * @cfg {CMDBuild.model.common.tabs.email.Email}
 		 */
 		record: undefined,
 
@@ -66,18 +66,19 @@
 		windowMode: 'create',
 
 		/**
-		 * @cfg {Array}
+		 * @property {Array}
+		 *
+		 * @private
 		 */
 		windowModeAvailable: ['create', 'edit', 'reply', 'view'],
 
 		/**
 		 * @param {Object} configurationObject
-		 * @param {CMDBuild.controller.management.common.tabs.email.Email} configurationObject.parentDelegate
+		 * @param {CMDBuild.controller.management.common.tabs.email.Grid} configurationObject.parentDelegate
 		 * @param {Mixed} configurationObject.record
 		 * @param {String} configurationObject.windowMode
 		 */
 		constructor: function(configurationObject) {
-			var me = this;
 			var windowClassName = null;
 
 			this.callParent(arguments);
@@ -103,19 +104,20 @@
 					scope: this,
 					loadMask: true,
 					success: function(response, options, decodedResponse) {
-						var templatesArray = decodedResponse.response.elements;
+						decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.RESPONSE][CMDBuild.core.constants.Proxy.ELEMENTS];
 
-						if (templatesArray.length > 0) {
-							// Sort templatesArray by description ascending
-							CMDBuild.core.Utils.objectArraySort(templatesArray, CMDBuild.core.constants.Proxy.DESCRIPTION);
+						if (!Ext.isEmpty(decodedResponse) && Ext.isArray(decodedResponse)) {
+							// Sort templates by description ascending
+							CMDBuild.core.Utils.objectArraySort(decodedResponse, CMDBuild.core.constants.Proxy.DESCRIPTION);
 
-							Ext.Array.forEach(templatesArray, function(template, index, allItems) {
+							Ext.Array.forEach(decodedResponse, function(template, i, allTemplates) {
 								this.view.fillFromTemplateButton.menu.add({
 									text: template[CMDBuild.core.constants.Proxy.DESCRIPTION],
 									templateName: template[CMDBuild.core.constants.Proxy.NAME],
+									scope: this,
 
 									handler: function(button, e) {
-										me.cmfg('onEmailWindowFillFromTemplateButtonClick', button[CMDBuild.core.constants.Proxy.TEMPLATE_NAME]);
+										this.cmfg('onTabEmailEmailWindowFillFromTemplateButtonClick', button[CMDBuild.core.constants.Proxy.TEMPLATE_NAME]);
 									}
 								});
 							}, this);
@@ -143,9 +145,11 @@
 						params: params,
 						scope: this,
 						success: function(response, options, decodedResponse) {
-							Ext.Array.forEach(decodedResponse.response, function(item, index, allItems) {
-								if(!Ext.Object.isEmpty(item))
-									this.attachmentsDelegate.attachmentAddPanel(item[CMDBuild.core.constants.Proxy.FILE_NAME]);
+							decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.RESPONSE];
+
+							Ext.Array.forEach(decodedResponse, function(attachmentObject, i, allAttachmentObjects) {
+								if(!Ext.Object.isEmpty(attachmentObject))
+									this.attachmentsDelegate.cmfg('tabEmailAttachmentAddPanel', attachmentObject[CMDBuild.core.constants.Proxy.FILE_NAME]);
 							}, this);
 						},
 						callback: function(records, operation, success) {
@@ -167,92 +171,93 @@
 		},
 
 		/**
-		 * @return {Boolean}
+		 * @returns {Boolean}
+		 *
+		 * @private
 		 */
 		isKeepSynchronizationChecked: function() {
 			return this.form.keepSynchronizationCheckbox.getValue();
 		},
 
 		/**
-		 * @return {Boolean}
-		 */
-		isPromptSynchronizationChecked: function() {
-			return this.record.get(CMDBuild.core.constants.Proxy.PROMPT_SYNCHRONIZATION);
-		},
-
-		/**
 		 * @param {CMDBuild.model.common.tabs.email.Template} record
+		 *
+		 * @private
 		 */
 		loadFormValues: function(record) {
-			var me = this;
-			var xaVars = Ext.apply({}, record.getData(), record.get(CMDBuild.core.constants.Proxy.VARIABLES));
+			if (!Ext.isEmpty(record)) {
+				var xaVars = Ext.apply({}, record.getData(), record.get(CMDBuild.core.constants.Proxy.VARIABLES));
 
-			this.templateResolver = new CMDBuild.Management.TemplateResolver({
-				clientForm: this.cmfg('tabEmailMainControllerGet').parentDelegate.getFormForTemplateResolver(),
-				xaVars: xaVars,
-				serverVars: CMDBuild.controller.common.AbstractBaseWidgetController.getTemplateResolverServerVars(
-					this.cmfg('tabEmailSelectedEntityGet', CMDBuild.core.constants.Proxy.ENTITY)
-				)
-			});
+				this.templateResolver = new CMDBuild.Management.TemplateResolver({
+					clientForm: this.cmfg('tabEmailGetFormForTemplateResolver'),
+					xaVars: xaVars,
+					serverVars: CMDBuild.controller.common.AbstractBaseWidgetController.getTemplateResolverServerVars(
+						this.cmfg('tabEmailSelectedEntityGet', CMDBuild.core.constants.Proxy.ENTITY)
+					)
+				});
 
-			this.templateResolver.resolveTemplates({
-				attributes: Ext.Object.getKeys(xaVars),
-				callback: function(values, ctx) {
-					var setValueArray = [];
-					var content = values[CMDBuild.core.constants.Proxy.BODY];
+				this.templateResolver.resolveTemplates({
+					attributes: Ext.Object.getKeys(xaVars),
+					scope: this,
+					callback: function(values, ctx) {
+						var setValueArray = [];
+						var content = values[CMDBuild.core.constants.Proxy.BODY];
 
-					if (me.windowMode == 'reply') {
-						setValueArray.push({
-							id: CMDBuild.core.constants.Proxy.BODY,
-							value: content + '<br /><br />' + me.record.get(CMDBuild.core.constants.Proxy.BODY)
-						});
-					} else {
-						setValueArray.push(
-							{
-								id: CMDBuild.core.constants.Proxy.FROM,
-								value: values[CMDBuild.core.constants.Proxy.FROM]
-							},
-							{
-								id: CMDBuild.core.constants.Proxy.TO,
-								value: values[CMDBuild.core.constants.Proxy.TO]
-							},
-							{
-								id: CMDBuild.core.constants.Proxy.CC,
-								value: values[CMDBuild.core.constants.Proxy.CC]
-							},
-							{
-								id: CMDBuild.core.constants.Proxy.BCC,
-								value: values[CMDBuild.core.constants.Proxy.BCC]
-							},
-							{
-								id: CMDBuild.core.constants.Proxy.SUBJECT,
-								value: values[CMDBuild.core.constants.Proxy.SUBJECT]
-							},
-							{
+						if (this.windowMode == 'reply') {
+							setValueArray.push({
 								id: CMDBuild.core.constants.Proxy.BODY,
-								value: content
-							},
-							{ // It's last one to avoid Notification pop-up display on setValues action
-								id: CMDBuild.core.constants.Proxy.KEEP_SYNCHRONIZATION,
-								value: values[CMDBuild.core.constants.Proxy.KEEP_SYNCHRONIZATION]
-							}
-						);
+								value: content + '<br /><br />' + this.record.get(CMDBuild.core.constants.Proxy.BODY)
+							});
+						} else {
+							setValueArray.push(
+								{
+									id: CMDBuild.core.constants.Proxy.FROM,
+									value: values[CMDBuild.core.constants.Proxy.FROM]
+								},
+								{
+									id: CMDBuild.core.constants.Proxy.TO,
+									value: values[CMDBuild.core.constants.Proxy.TO]
+								},
+								{
+									id: CMDBuild.core.constants.Proxy.CC,
+									value: values[CMDBuild.core.constants.Proxy.CC]
+								},
+								{
+									id: CMDBuild.core.constants.Proxy.BCC,
+									value: values[CMDBuild.core.constants.Proxy.BCC]
+								},
+								{
+									id: CMDBuild.core.constants.Proxy.SUBJECT,
+									value: values[CMDBuild.core.constants.Proxy.SUBJECT]
+								},
+								{
+									id: CMDBuild.core.constants.Proxy.BODY,
+									value: content
+								},
+								{ // It's last one to avoid Notification pop-up display on setValues action
+									id: CMDBuild.core.constants.Proxy.KEEP_SYNCHRONIZATION,
+									value: values[CMDBuild.core.constants.Proxy.KEEP_SYNCHRONIZATION]
+								}
+							);
+						}
+
+						this.form.getForm().setValues(setValueArray);
+
+						this.form.delayField.setValue(values[CMDBuild.core.constants.Proxy.DELAY]);
+
+						// Updates record's prompt synchronizations flag
+						this.record.set(CMDBuild.core.constants.Proxy.PROMPT_SYNCHRONIZATION, values[CMDBuild.core.constants.Proxy.PROMPT_SYNCHRONIZATION]);
 					}
-
-					me.form.getForm().setValues(setValueArray);
-
-					me.form.delayField.setValue(values[CMDBuild.core.constants.Proxy.DELAY]);
-
-					// Updates record's prompt synchronizations flag
-					me.record.set(CMDBuild.core.constants.Proxy.PROMPT_SYNCHRONIZATION, values[CMDBuild.core.constants.Proxy.PROMPT_SYNCHRONIZATION]);
-				}
-			});
+				});
+			} else {
+				_error('empty record parameter for loadFormValues()', this);
+			}
 		},
 
 		/**
 		 * Destroy email window object
 		 */
-		onEmailWindowAbortButtonClick: function() {
+		onTabEmailEmailWindowAbortButtonClick: function() {
 			if (CMDBuild.core.Utils.isObjectEmpty(this.form.getData()))
 				this.cmfg('tabEmailGridRecordRemove', this.record);
 
@@ -262,7 +267,7 @@
 		/**
 		 * Updates record object adding id (time in milliseconds), Description and attachments array and adds email record to grid store
 		 */
-		onEmailWindowConfirmButtonClick: function() {
+		onTabEmailEmailWindowConfirmButtonClick: function() {
 			// Validate before save
 			if (this.validate(this.form)) {
 				var formValues = this.form.getForm().getValues();
@@ -273,30 +278,30 @@
 
 				// Setup attachments only if DMS is enabled
 				if (CMDBuild.configuration.dms.get(CMDBuild.core.constants.Proxy.ENABLED))
-					this.record.set(CMDBuild.core.constants.Proxy.ATTACHMENTS, this.attachmentsDelegate.getAttachmentsNames());
+					this.record.set(CMDBuild.core.constants.Proxy.ATTACHMENTS, this.attachmentsDelegate.cmfg('tabEmailAttachmentNamesGet'));
 
 				this.record.set(CMDBuild.core.constants.Proxy.REFERENCE, this.cmfg('tabEmailSelectedEntityGet', CMDBuild.core.constants.Proxy.ID));
 
 				if (Ext.isEmpty(this.record.get(CMDBuild.core.constants.Proxy.ID))) {
-					this.parentDelegate.addRecord(this.record);
+					this.cmfg('tabEmailGridRecordAdd', { record: this.record });
 				} else {
-					this.parentDelegate.editRecord(this.record);
+					this.cmfg('tabEmailGridRecordEdit', { record: this.record });
 				}
 
-				if (!Ext.Object.isEmpty(this.templateResolver))
+				if (!Ext.isEmpty(this.templateResolver))
 					this.cmfg('tabEmailBindLocalDepsChangeEvent',{
 						record: this.record,
 						templateResolver: this.templateResolver
 					});
 
-				this.onEmailWindowAbortButtonClick();
+				this.cmfg('onTabEmailEmailWindowAbortButtonClick');
 			}
 		},
 
 		/**
 		 * Change event management to catch email content edit
 		 */
-		onEmailWindowFieldChange: function() {
+		onTabEmailEmailWindowFieldChange: function() {
 			if (!this.isAdvicePrompted && this.isKeepSynchronizationChecked()) {
 				this.isAdvicePrompted = true;
 
@@ -309,11 +314,12 @@
 		 *
 		 * @param {String} templateName
 		 */
-		onEmailWindowFillFromTemplateButtonClick: function(templateName) {
+		onTabEmailEmailWindowFillFromTemplateButtonClick: function(templateName) {
+			var params = {};
+			params[CMDBuild.core.constants.Proxy.NAME] = templateName;
+
 			CMDBuild.core.proxy.email.Templates.get({
-				params: {
-					name: templateName
-				},
+				params: params,
 				scope: this,
 				loadMask: true,
 				failure: function(response, options, decodedResponse) {
