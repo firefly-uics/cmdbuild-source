@@ -7,7 +7,8 @@
 			'CMDBuild.core.cache.Cache',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.interfaces.FormSubmit',
-			'CMDBuild.core.proxy.Index'
+			'CMDBuild.core.proxy.Index',
+			'CMDBuild.model.common.tabs.email.attachments.TargetClass'
 		],
 
 		singleton: true,
@@ -59,6 +60,37 @@
 			});
 
 			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.ATTACHMENT, parameters, true);
+		},
+
+		/**
+		 * @returns {Ext.data.Store or CMDBuild.core.cache.Store}
+		 */
+		getTargetClassComboStore: function() {
+			return CMDBuild.core.cache.Cache.requestAsStore(CMDBuild.core.constants.Proxy.CLASS, {
+				autoLoad: true,
+				model: 'CMDBuild.model.common.tabs.email.attachments.TargetClass',
+				proxy: {
+					type: 'ajax',
+					url: CMDBuild.core.proxy.Index.classes.readAll,
+					reader: {
+						type: 'json',
+						root: CMDBuild.core.constants.Proxy.CLASSES
+					},
+					extraParams: {
+						limitParam: undefined,
+						pageParam: undefined,
+						startParam: undefined
+					}
+				},
+				filters: [
+					function(record) { // Filters root of all classes
+						return record.get(CMDBuild.core.constants.Proxy.NAME) != 'Class';
+					}
+				],
+				sorters: [
+					{ property: CMDBuild.core.constants.Proxy.TEXT, direction: 'ASC' }
+				]
+			});
 		},
 
 		/**

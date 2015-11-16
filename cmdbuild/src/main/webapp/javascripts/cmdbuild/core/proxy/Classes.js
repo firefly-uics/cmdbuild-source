@@ -32,7 +32,7 @@
 
 			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.classes.readAll });
 
-			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.CLASSES, parameters);
+			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.CLASS, parameters);
 		},
 
 		/**
@@ -43,7 +43,7 @@
 
 			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.classes.remove });
 
-			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.CLASSES, parameters, true);
+			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.CLASS, parameters, true);
 		},
 
 		/**
@@ -56,7 +56,7 @@
 
 			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.classes.update });
 
-			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.CLASSES, parameters, true);
+			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.CLASS, parameters, true);
 		}
 	});
 
