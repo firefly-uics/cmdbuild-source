@@ -503,23 +503,13 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 
 	private PagedElements<Card> fetchCardsWithClassName(final String className, final QueryOptions queryOptions) {
 		final CMClass fetchedClass = dataView.findClass(className);
-		final PagedElements<CMCard> fetchedCards;
-		final Iterable<Card> cards;
-		if (fetchedClass != null) {
-			fetchedCards = DataViewCardFetcher.newInstance() //
-					.withDataView(dataView) //
-					.withClassName(className) //
-					.withQueryOptions(queryOptions) //
-					.build() //
-					.fetch();
-
-			cards = resolveCardForeignReferences(fetchedClass, fetchedCards);
-
-		} else {
-			cards = emptyList();
-			final List<CMCard> emptyList = emptyList();
-			fetchedCards = new PagedElements<CMCard>(emptyList, 0);
-		}
+		final PagedElements<CMCard> fetchedCards = DataViewCardFetcher.newInstance() //
+				.withDataView(dataView) //
+				.withClassName(className) //
+				.withQueryOptions(queryOptions) //
+				.build() //
+				.fetch();
+		final Iterable<Card> cards = resolveCardForeignReferences(fetchedClass, fetchedCards);
 		return new PagedElements<Card>(cards, fetchedCards.totalSize());
 	}
 
