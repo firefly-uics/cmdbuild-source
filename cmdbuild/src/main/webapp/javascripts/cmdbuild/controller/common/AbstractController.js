@@ -105,17 +105,40 @@
 			_warning('unmanaged function with name "' + name + '"', this);
 		},
 
-		// Controller methods
+		/**
+		 * Controller methods
+		 * Methods use by controllers to manage local variables from cmfg() functions without rewrite a function. Don't use to set local variables, alias as this.
+		 */
 			/**
-			 * @param {String} propertyName
+			 * @param {String} name
 			 *
 			 * @returns {Mixed}
 			 */
-			controllerPropertyGet: function(propertyName) {
-				if (!Ext.isEmpty(this[propertyName]))
-					return this[propertyName];
+			controllerPropertyGet: function(name) {
+				if (Ext.isString(name) && !Ext.isEmpty(this[name]))
+					return this[name];
 
 				return null;
+			},
+
+			controllerPropertyReset: function(name) {
+				if (Ext.isString(name) && !Ext.isEmpty(this[name]))
+					this[name] = null;
+			},
+
+			/**
+			 * @param {object} parameters
+			 * @param {String} parameters.name
+			 * @param {Mixed} parameters.value
+			 */
+			controllerPropertySet: function(parameters) {
+				if (
+					!Ext.Object.isEmpty(parameters)
+					&& !Ext.isEmpty(parameters.name)
+					&& !Ext.isEmpty(this[parameters.name])
+				) {
+					this[parameters.name] = parameters.value;
+				}
 			},
 
 		/**

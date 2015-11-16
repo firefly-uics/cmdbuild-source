@@ -79,7 +79,10 @@
 			this.tabDelegate = this.view.delegate;
 
 			this.tabDelegate.cmfg('tabEmailConfigurationSet', { value: this.widgetConfiguration });
-			this.tabDelegate.cmfg('configurationTemplatesSet', this.cmfg('widgetManageEmailConfigurationGet', CMDBuild.core.constants.Proxy.TEMPLATES));
+			this.tabDelegate.cmfg('tabEmailConfigurationSet', {
+				propertyName: CMDBuild.core.constants.Proxy.TEMPLATES,
+				value: this.cmfg('widgetManageEmailConfigurationGet', CMDBuild.core.constants.Proxy.TEMPLATES)
+			});
 
 			// Build bottom toolbar
 			this.buildBottomToolbar();
@@ -127,7 +130,7 @@
 		 */
 		getData: function() {
 			var out = {};
-			out[CMDBuild.core.constants.Proxy.OUTPUT] = this.tabDelegate.cmfg('selectedEntityIdGet');
+			out[CMDBuild.core.constants.Proxy.OUTPUT] = this.tabDelegate.cmfg('tabEmailSelectedEntityGet', CMDBuild.core.constants.Proxy.ID);
 
 			return out;
 		},
@@ -140,7 +143,7 @@
 		 * @override
 		 */
 		isBusy: function() {
-			return this.tabDelegate.cmfg('busyStateGet');
+			return this.tabDelegate.cmfg('tabEmailBusyStateGet');
 		},
 
 		/**
@@ -166,9 +169,7 @@
 		 */
 		onBeforeSave: function(callbackChainArray, i) {
 			if (!Ext.isEmpty(callbackChainArray[i])) {
-				var me = this;
-
-				this.tabDelegate.globalLoadMask = false;
+				this.tabDelegate.cmfg('tabEmailGlobalLoadMaskSet', false);
 
 				this.beforeSaveCallbackObject = {
 					array: callbackChainArray,
@@ -176,25 +177,29 @@
 				};
 
 				// Setup end-point callback to close widget save callback loop
-				this.tabDelegate.cmfg('regenerationEndPointCallbackSet', function() {
-					if (!Ext.Object.isEmpty(me.beforeSaveCallbackObject)) {
-						var index = me.beforeSaveCallbackObject.index;
+				var callbackDefinitionObject = {};
+				callbackDefinitionObject[CMDBuild.core.constants.Proxy.SCOPE] = this;
+				callbackDefinitionObject[CMDBuild.core.constants.Proxy.FUNCTION] =  function() {
+					if (!Ext.Object.isEmpty(this.beforeSaveCallbackObject)) {
+						var index = this.beforeSaveCallbackObject.index;
 
 						Ext.callback(
-							me.beforeSaveCallbackObject.array[index].fn,
-							me.beforeSaveCallbackObject.array[index].scope,
+							this.beforeSaveCallbackObject.array[index].fn,
+							this.beforeSaveCallbackObject.array[index].scope,
 							[
-								me.beforeSaveCallbackObject.array,
+								this.beforeSaveCallbackObject.array,
 								index + 1
 							]
 						);
 					}
 
-					me.tabDelegate.cmfg('regenerationEndPointCallbackSet'); // Reset callback function
-				});
+					this.tabDelegate.cmfg('regenerationEndPointCallbackSet'); // Reset callback function
+				};
 
-				this.tabDelegate.cmfg('regenerateAllEmailsSet', true);
-				this.tabDelegate.cmfg('storeLoad');
+				this.tabDelegate.cmfg('tabEmailRegenerationEndPointCallbackSet', callbackDefinitionObject);
+
+				this.tabDelegate.cmfg('tabEmailRegenerateAllEmailsSet', true);
+				this.tabDelegate.controllerGrid.cmfg('tabEmailGridStoreLoad');
 			}
 		},
 

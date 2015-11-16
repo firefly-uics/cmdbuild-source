@@ -42,7 +42,6 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
-			'controllerPropertyGet',
 			'onUserAndGroupGroupAccordionSelect = onUserAndGroupAccordionSelect',
 			'onUserAndGroupGroupAddButtonClick -> controllerProperties, controllerPrivileges, controllerUsers, controllerUserInterface, controllerDefaultFilters',
 			'onUserAndGroupGroupSelected -> controllerProperties, controllerPrivileges, controllerUsers, controllerUserInterface, controllerDefaultFilters',

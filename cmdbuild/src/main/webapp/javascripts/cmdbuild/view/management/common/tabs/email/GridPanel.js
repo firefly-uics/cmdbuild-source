@@ -38,7 +38,7 @@
 
 								disabled: (
 									this.delegate.cmfg('tabEmailConfigurationGet', CMDBuild.core.constants.Proxy.READ_ONLY)
-									|| !this.delegate.cmfg('editModeGet')
+									|| !this.delegate.cmfg('tabEmailEditModeGet')
 								),
 
 								handler: function(button, e) {
@@ -51,7 +51,7 @@
 
 								disabled: (
 									this.delegate.cmfg('tabEmailConfigurationGet', CMDBuild.core.constants.Proxy.READ_ONLY)
-									|| !this.delegate.cmfg('editModeGet')
+									|| !this.delegate.cmfg('tabEmailEditModeGet')
 								),
 
 								handler: function(button, e) {
@@ -63,7 +63,7 @@
 
 										fn: function(btn) {
 											if (btn == 'ok')
-												me.delegate.cmfg('onGlobalRegenerationButtonClick');
+												me.delegate.cmfg('onTabEmailGlobalRegenerationButtonClick');
 										}
 									});
 								}
@@ -74,7 +74,7 @@
 								scope: this,
 
 								handler: function(button, e) {
-									this.delegate.cmfg('storeLoad');
+									this.delegate.cmfg('tabEmailGridStoreLoad');
 								}
 							})
 						]
@@ -136,7 +136,7 @@
 								isDisabled: function(grid, rowIndex, colIndex, item, record) {
 									return (
 										this.delegate.cmfg('tabEmailConfigurationGet', CMDBuild.core.constants.Proxy.READ_ONLY)
-										|| !this.delegate.cmfg('editModeGet')
+										|| !this.delegate.cmfg('tabEmailEditModeGet')
 										|| !this.delegate.recordIsEditable(record)
 										|| !this.delegate.isRegenerable(record)
 										|| !record.get(CMDBuild.core.constants.Proxy.KEEP_SYNCHRONIZATION)
@@ -155,7 +155,7 @@
 								isDisabled: function(grid, rowIndex, colIndex, item, record) {
 									return (
 										this.delegate.cmfg('tabEmailConfigurationGet', CMDBuild.core.constants.Proxy.READ_ONLY)
-										|| !this.delegate.cmfg('editModeGet')
+										|| !this.delegate.cmfg('tabEmailEditModeGet')
 										|| this.delegate.recordIsEditable(record)
 									);
 								}
@@ -172,7 +172,7 @@
 								isDisabled: function(grid, rowIndex, colIndex, item, record) {
 									return (
 										this.delegate.cmfg('tabEmailConfigurationGet', CMDBuild.core.constants.Proxy.READ_ONLY)
-										|| !this.delegate.cmfg('editModeGet')
+										|| !this.delegate.cmfg('tabEmailEditModeGet')
 										|| !this.delegate.cmfg('tabEmailGridRecordIsSendable', record)
 									);
 								}
@@ -189,7 +189,7 @@
 								isDisabled: function(grid, rowIndex, colIndex, item, record) {
 									return (
 										this.delegate.cmfg('tabEmailConfigurationGet', CMDBuild.core.constants.Proxy.READ_ONLY)
-										|| !this.delegate.cmfg('editModeGet')
+										|| !this.delegate.cmfg('tabEmailEditModeGet')
 										|| !this.delegate.recordIsEditable(record)
 									);
 								}
@@ -215,7 +215,7 @@
 								isDisabled: function(grid, rowIndex, colIndex, item, record) {
 									return (
 										this.delegate.cmfg('tabEmailConfigurationGet', CMDBuild.core.constants.Proxy.READ_ONLY)
-										|| !this.delegate.cmfg('editModeGet')
+										|| !this.delegate.cmfg('tabEmailEditModeGet')
 										|| !this.delegate.recordIsEditable(record)
 									);
 								}

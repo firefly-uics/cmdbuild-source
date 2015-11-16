@@ -26,7 +26,7 @@
 			CMDBuild.core.interfaces.messages.Warning.display(action.result);
 			CMDBuild.core.interfaces.messages.Error.display(action.result, action);
 
-			Ext.callback(originalFunction, action.scope, [action, action.result.success, action.result]);
+			Ext.callback(originalFunction, action.scope, [action, action.result.success, action.response]);
 		},
 
 		/**

@@ -95,7 +95,7 @@
 		 * Regenerates only selected records
 		 */
 		onConfirmRegenerationWindowConfirmButtonClick: function() {
-			this.cmfg('regenerateSelectedEmails', this.view.grid.getSelectionModel().getSelection());
+			this.cmfg('tabEmailRegenerateSelectedEmails', this.view.grid.getSelectionModel().getSelection());
 
 			this.view.hide();
 		},
@@ -135,7 +135,7 @@
 							attributes: Ext.Object.getKeys(xaVars),
 							callback: function(values, ctx) {
 								emailObject = Ext.create('CMDBuild.model.common.tabs.email.Email', values);
-								emailObject.set(CMDBuild.core.constants.Proxy.REFERENCE, me.cmfg('selectedEntityIdGet'));
+								emailObject.set(CMDBuild.core.constants.Proxy.REFERENCE, me.cmfg('tabEmailSelectedEntityGet', CMDBuild.core.constants.Proxy.ID));
 								emailObject.set(CMDBuild.core.constants.Proxy.TEMPLATE, template.get(CMDBuild.core.constants.Proxy.KEY));
 
 								me.gridStore.add(emailObject);
