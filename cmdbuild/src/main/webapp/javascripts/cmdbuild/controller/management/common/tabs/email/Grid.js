@@ -145,32 +145,52 @@
 		},
 
 		/**
+		 * Creates reply email object
+		 *
 		 * @param {Mixed} record
 		 */
 		onTabEmailGridReplyEmailButtonClick: function(record) {
-			var content = '<p>'
+			if (!Ext.Object.isEmpty(record)) {
+				var content = '<p>'
 					+ CMDBuild.Translation.onDay + ' ' + record.get(CMDBuild.core.constants.Proxy.DATE)
 					+ ', <' + record.get(CMDBuild.core.constants.Proxy.FROM) + '> ' + CMDBuild.Translation.hasWrote
 				+ ':</p>'
 				+ '<blockquote>' + record.get(CMDBuild.core.constants.Proxy.BODY) + '</blockquote>';
 
-			var replyRecordData = {};
-			replyRecordData[CMDBuild.core.constants.Proxy.ACCOUNT] = record.get(CMDBuild.core.constants.Proxy.ACCOUNT);
-			replyRecordData[CMDBuild.core.constants.Proxy.BCC] = record.get(CMDBuild.core.constants.Proxy.BCC);
-			replyRecordData[CMDBuild.core.constants.Proxy.BODY] = content;
-			replyRecordData[CMDBuild.core.constants.Proxy.CC] = record.get(CMDBuild.core.constants.Proxy.CC);
-			replyRecordData[CMDBuild.core.constants.Proxy.KEEP_SYNCHRONIZATION] = false;
-			replyRecordData[CMDBuild.core.constants.Proxy.NOTIFY_WITH] = record.get(CMDBuild.core.constants.Proxy.NOTIFY_WITH);
-			replyRecordData[CMDBuild.core.constants.Proxy.NO_SUBJECT_PREFIX] = record.get(CMDBuild.core.constants.Proxy.NO_SUBJECT_PREFIX);
-			replyRecordData[CMDBuild.core.constants.Proxy.REFERENCE] = this.cmfg('tabEmailSelectedEntityGet', CMDBuild.core.constants.Proxy.ID);
-			replyRecordData[CMDBuild.core.constants.Proxy.SUBJECT] = 'RE: ' + record.get(CMDBuild.core.constants.Proxy.SUBJECT);
-			replyRecordData[CMDBuild.core.constants.Proxy.TO] = record.get(CMDBuild.core.constants.Proxy.FROM) || record.get(CMDBuild.core.constants.Proxy.TO);
+				var replyRecordData = {};
+				replyRecordData[CMDBuild.core.constants.Proxy.ACCOUNT] = record.get(CMDBuild.core.constants.Proxy.ACCOUNT);
+				replyRecordData[CMDBuild.core.constants.Proxy.BCC] = record.get(CMDBuild.core.constants.Proxy.BCC);
+				replyRecordData[CMDBuild.core.constants.Proxy.BODY] = content;
+				replyRecordData[CMDBuild.core.constants.Proxy.CC] = record.get(CMDBuild.core.constants.Proxy.CC);
+				replyRecordData[CMDBuild.core.constants.Proxy.KEEP_SYNCHRONIZATION] = false;
+				replyRecordData[CMDBuild.core.constants.Proxy.NOTIFY_WITH] = record.get(CMDBuild.core.constants.Proxy.NOTIFY_WITH);
+				replyRecordData[CMDBuild.core.constants.Proxy.NO_SUBJECT_PREFIX] = record.get(CMDBuild.core.constants.Proxy.NO_SUBJECT_PREFIX);
+				replyRecordData[CMDBuild.core.constants.Proxy.REFERENCE] = this.cmfg('tabEmailSelectedEntityGet', CMDBuild.core.constants.Proxy.ID);
+				replyRecordData[CMDBuild.core.constants.Proxy.SUBJECT] = 'RE: ' + record.get(CMDBuild.core.constants.Proxy.SUBJECT);
+				replyRecordData[CMDBuild.core.constants.Proxy.TO] = record.get(CMDBuild.core.constants.Proxy.FROM) || record.get(CMDBuild.core.constants.Proxy.TO);
 
-			Ext.create('CMDBuild.controller.management.common.tabs.email.EmailWindow', {
-				parentDelegate: this,
-				record: Ext.create('CMDBuild.model.common.tabs.email.Email', replyRecordData),
-				windowMode: 'reply'
-			});
+				var record = this.recordCreate(replyRecordData);
+
+				this.cmfg('tabEmailGridRecordAdd', {
+					record: record,
+					scope: this,
+					success: function(response, options, decodedResponse) { // Success function override
+						decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.RESPONSE];
+
+						record.set(CMDBuild.core.constants.Proxy.ID, decodedResponse);
+
+						Ext.create('CMDBuild.controller.management.common.tabs.email.EmailWindow', {
+							parentDelegate: this,
+							record: record,
+							windowMode: 'reply'
+						});
+
+						this.cmfg('tabEmailGridStoreLoad');
+					}
+				});
+			} else {
+				_error('empty record parameter on reply button click', this);
+			}
 		},
 
 		/**
