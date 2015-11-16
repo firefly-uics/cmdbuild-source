@@ -51,7 +51,7 @@
 			CMDBuild.core.constants.Proxy.GENERIC, // Default
 			CMDBuild.core.constants.Proxy.GROUP,
 			CMDBuild.core.constants.Proxy.USER,
-			CMDBuild.core.constants.Proxy.CLASSES
+			CMDBuild.core.constants.Proxy.CLASS
 		],
 
 		/**

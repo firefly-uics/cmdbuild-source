@@ -3,7 +3,10 @@
 	Ext.define('CMDBuild.view.management.common.tabs.email.attachments.picker.MainWindow', {
 		extend: 'CMDBuild.PopupWindow',
 
-		requires: ['CMDBuild.core.constants.Proxy'],
+		requires: [
+			'CMDBuild.core.constants.Proxy',
+			'CMDBuild.core.proxy.common.tabs.email.Attachment'
+		],
 
 		/**
 		 * @cfg {CMDBuild.controller.management.common.tabs.email.attachments.Picker}
@@ -41,10 +44,10 @@
 								fieldLabel: CMDBuild.Translation.selectAClass,
 								labelAlign: 'right',
 								valueField: CMDBuild.core.constants.Proxy.ID,
-								displayField: CMDBuild.core.constants.Proxy.DESCRIPTION,
+								displayField: CMDBuild.core.constants.Proxy.TEXT,
 								editable: false,
 
-								store: _CMCache.getClassesAndProcessesStore(),
+								store: CMDBuild.core.proxy.common.tabs.email.Attachment.getTargetClassComboStore(),
 								queryMode: 'local',
 
 								listeners: {
