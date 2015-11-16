@@ -31,6 +31,7 @@
 			'tabEmailGridDraftEmailsIsEmpty',
 			'tabEmailGridRecordAdd',
 			'tabEmailGridRecordEdit',
+			'tabEmailGridRecordIsEditable',
 			'tabEmailGridRecordIsRegenerable',
 			'tabEmailGridRecordIsSendable',
 			'tabEmailGridRecordRemove',
@@ -127,7 +128,7 @@
 			if (
 				!this.cmfg('tabEmailConfigurationGet', CMDBuild.core.constants.Proxy.READ_ONLY)
 				&& this.cmfg('tabEmailEditModeGet')
-				&& this.recordIsEditable(record)
+				&& this.cmfg('tabEmailGridRecordIsEditable', record)
 			) {
 				this.onTabEmailGridEditEmailButtonClick(record);
 			} else {
@@ -207,15 +208,6 @@
 			recordValues[CMDBuild.core.constants.Proxy.TEMPORARY] = this.cmfg('tabEmailSelectedEntityGet', CMDBuild.core.constants.Proxy.ID) < 0; // Setup temporary parameter
 
 			return Ext.create('CMDBuild.model.common.tabs.email.Email', recordValues);
-		},
-
-		/**
-		 * @param {Mixed} record
-		 *
-		 * @returns {Boolean}
-		 */
-		recordIsEditable: function(record) {
-			return record.get(CMDBuild.core.constants.Proxy.STATUS) == CMDBuild.core.constants.Proxy.DRAFT;
 		},
 
 		/**
@@ -314,6 +306,15 @@
 					this.cmfg('tabEmailGridStoreLoad');
 				}
 			}
+		},
+
+		/**
+		 * @param {Mixed} record
+		 *
+		 * @returns {Boolean}
+		 */
+		tabEmailGridRecordIsEditable: function(record) {
+			return record.get(CMDBuild.core.constants.Proxy.STATUS) == CMDBuild.core.constants.Proxy.DRAFT;
 		},
 
 		/**

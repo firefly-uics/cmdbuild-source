@@ -55,6 +55,9 @@
 			this.buildCardModuleStateDelegate();
 		},
 
+		/**
+		 * @private
+		 */
 		buildCardModuleStateDelegate: function() {
 			var me = this;
 
@@ -81,7 +84,7 @@
 		},
 
 		onAbortCardClick: function() {
-			this.cmfg('tabEmailEditModeSet', true);
+			this.cmfg('tabEmailEditModeSet', false);
 		},
 
 		/**
@@ -95,7 +98,7 @@
 				value: false
 			});
 
-			this.cmfg('tabEmailEditModeSet', true);
+			this.cmfg('tabEmailEditModeSet', false);
 
 			this.cmfg('tabEmailSelectedEntitySet', {
 				selectedEntity: this.card,
@@ -142,7 +145,7 @@
 				value: false
 			});
 
-			this.cmfg('tabEmailEditModeSet', true);
+			this.cmfg('tabEmailEditModeSet', false);
 		},
 
 		/**

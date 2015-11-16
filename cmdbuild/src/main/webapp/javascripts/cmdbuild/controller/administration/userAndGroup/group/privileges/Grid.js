@@ -199,10 +199,11 @@
 			Ext.Msg.show({
 				title: CMDBuild.Translation.attention,
 				msg: CMDBuild.Translation.common.confirmpopup.areyousure,
-				scope: this,
 				buttons: Ext.Msg.YESNO,
-				fn: function(button) {
-					if (button == 'yes') {
+				scope: this,
+
+				fn: function(buttonId, text, opt) {
+					if (buttonId == 'yes') {
 						var params = {};
 						params['privilegedObjectId'] = record.get(CMDBuild.core.constants.Proxy.ID);
 						params[CMDBuild.core.constants.Proxy.GROUP_ID] = this.cmfg('userAndGroupGroupSelectedGroupGet', CMDBuild.core.constants.Proxy.ID);
