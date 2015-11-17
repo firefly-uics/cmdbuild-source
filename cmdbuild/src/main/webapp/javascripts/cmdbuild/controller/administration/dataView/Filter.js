@@ -239,13 +239,13 @@
 			},
 
 		/**
-		 * @param {Object} result
+		 * @param {Object} response
 		 * @param {Object} options
-		 * @param {Object} decodedResult
+		 * @param {Object} decodedResponse
 		 *
 		 * @private
 		 */
-		success: function(result, options, decodedResult) {
+		success: function(response, options, decodedResponse) {
 			var me = this;
 
 			CMDBuild.view.common.field.translatable.Utils.commit(this.form);
