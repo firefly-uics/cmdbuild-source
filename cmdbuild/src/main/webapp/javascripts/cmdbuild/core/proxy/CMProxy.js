@@ -6,7 +6,7 @@
 	Ext.define('CMDBuild.core.proxy.CMProxy', {
 		alternateClassName: 'CMDBuild.ServiceProxy.core', // Legacy class name
 
-		requires: ['CMDBuild.core.Ajax'],
+		requires: ['CMDBuild.core.interfaces.Ajax'],
 
 		singleton: true,
 
@@ -23,7 +23,7 @@
 				}
 			});
 
-			CMDBuild.core.Ajax.request({
+			CMDBuild.core.interfaces.Ajax.request({
 				timeout: parameters.timeout,
 				url: parameters.url,
 				method: parameters.method,
@@ -66,7 +66,7 @@
 	CMDBuild.ServiceProxy.getFKTargetingClass = function(p) {
 		p.url = CMDBuild.ServiceProxy.url.fkTargetClass;
 		p.method = 'GET';
-		CMDBuild.core.Ajax.request(p);
+		CMDBuild.core.interfaces.Ajax.request(p);
 	};
 
 	// Alias

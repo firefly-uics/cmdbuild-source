@@ -3,7 +3,7 @@
 	Ext.define('CMDBuild.core.proxy.widgets.CustomForm', {
 
 		requires: [
-			'CMDBuild.core.Ajax',
+			'CMDBuild.core.interfaces.Ajax',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.Index'
 		],
@@ -29,7 +29,7 @@
 		 * @param {Object} parameters
 		 */
 		readFromFunctions: function(parameters) {
-			CMDBuild.core.Ajax.request({
+			CMDBuild.core.interfaces.Ajax.request({
 				url: CMDBuild.core.proxy.Index.functions.readCards,
 				params: parameters.params,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,

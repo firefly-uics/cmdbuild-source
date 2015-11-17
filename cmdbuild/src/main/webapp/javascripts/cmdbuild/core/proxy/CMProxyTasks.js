@@ -3,7 +3,7 @@
 	Ext.define('CMDBuild.core.proxy.CMProxyTasks', {
 
 		requires: [
-			'CMDBuild.core.Ajax',
+			'CMDBuild.core.interfaces.Ajax',
 			'CMDBuild.model.CMModelTasks'
 		],
 
@@ -13,7 +13,7 @@
 		 * @param {Object} parameters
 		 */
 		create: function(parameters) {
-			CMDBuild.core.Ajax.request({
+			CMDBuild.core.interfaces.Ajax.request({
 				method: 'POST',
 				url: this.getUrl(parameters.type).post,
 				params: parameters.params,
@@ -67,7 +67,7 @@
 		 * @param {Object} parameters
 		 */
 		remove: function(parameters) {
-			CMDBuild.core.Ajax.request({
+			CMDBuild.core.interfaces.Ajax.request({
 				method: 'POST',
 				url: this.getUrl(parameters.type).remove,
 				params: parameters.params,
@@ -81,7 +81,7 @@
 		 * @param {Object} parameters
 		 */
 		start: function(parameters) {
-			CMDBuild.core.Ajax.request({
+			CMDBuild.core.interfaces.Ajax.request({
 				method: 'POST',
 				url: this.getUrl('all').start,
 				params: parameters.params,
@@ -95,7 +95,7 @@
 		 * @param {Object} parameters
 		 */
 		stop: function(parameters) {
-			CMDBuild.core.Ajax.request({
+			CMDBuild.core.interfaces.Ajax.request({
 				method: 'POST',
 				url: this.getUrl('all').stop,
 				params: parameters.params,
@@ -109,7 +109,7 @@
 		 * @param {Object} parameters
 		 */
 		update: function(parameters) {
-			CMDBuild.core.Ajax.request({
+			CMDBuild.core.interfaces.Ajax.request({
 				method: 'POST',
 				url: this.getUrl(parameters.type).put,
 				params: parameters.params,
@@ -314,7 +314,7 @@
 			 * @param {Object} parameters
 			 */
 			getWorkflowAttributes: function(parameters) {
-				CMDBuild.core.Ajax.request({
+				CMDBuild.core.interfaces.Ajax.request({
 					method: 'POST',
 					url: CMDBuild.core.proxy.Index.attribute.read,
 					params: parameters.params,

@@ -4,7 +4,7 @@
 		alternateClassName: 'CMDBuild.ServiceProxy.workflow', // Legacy class name
 
 		requires: [
-			'CMDBuild.core.Ajax',
+			'CMDBuild.core.interfaces.Ajax',
 			'CMDBuild.core.proxy.Index'
 		],
 
@@ -58,7 +58,7 @@
 		 * @param {} parameters
 		 */
 		getXpdlVersions: function(parameters) {
-			CMDBuild.core.Ajax.request({
+			CMDBuild.core.interfaces.Ajax.request({
 				method: 'POST',
 				url: CMDBuild.core.proxy.Index.workflow.xpdlVersions,
 				params: parameters.params,
@@ -87,7 +87,7 @@
 		 * @param {Object} parameters
 		 */
 		synchronize: function(parameters) {
-			CMDBuild.core.Ajax.request( {
+			CMDBuild.core.interfaces.Ajax.request( {
 				url: CMDBuild.core.proxy.Index.workflow.synchronize,
 				loadMask: true,
 				params: parameters.params,

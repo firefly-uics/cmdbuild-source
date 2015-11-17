@@ -3,7 +3,7 @@
 	Ext.define('CMDBuild.core.proxy.email.Queue', {
 
 		requires: [
-			'CMDBuild.core.Ajax',
+			'CMDBuild.core.interfaces.Ajax',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.Index'
 		],
@@ -14,7 +14,7 @@
 		 * @param {Object} parameters
 		 */
 		configurationRead: function(parameters) {
-			CMDBuild.core.Ajax.request({
+			CMDBuild.core.interfaces.Ajax.request({
 				method: 'POST',
 				url: CMDBuild.core.proxy.Index.email.queue.configuration,
 				scope: parameters.scope || this,
@@ -29,7 +29,7 @@
 		 * @param {Object} parameters
 		 */
 		configurationSave: function(parameters) {
-			CMDBuild.core.Ajax.request({
+			CMDBuild.core.interfaces.Ajax.request({
 				method: 'GET',
 				url: CMDBuild.core.proxy.Index.email.queue.configure,
 				params: parameters.params,
@@ -45,7 +45,7 @@
 		 * @param {Object} parameters
 		 */
 		isRunning: function(parameters) {
-			CMDBuild.core.Ajax.request({
+			CMDBuild.core.interfaces.Ajax.request({
 				method: 'POST',
 				url: CMDBuild.core.proxy.Index.email.queue.running,
 				scope: parameters.scope || this,
@@ -60,7 +60,7 @@
 		 * @param {Object} parameters
 		 */
 		start: function(parameters) {
-			CMDBuild.core.Ajax.request({
+			CMDBuild.core.interfaces.Ajax.request({
 				method: 'POST',
 				url: CMDBuild.core.proxy.Index.email.queue.start,
 				scope: parameters.scope || this,
@@ -75,7 +75,7 @@
 		 * @param {Object} parameters
 		 */
 		stop: function(parameters) {
-			CMDBuild.core.Ajax.request({
+			CMDBuild.core.interfaces.Ajax.request({
 				method: 'POST',
 				url: CMDBuild.core.proxy.Index.email.queue.stop,
 				scope: parameters.scope || this,

@@ -3,7 +3,7 @@
 	Ext.define('CMDBuild.core.proxy.Csv', {
 
 		requires: [
-			'CMDBuild.core.Ajax',
+			'CMDBuild.core.interfaces.Ajax',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.LoadMask',
 			'CMDBuild.core.proxy.Index'
@@ -28,14 +28,14 @@
 		 * @param {Object} parameters
 		 */
 		getRecords: function(parameters) {
-			CMDBuild.core.Ajax.request({
+			CMDBuild.core.interfaces.Ajax.request({
 				method: 'GET',
 				url: CMDBuild.core.proxy.Index.csv.getCsvRecords,
 				scope: parameters.scope || this,
 				failure: parameters.failure || Ext.emptyFn,
 				success: parameters.success || Ext.emptyFn,
-				callback: function(records, operation, success) { // Clears server session data
-					CMDBuild.core.Ajax.request({
+				callback: function(options, success, response) { // Clears server session data
+					CMDBuild.core.interfaces.Ajax.request({
 						method: 'GET',
 						url: CMDBuild.core.proxy.Index.csv.clearSession
 					});

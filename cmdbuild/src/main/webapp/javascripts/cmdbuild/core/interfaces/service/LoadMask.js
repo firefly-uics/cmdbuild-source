@@ -1,8 +1,5 @@
 (function() {
 
-	/**
-	 * Service class used only from interface classes
-	 */
 	Ext.define('CMDBuild.core.interfaces.service.LoadMask', {
 
 		requires: ['CMDBuild.core.LoadMask'],

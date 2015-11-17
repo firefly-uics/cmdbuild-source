@@ -1,5 +1,5 @@
 CMDBuild.ServiceProxy.getFeature = function(classId, cardId, success, failure, callback) {
-	CMDBuild.core.Ajax.request({
+	CMDBuild.core.interfaces.Ajax.request({
 		url: 'services/json/gis/getfeature',
         params: {
             "className": _CMCache.getEntryTypeNameById(classId),
@@ -13,7 +13,7 @@ CMDBuild.ServiceProxy.getFeature = function(classId, cardId, success, failure, c
 };
 	
 CMDBuild.ServiceProxy.getGeoCardList = function(classId, success, failure, callback) {
-	CMDBuild.core.Ajax.request({
+	CMDBuild.core.interfaces.Ajax.request({
 		scope : this,
 		important: true,
 		url : 'services/json/gis/getgeocardlist',
@@ -32,11 +32,11 @@ CMDBuild.ServiceProxy.saveLayerVisibility = function(p) {
 	p.url = 'services/json/gis/setlayervisibility';
 	p.important = true;
 
-	CMDBuild.core.Ajax.request(p);
+	CMDBuild.core.interfaces.Ajax.request(p);
 };
 
 CMDBuild.ServiceProxy.saveLayerOrder = function(p) {
-	CMDBuild.core.Ajax.request({
+	CMDBuild.core.interfaces.Ajax.request({
 		scope : this,
 		important: true,
 		url: 'services/json/gis/setlayersorder',
@@ -113,7 +113,7 @@ CMDBuild.ServiceProxy.geoServer = {
 		p.url = "services/json/gis/deletegeoserverlayer";
 		p.important = true;
 		
-		CMDBuild.core.Ajax.request(p);
+		CMDBuild.core.interfaces.Ajax.request(p);
 	}
 };
 
@@ -122,21 +122,21 @@ CMDBuild.ServiceProxy.gis = {
 		config.method = "GET";
 		config.url = "services/json/gis/getgistreenavigation";
 
-		CMDBuild.core.Ajax.request(config);
+		CMDBuild.core.interfaces.Ajax.request(config);
 	},
 
 	saveGisTreeNavigation: function(config) {
 		config.method = "POST";
 		config.url = "services/json/gis/savegistreenavigation";
 
-		CMDBuild.core.Ajax.request(config);
+		CMDBuild.core.interfaces.Ajax.request(config);
 	},
 
 	removeGisTreeNavigation: function(config) {
 		config.method = "POST";
 		config.url = "services/json/gis/removegistreenavigation";
 
-		CMDBuild.core.Ajax.request(config);
+		CMDBuild.core.interfaces.Ajax.request(config);
 	},
 
 	expandDomainTree: function(config) {
@@ -144,13 +144,13 @@ CMDBuild.ServiceProxy.gis = {
 		config.url = "services/json/gis/expanddomaintree";
 		config.timeout = 300000;
 
-		CMDBuild.core.Ajax.request(config);
+		CMDBuild.core.interfaces.Ajax.request(config);
 	},
 
 	getAllLayers: function(config) {
 		config.method = "GET";
 		config.url = "services/json/gis/getalllayers";
 
-		CMDBuild.core.Ajax.request(config);
+		CMDBuild.core.interfaces.Ajax.request(config);
 	}
 };

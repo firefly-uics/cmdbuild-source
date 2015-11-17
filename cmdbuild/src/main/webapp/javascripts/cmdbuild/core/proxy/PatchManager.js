@@ -3,7 +3,7 @@
 	Ext.define('CMDBuild.core.proxy.PatchManager', {
 
 		requires: [
-			'CMDBuild.core.Ajax',
+			'CMDBuild.core.interfaces.Ajax',
 			'CMDBuild.core.configurations.Timeout',
 			'CMDBuild.core.proxy.Index',
 			'CMDBuild.model.patchManager.Patch'
@@ -41,7 +41,7 @@
 		 * @param {Object} parameters
 		 */
 		update: function(parameters) {
-			CMDBuild.core.Ajax.request({
+			CMDBuild.core.interfaces.Ajax.request({
 				url: CMDBuild.core.proxy.Index.patchManager.update,
 				params: parameters.params,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,

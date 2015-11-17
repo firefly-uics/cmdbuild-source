@@ -164,7 +164,7 @@
 		 * @param (String) parameters.params.projectId
 		 */
 		importIfc: function(parameters) {
-			CMDBuild.core.Ajax.request({
+			CMDBuild.core.interfaces.Ajax.request({
 				method: 'POST',
 				url: url.importIfc,
 				params: parameters.params,

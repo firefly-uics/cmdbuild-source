@@ -176,7 +176,7 @@
 
 						this.grid.getStore().load({
 							scope: this,
-							callback: function(options, success, response) {
+							callback: function(records, operation, success) {
 								this.grid.getSelectionModel().select(0, true);
 
 								// If no selections disable all UI

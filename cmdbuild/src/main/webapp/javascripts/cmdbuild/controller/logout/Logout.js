@@ -29,7 +29,7 @@
 						CMDBuild.core.proxy.session.Rest.logout({ urlParams: urlParams });
 					}
 				},
-				callback: function(records, operation, success) {
+				callback: function(options, success, response) {
 					Ext.util.Cookies.clear(CMDBuild.core.constants.Proxy.REST_SESSION_TOKEN);
 
 					window.location = 'index.jsp';
