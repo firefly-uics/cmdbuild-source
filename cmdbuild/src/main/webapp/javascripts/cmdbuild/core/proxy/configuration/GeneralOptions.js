@@ -31,6 +31,11 @@
 						startParam: undefined
 					}
 				},
+				filters: [
+					function(record) { // Filters root of all classes
+						return record.get(CMDBuild.core.constants.Proxy.NAME) != 'Class';
+					}
+				],
 				sorters: [
 					{ property: CMDBuild.core.constants.Proxy.TEXT, direction: 'ASC' }
 				]

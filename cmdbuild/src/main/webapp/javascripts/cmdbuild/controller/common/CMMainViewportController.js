@@ -84,12 +84,15 @@
 	};
 
 	ns.CMMainViewportController.prototype.selectStartingClass = function() {
-		var startingClass = CMDBuild.Runtime.StartingClassId || CMDBuild.Config.cmdbuild.startingclass, // TODO check also the group starting class
-		a = startingClass ? this.getFirstAccordionWithANodeWithGivenId(startingClass) : undefined;
+		var startingClassId = (
+			CMDBuild.configuration.runtime.get(CMDBuild.core.constants.Proxy.STARTING_CLASS_ID) // Group's starting class
+			|| CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.STARTING_CLASS) // Main configuration's starting class
+		);
+		var accordionWithNode = Ext.isEmpty(startingClassId) ? undefined : this.getFirstAccordionWithANodeWithGivenId(startingClassId);
 
-		if (a) {
-			a.expandSilently();
-			a.selectNodeById(startingClass);
+		if (!Ext.isEmpty(accordionWithNode)) {
+			accordionWithNode.expand();
+			accordionWithNode.selectNodeById(startingClassId);
 		} else {
 			this.selectFirstSelectableLeaf();
 		}

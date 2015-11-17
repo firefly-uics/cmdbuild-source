@@ -50,7 +50,7 @@
 					url: CMDBuild.core.proxy.Index.classes.readAll,
 					reader: {
 						type: 'json',
-						root: 'classes'
+						root: CMDBuild.core.constants.Proxy.CLASSES
 					},
 					extraParams: {
 						limitParam: undefined,
