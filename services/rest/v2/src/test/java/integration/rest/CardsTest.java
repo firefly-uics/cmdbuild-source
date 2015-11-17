@@ -147,6 +147,9 @@ public class CardsTest {
 		// given
 		final ResponseSingle<Long> expectedResponse = newResponseSingle(Long.class) //
 				.withElement(123L) //
+				.withMetadata(newMetadata() //
+						// nothing to add, just needed for simplify assertions
+						.build()) //
 				.build();
 		doReturn(expectedResponse) //
 				.when(service).create(anyString(), any(Card.class));
@@ -191,6 +194,9 @@ public class CardsTest {
 						.withValues(firstValues) //
 						.build() //
 				) //
+				.withMetadata(newMetadata() //
+						// nothing to add, just needed for simplify assertions
+						.build()) //
 				.build();
 		final ResponseSingle<Map<String, Object>> expectedResponse = Models.<Map<String, Object>> newResponseSingle() //
 				.withElement(ChainablePutMap.of(new HashMap<String, Object>()) //
@@ -198,6 +204,9 @@ public class CardsTest {
 						.chainablePut(UNDERSCORED_ID, firstId) //
 						.chainablePutAll(firstValues) //
 				) //
+				.withMetadata(newMetadata() //
+						// nothing to add, just needed for simplify assertions
+						.build()) //
 				.build();
 		doReturn(sentResponse) //
 				.when(service).read(anyString(), anyLong());

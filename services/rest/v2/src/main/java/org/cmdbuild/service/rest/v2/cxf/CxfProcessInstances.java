@@ -129,15 +129,29 @@ public class CxfProcessInstances implements ProcessInstances {
 		if (elements.totalSize() == 0) {
 			errorHandler.processInstanceNotFound(instanceId);
 		}
+		final UserProcessInstance element = from(elements).first().get();
+		final Map<Long, Reference> references = newHashMap();
+		for (final CMAttribute _element : from(element.getType().getAllAttributes()) //
+				.filter(attributeTypeInstanceOf(ReferenceAttributeType.class))) {
+			final Object value = element.get(_element.getName());
+			if (value instanceof IdAndDescription) {
+				final IdAndDescription _value = IdAndDescription.class.cast(value);
+				if (_value.getId() != null) {
+					references.put(_value.getId(), newReference() //
+							.withDescription(_value.getDescription()) //
+							.build());
+				}
+			}
+		}
 		final Function<UserProcessInstance, ProcessInstance> toProcessInstance = ToProcessInstance.newInstance() //
 				.withType(found) //
 				.withLookupHelper(lookupHelper) //
 				.build();
 		return newResponseSingle(ProcessInstance.class) //
-				.withElement(from(elements) //
-						.transform(toProcessInstance) //
-						.first() //
-						.get()) //
+				.withElement(toProcessInstance.apply(element)) //
+				.withMetadata(newMetadata() //
+						.withReferences(references) //
+						.build()) //
 				.build();
 	}
 
