@@ -6,6 +6,7 @@
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.interfaces.messages.Error',
 			'CMDBuild.core.interfaces.messages.Warning',
+			'CMDBuild.core.interfaces.service.LoadMask',
 			'CMDBuild.core.LoadMask'
 		],
 
@@ -21,7 +22,7 @@
 		 * @private
 		 */
 		adapterCallback: function(form, action, originalFunction) {
-			CMDBuild.core.interfaces.FormSubmit.manageLoadMask(action.loadMask, false);
+			CMDBuild.core.interfaces.service.LoadMask.manage(action.loadMask, false);
 
 			CMDBuild.core.interfaces.messages.Warning.display(action.result);
 			CMDBuild.core.interfaces.messages.Error.display(action.result, action);
@@ -53,36 +54,6 @@
 		 */
 		adapterFailure: function(form, action, originalFunction) {
 			Ext.callback(originalFunction, action.scope, [action.response, action, action.result]);
-		},
-
-		/**
-		 * Manage loadMaskParameter to display global loadMask or specific panel's one
-		 *
-		 * @param {Object or Boolean} loadMaskParameter
-		 * @param {Boolean} show
-		 *
-		 * @private
-		 */
-		manageLoadMask: function(loadMaskParameter, show) {
-			show = Ext.isBoolean(show) ? show : false;
-
-			if (!Ext.isEmpty(loadMaskParameter)) {
-				switch (Ext.typeOf(loadMaskParameter)) {
-					case 'object': {
-						if (Ext.isFunction(loadMaskParameter.setLoading))
-							loadMaskParameter.setLoading(show);
-					} break;
-
-					case 'boolean':
-					default: {
-						if (show) {
-							CMDBuild.core.LoadMask.show();
-						} else {
-							CMDBuild.core.LoadMask.hide();
-						}
-					}
-				}
-			}
 		},
 
 		/**
@@ -136,7 +107,7 @@
 		 * @private
 		 */
 		trapCallbacks: function(form, action, eOpts) {
-			CMDBuild.core.interfaces.FormSubmit.manageLoadMask(action.loadMask, true);
+			CMDBuild.core.interfaces.service.LoadMask.manage(action.loadMask, true);
 
 			action.callback = CMDBuild.core.interfaces.FormSubmit.interceptorCallback(action); // First of all because is related to others
 			action.failure = CMDBuild.core.interfaces.FormSubmit.interceptorFailure(action);
