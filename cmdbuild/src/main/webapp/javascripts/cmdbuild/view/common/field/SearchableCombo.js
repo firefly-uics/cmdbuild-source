@@ -152,7 +152,7 @@
 			if (this.getStore() && (this.getStore().find('Id', id) == -1)) {
 				var params = Ext.apply({ cardId: id }, this.getStore().baseParams);
 
-				CMDBuild.core.Ajax.request({
+				CMDBuild.core.interfaces.Ajax.request({
 					url: 'services/json/management/modcard/getcard',
 					params: params,
 					method: 'GET',

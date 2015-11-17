@@ -42,7 +42,7 @@
 			CMDBuild.core.Message.warning(tr.warning, tr.noupdate);
 		} else {
 			CMDBuild.core.LoadMask.show();
-			CMDBuild.core.Ajax.request({
+			CMDBuild.core.interfaces.Ajax.request({
 				method : 'POST',
 				url : 'services/json/management/importcsv/updatecsvrecords',
 				params : {
@@ -59,7 +59,7 @@
 
 	function onConfirmButtonClick() {
 		CMDBuild.core.LoadMask.show();
-		CMDBuild.core.Ajax.request({
+		CMDBuild.core.interfaces.Ajax.request({
 			method: 'POST',
 			url : 'services/json/management/importcsv/storecsvrecords',
 			waitTitle : CMDBuild.Translation.pleaseWait,
@@ -86,7 +86,7 @@
 	// callback called after the upload of the csv file
 	// and after the update of the grid records
 	function updateGridRecords() {
-		CMDBuild.core.Ajax.request({
+		CMDBuild.core.interfaces.Ajax.request({
 			method: 'GET',
 			url : 'services/json/management/importcsv/getcsvrecords',
 			scope: this,

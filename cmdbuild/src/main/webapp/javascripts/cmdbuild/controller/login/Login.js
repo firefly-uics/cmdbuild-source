@@ -68,7 +68,7 @@
 							success: function(response, options, decodedResponse) {
 								Ext.util.Cookies.set(CMDBuild.core.constants.Proxy.REST_SESSION_TOKEN, urlParams[CMDBuild.core.constants.Proxy.TOKEN]);
 							},
-							callback: function(records, operation, success) {
+							callback: function(options, success, response) {
 								// CMDBuild redirect
 								if (/administration.jsp$/.test(window.location)) {
 									window.location = 'administration.jsp' + window.location.hash;

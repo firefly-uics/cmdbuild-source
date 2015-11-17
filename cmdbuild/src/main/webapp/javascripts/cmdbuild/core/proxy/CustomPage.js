@@ -3,7 +3,7 @@
 	Ext.define('CMDBuild.core.proxy.CustomPage', {
 
 		requires: [
-			'CMDBuild.core.Ajax',
+			'CMDBuild.core.interfaces.Ajax',
 			'CMDBuild.core.proxy.Index'
 		],
 
@@ -13,7 +13,7 @@
 		 * @param {Object} parameters
 		 */
 		readForCurrentUser: function(parameters) {
-			CMDBuild.core.Ajax.request({
+			CMDBuild.core.interfaces.Ajax.request({
 				url: CMDBuild.core.proxy.Index.customPage.readForCurrentUser,
 				params: parameters.params,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,

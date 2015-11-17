@@ -3,7 +3,7 @@
 	Ext.define('CMDBuild.core.proxy.email.Accounts', {
 
 		requires: [
-			'CMDBuild.core.Ajax',
+			'CMDBuild.core.interfaces.Ajax',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.Index',
 			'CMDBuild.model.email.Accounts'
@@ -15,7 +15,7 @@
 		 * @param {Object} parameters
 		 */
 		create: function(parameters) {
-			CMDBuild.core.Ajax.request({
+			CMDBuild.core.interfaces.Ajax.request({
 				method: 'POST',
 				url: CMDBuild.core.proxy.Index.email.accounts.post,
 				params: parameters.params,
@@ -31,7 +31,7 @@
 		 * @param {Object} parameters
 		 */
 		get: function(parameters) {
-			CMDBuild.core.Ajax.request({
+			CMDBuild.core.interfaces.Ajax.request({
 				method: 'POST',
 				url: CMDBuild.core.proxy.Index.email.accounts.get,
 				params: parameters.params,
@@ -75,7 +75,7 @@
 		 * @param {Object} parameters
 		 */
 		remove: function(parameters) {
-			CMDBuild.core.Ajax.request({
+			CMDBuild.core.interfaces.Ajax.request({
 				method: 'POST',
 				url: CMDBuild.core.proxy.Index.email.accounts.remove,
 				params: parameters.params,
@@ -91,7 +91,7 @@
 		 * @param {Object} parameters
 		 */
 		setDefault: function(parameters) {
-			CMDBuild.core.Ajax.request({
+			CMDBuild.core.interfaces.Ajax.request({
 				method: 'POST',
 				url: CMDBuild.core.proxy.Index.email.accounts.setDefault,
 				params: parameters.params,
@@ -107,7 +107,7 @@
 		 * @param {Object} parameters
 		 */
 		update: function(parameters) {
-			CMDBuild.core.Ajax.request({
+			CMDBuild.core.interfaces.Ajax.request({
 				method: 'POST',
 				url: CMDBuild.core.proxy.Index.email.accounts.put,
 				params: parameters.params,

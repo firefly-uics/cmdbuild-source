@@ -4,7 +4,7 @@
 		extend: 'Ext.window.Window',
 
 		requires: [
-			'CMDBuild.core.Ajax',
+			'CMDBuild.core.interfaces.Ajax',
 			'CMDBuild.core.LoadMask',
 			'CMDBuild.core.constants.Proxy'
 		],
@@ -158,7 +158,7 @@
 						CMDBuild.core.LoadMask.hide();
 
 						for (var requestOption; requestOption=this.ajaxOptions.pop();) {
-							CMDBuild.core.Ajax.request(requestOption);
+							CMDBuild.core.interfaces.Ajax.request(requestOption);
 						}
 					}
 				},

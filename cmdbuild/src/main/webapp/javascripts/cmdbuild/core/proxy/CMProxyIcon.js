@@ -45,7 +45,7 @@
 			config.method = 'POST';
 			config.url = urls.remove;
 
-			CMDBuild.core.Ajax.request(config);
+			CMDBuild.core.interfaces.Ajax.request(config);
 		}
 	};
 })();

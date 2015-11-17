@@ -3,7 +3,7 @@
 	Ext.define('CMDBuild.core.proxy.widgets.OpenReport', {
 
 		requires: [
-			'CMDBuild.core.Ajax',
+			'CMDBuild.core.interfaces.Ajax',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.Index',
 			'CMDBuild.model.widget.openReport.ReportCombo'
@@ -15,7 +15,7 @@
 		 * @param {Object} parameters
 		 */
 		create: function(parameters) {
-			CMDBuild.core.Ajax.request({
+			CMDBuild.core.interfaces.Ajax.request({
 				method: 'POST',
 				url: CMDBuild.core.proxy.Index.report.createReportFactory,
 				params: parameters.params,
@@ -31,7 +31,7 @@
 		 * @param {Object} parameters
 		 */
 		createFactory: function(parameters) {
-			CMDBuild.core.Ajax.request({
+			CMDBuild.core.interfaces.Ajax.request({
 				method: 'POST',
 				url: CMDBuild.core.proxy.Index.report.createReportFactoryByTypeCode,
 				params: parameters.params,
@@ -90,7 +90,7 @@
 		 * @param {Object} parameters
 		 */
 		update: function(parameters) {
-			CMDBuild.core.Ajax.request({
+			CMDBuild.core.interfaces.Ajax.request({
 				method: 'POST',
 				url: CMDBuild.core.proxy.Index.report.updateReportFactoryParams,
 				params: parameters.params,

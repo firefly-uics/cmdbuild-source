@@ -177,7 +177,7 @@
 					// Save function response to instance data storage
 					this.instancesDataStorageSet(decodedResponse);
 				},
-				callback: function(response, options, decodedResponse) {
+				callback: function(options, success, response) {
 					this.buildLayout();
 				}
 			});

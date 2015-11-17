@@ -409,7 +409,7 @@ CMDBuild.Management.TemplateResolver.prototype = {
 	executeCQLTemplate: function(templateName, cqlQuery, ctx, callback) {
 		var queryParams = this.buildCQLQueryParameters(cqlQuery, ctx);
 		if (queryParams) {
-			CMDBuild.core.Ajax.request({
+			CMDBuild.core.interfaces.Ajax.request({
 				url: "services/json/management/modcard/getcardlist",
 				params: queryParams,
 				success: function(response, options, decoded) {

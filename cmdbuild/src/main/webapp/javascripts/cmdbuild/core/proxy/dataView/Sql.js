@@ -3,7 +3,7 @@
 	Ext.define('CMDBuild.core.proxy.dataView.Sql', {
 
 		requires: [
-			'CMDBuild.core.Ajax',
+			'CMDBuild.core.interfaces.Ajax',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.Index',
 			'CMDBuild.core.Utils',
@@ -16,7 +16,7 @@
 		 * @param {Object} parameters
 		 */
 		create: function(parameters) {
-			CMDBuild.core.Ajax.request({
+			CMDBuild.core.interfaces.Ajax.request({
 				method: 'POST',
 				url: CMDBuild.core.proxy.Index.dataView.sql.create,
 				params: parameters.params,
@@ -94,7 +94,7 @@
 		 * @param {Object} parameters
 		 */
 		remove: function(parameters) {
-			CMDBuild.core.Ajax.request({
+			CMDBuild.core.interfaces.Ajax.request({
 				method: 'POST',
 				url: CMDBuild.core.proxy.Index.dataView.sql.remove,
 				params: parameters.params,
@@ -110,7 +110,7 @@
 		 * @param {Object} parameters
 		 */
 		update: function(parameters) {
-			CMDBuild.core.Ajax.request({
+			CMDBuild.core.interfaces.Ajax.request({
 				method: 'POST',
 				url: CMDBuild.core.proxy.Index.dataView.sql.update,
 				params: parameters.params,

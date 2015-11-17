@@ -189,7 +189,7 @@
 					el.mask(CMDBuild.Translation.pleaseWait);
 				}
 
-				CMDBuild.core.Ajax.request({
+				CMDBuild.core.interfaces.Ajax.request({
 					url: "services/json/modwidget/callwidget",
 					method: "GET",
 					params: {

@@ -12,7 +12,7 @@
 		alternateClassName: 'CMDBuild.ServiceProxy.Filter', // Legacy class name
 
 		requires: [
-			'CMDBuild.core.Ajax',
+			'CMDBuild.core.interfaces.Ajax',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.Index'
 		],
@@ -27,7 +27,7 @@
 		 * @param {Object} parameters
 		 */
 		read: function(parameters) {
-			CMDBuild.core.Ajax.request({
+			CMDBuild.core.interfaces.Ajax.request({
 				url: CMDBuild.core.proxy.Index.filter.group.read,
 				params: parameters.params,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
@@ -134,7 +134,7 @@
 		 * @param {Object} parameters
 		 */
 		getDefaults: function(parameters) {
-			CMDBuild.core.Ajax.request({
+			CMDBuild.core.interfaces.Ajax.request({
 				url: CMDBuild.core.proxy.Index.filter.group.defaults.read,
 				params: parameters.params,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
@@ -149,7 +149,7 @@
 		 * @param {Object} parameters
 		 */
 		setDefaults: function(parameters) {
-			CMDBuild.core.Ajax.request({
+			CMDBuild.core.interfaces.Ajax.request({
 				url: CMDBuild.core.proxy.Index.filter.group.defaults.update,
 				params: parameters.params,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
@@ -169,7 +169,7 @@
 			request.method = method;
 			request.params = getParams(filter, fullParams);
 
-			CMDBuild.core.Ajax.request(config);
+			CMDBuild.core.interfaces.Ajax.request(config);
 		}
 	}
 

@@ -346,7 +346,7 @@
 						CMDBuild.app.Login.show();
 						return;
 					}
-					var translatedErrorString = CMDBuild.core.Ajax.formatMessage(reason, error.reasonParameters);
+					var translatedErrorString = CMDBuild.core.interfaces.Ajax.formatMessage(reason, error.reasonParameters);
 					if (translatedErrorString) {
 						errorBody.text = translatedErrorString;
 					}

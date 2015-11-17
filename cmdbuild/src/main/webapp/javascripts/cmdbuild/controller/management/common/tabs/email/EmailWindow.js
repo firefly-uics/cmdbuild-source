@@ -153,7 +153,7 @@
 									this.attachmentsDelegate.cmfg('tabEmailAttachmentAddPanel', attachmentObject[CMDBuild.core.constants.Proxy.FILE_NAME]);
 							}, this);
 						},
-						callback: function(records, operation, success) {
+						callback: function(options, success, response) {
 							this.view.setLoading(false);
 						}
 					});

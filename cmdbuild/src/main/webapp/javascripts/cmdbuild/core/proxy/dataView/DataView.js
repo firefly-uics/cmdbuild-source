@@ -3,7 +3,7 @@
 	Ext.define('CMDBuild.core.proxy.dataView.DataView', {
 
 		requires: [
-			'CMDBuild.core.Ajax',
+			'CMDBuild.core.interfaces.Ajax',
 			'CMDBuild.core.proxy.Index'
 		],
 
@@ -15,7 +15,7 @@
 		 * @param {Object} parameters
 		 */
 		readAll: function(parameters) {
-			CMDBuild.core.Ajax.request({
+			CMDBuild.core.interfaces.Ajax.request({
 				method: 'GET',
 				url: CMDBuild.core.proxy.Index.dataView.readAll,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : false,

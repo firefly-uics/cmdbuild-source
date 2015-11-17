@@ -3,7 +3,7 @@
 	Ext.define('CMDBuild.core.proxy.widgets.Grid', {
 
 		requires: [
-			'CMDBuild.core.Ajax',
+			'CMDBuild.core.interfaces.Ajax',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.Index'
 		],
@@ -16,7 +16,7 @@
 		 * @param {Object} parameters
 		 */
 		getFunctions: function(parameters) {
-			CMDBuild.core.Ajax.request({
+			CMDBuild.core.interfaces.Ajax.request({
 				method: 'POST',
 				url: CMDBuild.core.proxy.Index.functions.readAll,
 				scope: parameters.scope || this,

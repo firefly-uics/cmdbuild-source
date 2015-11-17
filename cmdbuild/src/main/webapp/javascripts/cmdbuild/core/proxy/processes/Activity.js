@@ -3,7 +3,7 @@
 	Ext.define('CMDBuild.core.proxy.processes.Activity', {
 
 		requires: [
-			'CMDBuild.core.Ajax',
+			'CMDBuild.core.interfaces.Ajax',
 			'CMDBuild.core.proxy.Index'
 		],
 
@@ -13,7 +13,7 @@
 		 * @param {Object} parameters
 		 */
 		lock: function(parameters) {
-			CMDBuild.core.Ajax.request({
+			CMDBuild.core.interfaces.Ajax.request({
 				method: 'POST',
 				url: CMDBuild.core.proxy.Index.processes.instances.lock,
 				headers: parameters.headers,
@@ -30,7 +30,7 @@
 		 * @param {Object} parameters
 		 */
 		unlock: function(parameters) {
-			CMDBuild.core.Ajax.request({
+			CMDBuild.core.interfaces.Ajax.request({
 				method: 'POST',
 				url: CMDBuild.core.proxy.Index.processes.instances.unlock,
 				headers: parameters.headers,
@@ -47,7 +47,7 @@
 		 * @param {Object} parameters
 		 */
 		unlockAll: function(parameters) {
-			CMDBuild.core.Ajax.request({
+			CMDBuild.core.interfaces.Ajax.request({
 				method: 'POST',
 				url: CMDBuild.core.proxy.Index.processes.instances.unlockAll,
 				headers: parameters.headers,

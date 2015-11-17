@@ -3,7 +3,7 @@
 	Ext.define('CMDBuild.core.proxy.dataView.Filter', {
 
 		requires: [
-			'CMDBuild.core.Ajax',
+			'CMDBuild.core.interfaces.Ajax',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.Index',
 			'CMDBuild.model.dataView.Filter'
@@ -15,7 +15,7 @@
 		 * @param {Object} parameters
 		 */
 		create: function(parameters) {
-			CMDBuild.core.Ajax.request({
+			CMDBuild.core.interfaces.Ajax.request({
 				url: CMDBuild.core.proxy.Index.dataView.filter.create,
 				params: parameters.params,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
@@ -63,7 +63,7 @@
 		 * @param {Object} parameters
 		 */
 		remove: function(parameters) {
-			CMDBuild.core.Ajax.request({
+			CMDBuild.core.interfaces.Ajax.request({
 				url: CMDBuild.core.proxy.Index.dataView.filter.remove,
 				params: parameters.params,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
@@ -78,7 +78,7 @@
 		 * @param {Object} parameters
 		 */
 		update: function(parameters) {
-			CMDBuild.core.Ajax.request({
+			CMDBuild.core.interfaces.Ajax.request({
 				url: CMDBuild.core.proxy.Index.dataView.filter.update,
 				params: parameters.params,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,

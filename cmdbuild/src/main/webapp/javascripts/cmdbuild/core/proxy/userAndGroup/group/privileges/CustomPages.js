@@ -3,7 +3,7 @@
 	Ext.define('CMDBuild.core.proxy.userAndGroup.group.privileges.CustomPages', {
 
 		requires: [
-			'CMDBuild.core.Ajax',
+			'CMDBuild.core.interfaces.Ajax',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.Index',
 			'CMDBuild.model.userAndGroup.group.privileges.GridRecord'
@@ -37,7 +37,7 @@
 		 * @param {Object} parameters
 		 */
 		update: function(parameters) {
-			CMDBuild.core.Ajax.request({
+			CMDBuild.core.interfaces.Ajax.request({
 				url: CMDBuild.core.proxy.Index.privileges.customPages.update,
 				params: parameters.params,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,

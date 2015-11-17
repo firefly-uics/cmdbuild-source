@@ -293,7 +293,7 @@
 			CMDBuild.core.proxy.Menu.save({
 				params: params,
 				scope: this,
-				callback: function(response, options, decodedResponse) {
+				callback: function(options, success, response) {
 					this.onMenuGroupMenuSelected();
 
 					// Customization of CMDBuild.view.common.field.translatable.Utils.commit
@@ -323,7 +323,7 @@
 			CMDBuild.core.proxy.Menu.remove({
 				params: params,
 				scope: this,
-				callback: function(response, options, decodedResponse) {
+				callback: function(options, success, response) {
 					this.onMenuGroupMenuSelected();
 				}
 			});
