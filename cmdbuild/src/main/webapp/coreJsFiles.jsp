@@ -118,7 +118,7 @@
 <script type="text/javascript" src="javascripts/cmdbuild/view/common/field/FieldManager.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/view/common/field/BooleanDisplayField.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/view/common/field/CMDisplayField.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/view/common/field/CMHtmlEditorField.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/view/common/field/HtmlEditor.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/view/common/field/LookupField.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/view/common/field/GridSearchField.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/view/common/field/LocaleSearchField.js"></script>

@@ -32,10 +32,10 @@
 		},
 
 		/**
-		 * @returns {CMDBuild.view.common.field.CMHtmlEditorField}
+		 * @returns {CMDBuild.view.common.field.HtmlEditor}
 		 */
 		buildEditor: function() {
-			return this.cmfg('attributeModelGet', CMDBuild.core.constants.Proxy.HIDDEN) ? {} : Ext.create('CMDBuild.view.common.field.CMHtmlEditorField', {
+			return this.cmfg('attributeModelGet', CMDBuild.core.constants.Proxy.HIDDEN) ? {} : Ext.create('CMDBuild.view.common.field.HtmlEditor', {
 				allowBlank: !this.cmfg('attributeModelGet', CMDBuild.core.constants.Proxy.MANDATORY),
 				disabled: !this.cmfg('attributeModelGet', CMDBuild.core.constants.Proxy.WRITABLE),
 				name: this.cmfg('attributeModelGet', CMDBuild.core.constants.Proxy.NAME),
@@ -44,10 +44,10 @@
 		},
 
 		/**
-		 * @returns {CMDBuild.view.common.field.CMHtmlEditorField}
+		 * @returns {CMDBuild.view.common.field.HtmlEditor}
 		 */
 		buildField: function() {
-			return Ext.create('CMDBuild.view.common.field.CMHtmlEditorField', {
+			return Ext.create('CMDBuild.view.common.field.HtmlEditor', {
 				allowBlank: !this.cmfg('attributeModelGet', CMDBuild.core.constants.Proxy.MANDATORY),
 				disabled: !this.cmfg('attributeModelGet', CMDBuild.core.constants.Proxy.WRITABLE),
 				fieldLabel: this.applyMandatoryLabelFlag(

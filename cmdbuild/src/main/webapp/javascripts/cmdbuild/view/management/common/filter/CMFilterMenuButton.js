@@ -300,7 +300,7 @@
 
 			if (fieldClassName == "Ext.form.field.TextArea") {
 				height += TEXT_FIELD_HEIGHT;
-			} else if (fieldClassName == "CMDBuild.view.common.field.CMHtmlEditorField") {
+			} else if (fieldClassName == "CMDBuild.view.common.field.HtmlEditor") {
 				height += HTML_FIELD_HEIGHT;
 			} else {
 				height += SIMPLE_FIELD_HEIGHT;

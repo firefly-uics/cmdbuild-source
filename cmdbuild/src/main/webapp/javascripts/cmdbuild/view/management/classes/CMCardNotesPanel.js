@@ -28,7 +28,7 @@
 				}
 			});
 
-			var htmlField = Ext.create('CMDBuild.view.common.field.CMHtmlEditorField', {
+			var htmlField = Ext.create('CMDBuild.view.common.field.HtmlEditor', {
 				name: 'Notes',
 				hideLabel: true
 			});
