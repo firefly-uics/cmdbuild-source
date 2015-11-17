@@ -97,11 +97,11 @@
 		 * @returns {Boolean}
 		 */
 		onAccordionBeforeSelect: function(node) {
-			return this.onAccordionIsNodeSelectable(node);
+			return this.cmfg('onAccordionIsNodeSelectable', node);
 		},
 
 		onAccordionDeselect: function() {
-			this.onAccordionSelectionChange();
+			this.cmfg('onAccordionSelectionChange');
 			this.view.getSelectionModel().deselectAll();
 		},
 
@@ -110,9 +110,9 @@
 
 			// Reselect selected or select first leaf
 			if (this.view.getSelectionModel().hasSelection()) {
-				this.onAccordionSelectionChange();
+				this.cmfg('onAccordionSelectionChange');
 			} else {
-				this.onAccordionSelectFirstSelectableNode();
+				this.cmfg('onAccordionSelectFirstSelectableNode');
 			}
 		},
 
@@ -126,7 +126,7 @@
 				var inspectedNode = this.view.getRootNode();
 
 				while (inspectedNode) {
-					if (this.onAccordionIsNodeSelectable(inspectedNode)) {
+					if (this.cmfg('onAccordionIsNodeSelectable', inspectedNode)) {
 						node = inspectedNode;
 
 						break;
@@ -140,14 +140,17 @@
 		},
 
 		/**
-		 * Search in entityId parameter because id isn't entryType's id
+		 * Search in entityId and id parameter
 		 *
 		 * @param {Number or String} id
 		 *
 		 * @returns {CMDBuild.model.common.accordion.Generic}
 		 */
 		onAccordionGetNodeById: function(id) {
-			return this.view.getStore().getRootNode().findChild(CMDBuild.core.constants.Proxy.ENTITY_ID, id, true);
+			return (
+				this.view.getStore().getRootNode().findChild(CMDBuild.core.constants.Proxy.ID, id, true)
+				|| this.view.getStore().getRootNode().findChild(CMDBuild.core.constants.Proxy.ENTITY_ID, id, true)
+			);
 		},
 
 		/**
@@ -170,12 +173,12 @@
 		},
 
 		onAccordionSelectFirstSelectableNode: function() {
-			var firstSelectableNode = this.onAccordionGetFirtsSelectableNode();
+			var firstSelectableNode = this.cmfg('onAccordionGetFirtsSelectableNode');
 
 			if (!Ext.isEmpty(firstSelectableNode)) {
 				this.view.expand();
 
-				this.onAccordionSelectNodeById(firstSelectableNode.get(CMDBuild.core.constants.Proxy.ID));
+				this.cmfg('onAccordionSelectNodeById', firstSelectableNode.get(CMDBuild.core.constants.Proxy.ID));
 			}
 		},
 
@@ -200,7 +203,7 @@
 		 * @param {Number or String} id
 		 */
 		onAccordionSelectNodeById: function(id) {
-			var node = this.onAccordionGetNodeById(id);
+			var node = this.cmfg('onAccordionGetNodeById', id);
 
 			if (!Ext.isEmpty(node)) {
 				// Expand fail if the accordion is not visible. I can't know when accordion's parent will be visible, so skip only the expand to avoid to fail
@@ -220,14 +223,14 @@
 		 */
 		onAccordionUpdateStore: function(nodeIdToSelect) {
 			if (!Ext.isEmpty(nodeIdToSelect))
-				this.onAccordionSelectNodeById(this.accordionBuildId(nodeIdToSelect));
+				this.cmfg('onAccordionSelectNodeById', this.cmfg('accordionBuildId', nodeIdToSelect));
 
 			// Select first selectable item if no selection and expanded
 			if (!this.view.getSelectionModel().hasSelection() && this.view.getCollapsed() === false)
-				this.onAccordionSelectFirstSelectableNode();
+				this.cmfg('onAccordionSelectFirstSelectableNode');
 
 			// Hide if accordion is empty
-			if (this.hideIfEmpty && this.onAccordionIsEmpty())
+			if (this.hideIfEmpty && this.cmfg('onAccordionIsEmpty'))
 				this.hide();
 		}
 	});
