@@ -41,10 +41,10 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
-			'getTabHistoryGridColumns',
-			'getTabHistoryGridStore',
-			'onTabHistoryRowExpand',
 			'onTabHistoryPanelShow = onTabHistoryIncludeRelationCheck', // Reloads store to be consistent with includeRelationsCheckbox state
+			'onTabHistoryRowExpand',
+			'tabHistoryGridColumnsGet',
+			'tabHistoryGridStoreGet',
 			'tabHistorySelectedEntityGet',
 			'tabHistorySelectedEntitySet'
 		],
@@ -70,9 +70,7 @@
 
 			this.callParent(arguments);
 
-			this.grid = Ext.create('CMDBuild.view.management.classes.tabs.history.GridPanel', {
-				delegate: this
-			});
+			this.grid = Ext.create('CMDBuild.view.management.classes.tabs.history.GridPanel', { delegate: this });
 
 			this.view.add(this.grid);
 
@@ -85,6 +83,7 @@
 		 * TODO: should be better to refactor this method when a getCard service will returns a better model of card data
 		 *
 		 * @override
+		 * @private
 		 */
 		addCurrentCardToStore: function() {
 			var selectedEntityAttributes = {};
@@ -103,6 +102,9 @@
 			this.clearStoreAdd(this.buildCurrentEntityModel(selectedEntityMergedData, selectedEntityAttributes));
 		},
 
+		/**
+		 * @private
+		 */
 		buildCardModuleStateDelegate: function() {
 			var me = this;
 
@@ -133,6 +135,8 @@
 		 * @param {Object} entityAttributeData
 		 *
 		 * @returns {CMDBuild.model.common.tabs.history.classes.CardRecord} currentEntityModel
+		 *
+		 * @private
 		 */
 		buildCurrentEntityModel: function(entityData, entityAttributeData) {
 			var currentEntityModel = Ext.create('CMDBuild.model.common.tabs.history.classes.CardRecord', entityData);
@@ -146,6 +150,7 @@
 		 * @param {CMDBuild.model.common.tabs.history.classes.RelationRecord} record
 		 *
 		 * @override
+		 * @private
 		 */
 		currentCardRowExpand: function(record) {
 			var predecessorRecord = this.getRecordPredecessor(record);
@@ -185,9 +190,31 @@
 		 * @returns {CMDBuild.core.proxy.common.tabs.history.Classes}
 		 *
 		 * @override
+		 * @private
 		 */
 		getProxy: function() {
 			return CMDBuild.core.proxy.common.tabs.history.Classes;
+		},
+
+		/**
+		 * @param {Object} card
+		 */
+		onCardSelected: function(card) {
+			this.tabHistorySelectedEntitySet(card);
+
+			if (!Ext.isEmpty(this.entryType) && this.entryType.get(CMDBuild.core.constants.Proxy.TABLE_TYPE) != CMDBuild.core.constants.Global.getTableTypeSimpleTable()) // SimpleTables hasn't history
+				this.view.setDisabled(Ext.isEmpty(this.tabHistorySelectedEntityGet()));
+
+			this.cmfg('onTabHistoryPanelShow');
+		},
+
+		/**
+		 * @param {CMDBuild.cache.CMEntryTypeModel} entryType
+		 */
+		onEntryTypeSelected: function(entryType) {
+			this.entryType = entryType;
+
+			this.view.disable();
 		},
 
 		/**
@@ -195,7 +222,7 @@
 		 *
 		 * @override
 		 */
-		getTabHistoryGridColumns: function() {
+		tabHistoryGridColumnsGet: function() {
 			var columns = this.callParent(arguments);
 
 			if (!CMDBuild.configuration.userInterface.get(CMDBuild.core.constants.Proxy.SIMPLE_HISTORY_MODE_FOR_CARD)) {
@@ -248,27 +275,6 @@
 			}
 
 			return columns;
-		},
-
-		/**
-		 * @param {Object} card
-		 */
-		onCardSelected: function(card) {
-			this.tabHistorySelectedEntitySet(card);
-
-			if (!Ext.isEmpty(this.entryType) && this.entryType.get(CMDBuild.core.constants.Proxy.TABLE_TYPE) != CMDBuild.core.constants.Global.getTableTypeSimpleTable()) // SimpleTables hasn't history
-				this.view.setDisabled(Ext.isEmpty(this.tabHistorySelectedEntityGet()));
-
-			this.cmfg('onTabHistoryPanelShow');
-		},
-
-		/**
-		 * @param {CMDBuild.cache.CMEntryTypeModel} entryType
-		 */
-		onEntryTypeSelected: function(entryType) {
-			this.entryType = entryType;
-
-			this.view.disable();
 		}
 	});
 

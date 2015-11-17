@@ -7,6 +7,7 @@
 		extend: 'CMDBuild.controller.common.AbstractController',
 
 		requires: [
+			'CMDBuild.core.configurations.DataFormat',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.Attributes'
 		],
@@ -45,9 +46,7 @@
 		constructor: function(configurationObject) {
 			this.callParent(arguments);
 
-			this.view = Ext.create('CMDBuild.view.management.common.tabs.history.HistoryView', {
-				delegate: this
-			});
+			this.view = Ext.create('CMDBuild.view.management.common.tabs.history.HistoryView', { delegate: this });
 		},
 
 		/**
@@ -84,6 +83,8 @@
 		 * @param {CMDBuild.model.common.tabs.history.classes.CardRecord or CMDBuild.model.common.tabs.history.classes.RelationRecord} record
 		 *
 		 * @returns {CMDBuild.model.common.tabs.history.classes.CardRecord or CMDBuild.model.common.tabs.history.classes.RelationRecord} predecessor or null
+		 *
+		 * @private
 		 */
 		getRecordPredecessor: function(record) {
 			var i = this.grid.getStore().indexOf(record) + 1;
@@ -110,6 +111,8 @@
 
 		/**
 		 * @returns {CMDBuild.view.management.common.tabs.history.RowExpander} or null
+		 *
+		 * @private
 		 */
 		getRowExpanderPlugin: function() {
 			var rowExpanderPlugin = null;
@@ -126,49 +129,6 @@
 			}
 
 			return rowExpanderPlugin;
-		},
-
-		/**
-		 * @returns {Array}
-		 */
-		getTabHistoryGridColumns: function() {
-			return [
-				Ext.create('Ext.grid.column.Date', {
-					dataIndex: CMDBuild.core.constants.Proxy.BEGIN_DATE,
-					text: CMDBuild.Translation.beginDate,
-					width: 140,
-					format:'d/m/Y H:i:s',
-					sortable: false,
-					hideable: false,
-					menuDisabled: true,
-					fixed: true
-				}),
-				Ext.create('Ext.grid.column.Date', {
-					dataIndex: CMDBuild.core.constants.Proxy.END_DATE,
-					text: CMDBuild.Translation.endDate,
-					width: 140,
-					format:'d/m/Y H:i:s',
-					sortable: false,
-					hideable: false,
-					menuDisabled: true,
-					fixed: true
-				}),
-				{
-					dataIndex: CMDBuild.core.constants.Proxy.USER,
-					text: CMDBuild.Translation.user,
-					sortable: false,
-					hideable: false,
-					menuDisabled: true,
-					flex: 1
-				}
-			];
-		},
-
-		/**
-		 * @returns {Ext.data.Store}
-		 */
-		getTabHistoryGridStore: function() {
-			return this.getProxy().getStore();
 		},
 
 		onAddCardButtonClick: function() {
@@ -316,6 +276,49 @@
 			}
 		},
 
+		/**
+		 * @returns {Array}
+		 */
+		tabHistoryGridColumnsGet: function() {
+			return [
+				Ext.create('Ext.grid.column.Date', {
+					dataIndex: CMDBuild.core.constants.Proxy.BEGIN_DATE,
+					text: CMDBuild.Translation.beginDate,
+					width: 140,
+					format: CMDBuild.core.configurations.DataFormat.getDateTime(),
+					sortable: false,
+					hideable: false,
+					menuDisabled: true,
+					fixed: true
+				}),
+				Ext.create('Ext.grid.column.Date', {
+					dataIndex: CMDBuild.core.constants.Proxy.END_DATE,
+					text: CMDBuild.Translation.endDate,
+					width: 140,
+					format: CMDBuild.core.configurations.DataFormat.getDateTime(),
+					sortable: false,
+					hideable: false,
+					menuDisabled: true,
+					fixed: true
+				}),
+				{
+					dataIndex: CMDBuild.core.constants.Proxy.USER,
+					text: CMDBuild.Translation.user,
+					sortable: false,
+					hideable: false,
+					menuDisabled: true,
+					flex: 1
+				}
+			];
+		},
+
+		/**
+		 * @returns {Ext.data.Store}
+		 */
+		tabHistoryGridStoreGet: function() {
+			return this.getProxy().getStore();
+		},
+
 		// SelectedEntity property functions
 			/**
 			 * @returns {Mixed}
@@ -337,6 +340,8 @@
 		 *
 		 * @param {Object} object1 - currently expanded record
 		 * @param {Object} object2 - predecessor record
+		 *
+		 * @private
 		 */
 		valuesFormattingAndCompare: function(object1, object2) {
 			object1 = object1 || {};
