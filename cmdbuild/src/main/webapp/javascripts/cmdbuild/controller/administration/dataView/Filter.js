@@ -7,6 +7,7 @@
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.Message',
 			'CMDBuild.core.proxy.dataView.Filter',
+			'CMDBuild.core.Utils',
 			'CMDBuild.view.common.field.translatable.Utils'
 		],
 
@@ -38,7 +39,9 @@
 		grid: undefined,
 
 		/**
-		 * @property {CMDBuild.model.dataView.Filter}
+		 * @property {CMDBuild.model.dataView.filter.SelectedView}
+		 *
+		 * @private
 		 */
 		selectedView: undefined,
 
@@ -64,7 +67,7 @@
 		},
 
 		onDataViewFilterAbortButtonClick: function() {
-			if (!Ext.isEmpty(this.selectedView)) {
+			if (!this.selectedViewIsEmpty()) {
 				this.onDataViewFilterRowSelected();
 			} else {
 				this.form.reset();
@@ -75,11 +78,11 @@
 		onDataViewFilterAddButtonClick: function() {
 			this.grid.getSelectionModel().deselectAll();
 
-			this.selectedView = null;
+			this.selectedViewReset();
 
 			this.form.reset();
 			this.form.setDisabledModify(false, true);
-			this.form.loadRecord(Ext.create('CMDBuild.model.dataView.Filter'));
+			this.form.loadRecord(Ext.create('CMDBuild.model.dataView.filter.GridStore'));
 		},
 
 		onDataViewFilterModifyButtonClick: function() {
@@ -100,23 +103,40 @@
 			});
 		},
 
-		/**
-		 * TODO: waiting for refactor (crud)
-		 */
 		onDataViewFilterRowSelected: function() {
-			this.selectedView = this.grid.getSelectionModel().getSelection()[0];
+			var selectedViewId = this.grid.getSelectionModel().getSelection()[0].get(CMDBuild.core.constants.Proxy.ID);
 
-			// TODO: waiting for refacotr
-			if (Ext.isString(this.selectedView.get(CMDBuild.core.constants.Proxy.FILTER)))
-				this.selectedView.set(CMDBuild.core.constants.Proxy.FILTER, Ext.decode(this.selectedView.get(CMDBuild.core.constants.Proxy.FILTER)));
+			var params = {};
+			params[CMDBuild.core.constants.Proxy.ID] = selectedViewId;
 
-			this.form.loadRecord(this.selectedView);
-			this.form.setDisabledModify(true, true);
+			CMDBuild.core.proxy.dataView.Filter.read({ // TODO: waiting for refactor (CRUD)
+				params: params,
+				scope: this,
+				success: function(response, options, decodedResponse) {
+					decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.VIEWS];
+
+					this.selectedViewSet({
+						value: Ext.Array.findBy(decodedResponse, function(viewObject, i) {
+							return selectedViewId == viewObject[CMDBuild.core.constants.Proxy.ID];
+						}, this)
+					});
+
+					// TODO: waiting for refactor (CRUD with decoded filter data)
+					if (CMDBuild.core.Utils.isJsonString(this.selectedViewGet(CMDBuild.core.constants.Proxy.FILTER)))
+						this.selectedViewSet({
+							propertyName: CMDBuild.core.constants.Proxy.FILTER,
+							value: Ext.decode(this.selectedViewGet(CMDBuild.core.constants.Proxy.FILTER))
+						});
+
+					this.form.loadRecord(this.selectedViewGet());
+					this.form.setDisabledModify(true, true);
+				}
+			});
 		},
 
 		onDataViewFilterSaveButtonClick: function() {
 			if (this.validate(this.form)) {
-				var formDataModel = Ext.create('CMDBuild.model.dataView.Filter', this.form.getData(true));
+				var formDataModel = Ext.create('CMDBuild.model.dataView.filter.SelectedView', this.form.getData(true));
 
 				var params = formDataModel.getData();
 				params[CMDBuild.core.constants.Proxy.FILTER] = Ext.encode(params[CMDBuild.core.constants.Proxy.FILTER]);
@@ -137,10 +157,13 @@
 			}
 		},
 
+		/**
+		 * @private
+		 */
 		removeItem: function() {
-			if (!Ext.isEmpty(this.selectedView)) {
+			if (!this.selectedViewIsEmpty()) {
 				var params = {};
-				params[CMDBuild.core.constants.Proxy.ID] = this.selectedView.get(CMDBuild.core.constants.Proxy.ID);
+				params[CMDBuild.core.constants.Proxy.ID] = this.selectedViewGet(CMDBuild.core.constants.Proxy.ID);
 
 				CMDBuild.core.proxy.dataView.Filter.remove({
 					params: params,
@@ -163,10 +186,64 @@
 			}
 		},
 
+		// SelectedView property methods
+			/**
+			 * @param {Array or String} attributePath
+			 *
+			 * @returns {Mixed or undefined}
+			 *
+			 * @private
+			 */
+			selectedViewGet: function(attributePath) {
+				var parameters = {};
+				parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME] = 'selectedView';
+				parameters[CMDBuild.core.constants.Proxy.ATTRIBUTE_PATH] = attributePath;
+
+				return this.propertyManageGet(parameters);
+			},
+
+			/**
+			 * @param {Array or String} attributePath
+			 *
+			 * @returns {Boolean}
+			 *
+			 * @private
+			 */
+			selectedViewIsEmpty: function(attributePath) {
+				var parameters = {};
+				parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME] = 'selectedView';
+				parameters[CMDBuild.core.constants.Proxy.ATTRIBUTE_PATH] = attributePath;
+
+				return this.propertyManageIsEmpty(parameters);
+			},
+
+			/**
+			 * @private
+			 */
+			selectedViewReset: function() {
+				this.propertyManageReset('selectedView');
+			},
+
+			/**
+			 * @param {Object} parameters
+			 *
+			 * @private
+			 */
+			selectedViewSet: function(parameters) {
+				if (!Ext.Object.isEmpty(parameters)) {
+					parameters[CMDBuild.core.constants.Proxy.MODEL_NAME] = 'CMDBuild.model.dataView.filter.SelectedView';
+					parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME] = 'selectedView';
+
+					this.propertyManageSet(parameters);
+				}
+			},
+
 		/**
 		 * @param {Object} result
 		 * @param {Object} options
 		 * @param {Object} decodedResult
+		 *
+		 * @private
 		 */
 		success: function(result, options, decodedResult) {
 			var me = this;

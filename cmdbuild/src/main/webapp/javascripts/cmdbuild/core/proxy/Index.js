@@ -81,10 +81,19 @@
 			readForCurrentUser: 'services/json/custompages/readforcurrentuser'
 		},
 
+		dashboard: {
+			create: '',
+			read: '',
+			update: '',
+			remove: '',
+
+			readAll: 'services/json/dashboard/fulllist'
+		},
+
 		dataView: {
 			filter: {
 				create: 'services/json/viewmanagement/createfilterview',
-				read: '', // TODO: waiting for refactor (crud)
+				read: 'services/json/viewmanagement/readfilterview', // TODO: waiting for refactor (crud)
 				update: 'services/json/viewmanagement/updatefilterview',
 				remove: 'services/json/viewmanagement/deletefilterview',
 
