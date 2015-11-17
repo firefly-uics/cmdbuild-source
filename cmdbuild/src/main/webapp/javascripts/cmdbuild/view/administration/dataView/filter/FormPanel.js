@@ -3,7 +3,10 @@
 	Ext.define('CMDBuild.view.administration.dataView.filter.FormPanel', {
 		extend: 'Ext.form.Panel',
 
-		requires: ['CMDBuild.core.constants.Proxy'],
+		requires: [
+			'CMDBuild.core.constants.Proxy',
+			'CMDBuild.core.proxy.dataView.Filter'
+		],
 
 		mixins: ['CMDBuild.view.common.PanelFunctions'],
 
@@ -36,12 +39,12 @@
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
 				valueField: CMDBuild.core.constants.Proxy.NAME,
-				displayField: CMDBuild.core.constants.Proxy.DESCRIPTION,
+				displayField: CMDBuild.core.constants.Proxy.TEXT,
 				forceSelection: true,
 				editable: false,
 				allowBlank: false,
 
-				store: _CMCache.getClassesAndProcessesAndDahboardsStore(),
+				store: CMDBuild.core.proxy.dataView.Filter.getStoreSourceClass(),
 				queryMode: 'local'
 			});
 
