@@ -102,7 +102,7 @@
 
 			sql: {
 				create: 'services/json/viewmanagement/createsqlview',
-				read: '', // TODO: waiting for refactor (crud)
+				read: 'services/json/viewmanagement/readsqlview', // TODO: waiting for refactor (crud)
 				update: 'services/json/viewmanagement/updatesqlview',
 				remove: 'services/json/viewmanagement/deletesqlview',
 

@@ -38,7 +38,9 @@
 		grid: undefined,
 
 		/**
-		 * @property {CMDBuild.model.dataView.Sql}
+		 * @property {CMDBuild.model.dataView.sql.SelectedView}
+		 *
+		 * @private
 		 */
 		selectedView: undefined,
 
@@ -56,9 +58,7 @@
 		constructor: function(configurationObject) {
 			this.callParent(arguments);
 
-			this.view = Ext.create('CMDBuild.view.administration.dataView.sql.SqlView', {
-				delegate: this
-			});
+			this.view = Ext.create('CMDBuild.view.administration.dataView.sql.SqlView', { delegate: this });
 
 			// Shorthands
 			this.form = this.view.form;
@@ -66,7 +66,7 @@
 		},
 
 		onDataViewSqlAbortButtonClick: function() {
-			if (!Ext.isEmpty(this.selectedView)) {
+			if (!this.selectedViewIsEmpty()) {
 				this.onDataViewSqlRowSelected();
 			} else {
 				this.form.reset();
@@ -77,11 +77,11 @@
 		onDataViewSqlAddButtonClick: function() {
 			this.grid.getSelectionModel().deselectAll();
 
-			this.selectedView = null;
+			this.selectedViewReset();
 
 			this.form.reset();
 			this.form.setDisabledModify(false, true);
-			this.form.loadRecord(Ext.create('CMDBuild.model.dataView.Sql'));
+			this.form.loadRecord(Ext.create('CMDBuild.model.dataView.sql.GridStore'));
 		},
 
 		onDataViewSqlModifyButtonClick: function() {
@@ -102,21 +102,33 @@
 			});
 		},
 
-		/**
-		 * TODO: server implementation to get a single view data
-		 */
 		onDataViewSqlRowSelected: function() {
-			this.selectedView = this.grid.getSelectionModel().getSelection()[0];
+			var selectedViewId = this.grid.getSelectionModel().getSelection()[0].get(CMDBuild.core.constants.Proxy.ID);
 
-			this.form.loadRecord(this.selectedView);
+			var params = {};
+			params[CMDBuild.core.constants.Proxy.ID] = selectedViewId;
 
-			this.form.setDisabledModify(true, true);
+			CMDBuild.core.proxy.dataView.Sql.read({ // TODO: waiting for refactor (CRUD)
+				params: params,
+				scope: this,
+				success: function(response, options, decodedResponse) {
+					decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.VIEWS];
+
+					this.selectedViewSet({
+						value: Ext.Array.findBy(decodedResponse, function(viewObject, i) {
+							return selectedViewId == viewObject[CMDBuild.core.constants.Proxy.ID];
+						}, this)
+					});
+
+					this.form.loadRecord(this.selectedViewGet());
+					this.form.setDisabledModify(true, true);
+				}
+			});
 		},
 
 		onDataViewSqlSaveButtonClick: function() {
-			// Validate before save
 			if (this.validate(this.form)) {
-				var formData = Ext.create('CMDBuild.model.dataView.Sql',this.form.getData(true));
+				var formData = Ext.create('CMDBuild.model.dataView.sql.SelectedView',this.form.getData(true));
 
 				if (Ext.isEmpty(formData.get(CMDBuild.core.constants.Proxy.ID))) {
 					CMDBuild.core.proxy.dataView.Sql.create({
@@ -134,10 +146,13 @@
 			}
 		},
 
+		/**
+		 * @private
+		 */
 		removeItem: function() {
-			if (!Ext.isEmpty(this.selectedView)) {
+			if (!this.selectedViewIsEmpty()) {
 				var params = {};
-				params[CMDBuild.core.constants.Proxy.ID] = this.selectedView.get(CMDBuild.core.constants.Proxy.ID);
+				params[CMDBuild.core.constants.Proxy.ID] = this.selectedViewGet(CMDBuild.core.constants.Proxy.ID);
 
 				CMDBuild.core.proxy.dataView.Sql.remove({
 					params: params,
@@ -160,12 +175,66 @@
 			}
 		},
 
+		// SelectedView property methods
+			/**
+			 * @param {Array or String} attributePath
+			 *
+			 * @returns {Mixed or undefined}
+			 *
+			 * @private
+			 */
+			selectedViewGet: function(attributePath) {
+				var parameters = {};
+				parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME] = 'selectedView';
+				parameters[CMDBuild.core.constants.Proxy.ATTRIBUTE_PATH] = attributePath;
+
+				return this.propertyManageGet(parameters);
+			},
+
+			/**
+			 * @param {Array or String} attributePath
+			 *
+			 * @returns {Boolean}
+			 *
+			 * @private
+			 */
+			selectedViewIsEmpty: function(attributePath) {
+				var parameters = {};
+				parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME] = 'selectedView';
+				parameters[CMDBuild.core.constants.Proxy.ATTRIBUTE_PATH] = attributePath;
+
+				return this.propertyManageIsEmpty(parameters);
+			},
+
+			/**
+			 * @private
+			 */
+			selectedViewReset: function() {
+				this.propertyManageReset('selectedView');
+			},
+
+			/**
+			 * @param {Object} parameters
+			 *
+			 * @private
+			 */
+			selectedViewSet: function(parameters) {
+				if (!Ext.Object.isEmpty(parameters)) {
+					parameters[CMDBuild.core.constants.Proxy.MODEL_NAME] = 'CMDBuild.model.dataView.sql.SelectedView';
+					parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME] = 'selectedView';
+
+					this.propertyManageSet(parameters);
+				}
+			},
+
 		/**
-		 * @param {Object} result
+		 * @param {Object} response
 		 * @param {Object} options
-		 * @param {Object} decodedResult
+		 * @param {Object} decodedResponse
+		 *
+		 * @private
 		 */
-		success: function(result, options, decodedResult) {
+		success: function(response, options, decodedResponse) {
 			var me = this;
 
 			CMDBuild.view.common.field.translatable.Utils.commit(this.form);
