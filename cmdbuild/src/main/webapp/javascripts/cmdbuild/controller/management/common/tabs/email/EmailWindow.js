@@ -31,7 +31,8 @@
 			'onTabEmailEmailWindowBeforeDestroy',
 			'onTabEmailEmailWindowConfirmButtonClick',
 			'onTabEmailEmailWindowFieldChange',
-			'onTabEmailEmailWindowFillFromTemplateButtonClick'
+			'onTabEmailEmailWindowFillFromTemplateButtonClick',
+			'tabEmailEmailWindowSetLoading'
 		],
 
 		/**
@@ -141,9 +142,9 @@
 					params[CMDBuild.core.constants.Proxy.EMAIL_ID] = this.record.get(CMDBuild.core.constants.Proxy.ID);
 					params[CMDBuild.core.constants.Proxy.TEMPORARY] = this.record.get(CMDBuild.core.constants.Proxy.TEMPORARY);
 
-					this.view.setLoading(true);
 					CMDBuild.core.proxy.common.tabs.email.Attachment.getAll({
 						params: params,
+						loadMask: this.view,
 						scope: this,
 						success: function(response, options, decodedResponse) {
 							decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.RESPONSE];
@@ -152,9 +153,6 @@
 								if(!Ext.Object.isEmpty(attachmentObject))
 									this.attachmentsDelegate.cmfg('tabEmailAttachmentAddPanel', attachmentObject[CMDBuild.core.constants.Proxy.FILE_NAME]);
 							}, this);
-						},
-						callback: function(options, success, response) {
-							this.view.setLoading(false);
 						}
 					});
 				}
@@ -350,6 +348,15 @@
 					this.form.keepSynchronizationCheckbox.setDisabled(false);
 				}
 			});
+		},
+
+		/**
+		 * @param {Boolean} state
+		 */
+		tabEmailEmailWindowSetLoading: function(state) {
+			state = Ext.isBoolean(state) ? state : false;
+
+			this.view.setLoading(state);
 		}
 	});
 
