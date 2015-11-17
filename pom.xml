@@ -33,12 +33,13 @@
 		<junit.version>4.11</junit.version>
 		<mockito.version>1.9.5</mockito.version>
 		<!-- Plugins -->
-		<maven-compiler-plugin.version>2.3.2</maven-compiler-plugin.version>
-		<maven-failsafe-plugin.version>2.8</maven-failsafe-plugin.version>
+		<maven-compiler-plugin.version>3.3</maven-compiler-plugin.version>
+		<maven-failsafe-plugin.version>2.19</maven-failsafe-plugin.version>
 		<maven-merge-file-plugin.version>0.4</maven-merge-file-plugin.version>
-		<maven-surefire-plugin.version>2.8</maven-surefire-plugin.version>
-		<maven-war-plugin.version>2.1.1</maven-war-plugin.version>
-		<maven-jar-plugin.version>2.4</maven-jar-plugin.version>
+		<maven-surefire-plugin.version>2.19</maven-surefire-plugin.version>
+		<maven-war-plugin.version>2.6</maven-war-plugin.version>
+		<maven-jar-plugin.version>2.6</maven-jar-plugin.version>
+		<buildnumber-maven-plugin.version>1.4</buildnumber-maven-plugin.version>
 	</properties>
 
 	<modules>
@@ -292,6 +293,13 @@
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-jar-plugin</artifactId>
 					<version>${maven-jar-plugin.version}</version>
+					<configuration>
+						<archive>
+							<manifestEntries>
+								<Implementation-Changeset>${changeSet}</Implementation-Changeset>
+							</manifestEntries>
+						</archive>
+					</configuration>
 				</plugin>
 			</plugins>
 		</pluginManagement>
@@ -305,6 +313,18 @@
 					<target>1.6</target>
 					<showDeprecation>false</showDeprecation>
 				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>buildnumber-maven-plugin</artifactId>
+				<version>${buildnumber-maven-plugin.version}</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>hgchangeset</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>
