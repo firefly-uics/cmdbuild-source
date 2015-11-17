@@ -6,7 +6,7 @@
 	Ext.define('CMDBuild.core.cache.Cache', {
 
 		requires: [
-			'CMDBuild.core.Ajax',
+			'CMDBuild.core.interfaces.Ajax',
 			'CMDBuild.core.configurations.Timeout',
 			'CMDBuild.core.constants.Proxy'
 		],
@@ -185,7 +185,7 @@
 								CMDBuild.core.cache.Cache.invalidate(cacheGroupIdentifier);
 						}, parameters.success);
 
-						CMDBuild.core.Ajax.request(parameters);
+						CMDBuild.core.interfaces.Ajax.request(parameters);
 					} else { // Emulation of success and callback execution
 						var cachedValues = CMDBuild.core.cache.Cache.get(cacheGroupIdentifier, parameters.url, parameters.params);
 
@@ -204,7 +204,7 @@
 						)();
 					}
 				} else { // Uncachable endpoints manage
-					CMDBuild.core.Ajax.request(parameters);
+					CMDBuild.core.interfaces.Ajax.request(parameters);
 				}
 			} else {
 				_error('invalid request parameters', 'CMDBuild.core.cache.Cache');

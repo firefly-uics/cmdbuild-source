@@ -38,9 +38,7 @@
 		update: function(parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, {
-				url: CMDBuild.core.proxy.Index.group.users.saveGroupUserList
-			});
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.group.users.saveGroupUserList });
 
 			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.GROUP, parameters, true);
 		}

@@ -84,14 +84,14 @@
 			this.tinyMCEConfig.language = CMDBuild.configuration.localization.get(CMDBuild.core.constants.Proxy.LANGUAGE);
 
 			// Silver editor color setup for Administration
-			if (Ext.isEmpty(CMDBuild.app.Management)) {
+			if (Ext.isEmpty(CMDBuild.core.Management)) {
 				var extVersion = CMDBuild.core.Utils.getExtJsVersion();
 
 				this.tinyMCEConfig.popup_css = 'javascripts/ext-' + extVersion + '-ux/form/field/tinymce/themes/advanced/skins/extjs/dialog_silver.css';
 			}
 
 			// Blue editor color setup for Management
-			if (Ext.isEmpty(CMDBuild.app.Administration))
+			if (Ext.isEmpty(CMDBuild.core.Administration))
 				this.tinyMCEConfig.skin_variant = 'blue';
 
 			this.callParent(arguments);
