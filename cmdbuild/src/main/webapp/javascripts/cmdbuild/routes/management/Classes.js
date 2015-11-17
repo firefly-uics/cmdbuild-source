@@ -49,7 +49,8 @@
 			if (this.paramsValidation(params)) {
 				this.entryType = _CMCache.getEntryTypeByName(this.classIdentifier);
 
-				CMDBuild.Runtime.StartingClassId = this.entryType.get(CMDBuild.core.constants.Proxy.ID); // Use runtime configuration to select class
+				// Use runtime configuration to select class
+				CMDBuild.configuration.runtime.set(CMDBuild.core.constants.Proxy.STARTING_CLASS_ID, this.entryType.get(CMDBuild.core.constants.Proxy.ID));
 
 				this.applyClientFilter();
 			}

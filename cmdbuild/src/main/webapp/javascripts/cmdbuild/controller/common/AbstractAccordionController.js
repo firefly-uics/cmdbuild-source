@@ -140,12 +140,14 @@
 		},
 
 		/**
+		 * Search in entityId parameter because id isn't entryType's id
+		 *
 		 * @param {Number or String} id
 		 *
 		 * @returns {CMDBuild.model.common.accordion.Generic}
 		 */
 		onAccordionGetNodeById: function(id) {
-			return this.view.getStore().getRootNode().findChild(CMDBuild.core.constants.Proxy.ID, id, true);
+			return this.view.getStore().getRootNode().findChild(CMDBuild.core.constants.Proxy.ENTITY_ID, id, true);
 		},
 
 		/**
