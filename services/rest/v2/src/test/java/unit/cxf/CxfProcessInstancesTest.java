@@ -299,6 +299,8 @@ public class CxfProcessInstancesTest {
 				.when(workflowLogic).findProcessClass(anyString());
 		doReturn(attribute) //
 				.when(userProcessClass).getAttribute(anyString());
+		doReturn(asList(attribute)) //
+				.when(userProcessClass).getAllAttributes();
 		final UserProcessInstance instance = mock(UserProcessInstance.class);
 		doReturn(userProcessClass) //
 				.when(instance).getType();

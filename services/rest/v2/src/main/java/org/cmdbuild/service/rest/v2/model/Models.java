@@ -1896,6 +1896,7 @@ public class Models {
 	public static class ResponseSingleBuilder<T> extends ModelBuilder<ResponseSingle<T>> {
 
 		private T element;
+		private DetailResponseMetadata metadata;
 
 		private ResponseSingleBuilder() {
 			// use factory method
@@ -1905,11 +1906,17 @@ public class Models {
 		protected ResponseSingle<T> doBuild() {
 			final ResponseSingle<T> output = new ResponseSingle<T>();
 			output.setElement(element);
+			output.setMetadata(metadata);
 			return output;
 		}
 
 		public ResponseSingleBuilder<T> withElement(final T element) {
 			this.element = element;
+			return this;
+		}
+
+		public ResponseSingleBuilder<T> withMetadata(final DetailResponseMetadata metadata) {
+			this.metadata = metadata;
 			return this;
 		}
 

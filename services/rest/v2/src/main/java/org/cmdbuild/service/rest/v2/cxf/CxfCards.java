@@ -81,8 +81,24 @@ public class CxfCards implements Cards, LoggingSupport {
 					.withId(fetched.getId()) //
 					.withValues(adaptOutputValues(targetClass, fetched)) //
 					.build();
+			final Map<Long, Reference> references = newHashMap();
+			for (final CMAttribute _element : from(fetched.getType().getAllAttributes()) //
+					.filter(attributeTypeInstanceOf(ReferenceAttributeType.class))) {
+				final Object value = fetched.get(_element.getName());
+				if (value instanceof IdAndDescription) {
+					final IdAndDescription _value = IdAndDescription.class.cast(value);
+					if (_value.getId() != null) {
+						references.put(_value.getId(), newReference() //
+								.withDescription(_value.getDescription()) //
+								.build());
+					}
+				}
+			}
 			return newResponseSingle(Card.class) //
 					.withElement(element) //
+					.withMetadata(newMetadata() //
+							.withReferences(references) //
+							.build()) //
 					.build();
 		} catch (final NotFoundException e) {
 			errorHandler.cardNotFound(id);
