@@ -587,7 +587,7 @@ CMDBuild.Management.TemplateResolver.prototype = {
 				// as changed, and call the callback at blur
 				field.mon(field, "change", function(f) {
 					if (Ext.getClassName(f) == "Ext.ux.form.XCheckbox" ||
-							Ext.getClassName(f) == "CMDBuild.view.common.field.CMHtmlEditorField"
+							Ext.getClassName(f) == "CMDBuild.view.common.field.HtmlEditor"
 						) {
 
 						callback.call(scope);

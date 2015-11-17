@@ -176,7 +176,7 @@
 								name: CMDBuild.core.constants.Proxy.SUBJECT,
 								fieldLabel: CMDBuild.Translation.subject
 							},
-							Ext.create('CMDBuild.view.common.field.CMHtmlEditorField', {
+							Ext.create('CMDBuild.view.common.field.HtmlEditor', {
 								name: CMDBuild.core.constants.Proxy.BODY,
 								fieldLabel: CMDBuild.Translation.body,
 								labelWidth: CMDBuild.LABEL_WIDTH,

@@ -13,7 +13,7 @@
 		delegate: undefined,
 
 		/**
-		 * @property {CMDBuild.view.common.field.CMHtmlEditorField}
+		 * @property {CMDBuild.view.common.field.HtmlEditor}
 		 */
 		emailContentField: undefined,
 
@@ -125,7 +125,7 @@
 							}
 						}
 					},
-					this.emailContentField = Ext.create('CMDBuild.view.common.field.CMHtmlEditorField', {
+					this.emailContentField = Ext.create('CMDBuild.view.common.field.HtmlEditor', {
 						name: CMDBuild.core.constants.Proxy.BODY,
 						hideLabel: true,
 						flex: 1,

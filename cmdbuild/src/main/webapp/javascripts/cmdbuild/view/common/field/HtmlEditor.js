@@ -1,6 +1,6 @@
 (function() {
 
-	Ext.define('CMDBuild.view.common.field.CMHtmlEditorField', {
+	Ext.define('CMDBuild.view.common.field.HtmlEditor', {
 		extend: 'Ext.ux.form.field.TinyMCE',
 
 		requires: ['CMDBuild.core.Utils'],
