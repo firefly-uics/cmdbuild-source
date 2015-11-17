@@ -98,13 +98,11 @@
 			params[CMDBuild.core.constants.Proxy.FILE_NAME] = attachmentPanel[CMDBuild.core.constants.Proxy.FILE_NAME];
 			params[CMDBuild.core.constants.Proxy.TEMPORARY] = this.record.get(CMDBuild.core.constants.Proxy.TEMPORARY);
 
-			this.parentDelegate.view.setLoading(true);
 			CMDBuild.core.proxy.common.tabs.email.Attachment.remove({
-				scope: this,
 				params: params,
+				loadMask: this.parentDelegate.view,
+				scope: this,
 				success: function(response, options ,decodedResponse) {
-					this.parentDelegate.view.setLoading(false);
-
 					this.view.attachmentPanelsContainer.remove(attachmentPanel);
 				}
 			});

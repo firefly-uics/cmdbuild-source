@@ -107,7 +107,7 @@
 		// TODO: waiting for refactor (rename)
 		onTabEmailAttachmentPickerWindowConfirmButtonClick: function() {
 			if (this.view.attachmentGrid.getSelectionModel().hasSelection()) {
-				this.parentDelegate.parentDelegate.view.setLoading(true);
+				this.cmfg('tabEmailEmailWindowSetLoading', true);
 				Ext.Array.forEach(this.view.attachmentGrid.getSelectionModel().getSelection(), function(attachment, i, allAttachments) {
 					var params = {};
 					params[CMDBuild.core.constants.Proxy.EMAIL_ID] = this.record.get(CMDBuild.core.constants.Proxy.ID);
@@ -117,8 +117,8 @@
 					params[CMDBuild.core.constants.Proxy.FILE_NAME] = attachment.get('Filename');
 
 					CMDBuild.core.proxy.common.tabs.email.Attachment.copy({
-						scope: this,
 						params: params,
+						scope: this,
 						failure: function(response, options, decodedResponse) {
 							CMDBuild.core.Message.error(
 								CMDBuild.Translation.common.failure,
