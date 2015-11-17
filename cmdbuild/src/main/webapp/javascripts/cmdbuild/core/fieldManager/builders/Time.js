@@ -3,17 +3,15 @@
 	Ext.define('CMDBuild.core.fieldManager.builders.Time', {
 		extend: 'CMDBuild.core.fieldManager.builders.Abstract',
 
-		requires: ['CMDBuild.core.constants.Proxy'],
+		requires: [
+			'CMDBuild.core.configurations.DataFormat',
+			'CMDBuild.core.constants.Proxy'
+		],
 
 		/**
 		 * @cfg {CMDBuild.core.fieldManager.FieldManager}
 		 */
 		parentDelegate: undefined,
-
-		/**
-		 * @cfg {String}
-		 */
-		format: 'H:i:s',
 
 		/**
 		 * @cfg {Number}
@@ -33,7 +31,7 @@
 				disabled: !this.cmfg('attributeModelGet', CMDBuild.core.constants.Proxy.WRITABLE),
 				editor: withEditor ? this.buildEditor() : null,
 				flex: 1,
-				format: this.format,
+				format: CMDBuild.core.configurations.DataFormat.getTime(),
 				hidden: !this.cmfg('attributeModelGet', CMDBuild.core.constants.Proxy.SHOW_COLUMN),
 				hideTrigger: true, // Hides date picker
 				renderer: this.rendererColumn,
@@ -52,7 +50,7 @@
 				xtype: 'datefield',
 				allowBlank: !this.cmfg('attributeModelGet', CMDBuild.core.constants.Proxy.MANDATORY),
 				disabled: !this.cmfg('attributeModelGet', CMDBuild.core.constants.Proxy.WRITABLE),
-				format: this.format,
+				format: CMDBuild.core.configurations.DataFormat.getTime(),
 				name: this.cmfg('attributeModelGet', CMDBuild.core.constants.Proxy.NAME),
 				readOnly: !this.cmfg('attributeModelGet', CMDBuild.core.constants.Proxy.WRITABLE),
 				vtype: 'time'
@@ -70,7 +68,7 @@
 					this.cmfg('attributeModelGet', CMDBuild.core.constants.Proxy.DESCRIPTION)
 					|| this.cmfg('attributeModelGet', CMDBuild.core.constants.Proxy.NAME)
 				),
-				format: this.format,
+				format: CMDBuild.core.configurations.DataFormat.getTime(),
 				hidden: this.cmfg('attributeModelGet', CMDBuild.core.constants.Proxy.HIDDEN),
 				hideTrigger: true, // Hides date picker
 				labelAlign: 'right',
@@ -86,7 +84,7 @@
 		 * @returns {Object}
 		 */
 		buildStoreField: function() {
-			return { name: this.cmfg('attributeModelGet', CMDBuild.core.constants.Proxy.NAME), type: 'date', dateFormat: this.format };
+			return { name: this.cmfg('attributeModelGet', CMDBuild.core.constants.Proxy.NAME), type: 'date', dateFormat: CMDBuild.core.configurations.DataFormat.getTime() };
 		}
 	});
 

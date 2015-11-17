@@ -65,8 +65,8 @@
 						]
 					})
 				],
-				columns: this.delegate.cmfg('getTabHistoryGridColumns'),
-				store: this.delegate.cmfg('getTabHistoryGridStore')
+				columns: this.delegate.cmfg('tabHistoryGridColumnsGet'),
+				store: this.delegate.cmfg('tabHistoryGridStoreGet')
 			});
 
 			this.callParent(arguments);
