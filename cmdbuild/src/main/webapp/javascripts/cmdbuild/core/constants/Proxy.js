@@ -422,6 +422,7 @@
 		RESPONSE: 'response',
 		REST_SESSION_TOKEN: 'RestSessionToken',
 		RESTRICTED_ADMIN: 'restrictedAdmin',
+		RESULTS: 'results',
 		RETRY_WITHOUT_FILTER: 'retryWithoutFilter',
 		ROLE: 'role',
 		ROOT: 'root',

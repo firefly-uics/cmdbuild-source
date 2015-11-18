@@ -149,10 +149,11 @@
 						success: function(response, options, decodedResponse) {
 							decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.RESPONSE];
 
-							Ext.Array.forEach(decodedResponse, function(attachmentObject, i, allAttachmentObjects) {
-								if(!Ext.Object.isEmpty(attachmentObject))
-									this.attachmentsDelegate.cmfg('tabEmailAttachmentAddPanel', attachmentObject[CMDBuild.core.constants.Proxy.FILE_NAME]);
-							}, this);
+							if (!Ext.isEmpty(decodedResponse) && Ext.isArray(decodedResponse))
+								Ext.Array.forEach(decodedResponse, function(attachmentObject, i, allAttachmentObjects) {
+									if(!Ext.Object.isEmpty(attachmentObject))
+										this.attachmentsDelegate.cmfg('tabEmailAttachmentAddPanel', attachmentObject[CMDBuild.core.constants.Proxy.FILE_NAME]);
+								}, this);
 						}
 					});
 				}

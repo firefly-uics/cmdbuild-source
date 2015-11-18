@@ -3,7 +3,7 @@
 	Ext.define('CMDBuild.core.proxy.widgets.OpenReport', {
 
 		requires: [
-			'CMDBuild.core.interfaces.Ajax',
+			'CMDBuild.core.cache.Cache',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.Index',
 			'CMDBuild.model.widget.openReport.ReportCombo'
@@ -13,38 +13,34 @@
 
 		/**
 		 * @param {Object} parameters
+		 *
+		 * @management
 		 */
 		create: function(parameters) {
-			CMDBuild.core.interfaces.Ajax.request({
-				method: 'POST',
-				url: CMDBuild.core.proxy.Index.report.createReportFactory,
-				params: parameters.params,
-				scope: parameters.scope || this,
-				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
-				failure: parameters.failure || Ext.emptyFn,
-				success: parameters.success || Ext.emptyFn,
-				callback: parameters.callback || Ext.emptyFn
-			});
+			parameters = Ext.isEmpty(parameters) ? {} : parameters;
+
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.report.createReportFactory });
+
+			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.REPORT, parameters);
 		},
 
 		/**
 		 * @param {Object} parameters
+		 *
+		 * @management
 		 */
 		createFactory: function(parameters) {
-			CMDBuild.core.interfaces.Ajax.request({
-				method: 'POST',
-				url: CMDBuild.core.proxy.Index.report.createReportFactoryByTypeCode,
-				params: parameters.params,
-				scope: parameters.scope || this,
-				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
-				failure: parameters.failure || Ext.emptyFn,
-				success: parameters.success || Ext.emptyFn,
-				callback: parameters.callback || Ext.emptyFn
-			});
+			parameters = Ext.isEmpty(parameters) ? {} : parameters;
+
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.report.createReportFactoryByTypeCode });
+
+			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.REPORT, parameters);
 		},
 
 		/**
 		 * @returns {Ext.data.ArrayStore}
+		 *
+		 * @management
 		 */
 		getFormatsStore: function() {
 			return Ext.create('Ext.data.ArrayStore', {
@@ -62,22 +58,24 @@
 		},
 
 		/**
-		 * @return {Ext.data.Store}
+		 * @returns {Ext.data.Store or CMDBuild.core.cache.Store}
+		 *
+		 * @administration
 		 */
 		getReportsStore: function() {
-			return Ext.create('Ext.data.Store', {
+			return CMDBuild.core.cache.Cache.requestAsStore(CMDBuild.core.constants.Proxy.REPORT, {
 				autoLoad: true,
 				model: 'CMDBuild.model.widget.openReport.ReportCombo',
 				proxy: {
 					type: 'ajax',
-					url: CMDBuild.core.proxy.Index.report.getReportsByType,
+					url: CMDBuild.core.proxy.Index.classes.readAll,
 					reader: {
 						type: 'json',
-						root: 'rows',
-						totalProperty: 'results'
+						root: CMDBuild.core.constants.Proxy.ROWS,
+						totalProperty: CMDBuild.core.constants.Proxy.RESULTS
 					},
 					extraParams: {
-						type: 'custom'
+						type: CMDBuild.core.constants.Proxy.CUSTOM
 					}
 				},
 				sorters: [
@@ -88,18 +86,15 @@
 
 		/**
 		 * @param {Object} parameters
+		 *
+		 * @management
 		 */
 		update: function(parameters) {
-			CMDBuild.core.interfaces.Ajax.request({
-				method: 'POST',
-				url: CMDBuild.core.proxy.Index.report.updateReportFactoryParams,
-				params: parameters.params,
-				scope: parameters.scope || this,
-				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
-				failure: parameters.failure || Ext.emptyFn,
-				success: parameters.success || Ext.emptyFn,
-				callback: parameters.callback || Ext.emptyFn
-			});
+			parameters = Ext.isEmpty(parameters) ? {} : parameters;
+
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.report.updateReportFactoryParams });
+
+			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.REPORT, parameters);
 		}
 	});
 
