@@ -1,7 +1,5 @@
 package org.cmdbuild.workflow.widget;
 
-import java.util.Map;
-
 import org.cmdbuild.model.widget.OpenAttachment;
 import org.cmdbuild.model.widget.Widget;
 import org.cmdbuild.notification.Notifier;
@@ -19,7 +17,7 @@ public class OpenAttachmentWidgetFactory extends ValuePairWidgetFactory {
 	}
 
 	@Override
-	public Widget createWidget(final Map<String, Object> valuePairs) {
+	public Widget createWidget(final WidgetDefinition definition) {
 		return new OpenAttachment();
 	}
 

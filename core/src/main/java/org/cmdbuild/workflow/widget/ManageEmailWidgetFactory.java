@@ -79,7 +79,7 @@ public class ManageEmailWidgetFactory extends ValuePairWidgetFactory {
 	 * naive but fast to write solution ...first do it works...
 	 */
 	@Override
-	protected Widget createWidget(final Map<String, Object> valueMap) {
+	protected Widget createWidget(final WidgetDefinition definition) {
 		// I want to preserve the order
 		final Map<String, EmailTemplate> emailTemplatesByName = newLinkedHashMap();
 		final Collection<String> managedParameters = newHashSet();
@@ -87,10 +87,10 @@ public class ManageEmailWidgetFactory extends ValuePairWidgetFactory {
 		managedParameters.add(BUTTON_LABEL);
 		managedParameters.add(GLOBAL_NO_SUBJECT_PREFIX);
 
-		final Map<String, String> templates = filterKeysStartingWith(valueMap, TEMPLATE);
+		final Map<String, String> templates = filterKeysStartingWith(definition, TEMPLATE);
 		for (final String key : templates.keySet()) {
 			final EmailTemplate template = getTemplateForKey(emailTemplatesByName, key, TEMPLATE);
-			final String name = readString(valueMap.get(key));
+			final String name = readString(definition.get(key));
 			if (isNotBlank(name)) {
 				try {
 					final EmailTemplateLogic.Template _template = emailTemplateLogic.read(name);
@@ -112,87 +112,87 @@ public class ManageEmailWidgetFactory extends ValuePairWidgetFactory {
 		}
 		managedParameters.addAll(templates.keySet());
 
-		final Map<String, String> fromAddresses = filterKeysStartingWith(valueMap, FROM_ADDRESS);
+		final Map<String, String> fromAddresses = filterKeysStartingWith(definition, FROM_ADDRESS);
 		for (final String key : fromAddresses.keySet()) {
 			final EmailTemplate template = getTemplateForKey(emailTemplatesByName, key, FROM_ADDRESS);
-			template.setFromAddress(readString(valueMap.get(key)));
+			template.setFromAddress(readString(definition.get(key)));
 		}
 		managedParameters.addAll(fromAddresses.keySet());
 
-		final Map<String, String> toAddresses = filterKeysStartingWith(valueMap, TO_ADDRESSES);
+		final Map<String, String> toAddresses = filterKeysStartingWith(definition, TO_ADDRESSES);
 		for (final String key : toAddresses.keySet()) {
 			final EmailTemplate template = getTemplateForKey(emailTemplatesByName, key, TO_ADDRESSES);
-			template.setToAddresses(readString(valueMap.get(key)));
+			template.setToAddresses(readString(definition.get(key)));
 		}
 		managedParameters.addAll(toAddresses.keySet());
 
-		final Map<String, String> ccAddresses = filterKeysStartingWith(valueMap, CC_ADDRESSES);
+		final Map<String, String> ccAddresses = filterKeysStartingWith(definition, CC_ADDRESSES);
 		for (final String key : ccAddresses.keySet()) {
 			final EmailTemplate template = getTemplateForKey(emailTemplatesByName, key, CC_ADDRESSES);
-			template.setCcAddresses(readString(valueMap.get(key)));
+			template.setCcAddresses(readString(definition.get(key)));
 		}
 		managedParameters.addAll(ccAddresses.keySet());
 
-		final Map<String, String> bccAddresses = filterKeysStartingWith(valueMap, BCC_ADDRESSES);
+		final Map<String, String> bccAddresses = filterKeysStartingWith(definition, BCC_ADDRESSES);
 		for (final String key : bccAddresses.keySet()) {
 			final EmailTemplate template = getTemplateForKey(emailTemplatesByName, key, BCC_ADDRESSES);
-			template.setBccAddresses(readString(valueMap.get(key)));
+			template.setBccAddresses(readString(definition.get(key)));
 		}
 		managedParameters.addAll(bccAddresses.keySet());
 
-		final Map<String, String> subjects = filterKeysStartingWith(valueMap, SUBJECT);
+		final Map<String, String> subjects = filterKeysStartingWith(definition, SUBJECT);
 		for (final String key : subjects.keySet()) {
 			final EmailTemplate template = getTemplateForKey(emailTemplatesByName, key, SUBJECT);
-			template.setSubject(readString(valueMap.get(key)));
+			template.setSubject(readString(definition.get(key)));
 		}
 		managedParameters.addAll(subjects.keySet());
 
-		final Map<String, String> notifyWithThemplate = filterKeysStartingWith(valueMap, NOTIFY_TEMPLATE_NAME);
+		final Map<String, String> notifyWithThemplate = filterKeysStartingWith(definition, NOTIFY_TEMPLATE_NAME);
 		for (final String key : notifyWithThemplate.keySet()) {
 			final EmailTemplate template = getTemplateForKey(emailTemplatesByName, key, NOTIFY_TEMPLATE_NAME);
-			template.setNotifyWith(readString(valueMap.get(key)));
+			template.setNotifyWith(readString(definition.get(key)));
 		}
 		managedParameters.addAll(notifyWithThemplate.keySet());
 
-		final Map<String, String> contents = filterKeysStartingWith(valueMap, CONTENT);
+		final Map<String, String> contents = filterKeysStartingWith(definition, CONTENT);
 		for (final String key : contents.keySet()) {
 			final EmailTemplate template = getTemplateForKey(emailTemplatesByName, key, CONTENT);
-			template.setContent(readString(valueMap.get(key)));
+			template.setContent(readString(definition.get(key)));
 		}
 		managedParameters.addAll(contents.keySet());
 
-		final Map<String, String> conditions = filterKeysStartingWith(valueMap, CONDITION);
+		final Map<String, String> conditions = filterKeysStartingWith(definition, CONDITION);
 		for (final String key : conditions.keySet()) {
 			final EmailTemplate template = getTemplateForKey(emailTemplatesByName, key, CONDITION);
-			template.setCondition(readString(valueMap.get(key)));
+			template.setCondition(readString(definition.get(key)));
 		}
 		managedParameters.addAll(conditions.keySet());
 
-		final Map<String, String> noSubjectPrexifes = filterKeysStartingWith(valueMap, NO_SUBJECT_PREFIX);
+		final Map<String, String> noSubjectPrexifes = filterKeysStartingWith(definition, NO_SUBJECT_PREFIX);
 		for (final String key : noSubjectPrexifes.keySet()) {
 			final EmailTemplate template = getTemplateForKey(emailTemplatesByName, key, NO_SUBJECT_PREFIX);
-			template.setNoSubjectPrefix(readBooleanFalseIfMissing(valueMap.get(key)));
+			template.setNoSubjectPrefix(readBooleanFalseIfMissing(definition.get(key)));
 		}
 		managedParameters.addAll(noSubjectPrexifes.keySet());
 
-		final Map<String, String> keepSynchronizations = filterKeysStartingWith(valueMap, KEEP_SYNCHRONIZATION);
+		final Map<String, String> keepSynchronizations = filterKeysStartingWith(definition, KEEP_SYNCHRONIZATION);
 		for (final String key : keepSynchronizations.keySet()) {
 			final EmailTemplate template = getTemplateForKey(emailTemplatesByName, key, KEEP_SYNCHRONIZATION);
-			template.setKeepSynchronization(readBoolean(valueMap.get(key), true));
+			template.setKeepSynchronization(readBoolean(definition.get(key), true));
 		}
 		managedParameters.addAll(keepSynchronizations.keySet());
 
-		final Map<String, String> promptSynchronizations = filterKeysStartingWith(valueMap, PROMPT_SYNCHRONIZATION);
+		final Map<String, String> promptSynchronizations = filterKeysStartingWith(definition, PROMPT_SYNCHRONIZATION);
 		for (final String key : promptSynchronizations.keySet()) {
 			final EmailTemplate template = getTemplateForKey(emailTemplatesByName, key, PROMPT_SYNCHRONIZATION);
-			template.setPromptSynchronization(readBooleanFalseIfMissing(valueMap.get(key)));
+			template.setPromptSynchronization(readBooleanFalseIfMissing(definition.get(key)));
 		}
 		managedParameters.addAll(promptSynchronizations.keySet());
 
-		final Map<String, String> delays = filterKeysStartingWith(valueMap, DELAY_IN_SECONDS);
+		final Map<String, String> delays = filterKeysStartingWith(definition, DELAY_IN_SECONDS);
 		for (final String key : delays.keySet()) {
 			final EmailTemplate template = getTemplateForKey(emailTemplatesByName, key, DELAY_IN_SECONDS);
-			template.setDelay(defaultIfNull(readInteger(valueMap.get(key)), 0) * 1000);
+			template.setDelay(defaultIfNull(readInteger(definition.get(key)), 0) * 1000);
 		}
 		managedParameters.addAll(delays.keySet());
 
@@ -200,7 +200,8 @@ public class ManageEmailWidgetFactory extends ValuePairWidgetFactory {
 		widget.setTemplates(transformEntries(emailTemplatesByName,
 				new EntryTransformer<String, EmailTemplate, EmailTemplate>() {
 
-					final Map<String, String> unmanaged = extractUnmanagedStringParameters(valueMap, managedParameters);
+					final Map<String, String> unmanaged = extractUnmanagedStringParameters(definition,
+							managedParameters);
 
 					@Override
 					public EmailTemplate transformEntry(final String key, final EmailTemplate value) {
@@ -215,8 +216,8 @@ public class ManageEmailWidgetFactory extends ValuePairWidgetFactory {
 					}
 
 				}).values());
-		widget.setReadOnly(valueMap.containsKey(READ_ONLY));
-		widget.setNoSubjectPrefix(readBooleanFalseIfMissing(valueMap.get(GLOBAL_NO_SUBJECT_PREFIX)));
+		widget.setReadOnly(definition.containsKey(READ_ONLY));
+		widget.setNoSubjectPrefix(readBooleanFalseIfMissing(definition.get(GLOBAL_NO_SUBJECT_PREFIX)));
 
 		return widget;
 	}

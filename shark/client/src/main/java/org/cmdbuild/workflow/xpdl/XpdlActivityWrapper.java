@@ -1,28 +1,42 @@
 package org.cmdbuild.workflow.xpdl;
 
-import static com.google.common.reflect.Reflection.newProxy;
-import static org.cmdbuild.common.utils.Reflection.unsupported;
+import static java.util.Collections.emptyList;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang3.Validate;
 import org.cmdbuild.common.annotations.Legacy;
 import org.cmdbuild.dao.entry.CMValueSet;
-import org.cmdbuild.dao.entry.ForwardingValueSet;
 import org.cmdbuild.workflow.ActivityPerformer;
 import org.cmdbuild.workflow.CMActivity;
 import org.cmdbuild.workflow.CMActivityWidget;
 
 public class XpdlActivityWrapper implements CMActivity {
 
-	private static CMValueSet UNAVAILABLE_PROCESS_INSTANCE = new ForwardingValueSet() {
+	private static CMValueSet UNAVAILABLE_PROCESS_INSTANCE = new CMValueSet() {
 
-		private final CMValueSet UNSUPPORTED = newProxy(CMValueSet.class, unsupported("Process instance not available"));
+		private final Iterable<Map.Entry<String, Object>> NO_VALUES = emptyList();
 
 		@Override
-		protected CMValueSet delegate() {
-			return UNSUPPORTED;
+		public Object get(final String key) {
+			return null;
+		}
+
+		@Override
+		public <T> T get(final String key, final Class<? extends T> requiredType) {
+			return null;
+		}
+
+		@Override
+		public <T> T get(final String key, final Class<? extends T> requiredType, final T defaultValue) {
+			return null;
+		}
+
+		@Override
+		public Iterable<Map.Entry<String, Object>> getValues() {
+			return NO_VALUES;
 		}
 
 	};

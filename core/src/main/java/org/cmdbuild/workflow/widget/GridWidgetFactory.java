@@ -13,8 +13,6 @@ import static org.cmdbuild.model.widget.Grid.DEFAULT_REQUIRED;
 import static org.cmdbuild.model.widget.Grid.DEFAULT_SERIALIZATION;
 import static org.cmdbuild.model.widget.Grid.DEFAULT_WRITE_ON_ADVANCE;
 
-import java.util.Map;
-
 import org.apache.commons.lang3.Validate;
 import org.cmdbuild.model.widget.Grid;
 import org.cmdbuild.model.widget.Widget;
@@ -53,28 +51,29 @@ public class GridWidgetFactory extends ValuePairWidgetFactory {
 	}
 
 	@Override
-	protected Widget createWidget(final Map<String, Object> valueMap) {
-		final String className = readString(valueMap.get(CLASS_NAME));
+	protected Widget createWidget(final WidgetDefinition definition) {
+		final String className = readString(definition.get(CLASS_NAME));
 		Validate.notEmpty(className, "{} is required", CLASS_NAME);
 		final Grid widget = new Grid();
 		widget.setClassName(className);
-		widget.setOutputName(readString(valueMap.get(OUTPUT_KEY)));
-		widget.setCardSeparator(defaultIfBlank(readString(valueMap.get(CARD_SEPARATOR)), DEFAULT_MAP_SEPARATOR));
-		widget.setAttributeSeparator(defaultIfBlank(readString(valueMap.get(ATTRIBUTE_SEPARATOR)),
+		widget.setOutputName(readString(definition.get(OUTPUT_KEY)));
+		widget.setCardSeparator(defaultIfBlank(readString(definition.get(CARD_SEPARATOR)), DEFAULT_MAP_SEPARATOR));
+		widget.setAttributeSeparator(defaultIfBlank(readString(definition.get(ATTRIBUTE_SEPARATOR)),
 				DEFAULT_ENTRY_SEPARATOR));
-		widget.setKeyValueSeparator(defaultIfBlank(readString(valueMap.get(KEY_VALUE_SEPARATOR)),
+		widget.setKeyValueSeparator(defaultIfBlank(readString(definition.get(KEY_VALUE_SEPARATOR)),
 				DEFAULT_KEYVALUE_SEPARATOR));
-		widget.setSerializationType(defaultIfBlank(readString(valueMap.get(SERIALIZATION_TYPE)), DEFAULT_SERIALIZATION));
-		widget.setWriteOnAdvance(readBoolean(valueMap.get(WRITE_ON_ADVANCE), DEFAULT_WRITE_ON_ADVANCE));
-		widget.setPresets(readString(valueMap.get(PRESETS)));
-		widget.setPresetsType(defaultIfBlank(readString(valueMap.get(PRESETS_TYPE)), DEFAULT_PRESETS_TYPE));
-		widget.setDisableAddRow(readBoolean(valueMap.get(DISABLE_ADD_ROW), DEFAULT_DISABLE_ADD_ROW));
-		widget.setDisableImportFromCsv(readBoolean(valueMap.get(DISABLE_IMPORT_FROM_CSV),
+		widget.setSerializationType(defaultIfBlank(readString(definition.get(SERIALIZATION_TYPE)),
+				DEFAULT_SERIALIZATION));
+		widget.setWriteOnAdvance(readBoolean(definition.get(WRITE_ON_ADVANCE), DEFAULT_WRITE_ON_ADVANCE));
+		widget.setPresets(readString(definition.get(PRESETS)));
+		widget.setPresetsType(defaultIfBlank(readString(definition.get(PRESETS_TYPE)), DEFAULT_PRESETS_TYPE));
+		widget.setDisableAddRow(readBoolean(definition.get(DISABLE_ADD_ROW), DEFAULT_DISABLE_ADD_ROW));
+		widget.setDisableImportFromCsv(readBoolean(definition.get(DISABLE_IMPORT_FROM_CSV),
 				DEFAULT_DISABLE_IMPORT_FROM_CSV));
-		widget.setDisableDeleteRow(readBoolean(valueMap.get(DISABLE_DELETE_ROW), DEFAULT_DISABLE_DELETE_ROW));
-		widget.setReadOnly(readBoolean(valueMap.get(READ_ONLY), DEFAULT_READONLY));
-		widget.setRequired(readBoolean(valueMap.get(REQUIRED), DEFAULT_REQUIRED));
-		widget.setVariables(extractUnmanagedParameters(valueMap, KNOWN_PARAMETERS));
+		widget.setDisableDeleteRow(readBoolean(definition.get(DISABLE_DELETE_ROW), DEFAULT_DISABLE_DELETE_ROW));
+		widget.setReadOnly(readBoolean(definition.get(READ_ONLY), DEFAULT_READONLY));
+		widget.setRequired(readBoolean(definition.get(REQUIRED), DEFAULT_REQUIRED));
+		widget.setVariables(extractUnmanagedParameters(definition, KNOWN_PARAMETERS));
 		return widget;
 	}
 
