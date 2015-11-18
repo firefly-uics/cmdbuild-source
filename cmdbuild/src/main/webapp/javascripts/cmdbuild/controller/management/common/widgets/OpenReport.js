@@ -23,55 +23,44 @@
 		],
 
 		/**
-		 * @cfg {Boolean}
-		 */
-		enableWidgetConfigurationSetup: false,
-
-		/**
-		 * @property {CMDBuild.Management.TemplateResolver}
-		 */
-		templateResolver: undefined,
-
-		/**
 		 * @property {CMDBuild.view.management.common.widgets.OpenReport}
 		 */
 		view: undefined,
 
 		/**
-		 * @property {Object}
+		 * @cfg {String}
 		 */
-		widgetConf: undefined,
+		widgetConfigurationModelClassName: 'CMDBuild.model.widget.openReport.Configuration',
 
 		/**
 		 * @override
 		 */
 		beforeActiveView: function() {
 			if (
-				!Ext.isEmpty(this.widgetConf)
+				!this.widgetConfigurationIsEmpty()
 				&& Ext.isEmpty(this.templateResolver)
 			) {
 				var params = {};
 				params[CMDBuild.core.constants.Proxy.TYPE] = CMDBuild.core.constants.Proxy.CUSTOM;
-				params[CMDBuild.core.constants.Proxy.CODE] = this.widgetConf[CMDBuild.core.constants.Proxy.REPORT_CODE];
+				params[CMDBuild.core.constants.Proxy.CODE] = this.widgetConfigurationGet(CMDBuild.core.constants.Proxy.REPORT_CODE);
 
 				CMDBuild.core.proxy.widgets.OpenReport.createFactory({
 					params: params,
 					scope: this,
-					success: function(result, options, decodedResult) {
-						var me = this;
+					success: function(response, options, decodedResponse) {
+						if (!decodedResponse.filled)
+							this.configureForm(decodedResult[CMDBuild.core.constants.Proxy.ATTRIBUTE]);
 
-						if (!decodedResult.filled)
-							this.configureForm(decodedResult.attribute);
-
-						this.templateResolver = new CMDBuild.Management.TemplateResolver({
+						new CMDBuild.Management.TemplateResolver({
 							clientForm: this.clientForm,
-							xaVars: this.widgetConf[CMDBuild.core.constants.Proxy.PRESET],
+							xaVars: this.widgetConfigurationGet(CMDBuild.core.constants.Proxy.PRESET),
 							serverVars: this.getTemplateResolverServerVars()
 						}).resolveTemplates({
-							attributes: Ext.Object.getKeys(this.widgetConf[CMDBuild.core.constants.Proxy.PRESET]),
+							attributes: Ext.Object.getKeys(this.widgetConfigurationGet(CMDBuild.core.constants.Proxy.PRESET)),
+							scope: this,
 							callback: function(out, ctx) {
-								me.fillFormValues(out);
-								me.forceExtension(me.widgetConf[CMDBuild.core.constants.Proxy.FORCE_FORMAT]);
+								this.fillFormValues(out);
+								this.forceExtension(this.widgetConfigurationGet(CMDBuild.core.constants.Proxy.FORCE_FORMAT));
 							}
 						});
 					}
@@ -83,22 +72,25 @@
 		 * Add the required attributes and disable fields if in readOnlyAttributes array
 		 *
 		 * @param {Array} attributes
+		 *
+		 * @private
 		 */
 		configureForm: function(attributes) {
 			this.view.fieldContainer.removeAll();
 
-			Ext.Array.forEach(attributes, function(attribute, i, allAttributes) {
-				var field = CMDBuild.Management.FieldManager.getFieldForAttr(attribute, false);
+			if (!Ext.isEmpty(attributes) && Ext.isArray(attributes))
+				Ext.Array.forEach(attributes, function(attribute, i, allAttributes) {
+					var field = CMDBuild.Management.FieldManager.getFieldForAttr(attribute, false);
 
-				if (!Ext.isEmpty(field)) {
-					// To disable if field name is contained in widgetConfiguration.readOnlyAttributes
-					field.setDisabled(
-						Ext.Array.contains(this.widgetConf[CMDBuild.core.constants.Proxy.READ_ONLY_ATTRIBUTES], attribute[CMDBuild.core.constants.Proxy.NAME])
-					);
+					if (!Ext.isEmpty(field)) {
+						// To disable if field name is contained in widgetConfiguration.readOnlyAttributes
+						field.setDisabled(
+							Ext.Array.contains(this.widgetConfigurationGet(CMDBuild.core.constants.Proxy.READ_ONLY_ATTRIBUTES), attribute[CMDBuild.core.constants.Proxy.NAME])
+						);
 
-					this.view.fieldContainer.add(field);
-				}
-			}, this);
+						this.view.fieldContainer.add(field);
+					}
+				}, this);
 		},
 
 		/**
@@ -110,18 +102,24 @@
 		 * Fixes date format
 		 *
 		 * @param {Object} parameters - Ex: { input_name: value, ...}
+		 *
+		 * @private
 		 */
 		fillFormValues: function(parameters) {
-			Ext.Object.each(parameters, function(key, value, myself) {
-				if (Ext.isDate(value))
-					parameters[key] =  new Date(value);
-			}, this);
+			if (!Ext.Object.isEmpty(parameters)) {
+				Ext.Object.each(parameters, function(key, value, myself) {
+					if (Ext.isDate(value))
+						parameters[key] =  new Date(value);
+				}, this);
 
-			this.view.loadRecord(Ext.create('CMDBuild.DummyModel', parameters));
+				this.view.loadRecord(Ext.create('CMDBuild.DummyModel', parameters));
+			}
 		},
 
 		/**
 		 * @param {String} extension
+		 *
+		 * @private
 		 */
 		forceExtension: function(extension) {
 			if (!Ext.isEmpty(extension)) {
@@ -151,7 +149,7 @@
 				}
 			}, this);
 
-			params['reportExtension'] = params[CMDBuild.core.constants.Proxy.EXTENSION]; // TODO: fix this alias on server side
+			params['reportExtension'] = params[CMDBuild.core.constants.Proxy.EXTENSION]; // TODO: waiting for refactor (rename)
 
 			if (this.view.getForm().isValid())
 				CMDBuild.core.proxy.widgets.OpenReport.update({
