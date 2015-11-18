@@ -1,7 +1,5 @@
 package org.cmdbuild.workflow.widget;
 
-import java.util.Map;
-
 import org.cmdbuild.model.widget.Calendar;
 import org.cmdbuild.model.widget.Widget;
 import org.cmdbuild.notification.Notifier;
@@ -29,21 +27,21 @@ public class CalendarWidgetFactory extends ValuePairWidgetFactory {
 	}
 
 	@Override
-	protected Widget createWidget(final Map<String, Object> valueMap) {
+	protected Widget createWidget(final WidgetDefinition definition) {
 		final Calendar widget = new Calendar();
 
-		final String filter = readString(valueMap.get(CQL_FILTER));
+		final String filter = readString(definition.get(CQL_FILTER));
 		if (filter != null) {
 			widget.setFilter(filter);
 			widget.setEventClass(readClassNameFromCQLFilter(filter));
 		} else {
-			widget.setEventClass(readString(valueMap.get(EVENT_CLASS)));
+			widget.setEventClass(readString(definition.get(EVENT_CLASS)));
 		}
 
-		widget.setEventTitle(readString(valueMap.get(TITLE)));
-		widget.setStartDate(readString(valueMap.get(START_DATE)));
-		widget.setEndDate(readString(valueMap.get(END_DATE)));
-		widget.setDefaultDate(readString(valueMap.get(DEFAULT_DATE)));
+		widget.setEventTitle(readString(definition.get(TITLE)));
+		widget.setStartDate(readString(definition.get(START_DATE)));
+		widget.setEndDate(readString(definition.get(END_DATE)));
+		widget.setDefaultDate(readString(definition.get(DEFAULT_DATE)));
 
 		return widget;
 	}

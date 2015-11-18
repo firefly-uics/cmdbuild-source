@@ -29,8 +29,8 @@ public class ValuePairWidgetFactoryTest {
 		}
 
 		@Override
-		protected Widget createWidget(final Map<String, Object> valueMap) {
-			this.valueMap = valueMap;
+		protected Widget createWidget(final WidgetDefinition definition) {
+			this.valueMap = definition;
 			return new Widget() {
 
 				@Override

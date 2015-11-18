@@ -2,11 +2,10 @@ package org.cmdbuild.model.widget.customform;
 
 import static com.google.common.base.Splitter.on;
 import static java.lang.String.format;
+import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
 import static org.apache.commons.lang3.StringUtils.defaultString;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
-
-import java.util.Map;
 
 import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.builder.Builder;
@@ -92,43 +91,43 @@ public class CustomFormWidgetFactory extends ValuePairWidgetFactory {
 	}
 
 	@Override
-	protected Widget createWidget(final Map<String, Object> valueMap) {
+	protected Widget createWidget(final WidgetDefinition definition) {
 		final CustomForm widget = new CustomForm();
-		widget.setOutputName(readString(valueMap.get(OUTPUT_KEY)));
-		widget.setRequired(readBooleanFalseIfMissing(valueMap.get(REQUIRED)));
-		widget.setModel(modelOf(valueMap).build());
-		widget.setData(dataOf(valueMap).build());
-		widget.setFunctionData(functionDataOf(valueMap).build());
-		widget.setLayout(String.class.cast(valueMap.get(LAYOUT)));
-		widget.setCapabilities(capabilitiesOf(valueMap));
-		widget.setSerialization(serializationOf(valueMap));
-		widget.setVariables(extractUnmanagedParameters(valueMap, KNOWN_PARAMETERS));
+		widget.setOutputName(readString(definition.get(OUTPUT_KEY)));
+		widget.setRequired(readBooleanFalseIfMissing(definition.get(REQUIRED)));
+		widget.setModel(modelOf(definition).build());
+		widget.setData(dataOf(definition).build());
+		widget.setFunctionData(functionDataOf(definition).build());
+		widget.setLayout(String.class.cast(definition.get(LAYOUT)));
+		widget.setCapabilities(capabilitiesOf(definition));
+		widget.setSerialization(serializationOf(definition));
+		widget.setVariables(extractUnmanagedParameters(definition, KNOWN_PARAMETERS));
 		return widget;
 	}
 
-	private ModelBuilder modelOf(final Map<String, Object> valueMap) {
+	private ModelBuilder modelOf(final WidgetDefinition definition) {
 		final ModelBuilder output;
-		final String value = String.class.cast(valueMap.get(MODEL_TYPE));
+		final String value = String.class.cast(definition.get(MODEL_TYPE));
 		if (TYPE_FORM.equalsIgnoreCase(value)) {
-			final String expression = defaultString(String.class.cast(valueMap.get(FORM_MODEL)));
+			final String expression = defaultString(String.class.cast(definition.get(FORM_MODEL)));
 			Validate.isTrue(isNotBlank(expression), "invalid value for '%s'", FORM_MODEL);
 			output = new FallbackOnExceptionModelBuilder(new JsonStringModelBuilder(expression),
 					new IdentityModelBuilder(expression));
 		} else if (TYPE_CLASS.equalsIgnoreCase(value)) {
-			final String className = String.class.cast(valueMap.get(CLASS_MODEL));
+			final String className = String.class.cast(definition.get(CLASS_MODEL));
 			Validate.isTrue(isNotBlank(className), "invalid value for '%s'", CLASS_MODEL);
 			final Iterable<String> attributes = on(DEFAULT_ATTRIBUTES_SEPARATOR) //
 					.trimResults() //
 					.omitEmptyStrings() //
-					.split(defaultString(String.class.cast(valueMap.get(CLASS_ATTRIBUTES))));
+					.split(defaultString(String.class.cast(definition.get(CLASS_ATTRIBUTES))));
 			output = new ClassModelBuilder(dataView, metadataStoreFactory, className, attributes);
 		} else if (TYPE_FUNCTION.equalsIgnoreCase(value)) {
-			final String functionName = String.class.cast(valueMap.get(FUNCTION_MODEL));
+			final String functionName = String.class.cast(definition.get(FUNCTION_MODEL));
 			Validate.isTrue(isNotBlank(functionName), "invalid value for '%s'", FUNCTION_MODEL);
 			final Iterable<String> attributes = on(DEFAULT_ATTRIBUTES_SEPARATOR) //
 					.trimResults() //
 					.omitEmptyStrings() //
-					.split(defaultString(String.class.cast(valueMap.get(FUNCTION_ATTRIBUTES))));
+					.split(defaultString(String.class.cast(definition.get(FUNCTION_ATTRIBUTES))));
 			output = new FunctionModelBuilder(dataView, functionName, attributes);
 		} else {
 			output = new InvalidModelBuilder(format("'%s' is not a valid value for '%s'", value, MODEL_TYPE));
@@ -136,30 +135,49 @@ public class CustomFormWidgetFactory extends ValuePairWidgetFactory {
 		return output;
 	}
 
-	private DataBuilder dataOf(final Map<String, Object> valueMap) {
+	private DataBuilder dataOf(final WidgetDefinition definition) {
 		final DataBuilder output;
-		final String value = String.class.cast(valueMap.get(DATA_TYPE));
+		final String typeFromDefinition = String.class.cast(definition.get(DATA_TYPE));
+		final Object previouslySavedData = definition.getOutput();
+		final String rawData = defaultString(String.class.cast(defaultIfNull(previouslySavedData,
+				definition.get(RAW_DATA))));
+		final String value;
+		if (previouslySavedData != null) {
+			value = dataTypeBasedOnSerialization(safeSerializationType(definition), typeFromDefinition);
+		} else {
+			value = typeFromDefinition;
+		}
 		if (TYPE_RAW.equalsIgnoreCase(value) || TYPE_RAW_JSON.equalsIgnoreCase(value)) {
-			final String expression = defaultString(String.class.cast(valueMap.get(RAW_DATA)));
-			output = new IdentityDataBuilder(expression);
+			output = new IdentityDataBuilder(rawData);
 		} else if (TYPE_RAW_TEXT.equalsIgnoreCase(value)) {
-			final String expression = defaultString(String.class.cast(valueMap.get(RAW_DATA)));
-			output = new TextDataBuilder(expression, textConfigurationOf(valueMap));
-		} else if (TYPE_FUNCTION.equalsIgnoreCase(value) && !readBoolean(valueMap.get(TEMPLATE_RESOLVER), true)) {
-			final String functionName = defaultString(String.class.cast(valueMap.get(FUNCTION_DATA)));
+			output = new TextDataBuilder(rawData, textConfigurationOf(definition));
+		} else if (TYPE_FUNCTION.equalsIgnoreCase(value) && !readBoolean(definition.get(TEMPLATE_RESOLVER), true)) {
+			final String functionName = defaultString(String.class.cast(definition.get(FUNCTION_DATA)));
 			Validate.isTrue(isNotBlank(functionName), "invalid value for '%s'", FUNCTION_DATA);
-			output = new FunctionDataBuilder(dataView, functionName, valueMap);
+			output = new FunctionDataBuilder(dataView, functionName, definition);
 		} else {
 			output = new IdentityDataBuilder(null);
 		}
 		return output;
 	}
 
-	private Builder<String> functionDataOf(final Map<String, Object> valueMap) {
+	private static String dataTypeBasedOnSerialization(final String serializationType, final String defaultValue) {
+		final String output;
+		if (JSON_SERIALIZATION.equals(serializationType)) {
+			output = TYPE_RAW_JSON;
+		} else if (TEXT_SERIALIZATION.equals(serializationType)) {
+			output = TYPE_RAW_TEXT;
+		} else {
+			output = defaultValue;
+		}
+		return output;
+	}
+
+	private Builder<String> functionDataOf(final WidgetDefinition definition) {
 		final DataBuilder output;
-		final String value = String.class.cast(valueMap.get(DATA_TYPE));
-		if (TYPE_FUNCTION.equalsIgnoreCase(value) && readBoolean(valueMap.get(TEMPLATE_RESOLVER), true)) {
-			final String functionName = defaultString(String.class.cast(valueMap.get(FUNCTION_DATA)));
+		final String value = String.class.cast(definition.get(DATA_TYPE));
+		if (TYPE_FUNCTION.equalsIgnoreCase(value) && readBoolean(definition.get(TEMPLATE_RESOLVER), true)) {
+			final String functionName = defaultString(String.class.cast(definition.get(FUNCTION_DATA)));
 			Validate.isTrue(isNotBlank(functionName), "invalid value for '%s'", FUNCTION_DATA);
 			output = new IdentityDataBuilder(functionName);
 		} else {
@@ -168,25 +186,25 @@ public class CustomFormWidgetFactory extends ValuePairWidgetFactory {
 		return output;
 	}
 
-	private Capabilities capabilitiesOf(final Map<String, Object> valueMap) {
+	private Capabilities capabilitiesOf(final WidgetDefinition definition) {
 		final Capabilities output = new Capabilities();
-		output.setReadOnly(readBooleanFalseIfMissing(valueMap.get(READ_ONLY)));
-		output.setAddDisabled(readBooleanFalseIfMissing(valueMap.get(ADD_DISABLED)));
-		output.setDeleteDisabled(readBooleanFalseIfMissing(valueMap.get(DELETE_DISABLED)));
-		output.setImportDisabled(readBooleanFalseIfMissing(valueMap.get(IMPORT_DISABLED)));
-		output.setModifyDisabled(readBooleanFalseIfMissing(valueMap.get(MODIFY_DISABLED)));
-		output.setCloneDisabled(readBooleanFalseIfMissing(valueMap.get(CLONE_DISABLED)));
+		output.setReadOnly(readBooleanFalseIfMissing(definition.get(READ_ONLY)));
+		output.setAddDisabled(readBooleanFalseIfMissing(definition.get(ADD_DISABLED)));
+		output.setDeleteDisabled(readBooleanFalseIfMissing(definition.get(DELETE_DISABLED)));
+		output.setImportDisabled(readBooleanFalseIfMissing(definition.get(IMPORT_DISABLED)));
+		output.setModifyDisabled(readBooleanFalseIfMissing(definition.get(MODIFY_DISABLED)));
+		output.setCloneDisabled(readBooleanFalseIfMissing(definition.get(CLONE_DISABLED)));
 		return output;
 	}
 
-	private Serialization serializationOf(final Map<String, Object> valueMap) {
+	private Serialization serializationOf(final WidgetDefinition definition) {
 		final Serialization output = new Serialization();
-		final String type = defaultIfBlank(String.class.cast(valueMap.get(SERIALIZATION_TYPE)), TEXT_SERIALIZATION);
+		final String type = safeSerializationType(definition);
 		final Configuration configuration;
 		if (JSON_SERIALIZATION.equals(type)) {
 			configuration = null;
 		} else if (TEXT_SERIALIZATION.equals(type)) {
-			final TextConfiguration textConfiguration = textConfigurationOf(valueMap);
+			final TextConfiguration textConfiguration = textConfigurationOf(definition);
 			configuration = textConfiguration;
 		} else {
 			configuration = null;
@@ -196,15 +214,23 @@ public class CustomFormWidgetFactory extends ValuePairWidgetFactory {
 		return output;
 	}
 
-	private TextConfiguration textConfigurationOf(final Map<String, Object> valueMap) {
+	private TextConfiguration textConfigurationOf(final WidgetDefinition definition) {
 		final TextConfiguration textConfiguration = new TextConfiguration();
-		textConfiguration.setKeyValueSeparator(defaultIfBlank(String.class.cast(valueMap.get(KEY_VALUE_SEPARATOR)),
+		textConfiguration.setKeyValueSeparator(defaultIfBlank(String.class.cast(definition.get(KEY_VALUE_SEPARATOR)),
 				DEFAULT_KEY_VALUE_SEPARATOR));
-		textConfiguration.setAttributesSeparator(defaultIfBlank(String.class.cast(valueMap.get(ATTRIBUTES_SEPARATOR)),
-				DEFAULT_ATTRIBUTES_SEPARATOR));
-		textConfiguration.setRowsSeparator(defaultIfBlank(String.class.cast(valueMap.get(ROWS_SEPARATOR)),
+		textConfiguration.setAttributesSeparator(defaultIfBlank(
+				String.class.cast(definition.get(ATTRIBUTES_SEPARATOR)), DEFAULT_ATTRIBUTES_SEPARATOR));
+		textConfiguration.setRowsSeparator(defaultIfBlank(String.class.cast(definition.get(ROWS_SEPARATOR)),
 				DEFAULT_ROWS_SEPARATOR));
 		return textConfiguration;
+	}
+
+	/**
+	 * Returns the value of the serialization type. It always returns a valid
+	 * value.
+	 */
+	private static String safeSerializationType(final WidgetDefinition definition) {
+		return defaultIfBlank(String.class.cast(definition.get(SERIALIZATION_TYPE)), TEXT_SERIALIZATION);
 	}
 
 }
