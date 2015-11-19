@@ -7,6 +7,7 @@
 
 		requires: [
 			'CMDBuild.core.cache.Cache',
+			'CMDBuild.core.configurations.Timeout',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.Index',
 			'CMDBuild.model.report.Grid'
@@ -20,7 +21,10 @@
 		create: function(parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.report.createReportFactory });
+			Ext.apply(parameters, {
+				timeout: CMDBuild.core.configurations.Timeout.getReport(), // Get report timeout from configuration
+				url: CMDBuild.core.proxy.Index.report.createReportFactory
+			});
 
 			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.REPORT, parameters, true);
 		},
@@ -67,7 +71,10 @@
 		update: function(parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.report.updateReportFactoryParams });
+			Ext.apply(parameters, {
+				timeout: CMDBuild.core.configurations.Timeout.getReport(), // Get report timeout from configuration
+				url: CMDBuild.core.proxy.Index.report.updateReportFactoryParams
+			});
 
 			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.REPORT, parameters, true);
 		}

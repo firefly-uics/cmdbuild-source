@@ -6,7 +6,8 @@
 			'CMDBuild.core.cache.Cache',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.Index',
-			'CMDBuild.model.widget.openReport.ReportCombo'
+			'CMDBuild.model.widget.openReport.ReportCombo',
+			'CMDBuild.core.configurations.Timeout',
 		],
 
 		singleton: true,
@@ -19,7 +20,10 @@
 		create: function(parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.report.createReportFactory });
+			Ext.apply(parameters, {
+				timeout: CMDBuild.core.configurations.Timeout.getReport(), // Get report timeout from configuration
+				url: CMDBuild.core.proxy.Index.report.createReportFactory
+			});
 
 			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.REPORT, parameters);
 		},
@@ -32,7 +36,10 @@
 		createFactory: function(parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.report.createReportFactoryByTypeCode });
+			Ext.apply(parameters, {
+				timeout: CMDBuild.core.configurations.Timeout.getReport(), // Get report timeout from configuration
+				url: CMDBuild.core.proxy.Index.report.createReportFactoryByTypeCode
+			});
 
 			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.REPORT, parameters);
 		},
@@ -42,7 +49,7 @@
 		 *
 		 * @management
 		 */
-		getFormatsStore: function() {
+		getStoreFormats: function() {
 			return Ext.create('Ext.data.ArrayStore', {
 				fields: [CMDBuild.core.constants.Proxy.VALUE, CMDBuild.core.constants.Proxy.DESCRIPTION],
 				data: [
@@ -58,17 +65,35 @@
 		},
 
 		/**
+		 * @returns {Ext.data.ArrayStore}
+		 *
+		 * @administration
+		 */
+		getStoreForceFormat: function() {
+			return Ext.create('Ext.data.ArrayStore', {
+				fields: [CMDBuild.core.constants.Proxy.VALUE, CMDBuild.core.constants.Proxy.DESCRIPTION],
+				data: [
+					[CMDBuild.core.constants.Proxy.PDF, CMDBuild.Translation.pdf],
+					[CMDBuild.core.constants.Proxy.CSV, CMDBuild.Translation.csv]
+				],
+				sorters: [
+					{ property: CMDBuild.core.constants.Proxy.DESCRIPTION, direction: 'ASC' }
+				]
+			});
+		},
+
+		/**
 		 * @returns {Ext.data.Store or CMDBuild.core.cache.Store}
 		 *
 		 * @administration
 		 */
-		getReportsStore: function() {
+		getStoreReports: function() {
 			return CMDBuild.core.cache.Cache.requestAsStore(CMDBuild.core.constants.Proxy.REPORT, {
 				autoLoad: true,
 				model: 'CMDBuild.model.widget.openReport.ReportCombo',
 				proxy: {
 					type: 'ajax',
-					url: CMDBuild.core.proxy.Index.classes.readAll,
+					url: CMDBuild.core.proxy.Index.report.getReportsByType,
 					reader: {
 						type: 'json',
 						root: CMDBuild.core.constants.Proxy.ROWS,
@@ -92,7 +117,10 @@
 		update: function(parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.report.updateReportFactoryParams });
+			Ext.apply(parameters, {
+				timeout: CMDBuild.core.configurations.Timeout.getReport(), // Get report timeout from configuration
+				url: CMDBuild.core.proxy.Index.report.updateReportFactoryParams
+			});
 
 			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.REPORT, parameters);
 		}
