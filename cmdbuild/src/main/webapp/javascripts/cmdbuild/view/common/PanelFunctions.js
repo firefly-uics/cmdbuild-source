@@ -19,6 +19,7 @@
 				this.cascade(function(item) {
 					if (
 						!Ext.isEmpty(item)
+						&& Ext.isFunction(item.getValue)
 						&& this.isManagedField(item)
 					) {
 						data[item.name] = item.getValue();
@@ -111,7 +112,7 @@
 
 			if (!Ext.isEmpty(bottomToolbar))
 				Ext.Array.forEach(bottomToolbar.items.items, function(button, i, allButtons) {
-					if (Ext.isFunction(button.setDisabled))
+					if (!Ext.isEmpty(button) && Ext.isFunction(button.setDisabled))
 						button.setDisabled(state);
 				}, this);
 		},
@@ -129,7 +130,7 @@
 
 			// For Ext.form.field.Field objects
 			this.getForm().getFields().each(function(item, i, length) {
-				if (Ext.isFunction(item.setDisabled))
+				if (!Ext.isEmpty(item) && Ext.isFunction(item.setDisabled))
 					if (state) {
 						item.setDisabled(state);
 					} else {
@@ -182,7 +183,7 @@
 
 			if (!Ext.isEmpty(topToolbar))
 				Ext.Array.forEach(topToolbar.items.items, function(button, i, allButtons) {
-					if (Ext.isFunction(button.setDisabled)) {
+					if (!Ext.isEmpty(button) && Ext.isFunction(button.setDisabled)) {
 						if (Ext.isBoolean(button.forceDisabledState)) // Force disabled state implementation
 							state = button.forceDisabledState;
 

@@ -51,7 +51,7 @@
 						editable: false,
 						forceSelection: true,
 
-						store: CMDBuild.core.proxy.widgets.OpenReport.getFormatsStore(),
+						store: CMDBuild.core.proxy.widgets.OpenReport.getStoreFormats(),
 						queryMode: 'local'
 					}),
 					this.fieldContainer = Ext.create('Ext.container.Container', { // To contains all non fixed fields

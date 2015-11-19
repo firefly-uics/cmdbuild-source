@@ -4,7 +4,7 @@
 		extend: 'CMDBuild.controller.common.AbstractController',
 
 		requires: [
-			'CMDBuild.controller.common.AbstractBaseWidgetController',
+			'CMDBuild.controller.common.AbstractWidgetController',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.Message',
 			'CMDBuild.core.proxy.common.tabs.email.Attachment',
@@ -191,7 +191,7 @@
 				this.templateResolver = new CMDBuild.Management.TemplateResolver({
 					clientForm: this.cmfg('tabEmailGetFormForTemplateResolver'),
 					xaVars: xaVars,
-					serverVars: CMDBuild.controller.common.AbstractBaseWidgetController.getTemplateResolverServerVars(
+					serverVars: CMDBuild.controller.common.AbstractWidgetController.getTemplateResolverServerVars(
 						this.cmfg('tabEmailSelectedEntityGet', CMDBuild.core.constants.Proxy.ENTITY)
 					)
 				});

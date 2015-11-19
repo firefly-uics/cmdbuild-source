@@ -2,6 +2,9 @@
 
 	var tr = CMDBuild.Translation.administration.modClass.widgets;
 
+	/**
+	 * @deprecated (CMDBuild.view.administration.widget.form.AbstractWidgetDefinitionForm)
+	 */
 	Ext.define('CMDBuild.view.administration.widget.form.CMBaseWidgetDefinitionForm', {
 		extend: 'Ext.panel.Panel',
 
@@ -60,9 +63,6 @@
 				maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				allowBlank: false,
-//				translationsKeyType: 'Widget',
-//				translationsKeyField: 'ButtonLabel',
-//				itemId: 'ButtonLabel',
 
 				translationFieldConfig: {
 					type: CMDBuild.core.constants.Proxy.CLASS_WIDGET,

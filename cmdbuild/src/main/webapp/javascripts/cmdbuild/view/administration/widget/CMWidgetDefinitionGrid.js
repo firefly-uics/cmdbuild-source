@@ -1,7 +1,5 @@
 (function() {
 
-	var tr = CMDBuild.Translation.administration.modClass.widgets;
-
 	Ext.define('CMDBuild.view.administration.widget.CMWidgetDefinitionGrid', {
 		extend: 'Ext.grid.Panel',
 
@@ -14,22 +12,28 @@
 			Ext.apply(this, {
 				columns: [
 					{
-						header: tr.commonFields.type,
+						text: CMDBuild.Translation.administration.modClass.widgets.commonFields.type,
 						dataIndex: CMDBuild.core.constants.Proxy.TYPE,
 						flex: 1,
 
 						renderer: function(value) {
-							return tr[value].title;
+							switch (value) {
+								case '.OpenReport':
+									return CMDBuild.Translation.createReport;
+
+								default:
+									return CMDBuild.Translation.administration.modClass.widgets[value].title;
+							}
 						}
 					},
 					{
-						header: tr.commonFields.buttonLabel,
+						text: CMDBuild.Translation.administration.modClass.widgets.commonFields.buttonLabel,
 						dataIndex: CMDBuild.core.constants.Proxy.LABEL,
 						flex: 2
 					},
 					{
 						xtype: 'checkcolumn',
-						header: tr.commonFields.active,
+						text: CMDBuild.Translation.administration.modClass.widgets.commonFields.active,
 						dataIndex: CMDBuild.core.constants.Proxy.ACTIVE,
 						width: 60,
 						cmReadOnly: true
