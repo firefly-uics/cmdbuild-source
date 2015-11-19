@@ -124,13 +124,15 @@
 		 */
 		onAddClick: function(widgetName) {
 			this.model = undefined;
-			this.view.reset();
+//			this.view.reset();
 
 			this.buildSubController(widgetName, null, this.classId);
 
 			if (!Ext.Object.isEmpty(this.subController)) {
 				this.view.enableModify();
-				this.subController.setDefaultValues();
+
+				if (!Ext.isEmpty(this.subController) && Ext.isFunction(this.subController.setDefaultValues))
+					this.subController.setDefaultValues();
 			}
 		},
 
@@ -169,8 +171,8 @@
 		},
 
 		onEnableModify: function() {
-			if (this.subController)
-				this.subController.afterEnableEditing()
+			if (!Ext.isEmpty(this.subController) && Ext.isFunction(this.subController.afterEnableEditing))
+				this.subController.afterEnableEditing();
 		},
 
 		onModifyClick: function() {

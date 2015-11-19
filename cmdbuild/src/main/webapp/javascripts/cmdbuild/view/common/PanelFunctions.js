@@ -2,6 +2,10 @@
 
 	/**
 	 * New class than will replace CMFormFunctions
+	 *
+	 * Specific properties:
+	 *  - {Boolean} considerAsFieldToDisable: enable setDisable function on processed item also if it's not inherits from Ext.form.Field
+	 * 	- {Boolean} disablePanelFunctions: disable PanelFunctions class actions on processed item
 	 */
 	Ext.define('CMDBuild.view.common.PanelFunctions', {
 
@@ -21,6 +25,7 @@
 						!Ext.isEmpty(item)
 						&& Ext.isFunction(item.getValue)
 						&& this.isManagedField(item)
+						&& !item.disablePanelFunctions
 					) {
 						data[item.name] = item.getValue();
 					}
@@ -45,7 +50,7 @@
 					&& !item.isDisabled()
 					&& !item.isHidden()
 					&& !item.isValid()
-					&& !item.disableCascade // Property to disable cascade on fields
+					&& !item.disablePanelFunctions
 				) {
 					nonValidFields.push(item);
 				}
@@ -82,6 +87,7 @@
 						|| item instanceof Ext.form.field.HtmlEditor
 						|| item instanceof Ext.form.FieldContainer
 					)
+					&& !item.disablePanelFunctions
 				) {
 					item.setValue();
 				}
@@ -98,6 +104,7 @@
 						|| item instanceof Ext.form.field.HtmlEditor
 						|| item instanceof Ext.form.FieldContainer
 					)
+					&& !item.disablePanelFunctions
 				) {
 					item.reset();
 				}
@@ -112,8 +119,13 @@
 
 			if (!Ext.isEmpty(bottomToolbar))
 				Ext.Array.forEach(bottomToolbar.items.items, function(button, i, allButtons) {
-					if (!Ext.isEmpty(button) && Ext.isFunction(button.setDisabled))
+					if (
+						!Ext.isEmpty(button)
+						&& Ext.isFunction(button.setDisabled)
+						&& !button.disablePanelFunctions
+					) {
 						button.setDisabled(state);
+					}
 				}, this);
 		},
 
@@ -130,13 +142,18 @@
 
 			// For Ext.form.field.Field objects
 			this.getForm().getFields().each(function(item, i, length) {
-				if (!Ext.isEmpty(item) && Ext.isFunction(item.setDisabled))
+				if (
+					!Ext.isEmpty(item)
+					&& Ext.isFunction(item.setDisabled)
+					&& !item.disablePanelFunctions
+				) {
 					if (state) {
 						item.setDisabled(state);
 					} else {
 						if ((allFields || !item.cmImmutable) && item.isVisible())
 							item.setDisabled(state);
 					}
+				}
 			}, this);
 
 			// For extra objects (Buttons and objects with considerAsFieldToDisable property)
@@ -148,6 +165,7 @@
 						item instanceof Ext.button.Button
 						|| item.considerAsFieldToDisable
 					)
+					&& !item.disablePanelFunctions
 				) {
 					if (state) {
 						item.setDisabled(state);
@@ -183,7 +201,11 @@
 
 			if (!Ext.isEmpty(topToolbar))
 				Ext.Array.forEach(topToolbar.items.items, function(button, i, allButtons) {
-					if (!Ext.isEmpty(button) && Ext.isFunction(button.setDisabled)) {
+					if (
+						!Ext.isEmpty(button)
+						&& Ext.isFunction(button.setDisabled)
+						&& !button.disablePanelFunctions
+					) {
 						if (Ext.isBoolean(button.forceDisabledState)) // Force disabled state implementation
 							state = button.forceDisabledState;
 

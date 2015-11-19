@@ -22,14 +22,9 @@
 		defaultFields: undefined,
 
 		/**
-		 * @property {Ext.form.field.Checkbox}
+		 * @property {CMDBuild.view.common.field.comboBox.DrivedCheckbox}
 		 */
-		forceFormatCheck: undefined,
-
-		/**
-		 * @property {Ext.form.field.ComboBox}
-		 */
-		forceFormatOptions: undefined,
+		forceFormat: undefined,
 
 		/**
 		 * @property {Ext.grid.Panel}
@@ -40,14 +35,6 @@
 		 * @property {Ext.form.field.ComboBox}
 		 */
 		reportCode: undefined,
-
-		/**
-		 * Enable forceFormatOptions only if forceFormatCheck is checked
-		 */
-		enableNonFieldElements: function() {
-			if (!this.forceFormatCheck.getValue())
-				this.forceFormatOptions.disable();
-		},
 
 		/**
 		 * Builds widget configuration custom fields
@@ -78,28 +65,15 @@
 						}
 					}
 				}),
-				this.forceFormat = Ext.create('Ext.form.FieldContainer', {
+				this.forceFormat = Ext.create('CMDBuild.view.common.field.comboBox.DrivedCheckbox', {
+					name: CMDBuild.core.constants.Proxy.FORCE_FORMAT,
 					width: CMDBuild.ADM_BIG_FIELD_WIDTH,
 					fieldLabel: CMDBuild.Translation.forceFormat,
 					labelWidth: CMDBuild.LABEL_WIDTH,
+					displayField: CMDBuild.core.constants.Proxy.DESCRIPTION,
+					valueField: CMDBuild.core.constants.Proxy.VALUE,
 
-					layout: {
-						type: 'hbox'
-					},
-
-					items: [
-						this.forceFormatCheck = Ext.create('Ext.form.field.Checkbox', { flex: 1 }),
-						this.forceFormatOptions = Ext.create('Ext.form.field.ComboBox', {
-							displayField: CMDBuild.core.constants.Proxy.DESCRIPTION,
-							valueField: CMDBuild.core.constants.Proxy.VALUE,
-							flex: 4,
-							forceSelection: true,
-							editable: false,
-
-							store: CMDBuild.core.proxy.widgets.OpenReport.getStoreForceFormat(),
-							queryMode: 'local'
-						})
-					]
+					store: CMDBuild.core.proxy.widgets.OpenReport.getStoreForceFormat()
 				})
 			]);
 		},
