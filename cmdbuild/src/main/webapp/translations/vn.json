@@ -137,18 +137,6 @@
 			"title": "Quản lý Lớp",
 			"tree_title": "Danh sách Lớp",
 			"widgets": {
-				".OpenReport": {
-					"fields": {
-						"force": "Ðịnh dạng bắt buộc",
-						"presets": "Báo cáo thuộc tính",
-						"report": "Báo cáo"
-					},
-					"presetGrid": {
-						"attribute": "Thuộc tính",
-						"value": "Giá trị"
-					},
-					"title": "Tạo báo cáo"
-				},
 				".Calendar": {
 					"fields": {
 						"target": "Lớp mục tiêu",
@@ -1175,6 +1163,7 @@
 	"containsorequal": "<em>Contains or equal</em>",
 	"controls": "<em>Controls</em>",
 	"cql_filter": "<em>CQL filter</em>",
+	"createReport": "Tạo báo cáo",
 	"credentials": "Thông tin mật",
 	"csv": "CSV",
 	"csvFile": "Tập tin CSV",
@@ -1251,6 +1240,7 @@
 	"filter": "Bộ lọc",
 	"filtersForGroups": "Các bộ lọc của các nhóm",
 	"filterView": "Bộ lọc từ",
+	"forceFormat": "Ðịnh dạng bắt buộc",
 	"format": "Mẫu",
 	"format_csv": "<em>CSV</em>",
 	"format_odt": "<em>OpenOffice Odt</em>",
@@ -1394,6 +1384,7 @@
 	"replace": "<em>Replace</em>",
 	"reply": "<em>Reply</em>",
 	"report": "Báo cáo",
+	"reportAttributes": "Báo cáo thuộc tính",
 	"reportMenuJasper": "<em>Jasper-reports report</em>",
 	"reportParameters": "<em>Report parameters</em>",
 	"repository": "Kho lưu trữ",

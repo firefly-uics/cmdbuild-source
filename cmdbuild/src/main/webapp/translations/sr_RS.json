@@ -137,18 +137,6 @@
 			"title": "Управљање класама",
 			"tree_title": "Класе",
 			"widgets": {
-				".OpenReport": {
-					"fields": {
-						"force": "Принудно форматирање",
-						"presets": "Атрибути извештаја",
-						"report": "Извештај"
-					},
-					"presetGrid": {
-						"attribute": "Атрибут",
-						"value": "Вредност"
-					},
-					"title": "Креирај извештај"
-				},
 				".Calendar": {
 					"fields": {
 						"target": "Циљна класа",
@@ -1175,6 +1163,7 @@
 	"containsorequal": "Садржи или је једнак",
 	"controls": "Контроле",
 	"cql_filter": "CQL филтер",
+	"createReport": "Креирај извештај",
 	"credentials": "Подаци за приступ",
 	"csv": "CSV",
 	"csvFile": "CSV датотека",
@@ -1251,6 +1240,7 @@
 	"filter": "Филтер",
 	"filtersForGroups": "Групни филтер",
 	"filterView": "Филтер од",
+	"forceFormat": "Принудно форматирање",
 	"format": "Форматирај",
 	"format_csv": "CSV",
 	"format_odt": "OpenOffice Odt",
@@ -1394,6 +1384,7 @@
 	"replace": "Замени",
 	"reply": "<em>Reply</em>",
 	"report": "Извештаји",
+	"reportAttributes": "Атрибути извештаја",
 	"reportMenuJasper": "<em>Jasper-reports report</em>",
 	"reportParameters": "<em>Report parameters</em>",
 	"repository": "Архива",

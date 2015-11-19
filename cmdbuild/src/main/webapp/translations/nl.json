@@ -137,18 +137,6 @@
 			"title": "Beheer klassen",
 			"tree_title": "Klassen Lijst",
 			"widgets": {
-				".OpenReport": {
-					"fields": {
-						"force": "Forceer formaat",
-						"presets": "Rapport attributen",
-						"report": "Rapport"
-					},
-					"presetGrid": {
-						"attribute": "Attribuut",
-						"value": "Waarde"
-					},
-					"title": "Ontwerp rapport"
-				},
 				".Calendar": {
 					"fields": {
 						"target": "Doel Klas",
@@ -1175,6 +1163,7 @@
 	"containsorequal": "Bevat of is gelijk aan",
 	"controls": "Besturing",
 	"cql_filter": "CQL filter",
+	"createReport": "Ontwerp rapport",
 	"credentials": "Rechten",
 	"csv": "CSV",
 	"csvFile": "CSV bestand",
@@ -1251,6 +1240,7 @@
 	"filter": "Filter",
 	"filtersForGroups": "Filters for groepen",
 	"filterView": "Van Filter",
+	"forceFormat": "Forceer formaat",
 	"format": "Formaat",
 	"format_csv": "CSV",
 	"format_odt": "OpenOffice Odt",
@@ -1394,6 +1384,7 @@
 	"replace": "Vervang",
 	"reply": "<em>Reply</em>",
 	"report": "Rapport",
+	"reportAttributes": "Rapport attributen",
 	"reportMenuJasper": "<em>Jasper-reports report</em>",
 	"reportParameters": "<em>Report parameters</em>",
 	"repository": "Bewaarplaats",

@@ -137,18 +137,6 @@
 			"title": "Osztályok kezelése",
 			"tree_title": "Osztály lista",
 			"widgets": {
-				".OpenReport": {
-					"fields": {
-						"force": "Erőltetett formátum",
-						"presets": "Jelentés attribútumok",
-						"report": "Jelentés"
-					},
-					"presetGrid": {
-						"attribute": "Attribútum",
-						"value": "Érték"
-					},
-					"title": "Jelentés készítése"
-				},
 				".Calendar": {
 					"fields": {
 						"target": "Célosztály",
@@ -1175,6 +1163,7 @@
 	"containsorequal": "Tartalmaz vagy egyenlő",
 	"controls": "Vezérlők",
 	"cql_filter": "CQL szűrő",
+	"createReport": "Jelentés készítése",
 	"credentials": "Ajánlók",
 	"csv": "CSV",
 	"csvFile": "CSV fájl",
@@ -1251,6 +1240,7 @@
 	"filter": "Szűrő",
 	"filtersForGroups": "Szűrők csoportoknak",
 	"filterView": "Szűrőkből",
+	"forceFormat": "Erőltetett formátum",
 	"format": "Formátum",
 	"format_csv": "CSV",
 	"format_odt": "OpenOffice Odt",
@@ -1394,6 +1384,7 @@
 	"replace": "Kicserél",
 	"reply": "Válasz",
 	"report": "Jelentés",
+	"reportAttributes": "Jelentés attribútumok",
 	"reportMenuJasper": "<em>Jasper-reports report</em>",
 	"reportParameters": "Jelentés paraméter",
 	"repository": "Gyűjtemény",

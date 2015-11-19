@@ -137,18 +137,6 @@
 			"title": "مدیریت کلاسها",
 			"tree_title": "لیست کلاس",
 			"widgets": {
-				".OpenReport": {
-					"fields": {
-						"force": "قالب بندی اجباری",
-						"presets": "خواص گزارش",
-						"report": "گزارش"
-					},
-					"presetGrid": {
-						"attribute": "خاصیت",
-						"value": "مقدار"
-					},
-					"title": "تولید گزارش"
-				},
 				".Calendar": {
 					"fields": {
 						"target": "کلاس مقصد",
@@ -1251,6 +1239,7 @@
 	"filter": "فیلتر",
 	"filtersForGroups": "فیلترها برای گروهها",
 	"filterView": "از فیلتر",
+	"forceFormat": "قالب بندی اجباری",
 	"format": "Format",
 	"format_csv": "CSV",
 	"format_odt": "OpenOffice Odt",
@@ -1394,6 +1383,7 @@
 	"replace": "<em>Replace</em>",
 	"reply": "<em>Reply</em>",
 	"report": "گزارش",
+	"reportAttributes": "خواص گزارش",
 	"reportMenuJasper": "<em>Jasper-reports report</em>",
 	"reportParameters": "<em>Report parameters</em>",
 	"repository": "Repository",
@@ -1449,6 +1439,7 @@
 	"template": "قالب",
 	"templates": "قالبها",
 	"thresholdForClusteringNodes": "Threshold for clustering nodes",
+	"title": "تولید گزارش",
 	"to": "به",
 	"top": "بالا",
 	"translations": "ترجمه",

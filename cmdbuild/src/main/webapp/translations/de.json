@@ -136,18 +136,6 @@
 			"title": "Klassenverwaltung",
 			"tree_title": "Klasse",
 			"widgets": {
-				".OpenReport": {
-					"fields": {
-						"force": "Format erzwingen",
-						"presets": "Attribute des Berichtes",
-						"report": "Bericht"
-					},
-					"presetGrid": {
-						"attribute": "Attribut",
-						"value": "Wert"
-					},
-					"title": "Bericht erstellen"
-				},
 				".Calendar": {
 					"fields": {
 						"target": "Verweisklasse",
@@ -1175,6 +1163,7 @@
 	"containsorequal": "<em>Contains or equal</em>",
 	"controls": "Controls",
 	"cql_filter": "CQL Filter",
+	"createReport": "Bericht erstellen",
 	"credentials": "Berechtigungsnachweis",
 	"csv": "CSV",
 	"csvFile": "CSV Datei",
@@ -1251,6 +1240,7 @@
 	"filter": "Filter",
 	"filtersForGroups": "Gruppenfilter",
 	"filterView": "Aus dem Filter",
+	"forceFormat": "Format erzwingen",
 	"format": "Format",
 	"format_csv": "CSV",
 	"format_odt": "OpenOffice Odt",
@@ -1394,6 +1384,7 @@
 	"replace": "<em>Replace</em>",
 	"reply": "<em>Reply</em>",
 	"report": "Bericht",
+	"reportAttributes": "Attribute des Berichtes",
 	"reportMenuJasper": "<em>Jasper-reports report</em>",
 	"reportParameters": "<em>Report parameters</em>",
 	"repository": "Archivdatei",
