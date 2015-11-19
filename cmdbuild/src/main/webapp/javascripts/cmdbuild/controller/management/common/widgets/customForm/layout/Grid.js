@@ -97,7 +97,7 @@
 				fixed: true,
 
 				items: [
-					Ext.create('CMDBuild.core.buttons.iconized.row.Clone', {
+					Ext.create('CMDBuild.core.buttons.iconized.Clone', {
 						withSpacer: true,
 						tooltip: CMDBuild.Translation.cloneRow,
 						scope: this,
