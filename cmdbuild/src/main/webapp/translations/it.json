@@ -137,18 +137,6 @@
 			"title": "Gestione classi",
 			"tree_title": "Classi",
 			"widgets": {
-				".OpenReport": {
-					"fields": {
-						"force": "Forza formato",
-						"presets": "Attributi del report",
-						"report": "Report"
-					},
-					"presetGrid": {
-						"attribute": "Attributo",
-						"value": "Valore"
-					},
-					"title": "Crea Report"
-				},
 				".Calendar": {
 					"fields": {
 						"target": "Classe di riferimento",
@@ -1175,6 +1163,7 @@
 	"containsorequal": "Contiene o uguale",
 	"controls": "Controlli",
 	"cql_filter": "Filtro CQL",
+	"createReport": "Crea report",
 	"credentials": "Credenziali",
 	"csv": "CSV",
 	"csvFile": "File CSV",
@@ -1251,6 +1240,7 @@
 	"filter": "Filtro",
 	"filtersForGroups": "Filtri di gruppo",
 	"filterView": "Da Filtro",
+	"forceFormat": "Forza formato",
 	"format": "Formato",
 	"format_csv": "CSV",
 	"format_odt": "OpenOffice Odt",
@@ -1394,6 +1384,7 @@
 	"replace": "Sostituisci",
 	"reply": "Rispondi",
 	"report": "Report",
+	"reportAttributes": "Attributi del report",
 	"reportMenuJasper": "Jasper-reports report",
 	"reportParameters": "Parametri report",
 	"repository": "Archivio",

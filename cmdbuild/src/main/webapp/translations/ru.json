@@ -137,18 +137,6 @@
 			"title": "Настройка классов",
 			"tree_title": "Список классов",
 			"widgets": {
-				".OpenReport": {
-					"fields": {
-						"force": "Формат",
-						"presets": "Атрибуты отчета",
-						"report": "Отчет"
-					},
-					"presetGrid": {
-						"attribute": "Атрибут",
-						"value": "Значение"
-					},
-					"title": "Создать отчет"
-				},
 				".Calendar": {
 					"fields": {
 						"target": "Целевой класс",
@@ -1175,6 +1163,7 @@
 	"containsorequal": "<em>Contains or equal</em>",
 	"controls": "Управляющие элементы",
 	"cql_filter": "CQL-фильтр",
+	"createReport": "Создать отчет",
 	"credentials": "Учетные данные",
 	"csv": "CSV",
 	"csvFile": "Файл CSV",
@@ -1251,6 +1240,7 @@
 	"filter": "Фильтр",
 	"filtersForGroups": "Фильтры для групп",
 	"filterView": "На основе фильтра",
+	"forceFormat": "Формат",
 	"format": "Формат",
 	"format_csv": "Текст CSV",
 	"format_odt": "Документ OpenOffice",
@@ -1394,6 +1384,7 @@
 	"replace": "<em>Replace</em>",
 	"reply": "<em>Reply</em>",
 	"report": "Report",
+	"reportAttributes": "Атрибуты отчета",
 	"reportMenuJasper": "<em>Jasper-reports report</em>",
 	"reportParameters": "<em>Report parameters</em>",
 	"repository": "Хранилище документов",

@@ -137,18 +137,6 @@
 			"title": "管理类",
 			"tree_title": "类列表",
 			"widgets": {
-				".OpenReport": {
-					"fields": {
-						"force": "强制格式化",
-						"presets": "报告属性",
-						"report": "报告"
-					},
-					"presetGrid": {
-						"attribute": "属性",
-						"value": "值"
-					},
-					"title": "创建报告"
-				},
 				".Calendar": {
 					"fields": {
 						"target": "目标类",
@@ -1175,6 +1163,7 @@
 	"containsorequal": "Contains or equal",
 	"controls": "Controls",
 	"cql_filter": "CQL过滤器",
+	"createReport": "创建报告",
 	"credentials": "证书",
 	"csv": "CSV",
 	"csvFile": "CSV文件　",
@@ -1251,6 +1240,7 @@
 	"filter": "过滤器",
 	"filtersForGroups": "组的过滤器",
 	"filterView": "从过滤器",
+	"forceFormat": "强制格式化",
 	"format": "<em>Format</em>",
 	"format_csv": "CSV",
 	"format_odt": "OpenOffice Odt",
@@ -1394,6 +1384,7 @@
 	"replace": "替代",
 	"reply": "回复",
 	"report": "报告",
+	"reportAttributes": "报告属性",
 	"reportMenuJasper": "<em>Jasper-reports report</em>",
 	"reportParameters": "报告参数",
 	"repository": "集合",

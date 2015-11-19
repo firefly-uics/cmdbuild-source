@@ -14,7 +14,7 @@
 				menu: Ext.create('Ext.menu.Menu', {
 					items: [
 						{
-							text: CMDBuild.Translation.administration.modClass.widgets['.OpenReport'].title,
+							text: CMDBuild.Translation.createReport,
 							WIDGET_NAME: '.OpenReport',
 							scope: this,
 

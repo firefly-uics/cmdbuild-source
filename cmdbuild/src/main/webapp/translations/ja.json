@@ -137,18 +137,6 @@
 			"title": "クラス管理",
 			"tree_title": "クラスリスト",
 			"widgets": {
-				".OpenReport": {
-					"fields": {
-						"force": "フォーマットに合わせる",
-						"presets": "アトリビュートレポート",
-						"report": "レポート"
-					},
-					"presetGrid": {
-						"attribute": "属性",
-						"value": "値"
-					},
-					"title": "レポート作成"
-				},
 				".Calendar": {
 					"fields": {
 						"target": "ターゲットクラス",
@@ -1175,6 +1163,7 @@
 	"containsorequal": "含むまたは同じ",
 	"controls": "コントロール",
 	"cql_filter": "CQL フィルター",
+	"createReport": "レポート作成",
 	"credentials": "資格",
 	"csv": "CSV",
 	"csvFile": "CSV ファイル",
@@ -1251,6 +1240,7 @@
 	"filter": "フィルタ",
 	"filtersForGroups": "グループへのフィルタ",
 	"filterView": "フィルタから",
+	"forceFormat": "フォーマットに合わせる",
 	"format": "フォーマット",
 	"format_csv": "CSV",
 	"format_odt": "OpenOffice Odt",
@@ -1394,6 +1384,7 @@
 	"replace": "リプレース",
 	"reply": "<em>Reply</em>",
 	"report": "レポート",
+	"reportAttributes": "アトリビュートレポート",
 	"reportMenuJasper": "<em>Jasper-reports report</em>",
 	"reportParameters": "<em>Report parameters</em>",
 	"repository": "リポジトリ",

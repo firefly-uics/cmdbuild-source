@@ -137,18 +137,6 @@
 			"title": "Upravljanje klasama",
 			"tree_title": "Klase",
 			"widgets": {
-				".OpenReport": {
-					"fields": {
-						"force": "Prinudno formatiranje",
-						"presets": "Atributi izvještaja",
-						"report": "Izvještaj"
-					},
-					"presetGrid": {
-						"attribute": "Atribut",
-						"value": "Vrijednost"
-					},
-					"title": "Napravi izvještaj"
-				},
 				".Calendar": {
 					"fields": {
 						"target": "Ciljana klasa",
@@ -1175,6 +1163,7 @@
 	"containsorequal": "<em>Contains or equal</em>",
 	"controls": "<em>Controls</em>",
 	"cql_filter": "<em>CQL filter</em>",
+	"createReport": "Napravi izvještaj",
 	"credentials": "Podaci za pristup",
 	"csv": "CSV",
 	"csvFile": "CSV datoteka",
@@ -1251,6 +1240,7 @@
 	"filter": "Filter",
 	"filtersForGroups": "Grupni filter",
 	"filterView": "Filter od",
+	"forceFormat": "Prinudno formatiranje",
 	"format": "Formatiraj",
 	"format_csv": "<em>CSV</em>",
 	"format_odt": "<em>OpenOffice Odt</em>",
@@ -1394,6 +1384,7 @@
 	"replace": "<em>Replace</em>",
 	"reply": "<em>Reply</em>",
 	"report": "Izvještaji",
+	"reportAttributes": "Atributi izvještaja",
 	"reportMenuJasper": "<em>Jasper-reports report</em>",
 	"reportParameters": "<em>Report parameters</em>",
 	"repository": "Arhiva",

@@ -4,10 +4,10 @@
 
 		requires: [
 			'CMDBuild.core.cache.Cache',
+			'CMDBuild.core.configurations.Timeout',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.Index',
-			'CMDBuild.model.widget.openReport.ReportCombo',
-			'CMDBuild.core.configurations.Timeout',
+			'CMDBuild.model.widget.openReport.ReportCombo'
 		],
 
 		singleton: true,
