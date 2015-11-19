@@ -63,8 +63,9 @@
 			if (subControllerClass) {
 				var subView = this.view.buildWidgetForm(widgetName);
 
-				if (Ext.isString(subControllerClass)) {
+				if (Ext.isString(subControllerClass)) { // To use Ext.loader to asynchronous load also controllers
 					this.subController = Ext.create(subControllerClass, {
+						parentDelegate: this,
 						view: subView,
 						classId: classId
 					});
@@ -76,7 +77,7 @@
 				}
 
 				if (!Ext.Object.isEmpty(record))
-					this.subController.fillFormWithModel(record);
+					this.fillFormWithModelAdapter(record);
 
 				this.view.disableModify(true);
 			} else {
@@ -108,7 +109,7 @@
 		onAbortClick: function() {
 			if (this.model) {
 				this.view.disableModify(true);
-				this.subController.fillFormWithModel(this.model);
+				this.fillFormWithModelAdapter(this.model);
 			} else {
 				this.view.reset();
 			}
@@ -142,17 +143,28 @@
 			this.classId = classId;
 			this.view.reset(true);
 
-
 			// BUSINESS RULE: currently the widgets are not inherited so, deny the definition on superclasses
 			if (et.get('superclass')) {
 				this.view.disable();
 			} else {
 				this.view.enable();
 
-				var widgets = et.getWidgets();
+				CMDBuild.ServiceProxy.CMWidgetConfiguration.read({
+					scope: this,
+					success: function(response, options, decodedResponse) {
+						decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.RESPONSE];
 
-				for (var i = 0; i < widgets.length; ++i)
-					this.addRecordToGrid(widgets[i]);
+						if (
+							!Ext.isEmpty(decodedResponse[et.get(CMDBuild.core.constants.Proxy.NAME)])
+							&& Ext.isArray(decodedResponse[et.get(CMDBuild.core.constants.Proxy.NAME)])
+						) {
+							Ext.Array.forEach(decodedResponse[et.get(CMDBuild.core.constants.Proxy.NAME)], function(widgetDefinition, i, allWidgetDefinitions) {
+								if (!Ext.Object.isEmpty(widgetDefinition))
+									this.addRecordToGrid(widgetDefinition);
+							}, this);
+						}
+					}
+				});
 			}
 		},
 
@@ -254,6 +266,22 @@
 			this.model = record;
 
 			this.buildSubController(record.get(CMDBuild.core.constants.Proxy.TYPE), record, this.classId);
+		},
+
+		/**
+		 * Forwarder and adapter function
+		 *
+		 * @param {CMDBuild.model.widget.WidgetDefinition} model
+		 *
+		 * TODO: waiting for refactor (widget configuration panel), should use cmfg()
+		 */
+		fillFormWithModelAdapter: function(model) {
+			if (!Ext.isEmpty(this.subController))
+				if (!Ext.isEmpty(this.subController.fillFormWithModel) && Ext.isFunction(this.subController.fillFormWithModel)) { // Search in form view
+					this.subController.fillFormWithModel(model);
+				} else if (!Ext.isEmpty(this.subController) && Ext.isFunction(this.subController.cmfg)) { // Delegate cmfg call
+					this.subController.cmfg('widgetLoadRecord', model);
+				}
 		}
 	});
 

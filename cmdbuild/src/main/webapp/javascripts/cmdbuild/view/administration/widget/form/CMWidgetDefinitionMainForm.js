@@ -5,6 +5,8 @@ Ext.define("CMDBuild.view.administration.widget.CMWidgetDefinitionForm", {
 		formFunctions: "CMDBUild.view.common.CMFormFunctions"
 	},
 
+	layout: 'fit',
+
 	initComponent: function() {
 		var me = this;
 		this.modifyButton = new Ext.button.Button({
@@ -34,21 +36,29 @@ Ext.define("CMDBuild.view.administration.widget.CMWidgetDefinitionForm", {
 		this.removeAll();
 	},
 
-	// override
+	/**
+	 * Probably not necessary because PanelFunctions disable also non field elements
+	 *
+	 * @override
+	 */
 	enableModify: function(all) {
 		this.mixins.formFunctions.enableModify.call(this, all);
 		this.items.each(function(item) {
-			if (item.enableNonFieldElements) {
+			if (!Ext.isEmpty(item.enableNonFieldElements) && Ext.isFunction(item.enableNonFieldElements)) {
 				item.enableNonFieldElements();
 			}
 		});
 	},
 
-	// override
+	/**
+	 * Probably not necessary because PanelFunctions disable also non field elements
+	 *
+	 * @override
+	 */
 	disableModify: function(enableCMTBar) {
 		this.mixins.formFunctions.disableModify.call(this, enableCMTBar);
 		this.items.each(function(item) {
-			if (item.disableNonFieldElements) {
+			if (!Ext.isEmpty(item.disableNonFieldElements) && Ext.isFunction(item.disableNonFieldElements)) {
 				item.disableNonFieldElements();
 			}
 		});

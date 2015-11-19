@@ -10,7 +10,7 @@
 	 *
 	 * @abstract
 	 */
-	Ext.define('CMDBuild.controller.common.AbstractBaseWidgetController', {
+	Ext.define('CMDBuild.controller.common.AbstractWidgetController', {
 		extend: 'CMDBuild.controller.common.AbstractController',
 
 		requires: ['CMDBuild.core.constants.Proxy'],
@@ -123,7 +123,12 @@
 		 * @param {CMDBuild.model.CMActivityInstance} configurationObject.card
 		 */
 		constructor: function(configurationObject) {
-			if (!Ext.isEmpty(configurationObject) && !Ext.Object.isEmpty(configurationObject.widgetConfiguration)) {
+			if (
+				!Ext.Object.isEmpty(configurationObject)
+				&& !Ext.isEmpty(configurationObject.view)
+				&& !Ext.Object.isEmpty(configurationObject.widgetConfiguration)
+
+			) {
 				this.callParent(arguments);
 
 				// Setup widget configuration
@@ -134,7 +139,7 @@
 				if (this.enableDelegateApply)
 					this.view.delegate = this;
 			} else {
-				_error('wrong or empty widget view or configuration object', this);
+				_error('wrong configuration object or empty widget view', this);
 			}
 		},
 

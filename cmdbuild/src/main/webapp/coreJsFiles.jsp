@@ -30,6 +30,7 @@
 <script type="text/javascript" src="javascripts/cmdbuild/override/grid/plugin/RowExpander.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/override/JSON.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/override/layout/container/FixEditor.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/override/selection/CheckboxModel.js"></script>
 
 <!--  PROXYES -->
 <script type="text/javascript" src="javascripts/cmdbuild/core/proxy/Index.js"></script>

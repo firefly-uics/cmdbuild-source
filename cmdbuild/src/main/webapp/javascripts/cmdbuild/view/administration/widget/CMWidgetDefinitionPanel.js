@@ -77,7 +77,7 @@
 			var widgetClass = findWidgetClass(widgetName);
 
 			if (widgetClass) {
-				if (Ext.isString(widgetClass)) {
+				if (Ext.isString(widgetClass)) { // To use Ext.loader to asynchronous load also controllers
 					widget = Ext.create(widgetClass, {
 						border: false,
 						frame: false,
@@ -140,12 +140,22 @@
 			this.disableModify(enableToolbar = false);
 		},
 
+		/**
+		 * Forwarder and adapter function
+		 *
+		 * @returns {Object}
+		 *
+		 * TODO: waiting for refactor (widget configuration panel), should use cmfg()
+		 */
 		getWidgetDefinition: function() {
-			if (this.widgetForm) {
-				return this.widgetForm.getWidgetDefinition();
-			} else {
-				return {};
-			}
+			if (!Ext.isEmpty(this.widgetForm))
+				if (!Ext.isEmpty(this.widgetForm.getWidgetDefinition) && Ext.isFunction(this.widgetForm.getWidgetDefinition)) { // Search in form view
+					return this.widgetForm.getWidgetDefinition();
+				} else if (!Ext.isEmpty(this.widgetForm.delegate) && Ext.isFunction(this.widgetForm.delegate.cmfg)) { // Delegate cmfg call
+					return this.widgetForm.delegate.cmfg('widgetDefinitionGet');
+				}
+
+			return {};
 		}
 	});
 

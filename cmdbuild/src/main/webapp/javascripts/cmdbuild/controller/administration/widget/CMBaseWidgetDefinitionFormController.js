@@ -1,5 +1,8 @@
 (function() {
 
+	/**
+	 * @deprecated (CMDBuild.controller.administration.widget.AbstractWidgetDefinitionFormController)
+	 */
 	Ext.define('CMDBuild.controller.administration.widget.CMBaseWidgetDefinitionFormController', {
 		extend: 'Ext.Base',
 

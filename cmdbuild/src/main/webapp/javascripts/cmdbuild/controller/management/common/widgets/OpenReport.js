@@ -1,7 +1,7 @@
 (function() {
 
 	Ext.define('CMDBuild.controller.management.common.widgets.OpenReport', {
-		extend:'CMDBuild.controller.common.AbstractBaseWidgetController',
+		extend:'CMDBuild.controller.common.AbstractWidgetController',
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
