@@ -20,9 +20,7 @@
 		},
 
 		initComponent: function() {
-			this.delegate = Ext.create('CMDBuild.controller.common.field.delay.Delay', {
-				view: this
-			});
+			this.delegate = Ext.create('CMDBuild.controller.common.field.delay.Delay', { view: this });
 
 			this.delaySelectionCombo = Ext.create('Ext.form.field.ComboBox', {
 				name: this.name, // Property forward

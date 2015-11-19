@@ -1,9 +1,7 @@
 Ext.define("CMDBuild.view.administration.widget.CMWidgetDefinitionForm", {
 	extend: "Ext.form.Panel",
 
-	mixins: {
-		formFunctions: "CMDBUild.view.common.CMFormFunctions"
-	},
+	mixins: ['CMDBuild.view.common.PanelFunctions'],
 
 	layout: 'fit',
 
@@ -29,7 +27,7 @@ Ext.define("CMDBuild.view.administration.widget.CMWidgetDefinitionForm", {
 
 		this.callParent(arguments);
 
-		this.disableCMTbar();
+		this.setDisabledModify(true, true, true);
 	},
 
 	reset: function() {
@@ -42,7 +40,8 @@ Ext.define("CMDBuild.view.administration.widget.CMWidgetDefinitionForm", {
 	 * @override
 	 */
 	enableModify: function(all) {
-		this.mixins.formFunctions.enableModify.call(this, all);
+		this.setDisabledModify(false, true);
+
 		this.items.each(function(item) {
 			if (!Ext.isEmpty(item.enableNonFieldElements) && Ext.isFunction(item.enableNonFieldElements)) {
 				item.enableNonFieldElements();
@@ -56,7 +55,8 @@ Ext.define("CMDBuild.view.administration.widget.CMWidgetDefinitionForm", {
 	 * @override
 	 */
 	disableModify: function(enableCMTBar) {
-		this.mixins.formFunctions.disableModify.call(this, enableCMTBar);
+		this.setDisabledModify(true);
+
 		this.items.each(function(item) {
 			if (!Ext.isEmpty(item.disableNonFieldElements) && Ext.isFunction(item.disableNonFieldElements)) {
 				item.disableNonFieldElements();

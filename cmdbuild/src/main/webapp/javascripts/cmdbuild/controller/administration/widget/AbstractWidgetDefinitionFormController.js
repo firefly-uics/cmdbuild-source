@@ -63,28 +63,7 @@
 		 *
 		 * @abstract
 		 */
-		widgetLoadRecord: Ext.emptyFn,
-
-
-
-
-		afterEnableEditing: Ext.emptyFn,
-
-		disableNonFieldElements: Ext.emptyFn,
-
-		enableNonFieldElements: Ext.emptyFn,
-
-//		/**
-//		 * @param {CMDBuild.model.widget.WidgetDefinition} model
-//		 */
-//		fillFormWithModel: function(model) {
-//			if (!Ext.isEmpty(model) && model.$className == 'CMDBuild.model.widget.WidgetDefinition')
-//				this.view.fillWithModel(model);
-//		},
-
-		setDefaultValues: function() {
-			this.view.active.setValue(true);
-		}
+		widgetLoadRecord: Ext.emptyFn
 	});
 
 })();

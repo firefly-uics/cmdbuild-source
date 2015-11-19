@@ -39,34 +39,6 @@
 		widgetName: '.OpenReport',
 
 		/**
-		 * @param {Object} configurationObject
-		 * @param {Number} configurationObject.classId
-		 * @param {CMDBuild.view.administration.widget.form.OpenReport} configurationObject.view
-		 */
-		constructor: function(configurationObject) {
-			this.callParent(arguments);
-
-			// To enable/disable the combo-box with the related check
-			this.view.forceFormatCheck.setValue = Ext.Function.createSequence( // TODO: implementation of custom field
-				this.view.forceFormatCheck.setValue,
-				function(value) {
-					if (!this.forceFormatCheck.disabled) {
-						this.forceFormatOptions.setDisabled(!value);
-
-						if (value && typeof this.forceFormatOptions.getValue() != 'string') {
-							this.forceFormatOptions.setValue(
-								this.forceFormatOptions.store.first().get(this.forceFormatOptions.valueField)
-							);
-						} else {
-							this.forceFormatOptions.setValue();
-						}
-					}
-				},
-				this.view
-			);
-		},
-
-		/**
 		 * @param {Array} attributes
 		 *
 		 * @returns {Object} out
@@ -204,7 +176,7 @@
 					scope: this,
 					params: params,
 					success: function(response, options, decodedResponse) {
-						var data = decodedResponse['filled'] ? []: this.cleanServerAttributes(decodedResponse[CMDBuild.core.constants.Proxy.ATTRIBUTE]); // TODO
+						var data = decodedResponse['filled'] ? []: this.cleanServerAttributes(decodedResponse[CMDBuild.core.constants.Proxy.ATTRIBUTE]);
 
 						// Reset presetGrid store
 						this.view.presetGrid.getStore().removeAll();
@@ -223,10 +195,10 @@
 		 */
 		widgetOpenReportDefinitionGet: function() {
 			var returnObject = this.widgetDefinitionGet();
-			returnObject[CMDBuild.core.constants.Proxy.REPORT_CODE] = this.view.reportCode.getValue();
-			returnObject[CMDBuild.core.constants.Proxy.FORCE_FORMAT] = this.view.forceFormatOptions.getValue();
+			returnObject[CMDBuild.core.constants.Proxy.FORCE_FORMAT] = this.view.forceFormat.getValue();
 			returnObject[CMDBuild.core.constants.Proxy.PRESET] = this.presetGridGet(CMDBuild.core.constants.Proxy.DATA);
 			returnObject[CMDBuild.core.constants.Proxy.READ_ONLY_ATTRIBUTES] = this.presetGridGet(CMDBuild.core.constants.Proxy.READ_ONLY);
+			returnObject[CMDBuild.core.constants.Proxy.REPORT_CODE] = this.view.reportCode.getValue();
 
 			return returnObject;
 		},
@@ -239,12 +211,8 @@
 		 */
 		widgetOpenReportLoadRecord: function(record) {
 			this.view.loadRecord(record);
+			this.view.forceFormat.setValue(record.get(CMDBuild.core.constants.Proxy.FORCE_FORMAT));
 			this.view.reportCode.setValue(record.get(CMDBuild.core.constants.Proxy.REPORT_CODE));
-
-			if (!Ext.isEmpty(record.get(CMDBuild.core.constants.Proxy.FORCE_FORMAT))) {
-				this.view.forceFormatCheck.setValue(true);
-				this.view.forceFormatOptions.setValue(record.get(CMDBuild.core.constants.Proxy.FORCE_FORMAT));
-			}
 
 			// Find selected report ID and manually calls onReportSelected to fill presetGrid
 			this.view.reportCode.getStore().on('load', function(store, records, successful, eOpts) {

@@ -7,6 +7,11 @@
 		extend: 'Ext.form.Panel',
 
 		/**
+		 * @cfg {Mixed}
+		 */
+		delegate: undefined,
+
+		/**
 		 * @property {Ext.form.field.Checkbox}
 		 */
 		alwaysEnabled: undefined,
@@ -65,26 +70,6 @@
 
 			this.callParent(arguments);
 		},
-
-//		/**
-//		 * @abstract
-//		 */
-//		disableNonFieldElements: Ext.emptyFn,
-//
-//		/**
-//		 * @abstract
-//		 */
-//		enableNonFieldElements: Ext.emptyFn,
-
-//		/**
-//		 * @abstract
-//		 */
-//		getWidgetDefinition: Ext.emptyFn,
-
-		/**
-		 * @abstract
-		 */
-		fillWithModel: Ext.emptyFn,
 
 		/**
 		 * @returns {Array}

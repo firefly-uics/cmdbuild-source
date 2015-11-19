@@ -39,6 +39,7 @@
 
 		initComponent: function() {
 			Ext.apply(this, {
+				delegate: Ext.create('CMDBuild.controller.common.field.filter.advanced.Advanced', { view: this }),
 				items: [
 					this.label = Ext.create('Ext.form.field.Display', { value: CMDBuild.Translation.notSet }),
 					this.filterSetButton = Ext.create('CMDBuild.core.buttons.iconized.filter.Set', {
@@ -62,8 +63,6 @@
 					})
 				]
 			});
-
-			this.delegate = Ext.create('CMDBuild.controller.common.field.filter.advanced.Advanced', { view: this });
 
 			this.callParent(arguments);
 		},
