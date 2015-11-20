@@ -31,7 +31,7 @@
 						itemId: CMDBuild.core.constants.Proxy.TOOLBAR_TOP,
 
 						items: [
-							Ext.create('CMDBuild.core.buttons.iconized.add.WidgetDefinition', { delegate: this.delegate })
+							Ext.create('CMDBuild.core.buttons.iconized.add.Widget', { delegate: this.delegate })
 						]
 					})
 				],

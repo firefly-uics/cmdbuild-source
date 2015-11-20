@@ -35,7 +35,7 @@
 
 						items: [
 							Ext.create('CMDBuild.core.buttons.iconized.Modify', {
-								text: 'CMDBuild.Translation.modifyWidget', // TODO
+								text: CMDBuild.Translation.modifyWidget,
 								scope: this,
 
 								handler: function(button, e) {
@@ -43,7 +43,7 @@
 								}
 							}),
 							Ext.create('CMDBuild.core.buttons.iconized.Delete', {
-								text: 'CMDBuild.Translation.removeWidget', // TODO
+								text: CMDBuild.Translation.removeWidget,
 								scope: this,
 
 								handler: function(button, e) {

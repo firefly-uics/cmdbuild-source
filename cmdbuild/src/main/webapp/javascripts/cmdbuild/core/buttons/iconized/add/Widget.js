@@ -1,6 +1,6 @@
 (function() {
 
-	Ext.define('CMDBuild.core.buttons.iconized.add.WidgetDefinition', {
+	Ext.define('CMDBuild.core.buttons.iconized.add.Widget', {
 		extend: 'Ext.button.Split',
 
 		/**
@@ -9,7 +9,7 @@
 		delegate: undefined,
 
 		iconCls: 'add',
-		text: 'CMDBuild.Translation.addWidget',
+		text: CMDBuild.Translation.addWidget,
 
 		initComponent: function() {
 			Ext.apply(this, {
