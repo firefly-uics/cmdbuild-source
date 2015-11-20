@@ -51,22 +51,17 @@
 				disabled: true
 			});
 
-			this.widgetPanel = new CMDBuild.view.administration.widget.CMWidgetDefinitionPanel({
-				disabled: true
-			});
-
 			this.tabPanel = new Ext.tab.Panel({
 				frame: false,
 				border: false,
 				activeTab: 0,
 
 				items: [
-				 this.classForm
-				,this.attributesPanel
-				,this.domainGrid
-				,this.widgetPanel
-				,this.layerVisibilityGrid
-				,this.geoAttributesPanel
+					this.classForm,
+					this.attributesPanel,
+					this.domainGrid,
+					this.layerVisibilityGrid,
+					this.geoAttributesPanel
 				]
 			});
 

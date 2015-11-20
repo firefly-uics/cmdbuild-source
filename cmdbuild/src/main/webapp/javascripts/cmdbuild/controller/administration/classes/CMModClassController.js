@@ -22,12 +22,15 @@
 				this.domainTabController = new CMDBuild.controller.administration.classes.CMDomainTabController(this.view.domainGrid),
 				this.geoAttributesController = new CMDBuild.controller.administration.classes.CMGeoAttributeController(this.view.geoAttributesPanel),
 				this.attributePanelController = new CMDBuild.controller.administration.classes.CMClassAttributeController(this.view.attributesPanel),
-				this.widgetDefinitionController = new CMDBuild.controller.administration.widget.CMWidgetDefinitionController(this.view.widgetPanel)
+				this.widgetDefinitionController = Ext.create('CMDBuild.controller.administration.widget.Widget', { parentDelegate: this })
 			];
 			var me = this;
 			this.subControllers.relay = function(fn) {
 				Ext.Array.each(me.subControllers, fn);
-			}
+			};
+
+			// Views inject
+			this.view.tabPanel.add(this.widgetDefinitionController.getView()); // Inject tab
 		},
 
 		//private and overridden in subclasses
