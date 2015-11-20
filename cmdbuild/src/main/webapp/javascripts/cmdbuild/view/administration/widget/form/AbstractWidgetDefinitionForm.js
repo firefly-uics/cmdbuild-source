@@ -6,34 +6,20 @@
 	Ext.define('CMDBuild.view.administration.widget.form.AbstractWidgetDefinitionForm', {
 		extend: 'Ext.form.Panel',
 
+		mixins: ['CMDBuild.view.common.PanelFunctions'],
+
 		/**
 		 * @cfg {Mixed}
 		 */
 		delegate: undefined,
 
-		/**
-		 * @property {Ext.form.field.Checkbox}
-		 */
-		alwaysEnabled: undefined,
-
-		/**
-		 * @property {Ext.form.field.Checkbox}
-		 */
-		active: undefined,
-
-		/**
-		 * @property {CMDBuild.view.common.field.translatable.Text}
-		 */
-		buttonLabel: undefined,
-
-		/**
-		 * @property {Array}
-		 */
-		commonFields: [],
-
-		bodyCls: 'cmgraypanel-nopadding',
+		bodyCls: 'cmgraypanel',
 		border: false,
+		cls: 'x-panel-body-default-framed cmbordertop',
 		frame: false,
+		overflowY: 'auto',
+		split: true,
+		region: 'center',
 
 		layout: {
 			type: 'hbox',
@@ -42,6 +28,59 @@
 
 		initComponent: function() {
 			Ext.apply(this, {
+				dockedItems: [
+					Ext.create('Ext.toolbar.Toolbar', {
+						dock: 'top',
+						itemId: CMDBuild.core.constants.Proxy.TOOLBAR_TOP,
+
+						items: [
+							Ext.create('CMDBuild.core.buttons.iconized.Modify', {
+								text: 'CMDBuild.Translation.modifyWidget', // TODO
+								scope: this,
+
+								handler: function(button, e) {
+									this.delegate.cmfg('onClassTabWidgetModifyButtonClick');
+								}
+							}),
+							Ext.create('CMDBuild.core.buttons.iconized.Delete', {
+								text: 'CMDBuild.Translation.removeWidget', // TODO
+								scope: this,
+
+								handler: function(button, e) {
+									this.delegate.cmfg('onClassTabWidgetRemoveButtonClick');
+								}
+							})
+						]
+					}),
+					Ext.create('Ext.toolbar.Toolbar', {
+						dock: 'bottom',
+						itemId: CMDBuild.core.constants.Proxy.TOOLBAR_BOTTOM,
+						ui: 'footer',
+
+						layout: {
+							type: 'hbox',
+							align: 'middle',
+							pack: 'center'
+						},
+
+						items: [
+							Ext.create('CMDBuild.core.buttons.text.Save', {
+								scope: this,
+
+								handler: function(button, e) {
+									this.delegate.cmfg('onClassTabWidgetSaveButtonClick');
+								}
+							}),
+							Ext.create('CMDBuild.core.buttons.text.Abort', {
+								scope: this,
+
+								handler: function(button, e) {
+									this.delegate.cmfg('onClassTabWidgetAbortButtonClick');
+								}
+							})
+						]
+					})
+				],
 				items: [
 					Ext.create('Ext.form.FieldSet', {
 						title: CMDBuild.Translation.baseProperties,
@@ -64,26 +103,22 @@
 						},
 
 						items: this.widgetDefinitionFormCustomPropertiesGet()
-					}),
+					})
 				]
 			});
 
 			this.callParent(arguments);
+
+			this.setDisabledModify(true, true, true);
 		},
 
 		/**
 		 * @returns {Array}
-		 *
-		 * @abstract
 		 */
-		widgetDefinitionFormBasePropertiesGet: Ext.emptyFn,
-
-		/**
-		 * @returns {Array}
-		 */
-		widgetDefinitionFormCommonBasePropertiesGet: function() {
+		widgetDefinitionFormBasePropertiesGet: function() {
 			return [
-				this.buttonLabel = Ext.create('CMDBuild.view.common.field.translatable.Text', {
+				Ext.create('Ext.form.field.Hidden', { name: CMDBuild.core.constants.Proxy.ID }),
+				Ext.create('CMDBuild.view.common.field.translatable.Text', {
 					name: CMDBuild.core.constants.Proxy.LABEL,
 					fieldLabel: CMDBuild.Translation.administration.modClass.widgets.commonFields.buttonLabel,
 					maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
@@ -97,13 +132,13 @@
 						field: CMDBuild.core.constants.Proxy.DESCRIPTION
 					}
 				}),
-				this.active = Ext.create('Ext.form.field.Checkbox', {
+				Ext.create('Ext.form.field.Checkbox', {
 					name: CMDBuild.core.constants.Proxy.ACTIVE,
 					fieldLabel: CMDBuild.Translation.administration.modClass.widgets.commonFields.active,
 					labelWidth: CMDBuild.LABEL_WIDTH
 				}),
-				this.alwaysEnabled = Ext.create('Ext.form.field.Checkbox', {
-					name: 'alwaysenabled',
+				Ext.create('Ext.form.field.Checkbox', {
+					name: CMDBuild.core.constants.Proxy.ALWAYS_ENABLED,
 					fieldLabel: CMDBuild.Translation.administration.modClass.widgets.commonFields.alwaysenabled,
 					labelWidth: CMDBuild.LABEL_WIDTH
 				})

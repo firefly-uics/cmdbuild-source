@@ -89,7 +89,7 @@
 
 				switch (widgetName) {
 					case '.OpenReport': {
-						controller = 'CMDBuild.controller.administration.widget.OpenReport';
+						controller = 'CMDBuild.controller.administration.widget.form.OpenReport';
 					} break;
 
 					default: {

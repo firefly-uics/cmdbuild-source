@@ -42,7 +42,7 @@
 				fields: parameters.fields,
 				proxy: {
 					type: 'ajax',
-					url: CMDBuild.core.proxy.Index.widgets.grid.getSqlCardList,
+					url: CMDBuild.core.proxy.Index.functions.readCards,
 					reader: {
 						root: 'cards',
 						type: 'json',

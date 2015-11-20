@@ -3,9 +3,13 @@
 	Ext.define('CMDBuild.core.buttons.iconized.add.WidgetDefinition', {
 		extend: 'Ext.button.Split',
 
-		iconCls: 'add',
+		/**
+		 * @cfg {CMDBuild.controller.administration.widget.Widget}
+		 */
+		delegate: undefined,
 
-		text: CMDBuild.Translation.common.buttons.add,
+		iconCls: 'add',
+		text: 'CMDBuild.Translation.addWidget',
 
 		initComponent: function() {
 			Ext.apply(this, {
@@ -15,11 +19,9 @@
 					items: [
 						{
 							text: CMDBuild.Translation.createReport,
-							WIDGET_NAME: '.OpenReport',
 							scope: this,
-
 							handler: function(button, e) {
-								this.fireEvent('cm-add', '.OpenReport');
+								this.delegate.cmfg('onClassTabWidgetAddButtonClick', '.OpenReport');
 							}
 						},
 						{

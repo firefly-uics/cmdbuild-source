@@ -465,10 +465,15 @@
 			listAvailableTranslations: 'services/json/utils/listavailabletranslations'
 		},
 
-		widgets: {
-			grid: {
-				getSqlCardList: 'services/json/management/modcard/getsqlcardlist'
-			}
+		widget: {
+			configuration: {
+				create: 'services/json/modwidget/savewidgetdefinition', // TODO: waiting for refactor (crud)
+				read: 'services/json/modwidget/getallwidgets', // TODO: waiting for refactor (crud)
+				update: 'services/json/modwidget/savewidgetdefinition', // TODO: waiting for refactor (crud)
+				remove: 'services/json/modwidget/removewidgetdefinition',
+
+				readAll: 'services/json/modwidget/getallwidgets' // TODO: waiting for refactor (crud)
+			},
 		},
 
 		workflow: {
