@@ -9,17 +9,10 @@
 			'CMDBuild.model.widget.openReport.PresetGrid'
 		],
 
-		mixins: ['CMDBuild.view.common.PanelFunctions'],
-
 		/**
-		 * @cfg {CMDBuild.controller.administration.widget.OpenReport}
+		 * @cfg {CMDBuild.controller.administration.widget.form.OpenReport}
 		 */
 		delegate: undefined,
-
-		/**
-		 * @property {Ext.panel.Panel}
-		 */
-		defaultFields: undefined,
 
 		/**
 		 * @property {CMDBuild.view.common.field.comboBox.DrivedCheckbox}
@@ -37,19 +30,17 @@
 		reportCode: undefined,
 
 		/**
-		 * Builds widget configuration custom fields
-		 *
 		 * @returns {Array}
 		 *
 		 * @override
 		 */
 		widgetDefinitionFormBasePropertiesGet: function() {
-			return Ext.Array.push(this.widgetDefinitionFormCommonBasePropertiesGet(), [
+			return Ext.Array.push(this.callParent(arguments),[
 				this.reportCode = Ext.create('Ext.form.field.ComboBox', {
 					name: CMDBuild.core.constants.Proxy.REPORT_CODE,
 					fieldLabel: CMDBuild.Translation.report,
 					labelWidth: CMDBuild.LABEL_WIDTH,
-					width: CMDBuild.ADM_BIG_FIELD_WIDTH,
+					maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
 					valueField: CMDBuild.core.constants.Proxy.TITLE,
 					displayField: CMDBuild.core.constants.Proxy.DESCRIPTION,
 					forceSelection: true,
@@ -67,7 +58,7 @@
 				}),
 				this.forceFormat = Ext.create('CMDBuild.view.common.field.comboBox.DrivedCheckbox', {
 					name: CMDBuild.core.constants.Proxy.FORCE_FORMAT,
-					width: CMDBuild.ADM_BIG_FIELD_WIDTH,
+					maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
 					fieldLabel: CMDBuild.Translation.forceFormat,
 					labelWidth: CMDBuild.LABEL_WIDTH,
 					displayField: CMDBuild.core.constants.Proxy.DESCRIPTION,
