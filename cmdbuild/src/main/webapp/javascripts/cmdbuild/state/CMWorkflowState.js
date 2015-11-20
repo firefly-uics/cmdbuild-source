@@ -75,7 +75,8 @@
 			{name: "id", type: "integer", useNull: true },
 			{name: "classId", type: "integer"},
 			{name: "values", type: "auto"},
-			{name: "activityInstanceInfoList", type: "auto"}
+			{name: "activityInstanceInfoList", type: "auto"},
+			{name: "user", type: "string"}
 		],
 
 		STATE: {
