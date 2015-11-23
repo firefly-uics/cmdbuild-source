@@ -148,14 +148,6 @@
 					},
 					"title": "تقویم"
 				},
-				".Ping": {
-					"fields": {
-						"address": "آدرس برای پینگ کردن",
-						"count": "تعداد پینگها",
-						"templates": "قالبها"
-					},
-					"title": "پینگ"
-				},
 				".Workflow": {
 					"title": "شروع جریان کار"
 				},
@@ -1095,6 +1087,7 @@
 	"addRelations": "اضافه کردن رابطه",
 	"addReport": "اضافه کردن گزارش",
 	"address": "آدرس",
+	"addressToPing": "آدرس برای پینگ کردن",
 	"addRow": "اضافه کردن سطر",
 	"addTemplate": "اضافه کردن قالب",
 	"addUser": "اضافه کردن کاربر",
@@ -1332,6 +1325,7 @@
 	"normal": "نرمال",
 	"notes": "یاداشتها",
 	"notSet": "Not set",
+	"numberOfPings": "تعداد پینگها",
 	"odt": "ODT",
 	"onDay": "<em>On</em>",
 	"open_3d_viewer": "Open 3D viewer",
@@ -1345,6 +1339,7 @@
 	"password": "رمز عبور",
 	"pdf": "PDF",
 	"permissions": "اجازه",
+	"ping": "پینگ",
 	"pleaseWait": "لطفا منتظر بمانید",
 	"popupPercentageHeight": "Popup percentage height",
 	"popupPercentageWidth": "Popup percentage width",

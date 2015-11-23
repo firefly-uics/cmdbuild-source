@@ -147,14 +147,6 @@
 					},
 					"title": "Kalender"
 				},
-				".Ping": {
-					"fields": {
-						"address": "Adresse",
-						"count": "Ping Nummer",
-						"templates": "Template"
-					},
-					"title": "Ping"
-				},
 				".Workflow": {
 					"title": "Workflow starten"
 				},
@@ -1095,6 +1087,7 @@
 	"addRelations": "Beziehungen hinzufügen",
 	"addReport": "Bericht hinzufügen",
 	"address": "Adresse",
+	"addressToPing": "Adresse",
 	"addRow": "Zeile hinzufügen",
 	"addTemplate": "Template hinzufügen",
 	"addUser": "Benutzer hinzufügen",
@@ -1333,6 +1326,7 @@
 	"normal": "Normal",
 	"notes": "Notizen",
 	"notSet": "Nicht eingestellt",
+	"numberOfPings": "Ping nummer",
 	"odt": "ODT",
 	"onDay": "<em>On</em>",
 	"open_3d_viewer": "3D-Ansicht öffnen",
@@ -1346,6 +1340,7 @@
 	"password": "Passwort",
 	"pdf": "PDF",
 	"permissions": "Erlaubnis",
+	"ping": "Ping",
 	"pleaseWait": "Der Server wird kontaktiert ...",
 	"popupPercentageHeight": "Prozenthöhe des PopUp Fensters",
 	"popupPercentageWidth": "Prozentbreite des PopUp Fensters",

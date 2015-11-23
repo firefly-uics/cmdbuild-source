@@ -148,14 +148,6 @@
 					},
 					"title": "Naptár"
 				},
-				".Ping": {
-					"fields": {
-						"address": "Ping cél címe",
-						"count": "Ping mennyisége",
-						"templates": "Sablonok"
-					},
-					"title": "Ping"
-				},
 				".Workflow": {
 					"title": "Workflow kezdése"
 				},
@@ -1095,6 +1087,7 @@
 	"addRelations": "Reláció hozzáadása",
 	"addReport": "<em>Add report</em>",
 	"address": "Cím",
+	"addressToPing": "Ping cél címe",
 	"addRow": "Sor hozzáadása",
 	"addTemplate": "Sablon hozzáadása",
 	"addUser": "Felhasználó hozzáadása",
@@ -1333,6 +1326,7 @@
 	"normal": "Normál",
 	"notes": "Jegyzetek",
 	"notSet": "Nincs beállítva",
+	"numberOfPings": "Ping mennyisége",
 	"odt": "ODT",
 	"onDay": "Be",
 	"open_3d_viewer": "3D megtekintő megnyitása",
@@ -1346,6 +1340,7 @@
 	"password": "Jelszó",
 	"pdf": "PDF",
 	"permissions": "Engedélyek",
+	"ping": "Ping",
 	"pleaseWait": "Kérem várjon ...",
 	"popupPercentageHeight": "Popup százalékos magasság",
 	"popupPercentageWidth": "Popup százalékos szélesség",

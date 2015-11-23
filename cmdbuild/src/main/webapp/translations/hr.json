@@ -148,14 +148,6 @@
 					},
 					"title": "Kalendar"
 				},
-				".Ping": {
-					"fields": {
-						"address": "Adresa na koju se šalje ping",
-						"count": "Broj ping pokušaja",
-						"templates": "Predlošci"
-					},
-					"title": "Ping"
-				},
 				".Workflow": {
 					"title": "<em>Start workflow</em>"
 				},
@@ -1095,6 +1087,7 @@
 	"addRelations": "Dodaj relaciju",
 	"addReport": "Dodaj izvještaj",
 	"address": "<em>Address</em>",
+	"addressToPing": "Adresa na koju se šalje ping",
 	"addRow": "<em>Add row</em>",
 	"addTemplate": "Dodaj Predložak",
 	"addUser": "Dodaj korisnika",
@@ -1333,6 +1326,7 @@
 	"normal": "Normalno",
 	"notes": "Napomene",
 	"notSet": "Nije postavljeno",
+	"numberOfPings": "Broj ping pokušaja",
 	"odt": "ODT",
 	"onDay": "<em>On</em>",
 	"open_3d_viewer": "<em>Open 3D viewer</em>",
@@ -1346,6 +1340,7 @@
 	"password": "<em>Password</em>",
 	"pdf": "PDF",
 	"permissions": "Prava",
+	"ping": "Ping",
 	"pleaseWait": "Pričekajte...",
 	"popupPercentageHeight": "Visina (u postocima) popup prozora",
 	"popupPercentageWidth": "Širina (u postocima) popup prozora",

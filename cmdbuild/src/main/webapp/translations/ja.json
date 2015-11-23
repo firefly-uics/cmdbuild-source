@@ -148,14 +148,6 @@
 					},
 					"title": "カレンダ"
 				},
-				".Ping": {
-					"fields": {
-						"address": "pingアドレス",
-						"count": "pings回数",
-						"templates": "テンプレート"
-					},
-					"title": "Ping"
-				},
 				".Workflow": {
 					"title": "ワークフローを開始"
 				},
@@ -1095,6 +1087,7 @@
 	"addRelations": "リレーション追加",
 	"addReport": "レポート追加",
 	"address": "アドレス",
+	"addressToPing": "pingアドレス",
 	"addRow": "行を追加",
 	"addTemplate": "テンプレートを追加",
 	"addUser": "ユーザー追加",
@@ -1333,6 +1326,7 @@
 	"normal": "通常",
 	"notes": "ノート",
 	"notSet": "設定されていません",
+	"numberOfPings": "pings回数",
 	"odt": "ODT",
 	"onDay": "On",
 	"open_3d_viewer": "3Dビューアを開く",
@@ -1346,6 +1340,7 @@
 	"password": "パスワード",
 	"pdf": "PDF",
 	"permissions": "許可",
+	"ping": "Ping",
 	"pleaseWait": "お待ちください ...",
 	"popupPercentageHeight": "ポップアップのパーセント高さ",
 	"popupPercentageWidth": "ポップアップのパーセント幅",
