@@ -105,6 +105,10 @@
 						this.controllerWidgetForm = Ext.create('CMDBuild.controller.administration.widget.form.OpenReport', { parentDelegate: this });
 					} break;
 
+					case '.Ping': {
+						this.controllerWidgetForm = Ext.create('CMDBuild.controller.administration.widget.form.Ping', { parentDelegate: this });
+					} break;
+
 					default: { // TODO: use only string ones + use each()
 						for (var key in CMDBuild.controller.administration.widget)
 							if (CMDBuild.controller.administration.widget[key].WIDGET_NAME == type) {
@@ -265,8 +269,6 @@
 
 							this.buildFormController(selectedWidget[CMDBuild.core.constants.Proxy.TYPE]);
 
-							this.selectedWidgetModelSet();
-
 							this.classTabWidgetSelectedWidgetSet({ value: selectedWidget });
 
 							if (!this.classTabWidgetSelectedWidgetIsEmpty()) {
@@ -382,11 +384,6 @@
 				return this.propertyManageIsEmpty(parameters);
 			},
 
-			selectedWidgetModelSet: function() {
-				if (!Ext.isEmpty(this.controllerWidgetForm))
-					this.selectedWidgetModel = this.controllerWidgetForm.cmfg('classTabWidgetDefinitionModelGet');
-			},
-
 			classTabWidgetSelectedWidgetReset: function() {
 				this.propertyManageReset('selectedWidget');
 			},
@@ -395,8 +392,11 @@
 			 * @param {Object} parameters
 			 */
 			classTabWidgetSelectedWidgetSet: function(parameters) {
-				if (!Ext.Object.isEmpty(parameters)) {
-					parameters[CMDBuild.core.constants.Proxy.MODEL_NAME] = this.selectedWidgetModel;
+				if (
+					!Ext.Object.isEmpty(parameters)
+					&& !Ext.isEmpty(this.controllerWidgetForm)
+				) {
+					parameters[CMDBuild.core.constants.Proxy.MODEL_NAME] = this.controllerWidgetForm.cmfg('classTabWidgetDefinitionModelNameGet');
 					parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME] = 'selectedWidget';
 
 					this.propertyManageSet(parameters);

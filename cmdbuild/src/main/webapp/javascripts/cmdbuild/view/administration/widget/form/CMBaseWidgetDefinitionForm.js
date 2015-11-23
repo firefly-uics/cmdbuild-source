@@ -3,7 +3,7 @@
 	var tr = CMDBuild.Translation.administration.modClass.widgets;
 
 	/**
-	 * @deprecated (CMDBuild.view.administration.widget.form.AbstractWidgetDefinitionForm)
+	 * @deprecated (CMDBuild.view.administration.widget.form.AbstractWidgetDefinitionPanel)
 	 */
 	Ext.define('CMDBuild.view.administration.widget.form.CMBaseWidgetDefinitionForm', {
 		extend: 'Ext.panel.Panel',

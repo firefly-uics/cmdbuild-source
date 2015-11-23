@@ -1,5 +1,8 @@
 (function() {
 
+	/**
+	 * @deprecated
+	 */
 	Ext.define('CMDBuild.model.CMKeyValueModel', {
 		extend: 'Ext.data.Model',
 
@@ -9,6 +12,9 @@
 		]
 	});
 
+	/**
+	 * @deprecated (CMDBuild.view.common.field.grid.KeyValue)
+	 */
 	Ext.define('CMDBuild.view.administration.common.CMKeyValueGrid', {
 		extend: 'Ext.grid.Panel',
 

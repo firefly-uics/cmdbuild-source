@@ -29,6 +29,9 @@
 								case '.OpenReport':
 									return CMDBuild.Translation.createReport;
 
+								case '.Ping':
+									return CMDBuild.Translation.ping;
+
 								default:
 									return CMDBuild.Translation.administration.modClass.widgets[value].title;
 							}

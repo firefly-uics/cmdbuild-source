@@ -1,5 +1,8 @@
 (function() {
 
+	/**
+	 * @deprecated (CMDBuild.view.common.field.grid.KeyValue)
+	 */
 	Ext.define("CMDBuild.view.administration.common.CMDynamicKeyValueGrid", {
 		extend: "CMDBuild.view.administration.common.CMKeyValueGrid",
 

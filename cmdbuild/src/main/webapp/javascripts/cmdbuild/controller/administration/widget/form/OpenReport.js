@@ -1,7 +1,7 @@
 (function() {
 
 	Ext.define('CMDBuild.controller.administration.widget.form.OpenReport', {
-		extend: 'CMDBuild.controller.common.AbstractController',
+		extend: 'CMDBuild.controller.administration.widget.form.Abstract',
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
@@ -19,9 +19,9 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
-			'classTabWidgetOpenReportAdd = classTabWidgetAdd',
+			'classTabWidgetAdd',
+			'classTabWidgetDefinitionModelNameGet',
 			'classTabWidgetOpenReportDefinitionGet = classTabWidgetDefinitionGet',
-			'classTabWidgetOpenReportDefinitionModelGet = classTabWidgetDefinitionModelGet',
 			'classTabWidgetOpenReportLoadRecord = classTabWidgetLoadRecord',
 			'onWidgetOpenReportReportSelect'
 		],
@@ -34,7 +34,7 @@
 		definitionModelName: 'CMDBuild.model.widget.openReport.Definition',
 
 		/**
-		 * @cfg {CMDBuild.view.administration.widget.form.OpenReport}
+		 * @cfg {CMDBuild.view.administration.widget.form.OpenReportPanel}
 		 */
 		view: undefined,
 
@@ -45,13 +45,7 @@
 		constructor: function(configurationObject) {
 			this.callParent(arguments);
 
-			this.view = Ext.create('CMDBuild.view.administration.widget.form.OpenReport', { delegate: this });
-		},
-
-		classTabWidgetOpenReportAdd: function() {
-			this.view.reset();
-			this.view.setDisabledModify(false, true);
-			this.view.loadRecord(Ext.create(this.definitionModelName));
+			this.view = Ext.create('CMDBuild.view.administration.widget.form.OpenReportPanel', { delegate: this });
 		},
 
 		/**
@@ -59,22 +53,12 @@
 		 */
 		classTabWidgetOpenReportDefinitionGet: function() {
 			var widgetDefinition = CMDBuild.model.widget.openReport.Definition.convertToLegacy(
-				Ext.create(this.definitionModelName, this.view.getData(true)).getData()
+				Ext.create(this.classTabWidgetDefinitionModelNameGet(), this.view.getData(true)).getData()
 			);
 			widgetDefinition[CMDBuild.core.constants.Proxy.PRESET] = this.presetGridGet(CMDBuild.core.constants.Proxy.DATA);
 			widgetDefinition[CMDBuild.core.constants.Proxy.READ_ONLY_ATTRIBUTES] = this.presetGridGet(CMDBuild.core.constants.Proxy.READ_ONLY);
 
 			return widgetDefinition;
-		},
-
-		/**
-		 * @returns {String}
-		 */
-		classTabWidgetOpenReportDefinitionModelGet: function() {
-			if (!Ext.isEmpty(this.definitionModelName) && Ext.isString(this.definitionModelName))
-				return this.definitionModelName;
-
-			return null;
 		},
 
 		/**
@@ -190,18 +174,7 @@
 		 * @private
 		 */
 		presetGridGetData: function() {
-			var data = {};
-
-			Ext.Array.forEach(this.view.presetGrid.getStore().getRange(), function(record, i, allRecords) {
-				if (
-					!Ext.isEmpty(record.get(CMDBuild.core.constants.Proxy.NAME))
-					&& !Ext.isEmpty(record.get(CMDBuild.core.constants.Proxy.VALUE))
-				) {
-					data[record.get(CMDBuild.core.constants.Proxy.NAME)] = record.get(CMDBuild.core.constants.Proxy.VALUE);
-				}
-			}, this);
-
-			return data;
+			return this.view.presetGrid.getData(true);
 		},
 
 		/**
@@ -226,6 +199,8 @@
 		},
 
 		/**
+		 * PresetGrid setData() override
+		 *
 		 * @param {Object} data - Ex. { name: value }
 		 * @param {Array} readOnlyAttributes
 		 *
