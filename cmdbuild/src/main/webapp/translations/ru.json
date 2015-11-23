@@ -148,14 +148,6 @@
 					},
 					"title": "Календарь"
 				},
-				".Ping": {
-					"fields": {
-						"address": "Адрес",
-						"count": "Количество пакетов",
-						"templates": "Шаблоны"
-					},
-					"title": "Пинг"
-				},
 				".Workflow": {
 					"title": "Запустить процесс"
 				},
@@ -1095,6 +1087,7 @@
 	"addRelations": "Добавить связь",
 	"addReport": "Создать отчет",
 	"address": "Адрес",
+	"addressToPing": "Адрес",
 	"addRow": "Добавить строку",
 	"addTemplate": "Создать шаблон",
 	"addUser": "Добавить пользователя",
@@ -1333,6 +1326,7 @@
 	"normal": "Обычный",
 	"notes": "Комментарии",
 	"notSet": "Не установлен",
+	"numberOfPings": "Количество пакетов",
 	"odt": "ODT",
 	"onDay": "<em>On</em>",
 	"open_3d_viewer": "Открыть 3D просмотр",
@@ -1346,6 +1340,7 @@
 	"password": "Пароль",
 	"pdf": "PDF",
 	"permissions": "Разрешения",
+	"ping": "Пинг",
 	"pleaseWait": "Пожалуйста, подождите ...",
 	"popupPercentageHeight": "Высота всплывающего окна в процентах",
 	"popupPercentageWidth": "Ширина всплывающего окна в процентах",

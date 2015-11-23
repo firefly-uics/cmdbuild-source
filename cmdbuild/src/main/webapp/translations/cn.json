@@ -148,14 +148,6 @@
 					},
 					"title": "日历"
 				},
-				".Ping": {
-					"fields": {
-						"address": "ping的地址",
-						"count": "pings的数量",
-						"templates": "模版"
-					},
-					"title": "Ping"
-				},
 				".Workflow": {
 					"title": "开始工作流"
 				},
@@ -1095,6 +1087,7 @@
 	"addRelations": "增加关系",
 	"addReport": "<em>Add report</em>",
 	"address": "地图",
+	"addressToPing": "ping的地址",
 	"addRow": "增加行",
 	"addTemplate": "增加模版",
 	"addUser": "增加用户",
@@ -1333,6 +1326,7 @@
 	"normal": "<em>Normal</em>",
 	"notes": "<em>Notes</em>",
 	"notSet": "未设置",
+	"numberOfPings": "pings的数量",
 	"odt": "ODT",
 	"onDay": "On",
 	"open_3d_viewer": "打开3D浏览器",
@@ -1346,6 +1340,7 @@
 	"password": "密码",
 	"pdf": "PDF",
 	"permissions": "<em>Permissions</em>",
+	"ping": "Ping",
 	"pleaseWait": "请等待...",
 	"popupPercentageHeight": "弹出百分比高度",
 	"popupPercentageWidth": "弹出百分比宽度",

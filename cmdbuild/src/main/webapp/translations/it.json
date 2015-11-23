@@ -148,14 +148,6 @@
 					},
 					"title": "Calendario"
 				},
-				".Ping": {
-					"fields": {
-						"address": "Indirizzo",
-						"count": "Numero di ping",
-						"templates": "Template"
-					},
-					"title": "Ping"
-				},
 				".Workflow": {
 					"title": "Avvia processo"
 				},
@@ -1095,6 +1087,7 @@
 	"addRelations": "Aggiungi relazioni",
 	"addReport": "Aggiungi report",
 	"address": "Indirizzo",
+	"addressToPing": "Indirizzo",
 	"addRow": "Aggiungi riga",
 	"addTemplate": "Aggiungi template",
 	"addUser": "Aggiungi utente",
@@ -1333,6 +1326,7 @@
 	"normal": "Normale",
 	"notes": "Note",
 	"notSet": "Non impostato",
+	"numberOfPings": "Numero di ping",
 	"odt": "ODT",
 	"onDay": "Il giorno",
 	"open_3d_viewer": "Apri il visualizzatore 3D",
@@ -1346,6 +1340,7 @@
 	"password": "Password",
 	"pdf": "PDF",
 	"permissions": "Permessi",
+	"ping": "Ping",
 	"pleaseWait": "Attendere ...",
 	"popupPercentageHeight": "Altezza percentuale finestra popup",
 	"popupPercentageWidth": "Larghezza percentuale finestra popup",

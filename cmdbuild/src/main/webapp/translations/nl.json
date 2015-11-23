@@ -148,14 +148,6 @@
 					},
 					"title": "Kalender"
 				},
-				".Ping": {
-					"fields": {
-						"address": "Adres om te pingen",
-						"count": "Aantal pings",
-						"templates": "Sjabloon"
-					},
-					"title": "Ping"
-				},
 				".Workflow": {
 					"title": "Start procesgang"
 				},
@@ -1095,6 +1087,7 @@
 	"addRelations": "Relaties toevoegen",
 	"addReport": "Rapport toevoegen",
 	"address": "Adres",
+	"addressToPing": "Adres om te pingen",
 	"addRow": "Rij toevoegen",
 	"addTemplate": "Sjabloon toevoegen",
 	"addUser": "Gebruiker toevoegen",
@@ -1333,6 +1326,7 @@
 	"normal": "Normaal",
 	"notes": "Notities",
 	"notSet": "Niet gezet",
+	"numberOfPings": "Aantal pings",
 	"odt": "ODT",
 	"onDay": "Op",
 	"open_3d_viewer": "Start 3D viewer",
@@ -1346,6 +1340,7 @@
 	"password": "Wachtwoord",
 	"pdf": "PDF",
 	"permissions": "Permissies",
+	"ping": "Ping",
 	"pleaseWait": "Even geduld aub ...",
 	"popupPercentageHeight": "Popup percentage hoogte",
 	"popupPercentageWidth": "Popup percentage breedte",

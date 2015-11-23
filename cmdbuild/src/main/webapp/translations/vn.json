@@ -148,14 +148,6 @@
 					},
 					"title": "Lịch"
 				},
-				".Ping": {
-					"fields": {
-						"address": "Địa chỉ Ping",
-						"count": "Số lần Ping",
-						"templates": "Mẫu"
-					},
-					"title": "Ping"
-				},
 				".Workflow": {
 					"title": "<em>Start workflow</em>"
 				},
@@ -1095,6 +1087,7 @@
 	"addRelations": "Thêm các mối quan hệ",
 	"addReport": "Thêm báo cáo",
 	"address": "<em>Address</em>",
+	"addressToPing": "Địa chỉ Ping",
 	"addRow": "<em>Add row</em>",
 	"addTemplate": "<em>Add Template</em>",
 	"addUser": "Thêm người dùng",
@@ -1333,6 +1326,7 @@
 	"normal": "Thông thường",
 	"notes": "Các ghi chú",
 	"notSet": "Không cài đặt",
+	"numberOfPings": "Số lần Ping",
 	"odt": "ODT",
 	"onDay": "<em>On</em>",
 	"open_3d_viewer": "<em>Open 3D viewer</em>",
@@ -1346,6 +1340,7 @@
 	"password": "<em>Password</em>",
 	"pdf": "PDF",
 	"permissions": "Quyền truy cập",
+	"ping": "Ping",
 	"pleaseWait": "Xin vui lòng chờt ...",
 	"popupPercentageHeight": "Chiều cao bản hiển thị theo phần trăm",
 	"popupPercentageWidth": "Bề rộng bản hiển thị theo phần trăm",
