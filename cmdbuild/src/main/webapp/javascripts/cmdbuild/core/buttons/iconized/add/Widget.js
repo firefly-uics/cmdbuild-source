@@ -20,6 +20,7 @@
 						{
 							text: CMDBuild.Translation.createReport,
 							scope: this,
+
 							handler: function(button, e) {
 								this.delegate.cmfg('onClassTabWidgetAddButtonClick', '.OpenReport');
 							}
@@ -43,12 +44,11 @@
 							}
 						},
 						{
-							text: CMDBuild.Translation.administration.modClass.widgets['.Ping'].title,
-							WIDGET_NAME: '.Ping',
+							text: CMDBuild.Translation.ping,
 							scope: this,
 
 							handler: function(button, e) {
-								this.fireEvent('cm-add', '.Ping');
+								this.delegate.cmfg('onClassTabWidgetAddButtonClick', '.Ping');
 							}
 						},
 						{

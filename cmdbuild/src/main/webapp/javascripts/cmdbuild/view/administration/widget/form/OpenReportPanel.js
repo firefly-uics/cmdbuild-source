@@ -1,7 +1,7 @@
 (function() {
 
-	Ext.define('CMDBuild.view.administration.widget.form.OpenReport', {
-		extend: 'CMDBuild.view.administration.widget.form.AbstractWidgetDefinitionForm',
+	Ext.define('CMDBuild.view.administration.widget.form.OpenReportPanel', {
+		extend: 'CMDBuild.view.administration.widget.form.AbstractWidgetDefinitionPanel',
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
@@ -20,7 +20,7 @@
 		forceFormat: undefined,
 
 		/**
-		 * @property {Ext.grid.Panel}
+		 * @property {CMDBuild.view.common.field.grid.KeyValue}
 		 */
 		presetGrid: undefined,
 
@@ -76,28 +76,8 @@
 		 */
 		widgetDefinitionFormCustomPropertiesGet: function() {
 			return [
-				this.presetGrid = Ext.create('Ext.grid.Panel', {
-					title: CMDBuild.Translation.reportAttributes,
-					considerAsFieldToDisable: true,
-					margin: '8 0 0 0',
-
-					plugins: [
-						Ext.create('Ext.grid.plugin.CellEditing', { clicksToEdit: 1 })
-					],
-
-					columns: [
-						{
-							dataIndex: CMDBuild.core.constants.Proxy.NAME,
-							text: CMDBuild.Translation.attribute,
-							editor: { xtype: 'textfield' },
-							flex: 1
-						},
-						{
-							dataIndex: CMDBuild.core.constants.Proxy.VALUE,
-							text: CMDBuild.Translation.value,
-							editor: { xtype: 'textfield' },
-							flex: 1
-						},
+				this.presetGrid = Ext.create('CMDBuild.view.common.field.grid.KeyValue', {
+					additionalColumns: [
 						Ext.create('Ext.grid.column.CheckColumn', {
 							dataIndex: CMDBuild.core.constants.Proxy.READ_ONLY,
 							text: CMDBuild.Translation.readOnly,
@@ -108,14 +88,12 @@
 							fixed: true,
 						})
 					],
-
-					store: Ext.create('Ext.data.Store', {
-						model: 'CMDBuild.model.widget.openReport.PresetGrid',
-						data: [],
-						sorters: [
-							{ property: CMDBuild.core.constants.Proxy.NAME, direction: 'ASC' }
-						]
-					})
+					enableCellEditing: true,
+					keyAttributeName: CMDBuild.core.constants.Proxy.NAME,
+					keyLabel: CMDBuild.Translation.attribute,
+					margin: '8 0 9 0',
+					modelName: 'CMDBuild.model.widget.openReport.PresetGrid',
+					title: CMDBuild.Translation.reportAttributes
 				})
 			];
 		}

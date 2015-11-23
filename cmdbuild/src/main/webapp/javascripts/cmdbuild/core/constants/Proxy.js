@@ -105,6 +105,7 @@
 		CONFIRMED: 'confirmed',
 		CONTENT: 'content',
 		CONTEXT: 'context',
+		COUNT: 'count',
 		CREATE: 'create',
 		CRON_EXPRESSION: 'cronExpression',
 		CRON_INPUT_TYPE: 'cronInputType',

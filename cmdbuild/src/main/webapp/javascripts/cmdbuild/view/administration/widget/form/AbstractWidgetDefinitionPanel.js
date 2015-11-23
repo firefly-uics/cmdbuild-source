@@ -3,7 +3,7 @@
 	/**
 	 * @abstract
 	 */
-	Ext.define('CMDBuild.view.administration.widget.form.AbstractWidgetDefinitionForm', {
+	Ext.define('CMDBuild.view.administration.widget.form.AbstractWidgetDefinitionPanel', {
 		extend: 'Ext.form.Panel',
 
 		mixins: ['CMDBuild.view.common.PanelFunctions'],
