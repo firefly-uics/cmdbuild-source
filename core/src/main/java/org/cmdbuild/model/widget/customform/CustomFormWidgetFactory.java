@@ -138,11 +138,11 @@ public class CustomFormWidgetFactory extends ValuePairWidgetFactory {
 	private DataBuilder dataOf(final WidgetDefinition definition) {
 		final DataBuilder output;
 		final String typeFromDefinition = String.class.cast(definition.get(DATA_TYPE));
-		final Object previouslySavedData = definition.getOutput();
+		final String previouslySavedData = String.class.cast(definition.getOutput());
 		final String rawData = defaultString(String.class.cast(defaultIfNull(previouslySavedData,
 				definition.get(RAW_DATA))));
 		final String value;
-		if (previouslySavedData != null) {
+		if (isNotBlank(previouslySavedData)) {
 			value = dataTypeBasedOnSerialization(safeSerializationType(definition), typeFromDefinition);
 		} else {
 			value = typeFromDefinition;
