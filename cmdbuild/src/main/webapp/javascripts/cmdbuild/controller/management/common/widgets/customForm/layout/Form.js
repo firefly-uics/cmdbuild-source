@@ -39,6 +39,8 @@
 			this.view.add(this.buildFields());
 
 			this.cmfg('widgetCustomFormViewSetLoading', true);
+
+			CMDBuild.core.RequestBarrier.finalize('referenceStoreLoadBarrier');
 		},
 
 		/**
