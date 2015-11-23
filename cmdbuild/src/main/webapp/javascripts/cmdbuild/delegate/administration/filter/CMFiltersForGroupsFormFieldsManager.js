@@ -37,7 +37,7 @@
 				translationsKeyField: 'Description'
 			});
 
-			this.classes = Ext.create('CMDBuild.field.ErasableCombo', {
+			this.classes = Ext.create('Ext.form.field.ComboBox', {
 				fieldLabel: CMDBuild.Translation.targetClass,
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
