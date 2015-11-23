@@ -48,6 +48,8 @@
 			});
 
 			this.cmfg('widgetCustomFormViewSetLoading', true);
+
+			CMDBuild.core.RequestBarrier.finalize('referenceStoreLoadBarrier');
 		},
 
 		/**

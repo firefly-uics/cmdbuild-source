@@ -9,20 +9,41 @@
 
 		/**
 		 * @property {Object}
+		 *
+		 * @private
 		 */
 		barrierConfigurations: {},
 
 		/**
 		 * @param {String} id
+		 *
+		 * @private
 		 */
 		callback: function(id) {
-			CMDBuild.core.RequestBarrier.barrierConfigurations[id].index--;
+			if (!Ext.isEmpty(id) && Ext.isString(id)) {
+				CMDBuild.core.RequestBarrier.barrierConfigurations[id].index--;
 
-			if (CMDBuild.core.RequestBarrier.barrierConfigurations[id].index == 0)
+				CMDBuild.core.RequestBarrier.finalize(id);
+			}
+		},
+
+		/**
+		 * Check callback index and launch last callback
+		 *
+		 * @param {String} id
+		 */
+		finalize: function(id) {
+			if (
+				!Ext.isEmpty(id) && Ext.isString(id)
+				&& CMDBuild.core.RequestBarrier.barrierConfigurations[id].index == 0
+			) {
 				Ext.callback(
 					CMDBuild.core.RequestBarrier.barrierConfigurations[id].callback,
 					CMDBuild.core.RequestBarrier.barrierConfigurations[id].scope
 				);
+
+				delete CMDBuild.core.RequestBarrier.barrierConfigurations[id];
+			}
 		},
 
 		/**
@@ -31,11 +52,13 @@
 		 * @returns {Function}
 		 */
 		getCallback: function(id) {
-			CMDBuild.core.RequestBarrier.barrierConfigurations[id].index++;
+			if (!Ext.isEmpty(id) && Ext.isString(id)) {
+				CMDBuild.core.RequestBarrier.barrierConfigurations[id].index++;
 
-			return function(response, options, decodedResponse) {
-				CMDBuild.core.RequestBarrier.callback(id);
-			};
+				return function(response, options, decodedResponse) {
+					CMDBuild.core.RequestBarrier.callback(id);
+				};
+			}
 		},
 
 		/**

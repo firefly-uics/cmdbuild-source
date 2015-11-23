@@ -45,8 +45,8 @@
 			buildAfterRequest: function() {
 				CMDBuild.ServiceProxy.configuration.readMainConfiguration({
 					scope: this,
-					success: function(result, options, decodedResult) {
-						CMDBuild.Config.cmdbuild = decodedResult.data;
+					success: function(response, options, decodedResponse) {
+						CMDBuild.Config.cmdbuild = decodedResponse.data;
 					},
 					callback: function() {
 						Ext.create('CMDBuild.LoginPanel', {

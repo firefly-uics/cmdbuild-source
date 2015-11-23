@@ -156,26 +156,28 @@
 		buildDataConfigurationFromFunction: function(callback) {
 			callback = Ext.isFunction(callback) ? callback : Ext.emptyFn;
 
-			var params = {};
-			params[CMDBuild.core.proxy.CMProxyConstants.FUNCTION] = this.cmfg('widgetCustomFormConfigurationGet', CMDBuild.core.proxy.CMProxyConstants.FUNCTION_DATA);
-			params[CMDBuild.core.proxy.CMProxyConstants.PARAMS] = Ext.encode(this.cmfg('widgetCustomFormConfigurationGet', CMDBuild.core.proxy.CMProxyConstants.VARIABLES));
+			if (!this.cmfg('widgetCustomFormConfigurationIsAttributeEmpty', CMDBuild.core.proxy.CMProxyConstants.FUNCTION_DATA)) {
+				var params = {};
+				params[CMDBuild.core.proxy.CMProxyConstants.FUNCTION] = this.cmfg('widgetCustomFormConfigurationGet', CMDBuild.core.proxy.CMProxyConstants.FUNCTION_DATA);
+				params[CMDBuild.core.proxy.CMProxyConstants.PARAMS] = Ext.encode(this.cmfg('widgetCustomFormConfigurationGet', CMDBuild.core.proxy.CMProxyConstants.VARIABLES));
 
-			CMDBuild.core.proxy.widgets.CustomForm.readFromFunctions({
-				params: params,
-				scope: this,
-				success: function(response, options, decodedResponse) {
-					decodedResponse = decodedResponse[CMDBuild.core.proxy.CMProxyConstants.CARDS];
+				CMDBuild.core.proxy.widgets.CustomForm.readFromFunctions({
+					params: params,
+					scope: this,
+					success: function(response, options, decodedResponse) {
+						decodedResponse = decodedResponse[CMDBuild.core.proxy.CMProxyConstants.CARDS];
 
-					// Save function response to configuration's data property
-					this.widgetConfiguration[CMDBuild.core.proxy.CMProxyConstants.DATA] = decodedResponse;
+						// Save function response to configuration's data property
+						this.widgetConfiguration[CMDBuild.core.proxy.CMProxyConstants.DATA] = decodedResponse;
 
-					// Save function response to instance data storage
-					this.instancesDataStorageSet(decodedResponse);
-				},
-				callback: function(response, options, decodedResponse) {
-					this.buildLayout();
-				}
-			});
+						// Save function response to instance data storage
+						this.instancesDataStorageSet(decodedResponse);
+					},
+					callback: function(response, options, decodedResponse) {
+						this.buildLayout();
+					}
+				});
+			}
 		},
 
 		/**
@@ -292,7 +294,7 @@
 		 */
 		widgetCustomFormViewSetLoading: function(state) {
 			state = Ext.isBoolean(state) ? state : false;
-
+_debug('widgetCustomFormViewSetLoading', state, this.view);
 			this.view.setLoading(state);
 		}
 	});
