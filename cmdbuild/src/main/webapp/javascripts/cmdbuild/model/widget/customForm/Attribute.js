@@ -44,7 +44,7 @@
 			switch (objectModel[CMDBuild.core.proxy.CMProxyConstants.TYPE]) {
 				case 'lookup': {
 					objectModel['lookup'] = this.get(CMDBuild.core.proxy.CMProxyConstants.LOOKUP_TYPE);
-					objectModel['lookupchain'] = [];
+					objectModel['lookupchain'] = _CMCache.getLookupchainForType(this.get(CMDBuild.core.proxy.CMProxyConstants.LOOKUP_TYPE));
 				} break;
 
 				case 'reference': {
