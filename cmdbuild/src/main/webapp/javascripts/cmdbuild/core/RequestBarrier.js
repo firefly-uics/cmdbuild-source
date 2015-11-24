@@ -20,7 +20,10 @@
 		 * @private
 		 */
 		callback: function(id) {
-			if (!Ext.isEmpty(id) && Ext.isString(id)) {
+			if (
+				!Ext.isEmpty(id) && Ext.isString(id)
+				&& !Ext.isEmpty(CMDBuild.core.RequestBarrier.barrierConfigurations[id])
+			) {
 				CMDBuild.core.RequestBarrier.barrierConfigurations[id].index--;
 
 				CMDBuild.core.RequestBarrier.finalize(id);
@@ -35,6 +38,7 @@
 		finalize: function(id) {
 			if (
 				!Ext.isEmpty(id) && Ext.isString(id)
+				&& !Ext.isEmpty(CMDBuild.core.RequestBarrier.barrierConfigurations[id])
 				&& CMDBuild.core.RequestBarrier.barrierConfigurations[id].index == 0
 			) {
 				Ext.callback(
@@ -52,7 +56,10 @@
 		 * @returns {Function}
 		 */
 		getCallback: function(id) {
-			if (!Ext.isEmpty(id) && Ext.isString(id)) {
+			if (
+				!Ext.isEmpty(id) && Ext.isString(id)
+				&& !Ext.isEmpty(CMDBuild.core.RequestBarrier.barrierConfigurations[id])
+			) {
 				CMDBuild.core.RequestBarrier.barrierConfigurations[id].index++;
 
 				return function(response, options, decodedResponse) {

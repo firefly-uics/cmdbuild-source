@@ -87,6 +87,28 @@
 		 */
 		buildStoreField: function() {
 			return { name: this.cmfg('attributeModelGet', CMDBuild.core.proxy.CMProxyConstants.NAME), type: 'date', dateFormat: this.format };
+		},
+
+		/**
+		 * Override to implement date formatter method
+		 *
+		 * @param {Object} value
+		 * @param {Object} metadata
+		 * @param {Ext.data.Model} record
+		 * @param {Number} rowIndex
+		 * @param {Number} colIndex
+		 * @param {Ext.data.Store} store
+		 * @param {Ext.view.View} view
+		 *
+		 * @override
+		 */
+		rendererColumn: function(value, metadata, record, rowIndex, colIndex, store, view) {
+			this.callParent(arguments);
+
+			if (Ext.isDate(value))
+				return Ext.util.Format.date(value, this.format);
+
+			return value;
 		}
 	});
 
