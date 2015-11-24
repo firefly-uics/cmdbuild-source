@@ -143,14 +143,6 @@
 				".NavigationTree": {
 					"title": "ナビゲーションツリー"
 				},
-				".CreateModifyCard": {
-					"fields": {
-						"target": "ターゲットクラス",
-						"cql": "カードCQL選択",
-						"readOnly": "読み取り専用"
-					},
-					"title": "カードの作成または変更"
-				},
 				"commonFields": {
 					"active": "アクティブ",
 					"alwaysenabled": "常時可能",
@@ -1110,6 +1102,7 @@
 	"calendar": "カレンダ",
 	"camera": "カメラ",
 	"card": "カード",
+	"cardCqlSelector": "カードCQL選択",
 	"cardinality": "関係性",
 	"cardPanelHeight": "カードパネルの高さ(%)",
 	"cards": "カード",
@@ -1148,6 +1141,7 @@
 	"containsorequal": "含むまたは同じ",
 	"controls": "コントロール",
 	"cqlFilter": "CQL フィルター",
+	"createModifyCard": "カードの作成または変更",
 	"createReport": "レポート作成",
 	"credentials": "資格",
 	"csv": "CSV",

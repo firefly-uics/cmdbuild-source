@@ -143,14 +143,6 @@
 				".NavigationTree": {
 					"title": "Навигационное дерево"
 				},
-				".CreateModifyCard": {
-					"fields": {
-						"target": "Целевой класс",
-						"cql": "CQL отбор",
-						"readOnly": "Только чтение"
-					},
-					"title": "Создать или редактировать карточку"
-				},
 				"commonFields": {
 					"active": "Активный",
 					"alwaysenabled": "Всегда включен",
@@ -1110,6 +1102,7 @@
 	"calendar": "Календарь",
 	"camera": "Камера",
 	"card": "Данные",
+	"cardCqlSelector": "CQL отбор",
 	"cardinality": "Тип связи",
 	"cardPanelHeight": "Высота панели карточек в процентах",
 	"cards": "Конфигурационные единицы",
@@ -1148,6 +1141,7 @@
 	"containsorequal": "<em>Contains or equal</em>",
 	"controls": "Управляющие элементы",
 	"cqlFilter": "CQL-фильтр",
+	"createModifyCard": "Создать или редактировать карточку",
 	"createReport": "Создать отчет",
 	"credentials": "Учетные данные",
 	"csv": "CSV",

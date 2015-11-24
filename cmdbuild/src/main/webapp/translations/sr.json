@@ -143,14 +143,6 @@
 				".NavigationTree": {
 					"title": "Stablo navigacije"
 				},
-				".CreateModifyCard": {
-					"fields": {
-						"target": "Ciljna klasa",
-						"cql": "CQL selektor kartice",
-						"readOnly": "Samo pregled (read-only)"
-					},
-					"title": "Kreiraj ili modifikuj karticu"
-				},
 				"commonFields": {
 					"active": "Aktivan",
 					"alwaysenabled": "Uvek uključen",
@@ -1110,6 +1102,7 @@
 	"calendar": "Kalendar",
 	"camera": "Kamera",
 	"card": "Kartica",
+	"cardCqlSelector": "CQL selektor kartice",
 	"cardinality": "Kardinalitet",
 	"cardPanelHeight": "Visina (u procentima) panela za kartice ",
 	"cards": "Kartice podataka",
@@ -1148,6 +1141,7 @@
 	"containsorequal": "Sadrži ili je jednak",
 	"controls": "Kontrole",
 	"cqlFilter": "CQL filter",
+	"createModifyCard": "Kreiraj ili modifikuj karticu",
 	"createReport": "Kreiraj izveštaj",
 	"credentials": "Podaci za pristup",
 	"csv": "CSV",

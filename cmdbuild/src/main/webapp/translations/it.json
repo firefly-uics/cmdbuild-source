@@ -143,14 +143,6 @@
 				".NavigationTree": {
 					"title": "Albero di navigazione"
 				},
-				".CreateModifyCard": {
-					"fields": {
-						"target": "Classe di riferimento",
-						"cql": "Selettore CQL",
-						"readOnly": "Sola visualizzazione"
-					},
-					"title": "Crea o modifica scheda"
-				},
 				"commonFields": {
 					"active": "Attivo",
 					"alwaysenabled": "Sempre abilitato",
@@ -1110,6 +1102,7 @@
 	"calendar": "Calendario",
 	"camera": "Camera",
 	"card": "Scheda",
+	"cardCqlSelector": "Selettore CQL",
 	"cardinality": "Cardinalità",
 	"cardPanelHeight": "Altezza in percentuale del pannello scheda",
 	"cards": "Schede dati",
@@ -1148,6 +1141,7 @@
 	"containsorequal": "Contiene o uguale",
 	"controls": "Controlli",
 	"cqlFilter": "Filtro CQL",
+	"createModifyCard": "Crea o modifica scheda",
 	"createReport": "Crea report",
 	"credentials": "Credenziali",
 	"csv": "CSV",

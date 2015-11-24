@@ -143,14 +143,6 @@
 				".NavigationTree": {
 					"title": "Arbre de navigation"
 				},
-				".CreateModifyCard": {
-					"fields": {
-						"target": "Classe cible",
-						"cql": "Choisir une fiche CQL",
-						"readOnly": "Lecture seule"
-					},
-					"title": "Création et modification d'une fiche"
-				},
 				"commonFields": {
 					"active": "Actif",
 					"alwaysenabled": "Toujours actif",
@@ -1110,6 +1102,7 @@
 	"calendar": "Calendrier",
 	"camera": "Appareil photo",
 	"card": "Fiche",
+	"cardCqlSelector": "Choisir une fiche CQL",
 	"cardinality": "Cardinalité",
 	"cardPanelHeight": "Hauteur de la fenêtre en pourcentage",
 	"cards": "Fiches",
@@ -1148,6 +1141,7 @@
 	"containsorequal": "Contient ou est égal",
 	"controls": "Contrôles",
 	"cqlFilter": "Filtre CQL",
+	"createModifyCard": "Création et modification d'une fiche",
 	"createReport": "Créer un rapport",
 	"credentials": "Identifiant",
 	"csv": "CSV",

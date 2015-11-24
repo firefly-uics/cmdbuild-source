@@ -143,14 +143,6 @@
 				".NavigationTree": {
 					"title": "导航树"
 				},
-				".CreateModifyCard": {
-					"fields": {
-						"target": "目标类",
-						"cql": "卡片CQL选择器",
-						"readOnly": "只读"
-					},
-					"title": "创造或修改卡片"
-				},
 				"commonFields": {
 					"active": "活动状态",
 					"alwaysenabled": "总是允许",
@@ -1110,6 +1102,7 @@
 	"calendar": "日历",
 	"camera": "相机",
 	"card": "卡片",
+	"cardCqlSelector": "卡片CQL选择器",
 	"cardinality": "<em>Cardinality</em>",
 	"cardPanelHeight": "卡片显示区间用百分比表示",
 	"cards": "<em>Cards</em>",
@@ -1148,6 +1141,7 @@
 	"containsorequal": "Contains or equal",
 	"controls": "Controls",
 	"cqlFilter": "CQL过滤器",
+	"createModifyCard": "创造或修改卡片",
 	"createReport": "创建报告",
 	"credentials": "证书",
 	"csv": "CSV",

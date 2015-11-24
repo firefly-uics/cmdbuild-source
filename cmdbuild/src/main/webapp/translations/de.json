@@ -142,14 +142,6 @@
 				".NavigationTree": {
 					"title": "Baumansicht"
 				},
-				".CreateModifyCard": {
-					"fields": {
-						"target": "Verweisklasse",
-						"cql": "CQL Auswertung",
-						"readOnly": "Nur Anzeige"
-					},
-					"title": "Karte erstellen oder bearbeiten"
-				},
 				"commonFields": {
 					"active": "Aktiv",
 					"alwaysenabled": "Immer freigegeben",
@@ -1110,6 +1102,7 @@
 	"calendar": "Kalender",
 	"camera": "Kamera",
 	"card": "Karte",
+	"cardCqlSelector": "CQL Auswertung",
 	"cardinality": "Kardinalität",
 	"cardPanelHeight": "Prozenthöhe der Karte",
 	"cards": "Datenkarten",
@@ -1148,6 +1141,7 @@
 	"containsorequal": "<em>Contains or equal</em>",
 	"controls": "Controls",
 	"cqlFilter": "CQL Filter",
+	"createModifyCard": "Karte erstellen oder bearbeiten",
 	"createReport": "Bericht erstellen",
 	"credentials": "Berechtigungsnachweis",
 	"csv": "CSV",
