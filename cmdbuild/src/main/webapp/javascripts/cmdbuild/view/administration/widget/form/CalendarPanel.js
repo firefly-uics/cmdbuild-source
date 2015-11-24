@@ -123,7 +123,7 @@
 		widgetDefinitionFormCustomPropertiesGet: function() {
 			return [
 				Ext.create('Ext.form.FieldSet', {
-					title: CMDBuild.Translation.specificProperties,
+					title: CMDBuild.Translation.additionalProperties,
 					flex: 1,
 
 					layout: {
