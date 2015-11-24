@@ -21,7 +21,7 @@
 		 * @override
 		 */
 		widgetDefinitionFormBasePropertiesGet: function() {
-			return Ext.Array.push(this.callParent(arguments),[
+			return Ext.Array.push(this.callParent(arguments), [
 				Ext.create('Ext.form.field.Text', {
 					name: CMDBuild.core.constants.Proxy.ADDRESS,
 					fieldLabel: CMDBuild.Translation.addressToPing,

@@ -25,7 +25,8 @@
 			'onClassTabWidgetPanelShow',
 			'onClassTabWidgetRemoveButtonClick',
 			'onClassTabWidgetRowSelected',
-			'onClassTabWidgetSaveButtonClick'
+			'onClassTabWidgetSaveButtonClick',
+			'validate = classTabWidgetValidateForm'
 		],
 
 		/**
@@ -103,6 +104,10 @@
 				switch (type) {
 					case '.Calendar': {
 						this.controllerWidgetForm = Ext.create('CMDBuild.controller.administration.widget.form.Calendar', { parentDelegate: this });
+					} break;
+
+					case '.CreateModifyCard': {
+						this.controllerWidgetForm = Ext.create('CMDBuild.controller.administration.widget.form.CreateModifyCard', { parentDelegate: this });
 					} break;
 
 					case '.OpenReport': {
@@ -290,7 +295,7 @@
 		},
 
 		onClassTabWidgetSaveButtonClick: function() {
-			if (this.validate(this.form)) {
+			if (this.controllerWidgetForm.cmfg('classTabWidgetValidateForm', this.form)) {
 				var widgetDefinition = this.controllerWidgetForm.cmfg('classTabWidgetDefinitionGet');
 
 				var params = {};

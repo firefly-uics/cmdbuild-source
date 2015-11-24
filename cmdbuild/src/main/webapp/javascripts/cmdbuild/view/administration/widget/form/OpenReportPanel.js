@@ -35,7 +35,7 @@
 		 * @override
 		 */
 		widgetDefinitionFormBasePropertiesGet: function() {
-			return Ext.Array.push(this.callParent(arguments),[
+			return Ext.Array.push(this.callParent(arguments), [
 				this.reportCode = Ext.create('Ext.form.field.ComboBox', {
 					name: CMDBuild.core.constants.Proxy.REPORT_CODE,
 					fieldLabel: CMDBuild.Translation.report,
