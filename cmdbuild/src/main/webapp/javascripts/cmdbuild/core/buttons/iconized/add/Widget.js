@@ -26,12 +26,11 @@
 							}
 						},
 						{
-							text: CMDBuild.Translation.administration.modClass.widgets['.Calendar'].title,
-							WIDGET_NAME: '.Calendar',
+							text: CMDBuild.Translation.calendar,
 							scope: this,
 
 							handler: function(button, e) {
-								this.fireEvent('cm-add', '.Calendar');
+								this.delegate.cmfg('onClassTabWidgetAddButtonClick', '.Calendar');
 							}
 						},
 						{

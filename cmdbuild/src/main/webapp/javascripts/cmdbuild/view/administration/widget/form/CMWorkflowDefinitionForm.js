@@ -69,7 +69,7 @@
 			this.queryTypology.select("name");
 			this.workflowFilter = new Ext.form.field.TextArea({
 				name: "filter",
-				fieldLabel: CMDBuild.Translation.workflow_cql_filter,
+				fieldLabel: CMDBuild.Translation.cqlFilter,
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				width: CMDBuild.CFG_BIG_FIELD_WIDTH,
 				hidden: true
