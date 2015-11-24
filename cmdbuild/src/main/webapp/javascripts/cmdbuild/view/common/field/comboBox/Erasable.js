@@ -10,12 +10,13 @@
 
 		hideTrigger1: false,
 		hideTrigger2: false,
-		labelAlign: 'right',
 		trigger1Cls: Ext.baseCSSPrefix + 'form-arrow-trigger',
 		trigger2Cls: Ext.baseCSSPrefix + 'form-clear-trigger',
 
 		initComponent: function() {
-			this.delegate = Ext.create('CMDBuild.controller.common.field.comboBox.Erasable', { view: this });
+			Ext.apply(this, {
+				delegate: Ext.create('CMDBuild.controller.common.field.comboBox.Erasable', { view: this })
+			});
 
 			this.callParent(arguments);
 		},

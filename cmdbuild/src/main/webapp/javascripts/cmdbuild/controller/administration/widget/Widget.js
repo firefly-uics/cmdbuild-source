@@ -101,6 +101,10 @@
 		buildFormController: function(type) {
 			if (!Ext.isEmpty(type) && Ext.isString(type))
 				switch (type) {
+					case '.Calendar': {
+						this.controllerWidgetForm = Ext.create('CMDBuild.controller.administration.widget.form.Calendar', { parentDelegate: this });
+					} break;
+
 					case '.OpenReport': {
 						this.controllerWidgetForm = Ext.create('CMDBuild.controller.administration.widget.form.OpenReport', { parentDelegate: this });
 					} break;

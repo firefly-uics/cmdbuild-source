@@ -26,6 +26,9 @@
 
 						renderer: function(value) { // TODO
 							switch (value) {
+								case '.Calendar':
+									return CMDBuild.Translation.calendar;
+
 								case '.OpenReport':
 									return CMDBuild.Translation.createReport;
 
