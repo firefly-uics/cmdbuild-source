@@ -143,14 +143,6 @@
 				".NavigationTree": {
 					"title": "درخت ناوبری"
 				},
-				".CreateModifyCard": {
-					"fields": {
-						"target": "کلاس مقصد",
-						"cql": "Card CQL selector",
-						"readOnly": "تنها خواندن"
-					},
-					"title": "ایجاد یا تغییر کارت"
-				},
 				"commonFields": {
 					"active": "فعال",
 					"alwaysenabled": "همیشه فعال",
@@ -1110,6 +1102,7 @@
 	"calendar": "تقویم",
 	"camera": "Camera",
 	"card": "کارت",
+	"cardCqlSelector": "Card CQL selector",
 	"cardinality": "کاردینالیتی",
 	"cardPanelHeight": "ارتفاع پنل کارت بر حسب صدک",
 	"cards": "کارتها",
@@ -1148,6 +1141,7 @@
 	"containsorequal": "<em>Contains or equal</em>",
 	"controls": "کنترلها",
 	"cqlFilter": "CQL filter",
+	"createModifyCard": "ایجاد یا تغییر کارت",
 	"credentials": "اعتبارات",
 	"csv": "CSV",
 	"csvFile": "<em>CSV file</em>",

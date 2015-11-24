@@ -143,14 +143,6 @@
 				".NavigationTree": {
 					"title": "Navigációs fa"
 				},
-				".CreateModifyCard": {
-					"fields": {
-						"target": "Célosztály",
-						"cql": "Kártya CQL kiválasztó",
-						"readOnly": "Csak olvasható"
-					},
-					"title": "Kártya készítése vagy módosítása"
-				},
 				"commonFields": {
 					"active": "Aktív",
 					"alwaysenabled": "Mindig engedélyezett",
@@ -1110,6 +1102,7 @@
 	"calendar": "Naptár",
 	"camera": "Kamera",
 	"card": "Kártya",
+	"cardCqlSelector": "Kártya CQL kiválasztó",
 	"cardinality": "<em>Cardinality</em>",
 	"cardPanelHeight": "Kártyapanel magassága százalékban",
 	"cards": "Kártyák",
@@ -1148,6 +1141,7 @@
 	"containsorequal": "Tartalmaz vagy egyenlő",
 	"controls": "Vezérlők",
 	"cqlFilter": "CQL szűrő",
+	"createModifyCard": "Kártya készítése vagy módosítása",
 	"createReport": "Jelentés készítése",
 	"credentials": "Ajánlók",
 	"csv": "CSV",

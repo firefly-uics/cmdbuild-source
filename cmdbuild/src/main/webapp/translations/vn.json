@@ -143,14 +143,6 @@
 				".NavigationTree": {
 					"title": "<em>Navigation tree</em>"
 				},
-				".CreateModifyCard": {
-					"fields": {
-						"target": "Lớp mục tiêu",
-						"cql": "Bộ chọn thẻ CQL",
-						"readOnly": "Chỉ đọc"
-					},
-					"title": "Tạo mới hoặc sửa đổi thẻ"
-				},
 				"commonFields": {
 					"active": "Đang sử dụng",
 					"alwaysenabled": "Luôn được kích hoạt",
@@ -1110,6 +1102,7 @@
 	"calendar": "Lịch",
 	"camera": "<em>Camera</em>",
 	"card": "Thẻ",
+	"cardCqlSelector": "Bộ chọn thẻ CQL",
 	"cardinality": "Số lượng",
 	"cardPanelHeight": "Độ cao bảng điều khiển theo phần trăm",
 	"cards": "Các thẻ",
@@ -1148,6 +1141,7 @@
 	"containsorequal": "<em>Contains or equal</em>",
 	"controls": "<em>Controls</em>",
 	"cqlFilter": "<em>CQL filter</em>",
+	"createModifyCard": "Tạo mới hoặc sửa đổi thẻ",
 	"createReport": "Tạo báo cáo",
 	"credentials": "Thông tin mật",
 	"csv": "CSV",

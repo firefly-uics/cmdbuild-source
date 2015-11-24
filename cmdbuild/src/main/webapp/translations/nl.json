@@ -143,14 +143,6 @@
 				".NavigationTree": {
 					"title": "Navigatie overzicht"
 				},
-				".CreateModifyCard": {
-					"fields": {
-						"target": "Doel Klas",
-						"cql": "Kaart CQL kiezer",
-						"readOnly": "Alleen lezen"
-					},
-					"title": "Ontwerp of aanpassen van kaart"
-				},
 				"commonFields": {
 					"active": "Aktief",
 					"alwaysenabled": "Altijd toegestaan",
@@ -1110,6 +1102,7 @@
 	"calendar": "Kalender",
 	"camera": "Camera",
 	"card": "Kaart",
+	"cardCqlSelector": "Kaart CQL kiezer",
 	"cardinality": "Cardinaliteit",
 	"cardPanelHeight": "Hoogte van het kaart paneel in procenten",
 	"cards": "Kaarten",
@@ -1148,6 +1141,7 @@
 	"containsorequal": "Bevat of is gelijk aan",
 	"controls": "Besturing",
 	"cqlFilter": "CQL filter",
+	"createModifyCard": "Ontwerp of aanpassen van kaart",
 	"createReport": "Ontwerp rapport",
 	"credentials": "Rechten",
 	"csv": "CSV",
