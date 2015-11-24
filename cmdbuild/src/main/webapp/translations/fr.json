@@ -137,17 +137,6 @@
 			"title": "Gestion des classes",
 			"tree_title": "Arbre des classes",
 			"widgets": {
-				".Calendar": {
-					"fields": {
-						"target": "Classe cible",
-						"start": "Date de début",
-						"end": "Date de fin",
-						"title": "Titre",
-						"filter": "Filtre",
-						"defaultDate": "Date par défaut à la création"
-					},
-					"title": "Calendrier"
-				},
 				".Workflow": {
 					"title": "Démarrer le processus"
 				},
@@ -1117,6 +1106,7 @@
 	"buildFilter": "<em>Build filter</em>",
 	"buttonsToDisable": "Boutons à désactiver",
 	"cacheManagement": "Gestion du cache",
+	"calendar": "Calendrier",
 	"camera": "Appareil photo",
 	"card": "Fiche",
 	"cardinality": "Cardinalité",
@@ -1156,7 +1146,7 @@
 	"contains": "Contient",
 	"containsorequal": "Contient ou est égal",
 	"controls": "Contrôles",
-	"cql_filter": "Filtre CQL",
+	"cqlFilter": "Filtre CQL",
 	"createReport": "Créer un rapport",
 	"credentials": "Identifiant",
 	"csv": "CSV",
@@ -1167,6 +1157,7 @@
 	"dataSource": "Source de données",
 	"defaultAccount": "Compte par défaut",
 	"defaultClass": "Classe par défaut",
+	"defaultDateToOpen": "Date par défaut à la création",
 	"defaultFilters": "<em>Default filters</em>",
 	"defaultForGroups": "<em>Default for groups</em>",
 	"defaultGroup": "Groupe par défaut",
@@ -1222,6 +1213,7 @@
 	"engineName": "Nom du moteur",
 	"error": "Erreur",
 	"error_bimserver_connection": "Impossible de se connecter au serveur BIM",
+	"eventTitle": "Titre",
 	"expand": "<em>Expand</em>",
 	"expandAll": "<em>Expand all</em>",
 	"export": "Exporter",
@@ -1424,10 +1416,12 @@
 	"simpleHistoryForProcesses": "Historique simple des processus",
 	"smtpPort": "Port SMTP",
 	"smtpServer": "Serveur SMTP",
+	"specificProperties": "<em>Custom properties</em>",
 	"sql": "SQL",
 	"sqlView": "En SQL",
 	"standard": "Standard",
 	"start": "<em>Start</em>",
+	"startDate": "Date de début",
 	"startingPageAt": "Classe de départ",
 	"status": "Statut",
 	"stop": "<em>Stop</em>",
@@ -1478,7 +1472,6 @@
 	"workflow_attributes": "Attributs de processus",
 	"workflow_by_cql": "par Cql",
 	"workflow_by_name": "par nom",
-	"workflow_cql_filter": "Filtre Cql",
 	"workflow_query_tipology": "Sélection",
 	"workflowEngine": "Processus",
 	"write": "Écrire",

@@ -137,17 +137,6 @@
 			"title": "Управљање класама",
 			"tree_title": "Класе",
 			"widgets": {
-				".Calendar": {
-					"fields": {
-						"target": "Циљна класа",
-						"start": "Датум почетка",
-						"end": "Датум завршетка",
-						"title": "Назив догађаја",
-						"filter": "CQL филтер",
-						"defaultDate": "Подразумевани датум отварања"
-					},
-					"title": "Календар"
-				},
 				".Workflow": {
 					"title": "Покрени радни процес"
 				},
@@ -1117,6 +1106,7 @@
 	"buildFilter": "<em>Build filter</em>",
 	"buttonsToDisable": "Онемогућити тастере",
 	"cacheManagement": "Подешавање кеш меморије",
+	"calendar": "Календар",
 	"camera": "Камера",
 	"card": "Картица",
 	"cardinality": "Кардиналитет",
@@ -1156,7 +1146,7 @@
 	"contains": "Садржи",
 	"containsorequal": "Садржи или је једнак",
 	"controls": "Контроле",
-	"cql_filter": "CQL филтер",
+	"cqlFilter": "CQL филтер",
 	"createReport": "Креирај извештај",
 	"credentials": "Подаци за приступ",
 	"csv": "CSV",
@@ -1167,6 +1157,7 @@
 	"dataSource": "Извор података",
 	"defaultAccount": "Подразумевани кор. налог",
 	"defaultClass": "Подразумевана класа",
+	"defaultDateToOpen": "Подразумевани датум отварања",
 	"defaultFilters": "<em>Default filters</em>",
 	"defaultForGroups": "<em>Default for groups</em>",
 	"defaultGroup": "Подразумевана група",
@@ -1222,6 +1213,7 @@
 	"engineName": "Назив система за управљање процесима",
 	"error": "Грешка",
 	"error_bimserver_connection": "Није могуће успоставити везу ка Bim серверу ",
+	"eventTitle": "Назив догађаја",
 	"expand": "<em>Expand</em>",
 	"expandAll": "<em>Expand all</em>",
 	"export": "Извези",
@@ -1424,10 +1416,12 @@
 	"simpleHistoryForProcesses": "Поједностављена историја процеса",
 	"smtpPort": "SMTP порт",
 	"smtpServer": "SMTP сервер",
+	"specificProperties": "<em>Custom properties</em>",
 	"sql": "SQL",
 	"sqlView": "Из SQL-а",
 	"standard": "Стандардна",
 	"start": "<em>Start</em>",
+	"startDate": "Датум почетка",
 	"startingPageAt": "Почетна страница",
 	"status": "<em>Status</em>",
 	"stop": "<em>Stop</em>",
@@ -1478,7 +1472,6 @@
 	"workflow_attributes": "Атрибути радног процеса",
 	"workflow_by_cql": "по CQL",
 	"workflow_by_name": "по имену",
-	"workflow_cql_filter": "CQL филтер",
 	"workflow_query_tipology": "Селекција",
 	"workflowEngine": "Радни процеси (Workflow)",
 	"write": "Писање",

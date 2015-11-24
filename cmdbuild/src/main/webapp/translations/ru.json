@@ -137,17 +137,6 @@
 			"title": "Настройка классов",
 			"tree_title": "Список классов",
 			"widgets": {
-				".Calendar": {
-					"fields": {
-						"target": "Целевой класс",
-						"start": "Начальная дата",
-						"end": "Конечная дата",
-						"title": "Заголовок события",
-						"filter": "CQL фильтр",
-						"defaultDate": "Дата по умолчанию"
-					},
-					"title": "Календарь"
-				},
 				".Workflow": {
 					"title": "Запустить процесс"
 				},
@@ -1117,6 +1106,7 @@
 	"buildFilter": "<em>Build filter</em>",
 	"buttonsToDisable": "Отключать кнопки",
 	"cacheManagement": "Управление кэшем",
+	"calendar": "Календарь",
 	"camera": "Камера",
 	"card": "Данные",
 	"cardinality": "Тип связи",
@@ -1156,7 +1146,7 @@
 	"contains": "<em>Contains</em>",
 	"containsorequal": "<em>Contains or equal</em>",
 	"controls": "Управляющие элементы",
-	"cql_filter": "CQL-фильтр",
+	"cqlFilter": "CQL-фильтр",
 	"createReport": "Создать отчет",
 	"credentials": "Учетные данные",
 	"csv": "CSV",
@@ -1167,6 +1157,7 @@
 	"dataSource": "Источник данных",
 	"defaultAccount": "<em>Default account</em>",
 	"defaultClass": "Класс по умолчанию",
+	"defaultDateToOpen": "Дата по умолчанию",
 	"defaultFilters": "<em>Default filters</em>",
 	"defaultForGroups": "<em>Default for groups</em>",
 	"defaultGroup": "Основная группа",
@@ -1222,6 +1213,7 @@
 	"engineName": "Имя движка",
 	"error": "Ошибка",
 	"error_bimserver_connection": "Нет связи с сервером BIM",
+	"eventTitle": "Заголовок события",
 	"expand": "<em>Expand</em>",
 	"expandAll": "<em>Expand all</em>",
 	"export": "Экспорт",
@@ -1424,10 +1416,12 @@
 	"simpleHistoryForProcesses": "Простой формат истории для процессов",
 	"smtpPort": "SMTP порт",
 	"smtpServer": "SMTP сервер",
+	"specificProperties": "<em>Custom properties</em>",
 	"sql": "SQL",
 	"sqlView": "На основе SQL-запроса",
 	"standard": "Стандартный",
 	"start": "<em>Start</em>",
+	"startDate": "Начальная дата",
 	"startingPageAt": "Стартовая страница",
 	"status": "<em>Status</em>",
 	"stop": "<em>Stop</em>",
@@ -1478,7 +1472,6 @@
 	"workflow_attributes": "Атрибуты процесса",
 	"workflow_by_cql": "по CQL",
 	"workflow_by_name": "по имени",
-	"workflow_cql_filter": "CQL-фильтр",
 	"workflow_query_tipology": "Отбор",
 	"workflowEngine": "Рабочие процессы",
 	"write": "Запись",

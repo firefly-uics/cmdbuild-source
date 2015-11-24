@@ -137,17 +137,6 @@
 			"title": "Gestione classi",
 			"tree_title": "Classi",
 			"widgets": {
-				".Calendar": {
-					"fields": {
-						"target": "Classe di riferimento",
-						"start": "Data inizio",
-						"end": "Data fine",
-						"title": "Titolo evento",
-						"filter": "Filtro CQL",
-						"defaultDate": "Data di default"
-					},
-					"title": "Calendario"
-				},
 				".Workflow": {
 					"title": "Avvia processo"
 				},
@@ -1117,6 +1106,7 @@
 	"buildFilter": "Costruisci filtro",
 	"buttonsToDisable": "Bottoni da disabilitare",
 	"cacheManagement": "Gestione cache",
+	"calendar": "Calendario",
 	"camera": "Camera",
 	"card": "Scheda",
 	"cardinality": "Cardinalità",
@@ -1156,7 +1146,7 @@
 	"contains": "Contiene",
 	"containsorequal": "Contiene o uguale",
 	"controls": "Controlli",
-	"cql_filter": "Filtro CQL",
+	"cqlFilter": "Filtro CQL",
 	"createReport": "Crea report",
 	"credentials": "Credenziali",
 	"csv": "CSV",
@@ -1167,6 +1157,7 @@
 	"dataSource": "Sorgente dati",
 	"defaultAccount": "Account di default",
 	"defaultClass": "Classe di default",
+	"defaultDateToOpen": "Data di default",
 	"defaultFilters": "Filtri di default",
 	"defaultForGroups": "Default per i gruppi",
 	"defaultGroup": "Gruppo predefinito",
@@ -1222,6 +1213,7 @@
 	"engineName": "Nome Motore",
 	"error": "Errore",
 	"error_bimserver_connection": "Non sono riuscito a connettermi a Bimserver",
+	"eventTitle": "Titolo evento",
 	"expand": "<em>Expand</em>",
 	"expandAll": "<em>Expand all</em>",
 	"export": "Export",
@@ -1424,10 +1416,12 @@
 	"simpleHistoryForProcesses": "Visualizzazione storia semplificata per i processi",
 	"smtpPort": "Porta SMTP",
 	"smtpServer": "Server SMTP",
+	"specificProperties": "Properietà specifiche",
 	"sql": "SQL",
 	"sqlView": "Da SQL",
 	"standard": "Standard",
 	"start": "Avvia",
+	"startDate": "Data inizio",
 	"startingPageAt": "Pagina iniziale",
 	"status": "Stato",
 	"stop": "Ferma",
@@ -1478,7 +1472,6 @@
 	"workflow_attributes": "Attributi del processo",
 	"workflow_by_cql": "tramite Cql",
 	"workflow_by_name": "tramite nome",
-	"workflow_cql_filter": "Filtro Cql",
 	"workflow_query_tipology": "Selezione",
 	"workflowEngine": "Workflow",
 	"write": "Scrittura",

@@ -136,17 +136,6 @@
 			"title": "Klassenverwaltung",
 			"tree_title": "Klasse",
 			"widgets": {
-				".Calendar": {
-					"fields": {
-						"target": "Verweisklasse",
-						"start": "Anfangsdatum",
-						"end": "Ende",
-						"title": "Titel des Ereignisses",
-						"filter": "CQL Filter",
-						"defaultDate": "Default Datum"
-					},
-					"title": "Kalender"
-				},
 				".Workflow": {
 					"title": "Workflow starten"
 				},
@@ -1117,6 +1106,7 @@
 	"buildFilter": "<em>Build filter</em>",
 	"buttonsToDisable": "Schaltfläche zum Ausschalten",
 	"cacheManagement": "Cache Verwaltung",
+	"calendar": "Kalender",
 	"camera": "Kamera",
 	"card": "Karte",
 	"cardinality": "Kardinalität",
@@ -1156,7 +1146,7 @@
 	"contains": "<em>Contains</em>",
 	"containsorequal": "<em>Contains or equal</em>",
 	"controls": "Controls",
-	"cql_filter": "CQL Filter",
+	"cqlFilter": "CQL Filter",
 	"createReport": "Bericht erstellen",
 	"credentials": "Berechtigungsnachweis",
 	"csv": "CSV",
@@ -1167,6 +1157,7 @@
 	"dataSource": "Datasource",
 	"defaultAccount": "<em>Default account</em>",
 	"defaultClass": "Default-Klasse",
+	"defaultDateToOpen": "Default Datum",
 	"defaultFilters": "<em>Default filters</em>",
 	"defaultForGroups": "<em>Default for groups</em>",
 	"defaultGroup": "Standard gruppe",
@@ -1222,6 +1213,7 @@
 	"engineName": "Engine-Name",
 	"error": "Fehler",
 	"error_bimserver_connection": "Ich kann nicht mit Bimserver verbinden",
+	"eventTitle": "Titel des Ereignisses",
 	"expand": "<em>Expand</em>",
 	"expandAll": "<em>Expand all</em>",
 	"export": "Exportieren",
@@ -1424,10 +1416,12 @@
 	"simpleHistoryForProcesses": "Einfache Chronik für die Prozesse",
 	"smtpPort": "SMTP Port",
 	"smtpServer": "SMTP Server",
+	"specificProperties": "<em>Custom properties</em>",
 	"sql": "SQL",
 	"sqlView": "Aus SQL",
 	"standard": "Standard",
 	"start": "<em>Start</em>",
+	"startDate": "Anfangsdatum",
 	"startingPageAt": "Startseite",
 	"status": "<em>Status</em>",
 	"stop": "<em>Stop</em>",
@@ -1478,7 +1472,6 @@
 	"workflow_attributes": "Attribute des Prozesses",
 	"workflow_by_cql": "durch Cql",
 	"workflow_by_name": "durch name",
-	"workflow_cql_filter": "Cql Filter",
 	"workflow_query_tipology": "Markierung",
 	"workflowEngine": "Workflow",
 	"write": "Schreiben",

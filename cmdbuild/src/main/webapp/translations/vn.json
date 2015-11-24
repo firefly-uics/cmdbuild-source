@@ -137,17 +137,6 @@
 			"title": "Quản lý Lớp",
 			"tree_title": "Danh sách Lớp",
 			"widgets": {
-				".Calendar": {
-					"fields": {
-						"target": "Lớp mục tiêu",
-						"start": "Ngày bắt đầu",
-						"end": "Ngày kết thúc",
-						"title": "Tên sự kiện",
-						"filter": "Bộ lọc CQL",
-						"defaultDate": "Ngày mặc định bắt đầu hoạt động"
-					},
-					"title": "Lịch"
-				},
 				".Workflow": {
 					"title": "<em>Start workflow</em>"
 				},
@@ -1117,6 +1106,7 @@
 	"buildFilter": "<em>Build filter</em>",
 	"buttonsToDisable": "<em>Buttons to disable</em>",
 	"cacheManagement": "Quản lý bộ nhớ cache",
+	"calendar": "Lịch",
 	"camera": "<em>Camera</em>",
 	"card": "Thẻ",
 	"cardinality": "Số lượng",
@@ -1156,7 +1146,7 @@
 	"contains": "<em>Contains</em>",
 	"containsorequal": "<em>Contains or equal</em>",
 	"controls": "<em>Controls</em>",
-	"cql_filter": "<em>CQL filter</em>",
+	"cqlFilter": "<em>CQL filter</em>",
 	"createReport": "Tạo báo cáo",
 	"credentials": "Thông tin mật",
 	"csv": "CSV",
@@ -1167,6 +1157,7 @@
 	"dataSource": "Dữ liệu gốc",
 	"defaultAccount": "<em>Default account</em>",
 	"defaultClass": "Lớp mặc định",
+	"defaultDateToOpen": "Ngày mặc định bắt đầu hoạt động",
 	"defaultFilters": "<em>Default filters</em>",
 	"defaultForGroups": "<em>Default for groups</em>",
 	"defaultGroup": "Các nhóm mặc định",
@@ -1222,6 +1213,7 @@
 	"engineName": "Tên phương tiện",
 	"error": "Lỗi",
 	"error_bimserver_connection": "<em>I'm not able to connect to Bimserver</em>",
+	"eventTitle": "Tên sự kiện",
 	"expand": "<em>Expand</em>",
 	"expandAll": "<em>Expand all</em>",
 	"export": "<em>Export</em>",
@@ -1424,10 +1416,12 @@
 	"simpleHistoryForProcesses": "Lịch sử quá trình đơn giản",
 	"smtpPort": "<em>SMTP port</em>",
 	"smtpServer": "<em>SMTP server</em>",
+	"specificProperties": "<em>Custom properties</em>",
 	"sql": "SQL",
 	"sqlView": "Từ SQL",
 	"standard": "Tiêu chuẩn",
 	"start": "<em>Start</em>",
+	"startDate": "Ngày bắt đầu",
 	"startingPageAt": "Bắt đầu từ trang",
 	"status": "<em>Status</em>",
 	"stop": "<em>Stop</em>",
@@ -1478,7 +1472,6 @@
 	"workflow_attributes": "<em>Workflow attributes</em>",
 	"workflow_by_cql": "<em>by Cql</em>",
 	"workflow_by_name": "<em>by name</em>",
-	"workflow_cql_filter": "<em>Cql filter</em>",
 	"workflow_query_tipology": "<em>Selection</em>",
 	"workflowEngine": "Quy trình làm việc",
 	"write": "Viết",

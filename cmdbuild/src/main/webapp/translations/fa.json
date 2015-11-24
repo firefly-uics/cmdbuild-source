@@ -137,17 +137,6 @@
 			"title": "مدیریت کلاسها",
 			"tree_title": "لیست کلاس",
 			"widgets": {
-				".Calendar": {
-					"fields": {
-						"target": "کلاس مقصد",
-						"start": "تاریخ شروع",
-						"end": "تاریخ پایان",
-						"title": "نام رخداد",
-						"filter": "CQL Filter",
-						"defaultDate": "تاریخ پیش فرض بازکردن"
-					},
-					"title": "تقویم"
-				},
 				".Workflow": {
 					"title": "شروع جریان کار"
 				},
@@ -1117,6 +1106,7 @@
 	"buildFilter": "<em>Build filter</em>",
 	"buttonsToDisable": "Buttons to disable",
 	"cacheManagement": "Cache management",
+	"calendar": "تقویم",
 	"camera": "Camera",
 	"card": "کارت",
 	"cardinality": "کاردینالیتی",
@@ -1156,7 +1146,7 @@
 	"contains": "<em>Contains</em>",
 	"containsorequal": "<em>Contains or equal</em>",
 	"controls": "کنترلها",
-	"cql_filter": "CQL filter",
+	"cqlFilter": "CQL filter",
 	"credentials": "اعتبارات",
 	"csv": "CSV",
 	"csvFile": "<em>CSV file</em>",
@@ -1166,6 +1156,7 @@
 	"dataSource": "منبع اطلاعات",
 	"defaultAccount": "<em>Default account</em>",
 	"defaultClass": "Default class",
+	"defaultDateToOpen": "تاریخ پیش فرض بازکردن",
 	"defaultFilters": "<em>Default filters</em>",
 	"defaultForGroups": "<em>Default for groups</em>",
 	"defaultGroup": "گروه پیش فرض",
@@ -1221,6 +1212,7 @@
 	"engineName": "Engine name",
 	"error": "خطا",
 	"error_bimserver_connection": "I'm not able to connect to Bimserver",
+	"eventTitle": "نام رخداد",
 	"expand": "<em>Expand</em>",
 	"expandAll": "<em>Expand all</em>",
 	"export": "خروجی گرفتن",
@@ -1423,10 +1415,12 @@
 	"simpleHistoryForProcesses": "تاریخچه ساده ی پروسه",
 	"smtpPort": "SMTP port",
 	"smtpServer": "SMTP server",
+	"specificProperties": "<em>Custom properties</em>",
 	"sql": "SQL",
 	"sqlView": "From SQL",
 	"standard": "استاندارد",
 	"start": "<em>Start</em>",
+	"startDate": "تاریخ شروع",
 	"startingPageAt": "شروع صفحات از",
 	"status": "<em>Status</em>",
 	"stop": "<em>Stop</em>",
@@ -1478,7 +1472,6 @@
 	"workflow_attributes": "Workflow attributes",
 	"workflow_by_cql": "by Cql",
 	"workflow_by_name": "یا نام",
-	"workflow_cql_filter": "Cql filter",
 	"workflow_query_tipology": "انتخاب",
 	"workflowEngine": "Workflow",
 	"write": "نوشتن",
