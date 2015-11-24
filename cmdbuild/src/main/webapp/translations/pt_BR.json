@@ -137,17 +137,6 @@
 			"title": "Gerenciar classes",
 			"tree_title": "Lista de classe",
 			"widgets": {
-				".Calendar": {
-					"fields": {
-						"target": "Classe Alvo",
-						"start": "Data Início",
-						"end": "Data Final",
-						"title": "Título do Evento",
-						"filter": "Filtro CQL",
-						"defaultDate": "Data padrão para abrir"
-					},
-					"title": "Calendário"
-				},
 				".Workflow": {
 					"title": "<em>Start workflow</em>"
 				},
@@ -1117,6 +1106,7 @@
 	"buildFilter": "<em>Build filter</em>",
 	"buttonsToDisable": "<em>Buttons to disable</em>",
 	"cacheManagement": "Gerenciamento do Cache",
+	"calendar": "Calendário",
 	"camera": "<em>Camera</em>",
 	"card": "Cartão",
 	"cardinality": "Cardinalidade",
@@ -1156,7 +1146,7 @@
 	"contains": "<em>Contains</em>",
 	"containsorequal": "<em>Contains or equal</em>",
 	"controls": "<em>Controls</em>",
-	"cql_filter": "<em>CQL filter</em>",
+	"cqlFilter": "<em>CQL filter</em>",
 	"createReport": "Criar relatório",
 	"credentials": "Credenciais",
 	"csv": "CSV",
@@ -1167,6 +1157,7 @@
 	"dataSource": "Origem dos Dados",
 	"defaultAccount": "<em>Default account</em>",
 	"defaultClass": "Classe Padrão",
+	"defaultDateToOpen": "Data padrão para abrir",
 	"defaultFilters": "<em>Default filters</em>",
 	"defaultForGroups": "<em>Default for groups</em>",
 	"defaultGroup": "Grupo padrão",
@@ -1222,6 +1213,7 @@
 	"engineName": "Nome da Engine",
 	"error": "Erro",
 	"error_bimserver_connection": "<em>I'm not able to connect to Bimserver</em>",
+	"eventTitle": "Título do Evento",
 	"expand": "<em>Expand</em>",
 	"expandAll": "<em>Expand all</em>",
 	"export": "<em>Export</em>",
@@ -1424,10 +1416,12 @@
 	"simpleHistoryForProcesses": "Histório Simples para processos",
 	"smtpPort": "<em>SMTP port</em>",
 	"smtpServer": "<em>SMTP server</em>",
+	"specificProperties": "<em>Custom properties</em>",
 	"sql": "SQL",
 	"sqlView": "SQL Origem",
 	"standard": "Padrão",
 	"start": "<em>Start</em>",
+	"startDate": "Data Início",
 	"startingPageAt": "Iniciando página em",
 	"status": "<em>Status</em>",
 	"stop": "<em>Stop</em>",
@@ -1478,7 +1472,6 @@
 	"workflow_attributes": "<em>Workflow attributes</em>",
 	"workflow_by_cql": "<em>by Cql</em>",
 	"workflow_by_name": "<em>by name</em>",
-	"workflow_cql_filter": "<em>Cql filter</em>",
 	"workflow_query_tipology": "<em>Selection</em>",
 	"workflowEngine": "Workflow",
 	"write": "Escrita",

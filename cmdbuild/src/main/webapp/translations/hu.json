@@ -137,17 +137,6 @@
 			"title": "Osztályok kezelése",
 			"tree_title": "Osztály lista",
 			"widgets": {
-				".Calendar": {
-					"fields": {
-						"target": "Célosztály",
-						"start": "Kezdő dátum",
-						"end": "Befejező dátum",
-						"title": "Esemény címe",
-						"filter": "CQL szűrő",
-						"defaultDate": "Alapértelmezett kezdő dátum"
-					},
-					"title": "Naptár"
-				},
 				".Workflow": {
 					"title": "Workflow kezdése"
 				},
@@ -1117,6 +1106,7 @@
 	"buildFilter": "<em>Build filter</em>",
 	"buttonsToDisable": "Tiltandó gombok",
 	"cacheManagement": "Cache kezelés",
+	"calendar": "Naptár",
 	"camera": "Kamera",
 	"card": "Kártya",
 	"cardinality": "<em>Cardinality</em>",
@@ -1156,7 +1146,7 @@
 	"contains": "Tartalmaz",
 	"containsorequal": "Tartalmaz vagy egyenlő",
 	"controls": "Vezérlők",
-	"cql_filter": "CQL szűrő",
+	"cqlFilter": "CQL szűrő",
 	"createReport": "Jelentés készítése",
 	"credentials": "Ajánlók",
 	"csv": "CSV",
@@ -1167,6 +1157,7 @@
 	"dataSource": "<em>Data source</em>",
 	"defaultAccount": "Alapértelmezett fiók",
 	"defaultClass": "Alapértelmezett osztály",
+	"defaultDateToOpen": "Alapértelmezett kezdő dátum",
 	"defaultFilters": "<em>Default filters</em>",
 	"defaultForGroups": "<em>Default for groups</em>",
 	"defaultGroup": "Alapértelmezett csoport",
@@ -1222,6 +1213,7 @@
 	"engineName": "Engine neve",
 	"error": "Hiba",
 	"error_bimserver_connection": "Nem lehet csatlakozni a Bimserver-hez",
+	"eventTitle": "Esemény címe",
 	"expand": "<em>Expand</em>",
 	"expandAll": "<em>Expand all</em>",
 	"exportLabel": "Exportálás",
@@ -1424,10 +1416,12 @@
 	"simpleHistoryForProcesses": "Egyszerű folyamat történet",
 	"smtpPort": "SMTP port",
 	"smtpServer": "SMTP szerver",
+	"specificProperties": "<em>Custom properties</em>",
 	"sql": "SQL",
 	"sqlView": "SQL-ből",
 	"standard": "Általános",
 	"start": "Indítás",
+	"startDate": "Kezdő dátum",
 	"startingPageAt": "Kezdőoldal",
 	"status": "Státusz",
 	"stop": "Megállítás",
@@ -1478,7 +1472,6 @@
 	"workflow_attributes" : "Folyamat attribútumok",
 	"workflow_by_cql": "Cql szerint",
 	"workflow_by_name": "név szerint",
-	"workflow_cql_filter": "Cql szűrő",
 	"workflow_query_tipology": "kiválasztás",
 	"workflowEngine": "Workflow engine",
 	"write": "Írás",

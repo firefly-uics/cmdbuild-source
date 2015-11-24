@@ -137,17 +137,6 @@
 			"title": "クラス管理",
 			"tree_title": "クラスリスト",
 			"widgets": {
-				".Calendar": {
-					"fields": {
-						"target": "ターゲットクラス",
-						"start": "開始日",
-						"end": "終了日",
-						"title": "イベント名",
-						"filter": "CQL フィルタ",
-						"defaultDate": "オープン時の日付"
-					},
-					"title": "カレンダ"
-				},
 				".Workflow": {
 					"title": "ワークフローを開始"
 				},
@@ -1117,6 +1106,7 @@
 	"buildFilter": "<em>Build filter</em>",
 	"buttonsToDisable": "無効にするボタン",
 	"cacheManagement": "キャッシュ管理",
+	"calendar": "カレンダ",
 	"camera": "カメラ",
 	"card": "カード",
 	"cardinality": "関係性",
@@ -1156,7 +1146,7 @@
 	"contains": "含む",
 	"containsorequal": "含むまたは同じ",
 	"controls": "コントロール",
-	"cql_filter": "CQL フィルター",
+	"cqlFilter": "CQL フィルター",
 	"createReport": "レポート作成",
 	"credentials": "資格",
 	"csv": "CSV",
@@ -1167,6 +1157,7 @@
 	"dataSource": "データソース",
 	"defaultAccount": "既定のアカウント",
 	"defaultClass": "既定のクラス",
+	"defaultDateToOpen": "オープン時の日付",
 	"defaultFilters": "<em>Default filters</em>",
 	"defaultForGroups": "<em>Default for groups</em>",
 	"defaultGroup": "既定のグループ",
@@ -1222,6 +1213,7 @@
 	"engineName": "エンジン名",
 	"error": "エラー",
 	"error_bimserver_connection": "BIMサーバーに接続できません",
+	"eventTitle": "イベント名",
 	"expand": "<em>Expand</em>",
 	"expandAll": "<em>Expand all</em>",
 	"export": "エキスポート",
@@ -1424,10 +1416,12 @@
 	"simpleHistoryForProcesses": "プロセスの単純な履歴",
 	"smtpPort": "SMTPポート",
 	"smtpServer": "SMTPサーバー",
+	"specificProperties": "<em>Custom properties</em>",
 	"sql": "SQL",
 	"sqlView": "SQL から",
 	"standard": "標準",
 	"start": "<em>Start</em>",
+	"startDate": "開始日",
 	"startingPageAt": "初期ページ",
 	"status": "<em>Status</em>",
 	"stop": "<em>Stop</em>",
@@ -1478,7 +1472,6 @@
 	"workflow_attributes": "ワークフロー属性",
 	"workflow_by_cql": "Cqlで",
 	"workflow_by_name": "名前で",
-	"workflow_cql_filter": "Cqlフィルター",
 	"workflow_query_tipology": "選択",
 	"workflowEngine": "ワークフロー",
 	"write": "書込権限",

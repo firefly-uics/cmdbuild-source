@@ -137,17 +137,6 @@
 			"title": "Manage classes",
 			"tree_title": "Class List",
 			"widgets": {
-				".Calendar": {
-					"fields": {
-						"target": "Target Class",
-						"start": "Start date",
-						"end": "End date",
-						"title": "Event title",
-						"filter": "CQL Filter",
-						"defaultDate": "Default date to open"
-					},
-					"title": "Calendar"
-				},
 				".Workflow": {
 					"title": "Start workflow"
 				},
@@ -1117,6 +1106,7 @@
 	"buildFilter": "Build filter",
 	"buttonsToDisable": "Buttons to disable",
 	"cacheManagement": "Cache management",
+	"calendar": "Calendar",
 	"camera": "Camera",
 	"card": "Card",
 	"cardinality": "Cardinality",
@@ -1156,7 +1146,7 @@
 	"contains": "Contains",
 	"containsorequal": "Contains or equal",
 	"controls": "Controls",
-	"cql_filter": "CQL filter",
+	"cqlFilter": "CQL filter",
 	"createReport": "Create report",
 	"credentials": "Credentials",
 	"csv": "CSV",
@@ -1167,6 +1157,7 @@
 	"dataSource": "Data source",
 	"defaultAccount": "Default account",
 	"defaultClass": "Default class",
+	"defaultDateToOpen": "Default date to open",
 	"defaultFilters": "Default filters",
 	"defaultForGroups": "Default for groups",
 	"defaultGroup": "Default group",
@@ -1222,6 +1213,7 @@
 	"engineName": "Engine name",
 	"error": "Error",
 	"error_bimserver_connection": "I'm not able to connect to Bimserver",
+	"eventTitle": "Event title",
 	"expand": "Expand",
 	"expandAll": "Expand all",
 	"exportLabel": "Export",
@@ -1424,10 +1416,12 @@
 	"simpleHistoryForProcesses": "Simple history for processes",
 	"smtpPort": "SMTP port",
 	"smtpServer": "SMTP server",
+	"specificProperties": "Specific properties",
 	"sql": "SQL",
 	"sqlView": "From SQL",
 	"standard": "Standard",
 	"start": "Start",
+	"startDate": "Start date",
 	"startingPageAt": "Starting page at",
 	"status": "Status",
 	"stop": "Stop",
@@ -1478,7 +1472,6 @@
 	"workflow_attributes" : "Process attributes",
 	"workflow_by_cql": "by Cql",
 	"workflow_by_name": "by name",
-	"workflow_cql_filter": "Cql filter",
 	"workflow_query_tipology": "Selection",
 	"workflowEngine": "Workflow engine",
 	"write": "Write",

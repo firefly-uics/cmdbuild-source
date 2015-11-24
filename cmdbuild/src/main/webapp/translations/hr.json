@@ -137,17 +137,6 @@
 			"title": "Upravljanje klasama",
 			"tree_title": "Klase",
 			"widgets": {
-				".Calendar": {
-					"fields": {
-						"target": "Ciljana klasa",
-						"start": "Datum početka",
-						"end": "Datum završetka",
-						"title": "Naziv događaja",
-						"filter": "CQL filter",
-						"defaultDate": "Zadani datum otvaranja"
-					},
-					"title": "Kalendar"
-				},
 				".Workflow": {
 					"title": "<em>Start workflow</em>"
 				},
@@ -1117,6 +1106,7 @@
 	"buildFilter": "<em>Build filter</em>",
 	"buttonsToDisable": "<em>Buttons to disable</em>",
 	"cacheManagement": "Postavke cache memorije",
+	"calendar": "Kalendar",
 	"camera": "<em>Camera</em>",
 	"card": "Kartica",
 	"cardinality": "Kardinalnost",
@@ -1156,7 +1146,7 @@
 	"contains": "<em>Contains</em>",
 	"containsorequal": "<em>Contains or equal</em>",
 	"controls": "<em>Controls</em>",
-	"cql_filter": "<em>CQL filter</em>",
+	"cqlFilter": "<em>CQL filter</em>",
 	"createReport": "Napravi izvještaj",
 	"credentials": "Podaci za pristup",
 	"csv": "CSV",
@@ -1167,6 +1157,7 @@
 	"dataSource": "Izvor podataka",
 	"defaultAccount": "<em>Default account</em>",
 	"defaultClass": "Podrazumijevana klasa",
+	"defaultDateToOpen": "Zadani datum otvaranja",
 	"defaultFilters": "<em>Default filters</em>",
 	"defaultForGroups": "<em>Default for groups</em>",
 	"defaultGroup": "Zadana grupa",
@@ -1222,6 +1213,7 @@
 	"engineName": "Naziv sistema za upravljanje procesima",
 	"error": "Greška",
 	"error_bimserver_connection": "<em>I'm not able to connect to Bimserver</em>",
+	"eventTitle": "Naziv događaja",
 	"expand": "<em>Expand</em>",
 	"expandAll": "<em>Expand all</em>",
 	"export": "<em>Export</em>",
@@ -1424,10 +1416,12 @@
 	"simpleHistoryForProcesses": "Pojednostavljena povijest procesa",
 	"smtpPort": "<em>SMTP port</em>",
 	"smtpServer": "<em>SMTP server</em>",
+	"specificProperties": "<em>Custom properties</em>",
 	"sql": "SQL",
 	"sqlView": "Iz SQL-a",
 	"standard": "Standardna",
 	"start": "<em>Start</em>",
+	"startDate": "Datum početka",
 	"startingPageAt": "Početna stranica",
 	"status": "<em>Status</em>",
 	"stop": "<em>Stop</em>",
@@ -1478,7 +1472,6 @@
 	"workflow_attributes": "<em>Workflow attributes</em>",
 	"workflow_by_cql": "<em>by Cql</em>",
 	"workflow_by_name": "<em>by name</em>",
-	"workflow_cql_filter": "<em>Cql filter</em>",
 	"workflow_query_tipology": "<em>Selection</em>",
 	"workflowEngine": "Radni procesi (Workflow)",
 	"write": "Pisanje",

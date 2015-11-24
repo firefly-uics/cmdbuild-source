@@ -137,17 +137,6 @@
 			"title": "Beheer klassen",
 			"tree_title": "Klassen Lijst",
 			"widgets": {
-				".Calendar": {
-					"fields": {
-						"target": "Doel Klas",
-						"start": "Start datum",
-						"end": "Eind datum",
-						"title": "Aktiviteit titel",
-						"filter": "CQL Filter",
-						"defaultDate": "Standaard datum om te starten"
-					},
-					"title": "Kalender"
-				},
 				".Workflow": {
 					"title": "Start procesgang"
 				},
@@ -1117,6 +1106,7 @@
 	"buildFilter": "<em>Build filter</em>",
 	"buttonsToDisable": "Te blokkeren drukknoppen",
 	"cacheManagement": "Cache beheer",
+	"calendar": "Kalender",
 	"camera": "Camera",
 	"card": "Kaart",
 	"cardinality": "Cardinaliteit",
@@ -1156,7 +1146,7 @@
 	"contains": "Bevatten",
 	"containsorequal": "Bevat of is gelijk aan",
 	"controls": "Besturing",
-	"cql_filter": "CQL filter",
+	"cqlFilter": "CQL filter",
 	"createReport": "Ontwerp rapport",
 	"credentials": "Rechten",
 	"csv": "CSV",
@@ -1167,6 +1157,7 @@
 	"dataSource": "Gegevens bron",
 	"defaultAccount": "Standaard gebruiker",
 	"defaultClass": "Standaard klas",
+	"defaultDateToOpen": "Standaard datum om te starten",
 	"defaultFilters": "<em>Default filters</em>",
 	"defaultForGroups": "<em>Default for groups</em>",
 	"defaultGroup": "Standaard Groep",
@@ -1222,6 +1213,7 @@
 	"engineName": "Machine naam",
 	"error": "Fout",
 	"error_bimserver_connection": "Het is niet mogelijk om verbinding met Bimserver te maken",
+	"eventTitle": "Aktiviteit titel",
 	"expand": "<em>Expand</em>",
 	"expandAll": "<em>Expand all</em>",
 	"export": "Export",
@@ -1424,10 +1416,12 @@
 	"simpleHistoryForProcesses": "Eenvoudige geschiedenis voor processen",
 	"smtpPort": "SMTP Poort",
 	"smtpServer": "SMTP server",
+	"specificProperties": "<em>Custom properties</em>",
 	"sql": "SQL",
 	"sqlView": "Van SQL",
 	"standard": "Standaard",
 	"start": "<em>Start</em>",
+	"startDate": "Start datum",
 	"startingPageAt": "Start pagina bij",
 	"status": "<em>Status</em>",
 	"stop": "<em>Stop</em>",
@@ -1478,7 +1472,6 @@
 	"workflow_attributes": "Procesgang attributen",
 	"workflow_by_cql": "bij Cql",
 	"workflow_by_name": "bij naam",
-	"workflow_cql_filter": "Cql filter",
 	"workflow_query_tipology": "Selectie",
 	"workflowEngine": "Werkvolgorde",
 	"write": "Schrijf",

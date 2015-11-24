@@ -137,17 +137,6 @@
 			"title": "管理类",
 			"tree_title": "类列表",
 			"widgets": {
-				".Calendar": {
-					"fields": {
-						"target": "目标类",
-						"start": "开始日期",
-						"end": "结束日期",
-						"title": "事件题目",
-						"filter": "CQL过滤器",
-						"defaultDate": "打开时的缺省日期"
-					},
-					"title": "日历"
-				},
 				".Workflow": {
 					"title": "开始工作流"
 				},
@@ -1117,6 +1106,7 @@
 	"buildFilter": "<em>Build filter</em>",
 	"buttonsToDisable": "Buttons to disable",
 	"cacheManagement": "缓存管理",
+	"calendar": "日历",
 	"camera": "相机",
 	"card": "卡片",
 	"cardinality": "<em>Cardinality</em>",
@@ -1156,7 +1146,7 @@
 	"contains": "Contains",
 	"containsorequal": "Contains or equal",
 	"controls": "Controls",
-	"cql_filter": "CQL过滤器",
+	"cqlFilter": "CQL过滤器",
 	"createReport": "创建报告",
 	"credentials": "证书",
 	"csv": "CSV",
@@ -1167,6 +1157,7 @@
 	"dataSource": "<em>Data source</em>",
 	"defaultAccount": "缺省帐户",
 	"defaultClass": "缺省类",
+	"defaultDateToOpen": "打开时的缺省日期",
 	"defaultFilters": "<em>Default filters</em>",
 	"defaultForGroups": "<em>Default for groups</em>",
 	"defaultGroup": "缺省组",
@@ -1222,6 +1213,7 @@
 	"engineName": "引擎名称",
 	"error": "错误",
 	"error_bimserver_connection": "我不能连接Bimserver",
+	"eventTitle": "事件题目",
 	"expand": "<em>Expand</em>",
 	"expandAll": "<em>Expand all</em>",
 	"exportLabel": "导出",
@@ -1424,10 +1416,12 @@
 	"simpleHistoryForProcesses": "<em>Simple history for processes</em>",
 	"smtpPort": "SMTP入口",
 	"smtpServer": "SMTP服务器",
+	"specificProperties": "<em>Custom properties</em>",
 	"sql": "SQL",
 	"sqlView": "从SQL",
 	"standard": "<em>Standard</em>",
 	"start": "开始",
+	"startDate": "开始日期",
 	"startingPageAt": "<em>Starting page at</em>",
 	"status": "状态",
 	"stop": "停止",
@@ -1478,7 +1472,6 @@
 	"workflow_attributes" : "工作流属性",
 	"workflow_by_cql": "通过Cql",
 	"workflow_by_name": "通过名称",
-	"workflow_cql_filter": "Cql 过滤器",
 	"workflow_query_tipology": "选项",
 	"workflowEngine": "工作流引擎",
 	"write": "<em>Write</em>",

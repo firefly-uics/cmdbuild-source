@@ -137,17 +137,6 @@
 			"title": "Gestión de clases",
 			"tree_title": "Clases",
 			"widgets": {
-				".Calendar": {
-					"fields": {
-						"target": "Clase de referencia",
-						"start": "Fecha inicio",
-						"end": "Fecha fin",
-						"title": "Título evento",
-						"filter": "Filtro CQL",
-						"defaultDate": "Fecha de default"
-					},
-					"title": "Calendario"
-				},
 				".Workflow": {
 					"title": "Empieza flujo de trabajo"
 				},
@@ -1117,6 +1106,7 @@
 	"buildFilter": "<em>Build filter</em>",
 	"buttonsToDisable": "Botón para inhabilitar",
 	"cacheManagement": "Gestión caché",
+	"calendar": "Calendario",
 	"camera": "Cámara",
 	"card": "Tarjeta",
 	"cardinality": "Cardinalidad",
@@ -1156,7 +1146,7 @@
 	"contains": "<em>Contains</em>",
 	"containsorequal": "<em>Contains or equal</em>",
 	"controls": "Verificaciones",
-	"cql_filter": "Filtro CQL",
+	"cqlFilter": "Filtro CQL",
 	"createReport": "Crea Reporte",
 	"credentials": "Credenciales",
 	"csv": "CSV",
@@ -1167,6 +1157,7 @@
 	"dataSource": "Fuente de datos",
 	"defaultAccount": "<em>Default account</em>",
 	"defaultClass": "Clase por defecto",
+	"defaultDateToOpen": "Fecha de default",
 	"defaultFilters": "<em>Default filters</em>",
 	"defaultForGroups": "<em>Default for groups</em>",
 	"defaultGroup": "Grupo por defecto",
@@ -1222,6 +1213,7 @@
 	"engineName": "Nombre del motor",
 	"error": "Error",
 	"error_bimserver_connection": "No puedo conectarme con el Bimserver",
+	"eventTitle": "Título evento",
 	"expand": "<em>Expand</em>",
 	"expandAll": "<em>Expand all</em>",
 	"export": "Exportar",
@@ -1424,10 +1416,12 @@
 	"simpleHistoryForProcesses": "Simple historia para los procesos",
 	"smtpPort": "Puerto SMTP",
 	"smtpServer": "Servidor SMTP",
+	"specificProperties": "<em>Custom properties</em>",
 	"sql": "SQL",
 	"sqlView": "Desde SQL",
 	"standard": "Estándar",
 	"start": "<em>Start</em>",
+	"startDate": "Fecha inicio",
 	"startingPageAt": "Página inicial",
 	"status": "<em>Status</em>",
 	"stop": "<em>Stop</em>",
@@ -1478,7 +1472,6 @@
 	"workflow_attributes": "Atributos del flujo de trabajo",
 	"workflow_by_cql": "por Cql",
 	"workflow_by_name": "por nombre",
-	"workflow_cql_filter": "Filtro Cql",
 	"workflow_query_tipology": "Selección",
 	"workflowEngine": "Flujo de Trabajo",
 	"write": "Escritura",

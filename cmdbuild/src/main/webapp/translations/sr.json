@@ -137,17 +137,6 @@
 			"title": "Upravljanje klasama",
 			"tree_title": "Klase",
 			"widgets": {
-				".Calendar": {
-					"fields": {
-						"target": "Ciljna klasa",
-						"start": "Datum početka",
-						"end": "Datum završetka",
-						"title": "Naziv događaja",
-						"filter": "CQL filter",
-						"defaultDate": "Podrazumevani datum otvaranja"
-					},
-					"title": "Kalendar"
-				},
 				".Workflow": {
 					"title": "Pokreni radni proces"
 				},
@@ -1117,6 +1106,7 @@
 	"buildFilter": "<em>Build filter</em>",
 	"buttonsToDisable": "Onemogućiti tastere",
 	"cacheManagement": "Podešavanje keš memorije",
+	"calendar": "Kalendar",
 	"camera": "Kamera",
 	"card": "Kartica",
 	"cardinality": "Kardinalitet",
@@ -1156,7 +1146,7 @@
 	"contains": "Sadrži",
 	"containsorequal": "Sadrži ili je jednak",
 	"controls": "Kontrole",
-	"cql_filter": "CQL filter",
+	"cqlFilter": "CQL filter",
 	"createReport": "Kreiraj izveštaj",
 	"credentials": "Podaci za pristup",
 	"csv": "CSV",
@@ -1167,6 +1157,7 @@
 	"dataSource": "Izvor podataka",
 	"defaultAccount": "Podrazumevani kor. nalog",
 	"defaultClass": "Podrazumevana klasa",
+	"defaultDateToOpen": "Podrazumevani datum otvaranja",
 	"defaultFilters": "<em>Default filters</em>",
 	"defaultForGroups": "<em>Default for groups</em>",
 	"defaultGroup": "Podrazumevana grupa",
@@ -1222,6 +1213,7 @@
 	"engineName": "Naziv sistema za upravljanje procesima",
 	"error": "Greška",
 	"error_bimserver_connection": "Nije moguće uspostaviti vezu ka Bim serveru ",
+	"eventTitle": "Naziv događaja",
 	"expand": "<em>Expand</em>",
 	"expandAll": "<em>Expand all</em>",
 	"export": "Izvezi",
@@ -1424,10 +1416,12 @@
 	"simpleHistoryForProcesses": "Pojednostavljena istorija procesa",
 	"smtpPort": "SMTP port",
 	"smtpServer": "SMTP server",
+	"specificProperties": "<em>Custom properties</em>",
 	"sql": "SQL",
 	"sqlView": "Iz SQL-a",
 	"standard": "Standardna",
 	"start": "<em>Start</em>",
+	"startDate": "Datum početka",
 	"startingPageAt": "Početna stranica",
 	"status": "<em>Status</em>",
 	"stop": "<em>Stop</em>",
@@ -1478,7 +1472,6 @@
 	"workflow_attributes": "Atributi radnog procesa",
 	"workflow_by_cql": "po CQL",
 	"workflow_by_name": "po imenu",
-	"workflow_cql_filter": "CQL filter",
 	"workflow_query_tipology": "Selekcija",
 	"workflowEngine": "Radni procesi (Workflow)",
 	"write": "Pisanje",
