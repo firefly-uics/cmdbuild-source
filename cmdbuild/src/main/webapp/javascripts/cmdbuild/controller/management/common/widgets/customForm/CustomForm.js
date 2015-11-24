@@ -294,7 +294,7 @@
 		 */
 		widgetCustomFormViewSetLoading: function(state) {
 			state = Ext.isBoolean(state) ? state : false;
-_debug('widgetCustomFormViewSetLoading', state, this.view);
+
 			this.view.setLoading(state);
 		}
 	});
