@@ -29,6 +29,9 @@
 								case '.Calendar':
 									return CMDBuild.Translation.calendar;
 
+								case '.CreateModifyCard':
+									return CMDBuild.Translation.createModifyCard;
+
 								case '.OpenReport':
 									return CMDBuild.Translation.createReport;
 

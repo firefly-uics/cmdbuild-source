@@ -51,12 +51,11 @@
 							}
 						},
 						{
-							text: CMDBuild.Translation.administration.modClass.widgets['.CreateModifyCard'].title,
-							WIDGET_NAME: '.CreateModifyCard',
+							text: CMDBuild.Translation.createModifyCard,
 							scope: this,
 
 							handler: function(button, e) {
-								this.fireEvent('cm-add', '.CreateModifyCard');
+								this.delegate.cmfg('onClassTabWidgetAddButtonClick', '.CreateModifyCard');
 							}
 						}
 					]
