@@ -72,7 +72,7 @@
 				this.domainTabController.onClassSelected(selection.data.id);
 				this.geoAttributesController.onClassSelected(selection.data.id);
 				this.attributePanelController.onClassSelected(selection.data.id);
-				this.widgetDefinitionController.onClassSelected(selection.data.id);
+				this.widgetDefinitionController.cmfg('onClassSelected', selection.data.id);
 			}
 		},
 
@@ -98,7 +98,7 @@
 			this.domainTabController.onAddClassButtonClick();
 			this.geoAttributesController.onAddClassButtonClick();
 			this.attributePanelController.onAddClassButtonClick();
-			this.widgetDefinitionController.onAddClassButtonClick();
+			this.widgetDefinitionController.cmfg('onAddClassButtonClick');
 
 			this.view.onAddClassButtonClick();
 			_CMMainViewportController.deselectAccordionByName("class");

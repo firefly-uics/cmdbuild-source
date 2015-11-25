@@ -57,6 +57,23 @@
 					decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.CLASSES];
 
 					_CMCache.addClasses(decodedResponse);
+
+					/**
+					 * Widget
+					 *
+					 * Widgets must be added to cache only before classes, because widget object is added to class model
+					 */
+					CMDBuild.ServiceProxy.CMWidgetConfiguration.read({
+						loadMask: false,
+						scope: this,
+						success: function(response, options, decodedResponse) {
+							decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.RESPONSE];
+
+							// A day I'll can do a request to have only the active, now the cache discards the inactive if the flag onlyActive is true
+							_CMCache.addWidgetToEntryTypes(decodedResponse, true);
+						},
+						callback: CMDBuild.core.RequestBarrier.getCallback(barrierId)
+					});
 				},
 				callback: CMDBuild.core.RequestBarrier.getCallback(barrierId)
 			});
@@ -114,21 +131,6 @@
 				scope: this,
 				success: function(response, options, decodedResponse) {
 					_CMCache.addReports(decodedResponse);
-				},
-				callback: CMDBuild.core.RequestBarrier.getCallback(barrierId)
-			});
-
-			/**
-			 * Widget
-			 */
-			CMDBuild.ServiceProxy.CMWidgetConfiguration.read({
-				loadMask: false,
-				scope: this,
-				success: function(response, options, decodedResponse) {
-					decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.RESPONSE];
-
-					// A day I'll can do a request to have only the active, now the cache discards the inactive if the flag onlyActive is true
-					_CMCache.addWidgetToEntryTypes(decodedResponse, true);
 				},
 				callback: CMDBuild.core.RequestBarrier.getCallback(barrierId)
 			});
