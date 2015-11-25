@@ -4,8 +4,21 @@
 
 	Ext.define("CMDBuild.controller.administration.CMBaseAttributesController", {
 		constructor: function(view) {
-			this.view = view;
+			if (Ext.isEmpty(view)) {
+				this.view = new CMDBuild.view.administration.classes.CMClassAttributesPanel({
+					title: CMDBuild.Translation.administration.modClass.tabs.attributes,
+					border: false,
+					disabled: true
+				});
+			} else {
+				this.view = view;
+			}
+
 			this.getGrid().on("cm_attribute_moved", this.onAttributeMoved, this);
+		},
+
+		getView: function() {
+			return this.view;
 		},
 
 		onAttributeMoved: function() {

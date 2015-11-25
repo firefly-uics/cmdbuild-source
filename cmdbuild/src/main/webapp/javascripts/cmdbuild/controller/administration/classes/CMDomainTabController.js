@@ -4,7 +4,16 @@
 		requires: ['CMDBuild.core.proxy.domain.Domain'],
 
 		constructor: function(view) {
-			this.view = view;
+			if (Ext.isEmpty(view)) {
+				this.view = new CMDBuild.Administration.DomainGrid({
+					title : CMDBuild.Translation.administration.modClass.tabs.domains,
+					border: false,
+					disabled: true
+				});
+			} else {
+				this.view = view;
+			}
+
 			this.selection = null;
 
 			this.view.on("itemdblclick", onItemDoubleClick, this);
@@ -12,6 +21,10 @@
 			this.view.addDomainButton.on("click", onAddDomainButton, this);
 			this.view.modifyButton.on("click", onModifyDomainButton, this);
 			this.view.deleteButton.on("click", onDeleteDomainButton, this);
+		},
+
+		getView: function() {
+			return this.view;
 		},
 
 		onClassSelected: function(classId) {
