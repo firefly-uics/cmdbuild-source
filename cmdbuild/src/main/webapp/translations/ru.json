@@ -135,19 +135,7 @@
 				"properties": "Свойства"
 			},
 			"title": "Настройка классов",
-			"tree_title": "Список классов",
-			"widgets": {
-				".NavigationTree": {
-					"title": "Навигационное дерево"
-				},
-				"commonFields": {
-					"active": "Активный",
-					"alwaysenabled": "Всегда включен",
-					"buttonLabel": "Метка кнопки",
-					"type": "Тип"
-				},
-				"title": "Виджет"
-			}
+			"tree_title": "Список классов"
 		},
 		"modDashboard": {
 			"charts": {
@@ -1074,6 +1062,7 @@
 	"addWidget": "<em>Add widget</em>",
 	"administrator": "Администратор",
 	"alfresco": "Документы Alfresco",
+	"alwaysEnabled": "Всегда включен",
 	"any": "Любой",
 	"application": "Приложение",
 	"applyDefaultSelection": "<em>Apply default selection</em>",
@@ -1094,6 +1083,7 @@
 	"body": "Текст письма",
 	"bottom": "В нижней части",
 	"buildFilter": "<em>Build filter</em>",
+	"buttonLabel": "Метка кнопки",
 	"buttonsToDisable": "Отключать кнопки",
 	"byCql": "по CQL",
 	"byName": "по имени",
@@ -1463,6 +1453,7 @@
 	"views": "Представления",
 	"warning": "Предупреждение",
 	"webServicePath": "Путь в веб-сервисах",
+	"widget": "Виджет",
 	"workflow": "Процесс",
 	"workflowAttributes": "Атрибуты процесса",
 	"workflowEngine": "Рабочие процессы",

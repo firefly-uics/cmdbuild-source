@@ -112,7 +112,7 @@
 							align: 'stretch'
 						},
 
-						items: this.widgetDefinitionFormCustomPropertiesGet()
+						items: this.widgetDefinitionFormAdditionalPropertiesGet()
 					})
 				]
 			});
@@ -130,7 +130,7 @@
 				Ext.create('Ext.form.field.Hidden', { name: CMDBuild.core.constants.Proxy.ID }),
 				Ext.create('CMDBuild.view.common.field.translatable.Text', {
 					name: CMDBuild.core.constants.Proxy.LABEL,
-					fieldLabel: CMDBuild.Translation.administration.modClass.widgets.commonFields.buttonLabel,
+					fieldLabel: CMDBuild.Translation.buttonLabel,
 					maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
 					labelWidth: CMDBuild.LABEL_WIDTH,
 					allowBlank: false,
@@ -144,12 +144,12 @@
 				}),
 				Ext.create('Ext.form.field.Checkbox', {
 					name: CMDBuild.core.constants.Proxy.ACTIVE,
-					fieldLabel: CMDBuild.Translation.administration.modClass.widgets.commonFields.active,
+					fieldLabel: CMDBuild.Translation.active,
 					labelWidth: CMDBuild.LABEL_WIDTH
 				}),
 				Ext.create('Ext.form.field.Checkbox', {
 					name: CMDBuild.core.constants.Proxy.ALWAYS_ENABLED,
-					fieldLabel: CMDBuild.Translation.administration.modClass.widgets.commonFields.alwaysenabled,
+					fieldLabel: CMDBuild.Translation.alwaysEnabled,
 					labelWidth: CMDBuild.LABEL_WIDTH
 				})
 			];
@@ -160,7 +160,7 @@
 		 *
 		 * @abstract
 		 */
-		widgetDefinitionFormCustomPropertiesGet: Ext.emptyFn
+		widgetDefinitionFormAdditionalPropertiesGet: Ext.emptyFn
 	});
 
 })();

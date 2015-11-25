@@ -60,7 +60,7 @@
 		/**
 		 * Fills form with widget data
 		 *
-		 * @param {CMDBuild.model.widget.WidgetDefinition} record
+		 * @param {CMDBuild.model.widget.ping.Definition} record
 		 */
 		classTabWidgetPingLoadRecord: function(record) {
 			this.view.loadRecord(record);

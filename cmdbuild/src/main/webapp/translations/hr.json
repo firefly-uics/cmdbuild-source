@@ -135,19 +135,7 @@
 				"properties": "Obilježja"
 			},
 			"title": "Upravljanje klasama",
-			"tree_title": "Klase",
-			"widgets": {
-				".NavigationTree": {
-					"title": "<em>Navigation tree</em>"
-				},
-				"commonFields": {
-					"active": "Aktivan",
-					"alwaysenabled": "Uvijek uključen",
-					"buttonLabel": "Naslov tipke",
-					"type": "Tip"
-				},
-				"title": "Komponenta (Widget)"
-			}
+			"tree_title": "Klase"
 		},
 		"modDashboard": {
 			"charts": {
@@ -1074,6 +1062,7 @@
 	"addWidget": "<em>Add widget</em>",
 	"administrator": "Administrator",
 	"alfresco": "Alfresco",
+	"alwaysEnabled": "Uvijek uključen",
 	"any": "Bilo koji",
 	"application": "Aplikacija",
 	"applyDefaultSelection": "<em>Apply default selection</em>",
@@ -1094,6 +1083,7 @@
 	"body": "<em>Body</em>",
 	"bottom": "Pri dnu",
 	"buildFilter": "<em>Build filter</em>",
+	"buttonLabel": "Naslov tipke",
 	"buttonsToDisable": "<em>Buttons to disable</em>",
 	"byCql": "<em>by Cql</em>",
 	"byName": "<em>by name</em>",
@@ -1463,6 +1453,7 @@
 	"views": "Prikazi",
 	"warning": "Pažnja",
 	"webServicePath": "Putanja web servisa",
+	"widget": "Komponenta (Widget)",
 	"workflow": "<em>Workflow</em>",
 	"workflowAttributes": "<em>Workflow attributes</em>",
 	"workflowEngine": "Radni procesi (Workflow)",

@@ -135,19 +135,7 @@
 				"properties": "Obeležja"
 			},
 			"title": "Upravljanje klasama",
-			"tree_title": "Klase",
-			"widgets": {
-				".NavigationTree": {
-					"title": "Stablo navigacije"
-				},
-				"commonFields": {
-					"active": "Aktivan",
-					"alwaysenabled": "Uvek uključen",
-					"buttonLabel": "Naslov dugmeta",
-					"type": "Tip"
-				},
-				"title": "Komponenta (Widget)"
-			}
+			"tree_title": "Klase"
 		},
 		"modDashboard": {
 			"charts": {
@@ -1074,6 +1062,7 @@
 	"addWidget": "<em>Add widget</em>",
 	"administrator": "Administrator",
 	"alfresco": "Alfresco",
+	"alwaysEnabled": "Uvek uključen",
 	"any": "Bilo koji",
 	"application": "Aplikacija",
 	"applyDefaultSelection": "<em>Apply default selection</em>",
@@ -1094,6 +1083,7 @@
 	"body": "Telo poruke",
 	"bottom": "Pri dnu",
 	"buildFilter": "<em>Build filter</em>",
+	"buttonLabel": "Naslov dugmeta",
 	"buttonsToDisable": "Onemogućiti tastere",
 	"byCql": "po CQL",
 	"byName": "po imenu",
@@ -1463,6 +1453,7 @@
 	"views": "Prikazi",
 	"warning": "Pažnja",
 	"webServicePath": "Putanja web servisa",
+	"widget": "Komponenta (Widget)",
 	"workflow": "Radni procesi",
 	"workflowAttributes": "Atributi radnog procesa",
 	"workflowEngine": "Radni procesi (Workflow)",

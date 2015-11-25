@@ -135,19 +135,7 @@
 				"properties": "Đặc tính"
 			},
 			"title": "Quản lý Lớp",
-			"tree_title": "Danh sách Lớp",
-			"widgets": {
-				".NavigationTree": {
-					"title": "<em>Navigation tree</em>"
-				},
-				"commonFields": {
-					"active": "Đang sử dụng",
-					"alwaysenabled": "Luôn được kích hoạt",
-					"buttonLabel": "Nhãn ",
-					"type": "Loại"
-				},
-				"title": "Tiện ích"
-			}
+			"tree_title": "Danh sách Lớp"
 		},
 		"modDashboard": {
 			"charts": {
@@ -1074,6 +1062,7 @@
 	"addWidget": "<em>Add widget</em>",
 	"administrator": "Người quản trị",
 	"alfresco": "Alfresco",
+	"alwaysEnabled": "Luôn được kích hoạt",
 	"any": "Tùy chọn",
 	"application": "Ứng dụng",
 	"applyDefaultSelection": "<em>Apply default selection</em>",
@@ -1094,6 +1083,7 @@
 	"body": "<em>Body</em>",
 	"bottom": "Bên dưới",
 	"buildFilter": "<em>Build filter</em>",
+	"buttonLabel": "Nhãn ",
 	"buttonsToDisable": "<em>Buttons to disable</em>",
 	"byCql": "<em>by Cql</em>",
 	"byName": "<em>by name</em>",
@@ -1463,6 +1453,7 @@
 	"views": "Lượt xem",
 	"warning": "Cảnh báo",
 	"webServicePath": "Đường dẫn web service",
+	"widget": "Tiện ích",
 	"workflow": "<em>Workflow</em>",
 	"workflowAttributes": "<em>Workflow attributes</em>",
 	"workflowEngine": "Quy trình làm việc",

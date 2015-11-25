@@ -135,19 +135,7 @@
 				"properties": "プロパティ"
 			},
 			"title": "クラス管理",
-			"tree_title": "クラスリスト",
-			"widgets": {
-				".NavigationTree": {
-					"title": "ナビゲーションツリー"
-				},
-				"commonFields": {
-					"active": "アクティブ",
-					"alwaysenabled": "常時可能",
-					"buttonLabel": "ボタンラベル",
-					"type": "タイプ"
-				},
-				"title": "ウィジェット"
-			}
+			"tree_title": "クラスリスト"
 		},
 		"modDashboard": {
 			"charts": {
@@ -1074,6 +1062,7 @@
 	"addWidget": "<em>Add widget</em>",
 	"administrator": "アドミニストレータ",
 	"alfresco": "Alfresco",
+	"alwaysEnabled": "常時可能",
 	"any": "すべての",
 	"application": "アプリケーション",
 	"applyDefaultSelection": "<em>Apply default selection</em>",
@@ -1094,6 +1083,7 @@
 	"body": "本文",
 	"bottom": "ボトム",
 	"buildFilter": "<em>Build filter</em>",
+	"buttonLabel": "ボタンラベル",
 	"buttonsToDisable": "無効にするボタン",
 	"byCql": "Cqlで",
 	"byName": "名前で",
@@ -1463,6 +1453,7 @@
 	"views": "ビュー",
 	"warning": "警告",
 	"webServicePath": "Webサービスへのパス",
+	"widget": "ウィジェット",
 	"workflow": "ワークフロー",
 	"workflowAttributes": "ワークフロー属性",
 	"workflowEngine": "ワークフロー",

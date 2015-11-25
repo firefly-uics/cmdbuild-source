@@ -61,7 +61,7 @@
 		/**
 		 * Fills form with widget data
 		 *
-		 * @param {CMDBuild.model.widget.WidgetDefinition} record
+		 * @param {CMDBuild.model.widget.createModifyCard.Definition} record
 		 */
 		classTabWidgetCreateModifyCardLoadRecord: function(record) {
 			this.view.loadRecord(record);

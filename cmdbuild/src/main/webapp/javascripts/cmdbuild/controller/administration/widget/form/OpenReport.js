@@ -64,7 +64,7 @@
 		/**
 		 * Fills form with widget data
 		 *
-		 * @param {CMDBuild.model.widget.WidgetDefinition} record
+		 * @param {CMDBuild.model.widget.openReport.Definition} record
 		 */
 		classTabWidgetOpenReportLoadRecord: function(record) {
 			this.view.loadRecord(record);

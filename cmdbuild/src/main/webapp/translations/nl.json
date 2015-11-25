@@ -135,19 +135,7 @@
 				"properties": "Eigenschappen"
 			},
 			"title": "Beheer klassen",
-			"tree_title": "Klassen Lijst",
-			"widgets": {
-				".NavigationTree": {
-					"title": "Navigatie overzicht"
-				},
-				"commonFields": {
-					"active": "Aktief",
-					"alwaysenabled": "Altijd toegestaan",
-					"buttonLabel": "Knop label",
-					"type": "Soort"
-				},
-				"title": "Widget"
-			}
+			"tree_title": "Klassen Lijst"
 		},
 		"modDashboard": {
 			"charts": {
@@ -1074,6 +1062,7 @@
 	"addWidget": "<em>Add widget</em>",
 	"administrator": "Beheerder",
 	"alfresco": "Alfresco",
+	"alwaysEnabled": "Altijd toegestaan",
 	"any": "Alle",
 	"application": "Applikatie",
 	"applyDefaultSelection": "<em>Apply default selection</em>",
@@ -1094,6 +1083,7 @@
 	"body": "Sjabloon tekst",
 	"bottom": "Bodem",
 	"buildFilter": "<em>Build filter</em>",
+	"buttonLabel": "Knop label",
 	"buttonsToDisable": "Te blokkeren drukknoppen",
 	"byCql": "bij Cql",
 	"byName": "bij naam",
@@ -1463,6 +1453,7 @@
 	"views": "Vensters",
 	"warning": "Waarschuwing",
 	"webServicePath": "Web service pad",
+	"widget": "Widget",
 	"workflow": "Procesgang",
 	"workflowAttributes": "Procesgang attributen",
 	"workflowEngine": "Werkvolgorde",

@@ -52,7 +52,7 @@
 		selectedClass: undefined,
 
 		/**
-		 * @property {CMDBuild.model.widget.WidgetDefinition}
+		 * @property {Mixed}
 		 *
 		 * @private
 		 */
@@ -122,16 +122,8 @@
 						this.controllerWidgetForm = Ext.create('CMDBuild.controller.administration.widget.form.Workflow', { parentDelegate: this });
 					} break;
 
-					default: { // TODO: use only string ones + use each()
-						for (var key in CMDBuild.controller.administration.widget)
-							if (CMDBuild.controller.administration.widget[key].WIDGET_NAME == type) {
-								this.controllerWidgetForm = CMDBuild.controller.administration.widget[key].create({
-									view: subView,
-									classId: classId
-								});
-
-								break;
-							}
+					default: {
+						_warning('unmanaged widget controller type "' + type + '"', this);
 					}
 				}
 		},

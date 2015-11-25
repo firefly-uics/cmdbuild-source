@@ -76,7 +76,7 @@
 		/**
 		 * Fills form with widget data
 		 *
-		 * @param {CMDBuild.model.widget.WidgetDefinition} record
+		 * @param {CMDBuild.model.widget.calendar.Definition} record
 		 */
 		classTabWidgetCalendarLoadRecord: function(record) {
 			this.view.loadRecord(record);
