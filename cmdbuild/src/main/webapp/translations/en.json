@@ -135,19 +135,7 @@
 				"properties": "Properties"
 			},
 			"title": "Manage classes",
-			"tree_title": "Class List",
-			"widgets": {
-				".NavigationTree": {
-					"title": "Navigation tree"
-				},
-				"commonFields": {
-					"active": "Active",
-					"alwaysenabled": "Always enabled",
-					"buttonLabel": "Button label",
-					"type": "Type"
-				},
-				"title": "Widget"
-			}
+			"tree_title": "Class List"
 		},
 		"modDashboard": {
 			"charts": {
@@ -1074,6 +1062,7 @@
 	"addWidget": "Add widget",
 	"administrator": "Administrator",
 	"alfresco": "Alfresco",
+	"alwaysEnabled": "Always enabled",
 	"any": "Any",
 	"application": "Application",
 	"applyDefaultSelection": "Apply default selection",
@@ -1094,6 +1083,7 @@
 	"body": "Body",
 	"bottom": "Bottom",
 	"buildFilter": "Build filter",
+	"buttonLabel": "Button label",
 	"buttonsToDisable": "Buttons to disable",
 	"byCql": "by CQL",
 	"byName": "by name",
@@ -1463,6 +1453,7 @@
 	"views": "Views",
 	"warning": "Warning",
 	"webServicePath": "Web service path",
+	"widget": "Widget",
 	"workflow": "Process",
 	"workflowAttributes" : "Process attributes",
 	"workflowEngine": "Workflow engine",

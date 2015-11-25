@@ -135,19 +135,7 @@
 				"properties": "特性"
 			},
 			"title": "管理类",
-			"tree_title": "类列表",
-			"widgets": {
-				".NavigationTree": {
-					"title": "导航树"
-				},
-				"commonFields": {
-					"active": "活动状态",
-					"alwaysenabled": "总是允许",
-					"buttonLabel": "按钮标签",
-					"type": "类型"
-				},
-				"title": "窗口控件"
-			}
+			"tree_title": "类列表"
 		},
 		"modDashboard": {
 			"charts": {
@@ -1074,6 +1062,7 @@
 	"addWidget": "<em>Add widget</em>",
 	"administrator": "<em>Administrator</em>",
 	"alfresco": "Alfresco",
+	"alwaysEnabled": "总是允许",
 	"any": "任何",
 	"application": "应用",
 	"applyDefaultSelection": "<em>Apply default selection</em>",
@@ -1094,6 +1083,7 @@
 	"body": "Body",
 	"bottom": "底部",
 	"buildFilter": "<em>Build filter</em>",
+	"buttonLabel": "按钮标签",
 	"buttonsToDisable": "Buttons to disable",
 	"byCql": "通过Cql",
 	"byName": "通过名称",
@@ -1463,6 +1453,7 @@
 	"views": "浏览",
 	"warning": "<em>Warning</em>",
 	"webServicePath": "Web服务路径",
+	"widget": "窗口控件",
 	"workflow": "过程",
 	"workflowAttributes" : "工作流属性",
 	"workflowEngine": "工作流引擎",

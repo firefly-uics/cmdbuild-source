@@ -21,7 +21,7 @@
 		border: false,
 		frame: false,
 		layout: 'border',
-		title: CMDBuild.Translation.administration.modClass.widgets.title,
+		title: CMDBuild.Translation.widget,
 
 		initComponent: function() {
 			Ext.apply(this, {

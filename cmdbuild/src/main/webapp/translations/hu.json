@@ -135,19 +135,7 @@
 				"properties": "Tulajdonságok"
 			},
 			"title": "Osztályok kezelése",
-			"tree_title": "Osztály lista",
-			"widgets": {
-				".NavigationTree": {
-					"title": "Navigációs fa"
-				},
-				"commonFields": {
-					"active": "Aktív",
-					"alwaysenabled": "Mindig engedélyezett",
-					"buttonLabel": "Gomb címke",
-					"type": "Típus"
-				},
-				"title": "Widget"
-			}
+			"tree_title": "Osztály lista"
 		},
 		"modDashboard": {
 			"charts": {
@@ -1074,6 +1062,7 @@
 	"addWidget": "<em>Add widget</em>",
 	"administrator": "Adminisztrátor",
 	"alfresco": "Alfresco",
+	"alwaysEnabled": "Mindig engedélyezett",
 	"any": "Bármely",
 	"application": "Applikáció",
 	"applyDefaultSelection": "<em>Apply default selection</em>",
@@ -1094,6 +1083,7 @@
 	"body": "Törzs",
 	"bottom": "Alul",
 	"buildFilter": "<em>Build filter</em>",
+	"buttonLabel": "Gomb címke",
 	"buttonsToDisable": "Tiltandó gombok",
 	"byCql": "Cql szerint",
 	"byName": "név szerint",
@@ -1463,6 +1453,7 @@
 	"views": "Nézetek",
 	"warning": "<em>Warning</em>",
 	"webServicePath": "Web service elérési út",
+	"widget": "Widget",
 	"workflow": "Folyamat",
 	"workflowAttributes" : "Folyamat attribútumok",
 	"workflowEngine": "Workflow engine",

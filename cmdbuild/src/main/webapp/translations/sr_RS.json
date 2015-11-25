@@ -135,19 +135,7 @@
 				"properties": "Обележја"
 			},
 			"title": "Управљање класама",
-			"tree_title": "Класе",
-			"widgets": {
-				".NavigationTree": {
-					"title": "Стабло навигације"
-				},
-				"commonFields": {
-					"active": "Активан",
-					"alwaysenabled": "Увек укључен",
-					"buttonLabel": "Наслов дугмета",
-					"type": "Тип"
-				},
-				"title": "Компонента (Widget)"
-			}
+			"tree_title": "Класе"
 		},
 		"modDashboard": {
 			"charts": {
@@ -1074,6 +1062,7 @@
 	"addWidget": "<em>Add widget</em>",
 	"administrator": "Администратор",
 	"alfresco": "Alfresco",
+	"alwaysEnabled": "Увек укључен",
 	"any": "Било који",
 	"application": "Апликација",
 	"applyDefaultSelection": "<em>Apply default selection</em>",
@@ -1094,6 +1083,7 @@
 	"body": "Тело поруке",
 	"bottom": "При дну",
 	"buildFilter": "<em>Build filter</em>",
+	"buttonLabel": "Наслов дугмета",
 	"buttonsToDisable": "Онемогућити тастере",
 	"byCql": "по CQL",
 	"byName": "по имену",
@@ -1463,6 +1453,7 @@
 	"views": "Прикази",
 	"warning": "Пажња",
 	"webServicePath": "Путања web сервиса",
+	"widget": "Компонента (Widget)",
 	"workflow": "Радни процеси",
 	"workflowAttributes": "Атрибути радног процеса",
 	"workflowEngine": "Радни процеси (Workflow)",

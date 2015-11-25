@@ -135,19 +135,7 @@
 				"properties": "Propriedades"
 			},
 			"title": "Gerenciar classes",
-			"tree_title": "Lista de classe",
-			"widgets": {
-				".NavigationTree": {
-					"title": "<em>Navigation tree</em>"
-				},
-				"commonFields": {
-					"active": "Ativo",
-					"alwaysenabled": "Sempre habilitado",
-					"buttonLabel": "Descrição do botão",
-					"type": "Tipo"
-				},
-				"title": "Widget"
-			}
+			"tree_title": "Lista de classe"
 		},
 		"modDashboard": {
 			"charts": {
@@ -1074,6 +1062,7 @@
 	"addWidget": "<em>Add widget</em>",
 	"administrator": "Administrador",
 	"alfresco": "Alfresco",
+	"alwaysEnabled": "Sempre habilitado",
 	"any": "Qualquer",
 	"application": "Aplicação",
 	"applyDefaultSelection": "<em>Apply default selection</em>",
@@ -1094,6 +1083,7 @@
 	"body": "<em>Body</em>",
 	"bottom": "Inferior",
 	"buildFilter": "<em>Build filter</em>",
+	"buttonLabel": "Descrição do botão",
 	"buttonsToDisable": "<em>Buttons to disable</em>",
 	"byCql": "<em>by Cql</em>",
 	"byName": "<em>by name</em>",
@@ -1463,6 +1453,7 @@
 	"views": "Visualizações",
 	"warning": "Aviso",
 	"webServicePath": "Caminho para o Serviço Web",
+	"widget": "Widget",
 	"workflow": "<em>Workflow</em>",
 	"workflowAttributes": "<em>Workflow attributes</em>",
 	"workflowEngine": "Workflow",

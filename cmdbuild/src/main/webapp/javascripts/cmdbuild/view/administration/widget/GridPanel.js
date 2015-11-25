@@ -21,10 +21,10 @@
 				columns: [
 					{
 						dataIndex: CMDBuild.core.constants.Proxy.TYPE,
-						text: CMDBuild.Translation.administration.modClass.widgets.commonFields.type,
+						text: CMDBuild.Translation.type,
 						flex: 1,
 
-						renderer: function(value) { // TODO
+						renderer: function(value) {
 							switch (value) {
 								case '.Calendar':
 									return CMDBuild.Translation.calendar;
@@ -42,18 +42,18 @@
 									return CMDBuild.Translation.startWorkflow;
 
 								default:
-									return CMDBuild.Translation.administration.modClass.widgets[value].title;
+									return value;
 							}
 						}
 					},
 					{
 						dataIndex: CMDBuild.core.constants.Proxy.LABEL,
-						text: CMDBuild.Translation.administration.modClass.widgets.commonFields.buttonLabel,
+						text: CMDBuild.Translation.buttonLabel,
 						flex: 2
 					},
 					Ext.create('Ext.grid.column.CheckColumn', {
 						dataIndex: CMDBuild.core.constants.Proxy.ACTIVE,
-						text: CMDBuild.Translation.administration.modClass.widgets.commonFields.active,
+						text: CMDBuild.Translation.active,
 						width: 60,
 						align: 'center',
 						hideable: false,

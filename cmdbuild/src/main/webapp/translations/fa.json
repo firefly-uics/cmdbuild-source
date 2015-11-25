@@ -135,19 +135,7 @@
 				"properties": "ویژگیها"
 			},
 			"title": "مدیریت کلاسها",
-			"tree_title": "لیست کلاس",
-			"widgets": {
-				".NavigationTree": {
-					"title": "درخت ناوبری"
-				},
-				"commonFields": {
-					"active": "فعال",
-					"alwaysenabled": "همیشه فعال",
-					"buttonLabel": "برچسب پایین",
-					"type": "نوع"
-				},
-				"title": "Widget"
-			}
+			"tree_title": "لیست کلاس"
 		},
 		"modDashboard": {
 			"charts": {
@@ -1074,6 +1062,7 @@
 	"addWidget": "<em>Add widget</em>",
 	"administrator": "مدیریت",
 	"alfresco": "Alfresco",
+	"alwaysEnabled": "همیشه فعال",
 	"any": "همه",
 	"application": "Application",
 	"applyDefaultSelection": "<em>Apply default selection</em>",
@@ -1094,6 +1083,7 @@
 	"body": "بدنه",
 	"bottom": "Bottom",
 	"buildFilter": "<em>Build filter</em>",
+	"buttonLabel": "برچسب پایین",
 	"buttonsToDisable": "Buttons to disable",
 	"byCql": "by Cql",
 	"byName": "یا نام",
@@ -1463,6 +1453,7 @@
 	"views": "نمایش",
 	"warning": "هشدار",
 	"webServicePath": "Web service path",
+	"widget": "Widget",
 	"workflow": "Workflow",
 	"workflowAttributes": "Workflow attributes",
 	"workflowEngine": "Workflow",

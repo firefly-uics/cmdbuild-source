@@ -120,7 +120,7 @@
 		 *
 		 * @override
 		 */
-		widgetDefinitionFormCustomPropertiesGet: function() {
+		widgetDefinitionFormAdditionalPropertiesGet: function() {
 			return [
 				Ext.create('Ext.form.FieldSet', {
 					title: CMDBuild.Translation.additionalProperties,

@@ -18,8 +18,6 @@
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/administrationOverrides.js"></script>
 
 	<!-- COMMON -->
-	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/common/CMKeyValueGrid.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/common/CMDynamicKeyValueGrid.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/common/LayerGrid.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/common/CMDomainGrid.js"></script>
 
@@ -64,10 +62,6 @@
 	<!-- PROCESS -->
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/workflow/CMProcess.js"></script>
 
-	<!-- WIDGET -->
-	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/widget/form/CMBaseWidgetDefinitionForm.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/widget/form/CMWidgetDefinitionMainForm.js"></script>
-
 <!-- CONTROLLERS -->
 	<!-- GIS -->
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/gis/CMModGISNavigationConfigurationController.js"></script>
@@ -102,9 +96,6 @@
 
 	<!-- PROCESS -->
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/workflow/CMProcessController.js"></script>
-
-	<!-- WIDGET -->
-	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/widget/CMBaseWidgetDefinitionFormController.js"></script>
 
 <!-- BIM - ADMINISTRATION -->
 <script type="text/javascript" src="javascripts/cmdbuild/bim/administration/view/CMBIMPanel.js"></script>

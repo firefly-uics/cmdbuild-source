@@ -68,7 +68,7 @@
 		/**
 		 * Fills form with widget data
 		 *
-		 * @param {CMDBuild.model.widget.WidgetDefinition} record
+		 * @param {CMDBuild.model.widget.workflow.Definition} record
 		 */
 		classTabWidgetWorkflowLoadRecord: function(record) {
 			this.view.loadRecord(record);

@@ -47,7 +47,7 @@
 		 *
 		 * @override
 		 */
-		widgetDefinitionFormCustomPropertiesGet: function() {
+		widgetDefinitionFormAdditionalPropertiesGet: function() {
 			return [
 				this.presetGrid = Ext.create('CMDBuild.view.common.field.grid.KeyValue', {
 					enableRowAdd: true,
