@@ -1,6 +1,6 @@
 {
 	"description": "Deutsch",
-	"release": "2.3-dev",
+	"release": "2.4-dev",
 	"administration": {
 		"description": "Verwaltungsformular",
 		"modClass": {
@@ -60,8 +60,7 @@
 				"standard": "Standard",
 				"superclass": "Superklasse",
 				"type": "Typ",
-				"wait_msg": "Eingabe der Daten ...",
-				"wait_title": "Der Server wird kontaktiert"
+				"wait_msg": "Eingabe der Daten ..."
 			},
 			"class_property": "Eigenschaften",
 			"classtype": {
@@ -84,10 +83,8 @@
 				"md_label": "Master/Detail Label",
 				"modify_domain": "Domain bearbeiten",
 				"name": "Name",
-				"title_add": "Domain hinzufügen",
-				"title_modify": "Domain bearbeiten \"{0}\""
+				"title_add": "Domain hinzufügen"
 			},
-			"domains_title": "Domain Verwaltung",
 			"errors": {
 				"table": {
 					"cast": "Es ist unmöglich die Eigenschaft \"Superklasse\" bearbeiten, diese Klasse enthält Daten oder Unterklassen",
@@ -137,61 +134,7 @@
 				"properties": "Eigenschaften"
 			},
 			"title": "Klassenverwaltung",
-			"tree_title": "Klasse",
-			"widgets": {
-				".OpenReport": {
-					"fields": {
-						"force": "Format erzwingen",
-						"presets": "Attribute des Berichtes",
-						"report": "Bericht"
-					},
-					"presetGrid": {
-						"attribute": "Attribut",
-						"value": "Wert"
-					},
-					"title": "Bericht erstellen"
-				},
-				".Calendar": {
-					"fields": {
-						"target": "Verweisklasse",
-						"start": "Anfangsdatum",
-						"end": "Ende",
-						"title": "Titel des Ereignisses",
-						"filter": "CQL Filter",
-						"defaultDate": "Default Datum"
-					},
-					"title": "Kalender"
-				},
-				".Ping": {
-					"fields": {
-						"address": "Adresse",
-						"count": "Ping Nummer",
-						"templates": "Template"
-					},
-					"title": "Ping"
-				},
-				".Workflow": {
-					"title": "Workflow starten"
-				},
-				".NavigationTree": {
-					"title": "Baumansicht"
-				},
-				".CreateModifyCard": {
-					"fields": {
-						"target": "Verweisklasse",
-						"cql": "CQL Auswertung",
-						"readOnly": "Nur Anzeige"
-					},
-					"title": "Karte erstellen oder bearbeiten"
-				},
-				"commonFields": {
-					"active": "Aktiv",
-					"alwaysenabled": "Immer freigegeben",
-					"buttonLabel": "Button Etikett",
-					"type": "Typ"
-				},
-				"title": "Widget"
-			}
+			"tree_title": "Klasse"
 		},
 		"modDashboard": {
 			"charts": {
@@ -282,48 +225,9 @@
 			},
 			"title": "Dashboard"
 		},
-		"modLookup": {
-			"add_lookuptype": "Lookup Typ hinzufügen",
-			"lookupForm": {
-				"active": "Aktiv",
-				"code": "Code",
-				"description": "Beschreibung",
-				"disable_lookup": " Lookup deaktivieren",
-				"enable_lookup": "Lookup aktivieren",
-				"isdefault": "Default",
-				"notes": "Notizen",
-				"parentdescription": "Beschreibung der Superklasse",
-				"update_lookup": "Lookup Punkte bearbeiten"
-			},
-			"lookupGrid": {
-				"active": "Aktiv",
-				"add_lookup": "Lookup Punkt hinzufügen",
-				"code": "Code",
-				"description": "Beschreibung",
-				"isdefault": "Default",
-				"notes": "Notizen",
-				"parentdescription": "Beschreibung der Superklasse"
-			},
-			"lookupType": "Lookup Typ",
-			"lookupTypeForm": {
-				"active": "Aktiv",
-				"delete_lookuptype": "Lookup Typ wegnehmen",
-				"description": "Beschreibung",
-				"modify_lookuptype": "Lookup Typ bearbeiten",
-				"parent": "Superklasse",
-				"title": "Lookup Verwaltung"
-			},
-			"lookupTypes": "Lookup",
-			"tabs": {
-				"lookuplist": "Liste der Punkte",
-				"properties": "Eigenschaften"
-			},
-			"title": "Lookup Verwaltung"
-		},
 		"modWorkflow": {
 			"add_process": "Prozess hinzufügen",
 			"attributes_title": "Attributverwaltung",
-			"domains_title": "Domain Verwaltung",
 			"errors": {
 				"table": {
 					"cast": "Die Eigenschaft \"Superklasse\" kann nicht bearbeitet werden, die Klasse enthält Daten oder Unterklassen",
@@ -402,68 +306,18 @@
 		"modconnectors": {
 			"title": "Übergangsstelle"
 		},
-		"modmenu": {
-			"add_menu": "Menü hinzufügen",
-			"available_elements": "Verfügbare Daten",
-			"availabletree": {
-				"class": "Klassen",
-				"processclass": "Aktivität",
-				"dashboard": "Dashboards",
-				"report": "Bericht",
-				"view": "Sicht"
-			},
-			"custom_menu": "Kundenspezifisches Menü",
-			"custom_menus": "Menü",
-			"delete_menu": "Menü wegnehmen",
-			"menu_root": "Menü",
-			"modify_menu": "Menü ändern",
-			"new_folder": "Neuer Ordner",
-			"title": "Menüverwaltung"
-		},
-		"modreport": {
-			"add": "Bericht hinzufügen",
-			"importJRFormStep1": {
-				"description": "Beschreibung des Berichtes",
-				"enabled_groups": "Freigegebene Gruppe",
-				"fieldset": "Jasper Bericht importieren",
-				"master_report_jrxml": "Master Bericht (Datei .jrxml) anwählen",
-				"menuTitle": "JasperReports-Bericht",
-				"name": "Name des Berichtes"
-			},
-			"importJRFormStep2": {
-				"duplicate_images": "Fortsetzen ist unmöglich: Der Bericht enthält Bilddateien mit demselben Name.",
-				"fieldset_generic": "Jasper Bericht importieren",
-				"fieldset_images": "Importieren von im Master Bericht definierten Bildern",
-				"fieldset_subreports": "Importieren von in Master Bericht definierten Unterberichten",
-				"menuTitle": "JasperReports-Bericht",
-				"nothing_to_import": "Kein Bild oder Bericht gefunden; bestätigen, um mit der Eingabe fortzufahren.",
-				"success": {
-					"description": {
-						"add": "Der Bericht ist korrekt eingegeben worden",
-						"modify": "Der Bericht ist korrekt bearbeitet worden"
-					},
-					"title": "Der Upload des Berichts ist beendet"
-				}
-			},
-			"importOpenofficeTemplateForm": {
-				"menuTitle": "Openoffice Bericht"
-			},
-			"modify": "Menü ändern",
-			"remove": "Bericht abbrechen",
-			"title": "Bericht"
-		},
 		"tasks": {
 			"add": "Task hinzufügen",
 			"all": "Alle",
 			"clone": "Task klonen",
 			"cronForm" : {
-				"dayOfMounth": "Tag des Monats",
+				"dayOfMonth": "Tag des Monats",
 				"advanced": "Fortgeschritten",
 				"basic": "Grundlegend",
 				"dayOfWeek": "Tag der Woche",
 				"everyDay": "Jeden Tag",
 				"everyHour": "Jede Stunde",
-				"everyMounth": "Jeden Monat",
+				"everyMonth": "Jeden Monat",
 				"everyYear": "Jedes Jahr",
 				"hour": "Stunde",
 				"minute": "Minute",
@@ -576,6 +430,7 @@
 			"add": "Hinzufügen",
 			"apply": "Anwenden",
 			"as": "als",
+			"changeUser": "Benutzer ändern",
 			"check": "<em>Check</em>",
 			"clone": "Klonen",
 			"close": "Schließen",
@@ -584,6 +439,7 @@
 			"importLabel": "Importieren",
 			"load": "Load",
 			"modify": "Bearbeiten",
+			"move": "<em>Move</em>",
 			"next": "Nächste",
 			"previous": "Vorige",
 			"print": "Ausdrucken",
@@ -877,6 +733,8 @@
 			"WIDGET_SERVICE_MALFORMED_REQUEST": "Bitte prüfen Sie, ob Namespace, Zugriffsname und Parameters des Web Service korrekt sind"
 		},
 		"reference_invalid": "Der Wert stimmt das Filter nicht überein",
+		"reportsImportError": "<em>Error while importing report</em>",
+		"reportsAnalizeError": "<em>Error while analizing report</em>",
 		"requiredFieldMessage": "Das Feld ist erfordelich",
 		"routesInvalidCardIdentifier": "<em>Route error: invalid card identifier</em>",
 		"routesInvalidClassIdentifier": "<em>Route error: invalid class identifier</em>",
@@ -905,20 +763,6 @@
 	},
 	"info": {
 		"card_not_found": "Die Karte stimmt nicht mehr mit dem eingestellten Filter überein"
-	},
-	"login": {
-		"change_user": "Benutzer ändern",
-		"failed": "Anmeldung fehlgeschlagen",
-		"language": "Sprache",
-		"login": "Anmelden",
-		"multi_group": "Eine Gruppe auswählen",
-		"password": "Passwort",
-		"relogin_message": "Verbindung zur Sitzung ist abgebrochen. Bitte melden Sie sich erneut an.",
-		"relogin_title": "Die Sitzung ist ausgefallen",
-		"title": "Geben Sie Ihre Zugangsdaten ein",
-		"username": "Benutzer",
-		"waitMsg": "Dateien werden gesendet ...",
-		"waitTitle": "Server wird kontaktiert"
 	},
 	"management": {
 		"description": "Datenmanagement-Modul",
@@ -958,8 +802,8 @@
 			},
 			"notinrel": "Keine",
 			"notnull": "Not null",
-			"nullo": "Null",
 			"newfilter": "Neuen Suchfilter",
+			"nullo": "Null",
 			"relations": "Beziehungen",
 			"remove": "Entfernen",
 			"save_filter": "Filter speichern",
@@ -1076,22 +920,6 @@
 			"showgraph": "Ansicht Graph",
 			"shownotes": "Ansicht Notizen"
 		},
-		"modmenu": {
-			"menu": "Navigieren"
-		},
-		"modreport": {
-			"add_report": "Bericht hinzufügen",
-			"delete_report": "Bericht löschen",
-			"modify_report": "Bericht bearbeiten",
-			"reportForm": {
-				"description": "Beschreibung",
-				"name": "Name",
-				"report": "Bericht"
-			},
-			"report_parameters": "Parameter des Berichts",
-			"title": "Liste - ",
-			"treetitle": "Bericht"
-		},
 		"modutilities": {
 			"bulkupdate": {
 				"title": "Mehrfach-Update",
@@ -1143,9 +971,6 @@
 				},
 				"calendar": {
 					"wrong_config": "Der Kalender ist nicht richtig konfiguriert"
-				},
-				"createreport": {
-					"format_label": "Format"
 				},
 				"linkcards": {
 					"required": "Dafür muss man einige Karten markieren - "
@@ -1200,10 +1025,13 @@
 	},
 	"warnings": {
 		"emailTemplateRelatedAttributeEdited": "<em>Attribute related with email templates changed, some e-mail could be regenerated.</em>",
+		"itIsNotAllowedFilterWithCalculatedParams": "Es ist nicht erlaubt, ein Filter mit gerechneten Parametern zu benutzen",
 		"link_cards_changed_values": "Die Auswahl von \"{0}\" wurde aktualisiert",
 		"only_filtered": "Die Abänderungen können nur in die das laufende Filter respektierenden Karten Wirkungen zeigen",
 		"popup_block": "Es wurde ein Pop-up-Blocker erkannt. Bitte den Blocker ausschalten, um diese Operation auszuführen",
+		"reportsDuplicateImageFilename": "Fortsetzen ist unmöglich: Der Bericht enthält Bilddateien mit demselben Name.",
 		"saveMenuBeforeAccess": "<em>The menu has to been saved before access at the translations of this element.</em>",
+		"toSetAFilterYouMustBeforeSelectAClass": "<em>To set a filter you must before select a class</em>",
 		"warning_message": "Achtung"
 	},
 	"account": "Benutzerkonto",
@@ -1212,20 +1040,30 @@
 	"activityName": "Aktivitätsname",
 	"activityPerformer": "Ausführende der Aktivität",
 	"add": "Hinzufügen",
+	"add_attachment_from_dms": "Anhänge aus DMS hinzufügen",
 	"addAccount": "Benutzerkonto hinzufügen",
 	"addAttachmentFromDms": "Anhänge aus DMS hinzufügen",
 	"addCard": "Karte hinzufügen",
+	"addDomain": "Domain hinzufügen",
 	"addFilter": "Filter hinzufügen",
 	"addGroup": "Gruppe hinzufügen",
+	"additionalProperties": "<em>Additional properties</em>",
+	"addLookup": "Lookup Punkt hinzufügen",
+	"addLookupType": "Lookup Typ hinzufügen",
 	"addProject": "Projekt hinzufügen",
 	"addRelations": "Beziehungen hinzufügen",
+	"addReport": "Bericht hinzufügen",
 	"address": "Adresse",
+	"addressToPing": "Adresse",
 	"addRow": "Zeile hinzufügen",
 	"addTemplate": "Template hinzufügen",
 	"addUser": "Benutzer hinzufügen",
 	"addView": "Sicht hinzufügen",
+	"addWidget": "<em>Add widget</em>",
 	"administrator": "Administrator",
 	"alfresco": "Alfresco",
+	"alwaysEnabled": "Immer freigegeben",
+	"any": "Irgendein",
 	"application": "Anwendung",
 	"applyDefaultSelection": "<em>Apply default selection</em>",
 	"archivingDate": "Archivierungsdatum",
@@ -1234,6 +1072,7 @@
 	"attention": "Achtung",
 	"attribute": "Attribut",
 	"attributes": "Attribute",
+	"availableElements": "Verfügbare daten",
 	"availableFilters": "Verfügbare Filters",
 	"availablePatchesList": "Liste der verfügbaren Patches",
 	"availableUsers": "Verfügbare Benutzer",
@@ -1243,20 +1082,30 @@
 	"bim": "BIM",
 	"body": "Body",
 	"bottom": "Unten",
+	"buildFilter": "<em>Build filter</em>",
+	"buttonLabel": "Button Etikett",
 	"buttonsToDisable": "Schaltfläche zum Ausschalten",
+	"byCql": "durch Cql",
+	"byName": "durch name",
 	"cacheManagement": "Cache Verwaltung",
+	"calendar": "Kalender",
 	"camera": "Kamera",
 	"card": "Karte",
+	"cardCqlSelector": "CQL Auswertung",
+	"cardinality": "Kardinalität",
 	"cardPanelHeight": "Prozenthöhe der Karte",
 	"cards": "Datenkarten",
 	"category": "<em>Category</em>",
 	"cc": "Cc",
 	"changePassword": "Passwort ändern",
 	"checkFrequency": "Häufigkeit kontrollieren (Minuten)",
+	"chooseAGroup": "Eine Gruppe auswählen",
+	"chooseAnAttribute": "Ein Attribut auswählen",
 	"chooseAttachmentFromDb": "Anhang aus Datenbank auswählen",
 	"classAttribute": "Klasse-Attribut",
 	"classes": "Klassen",
 	"classLabel": "Klasse",
+	"classList": "Klasse",
 	"className": "Klassenname",
 	"clean_word_pasted_text": "Den von Word oder anderen Rich Text Pogrammen eingefügten Text bereinigen",
 	"clearCache": "Cache leeren",
@@ -1265,6 +1114,9 @@
 	"cloneCard": "Karte klonen",
 	"cloneRow": "<em>Clone row</em>",
 	"cmdbuildCategory": "CMDBuild Kategorie",
+	"code": "Code",
+	"collapse": "<em>Collapse</em>",
+	"collapseAll": "<em>Collapse all<em>",
 	"columnsPrivileges": "Spalten-Privilegien",
 	"composeEmail": "E-Mail schreiben",
 	"composeFromTemplate": "<em>Compose from template</em>",
@@ -1277,14 +1129,19 @@
 	"contains": "<em>Contains</em>",
 	"containsorequal": "<em>Contains or equal</em>",
 	"controls": "Controls",
-	"cql_filter": "CQL Filter",
+	"cqlFilter": "CQL Filter",
+	"createModifyCard": "Karte erstellen oder bearbeiten",
+	"createReport": "Bericht erstellen",
 	"credentials": "Berechtigungsnachweis",
 	"csv": "CSV",
 	"csvFile": "CSV Datei",
+	"customMenu": "Kundenspezifisches Menü",
 	"customPages": "<em>Custom pages</em>",
 	"dashboard": "Dashboard",
+	"dataSource": "Datasource",
 	"defaultAccount": "<em>Default account</em>",
 	"defaultClass": "Default-Klasse",
+	"defaultDateToOpen": "Default Datum",
 	"defaultFilters": "<em>Default filters</em>",
 	"defaultForGroups": "<em>Default for groups</em>",
 	"defaultGroup": "Standard gruppe",
@@ -1293,6 +1150,7 @@
 	"defaultLevel": "Default Ebene",
 	"delay": "<em>Delay</em>",
 	"deleteCard": "Karte löschen",
+	"deleteDomain": "Domain wegnehmen",
 	"deleteLabel": "<em>Delete</em>",
 	"deleteRow": "Zeile löschen",
 	"description_": "Beschreibung",
@@ -1300,16 +1158,20 @@
 	"destination": "Ziel",
 	"detail": "<em>Detail</em>",
 	"details": "Details",
+	"directDescription": "Direkte Beschreibung",
+	"direction": "Richtung",
 	"disable": "Ausschalten",
 	"disabledFeatures": "Gesperrte funktionalitäten",
 	"disabledTabsInClassesModule": "Gesperrte tabs im klassenmodul",
 	"disabledTabsInProcessesModule": "Gesperrte Tabs im Prozessmodul",
 	"disableGridFilter": "<em>Disable grid filter</em>",
 	"disableGroup": "Gruppe sperren",
+	"disableLookup": "Lookup deaktivieren",
 	"disableUser": "Benutzer sperren",
 	"display_less_attributes": "Weniger Attribute zeigen",
 	"display_more_attributes": "Mehr Attribute zeigen",
 	"domain": "Domain",
+	"domains": "Domains",
 	"download": "<em>Download</em>",
 	"download_ifc_file": "Ifc File herunterladen",
 	"edit": "<em>Edit</em>",
@@ -1323,9 +1185,11 @@
 	"enable": "Aktivieren",
 	"enabled": "Freigegeben",
 	"enabledClasses": "<em>Enabled classes</em>",
+	"enabledGroups": "Freigegebene gruppe",
 	"enabledLanguages": "Aktivierte sprachen",
 	"enableGridFilter": "<em>Enable grid filter</em>",
 	"enableGroup": "Gruppe freigeben",
+	"enableLookup": "Lookup aktivieren",
 	"enableMoveRejectedNotMatching": "unbehandelte E-Mails verschieben",
 	"enableSsl": "SSL aktivieren",
 	"enableUser": "Benutzer freigeben",
@@ -1333,15 +1197,20 @@
 	"engineName": "Engine-Name",
 	"error": "Fehler",
 	"error_bimserver_connection": "Ich kann nicht mit Bimserver verbinden",
+	"eventTitle": "Titel des Ereignisses",
+	"expand": "<em>Expand</em>",
+	"expandAll": "<em>Expand all</em>",
 	"export": "Exportieren",
 	"expose": "Ausstellen",
+	"externalServices": "Externe Dienste",
 	"file": "Datei",
 	"fileName": "File-Name",
 	"fileServer": "Datei-Server",
 	"fileServerPath": "Pfad für das Server Repository",
 	"filter": "Filter",
-	"filters_for_groups": "Gruppenfilter",
+	"filtersForGroups": "Gruppenfilter",
 	"filterView": "Aus dem Filter",
+	"forceFormat": "Format erzwingen",
 	"format": "Format",
 	"format_csv": "CSV",
 	"format_odt": "OpenOffice Odt",
@@ -1349,11 +1218,15 @@
 	"format_rtf": "Rich Text Format",
 	"frequencyCheck": "<em>Frequency check (min)</em>",
 	"from": "Von",
+	"fromSelection": "Aus der Auswahl",
 	"front": "Frontal",
 	"fullScreenNavigation": "Vollbildmodus beim Navigieren",
+	"functionLabel": "Funktion",
 	"general": "Allgemeine",
 	"generalOptions": "<em>General options</em>",
+	"geoserverLayers": "Ebenen von Geoserver",
 	"gis": "GIS",
+	"gisNavigation": "GIS-Navigation",
 	"global": "Global",
 	"gridRefresh": "<em>Grid refresh</em>",
 	"groups": "Gruppen",
@@ -1366,6 +1239,7 @@
 	"imapServer": "IMAP server",
 	"import": "<em>Import</em>",
 	"importFromCSV": "<em>Import from CSV</em>",
+	"importJasperReport": "Jasper bericht importieren",
 	"includeRelations": "<em>Include relations</em>",
 	"includeSystemActivities": "<em>Include system activities</em>",
 	"includeUsersFilters": "<em>Include users filters</em>",
@@ -1375,42 +1249,60 @@
 	"initialLongitude": "Anfangslänge",
 	"initialZoomLevel": "Anfangszoom",
 	"instanceName": "Instanzname",
+	"inverseDescription": "Umgekehrte Beschreibung",
 	"ipType": "<em>IP type</em>",
 	"ipv4": "ipv4",
 	"ipv6": "ipv6",
-	"itIsNotAllowedFilterWithCalculatedParams": "Es ist nicht erlaubt, ein Filter mit gerechneten Parametern zu benutzen",
-	"itIsNotAllowedFilterWithRuntimeParams": "Es ist nicht erlaubt, ein Filter mit vom Benutzer selektierbaren Parametern zu benutzen",
 	"keepSync": "<em>Keep sync</em>",
 	"key": "Schlüssel",
 	"language": "Sprache",
 	"last_checkin": "Letzter Check-in",
 	"layers": "Ebenen",
+	"layersOrder": "Ordnung der Ebenen",
 	"limitedAdministrator": "Begrenzter administrator",
 	"list": "Liste",
 	"lockCardsAndProcessesInEdit": "<em>Lock cards and processes in edit</em>",
 	"lockTimeout": "Maximale Zeitüberschreitung beim Sperren (Sekunden)",
 	"loggedGroup": "Angemeldete Gruppe",
 	"loggedUser": "Angemeldeter Benutzer",
+	"login": "Anmelden",
+	"lookupList": "Liste der Punkte",
+	"lookupTypes": "Lookup Typ",
 	"main": "Hauptsächlich",
+	"manageIcons": "Icon-Steuerung",
 	"manualRegeneration": "<em>Manual Regeneration</em>",
+	"masterDetail": "Master/Detail",
+	"masterDetailLabel": "Master/Detail label",
+	"masterReportJrxml": "Master bericht (.jrxml) anwählen",
 	"maximumLevel": "Maximal wählbare Ebene",
+	"menu": "Menü",
 	"mode": "Modus",
 	"modifyAccount": "Benutzerkonto verändern",
 	"modifyCard": "Karte bearbeiten",
+	"modifyDomain": "Domain bearbeiten",
 	"modifyFilter": "Filter bearbeiten",
 	"modifyGroup": "Gruppe bearbeiten",
+	"modifyLookup": "Lookup Punkte bearbeiten",
+	"modifyLookupType": "Lookup Typ bearbeiten",
 	"modifyProject": "Projekt verändern",
+	"modifyReport": "Menü ändern",
 	"modifyTemplate": "Template verändern",
 	"modifyUser": "Benutzer bearbeiten",
 	"modifyView": "Sicht bearbeiten",
+	"modifyWidget": "<em>Modify widget</em>",
 	"multiGroup": "Multigruppe",
 	"name": "Name",
+	"navigation": "Navigieren",
+	"navigationTrees": "Baumansichten",
+	"newFolder": "Neuer ordner",
 	"no_bim_project_for_card": "Es gibt keinen BIM Projekt für diese Karte",
 	"noAvailableData": "<em>No available data</em>",
 	"none": "Kein",
+	"noOne": "Keine",
 	"normal": "Normal",
-	"not_set": "Nicht eingestellt",
 	"notes": "Notizen",
+	"notSet": "Nicht eingestellt",
+	"numberOfPings": "Ping nummer",
 	"odt": "ODT",
 	"onDay": "<em>On</em>",
 	"open_3d_viewer": "3D-Ansicht öffnen",
@@ -1419,9 +1311,13 @@
 	"otherOptions": "Weitere optionen",
 	"outgoing": "Ausgehende",
 	"pan": "Schwenken",
+	"parent": "Superklasse",
+	"parentDescription": "Beschreibung der Superklasse",
 	"password": "Passwort",
 	"pdf": "PDF",
 	"permissions": "Erlaubnis",
+	"ping": "Ping",
+	"pleaseWait": "Der Server wird kontaktiert ...",
 	"popupPercentageHeight": "Prozenthöhe des PopUp Fensters",
 	"popupPercentageWidth": "Prozentbreite des PopUp Fensters",
 	"popupWindows": "PopUp Fenster",
@@ -1453,12 +1349,17 @@
 	"remove_formatting": "Formatierung entfernen",
 	"removeAccount": "Benutzerkonto entfernen",
 	"removeFilter": "Filter löschen",
+	"removeMenu": "Menü wegnehmen",
 	"removeProject": "Projekt entfernen",
+	"removeReport": "Bericht abbrechen",
 	"removeTemplate": "Template entfernen",
 	"removeView": "Sicht löschen",
+	"removeWidget": "<em>Remove widget</em>",
 	"replace": "<em>Replace</em>",
 	"reply": "<em>Reply</em>",
-	"report": "<em>Report</em>",
+	"report": "Bericht",
+	"reportAttributes": "Attribute des Berichtes",
+	"reportMenuJasper": "<em>Jasper-reports report</em>",
 	"reportParameters": "<em>Report parameters</em>",
 	"repository": "Archivdatei",
 	"reset": "Auf null stellen",
@@ -1474,6 +1375,7 @@
 	"selectAClass": "Eine Klasse markieren",
 	"selected_object": "Markierter Gegenstand",
 	"selectedUsers": "Ausgewählte Benutzer",
+	"selection": "Markierung",
 	"send": "<em>Send</em>",
 	"sentFolder": "<em>Sent folder</em>",
 	"separator": "Trennzeichen",
@@ -1481,6 +1383,8 @@
 	"serverUrl": "Dienst-URL",
 	"service": "<em>Service</em>",
 	"serviceSynchronization": "Synchronisierung der Dienste",
+	"sessionExpired": "Die Sitzung ist ausgefallen",
+	"sessionExpiredMessage": "Verbindung zur Sitzung ist abgebrochen. Bitte melden Sie sich erneut an.",
 	"sessionTimeout": "Sitzungsdauer (Sekunden)",
 	"set": "Eingestellt",
 	"setAsDefault": "Als default einstellen",
@@ -1497,10 +1401,13 @@
 	"simpleHistoryForProcesses": "Einfache Chronik für die Prozesse",
 	"smtpPort": "SMTP Port",
 	"smtpServer": "SMTP Server",
+	"sql": "SQL",
 	"sqlView": "Aus SQL",
 	"standard": "Standard",
 	"start": "<em>Start</em>",
+	"startDate": "Anfangsdatum",
 	"startingPageAt": "Startseite",
+	"startWorkflow": "Workflow starten",
 	"status": "<em>Status</em>",
 	"stop": "<em>Stop</em>",
 	"subject": "Betreff",
@@ -1522,7 +1429,6 @@
 	"tree_navigation_attributes": "Baumansicht-Attribut",
 	"tree_remove": "Baum löschen",
 	"tree_root_cql": "Quelle - CQL filter",
-	"trees_navigation": "Baumansichten",
 	"type": "Typ",
 	"uiConfiguration": "UI konfiguration",
 	"uiConfigurationForGroups": "Benutzeroberfläche-Konfiguration für Gruppen",
@@ -1547,14 +1453,12 @@
 	"views": "Sicht",
 	"warning": "Achtung",
 	"webServicePath": "Pfad für den Web Service",
+	"widget": "Widget",
 	"workflow": "Prozesse",
-	"workflow_attributes": "Attribute des Prozesses",
-	"workflow_by_cql": "durch Cql",
-	"workflow_by_name": "durch name",
-	"workflow_cql_filter": "Cql Filter",
-	"workflow_query_tipology": "Markierung",
+	"workflowAttributes": "Attribute des Prozesses",
 	"workflowEngine": "Workflow",
 	"write": "Schreiben",
 	"you_have_not_set_a_filter": "Sie haben keine Filter eingestellt",
+	"zip": "ZIP",
 	"zoom": "Zoom"
 }

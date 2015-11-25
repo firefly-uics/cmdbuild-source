@@ -6,7 +6,7 @@
 	Ext.define('CMDBuild.core.fieldManager.FieldManager', {
 		extend: 'CMDBuild.controller.common.AbstractController',
 
-		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+		requires: ['CMDBuild.core.constants.Proxy'],
 
 		/**
 		 * @cfg {Object}
@@ -121,7 +121,7 @@
 		 * @private
 		 */
 		buildAttributeController: function() {
-			var attributeType = this.attributeModelGet(CMDBuild.core.proxy.CMProxyConstants.TYPE).toLowerCase();
+			var attributeType = this.attributeModelGet(CMDBuild.core.constants.Proxy.TYPE).toLowerCase();
 
 			switch (attributeType) {
 				case 'boolean': return Ext.create('CMDBuild.core.fieldManager.builders.Boolean', { parentDelegate: this });
@@ -307,13 +307,13 @@
 				return function() { // This is field object
 					if (!Ext.isEmpty(this.templateResolver) && !this.isDisabled()) {
 						this.templateResolver.resolveTemplates({
-							attributes: [CMDBuild.core.proxy.CMProxyConstants.FILTER],
+							attributes: [CMDBuild.core.constants.Proxy.FILTER],
 							scope: this,
 							callback: function(out, ctx) {
 								// Filter attribute manage
 								var params = {};
-								params[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME] = this.attributeModel.get(CMDBuild.core.proxy.CMProxyConstants.TARGET_CLASS);
-								params[CMDBuild.core.proxy.CMProxyConstants.FILTER] = Ext.encode({ CQL: out[CMDBuild.core.proxy.CMProxyConstants.FILTER] });
+								params[CMDBuild.core.constants.Proxy.CLASS_NAME] = this.attributeModel.get(CMDBuild.core.constants.Proxy.TARGET_CLASS);
+								params[CMDBuild.core.constants.Proxy.FILTER] = Ext.encode({ CQL: out[CMDBuild.core.constants.Proxy.FILTER] });
 
 								if (!this.getStore().isLoading()) {
 									this.getStore().getProxy().extraParams = params; // Set last load params

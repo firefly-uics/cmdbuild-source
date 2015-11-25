@@ -13,7 +13,7 @@
 
 		// override to deny to add a note to a new process
 		disableTheTabBeforeCardSelection: function(processInstance) {
-			if (!processInstance 
+			if (!processInstance
 					|| processInstance.isNew()) {
 				return true;
 			} else {
@@ -49,13 +49,13 @@
 				params = me._getSaveParams();
 
 			if (form.isValid() && me.beforeSave(me.card)) {
-				CMDBuild.LoadMask.get().show();
+				CMDBuild.core.LoadMask.show();
 				form.submit({
 					method : 'POST',
 					url : 'services/json/workflow/saveactivity',
 					params: params,
 					success : function(basicForm, submitAction) {
-						CMDBuild.LoadMask.get().hide();
+						CMDBuild.core.LoadMask.hide();
 						me.view.disableModify(enableToolbar = true);
 
 						var noteValue = me.view.syncForms();
@@ -70,7 +70,7 @@
 						me.fireEvent(me.CMEVENTS.noteWasSaved);
 					},
 					failure: function() {
-						CMDBuild.LoadMask.get().hide();
+						CMDBuild.core.LoadMask.hide();
 					}
 				});
 			}
@@ -143,10 +143,6 @@
 		mixins: {
 			observable: "Ext.util.Observable",
 			widgetcontroller: "CMDBuild.controller.management.common.widgets.CMWidgetController"
-		},
-
-		statics: {
-			WIDGET_NAME: ".OpenNote"
 		},
 
 		constructor: function(view, supercontroller, widget, templateResolver, card) {

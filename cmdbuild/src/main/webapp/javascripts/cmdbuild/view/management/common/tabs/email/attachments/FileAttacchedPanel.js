@@ -18,6 +18,7 @@
 		 */
 		readOnly: false,
 
+		bodyPadding: '0 15 0 0',
 		frame: true,
 		margin: 5,
 
@@ -33,21 +34,21 @@
 						value: this.fileName,
 						flex: 1
 					}),
-					Ext.create('CMDBuild.core.buttons.Download', {
+					Ext.create('CMDBuild.core.buttons.iconized.Download', {
 						tooltip: CMDBuild.Translation.download,
 						scope: this,
 
 						handler: function(button, e) {
-							this.delegate.cmfg('onAttachmentDownloadButtonClick', this);
+							this.delegate.cmfg('onTabEmailAttachmentDownloadButtonClick', this);
 						}
 					}),
-					Ext.create('CMDBuild.core.buttons.Delete', {
+					Ext.create('CMDBuild.core.buttons.iconized.Delete', {
 						tooltip: CMDBuild.Translation.deleteLabel,
 						disabled: this.readOnly,
 						scope: this,
 
 						handler: function(button, e) {
-							this.delegate.cmfg('onAttachmentRemoveButtonClick', this);
+							this.delegate.cmfg('onTabEmailAttachmentRemoveButtonClick', this);
 						}
 					})
 				]

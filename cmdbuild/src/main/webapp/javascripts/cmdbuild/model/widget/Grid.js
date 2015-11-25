@@ -1,12 +1,12 @@
 (function() {
 
+	Ext.require('CMDBuild.core.constants.Proxy');
+
 	/**
 	 * Build grid model from class attributes
 	 */
 	Ext.define('CMDBuild.model.widget.Grid', {
 		extend: 'Ext.data.Model',
-
-		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
 
 		fields: [],
 
@@ -18,26 +18,26 @@
 
 			if (Ext.isArray(fieldsDefinitions)) {
 				Ext.Array.forEach(fieldsDefinitions, function(field, i, allFields) {
-					switch (field[CMDBuild.core.proxy.CMProxyConstants.TYPE]) {
+					switch (field[CMDBuild.core.constants.Proxy.TYPE]) {
 						case 'BOOLEAN': {
-							fieldsForModel.push({ name: field[CMDBuild.core.proxy.CMProxyConstants.NAME], type: 'boolean' });
+							fieldsForModel.push({ name: field[CMDBuild.core.constants.Proxy.NAME], type: 'boolean' });
 						} break;
 
 						case 'DATE': {
-							fieldsForModel.push({ name: field[CMDBuild.core.proxy.CMProxyConstants.NAME], type: 'date' });
+							fieldsForModel.push({ name: field[CMDBuild.core.constants.Proxy.NAME], type: 'date' });
 						} break;
 
 						case 'DECIMAL':
 						case 'DOUBLE': {
-							fieldsForModel.push({ name: field[CMDBuild.core.proxy.CMProxyConstants.NAME], type: 'float', useNull: true });
+							fieldsForModel.push({ name: field[CMDBuild.core.constants.Proxy.NAME], type: 'float', useNull: true });
 						} break;
 
 						case 'INTEGER': {
-							fieldsForModel.push({ name: field[CMDBuild.core.proxy.CMProxyConstants.NAME], type: 'int', useNull: true });
+							fieldsForModel.push({ name: field[CMDBuild.core.constants.Proxy.NAME], type: 'int', useNull: true });
 						} break;
 
 						default: {
-							fieldsForModel.push({ name: field[CMDBuild.core.proxy.CMProxyConstants.NAME], type: 'string' });
+							fieldsForModel.push({ name: field[CMDBuild.core.constants.Proxy.NAME], type: 'string' });
 						}
 					}
 				}, this);

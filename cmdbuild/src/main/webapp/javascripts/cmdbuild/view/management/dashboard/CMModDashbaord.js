@@ -1,8 +1,7 @@
 (function() {
-	Ext.define("CMDBuild.view.management.dashboard.CMModDashboard", {
 
+	Ext.define("CMDBuild.view.management.dashboard.CMModDashboard", {
 		extend: "Ext.panel.Panel",
-		cmName: "dashboard",
 
 		initComponent: function() {
 			this.layout = "card";
@@ -24,12 +23,12 @@
 					var columnsConf = dashboard.getColumns();
 					var columns = [];
 					var me = this;
-	
+
 					this.dashbaord = dashboard;
-	
+
 					for (var i=0, l=columnsConf.length, conf; i<l; ++i) {
 						conf = columnsConf[i];
-	
+
 						columns.push(new CMDBuild.view.management.dashboard.CMDashboardColumn({
 							columnWidth : conf.width,
 							charts: conf.charts,

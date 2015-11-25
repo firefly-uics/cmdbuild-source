@@ -6,12 +6,7 @@
 	ns.CMMainViewportController = function(viewport) {
 		this.viewport = viewport;
 
-		this.accordionControllers = {};
 		this.panelControllers = {};
-
-		this.viewport.foreachAccordion(function (accordion) {
-			buildAccordionController(this, accordion);
-		}, this);
 
 		this.viewport.foreachPanel(function(panel) {
 			buildPanelController(this, panel);
@@ -89,12 +84,15 @@
 	};
 
 	ns.CMMainViewportController.prototype.selectStartingClass = function() {
-		var startingClass = CMDBuild.Runtime.StartingClassId || CMDBuild.Config.cmdbuild.startingclass, // TODO check also the group starting class
-		a = startingClass ? this.getFirstAccordionWithANodeWithGivenId(startingClass) : undefined;
+		var startingClassId = (
+			CMDBuild.configuration.runtime.get(CMDBuild.core.constants.Proxy.STARTING_CLASS_ID) // Group's starting class
+			|| CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.STARTING_CLASS) // Main configuration's starting class
+		);
+		var accordionWithNode = Ext.isEmpty(startingClassId) ? undefined : this.getFirstAccordionWithANodeWithGivenId(startingClassId);
 
-		if (a) {
-			a.expandSilently();
-			a.selectNodeById(startingClass);
+		if (!Ext.isEmpty(accordionWithNode)) {
+			accordionWithNode.expand();
+			accordionWithNode.selectNodeById(startingClassId);
 		} else {
 			this.selectFirstSelectableLeaf();
 		}
@@ -112,22 +110,6 @@
 		if (a) {
 			this.bringTofrontPanelByCmName(a.cmName);
 			a.selectFirstSelectableNode();
-		}
-	};
-
-	ns.CMMainViewportController.prototype.addAccordion = function(a) {
-		if (a) {
-			if (!Ext.isArray(a)) {
-				a = [a];
-			}
-
-			for (var i=0, l=a.length; i<l; ++i) {
-				var accordion = a[i];
-				if (accordion != null) {
-					this.viewport.addAccordion(accordion);
-					buildAccordionController(this, accordion);
-				}
-			}
 		}
 	};
 
@@ -170,20 +152,6 @@
 			accordion.selectNodeById(p.IdClass);
 		}
 	};
-
-	/**
-	 * @param {Object} me
-	 * @param {Object} accordion
-	 */
-	function buildAccordionController(me, accordion) {
-		if (Ext.isFunction(accordion.cmControllerType)) {
-			me.accordionControllers[accordion.cmName] = new accordion.cmControllerType(accordion);
-		} else if (Ext.isString(accordion.cmControllerType)) { // To use Ext.loader to asynchronous load also controllers
-			me.accordionControllers[accordion.cmName] = Ext.create(accordion.cmControllerType, accordion);
-		} else {
-			me.accordionControllers[accordion.cmName] = new ns.accordion.CMBaseAccordionController(accordion);
-		}
-	}
 
 	/**
 	 * @param {Object} me

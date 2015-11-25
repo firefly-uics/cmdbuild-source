@@ -77,7 +77,9 @@ class LocalizedAttribute extends ForwardingAttribute {
 			final String attributeName = getName();
 
 			String translatedGroup = facade.read(AttributeConverter.of(entryType, GROUP) //
-					.create(entryTypeName, attributeName));
+					.withIdentifier(attributeName)
+					.withOwner(entryTypeName)
+					.create());
 
 			if (cacheForGroupsOptimization.containsKey(super.getGroup())) {
 				translatedGroup = cacheForGroupsOptimization.get(super.getGroup());
@@ -127,7 +129,9 @@ class LocalizedAttribute extends ForwardingAttribute {
 		final String attributeName = getName();
 
 		String translatedDescription = facade.read(AttributeConverter.of(entryType, DESCRIPTION) //
-				.create(entryTypeName, attributeName));
+				.withIdentifier(attributeName) //
+				.withOwner(entryTypeName) //
+				.create());
 
 		if (isBlank(translatedDescription)) {
 			translatedDescription = new CMEntryTypeVisitor() {
@@ -196,7 +200,9 @@ class LocalizedAttribute extends ForwardingAttribute {
 					}
 
 					final String groupNameTranslation = facade.read(AttributeConverter.of(CLASS, GROUP) //
-							.create(owner.getName(), attribute.getName()));
+							.withIdentifier(attribute.getName()) //
+							.withOwner(owner.getName()) //
+							.create());
 					if (!isBlank(groupNameTranslation)) {
 						translatedGroupName = groupNameTranslation;
 						break;
@@ -220,7 +226,10 @@ class LocalizedAttribute extends ForwardingAttribute {
 			final CMAttribute inheritedAttribute = parent.getAttribute(getName());
 			if (inheritedAttribute != null) {
 				final AttributeConverter converter = AttributeConverter.of(CLASS, field);
-				final TranslationObject translationObject = converter.create(parent.getName(), getName());
+				final TranslationObject translationObject = converter //
+						.withOwner(parent.getName()) //
+						.withIdentifier(getName()) //
+						.create();
 				inheritedTranslation = facade.read(translationObject);
 				if (isBlank(inheritedTranslation)) {
 					inheritedTranslation = inheritTranslationFromAllAncestors(parent, field);

@@ -3,7 +3,7 @@
 	Ext.define('CMDBuild.view.management.common.widgets.customForm.layout.FormPanel', {
 		extend: 'Ext.form.Panel',
 
-		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+		requires: ['CMDBuild.core.constants.Proxy'],
 
 		mixins: ['CMDBuild.view.common.PanelFunctions'],
 
@@ -28,21 +28,21 @@
 				dockedItems: [
 					Ext.create('Ext.toolbar.Toolbar', {
 						dock: 'top',
-						itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_TOP,
+						itemId: CMDBuild.core.constants.Proxy.TOOLBAR_TOP,
 
 						items: [
-							Ext.create('CMDBuild.core.buttons.Import', {
+							Ext.create('CMDBuild.core.buttons.iconized.Import', {
 								text: CMDBuild.Translation.import,
 								scope: this,
 
 								disabled: (
 									this.delegate.cmfg('widgetCustomFormConfigurationGet', [
-										CMDBuild.core.proxy.CMProxyConstants.CAPABILITIES,
-										CMDBuild.core.proxy.CMProxyConstants.READ_ONLY
+										CMDBuild.core.constants.Proxy.CAPABILITIES,
+										CMDBuild.core.constants.Proxy.READ_ONLY
 									])
 									|| this.delegate.cmfg('widgetCustomFormConfigurationGet', [
-										CMDBuild.core.proxy.CMProxyConstants.CAPABILITIES,
-										CMDBuild.core.proxy.CMProxyConstants.IMPORT_DISABLED
+										CMDBuild.core.constants.Proxy.CAPABILITIES,
+										CMDBuild.core.constants.Proxy.IMPORT_DISABLED
 									])
 								),
 
@@ -50,7 +50,7 @@
 									this.delegate.cmfg('onWidgetCustomFormLayoutFormImportButtonClick');
 								}
 							}),
-							Ext.create('CMDBuild.core.buttons.Reload', {
+							Ext.create('CMDBuild.core.buttons.iconized.Reload', {
 								text: CMDBuild.Translation.resetToDefault,
 								scope: this,
 

@@ -129,7 +129,7 @@
 	Ext.define("CMDBuild.view.administration.dashboard._DataSourceInputFildSet", {
 		extend: "Ext.form.FieldSet",
 
-		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+		requires: ['CMDBuild.core.constants.Proxy'],
 
 		statics: {
 			builders: {
@@ -308,7 +308,7 @@
 			if (this.input.type == 'INTEGER') {
 				this.fieldFilter = Ext.create('CMDBuild.view.common.field.filter.cql.Cql', {
 					fieldLabel: CMDBuild.Translation.filter,
-					fieldName: CMDBuild.core.proxy.CMProxyConstants.FILTER,
+					fieldName: CMDBuild.core.constants.Proxy.FILTER,
 					labelWidth: CMDBuild.LABEL_WIDTH - 15,
 					maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH
 				});
@@ -458,7 +458,7 @@
 					this.classToUseForReferenceWidget.setValue(data.classToUseForReferenceWidget);
 
 				if (!Ext.isEmpty(data.filter) && !Ext.isEmpty(this.fieldFilter))
-					this.fieldFilter.setValue(data[CMDBuild.core.proxy.CMProxyConstants.FILTER]);
+					this.fieldFilter.setValue(data[CMDBuild.core.constants.Proxy.FILTER]);
 			}
 
 			if (data.defaultValue && this.defaultField)

@@ -9,7 +9,7 @@ Ext.define("CMDBuild.view.management.utilities.CMModExportCSV", {
 
 	initComponent: function() {
 
-		this.exportBtn = new CMDBuild.buttons.ExportButton({
+		this.exportBtn = Ext.create('CMDBuild.core.buttons.text.Export', {
 			scope: this,
 			formBind: true,
 			handler: function(){
@@ -29,7 +29,7 @@ Ext.define("CMDBuild.view.management.utilities.CMModExportCSV", {
 			editable: false
 		});
 
-		this.separator = new Ext.form.ComboBox({ 
+		this.separator = new Ext.form.ComboBox({
 			name: 'separator',
 			fieldLabel: this.translation.separator,
 			valueField: 'value',

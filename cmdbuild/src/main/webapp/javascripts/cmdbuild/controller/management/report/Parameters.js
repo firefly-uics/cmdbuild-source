@@ -5,8 +5,8 @@
 
 		requires: [
 			'CMDBuild.core.Message',
-			'CMDBuild.core.proxy.CMProxyConstants',
-			'CMDBuild.core.proxy.CMProxyUrlIndex',
+			'CMDBuild.core.constants.Proxy',
+			'CMDBuild.core.proxy.Index',
 			'CMDBuild.core.proxy.report.Report'
 		],
 
@@ -71,7 +71,7 @@
 				});
 
 				Ext.Array.forEach(this.attributeList, function(attribute, i, allAttributes) {
-					if (fieldManager.isAttributeManaged(attribute[CMDBuild.core.proxy.CMProxyConstants.TYPE])) {
+					if (fieldManager.isAttributeManaged(attribute[CMDBuild.core.constants.Proxy.TYPE])) {
 						var attributeCustom = Ext.create('CMDBuild.model.common.attributes.Attribute', attribute);
 						attributeCustom.setAdaptedData(attribute);
 

@@ -114,7 +114,7 @@
 		},
 
 		buildTabControllerEmail: function() {
-			if (!CMDBuild.configuration.userInterface.isDisabledProcessTab(CMDBuild.core.proxy.CMProxyConstants.PROCESS_EMAIL_TAB)) {
+			if (!CMDBuild.configuration.userInterface.isDisabledProcessTab(CMDBuild.core.constants.Proxy.PROCESS_EMAIL_TAB)) {
 				this.controllerTabEmail = Ext.create('CMDBuild.controller.management.workflow.tabs.Email', { parentDelegate: this });
 
 				this.subControllers.push(this.controllerTabEmail);
@@ -126,7 +126,7 @@
 		},
 
 		buildTabControllerHistory: function() {
-			if (!CMDBuild.configuration.userInterface.isDisabledProcessTab(CMDBuild.core.proxy.CMProxyConstants.PROCESS_HISTORY_TAB)) {
+			if (!CMDBuild.configuration.userInterface.isDisabledProcessTab(CMDBuild.core.constants.Proxy.PROCESS_HISTORY_TAB)) {
 				this.controllerTabHistory = Ext.create('CMDBuild.controller.management.workflow.tabs.History', { parentDelegate: this });
 
 				this.subControllers.push(this.controllerTabHistory);
@@ -217,7 +217,7 @@
 		 * Forward onModifyCardClick event to email tab controller
 		 */
 		onModifyCardClick: function() {
-			this.controllerTabEmail.onModifyCardClick();
+			this.controllerTabEmail.cmfg('onTabEmailModifyCardClick');
 		},
 
 		/**

@@ -54,7 +54,7 @@
 		var form = this.view.form.getForm();
 
 		if (form.isValid()) {
-			CMDBuild.LoadMask.get().show();
+			CMDBuild.core.LoadMask.show();
 			form.submit({
 				method: 'POST',
 				url: url,
@@ -72,7 +72,7 @@
 					_debug("Failed to add or modify a Geoserver Layer", arguments);	
 				},
 				callback: function() {
-					CMDBuild.LoadMask.get().hide();
+					CMDBuild.core.LoadMask.hide();
 				}
 			});
 		}
@@ -94,7 +94,7 @@
 			buttons: Ext.Msg.YESNO,
 			fn: function(button) {
 				if (button == "yes") {
-					CMDBuild.LoadMask.get().show();
+					CMDBuild.core.LoadMask.show();
 					var layerName = me.view.form.getName();
 					CMDBuild.ServiceProxy.geoServer.deleteLayer({
 						params: {
@@ -103,7 +103,7 @@
 						callback: function() {
 							_CMCache.onGeoAttributeDeleted("_Geoserver", layerName);
 							me.view.layersGrid.loadStoreAndSelectLayerWithName();
-							CMDBuild.LoadMask.get().hide();
+							CMDBuild.core.LoadMask.hide();
 						}
 					});
 				}

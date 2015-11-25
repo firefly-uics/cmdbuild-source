@@ -6,9 +6,9 @@
 
 	Ext.define("CMDBuild.view.management.common.widgets.CMWebServiceDelegate", {
 		/**
-		 * 
+		 *
 		 * @param {CMDBuild.view.management.common.widgets.CMWebService} widget
-		 * the widget that calls the method 
+		 * the widget that calls the method
 		 * @param {Ext.data.Model} model
 		 * the model of the grid row for which the button was clicked
 		 */
@@ -19,9 +19,9 @@
 		extend: "Ext.grid.Panel",
 
 		initComponent: function() {
-			this.bbar = [new CMDBuild.field.LocalGridSearchField({
-				grid: this
-			})];
+			this.bbar = [
+				Ext.create('CMDBuild.view.common.field.GridLocalSearch', { grid: this })
+			];
 
 			this.callParent(arguments);
 		}
@@ -48,10 +48,6 @@
 			this.callParent(arguments);
 		},
 
-		statics : {
-			WIDGET_NAME: ".WebService"
-		},
-
 		getSelectedRecords: function() {
 			var selection = [];
 			// if the widget is never opened
@@ -72,7 +68,7 @@
 				store: store
 			});
 
-			
+
 			this.add(this.grid);
 
 			this.mon(this.grid, 'beforeitemclick', function(grid, model, htmlelement, rowIndex, event, opt) {
@@ -156,7 +152,7 @@
 			items: fields
 		};
 	}
-	
-	
-	
+
+
+
 })();

@@ -1,12 +1,12 @@
 (function() {
 
 	Ext.define('CMDBuild.controller.management.common.widgets.customForm.CustomForm', {
-		extend: 'CMDBuild.controller.common.AbstractBaseWidgetController',
+		extend: 'CMDBuild.controller.common.AbstractWidgetController',
 
 		requires: [
 			'CMDBuild.core.Message',
-			'CMDBuild.core.proxy.CMProxyConstants',
-			'CMDBuild.core.proxy.widgets.CustomForm',
+			'CMDBuild.core.constants.Proxy',
+			'CMDBuild.core.proxy.widget.CustomForm',
 			'CMDBuild.core.Utils'
 		],
 
@@ -35,12 +35,12 @@
 		 */
 		cmfgCatchedFunctions: [
 			'getTemplateResolverServerVars = widgetCustomFormGetTemplateResolverServerVars',
-			'widgetConfigurationGet = widgetCustomFormConfigurationGet',
-			'widgetConfigurationIsAttributeEmpty = widgetCustomFormConfigurationIsAttributeEmpty',
-			'widgetConfigurationSet = widgetCustomFormConfigurationSet',
-			'widgetControllerPropertyGet = widgetCustomFormControllerPropertyGet',
 			'instancesDataStorageGet = widgetCustomFormInstancesDataStorageGet',
 			'instancesDataStorageIsEmpty = widgetCustomFormInstancesDataStorageIsEmpty',
+			'widgetConfigurationGet = widgetCustomFormConfigurationGet',
+			'widgetConfigurationIsEmpty = widgetCustomFormConfigurationIsAttributeEmpty',
+			'widgetConfigurationSet = widgetCustomFormConfigurationSet',
+			'widgetControllerPropertyGet = widgetCustomFormControllerPropertyGet',
 			'widgetCustomFormViewSetLoading'
 		],
 
@@ -48,6 +48,11 @@
 		 * @property {CMDBuild.view.management.common.widgets.customForm.CustomFormView}
 		 */
 		view: undefined,
+
+		/**
+		 * @cfg {String}
+		 */
+		widgetConfigurationModelClassName: 'CMDBuild.model.widget.customForm.Configuration',
 
 		/**
 		 * @param {Array or String} target
@@ -102,7 +107,7 @@
 
 						// Apply change event to reset data property in widgetConfiguration to avoid sql function server call
 						templateResolver.bindLocalDepsChange(function() {
-							this.widgetConfiguration[CMDBuild.core.proxy.CMProxyConstants.DATA] = null;
+							this.widgetConfiguration[CMDBuild.core.constants.Proxy.DATA] = null;
 						}, this);
 					}
 				});
@@ -117,21 +122,21 @@
 			this.callParent(arguments);
 
 			// Execute template resolver on model property
-			if (!Ext.isEmpty(this.cmfg('widgetCustomFormConfigurationGet', CMDBuild.core.proxy.CMProxyConstants.MODEL)))
+			if (!Ext.isEmpty(this.cmfg('widgetCustomFormConfigurationGet', CMDBuild.core.constants.Proxy.MODEL)))
 				this.cmfg('widgetCustomFormConfigurationSet', {
-					configurationObject: this.applyTemplateResolverToArray(this.widgetConfiguration[CMDBuild.core.proxy.CMProxyConstants.MODEL]),
-					propertyName: CMDBuild.core.proxy.CMProxyConstants.MODEL
+					propertyName: CMDBuild.core.constants.Proxy.MODEL,
+					value: this.applyTemplateResolverToArray(this.widgetConfiguration[CMDBuild.core.constants.Proxy.MODEL])
 				});
 
 			// Execute template resolver on variables property
 			if (
-				Ext.isEmpty(this.cmfg('widgetCustomFormConfigurationGet', CMDBuild.core.proxy.CMProxyConstants.DATA))
+				Ext.isEmpty(this.cmfg('widgetCustomFormConfigurationGet', CMDBuild.core.constants.Proxy.DATA))
 				&& this.cmfg('widgetCustomFormInstancesDataStorageIsEmpty')
-				&& !Ext.isEmpty(this.cmfg('widgetCustomFormConfigurationGet', CMDBuild.core.proxy.CMProxyConstants.FUNCTION_DATA))
+				&& !Ext.isEmpty(this.cmfg('widgetCustomFormConfigurationGet', CMDBuild.core.constants.Proxy.FUNCTION_DATA))
 			) {
 				this.cmfg('widgetCustomFormConfigurationSet', {
-					configurationObject: this.applyTemplateResolverToObject(this.widgetConfiguration[CMDBuild.core.proxy.CMProxyConstants.VARIABLES]),
-					propertyName: CMDBuild.core.proxy.CMProxyConstants.VARIABLES
+					propertyName: CMDBuild.core.constants.Proxy.VARIABLES,
+					value: this.applyTemplateResolverToObject(this.widgetConfiguration[CMDBuild.core.constants.Proxy.VARIABLES])
 				});
 
 				// Build data configurations from function definition
@@ -158,22 +163,22 @@
 
 			if (!this.cmfg('widgetCustomFormConfigurationIsAttributeEmpty', CMDBuild.core.proxy.CMProxyConstants.FUNCTION_DATA)) {
 				var params = {};
-				params[CMDBuild.core.proxy.CMProxyConstants.FUNCTION] = this.cmfg('widgetCustomFormConfigurationGet', CMDBuild.core.proxy.CMProxyConstants.FUNCTION_DATA);
-				params[CMDBuild.core.proxy.CMProxyConstants.PARAMS] = Ext.encode(this.cmfg('widgetCustomFormConfigurationGet', CMDBuild.core.proxy.CMProxyConstants.VARIABLES));
+				params[CMDBuild.core.constants.Proxy.FUNCTION] = this.cmfg('widgetCustomFormConfigurationGet', CMDBuild.core.constants.Proxy.FUNCTION_DATA);
+				params[CMDBuild.core.constants.Proxy.PARAMS] = Ext.encode(this.cmfg('widgetCustomFormConfigurationGet', CMDBuild.core.constants.Proxy.VARIABLES));
 
-				CMDBuild.core.proxy.widgets.CustomForm.readFromFunctions({
+				CMDBuild.core.proxy.widget.CustomForm.readFromFunctions({
 					params: params,
 					scope: this,
 					success: function(response, options, decodedResponse) {
-						decodedResponse = decodedResponse[CMDBuild.core.proxy.CMProxyConstants.CARDS];
+						decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.CARDS];
 
 						// Save function response to configuration's data property
-						this.widgetConfiguration[CMDBuild.core.proxy.CMProxyConstants.DATA] = decodedResponse;
+						this.widgetConfiguration[CMDBuild.core.constants.Proxy.DATA] = decodedResponse;
 
 						// Save function response to instance data storage
 						this.instancesDataStorageSet(decodedResponse);
 					},
-					callback: function(response, options, decodedResponse) {
+					callback: function(options, success, response) {
 						this.buildLayout();
 					}
 				});
@@ -184,8 +189,8 @@
 		 * Builds layout controller and inject view
 		 */
 		buildLayout: function() {
-			if (!this.cmfg('widgetCustomFormConfigurationIsAttributeEmpty', CMDBuild.core.proxy.CMProxyConstants.MODEL)) {
-				switch (this.cmfg('widgetCustomFormConfigurationGet', CMDBuild.core.proxy.CMProxyConstants.LAYOUT)) {
+			if (!this.cmfg('widgetCustomFormConfigurationIsAttributeEmpty', CMDBuild.core.constants.Proxy.MODEL)) {
+				switch (this.cmfg('widgetCustomFormConfigurationGet', CMDBuild.core.constants.Proxy.LAYOUT)) {
 					case 'form': {
 						this.controllerLayout = Ext.create('CMDBuild.controller.management.common.widgets.customForm.layout.Form', { parentDelegate: this });
 					} break;
@@ -214,12 +219,12 @@
 		getData: function() {
 			var layoutData = this.controllerLayout.getData();
 			var output = {};
-			output[CMDBuild.core.proxy.CMProxyConstants.OUTPUT] = [];
+			output[CMDBuild.core.constants.Proxy.OUTPUT] = [];
 
 			if (
 				!this.cmfg('widgetCustomFormConfigurationGet', [
-					CMDBuild.core.proxy.CMProxyConstants.CAPABILITIES,
-					CMDBuild.core.proxy.CMProxyConstants.READ_ONLY
+					CMDBuild.core.constants.Proxy.CAPABILITIES,
+					CMDBuild.core.constants.Proxy.READ_ONLY
 				])
 				&& Ext.isArray(layoutData)
 			) {
@@ -233,8 +238,9 @@
 						serverVars: this.cmfg('widgetCustomFormGetTemplateResolverServerVars')
 					}).resolveTemplates({
 						attributes: Ext.Object.getKeys(dataObject),
+						scope: this,
 						callback: function(out, ctx) {
-							output[CMDBuild.core.proxy.CMProxyConstants.OUTPUT].push(Ext.encode(out));
+							output[CMDBuild.core.constants.Proxy.OUTPUT].push(Ext.encode(out));
 						}
 					});
 				}, this);
@@ -263,31 +269,10 @@
 		 * @override
 		 */
 		onEditMode: function() {
-			this.instancesDataStorageSet(this.cmfg('widgetCustomFormConfigurationGet', CMDBuild.core.proxy.CMProxyConstants.DATA));
+			this.instancesDataStorageSet(this.cmfg('widgetCustomFormConfigurationGet', CMDBuild.core.constants.Proxy.DATA));
 
 			this.beforeActiveView();
 		},
-
-		// WidgetConfiguration methods
-			/**
-			 * @param {Object} parameters
-			 * @param {Object} parameters.configurationObject
-			 * @param {String} parameters.propertyName
-			 *
-			 * @returns {Mixed}
-			 *
-			 * @override
-			 */
-			widgetConfigurationSet: function(parameters) {
-				var configurationObject = parameters.configurationObject;
-				var propertyName = parameters.propertyName;
-
-				this.callParent(arguments);
-
-				// Full model setup management
-				if (!Ext.isEmpty(configurationObject) && Ext.isEmpty(propertyName))
-					this.widgetConfigurationModel = Ext.create('CMDBuild.model.widget.customForm.Configuration', Ext.clone(configurationObject));
-			},
 
 		/**
 		 * @param {Boolean} state

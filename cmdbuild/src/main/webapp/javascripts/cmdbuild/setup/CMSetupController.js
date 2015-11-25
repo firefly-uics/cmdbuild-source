@@ -92,7 +92,7 @@
 			CMDBuild.Msg.error(CMDBuild.Translation.common.failure, CMDBuild.Translation.errors.invalid_fields, false);
 			return;
 		} else {
-			CMDBuild.LoadMask.get().show();
+			CMDBuild.core.LoadMask.show();
 			CMDBuild.ServiceProxy.setup.applySetup({
 				params: this.takeData(),
 				scope: this,
@@ -105,14 +105,14 @@
 					});
 				},
 				callback: function() {			
-					CMDBuild.LoadMask.get().hide();
+					CMDBuild.core.LoadMask.hide();
 				}
 			});
 		}
 	}
 	
 	function onConnectionButtonClick() {
-		CMDBuild.LoadMask.get().show();
+		CMDBuild.core.LoadMask.show();
 		CMDBuild.ServiceProxy.setup.testDBConnection({
 			params: {
 				host: this.s2.host.getValue(),
@@ -128,7 +128,7 @@
 				});
 			},
 			callback:function(form, action){
-				CMDBuild.LoadMask.get().hide()
+				CMDBuild.core.LoadMask.hide()
 			}		
 		});
 	}

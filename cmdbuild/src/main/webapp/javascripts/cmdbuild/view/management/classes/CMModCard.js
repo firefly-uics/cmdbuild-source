@@ -9,8 +9,6 @@
 			uistatedelegate: "CMDBuild.state.UIStateDelegate"
 		},
 
-		cmName: "class",
-
 		whitMap: true,
 
 		constructor: function() {

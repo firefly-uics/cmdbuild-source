@@ -1,6 +1,8 @@
 (function() {
 
-	// TODO: use CMDBuild.model.CMModelFunctions.list and delete this one
+	/**
+	 * @deprecated new class (CMDBuild.view.common.field.filter.advanced.Advanced)
+	 */
 	Ext.define('Functions', {
 		extend: 'Ext.data.Model',
 		fields: [
@@ -13,7 +15,7 @@
 		model: 'Functions',
 		proxy: {
 			type: 'ajax',
-			url: CMDBuild.ServiceProxy.url.functions.getFunctions,
+			url: CMDBuild.ServiceProxy.url.functions.readAll,
 			reader: {
 					type: 'json',
 					root: 'response'

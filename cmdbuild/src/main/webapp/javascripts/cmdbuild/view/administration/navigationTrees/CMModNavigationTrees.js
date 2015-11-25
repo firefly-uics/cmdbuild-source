@@ -1,14 +1,13 @@
 (function() {
 	var translationModClass = CMDBuild.Translation.administration.modClass;
-	
-	var baseTitle = CMDBuild.Translation.tree_navigation; 
-	
+
+	var baseTitle = CMDBuild.Translation.tree_navigation;
+
 	Ext.define("CMDBuild.view.administration.navigationTrees.CMModNavigationTrees", {
 		extend: "Ext.panel.Panel",
-		
-		cmName:'navigationTrees',	
+
 		translation: CMDBuild.Translation.administration.modClass,
-		
+
 		NAME: "CMModNavigationTrees",
 
 		constructor: function() {
@@ -36,7 +35,7 @@
 				items: [this.navigationTreesForm, this.navigationTreesTree],
 				activeTab: 0
 			});
-			
+
 			this.callParent(arguments);
 		},
 
@@ -60,7 +59,7 @@
 			} else {
 				this.setTitle(baseTitle);
 			}
-		} 
+		}
 	});
 
 })();

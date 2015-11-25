@@ -3,7 +3,10 @@
 	Ext.define('CMDBuild.controller.administration.workflow.CMProcessFormController', {
 		extend: 'CMDBuild.controller.administration.classes.CMClassFormController',
 
-		requires: ['CMDBuild.core.proxy.CMProxyWorkflow'],
+		requires: [
+			'CMDBuild.core.proxy.CMProxyWorkflow',
+			'CMDBuild.view.common.field.translatable.Utils'
+		],
 
 		/**
 		 * @param {CMDBuild.view.administration.workflow.CMProcessForm} view
@@ -31,22 +34,23 @@
 		},
 
 		/**
-		 * @param {Object} result
+		 * @param {Object} response
 		 * @param {Object} options
-		 * @param {Object} decodedResult
+		 * @param {Object} decodedResponse
 		 *
 		 * @override
 		 */
-		deleteSuccessCB: function(result, options, decodedResult) {
-			var removedClassId = this.selection.get(CMDBuild.core.proxy.CMProxyConstants.ID);
+		deleteSuccessCB: function(response, options, decodedResponse) {
+			var removedClassId = this.selection.get(CMDBuild.core.constants.Proxy.ID);
 
+			_CMMainViewportController.findAccordionByCMName('workflow').deselect();
+			_CMMainViewportController.findAccordionByCMName('workflow').updateStore();
+
+			/**
+			 * @deprecated
+			 */
 			_CMCache.onProcessDeleted(removedClassId);
-
 			this.selection = null;
-
-			// Accordion synchronization
-			_CMMainViewportController.findAccordionByCMName('process').updateStore();
-			_CMMainViewportController.findAccordionByCMName('process').selectFirstSelectableNode();
 		},
 
 		onAddClassButtonClick: function() {
@@ -106,13 +110,13 @@
 						}
 
 						store.add({
-							id: CMDBuild.core.proxy.CMProxyConstants.TEMPLATE,
+							id: CMDBuild.core.constants.Proxy.TEMPLATE,
 							index: 0
 						});
 
 						store.sort([
 							{
-								property : CMDBuild.core.proxy.CMProxyConstants.INDEX,
+								property : CMDBuild.core.constants.Proxy.INDEX,
 								direction: 'DESC'
 							}
 						]);
@@ -127,7 +131,7 @@
 			var basicForm = this.view.xpdlForm.getForm();
 			basicForm.standardSubmit = false;
 
-			CMDBuild.LoadMask.get().show();
+			CMDBuild.core.LoadMask.show();
 
 			CMDBuild.core.proxy.CMProxyWorkflow.xpdlUpload({
 				form: basicForm,
@@ -136,7 +140,7 @@
 				},
 				scope: this,
 				success: function(form, action) {
-					CMDBuild.LoadMask.get().hide();
+					CMDBuild.core.LoadMask.hide();
 
 					var messages = (Ext.decode(action.response.responseText) || {}).response;
 					if (messages && messages.length > 0) {
@@ -149,7 +153,7 @@
 					}
 				},
 				failure: function() {
-					CMDBuild.LoadMask.get().hide();
+					CMDBuild.core.LoadMask.hide();
 
 					CMDBuild.Msg.error(CMDBuild.Translation.common.failure, CMDBuild.Translation.administration.modWorkflow.xpdlUpload.error, true);
 				}
@@ -157,19 +161,23 @@
 		},
 
 		/**
-		 * @param {Object} result
+		 * @param {Object} response
 		 * @param {Object} options
-		 * @param {Object} decodedResult
+		 * @param {Object} decodedResponse
 		 *
 		 * @override
 		 */
-		saveSuccessCB: function(result, options, decodedResult) {
-			var savedProcessData = decodedResult[CMDBuild.core.proxy.CMProxyConstants.TABLE];
-			this.selection = _CMCache.onProcessSaved(savedProcessData);
+		saveSuccessCB: function(response, options, decodedResponse) {
+			decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.TABLE];
 
-			// Accordion synchronization
-			_CMMainViewportController.findAccordionByCMName('process').updateStore();
-			_CMMainViewportController.findAccordionByCMName('process').selectNodeById(savedProcessData[CMDBuild.core.proxy.CMProxyConstants.ID]);
+			_CMMainViewportController.findAccordionByCMName('workflow').updateStore(decodedResponse[CMDBuild.core.constants.Proxy.ID]);
+
+			/**
+			 * @deprecated
+			 */
+			this.selection = _CMCache.onProcessSaved(decodedResponse);
+
+			CMDBuild.view.common.field.translatable.Utils.commit(this.view.form);
 		}
 	});
 

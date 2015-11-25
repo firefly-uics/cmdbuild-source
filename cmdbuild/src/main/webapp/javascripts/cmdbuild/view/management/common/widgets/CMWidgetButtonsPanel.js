@@ -13,10 +13,10 @@
 		},
 
 		disable: function() {
-			if ((this.widgetDefinition
-					&& this.widgetDefinition.alwaysenabled)
-					|| _CMUIConfiguration.isProcessWidgetAlwaysEnabled()) {
-
+			if (
+				( this.widgetDefinition && this.widgetDefinition.alwaysenabled)
+				|| CMDBuild.configuration.userInterface.get(CMDBuild.core.constants.Proxy.PROCESS_WIDGET_ALWAYS_ENABLED)
+			) {
 				return this.enable();
 			} else {
 				return this.callParent(arguments);

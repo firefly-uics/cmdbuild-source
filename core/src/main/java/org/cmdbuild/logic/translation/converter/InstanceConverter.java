@@ -2,13 +2,12 @@ package org.cmdbuild.logic.translation.converter;
 
 import java.util.Map;
 
-import org.cmdbuild.logic.translation.TranslationObject;
 import org.cmdbuild.logic.translation.object.InstanceName;
 import org.cmdbuild.logic.translation.object.ViewDescription;
 
 import com.google.common.collect.Maps;
 
-public enum InstanceConverter {
+public enum InstanceConverter implements Converter {
 
 	NAME(nameField()) {
 
@@ -18,13 +17,8 @@ public enum InstanceConverter {
 		}
 
 		@Override
-		public InstanceConverter withTranslations(final Map<String, String> map) {
-			translations = map;
-			return this;
-		}
-
-		@Override
-		public InstanceName create(final String instanceName) {
+		public InstanceName create() {
+			validate();
 			final InstanceName.Builder builder = InstanceName //
 					.newInstance();
 
@@ -43,27 +37,37 @@ public enum InstanceConverter {
 		}
 
 		@Override
-		public InstanceConverter withTranslations(final Map<String, String> map) {
-			throw new UnsupportedOperationException();
-		}
-
-		@Override
-		public ViewDescription create(final String name) {
+		public ViewDescription create() {
 			throw new UnsupportedOperationException();
 		}
 	};
 
 	private final String fieldName;
+
 	private static Map<String, String> translations = Maps.newHashMap();
 
 	private static final String NAME_FIELD = "instancename";
 	private static final String UNDEFINED_FIELD = "undefined";
 
-	public abstract TranslationObject create(String name);
+	@Override
+	public Converter withIdentifier(final String identifier) {
+		return this;
+	}
 
-	public abstract InstanceConverter withTranslations(Map<String, String> map);
+	@Override
+	public Converter withOwner(final String parentIdentifier) {
+		return this;
+	}
 
-	public abstract boolean isValid();
+	@Override
+	public Converter withTranslations(final Map<String, String> map) {
+		translations = map;
+		return this;
+	}
+
+	private static void validate() {
+		// nothing to do
+	}
 
 	public static String nameField() {
 		return NAME_FIELD;

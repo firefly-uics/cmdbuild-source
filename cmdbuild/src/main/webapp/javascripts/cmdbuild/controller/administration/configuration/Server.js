@@ -4,10 +4,10 @@
 		extend: 'CMDBuild.controller.common.AbstractController',
 
 		requires: [
-			'CMDBuild.core.proxy.CMProxyWorkflow',
+			'CMDBuild.core.Message',
 			'CMDBuild.core.proxy.Card',
-			'CMDBuild.core.proxy.Utils',
-			'CMDBuild.core.proxy.processes.Activity'
+			'CMDBuild.core.proxy.CMProxyWorkflow',
+			'CMDBuild.core.proxy.Utils'
 		],
 
 		/**
@@ -19,15 +19,10 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
-			'onServerClearCacheButtonClick',
-			'onServerServiceSynchButtonClick',
-			'onServerUnlockCardsButtonClick'
+			'onConfigurationServerClearCacheButtonClick',
+			'onConfigurationServerServiceSynchButtonClick',
+			'onConfigurationServerUnlockCardsButtonClick'
 		],
-
-		/**
-		 * @cfg {String}
-		 */
-		configFileName: 'server',
 
 		/**
 		 * @property {CMDBuild.view.administration.configuration.ServerPanel}
@@ -43,34 +38,27 @@
 		constructor: function(configObject) {
 			this.callParent(arguments);
 
-			this.view = Ext.create('CMDBuild.view.administration.configuration.ServerPanel', {
-				delegate: this
-			});
-
-			this.cmfg('onConfigurationRead', {
-				configFileName: this.configFileName,
-				view: this.view
-			});
+			this.view = Ext.create('CMDBuild.view.administration.configuration.ServerPanel', { delegate: this });
 		},
 
-		onServerClearCacheButtonClick: function() {
+		onConfigurationServerClearCacheButtonClick: function() {
 			CMDBuild.core.proxy.Utils.clearCache({
-				success: CMDBuild.Msg.success
+				success: CMDBuild.core.Message.success
 			});
 		},
 
-		onServerServiceSynchButtonClick: function() {
+		onConfigurationServerServiceSynchButtonClick: function() {
 			CMDBuild.core.proxy.CMProxyWorkflow.synchronize({
-				success: CMDBuild.Msg.success
+				success: CMDBuild.core.Message.success
 			});
 		},
 
 		/**
 		 * Unlocks all cards and processes also if proxy is specific for cards
 		 */
-		onServerUnlockCardsButtonClick: function() {
+		onConfigurationServerUnlockCardsButtonClick: function() {
 			CMDBuild.core.proxy.Card.unlockAll({
-				success: CMDBuild.Msg.success
+				success: CMDBuild.core.Message.success
 			});
 		}
 	});

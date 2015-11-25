@@ -259,7 +259,6 @@
 
 				editor.onExecCommand.listeners = [];
 
-				me.iframeEl.dom.contentDocument.body.contentEditable = false;
 				me.iframeEl.addCls('x-form-field x-form-text');
 			});
 
@@ -280,7 +279,6 @@
 
 				editor.nodeChanged();
 
-				me.iframeEl.dom.contentDocument.body.contentEditable = true;
 				me.iframeEl.removeCls('x-form-field x-form-text');
 			});
 

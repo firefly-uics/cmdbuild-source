@@ -4,7 +4,7 @@
 		extend: 'CMDBuild.controller.common.AbstractController',
 
 		requires: [
-			'CMDBuild.core.proxy.CMProxyConstants',
+			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.RequestBarrier'
 		],
 
@@ -70,11 +70,11 @@
 		buildFields: function() {
 			var itemsArray = [];
 
-			if (!this.cmfg('widgetCustomFormConfigurationIsAttributeEmpty',  CMDBuild.core.proxy.CMProxyConstants.MODEL)) {
+			if (!this.cmfg('widgetCustomFormConfigurationIsAttributeEmpty',  CMDBuild.core.constants.Proxy.MODEL)) {
 				var fieldManager = Ext.create('CMDBuild.core.fieldManager.FieldManager', { parentDelegate: this });
 
-				Ext.Array.forEach(this.cmfg('widgetCustomFormConfigurationGet', CMDBuild.core.proxy.CMProxyConstants.MODEL), function(attribute, i, allAttributes) {
-					if (fieldManager.isAttributeManaged(attribute.get(CMDBuild.core.proxy.CMProxyConstants.TYPE))) {
+				Ext.Array.forEach(this.cmfg('widgetCustomFormConfigurationGet', CMDBuild.core.constants.Proxy.MODEL), function(attribute, i, allAttributes) {
+					if (fieldManager.isAttributeManaged(attribute.get(CMDBuild.core.constants.Proxy.TYPE))) {
 						fieldManager.attributeModelSet(Ext.create('CMDBuild.model.common.attributes.Attribute', attribute.getData()));
 						fieldManager.push(itemsArray, fieldManager.buildField());
 					} else { // @deprecated - Old field manager
@@ -91,6 +91,12 @@
 								serverVars: this.cmfg('widgetCustomFormGetTemplateResolverServerVars')
 							});
 
+							// Required label fix
+							if (attribute[CMDBuild.core.constants.Proxy.MANDATORY] || attribute['isnotnull']) {
+								attribute[CMDBuild.core.constants.Proxy.DESCRIPTION] = (!Ext.isEmpty(attribute['isnotnull']) && attribute['isnotnull'] ? '* ' : '')
+								+ attribute.description || attribute.name;
+							}
+
 							item = CMDBuild.Management.ReferenceField.buildEditor(attribute, templateResolver);
 
 							// Force execution of template resolver
@@ -100,7 +106,7 @@
 							item = CMDBuild.Management.FieldManager.getFieldForAttr(attribute, false, false);
 						}
 
-						if (attribute[CMDBuild.core.proxy.CMProxyConstants.FIELD_MODE] == 'read')
+						if (attribute[CMDBuild.core.constants.Proxy.FIELD_MODE] == 'read')
 							item.setDisabled(true);
 
 						// Force execution of template resolver

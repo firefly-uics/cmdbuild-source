@@ -1,4 +1,5 @@
 (function() {
+
 	var tr = CMDBuild.Translation.administration.modWorkflow;
 
 	Ext.require('CMDBuild.core.proxy.CMProxyWorkflow');
@@ -6,9 +7,7 @@
 	Ext.define('CMDBuild.view.administration.workflow.CMProcess', {
 		extend: 'Ext.panel.Panel',
 
-		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
-
-		cmName: 'process',
+		requires: ['CMDBuild.core.constants.Proxy'],
 
 		constructor: function() {
 
@@ -19,11 +18,11 @@
 
 			this.printSchema = Ext.create('CMDBuild.core.buttons.iconized.Print', {
 				formatList: [
-					CMDBuild.core.proxy.CMProxyConstants.PDF,
-					CMDBuild.core.proxy.CMProxyConstants.ODT
+					CMDBuild.core.constants.Proxy.PDF,
+					CMDBuild.core.constants.Proxy.ODT
 				],
 				mode: 'legacy',
-				text: CMDBuild.Translation.printSchema
+				text: CMDBuild.Translation.administration.modClass.print_schema
 			});
 
 			this.processForm = Ext.create('CMDBuild.view.administration.workflow.CMProcessForm', {
@@ -84,4 +83,5 @@
 
 		onProcessSelected: Ext.emptyFn
 	});
+
 })();

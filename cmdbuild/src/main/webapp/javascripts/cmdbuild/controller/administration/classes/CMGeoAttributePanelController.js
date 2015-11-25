@@ -1,9 +1,18 @@
 (function() {
 	Ext.define("CMDBuild.controller.administration.classes.CMGeoAttributeController", {
 		constructor: function(view) {
-			this.view = view;
-			this.form = view.form;
-			this.grid = view.grid;
+			if (Ext.isEmpty(view)) {
+				this.view = new CMDBuild.view.administration.classes.CMGeoAttributesPanel({
+					title: CMDBuild.Translation.administration.modClass.tabs.geo_attributes,
+					disabled: true
+				});
+				this.form = this.view.form;
+				this.grid = this.view.grid;
+			} else {
+				this.view = view;
+				this.form = view.form;
+				this.grid = view.grid;
+			}
 
 			this.gridSM = this.grid.getSelectionModel();
 			this.gridSM.on('selectionchange', onSelectionChanged , this);
@@ -16,6 +25,10 @@
 			this.form.cancelButton.on("click", onCancelButtonFormClick, this);
 			this.form.modifyButton.on("click", onModifyButtonFormClick, this);
 			this.grid.addAttributeButton.on("click", onAddAttributeClick, this);
+		},
+
+		getView: function() {
+			return this.view;
 		},
 
 		onClassSelected: function(classId) {
@@ -57,7 +70,7 @@
 		}
 
 		this.form.enableModify(all = true);
-		CMDBuild.LoadMask.get().show();
+		CMDBuild.core.LoadMask.show();
 
 		var attributeConfig = this.form.getData();
 		attributeConfig.style = Ext.encode(this.form.getStyle());
@@ -112,9 +125,9 @@
 			"name": me.currentAttribute.get("name")
 		};
 
-		CMDBuild.LoadMask.get().show();
+		CMDBuild.core.LoadMask.show();
 		CMDBuild.ServiceProxy.geoAttribute.remove({
-			params: params, 
+			params: params,
 			success: function onDeleteGeoAttributeSuccess(response, request, decoded) {
 				_CMCache.onGeoAttributeDeleted(params.masterTableName, params.name);
 				me.view.onClassSelected(me.currentClassId);
@@ -138,7 +151,7 @@
 	}
 
 	function callback() {
-		CMDBuild.LoadMask.get().hide();
+		CMDBuild.core.LoadMask.hide();
 	}
 
 	function isItMineOrOfMyParents(attr, classId) {
