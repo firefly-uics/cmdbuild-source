@@ -105,7 +105,7 @@
 		 * @param {Array} data
 		 */
 		dataManageAndForward: function(data) {
-			if (!this.cmfg('widgetCustomFormConfigurationIsAttributeEmpty',  CMDBuild.core.constants.Proxy.MODEL)) {
+			if (!this.cmfg('widgetCustomFormConfigurationIsEmpty',  CMDBuild.core.constants.Proxy.MODEL)) {
 				var barrierId = 'dataManageBarrier';
 
 				CMDBuild.core.RequestBarrier.init(barrierId, function() {
@@ -131,6 +131,8 @@
 						} break;
 					}
 				}, this);
+
+				CMDBuild.core.RequestBarrier.finalize(barrierId);
 			}
 		},
 

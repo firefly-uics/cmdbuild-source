@@ -132,6 +132,8 @@
 					_CMCache.addWidgetToEntryTypes(decodedResponse);
 				}
 			});
+
+			CMDBuild.core.RequestBarrier.finalize(barrierId);
 		},
 
 		/**
@@ -182,6 +184,8 @@
 			Ext.create('CMDBuild.core.configurationBuilders.RelationGraph', { callback: CMDBuild.core.RequestBarrier.getCallback(barrierId) }); // CMDBuild RelationGraph configuration
 			Ext.create('CMDBuild.core.configurationBuilders.UserInterface', { callback: CMDBuild.core.RequestBarrier.getCallback(barrierId) }); // CMDBuild UserInterface configuration
 			Ext.create('CMDBuild.core.configurationBuilders.Workflow', { callback: CMDBuild.core.RequestBarrier.getCallback(barrierId) }); // CMDBuild Workflow configuration
+
+			CMDBuild.core.RequestBarrier.finalize(barrierId);
 		},
 
 		/**
