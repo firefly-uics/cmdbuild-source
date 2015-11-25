@@ -13,6 +13,16 @@
 		 */
 		delegate: undefined,
 
+		/**
+		 * @property {Ext.container.Container}
+		 */
+		additionalProperties: undefined,
+
+		/**
+		 * @property {Ext.form.FieldSet}
+		 */
+		baseProperties: undefined,
+
 		bodyCls: 'cmgraypanel',
 		border: false,
 		cls: 'x-panel-body-default-framed cmbordertop',
@@ -82,7 +92,7 @@
 					})
 				],
 				items: [
-					Ext.create('Ext.form.FieldSet', {
+					this.baseProperties = Ext.create('Ext.form.FieldSet', {
 						title: CMDBuild.Translation.baseProperties,
 						flex: 1,
 
@@ -94,7 +104,7 @@
 						items: this.widgetDefinitionFormBasePropertiesGet()
 					}),
 					{ xtype: 'splitter' },
-					Ext.create('Ext.container.Container', {
+					this.additionalProperties = Ext.create('Ext.container.Container', {
 						flex: 1,
 
 						layout: {

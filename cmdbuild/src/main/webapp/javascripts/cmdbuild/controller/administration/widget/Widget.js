@@ -118,6 +118,10 @@
 						this.controllerWidgetForm = Ext.create('CMDBuild.controller.administration.widget.form.Ping', { parentDelegate: this });
 					} break;
 
+					case '.Workflow': {
+						this.controllerWidgetForm = Ext.create('CMDBuild.controller.administration.widget.form.Workflow', { parentDelegate: this });
+					} break;
+
 					default: { // TODO: use only string ones + use each()
 						for (var key in CMDBuild.controller.administration.widget)
 							if (CMDBuild.controller.administration.widget[key].WIDGET_NAME == type) {
