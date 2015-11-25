@@ -5,7 +5,7 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.widgets.Workflow',
+			'CMDBuild.core.proxy.widget.Workflow',
 			'CMDBuild.model.widget.workflow.Definition'
 		],
 
@@ -110,7 +110,7 @@
 				var params = {};
 				params[CMDBuild.core.constants.Proxy.CLASS_ID] = selectedRecord.get(CMDBuild.core.constants.Proxy.ID);
 
-				CMDBuild.core.proxy.widgets.Workflow.readStartActivity({
+				CMDBuild.core.proxy.widget.Workflow.readStartActivity({
 					params: params,
 					scope: this,
 					success: function(response, options, decodedResponse) {

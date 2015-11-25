@@ -5,7 +5,7 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.widgets.OpenReport',
+			'CMDBuild.core.proxy.widget.OpenReport',
 			'CMDBuild.model.widget.openReport.PresetGrid'
 		],
 
@@ -46,7 +46,7 @@
 					forceSelection: true,
 					editable: false,
 
-					store: CMDBuild.core.proxy.widgets.OpenReport.getStoreReports(),
+					store: CMDBuild.core.proxy.widget.OpenReport.getStoreReports(),
 					queryMode: 'local',
 
 					listeners: {
@@ -64,7 +64,7 @@
 					displayField: CMDBuild.core.constants.Proxy.DESCRIPTION,
 					valueField: CMDBuild.core.constants.Proxy.VALUE,
 
-					store: CMDBuild.core.proxy.widgets.OpenReport.getStoreForceFormat()
+					store: CMDBuild.core.proxy.widget.OpenReport.getStoreForceFormat()
 				})
 			]);
 		},

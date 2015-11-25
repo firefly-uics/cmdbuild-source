@@ -3,7 +3,7 @@
 	/**
 	 * @administration
 	 */
-	Ext.define('CMDBuild.core.proxy.widgets.Configuration', {
+	Ext.define('CMDBuild.core.proxy.widget.Configuration', {
 
 		requires: [
 			'CMDBuild.core.interfaces.Ajax',

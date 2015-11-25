@@ -5,7 +5,7 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.widgets.OpenReport'
+			'CMDBuild.core.proxy.widget.OpenReport'
 		],
 
 		/**
@@ -44,7 +44,7 @@
 				params[CMDBuild.core.constants.Proxy.TYPE] = CMDBuild.core.constants.Proxy.CUSTOM;
 				params[CMDBuild.core.constants.Proxy.CODE] = this.widgetConfigurationGet(CMDBuild.core.constants.Proxy.REPORT_CODE);
 
-				CMDBuild.core.proxy.widgets.OpenReport.createFactory({
+				CMDBuild.core.proxy.widget.OpenReport.createFactory({
 					params: params,
 					scope: this,
 					success: function(response, options, decodedResponse) {
@@ -152,7 +152,7 @@
 			params['reportExtension'] = params[CMDBuild.core.constants.Proxy.EXTENSION]; // TODO: waiting for refactor (rename)
 
 			if (this.view.getForm().isValid())
-				CMDBuild.core.proxy.widgets.OpenReport.update({
+				CMDBuild.core.proxy.widget.OpenReport.update({
 					params: params,
 					scope: this,
 					success: function(response, options, decodedResponse) { // Pop-up display mode

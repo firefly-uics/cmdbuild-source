@@ -5,7 +5,7 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.widgets.Workflow',
+			'CMDBuild.core.proxy.widget.Workflow',
 			'CMDBuild.model.widget.workflow.PresetGrid'
 		],
 
@@ -46,7 +46,7 @@
 					forceSelection: true,
 					editable: false,
 
-					store: CMDBuild.core.proxy.widgets.Workflow.getStoreSelectionType(),
+					store: CMDBuild.core.proxy.widget.Workflow.getStoreSelectionType(),
 					queryMode: 'local',
 
 					listeners: {
@@ -110,7 +110,7 @@
 							forceSelection: true,
 							editable: false,
 
-							store: CMDBuild.core.proxy.widgets.Workflow.getStoreTargetWorkflow(),
+							store: CMDBuild.core.proxy.widget.Workflow.getStoreTargetWorkflow(),
 							queryMode: 'local',
 
 							listeners: {
