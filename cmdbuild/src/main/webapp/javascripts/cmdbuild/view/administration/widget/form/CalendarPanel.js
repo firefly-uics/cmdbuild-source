@@ -38,6 +38,34 @@
 		 *
 		 * @override
 		 */
+		widgetDefinitionFormAdditionalPropertiesGet: function() {
+			return [
+				Ext.create('Ext.form.FieldSet', {
+					title: CMDBuild.Translation.additionalProperties,
+					flex: 1,
+
+					layout: {
+						type: 'vbox',
+						align: 'stretch'
+					},
+
+					items: [
+						Ext.create('Ext.form.field.TextArea', {
+							name: CMDBuild.core.constants.Proxy.FILTER,
+							fieldLabel: CMDBuild.Translation.cqlFilter,
+							labelWidth: CMDBuild.LABEL_WIDTH,
+							maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH
+						})
+					]
+				})
+			];
+		},
+
+		/**
+		 * @returns {Array}
+		 *
+		 * @override
+		 */
 		widgetDefinitionFormBasePropertiesGet: function() {
 			return Ext.Array.push(this.callParent(arguments), [
 				Ext.create('Ext.form.field.ComboBox', {
@@ -113,34 +141,6 @@
 					queryMode: 'local'
 				})
 			]);
-		},
-
-		/**
-		 * @returns {Array}
-		 *
-		 * @override
-		 */
-		widgetDefinitionFormAdditionalPropertiesGet: function() {
-			return [
-				Ext.create('Ext.form.FieldSet', {
-					title: CMDBuild.Translation.additionalProperties,
-					flex: 1,
-
-					layout: {
-						type: 'vbox',
-						align: 'stretch'
-					},
-
-					items: [
-						Ext.create('Ext.form.field.TextArea', {
-							name: CMDBuild.core.constants.Proxy.FILTER,
-							fieldLabel: CMDBuild.Translation.cqlFilter,
-							labelWidth: CMDBuild.LABEL_WIDTH,
-							maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH
-						})
-					]
-				})
-			];
 		}
 	});
 

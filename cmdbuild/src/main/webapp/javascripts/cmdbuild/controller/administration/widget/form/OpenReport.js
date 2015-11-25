@@ -23,7 +23,7 @@
 			'classTabWidgetDefinitionModelNameGet',
 			'classTabWidgetOpenReportDefinitionGet = classTabWidgetDefinitionGet',
 			'classTabWidgetOpenReportLoadRecord = classTabWidgetLoadRecord',
-			'onWidgetOpenReportReportSelect'
+			'onClassTabWidgetOpenReportReportSelect'
 		],
 
 		/**
@@ -79,7 +79,7 @@
 				);
 
 				if(storeReportIndex >= 0)
-					this.cmfg('onWidgetOpenReportReportSelect', {
+					this.cmfg('onClassTabWidgetOpenReportReportSelect', {
 						presets: record.get(CMDBuild.core.constants.Proxy.PRESET),
 						readOnlyAttributes: record.get(CMDBuild.core.constants.Proxy.READ_ONLY_ATTRIBUTES),
 						selectedReport: store.getAt(storeReportIndex)
@@ -116,7 +116,7 @@
 		 * @param {Object} parameters.readOnlyAttributes
 		 * @param {Object} parameters.selectedReport
 		 */
-		onWidgetOpenReportReportSelect: function(parameters) {
+		onClassTabWidgetOpenReportReportSelect: function(parameters) {
 			if (
 				!Ext.Object.isEmpty(parameters)
 				&& !Ext.isEmpty(parameters.selectedReport)
@@ -134,7 +134,7 @@
 					scope: this,
 					params: params,
 					success: function(response, options, decodedResponse) {
-						var data = decodedResponse['filled'] ? []: this.cleanServerAttributes(decodedResponse[CMDBuild.core.constants.Proxy.ATTRIBUTE]);
+						var data = decodedResponse['filled'] ? {} : this.cleanServerAttributes(decodedResponse[CMDBuild.core.constants.Proxy.ATTRIBUTE]);
 
 						// Reset presetGrid store
 						this.view.presetGrid.getStore().removeAll();

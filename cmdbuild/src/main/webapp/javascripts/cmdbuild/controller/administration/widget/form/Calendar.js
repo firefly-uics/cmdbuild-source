@@ -63,14 +63,12 @@
 		},
 
 		/**
-		 * @return {Object} widgetDefinition
+		 * @return {Object}
 		 */
 		classTabWidgetCalendarDefinitionGet: function() {
-			var widgetDefinition = CMDBuild.model.widget.calendar.Definition.convertToLegacy(
+			return CMDBuild.model.widget.calendar.Definition.convertToLegacy(
 				Ext.create(this.classTabWidgetDefinitionModelNameGet(), this.view.getData(true)).getData()
 			);
-
-			return widgetDefinition;
 		},
 
 		/**
