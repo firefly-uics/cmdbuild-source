@@ -6,7 +6,7 @@
 		requires: [
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.Classes',
-			'CMDBuild.core.proxy.widgets.Configuration',
+			'CMDBuild.core.proxy.widget.Configuration',
 			'CMDBuild.view.common.field.translatable.Utils'
 		],
 
@@ -224,7 +224,7 @@
 				this.form.reset();
 
 			if (!this.view.isDisabled()) {
-				CMDBuild.core.proxy.widgets.Configuration.read({ // TODO: better way + comments when i'll get getStore() proxy working
+				CMDBuild.core.proxy.widget.Configuration.read({ // TODO: better way + comments when i'll get getStore() proxy working
 					scope: this,
 					success: function(response, options, decodedResponse) {
 						decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.RESPONSE];
@@ -259,7 +259,7 @@
 				var params = {};
 				params[CMDBuild.core.constants.Proxy.ID] = selectedWidgetId;
 
-				CMDBuild.core.proxy.widgets.Configuration.read({
+				CMDBuild.core.proxy.widget.Configuration.read({
 					params: params,
 					scope: this,
 					success: function(response, options, decodedResponse) {
@@ -299,13 +299,13 @@
 				params[CMDBuild.core.constants.Proxy.WIDGET] = Ext.encode(widgetDefinition);
 
 				if (Ext.isEmpty(widgetDefinition[CMDBuild.core.constants.Proxy.ID])) {
-					CMDBuild.core.proxy.widgets.Configuration.create({
+					CMDBuild.core.proxy.widget.Configuration.create({
 						params: params,
 						scope: this,
 						success: this.success
 					});
 				} else {
-					CMDBuild.core.proxy.widgets.Configuration.update({
+					CMDBuild.core.proxy.widget.Configuration.update({
 						params: params,
 						scope: this,
 						success: this.success
@@ -323,7 +323,7 @@
 				params[CMDBuild.core.constants.Proxy.CLASS_NAME] = this.classTabWidgetSelectedClassGet(CMDBuild.core.constants.Proxy.NAME);
 				params[CMDBuild.core.constants.Proxy.WIDGET_ID] = this.classTabWidgetSelectedWidgetGet(CMDBuild.core.constants.Proxy.ID);
 
-				CMDBuild.core.proxy.widgets.Configuration.remove({
+				CMDBuild.core.proxy.widget.Configuration.remove({
 					params: params,
 					scope: this,
 					success: function(response, options, decodedResponse) {

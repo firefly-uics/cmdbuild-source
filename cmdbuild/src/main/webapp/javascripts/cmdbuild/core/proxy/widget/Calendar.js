@@ -1,6 +1,6 @@
 (function() {
 
-	Ext.define('CMDBuild.core.proxy.widgets.Calendar', {
+	Ext.define('CMDBuild.core.proxy.widget.Calendar', {
 
 		requires: [
 			'CMDBuild.core.cache.Cache',

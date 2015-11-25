@@ -1,6 +1,6 @@
 (function() {
 
-	Ext.define('CMDBuild.core.proxy.widgets.OpenReport', {
+	Ext.define('CMDBuild.core.proxy.widget.OpenReport', {
 
 		requires: [
 			'CMDBuild.core.cache.Cache',

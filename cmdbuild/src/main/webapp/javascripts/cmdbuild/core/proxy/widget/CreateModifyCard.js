@@ -1,6 +1,6 @@
 (function() {
 
-	Ext.define('CMDBuild.core.proxy.widgets.CreateModifyCard', {
+	Ext.define('CMDBuild.core.proxy.widget.CreateModifyCard', {
 
 		requires: [
 			'CMDBuild.core.cache.Cache',

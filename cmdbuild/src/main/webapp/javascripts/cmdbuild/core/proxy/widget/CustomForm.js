@@ -1,6 +1,6 @@
 (function() {
 
-	Ext.define('CMDBuild.core.proxy.widgets.CustomForm', {
+	Ext.define('CMDBuild.core.proxy.widget.CustomForm', {
 
 		requires: [
 			'CMDBuild.core.interfaces.Ajax',

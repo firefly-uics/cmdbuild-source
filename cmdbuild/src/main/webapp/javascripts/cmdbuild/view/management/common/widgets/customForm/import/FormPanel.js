@@ -6,7 +6,7 @@
 		requires: [
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.Csv',
-			'CMDBuild.core.proxy.widgets.CustomForm'
+			'CMDBuild.core.proxy.widget.CustomForm'
 		],
 
 		mixins: {
@@ -49,7 +49,7 @@
 
 						value: CMDBuild.core.constants.Proxy.CSV, // Default value
 
-						store: CMDBuild.core.proxy.widgets.CustomForm.getImportFileFormatStore(),
+						store: CMDBuild.core.proxy.widget.CustomForm.getImportFileFormatStore(),
 						queryMode: 'local'
 					}),
 					Ext.create('Ext.form.field.File', {

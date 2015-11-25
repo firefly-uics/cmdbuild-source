@@ -5,7 +5,7 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.widgets.CreateModifyCard'
+			'CMDBuild.core.proxy.widget.CreateModifyCard'
 		],
 
 		/**
@@ -45,7 +45,7 @@
 					editable: false,
 					forceSelection: true,
 
-					store: CMDBuild.core.proxy.widgets.CreateModifyCard.getStoreTargetClass(),
+					store: CMDBuild.core.proxy.widget.CreateModifyCard.getStoreTargetClass(),
 					queryMode: 'local'
 				})
 			]);

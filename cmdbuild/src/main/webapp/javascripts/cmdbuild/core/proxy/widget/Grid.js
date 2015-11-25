@@ -1,6 +1,6 @@
 (function() {
 
-	Ext.define('CMDBuild.core.proxy.widgets.Grid', {
+	Ext.define('CMDBuild.core.proxy.widget.Grid', {
 
 		requires: [
 			'CMDBuild.core.interfaces.Ajax',

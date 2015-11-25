@@ -1,6 +1,6 @@
 (function() {
 
-	Ext.define('CMDBuild.core.proxy.widgets.Workflow', {
+	Ext.define('CMDBuild.core.proxy.widget.Workflow', {
 
 		requires: [
 			'CMDBuild.core.cache.Cache',
