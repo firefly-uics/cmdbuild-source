@@ -46,7 +46,7 @@
 			this.cascade(function(item) {
 				if (
 					!Ext.isEmpty(item)
-					&& this.isManagedField()
+					&& this.isManagedField(item)
 					&& !item.isDisabled()
 					&& !item.isHidden()
 					&& !item.isValid()
