@@ -31,36 +31,6 @@
 
 		/**
 		 * @returns {Array}
-		 *
-		 * @override
-		 */
-		widgetDefinitionFormBasePropertiesGet: function() {
-			return Ext.Array.push(this.callParent(arguments), [
-				Ext.create('Ext.form.field.ComboBox', {
-					name: CMDBuild.core.constants.Proxy.FILTER_TYPE,
-					fieldLabel: CMDBuild.Translation.selection,
-					labelWidth: CMDBuild.LABEL_WIDTH,
-					maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
-					valueField: CMDBuild.core.constants.Proxy.NAME,
-					displayField: CMDBuild.core.constants.Proxy.DESCRIPTION,
-					forceSelection: true,
-					editable: false,
-
-					store: CMDBuild.core.proxy.widget.Workflow.getStoreSelectionType(),
-					queryMode: 'local',
-
-					listeners: {
-						scope: this,
-						change: function(combo, newValue, oldValue, eOpts) {
-							this.delegate.cmfg('onClassTabWidgetWorkflowFilterTypeChange', newValue);
-						}
-					}
-				})
-			]);
-		},
-
-		/**
-		 * @returns {Array}
 		 */
 		widgetDefinitionFormAdditionalPropertiesByCqlGet: function() {
 			return [
@@ -131,6 +101,36 @@
 					]
 				})
 			];
+		},
+
+		/**
+		 * @returns {Array}
+		 *
+		 * @override
+		 */
+		widgetDefinitionFormBasePropertiesGet: function() {
+			return Ext.Array.push(this.callParent(arguments), [
+				Ext.create('Ext.form.field.ComboBox', {
+					name: CMDBuild.core.constants.Proxy.FILTER_TYPE,
+					fieldLabel: CMDBuild.Translation.selection,
+					labelWidth: CMDBuild.LABEL_WIDTH,
+					maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
+					valueField: CMDBuild.core.constants.Proxy.NAME,
+					displayField: CMDBuild.core.constants.Proxy.DESCRIPTION,
+					forceSelection: true,
+					editable: false,
+
+					store: CMDBuild.core.proxy.widget.Workflow.getStoreSelectionType(),
+					queryMode: 'local',
+
+					listeners: {
+						scope: this,
+						change: function(combo, newValue, oldValue, eOpts) {
+							this.delegate.cmfg('onClassTabWidgetWorkflowFilterTypeChange', newValue);
+						}
+					}
+				})
+			]);
 		}
 	});
 

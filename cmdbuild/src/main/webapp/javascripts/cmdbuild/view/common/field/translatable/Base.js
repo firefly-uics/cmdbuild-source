@@ -47,9 +47,7 @@
 					scope: this,
 
 					handler: function(button, e) {
-						Ext.create('CMDBuild.controller.common.field.translatable.Window', {
-							ownerField: this
-						});
+						Ext.create('CMDBuild.controller.common.field.translatable.Window', { ownerField: this });
 					}
 				});
 			}
