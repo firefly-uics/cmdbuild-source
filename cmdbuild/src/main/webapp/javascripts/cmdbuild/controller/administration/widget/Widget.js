@@ -21,6 +21,8 @@
 		cmfgCatchedFunctions: [
 			'onClassTabWidgetAbortButtonClick',
 			'onClassTabWidgetAddButtonClick',
+			'onClassTabWidgetClassAddButtonClick = onAddClassButtonClick',
+			'onClassTabWidgetClassSelected = onClassSelected',
 			'onClassTabWidgetModifyButtonClick = onClassTabWidgetItemDoubleClick',
 			'onClassTabWidgetPanelShow',
 			'onClassTabWidgetRemoveButtonClick',
@@ -140,15 +142,48 @@
 				this.grid.getSelectionModel().select(0, true);
 		},
 
+		onClassTabWidgetAbortButtonClick: function() {
+			if (!this.classTabWidgetSelectedWidgetIsEmpty()) {
+				this.cmfg('onClassTabWidgetRowSelected');
+			} else if (!Ext.isEmpty(this.form)) {
+				this.form.reset();
+				this.form.setDisabledModify(true, true, true);
+			}
+		},
+
 		/**
-		 * Get selected class data and enable/disable tab
+		 * @param {String} type
+		 */
+		onClassTabWidgetAddButtonClick: function(type) {
+			if (!Ext.isEmpty(type) && Ext.isString(type)) {
+				this.grid.getSelectionModel().deselectAll();
+
+				this.classTabWidgetSelectedWidgetReset();
+
+				this.buildFormController(type);
+				this.buildForm();
+
+				if (!Ext.isEmpty(this.controllerWidgetForm) && Ext.isFunction(this.controllerWidgetForm.cmfg))
+					this.controllerWidgetForm.cmfg('classTabWidgetAdd');
+			}
+		},
+
+		/**
+		 * Invoked from parentDelegate
+		 */
+		onClassTabWidgetClassAddButtonClick: function() {
+			this.view.disable();
+		},
+
+		/**
+		 * Get selected class data and enable/disable tab, invoked from parentDelegate
 		 *
 		 * @param {Number} classId
 		 */
-		onClassSelected: function(classId) {
+		onClassTabWidgetClassSelected: function(classId) {
 			if (!Ext.isEmpty(classId) || !Ext.isNumeric(classId)) {
 				var params = {};
-				params[CMDBuild.core.constants.Proxy.ACTIVE] = true;
+				params[CMDBuild.core.constants.Proxy.ACTIVE] = false;
 
 				CMDBuild.core.proxy.Classes.readAll({
 					params: params,
@@ -174,32 +209,6 @@
 				});
 			} else {
 				_error('onClassSelected empty or invalid class id parameter', this);
-			}
-		},
-
-		onClassTabWidgetAbortButtonClick: function() {
-			if (!this.classTabWidgetSelectedWidgetIsEmpty()) {
-				this.cmfg('onClassTabWidgetRowSelected');
-			} else if (!Ext.isEmpty(this.form)) {
-				this.form.reset();
-				this.form.setDisabledModify(true, true, true);
-			}
-		},
-
-		/**
-		 * @param {String} type
-		 */
-		onClassTabWidgetAddButtonClick: function(type) {
-			if (!Ext.isEmpty(type) && Ext.isString(type)) {
-				this.grid.getSelectionModel().deselectAll();
-
-				this.classTabWidgetSelectedWidgetReset();
-
-				this.buildFormController(type);
-				this.buildForm();
-
-				if (!Ext.isEmpty(this.controllerWidgetForm) && Ext.isFunction(this.controllerWidgetForm.cmfg))
-					this.controllerWidgetForm.cmfg('classTabWidgetAdd');
 			}
 		},
 
