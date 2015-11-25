@@ -137,9 +137,6 @@
 			"title": "Osztályok kezelése",
 			"tree_title": "Osztály lista",
 			"widgets": {
-				".Workflow": {
-					"title": "Workflow kezdése"
-				},
 				".NavigationTree": {
 					"title": "Navigációs fa"
 				},
@@ -1098,6 +1095,8 @@
 	"bottom": "Alul",
 	"buildFilter": "<em>Build filter</em>",
 	"buttonsToDisable": "Tiltandó gombok",
+	"byCql": "Cql szerint",
+	"byName": "név szerint",
 	"cacheManagement": "Cache kezelés",
 	"calendar": "Naptár",
 	"camera": "Kamera",
@@ -1386,6 +1385,7 @@
 	"selectAClass": "Válasszon osztályt",
 	"selected_object": "Kiválasztott objektum",
 	"selectedUsers": "Hozzáadott felhasználók",
+	"selection": "kiválasztás",
 	"send": "Küldés",
 	"sentFolder": "Elküldött",
 	"separator": "Elválasztó",
@@ -1417,6 +1417,7 @@
 	"start": "Indítás",
 	"startDate": "Kezdő dátum",
 	"startingPageAt": "Kezdőoldal",
+	"startWorkflow": "Workflow kezdése",
 	"status": "Státusz",
 	"stop": "Megállítás",
 	"subject": "Tárgy",
@@ -1463,10 +1464,7 @@
 	"warning": "<em>Warning</em>",
 	"webServicePath": "Web service elérési út",
 	"workflow": "Folyamat",
-	"workflow_attributes" : "Folyamat attribútumok",
-	"workflow_by_cql": "Cql szerint",
-	"workflow_by_name": "név szerint",
-	"workflow_query_tipology": "kiválasztás",
+	"workflowAttributes" : "Folyamat attribútumok",
 	"workflowEngine": "Workflow engine",
 	"write": "Írás",
 	"you_have_not_set_a_filter": "Nem állított be szűrőt",

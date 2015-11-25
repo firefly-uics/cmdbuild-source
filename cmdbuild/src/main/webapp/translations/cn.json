@@ -137,9 +137,6 @@
 			"title": "管理类",
 			"tree_title": "类列表",
 			"widgets": {
-				".Workflow": {
-					"title": "开始工作流"
-				},
 				".NavigationTree": {
 					"title": "导航树"
 				},
@@ -1098,6 +1095,8 @@
 	"bottom": "底部",
 	"buildFilter": "<em>Build filter</em>",
 	"buttonsToDisable": "Buttons to disable",
+	"byCql": "通过Cql",
+	"byName": "通过名称",
 	"cacheManagement": "缓存管理",
 	"calendar": "日历",
 	"camera": "相机",
@@ -1386,6 +1385,7 @@
 	"selectAClass": "选择一个类",
 	"selected_object": "选择的目标",
 	"selectedUsers": "<em>Selected users</em>",
+	"selection": "选项",
 	"send": "发送",
 	"sentFolder": "发送文件夹",
 	"separator": "分离器",
@@ -1417,6 +1417,7 @@
 	"start": "开始",
 	"startDate": "开始日期",
 	"startingPageAt": "<em>Starting page at</em>",
+	"startWorkflow": "开始工作流",
 	"status": "状态",
 	"stop": "停止",
 	"subject": "主题",
@@ -1463,10 +1464,7 @@
 	"warning": "<em>Warning</em>",
 	"webServicePath": "Web服务路径",
 	"workflow": "过程",
-	"workflow_attributes" : "工作流属性",
-	"workflow_by_cql": "通过Cql",
-	"workflow_by_name": "通过名称",
-	"workflow_query_tipology": "选项",
+	"workflowAttributes" : "工作流属性",
 	"workflowEngine": "工作流引擎",
 	"write": "<em>Write</em>",
 	"you_have_not_set_a_filter": "你没有设置过滤器",

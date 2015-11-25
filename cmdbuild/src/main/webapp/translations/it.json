@@ -137,9 +137,6 @@
 			"title": "Gestione classi",
 			"tree_title": "Classi",
 			"widgets": {
-				".Workflow": {
-					"title": "Avvia processo"
-				},
 				".NavigationTree": {
 					"title": "Albero di navigazione"
 				},
@@ -1098,6 +1095,8 @@
 	"bottom": "Sotto",
 	"buildFilter": "Costruisci filtro",
 	"buttonsToDisable": "Bottoni da disabilitare",
+	"byCql": "tramite CQL",
+	"byName": "tramite nome",
 	"cacheManagement": "Gestione cache",
 	"calendar": "Calendario",
 	"camera": "Camera",
@@ -1386,6 +1385,7 @@
 	"selectAClass": "Seleziona una classe",
 	"selected_object": "Oggetto selezionato",
 	"selectedUsers": "Utenti selezionati",
+	"selection": "Selezione",
 	"send": "Invia",
 	"sentFolder": "Cartella posta inviata",
 	"separator": "Separatore",
@@ -1417,6 +1417,7 @@
 	"start": "Avvia",
 	"startDate": "Data inizio",
 	"startingPageAt": "Pagina iniziale",
+	"startWorkflow": "Avvia processo",
 	"status": "Stato",
 	"stop": "Ferma",
 	"subject": "Oggetto",
@@ -1463,10 +1464,7 @@
 	"warning": "Attenzione",
 	"webServicePath": "Percorso per il web service",
 	"workflow": "Processo",
-	"workflow_attributes": "Attributi del processo",
-	"workflow_by_cql": "tramite Cql",
-	"workflow_by_name": "tramite nome",
-	"workflow_query_tipology": "Selezione",
+	"workflowAttributes": "Attributi del processo",
 	"workflowEngine": "Workflow",
 	"write": "Scrittura",
 	"you_have_not_set_a_filter": "Non hai impostato un filtro",

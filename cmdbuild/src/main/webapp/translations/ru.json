@@ -137,9 +137,6 @@
 			"title": "Настройка классов",
 			"tree_title": "Список классов",
 			"widgets": {
-				".Workflow": {
-					"title": "Запустить процесс"
-				},
 				".NavigationTree": {
 					"title": "Навигационное дерево"
 				},
@@ -1098,6 +1095,8 @@
 	"bottom": "В нижней части",
 	"buildFilter": "<em>Build filter</em>",
 	"buttonsToDisable": "Отключать кнопки",
+	"byCql": "по CQL",
+	"byName": "по имени",
 	"cacheManagement": "Управление кэшем",
 	"calendar": "Календарь",
 	"camera": "Камера",
@@ -1386,6 +1385,7 @@
 	"selectAClass": "Выберите класс",
 	"selected_object": "Выбранный объект",
 	"selectedUsers": "Выбранные пользователи",
+	"selection": "Отбор",
 	"send": "<em>Send</em>",
 	"sentFolder": "<em>Sent folder</em>",
 	"separator": "Разделитель",
@@ -1417,6 +1417,7 @@
 	"start": "<em>Start</em>",
 	"startDate": "Начальная дата",
 	"startingPageAt": "Стартовая страница",
+	"startWorkflow": "Запустить процесс",
 	"status": "<em>Status</em>",
 	"stop": "<em>Stop</em>",
 	"subject": "Тема",
@@ -1463,10 +1464,7 @@
 	"warning": "Предупреждение",
 	"webServicePath": "Путь в веб-сервисах",
 	"workflow": "Процесс",
-	"workflow_attributes": "Атрибуты процесса",
-	"workflow_by_cql": "по CQL",
-	"workflow_by_name": "по имени",
-	"workflow_query_tipology": "Отбор",
+	"workflowAttributes": "Атрибуты процесса",
 	"workflowEngine": "Рабочие процессы",
 	"write": "Запись",
 	"you_have_not_set_a_filter": "Фильтр не установлен",

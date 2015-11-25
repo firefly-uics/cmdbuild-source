@@ -136,9 +136,6 @@
 			"title": "Klassenverwaltung",
 			"tree_title": "Klasse",
 			"widgets": {
-				".Workflow": {
-					"title": "Workflow starten"
-				},
 				".NavigationTree": {
 					"title": "Baumansicht"
 				},
@@ -1098,6 +1095,8 @@
 	"bottom": "Unten",
 	"buildFilter": "<em>Build filter</em>",
 	"buttonsToDisable": "Schaltfläche zum Ausschalten",
+	"byCql": "durch Cql",
+	"byName": "durch name",
 	"cacheManagement": "Cache Verwaltung",
 	"calendar": "Kalender",
 	"camera": "Kamera",
@@ -1386,6 +1385,7 @@
 	"selectAClass": "Eine Klasse markieren",
 	"selected_object": "Markierter Gegenstand",
 	"selectedUsers": "Ausgewählte Benutzer",
+	"selection": "Markierung",
 	"send": "<em>Send</em>",
 	"sentFolder": "<em>Sent folder</em>",
 	"separator": "Trennzeichen",
@@ -1417,6 +1417,7 @@
 	"start": "<em>Start</em>",
 	"startDate": "Anfangsdatum",
 	"startingPageAt": "Startseite",
+	"startWorkflow": "Workflow starten",
 	"status": "<em>Status</em>",
 	"stop": "<em>Stop</em>",
 	"subject": "Betreff",
@@ -1463,10 +1464,7 @@
 	"warning": "Achtung",
 	"webServicePath": "Pfad für den Web Service",
 	"workflow": "Prozesse",
-	"workflow_attributes": "Attribute des Prozesses",
-	"workflow_by_cql": "durch Cql",
-	"workflow_by_name": "durch name",
-	"workflow_query_tipology": "Markierung",
+	"workflowAttributes": "Attribute des Prozesses",
 	"workflowEngine": "Workflow",
 	"write": "Schreiben",
 	"you_have_not_set_a_filter": "Sie haben keine Filter eingestellt",
