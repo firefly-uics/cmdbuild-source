@@ -23,6 +23,26 @@
 		 *
 		 * @override
 		 */
+		widgetDefinitionFormAdditionalPropertiesGet: function() {
+			return [
+				this.presetGrid = Ext.create('CMDBuild.view.common.field.grid.KeyValue', {
+					enableRowAdd: true,
+					enableRowDelete: true,
+					enableCellEditing: true,
+					keyAttributeName: CMDBuild.core.constants.Proxy.NAME,
+					keyLabel: CMDBuild.Translation.attribute,
+					margin: '8 0 9 0',
+					modelName: 'CMDBuild.model.widget.ping.PresetGrid',
+					title: CMDBuild.Translation.templates
+				})
+			];
+		},
+
+		/**
+		 * @returns {Array}
+		 *
+		 * @override
+		 */
 		widgetDefinitionFormBasePropertiesGet: function() {
 			return Ext.Array.push(this.callParent(arguments), [
 				Ext.create('Ext.form.field.Text', {
@@ -40,26 +60,6 @@
 					minValue: 1
 				})
 			]);
-		},
-
-		/**
-		 * @returns {Array}
-		 *
-		 * @override
-		 */
-		widgetDefinitionFormAdditionalPropertiesGet: function() {
-			return [
-				this.presetGrid = Ext.create('CMDBuild.view.common.field.grid.KeyValue', {
-					enableRowAdd: true,
-					enableRowDelete: true,
-					enableCellEditing: true,
-					keyAttributeName: CMDBuild.core.constants.Proxy.NAME,
-					keyLabel: CMDBuild.Translation.attribute,
-					margin: '8 0 9 0',
-					modelName: 'CMDBuild.model.widget.ping.PresetGrid',
-					title: CMDBuild.Translation.templates
-				})
-			];
 		}
 	});
 

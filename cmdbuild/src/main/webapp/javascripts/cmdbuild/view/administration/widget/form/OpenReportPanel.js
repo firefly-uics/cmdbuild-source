@@ -34,46 +34,6 @@
 		 *
 		 * @override
 		 */
-		widgetDefinitionFormBasePropertiesGet: function() {
-			return Ext.Array.push(this.callParent(arguments), [
-				this.reportCode = Ext.create('Ext.form.field.ComboBox', {
-					name: CMDBuild.core.constants.Proxy.REPORT_CODE,
-					fieldLabel: CMDBuild.Translation.report,
-					labelWidth: CMDBuild.LABEL_WIDTH,
-					maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
-					valueField: CMDBuild.core.constants.Proxy.TITLE,
-					displayField: CMDBuild.core.constants.Proxy.DESCRIPTION,
-					forceSelection: true,
-					editable: false,
-
-					store: CMDBuild.core.proxy.widget.OpenReport.getStoreReports(),
-					queryMode: 'local',
-
-					listeners: {
-						scope: this,
-						select: function(combo, records, eOpts) {
-							this.delegate.cmfg('onWidgetOpenReportReportSelect', { selectedReport: records[0] });
-						}
-					}
-				}),
-				this.forceFormat = Ext.create('CMDBuild.view.common.field.comboBox.DrivedCheckbox', {
-					name: CMDBuild.core.constants.Proxy.FORCE_FORMAT,
-					maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
-					fieldLabel: CMDBuild.Translation.forceFormat,
-					labelWidth: CMDBuild.LABEL_WIDTH,
-					displayField: CMDBuild.core.constants.Proxy.DESCRIPTION,
-					valueField: CMDBuild.core.constants.Proxy.VALUE,
-
-					store: CMDBuild.core.proxy.widget.OpenReport.getStoreForceFormat()
-				})
-			]);
-		},
-
-		/**
-		 * @returns {Array}
-		 *
-		 * @override
-		 */
 		widgetDefinitionFormAdditionalPropertiesGet: function() {
 			return [
 				this.presetGrid = Ext.create('CMDBuild.view.common.field.grid.KeyValue', {
@@ -96,6 +56,46 @@
 					title: CMDBuild.Translation.reportAttributes
 				})
 			];
+		},
+
+		/**
+		 * @returns {Array}
+		 *
+		 * @override
+		 */
+		widgetDefinitionFormBasePropertiesGet: function() {
+			return Ext.Array.push(this.callParent(arguments), [
+				this.reportCode = Ext.create('Ext.form.field.ComboBox', {
+					name: CMDBuild.core.constants.Proxy.REPORT_CODE,
+					fieldLabel: CMDBuild.Translation.report,
+					labelWidth: CMDBuild.LABEL_WIDTH,
+					maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
+					valueField: CMDBuild.core.constants.Proxy.TITLE,
+					displayField: CMDBuild.core.constants.Proxy.DESCRIPTION,
+					forceSelection: true,
+					editable: false,
+
+					store: CMDBuild.core.proxy.widget.OpenReport.getStoreReports(),
+					queryMode: 'local',
+
+					listeners: {
+						scope: this,
+						select: function(combo, records, eOpts) {
+							this.delegate.cmfg('onClassTabWidgetOpenReportReportSelect', { selectedReport: records[0] });
+						}
+					}
+				}),
+				this.forceFormat = Ext.create('CMDBuild.view.common.field.comboBox.DrivedCheckbox', {
+					name: CMDBuild.core.constants.Proxy.FORCE_FORMAT,
+					maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
+					fieldLabel: CMDBuild.Translation.forceFormat,
+					labelWidth: CMDBuild.LABEL_WIDTH,
+					displayField: CMDBuild.core.constants.Proxy.DESCRIPTION,
+					valueField: CMDBuild.core.constants.Proxy.VALUE,
+
+					store: CMDBuild.core.proxy.widget.OpenReport.getStoreForceFormat()
+				})
+			]);
 		}
 	});
 

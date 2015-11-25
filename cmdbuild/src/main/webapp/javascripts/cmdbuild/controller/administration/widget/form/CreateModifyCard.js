@@ -48,14 +48,12 @@
 		},
 
 		/**
-		 * @return {Object} widgetDefinition
+		 * @return {Object}
 		 */
 		classTabWidgetCreateModifyCardDefinitionGet: function() {
-			var widgetDefinition = CMDBuild.model.widget.createModifyCard.Definition.convertToLegacy(
+			return CMDBuild.model.widget.createModifyCard.Definition.convertToLegacy(
 				Ext.create(this.classTabWidgetDefinitionModelNameGet(), this.view.getData(true)).getData()
 			);
-
-			return widgetDefinition;
 		},
 
 		/**

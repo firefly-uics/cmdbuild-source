@@ -28,34 +28,6 @@
 		 *
 		 * @override
 		 */
-		widgetDefinitionFormBasePropertiesGet: function() {
-			return Ext.Array.push(this.callParent(arguments), [
-				Ext.create('Ext.form.field.Checkbox', {
-					name: CMDBuild.core.constants.Proxy.READ_ONLY,
-					fieldLabel: CMDBuild.Translation.readOnly,
-					labelWidth: CMDBuild.LABEL_WIDTH
-				}),
-				this.targetClass = Ext.create('Ext.form.field.ComboBox', {
-					name: CMDBuild.core.constants.Proxy.TARGET_CLASS,
-					fieldLabel: CMDBuild.Translation.targetClass,
-					labelWidth: CMDBuild.LABEL_WIDTH,
-					maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
-					valueField: CMDBuild.core.constants.Proxy.NAME,
-					displayField: CMDBuild.core.constants.Proxy.TEXT, // TODO: waiting for refactor (rename description)
-					editable: false,
-					forceSelection: true,
-
-					store: CMDBuild.core.proxy.widget.CreateModifyCard.getStoreTargetClass(),
-					queryMode: 'local'
-				})
-			]);
-		},
-
-		/**
-		 * @returns {Array}
-		 *
-		 * @override
-		 */
 		widgetDefinitionFormAdditionalPropertiesGet: function() {
 			return [
 				Ext.create('Ext.form.FieldSet', {
@@ -77,6 +49,34 @@
 					]
 				})
 			];
+		},
+
+		/**
+		 * @returns {Array}
+		 *
+		 * @override
+		 */
+		widgetDefinitionFormBasePropertiesGet: function() {
+			return Ext.Array.push(this.callParent(arguments), [
+				Ext.create('Ext.form.field.Checkbox', {
+					name: CMDBuild.core.constants.Proxy.READ_ONLY,
+					fieldLabel: CMDBuild.Translation.readOnly,
+					labelWidth: CMDBuild.LABEL_WIDTH
+				}),
+				this.targetClass = Ext.create('Ext.form.field.ComboBox', {
+					name: CMDBuild.core.constants.Proxy.TARGET_CLASS,
+					fieldLabel: CMDBuild.Translation.targetClass,
+					labelWidth: CMDBuild.LABEL_WIDTH,
+					maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
+					valueField: CMDBuild.core.constants.Proxy.NAME,
+					displayField: CMDBuild.core.constants.Proxy.TEXT, // TODO: waiting for refactor (rename description)
+					editable: false,
+					forceSelection: true,
+
+					store: CMDBuild.core.proxy.widget.CreateModifyCard.getStoreTargetClass(),
+					queryMode: 'local'
+				})
+			]);
 		}
 	});
 

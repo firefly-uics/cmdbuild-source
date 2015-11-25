@@ -125,6 +125,11 @@
 		/**
 		 * @returns {Array}
 		 */
+		widgetDefinitionFormAdditionalPropertiesGet: Ext.emptyFn,
+
+		/**
+		 * @returns {Array}
+		 */
 		widgetDefinitionFormBasePropertiesGet: function() {
 			return [
 				Ext.create('Ext.form.field.Hidden', { name: CMDBuild.core.constants.Proxy.ID }),
@@ -153,14 +158,7 @@
 					labelWidth: CMDBuild.LABEL_WIDTH
 				})
 			];
-		},
-
-		/**
-		 * @returns {Array}
-		 *
-		 * @abstract
-		 */
-		widgetDefinitionFormAdditionalPropertiesGet: Ext.emptyFn
+		}
 	});
 
 })();
