@@ -3,7 +3,10 @@
 	Ext.define('CMDBuild.view.administration.widget.form.PingPanel', {
 		extend: 'CMDBuild.view.administration.widget.form.AbstractWidgetDefinitionPanel',
 
-		requires: ['CMDBuild.core.constants.Proxy'],
+		requires: [
+			'CMDBuild.core.constants.Proxy',
+			'CMDBuild.model.widget.ping.PresetGrid'
+		],
 
 		/**
 		 * @cfg {CMDBuild.controller.administration.widget.form.OpenReport}
@@ -53,8 +56,8 @@
 					keyAttributeName: CMDBuild.core.constants.Proxy.NAME,
 					keyLabel: CMDBuild.Translation.attribute,
 					margin: '8 0 9 0',
-					modelName: 'CMDBuild.model.widget.openReport.PresetGrid',
-					title: CMDBuild.Translation.templates,
+					modelName: 'CMDBuild.model.widget.ping.PresetGrid',
+					title: CMDBuild.Translation.templates
 				})
 			];
 		}

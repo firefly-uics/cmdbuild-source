@@ -137,9 +137,6 @@
 			"title": "Управљање класама",
 			"tree_title": "Класе",
 			"widgets": {
-				".Workflow": {
-					"title": "Покрени радни процес"
-				},
 				".NavigationTree": {
 					"title": "Стабло навигације"
 				},
@@ -1098,6 +1095,8 @@
 	"bottom": "При дну",
 	"buildFilter": "<em>Build filter</em>",
 	"buttonsToDisable": "Онемогућити тастере",
+	"byCql": "по CQL",
+	"byName": "по имену",
 	"cacheManagement": "Подешавање кеш меморије",
 	"calendar": "Календар",
 	"camera": "Камера",
@@ -1386,6 +1385,7 @@
 	"selectAClass": "Изабери класу",
 	"selected_object": "Изабрани објекат",
 	"selectedUsers": "Корисници у групи",
+	"selection": "Селекција",
 	"send": "<em>Send</em>",
 	"sentFolder": "<em>Sent folder</em>",
 	"separator": "Сепаратор",
@@ -1417,6 +1417,7 @@
 	"start": "<em>Start</em>",
 	"startDate": "Датум почетка",
 	"startingPageAt": "Почетна страница",
+	"startWorkflow": "Покрени радни процес",
 	"status": "<em>Status</em>",
 	"stop": "<em>Stop</em>",
 	"subject": "Субјекат",
@@ -1463,10 +1464,7 @@
 	"warning": "Пажња",
 	"webServicePath": "Путања web сервиса",
 	"workflow": "Радни процеси",
-	"workflow_attributes": "Атрибути радног процеса",
-	"workflow_by_cql": "по CQL",
-	"workflow_by_name": "по имену",
-	"workflow_query_tipology": "Селекција",
+	"workflowAttributes": "Атрибути радног процеса",
 	"workflowEngine": "Радни процеси (Workflow)",
 	"write": "Писање",
 	"you_have_not_set_a_filter": "Нисте поставили филтер",

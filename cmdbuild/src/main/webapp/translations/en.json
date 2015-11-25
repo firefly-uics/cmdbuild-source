@@ -137,9 +137,6 @@
 			"title": "Manage classes",
 			"tree_title": "Class List",
 			"widgets": {
-				".Workflow": {
-					"title": "Start workflow"
-				},
 				".NavigationTree": {
 					"title": "Navigation tree"
 				},
@@ -1098,6 +1095,8 @@
 	"bottom": "Bottom",
 	"buildFilter": "Build filter",
 	"buttonsToDisable": "Buttons to disable",
+	"byCql": "by CQL",
+	"byName": "by name",
 	"cacheManagement": "Cache management",
 	"calendar": "Calendar",
 	"camera": "Camera",
@@ -1386,6 +1385,7 @@
 	"selectAClass": "Select a class",
 	"selected_object": "Selected Object",
 	"selectedUsers": "Selected users",
+	"selection": "Selection",
 	"send": "Send",
 	"sentFolder": "Sent folder",
 	"separator": "Separator",
@@ -1417,6 +1417,7 @@
 	"start": "Start",
 	"startDate": "Start date",
 	"startingPageAt": "Starting page at",
+	"startWorkflow": "Start workflow",
 	"status": "Status",
 	"stop": "Stop",
 	"subject": "Subject",
@@ -1463,10 +1464,7 @@
 	"warning": "Warning",
 	"webServicePath": "Web service path",
 	"workflow": "Process",
-	"workflow_attributes" : "Process attributes",
-	"workflow_by_cql": "by Cql",
-	"workflow_by_name": "by name",
-	"workflow_query_tipology": "Selection",
+	"workflowAttributes" : "Process attributes",
 	"workflowEngine": "Workflow engine",
 	"write": "Write",
 	"you_have_not_set_a_filter": "You have not set a filter",

@@ -137,9 +137,6 @@
 			"title": "クラス管理",
 			"tree_title": "クラスリスト",
 			"widgets": {
-				".Workflow": {
-					"title": "ワークフローを開始"
-				},
 				".NavigationTree": {
 					"title": "ナビゲーションツリー"
 				},
@@ -1098,6 +1095,8 @@
 	"bottom": "ボトム",
 	"buildFilter": "<em>Build filter</em>",
 	"buttonsToDisable": "無効にするボタン",
+	"byCql": "Cqlで",
+	"byName": "名前で",
 	"cacheManagement": "キャッシュ管理",
 	"calendar": "カレンダ",
 	"camera": "カメラ",
@@ -1386,6 +1385,7 @@
 	"selectAClass": "クラスを選択",
 	"selected_object": "選択されたオブジェクト",
 	"selectedUsers": "ルックアップユーザー",
+	"selection": "選択",
 	"send": "<em>Send</em>",
 	"sentFolder": "<em>Sent folder</em>",
 	"separator": "セパレータ",
@@ -1417,6 +1417,7 @@
 	"start": "<em>Start</em>",
 	"startDate": "開始日",
 	"startingPageAt": "初期ページ",
+	"startWorkflow": "ワークフローを開始",
 	"status": "<em>Status</em>",
 	"stop": "<em>Stop</em>",
 	"subject": "サブジェクト",
@@ -1463,10 +1464,7 @@
 	"warning": "警告",
 	"webServicePath": "Webサービスへのパス",
 	"workflow": "ワークフロー",
-	"workflow_attributes": "ワークフロー属性",
-	"workflow_by_cql": "Cqlで",
-	"workflow_by_name": "名前で",
-	"workflow_query_tipology": "選択",
+	"workflowAttributes": "ワークフロー属性",
 	"workflowEngine": "ワークフロー",
 	"write": "書込権限",
 	"you_have_not_set_a_filter": "フィルタを設定していません",

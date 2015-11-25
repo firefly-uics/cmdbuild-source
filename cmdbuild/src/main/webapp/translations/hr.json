@@ -137,9 +137,6 @@
 			"title": "Upravljanje klasama",
 			"tree_title": "Klase",
 			"widgets": {
-				".Workflow": {
-					"title": "<em>Start workflow</em>"
-				},
 				".NavigationTree": {
 					"title": "<em>Navigation tree</em>"
 				},
@@ -1098,6 +1095,8 @@
 	"bottom": "Pri dnu",
 	"buildFilter": "<em>Build filter</em>",
 	"buttonsToDisable": "<em>Buttons to disable</em>",
+	"byCql": "<em>by Cql</em>",
+	"byName": "<em>by name</em>",
 	"cacheManagement": "Postavke cache memorije",
 	"calendar": "Kalendar",
 	"camera": "<em>Camera</em>",
@@ -1386,6 +1385,7 @@
 	"selectAClass": "<em>Select a Class</em>",
 	"selected_object": "<em>Selected Object</em>",
 	"selectedUsers": "Korisnici u grupi",
+	"selection": "<em>Selection</em>",
 	"send": "<em>Send</em>",
 	"sentFolder": "<em>Sent folder</em>",
 	"separator": "Separator",
@@ -1417,6 +1417,7 @@
 	"start": "<em>Start</em>",
 	"startDate": "Datum početka",
 	"startingPageAt": "Početna stranica",
+	"startWorkflow": "<em>Start workflow</em>",
 	"status": "<em>Status</em>",
 	"stop": "<em>Stop</em>",
 	"subject": "Subject",
@@ -1463,10 +1464,7 @@
 	"warning": "Pažnja",
 	"webServicePath": "Putanja web servisa",
 	"workflow": "<em>Workflow</em>",
-	"workflow_attributes": "<em>Workflow attributes</em>",
-	"workflow_by_cql": "<em>by Cql</em>",
-	"workflow_by_name": "<em>by name</em>",
-	"workflow_query_tipology": "<em>Selection</em>",
+	"workflowAttributes": "<em>Workflow attributes</em>",
 	"workflowEngine": "Radni procesi (Workflow)",
 	"write": "Pisanje",
 	"you_have_not_set_a_filter": "Niste postavili filter",

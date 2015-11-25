@@ -137,9 +137,6 @@
 			"title": "Gestion des classes",
 			"tree_title": "Arbre des classes",
 			"widgets": {
-				".Workflow": {
-					"title": "Démarrer le processus"
-				},
 				".NavigationTree": {
 					"title": "Arbre de navigation"
 				},
@@ -1098,6 +1095,8 @@
 	"bottom": "En dessous",
 	"buildFilter": "<em>Build filter</em>",
 	"buttonsToDisable": "Boutons à désactiver",
+	"byCql": "par Cql",
+	"byName": "par nom",
 	"cacheManagement": "Gestion du cache",
 	"calendar": "Calendrier",
 	"camera": "Appareil photo",
@@ -1386,6 +1385,7 @@
 	"selectAClass": "Choisir une classe",
 	"selected_object": "Choisir un objet",
 	"selectedUsers": "Utilisateur sélectionné",
+	"selection": "Sélection",
 	"send": "<em>Send</em>",
 	"sentFolder": "<em>Sent folder</em>",
 	"separator": "Séparateur",
@@ -1417,6 +1417,7 @@
 	"start": "<em>Start</em>",
 	"startDate": "Date de début",
 	"startingPageAt": "Classe de départ",
+	"startWorkflow": "Démarrer le processus",
 	"status": "Statut",
 	"stop": "<em>Stop</em>",
 	"subject": "Sujet",
@@ -1463,10 +1464,7 @@
 	"warning": "Attention",
 	"webServicePath": "Chemin du Web service",
 	"workflow": "Processus",
-	"workflow_attributes": "Attributs de processus",
-	"workflow_by_cql": "par Cql",
-	"workflow_by_name": "par nom",
-	"workflow_query_tipology": "Sélection",
+	"workflowAttributes": "Attributs de processus",
 	"workflowEngine": "Processus",
 	"write": "Écrire",
 	"you_have_not_set_a_filter": "Vous n'avez pas de filtre",
