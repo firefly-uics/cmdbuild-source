@@ -10,13 +10,25 @@
 		],
 
 		constructor: function(view) {
-			this.view = view;
+			if (Ext.isEmpty(view)) {
+				this.view = new CMDBuild.view.administration.classes.CMClassForm({
+					title: CMDBuild.Translation.administration.modClass.tabs.properties,
+					border: false
+				});
+			} else {
+				this.view = view;
+			}
+
 			this.selection = null;
 
 			this.view.abortButton.on("click", this.onAbortClick, this);
 			this.view.saveButton.on("click", this.onSaveClick, this);
 			this.view.deleteButton.on("click", this.onDeleteClick, this);
 			this.view.printClassButton.on("click", this.onPrintClass, this);
+		},
+
+		getView: function() {
+			return this.view;
 		},
 
 		onClassSelected: function(classId) {

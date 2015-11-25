@@ -203,6 +203,8 @@
 			buildBimController(this, this.view.getGrid());
 
 			Ext.resumeLayouts();
+
+			this.view.cardTabPanel.setActiveTab(0);
 		},
 
 		buildTabControllerAttachments: function() {
