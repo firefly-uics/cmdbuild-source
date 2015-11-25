@@ -1,9 +1,11 @@
 (function() {
 	Ext.ns("CMDBuild.administration.navigationTrees");
 	var ns = CMDBuild.administration.navigationTrees;
-	
+
 	Ext.define("CMDBuild.controller.administration.navigationTrees.CMModNavigationTreesController", {
 		extend: "CMDBuild.controller.CMBasePanelController",
+
+		requires: ['CMDBuild.core.constants.Proxy'],
 
 		constructor: function() {
 			this.callParent(arguments);
@@ -19,17 +21,15 @@
 		cmOn: function(name, param, callBack) {
 			switch (name) {
 				case 'onAddButtonClick':
-					_CMMainViewportController.deselectAccordionByName("navigationTrees");
+					_CMMainViewportController.deselectAccordionByName('navigationtree');
 					this.view.selectPropertiesTab();
 					this.view.navigationTreesTree.disable();
-					_CMCache.initModifyingTranslations();
 					this.view.navigationTreesForm.enableModify(true);
 					this.view.navigationTreesTree.enableModify();
 					this.formController.cmOn("onNew");
 					this.isNew = true;
 					break;
 				case 'onModifyButtonClick':
-					_CMCache.initModifyingTranslations();
 					this.view.navigationTreesForm.enableModify();
 					this.view.navigationTreesTree.enableModify();
 					this.isNew = false;
@@ -82,7 +82,7 @@
 			}
 			return undefined;
 		},
-		
+
 		save: function(formData) {
 			var treeData = this.treeController.getData();
 			var structure = {
@@ -95,7 +95,7 @@
 			_CMCache.saveNavigationTrees(formData, function() {
 			});
 		},
-		
+
 		create: function(formData) {
 			var structure = {
 					targetClassName:formData.rootName,
@@ -106,7 +106,7 @@
 			_CMCache.createNavigationTrees(formData, function() {
 			});
 		},
-		
+
 		remove: function(name) {
 			if (! name) {
 				return;
@@ -126,14 +126,16 @@
 
 		onViewOnFront: function(selection) {
 			if (selection) {
-				_CMCache.readNavigationTrees(this, selection.get("id"), selectTree);
+				var id = selection.get(CMDBuild.core.constants.Proxy.ENTITY_ID) || selection.get("id"); // New accordion manage
+
+				_CMCache.readNavigationTrees(this, id, selectTree);
 			}
 		}
-		
+
 
 	});
 	function selectTree(me, name) {
 		me.cmOn("onTreeSelected", { tree: name });
 	}
-	
+
 })();

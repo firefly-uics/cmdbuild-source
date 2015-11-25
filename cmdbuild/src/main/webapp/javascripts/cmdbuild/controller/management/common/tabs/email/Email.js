@@ -10,7 +10,7 @@
 
 		requires: [
 			'CMDBuild.controller.management.common.widgets.CMWidgetController',
-			'CMDBuild.core.proxy.CMProxyConstants',
+			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.Utils',
 			'CMDBuild.core.proxy.email.Templates',
 			'CMDBuild.core.Message'
@@ -23,6 +23,8 @@
 
 		/**
 		 * @cfg {Boolean}
+		 *
+		 * @private
 		 */
 		busyState: false,
 
@@ -37,57 +39,48 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
-			'busyStateGet',
-			'busyStateSet',
-			'configurationGet',
-			'configurationSet',
-			'configurationTemplatesSet',
-			'editModeGet',
-			'getAllTemplatesData',
-			'getGlobalLoadMask',
-			'getMainController',
-			'onEmailPanelShow',
-			'onGlobalRegenerationButtonClick',
-			'onModifyCardClick',
-			'regenerateAllEmailsSet',
-			'regenerateSelectedEmails',
-			'regenerationEndPointCallbackGet',
-			'regenerationEndPointCallbackSet',
-			'selectedEntityGet',
-			'selectedEntityIdGet',
-			'sendAll -> controllerGrid',
-			'sendAllOnSaveGet',
-			'sendAllOnSaveSet',
-			'setUiState -> controllerGrid',
-			'storeLoad -> controllerGrid'
+			'onTabEmailGlobalRegenerationButtonClick',
+			'onTabEmailModifyCardClick',
+			'onTabEmailPanelShow',
+			'tabEmailBindLocalDepsChangeEvent',
+			'tabEmailBusyStateGet',
+			'tabEmailBusyStateSet',
+			'tabEmailConfigurationGet',
+			'tabEmailConfigurationSet',
+			'tabEmailEditModeGet',
+			'tabEmailEditModeSet',
+			'tabEmailGetAllTemplatesData',
+			'tabEmailGetFormForTemplateResolver',
+			'tabEmailGlobalLoadMaskGet',
+			'tabEmailGlobalLoadMaskSet',
+			'tabEmailRegenerateAllEmailsSet',
+			'tabEmailRegenerateSelectedEmails',
+			'tabEmailRegenerationEndPointCallbackSet',
+			'tabEmailSelectedEntityGet',
+			'tabEmailSelectedEntityInit',
+			'tabEmailSelectedEntityIsEmpty',
+			'tabEmailSelectedEntitySet',
+			'tabEmailSendAllOnSaveSet'
 		],
 
 		/**
-		 * @cfg {Object}
+		 * @property {CMDBuild.model.common.tabs.email.Configuration}
+		 *
+		 * @private
 		 */
 		configuration: {},
 
 		/**
-		 * Template objects array
-		 *
-		 * @cfg {Array}
-		 */
-		configurationTemplates: [],
-
-		/**
-		 * @cfg {CMDBuild.controller.management.common.tabs.email.Grid}
+		 * @property {CMDBuild.controller.management.common.tabs.email.Grid}
 		 */
 		controllerGrid: undefined,
 
 		/**
-		 * @cfg {Object}
+		 * @property {Boolean}
+		 *
+		 * @private
 		 */
-		defaultConfiguration: {
-			noSubjectPrefix: false,
-			readOnly: true,
-			required: false,
-			templates: []
-		},
+		editMode: false,
 
 		/**
 		 * All templates I have in configuration and grid
@@ -104,11 +97,6 @@
 		emailTemplatesIdentifiers: [],
 
 		/**
-		 * @property {Boolean}
-		 */
-		flagEditMode: false,
-
-		/**
 		 * @cfg {Boolean}
 		 */
 		flagForceRegeneration: false,
@@ -119,13 +107,6 @@
 		flagRegenerateAllEmails: false,
 
 		/**
-		 * If true send all draft emails on save action
-		 *
-		 * @cfg {Boolean}
-		 */
-		flagSendAllOnSave: false,
-
-		/**
 		 * Shorthand to view grid
 		 *
 		 * @property {CMDBuild.view.management.common.tabs.email.GridPanel}
@@ -134,15 +115,19 @@
 
 		/**
 		 * @cfg {Boolean}
+		 *
+		 * @private
 		 */
 		globalLoadMask: true,
 
 		/**
-		 * Executed on regeneration end-point, works also as flagSave
+		 * Defines a function executed on regeneration end-point, works also as flagSave
 		 *
-		 * @cfg {Function} or null
+		 * @cfg {CMDBuild.model.common.tabs.email.RegenerationEndPointCallback}
+		 *
+		 * @private
 		 */
-		regenerationEndPointCallback: null,
+		regenerationEndPointCallback: undefined,
 
 		/**
 		 * Global attribute change flag
@@ -155,8 +140,19 @@
 		 * Actually selected Card/Activity
 		 *
 		 * @cfg {CMDBuild.model.common.tabs.email.SelectedEntity}
+		 *
+		 * @private
 		 */
 		selectedEntity: undefined,
+
+		/**
+		 * If true send all draft emails on save action
+		 *
+		 * @cfg {Boolean}
+		 *
+		 * @private
+		 */
+		sendAllOnSave: false,
 
 		/**
 		 * @property {CMDBuild.Management.TemplateResolver}
@@ -177,7 +173,7 @@
 			 * @param {Array} searchedVariablesNames - searched variables names
 			 * @param {Array} foundedKeysArray - where to push keys of variables witch contains CQL
 			 *
-			 * @return {Boolean} found
+			 * @returns {Boolean} found
 			 */
 			searchForCqlClientVariables: function(inspectingVariable, inspectingVariableKey, searchedVariablesNames, foundedKeysArray) {
 				var found = false;
@@ -202,17 +198,17 @@
 			 * @param {Mixed} record
 			 * @param {Array} regenerationTrafficLightArray
 			 *
-			 * @return {Boolean} storeLoadEnabled
+			 * @returns {Boolean} storeLoadEnabled
 			 */
 			trafficLightArrayCheck: function(record, regenerationTrafficLightArray) {
 				if (!Ext.isEmpty(regenerationTrafficLightArray) && Ext.isArray(regenerationTrafficLightArray)) {
 					var storeLoadEnabled = true;
 
-					Ext.Array.forEach(regenerationTrafficLightArray, function(item, index, allItems) {
-						if (Ext.Object.equals(item[CMDBuild.core.proxy.CMProxyConstants.RECORD], record))
-							item[CMDBuild.core.proxy.CMProxyConstants.STATUS] = true;
+					Ext.Array.forEach(regenerationTrafficLightArray, function(item, i, allItems) {
+						if (Ext.Object.equals(item[CMDBuild.core.constants.Proxy.RECORD], record))
+							item[CMDBuild.core.constants.Proxy.STATUS] = true;
 
-						if (!item[CMDBuild.core.proxy.CMProxyConstants.STATUS])
+						if (!item[CMDBuild.core.constants.Proxy.STATUS])
 							storeLoadEnabled = false;
 					}, this);
 
@@ -233,8 +229,8 @@
 			trafficLightSlotBuild: function(record, trafficLightArray) {
 				if (!Ext.isEmpty(record) && Ext.isArray(trafficLightArray)) {
 					var trafficLight = {};
-					trafficLight[CMDBuild.core.proxy.CMProxyConstants.STATUS] = false;
-					trafficLight[CMDBuild.core.proxy.CMProxyConstants.RECORD] = record; // Reference to record
+					trafficLight[CMDBuild.core.constants.Proxy.STATUS] = false;
+					trafficLight[CMDBuild.core.constants.Proxy.RECORD] = record; // Reference to record
 
 					trafficLightArray.push(trafficLight);
 				}
@@ -250,14 +246,12 @@
 		 * @abstract
 		 */
 		constructor: function(configurationObject) {
-			this.configurationSet();
-
 			this.callParent(arguments);
 
+			this.tabEmailConfigurationReset();
+
 			// Build controllers
-			this.controllerGrid = Ext.create('CMDBuild.controller.management.common.tabs.email.Grid', {
-				parentDelegate: this
-			});
+			this.controllerGrid = Ext.create('CMDBuild.controller.management.common.tabs.email.Grid', { parentDelegate: this });
 			this.grid = this.controllerGrid.getView();
 
 			this.controllerConfirmRegenerationWindow = Ext.create('CMDBuild.controller.management.common.tabs.email.ConfirmRegenerationWindow', {
@@ -265,53 +259,19 @@
 				gridDelegate: this.controllerGrid
 			});
 
-			this.selectedEntitySet(); // Setup empty object by default
+			this.cmfg('tabEmailSelectedEntityInit'); // Setup empty object by default
 
 			// Extends to create view
 		},
 
 		/**
-		 * @param {Mixed} record
-		 * @param {CMDBuild.Management.TemplateResolver} templateResolver
-		 * @param {Object} scope
-		 */
-		bindLocalDepsChangeEvent: function(record, templateResolver, scope) {
-			templateResolver.bindLocalDepsChange(function() {
-				if (
-					!Ext.Object.isEmpty(record)
-					&& !scope.relatedAttributeChanged
-				) {
-					scope.relatedAttributeChanged = true;
-
-					if (!record.get(CMDBuild.core.proxy.CMProxyConstants.KEEP_SYNCHRONIZATION) && !record.get(CMDBuild.core.proxy.CMProxyConstants.PROMPT_SYNCHRONIZATION))
-						CMDBuild.core.Message.warn(null, CMDBuild.Translation.warnings.emailTemplateRelatedAttributeEdited);
-				}
-			});
-		},
-
-		// BusyState property functions
-			/**
-			 * @return {Boolean}
-			 */
-			busyStateGet: function() {
-				return this.busyState;
-			},
-
-			/**
-			 * @param {Boolean} state
-			 */
-			busyStateSet: function(state) {
-				this.busyState = Ext.isBoolean(state) ? state : false;
-			},
-
-		/**
 		 * @param {Array} data
 		 * @param {CMDBuild.Management.TemplateResolver} templateResolver
 		 *
-		 * @return {Boolean}
+		 * @returns {Boolean}
 		 */
 		checkCondition: function(data, templateResolver) {
-			var conditionExpr = data[CMDBuild.core.proxy.CMProxyConstants.CONDITION];
+			var conditionExpr = data[CMDBuild.core.constants.Proxy.CONDITION];
 
 			return Ext.isEmpty(conditionExpr) || templateResolver.safeJSEval(conditionExpr);
 		},
@@ -319,11 +279,11 @@
 		/**
 		 * Builds templatesToRegenerate array in relation of dirty fields
 		 *
-		 * @return {Array} templatesToRegenerate
+		 * @returns {Array} templatesToRegenerate
 		 */
 		checkTemplatesToRegenerate: function() {
 			var templatesToRegenerate = [];
-			var clientForm = this.parentDelegate.getFormForTemplateResolver();
+			var clientForm = this.cmfg('tabEmailGetFormForTemplateResolver');
 			var dirtyVariables = Ext.Object.getKeys(clientForm.getValues(false, true));
 			var xaVars = this.extractVariablesForTemplateResolver();
 
@@ -350,13 +310,13 @@
 			// Check templates attributes looking for dirtyVariables as client variables (ex. {client:varName})
 			Ext.Array.forEach(this.emailTemplatesObjects, function(template, templateIndex, allTemplatesItems) {
 				if (!Ext.Object.isEmpty(template))
-					var mergedTemplate = Ext.apply(template.getData(), template.get(CMDBuild.core.proxy.CMProxyConstants.VARIABLES));
+					var mergedTemplate = Ext.apply(template.getData(), template.get(CMDBuild.core.constants.Proxy.VARIABLES));
 
 					Ext.Object.each(mergedTemplate, function(key, value, myself) {
 						if (Ext.isString(value)) { // Check all types of CQL variables that can contains client variables
 							CMDBuild.controller.management.common.tabs.email.Email.searchForCqlClientVariables(
 								value,
-								mergedTemplate[CMDBuild.core.proxy.CMProxyConstants.KEY] || mergedTemplate[CMDBuild.core.proxy.CMProxyConstants.NAME],
+								mergedTemplate[CMDBuild.core.constants.Proxy.KEY] || mergedTemplate[CMDBuild.core.constants.Proxy.NAME],
 								dirtyVariables,
 								templatesToRegenerate
 							);
@@ -367,73 +327,24 @@
 			return templatesToRegenerate;
 		},
 
-		// Configuration property functions
-			/**
-			 * @return {Object}
-			 */
-			configurationGet: function() {
-				return this.configuration;
-			},
-
-			/**
-			 * Set configure object and enable UI and all contained components
-			 *
-			 * @param {Object} configuration
-			 */
-			configurationSet: function(configuration) {
-				if (Ext.Object.isEmpty(configuration)) {
-					this.configuration = this.defaultConfiguration;
-				} else {
-					// Setup class configuration applying configuration attributes to defaultConfiguration
-					this.configuration = Ext.apply({}, configuration, this.defaultConfiguration);
-				}
-			},
-
-		// ConfigurationTemplates property functions
-			/**
-			 * @param {Array} configurationTemplatesArray
-			 */
-			configurationTemplatesSet: function(configurationTemplatesArray) {
-				if (Ext.isArray(configurationTemplatesArray) && !Ext.isEmpty(configurationTemplatesArray)) {
-					this.configurationTemplates = configurationTemplatesArray;
-				} else {
-					this.configurationTemplates = [];
-				}
-			},
-
-		// EditMode property functions
-			/**
-			 * @return {Boolean}
-			 */
-			editModeGet: function() {
-				return this.flagEditMode;
-			},
-
-			/**
-			 * @param {Boolean} mode
-			 */
-			editModeSet: function(mode) {
-				this.flagEditMode = Ext.isBoolean(mode) ? mode : false;
-			},
-
 		/**
 		 * Extract the variables of each EmailTemplate object, add a suffix to them with the index, and put them all in the templates map.
 		 * This is needed to be passed as a unique map to the template resolver.
 		 *
-		 * @return {Object} variables
+		 * @returns {Object} variables
 		 */
 		extractVariablesForTemplateResolver: function() {
 			var variables = {};
 
-			Ext.Array.forEach(this.emailTemplatesObjects, function(item, index, allItems) {
+			Ext.Array.forEach(this.emailTemplatesObjects, function(item, i, allItems) {
 				var templateObject = item.getData();
-				var templateVariables = item.get(CMDBuild.core.proxy.CMProxyConstants.VARIABLES);
+				var templateVariables = item.get(CMDBuild.core.constants.Proxy.VARIABLES);
 
 				for (var key in templateVariables)
 					variables[key] = templateVariables[key];
 
 				for (var key in templateObject)
-					variables[key + (index + 1)] = templateObject[key];
+					variables[key + (i + 1)] = templateObject[key];
 			}, this);
 
 			return variables;
@@ -441,7 +352,7 @@
 
 		// ForceRegeneration property functions
 			/**
-			 * @return {Boolean}
+			 * @returns {Boolean}
 			 */
 			forceRegenerationGet: function() {
 				return this.flagForceRegeneration;
@@ -454,26 +365,333 @@
 				this.flagForceRegeneration = Ext.isBoolean(mode) ? mode : false;
 			},
 
-		getAllTemplatesData: function() {
+		/**
+		 * Called from parent super controller
+		 */
+		onAddCardButtonClick: function() {
+			this.cmfg('tabEmailEditModeSet', true);
+		},
+
+		onTabEmailGlobalRegenerationButtonClick: function() {
+			this.cmfg('tabEmailRegenerateAllEmailsSet', true);
+			this.forceRegenerationSet(true);
+			this.controllerGrid.cmfg('tabEmailGridStoreLoad');
+		},
+
+		/**
+		 * Base implementation to force email regeneration and editMode setup
+		 */
+		onTabEmailModifyCardClick: function() {
+			this.cmfg('tabEmailEditModeSet', true);
+
+			if (!this.grid.getStore().isLoading())
+				this.cmfg('onTabEmailGlobalRegenerationButtonClick');
+		},
+
+		/**
+		 * Reload store every time panel is showed
+		 */
+		onTabEmailPanelShow: function() {
+			this.view.setDisabled(
+				this.cmfg('tabEmailSelectedEntityIsEmpty', CMDBuild.core.constants.Proxy.ENTITY)
+				&& !this.cmfg('tabEmailEditModeGet') // Evaluate also editMode to enable onAddCardButtonClick
+			);
+
+			if (this.view.isVisible()) {
+				this.controllerGrid.cmfg('tabEmailGridUiStateSet');
+
+				// Regenerate all widgets only if editMode otherwise simple store load
+				this.cmfg('tabEmailRegenerateAllEmailsSet', this.cmfg('tabEmailEditModeGet'));
+				this.controllerGrid.cmfg('tabEmailGridStoreLoad');
+
+				// Fire show event to manage buttons setup
+				this.grid.buttonAdd.fireEvent('show');
+				this.grid.buttonRegenerate.fireEvent('show');
+			}
+		},
+
+		/**
+		 * @param {Mixed} record
+		 * @param {Array} regenerationTrafficLightArray
+		 */
+		regenerateEmail: function(record, regenerationTrafficLightArray) {
+			if (
+				!Ext.Object.isEmpty(record)
+				&& Ext.isArray(regenerationTrafficLightArray)
+				&& !Ext.isEmpty(record.get(CMDBuild.core.constants.Proxy.TEMPLATE))
+				&& record.get(CMDBuild.core.constants.Proxy.KEEP_SYNCHRONIZATION)
+			) {
+				// Find record template in emailTemplatesObjects
+				var recordTemplate = record.get(CMDBuild.core.constants.Proxy.TEMPLATE);
+				recordTemplate = Ext.Array.findBy(this.emailTemplatesObjects, function(item, i) {
+					if (
+						recordTemplate == item.get(CMDBuild.core.constants.Proxy.KEY)
+						|| recordTemplate == item.get(CMDBuild.core.constants.Proxy.NAME)
+					) {
+						return true;
+					}
+
+					return false;
+				}, this);
+
+				if (!Ext.isEmpty(recordTemplate)) {
+					var templateData = Ext.apply({}, recordTemplate.getData(), recordTemplate.get(CMDBuild.core.constants.Proxy.VARIABLES));
+					var xaVars = Ext.apply({}, templateData, record.getData());
+
+					var templateResolver = new CMDBuild.Management.TemplateResolver({
+						clientForm: this.cmfg('tabEmailGetFormForTemplateResolver'),
+						xaVars: xaVars,
+						serverVars: CMDBuild.controller.management.common.widgets.CMWidgetController.getTemplateResolverServerVars(
+							this.cmfg('tabEmailSelectedEntityGet', CMDBuild.core.constants.Proxy.ENTITY)
+						)
+					});
+
+					templateResolver.resolveTemplates({
+						attributes: Ext.Object.getKeys(xaVars),
+						scope: this,
+						callback: function(values, ctx) {
+							for (var key in values)
+								record.set(key, values[key]);
+
+							if (this.checkCondition(values, templateResolver)) {
+								_msg('Email with subject "' + values[CMDBuild.core.constants.Proxy.SUBJECT] + '" regenerated');
+
+								CMDBuild.controller.management.common.tabs.email.Email.trafficLightSlotBuild(record, regenerationTrafficLightArray);
+
+								this.controllerGrid.cmfg('tabEmailGridRecordEdit', {
+									record: record,
+									regenerationTrafficLightArray: regenerationTrafficLightArray
+								});
+							} else {
+								this.controllerGrid.cmfg('tabEmailGridRecordRemove', record);
+							}
+
+							this.cmfg('tabEmailBindLocalDepsChangeEvent',{
+								record: record,
+								templateResolver: templateResolver,
+								scope: this
+							});
+						}
+					});
+				}
+			}
+		},
+
+		/**
+		 * @param {CMDBuild.model.common.tabs.email.Template} template
+		 * @param {Array} regenerationTrafficLightArray
+		 */
+		regenerateTemplate: function(template, regenerationTrafficLightArray) {
+			if (
+				!Ext.Object.isEmpty(template)
+				&& Ext.isArray(regenerationTrafficLightArray)
+			) {
+				var xaVars = Ext.apply({}, template.getData(), template.get(CMDBuild.core.constants.Proxy.VARIABLES));
+
+				var templateResolver = new CMDBuild.Management.TemplateResolver({
+					clientForm: this.cmfg('tabEmailGetFormForTemplateResolver'),
+					xaVars: xaVars,
+					serverVars: CMDBuild.controller.management.common.widgets.CMWidgetController.getTemplateResolverServerVars(
+						this.cmfg('tabEmailSelectedEntityGet', CMDBuild.core.constants.Proxy.ENTITY)
+					)
+				});
+
+				templateResolver.resolveTemplates({
+					attributes: Ext.Object.getKeys(xaVars),
+					scope: this,
+					callback: function(values, ctx) {
+						var emailObject = null;
+
+						// Find record witch has been created from this template
+						var record = Ext.Array.findBy(this.controllerGrid.cmfg('tabEmailGridDraftEmailsGet'), function(item, i) {
+							if (item.get(CMDBuild.core.constants.Proxy.TEMPLATE) == template.get(CMDBuild.core.constants.Proxy.KEY))
+								return true;
+
+							return false;
+						});
+
+						// Update record data with values
+						if (!Ext.Object.isEmpty(record))
+							values = Ext.Object.merge(record.getData(), values);
+
+						emailObject = Ext.create('CMDBuild.model.common.tabs.email.Email', values);
+						emailObject.set(CMDBuild.core.constants.Proxy.REFERENCE, this.cmfg('tabEmailSelectedEntityGet', CMDBuild.core.constants.Proxy.ID));
+						emailObject.set(CMDBuild.core.constants.Proxy.TEMPLATE, template.get(CMDBuild.core.constants.Proxy.KEY));
+						emailObject.set(CMDBuild.core.constants.Proxy.TEMPORARY, this.cmfg('tabEmailSelectedEntityGet', CMDBuild.core.constants.Proxy.ID) < 0); // Setup temporary parameter
+
+						if (this.checkCondition(values, templateResolver)) {
+							_msg('Template with subject "' + values[CMDBuild.core.constants.Proxy.SUBJECT] + '" regenerated');
+
+							CMDBuild.controller.management.common.tabs.email.Email.trafficLightSlotBuild(emailObject, regenerationTrafficLightArray);
+
+							if (Ext.isEmpty(record)) {
+								this.controllerGrid.cmfg('tabEmailGridRecordAdd', {
+									record: emailObject,
+									regenerationTrafficLightArray: regenerationTrafficLightArray
+								});
+							} else {
+								this.controllerGrid.cmfg('tabEmailGridRecordEdit', {
+									record: emailObject,
+									regenerationTrafficLightArray: regenerationTrafficLightArray
+								});
+							}
+						} else {
+							this.controllerGrid.cmfg('tabEmailGridRecordRemove', record);
+						}
+
+						this.cmfg('tabEmailBindLocalDepsChangeEvent',{
+							record: emailObject,
+							templateResolver: templateResolver,
+							scope: this
+						});
+					}
+				});
+			}
+		},
+
+// TODO: probably unused
+//		/**
+//		 * Reset configuration attributes
+//		 */
+//		reset: function() {
+//			this.tabEmailConfigurationReset();
+//			this.cmfg('tabEmailConfigurationSet', {
+//				propertyName: CMDBuild.core.constants.Proxy.TEMPLATES,
+//				value: []
+//			});
+//		},
+
+		/**
+		 * @param {Object} parameters
+		 * @param {Mixed} parameters.record
+		 * @param {CMDBuild.Management.TemplateResolver} parameters.templateResolver
+		 * @param {Object} parameters.scope
+		 */
+		tabEmailBindLocalDepsChangeEvent: function(parameters) {
+			if (
+				!Ext.Object.isEmpty(parameters)
+				&& !Ext.isEmpty(parameters.record)
+				&& !Ext.isEmpty(parameters.templateResolver)
+			) {
+				parameters.scope = Ext.isEmpty(parameters.scope) ? this : parameters.scope;
+
+				parameters.templateResolver.bindLocalDepsChange(function() {
+					if (
+						!Ext.Object.isEmpty(parameters.record)
+						&& !this.relatedAttributeChanged
+					) {
+						this.relatedAttributeChanged = true;
+
+						if (
+							!parameters.record.get(CMDBuild.core.constants.Proxy.KEEP_SYNCHRONIZATION)
+							&& !parameters.record.get(CMDBuild.core.constants.Proxy.PROMPT_SYNCHRONIZATION)
+						) {
+							CMDBuild.core.Message.warning(null, CMDBuild.Translation.warnings.emailTemplateRelatedAttributeEdited);
+						}
+					}
+				}, parameters.scope);
+			} else {
+				_error('error on tabEmailBindLocalDepsChangeEvent() parameters', this);
+			}
+		},
+
+		// BusyState property functions
+			/**
+			 * @returns {Boolean}
+			 */
+			tabEmailBusyStateGet: function() {
+				return this.busyState;
+			},
+
+			/**
+			 * @param {Boolean} state
+			 */
+			tabEmailBusyStateSet: function(state) {
+				state = Ext.isBoolean(state) ? state : false;
+
+				this.busyState = state;
+			},
+
+		// Configuration property functions
+			/**
+			 * @param {Array or String} attributePath
+			 *
+			 * @returns {Mixed or undefined}
+			 */
+			tabEmailConfigurationGet: function(attributePath) {
+				var parameters = {};
+				parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME] = 'configuration';
+				parameters[CMDBuild.core.constants.Proxy.ATTRIBUTE_PATH] = attributePath;
+
+				return this.propertyManageGet(parameters);
+			},
+
+			tabEmailConfigurationReset: function() {
+				var parameters = {};
+				parameters[CMDBuild.core.constants.Proxy.MODEL_NAME] = 'CMDBuild.model.common.tabs.email.Configuration';
+				parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME] = 'configuration';
+				parameters[CMDBuild.core.constants.Proxy.VALUE] = {};
+
+				this.propertyManageSet(parameters);
+			},
+
+			/**
+			 * @param {Object} parameters
+			 */
+			tabEmailConfigurationSet: function(parameters) {
+				if (!Ext.Object.isEmpty(parameters)) {
+					parameters[CMDBuild.core.constants.Proxy.MODEL_NAME] = 'CMDBuild.model.common.tabs.email.Configuration';
+					parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME] = 'configuration';
+
+					this.propertyManageSet(parameters);
+				}
+			},
+
+		// EditMode property functions
+			/**
+			 * @returns {Boolean}
+			 */
+			tabEmailEditModeGet: function() {
+				return this.editMode;
+			},
+
+			/**
+			 * @param {Boolean} state
+			 */
+			tabEmailEditModeSet: function(state) {
+				state = Ext.isBoolean(state) ? state : false;
+
+				this.editMode = state;
+			},
+
+		/**
+		 * Adapter function waiting for widgetController refactor
+		 */
+		tabEmailGetFormForTemplateResolver: function() {
+			if (!Ext.isEmpty(this.parentDelegate) && Ext.isFunction(this.parentDelegate.getFormForTemplateResolver))
+				return this.parentDelegate.getFormForTemplateResolver();
+		},
+
+		tabEmailGetAllTemplatesData: function() {
 			// Reset local storage arrays
 			this.emailTemplatesObjects = [];
 			this.emailTemplatesIdentifiers = [];
 
 			// Loads configuration templates to local array and push key in emailTemplatesIdentifiers array
-			Ext.Array.forEach(this.configurationTemplates, function(template, index, allItems) {
-				if (!Ext.isEmpty(template) && !Ext.Array.contains(this.emailTemplatesIdentifiers, template.get(CMDBuild.core.proxy.CMProxyConstants.KEY))) {
+			Ext.Array.forEach(this.cmfg('tabEmailConfigurationGet', CMDBuild.core.constants.Proxy.TEMPLATES), function(template, i, allItems) {
+				if (!Ext.isEmpty(template) && !Ext.Array.contains(this.emailTemplatesIdentifiers, template.get(CMDBuild.core.constants.Proxy.KEY))) {
 					this.emailTemplatesObjects.push(template);
-					this.emailTemplatesIdentifiers.push(template.get(CMDBuild.core.proxy.CMProxyConstants.KEY));
+					this.emailTemplatesIdentifiers.push(template.get(CMDBuild.core.constants.Proxy.KEY));
 				}
 			}, this);
 
 			// Load grid's draft templates names to local array
-			Ext.Array.forEach(this.controllerGrid.getDraftEmails(), function(record, index, allItems) {
+			Ext.Array.forEach(this.controllerGrid.cmfg('tabEmailGridDraftEmailsGet'), function(record, i, allItems) {
 				var templateIdentifier = null;
-				var template = record.get(CMDBuild.core.proxy.CMProxyConstants.TEMPLATE);
+				var template = record.get(CMDBuild.core.constants.Proxy.TEMPLATE);
 
 				if (Ext.isObject(template)) {
-					templateIdentifier = template.get(CMDBuild.core.proxy.CMProxyConstants.KEY) || template.get(CMDBuild.core.proxy.CMProxyConstants.NAME);
+					templateIdentifier = template.get(CMDBuild.core.constants.Proxy.KEY) || template.get(CMDBuild.core.constants.Proxy.NAME);
 				} else if (!Ext.isEmpty(template)) {
 					templateIdentifier = template;
 				}
@@ -482,12 +700,13 @@
 					this.emailTemplatesIdentifiers.push(templateIdentifier);
 			}, this);
 
+			var params = {};
+			params[CMDBuild.core.constants.Proxy.TEMPLATES] = Ext.encode(this.emailTemplatesIdentifiers);
+
 			CMDBuild.core.proxy.email.Templates.getAll({
-				params: {
-					templates: Ext.encode(this.emailTemplatesIdentifiers)
-				},
+				params: params,
+				loadMask: this.cmfg('tabEmailGlobalLoadMaskGet'),
 				scope: this,
-				loadMask: this.globalLoadMask,
 				failure: function(response, options, decodedResponse) {
 					CMDBuild.core.Message.error(
 						CMDBuild.Translation.common.failure,
@@ -509,57 +728,22 @@
 			});
 		},
 
-		/**
-		 * @return {Boolean}
-		 */
-		getGlobalLoadMask: function() {
-			return this.globalLoadMask;
-		},
+		// GlobalLoadMask property functions
+			/**
+			 * @returns {Boolean}
+			 */
+			tabEmailGlobalLoadMaskGet: function() {
+				return this.globalLoadMask;
+			},
 
-		/**
-		 * @return {CMDBuild.controller.management.common.tabs.email.Email}
-		 */
-		getMainController: function() {
-			return this;
-		},
+			/**
+			 * @param {Boolean} state
+			 */
+			tabEmailGlobalLoadMaskSet: function(state) {
+				state = Ext.isBoolean(state) ? state : true;
 
-		onAddCardButtonClick: function() {
-			this.editModeSet(true);
-		},
-
-		/**
-		 * Reload store every time panel is showed
-		 */
-		onEmailPanelShow: function() {
-			this.view.setDisabled(
-				Ext.isEmpty(this.selectedEntity.get(CMDBuild.core.proxy.CMProxyConstants.ENTITY))
-				&& !this.editModeGet() // Evaluate also editMode to enable onAddCardButtonClick
-			);
-
-			if (this.view.isVisible()) {
-				this.cmfg('setUiState');
-
-				// Regenerate all widgets only if editMode otherwise simple store load
-				this.regenerateAllEmailsSet(this.editModeGet());
-				this.cmfg('storeLoad');
-			}
-		},
-
-		onGlobalRegenerationButtonClick: function() {
-			this.regenerateAllEmailsSet(true);
-			this.forceRegenerationSet(true);
-			this.cmfg('storeLoad');
-		},
-
-		/**
-		 * Base implementation to force email regeneration and editMode setup
-		 */
-		onModifyCardClick: function() {
-			this.editModeSet(true);
-
-			if (!this.grid.getStore().isLoading())
-				this.onGlobalRegenerationButtonClick();
-		},
+				this.globalLoadMask = state;
+			},
 
 		// RegenerateAllEmails property functions
 			/**
@@ -571,7 +755,7 @@
 			regenerateAllEmails: function() {
 				var isRegenerationStarted = false; // Marks that regeneration process is started
 
-				if (this.regenerateAllEmailsGet()) {
+				if (this.tabEmailRegenerateAllEmailsGet()) {
 					var regenerationTrafficLightArray = [];
 
 					this.controllerConfirmRegenerationWindow.reset();
@@ -581,18 +765,18 @@
 						var emailTemplatesToRegenerate = this.checkTemplatesToRegenerate();
 
 						// Build records to regenerate array
-						Ext.Array.forEach(this.controllerGrid.getDraftEmails(), function(item, i, allItems) {
-							var recordTemplate = item.get(CMDBuild.core.proxy.CMProxyConstants.TEMPLATE);
+						Ext.Array.forEach(this.controllerGrid.cmfg('tabEmailGridDraftEmailsGet'), function(item, i, allItems) {
+							var recordTemplate = item.get(CMDBuild.core.constants.Proxy.TEMPLATE);
 
 							if (
-								this.controllerGrid.isRegenerable(item)
+								this.controllerGrid.cmfg('tabEmailGridRecordIsRegenerable', item)
 								&& (
 									Ext.Array.contains(emailTemplatesToRegenerate, recordTemplate)
 									|| this.forceRegenerationGet()
 								)
-								&& item.get(CMDBuild.core.proxy.CMProxyConstants.KEEP_SYNCHRONIZATION)
+								&& item.get(CMDBuild.core.constants.Proxy.KEEP_SYNCHRONIZATION)
 							) {
-								if (item.get(CMDBuild.core.proxy.CMProxyConstants.PROMPT_SYNCHRONIZATION) && !this.forceRegenerationGet()) { // PromptSynch implementation
+								if (item.get(CMDBuild.core.constants.Proxy.PROMPT_SYNCHRONIZATION) && !this.forceRegenerationGet()) { // PromptSynch implementation
 									this.controllerConfirmRegenerationWindow.addRecordToArray(item);
 								} else {
 									isRegenerationStarted = true;
@@ -605,8 +789,8 @@
 						}, this);
 
 						// Build template to regenerate array
-						Ext.Array.forEach(this.configurationTemplates, function(item, i, allItems) {
-							var templateIdentifier = item.get(CMDBuild.core.proxy.CMProxyConstants.KEY);
+						Ext.Array.forEach(this.cmfg('tabEmailConfigurationGet', CMDBuild.core.constants.Proxy.TEMPLATES), function(item, i, allItems) {
+							var templateIdentifier = item.get(CMDBuild.core.constants.Proxy.KEY);
 
 							if (
 								!Ext.isEmpty(templateIdentifier)
@@ -616,7 +800,7 @@
 								)
 								&& !Ext.Array.contains(templatesCheckedForRegenerationIdentifiers, templateIdentifier) // Avoid to generate already regenerated templates
 							) {
-								if (item.get(CMDBuild.core.proxy.CMProxyConstants.PROMPT_SYNCHRONIZATION) && !this.forceRegenerationGet()) { // PromptSynch implementation
+								if (item.get(CMDBuild.core.constants.Proxy.PROMPT_SYNCHRONIZATION) && !this.forceRegenerationGet()) { // PromptSynch implementation
 									this.controllerConfirmRegenerationWindow.addTemplateToArray(item);
 								} else {
 									isRegenerationStarted = true;
@@ -634,95 +818,42 @@
 						this.forceRegenerationSet(); // Reset force regeneration flag
 					}
 
-					this.regenerateAllEmailsSet(); // Reset regenerate all emails flag
+					this.cmfg('tabEmailRegenerateAllEmailsSet', false); // Reset regenerate all emails flag
 				}
 
 				// Set all email as outgoing on save card
-				if (this.sendAllOnSaveGet()) {
-					this.sendAllOnSaveSet();
+				if (this.tabEmailSendAllOnSaveGet()) {
+					this.cmfg('tabEmailSendAllOnSaveSet');
 
-					this.cmfg('sendAll');
-				} else if (!isRegenerationStarted && Ext.isFunction(this.regenerationEndPointCallback)) { // Executed if no regeneration was performed
-					Ext.callback(this.regenerationEndPointCallback, this);
+					this.controllerGrid.cmfg('tabEmailGridSendAll');
+				} else if (
+					!isRegenerationStarted
+					&& Ext.isFunction(this.tabEmailRegenerationEndPointCallbackGet(CMDBuild.core.constants.Proxy.FUNCTION))
+				) { // Executed if no regeneration was performed
+					Ext.callback(
+						this.tabEmailRegenerationEndPointCallbackGet(CMDBuild.core.constants.Proxy.FUNCTION),
+						this.tabEmailRegenerationEndPointCallbackGet(CMDBuild.core.constants.Proxy.SCOPE)
+					);
 				}
 
-				this.busyStateSet(); // Reset widget busy state to false
+				this.cmfg('tabEmailBusyStateSet', false); // Reset widget busy state to false
 			},
 
 			/**
-			 * @return {Boolean}
+			 * @returns {Boolean}
 			 */
-			regenerateAllEmailsGet: function() {
+			tabEmailRegenerateAllEmailsGet: function() {
 				return this.flagRegenerateAllEmails;
 			},
 
 			/**
-			 * @param {Boolean} mode
+			 * @param {Boolean} state
 			 */
-			regenerateAllEmailsSet: function(mode) {
-				this.flagRegenerateAllEmails = Ext.isBoolean(mode) ? mode : false;
+			tabEmailRegenerateAllEmailsSet: function(state) {
+				state = Ext.isBoolean(state) ? state : false;
+
+				this.flagRegenerateAllEmails = state;
 			},
-
-		/**
-		 * @param {Mixed} record
-		 * @param {Array} regenerationTrafficLightArray
-		 */
-		regenerateEmail: function(record, regenerationTrafficLightArray) {
-			if (
-				!Ext.Object.isEmpty(record)
-				&& Ext.isArray(regenerationTrafficLightArray)
-				&& !Ext.isEmpty(record.get(CMDBuild.core.proxy.CMProxyConstants.TEMPLATE))
-				&& record.get(CMDBuild.core.proxy.CMProxyConstants.KEEP_SYNCHRONIZATION)
-			) {
-				var me = this;
-
-				// Find record template in emailTemplatesObjects
-				var recordTemplate = record.get(CMDBuild.core.proxy.CMProxyConstants.TEMPLATE);
-				recordTemplate = Ext.Array.findBy(this.emailTemplatesObjects, function(item, index) {
-					if (
-						recordTemplate == item.get(CMDBuild.core.proxy.CMProxyConstants.KEY)
-						|| recordTemplate == item.get(CMDBuild.core.proxy.CMProxyConstants.NAME)
-					) {
-						return true;
-					}
-
-					return false;
-				}, this);
-
-				if (!Ext.isEmpty(recordTemplate)) {
-					var templateData = Ext.apply({}, recordTemplate.getData(), recordTemplate.get(CMDBuild.core.proxy.CMProxyConstants.VARIABLES));
-					var xaVars = Ext.apply({}, templateData, record.getData());
-
-					var templateResolver = new CMDBuild.Management.TemplateResolver({
-						clientForm: this.parentDelegate.getFormForTemplateResolver(),
-						xaVars: xaVars,
-						serverVars: CMDBuild.controller.management.common.widgets.CMWidgetController.getTemplateResolverServerVars(
-							this.selectedEntity.get(CMDBuild.core.proxy.CMProxyConstants.ENTITY)
-						)
-					});
-
-					templateResolver.resolveTemplates({
-						attributes: Ext.Object.getKeys(xaVars),
-						callback: function(values, ctx) {
-							for (var key in values)
-								record.set(key, values[key]);
-
-							if (me.checkCondition(values, templateResolver)) {
-								_msg('Email with subject "' + values[CMDBuild.core.proxy.CMProxyConstants.SUBJECT] + '" regenerated');
-
-								CMDBuild.controller.management.common.tabs.email.Email.trafficLightSlotBuild(record, regenerationTrafficLightArray);
-
-								me.controllerGrid.editRecord(record, regenerationTrafficLightArray);
-							} else {
-								me.controllerGrid.removeRecord(record);
-							}
-
-							me.bindLocalDepsChangeEvent(record, templateResolver, me);
-						}
-					});
-				}
-			}
-		},
 
 		/**
 		 * Launch regeneration only of selected grid records
@@ -732,15 +863,15 @@
 		 *
 		 * @param {Array} records
 		 */
-		regenerateSelectedEmails: function(records) {
+		tabEmailRegenerateSelectedEmails: function(records) {
 			if (!Ext.isEmpty(records)) {
 				var regenerationTrafficLightArray = [];
 
 				Ext.Array.forEach(records, function(item, i, allItems) {
-					var recordTemplate = item.get(CMDBuild.core.proxy.CMProxyConstants.TEMPLATE);
+					var recordTemplate = item.get(CMDBuild.core.constants.Proxy.TEMPLATE);
 
 					if (!Ext.isEmpty(recordTemplate)) {
-						if (Ext.isEmpty(item.get(CMDBuild.core.proxy.CMProxyConstants.ID))) { // If there isn't an id the record is a new email generated from template
+						if (Ext.isEmpty(item.get(CMDBuild.core.constants.Proxy.ID))) { // If there isn't an id the record is a new email generated from template
 							this.regenerateTemplate(item, regenerationTrafficLightArray);
 						} else {
 							this.regenerateEmail(item, regenerationTrafficLightArray);
@@ -748,176 +879,174 @@
 					}
 				}, this);
 
-				this.relatedAttributeChanged = false; // Reset attribute changed flag
-			}
-		},
-
-		/**
-		 * @param {CMDBuild.model.common.tabs.email.Template} template
-		 * @param {Array} regenerationTrafficLightArray
-		 */
-		regenerateTemplate: function(template, regenerationTrafficLightArray) {
-			if (
-				!Ext.Object.isEmpty(template)
-				&& Ext.isArray(regenerationTrafficLightArray)
-			) {
-				var me = this;
-				var xaVars = Ext.apply({}, template.getData(), template.get(CMDBuild.core.proxy.CMProxyConstants.VARIABLES));
-
-				var templateResolver = new CMDBuild.Management.TemplateResolver({
-					clientForm: this.parentDelegate.getFormForTemplateResolver(),
-					xaVars: xaVars,
-					serverVars: CMDBuild.controller.management.common.widgets.CMWidgetController.getTemplateResolverServerVars(
-						this.selectedEntity.get(CMDBuild.core.proxy.CMProxyConstants.ENTITY)
-					)
-				});
-
-				templateResolver.resolveTemplates({
-					attributes: Ext.Object.getKeys(xaVars),
-					callback: function(values, ctx) {
-						var emailObject = null;
-
-						// Find record witch has been created from this template
-						var record = Ext.Array.findBy(me.controllerGrid.getDraftEmails(), function(item, index) {
-							if (item.get(CMDBuild.core.proxy.CMProxyConstants.TEMPLATE) == template.get(CMDBuild.core.proxy.CMProxyConstants.KEY))
-								return true;
-
-							return false;
-						});
-
-						// Update record data with values
-						if (!Ext.Object.isEmpty(record))
-							values = Ext.Object.merge(record.getData(), values);
-
-						emailObject = Ext.create('CMDBuild.model.common.tabs.email.Email', values);
-						emailObject.set(CMDBuild.core.proxy.CMProxyConstants.REFERENCE, me.cmfg('selectedEntityIdGet'));
-						emailObject.set(CMDBuild.core.proxy.CMProxyConstants.TEMPLATE, template.get(CMDBuild.core.proxy.CMProxyConstants.KEY));
-						emailObject.set(CMDBuild.core.proxy.CMProxyConstants.TEMPORARY, me.cmfg('selectedEntityIdGet') < 0); // Setup temporary parameter
-
-						if (me.checkCondition(values, templateResolver)) {
-							_msg('Template with subject "' + values[CMDBuild.core.proxy.CMProxyConstants.SUBJECT] + '" regenerated');
-
-							CMDBuild.controller.management.common.tabs.email.Email.trafficLightSlotBuild(emailObject, regenerationTrafficLightArray);
-
-							if (Ext.isEmpty(record)) {
-								me.controllerGrid.addRecord(emailObject, regenerationTrafficLightArray);
-							} else {
-								me.controllerGrid.editRecord(emailObject, regenerationTrafficLightArray);
-							}
-						} else {
-							me.controllerGrid.removeRecord(record);
-						}
-
-						me.bindLocalDepsChangeEvent(emailObject, templateResolver, me);
-					}
-				});
+				this.relatedAttributeChanged = false; // Reset attribute changed flag // TODO
 			}
 		},
 
 		// RegenerationEndPointCallback property functions
 			/**
-			 * @return {Function} or null
+			 * @param {Array or String} attributePath
+			 *
+			 * @returns {Mixed or undefined}
 			 */
-			regenerationEndPointCallbackGet: function() {
-				return this.regenerationEndPointCallback;
+			tabEmailRegenerationEndPointCallbackGet: function(attributePath) {
+				var parameters = {};
+				parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME] = 'regenerationEndPointCallback';
+				parameters[CMDBuild.core.constants.Proxy.ATTRIBUTE_PATH] = attributePath;
+
+				return this.propertyManageGet(parameters);
 			},
 
 			/**
-			 * @param {Function} callbackFunction
+			 * @param {Object} parameters
 			 */
-			regenerationEndPointCallbackSet: function(callbackFunction) {
-				this.regenerationEndPointCallback = Ext.isFunction(callbackFunction) ? callbackFunction : null;
-			},
+			tabEmailRegenerationEndPointCallbackSet: function(parameters) {
+				if (!Ext.Object.isEmpty(parameters)) {
+					parameters[CMDBuild.core.constants.Proxy.MODEL_NAME] = 'CMDBuild.model.common.tabs.email.RegenerationEndPointCallback';
+					parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME] = 'regenerationEndPointCallback';
 
-		/**
-		 * Reset configuration attributes
-		 */
-		reset: function() {
-			this.configurationSet();
-			this.configurationTemplatesSet();
-		},
+					this.propertyManageSet(parameters);
+				}
+			},
 
 		// SelectedEntity property functions
 			/**
-			 * @return {Number}
+			 * @param {Array or String} attributePath
+			 *
+			 * @returns {Mixed or undefined}
 			 */
-			selectedEntityIdGet: function() {
-				if (Ext.Object.isEmpty(this.selectedEntity))
-					return null;
+			tabEmailSelectedEntityGet: function(attributePath) {
+				var parameters = {};
+				parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME] = 'selectedEntity';
+				parameters[CMDBuild.core.constants.Proxy.ATTRIBUTE_PATH] = attributePath;
 
-				return this.selectedEntity.get(CMDBuild.core.proxy.CMProxyConstants.ID);
+				return this.propertyManageGet(parameters);
 			},
 
 			/**
-			 * @return {CMDBuild.model.common.tabs.email.SelectedEntity}
+			 * Initialize selectedEntity object
+			 *
+			 * @param {Object} parameters
+			 * @param {Object} parameters.scope
+			 * @param {Function} parameters.callbackFunction
 			 */
-			selectedEntityGet: function() {
-				return this.selectedEntity;
+			tabEmailSelectedEntityInit: function(parameters) {
+				parameters = Ext.Object.isEmpty(parameters) ? {} : parameters;
+				parameters.callbackFunction = Ext.isFunction(parameters.callbackFunction) ? parameters.callbackFunction : Ext.emptyFn;
+				parameters.scope = Ext.isEmpty(parameters.scope) ? parameters.scope : this;
+
+				var params = {};
+				params[CMDBuild.core.constants.Proxy.NOT_POSITIVES] = true;
+
+				CMDBuild.core.proxy.Utils.generateId({
+					params: params,
+					scope: this,
+					success: function(response, options, decodedResponse) {
+						parameters[CMDBuild.core.constants.Proxy.MODEL_NAME] = 'CMDBuild.model.common.tabs.email.SelectedEntity';
+						parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME] = 'selectedEntity';
+						parameters[CMDBuild.core.constants.Proxy.VALUE] = { id: decodedResponse.response };
+
+						this.propertyManageSet(parameters);
+					},
+					callback: parameters.callbackFunction
+				});
+			},
+
+			/**
+			 * @param {Array or String} attributePath
+			 *
+			 * @returns {Boolean}
+			 */
+			tabEmailSelectedEntityIsEmpty: function(attributePath) {
+				var parameters = {};
+				parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME] = 'selectedEntity';
+				parameters[CMDBuild.core.constants.Proxy.ATTRIBUTE_PATH] = attributePath;
+
+				return this.propertyManageIsEmpty(parameters);
 			},
 
 			/**
 			 * Creates SelectedEntity object and bind relative original object
 			 *
-			 * @param {Mixed} selectedEntity
-			 * @param {Function} callbackFunction
+			 * @param {Object} parameters
+			 * @param {Mixed} parameters.selectedEntity
+			 * @param {Object} parameters.scope
+			 * @param {Function} parameters.callbackFunction
 			 */
-			selectedEntitySet: function(selectedEntity, callbackFunction) {
-				if (!Ext.isFunction(callbackFunction))
-					callbackFunction = undefined;
+			tabEmailSelectedEntitySet: function(parameters) {
+				if (!Ext.Object.isEmpty(parameters)) {
+					parameters.callbackFunction = Ext.isFunction(parameters.callbackFunction) ? parameters.callbackFunction : Ext.emptyFn;
+					parameters.scope = Ext.isEmpty(parameters.scope) ? parameters.scope : this;
 
-				if (Ext.isEmpty(selectedEntity)) {
-					var params = {};
-					params[CMDBuild.core.proxy.CMProxyConstants.NOT_POSITIVES] = true;
+					if (Ext.isEmpty(parameters.selectedEntity)) {
+						var params = {};
+						params[CMDBuild.core.constants.Proxy.NOT_POSITIVES] = true;
 
-					CMDBuild.core.proxy.Utils.generateId({
-						params: params,
-						scope: this,
-						success: function(response, options, decodedResponse) {
-							this.selectedEntity = Ext.create('CMDBuild.model.common.tabs.email.SelectedEntity', {
-								id: decodedResponse.response
-							});
-						},
-						callback: callbackFunction || Ext.emptyFn
-					});
-				} else if (Ext.isEmpty(selectedEntity.get(CMDBuild.core.proxy.CMProxyConstants.ID))) {
-					var params = {};
-					params[CMDBuild.core.proxy.CMProxyConstants.NOT_POSITIVES] = true;
+						CMDBuild.core.proxy.Utils.generateId({
+							params: params,
+							scope: this,
+							success: function(response, options, decodedResponse) {
+								var serviceParams = {};
+								serviceParams[CMDBuild.core.constants.Proxy.MODEL_NAME] = 'CMDBuild.model.common.tabs.email.SelectedEntity';
+								serviceParams[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME] = 'selectedEntity';
+								serviceParams[CMDBuild.core.constants.Proxy.VALUE] = { id: decodedResponse.response };
 
-					CMDBuild.core.proxy.Utils.generateId({
-						params: params,
-						scope: this,
-						success: function(response, options, decodedResponse) {
-							this.selectedEntity = Ext.create('CMDBuild.model.common.tabs.email.SelectedEntity', {
-								id: decodedResponse.response,
-								entity: selectedEntity
-							});
-						},
-						callback: callbackFunction || Ext.emptyFn
-					});
-				} else {
-					this.selectedEntity = Ext.create('CMDBuild.model.common.tabs.email.SelectedEntity', {
-						id: selectedEntity.get(CMDBuild.core.proxy.CMProxyConstants.ID),
-						entity: selectedEntity
-					});
+								this.propertyManageSet(serviceParams);
+							},
+							callback: parameters.callbackFunction
+						});
+					} else if (Ext.isEmpty(parameters.selectedEntity.get(CMDBuild.core.constants.Proxy.ID))) {
+						var params = {};
+						params[CMDBuild.core.constants.Proxy.NOT_POSITIVES] = true;
 
-					if (Ext.isFunction(callbackFunction))
-						callbackFunction();
+						CMDBuild.core.proxy.Utils.generateId({
+							params: params,
+							scope: this,
+							success: function(response, options, decodedResponse) {
+								var serviceParams = {};
+								serviceParams[CMDBuild.core.constants.Proxy.MODEL_NAME] = 'CMDBuild.model.common.tabs.email.SelectedEntity';
+								serviceParams[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME] = 'selectedEntity';
+								serviceParams[CMDBuild.core.constants.Proxy.VALUE] = {
+									id: decodedResponse.response,
+									entity: parameters.selectedEntity
+								};
+
+								this.propertyManageSet(serviceParams);
+							},
+							callback: parameters.callbackFunction
+						});
+					} else {
+						var serviceParams = {};
+						serviceParams[CMDBuild.core.constants.Proxy.MODEL_NAME] = 'CMDBuild.model.common.tabs.email.SelectedEntity';
+						serviceParams[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME] = 'selectedEntity';
+						serviceParams[CMDBuild.core.constants.Proxy.VALUE] = {
+							id: parameters.selectedEntity.get(CMDBuild.core.constants.Proxy.ID),
+							entity: parameters.selectedEntity
+						};
+
+						this.propertyManageSet(serviceParams);
+
+						if (Ext.isFunction(parameters.callbackFunction))
+							Ext.callback(parameters.callbackFunction, parameters.scope);
+					}
 				}
 			},
 
 		// SendAllOnSave property functions
 			/**
-			 * @return {Boolean}
+			 * @returns {Boolean}
 			 */
-			sendAllOnSaveGet: function() {
-				return this.flagSendAllOnSave;
+			tabEmailSendAllOnSaveGet: function() {
+				return this.sendAllOnSave;
 			},
 
 			/**
-			 * @param {Boolean} mode
+			 * @param {Boolean} state
 			 */
-			sendAllOnSaveSet: function(mode) {
-				this.flagSendAllOnSave = Ext.isBoolean(mode) ? mode : false;
+			tabEmailSendAllOnSaveSet: function(state) {
+				state = Ext.isBoolean(state) ? state : false;
+
+				this.sendAllOnSave = state;
 			}
 	});
 

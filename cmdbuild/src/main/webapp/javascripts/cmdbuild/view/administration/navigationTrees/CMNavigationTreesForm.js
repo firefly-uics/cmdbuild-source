@@ -124,7 +124,6 @@
 		},
 
 		onTreeSelected: function(tree) {
-			this.treeDescription.translationsKeyName = tree.type;
 			if (tree) {
                 this.reset();
 				this.loadForm(tree);
@@ -164,7 +163,6 @@
 			this.reset();
 			this.enableModify(all = true);
 			this.setDefaultValues();
-			_CMCache.initAddingTranslations();
 		},
 
 		enableModify: function(all) {

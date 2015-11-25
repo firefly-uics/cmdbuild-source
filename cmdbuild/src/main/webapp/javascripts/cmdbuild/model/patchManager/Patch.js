@@ -1,14 +1,14 @@
 (function() {
 
-	Ext.require('CMDBuild.core.proxy.CMProxyConstants');
+	Ext.require('CMDBuild.core.constants.Proxy');
 
 	Ext.define('CMDBuild.model.patchManager.Patch', {
 		extend: 'Ext.data.Model',
 
 		fields: [
-			{ name: CMDBuild.core.proxy.CMProxyConstants.CATEGORY,  type: 'string' },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,  type: 'string' },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.NAME,  type: 'string' }
+			{ name: CMDBuild.core.constants.Proxy.CATEGORY,  type: 'string' },
+			{ name: CMDBuild.core.constants.Proxy.DESCRIPTION,  type: 'string' },
+			{ name: CMDBuild.core.constants.Proxy.NAME,  type: 'string' }
 		]
 	});
 

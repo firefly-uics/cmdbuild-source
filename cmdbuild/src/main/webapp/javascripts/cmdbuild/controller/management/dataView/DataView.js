@@ -3,7 +3,7 @@
 	Ext.define('CMDBuild.controller.management.dataView.DataView', {
 		extend: 'CMDBuild.controller.common.AbstractBasePanelController',
 
-		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+		requires: ['CMDBuild.core.constants.Proxy'],
 
 		/**
 		 * @cfg {Array}
@@ -43,13 +43,13 @@
 		onViewOnFront: function(node) {
 			if (!Ext.isEmpty(node)) {
 				var selectedDataView = node.getData();
-				selectedDataView[CMDBuild.core.proxy.CMProxyConstants.OUTPUT] = _CMCache.getDataSourceOutput(node.get(CMDBuild.core.proxy.CMProxyConstants.SOURCE_FUNCTION));
+				selectedDataView[CMDBuild.core.constants.Proxy.OUTPUT] = _CMCache.getDataSourceOutput(node.get(CMDBuild.core.constants.Proxy.SOURCE_FUNCTION));
 
 				this.dataViewSelectedSet({ value: selectedDataView });
 
 				this.view.removeAll(true);
 
-				switch(this.dataViewSelectedGet(CMDBuild.core.proxy.CMProxyConstants.SECTION_HIERARCHY)[0]) {
+				switch(this.dataViewSelectedGet(CMDBuild.core.constants.Proxy.SECTION_HIERARCHY)[0]) {
 					case 'sql':
 					default: {
 						this.sectionController = Ext.create('CMDBuild.controller.management.dataView.Sql', { parentDelegate: this });
@@ -58,7 +58,7 @@
 
 				this.view.add(this.sectionController.getView());
 
-				this.setViewTitle(this.dataViewSelectedGet(CMDBuild.core.proxy.CMProxyConstants.TEXT));
+				this.setViewTitle(this.dataViewSelectedGet(CMDBuild.core.constants.Proxy.TEXT));
 
 				this.callParent(arguments);
 			}

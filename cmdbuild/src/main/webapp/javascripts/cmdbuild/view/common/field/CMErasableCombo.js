@@ -1,5 +1,8 @@
 (function() {
 
+	/**
+	 * @deprecated (CMDBuild.view.common.field.comboBox.Erasable)
+	 */
 	Ext.define('CMDBuild.view.common.field.CMErasableCombo', {
 		alternateClassName: 'CMDBuild.field.ErasableCombo', // Legacy class name
 		extend: 'CMDBuild.field.CMBaseCombo',

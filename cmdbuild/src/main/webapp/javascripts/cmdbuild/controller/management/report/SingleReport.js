@@ -5,8 +5,8 @@
 
 		requires: [
 			'CMDBuild.core.Message',
-			'CMDBuild.core.proxy.CMProxyConstants',
-			'CMDBuild.core.proxy.CMProxyUrlIndex',
+			'CMDBuild.core.constants.Proxy',
+			'CMDBuild.core.proxy.Index',
 			'CMDBuild.core.proxy.report.Report'
 		],
 
@@ -43,10 +43,10 @@
 		 * @cfg {Array}
 		 */
 		managedReportTypes: [
-			CMDBuild.core.proxy.CMProxyConstants.CSV,
-			CMDBuild.core.proxy.CMProxyConstants.ODT,
-			CMDBuild.core.proxy.CMProxyConstants.PDF,
-			CMDBuild.core.proxy.CMProxyConstants.RTF
+			CMDBuild.core.constants.Proxy.CSV,
+			CMDBuild.core.constants.Proxy.ODT,
+			CMDBuild.core.constants.Proxy.PDF,
+			CMDBuild.core.constants.Proxy.RTF
 		],
 
 		/**
@@ -63,7 +63,7 @@
 			if (
 				!Ext.isEmpty(this.currentReportParametersGet({
 					callIdentifier: 'create',
-					property: CMDBuild.core.proxy.CMProxyConstants.ID
+					property: CMDBuild.core.constants.Proxy.ID
 				}))
 			) {
 				CMDBuild.core.proxy.report.Report.create({
@@ -156,7 +156,7 @@
 					switch(callIdentifier) {
 						case 'create': {
 							this.currentReportParameters['create'] = Ext.applyIf(params, { // Apply default values
-								extension: CMDBuild.core.proxy.CMProxyConstants.PDF,
+								extension: CMDBuild.core.constants.Proxy.PDF,
 								type: 'CUSTOM'
 							});
 						} break;
@@ -192,7 +192,7 @@
 						extension: type,
 						id: this.currentReportParametersGet({
 							callIdentifier: 'create',
-							property: CMDBuild.core.proxy.CMProxyConstants.ID
+							property: CMDBuild.core.constants.Proxy.ID
 						})
 					}
 				});
@@ -208,23 +208,23 @@
 		},
 
 		/**
-		 * @param {CMDBuild.view.common.CMAccordionStoreModel} node
+		 * @param {CMDBuild.model.common.accordion.Generic} node
 		 */
 		onViewOnFront: function(node) {
 			this.currentReportParametersSet(); // Reset class property
 
 			if (
 				!Ext.Object.isEmpty(node)
-				&& !Ext.isEmpty(node.get(CMDBuild.core.proxy.CMProxyConstants.ID))
-				&& node.get(CMDBuild.core.proxy.CMProxyConstants.ID) != CMDBuild.core.proxy.CMProxyConstants.CUSTOM
+				&& !Ext.isEmpty(node.get(CMDBuild.core.constants.Proxy.ID))
+				&& node.get(CMDBuild.core.constants.Proxy.ID) != CMDBuild.core.constants.Proxy.CUSTOM
 			) {
-				this.setViewTitle(node.get(CMDBuild.core.proxy.CMProxyConstants.TEXT));
+				this.setViewTitle(node.get(CMDBuild.core.constants.Proxy.TEXT));
 
 				this.currentReportParametersSet({
 					callIdentifier: 'create',
 					params: {
-						extension: node.get(CMDBuild.core.proxy.CMProxyConstants.TYPE).replace(/report/i, ''), // Removes 'report' string from type property in node object
-						id: node.get(CMDBuild.core.proxy.CMProxyConstants.ID)
+						extension: node.get(CMDBuild.core.constants.Proxy.SECTION_HIERARCHY)[0],
+						id: node.get(CMDBuild.core.constants.Proxy.ENTITY_ID)
 					}
 				});
 
@@ -243,12 +243,12 @@
 			forceDownload = forceDownload || false;
 
 			var params = {};
-			params[CMDBuild.core.proxy.CMProxyConstants.FORCE_DOWNLOAD_PARAM_KEY] = true;
+			params[CMDBuild.core.constants.Proxy.FORCE_DOWNLOAD_PARAM_KEY] = true;
 
 			if (forceDownload) { // Force download mode
 				var form = Ext.create('Ext.form.Panel', {
 					standardSubmit: true,
-					url: CMDBuild.core.proxy.CMProxyUrlIndex.reports.printReportFactory + '?donotdelete=true' // Add parameter to avoid report delete
+					url: CMDBuild.core.proxy.Index.report.printReportFactory + '?donotdelete=true' // Add parameter to avoid report delete
 				});
 
 				form.submit({
@@ -267,7 +267,7 @@
 
 					autoEl: {
 						tag: 'iframe',
-						src: CMDBuild.core.proxy.CMProxyUrlIndex.reports.printReportFactory + '?donotdelete=true' // Add parameter to avoid report delete
+						src: CMDBuild.core.proxy.Index.report.printReportFactory + '?donotdelete=true' // Add parameter to avoid report delete
 					}
 				});
 			}

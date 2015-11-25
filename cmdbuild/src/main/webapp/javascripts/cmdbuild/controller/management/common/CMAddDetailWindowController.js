@@ -29,7 +29,7 @@
 				this.saveRelationAction(form, res);
 			}
 			this.view.destroy();
-			CMDBuild.LoadMask.get().hide();
+			CMDBuild.core.LoadMask.hide();
 		},
 
 		addRelation: function(form, res) {

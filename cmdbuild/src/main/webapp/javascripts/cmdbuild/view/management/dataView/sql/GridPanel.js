@@ -3,10 +3,7 @@
 	Ext.define('CMDBuild.view.management.dataView.sql.GridPanel', {
 		extend: 'Ext.grid.Panel',
 
-		requires: [
-			'CMDBuild.core.proxy.CMProxyConstants',
-			'CMDBuild.core.proxy.dataView.Sql'
-		],
+		requires: ['CMDBuild.core.constants.Proxy'],
 
 		/**
 		 * @cfg {CMDBuild.controller.management.dataView.Sql}
@@ -24,10 +21,10 @@
 				dockedItems: [
 					Ext.create('Ext.toolbar.Toolbar', {
 						dock: 'top',
-						itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_TOP,
+						itemId: CMDBuild.core.constants.Proxy.TOOLBAR_TOP,
 
 						items: [
-							Ext.create('CMDBuild.core.buttons.Add', {
+							Ext.create('CMDBuild.core.buttons.iconized.add.Add', {
 								text: CMDBuild.Translation.addCard,
 								disabled: true
 							})
@@ -45,8 +42,8 @@
 							Ext.create('CMDBuild.core.buttons.iconized.Print', {
 								delegate: this.delegate,
 								formatList: [
-									CMDBuild.core.proxy.CMProxyConstants.PDF,
-									CMDBuild.core.proxy.CMProxyConstants.CSV
+									CMDBuild.core.constants.Proxy.PDF,
+									CMDBuild.core.constants.Proxy.CSV
 								]
 							})
 						]

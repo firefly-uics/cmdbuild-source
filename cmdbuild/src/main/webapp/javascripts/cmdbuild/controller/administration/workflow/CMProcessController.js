@@ -21,6 +21,8 @@
 			var processId, process;
 
 			if (selection) {
+				selection.data['id'] = selection.data[CMDBuild.core.constants.Proxy.ENTITY_ID]; // New accordion manage
+
 				processId = selection.data.id;
 
 				if (processId)
@@ -44,7 +46,7 @@
 			this.view.taskManagerPanel.setDisabled(true);
 			this.view.onAddClassButtonClick();
 
-			_CMMainViewportController.deselectAccordionByName('process');
+			_CMMainViewportController.deselectAccordionByName('workflow');
 		}
 	});
 

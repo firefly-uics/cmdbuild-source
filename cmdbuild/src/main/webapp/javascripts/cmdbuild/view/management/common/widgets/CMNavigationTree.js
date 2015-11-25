@@ -9,9 +9,6 @@
 	Ext.define("CMDBuild.view.management.common.widgets.CMNavigationTree", {
 		extend: "Ext.panel.Panel",
 		autoScroll: true,
-		statics: {
-			WIDGET_NAME: ".NavigationTree"
-		},
 
 		initComponent: function() {
 			this.WIDGET_NAME = this.self.WIDGET_NAME;

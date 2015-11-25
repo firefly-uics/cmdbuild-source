@@ -5,6 +5,7 @@
 		singleton: true,
 
 		config: {
+			customizationsPath: 'upload/custompages/',
 			version: '1.0' // GuiFramework version (used to build folder name)
 		},
 
