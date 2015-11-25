@@ -70,7 +70,7 @@
 		buildFields: function() {
 			var itemsArray = [];
 
-			if (!this.cmfg('widgetCustomFormConfigurationIsAttributeEmpty',  CMDBuild.core.constants.Proxy.MODEL)) {
+			if (!this.cmfg('widgetCustomFormConfigurationIsEmpty',  CMDBuild.core.constants.Proxy.MODEL)) {
 				var fieldManager = Ext.create('CMDBuild.core.fieldManager.FieldManager', { parentDelegate: this });
 
 				Ext.Array.forEach(this.cmfg('widgetCustomFormConfigurationGet', CMDBuild.core.constants.Proxy.MODEL), function(attribute, i, allAttributes) {
@@ -145,6 +145,8 @@
 						callback: CMDBuild.core.RequestBarrier.getCallback(barrierId)
 					});
 			}, this);
+
+			CMDBuild.core.RequestBarrier.finalize(barrierId);
 		},
 
 		onWidgetCustomFormRowEditWindowAbortButtonClick: function() {

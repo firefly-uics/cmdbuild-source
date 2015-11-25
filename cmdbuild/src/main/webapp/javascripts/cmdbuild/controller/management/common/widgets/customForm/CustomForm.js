@@ -38,7 +38,7 @@
 			'instancesDataStorageGet = widgetCustomFormInstancesDataStorageGet',
 			'instancesDataStorageIsEmpty = widgetCustomFormInstancesDataStorageIsEmpty',
 			'widgetConfigurationGet = widgetCustomFormConfigurationGet',
-			'widgetConfigurationIsEmpty = widgetCustomFormConfigurationIsAttributeEmpty',
+			'widgetConfigurationIsEmpty = widgetCustomFormConfigurationIsEmpty',
 			'widgetConfigurationSet = widgetCustomFormConfigurationSet',
 			'widgetControllerPropertyGet = widgetCustomFormControllerPropertyGet',
 			'widgetCustomFormViewSetLoading'
@@ -161,7 +161,7 @@
 		buildDataConfigurationFromFunction: function(callback) {
 			callback = Ext.isFunction(callback) ? callback : Ext.emptyFn;
 
-			if (!this.cmfg('widgetCustomFormConfigurationIsAttributeEmpty', CMDBuild.core.proxy.CMProxyConstants.FUNCTION_DATA)) {
+			if (!this.cmfg('widgetCustomFormConfigurationIsEmpty', CMDBuild.core.proxy.CMProxyConstants.FUNCTION_DATA)) {
 				var params = {};
 				params[CMDBuild.core.constants.Proxy.FUNCTION] = this.cmfg('widgetCustomFormConfigurationGet', CMDBuild.core.constants.Proxy.FUNCTION_DATA);
 				params[CMDBuild.core.constants.Proxy.PARAMS] = Ext.encode(this.cmfg('widgetCustomFormConfigurationGet', CMDBuild.core.constants.Proxy.VARIABLES));
@@ -189,7 +189,7 @@
 		 * Builds layout controller and inject view
 		 */
 		buildLayout: function() {
-			if (!this.cmfg('widgetCustomFormConfigurationIsAttributeEmpty', CMDBuild.core.constants.Proxy.MODEL)) {
+			if (!this.cmfg('widgetCustomFormConfigurationIsEmpty', CMDBuild.core.constants.Proxy.MODEL)) {
 				switch (this.cmfg('widgetCustomFormConfigurationGet', CMDBuild.core.constants.Proxy.LAYOUT)) {
 					case 'form': {
 						this.controllerLayout = Ext.create('CMDBuild.controller.management.common.widgets.customForm.layout.Form', { parentDelegate: this });
