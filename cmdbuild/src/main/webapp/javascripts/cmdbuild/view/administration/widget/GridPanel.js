@@ -38,6 +38,9 @@
 								case '.Ping':
 									return CMDBuild.Translation.ping;
 
+								case '.Workflow':
+									return CMDBuild.Translation.startWorkflow;
+
 								default:
 									return CMDBuild.Translation.administration.modClass.widgets[value].title;
 							}

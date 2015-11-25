@@ -34,12 +34,11 @@
 							}
 						},
 						{
-							text: CMDBuild.Translation.administration.modClass.widgets['.Workflow'].title,
-							WIDGET_NAME: '.Workflow',
+							text: CMDBuild.Translation.startWorkflow,
 							scope: this,
 
 							handler: function(button, e) {
-								this.fireEvent('cm-add', '.Workflow');
+								this.delegate.cmfg('onClassTabWidgetAddButtonClick', '.Workflow');
 							}
 						},
 						{

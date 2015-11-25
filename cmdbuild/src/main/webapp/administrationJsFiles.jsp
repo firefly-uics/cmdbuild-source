@@ -66,7 +66,6 @@
 
 	<!-- WIDGET -->
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/widget/form/CMBaseWidgetDefinitionForm.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/widget/form/CMWorkflowDefinitionForm.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/widget/form/CMWidgetDefinitionMainForm.js"></script>
 
 <!-- CONTROLLERS -->
@@ -106,7 +105,6 @@
 
 	<!-- WIDGET -->
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/widget/CMBaseWidgetDefinitionFormController.js"></script>
- 	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/widget/CMWorkflowController.js"></script>
 
 <!-- BIM - ADMINISTRATION -->
 <script type="text/javascript" src="javascripts/cmdbuild/bim/administration/view/CMBIMPanel.js"></script>
