@@ -22,12 +22,12 @@
 			'onUserAndGroupUserAddButtonClick',
 			'onUserAndGroupUserChangePasswordButtonClick',
 			'onUserAndGroupUserDisableButtonClick',
-			'onUserAndGroupUserModifyButtonClick = onUserItemDoubleClick',
+			'onUserAndGroupUserModifyButtonClick = onUserAndGroupUserItemDoubleClick',
 			'onUserAndGroupUserPrivilegedChange',
 			'onUserAndGroupUserRowSelected',
 			'onUserAndGroupUserSaveButtonClick',
 			'onUserAndGroupUserServiceChange',
-			'onUserAndGroupUserTabShow'
+			'onUserAndGroupUserShow'
 		],
 
 		/**
@@ -70,6 +70,8 @@
 
 		/**
 		 * @param {Ext.form.FieldSet} fieldset
+		 *
+		 * @private
 		 */
 		enableFieldset: function(fieldset) {
 			fieldset.cascade(function (item) {
@@ -208,8 +210,12 @@
 				this.form.privilegedCheckbox.setValue(false);
 		},
 
-		onUserAndGroupUserTabShow: function() {
+		onUserAndGroupUserShow: function() { // TODO: implementation of activeOnly/all user display
+			var params = {};
+			params['includeUnactive'] = this.view.includeUnactiveUsers.getValue();
+
 			this.grid.getStore().load({
+				params: params,
 				scope: this,
 				callback: function(records, operation, success) {
 					if (!this.grid.getSelectionModel().hasSelection())
@@ -265,6 +271,8 @@
 		 * @param {Object} result
 		 * @param {Object} options
 		 * @param {Object} decodedResult
+		 *
+		 * @private
 		 */
 		success: function(result, options, decodedResult) {
 			var me = this;

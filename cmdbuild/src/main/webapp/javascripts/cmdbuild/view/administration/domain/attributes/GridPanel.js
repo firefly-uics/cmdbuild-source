@@ -7,6 +7,7 @@
 		extend: "CMDBuild.view.administration.classes.CMAttributeGrid",
 
 		border: false,
+		cls: 'cmborderbottom',
 
 		buildColumnConf: function() {
 			this.columns = [{

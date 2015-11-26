@@ -171,7 +171,7 @@
 								editable: false,
 								allowBlank: true,
 
-								store: CMDBuild.core.proxy.userAndGroup.user.User.getDefaultGroupStore(),
+								store: CMDBuild.core.proxy.userAndGroup.user.User.getStoreDefaultGroup(),
 								queryMode: 'local'
 							}),
 							Ext.create('Ext.form.field.Checkbox', {

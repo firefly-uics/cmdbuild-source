@@ -45,6 +45,7 @@
 		 */
 		onViewOnFront: function(node) {
 			if (!Ext.Object.isEmpty(node)) {
+				var titleParts = [];
 				var selectedAccordionData = node.getData();
 				selectedAccordionData[CMDBuild.core.constants.Proxy.ID] = selectedAccordionData[CMDBuild.core.constants.Proxy.ENTITY_ID];
 
@@ -55,25 +56,26 @@
 				switch (this.userAndGroupSelectedAccordionGet(CMDBuild.core.constants.Proxy.SECTION_HIERARCHY)[0]) {
 					case 'user': {
 						this.sectionController = Ext.create('CMDBuild.controller.administration.userAndGroup.user.User', { parentDelegate: this });
+
+						titleParts = [this.sectionController.getBaseTitle()];
 					} break;
 
 					case 'group':
 					default: {
 						this.sectionController = Ext.create('CMDBuild.controller.administration.userAndGroup.group.Group', { parentDelegate: this });
+
+						titleParts = [this.sectionController.getBaseTitle()];
+
+						if (!this.userAndGroupSelectedAccordionIsEmpty(CMDBuild.core.constants.Proxy.DESCRIPTION))
+							titleParts.push(this.userAndGroupSelectedAccordionGet(CMDBuild.core.constants.Proxy.DESCRIPTION));
 					}
 				}
-
-				var titleParts = [this.sectionController.getBaseTitle()];
-
-				if (!this.userAndGroupSelectedAccordionIsEmpty(CMDBuild.core.constants.Proxy.DESCRIPTION))
-					titleParts.push(this.userAndGroupSelectedAccordionGet(CMDBuild.core.constants.Proxy.DESCRIPTION));
 
 				this.setViewTitle(titleParts);
 
 				this.view.add(this.sectionController.getView());
 
 				this.sectionController.cmfg('onUserAndGroupAccordionSelect');
-
 				this.sectionController.getView().fireEvent('show'); // Manual show event fire
 
 				this.callParent(arguments);

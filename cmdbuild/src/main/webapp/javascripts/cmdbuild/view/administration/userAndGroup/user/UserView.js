@@ -20,6 +20,11 @@
 		 */
 		grid: undefined,
 
+		/**
+		 * @property {Ext.form.field.Checkbox}
+		 */
+		includeUnactiveUsers: undefined,
+
 		baseTitle: CMDBuild.Translation.users,
 		border: true,
 		frame: false,
@@ -38,6 +43,19 @@
 
 								handler: function(button, e) {
 									this.delegate.cmfg('onUserAndGroupUserAddButtonClick');
+								}
+							}),
+							'->',
+							this.includeUnactiveUsers = Ext.create('Ext.form.field.Checkbox', {
+								boxLabel: '@@ CMDBuild.Translation.includeUnactiveUsers',
+								boxLabelCls: 'cmtoolbaritem',
+								inputValue: true,
+								uncheckedValue: false,
+								checked: false, // Default as false
+								scope: this,
+
+								handler: function(checkbox, checked) {
+									this.delegate.cmfg('onUserAndGroupUserShow');
 								}
 							})
 						]
@@ -62,7 +80,7 @@
 
 		listeners: {
 			show: function(panel, eOpts) {
-				this.delegate.cmfg('onUserAndGroupUserTabShow');
+				this.delegate.cmfg('onUserAndGroupUserShow');
 			}
 		}
 	});

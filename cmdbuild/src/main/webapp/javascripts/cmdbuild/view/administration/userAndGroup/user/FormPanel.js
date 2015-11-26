@@ -52,7 +52,7 @@
 
 		bodyCls: 'cmgraypanel',
 		border: false,
-		cls: 'x-panel-body-default-framed',
+		cls: 'x-panel-body-default-framed cmbordertop',
 		frame: false,
 		overflowY: 'auto',
 		split: true,
@@ -161,7 +161,7 @@
 								allowBlank: true,
 								vtype: 'emailOrBlank'
 							}),
-							this.defaultGroupCombo = Ext.create('CMDBuild.field.ErasableCombo', {
+							this.defaultGroupCombo = Ext.create('CMDBuild.view.common.field.comboBox.Erasable', {
 								name: 'defaultgroup',
 								fieldLabel: CMDBuild.Translation.defaultGroup,
 								labelWidth: CMDBuild.LABEL_WIDTH,
@@ -171,7 +171,7 @@
 								editable: false,
 								allowBlank: true,
 
-								store: CMDBuild.core.proxy.userAndGroup.user.User.getDefaultGroupStore(),
+								store: CMDBuild.core.proxy.userAndGroup.user.User.getStoreDefaultGroup(),
 								queryMode: 'local'
 							}),
 							Ext.create('Ext.form.field.Checkbox', {
@@ -203,10 +203,7 @@
 									}
 								}
 							}),
-							{
-								xtype: 'hiddenfield',
-								name: 'userid'
-							}
+							Ext.create('Ext.form.field.Hidden', { name: 'userid' })
 						]
 					}),
 					{ xtype: 'splitter' },
