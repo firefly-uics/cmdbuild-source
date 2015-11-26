@@ -341,10 +341,10 @@
 				var reason = error.reason;
 				if (reason) {
 					if (reason == 'AUTH_NOT_LOGGED_IN' || reason == 'AUTH_MULTIPLE_GROUPS') {
-						CMDBuild.app.Login.addAjaxOptions(options);
-						CMDBuild.app.Login.setAuthFieldsEnabled(reason == 'AUTH_NOT_LOGGED_IN');
-						CMDBuild.app.Login.show();
-						return;
+						Ext.create('CMDBuild.controller.common.sessionExpired.SessionExpired', {
+							ajaxParameters: options,
+							passwordFieldEnable: reason == 'AUTH_NOT_LOGGED_IN'
+						});
 					}
 					var translatedErrorString = CMDBuild.core.interfaces.Ajax.formatMessage(reason, error.reasonParameters);
 					if (translatedErrorString) {

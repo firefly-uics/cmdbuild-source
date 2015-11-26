@@ -84,9 +84,10 @@
 
 				if (!Ext.isEmpty(reason)) {
 					if (reason == 'AUTH_NOT_LOGGED_IN' || reason == 'AUTH_MULTIPLE_GROUPS') {
-						var loginWindow = Ext.create('CMDBuild.core.LoginWindow', { ajaxOptions: options });
-						loginWindow.setAuthFieldsEnabled(reason == 'AUTH_NOT_LOGGED_IN');
-						loginWindow.show();
+						Ext.create('CMDBuild.controller.common.sessionExpired.SessionExpired', {
+							ajaxParameters: options,
+							passwordFieldEnable: reason == 'AUTH_NOT_LOGGED_IN'
+						});
 
 						return;
 					}
