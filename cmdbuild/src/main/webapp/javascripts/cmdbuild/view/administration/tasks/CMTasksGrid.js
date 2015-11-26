@@ -13,8 +13,8 @@
 		delegate: undefined,
 
 		border: false,
-		frame: false,
 		cls: 'cmborderbottom',
+		frame: false,
 
 		initComponent: function() {
 			this.gridColumns = [

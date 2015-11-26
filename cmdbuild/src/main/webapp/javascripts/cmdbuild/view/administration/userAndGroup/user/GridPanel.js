@@ -14,6 +14,7 @@
 		delegate: undefined,
 
 		border: false,
+		cls: 'cmborderbottom',
 		frame: false,
 
 		initComponent: function() {
@@ -28,7 +29,17 @@
 						dataIndex: CMDBuild.core.constants.Proxy.DESCRIPTION,
 						text: CMDBuild.Translation.descriptionLabel,
 						flex: 1
-					}
+					},
+					Ext.create('Ext.ux.grid.column.Active', {
+						dataIndex: CMDBuild.core.constants.Proxy.IS_ACTIVE,
+						text: CMDBuild.Translation.active,
+						width: 60,
+						align: 'center',
+						sortable: false,
+						hideable: false,
+						menuDisabled: true,
+						fixed: true
+					})
 				],
 				store: CMDBuild.core.proxy.userAndGroup.user.User.getStore()
 			});
@@ -38,7 +49,7 @@
 
 		listeners: {
 			itemdblclick: function(grid, record, item, index, e, eOpts) {
-				this.delegate.cmfg('onUserItemDoubleClick');
+				this.delegate.cmfg('onUserAndGroupUserItemDoubleClick');
 			},
 
 			select: function(row, record, index) {

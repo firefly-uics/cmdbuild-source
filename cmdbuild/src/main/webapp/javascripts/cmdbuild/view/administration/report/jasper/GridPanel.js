@@ -15,6 +15,7 @@
 		delegate: undefined,
 
 		border: false,
+		cls: 'cmborderbottom',
 		frame: false,
 
 		initComponent: function() {

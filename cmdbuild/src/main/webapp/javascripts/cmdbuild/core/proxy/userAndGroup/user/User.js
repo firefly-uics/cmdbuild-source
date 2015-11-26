@@ -18,9 +18,7 @@
 		create: function(parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, {
-				url: CMDBuild.core.proxy.Index.user.create
-			});
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.user.create });
 
 			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.USER, parameters, true);
 		},
@@ -31,18 +29,16 @@
 		disable:function(parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, {
-				url: CMDBuild.core.proxy.Index.user.disable
-			});
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.user.disable });
 
 			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.USER, parameters, true);
 		},
 
 		/**
-		 * @return {Ext.data.Store}
+		 * @returns {Ext.data.Store or CMDBuild.core.cache.Store}
 		 */
 		getStore: function() {
-			return Ext.create('Ext.data.Store', {
+			return CMDBuild.core.cache.Cache.requestAsStore(CMDBuild.core.constants.Proxy.USER, {
 				autoLoad: false,
 				model: 'CMDBuild.model.userAndGroup.user.User',
 				proxy: {
@@ -51,6 +47,11 @@
 					reader: {
 						type: 'json',
 						root: CMDBuild.core.constants.Proxy.ROWS
+					},
+					extraParams: {
+						limitParam: undefined,
+						pageParam: undefined,
+						startParam: undefined
 					}
 				},
 				sorters: [
@@ -60,18 +61,23 @@
 		},
 
 		/**
-		 * @return {Ext.data.Store}
+		 * @returns {Ext.data.Store or CMDBuild.core.cache.Store}
 		 */
-		getDefaultGroupStore: function() {
-			return Ext.create('Ext.data.Store', {
+		getStoreDefaultGroup: function() {
+			return CMDBuild.core.cache.Cache.requestAsStore(CMDBuild.core.constants.Proxy.USER, {
 				autoLoad: false,
 				model: 'CMDBuild.model.userAndGroup.user.DefaultGroup',
 				proxy: {
 					type: 'ajax',
 					url: CMDBuild.core.proxy.Index.user.getGroupList,
 					reader: {
-						root: 'result',
-						type: 'json'
+						type: 'json',
+						root: 'result'
+					},
+					extraParams: {
+						limitParam: undefined,
+						pageParam: undefined,
+						startParam: undefined
 					}
 				},
 				sorters: [
@@ -86,9 +92,7 @@
 		read: function(parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, {
-				url: CMDBuild.core.proxy.Index.user.read
-			});
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.user.read });
 
 			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.USER, parameters);
 		},
@@ -99,9 +103,7 @@
 		update: function(parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, {
-				url: CMDBuild.core.proxy.Index.user.update
-			});
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.user.update });
 
 			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.USER, parameters, true);
 		}
