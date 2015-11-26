@@ -18,7 +18,7 @@
 				return rawValue.replace(/(\r\n|\n|\r)/gm, '<br />');
 
 			return rawValue;
-		},
+		}
 	});
 
 })();
