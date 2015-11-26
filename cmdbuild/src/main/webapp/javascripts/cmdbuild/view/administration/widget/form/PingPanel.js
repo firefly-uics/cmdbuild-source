@@ -25,41 +25,43 @@
 		 */
 		widgetDefinitionFormAdditionalPropertiesGet: function() {
 			return [
-				this.presetGrid = Ext.create('CMDBuild.view.common.field.grid.KeyValue', {
-					enableRowAdd: true,
-					enableRowDelete: true,
-					enableCellEditing: true,
-					keyAttributeName: CMDBuild.core.constants.Proxy.NAME,
-					keyLabel: CMDBuild.Translation.attribute,
-					margin: '8 0 9 0',
-					modelName: 'CMDBuild.model.widget.ping.PresetGrid',
-					title: CMDBuild.Translation.templates
+				Ext.create('Ext.form.FieldSet', {
+					title: CMDBuild.Translation.additionalProperties,
+					flex: 1,
+
+					layout: {
+						type: 'vbox',
+						align: 'stretch'
+					},
+
+					items: [
+						Ext.create('Ext.form.field.Text', {
+							name: CMDBuild.core.constants.Proxy.ADDRESS,
+							fieldLabel: CMDBuild.Translation.addressToPing,
+							labelWidth: CMDBuild.LABEL_WIDTH,
+							maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH
+						}),
+						Ext.create('Ext.form.field.Number', {
+							name: CMDBuild.core.constants.Proxy.COUNT,
+							fieldLabel: CMDBuild.Translation.numberOfPings,
+							labelWidth: CMDBuild.LABEL_WIDTH,
+							maxWidth: CMDBuild.ADM_SMALL_FIELD_WIDTH,
+							maxValue: 10,
+							minValue: 1
+						}),
+						this.presetGrid = Ext.create('CMDBuild.view.common.field.grid.KeyValue', {
+							enableRowAdd: true,
+							enableRowDelete: true,
+							enableCellEditing: true,
+							keyAttributeName: CMDBuild.core.constants.Proxy.NAME,
+							keyLabel: CMDBuild.Translation.attribute,
+							margin: '8 0 9 0',
+							modelName: 'CMDBuild.model.widget.ping.PresetGrid',
+							title: CMDBuild.Translation.templates
+						})
+					]
 				})
 			];
-		},
-
-		/**
-		 * @returns {Array}
-		 *
-		 * @override
-		 */
-		widgetDefinitionFormBasePropertiesGet: function() {
-			return Ext.Array.push(this.callParent(arguments), [
-				Ext.create('Ext.form.field.Text', {
-					name: CMDBuild.core.constants.Proxy.ADDRESS,
-					fieldLabel: CMDBuild.Translation.addressToPing,
-					labelWidth: CMDBuild.LABEL_WIDTH,
-					maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH
-				}),
-				Ext.create('Ext.form.field.Number', {
-					name: CMDBuild.core.constants.Proxy.COUNT,
-					fieldLabel: CMDBuild.Translation.numberOfPings,
-					labelWidth: CMDBuild.LABEL_WIDTH,
-					maxWidth: CMDBuild.ADM_SMALL_FIELD_WIDTH,
-					maxValue: 10,
-					minValue: 1
-				})
-			]);
 		}
 	});
 

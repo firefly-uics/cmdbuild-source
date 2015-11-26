@@ -18,10 +18,24 @@
 
 		initComponent: function() {
 			Ext.apply(this, {
+				viewConfig: {
+					plugins: {
+						ptype: 'gridviewdragdrop',
+						dragGroup: 'widgetsDDGroup',
+						dropGroup: 'widgetsDDGroup'
+					},
+					listeners: {
+						scope: this,
+						drop: function(node, data, overModel, dropPosition, eOpts) {
+							this.delegate.cmfg('onClassTabWidgetItemDrop');
+						}
+					}
+				},
 				columns: [
 					{
 						dataIndex: CMDBuild.core.constants.Proxy.TYPE,
 						text: CMDBuild.Translation.type,
+						sortable: false,
 						flex: 1,
 
 						renderer: function(value) {
@@ -49,25 +63,23 @@
 					{
 						dataIndex: CMDBuild.core.constants.Proxy.LABEL,
 						text: CMDBuild.Translation.buttonLabel,
+						sortable: false,
 						flex: 2
 					},
-					Ext.create('Ext.grid.column.CheckColumn', {
+					Ext.create('Ext.ux.grid.column.Active', {
 						dataIndex: CMDBuild.core.constants.Proxy.ACTIVE,
 						text: CMDBuild.Translation.active,
 						width: 60,
 						align: 'center',
+						sortable: false,
 						hideable: false,
 						menuDisabled: true,
-						fixed: true,
+						fixed: true
 					})
 				],
 				store: Ext.create('Ext.data.Store', {
 					model: 'CMDBuild.model.widget.DefinitionGrid',
-					data: [],
-					sorters: [
-						{ property: CMDBuild.core.constants.Proxy.TYPE, direction: 'ASC' },
-						{ property: CMDBuild.core.constants.Proxy.LABEL, direction: 'ASC' }
-					]
+					data: []
 				})
 			});
 

@@ -68,7 +68,7 @@
 								dragGroup: 'firstGridDDGroup',
 								dropGroup: 'secondGridDDGroup'
 							}
-						},
+						}
 					}),
 					{ xtype: 'splitter' },
 					this.selectedGrid = Ext.create('CMDBuild.view.administration.userAndGroup.group.users.GridPanel', {
@@ -81,7 +81,7 @@
 								dragGroup: 'secondGridDDGroup',
 								dropGroup: 'firstGridDDGroup'
 							}
-						},
+						}
 					})
 				]
 			});

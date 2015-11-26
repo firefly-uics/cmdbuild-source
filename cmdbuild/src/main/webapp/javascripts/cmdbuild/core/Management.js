@@ -16,6 +16,7 @@
 			'CMDBuild.core.proxy.Menu',
 			'CMDBuild.core.proxy.report.Report',
 			'CMDBuild.core.proxy.userAndGroup.group.Group',
+			'CMDBuild.core.proxy.widget.Widget',
 			'CMDBuild.core.RequestBarrier'
 		],
 
@@ -63,7 +64,7 @@
 					 *
 					 * Widgets must be added to cache only before classes, because widget object is added to class model
 					 */
-					CMDBuild.ServiceProxy.CMWidgetConfiguration.read({
+					CMDBuild.core.proxy.widget.Widget.readAll({
 						loadMask: false,
 						scope: this,
 						success: function(response, options, decodedResponse) {

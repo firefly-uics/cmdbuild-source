@@ -6,7 +6,7 @@
 		requires: [
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.Classes',
-			'CMDBuild.core.proxy.widget.Configuration',
+			'CMDBuild.core.proxy.widget.Widget',
 			'CMDBuild.view.common.field.translatable.Utils'
 		],
 
@@ -23,6 +23,7 @@
 			'onClassTabWidgetAddButtonClick',
 			'onClassTabWidgetClassAddButtonClick = onAddClassButtonClick',
 			'onClassTabWidgetClassSelected = onClassSelected',
+			'onClassTabWidgetItemDrop',
 			'onClassTabWidgetModifyButtonClick = onClassTabWidgetItemDoubleClick',
 			'onClassTabWidgetPanelShow',
 			'onClassTabWidgetRemoveButtonClick',
@@ -212,6 +213,26 @@
 			}
 		},
 
+		onClassTabWidgetItemDrop: function() { // TODO: temporary
+			if (!Ext.isEmpty(this.grid.getStore().getRange()) && Ext.isArray(this.grid.getStore().getRange())) {
+				var params = {};
+				params['sortedArray'] = [];
+
+				Ext.Array.forEach(this.grid.getStore().getRange(), function(widgetRowModel, i, allWidgetRowModels) {
+					if (!Ext.isEmpty(widgetRowModel))
+						params['sortedArray'].push(widgetRowModel.get(CMDBuild.core.constants.Proxy.ID));
+				}, this);
+_debug('onClassTabWidgetItemDrop', params['sortedArray']);
+				CMDBuild.core.proxy.widget.Widget.setSorting({
+					params: params,
+					scope: this,
+					success: function(response, options, decodedResponse) {
+						this.cmfg('onClassTabWidgetPanelShow');
+					}
+				});
+			}
+		},
+
 		onClassTabWidgetModifyButtonClick: function() {
 			if (!Ext.isEmpty(this.form))
 				this.form.setDisabledModify(false);
@@ -233,7 +254,7 @@
 				this.form.reset();
 
 			if (!this.view.isDisabled()) {
-				CMDBuild.core.proxy.widget.Configuration.read({ // TODO: better way + comments when i'll get getStore() proxy working
+				CMDBuild.core.proxy.widget.Widget.read({ // TODO: waiting for refactor (CRUD getStore())
 					scope: this,
 					success: function(response, options, decodedResponse) {
 						decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.RESPONSE];
@@ -268,7 +289,7 @@
 				var params = {};
 				params[CMDBuild.core.constants.Proxy.ID] = selectedWidgetId;
 
-				CMDBuild.core.proxy.widget.Configuration.read({
+				CMDBuild.core.proxy.widget.Widget.read({
 					params: params,
 					scope: this,
 					success: function(response, options, decodedResponse) {
@@ -308,13 +329,13 @@
 				params[CMDBuild.core.constants.Proxy.WIDGET] = Ext.encode(widgetDefinition);
 
 				if (Ext.isEmpty(widgetDefinition[CMDBuild.core.constants.Proxy.ID])) {
-					CMDBuild.core.proxy.widget.Configuration.create({
+					CMDBuild.core.proxy.widget.Widget.create({
 						params: params,
 						scope: this,
 						success: this.success
 					});
 				} else {
-					CMDBuild.core.proxy.widget.Configuration.update({
+					CMDBuild.core.proxy.widget.Widget.update({
 						params: params,
 						scope: this,
 						success: this.success
@@ -332,7 +353,7 @@
 				params[CMDBuild.core.constants.Proxy.CLASS_NAME] = this.classTabWidgetSelectedClassGet(CMDBuild.core.constants.Proxy.NAME);
 				params[CMDBuild.core.constants.Proxy.WIDGET_ID] = this.classTabWidgetSelectedWidgetGet(CMDBuild.core.constants.Proxy.ID);
 
-				CMDBuild.core.proxy.widget.Configuration.remove({
+				CMDBuild.core.proxy.widget.Widget.remove({
 					params: params,
 					scope: this,
 					success: function(response, options, decodedResponse) {

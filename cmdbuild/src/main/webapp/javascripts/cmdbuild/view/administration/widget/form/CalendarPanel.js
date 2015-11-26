@@ -50,6 +50,78 @@
 					},
 
 					items: [
+						Ext.create('Ext.form.field.ComboBox', {
+							name: CMDBuild.core.constants.Proxy.EVENT_CLASS,
+							fieldLabel: CMDBuild.Translation.targetClass,
+							labelWidth: CMDBuild.LABEL_WIDTH,
+							maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
+							valueField: CMDBuild.core.constants.Proxy.NAME,
+							displayField: CMDBuild.core.constants.Proxy.TEXT, // TODO: waiting for refactor (rename description)
+							editable: false,
+							forceSelection: true,
+
+							store: CMDBuild.core.proxy.widget.Calendar.getStoreTargetClass(),
+							queryMode: 'local',
+
+							listeners: {
+								scope: this,
+								change: function(combo, newValue, oldValue, eOpts) {
+									this.delegate.cmfg('onClassTabWidgetCalendarTargetClassChange', newValue);
+								}
+							}
+						}),
+						this.startDate = Ext.create('CMDBuild.view.common.field.comboBox.Erasable', {
+							name: CMDBuild.core.constants.Proxy.START_DATE,
+							fieldLabel: CMDBuild.Translation.startDate,
+							labelWidth: CMDBuild.LABEL_WIDTH,
+							maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
+							valueField: CMDBuild.core.constants.Proxy.NAME,
+							displayField: CMDBuild.core.constants.Proxy.DESCRIPTION,
+							editable: false,
+							forceSelection: true,
+
+							store: CMDBuild.core.proxy.widget.Calendar.getStoreAttributesDate(),
+							queryMode: 'local'
+						}),
+						this.endDate = Ext.create('CMDBuild.view.common.field.comboBox.Erasable', {
+							name: CMDBuild.core.constants.Proxy.END_DATE,
+							fieldLabel: CMDBuild.Translation.endDate,
+							labelWidth: CMDBuild.LABEL_WIDTH,
+							maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
+							valueField: CMDBuild.core.constants.Proxy.NAME,
+							displayField: CMDBuild.core.constants.Proxy.DESCRIPTION,
+							editable: false,
+							forceSelection: true,
+
+							store: CMDBuild.core.proxy.widget.Calendar.getStoreAttributesDate(),
+							queryMode: 'local'
+						}),
+						this.defaultDate = Ext.create('CMDBuild.view.common.field.comboBox.Erasable', {
+							name: CMDBuild.core.constants.Proxy.DEFAULT_DATE,
+							fieldLabel: CMDBuild.Translation.defaultDateToOpen,
+							labelWidth: CMDBuild.LABEL_WIDTH,
+							maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
+							valueField: CMDBuild.core.constants.Proxy.NAME,
+							displayField: CMDBuild.core.constants.Proxy.DESCRIPTION,
+							editable: false,
+							forceSelection: true,
+
+							store: CMDBuild.core.proxy.widget.Calendar.getStoreAttributesDate(),
+							queryMode: 'local'
+						}),
+						this.eventTitle = Ext.create('CMDBuild.view.common.field.comboBox.Erasable', {
+							name: CMDBuild.core.constants.Proxy.EVENT_TITLE,
+							fieldLabel: CMDBuild.Translation.eventTitle,
+							labelWidth: CMDBuild.LABEL_WIDTH,
+							maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
+							valueField: CMDBuild.core.constants.Proxy.NAME,
+							displayField: CMDBuild.core.constants.Proxy.DESCRIPTION,
+							editable: false,
+							forceSelection: true,
+
+							store: CMDBuild.core.proxy.widget.Calendar.getStoreAttributesString(),
+							queryMode: 'local'
+						}),
 						Ext.create('Ext.form.field.TextArea', {
 							name: CMDBuild.core.constants.Proxy.FILTER,
 							fieldLabel: CMDBuild.Translation.cqlFilter,
@@ -59,88 +131,6 @@
 					]
 				})
 			];
-		},
-
-		/**
-		 * @returns {Array}
-		 *
-		 * @override
-		 */
-		widgetDefinitionFormBasePropertiesGet: function() {
-			return Ext.Array.push(this.callParent(arguments), [
-				Ext.create('Ext.form.field.ComboBox', {
-					name: CMDBuild.core.constants.Proxy.EVENT_CLASS,
-					fieldLabel: CMDBuild.Translation.targetClass,
-					labelWidth: CMDBuild.LABEL_WIDTH,
-					maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
-					valueField: CMDBuild.core.constants.Proxy.NAME,
-					displayField: CMDBuild.core.constants.Proxy.TEXT, // TODO: waiting for refactor (rename description)
-					editable: false,
-					forceSelection: true,
-
-					store: CMDBuild.core.proxy.widget.Calendar.getStoreTargetClass(),
-					queryMode: 'local',
-
-					listeners: {
-						scope: this,
-						change: function(combo, newValue, oldValue, eOpts) {
-							this.delegate.cmfg('onClassTabWidgetCalendarTargetClassChange', newValue);
-						}
-					}
-				}),
- 				this.startDate = Ext.create('CMDBuild.view.common.field.comboBox.Erasable', {
- 					name: CMDBuild.core.constants.Proxy.START_DATE,
-					fieldLabel: CMDBuild.Translation.startDate,
-					labelWidth: CMDBuild.LABEL_WIDTH,
-					maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
-					valueField: CMDBuild.core.constants.Proxy.NAME,
-					displayField: CMDBuild.core.constants.Proxy.DESCRIPTION,
-					editable: false,
-					forceSelection: true,
-
-					store: CMDBuild.core.proxy.widget.Calendar.getStoreAttributesDate(),
-					queryMode: 'local'
-				}),
- 				this.endDate = Ext.create('CMDBuild.view.common.field.comboBox.Erasable', {
- 					name: CMDBuild.core.constants.Proxy.END_DATE,
-					fieldLabel: CMDBuild.Translation.endDate,
-					labelWidth: CMDBuild.LABEL_WIDTH,
-					maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
-					valueField: CMDBuild.core.constants.Proxy.NAME,
-					displayField: CMDBuild.core.constants.Proxy.DESCRIPTION,
-					editable: false,
-					forceSelection: true,
-
-					store: CMDBuild.core.proxy.widget.Calendar.getStoreAttributesDate(),
-					queryMode: 'local'
-				}),
- 				this.defaultDate = Ext.create('CMDBuild.view.common.field.comboBox.Erasable', {
- 					name: CMDBuild.core.constants.Proxy.DEFAULT_DATE,
-					fieldLabel: CMDBuild.Translation.defaultDateToOpen,
-					labelWidth: CMDBuild.LABEL_WIDTH,
-					maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
-					valueField: CMDBuild.core.constants.Proxy.NAME,
-					displayField: CMDBuild.core.constants.Proxy.DESCRIPTION,
-					editable: false,
-					forceSelection: true,
-
-					store: CMDBuild.core.proxy.widget.Calendar.getStoreAttributesDate(),
-					queryMode: 'local'
-				}),
- 				this.eventTitle = Ext.create('CMDBuild.view.common.field.comboBox.Erasable', {
- 					name: CMDBuild.core.constants.Proxy.EVENT_TITLE,
-					fieldLabel: CMDBuild.Translation.eventTitle,
-					labelWidth: CMDBuild.LABEL_WIDTH,
-					maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
-					valueField: CMDBuild.core.constants.Proxy.NAME,
-					displayField: CMDBuild.core.constants.Proxy.DESCRIPTION,
-					editable: false,
-					forceSelection: true,
-
-					store: CMDBuild.core.proxy.widget.Calendar.getStoreAttributesString(),
-					queryMode: 'local'
-				})
-			]);
 		}
 	});
 
