@@ -45,7 +45,6 @@
 <script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxyGIS.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxyIcon.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxyNavigationTrees.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxyWidgetConfiguration.js"></script>
 
 <!-- MODELS -->
 <script type="text/javascript" src="javascripts/cmdbuild/model/report/Cache.js"></script>

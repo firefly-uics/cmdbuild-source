@@ -20,7 +20,7 @@
 		initComponent: function() {
 			Ext.apply(this, {
 				columns: [
-					{
+					Ext.create('Ext.ux.grid.column.Tick', {
 						text: CMDBuild.Translation.defaultLabel,
 						dataIndex: CMDBuild.core.constants.Proxy.IS_DEFAULT,
 						align: 'center',
@@ -29,11 +29,8 @@
 						hideable: false,
 						menuDisabled: true,
 						fixed: true,
-
-						renderer: function(value, metaData, record) {
-							return value ? '<img src="images/icons/tick.png" alt="' + CMDBuild.Translation.defaultLabel + '" />' : null;
-						}
-					},
+						iconLabel: CMDBuild.Translation.defaultLabel
+					}),
 					{
 						dataIndex: CMDBuild.core.constants.Proxy.NAME,
 						text: CMDBuild.Translation.name,

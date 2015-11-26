@@ -14,6 +14,7 @@
 			'CMDBuild.core.proxy.lookup.Type',
 			'CMDBuild.core.proxy.report.Report',
 			'CMDBuild.core.proxy.userAndGroup.group.Group',
+			'CMDBuild.core.proxy.widget.Widget',
 			'CMDBuild.core.RequestBarrier'
 		],
 
@@ -123,14 +124,15 @@
 			/**
 			 * Widget
 			 */
-			CMDBuild.ServiceProxy.CMWidgetConfiguration.read({
+			CMDBuild.core.proxy.widget.Widget.readAll({
+				loadMask: false,
 				scope: this,
-				callback: CMDBuild.core.RequestBarrier.getCallback(barrierId),
 				success: function(response, options, decodedResponse) {
 					decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.RESPONSE];
 
 					_CMCache.addWidgetToEntryTypes(decodedResponse);
-				}
+				},
+				callback: CMDBuild.core.RequestBarrier.getCallback(barrierId)
 			});
 
 			CMDBuild.core.RequestBarrier.finalize(barrierId);

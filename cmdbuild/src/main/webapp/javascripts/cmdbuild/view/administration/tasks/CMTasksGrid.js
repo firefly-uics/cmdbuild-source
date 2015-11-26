@@ -23,8 +23,8 @@
 					hidden: true
 				},
 				{
-					text: tr.type,
 					dataIndex: CMDBuild.core.constants.Proxy.TYPE,
+					text: tr.type,
 					flex: 1,
 					scope: this,
 
@@ -37,20 +37,17 @@
 					dataIndex: CMDBuild.core.constants.Proxy.DESCRIPTION,
 					flex: 4
 				},
-				{
+				Ext.create('Ext.ux.grid.column.Active', {
+					dataIndex: CMDBuild.core.constants.Proxy.ACTIVE,
 					text: CMDBuild.Translation.active,
 					width: 60,
 					align: 'center',
-					dataIndex: CMDBuild.core.constants.Proxy.ACTIVE,
 					hideable: false,
 					menuDisabled: true,
 					fixed: true,
-					scope: this,
-
-					renderer: function(value, metaData, record) {
-						return this.activeGridColumnRenderer(value, metaData, record);
-					}
-				},
+					iconLabelActive: tr.running,
+					iconLabelNotActive: tr.stopped
+				}),
 				Ext.create('Ext.grid.column.Action', {
 					align: 'center',
 					width: 25,
@@ -117,17 +114,6 @@
 			select: function(model, record, index, eOpts) {
 				this.delegate.cmOn('onRowSelected');
 			}
-		},
-
-		/**
-		 * Used to render active value to add icon in grid
-		 *
-		 * @param {Mixed} value
-		 * @param {Object} metaData
-		 * @param {Object} record
-		 */
-		activeGridColumnRenderer: function(value, metaData, record) {
-			return value ? '<img src="images/icons/accept.png" alt="' + tr.running + '" />' : '<img src="images/icons/cancel.png" alt="' + tr.stopped + '" />';
 		},
 
 		/**

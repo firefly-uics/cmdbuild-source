@@ -1,9 +1,6 @@
 (function() {
 
-	/**
-	 * @administration
-	 */
-	Ext.define('CMDBuild.core.proxy.widget.Configuration', {
+	Ext.define('CMDBuild.core.proxy.widget.Widget', {
 
 		requires: [
 			'CMDBuild.core.interfaces.Ajax',
@@ -19,7 +16,7 @@
 		create: function(parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.widget.configuration.create });
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.widget.create });
 
 			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.WIDGET, parameters, true);
 		},
@@ -33,7 +30,7 @@
 //				model: 'CMDBuild.model.filter.group.Store',
 //				proxy: {
 //					type: 'ajax',
-//					url: CMDBuild.core.proxy.Index.widget.configuration.readAll,
+//					url: CMDBuild.core.proxy.Index.widget.readAll,
 //					reader: {
 //						type: 'json',
 //						root: CMDBuild.core.constants.Proxy.FILTERS
@@ -51,7 +48,18 @@
 		read: function(parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.widget.configuration.read });
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.widget.read });
+
+			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.WIDGET, parameters);
+		},
+
+		/**
+		 * @param {Object} parameters
+		 */
+		readAll: function(parameters) {
+			parameters = Ext.isEmpty(parameters) ? {} : parameters;
+
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.widget.readAll });
 
 			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.WIDGET, parameters);
 		},
@@ -62,7 +70,20 @@
 		remove: function(parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.widget.configuration.remove });
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.widget.remove });
+
+			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.WIDGET, parameters, true);
+		},
+
+		/**
+		 * @param {Object} parameters
+		 *
+		 * TODO: temporary
+		 */
+		setSorting: function(parameters) {
+			parameters = Ext.isEmpty(parameters) ? {} : parameters;
+
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.widget.setSorting });
 
 			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.WIDGET, parameters, true);
 		},
@@ -73,7 +94,7 @@
 		update: function(parameters) {
 			parameters = Ext.isEmpty(parameters) ? {} : parameters;
 
-			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.widget.configuration.update });
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.widget.update });
 
 			CMDBuild.core.cache.Cache.request(CMDBuild.core.constants.Proxy.WIDGET, parameters, true);
 		}
