@@ -120,7 +120,7 @@
 					decodedResult = decodedResult[CMDBuild.core.constants.Proxy.GROUPS];
 
 					var loggedUserCurrentGroup = Ext.Array.findBy(decodedResult, function(groupObject, i) {
-						return CMDBuild.Runtime.DefaultGroupId == groupObject[CMDBuild.core.constants.Proxy.ID];
+						return CMDBuild.configuration.runtime.get(CMDBuild.core.constants.Proxy.DEFAULT_GROUP_ID) == groupObject[CMDBuild.core.constants.Proxy.ID];
 					}, this);
 
 					if (!Ext.isEmpty(loggedUserCurrentGroup)) {

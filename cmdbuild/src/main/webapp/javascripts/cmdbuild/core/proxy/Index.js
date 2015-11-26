@@ -265,8 +265,6 @@
 			}
 		},
 
-		login: 'services/json/login/login',
-
 		lookup: {
 			create: 'services/json/schema/modlookup/savelookup', // TODO: waiting for refactor (crud)
 			read: 'services/json/schema/modlookup/getlookuplist', // TODO: waiting for refactor (crud)

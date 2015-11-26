@@ -41,7 +41,7 @@
 		enabled: true,
 
 		/**
-		 * Managed group ids splits all cached functions in groups
+		 * Managed group ids splits all cached functions in groups. Use 'uncached' to force uncached AJAX calls
 		 *
 		 * @cfg {Array}
 		 *
@@ -94,6 +94,7 @@
 		invalidate: function(cacheGroupIdentifier) {
 			if (
 				!Ext.isEmpty(cacheGroupIdentifier)
+				&& cacheGroupIdentifier != CMDBuild.core.constants.Proxy.UNCACHED // Force uncached AJAX calls
 				&& Ext.Array.contains(CMDBuild.core.cache.Cache.managedCacheGroupsArray, cacheGroupIdentifier)
 			) {
 				delete CMDBuild.core.cache.Cache.cachedValues[cacheGroupIdentifier];
@@ -167,7 +168,10 @@
 					success: Ext.emptyFn
 				});
 
-				if (Ext.Array.contains(CMDBuild.core.cache.Cache.managedCacheGroupsArray, cacheGroupIdentifier)) { // Cacheable endpoints manage
+				if (
+					cacheGroupIdentifier != CMDBuild.core.constants.Proxy.UNCACHED // Force uncached AJAX calls
+					&& Ext.Array.contains(CMDBuild.core.cache.Cache.managedCacheGroupsArray, cacheGroupIdentifier)
+				) { // Cacheable endpoints manage
 					if (
 						!CMDBuild.core.cache.Cache.enabled
 						|| CMDBuild.core.cache.Cache.isExpired(cacheGroupIdentifier, parameters.url, parameters.params)
@@ -238,6 +242,7 @@
 			if (
 				!Ext.isEmpty(identifier) && Ext.isString(identifier)
 				&& !Ext.isEmpty(values)
+				&& cacheGroupIdentifier != CMDBuild.core.constants.Proxy.UNCACHED // Force uncached AJAX calls
 				&& Ext.Array.contains(CMDBuild.core.cache.Cache.managedCacheGroupsArray, cacheGroupIdentifier)
 			) {
 				var cacheObject = {};

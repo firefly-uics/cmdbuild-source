@@ -82,7 +82,7 @@
 		isSectionDisabled: function(moduleName) {
 			switch (moduleName) {
 				case CMDBuild.core.constants.Proxy.CHANGE_PASSWORD:
-					return !CMDBuild.Runtime.CanChangePassword;
+					return !CMDBuild.configuration.runtime.get(CMDBuild.core.constants.Proxy.ALLOW_PASSWORD_CHANGE);
 
 				default:
 					return CMDBuild.configuration.userInterface.isDisabledModule(moduleName);

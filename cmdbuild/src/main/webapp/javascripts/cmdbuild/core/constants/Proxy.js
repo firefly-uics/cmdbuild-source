@@ -505,6 +505,7 @@
 		TRANSLATIONS: 'translations',
 		TYPE: 'type',
 		UI_CONFIGURATION: 'uiConfiguration',
+		UNCACHED: 'unchached',
 		UNIQUE: 'unique',
 		UPDATE: 'update',
 		URL: 'url',
