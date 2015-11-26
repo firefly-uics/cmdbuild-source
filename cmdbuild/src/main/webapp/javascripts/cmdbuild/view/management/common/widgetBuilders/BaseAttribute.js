@@ -106,6 +106,7 @@
 		 */
 		buildReadOnlyField: function(attribute) {
 			var field = new Ext.form.DisplayField({
+				allowBlank: true,
 				labelAlign: "right",
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				fieldLabel: attribute.description || attribute.name,
