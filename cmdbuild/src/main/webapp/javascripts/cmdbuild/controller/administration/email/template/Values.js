@@ -1,12 +1,12 @@
 (function () {
 
-	Ext.define('CMDBuild.controller.administration.email.templates.Values', {
+	Ext.define('CMDBuild.controller.administration.email.template.Values', {
 		extend: 'CMDBuild.controller.common.AbstractController',
 
 		requires: ['CMDBuild.core.constants.Proxy'],
 
 		/**
-		 * @cfg {CMDBuild.controller.administration.email.templates.Templates}
+		 * @cfg {CMDBuild.controller.administration.email.template.Template}
 		 */
 		parentDelegate: undefined,
 
@@ -14,8 +14,9 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
-			'onValuesWindowAbortButtonClick',
-			'onValuesWindowSaveButtonClick'
+			'onEmailTemplateValuesWindowAbortButtonClick',
+			'onEmailTemplateValuesWindowDeleteRowButtonClick',
+			'onEmailTemplateValuesWindowSaveButtonClick'
 		],
 
 		/**
@@ -24,22 +25,20 @@
 		grid: undefined,
 
 		/**
-		 * @property {CMDBuild.view.administration.email.templates.ValuesWindow}
+		 * @property {CMDBuild.view.administration.email.template.ValuesWindow}
 		 */
 		view: undefined,
 
 		/**
 		 * @param {Object} configurationObject
-		 * @param {CMDBuild.controller.administration.email.templates.Templates} configurationObject.parentDelegate
+		 * @param {CMDBuild.controller.administration.email.template.Template} configurationObject.parentDelegate
 		 *
 		 * @override
 		 */
 		constructor: function(configurationObject) {
 			this.callParent(arguments);
 
-			this.view = Ext.create('CMDBuild.view.administration.email.templates.ValuesWindow', {
-				delegate: this
-			});
+			this.view = Ext.create('CMDBuild.view.administration.email.template.ValuesWindow', { delegate: this });
 
 			// Shorthands
 			this.grid = this.view.grid;
@@ -52,14 +51,21 @@
 			}
 		},
 
-		onValuesWindowAbortButtonClick: function() {
+		onEmailTemplateValuesWindowAbortButtonClick: function() {
 			this.view.destroy();
 		},
 
-		onValuesWindowSaveButtonClick: function() {
-			this.cmfg('valuesDataSet', this.storeDataGet());
+		/**
+		 * @param {CMDBuild.model.email.template.Variable} record
+		 */
+		onEmailTemplateValuesWindowDeleteRowButtonClick: function(record) {
+			this.grid.getStore().remove(record);
+		},
 
-			this.onValuesWindowAbortButtonClick();
+		onEmailTemplateValuesWindowSaveButtonClick: function() {
+			this.cmfg('emailTemplateValuesDataSet', this.storeDataGet());
+
+			this.onEmailTemplateValuesWindowAbortButtonClick();
 		},
 
 		/**
@@ -71,6 +77,8 @@
 		 * 			key2: value2,
 		 * 			...
 		 * 		}
+		 *
+		 * @private
 		 */
 		storeDataGet: function() {
 			var data = {};
@@ -90,9 +98,11 @@
 
 		/**
 		 * Rewrite of loadData
+		 *
+		 * @private
 		 */
 		storeDataSet: function() {
-			var data = this.cmfg('valuesDataGet');
+			var data = this.cmfg('emailTemplateValuesDataGet');
 			var store = this.grid.getStore();
 			store.removeAll();
 

@@ -24,7 +24,8 @@
 			'onEmailAccountRemoveButtonClick',
 			'onEmailAccountRowSelected',
 			'onEmailAccountSaveButtonClick',
-			'onEmailAccountSetDefaultButtonClick'
+			'onEmailAccountSetDefaultButtonClick',
+			'onEmailAccountShow'
 		],
 
 		/**
@@ -107,7 +108,7 @@
 				var params = {};
 				params[CMDBuild.core.constants.Proxy.NAME] = this.grid.getSelectionModel().getSelection()[0].get(CMDBuild.core.constants.Proxy.NAME);
 
-				CMDBuild.core.proxy.email.Account.get({
+				CMDBuild.core.proxy.email.Account.read({
 					params: params,
 					scope: this,
 					failure: function(response, options, decodedResponse) {
@@ -161,6 +162,16 @@
 				params: params,
 				scope: this,
 				success: this.success
+			});
+		},
+
+		onEmailAccountShow: function() {
+			this.grid.getStore().load({
+				scope: this,
+				callback: function(records, operation, success) {
+					if (!this.grid.getSelectionModel().hasSelection())
+						this.grid.getSelectionModel().select(0, true);
+				}
 			});
 		},
 

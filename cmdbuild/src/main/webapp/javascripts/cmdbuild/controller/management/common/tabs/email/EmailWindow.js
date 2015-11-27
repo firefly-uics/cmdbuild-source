@@ -8,7 +8,7 @@
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.Message',
 			'CMDBuild.core.proxy.common.tabs.email.Attachment',
-			'CMDBuild.core.proxy.email.Templates',
+			'CMDBuild.core.proxy.email.Template',
 			'CMDBuild.core.Utils'
 		],
 
@@ -102,7 +102,7 @@
 				this.form = this.view.form;
 
 				// Fill from template button store configuration
-				CMDBuild.core.proxy.email.Templates.getAll({
+				CMDBuild.core.proxy.email.Template.readAll({
 					scope: this,
 					loadMask: true,
 					success: function(response, options, decodedResponse) {
@@ -326,7 +326,7 @@
 			var params = {};
 			params[CMDBuild.core.constants.Proxy.NAME] = templateName;
 
-			CMDBuild.core.proxy.email.Templates.get({
+			CMDBuild.core.proxy.email.Template.read({
 				params: params,
 				scope: this,
 				loadMask: true,

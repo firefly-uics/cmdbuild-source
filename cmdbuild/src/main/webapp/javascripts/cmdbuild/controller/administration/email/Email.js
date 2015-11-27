@@ -37,7 +37,7 @@
 					} break;
 
 					case 'templates': {
-						this.sectionController = Ext.create('CMDBuild.controller.administration.email.templates.Templates', { parentDelegate: this });
+						this.sectionController = Ext.create('CMDBuild.controller.administration.email.template.Template', { parentDelegate: this });
 					} break;
 
 					case 'accounts':
@@ -49,6 +49,8 @@
 				this.setViewTitle(node.get(CMDBuild.core.constants.Proxy.DESCRIPTION));
 
 				this.view.add(this.sectionController.getView());
+
+				this.sectionController.getView().fireEvent('show');
 
 				if (!Ext.isEmpty(this.sectionController) && Ext.isFunction(this.sectionController.onViewOnFront))
 					this.sectionController.onViewOnFront();

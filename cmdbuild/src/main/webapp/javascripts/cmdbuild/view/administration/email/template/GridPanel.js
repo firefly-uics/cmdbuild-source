@@ -1,22 +1,22 @@
 (function() {
 
-	Ext.define('CMDBuild.view.administration.email.templates.GridPanel', {
+	Ext.define('CMDBuild.view.administration.email.template.GridPanel', {
 		extend: 'Ext.grid.Panel',
 
 		requires: [
-			'CMDBuild.core.Message',
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.email.Templates'
+			'CMDBuild.core.proxy.email.Template'
 		],
 
 		/**
-		 * @cfg {CMDBuild.controller.administration.email.templates.Templates}
+		 * @cfg {CMDBuild.controller.administration.email.template.Template}
 		 */
 		delegate: undefined,
 
 		border: false,
 		cls: 'cmborderbottom',
 		frame: false,
+		split: true,
 
 		initComponent: function() {
 			Ext.apply(this, {
@@ -37,7 +37,7 @@
 						flex: 2
 					}
 				],
-				store: CMDBuild.core.proxy.email.Templates.getStore()
+				store: CMDBuild.core.proxy.email.Template.getStore()
 			});
 
 			this.callParent(arguments);
@@ -45,22 +45,11 @@
 
 		listeners: {
 			itemdblclick: function(grid, record, item, index, e, eOpts) {
-				this.delegate.cmfg('onEmailTemplatesItemDoubleClick');
+				this.delegate.cmfg('onEmailTemplateItemDoubleClick');
 			},
 
 			select: function(row, record, index) {
-				this.delegate.cmfg('onEmailTemplatesRowSelected');
-			},
-
-			// Event to load store on view display and first row selection as CMDbuild standard
-			viewready: function() {
-				this.getStore().load({
-					scope: this,
-					callback: function(records, operation, success) {
-						if (!this.getSelectionModel().hasSelection())
-							this.getSelectionModel().select(0, true);
-					}
-				});
+				this.delegate.cmfg('onEmailTemplateRowSelected');
 			}
 		}
 	});

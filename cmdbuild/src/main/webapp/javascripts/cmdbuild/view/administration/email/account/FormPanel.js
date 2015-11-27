@@ -27,7 +27,6 @@
 		cls: 'x-panel-body-default-framed cmbordertop',
 		frame: false,
 		overflowY: 'auto',
-		split: true,
 
 		layout: {
 			type: 'hbox',
