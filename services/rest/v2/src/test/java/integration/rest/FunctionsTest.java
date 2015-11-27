@@ -1,11 +1,13 @@
 package integration.rest;
 
+import static com.google.common.collect.Maps.newHashMap;
 import static java.util.Arrays.asList;
 import static org.cmdbuild.service.rest.test.HttpClientUtils.contentOf;
 import static org.cmdbuild.service.rest.test.HttpClientUtils.statusCodeOf;
 import static org.cmdbuild.service.rest.test.ServerResource.randomPort;
 import static org.cmdbuild.service.rest.v2.constants.Serialization.FILTER;
 import static org.cmdbuild.service.rest.v2.constants.Serialization.LIMIT;
+import static org.cmdbuild.service.rest.v2.constants.Serialization.PARAMS;
 import static org.cmdbuild.service.rest.v2.constants.Serialization.START;
 import static org.cmdbuild.service.rest.v2.model.Models.newAttribute;
 import static org.cmdbuild.service.rest.v2.model.Models.newFunctionWithBasicDetails;
@@ -13,6 +15,7 @@ import static org.cmdbuild.service.rest.v2.model.Models.newFunctionWithFullDetai
 import static org.cmdbuild.service.rest.v2.model.Models.newMetadata;
 import static org.cmdbuild.service.rest.v2.model.Models.newResponseMultiple;
 import static org.cmdbuild.service.rest.v2.model.Models.newResponseSingle;
+import static org.cmdbuild.service.rest.v2.model.Models.newValues;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.anyInt;
@@ -22,6 +25,8 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+
+import java.util.Map;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -36,6 +41,7 @@ import org.cmdbuild.service.rest.v2.model.FunctionWithBasicDetails;
 import org.cmdbuild.service.rest.v2.model.FunctionWithFullDetails;
 import org.cmdbuild.service.rest.v2.model.ResponseMultiple;
 import org.cmdbuild.service.rest.v2.model.ResponseSingle;
+import org.cmdbuild.service.rest.v2.model.Values;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
@@ -187,6 +193,43 @@ public class FunctionsTest {
 		assertThat(json.from(contentOf(response)), equalTo(json.from(expectedResponse)));
 
 		verify(service).readOutputParameters(eq(1L), eq(456), eq(789));
+	}
+
+	@Test
+	public void functionOutputRetrieved() throws Exception {
+		// given
+		final Map<String, Object> values = newHashMap();
+		final ResponseMultiple<Values> expectedResponse = newResponseMultiple(Values.class) //
+				.withElements(asList( //
+						newValues() //
+								.withValues(values) //
+								.build(), //
+						newValues() //
+								.build())) //
+				.withMetadata(newMetadata() //
+						.withTotal(2L) //
+						.build()) //
+				.build();
+		when(service.call(anyLong(), anyString())) //
+				.thenReturn(expectedResponse);
+		final String inputs = "" //
+				+ "{" //
+				+ "	\"foo\": \"FOO\"," //
+				+ "	\"bar\": 1," //
+				+ "	\"baz\"=true" //
+				+ "}";
+
+		// when
+		final HttpGet get = new HttpGet(new URIBuilder(server.resource("functions/1/outputs/")) //
+				.setParameter(PARAMS, inputs) //
+				.build());
+		final HttpResponse response = httpclient.execute(get);
+
+		// then
+		assertThat(statusCodeOf(response), equalTo(200));
+		assertThat(json.from(contentOf(response)), equalTo(json.from(expectedResponse)));
+
+		verify(service).call(eq(1L), eq(inputs));
 	}
 
 }
