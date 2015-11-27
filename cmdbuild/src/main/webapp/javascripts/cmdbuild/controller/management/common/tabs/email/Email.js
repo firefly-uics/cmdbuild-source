@@ -12,7 +12,7 @@
 			'CMDBuild.controller.management.common.widgets.CMWidgetController',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.Utils',
-			'CMDBuild.core.proxy.email.Templates',
+			'CMDBuild.core.proxy.email.Template',
 			'CMDBuild.core.Message'
 		],
 
@@ -703,7 +703,7 @@
 			var params = {};
 			params[CMDBuild.core.constants.Proxy.TEMPLATES] = Ext.encode(this.emailTemplatesIdentifiers);
 
-			CMDBuild.core.proxy.email.Templates.getAll({
+			CMDBuild.core.proxy.email.Template.readAll({
 				params: params,
 				loadMask: this.cmfg('tabEmailGlobalLoadMaskGet'),
 				scope: this,

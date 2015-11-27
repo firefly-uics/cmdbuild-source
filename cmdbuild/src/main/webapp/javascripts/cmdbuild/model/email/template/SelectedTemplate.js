@@ -2,19 +2,7 @@
 
 	Ext.require('CMDBuild.core.constants.Proxy');
 
-	Ext.define('CMDBuild.model.email.Templates.grid', {
-		extend: 'Ext.data.Model',
-
-		fields: [
-			{ name: CMDBuild.core.constants.Proxy.DESCRIPTION, type: 'string' },
-			{ name: CMDBuild.core.constants.Proxy.ID, type: 'int' },
-			{ name: CMDBuild.core.constants.Proxy.NAME, type: 'string' },
-			{ name: CMDBuild.core.constants.Proxy.SUBJECT, type: 'string' }
-		]
-
-	});
-
-	Ext.define('CMDBuild.model.email.Templates.singleTemplate', {
+	Ext.define('CMDBuild.model.email.template.SelectedTemplate', {
 		extend: 'Ext.data.Model',
 
 		fields: [
@@ -32,15 +20,6 @@
 			{ name: CMDBuild.core.constants.Proxy.SUBJECT, type: 'string' },
 			{ name: CMDBuild.core.constants.Proxy.TO, type: 'string' },
 			{ name: CMDBuild.core.constants.Proxy.VARIABLES, type: 'auto' }
-		]
-	});
-
-	Ext.define('CMDBuild.model.email.Templates.variablesWindow', {
-		extend: 'Ext.data.Model',
-
-		fields: [
-			{ name: CMDBuild.core.constants.Proxy.KEY, type: 'string' },
-			{ name: CMDBuild.core.constants.Proxy.VALUE, type: 'string' }
 		]
 	});
 

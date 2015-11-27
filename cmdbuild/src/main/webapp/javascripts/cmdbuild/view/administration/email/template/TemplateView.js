@@ -1,22 +1,22 @@
 (function() {
 
-	Ext.define('CMDBuild.view.administration.email.account.AccountView', {
+	Ext.define('CMDBuild.view.administration.email.template.TemplateView', {
 		extend: 'Ext.panel.Panel',
 
 		requires: ['CMDBuild.core.constants.Proxy'],
 
 		/**
-		 * @cfg {CMDBuild.controller.administration.email.Account}
+		 * @cfg {CMDBuild.controller.administration.email.template.Template}
 		 */
 		delegate: undefined,
 
 		/**
-		 * @property {CMDBuild.view.administration.email.account.FormPanel}
+		 * @property {CMDBuild.view.administration.email.template.FormPanel}
 		 */
 		form: undefined,
 
 		/**
-		 * @property {CMDBuild.view.administration.email.account.GridPanel}
+		 * @property {CMDBuild.view.administration.email.template.GridPanel}
 		 */
 		grid: undefined,
 
@@ -33,23 +33,23 @@
 
 						items: [
 							Ext.create('CMDBuild.core.buttons.iconized.add.Add', {
-								text: CMDBuild.Translation.addAccount,
+								text: CMDBuild.Translation.addTemplate,
 								scope: this,
 
 								handler: function(button, e) {
-									this.delegate.cmfg('onEmailAccountAddButtonClick');
+									this.delegate.cmfg('onEmailTemplateAddButtonClick');
 								}
 							})
 						]
 					})
 				],
 				items: [
-					this.grid = Ext.create('CMDBuild.view.administration.email.account.GridPanel', {
+					this.grid = Ext.create('CMDBuild.view.administration.email.template.GridPanel', {
 						delegate: this.delegate,
 						region: 'north',
 						height: '30%'
 					}),
-					this.form = Ext.create('CMDBuild.view.administration.email.account.FormPanel', {
+					this.form = Ext.create('CMDBuild.view.administration.email.template.FormPanel', {
 						delegate: this.delegate,
 						region: 'center'
 					})
@@ -61,7 +61,7 @@
 
 		listeners: {
 			show: function(panel, eOpts) {
-				this.delegate.cmfg('onEmailAccountShow');
+				this.delegate.cmfg('onEmailTemplateShow');
 			}
 		}
 	});

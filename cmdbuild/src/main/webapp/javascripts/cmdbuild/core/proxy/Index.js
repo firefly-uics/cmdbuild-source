@@ -150,12 +150,12 @@
 			},
 
 			templates:{
+				create: 'services/json/email/template/create',
+				read: 'services/json/email/template/read',
+				update: 'services/json/email/template/update',
 				remove: 'services/json/email/template/delete',
-				get: 'services/json/email/template/read',
-				post: 'services/json/email/template/create',
-				put: 'services/json/email/template/update',
 
-				getStore: 'services/json/email/template/readall'
+				readAll: 'services/json/email/template/readall'
 			},
 
 			remove: 'services/json/email/email/delete',

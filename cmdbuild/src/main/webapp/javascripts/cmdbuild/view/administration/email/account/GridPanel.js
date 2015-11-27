@@ -5,7 +5,7 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.Message'
+			'CMDBuild.core.proxy.email.Account'
 		],
 
 		/**
@@ -16,6 +16,7 @@
 		border: false,
 		cls: 'cmborderbottom',
 		frame: false,
+		split: true,
 
 		initComponent: function() {
 			Ext.apply(this, {
@@ -55,17 +56,6 @@
 
 			select: function(row, record, index) {
 				this.delegate.cmfg('onEmailAccountRowSelected');
-			},
-
-			// Event to load store on view display and first row selection as CMDbuild standard
-			viewready: function() {
-				this.getStore().load({
-					scope: this,
-					callback: function(records, operation, success) {
-						if (!this.getSelectionModel().hasSelection())
-							this.getSelectionModel().select(0, true);
-					}
-				});
 			}
 		}
 	});
