@@ -620,7 +620,7 @@
 			"DOMAIN_NOTFOUND": "Domínio {0} não localizado",
 			"ILLEGAL_CRON_EXPRESSION": "Expressão cron inválida",
 			"LOCKED_CARD": "O usuário {0} está editando o cartão para {1} segundos",
-			"LOCKED_MISSING": "<em>Should be locked before</em>",
+			"LOCKED_MISSING": "<em>Expired time for editing</em>",
 			"LOOKUP_NOTFOUND": "Pesquise não localizada para tipo {0}",
 			"LOOKUP_TYPE_NOTFOUND": "Tipo de Pesquisa {0} não localizada",
 			"MENU_NOTFOUND": "Menu não localizada",

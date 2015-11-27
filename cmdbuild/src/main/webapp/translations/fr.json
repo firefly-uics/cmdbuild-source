@@ -620,7 +620,7 @@
 			"DOMAIN_NOTFOUND": "Lien {0} non trouvé",
 			"ILLEGAL_CRON_EXPRESSION": "Expression cron non valide",
 			"LOCKED_CARD": "L'utilisateur {0} modifie la fiche depuis {1} secondes",
-			"LOCKED_MISSING": "<em>Should be locked before</em>",
+			"LOCKED_MISSING": "<em>Expired time for editing</em>",
 			"LOOKUP_NOTFOUND": "valeur non trouvée dans la liste {0}",
 			"LOOKUP_TYPE_NOTFOUND": "liste de valeurs {0} non trouvée",
 			"MENU_NOTFOUND": "Menu non trouvé",

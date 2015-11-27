@@ -620,7 +620,7 @@
 			"DOMAIN_NOTFOUND": "دامین {0} پیدا نشد",
 			"ILLEGAL_CRON_EXPRESSION": "Invalid cron expression",
 			"LOCKED_CARD": "کاربر {0} کارت را در {1} ثانیه ویرایش کرد",
-			"LOCKED_MISSING": "<em>Should be locked before</em>",
+			"LOCKED_MISSING": "<em>Expired time for editing</em>",
 			"LOOKUP_NOTFOUND": "مراجعه برای نوع {0} حاصلی نداشت",
 			"LOOKUP_TYPE_NOTFOUND": "مراجعه نوع {0} حاصلی نداشت",
 			"MENU_NOTFOUND": "منو پیدا نشد",

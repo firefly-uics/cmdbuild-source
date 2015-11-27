@@ -620,7 +620,7 @@
 			"DOMAIN_NOTFOUND": "域 {0} 未被发现",
 			"ILLEGAL_CRON_EXPRESSION": "无效cron表达",
 			"LOCKED_CARD": "用户 {0} 已编辑卡片 {1} 秒",
-			"LOCKED_MISSING": "<em>Should be locked before</em>",
+			"LOCKED_MISSING": "<em>Expired time for editing</em>",
 			"LOOKUP_NOTFOUND": "Lookup 未发现类型 {0}",
 			"LOOKUP_TYPE_NOTFOUND": "Lookup 类型 {0} 未被发现",
 			"MENU_NOTFOUND": "未发现菜单",

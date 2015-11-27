@@ -620,7 +620,7 @@
 			"DOMAIN_NOTFOUND": "Связь {0} не найдена",
 			"ILLEGAL_CRON_EXPRESSION": "Неверное выражение для cron",
 			"LOCKED_CARD": "Пользователь {0} редактирует эту карточку в течение {1} секунд",
-			"LOCKED_MISSING": "<em>Should be locked before</em>",
+			"LOCKED_MISSING": "<em>Expired time for editing</em>",
 			"LOOKUP_NOTFOUND": "Перечень не найден для {0}",
 			"LOOKUP_TYPE_NOTFOUND": "Перечень {0} не найден",
 			"MENU_NOTFOUND": "Меню не найдено",
