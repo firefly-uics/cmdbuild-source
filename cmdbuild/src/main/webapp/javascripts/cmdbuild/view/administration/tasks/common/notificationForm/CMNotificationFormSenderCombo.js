@@ -5,7 +5,7 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.email.Accounts'
+			'CMDBuild.core.proxy.email.Account'
 		],
 
 		/**
@@ -26,7 +26,7 @@
 
 		initComponent: function() {
 			Ext.apply(this, {
-				store: CMDBuild.core.proxy.email.Accounts.getStore()
+				store: CMDBuild.core.proxy.email.Account.getStore()
 			});
 
 			this.callParent(arguments);

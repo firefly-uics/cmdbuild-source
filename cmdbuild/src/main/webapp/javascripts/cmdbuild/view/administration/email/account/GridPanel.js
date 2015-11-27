@@ -1,16 +1,15 @@
 (function() {
 
-	Ext.define('CMDBuild.view.administration.email.accounts.GridPanel', {
+	Ext.define('CMDBuild.view.administration.email.account.GridPanel', {
 		extend: 'Ext.grid.Panel',
 
 		requires: [
-			'CMDBuild.core.Message',
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.email.Accounts'
+			'CMDBuild.core.Message'
 		],
 
 		/**
-		 * @cfg {CMDBuild.controller.administration.email.Accounts}
+		 * @cfg {CMDBuild.controller.administration.email.Account}
 		 */
 		delegate: undefined,
 
@@ -43,7 +42,7 @@
 						flex: 1
 					}
 				],
-				store: CMDBuild.core.proxy.email.Accounts.getStore()
+				store: CMDBuild.core.proxy.email.Account.getStore()
 			});
 
 			this.callParent(arguments);
@@ -51,11 +50,11 @@
 
 		listeners: {
 			itemdblclick: function(grid, record, item, index, e, eOpts) {
-				this.delegate.cmfg('onEmailAccountsItemDoubleClick');
+				this.delegate.cmfg('onEmailAccountItemDoubleClick');
 			},
 
 			select: function(row, record, index) {
-				this.delegate.cmfg('onEmailAccountsRowSelected');
+				this.delegate.cmfg('onEmailAccountRowSelected');
 			},
 
 			// Event to load store on view display and first row selection as CMDbuild standard
