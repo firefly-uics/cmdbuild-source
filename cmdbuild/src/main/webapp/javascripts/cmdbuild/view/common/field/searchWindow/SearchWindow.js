@@ -23,6 +23,8 @@
 		 */
 		saveButton: undefined,
 
+		closeAction: 'hide',
+
 		initComponent: function() {
 			Ext.apply(this, {
 				dockedItems: [
@@ -65,15 +67,6 @@
 			show: function(window, eOpts) {
 				this.delegate.cmfg('onFieldSearchWindowShow');
 			}
-		},
-
-		/**
-		 * Override close action to avoid window destroy. Close is called by Esc button press and using top-right close toolButton.
-		 *
-		 * @override
-		 */
-		close: function() {
-			this.hide();
 		}
 	});
 
