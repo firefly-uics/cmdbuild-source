@@ -17,7 +17,7 @@ public class XpdlActivitySet implements XpdlActivityHolder {
 	}
 
 	@Override
-	public XpdlActivity createActivity(String activityId) {
+	public XpdlActivity createActivity(final String activityId) {
 		return activities.createActivity(activityId);
 	}
 

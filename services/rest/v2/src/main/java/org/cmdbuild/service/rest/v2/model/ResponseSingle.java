@@ -1,6 +1,7 @@
 package org.cmdbuild.service.rest.v2.model;
 
 import static org.cmdbuild.service.rest.v2.constants.Serialization.DATA;
+import static org.cmdbuild.service.rest.v2.constants.Serialization.RESPONSE_METADATA;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -13,6 +14,7 @@ import org.codehaus.jackson.annotate.JsonProperty;
 public class ResponseSingle<T> extends AbstractModel {
 
 	private T element;
+	private DetailResponseMetadata metadata;
 
 	ResponseSingle() {
 		// package visibility
@@ -26,6 +28,16 @@ public class ResponseSingle<T> extends AbstractModel {
 
 	void setElement(final T element) {
 		this.element = element;
+	}
+
+	@XmlElement(name = RESPONSE_METADATA, type = DetailResponseMetadata.class)
+	@JsonProperty(RESPONSE_METADATA)
+	public DetailResponseMetadata getMetadata() {
+		return metadata;
+	}
+
+	void setMetadata(final DetailResponseMetadata metadata) {
+		this.metadata = metadata;
 	}
 
 	@Override
@@ -42,6 +54,7 @@ public class ResponseSingle<T> extends AbstractModel {
 		final ResponseSingle<T> other = ResponseSingle.class.cast(obj);
 		return new EqualsBuilder() //
 				.append(this.element, other.element) //
+				.append(this.metadata, other.metadata) //
 				.isEquals();
 	}
 
@@ -49,6 +62,7 @@ public class ResponseSingle<T> extends AbstractModel {
 	protected int doHashCode() {
 		return new HashCodeBuilder() //
 				.append(this.element) //
+				.append(this.metadata) //
 				.toHashCode();
 	}
 

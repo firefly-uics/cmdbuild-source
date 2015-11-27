@@ -116,6 +116,9 @@ public class FunctionsTest {
 						.withName("foo") //
 						.withDescription("Foo") //
 						.build()) //
+				.withMetadata(newMetadata() //
+						// nothing to add, just needed for simplify assertions
+						.build()) //
 				.build();
 		when(service.read(anyLong())) //
 				.thenReturn(expectedResponse);

@@ -807,6 +807,7 @@
 			"ORM_ILLEGAL_NAME_ERROR": "نام غیر مجاز: {0}",
 			"ORM_LOOKUPTYPE_ALREADY_EXISTS": "در حال حاضر یک نوع مراجعه با این نام وجود دارد",
 			"ORM_MALFORMED_PATCH": "Unreadable Patch",
+			"ORM_MISSING_MADATORY_VALUES": "<em>Missing mandatory values: {0}</em>", 
 			"ORM_NOT_NULL_VIOLATION": "Not null constraint violated",
 			"ORM_POSTGIS_NOT_FOUND": "PostGIS is not installed",
 			"ORM_READ_ONLY_RELATION": "Read-only relation",

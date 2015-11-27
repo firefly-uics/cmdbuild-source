@@ -807,6 +807,7 @@
 			"ORM_ILLEGAL_NAME_ERROR": "Nedozvoljeno ime: {0}",
 			"ORM_LOOKUPTYPE_ALREADY_EXISTS": "U šifarniku već postoji tip sa istim opisom",
 			"ORM_MALFORMED_PATCH": "Neodgovarajuća ispravka/dopuna (patch)",
+			"ORM_MISSING_MADATORY_VALUES": "<em>Missing mandatory values: {0}</em>", 
 			"ORM_NOT_NULL_VIOLATION": "Narušeno ograničenje: nedozvoljena null vrednost",
 			"ORM_POSTGIS_NOT_FOUND": "PostGIS nije instaliran",
 			"ORM_READ_ONLY_RELATION": "Relacija je dostupna samo za čitanje",
