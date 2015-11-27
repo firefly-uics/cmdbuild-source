@@ -71,6 +71,7 @@ public class Serialization {
 			HIDDEN = "hidden", //
 			INDEX = "index", //
 			INHERITED = "inherited", //
+			INPUTS = "inputs", //
 			INSTRUCTIONS = "instructions", //
 			KEEP_SYNCHRONIZATION = "keepSynchronization", //
 			LABEL = "label", //
