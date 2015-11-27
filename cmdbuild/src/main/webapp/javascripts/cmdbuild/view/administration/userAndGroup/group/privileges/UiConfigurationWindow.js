@@ -16,6 +16,7 @@
 		form: undefined,
 
 		autoHeight: true,
+		closeAction: 'hide',
 		border: false,
 		frame: false,
 		layout: 'fit',
@@ -102,15 +103,6 @@
 			show: function(window, eOpts) {
 				this.delegate.cmfg('onUserAndGroupGroupPrivilegesGridUIConfigurationShow');
 			}
-		},
-
-		/**
-		 * Override close action to avoid window destroy. Close is called by Esc button press and using top-right close toolButton.
-		 *
-		 * @override
-		 */
-		close: function() {
-			this.hide();
 		}
 	});
 
