@@ -5,7 +5,7 @@ import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.cmdbuild.service.rest.v2.constants.Serialization.FILTER;
 import static org.cmdbuild.service.rest.v2.constants.Serialization.FUNCTION_ID;
 import static org.cmdbuild.service.rest.v2.constants.Serialization.LIMIT;
-import static org.cmdbuild.service.rest.v2.constants.Serialization.PARAMS;
+import static org.cmdbuild.service.rest.v2.constants.Serialization.PARAMETERS;
 import static org.cmdbuild.service.rest.v2.constants.Serialization.START;
 
 import javax.ws.rs.GET;
@@ -59,7 +59,7 @@ public interface Functions {
 	@Path("{" + FUNCTION_ID + "}/outputs/")
 	ResponseMultiple<Values> call( //
 			@PathParam(FUNCTION_ID) Long functionId, //
-			@QueryParam(PARAMS) String inputs //
+			@QueryParam(PARAMETERS) String inputs //
 	);
 
 }
