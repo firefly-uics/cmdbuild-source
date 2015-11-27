@@ -13,7 +13,7 @@
 				text : CMDBuild.Translation.administration.modClass.add_class
 			});
 
-			this.printSchema = Ext.create('CMDBuild.core.buttons.iconized.Print', {
+			this.printSchema = Ext.create('CMDBuild.core.buttons.iconized.split.Print', {
 				formatList: [
 					CMDBuild.core.constants.Proxy.PDF,
 					CMDBuild.core.constants.Proxy.ODT

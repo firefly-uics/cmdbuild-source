@@ -39,7 +39,7 @@
 						items: [
 							new CMDBuild.field.GridSearchField({ grid: this }),
 							new CMDBuild.view.management.common.filter.CMFilterMenuButton({ disabled: true }),
-							Ext.create('CMDBuild.core.buttons.iconized.Print', {
+							Ext.create('CMDBuild.core.buttons.iconized.split.Print', {
 								delegate: this.delegate,
 								formatList: [
 									CMDBuild.core.constants.Proxy.PDF,

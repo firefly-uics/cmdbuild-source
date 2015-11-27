@@ -1,6 +1,6 @@
 (function() {
 
-	Ext.define('CMDBuild.core.buttons.iconized.Print', {
+	Ext.define('CMDBuild.core.buttons.iconized.split.Print', {
 		extend: 'Ext.button.Split',
 
 		requires: ['CMDBuild.core.constants.Proxy'],

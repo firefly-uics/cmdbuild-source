@@ -5,6 +5,7 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
+			'CMDBuild.core.Message',
 			'CMDBuild.core.proxy.Index',
 			'CMDBuild.core.proxy.report.Print'
 		],
@@ -64,9 +65,7 @@
 		constructor: function(configurationObject) {
 			this.callParent(arguments);
 
-			this.view = Ext.create('CMDBuild.view.common.entryTypeGrid.printTool.PrintWindow', {
-				delegate: this
-			});
+			this.view = Ext.create('CMDBuild.view.common.entryTypeGrid.printTool.PrintWindow', { delegate: this });
 
 			if (!Ext.isEmpty(this.view) && Ext.isString(this.format))
 				if (Ext.Array.contains(this.browserManagedFormats, this.format)) { // With browser managed formats show modal pop-up
@@ -76,6 +75,9 @@
 				}
 		},
 
+		/**
+		 * @private
+		 */
 		createDocument: function() {
 			var proxyCreateFunction = null;
 
@@ -110,7 +112,7 @@
 					params: this.parameters,
 					scope: this,
 					failure: function(response, options, decodedResponse) {
-						CMDBuild.Msg.error(
+						CMDBuild.core.Message.error(
 							CMDBuild.Translation.error,
 							CMDBuild.Translation.errors.createReportFilure,
 							false
@@ -137,6 +139,8 @@
 
 		/**
 		 * Get created report from server and display it in iframe
+		 *
+		 * @private
 		 */
 		showReport: function() {
 			var params = {};

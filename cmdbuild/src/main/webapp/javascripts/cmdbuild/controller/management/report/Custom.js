@@ -94,6 +94,8 @@
 
 		/**
 		 * @param {Boolean} forceDownload
+		 *
+		 * @private
 		 */
 		createReport: function(forceDownload) {
 			forceDownload = forceDownload || false;
@@ -174,7 +176,7 @@
 
 				this.reportCustomSelectedReport(reportInfo[CMDBuild.core.constants.Proxy.RECORD]);
 
-				// Force download true for PDF and CSV
+				// Force download true for ODT and RTF
 				this.createReport(Ext.Array.contains(this.forceDownloadTypes, reportInfo[CMDBuild.core.constants.Proxy.TYPE]));
 			} else {
 				CMDBuild.core.Message.error(

@@ -408,7 +408,7 @@
 				}
 			});
 
-			this.printCardMenu = Ext.create('CMDBuild.core.buttons.iconized.Print', {
+			this.printCardMenu = Ext.create('CMDBuild.core.buttons.iconized.split.Print', {
 				formatList: [
 					CMDBuild.core.constants.Proxy.PDF,
 					CMDBuild.core.constants.Proxy.ODT
