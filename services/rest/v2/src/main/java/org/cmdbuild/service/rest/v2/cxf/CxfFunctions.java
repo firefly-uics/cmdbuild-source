@@ -1,9 +1,11 @@
 package org.cmdbuild.service.rest.v2.cxf;
 
+import static com.google.common.base.Predicates.alwaysTrue;
 import static com.google.common.base.Predicates.equalTo;
 import static com.google.common.collect.FluentIterable.from;
 import static com.google.common.collect.Iterables.size;
 import static com.google.common.collect.Ordering.from;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.cmdbuild.dao.entrytype.Predicates.functionId;
 import static org.cmdbuild.service.rest.v2.model.Models.newAttribute;
 import static org.cmdbuild.service.rest.v2.model.Models.newFunctionWithBasicDetails;
@@ -17,7 +19,12 @@ import java.util.Comparator;
 import org.cmdbuild.dao.function.CMFunction;
 import org.cmdbuild.dao.function.CMFunction.CMFunctionParameter;
 import org.cmdbuild.dao.view.CMDataView;
+import org.cmdbuild.logic.data.access.filter.json.JsonParser;
+import org.cmdbuild.logic.data.access.filter.model.Element;
+import org.cmdbuild.logic.data.access.filter.model.Filter;
+import org.cmdbuild.logic.data.access.filter.model.Parser;
 import org.cmdbuild.service.rest.v2.Functions;
+import org.cmdbuild.service.rest.v2.cxf.filter.FunctionElementPredicate;
 import org.cmdbuild.service.rest.v2.cxf.serialization.AttributeTypeResolver;
 import org.cmdbuild.service.rest.v2.model.Attribute;
 import org.cmdbuild.service.rest.v2.model.FunctionWithBasicDetails;
@@ -27,6 +34,7 @@ import org.cmdbuild.service.rest.v2.model.ResponseSingle;
 
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
+import com.google.common.base.Predicate;
 
 public class CxfFunctions implements Functions {
 
@@ -52,10 +60,26 @@ public class CxfFunctions implements Functions {
 	}
 
 	@Override
-	public ResponseMultiple<FunctionWithBasicDetails> readAll(final Integer limit, final Integer offset) {
-		final Iterable<? extends CMFunction> functions = dataView.findAllFunctions();
-		final Iterable<? extends CMFunction> ordered = from(ID_ASC).sortedCopy(functions);
-		final Iterable<FunctionWithBasicDetails> elements = from(ordered) //
+	public ResponseMultiple<FunctionWithBasicDetails> readAll(final Integer limit, final Integer offset,
+			final String filter) {
+		final Predicate<CMFunction> predicate;
+		if (isNotBlank(filter)) {
+			final Parser parser = new JsonParser(filter);
+			final Filter filterModel = parser.parse();
+			final Optional<Element> element = filterModel.attribute();
+			if (element.isPresent()) {
+				predicate = new FunctionElementPredicate(element.get());
+			} else {
+				predicate = alwaysTrue();
+			}
+		} else {
+			predicate = alwaysTrue();
+		}
+		final Iterable<? extends CMFunction> all = dataView.findAllFunctions();
+		final Iterable<? extends CMFunction> ordered = from(ID_ASC).sortedCopy(all);
+		final Iterable<? extends CMFunction> filtered = from(ordered) //
+				.filter(predicate);
+		final Iterable<FunctionWithBasicDetails> elements = from(filtered) //
 				.skip((offset == null) ? 0 : offset) //
 				.limit((limit == null) ? Integer.MAX_VALUE : limit) //
 				.transform(new Function<CMFunction, FunctionWithBasicDetails>() {
@@ -73,7 +97,7 @@ public class CxfFunctions implements Functions {
 		return newResponseMultiple(FunctionWithBasicDetails.class) //
 				.withElements(elements) //
 				.withMetadata(newMetadata() //
-						.withTotal(size(ordered)) //
+						.withTotal(size(filtered)) //
 						.build()) //
 				.build();
 	}

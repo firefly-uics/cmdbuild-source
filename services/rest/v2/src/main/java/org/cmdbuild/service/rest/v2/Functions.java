@@ -2,6 +2,7 @@ package org.cmdbuild.service.rest.v2;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.cmdbuild.service.rest.v2.constants.Serialization.FILTER;
 import static org.cmdbuild.service.rest.v2.constants.Serialization.FUNCTION_ID;
 import static org.cmdbuild.service.rest.v2.constants.Serialization.LIMIT;
 import static org.cmdbuild.service.rest.v2.constants.Serialization.START;
@@ -26,7 +27,8 @@ public interface Functions {
 	@Path(EMPTY)
 	ResponseMultiple<FunctionWithBasicDetails> readAll( //
 			@QueryParam(LIMIT) Integer limit, //
-			@QueryParam(START) Integer offset //
+			@QueryParam(START) Integer offset, //
+			@QueryParam(FILTER) String filter //
 	);
 
 	@GET
