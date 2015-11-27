@@ -5,7 +5,6 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.LoadMask',
 			'CMDBuild.core.Message',
 			'CMDBuild.core.proxy.Index',
 			'CMDBuild.core.proxy.report.Jasper',
@@ -29,7 +28,8 @@
 			'onReportsJasperModifyButtonClick = onReportsJasperItemDoubleClick',
 			'onReportsJasperRemoveButtonClick',
 			'onReportsJasperRowSelected',
-			'onReportsJasperSaveButtonClick'
+			'onReportsJasperSaveButtonClick',
+			'onReportsJasperShow'
 		],
 
 		/**
@@ -87,14 +87,14 @@
 			this.grid = this.view.grid;
 		},
 
+		/**
+		 * @private
+		 */
 		import: function() {
-			CMDBuild.core.LoadMask.show();
 			CMDBuild.core.proxy.report.Jasper.import({
-				form: this.form.step2Panel,
+				form: this.form.step2Panel.getForm(),
 				scope: this,
-				failure: function(form, action) {
-					CMDBuild.core.LoadMask.hide();
-
+				failure: function(response, options, decodedResponse) {
 					CMDBuild.core.Message.error(CMDBuild.Translation.errors.error_message, CMDBuild.Translation.errors.reportsImportError, false);
 				},
 				success: this.success
@@ -180,7 +180,7 @@
 			CMDBuild.core.proxy.report.Jasper.create({
 				params: params,
 				scope: this,
-				success: function(result, options, decodedResult) {
+				success: function(response, options, decodedResponse) {
 					params = {};
 					params[CMDBuild.core.constants.Proxy.FORCE_DOWNLOAD_PARAM_KEY] = true;
 
@@ -245,28 +245,23 @@
 				params[CMDBuild.core.constants.Proxy.NAME] = this.form.step1Panel.name.getValue(); // TODO: waiting for refactor (read title parameter, write as name)
 				params[CMDBuild.core.constants.Proxy.REPORT_ID] = this.form.step1Panel.reportId.getValue() || -1; // TODO: waiting for refactor (read id parameter, write as reportId)
 
-				CMDBuild.core.LoadMask.show();
 				CMDBuild.core.proxy.report.Jasper.analize({
-					form: this.form.step1Panel,
+					form: this.form.step1Panel.getForm(),
 					params: params,
 					scope: this,
-					failure: function(form, action) {
-						CMDBuild.core.LoadMask.hide();
-
+					failure: function(response, options, decodedResponse) {
 						CMDBuild.core.Message.error(CMDBuild.Translation.errors.error_message, CMDBuild.Translation.errors.reportsAnalizeError, false);
 					},
-					success: function(form, action) {
-						CMDBuild.core.LoadMask.hide();
-
-						if (Ext.isBoolean(action.result.skipSecondStep) && action.result.skipSecondStep) {
+					success: function(response, options, decodedResponse) {
+						if (Ext.isBoolean(decodedResponse.skipSecondStep) && decodedResponse.skipSecondStep) {
 							CMDBuild.core.proxy.report.Jasper.save({
 								scope: this,
 								success: this.success
 							});
 						} else {
-							this.setFormDetails(action.result);
+							this.setFormDetails(decodedResponse);
 
-							if (Ext.isEmpty(action.result.images) && Ext.isEmpty(action.result.subreports)) {
+							if (Ext.isEmpty(decodedResponse.images) && Ext.isEmpty(decodedResponse.subreports)) {
 								this.import();
 							} else {
 								this.form.getLayout().setActiveItem(1);
@@ -279,6 +274,19 @@
 			}
 		},
 
+		onReportsJasperShow: function() {
+			this.grid.getStore().load({
+				scope: this,
+				callback: function(records, operation, success) {
+					if (!this.grid.getSelectionModel().hasSelection())
+						this.grid.getSelectionModel().select(0, true);
+				}
+			});
+		},
+
+		/**
+		 * @private
+		 */
 		removeItem: function() {
 			if (!Ext.isEmpty(this.selectedReport)) {
 				var params = {};
@@ -308,8 +316,6 @@
 									// If no selections disable all UI
 									if (!this.grid.getSelectionModel().hasSelection())
 										this.form.setDisabledModify(true, true, true, true);
-
-									_CMCache.reloadReportStores();
 								}
 							}
 						});
@@ -319,39 +325,36 @@
 		},
 
 		/**
-		 * @param {Object} result
+		 * @param {Object} response
 		 * @param {Object} options
-		 * @param {Object} decodedResult
+		 * @param {Object} decodedResponse
+		 *
+		 * @private
 		 */
-		success: function(result, options, decodedResult) {
-			var me = this;
-
+		success: function(response, options, decodedResponse) {
 			this.grid.getStore().load({
+				scope: this,
 				callback: function(records, operation, success) {
-					CMDBuild.core.LoadMask.hide();
-
 					if (success) {
-						me.form.step2Panel.removeAll();
+						this.form.step2Panel.removeAll();
 
 						// Reset server session
 						CMDBuild.core.proxy.report.Jasper.resetSession({
-							scope: me,
+							scope: this,
 							success: function(response, options, decodedResponse) {
-								me.form.getLayout().setActiveItem(0);
+								this.form.getLayout().setActiveItem(0);
 							}
 						});
 
-						var rowIndex = this.find(
+						var rowIndex = this.grid.getStore().find(
 							CMDBuild.core.constants.Proxy.NAME,
-							me.form.step1Panel.name.getValue()
+							this.form.step1Panel.name.getValue()
 						);
 
-						me.grid.getSelectionModel().select(rowIndex, true);
-						me.form.setDisabledModify(true);
+						this.grid.getSelectionModel().select(rowIndex, true);
+						this.form.setDisabledModify(true);
 
-						_CMCache.reloadReportStores();
-
-						CMDBuild.view.common.field.translatable.Utils.commit(me.form.step1Panel);
+						CMDBuild.view.common.field.translatable.Utils.commit(this.form.step1Panel);
 					}
 				}
 			});
@@ -360,6 +363,8 @@
 		// Step 2 methods
 			/**
 			 * @param {Object} results
+			 *
+			 * @private
 			 *
 			 * TODO: this functionality should be refactored because it's not so safe to apply server response like this way
 			 */
@@ -394,6 +399,8 @@
 			/**
 			 * @param {Array} refer
 			 * @param {String} namePrefix
+			 *
+			 * @private
 			 */
 			buildFields: function(refer, namePrefix) {
 				if (!Ext.isEmpty(refer) && Ext.isArray(refer)) {

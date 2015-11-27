@@ -83,9 +83,7 @@
 						labelWidth: CMDBuild.LABEL_WIDTH,
 						maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH
 					}),
-					this.reportId = Ext.create('Ext.form.field.Hidden', {
-						name: CMDBuild.core.constants.Proxy.ID
-					})
+					this.reportId = Ext.create('Ext.form.field.Hidden', { name: CMDBuild.core.constants.Proxy.ID })
 				]
 			});
 

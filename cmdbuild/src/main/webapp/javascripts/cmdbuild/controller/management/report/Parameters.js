@@ -99,7 +99,7 @@
 
 		onReportParametersWindowPrintButtonClick: function() {
 			if (this.view.form.getForm().isValid()) {
-				this.cmfg('currentReportParametersSet', {
+				this.cmfg('selectedReportParametersSet', {
 					callIdentifier: 'update',
 					params: this.form.getValues()
 				});

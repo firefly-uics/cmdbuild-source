@@ -67,6 +67,8 @@
 
 			/**
 			 * @param {Object} parameters
+			 *
+			 * @private
 			 */
 			reportSelectedAccordionSet: function(parameters) {
 				if (!Ext.Object.isEmpty(parameters)) {
@@ -78,11 +80,14 @@
 			},
 
 		/**
-		 * @param {CMDBuild.model.common.accordion.Generic} node
+		 * @param {CMDBuild.model.common.accordion.Report} node
 		 */
 		onViewOnFront: function(node) {
 			if (!Ext.Object.isEmpty(node)) {
-				this.reportSelectedAccordionSet({ value: node.getData() });
+				var nodeData = node.getData();
+				nodeData[CMDBuild.core.constants.Proxy.TYPE] = nodeData[CMDBuild.core.constants.Proxy.ENTITY_ID];
+
+				this.reportSelectedAccordionSet({ value: nodeData });
 
 				this.view.removeAll(true);
 
@@ -97,7 +102,7 @@
 
 				this.view.add(this.sectionController.getView());
 
-				this.sectionController.cmfg('onReportAccordionSelect');
+				this.sectionController.cmfg('onReportShow');
 
 				this.callParent(arguments);
 			}

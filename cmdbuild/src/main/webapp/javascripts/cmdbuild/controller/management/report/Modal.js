@@ -48,7 +48,7 @@
 
 			this.view = Ext.create('CMDBuild.view.management.report.ModalWindow', { delegate: this });
 
-			this.setViewTitle(this.cmfg('currentReportRecordGet', CMDBuild.core.constants.Proxy.DESCRIPTION));
+			this.setViewTitle(this.cmfg('selectedReportRecordGet', CMDBuild.core.constants.Proxy.DESCRIPTION));
 
 			if (!Ext.isEmpty(this.view) && Ext.isString(this.extension) && Ext.Array.contains(this.browserManagedFormats, this.extension))
 				this.view.show();

@@ -17,6 +17,7 @@
 		border: false,
 		cls: 'cmborderbottom',
 		frame: false,
+		split: true,
 
 		initComponent: function() {
 			var store = CMDBuild.core.proxy.report.Jasper.getStore();
@@ -87,18 +88,6 @@
 
 			select: function(row, record, index) {
 				this.delegate.cmfg('onReportsJasperRowSelected');
-			},
-
-			// Event to load store on view display and first row selection as CMDbuild standard
-			viewready: function(panel, eOpts) {
-				this.getStore().load({
-					scope: this,
-					callback: function(records, operation, success) {
-						if (success)
-							if (!this.getSelectionModel().hasSelection())
-								this.getSelectionModel().select(0, true);
-					}
-				});
 			}
 		}
 	});
