@@ -620,7 +620,7 @@
 			"DOMAIN_NOTFOUND": "Domein {0} niet gevonden",
 			"ILLEGAL_CRON_EXPRESSION": "Niet geldige cron expressie",
 			"LOCKED_CARD": "Gebruiker {0} is de kaart aan het bijwerken sinds {1} seconde",
-			"LOCKED_MISSING": "<em>Should be locked before</em>",
+			"LOCKED_MISSING": "<em>Expired time for editing</em>",
 			"LOOKUP_NOTFOUND": "Zoeklijst niet gevonden voor type {0}",
 			"LOOKUP_TYPE_NOTFOUND": "Zoeklijst type {0} niet gevonden",
 			"MENU_NOTFOUND": "Menu niet gevonden",

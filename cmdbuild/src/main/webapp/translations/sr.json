@@ -620,7 +620,7 @@
 			"DOMAIN_NOTFOUND": "Relacija {0} ne postoji",
 			"ILLEGAL_CRON_EXPRESSION": "Nevalidan cron izraz",
 			"LOCKED_CARD": "Korisnik {0} ažurira karticu {1} sekundi",
-			"LOCKED_MISSING": "<em>Should be locked before</em>",
+			"LOCKED_MISSING": "<em>Expired time for editing</em>",
 			"LOOKUP_NOTFOUND": "Šifarnik {0} ne postoji",
 			"LOOKUP_TYPE_NOTFOUND": "Tip {0} ne postoji u šifarniku",
 			"MENU_NOTFOUND": "Meni ne postoji",

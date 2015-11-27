@@ -26,6 +26,8 @@
 		},
 
 		/**
+		 * Custom error messages implementation
+		 *
 		 * @param {String} reasonName
 		 * @param {Object} reasonParameters
 		 *

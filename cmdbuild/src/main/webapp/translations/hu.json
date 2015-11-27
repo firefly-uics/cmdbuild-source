@@ -620,7 +620,7 @@
 			"DOMAIN_NOTFOUND": "A {0} domain nem található",
 			"ILLEGAL_CRON_EXPRESSION": "Érvénytelen cron kifejezés",
 			"LOCKED_CARD": "A {0} felhasználó szerkesztette a kártyát {1} másodperce",
-			"LOCKED_MISSING": "<em>Should be locked before</em>",
+			"LOCKED_MISSING": "<em>Expired time for editing</em>",
 			"LOOKUP_NOTFOUND": "A lista a {0} típushoz nem található",
 			"LOOKUP_TYPE_NOTFOUND": "A {0} lista típus nem található",
 			"MENU_NOTFOUND": "A menü nem található",
