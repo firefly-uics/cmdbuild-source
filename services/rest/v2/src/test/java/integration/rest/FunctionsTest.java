@@ -4,6 +4,7 @@ import static java.util.Arrays.asList;
 import static org.cmdbuild.service.rest.test.HttpClientUtils.contentOf;
 import static org.cmdbuild.service.rest.test.HttpClientUtils.statusCodeOf;
 import static org.cmdbuild.service.rest.test.ServerResource.randomPort;
+import static org.cmdbuild.service.rest.v2.constants.Serialization.FILTER;
 import static org.cmdbuild.service.rest.v2.constants.Serialization.LIMIT;
 import static org.cmdbuild.service.rest.v2.constants.Serialization.START;
 import static org.cmdbuild.service.rest.v2.model.Models.newAttribute;
@@ -16,6 +17,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyLong;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -80,13 +82,14 @@ public class FunctionsTest {
 						.withTotal(2L) //
 						.build()) //
 				.build();
-		when(service.readAll(anyInt(), anyInt())) //
+		when(service.readAll(anyInt(), anyInt(), anyString())) //
 				.thenReturn(expectedResponse);
 
 		// when
 		final HttpGet get = new HttpGet(new URIBuilder(server.resource("functions/")) //
 				.setParameter(LIMIT, "123") //
 				.setParameter(START, "456") //
+				.setParameter(FILTER, "this is the filter") //
 				.build());
 		final HttpResponse response = httpclient.execute(get);
 
@@ -94,7 +97,7 @@ public class FunctionsTest {
 		assertThat(statusCodeOf(response), equalTo(200));
 		assertThat(json.from(contentOf(response)), equalTo(json.from(expectedResponse)));
 
-		verify(service).readAll(eq(123), eq(456));
+		verify(service).readAll(eq(123), eq(456), eq("this is the filter"));
 	}
 
 	@Test

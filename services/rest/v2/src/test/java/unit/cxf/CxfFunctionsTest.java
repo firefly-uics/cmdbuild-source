@@ -51,7 +51,7 @@ public class CxfFunctionsTest {
 				.when(dataView).findAllFunctions();
 
 		// when
-		underTest.readAll(123, 456);
+		underTest.readAll(123, 456, null);
 	}
 
 	@Test
@@ -64,7 +64,7 @@ public class CxfFunctionsTest {
 				.when(dataView).findAllFunctions();
 
 		// when
-		final ResponseMultiple<FunctionWithBasicDetails> response = underTest.readAll(null, null);
+		final ResponseMultiple<FunctionWithBasicDetails> response = underTest.readAll(null, null, null);
 
 		// then
 		assertThat(response.getMetadata().getTotal(), equalTo(3L));
@@ -79,6 +79,37 @@ public class CxfFunctionsTest {
 	}
 
 	@Test
+	public void functionsFilteredByNameReturned() throws Exception {
+		// given
+		final CMFunction _1 = function(1L);
+		final CMFunction _2 = function(2L);
+		final CMFunction _3 = function(3L);
+		doReturn(asList(_1, _2, _3)) //
+				.when(dataView).findAllFunctions();
+
+		// when
+		final ResponseMultiple<FunctionWithBasicDetails> response = underTest.readAll(null, null, "" //
+				+ "{" //
+				+ "	\"attribute\": {" //
+				+ "		\"simple\": {" //
+				+ "			\"attribute\": \"name\"," //
+				+ "			\"operator\": \"equal\"," //
+				+ "			\"value\": [\"2\"]" //
+				+ "		}" //
+				+ "	}" //
+				+ "}");
+
+		// then
+		assertThat(response.getMetadata().getTotal(), equalTo(1L));
+		assertThat(response.getElements(), hasSize(1));
+		assertThat(get(response.getElements(), 0), equalTo(newFunctionWithBasicDetails() //
+				.withId(_2.getId()) //
+				.withName(_2.getName()) //
+				.withDescription(_2.getName()) //
+				.build()));
+	}
+
+	@Test
 	public void functionsReturnedPaged() throws Exception {
 		// given
 		final CMFunction _1 = function(1L);
@@ -90,7 +121,7 @@ public class CxfFunctionsTest {
 				.when(dataView).findAllFunctions();
 
 		// when
-		final ResponseMultiple<FunctionWithBasicDetails> response = underTest.readAll(2, 1);
+		final ResponseMultiple<FunctionWithBasicDetails> response = underTest.readAll(2, 1, null);
 
 		// then
 		assertThat(response.getMetadata().getTotal(), equalTo(5L));
