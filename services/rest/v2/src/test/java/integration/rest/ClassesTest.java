@@ -112,6 +112,9 @@ public class ClassesTest {
 										.build() //
 								)) //
 						.build()) //
+				.withMetadata(newMetadata() //
+						// nothing to add, just needed for simplify assertions
+						.build()) //
 				.build();
 		when(service.read(anyString())) //
 				.thenReturn(expectedResponse);

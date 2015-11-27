@@ -807,6 +807,7 @@
 			"ORM_ILLEGAL_NAME_ERROR": "Неверное имя: {0}",
 			"ORM_LOOKUPTYPE_ALREADY_EXISTS": "Перечень уже существует",
 			"ORM_MALFORMED_PATCH": "Пакет обновлений поврежден",
+			"ORM_MISSING_MADATORY_VALUES": "<em>Missing mandatory values: {0}</em>", 
 			"ORM_NOT_NULL_VIOLATION": "Нарушение требования Not null",
 			"ORM_POSTGIS_NOT_FOUND": "PostGIS не установлен",
 			"ORM_READ_ONLY_RELATION": "Связь только для чтения",

@@ -97,6 +97,9 @@ public class ProcessInstanceAttachmentsTest {
 		write(file, "blah blah blah");
 		final ResponseSingle<String> expectedResponse = newResponseSingle(String.class) //
 				.withElement("the id") //
+				.withMetadata(newMetadata() //
+						// nothing to add, just needed for simplify assertions
+						.build()) //
 				.build();
 		doReturn(expectedResponse) //
 				.when(service).create(anyString(), anyLong(), any(Attachment.class), any(DataHandler.class));
@@ -217,9 +220,15 @@ public class ProcessInstanceAttachmentsTest {
 				.build();
 		final ResponseSingle<Attachment> sentResponse = newResponseSingle(Attachment.class) //
 				.withElement(attachmentMetadata) //
+				.withMetadata(newMetadata() //
+						// nothing to add, just needed for simplify assertions
+						.build()) //
 				.build();
 		final ResponseSingle<Map<String, Object>> expectedResponse = Models.<Map<String, Object>> newResponseSingle() //
 				.withElement(new AttachmentAdapter().marshal(attachmentMetadata)) //
+				.withMetadata(newMetadata() //
+						// nothing to add, just needed for simplify assertions
+						.build()) //
 				.build();
 		when(service.read(anyString(), anyLong(), anyString())) //
 				.thenReturn(sentResponse);
