@@ -1,6 +1,6 @@
 (function() {
 
-	Ext.define('CMDBuild.controller.management.report.SingleReport', {
+	Ext.define('CMDBuild.controller.management.report.Single', {
 		extend: 'CMDBuild.controller.common.AbstractBasePanelController',
 
 		requires: [
@@ -14,10 +14,10 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
-			'currentReportParametersSet',
+			'reportSingleSelectedReportParametersSet = selectedReportParametersSet',
 			'onSingleReportDownloadButtonClick',
 			'onSingleReportTypeButtonClick',
-			'updateReport'
+			'reportSingleUpdateReport = updateReport'
 		],
 
 		/**
@@ -50,7 +50,7 @@
 		],
 
 		/**
-		 * @cfg {CMDBuild.view.management.report.SingleReportPanel}
+		 * @cfg {CMDBuild.view.management.report.SinglePanel}
 		 */
 		view: undefined,
 
@@ -92,7 +92,7 @@
 									forceDownload: forceDownload
 								});
 							} else {
-								this.updateReport(forceDownload);
+								this.cmfg('reportSingleUpdateReport', forceDownload);
 							}
 						}
 					}
@@ -148,7 +148,7 @@
 			 * @param {Object} parameters.params
 			 * @param {String} parameters.callIdentifier - managed identifiers (create, update)
 			 */
-			currentReportParametersSet: function(parameters) {
+			reportSingleSelectedReportParametersSet: function(parameters) {
 				if (!Ext.isEmpty(parameters) && Ext.isObject(parameters)) {
 					var params = parameters.params || null;
 					var callIdentifier = parameters.callIdentifier || null;
@@ -186,7 +186,7 @@
 		 */
 		onSingleReportTypeButtonClick: function(type) {
 			if (Ext.Array.contains(this.managedReportTypes, type)) {
-				this.currentReportParametersSet({
+				this.cmfg('reportSingleSelectedReportParametersSet', {
 					callIdentifier: 'create',
 					params: {
 						extension: type,
@@ -211,7 +211,7 @@
 		 * @param {CMDBuild.model.common.accordion.Generic} node
 		 */
 		onViewOnFront: function(node) {
-			this.currentReportParametersSet(); // Reset class property
+			this.cmfg('reportSingleSelectedReportParametersSet'); // Reset class property
 
 			if (
 				!Ext.Object.isEmpty(node)
@@ -220,7 +220,7 @@
 			) {
 				this.setViewTitle(node.get(CMDBuild.core.constants.Proxy.TEXT));
 
-				this.currentReportParametersSet({
+				this.cmfg('reportSingleSelectedReportParametersSet', {
 					callIdentifier: 'create',
 					params: {
 						extension: node.get(CMDBuild.core.constants.Proxy.SECTION_HIERARCHY)[0],
@@ -276,7 +276,7 @@
 		/**
 		 * @param {Boolean} forceDownload
 		 */
-		updateReport: function(forceDownload) {
+		reportSingleUpdateReport: function(forceDownload) {
 			if (!this.currentReportParametersIsEmpty('update')) {
 				CMDBuild.core.proxy.report.Report.update({
 					params: this.currentReportParametersGet({ callIdentifier: 'update' }),

@@ -5,6 +5,7 @@
 		requires: [
 			'CMDBuild.core.cache.Cache',
 			'CMDBuild.core.constants.Proxy',
+			'CMDBuild.core.interfaces.FormSubmit',
 			'CMDBuild.core.proxy.Index',
 			'CMDBuild.model.report.Grid'
 		],
@@ -15,15 +16,11 @@
 		 * @param {Object} parameters
 		 */
 		analize: function(parameters) {
-			parameters.form.submit({
-				method: 'POST',
-				url: CMDBuild.core.proxy.Index.report.jasper.analyze,
-				params: parameters.params,
-				scope: parameters.scope || this,
-				failure: parameters.failure || Ext.emptyFn,
-				success: parameters.success || Ext.emptyFn,
-				callback: parameters.callback || Ext.emptyFn
-			});
+			parameters = Ext.isEmpty(parameters) ? {} : parameters;
+
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.report.jasper.analyze });
+
+			CMDBuild.core.interfaces.FormSubmit.submit(parameters);
 		},
 
 		/**
@@ -38,10 +35,10 @@
 		},
 
 		/**
-		 * @return {Ext.data.Store}
+		 * @returns {Ext.data.Store or CMDBuild.core.cache.Store}
 		 */
 		getStore: function() {
-			return Ext.create('Ext.data.Store', {
+			return CMDBuild.core.cache.Cache.requestAsStore(CMDBuild.core.constants.Proxy.REPORT, {
 				autoLoad: false,
 				model: 'CMDBuild.model.report.Grid',
 				pageSize: CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.ROW_LIMIT),
@@ -50,8 +47,8 @@
 					url: CMDBuild.core.proxy.Index.report.jasper.getReportsByType,
 					reader: {
 						type: 'json',
-						root: 'rows',
-						totalProperty: 'results'
+						root: CMDBuild.core.constants.Proxy.ROWS,
+						totalProperty: CMDBuild.core.constants.Proxy.RESULTS
 					},
 					extraParams: {
 						type: CMDBuild.core.constants.Proxy.CUSTOM
@@ -67,14 +64,11 @@
 		 * @param {Object} parameters
 		 */
 		import: function(parameters) {
-			parameters.form.submit({
-				method: 'POST',
-				url: CMDBuild.core.proxy.Index.report.jasper.import,
-				params: parameters.params,
-				scope: parameters.scope || this,
-				failure: parameters.failure || Ext.emptyFn,
-				success: parameters.success || Ext.emptyFn
-			});
+			parameters = Ext.isEmpty(parameters) ? {} : parameters;
+
+			Ext.apply(parameters, { url: CMDBuild.core.proxy.Index.report.jasper.import });
+
+			CMDBuild.core.interfaces.FormSubmit.submit(parameters);
 		},
 
 		/**

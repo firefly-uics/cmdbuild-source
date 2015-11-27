@@ -47,7 +47,6 @@
 					this.grid = Ext.create('CMDBuild.view.administration.report.jasper.GridPanel', {
 						delegate: this.delegate,
 						region: 'north',
-						split: true,
 						height: '30%'
 					}),
 					this.form = Ext.create('CMDBuild.view.administration.report.jasper.form.FormPanel', {
@@ -58,6 +57,12 @@
 			});
 
 			this.callParent(arguments);
+		},
+
+		listeners: {
+			show: function(panel, eOpts) {
+				this.delegate.cmfg('onReportsJasperShow');
+			}
 		}
 	});
 

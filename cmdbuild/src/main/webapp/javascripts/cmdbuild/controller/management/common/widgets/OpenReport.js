@@ -17,9 +17,9 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
-			'currentReportRecordGet',
 			'onOpenReportSaveButtonClick',
-			'showReport'
+			'showReport',
+			'widgetOpenReportSelectedReportRecordGet = selectedReportRecordGet'
 		],
 
 		/**
@@ -92,11 +92,6 @@
 					}
 				}, this);
 		},
-
-		/**
-		 * Avoids not managed function warning
-		 */
-		currentReportRecordGet: Ext.emptyFn,
 
 		/**
 		 * Fixes date format
@@ -186,7 +181,12 @@
 			Ext.defer(function() { // Form cleanup
 				form.close();
 			}, 100);
-		}
+		},
+
+		/**
+		 * Avoids not managed function warning
+		 */
+		widgetOpenReportSelectedReportRecordGet: Ext.emptyFn
 	});
 
 })();

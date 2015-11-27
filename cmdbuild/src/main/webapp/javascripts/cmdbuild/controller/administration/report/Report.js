@@ -36,9 +36,11 @@
 					}
 				}
 
+				this.setViewTitle(node.get(CMDBuild.core.constants.Proxy.TEXT));
+
 				this.view.add(this.sectionController.getView());
 
-				this.setViewTitle(node.get(CMDBuild.core.constants.Proxy.TEXT));
+				this.sectionController.getView().fireEvent('show');
 
 				this.callParent(arguments);
 			}

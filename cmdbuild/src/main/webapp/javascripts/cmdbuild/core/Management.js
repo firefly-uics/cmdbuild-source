@@ -124,18 +124,6 @@
 				callback: CMDBuild.core.RequestBarrier.getCallback(barrierId)
 			});
 
-			/**
-			 * Report
-			 */
-			CMDBuild.core.proxy.report.Report.getTypesTree({
-				loadMask: false,
-				scope: this,
-				success: function(response, options, decodedResponse) {
-					_CMCache.addReports(decodedResponse);
-				},
-				callback: CMDBuild.core.RequestBarrier.getCallback(barrierId)
-			});
-
 			CMDBuild.core.RequestBarrier.finalize(barrierId);
 		},
 
@@ -284,8 +272,8 @@
 							cmControllerType: 'CMDBuild.controller.management.report.Report',
 							cmName: 'report'
 						}),
-						Ext.create('CMDBuild.view.management.report.SingleReportPanel', {
-							cmControllerType: 'CMDBuild.controller.management.report.SingleReport',
+						Ext.create('CMDBuild.view.management.report.SinglePanel', {
+							cmControllerType: 'CMDBuild.controller.management.report.Single',
 							cmName: 'singlereport'
 						}),
 						this.cardPanel = new CMDBuild.view.management.classes.CMModCard({

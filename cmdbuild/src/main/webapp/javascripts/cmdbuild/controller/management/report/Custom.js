@@ -10,19 +10,18 @@
 			'CMDBuild.core.proxy.report.Report'
 		],
 
-		mixins: ['CMDBuild.controller.management.report.SingleReport'], // Import functions to avoid to duplicate
+		mixins: ['CMDBuild.controller.management.report.Single'], // Import functions to avoid to duplicate
 
 		/**
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
-			'currentReportParametersSet',
-			'currentReportRecordGet',
-			'currentReportRecordSet',
-			'onReportCustomAccordionSelect = onReportAccordionSelect',
 			'onReportCustomGenerateButtonClick',
-			'showReport',
-			'updateReport'
+			'onReportCustomShow = onReportShow',
+			'reportCustomSelectedReportParametersSet = selectedReportParametersSet',
+			'reportCustomSelectedReportRecordGet = selectedReportRecordGet',
+			'reportCustomShowReport = showReport',
+			'reportCustomUpdateReport = updateReport'
 		],
 
 		/**
@@ -93,15 +92,6 @@
 			this.grid = this.view.grid;
 		},
 
-		onReportCustomAccordionSelect: function() {
-			if (!this.cmfg('reportSelectedAccordionIsEmpty')) {
-				var params = {};
-				params[CMDBuild.core.constants.Proxy.TYPE] = this.cmfg('reportSelectedAccordionGet', CMDBuild.core.constants.Proxy.TYPE);
-
-				this.grid.getStore().load({ params: params });
-			}
-		},
-
 		/**
 		 * @param {Boolean} forceDownload
 		 */
@@ -126,7 +116,7 @@
 					},
 					success: function(response, options, decodedResponse) {
 						if(decodedResponse.filled) { // Report with no parameters
-							this.showReport(forceDownload);
+							this.cmfg('reportCustomShowReport', forceDownload);
 						} else { // Show parameters window
 							Ext.create('CMDBuild.controller.management.report.Parameters', {
 								parentDelegate: this,
@@ -145,7 +135,7 @@
 			 *
 			 * @return {Mixed or undefined}
 			 */
-			currentReportRecordGet: function(attributePath) {
+			reportCustomSelectedReportRecordGet: function(attributePath) {
 				var parameters = {};
 				parameters[CMDBuild.core.constants.Proxy.TARGET_VARIABLE_NAME] = 'currentReportRecord';
 				parameters[CMDBuild.core.constants.Proxy.ATTRIBUTE_PATH] = attributePath;
@@ -155,8 +145,10 @@
 
 			/**
 			 * @param {CMDBuild.model.report.Grid} record
+			 *
+			 * @private
 			 */
-			currentReportRecordSet: function(record) {
+			reportCustomSelectedReport: function(record) {
 				if (!Ext.Object.isEmpty(record)) {
 					var parameters = {};
 					parameters[CMDBuild.core.constants.Proxy.MODEL_NAME] = 'CMDBuild.model.report.Grid';
@@ -172,7 +164,7 @@
 		 */
 		onReportCustomGenerateButtonClick: function(reportInfo) {
 			if (Ext.Array.contains(this.managedReportTypes, reportInfo[CMDBuild.core.constants.Proxy.TYPE])) {
-				this.currentReportParametersSet({
+				this.cmfg('reportCustomSelectedReportParametersSet', {
 					callIdentifier: 'create',
 					params: {
 						extension: reportInfo[CMDBuild.core.constants.Proxy.TYPE],
@@ -180,7 +172,7 @@
 					}
 				});
 
-				this.currentReportRecordSet(reportInfo[CMDBuild.core.constants.Proxy.RECORD]);
+				this.reportCustomSelectedReport(reportInfo[CMDBuild.core.constants.Proxy.RECORD]);
 
 				// Force download true for PDF and CSV
 				this.createReport(Ext.Array.contains(this.forceDownloadTypes, reportInfo[CMDBuild.core.constants.Proxy.TYPE]));
@@ -190,6 +182,15 @@
 					CMDBuild.Translation.errors.unmanagedReportType,
 					false
 				);
+			}
+		},
+
+		onReportCustomShow: function() {
+			if (!this.cmfg('reportSelectedAccordionIsEmpty')) {
+				var params = {};
+				params[CMDBuild.core.constants.Proxy.TYPE] = this.cmfg('reportSelectedAccordionGet', CMDBuild.core.constants.Proxy.TYPE);
+
+				this.grid.getStore().load({ params: params });
 			}
 		},
 
@@ -241,7 +242,7 @@
 			 * @param {Object} parameters.params
 			 * @param {String} parameters.callIdentifier - managed identifiers (create, update)
 			 */
-			currentReportParametersSet: function(parameters) {
+			reportCustomSelectedReportParametersSet: function(parameters) {
 				if (!Ext.isEmpty(parameters) && Ext.isObject(parameters)) {
 					var params = parameters.params || null;
 					var callIdentifier = parameters.callIdentifier || null;
@@ -272,7 +273,7 @@
 		 *
 		 * @param {Boolean} forceDownload
 		 */
-		showReport: function(forceDownload) {
+		reportCustomShowReport: function(forceDownload) {
 			forceDownload = forceDownload || false;
 
 			if (forceDownload) { // Force download mode
@@ -306,13 +307,13 @@
 		/**
 		 * @param {Boolean} forceDownload
 		 */
-		updateReport: function(forceDownload) {
+		reportCustomUpdateReport: function(forceDownload) {
 			if (!this.currentReportParametersIsEmpty('update')) {
 				CMDBuild.core.proxy.report.Report.update({
 					params: this.currentReportParametersGet({ callIdentifier: 'update' }),
 					scope: this,
 					success: function(response, options, decodedResponse) {
-						this.showReport(forceDownload);
+						this.cmfg('reportCustomShowReport', forceDownload);
 					}
 				});
 			}
