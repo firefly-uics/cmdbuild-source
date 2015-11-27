@@ -807,6 +807,7 @@
 			"ORM_ILLEGAL_NAME_ERROR": "Illegális név: {0}",
 			"ORM_LOOKUPTYPE_ALREADY_EXISTS": "Már létezik ilyen leírással lista",
 			"ORM_MALFORMED_PATCH": "Olvashatatlan Patch",
+			"ORM_MISSING_MADATORY_VALUES": "<em>Missing mandatory values: {0}</em>", 
 			"ORM_NOT_NULL_VIOLATION": "Nem null kötelezettség megszegése",
 			"ORM_POSTGIS_NOT_FOUND": "PostGIS nincs telepítve",
 			"ORM_READ_ONLY_RELATION": "Csak olvasható reláció",

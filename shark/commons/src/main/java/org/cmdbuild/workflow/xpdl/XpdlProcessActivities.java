@@ -22,7 +22,7 @@ public class XpdlProcessActivities extends XpdlActivities {
 	@Override
 	@SuppressWarnings("unchecked")
 	protected List<Activity> startingActivities() {
-		return (List<Activity>) xpdlProcess.inner.getStartingActivities();
+		return xpdlProcess.inner.getStartingActivities();
 	}
 
 	@Override

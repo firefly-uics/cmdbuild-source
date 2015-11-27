@@ -32,7 +32,7 @@
 				},
 				success : function(response) {
 					var ret = Ext.JSON.decode(response.responseText);
-					var attributes = CMDBuild.controller.common.WorkflowStaticsController.filterAttributesInStep(me.cardAttributes, ret.response.variables);
+					var attributes = CMDBuild.controller.management.workflow.StaticsController.filterAttributesInStep(me.cardAttributes, ret.response.variables);
 					attributes = cleanServerAttributes(attributes);
 					me.view.fillPresetWithData(attributes);
 				}

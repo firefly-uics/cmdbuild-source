@@ -9,7 +9,6 @@ import org.cmdbuild.auth.UserStore;
 import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.dao.view.user.UserDataView;
-import org.cmdbuild.data.view.PermissiveDataView;
 import org.cmdbuild.logic.data.access.UserDataAccessLogicBuilder;
 import org.cmdbuild.logic.data.access.WebServiceDataAccessLogicBuilder;
 import org.cmdbuild.logic.workflow.UserWorkflowLogicBuilder;
@@ -18,7 +17,9 @@ import org.cmdbuild.services.event.ObservableDataView;
 import org.cmdbuild.workflow.DataViewWorkflowPersistence;
 import org.cmdbuild.workflow.DefaultWorkflowEngine;
 import org.cmdbuild.workflow.DefaultWorkflowEngine.DefaultWorkflowEngineBuilder;
+import org.cmdbuild.workflow.ProcessDefinitionManager;
 import org.cmdbuild.workflow.WorkflowPersistence;
+import org.cmdbuild.workflow.user.UserProcessDefinitionManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
@@ -65,7 +66,6 @@ public class User {
 		return new WebServiceDataAccessLogicBuilder( //
 				data.systemDataView(), //
 				data.lookupStore(), //
-				permissiveDataView(), //
 				userDataView(), //
 				operationUser(), //
 				lock.dummyLockLogic());
@@ -78,7 +78,6 @@ public class User {
 		return new UserDataAccessLogicBuilder( //
 				data.systemDataView(), //
 				data.lookupStore(), //
-				permissiveDataView(), //
 				userDataView(), //
 				operationUser(), //
 				lock.configurationAwareLockLogic());
@@ -102,12 +101,6 @@ public class User {
 
 	@Bean
 	@Scope(PROTOTYPE)
-	protected PermissiveDataView permissiveDataView() {
-		return new PermissiveDataView(userDataView(), data.systemDataView());
-	}
-
-	@Bean
-	@Scope(PROTOTYPE)
 	@Qualifier(USER)
 	protected Builder<DefaultWorkflowEngine> userWorkflowEngineBuilder() {
 		return new DefaultWorkflowEngineBuilder() //
@@ -127,11 +120,17 @@ public class User {
 				.withPrivilegeContext(operationUser.getPrivilegeContext()) //
 				.withOperationUser(operationUser) //
 				.withDataView(userDataView()) //
-				.withProcessDefinitionManager(workflow.processDefinitionManager()) //
+				.withProcessDefinitionManager(userProcessDefinitionManager()) //
 				.withLookupHelper(workflow.lookupHelper()) //
 				.withWorkflowService(workflow.workflowService()) //
 				.withActivityPerformerTemplateResolverFactory(workflow.activityPerformerTemplateResolverFactory()) //
 				.build();
+	}
+
+	@Bean
+	@Scope(PROTOTYPE)
+	protected ProcessDefinitionManager userProcessDefinitionManager() {
+		return new UserProcessDefinitionManager(workflow.processDefinitionManager(), userDataView());
 	}
 
 	@Bean

@@ -3,6 +3,8 @@
 	Ext.define('CMDBuild.controller.management.common.CMCardWindowController', {
 		extend: 'CMDBuild.controller.management.classes.CMBaseCardPanelController',
 
+		requires: ['CMDBuild.controller.management.classes.StaticsController'],
+
 		mixins: {
 			observable : 'Ext.util.Observable'
 		},
@@ -78,7 +80,7 @@
 					Ext.String.format(
 						'<p class="{0}">{1}</p>',
 						CMDBuild.Constants.css.error_msg, CMDBuild.Translation.errors.invalid_attributes
-					) + CMDBuild.controller.common.CardStaticsController.getInvalidAttributeAsHTML(form),
+					) + CMDBuild.controller.management.classes.StaticsController.getInvalidAttributeAsHTML(form),
 					false
 				);
 			}
