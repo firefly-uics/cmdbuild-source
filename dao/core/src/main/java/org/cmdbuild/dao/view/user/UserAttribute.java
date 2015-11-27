@@ -1,15 +1,19 @@
 package org.cmdbuild.dao.view.user;
 
+import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
+
 import java.util.Map;
 
 import org.cmdbuild.dao.entry.ForwardingAttribute;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMEntryType;
+import org.cmdbuild.dao.entrytype.attributetype.CMAttributeTypeVisitor;
+import org.cmdbuild.dao.entrytype.attributetype.ForwardingAttributeTypeVisitor;
+import org.cmdbuild.dao.entrytype.attributetype.NullAttributeTypeVisitor;
+import org.cmdbuild.dao.entrytype.attributetype.ReferenceAttributeType;
 import org.cmdbuild.dao.view.user.privileges.RowAndColumnPrivilegeFetcher;
 
 public class UserAttribute extends ForwardingAttribute {
-
-	private final static String NO_PRIVILEGE = "none";
 
 	static UserAttribute newInstance(final UserDataView view, final CMAttribute inner,
 			final RowAndColumnPrivilegeFetcher rowAndColumnPrivilegeFetcher) {
@@ -21,10 +25,36 @@ public class UserAttribute extends ForwardingAttribute {
 		 * For non administrator user, remove the attribute with mode "hidden"
 		 */
 		final boolean isAdmin = view.getPrivilegeContext().hasAdministratorPrivileges();
-		final Map<String, String> attributesPrivileges = rowAndColumnPrivilegeFetcher
-				.fetchAttributesPrivilegesFor(inner.getOwner());
-		final String mode = attributesPrivileges.get(inner.getName());
-		if (isAdmin || !NO_PRIVILEGE.equals(mode)) {
+		final Mode mode = new ForwardingAttributeTypeVisitor() {
+
+			private final CMAttributeTypeVisitor delegate = NullAttributeTypeVisitor.getInstance();
+
+			private Mode output;
+
+			public Mode mode() {
+				final Map<String, String> attributesPrivileges = rowAndColumnPrivilegeFetcher
+						.fetchAttributesPrivilegesFor(inner.getOwner());
+				output = Mode.of(attributesPrivileges.get(inner.getName()));
+				inner.getType().accept(this);
+				return output;
+			}
+
+			@Override
+			protected CMAttributeTypeVisitor delegate() {
+				return delegate;
+			}
+
+			@Override
+			public void visit(final ReferenceAttributeType attributeType) {
+				if (view.findDomain(attributeType.getDomainName()) == null) {
+					if (output == Mode.WRITE) {
+						output = Mode.READ;
+					}
+				}
+			}
+
+		}.mode();
+		if (isAdmin || (mode != null)) {
 			return new UserAttribute(view, inner, mode);
 		}
 
@@ -33,12 +63,12 @@ public class UserAttribute extends ForwardingAttribute {
 
 	private final UserDataView view;
 	private final CMAttribute delegate;
-	private final String mode;
+	private final Mode mode;
 
 	private UserAttribute( //
 			final UserDataView view, //
 			final CMAttribute delegate, //
-			final String mode //
+			final Mode mode //
 	) {
 		this.view = view;
 		this.delegate = delegate;
@@ -57,11 +87,7 @@ public class UserAttribute extends ForwardingAttribute {
 
 	@Override
 	public Mode getMode() {
-		if (mode != null) {
-			return Mode.valueOf(mode.toUpperCase());
-		} else {
-			return super.getMode();
-		}
+		return defaultIfNull(mode, super.getMode());
 	}
 
 }

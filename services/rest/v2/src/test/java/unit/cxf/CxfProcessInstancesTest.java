@@ -198,6 +198,8 @@ public class CxfProcessInstancesTest {
 		doReturn(new StringAttributeType()) //
 				.when(attribute).getType();
 		final UserProcessClass userProcessClass = mockProcessClass(null, "foo");
+		doReturn(asList(attribute)) //
+				.when(userProcessClass).getAllAttributes();
 		doReturn(userProcessClass) //
 				.when(workflowLogic).findProcessClass(anyString());
 		doReturn(asList(attribute)) //
@@ -297,6 +299,8 @@ public class CxfProcessInstancesTest {
 				.when(workflowLogic).findProcessClass(anyString());
 		doReturn(attribute) //
 				.when(userProcessClass).getAttribute(anyString());
+		doReturn(asList(attribute)) //
+				.when(userProcessClass).getAllAttributes();
 		final UserProcessInstance instance = mock(UserProcessInstance.class);
 		doReturn(userProcessClass) //
 				.when(instance).getType();

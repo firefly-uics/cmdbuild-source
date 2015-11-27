@@ -107,6 +107,9 @@ public class ReportsTest {
 						.withTitle("this is the title") //
 						.withDescription("this is the description") //
 						.build()) //
+				.withMetadata(newMetadata() //
+						// nothing to add, just needed for simplify assertions
+						.build()) //
 				.build();
 		doReturn(sentResponse) //
 				.when(service).read(anyLong());

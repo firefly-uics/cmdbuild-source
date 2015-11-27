@@ -23,6 +23,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.cmdbuild.service.rest.v2.model.Attribute.Filter;
 import org.cmdbuild.service.rest.v2.model.ClassWithFullDetails.AttributeOrder;
+import org.cmdbuild.service.rest.v2.model.DetailResponseMetadata.Reference;
 import org.cmdbuild.service.rest.v2.model.ProcessActivityWithFullDetails.AttributeStatus;
 
 import com.google.common.base.Function;
@@ -1275,9 +1276,11 @@ public class Models {
 	public static class MetadataBuilder extends ModelBuilder<DetailResponseMetadata> {
 
 		private static final Map<Long, Long> NO_POSITIONS = emptyMap();
+		private static final Map<Long, Reference> NO_REFERENCES = emptyMap();
 
 		private Long total;
 		private Map<Long, Long> positions;
+		private Map<Long, Reference> references;
 
 		private MetadataBuilder() {
 			// use factory method
@@ -1287,6 +1290,7 @@ public class Models {
 		protected void doValidate() {
 			super.doValidate();
 			positions = defaultIfNull(positions, NO_POSITIONS);
+			references = defaultIfNull(references, NO_REFERENCES);
 		}
 
 		@Override
@@ -1294,6 +1298,7 @@ public class Models {
 			final DetailResponseMetadata output = new DetailResponseMetadata();
 			output.setTotal(total);
 			output.setPositions(positions);
+			output.setReferences(references);
 			return output;
 		}
 
@@ -1309,6 +1314,11 @@ public class Models {
 
 		public MetadataBuilder withPositions(final Map<Long, Long> positions) {
 			this.positions = positions;
+			return this;
+		}
+
+		public MetadataBuilder withReferences(final Map<Long, Reference> references) {
+			this.references = references;
 			return this;
 		}
 
@@ -1761,6 +1771,31 @@ public class Models {
 
 	}
 
+	public static class ReferenceBuilder extends ModelBuilder<Reference> {
+
+		private String description;
+		private Long parent;
+
+		@Override
+		protected Reference doBuild() {
+			final Reference output = new Reference();
+			output.setDescription(description);
+			output.setParent(parent);
+			return output;
+		}
+
+		public ReferenceBuilder withDescription(final String description) {
+			this.description = description;
+			return this;
+		}
+
+		public ReferenceBuilder withParent(final Long parent) {
+			this.parent = parent;
+			return this;
+		}
+
+	}
+
 	public static class RelationBuilder extends ModelBuilder<Relation> {
 
 		private String type;
@@ -1861,6 +1896,7 @@ public class Models {
 	public static class ResponseSingleBuilder<T> extends ModelBuilder<ResponseSingle<T>> {
 
 		private T element;
+		private DetailResponseMetadata metadata;
 
 		private ResponseSingleBuilder() {
 			// use factory method
@@ -1870,11 +1906,17 @@ public class Models {
 		protected ResponseSingle<T> doBuild() {
 			final ResponseSingle<T> output = new ResponseSingle<T>();
 			output.setElement(element);
+			output.setMetadata(metadata);
 			return output;
 		}
 
 		public ResponseSingleBuilder<T> withElement(final T element) {
 			this.element = element;
+			return this;
+		}
+
+		public ResponseSingleBuilder<T> withMetadata(final DetailResponseMetadata metadata) {
+			this.metadata = metadata;
 			return this;
 		}
 
@@ -2187,6 +2229,10 @@ public class Models {
 
 	public static ProcessWithFullDetailsBuilder newProcessWithFullDetails() {
 		return new ProcessWithFullDetailsBuilder();
+	}
+
+	public static ReferenceBuilder newReference() {
+		return new ReferenceBuilder();
 	}
 
 	public static RelationBuilder newRelation() {

@@ -24,7 +24,7 @@ public class ReferenceType implements Serializable {
 		description = "";
 	}
 
-	public ReferenceType(int id, int idClass, String description) {
+	public ReferenceType(final int id, final int idClass, final String description) {
 		super();
 		this.id = id;
 		this.idClass = idClass;
@@ -35,7 +35,7 @@ public class ReferenceType implements Serializable {
 		return id;
 	}
 
-	public void setId(int id) {
+	public void setId(final int id) {
 		this.id = id;
 	}
 
@@ -43,7 +43,7 @@ public class ReferenceType implements Serializable {
 		return idClass;
 	}
 
-	public void setIdClass(int idClass) {
+	public void setIdClass(final int idClass) {
 		this.idClass = idClass;
 	}
 
@@ -51,7 +51,7 @@ public class ReferenceType implements Serializable {
 		return description;
 	}
 
-	public void setDescription(String description) {
+	public void setDescription(final String description) {
 		this.description = description;
 	}
 
@@ -79,23 +79,30 @@ public class ReferenceType implements Serializable {
 	}
 
 	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
+	public boolean equals(final Object obj) {
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		if (obj == null) {
 			return false;
-		if (getClass() != obj.getClass())
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
-		ReferenceType other = (ReferenceType) obj;
+		}
+		final ReferenceType other = (ReferenceType) obj;
 		if (description == null) {
-			if (other.description != null)
+			if (other.description != null) {
 				return false;
-		} else if (!description.equals(other.description))
+			}
+		} else if (!description.equals(other.description)) {
 			return false;
-		if (id != other.id)
+		}
+		if (id != other.id) {
 			return false;
-		if (idClass != other.idClass)
+		}
+		if (idClass != other.idClass) {
 			return false;
+		}
 		return true;
 	}
 }

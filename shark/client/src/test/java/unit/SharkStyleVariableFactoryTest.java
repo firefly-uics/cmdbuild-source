@@ -1,14 +1,15 @@
 package unit;
 
 import static org.cmdbuild.workflow.xpdl.SharkStyleXpdlExtendedAttributeVariableFactory.VARIABLE_PREFIX;
-import static org.hamcrest.CoreMatchers.is;
+import static org.cmdbuild.workflow.xpdl.SharkStyleXpdlExtendedAttributeVariableFactory.VariableSuffix.UPDATE;
+import static org.cmdbuild.workflow.xpdl.SharkStyleXpdlExtendedAttributeVariableFactory.VariableSuffix.UPDATEREQUIRED;
+import static org.cmdbuild.workflow.xpdl.SharkStyleXpdlExtendedAttributeVariableFactory.VariableSuffix.VIEW;
+import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 
 import org.cmdbuild.workflow.xpdl.CMActivityVariableToProcess;
-import org.cmdbuild.workflow.xpdl.CMActivityVariableToProcess.Type;
 import org.cmdbuild.workflow.xpdl.SharkStyleXpdlExtendedAttributeVariableFactory;
-import org.cmdbuild.workflow.xpdl.SharkStyleXpdlExtendedAttributeVariableFactory.VariableSuffix;
 import org.cmdbuild.workflow.xpdl.XpdlExtendedAttribute;
 import org.cmdbuild.workflow.xpdl.XpdlExtendedAttributeVariableFactory;
 import org.junit.Test;
@@ -20,20 +21,22 @@ public class SharkStyleVariableFactoryTest {
 	@Test
 	public void returnsNullForInvalidEntries() {
 		assertNull(createVariable("Rubbish", "Foo"));
-		assertNull(createVariable(VARIABLE_PREFIX + VariableSuffix.VIEW, null));
+		assertNull(createVariable(VARIABLE_PREFIX + VIEW, null));
 	}
 
 	@Test
 	public void returnsVariableName() {
-		assertThat(createVariable(VARIABLE_PREFIX + VariableSuffix.VIEW, "VarName").getName(), is("VarName"));
+		assertThat(createVariable(VARIABLE_PREFIX + VIEW, "VarName").getName(), equalTo("VarName"));
 	}
 
 	@Test
 	public void returnsVariableType() {
-		assertThat(createVariable(VARIABLE_PREFIX + VariableSuffix.VIEW, "Foo").getType(), is(Type.READ_ONLY));
-		assertThat(createVariable(VARIABLE_PREFIX + VariableSuffix.UPDATE, "Bar").getType(), is(Type.READ_WRITE));
-		assertThat(createVariable(VARIABLE_PREFIX + VariableSuffix.UPDATEREQUIRED, "Baz").getType(),
-				is(Type.READ_WRITE_REQUIRED));
+		assertThat(createVariable(VARIABLE_PREFIX + VIEW, "Foo").isWritable(), equalTo(false));
+		assertThat(createVariable(VARIABLE_PREFIX + VIEW, "Foo").isMandatory(), equalTo(false));
+		assertThat(createVariable(VARIABLE_PREFIX + UPDATE, "Bar").isWritable(), equalTo(true));
+		assertThat(createVariable(VARIABLE_PREFIX + UPDATE, "Bar").isMandatory(), equalTo(false));
+		assertThat(createVariable(VARIABLE_PREFIX + UPDATEREQUIRED, "Baz").isWritable(), equalTo(true));
+		assertThat(createVariable(VARIABLE_PREFIX + UPDATEREQUIRED, "Baz").isMandatory(), equalTo(true));
 	}
 
 	/*

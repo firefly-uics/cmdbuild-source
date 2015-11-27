@@ -2,6 +2,12 @@
 	var MAX_HEIGHT = 100;
 
 	Ext.form.field.Display.override({
+
+		/**
+		 * @cfg {Boolean}
+		 */
+		allowBlank: true,
+
 		setValue : function(value) {
 			// for the attributes like lookup and reference
 			// that has as value an object like {id:"", description:""}
@@ -25,11 +31,28 @@
 					}
 				}
 			}
+		},
+
+		/**
+		 * Validate also display field
+		 *
+		 * @override
+		 */
+		isValid: function() {
+			if (this.allowBlank)
+				return true;
+
+			return !Ext.isEmpty(this.getValue());
 		}
 	});
 
 	Ext.define("CMDBuild.view.common.field.CMDisplayField", {
 		extend : "Ext.form.field.Display",
+
+		/**
+		 * @cfg {Boolean}
+		 */
+		allowBlank: true,
 
 		constructor : function() {
 			this.callParent(arguments);
@@ -71,6 +94,18 @@
 			if (this.expandButtonEl) {
 				this.expandButtonEl.hide();
 			}
+		},
+
+		/**
+		 * Validate also display field
+		 *
+		 * @override
+		 */
+		isValid: function() {
+			if (this.allowBlank)
+				return true;
+
+			return !Ext.isEmpty(this.getValue());
 		}
 	});
 

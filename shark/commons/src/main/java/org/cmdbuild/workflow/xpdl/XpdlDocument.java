@@ -30,7 +30,7 @@ public class XpdlDocument {
 	public enum ScriptLanguage {
 		JAVA(SharkConstants.GRAMMAR_JAVA), //
 		JAVASCRIPT(SharkConstants.GRAMMAR_JAVA_SCRIPT), //
-		PYTHON(SharkConstants.GRAMMAR_PYTHON_SCRIPT), // 
+		PYTHON(SharkConstants.GRAMMAR_PYTHON_SCRIPT), //
 		GROOVY("text/groovy"), //
 		;
 
@@ -45,7 +45,7 @@ public class XpdlDocument {
 		}
 
 		public static ScriptLanguage of(final String mimeType) {
-			for (ScriptLanguage language : values()) {
+			for (final ScriptLanguage language : values()) {
 				if (language.mimeType.equals(mimeType)) {
 					return language;
 				}
@@ -58,31 +58,31 @@ public class XpdlDocument {
 	public enum StandardAndCustomTypes {
 		BOOLEAN {
 			@Override
-			protected void selectDataType(DataTypes dataTypes) {
+			protected void selectDataType(final DataTypes dataTypes) {
 				dataTypes.getBasicType().setTypeBOOLEAN();
 			}
 		},
 		DATETIME {
 			@Override
-			protected void selectDataType(DataTypes dataTypes) {
+			protected void selectDataType(final DataTypes dataTypes) {
 				dataTypes.getBasicType().setTypeDATETIME();
 			}
 		},
 		FLOAT {
 			@Override
-			protected void selectDataType(DataTypes dataTypes) {
+			protected void selectDataType(final DataTypes dataTypes) {
 				dataTypes.getBasicType().setTypeFLOAT();
 			}
 		},
 		INTEGER {
 			@Override
-			protected void selectDataType(DataTypes dataTypes) {
+			protected void selectDataType(final DataTypes dataTypes) {
 				dataTypes.getBasicType().setTypeINTEGER();
 			}
 		},
 		STRING {
 			@Override
-			protected void selectDataType(DataTypes dataTypes) {
+			protected void selectDataType(final DataTypes dataTypes) {
 				dataTypes.getBasicType().setTypeSTRING();
 			}
 		},
@@ -91,14 +91,14 @@ public class XpdlDocument {
 		 */
 		REFERENCE(Constants.XPDL_REFERENCE_DECLARED_TYPE, ReferenceType.class.getName()) {
 			@Override
-			protected void selectDataType(DataTypes dataTypes) {
+			protected void selectDataType(final DataTypes dataTypes) {
 				dataTypes.setDeclaredType();
 				dataTypes.getDeclaredType().setId(getDeclaredTypeId());
 			}
 		},
 		LOOKUP(Constants.XPDL_LOOKUP_DECLARED_TYPE, LookupType.class.getName()) {
 			@Override
-			protected void selectDataType(DataTypes dataTypes) {
+			protected void selectDataType(final DataTypes dataTypes) {
 				dataTypes.setDeclaredType();
 				dataTypes.getDeclaredType().setId(getDeclaredTypeId());
 			}
@@ -171,7 +171,7 @@ public class XpdlDocument {
 
 	public XpdlProcess createProcess(final String procDefId) {
 		turnReadWrite();
-		WorkflowProcess wp = (WorkflowProcess) pkg.getWorkflowProcesses().generateNewElement();
+		final WorkflowProcess wp = (WorkflowProcess) pkg.getWorkflowProcesses().generateNewElement();
 		wp.setId(procDefId);
 		pkg.getWorkflowProcesses().add(wp);
 		return new XpdlProcess(this, wp);
@@ -198,12 +198,12 @@ public class XpdlDocument {
 
 	public void addPackageField(final String dfId, final StandardAndCustomTypes type) {
 		turnReadWrite();
-		DataField df = createDataField(dfId, type);
+		final DataField df = createDataField(dfId, type);
 		pkg.getDataFields().add(df);
 	}
 
 	DataField createDataField(final String dfId, final StandardAndCustomTypes type) {
-		DataField df = (DataField) pkg.getDataFields().generateNewElement();
+		final DataField df = (DataField) pkg.getDataFields().generateNewElement();
 		df.setId(dfId);
 		type.setTypeToField(df);
 		return df;
@@ -215,7 +215,7 @@ public class XpdlDocument {
 
 	public void addRoleParticipant(final String participantId) {
 		turnReadWrite();
-		Participant p = (Participant) pkg.getParticipants().generateNewElement();
+		final Participant p = (Participant) pkg.getParticipants().generateNewElement();
 		p.setId(participantId);
 		// Default but better safe than sorry
 		p.getParticipantType().setTypeROLE();
@@ -229,7 +229,7 @@ public class XpdlDocument {
 
 	public void addSystemParticipant(final String participantId) {
 		turnReadWrite();
-		Participant p = (Participant) pkg.getParticipants().generateNewElement();
+		final Participant p = (Participant) pkg.getParticipants().generateNewElement();
 		p.setId(participantId);
 		p.getParticipantType().setTypeSYSTEM();
 		pkg.getParticipants().add(p);
@@ -240,8 +240,8 @@ public class XpdlDocument {
 	 */
 
 	public void createCustomTypeDeclarations() {
-		TypeDeclarations types = pkg.getTypeDeclarations();
-		for (StandardAndCustomTypes t : StandardAndCustomTypes.values()) {
+		final TypeDeclarations types = pkg.getTypeDeclarations();
+		for (final StandardAndCustomTypes t : StandardAndCustomTypes.values()) {
 			if (t.isCustom()) {
 				addExternalReferenceType(types, t);
 				addExternalReferenceArrayType(types, t);
@@ -249,19 +249,18 @@ public class XpdlDocument {
 		}
 	}
 
-	private void addExternalReferenceType(TypeDeclarations types, StandardAndCustomTypes t) {
+	private void addExternalReferenceType(final TypeDeclarations types, final StandardAndCustomTypes t) {
 		addExternalReferenceType(types, t.getDeclaredTypeId(), t.getDeclaredTypeLocation());
 	}
 
-	private void addExternalReferenceArrayType(TypeDeclarations types, StandardAndCustomTypes t) {
-		addExternalReferenceType(types, t.getDeclaredTypeId() + ARRAY_DECLARED_TYPE_NAME_SUFFIX, t
-				.getDeclaredTypeLocation()
-				+ ARRAY_DECLARED_TYPE_LOCATION_SUFFIX);
+	private void addExternalReferenceArrayType(final TypeDeclarations types, final StandardAndCustomTypes t) {
+		addExternalReferenceType(types, t.getDeclaredTypeId() + ARRAY_DECLARED_TYPE_NAME_SUFFIX,
+				t.getDeclaredTypeLocation() + ARRAY_DECLARED_TYPE_LOCATION_SUFFIX);
 	}
 
 	private void addExternalReferenceType(final TypeDeclarations types, final String id, final String location) {
 		turnReadWrite();
-		TypeDeclaration type = (TypeDeclaration) types.generateNewElement();
+		final TypeDeclaration type = (TypeDeclaration) types.generateNewElement();
 		type.setId(id);
 		type.getDataTypes().getExternalReference().setLocation(location);
 		type.getDataTypes().setExternalReference();
