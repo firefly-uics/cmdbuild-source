@@ -16,7 +16,7 @@
 				text: tr.add_process
 			});
 
-			this.printSchema = Ext.create('CMDBuild.core.buttons.iconized.Print', {
+			this.printSchema = Ext.create('CMDBuild.core.buttons.iconized.split.Print', {
 				formatList: [
 					CMDBuild.core.constants.Proxy.PDF,
 					CMDBuild.core.constants.Proxy.ODT

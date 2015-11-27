@@ -43,7 +43,7 @@
 								disabled: true
 							}),
 							Ext.create('CMDBuild.core.buttons.iconized.RelationGraph', { disabled: true }),
-							Ext.create('CMDBuild.core.buttons.iconized.Print', {
+							Ext.create('CMDBuild.core.buttons.iconized.split.Print', {
 								text: CMDBuild.Translation.common.buttons.print + ' ' + CMDBuild.Translation.card.toLowerCase(),
 								disabled: true
 							})

@@ -524,7 +524,7 @@
 		}
 
 		if (me.cmAddPrintButton) {
-			me.printGridMenu = Ext.create('CMDBuild.core.buttons.iconized.Print', {
+			me.printGridMenu = Ext.create('CMDBuild.core.buttons.iconized.split.Print', {
 				formatList: [
 					CMDBuild.core.constants.Proxy.PDF,
 					CMDBuild.core.constants.Proxy.CSV
