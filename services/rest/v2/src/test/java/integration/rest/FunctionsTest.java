@@ -7,7 +7,7 @@ import static org.cmdbuild.service.rest.test.HttpClientUtils.statusCodeOf;
 import static org.cmdbuild.service.rest.test.ServerResource.randomPort;
 import static org.cmdbuild.service.rest.v2.constants.Serialization.FILTER;
 import static org.cmdbuild.service.rest.v2.constants.Serialization.LIMIT;
-import static org.cmdbuild.service.rest.v2.constants.Serialization.PARAMS;
+import static org.cmdbuild.service.rest.v2.constants.Serialization.PARAMETERS;
 import static org.cmdbuild.service.rest.v2.constants.Serialization.START;
 import static org.cmdbuild.service.rest.v2.model.Models.newAttribute;
 import static org.cmdbuild.service.rest.v2.model.Models.newFunctionWithBasicDetails;
@@ -221,7 +221,7 @@ public class FunctionsTest {
 
 		// when
 		final HttpGet get = new HttpGet(new URIBuilder(server.resource("functions/1/outputs/")) //
-				.setParameter(PARAMS, inputs) //
+				.setParameter(PARAMETERS, inputs) //
 				.build());
 		final HttpResponse response = httpclient.execute(get);
 
