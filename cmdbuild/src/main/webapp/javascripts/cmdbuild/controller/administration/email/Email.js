@@ -52,9 +52,6 @@
 
 				this.sectionController.getView().fireEvent('show');
 
-				if (!Ext.isEmpty(this.sectionController) && Ext.isFunction(this.sectionController.onViewOnFront))
-					this.sectionController.onViewOnFront();
-
 				this.callParent(arguments);
 			}
 		}

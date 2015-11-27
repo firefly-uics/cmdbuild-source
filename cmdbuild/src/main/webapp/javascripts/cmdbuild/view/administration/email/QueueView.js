@@ -1,13 +1,11 @@
 (function() {
 
-	Ext.define('CMDBuild.view.administration.email.QueuePanel', {
+	Ext.define('CMDBuild.view.administration.email.QueueView', {
 		extend: 'Ext.form.Panel',
 
 		requires: ['CMDBuild.core.constants.Proxy'],
 
-		mixins: {
-			panelFunctions: 'CMDBuild.view.common.PanelFunctions'
-		},
+		mixins: ['CMDBuild.view.common.PanelFunctions'],
 
 		/**
 		 * @cfg {CMDBuild.controller.administration.email.templates.Queue}
@@ -32,6 +30,7 @@
 		bodyCls: 'cmgraypanel',
 		border: false,
 		frame: false,
+		overflowY: 'auto',
 
 		layout: {
 			type: 'vbox',
@@ -39,33 +38,6 @@
 		},
 
 		initComponent: function() {
-			this.queueStartButton = Ext.create('CMDBuild.core.buttons.iconized.Start', {
-				text: CMDBuild.Translation.start,
-				scope: this,
-
-				handler: function(button, e) {
-					this.delegate.cmfg('onEmailQueueStartButtonClick');
-				}
-			});
-
-			this.queueStopButton = Ext.create('CMDBuild.core.buttons.iconized.Stop', {
-				text: CMDBuild.Translation.stop,
-				scope: this,
-
-				handler: function(button, e) {
-					this.delegate.cmfg('onEmailQueueStopButtonClick');
-				}
-			});
-
-			this.cycleIntervalField = Ext.create('CMDBuild.view.common.field.slider.SingleWithExtremeLabels', {
-				name: CMDBuild.core.constants.Proxy.TIME,
-				fieldLabel: CMDBuild.Translation.frequencyCheck,
-				labelWidth: CMDBuild.LABEL_WIDTH,
-				maxWidth: CMDBuild.CFG_BIG_FIELD_WIDTH,
-				minValue: 1,
-				maxValue: 10
-			});
-
 			Ext.apply(this, {
 				dockedItems: [
 					Ext.create('Ext.toolbar.Toolbar', {
@@ -74,8 +46,22 @@
 
 						items: [
 							'->',
-							this.queueStartButton,
-							this.queueStopButton
+							this.queueStartButton = Ext.create('CMDBuild.core.buttons.iconized.Start', {
+								text: CMDBuild.Translation.start,
+								scope: this,
+
+								handler: function(button, e) {
+									this.delegate.cmfg('onEmailQueueStartButtonClick');
+								}
+							}),
+							this.queueStopButton = Ext.create('CMDBuild.core.buttons.iconized.Stop', {
+								text: CMDBuild.Translation.stop,
+								scope: this,
+
+								handler: function(button, e) {
+									this.delegate.cmfg('onEmailQueueStopButtonClick');
+								}
+							})
 						]
 					}),
 					Ext.create('Ext.toolbar.Toolbar', {
@@ -107,10 +93,25 @@
 						]
 					})
 				],
-				items: [this.cycleIntervalField]
+				items: [
+					this.cycleIntervalField = Ext.create('CMDBuild.view.common.field.slider.SingleWithExtremeLabels', {
+						name: CMDBuild.core.constants.Proxy.TIME,
+						fieldLabel: CMDBuild.Translation.frequencyCheck,
+						labelWidth: CMDBuild.LABEL_WIDTH,
+						maxWidth: CMDBuild.CFG_BIG_FIELD_WIDTH,
+						minValue: 1,
+						maxValue: 10
+					})
+				]
 			});
 
 			this.callParent(arguments);
+		},
+
+		listeners: {
+			show: function(panel, eOpts) {
+				this.delegate.cmfg('onEmailQueueShow');
+			}
 		}
 	});
 
