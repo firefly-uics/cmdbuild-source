@@ -42,13 +42,13 @@
 
 					case 'accounts':
 					default: {
-						this.sectionController = Ext.create('CMDBuild.controller.administration.email.Accounts', { parentDelegate: this });
+						this.sectionController = Ext.create('CMDBuild.controller.administration.email.Account', { parentDelegate: this });
 					}
 				}
 
-				this.view.add(this.sectionController.getView());
-
 				this.setViewTitle(node.get(CMDBuild.core.constants.Proxy.DESCRIPTION));
+
+				this.view.add(this.sectionController.getView());
 
 				if (!Ext.isEmpty(this.sectionController) && Ext.isFunction(this.sectionController.onViewOnFront))
 					this.sectionController.onViewOnFront();

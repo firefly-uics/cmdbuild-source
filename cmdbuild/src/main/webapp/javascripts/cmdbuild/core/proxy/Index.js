@@ -119,19 +119,17 @@
 			remove: 'services/json/schema/modclass/deletedomain',
 
 			readAll: 'services/json/schema/modclass/getalldomains',
-
 			getDomainList: 'services/json/schema/modclass/getdomainlist'
 		},
 
 		email: {
 			accounts:{
+				create: 'services/json/schema/emailaccount/post',
+				read: 'services/json/schema/emailaccount/get',
+				update: 'services/json/schema/emailaccount/put',
 				remove: 'services/json/schema/emailaccount/delete',
-				get: 'services/json/schema/emailaccount/get',
-				post: 'services/json/schema/emailaccount/post',
-				put: 'services/json/schema/emailaccount/put',
 
-				getStore: 'services/json/schema/emailaccount/getall',
-				getStoreColumns: '',
+				readAll: 'services/json/schema/emailaccount/getall',
 				setDefault: 'services/json/schema/emailaccount/setdefault'
 			},
 
