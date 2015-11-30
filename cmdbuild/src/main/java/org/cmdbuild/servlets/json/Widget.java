@@ -1,7 +1,9 @@
 package org.cmdbuild.servlets.json;
 
+import static com.google.common.collect.FluentIterable.from;
 import static com.google.common.collect.Maps.newHashMap;
 import static com.google.common.collect.Multimaps.index;
+import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.cmdbuild.services.json.dto.JsonResponse.success;
@@ -138,7 +140,7 @@ public class Widget extends JSONBaseWithSpringContext {
 	}
 
 	@JSONExported
-	public JsonResponse readAll( //
+	public JsonResponse readAll( // .asMap()
 			@Parameter(value = ACTIVE_ONLY, required = false) final boolean activeOnly, //
 			@Parameter(value = CLASS_NAMES, required = false) final String jsonClassNames //
 	) {
@@ -149,6 +151,14 @@ public class Widget extends JSONBaseWithSpringContext {
 			classNames = toIterable(jsonClassNames);
 		}
 		return success(index(widgetLogic().getAllWidgets(activeOnly, classNames), SOURCE_CLASS).asMap());
+	}
+
+	@JSONExported
+	public JsonResponse readAllForClass( //
+			@Parameter(value = ACTIVE_ONLY, required = false) final boolean activeOnly, //
+			@Parameter(value = CLASS_NAME) final String className //
+	) {
+		return success(from(widgetLogic().getAllWidgets(activeOnly, asList(className))).toList());
 	}
 
 	@JSONExported
