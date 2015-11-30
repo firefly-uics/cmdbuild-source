@@ -462,12 +462,12 @@
 		},
 
 		widget: {
-			create: 'services/json/modwidget/savewidgetdefinition', // TODO: waiting for refactor (crud)
-			read: 'services/json/modwidget/getallwidgets', // TODO: waiting for refactor (crud)
-			update: 'services/json/modwidget/savewidgetdefinition', // TODO: waiting for refactor (crud)
-			remove: 'services/json/modwidget/removewidgetdefinition',
+			create: 'services/json/widget/create',
+			read: 'services/json/widget/read',
+			update: 'services/json/widget/update',
+			remove: 'services/json/widget/delete',
 
-			readAll: 'services/json/modwidget/getallwidgets' // TODO: waiting for refactor (crud)
+			readAll: 'services/json/widget/readall'
 		},
 
 		workflow: {

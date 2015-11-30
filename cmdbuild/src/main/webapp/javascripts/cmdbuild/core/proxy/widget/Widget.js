@@ -25,21 +25,21 @@
 		 * @return {Ext.data.Store or CMDBuild.core.cache.Store}
 		 */
 		getStore: function() { // TODO: waiting for refactor (CRUD)
-//			return CMDBuild.core.cache.Cache.requestAsStore(CMDBuild.core.constants.Proxy.WIDGET, {
-//				autoLoad: false,
-//				model: 'CMDBuild.model.filter.group.Store',
-//				proxy: {
-//					type: 'ajax',
-//					url: CMDBuild.core.proxy.Index.widget.readAll,
-//					reader: {
-//						type: 'json',
-//						root: CMDBuild.core.constants.Proxy.FILTERS
-//					}
-//				},
-//				sorters: [
-//					{ property: CMDBuild.core.constants.Proxy.DESCRIPTION, direction: 'ASC' }
-//				]
-//			});
+			return CMDBuild.core.cache.Cache.requestAsStore(CMDBuild.core.constants.Proxy.WIDGET, {
+				autoLoad: false,
+				model: 'CMDBuild.model.filter.group.Store',
+				proxy: {
+					type: 'ajax',
+					url: CMDBuild.core.proxy.Index.widget.readAll,
+					reader: {
+						type: 'json',
+						root: CMDBuild.core.constants.Proxy.FILTERS
+					}
+				},
+				sorters: [
+					{ property: CMDBuild.core.constants.Proxy.DESCRIPTION, direction: 'ASC' }
+				]
+			});
 		},
 
 		/**
