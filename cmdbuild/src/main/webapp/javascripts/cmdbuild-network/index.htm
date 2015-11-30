@@ -32,7 +32,7 @@
 				}
 			};
 			//var script = 'http://localhost/cmdbuild-gui-framework/api/cmdbuildAP.js';
-			var script = getUrlParameter("basePath") + '/javascripts/cmdbuild-gui-framework-1.0/cmdbuildAP.js';
+			var script = getUrlParameter("basePath") + '/javascripts/cmdbuild-gui-framework-1.0/api/cmdbuildAP.js';
 
 			var httpCallParameters = {
 				cardId: getUrlParameter("cardId"),
@@ -43,7 +43,7 @@
 			$.ajax({
 				async: false,
 				url: script,
-				crossDomain: true,
+				crossDomain: true,	
 				dataType: "script",
 				cache: false,
 				success : function(data, status) {
