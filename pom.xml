@@ -21,7 +21,6 @@
 		<module>dao/postgresql</module>
 		<module>dms/alfresco</module>
 		<module>dms/core</module>
-		<module>graph</module>
 		<module>parent</module>
 		<module>scheduler/core</module>
 		<module>scheduler/quartz</module>
