@@ -138,7 +138,7 @@
 		 *
 		 * @private
 		 */
-		loadCallback: function(options, success, response) {
+		defaultLoadCallback: function(options, success, response) {
 			if (!this.grid.getSelectionModel().hasSelection())
 				this.grid.getSelectionModel().select(0, true);
 		},
@@ -241,20 +241,29 @@ _debug('onClassTabWidgetItemDrop', params['sortedArray']);
 		/**
 		 * @param {Object} parameters
 		 * @param {Function} parameters.loadCallback
-		 *
-		 * TODO: waiting for refactor (CRUD)
 		 */
 		onClassTabWidgetPanelShow: function(parameters) {
 			parameters = Ext.Object.isEmpty(parameters) ? {} : parameters;
-			parameters.loadCallback = Ext.isFunction(parameters.loadCallback) ? parameters.loadCallback : this.loadCallback;
+			parameters.loadCallback = Ext.isFunction(parameters.loadCallback) ? parameters.loadCallback : this.defaultLoadCallback;
+
+//			var params = {};
 
 			this.grid.getStore().removeAll();
+
+//			this.grid.getStore().load({
+//				params: params,
+////				success: function(records, operation, success) {
+////
+////				}
+//				success: parameters.loadCallback
+//			});
 
 			if (!Ext.isEmpty(this.form) && Ext.isFunction(this.form.reset))
 				this.form.reset();
 
+			// TODO: waiting for refactor (CRUD getStore())
 			if (!this.view.isDisabled()) {
-				CMDBuild.core.proxy.widget.Widget.read({ // TODO: waiting for refactor (CRUD getStore())
+				CMDBuild.core.proxy.widget.Widget.readAll({
 					scope: this,
 					success: function(response, options, decodedResponse) {
 						decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.RESPONSE];
@@ -285,9 +294,9 @@ _debug('onClassTabWidgetItemDrop', params['sortedArray']);
 
 		onClassTabWidgetRowSelected: function() {
 			if (this.grid.getSelectionModel().hasSelection()) {
-				var selectedWidgetId = this.grid.getSelectionModel().getSelection()[0].get(CMDBuild.core.constants.Proxy.ID);
 				var params = {};
-				params[CMDBuild.core.constants.Proxy.ID] = selectedWidgetId;
+				params[CMDBuild.core.constants.Proxy.CLASS_NAME] = this.classTabWidgetSelectedClassGet(CMDBuild.core.constants.Proxy.NAME);
+				params[CMDBuild.core.constants.Proxy.WIDGET_ID] = this.grid.getSelectionModel().getSelection()[0].get(CMDBuild.core.constants.Proxy.ID);
 
 				CMDBuild.core.proxy.widget.Widget.read({
 					params: params,
@@ -295,25 +304,17 @@ _debug('onClassTabWidgetItemDrop', params['sortedArray']);
 					success: function(response, options, decodedResponse) {
 						decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.RESPONSE] || [];
 
-						var classWidgets = decodedResponse[this.classTabWidgetSelectedClassGet(CMDBuild.core.constants.Proxy.NAME)];
+						this.buildFormController(decodedResponse[CMDBuild.core.constants.Proxy.TYPE]);
 
-						if (!Ext.isEmpty(classWidgets)) {
-							var selectedWidget = Ext.Array.findBy(classWidgets, function(widgetObject, i) {
-								return selectedWidgetId == widgetObject[CMDBuild.core.constants.Proxy.ID];
-							}, this);
+						this.classTabWidgetSelectedWidgetSet({ value: decodedResponse });
 
-							this.buildFormController(selectedWidget[CMDBuild.core.constants.Proxy.TYPE]);
+						if (!this.classTabWidgetSelectedWidgetIsEmpty()) {
+							this.buildForm();
 
-							this.classTabWidgetSelectedWidgetSet({ value: selectedWidget });
+							if (!Ext.isEmpty(this.controllerWidgetForm))
+								this.controllerWidgetForm.cmfg('classTabWidgetLoadRecord', this.classTabWidgetSelectedWidgetGet());
 
-							if (!this.classTabWidgetSelectedWidgetIsEmpty()) {
-								this.buildForm();
-
-								if (!Ext.isEmpty(this.controllerWidgetForm))
-									this.controllerWidgetForm.cmfg('classTabWidgetLoadRecord', this.classTabWidgetSelectedWidgetGet());
-
-								this.form.setDisabledModify(true, true);
-							}
+							this.form.setDisabledModify(true, true);
 						}
 					}
 				});
