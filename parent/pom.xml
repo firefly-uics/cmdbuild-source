@@ -373,10 +373,6 @@
 			<url>http://cukes.info/maven</url>
 		</pluginRepository>
 		<pluginRepository>
-			<id>servebox</id>
-			<url>http://maven.servebox.org/repository</url>
-		</pluginRepository>
-		<pluginRepository>
 			<id>croche-releases</id>
 			<url>http://croche.googlecode.com/svn/repository/releases</url>
 		</pluginRepository>
