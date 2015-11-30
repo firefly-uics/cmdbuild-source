@@ -1,0 +1,60 @@
+<DATA>
+	<checkbox id="nodesTooltip" label="Tooltip for entities" text="true">
+		<onClick>
+			<command>boolean</command>
+			<type>nodesTooltip</type>
+		</onClick>
+	</checkbox>
+	<checkbox id="edgesTooltip" label="Tooltip for relations" text="true">
+		<onClick>
+			<command>boolean</command>
+			<type>edgesTooltip</type>
+		</onClick>
+	</checkbox>
+	<checkbox id="labels" label="Show a label on every entity" text="false">
+		<onClick>
+			<command>boolean</command>
+			<type>labels</type>
+		</onClick>
+	</checkbox>
+	<checkbox id="automaticZoom" label="Automatic zoom" text="true">
+		<onClick>
+			<command>boolean</command>
+			<type>automaticZoom</type>
+		</onClick>
+	</checkbox>
+	<spinner label="Explosion levels" id="explosionLevels" class="optionsSpinner">
+		<params>
+			<backend>Options</backend>
+			<type>explosionLevels</type>
+			<value>1</value>
+		</params>
+		<onChange>
+			<command>boolean</command>
+			<type>explosionLevels</type>
+		</onChange>
+	</spinner>
+<!-- 	<select label="Layout type" id="layoutType" class="optionsSelect"> -->
+<!-- 		<params> -->
+<!-- 			<backend>Options</backend> -->
+<!-- 			<type>layoutType</type> -->
+<!-- 			<value>Hierarchical</value> -->
+<!-- 		</params> -->
+<!-- 		<onChange> -->
+<!-- 			<command>boolean</command> -->
+<!-- 			<type>layoutType</type> -->
+<!-- 		</onChange> -->
+<!-- 	</select> -->
+<!-- 	<select label="Projection type" id="projectionType" class="optionsSelect"> -->
+<!-- 		<params> -->
+<!-- 			<backend>Options</backend> -->
+<!-- 			<type>projectionType</type> -->
+<!-- 			<value>Projection</value> -->
+<!-- 		</params> -->
+<!-- 		<onChange> -->
+<!-- 			<command>boolean</command> -->
+<!-- 			<type>projectionType</type> -->
+<!-- 		</onChange> -->
+<!-- 	</select> -->
+
+</DATA>
