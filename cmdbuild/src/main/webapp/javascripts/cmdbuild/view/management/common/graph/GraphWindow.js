@@ -1,32 +1,48 @@
-Ext.define("CMDBuild.Management.GraphWindow", {
+Ext.define('CMDBuild.Management.GuiGraphWindow', {
 	extend: "CMDBuild.PopupWindow",
-	resizable: true,
-
-	initComponent: function() {
-		var graphParams = {};
-		Ext.apply(graphParams, CMDBuild.Config.graph, {
-			classid: this.classId,
-			objid: this.cardId
-		});
-
-		Ext.apply(this, {
-			title: CMDBuild.Translation.management.graph.title,
-			layout: "border", 
-			items: {
-				xtype: 'flash',
-				url: 'flash/graph.swf',
-				flashVars: graphParams,
-				region: "center"
-			}
-		});
-
-		this.callParent(arguments);
+	
+	requires: ['CMDBuild.core.configurations.CustomPages'],
+	
+    layout: 'fit',
+    items: [
+    ],
+   listeners: {
+		show: function() {
+			var basePath = window.location.toString().split('/');
+			basePath = Ext.Array.slice(basePath, 0, basePath.length - 1).join('/');
+			var src = basePath //CMDBuild.core.configurations.CustomPages.getCustomizationsPath()
+				+ '/javascripts/cmdbuild-network'
+				+ '/?basePath=' + basePath
+				+ '&classId=' + this.classId + '&cardId=' + this.cardId 
+				+ '&frameworkVersion=' + CMDBuild.core.configurations.CustomPages.getVersion();
+	   		this.add({
+			        xtype: 'box',
+			        autoEl: {
+			            tag: 'iframe',
+			            src: src
+			            }
+		    	});
+	    }
+     },
+	setItems: function(htmlSrc) {
+		this.removeAll();
+		this.add({
+	        xtype: 'box',
+	        autoEl: {
+	            tag: 'iframe',
+	            src: htmlSrc
+	        }
+        });
 	}
 });
 
 CMDBuild.Management.showGraphWindow = function(classId, cardId) {
-	new CMDBuild.Management.GraphWindow({
-		classId: classId,
-		cardId: cardId
+	var basePath = window.location.toString().split('/');
+	basePath = Ext.Array.slice(basePath, 0, basePath.length - 1).join('/');	
+	var entity = _CMCache.getClassById(classId);
+	new CMDBuild.Management.GuiGraphWindow({
+		classId: entity.data.name,
+		cardId: cardId,
+		basePath: basePath
 	}).show();
 };
