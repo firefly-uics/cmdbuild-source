@@ -131,17 +131,17 @@
 				}
 		},
 
-		/**
-		 * @param {Object} options
-		 * @param {Boolean} success
-		 * @param {Object} response
-		 *
-		 * @private
-		 */
-		defaultLoadCallback: function(options, success, response) {
-			if (!this.grid.getSelectionModel().hasSelection())
-				this.grid.getSelectionModel().select(0, true);
-		},
+//		/**
+//		 * @param {Object} options
+//		 * @param {Boolean} success
+//		 * @param {Object} response
+//		 *
+//		 * @private
+//		 */
+//		defaultLoadCallback: function(options, success, response) {
+//			if (!this.grid.getSelectionModel().hasSelection())
+//				this.grid.getSelectionModel().select(0, true);
+//		},
 
 		onClassTabWidgetAbortButtonClick: function() {
 			if (!this.classTabWidgetSelectedWidgetIsEmpty()) {
@@ -201,8 +201,6 @@
 
 							// BUSINESS RULE: currently the widgets are not inherited so, deny the definition on superClasses
 							this.view.setDisabled(this.classTabWidgetSelectedClassGet(CMDBuild.core.constants.Proxy.IS_SUPER_CLASS));
-
-							this.cmfg('onClassTabWidgetPanelShow');
 						} else {
 							_error('class with id "' + classId + '" not found', this);
 						}
@@ -227,7 +225,7 @@ _debug('onClassTabWidgetItemDrop', params['sortedArray']);
 					params: params,
 					scope: this,
 					success: function(response, options, decodedResponse) {
-						this.cmfg('onClassTabWidgetPanelShow');
+//						this.cmfg('onClassTabWidgetPanelShow');
 					}
 				});
 			}
@@ -239,43 +237,31 @@ _debug('onClassTabWidgetItemDrop', params['sortedArray']);
 		},
 
 		/**
-		 * @param {Object} parameters
-		 * @param {Function} parameters.loadCallback
+		 * Loads store passing selected class name and selects first or with idToSelect id value card
+		 *
+		 * @param {Number} idToSelect
 		 */
-		onClassTabWidgetPanelShow: function(parameters) {
-			parameters = Ext.Object.isEmpty(parameters) ? {} : parameters;
-			parameters.loadCallback = Ext.isFunction(parameters.loadCallback) ? parameters.loadCallback : this.defaultLoadCallback;
+		onClassTabWidgetPanelShow: function(idToSelect) {
+			idToSelect = Ext.isNumber(idToSelect) ? idToSelect : 0;
 
-//			var params = {};
+			var params = {};
+			params[CMDBuild.core.constants.Proxy.CLASS_NAME] = this.classTabWidgetSelectedClassGet(CMDBuild.core.constants.Proxy.NAME);
 
-			this.grid.getStore().removeAll();
-
-//			this.grid.getStore().load({
-//				params: params,
-////				success: function(records, operation, success) {
-////
-////				}
-//				success: parameters.loadCallback
-//			});
-
-			if (!Ext.isEmpty(this.form) && Ext.isFunction(this.form.reset))
-				this.form.reset();
-
-			// TODO: waiting for refactor (CRUD getStore())
-			if (!this.view.isDisabled()) {
-				CMDBuild.core.proxy.widget.Widget.readAll({
+			if (!this.grid.getStore().isLoading())
+				this.grid.getStore().load({
+					params: params,
 					scope: this,
-					success: function(response, options, decodedResponse) {
-						decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.RESPONSE];
+					callback: function(records, operation, success) {
+						var selectedRecordIndex = this.grid.getStore().find(CMDBuild.core.constants.Proxy.ID, idToSelect);
 
-						var classWidgets = decodedResponse[this.classTabWidgetSelectedClassGet(CMDBuild.core.constants.Proxy.NAME)];
+						this.grid.getSelectionModel().select(
+							selectedRecordIndex > 0 ? selectedRecordIndex : idToSelect,
+							true
+						);
 
-						if (!Ext.isEmpty(classWidgets) && Ext.isArray(classWidgets))
-							this.grid.getStore().loadData(classWidgets);
-					},
-					callback: parameters.loadCallback
+						this.cmfg('onClassTabWidgetRowSelected');
+					}
 				});
-			}
 		},
 
 		onClassTabWidgetRemoveButtonClick: function() {
@@ -296,7 +282,7 @@ _debug('onClassTabWidgetItemDrop', params['sortedArray']);
 			if (this.grid.getSelectionModel().hasSelection()) {
 				var params = {};
 				params[CMDBuild.core.constants.Proxy.CLASS_NAME] = this.classTabWidgetSelectedClassGet(CMDBuild.core.constants.Proxy.NAME);
-				params[CMDBuild.core.constants.Proxy.WIDGET_ID] = this.grid.getSelectionModel().getSelection()[0].get(CMDBuild.core.constants.Proxy.ID);
+				params[CMDBuild.core.constants.Proxy.ID] = this.grid.getSelectionModel().getSelection()[0].get(CMDBuild.core.constants.Proxy.ID);
 
 				CMDBuild.core.proxy.widget.Widget.read({
 					params: params,
@@ -318,6 +304,8 @@ _debug('onClassTabWidgetItemDrop', params['sortedArray']);
 						}
 					}
 				});
+			} else {
+				this.form.setDisabledModify(true, true, true);
 			}
 		},
 
@@ -333,13 +321,23 @@ _debug('onClassTabWidgetItemDrop', params['sortedArray']);
 					CMDBuild.core.proxy.widget.Widget.create({
 						params: params,
 						scope: this,
-						success: this.success
+						success: function(response, options, decodedResponse) {
+							decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.RESPONSE];
+
+							CMDBuild.view.common.field.translatable.Utils.commit(this.form);
+
+							this.cmfg('onClassTabWidgetPanelShow', decodedResponse);
+						}
 					});
 				} else {
 					CMDBuild.core.proxy.widget.Widget.update({
 						params: params,
 						scope: this,
-						success: this.success
+						success: function(response, options, decodedResponse) {
+							CMDBuild.view.common.field.translatable.Utils.commit(this.form);
+
+							this.cmfg('onClassTabWidgetPanelShow', parseInt(this.form.getForm().findField(CMDBuild.core.constants.Proxy.ID).getValue()));
+						}
 					});
 				}
 			}
@@ -352,7 +350,7 @@ _debug('onClassTabWidgetItemDrop', params['sortedArray']);
 			if (!this.classTabWidgetSelectedWidgetIsEmpty()) {
 				var params = {};
 				params[CMDBuild.core.constants.Proxy.CLASS_NAME] = this.classTabWidgetSelectedClassGet(CMDBuild.core.constants.Proxy.NAME);
-				params[CMDBuild.core.constants.Proxy.WIDGET_ID] = this.classTabWidgetSelectedWidgetGet(CMDBuild.core.constants.Proxy.ID);
+				params[CMDBuild.core.constants.Proxy.ID] = this.classTabWidgetSelectedWidgetGet(CMDBuild.core.constants.Proxy.ID);
 
 				CMDBuild.core.proxy.widget.Widget.remove({
 					params: params,
@@ -437,29 +435,7 @@ _debug('onClassTabWidgetItemDrop', params['sortedArray']);
 
 					this.propertyManageSet(parameters);
 				}
-			},
-
-		/**
-		 * @param {Object} response
-		 * @param {Object} options
-		 * @param {Object} decodedResponse
-		 */
-		success: function(response, options, decodedResponse) {
-			decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.RESPONSE];
-
-			CMDBuild.view.common.field.translatable.Utils.commit(this.view.form);
-
-			this.cmfg('onClassTabWidgetPanelShow', {
-				loadCallback: function(options, success, response) {
-					this.grid.getSelectionModel().select(
-						this.grid.getStore().find(CMDBuild.core.constants.Proxy.ID, decodedResponse[CMDBuild.core.constants.Proxy.ID]),
-						true
-					);
-
-					this.form.setDisabledModify(true);
-				}
-			});
-		}
+			}
 	});
 
 })();

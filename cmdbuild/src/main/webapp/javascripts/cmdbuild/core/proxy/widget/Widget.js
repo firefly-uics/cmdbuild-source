@@ -5,7 +5,8 @@
 		requires: [
 			'CMDBuild.core.interfaces.Ajax',
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.Index'
+			'CMDBuild.core.proxy.Index',
+			'CMDBuild.model.widget.DefinitionGrid'
 		],
 
 		singleton: true,
@@ -24,16 +25,16 @@
 		/**
 		 * @return {Ext.data.Store or CMDBuild.core.cache.Store}
 		 */
-		getStore: function() { // TODO: waiting for refactor (CRUD)
+		getStore: function() {
 			return CMDBuild.core.cache.Cache.requestAsStore(CMDBuild.core.constants.Proxy.WIDGET, {
 				autoLoad: false,
-				model: 'CMDBuild.model.filter.group.Store',
+				model: 'CMDBuild.model.widget.DefinitionGrid',
 				proxy: {
 					type: 'ajax',
-					url: CMDBuild.core.proxy.Index.widget.readAll,
+					url: CMDBuild.core.proxy.Index.widget.readAllForClass,
 					reader: {
 						type: 'json',
-						root: CMDBuild.core.constants.Proxy.FILTERS
+						root: CMDBuild.core.constants.Proxy.RESPONSE
 					}
 				},
 				sorters: [
