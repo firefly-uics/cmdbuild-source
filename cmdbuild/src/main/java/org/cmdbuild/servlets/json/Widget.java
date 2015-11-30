@@ -2,10 +2,17 @@ package org.cmdbuild.servlets.json;
 
 import static com.google.common.collect.Maps.newHashMap;
 import static com.google.common.collect.Multimaps.index;
+import static java.util.Collections.emptyList;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.cmdbuild.services.json.dto.JsonResponse.success;
+import static org.cmdbuild.servlets.json.CommunicationConstants.ACTIVE_ONLY;
 import static org.cmdbuild.servlets.json.CommunicationConstants.CLASS_NAME;
+import static org.cmdbuild.servlets.json.CommunicationConstants.CLASS_NAMES;
+import static org.cmdbuild.servlets.json.CommunicationConstants.ID;
+import static org.cmdbuild.servlets.json.CommunicationConstants.PARAMS;
 import static org.cmdbuild.servlets.json.CommunicationConstants.WIDGET;
 import static org.cmdbuild.servlets.json.CommunicationConstants.WIDGET_ID;
+import static org.cmdbuild.servlets.json.schema.Utils.toIterable;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -41,12 +48,12 @@ public class Widget extends JSONBaseWithSpringContext {
 
 	@JSONExported
 	public JsonResponse callWidget( //
-			@Parameter("id") final Long cardId, //
+			@Parameter(ID) final Long cardId, //
 			@Parameter(CLASS_NAME) final String className, //
 			@Parameter(required = false, value = "activityId") final String activityInstanceId, //
 			@Parameter(WIDGET_ID) final String widgetId, //
 			@Parameter(required = false, value = "action") final String action, //
-			@Parameter(required = false, value = "params") final String jsonParams //
+			@Parameter(required = false, value = PARAMS) final String jsonParams //
 	) throws Exception {
 		final boolean isActivity = activityInstanceId != null;
 		if (isActivity) {
@@ -131,14 +138,23 @@ public class Widget extends JSONBaseWithSpringContext {
 	}
 
 	@JSONExported
-	public JsonResponse readAll() {
-		return success(index(widgetLogic().getAllWidgets(), SOURCE_CLASS).asMap());
+	public JsonResponse readAll( //
+			@Parameter(value = ACTIVE_ONLY, required = false) final boolean activeOnly, //
+			@Parameter(value = CLASS_NAMES, required = false) final String jsonClassNames //
+	) {
+		final Iterable<String> classNames;
+		if (isBlank(jsonClassNames)) {
+			classNames = emptyList();
+		} else {
+			classNames = toIterable(jsonClassNames);
+		}
+		return success(index(widgetLogic().getAllWidgets(activeOnly, classNames), SOURCE_CLASS).asMap());
 	}
 
 	@JSONExported
 	public JsonResponse read( //
 			@Parameter(CLASS_NAME) final String className, //
-			@Parameter(WIDGET_ID) final Long widgetId //
+			@Parameter(ID) final Long widgetId //
 	) throws Exception {
 		return success(widgetLogic().getWidget(widgetId));
 	}
@@ -160,7 +176,7 @@ public class Widget extends JSONBaseWithSpringContext {
 	@JSONExported
 	public void delete( //
 			@Parameter(CLASS_NAME) final String className, //
-			@Parameter(WIDGET_ID) final Long widgetId //
+			@Parameter(ID) final Long widgetId //
 	) throws Exception {
 		widgetLogic().deleteWidget(widgetId);
 	}
