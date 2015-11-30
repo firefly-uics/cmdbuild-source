@@ -3,10 +3,7 @@
 	Ext.define('CMDBuild.view.administration.widget.GridPanel', {
 		extend: 'Ext.grid.Panel',
 
-		requires: [
-			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.model.widget.DefinitionGrid'
-		],
+		requires: ['CMDBuild.core.constants.Proxy'],
 
 		/**
 		 * @cfg {CMDBuild.controller.administration.widget.Widget}
@@ -78,10 +75,7 @@
 						fixed: true
 					})
 				],
-				store: Ext.create('Ext.data.Store', {
-					model: 'CMDBuild.model.widget.DefinitionGrid',
-					data: []
-				})
+				store: CMDBuild.core.proxy.widget.Widget.getStore()
 			});
 
 			this.callParent(arguments);

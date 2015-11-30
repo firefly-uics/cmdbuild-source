@@ -467,7 +467,8 @@
 			update: 'services/json/widget/update',
 			remove: 'services/json/widget/delete',
 
-			readAll: 'services/json/widget/readall'
+			readAll: 'services/json/widget/readall',
+			readAllForClass: 'services/json/widget/readallforclass'
 		},
 
 		workflow: {
