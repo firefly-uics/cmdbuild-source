@@ -8,10 +8,6 @@
 	<!-- portlet CMDBuild -->
 	<script
 		src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-<!--	<script
-		src="http://cytoscape.github.io/cytoscape.js/api/cytoscape.js-latest/cytoscape.min.js"></script>
--->	<!-- 	<script type="text/javascript" -->
-	<!-- 		src="http://10.0.0.107:8080/gui-framework-core/api/cmdbuildAP.js"></script> -->
 	<script type="text/javascript">
 		$(document).ready(function() {
 			var getUrlParameter = function getUrlParameter(
@@ -31,8 +27,8 @@
 					}
 				}
 			};
-			//var script = 'http://localhost/cmdbuild-gui-framework/api/cmdbuildAP.js';
-			var script = getUrlParameter("basePath") + '/javascripts/cmdbuild-gui-framework-1.0/api/cmdbuildAP.js';
+			var script = getUrlParameter("basePath") + "/javascripts/cmdbuild-gui-framework-" +
+			getUrlParameter("frameworkVersion") + "/api/cmdbuildAP.js";
 
 			var httpCallParameters = {
 				cardId: getUrlParameter("cardId"),
@@ -54,8 +50,6 @@
 				$("#cmdbuilForm").cmdbuildAP({
 					apiUrl : '~/services/rest/v2/',
 					appRootUrl : '~/javascripts/cmdbuild-gui-framework-1.0/',
-					//appConfigUrl: 'Graph/',
-					//appRootUrl : 'http://localhost/cmdbuild-gui-framework/',
 					appConfigUrl: 'Graph/',
 					customjs: [
 							"libraries/cytoscape.min.js",
