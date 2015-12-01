@@ -13,7 +13,7 @@
 						<command>undo</command>
 					</onClick>
 				</span>
-				<span class="layout toolbarButton" tooltip="aaaaaaaaaaaaaaaaaaaaaaApply the current layout">
+				<span class="layout toolbarButton" tooltip="Apply the current layout">
 					<onClick>
 						<command>doLayout</command>
 					</onClick>
@@ -118,25 +118,6 @@
 					</onClick>
 				</button>
 			</div>
-<!-- 			<div id="promptPanelContainer"> -->
-<!-- 				<onInit> -->
-<!-- 					<command>navigate</command> -->
-<!-- 					<container>promptPanelContainer</container> -->
-<!-- 					<form>promptPanelMain</form> -->
-<!-- 					<fromObserving>true</fromObserving> -->
-<!-- 				</onInit> -->
-<!-- 				<form id="promptPanelMain"> -->
-<!-- 			 		<observe container="promptPanelContainer"> -->
-<!-- 					observing a generic save of formactivity...not interested in a specific variable -->
-<!-- 						<cardId>$prompt.dummy</cardId>  -->
-<!-- 					</observe> -->
-<!-- 		 			<params> -->
-<!-- 						<type>form</type> -->
-<!-- 						<backend>PromptNavigation</backend> -->
-<!-- 						<readonly>true</readonly> -->
-<!-- 					</params> -->
-<!-- 				</form> -->
-<!-- 			</div> -->
 		</div>
 		<form title="Command panel" id="commandPanel" include="commandPanel.xml" class="cmdbuildTabbedForm"/>
 		<dialog id="commandPanelDialog"></dialog>

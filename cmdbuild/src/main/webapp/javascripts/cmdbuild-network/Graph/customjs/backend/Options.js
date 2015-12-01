@@ -8,40 +8,44 @@
 		this.data = [];
 		this.metadata = {};
 		var levels = [{
-				_id: "1",
-				description: "1"
-			},{
-				_id: "2",
-				description: "2"
-			},{
-				_id: "3",
-				description: "3"
-			},{
-				_id: "4",
-				description: "4"
-			},{
-				_id: "5",
-				description: "5"
-			}
-		];
-	
+			_id: "1",
+			description: "1"
+		}, {
+			_id: "2",
+			description: "2"
+		}, {
+			_id: "3",
+			description: "3"
+		}, {
+			_id: "4",
+			description: "4"
+		}, {
+			_id: "5",
+			description: "5"
+		}];
+
 		var layouts = [{
-				_id: "Hierarchical",
-				description: "Hierarchical"
-			},{
-				_id: "Attractive",
-				description: "Attractive"
-			}
-		];
-	
+			_id: "Hierarchical",
+			description: "Hierarchical"
+		}, {
+			_id: "Attractive",
+			description: "Attractive"
+		}];
+
 		var projections = [{
-				_id: "Projection",
-				description: "Projection"
-			},{
-				_id: "Orthogonal",
-				description: "Orthogonal"
-			}
-		];
+			_id: "Projection",
+			description: "Projection"
+		}, {
+			_id: "Orthogonal",
+			description: "Orthogonal"
+		}];
+		var labelsVisibility = [{
+			_id: "All",
+			description: "Labels on all entities"
+		}, {
+			_id: "Selected",
+			description: "Labels on all selected entities"
+		}];
 
 		/**
 		 * Private attributes
@@ -66,9 +70,13 @@
 				case "explosionLevels" :
 					this.data = levels;
 					break;
+				case "labels" :
+					this.data = labelsVisibility;
+					break;
 			}
-			setTimeout(function() { onObjectReady(); }, 10);
-			
+			setTimeout(function() {
+				onObjectReady();
+			}, 10);
 
 		};
 		this.getData = function() {
