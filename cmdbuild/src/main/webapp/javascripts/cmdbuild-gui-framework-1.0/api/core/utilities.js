@@ -197,7 +197,6 @@
 				}
 				else if (field.attr("valueType") == "spinner") {
 					var entryValue = field.spinner("value");
-					console.log("yay " + entryValue);
 					return entryValue;
 				}
 
