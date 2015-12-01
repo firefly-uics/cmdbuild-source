@@ -68,10 +68,14 @@ ui-selectmenu-button{
     align-content: flex-start !important;
 }
 .counterType {
+	font-family: tahoma,arial,verdana,sans-serif;
+	font-size: 11px;
 	color: #222222;
 	margin-left: 12px;	
 }
 .counterValue {
+	font-family: tahoma,arial,verdana,sans-serif;
+	font-size: 11px;
 	color: #448844;
 	font-weight:bold;
 }

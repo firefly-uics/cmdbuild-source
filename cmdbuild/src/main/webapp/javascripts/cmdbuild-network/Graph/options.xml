@@ -11,12 +11,12 @@
 			<type>edgesTooltip</type>
 		</onClick>
 	</checkbox>
-	<checkbox id="labels" label="Show a label on every entity" text="false">
-		<onClick>
-			<command>boolean</command>
-			<type>labels</type>
-		</onClick>
-	</checkbox>
+<!-- 	<checkbox id="labels" label="Show a label on every entity" text="false"> -->
+<!-- 		<onClick> -->
+<!-- 			<command>boolean</command> -->
+<!-- 			<type>labels</type> -->
+<!-- 		</onClick> -->
+<!-- 	</checkbox> -->
 	<checkbox id="automaticZoom" label="Automatic zoom" text="true">
 		<onClick>
 			<command>boolean</command>
@@ -34,6 +34,17 @@
 			<type>explosionLevels</type>
 		</onChange>
 	</spinner>
+	<select label="Labels" id="labels" class="optionsSelect">
+		<params>
+			<backend>Options</backend>
+			<type>labels</type>
+			<value>No labels</value>
+		</params>
+		<onChange>
+			<command>boolean</command>
+			<type>labels</type>
+		</onChange>
+	</select>
 <!-- 	<select label="Layout type" id="layoutType" class="optionsSelect"> -->
 <!-- 		<params> -->
 <!-- 			<backend>Options</backend> -->
