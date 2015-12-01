@@ -37,25 +37,7 @@
 						flex: 1,
 
 						renderer: function(value) {
-							switch (value) {
-								case '.Calendar':
-									return CMDBuild.Translation.calendar;
-
-								case '.CreateModifyCard':
-									return CMDBuild.Translation.createModifyCard;
-
-								case '.OpenReport':
-									return CMDBuild.Translation.createReport;
-
-								case '.Ping':
-									return CMDBuild.Translation.ping;
-
-								case '.Workflow':
-									return CMDBuild.Translation.startWorkflow;
-
-								default:
-									return value;
-							}
+							return this.delegate.cmfg('classTabWidgetTypeRenderer', value);
 						}
 					},
 					{

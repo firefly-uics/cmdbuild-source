@@ -23,6 +23,11 @@
 		 */
 		baseProperties: undefined,
 
+		/**
+		 * @property {Ext.form.field.Text}
+		 */
+		fieldType: undefined,
+
 		bodyCls: 'cmgraypanel',
 		border: false,
 		cls: 'x-panel-body-default-framed cmbordertop',
@@ -133,6 +138,23 @@
 		widgetDefinitionFormBasePropertiesGet: function() {
 			return [
 				Ext.create('Ext.form.field.Hidden', { name: CMDBuild.core.constants.Proxy.ID }),
+				this.fieldType = Ext.create('Ext.form.field.Text', {
+					fieldLabel: CMDBuild.Translation.type,
+					labelWidth: CMDBuild.LABEL_WIDTH,
+					name: CMDBuild.core.constants.Proxy.TYPE,
+					maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
+					disabled: true,
+					disablePanelFunctions: true,
+					readOnly: true,
+					submitValue: false,
+
+					listeners: {
+						scope: this,
+						change: function(field, newValue, oldValue, eOpts) {
+							field.setValue(this.delegate.cmfg('classTabWidgetTypeRenderer', newValue));
+						}
+					}
+				}),
 				Ext.create('CMDBuild.view.common.field.translatable.Text', {
 					name: CMDBuild.core.constants.Proxy.LABEL,
 					fieldLabel: CMDBuild.Translation.buttonLabel,
