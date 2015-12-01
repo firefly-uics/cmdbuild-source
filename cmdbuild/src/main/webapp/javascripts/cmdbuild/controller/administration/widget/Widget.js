@@ -19,6 +19,7 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
+			'classTabWidgetTypeRenderer',
 			'onClassTabWidgetAbortButtonClick',
 			'onClassTabWidgetAddButtonClick',
 			'onClassTabWidgetClassAddButtonClick = onAddClassButtonClick',
@@ -129,6 +130,35 @@
 						_warning('unmanaged widget controller type "' + type + '"', this);
 					}
 				}
+		},
+
+		/**
+		 * Act as renderer for text field
+		 *
+		 * @param {String} value
+		 *
+		 * @returns {String}
+		 */
+		classTabWidgetTypeRenderer: function(value) {
+			switch (value) {
+				case '.Calendar':
+					return CMDBuild.Translation.calendar;
+
+				case '.CreateModifyCard':
+					return CMDBuild.Translation.createModifyCard;
+
+				case '.OpenReport':
+					return CMDBuild.Translation.createReport;
+
+				case '.Ping':
+					return CMDBuild.Translation.ping;
+
+				case '.Workflow':
+					return CMDBuild.Translation.startWorkflow;
+
+				default:
+					return value;
+			}
 		},
 
 //		/**
@@ -312,7 +342,7 @@ _debug('onClassTabWidgetItemDrop', params['sortedArray']);
 		onClassTabWidgetSaveButtonClick: function() {
 			if (this.controllerWidgetForm.cmfg('classTabWidgetValidateForm', this.form)) {
 				var widgetDefinition = this.controllerWidgetForm.cmfg('classTabWidgetDefinitionGet');
-
+_debug('widgetDefinition', widgetDefinition);
 				var params = {};
 				params[CMDBuild.core.constants.Proxy.CLASS_NAME] = this.classTabWidgetSelectedClassGet(CMDBuild.core.constants.Proxy.NAME);
 				params[CMDBuild.core.constants.Proxy.WIDGET] = Ext.encode(widgetDefinition);
