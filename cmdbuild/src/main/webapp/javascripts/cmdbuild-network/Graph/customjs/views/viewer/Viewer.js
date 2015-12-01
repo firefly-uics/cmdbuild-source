@@ -9,6 +9,7 @@
 		var plane;
 		var thisViewer = undefined;
 		var labelsInterval = undefined;
+		var labels = [];
 		var raycaster = new THREE.Raycaster();
 		raycaster.linePrecision = 3;
 		var mouse = new THREE.Vector2(), offset = new THREE.Vector3(), INTERSECTED, SELECTED, LASTSELECTED;
@@ -66,7 +67,7 @@
 							{},
 							function(response) {
 								if (true) {// $.Cmdbuild.customvariables.options["automaticZoom"])
-											// {
+									// {
 									var me = this;
 									setTimeout(
 											function() {
@@ -461,6 +462,9 @@
 			for ( var key in selected) {
 				this.showSelected(key);
 			}
+			if ($.Cmdbuild.customvariables.options["labels"] == "Selected") {
+				this.refreshLabels();
+			}
 		};
 		this.removeSelectionGlObjects = function() {
 			// this is a viewer operation only for optimization issues
@@ -564,12 +568,7 @@
 			vector.y = -(vector.y * heightHalf) + heightHalf;
 			vector.z = -(vector.z * heightHalf) + heightHalf;
 
-			return {
-				x: vector.x,
-				y: vector.y,
-				z: vector.z
-			};
-
+			return new THREE.Vector3(vector.x, vector.y, vector.z);
 		};
 		this.refreshLabels = function() {
 			if (labelsInterval) {
@@ -583,12 +582,16 @@
 				$("#label" + labels[i].id).remove();
 			}
 			labels = [];
-			if ($.Cmdbuild.customvariables.options["labels"]) {
+			var showLabels = $.Cmdbuild.customvariables.options["labels"];
+			if (showLabels) {
 				var nodes = this.model.getNodes();
 				for (var i = 0; i < nodes.length; i++) {
 					var node = nodes[i];
 					var label = $.Cmdbuild.g3d.Model
 							.getGraphData(node, "label");
+					if (showLabels == "Selected" && ! this.selected.isSelect(node.id())) {
+						continue;
+					}
 					labels.push({
 						object: node.glObject,
 						id: node.id()
@@ -633,7 +636,7 @@
 							labels[i].x = x;
 							labels[i].y = y;
 						}
-					}, 50);
+					}, 10);
 		};
 		this.searchFirstFreePlace = function(labels, i, x, y) {
 			for (var i = 0; i < labels.length; i++) {
@@ -641,6 +644,7 @@
 			}
 		};
 		this.onVideo = function(box, w, h) {
+			var minDistance = -Number.MAX_VALUE;
 			for (var i = 0; i < box.vertices.length; i++) {
 				var vertice = box.vertices[i];
 				var vector = new THREE.Vector3(vertice.x, vertice.y, vertice.z);
@@ -648,30 +652,36 @@
 						h / 2);
 				var x = vertice.x;
 				var y = vertice.y;
-				if (x < 0 || x > w || y < 0 || y > h) {
-					return false;
-				}
+				minDistance = Math.max(-x, minDistance);
+				minDistance = Math.max(x - w, minDistance);
+				minDistance = Math.max(-y, minDistance);
+				minDistance = Math.max(y - h, minDistance);
 			}
-			return true;
+			return minDistance;
 		};
-		this.zoomIn = function(box, w, h) {
-			if (this.onVideo(box, w, h)) {
+		this.zoomIn = function(box, w, h, zoom) {
+			var distance = this.onVideo(box, w, h) - w/4;
+			if (distance > 0) {
 				var me = this;
 				setTimeout(function() {
-					camera.translateZ(-10.1);
-					me.zoomIn(box, w, h);
+					camera.translateZ(zoom);
+					me.zoomIn(box, w, h, zoom);
 				}, 10);
-			} else {
-				camera.translateZ(+10.1);
+			} else if (zoom > 10) {
+				this.zoomOut(box, w, h, 10);
 			}
 		};
-		this.zoomOut = function(box, w, h) {
-			if (!this.onVideo(box, w, h)) {
+		this.zoomOut = function(box, w, h, zoom) {
+			var distance = this.onVideo(box, w, h) - w/4;;
+			if (! (distance > 0)) {
 				var me = this;
 				setTimeout(function() {
-					camera.translateZ(10.1);
-					me.zoomOut(box, w, h);
-				}, 5);
+					camera.translateZ(-zoom);
+					me.zoomOut(box, w, h, zoom);
+				}, 10);
+			}
+			else if (zoom > 10) {
+				this.zoomIn(box, w, h, 10);
 			}
 		};
 		this.scaleInView = function(box) {
@@ -690,12 +700,12 @@
 			controls.enabled = true;
 			$.Cmdbuild.customvariables.camera.zoomOnPosition(position,
 					function() {
-						var isOnVideo = this.onVideo(box, w, h);
+						var isOnVideo = this.onVideo(box, w, h) > 0;
 						if (isOnVideo) {
-							this.zoomIn(box, w, h);
+							this.zoomIn(box, w, h, 100);
 
 						} else {
-							this.zoomOut(box, w, h);
+							this.zoomOut(box, w, h, 100);
 						}
 					}, this);
 		};
