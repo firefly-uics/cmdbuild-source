@@ -71,12 +71,12 @@
 						if (!Ext.isEmpty(header.editor.store)) {
 							var comboRecord = header.editor.store.findRecord('Id', value);
 
-							value = !Ext.isEmpty(comboRecord) ? comboRecord.get('Description') : '';
-						} else if (attribute.type == 'DATE') {
-							value = me.formatDate(value);
-						}
+							header.editor.setValue(value);
 
-						return value;
+							return Ext.isEmpty(comboRecord) ? '' : comboRecord.get('Description');
+						} else if (attribute.type == 'DATE') {
+							return me.formatDate(value);
+						}
 					}
 
 					if (Ext.isEmpty(Ext.String.trim(String(value))) && attribute[CMDBuild.core.proxy.CMProxyConstants.NOT_NULL])
@@ -397,6 +397,12 @@
 		onWidgetCustomFormLayoutGridShow: function() {
 			if (!this.cmfg('widgetCustomFormInstancesDataStorageIsEmpty'))
 				this.setData(this.cmfg('widgetCustomFormInstancesDataStorageGet'));
+
+			// Fixes reference field renderer to avoid black cell content render
+			Ext.Function.createDelayed(function() {
+				if (this.view.getView().isVisible())
+					this.view.getView().refresh();
+			}, 100, this)();
 		},
 
 		/**

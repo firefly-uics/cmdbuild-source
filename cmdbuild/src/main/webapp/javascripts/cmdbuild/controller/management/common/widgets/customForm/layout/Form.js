@@ -3,7 +3,10 @@
 	Ext.define('CMDBuild.controller.management.common.widgets.customForm.layout.Form', {
 		extend: 'CMDBuild.controller.common.AbstractController',
 
-		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+		requires: [
+			'CMDBuild.core.proxy.CMProxyConstants',
+			'CMDBuild.core.RequestBarrier'
+		],
 
 		/**
 		 * @cfg {Array}

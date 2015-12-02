@@ -49,11 +49,11 @@
 
 				case 'reference': {
 					objectModel['referencedClassName'] = this.get(CMDBuild.core.proxy.CMProxyConstants.TARGET_CLASS);
+					objectModel[CMDBuild.core.proxy.CMProxyConstants.META] = {};
 
 					// New filter object structure adapter
 					if (!Ext.isEmpty(this.get(CMDBuild.core.proxy.CMProxyConstants.FILTER))) {
 						objectModel[CMDBuild.core.proxy.CMProxyConstants.FILTER] = this.get(CMDBuild.core.proxy.CMProxyConstants.FILTER)[CMDBuild.core.proxy.CMProxyConstants.EXPRESSION];
-						objectModel[CMDBuild.core.proxy.CMProxyConstants.META] = {};
 
 						Ext.Object.each(this.get(CMDBuild.core.proxy.CMProxyConstants.FILTER)[CMDBuild.core.proxy.CMProxyConstants.CONTEXT], function(key, value, myself) {
 							objectModel[CMDBuild.core.proxy.CMProxyConstants.META]['system.template.' + key] = value;

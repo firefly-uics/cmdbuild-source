@@ -46,9 +46,7 @@
 		constructor: function(configurationObject) {
 			this.callParent(arguments);
 
-			this.view = Ext.create('CMDBuild.view.management.common.widgets.customForm.RowEditWindow', {
-				delegate: this
-			});
+			this.view = Ext.create('CMDBuild.view.management.common.widgets.customForm.RowEditWindow', { delegate: this });
 
 			// Shorthand
 			this.form = this.view.form;
