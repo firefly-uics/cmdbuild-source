@@ -663,6 +663,7 @@
 			"ORM_ILLEGAL_NAME_ERROR": "不正な名前: {0}",
 			"ORM_LOOKUPTYPE_ALREADY_EXISTS": "同じ説明の別のルックアップが既に在ります",
 			"ORM_MALFORMED_PATCH": "届かないパッチ",
+			"ORM_MISSING_MADATORY_VALUES": "<em>Missing mandatory values: {0}</em>", 
 			"ORM_NOT_NULL_VIOLATION": "Not null 制約違反",
 			"ORM_POSTGIS_NOT_FOUND": "PostGIS インストールされていません",
 			"ORM_READ_ONLY_RELATION": "読み取り専用リレーション",

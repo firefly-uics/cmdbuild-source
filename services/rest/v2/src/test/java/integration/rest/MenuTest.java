@@ -4,6 +4,7 @@ import static org.cmdbuild.service.rest.test.HttpClientUtils.contentOf;
 import static org.cmdbuild.service.rest.test.HttpClientUtils.statusCodeOf;
 import static org.cmdbuild.service.rest.test.ServerResource.randomPort;
 import static org.cmdbuild.service.rest.v2.model.Models.newMenu;
+import static org.cmdbuild.service.rest.v2.model.Models.newMetadata;
 import static org.cmdbuild.service.rest.v2.model.Models.newResponseSingle;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
@@ -52,6 +53,9 @@ public class MenuTest {
 		final ResponseSingle<MenuDetail> expectedResponse = newResponseSingle(MenuDetail.class) //
 				.withElement(newMenu() //
 						.withMenuType("root") //
+						.build()) //
+				.withMetadata(newMetadata() //
+						// nothing to add, just needed for simplify assertions
 						.build()) //
 				.build();
 		when(service.read()) //

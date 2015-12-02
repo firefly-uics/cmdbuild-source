@@ -5,6 +5,7 @@ import static org.apache.http.entity.ContentType.APPLICATION_JSON;
 import static org.cmdbuild.service.rest.test.HttpClientUtils.contentOf;
 import static org.cmdbuild.service.rest.test.HttpClientUtils.statusCodeOf;
 import static org.cmdbuild.service.rest.test.ServerResource.randomPort;
+import static org.cmdbuild.service.rest.v2.model.Models.newMetadata;
 import static org.cmdbuild.service.rest.v2.model.Models.newResponseSingle;
 import static org.cmdbuild.service.rest.v2.model.Models.newSession;
 import static org.hamcrest.Matchers.equalTo;
@@ -67,6 +68,9 @@ public class SessionsTest {
 						.withRole("role") //
 						.withAvailableRoles(asList("foo", "bar", "baz")) //
 						.build()) //
+				.withMetadata(newMetadata() //
+						// nothing to add, just needed for simplify assertions
+						.build()) //
 				.build();
 		doReturn(sentResponse) //
 				.when(service).create(any(Session.class));
@@ -103,6 +107,9 @@ public class SessionsTest {
 						.withAvailableRoles(asList("foo", "bar", "baz")) //
 						.build() //
 				) //
+				.withMetadata(newMetadata() //
+						// nothing to add, just needed for simplify assertions
+						.build()) //
 				.build();
 		doReturn(sentResponse) //
 				.when(service).read(anyString());
@@ -128,6 +135,9 @@ public class SessionsTest {
 						.withPassword("password") //
 						.withRole("role") //
 						.withAvailableRoles(asList("foo", "bar", "baz")) //
+						.build()) //
+				.withMetadata(newMetadata() //
+						// nothing to add, just needed for simplify assertions
 						.build()) //
 				.build();
 		doReturn(sentResponse) //

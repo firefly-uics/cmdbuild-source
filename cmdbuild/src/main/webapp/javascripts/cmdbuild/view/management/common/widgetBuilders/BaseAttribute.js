@@ -106,15 +106,28 @@
 		 */
 		buildReadOnlyField: function(attribute) {
 			var field = new Ext.form.DisplayField({
+				allowBlank: true,
 				labelAlign: "right",
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				fieldLabel: attribute.description || attribute.name,
 				width: CMDBuild.BIG_FIELD_WIDTH,
 				submitValue: false,
 				name: attribute.name,
-				disabled: false
+				disabled: false,
+
+				/**
+				 * Validate also display field
+				 *
+				 * @override
+				 */
+				isValid: function() {
+					if (this.allowBlank)
+						return true;
+
+					return !Ext.isEmpty(this.getValue());
+				}
 			});
-			return field;
+			return this.markAsRequired(field, attribute);
 		},
 		/**
 		 * The implementation must return a configuration object for the header of a Ext.GridPanel

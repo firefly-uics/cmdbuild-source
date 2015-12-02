@@ -262,7 +262,7 @@
 				if (activityInstance.isNew()
 						|| processInstance.isStateOpen()) {
 
-					attributes = CMDBuild.controller.common.WorkflowStaticsController.filterAttributesInStep(attributes, variables);
+					attributes = CMDBuild.controller.management.workflow.StaticsController.filterAttributesInStep(attributes, variables);
 				} else {
 					// if here, we have a closed process, so show
 					// all the attributes
@@ -446,7 +446,7 @@
 
 	function validateForm(me) {
 		var form = me.view.getForm();
-		var invalidAttributes = CMDBuild.controller.common.CardStaticsController.getInvalidAttributeAsHTML(form);
+		var invalidAttributes = CMDBuild.controller.management.workflow.StaticsController.getInvalidAttributeAsHTML(form);
 
 		if (invalidAttributes != null) {
 			var msg = Ext.String.format("<p class=\"{0}\">{1}</p>", CMDBuild.core.constants.Global.getErrorMsgCss(), CMDBuild.Translation.errors.invalid_attributes);

@@ -239,7 +239,7 @@ public class ModClass extends JSONBaseWithSpringContext {
 				UNUSED_ATTRIBUTE_QUERY);
 
 		final AttributeSerializer attributeSerializer = AttributeSerializer.newInstance() //
-				.withDataView(dataLogic.getView()) //
+				.withDataView(systemDataView()) //
 				.build();
 		final JSONObject out = new JSONObject();
 		out.put(ATTRIBUTES, attributeSerializer.toClient(attributes, activeOnly));
@@ -518,7 +518,7 @@ public class ModClass extends JSONBaseWithSpringContext {
 					if (referencedClass.isAncestorOf(targetClass)) {
 						final boolean serializeAlsoClassId = true;
 						final AttributeSerializer attributeSerializer = AttributeSerializer.newInstance() //
-								.withDataView(logic.getView()) //
+								.withDataView(systemDataView()) //
 								.build();
 						final JSONObject jsonAttribute = attributeSerializer.toClient(attribute, serializeAlsoClassId);
 

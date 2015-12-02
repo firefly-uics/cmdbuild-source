@@ -27,6 +27,65 @@
 
 	/**
 	 * @override
+	 * @return Ext.form.DisplayField
+	 */
+	CMDBuild.WidgetBuilders.LookupAttribute.prototype.buildReadOnlyField = function(attribute) {
+		var field = new Ext.form.DisplayField({
+			allowBlank: true,
+			labelAlign: "right",
+			labelWidth: CMDBuild.LABEL_WIDTH,
+			fieldLabel: attribute.description || attribute.name,
+			width: CMDBuild.BIG_FIELD_WIDTH,
+			submitValue: false,
+			name: attribute.name,
+			disabled: false,
+
+			/**
+			 * Validate also display field
+			 *
+			 * @override
+			 */
+			isValid: function() {
+				if (this.allowBlank)
+					return true;
+
+				return !Ext.isEmpty(this.getValue());
+			}
+		});
+
+		// Overrides setValue function to translate attribute value to description
+		var originalSetValue = field.setValue;
+		field.setValue = function(value) {
+			if (!Ext.isEmpty(value)) {
+				var store = _CMCache.getLookupStore(attribute.lookup);
+
+				if (value.hasOwnProperty(CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION)) {
+					value = value[CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION];
+				} else if (value.hasOwnProperty('Description')) {
+					value = value['Description'];
+				} else if (value.hasOwnProperty(CMDBuild.core.proxy.CMProxyConstants.ID)) {
+					value = value[CMDBuild.core.proxy.CMProxyConstants.ID];
+				} else if (value.hasOwnProperty('Id')) {
+					value = value['Id'];
+				} else if (typeof value == 'string' && !isNaN(parseInt(value))) {
+					value = parseInt(value);
+				}
+
+				var foundRecord = store.findRecord('Id', value);
+
+				if (!Ext.isEmpty(foundRecord)) {
+					originalSetValue.call(field, foundRecord.get('Description'));
+				} else {
+					originalSetValue.call(field, value);
+				}
+			}
+		};
+
+		return this.markAsRequired(field, attribute);
+	};
+
+	/**
+	 * @override
 	 */
 	CMDBuild.WidgetBuilders.LookupAttribute.prototype.buildCellEditor = function(attribute) {
 		var field = CMDBuild.Management.FieldManager.getFieldForAttr(attribute, readOnly = false);

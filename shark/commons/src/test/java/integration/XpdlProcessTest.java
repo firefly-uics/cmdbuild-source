@@ -118,20 +118,19 @@ public class XpdlProcessTest extends AbstractXpdlTest {
 	@Test
 	public void startActivitiesAreFoundEvenAfterStartEvents() {
 		final XpdlProcess xpdlProcess = xpdlDocument.createProcess(randomName());
-		XpdlActivity start = xpdlProcess.createActivity("S");
+		final XpdlActivity start = xpdlProcess.createActivity("S");
 		start.setStartEventType();
-		XpdlActivity noImpl = xpdlProcess.createActivity("NI");
+		final XpdlActivity noImpl = xpdlProcess.createActivity("NI");
 		xpdlProcess.createTransition(start, noImpl);
 
-		List<XpdlActivity> startActivities = xpdlProcess.getStartActivities();
+		final List<XpdlActivity> startActivities = xpdlProcess.getStartActivities();
 		assertThat(startActivities.size(), is(1));
 		assertThat(startActivities.get(0).getId(), is("S"));
 
-		List<XpdlActivity> manualStartActivities = xpdlProcess.getManualStartActivitiesRecursive();
+		final List<XpdlActivity> manualStartActivities = xpdlProcess.getManualStartActivitiesRecursive();
 		assertThat(manualStartActivities.size(), is(1));
 		assertThat(manualStartActivities.get(0).getId(), is("NI"));
 	}
-
 
 	@Test
 	public void participantsAreQueriedFromProcessOrDocument() {

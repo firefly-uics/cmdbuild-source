@@ -13,11 +13,13 @@ import static java.util.Collections.emptyMap;
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 import static org.apache.commons.lang3.StringUtils.defaultString;
 import static org.cmdbuild.dao.entrytype.Functions.attributeName;
+import static org.cmdbuild.dao.entrytype.Predicates.attributeTypeInstanceOf;
 import static org.cmdbuild.model.widget.Widget.SUBMISSION_PARAM;
 import static org.cmdbuild.service.rest.v2.constants.Serialization.UNDERSCORED_STATUS;
 import static org.cmdbuild.service.rest.v2.cxf.util.Json.safeJsonArray;
 import static org.cmdbuild.service.rest.v2.cxf.util.Json.safeJsonObject;
 import static org.cmdbuild.service.rest.v2.model.Models.newMetadata;
+import static org.cmdbuild.service.rest.v2.model.Models.newReference;
 import static org.cmdbuild.service.rest.v2.model.Models.newResponseMultiple;
 import static org.cmdbuild.service.rest.v2.model.Models.newResponseSingle;
 import static org.cmdbuild.workflow.ProcessAttributes.FlowStatus;
@@ -27,8 +29,10 @@ import java.util.Map;
 import java.util.Set;
 
 import org.cmdbuild.common.utils.PagedElements;
+import org.cmdbuild.dao.entry.IdAndDescription;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.ReferenceAttributeType;
 import org.cmdbuild.logic.data.QueryOptions;
 import org.cmdbuild.logic.mapping.json.FilterElementGetters;
 import org.cmdbuild.logic.mapping.json.JsonFilterHelper;
@@ -36,6 +40,7 @@ import org.cmdbuild.logic.workflow.WorkflowLogic;
 import org.cmdbuild.service.rest.v2.ProcessInstances;
 import org.cmdbuild.service.rest.v2.cxf.serialization.DefaultConverter;
 import org.cmdbuild.service.rest.v2.cxf.serialization.ToProcessInstance;
+import org.cmdbuild.service.rest.v2.model.DetailResponseMetadata.Reference;
 import org.cmdbuild.service.rest.v2.model.ProcessInstance;
 import org.cmdbuild.service.rest.v2.model.ProcessInstanceAdvanceable;
 import org.cmdbuild.service.rest.v2.model.ResponseMultiple;
@@ -124,15 +129,29 @@ public class CxfProcessInstances implements ProcessInstances {
 		if (elements.totalSize() == 0) {
 			errorHandler.processInstanceNotFound(instanceId);
 		}
+		final UserProcessInstance element = from(elements).first().get();
+		final Map<Long, Reference> references = newHashMap();
+		for (final CMAttribute _element : from(element.getType().getAllAttributes()) //
+				.filter(attributeTypeInstanceOf(ReferenceAttributeType.class))) {
+			final Object value = element.get(_element.getName());
+			if (value instanceof IdAndDescription) {
+				final IdAndDescription _value = IdAndDescription.class.cast(value);
+				if (_value.getId() != null) {
+					references.put(_value.getId(), newReference() //
+							.withDescription(_value.getDescription()) //
+							.build());
+				}
+			}
+		}
 		final Function<UserProcessInstance, ProcessInstance> toProcessInstance = ToProcessInstance.newInstance() //
 				.withType(found) //
 				.withLookupHelper(lookupHelper) //
 				.build();
 		return newResponseSingle(ProcessInstance.class) //
-				.withElement(from(elements) //
-						.transform(toProcessInstance) //
-						.first() //
-						.get()) //
+				.withElement(toProcessInstance.apply(element)) //
+				.withMetadata(newMetadata() //
+						.withReferences(references) //
+						.build()) //
 				.build();
 	}
 
@@ -196,6 +215,21 @@ public class CxfProcessInstances implements ProcessInstances {
 
 					});
 		}
+		final Map<Long, Reference> references = newHashMap();
+		for (final UserProcessInstance element : elements) {
+			for (final CMAttribute _element : from(element.getType().getAllAttributes()) //
+					.filter(attributeTypeInstanceOf(ReferenceAttributeType.class))) {
+				final Object value = element.get(_element.getName());
+				if (value instanceof IdAndDescription) {
+					final IdAndDescription _value = IdAndDescription.class.cast(value);
+					if (_value.getId() != null) {
+						references.put(_value.getId(), newReference() //
+								.withDescription(_value.getDescription()) //
+								.build());
+					}
+				}
+			}
+		}
 		final Function<UserProcessInstance, ProcessInstance> toProcessInstance = ToProcessInstance.newInstance() //
 				.withType(found) //
 				.withLookupHelper(lookupHelper) //
@@ -207,6 +241,7 @@ public class CxfProcessInstances implements ProcessInstances {
 				.withMetadata(newMetadata() //
 						.withTotal(Long.valueOf(elements.totalSize())) //
 						.withPositions(positions) //
+						.withReferences(references) //
 						.build()) //
 				.build();
 	}

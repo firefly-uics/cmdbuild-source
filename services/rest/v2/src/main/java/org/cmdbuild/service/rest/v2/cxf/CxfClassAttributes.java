@@ -45,6 +45,9 @@ public class CxfClassAttributes implements ClassAttributes {
 		if (target == null) {
 			errorHandler.classNotFound(classId);
 		}
+		if (userDataAccessLogic.isProcess(target)) {
+			errorHandler.classNotFoundClassIsProcess(classId);
+		}
 		final PagedElements<CMAttribute> filteredAttributes = userDataAccessLogic.getAttributes( //
 				target.getName(), //
 				activeOnly, //

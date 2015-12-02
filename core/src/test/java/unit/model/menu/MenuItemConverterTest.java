@@ -37,7 +37,6 @@ public class MenuItemConverterTest {
 						mock(CMDataView.class), //
 						mock(LookupStore.class), //
 						mock(CMDataView.class), //
-						mock(CMDataView.class), //
 						new OperationUser( //
 								mock(AuthenticatedUser.class), //
 								mock(PrivilegeContext.class), //
