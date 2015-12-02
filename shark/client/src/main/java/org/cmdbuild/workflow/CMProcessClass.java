@@ -48,6 +48,7 @@ public interface CMProcessClass extends CMClass {
 	 * 
 	 * @return if process can be stopped by every user that can modify it
 	 */
+	@Override
 	boolean isUserStoppable();
 
 	/**

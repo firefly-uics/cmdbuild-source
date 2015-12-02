@@ -101,6 +101,9 @@ public class ProcessesTest {
 				.withElement(newProcessWithFullDetails() //
 						.withName("foo") //
 						.build()) //
+				.withMetadata(newMetadata() //
+						// nothing to add, just needed for simplify assertions
+						.build()) //
 				.build();
 		when(service.read(anyString())) //
 				.thenReturn(expectedResponse);
@@ -121,6 +124,9 @@ public class ProcessesTest {
 		// given
 		final ResponseSingle<Long> expectedResponse = newResponseSingle(Long.class) //
 				.withElement(42L) //
+				.withMetadata(newMetadata() //
+						// nothing to add, just needed for simplify assertions
+						.build()) //
 				.build();
 		when(service.generateId(anyString())) //
 				.thenReturn(expectedResponse);

@@ -663,6 +663,7 @@
 			"ORM_ILLEGAL_NAME_ERROR": "Tên không hợp lệ: {0}",
 			"ORM_LOOKUPTYPE_ALREADY_EXISTS": "Thay đổi một kểu tra cứu khác với cùng một mô tả",
 			"ORM_MALFORMED_PATCH": "Không thể đọc được Patch",
+			"ORM_MISSING_MADATORY_VALUES": "<em>Missing mandatory values: {0}</em>", 
 			"ORM_NOT_NULL_VIOLATION": "Not null constraint violated",
 			"ORM_POSTGIS_NOT_FOUND": "PostGIS không được cài được",
 			"ORM_READ_ONLY_RELATION": "Quan hệ chỉ được đọc",

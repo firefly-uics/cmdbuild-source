@@ -13,6 +13,17 @@ public interface CMAttribute extends Deactivable {
 		WRITE, //
 		READ, //
 		HIDDEN, //
+		;
+
+		public static Mode of(final String value) {
+			for (final Mode element : values()) {
+				if (element.name().equalsIgnoreCase(value)) {
+					return element;
+				}
+			}
+			return null;
+		}
+
 	}
 
 	CMEntryType getOwner();

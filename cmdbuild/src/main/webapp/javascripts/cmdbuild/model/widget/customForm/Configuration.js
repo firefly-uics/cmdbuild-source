@@ -55,9 +55,18 @@
 						newValue = Ext.isString(newValue) ? Ext.decode(newValue) : newValue;
 
 						var attributesArray = [];
+						var attributesDataTypes = {};
+
+						// Build attributes dataTypes
+						Ext.Array.forEach(this.get(CMDBuild.core.constants.Proxy.MODEL), function(fieldModel, i, allfieldModels) {
+							attributesDataTypes[fieldModel.get(CMDBuild.core.constants.Proxy.NAME)] = fieldModel.get(CMDBuild.core.constants.Proxy.TYPE);
+						}, this);
 
 						Ext.Array.forEach(newValue, function(attributeObject, i, allAttributeObjects) {
-							attributesArray.push(Ext.create('CMDBuild.model.common.Generic', attributeObject));
+							attributesArray.push(Ext.create('CMDBuild.model.common.Generic', {
+								data: attributeObject,
+								dataTypes: attributesDataTypes
+							}));
 						}, this);
 
 						newValue = attributesArray;

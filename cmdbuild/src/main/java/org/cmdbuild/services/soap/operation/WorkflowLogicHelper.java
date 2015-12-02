@@ -114,8 +114,7 @@ public class WorkflowLogicHelper implements SoapLogicHelper {
 		return selectActivityInstanceFor(processInstance).getDefinition();
 	}
 
-	public UserActivityInstance selectActivityInstanceFor(final UserProcessInstance processInstance)
-			throws CMWorkflowException {
+	public UserActivityInstance selectActivityInstanceFor(final UserProcessInstance processInstance) {
 		UserActivityInstance selectedActivityInstance = null;
 		for (final UserActivityInstance activityInstance : processInstance.getActivities()) {
 			if (selectedActivityInstance == null) {
@@ -147,16 +146,17 @@ public class WorkflowLogicHelper implements SoapLogicHelper {
 	}
 
 	private String visibilityFor(final CMActivityVariableToProcess variable) {
-		switch (variable.getType()) {
-		case READ_ONLY:
-			return "VIEW";
-		case READ_WRITE:
-			return "UPDATE";
-		case READ_WRITE_REQUIRED:
-			return "REQUIRED";
-		default:
-			throw new IllegalArgumentException("missing type mapping");
+		final String output;
+		if (variable.isWritable()) {
+			if (variable.isMandatory()) {
+				output = "REQUIRED";
+			} else {
+				output = "UPDATE";
+			}
+		} else {
+			output = "VIEW";
 		}
+		return output;
 	}
 
 	private List<WorkflowWidgetDefinition> workflowWidgetDefinitionsFor(final String className, final Integer cardId)

@@ -11,6 +11,7 @@ public class XpdlProcessExtendedAttributes extends XpdlExtendedAttributes {
 		this.proc = proc;
 	}
 
+	@Override
 	protected ExtendedAttributes extendedAttributes() {
 		return proc.inner.getExtendedAttributes();
 	}

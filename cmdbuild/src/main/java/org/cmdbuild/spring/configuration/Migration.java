@@ -54,7 +54,7 @@ public class Migration {
 		final FilesStore patchesExt = fileStore.webInfFilesStore().sub(PATCHES_EXT_DIRECTORY);
 		for (final File element : patchesExt.files(null)) {
 			if (element.isDirectory()) {
-				String name = element.getName();
+				final String name = element.getName();
 				output.add(new FilesStoreRepository(patchesExt.sub(name), name));
 			}
 		}

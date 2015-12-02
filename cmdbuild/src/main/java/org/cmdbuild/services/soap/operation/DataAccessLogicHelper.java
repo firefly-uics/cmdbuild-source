@@ -531,7 +531,7 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 			UserActivityInstance activityInstance = null;
 			try {
 				activityInstance = workflowLogicHelper.selectActivityInstanceFor(processInstance);
-			} catch (final CMWorkflowException e) {
+			} catch (final Exception e) {
 				activityInstance = null;
 			}
 			addActivityExtras(activityInstance, cardExt);

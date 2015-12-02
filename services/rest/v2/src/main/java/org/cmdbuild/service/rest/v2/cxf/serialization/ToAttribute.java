@@ -4,7 +4,6 @@ import static org.cmdbuild.service.rest.v2.model.Models.newAttributeStatus;
 
 import org.cmdbuild.service.rest.v2.model.ProcessActivityWithFullDetails.AttributeStatus;
 import org.cmdbuild.workflow.xpdl.CMActivityVariableToProcess;
-import org.cmdbuild.workflow.xpdl.CMActivityVariableToProcess.Type;
 
 import com.google.common.base.Function;
 
@@ -24,8 +23,8 @@ public class ToAttribute implements Function<CMActivityVariableToProcess, Attrib
 	public AttributeStatus apply(final CMActivityVariableToProcess input) {
 		return newAttributeStatus() //
 				.withId(input.getName()) //
-				.withWritable(input.getType() != Type.READ_ONLY) //
-				.withMandatory(input.getType() == Type.READ_WRITE_REQUIRED) //
+				.withWritable(input.isWritable()) //
+				.withMandatory(input.isMandatory()) //
 				.withIndex(index) //
 				.build();
 	}
