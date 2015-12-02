@@ -9,7 +9,7 @@
 			{ name: 'alwaysenabled', type: 'boolean' },
 			{ name: CMDBuild.core.proxy.CMProxyConstants.ACTIVE, type: 'boolean' },
 			{ name: CMDBuild.core.proxy.CMProxyConstants.CAPABILITIES, type: 'auto' }, // Object to gather all UI disable flags
-			{ name: CMDBuild.core.proxy.CMProxyConstants.DATA, type: 'auto' }, // Encoded array of CMDBuild.model.common.Generic models strings
+			{ name: CMDBuild.core.proxy.CMProxyConstants.DATA, type: 'auto' }, // Encoded array of CMDBuild.model.common.Generic models
 			{ name: CMDBuild.core.proxy.CMProxyConstants.FUNCTION_DATA, type: 'auto' }, // Function data to be resolved with TemplateResolver (data attribute alias)
 			{ name: CMDBuild.core.proxy.CMProxyConstants.ID, type: 'string' },
 			{ name: CMDBuild.core.proxy.CMProxyConstants.LABEL, type: 'string' },
@@ -55,9 +55,18 @@
 						newValue = Ext.isString(newValue) ? Ext.decode(newValue) : newValue;
 
 						var attributesArray = [];
+						var attributesDataTypes = {};
+
+						// Build attributes dataTypes
+						Ext.Array.forEach(this.get(CMDBuild.core.proxy.CMProxyConstants.MODEL), function(fieldModel, i, allfieldModels) {
+							attributesDataTypes[fieldModel.get(CMDBuild.core.proxy.CMProxyConstants.NAME)] = fieldModel.get(CMDBuild.core.proxy.CMProxyConstants.TYPE);
+						}, this);
 
 						Ext.Array.forEach(newValue, function(attributeObject, i, allAttributeObjects) {
-							attributesArray.push(Ext.create('CMDBuild.model.common.Generic', attributeObject));
+							attributesArray.push(Ext.create('CMDBuild.model.common.Generic', {
+								data: attributeObject,
+								dataTypes: attributesDataTypes
+							}));
 						}, this);
 
 						newValue = attributesArray;
