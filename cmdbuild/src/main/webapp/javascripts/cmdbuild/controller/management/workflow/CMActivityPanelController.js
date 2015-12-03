@@ -292,13 +292,17 @@
 			}
 		},
 
-		// override
+		/**
+		 * @override
+		 */
 		onShowGraphClick: function() {
 			var pi = _CMWFState.getProcessInstance();
-			var classId = pi.getClassId();
-			var cardId = pi.getId();
 
-			CMDBuild.Management.showGraphWindow(classId, cardId);
+			Ext.create('CMDBuild.controller.management.common.graph.Graph', {
+				parentDelegate: this,
+				classId: pi.getClassId(),
+				cardId: pi.getId()
+			});
 		},
 
 		onEditMode: function() {

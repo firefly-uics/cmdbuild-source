@@ -427,11 +427,11 @@
 				this.cloneCardButton
 			];
 
-			this.graphButton = new Ext.button.Button({
-				iconCls : "graph",
-				text : CMDBuild.Translation.management.graph.action,
-				handler: function() {
-					me.fireEvent(me.CMEVENTS.openGraphButtonClick);
+			this.graphButton = Ext.create('CMDBuild.core.buttons.iconized.RelationGraph', {
+				scope: this,
+
+				handler: function(button, e) {
+					this.fireEvent(this.CMEVENTS.openGraphButtonClick);
 				}
 			});
 

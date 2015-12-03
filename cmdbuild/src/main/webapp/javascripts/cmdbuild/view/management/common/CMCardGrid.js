@@ -571,15 +571,19 @@
 
 	function renderGraphIcon() {
 		return '<img style="cursor:pointer" title="'
-			+ CMDBuild.Translation.management.graph.icon_tooltip
+			+ CMDBuild.Translation.openRelationGraph
 			+'" class="action-open-graph" src="images/icons/chart_organisation.png"/>';
 	}
 
 	function cellclickHandler(grid, model, htmlelement, rowIndex, event, opt) {
 		var action = event.target.className;
-		if (action == 'action-open-graph') {
-			CMDBuild.Management.showGraphWindow(model.get("IdClass"), model.get("Id"));
-		}
+
+		if (action == 'action-open-graph')
+			Ext.create('CMDBuild.controller.management.common.graph.Graph', {
+				parentDelegate: this,
+				classId: model.get('IdClass'),
+				cardId: model.get('id')
+			});
 
 		this.callDelegates("onCMCardGridIconRowClick", [grid, action, model]);
 	}
