@@ -6,7 +6,7 @@
 			'CMDBuild.core.interfaces.Ajax',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.proxy.Index',
-			'CMDBuild.model.common.tabs.history.classes.CardRecord'
+			'CMDBuild.model.classes.tabs.history.CardRecord'
 		],
 
 		singleton: true,
@@ -85,7 +85,7 @@
 		getStore: function() {
 			return Ext.create('Ext.data.Store', {
 				autoLoad: false,
-				model: 'CMDBuild.model.common.tabs.history.classes.CardRecord',
+				model: 'CMDBuild.model.classes.tabs.history.CardRecord',
 				proxy: {
 					type: 'ajax',
 					url: CMDBuild.core.proxy.Index.history.classes.getCardHistory,

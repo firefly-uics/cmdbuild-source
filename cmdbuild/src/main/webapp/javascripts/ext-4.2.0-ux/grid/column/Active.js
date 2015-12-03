@@ -6,12 +6,12 @@
 		/**
 		 * @cfg {String}
 		 */
-		iconLabelActive: 'Active icon',
+		iconAltTextActive: 'Active icon',
 
 		/**
 		 * @cfg {String}
 		 */
-		iconLabelNotActive: 'Not active icon',
+		iconAltTextNotActive: 'Not active icon',
 
 		/**
 		 * @param {Object} value
@@ -26,7 +26,7 @@
 		 */
 		renderer: function(value, metaData, record, rowIndex, colIndex, store, view) {
 			if (Ext.isBoolean(value))
-				return value ? '<img src="images/icons/accept.png" alt="' + this.iconLabelActive + '" />' : '<img src="images/icons/cancel.png" alt="' + this.iconLabelNotActive + '" />';
+				return value ? '<img src="images/icons/accept.png" alt="' + this.iconAltTextActive + '" />' : '<img src="images/icons/cancel.png" alt="' + this.iconAltTextNotActive + '" />';
 
 			return value;
 		}

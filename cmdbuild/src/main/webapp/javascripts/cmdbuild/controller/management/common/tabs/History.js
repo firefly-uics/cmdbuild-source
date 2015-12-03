@@ -81,9 +81,9 @@
 		/**
 		 * Finds same type (card or relation) current record predecessor
 		 *
-		 * @param {CMDBuild.model.common.tabs.history.classes.CardRecord or CMDBuild.model.common.tabs.history.classes.RelationRecord} record
+		 * @param {CMDBuild.model.classes.tabs.history.CardRecord or CMDBuild.model.classes.tabs.history.RelationRecord} record
 		 *
-		 * @returns {CMDBuild.model.common.tabs.history.classes.CardRecord or CMDBuild.model.common.tabs.history.classes.RelationRecord} predecessor or null
+		 * @returns {CMDBuild.model.classes.tabs.history.CardRecord or CMDBuild.model.classes.tabs.history.RelationRecord} predecessor or null
 		 *
 		 * @private
 		 */
@@ -140,7 +140,7 @@
 		},
 
 		/**
-		 * @param {CMDBuild.model.common.tabs.history.classes.CardRecord or CMDBuild.model.common.tabs.history.classes.RelationRecord} record
+		 * @param {CMDBuild.model.classes.tabs.history.CardRecord or CMDBuild.model.classes.tabs.history.RelationRecord} record
 		 */
 		onTabHistoryRowExpand: function(record) {
 			if (!Ext.isEmpty(record)) {
@@ -260,7 +260,7 @@
 
 											// Build reference models
 											Ext.Array.forEach(decodedResponse, function(element, i, allElements) {
-												referenceElementsModels.push(Ext.create('CMDBuild.model.common.tabs.history.classes.RelationRecord', element));
+												referenceElementsModels.push(Ext.create('CMDBuild.model.classes.tabs.history.RelationRecord', element));
 											});
 
 											this.clearStoreAdd(referenceElementsModels);

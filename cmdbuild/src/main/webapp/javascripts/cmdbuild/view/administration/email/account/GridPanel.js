@@ -24,13 +24,13 @@
 					Ext.create('Ext.ux.grid.column.Tick', {
 						text: CMDBuild.Translation.defaultLabel,
 						dataIndex: CMDBuild.core.constants.Proxy.IS_DEFAULT,
+						iconAltText: CMDBuild.Translation.defaultLabel,
 						align: 'center',
 						width: 50,
 						sortable: false,
 						hideable: false,
 						menuDisabled: true,
-						fixed: true,
-						iconLabel: CMDBuild.Translation.defaultLabel
+						fixed: true
 					}),
 					{
 						dataIndex: CMDBuild.core.constants.Proxy.NAME,

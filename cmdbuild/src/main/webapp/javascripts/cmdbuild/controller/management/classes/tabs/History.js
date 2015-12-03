@@ -136,12 +136,12 @@
 		 * @param {Object} entityData
 		 * @param {Object} entityAttributeData
 		 *
-		 * @returns {CMDBuild.model.common.tabs.history.classes.CardRecord} currentEntityModel
+		 * @returns {CMDBuild.model.classes.tabs.history.CardRecord} currentEntityModel
 		 *
 		 * @private
 		 */
 		buildCurrentEntityModel: function(entityData, entityAttributeData) {
-			var currentEntityModel = Ext.create('CMDBuild.model.common.tabs.history.classes.CardRecord', entityData);
+			var currentEntityModel = Ext.create('CMDBuild.model.classes.tabs.history.CardRecord', entityData);
 			currentEntityModel.set(CMDBuild.core.constants.Proxy.VALUES, entityAttributeData);
 			currentEntityModel.commit();
 
@@ -149,7 +149,7 @@
 		},
 
 		/**
-		 * @param {CMDBuild.model.common.tabs.history.classes.RelationRecord} record
+		 * @param {CMDBuild.model.classes.tabs.history.RelationRecord} record
 		 *
 		 * @override
 		 * @private
@@ -226,34 +226,28 @@
 
 			if (!CMDBuild.configuration.userInterface.get(CMDBuild.core.constants.Proxy.SIMPLE_HISTORY_MODE_FOR_CARD)) {
 				Ext.Array.push(columns, [
-					{
+					Ext.create('Ext.ux.grid.column.Tick', {
 						dataIndex: CMDBuild.core.constants.Proxy.IS_CARD,
 						text: CMDBuild.Translation.attributes,
+						iconAltText: CMDBuild.Translation.attributes,
 						width: 65,
 						align: 'center',
 						sortable: false,
 						hideable: false,
 						menuDisabled: true,
-						fixed: true,
-
-						renderer: function(value, metaData, record) {
-							return value ? '<img src="images/icons/tick.png" alt="' + CMDBuild.Translation.attributes + '" />' : null;
-						}
-					},
-					{
+						fixed: true
+					}),
+					Ext.create('Ext.ux.grid.column.Tick', {
 						dataIndex: CMDBuild.core.constants.Proxy.IS_RELATION,
 						text: CMDBuild.Translation.relation,
+						iconAltText: CMDBuild.Translation.relation,
 						width: 65,
 						align: 'center',
 						sortable: false,
 						hideable: false,
 						menuDisabled: true,
-						fixed: true,
-
-						renderer: function(value, metaData, record) {
-							return value ? '<img src="images/icons/tick.png" alt="' + CMDBuild.Translation.relation + '" />' : null;
-						}
-					},
+						fixed: true
+					}),
 					{
 						dataIndex: CMDBuild.core.constants.Proxy.DOMAIN,
 						text: CMDBuild.Translation.domain,
