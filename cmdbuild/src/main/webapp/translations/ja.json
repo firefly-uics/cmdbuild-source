@@ -663,7 +663,7 @@
 			"ORM_ILLEGAL_NAME_ERROR": "不正な名前: {0}",
 			"ORM_LOOKUPTYPE_ALREADY_EXISTS": "同じ説明の別のルックアップが既に在ります",
 			"ORM_MALFORMED_PATCH": "届かないパッチ",
-			"ORM_MISSING_MADATORY_VALUES": "<em>Missing mandatory values: {0}</em>", 
+			"ORM_MISSING_MADATORY_VALUES": "<em>Missing mandatory values: {0}</em>",
 			"ORM_NOT_NULL_VIOLATION": "Not null 制約違反",
 			"ORM_POSTGIS_NOT_FOUND": "PostGIS インストールされていません",
 			"ORM_READ_ONLY_RELATION": "読み取り専用リレーション",
@@ -815,11 +815,6 @@
 			"show_all": "すべて表示",
 			"title": "属性を選択",
 			"window_title": "検索フィルタ"
-		},
-		"graph": {
-			"action": "リレーショングラフ",
-			"icon_tooltip": "リレーショングラフを開く",
-			"title": "リレーショングラフ"
 		},
 		"modcard": {
 			"add_attachment": "添付追加",
@@ -1307,6 +1302,7 @@
 	"odt": "ODT",
 	"onDay": "On",
 	"open_3d_viewer": "3Dビューアを開く",
+	"openRelationGraph": "リレーショングラフを開く",
 	"operationsDelay": "オペレーション遅延",
 	"origin": "ターゲット（起点)",
 	"otherOptions": "他のオプション",

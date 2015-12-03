@@ -663,7 +663,7 @@
 			"ORM_ILLEGAL_NAME_ERROR": "Nome Ilegal: {0}",
 			"ORM_LOOKUPTYPE_ALREADY_EXISTS": "Já existe outro tipo de pesquisa com a mesma descrição",
 			"ORM_MALFORMED_PATCH": "Patch não pode ser lido",
-			"ORM_MISSING_MADATORY_VALUES": "<em>Missing mandatory values: {0}</em>", 
+			"ORM_MISSING_MADATORY_VALUES": "<em>Missing mandatory values: {0}</em>",
 			"ORM_NOT_NULL_VIOLATION": "Restrição Violada não nula",
 			"ORM_POSTGIS_NOT_FOUND": "PostGIS não está instalado",
 			"ORM_READ_ONLY_RELATION": "Relacionamento Somente de Leitura",
@@ -815,11 +815,6 @@
 			"show_all": "Mostrar todos",
 			"title": "Escolha um atributo",
 			"window_title": "Filtro de Pesquisa"
-		},
-		"graph": {
-			"action": "Gráfico de relacionamento",
-			"icon_tooltip": "Abrir gráfico de relacionamento",
-			"title": "Gráfico de relacionamento"
 		},
 		"modcard": {
 			"add_attachment": "Adicionar anexo",
@@ -1307,6 +1302,7 @@
 	"odt": "ODT",
 	"onDay": "<em>On</em>",
 	"open_3d_viewer": "<em>Open 3D viewer</em>",
+	"openRelationGraph": "Abrir gráfico de relacionamento",
 	"operationsDelay": "Atraso de Operações",
 	"origin": "Origem",
 	"otherOptions": "Outras Opções",
@@ -1343,7 +1339,7 @@
 	"regenerateEmail": "Regenerar os e-mails",
 	"rejectedFolder": "<em>Rejected folder</em>",
 	"relation": "<em>Relation</em>",
-	"relationGraph": "Gráfico de Relacionamento",
+	"relationGraph": "Gráfico de relacionamento",
 	"relationLimit": "Limites de relacionamentos",
 	"relations": "Relacionamentos",
 	"remove": "<em>Remove</em>",

@@ -663,7 +663,7 @@
 			"ORM_ILLEGAL_NAME_ERROR": "Illegale naam: {0}",
 			"ORM_LOOKUPTYPE_ALREADY_EXISTS": "Er bestaat al een zoeklijst type met dezelfde omschrijving",
 			"ORM_MALFORMED_PATCH": "Niet-leesbare fix",
-			"ORM_MISSING_MADATORY_VALUES": "<em>Missing mandatory values: {0}</em>", 
+			"ORM_MISSING_MADATORY_VALUES": "<em>Missing mandatory values: {0}</em>",
 			"ORM_NOT_NULL_VIOLATION": "Niet null constraint geschonden",
 			"ORM_POSTGIS_NOT_FOUND": "PostGIS is niet geinstalleerd",
 			"ORM_READ_ONLY_RELATION": "Alleen-Lezen relatie",
@@ -815,11 +815,6 @@
 			"show_all": "Toon alles",
 			"title": "Kies een attribuut",
 			"window_title": "Zoek filter"
-		},
-		"graph": {
-			"action": "Relatie grafiek",
-			"icon_tooltip": "Open relatie grafiek",
-			"title": "Relatie grafiek"
 		},
 		"modcard": {
 			"add_attachment": "Bijlage toevoegen",
@@ -1307,6 +1302,7 @@
 	"odt": "ODT",
 	"onDay": "Op",
 	"open_3d_viewer": "Start 3D viewer",
+	"openRelationGraph": "Open relatie grafiek",
 	"operationsDelay": "Uitvoeringsvertraging",
 	"origin": "Beginpunt",
 	"otherOptions": "Andere opties",
@@ -1343,7 +1339,7 @@
 	"regenerateEmail": "Regenereer e-mails",
 	"rejectedFolder": "Map geweigerd",
 	"relation": "Relatie",
-	"relationGraph": "Relatie Grafiek",
+	"relationGraph": "Relatie grafiek",
 	"relationLimit": "Relatie limiet",
 	"relations": "Relaties",
 	"remove": "Verwijderen",
