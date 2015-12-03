@@ -31,6 +31,7 @@
 		autoScroll: true,
 		border: false,
 		cls: 'history_panel', // To apply right style to grid rows
+		disableSelection: true,
 		frame: false,
 
 		initComponent: function() {

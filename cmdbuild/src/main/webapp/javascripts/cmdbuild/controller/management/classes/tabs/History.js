@@ -100,6 +100,8 @@
 			this.valuesFormattingAndCompare(selectedEntityAttributes); // Formats values only
 
 			this.clearStoreAdd(this.buildCurrentEntityModel(selectedEntityMergedData, selectedEntityAttributes));
+
+			this.callParent(arguments);
 		},
 
 		/**
@@ -173,9 +175,6 @@
 				this.getProxy().getHistoric({
 					params: predecessorParams,
 					scope: this,
-					failure: function(response, options, decodedResponse) {
-						_error('get historic predecessor card failure', this);
-					},
 					success: function(response, options, decodedResponse) {
 						this.valuesFormattingAndCompare(selectedEntityAttributes, decodedResponse.response[CMDBuild.core.constants.Proxy.VALUES]);
 

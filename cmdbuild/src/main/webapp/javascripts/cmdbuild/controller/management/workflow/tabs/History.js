@@ -118,6 +118,8 @@
 			this.valuesFormattingAndCompare(selectedEntityAttributes); // Formats values only
 
 			this.clearStoreAdd(this.buildCurrentEntityModel(selectedEntityAttributes));
+
+			this.callParent(arguments);
 		},
 
 		/**
@@ -189,9 +191,6 @@
 				this.getProxy().getHistoric({
 					params: predecessorParams,
 					scope: this,
-					failure: function(response, options, decodedResponse) {
-						_error('get historic predecessor card failure', this);
-					},
 					success: function(response, options, decodedResponse) {
 						this.valuesFormattingAndCompare(selectedEntityAttributes, decodedResponse.response[CMDBuild.core.constants.Proxy.VALUES]);
 
@@ -268,9 +267,6 @@
 					params: params,
 					loadMask: false,
 					scope: this,
-					failure: function(response, options, decodedResponse) {
-						_error('get lookup failure', this);
-					},
 					success: function(response, options, decodedResponse) {
 						Ext.Array.forEach(decodedResponse.rows, function(lookup, i, array) {
 							switch (lookup['Code']) {
