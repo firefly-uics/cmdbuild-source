@@ -663,7 +663,7 @@
 			"ORM_ILLEGAL_NAME_ERROR": "Nom illégal: {0}",
 			"ORM_LOOKUPTYPE_ALREADY_EXISTS": "Il y a déjà une liste de valeurs ayant le même libellé",
 			"ORM_MALFORMED_PATCH": "Correctif mal formé",
-			"ORM_MISSING_MADATORY_VALUES": "<em>Missing mandatory values: {0}</em>", 
+			"ORM_MISSING_MADATORY_VALUES": "<em>Missing mandatory values: {0}</em>",
 			"ORM_NOT_NULL_VIOLATION": "Violation de la contrainte : Non nul",
 			"ORM_POSTGIS_NOT_FOUND": "PostGIS n'est pas installé",
 			"ORM_READ_ONLY_RELATION": "Relation en lecture seule",
@@ -815,11 +815,6 @@
 			"show_all": "Voir tout",
 			"title": "Choisir un attribut",
 			"window_title": "Filtre de recherche"
-		},
-		"graph": {
-			"action": "Graphe de relations",
-			"icon_tooltip": "Ouvrir le graphe de relations",
-			"title": "Graphe de relations"
 		},
 		"modcard": {
 			"add_attachment": "Ajouter des pièces jointes",
@@ -1307,6 +1302,7 @@
 	"odt": "ODT",
 	"onDay": "Travaillé",
 	"open_3d_viewer": "Ouvrir la visionneuse 3D",
+	"openRelationGraph": "Ouvrir le graphe de relations",
 	"operationsDelay": "Délais des opérations",
 	"origin": "Origine",
 	"otherOptions": "Autres options",

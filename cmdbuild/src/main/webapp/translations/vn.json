@@ -663,7 +663,7 @@
 			"ORM_ILLEGAL_NAME_ERROR": "Tên không hợp lệ: {0}",
 			"ORM_LOOKUPTYPE_ALREADY_EXISTS": "Thay đổi một kểu tra cứu khác với cùng một mô tả",
 			"ORM_MALFORMED_PATCH": "Không thể đọc được Patch",
-			"ORM_MISSING_MADATORY_VALUES": "<em>Missing mandatory values: {0}</em>", 
+			"ORM_MISSING_MADATORY_VALUES": "<em>Missing mandatory values: {0}</em>",
 			"ORM_NOT_NULL_VIOLATION": "Not null constraint violated",
 			"ORM_POSTGIS_NOT_FOUND": "PostGIS không được cài được",
 			"ORM_READ_ONLY_RELATION": "Quan hệ chỉ được đọc",
@@ -815,11 +815,6 @@
 			"show_all": "Hiện thị tất cả",
 			"title": "Chọn một thuộc tính",
 			"window_title": "Tìm bộ lọc"
-		},
-		"graph": {
-			"action": "Đồ thị mối quan hệ",
-			"icon_tooltip": "Mở rộng đồ thị mối quan hệ",
-			"title": "Đồ thị mối quan hệ"
 		},
 		"modcard": {
 			"add_attachment": "Thêm tập tin đính kèm",
@@ -1307,6 +1302,7 @@
 	"odt": "ODT",
 	"onDay": "<em>On</em>",
 	"open_3d_viewer": "<em>Open 3D viewer</em>",
+	"openRelationGraph": "Mở rộng đồ thị mối quan hệ",
 	"operationsDelay": "Trì hoãn tác vụ",
 	"origin": "Ðiểm bắt đầu",
 	"otherOptions": "Những chọn lựa khác",
@@ -1343,7 +1339,7 @@
 	"regenerateEmail": "Tái tạo e-mail",
 	"rejectedFolder": "<em>Rejected folder</em>",
 	"relation": "<em>Relation</em>",
-	"relationGraph": "Đồ thị liên quan",
+	"relationGraph": "Đồ thị mối quan hệ",
 	"relationLimit": "Giới hạn các quan hệ",
 	"relations": "Các mối quan hệ",
 	"remove": "<em>Remove</em>",

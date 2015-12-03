@@ -663,7 +663,7 @@
 			"ORM_ILLEGAL_NAME_ERROR": "Illegális név: {0}",
 			"ORM_LOOKUPTYPE_ALREADY_EXISTS": "Már létezik ilyen leírással lista",
 			"ORM_MALFORMED_PATCH": "Olvashatatlan Patch",
-			"ORM_MISSING_MADATORY_VALUES": "<em>Missing mandatory values: {0}</em>", 
+			"ORM_MISSING_MADATORY_VALUES": "<em>Missing mandatory values: {0}</em>",
 			"ORM_NOT_NULL_VIOLATION": "Nem null kötelezettség megszegése",
 			"ORM_POSTGIS_NOT_FOUND": "PostGIS nincs telepítve",
 			"ORM_READ_ONLY_RELATION": "Csak olvasható reláció",
@@ -815,11 +815,6 @@
 			"show_all": "Mindegyik mutatása",
 			"title": "Válasszon attribútumot",
 			"window_title": "Kereső szűrő"
-		},
-		"graph": {
-			"action": "Relációs gráf",
-			"icon_tooltip": "Relációs gráf megnyitása",
-			"title": "Relációs gráf"
 		},
 		"modcard": {
 			"add_attachment": "Csatolmány hozzáadása",
@@ -1307,6 +1302,7 @@
 	"odt": "ODT",
 	"onDay": "Be",
 	"open_3d_viewer": "3D megtekintő megnyitása",
+	"openRelationGraph": "Relációs gráf megnyitása",
 	"operationsDelay": "Operáció késleltetés",
 	"origin": "Eredet",
 	"otherOptions": "Más opciók",

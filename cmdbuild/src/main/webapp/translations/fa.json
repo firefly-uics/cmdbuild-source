@@ -663,7 +663,7 @@
 			"ORM_ILLEGAL_NAME_ERROR": "نام غیر مجاز: {0}",
 			"ORM_LOOKUPTYPE_ALREADY_EXISTS": "در حال حاضر یک نوع مراجعه با این نام وجود دارد",
 			"ORM_MALFORMED_PATCH": "Unreadable Patch",
-			"ORM_MISSING_MADATORY_VALUES": "<em>Missing mandatory values: {0}</em>", 
+			"ORM_MISSING_MADATORY_VALUES": "<em>Missing mandatory values: {0}</em>",
 			"ORM_NOT_NULL_VIOLATION": "Not null constraint violated",
 			"ORM_POSTGIS_NOT_FOUND": "PostGIS is not installed",
 			"ORM_READ_ONLY_RELATION": "Read-only relation",
@@ -815,11 +815,6 @@
 			"show_all": "نمایش همه",
 			"title": "یک خاصیت را انتخاب کنید",
 			"window_title": "فیلتر جستجو"
-		},
-		"graph": {
-			"action": "گراف رابطه",
-			"icon_tooltip": "باز کردن گراف رابطه",
-			"title": "گراف رابطه"
 		},
 		"modcard": {
 			"add_attachment": "اضافه کردن ضمیمه",
@@ -1306,6 +1301,7 @@
 	"odt": "ODT",
 	"onDay": "<em>On</em>",
 	"open_3d_viewer": "Open 3D viewer",
+	"openRelationGraph": "باز کردن گراف رابطه",
 	"operationsDelay": "Operations delay",
 	"origin": "مبدا",
 	"otherOptions": "انتخابهای دیگر",
@@ -1342,7 +1338,7 @@
 	"regenerateEmail": "باز تولید ایمیل",
 	"rejectedFolder": "فولدر ریجکت شده",
 	"relation": "<em>Relation</em>",
-	"relationGraph": "Relation Graph",
+	"relationGraph": "گراف رابطه",
 	"relationLimit": "Relations limit",
 	"relations": "روابط",
 	"remove": "Remove",

@@ -663,7 +663,7 @@
 			"ORM_ILLEGAL_NAME_ERROR": "Неверное имя: {0}",
 			"ORM_LOOKUPTYPE_ALREADY_EXISTS": "Перечень уже существует",
 			"ORM_MALFORMED_PATCH": "Пакет обновлений поврежден",
-			"ORM_MISSING_MADATORY_VALUES": "<em>Missing mandatory values: {0}</em>", 
+			"ORM_MISSING_MADATORY_VALUES": "<em>Missing mandatory values: {0}</em>",
 			"ORM_NOT_NULL_VIOLATION": "Нарушение требования Not null",
 			"ORM_POSTGIS_NOT_FOUND": "PostGIS не установлен",
 			"ORM_READ_ONLY_RELATION": "Связь только для чтения",
@@ -815,11 +815,6 @@
 			"show_all": "Показать все",
 			"title": "Выберите атрибут",
 			"window_title": "Фильтр"
-		},
-		"graph": {
-			"action": "Диаграмма связей",
-			"icon_tooltip": "Показать диаграмму связей",
-			"title": "Диаграмма связей"
 		},
 		"modcard": {
 			"add_attachment": "Вложить файл",
@@ -1307,6 +1302,7 @@
 	"odt": "ODT",
 	"onDay": "<em>On</em>",
 	"open_3d_viewer": "Открыть 3D просмотр",
+	"openRelationGraph": "Показать диаграмму связей",
 	"operationsDelay": "Таймаут операций",
 	"origin": "Исходная таблица",
 	"otherOptions": "Другие настройки",

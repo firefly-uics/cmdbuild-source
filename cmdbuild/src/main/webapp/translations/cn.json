@@ -663,7 +663,7 @@
 			"ORM_ILLEGAL_NAME_ERROR": "非法名称: {0}",
 			"ORM_LOOKUPTYPE_ALREADY_EXISTS": "已存在另一个lookup类型具体相同的描述",
 			"ORM_MALFORMED_PATCH": "不可读补丁",
-			"ORM_MISSING_MADATORY_VALUES": "<em>Missing mandatory values: {0}</em>", 
+			"ORM_MISSING_MADATORY_VALUES": "<em>Missing mandatory values: {0}</em>",
 			"ORM_NOT_NULL_VIOLATION": "违反非零限制规则",
 			"ORM_POSTGIS_NOT_FOUND": "PostGIS未安装",
 			"ORM_READ_ONLY_RELATION": "只读关联",
@@ -815,11 +815,6 @@
 			"show_all": "显示所有",
 			"title": "选择一个属性",
 			"window_title": "搜索过滤器"
-		},
-		"graph": {
-			"action": "关系图表",
-			"icon_tooltip": "打开关系图表",
-			"title": "关系图表"
 		},
 		"modcard": {
 			"add_attachment": "增加附件",
@@ -1307,6 +1302,7 @@
 	"odt": "ODT",
 	"onDay": "On",
 	"open_3d_viewer": "打开3D浏览器",
+	"openRelationGraph": "打开关系图表",
 	"operationsDelay": "操作延迟",
 	"origin": "起源",
 	"otherOptions": "<em>Other options</em>",

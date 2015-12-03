@@ -663,7 +663,7 @@
 			"ORM_ILLEGAL_NAME_ERROR": "Illegal name: {0}",
 			"ORM_LOOKUPTYPE_ALREADY_EXISTS": "There is already another lookup type with the same description",
 			"ORM_MALFORMED_PATCH": "Unreadable Patch",
-			"ORM_MISSING_MADATORY_VALUES": "Missing mandatory values: {0}", 
+			"ORM_MISSING_MADATORY_VALUES": "Missing mandatory values: {0}",
 			"ORM_NOT_NULL_VIOLATION": "Not null constraint violated",
 			"ORM_POSTGIS_NOT_FOUND": "PostGIS is not installed",
 			"ORM_READ_ONLY_RELATION": "Read-only relation",
@@ -815,11 +815,6 @@
 			"show_all": "Show all",
 			"title": "Choose an attribute",
 			"window_title": "Search filter"
-		},
-		"graph": {
-			"action": "Relation graph",
-			"icon_tooltip": "Open relation graph",
-			"title": "Relation graph"
 		},
 		"modcard": {
 			"add_attachment": "Add attachment",
@@ -1307,6 +1302,7 @@
 	"odt": "ODT",
 	"onDay": "On",
 	"open_3d_viewer": "Open 3D viewer",
+	"openRelationGraph": "Open relation graph",
 	"operationsDelay": "Operations delay",
 	"origin": "Origin",
 	"otherOptions": "Other options",

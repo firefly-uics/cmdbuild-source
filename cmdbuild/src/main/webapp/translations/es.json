@@ -663,7 +663,7 @@
 			"ORM_ILLEGAL_NAME_ERROR": "Nombre ilegal: {0}",
 			"ORM_LOOKUPTYPE_ALREADY_EXISTS": "Ya existe otro tipo lookup con la misma descripción",
 			"ORM_MALFORMED_PATCH": "Parche ilegible",
-			"ORM_MISSING_MADATORY_VALUES": "<em>Missing mandatory values: {0}</em>", 
+			"ORM_MISSING_MADATORY_VALUES": "<em>Missing mandatory values: {0}</em>",
 			"ORM_NOT_NULL_VIOLATION": "Vínculo de no nulidad violado",
 			"ORM_POSTGIS_NOT_FOUND": "PostGIS no instalado",
 			"ORM_READ_ONLY_RELATION": "Relación de sólo lectura",
@@ -815,11 +815,6 @@
 			"show_all": "Muestra todos",
 			"title": "Elige un atributo",
 			"window_title": "Filtro de búsqueda"
-		},
-		"graph": {
-			"action": "Gráfico de las relaciones",
-			"icon_tooltip": "Abre el gráfico de las relaciones",
-			"title": "Gráfico de las relaciones"
 		},
 		"modcard": {
 			"add_attachment": "Agrega adjunto",
@@ -1307,6 +1302,7 @@
 	"odt": "ODT",
 	"onDay": "<em>On</em>",
 	"open_3d_viewer": "Abre visor 3D",
+	"openRelationGraph": "Abre el gráfico de las relaciones",
 	"operationsDelay": "Retraso operaciones",
 	"origin": "Origen",
 	"otherOptions": "Otras opciónes",
