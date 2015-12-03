@@ -45,17 +45,16 @@
 		constructor: function(configurationObject) {
 			this.callParent(arguments);
 
-			this.view = Ext.create('CMDBuild.view.management.common.tabs.history.HistoryView', {
-				delegate: this
-			});
+			this.view = Ext.create('CMDBuild.view.management.common.tabs.history.HistoryView', { delegate: this });
 		},
 
 		/**
-		 * Adds current card to history store for a better visualization of differences from last history record and current one.
-		 *
-		 * @abstract
+		 * Adds current card to history store for a better visualization of differences from last history record and current one. As last function called on store build
+		 * collapses all rows on store load.
 		 */
-		addCurrentCardToStore: Ext.emptyFn,
+		addCurrentCardToStore: function() {
+			this.getRowExpanderPlugin().collapseAll();
+		},
 
 		/**
 		 * Clear store and re-add all records to avoid RowExpander plugin bug that appens with store add action that won't manage correctly expand/collapse events
@@ -116,8 +115,7 @@
 
 			if (
 				!Ext.isEmpty(this.grid)
-				&& !Ext.isEmpty(this.grid.plugins)
-				&& Ext.isArray(this.grid.plugins)
+				&& !Ext.isEmpty(this.grid.plugins) && Ext.isArray(this.grid.plugins)
 			) {
 				Ext.Array.forEach(this.grid.plugins, function(plugin, i, allPlugins) {
 					if (plugin instanceof Ext.grid.plugin.RowExpander)
@@ -196,9 +194,6 @@
 						this.getProxy().getHistoric({ // Get expanded card data
 							params: params,
 							scope: this,
-							failure: function(response, options, decodedResponse) {
-								_error('get historic card failure', this);
-							},
 							success: function(response, options, decodedResponse) {
 								var cardValuesObject = decodedResponse.response[CMDBuild.core.proxy.CMProxyConstants.VALUES];
 								var predecessorRecord = this.getRecordPredecessor(record);
@@ -211,11 +206,10 @@
 									this.getProxy().getHistoric({ // Get expanded predecessor's card data
 										params: predecessorParams,
 										scope: this,
-										failure: function(response, options, decodedResponse) {
-											_error('get historic predecessor card failure', this);
-										},
 										success: function(response, options, decodedResponse) {
-											this.valuesFormattingAndCompare(cardValuesObject, decodedResponse.response[CMDBuild.core.proxy.CMProxyConstants.VALUES]);
+											decodedResponse = decodedResponse[CMDBuild.core.proxy.CMProxyConstants.RESPONSE];
+
+											this.valuesFormattingAndCompare(cardValuesObject, decodedResponse[CMDBuild.core.proxy.CMProxyConstants.VALUES]);
 
 											// Setup record property with historic card details to use XTemplate functionalities to render
 											record.set(CMDBuild.core.proxy.CMProxyConstants.VALUES, cardValuesObject);
@@ -237,9 +231,6 @@
 					this.getProxy().getRelationHistoric({
 						params: params,
 						scope: this,
-						failure: function(response, options, decodedResponse) {
-							_error('get historic relation failure', this);
-						},
 						success: function(response, options, decodedResponse) {
 							var cardValuesObject = decodedResponse.response[CMDBuild.core.proxy.CMProxyConstants.VALUES];
 
@@ -268,12 +259,12 @@
 				CMDBuild.core.proxy.Attributes.read({
 					params: params,
 					scope: this,
-					failure: function(response, options, decodedResponse) {
-						_error('get attributes failure', this);
-					},
 					success: function(response, options, decodedResponse) {
-						Ext.Array.forEach(decodedResponse[CMDBuild.core.proxy.CMProxyConstants.ATTRIBUTES], function(attribute, i, allAttributes) {
-							this.entryTypeAttributes[attribute[CMDBuild.core.proxy.CMProxyConstants.NAME]] = attribute;
+						decodedResponse = decodedResponse[CMDBuild.core.proxy.CMProxyConstants.ATTRIBUTES];
+
+						Ext.Array.forEach(decodedResponse, function(attribute, i, allAttributes) {
+							if (attribute['fieldmode'] != 'hidden')
+								this.entryTypeAttributes[attribute[CMDBuild.core.proxy.CMProxyConstants.NAME]] = attribute;
 						}, this);
 
 						params = {};
@@ -284,24 +275,22 @@
 							params: params,
 							scope: this,
 							callback: function(records, operation, success) {
-								this.getRowExpanderPlugin().collapseAll();
-
 								if (this.grid.includeRelationsCheckbox.getValue()) {
 									this.getProxy().getRelations({
 										params: params,
 										scope: this,
-										failure: function(response, options, decodedResponse) {
-											_error('getCardRelationsHistory failure', this);
-										},
 										success: function(response, options, decodedResponse) {
-											var referenceElements = decodedResponse.response.elements;
+											decodedResponse = decodedResponse[CMDBuild.core.proxy.CMProxyConstants.RESPONSE];
+											decodedResponse = decodedResponse[CMDBuild.core.proxy.CMProxyConstants.ELEMENTS];
+
+											var referenceElementsModels = [];
 
 											// Build reference models
-											Ext.Array.forEach(referenceElements, function(element, i, allElements) {
-												referenceElements[i] = Ext.create('CMDBuild.model.common.tabs.history.classes.RelationRecord', element);
+											Ext.Array.forEach(decodedResponse, function(element, i, allElements) {
+												referenceElementsModels.push(Ext.create('CMDBuild.model.common.tabs.history.classes.RelationRecord', element));
 											});
 
-											this.clearStoreAdd(referenceElements);
+											this.clearStoreAdd(referenceElementsModels);
 
 											this.addCurrentCardToStore();
 										}
@@ -332,7 +321,13 @@
 			},
 
 		/**
-		 * Formats all object1 values as objects { {Boolean} changed: "...", {Mixed} description: "..." }. If value1 is different than value2
+		 * Formats all object1 values as objects:
+		 * 	{
+		 * 		{Boolean} changed
+		 * 		{Mixed} description
+		 * 	}
+		 *
+		 * If value1 is different than value2
 		 * modified is true, false otherwise. Strips also HTML tags from "description".
 		 *
 		 * @param {Object} object1 - currently expanded record
@@ -346,9 +341,9 @@
 				Ext.Object.each(object1, function(key, value, myself) {
 					var changed = false;
 
-					// Get attribute's description
-					var attributeDescription = this.entryTypeAttributes.hasOwnProperty(key) ? this.entryTypeAttributes[key][CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION] : null;
-					var attributeIndex = this.entryTypeAttributes.hasOwnProperty(key) ? this.entryTypeAttributes[key][CMDBuild.core.proxy.CMProxyConstants.INDEX] : 0;
+					// Get attribute's index and description
+					var attributeDescription = Ext.isEmpty(this.entryTypeAttributes[key]) ? null : this.entryTypeAttributes[key][CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION];
+					var attributeIndex = Ext.isEmpty(this.entryTypeAttributes[key]) ? 0 : this.entryTypeAttributes[key][CMDBuild.core.proxy.CMProxyConstants.INDEX];
 
 					// Build object1 properties models
 					var attributeValues = Ext.isObject(value) ? value : { description: value };

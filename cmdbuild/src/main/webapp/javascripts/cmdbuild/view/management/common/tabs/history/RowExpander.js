@@ -4,6 +4,7 @@
 		extend: 'Ext.grid.plugin.RowExpander',
 
 		expandOnEnter: false,
+		selectRowOnExpand: false,
 
 		// XTemplate formats all values to an array of key-value objects before display
 		rowBodyTpl: new Ext.XTemplate(

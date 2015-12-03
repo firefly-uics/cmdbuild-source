@@ -5,6 +5,8 @@
 
 		require: ['CMDBuild.core.proxy.CMProxyConstants'],
 
+		idProperty: '', // HACK: avoids to use id field as record identifier, fixes a bug of duplicates rows id
+
 		fields: [
 			{ name: CMDBuild.core.proxy.CMProxyConstants.BEGIN_DATE, type: 'date', dateFormat: 'd/m/Y H:i:s' },
 			{ name: CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME, type: 'string' },
