@@ -175,7 +175,7 @@
 											_error('get historic predecessor card failure', this);
 										},
 										success: function(response, options, decodedResponse) {
-											decodedResponse = decodedResponse[CMDBuild.core.proxy.CMProxyConstants.RESPONSE];
+											decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.RESPONSE];
 
 											this.valuesFormattingAndCompare(cardValuesObject, decodedResponse[CMDBuild.core.constants.Proxy.VALUES]);
 
@@ -227,14 +227,11 @@
 				CMDBuild.core.proxy.Attributes.read({
 					params: params,
 					scope: this,
-					failure: function(response, options, decodedResponse) {
-						_error('get attributes failure', this);
-					},
 					success: function(response, options, decodedResponse) {
-						decodedResponse = decodedResponse[CMDBuild.core.proxy.CMProxyConstants.ATTRIBUTES];
+						decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.ATTRIBUTES];
 
-						Ext.Array.forEach(decodedResponse[CMDBuild.core.constants.Proxy.ATTRIBUTES], function(attribute, i, allAttributes) {
-							if (attribute['fieldmode'] != 'hidden')							
+						Ext.Array.forEach(decodedResponse, function(attribute, i, allAttributes) {
+							if (attribute['fieldmode'] != 'hidden')
 								this.entryTypeAttributes[attribute[CMDBuild.core.constants.Proxy.NAME]] = attribute;
 						}, this);
 
@@ -257,13 +254,13 @@
 										},
 										success: function(response, options, decodedResponse) {
 											decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.RESPONSE];
-											decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.ELEMENTS];											
+											decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.ELEMENTS];
 
 											var referenceElementsModels = [];
 
 											// Build reference models
 											Ext.Array.forEach(decodedResponse, function(element, i, allElements) {
-												referenceElementsModels.push('CMDBuild.model.common.tabs.history.classes.RelationRecord', element));
+												referenceElementsModels.push(Ext.create('CMDBuild.model.common.tabs.history.classes.RelationRecord', element));
 											});
 
 											this.clearStoreAdd(referenceElementsModels);

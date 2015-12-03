@@ -161,7 +161,7 @@
 		buildDataConfigurationFromFunction: function(callback) {
 			callback = Ext.isFunction(callback) ? callback : Ext.emptyFn;
 
-			if (!this.cmfg('widgetCustomFormConfigurationIsEmpty', CMDBuild.core.proxy.CMProxyConstants.FUNCTION_DATA)) {
+			if (!this.cmfg('widgetCustomFormConfigurationIsEmpty', CMDBuild.core.constants.Proxy.FUNCTION_DATA)) {
 				var params = {};
 				params[CMDBuild.core.constants.Proxy.FUNCTION] = this.cmfg('widgetCustomFormConfigurationGet', CMDBuild.core.constants.Proxy.FUNCTION_DATA);
 				params[CMDBuild.core.constants.Proxy.PARAMS] = Ext.encode(this.cmfg('widgetCustomFormConfigurationGet', CMDBuild.core.constants.Proxy.VARIABLES));
