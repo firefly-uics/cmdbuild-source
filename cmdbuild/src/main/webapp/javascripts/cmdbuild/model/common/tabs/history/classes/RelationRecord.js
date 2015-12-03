@@ -5,6 +5,8 @@
 	Ext.define('CMDBuild.model.common.tabs.history.classes.RelationRecord', {
 		extend: 'Ext.data.Model',
 
+		idProperty: '', // HACK: avoids to use id field as record identifier, fixes a bug of duplicates rows id
+
 		fields: [
 			{ name: CMDBuild.core.constants.Proxy.BEGIN_DATE, type: 'date', dateFormat: 'd/m/Y H:i:s' },
 			{ name: CMDBuild.core.constants.Proxy.CLASS_NAME, type: 'string' },

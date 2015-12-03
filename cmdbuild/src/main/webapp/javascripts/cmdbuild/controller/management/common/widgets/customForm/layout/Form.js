@@ -173,20 +173,12 @@
 		 * @param {Array} data
 		 */
 		setData: function(data) {
-			data = (Ext.isArray(data) && !Ext.isEmpty(data[0])) ? data[0] : data;
+			data = (Ext.isArray(data) && !Ext.isEmpty(data[0])) ? data[0] : data; // Get first item only from arrays
 
 			this.view.reset();
 
-			if (Ext.isObject(data)) {
-				// Clean data object to avoid set of empty values
-				Ext.Object.each(data, function(key, value, myself) {
-					if (Ext.isEmpty(value))
-						delete data[key];
-				}, this);
-
-				if (!Ext.Object.isEmpty(data))
-					this.view.getForm().setValues(data);
-			}
+			if (Ext.isObject(data) && !Ext.Object.isEmpty(data))
+				this.view.loadRecord(data);
 
 			this.isValid(false);
 		},

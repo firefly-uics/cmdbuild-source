@@ -50,11 +50,12 @@
 		},
 
 		/**
-		 * Adds current card to history store for a better visualization of differences from last history record and current one.
-		 *
-		 * @abstract
+		 * Adds current card to history store for a better visualization of differences from last history record and current one. As last function called on store build
+		 * collapses all rows on store load.
 		 */
-		addCurrentCardToStore: Ext.emptyFn,
+		addCurrentCardToStore: function() {
+			this.getRowExpanderPlugin().collapseAll();
+		},
 
 		/**
 		 * Clear store and re-add all records to avoid RowExpander plugin bug that appens with store add action that won't manage correctly expand/collapse events
@@ -119,8 +120,7 @@
 
 			if (
 				!Ext.isEmpty(this.grid)
-				&& !Ext.isEmpty(this.grid.plugins)
-				&& Ext.isArray(this.grid.plugins)
+				&& !Ext.isEmpty(this.grid.plugins) && Ext.isArray(this.grid.plugins)
 			) {
 				Ext.Array.forEach(this.grid.plugins, function(plugin, i, allPlugins) {
 					if (plugin instanceof Ext.grid.plugin.RowExpander)
@@ -175,7 +175,9 @@
 											_error('get historic predecessor card failure', this);
 										},
 										success: function(response, options, decodedResponse) {
-											this.valuesFormattingAndCompare(cardValuesObject, decodedResponse.response[CMDBuild.core.constants.Proxy.VALUES]);
+											decodedResponse = decodedResponse[CMDBuild.core.proxy.CMProxyConstants.RESPONSE];
+
+											this.valuesFormattingAndCompare(cardValuesObject, decodedResponse[CMDBuild.core.constants.Proxy.VALUES]);
 
 											// Setup record property with historic card details to use XTemplate functionalities to render
 											record.set(CMDBuild.core.constants.Proxy.VALUES, cardValuesObject);
@@ -197,9 +199,6 @@
 					this.getProxy().getRelationHistoric({
 						params: params,
 						scope: this,
-						failure: function(response, options, decodedResponse) {
-							_error('get historic relation failure', this);
-						},
 						success: function(response, options, decodedResponse) {
 							var cardValuesObject = decodedResponse.response[CMDBuild.core.constants.Proxy.VALUES];
 
@@ -232,8 +231,11 @@
 						_error('get attributes failure', this);
 					},
 					success: function(response, options, decodedResponse) {
+						decodedResponse = decodedResponse[CMDBuild.core.proxy.CMProxyConstants.ATTRIBUTES];
+
 						Ext.Array.forEach(decodedResponse[CMDBuild.core.constants.Proxy.ATTRIBUTES], function(attribute, i, allAttributes) {
-							this.entryTypeAttributes[attribute[CMDBuild.core.constants.Proxy.NAME]] = attribute;
+							if (attribute['fieldmode'] != 'hidden')							
+								this.entryTypeAttributes[attribute[CMDBuild.core.constants.Proxy.NAME]] = attribute;
 						}, this);
 
 						params = {};
@@ -254,14 +256,17 @@
 											_error('getCardRelationsHistory failure', this);
 										},
 										success: function(response, options, decodedResponse) {
-											var referenceElements = decodedResponse.response.elements;
+											decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.RESPONSE];
+											decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.ELEMENTS];											
+
+											var referenceElementsModels = [];
 
 											// Build reference models
-											Ext.Array.forEach(referenceElements, function(element, i, allElements) {
-												referenceElements[i] = Ext.create('CMDBuild.model.common.tabs.history.classes.RelationRecord', element);
+											Ext.Array.forEach(decodedResponse, function(element, i, allElements) {
+												referenceElementsModels.push('CMDBuild.model.common.tabs.history.classes.RelationRecord', element));
 											});
 
-											this.clearStoreAdd(referenceElements);
+											this.clearStoreAdd(referenceElementsModels);
 
 											this.addCurrentCardToStore();
 										}
@@ -335,7 +340,13 @@
 			},
 
 		/**
-		 * Formats all object1 values as objects { {Boolean} changed: "...", {Mixed} description: "..." }. If value1 is different than value2
+		 * Formats all object1 values as objects:
+		 * 	{
+		 * 		{Boolean} changed
+		 * 		{Mixed} description
+		 * 	}
+		 *
+		 * If value1 is different than value2
 		 * modified is true, false otherwise. Strips also HTML tags from "description".
 		 *
 		 * @param {Object} object1 - currently expanded record
@@ -351,9 +362,9 @@
 				Ext.Object.each(object1, function(key, value, myself) {
 					var changed = false;
 
-					// Get attribute's description
-					var attributeDescription = this.entryTypeAttributes.hasOwnProperty(key) ? this.entryTypeAttributes[key][CMDBuild.core.constants.Proxy.DESCRIPTION] : null;
-					var attributeIndex = this.entryTypeAttributes.hasOwnProperty(key) ? this.entryTypeAttributes[key][CMDBuild.core.constants.Proxy.INDEX] : 0;
+					// Get attribute's index and description
+					var attributeDescription = Ext.isEmpty(this.entryTypeAttributes[key]) ? null : this.entryTypeAttributes[key][CMDBuild.core.constants.Proxy.DESCRIPTION];
+					var attributeIndex = Ext.isEmpty(this.entryTypeAttributes[key]) ? 0 : this.entryTypeAttributes[key][CMDBuild.core.constants.Proxy.INDEX];
 
 					// Build object1 properties models
 					var attributeValues = Ext.isObject(value) ? value : { description: value };
