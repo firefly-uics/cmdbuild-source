@@ -190,7 +190,11 @@
 		},
 
 		onOpenGraphClick: function(model) {
-			CMDBuild.Management.showGraphWindow(model.get("IdClass"), model.get("Id"));
+			Ext.create('CMDBuild.controller.management.common.graph.Graph', {
+				parentDelegate: this,
+				classId: model.get('IdClass'),
+				cardId: model.get('id')
+			});
 		},
 
 		onOpenNoteClick: function(model) {
