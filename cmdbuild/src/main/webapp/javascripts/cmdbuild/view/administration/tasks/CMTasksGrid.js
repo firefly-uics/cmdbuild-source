@@ -40,13 +40,13 @@
 				Ext.create('Ext.ux.grid.column.Active', {
 					dataIndex: CMDBuild.core.constants.Proxy.ACTIVE,
 					text: CMDBuild.Translation.active,
+					iconAltTextActive: tr.running,
+					iconAltTextNotActive: tr.stopped,
 					width: 60,
 					align: 'center',
 					hideable: false,
 					menuDisabled: true,
-					fixed: true,
-					iconLabelActive: tr.running,
-					iconLabelNotActive: tr.stopped
+					fixed: true
 				}),
 				Ext.create('Ext.grid.column.Action', {
 					align: 'center',

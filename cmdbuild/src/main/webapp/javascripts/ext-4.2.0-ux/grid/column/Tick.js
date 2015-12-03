@@ -6,7 +6,7 @@
 		/**
 		 * @cfg {String}
 		 */
-		iconLabel: 'Tick icon',
+		iconAltText: 'Tick icon',
 
 		/**
 		 * @param {Object} value
@@ -21,7 +21,7 @@
 		 */
 		renderer: function(value, metaData, record, rowIndex, colIndex, store, view) {
 			if (Ext.isBoolean(value))
-				return value ? '<img src="images/icons/tick.png" alt="' + this.iconLabel + '" />' : null;
+				return value ? '<img src="images/icons/tick.png" alt="' + this.iconAltText + '" />' : null;
 
 			return value;
 		}

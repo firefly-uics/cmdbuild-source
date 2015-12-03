@@ -50,7 +50,7 @@
 								scope: this,
 
 								handler: function(checkbox, checked) {
-									this.delegate.cmfg('onProcessesTabHistoryIncludeSystemActivitiesCheck');
+									this.delegate.cmfg('onWorkflowTabHistoryIncludeSystemActivitiesCheck');
 								}
 							}),
 							this.includeRelationsCheckbox = Ext.create('Ext.form.field.Checkbox', {
@@ -74,7 +74,7 @@
 
 			// Apply activitiesStore filter
 			this.getStore().on('load', function(store, records, successful, eOpts) {
-				this.delegate.cmfg('onProcessesTabHistoryIncludeSystemActivitiesCheck');
+				this.delegate.cmfg('onWorkflowTabHistoryIncludeSystemActivitiesCheck');
 			}, this);
 		},
 

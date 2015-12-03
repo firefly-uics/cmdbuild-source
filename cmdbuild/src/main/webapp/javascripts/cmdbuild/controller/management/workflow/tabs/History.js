@@ -40,7 +40,7 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
-			'onProcessesTabHistoryIncludeSystemActivitiesCheck',
+			'onWorkflowTabHistoryIncludeSystemActivitiesCheck',
 			'onTabHistoryPanelShow = onTabHistoryIncludeRelationCheck', // Reloads store to be consistent with includeRelationsCheckbox state
 			'onTabHistoryRowExpand',
 			'tabHistoryGridColumnsGet',
@@ -125,7 +125,7 @@
 		/**
 		 * @param {Object} entityAttributeData
 		 *
-		 * @returns {CMDBuild.model.common.tabs.history.processes.CardRecord} currentEntityModel
+		 * @returns {CMDBuild.model.workflow.tabs.history.CardRecord} currentEntityModel
 		 *
 		 * @private
 		 */
@@ -138,7 +138,7 @@
 					performers.push(activityObject[CMDBuild.core.constants.Proxy.PERFORMER_NAME]);
 			}, this);
 
-			var currentEntityModel = Ext.create('CMDBuild.model.common.tabs.history.processes.CardRecord', this.selectedEntity.getData());
+			var currentEntityModel = Ext.create('CMDBuild.model.workflow.tabs.history.CardRecord', this.selectedEntity.getData());
 			currentEntityModel.set(CMDBuild.core.constants.Proxy.ACTIVITY_NAME, this.selectedEntity.get(CMDBuild.core.constants.Proxy.VALUES)['Code']);
 			currentEntityModel.set(CMDBuild.core.constants.Proxy.PERFORMERS, performers);
 			currentEntityModel.set(CMDBuild.core.constants.Proxy.STATUS, this.statusTranslationGet(this.selectedEntity.get(CMDBuild.core.constants.Proxy.FLOW_STATUS)));
@@ -161,11 +161,11 @@
 
 			this.callParent(arguments);
 
-			this.onProcessesTabHistoryIncludeSystemActivitiesCheck();
+			this.onWorkflowTabHistoryIncludeSystemActivitiesCheck();
 		},
 
 		/**
-		 * @param {CMDBuild.model.common.tabs.history.classes.CardRecord} record
+		 * @param {CMDBuild.model.classes.tabs.history.CardRecord} record
 		 *
 		 * @override
 		 * @private
@@ -225,7 +225,7 @@
 		/**
 		 * Include or not System activities rows in history grid.
 		 */
-		onProcessesTabHistoryIncludeSystemActivitiesCheck: function() {
+		onWorkflowTabHistoryIncludeSystemActivitiesCheck: function() {
 			this.getRowExpanderPlugin().collapseAll();
 
 			if (this.grid.includeSystemActivitiesCheckbox.getValue()) { // Checked: Remove any filter from store
