@@ -11,20 +11,13 @@
 			selected: '#FFFF00',
 			edge: "#FF9900"
 	};
-	var colors = {};
-	function class2Color(className) {
-		if (! colors[className]) {
-			colors[className] = "#" + ('00000'+(Math.random()*(1<<24)|0).toString(16)).slice(-6);
-		}
-		return colors[className];
-	};
 	var elements = {
 			nodes: [{
 				data: {
-					className: 'Dipendente',
-					id: '733997',
-					label: 'Primo',
-					color: class2Color('Dipendente'),
+					className: '',
+					id: '',
+					label: '',
+					color: "#ff0000",
 					faveShape: 'triangle',
 					position: {
 						x : 0,
@@ -72,7 +65,7 @@
 					className: targetClassName,
 					id: targetId,
 					label: targetDescription,
-					color: class2Color(targetClassName),
+					color: "#ff0000",
 					faveShape: 'triangle',
 					position: {
 						x : Math.random() * 1000 - 500,
