@@ -27,7 +27,7 @@
 				setTimeout(function() {
 					var parentId = elements.nodes[0].data.id;
 					var parentNode = me.model.getNode(parentId);
-					me.explodeNode(parentId, 5, function(elements) {
+					me.explodeNode(parentId, 1, function(elements) {
 						if (!batch) {
 							$.Cmdbuild.customvariables.commandInExecution = false;
 							me.model.changed();
@@ -43,12 +43,12 @@
 				callback.apply(callbackScope, []);
 				return;
 			}
-			if (justExploded[id]) {
+			if (justExploded[id] && justExploded[id] >= levels) {
 				callback.apply(callbackScope, []);
 				return;
 			}
 			else {
-				justExploded[id] = true;
+				justExploded[id] = levels;
 			}
 			var parentNode = this.model.getNode(id);
 			var oldChildren = $.Cmdbuild.g3d.Model.getGraphData(parentNode, "children");
@@ -74,7 +74,6 @@
 					}, this);
 				} else {
 					callback.apply(callbackScope, [this.newElements]);
-					
 				}
 			}, this);
 			
@@ -88,7 +87,7 @@
 			var child = children[0];
 			children.splice(0, 1);
 			this.explodeNode(child, levels, function() {
-				this.explodeChildren(children, levels, callback, callbackScope);				
+				this.explodeChildren(children, levels - 1, callback, callbackScope);				
 			}, this);
 		};
 		this.undo = function() {
