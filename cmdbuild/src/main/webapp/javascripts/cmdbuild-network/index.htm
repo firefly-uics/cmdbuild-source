@@ -9,102 +9,112 @@
 	<script
 		src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 	<script type="text/javascript">
-		$(document).ready(function() {
-			var getUrlParameter = function getUrlParameter(
-					sParam) {
-				var sPageURL = decodeURIComponent(window.location.search
-						.substring(1)), sURLVariables = sPageURL
-						.split('&'), sParameterName, i;
+		$(document)
+				.ready(
+						function() {
+							var getUrlParameter = function getUrlParameter(
+									sParam) {
+								var sPageURL = decodeURIComponent(window.location.search
+										.substring(1)), sURLVariables = sPageURL
+										.split('&'), sParameterName, i;
 
-				for (i = 0; i < sURLVariables.length; i++) {
-					sParameterName = sURLVariables[i]
-							.split('=');
+								for (i = 0; i < sURLVariables.length; i++) {
+									sParameterName = sURLVariables[i]
+											.split('=');
 
-					if (sParameterName[0] === sParam) {
-						return sParameterName[1] === undefined
-								? true
-								: sParameterName[1];
-					}
-				}
-			};
-			var script = getUrlParameter("basePath") + "/javascripts/cmdbuild-gui-framework-" +
-			getUrlParameter("frameworkVersion") + "/api/cmdbuildAP.js";
+									if (sParameterName[0] === sParam) {
+										return sParameterName[1] === undefined
+												? true
+												: sParameterName[1];
+									}
+								}
+							};
+							var guiFrameworkName = "cmdbuild-gui-framework-"
+									+ getUrlParameter("frameworkVersion");
+							var script = getUrlParameter("basePath")
+									+ "/javascripts/" + guiFrameworkName
+									+ "/api/cmdbuildAP.js";
 
-			var httpCallParameters = {
-				cardId: getUrlParameter("cardId"),
-				classId: getUrlParameter("classId"),
-				basePath: getUrlParameter("basePath"),
-				coreVersion: getUrlParameter("frameworkVersion")
-			};
-			$.ajax({
-				async: false,
-				url: script,
-				crossDomain: true,	
-				dataType: "script",
-				cache: false,
-				success : function(data, status) {
-						callCmdbuildAP();
-					} 
-			});
-			function callCmdbuildAP() {
-				$("#cmdbuilForm").cmdbuildAP({
-					apiUrl : '~/services/rest/v2/',
-					appRootUrl : '~/javascripts/cmdbuild-gui-framework-1.0/',
-					appConfigUrl: 'Graph/',
-					customjs: [
-							"libraries/cytoscape.min.js",
-							"backend/BackendTest.js",
-							"backend/ClassesNavigation.js",
-							"backend/CardsNavigation.js",
-							"backend/SelectedNavigation.js",
-							"backend/CmdbuildTest.js",
-							"backend/SpriteArchive.js",
-							"backend/Options.js",
-							"commands/init.js",
-							"commands/modifyPosition.js",
-							"commands/macroCommand.js",
-							"commands/explode.js",
-							"commands/explode_levels.js",
-							"commands/init_explode.js",
-							"commands/openChildren.js",
-							"algorithms/aStar.js",
-							"algorithms/breadthFirstSearch.js",
-							"algorithms/dijkstra.js",
-							"algorithms/kruskal.js",
-							"commands/deleteCards.js",
-							"commands.js",
-							"elements.js",
-							"cardsGrid.js",
-							"selectedGrid.js",
-							"three.min.js",
-							"scripts.js",
-							"tree.js",
-							"core/CommandsManager.js",
-							"core/Model.js",
-							"core/Cytoscape.js",
-							"core/Selected.js",
-							"core/Options.js",
-							"views/viewer/Viewer.js",
-							"views/viewer/ViewerUtilities.js",
-							"views/viewer/Camera.js",
-							"TrackballControls.js",
-							"plugins/GuiCircle.js", // first layout's sample
-							"plugins/GuiSphere.js"], // first layout's sample
-					start: "home.xml",
-					theme: [
-							"jquery-ui-graph.theme.min.css",
-							"custom.css"],
-					authentication: {
-						type: 'system',
-						login: {
-							username: "ab005553"
-						}
-					},
-					cssClass: "cmdbuild-graph",
-					httpCallParameters: httpCallParameters
-				});
-			}
-		});
+							var httpCallParameters = {
+								cardId: getUrlParameter("cardId"),
+								classId: getUrlParameter("classId"),
+								basePath: getUrlParameter("basePath"),
+								coreVersion: getUrlParameter("frameworkVersion")
+							};
+							$.ajax({
+								async: false,
+								url: script,
+								crossDomain: true,
+								dataType: "script",
+								cache: false,
+								success: function(data, status) {
+									callCmdbuildAP();
+								}
+							});
+							function callCmdbuildAP() {
+								$("#cmdbuilForm")
+										.cmdbuildAP(
+												{
+													apiUrl: '~/services/rest/v2/',
+													//appRootUrl : '~/javascripts/cmdbuild-gui-framework-' + getUrlParameter("frameworkVersion") + '/',
+													appRootUrl: '~/javascripts/'
+															+ guiFrameworkName
+															+ '/',
+													appConfigUrl: 'Graph/',
+													customjs: [
+															"libraries/cytoscape.min.js",
+															"backend/BackendTest.js",
+															"backend/ClassesNavigation.js",
+															"backend/CardsNavigation.js",
+															"backend/SelectedNavigation.js",
+															"backend/CmdbuildTest.js",
+															"backend/SpriteArchive.js",
+															"backend/Options.js",
+															"commands/init.js",
+															"commands/modifyPosition.js",
+															"commands/macroCommand.js",
+															"commands/explode.js",
+															"commands/explode_levels.js",
+															"commands/init_explode.js",
+															"commands/openChildren.js",
+															"algorithms/aStar.js",
+															"algorithms/breadthFirstSearch.js",
+															"algorithms/dijkstra.js",
+															"algorithms/kruskal.js",
+															"commands/deleteCards.js",
+															"commands.js",
+															"elements.js",
+															"cardsGrid.js",
+															"selectedGrid.js",
+															"three.min.js",
+															"scripts.js",
+															"tree.js",
+															"core/CommandsManager.js",
+															"core/Model.js",
+															"core/Cytoscape.js",
+															"core/Selected.js",
+															"core/Options.js",
+															"views/viewer/Viewer.js",
+															"views/viewer/ViewerUtilities.js",
+															"views/viewer/Camera.js",
+															"TrackballControls.js",
+															"plugins/GuiCircle.js", // first layout's sample
+															"plugins/GuiSphere.js"], // first layout's sample
+													start: "home.xml",
+													theme: [
+															"jquery-ui-graph.theme.min.css",
+															"custom.css"],
+													authentication: {
+														type: 'system',
+														login: {
+															username: "ab005553"
+														}
+													},
+													cssClass: "cmdbuild-graph",
+													httpCallParameters: httpCallParameters
+												});
+							}
+						});
 	</script>
 
 	<div id="cmdbuilForm"></div>

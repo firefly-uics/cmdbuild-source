@@ -34,7 +34,7 @@
 						<command>stopCommands</command>
 					</onClick>
 				</span>
-				<span class="selectAll toolbarButton" tooltip="Selct all nodes">
+				<span class="selectAll toolbarButton" tooltip="Select all nodes">
 					<onClick>
 						<command>selectAll</command>
 					</onClick>
