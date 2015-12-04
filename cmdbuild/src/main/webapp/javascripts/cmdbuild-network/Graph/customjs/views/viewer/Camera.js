@@ -33,12 +33,12 @@
 					me.cameraPosition.z += stepZ;
 					me.changed({});
 					singleStep(index - 1);
-				}, 10);
+				}, 50);
 			}
 			singleStep(times);
 		};
 		this.zoomOnPosition = function(position, callback, callbackScope) {
-			this.animateZoomOnPosition(position, 25, function() {
+			this.animateZoomOnPosition(position, 10, function() {
 				if (callback) {
 					callback.apply(callbackScope, []);
 				}
