@@ -194,7 +194,7 @@ BEGIN
 		key = split_part(part, ': ', 1);
 		value = split_part(part, ': ', 2);
 		IF NOT (missingOnly AND substring(comment, key || ': [^|]+') IS NOT NULL) THEN
-			comment = concat(comment, '|' || key || ': ' || value);
+			comment = concat_ws('|', comment, key || ': ' || value);
 		ELSE
 		END IF;
 	END LOOP;
