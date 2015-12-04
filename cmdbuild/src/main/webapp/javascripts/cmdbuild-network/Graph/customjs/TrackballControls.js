@@ -60,7 +60,14 @@ THREE.TrackballControls = function ( object, domElement ) {
 	_panEnd = new THREE.Vector2();
 
 	// for reset
-
+	
+	//************************************
+	//MADE IN TECNOTECA
+	this.setY = function(direction) {
+		_zoomStart.y = direction * .1;
+	};
+	//************************************
+	
 	this.target0 = this.target.clone();
 	this.position0 = this.object.position.clone();
 	this.up0 = this.object.up.clone();
