@@ -60,6 +60,12 @@
 		this.init = function() {
 			this.loadAttributes();
 		};
+		this.deleteRow = function(param, callback, callbackScope) {
+			var data = $.Cmdbuild.dataModel.getValues(param.form);
+			$.Cmdbuild.utilities.proxy.deleteCard(data._type, data._id, function() {
+				callback.apply(callbackScope, []);
+			}, this);
+		};
 		this.loadAttributes = function() {
 			if (!this.type) {
 				var msg = "No _type specified for form: " + param.form;

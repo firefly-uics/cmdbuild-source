@@ -6,6 +6,8 @@
 			"libraries/dataTables.jqueryui.js",
 			"libraries/dataTables.fixedColumns.min.js",
 			"libraries/mask.js",
+			"libraries/js/jstree.min.js",
+			"libraries/js/jstree-actions.js",
 			"libraries/js/waitMe.min.js",
 			"libraries/js/clEditor/jquery.cleditor.js",
 			"core/errorsManager.js",
@@ -78,7 +80,8 @@
 			"libraries/dataTables.fixedColumns.min.css",
 			"libraries/css/cmdbuildstyle.css",
 			"libraries/css/waitMe.min.css",
-			"libraries/js/clEditor/jquery.cleditor.css"
+			"libraries/js/clEditor/jquery.cleditor.css",
+			"libraries/css/jstree.css"
 		],
 		defaultTheme : "libraries/jquery-ui.theme.css",
 

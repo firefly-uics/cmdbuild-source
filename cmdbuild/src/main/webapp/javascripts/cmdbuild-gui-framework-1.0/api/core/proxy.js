@@ -153,6 +153,13 @@
 				callback.apply(callbackScope, [data, metadata]);
 			}, {});
 		},
+		deleteCard: function(type, cardId, callback, callbackScope) {
+			// get url and make request
+			var url = $.Cmdbuild.global.getApiUrl() + 'classes/' + type + "/cards/" + cardId;
+			$.Cmdbuild.authProxy.makeAjaxRequest(url, methods.DELETE, function(data, metadata){
+				callback.apply(callbackScope, [data, metadata]);
+			}, {});
+		},
 		getCardData: function(type, cardId, config, callback, callbackScope) {
 			// params
 			var params = this.prepareParamsForList(config);
@@ -386,7 +393,7 @@
 		},
 		putImpersonate: function(sessionId, username, callback, callbackScope) {
 			var url = $.Cmdbuild.global.getApiUrl() + 'sessions/'+ sessionId + 
-			'/impersonate/' + username;
+			'/impersonate/' + username + '/';
 			var callbackObj = {
 					success: function(response){
 						callback.apply(callbackScope, [true]);

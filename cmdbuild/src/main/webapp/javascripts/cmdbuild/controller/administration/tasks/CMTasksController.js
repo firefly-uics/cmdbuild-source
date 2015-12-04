@@ -4,7 +4,9 @@
 		extend: 'CMDBuild.controller.common.CMBasePanelController',
 
 		requires: [
-			'CMDBuild.core.proxy.CMProxyConstants',
+			'CMDBuild.core.constants.Global',
+			'CMDBuild.core.constants.Proxy',
+			'CMDBuild.core.LoadMask',
 			'CMDBuild.core.proxy.CMProxyTasks',
 			'CMDBuild.core.Utils'
 		],
@@ -28,11 +30,6 @@
 		 * @property {Ext.selection.Model}
 		 */
 		selectionModel: undefined,
-
-		/**
-		 * @cfg {String}
-		 */
-		titleSeparator: ' - ',
 
 		/**
 		 * Used to validate tasks
@@ -73,13 +70,14 @@
 		},
 
 		/**
-		 * @param {CMDBuild.view.common.CMAccordionStoreModel} parameters
+		 * @param {CMDBuild.model.common.accordion.Generic} parameters
 		 *
 		 * @override
 		 */
 		onViewOnFront: function(parameters) {
 			if (!Ext.isEmpty(parameters)) {
-				this.taskType = (this.correctTaskTypeCheck(parameters.internalId)) ? parameters.internalId : this.tasksDatas[0];
+				this.taskType = (this.correctTaskTypeCheck(parameters.get(CMDBuild.core.constants.Proxy.SECTION_HIERARCHY)[0]))
+					? parameters.get(CMDBuild.core.constants.Proxy.SECTION_HIERARCHY)[0] : this.tasksDatas[0];
 
 				this.grid.reconfigure(CMDBuild.core.proxy.CMProxyTasks.getStore(this.taskType));
 				this.grid.getStore().load({
@@ -96,7 +94,7 @@
 				// Fire show event on accordion click
 				this.view.fireEvent('show');
 
-				this.setViewTitle(parameters.get(CMDBuild.core.proxy.CMProxyConstants.TEXT));
+				this.setViewTitle(parameters.get(CMDBuild.core.constants.Proxy.TEXT));
 
 				this.callParent(arguments);
 			}
@@ -268,7 +266,7 @@
 		 * @param {Function} callback
 		 */
 		onRowSelected: function(name, param, callBack) {
-			var selectedType = this.selectionModel.getSelection()[0].get(CMDBuild.core.proxy.CMProxyConstants.TYPE);
+			var selectedType = this.selectionModel.getSelection()[0].get(CMDBuild.core.constants.Proxy.TYPE);
 
 			if (
 				!this.form.delegate
@@ -285,12 +283,12 @@
 		 * @param {Object} record
 		 */
 		onStartButtonClick: function(record) {
-			CMDBuild.LoadMask.get().show();
+			CMDBuild.core.LoadMask.show();
 
 			CMDBuild.core.proxy.CMProxyTasks.start({
 				scope: this,
 				params: {
-					id: record.get(CMDBuild.core.proxy.CMProxyConstants.ID)
+					id: record.get(CMDBuild.core.constants.Proxy.ID)
 				},
 				success: this.success,
 				callback: this.callback
@@ -301,12 +299,12 @@
 		 * @param {Object} record
 		 */
 		onStopButtonClick: function(record) {
-			CMDBuild.LoadMask.get().show();
+			CMDBuild.core.LoadMask.show();
 
 			CMDBuild.core.proxy.CMProxyTasks.stop({
 				scope: this,
 				params: {
-					id: record.get(CMDBuild.core.proxy.CMProxyConstants.ID)
+					id: record.get(CMDBuild.core.constants.Proxy.ID)
 				},
 				success: this.success,
 				callback: this.callback
@@ -320,7 +318,7 @@
 		 */
 		setViewTitle: function(titlePart) {
 			if (!Ext.isEmpty(titlePart))
-				this.view.setTitle(this.view.baseTitle + this.titleSeparator + titlePart);
+				this.view.setTitle(this.view.baseTitle + CMDBuild.core.constants.Global.getTitleSeparator() + titlePart);
 		},
 
 		/**
@@ -337,8 +335,8 @@
 					me.form.disableModify(true);
 
 					var rowIndex = this.find(
-						CMDBuild.core.proxy.CMProxyConstants.ID,
-						options.params[CMDBuild.core.proxy.CMProxyConstants.ID]
+						CMDBuild.core.constants.Proxy.ID,
+						options.params[CMDBuild.core.constants.Proxy.ID]
 					);
 
 					me.selectionModel.deselectAll();

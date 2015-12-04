@@ -8,9 +8,6 @@
 		frame: false,
 
 		constructor: function() {
-			var tabs = CMDBuild.model.CMUIConfigurationModel.cardTabs;
-			var disabledTabs = _CMUIConfiguration.getDisabledCardTabs();
-
 			this.cardPanel = new CMDBuild.view.management.classes.CMCardPanel({
 				title: tr.tabs.card,
 				border: false,
@@ -18,26 +15,34 @@
 				withButtons: true
 			});
 
-			this.cardNotesPanel = isEnabled(disabledTabs, tabs.notes) ? new CMDBuild.view.management.classes.CMCardNotesPanel({
-				title: tr.tabs.notes,
-				disabled: true
-			}) : null;
+			this.cardNotesPanel = CMDBuild.configuration.userInterface.isDisabledCardTab(CMDBuild.core.constants.Proxy.CLASS_NOTE_TAB) ? null
+				: new CMDBuild.view.management.classes.CMCardNotesPanel({
+					title: tr.tabs.notes,
+					disabled: true
+				})
+			;
 
-			this.relationsPanel = isEnabled(disabledTabs, tabs.relations) ? new CMDBuild.view.management.classes.CMCardRelationsPanel({
-				title: tr.tabs.relations,
-				border: false,
-				disabled: true
-			}) : null;
+			this.relationsPanel = CMDBuild.configuration.userInterface.isDisabledCardTab(CMDBuild.core.constants.Proxy.CLASS_RELATION_TAB) ? null
+				: new CMDBuild.view.management.classes.CMCardRelationsPanel({
+					title: tr.tabs.relations,
+					border: false,
+					disabled: true
+				})
+			;
 
-			this.mdPanel = isEnabled(disabledTabs, tabs.details) ? new CMDBuild.view.management.classes.masterDetails.CMCardMasterDetail({
-				title: tr.tabs.detail,
-				disabled: true
-			}) : null;
+			this.mdPanel = CMDBuild.configuration.userInterface.isDisabledCardTab(CMDBuild.core.constants.Proxy.CLASS_DETAIL_TAB) ? null
+				: new CMDBuild.view.management.classes.masterDetails.CMCardMasterDetail({
+					title: tr.tabs.detail,
+					disabled: true
+				})
+			;
 
-			this.attachmentPanel = isEnabled(disabledTabs, tabs.attachments) ? new CMDBuild.view.management.classes.attachments.CMCardAttachmentsPanel({
-				title: tr.tabs.attachments,
-				disabled: true
-			}): null;
+			this.attachmentPanel = CMDBuild.configuration.userInterface.isDisabledCardTab(CMDBuild.core.constants.Proxy.CLASS_ATTACHMENT_TAB) ? null
+				: new CMDBuild.view.management.classes.attachments.CMCardAttachmentsPanel({
+					title: tr.tabs.attachments,
+					disabled: true
+				})
+			;
 
 			this.callParent(arguments);
 
@@ -97,7 +102,7 @@
 			return this.emailPanel;
 		},
 
-		showWidget: function (w) {
+		showWidget: function(w) {
 			return false; // not implemented yet
 		},
 
@@ -105,9 +110,5 @@
 			this.setActiveTab(this.cardPanel);
 		}
 	});
-
-	function isEnabled(disabledTabs, name) {
-		return !Ext.Array.contains(disabledTabs, name);
-	}
 
 })();

@@ -4,8 +4,9 @@
 		extend: 'CMDBuild.controller.common.AbstractController',
 
 		requires: [
+			'CMDBuild.core.constants.Proxy',
+			'CMDBuild.core.LoadMask',
 			'CMDBuild.core.proxy.Card',
-			'CMDBuild.core.proxy.CMProxyConstants',
 			'CMDBuild.core.proxy.Csv',
 			'CMDBuild.core.RequestBarrier'
 		],
@@ -69,12 +70,12 @@
 		 */
 		onWidgetCustomFormImportUploadButtonClick: function() {
 			if (this.validate(this.form)) {
-				CMDBuild.LoadMask.get().show();
+				CMDBuild.core.LoadMask.show();
 				CMDBuild.core.proxy.Csv.decode({
 					form: this.form.getForm(),
 					scope: this,
 					failure: function(form, action) {
-						CMDBuild.LoadMask.get().hide();
+						CMDBuild.core.LoadMask.hide();
 
 						CMDBuild.Msg.error(
 							CMDBuild.Translation.common.failure,
@@ -104,7 +105,7 @@
 		 * @param {Array} data
 		 */
 		dataManageAndForward: function(data) {
-			if (!this.cmfg('widgetCustomFormConfigurationIsAttributeEmpty',  CMDBuild.core.proxy.CMProxyConstants.MODEL)) {
+			if (!this.cmfg('widgetCustomFormConfigurationIsEmpty',  CMDBuild.core.constants.Proxy.MODEL)) {
 				var barrierId = 'dataManageBarrier';
 
 				CMDBuild.core.RequestBarrier.init(barrierId, function() {
@@ -116,11 +117,11 @@
 
 					this.onWidgetCustomFormImportAbortButtonClick();
 
-					CMDBuild.LoadMask.get().hide();
+					CMDBuild.core.LoadMask.hide();
 				}, this);
 
-				Ext.Array.forEach(this.cmfg('widgetCustomFormConfigurationGet', CMDBuild.core.proxy.CMProxyConstants.MODEL), function(attribute, i, allAttributes) {
-					switch (attribute.get(CMDBuild.core.proxy.CMProxyConstants.TYPE)) {
+				Ext.Array.forEach(this.cmfg('widgetCustomFormConfigurationGet', CMDBuild.core.constants.Proxy.MODEL), function(attribute, i, allAttributes) {
+					switch (attribute.get(CMDBuild.core.constants.Proxy.TYPE)) {
 						case 'lookup': {
 							this.dataManageLookup(data, attribute, barrierId);
 						} break;
@@ -130,6 +131,8 @@
 						} break;
 					}
 				}, this);
+
+				CMDBuild.core.RequestBarrier.finalize(barrierId);
 			}
 		},
 
@@ -144,17 +147,17 @@
 				&& !Ext.isEmpty(attribute)
 				&& !Ext.isEmpty(barrierId) && Ext.isString(barrierId)
 			) {
-				var attributeName = attribute.get(CMDBuild.core.proxy.CMProxyConstants.NAME);
+				var attributeName = attribute.get(CMDBuild.core.constants.Proxy.NAME);
 
 				var params = {};
-				params[CMDBuild.core.proxy.CMProxyConstants.TYPE] = attribute.get(CMDBuild.core.proxy.CMProxyConstants.LOOKUP_TYPE);
-				params[CMDBuild.core.proxy.CMProxyConstants.ACTIVE] = true;
+				params[CMDBuild.core.constants.Proxy.TYPE] = attribute.get(CMDBuild.core.constants.Proxy.LOOKUP_TYPE);
+				params[CMDBuild.core.constants.Proxy.ACTIVE] = true;
 
 				CMDBuild.ServiceProxy.lookup.get({
 					params: params,
 					scope: this,
 					success: function(response, options, decodedResponse) {
-						decodedResponse = decodedResponse[CMDBuild.core.proxy.CMProxyConstants.ROWS];
+						decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.ROWS];
 
 						Ext.Array.forEach(data, function(recordObject, i, allRecordObjects) {
 							if (!Ext.isEmpty(recordObject[attributeName])) {
@@ -185,7 +188,7 @@
 				&& !Ext.isEmpty(attribute)
 				&& !Ext.isEmpty(barrierId) && Ext.isString(barrierId)
 			) {
-				var attributeName = attribute.get(CMDBuild.core.proxy.CMProxyConstants.NAME);
+				var attributeName = attribute.get(CMDBuild.core.constants.Proxy.NAME);
 				var requiredCardAdvancedFilterArray = [];
 
 				Ext.Array.forEach(data, function(recordObject, i, allRecordObjects) {
@@ -201,8 +204,8 @@
 				}, this);
 
 				var params = {};
-				params[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME] = attribute.get(CMDBuild.core.proxy.CMProxyConstants.TARGET_CLASS);
-				params[CMDBuild.core.proxy.CMProxyConstants.FILTER] = Ext.encode({ // Filters request to get only required cards
+				params[CMDBuild.core.constants.Proxy.CLASS_NAME] = attribute.get(CMDBuild.core.constants.Proxy.TARGET_CLASS);
+				params[CMDBuild.core.constants.Proxy.FILTER] = Ext.encode({ // Filters request to get only required cards
 					attribute: { or: requiredCardAdvancedFilterArray }
 				});
 
@@ -211,7 +214,7 @@
 					loadMask: false,
 					scope: this,
 					success: function(response, options, decodedResponse) {
-						decodedResponse = decodedResponse[CMDBuild.core.proxy.CMProxyConstants.ROWS];
+						decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.ROWS];
 
 						var referencedCardsMap = {};
 

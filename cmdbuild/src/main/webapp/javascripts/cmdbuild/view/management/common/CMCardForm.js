@@ -408,10 +408,10 @@
 				}
 			});
 
-			this.printCardMenu = Ext.create('CMDBuild.core.buttons.iconized.Print', {
+			this.printCardMenu = Ext.create('CMDBuild.core.buttons.iconized.split.Print', {
 				formatList: [
-					CMDBuild.core.proxy.CMProxyConstants.PDF,
-					CMDBuild.core.proxy.CMProxyConstants.ODT
+					CMDBuild.core.constants.Proxy.PDF,
+					CMDBuild.core.constants.Proxy.ODT
 				],
 				mode: 'legacy',
 				text: CMDBuild.Translation.common.buttons.print + ' ' + CMDBuild.Translation.management.modcard.tabs.card.toLowerCase()
@@ -427,11 +427,11 @@
 				this.cloneCardButton
 			];
 
-			this.graphButton = new Ext.button.Button({
-				iconCls : "graph",
-				text : CMDBuild.Translation.management.graph.action,
-				handler: function() {
-					me.fireEvent(me.CMEVENTS.openGraphButtonClick);
+			this.graphButton = Ext.create('CMDBuild.core.buttons.iconized.RelationGraph', {
+				scope: this,
+
+				handler: function(button, e) {
+					this.fireEvent(this.CMEVENTS.openGraphButtonClick);
 				}
 			});
 

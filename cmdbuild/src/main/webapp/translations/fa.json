@@ -1,6 +1,6 @@
 {
 	"description": "Persian",
-		"release": "2.3-dev",
+		"release": "2.4-dev",
 		"administration": {
 		"description": "ماژول ادمین",
 		"modClass": {
@@ -84,10 +84,8 @@
 				"md_label": "Master/Detail Label",
 				"modify_domain": "تغییر دامنه",
 				"name": "نام",
-				"title_add": "اضافه کردن دامنه",
-				"title_modify": "Modify domain \"{0}\""
+				"title_add": "اضافه کردن دامنه"
 			},
-			"domains_title": "Manage domain",
 			"errors": {
 				"table": {
 					"cast": "Error modifying \"superclass\" property, class either contains data or has child classes",
@@ -137,61 +135,7 @@
 				"properties": "ویژگیها"
 			},
 			"title": "مدیریت کلاسها",
-			"tree_title": "لیست کلاس",
-			"widgets": {
-				".OpenReport": {
-					"fields": {
-						"force": "قالب بندی اجباری",
-						"presets": "خواص گزارش",
-						"report": "گزارش"
-					},
-					"presetGrid": {
-						"attribute": "خاصیت",
-						"value": "مقدار"
-					},
-					"title": "تولید گزارش"
-				},
-				".Calendar": {
-					"fields": {
-						"target": "کلاس مقصد",
-						"start": "تاریخ شروع",
-						"end": "تاریخ پایان",
-						"title": "نام رخداد",
-						"filter": "CQL Filter",
-						"defaultDate": "تاریخ پیش فرض بازکردن"
-					},
-					"title": "تقویم"
-				},
-				".Ping": {
-					"fields": {
-						"address": "آدرس برای پینگ کردن",
-						"count": "تعداد پینگها",
-						"templates": "قالبها"
-					},
-					"title": "پینگ"
-				},
-				".Workflow": {
-					"title": "شروع جریان کار"
-				},
-				".NavigationTree": {
-					"title": "درخت ناوبری"
-				},
-				".CreateModifyCard": {
-					"fields": {
-						"target": "کلاس مقصد",
-						"cql": "Card CQL selector",
-						"readOnly": "تنها خواندن"
-					},
-					"title": "ایجاد یا تغییر کارت"
-				},
-				"commonFields": {
-					"active": "فعال",
-					"alwaysenabled": "همیشه فعال",
-					"buttonLabel": "برچسب پایین",
-					"type": "نوع"
-				},
-				"title": "Widget"
-			}
+			"tree_title": "لیست کلاس"
 		},
 		"modDashboard": {
 			"charts": {
@@ -282,48 +226,9 @@
 			},
 			"title": "داشبورد"
 		},
-		"modLookup": {
-			"add_lookuptype": "اضافه کردن نوع جستجو",
-			"lookupForm": {
-				"active": "فعال",
-				"code": "کد",
-				"description": "توضیحات",
-				"disable_lookup": "غیر فعال کردن جستجو",
-				"enable_lookup": "فعال کردن جستجو",
-				"isdefault": "پیش فرض",
-				"notes": "یاداشتها",
-				"parentdescription": "توضیحات والدین",
-				"update_lookup": "تغییر جستجو"
-			},
-			"lookupGrid": {
-				"active": "فعال",
-				"add_lookup": "اضافه کردن جستجو",
-				"code": "کد",
-				"description": "توضیحات",
-				"isdefault": "پیش فرض",
-				"notes": "یاداشتها",
-				"parentdescription": "توضیحات والدین"
-			},
-			"lookupType": "نوع جستجو",
-			"lookupTypeForm": {
-				"active": "فعال",
-				"delete_lookuptype": "حذف نوع جستجو",
-				"description": "توضیحات",
-				"modify_lookuptype": "تغییر نوع جستجو",
-				"parent": "والدین",
-				"title": "مدیریت جستجو"
-			},
-			"lookupTypes": "انواع جستجو",
-			"tabs": {
-				"lookuplist": "لیست جستجوها",
-				"properties": "ویژگی"
-			},
-			"title": "مدیریت جستجو"
-		},
 		"modWorkflow": {
 			"add_process": "اضافه کردن پروسه",
 			"attributes_title": "مدیریت خواص",
-			"domains_title": "مدیریت دامنه ها",
 			"errors": {
 				"table": {
 					"cast": "It is not possible to change the \"superclass\" property, the class contains data or subclasses",
@@ -402,72 +307,22 @@
 		"modconnectors": {
 			"title": "اتصالات"
 		},
-		"modmenu": {
-			"add_menu": "اضافه کردن منو",
-			"available_elements": "المانهای در دسترس",
-			"availabletree": {
-				"class": "کلاسها",
-				"dashboard": "داشبورد",
-				"processclass": "فعالیتها",
-				"report": "گزارشها",
-				"view": "نمایش"
-			},
-			"custom_menu": "منوی سفارشی",
-			"custom_menus": "منوهای سفارشی",
-			"delete_menu": "حذف منو",
-			"menu_root": "منو",
-			"modify_menu": "تغییر منو",
-			"new_folder": "پوشه جدید",
-			"title": "مدیریت منوها"
-		},
-		"modreport": {
-			"add": "اضافه کردن گزارش",
-			"importJRFormStep1": {
-				"description": "توضیحات گزارش",
-				"enabled_groups": "گروههای فعال",
-				"fieldset": "Import jasper report",
-				"master_report_jrxml": "Master Report (.jrxml)",
-				"menuTitle": "Jasper-reports report",
-				"name": "نام گزارش"
-			},
-			"importJRFormStep2": {
-				"duplicate_images": "هشدار: تصویر گزارش با همین نام وجود دارد، نمیشود ادامه داد",
-				"fieldset_generic": "Import jasper report",
-				"fieldset_images": "تصاویر مورد نیاز",
-				"fieldset_subreports": "زیرگزارشهای مورد نیاز",
-				"menuTitle": "Report Jasper-reports",
-				"nothing_to_import": "هیچ تصویر یا زیرگزارشی یافت نشد. لطفا تایید کنید تا بوسیله وارد کردن پروسس شود.",
-				"success": {
-					"description": {
-						"add": "وارد کردن کامل شد",
-						"modify": "گزارش ویرایش شد"
-					},
-					"title": "موفقیت"
-				}
-			},
-			"importOpenofficeTemplateForm": {
-				"menuTitle": "Openoffice report"
-			},
-			"modify": "ویرایش گزارش",
-			"remove": "حذف گزارش",
-			"title": "گزارش"
-		},
 		"tasks": {
 			"add": "اضافه کردن کار",
 			"all": "همه",
 			"clone": "مشابه گیری از کار",
 			"cronForm": {
-				"dayOfMounth": "روز ماه",
+				"dayOfMonth": "روز ماه",
 				"advanced": "جلو",
 				"basic": "پایه",
 				"dayOfWeek": "روز هفته",
 				"everyDay": "هر روز",
 				"everyHour": "هر ساعت",
-				"everyMounth": "هر ماه",
+				"everyMonth": "هر ماه",
 				"everyYear": "هر سال",
 				"hour": "ساعت",
 				"minute": "دقیقه",
-				"mounth": "ماه"
+				"month": "ماه"
 			},
 			"errorMessages": {
 				"taskConnector": {
@@ -576,6 +431,7 @@
 			"add": "اضافه",
 			"apply": "اعمال کردن",
 			"as": "به عنوان",
+			"changeUser": "تغییر کاربر",
 			"check": "<em>Check</em>",
 			"clone": "مشابه گیری",
 			"close": "بستن",
@@ -584,6 +440,7 @@
 			"importLabel": "ورودی دادن",
 			"load": "لود",
 			"modify": "ویرایش",
+			"move": "<em>Move</em>",
 			"next": "بعدی",
 			"previous": "قبلی",
 			"print": "چاپ",
@@ -644,8 +501,7 @@
 		},
 		"unknown_error": "خطای ناشناخته",
 		"user": "کاربر",
-		"wait_msg": "ارسال اطلاعات",
-		"wait_title": "لطفا منتظر بمانید"
+		"wait_msg": "ارسال اطلاعات"
 	},
 	"configure": {
 		"failure": {
@@ -764,7 +620,7 @@
 			"DOMAIN_NOTFOUND": "دامین {0} پیدا نشد",
 			"ILLEGAL_CRON_EXPRESSION": "Invalid cron expression",
 			"LOCKED_CARD": "کاربر {0} کارت را در {1} ثانیه ویرایش کرد",
-			"LOCKED_MISSING": "<em>Should be locked before</em>",
+			"LOCKED_MISSING": "<em>Expired time for editing</em>",
 			"LOOKUP_NOTFOUND": "مراجعه برای نوع {0} حاصلی نداشت",
 			"LOOKUP_TYPE_NOTFOUND": "مراجعه نوع {0} حاصلی نداشت",
 			"MENU_NOTFOUND": "منو پیدا نشد",
@@ -807,7 +663,7 @@
 			"ORM_ILLEGAL_NAME_ERROR": "نام غیر مجاز: {0}",
 			"ORM_LOOKUPTYPE_ALREADY_EXISTS": "در حال حاضر یک نوع مراجعه با این نام وجود دارد",
 			"ORM_MALFORMED_PATCH": "Unreadable Patch",
-			"ORM_MISSING_MADATORY_VALUES": "<em>Missing mandatory values: {0}</em>", 
+			"ORM_MISSING_MADATORY_VALUES": "<em>Missing mandatory values: {0}</em>",
 			"ORM_NOT_NULL_VIOLATION": "Not null constraint violated",
 			"ORM_POSTGIS_NOT_FOUND": "PostGIS is not installed",
 			"ORM_READ_ONLY_RELATION": "Read-only relation",
@@ -878,6 +734,8 @@
 			"WIDGET_SERVICE_MALFORMED_REQUEST": "Check if the namespace, the method name and the parameters of the web service are correct"
 		},
 		"reference_invalid": "مقدار با فیلتر همخوانی ندارد",
+		"reportsImportError": "<em>Error while importing report</em>",
+		"reportsAnalizeError": "<em>Error while analizing report</em>",
 		"requiredFieldMessage": "This field is required",
 		"routesInvalidCardIdentifier": "<em>Route error: invalid card identifier</em>",
 		"routesInvalidClassIdentifier": "<em>Route error: invalid class identifier</em>",
@@ -906,20 +764,6 @@
 	},
 	"info": {
 		"card_not_found": "کارت با فیلترهای کنونی همخوانی ندارد"
-	},
-	"login": {
-		"change_user": "تغییر کاربر",
-		"failed": "خطای ورود",
-		"language": "زبان",
-		"login": "ورود",
-		"multi_group": "انتخاب گروه",
-		"password": "رمز عبور",
-		"relogin_message": "نشست دارای احتمال منقضی شده،لطفا دوباره رمز عبور خود را وارد نمایید",
-		"relogin_title": "نشست منقضی شد",
-		"title": "لطفا وارد شوید",
-		"username": "نام کاربری",
-		"waitMsg": "ارسال اطلاعات",
-		"waitTitle": "در حال اتصال"
 	},
 	"management": {
 		"description": "ماژول مدیریت اطلاعات",
@@ -959,8 +803,8 @@
 			},
 			"notinrel": "هیچ کدام",
 			"notnull": "تهی نیست",
-			"nullo": "تهی است",
 			"newfilter": "فیلتر جستجوی جدید",
+			"nullo": "تهی است",
 			"relations": "روابط",
 			"remove": "حذف",
 			"save_filter": "ذخیره ی فیلتر",
@@ -971,11 +815,6 @@
 			"show_all": "نمایش همه",
 			"title": "یک خاصیت را انتخاب کنید",
 			"window_title": "فیلتر جستجو"
-		},
-		"graph": {
-			"action": "گراف رابطه",
-			"icon_tooltip": "باز کردن گراف رابطه",
-			"title": "گراف رابطه"
 		},
 		"modcard": {
 			"add_attachment": "اضافه کردن ضمیمه",
@@ -1077,22 +916,6 @@
 			"showgraph": "نمایش گراف",
 			"shownotes": "نمایش یاداشتها"
 		},
-		"modmenu": {
-			"menu": "هدایت"
-		},
-		"modreport": {
-			"add_report": "اضافه کردن گزارش",
-			"delete_report": "حذف گزارش",
-			"modify_report": "ویرایش گزارش",
-			"reportForm": {
-				"description": "توضیحات",
-				"name": "نام",
-				"report": "گزارش"
-			},
-			"report_parameters": "پارامترهای گزارش",
-			"title": "لیست - ",
-			"treetitle": "گزارش"
-		},
 		"modutilities": {
 			"bulkupdate": {
 				"title": "آپدیت چندگانه",
@@ -1144,9 +967,6 @@
 				},
 				"calendar": {
 					"wrong_config": "تقویم به درستی تنظیم نشده است"
-				},
-				"createreport": {
-					"format_label": "Format"
 				},
 				"linkcards": {
 					"required": "لطفا چند کارت انتخاب کنید - "
@@ -1201,10 +1021,13 @@
 	},
 	"warnings": {
 		"emailTemplateRelatedAttributeEdited": "<em>Attribute related with email templates changed, some e-mail could be regenerated.</em>",
+		"itIsNotAllowedFilterWithCalculatedParams": "اجازه ندارید که از فیلتر با پارامترهای محاسبه شده استفاده کنید",
 		"link_cards_changed_values": "<em>The selection of \"{0}\" has been updated.</em>",
 		"only_filtered": "تغییرات تنها در کارتهایی که با فیلتر کنونی سازگاری دارند اتفاق خواهد افتاد",
 		"popup_block": "<em>We have detected that you are using popup blocking software, please disable to run operation.</em>",
+		"reportsDuplicateImageFilename": "هشدار: تصویر گزارش با همین نام وجود دارد، نمیشود ادامه داد",
 		"saveMenuBeforeAccess": "<em>The menu has to been saved before access at the translations of this element.</em>",
+		"toSetAFilterYouMustBeforeSelectAClass": "<em>To set a filter you must before select a class</em>",
 		"warning_message": "هشدار"
 	},
 	"account": "حساب",
@@ -1213,20 +1036,30 @@
 	"activityName": "نام فعالیت",
 	"activityPerformer": "انجام دهنده",
 	"add": "اضافه",
+	"add_attachment_from_db": "اضافه کردن ضمیمه از پایگاه داده",
 	"addAccount": "اضافه کردن حساب",
 	"addAttachmentFromDms": "اضافه کردن ضمیمه از پایگاه داده",
 	"addCard": "اضافه کردن کارت",
+	"addDomain": "اضافه کردن دامنه",
 	"addFilter": "اضافه کردن فیلتر",
 	"addGroup": "اضافه کردن گروه",
+	"additionalProperties": "<em>Additional properties</em>",
+	"addLookup": "اضافه کردن جستجو",
+	"addLookupType": "اضافه کردن نوع جستجو",
 	"addProject": "اضافه کردن پروژه",
 	"addRelations": "اضافه کردن رابطه",
+	"addReport": "اضافه کردن گزارش",
 	"address": "آدرس",
+	"addressToPing": "آدرس برای پینگ کردن",
 	"addRow": "اضافه کردن سطر",
 	"addTemplate": "اضافه کردن قالب",
 	"addUser": "اضافه کردن کاربر",
 	"addView": "اضافه کردن نمایش",
+	"addWidget": "<em>Add widget</em>",
 	"administrator": "مدیریت",
 	"alfresco": "Alfresco",
+	"alwaysEnabled": "همیشه فعال",
+	"any": "همه",
 	"application": "Application",
 	"applyDefaultSelection": "<em>Apply default selection</em>",
 	"archivingDate": "تاریخ آرشیو کردن",
@@ -1235,6 +1068,7 @@
 	"attention": "توجه",
 	"attribute": "خاصیت",
 	"attributes": "خواص",
+	"availableElements": "المانهای در دسترس",
 	"availableFilters": "فیلترهای موجود",
 	"availablePatchesList": "List of available patches",
 	"availableUsers": "کاربران موجود",
@@ -1244,20 +1078,30 @@
 	"bim": "BIM",
 	"body": "بدنه",
 	"bottom": "Bottom",
+	"buildFilter": "<em>Build filter</em>",
+	"buttonLabel": "برچسب پایین",
 	"buttonsToDisable": "Buttons to disable",
+	"byCql": "by Cql",
+	"byName": "یا نام",
 	"cacheManagement": "Cache management",
+	"calendar": "تقویم",
 	"camera": "Camera",
 	"card": "کارت",
+	"cardCqlSelector": "Card CQL selector",
+	"cardinality": "کاردینالیتی",
 	"cardPanelHeight": "ارتفاع پنل کارت بر حسب صدک",
 	"cards": "کارتها",
 	"category": "<em>Category</em>",
 	"cc": "Cc",
 	"changePassword": "تغییر رمز عبور",
 	"checkFrequency": "فرکانس چک کردن(به دقیقه)",
+	"chooseAGroup": "انتخاب گروه",
+	"chooseAnAttribute": "یک خاصیت را انتخاب کنید",
 	"chooseAttachmentFromDb": "انتخاب ضمیمه از پایگاه داده",
 	"classAttribute": "Class attribute",
 	"classes": "کلاسها",
 	"classLabel": "کلاس",
+	"classList": "لیست کلاس",
 	"className": "Class name",
 	"clean_word_pasted_text": "Clean the text pasted from Word or other Rich Text applications",
 	"clearCache": "Clear cache",
@@ -1266,6 +1110,9 @@
 	"cloneCard": "شبیه سازی کارت",
 	"cloneRow": "<em>Clone row</em>",
 	"cmdbuildCategory": "<em>CMDBuild category</em>",
+	"code": "کد",
+	"collapse": "<em>Collapse</em>",
+	"collapseAll": "<em>Collapse all<em>",
 	"columnsPrivileges": "دسترسی ستونها",
 	"composeEmail": "نوشتن ایمیل",
 	"composeFromTemplate": "<em>Compose from template</em>",
@@ -1278,14 +1125,18 @@
 	"contains": "<em>Contains</em>",
 	"containsorequal": "<em>Contains or equal</em>",
 	"controls": "کنترلها",
-	"cql_filter": "CQL filter",
+	"cqlFilter": "CQL filter",
+	"createModifyCard": "ایجاد یا تغییر کارت",
 	"credentials": "اعتبارات",
 	"csv": "CSV",
 	"csvFile": "<em>CSV file</em>",
+	"customMenu": "منوی سفارشی",
 	"customPages": "<em>Custom pages</em>",
 	"dashboard": "داشبورد",
+	"dataSource": "منبع اطلاعات",
 	"defaultAccount": "<em>Default account</em>",
 	"defaultClass": "Default class",
+	"defaultDateToOpen": "تاریخ پیش فرض بازکردن",
 	"defaultFilters": "<em>Default filters</em>",
 	"defaultForGroups": "<em>Default for groups</em>",
 	"defaultGroup": "گروه پیش فرض",
@@ -1294,6 +1145,7 @@
 	"defaultLevel": "Default level",
 	"delay": "<em>Delay</em>",
 	"deleteCard": "حذف کارت",
+	"deleteDomain": "حذف دامنه",
 	"deleteLabel": "<em>Delete</em>",
 	"deleteRow": "حذف سطر",
 	"description_": "توضیحات",
@@ -1301,16 +1153,20 @@
 	"destination": "مقصد",
 	"detail": "<em>Detail</em>",
 	"details": "جزئیات",
+	"directDescription": "توضیحات مستقیم",
+	"direction": "سمت",
 	"disable": "غیر فعال",
 	"disabledFeatures": "ویژگیهای غیر فعال",
 	"disabledTabsInClassesModule": "زبانه های غیر فعال در ماژول کلاسها",
 	"disabledTabsInProcessesModule": "زبانه های غیر فعال در ماژول پروسه ها",
 	"disableGridFilter": "<em>Disable grid filter</em>",
 	"disableGroup": "غیر فعال کردن گروه",
+	"disableLookup": "غیر فعال کردن جستجو",
 	"disableUser": "غیر فعال کردن کاربر",
 	"display_less_attributes": "خواص کمتری نشان بده",
 	"display_more_attributes": "خواص بیشتری نشان بده",
 	"domain": "دامنه",
+	"domains": "دامنه ها",
 	"download": "<em>Download</em>",
 	"download_ifc_file": "Download Ifc file",
 	"edit": "<em>Edit</em>",
@@ -1324,9 +1180,11 @@
 	"enable": "فعال",
 	"enabled": "فعال شده",
 	"enabledClasses": "<em>Enabled classes</em>",
+	"enabledGroups": "گروههای فعال",
 	"enabledLanguages": "زبانهای فعال",
 	"enableGridFilter": "<em>Enable grid filter</em>",
 	"enableGroup": "فعال کردن گروه",
+	"enableLookup": "فعال کردن جستجو",
 	"enableMoveRejectedNotMatching": "Enable move rejected not matching",
 	"enableSsl": "Enable SSL",
 	"enableUser": "کاربر فعال",
@@ -1334,15 +1192,20 @@
 	"engineName": "Engine name",
 	"error": "خطا",
 	"error_bimserver_connection": "I'm not able to connect to Bimserver",
+	"eventTitle": "نام رخداد",
+	"expand": "<em>Expand</em>",
+	"expandAll": "<em>Expand all</em>",
 	"export": "خروجی گرفتن",
 	"expose": "در معرض",
+	"externalServices": "سرویسهای خارجی",
 	"file": "فایل",
 	"fileName": "نام فایل",
 	"fileServer": "File Server",
 	"fileServerPath": "File server path",
 	"filter": "فیلتر",
-	"filters_for_groups": "فیلترها برای گروهها",
+	"filtersForGroups": "فیلترها برای گروهها",
 	"filterView": "از فیلتر",
+	"forceFormat": "قالب بندی اجباری",
 	"format": "Format",
 	"format_csv": "CSV",
 	"format_odt": "OpenOffice Odt",
@@ -1350,11 +1213,15 @@
 	"format_rtf": "Rich Text Format",
 	"frequencyCheck": "<em>Frequency check (min)</em>",
 	"from": "از",
+	"fromSelection": "FromSelection",
 	"front": "رویرو",
 	"fullScreenNavigation": "هدایت فول اسکرین",
+	"functionLabel": "تابع",
 	"general": "کلی",
 	"generalOptions": "<em>General options</em>",
+	"geoserverLayers": "Geoserver layers",
 	"gis": "GIS",
+	"gisNavigation": "GIS navigation",
 	"global": "سراسری",
 	"gridRefresh": "<em>Grid refresh</em>",
 	"groups": "گروهها",
@@ -1367,6 +1234,7 @@
 	"imapServer": "IMAP server",
 	"import": "<em>Import</em>",
 	"importFromCSV": "<em>Import from CSV</em>",
+	"importJasperReport": "Import jasper report",
 	"includeRelations": "<em>Include relations</em>",
 	"includeSystemActivities": "<em>Include system activities</em>",
 	"includeUsersFilters": "<em>Include users filters</em>",
@@ -1376,53 +1244,76 @@
 	"initialLongitude": "Initial longitude",
 	"initialZoomLevel": "Initial zoom level",
 	"instanceName": "نام مورد",
+	"inverseDescription": "توضیحات معکوس",
 	"ipType": "<em>IP type</em>",
 	"ipv4": "ipv4",
 	"ipv6": "ipv6",
-	"itIsNotAllowedFilterWithCalculatedParams": "اجازه ندارید که از فیلتر با پارامترهای محاسبه شده استفاده کنید",
-	"itIsNotAllowedFilterWithRuntimeParams": "اجازه ندارید که از فیلتری استفاده که کنید که کاربر بتواند انتخاب کند.",
 	"keepSync": "<em>Keep sync</em>",
 	"key": "کلید",
 	"language": "<em>Language</em>",
 	"last_checkin": "آخرین ورود",
 	"layers": "لایه ها",
+	"layersOrder": "ترتیب لایه ها",
 	"limitedAdministrator": "ادمین با دسترسی محدود",
 	"list": "لیست",
 	"lockCardsAndProcessesInEdit": "<em>Lock cards and processes in edit</em>",
 	"lockTimeout": "مهلت قفل(به ثانیه)",
 	"loggedGroup": "گروه لاگ شده",
 	"loggedUser": "کاربر لاگ شده",
+	"login": "ورود",
+	"lookupList": "لیست جستجوها",
+	"lookupTypes": "انواع جستجو",
 	"main": "Main",
+	"manageIcons": "مدیریت آیکونها",
 	"manualRegeneration": "<em>Manual Regeneration</em>",
+	"masterDetail": "Master/Detail",
+	"masterDetailLabel": "Master/Detail Label",
+	"masterReportJrxml": "Master report (.jrxml)",
 	"maximumLevel": "Maximum level",
+	"menu": "منو",
 	"mode": "مد",
 	"modifyAccount": "تغییر حساب",
 	"modifyCard": "ویرایش کارت",
+	"modifyDomain": "تغییر دامنه",
 	"modifyFilter": "ویرایش فیلتر",
 	"modifyGroup": "ویرایش گروه",
+	"modifyLookup": "تغییر جستجو",
+	"modifyLookupType": "تغییر نوع جستجو",
 	"modifyProject": "ویرایش پروژه",
+	"modifyReport": "ویرایش گزارش",
 	"modifyTemplate": "ویرایش قالب",
 	"modifyUser": "ویرایش کاربر",
 	"modifyView": "ویرایش نمایش",
+	"modifyWidget": "<em>Modify widget</em>",
 	"multiGroup": "چند گروهی",
 	"name": "نام",
+	"navigation": "هدایت",
+	"navigationTrees": "درخت هدایت",
+	"newFolder": "پوشه جدید",
 	"no_bim_project_for_card": "There is no BIM project for this card",
 	"noAvailableData": "<em>No available data</em>",
 	"none": "هیچ",
+	"noOne": "هیچ کدام",
 	"normal": "نرمال",
-	"not_set": "Not set",
 	"notes": "یاداشتها",
+	"notSet": "Not set",
+	"numberOfPings": "تعداد پینگها",
 	"odt": "ODT",
 	"onDay": "<em>On</em>",
 	"open_3d_viewer": "Open 3D viewer",
+	"openRelationGraph": "باز کردن گراف رابطه",
 	"operationsDelay": "Operations delay",
 	"origin": "مبدا",
 	"otherOptions": "انتخابهای دیگر",
 	"outgoing": "خروجی",
 	"pan": "Pan",
+	"parent": "والدین",
+	"parentDescription": "توضیحات والدین",
 	"password": "رمز عبور",
 	"pdf": "PDF",
 	"permissions": "اجازه",
+	"ping": "پینگ",
+	"pleaseWait": "لطفا منتظر بمانید",
 	"popupPercentageHeight": "Popup percentage height",
 	"popupPercentageWidth": "Popup percentage width",
 	"popupWindows": "Popup windows",
@@ -1447,19 +1338,24 @@
 	"regenerateEmail": "باز تولید ایمیل",
 	"rejectedFolder": "فولدر ریجکت شده",
 	"relation": "<em>Relation</em>",
-	"relationGraph": "Relation Graph",
+	"relationGraph": "گراف رابطه",
 	"relationLimit": "Relations limit",
 	"relations": "روابط",
 	"remove": "Remove",
 	"remove_formatting": "<em>Remove formatting</em>",
 	"removeAccount": "حذف حساب",
 	"removeFilter": "حذف فیلتر",
+	"removeMenu": "حذف منو",
 	"removeProject": "حذف پروژه",
+	"removeReport": "حذف گزارش",
 	"removeTemplate": "حذف قالب",
 	"removeView": "حذف نمایش",
+	"removeWidget": "<em>Remove widget</em>",
 	"replace": "<em>Replace</em>",
 	"reply": "<em>Reply</em>",
-	"report": "<em>Report</em>",
+	"report": "گزارش",
+	"reportAttributes": "خواص گزارش",
+	"reportMenuJasper": "<em>Jasper-reports report</em>",
 	"reportParameters": "<em>Report parameters</em>",
 	"repository": "Repository",
 	"reset": "ریست",
@@ -1475,6 +1371,7 @@
 	"selectAClass": "یک کلاس انتخاب کن",
 	"selected_object": "<em>Selected Object</em>",
 	"selectedUsers": "کاربران انتخاب شده",
+	"selection": "انتخاب",
 	"send": "<em>Send</em>",
 	"sentFolder": "<em>Sent folder</em>",
 	"separator": "جدا کننده",
@@ -1482,6 +1379,8 @@
 	"serverUrl": "Server URL",
 	"service": "<em>Service</em>",
 	"serviceSynchronization": "Service synchronization",
+	"sessionExpired": "نشست منقضی شد",
+	"sessionExpiredMessage": "نشست دارای احتمال منقضی شده،لطفا دوباره رمز عبور خود را وارد نمایید",
 	"sessionTimeout": "Session timeout (seconds)",
 	"set": "Set",
 	"setAsDefault": "تعیین به عنوان پیش فرض",
@@ -1498,10 +1397,13 @@
 	"simpleHistoryForProcesses": "تاریخچه ساده ی پروسه",
 	"smtpPort": "SMTP port",
 	"smtpServer": "SMTP server",
+	"sql": "SQL",
 	"sqlView": "From SQL",
 	"standard": "استاندارد",
 	"start": "<em>Start</em>",
+	"startDate": "تاریخ شروع",
 	"startingPageAt": "شروع صفحات از",
+	"startWorkflow": "شروع جریان کار",
 	"status": "<em>Status</em>",
 	"stop": "<em>Stop</em>",
 	"subject": "موضوع",
@@ -1511,6 +1413,7 @@
 	"template": "قالب",
 	"templates": "قالبها",
 	"thresholdForClusteringNodes": "Threshold for clustering nodes",
+	"title": "تولید گزارش",
 	"to": "به",
 	"top": "بالا",
 	"translations": "ترجمه",
@@ -1523,7 +1426,6 @@
 	"tree_navigation_attributes": "خواص درخت هدایت",
 	"tree_remove": "حذف درخت",
 	"tree_root_cql": "Root CQL filter",
-	"trees_navigation": "درخت هدایت",
 	"type": "Type",
 	"uiConfiguration": "تنظیمات واسط کاربری",
 	"uiConfigurationForGroups": "UI configuration for group",
@@ -1548,14 +1450,12 @@
 	"views": "نمایش",
 	"warning": "هشدار",
 	"webServicePath": "Web service path",
+	"widget": "Widget",
 	"workflow": "Workflow",
-	"workflow_attributes": "Workflow attributes",
-	"workflow_by_cql": "by Cql",
-	"workflow_by_name": "یا نام",
-	"workflow_cql_filter": "Cql filter",
-	"workflow_query_tipology": "انتخاب",
+	"workflowAttributes": "Workflow attributes",
 	"workflowEngine": "Workflow",
 	"write": "نوشتن",
 	"you_have_not_set_a_filter": "فیلتری انتخاب نکردید",
+	"zip": "ZIP",
 	"zoom": "زوم"
 }

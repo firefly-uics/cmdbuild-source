@@ -37,6 +37,9 @@
 				data[this.attributes[i]._id] = param.data[this.attributes[i]._id];
 			}
 			data["_advance"] = (param.advance == "true");
+			if (typeof this.processActivityId === 'object') {
+				this.processActivityId = this.processActivityId[0];
+			}
 			data["_activity"] = this.processActivityId;
 			this.widgetsData = $.Cmdbuild.widgets.getWidgetsData(param.form, this.widgets);
 			$.Cmdbuild.widgets.saveOnDataWidgets(data, this.widgetsData);

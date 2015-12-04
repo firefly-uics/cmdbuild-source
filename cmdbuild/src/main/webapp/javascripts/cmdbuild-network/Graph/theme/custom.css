@@ -1,0 +1,148 @@
+/*
+* Override font-weight rule for "a" tags
+*/
+.cmdbuild-crt-toscana-theme a,
+.cmdbuild-crt-toscana-theme a:link {
+	font-weight: normal;
+}
+.cmdbuild-crt-toscana-theme .ui-state-default, 
+.cmdbuild-crt-toscana-theme .ui-widget-content .ui-state-default, 
+.cmdbuild-crt-toscana-theme .ui-widget-header .ui-state-default {
+	font-weight: normal;
+}
+.optionsSpinner {
+	width: 20px!important;
+}
+.labelText {
+	position: absolute;
+	top: 20px; 
+	width: 200px;
+	padding: 10px;
+	text-align: left;
+	z-index: 50;
+	color: #066;
+	font-family: tahoma,arial,verdana,sans-serif;
+	font-size: 11px;
+	display: none;
+}
+#viewerInformationImg {
+	width: 32px;
+	height: 32px;
+}
+/*
+ui-selectmenu-button{
+	width: 100px!important;
+	overflow:auto;
+}*/
+.viewerInformation {
+	position: absolute;
+	top: 20px; 
+	width: 200px;
+	padding: 10px;
+	text-align: left;
+	z-index:100;
+	font-family: tahoma,arial,verdana,sans-serif;
+	font-size: 11px;
+	color: #444444;
+	background: #ffffff;
+	display: none;
+	border: 1px solid #99bce8;
+	border-radius:5;
+	box-shadow: 10px 10px 5px #8888aa;
+}
+.viewerInformationNode {
+	border: 1px solid #99bce8;
+}
+.viewerInformationEdge {
+	border: 1px solid #ff6666;
+}
+#margin10 {
+	margin-left:10;
+	margin-right:5;
+ 	font-weight: normal;
+}
+.allWidth {
+	width: 100%;
+    padding: 4px 4px 4px 4px;
+    -webkit-align-content: flex-start  !important;
+    align-content: flex-start !important;
+}
+.counterType {
+	font-family: tahoma,arial,verdana,sans-serif;
+	font-size: 11px;
+	color: #222222;
+	margin-left: 12px;	
+}
+.counterValue {
+	font-family: tahoma,arial,verdana,sans-serif;
+	font-size: 11px;
+	color: #448844;
+	font-weight:bold;
+}
+.canvas {
+	width: 100%;
+	height: 100%;	
+}
+.openCardsFromClass {
+	cursor: pointer;
+	width: 16px;
+	height: 16px;
+	display: inline-block;
+	background:transparent url("../images/geogebra.png") right 50% no-repeat;
+}
+.zoom {
+	cursor: pointer;
+	width: 16px;
+	height: 16px;
+	display: inline-block;
+	background:transparent url("../images/edit-find-9.png") right 50% no-repeat;
+}
+.toolbarButton {
+	cursor: pointer;
+	width: 16px;
+	height: 16px;
+	display: inline-block;
+	margin-left: 12px;
+}
+.layout {
+	background:transparent url("../images/chart_organisation.png") right 50% no-repeat;
+}
+.centerOnViewer {
+	background:transparent url("../images/four-arrows-pointing-to-center_318-34903.png") right 50% no-repeat;
+}
+.centerOnSelection {
+	background:transparent url("../images/arrow_in.png") right 50% no-repeat;
+}
+.deleteSelected {
+	background:transparent url("../images/application_form_delete.png") right 50% no-repeat;
+}
+.deleteUnselected {
+	background:transparent url("../images/shape_square_delete.png") right 50% no-repeat;
+}
+.selectAll {
+	background:transparent url("../images/select-all-128.png") right 50% no-repeat;
+}
+.undo {
+	background:transparent url("../images/arrow_undo.png") right 50% no-repeat;
+}
+.stop {
+	background:transparent url("../images/stop.png") right 50% no-repeat;
+}
+.navigateOnNode {
+	background:transparent url("../images/eye_of_gnome.png") right 50% no-repeat;
+}
+.commandPanelWindow {
+	height: 500px;
+	overflow: auto;
+}
+
+/* 4 Umberto! */
+.waitMe_container {position:relative}
+body.waitMe_container {position:absolute;top:50%;left:50%;width:80px;height:100%}
+.waitMe_container .waitMe {position:absolute;top:50%;left:50%;width:80px;height:100%;z-index:9989;text-align:center}
+.waitMe_container .waitMe * {font-family:sans-serif;font-size:14px;font-weight:initial;font-style:initial;color:initial;text-decoration:initial;text-transform:initial;padding:initial;margin:initial}
+.waitMe_container .waitMe .waitMe_content {position:absolute;top:0;left:0;width:80px;height:100%}
+.waitMe_container .waitMe .waitMe_progress {position:relative}
+.waitMe_container .waitMe .waitMe_progress > div {-webkit-animation-fill-mode:both;animation-fill-mode:both;display:inline-block}
+.waitMe_container .waitMe .waitMe_text {position:relative;margin:20px 0 0}
+div.waitMe  {position:absolute;top:50%;left:50%;width:80px;height:100%}

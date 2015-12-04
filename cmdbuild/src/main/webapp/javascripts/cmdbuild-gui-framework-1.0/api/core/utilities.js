@@ -179,6 +179,8 @@
 				$.Cmdbuild.utilities.proxy.getLookupValue(attribute.lookupType, value, {}, function(response, metadata) {
 					callback.apply(callbackScope, [response.description]);				
 				}, this);
+			} else {
+				callback.apply(callbackScope, [undefined]);
 			}
 		},
 		getHtmlFieldValue: function(name) {
@@ -191,6 +193,10 @@
 				else if (field.attr("isDate") == "true") {
 					var entryValue = field.val();
 					entryValue = $.Cmdbuild.utilities.convertDateGUI2DB(entryValue);
+					return entryValue;
+				}
+				else if (field.attr("valueType") == "spinner") {
+					var entryValue = field.spinner("value");
 					return entryValue;
 				}
 

@@ -3,9 +3,11 @@
 	Ext.define("CMDBuild.controller.administration.dashboard.CMModDashboardController", {
 		extend: "CMDBuild.controller.CMBasePanelController",
 
+		requires: ['CMDBuild.core.constants.Proxy'],
+
 		mixins: {
 			modDashboardDelegate: "CMDBuild.view.administration.dashboard.CMModDashboardDelegate",
-			chartPanelDelegate: "CMDBuild.controller.administration.dashboard.CMDashboardChartConfigurationPanelControllerDelegate" 
+			chartPanelDelegate: "CMDBuild.controller.administration.dashboard.CMDashboardChartConfigurationPanelControllerDelegate"
 		},
 
 		statics: {
@@ -36,7 +38,7 @@
 			this.dashboard = null;
 
 			if (relatedTreeNode) {
-				var id = relatedTreeNode.get("id");
+				var id = relatedTreeNode.get(CMDBuild.core.constants.Proxy.ENTITY_ID) || relatedTreeNode.get("id"); // New accordion manage
 				this.dashboard = _CMCache.getDashboardById(id);
 			}
 

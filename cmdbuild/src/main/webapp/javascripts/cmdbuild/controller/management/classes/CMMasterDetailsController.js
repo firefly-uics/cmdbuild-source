@@ -178,11 +178,11 @@
 				params.detailClassName = _CMCache.getEntryTypeNameById(detailCard.get("IdClass"));
 				params.detailCardId = detailCard.get("Id");
 
-				CMDBuild.LoadMask.get().show();
+				CMDBuild.core.LoadMask.show();
 				CMDBuild.ServiceProxy.relations.removeDetail({
 					params : params,
 					callback: function() {
-						CMDBuild.LoadMask.get().hide();
+						CMDBuild.core.LoadMask.hide();
 						me.view.reload();
 					}
 				});
@@ -190,7 +190,11 @@
 		},
 
 		onOpenGraphClick: function(model) {
-			CMDBuild.Management.showGraphWindow(model.get("IdClass"), model.get("Id"));
+			Ext.create('CMDBuild.controller.management.common.graph.Graph', {
+				parentDelegate: this,
+				classId: model.get('IdClass'),
+				cardId: model.get('id')
+			});
 		},
 
 		onOpenNoteClick: function(model) {
@@ -250,7 +254,7 @@
 	}
 
 	function removeCard(model) {
-		CMDBuild.LoadMask.get().show();
+		CMDBuild.core.LoadMask.show();
 		CMDBuild.ServiceProxy.card.remove({
 			scope : this,
 			important: true,
@@ -260,7 +264,7 @@
 			},
 			success : updateDetailGrid,
 			callback : function() {
-				CMDBuild.LoadMask.get().hide();
+				CMDBuild.core.LoadMask.hide();
 			}
 		});
 	}

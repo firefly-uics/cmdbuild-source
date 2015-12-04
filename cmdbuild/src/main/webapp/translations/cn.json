@@ -84,10 +84,8 @@
 				"md_label": "主机/详细字段",
 				"modify_domain": "修改域",
 				"name": "名称",
-				"title_add": "增加域",
-				"title_modify": "修改域 \"{0}\""
+				"title_add": "增加域"
 			},
-			"domains_title": "管理域",
 			"errors": {
 				"table": {
 					"cast": "错误修改 \"超类\" 特性, 类包函数据或有子类",
@@ -137,61 +135,7 @@
 				"properties": "特性"
 			},
 			"title": "管理类",
-			"tree_title": "类列表",
-			"widgets": {
-				".OpenReport": {
-					"fields": {
-						"force": "强制格式化",
-						"presets": "报告属性",
-						"report": "报告"
-					},
-					"presetGrid": {
-						"attribute": "属性",
-						"value": "值"
-					},
-					"title": "创建报告"
-				},
-				".Calendar": {
-					"fields": {
-						"target": "目标类",
-						"start": "开始日期",
-						"end": "结束日期",
-						"title": "事件题目",
-						"filter": "CQL过滤器",
-						"defaultDate": "打开时的缺省日期"
-					},
-					"title": "日历"
-				},
-				".Ping": {
-					"fields": {
-						"address": "ping的地址",
-						"count": "pings的数量",
-						"templates": "模版"
-					},
-					"title": "Ping"
-				},
-				".Workflow": {
-					"title": "开始工作流"
-				},
-				".NavigationTree": {
-					"title": "导航树"
-				},
-				".CreateModifyCard": {
-					"fields": {
-						"target": "目标类",
-						"cql": "卡片CQL选择器",
-						"readOnly": "只读"
-					},
-					"title": "创造或修改卡片"
-				},
-				"commonFields": {
-					"active": "活动状态",
-					"alwaysenabled": "总是允许",
-					"buttonLabel": "按钮标签",
-					"type": "类型"
-				},
-				"title": "窗口控件"
-			}
+			"tree_title": "类列表"
 		},
 		"modDashboard": {
 			"charts": {
@@ -282,48 +226,9 @@
 			},
 			"title": "仪表盘图形"
 		},
-		"modLookup": {
-			"add_lookuptype": "增加查表类型",
-			"lookupForm": {
-				"active": "激活的",
-				"code": "代码",
-				"description": "描述",
-				"disable_lookup": "使查表无效",
-				"enable_lookup": "使查表有效",
-				"isdefault": "缺省",
-				"notes": "注释",
-				"parentdescription": "父类描述",
-				"update_lookup": "修改查表"
-			},
-			"lookupGrid": {
-				"active": "激活的",
-				"add_lookup": "增加查表",
-				"code": "代码",
-				"description": "描述",
-				"isdefault": "缺省",
-				"notes": "注释",
-				"parentdescription": "父类描述"
-			},
-			"lookupType": "查表类型",
-			"lookupTypeForm": {
-				"active": "活动状态",
-				"delete_lookuptype": "删除Lookup类型",
-				"description": "描述",
-				"modify_lookuptype": "修改Lookup类型",
-				"parent": "父类",
-				"title": "Lookup管理"
-			},
-			"lookupTypes": "Lookup类型",
-			"tabs": {
-				"lookuplist": "Lookup列表",
-				"properties": "特性"
-			},
-			"title": "Lookup管理"
-		},
 		"modWorkflow": {
 			"add_process": "增加进程",
 			"attributes_title": "管理属性",
-			"domains_title": "管理域",
 			"errors": {
 				"table": {
 					"cast": "不能进行替换\"超类\" 特性, 包括数据或子类的类",
@@ -402,72 +307,22 @@
 		"modconnectors": {
 			"title": "连接器"
 		},
-		"modmenu": {
-			"add_menu": "增加菜单",
-			"available_elements": "可用元素",
-			"availabletree": {
-				"class": "类",
-				"dashboard": "仪表盘",
-				"processclass": "活动性",
-				"report": "报告",
-				"view": "预览"
-			},
-			"custom_menu": "自定义菜单",
-			"custom_menus": "自定义菜单",
-			"delete_menu": "删除菜单",
-			"menu_root": "菜单",
-			"modify_menu": "修改菜单",
-			"new_folder": "新文件夹",
-			"title": "菜单管理"
-		},
-		"modreport": {
-			"add": "增加报告",
-			"importJRFormStep1": {
-				"description": "报告描述描述",
-				"enabled_groups": "使组有效",
-				"fieldset": "引入jasper报告",
-				"master_report_jrxml": "主报告(.jrxml)",
-				"menuTitle": "Jasper-形式的报告",
-				"name": "Report 名称"
-			},
-			"importJRFormStep2": {
-				"duplicate_images": "警告: 发现报告图像重名－不能进行处理。",
-				"fieldset_generic": "引入jasper报告",
-				"fieldset_images": "所需的图像",
-				"fieldset_subreports": "所需的分报告",
-				"menuTitle": "公布Jasper-报告",
-				"nothing_to_import": "未发现图像或分报告。请确认进行了引入。",
-				"success": {
-					"description": {
-						"add": "引入完成",
-						"modify": "报告修改"
-					},
-					"title": "成功"
-				}
-			},
-			"importOpenofficeTemplateForm": {
-				"menuTitle": "打开office报告"
-			},
-			"modify": "修改报告",
-			"remove": "删除报告",
-			"title": "报告"
-		},
 		"tasks": {
 			"add": "增加任务",
 			"all": "所有",
 			"clone": "克隆任务",
 			"cronForm" : {
-				"dayOfMounth": "月日",
+				"dayOfMonth": "月日",
 				"advanced": "高级的",
 				"basic": "基本的",
 				"dayOfWeek": "周日",
 				"everyDay": "每天",
 				"everyHour": "每小时",
-				"everyMounth": "每月",
+				"everyMonth": "每月",
 				"everyYear": "每年",
 				"hour": "小时",
 				"minute": "分",
-				"mounth": "月"
+				"month": "月"
 			},
 			"errorMessages": {
 				"taskConnector": {
@@ -576,6 +431,7 @@
 			"add": "增加",
 			"apply": "应用",
 			"as": "作为",
+			"changeUser": "<em>Change user</em>",
 			"check": "检查",
 			"clone": "克隆",
 			"close": "关闭",
@@ -584,6 +440,7 @@
 			"importLabel": "导入",
 			"load": "加载",
 			"modify": "修改",
+			"move": "<em>Move</em>",
 			"next": "下一个",
 			"previous": "上一个",
 			"print": "打印",
@@ -644,8 +501,7 @@
 		},
 		"unknown_error": "未知错误",
 		"user": "用户",
-		"wait_msg": "发送数据...",
-		"wait_title": "请等待..."
+		"wait_msg": "发送数据..."
 	},
 	"configure": {
 		"failure": {
@@ -764,7 +620,7 @@
 			"DOMAIN_NOTFOUND": "域 {0} 未被发现",
 			"ILLEGAL_CRON_EXPRESSION": "无效cron表达",
 			"LOCKED_CARD": "用户 {0} 已编辑卡片 {1} 秒",
-			"LOCKED_MISSING": "<em>Should be locked before</em>",
+			"LOCKED_MISSING": "<em>Expired time for editing</em>",
 			"LOOKUP_NOTFOUND": "Lookup 未发现类型 {0}",
 			"LOOKUP_TYPE_NOTFOUND": "Lookup 类型 {0} 未被发现",
 			"MENU_NOTFOUND": "未发现菜单",
@@ -807,7 +663,7 @@
 			"ORM_ILLEGAL_NAME_ERROR": "非法名称: {0}",
 			"ORM_LOOKUPTYPE_ALREADY_EXISTS": "已存在另一个lookup类型具体相同的描述",
 			"ORM_MALFORMED_PATCH": "不可读补丁",
-			"ORM_MISSING_MADATORY_VALUES": "<em>Missing mandatory values: {0}</em>", 
+			"ORM_MISSING_MADATORY_VALUES": "<em>Missing mandatory values: {0}</em>",
 			"ORM_NOT_NULL_VIOLATION": "违反非零限制规则",
 			"ORM_POSTGIS_NOT_FOUND": "PostGIS未安装",
 			"ORM_READ_ONLY_RELATION": "只读关联",
@@ -878,6 +734,8 @@
 			"WIDGET_SERVICE_MALFORMED_REQUEST": "请核实webservice的名字空间，API的名字或输入参数"
 		},
 		"reference_invalid": "值与过滤器不匹配",
+		"reportsImportError": "<em>Error while importing report</em>",
+		"reportsAnalizeError": "<em>Error while analizing report</em>",
 		"requiredFieldMessage": "此字段是必须的",
 		"routesInvalidCardIdentifier": "路径错误: 无效的卡片识别符",
 		"routesInvalidClassIdentifier": "路径错误: 无效的类识别符",
@@ -906,20 +764,6 @@
 	},
 	"info": {
 		"card_not_found": "卡片与当前的过滤器不匹配"
-	},
-	"login": {
-		"change_user": "更改用户",
-		"failed": "登录失败",
-		"language": "语言",
-		"login": "登录",
-		"multi_group": "选择组",
-		"password": "密码",
-		"relogin_message": "此认证对话已过期. 请再次输入密码.",
-		"relogin_title": "对话过程",
-		"title": "请登录",
-		"username": "用户名",
-		"waitMsg": "发送数据...",
-		"waitTitle": "连接中"
 	},
 	"management": {
 		"description": "数据管理模块",
@@ -971,11 +815,6 @@
 			"show_all": "显示所有",
 			"title": "选择一个属性",
 			"window_title": "搜索过滤器"
-		},
-		"graph": {
-			"action": "关系图表",
-			"icon_tooltip": "打开关系图表",
-			"title": "关系图表"
 		},
 		"modcard": {
 			"add_attachment": "增加附件",
@@ -1077,22 +916,6 @@
 			"showgraph": "显示图表",
 			"shownotes": "显示注释"
 		},
-		"modmenu": {
-			"menu": "导航"
-		},
-		"modreport": {
-			"add_report": "增加报告",
-			"delete_report": "删除报告",
-			"modify_report": "编辑报告",
-			"reportForm": {
-				"description": "描述",
-				"name": "名称",
-				"report": "报告"
-			},
-			"report_parameters": "报告参数",
-			"title": "清单 - ",
-			"treetitle": "报告"
-		},
 		"modutilities": {
 			"bulkupdate": {
 				"title": "多次更新",
@@ -1144,9 +967,6 @@
 				},
 				"calendar": {
 					"wrong_config": "日历未被设置好"
-				},
-				"createreport": {
-					"format_label": "格式"
 				},
 				"linkcards": {
 					"required": "请选择卡片 - "
@@ -1201,10 +1021,13 @@
 	},
 	"warnings": {
 		"emailTemplateRelatedAttributeEdited": "与email模板相关联的属性变化, email不能生成.",
+		"itIsNotAllowedFilterWithCalculatedParams": "不允许使用已被计算过的参数来过滤",
 		"link_cards_changed_values": "选择\"{0}\" 已更新",
 		"only_filtered": "变更只能应用于满足当前过滤器的卡片",
 		"popup_block": "我们检测到你的计算机安装了防止弹出窗口的软件, 禁止此软件，以便正常弹出窗口",
+		"reportsDuplicateImageFilename": "<emWarning: found report images with same filename - cannot proceed.</em>",
 		"saveMenuBeforeAccess": "此下拉菜单在被翻译前已被保存。",
+		"toSetAFilterYouMustBeforeSelectAClass": "<em>To set a filter you must before select a class</em>",
 		"warning_message": "警告"
 	},
 	"account": "帐户",
@@ -1213,20 +1036,30 @@
 	"activityName": "活动名称",
 	"activityPerformer": "活动执行者",
 	"add": "增加",
+	"add_attachment_from_dms": "<em>Add attachments from DMS</em>",
 	"addAccount": "增加帐户",
 	"addAttachmentFromDms": "从DMS增加附件",
 	"addCard": "增加卡片",
+	"addDomain": "<em>Add domain</em>",
 	"addFilter": "增加过滤器",
 	"addGroup": "<em>Add group</em>",
+	"additionalProperties": "<em>Additional properties</em>",
+	"addLookup": "<em>Add lookup</em>",
+	"addLookupType": "<em>Add lookup type</em>",
 	"addProject": "增加项目",
 	"addRelations": "增加关系",
+	"addReport": "<em>Add report</em>",
 	"address": "地图",
+	"addressToPing": "ping的地址",
 	"addRow": "增加行",
 	"addTemplate": "增加模版",
 	"addUser": "增加用户",
 	"addView": "增加视图",
+	"addWidget": "<em>Add widget</em>",
 	"administrator": "<em>Administrator</em>",
 	"alfresco": "Alfresco",
+	"alwaysEnabled": "总是允许",
+	"any": "任何",
 	"application": "应用",
 	"applyDefaultSelection": "<em>Apply default selection</em>",
 	"archivingDate": "存档日期",
@@ -1235,6 +1068,7 @@
 	"attention": "注意　",
 	"attribute": "属性",
 	"attributes": "属性",
+	"availableElements": "<em>Available elements</em>",
 	"availableFilters": "有效的过滤器",
 	"availablePatchesList": "有效的补丁清单",
 	"availableUsers": "<em>Available users</em>",
@@ -1244,20 +1078,30 @@
 	"bim": "BIM",
 	"body": "Body",
 	"bottom": "底部",
+	"buildFilter": "<em>Build filter</em>",
+	"buttonLabel": "按钮标签",
 	"buttonsToDisable": "Buttons to disable",
+	"byCql": "通过Cql",
+	"byName": "通过名称",
 	"cacheManagement": "缓存管理",
+	"calendar": "日历",
 	"camera": "相机",
 	"card": "卡片",
+	"cardCqlSelector": "卡片CQL选择器",
+	"cardinality": "<em>Cardinality</em>",
 	"cardPanelHeight": "卡片显示区间用百分比表示",
 	"cards": "<em>Cards</em>",
 	"category": "<em>Category</em>",
 	"cc": "Cc",
 	"changePassword": "更改密码",
 	"checkFrequency": "检查频率 (min)",
+	"chooseAGroup": "<em>Choose a group</em>",
+	"chooseAnAttribute": "选择一个属性",
 	"chooseAttachmentFromDb": "在数据库中选择附件",
 	"classAttribute": "类属性",
 	"classes": "<em>Classes</em>",
 	"classLabel": "类",
+	"classList": "类列表",
 	"className": "类名称",
 	"clean_word_pasted_text": "清除从Marosoft word及其他文本文件中拷贝的文字",
 	"clearCache": "清除缓存",
@@ -1266,6 +1110,9 @@
 	"cloneCard": "克隆卡片",
 	"cloneRow": "<em>Clone row</em>",
 	"cmdbuildCategory": "CMDBuild 类别",
+	"code": "<em>Code</em>",
+	"collapse": "<em>Collapse</em>",
+	"collapseAll": "<em>Collapse all</em>",
 	"columnsPrivileges": "<em>Columns privileges</em>",
 	"composeEmail": "编辑 e-mail",
 	"composeFromTemplate": "Compose from template",
@@ -1278,14 +1125,19 @@
 	"contains": "Contains",
 	"containsorequal": "Contains or equal",
 	"controls": "Controls",
-	"cql_filter": "CQL过滤器",
+	"cqlFilter": "CQL过滤器",
+	"createModifyCard": "创造或修改卡片",
+	"createReport": "创建报告",
 	"credentials": "证书",
 	"csv": "CSV",
 	"csvFile": "CSV文件　",
+	"customMenu": "<em>Custom menu</em>",
 	"customPages": "<em>Custom pages</em>",
 	"dashboard": "<em>Dashboard</em>",
+	"dataSource": "<em>Data source</em>",
 	"defaultAccount": "缺省帐户",
 	"defaultClass": "缺省类",
+	"defaultDateToOpen": "打开时的缺省日期",
 	"defaultFilters": "<em>Default filters</em>",
 	"defaultForGroups": "<em>Default for groups</em>",
 	"defaultGroup": "缺省组",
@@ -1294,6 +1146,7 @@
 	"defaultLevel": "缺省级别",
 	"delay": "延迟",
 	"deleteCard": "删除卡片",
+	"deleteDomain": "<em>Delete domain</em>",
 	"deleteLabel": "删除",
 	"deleteRow": "删除行",
 	"description_": "描述",
@@ -1301,16 +1154,20 @@
 	"destination": "目的地",
 	"detail": "<em>Detail</em>",
 	"details": "<em>Details</em>",
+	"directDescription": "<em>Direct description</em>",
+	"direction": "方向",
 	"disable": "无效的",
 	"disabledFeatures": "<em>Disabled features</em>",
 	"disabledTabsInClassesModule": "<em>Disabled tabs in classes module</em>",
 	"disabledTabsInProcessesModule": "<em>Disabled tabs in processes module</em>",
 	"disableGridFilter": "无效的方格过滤器",
 	"disableGroup": "<em>Disable group</em>",
+	"disableLookup": "<em>Disable lookup</em>",
 	"disableUser": "无效的用户",
 	"display_less_attributes": "显示较少属性",
 	"display_more_attributes": "显示更多属性",
 	"domain": "域",
+	"domains": "<em>Domains</em>",
 	"download": "下载",
 	"download_ifc_file": "下载Ifc文件",
 	"edit": "编辑",
@@ -1324,9 +1181,11 @@
 	"enable": "使生效",
 	"enabled": "使生效的",
 	"enabledClasses": "生效的类",
+	"enabledGroups": "<em>Enabled groups</em>",
 	"enabledLanguages": "生效的语言",
 	"enableGridFilter": "使方格过滤器生效",
 	"enableGroup": "<em>Enable group</em>",
+	"enableLookup": "<em>Enable lookup</em>",
 	"enableMoveRejectedNotMatching": "Enable move rejected not matching",
 	"enableSsl": "使SSL生效",
 	"enableUser": "使用户生效",
@@ -1334,15 +1193,20 @@
 	"engineName": "引擎名称",
 	"error": "错误",
 	"error_bimserver_connection": "我不能连接Bimserver",
+	"eventTitle": "事件题目",
+	"expand": "<em>Expand</em>",
+	"expandAll": "<em>Expand all</em>",
 	"exportLabel": "导出",
 	"expose": "Expose",
+	"externalServices": "外部服务",
 	"file": "<em>File</em>",
 	"fileName": "文件名称",
 	"fileServer": "文件服务器",
 	"fileServerPath": "文件服务器路径",
 	"filter": "过滤器",
-	"filters_for_groups": "组的过滤器",
+	"filtersForGroups": "组的过滤器",
 	"filterView": "从过滤器",
+	"forceFormat": "强制格式化",
 	"format": "<em>Format</em>",
 	"format_csv": "CSV",
 	"format_odt": "OpenOffice Odt",
@@ -1350,11 +1214,15 @@
 	"format_rtf": "富文本格式",
 	"frequencyCheck": "检查频率 (min)",
 	"from": "从",
+	"fromSelection": "从...选择",
 	"front": "前面",
 	"fullScreenNavigation": "<em>Full screen navigation</em>",
+	"functions": "函数",
 	"general": "一般的",
 	"generalOptions": "一般的选择",
+	"geoserverLayers": "地理信息服务器层",
 	"gis": "GIS",
+	"gisNavigation": "GIS导航",
 	"global": "全局的",
 	"gridRefresh": "格子更新",
 	"groups": "<em>Groups</em>",
@@ -1367,6 +1235,7 @@
 	"imapServer": "IMAP服务器",
 	"import": "<em>Import</em>",
 	"importFromCSV": "从CSV导入",
+	"importJasperReport": "<em>Import Jasper report</em>",
 	"includeRelations": "包括关系",
 	"includeSystemActivities": "包括系统活动",
 	"includeUsersFilters": "<em>Include users filters</em>",
@@ -1376,53 +1245,76 @@
 	"initialLongitude": "初始经度",
 	"initialZoomLevel": "初使变焦等级",
 	"instanceName": "实例名称",
+	"inverseDescription": "<em>Inverse description</em>",
 	"ipType": "IP类型",
 	"ipv4": "ipv4",
 	"ipv6": "ipv6",
-	"itIsNotAllowedFilterWithCalculatedParams": "不允许使用已被计算过的参数来过滤",
-	"itIsNotAllowedFilterWithRuntimeParams": "不允许使用用户可选择的参数来过滤",
 	"keepSync": "保持同步",
 	"key": "键",
 	"language": "语言",
 	"last_checkin": "最后一次登记",
 	"layers": "层",
+	"layersOrder": "层的顺序",
 	"limitedAdministrator": "<em>Limited administrator</em>",
 	"list": "清单",
 	"lockCardsInEdit": "编辑时锁定卡片",
 	"lockTimeout": "锁定超时(seconds)",
 	"loggedGroup": "记录的组",
 	"loggedUser": "记录的用户",
+	"login": "<em>Login</em>",
+	"lookupList": "<em>Lookup list</em>",
+	"lookupTypes": "<em>Lookup types</em>",
 	"main": "Main",
+	"manageIcons": "管理图标",
 	"manualRegeneration": "手册再生成",
+	"masterDetail": "<em>Master/Detail</em>",
+	"masterDetailLabel": "<em>Master/Detail label</em>",
+	"masterReportJrxml": "<em>Master report (.jrxml)</em>",
 	"maximumLevel": "最大等级",
+	"menu": "<em>Menu</em>",
 	"mode": "模式",
 	"modifyAccount": "改变帐户",
 	"modifyCard": "修改卡片",
+	"modifyDomain": "<em>Modify domain</em>",
 	"modifyFilter": "　改变过滤器",
 	"modifyGroup": "<em>Modify group</em>",
+	"modifyLookup": "<em>Modify lookup</em>",
+	"modifyLookupType": "<em>Modify lookup type</em>",
 	"modifyProject": "改变项目",
+	"modifyReport": "<em>Modify report</em>",
 	"modifyTemplate": "改变模版",
 	"modifyUser": "改变用户",
 	"modifyView": "改变视图",
+	"modifyWidget": "<em>Modify widget</em>",
 	"multiGroup": "群组",
 	"name": "名称",
+	"navigation": "<em>Navigation</em>",
+	"navigationTrees": "导航树",
+	"newFolder": "<em>New folder</em>",
 	"no_bim_project_for_card": "此卡片没有BIM项目",
 	"noAvailableData": "<em>No available data</em>",
 	"none": "<em>None</em>",
+	"noOne": "没人",
 	"normal": "<em>Normal</em>",
-	"not_set": "未设置",
 	"notes": "<em>Notes</em>",
+	"notSet": "未设置",
+	"numberOfPings": "pings的数量",
 	"odt": "ODT",
 	"onDay": "On",
 	"open_3d_viewer": "打开3D浏览器",
+	"openRelationGraph": "打开关系图表",
 	"operationsDelay": "操作延迟",
 	"origin": "起源",
 	"otherOptions": "<em>Other options</em>",
 	"outgoing": "Outgoing",
 	"pan": "Pan",
+	"parent": "<em>Parent</em>",
+	"parentDescription": "<em>Parent description</em>",
 	"password": "密码",
 	"pdf": "PDF",
 	"permissions": "<em>Permissions</em>",
+	"ping": "Ping",
+	"pleaseWait": "请等待...",
 	"popupPercentageHeight": "弹出百分比高度",
 	"popupPercentageWidth": "弹出百分比宽度",
 	"popupWindows": "弹出窗口",
@@ -1454,12 +1346,17 @@
 	"remove_formatting": "删除格式化",
 	"removeAccount": "删除帐户",
 	"removeFilter": "删除过滤器",
+	"removeMenu": "<em>Remove menu</em>",
 	"removeProject": "删除项目",
+	"removeReport": "<em>Remove report</em>",
 	"removeTemplate": "删除模版",
 	"removeView": "删除视图",
+	"removeWidget": "<em>Remove widget</em>",
 	"replace": "替代",
 	"reply": "回复",
 	"report": "报告",
+	"reportAttributes": "报告属性",
+	"reportMenuJasper": "<em>Jasper-reports report</em>",
 	"reportParameters": "报告参数",
 	"repository": "集合",
 	"reset": "重置",
@@ -1475,6 +1372,7 @@
 	"selectAClass": "选择一个类",
 	"selected_object": "选择的目标",
 	"selectedUsers": "<em>Selected users</em>",
+	"selection": "选项",
 	"send": "发送",
 	"sentFolder": "发送文件夹",
 	"separator": "分离器",
@@ -1482,6 +1380,8 @@
 	"serverUrl": "服务器URL",
 	"service": "服务",
 	"serviceSynchronization": "服务同步",
+	"sessionExpired": "<em>Session expired</em>",
+	"sessionExpiredMessage": "<em>The authenticated session has expired. Please, insert your password again.</em>",
 	"sessionTimeout": "会话超时(seconds)",
 	"set": "设置",
 	"setAsDefault": "设置为缺省",
@@ -1498,9 +1398,13 @@
 	"simpleHistoryForProcesses": "<em>Simple history for processes</em>",
 	"smtpPort": "SMTP入口",
 	"smtpServer": "SMTP服务器",
+	"sql": "SQL",
 	"sqlView": "从SQL",
 	"standard": "<em>Standard</em>",
 	"start": "开始",
+	"startDate": "开始日期",
+	"startingPageAt": "<em>Starting page at</em>",
+	"startWorkflow": "开始工作流",
 	"status": "状态",
 	"stop": "停止",
 	"subject": "主题",
@@ -1522,7 +1426,6 @@
 	"tree_navigation_attributes": "导航树属性",
 	"tree_remove": "删除树",
 	"tree_root_cql": "根CQL过滤器",
-	"trees_navigation": "导航树",
 	"type": "类型",
 	"uiConfiguration": "<em>UI configuration</em>",
 	"uiConfigurationForGroups": "组的UI设置",
@@ -1547,14 +1450,12 @@
 	"views": "浏览",
 	"warning": "<em>Warning</em>",
 	"webServicePath": "Web服务路径",
+	"widget": "窗口控件",
 	"workflow": "过程",
-	"workflow_attributes" : "工作流属性",
-	"workflow_by_cql": "通过Cql",
-	"workflow_by_name": "通过名称",
-	"workflow_cql_filter": "Cql 过滤器",
-	"workflow_query_tipology": "选项",
+	"workflowAttributes" : "工作流属性",
 	"workflowEngine": "工作流引擎",
 	"write": "<em>Write</em>",
 	"you_have_not_set_a_filter": "你没有设置过滤器",
+	"zip": "ZIP",
 	"zoom": "缩放"
 }

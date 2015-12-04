@@ -60,6 +60,7 @@
 		advance: function(param) {
 			try {
 				param.formObject = $.Cmdbuild.dataModel.forms[param.form];
+				var data = $.Cmdbuild.dataModel.model[param.form].data;
 				if (! $.Cmdbuild.dataModel.change(param)) {
 					return;
 				}
@@ -178,8 +179,16 @@
 			backend.deleteRow({
 				form: param.form
 			}, function() {
-				$.Cmdbuild.standard.commands.dialogClose(param);
-				$.Cmdbuild.standard.grid.onNavigate("begin", param.form);
+				//$.Cmdbuild.standard.commands.dialogClose(param);
+				if (param.navigationForm) {
+					$.Cmdbuild.standard.commands.navigate({
+						form: param.navigationForm,
+						container: param.navigationContainer
+					});
+					
+				} else {
+					$.Cmdbuild.standard.grid.onNavigate("begin", param.form);
+				}
 			});
 		},
 		attach: function(params) {

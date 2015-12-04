@@ -52,6 +52,7 @@ public class Serialization {
 			DESCRIPTION_MASTER_DETAIL = DESCRIPTION + "MasterDetail", //
 			DESTINATION = "destination", //
 			DESTINATION_PROCESS = DESTINATION + PROCESS_CAPITAL, //
+			DETAILED = "detailed", //
 			DIRECTION = "direction", //
 			DISPLAYABLE_IN_LIST = "displayableInList", //
 			DOMAIN = "domain", //

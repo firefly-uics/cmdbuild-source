@@ -4,9 +4,14 @@
 		extend: 'CMDBuild.controller.common.AbstractController',
 
 		requires: [
-			'CMDBuild.core.proxy.CMProxyConstants',
+			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.RequestBarrier'
 		],
+
+		/**
+		 * @cfg {CMDBuild.controller.management.common.widgets.customForm.CustomForm}
+		 */
+		parentDelegate: undefined,
 
 		/**
 		 * @cfg {Array}
@@ -52,11 +57,11 @@
 		buildFields: function() {
 			var itemsArray = [];
 
-			if (!this.cmfg('widgetCustomFormConfigurationIsAttributeEmpty',  CMDBuild.core.proxy.CMProxyConstants.MODEL)) {
+			if (!this.cmfg('widgetCustomFormConfigurationIsEmpty',  CMDBuild.core.constants.Proxy.MODEL)) {
 				var fieldManager = Ext.create('CMDBuild.core.fieldManager.FieldManager', { parentDelegate: this });
 
-				Ext.Array.forEach(this.cmfg('widgetCustomFormConfigurationGet', CMDBuild.core.proxy.CMProxyConstants.MODEL), function(attribute, i, allAttributes) {
-					if (fieldManager.isAttributeManaged(attribute.get(CMDBuild.core.proxy.CMProxyConstants.TYPE))) {
+				Ext.Array.forEach(this.cmfg('widgetCustomFormConfigurationGet', CMDBuild.core.constants.Proxy.MODEL), function(attribute, i, allAttributes) {
+					if (fieldManager.isAttributeManaged(attribute.get(CMDBuild.core.constants.Proxy.TYPE))) {
 						fieldManager.attributeModelSet(Ext.create('CMDBuild.model.common.attributes.Attribute', attribute.getData()));
 						fieldManager.push(itemsArray, fieldManager.buildField());
 					} else { // @deprecated - Old field manager
@@ -74,8 +79,8 @@
 							});
 
 							// Required label fix
-							if (attribute[CMDBuild.core.proxy.CMProxyConstants.MANDATORY] || attribute['isnotnull']) {
-								attribute[CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION] = (!Ext.isEmpty(attribute['isnotnull']) && attribute['isnotnull'] ? '* ' : '')
+							if (attribute[CMDBuild.core.constants.Proxy.MANDATORY] || attribute['isnotnull']) {
+								attribute[CMDBuild.core.constants.Proxy.DESCRIPTION] = (!Ext.isEmpty(attribute['isnotnull']) && attribute['isnotnull'] ? '* ' : '')
 								+ attribute.description || attribute.name;
 							}
 
@@ -92,7 +97,7 @@
 							item = CMDBuild.Management.FieldManager.getFieldForAttr(attribute, false, false);
 						}
 
-						if (attribute[CMDBuild.core.proxy.CMProxyConstants.FIELD_MODE] == 'read')
+						if (attribute[CMDBuild.core.constants.Proxy.FIELD_MODE] == 'read')
 							item.setDisabled(true);
 
 						itemsArray.push(item);
@@ -133,11 +138,11 @@
 
 		onWidgetCustomFormLayoutFormResetButtonClick: function() {
 			this.cmfg('widgetCustomFormConfigurationSet', {
-				configurationObject: this.cmfg('widgetCustomFormControllerPropertyGet', 'widgetConfiguration')[CMDBuild.core.proxy.CMProxyConstants.DATA],
-				propertyName: CMDBuild.core.proxy.CMProxyConstants.DATA
+				propertyName: CMDBuild.core.constants.Proxy.DATA,
+				value: this.cmfg('widgetCustomFormControllerPropertyGet', 'widgetConfiguration')[CMDBuild.core.constants.Proxy.DATA]
 			});
 
-			this.setData(this.cmfg('widgetCustomFormConfigurationGet', CMDBuild.core.proxy.CMProxyConstants.DATA));
+			this.setData(this.cmfg('widgetCustomFormConfigurationGet', CMDBuild.core.constants.Proxy.DATA));
 		},
 
 		/**
@@ -146,15 +151,15 @@
 		 */
 		onWidgetCustomFormLayoutFormShow: function() {
 			var isWidgetReadOnly = this.cmfg('widgetCustomFormConfigurationGet', [
-				CMDBuild.core.proxy.CMProxyConstants.CAPABILITIES,
-				CMDBuild.core.proxy.CMProxyConstants.READ_ONLY
+				CMDBuild.core.constants.Proxy.CAPABILITIES,
+				CMDBuild.core.constants.Proxy.READ_ONLY
 			]);
 
 			if (
 				isWidgetReadOnly
  				|| this.cmfg('widgetCustomFormConfigurationGet', [
-					CMDBuild.core.proxy.CMProxyConstants.CAPABILITIES,
-					CMDBuild.core.proxy.CMProxyConstants.MODIFY_DISABLED
+					CMDBuild.core.constants.Proxy.CAPABILITIES,
+					CMDBuild.core.constants.Proxy.MODIFY_DISABLED
 				])
 			) {
 				this.view.setDisabledModify(true, true, isWidgetReadOnly);

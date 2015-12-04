@@ -4,8 +4,8 @@
 		extend: 'CMDBuild.controller.common.AbstractBasePanelController',
 
 		requires: [
-			'CMDBuild.core.configurations.CustomPages',
-			'CMDBuild.core.proxy.CMProxyConstants'
+			'CMDBuild.core.constants.Proxy',
+			'CMDBuild.core.configurations.CustomPages'
 		],
 
 		/**
@@ -19,14 +19,14 @@
 		view: undefined,
 
 		/**
-		 * @param {CMDBuild.view.common.CMAccordionStoreModel} node
+		 * @param {CMDBuild.model.common.accordion.Generic} node
 		 */
 		onViewOnFront: function(node) {
 			if (!Ext.isEmpty(node)) {
 				var basePath = window.location.toString().split('/');
 				basePath = Ext.Array.slice(basePath, 0, basePath.length - 1).join('/');
 
-				this.setViewTitle(node.get(CMDBuild.core.proxy.CMProxyConstants.TEXT));
+				this.setViewTitle(node.get(CMDBuild.core.constants.Proxy.TEXT));
 
 				this.view.removeAll();
 				this.view.add({
@@ -34,8 +34,8 @@
 
 					autoEl: {
 						tag: 'iframe',
-						src: CMDBuild.Constants.customPages.customizationsPath
-							+ node.get(CMDBuild.core.proxy.CMProxyConstants.TEXT)
+						src: CMDBuild.core.configurations.CustomPages.getCustomizationsPath()
+							+ node.get(CMDBuild.core.constants.Proxy.NAME)
 							+ '/?basePath=' + basePath
 							+ '&frameworkVersion=' + CMDBuild.core.configurations.CustomPages.getVersion()
 					}

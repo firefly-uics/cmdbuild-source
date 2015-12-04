@@ -3,6 +3,12 @@
 	Ext.define('CMDBuild.controller.administration.configuration.GeneralOptions', {
 		extend: 'CMDBuild.controller.common.AbstractController',
 
+		requires: [
+			'CMDBuild.core.constants.Proxy',
+			'CMDBuild.core.proxy.configuration.GeneralOptions',
+			'CMDBuild.model.configuration.instance.Form'
+		],
+
 		/**
 		 * @cfg {CMDBuild.controller.administration.configuration.Configuration}
 		 */
@@ -12,14 +18,9 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
-			'onGeneralOptionsAbortButtonClick',
-			'onGeneralOptionsSaveButtonClick'
+			'onConfigurationGeneralOptionsSaveButtonClick',
+			'onConfigurationGeneralOptionsTabShow = onConfigurationGeneralOptionsAbortButtonClick'
 		],
-
-		/**
-		 * @cfg {String}
-		 */
-		configFileName: 'cmdbuild',
 
 		/**
 		 * @property {CMDBuild.view.administration.configuration.GeneralOptionsPanel}
@@ -35,29 +36,37 @@
 		constructor: function(configObject) {
 			this.callParent(arguments);
 
-			this.view = Ext.create('CMDBuild.view.administration.configuration.GeneralOptionsPanel', {
-				delegate: this
-			});
+			this.view = Ext.create('CMDBuild.view.administration.configuration.GeneralOptionsPanel', { delegate: this });
+		},
 
-			this.cmfg('onConfigurationRead', {
-				configFileName: this.configFileName,
-				view: this.view
+		onConfigurationGeneralOptionsSaveButtonClick: function() {
+			CMDBuild.core.proxy.configuration.GeneralOptions.update({
+				params: CMDBuild.model.configuration.instance.Form.convertToLegacy(this.view.getData(true)),
+				scope: this,
+				success: function(response, options, decodedResponse) {
+					this.onConfigurationGeneralOptionsTabShow();
+
+					CMDBuild.view.common.field.translatable.Utils.commit(this.view);
+
+					CMDBuild.core.Message.success();
+				}
 			});
 		},
 
-		onGeneralOptionsAbortButtonClick: function() {
-			this.cmfg('onConfigurationRead', {
-				configFileName: this.configFileName,
-				view: this.view
-			});
-		},
+		onConfigurationGeneralOptionsTabShow: function() {
+			CMDBuild.core.proxy.configuration.GeneralOptions.read({
+				scope: this,
+				success: function(response, options, decodedResponse) {
+					decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.DATA];
 
-		onGeneralOptionsSaveButtonClick: function() {
-			this.cmfg('onConfigurationSave', {
-				configFileName: this.configFileName,
-				view: this.view
+					this.view.loadRecord(Ext.create('CMDBuild.model.configuration.instance.Form', CMDBuild.model.configuration.instance.Form.convertFromLegacy(decodedResponse)));
+
+					Ext.get('instance_name').dom.innerHTML = decodedResponse[CMDBuild.core.constants.Proxy.INSTANCE_NAME];
+
+					this.view.instanceNameField.translationsRead(); // Custom function call to read translations data
+				}
 			});
-		},
+		}
 	});
 
 })();

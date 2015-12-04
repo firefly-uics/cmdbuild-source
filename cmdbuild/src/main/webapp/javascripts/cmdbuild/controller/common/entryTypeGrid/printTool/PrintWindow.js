@@ -4,8 +4,9 @@
 		extend: 'CMDBuild.controller.common.AbstractController',
 
 		requires: [
-			'CMDBuild.core.proxy.CMProxyConstants',
-			'CMDBuild.core.proxy.CMProxyUrlIndex',
+			'CMDBuild.core.constants.Proxy',
+			'CMDBuild.core.Message',
+			'CMDBuild.core.proxy.Index',
 			'CMDBuild.core.proxy.report.Print'
 		],
 
@@ -26,14 +27,14 @@
 		 * @cfg {Array}
 		 */
 		browserManagedFormats: [
-			CMDBuild.core.proxy.CMProxyConstants.PDF,
-			CMDBuild.core.proxy.CMProxyConstants.CSV
+			CMDBuild.core.constants.Proxy.PDF,
+			CMDBuild.core.constants.Proxy.CSV
 		],
 
 		/**
 		 * @cfg {String}
 		 */
-		format: CMDBuild.core.proxy.CMProxyConstants.PDF,
+		format: CMDBuild.core.constants.Proxy.PDF,
 
 		/**
 		 * @cfg {Boolean}
@@ -70,12 +71,13 @@
 				if (Ext.Array.contains(this.browserManagedFormats, this.format)) { // With browser managed formats show modal pop-up
 					this.view.show();
 				} else { // Otherwise force file download
-					this.forceDownload = true;
-
-					this.createDocument();
+					this.createDocument(true);
 				}
 		},
 
+		/**
+		 * @private
+		 */
 		createDocument: function() {
 			var proxyCreateFunction = null;
 
@@ -109,6 +111,13 @@
 				proxyCreateFunction({
 					params: this.parameters,
 					scope: this,
+					failure: function(response, options, decodedResponse) {
+						CMDBuild.core.Message.error(
+							CMDBuild.Translation.error,
+							CMDBuild.Translation.errors.createReportFilure,
+							false
+						);
+					},
 					success: function(response, options, decodedResponse) {
 						this.showReport();
 					}
@@ -130,15 +139,17 @@
 
 		/**
 		 * Get created report from server and display it in iframe
+		 *
+		 * @private
 		 */
 		showReport: function() {
 			var params = {};
-			params[CMDBuild.core.proxy.CMProxyConstants.FORCE_DOWNLOAD_PARAM_KEY] = true;
+			params[CMDBuild.core.constants.Proxy.FORCE_DOWNLOAD_PARAM_KEY] = true;
 
 			if (this.forceDownload) { // Force download mode
 				var form = Ext.create('Ext.form.Panel', {
 					standardSubmit: true,
-					url: CMDBuild.core.proxy.CMProxyUrlIndex.reports.printReportFactory
+					url: CMDBuild.core.proxy.Index.report.printReportFactory
 				});
 
 				form.submit({
@@ -157,7 +168,7 @@
 
 					autoEl: {
 						tag: 'iframe',
-						src: CMDBuild.core.proxy.CMProxyUrlIndex.reports.printReportFactory
+						src: CMDBuild.core.proxy.Index.report.printReportFactory
 					}
 				});
 			}

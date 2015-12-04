@@ -26,6 +26,7 @@
 					nTotalRows: 0,
 					firstRow: 0,
 					condition: param.condition,
+					hookSelection: (param.hookSelection === "true"),
 					singleSelect: (param.singleSelect == 1) ? true : false,
 					onClick: $.Cmdbuild.elementsManager.getEvent("onClick", xmlForm),
 					onChange: $.Cmdbuild.elementsManager.getEvent("onChange", xmlForm),
@@ -155,8 +156,16 @@
 								}
 								var row = $('#' + me.id + ' tbody tr:not(".cmdbuildGroupByHeader"):eq(' + selectedRow + ')');
 								var table = $('#' + me.id).DataTable();
-								me.selectRow(me.id, table, row, selectedRow);
+								if (! me.paginationSettings.hookSelection) {
+									me.selectRow(me.id, table, row, selectedRow, false);
+								}
+								else {
+									this.selectRows($.Cmdbuild.customvariables.selected.getData());
+								}
 								me.disableRowButtons();
+							} else {
+								$.Cmdbuild.dataModel.setCurrentIndex(me.id, -1);
+
 							}
 						}, me);
 					},
@@ -184,12 +193,12 @@
 					$($.fn.dataTable.tables(true)).DataTable().columns.adjust();
 				});
 
-				$('#' + this.id + ' tbody').on('click', 'tr', function () {
+				$('#' + this.id + ' tbody').on('click', 'tr', function (event) {
 					var htmlTable =  $(this).parents('table');
 					me.id = htmlTable.attr("id");
 					var table = $('#' + me.id).DataTable();
-					if (! $(this).hasClass('selected')) {
-						me.selectRow(param.form, table, $(this), table.row(this).index());
+					if (! $(this).hasClass('selected') || me.paginationSettings.hookSelection) {
+						me.selectRow(param.form, table, $(this), table.row(this).index(), event.ctrlKey);
 					}
 					$.Cmdbuild.eventsManager.onEvent(me.paginationSettings.onClick);
 				});
@@ -198,13 +207,13 @@
 						$.Cmdbuild.eventsManager.executeEvent(me.onDblClick);
 					});
 				}
-				$('#' + this.id + ' tbody').on('click', 'span', function () {
+				$('#' + this.id + ' tbody').on('click', 'span', function (event) {
 					var htmlTable =  $(this).parents('table');
 					me.id = htmlTable.attr("id");
 					var table = $('#' + me.id).DataTable();
 					var row =  $(this).parents('tr');
 //					var data = table.row(row).data();
-					me.selectRow(param.form, table, row, table.row(row).index());
+					me.selectRow(param.form, table, row, table.row(row).index(), event.ctrlKey);
 					var p = jQuery.parseJSON($(this).attr("method"));
 					$.Cmdbuild.eventsManager.onEvent(p);
 				});
@@ -300,17 +309,38 @@
 	            }
 	        });
 		};
-		this.selectRow = function(name, table, row, index) {
+		
+		this.selectRows = function(selected) {
+			var table = $('#' + this.id).DataTable();
+			var data = this.paginationSettings.backend.getData();
+			for (var i = 0; i < data.length; i++) {
+				var row = data[i];
+				var tRow = table.row(i).node();
+				if (selected[row.id]) {
+					$(tRow).addClass('selected');
+				}
+				else {
+					$(tRow).removeClass('selected');
+				}
+			}			
+		};
+		this.selectRow = function(name, table, row, index, ctrlKey) {
 			$.Cmdbuild.dataModel.setCurrentIndex(name, index);
-			table.$('tr.selected').removeClass('selected');
-			row.addClass('selected');
-			$.Cmdbuild.eventsManager.onEvent(this.paginationSettings.onChange);
+			
+			if (! this.paginationSettings.hookSelection) {
+				table.$('tr.selected').removeClass('selected');
+				row.addClass('selected');
+			}
+			if (this.paginationSettings.onChange) {
+				this.paginationSettings.onChange.addSelection = ctrlKey;
+				$.Cmdbuild.eventsManager.onEvent(this.paginationSettings.onChange);
+			}
 		};
 		this.getNoAttributeColumns = function() {
 			var columnDefs = [];
 			var attributes = this.paginationSettings.backend.getAttributes();
 			var index = 0;
-			for (var i = 0; i < attributes.length; i++) {
+			for (var i = 0; attributes && i < attributes.length; i++) {
 				var attribute = attributes[i];
 				if (attribute.displayableInList) {
 					if (attribute.type == "IMAGEBUTTON") {

@@ -84,7 +84,7 @@
 					});
 				}
 				this.getVariable(keys[0], function(response) {
-					this.resolveCqlCallback(response, callback, callbackScope);
+					this.resolveCqlCallback(response, keys, callback, callbackScope);
 				}, this);
 			}
 			catch (e) {
@@ -92,7 +92,7 @@
 				$.Cmdbuild.errorsManager.popup(e);
 			}
 		},
-		resolveCqlCallback : function(value, callback, callbackScope) {
+		resolveCqlCallback : function(value, keys, callback, callbackScope) {
 			try {
 				this.configurator.manager["cql"].getValue("", value, function(response) {
 					if (response.length <= 0) {
@@ -130,7 +130,7 @@
 					cqlEvaluate(param, function(response) {
 						callback.apply(callbackScope, [response]);
 					}, this);
-					break;
+					return;
 				}
 			}
 			throw new $.Cmdbuild.errorsManager.getError({

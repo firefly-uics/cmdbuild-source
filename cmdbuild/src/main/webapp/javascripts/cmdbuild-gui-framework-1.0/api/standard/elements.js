@@ -22,6 +22,24 @@
 			});
 			return htmlStr;
 		},
+		spinner : function(xmlElement) {
+			var htmlStr = "";
+			var ca = $.Cmdbuild.elementsManager.getCommonAttributes(xmlElement);
+			var label = $.Cmdbuild.elementsManager.insertLabel(xmlElement);
+			var change = $.Cmdbuild.elementsManager.getEvent("onChange", xmlElement);
+			var param = $.Cmdbuild.elementsManager.getParams(xmlElement);
+			var value = param.value;
+			var input = "<input  " + ca + " name='value' valueType='spinner' value='" + value + "'></input>";
+			var id = $.Cmdbuild.elementsManager.getXmlElementId(xmlElement);
+			$.Cmdbuild.scriptsManager.push({
+				script : "spinner",
+				id : id,
+				spin: change,
+				value: value
+			});
+			var htmlStr = $.Cmdbuild.elementsManager.wrapInFormRow(label, input, "input");
+			return htmlStr;
+		},
 		checkbox : function(xmlElement) {
 			var id = $.Cmdbuild.elementsManager.getXmlElementId(xmlElement);
 			var text = xmlElement.getAttribute("text");

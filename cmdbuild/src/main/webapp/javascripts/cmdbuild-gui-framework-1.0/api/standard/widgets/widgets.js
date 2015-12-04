@@ -57,9 +57,13 @@
 			var widget = widgets[0];
 			widgets.splice(0, 1);
 			var data = widgetData[widget._id];
+			if (! data) {
+				callback.apply(callbackScope, []);
+				return;
+			}
 			if (data.saveType == $.Cmdbuild.widgets.SAVEAFTER) {
 				var widgetName = $.Cmdbuild.standard.widgetDiv.widgetName(data.widgetType);
-				$.Cmdbuild.widgets[widgetName].flush(param, widget.data, widget._id, parent_form, function() {
+				$.Cmdbuild.widgets[widgetName].flush(param, widgetData[widget._id].data, widget._id, parent_form, function() {
 					this.savePostponedWidgetsRecursive(widgets, widgetData, param, parent_form, callback, callbackScope);
 				}, this);
 			}

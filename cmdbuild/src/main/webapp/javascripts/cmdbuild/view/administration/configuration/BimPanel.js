@@ -3,7 +3,9 @@
 	Ext.define('CMDBuild.view.administration.configuration.BimPanel', {
 		extend: 'Ext.form.Panel',
 
-		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+		requires: ['CMDBuild.core.constants.Proxy'],
+
+		mixins: ['CMDBuild.view.common.PanelFunctions'],
 
 		/**
 		 * @cfg {CMDBuild.controller.administration.configuration.Bim}
@@ -27,16 +29,11 @@
 		},
 
 		initComponent: function() {
-			this.enabledCheckBox = Ext.create('Ext.ux.form.XCheckbox', {
-				name: CMDBuild.core.proxy.CMProxyConstants.ENABLED,
-				fieldLabel: CMDBuild.Translation.enabled
-			});
-
 			Ext.apply(this, {
 				dockedItems: [
 					Ext.create('Ext.toolbar.Toolbar', {
 						dock: 'bottom',
-						itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_BOTTOM,
+						itemId: CMDBuild.core.constants.Proxy.TOOLBAR_BOTTOM,
 						ui: 'footer',
 
 						layout: {
@@ -46,39 +43,45 @@
 						},
 
 						items: [
-							Ext.create('CMDBuild.core.buttons.Save', {
+							Ext.create('CMDBuild.core.buttons.text.Save', {
 								scope: this,
 
 								handler: function(button, e) {
-									this.delegate.cmfg('onBimSaveButtonClick');
+									this.delegate.cmfg('onConfigurationBimSaveButtonClick');
 								}
 							}),
-							Ext.create('CMDBuild.core.buttons.Abort', {
+							Ext.create('CMDBuild.core.buttons.text.Abort', {
 								scope: this,
 
 								handler: function(button, e) {
-									this.delegate.cmfg('onBimAbortButtonClick');
+									this.delegate.cmfg('onConfigurationBimAbortButtonClick');
 								}
 							})
 						]
 					})
 				],
 				items: [
-					this.enabledCheckBox,
+					{
+						xtype: 'checkbox',
+						name: CMDBuild.core.constants.Proxy.ENABLED,
+						fieldLabel: CMDBuild.Translation.enabled,
+						inputValue: true,
+						uncheckedValue: false
+					},
 					{
 						xtype: 'textfield',
-						name: CMDBuild.core.proxy.CMProxyConstants.URL,
+						name: CMDBuild.core.constants.Proxy.URL,
 						fieldLabel: CMDBuild.Translation.url,
 						maxWidth: CMDBuild.CFG_BIG_FIELD_WIDTH,
 					},
 					{
 						xtype: 'textfield',
-						name: 'username',
+						name: CMDBuild.core.constants.Proxy.USERNAME,
 						fieldLabel: CMDBuild.Translation.username
 					},
 					{
 						xtype: 'textfield',
-						name: CMDBuild.core.proxy.CMProxyConstants.PASSWORD,
+						name: CMDBuild.core.constants.Proxy.PASSWORD,
 						fieldLabel: CMDBuild.Translation.password,
 						inputType: 'password'
 					}
@@ -88,18 +91,9 @@
 			this.callParent(arguments);
 		},
 
-		/**
-		 * @param {Object} saveDataObject
-		 *
-		 * @override
-		 */
-		afterSubmit: function(saveDataObject) {
-			CMDBuild.Config.workflow.enabled = this.enabledCheckBox.getValue();
-
-			if (CMDBuild.Config.workflow.enabled) {
-				_CMMainViewportController.enableAccordionByName(this.delegate.configFileName);
-			} else {
-				_CMMainViewportController.disableAccordionByName(this.delegate.configFileName);
+		listeners: {
+			show: function(panel, eOpts) {
+				this.delegate.cmfg('onConfigurationBimTabShow');
 			}
 		}
 	});

@@ -3,30 +3,32 @@
  */
 // private 
 // static
-	function cqlEvaluate(obj, callback, callbackScope) {
-		// 	obj have the follow structure:
-		//	filter: cql to evaluate,
-		//	meta: meta,
-		//	form: form
+function cqlEvaluate(obj, callback, callbackScope) {
+	// obj have the follow structure:
+	// filter: cql to evaluate,
+	// meta: meta,
+	// form: form
 
-		var output = function(msg) {
-			console.log("cql.manager: " + msg.msg);
-		};
+	var output = function(msg) {
+		console.log("cql.manager: " + msg.msg);
+	};
 
-		// load CQL manager
-		var configurator = new Configurator(output);
-		var cqlManager = new CqlManager(configurator);
-		var meta = {};
-		for (var key in obj.meta) {
-			cqlManager.lexer.analize(obj.meta[key]);
-			meta[key] = new treeObject(configurator, cqlManager.lexer.tree, null, obj.form);
-		}
-		cqlManager.lexer.analize(obj.filter);
-		var treeObj = new treeObject(configurator, cqlManager.lexer.tree, meta, obj.form);
-		treeObj.resolve(function(response) {
-			callback.apply(callbackScope, [response]);
-		}, this);
-	} 
+	// load CQL manager
+	var configurator = new Configurator(output);
+	var cqlManager = new CqlManager(configurator);
+	var meta = {};
+	for ( var key in obj.meta) {
+		cqlManager.lexer.analize(obj.meta[key]);
+		meta[key] = new treeObject(configurator, cqlManager.lexer.tree, null,
+				obj.form);
+	}
+	cqlManager.lexer.analize(obj.filter);
+	var treeObj = new treeObject(configurator, cqlManager.lexer.tree, meta,
+			obj.form);
+	treeObj.resolve(function(response) {
+		callback.apply(callbackScope, [response]);
+	}, this);
+}
 // end static
 function CqlManager(configurator) {
 	// called by form interested in cql
@@ -45,7 +47,7 @@ function CqlManager(configurator) {
 		this.variablesTable.generate(form, this.commandsTable);
 	};
 	this.compileAttribute = function(form, attribute) {
-		if (! (attribute.filter && attribute.filter.text)) {
+		if (!(attribute.filter && attribute.filter.text)) {
 			return;
 		}
 		this.lexer.analize(attribute.filter.text);
@@ -55,7 +57,8 @@ function CqlManager(configurator) {
 			this.lexer.analize(attribute.filter.params[key]);
 			var nameSpaces = key.split(".");
 			var nameMeta = nameSpaces[nameSpaces.length - 1];
-			this.commandsTable.pushMeta(form, attribute.name, nameMeta, this.lexer.tree);
+			this.commandsTable.pushMeta(form, attribute.name, nameMeta,
+					this.lexer.tree);
 		}
 		this.commandsTable.push(form, attribute.name, attributeTree);
 	};
@@ -63,13 +66,13 @@ function CqlManager(configurator) {
 		alert(e.form + " " + e.field);
 	};
 	this.fieldChanged = function(form, field) {
-//		if(this.cqlEnabled) {
-			this.variablesTable.fieldChanged(form, field);
-//		}
+		// if(this.cqlEnabled) {
+		this.variablesTable.fieldChanged(form, field);
+		// }
 	};
 	this.resolve = function(form, field, callback, callbackScope) {
-		//have to return 2 different values in the case a filter is empty and
-		//in the case a filter is not defined (a variable is empty for example)
+		// have to return 2 different values in the case a filter is empty and
+		// in the case a filter is not defined (a variable is empty for example)
 		this.commandsTable.resolve(form, field, function(response) {
 			callback.apply(callbackScope, [response]);
 		}, this);
@@ -99,15 +102,17 @@ function lexer(configurator) {
 	this.analize = function(str) {
 		this.stackPointer = 0;
 		this.tree = [];
-		this.stack = [ this.tree ];
+		this.stack = [this.tree];
 		this.originalCommand = str;
 		this.stackStrings = [];
-		this._analize(" " + str, false);//the space exclude a begin with a {
+		this._analize(" " + str, false);// the space exclude a begin with a {
 		// at the end of recursion I can evaluate if the string is well formed
 		if (this.stackPointer != 0) {
-			console.log(this.CQLSINTAXERRORBADFORMATTEDCOMMAND + " " + this.originalCommand);
+			console.log(this.CQLSINTAXERRORBADFORMATTEDCOMMAND + " "
+					+ this.originalCommand);
 			var error = new Error({
-				message : this.CQLSINTAXERRORBADFORMATTEDCOMMAND + " " + this.originalCommand
+				message: this.CQLSINTAXERRORBADFORMATTEDCOMMAND + " "
+						+ this.originalCommand
 			});
 			throw error;
 		}
@@ -120,25 +125,30 @@ function lexer(configurator) {
 		var indexOpen = str.indexOf("{");
 		var indexClose = str.indexOf("}");
 		if (this.stackPointer < 0) {
-			console.log(this.CQLSINTAXERRORBADFORMATTEDCOMMAND + " " + str + " " + this.originalCommand, this.stackStrings);
+			console.log(this.CQLSINTAXERRORBADFORMATTEDCOMMAND + " " + str
+					+ " " + this.originalCommand, this.stackStrings);
 			var error = new Error({
-				message : this.CQLSINTAXERRORBADFORMATTEDCOMMAND + " " + this.originalCommand
+				message: this.CQLSINTAXERRORBADFORMATTEDCOMMAND + " "
+						+ this.originalCommand
 			});
 			throw error;
 		}
 		if (indexClose == -1 && indexOpen == -1) {// there are no brackets
-			var token = str.trim();
+			var token = str;//.trim();
 			this.pushToken(token, canBeManager);
 		} else if (indexClose < indexOpen || indexOpen == -1) {// token
-			var token = (str.substr(0, indexClose)).trim();
+			var token = (str.substr(0, indexClose));//.trim();
 			this.pushToken(token, canBeManager);
-			// this because the sequence }{ goes directly in the case indexOpen == 0
-			this.stackPointer += (str.substr(indexClose + 1, 1) === "{") ? 0 : -1;
+			// this because the sequence }{ goes directly in the case indexOpen
+			// == 0
+			this.stackPointer += (str.substr(indexClose + 1, 1) === "{")
+					? 0
+					: -1;
 			this._analize(str.substr(indexClose + 1), false);
 		} else if (indexOpen == 0) {
 			this._analize(str.substr(indexOpen + 1), true);// can be a manager
 		} else {
-			var token = (str.substr(0, indexOpen)).trim();
+			var token = (str.substr(0, indexOpen));//.trim();
 			var node = this.stack[this.stackPointer];
 			this.pushToken(token, canBeManager);
 			node.push([]);
@@ -146,7 +156,7 @@ function lexer(configurator) {
 			this.stack[this.stackPointer] = node[node.length - 1];
 			this._analize(str.substr(indexOpen), false);
 		}
-		
+
 	};
 	this.pushToken = function(token, canBeManager) {
 		var node = this.stack[this.stackPointer];
@@ -154,14 +164,14 @@ function lexer(configurator) {
 			var tokenParts = token.split(":");
 			if (tokenParts.length == 2 && canBeManager) {
 				node.push({
-					type : "object",
-					manager : tokenParts[0],
-					value : tokenParts[1]
+					type: "object",
+					manager: tokenParts[0],
+					value: tokenParts[1]
 				});
 			} else {
 				node.push({
-					type : "text",
-					value : token
+					type: "text",
+					value: token
 				});
 			}
 		}
@@ -177,10 +187,10 @@ function variablesTable(configurator) {
 	this.generate = function(form, commandsTable) {
 		this.table[form] = [];
 		var commands = commandsTable.getForm(form);
-		if (! commands) {
+		if (!commands) {
 			return;
 		}
-		for (var field in commands) {
+		for ( var field in commands) {
 			var fieldTree = commandsTable.getTree(form, field);
 			var fieldMeta = commandsTable.getMeta(form, field);
 			if (!fieldTree) {
@@ -195,20 +205,20 @@ function variablesTable(configurator) {
 				this.generateVariables(form, field, tree[i], meta);
 			} else if (tree[i].type == "object") {
 				// can be a lookup the the variable is only the first part
-				// (es: nameLookup.id)
+				// (ex: nameLookup.id)
 				var variables = tree[i].value.split(".");
 				this.table[form].push({
-					form : form,
-					field : field,
-					manager : tree[i].manager,
-					variable : variables[0]
+					form: form,
+					field: field,
+					manager: tree[i].manager,
+					variable: variables[0]
 				});
 			} else {
 				;// nop (is a constant)
 			}
 		}
 		if (meta) {
-			for (var key in meta) {
+			for ( var key in meta) {
 				this.generateVariables(form, field, meta[key].getTree(), null);
 			}
 		}
@@ -237,8 +247,9 @@ function variablesTable(configurator) {
 			for (var i = 0; i < this.table[key].length; i++) {
 				var variable = this.table[key][i];
 				this.configurator.output({
-					type : "debug",
-					msg : variable.form + "|" + variable.field + "|" + variable.variable + "|" + variable.manager
+					type: "debug",
+					msg: variable.form + "|" + variable.field + "|"
+							+ variable.variable + "|" + variable.manager
 				});
 			}
 		}
@@ -255,15 +266,16 @@ function commandsTable(configurator) {
 			this.table[form] = {};
 		}
 		this.table[form][field] = {};
-	},
-	this.push = function(form, field, tree) {
-		this.table[form][field]["tree"] = new treeObject(configurator, tree, this.getMeta(form, field), form);
+	}, this.push = function(form, field, tree) {
+		this.table[form][field]["tree"] = new treeObject(configurator, tree,
+				this.getMeta(form, field), form);
 	};
 	this.pushMeta = function(form, field, nameMeta, tree) {
 		if (!this.table[form][field]["meta"]) {
 			this.table[form][field]["meta"] = {};
 		}
-		this.table[form][field]["meta"][nameMeta] =	new treeObject(configurator, tree, this.getMeta(form, field), form);
+		this.table[form][field]["meta"][nameMeta] = new treeObject(
+				configurator, tree, this.getMeta(form, field), form);
 	};
 	this.getForm = function(form) {
 		if (!this.table[form]) {
@@ -288,7 +300,7 @@ function commandsTable(configurator) {
 	this.resolve = function(form, field, callback, callbackScope) {
 		if (this.getTree(form, field)) {
 			this.getTree(form, field).resolve(function(response) {
-				callback.apply(callbackScope, [response]);				
+				callback.apply(callbackScope, [response]);
 			}, this);
 		} else {
 			callback.apply(callbackScope, [""]);
@@ -300,15 +312,15 @@ function commandsTable(configurator) {
 				var str = form + "|" + field;
 				str += "|" + this.getTree(form, field).write();
 				this.configurator.output({
-					type : "debug",
-					msg : str
+					type: "debug",
+					msg: str
 				});
-				for (var meta in this.getMeta(form, field)) {
+				for ( var meta in this.getMeta(form, field)) {
 					var str = form + " " + field + "-->meta-->" + meta;
 					str += "|" + this.getMeta(form, field)[meta].write();
 					this.configurator.output({
-						type : "debug",
-						msg : str
+						type: "debug",
+						msg: str
 					});
 				}
 			}
@@ -321,7 +333,7 @@ function commandsTable(configurator) {
 function treeObject(configurator, tree, meta, form) {
 	this.configurator = configurator;
 	this.tree = tree;
-	this.meta = meta;//for meta
+	this.meta = meta;// for meta
 	this.form = form;
 	this.getTree = function() {
 		return this.tree;
@@ -334,7 +346,7 @@ function treeObject(configurator, tree, meta, form) {
 		for (var i = 0; i < tree.length; i++) {
 			if (tree[i].type == undefined) { // is an array
 				str += "+" + this.writeTree(tree[i]);
-			} else if (tree[i].type == "object") {	
+			} else if (tree[i].type == "object") {
 				str += "+" + "[" + tree[i].manager + "]" + tree[i].value;
 			} else {
 				str += "+" + tree[i].value;
@@ -352,8 +364,7 @@ function treeObject(configurator, tree, meta, form) {
 			this.resolveTree(temporaryTree, "", function(response) {
 				callback.apply(callbackScope, [response]);
 			}, this);
-		}
-		catch (e) {
+		} catch (e) {
 			callback.apply(callbackScope, [undefined]);
 		}
 	};
@@ -367,58 +378,67 @@ function treeObject(configurator, tree, meta, form) {
 		if (node.type == undefined) { // is an array
 			var temporaryTree = node.slice();
 			this.resolveTree(temporaryTree, "", function(response) {
-				this.resolveTree(tree, returnValue + response, callback, callbackScope);
+				this.resolveTree(tree, returnValue + response, callback,
+						callbackScope);
 			}, this);
 		} else if (node.type == "object") {
 			var strValue = "";
 			var arValues = node.value.split(".");
-			if (this.isInMyMeta(arValues[0])) {//tree[i].value)) {
+			if (this.isInMyMeta(arValues[0])) {// tree[i].value)) {
 				this.resolveMeta(arValues[0], function(response) {
 					if (response == undefined) {
 						response = $.Cmdbuild.global.CQLUNDEFINEDVALUE;
-						this.resolveTree(tree, returnValue + response, callback, callbackScope);
+						this.resolveTree(tree, returnValue + response,
+								callback, callbackScope);
 					}
-					this.evaluate(node.manager, this.form, response, function(evaluated) {
+					this.evaluate(node.manager, this.form, response, function(
+							evaluated) {
+						var keys = node.value.split(".");
 						if (evaluated === undefined) {
 							evaluated = $.Cmdbuild.global.CQLUNDEFINEDVALUE;
-//							throw new Error("");
 						}
-						this.resolveTree(tree, returnValue + evaluated, callback, callbackScope);
+						if (keys.length > 1 && evaluated.length > 0) {
+							evaluated = evaluated[0][keys[1]];
+						}
+						this.resolveTree(tree, returnValue + evaluated,
+								callback, callbackScope);
 					}, this);
 				}, this);
-			}
-			else {
+			} else {
 				strValue = node.value;
-				this.evaluate(node.manager, this.form, strValue, function(evaluated) {
+				this.evaluate(node.manager, this.form, strValue, function(
+						evaluated) {
 					if (evaluated === undefined) {
 						evaluated = $.Cmdbuild.global.CQLUNDEFINEDVALUE;
 					}
-					this.resolveTree(tree, returnValue + evaluated, callback, callbackScope);
+					this.resolveTree(tree, returnValue + evaluated, callback,
+							callbackScope);
 				}, this);
 			}
 		} else {
-			this.resolveTree(tree, returnValue + node.value, callback, callbackScope);
+			this.resolveTree(tree, returnValue + node.value, callback,
+					callbackScope);
 		}
 	};
 	this.isInMyMeta = function(key) {
-		if (! this.meta) {
+		if (!this.meta) {
 			return false;
 		}
 		return (this.meta && this.meta[key]);
 	};
 	this.resolveMeta = function(key, callback, callbackScope) {
-//		var meta = this.commandTable.getMeta(this.form, this.field);
+		// var meta = this.commandTable.getMeta(this.form, this.field);
 		this.meta[key].resolve(function(response) {
 			callback.apply(callbackScope, [response]);
 		}, this);
 	};
 	this.evaluate = function(manager, form, value, callback, callbackScope) {
 		if (this.configurator.manager[manager]) {
-			this.configurator.manager[manager].getValue(form, value, function(response) {
+			this.configurator.manager[manager].getValue(form, value, function(
+					response) {
 				callback.apply(callbackScope, [response]);
 			}, this);
-		}
-		else {
+		} else {
 			output(HOOKMANAGERNOTDEFINED + ": " + manager);
 		}
 	};
@@ -430,18 +450,18 @@ function configurator(output) {
 	var HOOKMANAGERNOTDEFINED = "Non e' stato definito un manager Cql";
 	this.debug = false;
 	this.manager = {
-		xa : {
-			getValue : function(form, name) {
+		xa: {
+			getValue: function(form, name) {
 				output(HOOKMANAGERNOTDEFINED + ": " + "xa");
 			}
 		},
-		client : {
-			getValue : function(form, name) {
+		client: {
+			getValue: function(form, name) {
 				output(HOOKMANAGERNOTDEFINED + ": " + "client");
 			}
 		},
-		server : {
-			getValue : function(form, name) {
+		server: {
+			getValue: function(form, name) {
 				output(HOOKMANAGERNOTDEFINED + ": " + "server");
 			}
 		}

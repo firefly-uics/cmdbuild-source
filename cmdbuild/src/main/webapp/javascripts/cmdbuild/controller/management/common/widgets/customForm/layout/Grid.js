@@ -4,9 +4,14 @@
 		extend: 'CMDBuild.controller.common.AbstractController',
 
 		requires: [
-			'CMDBuild.core.proxy.CMProxyConstants',
+			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.RequestBarrier'
 		],
+
+		/**
+		 * @cfg {CMDBuild.controller.management.common.widgets.customForm.CustomForm}
+		 */
+		parentDelegate: undefined,
 
 		/**
 		 * @cfg {Array}
@@ -79,7 +84,7 @@
 						}
 					}
 
-					if (Ext.isEmpty(Ext.String.trim(String(value))) && attribute[CMDBuild.core.proxy.CMProxyConstants.NOT_NULL])
+					if (Ext.isEmpty(Ext.String.trim(String(value))) && attribute[CMDBuild.core.constants.Proxy.NOT_NULL])
 						metadata.tdCls += ' x-grid-invalid-cell-error';
 
 					return null;
@@ -107,12 +112,12 @@
 						isDisabled: function(grid, rowIndex, colIndex, item, record) {
 							return (
 								this.cmfg('widgetCustomFormConfigurationGet', [
-									CMDBuild.core.proxy.CMProxyConstants.CAPABILITIES,
-									CMDBuild.core.proxy.CMProxyConstants.READ_ONLY
+									CMDBuild.core.constants.Proxy.CAPABILITIES,
+									CMDBuild.core.constants.Proxy.READ_ONLY
 								])
 								|| this.cmfg('widgetCustomFormConfigurationGet', [
-									CMDBuild.core.proxy.CMProxyConstants.CAPABILITIES,
-									CMDBuild.core.proxy.CMProxyConstants.CLONE_DISABLED
+									CMDBuild.core.constants.Proxy.CAPABILITIES,
+									CMDBuild.core.constants.Proxy.CLONE_DISABLED
 								])
 							);
 						},
@@ -124,7 +129,7 @@
 							});
 						}
 					}),
-					Ext.create('CMDBuild.core.buttons.Modify', {
+					Ext.create('CMDBuild.core.buttons.iconized.Modify', {
 						withSpacer: true,
 						tooltip: CMDBuild.Translation.editRow,
 						scope: this,
@@ -132,12 +137,12 @@
 						isDisabled: function(grid, rowIndex, colIndex, item, record) {
 							return (
 								this.cmfg('widgetCustomFormConfigurationGet', [
-									CMDBuild.core.proxy.CMProxyConstants.CAPABILITIES,
-									CMDBuild.core.proxy.CMProxyConstants.READ_ONLY
+									CMDBuild.core.constants.Proxy.CAPABILITIES,
+									CMDBuild.core.constants.Proxy.READ_ONLY
 								])
 								|| this.cmfg('widgetCustomFormConfigurationGet', [
-									CMDBuild.core.proxy.CMProxyConstants.CAPABILITIES,
-									CMDBuild.core.proxy.CMProxyConstants.MODIFY_DISABLED
+									CMDBuild.core.constants.Proxy.CAPABILITIES,
+									CMDBuild.core.constants.Proxy.MODIFY_DISABLED
 								])
 							);
 						},
@@ -146,7 +151,7 @@
 							this.cmfg('onWidgetCustomFormLayoutGridEditRowButtonClick', record);
 						}
 					}),
-					Ext.create('CMDBuild.core.buttons.Delete', {
+					Ext.create('CMDBuild.core.buttons.iconized.Delete', {
 						withSpacer: true,
 						tooltip: CMDBuild.Translation.deleteRow,
 						scope: this,
@@ -154,12 +159,12 @@
 						isDisabled: function(grid, rowIndex, colIndex, item, record) {
 							return (
 								this.cmfg('widgetCustomFormConfigurationGet', [
-									CMDBuild.core.proxy.CMProxyConstants.CAPABILITIES,
-									CMDBuild.core.proxy.CMProxyConstants.READ_ONLY
+									CMDBuild.core.constants.Proxy.CAPABILITIES,
+									CMDBuild.core.constants.Proxy.READ_ONLY
 								])
 								|| this.cmfg('widgetCustomFormConfigurationGet', [
-									CMDBuild.core.proxy.CMProxyConstants.CAPABILITIES,
-									CMDBuild.core.proxy.CMProxyConstants.DELETE_DISABLED
+									CMDBuild.core.constants.Proxy.CAPABILITIES,
+									CMDBuild.core.constants.Proxy.DELETE_DISABLED
 								])
 							);
 						},
@@ -180,11 +185,11 @@
 		buildColumns: function() {
 			var columns = [];
 
-			if (!this.cmfg('widgetCustomFormConfigurationIsAttributeEmpty',  CMDBuild.core.proxy.CMProxyConstants.MODEL)) {
+			if (!this.cmfg('widgetCustomFormConfigurationIsEmpty',  CMDBuild.core.constants.Proxy.MODEL)) {
 				var fieldManager = Ext.create('CMDBuild.core.fieldManager.FieldManager', { parentDelegate: this });
 
-				Ext.Array.forEach(this.cmfg('widgetCustomFormConfigurationGet', CMDBuild.core.proxy.CMProxyConstants.MODEL), function(attribute, i, allAttributes) {
-					if (fieldManager.isAttributeManaged(attribute.get(CMDBuild.core.proxy.CMProxyConstants.TYPE))) {
+				Ext.Array.forEach(this.cmfg('widgetCustomFormConfigurationGet', CMDBuild.core.constants.Proxy.MODEL), function(attribute, i, allAttributes) {
+					if (fieldManager.isAttributeManaged(attribute.get(CMDBuild.core.constants.Proxy.TYPE))) {
 						fieldManager.attributeModelSet(Ext.create('CMDBuild.model.common.attributes.Attribute', attribute.getData()));
 						fieldManager.push(columns, fieldManager.buildColumn(true));
 					} else { // @deprecated - Old field manager
@@ -228,20 +233,20 @@
 							editor.hideLabel = true;
 
 							// Read only attributes header/editor setup
-							header[CMDBuild.core.proxy.CMProxyConstants.DISABLED] = !attribute[CMDBuild.core.proxy.CMProxyConstants.WRITABLE];
-							header[CMDBuild.core.proxy.CMProxyConstants.REQUIRED] = false;
-							editor[CMDBuild.core.proxy.CMProxyConstants.DISABLED] = !attribute[CMDBuild.core.proxy.CMProxyConstants.WRITABLE];
-							editor[CMDBuild.core.proxy.CMProxyConstants.REQUIRED] = false;
+							header[CMDBuild.core.constants.Proxy.DISABLED] = !attribute[CMDBuild.core.constants.Proxy.WRITABLE];
+							header[CMDBuild.core.constants.Proxy.REQUIRED] = false;
+							editor[CMDBuild.core.constants.Proxy.DISABLED] = !attribute[CMDBuild.core.constants.Proxy.WRITABLE];
+							editor[CMDBuild.core.constants.Proxy.REQUIRED] = false;
 
-							if (attribute[CMDBuild.core.proxy.CMProxyConstants.MANDATORY] || attribute['isnotnull']) {
+							if (attribute[CMDBuild.core.constants.Proxy.MANDATORY] || attribute['isnotnull']) {
 								header.header = '* ' + header.header; // TODO: header property is deprecated, should use "text" but FieldManager uses header so ...
 
-								header[CMDBuild.core.proxy.CMProxyConstants.REQUIRED] = true;
-								editor[CMDBuild.core.proxy.CMProxyConstants.REQUIRED] = true;
+								header[CMDBuild.core.constants.Proxy.REQUIRED] = true;
+								editor[CMDBuild.core.constants.Proxy.REQUIRED] = true;
 							}
 
 							// Do not override renderer, add editor on checkbox columns and make it editable
-							if (attribute[CMDBuild.core.proxy.CMProxyConstants.TYPE] != 'BOOLEAN') {
+							if (attribute[CMDBuild.core.constants.Proxy.TYPE] != 'BOOLEAN') {
 								header.editor = editor;
 
 								this.addRendererToHeader(header, attribute);
@@ -268,15 +273,15 @@
 		buildDataStore: function() {
 			var storeFields = [];
 
-			if (!this.cmfg('widgetCustomFormConfigurationIsAttributeEmpty',  CMDBuild.core.proxy.CMProxyConstants.MODEL)) {
+			if (!this.cmfg('widgetCustomFormConfigurationIsEmpty',  CMDBuild.core.constants.Proxy.MODEL)) {
 				var fieldManager = Ext.create('CMDBuild.core.fieldManager.FieldManager', { parentDelegate: this });
 
-				Ext.Array.forEach(this.cmfg('widgetCustomFormConfigurationGet', CMDBuild.core.proxy.CMProxyConstants.MODEL), function(attribute, i, allAttributes) {
-					if (fieldManager.isAttributeManaged(attribute.get(CMDBuild.core.proxy.CMProxyConstants.TYPE))) {
+				Ext.Array.forEach(this.cmfg('widgetCustomFormConfigurationGet', CMDBuild.core.constants.Proxy.MODEL), function(attribute, i, allAttributes) {
+					if (fieldManager.isAttributeManaged(attribute.get(CMDBuild.core.constants.Proxy.TYPE))) {
 						fieldManager.attributeModelSet(Ext.create('CMDBuild.model.common.attributes.Attribute', attribute.getData()));
 						fieldManager.push(storeFields, fieldManager.buildStoreField());
 					} else {
-						storeFields.push({ name: attribute.get(CMDBuild.core.proxy.CMProxyConstants.NAME), type: 'string' });
+						storeFields.push({ name: attribute.get(CMDBuild.core.constants.Proxy.NAME), type: 'string' });
 					}
 				}, this);
 			}
@@ -312,14 +317,14 @@
 
 			// If widget is flagged as required must return at least 1 row
 			returnValue = !(
-				this.cmfg('widgetCustomFormConfigurationGet', CMDBuild.core.proxy.CMProxyConstants.REQUIRED)
+				this.cmfg('widgetCustomFormConfigurationGet', CMDBuild.core.constants.Proxy.REQUIRED)
 				&& this.view.getStore().getCount() == 0
 			);
 
 			// Build required attributes names array
-			Ext.Array.forEach(this.cmfg('widgetCustomFormConfigurationGet', CMDBuild.core.proxy.CMProxyConstants.MODEL), function(attributeModel, i, allAttributeModels) {
-				if (attributeModel.get(CMDBuild.core.proxy.CMProxyConstants.MANDATORY))
-					requiredAttributes.push(attributeModel.get(CMDBuild.core.proxy.CMProxyConstants.NAME));
+			Ext.Array.forEach(this.cmfg('widgetCustomFormConfigurationGet', CMDBuild.core.constants.Proxy.MODEL), function(attributeModel, i, allAttributeModels) {
+				if (attributeModel.get(CMDBuild.core.constants.Proxy.MANDATORY))
+					requiredAttributes.push(attributeModel.get(CMDBuild.core.constants.Proxy.NAME));
 			}, this);
 
 			// Check grid store records empty required fields
@@ -384,8 +389,8 @@
 
 		onWidgetCustomFormLayoutGridResetButtonClick: function() {
 			this.cmfg('widgetCustomFormConfigurationSet', {
-				configurationObject: this.cmfg('widgetCustomFormControllerPropertyGet', 'widgetConfiguration')[CMDBuild.core.proxy.CMProxyConstants.DATA],
-				propertyName: CMDBuild.core.proxy.CMProxyConstants.DATA
+				propertyName: CMDBuild.core.constants.Proxy.DATA,
+				value: this.cmfg('widgetCustomFormControllerPropertyGet', 'widgetConfiguration')[CMDBuild.core.constants.Proxy.DATA]
 			});
 
 			this.setData(this.cmfg('widgetCustomFormInstancesDataStorageGet'));
@@ -414,7 +419,7 @@
 			if (!Ext.isEmpty(data))
 				this.view.getStore().loadData(data);
 
-			this.isValid();
+			this.isValid(false);
 		},
 
 		/**

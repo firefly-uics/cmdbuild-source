@@ -6,6 +6,30 @@
 		htmlText: function(param) {
 			$('#' + param.id).cleditor();	
 		},
+		spinner: function(param) {
+			$('#' + param.id).spinner({
+				  spin: function( event, ui ) {
+				        if ( ui.value > 10 ) {
+				            $( this ).spinner( "value", 10 );
+				            return false;
+				          } else if ( ui.value < 1 ) {
+				            $( this ).spinner( "value", 1 );
+				            return false;
+				          }
+					  $.Cmdbuild.eventsManager.onEvent(param.spin);
+				  },
+				  change: function( event, ui ) {
+				        if ( ui.value > 10 ) {
+				            $( this ).spinner( "value", 10 );
+				            return false;
+				          } else if ( ui.value < 1 ) {
+				            $( this ).spinner( "value", 1 );
+				            return false;
+				          }
+					  $.Cmdbuild.eventsManager.onEvent(param.spin);
+				  }
+			});	
+		},
 		lookup: function(param) {
 			try {
 				if(!param.readOnly) {

@@ -1,10 +1,11 @@
 (function($) {
-	
 	var API_URL_KEY = "apiUrl";
+	var ACCESS_TOKEN = "access_token";
 	var APP_ROOT_URL_KEY = "appRootUrl";
 	var GUI_JAVA_URL_KEY = "guiJavaUrlKey";
 	var APP_CONFIG_URL_KEY = "appConfigUrl";
 	var NAME_GUI_FRAMEWORK = "cmdbuild-gui-framework-";
+	var DEFAULT_ACCESS_TOKEN = "RestSessionToken";
 
 	var defaultparams = {
 		debug: false,
@@ -14,6 +15,7 @@
 		customjs: [],
 		stylesheets: [],
 		authentication: null,
+		access_token: DEFAULT_ACCESS_TOKEN,
 		httpCallParameters: {}
 	};
 
@@ -42,6 +44,12 @@
 		// application url
 		if (!params[APP_ROOT_URL_KEY]) {
 			throw new Error(APP_ROOT_URL_KEY + " is required");
+		}
+		if (params[ACCESS_TOKEN]) {
+			$.Cmdbuild.access_token = params[ACCESS_TOKEN];
+		}
+		else {
+			$.Cmdbuild.access_token = DEFAULT_ACCESS_TOKEN;
 		}
 		var rootGui = params[APP_ROOT_URL_KEY];
 		var nameGuiFramework = NAME_GUI_FRAMEWORK + params.httpCallParameters.coreVersion;

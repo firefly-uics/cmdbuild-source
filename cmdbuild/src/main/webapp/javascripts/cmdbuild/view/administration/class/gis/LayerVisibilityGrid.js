@@ -11,11 +11,11 @@
 			var me = this;
 
 			this.mon(this, "activate", function() {
-				CMDBuild.LoadMask.get().show();
+				CMDBuild.core.LoadMask.show();
 				me.store.load({
 					callback: function(records, operation, success) {
 						selectVisibleLayers.call(me, me.currentClassId);
-						CMDBuild.LoadMask.get().hide();
+						CMDBuild.core.LoadMask.hide();
 					}
 				});
 			}, null);
@@ -33,7 +33,7 @@
 			var record = this.store.getAt(recordIndex);
 			var et = _CMCache.getEntryTypeById(this.currentClassId);
 
-			CMDBuild.LoadMask.get().show();
+			CMDBuild.core.LoadMask.show();
 			CMDBuild.ServiceProxy.saveLayerVisibility({
 				params: {
 					tableName: et.get("name"),
@@ -48,7 +48,7 @@
 					record.set(column.dataIndex, !checked);
 				},
 				callback: function() {
-					CMDBuild.LoadMask.get().hide();
+					CMDBuild.core.LoadMask.hide();
 					record.commit();
 				}
 			});

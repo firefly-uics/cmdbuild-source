@@ -5,8 +5,8 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Map;
 
-import org.apache.commons.lang3.StringUtils;
 import org.cmdbuild.logic.translation.TranslationObject;
+import org.cmdbuild.logic.translation.converter.Converter;
 import org.cmdbuild.logic.translation.converter.InstanceConverter;
 import org.cmdbuild.logic.translation.object.InstanceName;
 import org.junit.Test;
@@ -22,12 +22,12 @@ public class InstanceNameObjectCreationTest {
 	@Test
 	public void forInstanceNameReturnsValidObject() {
 		// given
-		final InstanceConverter converter = InstanceConverter //
+		final Converter converter = InstanceConverter //
 				.of(InstanceConverter.nameField())//
 				.withTranslations(map);
 
 		// when
-		final TranslationObject translationObject = converter.create(StringUtils.EMPTY);
+		final TranslationObject translationObject = converter.create();
 
 		// then
 		assertTrue(converter.isValid());

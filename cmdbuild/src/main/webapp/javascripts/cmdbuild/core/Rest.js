@@ -11,15 +11,15 @@
 		],
 
 		constructor: function() {
-			if (Ext.isEmpty(Ext.util.Cookies.get(CMDBuild.core.proxy.CMProxyConstants.REST_SESSION_TOKEN))) {
+			if (Ext.isEmpty(Ext.util.Cookies.get(CMDBuild.core.constants.Proxy.REST_SESSION_TOKEN))) {
 				this.fakeCallToGetAuthorizationToken();
 			} else {
 				// Verify if session with cookie token exists
 				var params = {};
-				params[CMDBuild.core.proxy.CMProxyConstants.USERNAME] = CMDBuild.Runtime.Username;
+				params[CMDBuild.core.constants.Proxy.USERNAME] = CMDBuild.configuration.runtime.get(CMDBuild.core.constants.Proxy.USERNAME);
 
 				var urlParams = {};
-				urlParams[CMDBuild.core.proxy.CMProxyConstants.TOKEN] = Ext.util.Cookies.get(CMDBuild.core.proxy.CMProxyConstants.REST_SESSION_TOKEN);
+				urlParams[CMDBuild.core.constants.Proxy.TOKEN] = Ext.util.Cookies.get(CMDBuild.core.constants.Proxy.REST_SESSION_TOKEN);
 
 				CMDBuild.core.proxy.session.Rest.read({
 					params: params,
@@ -39,13 +39,13 @@
 		 */
 		fakeCallToGetAuthorizationToken: function(urlParams, authorizationKey) {
 			var params = {};
-			params[CMDBuild.core.proxy.CMProxyConstants.USERNAME] = CMDBuild.Runtime.Username;
+			params[CMDBuild.core.constants.Proxy.USERNAME] = CMDBuild.configuration.runtime.get(CMDBuild.core.constants.Proxy.USERNAME);
 
 			CMDBuild.core.proxy.Utils.generateId({
 				scope: this,
 				success: function(response, options, decodedResponse) {
 					var urlParams = {};
-					urlParams[CMDBuild.core.proxy.CMProxyConstants.TOKEN] = response.getResponseHeader(CMDBuild.core.proxy.CMProxyConstants.AUTHORIZATION_HEADER_KEY);
+					urlParams[CMDBuild.core.constants.Proxy.TOKEN] = response.getResponseHeader(CMDBuild.core.constants.Proxy.AUTHORIZATION_HEADER_KEY);
 
 					CMDBuild.core.proxy.session.Rest.login({
 						params: params,
@@ -53,7 +53,7 @@
 						loadMask: false,
 						scope: this,
 						success: function(response, options, decodedResponse) {
-							Ext.util.Cookies.set(CMDBuild.core.proxy.CMProxyConstants.REST_SESSION_TOKEN, urlParams[CMDBuild.core.proxy.CMProxyConstants.TOKEN]);
+							Ext.util.Cookies.set(CMDBuild.core.constants.Proxy.REST_SESSION_TOKEN, urlParams[CMDBuild.core.constants.Proxy.TOKEN]);
 						}
 					});
 				}

@@ -1,38 +1,39 @@
 (function() {
 
 	Ext.define('CMDBuild.view.administration.accordion.Report', {
-		extend: 'CMDBuild.view.common.CMBaseAccordion',
-
-		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
-
-		cmName: 'report',
-		title: CMDBuild.Translation.administration.modreport.title,
+		extend: 'CMDBuild.view.common.AbstractAccordion',
 
 		/**
-		 * @param {CMDBuild.model.Report} report
+		 * @cfg {CMDBuild.controller.common.AbstractAccordionController}
+		 */
+		delegate: undefined,
+
+		/**
+		 * @cfg {String}
+		 */
+		cmName: undefined,
+
+		title: CMDBuild.Translation.report,
+
+		/**
+		 * @param {Number} nodeIdToSelect
 		 *
-		 * @return {Object} nodeConf
+		 * @override
 		 */
-		buildNodeConf: function(report) {
-			var nodeConf = report.getData();
-			nodeConf['cmName'] = this.cmName;
-			nodeConf['leaf'] = true;
+		updateStore: function(nodeIdToSelect) {
+			this.getStore().getRootNode().removeAll();
+			this.getStore().getRootNode().appendChild([
+				{
+					cmName: this.cmName,
+					text: CMDBuild.Translation.reportMenuJasper,
+					description: CMDBuild.Translation.reportMenuJasper,
+					id: this.delegate.cmfg('accordionBuildId', { components: 'jasper' }),
+					sectionHierarchy: ['jasper'],
+					leaf: true
+				}
+			]);
 
-			return nodeConf;
-		},
-
-		/**
-		 * @return {Array} nodes
-		 */
-		buildTreeStructure: function() {
-			var nodes = [];
-			var reports = _CMCache.getReports();
-
-			for (var key in reports)
-				nodes.push(this.buildNodeConf(reports[key]));
-
-			return nodes;
-
+			this.callParent(arguments);
 		}
 	});
 

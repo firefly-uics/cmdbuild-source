@@ -1,6 +1,6 @@
 {
 	"description": "Tiếng Việt",
-	"release": "2.3-dev",
+	"release": "2.4-dev",
 	"administration": {
 		"description": "Mô-đun Quản lý",
 		"modClass": {
@@ -84,10 +84,8 @@
 				"md_label": "Nhãn Tổng thể/Chi tiết",
 				"modify_domain": "Sửa đổi tên miền",
 				"name": "Tên",
-				"title_add": "Thêm tên miền",
-				"title_modify": "Sửa đổi tên miền \"{0}\""
+				"title_add": "Thêm tên miền"
 			},
-			"domains_title": "Quản lý tên miền",
 			"errors": {
 				"table": {
 					"cast": "Lỗi khi sửa đổi đặc tính \"superclass\", Lớp đang có chứa dữ liệu hay có các Lớp con",
@@ -137,61 +135,7 @@
 				"properties": "Đặc tính"
 			},
 			"title": "Quản lý Lớp",
-			"tree_title": "Danh sách Lớp",
-			"widgets": {
-				".OpenReport": {
-					"fields": {
-						"force": "Ðịnh dạng bắt buộc",
-						"presets": "Báo cáo thuộc tính",
-						"report": "Báo cáo"
-					},
-					"presetGrid": {
-						"attribute": "Thuộc tính",
-						"value": "Giá trị"
-					},
-					"title": "Tạo báo cáo"
-				},
-				".Calendar": {
-					"fields": {
-						"target": "Lớp mục tiêu",
-						"start": "Ngày bắt đầu",
-						"end": "Ngày kết thúc",
-						"title": "Tên sự kiện",
-						"filter": "Bộ lọc CQL",
-						"defaultDate": "Ngày mặc định bắt đầu hoạt động"
-					},
-					"title": "Lịch"
-				},
-				".Ping": {
-					"fields": {
-						"address": "Địa chỉ Ping",
-						"count": "Số lần Ping",
-						"templates": "Mẫu"
-					},
-					"title": "Ping"
-				},
-				".Workflow": {
-					"title": "<em>Start workflow</em>"
-				},
-				".NavigationTree": {
-					"title": "<em>Navigation tree</em>"
-				},
-				".CreateModifyCard": {
-					"fields": {
-						"target": "Lớp mục tiêu",
-						"cql": "Bộ chọn thẻ CQL",
-						"readOnly": "Chỉ đọc"
-					},
-					"title": "Tạo mới hoặc sửa đổi thẻ"
-				},
-				"commonFields": {
-					"active": "Đang sử dụng",
-					"alwaysenabled": "Luôn được kích hoạt",
-					"buttonLabel": "Nhãn ",
-					"type": "Loại"
-				},
-				"title": "Tiện ích"
-			}
+			"tree_title": "Danh sách Lớp"
 		},
 		"modDashboard": {
 			"charts": {
@@ -282,48 +226,9 @@
 			},
 			"title": "Bảng điều khiển"
 		},
-		"modLookup": {
-			"add_lookuptype": "Thêm loại tra cứu",
-			"lookupForm": {
-				"active": "Đang sử dụng",
-				"code": "Mã",
-				"description": "Mô tả",
-				"disable_lookup": "Vô hiệu hóa tra cứu",
-				"enable_lookup": "Cho phép tra cứu",
-				"isdefault": "Mặc định",
-				"notes": "Ghi chú",
-				"parentdescription": "Mô tả trước",
-				"update_lookup": "Sửa đổi tra cứu"
-			},
-			"lookupGrid": {
-				"active": "Đang sử dụng",
-				"add_lookup": "Thêm tra cứu ",
-				"code": "Mã",
-				"description": "Mô tả",
-				"isdefault": "Mặc định",
-				"notes": "Ghi chú",
-				"parentdescription": "Mô tả trước đó"
-			},
-			"lookupType": "Loại tra cứu",
-			"lookupTypeForm": {
-				"active": "Đang sử dụng",
-				"delete_lookuptype": "Xóa loại tra cứu",
-				"description": "Mô tả",
-				"modify_lookuptype": "Sửa đổi loại tra cứu",
-				"parent": "Trước đó",
-				"title": "Quản lý tra cứu"
-			},
-			"lookupTypes": "Các loại tra cứu",
-			"tabs": {
-				"lookuplist": "Danh sách tra cứu",
-				"properties": "Đặc tính"
-			},
-			"title": "Quản lí tra cứu"
-		},
 		"modWorkflow": {
 			"add_process": "Thêm quy trình",
 			"attributes_title": "Quản lí thuộc tính",
-			"domains_title": "Quản lí tên miền",
 			"errors": {
 				"table": {
 					"cast": "Không thể thay đổi thuộc tính của \"superclass\", lớp có chứa dữ liệu hoặc lớp con ",
@@ -392,7 +297,7 @@
 				"title": "Quản lý biểu tượng"
 			},
 			"layermanager": {
-				"Tiêu đề": "Thứ tự Lớp "
+				"title": "Thứ tự Lớp "
 			},
 			"navigationTree": {
 				"title": "Định vị GIS"
@@ -400,74 +305,24 @@
 			"title": "GIS"
 		},
 		"modconnectors": {
-			"Tiêu đề": "Kết nối"
-		},
-		"modmenu": {
-			"add_menu": "Thêm Menu",
-			"available_elements": "Các thành tố có sẵn",
-			"availabletree": {
-				"class": "Các lớp",
-				"dashboard": "Các bảng điểu khiển",
-				"processclass": "Các hoạt động",
-				"report": "Các bảng báo cáo",
-				"view": "Lượt xem"
-			},
-			"custom_menu": "Menu tùy chỉnh",
-			"custom_menus": "Các menu tùy chỉnh",
-			"delete_menu": "Xóa menu",
-			"menu_root": "Menu",
-			"modify_menu": "Sửa đổi menu",
-			"new_folder": "Thư mục mới",
-			"title": "Quản lý menu"
-		},
-		"modreport": {
-			"add": "Thêm báo cáo",
-			"importJRFormStep1": {
-				"description": "Mô tả Báo cáo",
-				"enabled_groups": "Những nhóm được cho phép",
-				"fieldset": "Báo cáo nhập Jasper",
-				"master_report_jrxml": "Báo cáo tổng thể (.jrxml)",
-				"menuTitle": "Báo cáo kiểu Jasper ",
-				"name": "Tên báo cáo"
-			},
-			"importJRFormStep2": {
-				"duplicate_images": "Cảnh báo: báo cáo hình ảnh được tìm thấy trùng tên với một tập tin khác- không thể tiến hành.",
-				"fieldset_generic": "Nhập báo cáo Jasper",
-				"fieldset_images": "Hình ảnh cần thiết",
-				"fieldset_subreports": "Báo cáo phụ cần thiết",
-				"menuTitle": "Báo cáo Jasper",
-				"nothing_to_import": "Không có hình ảnh hay báo cáo phụ được tìm thấy. Vui lòng xác nhận để tiến hành nhâp dữ liệu.",
-				"success": {
-					"description": {
-						"add": "Báo cáo hoàn tất",
-						"modify": "Báo cáo được sửa đổi"
-					},
-					"title": "Thành công"
-				}
-			},
-			"importOpenofficeTemplateForm": {
-				"Tiêu đề của lệnh đơn": "Openoffice report"
-			},
-			"modify": "Sửa đổi báo cáo",
-			"remove": "Xóa báo cáo",
-			"title": "Báo cáo"
+			"title": "Kết nối"
 		},
 		"tasks": {
 			"add": "<em>Add task</em>",
 			"all": "<em>All</em>",
 			"clone": "<em>Clone task</em>",
 			"cronForm" : {
-				"dayOfMounth": "<em>Day of month</em>",
+				"dayOfMonth": "<em>Day of month</em>",
 				"advanced": "<em>Advanced</em>",
 				"basic": "<em>Basic</em>",
 				"dayOfWeek": "<em>Day of week</em>",
 				"everyDay": "<em>Every day</em>",
 				"everyHour": "<em>Every hour</em>",
-				"everyMounth": "<em>Every month</em>",
+				"everyMonth": "<em>Every month</em>",
 				"everyYear": "<em>Every year</em>",
 				"hour": "<em>Hour</em>",
 				"minute": "<em>Minute</em>",
-				"mounth": "<em>Month</em>"
+				"month": "<em>Month</em>"
 			},
 			"errorMessages": {
 				"taskConnector": {
@@ -576,6 +431,7 @@
 			"add": "Thêm",
 			"apply": "Áp dụng",
 			"as": "như là",
+			"changeUser": "Thay đổi người dùng",
 			"check": "<em>Check</em>",
 			"clone": "Sao chép",
 			"close": "Đóng",
@@ -584,6 +440,7 @@
 			"importLabel": "Nhập",
 			"load": "Tải",
 			"modify": "Sửa đổi",
+			"move": "<em>Move</em>",
 			"next": "<em>Next</em>",
 			"previous": "<em>Previous</em>",
 			"print": "In",
@@ -644,8 +501,7 @@
 		},
 		"unknown_error": "Lỗi không rõ",
 		"user": "Người dùng",
-		"wait_msg": "Đang gửi dữ liệu...",
-		"wait_title": "Xin vui lòng chờt..."
+		"wait_msg": "Đang gửi dữ liệu..."
 	},
 	"configure": {
 		"failure": {
@@ -764,7 +620,7 @@
 			"DOMAIN_NOTFOUND": "Tên miền {0} không tìm thấ",
 			"ILLEGAL_CRON_EXPRESSION": "Biểu thức cron không hợp lệ",
 			"LOCKED_CARD": "Người dùng {0} chỉnh sửa thẻ {1} giây",
-			"LOCKED_MISSING": "<em>Should be locked before</em>",
+			"LOCKED_MISSING": "<em>Expired time for editing</em>",
 			"LOOKUP_NOTFOUND": "Tra cứu không tìm thấy loại {0}",
 			"LOOKUP_TYPE_NOTFOUND": "Loại tra cứu {0} không tìm thấy",
 			"MENU_NOTFOUND": "Không tìm thấy lệnh đơn",
@@ -807,7 +663,7 @@
 			"ORM_ILLEGAL_NAME_ERROR": "Tên không hợp lệ: {0}",
 			"ORM_LOOKUPTYPE_ALREADY_EXISTS": "Thay đổi một kểu tra cứu khác với cùng một mô tả",
 			"ORM_MALFORMED_PATCH": "Không thể đọc được Patch",
-			"ORM_MISSING_MADATORY_VALUES": "<em>Missing mandatory values: {0}</em>", 
+			"ORM_MISSING_MADATORY_VALUES": "<em>Missing mandatory values: {0}</em>",
 			"ORM_NOT_NULL_VIOLATION": "Not null constraint violated",
 			"ORM_POSTGIS_NOT_FOUND": "PostGIS không được cài được",
 			"ORM_READ_ONLY_RELATION": "Quan hệ chỉ được đọc",
@@ -878,6 +734,8 @@
 			"WIDGET_SERVICE_MALFORMED_REQUEST": "Kiểm tra namespace, tên phương thức và các thông số của dịch vụ web là chính xác"
 		},
 		"reference_invalid": "Giá trị không phù hợp với bộ lọc",
+		"reportsImportError": "<em>Error while importing report</em>",
+		"reportsAnalizeError": "<em>Error while analizing report</em>",
 		"requiredFieldMessage": "<em>This field is required</em>",
 		"routesInvalidCardIdentifier": "<em>Routes error: invalid card identifier</em>",
 		"routesInvalidClassIdentifier": "<em>Routes error: invalid class identifier</em>",
@@ -906,20 +764,6 @@
 	},
 	"info": {
 		"card_not_found": "Thẻ không phù hợp với bộ lọc hiện tại"
-	},
-	"login": {
-		"change_user": "Thay đổi người dùng",
-		"failed": "Đăng nhập thất bại",
-		"language": "Ngôn ngữ",
-		"login": "Đăng nhập",
-		"multi_group": "Chọn một nhóm",
-		"password": "Mật khẩu",
-		"relogin_message": "Chứng thực đã hết hạn. Xin vui lòng chèn mật khẩu lần nữa.",
-		"relogin_title": "Phiên làm việc đã hết hạn",
-		"title": "Vui lòng đăng nhập",
-		"username": "Tên người dùng",
-		"waitMsg": "Đang gửi dữ liệu...",
-		"waitTitle": "Đang kết nối"
 	},
 	"management": {
 		"description": "Danh muc quản lí dữ liệu",
@@ -959,8 +803,8 @@
 			},
 			"notinrel": "Không có",
 			"notnull": "Co phai no vo hieu luc",
-			"nullo": "No vo hieu luc",
 			"newfilter": "Tìm bộ lọc mới",
+			"nullo": "No vo hieu luc",
 			"relations": "Các mối quan hệ",
 			"remove": "Hủy bỏ",
 			"save_filter": "Lưu bộ lọc",
@@ -971,11 +815,6 @@
 			"show_all": "Hiện thị tất cả",
 			"title": "Chọn một thuộc tính",
 			"window_title": "Tìm bộ lọc"
-		},
-		"graph": {
-			"action": "Đồ thị mối quan hệ",
-			"icon_tooltip": "Mở rộng đồ thị mối quan hệ",
-			"title": "Đồ thị mối quan hệ"
 		},
 		"modcard": {
 			"add_attachment": "Thêm tập tin đính kèm",
@@ -1077,22 +916,6 @@
 			"showgraph": "Hiện thị đồ thị",
 			"shownotes": "Hiện thị các ghi chú"
 		},
-		"modmenu": {
-			"menu": "Hướng"
-		},
-		"modreport": {
-			"add_report": "Thêm báo cáo",
-			"delete_report": "Xóa báo cáo",
-			"modify_report": "Chỉnh sửa báo cáo",
-			"reportForm": {
-				"description": "Mô tả",
-				"name": "Tên",
-				"report": "Báo cáo"
-			},
-			"report_parameters": "Các bao cáo thông số",
-			"title": "Danh sách - ",
-			"treetitle": "Báo cáo"
-		},
 		"modutilities": {
 			"bulkupdate": {
 				"title": "Nhiều cập nhật",
@@ -1144,9 +967,6 @@
 				},
 				"calendar": {
 					"wrong_config": "Lịch không được cấu hình tốt"
-				},
-				"createreport": {
-					"format_label": "Mẫu"
 				},
 				"linkcards": {
 					"required": "Xin vui lòng chọn một vài thẻ- "
@@ -1201,10 +1021,13 @@
 	},
 	"warnings": {
 		"emailTemplateRelatedAttributeEdited": "<em>Attribute related with email templates changed, some e-mail could be regenerated.</em>",
+		"itIsNotAllowedFilterWithCalculatedParams": " Không được phép sử dụng  bộ lọc voi các thông số được tính toán ",
 		"link_cards_changed_values": "Sự lựa chọn của\"{0}\" đã được cập nhật",
 		"only_filtered": "Những thay đổi chỉ sẽ được áp dụng cho các thẻ đáp ứng được bộ lọc hiện tại",
 		"popup_block": "Chúng tôi phát hiện bạn đang sử dụng phần mềm chan cac cua so tu dong xuat hien, vui lòng tắt phan mem do để chạy hoạt động",
+		"reportsDuplicateImageFilename": "Cảnh báo: báo cáo hình ảnh được tìm thấy trùng tên với một tập tin khác- không thể tiến hành.",
 		"saveMenuBeforeAccess": "<em>The menu has to been saved before access at the translations of this element.</em>",
+		"toSetAFilterYouMustBeforeSelectAClass": "<em>To set a filter you must before select a class</em>",
 		"warning_message": "Cảnh báo"
 	},
 	"account": "<em>Account</em>",
@@ -1213,20 +1036,30 @@
 	"activityName": "Tên hoạt động",
 	"activityPerformer": "Hoạt động biểu diễn",
 	"add": "Thêm",
+	"add_attachment_from_dms": "<em>Add attachments from DMS</em>",
 	"addAccount": "<em>Add account</em>",
 	"addAttachmentFromDms": "<em>Add attachments from DMS</em>",
 	"addCard": "Thêm thẻ",
+	"addDomain": "Thêm tên miền",
 	"addFilter": "Thêm bộ lọc",
 	"addGroup": "Thêm nhóm",
+	"additionalProperties": "<em>Additional properties</em>",
+	"addLookup": "Thêm tra cứu",
+	"addLookupType": "Thêm loại tra cứu",
 	"addProject": "<em>Add Project</em>",
 	"addRelations": "Thêm các mối quan hệ",
+	"addReport": "Thêm báo cáo",
 	"address": "<em>Address</em>",
+	"addressToPing": "Địa chỉ Ping",
 	"addRow": "<em>Add row</em>",
 	"addTemplate": "<em>Add Template</em>",
 	"addUser": "Thêm người dùng",
 	"addView": "Thêm lượt xem",
+	"addWidget": "<em>Add widget</em>",
 	"administrator": "Người quản trị",
 	"alfresco": "Alfresco",
+	"alwaysEnabled": "Luôn được kích hoạt",
+	"any": "Tùy chọn",
 	"application": "Ứng dụng",
 	"applyDefaultSelection": "<em>Apply default selection</em>",
 	"archivingDate": "Ngày lưu trữ",
@@ -1235,6 +1068,7 @@
 	"attention": "Chú ý",
 	"attribute": "<em>Attribute</em>",
 	"attributes": "Các thuộc tính",
+	"availableElements": "Các thành tố có sẵn",
 	"availableFilters": "Các bộ lọc sử dụng được",
 	"availablePatchesList": "Danh sách các bản chỉnh sữa lỗi có sẵn",
 	"availableUsers": "Các người dùng đang có",
@@ -1244,20 +1078,30 @@
 	"bim": "<em>BIM</em>",
 	"body": "<em>Body</em>",
 	"bottom": "Bên dưới",
+	"buildFilter": "<em>Build filter</em>",
+	"buttonLabel": "Nhãn ",
 	"buttonsToDisable": "<em>Buttons to disable</em>",
+	"byCql": "<em>by Cql</em>",
+	"byName": "<em>by name</em>",
 	"cacheManagement": "Quản lý bộ nhớ cache",
+	"calendar": "Lịch",
 	"camera": "<em>Camera</em>",
 	"card": "Thẻ",
+	"cardCqlSelector": "Bộ chọn thẻ CQL",
+	"cardinality": "Số lượng",
 	"cardPanelHeight": "Độ cao bảng điều khiển theo phần trăm",
 	"cards": "Các thẻ",
 	"category": "<em>Category</em>",
 	"cc": "<em>Cc</em>",
 	"changePassword": "Đổi mật khẩu",
 	"checkFrequency": "<em>Check frequency (minutes)</em>",
+	"chooseAGroup": "Chọn một nhóm",
+	"chooseAnAttribute": "Chọn một thuộc tính",
 	"chooseAttachmentFromDb": "<em>Choose attachments from Database</em>",
 	"classAttribute": "<em>Class attribute</em>",
 	"classes": "Các lớp",
 	"classLabel": "<em>Class</em>",
+	"classList": "Danh sách Lớp",
 	"className": "<em>Class name</em>",
 	"clean_word_pasted_text": "<em>Clean the text pasted from Word or other Rich Text applications</em>",
 	"clearCache": "Xóa bộ nhớ cache",
@@ -1266,6 +1110,9 @@
 	"cloneCard": "Bản sao thẻ",
 	"cloneRow": "<em>Clone row</em>",
 	"cmdbuildCategory": "Chỉ mục",
+	"code": "Mã",
+	"collapse": "<em>Collapse</em>",
+	"collapseAll": "<em>Collapse all<em>",
 	"columnsPrivileges": "Các đặc quyền của các cột",
 	"composeEmail": "Soạn email",
 	"composeFromTemplate": "<em>Compose from template</em>",
@@ -1278,14 +1125,19 @@
 	"contains": "<em>Contains</em>",
 	"containsorequal": "<em>Contains or equal</em>",
 	"controls": "<em>Controls</em>",
-	"cql_filter": "<em>CQL filter</em>",
+	"cqlFilter": "<em>CQL filter</em>",
+	"createModifyCard": "Tạo mới hoặc sửa đổi thẻ",
+	"createReport": "Tạo báo cáo",
 	"credentials": "Thông tin mật",
 	"csv": "CSV",
 	"csvFile": "Tập tin CSV",
+	"customMenu": "Menu tùy chỉnh",
 	"customPages": "<em>Custom pages</em>",
 	"dashboard": "Bảng điều khiển",
+	"dataSource": "Dữ liệu gốc",
 	"defaultAccount": "<em>Default account</em>",
 	"defaultClass": "Lớp mặc định",
+	"defaultDateToOpen": "Ngày mặc định bắt đầu hoạt động",
 	"defaultFilters": "<em>Default filters</em>",
 	"defaultForGroups": "<em>Default for groups</em>",
 	"defaultGroup": "Các nhóm mặc định",
@@ -1294,6 +1146,7 @@
 	"defaultLevel": "Cấp độ mặc định",
 	"delay": "<em>Delay</em>",
 	"deleteCard": "Xóa thẻ",
+	"deleteDomain": "Xóa tên miền",
 	"deleteLabel": "<em>Delete</em>",
 	"deleteRow": "<em>Delete row</em>",
 	"description_": "Mô tả",
@@ -1301,16 +1154,20 @@
 	"destination": "Ðiểm đến",
 	"detail": "<em>Detail</em>",
 	"details": "Chi tiết",
+	"directDescription": "Mô tả trực tiếp",
+	"direction": "loi chi dan",
 	"disable": "<em>Disable</em>",
 	"disabledFeatures": "Vô hiệu hóa các tính năng",
 	"disabledTabsInClassesModule": "Các bảng bị vô hiệu hóa trong mô-đun Lớp ",
 	"disabledTabsInProcessesModule": " Các bảng bị vô hiệu hóa trong mô-đun Quy trình",
 	"disableGridFilter": "<em>Disable grid filter</em>",
 	"disableGroup": "Vô hiệu hóa Nhóm",
+	"disableLookup": "Vô hiệu hóa tra cứu",
 	"disableUser": "Vô hiệu hóa người dùng",
 	"display_less_attributes": "<em>Display less attributes</em>",
 	"display_more_attributes": "<em>Display more attributes</em>",
 	"domain": "Tên miền",
+	"domains": "Tên miền",
 	"download": "<em>Download</em>",
 	"download_ifc_file": "<em>Download Ifc file</em>",
 	"edit": "<em>Edit</em>",
@@ -1324,9 +1181,11 @@
 	"enable": "<em>Enable</em>",
 	"enabled": " Kích hoạt",
 	"enabledClasses": "<em>Enabled classes</em>",
+	"enabledGroups": "Những nhóm được cho phép",
 	"enabledLanguages": "<em>Enabled languages</em>",
 	"enableGridFilter": "<em>Enable grid filter</em>",
 	"enableGroup": "Kích hoạt Nhóm",
+	"enableLookup": "Cho phép tra cứu",
 	"enableMoveRejectedNotMatching": "<em>Enable move rejected not matching</em>",
 	"enableSsl": "<em>Enable SSL</em>",
 	"enableUser": "Kích hoạt người dùng",
@@ -1334,15 +1193,20 @@
 	"engineName": "Tên phương tiện",
 	"error": "Lỗi",
 	"error_bimserver_connection": "<em>I'm not able to connect to Bimserver</em>",
+	"eventTitle": "Tên sự kiện",
+	"expand": "<em>Expand</em>",
+	"expandAll": "<em>Expand all</em>",
 	"export": "<em>Export</em>",
 	"expose": "<em>Expose</em>",
+	"externalServices": "Các dịch vụ ngoài",
 	"file": "Tập tin",
 	"fileName": "<em>File name</em>",
 	"fileServer": "File server",
 	"fileServerPath": "Đường dẫn file server",
 	"filter": "Bộ lọc",
-	"filters_for_groups": "Các bộ lọc của các nhóm",
+	"filtersForGroups": "Các bộ lọc của các nhóm",
 	"filterView": "Bộ lọc từ",
+	"forceFormat": "Ðịnh dạng bắt buộc",
 	"format": "Mẫu",
 	"format_csv": "<em>CSV</em>",
 	"format_odt": "<em>OpenOffice Odt</em>",
@@ -1350,11 +1214,15 @@
 	"format_rtf": "<em>Rich Text Format</em>",
 	"frequencyCheck": "<em>Frequency check (min)</em>",
 	"from": "<em>From<em>",
+	"fromSelection": "Lựa chọn từ",
 	"front": "<em>Front</em>",
 	"fullScreenNavigation": "Chuyển hướng xem toàn màn hình",
+	"functionLabel": "<em>Function</em>",
 	"general": "Tổng quát",
 	"generalOptions": "<em>General options</em>",
+	"geoserverLayers": "Các lớp Geoserver",
 	"gis": "GIS",
+	"gisNavigation": "Định vị GIS",
 	"global": "<em>Global</em>",
 	"gridRefresh": "<em>Grid refresh</em>",
 	"groups": "Các nhóm",
@@ -1367,6 +1235,7 @@
 	"imapServer": "<em>IMAP server</em>",
 	"import": "<em>Import</em>",
 	"importFromCSV": "<em>Import from CSV</em>",
+	"importJasperReport": "Nhập báo cáo Jasper",
 	"includeRelations": "<em>Include relations</em>",
 	"includeSystemActivities": "<em>Include system activities</em>",
 	"includeUsersFilters": "<em>Include users filters</em>",
@@ -1376,53 +1245,76 @@
 	"initialLongitude": "Kinh độ ban đầu",
 	"initialZoomLevel": "Mức độ phóng ban đầu",
 	"instanceName": "Tên thực thể",
+	"inverseDescription": "Mô tả ngược",
 	"ipType": "<em>IP type</em>",
 	"ipv4": "ipv4",
 	"ipv6": "ipv6",
-	"itIsNotAllowedFilterWithCalculatedParams": " Không được phép sử dụng  bộ lọc voi các thông số được tính toán ",
-	"itIsNotAllowedFilterWithRuntimeParams": " không được phép sử dụng bộ lọc với các thông số được chọn lựa boi Người dùng ",
 	"keepSync": "<em>Keep sync</em>",
 	"key": "Từ khóa",
 	"language": "<em>Language</em>",
 	"last_checkin": "<em>Last checkin</em>",
 	"layers": "<em>Layers</em>",
+	"layersOrder": "Thứ tự Lớp ",
 	"limitedAdministrator": "Người quản trị cấp dưới",
 	"list": "Danh sách",
 	"lockCardsAndProcessesInEdit": "<em>Lock cards and processes in edit</em>",
 	"lockTimeout": "Thời gian chờ khóat (vài giây)",
 	"loggedGroup": "Đăng nhập nhóm",
 	"loggedUser": "Đăng nhập người dùng",
+	"login": "Đăng nhập",
+	"lookupList": "Danh sách tra cứu",
+	"lookupTypes": "Loại tra cứu",
 	"main": "<em>Main</em>",
+	"manageIcons": "Quản lý biểu tượng",
 	"manualRegeneration": "<em>Manual Regeneration</em>",
+	"masterDetail": "Tổng thể/Chi tiết",
+	"masterDetailLabel": "Nhãn Tổng thể/Chi tiết",
+	"masterReportJrxml": "Báo cáo tổng thể (.jrxml)",
 	"maximumLevel": "Cấp độ cao nhất",
+	"menu": "Menu",
 	"mode": "<em>Mode</em>",
 	"modifyAccount": "<em>Modify account</em>",
 	"modifyCard": "Sửa đổi thẻ",
+	"modifyDomain": "Sửa đổi tên miền",
 	"modifyFilter": "Sửa đổi bộ lọc",
 	"modifyGroup": "Sửa đổi Nhóm",
+	"modifyLookup": "Sửa đổi tra cứu",
+	"modifyLookupType": "Sửa đổi loại tra cứu",
 	"modifyProject": "<em>Modify Project</em>",
+	"modifyReport": "Sửa đổi báo cáo",
 	"modifyTemplate": "<em>Modify Template</em>",
 	"modifyUser": "Sửa đổi người dùng ",
 	"modifyView": "Sửa đổi lượt xem",
+	"modifyWidget": "<em>Modify widget</em>",
 	"multiGroup": "<em>Multi group</em>",
 	"name": "Tên",
+	"navigation": "Hướng",
+	"navigationTrees": "<em>Navigation trees</em>",
+	"newFolder": "Thư mục mới",
 	"no_bim_project_for_card": "<em>There is no BIM project for this card</em>",
 	"noAvailableData": "<em>No available data</em>",
 	"none": "Không có",
+	"noOne": "Không có",
 	"normal": "Thông thường",
-	"not_set": "Không cài đặt",
 	"notes": "Các ghi chú",
+	"notSet": "Không cài đặt",
+	"numberOfPings": "Số lần Ping",
 	"odt": "ODT",
 	"onDay": "<em>On</em>",
 	"open_3d_viewer": "<em>Open 3D viewer</em>",
+	"openRelationGraph": "Mở rộng đồ thị mối quan hệ",
 	"operationsDelay": "Trì hoãn tác vụ",
 	"origin": "Ðiểm bắt đầu",
 	"otherOptions": "Những chọn lựa khác",
 	"outgoing": "<em>Outgoing</em>",
 	"pan": "<em>Pan</em>",
+	"parent": "Trước đó",
+	"parentDescription": "Mô tả trước",
 	"password": "<em>Password</em>",
 	"pdf": "PDF",
 	"permissions": "Quyền truy cập",
+	"ping": "Ping",
+	"pleaseWait": "Xin vui lòng chờt ...",
 	"popupPercentageHeight": "Chiều cao bản hiển thị theo phần trăm",
 	"popupPercentageWidth": "Bề rộng bản hiển thị theo phần trăm",
 	"popupWindows": "Cửa sổ mới",
@@ -1447,19 +1339,24 @@
 	"regenerateEmail": "Tái tạo e-mail",
 	"rejectedFolder": "<em>Rejected folder</em>",
 	"relation": "<em>Relation</em>",
-	"relationGraph": "Đồ thị liên quan",
+	"relationGraph": "Đồ thị mối quan hệ",
 	"relationLimit": "Giới hạn các quan hệ",
 	"relations": "Các mối quan hệ",
 	"remove": "<em>Remove</em>",
 	"remove_formatting": "<em>Remove formatting</em>",
 	"removeAccount": "<em>Remove account</em>",
 	"removeFilter": "Hủy bỏ bộ lọc",
+	"removeMenu": "Xóa menu",
 	"removeProject": "<em>Remove Project</em>",
+	"removeReport": "Xóa báo cáo",
 	"removeTemplate": "<em>Remove Template</em>",
 	"removeView": "Hủy bỏ lượt xem",
+	"removeWidget": "<em>Remove widget</em>",
 	"replace": "<em>Replace</em>",
 	"reply": "<em>Reply</em>",
-	"report": "<em>Report</em>",
+	"report": "Báo cáo",
+	"reportAttributes": "Báo cáo thuộc tính",
+	"reportMenuJasper": "<em>Jasper-reports report</em>",
 	"reportParameters": "<em>Report parameters</em>",
 	"repository": "Kho lưu trữ",
 	"reset": "<em>Reset</em>",
@@ -1475,6 +1372,7 @@
 	"selectAClass": "<em>Select a Class</em>",
 	"selected_object": "<em>Selected Object</em>",
 	"selectedUsers": "Những người dùng được chọn",
+	"selection": "<em>Selection</em>",
 	"send": "<em>Send</em>",
 	"sentFolder": "<em>Sent folder</em>",
 	"separator": "Phân cách",
@@ -1482,6 +1380,8 @@
 	"serverUrl": "Máy chủ URL",
 	"service": "<em>Service</em>",
 	"serviceSynchronization": "Dịch vụ đồng bộ hóa",
+	"sessionExpired": "Phiên làm việc đã hết hạn",
+	"sessionExpiredMessage": "Chứng thực đã hết hạn. Xin vui lòng chèn mật khẩu lần nữa.",
 	"sessionTimeout": "Hết hạn thời gian (giây)",
 	"set": "Cài đặt",
 	"setAsDefault": "<em>Set as default</em>",
@@ -1498,10 +1398,13 @@
 	"simpleHistoryForProcesses": "Lịch sử quá trình đơn giản",
 	"smtpPort": "<em>SMTP port</em>",
 	"smtpServer": "<em>SMTP server</em>",
+	"sql": "SQL",
 	"sqlView": "Từ SQL",
 	"standard": "Tiêu chuẩn",
 	"start": "<em>Start</em>",
-	"starting_class": "Bắt đầu từ trang",
+	"startDate": "Ngày bắt đầu",
+	"startingPageAt": "Bắt đầu từ trang",
+	"startWorkflow": "<em>Start workflow</em>",
 	"status": "<em>Status</em>",
 	"stop": "<em>Stop</em>",
 	"subject": "<em>Subject</em>",
@@ -1523,7 +1426,6 @@
 	"tree_navigation_attributes": "<em>Navigation tree attributes</em>",
 	"tree_remove": "<em>Remove tree</em>",
 	"tree_root_cql": "<em>Root CQL filter</em>",
-	"trees_navigation": "<em>Navigation trees</em>",
 	"type": "Kiểu",
 	"uiConfiguration": "Cấu hình UI",
 	"uiConfigurationForGroups": "<em>UI configuration for group</em>",
@@ -1548,14 +1450,12 @@
 	"views": "Lượt xem",
 	"warning": "Cảnh báo",
 	"webServicePath": "Đường dẫn web service",
+	"widget": "Tiện ích",
 	"workflow": "<em>Workflow</em>",
-	"workflow_attributes": "<em>Workflow attributes</em>",
-	"workflow_by_cql": "<em>by Cql</em>",
-	"workflow_by_name": "<em>by name</em>",
-	"workflow_cql_filter": "<em>Cql filter</em>",
-	"workflow_query_tipology": "<em>Selection</em>",
+	"workflowAttributes": "<em>Workflow attributes</em>",
 	"workflowEngine": "Quy trình làm việc",
 	"write": "Viết",
 	"you_have_not_set_a_filter": "Bạn không cần cài đặt thẻ",
+	"zip": "ZIP",
 	"zoom": "<em>Zoom</em>"
 }

@@ -31,6 +31,10 @@
 		};
 		this.updateData = function(param, callBack) {
 			var data = {};
+			if (! this.data["_id"]) {
+				this.newData(param, callBack);
+				return;
+			}
 			for (var i = 0; i < this.attributes.length; i++) {
 				data[this.attributes[i]._id] = param.data[this.attributes[i]._id];
 			}

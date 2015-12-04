@@ -24,7 +24,7 @@
 			this.authenticationToken = token;
 		},
 		getAuthenticationToken : function() {
-			var token = $.Cmdbuild.utilities.readCookie("RestSessionToken");
+			var token = $.Cmdbuild.utilities.readCookie($.Cmdbuild.access_token);
 			if (token) {
 				this.authenticationToken = token;
 			}

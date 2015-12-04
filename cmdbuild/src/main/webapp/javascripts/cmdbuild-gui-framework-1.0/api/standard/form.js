@@ -98,7 +98,9 @@
 			for ( var key in param.data) {
 				var val = $.Cmdbuild.utilities.getHtmlFieldValue("#" + param.form + "_" + key);
 				var interactivity = $.Cmdbuild.utilities.getHtmlFieldInteractivity("#" + param.form + "_" + key);
-				if (val !== null && ! (interactivity == $.Cmdbuild.global.READ_WRITE_REQUIRED && $.trim(val) == "")) {
+				if (val) {
+					param.data[key] = val;
+				} else if (interactivity != $.Cmdbuild.global.READ_WRITE_REQUIRED && val === "") {
 					param.data[key] = val;
 				} else if (interactivity == $.Cmdbuild.global.READ_WRITE_REQUIRED) {
 					var attributes = param.formObject.param.backend.getAttributes();
@@ -645,6 +647,10 @@
 			return htmlStr;
 		};
 		this.noGroupDefinition = function(attributes) {
+			if (! attributes) {
+				console.log("Error no attributes on form :" + this.param.form);
+				return;
+			}
 			var thereAreGroups = false;
 			for (var i = 0; i < attributes.length; i++) {
 				if (attributes[i].group) {
