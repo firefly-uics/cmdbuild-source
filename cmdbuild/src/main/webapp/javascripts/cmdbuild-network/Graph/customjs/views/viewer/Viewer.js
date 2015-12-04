@@ -1,4 +1,8 @@
 (function($) {
+	var OPTIONS_LABEL_ON_SELECTED = "Selected";
+	var OPTIONS_LABEL_ON_ALL = "All";
+	var MAX_DISTANCE_NODES = 10000;
+	var MIN_STEP_ZOOMALL = 10;
 	var STEPOPENCOMPOUND = 20;
 	if (!$.Cmdbuild.g3d) {
 		$.Cmdbuild.g3d = {};
@@ -462,7 +466,7 @@
 			for ( var key in selected) {
 				this.showSelected(key);
 			}
-			if ($.Cmdbuild.customvariables.options["labels"] == "Selected") {
+			if ($.Cmdbuild.customvariables.options["labels"] === OPTIONS_LABEL_ON_SELECTED) {
 				this.refreshLabels();
 			}
 		};
@@ -506,7 +510,7 @@
 			var miny = Number.MAX_VALUE;
 			var minz = Number.MAX_VALUE;
 			for (var i = 0; i < objects.length; i++) {
-				var p = objects[i].position.clone();
+				var p = objects[i].position;
 				minx = Math.min(minx, p.x);
 				miny = Math.min(miny, p.y);
 				minz = Math.min(minz, p.z);
@@ -560,10 +564,38 @@
 			this.scaleInView(vertices);
 			camera.updateProjectionMatrix();
 		};
+		this.projectVector = function(vector, projectionMatrix, matrixWorld) {
+			var projScreenMatrix = new THREE.Matrix4();
+			var matrixWorldInverse = new THREE.Matrix4();
+			matrixWorldInverse.getInverse(matrixWorld);
+
+			projScreenMatrix.multiplyMatrices(projectionMatrix,
+					matrixWorldInverse);
+			// projScreenMatrix.multiplyVector3( vector );
+			vector = vector.applyProjection(projScreenMatrix);
+
+			return vector;
+
+		};
 		this.vector2ScreenPosition = function(vector, camera, widthHalf,
 				heightHalf) {
+			var v = new THREE.Vector3();
+			v.copy(vector);
 			vector.project(camera);
-
+			var projectionMatrix = new THREE.Matrix4();
+			var matrixWorld = new THREE.Matrix4();
+			projectionMatrix.copy(camera.projectionMatrix);
+			matrixWorld.copy(camera.matrixWorld);
+			for (var i = 0; i < 10; i++) {
+				var vApp = new THREE.Vector3();
+				vApp.copy(v);
+				matrixWorld.makeTranslation(0, 0, i * 10);
+				this.projectVector(vApp, projectionMatrix, matrixWorld);
+				console.log(vector.x + " - " + vector.y + " - " + vector.z
+						+ " -- " + vApp.x + " - " + vApp.y + " - " + vApp.z,
+						projectionMatrix, matrixWorld);
+			}
+			camera.matrixWorld.copy(matrixWorld);
 			vector.x = (vector.x * widthHalf) + widthHalf;
 			vector.y = -(vector.y * heightHalf) + heightHalf;
 			vector.z = -(vector.z * heightHalf) + heightHalf;
@@ -589,7 +621,8 @@
 					var node = nodes[i];
 					var label = $.Cmdbuild.g3d.Model
 							.getGraphData(node, "label");
-					if (showLabels == "Selected" && ! this.selected.isSelect(node.id())) {
+					if (showLabels == "Selected"
+							&& !this.selected.isSelect(node.id())) {
 						continue;
 					}
 					labels.push({
@@ -608,6 +641,11 @@
 			}
 			labelsInterval = setInterval(
 					function() {
+						var showLabels = $.Cmdbuild.customvariables.options["labels"];
+						if (!showLabels) {
+							clearInterval(labelsInterval);
+							return;
+						}
 						for (var i = 0; i < labels.length; i++) {
 							var p = labels[i].object.position.clone();
 							p.project(camera);
@@ -617,7 +655,6 @@
 									&& (realMouse.x >= x - 40 && realMouse.x < x + 250)) {
 								y = realMouse.y - 60;
 							}
-							// y = this.searchFirstFreePlace(labels, i);
 							if (y < 0 || x < 0 || x > wCanvas
 									|| y > hCanvas - 40) {
 								$("#label" + labels[i].id).css({
@@ -636,56 +673,60 @@
 							labels[i].x = x;
 							labels[i].y = y;
 						}
-					}, 10);
+					}, 500);
 		};
-		this.searchFirstFreePlace = function(labels, i, x, y) {
-			for (var i = 0; i < labels.length; i++) {
-
+		this.pointOnScreen = function(vector, w, h, projectionMatrix,
+				matrixWorld, bFirst) {
+			var v = new THREE.Vector3();
+			v.copy(vector);
+			this.projectVector(v, projectionMatrix, matrixWorld);
+			v.x = (v.x * w / 2) + w / 2;
+			v.y = -(v.y * h / 2) + h / 2;
+			if (v.x < 0 || v.x > w || v.y < 0 || v.y > h) {
+				return false;
 			}
+			return true;
 		};
-		this.onVideo = function(box, w, h) {
-			var minDistance = -Number.MAX_VALUE;
+		this.onVideo = function(box, w, h, projectionMatrix, matrixWorld) {
 			for (var i = 0; i < box.vertices.length; i++) {
 				var vertice = box.vertices[i];
 				var vector = new THREE.Vector3(vertice.x, vertice.y, vertice.z);
-				vertice = this.vector2ScreenPosition(vector, camera, w / 2,
-						h / 2);
-				var x = vertice.x;
-				var y = vertice.y;
-				minDistance = Math.max(-x, minDistance);
-				minDistance = Math.max(x - w, minDistance);
-				minDistance = Math.max(-y, minDistance);
-				minDistance = Math.max(y - h, minDistance);
+				var bOnVideo = this.pointOnScreen(vector, w, h,
+						projectionMatrix, matrixWorld);
+				if (!bOnVideo) {
+					return false;
+				}
 			}
-			return minDistance;
+			return true;
 		};
-		this.zoomIn = function(box, w, h, zoom) {
-			var distance = this.onVideo(box, w, h) - w/4;
-			if (distance > 0) {
-				var me = this;
+		this.stepZoom = function(box, w, h) {
+			var NORECURSE = 100;
+			var me = this;
+			function stepIn() {
 				setTimeout(function() {
-					camera.translateZ(zoom);
-					me.zoomIn(box, w, h, zoom);
-				}, 10);
-			} else if (zoom > 10) {
-				this.zoomOut(box, w, h, 10);
+					if (me.onVideo(box, w, h, camera.projectionMatrix,
+							camera.matrixWorld)
+							&& NORECURSE-- > 0) {
+						controls.setY(+1);
+						stepIn();
+					}
+				}, 50);
 			}
-		};
-		this.zoomOut = function(box, w, h, zoom) {
-			var distance = this.onVideo(box, w, h) - w/4;;
-			if (! (distance > 0)) {
-				var me = this;
+			function stepOut() {
 				setTimeout(function() {
-					camera.translateZ(-zoom);
-					me.zoomOut(box, w, h, zoom);
-				}, 10);
+					if (!me.onVideo(box, w, h, camera.projectionMatrix,
+							camera.matrixWorld)
+							&& NORECURSE-- > 0) {
+						controls.setY(-1);
+						stepOut();
+					}
+				}, 100);
 			}
-			else if (zoom > 10) {
-				this.zoomIn(box, w, h, 10);
-			}
-		};
+			stepIn();
+			stepOut();
+		}
 		this.scaleInView = function(box) {
-			var vertices2D = [];
+			NORECURSE = 100;
 			var x = box.x + box.w / 2;
 			var y = box.y + box.h / 2;
 			var z = box.z + box.d / 2;
@@ -698,15 +739,10 @@
 				z: z
 			};
 			controls.enabled = true;
+			var index = 10;
 			$.Cmdbuild.customvariables.camera.zoomOnPosition(position,
 					function() {
-						var isOnVideo = this.onVideo(box, w, h) > 0;
-						if (isOnVideo) {
-							this.zoomIn(box, w, h, 100);
-
-						} else {
-							this.zoomOut(box, w, h, 100);
-						}
+						this.stepZoom(box, w, h);
 					}, this);
 		};
 		this.refreshOptions = function() {
