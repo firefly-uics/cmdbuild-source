@@ -61,6 +61,11 @@
 						<command>navigateOnNode</command>
 					</onClick>
 				</span>
+				<span class="subGraph toolbarButton" tooltip="Select the sub graph that contains the selected elements">
+					<onClick>
+						<command>connect</command>
+					</onClick>
+				</span>
 			</div>
 			<div id="commandPanelContainer">
 				<onInit>
@@ -97,26 +102,6 @@
 				</counter>
 			</div>
 			<div id="algorithmsPanelContainer">
-				<button id="aStar" text="aStar">
-					<onClick>
-						<command>aStar</command>
-					</onClick>
-				</button>
-				<button id="Kruskal" text="Kruskal">
-					<onClick>
-						<command>kruskal</command>
-					</onClick>
-				</button>
-				<button id="breadthFirstSearch" text="breadthFirstSearch">
-					<onClick>
-						<command>breadthFirstSearch</command>
-					</onClick>
-				</button>
-				<button id="dijkstra" text="dijkstra">
-					<onClick>
-						<command>dijkstra</command>
-					</onClick>
-				</button>
 			</div>
 		</div>
 		<form title="Command panel" id="commandPanel" include="commandPanel.xml" class="cmdbuildTabbedForm"/>
