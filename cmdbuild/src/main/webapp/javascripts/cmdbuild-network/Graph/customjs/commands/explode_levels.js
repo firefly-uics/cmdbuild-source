@@ -31,42 +31,58 @@
 				callback.apply(callbackScope, []);
 				return;
 			}
-			if (justExploded[id]) {
+			if (justExploded[id] && justExploded[id] >= levels) {
 				callback.apply(callbackScope, []);
 				return;
 			}
 			else {
-				justExploded[id] = true;
+				justExploded[id] = levels;
 			}
 			var parentNode = this.model.getNode(id);
+			var explodedChildren = $.Cmdbuild.g3d.Model.getGraphData(parentNode, "exploded_children");
 			var oldChildren = $.Cmdbuild.g3d.Model.getGraphData(parentNode, "children");
-			backend.getANodesBunch(id, this.domainList, function(elements) {
-				var newElements = [];
-				this.model.pushElements(elements);
-				for (var i = 0; i < elements.nodes.length; i++) {
-					var childId = elements.nodes[i].data.id;
-					newElements.push(childId);
-				}
-				if (oldChildren) {
-					newElements = newElements.concat(oldChildren);
-				}
-				$.Cmdbuild.g3d.Model.setGraphData(parentNode, "children", newElements);
-				if (! batch) {
-					this.model.changed();	
-				}
-				this.newElements = this.newElements.concat(newElements);
-				if (levels > 0) {
-					var children = this.newElements.slice();
-					this.explodeChildren(children, levels - 1, function() {
-						callback.apply(callbackScope, []);
-					}, this);
-				} else {
-					callback.apply(callbackScope, []);
-					
-				}
-			}, this);
-			
+			/////-----qui va fatta!!!!!
+			if (explodedChildren) {
+				var emptyBunch = { nodes: [], edges: []};
+				this.explodeMyChildren(parentNode, emptyBunch, oldChildren, batch, levels, callback, callbackScope);
+			} else {
+				$.Cmdbuild.g3d.Model.setGraphData(parentNode, "exploded_children", true);
+				backend.getANodesBunch(id, this.domainList, function(elements) {
+					this.explodeMyChildren(parentNode, elements, oldChildren, batch, levels, callback, callbackScope);
+				}, this);
+			}
 		};
+//		---------------------------------------------		
+		this.explodeMyChildren = function(parentNode, elements, oldChildren, batch, levels, callback, callbackScope) {
+			if ($.Cmdbuild.customvariables.commandsManager.stopped) {
+				callback.apply(callbackScope, []);
+				return;
+			}
+			var newElements = [];
+			this.model.pushElements(elements);
+			for (var i = 0; i < elements.nodes.length; i++) {
+				var childId = elements.nodes[i].data.id;
+				newElements.push(childId);
+			}
+			if (oldChildren) {
+				newElements = newElements.concat(oldChildren);
+			}
+			$.Cmdbuild.g3d.Model.setGraphData(parentNode, "children", newElements);
+			if (! batch) {
+				this.model.changed();	
+			}
+			this.newElements = this.newElements.concat(newElements);
+			if (levels > 0) {
+				var children = this.newElements.slice();
+				this.explodeChildren(children, levels - 1, function() {
+					callback.apply(callbackScope, []);
+				}, this);
+			} else {
+				callback.apply(callbackScope, []);
+				
+			}
+		}
+//		---------------------------------------------		
 		this.explodeChildren = function(children, levels, callback, callbackScope) {
 			if (children.length == 0 || $.Cmdbuild.customvariables.commandsManager.stopped) {
 				
@@ -76,7 +92,7 @@
 			var child = children[0];
 			children.splice(0, 1);
 			this.explodeNode(child, levels, function() {
-				this.explodeChildren(children, levels, callback, callbackScope);				
+				this.explodeChildren(children, levels - 1, callback, callbackScope);				
 			}, this);
 		};
 		this.undo = function() {
