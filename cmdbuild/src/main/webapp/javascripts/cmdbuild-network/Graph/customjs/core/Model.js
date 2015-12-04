@@ -5,7 +5,9 @@
 	var Model = function() {
 		this.observers = [];
 		this.erase = function() {
-			cy.remove("*");		
+			cy.remove("*");	
+			cy.destroy();
+			
 		};
 		this.erase();
 		this.doLayout = function(options) {
@@ -212,17 +214,9 @@
 		this.collection = function() {
 			return cy.collection();
 		};
-		this.kruskal = function(params) {
-			return cy.elements().kruskal(params);
-		};
-		this.aStar = function(params) {
-			return cy.elements().aStar(params);
-		};
-		this.dijkstra = function(params) {
-			return cy.elements().dijkstra(params);
-		};
-		this.depthFirstSearch = function(params) {
-			return cy.elements().breadthFirstSearch(params);
+		this.bellmanFord = function(id) {
+			return cy.elements().bellmanFord({ root: "#" + id });
+			//return nodes.kruskal();
 		};
 	};
 	$.Cmdbuild.g3d.Model = Model;

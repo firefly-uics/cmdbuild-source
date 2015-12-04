@@ -97,18 +97,8 @@
 					$.Cmdbuild.customvariables.model,
 					$.Cmdbuild.customvariables.selected);
 		},
-		kruskal: function(param) {
-			new $.Cmdbuild.g3d.algorithms.kruskal(
-					$.Cmdbuild.customvariables.model,
-					$.Cmdbuild.customvariables.selected);
-		},
-		breadthFirstSearch: function(param) {
-			new $.Cmdbuild.g3d.algorithms.breadthFirstSearch(
-					$.Cmdbuild.customvariables.model,
-					$.Cmdbuild.customvariables.selected);
-		},
-		aStar: function(param) {
-			new $.Cmdbuild.g3d.algorithms.aStar(
+		connect: function(param) {
+			new $.Cmdbuild.g3d.algorithms.connect(
 					$.Cmdbuild.customvariables.model,
 					$.Cmdbuild.customvariables.selected);
 		},
