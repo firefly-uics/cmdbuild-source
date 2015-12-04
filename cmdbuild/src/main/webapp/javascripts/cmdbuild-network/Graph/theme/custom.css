@@ -131,6 +131,9 @@ ui-selectmenu-button{
 .navigateOnNode {
 	background:transparent url("../images/eye_of_gnome.png") right 50% no-repeat;
 }
+.subGraph {
+	background:transparent url("../images/subgraph.png") right 50% no-repeat;
+}
 .commandPanelWindow {
 	height: 500px;
 	overflow: auto;
