@@ -3,6 +3,7 @@
 	Ext.define('CMDBuild.core.proxy.report.Report', {
 
 		requires: [
+			'CMDBuild.core.configurations.Timeout',
 			'CMDBuild.core.proxy.CMProxyConstants',
 			'CMDBuild.core.proxy.CMProxyUrlIndex',
 			'CMDBuild.model.report.Grid'
@@ -18,6 +19,7 @@
 				url: CMDBuild.core.proxy.CMProxyUrlIndex.reports.createReportFactory,
 				params: parameters.params,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
+				timeout: CMDBuild.core.configurations.Timeout.getReport(), // Get report timeout from configuration
 				scope: parameters.scope || this,
 				failure: parameters.failure || Ext.emptyFn,
 				success: parameters.success || Ext.emptyFn,
@@ -78,6 +80,7 @@
 				url: CMDBuild.core.proxy.CMProxyUrlIndex.reports.updateReportFactoryParams,
 				params: parameters.params,
 				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
+				timeout: CMDBuild.core.configurations.Timeout.getReport(), // Get report timeout from configuration
 				scope: parameters.scope || this,
 				failure: parameters.failure || Ext.emptyFn,
 				success: parameters.success || Ext.emptyFn,
