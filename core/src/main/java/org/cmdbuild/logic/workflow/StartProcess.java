@@ -2,11 +2,11 @@ package org.cmdbuild.logic.workflow;
 
 import static com.google.common.collect.Maps.newHashMap;
 import static com.google.common.collect.Maps.transformValues;
+import static java.util.Collections.emptyMap;
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.cmdbuild.common.template.TemplateResolvers.identity;
 
-import java.util.Collections;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -19,7 +19,6 @@ import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
 import com.google.common.base.Function;
-import com.google.common.collect.Maps;
 
 public class StartProcess implements Action {
 
@@ -27,21 +26,29 @@ public class StartProcess implements Action {
 
 	public static interface Hook {
 
-		void started(UserProcessInstance userProcessInstance);
+		void created(UserProcessInstance userProcessInstance);
+
+		void advanced(UserProcessInstance userProcessInstance);
 
 	}
 
 	private static Hook NULL_HOOK = new Hook() {
 
 		@Override
-		public void started(final UserProcessInstance userProcessInstance) {
+		public void created(final UserProcessInstance userProcessInstance) {
 			// nothing to do
 		}
+
+		@Override
+		public void advanced(final UserProcessInstance userProcessInstance) {
+			// nothing to do
+		}
+
 	};
 
 	public static class Builder implements org.apache.commons.lang3.builder.Builder<StartProcess> {
 
-		private static final Map<String, Object> EMPTY_ATTRIBUTES = Collections.emptyMap();
+		private static final Map<String, Object> EMPTY_ATTRIBUTES = emptyMap();
 
 		private WorkflowLogic workflowLogic;
 		private Hook hook;
@@ -52,7 +59,7 @@ public class StartProcess implements Action {
 
 		private Builder() {
 			// use factory method
-			attributes = Maps.newHashMap();
+			attributes = newHashMap();
 		}
 
 		@Override
@@ -110,7 +117,8 @@ public class StartProcess implements Action {
 
 	}
 
-	private static final Map<String, Object> NO_WIDGETS = Collections.emptyMap();
+	private static final Map<String, Object> NO_VALUES = emptyMap();
+	private static final Map<String, Object> NO_WIDGETS = emptyMap();
 
 	public static Builder newInstance() {
 		return new Builder();
@@ -135,12 +143,22 @@ public class StartProcess implements Action {
 	@Override
 	public void execute() {
 		try {
-			final UserProcessInstance userProcessInstance = workflowLogic.startProcess( //
+			final UserProcessInstance created = workflowLogic.startProcess( //
 					className, //
 					newHashMap(transformValues(attributes, APPLY_TEMPLATE_RESOLVER)), //
 					NO_WIDGETS, //
-					advance);
-			hook.started(userProcessInstance);
+					false);
+			hook.created(created);
+			if (advance) {
+				final UserProcessInstance advanced = workflowLogic.updateProcess( //
+						className, //
+						created.getCardId(), //
+						created.getActivities().get(0).getId(), //
+						NO_VALUES, //
+						NO_WIDGETS, //
+						true);
+				hook.advanced(advanced);
+			}
 		} catch (final CMWorkflowException e) {
 			logger.error(marker, "error starting process", e);
 			throw new RuntimeException(e);
