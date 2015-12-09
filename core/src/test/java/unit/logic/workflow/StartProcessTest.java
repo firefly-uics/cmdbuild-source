@@ -1,16 +1,19 @@
 package unit.logic.workflow;
 
+import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasEntry;
-import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyBoolean;
+import static org.mockito.Matchers.anyLong;
+import static org.mockito.Matchers.anyMap;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 import java.util.HashMap;
@@ -22,6 +25,7 @@ import org.cmdbuild.logic.workflow.StartProcess;
 import org.cmdbuild.logic.workflow.StartProcess.Builder;
 import org.cmdbuild.logic.workflow.StartProcess.Hook;
 import org.cmdbuild.logic.workflow.WorkflowLogic;
+import org.cmdbuild.workflow.user.UserActivityInstance;
 import org.cmdbuild.workflow.user.UserProcessInstance;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -90,6 +94,17 @@ public class StartProcessTest {
 	public void processStartedWithoutAttributes() throws Exception {
 		// given
 		final WorkflowLogic workflowLogic = mock(WorkflowLogic.class);
+		final UserProcessInstance created = mock(UserProcessInstance.class);
+		doReturn(42L) //
+				.when(created).getCardId();
+		doReturn(asList(userActivityInstance("first"))) //
+				.when(created).getActivities();
+		doReturn(created) //
+				.when(workflowLogic).startProcess(anyString(), anyMap(), anyMap(), anyBoolean());
+		final UserProcessInstance advanced = mock(UserProcessInstance.class);
+		doReturn(advanced) //
+				.when(workflowLogic).updateProcess(anyString(), anyLong(), anyString(), anyMap(), anyMap(),
+						anyBoolean());
 
 		// when
 		StartProcess.newInstance() //
@@ -100,19 +115,32 @@ public class StartProcessTest {
 
 		// verify
 		verify(workflowLogic).startProcess(eq("foo"), attributesCaptor.capture(), widgetSubmissionCaptor.capture(),
-				eq(true));
+				eq(false));
+		verify(workflowLogic).updateProcess(eq("foo"), eq(42L), eq("first"), attributesCaptor.capture(),
+				widgetSubmissionCaptor.capture(), eq(true));
 
 		final Map<String, Object> attributes = attributesCaptor.getValue();
-		assertThat(attributes.isEmpty(), is(true));
+		assertThat(attributes.isEmpty(), equalTo(true));
 
 		final Map<String, Object> widgetSubmission = widgetSubmissionCaptor.getValue();
-		assertThat(widgetSubmission.isEmpty(), is(true));
+		assertThat(widgetSubmission.isEmpty(), equalTo(true));
 	}
 
 	@Test
 	public void processStartedWithAttributes() throws Exception {
 		// given
 		final WorkflowLogic workflowLogic = mock(WorkflowLogic.class);
+		final UserProcessInstance created = mock(UserProcessInstance.class);
+		doReturn(42L) //
+				.when(created).getCardId();
+		doReturn(asList(userActivityInstance("first"))) //
+				.when(created).getActivities();
+		doReturn(created) //
+				.when(workflowLogic).startProcess(anyString(), anyMap(), anyMap(), anyBoolean());
+		final UserProcessInstance advanced = mock(UserProcessInstance.class);
+		doReturn(advanced) //
+				.when(workflowLogic).updateProcess(anyString(), anyLong(), anyString(), anyMap(), anyMap(),
+						anyBoolean());
 
 		// when
 		StartProcess.newInstance() //
@@ -131,23 +159,36 @@ public class StartProcessTest {
 
 		// verify
 		verify(workflowLogic).startProcess(eq("foo"), attributesCaptor.capture(), widgetSubmissionCaptor.capture(),
-				eq(true));
+				eq(false));
+		verify(workflowLogic).updateProcess(eq("foo"), eq(42L), eq("first"), attributesCaptor.capture(),
+				widgetSubmissionCaptor.capture(), eq(true));
 
-		final Map<String, Object> attributes = attributesCaptor.getValue();
+		final Map<String, Object> attributes = attributesCaptor.getAllValues().get(0);
 		assertThat(attributes.size(), equalTo(4));
 		assertThat(attributes, hasEntry("bar", (Object) "BAR"));
 		assertThat(attributes, hasEntry("baz", (Object) 42L));
 		assertThat(attributes, hasEntry("a", (Object) "A"));
 		assertThat(attributes, hasEntry("b", (Object) 123));
 
-		final Map<String, Object> widgetSubmission = widgetSubmissionCaptor.getValue();
-		assertThat(widgetSubmission.isEmpty(), is(true));
+		final Map<String, Object> widgetSubmission = widgetSubmissionCaptor.getAllValues().get(0);
+		assertThat(widgetSubmission.isEmpty(), equalTo(true));
 	}
 
 	@Test
 	public void settingAttributeWithNullNameDoesNothing() throws Exception {
 		// given
 		final WorkflowLogic workflowLogic = mock(WorkflowLogic.class);
+		final UserProcessInstance created = mock(UserProcessInstance.class);
+		doReturn(42L) //
+				.when(created).getCardId();
+		doReturn(asList(userActivityInstance("first"))) //
+				.when(created).getActivities();
+		doReturn(created) //
+				.when(workflowLogic).startProcess(anyString(), anyMap(), anyMap(), anyBoolean());
+		final UserProcessInstance advanced = mock(UserProcessInstance.class);
+		doReturn(advanced) //
+				.when(workflowLogic).updateProcess(anyString(), anyLong(), anyString(), anyMap(), anyMap(),
+						anyBoolean());
 
 		// when
 		StartProcess.newInstance() //
@@ -165,21 +206,34 @@ public class StartProcessTest {
 
 		// verify
 		verify(workflowLogic).startProcess(eq("foo"), attributesCaptor.capture(), widgetSubmissionCaptor.capture(),
-				eq(true));
+				eq(false));
+		verify(workflowLogic).updateProcess(eq("foo"), eq(42L), eq("first"), attributesCaptor.capture(),
+				widgetSubmissionCaptor.capture(), eq(true));
 
-		final Map<String, Object> attributes = attributesCaptor.getValue();
+		final Map<String, Object> attributes = attributesCaptor.getAllValues().get(0);
 		assertThat(attributes.size(), equalTo(2));
 		assertThat(attributes, hasEntry("bar", (Object) "BAR"));
 		assertThat(attributes, hasEntry("baz", (Object) 42L));
 
-		final Map<String, Object> widgetSubmission = widgetSubmissionCaptor.getValue();
-		assertThat(widgetSubmission.isEmpty(), is(true));
+		final Map<String, Object> widgetSubmission = widgetSubmissionCaptor.getAllValues().get(0);
+		assertThat(widgetSubmission.isEmpty(), equalTo(true));
 	}
 
 	@Test
 	public void settingAttributeWithBlankNameDoesNothing() throws Exception {
 		// given
 		final WorkflowLogic workflowLogic = mock(WorkflowLogic.class);
+		final UserProcessInstance created = mock(UserProcessInstance.class);
+		doReturn(42L) //
+				.when(created).getCardId();
+		doReturn(asList(userActivityInstance("first"))) //
+				.when(created).getActivities();
+		doReturn(created) //
+				.when(workflowLogic).startProcess(anyString(), anyMap(), anyMap(), anyBoolean());
+		final UserProcessInstance advanced = mock(UserProcessInstance.class);
+		doReturn(advanced) //
+				.when(workflowLogic).updateProcess(anyString(), anyLong(), anyString(), anyMap(), anyMap(),
+						anyBoolean());
 
 		// when
 		StartProcess.newInstance() //
@@ -198,21 +252,38 @@ public class StartProcessTest {
 
 		// verify
 		verify(workflowLogic).startProcess(eq("foo"), attributesCaptor.capture(), widgetSubmissionCaptor.capture(),
-				eq(true));
+				eq(false));
+		verify(workflowLogic).updateProcess(eq("foo"), eq(42L), eq("first"), attributesCaptor.capture(),
+				widgetSubmissionCaptor.capture(), eq(true));
 
-		final Map<String, Object> attributes = attributesCaptor.getValue();
+		Map<String, Object> attributes = attributesCaptor.getAllValues().get(0);
 		assertThat(attributes.size(), equalTo(2));
 		assertThat(attributes, hasEntry("bar", (Object) "BAR"));
 		assertThat(attributes, hasEntry("baz", (Object) 42L));
+		attributes = attributesCaptor.getAllValues().get(1);
+		assertThat(attributes.isEmpty(), equalTo(true));
 
-		final Map<String, Object> widgetSubmission = widgetSubmissionCaptor.getValue();
-		assertThat(widgetSubmission.isEmpty(), is(true));
+		Map<String, Object> widgetSubmission = widgetSubmissionCaptor.getAllValues().get(0);
+		assertThat(widgetSubmission.isEmpty(), equalTo(true));
+		widgetSubmission = widgetSubmissionCaptor.getAllValues().get(1);
+		assertThat(widgetSubmission.isEmpty(), equalTo(true));
 	}
 
 	@Test
 	public void settingNullAttributesDoesNothing() throws Exception {
 		// given
 		final WorkflowLogic workflowLogic = mock(WorkflowLogic.class);
+		final UserProcessInstance created = mock(UserProcessInstance.class);
+		doReturn(42L) //
+				.when(created).getCardId();
+		doReturn(asList(userActivityInstance("first"))) //
+				.when(created).getActivities();
+		doReturn(created) //
+				.when(workflowLogic).startProcess(anyString(), anyMap(), anyMap(), anyBoolean());
+		final UserProcessInstance advanced = mock(UserProcessInstance.class);
+		doReturn(advanced) //
+				.when(workflowLogic).updateProcess(anyString(), anyLong(), anyString(), anyMap(), anyMap(),
+						anyBoolean());
 
 		// when
 		StartProcess.newInstance() //
@@ -224,19 +295,32 @@ public class StartProcessTest {
 
 		// verify
 		verify(workflowLogic).startProcess(eq("foo"), attributesCaptor.capture(), widgetSubmissionCaptor.capture(),
-				eq(true));
+				eq(false));
+		verify(workflowLogic).updateProcess(eq("foo"), eq(42L), eq("first"), attributesCaptor.capture(),
+				widgetSubmissionCaptor.capture(), eq(true));
 
-		final Map<String, Object> attributes = attributesCaptor.getValue();
+		final Map<String, Object> attributes = attributesCaptor.getAllValues().get(0);
 		assertThat(attributes.size(), equalTo(0));
 
-		final Map<String, Object> widgetSubmission = widgetSubmissionCaptor.getValue();
-		assertThat(widgetSubmission.isEmpty(), is(true));
+		final Map<String, Object> widgetSubmission = widgetSubmissionCaptor.getAllValues().get(0);
+		assertThat(widgetSubmission.isEmpty(), equalTo(true));
 	}
 
 	@Test
 	public void processIsAdvanceableImplicitly() throws Exception {
 		// given
 		final WorkflowLogic workflowLogic = mock(WorkflowLogic.class);
+		final UserProcessInstance created = mock(UserProcessInstance.class);
+		doReturn(42L) //
+				.when(created).getCardId();
+		doReturn(asList(userActivityInstance("first"))) //
+				.when(created).getActivities();
+		doReturn(created) //
+				.when(workflowLogic).startProcess(anyString(), anyMap(), anyMap(), anyBoolean());
+		final UserProcessInstance advanced = mock(UserProcessInstance.class);
+		doReturn(advanced) //
+				.when(workflowLogic).updateProcess(anyString(), anyLong(), anyString(), anyMap(), anyMap(),
+						anyBoolean());
 
 		// when
 		StartProcess.newInstance() //
@@ -247,13 +331,26 @@ public class StartProcessTest {
 
 		// verify
 		verify(workflowLogic).startProcess(eq("foo"), attributesCaptor.capture(), widgetSubmissionCaptor.capture(),
-				eq(true));
+				eq(false));
+		verify(workflowLogic).updateProcess(eq("foo"), eq(42L), eq("first"), attributesCaptor.capture(),
+				widgetSubmissionCaptor.capture(), eq(true));
 	}
 
 	@Test
 	public void processAdvanceableOrNot() throws Exception {
 		// given
 		final WorkflowLogic workflowLogic = mock(WorkflowLogic.class);
+		final UserProcessInstance created = mock(UserProcessInstance.class);
+		doReturn(42L) //
+				.when(created).getCardId();
+		doReturn(asList(userActivityInstance("first"))) //
+				.when(created).getActivities();
+		doReturn(created) //
+				.when(workflowLogic).startProcess(anyString(), anyMap(), anyMap(), anyBoolean());
+		final UserProcessInstance advanced = mock(UserProcessInstance.class);
+		doReturn(advanced) //
+				.when(workflowLogic).updateProcess(anyString(), anyLong(), anyString(), anyMap(), anyMap(),
+						anyBoolean());
 		final StartProcess advanceable = StartProcess.newInstance() //
 				.withWorkflowLogic(workflowLogic) //
 				.withClassName("foo") //
@@ -272,6 +369,8 @@ public class StartProcessTest {
 		// verify
 		final InOrder inOrder = inOrder(workflowLogic);
 		inOrder.verify(workflowLogic).startProcess(eq("foo"), attributesCaptor.capture(),
+				widgetSubmissionCaptor.capture(), eq(false));
+		inOrder.verify(workflowLogic).updateProcess(eq("foo"), eq(42L), eq("first"), attributesCaptor.capture(),
 				widgetSubmissionCaptor.capture(), eq(true));
 		inOrder.verify(workflowLogic).startProcess(eq("foo"), attributesCaptor.capture(),
 				widgetSubmissionCaptor.capture(), eq(false));
@@ -281,6 +380,17 @@ public class StartProcessTest {
 	public void whenSpecifiedTemplateResolverIsInvokedForEveryParameter() throws Exception {
 		// given
 		final WorkflowLogic workflowLogic = mock(WorkflowLogic.class);
+		final UserProcessInstance created = mock(UserProcessInstance.class);
+		doReturn(42L) //
+				.when(created).getCardId();
+		doReturn(asList(userActivityInstance("first"))) //
+				.when(created).getActivities();
+		doReturn(created) //
+				.when(workflowLogic).startProcess(anyString(), anyMap(), anyMap(), anyBoolean());
+		final UserProcessInstance advanced = mock(UserProcessInstance.class);
+		doReturn(advanced) //
+				.when(workflowLogic).updateProcess(anyString(), anyLong(), anyString(), anyMap(), anyMap(),
+						anyBoolean());
 		final TemplateResolver templateResolver = mock(TemplateResolver.class);
 		when(templateResolver.resolve(anyString())) //
 				.thenAnswer(new Answer<String>() {
@@ -310,21 +420,64 @@ public class StartProcessTest {
 		verify(templateResolver).resolve("BAR");
 		verify(templateResolver).resolve("BAZ");
 		verify(workflowLogic).startProcess(eq("foo"), attributesCaptor.capture(), widgetSubmissionCaptor.capture(),
-				eq(true));
+				eq(false));
+		verify(workflowLogic).updateProcess(eq("foo"), eq(42L), eq("first"), attributesCaptor.capture(),
+				widgetSubmissionCaptor.capture(), eq(true));
 
-		final Map<String, Object> attributes = attributesCaptor.getValue();
+		final Map<String, Object> attributes = attributesCaptor.getAllValues().get(0);
 		assertThat(attributes, hasEntry("foo", (Object) "OOF"));
 		assertThat(attributes, hasEntry("bar", (Object) "RAB"));
 		assertThat(attributes, hasEntry("baz", (Object) "ZAB"));
 	}
 
 	@Test
-	public void hookInvokedWhenProcessHasBeenStarted() throws Exception {
+	public void hookInvokedWhenProcessInstanceHasBeenCreated() throws Exception {
 		// given
 		final WorkflowLogic workflowLogic = mock(WorkflowLogic.class);
-		final UserProcessInstance userProcessInstance = mock(UserProcessInstance.class);
-		when(workflowLogic.startProcess(anyString(), any(Map.class), any(Map.class), anyBoolean())) //
-				.thenReturn(userProcessInstance);
+		final UserProcessInstance created = mock(UserProcessInstance.class);
+		doReturn(42L) //
+				.when(created).getCardId();
+		doReturn(asList(userActivityInstance("first"))) //
+				.when(created).getActivities();
+		doReturn(created) //
+				.when(workflowLogic).startProcess(anyString(), anyMap(), anyMap(), anyBoolean());
+		final UserProcessInstance advanced = mock(UserProcessInstance.class);
+		doReturn(advanced) //
+				.when(workflowLogic).updateProcess(anyString(), anyLong(), anyString(), anyMap(), anyMap(),
+						anyBoolean());
+		final Hook hook = mock(Hook.class);
+
+		// when
+		StartProcess.newInstance() //
+				.withWorkflowLogic(workflowLogic) //
+				.withHook(hook) //
+				.withClassName("foo") //
+				.withAdvanceStatus(false) //
+				.build() //
+				.execute();
+
+		// verify
+		verify(workflowLogic).startProcess(eq("foo"), attributesCaptor.capture(), widgetSubmissionCaptor.capture(),
+				eq(false));
+		verify(hook).created(created);
+		verifyNoMoreInteractions(workflowLogic, hook);
+	}
+
+	@Test
+	public void hooksInvokedWhenProcessInstanceHasBeenCreatedAndAdvanced() throws Exception {
+		// given
+		final WorkflowLogic workflowLogic = mock(WorkflowLogic.class);
+		final UserProcessInstance created = mock(UserProcessInstance.class);
+		doReturn(42L) //
+				.when(created).getCardId();
+		doReturn(asList(userActivityInstance("first"))) //
+				.when(created).getActivities();
+		doReturn(created) //
+				.when(workflowLogic).startProcess(anyString(), anyMap(), anyMap(), anyBoolean());
+		final UserProcessInstance advanced = mock(UserProcessInstance.class);
+		doReturn(advanced) //
+				.when(workflowLogic).updateProcess(anyString(), anyLong(), anyString(), anyMap(), anyMap(),
+						anyBoolean());
 		final Hook hook = mock(Hook.class);
 
 		// when
@@ -337,7 +490,22 @@ public class StartProcessTest {
 
 		// verify
 		verify(workflowLogic).startProcess(eq("foo"), attributesCaptor.capture(), widgetSubmissionCaptor.capture(),
-				eq(true));
-		verify(hook).started(userProcessInstance);
+				eq(false));
+		verify(workflowLogic).updateProcess(eq("foo"), eq(42L), eq("first"), attributesCaptor.capture(),
+				widgetSubmissionCaptor.capture(), eq(true));
+		verify(hook).created(created);
+		verify(hook).advanced(advanced);
 	}
+
+	/*
+	 * Utilities
+	 */
+
+	private UserActivityInstance userActivityInstance(final String id) {
+		final UserActivityInstance output = mock(UserActivityInstance.class, id);
+		doReturn(id) //
+				.when(output).getId();
+		return output;
+	}
+
 }
