@@ -11,7 +11,7 @@
 		],
 
 		constructor: function() {
-			if (Ext.isEmpty(Ext.util.Cookies.get(CMDBuild.core.constants.Proxy.REST_SESSION_TOKEN))) {
+			if (Ext.isEmpty(Ext.util.Cookies.get(CMDBuild.core.constants.Proxy.SESSION_TOKEN))) {
 				this.fakeCallToGetAuthorizationToken();
 			} else {
 				// Verify if session with cookie token exists
@@ -19,7 +19,7 @@
 				params[CMDBuild.core.constants.Proxy.USERNAME] = CMDBuild.configuration.runtime.get(CMDBuild.core.constants.Proxy.USERNAME);
 
 				var urlParams = {};
-				urlParams[CMDBuild.core.constants.Proxy.TOKEN] = Ext.util.Cookies.get(CMDBuild.core.constants.Proxy.REST_SESSION_TOKEN);
+				urlParams[CMDBuild.core.constants.Proxy.TOKEN] = Ext.util.Cookies.get(CMDBuild.core.constants.Proxy.SESSION_TOKEN);
 
 				CMDBuild.core.proxy.session.Rest.read({
 					params: params,
@@ -53,7 +53,7 @@
 						loadMask: false,
 						scope: this,
 						success: function(response, options, decodedResponse) {
-							Ext.util.Cookies.set(CMDBuild.core.constants.Proxy.REST_SESSION_TOKEN, urlParams[CMDBuild.core.constants.Proxy.TOKEN]);
+							Ext.util.Cookies.set(CMDBuild.core.constants.Proxy.SESSION_TOKEN, urlParams[CMDBuild.core.constants.Proxy.TOKEN]);
 						}
 					});
 				}
