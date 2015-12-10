@@ -24,7 +24,6 @@
 		 * @cfg {Array}
 		 */
 		attributesKeysToFilter: [
-			'Code',
 			'Id',
 			'IdClass',
 			'IdClass_value',
