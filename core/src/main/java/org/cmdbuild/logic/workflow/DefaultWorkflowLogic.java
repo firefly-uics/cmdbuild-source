@@ -602,6 +602,10 @@ class DefaultWorkflowLogic implements WorkflowLogic {
 
 	private void validateMandatoryVariables(final UserActivityInstance activity, final Map<String, ?> variables)
 			throws CMWorkflowException {
+		if (operationUser.hasAdministratorPrivileges()) {
+			// for backward compatibility we should allow this
+			return;
+		}
 		final Collection<String> missing = newArrayList();
 		for (final CMActivityVariableToProcess element : activity.getDefinition().getVariables()) {
 			if (element.isMandatory()) {
