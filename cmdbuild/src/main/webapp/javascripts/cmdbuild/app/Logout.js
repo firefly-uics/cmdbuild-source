@@ -18,9 +18,9 @@
 			CMDBuild.core.proxy.session.JsonRpc.logout({
 				scope: this,
 				success: function(response, options, decodedResponse) {
-					if (!Ext.isEmpty(Ext.util.Cookies.get(CMDBuild.core.proxy.CMProxyConstants.REST_SESSION_TOKEN))) {
+					if (!Ext.isEmpty(Ext.util.Cookies.get(CMDBuild.core.proxy.CMProxyConstants.SESSION_TOKEN))) {
 						var urlParams = {};
-						urlParams[CMDBuild.core.proxy.CMProxyConstants.TOKEN] = Ext.util.Cookies.get(CMDBuild.core.proxy.CMProxyConstants.REST_SESSION_TOKEN);
+						urlParams[CMDBuild.core.proxy.CMProxyConstants.TOKEN] = Ext.util.Cookies.get(CMDBuild.core.proxy.CMProxyConstants.SESSION_TOKEN);
 
 						CMDBuild.core.proxy.session.Rest.logout({ urlParams: urlParams });
 					}
