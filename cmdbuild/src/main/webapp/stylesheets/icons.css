@@ -61,6 +61,9 @@
 	.xml { background-image: url("../images/icons/fileFormats/xml.png") !important; }
 	.zip { background-image: url("../images/icons/fileFormats/zip.png") !important; }
 
+/* Navigation chronology */
+	.navigation-chronology { background-image: url("../images/icons/navigation/chronology.png") !important; }
+
 /* Trigger fields */
 	.trigger-add { background-image: url("../images/form/trigger-add.png") !important; }
 	.trigger-edit { background-image: url("../images/form/trigger-edit.png") !important; }

@@ -63,6 +63,7 @@
 				Ext.create('CMDBuild.core.LoggerManager'); // Logger configuration
 				Ext.create('CMDBuild.core.Data'); // Data connections configuration
 				Ext.create('CMDBuild.core.Rest'); // Setup REST connection
+				Ext.create('CMDBuild.core.navigation.Chronology'); // Navigation chronology
 
 				CMDBuild.core.Management.init();
 			}

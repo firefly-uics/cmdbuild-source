@@ -102,12 +102,6 @@
 			}
 		},
 
-		activateRelationTab: function() {
-			if (relationsPanel != null) {
-				this.acutalPanel.setActiveTab(this.relationsPanel);
-			}
-		},
-
 		getWidgetButtonsPanel: function() {
 			return this.activityTab;
 		},

@@ -84,6 +84,7 @@
 
 			_CMUtils.forwardMethods(this, this.cardTabPanel, [
 				"activateFirstTab",
+				"setActivateTab",
 				"getCardPanel",
 				"getNotePanel",
 				"getMDPanel",
