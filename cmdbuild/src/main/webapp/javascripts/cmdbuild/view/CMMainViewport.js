@@ -180,6 +180,9 @@
 				padding: '5 5 5 0',
 				frame: false,
 				border: false,
+				bodyStyle: {
+					border: '0px;'
+				},
 
 				layout: 'card',
 
@@ -187,7 +190,6 @@
 					Ext.create('Ext.toolbar.Toolbar', {
 						dock: 'top',
 						itemId: CMDBuild.core.constants.Proxy.TOOLBAR_TOP,
-						cls: 'x-docked-noborder-bottom',
 
 						items: [
 							'->',
