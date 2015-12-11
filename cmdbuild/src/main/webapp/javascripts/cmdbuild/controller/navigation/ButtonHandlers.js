@@ -13,23 +13,17 @@
 		 * @param {CMDBuild.model.navigation.chronology.Record} record
 		 */
 		navigationChronologyButtonHandler: function(record) {
-			var accordion = _CMMainViewportController.findAccordionByCMName(record.get(CMDBuild.core.constants.Proxy.MODULE_ID));
+			switch (record.get(CMDBuild.core.constants.Proxy.MODULE_ID)) {
+				case 'class':
+					return this.navigationChronologyButtonHandlerClass(record);
 
-			if (!Ext.isEmpty(accordion)) {
-				switch (record.get(CMDBuild.core.constants.Proxy.MODULE_ID)) {
-					case 'class': {
-						this.navigationChronologyButtonHandlerClass(record);
-					} break;
+				case 'dataview':
+					return this.navigationChronologyButtonHandlerDataView(record);
 
-					case 'workflow': {
-						this.navigationChronologyButtonHandlerWorkflow(record);
-					} break;
+				case 'workflow':
+					return this.navigationChronologyButtonHandlerWorkflow(record);
 
-					// TODO: ...
-				}
-
-				accordion.expand();
-				accordion.selectNodeById(record.accordionItem);
+				// TODO: ...
 			}
 		},
 
@@ -67,6 +61,19 @@
 						record.get([CMDBuild.core.constants.Proxy.ENTRY_TYPE, CMDBuild.core.constants.Proxy.ID])
 					);
 				}
+			}
+		},
+
+		/**
+		 * @param {CMDBuild.model.navigation.chronology.Record} record
+		 */
+		navigationChronologyButtonHandlerDataView: function(record) {
+			if (
+				!Ext.isEmpty(record) && !record.isEmpty()
+				&& !record.isEmpty([CMDBuild.core.constants.Proxy.ENTRY_TYPE, CMDBuild.core.constants.Proxy.ID])
+			) {
+				_CMMainViewportController.findAccordionByCMName('dataview').expand();
+				_CMMainViewportController.findAccordionByCMName('dataview').selectNodeById(record.get([CMDBuild.core.constants.Proxy.ENTRY_TYPE, CMDBuild.core.constants.Proxy.ID]));
 			}
 		},
 

@@ -7,7 +7,7 @@
 
 		fields: [
 			{ name: CMDBuild.core.constants.Proxy.DESCRIPTION, type: 'string' },
-			{ name: CMDBuild.core.constants.Proxy.ID, type: 'int', useNull: true },
+			{ name: CMDBuild.core.constants.Proxy.ID, type: 'string' }, // Accordion item's IDs are strings
 			{ name: CMDBuild.core.constants.Proxy.OBJECT, type: 'auto', defaultValue: {} }
 		],
 

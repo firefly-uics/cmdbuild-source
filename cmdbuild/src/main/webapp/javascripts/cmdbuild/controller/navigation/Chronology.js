@@ -53,12 +53,14 @@
 		 */
 		getIconClass: function(record) {
 			switch (record.get(CMDBuild.core.constants.Proxy.MODULE_ID)) {
+				case 'class':
+					return 'cmdbuild-tree-class-icon';
+
 				case 'workflow':
 					return 'cmdbuild-tree-processclass-icon';
 
-				case 'class':
 				default:
-					return 'cmdbuild-tree-class-icon';
+					return 'x-tree-icon-leaf';
 			}
 		},
 
@@ -117,6 +119,9 @@
 					switch (property) {
 						case 'class':
 							return targetArray.push(CMDBuild.Translation.classList);
+
+						case 'dataview':
+							return targetArray.push(CMDBuild.Translation.views);
 
 						case 'workflow':
 							return targetArray.push(CMDBuild.Translation.processes);
