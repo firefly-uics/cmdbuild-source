@@ -17,11 +17,17 @@
 				case 'class':
 					return this.navigationChronologyButtonHandlerClass(record);
 
+				case 'custompage':
+					return this.navigationChronologyButtonHandlerCustomPage(record);
+
 				case 'dashboard':
 					return this.navigationChronologyButtonHandlerDashboard(record);
 
 				case 'dataview':
 					return this.navigationChronologyButtonHandlerDataView(record);
+
+				case 'report':
+					return this.navigationChronologyButtonHandlerReport(record);
 
 				case 'workflow':
 					return this.navigationChronologyButtonHandlerWorkflow(record);
@@ -70,6 +76,19 @@
 		/**
 		 * @param {CMDBuild.model.navigation.chronology.Record} record
 		 */
+		navigationChronologyButtonHandlerCustomPage: function(record) {
+			if (
+				!Ext.isEmpty(record) && !record.isEmpty()
+				&& !record.isEmpty([CMDBuild.core.constants.Proxy.ENTRY_TYPE, CMDBuild.core.constants.Proxy.ID])
+			) {
+				_CMMainViewportController.findAccordionByCMName('custompage').expand();
+				_CMMainViewportController.findAccordionByCMName('custompage').selectNodeById(record.get([CMDBuild.core.constants.Proxy.ENTRY_TYPE, CMDBuild.core.constants.Proxy.ID]));
+			}
+		},
+
+		/**
+		 * @param {CMDBuild.model.navigation.chronology.Record} record
+		 */
 		navigationChronologyButtonHandlerDashboard: function(record) {
 			if (
 				!Ext.isEmpty(record) && !record.isEmpty()
@@ -90,6 +109,19 @@
 			) {
 				_CMMainViewportController.findAccordionByCMName('dataview').expand();
 				_CMMainViewportController.findAccordionByCMName('dataview').selectNodeById(record.get([CMDBuild.core.constants.Proxy.ENTRY_TYPE, CMDBuild.core.constants.Proxy.ID]));
+			}
+		},
+
+		/**
+		 * @param {CMDBuild.model.navigation.chronology.Record} record
+		 */
+		navigationChronologyButtonHandlerReport: function(record) {
+			if (
+				!Ext.isEmpty(record) && !record.isEmpty()
+				&& !record.isEmpty([CMDBuild.core.constants.Proxy.ENTRY_TYPE, CMDBuild.core.constants.Proxy.ID])
+			) {
+				_CMMainViewportController.findAccordionByCMName('report').expand();
+				_CMMainViewportController.findAccordionByCMName('report').selectNodeById(record.get([CMDBuild.core.constants.Proxy.ENTRY_TYPE, CMDBuild.core.constants.Proxy.ID]));
 			}
 		},
 

@@ -56,6 +56,9 @@
 				case 'class':
 					return 'cmdbuild-tree-class-icon';
 
+				case 'custompage':
+					return 'cmdbuild-tree-custompage-icon';
+
 				case 'dashboard':
 					return 'cmdbuild-tree-dashboard-icon';
 
@@ -123,11 +126,17 @@
 						case 'class':
 							return targetArray.push(CMDBuild.Translation.classList);
 
+						case 'custompage':
+							return targetArray.push(CMDBuild.Translation.customPages);
+
 						case 'dashboard':
 							return targetArray.push(CMDBuild.Translation.dashboard);
 
 						case 'dataview':
 							return targetArray.push(CMDBuild.Translation.views);
+
+						case 'report':
+							return targetArray.push(CMDBuild.Translation.report);
 
 						case 'workflow':
 							return targetArray.push(CMDBuild.Translation.processes);
