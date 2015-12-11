@@ -60,6 +60,16 @@
 
 				this.setViewTitle(this.dataViewSelectedGet(CMDBuild.core.constants.Proxy.TEXT));
 
+				// History: view selected save
+				CMDBuild.global.navigation.Chronology.cmfg('navigationChronologyRecordSave', {
+					moduleId: this.cmName,
+					entryType: {
+						description: this.dataViewSelectedGet(CMDBuild.core.constants.Proxy.TEXT),
+						id: this.dataViewSelectedGet(CMDBuild.core.constants.Proxy.ID),
+						object: this.dataViewSelectedGet()
+					}
+				});
+
 				this.callParent(arguments);
 			}
 		},

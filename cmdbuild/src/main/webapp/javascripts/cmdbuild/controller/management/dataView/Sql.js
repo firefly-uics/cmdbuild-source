@@ -160,40 +160,41 @@
 			}, this);
 		},
 
-		onFullScreenChangeToFormOnly: function() {
-			Ext.suspendLayouts();
+		// _CMUIState methods
+			onFullScreenChangeToFormOnly: function() {
+				Ext.suspendLayouts();
 
-			this.grid.hide();
-			this.grid.region = '';
+				this.grid.hide();
+				this.grid.region = '';
 
-			this.form.show();
-			this.form.region = 'center';
+				this.form.show();
+				this.form.region = 'center';
 
-			Ext.resumeLayouts(true);
-		},
+				Ext.resumeLayouts(true);
+			},
 
-		onFullScreenChangeToGridOnly: function() {
-			Ext.suspendLayouts();
+			onFullScreenChangeToGridOnly: function() {
+				Ext.suspendLayouts();
 
-			this.form.hide();
-			this.form.region = '';
+				this.form.hide();
+				this.form.region = '';
 
-			this.grid.show();
-			this.grid.region = 'center';
+				this.grid.show();
+				this.grid.region = 'center';
 
-			Ext.resumeLayouts(true);
-		},
+				Ext.resumeLayouts(true);
+			},
 
-		onFullScreenChangeToOff: function() {
-			Ext.suspendLayouts();
-			this.form.show();
-			this.form.region = 'south';
+			onFullScreenChangeToOff: function() {
+				Ext.suspendLayouts();
+				this.form.show();
+				this.form.region = 'south';
 
-			this.grid.show();
-			this.grid.region = 'center';
+				this.grid.show();
+				this.grid.region = 'center';
 
-			Ext.resumeLayouts(true);
-		}
+				Ext.resumeLayouts(true);
+			}
 	});
 
 })();
