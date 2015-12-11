@@ -242,7 +242,23 @@
 
 			_CMUIState.onlyGridIfFullScreen();
 
-			this.view.activateFirstTab();
+			if (
+				!Ext.isEmpty(danglingCard)
+				&& !Ext.isEmpty(danglingCard.activateFirstTab)
+			) {
+				this.view.cardTabPanel.activeTabSet(danglingCard.activateFirstTab);
+			}
+
+			// History: process selected save
+			var record = {};
+			record[CMDBuild.core.constants.Proxy.MODULE_ID] = this.view.cmName;
+			record[CMDBuild.core.constants.Proxy.ENTRY_TYPE] = {
+				description: _CMWFState.getProcessClassRef().get(CMDBuild.core.constants.Proxy.TEXT),
+				id: _CMWFState.getProcessClassRef().get(CMDBuild.core.constants.Proxy.ID),
+				object: _CMWFState.getProcessClassRef()
+			};
+
+			CMDBuild.global.navigation.Chronology.cmfg('navigationChronologyRecordSave', record);
 		}
 	});
 
