@@ -17,6 +17,9 @@
 				case 'class':
 					return this.navigationChronologyButtonHandlerClass(record);
 
+				case 'dashboard':
+					return this.navigationChronologyButtonHandlerDashboard(record);
+
 				case 'dataview':
 					return this.navigationChronologyButtonHandlerDataView(record);
 
@@ -61,6 +64,19 @@
 						record.get([CMDBuild.core.constants.Proxy.ENTRY_TYPE, CMDBuild.core.constants.Proxy.ID])
 					);
 				}
+			}
+		},
+
+		/**
+		 * @param {CMDBuild.model.navigation.chronology.Record} record
+		 */
+		navigationChronologyButtonHandlerDashboard: function(record) {
+			if (
+				!Ext.isEmpty(record) && !record.isEmpty()
+				&& !record.isEmpty([CMDBuild.core.constants.Proxy.ENTRY_TYPE, CMDBuild.core.constants.Proxy.ID])
+			) {
+				_CMMainViewportController.findAccordionByCMName('dashboard').expand();
+				_CMMainViewportController.findAccordionByCMName('dashboard').selectNodeById(record.get([CMDBuild.core.constants.Proxy.ENTRY_TYPE, CMDBuild.core.constants.Proxy.ID]));
 			}
 		},
 
