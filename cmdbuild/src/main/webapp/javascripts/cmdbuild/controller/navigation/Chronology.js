@@ -56,6 +56,9 @@
 				case 'class':
 					return 'cmdbuild-tree-class-icon';
 
+				case 'dashboard':
+					return 'cmdbuild-tree-dashboard-icon';
+
 				case 'workflow':
 					return 'cmdbuild-tree-processclass-icon';
 
@@ -119,6 +122,9 @@
 					switch (property) {
 						case 'class':
 							return targetArray.push(CMDBuild.Translation.classList);
+
+						case 'dashboard':
+							return targetArray.push(CMDBuild.Translation.dashboard);
 
 						case 'dataview':
 							return targetArray.push(CMDBuild.Translation.views);
