@@ -134,6 +134,7 @@ public class CommunicationConstants {
 			GROUP_ID = "groupId", //
 			GROUP_NAME = "groupName", //
 			GROUPS = "groups", //
+			HEADERS = "headers", //
 			HOST = "host", //
 			ICONNAME = "iconName", //
 			IMAP_PORT = "imapPort", //
