@@ -431,16 +431,15 @@
 
 			this.changeClassUIConfigurationForGroup(entryTypeId);
 
-			// History: class selected save
-			var record = {};
-			record[CMDBuild.core.constants.Proxy.MODULE_ID] = this.view.cmName;
-			record[CMDBuild.core.constants.Proxy.ENTRY_TYPE] = {
-				description: _CMCardModuleState.entryType.get(CMDBuild.core.constants.Proxy.TEXT),
-				id: _CMCardModuleState.entryType.get(CMDBuild.core.constants.Proxy.ID),
-				object: _CMCardModuleState.entryType
-			};
-
-			CMDBuild.global.navigation.Chronology.cmfg('navigationChronologyRecordSave', record);
+			// History record save
+			CMDBuild.global.navigation.Chronology.cmfg('navigationChronologyRecordSave', {
+				moduleId: 'class',
+				entryType: {
+					description: _CMCardModuleState.entryType.get(CMDBuild.core.constants.Proxy.TEXT),
+					id: _CMCardModuleState.entryType.get(CMDBuild.core.constants.Proxy.ID),
+					object: _CMCardModuleState.entryType
+				}
+			});
 		}
 	});
 

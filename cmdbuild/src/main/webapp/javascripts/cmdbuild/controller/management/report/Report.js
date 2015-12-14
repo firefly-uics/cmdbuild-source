@@ -104,7 +104,7 @@
 
 				this.sectionController.cmfg('onReportShow');
 
-				// History: view selected save
+				// History record save
 				CMDBuild.global.navigation.Chronology.cmfg('navigationChronologyRecordSave', {
 					moduleId: this.cmName,
 					entryType: {

@@ -1,13 +1,8 @@
 (function() {
 
-	/**
-	 * @private
-	 */
 	Ext.define('CMDBuild.controller.navigation.ButtonHandlers', {
 
-		requires: [
-			'CMDBuild.core.constants.Proxy',
-		],
+		requires: ['CMDBuild.core.constants.Proxy'],
 
 		/**
 		 * @param {CMDBuild.model.navigation.chronology.Record} record
@@ -18,26 +13,26 @@
 					return this.navigationChronologyButtonHandlerClass(record);
 
 				case 'custompage':
-					return this.navigationChronologyButtonHandlerCustomPage(record);
+					return this.navigationChronologyButtonHandlerDefault(record);
 
 				case 'dashboard':
-					return this.navigationChronologyButtonHandlerDashboard(record);
+					return this.navigationChronologyButtonHandlerDefault(record);
 
 				case 'dataview':
-					return this.navigationChronologyButtonHandlerDataView(record);
+					return this.navigationChronologyButtonHandlerDefault(record);
 
 				case 'report':
-					return this.navigationChronologyButtonHandlerReport(record);
+					return this.navigationChronologyButtonHandlerDefault(record);
 
 				case 'workflow':
 					return this.navigationChronologyButtonHandlerWorkflow(record);
-
-				// TODO: ...
 			}
 		},
 
 		/**
 		 * @param {CMDBuild.model.navigation.chronology.Record} record
+		 *
+		 * @private
 		 */
 		navigationChronologyButtonHandlerClass: function(record) {
 			if (!Ext.isEmpty(record) && !record.isEmpty()) {
@@ -45,6 +40,8 @@
 					!record.isEmpty([CMDBuild.core.constants.Proxy.ENTRY_TYPE, CMDBuild.core.constants.Proxy.ID])
 					&& !record.isEmpty([CMDBuild.core.constants.Proxy.ITEM, CMDBuild.core.constants.Proxy.ID])
 				) {
+					_CMMainViewportController.findAccordionByCMName(record.get(CMDBuild.core.constants.Proxy.MODULE_ID)).expand();
+
 					_CMMainViewportController.openCard({
 						Id: record.get([CMDBuild.core.constants.Proxy.ITEM, CMDBuild.core.constants.Proxy.ID]),
 						IdClass: record.get([CMDBuild.core.constants.Proxy.ENTRY_TYPE, CMDBuild.core.constants.Proxy.ID]),
@@ -53,20 +50,21 @@
 					});
 
 					if (!record.isEmpty([CMDBuild.core.constants.Proxy.SECTION, CMDBuild.core.constants.Proxy.OBJECT]))
-						_CMMainViewportController.panelControllers['class'].gridController.view.getStore().on('load', function() {
-							_CMMainViewportController.viewport.findModuleByCMName('class').cardTabPanel.activeTabSet(
+						_CMMainViewportController.panelControllers[record.get(CMDBuild.core.constants.Proxy.MODULE_ID)].gridController.view.getStore().on('load', function() {
+							_CMMainViewportController.viewport.findModuleByCMName(record.get(CMDBuild.core.constants.Proxy.MODULE_ID)).cardTabPanel.activeTabSet(
 								record.get([CMDBuild.core.constants.Proxy.SECTION, CMDBuild.core.constants.Proxy.OBJECT])
 							);
 						}, this, { single: true });
 
 					if (!record.isEmpty([CMDBuild.core.constants.Proxy.SUB_SECTION, CMDBuild.core.constants.Proxy.OBJECT]))
-						_CMMainViewportController.panelControllers['class'].gridController.view.getStore().on('load', function() {
-							_CMMainViewportController.panelControllers['class'].mdController.activeTabSet(
+						_CMMainViewportController.panelControllers[record.get(CMDBuild.core.constants.Proxy.MODULE_ID)].gridController.view.getStore().on('load', function() {
+							_CMMainViewportController.panelControllers[record.get(CMDBuild.core.constants.Proxy.MODULE_ID)].mdController.activeTabSet(
 								record.get([CMDBuild.core.constants.Proxy.SUB_SECTION, CMDBuild.core.constants.Proxy.OBJECT])
 							);
 						}, this, { single: true });
 				} else if (!record.isEmpty([CMDBuild.core.constants.Proxy.ENTRY_TYPE, CMDBuild.core.constants.Proxy.ID])) {
-					_CMMainViewportController.findAccordionByCMName('class').selectNodeById(
+					_CMMainViewportController.findAccordionByCMName(record.get(CMDBuild.core.constants.Proxy.MODULE_ID)).expand();
+					_CMMainViewportController.findAccordionByCMName(record.get(CMDBuild.core.constants.Proxy.MODULE_ID)).selectNodeById(
 						record.get([CMDBuild.core.constants.Proxy.ENTRY_TYPE, CMDBuild.core.constants.Proxy.ID])
 					);
 				}
@@ -75,58 +73,25 @@
 
 		/**
 		 * @param {CMDBuild.model.navigation.chronology.Record} record
+		 *
+		 * @private
 		 */
-		navigationChronologyButtonHandlerCustomPage: function(record) {
+		navigationChronologyButtonHandlerDefault: function(record) {
 			if (
 				!Ext.isEmpty(record) && !record.isEmpty()
 				&& !record.isEmpty([CMDBuild.core.constants.Proxy.ENTRY_TYPE, CMDBuild.core.constants.Proxy.ID])
 			) {
-				_CMMainViewportController.findAccordionByCMName('custompage').expand();
-				_CMMainViewportController.findAccordionByCMName('custompage').selectNodeById(record.get([CMDBuild.core.constants.Proxy.ENTRY_TYPE, CMDBuild.core.constants.Proxy.ID]));
+				_CMMainViewportController.findAccordionByCMName(record.get(CMDBuild.core.constants.Proxy.MODULE_ID)).expand();
+				_CMMainViewportController.findAccordionByCMName(record.get(CMDBuild.core.constants.Proxy.MODULE_ID)).selectNodeById(
+					record.get([CMDBuild.core.constants.Proxy.ENTRY_TYPE, CMDBuild.core.constants.Proxy.ID])
+				);
 			}
 		},
 
 		/**
 		 * @param {CMDBuild.model.navigation.chronology.Record} record
-		 */
-		navigationChronologyButtonHandlerDashboard: function(record) {
-			if (
-				!Ext.isEmpty(record) && !record.isEmpty()
-				&& !record.isEmpty([CMDBuild.core.constants.Proxy.ENTRY_TYPE, CMDBuild.core.constants.Proxy.ID])
-			) {
-				_CMMainViewportController.findAccordionByCMName('dashboard').expand();
-				_CMMainViewportController.findAccordionByCMName('dashboard').selectNodeById(record.get([CMDBuild.core.constants.Proxy.ENTRY_TYPE, CMDBuild.core.constants.Proxy.ID]));
-			}
-		},
-
-		/**
-		 * @param {CMDBuild.model.navigation.chronology.Record} record
-		 */
-		navigationChronologyButtonHandlerDataView: function(record) {
-			if (
-				!Ext.isEmpty(record) && !record.isEmpty()
-				&& !record.isEmpty([CMDBuild.core.constants.Proxy.ENTRY_TYPE, CMDBuild.core.constants.Proxy.ID])
-			) {
-				_CMMainViewportController.findAccordionByCMName('dataview').expand();
-				_CMMainViewportController.findAccordionByCMName('dataview').selectNodeById(record.get([CMDBuild.core.constants.Proxy.ENTRY_TYPE, CMDBuild.core.constants.Proxy.ID]));
-			}
-		},
-
-		/**
-		 * @param {CMDBuild.model.navigation.chronology.Record} record
-		 */
-		navigationChronologyButtonHandlerReport: function(record) {
-			if (
-				!Ext.isEmpty(record) && !record.isEmpty()
-				&& !record.isEmpty([CMDBuild.core.constants.Proxy.ENTRY_TYPE, CMDBuild.core.constants.Proxy.ID])
-			) {
-				_CMMainViewportController.findAccordionByCMName('report').expand();
-				_CMMainViewportController.findAccordionByCMName('report').selectNodeById(record.get([CMDBuild.core.constants.Proxy.ENTRY_TYPE, CMDBuild.core.constants.Proxy.ID]));
-			}
-		},
-
-		/**
-		 * @param {CMDBuild.model.navigation.chronology.Record} record
+		 *
+		 * @private
 		 */
 		navigationChronologyButtonHandlerWorkflow: function(record) {
 			if (!Ext.isEmpty(record) && !record.isEmpty()) {
@@ -134,6 +99,8 @@
 					!record.isEmpty([CMDBuild.core.constants.Proxy.ENTRY_TYPE, CMDBuild.core.constants.Proxy.ID])
 					&& !record.isEmpty([CMDBuild.core.constants.Proxy.ITEM, CMDBuild.core.constants.Proxy.ID])
 				) {
+					_CMMainViewportController.findAccordionByCMName(record.get(CMDBuild.core.constants.Proxy.MODULE_ID)).expand();
+
 					_CMMainViewportController.openCard({
 						Id: record.get([CMDBuild.core.constants.Proxy.ITEM, CMDBuild.core.constants.Proxy.ID]),
 						IdClass: record.get([CMDBuild.core.constants.Proxy.ENTRY_TYPE, CMDBuild.core.constants.Proxy.ID]),
@@ -142,13 +109,14 @@
 					});
 
 					if (!record.isEmpty([CMDBuild.core.constants.Proxy.SECTION, CMDBuild.core.constants.Proxy.OBJECT]))
-						_CMMainViewportController.panelControllers['workflow'].gridController.view.getStore().on('load', function() {
-							_CMMainViewportController.viewport.findModuleByCMName('workflow').cardTabPanel.activeTabSet(
+						_CMMainViewportController.panelControllers[record.get(CMDBuild.core.constants.Proxy.MODULE_ID)].gridController.view.getStore().on('load', function() {
+							_CMMainViewportController.viewport.findModuleByCMName(record.get(CMDBuild.core.constants.Proxy.MODULE_ID)).cardTabPanel.activeTabSet(
 								record.get([CMDBuild.core.constants.Proxy.SECTION, CMDBuild.core.constants.Proxy.OBJECT])
 							);
 						}, this, { single: true });
 				} else if (!record.isEmpty([CMDBuild.core.constants.Proxy.ENTRY_TYPE, CMDBuild.core.constants.Proxy.ID])) {
-					_CMMainViewportController.findAccordionByCMName('workflow').selectNodeById(
+					_CMMainViewportController.findAccordionByCMName(record.get(CMDBuild.core.constants.Proxy.MODULE_ID)).expand();
+					_CMMainViewportController.findAccordionByCMName(record.get(CMDBuild.core.constants.Proxy.MODULE_ID)).selectNodeById(
 						record.get([CMDBuild.core.constants.Proxy.ENTRY_TYPE, CMDBuild.core.constants.Proxy.ID])
 					);
 				}
