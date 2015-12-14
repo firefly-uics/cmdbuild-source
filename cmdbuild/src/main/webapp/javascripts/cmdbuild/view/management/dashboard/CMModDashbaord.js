@@ -3,12 +3,21 @@
 	Ext.define("CMDBuild.view.management.dashboard.CMModDashboard", {
 		extend: "Ext.panel.Panel",
 
+		frame: false,
+		layout: "card",
+
 		initComponent: function() {
-			this.layout = "card";
-			this.items = [{xtype: "panel"}];
 			this.renderdDashboards = {};
 			this.dashbaord = null;
-			this.border = false;
+
+			Ext.apply(this, {
+				tools: [
+					Ext.create('CMDBuild.view.common.panel.gridAndForm.tools.Properties', {
+						style: {} // Reset margin setup
+					})
+				]
+			});
+
 			this.callParent(arguments);
 		},
 

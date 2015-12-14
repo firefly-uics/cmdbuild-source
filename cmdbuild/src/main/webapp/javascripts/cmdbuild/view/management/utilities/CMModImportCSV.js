@@ -24,6 +24,11 @@
 
 			Ext.apply(this, {
 				title: tr.title,
+				tools: [
+					Ext.create('CMDBuild.view.common.panel.gridAndForm.tools.Properties', {
+						style: {} // Reset margin setup
+					})
+				],
 				items:[this.form, this.grid],
 				buttonAlign: "center",
 				buttons: [

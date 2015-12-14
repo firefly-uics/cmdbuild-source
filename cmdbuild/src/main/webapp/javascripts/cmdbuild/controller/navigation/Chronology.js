@@ -23,26 +23,26 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
-			'navigationChronologyButtonGet',
+			'navigationChronologyItemConfigurationGet',
 			'navigationChronologyButtonHandler', // From mixins
 			'navigationChronologyRecordSave',
-			'onNavigationChronologyButtonShowMenu'
+			'onNavigationChronologyMenuBeforeShow'
 		],
 
-		/**
-		 * @property {Ext.button.Split}
-		 */
-		view: undefined,
-
-		/**
-		 * @param {Object} configurationObject
-		 * @param {Ext.button.Split} configurationObject.view
-		 */
-		constructor: function(configurationObject) {
-			this.callParent(arguments);
-
-			this.view = Ext.create('CMDBuild.view.navigation.chronology.Button', { delegate: this });
-		},
+//		/**
+//		 * @property {Ext.button.Split}
+//		 */
+//		view: undefined,
+//
+//		/**
+//		 * @param {Object} configurationObject
+//		 * @param {Ext.button.Split} configurationObject.view
+//		 */
+//		constructor: function(configurationObject) {
+//			this.callParent(arguments);
+//
+//			this.view = Ext.create('CMDBuild.view.navigation.chronology.Button', { delegate: this });
+//		},
 
 		/**
 		 * @param {CMDBuild.model.navigation.chronology.Record} record
@@ -150,40 +150,11 @@
 			},
 
 		/**
-		 * @returns {CMDBuild.view.navigation.chronology.Button}
+		 * @returns {Array} menuItems
+		 *
+		 * @private
 		 */
-		navigationChronologyButtonGet: function() {
-			return this.view;
-		},
-
-		/**
-		 * @param {Object} parameters
-		 * @param {String} parameters.moduleId - cmName (class, workflow, dashboard, dataview, ...)
-		 * @param {String} parameters.entryType - selected entryType (Class, process, ...)
-		 * @param {Object} parameters.item - item selected from grid (card, instance, ...)
-		 * @param {Object} parameters.section - usually form tab object
-		 * @param {Object} parameters.subSection - usually form tab sub-section
-		 */
-		navigationChronologyRecordSave: function(parameters) {
-			if (
-				!Ext.isEmpty(parameters) && Ext.isObject(parameters)
-				&& !Ext.isEmpty(parameters[CMDBuild.core.constants.Proxy.MODULE_ID])
-				&& !Ext.isEmpty(parameters[CMDBuild.core.constants.Proxy.ENTRY_TYPE])
-			) {
-				var record = Ext.create('CMDBuild.model.navigation.chronology.Record', parameters);
-
-				// Filter double records save
-				if (Ext.isEmpty(this.records) || !this.records[0].equals(record))
-					this.records.unshift(record);
-
-				// Resize array to referenceComboStoreLimit configuration parameter
-				this.records = Ext.Array.slice(this.records, 0, CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.REFERENCE_COMBO_STORE_LIMIT));
-			} else {
-				_warning('invalid record field configuration', this, parameters);
-			}
-		},
-
-		onNavigationChronologyButtonShowMenu: function() {
+		menuItemsBuild: function() {
 			var menuItems = [];
 
 			if (!Ext.isEmpty(this.records) && Ext.isArray(this.records)) {
@@ -213,16 +184,75 @@
 				});
 			}
 
-			Ext.apply(this.view, {
-				menu: Ext.create('Ext.menu.Menu', {
-					overflowX: 'auto',
-					maxWidth: CMDBuild.MENU_WIDTH,
+			return menuItems;
+		},
 
-					items: menuItems
-				})
-			});
+		/**
+		 * @returns {Object}
+		 */
+		navigationChronologyItemConfigurationGet: function() {
+//			return this.view;
+			return {
+				text: CMDBuild.Translation.navigationChronology,
+				iconCls: 'navigation-chronology',
 
-			this.view.showMenu();
+				menu: Ext.create('Ext.menu.Menu'),
+
+				listeners: {
+					beforeshow: function(tool, eOpts) {
+						return CMDBuild.global.navigation.Chronology.cmfg('onNavigationChronologyMenuBeforeShow', this);
+					}
+				}
+			};
+		},
+
+		/**
+		 * @param {Object} parameters
+		 * @param {String} parameters.moduleId - cmName (class, workflow, dashboard, dataview, ...)
+		 * @param {String} parameters.entryType - selected entryType (Class, process, ...)
+		 * @param {Object} parameters.item - item selected from grid (card, instance, ...)
+		 * @param {Object} parameters.section - usually form tab object
+		 * @param {Object} parameters.subSection - usually form tab sub-section
+		 */
+		navigationChronologyRecordSave: function(parameters) {
+			if (
+				!Ext.isEmpty(parameters) && Ext.isObject(parameters)
+				&& !Ext.isEmpty(parameters[CMDBuild.core.constants.Proxy.MODULE_ID])
+				&& !Ext.isEmpty(parameters[CMDBuild.core.constants.Proxy.ENTRY_TYPE])
+			) {
+				var record = Ext.create('CMDBuild.model.navigation.chronology.Record', parameters);
+
+				// Filter double records save
+				if (Ext.isEmpty(this.records) || !this.records[0].equals(record))
+					this.records.unshift(record);
+
+				// Resize array to referenceComboStoreLimit configuration parameter
+				this.records = Ext.Array.slice(this.records, 0, CMDBuild.configuration.instance.get(CMDBuild.core.constants.Proxy.REFERENCE_COMBO_STORE_LIMIT));
+			} else {
+				_warning('invalid record field configuration', this, parameters);
+			}
+		},
+
+		/**
+		 * @param {Object} item
+		 *
+		 * @returns {Boolean}
+		 */
+		onNavigationChronologyMenuBeforeShow: function(item) {
+			if (!Ext.isEmpty(item)) {
+				Ext.apply(item, {
+					menu: Ext.create('Ext.menu.Menu', {
+						overflowX: 'auto',
+						maxWidth: CMDBuild.MENU_WIDTH,
+
+						items: this.menuItemsBuild()
+					})
+				});
+
+				return true;
+			}
+
+			return false;
 		}
 	});
 

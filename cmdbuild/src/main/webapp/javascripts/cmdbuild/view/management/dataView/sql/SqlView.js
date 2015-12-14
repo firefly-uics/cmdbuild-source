@@ -43,8 +43,7 @@
 						region: 'south',
 						split: true
 					})
-				],
-				tools: []
+				]
 			});
 
 			this.callParent(arguments);

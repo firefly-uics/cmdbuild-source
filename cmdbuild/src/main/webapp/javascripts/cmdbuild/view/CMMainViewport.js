@@ -160,17 +160,18 @@
 			this.border = false;
 
 			this.cmAccordions = Ext.create('Ext.panel.Panel', {
-				border: true,
-				collapsed: this.hideAccordions,
-				collapsible: true,
-				frame: false,
-				header: false, // Hide panel header as CMDBuild UI look
-				layout: 'accordion',
-				margin: this.hideAccordions ? '0 2 0 0' : '0',
-				padding: '5 0 5 5',
 				region: 'west',
-				split: true,
+				frame: false,
+				border: true,
+				padding: '5 0 5 5',
+				margin: this.hideAccordions ? '0 2 0 0' : '0',
+				layout: 'accordion',
 				width: 200,
+
+				split: true,
+				collapsible: true,
+				collapsed: this.hideAccordions,
+				header: false, // Hide panel header as CMDBuild UI look
 
 				items: this.cmAccordions
 			});
@@ -185,18 +186,6 @@
 				},
 
 				layout: 'card',
-
-				dockedItems: Ext.isEmpty(CMDBuild.global) || Ext.isEmpty(CMDBuild.global.navigation) ? [] : [
-					Ext.create('Ext.toolbar.Toolbar', {
-						dock: 'top',
-						itemId: CMDBuild.core.constants.Proxy.TOOLBAR_TOP,
-
-						items: [
-							'->',
-							CMDBuild.global.navigation.Chronology.cmfg('navigationChronologyButtonGet')
-						]
-					})
-				],
 
 				items: this.cmPanels,
 			});
