@@ -124,25 +124,24 @@
 		 */
 		onTabEmailPanelShow: function() {
 			if (this.view.isVisible()) {
-				// History: section save
-				var record = {};
-				record[CMDBuild.core.constants.Proxy.MODULE_ID] = 'workflow';
-				record[CMDBuild.core.constants.Proxy.ENTRY_TYPE] = {
-					description: _CMWFState.getProcessClassRef().get(CMDBuild.core.constants.Proxy.TEXT),
-					id: _CMWFState.getProcessClassRef().get(CMDBuild.core.constants.Proxy.ID),
-					object: _CMWFState.getProcessClassRef()
-				};
-				record[CMDBuild.core.constants.Proxy.ITEM] = {
-					description: _CMWFState.getProcessInstance().get(CMDBuild.core.constants.Proxy.TEXT),
-					id: _CMWFState.getProcessInstance().get(CMDBuild.core.constants.Proxy.ID),
-					object: _CMWFState.getProcessInstance()
-				};
-				record[CMDBuild.core.constants.Proxy.SECTION] = {
-					description: this.view.title,
-					object: this.view
-				};
-
-				CMDBuild.global.navigation.Chronology.cmfg('navigationChronologyRecordSave', record);
+				// History record save
+				CMDBuild.global.navigation.Chronology.cmfg('navigationChronologyRecordSave', {
+					moduleId: 'workflow',
+					entryType: {
+						description: _CMWFState.getProcessClassRef().get(CMDBuild.core.constants.Proxy.TEXT),
+						id: _CMWFState.getProcessClassRef().get(CMDBuild.core.constants.Proxy.ID),
+						object: _CMWFState.getProcessClassRef()
+					},
+					item: {
+						description: _CMWFState.getProcessInstance().get(CMDBuild.core.constants.Proxy.TEXT),
+						id: _CMWFState.getProcessInstance().get(CMDBuild.core.constants.Proxy.ID),
+						object: _CMWFState.getProcessInstance()
+					},
+					section: {
+						description: this.view.title,
+						object: this.view
+					}
+				});
 			}
 
 			this.callParent(arguments);

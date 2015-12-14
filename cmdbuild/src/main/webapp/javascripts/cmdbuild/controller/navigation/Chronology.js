@@ -53,8 +53,11 @@
 		 */
 		getIconClass: function(record) {
 			switch (record.get(CMDBuild.core.constants.Proxy.MODULE_ID)) {
-				case 'class':
-					return 'cmdbuild-tree-class-icon';
+				case 'class': {
+					var isSuperClass = record.get([CMDBuild.core.constants.Proxy.ENTRY_TYPE, CMDBuild.core.constants.Proxy.OBJECT, 'superclass']);
+
+					return isSuperClass ? 'cmdbuild-tree-superclass-icon' : 'cmdbuild-tree-class-icon';
+				}
 
 				case 'custompage':
 					return 'cmdbuild-tree-custompage-icon';
@@ -62,8 +65,11 @@
 				case 'dashboard':
 					return 'cmdbuild-tree-dashboard-icon';
 
-				case 'workflow':
-					return 'cmdbuild-tree-processclass-icon';
+				case 'workflow': {
+					var isSuperClass = record.get([CMDBuild.core.constants.Proxy.ENTRY_TYPE, CMDBuild.core.constants.Proxy.OBJECT, 'superclass']);
+
+					return isSuperClass ? 'cmdbuild-tree-superprocessclass-icon' : 'cmdbuild-tree-processclass-icon';
+				}
 
 				default:
 					return 'x-tree-icon-leaf';
