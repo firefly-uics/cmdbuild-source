@@ -86,6 +86,7 @@
 		defaultTheme : "libraries/jquery-ui.theme.css",
 
 		loadAndStart : function(configParams, container) {
+			console.log("comincio a caricare");
 			this.configParams = configParams;
 			this.htmlContainer = container;
 
@@ -101,6 +102,7 @@
 			this.loadStaticStylesheets();
 			this.loadThemeStylesheet(configParams.theme);
 			this.loadHttpCallParameters(this.configParams.httpCallParameters);
+			console.log("finisco di caricare");
 		},
 		loadHttpCallParameters: function(httpCallParameters) {
 			this.httpCallParameters = httpCallParameters;
