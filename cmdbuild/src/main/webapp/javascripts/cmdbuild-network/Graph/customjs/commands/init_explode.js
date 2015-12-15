@@ -27,7 +27,7 @@
 				setTimeout(function() {
 					var parentId = elements.nodes[0].data.id;
 					var parentNode = me.model.getNode(parentId);
-					me.explodeNode(parentId, 1, function(elements) {
+					me.explodeNode(parentId, $.Cmdbuild.custom.configuration.explosionLevels - 1, function(elements) {
 						if (!batch) {
 							$.Cmdbuild.customvariables.commandInExecution = false;
 							me.model.changed();
@@ -91,13 +91,7 @@
 			}, this);
 		};
 		this.undo = function() {
-			for (var i = 0; i < this.newElements.length; i++) {
-				var id = this.newElements[i];
-				this.model.remove(id);
-			}
-			if (this.batch !== true) {
-				this.model.changed(true);
-			}
+			console.log("Error! undo the init");
 		};
 	};
 	$.Cmdbuild.g3d.commands.init_explode = init_explode;
