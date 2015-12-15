@@ -28,7 +28,7 @@
 			}, 10);
 		};
 		this.undo = function() {
-			if (this.commandsStack.length == 0) {
+			if (this.commandsStack.length == 1) {
 				return;
 			}
 			var command = this.commandsStack.pop();
