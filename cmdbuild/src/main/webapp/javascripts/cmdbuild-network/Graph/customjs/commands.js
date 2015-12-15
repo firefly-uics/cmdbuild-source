@@ -3,6 +3,15 @@
 		pippo: function(param) {
 			alert("pippo");
 		},
+		initOptions: function(param) {
+			$("#nodesTooltip").prop("checked", $.Cmdbuild.custom.configuration.nodesTooltip);
+			$.Cmdbuild.customvariables.options["nodesTooltip"] = $.Cmdbuild.custom.configuration.nodesTooltip;
+			$("#edgesTooltip").prop("checked", $.Cmdbuild.custom.configuration.edgesTooltip);
+			$.Cmdbuild.customvariables.options["edgesTooltip"] = $.Cmdbuild.custom.configuration.edgesTooltip;
+			$("#explosionLevels").spinner("value", $.Cmdbuild.custom.configuration.explosionLevels);
+			$.Cmdbuild.customvariables.options["explosionLevels"] = $.Cmdbuild.custom.configuration.explosionLevels;
+			// ***TODO: labels*** 
+		},
 		navigateOnNode: function(param) {
 			var selected = $.Cmdbuild.customvariables.selected.getCards(0, 1);
 			if (selected.total <= 0) {
@@ -18,11 +27,12 @@
 						classId: classId,
 						cardId: cardId
 					});
-			$.Cmdbuild.customvariables.commandsManager.execute(init, {}, function(response) {
-				this.centerOnViewer();
-				$.Cmdbuild.customvariables.selected.erase();
-				$.Cmdbuild.customvariables.selected.select(cardId);
-			}, this);
+			$.Cmdbuild.customvariables.commandsManager.execute(init, {},
+					function(response) {
+						this.centerOnViewer();
+						$.Cmdbuild.customvariables.selected.erase();
+						$.Cmdbuild.customvariables.selected.select(cardId);
+					}, this);
 		},
 		selectAll: function() {
 			$.Cmdbuild.customvariables.selected.erase();
@@ -35,7 +45,7 @@
 		centerOnViewer: function() {
 			var box = $.Cmdbuild.customvariables.viewer.boundingBox();
 			$.Cmdbuild.customvariables.viewer.zoomAll(box);
-			
+
 		},
 		openSelection: function(param) {
 			var selected = $.Cmdbuild.customvariables.selected.getData();
@@ -43,14 +53,17 @@
 			var arCommands = getExplodeCommands(selected, levels);
 			var macroCommand = new $.Cmdbuild.g3d.commands.macroCommand(
 					$.Cmdbuild.customvariables.model, arCommands);
-			$.Cmdbuild.customvariables.commandsManager.execute(
-					macroCommand, {}, function() {
+			$.Cmdbuild.customvariables.commandsManager.execute(macroCommand,
+					{}, function() {
+						var nodes = $.Cmdbuild.customvariables.model.getNodes();
+						$.Cmdbuild.g3d.Model.removeGraphData(nodes, "exploded_children");
 					}, $.Cmdbuild.customvariables.viewer);
-			
+
 		},
 		boolean: function(param) {
-			//var value = $("#" + param.type).val();
-			var value = $.Cmdbuild.utilities.getHtmlFieldValue("#" + param.type);
+			// var value = $("#" + param.type).val();
+			var value = $.Cmdbuild.utilities
+					.getHtmlFieldValue("#" + param.type);
 			$.Cmdbuild.customvariables.options[param.type] = value;
 			$.Cmdbuild.customvariables.options.changed();
 		},
@@ -58,14 +71,16 @@
 			var paramActualized = $.Cmdbuild.dataModel.resolveVariables(param);
 			if (param.addSelection === false) {
 				$.Cmdbuild.customvariables.selected.erase();
-				$.Cmdbuild.customvariables.selected.select(paramActualized.node);				
-			}
-			else {
-				if ($.Cmdbuild.customvariables.selected.isSelect(paramActualized.node)) {
-					$.Cmdbuild.customvariables.selected.unSelect(paramActualized.node);				
-				}
-				else {
-					$.Cmdbuild.customvariables.selected.select(paramActualized.node);				
+				$.Cmdbuild.customvariables.selected
+						.select(paramActualized.node);
+			} else {
+				if ($.Cmdbuild.customvariables.selected
+						.isSelect(paramActualized.node)) {
+					$.Cmdbuild.customvariables.selected
+							.unSelect(paramActualized.node);
+				} else {
+					$.Cmdbuild.customvariables.selected
+							.select(paramActualized.node);
 				}
 			}
 			var form2Hook = $.Cmdbuild.dataModel.forms[paramActualized.id];
@@ -109,10 +124,10 @@
 
 	};
 	$.Cmdbuild.custom.commands = commands;
-	
+
 	function getExplodeCommands(selected, levels) {
 		var arCommands = [];
-		for (var key in selected) {
+		for ( var key in selected) {
 			arCommands.push({
 				command: "explode_levels",
 				id: key,

@@ -44,7 +44,11 @@
 			var nodes = this.model.getNodes();
 			for (var i = 0; i < nodes.length; i++) {
 				if ($.Cmdbuild.g3d.Model.getGraphData(nodes[i], "className") == className) {
-					this.selected[nodes[i].id()] = true;
+					if (this.selected[nodes[i].id()] === true && event.ctrlKey) {
+						delete this.selected[nodes[i].id()];
+					} else {
+						this.selected[nodes[i].id()] = true;
+					}
 				}
 			}
 			this.changed({});
