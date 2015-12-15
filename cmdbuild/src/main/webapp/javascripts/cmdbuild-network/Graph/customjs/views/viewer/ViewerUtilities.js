@@ -2,7 +2,6 @@
 //---------------------------------------------
 
 	//-----------------------------------------
-	var CAMERA_Z_START_POSITION = 2500;
 	
 	if (! $.Cmdbuild.g3d) {
 		$.Cmdbuild.g3d = {};
@@ -131,7 +130,8 @@
 			var fov = (param && param.fov) ? param.fov : 70;
 			var camera = new THREE.PerspectiveCamera(fov, window.innerWidth
 					/ window.innerHeight, 1, 100000);
-			camera.position.z = CAMERA_Z_START_POSITION;
+			camera.position.z = $.Cmdbuild.custom.configuration.camera.position.z;
+			camera.position.y = $.Cmdbuild.custom.configuration.camera.position.y;
 			return camera;
 		},
 		//OPENGL
