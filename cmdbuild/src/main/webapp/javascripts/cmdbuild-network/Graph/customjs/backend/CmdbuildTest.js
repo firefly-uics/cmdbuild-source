@@ -1,5 +1,8 @@
 (function($) {
 	var ELEMENTSNUMBERTOBECOMPOUND = 100;
+	var cache = {
+		domains: {}
+	};
 	if (! $.Cmdbuild.g3d) {
 		$.Cmdbuild.g3d = {};
 	}
@@ -105,13 +108,22 @@
 				nodes: [],
 				edges: []
 			};
-			var filter = this.getFilterForDomain(className);
-			var param = {
-					filter: filter
-			};
-			$.Cmdbuild.utilities.proxy.getDomains(param, function(response) {
-				this.getAllRelations(node, response, domainList, className, parseInt(cardId), elements, callback, callbackScope);
-			}, this);
+			var configuration = $.Cmdbuild.custom.configuration;
+			if (configuration.filterClassesDomains[className]) {
+				this.getAllRelations(node, configuration.filterClassesDomains[className], domainList, className, parseInt(cardId), elements, callback, callbackScope);				
+			} else if (cache.domains[className] && false){
+				this.getAllRelations(node, cache.domains[className], domainList, className, parseInt(cardId), elements, callback, callbackScope);				
+			
+			} else {
+				var filter = this.getFilterForDomain(className);
+				var param = {
+						filter: filter
+				};
+				$.Cmdbuild.utilities.proxy.getDomains(param, function(response) {
+					cache.domains[className] = response.slice();
+					this.getAllRelations(node, response, domainList, className, parseInt(cardId), elements, callback, callbackScope);
+				}, this);
+			}			
 		};
 		this.pushAnOpeningChild = function(elements, domain, id, description, className, data, node, parentId, children) {
 			var cyNode = this.model.getNode(id);
@@ -125,10 +137,6 @@
 				callback.apply(callbackScope, [elements]);
 				return;
 			}
-			var filter = this.getFilterForRelation(cardId);
-			var param = {
-					filter: filter
-			};
 			var domain = domains[0];
 			domains.splice(0, 1);
 			if (domainList != null) {
@@ -142,7 +150,23 @@
 			} 
 			var  domainId = domain._id;
 			var children = [];
+			var filter = this.getFilterForRelation(cardId);
+			var param = {
+					filter: filter
+			};
 			$.Cmdbuild.utilities.proxy.getRelations(domainId, param, function(response) {
+				if (response.length <= 0) {
+					this.getAllRelations(node, domains, domainList, className, cardId, elements, callback, callbackScope);
+					return;
+				}
+				var relation = response[0];
+				var configuration = $.Cmdbuild.custom.configuration;
+				if (configuration.filterClasses.indexOf(relation._destinationType) != -1 ||
+						configuration.filterClasses.indexOf(relation._sourceType) != -1) {
+					this.getAllRelations(node, domains, domainList, className, cardId, elements, callback, callbackScope);
+					return;
+					
+				}
 				if (response.length > ELEMENTSNUMBERTOBECOMPOUND) {
 					var relation = response[0];
 					var rDescription = (relation._sourceId == cardId && relation._sourceType == className) ?

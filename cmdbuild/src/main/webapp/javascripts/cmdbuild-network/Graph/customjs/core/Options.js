@@ -2,20 +2,11 @@
 	if (! $.Cmdbuild.g3d) {
 		$.Cmdbuild.g3d = {};
 	}
-	var defaultOptions = {
-		nodesTooltip: true,
-		edgesTooltip: true,
-		layoutType: "Hierarchical",
-		projectionType: "Projection",
-		explosionLevels: 1,
-		labels: false
-	};
 	var Options = function() {
 		this.observers = [];
 		this.init = function(name) {
 			return this[name];
 		};
-		$.extend(this, defaultOptions);
 		this.data = function(name) {
 			return this[name];
 		};
@@ -30,4 +21,12 @@
 		this.init();
 	};
 	$.Cmdbuild.g3d.Options = Options;	
+	//statics
+	$.Cmdbuild.g3d.Options.chargeConfiguration = function(callback, callbackScope) {
+		var nameFile = $.Cmdbuild.appConfigUrl + "configuration.json";
+		$.getJSON(nameFile, {}, function(response) {
+			console.log("response = ", response);
+			callback.apply(callbackScope, [response]);
+		}, this);
+	};
 })(jQuery);

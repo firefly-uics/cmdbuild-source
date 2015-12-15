@@ -13,7 +13,6 @@
 		var backend = new $.Cmdbuild.g3d.backend.CmdbuildTest();
 		this.newElements = [];
 		backend.setModel(this.model);
-		var justExploded = {};
 		this.execute = function(callback, callbackScope) {
 			var levels = parseInt(params.levels);//$.Cmdbuild.customvariables.options["explosionLevels"]) - 1;
 			if ($.Cmdbuild.customvariables.commandsManager.stopped) {
@@ -31,17 +30,9 @@
 				callback.apply(callbackScope, []);
 				return;
 			}
-			if (justExploded[id] && justExploded[id] >= levels) {
-				callback.apply(callbackScope, []);
-				return;
-			}
-			else {
-				justExploded[id] = levels;
-			}
 			var parentNode = this.model.getNode(id);
 			var explodedChildren = $.Cmdbuild.g3d.Model.getGraphData(parentNode, "exploded_children");
 			var oldChildren = $.Cmdbuild.g3d.Model.getGraphData(parentNode, "children");
-			/////-----qui va fatta!!!!!
 			if (explodedChildren) {
 				var emptyBunch = { nodes: [], edges: []};
 				this.explodeMyChildren(parentNode, emptyBunch, oldChildren, batch, levels, callback, callbackScope);
@@ -52,7 +43,6 @@
 				}, this);
 			}
 		};
-//		---------------------------------------------		
 		this.explodeMyChildren = function(parentNode, elements, oldChildren, batch, levels, callback, callbackScope) {
 			if ($.Cmdbuild.customvariables.commandsManager.stopped) {
 				callback.apply(callbackScope, []);
@@ -71,15 +61,12 @@
 			if (! batch) {
 				this.model.changed();	
 			}
-			this.newElements = this.newElements.concat(newElements);
+			newElements = this.newElements.concat(newElements);
 			if (levels > 0) {
-				var children = this.newElements.slice();
-				this.explodeChildren(children, levels - 1, function() {
-					callback.apply(callbackScope, []);
-				}, this);
+				var children = newElements.slice();
+				this.explodeChildren(children, levels, callback, callbackScope);
 			} else {
-				callback.apply(callbackScope, []);
-				
+				callback.apply(callbackScope, []);				
 			}
 		}
 //		---------------------------------------------		
@@ -91,8 +78,8 @@
 			}
 			var child = children[0];
 			children.splice(0, 1);
-			this.explodeNode(child, levels, function() {
-				this.explodeChildren(children, levels - 1, callback, callbackScope);				
+			this.explodeNode(child, levels - 1, function() {
+				this.explodeChildren(children, levels, callback, callbackScope);				
 			}, this);
 		};
 		this.undo = function() {
