@@ -3,6 +3,7 @@ package org.cmdbuild.servlets.json.management;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.cmdbuild.servlets.json.CommunicationConstants.CLASS_NAME;
 import static org.cmdbuild.servlets.json.CommunicationConstants.DATA;
+import static org.cmdbuild.servlets.json.CommunicationConstants.FILE_NAME;
 import static org.cmdbuild.servlets.json.CommunicationConstants.HEADERS;
 import static org.cmdbuild.servlets.json.CommunicationConstants.SEPARATOR;
 
@@ -14,9 +15,9 @@ import java.io.IOException;
 import java.util.Map;
 
 import javax.activation.DataHandler;
-import javax.activation.FileDataSource;
 import javax.mail.util.ByteArrayDataSource;
 
+import org.cmdbuild.common.utils.TempDataSource;
 import org.cmdbuild.servlets.json.JSONBaseWithSpringContext;
 import org.cmdbuild.servlets.utils.Parameter;
 import org.codehaus.jackson.JsonParseException;
@@ -49,6 +50,7 @@ public class ExportCSV extends JSONBaseWithSpringContext {
 
 	@JSONExported(contentType = TEXT_CSV)
 	public DataHandler writeCsv( //
+			@Parameter(FILE_NAME) final String fileName, //
 			@Parameter(SEPARATOR) final String separator, //
 			@Parameter(HEADERS) final String headersAsString, //
 			@Parameter(DATA) final String data //
@@ -56,14 +58,17 @@ public class ExportCSV extends JSONBaseWithSpringContext {
 		final String[] headers = MAPPER.readValue(headersAsString, String[].class);
 		final Map<String, Object>[] entries = MAPPER.readValue(data, Map[].class);
 		final CsvPreference preferences = new CsvPreference('"', separator.charAt(0), "\n");
-		final File file = File.createTempFile("csv", null);
+		final TempDataSource tmp = TempDataSource.newInstance() //
+				.withName(fileName) //
+				.build();
+		final File file = tmp.getFile();
 		final FileWriter fileWriter = new FileWriter(file);
 		final CsvMapWriter csvWriter = new CsvMapWriter(fileWriter, preferences);
 		try {
 			csvWriter.writeHeader(headers);
 			for (final Map<String, Object> entry : entries) {
 				for (final String element : headers) {
-					if (!entry.containsKey(element)) {
+					if (!entry.containsKey(element) || (entry.get(element) == null)) {
 						entry.put(element, EMPTY);
 					}
 				}
@@ -72,7 +77,7 @@ public class ExportCSV extends JSONBaseWithSpringContext {
 		} finally {
 			csvWriter.close();
 		}
-		return new DataHandler(new FileDataSource(file));
+		return new DataHandler(tmp);
 	}
 
 }

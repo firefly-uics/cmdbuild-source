@@ -116,7 +116,6 @@ public class CommunicationConstants {
 			EXTENSION = "extension", //
 			FIELD = "field", //
 			FIELD_MODE = "fieldmode", //
-			FILE_CSV = "filecsv", //
 			FILE = "file", //
 			FILE_IFC = "fileIFC", //
 			FILE_NAME = "fileName", //
