@@ -49,7 +49,7 @@
 			function callCmdbuildAP() {
 				$("#cmdbuilForm").cmdbuildAP({
 					apiUrl : '~/services/rest/v2/',
-					appRootUrl : '~/javascripts/cmdbuild-gui-framework-1.0/',
+					appRootUrl : '~/javascripts/cmdbuild-gui-framework-' + getUrlParameter("frameworkVersion") + '/',
 					appConfigUrl: 'Graph/',
 					access_token: 'CMDBuildSessionToken',
 					customjs: [
