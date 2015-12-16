@@ -58,10 +58,10 @@
 			this.cascade(function(item) {
 				if (
 					!Ext.isEmpty(item)
-					&& item instanceof Ext.form.Field
-					&& !item.isDisabled()
-					&& !item.isHidden()
-					&& !item.isValid()
+					&& this.isManagedField(item)
+					&& Ext.isFunction(item.isDisabled) && !item.isDisabled()
+					&& Ext.isFunction(item.isHidden) && !item.isHidden()
+					&& Ext.isFunction(item.isValid) && !item.isValid()
 				) {
 					nonValidFields.push(item);
 				}

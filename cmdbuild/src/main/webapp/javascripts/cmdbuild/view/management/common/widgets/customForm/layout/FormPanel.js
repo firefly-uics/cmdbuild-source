@@ -24,6 +24,11 @@
 		},
 
 		initComponent: function() {
+			var isWidgetReadOnly = this.delegate.cmfg('widgetCustomFormConfigurationGet', [
+				CMDBuild.core.proxy.CMProxyConstants.CAPABILITIES,
+				CMDBuild.core.proxy.CMProxyConstants.READ_ONLY
+			]);
+
 			Ext.apply(this, {
 				dockedItems: [
 					Ext.create('Ext.toolbar.Toolbar', {
@@ -31,15 +36,12 @@
 						itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_TOP,
 
 						items: [
-							Ext.create('CMDBuild.core.buttons.Import', {
+							Ext.create('CMDBuild.core.buttons.iconized.Import', {
 								text: CMDBuild.Translation.import,
 								scope: this,
 
 								disabled: (
-									this.delegate.cmfg('widgetCustomFormConfigurationGet', [
-										CMDBuild.core.proxy.CMProxyConstants.CAPABILITIES,
-										CMDBuild.core.proxy.CMProxyConstants.READ_ONLY
-									])
+									isWidgetReadOnly
 									|| this.delegate.cmfg('widgetCustomFormConfigurationGet', [
 										CMDBuild.core.proxy.CMProxyConstants.CAPABILITIES,
 										CMDBuild.core.proxy.CMProxyConstants.IMPORT_DISABLED
@@ -48,6 +50,21 @@
 
 								handler: function(button, e) {
 									this.delegate.cmfg('onWidgetCustomFormLayoutFormImportButtonClick');
+								}
+							}),
+							Ext.create('CMDBuild.core.buttons.iconized.Export', {
+								scope: this,
+
+								disabled: ( // TODO: configurations
+									isWidgetReadOnly
+//									|| this.delegate.cmfg('widgetCustomFormConfigurationGet', [
+//										CMDBuild.core.proxy.CMProxyConstants.CAPABILITIES,
+//										CMDBuild.core.proxy.CMProxyConstants.EXPORT_DISABLED
+//									])
+								),
+
+								handler: function(button, e) {
+									this.delegate.cmfg('onWidgetCustomFormLayoutFormExportButtonClick');
 								}
 							}),
 							Ext.create('CMDBuild.core.buttons.Reload', {

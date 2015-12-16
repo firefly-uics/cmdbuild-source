@@ -10,15 +10,17 @@
 		singleton: true,
 
 		/**
-		 * @return {Ext.data.ArrayStore}
+		 * @param {Object} parameters
 		 */
-		getImportModeStore: function() {
-			return Ext.create('Ext.data.ArrayStore', {
-				fields: [CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION, CMDBuild.core.proxy.CMProxyConstants.VALUE],
-				data: [
-					[CMDBuild.Translation.add, 'add'],
-					[CMDBuild.Translation.replace , 'replace']
-				]
+		exports: function(parameters) {
+			parameters.form.submit({
+				url: CMDBuild.core.proxy.CMProxyUrlIndex.csv.exports,
+				params: parameters.params,
+				loadMask: Ext.isBoolean(parameters.loadMask) ? parameters.loadMask : true,
+				scope: parameters.scope || this,
+				failure: parameters.failure || Ext.emptyFn,
+				success: parameters.success || Ext.emptyFn,
+				callback: parameters.callback || Ext.emptyFn
 			});
 		},
 
@@ -46,7 +48,24 @@
 		/**
 		 * @return {Ext.data.ArrayStore}
 		 */
-		getSeparatorStore: function() {
+		getStoreImportMode: function() {
+			return Ext.create('Ext.data.ArrayStore', {
+				fields: [CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION, CMDBuild.core.proxy.CMProxyConstants.VALUE],
+				data: [
+					[CMDBuild.Translation.replace , 'replace'],
+					[CMDBuild.Translation.add, 'add'],
+					[CMDBuild.Translation.merge , 'merge']
+				],
+				sorters: [
+					{ property: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION, direction: 'ASC' }
+				]
+			});
+		},
+
+		/**
+		 * @return {Ext.data.ArrayStore}
+		 */
+		getStoreSeparator: function() {
 			return Ext.create('Ext.data.ArrayStore', {
 				fields: [CMDBuild.core.proxy.CMProxyConstants.VALUE],
 				data: [

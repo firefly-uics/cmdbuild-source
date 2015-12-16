@@ -49,7 +49,7 @@
 			});
 
 			this.csvFileField = Ext.create('Ext.form.field.File', {
-				name: 'filecsv',
+				name: CMDBuild.core.proxy.CMProxyConstants.FILE,
 				fieldLabel: CMDBuild.Translation.csvFile,
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				labelAlign: 'right',
@@ -69,7 +69,7 @@
 				editable: false,
 				allowBlank: false,
 
-				store: CMDBuild.core.proxy.Csv.getSeparatorStore(),
+				store: CMDBuild.core.proxy.Csv.getStoreSeparator(),
 				queryMode: 'local'
 			});
 
@@ -85,7 +85,7 @@
 				editable: false,
 				allowBlank: false,
 
-				store: CMDBuild.core.proxy.Csv.getImportModeStore(),
+				store: CMDBuild.core.proxy.Csv.getStoreImportMode(),
 				queryMode: 'local'
 			});
 

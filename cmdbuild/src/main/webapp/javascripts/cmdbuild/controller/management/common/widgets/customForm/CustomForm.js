@@ -35,12 +35,14 @@
 		 */
 		cmfgCatchedFunctions: [
 			'getTemplateResolverServerVars = widgetCustomFormGetTemplateResolverServerVars',
+			'instancesDataStorageGet = widgetCustomFormInstancesDataStorageGet',
+			'instancesDataStorageIsEmpty = widgetCustomFormInstancesDataStorageIsEmpty',
 			'widgetConfigurationGet = widgetCustomFormConfigurationGet',
 			'widgetConfigurationIsAttributeEmpty = widgetCustomFormConfigurationIsAttributeEmpty',
 			'widgetConfigurationSet = widgetCustomFormConfigurationSet',
 			'widgetControllerPropertyGet = widgetCustomFormControllerPropertyGet',
-			'instancesDataStorageGet = widgetCustomFormInstancesDataStorageGet',
-			'instancesDataStorageIsEmpty = widgetCustomFormInstancesDataStorageIsEmpty',
+			'widgetCustomFormDataGet',
+			'widgetCustomFormModelStoreBuilder',
 			'widgetCustomFormViewSetLoading'
 		],
 
@@ -147,7 +149,7 @@
 		 * @override
 		 */
 		beforeHideView: function() {
-			this.instancesDataStorageSet(this.controllerLayout.getData());
+			this.instancesDataStorageSet(this.cmfg('widgetCustomFormDataGet'));
 		},
 
 		/**
@@ -212,7 +214,6 @@
 		 * @override
 		 */
 		getData: function() {
-			var layoutData = this.controllerLayout.getData();
 			var output = {};
 			output[CMDBuild.core.proxy.CMProxyConstants.OUTPUT] = [];
 
@@ -221,10 +222,8 @@
 					CMDBuild.core.proxy.CMProxyConstants.CAPABILITIES,
 					CMDBuild.core.proxy.CMProxyConstants.READ_ONLY
 				])
-				&& Ext.isArray(layoutData)
 			) {
-				// Uses direct data property access to avoid a get problem because of generic model
-				Ext.Array.forEach(layoutData, function(rowObject, i, allRowObjects) {
+				Ext.Array.forEach(this.cmfg('widgetCustomFormDataGet'), function(rowObject, i, allRowObjects) {
 					var dataObject = Ext.isEmpty(rowObject.data) ? rowObject : rowObject.data; // Model/Objects management
 
 					new CMDBuild.Management.TemplateResolver({
@@ -234,7 +233,8 @@
 					}).resolveTemplates({
 						attributes: Ext.Object.getKeys(dataObject),
 						callback: function(out, ctx) {
-							output[CMDBuild.core.proxy.CMProxyConstants.OUTPUT].push(Ext.encode(out));
+							if (Ext.isObject(out))
+								output[CMDBuild.core.proxy.CMProxyConstants.OUTPUT].push(Ext.encode(out));
 						}
 					});
 				}, this);
@@ -266,6 +266,39 @@
 			this.instancesDataStorageSet(this.cmfg('widgetCustomFormConfigurationGet', CMDBuild.core.proxy.CMProxyConstants.DATA));
 
 			this.beforeActiveView();
+		},
+
+		/**
+		 * Shorthand to controllerLayout's getData method
+		 *
+		 * @returns {Array}
+		 */
+		widgetCustomFormDataGet: function() {
+			return this.controllerLayout.getData();
+		},
+
+		/**
+		 * @returns {Ext.data.ArrayStore}
+		 */
+		widgetCustomFormModelStoreBuilder: function() {
+			var columnsData = [];
+
+			Ext.Array.forEach(this.cmfg('widgetCustomFormConfigurationGet', CMDBuild.core.proxy.CMProxyConstants.MODEL), function(attributeModel, i, allAttributeModels) {
+				if (!Ext.isEmpty(attributeModel))
+					columnsData.push([
+						attributeModel.get(CMDBuild.ServiceProxy.parameter.NAME),
+						attributeModel.get(CMDBuild.ServiceProxy.parameter.DESCRIPTION)
+					]);
+			}, this);
+
+			return Ext.create('Ext.data.ArrayStore', {
+				fields: [CMDBuild.ServiceProxy.parameter.NAME, CMDBuild.ServiceProxy.parameter.DESCRIPTION],
+				data: columnsData,
+
+				sorters: [
+					{ property: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION, direction: 'ASC' }
+				]
+			});
 		},
 
 		// WidgetConfiguration methods

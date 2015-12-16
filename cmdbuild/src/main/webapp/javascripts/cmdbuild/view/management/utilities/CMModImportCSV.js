@@ -9,7 +9,7 @@
 		hideMode:  'offsets',
 		frame: true,
 		border: false,
-	
+
 		initComponent: function() {
 			this.form = new CMDBuild.view.management.utilities.CMModImportCSV.UploadForm({
 				region: "center",
@@ -36,15 +36,15 @@
 			this.callParent(arguments);
 		}
 	});
-	
-	
+
+
 	Ext.define("CMDBuild.view.management.utilities.CMModImportCSV.UploadForm", {
 		extend: "Ext.form.Panel",
 		mixins: {
 			cmFormFunctions: "CMDBUild.view.common.CMFormFunctions"
 		},
 		constructor: function() {
-	
+
 			this.classList = new CMDBuild.field.CMBaseCombo({
 				store: _CMCache.getClassesStore(),
 				labelWidth: CMDBuild.LABEL_WIDTH,
@@ -75,10 +75,10 @@
 					labelWidth: CMDBuild.LABEL_WIDTH,
 					fieldLabel: tr.csvfile,
 					allowBlank: false,
-					name: 'filecsv'
+					name: 'file'
 				},
 
-				new Ext.form.ComboBox({ 
+				new Ext.form.ComboBox({
 					name: 'separator',
 					fieldLabel: tr.separator,
 					labelWidth: CMDBuild.LABEL_WIDTH,
@@ -149,7 +149,7 @@
 						// prevent the red triangle if enter in
 						// editing for a date and leave the field
 						// without change something
-						if (isADate(value) 
+						if (isADate(value)
 							&& typeof oldValue == "string"
 							&& formatDate(value) == oldValue) {
 
@@ -419,7 +419,7 @@
 
 		if (v && typeof v == "object") {
 			if (isADate(v)) {
-				v = formatDate(v); 
+				v = formatDate(v);
 			} else {
 				v = v.description;
 			}

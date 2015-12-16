@@ -14,7 +14,6 @@
 .find { background-image: url("../images/icons/find.png") !important; }
 .foreignkey { background-image: url("../images/icons/database_table.png") !important; }
 .graph { background-image: url("../images/icons/chart_organisation.png") !important; }
-.import { background-image: url("../images/icons/page_white_go.png") !important; }
 .map { background-image: url("../images/icons/map.png") !important; }
 .modify { background-image: url("../images/icons/modify.png") !important; }
 .note { background-image: url("../images/icons/note.png") !important; }
@@ -58,3 +57,7 @@
 	.sql { background-image: url("../images/icons/fileFormats/sql.png") !important; }
 	.xml { background-image: url("../images/icons/fileFormats/xml.png") !important; }
 	.zip { background-image: url("../images/icons/fileFormats/zip.png") !important; }
+
+/* Import/Export */
+	.export { background-image: url("../images/icons/export.png") !important; }
+	.import { background-image: url("../images/icons/import.png") !important; }
