@@ -27,11 +27,6 @@
 		 */
 		modeCombo: undefined,
 
-		/**
-		 * @cfg {Boolean}
-		 */
-		modeDisabled: false,
-
 		frame: true,
 		border: false,
 		encoding: 'multipart/form-data',
@@ -92,12 +87,14 @@
 						valueField: CMDBuild.core.proxy.CMProxyConstants.VALUE,
 						displayField: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
 						maxWidth: CMDBuild.MEDIUM_FIELD_WIDTH,
-						disabled: this.modeDisabled,
 						value: 'replace',
 						editable: false,
 						allowBlank: false,
 
-						store: CMDBuild.core.proxy.Csv.getStoreImportMode(),
+						store: CMDBuild.core.proxy.Csv.getStoreImportMode(
+							// Remove add option from store in form layout
+							this.delegate.cmfg('widgetCustomFormConfigurationGet', CMDBuild.core.proxy.CMProxyConstants.LAYOUT) == 'form' ? ['add'] : null
+						),
 						queryMode: 'local',
 
 						listeners: {

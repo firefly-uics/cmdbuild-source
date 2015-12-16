@@ -30,11 +30,6 @@
 		form: undefined,
 
 		/**
-		 * @cfg {Boolean}
-		 */
-		modeDisabled: false,
-
-		/**
 		 * @property {CMDBuild.view.management.common.widgets.customForm.import.ImportWindow}
 		 */
 		view: undefined,
@@ -48,10 +43,7 @@
 		constructor: function(configurationObject) {
 			this.callParent(arguments);
 
-			this.view = Ext.create('CMDBuild.view.management.common.widgets.customForm.import.ImportWindow', {
-				delegate: this,
-				modeDisabled: this.modeDisabled
-			});
+			this.view = Ext.create('CMDBuild.view.management.common.widgets.customForm.import.ImportWindow', { delegate: this });
 
 			// Shorthands
 			this.form = this.view.form;

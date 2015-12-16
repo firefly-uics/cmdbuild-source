@@ -15,11 +15,6 @@
 		 */
 		form: undefined,
 
-		/**
-		 * @cfg {Boolean}
-		 */
-		modeDisabled: false,
-
 		autoHeight: true,
 		border: false,
 		defaultSizeW: 0.90,
@@ -58,10 +53,7 @@
 					})
 				],
 				items: [
-					this.form = Ext.create('CMDBuild.view.management.common.widgets.customForm.export.FormPanel', {
-						delegate: this.delegate,
-						modeDisabled: this.modeDisabled
-					})
+					this.form = Ext.create('CMDBuild.view.management.common.widgets.customForm.export.FormPanel', { delegate: this.delegate })
 				]
 			});
 
