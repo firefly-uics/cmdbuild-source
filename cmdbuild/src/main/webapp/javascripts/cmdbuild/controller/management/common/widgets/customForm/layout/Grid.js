@@ -398,7 +398,7 @@
 			if (!this.cmfg('widgetCustomFormInstancesDataStorageIsEmpty'))
 				this.setData(this.cmfg('widgetCustomFormInstancesDataStorageGet'));
 
-			// Fixes reference field renderer to avoid black cell content render
+			// Fixes reference field renderer to avoid blank cell content render
 			Ext.Function.createDelayed(function() {
 				if (this.view.getView().isVisible())
 					this.view.getView().refresh();
