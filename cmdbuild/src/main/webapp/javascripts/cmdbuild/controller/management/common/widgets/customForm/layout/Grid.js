@@ -408,7 +408,7 @@
 				configurationObject: this.cmfg('widgetCustomFormControllerPropertyGet', 'widgetConfiguration')[CMDBuild.core.proxy.CMProxyConstants.DATA],
 				propertyName: CMDBuild.core.proxy.CMProxyConstants.DATA
 			});
-_debug('default', this.cmfg('widgetCustomFormInstancesDataStorageGet'));
+
 			this.setData(this.cmfg('widgetCustomFormConfigurationGet', CMDBuild.core.proxy.CMProxyConstants.DATA));
 		},
 
