@@ -11,6 +11,7 @@ import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.DEFAU
 import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.DEFAULT_KEY_VALUE_SEPARATOR;
 import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.DEFAULT_ROWS_SEPARATOR;
 import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.DELETE_DISABLED;
+import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.EXPORT_DISABLED;
 import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.FORM_MODEL;
 import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.FUNCTION_ATTRIBUTES;
 import static org.cmdbuild.model.widget.customform.CustomFormWidgetFactory.FUNCTION_DATA;
@@ -448,6 +449,7 @@ public class CustomFormWidgetFactoryTest {
 		assertThat(capabilities.isReadOnly(), equalTo(false));
 		assertThat(capabilities.isAddDisabled(), equalTo(false));
 		assertThat(capabilities.isDeleteDisabled(), equalTo(false));
+		assertThat(capabilities.isExportDisabled(), equalTo(false));
 		assertThat(capabilities.isImportDisabled(), equalTo(false));
 		assertThat(capabilities.isModifyDisabled(), equalTo(false));
 		assertThat(capabilities.isCloneDisabled(), equalTo(false));
@@ -463,6 +465,7 @@ public class CustomFormWidgetFactoryTest {
 				+ READ_ONLY + "\n" //
 				+ ADD_DISABLED + "\n" //
 				+ DELETE_DISABLED + "\n" //
+				+ EXPORT_DISABLED + "\n" //
 				+ IMPORT_DISABLED + "\n" //
 				+ MODIFY_DISABLED + "\n" //
 		;
@@ -475,6 +478,7 @@ public class CustomFormWidgetFactoryTest {
 		assertThat(capabilities.isReadOnly(), equalTo(false));
 		assertThat(capabilities.isAddDisabled(), equalTo(false));
 		assertThat(capabilities.isDeleteDisabled(), equalTo(false));
+		assertThat(capabilities.isExportDisabled(), equalTo(false));
 		assertThat(capabilities.isImportDisabled(), equalTo(false));
 		assertThat(capabilities.isModifyDisabled(), equalTo(false));
 		verifyNoMoreInteractions(templateRespository, notifier, dataView, metadataStoreFactory);
@@ -489,6 +493,7 @@ public class CustomFormWidgetFactoryTest {
 				+ READ_ONLY + "=true\n" //
 				+ ADD_DISABLED + "=true\n" //
 				+ DELETE_DISABLED + "=true\n" //
+				+ EXPORT_DISABLED + "=true\n" //
 				+ IMPORT_DISABLED + "=true\n" //
 				+ MODIFY_DISABLED + "=true\n" //
 				+ CLONE_DISABLED + "=true\n" //
@@ -502,6 +507,7 @@ public class CustomFormWidgetFactoryTest {
 		assertThat(capabilities.isReadOnly(), equalTo(false));
 		assertThat(capabilities.isAddDisabled(), equalTo(false));
 		assertThat(capabilities.isDeleteDisabled(), equalTo(false));
+		assertThat(capabilities.isExportDisabled(), equalTo(false));
 		assertThat(capabilities.isImportDisabled(), equalTo(false));
 		assertThat(capabilities.isModifyDisabled(), equalTo(false));
 		assertThat(capabilities.isCloneDisabled(), equalTo(false));
@@ -517,6 +523,7 @@ public class CustomFormWidgetFactoryTest {
 				+ READ_ONLY + "=\"true\"\n" //
 				+ ADD_DISABLED + "=\"true\"\n" //
 				+ DELETE_DISABLED + "=\"true\"\n" //
+				+ EXPORT_DISABLED + "=\"true\"\n" //
 				+ IMPORT_DISABLED + "=\"true\"\n" //
 				+ MODIFY_DISABLED + "=\"true\"\n" //
 				+ CLONE_DISABLED + "=\"true\"\n" //
@@ -530,6 +537,7 @@ public class CustomFormWidgetFactoryTest {
 		assertThat(capabilities.isReadOnly(), equalTo(true));
 		assertThat(capabilities.isAddDisabled(), equalTo(true));
 		assertThat(capabilities.isDeleteDisabled(), equalTo(true));
+		assertThat(capabilities.isExportDisabled(), equalTo(true));
 		assertThat(capabilities.isImportDisabled(), equalTo(true));
 		assertThat(capabilities.isModifyDisabled(), equalTo(true));
 		assertThat(capabilities.isCloneDisabled(), equalTo(true));
