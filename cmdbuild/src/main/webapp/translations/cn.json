@@ -1384,6 +1384,7 @@
 	"itIsNotAllowedFilterWithRuntimeParams": "不允许使用用户可选择的参数来过滤",
 	"keepSync": "保持同步",
 	"key": "键",
+	"keyAttributes": "<em>Key attributes</em>",
 	"language": "语言",
 	"last_checkin": "最后一次登记",
 	"layers": "层",

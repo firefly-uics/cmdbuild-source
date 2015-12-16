@@ -1384,6 +1384,7 @@
 	"itIsNotAllowedFilterWithRuntimeParams": "It's not allowed to use a filter with user selectable parameters",
 	"keepSync": "Keep sync",
 	"key": "Key",
+	"keyAttributes": "Key attributes",
 	"language": "Language",
 	"last_checkin": "Last checkin",
 	"layers": "Layers",

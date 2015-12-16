@@ -1384,6 +1384,7 @@
 	"itIsNotAllowedFilterWithRuntimeParams": "اجازه ندارید که از فیلتری استفاده که کنید که کاربر بتواند انتخاب کند.",
 	"keepSync": "<em>Keep sync</em>",
 	"key": "کلید",
+	"keyAttributes": "<em>Key attributes</em>",
 	"language": "<em>Language</em>",
 	"last_checkin": "آخرین ورود",
 	"layers": "لایه ها",

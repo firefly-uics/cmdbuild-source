@@ -1384,6 +1384,7 @@
 	"itIsNotAllowedFilterWithRuntimeParams": " không được phép sử dụng bộ lọc với các thông số được chọn lựa boi Người dùng ",
 	"keepSync": "<em>Keep sync</em>",
 	"key": "Từ khóa",
+	"keyAttributes": "<em>Key attributes</em>",
 	"language": "<em>Language</em>",
 	"last_checkin": "<em>Last checkin</em>",
 	"layers": "<em>Layers</em>",
