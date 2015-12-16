@@ -49,6 +49,8 @@
 
 		/**
 		 * @return {Array} itemsArray
+		 *
+		 * @private
 		 */
 		buildFields: function() {
 			var itemsArray = [];
@@ -106,6 +108,8 @@
 
 		/**
 		 * @returns {Array}
+		 *
+		 * @public
 		 */
 		getData: function() {
 			return [this.view.getData(true)];
@@ -117,6 +121,8 @@
 		 * @param {Boolean} showPopup
 		 *
 		 * @returns {Boolean}
+		 *
+		 * @public
 		 */
 		isValid: function(showPopup) {
 			return this.validate(this.view, showPopup);

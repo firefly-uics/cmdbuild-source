@@ -106,7 +106,7 @@
 					}),
 					this.keyAttributesMultiselect = Ext.create('CMDBuild.view.common.field.multiselect.Multiselect', {
 						name: CMDBuild.core.proxy.CMProxyConstants.KEY_ATTRIBUTES,
-						fieldLabel: CMDBuild.core.constants.Global.getMandatoryLabelFlag() + 'CMDBuild.Translation.keyAttributes',
+						fieldLabel: CMDBuild.core.constants.Global.getMandatoryLabelFlag() + CMDBuild.Translation.keyAttributes,
 						labelWidth: CMDBuild.LABEL_WIDTH,
 						labelAlign: 'right',
 						valueField: CMDBuild.core.proxy.CMProxyConstants.NAME,

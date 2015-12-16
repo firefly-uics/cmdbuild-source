@@ -61,6 +61,8 @@
 		 * @returns {String} value
 		 *
 		 * TODO: delete when old FieldManager will be replaced
+		 *
+		 * @private
 		 */
 		addRendererToHeader: function(header, attribute) {
 			var me = this;
@@ -90,6 +92,8 @@
 
 		/**
 		 * @returns {Ext.grid.column.Action}
+		 *
+		 * @private
 		 */
 		buildActionColumns: function() {
 			return Ext.create('Ext.grid.column.Action', {
@@ -178,6 +182,8 @@
 		 * @returns {Array} columns definitions
 		 *
 		 * TODO: this implementation should be refactored with FieldManager class
+		 *
+		 * @private
 		 */
 		buildColumns: function() {
 			var columns = [];
@@ -266,6 +272,8 @@
 
 		/**
 		 * @returns {Ext.data.ArrayStore}
+		 *
+		 * @private
 		 */
 		buildDataStore: function() {
 			var storeFields = [];
@@ -309,6 +317,8 @@
 		 * Check required field value of grid store records
 		 *
 		 * @returns {Boolean}
+		 *
+		 * @public
 		 */
 		isValid: function() {
 			var returnValue = true;
