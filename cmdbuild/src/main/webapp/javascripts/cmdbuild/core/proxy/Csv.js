@@ -46,16 +46,24 @@
 		},
 
 		/**
+		 * @param {Array} excludedValues
+		 *
 		 * @return {Ext.data.ArrayStore}
 		 */
-		getStoreImportMode: function() {
+		getStoreImportMode: function(excludedValues) {
+			excludedValues = Ext.isArray(excludedValues) ? excludedValues : [];
+
+			var dataValues = [
+				[CMDBuild.Translation.replace , 'replace'],
+				[CMDBuild.Translation.add, 'add'],
+				[CMDBuild.Translation.merge , 'merge']
+			];
+
 			return Ext.create('Ext.data.ArrayStore', {
 				fields: [CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION, CMDBuild.core.proxy.CMProxyConstants.VALUE],
-				data: [
-					[CMDBuild.Translation.replace , 'replace'],
-					[CMDBuild.Translation.add, 'add'],
-					[CMDBuild.Translation.merge , 'merge']
-				],
+				data: Ext.Array.filter(dataValues, function(valueArray, i, allValueArrays) {
+					return !Ext.Array.contains(excludedValues, valueArray[1]);
+				}, this),
 				sorters: [
 					{ property: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION, direction: 'ASC' }
 				]

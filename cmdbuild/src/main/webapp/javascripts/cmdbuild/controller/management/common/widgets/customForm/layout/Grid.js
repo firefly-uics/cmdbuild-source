@@ -21,7 +21,7 @@
 			'onWidgetCustomFormLayoutGridImportButtonClick',
 			'onWidgetCustomFormLayoutGridResetButtonClick',
 			'onWidgetCustomFormLayoutGridShow = onWidgetCustomFormShow',
-			'widgetCustomFormLayoutGridImportData = widgetCustomFormImportData'
+			'setData = widgetCustomFormImportData'
 		],
 
 		/**
@@ -418,6 +418,8 @@
 
 		/**
 		 * @param {Array} data
+		 *
+		 * @private
 		 */
 		setData: function(data) {
 			this.view.getStore().removeAll();
@@ -426,14 +428,6 @@
 				this.view.getStore().loadData(data);
 
 			this.isValid();
-		},
-
-		/**
-		 * @param {Object} data
-		 */
-		widgetCustomFormLayoutGridImportData: function(data) {
-			if (!Ext.isEmpty(data) && Ext.isArray(data))
-				this.view.getStore().loadData(data);
 		}
 	});
 

@@ -16,7 +16,7 @@
 			'onWidgetCustomFormLayoutFormImportButtonClick',
 			'onWidgetCustomFormLayoutFormResetButtonClick',
 			'onWidgetCustomFormLayoutFormShow = onWidgetCustomFormShow',
-			'widgetCustomFormLayoutFormImportData = widgetCustomFormImportData'
+			'setData = widgetCustomFormImportData'
 		],
 
 		/**
@@ -134,10 +134,7 @@
 		 * Opens import configuration pop-up window
 		 */
 		onWidgetCustomFormLayoutFormImportButtonClick: function() {
-			Ext.create('CMDBuild.controller.management.common.widgets.customForm.Import', {
-				parentDelegate: this,
-				modeDisabled: true
-			});
+			Ext.create('CMDBuild.controller.management.common.widgets.customForm.Import', { parentDelegate: this });
 		},
 
 		onWidgetCustomFormLayoutFormResetButtonClick: function() {
@@ -175,6 +172,8 @@
 
 		/**
 		 * @param {Array} data
+		 *
+		 * @private
 		 */
 		setData: function(data) {
 			data = (Ext.isArray(data) && !Ext.isEmpty(data[0])) ? data[0] : data; // Get first item only from arrays
@@ -182,20 +181,9 @@
 			this.view.reset();
 
 			if (Ext.isObject(data) && !Ext.Object.isEmpty(data))
-				this.view.loadRecord(data);
+				this.view.getForm().setValues(data);
 
 			this.isValid(false);
-		},
-
-		/**
-		 * @param {Object} parameters
-		 * @param {String} parameters.append
-		 * @param {Array} parameters.rowsObjects
-		 */
-		widgetCustomFormLayoutFormImportData: function(parameters) {
-			var rowsObjects = Ext.isArray(parameters.rowsObjects) ? parameters.rowsObjects : [];
-
-			this.setData(rowsObjects);
 		}
 	});
 

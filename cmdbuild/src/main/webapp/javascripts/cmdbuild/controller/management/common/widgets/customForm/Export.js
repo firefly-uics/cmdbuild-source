@@ -74,6 +74,8 @@
 				Ext.defer(function() { // Form cleanup
 					form.close();
 				}, 100);
+
+				this.cmfg('onWidgetCustomFormExportAbortButtonClick');
 			}
 		}
 	});
