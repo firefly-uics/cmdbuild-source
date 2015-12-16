@@ -55,6 +55,8 @@
 		 * @param {Array or String} target
 		 *
 		 * @returns {Array} decodedOutput
+		 *
+		 * @private
 		 */
 		applyTemplateResolverToArray: function(target) {
 			target = CMDBuild.core.Utils.isJsonString(target) ? Ext.decode(target) : target;
@@ -83,6 +85,8 @@
 		 * @param {Object or String} target
 		 *
 		 * @returns {Object} decodedOutput
+		 *
+		 * @private
 		 */
 		applyTemplateResolverToObject: function(target) {
 			target = CMDBuild.core.Utils.isJsonString(target) ? Ext.decode(target) : target;
@@ -113,6 +117,7 @@
 		},
 
 		/**
+		 * @public
 		 * @override
 		 */
 		beforeActiveView: function() {
@@ -146,6 +151,7 @@
 		/**
 		 * Save data in storage attribute
 		 *
+		 * @public
 		 * @override
 		 */
 		beforeHideView: function() {
@@ -154,6 +160,8 @@
 
 		/**
 		 * @param {Function} callback
+		 *
+		 * @private
 		 */
 		buildDataConfigurationFromFunction: function(callback) {
 			callback = Ext.isFunction(callback) ? callback : Ext.emptyFn;
@@ -184,6 +192,8 @@
 
 		/**
 		 * Builds layout controller and inject view
+		 *
+		 * @private
 		 */
 		buildLayout: function() {
 			if (!this.cmfg('widgetCustomFormConfigurationIsAttributeEmpty', CMDBuild.core.proxy.CMProxyConstants.MODEL)) {
@@ -211,6 +221,7 @@
 		/**
 		 * @return {Object} output
 		 *
+		 * @public
 		 * @override
 		 */
 		getData: function() {
@@ -248,6 +259,7 @@
 		 *
 		 * @returns {Boolean}
 		 *
+		 * @public
 		 * @override
 		 */
 		isValid: function() {
@@ -260,6 +272,7 @@
 		/**
 		 * Preset data in instanceDataStorage variable
 		 *
+		 * @public
 		 * @override
 		 */
 		onEditMode: function() {

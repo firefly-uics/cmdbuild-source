@@ -275,6 +275,8 @@
 		 * @param {Array} csvData
 		 *
 		 * @returns {Boolean}
+		 *
+		 * @private
 		 */
 		isValidKeyCsvAttributes: function(keyAttributes, csvData) {
 			if (
@@ -320,6 +322,8 @@
 		 * @param {Array} keyAttributes
 		 *
 		 * @returns {Boolean}
+		 *
+		 * @private
 		 */
 		isValidGridStoreKeyAttributes: function(keyAttributes) {
 			if (!Ext.isEmpty(keyAttributes) && Ext.isArray(keyAttributes)) {
