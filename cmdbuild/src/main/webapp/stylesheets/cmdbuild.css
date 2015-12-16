@@ -663,3 +663,6 @@ em { font-style: oblique !important; }
 
 /* FIX: empty ending row in grids */
 	.x-grid-row-summary { display: none; }
+
+/* Generic field invalid class */
+	.cm-form-invalid-field { border-color: #cc3300 !important; }

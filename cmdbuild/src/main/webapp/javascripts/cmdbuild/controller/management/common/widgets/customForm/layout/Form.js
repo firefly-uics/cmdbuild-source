@@ -12,6 +12,7 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
+			'onWidgetCustomFormLayoutFormExportButtonClick',
 			'onWidgetCustomFormLayoutFormImportButtonClick',
 			'onWidgetCustomFormLayoutFormResetButtonClick',
 			'onWidgetCustomFormLayoutFormShow = onWidgetCustomFormShow',
@@ -119,6 +120,14 @@
 		 */
 		isValid: function(showPopup) {
 			return this.validate(this.view, showPopup);
+		},
+
+
+		/**
+		 * Opens export configuration pop-up window
+		 */
+		onWidgetCustomFormLayoutFormExportButtonClick: function() {
+			Ext.create('CMDBuild.controller.management.common.widgets.customForm.Export', { parentDelegate: this });
 		},
 
 		/**

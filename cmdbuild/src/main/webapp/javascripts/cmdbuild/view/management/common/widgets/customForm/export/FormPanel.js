@@ -1,6 +1,6 @@
 (function() {
 
-	Ext.define('CMDBuild.view.management.common.widgets.customForm.import.FormPanel', {
+	Ext.define('CMDBuild.view.management.common.widgets.customForm.export.FormPanel', {
 		extend: 'Ext.form.Panel',
 
 		requires: [
@@ -13,28 +13,12 @@
 		mixins: ['CMDBuild.view.common.PanelFunctions'],
 
 		/**
-		 * @cfg {CMDBuild.controller.management.common.widgets.customForm.Import}
+		 * @cfg {CMDBuild.controller.management.common.widgets.customForm.Export}
 		 */
 		delegate: undefined,
 
-		/**
-		 * @property {CMDBuild.view.common.field.multiselect.Multiselect}
-		 */
-		keyAttributesMultiselect: undefined,
-
-		/**
-		 * @property {Ext.form.field.ComboBox}
-		 */
-		modeCombo: undefined,
-
-		/**
-		 * @cfg {Boolean}
-		 */
-		modeDisabled: false,
-
 		frame: true,
 		border: false,
-		encoding: 'multipart/form-data',
 
 		layout: {
 			type: 'vbox',
@@ -58,16 +42,17 @@
 
 						value: CMDBuild.core.proxy.CMProxyConstants.CSV, // Default value
 
-						store: CMDBuild.core.proxy.widgets.CustomForm.getStoreImportFileFormat(),
+						store: CMDBuild.core.proxy.widgets.CustomForm.getStoreExportFileFormat(),
 						queryMode: 'local'
 					}),
-					Ext.create('Ext.form.field.File', {
-						name: CMDBuild.core.proxy.CMProxyConstants.FILE,
-						fieldLabel: CMDBuild.core.constants.Global.getMandatoryLabelFlag() + CMDBuild.Translation.file,
+					Ext.create('Ext.form.field.Text', {
+						name: CMDBuild.core.proxy.CMProxyConstants.FILE_NAME,
+						fieldLabel: CMDBuild.core.constants.Global.getMandatoryLabelFlag() + CMDBuild.Translation.fileName,
 						labelWidth: CMDBuild.LABEL_WIDTH,
 						labelAlign: 'right',
+						maxWidth: CMDBuild.BIG_FIELD_WIDTH,
 						allowBlank: false,
-						maxWidth: CMDBuild.BIG_FIELD_WIDTH
+						vtype: 'alphanumextended'
 					}),
 					Ext.create('Ext.form.field.ComboBox', {
 						name: CMDBuild.core.proxy.CMProxyConstants.SEPARATOR,
@@ -84,32 +69,9 @@
 						store: CMDBuild.core.proxy.Csv.getStoreSeparator(),
 						queryMode: 'local'
 					}),
-					this.modeCombo = Ext.create('Ext.form.field.ComboBox', {
-						name: CMDBuild.core.proxy.CMProxyConstants.MODE,
-						fieldLabel: CMDBuild.Translation.mode,
-						labelWidth: CMDBuild.LABEL_WIDTH,
-						labelAlign: 'right',
-						valueField: CMDBuild.core.proxy.CMProxyConstants.VALUE,
-						displayField: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
-						maxWidth: CMDBuild.MEDIUM_FIELD_WIDTH,
-						disabled: this.modeDisabled,
-						value: 'replace',
-						editable: false,
-						allowBlank: false,
-
-						store: CMDBuild.core.proxy.Csv.getStoreImportMode(),
-						queryMode: 'local',
-
-						listeners: {
-							scope: this,
-							change: function(field, newValue, oldValue, eOpts) {
-								this.delegate.cmfg('onWidgetCustomFormImportModeChange');
-							}
-						}
-					}),
-					this.keyAttributesMultiselect = Ext.create('CMDBuild.view.common.field.multiselect.Multiselect', {
-						name: CMDBuild.core.proxy.CMProxyConstants.KEY_ATTRIBUTES,
-						fieldLabel: CMDBuild.core.constants.Global.getMandatoryLabelFlag() + 'CMDBuild.Translation.keyAttributes',
+					Ext.create('CMDBuild.view.common.field.multiselect.Multiselect', {
+						name: CMDBuild.core.proxy.CMProxyConstants.HEADERS,
+						fieldLabel: CMDBuild.core.constants.Global.getMandatoryLabelFlag() + CMDBuild.Translation.dataToExport,
 						labelWidth: CMDBuild.LABEL_WIDTH,
 						labelAlign: 'right',
 						valueField: CMDBuild.core.proxy.CMProxyConstants.NAME,
@@ -117,9 +79,9 @@
 						maxHeight: 300,
 						maxWidth: CMDBuild.MEDIUM_FIELD_WIDTH,
 						considerAsFieldToDisable: true,
+						defaultSelection: 'all',
 						flex: 1, // Stretch vertically
 						allowBlank: false,
-						disabled: true,
 
 						store: this.delegate.cmfg('widgetCustomFormModelStoreBuilder'),
 						queryMode: 'local'

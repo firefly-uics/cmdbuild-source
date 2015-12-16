@@ -40,13 +40,6 @@
 		textDefault: CMDBuild.Translation.download
 	});
 
-	Ext.define('CMDBuild.core.buttons.Import', {
-		extend: 'CMDBuild.core.buttons.Base',
-
-		iconCls: 'import',
-		textDefault: CMDBuild.Translation.common.buttons.modify
-	});
-
 	Ext.define('CMDBuild.core.buttons.Modify', {
 		extend: 'CMDBuild.core.buttons.Base',
 

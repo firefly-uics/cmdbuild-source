@@ -4,6 +4,7 @@
 		extend: 'CMDBuild.controller.common.AbstractController',
 
 		requires: [
+			'CMDBuild.core.Message',
 			'CMDBuild.core.proxy.CMProxyConstants',
 			'CMDBuild.core.RequestBarrier'
 		],
@@ -16,6 +17,7 @@
 			'onWidgetCustomFormLayoutGridCloneRowButtonClick',
 			'onWidgetCustomFormLayoutGridDeleteRowButtonClick' ,
 			'onWidgetCustomFormLayoutGridEditRowButtonClick',
+			'onWidgetCustomFormLayoutGridExportButtonClick',
 			'onWidgetCustomFormLayoutGridImportButtonClick',
 			'onWidgetCustomFormLayoutGridResetButtonClick',
 			'onWidgetCustomFormLayoutGridShow = onWidgetCustomFormShow',
@@ -289,6 +291,8 @@
 
 		/**
 		 * @returns {Array} storeRecordsData
+		 *
+		 * @public
 		 */
 		getData: function() {
 			var storeRecordsData = [];
@@ -376,6 +380,13 @@
 		},
 
 		/**
+		 * Opens export configuration pop-up window
+		 */
+		onWidgetCustomFormLayoutGridExportButtonClick: function() {
+			Ext.create('CMDBuild.controller.management.common.widgets.customForm.Export', { parentDelegate: this });
+		},
+
+		/**
 		 * Opens import configuration pop-up window
 		 */
 		onWidgetCustomFormLayoutGridImportButtonClick: function() {
@@ -418,15 +429,11 @@
 		},
 
 		/**
-		 * @param {Object} parameters
-		 * @param {String} parameters.append
-		 * @param {Array} parameters.rowsObjects
+		 * @param {Object} data
 		 */
-		widgetCustomFormLayoutGridImportData: function(parameters) {
-			var append = Ext.isBoolean(parameters.append) ? parameters.append : false;
-			var rowsObjects = Ext.isArray(parameters.rowsObjects) ? parameters.rowsObjects : [];
-
-			this.view.getStore().loadData(rowsObjects, append);
+		widgetCustomFormLayoutGridImportData: function(data) {
+			if (!Ext.isEmpty(data) && Ext.isArray(data))
+				this.view.getStore().loadData(data);
 		}
 	});
 
