@@ -1384,6 +1384,7 @@
 	"itIsNotAllowedFilterWithRuntimeParams": "Nem engedélyezett a szűrők felhasználó által választott paraméterrel történő használata",
 	"keepSync": "Folyamatos sync",
 	"key": "Kulcs",
+	"keyAttributes": "<em>Key attributes</em>",
 	"language": "Nyelv",
 	"last_checkin": "Last checkin",
 	"layers": "Rétegek",

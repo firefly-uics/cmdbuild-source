@@ -1384,6 +1384,7 @@
 	"itIsNotAllowedFilterWithRuntimeParams": "Es ist nicht erlaubt, ein Filter mit vom Benutzer selektierbaren Parametern zu benutzen",
 	"keepSync": "<em>Keep sync</em>",
 	"key": "Schlüssel",
+	"keyAttributes": "<em>Key attributes</em>",
 	"language": "Sprache",
 	"last_checkin": "Letzter Check-in",
 	"layers": "Ebenen",

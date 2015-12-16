@@ -1384,6 +1384,7 @@
 	"itIsNotAllowedFilterWithRuntimeParams": "Nije dozvoljeno koristiti filter sa korisnički odabranim parametrima",
 	"keepSync": "<em>Keep sync</em>",
 	"key": "Ključ",
+	"keyAttributes": "<em>Key attributes</em>",
 	"language": "<em>Language</em>",
 	"last_checkin": "<em>Last checkin</em>",
 	"layers": "<em>Layers</em>",
