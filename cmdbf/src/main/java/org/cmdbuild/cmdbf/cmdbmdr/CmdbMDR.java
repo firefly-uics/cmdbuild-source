@@ -5,7 +5,7 @@ import static org.cmdbuild.dao.query.clause.AnyClass.anyClass;
 import static org.cmdbuild.dao.query.clause.ClassHistory.history;
 import static org.cmdbuild.dao.query.clause.DomainHistory.history;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
-import static org.cmdbuild.dao.query.clause.alias.Utils.as;
+import static org.cmdbuild.dao.query.clause.alias.Aliases.as;
 import static org.cmdbuild.dao.query.clause.join.Over.over;
 import static org.cmdbuild.dao.query.clause.where.AndWhereClause.and;
 import static org.cmdbuild.dao.query.clause.where.BeginsWithOperatorAndValue.beginsWith;
@@ -84,8 +84,7 @@ import org.cmdbuild.dao.query.clause.QueryAliasAttribute;
 import org.cmdbuild.dao.query.clause.QueryAttribute;
 import org.cmdbuild.dao.query.clause.QueryDomain.Source;
 import org.cmdbuild.dao.query.clause.alias.Alias;
-import org.cmdbuild.dao.query.clause.alias.EntryTypeAlias;
-import org.cmdbuild.dao.query.clause.alias.NameAlias;
+import org.cmdbuild.dao.query.clause.alias.Aliases;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
 import org.cmdbuild.dms.DmsConfiguration;
 import org.cmdbuild.dms.DocumentTypeDefinition;
@@ -157,8 +156,8 @@ import com.google.common.collect.Iterables;
 
 public class CmdbMDR implements ManagementDataRepository {
 
-	private static final Alias TARGET_ALIAS = NameAlias.as("TARGET");
-	private static final Alias DOMAIN_ALIAS = NameAlias.as("DOMAIN");
+	private static final Alias TARGET_ALIAS = Aliases.name("TARGET");
+	private static final Alias DOMAIN_ALIAS = Aliases.name("DOMAIN");
 	private static final String HISTORY_CURRENT_ID = "CurrentId";
 	private static final String ENTRY_RECORDID_PREFIX = "entry:";
 	private static final String DOCUMENT_RECORDID_PREFIX = "doc:";
@@ -852,6 +851,17 @@ public class CmdbMDR implements ManagementDataRepository {
 		if (card != null) {
 			final String recordId = aliasRegistry.getRecordId(instanceId);
 			if (recordId == null || recordId.startsWith(ENTRY_RECORDID_PREFIX)) {
+				final QName qname = xmlRegistry
+						.getTypeQName(new GeoClass(card.getType().getIdentifier().getLocalName()));
+				final GeoClass geoClass = (GeoClass) xmlRegistry.getType(qname);
+				if (geoClass != null) {
+					final JSONObject jsonObject = new JSONObject();
+					for (final LayerMetadata layer : geoClass.getLayers()) {
+						jsonObject.put(layer.getName(), "");
+					}
+					gisLogic.updateFeatures(Card.newInstance(card.getType()).withId(card.getId()).build(),
+							Collections.<String, Object> singletonMap("geoAttributes", jsonObject.toString()));
+				}
 				dataAccessLogic.deleteCard(card.getType().getIdentifier().getLocalName(), card.getId());
 			} else if (recordId.startsWith(DOCUMENT_RECORDID_PREFIX)) {
 				final String name = recordId.substring(DOCUMENT_RECORDID_PREFIX.length());
@@ -1193,54 +1203,74 @@ public class CmdbMDR implements ManagementDataRepository {
 			types.add(cmClass);
 		}
 
-		for (final CMClass type : types) {
-			final List<QueryAttribute> attributes = new ArrayList<QueryAttribute>();
-			if (properties != null && !properties.contains(new QName(""))) {
-				for (final QName property : properties) {
-					if (type.getAttribute(property.getLocalPart()) != null) {
-						attributes.add(attribute(type, property.getLocalPart()));
-					}
-				}
-			} else {
-				attributes.add(anyAttribute(type));
-			}
-
-			boolean isSatisfiable = true;
-			final List<WhereClause> conditions = new ArrayList<WhereClause>();
-			if (instanceId != null) {
-				if (type instanceof ClassHistory) {
-					isSatisfiable = applyIdFilter(attribute(type, HISTORY_CURRENT_ID), instanceId, conditions);
-				} else {
-					isSatisfiable = applyIdFilter(attribute(type, Constants.ID_ATTRIBUTE), instanceId, conditions);
-				}
-			}
-			if (filters != null) {
-				isSatisfiable &= applyPropertyFilter(type, null, filters, conditions);
-			}
-			if (isSatisfiable) {
-				final QuerySpecsBuilder queryBuilder = dataAccessLogic.getView().select(attributes.toArray())
-						.from(type);
-				if (!conditions.isEmpty()) {
-					if (conditions.size() == 1) {
-						queryBuilder.where(conditions.get(0));
-					} else if (conditions.size() == 2) {
-						queryBuilder.where(and(conditions.get(0), conditions.get(1)));
-					} else {
-						queryBuilder.where(and(conditions.get(0), conditions.get(1),
-								conditions.subList(2, conditions.size()).toArray(new WhereClause[0])));
-					}
-				} else {
-					queryBuilder.where(trueWhereClause());
-				}
-				for (final CMQueryRow row : queryBuilder.run()) {
-					CMCard card = row.getCard(type);
-					if (card.getEndDate() != null) {
-						card = new CMCardHistory(card);
-					}
-					cardList.add(card);
-				}
-			}
+		final Set<Long> instanceIdSet = new HashSet<Long>();
+		Iterator<Long> instanceIdIterator = null;
+		if (instanceId != null) {
+			instanceIdIterator = instanceId.iterator();
 		}
+
+		do {
+			for (final CMClass type : types) {
+				Collection<Long> instanceIdList = null;
+				if (instanceIdIterator != null) {
+					instanceIdList = new ArrayList<Long>();
+					for (int i = 0; i < 1000 && instanceIdIterator.hasNext(); i++) {
+						final Long id = instanceIdIterator.next();
+						if (instanceIdSet.add(id)) {
+							instanceIdList.add(id);
+						}
+					}
+				}
+
+				final List<QueryAttribute> attributes = new ArrayList<QueryAttribute>();
+				if (properties != null && !properties.contains(new QName(""))) {
+					for (final QName property : properties) {
+						if (type.getAttribute(property.getLocalPart()) != null) {
+							attributes.add(attribute(type, property.getLocalPart()));
+						}
+					}
+				} else {
+					attributes.add(anyAttribute(type));
+				}
+
+				boolean isSatisfiable = true;
+				final List<WhereClause> conditions = new ArrayList<WhereClause>();
+				if (instanceIdList != null) {
+					if (type instanceof ClassHistory) {
+						isSatisfiable = applyIdFilter(attribute(type, HISTORY_CURRENT_ID), instanceIdList, conditions);
+					} else {
+						isSatisfiable = applyIdFilter(attribute(type, Constants.ID_ATTRIBUTE), instanceIdList,
+								conditions);
+					}
+				}
+				if (filters != null) {
+					isSatisfiable &= applyPropertyFilter(type, null, filters, conditions);
+				}
+				if (isSatisfiable) {
+					final QuerySpecsBuilder queryBuilder = dataAccessLogic.getView().select(attributes.toArray())
+							.from(type);
+					if (!conditions.isEmpty()) {
+						if (conditions.size() == 1) {
+							queryBuilder.where(conditions.get(0));
+						} else if (conditions.size() == 2) {
+							queryBuilder.where(and(conditions.get(0), conditions.get(1)));
+						} else {
+							queryBuilder.where(and(conditions.get(0), conditions.get(1),
+									conditions.subList(2, conditions.size()).toArray(new WhereClause[0])));
+						}
+					} else {
+						queryBuilder.where(trueWhereClause());
+					}
+					for (final CMQueryRow row : queryBuilder.run()) {
+						CMCard card = row.getCard(type);
+						if (card.getEndDate() != null) {
+							card = new CMCardHistory(card);
+						}
+						cardList.add(card);
+					}
+				}
+			}
+		} while (instanceIdIterator != null && instanceIdIterator.hasNext());
 		return cardList;
 	}
 
@@ -1426,7 +1456,7 @@ public class CmdbMDR implements ManagementDataRepository {
 	private boolean applyPropertyFilter(final CMEntryType type, final Alias alias,
 			final Collection<PropertyValueType> propertyValueList, final List<WhereClause> conditions) {
 		boolean isSatisfiable = true;
-		final Alias typeAlias = alias != null ? alias : EntryTypeAlias.canonicalAlias(type);
+		final Alias typeAlias = alias != null ? alias : Aliases.canonical(type);
 		final Iterator<PropertyValueType> iterator = propertyValueList.iterator();
 		while (isSatisfiable && iterator.hasNext()) {
 			final PropertyValueType propertyValue = iterator.next();
