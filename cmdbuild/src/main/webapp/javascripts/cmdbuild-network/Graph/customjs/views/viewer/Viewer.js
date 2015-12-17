@@ -1,4 +1,5 @@
 (function($) {
+	var CONFIGURATION_FILE = "configurations/configuration.json";
 	var OPTIONS_LABEL_ON_SELECTED = "Selected";
 	var OPTIONS_LABEL_ON_ALL = "All";
 	var MAX_DISTANCE_NODES = 10000;
@@ -22,7 +23,7 @@
 		var objects = [];
 		var edges = [];
 		this.init = function() {
-			$.Cmdbuild.g3d.Options.chargeConfiguration(function(response) {
+			$.Cmdbuild.g3d.Options.chargeConfiguration(CONFIGURATION_FILE, function(response) {
 				$.Cmdbuild.custom.configuration = response;
 				this.initCB();
 				animate();
