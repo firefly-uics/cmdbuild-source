@@ -1,4 +1,5 @@
 (function($) {
+	var INCLUDED_FILE = "NetworkConfigurationFile";
 	if (! $.Cmdbuild.g3d) {
 		$.Cmdbuild.g3d = {};
 	}
@@ -22,11 +23,44 @@
 	};
 	$.Cmdbuild.g3d.Options = Options;	
 	//statics
-	$.Cmdbuild.g3d.Options.chargeConfiguration = function(callback, callbackScope) {
-		var nameFile = $.Cmdbuild.appConfigUrl + "configuration.json";
-		$.getJSON(nameFile, {}, function(response) {
-			console.log("response = ", response);
-			callback.apply(callbackScope, [response]);
+	$.Cmdbuild.g3d.Options.chargeConfiguration = function(configurationFile, callback, callbackScope) {
+		var fileName = $.Cmdbuild.appConfigUrl + configurationFile;
+		$.getJSON(fileName, {}, function(configuration) {
+			$.Cmdbuild.g3d.Options.includeFiles(configuration, function() {
+				console.log("configuration = ", configuration);
+				callback.apply(callbackScope, [configuration]);
+			}, this);
+		}, this);
+	};
+	$.Cmdbuild.g3d.Options.includeFiles = function(configuration, callback, callbackScope) {
+		console.log("include = ", configuration);
+		var filesToInclude = [];
+		for (var key in configuration) {
+			if (configuration[key][INCLUDED_FILE]) {
+				console.log("found = ", configuration[key][INCLUDED_FILE] );
+
+				filesToInclude.push({
+					key: key,
+					fileName: configuration[key][INCLUDED_FILE] 
+				});
+			}
+		}
+		$.Cmdbuild.g3d.Options.chargeFiles(configuration, filesToInclude, function() {
+			callback.apply(callbackScope, [configuration]);
+		}), this;
+	};
+	$.Cmdbuild.g3d.Options.chargeFiles = function(configuration, filesToInclude, callback, callbackScope) {
+		if (filesToInclude.length == 0) {
+			callback.apply(callbackScope, [configuration]);
+			return;
+		}
+		var file = filesToInclude[0];
+		filesToInclude.splice(0, 1);
+		$.Cmdbuild.g3d.Options.chargeConfiguration(file.fileName, function(response) {
+			configuration[file.key] = response;
+			$.Cmdbuild.g3d.Options.chargeFiles(configuration, filesToInclude, function() {
+				callback.apply(callbackScope, [configuration]);
+			}), this;
 		}, this);
 	};
 })(jQuery);
