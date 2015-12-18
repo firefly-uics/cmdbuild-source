@@ -115,18 +115,28 @@
 
 	/**
 	 * @param {Object} parameters
+	 * @param {Boolean or Object} parameters.activateFirstTab - if object selects object as tab otherwise selects first one
 	 * @param {Number} parameters.Id - card id
 	 * @param {Number} parameters.IdClass
-	 * @param {Boolean or Object} parameters.activateFirstTab - if object selects object as tab otherwise selects first one
 	 */
 	ns.CMMainViewportController.prototype.openCard = function(parameters) {
-		var accordion = this.getFirstAccordionWithANodeWithGivenId(parameters['IdClass']);
+		if (
+			Ext.isObject(parameters) && !Ext.Object.isEmpty(parameters)
+			&& !Ext.isEmpty(parameters['Id'])
+			&& !Ext.isEmpty(parameters['IdClass'])
+		) {
+			parameters.activateFirstTab = Ext.isEmpty(parameters.activateFirstTab) ? true : parameters.activateFirstTab;
 
-		this.setDanglingCard(parameters);
+			var accordion = this.getFirstAccordionWithANodeWithGivenId(parameters['IdClass']);
 
-		if (!Ext.isEmpty(accordion) && Ext.isFunction(accordion.selectNodeById)) {
-			accordion.deselect(); // Required or selection doesn't work if exists another selection
-			accordion.selectNodeById(parameters['IdClass']);
+			this.setDanglingCard(parameters);
+
+			if (!Ext.isEmpty(accordion) && Ext.isFunction(accordion.selectNodeById)) {
+				accordion.deselect(); // Required or selection doesn't work if exists another selection
+				accordion.selectNodeById(parameters['IdClass']);
+			}
+		} else {
+			_error('malformed parameters in openCard method', this);
 		}
 	};
 
