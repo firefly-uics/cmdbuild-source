@@ -214,7 +214,7 @@
 			if (!Ext.isEmpty(csvData) && Ext.isArray(csvData))
 				switch (this.form.modeCombo.getValue()) {
 					case 'add':
-						return Ext.Array.push(this.cmfg('widgetCustomFormDataGet'), csvData);
+						return Ext.Array.push(this.cmfg('widgetCustomFormLayoutControllerDataGet'), csvData);
 
 					case 'merge':
 						return this.importDataModeManagerMerge(csvData);
@@ -245,7 +245,7 @@
 			) {
 				var outputData = [];
 
-				Ext.Array.forEach(this.cmfg('widgetCustomFormDataGet'), function(storeRowObject, i, allStoreRowObjects) {
+				Ext.Array.forEach(this.cmfg('widgetCustomFormLayoutControllerDataGet'), function(storeRowObject, i, allStoreRowObjects) {
 					if (Ext.isObject(storeRowObject) && !Ext.Object.isEmpty(storeRowObject)) {
 						var foundCsvRowObject = Ext.Array.findBy(csvData, function(csvRowObject, i, allCsvRowObjects) {
 							var isValid = true;
@@ -268,7 +268,7 @@
 				return outputData;
 			}
 
-			return this.cmfg('widgetCustomFormDataGet');
+			return this.cmfg('widgetCustomFormLayoutControllerDataGet');
 		},
 
 		/**
@@ -334,7 +334,7 @@
 				var keyAttributeCsvValues = [];
 
 				// Build keyAttributeCsvValues array with append algorithm
-				Ext.Array.forEach(this.cmfg('widgetCustomFormDataGet'), function(storeRowObject, i, allStoreRowObjects) {
+				Ext.Array.forEach(this.cmfg('widgetCustomFormLayoutControllerDataGet'), function(storeRowObject, i, allStoreRowObjects) {
 					var key = '';
 
 					Ext.Array.forEach(keyAttributes, function(name, i, allNames) {

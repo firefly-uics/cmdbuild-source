@@ -5,9 +5,14 @@
 
 		requires: [
 			'CMDBuild.core.constants.Proxy',
-			'CMDBuild.core.proxy.widget.Grid',
-			'CMDBuild.core.Message'
+			'CMDBuild.core.Message',
+			'CMDBuild.core.proxy.widget.Grid'
 		],
+
+		/**
+		 * @cfg {CMDBuild.controller.management.common.CMWidgetManagerController}
+		 */
+		parentDelegate: undefined,
 
 		/**
 		 * @property {Array}
@@ -29,11 +34,18 @@
 		 */
 		cmfgCatchedFunctions: [
 			'getCardAttributes',
+			'getLabel',
+			'isBusy',
 			'onAddRowButtonClick' ,
 			'onCSVImportButtonClick',
 			'onDeleteRowButtonClick',
 			'onEditRowButtonClick',
-			'setGridDataFromCsv'
+			'onWidgetGridBeforeActiveView = beforeActiveView',
+			'onWidgetGridBeforeHideView = beforeHideView',
+			'onWidgetGridEditMode = onEditMode',
+			'setGridDataFromCsv',
+			'widgetGridGetData = getData',
+			'widgetGridIsValid = isValid'
 		],
 
 		/**
@@ -137,45 +149,6 @@
 
 					return null;
 				}
-		},
-
-		/**
-		 * @override
-		 */
-		beforeActiveView: function() {
-			// Disable add button
-			this.view.addButton.setDisabled(
-				this.widgetConf.hasOwnProperty(CMDBuild.core.constants.Proxy.DISABLE_ADD_ROW)
-				&& this.widgetConf[CMDBuild.core.constants.Proxy.DISABLE_ADD_ROW]
-			);
-
-			// Disable import from CSV button
-			this.view.importFromCSVButton.setDisabled(
-				this.widgetConf.hasOwnProperty(CMDBuild.core.constants.Proxy.DISABLE_IMPORT_FROM_CSV)
-				&& this.widgetConf[CMDBuild.core.constants.Proxy.DISABLE_IMPORT_FROM_CSV]
-			);
-
-			// Disable buttons for readOnly mode
-			if (
-				this.widgetConf.hasOwnProperty(CMDBuild.core.constants.Proxy.READ_ONLY)
-				&& this.widgetConf[CMDBuild.core.constants.Proxy.READ_ONLY]
-			) {
-				this.view.addButton.setDisabled(true);
-				this.view.importFromCSVButton.setDisabled(true);
-
-				this.grid.on('beforeedit', function(plugin, edit) {
-					return false;
-				});
-			}
-
-			this.configureGridPanel();
-		},
-
-		/**
-		 * Save data in storage attribute
-		 */
-		beforeHideView: function() {
-			this.instancesDataStorage[this.getWidgetId()] = this.grid.getStore().getRange();
 		},
 
 		/**
@@ -465,89 +438,6 @@
 		},
 
 		/**
-		 * @return {Object} out
-		 *
-		 * @override
-		 */
-		getData: function() {
-			var me = this;
-			var out = {};
-			var data = [];
-
-			this.grid.getStore().each(function(record) {
-				var xaVars = record.data;
-
-				// Resolve templates for widget configuration "text" type
-				new CMDBuild.Management.TemplateResolver({
-					clientForm: this.clientForm,
-					xaVars: xaVars,
-					serverVars: this.getTemplateResolverServerVars()
-				}).resolveTemplates({
-					attributes: Ext.Object.getKeys(xaVars),
-					callback: function(out, ctx) {
-						// Date field format fix: date field gives wrong formatted value used as cell editor.
-						// To delete when FieldManager will be refactored
-						Ext.Object.each(out, function(key, value, object) {
-							out[key] = me.formatDate(value);
-						});
-
-						data.push(
-							Ext.encode(
-								Ext.Object.merge(record.data, out)
-							)
-						);
-					}
-				});
-			}, this);
-
-			if (!this.readOnly)
-				out[CMDBuild.core.constants.Proxy.OUTPUT] = data;
-
-			return out;
-		},
-
-		/**
-		 * Check required field value of grid store records
-		 *
-		 * @return {Boolean}
-		 *
-		 * @override
-		 */
-		isValid: function() {
-			var returnValue = true;
-			var requiredAttributes = [];
-
-			// If widget is flagged as required must return at least 1 row
-			if (
-				Ext.isBoolean(this.widgetConf[CMDBuild.core.constants.Proxy.REQUIRED])
-				&& this.widgetConf[CMDBuild.core.constants.Proxy.REQUIRED]
-				&& this.grid.getStore().getCount() == 0
-			) {
-				returnValue = false;
-			}
-
-			// Build columns required array
-			Ext.Array.forEach(this.columns, function(column, i, allColumns) {
-				if (column[CMDBuild.core.constants.Proxy.REQUIRED])
-					requiredAttributes.push(column[CMDBuild.core.constants.Proxy.DATA_INDEX]);
-			}, this);
-
-			// Check grid store records empty required fields
-			this.grid.getStore().each(function(record) {
-				for (var y in requiredAttributes)
-					if (Ext.isEmpty(record.get(requiredAttributes[y]))) {
-						returnValue = false;
-
-						return false;
-					}
-
-				return true;
-			}, this);
-
-			return returnValue;
-		},
-
-		/**
 		 * Read presets and loads data to grid store
 		 */
 		loadPresets: function() {
@@ -600,13 +490,6 @@
 		},
 
 		/**
-		 * Reset instance storage property
-		 */
-		onEditMode: function() {
-			this.instancesDataStorage = {};
-		},
-
-		/**
 		 * Edit row data in new pop-up window
 		 *
 		 * @param {Object} record
@@ -616,6 +499,58 @@
 				parentDelegate: this,
 				record: record
 			});
+		},
+
+		/**
+		 * @override
+		 */
+		onWidgetGridBeforeActiveView: function() {
+			this.beforeActiveView(arguments); // CallParent alias
+
+			// Disable add button
+			this.view.addButton.setDisabled(
+				this.widgetConf.hasOwnProperty(CMDBuild.core.constants.Proxy.DISABLE_ADD_ROW)
+				&& this.widgetConf[CMDBuild.core.constants.Proxy.DISABLE_ADD_ROW]
+			);
+
+			// Disable import from CSV button
+			this.view.importFromCSVButton.setDisabled(
+				this.widgetConf.hasOwnProperty(CMDBuild.core.constants.Proxy.DISABLE_IMPORT_FROM_CSV)
+				&& this.widgetConf[CMDBuild.core.constants.Proxy.DISABLE_IMPORT_FROM_CSV]
+			);
+
+			// Disable buttons for readOnly mode
+			if (
+				this.widgetConf.hasOwnProperty(CMDBuild.core.constants.Proxy.READ_ONLY)
+				&& this.widgetConf[CMDBuild.core.constants.Proxy.READ_ONLY]
+			) {
+				this.view.addButton.setDisabled(true);
+				this.view.importFromCSVButton.setDisabled(true);
+
+				this.grid.on('beforeedit', function(plugin, edit) {
+					return false;
+				});
+			}
+
+			this.configureGridPanel();
+		},
+
+		/**
+		 * Save data in storage attribute
+		 *
+		 * @override
+		 */
+		onWidgetGridBeforeHideView: function() {
+			this.instancesDataStorage[this.getWidgetId()] = this.grid.getStore().getRange();
+
+			this.beforeHideView(arguments); // CallParent alias
+		},
+
+		/**
+		 * Reset instance storage property
+		 */
+		onWidgetGridEditMode: function() {
+			this.instancesDataStorage = {};
 		},
 
 		/**
@@ -668,6 +603,87 @@
 			Ext.Array.forEach(data, function(recordObject, i, allRecordsObjects) {
 				this.grid.getStore().add(Ext.create('CMDBuild.DummyModel', recordObject));
 			}, this);
+		},
+
+		/**
+		 * @return {Object} out
+		 *
+		 * @override
+		 */
+		widgetGridGetData: function() {
+			var me = this;
+			var out = {};
+			var data = [];
+
+			this.grid.getStore().each(function(record) {
+				var xaVars = record.data;
+
+				// Resolve templates for widget configuration "text" type
+				new CMDBuild.Management.TemplateResolver({
+					clientForm: this.clientForm,
+					xaVars: xaVars,
+					serverVars: this.getTemplateResolverServerVars()
+				}).resolveTemplates({
+					attributes: Ext.Object.getKeys(xaVars),
+					callback: function(out, ctx) {
+						// Date field format fix: date field gives wrong formatted value used as cell editor.
+						// To delete when FieldManager will be refactored
+						Ext.Object.each(out, function(key, value, object) {
+							out[key] = me.formatDate(value);
+						});
+
+						data.push(
+							Ext.encode(
+								Ext.Object.merge(record.data, out)
+							)
+						);
+					}
+				});
+			}, this);
+
+			if (!this.readOnly)
+				out[CMDBuild.core.constants.Proxy.OUTPUT] = data;
+
+			return out;
+		},
+
+		/**
+		 * Check required field value of grid store records
+		 *
+		 * @return {Boolean}
+		 */
+		widgetGridIsValid: function() {
+			var returnValue = true;
+			var requiredAttributes = [];
+
+			// If widget is flagged as required must return at least 1 row
+			if (
+				Ext.isBoolean(this.widgetConf[CMDBuild.core.constants.Proxy.REQUIRED])
+				&& this.widgetConf[CMDBuild.core.constants.Proxy.REQUIRED]
+				&& this.grid.getStore().getCount() == 0
+			) {
+				returnValue = false;
+			}
+
+			// Build columns required array
+			Ext.Array.forEach(this.columns, function(column, i, allColumns) {
+				if (column[CMDBuild.core.constants.Proxy.REQUIRED])
+					requiredAttributes.push(column[CMDBuild.core.constants.Proxy.DATA_INDEX]);
+			}, this);
+
+			// Check grid store records empty required fields
+			this.grid.getStore().each(function(record) {
+				for (var y in requiredAttributes)
+					if (Ext.isEmpty(record.get(requiredAttributes[y]))) {
+						returnValue = false;
+
+						return false;
+					}
+
+				return true;
+			}, this);
+
+			return returnValue;
 		}
 	});
 

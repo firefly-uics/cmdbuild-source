@@ -31,7 +31,11 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
-			'widgetConfigurationGet = widgetManageEmailConfigurationGet'
+			'getLabel',
+			'widgetConfigurationGet = widgetManageEmailConfigurationGet',
+			'widgetManageEmailGetData = getData',
+			'widgetManageEmailIsBusy = isBusy',
+			'widgetManageEmailIsValid = isValid'
 		],
 
 		/**
@@ -42,11 +46,6 @@
 		 * @override
 		 */
 		enableDelegateApply: false,
-
-		/**
-		 * @cfg {CMDBuild.controller.management.common.CMWidgetManagerController}
-		 */
-		ownerController: undefined,
 
 		/**
 		 * @property {CMDBuild.controller.management.common.tabs.email.Email}
@@ -94,7 +93,7 @@
 		 * @private
 		 */
 		buildBottomToolbar: function() {
-			this.tabDelegate.getView().on('show', this.widgetEmailShowEventManager, this);
+			this.tabDelegate.getView().on('show', this.showEventManager, this);
 
 			// Border manage
 			if (!this.tabDelegate.grid.hasCls('cmborderbottom'))
@@ -117,51 +116,12 @@
 		 * Delete event and hide toolbar on widget destroy
 		 */
 		destroy: function() {
-			this.tabDelegate.getView().un('show', this.widgetEmailShowEventManager, this);
+			this.tabDelegate.getView().un('show', this.showEventManager, this);
 			this.tabDelegate.getView().getDockedComponent(CMDBuild.core.constants.Proxy.TOOLBAR_BOTTOM).hide();
 
 			// Border manage
 			if (this.tabDelegate.grid.hasCls('cmborderbottom'))
 				this.tabDelegate.grid.removeCls('cmborderbottom');
-		},
-
-		/**
-		 * @returns {Object}
-		 *
-		 * @override
-		 */
-		getData: function() {
-			var out = {};
-			out[CMDBuild.core.constants.Proxy.OUTPUT] = this.tabDelegate.cmfg('tabEmailSelectedEntityGet', CMDBuild.core.constants.Proxy.ID);
-
-			return out;
-		},
-
-		/**
-		 * Used to mark widget as busy during regenerations, especially useful for getData() regeneration
-		 *
-		 * @returns {Boolean}
-		 *
-		 * @override
-		 */
-		isBusy: function() {
-			return this.tabDelegate.cmfg('tabEmailBusyStateGet');
-		},
-
-		/**
-		 * @return {Boolean}
-		 *
-		 * @override
-		 */
-		isValid: function() {
-			if (
-				Ext.isBoolean(this.cmfg('widgetManageEmailConfigurationGet', CMDBuild.core.constants.Proxy.REQUIRED))
-				&& this.cmfg('widgetManageEmailConfigurationGet', CMDBuild.core.constants.Proxy.REQUIRED)
-			) {
-				return this.tabDelegate.controllerGrid.cmfg('tabEmailGridDraftEmailsIsEmpty');
-			}
-
-			return this.callParent(arguments);
 		},
 
 		/**
@@ -211,7 +171,7 @@
 		 *
 		 * @private
 		 */
-		widgetEmailShowEventManager: function(panel, eOpts) {
+		showEventManager: function(panel, eOpts) {
 			var cardWidgetTypes = [];
 
 			if (Ext.isArray(this.parentDelegate.takeWidgetFromCard(this.card)))
@@ -222,6 +182,43 @@
 
 			if (Ext.Array.contains(cardWidgetTypes, this.cmfg('widgetManageEmailConfigurationGet', CMDBuild.core.constants.Proxy.TYPE)))
 				this.tabDelegate.getView().getDockedComponent(CMDBuild.core.constants.Proxy.TOOLBAR_BOTTOM).show();
+		},
+
+		/**
+		 * @returns {Object} output
+		 *
+		 * @override
+		 */
+		widgetManageEmailGetData: function() {
+			var output = {};
+			output[CMDBuild.core.constants.Proxy.OUTPUT] = this.tabDelegate.cmfg('tabEmailSelectedEntityGet', CMDBuild.core.constants.Proxy.ID);
+
+			return output;
+		},
+
+		/**
+		 * Used to mark widget as busy during regenerations, especially useful for getData() regeneration
+		 *
+		 * @returns {Boolean}
+		 *
+		 * @override
+		 */
+		widgetManageEmailIsBusy: function() {
+			return this.tabDelegate.cmfg('tabEmailBusyStateGet');
+		},
+
+		/**
+		 * @returns {Boolean}
+		 */
+		widgetManageEmailIsValid: function() {
+			if (
+				Ext.isBoolean(this.cmfg('widgetManageEmailConfigurationGet', CMDBuild.core.constants.Proxy.REQUIRED))
+				&& this.cmfg('widgetManageEmailConfigurationGet', CMDBuild.core.constants.Proxy.REQUIRED)
+			) {
+				return this.tabDelegate.controllerGrid.cmfg('tabEmailGridDraftEmailsIsEmpty');
+			}
+
+			return true;
 		}
 	});
 
