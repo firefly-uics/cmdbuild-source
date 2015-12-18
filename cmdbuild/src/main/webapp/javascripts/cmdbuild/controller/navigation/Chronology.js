@@ -29,21 +29,6 @@
 			'onNavigationChronologyMenuBeforeShow'
 		],
 
-//		/**
-//		 * @property {Ext.button.Split}
-//		 */
-//		view: undefined,
-//
-//		/**
-//		 * @param {Object} configurationObject
-//		 * @param {Ext.button.Split} configurationObject.view
-//		 */
-//		constructor: function(configurationObject) {
-//			this.callParent(arguments);
-//
-//			this.view = Ext.create('CMDBuild.view.navigation.chronology.Button', { delegate: this });
-//		},
-
 		/**
 		 * @param {CMDBuild.model.navigation.chronology.Record} record
 		 *
@@ -191,7 +176,6 @@
 		 * @returns {Object}
 		 */
 		navigationChronologyItemConfigurationGet: function() {
-//			return this.view;
 			return {
 				text: CMDBuild.Translation.navigationChronology,
 				iconCls: 'navigation-chronology',
