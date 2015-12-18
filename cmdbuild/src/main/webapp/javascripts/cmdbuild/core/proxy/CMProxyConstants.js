@@ -153,6 +153,7 @@
 		ENGINE: 'engine',
 		ENTITY: 'entity',
 		ENTRY_TYPE: 'entryType',
+		EXPORT_DISABLED: 'exportDisabled',
 		EXPRESSION: 'expression',
 		EXTENSION: 'extension',
 		EXTENSION_MAXIMUM_LEVEL: 'extensionMaximumLevel',
