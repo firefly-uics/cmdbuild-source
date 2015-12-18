@@ -80,7 +80,7 @@
 					labelWidth: CMDBuild.LABEL_WIDTH,
 					fieldLabel: tr.csvfile,
 					allowBlank: false,
-					name: 'filecsv'
+					name: 'file'
 				},
 
 				new Ext.form.ComboBox({

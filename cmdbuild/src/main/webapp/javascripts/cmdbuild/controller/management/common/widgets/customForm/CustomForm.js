@@ -41,6 +41,8 @@
 			'widgetConfigurationIsEmpty = widgetCustomFormConfigurationIsEmpty',
 			'widgetConfigurationSet = widgetCustomFormConfigurationSet',
 			'widgetControllerPropertyGet = widgetCustomFormControllerPropertyGet',
+			'widgetCustomFormDataGet',
+			'widgetCustomFormModelStoreBuilder',
 			'widgetCustomFormViewSetLoading'
 		],
 
@@ -58,6 +60,8 @@
 		 * @param {Array or String} target
 		 *
 		 * @returns {Array} decodedOutput
+		 *
+		 * @private
 		 */
 		applyTemplateResolverToArray: function(target) {
 			target = CMDBuild.core.Utils.isJsonString(target) ? Ext.decode(target) : target;
@@ -86,6 +90,8 @@
 		 * @param {Object or String} target
 		 *
 		 * @returns {Object} decodedOutput
+		 *
+		 * @private
 		 */
 		applyTemplateResolverToObject: function(target) {
 			target = CMDBuild.core.Utils.isJsonString(target) ? Ext.decode(target) : target;
@@ -116,6 +122,7 @@
 		},
 
 		/**
+		 * @public
 		 * @override
 		 */
 		beforeActiveView: function() {
@@ -149,14 +156,17 @@
 		/**
 		 * Save data in storage attribute
 		 *
+		 * @public
 		 * @override
 		 */
 		beforeHideView: function() {
-			this.instancesDataStorageSet(this.controllerLayout.getData());
+			this.instancesDataStorageSet(this.cmfg('widgetCustomFormDataGet'));
 		},
 
 		/**
 		 * @param {Function} callback
+		 *
+		 * @private
 		 */
 		buildDataConfigurationFromFunction: function(callback) {
 			callback = Ext.isFunction(callback) ? callback : Ext.emptyFn;
@@ -187,6 +197,8 @@
 
 		/**
 		 * Builds layout controller and inject view
+		 *
+		 * @private
 		 */
 		buildLayout: function() {
 			if (!this.cmfg('widgetCustomFormConfigurationIsEmpty', CMDBuild.core.constants.Proxy.MODEL)) {
@@ -214,10 +226,10 @@
 		/**
 		 * @return {Object} output
 		 *
+		 * @public
 		 * @override
 		 */
 		getData: function() {
-			var layoutData = this.controllerLayout.getData();
 			var output = {};
 			output[CMDBuild.core.constants.Proxy.OUTPUT] = [];
 
@@ -226,10 +238,9 @@
 					CMDBuild.core.constants.Proxy.CAPABILITIES,
 					CMDBuild.core.constants.Proxy.READ_ONLY
 				])
-				&& Ext.isArray(layoutData)
 			) {
 				// Uses direct data property access to avoid a get problem because of generic model
-				Ext.Array.forEach(layoutData, function(rowObject, i, allRowObjects) {
+				Ext.Array.forEach(this.cmfg('widgetCustomFormDataGet'), function(rowObject, i, allRowObjects) {
 					var dataObject = Ext.isEmpty(rowObject.data) ? rowObject : rowObject.data; // Model/Objects management
 
 					new CMDBuild.Management.TemplateResolver({
@@ -240,7 +251,8 @@
 						attributes: Ext.Object.getKeys(dataObject),
 						scope: this,
 						callback: function(out, ctx) {
-							output[CMDBuild.core.constants.Proxy.OUTPUT].push(Ext.encode(out));
+							if (Ext.isObject(out))
+								output[CMDBuild.core.constants.Proxy.OUTPUT].push(Ext.encode(out));
 						}
 					});
 				}, this);
@@ -254,6 +266,7 @@
 		 *
 		 * @returns {Boolean}
 		 *
+		 * @public
 		 * @override
 		 */
 		isValid: function() {
@@ -266,12 +279,46 @@
 		/**
 		 * Preset data in instanceDataStorage variable
 		 *
+		 * @public
 		 * @override
 		 */
 		onEditMode: function() {
 			this.instancesDataStorageSet(this.cmfg('widgetCustomFormConfigurationGet', CMDBuild.core.constants.Proxy.DATA));
 
 			this.beforeActiveView();
+		},
+
+		/**
+		 * Shorthand to controllerLayout's getData method
+		 *
+		 * @returns {Array}
+		 */
+		widgetCustomFormDataGet: function() {
+			return this.controllerLayout.getData();
+		},
+
+		/**
+		 * @returns {Ext.data.ArrayStore}
+		 */
+		widgetCustomFormModelStoreBuilder: function() {
+			var columnsData = [];
+
+			Ext.Array.forEach(this.cmfg('widgetCustomFormConfigurationGet', CMDBuild.core.constants.Proxy.MODEL), function(attributeModel, i, allAttributeModels) {
+				if (!Ext.isEmpty(attributeModel))
+					columnsData.push([
+						attributeModel.get(CMDBuild.core.constants.Proxy.NAME),
+						attributeModel.get(CMDBuild.core.constants.Proxy.DESCRIPTION)
+					]);
+			}, this);
+
+			return Ext.create('Ext.data.ArrayStore', {
+				fields: [CMDBuild.core.constants.Proxy.NAME, CMDBuild.core.constants.Proxy.DESCRIPTION],
+				data: columnsData,
+
+				sorters: [
+					{ property: CMDBuild.core.constants.Proxy.DESCRIPTION, direction: 'ASC' }
+				]
+			});
 		},
 
 		/**

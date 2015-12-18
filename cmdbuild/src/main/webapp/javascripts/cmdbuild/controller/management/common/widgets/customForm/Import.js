@@ -21,6 +21,7 @@
 		 */
 		cmfgCatchedFunctions: [
 			'onWidgetCustomFormImportAbortButtonClick',
+			'onWidgetCustomFormImportModeChange',
 			'onWidgetCustomFormImportUploadButtonClick'
 		],
 
@@ -30,12 +31,7 @@
 		form: undefined,
 
 		/**
-		 * @cfg {Boolean}
-		 */
-		modeDisabled: false,
-
-		/**
-		 * @property {CMDBuild.view.management.common.widgets.customForm.ImportWindow}
+		 * @property {CMDBuild.view.management.common.widgets.customForm.import.ImportWindow}
 		 */
 		view: undefined,
 
@@ -48,10 +44,7 @@
 		constructor: function(configurationObject) {
 			this.callParent(arguments);
 
-			this.view = Ext.create('CMDBuild.view.management.common.widgets.customForm.import.ImportWindow', {
-				delegate: this,
-				modeDisabled: this.modeDisabled
-			});
+			this.view = Ext.create('CMDBuild.view.management.common.widgets.customForm.import.ImportWindow', { delegate: this });
 
 			// Shorthands
 			this.form = this.view.form;
@@ -61,8 +54,323 @@
 				this.view.show();
 		},
 
+		/**
+		 * Complete CSV translation data and forward call to parent delegate:
+		 * 	- Lookup: from description to id
+		 * 	- Reference: from code to id
+		 *
+		 * @param {Array} csvData
+		 *
+		 * @private
+		 */
+		dataManageAndForward: function(csvData) {
+			if (
+				!Ext.isEmpty(csvData) && Ext.isArray(csvData)
+				&& !this.cmfg('widgetCustomFormConfigurationIsAttributeEmpty',  CMDBuild.core.constants.Proxy.MODEL)
+			) {
+				var barrierId = 'dataManageBarrier';
+
+				CMDBuild.core.RequestBarrier.init(barrierId, function() {
+					// Forwards to parent delegate
+					this.cmfg('widgetCustomFormImportData', this.importDataModeManager(csvData));
+					this.cmfg('onWidgetCustomFormImportAbortButtonClick');
+
+					CMDBuild.core.LoadMask.hide();
+				}, this);
+
+				Ext.Array.forEach(this.cmfg('widgetCustomFormConfigurationGet', CMDBuild.core.constants.Proxy.MODEL), function(attribute, i, allAttributes) {
+					switch (attribute.get(CMDBuild.core.constants.Proxy.TYPE)) {
+						case 'lookup': {
+							this.dataManageLookup(csvData, attribute, barrierId);
+						} break;
+
+						case 'reference': {
+							this.dataManageReference(csvData, attribute, barrierId);
+						} break;
+					}
+				}, this);
+
+				CMDBuild.core.RequestBarrier.finalize(barrierId);
+			}
+		},
+
+		/**
+		 * @param {Array} csvData
+		 * @param {CMDBuild.model.widget.customForm.Attribute} attribute
+		 * @param {String} barrierId
+		 *
+		 * @private
+		 */
+		dataManageLookup: function(csvData, attribute, barrierId) {
+			if (
+				!Ext.isEmpty(csvData) && Ext.isArray(csvData)
+				&& !Ext.isEmpty(attribute)
+				&& !Ext.isEmpty(barrierId) && Ext.isString(barrierId)
+			) {
+				var attributeName = attribute.get(CMDBuild.core.constants.Proxy.NAME);
+
+				var params = {};
+				params[CMDBuild.core.constants.Proxy.TYPE] = attribute.get(CMDBuild.core.constants.Proxy.LOOKUP_TYPE);
+				params[CMDBuild.core.constants.Proxy.ACTIVE] = true;
+
+				CMDBuild.ServiceProxy.lookup.get({
+					params: params,
+					scope: this,
+					success: function(response, options, decodedResponse) {
+						decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.ROWS];
+
+						Ext.Array.forEach(csvData, function(recordObject, i, allRecordObjects) {
+							if (!Ext.isEmpty(recordObject[attributeName])) {
+								var selectedLookup = Ext.Array.findBy(decodedResponse, function(lookupObject, i) {
+									return lookupObject['Description'] == recordObject[attributeName];
+								}, this);
+
+								if (!Ext.isEmpty(selectedLookup))
+									csvData[i][attributeName] = selectedLookup['Id'];
+							}
+						}, this);
+					},
+					callback: CMDBuild.core.RequestBarrier.getCallback(barrierId)
+				});
+			} else {
+				_error('malformed parameters in Lookup data manage', this);
+			}
+		},
+
+		/**
+		 * @param {Array} csvData
+		 * @param {CMDBuild.model.widget.customForm.Attribute} attribute
+		 * @param {String} barrierId
+		 *
+		 * @private
+		 */
+		dataManageReference: function(csvData, attribute, barrierId) {
+			if (
+				!Ext.isEmpty(csvData) && Ext.isArray(csvData)
+				&& !Ext.isEmpty(attribute)
+				&& !Ext.isEmpty(barrierId) && Ext.isString(barrierId)
+			) {
+				var attributeName = attribute.get(CMDBuild.core.constants.Proxy.NAME);
+				var requiredCardAdvancedFilterArray = [];
+
+				Ext.Array.forEach(csvData, function(recordObject, i, allRecordObjects) {
+					if (!Ext.isEmpty(recordObject[attributeName]))
+						requiredCardAdvancedFilterArray.push({
+							simple: {
+								attribute: 'Code',
+								operator: 'equal',
+								value: [recordObject[attributeName]],
+								parameterType: 'fixed'
+							}
+						});
+				}, this);
+
+				var params = {};
+				params[CMDBuild.core.constants.Proxy.CLASS_NAME] = attribute.get(CMDBuild.core.constants.Proxy.TARGET_CLASS);
+
+				if (!Ext.isEmpty(requiredCardAdvancedFilterArray))
+					params[CMDBuild.core.constants.Proxy.FILTER] = Ext.encode({ // Filters request to get only required cards
+						attribute: { or: requiredCardAdvancedFilterArray }
+					});
+
+				CMDBuild.core.proxy.Card.getList({
+					params: params,
+					loadMask: false,
+					scope: this,
+					success: function(response, options, decodedResponse) {
+						decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.ROWS];
+
+						var referencedCardsMap = {};
+
+						// Build referencedCardsMap
+						Ext.Array.forEach(decodedResponse, function(cardObject, i, allCardObjects) {
+							referencedCardsMap[cardObject['Code']] = cardObject;
+						}, this);
+
+						Ext.Array.forEach(csvData, function(recordObject, i, allRecordObjects) {
+							if (!Ext.isEmpty(recordObject[attributeName])) {
+								var selectedCard = referencedCardsMap[recordObject[attributeName]];
+
+								if (!Ext.isEmpty(selectedCard))
+									csvData[i][attributeName] = selectedCard['Id'];
+							}
+						}, this);
+					},
+					callback: CMDBuild.core.RequestBarrier.getCallback(barrierId)
+				});
+			} else {
+				_error('malformed parameters in Reference data manage', this);
+			}
+		},
+
+		/**
+		 * @param {Array} csvData
+		 *
+		 * @private
+		 */
+		importDataModeManager: function(csvData) {
+			csvData = Ext.Array.clean(csvData);
+
+			if (!Ext.isEmpty(csvData) && Ext.isArray(csvData))
+				switch (this.form.modeCombo.getValue()) {
+					case 'add':
+						return Ext.Array.push(this.cmfg('widgetCustomFormDataGet'), csvData);
+
+					case 'merge':
+						return this.importDataModeManagerMerge(csvData);
+
+					case 'replace':
+					default:
+						return csvData;
+				}
+		},
+
+		/**
+		 * @param {Array} csvData
+		 *
+		 * @returns {Array}
+		 *
+		 * @private
+		 */
+		importDataModeManagerMerge: function(csvData) {
+			csvData = Ext.Array.clean(csvData);
+
+			var keyAttributes = Ext.Array.clean(this.form.keyAttributesMultiselect.getValue());
+
+			if (
+				!Ext.isEmpty(csvData) && Ext.isArray(csvData)
+				&& !Ext.isEmpty(keyAttributes) && Ext.isArray(keyAttributes)
+				&& this.isValidKeyCsvAttributes(keyAttributes, csvData)
+				&& this.isValidGridStoreKeyAttributes(keyAttributes)
+			) {
+				var outputData = [];
+
+				Ext.Array.forEach(this.cmfg('widgetCustomFormDataGet'), function(storeRowObject, i, allStoreRowObjects) {
+					if (Ext.isObject(storeRowObject) && !Ext.Object.isEmpty(storeRowObject)) {
+						var foundCsvRowObject = Ext.Array.findBy(csvData, function(csvRowObject, i, allCsvRowObjects) {
+							var isValid = true;
+
+							isValid = Ext.Array.each(keyAttributes, function(name, i, allNames) {
+								return String(csvRowObject[name]) == String(storeRowObject[name]);
+							}, this);
+
+							return Ext.isBoolean(isValid);
+						}, this);
+
+						if (!Ext.Object.isEmpty(foundCsvRowObject)) {
+							outputData.push(Ext.Object.merge(storeRowObject, foundCsvRowObject));
+						} else {
+							outputData.push(storeRowObject);
+						}
+					}
+				}, this);
+
+				return outputData;
+			}
+
+			return this.cmfg('widgetCustomFormDataGet');
+		},
+
+		/**
+		 * Check key attributes value tuples local store uniqueness
+		 *
+		 * @param {Array} keyAttributes
+		 * @param {Array} csvData
+		 *
+		 * @returns {Boolean}
+		 *
+		 * @private
+		 */
+		isValidKeyCsvAttributes: function(keyAttributes, csvData) {
+			if (
+				!Ext.isEmpty(keyAttributes) && Ext.isArray(keyAttributes)
+				&& !Ext.isEmpty(csvData) && Ext.isArray(csvData)
+			) {
+				var isValid = true;
+				var keyAttributeCsvValues = [];
+
+				// Build keyAttributeCsvValues array with append algorithm
+				Ext.Array.forEach(csvData, function(csvRowObject, i, allCsvRowObjects) {
+					var key = '';
+
+					Ext.Array.forEach(keyAttributes, function(name, i, allNames) {
+						key += csvRowObject[name];
+
+						isValid = !Ext.isEmpty(csvRowObject[name]);
+					}, this);
+
+					keyAttributeCsvValues.push(key);
+				}, this);
+
+				// Check uniqueness of keyAttributes
+				if (!Ext.isEmpty(keyAttributeCsvValues) && isValid) {
+					isValid = Ext.Array.equals(Ext.Array.unique(keyAttributeCsvValues), keyAttributeCsvValues);
+				} else {
+					return CMDBuild.core.Message.error(
+						CMDBuild.Translation.error,
+						'CSV file invalid key attribute/s', // TODO
+						false
+					);
+				}
+
+				return isValid;
+			}
+
+			return false;
+		},
+
+		/**
+		 * Check key attributes value tuples local store uniqueness
+		 *
+		 * @param {Array} keyAttributes
+		 *
+		 * @returns {Boolean}
+		 *
+		 * @private
+		 */
+		isValidGridStoreKeyAttributes: function(keyAttributes) {
+			if (!Ext.isEmpty(keyAttributes) && Ext.isArray(keyAttributes)) {
+				var isValid = true;
+				var keyAttributeCsvValues = [];
+
+				// Build keyAttributeCsvValues array with append algorithm
+				Ext.Array.forEach(this.cmfg('widgetCustomFormDataGet'), function(storeRowObject, i, allStoreRowObjects) {
+					var key = '';
+
+					Ext.Array.forEach(keyAttributes, function(name, i, allNames) {
+						key += storeRowObject[name];
+
+						isValid = !Ext.isEmpty(storeRowObject[name]);
+					}, this);
+
+					keyAttributeCsvValues.push(key);
+				}, this);
+
+				// Check uniqueness of keyAttributes
+				if (!Ext.isEmpty(keyAttributeCsvValues) && isValid) {
+					isValid = Ext.Array.equals(Ext.Array.unique(keyAttributeCsvValues), keyAttributeCsvValues);
+				} else {
+					return CMDBuild.core.Message.error(
+						CMDBuild.Translation.error,
+						'local store invalid key attribute/s', // TODO
+						false
+					);
+				}
+
+				return isValid;
+			}
+
+			return false;
+		},
+
 		onWidgetCustomFormImportAbortButtonClick: function() {
 			this.view.destroy();
+		},
+
+		onWidgetCustomFormImportModeChange: function() {
+			this.form.keyAttributesMultiselect.setDisabled(
+				this.form.modeCombo.getValue() != 'merge'
+			);
 		},
 
 		/**
@@ -70,12 +378,12 @@
 		 */
 		onWidgetCustomFormImportUploadButtonClick: function() {
 			if (this.validate(this.form)) {
-				CMDBuild.core.LoadMask.show();
+				CMDBuild.LoadMask.get().show();
 				CMDBuild.core.proxy.Csv.decode({
 					form: this.form.getForm(),
 					scope: this,
 					failure: function(form, action) {
-						CMDBuild.core.LoadMask.hide();
+						CMDBuild.LoadMask.get().hide();
 
 						CMDBuild.Msg.error(
 							CMDBuild.Translation.common.failure,
@@ -94,148 +402,6 @@
 						this.dataManageAndForward(decodedRows);
 					}
 				});
-			}
-		},
-
-		/**
-		 * Complete CSV translation data and forward call to parent delegate:
-		 * 	- Lookup: from description to id
-		 * 	- Reference: from code to id
-		 *
-		 * @param {Array} data
-		 */
-		dataManageAndForward: function(data) {
-			if (!this.cmfg('widgetCustomFormConfigurationIsEmpty',  CMDBuild.core.constants.Proxy.MODEL)) {
-				var barrierId = 'dataManageBarrier';
-
-				CMDBuild.core.RequestBarrier.init(barrierId, function() {
-					// Forwards to parent delegate
-					this.cmfg('widgetCustomFormImportData', {
-						append: this.form.importModeCombo.getValue() == 'add',
-						rowsObjects: data
-					});
-
-					this.onWidgetCustomFormImportAbortButtonClick();
-
-					CMDBuild.core.LoadMask.hide();
-				}, this);
-
-				Ext.Array.forEach(this.cmfg('widgetCustomFormConfigurationGet', CMDBuild.core.constants.Proxy.MODEL), function(attribute, i, allAttributes) {
-					switch (attribute.get(CMDBuild.core.constants.Proxy.TYPE)) {
-						case 'lookup': {
-							this.dataManageLookup(data, attribute, barrierId);
-						} break;
-
-						case 'reference': {
-							this.dataManageReference(data, attribute, barrierId);
-						} break;
-					}
-				}, this);
-
-				CMDBuild.core.RequestBarrier.finalize(barrierId);
-			}
-		},
-
-		/**
-		 * @param {Array} data
-		 * @param {CMDBuild.model.widget.customForm.Attribute} attribute
-		 * @param {String} barrierId
-		 */
-		dataManageLookup: function(data, attribute, barrierId) {
-			if (
-				!Ext.isEmpty(data) && Ext.isArray(data)
-				&& !Ext.isEmpty(attribute)
-				&& !Ext.isEmpty(barrierId) && Ext.isString(barrierId)
-			) {
-				var attributeName = attribute.get(CMDBuild.core.constants.Proxy.NAME);
-
-				var params = {};
-				params[CMDBuild.core.constants.Proxy.TYPE] = attribute.get(CMDBuild.core.constants.Proxy.LOOKUP_TYPE);
-				params[CMDBuild.core.constants.Proxy.ACTIVE] = true;
-
-				CMDBuild.ServiceProxy.lookup.get({
-					params: params,
-					scope: this,
-					success: function(response, options, decodedResponse) {
-						decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.ROWS];
-
-						Ext.Array.forEach(data, function(recordObject, i, allRecordObjects) {
-							if (!Ext.isEmpty(recordObject[attributeName])) {
-								var selectedLookup = Ext.Array.findBy(decodedResponse, function(lookupObject, i) {
-									return lookupObject['Description'] == recordObject[attributeName];
-								}, this);
-
-								if (!Ext.isEmpty(selectedLookup))
-									data[i][attributeName] = selectedLookup['Id'];
-							}
-						}, this);
-					},
-					callback: CMDBuild.core.RequestBarrier.getCallback(barrierId)
-				});
-			} else {
-				_error('Malformed parameters in Lookup data manage', this);
-			}
-		},
-
-		/**
-		 * @param {Array} data
-		 * @param {CMDBuild.model.widget.customForm.Attribute} attribute
-		 * @param {String} barrierId
-		 */
-		dataManageReference: function(data, attribute, barrierId) {
-			if (
-				!Ext.isEmpty(data) && Ext.isArray(data)
-				&& !Ext.isEmpty(attribute)
-				&& !Ext.isEmpty(barrierId) && Ext.isString(barrierId)
-			) {
-				var attributeName = attribute.get(CMDBuild.core.constants.Proxy.NAME);
-				var requiredCardAdvancedFilterArray = [];
-
-				Ext.Array.forEach(data, function(recordObject, i, allRecordObjects) {
-					if (!Ext.isEmpty(recordObject[attributeName]))
-						requiredCardAdvancedFilterArray.push({
-							simple: {
-								attribute: 'Code',
-								operator: 'equal',
-								value: [recordObject[attributeName]],
-								parameterType: 'fixed'
-							}
-						});
-				}, this);
-
-				var params = {};
-				params[CMDBuild.core.constants.Proxy.CLASS_NAME] = attribute.get(CMDBuild.core.constants.Proxy.TARGET_CLASS);
-				params[CMDBuild.core.constants.Proxy.FILTER] = Ext.encode({ // Filters request to get only required cards
-					attribute: { or: requiredCardAdvancedFilterArray }
-				});
-
-				CMDBuild.core.proxy.Card.getList({
-					params: params,
-					loadMask: false,
-					scope: this,
-					success: function(response, options, decodedResponse) {
-						decodedResponse = decodedResponse[CMDBuild.core.constants.Proxy.ROWS];
-
-						var referencedCardsMap = {};
-
-						// Build referencedCardsMap
-						Ext.Array.forEach(decodedResponse, function(cardObject, i, allCardObjects) {
-							referencedCardsMap[cardObject['Code']] = cardObject;
-						}, this);
-
-						Ext.Array.forEach(data, function(recordObject, i, allRecordObjects) {
-							if (!Ext.isEmpty(recordObject[attributeName])) {
-								var selectedCard = referencedCardsMap[recordObject[attributeName]];
-
-								if (!Ext.isEmpty(selectedCard))
-									data[i][attributeName] = selectedCard['Id'];
-							}
-						}, this);
-					},
-					callback: CMDBuild.core.RequestBarrier.getCallback(barrierId)
-				});
-			} else {
-				_error('Malformed parameters in Reference data manage', this);
 			}
 		}
 	});

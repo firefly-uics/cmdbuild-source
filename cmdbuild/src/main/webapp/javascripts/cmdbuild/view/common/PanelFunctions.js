@@ -47,9 +47,9 @@
 				if (
 					!Ext.isEmpty(item)
 					&& this.isManagedField(item)
-					&& !item.isDisabled()
-					&& !item.isHidden()
-					&& !item.isValid()
+					&& Ext.isFunction(item.isDisabled) && !item.isDisabled()
+					&& Ext.isFunction(item.isHidden) && !item.isHidden()
+					&& Ext.isFunction(item.isValid) && !item.isValid()
 					&& !item.disablePanelFunctions
 				) {
 					nonValidFields.push(item);
