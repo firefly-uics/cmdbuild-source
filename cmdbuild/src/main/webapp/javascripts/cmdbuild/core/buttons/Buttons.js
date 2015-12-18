@@ -53,13 +53,6 @@
 		textDefault: CMDBuild.Translation.common.buttons.exportLabel
 	});
 
-	Ext.define('CMDBuild.core.buttons.Import', {
-		alternateClassName: 'CMDBuild.buttons.ImportButton', // Legacy class name
-		extend: 'CMDBuild.core.buttons.Base',
-
-		textDefault: CMDBuild.Translation.common.buttons.importLabel
-	});
-
 	Ext.define('CMDBuild.core.buttons.Previous', {
 		extend: 'CMDBuild.core.buttons.Base',
 

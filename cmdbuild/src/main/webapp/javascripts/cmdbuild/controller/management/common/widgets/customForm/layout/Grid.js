@@ -4,6 +4,7 @@
 		extend: 'CMDBuild.controller.common.AbstractController',
 
 		requires: [
+			'CMDBuild.core.Message',
 			'CMDBuild.core.proxy.CMProxyConstants',
 			'CMDBuild.core.RequestBarrier'
 		],
@@ -16,10 +17,11 @@
 			'onWidgetCustomFormLayoutGridCloneRowButtonClick',
 			'onWidgetCustomFormLayoutGridDeleteRowButtonClick' ,
 			'onWidgetCustomFormLayoutGridEditRowButtonClick',
+			'onWidgetCustomFormLayoutGridExportButtonClick',
 			'onWidgetCustomFormLayoutGridImportButtonClick',
 			'onWidgetCustomFormLayoutGridResetButtonClick',
 			'onWidgetCustomFormLayoutGridShow = onWidgetCustomFormShow',
-			'widgetCustomFormLayoutGridImportData = widgetCustomFormImportData'
+			'setData = widgetCustomFormImportData'
 		],
 
 		/**
@@ -59,6 +61,8 @@
 		 * @returns {String} value
 		 *
 		 * TODO: delete when old FieldManager will be replaced
+		 *
+		 * @private
 		 */
 		addRendererToHeader: function(header, attribute) {
 			var me = this;
@@ -88,6 +92,8 @@
 
 		/**
 		 * @returns {Ext.grid.column.Action}
+		 *
+		 * @private
 		 */
 		buildActionColumns: function() {
 			return Ext.create('Ext.grid.column.Action', {
@@ -176,6 +182,8 @@
 		 * @returns {Array} columns definitions
 		 *
 		 * TODO: this implementation should be refactored with FieldManager class
+		 *
+		 * @private
 		 */
 		buildColumns: function() {
 			var columns = [];
@@ -264,6 +272,8 @@
 
 		/**
 		 * @returns {Ext.data.ArrayStore}
+		 *
+		 * @private
 		 */
 		buildDataStore: function() {
 			var storeFields = [];
@@ -289,6 +299,8 @@
 
 		/**
 		 * @returns {Array} storeRecordsData
+		 *
+		 * @public
 		 */
 		getData: function() {
 			var storeRecordsData = [];
@@ -305,6 +317,8 @@
 		 * Check required field value of grid store records
 		 *
 		 * @returns {Boolean}
+		 *
+		 * @public
 		 */
 		isValid: function() {
 			var returnValue = true;
@@ -376,6 +390,13 @@
 		},
 
 		/**
+		 * Opens export configuration pop-up window
+		 */
+		onWidgetCustomFormLayoutGridExportButtonClick: function() {
+			Ext.create('CMDBuild.controller.management.common.widgets.customForm.Export', { parentDelegate: this });
+		},
+
+		/**
 		 * Opens import configuration pop-up window
 		 */
 		onWidgetCustomFormLayoutGridImportButtonClick: function() {
@@ -388,7 +409,7 @@
 				propertyName: CMDBuild.core.proxy.CMProxyConstants.DATA
 			});
 
-			this.setData(this.cmfg('widgetCustomFormInstancesDataStorageGet'));
+			this.setData(this.cmfg('widgetCustomFormConfigurationGet', CMDBuild.core.proxy.CMProxyConstants.DATA));
 		},
 
 		/**
@@ -407,6 +428,8 @@
 
 		/**
 		 * @param {Array} data
+		 *
+		 * @private
 		 */
 		setData: function(data) {
 			this.view.getStore().removeAll();
@@ -415,18 +438,6 @@
 				this.view.getStore().loadData(data);
 
 			this.isValid();
-		},
-
-		/**
-		 * @param {Object} parameters
-		 * @param {String} parameters.append
-		 * @param {Array} parameters.rowsObjects
-		 */
-		widgetCustomFormLayoutGridImportData: function(parameters) {
-			var append = Ext.isBoolean(parameters.append) ? parameters.append : false;
-			var rowsObjects = Ext.isArray(parameters.rowsObjects) ? parameters.rowsObjects : [];
-
-			this.view.getStore().loadData(rowsObjects, append);
 		}
 	});
 

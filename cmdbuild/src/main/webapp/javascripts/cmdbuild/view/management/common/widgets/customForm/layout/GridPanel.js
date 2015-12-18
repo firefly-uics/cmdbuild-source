@@ -52,8 +52,7 @@
 									this.delegate.cmfg('onWidgetCustomFormLayoutGridAddRowButtonClick');
 								}
 							}),
-							Ext.create('CMDBuild.core.buttons.Import', {
-								text: CMDBuild.Translation.import,
+							Ext.create('CMDBuild.core.buttons.iconized.Import', {
 								scope: this,
 
 								disabled: (
@@ -66,6 +65,21 @@
 
 								handler: function(button, e) {
 									this.delegate.cmfg('onWidgetCustomFormLayoutGridImportButtonClick');
+								}
+							}),
+							Ext.create('CMDBuild.core.buttons.iconized.Export', {
+								scope: this,
+
+								disabled: ( // TODO: configurations
+									isWidgetReadOnly
+//									|| this.delegate.cmfg('widgetCustomFormConfigurationGet', [
+//										CMDBuild.core.proxy.CMProxyConstants.CAPABILITIES,
+//										CMDBuild.core.proxy.CMProxyConstants.EXPORT_DISABLED
+//									])
+								),
+
+								handler: function(button, e) {
+									this.delegate.cmfg('onWidgetCustomFormLayoutGridExportButtonClick');
 								}
 							}),
 							Ext.create('CMDBuild.core.buttons.Reload', {

@@ -9,7 +9,22 @@
 		/**
 		 * @return {Ext.data.ArrayStore}
 		 */
-		getImportFileFormatStore: function() {
+		getStoreExportFileFormat: function() {
+			return Ext.create('Ext.data.ArrayStore', {
+				fields: [CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION, CMDBuild.core.proxy.CMProxyConstants.NAME],
+				data: [
+					[CMDBuild.Translation.csv, CMDBuild.core.proxy.CMProxyConstants.CSV]
+				],
+				sorters: [
+					{ property: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION, direction: 'ASC' }
+				]
+			});
+		},
+
+		/**
+		 * @return {Ext.data.ArrayStore}
+		 */
+		getStoreImportFileFormat: function() {
 			return Ext.create('Ext.data.ArrayStore', {
 				fields: [CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION, CMDBuild.core.proxy.CMProxyConstants.NAME],
 				data: [

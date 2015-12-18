@@ -10,7 +10,7 @@ import static org.cmdbuild.common.utils.guava.Functions.toKey;
 import static org.cmdbuild.common.utils.guava.Functions.toValue;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ELEMENTS;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ENTRIES;
-import static org.cmdbuild.servlets.json.CommunicationConstants.FILE_CSV;
+import static org.cmdbuild.servlets.json.CommunicationConstants.FILE;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ID_CLASS;
 import static org.cmdbuild.servlets.json.CommunicationConstants.SEPARATOR;
 
@@ -193,7 +193,7 @@ public class ImportCSV extends JSONBaseWithSpringContext {
 
 	@JSONExported(forceContentType = true)
 	public JsonResponse readCsv( //
-			@Parameter(FILE_CSV) final FileItem file, //
+			@Parameter(FILE) final FileItem file, //
 			@Parameter(SEPARATOR) final String separator //
 	) throws IOException {
 		final CsvPreference importCsvPreferences = new CsvPreference('"', separator.charAt(0), "\n");
@@ -218,7 +218,7 @@ public class ImportCSV extends JSONBaseWithSpringContext {
 
 	/**
 	 * Stores in the session the records of the file that the user has uploaded
-	 * 
+	 *
 	 * @param file
 	 *            is the uploaded file
 	 * @param separatorString
@@ -228,7 +228,7 @@ public class ImportCSV extends JSONBaseWithSpringContext {
 	 */
 	@JSONExported
 	public void uploadCSV( //
-			@Parameter(FILE_CSV) final FileItem file, //
+			@Parameter(FILE) final FileItem file, //
 			@Parameter(SEPARATOR) final String separatorString, //
 			@Parameter(ID_CLASS) final Long classId //
 	) throws IOException, JSONException {
@@ -240,7 +240,7 @@ public class ImportCSV extends JSONBaseWithSpringContext {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return the serialization of the cards
 	 */
 	@JSONExported
