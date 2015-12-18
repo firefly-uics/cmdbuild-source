@@ -253,6 +253,8 @@
 		},
 
 		/**
+		 * This method can't be called using cmfg functionalities because of his implementation
+		 *
 		 * @abstract
 		 */
 		onEditMode: Ext.emptyFn,

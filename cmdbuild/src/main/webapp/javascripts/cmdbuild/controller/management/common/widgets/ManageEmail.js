@@ -155,10 +155,10 @@
 						);
 					}
 
-					this.tabDelegate.cmfg('regenerationEndPointCallbackSet'); // Reset callback function
+					this.tabDelegate.cmfg('tabEmailRegenerationEndPointCallbackReset'); // Reset callback function
 				};
 
-				this.tabDelegate.cmfg('tabEmailRegenerationEndPointCallbackSet', callbackDefinitionObject);
+				this.tabDelegate.cmfg('tabEmailRegenerationEndPointCallbackSet', { value: callbackDefinitionObject });
 
 				this.tabDelegate.cmfg('tabEmailRegenerateAllEmailsSet', true);
 				this.tabDelegate.controllerGrid.cmfg('tabEmailGridStoreLoad');
