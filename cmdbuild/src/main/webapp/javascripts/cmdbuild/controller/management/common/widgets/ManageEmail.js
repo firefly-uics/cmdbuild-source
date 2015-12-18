@@ -64,7 +64,7 @@
 		widgetConfigurationModelClassName: 'CMDBuild.model.widget.manageEmail.Configuration',
 
 		/**
-		 * @param {CMDBuild.view.management.common.widgets.customForm.CustomFormView} configurationObject.view
+		 * @param {CMDBuild.view.management.widget.customForm.CustomFormView} configurationObject.view
 		 * @param {CMDBuild.controller.management.common.CMWidgetManagerController} configurationObject.parentDelegate
 		 * @param {Object} configurationObject.widgetConfiguration
 		 * @param {Ext.form.Basic} configurationObject.clientForm

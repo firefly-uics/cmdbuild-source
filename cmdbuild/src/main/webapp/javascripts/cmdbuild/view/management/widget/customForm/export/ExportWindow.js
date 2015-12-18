@@ -1,24 +1,24 @@
 (function() {
 
-	Ext.define('CMDBuild.view.management.common.widgets.customForm.RowEditWindow', {
+	Ext.define('CMDBuild.view.management.widget.customForm.export.ExportWindow', {
 		extend: 'CMDBuild.core.PopupWindow',
 
 		requires: ['CMDBuild.core.constants.Proxy'],
 
 		/**
-		 * @cfg {CMDBuild.controller.management.common.widgets.customForm.layout.Grid}
+		 * @cfg {CMDBuild.controller.management.widget.customForm.Export}
 		 */
 		delegate: undefined,
 
 		/**
-		 * @property {Ext.form.Panel}
+		 * @property {CMDBuild.view.management.widget.customForm.export.FormPanel}
 		 */
 		form: undefined,
 
+		autoHeight: true,
 		border: false,
 		defaultSizeW: 0.90,
-		defaultSizeH: 0.80,
-		title: CMDBuild.Translation.editRow,
+		title: CMDBuild.Translation.exportLabel,
 
 		initComponent: function() {
 			Ext.apply(this, {
@@ -35,41 +35,31 @@
 						},
 
 						items: [
-							Ext.create('CMDBuild.core.buttons.text.Save', {
+							Ext.create('CMDBuild.core.buttons.text.Export', {
 								scope: this,
 
 								handler: function(button, e) {
-									this.delegate.cmfg('onWidgetCustomFormRowEditWindowSaveButtonClick');
+									this.delegate.cmfg('onWidgetCustomFormExportExportButtonClick');
 								}
 							}),
 							Ext.create('CMDBuild.core.buttons.text.Abort', {
 								scope: this,
 
 								handler: function(button, e) {
-									this.delegate.cmfg('onWidgetCustomFormRowEditWindowAbortButtonClick');
+									this.delegate.cmfg('onWidgetCustomFormExportAbortButtonClick');
 								}
 							})
 						]
 					})
 				],
 				items: [
-					this.form = Ext.create('Ext.form.Panel', {
-						border: false,
-						frame: true,
-						overflowY: 'auto',
-
-						layout: {
-							type: 'vbox',
-							align: 'stretch'
-						}
-					})
+					this.form = Ext.create('CMDBuild.view.management.widget.customForm.export.FormPanel', { delegate: this.delegate })
 				]
 			});
 
 			this.callParent(arguments);
 
 			// Resize window, smaller than default size
-			this.height = this.height * this.defaultSizeH;
 			this.width = this.width * this.defaultSizeW;
 		}
 	});

@@ -17,7 +17,7 @@
 				controllerClasses: {
 					'.Calendar': CMDBuild.controller.management.common.widgets.CMCalendarController,
 					'.CreateModifyCard': CMDBuild.controller.management.common.widgets.CMCreateModifyCardController,
-					'.CustomForm': 'CMDBuild.controller.management.common.widgets.customForm.CustomForm',
+					'.CustomForm': 'CMDBuild.controller.management.widget.customForm.CustomForm',
 					'.Grid': 'CMDBuild.controller.management.common.widgets.grid.Grid',
 					'.LinkCards': CMDBuild.controller.management.common.widgets.linkCards.LinkCardsController,
 					'.ManageEmail': 'CMDBuild.controller.management.common.widgets.ManageEmail',
