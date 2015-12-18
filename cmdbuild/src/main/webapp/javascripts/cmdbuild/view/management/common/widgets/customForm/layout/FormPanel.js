@@ -24,6 +24,11 @@
 		},
 
 		initComponent: function() {
+			var isWidgetReadOnly = this.delegate.cmfg('widgetCustomFormConfigurationGet', [
+				CMDBuild.core.constants.Proxy.CAPABILITIES,
+				CMDBuild.core.constants.Proxy.READ_ONLY
+			]);
+
 			Ext.apply(this, {
 				dockedItems: [
 					Ext.create('Ext.toolbar.Toolbar', {
@@ -36,10 +41,7 @@
 								scope: this,
 
 								disabled: (
-									this.delegate.cmfg('widgetCustomFormConfigurationGet', [
-										CMDBuild.core.constants.Proxy.CAPABILITIES,
-										CMDBuild.core.constants.Proxy.READ_ONLY
-									])
+									isWidgetReadOnly
 									|| this.delegate.cmfg('widgetCustomFormConfigurationGet', [
 										CMDBuild.core.constants.Proxy.CAPABILITIES,
 										CMDBuild.core.constants.Proxy.IMPORT_DISABLED
@@ -48,6 +50,21 @@
 
 								handler: function(button, e) {
 									this.delegate.cmfg('onWidgetCustomFormLayoutFormImportButtonClick');
+								}
+							}),
+							Ext.create('CMDBuild.core.buttons.iconized.Export', {
+								scope: this,
+
+								disabled: (
+									isWidgetReadOnly
+									|| this.delegate.cmfg('widgetCustomFormConfigurationGet', [
+										CMDBuild.core.constants.Proxy.CAPABILITIES,
+										CMDBuild.core.constants.Proxy.EXPORT_DISABLED
+									])
+								),
+
+								handler: function(button, e) {
+									this.delegate.cmfg('onWidgetCustomFormLayoutFormExportButtonClick');
 								}
 							}),
 							Ext.create('CMDBuild.core.buttons.iconized.Reload', {

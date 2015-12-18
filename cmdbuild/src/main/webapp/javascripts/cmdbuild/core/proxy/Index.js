@@ -66,6 +66,7 @@
 
 		csv: {
 			clearSession: 'services/json/management/importcsv/clearsession',
+			exports: 'services/json/management/exportcsv/writecsv',
 			getCsvRecords: 'services/json/management/importcsv/getcsvrecords',
 			readCsv: 'services/json/management/importcsv/readcsv',
 			uploadCsv: 'services/json/management/importcsv/uploadcsv'

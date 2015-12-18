@@ -9,9 +9,10 @@
 			{ name: CMDBuild.core.constants.Proxy.ADD_DISABLED, type: 'boolean' },
 			{ name: CMDBuild.core.constants.Proxy.CLONE_DISABLED, type: 'boolean' },
 			{ name: CMDBuild.core.constants.Proxy.DELETE_DISABLED, type: 'boolean' },
+			{ name: CMDBuild.core.constants.Proxy.EXPORT_DISABLED, type: 'boolean' },
 			{ name: CMDBuild.core.constants.Proxy.IMPORT_DISABLED, type: 'boolean' },
 			{ name: CMDBuild.core.constants.Proxy.MODIFY_DISABLED, type: 'boolean' },
-			{ name: CMDBuild.core.constants.Proxy.READ_ONLY, type: 'boolean' },
+			{ name: CMDBuild.core.constants.Proxy.READ_ONLY, type: 'boolean' }
 		]
 	});
 

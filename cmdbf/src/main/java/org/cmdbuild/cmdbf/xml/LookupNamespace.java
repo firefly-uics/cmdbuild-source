@@ -170,7 +170,7 @@ public class LookupNamespace extends AbstractNamespace {
 				if (idValue != null && !idValue.isEmpty()) {
 					lookupId = Long.parseLong(idValue);
 				}
-				if (lookupId <= 0 && lookupTypeName != null && !lookupTypeName.isEmpty()) {
+				if ((lookupId == null || lookupId <= 0) && lookupTypeName != null && !lookupTypeName.isEmpty()) {
 					final LookupType lookupType = getType(new QName(getNamespaceURI(), lookupTypeName));
 					if (lookupType != null) {
 						for (final Lookup lookup : lookupLogic.getAllLookup(lookupType, true, UNUSED_LOOKUP_QUERY)) {

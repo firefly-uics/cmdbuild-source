@@ -53,7 +53,6 @@
 								}
 							}),
 							Ext.create('CMDBuild.core.buttons.iconized.Import', {
-								text: CMDBuild.Translation.import,
 								scope: this,
 
 								disabled: (
@@ -66,6 +65,21 @@
 
 								handler: function(button, e) {
 									this.delegate.cmfg('onWidgetCustomFormLayoutGridImportButtonClick');
+								}
+							}),
+							Ext.create('CMDBuild.core.buttons.iconized.Export', {
+								scope: this,
+
+								disabled: (
+									isWidgetReadOnly
+									|| this.delegate.cmfg('widgetCustomFormConfigurationGet', [
+										CMDBuild.core.constants.Proxy.CAPABILITIES,
+										CMDBuild.core.constants.Proxy.EXPORT_DISABLED
+									])
+								),
+
+								handler: function(button, e) {
+									this.delegate.cmfg('onWidgetCustomFormLayoutGridExportButtonClick');
 								}
 							}),
 							Ext.create('CMDBuild.core.buttons.iconized.Reload', {

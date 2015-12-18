@@ -4,6 +4,7 @@
 		extend: 'CMDBuild.controller.common.AbstractController',
 
 		requires: [
+			'CMDBuild.core.Message',
 			'CMDBuild.core.constants.Proxy',
 			'CMDBuild.core.RequestBarrier'
 		],
@@ -21,10 +22,11 @@
 			'onWidgetCustomFormLayoutGridCloneRowButtonClick',
 			'onWidgetCustomFormLayoutGridDeleteRowButtonClick' ,
 			'onWidgetCustomFormLayoutGridEditRowButtonClick',
+			'onWidgetCustomFormLayoutGridExportButtonClick',
 			'onWidgetCustomFormLayoutGridImportButtonClick',
 			'onWidgetCustomFormLayoutGridResetButtonClick',
 			'onWidgetCustomFormLayoutGridShow = onWidgetCustomFormShow',
-			'widgetCustomFormLayoutGridImportData = widgetCustomFormImportData'
+			'setData = widgetCustomFormImportData'
 		],
 
 		/**
@@ -64,6 +66,8 @@
 		 * @returns {String} value
 		 *
 		 * TODO: delete when old FieldManager will be replaced
+		 *
+		 * @private
 		 */
 		addRendererToHeader: function(header, attribute) {
 			var me = this;
@@ -93,6 +97,8 @@
 
 		/**
 		 * @returns {Ext.grid.column.Action}
+		 *
+		 * @private
 		 */
 		buildActionColumns: function() {
 			return Ext.create('Ext.grid.column.Action', {
@@ -181,6 +187,8 @@
 		 * @returns {Array} columns definitions
 		 *
 		 * TODO: this implementation should be refactored with FieldManager class
+		 *
+		 * @private
 		 */
 		buildColumns: function() {
 			var columns = [];
@@ -269,6 +277,8 @@
 
 		/**
 		 * @returns {Ext.data.ArrayStore}
+		 *
+		 * @private
 		 */
 		buildDataStore: function() {
 			var storeFields = [];
@@ -294,6 +304,8 @@
 
 		/**
 		 * @returns {Array} storeRecordsData
+		 *
+		 * @public
 		 */
 		getData: function() {
 			var storeRecordsData = [];
@@ -310,6 +322,8 @@
 		 * Check required field value of grid store records
 		 *
 		 * @returns {Boolean}
+		 *
+		 * @public
 		 */
 		isValid: function() {
 			var returnValue = true;
@@ -381,6 +395,13 @@
 		},
 
 		/**
+		 * Opens export configuration pop-up window
+		 */
+		onWidgetCustomFormLayoutGridExportButtonClick: function() {
+			Ext.create('CMDBuild.controller.management.common.widgets.customForm.Export', { parentDelegate: this });
+		},
+
+		/**
 		 * Opens import configuration pop-up window
 		 */
 		onWidgetCustomFormLayoutGridImportButtonClick: function() {
@@ -393,7 +414,7 @@
 				value: this.cmfg('widgetCustomFormControllerPropertyGet', 'widgetConfiguration')[CMDBuild.core.constants.Proxy.DATA]
 			});
 
-			this.setData(this.cmfg('widgetCustomFormInstancesDataStorageGet'));
+			this.setData(this.cmfg('widgetCustomFormConfigurationGet', CMDBuild.core.constants.Proxy.DATA));
 		},
 
 		/**
@@ -403,7 +424,7 @@
 			if (!this.cmfg('widgetCustomFormInstancesDataStorageIsEmpty'))
 				this.setData(this.cmfg('widgetCustomFormInstancesDataStorageGet'));
 
-			// Fixes reference field renderer to avoid black cell content render
+			// Fixes reference field renderer to avoid blank cell content render
 			Ext.Function.createDelayed(function() {
 				if (this.view.getView().isVisible())
 					this.view.getView().refresh();
@@ -412,6 +433,8 @@
 
 		/**
 		 * @param {Array} data
+		 *
+		 * @private
 		 */
 		setData: function(data) {
 			this.view.getStore().removeAll();
@@ -419,19 +442,7 @@
 			if (!Ext.isEmpty(data))
 				this.view.getStore().loadData(data);
 
-			this.isValid(false);
-		},
-
-		/**
-		 * @param {Object} parameters
-		 * @param {String} parameters.append
-		 * @param {Array} parameters.rowsObjects
-		 */
-		widgetCustomFormLayoutGridImportData: function(parameters) {
-			var append = Ext.isBoolean(parameters.append) ? parameters.append : false;
-			var rowsObjects = Ext.isArray(parameters.rowsObjects) ? parameters.rowsObjects : [];
-
-			this.view.getStore().loadData(rowsObjects, append);
+			this.isValid();
 		}
 	});
 

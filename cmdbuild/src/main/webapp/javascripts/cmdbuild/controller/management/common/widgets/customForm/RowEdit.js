@@ -64,6 +64,8 @@
 
 		/**
 		 * @return {Array} itemsArray
+		 *
+		 * @private
 		 */
 		buildFields: function() {
 			var itemsArray = [];
@@ -121,6 +123,8 @@
 
 		/**
 		 * Calls field template resolver, store load and loads record only at the end of all store loads
+		 *
+		 * @private
 		 */
 		fieldsInitialization: function() {
 			var barrierId = 'rowEditFieldsInitializationBarrier';

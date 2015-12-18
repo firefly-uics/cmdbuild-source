@@ -1,24 +1,24 @@
 (function() {
 
-	Ext.define('CMDBuild.view.management.common.widgets.customForm.import.ImportWindow', {
+	Ext.define('CMDBuild.view.management.common.widgets.customForm.export.ExportWindow', {
 		extend: 'CMDBuild.core.PopupWindow',
 
 		requires: ['CMDBuild.core.constants.Proxy'],
 
 		/**
-		 * @cfg {CMDBuild.controller.management.common.widgets.customForm.Import}
+		 * @cfg {CMDBuild.controller.management.common.widgets.customForm.Export}
 		 */
 		delegate: undefined,
 
 		/**
-		 * @property {CMDBuild.view.management.common.widgets.customForm.import.FormPanel}
+		 * @property {CMDBuild.view.management.common.widgets.customForm.export.FormPanel}
 		 */
 		form: undefined,
 
 		autoHeight: true,
 		border: false,
 		defaultSizeW: 0.90,
-		title: CMDBuild.Translation.import,
+		title: CMDBuild.Translation.exportLabel,
 
 		initComponent: function() {
 			Ext.apply(this, {
@@ -35,25 +35,25 @@
 						},
 
 						items: [
-							Ext.create('CMDBuild.core.buttons.text.Upload', {
+							Ext.create('CMDBuild.core.buttons.text.Export', {
 								scope: this,
 
 								handler: function(button, e) {
-									this.delegate.cmfg('onWidgetCustomFormImportUploadButtonClick');
+									this.delegate.cmfg('onWidgetCustomFormExportExportButtonClick');
 								}
 							}),
 							Ext.create('CMDBuild.core.buttons.text.Abort', {
 								scope: this,
 
 								handler: function(button, e) {
-									this.delegate.cmfg('onWidgetCustomFormImportAbortButtonClick');
+									this.delegate.cmfg('onWidgetCustomFormExportAbortButtonClick');
 								}
 							})
 						]
 					})
 				],
 				items: [
-					this.form = Ext.create('CMDBuild.view.management.common.widgets.customForm.import.FormPanel', { delegate: this.delegate })
+					this.form = Ext.create('CMDBuild.view.management.common.widgets.customForm.export.FormPanel', { delegate: this.delegate })
 				]
 			});
 
