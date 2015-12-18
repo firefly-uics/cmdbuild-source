@@ -157,9 +157,9 @@
 		 * @private
 		 */
 		areThereBusyWidget: function() {
-			Ext.Object.each(this.controllers, function(id, controller, myself) {
-				var widgetsBusyState = false;
+			var widgetsBusyState = false;
 
+			Ext.Object.each(this.controllers, function(id, controller, myself) {
 				// cmfg() implementation adapter
 				if (!Ext.isEmpty(controller.cmfg) && Ext.isFunction(controller.cmfg)) {
 					widgetsBusyState = controller.cmfg('isBusy');
@@ -182,19 +182,19 @@
 		 *
 		 * @private
 		 */
-		onBeforeSaveTrigger: function(lastCallback) {
+		beforeSaveTriggerManager: function(lastCallback) {
 			var controllersArray = Ext.Object.getValues(this.controllers);
 			var chainArray = [];
 
-			if (!Ext.isEmpty(lastCallback) && typeof lastCallback == 'function') {
-				if (Ext.isEmpty(controllersArray)) { // No activity widgets
+			if (!Ext.isEmpty(lastCallback) && Ext.isFunction(lastCallback)) {
+				if (Ext.Object.isEmpty(controllersArray)) { // No active widgets
 					return lastCallback();
 				} else {
 					Ext.Array.forEach(controllersArray, function(controller, i, allControllers) {
 						var nextControllerFunction = Ext.emptyFn;
 						var scope = this;
 
-						if (typeof controller.onBeforeSave == 'function') {
+						if (!Ext.isEmpty(controller.onBeforeSave) && Ext.isFunction(controller.onBeforeSave)) {
 							if (i + 1 < controllersArray.length) {
 								nextControllerFunction = controllersArray[i + 1].onBeforeSave;
 								scope = controllersArray[i + 1];
@@ -211,14 +211,14 @@
 					}, this);
 
 					// Execute first chain function
-					if (!Ext.isEmpty(controllersArray[0]) && typeof controllersArray[0].onBeforeSave == 'function') {
+					if (!Ext.isEmpty(controllersArray[0]) && Ext.isFunction(controllersArray[0].onBeforeSave)) {
 						controllersArray[0].onBeforeSave(chainArray, 0);
 					} else {
-						_msg('CMDBuild.controller.management.common.CMWidgetManagerController onBeforeSaveTrigger controllersArray head function error!');
+						_error('onBeforeSaveTrigger controllersArray head function error', this);
 					}
 				}
 			} else {
-				_msg('CMDBuild.controller.management.common.CMWidgetManagerController onBeforeSaveTrigger lastCallback function error!');
+				_error('onBeforeSaveTrigger lastCallback function error', this);
 			}
 		},
 
@@ -226,7 +226,7 @@
 			var me = this;
 
 			CMDBuild.core.LoadMask.show();
-			this.onBeforeSaveTrigger(
+			this.beforeSaveTriggerManager(
 				function() {
 					new _CMUtils.PollingFunction({
 						success: cb,
