@@ -21,7 +21,9 @@
 			'onWidgetCustomFormLayoutFormImportButtonClick',
 			'onWidgetCustomFormLayoutFormResetButtonClick',
 			'onWidgetCustomFormLayoutFormShow = onWidgetCustomFormShow',
-			'setData = widgetCustomFormImportData'
+			'setData = widgetCustomFormImportData',
+			'widgetCustomFormLayoutFormDataGet = widgetCustomFormLayoutControllerDataGet',
+			'widgetCustomFormLayoutFormIsValid = widgetCustomFormLayoutControllerIsValid'
 		],
 
 		/**
@@ -112,29 +114,6 @@
 		},
 
 		/**
-		 * @returns {Array}
-		 *
-		 * @public
-		 */
-		getData: function() {
-			return [this.view.getData(true)];
-		},
-
-		/**
-		 * Validate form
-		 *
-		 * @param {Boolean} showPopup
-		 *
-		 * @returns {Boolean}
-		 *
-		 * @public
-		 */
-		isValid: function(showPopup) {
-			return this.validate(this.view, showPopup);
-		},
-
-
-		/**
 		 * Opens export configuration pop-up window
 		 */
 		onWidgetCustomFormLayoutFormExportButtonClick: function() {
@@ -194,7 +173,25 @@
 			if (Ext.isObject(data) && !Ext.Object.isEmpty(data))
 				this.view.getForm().setValues(data);
 
-			this.isValid(false);
+			this.cmfg('widgetCustomFormLayoutFormIsValid', false);
+		},
+
+		/**
+		 * @returns {Array}
+		 */
+		widgetCustomFormLayoutFormDataGet: function() {
+			return [this.view.getData(true)];
+		},
+
+		/**
+		 * Validate form
+		 *
+		 * @param {Boolean} showPopup
+		 *
+		 * @returns {Boolean}
+		 */
+		widgetCustomFormLayoutFormIsValid: function(showPopup) {
+			return this.validate(this.view, showPopup);
 		}
 	});
 

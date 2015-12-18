@@ -9,6 +9,11 @@
 		],
 
 		/**
+		 * @cfg {CMDBuild.controller.management.common.CMWidgetManagerController}
+		 */
+		parentDelegate: undefined,
+
+		/**
 		 * @property {Ext.form.Basic}
 		 */
 		clientForm: undefined,
@@ -17,8 +22,13 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
+			'getLabel',
+			'isBusy',
+			'isValid',
 			'onOpenReportSaveButtonClick',
+			'onWidgetOpenReportBeforeActiveView = beforeActiveView',
 			'showReport',
+			'widgetOpenReportGetData = getData',
 			'widgetOpenReportSelectedReportRecordGet = selectedReportRecordGet'
 		],
 
@@ -35,7 +45,9 @@
 		/**
 		 * @override
 		 */
-		beforeActiveView: function() {
+		onWidgetOpenReportBeforeActiveView: function() {
+			this.beforeActiveView(arguments); // CallParent alias
+
 			if (
 				!this.widgetConfigurationIsEmpty()
 				&& Ext.isEmpty(this.templateResolver)
@@ -182,6 +194,11 @@
 				form.close();
 			}, 100);
 		},
+
+		/**
+		 * Avoids not managed function warning
+		 */
+		widgetOpenReportGetData: Ext.emptyFn,
 
 		/**
 		 * Avoids not managed function warning

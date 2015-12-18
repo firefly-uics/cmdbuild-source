@@ -34,14 +34,22 @@
 		 * @cfg {Array}
 		 */
 		cmfgCatchedFunctions: [
+			'getLabel',
 			'getTemplateResolverServerVars = widgetCustomFormGetTemplateResolverServerVars',
 			'instancesDataStorageGet = widgetCustomFormInstancesDataStorageGet',
 			'instancesDataStorageIsEmpty = widgetCustomFormInstancesDataStorageIsEmpty',
+			'isBusy',
+			'onWidgetCustomFormBeforeActiveView = beforeActiveView',
+			'onWidgetCustomFormBeforeHideView = beforeHideView',
+			'onWidgetCustomFormEditMode = onEditMode',
 			'widgetConfigurationGet = widgetCustomFormConfigurationGet',
 			'widgetConfigurationIsEmpty = widgetCustomFormConfigurationIsEmpty',
 			'widgetConfigurationSet = widgetCustomFormConfigurationSet',
 			'widgetControllerPropertyGet = widgetCustomFormControllerPropertyGet',
-			'widgetCustomFormDataGet',
+			'widgetCustomFormGetData = getData',
+			'widgetCustomFormIsValid = isValid',
+			'widgetCustomFormLayoutControllerDataGet -> controllerLayout',
+			'widgetCustomFormLayoutControllerIsValid -> controllerLayout',
 			'widgetCustomFormModelStoreBuilder',
 			'widgetCustomFormViewSetLoading'
 		],
@@ -122,48 +130,6 @@
 		},
 
 		/**
-		 * @public
-		 * @override
-		 */
-		beforeActiveView: function() {
-			this.callParent(arguments);
-
-			// Execute template resolver on model property
-			if (!Ext.isEmpty(this.cmfg('widgetCustomFormConfigurationGet', CMDBuild.core.constants.Proxy.MODEL)))
-				this.cmfg('widgetCustomFormConfigurationSet', {
-					propertyName: CMDBuild.core.constants.Proxy.MODEL,
-					value: this.applyTemplateResolverToArray(this.widgetConfiguration[CMDBuild.core.constants.Proxy.MODEL])
-				});
-
-			// Execute template resolver on variables property
-			if (
-				Ext.isEmpty(this.cmfg('widgetCustomFormConfigurationGet', CMDBuild.core.constants.Proxy.DATA))
-				&& this.cmfg('widgetCustomFormInstancesDataStorageIsEmpty')
-				&& !Ext.isEmpty(this.cmfg('widgetCustomFormConfigurationGet', CMDBuild.core.constants.Proxy.FUNCTION_DATA))
-			) {
-				this.cmfg('widgetCustomFormConfigurationSet', {
-					propertyName: CMDBuild.core.constants.Proxy.VARIABLES,
-					value: this.applyTemplateResolverToObject(this.widgetConfiguration[CMDBuild.core.constants.Proxy.VARIABLES])
-				});
-
-				// Build data configurations from function definition
-				this.buildDataConfigurationFromFunction();
-			} else {
-				this.buildLayout();
-			}
-		},
-
-		/**
-		 * Save data in storage attribute
-		 *
-		 * @public
-		 * @override
-		 */
-		beforeHideView: function() {
-			this.instancesDataStorageSet(this.cmfg('widgetCustomFormDataGet'));
-		},
-
-		/**
 		 * @param {Function} callback
 		 *
 		 * @private
@@ -224,12 +190,64 @@
 		},
 
 		/**
-		 * @return {Object} output
-		 *
-		 * @public
 		 * @override
 		 */
-		getData: function() {
+		onWidgetCustomFormBeforeActiveView: function() {
+			this.beforeActiveView(arguments); // CallParent alias
+
+			// Execute template resolver on model property
+			if (!Ext.isEmpty(this.cmfg('widgetCustomFormConfigurationGet', CMDBuild.core.constants.Proxy.MODEL)))
+				this.cmfg('widgetCustomFormConfigurationSet', {
+					propertyName: CMDBuild.core.constants.Proxy.MODEL,
+					value: this.applyTemplateResolverToArray(this.widgetConfiguration[CMDBuild.core.constants.Proxy.MODEL])
+				});
+
+			// Execute template resolver on variables property
+			if (
+				Ext.isEmpty(this.cmfg('widgetCustomFormConfigurationGet', CMDBuild.core.constants.Proxy.DATA))
+				&& this.cmfg('widgetCustomFormInstancesDataStorageIsEmpty')
+				&& !Ext.isEmpty(this.cmfg('widgetCustomFormConfigurationGet', CMDBuild.core.constants.Proxy.FUNCTION_DATA))
+			) {
+				this.cmfg('widgetCustomFormConfigurationSet', {
+					propertyName: CMDBuild.core.constants.Proxy.VARIABLES,
+					value: this.applyTemplateResolverToObject(this.widgetConfiguration[CMDBuild.core.constants.Proxy.VARIABLES])
+				});
+
+				// Build data configurations from function definition
+				this.buildDataConfigurationFromFunction();
+			} else {
+				this.buildLayout();
+			}
+		},
+
+		/**
+		 * Preset data in instanceDataStorage variable
+		 *
+		 * @override
+		 */
+		onWidgetCustomFormEditMode: function() {
+			this.instancesDataStorageSet(this.cmfg('widgetCustomFormConfigurationGet', CMDBuild.core.constants.Proxy.DATA));
+
+			this.cmfg('onWidgetCustomFormBeforeActiveView');
+		},
+
+		/**
+		 * Save data in storage attribute
+		 *
+		 * @override
+		 */
+		onWidgetCustomFormBeforeHideView: function() {
+			this.instancesDataStorageSet(this.cmfg('widgetCustomFormLayoutControllerDataGet'));
+
+			this.beforeHideView(arguments); // CallParent alias
+		},
+
+		/**
+		 * @return {Object} output
+		 *
+		 * @override
+		 */
+		widgetCustomFormGetData: function() {
 			var output = {};
 			output[CMDBuild.core.constants.Proxy.OUTPUT] = [];
 
@@ -240,7 +258,7 @@
 				])
 			) {
 				// Uses direct data property access to avoid a get problem because of generic model
-				Ext.Array.forEach(this.cmfg('widgetCustomFormDataGet'), function(rowObject, i, allRowObjects) {
+				Ext.Array.forEach(this.cmfg('widgetCustomFormLayoutControllerDataGet'), function(rowObject, i, allRowObjects) {
 					var dataObject = Ext.isEmpty(rowObject.data) ? rowObject : rowObject.data; // Model/Objects management
 
 					new CMDBuild.Management.TemplateResolver({
@@ -262,40 +280,22 @@
 		},
 
 		/**
-		 * Check required field value of grid store records
-		 *
 		 * @returns {Boolean}
 		 *
-		 * @public
 		 * @override
 		 */
-		isValid: function() {
-			if (!Ext.isEmpty(this.controllerLayout) && Ext.isFunction(this.controllerLayout.isValid))
-				return this.controllerLayout.isValid();
-
-			return this.callParent(arguments);
+		widgetCustomFormIsValid: function() {
+			return Ext.isEmpty(this.controllerLayout) ? this.isValid() : this.cmfg('widgetCustomFormLayoutControllerIsValid');
 		},
 
-		/**
-		 * Preset data in instanceDataStorage variable
-		 *
-		 * @public
-		 * @override
-		 */
-		onEditMode: function() {
-			this.instancesDataStorageSet(this.cmfg('widgetCustomFormConfigurationGet', CMDBuild.core.constants.Proxy.DATA));
-
-			this.beforeActiveView();
-		},
-
-		/**
-		 * Shorthand to controllerLayout's getData method
-		 *
-		 * @returns {Array}
-		 */
-		widgetCustomFormDataGet: function() {
-			return this.controllerLayout.getData();
-		},
+//		/**
+//		 * Forwarder method
+//		 *
+//		 * @returns {Array}
+//		 */
+//		widgetCustomFormLayoutControllerDataGet: function() {
+//			return this.controllerLayout.getData();
+//		},
 
 		/**
 		 * @returns {Ext.data.ArrayStore}

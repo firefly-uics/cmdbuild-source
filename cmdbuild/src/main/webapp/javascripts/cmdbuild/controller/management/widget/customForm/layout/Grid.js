@@ -26,7 +26,9 @@
 			'onWidgetCustomFormLayoutGridImportButtonClick',
 			'onWidgetCustomFormLayoutGridResetButtonClick',
 			'onWidgetCustomFormLayoutGridShow = onWidgetCustomFormShow',
-			'setData = widgetCustomFormImportData'
+			'setData = widgetCustomFormImportData',
+			'widgetCustomFormLayoutGridDataGet = widgetCustomFormLayoutControllerDataGet',
+			'widgetCustomFormLayoutGridIsValid = widgetCustomFormLayoutControllerIsValid'
 		],
 
 		/**
@@ -303,59 +305,6 @@
 		},
 
 		/**
-		 * @returns {Array} storeRecordsData
-		 *
-		 * @public
-		 */
-		getData: function() {
-			var storeRecordsData = [];
-
-			Ext.Array.forEach(this.view.getStore().getRange(), function(record, i, allRecords) {
-				if (!Ext.isEmpty(record) && Ext.isFunction(record.getData))
-					storeRecordsData.push(record.getData());
-			}, this);
-
-			return storeRecordsData;
-		},
-
-		/**
-		 * Check required field value of grid store records
-		 *
-		 * @returns {Boolean}
-		 *
-		 * @public
-		 */
-		isValid: function() {
-			var returnValue = true;
-			var requiredAttributes = [];
-
-			// If widget is flagged as required must return at least 1 row
-			returnValue = !(
-				this.cmfg('widgetCustomFormConfigurationGet', CMDBuild.core.constants.Proxy.REQUIRED)
-				&& this.view.getStore().getCount() == 0
-			);
-
-			// Build required attributes names array
-			Ext.Array.forEach(this.cmfg('widgetCustomFormConfigurationGet', CMDBuild.core.constants.Proxy.MODEL), function(attributeModel, i, allAttributeModels) {
-				if (attributeModel.get(CMDBuild.core.constants.Proxy.MANDATORY))
-					requiredAttributes.push(attributeModel.get(CMDBuild.core.constants.Proxy.NAME));
-			}, this);
-
-			// Check grid store records empty required fields
-			this.view.getStore().each(function(record) {
-				Ext.Array.forEach(requiredAttributes, function(attributeName, i, allAttributeNames) {
-					if (Ext.isEmpty(record.get(attributeName))) {
-						returnValue = false;
-
-						return false;
-					}
-				}, this);
-			}, this);
-
-			return returnValue;
-		},
-
-		/**
 		 * Add empty row to grid store
 		 */
 		onWidgetCustomFormLayoutGridAddRowButtonClick: function() {
@@ -442,7 +391,56 @@
 			if (!Ext.isEmpty(data))
 				this.view.getStore().loadData(data);
 
-			this.isValid();
+			this.cmfg('widgetCustomFormLayoutGridIsValid');
+		},
+
+		/**
+		 * @returns {Array} storeRecordsData
+		 */
+		widgetCustomFormLayoutGridDataGet: function() {
+			var storeRecordsData = [];
+
+			Ext.Array.forEach(this.view.getStore().getRange(), function(record, i, allRecords) {
+				if (!Ext.isEmpty(record) && Ext.isFunction(record.getData))
+					storeRecordsData.push(record.getData());
+			}, this);
+
+			return storeRecordsData;
+		},
+
+		/**
+		 * Check required field value of grid store records
+		 *
+		 * @returns {Boolean}
+		 */
+		widgetCustomFormLayoutGridIsValid: function() {
+			var returnValue = true;
+			var requiredAttributes = [];
+
+			// If widget is flagged as required must return at least 1 row
+			returnValue = !(
+				this.cmfg('widgetCustomFormConfigurationGet', CMDBuild.core.constants.Proxy.REQUIRED)
+				&& this.view.getStore().getCount() == 0
+			);
+
+			// Build required attributes names array
+			Ext.Array.forEach(this.cmfg('widgetCustomFormConfigurationGet', CMDBuild.core.constants.Proxy.MODEL), function(attributeModel, i, allAttributeModels) {
+				if (attributeModel.get(CMDBuild.core.constants.Proxy.MANDATORY))
+					requiredAttributes.push(attributeModel.get(CMDBuild.core.constants.Proxy.NAME));
+			}, this);
+
+			// Check grid store records empty required fields
+			this.view.getStore().each(function(record) {
+				Ext.Array.forEach(requiredAttributes, function(attributeName, i, allAttributeNames) {
+					if (Ext.isEmpty(record.get(attributeName))) {
+						returnValue = false;
+
+						return false;
+					}
+				}, this);
+			}, this);
+
+			return returnValue;
 		}
 	});
 
