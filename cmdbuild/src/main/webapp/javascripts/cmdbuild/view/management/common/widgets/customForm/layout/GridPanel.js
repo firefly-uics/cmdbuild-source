@@ -70,12 +70,12 @@
 							Ext.create('CMDBuild.core.buttons.iconized.Export', {
 								scope: this,
 
-								disabled: ( // TODO: configurations
+								disabled: (
 									isWidgetReadOnly
-//									|| this.delegate.cmfg('widgetCustomFormConfigurationGet', [
-//										CMDBuild.core.proxy.CMProxyConstants.CAPABILITIES,
-//										CMDBuild.core.proxy.CMProxyConstants.EXPORT_DISABLED
-//									])
+									|| this.delegate.cmfg('widgetCustomFormConfigurationGet', [
+										CMDBuild.core.proxy.CMProxyConstants.CAPABILITIES,
+										CMDBuild.core.proxy.CMProxyConstants.EXPORT_DISABLED
+									])
 								),
 
 								handler: function(button, e) {
