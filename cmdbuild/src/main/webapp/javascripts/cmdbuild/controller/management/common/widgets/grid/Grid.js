@@ -317,6 +317,12 @@
 
 			if (!Ext.isEmpty(this.instancesDataStorage[this.getWidgetId()])) {
 				this.grid.getStore().loadRecords(this.instancesDataStorage[this.getWidgetId()]);
+
+				// Fixes reference field renderer to avoid blank cell content render
+				Ext.Function.createDelayed(function() {
+					if (this.grid.getView().isVisible())
+						this.grid.getView().refresh();
+				}, 100, this)();
 			} else if (!Ext.isEmpty(this.classType)) {
 				CMDBuild.Management.FieldManager.loadAttributes(
 					this.classType.get(CMDBuild.core.proxy.CMProxyConstants.ID),
