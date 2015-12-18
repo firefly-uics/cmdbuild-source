@@ -1,6 +1,6 @@
 (function () {
 
-	Ext.define('CMDBuild.controller.management.common.widgets.customForm.Import', {
+	Ext.define('CMDBuild.controller.management.widget.customForm.Import', {
 		extend: 'CMDBuild.controller.common.AbstractController',
 
 		requires: [
@@ -26,12 +26,12 @@
 		],
 
 		/**
-		 * @property {CMDBuild.view.management.common.widgets.customForm.import.FormPanel}
+		 * @property {CMDBuild.view.management.widget.customForm.import.FormPanel}
 		 */
 		form: undefined,
 
 		/**
-		 * @property {CMDBuild.view.management.common.widgets.customForm.import.ImportWindow}
+		 * @property {CMDBuild.view.management.widget.customForm.import.ImportWindow}
 		 */
 		view: undefined,
 
@@ -44,7 +44,7 @@
 		constructor: function(configurationObject) {
 			this.callParent(arguments);
 
-			this.view = Ext.create('CMDBuild.view.management.common.widgets.customForm.import.ImportWindow', { delegate: this });
+			this.view = Ext.create('CMDBuild.view.management.widget.customForm.import.ImportWindow', { delegate: this });
 
 			// Shorthands
 			this.form = this.view.form;

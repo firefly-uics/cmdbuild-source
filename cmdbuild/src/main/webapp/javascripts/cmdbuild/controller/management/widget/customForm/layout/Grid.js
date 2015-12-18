@@ -1,6 +1,6 @@
 (function() {
 
-	Ext.define('CMDBuild.controller.management.common.widgets.customForm.layout.Grid', {
+	Ext.define('CMDBuild.controller.management.widget.customForm.layout.Grid', {
 		extend: 'CMDBuild.controller.common.AbstractController',
 
 		requires: [
@@ -10,7 +10,7 @@
 		],
 
 		/**
-		 * @cfg {CMDBuild.controller.management.common.widgets.customForm.CustomForm}
+		 * @cfg {CMDBuild.controller.management.widget.customForm.CustomForm}
 		 */
 		parentDelegate: undefined,
 
@@ -30,7 +30,7 @@
 		],
 
 		/**
-		 * @property {CMDBuild.view.management.common.widgets.customForm.layout.GridPanel}
+		 * @property {CMDBuild.view.management.widget.customForm.layout.GridPanel}
 		 */
 		view: undefined,
 
@@ -48,7 +48,7 @@
 				this.cmfg('widgetCustomFormViewSetLoading', false);
 			}, this);
 
-			this.view = Ext.create('CMDBuild.view.management.common.widgets.customForm.layout.GridPanel', {
+			this.view = Ext.create('CMDBuild.view.management.widget.customForm.layout.GridPanel', {
 				delegate: this,
 				columns: this.buildColumns(),
 				store: this.buildDataStore()
@@ -388,7 +388,7 @@
 		 * @param {Ext.data.Model} record
 		 */
 		onWidgetCustomFormLayoutGridEditRowButtonClick: function(record) {
-			Ext.create('CMDBuild.controller.management.common.widgets.customForm.RowEdit', {
+			Ext.create('CMDBuild.controller.management.widget.customForm.RowEdit', {
 				parentDelegate: this,
 				record: record
 			});
@@ -398,14 +398,14 @@
 		 * Opens export configuration pop-up window
 		 */
 		onWidgetCustomFormLayoutGridExportButtonClick: function() {
-			Ext.create('CMDBuild.controller.management.common.widgets.customForm.Export', { parentDelegate: this });
+			Ext.create('CMDBuild.controller.management.widget.customForm.Export', { parentDelegate: this });
 		},
 
 		/**
 		 * Opens import configuration pop-up window
 		 */
 		onWidgetCustomFormLayoutGridImportButtonClick: function() {
-			Ext.create('CMDBuild.controller.management.common.widgets.customForm.Import', { parentDelegate: this });
+			Ext.create('CMDBuild.controller.management.widget.customForm.Import', { parentDelegate: this });
 		},
 
 		onWidgetCustomFormLayoutGridResetButtonClick: function() {

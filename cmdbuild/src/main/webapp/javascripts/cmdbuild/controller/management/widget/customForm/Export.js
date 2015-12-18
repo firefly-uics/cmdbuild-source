@@ -1,6 +1,6 @@
 (function () {
 
-	Ext.define('CMDBuild.controller.management.common.widgets.customForm.Export', {
+	Ext.define('CMDBuild.controller.management.widget.customForm.Export', {
 		extend: 'CMDBuild.controller.common.AbstractController',
 
 		requires: [
@@ -22,12 +22,12 @@
 		],
 
 		/**
-		 * @property {CMDBuild.view.management.common.widgets.customForm.export.FormPanel}
+		 * @property {CMDBuild.view.management.widget.customForm.export.FormPanel}
 		 */
 		form: undefined,
 
 		/**
-		 * @property {CMDBuild.view.management.common.widgets.customForm.export.ExportWindow}
+		 * @property {CMDBuild.view.management.widget.customForm.export.ExportWindow}
 		 */
 		view: undefined,
 
@@ -40,7 +40,7 @@
 		constructor: function(configurationObject) {
 			this.callParent(arguments);
 
-			this.view = Ext.create('CMDBuild.view.management.common.widgets.customForm.export.ExportWindow', { delegate: this });
+			this.view = Ext.create('CMDBuild.view.management.widget.customForm.export.ExportWindow', { delegate: this });
 
 			// Shorthands
 			this.form = this.view.form;

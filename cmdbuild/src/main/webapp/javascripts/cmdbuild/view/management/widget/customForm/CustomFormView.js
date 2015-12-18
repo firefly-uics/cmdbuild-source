@@ -1,12 +1,12 @@
 (function() {
 
-	Ext.define('CMDBuild.view.management.common.widgets.customForm.CustomFormView', {
+	Ext.define('CMDBuild.view.management.widget.customForm.CustomFormView', {
 		extend: 'Ext.panel.Panel',
 
 		requires: ['CMDBuild.core.constants.Proxy'],
 
 		/**
-		 * @cfg {CMDBuild.controller.management.common.widgets.customForm.CustomForm}
+		 * @cfg {CMDBuild.controller.management.widget.customForm.CustomForm}
 		 */
 		delegate: undefined,
 

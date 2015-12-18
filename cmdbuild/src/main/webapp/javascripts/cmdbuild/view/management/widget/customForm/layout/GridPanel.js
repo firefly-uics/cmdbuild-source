@@ -1,12 +1,12 @@
 (function() {
 
-	Ext.define('CMDBuild.view.management.common.widgets.customForm.layout.GridPanel', {
+	Ext.define('CMDBuild.view.management.widget.customForm.layout.GridPanel', {
 		extend: 'Ext.grid.Panel',
 
 		requires: ['CMDBuild.core.constants.Proxy'],
 
 		/**
-		 * @cfg {CMDBuild.controller.management.common.widgets.customForm.layout.Grid}
+		 * @cfg {CMDBuild.controller.management.widget.customForm.layout.Grid}
 		 */
 		delegate: undefined,
 

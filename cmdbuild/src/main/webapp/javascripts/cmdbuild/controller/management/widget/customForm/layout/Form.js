@@ -1,6 +1,6 @@
 (function() {
 
-	Ext.define('CMDBuild.controller.management.common.widgets.customForm.layout.Form', {
+	Ext.define('CMDBuild.controller.management.widget.customForm.layout.Form', {
 		extend: 'CMDBuild.controller.common.AbstractController',
 
 		requires: [
@@ -9,7 +9,7 @@
 		],
 
 		/**
-		 * @cfg {CMDBuild.controller.management.common.widgets.customForm.CustomForm}
+		 * @cfg {CMDBuild.controller.management.widget.customForm.CustomForm}
 		 */
 		parentDelegate: undefined,
 
@@ -25,7 +25,7 @@
 		],
 
 		/**
-		 * @property {CMDBuild.view.management.common.widgets.customForm.layout.FormPanel}
+		 * @property {CMDBuild.view.management.widget.customForm.layout.FormPanel}
 		 */
 		view: undefined,
 
@@ -43,7 +43,7 @@
 				this.cmfg('widgetCustomFormViewSetLoading', false);
 			}, this);
 
-			this.view = Ext.create('CMDBuild.view.management.common.widgets.customForm.layout.FormPanel', { delegate: this });
+			this.view = Ext.create('CMDBuild.view.management.widget.customForm.layout.FormPanel', { delegate: this });
 
 			this.view.add(this.buildFields());
 
@@ -138,14 +138,14 @@
 		 * Opens export configuration pop-up window
 		 */
 		onWidgetCustomFormLayoutFormExportButtonClick: function() {
-			Ext.create('CMDBuild.controller.management.common.widgets.customForm.Export', { parentDelegate: this });
+			Ext.create('CMDBuild.controller.management.widget.customForm.Export', { parentDelegate: this });
 		},
 
 		/**
 		 * Opens import configuration pop-up window
 		 */
 		onWidgetCustomFormLayoutFormImportButtonClick: function() {
-			Ext.create('CMDBuild.controller.management.common.widgets.customForm.Import', { parentDelegate: this });
+			Ext.create('CMDBuild.controller.management.widget.customForm.Import', { parentDelegate: this });
 		},
 
 		onWidgetCustomFormLayoutFormResetButtonClick: function() {

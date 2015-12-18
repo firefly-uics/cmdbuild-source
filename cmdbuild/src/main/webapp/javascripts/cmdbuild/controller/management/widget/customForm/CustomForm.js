@@ -1,6 +1,6 @@
 (function() {
 
-	Ext.define('CMDBuild.controller.management.common.widgets.customForm.CustomForm', {
+	Ext.define('CMDBuild.controller.management.widget.customForm.CustomForm', {
 		extend: 'CMDBuild.controller.common.AbstractWidgetController',
 
 		requires: [
@@ -47,7 +47,7 @@
 		],
 
 		/**
-		 * @property {CMDBuild.view.management.common.widgets.customForm.CustomFormView}
+		 * @property {CMDBuild.view.management.widget.customForm.CustomFormView}
 		 */
 		view: undefined,
 
@@ -204,12 +204,12 @@
 			if (!this.cmfg('widgetCustomFormConfigurationIsEmpty', CMDBuild.core.constants.Proxy.MODEL)) {
 				switch (this.cmfg('widgetCustomFormConfigurationGet', CMDBuild.core.constants.Proxy.LAYOUT)) {
 					case 'form': {
-						this.controllerLayout = Ext.create('CMDBuild.controller.management.common.widgets.customForm.layout.Form', { parentDelegate: this });
+						this.controllerLayout = Ext.create('CMDBuild.controller.management.widget.customForm.layout.Form', { parentDelegate: this });
 					} break;
 
 					case 'grid':
 					default: {
-						this.controllerLayout = Ext.create('CMDBuild.controller.management.common.widgets.customForm.layout.Grid', { parentDelegate: this });
+						this.controllerLayout = Ext.create('CMDBuild.controller.management.widget.customForm.layout.Grid', { parentDelegate: this });
 					}
 				}
 

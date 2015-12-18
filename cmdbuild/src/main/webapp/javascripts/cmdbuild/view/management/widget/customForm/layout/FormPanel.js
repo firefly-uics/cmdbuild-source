@@ -1,6 +1,6 @@
 (function() {
 
-	Ext.define('CMDBuild.view.management.common.widgets.customForm.layout.FormPanel', {
+	Ext.define('CMDBuild.view.management.widget.customForm.layout.FormPanel', {
 		extend: 'Ext.form.Panel',
 
 		requires: ['CMDBuild.core.constants.Proxy'],
@@ -8,7 +8,7 @@
 		mixins: ['CMDBuild.view.common.PanelFunctions'],
 
 		/**
-		 * @cfg {CMDBuild.controller.management.common.widgets.customForm.layout.Form}
+		 * @cfg {CMDBuild.controller.management.widget.customForm.layout.Form}
 		 */
 		delegate: undefined,
 

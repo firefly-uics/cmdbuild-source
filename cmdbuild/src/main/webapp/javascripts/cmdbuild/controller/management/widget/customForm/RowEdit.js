@@ -1,6 +1,6 @@
 (function () {
 
-	Ext.define('CMDBuild.controller.management.common.widgets.customForm.RowEdit', {
+	Ext.define('CMDBuild.controller.management.widget.customForm.RowEdit', {
 		extend: 'CMDBuild.controller.common.AbstractController',
 
 		requires: [
@@ -9,7 +9,7 @@
 		],
 
 		/**
-		 * @cfg {CMDBuild.controller.management.common.widgets.customForm.layout.Grid}
+		 * @cfg {CMDBuild.controller.management.widget.customForm.layout.Grid}
 		 */
 		parentDelegate: undefined,
 
@@ -32,13 +32,13 @@
 		record: undefined,
 
 		/**
-		 * @property {CMDBuild.view.management.common.widgets.customForm.RowEditWindow}
+		 * @property {CMDBuild.view.management.widget.customForm.RowEditWindow}
 		 */
 		view: undefined,
 
 		/**
 		 * @param {Object} configurationObject
-		 * @param {CMDBuild.controller.management.common.widgets.customForm.layout.Grid} configurationObject.parentDelegate
+		 * @param {CMDBuild.controller.management.widget.customForm.layout.Grid} configurationObject.parentDelegate
 		 * @param {Object} configurationObject.record
 		 *
 		 * @override
@@ -46,7 +46,7 @@
 		constructor: function(configurationObject) {
 			this.callParent(arguments);
 
-			this.view = Ext.create('CMDBuild.view.management.common.widgets.customForm.RowEditWindow', { delegate: this });
+			this.view = Ext.create('CMDBuild.view.management.widget.customForm.RowEditWindow', { delegate: this });
 
 			// Shorthand
 			this.form = this.view.form;
