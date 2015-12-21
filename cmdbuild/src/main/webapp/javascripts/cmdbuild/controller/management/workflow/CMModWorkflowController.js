@@ -231,12 +231,16 @@
 		 * Is called when the view is bring to front from the main viewport.
 		 * Set the entry type of the _CMWFState instead to store it inside this controller
 		 *
+		 * @param {Number} entryTypeId
+		 * @param {Object} danglingCard
+		 * @param {String} filter
+		 *
 		 * @override
 		 */
-		setEntryType: function(entryTypeId, danglingCard) {
+		setEntryType: function(entryTypeId, danglingCard, filter) {
 			var entryType = _CMCache.getEntryTypeById(entryTypeId);
 
-			_CMWFState.setProcessClassRef(entryType, danglingCard, false);
+			_CMWFState.setProcessClassRef(entryType, danglingCard, false, filter);
 
 			this.view.updateTitleForEntry(entryType);
 

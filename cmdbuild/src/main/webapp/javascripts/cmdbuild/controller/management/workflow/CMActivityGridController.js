@@ -28,8 +28,8 @@
 			var sd = new CMDBuild.state.CMWorkflowStateDelegate();
 			var me = this;
 
-			sd.onProcessClassRefChange = function(entryType, danglingCard) {
-				me.onEntryTypeSelected(entryType, danglingCard);
+			sd.onProcessClassRefChange = function(entryType, danglingCard, filter) {
+				me.onEntryTypeSelected(entryType, danglingCard, filter);
 			};
 
 			_CMWFState.addDelegate(sd);
