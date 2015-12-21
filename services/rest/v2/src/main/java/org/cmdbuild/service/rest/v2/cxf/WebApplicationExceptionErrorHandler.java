@@ -61,11 +61,9 @@ public class WebApplicationExceptionErrorHandler implements ErrorHandler, Loggin
 	}
 
 	@Override
-	public void missingUsername() {
-		logger.error("missing username");
-		throw new WebApplicationException(Response.status(BAD_REQUEST) //
-				.entity("missing username") //
-				.build());
+	public void functionNotFound(final Long id) {
+		logger.error("function not found '{}'", id);
+		notFound(id);
 	}
 
 	@Override
@@ -80,6 +78,14 @@ public class WebApplicationExceptionErrorHandler implements ErrorHandler, Loggin
 	public void lookupTypeNotFound(final String id) {
 		logger.error("lookup type not found '{}'", id);
 		notFound(id);
+	}
+
+	@Override
+	public void missingUsername() {
+		logger.error("missing username");
+		throw new WebApplicationException(Response.status(BAD_REQUEST) //
+				.entity("missing username") //
+				.build());
 	}
 
 	@Override

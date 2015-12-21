@@ -10,6 +10,7 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
+import org.cmdbuild.dao.function.CMFunction;
 import org.cmdbuild.dao.function.CMFunction.CMFunctionParameter;
 
 import com.google.common.base.Predicate;
@@ -332,6 +333,44 @@ public class Predicates {
 
 	public static Predicate<CMAttribute> mode(final Predicate<org.cmdbuild.dao.entrytype.CMAttribute.Mode> delegate) {
 		return new Mode(delegate);
+	}
+
+	private static abstract class FunctionPredicate<T> extends ForwardingObject implements Predicate<CMFunction> {
+
+		@Override
+		protected abstract Predicate<T> delegate();
+
+		protected abstract T value(CMFunction input);
+
+		@Override
+		public final boolean apply(final CMFunction input) {
+			return delegate().apply(value(input));
+		}
+
+	}
+
+	private static class FunctionId extends FunctionPredicate<Long> {
+
+		private final Predicate<Long> delegate;
+
+		public FunctionId(final Predicate<Long> delegate) {
+			this.delegate = delegate;
+		}
+
+		@Override
+		protected Predicate<Long> delegate() {
+			return delegate;
+		}
+
+		@Override
+		protected Long value(final CMFunction input) {
+			return input.getId();
+		}
+
+	}
+
+	public static Predicate<CMFunction> functionId(final Predicate<Long> delegate) {
+		return new FunctionId(delegate);
 	}
 
 	private static abstract class FunctionParameterPredicate<T> extends ForwardingObject implements
