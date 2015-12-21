@@ -59,6 +59,11 @@
 			this.setCard(card);
 		},
 
+		/**
+		 * @param {Number} entryTypeId
+		 * @param {Object} dc
+		 * @param {String} filter
+		 */
 		setEntryType: function(entryTypeId, dc, filter) {
 			this.entryType = _CMCache.getEntryTypeById(entryTypeId);
 			this.setCard(null);
@@ -404,6 +409,10 @@
 
 		/**
 		 * Bind the CMCardModuleState
+		 *
+		 * @param {Number} entryTypeId
+		 * @param {Object} dc
+		 * @param {String} filter
 		 *
 		 * @override
 		 */
