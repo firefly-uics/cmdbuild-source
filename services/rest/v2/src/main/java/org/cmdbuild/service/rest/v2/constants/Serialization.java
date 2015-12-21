@@ -65,10 +65,13 @@ public class Serialization {
 			FILE = "file", //
 			FILTER = "filter", //
 			FROM = "from", //
+			FUNCTION = "function", //
+			FUNCTION_ID = FUNCTION + ID_CAPITALIZED, //
 			GROUP = "group", //
 			HIDDEN = "hidden", //
 			INDEX = "index", //
 			INHERITED = "inherited", //
+			INPUTS = "inputs", //
 			INSTRUCTIONS = "instructions", //
 			KEEP_SYNCHRONIZATION = "keepSynchronization", //
 			LABEL = "label", //
