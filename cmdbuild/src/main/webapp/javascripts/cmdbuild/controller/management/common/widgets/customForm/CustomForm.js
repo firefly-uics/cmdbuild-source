@@ -108,7 +108,7 @@
 
 						// Apply change event to reset data property in widgetConfiguration to avoid sql function server call
 						templateResolver.bindLocalDepsChange(function() {
-							this.widgetConfiguration[CMDBuild.core.proxy.CMProxyConstants.DATA] = null;
+							this.instancesDataStorageSet(); // Reset widget instance data storage
 						}, this);
 					}
 				});
@@ -176,9 +176,6 @@
 					scope: this,
 					success: function(response, options, decodedResponse) {
 						decodedResponse = decodedResponse[CMDBuild.core.proxy.CMProxyConstants.CARDS];
-
-						// Save function response to configuration's data property
-						this.widgetConfiguration[CMDBuild.core.proxy.CMProxyConstants.DATA] = decodedResponse;
 
 						// Save function response to instance data storage
 						this.instancesDataStorageSet(decodedResponse);
