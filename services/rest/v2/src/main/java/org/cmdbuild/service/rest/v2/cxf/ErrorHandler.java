@@ -22,6 +22,8 @@ public interface ErrorHandler {
 
 	void lookupTypeNotFound(String id);
 
+	void functionNotFound(Long id);
+
 	void missingAttachmentId();
 
 	void missingAttachmentName();
