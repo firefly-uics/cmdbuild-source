@@ -22,6 +22,7 @@ import org.cmdbuild.service.rest.v2.Cql;
 import org.cmdbuild.service.rest.v2.DomainAttributes;
 import org.cmdbuild.service.rest.v2.Domains;
 import org.cmdbuild.service.rest.v2.EmailTemplates;
+import org.cmdbuild.service.rest.v2.Functions;
 import org.cmdbuild.service.rest.v2.Impersonate;
 import org.cmdbuild.service.rest.v2.LookupTypeValues;
 import org.cmdbuild.service.rest.v2.LookupTypes;
@@ -51,6 +52,7 @@ import org.cmdbuild.service.rest.v2.cxf.CxfCql;
 import org.cmdbuild.service.rest.v2.cxf.CxfDomainAttributes;
 import org.cmdbuild.service.rest.v2.cxf.CxfDomains;
 import org.cmdbuild.service.rest.v2.cxf.CxfEmailTemplates;
+import org.cmdbuild.service.rest.v2.cxf.CxfFunctions;
 import org.cmdbuild.service.rest.v2.cxf.CxfImpersonate;
 import org.cmdbuild.service.rest.v2.cxf.CxfLookupTypeValues;
 import org.cmdbuild.service.rest.v2.cxf.CxfLookupTypes;
@@ -316,6 +318,13 @@ public class ServicesV2 implements LoggingSupport {
 		final CxfProcessStartActivities service = new CxfProcessStartActivities(v2_errorHandler(),
 				helper.userWorkflowLogic());
 		return proxy(ProcessStartActivities.class, service);
+	}
+
+	@Bean
+	@Scope(value = SCOPE_REQUEST, proxyMode = TARGET_CLASS)
+	public Functions v2_functions() {
+		final CxfFunctions service = new CxfFunctions(v2_errorHandler(), helper.userDataView());
+		return proxy(Functions.class, service);
 	}
 
 	@Bean

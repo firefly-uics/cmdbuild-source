@@ -40,6 +40,7 @@
 			<ref bean="v2_domains" />
 			<ref bean="v2_domainAttributes" />
 			<ref bean="v2_emailTemplates" />
+			<ref bean="v2_functions" />
 			<ref bean="v2_relations" />
 			<ref bean="v2_impersonate" />
 			<ref bean="v2_lookupTypes" />
