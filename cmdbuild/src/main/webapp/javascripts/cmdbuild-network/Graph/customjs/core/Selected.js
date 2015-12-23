@@ -25,14 +25,18 @@
 			return Object.keys(this.selected).length;
 		};
 		this.select = function(nodeId, noRefresh) {
-			this.selected[nodeId] = true;
-			if (! noRefresh) {
-				this.changed({});
+			if (! this.selected[nodeId] === true) {
+				this.selected[nodeId] = true;
+				if (! noRefresh) {
+					this.changed({});
+				}
 			}
 		};
 		this.unSelect = function(nodeId) {
-			delete this.selected[nodeId];
-			this.changed({});
+			if (this.selected[nodeId] === true) {
+				delete this.selected[nodeId];
+				this.changed({});
+			}
 		};
 		this.erase = function() {
 			this.selected = {};
