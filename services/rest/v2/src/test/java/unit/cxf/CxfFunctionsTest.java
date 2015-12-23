@@ -231,6 +231,8 @@ public class CxfFunctionsTest {
 				.withName(foo.getName()) //
 				.withDescription(foo.getName()) //
 				.withType("text") //
+				.thatIsActive(true) //
+				.withIndex(0L) //
 				.build()));
 		assertThat(get(response.getElements(), 1).getId(), equalTo("bar"));
 		assertThat(get(response.getElements(), 2).getId(), equalTo("baz"));
@@ -261,6 +263,8 @@ public class CxfFunctionsTest {
 				.withName(baz.getName()) //
 				.withDescription(baz.getName()) //
 				.withType("boolean") //
+				.thatIsActive(true) //
+				.withIndex(0L) //
 				.build()));
 	}
 
@@ -315,6 +319,8 @@ public class CxfFunctionsTest {
 				.withName(foo.getName()) //
 				.withDescription(foo.getName()) //
 				.withType("text") //
+				.thatIsActive(true) //
+				.withIndex(0L) //
 				.build()));
 		assertThat(get(response.getElements(), 1).getId(), equalTo("bar"));
 		assertThat(get(response.getElements(), 2).getId(), equalTo("baz"));
@@ -345,6 +351,8 @@ public class CxfFunctionsTest {
 				.withName(baz.getName()) //
 				.withDescription(baz.getName()) //
 				.withType("boolean") //
+				.thatIsActive(true) //
+				.withIndex(0L) //
 				.build()));
 	}
 

@@ -183,6 +183,8 @@ public class CxfFunctions implements Functions {
 				.limit((limit == null) ? Integer.MAX_VALUE : limit) //
 				.transform(new Function<CMFunctionParameter, Attribute>() {
 
+					private long index = 0;
+
 					@Override
 					public Attribute apply(final CMFunctionParameter input) {
 						return newAttribute() //
@@ -190,6 +192,8 @@ public class CxfFunctions implements Functions {
 								.withName(input.getName()) //
 								.withDescription(input.getName()) //
 								.withType(new AttributeTypeResolver().resolve(input.getType()).asString()) //
+								.thatIsActive(true) //
+								.withIndex(index++) //
 								.build();
 					}
 
