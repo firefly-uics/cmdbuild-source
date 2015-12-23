@@ -116,6 +116,16 @@
 				callback.apply(callbackScope, [data, metadata]);
 			}, params);
 		},
+		getRelation: function(domainId, relationId, config, callback, callbackScope) {
+			// params
+			var params = this.prepareParamsForList(config);
+
+			// get url and make request
+			var url = $.Cmdbuild.global.getApiUrl() + 'domains/' + domainId + "/relations/" + relationId;
+			$.Cmdbuild.authProxy.makeAjaxRequest(url, methods.GET, function(data, metadata){
+				callback.apply(callbackScope, [data, metadata]);
+			}, params);
+		},
 		getDomains: function(config, callback, callbackScope) {
 			// params
 			var params = this.prepareParamsForList(config);
@@ -129,6 +139,13 @@
 		getDomain: function(id, callback, callbackScope, params) {
 			// get url and make request
 			var url = $.Cmdbuild.global.getApiUrl() + 'domains/' + id;
+			$.Cmdbuild.authProxy.makeAjaxRequest(url, methods.GET, function(data, metadata){
+				callback.apply(callbackScope, [data, metadata]);
+			}, params);
+		},
+		getDomainAttributes: function(id, callback, callbackScope, params) {
+			// get url and make request
+			var url = $.Cmdbuild.global.getApiUrl() + 'domains/' + id + "/attributes";
 			$.Cmdbuild.authProxy.makeAjaxRequest(url, methods.GET, function(data, metadata){
 				callback.apply(callbackScope, [data, metadata]);
 			}, params);
