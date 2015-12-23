@@ -5,7 +5,7 @@
 	"explosionLevels": 2,
 	"nodesTooltip": true,
 	"edgesTooltip": true,
-	"labels": "No labels",
+	"labels": "",
 	"defaultSprite": "others/circle_blue.png",
 	"filterClassesDomains": {
 		"InternalEmployee" : [{

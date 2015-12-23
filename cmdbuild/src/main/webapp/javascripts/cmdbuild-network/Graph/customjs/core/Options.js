@@ -8,6 +8,13 @@
 		this.init = function(name) {
 			return this[name];
 		};
+		
+		if (! $.Cmdbuild.customvariables.options) {
+			$.Cmdbuild.customvariables.options = {};
+		}
+		for (var key in $.Cmdbuild.custom.configuration) {
+			this[key] = $.Cmdbuild.custom.configuration[key];
+		}
 		this.data = function(name) {
 			return this[name];
 		};
@@ -27,18 +34,14 @@
 		var fileName = $.Cmdbuild.appConfigUrl + configurationFile;
 		$.getJSON(fileName, {}, function(configuration) {
 			$.Cmdbuild.g3d.Options.includeFiles(configuration, function() {
-				console.log("configuration = ", configuration);
 				callback.apply(callbackScope, [configuration]);
 			}, this);
 		}, this);
 	};
 	$.Cmdbuild.g3d.Options.includeFiles = function(configuration, callback, callbackScope) {
-		console.log("include = ", configuration);
 		var filesToInclude = [];
 		for (var key in configuration) {
 			if (configuration[key][INCLUDED_FILE]) {
-				console.log("found = ", configuration[key][INCLUDED_FILE] );
-
 				filesToInclude.push({
 					key: key,
 					fileName: configuration[key][INCLUDED_FILE] 
