@@ -71,7 +71,9 @@
 				if (Ext.Array.contains(this.browserManagedFormats, this.format)) { // With browser managed formats show modal pop-up
 					this.view.show();
 				} else { // Otherwise force file download
-					this.createDocument(true);
+					this.forceDownload = true;
+
+					this.createDocument();
 				}
 		},
 
