@@ -1,7 +1,15 @@
 (function($) {
 	var commands = {
-		pippo: function(param) {
-			alert("pippo");
+		test: function(param) {
+			var paramActualized = $.Cmdbuild.dataModel.resolveVariables(param);
+			console.log("Test", param, paramActualized);
+		},
+		switchOnSelected: function(param) {
+			var check = $.Cmdbuild.utilities.getHtmlFieldValue("#" + param.check);
+			$.Cmdbuild.standard.commands.tab({
+				form: param.form,
+				activeTab: (check) ? 1 : 0
+			});
 		},
 		initOptions: function(param) {
 			$("#nodesTooltip").prop("checked", $.Cmdbuild.custom.configuration.nodesTooltip);
