@@ -78,10 +78,9 @@
 						<type>tabbed</type>
 					</params>
 					<form title="Classes" id="classesGrid" include="classes.xml" class="commandPanelWindow cmdbuildTabbedForm"/>
-					<form title="All cards" id="cardsGrid" include="cards.xml" class="commandPanelWindow cmdbuildTabbedForm"/>
-					<form title="Card" id="detail" include="detail.xml" class="commandPanelWindow cmdbuildTabbedForm"/>
-					<form title="Selected" id="selectedGrid" include="selected.xml" class="commandPanelWindow cmdbuildTabbedForm"/> 
-					<form title="Options" id="options" include="options.xml" class="commandPanelWindow cmdbuildTabbedForm"/> 
+					<form title="Card list" id="mainCardsGrid" include="mainCards.xml" class="commandPanelWindow cmdbuildTabbedForm"/>
+					<form title="Card detail" id="detail" include="detail.xml" class="commandPanelWindow cmdbuildTabbedForm"/>
+ 					<form title="Relations" id="relations" include="relations.xml" class="commandPanelWindow cmdbuildTabbedForm"/>  
 				</form>
 			</div>
 			<div id="statusPanelContainer">
@@ -101,10 +100,29 @@
 					</params>
 				</counter>
 			</div>
-			<div id="algorithmsPanelContainer">
+			<div id="optionsPanelContainer" class="cmdbuildGridFilterContainer ui-state-default ui-corner-all allWidth">
+				<span class="properties toolbarButton" tooltip="Open the properties panel">
+					<onClick>
+						<command>navigate</command>
+						<form>options</form>
+						<dialog>commandPanelDialog</dialog>
+					</onClick>
+				</span>
+				<spinner label="Open levels" id="explosionLevels" class="optionsSpinner">
+					<params>
+						<backend>Options</backend>
+						<type>explosionLevels</type>
+						<value>1</value>
+					</params>
+					<onChange>
+						<command>boolean</command>
+						<type>explosionLevels</type>
+					</onChange>
+				</spinner>
 			</div>
 		</div>
 		<form title="Command panel" id="commandPanel" include="commandPanel.xml" class="cmdbuildTabbedForm"/>
+		<form title="Options" id="options" include="options.xml" class="commandPanelWindow cmdbuildTabbedForm"/> 
 		<dialog id="commandPanelDialog"></dialog>
 	</div>
 </DATA>	

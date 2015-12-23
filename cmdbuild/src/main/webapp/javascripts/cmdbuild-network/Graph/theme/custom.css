@@ -10,8 +10,23 @@
 .cmdbuild-crt-toscana-theme .ui-widget-header .ui-state-default {
 	font-weight: normal;
 }
+.cmdbuildLabel {
+	width: 20px!important;
+	font-family: tahoma,arial,verdana,sans-serif;
+	font-size: 11px;
+}
 .optionsSpinner {
 	width: 20px!important;
+	text-align: left;
+}
+#mainCardsFormContainer .ui-tabs-anchor {
+	display:none;
+}
+#mainCardsFormContainer .ui-corner-top {
+	display:none;
+}
+.relationAttributes {
+	font-size: 9px;
 }
 .labelText {
 	position: absolute;
@@ -103,6 +118,9 @@ ui-selectmenu-button{
 	height: 16px;
 	display: inline-block;
 	margin-left: 12px;
+}
+.properties {
+	background:transparent url("../images/gnome-display-properties.png") right 50% no-repeat;
 }
 .layout {
 	background:transparent url("../images/chart_organisation.png") right 50% no-repeat;

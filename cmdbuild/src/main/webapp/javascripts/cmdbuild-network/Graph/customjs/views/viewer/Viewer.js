@@ -321,9 +321,9 @@
 			if (intersects.length > 0) {
 				controls.enabled = false;
 				SELECTED = intersects[0].object;
-//				if (SELECTED == LASTSELECTED) {
-//					return;
-//				}
+				if (SELECTED == LASTSELECTED) {
+					return;
+				}
 				LASTSELECTED = SELECTED;
 				var intersects = raycaster.intersectObject(plane, true);
 				if (intersects.length <= 0) {
