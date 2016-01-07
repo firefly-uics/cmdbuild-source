@@ -43,6 +43,8 @@ import org.cmdbuild.dao.entrytype.attributetype.TextAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TimeAttributeType;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.data.store.metadata.Metadata;
+import org.cmdbuild.model.widget.customform.Attribute.Filter;
+import org.cmdbuild.model.widget.customform.Attribute.Target;
 import org.cmdbuild.services.meta.MetadataStoreFactory;
 
 import com.google.common.base.Function;
@@ -183,7 +185,7 @@ class ClassModelBuilder extends AttributesBasedModelBuilder {
 
 							@Override
 							public void visit(final ForeignKeyAttributeType attributeType) {
-								output.setTargetClass(attributeType.getForeignKeyDestinationClassName());
+								setTargetAndTargetType(attributeType.getForeignKeyDestinationClassName());
 							}
 
 							@Override
@@ -203,9 +205,10 @@ class ClassModelBuilder extends AttributesBasedModelBuilder {
 								} else if ("1:N".equals(domainCardinality)) {
 									target = domain.getClass1();
 								}
-								output.setTargetClass(target.getName());
+								final String name = target.getName();
+								setTargetAndTargetType(name);
 								if (isNotBlank(input.getFilter())) {
-									output.setFilter(new Attribute.Filter() {
+									output.setFilter(new Filter() {
 										{
 											setExpression(input.getFilter());
 											setContext(toMap(metadataStoreFactory.storeForAttribute(input).readAll()));
@@ -230,6 +233,17 @@ class ClassModelBuilder extends AttributesBasedModelBuilder {
 							@Override
 							public void visit(final TextAttributeType attributeType) {
 								output.setEditorType(input.getEditorType());
+							}
+
+							private void setTargetAndTargetType(final String className) {
+								output.setTarget(new Target() {
+									{
+										setName(className);
+										final boolean isProcess = dataView.getActivityClass().isAncestorOf(
+												dataView.findClass(className));
+										setType(isProcess ? "process" : "class");
+									}
+								});
 							}
 
 						});

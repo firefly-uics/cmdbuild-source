@@ -241,6 +241,8 @@ public class CustomFormWidgetFactoryTest {
 		assertThat(attribute.getLength(), equalTo(3L));
 		assertThat(attribute.getEditorType(), equalTo("lol"));
 		assertThat(attribute.getTargetClass(), equalTo("some class"));
+		assertThat(attribute.getTarget().getName(), equalTo("some class"));
+		assertThat(attribute.getTarget().getType(), nullValue());
 		assertThat(attribute.getLookupType(), equalTo("some lookup type"));
 		assertThat(attribute.getFilter(), equalTo(Filter.class.cast(new Filter() {
 			{
@@ -250,6 +252,36 @@ public class CustomFormWidgetFactoryTest {
 						.chainablePut("bar", "baz"));
 			}
 		})));
+		verifyNoMoreInteractions(templateRespository, notifier, dataView, metadataStoreFactory);
+	}
+
+	@Test
+	public void definitionForFormConfigurationWithNewTargetSuccessfullyParsed() throws Exception {
+		// given
+		final String serialization = "" //
+				+ MODEL_TYPE + "=\"form\"\n" //
+				+ FORM_MODEL + "=" //
+				+ "    \"[" //
+				+ "        {" //
+				+ "            \"target\": {" //
+				+ "                \"name\": \"this is the name\"," //
+				+ "                \"type\": \"this is the type\"" //
+				+ "            }" //
+				+ "        }" //
+				+ "    ]\"" //
+		;
+
+		// when
+		final CustomForm created = (CustomForm) widgetFactory.createWidget(serialization, mock(CMValueSet.class));
+
+		// then
+		final List<Attribute> form = readJsonString(created.getModel());
+		assertThat(form, not(empty()));
+		assertThat(form, hasSize(1));
+		final Attribute attribute = form.get(0);
+		assertThat(attribute.getTargetClass(), equalTo("this is the name"));
+		assertThat(attribute.getTarget().getName(), equalTo("this is the name"));
+		assertThat(attribute.getTarget().getType(), equalTo("this is the type"));
 		verifyNoMoreInteractions(templateRespository, notifier, dataView, metadataStoreFactory);
 	}
 
