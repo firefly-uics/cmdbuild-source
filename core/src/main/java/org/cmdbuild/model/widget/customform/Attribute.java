@@ -16,6 +16,78 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 @XmlRootElement
 public class Attribute {
 
+	private static final String //
+			DESCRIPTION = "description", //
+			EDITOR_TYPE = "editorType", //
+			FILTER = "filter", //
+			HIDDEN = "hidden", //
+			LENGTH = "length", //
+			LOOKUP_TYPE = "lookupType", //
+			MANDATORY = "mandatory", //
+			NAME = "name", //
+			PRECISION = "precision", //
+			SCALE = "scale", //
+			SHOW_COLUMN = "showColumn", //
+			TARGET = "target", //
+			TARGET_CLASS = "targetClass", //
+			TYPE = "type", //
+			UNIQUE = "unique", //
+			WRITABLE = "writable";
+
+	@XmlRootElement
+	public static class Target {
+
+		private String name;
+		private String type;
+
+		@XmlAttribute(name = NAME)
+		public String getName() {
+			return name;
+		}
+
+		public void setName(final String name) {
+			this.name = name;
+		}
+
+		@XmlAttribute(name = TYPE)
+		public String getType() {
+			return type;
+		}
+
+		public void setType(final String type) {
+			this.type = type;
+		}
+
+		@Override
+		public boolean equals(final Object obj) {
+			if (obj == this) {
+				return true;
+			}
+			if (!(obj instanceof Attribute.Filter)) {
+				return false;
+			}
+			final Target other = Target.class.cast(obj);
+			return new EqualsBuilder() //
+					.append(this.name, other.name) //
+					.append(this.type, other.type) //
+					.isEquals();
+		}
+
+		@Override
+		public int hashCode() {
+			return new HashCodeBuilder() //
+					.append(name) //
+					.append(type) //
+					.toHashCode();
+		}
+
+		@Override
+		public String toString() {
+			return reflectionToString(this, SHORT_PREFIX_STYLE);
+		}
+
+	}
+
 	@XmlRootElement
 	public static class Filter {
 
@@ -52,7 +124,7 @@ public class Attribute {
 			if (!(obj instanceof Attribute.Filter)) {
 				return false;
 			}
-			final Attribute.Filter other = Attribute.Filter.class.cast(obj);
+			final Filter other = Filter.class.cast(obj);
 			return new EqualsBuilder() //
 					.append(this.expression, other.expression) //
 					.append(this.context, other.context) //
@@ -74,23 +146,6 @@ public class Attribute {
 
 	}
 
-	private static final String //
-			DESCRIPTION = "description", //
-			EDITOR_TYPE = "editorType", //
-			FILTER = "filter", //
-			HIDDEN = "hidden", //
-			LENGTH = "length", //
-			LOOKUP_TYPE = "lookupType", //
-			MANDATORY = "mandatory", //
-			NAME = "name", //
-			PRECISION = "precision", //
-			SCALE = "scale", //
-			SHOW_COLUMN = "showColumn", //
-			TARGET_CLASS = "targetClass", //
-			TYPE = "type", //
-			UNIQUE = "unique", //
-			WRITABLE = "writable";
-
 	private String type;
 	private String name;
 	private String description;
@@ -103,9 +158,9 @@ public class Attribute {
 	private Long scale;
 	private Long length;
 	private String editorType;
-	private String targetClass;
+	private Target target;
 	private String lookupType;
-	private Attribute.Filter filter;
+	private Filter filter;
 
 	@XmlAttribute(name = TYPE)
 	public String getType() {
@@ -215,13 +270,36 @@ public class Attribute {
 		this.editorType = editorType;
 	}
 
+	/**
+	 * @deprecated use {@link getTarget()} instead.
+	 */
+	@Deprecated
 	@XmlAttribute(name = TARGET_CLASS)
 	public String getTargetClass() {
-		return targetClass;
+		return (target == null) ? null : target.getName();
 	}
 
+	/**
+	 * @deprecated use {@link setTarget(String)} instead.
+	 */
+	@Deprecated
 	public void setTargetClass(final String targetClass) {
-		this.targetClass = targetClass;
+		final String oldType = (target == null) ? null : target.getType();
+		this.target = new Target() {
+			{
+				setName(targetClass);
+				setType(oldType);
+			}
+		};
+	}
+
+	@XmlAttribute(name = TARGET)
+	public Target getTarget() {
+		return target;
+	}
+
+	public void setTarget(final Target target) {
+		this.target = target;
 	}
 
 	@XmlAttribute(name = LOOKUP_TYPE)
@@ -264,7 +342,7 @@ public class Attribute {
 				.append(this.scale, other.scale) //
 				.append(this.length, other.length) //
 				.append(this.editorType, other.editorType) //
-				.append(this.targetClass, other.targetClass) //
+				.append(this.target, other.target) //
 				.append(this.lookupType, other.lookupType) //
 				.append(this.filter, other.filter) //
 				.isEquals();
@@ -283,7 +361,7 @@ public class Attribute {
 				.append(scale) //
 				.append(length) //
 				.append(editorType) //
-				.append(targetClass) //
+				.append(target) //
 				.append(lookupType) //
 				.append(filter) //
 				.toHashCode();
