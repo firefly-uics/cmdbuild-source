@@ -61,6 +61,11 @@
 			this.setCard(card);
 		},
 
+		/**
+		 * @param {Number} entryTypeId
+		 * @param {Object} dc
+		 * @param {String} filter
+		 */
 		setEntryType: function(entryTypeId, dc, filter) {
 			this.entryType = _CMCache.getEntryTypeById(entryTypeId);
 			this.setCard(null);
@@ -390,25 +395,32 @@
 		 * Forward onAbortCardClick event to email tab controller
 		 */
 		onAbortCardClick: function() {
-			this.controllerTabEmail.onAbortCardClick();
+			if (!Ext.isEmpty(this.controllerTabEmail) && Ext.isFunction(this.controllerTabEmail.onAbortCardClick))
+				this.controllerTabEmail.onAbortCardClick();
 		},
 
 		/**
 		 * Forward onModifyCardClick event to email tab controller
 		 */
 		onModifyCardClick: function() {
-			this.controllerTabEmail.cmfg('onTabEmailModifyCardClick');
+			if (!Ext.isEmpty(this.controllerTabEmail) && Ext.isFunction(this.controllerTabEmail.onModifyCardClick))
+				this.controllerTabEmail.onModifyCardClick();
 		},
 
 		/**
 		 * Forward onSaveCardClick event to email tab controller
 		 */
 		onSaveCardClick: function() {
-			this.controllerTabEmail.onSaveCardClick();
+			if (!Ext.isEmpty(this.controllerTabEmail) && Ext.isFunction(this.controllerTabEmail.onSaveCardClick))
+				this.controllerTabEmail.onSaveCardClick();
 		},
 
 		/**
 		 * Bind the CMCardModuleState
+		 *
+		 * @param {Number} entryTypeId
+		 * @param {Object} dc
+		 * @param {String} filter
 		 *
 		 * @override
 		 */

@@ -44,6 +44,7 @@ public class CustomFormWidgetFactory extends ValuePairWidgetFactory {
 			MODIFY_DISABLED = "ModifyDisabled", //
 			RAW_DATA = "RawData", //
 			READ_ONLY = "ReadOnly", //
+			REFRESH_BEHAVIOUR = "RefreshBehaviour", //
 			REQUIRED = "Required", //
 			ROWS_SEPARATOR = "RowsSeparator", //
 			SERIALIZATION_TYPE = "SerializationType", //
@@ -59,7 +60,7 @@ public class CustomFormWidgetFactory extends ValuePairWidgetFactory {
 			TEMPLATE_RESOLVER, //
 			LAYOUT, //
 			READ_ONLY, ADD_DISABLED, DELETE_DISABLED, EXPORT_DISABLED, IMPORT_DISABLED, MODIFY_DISABLED,
-			CLONE_DISABLED, //
+			CLONE_DISABLED, REFRESH_BEHAVIOUR, //
 			SERIALIZATION_TYPE, KEY_VALUE_SEPARATOR, ATTRIBUTES_SEPARATOR, ROWS_SEPARATOR //
 	};
 
@@ -200,6 +201,7 @@ public class CustomFormWidgetFactory extends ValuePairWidgetFactory {
 		output.setImportDisabled(readBooleanFalseIfMissing(definition.get(IMPORT_DISABLED)));
 		output.setModifyDisabled(readBooleanFalseIfMissing(definition.get(MODIFY_DISABLED)));
 		output.setCloneDisabled(readBooleanFalseIfMissing(definition.get(CLONE_DISABLED)));
+		output.setRefreshBehaviour(String.class.cast(definition.get(REFRESH_BEHAVIOUR)));
 		return output;
 	}
 

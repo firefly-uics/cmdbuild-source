@@ -419,6 +419,7 @@
 		REFERENCE_COMBO_STORE_LIMIT: 'referenceComboStoreLimit',
 		REFERENCED_CLASS_NAME: 'referencedClassName',
 		REFERENCED_ELEMENT_ID: 'referencedElementId',
+		REFRESH_BEHAVIOUR: 'refreshBehaviour',
 		REJECT_NOT_MATCHING: 'rejectNotMatching',
 		REJECTED_FOLDER: 'rejectedFolder',
 		RELATION: 'relation',

@@ -1043,6 +1043,78 @@ public class Models {
 
 	}
 
+	public static class FunctionWithBasicDetailsBuilder extends ModelBuilder<FunctionWithBasicDetails> {
+
+		private Long id;
+		private String name;
+		private String description;
+
+		private FunctionWithBasicDetailsBuilder() {
+			// use factory method
+		}
+
+		@Override
+		protected FunctionWithBasicDetails doBuild() {
+			final FunctionWithBasicDetails output = new FunctionWithBasicDetails();
+			output.setId(id);
+			output.setName(name);
+			output.setDescription(description);
+			return output;
+		}
+
+		public FunctionWithBasicDetailsBuilder withId(final Long id) {
+			this.id = id;
+			return this;
+		}
+
+		public FunctionWithBasicDetailsBuilder withName(final String name) {
+			this.name = name;
+			return this;
+		}
+
+		public FunctionWithBasicDetailsBuilder withDescription(final String description) {
+			this.description = description;
+			return this;
+		}
+
+	}
+
+	public static class FunctionWithFullDetailsBuilder extends ModelBuilder<FunctionWithFullDetails> {
+
+		private Long id;
+		private String name;
+		private String description;
+
+		private FunctionWithFullDetailsBuilder() {
+			// use factory method
+		}
+
+		@Override
+		protected FunctionWithFullDetails doBuild() {
+			final FunctionWithFullDetails output = new FunctionWithFullDetails();
+			output.setId(id);
+			output.setName(name);
+			output.setDescription(description);
+			return output;
+		}
+
+		public FunctionWithFullDetailsBuilder withId(final Long id) {
+			this.id = id;
+			return this;
+		}
+
+		public FunctionWithFullDetailsBuilder withName(final String name) {
+			this.name = name;
+			return this;
+		}
+
+		public FunctionWithFullDetailsBuilder withDescription(final String description) {
+			this.description = description;
+			return this;
+		}
+
+	}
+
 	public static class LongIdBuilder extends ModelBuilder<LongId> {
 
 		private Long id;
@@ -2173,6 +2245,14 @@ public class Models {
 
 	public static FilterBuilder newFilter() {
 		return new FilterBuilder();
+	}
+
+	public static FunctionWithBasicDetailsBuilder newFunctionWithBasicDetails() {
+		return new FunctionWithBasicDetailsBuilder();
+	}
+
+	public static FunctionWithFullDetailsBuilder newFunctionWithFullDetails() {
+		return new FunctionWithFullDetailsBuilder();
 	}
 
 	public static LongIdBuilder newLongId() {

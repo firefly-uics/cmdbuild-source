@@ -20,6 +20,7 @@ import static org.cmdbuild.dao.query.clause.where.NullOperatorAndValue.isNull;
 import static org.cmdbuild.dao.query.clause.where.OrWhereClause.or;
 import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
 import static org.cmdbuild.dao.query.clause.where.TrueWhereClause.trueWhereClause;
+import static org.cmdbuild.logic.data.lookup.LookupLogic.UNUSED_LOOKUP_QUERY;
 
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -41,6 +42,7 @@ import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.apache.commons.lang3.ObjectUtils;
 import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.cmdbf.CMDBfId;
 import org.cmdbuild.cmdbf.CMDBfItem;
@@ -68,13 +70,28 @@ import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entry.CMEntry;
 import org.cmdbuild.dao.entry.CMRelation;
 import org.cmdbuild.dao.entry.IdAndDescription;
+import org.cmdbuild.dao.entry.LookupValue;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.entrytype.CMEntryType;
+import org.cmdbuild.dao.entrytype.attributetype.BooleanAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.CMAttributeTypeVisitor;
+import org.cmdbuild.dao.entrytype.attributetype.CharAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.DateAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.DateTimeAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.DecimalAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.DoubleAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.EntryTypeAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.ForeignKeyAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.IntegerAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.IpAddressAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.LookupAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.ReferenceAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.StringArrayAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.StringAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.TextAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.TimeAttributeType;
 import org.cmdbuild.dao.query.CMQueryRow;
 import org.cmdbuild.dao.query.QuerySpecsBuilder;
 import org.cmdbuild.dao.query.clause.AnyClass;
@@ -86,6 +103,8 @@ import org.cmdbuild.dao.query.clause.QueryDomain.Source;
 import org.cmdbuild.dao.query.clause.alias.Alias;
 import org.cmdbuild.dao.query.clause.alias.Aliases;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
+import org.cmdbuild.data.store.lookup.Lookup;
+import org.cmdbuild.data.store.lookup.LookupType;
 import org.cmdbuild.dms.DmsConfiguration;
 import org.cmdbuild.dms.DocumentTypeDefinition;
 import org.cmdbuild.dms.StoredDocument;
@@ -94,6 +113,7 @@ import org.cmdbuild.logic.GISLogic;
 import org.cmdbuild.logic.data.access.CardStorableConverter;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.logic.data.access.RelationDTO;
+import org.cmdbuild.logic.data.lookup.LookupLogic;
 import org.cmdbuild.logic.dms.DmsLogic;
 import org.cmdbuild.model.data.Card;
 import org.cmdbuild.model.gis.LayerMetadata;
@@ -168,6 +188,7 @@ public class CmdbMDR implements ManagementDataRepository {
 
 	private final XmlRegistry xmlRegistry;
 	private final MdrScopedIdRegistry aliasRegistry;
+	private final LookupLogic lookupLogic;
 	private final DataAccessLogic dataAccessLogic;
 	private final DmsLogic dmsLogic;
 	private final GISLogic gisLogic;
@@ -222,13 +243,124 @@ public class CmdbMDR implements ManagementDataRepository {
 			}
 		}
 	}
+	
+	private class FilterCMAttributeTypeVisitor implements CMAttributeTypeVisitor {
+		private Object newValue;
+		private Object value;
+		
+		public FilterCMAttributeTypeVisitor(Object value) {
+			this.value = value;
+		}
+		
+		public Object getNewValue() {
+			return newValue;
+		}
 
-	public CmdbMDR(final XmlRegistry xmlRegistry, final DataAccessLogic dataAccessLogic, final DmsLogic dmsLogic,
-			final GISLogic gisLogic, final GeoFeatureStore geoFeatureStore, final OperationUser operationUser,
-			final MdrScopedIdRegistry aliasRegistry, final CmdbfConfiguration cmdbfConfiguration,
-			final DmsConfiguration dmsConfiguration, final DatabaseConfiguration databaseConfiguration,
-			final PatchManager patchManager) {
+		@Override
+		public void visit(final TimeAttributeType attributeType) {
+			newValue = attributeType.convertValue(value);
+			if (newValue != null) {
+				newValue = ((DateTime) newValue).toDate();
+			}
+		}
+
+		@Override
+		public void visit(final TextAttributeType attributeType) {
+			newValue = attributeType.convertValue(value);
+		}
+
+		@Override
+		public void visit(final StringAttributeType attributeType) {
+			newValue = attributeType.convertValue(value);
+		}
+
+		@Override
+		public void visit(final ReferenceAttributeType attributeType) {
+			newValue = attributeType.convertValue(value);			
+		}
+
+		@Override
+		public void visit(final LookupAttributeType attributeType) {
+			Long lookupId = null;
+			LookupType lookupType = lookupLogic.typeFor(attributeType.getLookupTypeName());
+			for (final Lookup lookup : lookupLogic.getAllLookup(lookupType, true, UNUSED_LOOKUP_QUERY)) {
+				if (lookup.description() != null && ObjectUtils.equals(lookup.description(), value)) {
+					lookupId = lookup.getId();
+				}
+			}
+			if(lookupId != null)
+				newValue = new LookupValue(lookupId, (String)value, attributeType.getLookupTypeName(), null);
+		}
+
+		@Override
+		public void visit(final IpAddressAttributeType attributeType) {
+			newValue = attributeType.convertValue(value);
+		}
+
+		@Override
+		public void visit(final IntegerAttributeType attributeType) {
+			newValue = attributeType.convertValue(value);
+		}
+
+		@Override
+		public void visit(final ForeignKeyAttributeType attributeType) {
+			newValue = attributeType.convertValue(value);
+		}
+
+		@Override
+		public void visit(final DoubleAttributeType attributeType) {
+			newValue = attributeType.convertValue(value);
+		}
+
+		@Override
+		public void visit(final DecimalAttributeType attributeType) {
+			newValue = attributeType.convertValue(value);
+		}
+
+		@Override
+		public void visit(final DateAttributeType attributeType) {
+			newValue = attributeType.convertValue(value);
+			if (newValue != null) {
+				newValue = ((DateTime) newValue).toDate();
+			}
+		}
+
+		@Override
+		public void visit(final DateTimeAttributeType attributeType) {
+			newValue = attributeType.convertValue(value);
+			if (newValue != null) {
+				newValue = ((DateTime) newValue).toDate();
+			}
+		}
+
+		@Override
+		public void visit(final EntryTypeAttributeType attributeType) {
+			newValue = attributeType.convertValue(value);
+		}
+
+		@Override
+		public void visit(final BooleanAttributeType attributeType) {
+			newValue = attributeType.convertValue(value);
+		}
+
+		@Override
+		public void visit(final StringArrayAttributeType attributeType) {
+			newValue = attributeType.convertValue(value);
+		}
+
+		@Override
+		public void visit(final CharAttributeType attributeType) {
+			newValue = attributeType.convertValue(value);
+		}
+	}
+
+	public CmdbMDR(final XmlRegistry xmlRegistry, final LookupLogic lookupLogic, final DataAccessLogic dataAccessLogic,
+			final DmsLogic dmsLogic, final GISLogic gisLogic, final GeoFeatureStore geoFeatureStore,
+			final OperationUser operationUser, final MdrScopedIdRegistry aliasRegistry,
+			final CmdbfConfiguration cmdbfConfiguration, final DmsConfiguration dmsConfiguration,
+			final DatabaseConfiguration databaseConfiguration, final PatchManager patchManager) {
 		this.xmlRegistry = xmlRegistry;
+		this.lookupLogic = lookupLogic;
 		this.dataAccessLogic = dataAccessLogic;
 		this.dmsLogic = dmsLogic;
 		this.gisLogic = gisLogic;
@@ -1629,11 +1761,9 @@ public class CmdbMDR implements ManagementDataRepository {
 	}
 
 	private Object convertFilterValue(final CMAttribute attribute, final Object value) {
-		Object newValue = attribute.getType().convertValue(value);
-		if (newValue instanceof DateTime) {
-			newValue = ((DateTime) newValue).toDate();
-		}
-		return newValue;
+		FilterCMAttributeTypeVisitor visitor = new FilterCMAttributeTypeVisitor(value);
+		attribute.getType().accept(visitor);
+		return visitor.getNewValue();
 	}
 
 	private CMCard resolveItemAlias(final CMDBfItem item) throws Exception {
